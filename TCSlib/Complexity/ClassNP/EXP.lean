@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Seyoon Ragavan
 -/
 import TCSlib.Complexity.ClassNP.NP
+import TCSlib.Complexity.TuringMachine.Build.Primitives
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -732,6 +733,1962 @@ private lemma enumBudget_bound (a C c d : ℕ) :
        _ ≤ a * A * 2 ^ n ^ e := by
         simpa only [Nat.mul_assoc] using Nat.mul_le_mul_left a (hA n)
 
+/-- The catalog counter and the predecessor's counter have the same recursive
+equations, including overflow on the empty word. -/
+private lemma enumCont_inc_eq (s : List Bool) : incFixed s = enumInc s := by
+  induction s with
+  | nil => rfl
+  | cons b s ih => cases b <;> simp only [incFixed, enumInc, ih]
+
+/-- Stalling on overflow preserves the exact candidate width. -/
+private lemma enumCont_step_length (s : List Bool) :
+    ((incFixed s).getD s).length = s.length := by
+  rw [enumCont_inc_eq]
+  have h := enumInc_spec s
+  cases hi : enumInc s with
+  | none => rfl
+  | some u => simp only [hi] at h; exact h.1
+
+/-- Before exhaustion, the stalled catalog orbit is exactly the predecessor's
+rank enumeration. No identity is asserted at the terminal rank `2^w`.
+**Proof sketch.** The initial word is `enumWord w 0`. At a successor rank
+still below `2^w`, the proved increment equation returns `some` of the next
+word, so the fallback branch is never used. -/
+private lemma enumCont_orbit (w : ℕ) : ∀ i, i < 2 ^ w →
+    (fun s => (incFixed s).getD s)^[i] (List.replicate w false) =
+      enumWord w i := by
+  intro i
+  induction i with
+  | zero => intro _; exact (enumWord_zero w).symm
+  | succ i ih =>
+    intro hi
+    rw [Function.iterate_succ_apply', ih (by omega), enumCont_inc_eq,
+      enumInc_word w i (by omega), if_pos hi]
+    rfl
+
+/-- The exact fuel word is a unary all-true word of the certificate width.
+**Proof sketch.** At successor width, `2^(w+1)-1 = 2*(2^w-1)+1`;
+`Nat.bit1_bits` prepends a true bit. The base case is zero fuel. -/
+private lemma enumCont_fuel_bits (w : ℕ) :
+    Nat.bits (2 ^ w - 1) = List.replicate w true := by
+  induction w with
+  | zero => simp
+  | succ w ih =>
+    have hp : 0 < 2 ^ w := Nat.pow_pos (by omega)
+    have he : 2 ^ (w + 1) - 1 = 2 * (2 ^ w - 1) + 1 := by
+      rw [Nat.pow_succ]
+      omega
+    rw [he, Nat.bit1_bits, ih, List.replicate_succ]
+
+/-- A history tape can contain blank entries; its length is tracked on a
+separate all-true clock tape. Cells outside its finite list are blank. -/
+private def enumCont_sparse (w : List (Option Bool)) (z : ℤ) : Option Bool :=
+  if 0 ≤ z then (w[z.toNat]?).join else none
+
+/-- Appending a possibly blank history symbol writes just the next cell. -/
+private lemma enumCont_sparse_append (w : List (Option Bool)) (b : Option Bool) :
+    enumCont_sparse (w ++ [b]) =
+      Function.update (enumCont_sparse w) (w.length : ℤ) b := by
+  funext z
+  by_cases hz : z = (w.length : ℤ)
+  · subst z; simp [enumCont_sparse]
+  · rw [Function.update_of_ne hz]
+    by_cases hnonneg : 0 ≤ z
+    · have hne : z.toNat ≠ w.length := by omega
+      simp only [enumCont_sparse, if_pos hnonneg]
+      by_cases hlt : z.toNat < w.length
+      · rw [List.getElem?_append_left hlt]
+      · have hgt : w.length + 1 ≤ z.toNat := by omega
+        rw [List.getElem?_eq_none (by simp; omega),
+          List.getElem?_eq_none (by omega)]
+    · simp only [enumCont_sparse, if_neg hnonneg]
+
+/-- Erasing the last history cell recovers its prefix, even if the erased
+entry was itself blank. -/
+private lemma enumCont_sparse_erase (w : List (Option Bool)) (b : Option Bool) :
+    Function.update (enumCont_sparse (w ++ [b])) (w.length : ℤ) none =
+      enumCont_sparse w := by
+  rw [enumCont_sparse_append, Function.update_idem]
+  have hblank : enumCont_sparse w (w.length : ℤ) = none := by
+    simp [enumCont_sparse]
+  rw [← hblank]
+  exact Function.update_eq_self _ _
+
+/-- Three tape symbols encode the three source head moves. -/
+private def enumCont_moveCode : SignType → Option Bool
+  | .neg => some false
+  | .zero => none
+  | .pos => some true
+
+/-- Decode the inverse move for the backward restoration pass. -/
+private def enumCont_unmove : Option Bool → SignType
+  | some false => .pos
+  | none => .zero
+  | some true => .neg
+
+/-- A recorded move and its inverse cancel as integer head displacements. -/
+private lemma enumCont_unmove_cast (d : SignType) :
+    (enumCont_unmove (enumCont_moveCode d)).cast = -(d.cast : ℤ) := by
+  cases d <;> rfl
+
+/-- A history entry retains every overwritten symbol and every source move.
+No source state or native-input movement is needed for work-tape restoration. -/
+private abbrev EnumContEntry (k : ℕ) :=
+  (Fin k → Option Bool) × (Fin k → SignType)
+
+/-- Instrument one source action with a clock cell and two history tracks per
+source tape. The source action and output are otherwise unchanged. -/
+private def enumCont_logAction {k : ℕ} {S : Type} (old : Fin k → Option Bool)
+    (a : Action k Bool S) : Action (k + (1 + (k + k))) Bool S :=
+  ⟨a.inputTape,
+    tapeBlocks a.workTapes (some (some true), .pos)
+      (Fin.addCases (fun i => (some (old i), .pos))
+        (fun i => (some (enumCont_moveCode (a.workTapes i).2), .pos))),
+    a.output, a.state⟩
+
+/-- The logged source keeps its original finite state set. The extra tapes
+are a unary step clock, old-symbol histories, and movement histories. -/
+private def enumCont_logTM (M : FinTM Bool) : FinTM Bool where
+  k := M.k + (1 + (M.k + M.k))
+  State := M.State
+  tm := {
+    q₀ := M.tm.q₀
+    tr := fun q inp work =>
+      let old := fun i : Fin M.k => work (Fin.castAdd (1 + (M.k + M.k)) i)
+      enumCont_logAction old (M.tm.tr q inp old) }
+
+/-- The correspondence stores exactly the source configuration and the
+finite history; every history head is one cell past the recorded entries. -/
+private def enumCont_logCfg {k : ℕ} {S : Type} {x : List Bool}
+    (c : Cfg k Bool S x) (h : List (EnumContEntry k)) :
+    Cfg (k + (1 + (k + k))) Bool S x :=
+  ⟨c.state, c.inputPos,
+    tapeBlocks c.workTapes (bufferTape (List.replicate h.length true))
+      (Fin.addCases (fun i => enumCont_sparse (h.map (fun e => e.1 i)))
+        (fun i => enumCont_sparse (h.map (fun e => enumCont_moveCode (e.2 i))))),
+    tapeBlocks c.workTapePos (h.length : ℤ) (fun _ => h.length), c.output⟩
+
+/-- One logged action preserves source semantics and appends exactly one
+history entry, including a halting or emitting action.
+**Proof sketch.** Split the physical tapes into source, clock, old-symbol,
+and movement blocks. Source fields apply the original action; each history
+field is the single-cell append identity at its current length. -/
+private lemma enumCont_log_apply {k : ℕ} {S : Type} {x : List Bool}
+    (c : Cfg k Bool S x) (h : List (EnumContEntry k)) (a : Action k Bool S) :
+    (enumCont_logAction c.workTapeSymbols a).apply (enumCont_logCfg c h) =
+      enumCont_logCfg (a.apply c)
+        (h ++ [(c.workTapeSymbols, fun i => (a.workTapes i).2)]) := by
+  refine Cfg.ext rfl rfl ?_ ?_ rfl
+  · funext i
+    refine Fin.addCases (fun j => ?_) (fun j => ?_) i
+    · simp [enumCont_logAction, enumCont_logCfg, Action.apply, tapeBlocks]
+    · refine Fin.addCases (fun j => ?_) (fun j => ?_) j
+      · simp [enumCont_logAction, enumCont_logCfg, Action.apply, tapeBlocks,
+          List.replicate_add, bufferTape_append]
+      · refine Fin.addCases (fun j => ?_) (fun j => ?_) j <;>
+          simp [enumCont_logAction, enumCont_logCfg, Action.apply, tapeBlocks,
+            enumCont_sparse_append, Fin.addCases]
+  · funext i
+    refine Fin.addCases (fun j => ?_) (fun j => ?_) i
+    · simp [enumCont_logAction, enumCont_logCfg, Action.apply, tapeBlocks]
+    · refine Fin.addCases (fun j => ?_) (fun j => ?_) j
+      · simp [enumCont_logAction, enumCont_logCfg, Action.apply, tapeBlocks]
+      · refine Fin.addCases (fun j => ?_) (fun j => ?_) j <;>
+          simp [enumCont_logAction, enumCont_logCfg, Action.apply, tapeBlocks,
+            Fin.addCases]
+
+/-- Record precisely the actions actually executed by a source run. No entry
+is added after the source has halted. -/
+private def enumCont_history {k : ℕ} {S : Type} {x : List Bool}
+    (tm : MultiTapeTM k Bool S) (c₀ : Cfg k Bool S x) : ℕ → List (EnumContEntry k)
+  | 0 => []
+  | t + 1 =>
+    let c := tm.runFrom c₀ t
+    match c.state with
+    | none => enumCont_history tm c₀ t
+    | some q => enumCont_history tm c₀ t ++
+        [(c.workTapeSymbols, fun i => ((tm.tr q c.inputSymbol c.workTapeSymbols).workTapes i).2)]
+
+/-- Logging is lockstep with the source, from arbitrary prepared source
+configurations. The source input, output, and halting time are unchanged.
+**Proof sketch.** Induct on elapsed time. Halted configurations remain fixed;
+otherwise the source-block reads agree and `enumCont_log_apply` records the
+next action. This also covers the final emission on the halting action. -/
+private lemma enumCont_log_run (M : FinTM Bool) {x : List Bool}
+    (c₀ : Cfg M.k Bool M.State x) (t : ℕ) :
+    (enumCont_logTM M).tm.runFrom (enumCont_logCfg c₀ []) t =
+      enumCont_logCfg (M.tm.runFrom c₀ t) (enumCont_history M.tm c₀ t) := by
+  induction t with
+  | zero => rfl
+  | succ t ih =>
+    rw [MultiTapeTM.runFrom_succ_eq_step', ih]
+    let c := M.tm.runFrom c₀ t
+    have hr : (fun i : Fin M.k =>
+        (enumCont_logCfg c (enumCont_history M.tm c₀ t)).workTapeSymbols
+          (Fin.castAdd (1 + (M.k + M.k)) i)) = c.workTapeSymbols := by
+      funext i
+      simp [enumCont_logCfg, Cfg.workTapeSymbols, tapeBlocks]
+    have hsrun : (M.tm.runFrom c₀ t).state = c.state := rfl
+    cases hs : c.state with
+    | none =>
+      have hn : (M.tm.runFrom c₀ t).state = none := hsrun.trans hs
+      simp only [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.step,
+        enumCont_history, enumCont_logCfg, hn]
+    | some q =>
+      have hq : (M.tm.runFrom c₀ t).state = some q := hsrun.trans hs
+      have hstate : (enumCont_logCfg (M.tm.runFrom c₀ t)
+          (enumCont_history M.tm c₀ t)).state = some q := hq
+      simp only [MultiTapeTM.step, hstate]
+      change (enumCont_logAction _ ((M.tm.tr q _ _))).apply _ = _
+      rw [hr, enumCont_log_apply]
+      simp only [enumCont_history, MultiTapeTM.runFrom_succ_eq_step',
+        MultiTapeTM.step, hq]
+      rfl
+
+/-- The restoration controller alternates inverse head movement with writing
+the old symbols. It erases history as it goes and halts with history heads at
+zero when the clock's left blank is reached. Native input is stationary. -/
+private def enumCont_undoTM (k : ℕ) : FinTM Bool where
+  k := k + (1 + (k + k))
+  State := Option (Fin k → Option Bool)
+  tm := {
+    q₀ := none
+    tr := fun q _ work => match q with
+      | none =>
+        if (work (Fin.natAdd k (Fin.castAdd (k + k) 0))).isSome then
+          ⟨0, tapeBlocks
+            (fun i => (none, enumCont_unmove
+              (work (Fin.natAdd k (Fin.natAdd 1 (Fin.natAdd k i))))))
+            (some none, 0) (fun _ => (some none, 0)), none,
+            some (some (fun i => work (Fin.natAdd k (Fin.natAdd 1 (Fin.castAdd k i)))))⟩
+        else
+          ⟨0, tapeBlocks (fun _ => (none, 0)) (none, .pos)
+            (fun _ => (none, .pos)), none, none⟩
+      | some old =>
+        ⟨0, tapeBlocks (fun i => (some (old i), 0)) (none, .neg)
+          (fun _ => (none, .neg)), none, some none⟩ }
+
+/-- At a restoration checkpoint the heads inspect the last remaining
+history entry. The native input position and source control are irrelevant
+to undoing the source work fields, so the former is explicit. -/
+private def enumCont_undoCfg {k : ℕ} {S : Type} {x : List Bool}
+    (c : Cfg k Bool S x) (h : List (EnumContEntry k)) (p : Fin (x.length + 2)) :
+    Cfg (enumCont_undoTM k).k Bool (enumCont_undoTM k).State x :=
+  ⟨some none, p, (enumCont_logCfg c h).workTapes,
+    tapeBlocks c.workTapePos ((h.length : ℤ) - 1) (fun _ => (h.length : ℤ) - 1), []⟩
+
+/-- The completed restoration retains exactly the source's initial work
+fields and leaves every history tape blank with its head at zero. -/
+private def enumCont_undoResult {k : ℕ} {S : Type} {x : List Bool}
+    (c : Cfg k Bool S x) (p : Fin (x.length + 2)) :
+    Cfg (enumCont_undoTM k).k Bool (enumCont_undoTM k).State x :=
+  ⟨none, p, (enumCont_logCfg c []).workTapes,
+    tapeBlocks c.workTapePos 0 (fun _ => 0), []⟩
+
+/-- Undoing a tape write at the old head restores its original contents,
+including no-write actions and writes of blank. -/
+private lemma enumCont_restore_cell {k : ℕ} {S : Type} {x : List Bool}
+    (c : Cfg k Bool S x) (a : Action k Bool S) (i : Fin k) :
+    Function.update ((a.apply c).workTapes i) (c.workTapePos i) (c.workTapeSymbols i) =
+      c.workTapes i := by
+  rw [Action.apply_workTapes, Function.update_idem]
+  exact Function.update_eq_self _ _
+
+/-- Erasing the last clock mark exposes exactly the preceding clock word. -/
+private lemma enumCont_clock_erase (n : ℕ) :
+    Function.update (bufferTape (List.replicate (n + 1) true)) (n : ℤ) none =
+      bufferTape (List.replicate n true) := by
+  rw [List.replicate_add, List.replicate_one, bufferTape_append,
+    List.length_replicate, Function.update_idem]
+  have hblank : bufferTape (List.replicate n true) (n : ℤ) = none := by simp
+  rw [← hblank]
+  exact Function.update_eq_self _ _
+
+/-- Between inverse movement and inverse writing, the source heads are back
+at their old positions and the last history entry is already erased. -/
+private def enumCont_undoMid {k : ℕ} {S : Type} {x : List Bool}
+    (c : Cfg k Bool S x) (a : Action k Bool S) (h : List (EnumContEntry k))
+    (p : Fin (x.length + 2)) :
+    Cfg (enumCont_undoTM k).k Bool (enumCont_undoTM k).State x :=
+  ⟨some (some c.workTapeSymbols), p, (enumCont_logCfg (a.apply c) h).workTapes,
+    tapeBlocks c.workTapePos (h.length : ℤ) (fun _ => h.length), []⟩
+
+/-- The first restoration transition reverses the last source head moves,
+retains the old symbols in finite control, and erases their history cells.
+**Proof sketch.** At the newest clock mark, the parallel tracks read the
+last appended entry. The inverse displacement returns every source head to
+its pre-action location. Single-cell erase identities recover each prefix. -/
+private lemma enumCont_undo_back {k : ℕ} {S : Type} {x : List Bool}
+    (c : Cfg k Bool S x) (a : Action k Bool S) (h : List (EnumContEntry k))
+    (p : Fin (x.length + 2)) :
+    (enumCont_undoTM k).tm.step
+      (enumCont_undoCfg (a.apply c)
+        (h ++ [(c.workTapeSymbols, fun i => (a.workTapes i).2)]) p) =
+      enumCont_undoMid c a h p := by
+  let u := enumCont_undoCfg (a.apply c)
+    (h ++ [(c.workTapeSymbols, fun i => (a.workTapes i).2)]) p
+  have hc : u.workTapeSymbols (Fin.natAdd k (Fin.castAdd (k + k) 0)) = some true := by
+    simp [u, enumCont_undoCfg, enumCont_logCfg, Cfg.workTapeSymbols, tapeBlocks]
+  have ho : (fun i : Fin k => u.workTapeSymbols
+      (Fin.natAdd k (Fin.natAdd 1 (Fin.castAdd k i)))) = c.workTapeSymbols := by
+    funext i
+    simp [u, enumCont_undoCfg, enumCont_logCfg, Cfg.workTapeSymbols, tapeBlocks,
+      enumCont_sparse]
+  have hm : (fun i : Fin k => u.workTapeSymbols
+      (Fin.natAdd k (Fin.natAdd 1 (Fin.natAdd k i)))) =
+      fun i => enumCont_moveCode (a.workTapes i).2 := by
+    funext i
+    simp [u, enumCont_undoCfg, enumCont_logCfg, Cfg.workTapeSymbols, tapeBlocks,
+      enumCont_sparse, Fin.addCases]
+    congr 3
+    apply Fin.ext
+    simp
+  change ((enumCont_undoTM k).tm.tr none _ u.workTapeSymbols).apply u = _
+  simp only [enumCont_undoTM, hc, Option.isSome_some, ↓reduceIte]
+  rw [ho]
+  have hm' (i : Fin k) := congrFun hm i
+  have herase (f : EnumContEntry k → Option Bool) (b : Option Bool) :
+      Function.update (enumCont_sparse (h.map f ++ [b])) (h.length : ℤ) none =
+        enumCont_sparse (h.map f) := by
+    simpa only [List.length_map] using enumCont_sparse_erase (h.map f) b
+  simp only [hm']
+  refine Cfg.ext rfl (moveInputPos_zero _) ?_ ?_ rfl
+  · funext i
+    refine Fin.addCases (fun j => ?_) (fun j => ?_) i
+    · simp [u, enumCont_undoMid, enumCont_undoCfg, enumCont_logCfg, Action.apply, tapeBlocks]
+    · refine Fin.addCases (fun j => ?_) (fun j => ?_) j
+      · simp [u, enumCont_undoMid, enumCont_undoCfg, enumCont_logCfg, Action.apply,
+          tapeBlocks, enumCont_clock_erase]
+      · refine Fin.addCases (fun j => ?_) (fun j => ?_) j <;>
+          simp [u, enumCont_undoMid, enumCont_undoCfg, enumCont_logCfg, Action.apply,
+            tapeBlocks, Fin.addCases, herase]
+  · funext i
+    refine Fin.addCases (fun j => ?_) (fun j => ?_) i
+    · simp [u, enumCont_undoMid, enumCont_undoCfg, Action.apply, tapeBlocks,
+        enumCont_unmove_cast]
+    · refine Fin.addCases (fun j => ?_) (fun j => ?_) j
+      · simp [u, enumCont_undoMid, enumCont_undoCfg, Action.apply, tapeBlocks]
+      · refine Fin.addCases (fun j => ?_) (fun j => ?_) j <;>
+          simp [u, enumCont_undoMid, enumCont_undoCfg, Action.apply, tapeBlocks, Fin.addCases]
+
+/-- The second restoration transition writes the retained old symbols and
+backs the history heads up to the preceding entry. -/
+private lemma enumCont_undo_write {k : ℕ} {S : Type} {x : List Bool}
+    (c : Cfg k Bool S x) (a : Action k Bool S) (h : List (EnumContEntry k))
+    (p : Fin (x.length + 2)) :
+    (enumCont_undoTM k).tm.step (enumCont_undoMid c a h p) =
+      enumCont_undoCfg c h p := by
+  change ((enumCont_undoTM k).tm.tr (some c.workTapeSymbols) _ _).apply _ = _
+  refine Cfg.ext rfl (moveInputPos_zero _) ?_ ?_ rfl
+  · funext i
+    refine Fin.addCases (fun j => ?_) (fun j => ?_) i
+    · simpa [enumCont_undoTM, enumCont_undoMid, enumCont_undoCfg, enumCont_logCfg,
+        Action.apply, tapeBlocks] using enumCont_restore_cell c a j
+    · refine Fin.addCases (fun j => ?_) (fun j => ?_) j <;>
+        simp [enumCont_undoTM, enumCont_undoMid, enumCont_undoCfg, enumCont_logCfg,
+          Action.apply, tapeBlocks]
+  · funext i
+    refine Fin.addCases (fun j => ?_) (fun j => ?_) i
+    · simp [enumCont_undoTM, enumCont_undoMid, enumCont_undoCfg, Action.apply, tapeBlocks]
+    · refine Fin.addCases (fun j => ?_) (fun j => ?_) j <;>
+        simp [enumCont_undoTM, enumCont_undoMid, enumCont_undoCfg, Action.apply,
+          tapeBlocks, sub_eq_add_neg]
+
+/-- With no history left, one silent transition restores the history heads
+to zero and halts. This also handles a source that took no steps. -/
+private lemma enumCont_undo_empty {k : ℕ} {S : Type} {x : List Bool}
+    (c : Cfg k Bool S x) (p : Fin (x.length + 2)) :
+    (enumCont_undoTM k).tm.step (enumCont_undoCfg c [] p) =
+      enumCont_undoResult c p := by
+  change ((enumCont_undoTM k).tm.tr none _ _).apply _ = _
+  have hc : (enumCont_undoCfg c [] p).workTapeSymbols
+      (Fin.natAdd k (Fin.castAdd (k + k) 0)) = none := by
+    simp [enumCont_undoCfg, enumCont_logCfg, Cfg.workTapeSymbols, tapeBlocks]
+  simp only [enumCont_undoTM, hc, Option.isSome_none, Bool.false_eq_true, ↓reduceIte]
+  refine Cfg.ext rfl (moveInputPos_zero _) ?_ ?_ rfl
+  · funext i
+    refine Fin.addCases (fun j => ?_) (fun j => ?_) i
+    · simp [enumCont_undoCfg, enumCont_undoResult, Action.apply, tapeBlocks]
+    · refine Fin.addCases (fun j => ?_) (fun j => ?_) j <;>
+        simp [enumCont_undoCfg, enumCont_undoResult, Action.apply, tapeBlocks]
+  · funext i
+    refine Fin.addCases (fun j => ?_) (fun j => ?_) i
+    · simp [enumCont_undoCfg, enumCont_undoResult, Action.apply, tapeBlocks]
+    · refine Fin.addCases (fun j => ?_) (fun j => ?_) j <;>
+        simp [enumCont_undoCfg, enumCont_undoResult, Action.apply, tapeBlocks]
+
+/-- A logged live source prefix can be completely undone in `2t+1` steps.
+The theorem restores the full original work tapes and heads, with blank
+history, while preserving any supplied native input position.
+**Proof sketch.** Peel the last source action. Two proved transitions first
+reverse its moves and erase its history, then restore its overwritten cells.
+Induction undoes the shorter prefix; the empty prefix takes one final step. -/
+private lemma enumCont_undo_run (M : FinTM Bool) {x : List Bool}
+    (c₀ : Cfg M.k Bool M.State x) (p : Fin (x.length + 2)) (t : ℕ)
+    (hlive : ∀ j < t, ¬(M.tm.runFrom c₀ j).Halted) :
+    (enumCont_undoTM M.k).tm.runFrom
+      (enumCont_undoCfg (M.tm.runFrom c₀ t) (enumCont_history M.tm c₀ t) p) (2 * t + 1) =
+      enumCont_undoResult c₀ p := by
+  induction t with
+  | zero =>
+    simpa only [Nat.mul_zero, Nat.zero_add, MultiTapeTM.runFrom_zero,
+      enumCont_history, MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero]
+      using enumCont_undo_empty c₀ p
+  | succ t ih =>
+    have hs : (M.tm.runFrom c₀ t).state ≠ none := hlive t (by omega)
+    cases hq : (M.tm.runFrom c₀ t).state with
+    | none => exact False.elim (hs hq)
+    | some q =>
+      have he : 2 * (t + 1) + 1 = 2 + (2 * t + 1) := by omega
+      let c := M.tm.runFrom c₀ t
+      let a := M.tm.tr q c.inputSymbol c.workTapeSymbols
+      have hsrun : M.tm.runFrom c₀ (t + 1) = a.apply c := by
+        rw [MultiTapeTM.runFrom_succ_eq_step']
+        simp only [MultiTapeTM.step, hq]
+        rfl
+      have hhist : enumCont_history M.tm c₀ (t + 1) =
+          enumCont_history M.tm c₀ t ++ [(c.workTapeSymbols, fun i => (a.workTapes i).2)] := by
+        simp only [enumCont_history, hq]
+        rfl
+      have htwo : (enumCont_undoTM M.k).tm.runFrom
+          (enumCont_undoCfg (a.apply c)
+            (enumCont_history M.tm c₀ t ++ [(c.workTapeSymbols, fun i => (a.workTapes i).2)]) p) 2 =
+          enumCont_undoCfg c (enumCont_history M.tm c₀ t) p := by
+        rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_succ_eq_step',
+          MultiTapeTM.runFrom_zero, enumCont_undo_back, enumCont_undo_write]
+      rw [hsrun, hhist, he, MultiTapeTM.runFrom_add, htwo]
+      exact ih (fun j hj => hlive j (by omega))
+
+/-- Any known halted endpoint is reached at the first halting time, with a
+live source at every earlier time. The bound is never increased. -/
+private lemma enumCont_first_halt {k : ℕ} {S : Type} {x : List Bool}
+    (tm : MultiTapeTM k Bool S) (c₀ : Cfg k Bool S x) (T : ℕ)
+    (hh : (tm.runFrom c₀ T).state = none) :
+    ∃ t ≤ T, (∀ j < t, ¬(tm.runFrom c₀ j).Halted) ∧
+      tm.runFrom c₀ t = tm.runFrom c₀ T := by
+  classical
+  have hex : ∃ t, (tm.runFrom c₀ t).state = none := ⟨T, hh⟩
+  let t := Nat.find hex
+  have ht : t ≤ T := Nat.find_min' hex hh
+  refine ⟨t, ht, fun j hj => Nat.find_min hex hj, ?_⟩
+  obtain ⟨r, hr⟩ := Nat.exists_eq_add_of_le ht
+  rw [hr, MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_of_halt _ (Nat.find_spec hex)]
+
+/-- Administrative actions preserve the source bank and only move the native
+input and the final capture tape. -/
+private def enumCont_bufferAction {L : ℕ} {H : Type}
+    (m d : SignType) (q : Option H) : Action (L + 1) Bool H :=
+  ⟨m, fun i => (none, if i.val < L then 0 else d), none, q⟩
+
+/-- Entry into restoration moves all history heads from the right blank to
+the newest entry, leaving source heads fixed. -/
+private def enumCont_undoEntry (k : ℕ) :
+    Action (enumCont_undoTM k).k Bool (enumCont_undoTM k).State :=
+  ⟨0, tapeBlocks (fun _ => (none, 0)) (none, .neg) (fun _ => (none, .neg)),
+    none, some none⟩
+
+/-- A clean subroutine logs and captures a source, undoes all source work,
+rewinds the native input and captured word, and halts silently. Its retained
+output word lives on the last work tape; it emits no physical output. -/
+private def enumCont_cleanTM (M : FinTM Bool) : FinTM Bool where
+  k := (enumCont_logTM M).k + 1
+  State := M.State ⊕ (Fin 6 ⊕ (enumCont_undoTM M.k).State)
+  tm := {
+    q₀ := .inl M.tm.q₀
+    tr := fun q inp work => match q with
+      | .inl q => captureAction Sum.inl (.inr (.inl 0))
+          ((enumCont_logTM M).tm.tr q inp (fun i => work i.castSucc))
+      | .inr (.inr q) => captureAction (fun q => .inr (.inr q)) (.inr (.inl 1))
+          ((enumCont_undoTM M.k).tm.tr q inp (fun i => work i.castSucc))
+      | .inr (.inl q) => match q.val with
+        | 0 => captureAction (fun q => .inr (.inr q)) (.inr (.inl 1))
+            (enumCont_undoEntry M.k)
+        | 1 => controlAction .neg (some (.inr (.inl 2)))
+        | 2 => match inp with
+          | some _ => controlAction .neg (some (.inr (.inl 2)))
+          | none => controlAction .pos (some (.inr (.inl 3)))
+        | 3 => enumCont_bufferAction 0 .neg (some (.inr (.inl 4)))
+        | 4 => match work (Fin.last (enumCont_logTM M).k) with
+          | some _ => enumCont_bufferAction 0 .neg (some (.inr (.inl 4)))
+          | none => enumCont_bufferAction 0 .pos (some (.inr (.inl 5)))
+        | _ => controlAction 0 none }
+
+/-- Clean administrative configurations expose only the native and capture
+heads. The source work fields are already restored and the histories blank. -/
+private def enumCont_cleanCfg (M : FinTM Bool) {x : List Bool}
+    (c₀ : Cfg M.k Bool M.State x) (y : List Bool)
+    (q : Option (enumCont_cleanTM M).State) (p : Fin (x.length + 2)) (h : ℤ) :
+    Cfg (enumCont_cleanTM M).k Bool (enumCont_cleanTM M).State x :=
+  ⟨q, p,
+    (fun i => if hi : i.val < (enumCont_logTM M).k then
+      (enumCont_logCfg c₀ []).workTapes ⟨i, hi⟩ else bufferTape y),
+    (fun i => if hi : i.val < (enumCont_logTM M).k then
+      (enumCont_logCfg c₀ []).workTapePos ⟨i, hi⟩ else h), []⟩
+
+/-- The clean subroutine's first phase is the public captured simulation of
+the logged source. Halting emissions are retained on the capture tape. -/
+private lemma enumCont_clean_capture (M : FinTM Bool) {x : List Bool}
+    (c₀ : Cfg M.k Bool M.State x) (t : ℕ)
+    (hlive : ∀ j < t, ¬(M.tm.runFrom c₀ j).Halted) :
+    (enumCont_cleanTM M).tm.runFrom
+      (captureCfg Sum.inl (.inr (.inl 0)) [] [] (enumCont_logCfg c₀ [])) t =
+      captureCfg Sum.inl (.inr (.inl 0)) [] []
+        (enumCont_logCfg (M.tm.runFrom c₀ t) (enumCont_history M.tm c₀ t)) := by
+  rw [capture_run (enumCont_logTM M).tm (enumCont_cleanTM M).tm Sum.inl (.inr (.inl 0))
+    (fun _ _ _ => rfl) [] [] (enumCont_logCfg c₀ []) t]
+  · rw [enumCont_log_run]
+  · intro j hj
+    rw [enumCont_log_run]
+    exact hlive j hj
+
+/-- After source halt, one silent dispatch parks every history head on its
+last entry and starts the captured restoration, retaining the source output. -/
+private lemma enumCont_clean_undo_entry (M : FinTM Bool) {x : List Bool}
+    (c : Cfg M.k Bool M.State x) (h : List (EnumContEntry M.k))
+    (hs : c.state = none) :
+    (enumCont_cleanTM M).tm.step
+      (captureCfg Sum.inl (.inr (.inl 0)) [] [] (enumCont_logCfg c h)) =
+      captureCfg (fun q => .inr (.inr q)) (.inr (.inl 1)) c.output []
+        (enumCont_undoCfg c h c.inputPos) := by
+  have hstate : (captureCfg (fun q => (Sum.inl q : (enumCont_cleanTM M).State))
+      (.inr (.inl 0)) [] [] (enumCont_logCfg c h)).state = some (.inr (.inl 0)) := by
+    simp [captureCfg, enumCont_logCfg, hs]
+  simp only [MultiTapeTM.step, hstate]
+  refine Cfg.ext rfl (moveInputPos_zero _) ?_ ?_ rfl
+  · funext i
+    refine Fin.lastCases ?_ (fun j => ?_) i
+    · simp [enumCont_cleanTM, enumCont_logTM, enumCont_undoTM, captureAction, captureCfg, enumCont_undoEntry,
+        enumCont_logCfg, enumCont_undoCfg, Action.apply]
+    · simp only [enumCont_cleanTM, enumCont_logTM, enumCont_undoTM, captureAction, enumCont_undoEntry, captureCfg,
+        Fin.coe_castSucc, enumCont_undoCfg, Action.apply,
+        enumCont_logCfg, List.nil_append, List.append_nil]
+      refine Fin.addCases (fun j => ?_) (fun j => ?_) j
+      · simp [tapeBlocks, Fin.addCases, j.isLt,
+          show j.val < M.k + (1 + (M.k + M.k)) from Nat.lt_of_lt_of_le j.isLt (by omega)]
+      · refine Fin.addCases (fun j => ?_) (fun j => ?_) j <;>
+          simp [tapeBlocks, Fin.addCases, j.isLt]
+  · funext i
+    refine Fin.lastCases ?_ (fun j => ?_) i
+    · simp [enumCont_cleanTM, enumCont_logTM, enumCont_undoTM, captureAction, captureCfg, enumCont_undoEntry,
+        enumCont_logCfg, enumCont_undoCfg, Action.apply]
+    · simp only [enumCont_cleanTM, enumCont_logTM, enumCont_undoTM, captureAction, enumCont_undoEntry, captureCfg,
+        Fin.coe_castSucc, enumCont_undoCfg, Action.apply,
+        enumCont_logCfg]
+      refine Fin.addCases (fun j => ?_) (fun j => ?_) j
+      · simp [tapeBlocks, Fin.addCases, j.isLt,
+          show j.val < M.k + (1 + (M.k + M.k)) from Nat.lt_of_lt_of_le j.isLt (by omega)]
+      · refine Fin.addCases (fun j => ?_) (fun j => ?_) j <;>
+          simp [tapeBlocks, Fin.addCases, sub_eq_add_neg]
+
+/-- The captured restoration returns within `2t+1` steps with the original
+source work restored and its completed output retained separately.
+**Proof sketch.** Take the restoration machine's first halt below its proved
+exact bound, apply `capture_run`, and identify the returned configuration
+field by field. Its empty output appends nothing to the retained source word. -/
+private lemma enumCont_clean_restore (M : FinTM Bool) {x : List Bool}
+    (c₀ : Cfg M.k Bool M.State x) (p : Fin (x.length + 2)) (t : ℕ)
+    (hlive : ∀ j < t, ¬(M.tm.runFrom c₀ j).Halted) :
+    ∃ r ≤ 2 * t + 1,
+      (enumCont_cleanTM M).tm.runFrom
+        (captureCfg (fun q => .inr (.inr q)) (.inr (.inl 1))
+          (M.tm.runFrom c₀ t).output []
+          (enumCont_undoCfg (M.tm.runFrom c₀ t) (enumCont_history M.tm c₀ t) p)) r =
+        enumCont_cleanCfg M c₀ (M.tm.runFrom c₀ t).output
+          (some (.inr (.inl 1))) p ((M.tm.runFrom c₀ t).output.length : ℤ) := by
+  have hu := enumCont_undo_run M c₀ p t hlive
+  obtain ⟨r, hr, hl, he⟩ := enumCont_first_halt (enumCont_undoTM M.k).tm
+    (enumCont_undoCfg (M.tm.runFrom c₀ t) (enumCont_history M.tm c₀ t) p)
+    (2 * t + 1) (by rw [hu]; rfl)
+  refine ⟨r, hr, ?_⟩
+  rw [capture_run (enumCont_undoTM M.k).tm (enumCont_cleanTM M).tm
+    (fun q => .inr (.inr q)) (.inr (.inl 1)) (fun _ _ _ => rfl)
+    _ [] _ r hl, he, hu]
+  simp [captureCfg, enumCont_undoResult, enumCont_cleanCfg, enumCont_logCfg,
+    enumCont_logTM, enumCont_undoTM]
+  exact ⟨rfl, rfl⟩
+
+/-- Moving the clean subroutine's two exposed heads preserves every tape and
+the empty physical output. -/
+private lemma enumCont_buffer_apply (M : FinTM Bool) {x : List Bool}
+    (c₀ : Cfg M.k Bool M.State x) (y : List Bool)
+    (q q' : Option (enumCont_cleanTM M).State) (p : Fin (x.length + 2)) (h : ℤ)
+    (m d : SignType) :
+    (enumCont_bufferAction m d q').apply (enumCont_cleanCfg M c₀ y q p h) =
+      enumCont_cleanCfg M c₀ y q' (moveInputPos p m) (h + d.cast) := by
+  refine Cfg.ext rfl rfl rfl ?_ rfl
+  funext i
+  by_cases hi : i.val < (enumCont_logTM M).k <;>
+    simp [enumCont_bufferAction, enumCont_cleanCfg, Action.apply, hi]
+
+/-- A mandatory left step followed by a boundary scan restores the native
+head in at most its old position plus two steps. This private derivation
+uses the proved `rewind_scan`, following the timed wrapper's template. -/
+private lemma enumCont_rewind {k : ℕ} {S : Type} {x : List Bool}
+    (tm : MultiTapeTM k Bool S) (start scan : S) (dest : Option S)
+    (hstart : ∀ inp work, tm.tr start inp work = controlAction .neg (some scan))
+    (hscan : ∀ inp work, tm.tr scan inp work = match inp with
+      | some _ => controlAction .neg (some scan)
+      | none => controlAction .pos dest)
+    (c : Cfg k Bool S x) (hs : c.state = some start) :
+    ∃ r ≤ c.inputPos.val + 2,
+      tm.runFrom c r = {c with state := dest, inputPos := 1} := by
+  have hstep : tm.step c =
+      {c with state := some scan, inputPos := moveInputPos c.inputPos .neg} := by
+    unfold MultiTapeTM.step
+    rw [hs]
+    dsimp only
+    rw [hstart, controlAction_apply]
+  have hp : (moveInputPos c.inputPos .neg).val ≤ x.length := by
+    rw [moveInputPos_neg_val]
+    have := c.inputPos.isLt
+    omega
+  refine ⟨1 + ((moveInputPos c.inputPos .neg).val + 1), ?_, ?_⟩
+  · rw [moveInputPos_neg_val]; omega
+  · rw [MultiTapeTM.runFrom_add]
+    change tm.runFrom (tm.step c) _ = _
+    rw [hstep, rewind_scan tm scan dest hscan _ rfl hp]
+
+/-- The retained output word rewinds without being erased. Starting just
+left of cell `j`, the scan returns its head to zero in exactly `j+1` steps. -/
+private lemma enumCont_clean_buffer_rewind (M : FinTM Bool) {x : List Bool}
+    (c₀ : Cfg M.k Bool M.State x) (y : List Bool) (p : Fin (x.length + 2)) :
+    ∀ j, j ≤ y.length →
+      (enumCont_cleanTM M).tm.runFrom
+        (enumCont_cleanCfg M c₀ y (some (.inr (.inl 4))) p ((j : ℤ) - 1)) (j + 1) =
+        enumCont_cleanCfg M c₀ y (some (.inr (.inl 5))) p 0 := by
+  intro j
+  induction j with
+  | zero =>
+    intro _
+    rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero]
+    unfold MultiTapeTM.step
+    change ((enumCont_cleanTM M).tm.tr (.inr (.inl 4)) _ _).apply _ = _
+    have hr : (enumCont_cleanCfg M c₀ y (some (.inr (.inl 4))) p ((0 : ℤ) - 1)).workTapeSymbols
+        (Fin.last (enumCont_logTM M).k) = none := by
+      simp [enumCont_cleanCfg, Cfg.workTapeSymbols]
+    simp only [enumCont_cleanTM, Nat.cast_zero]
+    rw [hr, enumCont_buffer_apply]
+    simp [SignType.cast]
+  | succ j ih =>
+    intro hj
+    have hz : (((j + 1 : ℕ) : ℤ) - 1) = j := by omega
+    rw [hz, MultiTapeTM.runFrom_succ_eq_step]
+    have hs : (enumCont_cleanTM M).tm.step
+        (enumCont_cleanCfg M c₀ y (some (.inr (.inl 4))) p j) =
+        enumCont_cleanCfg M c₀ y (some (.inr (.inl 4))) p ((j : ℤ) - 1) := by
+      unfold MultiTapeTM.step
+      change ((enumCont_cleanTM M).tm.tr (.inr (.inl 4)) _ _).apply _ = _
+      have hr : (enumCont_cleanCfg M c₀ y (some (.inr (.inl 4))) p j).workTapeSymbols
+          (Fin.last (enumCont_logTM M).k) = some (y[j]'(by omega)) := by
+        simp [enumCont_cleanCfg, Cfg.workTapeSymbols, List.getElem?_eq_getElem (by omega : j < y.length)]
+      simp only [enumCont_cleanTM, hr]
+      rw [enumCont_buffer_apply]
+      simp [SignType.cast, sub_eq_add_neg]
+    rw [hs]
+    exact ih (by omega)
+
+/-- A halting source call can be made clean: retain its output on the final
+tape, restore every source work field, blank all histories, and rewind both
+exposed heads. The full duration is at most `3T+|x|+|y|+8`.
+**Proof sketch.** Capture the logged run through its first halt; undo the
+recorded actions; rewind native input; rewind the retained word; halt. Each
+administrative transition is charged, and all phases keep physical output
+empty. Only the actual source time is used in the restoration bound. -/
+private lemma enumCont_clean_complete (M : FinTM Bool) {x : List Bool}
+    (c₀ : Cfg M.k Bool M.State x) (y : List Bool) (T : ℕ)
+    (hh : (M.tm.runFrom c₀ T).state = none)
+    (ho : (M.tm.runFrom c₀ T).output = y) :
+    ∃ τ ≤ 3 * T + x.length + y.length + 8,
+      (enumCont_cleanTM M).tm.runFrom
+        (captureCfg Sum.inl (.inr (.inl 0)) [] [] (enumCont_logCfg c₀ [])) τ =
+        enumCont_cleanCfg M c₀ y none 1 0 := by
+  obtain ⟨t, ht, hlive, he⟩ := enumCont_first_halt M.tm c₀ T hh
+  have hs : (M.tm.runFrom c₀ t).state = none := by rw [he]; exact hh
+  have hout : (M.tm.runFrom c₀ t).output = y := by rw [he]; exact ho
+  have hcap := enumCont_clean_capture M c₀ t hlive
+  have hentry := enumCont_clean_undo_entry M (M.tm.runFrom c₀ t)
+    (enumCont_history M.tm c₀ t) hs
+  obtain ⟨r, hr, hrest⟩ := enumCont_clean_restore M c₀ (M.tm.runFrom c₀ t).inputPos t hlive
+  have hfirst : (enumCont_cleanTM M).tm.runFrom
+      (captureCfg Sum.inl (.inr (.inl 0)) [] [] (enumCont_logCfg c₀ [])) (t + 1 + r) =
+      enumCont_cleanCfg M c₀ y (some (.inr (.inl 1)))
+        (M.tm.runFrom c₀ t).inputPos (y.length : ℤ) := by
+    rw [MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_succ_eq_step', hcap, hentry, hrest, hout]
+  obtain ⟨u, hu, hrew⟩ := enumCont_rewind (enumCont_cleanTM M).tm
+    (.inr (.inl 1)) (.inr (.inl 2)) (some (.inr (.inl 3)))
+    (fun _ _ => rfl) (fun inp _ => by cases inp <;> rfl)
+    (enumCont_cleanCfg M c₀ y (some (.inr (.inl 1)))
+      (M.tm.runFrom c₀ t).inputPos (y.length : ℤ)) rfl
+  have hrew' : (enumCont_cleanTM M).tm.runFrom
+      (enumCont_cleanCfg M c₀ y (some (.inr (.inl 1)))
+        (M.tm.runFrom c₀ t).inputPos (y.length : ℤ)) u =
+      enumCont_cleanCfg M c₀ y (some (.inr (.inl 3))) 1 (y.length : ℤ) := hrew
+  have hback : (enumCont_cleanTM M).tm.step
+      (enumCont_cleanCfg M c₀ y (some (.inr (.inl 3))) 1 (y.length : ℤ)) =
+      enumCont_cleanCfg M c₀ y (some (.inr (.inl 4))) 1 ((y.length : ℤ) - 1) := by
+    change (enumCont_bufferAction 0 .neg _).apply _ = _
+    rw [enumCont_buffer_apply]
+    simp [sub_eq_add_neg, SignType.cast]
+  have hlast : (enumCont_cleanTM M).tm.step
+      (enumCont_cleanCfg M c₀ y (some (.inr (.inl 5))) 1 0) =
+      enumCont_cleanCfg M c₀ y none 1 0 := by
+    change (controlAction 0 none).apply _ = _
+    rw [controlAction_apply]
+    simp [moveInputPos_zero, enumCont_cleanCfg]
+  refine ⟨t + 1 + r + u + 1 + (y.length + 1) + 1, ?_, ?_⟩
+  · change u ≤ (M.tm.runFrom c₀ t).inputPos.val + 2 at hu
+    have hp := (M.tm.runFrom c₀ t).inputPos.isLt
+    omega
+  · rw [MultiTapeTM.runFrom_succ_eq_step',
+      MultiTapeTM.runFrom_add _ _ (y.length + 1),
+      MultiTapeTM.runFrom_succ_eq_step' (t := t + 1 + r + u),
+      MultiTapeTM.runFrom_add _ _ u, hfirst, hrew', hback,
+      enumCont_clean_buffer_rewind M c₀ y 1 y.length (le_refl _), hlast]
+
+/-- The assembly source emits native input followed by the candidate already
+on its sole work tape. Its two phases never write the candidate. -/
+private def enumCont_concatTM : FinTM Bool where
+  k := 1
+  State := Bool
+  tm := {
+    q₀ := false
+    tr := fun q inp work =>
+      if q then match work 0 with
+        | some b => ⟨0, fun _ => (none, .pos), some b, some true⟩
+        | none => controlAction 0 none
+      else match inp with
+        | some b => ⟨.pos, fun _ => (none, 0), some b, some false⟩
+        | none => controlAction 0 (some true) }
+
+/-- Assembly configurations keep the candidate word fixed while exposing
+the input head, candidate head, and emitted prefix. -/
+private def enumCont_concatCfg (x s : List Bool) (q : Option Bool)
+    (p : Fin (x.length + 2)) (z : ℤ) (out : List Bool) :
+    Cfg 1 Bool Bool x := ⟨q, p, fun _ => bufferTape s, fun _ => z, out⟩
+
+/-- The native-input scan emits exactly the remaining input and switches to
+the candidate phase, preserving the candidate and its head at zero.
+**Proof sketch.** Induct on the remaining native suffix. A bit is emitted
+and advances the native head; the right blank takes one silent phase change. -/
+private lemma enumCont_concat_native (x s pre rest : List Bool) (hx : x = pre ++ rest) :
+    enumCont_concatTM.tm.runFrom
+      (enumCont_concatCfg x s (some false) ⟨pre.length + 1, by simp [hx]; omega⟩ 0 pre)
+      (rest.length + 1) =
+      enumCont_concatCfg x s (some true) (Fin.last (x.length + 1)) 0 x := by
+  induction rest generalizing pre with
+  | nil =>
+    have hp : x = pre := by simpa using hx
+    subst pre
+    simp only [List.length_nil]
+    rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero]
+    have hr : (enumCont_concatCfg x s (some false) ⟨x.length + 1, by omega⟩ 0 x).inputSymbol =
+        none := by simp [enumCont_concatCfg, Cfg.inputSymbol]
+    unfold MultiTapeTM.step
+    change (enumCont_concatTM.tm.tr false _ _).apply _ = _
+    simp only [enumCont_concatTM, Bool.false_eq_true, ↓reduceIte, hr]
+    rw [controlAction_apply]
+    simp [moveInputPos_zero, enumCont_concatCfg]
+    rfl
+  | cons b rest ih =>
+    have hread : (enumCont_concatCfg x s (some false)
+        ⟨pre.length + 1, by simp [hx]; omega⟩ 0 pre).inputSymbol = some b := by
+      rw [inputSymbol_at _ pre.length (by simp [hx]) rfl]
+      simp [hx]
+    have hstep : enumCont_concatTM.tm.step
+        (enumCont_concatCfg x s (some false) ⟨pre.length + 1, by simp [hx]; omega⟩ 0 pre) =
+        enumCont_concatCfg x s (some false)
+          ⟨(pre ++ [b]).length + 1, by simp [hx]⟩ 0 (pre ++ [b]) := by
+      unfold MultiTapeTM.step
+      change (enumCont_concatTM.tm.tr false _ _).apply _ = _
+      simp only [enumCont_concatTM, Bool.false_eq_true, ↓reduceIte, hread]
+      refine Cfg.ext rfl ?_ rfl ?_ rfl
+      · apply Fin.ext
+        dsimp only [Action.apply, enumCont_concatCfg]
+        rw [moveInputPos_pos_of_ne_right _ (by simp [hx])]
+        simp
+      · funext i; simp [Action.apply, enumCont_concatCfg]
+    simp only [List.length_cons]
+    rw [MultiTapeTM.runFrom_succ_eq_step, hstep]
+    exact ih (pre ++ [b]) (by simpa only [List.append_assoc, List.singleton_append] using hx)
+
+/-- The candidate scan appends the exact tape word to the emitted native
+input and halts at its right blank. Empty candidates take the final step. -/
+private lemma enumCont_concat_candidate (x s pre rest : List Bool) (p : Fin (x.length + 2)) (out : List Bool)
+    (hs : s = pre ++ rest) :
+    enumCont_concatTM.tm.runFrom
+      (enumCont_concatCfg x s (some true) p pre.length (out ++ pre))
+      (rest.length + 1) =
+      enumCont_concatCfg x s none p s.length (out ++ s) := by
+  induction rest generalizing pre with
+  | nil =>
+    have hp : s = pre := by simpa using hs
+    subst pre
+    simp only [List.length_nil]
+    rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero]
+    unfold MultiTapeTM.step
+    change (enumCont_concatTM.tm.tr true _ _).apply _ = _
+    simp only [enumCont_concatTM, ↓reduceIte, enumCont_concatCfg, Cfg.workTapeSymbols,
+      bufferTape_nat, List.getElem?_length]
+    rw [controlAction_apply]
+    simp [moveInputPos_zero]
+  | cons b rest ih =>
+    have hr : (enumCont_concatCfg x s (some true) p
+        pre.length (out ++ pre)).workTapeSymbols 0 = some b := by
+      simp [enumCont_concatCfg, Cfg.workTapeSymbols, hs]
+    have hstep : enumCont_concatTM.tm.step
+        (enumCont_concatCfg x s (some true) p pre.length (out ++ pre)) =
+        enumCont_concatCfg x s (some true) p
+          (pre ++ [b]).length (out ++ (pre ++ [b])) := by
+      unfold MultiTapeTM.step
+      change (enumCont_concatTM.tm.tr true _ _).apply _ = _
+      simp only [enumCont_concatTM, ↓reduceIte, hr]
+      refine Cfg.ext rfl (moveInputPos_zero _) rfl ?_ ?_
+      · funext i; simp [enumCont_concatCfg, Action.apply]
+      · simp [enumCont_concatCfg, Action.apply, List.append_assoc]
+    simp only [List.length_cons]
+    rw [MultiTapeTM.runFrom_succ_eq_step, hstep]
+    exact ih (pre ++ [b]) (by simpa only [List.append_assoc, List.singleton_append] using hs)
+
+/-- Assembly from the candidate seam emits exactly `x ++ s` in
+`|x|+|s|+2` steps. The fixed candidate tape is retained. -/
+private lemma enumCont_concat_run (x s : List Bool) :
+    enumCont_concatTM.tm.runFrom
+      (Cfg.ofWords (input := x) false (fun _ => s)) (x.length + s.length + 2) =
+      enumCont_concatCfg x s none (Fin.last (x.length + 1)) s.length (x ++ s) := by
+  have hn := enumCont_concat_native x s [] x rfl
+  have hs := enumCont_concat_candidate x s [] s (Fin.last (x.length + 1)) x rfl
+  simp only [List.length_nil, List.append_nil, Nat.zero_add,
+    Nat.cast_zero] at hn hs
+  have hp : (⟨1, by omega⟩ : Fin (x.length + 2)) = 1 := by apply Fin.ext; simp
+  rw [hp] at hn
+  change enumCont_concatTM.tm.runFrom (enumCont_concatCfg x s (some false) 1 0 []) _ = _
+  rw [show x.length + s.length + 2 = (x.length + 1) + (s.length + 1) by omega,
+    MultiTapeTM.runFrom_add, hn, hs]
+
+/-- Buffered composition also works from a prepared first-machine work
+configuration. Its second machine still receives genuine fresh work tapes.
+**Proof sketch.** Use the first source halt, the public buffered lockstep and
+rewind equations, then the public relocated second-phase simulation. -/
+private lemma enumCont_prepared_comp (M₁ M₂ : FinTM Bool) {x : List Bool}
+    (c₀ : Cfg M₁.k Bool M₁.State x) (y z : List Bool) (T₁ T₂ : ℕ)
+    (hh : (M₁.tm.runFrom c₀ T₁).state = none)
+    (ho : (M₁.tm.runFrom c₀ T₁).output = y)
+    (h₂ : M₂.ComputesInTime y z T₂) :
+    ∃ t ≤ T₁ + y.length + 2 + T₂,
+      ((bufferedCompTM M₁ M₂).tm.runFrom (bufferedFirstCfg M₁ M₂ c₀) t).state = none ∧
+      ((bufferedCompTM M₁ M₂).tm.runFrom (bufferedFirstCfg M₁ M₂ c₀) t).output = z := by
+  obtain ⟨t, ht, hlive, he⟩ := enumCont_first_halt M₁.tm c₀ T₁ hh
+  let c := M₁.tm.runFrom c₀ t
+  have hs : c.state = none := by dsimp [c]; rw [he]; exact hh
+  have hout : c.output = y := by dsimp [c]; rw [he]; exact ho
+  have hfirst := bufferedFirstCfg_run M₁ M₂ c₀ t hlive
+  have hrew := bufferedFirstCfg_rewind M₁ M₂ c hs
+  obtain ⟨tag, _, hrun⟩ := bufferedSecondCfg_run M₁ M₂ (M₂.tm.initCfg c.output) true
+    (by simp [VirtualTag, MultiTapeTM.initCfg, Cfg.init])
+    c.inputPos c.workTapes c.workTapePos T₂
+  have h₂' : (M₂.tm.runFrom (M₂.tm.initCfg c.output) T₂).state = none ∧
+      (M₂.tm.runFrom (M₂.tm.initCfg c.output) T₂).output = z := by
+    rw [hout]
+    exact (computesInTime_iff _ _ _ _).mp h₂
+  refine ⟨t + (c.output.length + 2) + T₂, by rw [hout]; omega, ?_⟩
+  rw [MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_add, hfirst, hrew, hrun]
+  exact ⟨by simp only [bufferedSecondCfg, h₂'.1, Option.map_none], h₂'.2⟩
+
+/-- The prepared assembly source occupies tape zero; the composition buffer
+and verifier work tapes are exactly blank at the candidate seam. -/
+private lemma enumCont_round_seam (MV : FinTM Bool) (x s : List Bool) (phase : Bool) :
+    bufferedFirstCfg enumCont_concatTM MV (Cfg.ofWords (input := x) phase (fun _ => s)) =
+      Cfg.ofWords (.inl (some phase) : (bufferedCompTM enumCont_concatTM MV).State)
+        (stateWord (bufferedCompTM enumCont_concatTM MV).k s) := by
+  refine Cfg.ext rfl rfl ?_ ?_ rfl
+  · funext i
+    refine Fin.addCases (fun j => ?_) (fun j => ?_) i
+    · have hj : j.val = 0 := by have h := j.isLt; change j.val < 1 at h; omega
+      simp [bufferedFirstCfg, Cfg.ofWords, stateWord, tapeBlocks]
+    · refine Fin.addCases (fun j => ?_) (fun j => ?_) j <;>
+        simp [bufferedFirstCfg, Cfg.ofWords, stateWord, tapeBlocks, enumCont_concatTM]
+  · funext i
+    refine Fin.addCases (fun j => ?_) (fun j => ?_) i
+    · simp [bufferedFirstCfg, Cfg.ofWords, tapeBlocks]
+    · refine Fin.addCases (fun j => ?_) (fun j => ?_) j <;>
+        simp [bufferedFirstCfg, Cfg.ofWords, tapeBlocks]
+
+/-- The prepared verifier call accepts the exact assembled input `x ++ s`.
+Its bound includes assembly, the buffer rewind, and the verifier's actual
+polynomial budget on that input. -/
+private lemma enumCont_verifier_call (MV : FinTM Bool) (V : Language Bool) (a d : ℕ)
+    (hV : MV.DecidesInTime V (fun n => a * (n + 1) ^ d)) (x s : List Bool) :
+    ∃ t ≤ a * (x.length + s.length + 1) ^ d + 2 * (x.length + s.length) + 4,
+      ((bufferedCompTM enumCont_concatTM MV).tm.runFrom
+        (Cfg.ofWords (input := x) (bufferedCompTM enumCont_concatTM MV).tm.q₀
+          (stateWord (bufferedCompTM enumCont_concatTM MV).k s)) t).state = none ∧
+      ((bufferedCompTM enumCont_concatTM MV).tm.runFrom
+        (Cfg.ofWords (input := x) (bufferedCompTM enumCont_concatTM MV).tm.q₀
+          (stateWord (bufferedCompTM enumCont_concatTM MV).k s)) t).output =
+        [MultiTapeTM.indicator V (x ++ s)] := by
+  obtain ⟨t, ht, hh, ho⟩ := enumCont_prepared_comp enumCont_concatTM MV
+    (Cfg.ofWords (input := x) false (fun _ => s)) (x ++ s)
+    [MultiTapeTM.indicator V (x ++ s)] (x.length + s.length + 2)
+    (a * ((x ++ s).length + 1) ^ d)
+    (by rw [enumCont_concat_run]; rfl) (by rw [enumCont_concat_run]; rfl) (hV (x ++ s))
+  rw [enumCont_round_seam MV x s false] at hh ho
+  simp only [List.length_append] at ht
+  exact ⟨t, by omega, hh, ho⟩
+
+/-- Relabel live states and redirect halt to a live return state, preserving
+the complete action. This wrapper is used only for already-silent calls. -/
+private def enumCont_returnAction {k : ℕ} {S H : Type}
+    (emb : S → H) (ret : H) (a : Action k Bool S) : Action k Bool H :=
+  ⟨a.inputTape, a.workTapes, a.output, some ((a.state.map emb).getD ret)⟩
+
+/-- The live-return correspondence preserves all configuration fields except
+the control state, including work-tape results. -/
+private def enumCont_returnCfg {k : ℕ} {S H : Type} {x : List Bool}
+    (emb : S → H) (ret : H) (c : Cfg k Bool S x) : Cfg k Bool H x :=
+  ⟨some ((c.state.map emb).getD ret), c.inputPos, c.workTapes, c.workTapePos, c.output⟩
+
+/-- A host with the redirected transition table simulates a source through
+its first halt and returns the exact completed configuration.
+**Proof sketch.** One redirected action commutes with the configuration map.
+Induct through live source steps; a halting action selects the live return
+state while preserving its final writes and output. -/
+private lemma enumCont_return_run {k : ℕ} {S H : Type} {x : List Bool}
+    (tm : MultiTapeTM k Bool S) (host : MultiTapeTM k Bool H)
+    (emb : S → H) (ret : H)
+    (htr : ∀ q inp work, host.tr (emb q) inp work =
+      enumCont_returnAction emb ret (tm.tr q inp work))
+    (c₀ : Cfg k Bool S x) (t : ℕ)
+    (hlive : ∀ j < t, ¬(tm.runFrom c₀ j).Halted) :
+    host.runFrom (enumCont_returnCfg emb ret c₀) t =
+      enumCont_returnCfg emb ret (tm.runFrom c₀ t) := by
+  induction t with
+  | zero => rfl
+  | succ t ih =>
+    rw [MultiTapeTM.runFrom_succ_eq_step', ih (fun j hj => hlive j (by omega)),
+      MultiTapeTM.runFrom_succ_eq_step']
+    have hs : (tm.runFrom c₀ t).state ≠ none := hlive t (by omega)
+    cases hq : (tm.runFrom c₀ t).state with
+    | none => exact False.elim (hs hq)
+    | some q =>
+      simp only [MultiTapeTM.step, enumCont_returnCfg, hq, Option.map_some, Option.getD_some]
+      rw [htr]
+      rfl
+
+/-- Combining the prepared verifier call with the clean wrapper gives a
+repeatable call: the candidate is retained, all other original source work
+is restored to blank, and the sole verdict is held on the capture tape.
+The concrete body still has to dispatch, clear that verdict, and increment. -/
+private lemma enumCont_clean_verifier (MV : FinTM Bool) (V : Language Bool) (a d : ℕ)
+    (hV : MV.DecidesInTime V (fun n => a * (n + 1) ^ d)) (x s : List Bool) :
+    let Q := bufferedCompTM enumCont_concatTM MV
+    let c₀ := Cfg.ofWords (input := x) Q.tm.q₀ (stateWord Q.k s)
+    ∃ t ≤ 3 * (a * (x.length + s.length + 1) ^ d + 2 * (x.length + s.length) + 4) +
+        x.length + 9,
+      (enumCont_cleanTM Q).tm.runFrom
+        (captureCfg Sum.inl (.inr (.inl 0)) [] [] (enumCont_logCfg c₀ [])) t =
+        enumCont_cleanCfg Q c₀ [MultiTapeTM.indicator V (x ++ s)] none 1 0 := by
+  dsimp only
+  obtain ⟨t, ht, hh, ho⟩ := enumCont_verifier_call MV V a d hV x s
+  obtain ⟨r, hr, he⟩ := enumCont_clean_complete (bufferedCompTM enumCont_concatTM MV)
+    (Cfg.ofWords (input := x) (bufferedCompTM enumCont_concatTM MV).tm.q₀
+      (stateWord (bufferedCompTM enumCont_concatTM MV).k s))
+    [MultiTapeTM.indicator V (x ++ s)] t hh ho
+  exact ⟨r, by simp only [List.length_singleton] at hr; omega, he⟩
+
+/-- Pad an action with inactive high tapes and embed its finite control. -/
+private def enumCont_padAction {k K : ℕ} {S H : Type}
+    (emb : S → H) (a : Action k Bool S) : Action K Bool H :=
+  ⟨a.inputTape, fun i => if hi : i.val < k then a.workTapes ⟨i, hi⟩ else (none, 0),
+    a.output, a.state.map emb⟩
+
+/-- Pad a source configuration with blank stationary high tapes. -/
+private def enumCont_padCfg {k K : ℕ} {S H : Type} {x : List Bool}
+    (emb : S → H) (c : Cfg k Bool S x) : Cfg K Bool H x :=
+  ⟨c.state.map emb, c.inputPos,
+    (fun i => if hi : i.val < k then c.workTapes ⟨i, hi⟩ else fun _ => none),
+    (fun i => if hi : i.val < k then c.workTapePos ⟨i, hi⟩ else 0), c.output⟩
+
+/-- Padding commutes with one action; the new high tapes remain blank. -/
+private lemma enumCont_pad_apply {k K : ℕ} {S H : Type} {x : List Bool}
+    (emb : S → H) (c : Cfg k Bool S x) (a : Action k Bool S) :
+    (enumCont_padAction (K := K) emb a).apply (enumCont_padCfg emb c) =
+      enumCont_padCfg emb (a.apply c) := by
+  refine Cfg.ext rfl rfl ?_ ?_ rfl
+  · funext i
+    by_cases hi : i.val < k <;> simp [enumCont_padAction, enumCont_padCfg, Action.apply, hi]
+  · funext i
+    by_cases hi : i.val < k <;> simp [enumCont_padAction, enumCont_padCfg, Action.apply, hi]
+
+/-- A machine may run on an initial tape block of a larger controller.
+**Proof sketch.** The source-block reads agree when the source fits. One
+step commutes with padding, including the absorbing halted case; iterate. -/
+private lemma enumCont_pad_run {k K : ℕ} {S H : Type} {x : List Bool}
+    (hk : k ≤ K) (tm : MultiTapeTM k Bool S) (host : MultiTapeTM K Bool H)
+    (emb : S → H)
+    (htr : ∀ q inp work, host.tr (emb q) inp work =
+      enumCont_padAction emb (tm.tr q inp
+        (fun i => work ⟨i, Nat.lt_of_lt_of_le i.isLt hk⟩)))
+    (c : Cfg k Bool S x) (t : ℕ) :
+    host.runFrom (enumCont_padCfg emb c) t = enumCont_padCfg emb (tm.runFrom c t) := by
+  apply MultiTapeTM.runFrom_comm_of_step (enumCont_padCfg emb) ?_ c t
+  intro c
+  cases hq : c.state with
+  | none => simp only [MultiTapeTM.step, enumCont_padCfg, hq, Option.map_none]
+  | some q =>
+    have hs : (enumCont_padCfg (K := K) emb c).state = some (emb q) := by
+      simp only [enumCont_padCfg, hq, Option.map_some]
+    have hw : (fun i : Fin k => (enumCont_padCfg (K := K) emb c).workTapeSymbols
+        ⟨i, Nat.lt_of_lt_of_le i.isLt hk⟩) = c.workTapeSymbols := by
+      funext i
+      simp [enumCont_padCfg, Cfg.workTapeSymbols, i.isLt]
+    have hin : (enumCont_padCfg (K := K) emb c).inputSymbol = c.inputSymbol := rfl
+    simp only [MultiTapeTM.step, hs, hq]
+    rw [htr, hw, hin, enumCont_pad_apply]
+
+/-- Three finite source routines share a common padded tape block. The
+startup routine is the initial branch; prepared calls may select either
+other branch without moving their candidate off tape zero. -/
+private def enumCont_sources (Q R U : FinTM Bool) : FinTM Bool where
+  k := Q.k + R.k + U.k
+  State := Q.State ⊕ (R.State ⊕ U.State)
+  tm := {
+    q₀ := .inr (.inr U.tm.q₀)
+    tr := fun q inp work => match q with
+      | .inl q => enumCont_padAction Sum.inl
+          (Q.tm.tr q inp (fun i => work ⟨i, by have := i.isLt; omega⟩))
+      | .inr (.inl q) => enumCont_padAction (fun q => .inr (.inl q))
+          (R.tm.tr q inp (fun i => work ⟨i, by have := i.isLt; omega⟩))
+      | .inr (.inr q) => enumCont_padAction (fun q => .inr (.inr q))
+          (U.tm.tr q inp (fun i => work ⟨i, by have := i.isLt; omega⟩)) }
+
+/-- Move or write the candidate at tape zero and the final capture tape,
+preserving every intervening tape. -/
+private def enumCont_endsAction {L : ℕ} {H : Type}
+    (a b : Option (Option Bool)) (d : SignType) (q : Option H) : Action (L + 1) Bool H :=
+  ⟨0, fun i => if i.val = 0 then (a, d) else if i.val = L then (b, d) else (none, 0), none, q⟩
+
+/-- The concrete body uses one clean source block for initialization,
+verification, and increment. Administrative states are the anchor (0),
+seed copy (1), unused reserve (2), verdict (3), increment check (4), result
+copy (5), and synchronized rewind (6). The stopped variant freezes only
+the anchor and is used to certify first returns without an interior visit. -/
+private def enumCont_bodyTM (B : FinTM Bool) (qverify qinc : B.State) (stopped : Bool) :
+    FinTM Bool where
+  k := (enumCont_logTM B).k + 1
+  State := ((enumCont_cleanTM B).State × Fin 3) ⊕ Fin 7
+  tm := {
+    q₀ := .inl ((enumCont_cleanTM B).tm.q₀, 0)
+    tr := fun q inp work => match q with
+      | .inl (q, mode) => enumCont_returnAction (fun q => .inl (q, mode))
+          (.inr (if mode.val = 0 then 1 else if mode.val = 1 then 3 else 4))
+          ((enumCont_cleanTM B).tm.tr q inp work)
+      | .inr q => match q.val with
+        | 0 => if stopped then controlAction 0 (some (.inr 0))
+            else controlAction 0 (some (.inl (.inl qverify, 1)))
+        | 3 => match work (Fin.last (enumCont_logTM B).k) with
+          | some true => ⟨0, fun _ => (none, 0), some true, none⟩
+          | _ => ⟨0, fun i => (if i.val = (enumCont_logTM B).k then some none else none, 0),
+              none, some (.inl (.inl qinc, 2))⟩
+        | 4 => if work (Fin.last (enumCont_logTM B).k) = none then
+              controlAction 0 (some (.inr 0))
+            else controlAction 0 (some (.inr 5))
+        | 6 => match work 0 with
+          | some _ => enumCont_endsAction none none .neg (some (.inr 6))
+          | none => enumCont_endsAction none none .pos (some (.inr 0))
+        | _ => match work (Fin.last (enumCont_logTM B).k) with
+          | some b => enumCont_endsAction (some (some (if q.val = 1 then false else b)))
+              (some none) .pos (some (.inr q))
+          | none => enumCont_endsAction none none .neg (some (.inr 6)) }
+
+/-- Starting assembly in its candidate phase supplies just that candidate to
+the catalog incrementer. Its output is empty exactly on overflow; a clean
+wrapper will retain the original candidate for that branch. -/
+private lemma enumCont_increment_call (I : FinTM Bool) (j : ℕ)
+    (hI : I.ComputesFunInTime (fun s => (incFixed s).getD []) (fun n => j * (n + 1)))
+    (x s : List Bool) :
+    ∃ t ≤ (j + 3) * (s.length + 1),
+      ((bufferedCompTM enumCont_concatTM I).tm.runFrom
+        (Cfg.ofWords (input := x) (.inl (some true))
+          (stateWord (bufferedCompTM enumCont_concatTM I).k s)) t).state = none ∧
+      ((bufferedCompTM enumCont_concatTM I).tm.runFrom
+        (Cfg.ofWords (input := x) (.inl (some true))
+          (stateWord (bufferedCompTM enumCont_concatTM I).k s)) t).output =
+        (incFixed s).getD [] := by
+  have hs := enumCont_concat_candidate x s [] s 1 [] rfl
+  simp only [List.length_nil, List.nil_append, Nat.cast_zero] at hs
+  obtain ⟨t, ht, hh, ho⟩ := enumCont_prepared_comp enumCont_concatTM I
+    (Cfg.ofWords (input := x) true (fun _ => s)) s ((incFixed s).getD [])
+    (s.length + 1) (j * (s.length + 1))
+    (by change (enumCont_concatTM.tm.runFrom (enumCont_concatCfg x s (some true) 1 0 []) _).state = none
+        rw [hs]; rfl)
+    (by change (enumCont_concatTM.tm.runFrom (enumCont_concatCfg x s (some true) 1 0 []) _).output = s
+        rw [hs]; rfl) (hI s)
+  rw [enumCont_round_seam I x s true] at hh ho
+  refine ⟨t, ht.trans ?_, hh, ho⟩
+  simp only [Nat.add_mul, Nat.mul_add, Nat.mul_one]
+  omega
+
+/-- Padding preserves the candidate-on-zero convention when the source has
+at least one work tape. All added tapes are blank and parked at zero. -/
+private lemma enumCont_pad_words {k K : ℕ} {S H : Type} (hk : 0 < k) (_hle : k ≤ K)
+    (emb : S → H) (q : S) (x s : List Bool) :
+    enumCont_padCfg (K := K) emb (Cfg.ofWords (input := x) q (stateWord k s)) =
+      Cfg.ofWords (emb q) (stateWord K s) := by
+  refine Cfg.ext rfl rfl ?_ ?_ rfl
+  · funext i
+    by_cases hi : i.val < k
+    · simp [enumCont_padCfg, Cfg.ofWords, stateWord, hi]
+    · have hn : i.val ≠ 0 := by omega
+      simp [enumCont_padCfg, Cfg.ofWords, stateWord, hi, hn]
+  · funext i
+    simp [enumCont_padCfg, Cfg.ofWords]
+
+/-- The same padding identity for empty initial work is valid even when the
+source machine has no work tapes. -/
+private lemma enumCont_pad_init {k K : ℕ} {S H : Type} (emb : S → H)
+    (q : S) (x : List Bool) :
+    enumCont_padCfg (k := k) (K := K) emb (Cfg.init q x) =
+      Cfg.ofWords (emb q) (stateWord K []) := by
+  refine Cfg.ext rfl rfl ?_ ?_ rfl
+  · funext i
+    simp [enumCont_padCfg, Cfg.init, Cfg.ofWords, stateWord]
+  · funext i
+    simp [enumCont_padCfg, Cfg.init, Cfg.ofWords]
+
+/-- Overwriting the first remaining candidate cell extends the completed
+prefix and drops the old cell, also when the old word is initially empty. -/
+private lemma enumCont_overwrite (pre old : List Bool) (b : Bool) :
+    Function.update (bufferTape (pre ++ old)) (pre.length : ℤ) (some b) =
+      bufferTape (pre ++ b :: old.drop 1) := by
+  funext z
+  by_cases hz : z = (pre.length : ℤ)
+  · subst z; simp
+  · rw [Function.update_of_ne hz]
+    by_cases h0 : 0 ≤ z
+    · have hn : z.toNat ≠ pre.length := by omega
+      simp only [bufferTape, if_pos h0, List.getElem?_append]
+      split
+      · rfl
+      · have hp : 0 < z.toNat - pre.length := by omega
+        obtain ⟨m, hm⟩ := Nat.exists_eq_succ_of_ne_zero (Nat.ne_of_gt hp)
+        rw [hm]
+        cases old <;> simp
+    · simp [bufferTape, h0]
+
+/-- The erased capture prefix consists entirely of blanks. Replacing its
+next symbol by blank increases that prefix by one cell. -/
+private lemma enumCont_sparse_clear (p : ℕ) (b : Bool) (rest : List Bool) :
+    Function.update (enumCont_sparse (List.replicate p none ++ (b :: rest).map some))
+      (p : ℤ) none =
+      enumCont_sparse (List.replicate (p + 1) none ++ rest.map some) := by
+  funext z
+  by_cases hz : z = (p : ℤ)
+  · subst z; simp [enumCont_sparse, List.getElem?_append]
+  · rw [Function.update_of_ne hz]
+    by_cases h0 : 0 ≤ z
+    · have hn : z.toNat ≠ p := by omega
+      by_cases hp : z.toNat < p
+      · simp [enumCont_sparse, h0, List.getElem?_append, hp,
+          show z.toNat < p + 1 by omega]
+      · simp [enumCont_sparse, h0, List.getElem?_append, hp,
+          show ¬z.toNat < p + 1 by omega,
+          show z.toNat - p = (z.toNat - (p + 1)) + 1 by omega]
+    · simp [enumCont_sparse, h0]
+
+/-- Tape configurations for the administrative copy and rewind scans. Only
+the candidate and final capture tape may be nonblank; their heads coincide. -/
+private def enumCont_pairCfg {L : ℕ} {S : Type} {x : List Bool}
+    (q : Option S) (u v : ℤ → Option Bool) (h : ℤ) : Cfg (L + 1) Bool S x :=
+  ⟨q, 1, (fun i => if i.val = 0 then u else if i.val = L then v else fun _ => none),
+    (fun i => if i.val = 0 ∨ i.val = L then h else 0), []⟩
+
+/-- The two-ended administrative action changes exactly those tape cells and
+their common head, preserving native input and physical silence. -/
+private lemma enumCont_ends_apply {L : ℕ} {S : Type} {x : List Bool} (_hL : 0 < L)
+    (q q' : Option S) (u v : ℤ → Option Bool) (h : ℤ)
+    (a b : Option (Option Bool)) (d : SignType) :
+    (enumCont_endsAction (L := L) a b d q').apply (enumCont_pairCfg (x := x) q u v h) =
+      enumCont_pairCfg q' (Function.update u h (a.getD (u h)))
+        (Function.update v h (b.getD (v h))) (h + (d : ℤ)) := by
+  refine Cfg.ext rfl (moveInputPos_zero _) ?_ ?_ rfl
+  · funext i
+    by_cases hz : i.val = 0
+    · have he : i = 0 := Fin.ext hz
+      subst i
+      cases a <;> simp [enumCont_endsAction, enumCont_pairCfg, Action.apply,
+        Function.update_eq_self]
+    · have he : i ≠ 0 := by intro he; apply hz; simp [he]
+      by_cases hl : i.val = L
+      · cases b <;> simp [enumCont_endsAction, enumCont_pairCfg, Action.apply, he, hl,
+          Function.update_eq_self]
+      · simp [enumCont_endsAction, enumCont_pairCfg, Action.apply, he, hl]
+  · funext i
+    by_cases hz : i.val = 0
+    · have he : i = 0 := Fin.ext hz
+      subst i
+      simp [enumCont_endsAction, enumCont_pairCfg, Action.apply]
+    · have he : i ≠ 0 := by intro he; apply hz; simp [he]
+      by_cases hl : i.val = L <;>
+        simp [enumCont_endsAction, enumCont_pairCfg, Action.apply, he, hl]
+
+/-- A sparse list of blank entries is an everywhere blank tape. -/
+private lemma enumCont_sparse_blanks (n : ℕ) :
+    enumCont_sparse (List.replicate n none) = fun _ => none := by
+  funext z
+  by_cases hz : 0 ≤ z <;> by_cases hn : z.toNat < n <;>
+    simp [enumCont_sparse, hz, hn]
+
+/-- Lifting every word symbol into the sparse representation gives the usual
+buffer tape. -/
+private lemma enumCont_sparse_some (w : List Bool) :
+    enumCont_sparse (w.map some) = bufferTape w := by
+  funext z
+  by_cases hz : 0 ≤ z
+  · simp only [enumCont_sparse, bufferTape, if_pos hz, List.getElem?_map]
+    cases w[z.toNat]? <;> rfl
+  · simp [enumCont_sparse, bufferTape, hz]
+
+/-- The copy scan overwrites the candidate from left to right and erases each
+captured symbol. The old suffix is explicit, so initialization from an empty
+candidate and replacement of an equal-width candidate share this proof.
+**Proof sketch.** One step uses the overwrite and sparse-clear identities;
+induct on the remaining captured suffix. Its right blank starts rewind. -/
+private lemma enumCont_copy_scan {L : ℕ} {S : Type} {x : List Bool} (hL : 0 < L)
+    (tm : MultiTapeTM (L + 1) Bool S) (qc qr : S) (f : Bool → Bool)
+    (htr : ∀ inp work, tm.tr qc inp work = match work (Fin.last L) with
+      | some b => enumCont_endsAction (some (some (f b))) (some none) .pos (some qc)
+      | none => enumCont_endsAction none none .neg (some qr))
+    (pre old rest : List Bool) :
+    tm.runFrom (enumCont_pairCfg (x := x) (some qc) (bufferTape (pre ++ old))
+      (enumCont_sparse (List.replicate pre.length none ++ rest.map some)) pre.length)
+      (rest.length + 1) =
+      enumCont_pairCfg (some qr) (bufferTape (pre ++ rest.map f ++ old.drop rest.length))
+        (fun _ => none) ((pre.length : ℤ) + rest.length - 1) := by
+  induction rest generalizing pre old with
+  | nil =>
+    have hv : enumCont_sparse (List.replicate pre.length none ++ ([] : List Bool).map some) =
+        (fun _ => none) := by simpa using enumCont_sparse_blanks pre.length
+    rw [hv]
+    simp only [List.length_nil, Nat.zero_add, List.map_nil, List.drop_zero, List.append_nil,
+      Int.natCast_zero, add_zero]
+    rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero]
+    change (tm.tr qc _ _).apply _ = _
+    rw [htr]
+    have hr : (enumCont_pairCfg (L := L) (x := x) (some qc) (bufferTape (pre ++ old))
+        (fun _ => none) pre.length).workTapeSymbols (Fin.last L) = none := by
+      simp [enumCont_pairCfg, Cfg.workTapeSymbols, Nat.ne_of_gt hL]
+    rw [hr, enumCont_ends_apply hL]
+    simp only [Option.getD_none, Function.update_eq_self]
+    simp [sub_eq_add_neg]
+  | cons b rest ih =>
+    let c := enumCont_pairCfg (L := L) (x := x) (some qc) (bufferTape (pre ++ old))
+      (enumCont_sparse (List.replicate pre.length none ++ (b :: rest).map some)) pre.length
+    have hr : c.workTapeSymbols (Fin.last L) = some b := by
+      simp [c, enumCont_pairCfg, Cfg.workTapeSymbols, Nat.ne_of_gt hL, enumCont_sparse]
+    have he : tm.step c = enumCont_pairCfg (some qc)
+        (bufferTape ((pre ++ [f b]) ++ old.drop 1))
+        (enumCont_sparse (List.replicate (pre ++ [f b]).length none ++ rest.map some))
+        (pre ++ [f b]).length := by
+      change (tm.tr qc _ _).apply c = _
+      rw [htr, hr]
+      dsimp only [c]
+      rw [enumCont_ends_apply hL]
+      simp only [Option.getD_some, enumCont_overwrite, enumCont_sparse_clear,
+        List.length_append, List.length_singleton, Nat.cast_add, Nat.cast_one]
+      simp [List.append_assoc]
+    simp only [List.length_cons]
+    rw [MultiTapeTM.runFrom_succ_eq_step, he, ih]
+    simp [List.map_cons, List.append_assoc, add_comm, add_left_comm]
+
+/-- Rewind the two endpoint heads together across the completed candidate.
+The left blank takes one positive move, restoring both heads to cell zero. -/
+private lemma enumCont_pair_rewind {L : ℕ} {S : Type} {x : List Bool} (hL : 0 < L)
+    (tm : MultiTapeTM (L + 1) Bool S) (qr qa : S)
+    (htr : ∀ inp work, tm.tr qr inp work = match work 0 with
+      | some _ => enumCont_endsAction none none .neg (some qr)
+      | none => enumCont_endsAction none none .pos (some qa))
+    (w : List Bool) (j : ℕ) (hj : j ≤ w.length) :
+    tm.runFrom (enumCont_pairCfg (x := x) (some qr) (bufferTape w) (fun _ => none) (j - 1))
+      (j + 1) = enumCont_pairCfg (some qa) (bufferTape w) (fun _ => none) 0 := by
+  induction j with
+  | zero =>
+    rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero]
+    change (tm.tr qr _ _).apply _ = _
+    rw [htr]
+    have hr : (enumCont_pairCfg (L := L) (x := x) (some qr) (bufferTape w)
+        (fun _ => none) (0 - 1)).workTapeSymbols 0 = none := by
+      simp [enumCont_pairCfg, Cfg.workTapeSymbols]
+    simp only [Nat.cast_zero]
+    rw [hr, enumCont_ends_apply hL]
+    simp only [Option.getD_none, Function.update_eq_self]
+    simp
+  | succ j ih =>
+    have hj' : j < w.length := by omega
+    have hr : (enumCont_pairCfg (L := L) (x := x) (some qr) (bufferTape w)
+        (fun _ => none) ((j + 1 : ℕ) - 1)).workTapeSymbols 0 = some w[j] := by
+      simp [enumCont_pairCfg, Cfg.workTapeSymbols, List.getElem?_eq_getElem hj']
+    have he : tm.step (enumCont_pairCfg (x := x) (some qr) (bufferTape w)
+        (fun _ => none) ((j + 1 : ℕ) - 1)) =
+        enumCont_pairCfg (some qr) (bufferTape w) (fun _ => none) (j - 1) := by
+      change (tm.tr qr _ _).apply _ = _
+      rw [htr, hr, enumCont_ends_apply hL]
+      simp only [Option.getD_none, Function.update_eq_self]
+      simp [sub_eq_add_neg, add_assoc]
+    rw [MultiTapeTM.runFrom_succ_eq_step, he]
+    exact ih (by omega)
+
+/-- Copying a captured word at least as long as the old candidate completely
+replaces it, erases capture, and restores the canonical seam in linear time. -/
+private lemma enumCont_copy_complete {L : ℕ} {S : Type} {x : List Bool} (hL : 0 < L)
+    (tm : MultiTapeTM (L + 1) Bool S) (qc qr qa : S) (f : Bool → Bool)
+    (hc : ∀ inp work, tm.tr qc inp work = match work (Fin.last L) with
+      | some b => enumCont_endsAction (some (some (f b))) (some none) .pos (some qc)
+      | none => enumCont_endsAction none none .neg (some qr))
+    (hr : ∀ inp work, tm.tr qr inp work = match work 0 with
+      | some _ => enumCont_endsAction none none .neg (some qr)
+      | none => enumCont_endsAction none none .pos (some qa))
+    (old v : List Bool) (hv : old.length ≤ v.length) :
+    tm.runFrom (enumCont_pairCfg (x := x) (some qc) (bufferTape old) (bufferTape v) 0)
+      (2 * v.length + 2) =
+      enumCont_pairCfg (some qa) (bufferTape (v.map f)) (fun _ => none) 0 := by
+  have hc' := enumCont_copy_scan (x := x) hL tm qc qr f hc [] old v
+  simp only [List.length_nil, List.replicate_zero, List.nil_append, Nat.cast_zero,
+    zero_add, enumCont_sparse_some, List.drop_eq_nil_iff.mpr hv, List.append_nil] at hc'
+  rw [show 2 * v.length + 2 = (v.length + 1) + (v.length + 1) by omega,
+    MultiTapeTM.runFrom_add, hc']
+  exact enumCont_pair_rewind hL tm qr qa hr (v.map f) v.length (by simp)
+
+/-- Empty history adds only blank stationary tapes to a candidate seam. -/
+private lemma enumCont_log_words (B : FinTM Bool) (hB : 0 < B.k)
+    (x s : List Bool) (q : B.State) :
+    enumCont_logCfg (Cfg.ofWords (input := x) q (stateWord B.k s)) [] =
+      Cfg.ofWords q (stateWord (enumCont_logTM B).k s) := by
+  refine Cfg.ext rfl rfl ?_ ?_ rfl
+  · funext i
+    refine Fin.addCases (fun j => ?_) (fun j => ?_) i
+    · simp [enumCont_logCfg, Cfg.ofWords, stateWord, tapeBlocks]
+    · have hn : B.k + j.val ≠ 0 := by omega
+      refine Fin.addCases (fun l => ?_) (fun l => ?_) j
+      · simp [enumCont_logCfg, Cfg.ofWords, stateWord, tapeBlocks, Nat.ne_of_gt hB]
+      · refine Fin.addCases (fun l => ?_) (fun l => ?_) l <;>
+          simp [enumCont_logCfg, Cfg.ofWords, stateWord, tapeBlocks,
+            Fin.addCases, Nat.ne_of_gt hB] <;> exact enumCont_sparse_blanks 0
+  · funext i
+    refine Fin.addCases (fun j => ?_) (fun j => ?_) i
+    · simp [enumCont_logCfg, Cfg.ofWords, tapeBlocks]
+    · refine Fin.addCases (fun j => ?_) (fun j => ?_) j <;>
+        simp [enumCont_logCfg, Cfg.ofWords, tapeBlocks]
+
+/-- Appending one output tape to a candidate seam has the two-endpoint tape
+layout used by the administrative controller. -/
+private lemma enumCont_extend_words {L : ℕ} (hL : 0 < L) (s y : List Bool) :
+    (fun i : Fin (L + 1) => if hi : i.val < L then
+      bufferTape (stateWord L s ⟨i, hi⟩) else bufferTape y) =
+      (fun i => if i.val = 0 then bufferTape s else if i.val = L then bufferTape y
+        else fun _ => none) := by
+  funext i
+  by_cases hz : i.val = 0
+  · have he : i = 0 := Fin.ext hz
+    subst i
+    simp [stateWord, hL]
+  · have he : i ≠ 0 := by intro he; apply hz; simp [he]
+    by_cases hi : i.val < L
+    · have hn : i.val ≠ L := by omega
+      simp [stateWord, hi, hz, hn]
+    · have hl : i.val = L := by have := i.isLt; omega
+      simp [hl, Nat.ne_of_gt hL]
+
+/-- The clean wrapper's entry configuration at a prepared source seam. -/
+private lemma enumCont_clean_entry_words (B : FinTM Bool) (hB : 0 < B.k)
+    (x s : List Bool) (q : B.State) :
+    captureCfg (fun q => (Sum.inl q : (enumCont_cleanTM B).State)) (.inr (.inl 0)) [] []
+      (enumCont_logCfg (Cfg.ofWords (input := x) q (stateWord B.k s)) []) =
+      enumCont_pairCfg (some (.inl q)) (bufferTape s) (fun _ => none) 0 := by
+  rw [enumCont_log_words B hB]
+  refine Cfg.ext rfl rfl ?_ ?_ rfl
+  · simpa only [captureCfg, Cfg.ofWords, List.append_nil, bufferTape_nil] using
+      enumCont_extend_words (by omega) s []
+  · funext i
+    simp [captureCfg, Cfg.ofWords, enumCont_pairCfg]
+
+/-- The completed clean call has restored the candidate seam and retained
+only its captured output on the last tape. -/
+private lemma enumCont_clean_exit_words (B : FinTM Bool) (hB : 0 < B.k)
+    (x s y : List Bool) (q : B.State) (q' : Option (enumCont_cleanTM B).State) :
+    enumCont_cleanCfg B (Cfg.ofWords (input := x) q (stateWord B.k s)) y q' 1 0 =
+      enumCont_pairCfg q' (bufferTape s) (bufferTape y) 0 := by
+  unfold enumCont_cleanCfg
+  rw [enumCont_log_words B hB]
+  refine Cfg.ext rfl rfl ?_ ?_ rfl
+  · exact enumCont_extend_words (by dsimp [enumCont_logTM]; omega) s y
+  · funext i
+    simp [Cfg.ofWords, enumCont_pairCfg]
+
+/-- A clean call inside the body redirects the clean wrapper's first halt to
+the appropriate live administrative state. This is a complete configuration
+equation: all scratch is blank, both endpoint heads are zero, and output is
+physically empty. -/
+private lemma enumCont_body_call (B : FinTM Bool) (hB : 0 < B.k)
+    (qv qi q : B.State) (stop : Bool) (mode : Fin 3) (x s y : List Bool) (T : ℕ)
+    (hh : (B.tm.runFrom (Cfg.ofWords (input := x) q (stateWord B.k s)) T).state = none)
+    (ho : (B.tm.runFrom (Cfg.ofWords (input := x) q (stateWord B.k s)) T).output = y) :
+    ∃ t ≤ 3 * T + x.length + y.length + 8,
+      (enumCont_bodyTM B qv qi stop).tm.runFrom
+        (enumCont_pairCfg (x := x) (some (.inl (.inl q, mode)))
+          (bufferTape s) (fun _ => none) 0) t =
+        enumCont_pairCfg (some (.inr (if mode.val = 0 then 1 else if mode.val = 1 then 3 else 4)))
+          (bufferTape s) (bufferTape y) 0 := by
+  obtain ⟨r, hr, he⟩ := enumCont_clean_complete B
+    (Cfg.ofWords (input := x) q (stateWord B.k s)) y T hh ho
+  rw [enumCont_clean_entry_words B hB, enumCont_clean_exit_words B hB] at he
+  obtain ⟨t, ht, hlive, hend⟩ := enumCont_first_halt (enumCont_cleanTM B).tm _ r
+    (by rw [he]; rfl)
+  have hrun := enumCont_return_run (enumCont_cleanTM B).tm (enumCont_bodyTM B qv qi stop).tm
+    (fun q => .inl (q, mode))
+    (.inr (if mode.val = 0 then 1 else if mode.val = 1 then 3 else 4))
+    (fun _ _ _ => rfl) (enumCont_pairCfg (x := x) (some (.inl q))
+      (bufferTape s) (fun _ => none) 0) t hlive
+  rw [hend, he] at hrun
+  exact ⟨t, ht.trans hr, hrun⟩
+
+/-- With empty capture and zero endpoint heads, the administrative tape
+layout is exactly the public canonical candidate seam. -/
+private lemma enumCont_pair_words {L : ℕ} {S : Type} {x : List Bool}
+    (q : S) (s : List Bool) :
+    enumCont_pairCfg (L := L) (x := x) (some q) (bufferTape s) (fun _ => none) 0 =
+      Cfg.ofWords q (stateWord (L + 1) s) := by
+  refine Cfg.ext rfl rfl ?_ ?_ rfl
+  · funext i
+    by_cases hz : i.val = 0
+    · have he : i = 0 := Fin.ext hz
+      simp [enumCont_pairCfg, Cfg.ofWords, stateWord, he]
+    · have he : i ≠ 0 := by intro he; apply hz; simp [he]
+      simp [enumCont_pairCfg, Cfg.ofWords, stateWord, he]
+  · funext i; simp [enumCont_pairCfg, Cfg.ofWords]
+
+/-- Initialization runs the clean unary generator, copies its marks as false
+candidate bits, erases the marks, and rewinds to the canonical anchor. -/
+private lemma enumCont_body_start (B : FinTM Bool) (hB : 0 < B.k)
+    (qv qi : B.State) (stop : Bool) (x : List Bool) (w T : ℕ)
+    (hh : (B.tm.runFrom (Cfg.ofWords (input := x) B.tm.q₀ (stateWord B.k [])) T).state = none)
+    (ho : (B.tm.runFrom (Cfg.ofWords (input := x) B.tm.q₀ (stateWord B.k [])) T).output =
+      List.replicate w true) :
+    ∃ t ≤ 3 * T + x.length + 3 * w + 10,
+      (enumCont_bodyTM B qv qi stop).tm.runFrom ((enumCont_bodyTM B qv qi stop).tm.initCfg x) t =
+        Cfg.ofWords (.inr 0) (stateWord (enumCont_bodyTM B qv qi stop).k (List.replicate w false)) := by
+  obtain ⟨t, ht, he⟩ := enumCont_body_call B hB qv qi B.tm.q₀ stop 0 x []
+    (List.replicate w true) T hh ho
+  have hi : enumCont_pairCfg (x := x) (some (.inl (.inl B.tm.q₀, (0 : Fin 3))))
+      (bufferTape []) (fun _ => none) 0 = (enumCont_bodyTM B qv qi stop).tm.initCfg x := by
+    rw [enumCont_pair_words]
+    simp [enumCont_bodyTM, enumCont_cleanTM, enumCont_logTM,
+      MultiTapeTM.initCfg, Cfg.init, Cfg.ofWords, stateWord]
+  rw [hi] at he
+  have hc := enumCont_copy_complete (x := x)
+    (show 0 < (enumCont_logTM B).k by dsimp [enumCont_logTM]; omega)
+    (enumCont_bodyTM B qv qi stop).tm (.inr 1) (.inr 6) (.inr 0) (fun _ => false)
+    (by intro inp work; rfl) (by intro inp work; rfl) [] (List.replicate w true) (by simp)
+  simp only [List.length_replicate, List.map_replicate, enumCont_pair_words] at hc
+  refine ⟨t + (2 * w + 2), ?_, ?_⟩
+  · simp only [List.length_replicate] at ht; omega
+  · rw [MultiTapeTM.runFrom_add, he]
+    exact hc
+
+/-- A genuine round leaves the anchor in one silent stationary transition. -/
+private lemma enumCont_body_depart (B : FinTM Bool) (qv qi : B.State) (x s : List Bool) :
+    (enumCont_bodyTM B qv qi false).tm.step
+      (Cfg.ofWords (input := x) (.inr 0) (stateWord (enumCont_bodyTM B qv qi false).k s)) =
+      enumCont_pairCfg (some (.inl (.inl qv, 1))) (bufferTape s) (fun _ => none) 0 := by
+  rw [enumCont_pair_words]
+  change (controlAction 0 (some (.inl (.inl qv, (1 : Fin 3)) :
+    (enumCont_bodyTM B qv qi false).State))).apply _ = _
+  rw [controlAction_apply]
+  simp [moveInputPos_zero, Cfg.ofWords]
+  exact ⟨rfl, rfl⟩
+
+/-- A captured true verdict emits the sole physical accepting bit and halts. -/
+private lemma enumCont_body_accept (B : FinTM Bool) (qv qi : B.State) (stop : Bool)
+    (x s : List Bool) :
+    let c := enumCont_pairCfg (x := x) (some (.inr (3 : Fin 7))) (bufferTape s)
+      (bufferTape [true]) 0
+    ((enumCont_bodyTM B qv qi stop).tm.step c).state = none ∧
+      ((enumCont_bodyTM B qv qi stop).tm.step c).output = [true] := by
+  have hL : (enumCont_logTM B).k ≠ 0 := by dsimp [enumCont_logTM]; omega
+  simp [MultiTapeTM.step, enumCont_bodyTM, enumCont_pairCfg, Cfg.workTapeSymbols,
+    hL, Action.apply, bufferTape]
+
+/-- A false verdict is erased before entering the clean increment call. -/
+private lemma enumCont_body_reject (B : FinTM Bool) (qv qi : B.State) (stop : Bool)
+    (x s : List Bool) :
+    (enumCont_bodyTM B qv qi stop).tm.step
+      (enumCont_pairCfg (x := x) (some (.inr 3)) (bufferTape s) (bufferTape [false]) 0) =
+      enumCont_pairCfg (some (.inl (.inl qi, 2))) (bufferTape s) (fun _ => none) 0 := by
+  have hL : (enumCont_logTM B).k ≠ 0 := by dsimp [enumCont_logTM]; omega
+  have hv : Function.update (bufferTape [false]) (0 : ℤ) none = fun _ => none := by
+    rw [show [false] = [] ++ [false] by rfl, bufferTape_append]
+    simp only [List.length_nil, Nat.cast_zero, Function.update_idem]
+    simp [Function.update_eq_self]
+  have hr : (enumCont_pairCfg (L := (enumCont_logTM B).k) (x := x)
+      (some (.inr (3 : Fin 7)) : Option (enumCont_bodyTM B qv qi stop).State)
+      (bufferTape s) (bufferTape [false]) 0).workTapeSymbols (Fin.last (enumCont_logTM B).k) =
+      some false := by simp [enumCont_pairCfg, Cfg.workTapeSymbols, hL, bufferTape]
+  change ((enumCont_bodyTM B qv qi stop).tm.tr (.inr 3) _ _).apply _ = _
+  simp only [enumCont_bodyTM, hr]
+  refine Cfg.ext rfl (moveInputPos_zero _) ?_ ?_ rfl
+  · funext i
+    by_cases hz : i.val = 0
+    · have he : i = 0 := Fin.ext hz
+      subst i
+      simp [enumCont_pairCfg, Action.apply, Ne.symm hL]
+    · have he : i ≠ 0 := by intro he; apply hz; simp [he]
+      by_cases hl : i.val = (enumCont_logTM B).k <;>
+        simp [enumCont_pairCfg, Action.apply, he, hl, hv]
+  · funext i
+    simp [enumCont_pairCfg, Action.apply]
+
+/-- The catalog's empty overflow output preserves the old candidate. Every
+nonempty increment result has the exact old width and is the stalled step. -/
+private lemma enumCont_increment_cases (s : List Bool) :
+    let v := (incFixed s).getD []
+    (v = [] ∧ (incFixed s).getD s = s) ∨
+      (v ≠ [] ∧ v.length = s.length ∧ (incFixed s).getD s = v) := by
+  have hlen := enumCont_step_length s
+  cases hi : incFixed s with
+  | none => simp
+  | some v =>
+    rw [hi] at hlen
+    simp only [Option.getD_some] at hlen ⊢
+    by_cases hv : v = []
+    · subst v
+      have hs : s = [] := List.length_eq_zero_iff.mp hlen.symm
+      simp [hs]
+    · exact Or.inr ⟨hv, hlen, trivial⟩
+
+/-- The increment-result check preserves all fields and chooses the anchor
+on overflow or the copy phase on a nonempty result. -/
+private lemma enumCont_body_check (B : FinTM Bool) (qv qi : B.State) (stop : Bool)
+    (x s v : List Bool) :
+    (enumCont_bodyTM B qv qi stop).tm.step
+      (enumCont_pairCfg (x := x) (some (.inr 4)) (bufferTape s) (bufferTape v) 0) =
+      enumCont_pairCfg (some (.inr (if v = [] then 0 else 5)))
+        (bufferTape s) (bufferTape v) 0 := by
+  have hL : (enumCont_logTM B).k ≠ 0 := by dsimp [enumCont_logTM]; omega
+  have hv : bufferTape v 0 = none ↔ v = [] := by cases v <;> simp [bufferTape]
+  change ((enumCont_bodyTM B qv qi stop).tm.tr (.inr 4) _ _).apply _ = _
+  simp only [enumCont_bodyTM]
+  have hr : (enumCont_pairCfg (L := (enumCont_logTM B).k) (x := x)
+      (some (.inr (4 : Fin 7)) : Option (enumCont_bodyTM B qv qi stop).State)
+      (bufferTape s) (bufferTape v) 0).workTapeSymbols (Fin.last (enumCont_logTM B).k) =
+      bufferTape v 0 := by simp [enumCont_pairCfg, Cfg.workTapeSymbols, hL]
+  rw [hr]
+  simp only [hv]
+  by_cases he : v = [] <;> simp only [he, ↓reduceIte, controlAction_apply]
+  all_goals
+    refine Cfg.ext rfl (moveInputPos_zero _) rfl ?_ rfl
+    funext i
+    simp [enumCont_pairCfg]
+
+/-- A clean increment call followed by copy and rewind implements the exact
+stalled fixed-width step. Empty overflow results preserve the candidate;
+successful results replace every candidate cell in place. -/
+private lemma enumCont_body_increment (B : FinTM Bool) (hB : 0 < B.k)
+    (qv qi : B.State) (stop : Bool) (x s : List Bool) (T : ℕ)
+    (hh : (B.tm.runFrom (Cfg.ofWords (input := x) qi (stateWord B.k s)) T).state = none)
+    (ho : (B.tm.runFrom (Cfg.ofWords (input := x) qi (stateWord B.k s)) T).output =
+      (incFixed s).getD []) :
+    ∃ t ≤ 3 * T + x.length + 3 * s.length + 11,
+      (enumCont_bodyTM B qv qi stop).tm.runFrom
+        (enumCont_pairCfg (x := x) (some (.inl (.inl qi, 2)))
+          (bufferTape s) (fun _ => none) 0) t =
+        Cfg.ofWords (.inr 0) (stateWord (enumCont_bodyTM B qv qi stop).k ((incFixed s).getD s)) := by
+  obtain ⟨t, ht, he⟩ := enumCont_body_call B hB qv qi qi stop 2 x s ((incFixed s).getD []) T hh ho
+  simp only [show (2 : Fin 3).val = 2 by decide, show ¬(2 : ℕ) = 0 by decide,
+    show ¬(2 : ℕ) = 1 by decide, ↓reduceIte] at he
+  rcases enumCont_increment_cases s with ⟨hv, hs⟩ | ⟨hv, hl, hs⟩
+  · refine ⟨t + 1, ?_, ?_⟩
+    · rw [hv] at ht; simp only [List.length_nil] at ht; omega
+    · rw [MultiTapeTM.runFrom_succ_eq_step', he, enumCont_body_check, if_pos hv, hv,
+        hs, bufferTape_nil, enumCont_pair_words]
+      rfl
+  · have hc := enumCont_copy_complete (x := x)
+      (show 0 < (enumCont_logTM B).k by dsimp [enumCont_logTM]; omega)
+      (enumCont_bodyTM B qv qi stop).tm (.inr 5) (.inr 6) (.inr 0) id
+      (by intro inp work; rfl) (by intro inp work; rfl) s ((incFixed s).getD []) (by omega)
+    simp only [List.map_id, enumCont_pair_words] at hc
+    refine ⟨(t + 1) + (2 * ((incFixed s).getD []).length + 2), ?_, ?_⟩
+    · rw [hl] at ht ⊢; omega
+    · rw [MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_succ_eq_step' (t := t), he,
+        enumCont_body_check, if_neg hv, hc, hs]
+      rfl
+
+/-- Starting just after departure, one verifier call either emits acceptance
+or clears the verdict and completes one exact candidate update. This raw
+segment is valid in both controller variants; first-return guards are added
+separately using the stopped anchor. -/
+private lemma enumCont_body_round_raw (B : FinTM Bool) (hB : 0 < B.k)
+    (qv qi : B.State) (stop : Bool) (x s : List Bool) (b : Bool) (Tv Ti : ℕ)
+    (hv : (B.tm.runFrom (Cfg.ofWords (input := x) qv (stateWord B.k s)) Tv).state = none ∧
+      (B.tm.runFrom (Cfg.ofWords (input := x) qv (stateWord B.k s)) Tv).output = [b])
+    (hi : (B.tm.runFrom (Cfg.ofWords (input := x) qi (stateWord B.k s)) Ti).state = none ∧
+      (B.tm.runFrom (Cfg.ofWords (input := x) qi (stateWord B.k s)) Ti).output =
+        (incFixed s).getD []) :
+    ∃ t ≤ 3 * Tv + 3 * Ti + 2 * x.length + 3 * s.length + 21,
+      if b then
+        ((enumCont_bodyTM B qv qi stop).tm.runFrom
+          (enumCont_pairCfg (x := x) (some (.inl (.inl qv, 1)))
+            (bufferTape s) (fun _ => none) 0) t).state = none ∧
+        ((enumCont_bodyTM B qv qi stop).tm.runFrom
+          (enumCont_pairCfg (x := x) (some (.inl (.inl qv, 1)))
+            (bufferTape s) (fun _ => none) 0) t).output = [true]
+      else (enumCont_bodyTM B qv qi stop).tm.runFrom
+          (enumCont_pairCfg (x := x) (some (.inl (.inl qv, 1)))
+            (bufferTape s) (fun _ => none) 0) t =
+        Cfg.ofWords (.inr 0) (stateWord (enumCont_bodyTM B qv qi stop).k ((incFixed s).getD s)) := by
+  obtain ⟨t, ht, he⟩ := enumCont_body_call B hB qv qi qv stop 1 x s [b] Tv hv.1 hv.2
+  simp only [show (1 : Fin 3).val = 1 by decide, show ¬(1 : ℕ) = 0 by decide,
+    ↓reduceIte] at he
+  simp only [List.length_singleton] at ht
+  cases b with
+  | false =>
+    obtain ⟨r, hr, hrun⟩ := enumCont_body_increment B hB qv qi stop x s Ti hi.1 hi.2
+    refine ⟨(t + 1) + r, by omega, ?_⟩
+    simp only [Bool.false_eq_true, ↓reduceIte]
+    rw [MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_succ_eq_step', he,
+      enumCont_body_reject, hrun]
+  | true =>
+    refine ⟨t + 1, by omega, ?_⟩
+    simp only [↓reduceIte, MultiTapeTM.runFrom_succ_eq_step', he]
+    exact enumCont_body_accept B qv qi stop x s
+
+/-- An anchor whose transition is a stationary self-loop preserves its
+complete configuration for every subsequent step. -/
+private lemma enumCont_absorb {k : ℕ} {S : Type} {x : List Bool}
+    (tm : MultiTapeTM k Bool S) (qa : S)
+    (ha : ∀ inp work, tm.tr qa inp work = controlAction 0 (some qa))
+    (c : Cfg k Bool S x) (hc : c.state = some qa) (t : ℕ) : tm.runFrom c t = c := by
+  induction t with
+  | zero => rfl
+  | succ t ih =>
+    rw [MultiTapeTM.runFrom_succ_eq_step', ih]
+    simp only [MultiTapeTM.step, hc, ha, controlAction_apply]
+    apply Cfg.ext
+    · exact hc.symm
+    · exact moveInputPos_zero _
+    · rfl
+    · rfl
+    · rfl
+
+/-- Two transition tables differing only at the anchor agree on every run
+prefix that has not yet visited that anchor. -/
+private lemma enumCont_agree_run {k : ℕ} {S : Type} {x : List Bool}
+    (tm stop : MultiTapeTM k Bool S) (qa : S)
+    (ha : ∀ q, q ≠ qa → ∀ inp work, tm.tr q inp work = stop.tr q inp work)
+    (c : Cfg k Bool S x) (t : ℕ)
+    (hn : ∀ j < t, (stop.runFrom c j).state ≠ some qa) :
+    tm.runFrom c t = stop.runFrom c t := by
+  induction t with
+  | zero => rfl
+  | succ t ih =>
+    rw [MultiTapeTM.runFrom_succ_eq_step', ih (fun j hj => hn j (by omega)),
+      MultiTapeTM.runFrom_succ_eq_step']
+    cases hs : (stop.runFrom c t).state with
+    | none => simp only [MultiTapeTM.step, hs]
+    | some q =>
+      have hq : q ≠ qa := by intro he; subst q; exact hn t (by omega) hs
+      simp only [MultiTapeTM.step, hs, ha q hq]
+
+/-- The first visit to a stopped anchor transfers to the active machine with
+the same full endpoint and no earlier anchor visit. Absorption identifies
+the first endpoint with the supplied bounded endpoint. -/
+private lemma enumCont_first_anchor {k : ℕ} {S : Type} {x : List Bool}
+    (tm stop : MultiTapeTM k Bool S) (qa : S)
+    (ha : ∀ q, q ≠ qa → ∀ inp work, tm.tr q inp work = stop.tr q inp work)
+    (hs : ∀ inp work, stop.tr qa inp work = controlAction 0 (some qa))
+    (c : Cfg k Bool S x) (T : ℕ) (hT : (stop.runFrom c T).state = some qa) :
+    ∃ t ≤ T, (∀ j < t, (tm.runFrom c j).state ≠ some qa) ∧
+      tm.runFrom c t = stop.runFrom c T := by
+  classical
+  have hex : ∃ t, (stop.runFrom c t).state = some qa := ⟨T, hT⟩
+  let t := Nat.find hex
+  have ht : t ≤ T := Nat.find_min' hex hT
+  have hend : (stop.runFrom c t).state = some qa := Nat.find_spec hex
+  have hn : ∀ j < t, (stop.runFrom c j).state ≠ some qa := fun j hj => Nat.find_min hex hj
+  have he : stop.runFrom c T = stop.runFrom c t := by
+    obtain ⟨r, hr⟩ := Nat.exists_eq_add_of_le ht
+    rw [hr, MultiTapeTM.runFrom_add, enumCont_absorb stop qa hs _ hend]
+  refine ⟨t, ht, ?_, ?_⟩
+  · intro j hj
+    rw [enumCont_agree_run tm stop qa ha c j (fun i hi => hn i (by omega))]
+    exact hn j hj
+  · rw [enumCont_agree_run tm stop qa ha c t hn, he]
+
+/-- A halted stopped run never visited the live absorbing anchor. Its entire
+bounded run therefore transfers unchanged to the active machine. -/
+private lemma enumCont_halt_transfer {k : ℕ} {S : Type} {x : List Bool}
+    (tm stop : MultiTapeTM k Bool S) (qa : S)
+    (ha : ∀ q, q ≠ qa → ∀ inp work, tm.tr q inp work = stop.tr q inp work)
+    (hs : ∀ inp work, stop.tr qa inp work = controlAction 0 (some qa))
+    (c : Cfg k Bool S x) (T : ℕ) (hT : (stop.runFrom c T).state = none) :
+    tm.runFrom c T = stop.runFrom c T ∧
+      ∀ j ≤ T, (tm.runFrom c j).state ≠ some qa := by
+  have hn : ∀ j ≤ T, (stop.runFrom c j).state ≠ some qa := by
+    intro j hj hjq
+    obtain ⟨r, hr⟩ := Nat.exists_eq_add_of_le hj
+    have he : stop.runFrom c T = stop.runFrom c j := by
+      rw [hr, MultiTapeTM.runFrom_add, enumCont_absorb stop qa hs _ hjq]
+    have he' := congrArg Cfg.state he
+    rw [hT, hjq] at he'
+    contradiction
+  refine ⟨enumCont_agree_run tm stop qa ha c T (fun j hj => hn j (by omega)), ?_⟩
+  intro j hj
+  rw [enumCont_agree_run tm stop qa ha c j (fun i hi => hn i (by omega))]
+  exact hn j hj
+
+/-- The active and stopped body have identical transitions away from the
+anchor. Their tape counts and finite state types are definitionally equal. -/
+private lemma enumCont_body_agree (B : FinTM Bool) (qv qi : B.State)
+    (q : (enumCont_bodyTM B qv qi false).State) (hq : q ≠ .inr 0) (inp work) :
+    (enumCont_bodyTM B qv qi false).tm.tr q inp work =
+      (enumCont_bodyTM B qv qi true).tm.tr q inp work := by
+  cases q with
+  | inl q => rfl
+  | inr q =>
+    have hz : q.val ≠ 0 := by
+      intro he
+      apply hq
+      congr 1
+      exact Fin.ext he
+    simp only [enumCont_bodyTM]
+    split <;> first | contradiction | rfl
+
+/-- Startup satisfies the loop export's first-anchor guard as well as its
+full canonical configuration equality. -/
+private lemma enumCont_body_start_guarded (B : FinTM Bool) (hB : 0 < B.k)
+    (qv qi : B.State) (x : List Bool) (w T : ℕ)
+    (hh : (B.tm.runFrom (Cfg.ofWords (input := x) B.tm.q₀ (stateWord B.k [])) T).state = none)
+    (ho : (B.tm.runFrom (Cfg.ofWords (input := x) B.tm.q₀ (stateWord B.k [])) T).output =
+      List.replicate w true) :
+    ∃ t ≤ 3 * T + x.length + 3 * w + 10,
+      (∀ j < t, ((enumCont_bodyTM B qv qi false).tm.runFrom
+        ((enumCont_bodyTM B qv qi false).tm.initCfg x) j).state ≠ some (.inr 0)) ∧
+      (enumCont_bodyTM B qv qi false).tm.runFrom ((enumCont_bodyTM B qv qi false).tm.initCfg x) t =
+        Cfg.ofWords (.inr 0) (stateWord (enumCont_bodyTM B qv qi false).k (List.replicate w false)) := by
+  obtain ⟨r, hr, he⟩ := enumCont_body_start B hB qv qi true x w T hh ho
+  change (enumCont_bodyTM B qv qi true).tm.runFrom
+    ((enumCont_bodyTM B qv qi false).tm.initCfg x) r =
+      Cfg.ofWords (.inr 0) (stateWord (enumCont_bodyTM B qv qi false).k (List.replicate w false)) at he
+  obtain ⟨t, ht, hn, hend⟩ := enumCont_first_anchor
+    (enumCont_bodyTM B qv qi false).tm (enumCont_bodyTM B qv qi true).tm (.inr 0)
+    (enumCont_body_agree B qv qi) (by intro inp work; rfl)
+    ((enumCont_bodyTM B qv qi false).tm.initCfg x) r (by rw [he]; rfl)
+  rw [he] at hend
+  exact ⟨t, ht.trans hr, hn, hend⟩
+
+/-- The active round has positive duration and no strict interior visit to
+the anchor. Rejection uses the first stopped-anchor visit; acceptance never
+visits that live absorbing state. In either case departure adds one step. -/
+private lemma enumCont_body_round_guarded (B : FinTM Bool) (hB : 0 < B.k)
+    (qv qi : B.State) (x s : List Bool) (b : Bool) (Tv Ti : ℕ)
+    (hv : (B.tm.runFrom (Cfg.ofWords (input := x) qv (stateWord B.k s)) Tv).state = none ∧
+      (B.tm.runFrom (Cfg.ofWords (input := x) qv (stateWord B.k s)) Tv).output = [b])
+    (hi : (B.tm.runFrom (Cfg.ofWords (input := x) qi (stateWord B.k s)) Ti).state = none ∧
+      (B.tm.runFrom (Cfg.ofWords (input := x) qi (stateWord B.k s)) Ti).output =
+        (incFixed s).getD []) :
+    ∃ t, 0 < t ∧ t ≤ 3 * Tv + 3 * Ti + 2 * x.length + 3 * s.length + 22 ∧
+      (∀ j, 0 < j → j < t →
+        ((enumCont_bodyTM B qv qi false).tm.runFrom
+          (Cfg.ofWords (input := x) (.inr 0) (stateWord (enumCont_bodyTM B qv qi false).k s)) j).state
+            ≠ some (.inr 0)) ∧
+      if b then
+        ((enumCont_bodyTM B qv qi false).tm.runFrom
+          (Cfg.ofWords (input := x) (.inr 0) (stateWord (enumCont_bodyTM B qv qi false).k s)) t).state
+            = none ∧
+        ((enumCont_bodyTM B qv qi false).tm.runFrom
+          (Cfg.ofWords (input := x) (.inr 0) (stateWord (enumCont_bodyTM B qv qi false).k s)) t).output
+            = [true]
+      else (enumCont_bodyTM B qv qi false).tm.runFrom
+          (Cfg.ofWords (input := x) (.inr 0) (stateWord (enumCont_bodyTM B qv qi false).k s)) t =
+        Cfg.ofWords (.inr 0) (stateWord (enumCont_bodyTM B qv qi false).k ((incFixed s).getD s)) := by
+  obtain ⟨r, hr, he⟩ := enumCont_body_round_raw B hB qv qi true x s b Tv Ti hv hi
+  cases b with
+  | false =>
+    simp only [Bool.false_eq_true, ↓reduceIte] at he ⊢
+    obtain ⟨t, ht, hn, hend⟩ := enumCont_first_anchor
+      (enumCont_bodyTM B qv qi false).tm (enumCont_bodyTM B qv qi true).tm (.inr 0)
+      (enumCont_body_agree B qv qi) (by intro inp work; rfl)
+      (enumCont_pairCfg (x := x) (some (.inl (.inl qv, 1)))
+        (bufferTape s) (fun _ => none) 0) r (by rw [he]; rfl)
+    refine ⟨t + 1, by omega, by omega, ?_, ?_⟩
+    · intro j hj hjt
+      obtain ⟨i, rfl⟩ := Nat.exists_eq_succ_of_ne_zero (Nat.ne_of_gt hj)
+      rw [MultiTapeTM.runFrom_succ_eq_step, enumCont_body_depart]
+      exact hn i (by omega)
+    · rw [MultiTapeTM.runFrom_succ_eq_step, enumCont_body_depart, hend, he]
+      rfl
+  | true =>
+    simp only [↓reduceIte] at he ⊢
+    obtain ⟨hend, hn⟩ := enumCont_halt_transfer
+      (enumCont_bodyTM B qv qi false).tm (enumCont_bodyTM B qv qi true).tm (.inr 0)
+      (enumCont_body_agree B qv qi) (by intro inp work; rfl)
+      (enumCont_pairCfg (x := x) (some (.inl (.inl qv, 1)))
+        (bufferTape s) (fun _ => none) 0) r he.1
+    refine ⟨r + 1, by omega, by omega, ?_, ?_⟩
+    · intro j hj hjr
+      obtain ⟨i, rfl⟩ := Nat.exists_eq_succ_of_ne_zero (Nat.ne_of_gt hj)
+      rw [MultiTapeTM.runFrom_succ_eq_step, enumCont_body_depart]
+      exact hn i (by omega)
+    · rw [MultiTapeTM.runFrom_succ_eq_step, enumCont_body_depart, hend]
+      exact he
+
+/-- A prepared source call may use the initial tape block of the shared
+source machine; padding preserves its halt and exact emitted word. -/
+private lemma enumCont_lift_call (M B : FinTM Bool) (hM : 0 < M.k) (hk : M.k ≤ B.k)
+    (emb : M.State → B.State)
+    (htr : ∀ q inp work, B.tm.tr (emb q) inp work =
+      enumCont_padAction emb (M.tm.tr q inp
+        (fun i => work ⟨i, Nat.lt_of_lt_of_le i.isLt hk⟩)))
+    (q : M.State) (x s y : List Bool) (T : ℕ)
+    (hh : (M.tm.runFrom (Cfg.ofWords (input := x) q (stateWord M.k s)) T).state = none)
+    (ho : (M.tm.runFrom (Cfg.ofWords (input := x) q (stateWord M.k s)) T).output = y) :
+    (B.tm.runFrom (Cfg.ofWords (input := x) (emb q) (stateWord B.k s)) T).state = none ∧
+      (B.tm.runFrom (Cfg.ofWords (input := x) (emb q) (stateWord B.k s)) T).output = y := by
+  rw [← enumCont_pad_words hM hk emb q x s,
+    enumCont_pad_run hk M.tm B.tm emb htr]
+  exact ⟨by simp [enumCont_padCfg, hh], ho⟩
+
+/-- Initial calls pad correctly even for a zero-work-tape source. -/
+private lemma enumCont_lift_init (M B : FinTM Bool) (hk : M.k ≤ B.k)
+    (emb : M.State → B.State)
+    (htr : ∀ q inp work, B.tm.tr (emb q) inp work =
+      enumCont_padAction emb (M.tm.tr q inp
+        (fun i => work ⟨i, Nat.lt_of_lt_of_le i.isLt hk⟩)))
+    (x y : List Bool) (T : ℕ) (h : M.ComputesInTime x y T) :
+    (B.tm.runFrom (Cfg.ofWords (input := x) (emb M.tm.q₀) (stateWord B.k [])) T).state = none ∧
+      (B.tm.runFrom (Cfg.ofWords (input := x) (emb M.tm.q₀) (stateWord B.k [])) T).output = y := by
+  obtain ⟨hh, ho⟩ := (computesInTime_iff M x y T).mp h
+  rw [← enumCont_pad_init (k := M.k) emb M.tm.q₀ x]
+  change (B.tm.runFrom (enumCont_padCfg emb (M.tm.initCfg x)) T).state = none ∧
+    (B.tm.runFrom (enumCont_padCfg emb (M.tm.initCfg x)) T).output = y
+  rw [enumCont_pad_run hk M.tm B.tm emb htr]
+  refine ⟨?_, ho⟩
+  change ((M.tm.runFrom (M.tm.initCfg x) T).state.map emb) = none
+  rw [hh]
+  rfl
+
+/-- One input-independent polynomial bounds both body phases. The degree
+dominates the verifier degree, unary-generator degree, and linear scans;
+the coefficient absorbs every fixed administrative transition. -/
+private lemma enumCont_common_bound (a d f c j n w : ℕ) :
+    let P := (n + w + 1) ^ (d + c + 2)
+    let A := 3 * a + 3 * f + 3 * j + 60
+    3 * (f * (n + 1) ^ (c + 1)) + n + 3 * w + 10 ≤ A * P ∧
+      3 * (a * (n + w + 1) ^ d + 2 * (n + w) + 4) +
+        3 * ((j + 3) * (w + 1)) + 2 * n + 3 * w + 22 ≤ A * P := by
+  dsimp only
+  let P := (n + w + 1) ^ (d + c + 2)
+  have hn : n + w + 1 ≤ P := by
+    calc n + w + 1 = (n + w + 1) ^ 1 := by simp
+      _ ≤ P := Nat.pow_le_pow_right (by omega) (by omega)
+  have hd : (n + w + 1) ^ d ≤ P := Nat.pow_le_pow_right (by omega) (by omega)
+  have hf : (n + 1) ^ (c + 1) ≤ P :=
+    (Nat.pow_le_pow_left (by omega) _).trans (Nat.pow_le_pow_right (by omega) (by omega))
+  have ha' := Nat.mul_le_mul_left a hd
+  have hf' := Nat.mul_le_mul_left f hf
+  have hj' := Nat.mul_le_mul_left (j + 3) (show w + 1 ≤ P by omega)
+  change _ ≤ (3 * a + 3 * f + 3 * j + 60) * P ∧
+    _ ≤ (3 * a + 3 * f + 3 * j + 60) * P
+  simp only [Nat.add_mul, Nat.mul_assoc] at hj' ⊢
+  omega
+
+/-- A concrete body with polynomial startup and exact seam restoration gives
+the frozen enumerator configuration contract by the audited loop export.
+This lemma is conditional only on the two explicit body obligations below.
+**Proof sketch.** Use the catalog unary generator for the fuel bits, enlarging
+the common coefficient and degree to cover both fuel and body. Instantiate
+`exists_loopCfgTM` with the exact-width invariant and stalled increment.
+The terminal is `(2^w-1)+1=2^w`; on candidate indices use `enumCont_orbit`.
+Finally absorb the export's additive one using `1 ≤ (n+w+1)^D`, exactly as
+in infrastructure round 3, item 5. All constants are fixed before the input. -/
+private lemma enumCont_from_body (C c A D : ℕ) (V : Language Bool)
+    (body : FinTM Bool) (anchor : body.State)
+    (hstart : ∀ x : List Bool,
+      ∃ t ≤ A * (x.length + C * (x.length + 1) ^ c + 1) ^ D,
+        (∀ t' < t, (body.tm.runFrom (body.tm.initCfg x) t').state ≠ some anchor) ∧
+        body.tm.runFrom (body.tm.initCfg x) t =
+          Cfg.ofWords anchor (stateWord body.k (List.replicate (C * (x.length + 1) ^ c) false)))
+    (hround : ∀ (x s : List Bool), s.length = C * (x.length + 1) ^ c →
+      ∃ t, 0 < t ∧ t ≤ A * (x.length + C * (x.length + 1) ^ c + 1) ^ D ∧
+        (∀ t', 0 < t' → t' < t →
+          (body.tm.runFrom (Cfg.ofWords (input := x) anchor (stateWord body.k s)) t').state
+            ≠ some anchor) ∧
+        if MultiTapeTM.indicator V (x ++ s) then
+          (body.tm.runFrom (Cfg.ofWords (input := x) anchor (stateWord body.k s)) t).state = none ∧
+          (body.tm.runFrom (Cfg.ofWords (input := x) anchor (stateWord body.k s)) t).output = [true]
+        else
+          body.tm.runFrom (Cfg.ofWords (input := x) anchor (stateWord body.k s)) t =
+            Cfg.ofWords anchor (stateWord body.k ((incFixed s).getD s))) :
+    ∃ (b e : ℕ) (E : FinTM Bool), ∀ x : List Bool,
+      ∃ (cfg : ℕ → Cfg E.k Bool E.State x) (startup : ℕ),
+        startup ≤ b * (x.length + C * (x.length + 1) ^ c + 1) ^ e ∧
+        E.tm.runFrom (E.tm.initCfg x) startup = cfg 0 ∧
+        (cfg (2 ^ (C * (x.length + 1) ^ c))).state = none ∧
+        (cfg (2 ^ (C * (x.length + 1) ^ c))).output = [false] ∧
+        ∀ i, i < 2 ^ (C * (x.length + 1) ^ c) → ∃ t,
+          t ≤ b * (x.length + C * (x.length + 1) ^ c + 1) ^ e ∧
+          if MultiTapeTM.indicator V (x ++ enumWord (C * (x.length + 1) ^ c) i) then
+            (E.tm.runFrom (cfg i) t).state = none ∧
+              (E.tm.runFrom (cfg i) t).output = [true]
+          else E.tm.runFrom (cfg i) t = cfg (i + 1) := by
+  obtain ⟨F, f, hF⟩ := computesFunInTime_polyUnary C c
+  let T := fun n => (A + f) * (n + C * (n + 1) ^ c + 1) ^ (D + c + 1)
+  have hbody (n : ℕ) : A * (n + C * (n + 1) ^ c + 1) ^ D ≤ T n := by
+    exact Nat.mul_le_mul (by omega) (Nat.pow_le_pow_right (by omega) (by omega))
+  have hfuel : F.ComputesFunInTime
+      (fun x => Nat.bits (2 ^ (C * (x.length + 1) ^ c) - 1)) T := by
+    intro x
+    dsimp only
+    rw [enumCont_fuel_bits]
+    apply (hF x).mono
+    exact Nat.mul_le_mul (by omega)
+      ((Nat.pow_le_pow_left (by omega : x.length + 1 ≤
+        x.length + C * (x.length + 1) ^ c + 1) (c + 1)).trans
+        (Nat.pow_le_pow_right (by omega) (by omega)))
+  obtain ⟨E, K, hE⟩ := exists_loopCfgTM body F anchor
+    (fun x s => s.length = C * (x.length + 1) ^ c)
+    (fun _ s => (incFixed s).getD s)
+    (fun x s => MultiTapeTM.indicator V (x ++ s))
+    (fun x => List.replicate (C * (x.length + 1) ^ c) false)
+    (fun n => 2 ^ (C * (n + 1) ^ c) - 1) T hfuel
+    (by intro x; exact List.length_replicate)
+    (by intro x s hs; exact (enumCont_step_length s).trans hs)
+    (by
+      intro x
+      obtain ⟨t, ht, hi, hh⟩ := hstart x
+      exact ⟨t, ht.trans (hbody x.length), hi, hh⟩)
+    (by
+      intro x s hs
+      obtain ⟨t, htpos, ht, hi, hh⟩ := hround x s hs
+      exact ⟨t, htpos, ht.trans (hbody x.length), hi, hh⟩)
+  refine ⟨K * (A + f + 1), D + c + 1, E, fun x => ?_⟩
+  obtain ⟨cfg, startup, ht, hi, _, hend, hout, hr⟩ := hE x
+  have hone : 1 ≤ 2 ^ (C * (x.length + 1) ^ c) := Nat.one_le_two_pow
+  have hterminal : 2 ^ (C * (x.length + 1) ^ c) - 1 + 1 =
+      2 ^ (C * (x.length + 1) ^ c) := Nat.sub_add_cancel hone
+  rw [hterminal] at hend hout
+  have hbudget : K * (T x.length + 1) ≤ K * (A + f + 1) *
+      (x.length + C * (x.length + 1) ^ c + 1) ^ (D + c + 1) := by
+    have hp : 1 ≤ (x.length + C * (x.length + 1) ^ c + 1) ^ (D + c + 1) :=
+      Nat.one_le_pow _ _ (by omega)
+    calc K * (T x.length + 1) ≤ K * (T x.length +
+        (x.length + C * (x.length + 1) ^ c + 1) ^ (D + c + 1)) :=
+          Nat.mul_le_mul_left K (Nat.add_le_add_left hp _)
+      _ = _ := by dsimp [T]; ring
+  refine ⟨cfg, startup, ht.trans hbudget, hi, hend, hout, ?_⟩
+  intro i hi
+  obtain ⟨t, ht, hh⟩ := hr i (by omega)
+  rw [enumCont_orbit _ i hi] at hh
+  exact ⟨t, ht.trans hbudget, hh⟩
+
 /-- **Continuation frontier; admitted in this partial delivery.** There is one
 uniform finite machine with a polynomial startup and a polynomially bounded
 accept-or-advance segment for each exact-width candidate. The configuration
@@ -761,7 +2718,55 @@ private theorem enumMachine_contracts (C c a d : ℕ) (V : Language Bool)
             (E.tm.runFrom (cfg i) t).state = none ∧
               (E.tm.runFrom (cfg i) t).output = [true]
           else E.tm.runFrom (cfg i) t = cfg (i + 1) := by
-  sorry
+  obtain ⟨U, f, hU⟩ := computesFunInTime_polyUnary C c
+  obtain ⟨I, j, hI⟩ := computesFunInTime_incFixed
+  let Q := bufferedCompTM enumCont_concatTM MV
+  let R := bufferedCompTM enumCont_concatTM I
+  let B := enumCont_sources Q R U
+  let qv : B.State := .inl Q.tm.q₀
+  let qi : B.State := .inr (.inl (.inl (some true)))
+  have hQ : 0 < Q.k := by dsimp [Q, bufferedCompTM, enumCont_concatTM]; omega
+  have hR : 0 < R.k := by dsimp [R, bufferedCompTM, enumCont_concatTM]; omega
+  have hQB : Q.k ≤ B.k := by dsimp [B, enumCont_sources]; omega
+  have hRB : R.k ≤ B.k := by dsimp [B, enumCont_sources]; omega
+  have hUB : U.k ≤ B.k := by dsimp [B, enumCont_sources]; omega
+  have hB : 0 < B.k := lt_of_lt_of_le hQ hQB
+  apply enumCont_from_body C c (3 * a + 3 * f + 3 * j + 60) (d + c + 2) V
+    (enumCont_bodyTM B qv qi false) (.inr 0)
+  · intro x
+    have hu := enumCont_lift_init U B hUB (fun q => .inr (.inr q))
+      (by intro q inp work; rfl) x (List.replicate (C * (x.length + 1) ^ c) true)
+      (f * (x.length + 1) ^ (c + 1)) (hU x)
+    obtain ⟨t, ht, hn, he⟩ := enumCont_body_start_guarded B hB qv qi x
+      (C * (x.length + 1) ^ c) (f * (x.length + 1) ^ (c + 1)) hu.1 hu.2
+    exact ⟨t, ht.trans (enumCont_common_bound a d f c j x.length
+      (C * (x.length + 1) ^ c)).1, hn, he⟩
+  · intro x s hs
+    obtain ⟨tv, htv, hhv, hov⟩ := enumCont_verifier_call MV V a d hV x s
+    obtain ⟨ti, hti, hhi, hoi⟩ := enumCont_increment_call I j hI x s
+    have hv := enumCont_lift_call Q B hQ hQB Sum.inl
+      (by intro q inp work; rfl) Q.tm.q₀ x s [MultiTapeTM.indicator V (x ++ s)] tv hhv hov
+    have hi := enumCont_lift_call R B hR hRB (fun q => .inr (.inl q))
+      (by intro q inp work; rfl) (.inl (some true)) x s ((incFixed s).getD []) ti hhi hoi
+    obtain ⟨t, htpos, ht, hn, he⟩ := enumCont_body_round_guarded B hB qv qi x s
+      (MultiTapeTM.indicator V (x ++ s)) tv ti hv hi
+    refine ⟨t, htpos, ?_, hn, he⟩
+    have hb := (enumCont_common_bound a d f c j x.length s.length).2
+    rw [hs] at hb
+    apply le_trans (show t ≤ 3 * (a * (x.length + s.length + 1) ^ d +
+      2 * (x.length + s.length) + 4) + 3 * ((j + 3) * (s.length + 1)) +
+      2 * x.length + 3 * s.length + 22 by omega)
+    simpa only [hs] using hb
+
+/-! **Continuation completion note (batch E2-cont A).** The historical
+partial-fill descriptions above and below are retained under the statement
+freeze. The former `enumMachine_contracts` admission is now discharged.
+The new private body has proved initialization, exact buffered verifier
+input, captured silent output, complete reversible scratch restoration,
+in-place candidate replacement, and positive first-return round contracts.
+`enumCont_from_body` supplies the audited exact-width loop instantiation,
+catalog-generated `2^w-1` fuel, bounded rank orbit, terminal `2^w`, and
+uniform startup/round budgets. -/
 
 /-- Assuming the single machine-construction frontier, the proved loop
 invariant gives a decider with the audited exponential-times-polynomial
