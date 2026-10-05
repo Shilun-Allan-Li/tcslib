@@ -327,8 +327,15 @@ uncomputability chapter.
   (`audits/emitter-infra-{pack,bundle}.md`, 14 attachments; gate on
   zero blockers/majors, findings to
   `audits/emitter-infra-findings.md`). 3A-cont dispatched by the user
-  (bespoke, independent). Next: emitter gate → fills → 3B-cont brief;
-  4A waits on the gate (decision 11.3); then the epoch-3 audit.
+  (bespoke, independent). **Round 1: 0 blockers / 2 majors / 3 minors** (adequacy, not
+  falseness); repairs landed (the two clean-call bridge contracts in
+  `Loop.lean`, the 3B/4A mappings in §11b, the forwarding-host sketch
+  correction, token/doc sweeps; 57/57 zero errors, 20 = 13 + 7
+  admissions; full-print regressions PASS) and **round-2 pack
+  prepared** (`audits/emitter-infra-r2-{pack,bundle}.md`, 31
+  attachments incl. the evidence addendum both majors demanded).
+  Next: emitter gate (round 2) → fills → 3B-cont brief; 4A waits on
+  the gate (decision 11.3); then the epoch-3 audit.
   Subsumes 2C's
   `prefixTM`/`fixedPair` promotion requests. Dedup of superseded batch
   privates is an E5 closure task. Mathlib TM2 rejected as substrate

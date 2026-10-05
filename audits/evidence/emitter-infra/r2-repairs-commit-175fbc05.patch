@@ -1,0 +1,1786 @@
+commit 175fbc0549d3a017478584903793b7b78a0f14da
+Author: Seyoon Ragavan
+Subject: Emitter round-2 repairs: the clean-call bridges, sketch and doc sweeps
+
+
+diff --git a/AroraBarakChapter1Plan.md b/AroraBarakChapter1Plan.md
+index 2b51b9ab..1b3d111f 100644
+--- a/AroraBarakChapter1Plan.md
++++ b/AroraBarakChapter1Plan.md
+@@ -365,3 +365,4 @@ audit documents cite.
+ | **E5 executed — deletion-only dedup under the binding inventory** (2026-10-05, tool `scripts/e5_dead_analysis.py` committed). Deleted exactly the three superseded checkpoint families the epoch-2 resolutions name, all confirmed dead at source level (and by the gate's kernel walk): EXP's carry/capture machinery (`enumCarry*` + `enumBump*`/`enumBuffer_*`/`enumCarryPos*`/`enumWord_no_repeat` + the whole `EnumCapture` section's `enumCapture*` — 20 privates, 364 lines; 2,887 → 2,534) and Nondeterminism's standalone copying phase (`copyTapes` + `choiceCopy*` — 8 privates, 185 lines; 2,627 → 2,454). **No live replacements**: `enumLoop_run`, `prefixTM`/`fixedPair_polyTime`, `polyUnaryTM`/`poly_unary_computes` remain the audited implementations (replacement is elective re-proving with new audit surface and no correctness gain). **Deliberately retained dead** (recorded in both module docstrings' maintainer notes): contract-discharge evidence lemmas (`b2_tables_coincide`, `b2_unary_mask`, `cont_poly_guess_phase`, `certificateSplit_complete`; NP's five edge-case guards; `tmsat_split_length`, `enumCont_clean_verifier`); private instances reclassified live (typeclass resolution is non-textual — analyzer hardened). Verification: fresh 57/57 sweep zero errors, **21 admissions unchanged**, full epoch-2 closure regression program PASS, lint 0 FAIL / 3 WARN at the new sizes (`audits/logs/e5-dedup-{sweep,axioms,lint}.log`). **D7 re-measurement post-E5** (tool re-run, dimensions updated): minimal promotions now 34/43/24/13/8 — essentially unchanged, confirming the deferral rationale; the split program remains the one internal-namespace proposal for E3-pack ride-along review. **The post-gate serial queue is complete** (D6 merged, D7 measured-deferred, E5 closed). Next: the E3 briefs | Decided |
+ | **Emitter spec layer landed** (2026-10-05, §11 approved — decisions 11.1 increment/scope, 11.2 sibling contract, 11.3 4A waits; §11a spec-phase refinements recorded). **Five sorried contracts**: `Turing.emit_run` (Wrappers — the forwarding dual of `capture_run`, same-tape-count host, halting emission forwarded), `Turing.FinTM.exists_emitLoopTM` (Loop — the emitting sibling of `exists_loopCfgTM`: clean-seam rounds ending at the output-updated canonical seam, conclusion = `ComputesFunInTime` of the chunk concatenation over `R+1` rounds at the loopFind envelope; no emission-size hypothesis — the seam equality self-bounds chunks), `computesFunInTime_splitSolveWith` (Primitives — width-parametric split search over a monotone-budget captured evaluator, `[]` on exhaustion, envelope `c(n+1)(TE(n+1)+n+2)`), `computesFunInTime_unaryToken`, `computesFunInTime_appendBit`. **Two real transformers** (`emitAction`/`emitCfg`) and **two pure vocabulary defs** (`solveSplitWith` — definitionally generalizes `solveSplit`; `unaryTokenSplit`). §11a narrowings: P17 subsumed (E2∘P2), P18 → the append atom (persistence is the loop state word), E4′ placed in Primitives (pairEncode import; the P15 engine/contract split). Verification: fresh 57/57 sweep zero errors, **18 admissions = 13 campaign + the 5 spec contracts exactly** (Wrappers 1 / Loop 1 / Primitives 3); full epoch-2 closure regression program PASS; Build lint 0 FAIL / 2 WARN (the standing size exceptions) — `audits/logs/emitter-spec-{sweep,axioms,lint}.log`. Next: the emitter-increment audit pack | Decided |
+ | **Emitter-increment audit pack prepared** (2026-10-05, `audits/emitter-infra-{pack,bundle}.md`, bundle SHA-256 `3f9d7fe76067e78272c3be86e8957256c8acb28adb31ac33418373a4f3ce6a77`, 14 attachments, 11,793 lines): the statements-first adversarial round over the five sorried contracts, two transformers, and two vocabulary defs, explicitly inviting the original infra gate's scrutiny (the round-1 `exists_loopTM` falseness and round-2 configuration-gap lessons are named). Priorities riskiest-first: `exists_emitLoopTM` (output-prefix commutation as a model fact; the no-emission-size-hypothesis self-bounding claim; round-count alignment incl. the find-mode exhaustion terminal; vacuity/information-flow transcription from the audited sibling; envelope; sketch feasibility), `emit_run` (same-tape-count dual transcription; forwarded halting emission; guard semantics; embedding composability), `splitSolveWith` (envelope truth under monotone `TE` alone; definitional recovery of `solveSplit`; edges), `unaryToken` conventions vs the three grammars, the §11a narrowings, and **customer fit now, not at fill time** (3B-cont's states 9–34 as an emitLoop instantiation; 4A per decision 11.3; 3A-cont's body as the splitSolveWith template). Maintainer attestations: append-only spec commit (1,467 insertions, zero deletions); 18 = 13 + 5 exactly; regression program PASS; lint 0 FAIL / 2 WARN. Epoch-3 REPORTs attached as frontier evidence, explicitly not audited material. Gate closes on zero blockers/majors; findings to `audits/emitter-infra-findings.md`; pack immutable once sent | Decided |
++| **Emitter round-1 findings + round-2 repairs** (2026-10-05, `audits/emitter-infra-findings.md`: **0 blockers, 2 majors, 3 minors** — no false statement among the five contracts; finding 6 independently re-derived the output-prefix commutation, the self-bounding-chunk claim, the round count, and a 10·(T+1)(R+2) forwarding-variant ledger). Majors were adequacy: (1) function contracts cannot deliver the loop seam (a witness may dirty scratch on its final transition) — repaired by **two new sorried bridge contracts** in `Loop.lean`, `exists_installCallTM`/`exists_emitCallTM` (canonical `ofWords`/`stateWord` entry AND exit seams, first-positive-visit discipline, envelope `c(T+|arg|+|f arg|+1)`; fill route = the A-continuation's proved log/undo pattern), plus the **3B normalization mapping** (§11b item 2: state word encodes cursor/consumed-prefix/phase; the permanent marker eliminated; absorbing finished phase; R = serialized length) and the **4A stage mapping** (§11b item 3: validation as a decision prefix before any irreversible emission; R = snapshot bound; ledger = sum of chunk lengths); (2) missing evidence — repaired by the r2 bundle's addendum (model definitions, phase-4 records, customer grammars incl. the full `satRedTM` table, both pinned spec-commit patches, the closure+lint programs, full-print regression log). Minors swept: the **unchanged-host sketch refuted and corrected** to the forwarding variant with a new prefix-summation lemma (the auditor's one-state witness acknowledged in the docstring); `unaryTokenSplit`'s marker overclaim corrected with the separating example; definition docs completed and attestation 4 restated precisely; P17's rule named (finite control or the emit call, never the private `constTM`). Verification: 57/57 zero errors, **20 = 13 + 7 admissions exactly**; regression with all 18 root prints PASS; lint 0 FAIL / 2 WARN (`audits/logs/emitter-r2-{sweep,axioms,lint}.log`). Round-2 pack prepared (`audits/emitter-infra-r2-{pack,bundle}.md`, 30 attachments) | Decided |
+diff --git a/TCSlib/Complexity/TuringMachine/Build/Convention.lean b/TCSlib/Complexity/TuringMachine/Build/Convention.lean
+index 225e62c0..0f046e6f 100644
+--- a/TCSlib/Complexity/TuringMachine/Build/Convention.lean
++++ b/TCSlib/Complexity/TuringMachine/Build/Convention.lean
+@@ -124,7 +124,9 @@ solution `i ≤ n` of the width-parametric split equation `i + f i = n`, or
+ `none` — the generalization of `Turing.solveSplit` from the hardwired
+ polynomial family to an arbitrary width function. At
+ `f = fun i => C * (i + 1) ^ e` this definitionally recovers
+-`solveSplit C e n`. -/
++`solveSplit C e n`. Customers: the 3A-continuation's exponential padding
++equation (through `computesFunInTime_splitSolveWith`) and later padding
++arguments. No machine content: `List.range` search, first match. -/
+ def solveSplitWith (f : ℕ → ℕ) (n : ℕ) : Option ℕ :=
+   (List.range (n + 1)).find? fun i => i + f i == n
+ 
+@@ -133,9 +135,16 @@ the leading unary token — the maximal `true`-prefix together with its
+ terminating `false` delimiter — returning the token and the remainder. A
+ word with no delimiter yields the whole word as an unterminated token with
+ empty remainder; the empty word yields two empty words; a leading `false`
+-is the length-zero token `[false]`. This is the shared atom of the
+-serialization grammars (unary indices with terminators); single-bit
+-markers are read by the same step at token length zero or one. -/
++is the length-zero token `[false]`. This operation consumes **unary
++tokens** — the shared atom of the serialization grammars (unary indices
++with terminators). It does not consume standalone single-bit markers or
++polarity bits: `unaryTokenSplit [true, false, true] =
++([true, false], [true])`, a terminated unary-one token, not a lone
++`true` marker — scanners handle markers and polarity by their own
++grammar states (emitter-infra round-1 audit, finding 4). Customers: the
++3B continuation's streaming scanner, the Cook-Levin emitter's index
++reads (4A), 4B's dual scanner. No machine content: structural recursion
++on the word. -/
+ def unaryTokenSplit : List Bool → List Bool × List Bool
+   | [] => ([], [])
+   | false :: rest => ([false], rest)
+diff --git a/TCSlib/Complexity/TuringMachine/Build/Loop.lean b/TCSlib/Complexity/TuringMachine/Build/Loop.lean
+index 0c87df41..515b027e 100644
+--- a/TCSlib/Complexity/TuringMachine/Build/Loop.lean
++++ b/TCSlib/Complexity/TuringMachine/Build/Loop.lean
+@@ -2713,13 +2713,19 @@ round equality itself bounds the chunk length by the round's duration
+ (output grows by at most one symbol per step), so no separate emission
+ bound is hypothesized.
+ 
+-**Construction sketch.** The find-mode `loopHost` is the engine: its
+-exhaustion terminal appends nothing, so with every round advancing, the
+-accumulated output survives to the halt. Re-derive the host contract
+-with the output-prefixed seam (runs commute with output prefixes — the
+-transition table never reads the output tape), and thread the
+-concatenation through `loop_run`'s summation template. The fuel counter,
+-startup, and countdown machinery are reused unchanged; they are silent. -/
++**Construction sketch** (corrected per the emitter-infra round-1 audit,
++finding 3: the unchanged find-mode host routes body actions through
++`captureAction`, whose physical output is always `none`, so captured
++chunks never reach the physical output — a one-state self-emitting body
++refutes the literal reuse). Build a **forwarding host variant**: the
++same skeleton with the body dispatched through `Turing.emitAction`
++(chunks land on the physical output), the fuel capture and silent
++countdown machinery reused as they stand. Its contracts are proved over
++configurations with arbitrary accumulated output (runs commute with
++output prefixes — the transition table never reads the output tape),
++and the concatenation is threaded through a **new** prefix-summation
++lemma modeled on `loop_run`; the frozen empty-output `loop_run` itself
++is not reusable for this. -/
+ theorem exists_emitLoopTM (body F : FinTM Bool) (anchor : body.State)
+     (Inv : List Bool → List Bool → Prop)
+     (stepF emitF : List Bool → List Bool → List Bool)
+@@ -2749,4 +2755,73 @@ theorem exists_emitLoopTM (body F : FinTM Bool) (anchor : body.State)
+         (fun n => c * (T n + 1) * (R n + 2)) := by
+   sorry
+ 
++/-- **E5a, the install-mode clean call** (spec, added at the emitter-infra
++round-1 repair — finding 1's prepared-input/clean-return bridge;
++customers: loop and emit-loop bodies calling a catalog transducer on
++their tape-resident data, in particular `computesFunInTime_splitSolveWith`'s
++evaluator rounds and 3B-cont's token/counter installs). A function-level
++contract says nothing about a witness's terminal heads or scratch — a
++machine may dirty a tape on its final transition and still compute `f`
++within `T` — so the bridge supplies what the function contract cannot:
++for any such witness, a **callable module** with designated entry and
++exit states whose entry and exit are both the canonical clean seam. From
++`Cfg.ofWords entry (stateWord C.k arg)` — the argument as the sole
++tape-resident word, every other tape blank, input head at one, empty
++output, over an **arbitrary, untouched** native input — the module
++reaches, at its first positive visit to `exit`, exactly
++`Cfg.ofWords exit (stateWord C.k (f arg))`: the result installed, all
++scratch restored, nothing emitted.
++
++**Construction sketch.** Prepare a virtual input from the tape-resident
++argument (the relocated-read discipline of the proved hosts); run the
++witness through the capture wrapper, **logged** — record overwritten
++symbols and head moves, the A-continuation's proved log/undo pattern —
++then undo, charging the whole visited region to the elapsed run;
++install the captured result on tape zero; erase the log; rewind. Every
++phase is charged to `T`, the argument length, or the result length. -/
++theorem exists_installCallTM (M : FinTM Bool) (f : List Bool → List Bool)
++    (T : ℕ → ℕ) (hM : M.ComputesFunInTime f T) :
++    ∃ (C : FinTM Bool) (entry exit : C.State) (c : ℕ),
++      ∀ (x arg : List Bool),
++        ∃ t ≤ c * (T arg.length + arg.length + (f arg).length + 1),
++          0 < t ∧
++          (∀ t', 0 < t' → t' < t →
++            (C.tm.runFrom
++              (Cfg.ofWords (input := x) entry (stateWord C.k arg)) t').state
++                ≠ some exit) ∧
++          C.tm.runFrom
++            (Cfg.ofWords (input := x) entry (stateWord C.k arg)) t =
++              Cfg.ofWords exit (stateWord C.k (f arg)) := by
++  sorry
++
++/-- **E5b, the emit-mode clean call** (spec, added at the emitter-infra
++round-1 repair — the forwarding half of finding 1's bridge; customers:
++`exists_emitLoopTM` bodies emitting per-round chunks computed by a
++catalog transducer — 3B-cont's clause fragments, 4A's clause groups).
++Identical seam discipline to the install call, but the computed word is
++**forwarded to the physical output** and the tape-resident argument is
++preserved: from `Cfg.ofWords entry (stateWord C.k arg)`, the module
++reaches, at its first positive visit to `exit`, exactly the entry seam
++with `exit` control and output `f arg` — argument intact, scratch
++restored, the chunk emitted.
++
++**Construction sketch.** As the install call, with the captured result
++replayed through `Turing.emitAction`-style forwarding and then erased,
++instead of installed; the argument word is never consumed. -/
++theorem exists_emitCallTM (M : FinTM Bool) (f : List Bool → List Bool)
++    (T : ℕ → ℕ) (hM : M.ComputesFunInTime f T) :
++    ∃ (C : FinTM Bool) (entry exit : C.State) (c : ℕ),
++      ∀ (x arg : List Bool),
++        ∃ t ≤ c * (T arg.length + arg.length + (f arg).length + 1),
++          0 < t ∧
++          (∀ t', 0 < t' → t' < t →
++            (C.tm.runFrom
++              (Cfg.ofWords (input := x) entry (stateWord C.k arg)) t').state
++                ≠ some exit) ∧
++          C.tm.runFrom
++            (Cfg.ofWords (input := x) entry (stateWord C.k arg)) t =
++              { Cfg.ofWords (input := x) exit (stateWord C.k arg)
++                  with output := f arg } := by
++  sorry
++
+ end Turing.FinTM
+diff --git a/TCSlib/Complexity/TuringMachine/Build/Wrappers.lean b/TCSlib/Complexity/TuringMachine/Build/Wrappers.lean
+index 708b8d20..4ac8d602 100644
+--- a/TCSlib/Complexity/TuringMachine/Build/Wrappers.lean
++++ b/TCSlib/Complexity/TuringMachine/Build/Wrappers.lean
+@@ -210,7 +210,10 @@ verbatim; the source's emission, **if any, is forwarded as the host's
+ physical emission** — including an emission on the halting transition; a
+ live source successor is embedded via `emb`, and a halting source action
+ transfers control to the designated live return state `ret`. This is what
+-lets a proved transducer serve as one emission stage of a larger host. -/
++lets a proved transducer serve as one emission stage of a larger host.
++Customers: the forwarding loop-host variant behind `exists_emitLoopTM`,
++and `exists_emitCallTM`'s module. Construction: a record map, no
++machine content. -/
+ def emitAction (emb : S → H) (ret : H) (a : Action k Bool S) :
+     Action k Bool H where
+   inputTape := a.inputTape
+@@ -222,7 +225,12 @@ def emitAction (emb : S → H) (ret : H) (a : Action k Bool S) :
+ configuration `c`, viewed inside the host — state embedded (a halted source
+ appears at the live return state `ret`), tapes, heads, and input position
+ verbatim, and the host's physical output equal to the host's prior output
+-`pre` followed by everything the source has emitted. -/
++`pre` followed by everything the source has emitted. It deliberately does
++**not** normalize the source's terminal tapes or heads: clean returns are
++the separate bridge contracts' job (`exists_installCallTM`,
++`exists_emitCallTM` — emitter-infra round-1 audit, finding 1). Customers:
++`emit_run`'s statement and the bridge fills. Construction: a record map,
++no machine content. -/
+ def emitCfg {input : List Bool} (emb : S → H) (ret : H)
+     (pre : List Bool) (c : Cfg k Bool S input) :
+     Cfg k Bool H input where
+diff --git a/audits/emitter-infra-findings.md b/audits/emitter-infra-findings.md
+new file mode 100644
+index 00000000..6852c82e
+--- /dev/null
++++ b/audits/emitter-infra-findings.md
+@@ -0,0 +1,234 @@
++**Gate: OPEN — 0 blockers, 2 majors, 3 minors.** No false statement among the five new contracts was found. Their mathematical realizations are credible under the machine semantics used by the attached, previously proved library. The advertised customer coverage is not yet established: the return-configuration interface needs an explicit resolution, and the mandatory phase-4 evidence is absent.
++
++Audited the supplied `emitter-infra-bundle.md`, SHA-256 `3f9d7fe76067e78272c3be86e8957256c8acb28adb31ac33418373a4f3ce6a77`. Its 14 attachment headers exactly match the manifest. References below use repository paths and declaration names; line numbers are within the extracted attachments. This is a statements/interface audit, not a proof fill or certification of the epoch-3 reports. No Lean or Lake executable was available, and the attachment set is not a buildable checkout. The pack and supplied sources were not modified.
++
++1. **MAJOR — The claimed customer reuse still lacks an interface that establishes the required return configuration.**
++
++   **Files/declarations:** `TCSlib/Complexity/TuringMachine/Build/Loop.lean`, `Turing.FinTM.exists_emitLoopTM` (2723); `Build/Wrappers.lean`, `Turing.emit_run` and `Turing.emitCfg` (249, 226); `Build/Primitives.lean`, `computesFunInTime_unaryToken` and `computesFunInTime_appendBit` (4459, 4475); `machine-library-design.md`, §11 E3′ and §11a items 1, 2, 4. Customer evidence: `audits/ch2-epoch3-agent-reports/batchB.md`, “Exact machine continuation frontier.”
++
++   The emitting loop demands a concrete body whose round ends with all of the following: live control at `anchor`, native input head at 1, state word on tape 0 with head 0, every other body tape completely blank with head 0, and precisely the declared chunk on the output. In contrast, the two primitive contracts constrain only halting time and completed output from the genuine initial configuration. They say nothing about the final input head or source work tapes.
++
++   The forwarding wrapper does not close this difference. Its conclusion preserves the source's actual terminal tapes and heads; it does not normalize them. In particular,
++
++   \[
++   \operatorname{emitCfg}(\mathrm{emb},\mathrm{ret},p,c).\mathrm{workTapes}
++      =c.\mathrm{workTapes},\qquad
++   \operatorname{emitCfg}(\mathrm{emb},\mathrm{ret},p,c).\mathrm{inputPos}
++      =c.\mathrm{inputPos}.
++   \]
++
++   This is a logical interface issue, not merely an unfilled proof. A machine satisfying either function contract may write `true` on an extra scratch tape and move that head on its final halting transition, without changing its output or asymptotic budget. It still satisfies the contract. Its `emitCfg` image fails the clean-return equation. Thus that equation cannot be inferred for a witness using only the advertised function contract and forwarding lemma.
++
++   There are two additional data-flow obligations. `emit_run` uses the same `input` for source and host; calling a primitive on the current state word rather than on the original input requires a virtual-input preparation. Also, `appendBit` produces `s ++ [b]` on output, whereas persistence requires installing that word on tape 0. Forwarding emits it physically. Capturing it instead requires a subsequent copy/install/erase/rewind stage. The loop engine preserves a correctly returned state word; it does not construct that return.
++
++   The supplied 3B frontier exhibits the mismatch concretely. `satRed_start` reaches state 9 with a permanent nonblank marker on the second tape at position −1. `Cfg.ofWords ... (stateWord 2 s)` requires the entire second tape to be blank. These configurations differ at that cell even before streaming begins. Cursor plus input position must also be encoded in the sole persistent word; the raw streaming input position cannot cross an `ofWords` seam. Later literal buffering adds another representation/cleanup obligation. This does **not** prove a normalized body impossible; it proves that the reported machine is not already the promised instantiation.
++
++   P17 has a related visibility limitation: `Composition.lean`'s `constTM` is private, and its public `computesFunInTime_const` theorem does not expose the no-movement configuration contract. The existing public emission-chain vocabulary may discharge this small case, but §11a should identify that actual rule, rather than claim that an arbitrary constant-function witness provides it. A fixed finite-control word is feasible; an unbounded tape-dependent chunk is a separate transducer obligation.
++
++   **Required resolution before the adequacy gate:** specify either a reusable prepared-input/clean-return bridge, or a concrete customer normalization construction with its full entry/exit contract. For 3B this must name the encoded cursor/position/control data, marker and buffer handling, positive first return, a polynomial round bound, and an absorbing finished state with empty later chunks. State how token output is decoded and how append output becomes the next state word. Ordinary proofs can follow at fill time; the interface and feasible construction cannot be deferred. No change to the mathematically sound function contracts is forced, and a configuration-level *conclusion for the outer emitter* alone would not repair this body-entry problem.
++
++2. **MAJOR — The “complete bundle” does not contain evidence needed for the required model and phase-4 customer checks.**
++
++   **Files/declarations:** the immutable audit pack, “Evidence separation,” priorities 1, 2, 4, 6, and its verification appendix; `machine-library-design.md` §11a item 4; `Turing.FinTM.exists_emitLoopTM`, `Turing.emit_run`, and the customer-use claims on `computesFunInTime_unaryToken`.
++
++   The manifest is arithmetically correct: there are 14 attachments. Its scope is insufficient for the promised audit. In particular, it omits the `audits/ch2-phase4-*` records containing the six-stage silence obligations and exact serialization ledger. It also omits the relevant Cook-Levin customer declarations and the CNF serialization/parser definitions. The 3B report describes its frontier but does not include `satRedTM`'s transition table; the 4B grammar is not supplied at all.
++
++   The two files labeled “model files” are `Finite.lean` and `Composition.lean`. They import, but do not define, `MultiTapeTM.step`, `Action.apply`, the configuration/input-boundary machinery, and the `leftAction`/`rightCfg` simulation vocabulary. Those definitions reside in omitted dependencies, including `Configuration.lean`, `Deterministic.lean`, and `Simulation.lean`. The attached proved lemmas give substantial evidence about their behavior, used in findings 6–9, but that is not the requested inspection of their actual definitions.
++
++   The claim “the final customer asks only for `PolyTimeComputable`, therefore a function-level emitter suffices” does not settle a possibly frozen intermediate stage contract. A function-level specification permits a machine to delay all output until its last phase; another machine can emit the same word earlier. Their final function and time bounds may agree while their stage configurations differ. Whether 4A requires those configurations, and how the exact ledger aligns with `R+1` rounds and the final serialization delimiter, cannot be decided from a reference to missing records.
++
++   **Required resolution:** attach a pinned evidence addendum with the phase-4 contracts/ledger, relevant customer grammar and source interfaces, and the omitted model/simulation definitions. Give a stage-to-library mapping, including all-string validation before irreversible emission, the logical round count, and serialization terminators. Preserve the sent pack and record this omission in the resolutions file. This finding does not assert that the unavailable 4A/4B constructions are wrong; it prevents their coverage from being certified now.
++
++3. **MINOR — The unchanged find-mode host is not an emitting-loop implementation.**
++
++   **File/declarations:** `TCSlib/Complexity/TuringMachine/Build/Loop.lean`, construction sketch of `exists_emitLoopTM` (2716), and `loopHost` (762; body dispatch at 779–781, exhaustion at 826–827).
++
++   `loopHost` calls the body through `captureAction`, whose physical output is always `none`. Only a genuine body halt dispatches to payload replay. An advancing body sets the false stop flag, takes the debit path, and eventually reaches a silent find-mode exhaustion. Output-prefix commutation preserves an existing physical prefix; it does not transfer the captured chunks to physical output.
++
++   A minimal witness satisfies all the new hypotheses: use a zero-work-tape body whose sole state is the start/anchor and whose one-step self-loop emits `true` without moving; let `Inv` be true, `s0 x = []`, `stepF x s = s`, `emitF x s = [true]`, `R n = 0`, and `T n = 1`. The fuel machine halts silently in one step, computing `Nat.bits 0 = []`. Startup has duration 0; each round has duration 1 and satisfies strict-interior anchor exclusion. The required concatenation is `[true]`. The existing find-mode host captures that bit, then underflows and halts with physical output `[]`.
++
++   This refutes the literal unchanged-host construction, **not the theorem**. A new host variant can forward the padded body actions with `emitAction`, leaving the fuel capture and silent countdown machinery intact. Its proofs must use configurations with arbitrary accumulated output. Alternatively, explicitly flush captured chunks with an accounted cost. Record the routing change in the sketch; re-proving a stronger contract for the unchanged host is impossible. Likewise, use a new prefix-summation lemma modeled on `loop_run`, not the frozen empty-output/Boolean `loop_run` itself.
++
++4. **MINOR — `unaryTokenSplit` does not consume an arbitrary single-bit marker.**
++
++   **File/declaration:** `TCSlib/Complexity/TuringMachine/Build/Convention.lean`, `Turing.unaryTokenSplit`, final docstring sentence (137–138); corresponding scanner use in `machine-library-design.md` §11 E3′.
++
++   Direct reduction gives
++
++   \[
++   \operatorname{unaryTokenSplit}[\mathrm{true},\mathrm{false},\mathrm{true}]
++     =([\mathrm{true},\mathrm{false}],[\mathrm{true}]).
++   \]
++
++   Consuming just the leading `true` marker would instead return `([true], [false,true])`. A unary value one has a two-bit terminated token `[true,false]`; it is not a single-bit `true` marker. A leading `false` is handled correctly as a one-bit zero token. State that this operation consumes unary tokens; identify separate grammar-state handling for standalone markers and polarity bits. The definition and its function-computation theorem remain true.
++
++5. **MINOR — Maintainer attestation 4 overstates the per-declaration documentation.**
++
++   **Files/declarations:** pack attestation 4; `Build/Convention.lean`, `solveSplitWith` and `unaryTokenSplit`; `Build/Wrappers.lean`, `emitAction` and `emitCfg`.
++
++   All nine new declarations have descriptive prose and the spec-phase designation. The five contracts have construction sketches and named customers. The four definitions do not each carry both an explicit construction sketch and named customers; for example, `solveSplitWith` describes the equation and specialization but names no customer. The literal “every new declaration” assertion is therefore too strong. Qualify it to the five contracts, or add the missing documentation. The supplied lint summary of 0 FAIL / 2 WARN is not contradicted by this finding.
++
++6. **NOTE — The emitting loop's clean-output premise, self-bounding emissions, invariant coverage, and round count survive the mathematical attacks.**
++
++   **File/declaration:** `TCSlib/Complexity/TuringMachine/Build/Loop.lean`, `Turing.FinTM.exists_emitLoopTM`. Supporting attached declarations: `loop_output_length_le`, `loop_orbit_inv`, `loop_fuel_width`, `loopHost_prepare`, and `loopHost_reject`. Definition-level evidence limitation: finding 2.
++
++   For a configuration `c`, write \(P_p(c)\) for the same configuration with output `p ++ c.output`. The transition semantics used by the attached proofs give
++
++   \[
++   (P_p(c)).\mathrm{inputSymbol}=c.\mathrm{inputSymbol},\quad
++   (P_p(c)).\mathrm{workTapeSymbols}=c.\mathrm{workTapeSymbols},\quad
++   (P_p(c)).\mathrm{state}=c.\mathrm{state}.
++   \]
++
++   In a live state the same transition is selected. Every non-output update is identical, including the input move: both executions have the same input word, input position, and move, so any boundary clamping has identical arguments. If the action emits the optional bit `a.output`, output associativity gives
++
++   \[
++   (p\mathbin{++}c.\mathrm{output})\mathbin{++}a.\mathrm{output.toList}
++    =p\mathbin{++}(c.\mathrm{output}\mathbin{++}a.\mathrm{output.toList}).
++   \]
++
++   In a halted state both steps are identities. Thus one-step commutation and induction on time give
++
++   \[
++   \mathrm{step}(P_p(c))=P_p(\mathrm{step}(c)),\qquad
++   \mathrm{runFrom}(P_p(c),t)=P_p(\mathrm{runFrom}(c,t)).
++   \]
++
++   Let \(s_i=(\mathrm{stepF}\ x)^{[i]}(\mathrm{s0}\ x)\), \(p_0=[]\), and \(p_{i+1}=p_i\mathbin{++}\mathrm{emitF}\ x\ s_i\). Induction from `hInv0` and `hInvStep` establishes `Inv x s_i` for every `i`, not merely the visited prefix. Applying `hround` and commutation takes the body seam with output \(p_i\) to the next seam with output \(p_{i+1}\). The empty-output hypotheses therefore do not require physically clearing accumulated output.
++
++   The attached arbitrary-configuration bound is already the needed one:
++
++   \[
++   |(\mathrm{runFrom}(c,t)).\mathrm{output}|
++      \le |c.\mathrm{output}|+t.
++   \]
++
++   At a clean seam this yields \(|\mathrm{emitF}\ x\ s|\le t\le T(|x|)\). It counts an emission on the action whose successor is halted; subsequent halted steps add nothing. Here the round endpoint itself is live, so an earlier halt is impossible by absorption. No additional emission-size premise is needed.
++
++   Positive duration excludes the historical zero-step advance. Strict-interior anchor exclusion makes the endpoint the first positive return, while permitting the starting anchor. Startup's exclusion includes time 0 when startup is positive; zero-time startup is harmless. An empty invariant cannot make the premises vacuous because of `hInv0`. A zero fuel-time bound is also impossible by `FinTM.not_computesInTime_zero`. For zero body tapes, the encoded state word disappears, but deterministic first-return behavior still forces the same chunk for indistinguishable admissible seams; arbitrary noncomputable state data cannot evade that constraint.
++
++   The counter begins with value `R |x|`, executes round 0 before debiting, and after round `i` continues exactly when `i < R |x|`. Round `R |x|` is executed before underflow. Hence the output indices are exactly `0,...,R |x|`, matching `List.range (R |x| + 1)`. At `R=0` there is one round, not zero. A customer with zero logical emission rounds must use an empty chunk or a separate zero-case branch.
++
++   The budget also fits a forwarding variant. Put \(n=|x|\) and \(L=|\mathrm{Nat.bits}(R(n))|\le T(n)\). The attached controller ledger bounds fuel preparation by \(5T(n)+7\); body startup plus its stop/release costs at most \(T(n)+2\). An advancing round, including its stop and debit/underflow terminal, costs at most
++
++   \[
++   T(n)+1+(2L+4)\le 3T(n)+5\le10(T(n)+1).
++   \]
++
++   Startup is at most \(6T(n)+9\le10(T(n)+1)\). Consequently
++
++   \[
++   \mathrm{total}\le10(T(n)+1)+(R(n)+1)10(T(n)+1)
++       =10(T(n)+1)(R(n)+2).
++   \]
++
++   This is an implementation ledger for the proposed forwarding variant, not a checked proof about the unchanged host. No hidden linear-in-input scan is needed: fuel rewind is charged to the actual fuel-run displacement, bounded by its time. Thus the statement does not silently require `T n ≥ n`.
++
++7. **NOTE — `emit_run`, `emitAction`, and `emitCfg` have the correct lockstep shape, including the halting emission.**
++
++   **File/declarations:** `TCSlib/Complexity/TuringMachine/Build/Wrappers.lean`, `Turing.emitAction`, `Turing.emitCfg`, `Turing.emit_run`.
++
++   The componentwise identity to prove is
++
++   \[
++   (\mathrm{emitAction}\ \mathrm{emb}\ \mathrm{ret}\ a).\mathrm{apply}
++      (\mathrm{emitCfg}\ \mathrm{emb}\ \mathrm{ret}\ p\ c)
++   =\mathrm{emitCfg}\ \mathrm{emb}\ \mathrm{ret}\ p\ (a.\mathrm{apply}\ c).
++   \]
++
++   State equality follows because both sides use `some ((a.state.map emb).getD ret)`; the input/work updates coincide; the output equality is append associativity. In particular, `a.state = none` does not discard `a.output = some b`: the bit is appended and control becomes `some ret` on that same action.
++
++   For a live source configuration, `hagree` converts this action identity into a step identity. At the induction step from time `u` to `u+1`, `hlive u` supplies precisely that liveness premise. At `t=0` the claimed run equation is reflexive, even if `c₀` is already halted. If `c₀` is halted and `t>0`, the guard is false at time 0. A source halting at time `t` is permitted; one that halted strictly earlier is excluded. A `ComputesFunInTime` upper bound must therefore first be cut to the actual first halt, rather than substituted blindly for `t`.
++
++   Neither injectivity of `emb` nor disjointness of `ret` is needed for this conditional equality: `hagree` supplies transition consistency, and the guarded interval never steps beyond the source halt. Customers can use disjoint finite control for convenient phase separation.
++
++   The same tape count is correct: forwarding needs no capture tape. To preserve unrelated host tapes, first pad/relocate the source with the existing block-embedding vocabulary, then apply the wrapper at the enlarged common tape count. This is compatible in shape with the attached uses of `leftCfg_run`/`rightCfg_run`; it does not supply the preparation and cleanup omitted in finding 1.
++
++8. **NOTE — `splitSolveWith` has the right least-solution semantics and time envelope; its exponential instantiation is suitable at function level.**
++
++   **Files/declarations:** `Build/Convention.lean`, `Turing.solveSplitWith`; `Build/Primitives.lean`, `Turing.FinTM.computesFunInTime_splitSolveWith`; `audits/ch2-epoch3-agent-reports/batchA.md`, `e3_exp_bits_timed` and the displayed body frontier.
++
++   For original input length \(n\), enumerate candidates \(i=0,\ldots,n\). Prepare a virtual input of exactly length \(i\), run `E` to its first halt with captured output, and compare the entire canonical word `Nat.bits (f i)` with `Nat.bits (n-i)`. Then
++
++   \[
++   i\le n\ \Longrightarrow
++   \Bigl[\mathrm{Nat.bits}(f(i))=\mathrm{Nat.bits}(n-i)
++      \iff f(i)=n-i\iff i+f(i)=n\Bigr].
++   \]
++
++   Candidate preparation, suffix counting, and payload production take linear time in the original input length, up to machine constants. Evaluation, output comparison, and cleaning the evaluator's visited region take a constant multiple of its actual running time plus the linear overhead. A clean implementation can track visited intervals on auxiliary tapes; their extent is bounded by the elapsed evaluator run, without computing `TE` as a clock. For some fixed construction constant \(K\), each live round therefore fits
++
++   \[
++   K(\mathrm{TE}(i)+n+2)
++      \le K(\mathrm{TE}(n+1)+n+2).
++   \]
++
++   Taking fuel `R n = n`, the loop envelope is a constant multiple of `(n+2)(TE(n+1)+n+2)`, hence of the stated `(n+1)(TE(n+1)+n+2)` because `n+2 ≤ 2(n+1)`. The length-`n+1` state can take a positive silent stall to close the invariant. Fuel computation and the final payload length `n+i+2 ≤ 2n+2` fit the same envelope.
++
++   **Crucial implementation restriction:** execute `E` on the actual length-`i` prepared word. A generic composition bound evaluating `TE` at an inflated preparation-time bound would not imply the stated estimate for arbitrary monotone `TE`. Likewise, restoring only `O(n)` cells is not enough for an arbitrary evaluator; charge its whole visited region to its run time. These are feasible construction obligations, not missing assumptions on `f`.
++
++   No monotonicity of `f` or `i+f i` is needed: search every candidate in order and stop only on equality. An oversized value at an early candidate does not license early failure. At `n=0`, there is one candidate. If `f 0=0`, both binary words are `[]` and the result is the nonempty `pairEncode [] []`; otherwise the result is `[]`. An empty captured binary word must be recognized through the evaluator's halt, not mistaken for failure.
++
++   Specialization is definitionally exact:
++
++   ```lean
++   solveSplitWith (fun i => C * (i + 1) ^ e) n = solveSplit C e n
++   -- rfl after unfolding the two definitions
++   ```
++
++   For the reported exponential evaluator, use \(f(i)=a\,2^{(i+1)^d}\) and \(\mathrm{TE}(m)=B(m+1)^{d+1}\). This budget is monotone. Since \(n+2\le2(n+1)\) and \(n+1\le(n+1)^{d+1}\), the new final bound is polynomial:
++
++   \[
++   \begin{aligned}
++   c(n+1)\bigl(B(n+2)^{d+1}+n+2\bigr)
++      &\le c(n+1)\bigl(B2^{d+1}(n+1)^{d+1}+2(n+1)^{d+1}\bigr)\\
++      &=c\bigl(B2^{d+1}+2\bigr)(n+1)^{d+2}.
++   \end{aligned}
++   \]
++
++   Thus the new theorem supplies the desired split *function* at a suitable budget, if its proof is filled. It does not itself produce the configuration-level body existential printed in the A report. The pack explicitly keeps that continuation bespoke and independent, so this distinction is not a new major against A. The harvest/template claim should retain that distinction; this audit does not certify the report's evaluator proofs.
++
++9. **NOTE — The unary-token and append-bit function statements are true at the stated linear scale, including empty inputs.**
++
++   **Files/declarations:** `Build/Convention.lean`, `unaryTokenSplit`; `Build/Primitives.lean`, `computesFunInTime_unaryToken`, `computesFunInTime_appendBit`.
++
++   The recursive token definition has the advertised unary conventions:
++
++   \[
++   \begin{aligned}
++   \mathrm{unaryTokenSplit}([])&=([],[]),\\
++   \mathrm{unaryTokenSplit}(\mathrm{false}::r)&=([\mathrm{false}],r),\\
++   \mathrm{unaryTokenSplit}(\mathrm{true}^m\mathbin{++}[\mathrm{false}]\mathbin{++}r)
++      &=(\mathrm{true}^m\mathbin{++}[\mathrm{false}],r),\\
++   \mathrm{unaryTokenSplit}(\mathrm{true}^m)&=(\mathrm{true}^m,[]).
++   \end{aligned}
++   \]
++
++   Here `true` raised to a natural number means list replication, not a Boolean arithmetic operation. In every case `tok ++ rest = x`. Using the pairing length stated in the pack and realized by the attached primitive code,
++
++   \[
++   |\mathrm{pairEncode}(\mathrm{tok},\mathrm{rest})|
++     =2|\mathrm{tok}|+2+|\mathrm{rest}|
++     =n+|\mathrm{tok}|+2\le2n+2.
++   \]
++
++   A finite-state transducer doubles each token bit, including a present terminating `false`, emits the pair separator, then copies the remainder. On an unterminated token it emits the separator at the boundary without inventing a token delimiter. An implementation using at most two steps per token bit, one per remainder bit, and three final/control steps fits `2n+3 ≤ 3(n+1)`. Empty input consequently causes no output-length obstruction.
++
++   For append-bit, copy each of the `n` input bits while moving right; on the right blank, emit `b` and halt. This takes `n+1` steps and outputs exactly `x ++ [b]`, including `x=[]`. Its input head is at the right boundary, illustrating why the true function statement does not also assert the clean return needed in finding 1.
++
++   Neither vocabulary addition changes `incFixed`'s overflow convention. The polynomial specialization of `solveSplitWith` introduces no coefficient shift; the historical shift concerns the separate `certificateSplit` comparison, not this definition.
++
++10. **NOTE — Four-attestation verification: numerical log claims confirmed; historical preservation and kernel-regression execution remain qualified.**
++
++    **Files:** pack attestations 1–4; `audits/logs/emitter-spec-{sweep,axioms,lint}.log`; `scripts/ab_ch1_module_order.txt`; the four attached `Build/` sources.
++
++    | Attestation | Result of this audit |
++    |---|---|
++    | 1. Commit `883ebc79`, 1,467 insertions, zero deletions, no pre-existing text changed | **Not independently verifiable from this bundle.** No parent snapshot, commit diff, or Git objects are attached. Current files cannot establish a historical no-deletion claim. No contradictory evidence found. Supply the pinned diff/baseline to verify it. |
++    | 2. Fresh 57/57 sweep, no errors, 18 admissions | **Printed counts verified.** Exactly 57 distinct `CHECK` entries occur, in the exact order of the 57-line module list; zero `error:` lines; 18 admission warnings; final `FULL_SWEEP_COMPLETE`. The warnings split as 13 outside Build plus Wrappers 1, Loop 1, Primitives 3. Comment-stripped source inspection finds exactly the five named new `sorry` sites in Build. A fresh output directory and actual execution against these bytes cannot be independently established from the text log. |
++    | 3. All epoch-2 expectations unchanged | **Reported outcome confirmed, independent closure verification unavailable.** The eight-line log states the closure pass and `lean exit: 0`; its two explicit root prints are `capture_run: []` and the expected self-root of `EXP_subset_NEXP`. It does not print the ten target inventories or include the closure program. Its provenance is `76b1aea001098e605d3391ff03346275f5652a35 + working-tree spec edits`, not the final spec-commit hash. This is consistent with a pre-commit run, but the checked-byte linkage and unchanged expectations remain maintainer attestations. |
++    | 4. Lint and documentation | **Lint summary confirmed:** 0 FAIL / 2 WARN, both Loop/Primitives size warnings, plus Wrappers' informational size message. §11 records the in-file/D7 rationale. The “every new declaration” documentation clause needs the qualification in finding 5; the actual D7 decision record and lint program are not attached. |
++
++    These limitations do not justify claiming a failed Lean sweep or a regression. They also do not justify describing all four attestations as independently verified. The gate remains open specifically on findings 1 and 2; findings 3–5 are separately actionable minor corrections.
++
++Notation: `++` is list concatenation; `[]` is the empty list; `|x|` is list length. `P_p(c)` prefixes configuration `c`'s output by the word `p`; `a` is an action in the wrapper/step equations. `s_i` is the iterated loop state and `p_i` the concatenation before round `i`; `n=|x|`, `t` and `u` are elapsed times, and `L` is fuel-bit length. In budget formulas, `K` and `c` are fixed construction constants. In the exponential specialization only, `a` is the width coefficient, `d` the degree, and `B` the evaluator's time coefficient. `m` is a natural length, `r` a remainder word, and `true^m` a list of `m` true bits. Other identifiers are the supplied Lean declarations or their parameters.
+diff --git a/audits/logs/emitter-r2-axioms.log b/audits/logs/emitter-r2-axioms.log
+new file mode 100644
+index 00000000..a15418ca
+--- /dev/null
++++ b/audits/logs/emitter-r2-axioms.log
+@@ -0,0 +1,23 @@
++Emitter round-2 repairs: full regression attestation
++HEAD: 5920721ff0224260a692a950fba8221c5eeda8cf + working-tree r2 repairs
++UTC: 2026-10-05T16:44:59Z
++ROOTS Complexity.NP_subset_EXP: []
++ROOTS Complexity.HALT_NPHard: []
++ROOTS Complexity.HALT_not_mem_NP: []
++ROOTS Complexity.ntime_poly_subset_NP: []
++ROOTS Complexity.NP_subset_iUnion_NTIME: []
++ROOTS Complexity.NP_eq_iUnion_NTIME: []
++ROOTS Complexity.mem_NP_iff_exists_length_le: []
++ROOTS Complexity.timeConstructible_poly: []
++ROOTS Complexity.timed_universal_quantitative: []
++ROOTS Complexity.TMSAT_mem_NP: []
++ROOTS Complexity.TMSAT_NPHard: []
++ROOTS Complexity.TMSAT_NPComplete: []
++ROOTS Turing.timed_universal: []
++ROOTS Turing.timed_universal_concrete: []
++ROOTS Turing.FinTM.exists_loopCfgTM: []
++ROOTS Turing.FinTM.computesFunInTime_splitSolve: []
++ROOTS Turing.capture_run: []
++ROOTS Complexity.EXP_subset_NEXP: [Complexity.EXP_subset_NEXP]
++B2 CLOSURE AUDIT PASS: all ten epoch-2 targets admission-free; Chapter-1 and library regressions unchanged; E3 statement layer at its own roots.
++lean exit: 0
+diff --git a/audits/logs/emitter-r2-lint.log b/audits/logs/emitter-r2-lint.log
+new file mode 100644
+index 00000000..b209c7ee
+--- /dev/null
++++ b/audits/logs/emitter-r2-lint.log
+@@ -0,0 +1,9 @@
++WARN  TCSlib/Complexity/TuringMachine/Build/Loop.lean        2827 lines > 1000: policy requires a split or a recorded justification (escalation/decision log)
++WARN  TCSlib/Complexity/TuringMachine/Build/Primitives.lean  4480 lines > 1000: policy requires a split or a recorded justification (escalation/decision log)
++INFO  TCSlib/Complexity/TuringMachine/Build/Convention.lean  155 lines; 8 public / 0 private declarations
++INFO  TCSlib/Complexity/TuringMachine/Build/Loop.lean        2827 lines; 8 public / 95 private declarations
++INFO  TCSlib/Complexity/TuringMachine/Build/Primitives.lean  4480 lines; 18 public / 167 private declarations
++INFO  TCSlib/Complexity/TuringMachine/Build/Wrappers.lean    705 lines > target 600
++INFO  TCSlib/Complexity/TuringMachine/Build/Wrappers.lean    705 lines; 10 public / 18 private declarations
++
++style_lint: 0 FAIL, 2 WARN over 4 files
+diff --git a/audits/logs/emitter-r2-sweep.log b/audits/logs/emitter-r2-sweep.log
+new file mode 100644
+index 00000000..431e9bbe
+--- /dev/null
++++ b/audits/logs/emitter-r2-sweep.log
+@@ -0,0 +1,1218 @@
++CHECK TCSlib/Complexity/TuringMachine/Configuration
++TCSlib/Complexity/TuringMachine/Configuration.lean:137:17: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
++
++Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
++TCSlib/Complexity/TuringMachine/Configuration.lean:140:61: warning: unused variable `h`
++
++Note: This linter can be disabled with `set_option linter.unusedVariables false`
++TCSlib/Complexity/TuringMachine/Configuration.lean:155:17: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
++
++Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
++CHECK TCSlib/Complexity/TuringMachine/Deterministic
++CHECK TCSlib/Complexity/TuringMachine/StateRenaming
++CHECK TCSlib/Complexity/TuringMachine/Finite
++CHECK TCSlib/Complexity/TuringMachine/Oracle
++CHECK TCSlib/Complexity/TuringMachine/Simulation
++CHECK TCSlib/Complexity/TuringMachine/Sweep
++CHECK TCSlib/Complexity/TuringMachine/Composition
++CHECK TCSlib/Complexity/TuringMachine/Build/Convention
++CHECK TCSlib/Complexity/TuringMachine/Build/Wrappers
++TCSlib/Complexity/TuringMachine/Build/Wrappers.lean:257:8: warning: declaration uses 'sorry'
++CHECK TCSlib/Complexity/TuringMachine/Build/Loop
++TCSlib/Complexity/TuringMachine/Build/Loop.lean:2729:8: warning: declaration uses 'sorry'
++TCSlib/Complexity/TuringMachine/Build/Loop.lean:2782:8: warning: declaration uses 'sorry'
++TCSlib/Complexity/TuringMachine/Build/Loop.lean:2811:8: warning: declaration uses 'sorry'
++CHECK TCSlib/Complexity/TuringMachine/Robustness/AlphabetReduction
++CHECK TCSlib/Complexity/TuringMachine/Robustness/SingleTape
++CHECK TCSlib/Complexity/TuringMachine/Robustness/Bidirectional
++CHECK TCSlib/Complexity/ClassP/DTIME
++CHECK TCSlib/Complexity/ClassP/TimeConstructible
++CHECK TCSlib/Complexity/TuringMachine/Robustness/ObliviousSchedule
++CHECK TCSlib/Complexity/TuringMachine/Robustness/ObliviousCandidate
++TCSlib/Complexity/TuringMachine/Robustness/ObliviousCandidate.lean:473:6: warning: try 'simp' instead of 'simpa'
++
++Note: This linter can be disabled with `set_option linter.unnecessarySimpa false`
++TCSlib/Complexity/TuringMachine/Robustness/ObliviousCandidate.lean:501:37: warning: This simp argument is unused:
++  hl
++
++Hint: Omit it from the simp argument list.
++  simp [inputTag, clippedMove, hl̵,̵ ̵h̵r]
++
++Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
++TCSlib/Complexity/TuringMachine/Robustness/ObliviousCandidate.lean:533:45: warning: This simp argument is unused:
++  hw
++
++Hint: Omit it from the simp argument list.
++  simp [h̵w̵,̵ ̵Cfg.workTapeSymbols]
++
++Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
++TCSlib/Complexity/TuringMachine/Robustness/ObliviousCandidate.lean:535:49: warning: This simp argument is unused:
++  hw
++
++Hint: Omit it from the simp argument list.
++  simp [hz, h̵w̵,̵ ̵Function.update_of_ne hn]
++
++Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
++TCSlib/Complexity/TuringMachine/Robustness/ObliviousCandidate.lean:535:53: warning: This simp argument is unused:
++  Function.update_of_ne hn
++
++Hint: Omit it from the simp argument list.
++  simp [hz, hw,̵ ̵F̵u̵n̵c̵t̵i̵o̵n̵.̵u̵p̵d̵a̵t̵e̵_̵o̵f̵_̵n̵e̵ ̵h̵n̵]
++
++Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
++TCSlib/Complexity/TuringMachine/Robustness/ObliviousCandidate.lean:614:44: warning: This simp argument is unused:
++  List.append_nil
++
++Hint: Omit it from the simp argument list.
++  simp only [payloadZone, List.reverse_cons, FinTM.sweepFold_append, he, ih, FinTM.sweepFold,
++  ̲  ̲ ̲ ̲ ̲ ̲p̵a̵y̵l̵o̵a̵d̵B̵a̵c̵k̵w̵a̵r̵d̵_̵r̵o̵w̵,̵ ̵L̵i̵s̵t̵.̵a̵p̵p̵e̵n̵d̵_̵n̵i̵l̵]̵p̲a̲y̲l̲o̲a̲d̲B̲a̲c̲k̲w̲a̲r̲d̲_̲r̲o̲w̲]̲
++
++Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
++TCSlib/Complexity/TuringMachine/Robustness/ObliviousCandidate.lean:764:27: warning: This simp argument is unused:
++  act
++
++Hint: Omit it from the simp argument list.
++  simp only [a̵c̵t̵,̵ ̵Option.map_none]
++
++Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
++TCSlib/Complexity/TuringMachine/Robustness/ObliviousCandidate.lean:768:21: warning: This simp argument is unused:
++  act
++
++Hint: Omit it from the simp argument list.
++  simp only [a̵c̵t̵,̵ ̵Option.map_some, Function.update_self]
++
++Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
++TCSlib/Complexity/TuringMachine/Robustness/ObliviousCandidate.lean:769:21: warning: This simp argument is unused:
++  act
++
++Hint: Omit it from the simp argument list.
++  simp only [a̵c̵t̵,̵ ̵Option.map_some, Function.update_of_ne hz]
++
++Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
++TCSlib/Complexity/TuringMachine/Robustness/ObliviousCandidate.lean:774:29: warning: This simp argument is unused:
++  act
++
++Hint: Omit it from the simp argument list.
++  simp only [a̵c̵t̵,̵ ̵Option.toList_none, List.append_nil]
++
++Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
++TCSlib/Complexity/TuringMachine/Robustness/ObliviousCandidate.lean:776:21: warning: This simp argument is unused:
++  act
++
++Hint: Omit it from the simp argument list.
++  simp only [a̵c̵t̵,̵ ̵Option.toList_some, clockTape_append]
++
++Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
++TCSlib/Complexity/TuringMachine/Robustness/ObliviousCandidate.lean:784:65: warning: This simp argument is unused:
++  ho
++
++Hint: Omit it from the simp argument list.
++  simp [act, List.length_append,̵ ̵h̵o̵]
++
++Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
++TCSlib/Complexity/TuringMachine/Robustness/ObliviousCandidate.lean:784:73: warning: this tactic is never executed
++
++Note: This linter can be disabled with `set_option linter.unreachableTactic false`
++TCSlib/Complexity/TuringMachine/Robustness/ObliviousCandidate.lean:784:73: warning: 'omega' tactic does nothing
++
++Note: This linter can be disabled with `set_option linter.unusedTactic false`
++TCSlib/Complexity/TuringMachine/Robustness/ObliviousCandidate.lean:881:25: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
++
++Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
++CHECK TCSlib/Complexity/TuringMachine/Robustness/ObliviousSetup
++TCSlib/Complexity/TuringMachine/Robustness/ObliviousSetup.lean:191:25: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
++
++Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
++TCSlib/Complexity/TuringMachine/Robustness/ObliviousSetup.lean:217:4: warning: This simp argument is unused:
++  SignType.coe_neg_one
++
++Hint: Omit it from the simp argument list.
++  simp only [setupWrite, moveInputPos_zero, SignType.coe_zero, add_zero, S̵i̵g̵n̵T̵y̵p̵e̵.̵c̵o̵e̵_̵n̵e̵g̵_̵o̵n̵e̵,̵ ̵zero_add]
++
++Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
++TCSlib/Complexity/TuringMachine/Robustness/ObliviousSetup.lean:249:56: warning: This simp argument is unused:
++  SignType.coe_one
++
++Hint: Omit it from the simp argument list.
++  simp only [setupWrite, SignType.coe_zero, add_zero, S̵i̵g̵n̵T̵y̵p̵e̵.̵c̵o̵e̵_̵o̵n̵e̵,̵ ̵copyGuide_next]
++
++Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
++TCSlib/Complexity/TuringMachine/Robustness/ObliviousSetup.lean:313:64: warning: this tactic is never executed
++
++Note: This linter can be disabled with `set_option linter.unreachableTactic false`
++TCSlib/Complexity/TuringMachine/Robustness/ObliviousSetup.lean:313:23: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
++
++Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
++TCSlib/Complexity/TuringMachine/Robustness/ObliviousSetup.lean:313:35: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
++
++Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
++TCSlib/Complexity/TuringMachine/Robustness/ObliviousSetup.lean:313:64: warning: 'omega' tactic does nothing
++
++Note: This linter can be disabled with `set_option linter.unusedTactic false`
++TCSlib/Complexity/TuringMachine/Robustness/ObliviousSetup.lean:405:16: warning: this tactic is never executed
++
++Note: This linter can be disabled with `set_option linter.unreachableTactic false`
++TCSlib/Complexity/TuringMachine/Robustness/ObliviousSetup.lean:405:41: warning: this tactic is never executed
++
++Note: This linter can be disabled with `set_option linter.unreachableTactic false`
++TCSlib/Complexity/TuringMachine/Robustness/ObliviousSetup.lean:405:16: warning: 'simp [SignType.cast]' tactic does nothing
++
++Note: This linter can be disabled with `set_option linter.unusedTactic false`
++TCSlib/Complexity/TuringMachine/Robustness/ObliviousSetup.lean:405:41: warning: 'omega' tactic does nothing
++
++Note: This linter can be disabled with `set_option linter.unusedTactic false`
++Try this:
++  [apply] ring_nf
++  
++  The `ring` tactic failed to close the goal. Use `ring_nf` to obtain a normal form.
++    
++  Note that `ring` works primarily in *commutative* rings. If you have a noncommutative ring, abelian group or module, consider using `noncomm_ring`, `abel` or `module` instead.
++TCSlib/Complexity/TuringMachine/Robustness/ObliviousSetup.lean:600:25: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
++
++Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
++TCSlib/Complexity/TuringMachine/Robustness/ObliviousSetup.lean:686:26: warning: This simp argument is unused:
++  hg
++
++Hint: Omit it from the simp argument list.
++  simp_all ̵[̵h̵g̵]̵
++
++Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
++TCSlib/Complexity/TuringMachine/Robustness/ObliviousSetup.lean:731:38: warning: This simp argument is unused:
++  layoutPhase
++
++Hint: Omit it from the simp argument list.
++  simp [layoutP̵h̵a̵s̵e̵,̵ ̵l̵a̵y̵o̵u̵t̵Move, hi]
++
++Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
++TCSlib/Complexity/TuringMachine/Robustness/ObliviousSetup.lean:747:36: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
++
++Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
++TCSlib/Complexity/TuringMachine/Robustness/ObliviousSetup.lean:747:48: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
++
++Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
++TCSlib/Complexity/TuringMachine/Robustness/ObliviousSetup.lean:756:32: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
++
++Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
++TCSlib/Complexity/TuringMachine/Robustness/ObliviousSetup.lean:778:15: warning: This simp argument is unused:
++  Fin.val_mk
++
++Hint: Omit it from the simp argument list.
++  simp only [F̵i̵n̵.̵v̵a̵l̵_̵m̵k̵,̵ ̵Nat.cast_add, Nat.cast_one]
++
++Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
++TCSlib/Complexity/TuringMachine/Robustness/ObliviousSetup.lean:778:27: warning: This simp argument is unused:
++  Nat.cast_add
++
++Hint: Omit it from the simp argument list.
++  simp only [Fin.val_mk, Nat.cast_a̵d̵d̵,̵ ̵N̵a̵t̵.̵c̵a̵s̵t̵_̵one]
++
++Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
++TCSlib/Complexity/TuringMachine/Robustness/ObliviousSetup.lean:778:41: warning: This simp argument is unused:
++  Nat.cast_one
++
++Hint: Omit it from the simp argument list.
++  simp only [Fin.val_mk, Nat.cast_add,̵ ̵N̵a̵t̵.̵c̵a̵s̵t̵_̵o̵n̵e̵]
++
++Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
++TCSlib/Complexity/TuringMachine/Robustness/ObliviousSetup.lean:879:17: warning: This simp argument is unused:
++  Fin.val_mk
++
++Hint: Omit it from the simp argument list.
++  simp only [F̵i̵n̵.̵v̵a̵l̵_̵m̵k̵,̵ ̵Nat.cast_add, Nat.cast_one]
++
++Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
++TCSlib/Complexity/TuringMachine/Robustness/ObliviousSetup.lean:879:29: warning: This simp argument is unused:
++  Nat.cast_add
++
++Hint: Omit it from the simp argument list.
++  simp only [Fin.val_mk, Nat.cast_a̵d̵d̵,̵ ̵N̵a̵t̵.̵c̵a̵s̵t̵_̵one]
++
++Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
++TCSlib/Complexity/TuringMachine/Robustness/ObliviousSetup.lean:879:43: warning: This simp argument is unused:
++  Nat.cast_one
++
++Hint: Omit it from the simp argument list.
++  simp only [Fin.val_mk, Nat.cast_add,̵ ̵N̵a̵t̵.̵c̵a̵s̵t̵_̵o̵n̵e̵]
++
++Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
++CHECK TCSlib/Complexity/TuringMachine/Robustness/ObliviousLedger
++CHECK TCSlib/Complexity/TuringMachine/Robustness/Oblivious
++TCSlib/Complexity/TuringMachine/Robustness/Oblivious.lean:182:25: warning: This simp argument is unused:
++  hc
++
++Hint: Omit it from the simp argument list.
++  simp only [hfirst,̵ ̵h̵c̵]
++
++Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
++TCSlib/Complexity/TuringMachine/Robustness/Oblivious.lean:240:19: warning: This simp argument is unused:
++  hd
++
++Hint: Omit it from the simp argument list.
++  simp only [h̵d̵,̵ ̵SignType.cast, add_zero, ← sub_eq_add_neg, hleft', hc]
++
++Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
++TCSlib/Complexity/TuringMachine/Robustness/Oblivious.lean:379:26: warning: This simp argument is unused:
++  hw
++
++Hint: Omit it from the simp argument list.
++  simp [setupWrite, h̵w̵,̵ ̵Function.update_of_ne hz, h, hz]
++
++Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
++TCSlib/Complexity/TuringMachine/Robustness/Oblivious.lean:379:30: warning: This simp argument is unused:
++  Function.update_of_ne hz
++
++Hint: Omit it from the simp argument list.
++  simp [setupWrite, hw, F̵u̵n̵c̵t̵i̵o̵n̵.̵u̵p̵d̵a̵t̵e̵_̵o̵f̵_̵n̵e̵ ̵h̵z̵,̵ ̵h, hz]
++
++Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
++TCSlib/Complexity/TuringMachine/Robustness/Oblivious.lean:737:38: warning: try 'simp' instead of 'simpa'
++
++Note: This linter can be disabled with `set_option linter.unnecessarySimpa false`
++TCSlib/Complexity/TuringMachine/Robustness/Oblivious.lean:743:6: warning: try 'simp' instead of 'simpa'
++
++Note: This linter can be disabled with `set_option linter.unnecessarySimpa false`
++TCSlib/Complexity/TuringMachine/Robustness/Oblivious.lean:756:24: warning: try 'simp' instead of 'simpa'
++
++Note: This linter can be disabled with `set_option linter.unnecessarySimpa false`
++TCSlib/Complexity/TuringMachine/Robustness/Oblivious.lean:756:24: warning: try 'simp' instead of 'simpa'
++
++Note: This linter can be disabled with `set_option linter.unnecessarySimpa false`
++TCSlib/Complexity/TuringMachine/Robustness/Oblivious.lean:695:64: warning: This simp argument is unused:
++  Fin.reduceFinMk
++
++Hint: Omit it from the simp argument list.
++  simp only [prepInvariant, Action.apply, Fin.addCases_right, Fin.r̵e̵d̵u̵c̵e̵F̵i̵n̵M̵k̵,̵ ̵F̵i̵n̵.̵val_one, Nat.one_ne_zero,
++  ̲  ̲ ̲ ̲ ̲ ̲show (2 : ℕ) ≠ 0 by decide, ↓reduceIte,
++  ̵  ̵ ̵ ̵ ̵ ̵SignType.coe_zero, add_zero]
++
++Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
++TCSlib/Complexity/TuringMachine/Robustness/Oblivious.lean:695:111: warning: This simp argument is unused:
++  show (2 : ℕ) ≠ 0 by decide
++
++Hint: Omit it from the simp argument list.
++  simp only [prepInvariant, Action.apply, Fin.addCases_right, Fin.reduceFinMk, Fin.val_one,
++  ̲  ̲ ̲ ̲ ̲ ̲Nat.one_ne_zero, s̵h̵o̵w̵ ̵(̵2̵ ̵:̵ ̵ℕ̵)̵ ̵≠̵ ̵0̵ ̵b̵y̵ ̵d̵e̵c̵i̵d̵e̵,̵ ̵↓reduceIte, SignType.coe_zero, add_zero]
++
++Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
++TCSlib/Complexity/TuringMachine/Robustness/Oblivious.lean:725:52: warning: This simp argument is unused:
++  hi
++
++Hint: Omit it from the simp argument list.
++  simp only [obliviousSchedule, obliviousVisit, h̵i̵,̵ ̵setupWrite, Option.toList_none, List.append_nil]
++
++Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
++TCSlib/Complexity/TuringMachine/Robustness/Oblivious.lean:729:52: warning: This simp argument is unused:
++  hi
++
++Hint: Omit it from the simp argument list.
++  simp only [obliviousSchedule, obliviousVisit, h̵i̵,̵ ̵setupWrite, Option.toList_none, List.append_nil]
++
++Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
++CHECK TCSlib/Complexity/ClassP/P
++CHECK TCSlib/Complexity/ClassP/ModelInvariance
++CHECK TCSlib/Complexity/ClassP/Examples
++CHECK TCSlib/Complexity/TuringMachine/Encoding
++CHECK TCSlib/Complexity/TuringMachine/Build/Primitives
++TCSlib/Complexity/TuringMachine/Build/Primitives.lean:2491:42: warning: 'omega' tactic does nothing
++
++Note: This linter can be disabled with `set_option linter.unusedTactic false`
++TCSlib/Complexity/TuringMachine/Build/Primitives.lean:2497:72: warning: 'omega' tactic does nothing
++
++Note: This linter can be disabled with `set_option linter.unusedTactic false`
++TCSlib/Complexity/TuringMachine/Build/Primitives.lean:2491:42: warning: this tactic is never executed
++
++Note: This linter can be disabled with `set_option linter.unreachableTactic false`
++TCSlib/Complexity/TuringMachine/Build/Primitives.lean:2497:72: warning: this tactic is never executed
++
++Note: This linter can be disabled with `set_option linter.unreachableTactic false`
++TCSlib/Complexity/TuringMachine/Build/Primitives.lean:2489:82: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
++
++Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
++TCSlib/Complexity/TuringMachine/Build/Primitives.lean:2519:72: warning: 'omega' tactic does nothing
++
++Note: This linter can be disabled with `set_option linter.unusedTactic false`
++TCSlib/Complexity/TuringMachine/Build/Primitives.lean:2519:72: warning: this tactic is never executed
++
++Note: This linter can be disabled with `set_option linter.unreachableTactic false`
++TCSlib/Complexity/TuringMachine/Build/Primitives.lean:2507:38: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
++
++Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
++TCSlib/Complexity/TuringMachine/Build/Primitives.lean:2511:38: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
++
++Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
++TCSlib/Complexity/TuringMachine/Build/Primitives.lean:2569:29: warning: This simp argument is unused:
++  List.append_nil
++
++Hint: Omit it from the simp argument list.
++  simp only [↓reduceIte,̵ ̵L̵i̵s̵t̵.̵a̵p̵p̵e̵n̵d̵_̵n̵i̵l̵]
++
++Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
++TCSlib/Complexity/TuringMachine/Build/Primitives.lean:2532:42: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
++
++Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
++TCSlib/Complexity/TuringMachine/Build/Primitives.lean:2537:42: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
++
++Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
++TCSlib/Complexity/TuringMachine/Build/Primitives.lean:2540:42: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
++
++Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
++TCSlib/Complexity/TuringMachine/Build/Primitives.lean:2579:46: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
++
++Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
++TCSlib/Complexity/TuringMachine/Build/Primitives.lean:2603:43: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
++
++Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
++TCSlib/Complexity/TuringMachine/Build/Primitives.lean:2926:25: warning: 'omega' tactic does nothing
++
++Note: This linter can be disabled with `set_option linter.unusedTactic false`
++TCSlib/Complexity/TuringMachine/Build/Primitives.lean:2926:25: warning: this tactic is never executed
++
++Note: This linter can be disabled with `set_option linter.unreachableTactic false`
++TCSlib/Complexity/TuringMachine/Build/Primitives.lean:3025:59: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
++
++Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
++TCSlib/Complexity/TuringMachine/Build/Primitives.lean:3173:34: warning: This simp argument is unused:
++  splitRestoreScan
++
++Hint: Omit it from the simp argument list.
++  simp [Action.apply,̵ ̵s̵p̵l̵i̵t̵R̵e̵s̵t̵o̵r̵e̵S̵c̵a̵n̵]
++
++Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
++TCSlib/Complexity/TuringMachine/Build/Primitives.lean:3203:79: warning: 'omega' tactic does nothing
++
++Note: This linter can be disabled with `set_option linter.unusedTactic false`
++TCSlib/Complexity/TuringMachine/Build/Primitives.lean:3203:79: warning: this tactic is never executed
++
++Note: This linter can be disabled with `set_option linter.unreachableTactic false`
++TCSlib/Complexity/TuringMachine/Build/Primitives.lean:3266:6: warning: try 'simp' instead of 'simpa'
++
++Note: This linter can be disabled with `set_option linter.unnecessarySimpa false`
++TCSlib/Complexity/TuringMachine/Build/Primitives.lean:3311:52: warning: This simp argument is unused:
++  Nat.cast_one
++
++Hint: Omit it from the simp argument list.
++  simp only [List.length_nil, Nat.zero_add, N̵a̵t̵.̵c̵a̵s̵t̵_̵o̵n̵e̵,̵ ̵Fin.ext_iff, Fin.val_one] at h₁
++
++Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
++TCSlib/Complexity/TuringMachine/Build/Primitives.lean:3311:66: warning: This simp argument is unused:
++  Fin.ext_iff
++
++Hint: Omit it from the simp argument list.
++  simp only [List.length_nil, Nat.zero_add, Nat.cast_one, Fin.e̵x̵t̵_̵i̵f̵f̵,̵ ̵F̵i̵n̵.̵val_one] at h₁
++
++Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
++TCSlib/Complexity/TuringMachine/Build/Primitives.lean:3311:79: warning: This simp argument is unused:
++  Fin.val_one
++
++Hint: Omit it from the simp argument list.
++  simp only [List.length_nil, Nat.zero_add, Nat.cast_one, Fin.ext_iff,̵ ̵F̵i̵n̵.̵v̵a̵l̵_̵o̵n̵e̵] at h₁
++
++Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
++TCSlib/Complexity/TuringMachine/Build/Primitives.lean:3351:20: warning: This simp argument is unused:
++  MultiTapeTM.step
++
++Hint: Omit it from the simp argument list.
++  simp [M̵u̵l̵t̵i̵T̵a̵p̵e̵T̵M̵.̵s̵t̵e̵p̵,̵ ̵catalogPolyUnaryTM, Action.apply, catalogPolyCfg]
++
++Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
++TCSlib/Complexity/TuringMachine/Build/Primitives.lean:3351:38: warning: This simp argument is unused:
++  catalogPolyUnaryTM
++
++Hint: Omit it from the simp argument list.
++  simp [MultiTapeTM.step, c̵a̵t̵a̵l̵o̵g̵P̵o̵l̵y̵U̵n̵a̵r̵y̵T̵M̵,̵ ̵Action.apply, catalogPolyCfg]
++
++Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
++TCSlib/Complexity/TuringMachine/Build/Primitives.lean:3351:72: warning: This simp argument is unused:
++  catalogPolyCfg
++
++Hint: Omit it from the simp argument list.
++  simp [MultiTapeTM.step, catalogPolyUnaryTM, Action.apply,̵ ̵c̵a̵t̵a̵l̵o̵g̵P̵o̵l̵y̵C̵f̵g̵]
++
++Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
++TCSlib/Complexity/TuringMachine/Build/Primitives.lean:3352:10: warning: This simp argument is unused:
++  MultiTapeTM.step
++
++Hint: Omit it from the simp argument list.
++  simp [M̵u̵l̵t̵i̵T̵a̵p̵e̵T̵M̵.̵s̵t̵e̵p̵,̵ ̵catalogPolyUnaryTM, Action.apply, catalogPolyCfg]
++
++Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
++TCSlib/Complexity/TuringMachine/Build/Primitives.lean:3352:28: warning: This simp argument is unused:
++  catalogPolyUnaryTM
++
++Hint: Omit it from the simp argument list.
++  simp [MultiTapeTM.step, c̵a̵t̵a̵l̵o̵g̵P̵o̵l̵y̵U̵n̵a̵r̵y̵T̵M̵,̵ ̵Action.apply, catalogPolyCfg]
++
++Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
++TCSlib/Complexity/TuringMachine/Build/Primitives.lean:3352:62: warning: This simp argument is unused:
++  catalogPolyCfg
++
++Hint: Omit it from the simp argument list.
++  simp [MultiTapeTM.step, catalogPolyUnaryTM, Action.apply,̵ ̵c̵a̵t̵a̵l̵o̵g̵P̵o̵l̵y̵C̵f̵g̵]
++
++Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
++TCSlib/Complexity/TuringMachine/Build/Primitives.lean:3399:23: warning: This simp argument is unused:
++  Prod.mk.injEq
++
++Hint: Omit it from the simp argument list.
++  simp only [ht0, MultiTapeTM.runFrom_zero, splitRestoreScan, Cfg.ofWords,
++      Option.some.injEq,̵ ̵P̵r̵o̵d̵.̵m̵k̵.̵i̵n̵j̵E̵q̵] at hstate
++
++Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
++TCSlib/Complexity/TuringMachine/Build/Primitives.lean:4438:8: warning: declaration uses 'sorry'
++TCSlib/Complexity/TuringMachine/Build/Primitives.lean:4459:8: warning: declaration uses 'sorry'
++TCSlib/Complexity/TuringMachine/Build/Primitives.lean:4475:8: warning: declaration uses 'sorry'
++CHECK TCSlib/Complexity/TuringMachine/CodeParser
++TCSlib/Complexity/TuringMachine/CodeParser.lean:339:13: warning: This simp argument is unused:
++  codeBitsNat_bits
++
++Hint: Omit it from the simp argument list.
++  simp only [c̵o̵d̵e̵B̵i̵t̵s̵N̵a̵t̵_̵b̵i̵t̵s̵,̵ ̵List.append_assoc, codeReadFin_append, bind, Option.bind,
++  ̵  ̵ ̵ ̵codeReadTable_append,
++  ̲  ̲ ̲ ̲List.all_replicate, id_eq, Bool.true_eq, or_true,
++  ̵  ̵ ̵ ̵ite_self, ↓reduceIte, pure]
++
++Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
++TCSlib/Complexity/TuringMachine/CodeParser.lean:339:70: warning: This simp argument is unused:
++  bind
++
++Hint: Omit it from the simp argument list.
++  simp only [codeBitsNat_bits, List.append_assoc, codeReadFin_append, b̵i̵n̵d̵,̵ ̵Option.bind,
++      codeReadTable_append, List.all_replicate, id_eq, Bool.true_eq, or_true,
++  ̵  ̵ ̵ ̵ite_self, ↓reduceIte,
++  ̲  ̲ ̲ ̲pure]
++
++Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
++TCSlib/Complexity/TuringMachine/CodeParser.lean:339:76: warning: This simp argument is unused:
++  Option.bind
++
++Hint: Omit it from the simp argument list.
++  simp only [codeBitsNat_bits, List.append_assoc, codeReadFin_append, bind, O̵p̵t̵i̵o̵n̵.̵b̵i̵n̵d̵,̵
++  ̵ ̵ ̵ ̵ ̵codeReadTable_append,
++  ̲  ̲ ̲ ̲List.all_replicate, id_eq, Bool.true_eq, or_true,
++  ̵  ̵ ̵ ̵ite_self, ↓reduceIte, pure]
++
++Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
++TCSlib/Complexity/TuringMachine/CodeParser.lean:340:53: warning: This simp argument is unused:
++  Bool.true_eq
++
++Hint: Omit it from the simp argument list.
++  simp only [codeBitsNat_bits, List.append_assoc, codeReadFin_append, bind, Option.bind,
++      codeReadTable_append, List.all_replicate, id_eq, B̵oo̵l̵.̵t̵ru̵e̵_e̵q̵,̵ ̵o̵r̵_̵true,
++  ̵  ̵ ̵ ̵ite_self, ↓reduceIte, pure]
++
++Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
++TCSlib/Complexity/TuringMachine/CodeParser.lean:340:67: warning: This simp argument is unused:
++  or_true
++
++Hint: Omit it from the simp argument list.
++  simp only [codeBitsNat_bits, List.append_assoc, codeReadFin_append, bind, Option.bind,
++      codeReadTable_append, List.all_replicate, id_eq, Bool.true_eq, o̵r̵_̵t̵r̵u̵e̵,̵
++  ̵ ̵ ̵ ̵ ̵ite_self, ↓reduceIte, pure]
++
++Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
++TCSlib/Complexity/TuringMachine/CodeParser.lean:420:43: warning: This simp argument is unused:
++  h₁
++
++Hint: Omit it from the simp argument list.
++  simp [pairDecode, h₁̵,̵ ̵h̵₂, h₃] at h
++
++Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
++TCSlib/Complexity/TuringMachine/CodeParser.lean:420:47: warning: This simp argument is unused:
++  h₂
++
++Hint: Omit it from the simp argument list.
++  simp [pairDecode, h₁, h₂̵,̵ ̵h̵₃] at h
++
++Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
++TCSlib/Complexity/TuringMachine/CodeParser.lean:420:51: warning: This simp argument is unused:
++  h₃
++
++Hint: Omit it from the simp argument list.
++  simp [pairDecode, h₁, h₂,̵ ̵h̵₃̵] at h
++
++Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
++CHECK TCSlib/Complexity/TuringMachine/MathlibBridge
++TCSlib/Complexity/TuringMachine/MathlibBridge.lean:448:8: warning: This simp argument is unused:
++  Function.update_self
++
++Hint: Omit it from the simp argument list.
++  simp only [Action.apply, bridgeOne, bridgeCfg, ↓reduceIte, bridgeKey_index, F̵u̵n̵c̵t̵i̵o̵n̵.̵u̵p̵d̵a̵t̵e̵_̵s̵e̵l̵f̵,̵ ̵hs]
++
++Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
++TCSlib/Complexity/TuringMachine/MathlibBridge.lean:454:12: warning: This simp argument is unused:
++  Action.apply_workTapes
++
++Hint: Omit it from the simp argument list.
++  simp [A̵c̵t̵i̵o̵n̵.̵a̵p̵p̵l̵y̵_̵w̵o̵r̵k̵T̵a̵p̵e̵s̵,̵ ̵bridgeOne, bridgeCfg, hi, hk]
++
++Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
++TCSlib/Complexity/TuringMachine/MathlibBridge.lean:459:8: warning: This simp argument is unused:
++  Function.update_self
++
++Hint: Omit it from the simp argument list.
++  simp only [Action.apply, bridgeOne, bridgeCfg, ↓reduceIte, bridgeKey_index, F̵u̵n̵c̵t̵i̵o̵n̵.̵u̵p̵d̵a̵t̵e̵_̵s̵e̵l̵f̵,̵ ̵hs,
++  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲SignType.pos_eq_one, SignType.coe_one, List.length_cons, Nat.cast_add, Nat.cast_one]
++
++Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
++TCSlib/Complexity/TuringMachine/MathlibBridge.lean:484:8: warning: This simp argument is unused:
++  Function.update_self
++
++Hint: Omit it from the simp argument list.
++  simp only [Action.apply, bridgeOne, bridgeCfg, ↓reduceIte, bridgeKey_index,
++          F̵u̵n̵c̵t̵i̵o̵n̵.̵u̵p̵d̵a̵t̵e̵_̵s̵e̵l̵f̵,̵ ̵SignType.neg_eq_neg_one, SignType.coe_neg_one]
++
++Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
++TCSlib/Complexity/TuringMachine/MathlibBridge.lean:490:12: warning: This simp argument is unused:
++  Action.apply_workTapes
++
++Hint: Omit it from the simp argument list.
++  simp [A̵c̵t̵i̵o̵n̵.̵a̵p̵p̵l̵y̵_̵w̵o̵r̵k̵T̵a̵p̵e̵s̵,̵ ̵bridgeOne, bridgeCfg, hi, hk]
++
++Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
++TCSlib/Complexity/TuringMachine/MathlibBridge.lean:495:8: warning: This simp argument is unused:
++  Function.update_self
++
++Hint: Omit it from the simp argument list.
++  simp only [Action.apply, bridgeOne, bridgeCfg, ↓reduceIte, bridgeKey_index,
++          F̵u̵n̵c̵t̵i̵o̵n̵.̵u̵p̵d̵a̵t̵e̵_̵s̵e̵l̵f̵,̵ ̵SignType.neg_eq_neg_one, SignType.coe_neg_one, SignType.zero_eq_zero, SignType.coe_zero,
++  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲List.length_cons, Nat.cast_add, Nat.cast_one]
++
++Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
++TCSlib/Complexity/TuringMachine/MathlibBridge.lean:496:50: warning: This simp argument is unused:
++  List.length_cons
++
++Hint: Omit it from the simp argument list.
++  simp only [Action.apply, bridgeOne, bridgeCfg, ↓reduceIte, bridgeKey_index,
++          Function.update_self, SignType.neg_eq_neg_one, SignType.coe_neg_one, SignType.zero_eq_zero,
++  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲SignType.coe_zero, L̵i̵s̵t̵.̵l̵e̵n̵g̵t̵h̵_̵c̵o̵n̵s̵,̵ ̵Nat.cast_add, Nat.cast_one]
++
++Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
++TCSlib/Complexity/TuringMachine/MathlibBridge.lean:496:68: warning: This simp argument is unused:
++  Nat.cast_add
++
++Hint: Omit it from the simp argument list.
++  simp only [Action.apply, bridgeOne, bridgeCfg, ↓reduceIte, bridgeKey_index,
++          Function.update_self, SignType.neg_eq_neg_one, SignType.coe_neg_one, SignType.zero_eq_zero,
++  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲SignType.coe_zero, List.length_cons, N̵a̵t̵.̵c̵a̵s̵t̵_̵a̵d̵d̵,̵ ̵Nat.cast_one]
++
++Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
++TCSlib/Complexity/TuringMachine/MathlibBridge.lean:496:82: warning: This simp argument is unused:
++  Nat.cast_one
++
++Hint: Omit it from the simp argument list.
++  simp only [Action.apply, bridgeOne, bridgeCfg, ↓reduceIte, bridgeKey_index,
++          Function.update_self, SignType.neg_eq_neg_one, SignType.coe_neg_one, SignType.zero_eq_zero,
++  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲SignType.coe_zero, List.length_cons, N̵a̵t̵.̵c̵a̵s̵t̵_̵a̵d̵d̵,̵ ̵N̵a̵t̵.̵c̵a̵s̵t̵_̵o̵n̵e̵]̵N̲a̲t̲.̲c̲a̲s̲t̲_̲a̲d̲d̲]̲
++
++Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
++TCSlib/Complexity/TuringMachine/MathlibBridge.lean:719:32: warning: This simp argument is unused:
++  Num.cast_zero
++
++Hint: Omit it from the simp argument list.
++  simp only [Num.to_of_nat,̵ ̵N̵u̵m̵.̵c̵a̵s̵t̵_̵z̵e̵r̵o̵] at hz
++
++Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
++TCSlib/Complexity/TuringMachine/MathlibBridge.lean:821:75: warning: This simp argument is unused:
++  hk
++
++Hint: Omit it from the simp argument list.
++  simp [bridgeStore, PartrecToTM2.K'.elim, hi, hk̵,̵ ̵h̵] at *
++
++Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
++TCSlib/Complexity/TuringMachine/MathlibBridge.lean:869:15: warning: This simp argument is unused:
++  Action.apply
++
++Hint: Omit it from the simp argument list.
++  simp only [̵A̵c̵t̵i̵o̵n̵.̵a̵p̵p̵l̵y̵,̵ ̵b̵r̵i̵d̵g̵e̵C̵f̵g̵,̵[̲b̲r̲i̲d̲g̲e̲C̲f̲g̲,̲ bridgeOne, SignType.zero_eq_zero, moveInputPos_zero]
++
++Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
++TCSlib/Complexity/TuringMachine/MathlibBridge.lean:869:40: warning: This simp argument is unused:
++  bridgeOne
++
++Hint: Omit it from the simp argument list.
++  simp only [Action.apply, bridgeCfg, b̵r̵i̵d̵g̵e̵O̵n̵e̵,̵ ̵SignType.zero_eq_zero, moveInputPos_zero]
++
++Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
++TCSlib/Complexity/TuringMachine/MathlibBridge.lean:878:41: warning: This simp argument is unused:
++  SignType.coe_zero
++
++Hint: Omit it from the simp argument list.
++  simp only [bridgeCfg, bridgeStore_at, ↓reduceIte, List.length_nil, Nat.cast_zero, neg_zero,
++  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲SignType.zero_eq_zero, S̵i̵g̵n̵T̵y̵p̵e̵.̵c̵o̵e̵_̵z̵e̵r̵o̵,̵ ̵SignType.neg_eq_neg_one, SignType.coe_neg_one, zero_add]
++
++Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
++CHECK TCSlib/Complexity/TuringMachine/UniversalStartup
++TCSlib/Complexity/TuringMachine/UniversalStartup.lean:160:54: warning: This simp argument is unused:
++  Fin.val_mk
++
++Hint: Omit it from the simp argument list.
++  simp only ̵[̵F̵i̵n̵.̵v̵a̵l̵_̵m̵k̵]̵
++
++Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
++TCSlib/Complexity/TuringMachine/UniversalStartup.lean:164:54: warning: This simp argument is unused:
++  Fin.val_mk
++
++Hint: Omit it from the simp argument list.
++  simp only ̵[̵F̵i̵n̵.̵v̵a̵l̵_̵m̵k̵]̵
++
++Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
++TCSlib/Complexity/TuringMachine/UniversalStartup.lean:190:52: warning: This simp argument is unused:
++  Fin.val_mk
++
++Hint: Omit it from the simp argument list.
++  simp only ̵[̵F̵i̵n̵.̵v̵a̵l̵_̵m̵k̵]̵
++
++Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
++TCSlib/Complexity/TuringMachine/UniversalStartup.lean:197:54: warning: This simp argument is unused:
++  Fin.val_mk
++
++Hint: Omit it from the simp argument list.
++  simp only ̵[̵F̵i̵n̵.̵v̵a̵l̵_̵m̵k̵]̵
++
++Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
++TCSlib/Complexity/TuringMachine/UniversalStartup.lean:215:52: warning: This simp argument is unused:
++  Fin.val_mk
++
++Hint: Omit it from the simp argument list.
++  simp only ̵[̵F̵i̵n̵.̵v̵a̵l̵_̵m̵k̵]̵
++
++Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
++TCSlib/Complexity/TuringMachine/UniversalStartup.lean:274:46: warning: This simp argument is unused:
++  VirtualTag
++
++Hint: Omit it from the simp argument list.
++  simp_all ̵[̵V̵i̵r̵t̵u̵a̵l̵T̵a̵g̵]̵
++
++Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
++CHECK TCSlib/Complexity/TuringMachine/UniversalInterpreter
++TCSlib/Complexity/TuringMachine/UniversalInterpreter.lean:330:15: warning: try 'simp' instead of 'simpa'
++
++Note: This linter can be disabled with `set_option linter.unnecessarySimpa false`
++TCSlib/Complexity/TuringMachine/UniversalInterpreter.lean:353:6: warning: try 'simp' instead of 'simpa'
++
++Note: This linter can be disabled with `set_option linter.unnecessarySimpa false`
++TCSlib/Complexity/TuringMachine/UniversalInterpreter.lean:378:83: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
++
++Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
++TCSlib/Complexity/TuringMachine/UniversalInterpreter.lean:439:60: warning: This simp argument is unused:
++  zero_add
++
++Hint: Omit it from the simp argument list.
++  simp only [universalStateWindow, Nat.cast_zero, add_zero,̵ ̵z̵e̵r̵o̵_̵a̵d̵d̵]
++
++Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
++TCSlib/Complexity/TuringMachine/UniversalInterpreter.lean:503:15: warning: try 'simp' instead of 'simpa'
++
++Note: This linter can be disabled with `set_option linter.unnecessarySimpa false`
++TCSlib/Complexity/TuringMachine/UniversalInterpreter.lean:510:15: warning: try 'simp' instead of 'simpa'
++
++Note: This linter can be disabled with `set_option linter.unnecessarySimpa false`
++TCSlib/Complexity/TuringMachine/UniversalInterpreter.lean:519:71: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
++
++Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
++TCSlib/Complexity/TuringMachine/UniversalInterpreter.lean:519:83: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
++
++Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
++TCSlib/Complexity/TuringMachine/UniversalInterpreter.lean:546:15: warning: try 'simp' instead of 'simpa'
++
++Note: This linter can be disabled with `set_option linter.unnecessarySimpa false`
++TCSlib/Complexity/TuringMachine/UniversalInterpreter.lean:553:15: warning: try 'simp' instead of 'simpa'
++
++Note: This linter can be disabled with `set_option linter.unnecessarySimpa false`
++TCSlib/Complexity/TuringMachine/UniversalInterpreter.lean:563:39: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
++
++Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
++TCSlib/Complexity/TuringMachine/UniversalInterpreter.lean:1020:75: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
++
++Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
++TCSlib/Complexity/TuringMachine/UniversalInterpreter.lean:1021:16: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
++
++Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
++TCSlib/Complexity/TuringMachine/UniversalInterpreter.lean:1021:28: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
++
++Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
++CHECK TCSlib/Complexity/TuringMachine/UniversalBlock
++TCSlib/Complexity/TuringMachine/UniversalBlock.lean:68:15: warning: try 'simp' instead of 'simpa'
++
++Note: This linter can be disabled with `set_option linter.unnecessarySimpa false`
++TCSlib/Complexity/TuringMachine/UniversalBlock.lean:83:15: warning: try 'simp' instead of 'simpa'
++
++Note: This linter can be disabled with `set_option linter.unnecessarySimpa false`
++TCSlib/Complexity/TuringMachine/UniversalBlock.lean:62:10: warning: unused variable `h`
++
++Note: This linter can be disabled with `set_option linter.unusedVariables false`
++TCSlib/Complexity/TuringMachine/UniversalBlock.lean:79:64: warning: This simp argument is unused:
++  universalSkipDone
++
++Hint: Omit it from the simp argument list.
++  simp [universalInterpreter, universalFour, hr, h, hz,̵ ̵u̵n̵i̵v̵e̵r̵s̵a̵l̵S̵k̵i̵p̵D̵o̵n̵e̵]
++
++Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
++TCSlib/Complexity/TuringMachine/UniversalBlock.lean:93:50: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
++
++Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
++TCSlib/Complexity/TuringMachine/UniversalBlock.lean:93:62: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
++
++Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
++TCSlib/Complexity/TuringMachine/UniversalBlock.lean:108:10: warning: unused variable `h`
++
++Note: This linter can be disabled with `set_option linter.unusedVariables false`
++TCSlib/Complexity/TuringMachine/UniversalBlock.lean:164:53: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
++
++Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
++TCSlib/Complexity/TuringMachine/UniversalBlock.lean:164:65: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
++
++Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
++TCSlib/Complexity/TuringMachine/UniversalBlock.lean:185:50: warning: This simp argument is unused:
++  Nat.add_zero
++
++Hint: Omit it from the simp argument list.
++  simp only [List.length_nil, List.flatMap_nil, Nat.a̵d̵d̵_̵zero,̵ ̵N̵a̵t̵.̵z̵e̵r̵o̵_add,
++  ̵  ̵ ̵ ̵ ̵ ̵Nat.cast_zero, add_zero,
++  ̲  ̲ ̲ ̲ ̲ ̲MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
++
++Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
++TCSlib/Complexity/TuringMachine/UniversalBlock.lean:244:40: warning: try 'simp' instead of 'simpa'
++
++Note: This linter can be disabled with `set_option linter.unnecessarySimpa false`
++TCSlib/Complexity/TuringMachine/UniversalBlock.lean:271:40: warning: try 'simp' instead of 'simpa'
++
++Note: This linter can be disabled with `set_option linter.unnecessarySimpa false`
++TCSlib/Complexity/TuringMachine/UniversalBlock.lean:289:6: warning: this tactic is never executed
++
++Note: This linter can be disabled with `set_option linter.unreachableTactic false`
++TCSlib/Complexity/TuringMachine/UniversalBlock.lean:289:61: warning: this tactic is never executed
++
++Note: This linter can be disabled with `set_option linter.unreachableTactic false`
++TCSlib/Complexity/TuringMachine/UniversalBlock.lean:289:73: warning: this tactic is never executed
++
++Note: This linter can be disabled with `set_option linter.unreachableTactic false`
++TCSlib/Complexity/TuringMachine/UniversalBlock.lean:289:6: warning: 'simp only [Fin.val_mk, Nat.cast_add, Nat.cast_one]' tactic does nothing
++
++Note: This linter can be disabled with `set_option linter.unusedTactic false`
++TCSlib/Complexity/TuringMachine/UniversalBlock.lean:289:61: warning: 'congr 1' tactic does nothing
++
++Note: This linter can be disabled with `set_option linter.unusedTactic false`
++TCSlib/Complexity/TuringMachine/UniversalBlock.lean:289:73: warning: 'omega' tactic does nothing
++
++Note: This linter can be disabled with `set_option linter.unusedTactic false`
++TCSlib/Complexity/TuringMachine/UniversalBlock.lean:313:15: warning: try 'simp' instead of 'simpa'
++
++Note: This linter can be disabled with `set_option linter.unnecessarySimpa false`
++TCSlib/Complexity/TuringMachine/UniversalBlock.lean:321:15: warning: try 'simp' instead of 'simpa'
++
++Note: This linter can be disabled with `set_option linter.unnecessarySimpa false`
++TCSlib/Complexity/TuringMachine/UniversalBlock.lean:426:40: warning: try 'simp' instead of 'simpa'
++
++Note: This linter can be disabled with `set_option linter.unnecessarySimpa false`
++TCSlib/Complexity/TuringMachine/UniversalBlock.lean:574:68: warning: This simp argument is unused:
++  Fin.val_mk
++
++Hint: Omit it from the simp argument list.
++  simp only ̵[̵F̵i̵n̵.̵v̵a̵l̵_̵m̵k̵]̵
++
++Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
++CHECK TCSlib/Complexity/TuringMachine/Universal
++TCSlib/Complexity/TuringMachine/Universal.lean:314:15: warning: try 'simp' instead of 'simpa'
++
++Note: This linter can be disabled with `set_option linter.unnecessarySimpa false`
++TCSlib/Complexity/TuringMachine/Universal.lean:337:6: warning: try 'simp' instead of 'simpa'
++
++Note: This linter can be disabled with `set_option linter.unnecessarySimpa false`
++TCSlib/Complexity/TuringMachine/Universal.lean:362:83: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
++
++Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
++TCSlib/Complexity/TuringMachine/Universal.lean:427:15: warning: try 'simp' instead of 'simpa'
++
++Note: This linter can be disabled with `set_option linter.unnecessarySimpa false`
++TCSlib/Complexity/TuringMachine/Universal.lean:434:15: warning: try 'simp' instead of 'simpa'
++
++Note: This linter can be disabled with `set_option linter.unnecessarySimpa false`
++TCSlib/Complexity/TuringMachine/Universal.lean:443:71: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
++
++Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
++TCSlib/Complexity/TuringMachine/Universal.lean:443:83: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
++
++Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
++TCSlib/Complexity/TuringMachine/Universal.lean:470:15: warning: try 'simp' instead of 'simpa'
++
++Note: This linter can be disabled with `set_option linter.unnecessarySimpa false`
++TCSlib/Complexity/TuringMachine/Universal.lean:477:15: warning: try 'simp' instead of 'simpa'
++
++Note: This linter can be disabled with `set_option linter.unnecessarySimpa false`
++TCSlib/Complexity/TuringMachine/Universal.lean:487:39: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
++
++Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
++TCSlib/Complexity/TuringMachine/Universal.lean:621:75: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
++
++Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
++TCSlib/Complexity/TuringMachine/Universal.lean:622:16: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
++
++Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
++TCSlib/Complexity/TuringMachine/Universal.lean:622:28: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
++
++Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
++TCSlib/Complexity/TuringMachine/Universal.lean:644:15: warning: try 'simp' instead of 'simpa'
++
++Note: This linter can be disabled with `set_option linter.unnecessarySimpa false`
++TCSlib/Complexity/TuringMachine/Universal.lean:659:15: warning: try 'simp' instead of 'simpa'
++
++Note: This linter can be disabled with `set_option linter.unnecessarySimpa false`
++TCSlib/Complexity/TuringMachine/Universal.lean:638:10: warning: unused variable `h`
++
++Note: This linter can be disabled with `set_option linter.unusedVariables false`
++TCSlib/Complexity/TuringMachine/Universal.lean:655:85: warning: This simp argument is unused:
++  universalSkipDone
++
++Hint: Omit it from the simp argument list.
++  simp [timedCutInterpreter, universalInterpreter, universalFour, hr, h, hz,̵ ̵u̵n̵i̵v̵e̵r̵s̵a̵l̵S̵k̵i̵p̵D̵o̵n̵e̵]
++
++Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
++TCSlib/Complexity/TuringMachine/Universal.lean:669:50: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
++
++Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
++TCSlib/Complexity/TuringMachine/Universal.lean:669:62: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
++
++Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
++TCSlib/Complexity/TuringMachine/Universal.lean:684:10: warning: unused variable `h`
++
++Note: This linter can be disabled with `set_option linter.unusedVariables false`
++TCSlib/Complexity/TuringMachine/Universal.lean:740:53: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
++
++Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
++TCSlib/Complexity/TuringMachine/Universal.lean:740:65: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
++
++Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
++TCSlib/Complexity/TuringMachine/Universal.lean:761:50: warning: This simp argument is unused:
++  Nat.add_zero
++
++Hint: Omit it from the simp argument list.
++  simp only [List.length_nil, List.flatMap_nil, Nat.a̵d̵d̵_̵zero,̵ ̵N̵a̵t̵.̵z̵e̵r̵o̵_add,
++  ̵  ̵ ̵ ̵ ̵ ̵Nat.cast_zero, add_zero,
++  ̲  ̲ ̲ ̲ ̲ ̲MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
++
++Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
++TCSlib/Complexity/TuringMachine/Universal.lean:820:40: warning: try 'simp' instead of 'simpa'
++
++Note: This linter can be disabled with `set_option linter.unnecessarySimpa false`
++TCSlib/Complexity/TuringMachine/Universal.lean:847:40: warning: try 'simp' instead of 'simpa'
++
++Note: This linter can be disabled with `set_option linter.unnecessarySimpa false`
++TCSlib/Complexity/TuringMachine/Universal.lean:865:6: warning: this tactic is never executed
++
++Note: This linter can be disabled with `set_option linter.unreachableTactic false`
++TCSlib/Complexity/TuringMachine/Universal.lean:865:61: warning: this tactic is never executed
++
++Note: This linter can be disabled with `set_option linter.unreachableTactic false`
++TCSlib/Complexity/TuringMachine/Universal.lean:865:73: warning: this tactic is never executed
++
++Note: This linter can be disabled with `set_option linter.unreachableTactic false`
++TCSlib/Complexity/TuringMachine/Universal.lean:865:6: warning: 'simp only [Fin.val_mk, Nat.cast_add, Nat.cast_one]' tactic does nothing
++
++Note: This linter can be disabled with `set_option linter.unusedTactic false`
++TCSlib/Complexity/TuringMachine/Universal.lean:865:61: warning: 'congr 1' tactic does nothing
++
++Note: This linter can be disabled with `set_option linter.unusedTactic false`
++TCSlib/Complexity/TuringMachine/Universal.lean:865:73: warning: 'omega' tactic does nothing
++
++Note: This linter can be disabled with `set_option linter.unusedTactic false`
++TCSlib/Complexity/TuringMachine/Universal.lean:889:15: warning: try 'simp' instead of 'simpa'
++
++Note: This linter can be disabled with `set_option linter.unnecessarySimpa false`
++TCSlib/Complexity/TuringMachine/Universal.lean:897:15: warning: try 'simp' instead of 'simpa'
++
++Note: This linter can be disabled with `set_option linter.unnecessarySimpa false`
++TCSlib/Complexity/TuringMachine/Universal.lean:1006:40: warning: try 'simp' instead of 'simpa'
++
++Note: This linter can be disabled with `set_option linter.unnecessarySimpa false`
++TCSlib/Complexity/TuringMachine/Universal.lean:1106:68: warning: This simp argument is unused:
++  Fin.val_mk
++
++Hint: Omit it from the simp argument list.
++  simp only ̵[̵F̵i̵n̵.̵v̵a̵l̵_̵m̵k̵]̵
++
++Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
++TCSlib/Complexity/TuringMachine/Universal.lean:1484:16: warning: this tactic is never executed
++
++Note: This linter can be disabled with `set_option linter.unreachableTactic false`
++TCSlib/Complexity/TuringMachine/Universal.lean:1484:34: warning: this tactic is never executed
++
++Note: This linter can be disabled with `set_option linter.unreachableTactic false`
++TCSlib/Complexity/TuringMachine/Universal.lean:1484:61: warning: this tactic is never executed
++
++Note: This linter can be disabled with `set_option linter.unreachableTactic false`
++TCSlib/Complexity/TuringMachine/Universal.lean:1484:16: warning: 'apply Fin.ext' tactic does nothing
++
++Note: This linter can be disabled with `set_option linter.unusedTactic false`
++TCSlib/Complexity/TuringMachine/Universal.lean:1484:34: warning: 'simp only [Fin.val_mk]' tactic does nothing
++
++Note: This linter can be disabled with `set_option linter.unusedTactic false`
++TCSlib/Complexity/TuringMachine/Universal.lean:1484:61: warning: 'omega' tactic does nothing
++
++Note: This linter can be disabled with `set_option linter.unusedTactic false`
++TCSlib/Complexity/TuringMachine/Universal.lean:1578:30: warning: This simp argument is unused:
++  Nat.reduceAdd
++
++Hint: Omit it from the simp argument list.
++  simp only [Nat.add_assoc,̵ ̵N̵a̵t̵.̵r̵e̵d̵u̵c̵e̵A̵d̵d̵]
++
++Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
++TCSlib/Complexity/TuringMachine/Universal.lean:1583:16: warning: this tactic is never executed
++
++Note: This linter can be disabled with `set_option linter.unreachableTactic false`
++TCSlib/Complexity/TuringMachine/Universal.lean:1583:34: warning: this tactic is never executed
++
++Note: This linter can be disabled with `set_option linter.unreachableTactic false`
++TCSlib/Complexity/TuringMachine/Universal.lean:1583:61: warning: this tactic is never executed
++
++Note: This linter can be disabled with `set_option linter.unreachableTactic false`
++TCSlib/Complexity/TuringMachine/Universal.lean:1583:16: warning: 'apply Fin.ext' tactic does nothing
++
++Note: This linter can be disabled with `set_option linter.unusedTactic false`
++TCSlib/Complexity/TuringMachine/Universal.lean:1583:34: warning: 'simp only [Fin.val_mk]' tactic does nothing
++
++Note: This linter can be disabled with `set_option linter.unusedTactic false`
++TCSlib/Complexity/TuringMachine/Universal.lean:1583:61: warning: 'omega' tactic does nothing
++
++Note: This linter can be disabled with `set_option linter.unusedTactic false`
++TCSlib/Complexity/TuringMachine/Universal.lean:1606:28: warning: This simp argument is unused:
++  Nat.reduceAdd
++
++Hint: Omit it from the simp argument list.
++  simp only [Nat.add_assoc,̵ ̵N̵a̵t̵.̵r̵e̵d̵u̵c̵e̵A̵d̵d̵]
++
++Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
++TCSlib/Complexity/TuringMachine/Universal.lean:1608:43: warning: This simp argument is unused:
++  Fin.val_mk
++
++Hint: Omit it from the simp argument list.
++  simp only ̵[̵F̵i̵n̵.̵v̵a̵l̵_̵m̵k̵]̵
++
++Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
++TCSlib/Complexity/TuringMachine/Universal.lean:1608:10: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
++
++Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
++TCSlib/Complexity/TuringMachine/Universal.lean:1608:28: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
++
++Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
++TCSlib/Complexity/TuringMachine/Universal.lean:1608:55: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
++
++Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
++TCSlib/Complexity/TuringMachine/Universal.lean:2278:46: warning: This simp argument is unused:
++  VirtualTag
++
++Hint: Omit it from the simp argument list.
++  simp_all ̵[̵V̵i̵r̵t̵u̵a̵l̵T̵a̵g̵]̵
++
++Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
++CHECK TCSlib/Complexity/Uncomputability/Computable
++CHECK TCSlib/Complexity/Uncomputability/Diagonalization
++CHECK TCSlib/Complexity/Uncomputability/Halting
++CHECK TCSlib/Complexity/TuringMachine/Nondeterministic
++CHECK TCSlib/Complexity/Formulas/CNF
++CHECK TCSlib/Complexity/Formulas/CNFEncoding
++CHECK TCSlib/Complexity/Formulas/DNF
++CHECK TCSlib/Complexity/ClassNP/PolyTime
++CHECK TCSlib/Complexity/ClassNP/NP
++CHECK TCSlib/Complexity/ClassNP/CoNP
++CHECK TCSlib/Complexity/ClassNP/EXP
++TCSlib/Complexity/ClassNP/EXP.lean:2531:8: warning: declaration uses 'sorry'
++CHECK TCSlib/Complexity/ClassNP/Reductions
++CHECK TCSlib/Complexity/ClassNP/NTIME
++TCSlib/Complexity/ClassNP/NTIME.lean:215:8: warning: `Set.eq_empty_iff_forall_not_mem` has been deprecated: Use `Set.eq_empty_iff_forall_notMem` instead
++CHECK TCSlib/Complexity/ClassNP/Nondeterminism
++TCSlib/Complexity/ClassNP/Nondeterminism.lean:2902:8: warning: declaration uses 'sorry'
++TCSlib/Complexity/ClassNP/Nondeterminism.lean:2957:8: warning: declaration uses 'sorry'
++TCSlib/Complexity/ClassNP/Nondeterminism.lean:2968:8: warning: declaration uses 'sorry'
++TCSlib/Complexity/ClassNP/Nondeterminism.lean:3004:8: warning: declaration uses 'sorry'
++TCSlib/Complexity/ClassNP/Nondeterminism.lean:3010:8: warning: declaration uses 'sorry'
++CHECK TCSlib/Complexity/ClassNP/SAT
++TCSlib/Complexity/ClassNP/SAT.lean:126:51: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
++
++Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
++TCSlib/Complexity/ClassNP/SAT.lean:138:47: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
++
++Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
++TCSlib/Complexity/ClassNP/SAT.lean:333:33: warning: Try `simp at h` instead of `simpa using h`
++
++Note: This linter can be disabled with `set_option linter.unnecessarySimpa false`
++TCSlib/Complexity/ClassNP/SAT.lean:456:63: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
++
++Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
++TCSlib/Complexity/ClassNP/SAT.lean:608:56: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
++
++Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
++TCSlib/Complexity/ClassNP/SAT.lean:633:59: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
++
++Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
++TCSlib/Complexity/ClassNP/SAT.lean:670:55: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
++
++Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
++TCSlib/Complexity/ClassNP/SAT.lean:680:58: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
++
++Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
++TCSlib/Complexity/ClassNP/SAT.lean:691:88: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
++
++Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
++TCSlib/Complexity/ClassNP/SAT.lean:720:60: warning: 'omega' tactic does nothing
++
++Note: This linter can be disabled with `set_option linter.unusedTactic false`
++TCSlib/Complexity/ClassNP/SAT.lean:731:27: warning: 'omega' tactic does nothing
++
++Note: This linter can be disabled with `set_option linter.unusedTactic false`
++TCSlib/Complexity/ClassNP/SAT.lean:753:91: warning: 'omega' tactic does nothing
++
++Note: This linter can be disabled with `set_option linter.unusedTactic false`
++TCSlib/Complexity/ClassNP/SAT.lean:720:60: warning: this tactic is never executed
++
++Note: This linter can be disabled with `set_option linter.unreachableTactic false`
++TCSlib/Complexity/ClassNP/SAT.lean:731:27: warning: this tactic is never executed
++
++Note: This linter can be disabled with `set_option linter.unreachableTactic false`
++TCSlib/Complexity/ClassNP/SAT.lean:753:91: warning: this tactic is never executed
++
++Note: This linter can be disabled with `set_option linter.unreachableTactic false`
++TCSlib/Complexity/ClassNP/SAT.lean:749:84: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
++
++Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
++TCSlib/Complexity/ClassNP/SAT.lean:809:56: warning: 'omega' tactic does nothing
++
++Note: This linter can be disabled with `set_option linter.unusedTactic false`
++TCSlib/Complexity/ClassNP/SAT.lean:809:56: warning: this tactic is never executed
++
++Note: This linter can be disabled with `set_option linter.unreachableTactic false`
++TCSlib/Complexity/ClassNP/SAT.lean:792:63: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
++
++Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
++TCSlib/Complexity/ClassNP/SAT.lean:816:51: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
++
++Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
++TCSlib/Complexity/ClassNP/SAT.lean:877:48: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
++
++Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
++TCSlib/Complexity/ClassNP/SAT.lean:917:55: warning: This simp argument is unused:
++  FinTM.bufferTape
++
++Hint: Omit it from the simp argument list.
++  simp [captureCfg, MultiTapeTM.initCfg, Cfg.init,̵ ̵F̵i̵n̵T̵M̵.̵b̵u̵f̵f̵e̵r̵T̵a̵p̵e̵]
++
++Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
++TCSlib/Complexity/ClassNP/SAT.lean:979:26: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
++
++Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
++TCSlib/Complexity/ClassNP/SAT.lean:1331:8: warning: This simp argument is unused:
++  satSafeValue
++
++Hint: Omit it from the simp argument list.
++  simp [satVerdict, satSplitValid, satSplit, hs, pairDecode_pairEncode, s̵a̵t̵S̵a̵f̵e̵V̵a̵l̵u̵e̵,̵ ̵satGood, satInstance,
++  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲satWitness, satSyntax_spec, hp, CNF.decode, CNF.fallback, satWidth]
++
++Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
++TCSlib/Complexity/ClassNP/SAT.lean:1331:22: warning: This simp argument is unused:
++  satGood
++
++Hint: Omit it from the simp argument list.
++  simp [satVerdict, satSplitValid, satSplit, hs, pairDecode_pairEncode,
++  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵satSafeValue,
++  ̲ s̵a̵t̵G̵o̵o̵d̵,̵  ̲ ̲ ̲ ̲ ̲ ̲satInstance, satWitness, satSyntax_spec, hp,
++  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵CNF.decode, CNF.fallback, satWidth]
++
++Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
++TCSlib/Complexity/ClassNP/SAT.lean:1331:44: warning: This simp argument is unused:
++  satWitness
++
++Hint: Omit it from the simp argument list.
++  simp [satVerdict, satSplitValid, satSplit, hs, pairDecode_pairEncode, satSafeValue, satGood,
++  ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲satInstance, s̵a̵t̵W̵i̵t̵n̵e̵s̵s̵,̵ ̵satSyntax_spec, hp, CNF.decode, CNF.fallback, satWidth]
++
++Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
++TCSlib/Complexity/ClassNP/SAT.lean:1430:80: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
++
++Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
++TCSlib/Complexity/ClassNP/SAT.lean:1558:11: warning: Try `simp at h` instead of `simpa using h`
++
++Note: This linter can be disabled with `set_option linter.unnecessarySimpa false`
++TCSlib/Complexity/ClassNP/SAT.lean:2025:12: warning: This simp argument is unused:
++  he
++
++Hint: Omit it from the simp argument list.
++  simp [h̵e̵,̵ ̵satRedCounter_read, show r < n by omega]
++
++Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
++TCSlib/Complexity/ClassNP/SAT.lean:2022:39: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
++
++Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
++TCSlib/Complexity/ClassNP/SAT.lean:2036:17: warning: unused variable `hj`
++
++Note: This linter can be disabled with `set_option linter.unusedVariables false`
++TCSlib/Complexity/ClassNP/SAT.lean:2042:52: warning: This simp argument is unused:
++  max_eq_left
++
++Hint: Omit it from the simp argument list.
++  simp [MultiTapeTM.runFrom_zero, m̵a̵x̵_̵e̵q̵_̵l̵e̵f̵t̵,̵ ̵*]
++
++Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
++TCSlib/Complexity/ClassNP/SAT.lean:2057:59: warning: 'omega' tactic does nothing
++
++Note: This linter can be disabled with `set_option linter.unusedTactic false`
++TCSlib/Complexity/ClassNP/SAT.lean:2057:59: warning: this tactic is never executed
++
++Note: This linter can be disabled with `set_option linter.unreachableTactic false`
++TCSlib/Complexity/ClassNP/SAT.lean:2112:19: warning: 'omega' tactic does nothing
++
++Note: This linter can be disabled with `set_option linter.unusedTactic false`
++TCSlib/Complexity/ClassNP/SAT.lean:2112:19: warning: this tactic is never executed
++
++Note: This linter can be disabled with `set_option linter.unreachableTactic false`
++TCSlib/Complexity/ClassNP/SAT.lean:2077:40: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
++
++Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
++TCSlib/Complexity/ClassNP/SAT.lean:2122:82: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
++
++Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
++TCSlib/Complexity/ClassNP/SAT.lean:2126:73: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
++
++Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
++TCSlib/Complexity/ClassNP/SAT.lean:2128:41: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
++
++Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
++TCSlib/Complexity/ClassNP/SAT.lean:2185:40: warning: 'omega' tactic does nothing
++
++Note: This linter can be disabled with `set_option linter.unusedTactic false`
++TCSlib/Complexity/ClassNP/SAT.lean:2185:40: warning: this tactic is never executed
++
++Note: This linter can be disabled with `set_option linter.unreachableTactic false`
++TCSlib/Complexity/ClassNP/SAT.lean:2191:51: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
++
++Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
++TCSlib/Complexity/ClassNP/SAT.lean:2210:47: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
++
++Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
++TCSlib/Complexity/ClassNP/SAT.lean:2243:48: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
++
++Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
++TCSlib/Complexity/ClassNP/SAT.lean:2263:28: warning: This simp argument is unused:
++  Function.update_of_ne hz
++
++Hint: Omit it from the simp argument list.
++  simp [satRedBuffer, hz, F̵u̵n̵c̵t̵i̵o̵n̵.̵u̵p̵d̵a̵t̵e̵_̵o̵f̵_̵n̵e̵ ̵h̵z̵,̵ ̵FinTM.bufferTape]
++
++Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
++TCSlib/Complexity/ClassNP/SAT.lean:2360:8: warning: declaration uses 'sorry'
++CHECK TCSlib/Complexity/ClassNP/TMSAT
++CHECK TCSlib/Complexity/CookLevin/Snapshot
++CHECK TCSlib/Complexity/CookLevin/Hardness
++TCSlib/Complexity/CookLevin/Hardness.lean:82:8: warning: declaration uses 'sorry'
++TCSlib/Complexity/CookLevin/Hardness.lean:212:8: warning: declaration uses 'sorry'
++TCSlib/Complexity/CookLevin/Hardness.lean:219:8: warning: declaration uses 'sorry'
++TCSlib/Complexity/CookLevin/Hardness.lean:228:8: warning: declaration uses 'sorry'
++TCSlib/Complexity/CookLevin/Hardness.lean:234:8: warning: declaration uses 'sorry'
++CHECK TCSlib/Complexity/ClassNP/Tautology
++TCSlib/Complexity/ClassNP/Tautology.lean:1275:8: warning: declaration uses 'sorry'
++CHECK TCSlib/Complexity/TuringMachine
++CHECK TCSlib/Complexity/ClassP
++CHECK TCSlib/Complexity/Uncomputability
++CHECK TCSlib/Complexity/Formulas
++CHECK TCSlib/Complexity/CookLevin
++CHECK TCSlib/Complexity/ClassNP
++FULL_SWEEP_COMPLETE
+diff --git a/machine-library-design.md b/machine-library-design.md
+index d879c547..9ecd6342 100644
+--- a/machine-library-design.md
++++ b/machine-library-design.md
+@@ -529,3 +529,89 @@ Spec surface: **five sorried contracts** (`Turing.emit_run`,
+ (`emitAction`, `emitCfg`), two pure vocabulary definitions
+ (`solveSplitWith`, `unaryTokenSplit`). Convention's module-docstring
+ vocabulary bullets extend at fill time (append-only).
++
++## 11b. Round-2 repairs (2026-10-05, after `audits/emitter-infra-findings.md`)
++
++Round 1: **0 blockers, 2 majors, 3 minors** — no false statement among
++the five contracts; both majors are adequacy obligations, repaired here.
++
++1. **The clean-call bridge (finding 1, major).** A function-level
++   contract cannot deliver the loop seam: a witness may dirty scratch or
++   leave heads displaced on its final transition and still compute `f`
++   within `T`. Two new sorried bridge contracts supply the
++   prepared-input/clean-return interface, both with canonical
++   `Cfg.ofWords`/`stateWord` entry **and** exit seams, first-positive-
++   visit discipline, and envelopes charged to `T + |arg| + |f arg| + 1`:
++   `Turing.FinTM.exists_installCallTM` (result installed as the
++   tape-resident word, nothing emitted) and
++   `Turing.FinTM.exists_emitCallTM` (argument preserved, the computed
++   chunk forwarded to physical output). Both live in `Loop.lean` beside
++   the seams they serve (`stateWord` is defined there). Fill route: the
++   A-continuation's proved log/undo pattern around the capture wrapper,
++   with virtual-input preparation from the tape-resident argument.
++   `emitCfg`'s docstring now states explicitly that it does not
++   normalize terminal configurations — the bridges do.
++2. **The 3B normalization mapping (finding 1, required resolution).**
++   The reported `satRedTM` is **not** the promised instantiation as it
++   stands (its permanent position-−1 marker contradicts the blank
++   `ofWords` seam; its raw head positions cannot cross seams). The
++   committed instantiation plan: loop state word encodes
++   `(cursor, consumed-prefix length, phase tag)` via the audited pairing
++   vocabulary — the raw streaming position is re-derived each round by
++   advancing past the consumed prefix, and **the permanent marker is
++   eliminated** (round-local buffering restores its tape by round end).
++   Per round: decode the state word; `exists_installCallTM` over
++   `computesFunInTime_unaryToken` reads the next token of the remaining
++   serialization; finite control classifies marker/polarity bits; the
++   emitted clause fragment goes out through `exists_emitCallTM` (chunks
++   are of token-bounded length) or directly by finite control for
++   fixed fragments; the fresh-variable counter updates through
++   `computesFunInTime_appendBit` + install. Rounds have positive
++   duration and input-length-only budget; `R` = the serialized input
++   length (each round consumes at least one input position); once the
++   formula terminator is consumed, an **absorbing finished phase emits
++   empty chunks** for all remaining rounds. Token output is decoded by
++   `pairDecode`-side vocabulary (proved); append output becomes the
++   next state word by the install call. The banked `satReduction_*`
++   semantics close the function identity; `satRed_start`'s proved
++   maximum-pass survives as the `s0` computation.
++3. **The 4A stage mapping (finding 2, required resolution — recorded
++   here, certified against the attached phase-4 records in round 2).**
++   All-string validation runs **before any irreversible emission**: the
++   validation stages run as a decision prefix (the audited conditional
++   W3 over the parser/boundary checks); only the valid branch enters
++   the emitting loop, and the invalid branch emits the fixed fallback
++   through finite control. Logical round count: `R` = the
++   snapshot-index bound of the six-stage contract (an input-length-only
++   polynomial), one clause group per round through `exists_emitCallTM`;
++   the exact serialization-length ledger is the sum of the per-round
++   chunk lengths — never constant-per-clause, exactly as the phase-4
++   ledger demands. Serialization terminators: the final terminator is
++   the last round's chunk tail (or a post-loop constant emission by
++   finite control); both options keep the concatenation exact.
++4. **Host routing correction (finding 3, minor).**
++   `exists_emitLoopTM`'s construction sketch now specifies the
++   **forwarding host variant** (body dispatched through `emitAction`;
++   fuel/countdown machinery reused; contracts proved over
++   arbitrary-accumulated-output configurations; a **new**
++   prefix-summation lemma modeled on `loop_run`) — the unchanged
++   find-mode host is refuted by the auditor's one-state witness, since
++   `captureAction` suppresses the body's physical output.
++5. **Token conventions (finding 4, minor).** `unaryTokenSplit`'s
++   docstring now states it consumes unary tokens only, with the
++   auditor's separating example; standalone markers and polarity bits
++   are scanner grammar states.
++6. **P17's actual rule (finding 1's visibility note).** Fixed
++   finite-control chunks are emitted directly by body control (no
++   primitive, no appeal to the private `constTM`); unbounded
++   tape-dependent chunks go through `exists_emitCallTM`. §11a item 1 is
++   corrected accordingly: the subsumption's discharging rule is body
++   finite control, or the emit call, never the private constant
++   machine.
++7. **Documentation (finding 5, minor).** The four definitions now carry
++   customers and construction notes; attestation 4's "every new
++   declaration" claim is restated in the round-2 pack as exactly what
++   each class of declaration carries.
++
++Spec surface after round 2: **seven sorried contracts** (round 1's five
++plus the two bridges), two transformers, two vocabulary definitions.
