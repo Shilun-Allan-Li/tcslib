@@ -271,9 +271,18 @@ uncomputability chapter.
   statement layer); ch2 ledger **38/59 proved**. **Epoch-2 audit pack
   prepared 2026-10-05** (`audits/ch2-epoch2-{pack,bundle}.md` + the
   whole-span attestation under `audits/evidence/ch2-epoch2/`; 34
-  attachments; gate closes on zero blockers/majors, findings to
-  `audits/ch2-epoch2-findings.md`). After the gate: the post-gate
-  serial queue (D6, D7 incl. the ClassNP splits, E5 dedup). Subsumes 2C's
+  attachments). **GATE CLOSED 2026-10-05, PASS in one round: 0
+  blockers, 0 majors, 2 minors (audit-material errata, swept via
+  `audits/ch2-epoch2-resolutions.md`), 11 notes** — the auditor
+  rebuilt all 57 modules from empty oleans and verified all 386
+  privates / 1,167 kernel declarations admission-free. **Epoch 2 is
+  complete and audited end to end.** The post-gate serial queue is
+  unblocked, in order: D6 promotions, D7 splits (now incl. the three
+  ClassNP size exceptions, full discipline binding), E5 dedup (under
+  the resolutions' binding live/dead inventory: `enumLoop_run`,
+  `prefixTM`/`fixedPair_polyTime`, `polyUnaryTM`/`poly_unary_computes`
+  live; `enumCarryTM`/`enumCaptureTM`/`choiceCopyTM` dead), then the
+  E3 briefs. Subsumes 2C's
   `prefixTM`/`fixedPair` promotion requests. Dedup of superseded batch
   privates is an E5 closure task. Mathlib TM2 rejected as substrate
   (evaluation recorded in the ch1 decision log).

@@ -33,7 +33,7 @@ VENDORED = {
 
 # Declaration kinds requiring statement prose (instances exempt per policy).
 DOC_DECL_RE = re.compile(
-    r"^\s*(?:@\[[^\]]*\]\s*)*(?:noncomputable\s+)?(private\s+)?"
+    r"^\s*(?:@\[[^\]]*\]\s*)*(?:noncomputable\s+)?(private\s+)?(?:noncomputable\s+)?"
     r"(theorem|lemma|def|structure|abbrev|inductive)\s+([A-Za-z0-9_.']+)"
 )
 ATTR_LINE_RE = re.compile(r"^@\[[^\]]*\]$")
@@ -44,7 +44,7 @@ SET_OPTIONS = [
 ]
 DOCSTRING_RE = re.compile(r"/--.*?-/", re.S)
 DECL_RE = re.compile(
-    r"^(?:@\[[^\]]*\]\s*)?(?:noncomputable\s+)?(private\s+)?"
+    r"^(?:@\[[^\]]*\]\s*)?(?:noncomputable\s+)?(private\s+)?(?:noncomputable\s+)?"
     r"(theorem|def|lemma|structure|abbrev|instance|inductive)\s+([A-Za-z0-9_.']+)",
     re.M,
 )
