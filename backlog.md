@@ -378,9 +378,13 @@ uncomputability chapter.
   EMITTER LAYER IS COMPLETE (7/7, `Build/` admission-free)**: the
   split-search body closed via the proved install bridges in one
   round — the increment's thesis confirmed at first consumption; 68
-  privates; tree at **12 admissions, all campaign**. Next: the
-  emitter fill-audit pack (W+P+P2+L, ~271 privates) → A-cont-3
-  (1/6/3/4/5) + 3B-cont; 4A next; then the epoch-3 audit.
+  privates; tree at **12 admissions, all campaign**. **Fill-audit pack
+  prepared 2026-10-05** (`audits/emitter-fill-{pack,bundle}.md`, 22
+  attachments; whole-span attestation name-exact at 271 privates;
+  gate on zero blockers/majors, findings to
+  `audits/emitter-fill-findings.md`). On close: A-cont-3 (1/6/3/4/5)
+  + 3B-cont + 4A unblock with every dependency proved; then the
+  epoch-3 audit.
   Subsumes 2C's
   `prefixTM`/`fixedPair` promotion requests. Dedup of superseded batch
   privates is an E5 closure task. Mathlib TM2 rejected as substrate
