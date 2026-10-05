@@ -320,8 +320,15 @@ uncomputability chapter.
   ≈ 27 pts; 3B-cont and 4A are the customers). **3A-cont brief issued
   2026-10-05** (`briefs/ch2-e3cont-batchA.md`, base `b75b6771`,
   bespoke in parallel with the design review; zero sanctioned
-  admissions). Next: dispatch 3A-cont; on §11 approval, the emitter
-  spec layer → audit → fills → 3B-cont brief; then the epoch-3 audit.
+  admissions). §11 approved 2026-10-05 (11.1–11.3); **emitter spec layer
+  landed** (5 sorried contracts + 2 transformers + 2 vocabulary defs;
+  57/57 zero errors, 18 = 13 + 5 admissions exactly; regressions
+  PASS) and the **emitter-infra audit pack prepared**
+  (`audits/emitter-infra-{pack,bundle}.md`, 14 attachments; gate on
+  zero blockers/majors, findings to
+  `audits/emitter-infra-findings.md`). 3A-cont dispatched by the user
+  (bespoke, independent). Next: emitter gate → fills → 3B-cont brief;
+  4A waits on the gate (decision 11.3); then the epoch-3 audit.
   Subsumes 2C's
   `prefixTM`/`fixedPair` promotion requests. Dedup of superseded batch
   privates is an E5 closure task. Mathlib TM2 rejected as substrate
