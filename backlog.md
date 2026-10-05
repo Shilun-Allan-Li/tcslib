@@ -343,9 +343,14 @@ uncomputability chapter.
   both bridges — the zero-tape degeneracy; §11c's corrected 4A
   stage-to-seam mapping superseding §11b item 3; the §11a marker) and
   the **round-3 pack prepared** (36 attachments incl. the phase-4
-  reaudit table and the A-cont `e3c*` provenance). Next: emitter gate
-  (round 3) → fills → 3B-cont brief → A-cont-2 brief; 4A waits on the
-  gate (decision 11.3); then the epoch-3 audit.
+  reaudit table and the A-cont `e3c*` provenance). **A-cont-2 brief issued
+  2026-10-05** (`briefs/ch2-e3cont-batchA2.md`, base `d5ac2377`,
+  rev-parse-verified; targets 2/4/5 only — 1/3/6 deferred to
+  post-fill instantiation via `splitSolveWith`; ≈ 13 pts, zero
+  sanctioned admissions, dispatches in parallel with the r3 audit).
+  Next: emitter gate (round 3) → three fill batches by file
+  (Loop/Primitives/Wrappers) → A-cont-3 (targets 1/3/6) + 3B-cont;
+  4A waits on the gate (decision 11.3); then the epoch-3 audit.
   Subsumes 2C's
   `prefixTM`/`fixedPair` promotion requests. Dedup of superseded batch
   privates is an E5 closure task. Mathlib TM2 rejected as substrate
