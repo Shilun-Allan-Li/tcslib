@@ -327,7 +327,11 @@ uncomputability chapter.
   (`audits/emitter-infra-{pack,bundle}.md`, 14 attachments; gate on
   zero blockers/majors, findings to
   `audits/emitter-infra-findings.md`). 3A-cont dispatched by the user
-  (bespoke, independent). **Round 1: 0 blockers / 2 majors / 3 minors** (adequacy, not
+  (bespoke, independent); **integrated 2026-10-05 as a verified
+  partial checkpoint** (69 `e3c*` privates banked — the full phase
+  family for the split-search body; zero targets closed, zero new
+  admissions; a maintainer base-hash erratum in the brief was caught
+  by the agent and is recorded with its process correction). **Round 1: 0 blockers / 2 majors / 3 minors** (adequacy, not
   falseness); repairs landed (the two clean-call bridge contracts in
   `Loop.lean`, the 3B/4A mappings in §11b, the forwarding-host sketch
   correction, token/doc sweeps; 57/57 zero errors, 20 = 13 + 7
