@@ -84,6 +84,11 @@ from `Bool` to an arbitrary symbol type; the proof was symbol-free), and
 `timed_rewind` is the public `Turing.FinTM.timed_rewind` in
 `Simulation.lean`, verbatim. The private copies formerly here are removed;
 the two call sites below consume the public lemmas.
+
+**Implementation note (emitter batch W).** `emit_run` is now proved by the
+private action identity `emit_apply` and the guarded induction used by
+`capture_run`. A halting action forwards its optional final emission on
+the same transition that transfers control to the live return state.
 -/
 
 namespace Turing
@@ -240,6 +245,17 @@ def emitCfg {input : List Bool} (emb : S → H) (ret : H)
   workTapePos := c.workTapePos
   output := pre ++ c.output
 
+/-- Applying a forwarded action preserves the source fields and appends its
+optional emission after the host prefix, including when that action halts.
+**Proof sketch.** The state, input head, work tapes, and work heads agree
+definitionally; the physical output equality is append associativity. -/
+private lemma emit_apply {input : List Bool} (emb : S → H) (ret : H)
+    (pre : List Bool) (c : Cfg k Bool S input) (a : Action k Bool S) :
+    (emitAction emb ret a).apply (emitCfg emb ret pre c) =
+      emitCfg emb ret pre (a.apply c) := by
+  refine Cfg.ext rfl rfl rfl rfl ?_
+  exact List.append_assoc pre c.output a.output.toList
+
 /-- **E2, the forwarding wrapper** (spec, fill pending — design §11;
 customers: the emitting loop's per-round chunk calls, the Cook-Levin
 clause-group emission (4A), 3B-cont's fresh-literal chains). Any host
@@ -262,7 +278,25 @@ theorem emit_run {input : List Bool} (tm : MultiTapeTM k Bool S)
     (hlive : ∀ t' < t, ¬(tm.runFrom c₀ t').Halted) :
     host.runFrom (emitCfg emb ret pre c₀) t =
       emitCfg emb ret pre (tm.runFrom c₀ t) := by
-  sorry
+  have hstep (c : Cfg k Bool S input) (hs : ¬c.Halted) :
+      host.step (emitCfg emb ret pre c) =
+        emitCfg emb ret pre (tm.step c) := by
+    cases hq : c.state with
+    | none => exact False.elim (hs hq)
+    | some q =>
+      have hstate : (emitCfg emb ret pre c).state = some (emb q) := by
+        simp [emitCfg, hq]
+      have hinput : (emitCfg emb ret pre c).inputSymbol = c.inputSymbol := rfl
+      have hwork : (emitCfg emb ret pre c).workTapeSymbols = c.workTapeSymbols := rfl
+      simp only [MultiTapeTM.step, hstate, hq]
+      rw [hagree, hinput, hwork]
+      exact emit_apply emb ret pre c _
+  -- The guard supplies a genuine source step, including at the final halt.
+  induction t with
+  | zero => rfl
+  | succ t ih =>
+    rw [MultiTapeTM.runFrom_succ_eq_step', ih (fun s hs => hlive s (by omega)),
+      hstep _ (hlive t (by omega)), MultiTapeTM.runFrom_succ_eq_step']
 
 end Turing
 
