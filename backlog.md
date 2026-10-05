@@ -283,8 +283,17 @@ uncomputability chapter.
   verbatim; Wrappers privates removed, clients on the public API;
   57/57 zero errors, 21 admissions unchanged, promoted lemmas +
   epoch-2 closure regressions all clean —
-  `audits/logs/d6-promotion-{sweep,axioms,lint}.log`), then D7 splits (now incl. the three
-  ClassNP size exceptions, full discipline binding), E5 dedup (under
+  `audits/logs/d6-promotion-{sweep,axioms,lint}.log`), then **D7 —
+  EXECUTED AS A MEASURED DEFERRAL 2026-10-05**
+  (`audits/evidence/d7-split-analysis.md`; tool
+  `scripts/d7_split_analysis.py`): pure relocation infeasible — each
+  file is one private family (96–99.9% span); compliant splits need
+  ≥ 125 cross-file promotions program-wide (34/43/24/16/8 per file),
+  intersecting E5's live-replacement/deletion sets, so the physical
+  splits run **after E5** via one internal-namespace visibility
+  proposal, ride-along reviewed in the E3 pack (pilot: the
+  Nondeterminism forward/reverse cut, cost 5); size justifications
+  stand — then E5 dedup (under
   the resolutions' binding live/dead inventory: `enumLoop_run`,
   `prefixTM`/`fixedPair_polyTime`, `polyUnaryTM`/`poly_unary_computes`
   live; `enumCarryTM`/`enumCaptureTM`/`choiceCopyTM` dead), then the
