@@ -387,3 +387,104 @@ audit round → fills → **then** E2 continuation briefs, which cite the
 library instead of re-deriving machines. E2 continuations, E3, E4, and the
 ch3 skeleton are the customers that pay this back; the loop combinator is
 the piece to watch for slippage.
+
+## 11. The emitter increment (proposed 2026-10-05, post-E3 integration)
+
+**Evidence.** E3's outcome maps the library boundary exactly: everything
+recognizer-shaped closed in one round through the catalog (3B's memberships
+via `computesFunInTime_splitSolve 1 1` + capture + the audited wrappers; 3D
+via P10 + capture + composition), while both stalls sit on the producer
+side — 3B at a streaming transducer (`satRedTM` states 9–34, defined,
+unproved), 3A at a loop body that must internally run an evaluator and emit
+a payload, over a width family the catalog's split instance doesn't cover.
+The loop contracts deliberately require **empty output through every round**
+(round-2/3 audit repairs), and composition offers only input-pipelining —
+there is no output-append mode anywhere in the library. E4's summit
+(`SAT_NPHard`, 15 pts, continuation certain) is an emitter of exactly this
+shape: a per-index loop appending clause groups under the six-stage
+output-silence contract with an exact serialization-length ledger.
+
+**Rule of admission check** (§4): every item below has at least two named
+customers among 3B-cont, 4A, 4B, and 3A-cont.
+
+### E1. `emitLoop` — the emitting loop (control layer)
+
+The loop engine's output clause generalized: rounds append exact per-round
+emissions instead of staying silent. Shape (final quantifiers at spec time,
+audited):
+
+```
+-- SHAPE ONLY. Sibling of exists_loopCfgTM, sharing its host machinery.
+Inv, s0, stepF as in the decision loop; additionally
+  emitF : input → σ → List Bool        -- the exact chunk of round i
+contract: startup ≤ c(T+1); per-round segments ≤ c(T+1); positive
+  first-return; for every i ≤ R:
+    (cfg i).output = (List.range i).flatMap (fun j => emitF x (stepF^[j] s0))
+  terminal: halted, output = the full concatenation (no verdict bit — the
+  machine COMPUTES the concatenation; a deciding variant is NOT included).
+```
+
+Body obligations unchanged (accept-or-advance becomes advance-and-emit;
+scratch restore per §3/9.2). The summation lemma is `loop_run`'s template
+with the output clause threaded. **Customers:** 4A (the per-snapshot clause
+emitter — the design driver), 3B-cont (`satRedTM`'s streaming core as an
+instantiation), 4B (dual reduction emitter).
+
+### E2. `emitPhase` — the forwarding wrapper (control layer)
+
+The dual of W1: run an embedded transducer `T` (a `ComputesFunInTime`
+contract) inside a host, with `T`'s emissions landing on the **host's**
+output tape, source tapes isolated, halt redirected to a live return state;
+lockstep lemma in `capture_run`'s mold with "physical output = host prefix
+++ T's output so far". This is what lets a catalog transducer serve as one
+emission stage of a larger machine — today's only option is whole-machine
+input-pipelining. **Customers:** E1's per-round chunk calls (4A emits each
+clause group through a sub-transducer), 3B-cont (fresh-literal chain
+emission), 3A-cont marginally (the success payload `pairEncode` emission).
+
+### E3′. Stream primitives (catalog rows P16–P18)
+
+| # | Primitive | Spec (shape) | Source | Customers |
+|---|---|---|---|---|
+| P16 | `tokenStepTM` | consume one self-delimiting token (unary index / marker) from the input head, land head after it, expose the token in control | harvest: 3B's proved `satScanTM`/`satSyntaxStep`, 3D's six-state scan, 2D's parsers (fourth re-derivation otherwise) | 3B-cont, 4A, 4B |
+| P17 | `chunkEmitTM w` / parametric | append a control-determined word to output, `\|w\|` steps, no tape movement | new (trivial); the per-token emission atom | E1 bodies, 4A |
+| P18 | `unaryAccTM` | dedicated-tape unary accumulator: append one, read-length-in-binary via P4 composition, rewind | harvest: 3B's proved counter stages (`satRedCounter_write`, `satRed_maxOnes`, startup to state 9) | 3B-cont, 4A fresh indices |
+
+### E4′. `splitSolveWith` — width-parametric split search (control layer)
+
+Generalize P15's split search from the hardwired polynomial family to a
+hypothesis-supplied width evaluator: given a machine `E` with a captured
+`ComputesFunInTime (fun s => bits (f s.length)) T_E` contract and
+monotonicity of `n ↦ n + f n`, a machine solving `n + f n = m` (first
+success payload `pairEncode (take n) (drop n)`, exhaustion verdict) within
+the loopFind envelope over `T_E`. **Harvest source:** 3A-cont's bespoke
+body, whose contracts are already displayed in its REPORT — build the
+parametric form against that template once it lands (or directly, if this
+increment executes first). **Customers:** 3A-cont's equation (plug the
+proved `e3_exp_bits_timed`), every future padding argument (ch3+ time
+hierarchy pads the same way).
+
+### Placement, cost, open decisions
+
+- **Placement:** E1 extends `Loop.lean` **in-file** to reuse the audited
+  `loopHost` privates (a separate `Build/Emit.lean` cannot see them — the
+  D7 cross-file-privates qualification; re-deriving the host would be a
+  second 2,500-line proof). `Loop.lean`'s size exception grows and the D7
+  split trails as already recorded. E2 joins `Wrappers.lean`; P16–P18 join
+  `Primitives.lean`; E4′ joins `Loop.lean` beside P15's engine.
+- **Non-goals:** no deciding variant of the emitting loop (compose E1 with
+  the existing decision layer instead); no general transducer algebra; no
+  speculative tape-embedding (unchanged from §5's deferral).
+- **Cost estimate:** spec layer 4; one shared-infra audit round (the ch1
+  pattern, expected lighter — one host extension, not a new host); fills:
+  E1 8, E2 4, P16–P18 5, E4′ 6 — **≈ 27 points**, roughly the L batch.
+- **Sequencing:** freeze this section → spec statements → audit round →
+  fills → 3B-cont consumes E1/E2/P16–P18; 4A's brief cites the layer
+  instead of a bespoke emitter. **3A-cont dispatches in parallel, bespoke**
+  (disjoint ownership; its body becomes E4′'s harvest template; later
+  dedup is a recorded E5-style maintainer task, never the fill's).
+- **Open decisions (user):** (11.1) approve the increment and this scope;
+  (11.2) E1 as a sibling contract beside `exists_loopCfgTM` (recommended)
+  vs a generalization replacing it (touches audited statements — not
+  recommended); (11.3) whether 4A's brief waits for this gate to close
+  (recommended) or anticipates it.

@@ -313,8 +313,15 @@ uncomputability chapter.
   frontier: the native exponential split-search body existential
   (five-step plan in its REPORT; 35 `e3_*` privates banked). B's
   frontier: run lemmas + time proof for `satRedTM`'s streaming states
-  9–34 (startup proved; all reduction mathematics banked). Next: A/B
-  continuation briefs, then the epoch-3 audit.
+  9–34 (startup proved; all reduction mathematics banked).
+  **Emitter-increment design drafted 2026-10-05**
+  (`machine-library-design.md` §11, awaiting decisions 11.1–11.3:
+  `emitLoop` + `emitPhase` + P16–P18 + width-parametric split search;
+  ≈ 27 pts; 3B-cont and 4A are the customers). **3A-cont brief issued
+  2026-10-05** (`briefs/ch2-e3cont-batchA.md`, base `b75b6771`,
+  bespoke in parallel with the design review; zero sanctioned
+  admissions). Next: dispatch 3A-cont; on §11 approval, the emitter
+  spec layer → audit → fills → 3B-cont brief; then the epoch-3 audit.
   Subsumes 2C's
   `prefixTM`/`fixedPair` promotion requests. Dedup of superseded batch
   privates is an E5 closure task. Mathlib TM2 rejected as substrate
