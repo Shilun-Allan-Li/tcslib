@@ -261,7 +261,15 @@ uncomputability chapter.
   the B reverse-compiler continuation brief, then the epoch-2 audit.
   **B2 brief issued 2026-10-04** (`briefs/ch2-e2cont-batchB2.md`, base
   `e72d95bf`; 9 pts; zero sanctioned admissions; completion closes the
-  epoch at 10/10). Subsumes 2C's
+  epoch at 10/10). **B2 integrated 2026-10-05: EPOCH 2 CONSTRUCTION
+  COMPLETE — all ten targets admission-free** (commit `1514fd6b`;
+  Theorem 2.6 machine-checked both directions; 42 new `b2*` privates;
+  scheduler seam closed by read-normalization, dispatch on the actual
+  first halt, definitional table coincidence; independent kernel
+  traversal `audits/logs/ch2-e2cont-B2-axioms.log`). Tree: 57/57 zero
+  errors, **21 admissions** (5 padding + `EXP_subset_NEXP` + 15 E3/E4
+  statement layer); ch2 ledger **38/59 proved**. Next: the epoch-2
+  audit pack, then the post-gate serial queue (D6, D7, E5). Subsumes 2C's
   `prefixTM`/`fixedPair` promotion requests. Dedup of superseded batch
   privates is an E5 closure task. Mathlib TM2 rejected as substrate
   (evaluation recorded in the ch1 decision log).
