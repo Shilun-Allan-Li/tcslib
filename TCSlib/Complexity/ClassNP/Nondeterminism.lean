@@ -2357,6 +2357,516 @@ theorem NP_eq_iUnion_NTIME : NP = ⋃ c : ℕ, NTIME fun n => n ^ c + 1 := by
   exact Set.Subset.antisymm NP_subset_iUnion_NTIME
     (Set.iUnion_subset fun c => ntime_poly_subset_NP c)
 
+/-! ### Exponential split and evaluation infrastructure -/
+
+/-- Exponential padding has a unique split, including coefficient zero and
+degree zero: the prefix length increases strictly and the suffix length
+is nondecreasing. -/
+private lemma e3_split_strictMono (C c : ℕ) :
+    StrictMono (fun n : ℕ => n + C * 2 ^ (n + 1) ^ c) := by
+  intro n m hnm
+  exact Nat.add_lt_add_of_lt_of_le hnm (Nat.mul_le_mul_left C
+    (Nat.pow_le_pow_right (by omega) (Nat.pow_le_pow_left (by omega) c)))
+
+/-- Exact exponential widths make both parts of a concatenation unique. -/
+private lemma e3_split_unique (C c : ℕ) {x u y v : List Bool}
+    (hu : u.length = C * 2 ^ (x.length + 1) ^ c)
+    (hv : v.length = C * 2 ^ (y.length + 1) ^ c) (h : x ++ u = y ++ v) :
+    x = y ∧ u = v := by
+  have hlen := congrArg List.length h
+  simp only [List.length_append, hu, hv] at hlen
+  have hx := (e3_split_strictMono C c).injective hlen
+  exact ⟨List.append_inj_left h hx, List.append_inj_right h hx⟩
+
+/-- The finite exponential-length search, with an explicit failure value. -/
+private def e3Split (C c m : ℕ) : Option ℕ :=
+  (List.range (m + 1)).find? (fun n => decide (n + C * 2 ^ (n + 1) ^ c = m))
+
+/-- A successful search certifies its exact length equation and input bound. -/
+private lemma e3_split_spec (C c m n : ℕ) (h : e3Split C c m = some n) :
+    n ≤ m ∧ n + C * 2 ^ (n + 1) ^ c = m := by
+  have hn := List.mem_of_find?_eq_some h
+  have he := List.find?_some h
+  exact ⟨Nat.le_of_lt_succ (List.mem_range.mp hn), of_decide_eq_true he⟩
+
+/-- Exhaustion excludes every natural split, not only a chosen default. -/
+private lemma e3_split_none_iff (C c m : ℕ) :
+    e3Split C c m = none ↔ ¬∃ n, n + C * 2 ^ (n + 1) ^ c = m := by
+  rw [e3Split, List.find?_eq_none]
+  constructor
+  · intro h hex
+    obtain ⟨n, hn⟩ := hex
+    exact h n (List.mem_range.mpr (by omega)) (by simpa using hn)
+  · intro h n _ hn
+    exact h ⟨n, of_decide_eq_true hn⟩
+
+/-- Every valid exponential split is recovered by the finite search. -/
+private lemma e3_split_complete (C c m n : ℕ)
+    (hn : n + C * 2 ^ (n + 1) ^ c = m) : e3Split C c m = some n := by
+  cases hs : e3Split C c m with
+  | none => exact False.elim ((e3_split_none_iff C c m).mp hs ⟨n, hn⟩)
+  | some k =>
+    have hk := (e3_split_spec C c m k hs).2
+    exact congrArg some ((e3_split_strictMono C c).injective (hk.trans hn.symm))
+
+/-- A positive exponential coefficient rejects the empty verifier input. -/
+private lemma e3_split_empty (C c : ℕ) (hC : 0 < C) : e3Split C c 0 = none := by
+  apply (e3_split_none_iff C c 0).mpr
+  rintro ⟨n, hn⟩
+  have hp : 0 < C * 2 ^ (n + 1) ^ c := Nat.mul_pos hC (Nat.pow_pos (by omega))
+  omega
+
+/-- The choice-word verifier with the exact exponential certificate width. -/
+private def e3ChoiceVerifier (N : FinNDTM Bool) (C c : ℕ) : Language Bool :=
+  {y | ∃ x u : List Bool, u.length = C * 2 ^ (x.length + 1) ^ c ∧ y = x ++ u ∧
+    (N.tm.runWith u (N.tm.initCfg x)).state = none ∧
+    (N.tm.runWith u (N.tm.initCfg x)).output = [true]}
+
+/-- On a valid concatenation, membership tests exactly its own choice word. -/
+private lemma e3_choice_append (N : FinNDTM Bool) (C c : ℕ)
+    (x u : List Bool) (hu : u.length = C * 2 ^ (x.length + 1) ^ c) :
+    x ++ u ∈ e3ChoiceVerifier N C c ↔
+      (N.tm.runWith u (N.tm.initCfg x)).state = none ∧
+      (N.tm.runWith u (N.tm.initCfg x)).output = [true] := by
+  constructor
+  · rintro ⟨y, v, hv, heq, hhalt, hout⟩
+    obtain ⟨rfl, rfl⟩ := e3_split_unique C c hu hv heq
+    exact ⟨hhalt, hout⟩
+  · rintro ⟨hhalt, hout⟩
+    exact ⟨x, u, hu, rfl, hhalt, hout⟩
+
+/-- Failed exponential split search requires rejection. -/
+private lemma e3_choice_no_split (N : FinNDTM Bool) (C c : ℕ) (y : List Bool)
+    (h : e3Split C c y.length = none) : y ∉ e3ChoiceVerifier N C c := by
+  rintro ⟨x, u, hu, hy, _, _⟩
+  have hlen := congrArg List.length hy
+  simp only [List.length_append, hu] at hlen
+  exact (e3_split_none_iff C c y.length).mp h ⟨x.length, hlen.symm⟩
+
+/-- The exact padded certificate covers the source time budget at every length. -/
+private lemma e3_choice_budget (a c n : ℕ) :
+    a * 2 ^ n ^ c ≤ a * 2 ^ (n + 1) ^ c := by
+  exact Nat.mul_le_mul_left a
+    (Nat.pow_le_pow_right (by omega) (Nat.pow_le_pow_left (Nat.le_succ n) c))
+
+/-- All-branch halting justifies both padding and truncation of choice words;
+the certificate length itself remains exactly the prescribed exponential. -/
+private lemma e3_choice_certificate (N : FinNDTM Bool) (L : Language Bool)
+    (a c : ℕ) (hN : N.DecidesInTime L (fun n => a * 2 ^ n ^ c)) (x : List Bool) :
+    x ∈ L ↔ ∃ u : List Bool, u.length = a * 2 ^ (x.length + 1) ^ c ∧
+      x ++ u ∈ e3ChoiceVerifier N a c := by
+  rw [(hN x).2, ← acceptsWithin_iff_of_halts (hN x).1 (e3_choice_budget a c x.length)]
+  constructor
+  · rintro ⟨u, hu, hhalt, hout⟩
+    exact ⟨u, hu, (e3_choice_append N a c x u hu).mpr ⟨hhalt, hout⟩⟩
+  · rintro ⟨u, hu, hv⟩
+    exact ⟨u, hu, (e3_choice_append N a c x u hu).mp hv⟩
+
+/-- A decider cannot have zero time coefficient: its initial state on the
+empty input is live even on the unique empty choice word. -/
+private lemma e3_coefficient_pos (N : FinNDTM Bool) (L : Language Bool)
+    (a c : ℕ) (hN : N.DecidesInTime L (fun n => a * 2 ^ n ^ c)) : 0 < a := by
+  by_contra ha
+  have hz : a = 0 := by omega
+  have hh := (hN []).1 [] (by simp [hz])
+  simp [NDTM.runWith, NDTM.initCfg, Cfg.init] at hh
+
+/-- Multiplication by a power of two prefixes zeroes to a nonzero binary word.
+This is an exact binary representation, not an exponential unary emission. -/
+private lemma e3_bits_shift (C p : ℕ) (hC : C ≠ 0) :
+    Nat.bits (C * 2 ^ p) = List.replicate p false ++ Nat.bits C := by
+  induction p with
+  | zero => simp
+  | succ p ih =>
+    have hp : C * 2 ^ p ≠ 0 := Nat.mul_ne_zero hC (Nat.ne_of_gt (Nat.pow_pos (by omega)))
+    rw [show C * 2 ^ (p + 1) = 2 * (C * 2 ^ p) by ring, Nat.bit0_bits _ hp, ih]
+    simp [List.replicate_succ]
+
+/-- Before any padding validation, binary evaluation has polynomial output
+length in the enclosing input length, because the candidate prefix is bounded. -/
+private lemma e3_bits_length_bound (C c n m : ℕ) (hn : n ≤ m) :
+    (Nat.bits (C * 2 ^ (n + 1) ^ c)).length ≤ (m + 1) ^ c + (Nat.bits C).length := by
+  by_cases hC : C = 0
+  · simp [hC]
+  · rw [e3_bits_shift C _ hC, List.length_append, List.length_replicate]
+    exact Nat.add_le_add_right (Nat.pow_le_pow_left (by omega) c) _
+
+/-- Replace each input symbol by a zero bit, then append a fixed binary word.
+The scanner and fixed emission chain use no work tapes. -/
+private def e3ShiftTM (w : List Bool) : FinTM Bool where
+  k := 0
+  State := Unit ⊕ Fin (w.length + 1)
+  tm := {
+    q₀ := .inl ()
+    tr := fun q inp _ => match q with
+      | .inl _ => match inp with
+        | some _ => ⟨.pos, fun i => i.elim0, some false, some (.inl ())⟩
+        | none => controlAction 0 (some (.inr 0))
+      | .inr i => emitAction w Sum.inr i }
+
+/-- The shift scanner advances one input position and emits one zero per
+step, retaining its live scanner state until the boundary blank. -/
+private lemma e3_shift_scan (w x : List Bool) : ∀ t, t ≤ x.length →
+    ((e3ShiftTM w).tm.runFrom ((e3ShiftTM w).tm.initCfg x) t).state = some (.inl ()) ∧
+    (((e3ShiftTM w).tm.runFrom ((e3ShiftTM w).tm.initCfg x) t).inputPos : ℕ) = t + 1 ∧
+    ((e3ShiftTM w).tm.runFrom ((e3ShiftTM w).tm.initCfg x) t).output =
+      List.replicate t false := by
+  intro t
+  induction t with
+  | zero =>
+    intro _
+    refine ⟨rfl, ?_, rfl⟩
+    simp [MultiTapeTM.runFrom]
+  | succ t ih =>
+    intro ht
+    obtain ⟨hs, hp, ho⟩ := ih (by omega)
+    have hstep : (e3ShiftTM w).tm.runFrom ((e3ShiftTM w).tm.initCfg x) (t + 1) =
+        ((e3ShiftTM w).tm.tr (.inl ()) (some (x[t]'(by omega)))
+          (((e3ShiftTM w).tm.runFrom ((e3ShiftTM w).tm.initCfg x) t).workTapeSymbols)).apply
+          ((e3ShiftTM w).tm.runFrom ((e3ShiftTM w).tm.initCfg x) t) := by
+      rw [MultiTapeTM.runFrom_succ_eq_step']
+      unfold MultiTapeTM.step
+      rw [hs]
+      dsimp only
+      rw [inputSymbolInner (p := t) (by omega) (by omega)]
+    refine ⟨?_, ?_, ?_⟩
+    · rw [hstep]
+      simp [e3ShiftTM, Action.apply]
+    · rw [hstep]
+      simp only [e3ShiftTM, Action.apply]
+      rw [moveInputPos_pos_of_ne_right _ (by omega)]
+      show (((e3ShiftTM w).tm.runFrom ((e3ShiftTM w).tm.initCfg x) t).inputPos : ℕ) + 1 = t + 2
+      omega
+    · rw [hstep]
+      simp only [e3ShiftTM, Action.apply, ho]
+      exact List.replicate_succ'.symm
+
+/-- The scanner's blank transition enters the emission chain; the final
+halting transition is charged explicitly. The total is `|x|+|w|+2`. -/
+private lemma e3_shift_computes (w x : List Bool) :
+    (e3ShiftTM w).ComputesInTime x (List.replicate x.length false ++ w)
+      (x.length + w.length + 2) := by
+  obtain ⟨hs, hp, ho⟩ := e3_shift_scan w x x.length (le_refl _)
+  let cfg := (e3ShiftTM w).tm.runFrom ((e3ShiftTM w).tm.initCfg x) x.length
+  have hp' : (cfg.inputPos : ℕ) = x.length + 1 := hp
+  have hzero : cfg.inputPos ≠ 0 := by
+    intro h
+    rw [h] at hp'
+    simp at hp'
+  have hinp : cfg.inputSymbol = none := by
+    unfold Cfg.inputSymbol
+    rw [dif_neg hzero, dif_pos (by omega)]
+  have henter : (e3ShiftTM w).tm.runFrom ((e3ShiftTM w).tm.initCfg x) (x.length + 1) =
+      (controlAction 0 (some (.inr (0 : Fin (w.length + 1))))).apply cfg := by
+    rw [MultiTapeTM.runFrom_succ_eq_step']
+    change (e3ShiftTM w).tm.step cfg = _
+    simp only [MultiTapeTM.step, show cfg.state = some (.inl ()) from hs, e3ShiftTM, hinp]
+  let next := (e3ShiftTM w).tm.runFrom ((e3ShiftTM w).tm.initCfg x) (x.length + 1)
+  have hnext : next.state = some (.inr (0 : Fin (w.length + 1))) := by
+    dsimp only [next]
+    rw [henter]
+    rfl
+  have houtput : next.output = List.replicate x.length false := by
+    dsimp only [next]
+    rw [henter]
+    simp only [controlAction, Action.apply, Option.toList_none, List.append_nil]
+    exact ho
+  obtain ⟨hh, hout⟩ := emit_halts (e3ShiftTM w).tm w Sum.inr
+    (fun _ _ _ => rfl) next hnext
+  apply (computesInTime_iff _ _ _ _).mpr
+  rw [show x.length + w.length + 2 = (x.length + 1) + (w.length + 1) by omega,
+    MultiTapeTM.runFrom_add]
+  exact ⟨hh, by simpa only [houtput] using hout⟩
+
+/-- The fixed-word binary shift has a monotone linear budget on all inputs. -/
+private lemma e3_shift_timed (w : List Bool) :
+    (e3ShiftTM w).ComputesFunInTime (fun x => List.replicate x.length false ++ w)
+      (fun n => (w.length + 2) * (n + 1)) := by
+  intro x
+  apply (e3_shift_computes w x).mono
+  simp only [Nat.add_mul, Nat.mul_add, Nat.mul_one]
+  omega
+
+/-- The exact binary value of exponential padding is polynomial-time
+computable before any validity check.
+**Proof sketch.** At coefficient zero emit the empty binary word. Otherwise
+the catalog emits `(n+1)^c` unary symbols. The native shift scanner emits
+that many zeroes followed by the fixed nonzero coefficient's bits. Timed
+buffered composition and the binary shift identity identify the value;
+the monotone linear second-stage cost yields degree `c+1` uniformly. -/
+private lemma e3_exp_bits_timed (C c : ℕ) :
+    ∃ (M : FinTM Bool) (A : ℕ),
+      M.ComputesFunInTime (fun x => Nat.bits (C * 2 ^ (x.length + 1) ^ c))
+        (fun n => A * (n + 1) ^ (c + 1)) := by
+  by_cases hC : C = 0
+  · obtain ⟨M, A, hM⟩ := computesFunInTime_const ([] : List Bool)
+    refine ⟨M, A, fun x => ?_⟩
+    simpa only [hC, Nat.zero_mul, Nat.zero_bits] using (hM x).mono
+      (Nat.mul_le_mul_left A (by
+        simpa only [Nat.pow_one] using Nat.pow_le_pow_right (Nat.succ_pos x.length)
+          (show 1 ≤ c + 1 by omega)))
+  · obtain ⟨U, a, hU⟩ := computesFunInTime_polyUnary 1 c
+    obtain ⟨M, b, hM⟩ := computesFunInTime_comp hU (e3_shift_timed (Nat.bits C))
+      (by intro m n h; exact Nat.mul_le_mul_left _ (Nat.add_le_add_right h 1))
+    let k := (Nat.bits C).length + 2
+    refine ⟨M, b * (a + 1) * (k + 1), fun x => ?_⟩
+    have hc := hM x
+    simp only [Function.comp_apply, List.length_replicate, Nat.one_mul,
+      ← e3_bits_shift C _ hC] at hc
+    apply hc.mono
+    let p := (x.length + 1) ^ (c + 1)
+    have hp : 1 ≤ p := Nat.one_le_pow _ _ (Nat.succ_pos _)
+    change b * (a * p + k * (a * p + 1) + 1) ≤ b * (a + 1) * (k + 1) * p
+    calc
+      _ = b * (a * (k + 1) * p + (k + 1)) := by ring
+      _ ≤ b * (a * (k + 1) * p + (k + 1) * p) :=
+        Nat.mul_le_mul_left b (Nat.add_le_add_left (Nat.le_mul_of_pos_right _ hp) _)
+      _ = _ := by ring
+
+/-- The exponential search returns a threaded pair, or an empty rejection word. -/
+private def e3SplitWord (C c : ℕ) (y : List Bool) : List Bool :=
+  match e3Split C c y.length with
+  | some i => pairEncode (y.take i) (y.drop i)
+  | none => []
+
+/-- The emitted split has a linear length bound, including malformed inputs. -/
+private lemma e3_split_length (C c : ℕ) (y : List Bool) :
+    (e3SplitWord C c y).length ≤ 2 * y.length + 2 := by
+  cases hs : e3Split C c y.length with
+  | none => simp [e3SplitWord, hs]
+  | some i =>
+    have hi := (e3_split_spec C c y.length i hs).1
+    simp [e3SplitWord, hs, pairEncode]
+    omega
+
+/-- The existing paired loader and captured choice simulator handle every
+exponential search result in linear time, including explicit failure.
+**Proof sketch.** Failure excludes verifier membership and the empty-word
+loader rejects. Success certifies the exact dropped length, so split
+uniqueness identifies the native simulation verdict with membership. The
+linear emitted-length bound supplies one common loader budget. -/
+private lemma e3_split_answer (N : FinNDTM Bool) (C c : ℕ) (y : List Bool) :
+    (contPairTM N).ComputesInTime (e3SplitWord C c y)
+      [MultiTapeTM.indicator (e3ChoiceVerifier N C c) y] (3 * (2 * y.length + 3)) := by
+  classical
+  cases hs : e3Split C c y.length with
+  | none =>
+    have hn := e3_choice_no_split N C c y hs
+    simpa only [e3SplitWord, hs, MultiTapeTM.indicator, if_neg hn] using
+      (cont_pair_empty N).mono (by omega : 1 ≤ 3 * (2 * y.length + 3))
+  | some i =>
+    obtain ⟨hi, he⟩ := e3_split_spec C c y.length i hs
+    have hu : (y.drop i).length = C * 2 ^ ((y.take i).length + 1) ^ c := by
+      rw [List.length_drop, List.length_take_of_le hi]
+      omega
+    have hv := e3_choice_append N C c (y.take i) (y.drop i) hu
+    rw [List.take_append_drop] at hv
+    have hout : MultiTapeTM.indicator (e3ChoiceVerifier N C c) y =
+        decide ((N.tm.runWith (y.drop i) (N.tm.initCfg (y.take i))).state = none ∧
+          (N.tm.runWith (y.drop i) (N.tm.initCfg (y.take i))).output = [true]) := by
+      simp only [MultiTapeTM.indicator, hv]
+      split <;> simp_all
+    rw [e3SplitWord, hs, hout]
+    apply (cont_pair_computes N (y.take i) (y.drop i)).mono
+    have hl := e3_split_length C c y
+    simp only [e3SplitWord, hs] at hl
+    omega
+
+/-- A polynomial-time exponential split emitter suffices for the complete
+blank-tape choice verifier; all subsequent machine phases are already proved.
+**Proof sketch.** Timed buffered composition runs split recovery and then the
+unchanged paired loader/simulator. Charge the actual intermediate length,
+never a substituted arbitrary time function. The loader and rewind overhead
+fit thirteen copies of the positive polynomial envelope. -/
+private lemma e3_verifier_of_split (N : FinNDTM Bool) (C c : ℕ)
+    (M : FinTM Bool) (A r : ℕ)
+    (hM : M.ComputesFunInTime (e3SplitWord C c)
+      (fun n => A * (n + 1) ^ (r + 1))) : e3ChoiceVerifier N C c ∈ P := by
+  refine mem_P_iff.mpr ⟨A + 13, r + 1, bufferedCompTM M (contPairTM N), ?_⟩
+  intro y
+  obtain ⟨a, p, tapes, heads, ha, hstart⟩ :=
+    bufferedComp_start M (contPairTM N) y (e3SplitWord C c y) _ (hM y)
+  dsimp only at ha
+  obtain ⟨tag, _, hr⟩ := bufferedSecondCfg_run M (contPairTM N)
+    ((contPairTM N).tm.initCfg (e3SplitWord C c y)) true
+    (by simp [VirtualTag, MultiTapeTM.initCfg, Cfg.init]) p tapes heads
+    (3 * (2 * y.length + 3))
+  have hc := (computesInTime_iff _ _ _ _).mp (e3_split_answer N C c y)
+  have hbase : (bufferedCompTM M (contPairTM N)).ComputesInTime y
+      [MultiTapeTM.indicator (e3ChoiceVerifier N C c) y] (a + 3 * (2 * y.length + 3)) := by
+    apply (computesInTime_iff _ _ _ _).mpr
+    rw [MultiTapeTM.runFrom_add, hstart, hr]
+    exact ⟨by simpa only [bufferedSecondCfg, Option.map_eq_none_iff] using hc.1, hc.2⟩
+  apply hbase.mono
+  have hl := e3_split_length C c y
+  have hp : y.length + 1 ≤ (y.length + 1) ^ (r + 1) := by
+    simpa only [Nat.pow_one] using Nat.pow_le_pow_right (Nat.succ_pos y.length)
+      (show 1 ≤ r + 1 by omega)
+  calc
+    a + 3 * (2 * y.length + 3) ≤
+        A * (y.length + 1) ^ (r + 1) + 13 * (y.length + 1) := by omega
+    _ ≤ A * (y.length + 1) ^ (r + 1) + 13 * (y.length + 1) ^ (r + 1) :=
+      Nat.add_le_add_left (Nat.mul_le_mul_left 13 hp) _
+    _ = (A + 13) * (y.length + 1) ^ (r + 1) := by ring
+
+/-- The bounded search advances unary candidate length and stalls just past
+the input, so its invariant is closed on every possible round state. -/
+private def e3SplitStep (w s : List Bool) : List Bool :=
+  if s.length ≤ w.length then s ++ [true] else s
+
+/-- The search round tests the exact exponential length equation. -/
+private def e3SplitAccept (C c : ℕ) (w s : List Bool) : Bool :=
+  decide (s.length + C * 2 ^ (s.length + 1) ^ c = w.length)
+
+/-- Search-state length is preserved by the one-past-end stall. -/
+private lemma e3_step_inv (w s : List Bool) (hs : s.length ≤ w.length + 1) :
+    (e3SplitStep w s).length ≤ w.length + 1 := by
+  unfold e3SplitStep
+  split <;> simp_all
+
+/-- The tested orbit consists exactly of the unary candidate indices. -/
+private lemma e3_step_orbit (w : List Bool) : ∀ i, i ≤ w.length + 1 →
+    (e3SplitStep w)^[i] [] = List.replicate i true := by
+  intro i
+  induction i with
+  | zero => intro _; rfl
+  | succ i ih =>
+    intro hi
+    rw [Function.iterate_succ_apply', ih (by omega)]
+    simp only [e3SplitStep, List.length_replicate, if_pos (by omega : i ≤ w.length)]
+    exact List.replicate_succ'.symm
+
+/-- Predicate equality on a finite list preserves the least-success result. -/
+private lemma e3_find_congr {α : Type} (xs : List α) (p q : α → Bool)
+    (h : ∀ a ∈ xs, p a = q a) : xs.find? p = xs.find? q := by
+  induction xs with
+  | nil => rfl
+  | cons a xs ih =>
+    simp only [List.find?_cons, h a (by simp)]
+    rw [ih (fun b hb => h b (by simp [hb]))]
+
+/-- The loop's bounded orbit search is the specified exponential split search. -/
+private lemma e3_find_eq (C c : ℕ) (w : List Bool) :
+    (List.range (w.length + 1)).find?
+      (fun i => e3SplitAccept C c w ((e3SplitStep w)^[i] [])) = e3Split C c w.length := by
+  apply e3_find_congr
+  intro i hi
+  have hi' : i ≤ w.length := by simpa only [List.mem_range, Nat.lt_succ_iff] using hi
+  rw [e3_step_orbit w i (by omega)]
+  simp only [e3SplitAccept, List.length_replicate]
+
+/-- Both successful payloads and exhaustion agree with the split emitter. -/
+private lemma e3_loop_result (C c : ℕ) (w : List Bool) :
+    (match (List.range (w.length + 1)).find?
+        (fun i => e3SplitAccept C c w ((e3SplitStep w)^[i] [])) with
+      | some i => pairEncode (w.take ((e3SplitStep w)^[i] []).length)
+          (w.drop ((e3SplitStep w)^[i] []).length)
+      | none => []) = e3SplitWord C c w := by
+  rw [e3_find_eq]
+  cases hs : e3Split C c w.length with
+  | none => simp [e3SplitWord, hs]
+  | some i =>
+    have hi := (e3_split_spec C c w.length i hs).1
+    simp only [e3SplitWord, hs, e3_step_orbit w i (by omega), List.length_replicate]
+
+/-- The result-bearing loop increases the round exponent by one. -/
+private lemma e3_loop_bound (b A r n : ℕ) :
+    b * (A * (n + 1) ^ (r + 1) + 1) * (n + 2) ≤
+      (2 * b * (A + 1)) * (n + 1) ^ (r + 2) := by
+  have hp : 1 ≤ (n + 1) ^ (r + 1) := Nat.one_le_pow _ _ (Nat.succ_pos _)
+  have hfirst : A * (n + 1) ^ (r + 1) + 1 ≤ (A + 1) * (n + 1) ^ (r + 1) := by
+    rw [Nat.add_mul, Nat.one_mul]
+    omega
+  calc
+    _ ≤ b * ((A + 1) * (n + 1) ^ (r + 1)) * (2 * (n + 1)) :=
+      Nat.mul_le_mul (Nat.mul_le_mul_left b hfirst) (by omega)
+    _ = _ := by rw [show r + 2 = (r + 1) + 1 by omega, Nat.pow_succ]; ring
+
+/-- Concrete startup and scratch-restoring round contracts suffice for
+polynomial-time exponential split recovery through the audited loop engine.
+**Proof sketch.** Use the binary input-length machine as fuel, enlarge the
+common round coefficient to cover fuel generation, and invoke the public
+result-bearing loop. The proved unary orbit identifies the least valid
+split and the payload, with the empty output on exhaustion. The loop bound
+raises the round exponent by one. No body contract is inferred from a
+function-level evaluator or from an untimed computation. -/
+private lemma e3_split_of_body (C c : ℕ) (body : FinTM Bool) (anchor : body.State)
+    (A r : ℕ)
+    (hstart : ∀ w : List Bool, ∃ t ≤ A * (w.length + 1) ^ (r + 1),
+      (∀ t' < t, (body.tm.runFrom (body.tm.initCfg w) t').state ≠ some anchor) ∧
+      body.tm.runFrom (body.tm.initCfg w) t = Cfg.ofWords anchor (stateWord body.k []))
+    (hround : ∀ (w s : List Bool), s.length ≤ w.length + 1 →
+      ∃ t, 0 < t ∧ t ≤ A * (w.length + 1) ^ (r + 1) ∧
+        (∀ t', 0 < t' → t' < t →
+          (body.tm.runFrom (Cfg.ofWords (input := w) anchor (stateWord body.k s)) t').state
+            ≠ some anchor) ∧
+        if e3SplitAccept C c w s then
+          (body.tm.runFrom (Cfg.ofWords (input := w) anchor (stateWord body.k s)) t).state = none ∧
+          (body.tm.runFrom (Cfg.ofWords (input := w) anchor (stateWord body.k s)) t).output =
+            pairEncode (w.take s.length) (w.drop s.length)
+        else
+          body.tm.runFrom (Cfg.ofWords (input := w) anchor (stateWord body.k s)) t =
+            Cfg.ofWords anchor (stateWord body.k (e3SplitStep w s))) :
+    ∃ (M : FinTM Bool) (B : ℕ),
+      M.ComputesFunInTime (e3SplitWord C c) (fun n => B * (n + 1) ^ (r + 2)) := by
+  obtain ⟨F, a, hF⟩ := computesFunInTime_lengthBits
+  have hn (n : ℕ) : n + 1 ≤ (n + 1) ^ (r + 1) := by
+    simpa only [Nat.pow_one] using Nat.pow_le_pow_right (Nat.succ_pos n)
+      (show 1 ≤ r + 1 by omega)
+  have hbody (n : ℕ) : A * (n + 1) ^ (r + 1) ≤ (A + a) * (n + 1) ^ (r + 1) :=
+    Nat.mul_le_mul_right _ (by omega)
+  have hF' : F.ComputesFunInTime (fun w => Nat.bits w.length)
+      (fun n => (A + a) * (n + 1) ^ (r + 1)) := by
+    intro w
+    apply (hF w).mono
+    exact (Nat.mul_le_mul_left a (hn w.length)).trans (Nat.mul_le_mul_right _ (by omega))
+  obtain ⟨M, b, hM⟩ := exists_loopFindTM body F anchor
+    (fun w s => s.length ≤ w.length + 1) e3SplitStep (e3SplitAccept C c)
+    (fun w s => pairEncode (w.take s.length) (w.drop s.length)) (fun _ => [])
+    id (fun n => (A + a) * (n + 1) ^ (r + 1)) hF'
+    (by intro w; simp) e3_step_inv
+    (by
+      intro w
+      obtain ⟨t, ht, hi, hh⟩ := hstart w
+      exact ⟨t, ht.trans (hbody w.length), hi, hh⟩)
+    (by
+      intro w s hs
+      obtain ⟨t, htpos, ht, hi, hh⟩ := hround w s hs
+      exact ⟨t, htpos, ht.trans (hbody w.length), hi, hh⟩)
+  refine ⟨M, 2 * b * (A + a + 1), fun w => ?_⟩
+  have hm := hM w
+  dsimp only [id_eq] at hm
+  convert hm.mono (e3_loop_bound b (A + a) r w.length) using 1
+  exact (e3_loop_result C c w).symm
+
+/-- At degree zero the exponential split is the existing constant-width
+catalog split, with coefficient exactly `2*C`. -/
+private lemma e3_split_degree_zero (C : ℕ) :
+    ∃ (M : FinTM Bool) (A : ℕ),
+      M.ComputesFunInTime (e3SplitWord C 0) (fun n => A * (n + 1) ^ 2) := by
+  obtain ⟨M, A, hM⟩ := computesFunInTime_splitSolve (C * 2) 0
+  refine ⟨M, A, fun w => ?_⟩
+  have he : e3Split C 0 w.length = solveSplit (C * 2) 0 w.length := by
+    apply e3_find_congr
+    intro i _
+    apply Bool.eq_iff_iff.mpr
+    simp [beq_iff_eq]
+  simpa only [e3SplitWord, he] using hM w
+
+/-- Coefficient zero also has the existing constant-width split, irrespective
+of the degree. The sole suffix is empty. -/
+private lemma e3_split_coefficient_zero (c : ℕ) :
+    ∃ (M : FinTM Bool) (A : ℕ),
+      M.ComputesFunInTime (e3SplitWord 0 c) (fun n => A * (n + 1) ^ 2) := by
+  obtain ⟨M, A, hM⟩ := computesFunInTime_splitSolve 0 0
+  refine ⟨M, A, fun w => ?_⟩
+  have he : e3Split 0 c w.length = solveSplit 0 0 w.length := by
+    apply e3_find_congr
+    intro i _
+    apply Bool.eq_iff_iff.mpr
+    simp [beq_iff_eq]
+  simpa only [e3SplitWord, he] using hM w
+
 /-- **Exponential choice words are exponential certificates**: every fixed-exponent
 `NTIME (2^(n^c))` class is contained in the certificate-form `Complexity.NEXP`.
 
@@ -2373,9 +2883,58 @@ exists**. The simulation runs `|u| = Q n ≤ m` steps of the fixed machine `N` a
 polynomial bookkeeping per step — polynomial in `m`, which is the whole point of
 exponential padding: `V ∈ P`. Forward/backward certificate correspondence is verbatim
 the polynomial case (pad with `false`-bits; truncate to the length-`T n` prefix and
-absorb). -/
+absorb).
+
+**Partial-fill appendix (epoch 3A).** The exponential split specification,
+uniqueness, explicit failure, pre-validation binary-length bound, and a
+native polynomial-time binary evaluator are proved in the `e3*` layer.
+The existing paired loader and choice core provide the completed verifier
+after split recovery; `e3_split_of_body` supplies the audited result-bearing
+loop and its full polynomial time bound from concrete round contracts.
+Coefficient zero is excluded for a decider and the degree-zero case is
+closed through the catalog's constant-width split. The sole remaining
+local admission below constructs the positive-degree native search body:
+its startup, positive first-return rounds, comparison of the evaluated
+binary width with the remaining input length, exact success payload, and
+restoration of all scratch at rejection. The evaluator alone does not
+discharge this configuration-level obligation. This theorem remains
+dependent on `sorryAx`; no complete target closure is claimed. -/
 theorem ntime_expPow_subset_NEXP (c : ℕ) : NTIME (fun n => 2 ^ n ^ c) ⊆ NEXP := by
-  sorry
+  rintro L ⟨a, N, hN⟩
+  have ha : 0 < a := e3_coefficient_pos N L a c hN
+  refine ⟨a, c, e3ChoiceVerifier N a c, ?_, e3_choice_certificate N L a c hN⟩
+  by_cases hc : c = 0
+  · subst c
+    obtain ⟨M, A, hM⟩ := e3_split_degree_zero a
+    exact e3_verifier_of_split N a 0 M A 1 hM
+  · obtain ⟨Eval, B, hEval⟩ := e3_exp_bits_timed a c
+    -- Native frontier: consume the proved binary evaluator on the current
+    -- candidate, with a length-only polynomial bound on every round state.
+    -- Both the successful output and the complete restored seam are required.
+    obtain ⟨body, anchor, A, r, hstart, hround⟩ :
+        ∃ (body : FinTM Bool) (anchor : body.State) (A r : ℕ),
+          (∀ w : List Bool, ∃ t ≤ A * (w.length + 1) ^ (r + 1),
+            (∀ t' < t, (body.tm.runFrom (body.tm.initCfg w) t').state ≠ some anchor) ∧
+            body.tm.runFrom (body.tm.initCfg w) t =
+              Cfg.ofWords anchor (stateWord body.k [])) ∧
+          (∀ (w s : List Bool), s.length ≤ w.length + 1 →
+            ∃ t, 0 < t ∧ t ≤ A * (w.length + 1) ^ (r + 1) ∧
+              (∀ t', 0 < t' → t' < t →
+                (body.tm.runFrom (Cfg.ofWords (input := w) anchor
+                  (stateWord body.k s)) t').state ≠ some anchor) ∧
+              if e3SplitAccept a c w s then
+                (body.tm.runFrom (Cfg.ofWords (input := w) anchor
+                  (stateWord body.k s)) t).state = none ∧
+                (body.tm.runFrom (Cfg.ofWords (input := w) anchor
+                  (stateWord body.k s)) t).output =
+                    pairEncode (w.take s.length) (w.drop s.length)
+              else
+                body.tm.runFrom (Cfg.ofWords (input := w) anchor
+                  (stateWord body.k s)) t =
+                    Cfg.ofWords anchor (stateWord body.k (e3SplitStep w s))) := by
+      sorry
+    obtain ⟨M, D, hM⟩ := e3_split_of_body a c body anchor A r hstart hround
+    exact e3_verifier_of_split N a c M D (r + 1) hM
 
 /-- **Guess the exponential certificate**: the certificate-form `Complexity.NEXP` is
 contained in the union of the fixed-exponent `NTIME (2^(n^c))` classes.
