@@ -251,10 +251,15 @@ uncomputability chapter.
   approved-trailing (the `Loop`/`Primitives` split, ride-along
   audited, with the auditor's cross-file-privates qualification
   binding). **E2 continuation briefs issued 2026-10-04**
-  (`briefs/ch2-e2cont-batch{A,B,C,D}.md`, base `64d82f84`; 7/15/6/12
-  pts; zero sanctioned `sorryAx` anywhere; superseded-privates
-  no-touch rule; decision-log row in the ch2 plan). Next: dispatch,
-  then integration + the epoch-2 audit. Subsumes 2C's
+  (`briefs/ch2-e2cont-batch{A,B,C,D}.md`, base `64d82f84`).
+  **Integrated 2026-10-04: A/C/D COMPLETE, B 1-of-3** — nine of ten
+  epoch-2 targets admission-free (enumerator cluster incl. the HALT
+  pair; Exercise 2.1; the full TMSAT package); B's one frontier is
+  the integrated reverse NDTM host (guessing phase, coverage, and
+  normalization banked; five-step plan in its REPORT). Tree: 57/57
+  zero errors, **23 admissions**; ch2 ledger **36/59 proved**. Next:
+  the B reverse-compiler continuation brief, then the epoch-2 audit.
+  Subsumes 2C's
   `prefixTM`/`fixedPair` promotion requests. Dedup of superseded batch
   privates is an E5 closure task. Mathlib TM2 rejected as substrate
   (evaluation recorded in the ch1 decision log).
