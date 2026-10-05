@@ -385,9 +385,15 @@ uncomputability chapter.
   `audits/emitter-fill-findings.md`). **FILL GATE CLOSED 2026-10-05, PASS
   in one round (0/0/2/7)** — the emitter increment is complete and
   audited end to end (`audits/emitter-fill-resolutions.md`; both
-  minors maintainer errata, swept). A-cont-3 (1/6/3/4/5) + 3B-cont
-  + 4A are unblocked with every dependency proved and audited; then
-  the epoch-3 audit.
+  minors maintainer errata, swept). **The closing wave is dispatched-ready
+  2026-10-05**: A-3 (`briefs/ch2-e3cont-batchA3.md`, 1→6→3→4→5 via
+  `splitSolveWith`; zero sanctioned), 3B-cont
+  (`briefs/ch2-e3cont-batchB.md`, the emit-loop rebuild under the
+  r2-finding-5 schedule; zero sanctioned), 4A
+  (`briefs/ch2-epoch4-batchA.md`, the summit under the embedded
+  boundary table; one sanctioned root via 3B-cont for the SAT3
+  pair; Astra distillation explicitly non-binding). On returns →
+  4B → the epoch-3/4 audit → E5 closure.
   Subsumes 2C's
   `prefixTM`/`fixedPair` promotion requests. Dedup of superseded batch
   privates is an E5 closure task. Mathlib TM2 rejected as substrate
