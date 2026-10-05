@@ -293,11 +293,14 @@ uncomputability chapter.
   splits run **after E5** via one internal-namespace visibility
   proposal, ride-along reviewed in the E3 pack (pilot: the
   Nondeterminism forward/reverse cut, cost 5); size justifications
-  stand — then E5 dedup (under
-  the resolutions' binding live/dead inventory: `enumLoop_run`,
-  `prefixTM`/`fixedPair_polyTime`, `polyUnaryTM`/`poly_unary_computes`
-  live; `enumCarryTM`/`enumCaptureTM`/`choiceCopyTM` dead), then the
-  E3 briefs. Subsumes 2C's
+  stand — then **E5 — EXECUTED 2026-10-05, deletion-only** (the three
+  inventoried dead families removed: 28 privates, 549 lines; EXP
+  2,887 → 2,534, Nondeterminism 2,627 → 2,454; live routes untouched;
+  contract-evidence lemmas deliberately retained; 57/57 zero errors,
+  21 admissions unchanged, closure regressions PASS —
+  `audits/logs/e5-dedup-{sweep,axioms,lint}.log`; D7 re-measured
+  post-E5: 34/43/24/13/8, deferral confirmed). **The post-gate serial
+  queue is complete.** Next: the E3 briefs. Subsumes 2C's
   `prefixTM`/`fixedPair` promotion requests. Dedup of superseded batch
   privates is an E5 closure task. Mathlib TM2 rejected as substrate
   (evaluation recorded in the ch1 decision log).

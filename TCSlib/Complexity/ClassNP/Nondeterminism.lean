@@ -61,6 +61,18 @@ reconciliation of the two), and Theorem 2.22 (`EXP ≠ NEXP → P ≠ NP`, by pa
 * [AB09] S. Arora, B. Barak, *Computational Complexity: A Modern Approach*,
   Cambridge University Press, 2009. (Theorem 2.6, pp. 41-42; §2.6.2, pp. 56-57;
   Theorem 2.22, p. 57; Exercises 2.1, 2.27.)
+
+**Maintainer note (E5 dedup).** The epoch-2 checkpoint's superseded
+standalone copying phase — `copyTapes` and the `choiceCopy*` family,
+eight private declarations — was removed under the epoch-2 gate's
+binding live/dead inventory (`audits/ch2-epoch2-resolutions.md`): the
+continuation's forward compiler consumed `splitSolve` and the capture
+layer directly, and the auditor's kernel walk confirmed the family
+absent from the forward inclusion's closure. Unreferenced
+continuation/B2-era lemmas that discharge binding contract obligations
+(`cont_poly_guess_phase`, `b2_unary_mask`, `b2_tables_coincide`,
+`certificateSplit_complete`) are deliberately retained as audited
+evidence.
 -/
 
 namespace Complexity
@@ -436,191 +448,6 @@ including the empty-input case, where position one is already the right blank. -
 private lemma choiceCore_initial_tag (N : FinNDTM Bool) (x : List Bool) :
     VirtualTag (N.tm.initCfg x).inputPos true := by
   simp [NDTM.initCfg, Cfg.init, VirtualTag]
-
-/-- Three concrete tape slots for the standalone copying phase. -/
-private def copyTapes {α : Type} (left right clock : α) (i : Fin 3) : α :=
-  if i = 0 then left else if i = 1 then right else clock
-
-/-- A fixed copying phase, supplied with a unary split countdown on its third
-tape. It copies the prefix to tape zero and the suffix to tape one, in a single
-left-to-right pass, and never emits physical output. Split recovery and production
-of the countdown are separate startup obligations. -/
-private def choiceCopy : FinTM Bool where
-  k := 3
-  State := Bool
-  tm :=
-    { q₀ := true
-      tr := fun phase inp work => match inp with
-        | none => ⟨0, fun _ => (none, 0), none, none⟩
-        | some bit =>
-          if phase = true ∧ (work 2).isSome then
-            ⟨1, copyTapes (some (some bit), 1) (none, 0) (none, 1),
-              none, some true⟩
-          else
-            ⟨1, copyTapes (none, 0) (some (some bit), 1) (none, 0),
-              none, some false⟩ }
-
-/-- Configuration of the copying phase: completed prefix and suffix buffers,
-with the countdown head equal to the number of prefix bits already copied. -/
-private def choiceCopyCfg {y : List Bool} (n : ℕ) (phase : Bool)
-    (left right : List Bool) (p : Fin (y.length + 2)) :
-    Cfg 3 Bool Bool y where
-  state := some phase
-  inputPos := p
-  workTapes := copyTapes (bufferTape left) (bufferTape right)
-    (bufferTape (List.replicate n true))
-  workTapePos := copyTapes (left.length : ℤ) (right.length : ℤ)
-    (left.length : ℤ)
-  output := []
-
-/-- While the unary countdown is nonempty, one native copying step appends the
-current input bit only to the prefix buffer and advances the countdown once. -/
-private lemma choiceCopy_prefix_step {y : List Bool} (n : ℕ)
-    (left right : List Bool) (p : Fin (y.length + 2)) (bit : Bool)
-    (hlen : left.length < n)
-    (hin : (choiceCopyCfg n true left right p).inputSymbol = some bit) :
-    choiceCopy.tm.step (choiceCopyCfg n true left right p) =
-      choiceCopyCfg n true (left ++ [bit]) right (moveInputPos p 1) := by
-  have hc : (choiceCopyCfg n true left right p).workTapeSymbols 2 = some true := by
-    simp [choiceCopyCfg, copyTapes, Cfg.workTapeSymbols, hlen]
-  unfold MultiTapeTM.step
-  change (choiceCopy.tm.tr true _ _).apply _ = _
-  rw [hin]
-  dsimp only [choiceCopy]
-  rw [hc]
-  refine Cfg.ext rfl rfl ?_ ?_ (by simp [choiceCopyCfg])
-  · funext i
-    fin_cases i <;> simp [choiceCopyCfg, copyTapes, bufferTape_append]
-  · funext i
-    fin_cases i <;> simp [choiceCopyCfg, copyTapes]
-
-/-- Once the countdown is exhausted, one native copying step appends the current
-input bit only to the choice buffer, leaving the source-input buffer unchanged. -/
-private lemma choiceCopy_suffix_step {y : List Bool} (n : ℕ) (phase : Bool)
-    (left right : List Bool) (p : Fin (y.length + 2)) (bit : Bool)
-    (hlen : left.length = n)
-    (hin : (choiceCopyCfg n phase left right p).inputSymbol = some bit) :
-    choiceCopy.tm.step (choiceCopyCfg n phase left right p) =
-      choiceCopyCfg n false left (right ++ [bit]) (moveInputPos p 1) := by
-  have hc : (choiceCopyCfg n phase left right p).workTapeSymbols 2 = none := by
-    simp [choiceCopyCfg, copyTapes, Cfg.workTapeSymbols, hlen]
-  unfold MultiTapeTM.step
-  change (choiceCopy.tm.tr phase _ _).apply _ = _
-  rw [hin]
-  dsimp only [choiceCopy]
-  rw [hc]
-  simp only [Option.isSome_none, Bool.false_eq_true, and_false, if_false]
-  refine Cfg.ext rfl rfl ?_ ?_ (by simp [choiceCopyCfg])
-  · funext i
-    fin_cases i <;> simp [choiceCopyCfg, copyTapes, bufferTape_append]
-  · funext i
-    fin_cases i <;> simp [choiceCopyCfg, copyTapes]
-
-/-- Starting with the unary prefix length and blank data buffers, copying the
-first `t ≤ |x|` input symbols takes exactly `t` native transitions.
-
-**Proof sketch.** Induct on `t`. The native input head reads the next bit of
-`x`, and the unary countdown still has a bit. Apply the prefix-copy step and
-the list-prefix append identity; the native head advances without clamping
-because the next position is still within the input window. -/
-private lemma choiceCopy_prefix_run (x u : List Bool) (t : ℕ) (ht : t ≤ x.length) :
-    choiceCopy.tm.runFrom
-      (choiceCopyCfg (y := x ++ u) x.length true [] [] 1) t =
-        choiceCopyCfg x.length true (x.take t) []
-          ⟨t + 1, by simp only [List.length_append]; omega⟩ := by
-  induction t with
-  | zero => simp [MultiTapeTM.runFrom_zero, List.take_zero]
-  | succ t ih =>
-    rw [MultiTapeTM.runFrom_succ_eq_step', ih (by omega)]
-    have hp : (x.take t).length = t := List.length_take_of_le (by omega)
-    have hin : (choiceCopyCfg (y := x ++ u) x.length true (x.take t) []
-        ⟨t + 1, by simp only [List.length_append]; omega⟩).inputSymbol = some x[t] := by
-      rw [inputSymbolInner t (by simp only [choiceCopyCfg, Nat.add_comm])
-        (by simp only [List.length_append]; omega)]
-      rw [List.getElem_append_left (by omega)]
-    rw [choiceCopy_prefix_step _ _ _ _ _ (by rw [hp]; omega) hin,
-      ← List.take_succ_eq_append_getElem (by omega)]
-    congr 1
-    apply Fin.ext
-    rw [show (1 : SignType) = .pos from rfl,
-      moveInputPos_pos_of_ne_right _ (by simp only [List.length_append]; omega)]
-
-/-- After copying all of `x`, each additional suffix bit costs one native
-transition. The copied source input and its completed countdown remain unchanged.
-In particular, empty prefixes and empty suffixes are included.
-
-**Proof sketch.** The prefix-run lemma supplies the initial suffix configuration.
-Induct on the number of suffix bits: the countdown stays at its right blank,
-and the input read lies in the suffix of the concatenation. The suffix-copy
-step appends precisely that next bit and advances the native input head. -/
-private lemma choiceCopy_suffix_run (x u : List Bool) (t : ℕ) (ht : t ≤ u.length) :
-    ∃ phase : Bool, choiceCopy.tm.runFrom
-      (choiceCopyCfg (y := x ++ u) x.length true [] [] 1) (x.length + t) =
-        choiceCopyCfg x.length phase x (u.take t)
-          ⟨x.length + t + 1, by simp only [List.length_append]; omega⟩ := by
-  induction t with
-  | zero =>
-    refine ⟨true, ?_⟩
-    simpa only [Nat.add_zero, List.take_zero, List.take_length] using
-      choiceCopy_prefix_run x u x.length (le_refl _)
-  | succ t ih =>
-    obtain ⟨phase, hr⟩ := ih (by omega)
-    refine ⟨false, ?_⟩
-    conv_lhs => rw [Nat.add_succ x.length t, MultiTapeTM.runFrom_succ_eq_step', hr]
-    have hin : (choiceCopyCfg (y := x ++ u) x.length phase x (u.take t)
-        ⟨x.length + t + 1, by simp only [List.length_append]; omega⟩).inputSymbol =
-        some u[t] := by
-      rw [inputSymbolInner (x.length + t)
-        (by simp only [choiceCopyCfg, Nat.add_comm])
-        (by simp only [List.length_append]; omega)]
-      rw [List.getElem_append_right (by omega)]
-      simp
-    rw [choiceCopy_suffix_step _ _ _ _ _ _ rfl hin,
-      ← List.take_succ_eq_append_getElem (by omega)]
-    congr 1
-    apply Fin.ext
-    rw [show (1 : SignType) = .pos from rfl,
-      moveInputPos_pos_of_ne_right _ (by simp only [List.length_append]; omega)]
-    change x.length + t + 1 + 1 = x.length + (t + 1) + 1
-    omega
-
-/-- The entire copying pass takes `|x++u|+1` transitions, including its final
-boundary check. Both data buffers are exact, their heads are at their right
-blanks, the countdown is preserved, and physical output is empty. This contract
-still requires the unary split length to be present initially.
-
-**Proof sketch.** Instantiate the suffix-run lemma at the complete suffix length.
-The physical input head then reads the right blank. The next transition halts
-without writing, moving work heads, or emitting, preserving the two full buffers. -/
-private lemma choiceCopy_timed (x u : List Bool) :
-    let result := choiceCopy.tm.runFrom
-      (choiceCopyCfg (y := x ++ u) x.length true [] [] 1) ((x ++ u).length + 1)
-    result.state = none ∧
-      result.workTapes = copyTapes (bufferTape x) (bufferTape u)
-        (bufferTape (List.replicate x.length true)) ∧
-      result.workTapePos = copyTapes (x.length : ℤ) (u.length : ℤ) (x.length : ℤ) ∧
-      result.output = [] := by
-  obtain ⟨phase, hr⟩ := choiceCopy_suffix_run x u u.length (le_refl _)
-  simp only [List.take_length] at hr
-  dsimp only
-  rw [MultiTapeTM.runFrom_succ_eq_step']
-  have hr' : choiceCopy.tm.runFrom
-      (choiceCopyCfg (y := x ++ u) x.length true [] [] 1) (x ++ u).length =
-        choiceCopyCfg x.length phase x u
-          ⟨x.length + u.length + 1, by simp only [List.length_append]; omega⟩ := by
-    simpa only [List.length_append] using hr
-  rw [hr']
-  have hin : (choiceCopyCfg (y := x ++ u) x.length phase x u
-      ⟨x.length + u.length + 1, by simp only [List.length_append]; omega⟩).inputSymbol =
-      none := by
-    have h := inputSymbol_at (choiceCopyCfg (y := x ++ u) x.length phase x u
-      ⟨x.length + u.length + 1, by simp only [List.length_append]; omega⟩)
-      (x ++ u).length (le_refl _) (by simp [choiceCopyCfg])
-    simpa using h
-  unfold MultiTapeTM.step
-  change ((choiceCopy.tm.tr phase _ _).apply _).state = none ∧ _
-  rw [hin]
-  simp [choiceCopy, choiceCopyCfg]
 
 /-- The library and this file solve the same length equation. The coefficient
 is unchanged here: the `C+1` translation recorded for the marker-padding parser

@@ -183,11 +183,12 @@ def analyze(path, body_start, body_end, atomic_ranges=()):
     return blocks, legal, spans
 
 
+# Post-E5 dimensions (the EnumCapture section no longer exists in EXP).
 FILES = [
     ("TCSlib/Complexity/TuringMachine/Build/Loop.lean", 116, 2698, ()),
     ("TCSlib/Complexity/TuringMachine/Build/Primitives.lean", 121, 4418, ()),
-    ("TCSlib/Complexity/ClassNP/EXP.lean", 53, 2887, ((411, 582),)),
-    ("TCSlib/Complexity/ClassNP/Nondeterminism.lean", 65, 2627, ()),
+    ("TCSlib/Complexity/ClassNP/EXP.lean", 64, 2534, ()),
+    ("TCSlib/Complexity/ClassNP/Nondeterminism.lean", 77, 2454, ()),
     ("TCSlib/Complexity/ClassNP/TMSAT.lean", 92, 1908, ()),
 ]
 
