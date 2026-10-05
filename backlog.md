@@ -259,7 +259,9 @@ uncomputability chapter.
   normalization banked; five-step plan in its REPORT). Tree: 57/57
   zero errors, **23 admissions**; ch2 ledger **36/59 proved**. Next:
   the B reverse-compiler continuation brief, then the epoch-2 audit.
-  Subsumes 2C's
+  **B2 brief issued 2026-10-04** (`briefs/ch2-e2cont-batchB2.md`, base
+  `e72d95bf`; 9 pts; zero sanctioned admissions; completion closes the
+  epoch at 10/10). Subsumes 2C's
   `prefixTM`/`fixedPair` promotion requests. Dedup of superseded batch
   privates is an E5 closure task. Mathlib TM2 rejected as substrate
   (evaluation recorded in the ch1 decision log).
