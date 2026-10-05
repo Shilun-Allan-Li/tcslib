@@ -110,7 +110,7 @@ exceeding `t` is at most:
   `s · (1/2)^l + (1/2)^t + s · exp(−n/(120w)) + (s+1) · exp(−n/(120l))`
 
 The Chernoff tails vanish exponentially as `n → ∞`. -/
-lemma iterative_reduction_bound (c : Circuit n)
+lemma iterative_reduction_bound (c : TreeCircuit n)
     (d s w : ℕ) (l t : ℕ)
     (hd : c.depth ≤ d) (hs : c.size ≤ s) (hw : c.maxFanin ≤ w)
     (hd2 : 2 ≤ d) (hs_pos : 0 < s) (hw_pos : 0 < w) (hl_pos : 0 < l)
@@ -135,7 +135,7 @@ lemma iterative_reduction_bound (c : Circuit n)
     `Pr[DT(f|_ρ) > t] ≤ ε + s · exp(−n/(120w)) + (s+1) · exp(−n/(120l))`
 
     The exponential tails vanish as `n → ∞`, giving `Pr ≤ ε` asymptotically. -/
-theorem odonnell_lemma_4_28 (c : Circuit n)
+theorem odonnell_lemma_4_28 (c : TreeCircuit n)
     (d s w : ℕ) (l t : ℕ)
     (hd : c.depth ≤ d) (hs : c.size ≤ s) (hw : c.maxFanin ≤ w)
     (hd2 : 2 ≤ d) (hs_pos : 0 < s) (hw_pos : 0 < w) (hl_pos : 0 < l)

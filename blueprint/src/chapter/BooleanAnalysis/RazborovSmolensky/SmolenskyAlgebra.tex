@@ -87,7 +87,7 @@ Then there exists a seed $s \in S$ for which the number of Boolean inputs $x \in
 \lean{RazborovSmolensky.exists_single_poly_for_circuit_one_size}
 \label{RazborovSmolensky.exists_single_poly_for_circuit_one_size}
 \leanok
-\uses{RazborovSmolensky.ACp_GateOps, BoolCircuit.FeedForward, BoolCircuit.FeedForward.eval₁, BoolCircuit.FeedForward.onlyUsesGates, BoolCircuit.FeedForward.size, RazborovSmolensky.badInputCount, RazborovSmolensky.circuitDegreeBound, RazborovSmolensky.exists_poly_distribution_for_circuit_one_size, RazborovSmolensky.exists_single_polynomial_from_pointwise_distribution}
+\uses{RazborovSmolensky.ACp_GateOps, BoolCircuit.LayeredCircuit, BoolCircuit.LayeredCircuit.eval₁, BoolCircuit.LayeredCircuit.onlyUsesGates, BoolCircuit.LayeredCircuit.size, RazborovSmolensky.badInputCount, RazborovSmolensky.circuitDegreeBound, RazborovSmolensky.exists_poly_distribution_for_circuit_one_size, RazborovSmolensky.exists_single_polynomial_from_pointwise_distribution}
 \difficulty{2}
 Let $p$ be a prime, let $n\in\bbn$, and let $F$ be a feedforward circuit over the
 alphabet $\{0,1\}$ with input type $\mathrm{Fin}\,n$, a unique output node, and finitely
@@ -109,7 +109,7 @@ where $\operatorname{size}(F)$ is the number of non-input nodes of $F$.
 \lean{RazborovSmolensky.size_lower_bound_from_badCountLB}
 \label{RazborovSmolensky.size_lower_bound_from_badCountLB}
 \leanok
-\uses{RazborovSmolensky.ACp_GateOps, BoolCircuit.FeedForward, BoolCircuit.FeedForward.eval₁, BoolCircuit.FeedForward.onlyUsesGates, BoolCircuit.FeedForward.size, RazborovSmolensky.LowDegreeBadCountLB, RazborovSmolensky.badInputCount, RazborovSmolensky.circuitDegreeBound, RazborovSmolensky.exists_single_poly_for_circuit_one_size, RazborovSmolensky.modGateOp, RazborovSmolensky.modQTarget}
+\uses{RazborovSmolensky.ACp_GateOps, BoolCircuit.LayeredCircuit, BoolCircuit.LayeredCircuit.eval₁, BoolCircuit.LayeredCircuit.onlyUsesGates, BoolCircuit.LayeredCircuit.size, RazborovSmolensky.LowDegreeBadCountLB, RazborovSmolensky.badInputCount, RazborovSmolensky.circuitDegreeBound, RazborovSmolensky.exists_single_poly_for_circuit_one_size, RazborovSmolensky.modGateOp, RazborovSmolensky.modQTarget}
 \difficulty{3}
 Let $p$ and $q$ be primes, and let $F$ be a feedforward circuit over the alphabet
 $\{0,1\}$ with input coordinates indexed by $\mathrm{Fin}\,n$, finitely many nodes in
@@ -132,7 +132,7 @@ where $\abs{F}$ is the number of non-input nodes of $F$.
 \lean{RazborovSmolensky.size_lower_bound_from_relative_badCountLB}
 \label{RazborovSmolensky.size_lower_bound_from_relative_badCountLB}
 \leanok
-\uses{RazborovSmolensky.ACp_GateOps, BoolCircuit.FeedForward, BoolCircuit.FeedForward.eval₁, BoolCircuit.FeedForward.onlyUsesGates, BoolCircuit.FeedForward.size, RazborovSmolensky.LowDegreeBadCountLB, RazborovSmolensky.circuitDegreeBound, RazborovSmolensky.modGateOp, RazborovSmolensky.modQTarget, RazborovSmolensky.size_lower_bound_from_badCountLB}
+\uses{RazborovSmolensky.ACp_GateOps, BoolCircuit.LayeredCircuit, BoolCircuit.LayeredCircuit.eval₁, BoolCircuit.LayeredCircuit.onlyUsesGates, BoolCircuit.LayeredCircuit.size, RazborovSmolensky.LowDegreeBadCountLB, RazborovSmolensky.circuitDegreeBound, RazborovSmolensky.modGateOp, RazborovSmolensky.modQTarget, RazborovSmolensky.size_lower_bound_from_badCountLB}
 \difficulty{3}
 Let $p$ and $q$ be primes, and let $F$ be a layered feedforward circuit over the Boolean
 alphabet with input coordinates $\mathrm{Fin}\,n$ and a single output, each of whose

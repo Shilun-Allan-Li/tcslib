@@ -13,7 +13,7 @@ import TCSlib.Complexity.CircuitComplexity.CircuitSat
 ## Main definitions
 
 * `BoolCircuit.encodeCircuit`, `BoolCircuit.readCircuit` — a prefix serialisation of
-  `BoolCircuit.Circuit` into `List Bool`, and the parser that reads it back.
+  `BoolCircuit.TreeCircuit` into `List Bool`, and the parser that reads it back.
 * `BoolCircuit.encodeSigma`, `BoolCircuit.decodeSigma`, `BoolCircuit.circuitEncoding` — the same for an
   arity-tagged circuit, packaged as a `Computability.FinEncoding`.
 * `BoolCircuit.cktSatLang` — CKT-SAT as a `Language Bool`.  [AB09, Def 6.9]
@@ -37,12 +37,12 @@ campaign's machine model and `P` live on this branch), so its cost is bounded
 nowhere and the time half of [AB09, Lem 6.11] remains unformalized, as `CircuitSat.lean` already records. What is added is a bound on
 the reduction's *output*, and only on its number of 3-clauses: the output's
 variable type `SATTo3SAT.AuxVar (BoolCircuit.CktVar n)` is infinite (`CktVar n`
-is indexed by all of `Circuit n`), so no encoding of the output formula exists
+is indexed by all of `TreeCircuit n`), so no encoding of the output formula exists
 here and its bit length is not bounded.
 
 AB's concrete representation ([AB09, p. 112]) is the `S × S` adjacency matrix of
 a size-`S` circuit's DAG plus an array of `S` gate labels, vertices identified
-with `[S]`.  `BoolCircuit.Circuit` is a tree, and that representation is **not implemented**
+with `[S]`.  `BoolCircuit.TreeCircuit` is a tree, and that representation is **not implemented**
 here: a finite tree could be numbered (preorder, say) and given an adjacency
 matrix, but no such numbering and none of the accessors `SIZE`/`TYPE`/`EDGE`
 are defined.  AB offers the matrix as "a concrete
@@ -103,26 +103,26 @@ private theorem readUnary_unaryBits (k : ℕ) (rest : List Bool) :
 /-- A circuit as a bit string: a leaf is `false`, its sign, its index in unary;
 a gate is `true`, its connective, then its children, each prefixed by `true` and
 the list terminated by `false`. -/
-def encodeCircuit {n : ℕ} : Circuit n → List Bool
+def encodeCircuit {n : ℕ} : TreeCircuit n → List Bool
   | .lit l => false :: l.sign :: unaryBits l.idx.val
   | .node b cs => (true :: b :: (cs.flatMap fun c => true :: encodeCircuit c)) ++ [false]
 
 /-- The children block of a gate's encoding. -/
-def encodeChildren {n : ℕ} (cs : List (Circuit n)) : List Bool :=
+def encodeChildren {n : ℕ} (cs : List (TreeCircuit n)) : List Bool :=
   (cs.flatMap fun c => true :: encodeCircuit c) ++ [false]
 
 /-- A gate's encoding is its tag bit, its connective bit, then its children block. -/
-theorem encodeCircuit_node {n : ℕ} (b : Bool) (cs : List (Circuit n)) :
+theorem encodeCircuit_node {n : ℕ} (b : Bool) (cs : List (TreeCircuit n)) :
     encodeCircuit (.node b cs) = true :: b :: encodeChildren cs := by
   simp [encodeCircuit, encodeChildren]
 
 /-- The empty children block is the lone stop bit. -/
-theorem encodeChildren_nil {n : ℕ} : encodeChildren ([] : List (Circuit n)) = [false] := by
+theorem encodeChildren_nil {n : ℕ} : encodeChildren ([] : List (TreeCircuit n)) = [false] := by
   simp [encodeChildren]
 
 /-- A non-empty children block is a continue bit, the head's encoding, then the
 block for the tail. -/
-theorem encodeChildren_cons {n : ℕ} (d : Circuit n) (ds : List (Circuit n)) :
+theorem encodeChildren_cons {n : ℕ} (d : TreeCircuit n) (ds : List (TreeCircuit n)) :
     encodeChildren (d :: ds) = true :: (encodeCircuit d ++ encodeChildren ds) := by
   simp [encodeChildren, List.append_assoc]
 
@@ -134,7 +134,7 @@ callers supply the input's length, which always suffices. -/
 mutual
 
 /-- Read one circuit off the front of a bit string, returning the remainder. -/
-def readCircuit (n : ℕ) : ℕ → List Bool → Option (Circuit n × List Bool)
+def readCircuit (n : ℕ) : ℕ → List Bool → Option (TreeCircuit n × List Bool)
   | 0, _ => none
   | fuel + 1, bs =>
       match bs with
@@ -149,7 +149,7 @@ def readCircuit (n : ℕ) : ℕ → List Bool → Option (Circuit n × List Bool
       | _ => none
 
 /-- Read a gate's children block off the front of a bit string. -/
-def readChildren (n : ℕ) : ℕ → List Bool → Option (List (Circuit n) × List Bool)
+def readChildren (n : ℕ) : ℕ → List Bool → Option (List (TreeCircuit n) × List Bool)
   | 0, _ => none
   | fuel + 1, bs =>
       match bs with
@@ -174,7 +174,7 @@ order; one unit of fuel pays for the continue bit, the hypothesis for the head
 returns the tail's block as its remainder, and the induction hypothesis consumes
 that.  Fuel suffices at each step because the block's length is the sum of the
 two sub-lengths plus one. -/
-theorem readChildren_encodeChildren {n : ℕ} (ds : List (Circuit n))
+theorem readChildren_encodeChildren {n : ℕ} (ds : List (TreeCircuit n))
     (h : ∀ d ∈ ds, ∀ (fuel : ℕ) (rest : List Bool), (encodeCircuit d).length ≤ fuel →
       readCircuit n fuel (encodeCircuit d ++ rest) = some (d, rest)) :
     ∀ (fuel : ℕ) (rest : List Bool), (encodeChildren ds).length ≤ fuel →
@@ -206,10 +206,10 @@ untouched remainder; the index is in range because it came from a `Fin n`.  A
 gate is a tag bit, a connective bit and a children block; the children block is
 handled by the previous lemma, whose hypothesis is exactly what the induction
 supplies for the children. -/
-theorem readCircuit_encodeCircuit {n : ℕ} (C : Circuit n) :
+theorem readCircuit_encodeCircuit {n : ℕ} (C : TreeCircuit n) :
     ∀ (fuel : ℕ) (rest : List Bool), (encodeCircuit C).length ≤ fuel →
       readCircuit n fuel (encodeCircuit C ++ rest) = some (C, rest) := by
-  induction C using Circuit.ind with
+  induction C using TreeCircuit.ind with
   | hlit l =>
       intro fuel rest hf
       match fuel with
@@ -231,12 +231,12 @@ theorem readCircuit_encodeCircuit {n : ℕ} (C : Circuit n) :
 /-! ## The encoding -/
 
 /-- An arity-tagged circuit as a bit string: the arity in unary, then the circuit. -/
-def encodeSigma : ((n : ℕ) × Circuit n) → List Bool
+def encodeSigma : ((n : ℕ) × TreeCircuit n) → List Bool
   | ⟨n, C⟩ => unaryBits n ++ encodeCircuit C
 
 /-- Parse a bit string as an arity-tagged circuit, accepting only strings that
 re-encode to themselves. -/
-def decodeSigma (bs : List Bool) : Option ((n : ℕ) × Circuit n) :=
+def decodeSigma (bs : List Bool) : Option ((n : ℕ) × TreeCircuit n) :=
   match readUnary bs with
   | none => none
   | some (n, r) =>
@@ -245,7 +245,7 @@ def decodeSigma (bs : List Bool) : Option ((n : ℕ) × Circuit n) :=
       | _ => none
 
 /-- Every encoded circuit decodes back to itself. -/
-theorem decodeSigma_encodeSigma (C : (n : ℕ) × Circuit n) :
+theorem decodeSigma_encodeSigma (C : (n : ℕ) × TreeCircuit n) :
     decodeSigma (encodeSigma C) = some C := by
   obtain ⟨n, C⟩ := C
   simp only [decodeSigma, encodeSigma, readUnary_unaryBits]
@@ -254,7 +254,7 @@ theorem decodeSigma_encodeSigma (C : (n : ℕ) × Circuit n) :
   simp
 
 /-- Only the encoding of `C` decodes to `C`. -/
-theorem encodeSigma_of_decodeSigma {bs : List Bool} {C : (n : ℕ) × Circuit n}
+theorem encodeSigma_of_decodeSigma {bs : List Bool} {C : (n : ℕ) × TreeCircuit n}
     (h : decodeSigma bs = some C) : encodeSigma C = bs := by
   unfold decodeSigma at h
   split at h
@@ -270,7 +270,7 @@ theorem encodeSigma_of_decodeSigma {bs : List Bool} {C : (n : ℕ) × Circuit n}
     · exact absurd h (by simp)
 
 /-- The circuit encoding, as a `Computability.FinEncoding` over the alphabet `Bool`. -/
-def circuitEncoding : Computability.FinEncoding ((n : ℕ) × Circuit n) where
+def circuitEncoding : Computability.FinEncoding ((n : ℕ) × TreeCircuit n) where
   Γ := Bool
   encode := encodeSigma
   decode := decodeSigma
@@ -290,7 +290,7 @@ def cktSatLang : Language Bool :=
   {w | ∃ C, decodeSigma w = some C ∧ C ∈ CktSat}
 
 /-- `cktSatLang` and `BoolCircuit.CktSat` agree under the encoding. -/
-theorem mem_cktSatLang_iff (C : (n : ℕ) × Circuit n) :
+theorem mem_cktSatLang_iff (C : (n : ℕ) × TreeCircuit n) :
     encodeSigma C ∈ cktSatLang ↔ C ∈ CktSat := by
   constructor
   · rintro ⟨D, hD, hmem⟩
@@ -318,15 +318,15 @@ example : decodeSigma [false, true, true, false] = some ⟨0, .node true []⟩ :
   simp [decodeSigma, readUnary, readCircuit, readChildren, encodeSigma, encodeCircuit, unaryBits]
 
 example : encodeSigma ⟨0, .node true []⟩ ∈ cktSatLang :=
-  (mem_cktSatLang_iff _).mpr ⟨finZeroElim, by simp [Circuit.eval]⟩
+  (mem_cktSatLang_iff _).mpr ⟨finZeroElim, by simp [TreeCircuit.eval]⟩
 
 example : encodeSigma ⟨0, .node false []⟩ ∉ cktSatLang := by
   rw [mem_cktSatLang_iff]
   rintro ⟨u, hu⟩
-  simp [Circuit.eval] at hu
+  simp [TreeCircuit.eval] at hu
 
 example : encodeSigma ⟨1, .lit ⟨0, true⟩⟩ ∈ cktSatLang :=
-  (mem_cktSatLang_iff _).mpr ⟨fun _ => true, by simp [Circuit.eval]⟩
+  (mem_cktSatLang_iff _).mpr ⟨fun _ => true, by simp [TreeCircuit.eval]⟩
 
 example : ([] : List Bool) ∉ cktSatLang := by
   rintro ⟨C, hC, -⟩
@@ -341,12 +341,12 @@ of at least three bits.  A gate's size is one plus the total size of its
 children, and its encoding is two bits plus the children block; a side induction
 on the list of children shows the children's total size is at most the block's
 length, since each child contributes its own encoding and a continue bit. -/
-theorem size_le_length_encodeCircuit {n : ℕ} (C : Circuit n) :
+theorem size_le_length_encodeCircuit {n : ℕ} (C : TreeCircuit n) :
     C.size ≤ (encodeCircuit C).length := by
-  induction C using Circuit.ind with
-  | hlit l => simp [encodeCircuit, Circuit.size, unaryBits]
+  induction C using TreeCircuit.ind with
+  | hlit l => simp [encodeCircuit, TreeCircuit.size, unaryBits]
   | hnode b cs ih =>
-      have hlist : ∀ ds : List (Circuit n), (∀ d ∈ ds, d.size ≤ (encodeCircuit d).length) →
+      have hlist : ∀ ds : List (TreeCircuit n), (∀ d ∈ ds, d.size ≤ (encodeCircuit d).length) →
           ds.foldr (fun d acc => d.size + acc) 0 ≤ (encodeChildren ds).length := by
         intro ds hds
         induction ds with
@@ -359,11 +359,11 @@ theorem size_le_length_encodeCircuit {n : ℕ} (C : Circuit n) :
             omega
       have hsum := hlist cs ih
       rw [encodeCircuit_node]
-      simp only [Circuit.size, List.length_cons]
+      simp only [TreeCircuit.size, List.length_cons]
       omega
 
 /-- An arity-tagged circuit's size never exceeds the length of its encoding. -/
-theorem size_le_length_encodeSigma (C : (n : ℕ) × Circuit n) :
+theorem size_le_length_encodeSigma (C : (n : ℕ) × TreeCircuit n) :
     C.2.size ≤ (encodeSigma C).length := by
   obtain ⟨n, C⟩ := C
   have h := size_le_length_encodeCircuit C
@@ -372,10 +372,10 @@ theorem size_le_length_encodeSigma (C : (n : ℕ) × Circuit n) :
   omega
 
 /-- One gate's clauses use `3` literal occurrences per child, plus one. -/
-theorem gateClauses_flatten_length {n : ℕ} (b : Bool) (cs : List (Circuit n)) :
+theorem gateClauses_flatten_length {n : ℕ} (b : Bool) (cs : List (TreeCircuit n)) :
     (gateClauses b cs).flatten.length = 3 * cs.length + 1 := by
-  have key : ∀ (x : Literal (CktVar n)) (g : Circuit n → Literal (CktVar n))
-      (ds : List (Circuit n)), (ds.map fun c => [x, g c]).flatten.length = 2 * ds.length := by
+  have key : ∀ (x : Literal (CktVar n)) (g : TreeCircuit n → Literal (CktVar n))
+      (ds : List (TreeCircuit n)), (ds.map fun c => [x, g c]).flatten.length = 2 * ds.length := by
     intro x g ds
     induction ds with
     | nil => simp
@@ -385,7 +385,7 @@ theorem gateClauses_flatten_length {n : ℕ} (b : Bool) (cs : List (Circuit n)) 
 /-- The gate clauses of `C` use fewer than `7 * C.size` literal occurrences.
 
 **Proof sketch.** Structural induction, in the same shape as
-`BoolCircuit.Circuit.tseitin_length_lt`.  A leaf contributes four occurrences
+`BoolCircuit.TreeCircuit.tseitin_length_lt`.  A leaf contributes four occurrences
 against a size of one, and `7 - 3` is four.  At a gate the statement is
 strengthened by three units of slack so that it survives the passage to the
 children: a side induction on the list of children shows their occurrences,
@@ -393,12 +393,12 @@ children: a side induction on the list of children shows their occurrences,
 gate's own clauses cost three occurrences per child plus one, so those three per
 child are exactly what the side induction set aside, and the gate's node itself
 contributes the remaining seven units. -/
-theorem tseitin_flatten_length_le {n : ℕ} (C : Circuit n) :
+theorem tseitin_flatten_length_le {n : ℕ} (C : TreeCircuit n) :
     C.tseitin.flatten.length + 3 ≤ 7 * C.size := by
-  induction C using Circuit.ind with
-  | hlit l => simp [Circuit.tseitin, Circuit.size]
+  induction C using TreeCircuit.ind with
+  | hlit l => simp [TreeCircuit.tseitin, TreeCircuit.size]
   | hnode b cs ih =>
-      have hlist : ∀ ds : List (Circuit n),
+      have hlist : ∀ ds : List (TreeCircuit n),
           (∀ d ∈ ds, d.tseitin.flatten.length + 3 ≤ 7 * d.size) →
           (ds.flatMap fun d => d.tseitin).flatten.length + 3 * ds.length ≤
             7 * ds.foldr (fun d acc => d.size + acc) 0 := by
@@ -413,14 +413,14 @@ theorem tseitin_flatten_length_le {n : ℕ} (C : Circuit n) :
             omega
       have hsum := hlist cs ih
       have hg := gateClauses_flatten_length b cs
-      simp only [Circuit.tseitin, List.flatten_append, List.length_append, Circuit.size, hg]
+      simp only [TreeCircuit.tseitin, List.flatten_append, List.length_append, TreeCircuit.size, hg]
       omega
 
 /-- The CNF the reduction builds uses at most `7 * C.size` literal occurrences. -/
-theorem toCNF_flatten_length_le {n : ℕ} (C : Circuit n) :
+theorem toCNF_flatten_length_le {n : ℕ} (C : TreeCircuit n) :
     C.toCNF.flatten.length ≤ 7 * C.size := by
   have h := tseitin_flatten_length_le C
-  simp only [Circuit.toCNF, List.flatten_cons, List.length_append, List.length_cons,
+  simp only [TreeCircuit.toCNF, List.flatten_cons, List.length_append, List.length_cons,
     List.length_nil]
   omega
 
@@ -431,7 +431,7 @@ This is the clause-count half of the lemma and nothing more: it says how many
 3-clauses come out, not how long they take to build, so it is not a `≤p`
 statement.  AB gives no constant; `13` is this formalization's, read off the
 clause counts above. -/
-theorem length_to3SAT_toCNF_le (C : (n : ℕ) × Circuit n) :
+theorem length_to3SAT_toCNF_le (C : (n : ℕ) × TreeCircuit n) :
     (to3SAT C.2.toCNF).length ≤ 13 * (encodeSigma C).length := by
   have h1 := SATTo3SAT.length_to3SAT_le C.2.toCNF
   have h2 := toCNF_flatten_length_le C.2

@@ -135,7 +135,7 @@ each term of each gate distinct literals have distinct variables.
   {switching-lemma}
   {pdf-b5e074215b9e-p001-b004}
 \proofstep
-  {Term.width}
+  {LitList.width}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p001-b004}
@@ -1063,7 +1063,7 @@ where $\mathrm{depth}(g)$ denotes the least depth of a decision tree computing $
   {boolean-ch04-dnf-switching-lmn}
   {pdf-fc447f326910-p001-b004}
 \proofstep
-  {Term.width}
+  {LitList.width}
   {context}
   {boolean-ch04-dnf-switching-lmn}
   {pdf-fc447f326910-p001-b004}
@@ -1078,7 +1078,7 @@ where $\mathrm{depth}(g)$ denotes the least depth of a decision tree computing $
   {boolean-ch04-dnf-switching-lmn}
   {pdf-fc447f326910-p002-b004}
 \proofstep
-  {CNF.evalClause}
+  {Clause.eval}
   {context}
   {boolean-ch04-dnf-switching-lmn}
   {pdf-fc447f326910-p002-b004}
@@ -2118,7 +2118,7 @@ function has decision-tree depth strictly greater than $t$.
   pdf-b5e074215b9e-p002-b003,
   pdf-b5e074215b9e-p002-b004
 }
-\uses{BoolCircuit.Circuit, BoolCircuit.Circuit.depth, BoolCircuit.Circuit.eval, BoolCircuit.Circuit.maxFanin, BoolCircuit.Circuit.size, BoolCircuit.Lit.eval, BoolCircuit.Lit.toLiteral, CNF.eval, DNF, DNF.eval, DNF.width, LMN.bernoulliRestrProb_congr_fn', LMN.depth2AndToCNF, LMN.depth2AndToCNF_eval, LMN.depth2AndToCNF_width_le, LMN.depth2OrToDNF, LMN.depth2OrToDNF_eval, LMN.depth2OrToDNF_width_le, LMN.switching_bernoulli_dtDepth_cnf_general, LMN.switching_bernoulli_dtDepth_dnf_general, Literal.eval, SwitchingLemma.bernoulliRestrProb, SwitchingLemma.restrictFn, Term.eval, Term.width, dtDepth}
+\uses{BoolCircuit.TreeCircuit, BoolCircuit.TreeCircuit.depth, BoolCircuit.TreeCircuit.eval, BoolCircuit.TreeCircuit.maxFanin, BoolCircuit.TreeCircuit.size, BoolCircuit.Lit.eval, BoolCircuit.Lit.toLiteral, CNF.eval, DNF, DNF.eval, DNF.width, LMN.bernoulliRestrProb_congr_fn', LMN.depth2AndToCNF, LMN.depth2AndToCNF_eval, LMN.depth2AndToCNF_width_le, LMN.depth2OrToDNF, LMN.depth2OrToDNF_eval, LMN.depth2OrToDNF_width_le, LMN.switching_bernoulli_dtDepth_cnf_general, LMN.switching_bernoulli_dtDepth_dnf_general, Literal.eval, SwitchingLemma.bernoulliRestrProb, SwitchingLemma.restrictFn, Term.eval, LitList.width, dtDepth}
 \difficulty{5}
 Let $f\colon\{0,1\}^n\to\{0,1\}$ be a Boolean function on $n\ge 1$ variables that is
 computed by some Boolean circuit of depth at most $2$, size at most $s$, and fan-in at
@@ -2159,27 +2159,27 @@ for every $t\in\bbn$,
   {boolean-ch04-dnf-switching-lmn}
   {pdf-fc447f326910-p001-b004}
 \proofstep
-  {BoolCircuit.Circuit}
+  {BoolCircuit.TreeCircuit}
   {context}
   {boolean-ch04-dnf-switching-lmn}
   {pdf-fc447f326910-p011-b004}
 \proofstep
-  {BoolCircuit.Circuit.eval}
+  {BoolCircuit.TreeCircuit.eval}
   {context}
   {boolean-ch04-dnf-switching-lmn}
   {pdf-fc447f326910-p011-b004}
 \proofstep
-  {BoolCircuit.Circuit.depth}
+  {BoolCircuit.TreeCircuit.depth}
   {context}
   {boolean-ch04-dnf-switching-lmn}
   {pdf-fc447f326910-p011-b004}
 \proofstep
-  {BoolCircuit.Circuit.size}
+  {BoolCircuit.TreeCircuit.size}
   {context}
   {boolean-ch04-dnf-switching-lmn}
   {pdf-fc447f326910-p012-b001}
 \proofstep
-  {BoolCircuit.Circuit.maxFanin}
+  {BoolCircuit.TreeCircuit.maxFanin}
   {context}
   {boolean-ch04-dnf-switching-lmn}
   {pdf-fc447f326910-p012-b001}
@@ -2199,7 +2199,7 @@ for every $t\in\bbn$,
   {boolean-ch04-dnf-switching-lmn}
   {pdf-fc447f326910-p001-b004}
 \proofstep
-  {Term.width}
+  {LitList.width}
   {context}
   {boolean-ch04-dnf-switching-lmn}
   {pdf-fc447f326910-p001-b004}
@@ -2214,7 +2214,7 @@ for every $t\in\bbn$,
   {boolean-ch04-dnf-switching-lmn}
   {pdf-fc447f326910-p002-b004}
 \proofstep
-  {CNF.evalClause}
+  {Clause.eval}
   {context}
   {boolean-ch04-dnf-switching-lmn}
   {pdf-fc447f326910-p002-b004}
@@ -2999,17 +2999,17 @@ for every $t\in\bbn$,
   {boolean-ch04-dnf-switching-lmn}
   {pdf-fc447f326910-p002-b005}
 \proofstep
-  {cnfToDualDNF}
+  {CNF.dual}
   {context}
   {boolean-ch04-dnf-switching-lmn}
   {pdf-fc447f326910-p002-b005}
 \proofstep
-  {cnfToDualDNF_width}
+  {CNF.dual_width}
   {context}
   {boolean-ch04-dnf-switching-lmn}
   {pdf-fc447f326910-p002-b005}
 \proofstep
-  {cnfToDualDNF_eval}
+  {CNF.dual_eval}
   {context}
   {boolean-ch04-dnf-switching-lmn}
   {pdf-fc447f326910-p002-b005}
@@ -3034,12 +3034,12 @@ for every $t\in\bbn$,
   {boolean-ch04-dnf-switching-lmn}
   {pdf-fc447f326910-p002-b005}
 \proofstep
-  {SwitchingLemmaCNF.cnfToDualDNF_nodup}
+  {CNF.dual_nodup}
   {context}
   {boolean-ch04-dnf-switching-lmn}
   {pdf-fc447f326910-p002-b005}
 \proofstep
-  {SwitchingLemmaCNF.cnfToDualDNF_inj}
+  {CNF.dual_inj}
   {context}
   {boolean-ch04-dnf-switching-lmn}
   {pdf-fc447f326910-p002-b005}
@@ -3320,7 +3320,7 @@ for every $t\in\bbn$,
   {boolean-ch04-dnf-switching-lmn}
   {pdf-fc447f326910-p008-b005,
     pdf-fc447f326910-p012-b004}
-\uses{BoolCircuit.Circuit, BoolCircuit.Circuit.depth, BoolCircuit.Circuit.eval, BoolCircuit.Circuit.maxFanin, BoolCircuit.Circuit.size, DecisionTree.eval, LMN.composedDelta, LMN.composedDelta_le_one, LMN.depth2_circuit_switching_bound, LMN.dtDepth_restrictFn_le', SwitchingLemma.Restriction, SwitchingLemma.bernoulliRestrProb, SwitchingLemma.bernoulliRestrWeight, SwitchingLemma.bernoulliRestrWeight_sum_one, SwitchingLemma.restrictFn, dtDepth}
+\uses{BoolCircuit.TreeCircuit, BoolCircuit.TreeCircuit.depth, BoolCircuit.TreeCircuit.eval, BoolCircuit.TreeCircuit.maxFanin, BoolCircuit.TreeCircuit.size, DecisionTree.eval, LMN.composedDelta, LMN.composedDelta_le_one, LMN.depth2_circuit_switching_bound, LMN.dtDepth_restrictFn_le', SwitchingLemma.Restriction, SwitchingLemma.bernoulliRestrProb, SwitchingLemma.bernoulliRestrWeight, SwitchingLemma.bernoulliRestrWeight_sum_one, SwitchingLemma.restrictFn, dtDepth}
 \difficulty{6}
 Let $f\colon\{0,1\}^n\to\{0,1\}$ be a Boolean function on $n\ge 1$ variables, let
 $s,w,l\ge 1$ be positive integers, let $t\ge 0$, and suppose $f$ is computed by a
@@ -3343,7 +3343,7 @@ satisfies
 \lean{LMN.bernoulliRestrProb_list_union_bound}
 \label{LMN.bernoulliRestrProb_list_union_bound}
 \leanok
-\uses{BoolCircuit.Circuit, LMN.bernoulliRestrProb_union_bound_fin, SwitchingLemma.Restriction, SwitchingLemma.bernoulliRestrProb}
+\uses{BoolCircuit.TreeCircuit, LMN.bernoulliRestrProb_union_bound_fin, SwitchingLemma.Restriction, SwitchingLemma.bernoulliRestrProb}
 \difficulty{4}
 Fix a parameter $p$ with $0 \le p \le 1$, and consider a Bernoulli$(p)$ random
 restriction on $n$ variables, under which each variable is independently left free with
@@ -3373,7 +3373,7 @@ corresponding predicate holds.
   pdf-fc447f326910-p012-b003,
   pdf-fc447f326910-p013-b002
 }
-\uses{BoolCircuit.Circuit, BoolCircuit.Circuit.depth, BoolCircuit.Circuit.eval, BoolCircuit.Circuit.maxFanin, BoolCircuit.Circuit.size, DecisionTree.depth, DecisionTree.eval, LMN.bernoulliRestrProb_list_union_bound, LMN.child_size_le_parent, LMN.children_depth_le, LMN.children_maxFanin_le, LMN.children_size_sum_le, LMN.composedDelta, LMN.composedDelta_le_one, LMN.composedDelta_pos, LMN.composedDelta_step_right, LMN.compress_and_switch, LMN.dtDepth_restrictFn_le', LMN.two_stage_bound', SwitchingLemma.Restriction, SwitchingLemma.bernoulliRestrProb, SwitchingLemma.bernoulliRestrProb_le_one', SwitchingLemma.restrictFn, dtDepth}
+\uses{BoolCircuit.TreeCircuit, BoolCircuit.TreeCircuit.depth, BoolCircuit.TreeCircuit.eval, BoolCircuit.TreeCircuit.maxFanin, BoolCircuit.TreeCircuit.size, DecisionTree.depth, DecisionTree.eval, LMN.bernoulliRestrProb_list_union_bound, LMN.child_size_le_parent, LMN.children_depth_le, LMN.children_maxFanin_le, LMN.children_size_sum_le, LMN.composedDelta, LMN.composedDelta_le_one, LMN.composedDelta_pos, LMN.composedDelta_step_right, LMN.compress_and_switch, LMN.dtDepth_restrictFn_le', LMN.two_stage_bound', SwitchingLemma.Restriction, SwitchingLemma.bernoulliRestrProb, SwitchingLemma.bernoulliRestrProb_le_one', SwitchingLemma.restrictFn, dtDepth}
 \difficulty{7}
 Let $f:\{0,1\}^n \to \{0,1\}$ be a Boolean function on $n \ge 1$ variables, and fix
 natural numbers $d,s,w,l,t$ with $d \ge 3$ and $s,w,l \ge 1$. Suppose $f$ is computed by
@@ -3422,27 +3422,27 @@ Then under a Bernoulli random restriction $\rho$ with parameter $\delta_{d}$,
   {boolean-ch04-dnf-switching-lmn}
   {pdf-fc447f326910-p001-b004}
 \proofstep
-  {BoolCircuit.Circuit}
+  {BoolCircuit.TreeCircuit}
   {context}
   {boolean-ch04-dnf-switching-lmn}
   {pdf-fc447f326910-p011-b004}
 \proofstep
-  {BoolCircuit.Circuit.eval}
+  {BoolCircuit.TreeCircuit.eval}
   {context}
   {boolean-ch04-dnf-switching-lmn}
   {pdf-fc447f326910-p011-b004}
 \proofstep
-  {BoolCircuit.Circuit.depth}
+  {BoolCircuit.TreeCircuit.depth}
   {context}
   {boolean-ch04-dnf-switching-lmn}
   {pdf-fc447f326910-p011-b004}
 \proofstep
-  {BoolCircuit.Circuit.size}
+  {BoolCircuit.TreeCircuit.size}
   {context}
   {boolean-ch04-dnf-switching-lmn}
   {pdf-fc447f326910-p012-b001}
 \proofstep
-  {BoolCircuit.Circuit.maxFanin}
+  {BoolCircuit.TreeCircuit.maxFanin}
   {context}
   {boolean-ch04-dnf-switching-lmn}
   {pdf-fc447f326910-p012-b001}
@@ -3462,7 +3462,7 @@ Then under a Bernoulli random restriction $\rho$ with parameter $\delta_{d}$,
   {boolean-ch04-dnf-switching-lmn}
   {pdf-fc447f326910-p001-b004}
 \proofstep
-  {Term.width}
+  {LitList.width}
   {context}
   {boolean-ch04-dnf-switching-lmn}
   {pdf-fc447f326910-p001-b004}
@@ -3477,7 +3477,7 @@ Then under a Bernoulli random restriction $\rho$ with parameter $\delta_{d}$,
   {boolean-ch04-dnf-switching-lmn}
   {pdf-fc447f326910-p002-b004}
 \proofstep
-  {CNF.evalClause}
+  {Clause.eval}
   {context}
   {boolean-ch04-dnf-switching-lmn}
   {pdf-fc447f326910-p002-b004}
@@ -4309,17 +4309,17 @@ Then under a Bernoulli random restriction $\rho$ with parameter $\delta_{d}$,
   {boolean-ch04-dnf-switching-lmn}
   {pdf-fc447f326910-p002-b005}
 \proofstep
-  {cnfToDualDNF}
+  {CNF.dual}
   {context}
   {boolean-ch04-dnf-switching-lmn}
   {pdf-fc447f326910-p002-b005}
 \proofstep
-  {cnfToDualDNF_width}
+  {CNF.dual_width}
   {context}
   {boolean-ch04-dnf-switching-lmn}
   {pdf-fc447f326910-p002-b005}
 \proofstep
-  {cnfToDualDNF_eval}
+  {CNF.dual_eval}
   {direct}
   {boolean-ch04-dnf-switching-lmn}
   {pdf-fc447f326910-p002-b005}
@@ -4344,12 +4344,12 @@ Then under a Bernoulli random restriction $\rho$ with parameter $\delta_{d}$,
   {boolean-ch04-dnf-switching-lmn}
   {pdf-fc447f326910-p002-b005}
 \proofstep
-  {SwitchingLemmaCNF.cnfToDualDNF_nodup}
+  {CNF.dual_nodup}
   {context}
   {boolean-ch04-dnf-switching-lmn}
   {pdf-fc447f326910-p002-b005}
 \proofstep
-  {SwitchingLemmaCNF.cnfToDualDNF_inj}
+  {CNF.dual_inj}
   {context}
   {boolean-ch04-dnf-switching-lmn}
   {pdf-fc447f326910-p002-b005}
@@ -4753,7 +4753,7 @@ Then under a Bernoulli random restriction $\rho$ with parameter $\delta_{d}$,
   {context}
   {boolean-ch04-dnf-switching-lmn}
   {pdf-fc447f326910-p012-b004}
-\uses{BoolCircuit.Circuit, BoolCircuit.Circuit.depth, BoolCircuit.Circuit.eval, BoolCircuit.Circuit.maxFanin, BoolCircuit.Circuit.size, LMN.circuit_reduction_ind_base, LMN.circuit_reduction_ind_step, LMN.composedDelta, SwitchingLemma.bernoulliRestrProb, SwitchingLemma.restrictFn, dtDepth}
+\uses{BoolCircuit.TreeCircuit, BoolCircuit.TreeCircuit.depth, BoolCircuit.TreeCircuit.eval, BoolCircuit.TreeCircuit.maxFanin, BoolCircuit.TreeCircuit.size, LMN.circuit_reduction_ind_base, LMN.circuit_reduction_ind_step, LMN.composedDelta, SwitchingLemma.bernoulliRestrProb, SwitchingLemma.restrictFn, dtDepth}
 \difficulty{4}
 Let $f\colon\{0,1\}^n\to\{0,1\}$ be a Boolean function on $n\ge 1$ variables, and let
 $d\ge 2$, $s\ge 1$, $w\ge 1$, and $l\ge 1$ be positive integers together with an integer
@@ -4801,27 +4801,27 @@ computing a Boolean function $g$. Then
   {boolean-ch04-dnf-switching-lmn}
   {pdf-fc447f326910-p001-b004}
 \proofstep
-  {BoolCircuit.Circuit}
+  {BoolCircuit.TreeCircuit}
   {context}
   {boolean-ch04-dnf-switching-lmn}
   {pdf-fc447f326910-p001-b004}
 \proofstep
-  {BoolCircuit.Circuit.eval}
+  {BoolCircuit.TreeCircuit.eval}
   {context}
   {boolean-ch04-dnf-switching-lmn}
   {pdf-fc447f326910-p011-b004}
 \proofstep
-  {BoolCircuit.Circuit.depth}
+  {BoolCircuit.TreeCircuit.depth}
   {context}
   {boolean-ch04-dnf-switching-lmn}
   {pdf-fc447f326910-p011-b004}
 \proofstep
-  {BoolCircuit.Circuit.size}
+  {BoolCircuit.TreeCircuit.size}
   {context}
   {boolean-ch04-dnf-switching-lmn}
   {pdf-fc447f326910-p012-b001}
 \proofstep
-  {BoolCircuit.Circuit.maxFanin}
+  {BoolCircuit.TreeCircuit.maxFanin}
   {context}
   {boolean-ch04-dnf-switching-lmn}
   {pdf-fc447f326910-p012-b001}
@@ -4841,7 +4841,7 @@ computing a Boolean function $g$. Then
   {boolean-ch04-dnf-switching-lmn}
   {pdf-fc447f326910-p001-b004}
 \proofstep
-  {Term.width}
+  {LitList.width}
   {context}
   {boolean-ch04-dnf-switching-lmn}
   {pdf-fc447f326910-p001-b004}
@@ -4856,7 +4856,7 @@ computing a Boolean function $g$. Then
   {boolean-ch04-dnf-switching-lmn}
   {pdf-fc447f326910-p002-b004}
 \proofstep
-  {CNF.evalClause}
+  {Clause.eval}
   {context}
   {boolean-ch04-dnf-switching-lmn}
   {pdf-fc447f326910-p002-b004}
@@ -5695,17 +5695,17 @@ computing a Boolean function $g$. Then
   {boolean-ch04-dnf-switching-lmn}
   {pdf-fc447f326910-p002-b005}
 \proofstep
-  {cnfToDualDNF}
+  {CNF.dual}
   {context}
   {boolean-ch04-dnf-switching-lmn}
   {pdf-fc447f326910-p002-b005}
 \proofstep
-  {cnfToDualDNF_width}
+  {CNF.dual_width}
   {context}
   {boolean-ch04-dnf-switching-lmn}
   {pdf-fc447f326910-p002-b005}
 \proofstep
-  {cnfToDualDNF_eval}
+  {CNF.dual_eval}
   {context}
   {boolean-ch04-dnf-switching-lmn}
   {pdf-fc447f326910-p002-b005}
@@ -5730,12 +5730,12 @@ computing a Boolean function $g$. Then
   {boolean-ch04-dnf-switching-lmn}
   {pdf-fc447f326910-p002-b005}
 \proofstep
-  {SwitchingLemmaCNF.cnfToDualDNF_nodup}
+  {CNF.dual_nodup}
   {context}
   {boolean-ch04-dnf-switching-lmn}
   {pdf-fc447f326910-p002-b005}
 \proofstep
-  {SwitchingLemmaCNF.cnfToDualDNF_inj}
+  {CNF.dual_inj}
   {context}
   {boolean-ch04-dnf-switching-lmn}
   {pdf-fc447f326910-p002-b005}
@@ -6146,7 +6146,7 @@ computing a Boolean function $g$. Then
   {boolean-ch04-dnf-switching-lmn}
   {pdf-fc447f326910-p012-b004,
     pdf-fc447f326910-p006-b004}
-\uses{BoolCircuit.Circuit, BoolCircuit.Circuit.depth, BoolCircuit.Circuit.eval, BoolCircuit.Circuit.maxFanin, BoolCircuit.Circuit.size, LMN.circuit_reduction_ind, LMN.composedDelta, SwitchingLemma.bernoulliRestrProb, SwitchingLemma.restrictFn, dtDepth}
+\uses{BoolCircuit.TreeCircuit, BoolCircuit.TreeCircuit.depth, BoolCircuit.TreeCircuit.eval, BoolCircuit.TreeCircuit.maxFanin, BoolCircuit.TreeCircuit.size, LMN.circuit_reduction_ind, LMN.composedDelta, SwitchingLemma.bernoulliRestrProb, SwitchingLemma.restrictFn, dtDepth}
 \difficulty{3}
 Let $f\colon\{0,1\}^n \to \{0,1\}$ be a Boolean function on $n \ge 1$ variables, and let
 $d,s,w,l,t \in \bbn$ satisfy $d \ge 2$ and $s,w,l \ge 1$. Suppose $f$ is computed by
@@ -6187,27 +6187,27 @@ $\rho$ with parameter $\delta = \dfrac{1}{40w}\left(\dfrac{1}{40l}\right)^{d-2}$
   {boolean-ch04-dnf-switching-lmn}
   {pdf-fc447f326910-p001-b004}
 \proofstep
-  {BoolCircuit.Circuit}
+  {BoolCircuit.TreeCircuit}
   {context}
   {boolean-ch04-dnf-switching-lmn}
   {pdf-fc447f326910-p011-b004}
 \proofstep
-  {BoolCircuit.Circuit.eval}
+  {BoolCircuit.TreeCircuit.eval}
   {context}
   {boolean-ch04-dnf-switching-lmn}
   {pdf-fc447f326910-p011-b004}
 \proofstep
-  {BoolCircuit.Circuit.depth}
+  {BoolCircuit.TreeCircuit.depth}
   {context}
   {boolean-ch04-dnf-switching-lmn}
   {pdf-fc447f326910-p011-b004}
 \proofstep
-  {BoolCircuit.Circuit.size}
+  {BoolCircuit.TreeCircuit.size}
   {context}
   {boolean-ch04-dnf-switching-lmn}
   {pdf-fc447f326910-p012-b001}
 \proofstep
-  {BoolCircuit.Circuit.maxFanin}
+  {BoolCircuit.TreeCircuit.maxFanin}
   {context}
   {boolean-ch04-dnf-switching-lmn}
   {pdf-fc447f326910-p012-b001}
@@ -6227,7 +6227,7 @@ $\rho$ with parameter $\delta = \dfrac{1}{40w}\left(\dfrac{1}{40l}\right)^{d-2}$
   {boolean-ch04-dnf-switching-lmn}
   {pdf-fc447f326910-p001-b004}
 \proofstep
-  {Term.width}
+  {LitList.width}
   {context}
   {boolean-ch04-dnf-switching-lmn}
   {pdf-fc447f326910-p001-b004}
@@ -6242,7 +6242,7 @@ $\rho$ with parameter $\delta = \dfrac{1}{40w}\left(\dfrac{1}{40l}\right)^{d-2}$
   {boolean-ch04-dnf-switching-lmn}
   {pdf-fc447f326910-p002-b004}
 \proofstep
-  {CNF.evalClause}
+  {Clause.eval}
   {context}
   {boolean-ch04-dnf-switching-lmn}
   {pdf-fc447f326910-p002-b004}
@@ -7087,17 +7087,17 @@ $\rho$ with parameter $\delta = \dfrac{1}{40w}\left(\dfrac{1}{40l}\right)^{d-2}$
   {boolean-ch04-dnf-switching-lmn}
   {pdf-fc447f326910-p002-b005}
 \proofstep
-  {cnfToDualDNF}
+  {CNF.dual}
   {context}
   {boolean-ch04-dnf-switching-lmn}
   {pdf-fc447f326910-p002-b005}
 \proofstep
-  {cnfToDualDNF_width}
+  {CNF.dual_width}
   {context}
   {boolean-ch04-dnf-switching-lmn}
   {pdf-fc447f326910-p002-b005}
 \proofstep
-  {cnfToDualDNF_eval}
+  {CNF.dual_eval}
   {context}
   {boolean-ch04-dnf-switching-lmn}
   {pdf-fc447f326910-p002-b005}
@@ -7122,12 +7122,12 @@ $\rho$ with parameter $\delta = \dfrac{1}{40w}\left(\dfrac{1}{40l}\right)^{d-2}$
   {boolean-ch04-dnf-switching-lmn}
   {pdf-fc447f326910-p002-b005}
 \proofstep
-  {SwitchingLemmaCNF.cnfToDualDNF_nodup}
+  {CNF.dual_nodup}
   {context}
   {boolean-ch04-dnf-switching-lmn}
   {pdf-fc447f326910-p002-b005}
 \proofstep
-  {SwitchingLemmaCNF.cnfToDualDNF_inj}
+  {CNF.dual_inj}
   {context}
   {boolean-ch04-dnf-switching-lmn}
   {pdf-fc447f326910-p002-b005}
@@ -7542,7 +7542,7 @@ $\rho$ with parameter $\delta = \dfrac{1}{40w}\left(\dfrac{1}{40l}\right)^{d-2}$
   {context}
   {boolean-ch04-dnf-switching-lmn}
   {pdf-fc447f326910-p012-b004}
-\uses{BoolCircuit.Circuit, BoolCircuit.Circuit.depth, BoolCircuit.Circuit.eval, BoolCircuit.Circuit.maxFanin, BoolCircuit.Circuit.size, LMN.circuit_reduction_aux, LMN.composedDelta, SwitchingLemma.bernoulliRestrProb, SwitchingLemma.restrictFn, dtDepth}
+\uses{BoolCircuit.TreeCircuit, BoolCircuit.TreeCircuit.depth, BoolCircuit.TreeCircuit.eval, BoolCircuit.TreeCircuit.maxFanin, BoolCircuit.TreeCircuit.size, LMN.circuit_reduction_aux, LMN.composedDelta, SwitchingLemma.bernoulliRestrProb, SwitchingLemma.restrictFn, dtDepth}
 \difficulty{1}
 Let $f:\{0,1\}^n\to\{0,1\}$ be a Boolean function on $n\ge 1$ variables, and let
 $d,s,w,l,t$ be natural numbers with $d\ge 2$ and $s,w,l\ge 1$. Suppose $f$ is computed

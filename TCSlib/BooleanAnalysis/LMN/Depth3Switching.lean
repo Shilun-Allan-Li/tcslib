@@ -107,8 +107,8 @@ lemma restrictFn_listAnd (fs : List ((Fin n → Bool) → Bool)) (ρ : Restricti
 theorem depth3_compression
     (s₂ : ℕ) (gates : Fin s₂ → DNF n) (w l : ℕ)
     (hw : ∀ i, (gates i).width ≤ w) (hw_pos : 0 < w)
-    (hnd : ∀ i, ∀ t ∈ gates i, ∀ l₁ ∈ t, ∀ l₂ ∈ t, l₁.var = l₂.var → l₁ = l₂)
-    (hnodup : ∀ i, ∀ t ∈ gates i, t.Nodup)
+    (hnd : ∀ i, ∀ t ∈ (gates i).terms, ∀ l₁ ∈ t, ∀ l₂ ∈ t, l₁.var = l₂.var → l₁ = l₂)
+    (hnodup : ∀ i, ∀ t ∈ (gates i).terms, t.Nodup)
     (hn : 0 < n)
     (p : ℝ) (hp_pos : 0 < p) (hp_le : p ≤ 1 / (40 * ↑w)) (hp1 : p ≤ 1) :
     bernoulliRestrProb p
@@ -193,16 +193,16 @@ lemma dedupClauseVars_eval_of_not_taut (c : List (Literal n)) (h : ¬clauseIsTau
 
 /-- Clean a CNF: remove tautological clauses, then deduplicate within each clause. -/
 def cleanCNF_D3 (ψ : CNF n) : CNF n :=
-  (ψ.filter (fun c => ¬clauseIsTaut c)).map dedupClauseVars
+  ⟨(ψ.clauses.filter (fun c => ¬clauseIsTaut c)).map dedupClauseVars⟩
 
 /-
 Cleaning preserves CNF evaluation.
 -/
 lemma cleanCNF_D3_eval (ψ : CNF n) (x : Fin n → Bool) :
     CNF.eval (cleanCNF_D3 ψ) x = CNF.eval ψ x := by
-  unfold cleanCNF_D3;
-  unfold CNF.eval; simp +decide [ List.all_map ] ;
-  congr! 2 with t ht ; by_cases h : clauseIsTaut t <;> simp +decide [ h, CNF.evalClause ];
+  obtain ⟨cs⟩ := ψ
+  unfold cleanCNF_D3 CNF.eval; dsimp only; simp +decide [ List.all_map ] ;
+  congr! 2 with t ht ; by_cases h : clauseIsTaut t <;> simp +decide [ h, Clause.eval ];
   · have := clauseIsTaut_eval_true t h x; aesop;
   · exact dedupClauseVars_eval_of_not_taut t h x
 
@@ -213,22 +213,22 @@ lemma cleanCNF_D3_width_le (ψ : CNF n) :
     CNF.width (cleanCNF_D3 ψ) ≤ CNF.width ψ := by
   by_contra h_contra;
   -- Apply the definition of width to both CNFs.
-  unfold CNF.width at h_contra;
+  unfold CNF.width Depth2.width at h_contra;
   -- By definition of `cleanCNF_D3`, we know that every clause in `cleanCNF_D3 ψ` is a deduplicated version of some clause in `ψ`.
-  have h_clean : ∀ c' ∈ (cleanCNF_D3 ψ), ∃ c ∈ ψ, Term.width c' ≤ Term.width c := by
+  have h_clean : ∀ c' ∈ (cleanCNF_D3 ψ).clauses, ∃ c ∈ ψ.clauses, LitList.width c' ≤ LitList.width c := by
     unfold cleanCNF_D3;
     simp +zetaDelta at *;
     exact fun c' x hx hx' hx'' => ⟨ x, hx, hx''.symm ▸ dedupClauseVars_length_le x ⟩;
   -- By definition of `cleanCNF_D3`, we know that every clause in `cleanCNF_D3 ψ` is a deduplicated version of some clause in `ψ`, so the width of `cleanCNF_D3 ψ` is less than or equal to the width of `ψ`.
-  have h_width_le : ∀ c' ∈ (cleanCNF_D3 ψ), c'.width ≤ List.foldr max 0 (List.map Term.width ψ) := by
+  have h_width_le : ∀ c' ∈ (cleanCNF_D3 ψ).clauses, c'.width ≤ List.foldr max 0 (List.map LitList.width ψ.clauses) := by
     intro c' hc'
     obtain ⟨c, hcψ, hc'⟩ := h_clean c' hc'
-    have hc'_le : c.width ≤ List.foldr max 0 (List.map Term.width ψ) := by
-      have h_width_le : ∀ {l : List (Term n)}, c ∈ l → c.width ≤ List.foldr max 0 (List.map Term.width l) := by
+    have hc'_le : c.width ≤ List.foldr max 0 (List.map LitList.width ψ.clauses) := by
+      have h_width_le : ∀ {l : List (Clause n)}, c ∈ l → c.width ≤ List.foldr max 0 (List.map LitList.width l) := by
         intros l hl; induction l <;> aesop;
       exact h_width_le hcψ;
     exact le_trans hc' hc'_le;
-  have h_foldr_le : ∀ {l : List ℕ}, (∀ x ∈ l, x ≤ List.foldr max 0 (List.map Term.width ψ)) → List.foldr max 0 l ≤ List.foldr max 0 (List.map Term.width ψ) := by
+  have h_foldr_le : ∀ {l : List ℕ}, (∀ x ∈ l, x ≤ List.foldr max 0 (List.map LitList.width ψ.clauses)) → List.foldr max 0 l ≤ List.foldr max 0 (List.map LitList.width ψ.clauses) := by
     intros l hl; induction l <;> aesop;
   grind
 
@@ -236,28 +236,29 @@ lemma cleanCNF_D3_width_le (ψ : CNF n) :
 Cleaned CNF has nodup clauses.
 -/
 lemma cleanCNF_D3_nodup (ψ : CNF n) :
-    ∀ c ∈ cleanCNF_D3 ψ, c.Nodup := by
-  intro c hc; obtain ⟨ c', hc', rfl ⟩ := List.mem_map.mp hc; exact dedupClauseVars_nodup c';
+    ∀ c ∈ (cleanCNF_D3 ψ).clauses, c.Nodup := by
+  intro c hc; simp only [cleanCNF_D3] at hc
+  obtain ⟨ c', hc', rfl ⟩ := List.mem_map.mp hc; exact dedupClauseVars_nodup c';
 
 /-
 Cleaned CNF has variable-injective clauses.
 -/
 lemma cleanCNF_D3_var_inj (ψ : CNF n) :
-    ∀ c ∈ cleanCNF_D3 ψ, ∀ l₁ ∈ c, ∀ l₂ ∈ c, l₁.var = l₂.var → l₁ = l₂ := by
+    ∀ c ∈ (cleanCNF_D3 ψ).clauses, ∀ l₁ ∈ c, ∀ l₂ ∈ c, l₁.var = l₂.var → l₁ = l₂ := by
   intros c hc l₁ hl₁ l₂ hl₂ hvar
   apply dedupClauseVars_var_inj;
   any_goals assumption;
-  · unfold cleanCNF_D3 at hc;
+  · simp only [cleanCNF_D3] at hc;
     unfold dedupClauseVars at *; aesop;
-  · unfold cleanCNF_D3 at hc;
+  · simp only [cleanCNF_D3] at hc;
     unfold dedupClauseVars at *; aesop;
 
 /-- Any CNF can be cleaned to satisfy the switching lemma conditions. -/
 theorem exists_nice_cnf_of_cnf (ψ : CNF n) :
     ∃ ψ' : CNF n, CNF.width ψ' ≤ CNF.width ψ ∧
     (∀ x, CNF.eval ψ' x = CNF.eval ψ x) ∧
-    (∀ c ∈ ψ', c.Nodup) ∧
-    (∀ c ∈ ψ', ∀ l₁ ∈ c, ∀ l₂ ∈ c, l₁.var = l₂.var → l₁ = l₂) :=
+    (∀ c ∈ ψ'.clauses, c.Nodup) ∧
+    (∀ c ∈ ψ'.clauses, ∀ l₁ ∈ c, ∀ l₂ ∈ c, l₁.var = l₂.var → l₁ = l₂) :=
   ⟨cleanCNF_D3 ψ, cleanCNF_D3_width_le ψ, fun x => cleanCNF_D3_eval ψ x,
    cleanCNF_D3_nodup ψ, cleanCNF_D3_var_inj ψ⟩
 
@@ -265,8 +266,8 @@ theorem exists_nice_cnf_of_cnf (ψ : CNF n) :
 theorem dtDepth_le_implies_nice_cnf (f : (Fin n → Bool) → Bool) (d : ℕ)
     (h : dtDepth f ≤ d) :
     ∃ ψ : CNF n, CNF.width ψ ≤ d ∧ (∀ x, CNF.eval ψ x = f x) ∧
-    (∀ c ∈ ψ, c.Nodup) ∧
-    (∀ c ∈ ψ, ∀ l₁ ∈ c, ∀ l₂ ∈ c, l₁.var = l₂.var → l₁ = l₂) := by
+    (∀ c ∈ ψ.clauses, c.Nodup) ∧
+    (∀ c ∈ ψ.clauses, ∀ l₁ ∈ c, ∀ l₂ ∈ c, l₁.var = l₂.var → l₁ = l₂) := by
   obtain ⟨ψ₀, hw₀, heval₀⟩ := (dtDepth_le_implies_small_dnf_cnf f d h).2
   obtain ⟨ψ', hw', heval', hnodup', hvarinj'⟩ := exists_nice_cnf_of_cnf ψ₀
   exact ⟨ψ', le_trans hw' hw₀, fun x => (heval' x).trans (heval₀ x), hnodup', hvarinj'⟩
@@ -277,8 +278,8 @@ Similarly for DNF.
 theorem dtDepth_le_implies_nice_dnf (f : (Fin n → Bool) → Bool) (d : ℕ)
     (h : dtDepth f ≤ d) :
     ∃ φ : DNF n, DNF.width φ ≤ d ∧ (∀ x, DNF.eval φ x = f x) ∧
-    (∀ t ∈ φ, t.Nodup) ∧
-    (∀ t ∈ φ, ∀ l₁ ∈ t, ∀ l₂ ∈ t, l₁.var = l₂.var → l₁ = l₂) := by
+    (∀ t ∈ φ.terms, t.Nodup) ∧
+    (∀ t ∈ φ.terms, ∀ l₁ ∈ t, ∀ l₂ ∈ t, l₁.var = l₂.var → l₁ = l₂) := by
   sorry -- TODO: needs dtDepth_neg and CNF↔DNF negation duality
 
 /-! ## Functional Switching Lemma -/
@@ -352,8 +353,8 @@ lemma and_of_gates_has_cnf
     (s₂ : ℕ) (gates : Fin s₂ → DNF n) (l : ℕ) (ρ₁ : Restriction n)
     (h_gates : ∀ i : Fin s₂, dtDepth (restrictFn (gates i).eval ρ₁) ≤ l) :
     ∃ Ψ : CNF n, CNF.width Ψ ≤ l ∧
-      (∀ c ∈ Ψ, c.Nodup) ∧
-      (∀ c ∈ Ψ, ∀ l₁ ∈ c, ∀ l₂ ∈ c, l₁.var = l₂.var → l₁ = l₂) ∧
+      (∀ c ∈ Ψ.clauses, c.Nodup) ∧
+      (∀ c ∈ Ψ.clauses, ∀ l₁ ∈ c, ∀ l₂ ∈ c, l₁.var = l₂.var → l₁ = l₂) ∧
       (∀ x, CNF.eval Ψ x = (Finset.univ : Finset (Fin s₂)).val.toList.all
         (fun i => restrictFn (gates i).eval ρ₁ x)) := by
   obtain ⟨Ψ, hΨ⟩ : ∃ Ψ : CNF n, CNF.width Ψ ≤ l ∧ (∀ x, CNF.eval Ψ x = List.all (Finset.univ.val.toList.map (fun i => restrictFn (gates i).eval ρ₁)) (fun f => f x)) := by
@@ -361,7 +362,7 @@ lemma and_of_gates_has_cnf
     simp +zetaDelta at *;
     exact fun a => all_gates_have_small_cnf gates l ρ₁ h_gates a;
   -- Convert the CNF representation into a nice CNF representation using exists_nice �_c�nf_of_cnf.
-  obtain ⟨Ψ', hΨ'⟩ : ∃ Ψ' : CNF n, CNF.width Ψ' ≤ CNF.width Ψ ∧ (∀ x, CNF.eval Ψ' x = CNF.eval Ψ x) ∧ (∀ c ∈ Ψ', c.Nodup) ∧ (∀ c ∈ Ψ', ∀ l₁ ∈ c, ∀ l₂ ∈ c, l₁.var = l₂.var → l₁ = l₂) := by
+  obtain ⟨Ψ', hΨ'⟩ : ∃ Ψ' : CNF n, CNF.width Ψ' ≤ CNF.width Ψ ∧ (∀ x, CNF.eval Ψ' x = CNF.eval Ψ x) ∧ (∀ c ∈ Ψ'.clauses, c.Nodup) ∧ (∀ c ∈ Ψ'.clauses, ∀ l₁ ∈ c, ∀ l₂ ∈ c, l₁.var = l₂.var → l₁ = l₂) := by
     apply exists_nice_cnf_of_cnf;
   exact ⟨ Ψ', le_trans hΨ'.1 hΨ.1, hΨ'.2.2.1, hΨ'.2.2.2, fun x => by simpa [ hΨ.2 ] using hΨ'.2.1 x ⟩
 
@@ -375,8 +376,8 @@ lemma depth3_restricted_has_nice_cnf
     (h_f : ∀ x, f x = true ↔ ∀ i : Fin s₂, (gates i).eval x = true)
     (h_gates : ∀ i : Fin s₂, dtDepth (restrictFn (gates i).eval ρ₁) ≤ l) :
     ∃ Ψ : CNF n, CNF.width Ψ ≤ l ∧
-      (∀ c ∈ Ψ, c.Nodup) ∧
-      (∀ c ∈ Ψ, ∀ l₁ ∈ c, ∀ l₂ ∈ c, l₁.var = l₂.var → l₁ = l₂) ∧
+      (∀ c ∈ Ψ.clauses, c.Nodup) ∧
+      (∀ c ∈ Ψ.clauses, ∀ l₁ ∈ c, ∀ l₂ ∈ c, l₁.var = l₂.var → l₁ = l₂) ∧
       (∀ x, CNF.eval Ψ x = restrictFn f ρ₁ x) := by
   -- Use the existence of from `and_of_g �ates�_has_cnf` and show that it satisfies the required properties.
   obtain ⟨Ψ, hΨ⟩ := and_of_gates_has_cnf s₂ gates l ρ₁ h_gates;
@@ -446,8 +447,8 @@ theorem depth3_switching_bound
     (h_f : ∀ x, f x = true ↔ ∀ i : Fin s₂, (gates i).eval x = true)
     -- Gate conditions for the switching lemma
     (hw : ∀ i, (gates i).width ≤ w) (hw_pos : 0 < w)
-    (hnd : ∀ i, ∀ tm ∈ gates i, ∀ l₁ ∈ tm, ∀ l₂ ∈ tm, l₁.var = l₂.var → l₁ = l₂)
-    (hnodup : ∀ i, ∀ tm ∈ gates i, tm.Nodup)
+    (hnd : ∀ i, ∀ tm ∈ (gates i).terms, ∀ l₁ ∈ tm, ∀ l₂ ∈ tm, l₁.var = l₂.var → l₁ = l₂)
+    (hnodup : ∀ i, ∀ tm ∈ (gates i).terms, tm.Nodup)
     -- Restriction parameters
     (hn : 0 < n)
     (p₁ p₂ : ℝ)
@@ -494,8 +495,8 @@ theorem circuit_reduction_depth3
     (h_f : ∀ x, f x = true ↔ ∀ i : Fin s₂, (gates i).eval x = true)
     -- Gate conditions
     (hw : ∀ i, (gates i).width ≤ w) (hw_pos : 0 < w)
-    (hnd : ∀ i, ∀ tm ∈ gates i, ∀ l₁ ∈ tm, ∀ l₂ ∈ tm, l₁.var = l₂.var → l₁ = l₂)
-    (hnodup : ∀ i, ∀ tm ∈ gates i, tm.Nodup)
+    (hnd : ∀ i, ∀ tm ∈ (gates i).terms, ∀ l₁ ∈ tm, ∀ l₂ ∈ tm, l₁.var = l₂.var → l₁ = l₂)
+    (hnodup : ∀ i, ∀ tm ∈ (gates i).terms, tm.Nodup)
     (hn : 0 < n) (hl_pos : 0 < l) :
     let p₁ : ℝ := 1 / (40 * ↑w)
     let p₂ : ℝ := 1 / (40 * ↑l)
@@ -530,8 +531,8 @@ theorem circuit_reduction_depth3_le_eps
     (s₂ : ℕ) (gates : Fin s₂ → DNF n) (w l t : ℕ)
     (h_f : ∀ x, f x = true ↔ ∀ i : Fin s₂, (gates i).eval x = true)
     (hw : ∀ i, (gates i).width ≤ w) (hw_pos : 0 < w)
-    (hnd : ∀ i, ∀ tm ∈ gates i, ∀ l₁ ∈ tm, ∀ l₂ ∈ tm, l₁.var = l₂.var → l₁ = l₂)
-    (hnodup : ∀ i, ∀ tm ∈ gates i, tm.Nodup)
+    (hnd : ∀ i, ∀ tm ∈ (gates i).terms, ∀ l₁ ∈ tm, ∀ l₂ ∈ tm, l₁.var = l₂.var → l₁ = l₂)
+    (hnodup : ∀ i, ∀ tm ∈ (gates i).terms, tm.Nodup)
     (hn : 0 < n) (hl_pos : 0 < l)
     -- l and t are chosen so that the dominant terms sum to ≤ ε
     (ε : ℝ)

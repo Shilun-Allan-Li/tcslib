@@ -35,7 +35,7 @@ over the **DNF fragment**, and states Example 2.21.
   content (its hardness *is* Example 2.21's argument), while general Boolean
   formulas remain unformalized, per the audit's do-not-silently-identify
   guidance. Strings are read through the **shared** audited serialization
-  (`Std.Sat.CNF.decode`), evaluated dually. **Seeded design question (e) for
+  (`Std.Sat.DNF.decode`, delegating to `Std.Sat.CNF.decode`), as a `Std.Sat.DNF`. **Seeded design question (e) for
   the phase-4 audit.**
 * **The fallback flips sides**: the empty formula is a CNF tautology but the
   empty *disjunction* is false, so under the DNF reading non-well-formed
@@ -68,7 +68,7 @@ over the **DNF fragment**, and states Example 2.21.
 
 namespace Complexity
 
-open Std.Sat (CNF)
+open Std.Sat (CNF DNF)
 
 /-- **`coNP`-hardness** [AB09, §2.6.1]: every `coNP` language Karp-reduces to
 `L` — the mirror of the audited `Complexity.NPHard`. -/
@@ -87,31 +87,27 @@ assignment. Under the DNF reading the fallback (the empty formula, an empty
 disjunction) is *not* a tautology, so non-well-formed strings lie outside
 `TAUTOLOGY` (see the deviations list). -/
 def TAUTOLOGY : Language Bool :=
-  {x | (CNF.decode x).DNFTautology}
+  {x | (DNF.decode x).Tautology}
 
 /-! **Epoch-3 fill addition.** Private certificate and verifier machinery for
 the audited membership proof. No concurrent SAT fill is used. -/
 
-/-- Negating the literal polarities twice restores the syntax. -/
-private lemma taut_dual_dual (φ : CNF ℕ) : CNF.dual (CNF.dual φ) = φ := by
-  delta CNF.dual
-  simp [List.map_map, Function.comp_def]
-
 /-- Changing literal polarities preserves the mentioned-variable bound. -/
-private lemma taut_numVars_dual (φ : CNF ℕ) : (CNF.dual φ).numVars = φ.numVars := by
-  delta CNF.numVars CNF.dual
+private lemma taut_numVars_dual (ψ : DNF) : (DNF.dual ψ).numVars = CNF.numVars ψ.terms := by
+  delta CNF.numVars DNF.dual
   simp [List.flatMap_map, List.map_map, Function.comp_def]
 
 /-- DNF evaluation depends only on the mentioned variables.
 
 **Proof sketch.** Apply CNF evaluation congruence to the literal-negated
-formula. The proved De Morgan identity negates both values; involutivity
-and preservation of the variable bound transfer the equality back. -/
-private lemma taut_eval_congr {φ : CNF ℕ} {a b : ℕ → Bool}
-    (h : ∀ v < φ.numVars, a v = b v) : φ.evalDNF a = φ.evalDNF b := by
-  have he := eval_congr_of_lt_numVars (φ := CNF.dual φ)
+formula `DNF.dual ψ`. The proved De Morgan identity `CNF.eval_dual` negates both
+values; `DNF.dual_dual` and preservation of the variable bound transfer the
+equality back. -/
+private lemma taut_eval_congr {ψ : DNF} {a b : ℕ → Bool}
+    (h : ∀ v < CNF.numVars ψ.terms, a v = b v) : ψ.eval a = ψ.eval b := by
+  have he := eval_congr_of_lt_numVars (φ := DNF.dual ψ)
     (a := a) (b := b) (by simpa only [taut_numVars_dual] using h)
-  rw [← taut_dual_dual φ, CNF.evalDNF_dual, CNF.evalDNF_dual, he]
+  rw [← DNF.dual_dual ψ, CNF.eval_dual, CNF.eval_dual, he]
 
 /-- A finite certificate supplies false outside its explicitly stored bits. -/
 private def tautAssignment (u : List Bool) : ℕ → Bool := fun v => u.getD v false
@@ -126,19 +122,19 @@ falsifying assignment. This includes malformed strings and the empty input. -/
 private lemma taut_certificate_equiv (x : List Bool) :
     x ∈ (TAUTOLOGYᶜ : Language Bool) ↔
       ∃ u : List Bool, u.length = x.length + 1 ∧
-        (CNF.decode x).evalDNF (tautAssignment u) = false := by
+        (DNF.decode x).eval (tautAssignment u) = false := by
   classical
   have hn : x ∈ (TAUTOLOGYᶜ : Language Bool) ↔
-      ∃ a : ℕ → Bool, (CNF.decode x).evalDNF a = false := by
-    change (¬ ∀ a : ℕ → Bool, (CNF.decode x).evalDNF a = true) ↔ _
+      ∃ a : ℕ → Bool, (DNF.decode x).eval a = false := by
+    change (¬ ∀ a : ℕ → Bool, (DNF.decode x).eval a = true) ↔ _
     simp only [not_forall, Bool.not_eq_true]
   rw [hn]
   constructor
   · rintro ⟨a, ha⟩
     let u := List.ofFn (fun i : Fin (x.length + 1) => a i.val)
     refine ⟨u, List.length_ofFn, ?_⟩
-    have he : (CNF.decode x).evalDNF (tautAssignment u) =
-        (CNF.decode x).evalDNF a := by
+    have he : (DNF.decode x).eval (tautAssignment u) =
+        (DNF.decode x).eval a := by
       apply taut_eval_congr
       intro v hv
       have hv' : v < x.length + 1 := lt_of_lt_of_le hv
@@ -171,14 +167,14 @@ negates the decoded DNF only after that split has succeeded. -/
 private def tautVerifierBit (z : List Bool) : Bool :=
   match Turing.solveSplit 1 1 z.length with
   | none => false
-  | some i => !((CNF.decode (z.take i)).evalDNF (tautAssignment (z.drop i)))
+  | some i => !((DNF.decode (z.take i)).eval (tautAssignment (z.drop i)))
 
 /-- The verifier language is the accepting set of its single buffered bit. -/
 private def tautVerifier : Language Bool := {z | tautVerifierBit z = true}
 
 /-- Correctly sized certificates recover their own split and evaluation. -/
 private lemma taut_verifier_append (x u : List Bool) (hu : u.length = x.length + 1) :
-    x ++ u ∈ tautVerifier ↔ (CNF.decode x).evalDNF (tautAssignment u) = false := by
+    x ++ u ∈ tautVerifier ↔ (DNF.decode x).eval (tautAssignment u) = false := by
   have hs := taut_split_exists (x ++ u).length x.length (by simp [hu])
   change tautVerifierBit (x ++ u) = true ↔ _
   simp only [tautVerifierBit, hs, List.take_left, List.drop_left, Bool.not_eq_true']
@@ -198,8 +194,8 @@ fallback has false DNF value, so it belongs to the complement. -/
 private lemma taut_malformed (x u : List Bool) (hx : CNF.parse x = none)
     (hu : u.length = x.length + 1) :
     x ∈ (TAUTOLOGYᶜ : Language Bool) ∧ x ++ u ∈ tautVerifier := by
-  have hv : (CNF.decode x).evalDNF (tautAssignment u) = false := by
-    simp only [CNF.decode, hx, Option.getD_none]
+  have hv : (DNF.decode x).eval (tautAssignment u) = false := by
+    simp only [DNF.decode, CNF.decode, hx, Option.getD_none]
     rfl
   exact ⟨(taut_certificate_equiv x).mpr ⟨u, hu, hv⟩,
     (taut_verifier_append x u hu).mpr hv⟩
@@ -1024,7 +1020,7 @@ private lemma taut_formula_run (φ : CNF ℕ) (u : List Bool)
       tautTM.tm.runFrom
         (tautCfg x (some (.evalFirst .formula)) pre.length
           (by simp [hx, universal_pair_length]) u 0) t =
-      tautCfg x none i hi u 0 [!(φ.evalDNF (tautAssignment u))] := by
+      tautCfg x none i hi u 0 [!((DNF.mk φ).eval (tautAssignment u))] := by
   induction φ with
   | nil =>
     intro x pre hx
@@ -1073,7 +1069,7 @@ private lemma taut_formula_run (φ : CNF ℕ) (u : List Bool)
       · simp only [hs, List.length_cons, List.length_append]
         omega
       · rw [MultiTapeTM.runFrom_succ_eq_step', hprefix, taut_verdict]
-        delta CNF.evalDNF
+        delta DNF.eval
         simp [hv]
     | false =>
       simp only [hv, Bool.false_eq_true, ↓reduceIte] at hprefix
@@ -1082,7 +1078,7 @@ private lemma taut_formula_run (φ : CNF ℕ) (u : List Bool)
       · simp only [hs, List.length_cons, List.length_append]
         omega
       · rw [MultiTapeTM.runFrom_add, hprefix, htail]
-        delta CNF.evalDNF
+        delta DNF.eval
         simp [hv]
 
 /-- Every member of the variable-contribution list is bounded by its maximum. -/
@@ -1111,13 +1107,13 @@ with the formula run. Empty terms and the empty disjunction are covered by
 the two structural base cases; only the final verdict emits a bit. -/
 private lemma taut_machine_pair (x u : List Bool) (hu : u.length = x.length+1) :
     tautTM.ComputesInTime (pairEncode x u)
-      [!((CNF.decode x).evalDNF (tautAssignment u))] (10*((pairEncode x u).length+1)) := by
+      [!((DNF.decode x).eval (tautAssignment u))] (10*((pairEncode x u).length+1)) := by
   cases hp : CNF.parse x with
   | none =>
     have h := taut_machine_malformed x u hp
     have hm := h.mono (show 2*x.length+3 ≤ 10*((pairEncode x u).length+1) by
       rw [universal_pair_length]; omega)
-    simpa only [CNF.decode, hp, Option.getD_none] using hm
+    simpa only [DNF.decode, CNF.decode, hp, Option.getD_none] using hm
   | some φ =>
     have hx := taut_parse_shape hp
     subst x
@@ -1133,11 +1129,11 @@ private lemma taut_machine_pair (x u : List Bool) (hu : u.length = x.length+1) :
       (pairEncode (CNF.serialize φ) u) [] rfl
     simp only [List.length_nil] at heval
     have hcomp : tautTM.ComputesInTime (pairEncode (CNF.serialize φ) u)
-        [!(φ.evalDNF (tautAssignment u))] (a+b) := by
+        [!((DNF.mk φ).eval (tautAssignment u))] (a+b) := by
       apply (FinTM.computesInTime_iff _ _ _ _).mpr
       rw [MultiTapeTM.runFrom_add, hstart, heval]
       exact ⟨rfl, rfl⟩
-    rw [CNF.decode_serialize]
+    rw [DNF.decode_cnf_serialize]
     apply hcomp.mono
     rw [universal_pair_length] at ha ⊢
     omega
@@ -1237,20 +1233,20 @@ the complement.
 
 **Proof sketch.** By the definition of `Complexity.coNP`, exhibit
 `TAUTOLOGYᶜ ∈ NP`: `x ∈ TAUTOLOGYᶜ` iff some assignment falsifies the DNF
-reading of `CNF.decode x`. Certificate parameters `(1, 1)` exactly as in
+`DNF.decode x`. Certificate parameters `(1, 1)` exactly as in
 `Complexity.SAT_mem_NP` — a certificate of length `|x| + 1` carries the
 assignment on the mentioned variables (`Std.Sat.CNF.numVars_decode_le`
-bounds them by `|x|`; the evaluation-congruence bridge transfers to `evalDNF`
+bounds them by `|x|`; the evaluation-congruence bridge transfers to `DNF.eval`
 by the same mentioned-variable argument, a named obligation mirroring
 `Complexity.eval_congr_of_lt_numVars`). The verifier machine reuses the
 `SAT_mem_NP` obligations — odd-length split with explicit even rejection,
 the shared parsing machine, the assignment walk — with the **dual**
 evaluation loop: accept iff **every** term contains an unsatisfied literal,
-i.e. evaluate `evalDNF` and answer its negation (an empty term forces
+i.e. evaluate `DNF.eval` and answer its negation (an empty term forces
 rejection, the empty formula forces acceptance — round-1 audit, finding 2,
 correcting the drafted some-term phrasing) — and the buffered verdict. Malformed
 strings: the fallback is not a DNF tautology, so they lie in `TAUTOLOGYᶜ`,
-and the verifier accepts them with any certificate (`evalDNF` of `[]` is
+and the verifier accepts them with any certificate (`DNF.eval` of `⟨[]⟩` is
 `false` — consistent on both sides). -/
 theorem TAUTOLOGY_mem_coNP : TAUTOLOGY ∈ coNP := by
   exact taut_membership_of_verifier taut_verifier_mem_P
@@ -1260,11 +1256,11 @@ theorem TAUTOLOGY_mem_coNP : TAUTOLOGY ∈ coNP := by
 **Proof sketch.** Membership is `Complexity.TAUTOLOGY_mem_coNP`. Hardness:
 let `L ∈ coNP`, so `Lᶜ ∈ NP`, and `Complexity.SAT_NPHard` (Lemma 2.11)
 supplies `f` with `z ∈ Lᶜ ↔ f z ∈ SAT`. Set
-`g z := Std.Sat.CNF.serialize (Std.Sat.CNF.dual (CNF.decode (f z)))` — parse
+`g z := Std.Sat.DNF.serialize (Std.Sat.CNF.dual (CNF.decode (f z)))` — parse
 the Cook-Levin output, take the De Morgan dual, re-serialize. Then for every
 `z`: `z ∈ L` iff `f z ∉ SAT` iff `CNF.decode (f z)` is unsatisfiable iff its
-dual is a DNF tautology (`Std.Sat.CNF.dnfTautology_dual_iff`) iff
-`g z ∈ TAUTOLOGY` (`Std.Sat.CNF.decode_serialize` re-reads the emitted
+dual is a tautology (`Std.Sat.CNF.tautology_dual_iff`) iff
+`g z ∈ TAUTOLOGY` (`Std.Sat.DNF.decode_serialize` re-reads the emitted
 string; the decode-dual-serialize round trip is exact on every string since
 decoding is total). `Complexity.PolyTimeComputable g`: compose `f`'s machine
 (`Complexity.PolyTimeComputable.comp`) with the parse-dual-serialize

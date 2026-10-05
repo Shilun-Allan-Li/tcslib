@@ -90,8 +90,8 @@ applies to width-l formulas exactly as it does to width-w formulas. -/
 theorem subsequent_step_reduction
     (gates : Fin s_i → DNF n) (l : ℕ) (hl : 0 < l)
     (hw : ∀ i, (gates i).width ≤ l)
-    (hnd : ∀ i, ∀ t ∈ gates i, ∀ l₁ ∈ t, ∀ l₂ ∈ t, l₁.var = l₂.var → l₁ = l₂)
-    (hnodup : ∀ i, ∀ t ∈ gates i, t.Nodup)
+    (hnd : ∀ i, ∀ t ∈ (gates i).terms, ∀ l₁ ∈ t, ∀ l₂ ∈ t, l₁.var = l₂.var → l₁ = l₂)
+    (hnodup : ∀ i, ∀ t ∈ (gates i).terms, t.Nodup)
     (hn : 0 < n)
     (p : ℝ) (hp_pos : 0 < p) (hp_le : p ≤ 1 / (40 * ↑l)) (hp1 : p ≤ 1) :
     bernoulliRestrProb p
@@ -110,8 +110,8 @@ This is `one_step_dtDepth_bound` with w = l. -/
 theorem subsequent_step_dtDepth
     (gates : Fin s_i → DNF n) (l : ℕ) (hl : 0 < l)
     (hw : ∀ i, (gates i).width ≤ l)
-    (hnd : ∀ i, ∀ t ∈ gates i, ∀ l₁ ∈ t, ∀ l₂ ∈ t, l₁.var = l₂.var → l₁ = l₂)
-    (hnodup : ∀ i, ∀ t ∈ gates i, t.Nodup)
+    (hnd : ∀ i, ∀ t ∈ (gates i).terms, ∀ l₁ ∈ t, ∀ l₂ ∈ t, l₁.var = l₂.var → l₁ = l₂)
+    (hnodup : ∀ i, ∀ t ∈ (gates i).terms, t.Nodup)
     (hn : 0 < n)
     (p : ℝ) (hp_pos : 0 < p) (hp_le : p ≤ 1 / (40 * ↑l)) (hp1 : p ≤ 1) :
     bernoulliRestrProb p

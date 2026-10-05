@@ -57,7 +57,7 @@ O'Donnell, \emph{Analysis of Boolean Functions}, Ch.~4.
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b002}
 \proofstep
-  {Term.width}
+  {LitList.width}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b003}
@@ -879,7 +879,7 @@ O'Donnell, \emph{Analysis of Boolean Functions}, Ch.~4.
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b003}
 \proofstep
-  {cnfToDualDNF}
+  {CNF.dual}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b002}
@@ -899,7 +899,7 @@ O'Donnell, \emph{Analysis of Boolean Functions}, Ch.~4.
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b003}
 \proofstep
-  {SwitchingLemmaCNF.cnfToDualDNF_nodup}
+  {CNF.dual_nodup}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b003}
@@ -935,7 +935,7 @@ Recall (\texttt{Literal}, \texttt{Term}, \texttt{DNF} in
   \item A \textbf{term} is a \emph{list} of literals, not a set or a
         \texttt{Finset}.
   \item A \textbf{DNF} is a list of terms.
-  \item \texttt{Term.width} is defined as \texttt{List.length}, i.e.\ literal
+  \item \texttt{LitList.width} is defined as \texttt{List.length}, i.e.\ literal
         occurrences are \emph{counted with multiplicity}.
   \item \texttt{DNF.width} is the (list-)maximum of the term widths.
 \end{itemize}

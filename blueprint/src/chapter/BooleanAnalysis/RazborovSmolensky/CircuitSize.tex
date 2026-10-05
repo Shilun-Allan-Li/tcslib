@@ -16,7 +16,7 @@ previous chapter with their error bounds phrased directly in terms of the number
 \lean{RazborovSmolensky.gateLayerIdx}
 \label{RazborovSmolensky.gateLayerIdx}
 \leanok
-\uses{BoolCircuit.FeedForward}
+\uses{BoolCircuit.LayeredCircuit}
 For a feed-forward circuit $F$, a bound $d \le F.\mathrm{depth}$ and an index
 $j : \mathrm{Fin}\,d$, the layer index $\mathrm{gateLayerIdx}\,F\,h_d\,j \in
 \mathrm{Fin}(F.\mathrm{depth}+1)$ is $j+1$, i.e.\ the $(j+1)$-st node layer of $F$.  It packages the
@@ -27,7 +27,7 @@ non-input layers $1, \dots, d$ as indices into $F.\mathrm{nodes}$ so that they c
 \lean{RazborovSmolensky.gateCountBefore_eq_sum_cards}
 \label{RazborovSmolensky.gateCountBefore_eq_sum_cards}
 \leanok
-\uses{BoolCircuit.FeedForward, RazborovSmolensky.gateCountBefore, RazborovSmolensky.gateCountBefore_succ, RazborovSmolensky.gateLayerIdx}
+\uses{BoolCircuit.LayeredCircuit, RazborovSmolensky.gateCountBefore, RazborovSmolensky.gateCountBefore_succ, RazborovSmolensky.gateLayerIdx}
 \difficulty{5}
 Let $F$ be a Boolean feed-forward circuit (alphabet $\bbf_2$, input type
 $\mathrm{Fin}\,n$) all of whose node layers are finite, and write $\mathrm{depth}(F)$
@@ -44,7 +44,7 @@ where $L_i$ denotes the set of nodes in the $i$-th layer of $F$.
 \lean{RazborovSmolensky.size_eq_sum_cards}
 \label{RazborovSmolensky.size_eq_sum_cards}
 \leanok
-\uses{BoolCircuit.FeedForward, BoolCircuit.FeedForward.size}
+\uses{BoolCircuit.LayeredCircuit, BoolCircuit.LayeredCircuit.size}
 \difficulty{2}
 Let $F$ be a layered feedforward circuit over the Boolean alphabet $\bbf_2 = \{0,1\}$
 with input type $\mathrm{Fin}\,n$, and suppose every node layer of $F$ is finite. Then
@@ -61,7 +61,7 @@ nodes in layers $1, \dots, \mathrm{depth}(F)$.
 \lean{RazborovSmolensky.gateCountBefore_depth_eq_size}
 \label{RazborovSmolensky.gateCountBefore_depth_eq_size}
 \leanok
-\uses{BoolCircuit.FeedForward, BoolCircuit.FeedForward.size, RazborovSmolensky.gateCountBefore, RazborovSmolensky.gateCountBefore_eq_sum_cards, RazborovSmolensky.gateLayerIdx, RazborovSmolensky.size_eq_sum_cards}
+\uses{BoolCircuit.LayeredCircuit, BoolCircuit.LayeredCircuit.size, RazborovSmolensky.gateCountBefore, RazborovSmolensky.gateCountBefore_eq_sum_cards, RazborovSmolensky.gateLayerIdx, RazborovSmolensky.size_eq_sum_cards}
 \difficulty{4}
 Let $F$ be a feedforward circuit over the alphabet $\bbf_2$ with input type
 $\mathrm{Fin}\,n$, and suppose each of its node layers is finite. Counting the non-input
@@ -74,7 +74,7 @@ that is, its total number of non-input nodes.
 \lean{RazborovSmolensky.exists_poly_distribution_for_circuit_outputs_size}
 \label{RazborovSmolensky.exists_poly_distribution_for_circuit_outputs_size}
 \leanok
-\uses{RazborovSmolensky.ACp_GateOps, BoolCircuit.FeedForward, BoolCircuit.FeedForward.eval, BoolCircuit.FeedForward.onlyUsesGates, BoolCircuit.FeedForward.size, RazborovSmolensky.boolInput, RazborovSmolensky.circuitDegreeBound, RazborovSmolensky.exists_poly_distribution_for_circuit_outputs, RazborovSmolensky.gateCountBefore_depth_eq_size}
+\uses{RazborovSmolensky.ACp_GateOps, BoolCircuit.LayeredCircuit, BoolCircuit.LayeredCircuit.eval, BoolCircuit.LayeredCircuit.onlyUsesGates, BoolCircuit.LayeredCircuit.size, RazborovSmolensky.boolInput, RazborovSmolensky.circuitDegreeBound, RazborovSmolensky.exists_poly_distribution_for_circuit_outputs, RazborovSmolensky.gateCountBefore_depth_eq_size}
 \difficulty{3}
 Let $p$ be a prime and let $F$ be a feedforward circuit over the Boolean alphabet
 $\{0,1\}$ with inputs indexed by $\{1,\dots,n\}$ and a finite set of outputs, in which
@@ -98,7 +98,7 @@ on input $x$, respectively.
 \lean{RazborovSmolensky.exists_poly_distribution_for_circuit_one_size}
 \label{RazborovSmolensky.exists_poly_distribution_for_circuit_one_size}
 \leanok
-\uses{RazborovSmolensky.ACp_GateOps, BoolCircuit.FeedForward, BoolCircuit.FeedForward.eval₁, BoolCircuit.FeedForward.onlyUsesGates, BoolCircuit.FeedForward.size, RazborovSmolensky.boolInput, RazborovSmolensky.circuitDegreeBound, RazborovSmolensky.exists_poly_distribution_for_circuit_one, RazborovSmolensky.gateCountBefore_depth_eq_size}
+\uses{RazborovSmolensky.ACp_GateOps, BoolCircuit.LayeredCircuit, BoolCircuit.LayeredCircuit.eval₁, BoolCircuit.LayeredCircuit.onlyUsesGates, BoolCircuit.LayeredCircuit.size, RazborovSmolensky.boolInput, RazborovSmolensky.circuitDegreeBound, RazborovSmolensky.exists_poly_distribution_for_circuit_one, RazborovSmolensky.gateCountBefore_depth_eq_size}
 \difficulty{3}
 Let $p$ be a prime, and let $F$ be a feedforward circuit over the Boolean alphabet
 $\mathrm{Fin}\,2$ with input coordinates indexed by $\mathrm{Fin}\,n$ and a single
@@ -123,7 +123,7 @@ where $\operatorname{size}(F)$ denotes the number of non-input nodes of $F$.
 \lean{RazborovSmolensky.exists_poly_list_for_circuit_one_size}
 \label{RazborovSmolensky.exists_poly_list_for_circuit_one_size}
 \leanok
-\uses{RazborovSmolensky.ACp_GateOps, BoolCircuit.FeedForward, BoolCircuit.FeedForward.eval₁, BoolCircuit.FeedForward.onlyUsesGates, BoolCircuit.FeedForward.size, RazborovSmolensky.boolInput, RazborovSmolensky.circuitDegreeBound, RazborovSmolensky.exists_poly_list_for_circuit_one, RazborovSmolensky.gateCountBefore_depth_eq_size}
+\uses{RazborovSmolensky.ACp_GateOps, BoolCircuit.LayeredCircuit, BoolCircuit.LayeredCircuit.eval₁, BoolCircuit.LayeredCircuit.onlyUsesGates, BoolCircuit.LayeredCircuit.size, RazborovSmolensky.boolInput, RazborovSmolensky.circuitDegreeBound, RazborovSmolensky.exists_poly_list_for_circuit_one, RazborovSmolensky.gateCountBefore_depth_eq_size}
 \difficulty{3}
 Let $p$ be a prime and let $F$ be a feedforward circuit over the alphabet
 $\mathrm{Fin}\,2$ with $n$ Boolean input variables, finitely many nodes in each layer,

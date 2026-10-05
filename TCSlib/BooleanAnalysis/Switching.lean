@@ -304,7 +304,7 @@ private lemma encode_go_wellformed {n : ℕ} (f : DNF n) (w : ℕ)
     | cons step rest =>
       simp only [razborovEncode.go]
       -- Case split on find?
-      cases hfind : f.find? (fun t => decide (¬Term.killedBy t ρ₀)) with
+      cases hfind : f.terms.find? (fun t => decide (¬Term.killedBy t ρ₀)) with
       | none =>
         refine ⟨[], ?_, by simp, by intro hne; exact absurd rfl hne⟩
         simp [triplesToAux]
@@ -321,7 +321,7 @@ private lemma encode_go_wellformed {n : ℕ} (f : DNF n) (w : ℕ)
           simp only []
           set pcl := processClauseLits (fl :: fls) (step :: rest) ρ₀ σ with hpcl_def
           -- Extract the "new block" of aux data from pcl
-          have ht_mem : t_clause ∈ f := List.mem_of_find?_eq_some hfind
+          have ht_mem : t_clause ∈ f.terms := List.mem_of_find?_eq_some hfind
           have ht_len : t_clause.length ≤ w :=
             le_trans (term_length_le_width f t_clause ht_mem) hw
           have hfli_mem_zip : ∀ p ∈ fl :: fls, p ∈ t_clause.zipIdx := by
@@ -544,7 +544,7 @@ private lemma aux_image_card_bound {n : ℕ} (f : DNF n) (w d : ℕ)
     -- and empty terms are trivially `fixedBy` any restriction, so
     -- `dtDepth (restrictFn f.eval ρ) = 0` and there are no bad restrictions.
     subst hw0
-    have hall_empty : ∀ t ∈ f, t = [] := by
+    have hall_empty : ∀ t ∈ f.terms, t = [] := by
       intro t ht
       have ht_len : t.length ≤ 0 := le_trans (term_length_le_width f t ht) hw
       exact List.length_eq_zero_iff.mp (Nat.le_zero.mp ht_len)
@@ -553,13 +553,13 @@ private lemma aux_image_card_bound {n : ℕ} (f : DNF n) (w d : ℕ)
       unfold IsBadRestriction at hbad
       -- If f has any term, that term is empty hence fixedBy ρ → dtDepth 0
       -- If f is empty, restrictFn is constant false → dtDepth 0
-      by_cases hf : f = []
+      by_cases hf : f.terms = []
       · have hdtd : dtDepth (restrictFn f.eval ρ) = 0 := by
           apply killedAll_implies_dtDepth_zero
           intro t ht
           rw [hf] at ht; exact absurd ht (List.not_mem_nil)
         omega
-      · obtain ⟨t, ht_mem⟩ := List.exists_mem_of_ne_nil f hf
+      · obtain ⟨t, ht_mem⟩ := List.exists_mem_of_ne_nil f.terms hf
         have ht_empty : t = [] := hall_empty t ht_mem
         have hdtd : dtDepth (restrictFn f.eval ρ) = 0 := by
           apply fixedTerm_implies_dtDepth_zero
@@ -596,7 +596,7 @@ private lemma aux_image_card_bound {n : ℕ} (f : DNF n) (w d : ℕ)
     `w · 2 · 2 = 4w` possibilities, giving `(4w)^d` fibers. -/
 private lemma fiber_bound {n : ℕ} (f : DNF n) (w s d : ℕ)
     (hw : f.width ≤ w) (_hd : d ≤ s)
-    (hnd : ∀ t ∈ f, ∀ l₁ ∈ t, ∀ l₂ ∈ t, l₁.var = l₂.var → l₁ = l₂)
+    (hnd : ∀ t ∈ f.terms, ∀ l₁ ∈ t, ∀ l₂ ∈ t, l₁.var = l₂.var → l₁ = l₂)
     (γ : Restriction n) :
     (Finset.univ.filter fun ρ : Restriction n =>
         IsRestriction s ρ ∧ IsBadRestriction f.eval d ρ ∧
@@ -951,7 +951,7 @@ private lemma processClauseLits_remaining_le_numFree {n : ℕ}
 /-- If every clause of `f` is killed by `ρ`, the canonical decision tree for
     `f|ρ` is `.leaf false` and hence has depth 0. -/
 private lemma canonicalDTree_depth_zero_of_killed {n : ℕ} (f : DNF n)
-    (ρ : Restriction n) (h : ∀ t ∈ f, Term.killedBy t ρ) :
+    (ρ : Restriction n) (h : ∀ t ∈ f.terms, Term.killedBy t ρ) :
     (canonicalDTree f ρ).depth = 0 := by
   unfold canonicalDTree
   -- `canonicalDTree.go f (ρ.numFree + 1) ρ` hits the `fuel + 1` branch,
@@ -965,13 +965,13 @@ private lemma canonicalDTree_depth_zero_of_killed {n : ℕ} (f : DNF n)
 /-- If some clause of `f` is fixed by `ρ`, the canonical decision tree for
     `f|ρ` is `.leaf true` and hence has depth 0. -/
 private lemma canonicalDTree_depth_zero_of_fixed {n : ℕ} (f : DNF n)
-    (ρ : Restriction n) (h : ∃ t ∈ f, Term.fixedBy t ρ) :
+    (ρ : Restriction n) (h : ∃ t ∈ f.terms, Term.fixedBy t ρ) :
     (canonicalDTree f ρ).depth = 0 := by
   unfold canonicalDTree
   set fuel := ρ.numFree
   show (canonicalDTree.go f (fuel + 1) ρ).depth = 0
   simp only [canonicalDTree.go]
-  by_cases hkill : ∀ t ∈ f, Term.killedBy t ρ
+  by_cases hkill : ∀ t ∈ f.terms, Term.killedBy t ρ
   · rw [dif_pos hkill]; rfl
   · rw [dif_neg hkill, dif_pos h]; rfl
 
@@ -1020,7 +1020,7 @@ private lemma zipIdx_filter_getElem_fst {n : ℕ} (t : Term n)
 **Structural match between canonicalDTree.deepPath and the first alive
     clause's free literals** (sub-sorry).
 
-    When `f.find?` returns clause `t`, and the filtered (zipIdx) list of `t`'s
+    When `f.terms.find?` returns clause `t`, and the filtered (zipIdx) list of `t`'s
     free literals under `ρ` is `flis`, the prefix of `(canonicalDTree f ρ).deepPath`
     of length `flis.length` has variables matching the literals in `flis` exactly,
     in order. This is because `canonicalDTree.go` builds `termSubTree t ρ cont`,
@@ -1030,7 +1030,7 @@ private lemma zipIdx_filter_getElem_fst {n : ℕ} (t : Term n)
 -/
 private lemma canonicalDTree_deepPath_match_freeLits {n : ℕ} (f : DNF n)
     (ρ : Restriction n) (t : Term n)
-    (hfind : f.find? (fun t => decide (¬Term.killedBy t ρ)) = some t)
+    (hfind : f.terms.find? (fun t => decide (¬Term.killedBy t ρ)) = some t)
     (hnd : ∀ l₁ ∈ t, ∀ l₂ ∈ t, l₁.var = l₂.var → l₁ = l₂)
     (hnodup : t.Nodup)
     (k : ℕ)
@@ -1039,7 +1039,7 @@ private lemma canonicalDTree_deepPath_match_freeLits {n : ℕ} (f : DNF n)
     (hk_flis : k < flis.length)
     (hk_path : k < (canonicalDTree f ρ).deepPath.length) :
     ((canonicalDTree f ρ).deepPath[k]'hk_path).1 = (flis[k]'hk_flis).1.var := by
-  have halive : ¬ (∀ t ∈ f, Term.killedBy t ρ) ∧ ¬ (∃ t ∈ f, Term.fixedBy t ρ) := by
+  have halive : ¬ (∀ t ∈ f.terms, Term.killedBy t ρ) ∧ ¬ (∃ t ∈ f.terms, Term.fixedBy t ρ) := by
     constructor <;> contrapose! hk_path <;> simp_all +decide [ Term.killedBy, Term.fixedBy ] ;
     · grind;
     · have h_depth_zero : (canonicalDTree f ρ).depth = 0 := by
@@ -1173,7 +1173,7 @@ private lemma canonicalPath_preserve_processClauseLits {n : ℕ} (f : DNF n)
       (lits[k]'(by omega)).1.var = (path[k]'(by omega)).1)
     -- Extra context for the proof:
     (t : Term n)
-    (hfind : f.find? (fun t => decide (¬Term.killedBy t ρ₀)) = some t)
+    (hfind : f.terms.find? (fun t => decide (¬Term.killedBy t ρ₀)) = some t)
     (hnd_t : ∀ l₁ ∈ t, ∀ l₂ ∈ t, l₁.var = l₂.var → l₁ = l₂)
     (hnodup_t : t.Nodup)
     (hdepth : path.length ≤ (canonicalDTree f ρ₀).depth)
@@ -1195,11 +1195,11 @@ private lemma canonicalPath_preserve_processClauseLits {n : ℕ} (f : DNF n)
     -- Establish alive conditions
     have hpath_pos : 0 < path.length := by omega
     have hdepth_pos : 0 < (canonicalDTree f ρ₀).depth := by omega
-    have h_not_all_killed : ¬ ∀ t ∈ f, Term.killedBy t ρ₀ := by
+    have h_not_all_killed : ¬ ∀ t ∈ f.terms, Term.killedBy t ρ₀ := by
       intro hall
       have := canonicalDTree_depth_zero_of_killed f ρ₀ hall
       omega
-    have h_not_fixed : ¬ ∃ t ∈ f, Term.fixedBy t ρ₀ := by
+    have h_not_fixed : ¬ ∃ t ∈ f.terms, Term.fixedBy t ρ₀ := by
       intro ⟨t', ht', hfix'⟩
       have := canonicalDTree_depth_zero_of_fixed f ρ₀ ⟨t', ht', hfix'⟩
       omega
@@ -1214,7 +1214,7 @@ private lemma canonicalPath_preserve_processClauseLits {n : ℕ} (f : DNF n)
     set cont := (fun ρ' => if decide (Term.fixedBy t ρ') then DecisionTree.leaf true
       else canonicalDTree.go f ρ₀.numFree ρ') with hcont_def
     set ρ' := (processClauseLits lits path ρ₀ σ).2.1 with hρ'_def
-    have ht_mem : t ∈ f := List.mem_of_find?_eq_some hfind
+    have ht_mem : t ∈ f.terms := List.mem_of_find?_eq_some hfind
     -- lits.length = |free lits of t|
     have hfree_len : (t.filter (fun l => decide (l.var ∈ ρ₀.freeVars))).length = lits.length := by
       rw [hlits_eq, ← zipIdx_filter_length]
@@ -1360,8 +1360,8 @@ private lemma processClauseLits_freeLits_pairwise_var {n : ℕ}
     `processClauseLits_freeLits_pairwise_var`. -/
 private lemma razborovEncode_go_numFree_invariant {n : ℕ}
     (f : DNF n) (w : ℕ)
-    (hnd : ∀ t ∈ f, ∀ l₁ ∈ t, ∀ l₂ ∈ t, l₁.var = l₂.var → l₁ = l₂)
-    (hnodup : ∀ t ∈ f, t.Nodup)
+    (hnd : ∀ t ∈ f.terms, ∀ l₁ ∈ t, ∀ l₂ ∈ t, l₁.var = l₂.var → l₁ = l₂)
+    (hnodup : ∀ t ∈ f.terms, t.Nodup)
     (fuel : ℕ) (path : List (Fin n × Bool)) (ρ₀ σ : Restriction n)
     (hagree : ∀ v, ρ₀ v = none ↔ σ v = none)
     (hcanon : IsCanonicalPath f ρ₀ path)
@@ -1381,11 +1381,11 @@ private lemma razborovEncode_go_numFree_invariant {n : ℕ}
         Nat.lt_of_lt_of_le hpath_pos hdepth
       simp only [razborovEncode.go]
       -- Case split on find?
-      cases hfind : f.find? (fun t => decide (¬Term.killedBy t ρ₀)) with
+      cases hfind : f.terms.find? (fun t => decide (¬Term.killedBy t ρ₀)) with
       | none =>
         -- All clauses killed by ρ₀ → dtDepth = 0, contradicting hdepth_pos.
         exfalso
-        have hall : ∀ t ∈ f, Term.killedBy t ρ₀ := by
+        have hall : ∀ t ∈ f.terms, Term.killedBy t ρ₀ := by
           intro t ht
           have hne := (List.find?_eq_none.mp hfind) t ht
           simp only [decide_not, Bool.not_eq_true', decide_eq_false_iff_not,
@@ -1395,7 +1395,7 @@ private lemma razborovEncode_go_numFree_invariant {n : ℕ}
         omega
       | some t_clause =>
         simp only []
-        have ht_mem : t_clause ∈ f := List.mem_of_find?_eq_some hfind
+        have ht_mem : t_clause ∈ f.terms := List.mem_of_find?_eq_some hfind
         -- Build freeLitsIdx
         set fli := (t_clause.zipIdx).filter
           (fun p => decide (p.1.var ∈ ρ₀.freeVars)) with hfli_def
@@ -1578,8 +1578,8 @@ private lemma razborovEncode_go_numFree_invariant {n : ℕ}
 private lemma razborovEncode_fst_numFree_eq {n : ℕ} (f : DNF n) (w d : ℕ)
     (ρ : Restriction n) (s : ℕ) (hρ : IsRestriction s ρ)
     (hbad : IsBadRestriction f.eval d ρ) (hd : d ≤ s)
-    (hnd : ∀ t ∈ f, ∀ l₁ ∈ t, ∀ l₂ ∈ t, l₁.var = l₂.var → l₁ = l₂)
-    (hnodup : ∀ t ∈ f, t.Nodup) :
+    (hnd : ∀ t ∈ f.terms, ∀ l₁ ∈ t, ∀ l₂ ∈ t, l₁.var = l₂.var → l₁ = l₂)
+    (hnodup : ∀ t ∈ f.terms, t.Nodup) :
     IsRestriction (s - d) (razborovEncode f w d ρ).1 := by
   classical
   unfold IsRestriction at hρ ⊢
@@ -1614,8 +1614,8 @@ private lemma razborovEncode_fst_numFree_eq {n : ℕ} (f : DNF n) (w d : ℕ)
 /-- **Razborov counting bound**. -/
 private lemma bad_count_bound {n : ℕ} (f : DNF n) (w s d : ℕ)
     (hw : f.width ≤ w) (hd : d ≤ s)
-    (hnd : ∀ t ∈ f, ∀ l₁ ∈ t, ∀ l₂ ∈ t, l₁.var = l₂.var → l₁ = l₂)
-    (hnodup : ∀ t ∈ f, t.Nodup) :
+    (hnd : ∀ t ∈ f.terms, ∀ l₁ ∈ t, ∀ l₂ ∈ t, l₁.var = l₂.var → l₁ = l₂)
+    (hnodup : ∀ t ∈ f.terms, t.Nodup) :
     (Finset.univ.filter fun ρ : Restriction n =>
         IsRestriction s ρ ∧ IsBadRestriction f.eval d ρ).card ≤
     n.choose (s - d) * 2 ^ (n - (s - d)) * (4 * w) ^ d := by
@@ -1687,8 +1687,8 @@ private lemma choose_mul_pow_bound {n s d : ℕ} (hs : 5 * s ≤ n) (hd : d ≤ 
 
 theorem switching_lemma {n : ℕ} (hn : 0 < n) (f : DNF n) (w s d : ℕ)
     (hw : f.width ≤ w) (hs : 5 * s ≤ n)
-    (hnd : ∀ t ∈ f, ∀ l₁ ∈ t, ∀ l₂ ∈ t, l₁.var = l₂.var → l₁ = l₂)
-    (hnodup : ∀ t ∈ f, t.Nodup) :
+    (hnd : ∀ t ∈ f.terms, ∀ l₁ ∈ t, ∀ l₂ ∈ t, l₁.var = l₂.var → l₁ = l₂)
+    (hnodup : ∀ t ∈ f.terms, t.Nodup) :
     (Finset.univ.filter fun ρ : Restriction n =>
         IsRestriction s ρ ∧ IsBadRestriction f.eval d ρ).card * n ^ d ≤
     numSRestrictions n s * (10 * s * w) ^ d := by
@@ -1705,19 +1705,43 @@ theorem switching_lemma {n : ℕ} (hn : 0 < n) (f : DNF n) (w s d : ℕ)
 
 /-! ## Decision tree to DNF/CNF conversion -/
 
-private def toDNF {n : ℕ} : DecisionTree n → DNF n
+/-- The terms of the DNF read off a decision tree: one term per `true` leaf. -/
+private def toTerms {n : ℕ} : DecisionTree n → List (Term n)
   | .leaf true  => [[]   ]
   | .leaf false => []
   | .branch v lo hi =>
-    ((toDNF lo).map fun t => ⟨v, true⟩ :: t) ++
-    ((toDNF hi).map fun t => ⟨v, false⟩ :: t)
+    ((toTerms lo).map fun t => ⟨v, true⟩ :: t) ++
+    ((toTerms hi).map fun t => ⟨v, false⟩ :: t)
 
-private def toCNF {n : ℕ} : DecisionTree n → CNF n
+/-- The clauses of the CNF read off a decision tree: one clause per `false` leaf. -/
+private def toClauses {n : ℕ} : DecisionTree n → List (Clause n)
   | .leaf true  => []
   | .leaf false => [[]   ]
   | .branch v lo hi =>
-    ((toCNF lo).map fun c => ⟨v, false⟩ :: c) ++
-    ((toCNF hi).map fun c => ⟨v, true⟩ :: c)
+    ((toClauses lo).map fun c => ⟨v, false⟩ :: c) ++
+    ((toClauses hi).map fun c => ⟨v, true⟩ :: c)
+
+private def toDNF {n : ℕ} (T : DecisionTree n) : DNF n := ⟨toTerms T⟩
+
+private def toCNF {n : ℕ} (T : DecisionTree n) : CNF n := ⟨toClauses T⟩
+
+private lemma toTerms_eval {n : ℕ} (T : DecisionTree n) (x : Fin n → Bool) :
+    (toTerms T).any (fun t => Term.eval t x) = T.eval x := by
+  induction T with
+  | leaf b => cases b <;> simp [toTerms, DecisionTree.eval]
+  | branch v lo hi ihlo ihhi =>
+    simp only [toTerms, List.any_append, List.any_map, Function.comp_def, Term.eval_cons,
+      Literal.eval, DecisionTree.eval, if_true]
+    cases x v <;> simp [ihlo, ihhi]
+
+private lemma toClauses_eval {n : ℕ} (T : DecisionTree n) (x : Fin n → Bool) :
+    (toClauses T).all (fun c => Clause.eval c x) = T.eval x := by
+  induction T with
+  | leaf b => cases b <;> simp [toClauses, DecisionTree.eval]
+  | branch v lo hi ihlo ihhi =>
+    simp only [toClauses, List.all_append, List.all_map, Function.comp_def, Clause.eval_cons,
+      Literal.eval, DecisionTree.eval, if_true]
+    cases x v <;> simp [ihlo, ihhi]
 
 private lemma dtDepth_witness {n : ℕ} (f : (Fin n → Bool) → Bool) :
     ∃ T : DecisionTree n, T.depth ≤ dtDepth f ∧ ∀ x, T.eval x = f x := by
@@ -1741,63 +1765,38 @@ lemma dtDepth_le_implies_small_dnf_cnf {n : ℕ} (f : (Fin n → Bool) → Bool)
   · use SwitchingLemma.toDNF T, by
       have h_width_le_depth : ∀ T : DecisionTree n, (toDNF T).width ≤ T.depth := by
         intro T;
-        have h_width_induction : ∀ T : DecisionTree n, ∀ t ∈ toDNF T, t.length ≤ T.depth := by
+        have h_width_induction : ∀ T : DecisionTree n, ∀ t ∈ toTerms T, t.length ≤ T.depth := by
           intro T
           induction' T with v lo hi hlo hhi;
-          · cases v <;> simp +decide [ toDNF ];
-          · intro t ht; unfold toDNF at ht; simp_all +decide [ DecisionTree.depth ] ;
+          · cases v <;> simp +decide [ toTerms ];
+          · intro t ht; unfold toTerms at ht; simp_all +decide [ DecisionTree.depth ] ;
             grind;
         have h_width_induction : ∀ {l : List ℕ}, (∀ x ∈ l, x ≤ T.depth) → List.foldr max 0 l ≤ T.depth := by
           intros l hl; induction l <;> aesop;
         exact h_width_induction fun x hx => by aesop;
-      exact le_trans ( h_width_le_depth T ) hTd', by
-      intro x;
-      convert hTeval x using 1;
-      clear hTd hTeval hTd' h;
-      induction' T with v lo hi ihlo ihhi;
-      · cases v <;> simp +decide [ toDNF ];
-        · rfl;
-        · rfl;
-      · unfold DNF.eval at *; simp_all +decide [ DecisionTree.eval ] ;
-        unfold toDNF; simp +decide [ *, List.any_append ] ;
-        split_ifs <;> simp_all +decide [ Term.eval ];
-        · simp_all +decide [ Literal.eval ];
-          simp_all +decide [ List.any_eq, List.all_eq ];
-        · simp_all +decide [ List.any_eq, Literal.eval ]
+      exact le_trans ( h_width_le_depth T ) hTd', fun x => by
+      rw [← hTeval x]; exact toTerms_eval T x
   · use toCNF T;
     refine' ⟨ le_trans _ hTd', fun x => _ ⟩;
-    · have h_clause_length : ∀ T : DecisionTree n, ∀ c ∈ toCNF T, c.length ≤ T.depth := by
+    · have h_clause_length : ∀ T : DecisionTree n, ∀ c ∈ toClauses T, c.length ≤ T.depth := by
         intro T c hc
         induction' T with v lo hi ih_lo ih_hi generalizing c;
         · cases v <;> cases hc ; trivial;
           contradiction;
-        · have h_clauses : ∀ c ∈ toCNF (DecisionTree.branch lo hi ih_lo), ∃ c' ∈ toCNF hi ∪ toCNF ih_lo, c = ⟨lo, false⟩ :: c' ∨ c = ⟨lo, true⟩ :: c' := by
-            intro c hc; rw [ show toCNF ( DecisionTree.branch lo hi ih_lo ) = ( toCNF hi |> List.map fun c' => ⟨ lo, false ⟩ :: c' ) ++ ( toCNF ih_lo |> List.map fun c' => ⟨ lo, true ⟩ :: c' ) from rfl ] at hc; aesop;
+        · have h_clauses : ∀ c ∈ toClauses (DecisionTree.branch lo hi ih_lo), ∃ c' ∈ toClauses hi ∪ toClauses ih_lo, c = ⟨lo, false⟩ :: c' ∨ c = ⟨lo, true⟩ :: c' := by
+            intro c hc; rw [ show toClauses ( DecisionTree.branch lo hi ih_lo ) = ( toClauses hi |> List.map fun c' => ⟨ lo, false ⟩ :: c' ) ++ ( toClauses ih_lo |> List.map fun c' => ⟨ lo, true ⟩ :: c' ) from rfl ] at hc; aesop;
           obtain ⟨ c', hc', rfl | rfl ⟩ := h_clauses c hc <;> simp +arith +decide [ *, DecisionTree.depth ];
           · grind;
           · grind;
       have h_foldr_le : ∀ {l : List ℕ}, (∀ x ∈ l, x ≤ T.depth) → List.foldr Max.max 0 l ≤ T.depth := by
         intros l hl; induction l <;> aesop;
       exact h_foldr_le fun x hx => by aesop;
-    · rw [ ← hTeval, eq_comm ];
-      have h_equiv : ∀ T : DecisionTree n, ∀ x : Fin n → Bool, T.eval x = (toCNF T).eval x := by
-        intros T x; induction' T with v lo hi ih_lo ih_hi generalizing x; simp +decide [ *, CNF.eval ] ;
-        · cases v <;> simp +decide [ DecisionTree.eval ];
-          · exact ⟨ [ ], by tauto, by tauto ⟩;
-          · exact fun t ht => by cases ht;
-        · simp +decide [ *, DecisionTree.eval, CNF.eval ];
-          rw [ show toCNF ( DecisionTree.branch lo hi ih_lo ) = ( toCNF hi |> List.map fun c => ⟨ lo, false ⟩ :: c ) ++ ( toCNF ih_lo |> List.map fun c => ⟨ lo, true ⟩ :: c ) by rfl ];
-          split_ifs <;> simp_all +decide [ CNF.evalClause ];
-          · simp +decide [ *, Literal.eval ];
-            grind +splitIndPred;
-          · simp +decide [ *, Literal.eval ];
-            grind;
-      exact h_equiv T x
+    · rw [← hTeval x]; exact toClauses_eval T x
 
 theorem switching_corollary {n : ℕ} (hn : 0 < n) (f : DNF n) (w s : ℕ)
     (hw : f.width ≤ w) (hs : 5 * s ≤ n)
-    (hnd : ∀ t ∈ f, ∀ l₁ ∈ t, ∀ l₂ ∈ t, l₁.var = l₂.var → l₁ = l₂)
-    (hnodup : ∀ t ∈ f, t.Nodup) :
+    (hnd : ∀ t ∈ f.terms, ∀ l₁ ∈ t, ∀ l₂ ∈ t, l₁.var = l₂.var → l₁ = l₂)
+    (hnodup : ∀ t ∈ f.terms, t.Nodup) :
     (Finset.univ.filter fun ρ : Restriction n =>
         IsRestriction s ρ ∧
         ¬ ∃ ψ : CNF n, ψ.width ≤ w ∧
@@ -1852,34 +1851,33 @@ lemma Literal.flipNeg_injective {n : ℕ} : Function.Injective (Literal.flipNeg 
 
 /-! ## De Morgan dual: CNF → DNF -/
 
-/-- Convert a CNF to its De Morgan dual DNF by negating every literal.
-    Each clause (disjunction) becomes a term (conjunction) with negated literals.
-    `¬(∧ᵢ (∨ⱼ lᵢⱼ)) = ∨ᵢ (∧ⱼ ¬lᵢⱼ)` -/
-def cnfToDualDNF {n : ℕ} (ψ : CNF n) : DNF n :=
-  ψ.map (fun clause => clause.map Literal.flipNeg)
+/-- The De Morgan dual of a CNF: negate every literal and read each clause as a term.
+    `¬(∧ᵢ (∨ⱼ lᵢⱼ)) = ∨ᵢ (∧ⱼ ¬lᵢⱼ)`; the `Depth2` shape is unchanged. -/
+def _root_.CNF.dual {n : ℕ} (ψ : CNF n) : DNF n :=
+  ⟨ψ.clauses.map (fun clause => clause.map Literal.flipNeg)⟩
 
 /-! ## Properties of the dual -/
 
-lemma cnfToDualDNF_width {n : ℕ} (ψ : CNF n) :
-    (cnfToDualDNF ψ).width = ψ.width := by
-  simp only [cnfToDualDNF, DNF.width, CNF.width, Term.width,
+lemma _root_.CNF.dual_width {n : ℕ} (ψ : CNF n) :
+    ψ.dual.width = ψ.width := by
+  simp only [CNF.dual, DNF.width, CNF.width, Depth2.width, LitList.width,
     List.map_map, Function.comp_def, List.length_map]
-  congr 1
+  rfl
 
-lemma cnfToDualDNF_eval {n : ℕ} (ψ : CNF n) (x : Fin n → Bool) :
-    (cnfToDualDNF ψ).eval x = !(ψ.eval x) := by
-  simp only [cnfToDualDNF, DNF.eval, CNF.eval]
-  induction ψ with
+lemma _root_.CNF.dual_eval {n : ℕ} (ψ : CNF n) (x : Fin n → Bool) :
+    ψ.dual.eval x = !(ψ.eval x) := by
+  obtain ⟨cs⟩ := ψ
+  simp only [CNF.dual, DNF.eval, CNF.eval]
+  induction cs with
   | nil => simp
   | cons hd tl ih =>
     simp only [List.map_cons, List.any_cons, List.all_cons]
     rw [ih, Bool.not_and]
     congr 1
-    simp only [Term.eval, CNF.evalClause]
     induction hd with
     | nil => simp
     | cons l tl' ih' =>
-      simp only [List.map_cons, List.all_cons, List.any_cons, Literal.flipNeg_eval]
+      simp only [List.map_cons, Term.eval_cons, Clause.eval_cons, Literal.flipNeg_eval]
       rw [ih', Bool.not_or]
 
 /-! ## Decision tree depth is invariant under negation -/
@@ -1946,19 +1944,19 @@ lemma IsBadRestriction_neg {n : ℕ} (f : (Fin n → Bool) → Bool) (d : ℕ) (
 
 /-! ## Nodup and injectivity conditions transfer through duality -/
 
-lemma cnfToDualDNF_nodup {n : ℕ} (ψ : CNF n)
-    (h : ∀ c ∈ ψ, c.Nodup) :
-    ∀ t ∈ cnfToDualDNF ψ, t.Nodup := by
+lemma _root_.CNF.dual_nodup {n : ℕ} (ψ : CNF n)
+    (h : ∀ c ∈ ψ.clauses, c.Nodup) :
+    ∀ t ∈ ψ.dual.terms, t.Nodup := by
   intro t ht
-  simp only [cnfToDualDNF, List.mem_map] at ht
+  simp only [CNF.dual, List.mem_map] at ht
   obtain ⟨c, hc_mem, rfl⟩ := ht
   exact (h c hc_mem).map Literal.flipNeg_injective
 
-lemma cnfToDualDNF_inj {n : ℕ} (ψ : CNF n)
-    (h : ∀ c ∈ ψ, ∀ l₁ ∈ c, ∀ l₂ ∈ c, l₁.var = l₂.var → l₁ = l₂) :
-    ∀ t ∈ cnfToDualDNF ψ, ∀ l₁ ∈ t, ∀ l₂ ∈ t, l₁.var = l₂.var → l₁ = l₂ := by
+lemma _root_.CNF.dual_inj {n : ℕ} (ψ : CNF n)
+    (h : ∀ c ∈ ψ.clauses, ∀ l₁ ∈ c, ∀ l₂ ∈ c, l₁.var = l₂.var → l₁ = l₂) :
+    ∀ t ∈ ψ.dual.terms, ∀ l₁ ∈ t, ∀ l₂ ∈ t, l₁.var = l₂.var → l₁ = l₂ := by
   intro t ht l₁ hl₁ l₂ hl₂ hvar
-  simp only [cnfToDualDNF, List.mem_map] at ht
+  simp only [CNF.dual, List.mem_map] at ht
   obtain ⟨c, hc_mem, rfl⟩ := ht
   simp only [List.mem_map] at hl₁ hl₂
   obtain ⟨l₁', hl₁'_mem, rfl⟩ := hl₁
@@ -1975,40 +1973,40 @@ lemma cnfToDualDNF_inj {n : ℕ} (ψ : CNF n)
     is bounded by `numSRestrictions n s * (10 * s * w)^d / n^d`. -/
 theorem switching_lemma_cnf {n : ℕ} (hn : 0 < n) (ψ : CNF n) (w s d : ℕ)
     (hw : ψ.width ≤ w) (hs : 5 * s ≤ n)
-    (hnd : ∀ c ∈ ψ, ∀ l₁ ∈ c, ∀ l₂ ∈ c, l₁.var = l₂.var → l₁ = l₂)
-    (hnodup : ∀ c ∈ ψ, c.Nodup) :
+    (hnd : ∀ c ∈ ψ.clauses, ∀ l₁ ∈ c, ∀ l₂ ∈ c, l₁.var = l₂.var → l₁ = l₂)
+    (hnodup : ∀ c ∈ ψ.clauses, c.Nodup) :
     (Finset.univ.filter fun ρ : Restriction n =>
         IsRestriction s ρ ∧ IsBadRestriction ψ.eval d ρ).card * n ^ d ≤
     numSRestrictions n s * (10 * s * w) ^ d := by
   -- Rewrite using the dual DNF
   have hkey : ∀ ρ : Restriction n,
       IsBadRestriction ψ.eval d ρ ↔
-      IsBadRestriction (cnfToDualDNF ψ).eval d ρ := by
+      IsBadRestriction (CNF.dual ψ).eval d ρ := by
     intro ρ
     constructor
     · intro hbad
       simp only [IsBadRestriction] at hbad ⊢
-      rw [show (cnfToDualDNF ψ).eval = fun x => !(ψ.eval x) from
-        funext (fun x => cnfToDualDNF_eval ψ x)]
+      rw [show (CNF.dual ψ).eval = fun x => !(ψ.eval x) from
+        funext (fun x => CNF.dual_eval ψ x)]
       rw [restrictFn_neg]
       rw [dtDepth_neg]
       exact hbad
     · intro hbad
       simp only [IsBadRestriction] at hbad ⊢
-      rw [show (cnfToDualDNF ψ).eval = fun x => !(ψ.eval x) from
-        funext (fun x => cnfToDualDNF_eval ψ x)] at hbad
+      rw [show (CNF.dual ψ).eval = fun x => !(ψ.eval x) from
+        funext (fun x => CNF.dual_eval ψ x)] at hbad
       rw [restrictFn_neg] at hbad
       rw [dtDepth_neg] at hbad
       exact hbad
   have hfilter_eq : (Finset.univ.filter fun ρ : Restriction n =>
         IsRestriction s ρ ∧ IsBadRestriction ψ.eval d ρ) =
       (Finset.univ.filter fun ρ : Restriction n =>
-        IsRestriction s ρ ∧ IsBadRestriction (cnfToDualDNF ψ).eval d ρ) := by
+        IsRestriction s ρ ∧ IsBadRestriction (CNF.dual ψ).eval d ρ) := by
     ext ρ; simp [hkey]
   rw [hfilter_eq]
-  have hw' : (cnfToDualDNF ψ).width ≤ w := by rw [cnfToDualDNF_width]; exact hw
-  exact switching_lemma hn (cnfToDualDNF ψ) w s d hw' hs
-    (cnfToDualDNF_inj ψ hnd) (cnfToDualDNF_nodup ψ hnodup)
+  have hw' : (CNF.dual ψ).width ≤ w := by rw [CNF.dual_width]; exact hw
+  exact switching_lemma hn (CNF.dual ψ) w s d hw' hs
+    (CNF.dual_inj ψ hnd) (CNF.dual_nodup ψ hnodup)
 
 /-- **Switching Lemma Corollary for CNFs.**
     For a CNF formula `ψ` of width at most `w`, the number of `s`-restrictions
@@ -2016,8 +2014,8 @@ theorem switching_lemma_cnf {n : ℕ} (hn : 0 < n) (ψ : CNF n) (w s d : ℕ)
     is bounded. -/
 theorem switching_corollary_cnf {n : ℕ} (hn : 0 < n) (ψ : CNF n) (w s : ℕ)
     (hw : ψ.width ≤ w) (hs : 5 * s ≤ n)
-    (hnd : ∀ c ∈ ψ, ∀ l₁ ∈ c, ∀ l₂ ∈ c, l₁.var = l₂.var → l₁ = l₂)
-    (hnodup : ∀ c ∈ ψ, c.Nodup) :
+    (hnd : ∀ c ∈ ψ.clauses, ∀ l₁ ∈ c, ∀ l₂ ∈ c, l₁.var = l₂.var → l₁ = l₂)
+    (hnodup : ∀ c ∈ ψ.clauses, c.Nodup) :
     (Finset.univ.filter fun ρ : Restriction n =>
         IsRestriction s ρ ∧
         ¬ ∃ φ : DNF n, φ.width ≤ w ∧

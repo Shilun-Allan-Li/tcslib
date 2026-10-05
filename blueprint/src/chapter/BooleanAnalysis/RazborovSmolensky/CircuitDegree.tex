@@ -57,7 +57,7 @@ yields $b$ again.
 \lean{RazborovSmolensky.evalNode_succ_eq}
 \label{RazborovSmolensky.evalNode_succ_eq}
 \leanok
-\uses{BoolCircuit.FeedForward, BoolCircuit.FeedForward.evalNode}
+\uses{BoolCircuit.LayeredCircuit, BoolCircuit.LayeredCircuit.evalNode}
 \difficulty{1}
 Let $F$ be a feedforward circuit over an alphabet $\alpha$, let $d$ be a layer index
 with $0 \le d < \mathrm{depth}(F)$, let $u$ be a node of layer $d+1$, and let $x$ be an
@@ -81,7 +81,7 @@ The degree budget for the approximating polynomials after $d$ layers, defined as
 \lean{RazborovSmolensky.gateCountBefore}
 \label{RazborovSmolensky.gateCountBefore}
 \leanok
-\uses{BoolCircuit.FeedForward}
+\uses{BoolCircuit.LayeredCircuit}
 For a circuit $F$ with finite node sets, $\mathrm{gateCountBefore}\,F\,d$ counts the non-input gates
 in layers $1,\dots,d$: it is $0$ for $d = 0$ and, recursively, the count for $d$ plus the number of
 nodes at layer $d+1$.
@@ -91,7 +91,7 @@ nodes at layer $d+1$.
 \lean{RazborovSmolensky.gateCountBefore_zero}
 \label{RazborovSmolensky.gateCountBefore_zero}
 \leanok
-\uses{BoolCircuit.FeedForward, RazborovSmolensky.gateCountBefore}
+\uses{BoolCircuit.LayeredCircuit, RazborovSmolensky.gateCountBefore}
 \difficulty{1}
 Let $F$ be a layered feedforward circuit over the Boolean alphabet $\{0,1\}$, whose
 input layer carries $n$ nodes and each of whose layers has a finite node set. Then the
@@ -103,7 +103,7 @@ contributes no gates.
 \lean{RazborovSmolensky.gateCountBefore_succ}
 \label{RazborovSmolensky.gateCountBefore_succ}
 \leanok
-\uses{BoolCircuit.FeedForward, RazborovSmolensky.gateCountBefore}
+\uses{BoolCircuit.LayeredCircuit, RazborovSmolensky.gateCountBefore}
 \difficulty{1}
 Let $F$ be a layered feedforward circuit over the Boolean alphabet $\bbf_2$ with input
 type $\mathrm{Fin}\,n$, in which every layer has finitely many nodes, and for each
@@ -266,7 +266,7 @@ preceding existence statement.
 \lean{RazborovSmolensky.LayerPolyFamily}
 \label{RazborovSmolensky.LayerPolyFamily}
 \leanok
-\uses{BoolCircuit.FeedForward, BoolCircuit.FeedForward.evalNode, RazborovSmolensky.boolInput, RazborovSmolensky.circuitDegreeBound, RazborovSmolensky.gateCountBefore}
+\uses{BoolCircuit.LayeredCircuit, BoolCircuit.LayeredCircuit.evalNode, RazborovSmolensky.boolInput, RazborovSmolensky.circuitDegreeBound, RazborovSmolensky.gateCountBefore}
 A \texttt{LayerPolyFamily} for a circuit $F$ at layer $d$ consists of a nonempty finite seed type and,
 for each seed, a polynomial for every node of layer $d$, such that each polynomial has total degree at
 most $\mathrm{circuitDegreeBound}(p,\ell,d)$ and, for every Boolean input $x$, the number of seeds
@@ -278,7 +278,7 @@ $\mathrm{gateCountBefore}\,F\,d$ times the number of seeds.
 \lean{RazborovSmolensky.inputLayerFamily}
 \label{RazborovSmolensky.inputLayerFamily}
 \leanok
-\uses{BoolCircuit.FeedForward, BoolCircuit.FeedForward.evalNode, RazborovSmolensky.LayerPolyFamily, RazborovSmolensky.boolInput, RazborovSmolensky.circuitDegreeBound, RazborovSmolensky.gateCountBefore}
+\uses{BoolCircuit.LayeredCircuit, BoolCircuit.LayeredCircuit.evalNode, RazborovSmolensky.LayerPolyFamily, RazborovSmolensky.boolInput, RazborovSmolensky.circuitDegreeBound, RazborovSmolensky.gateCountBefore}
 The \texttt{LayerPolyFamily} at layer $0$: a single seed, with each input node represented exactly by
 the corresponding variable $X_i$, so that no seed is ever bad.
 \end{definition}
@@ -287,7 +287,7 @@ the corresponding variable $X_i$, so that no seed is ever bad.
 \lean{RazborovSmolensky.stepLayerFamily}
 \label{RazborovSmolensky.stepLayerFamily}
 \leanok
-\uses{RazborovSmolensky.ACp_GateOps, BoolCircuit.FeedForward, BoolCircuit.FeedForward.evalNode, BoolCircuit.FeedForward.onlyUsesGates, BoolCircuit.GatePolyFamily, RazborovSmolensky.LayerPolyFamily, RazborovSmolensky.bitify, RazborovSmolensky.bitify_boolVal, RazborovSmolensky.boolInput, RazborovSmolensky.boolVal_mem, RazborovSmolensky.circuitDegreeBound, RazborovSmolensky.evalNode_succ_eq, RazborovSmolensky.gateCountBefore, RazborovSmolensky.gatePolyFamily, RazborovSmolensky.pi_exists_bad_card_mul_le, RazborovSmolensky.prod_filter_fiber_mul_le, RazborovSmolensky.prod_left_filter_card}
+\uses{RazborovSmolensky.ACp_GateOps, BoolCircuit.LayeredCircuit, BoolCircuit.LayeredCircuit.evalNode, BoolCircuit.LayeredCircuit.onlyUsesGates, BoolCircuit.GatePolyFamily, RazborovSmolensky.LayerPolyFamily, RazborovSmolensky.bitify, RazborovSmolensky.bitify_boolVal, RazborovSmolensky.boolInput, RazborovSmolensky.boolVal_mem, RazborovSmolensky.circuitDegreeBound, RazborovSmolensky.evalNode_succ_eq, RazborovSmolensky.gateCountBefore, RazborovSmolensky.gatePolyFamily, RazborovSmolensky.pi_exists_bad_card_mul_le, RazborovSmolensky.prod_filter_fiber_mul_le, RazborovSmolensky.prod_left_filter_card}
 Given a circuit $F$ using only $\mathrm{AC}^0[p]$ gates and a \texttt{LayerPolyFamily} at layer $d$,
 this produces a \texttt{LayerPolyFamily} at layer $d+1$.  Its seed type is the product of the previous
 seed type with one gate seed per node of layer $d+1$, and each node polynomial is the gate
@@ -298,7 +298,7 @@ approximator applied to the layer-$d$ polynomials of its inputs.
 \lean{RazborovSmolensky.buildLayerFamily}
 \label{RazborovSmolensky.buildLayerFamily}
 \leanok
-\uses{RazborovSmolensky.ACp_GateOps, BoolCircuit.FeedForward, BoolCircuit.FeedForward.onlyUsesGates, RazborovSmolensky.LayerPolyFamily, RazborovSmolensky.inputLayerFamily, RazborovSmolensky.stepLayerFamily}
+\uses{RazborovSmolensky.ACp_GateOps, BoolCircuit.LayeredCircuit, BoolCircuit.LayeredCircuit.onlyUsesGates, RazborovSmolensky.LayerPolyFamily, RazborovSmolensky.inputLayerFamily, RazborovSmolensky.stepLayerFamily}
 For a circuit using only $\mathrm{AC}^0[p]$ gates, the \texttt{LayerPolyFamily} at any layer
 $d \le F.\mathrm{depth}$, obtained by starting from the input layer family and iterating the layer
 step $d$ times.
@@ -308,7 +308,7 @@ step $d$ times.
 \lean{RazborovSmolensky.exists_poly_distribution_for_circuit_outputs}
 \label{RazborovSmolensky.exists_poly_distribution_for_circuit_outputs}
 \leanok
-\uses{RazborovSmolensky.ACp_GateOps, BoolCircuit.FeedForward, BoolCircuit.FeedForward.eval, BoolCircuit.FeedForward.evalNode, BoolCircuit.FeedForward.onlyUsesGates, RazborovSmolensky.boolInput, RazborovSmolensky.buildLayerFamily, RazborovSmolensky.circuitDegreeBound, RazborovSmolensky.gateCountBefore}
+\uses{RazborovSmolensky.ACp_GateOps, BoolCircuit.LayeredCircuit, BoolCircuit.LayeredCircuit.eval, BoolCircuit.LayeredCircuit.evalNode, BoolCircuit.LayeredCircuit.onlyUsesGates, RazborovSmolensky.boolInput, RazborovSmolensky.buildLayerFamily, RazborovSmolensky.circuitDegreeBound, RazborovSmolensky.gateCountBefore}
 \difficulty{4}
 Let $p$ be a prime, let $F$ be a feedforward circuit over the alphabet $\mathrm{Fin}\,2$
 with input type $\mathrm{Fin}\,n$ and a finite output type, all of whose node sets are
@@ -334,7 +334,7 @@ $o$ on input $x$.
 \lean{RazborovSmolensky.exists_poly_distribution_for_circuit_one}
 \label{RazborovSmolensky.exists_poly_distribution_for_circuit_one}
 \leanok
-\uses{RazborovSmolensky.ACp_GateOps, BoolCircuit.FeedForward, BoolCircuit.FeedForward.eval, BoolCircuit.FeedForward.evalNode, BoolCircuit.FeedForward.eval₁, BoolCircuit.FeedForward.onlyUsesGates, RazborovSmolensky.boolInput, RazborovSmolensky.buildLayerFamily, RazborovSmolensky.circuitDegreeBound, RazborovSmolensky.gateCountBefore}
+\uses{RazborovSmolensky.ACp_GateOps, BoolCircuit.LayeredCircuit, BoolCircuit.LayeredCircuit.eval, BoolCircuit.LayeredCircuit.evalNode, BoolCircuit.LayeredCircuit.eval₁, BoolCircuit.LayeredCircuit.onlyUsesGates, RazborovSmolensky.boolInput, RazborovSmolensky.buildLayerFamily, RazborovSmolensky.circuitDegreeBound, RazborovSmolensky.gateCountBefore}
 \difficulty{4}
 Let $p$ be prime and let $n, \ell \in \bbn$. Let $F$ be a feedforward circuit over the
 alphabet $\mathrm{Fin}\,2$ with input type $\mathrm{Fin}\,n$, a single output node, and
@@ -359,7 +359,7 @@ nodes across layers $1,\dots,d$.
 \lean{RazborovSmolensky.exists_poly_list_for_circuit_one}
 \label{RazborovSmolensky.exists_poly_list_for_circuit_one}
 \leanok
-\uses{RazborovSmolensky.ACp_GateOps, BoolCircuit.FeedForward, BoolCircuit.FeedForward.eval₁, BoolCircuit.FeedForward.onlyUsesGates, RazborovSmolensky.boolInput, RazborovSmolensky.circuitDegreeBound, RazborovSmolensky.exists_poly_distribution_for_circuit_one, RazborovSmolensky.finset_toList_filter_length_eq_card, RazborovSmolensky.gateCountBefore, RazborovSmolensky.list_filter_map_length}
+\uses{RazborovSmolensky.ACp_GateOps, BoolCircuit.LayeredCircuit, BoolCircuit.LayeredCircuit.eval₁, BoolCircuit.LayeredCircuit.onlyUsesGates, RazborovSmolensky.boolInput, RazborovSmolensky.circuitDegreeBound, RazborovSmolensky.exists_poly_distribution_for_circuit_one, RazborovSmolensky.finset_toList_filter_length_eq_card, RazborovSmolensky.gateCountBefore, RazborovSmolensky.list_filter_map_length}
 \difficulty{4}
 Let $p$ be a prime and let $F$ be a layered feedforward circuit over the Boolean
 alphabet $\mathrm{Fin}\,2$, with inputs indexed by $\mathrm{Fin}\,n$, finitely many

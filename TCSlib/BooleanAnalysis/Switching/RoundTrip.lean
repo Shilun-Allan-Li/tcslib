@@ -28,15 +28,15 @@ lemma pcl_none_implies_rho_free {n : ℕ}
     then the decoder's restriction `ρ₀_dec` also finds `t_clause` first. -/
 lemma find_clause_preserved_in_encode {n : ℕ}
     (f : DNF n) (w : ℕ)
-    (hnd : ∀ t ∈ f, ∀ l₁ ∈ t, ∀ l₂ ∈ t, l₁.var = l₂.var → l₁ = l₂)
+    (hnd : ∀ t ∈ f.terms, ∀ l₁ ∈ t, ∀ l₂ ∈ t, l₁.var = l₂.var → l₁ = l₂)
     (enc_fuel : ℕ) (path : List (Fin n × Bool)) (ρ₀ σ ρ₀_dec : Restriction n)
     (t_clause : Term n)
-    (hfind_enc : f.find? (fun t => decide (¬Term.killedBy t ρ₀)) = some t_clause)
+    (hfind_enc : f.terms.find? (fun t => decide (¬Term.killedBy t ρ₀)) = some t_clause)
     (hE : ∀ v, ρ₀ v = none → σ v = none)
     (hB : ∀ v, ρ₀ v = none →
       ρ₀_dec v = (razborovEncode.go f w enc_fuel path ρ₀ σ []).1 v)
     (hD : ∀ v, ρ₀ v ≠ none → ρ₀_dec v = ρ₀ v) :
-    f.find? (fun t => decide (¬Term.killedBy t ρ₀_dec)) = some t_clause := by
+    f.terms.find? (fun t => decide (¬Term.killedBy t ρ₀_dec)) = some t_clause := by
   apply first_clause_preserved f ρ₀ ρ₀_dec t_clause hfind_enc hD
   intro ⟨l, hl_mem, hl_killed⟩
   simp only [Literal.killedBy] at hl_killed
@@ -97,14 +97,14 @@ lemma encode_go_fst_eq_rec {n : ℕ} (f : DNF n) (w fuel : ℕ)
     (step : Fin n × Bool) (rest : List (Fin n × Bool))
     (ρ₀ σ : Restriction n)
     (t_clause : Term n)
-    (hfind : f.find? (fun t => decide (¬Term.killedBy t ρ₀)) = some t_clause)
+    (hfind : f.terms.find? (fun t => decide (¬Term.killedBy t ρ₀)) = some t_clause)
     (fl : Literal n × ℕ) (fls : List (Literal n × ℕ))
     (hfli_eq : List.filter (fun (x : Literal n × ℕ) => decide (x.1.var ∈ Restriction.freeVars ρ₀))
       (List.zipIdx t_clause) = fl :: fls) :
     let pcl := processClauseLits (fl :: fls) (step :: rest) ρ₀ σ
     (razborovEncode.go f w (fuel + 1) (step :: rest) ρ₀ σ []).1 =
     (razborovEncode.go f w fuel pcl.1 pcl.2.1 pcl.2.2.1 []).1 := by
-  cases' h : List.find? ( fun t => !Term.killedBy t ρ₀ ) f with t <;> simp_all +decide [ SwitchingLemma.razborovEncode.go ];
+  cases' h : List.find? ( fun t => !Term.killedBy t ρ₀ ) f.terms with t <;> simp_all +decide [ SwitchingLemma.razborovEncode.go ];
   rw [ SwitchingLemma.encode_go_fst_acc ]
 
 /-! ## Round-trip invariant lemmas -/
@@ -165,7 +165,7 @@ lemma roundtrip_inv_hD' {n : ℕ}
 
 /-- Generalized round-trip: the decoder recovers σ from the encoder output. -/
 private lemma go_roundtrip_gen {n : ℕ} (f : DNF n) (w : ℕ) (hw : f.width ≤ w)
-    (hnd : ∀ t ∈ f, ∀ l₁ ∈ t, ∀ l₂ ∈ t, l₁.var = l₂.var → l₁ = l₂)
+    (hnd : ∀ t ∈ f.terms, ∀ l₁ ∈ t, ∀ l₂ ∈ t, l₁.var = l₂.var → l₁ = l₂)
     (enc_fuel : ℕ) (path : List (Fin n × Bool)) (ρ₀ σ : Restriction n)
     (σ_dec ρ₀_dec : Restriction n) (dec_fuel : ℕ)
     (hE : ∀ v, ρ₀ v = none → σ v = none)
@@ -221,7 +221,7 @@ private lemma go_roundtrip_gen {n : ℕ} (f : DNF n) (w : ℕ) (hw : f.width ≤
             fun p hp => (hfli_spec p hp).2
           have htw : t_clause.length ≤ w :=
             le_trans (term_length_le_width f t_clause (List.mem_of_find?_eq_some hfind_enc)) hw
-          have hfind_dec : f.find? (fun t => decide (¬Term.killedBy t ρ₀_dec)) =
+          have hfind_dec : f.terms.find? (fun t => decide (¬Term.killedBy t ρ₀_dec)) =
               some t_clause :=
             find_clause_preserved_in_encode f w hnd (fuel + 1) (step :: rest)
               ρ₀ σ ρ₀_dec t_clause hfind_enc hE hB hD
@@ -320,7 +320,7 @@ private lemma go_roundtrip_gen {n : ℕ} (f : DNF n) (w : ℕ) (hw : f.width ≤
 
 /-- Go-level round-trip. -/
 private lemma go_roundtrip {n : ℕ} (f : DNF n) (w : ℕ) (hw : f.width ≤ w)
-    (hnd : ∀ t ∈ f, ∀ l₁ ∈ t, ∀ l₂ ∈ t, l₁.var = l₂.var → l₁ = l₂)
+    (hnd : ∀ t ∈ f.terms, ∀ l₁ ∈ t, ∀ l₂ ∈ t, l₁.var = l₂.var → l₁ = l₂)
     (enc_fuel : ℕ) (path : List (Fin n × Bool)) (ρ : Restriction n) :
     let enc := razborovEncode.go f w enc_fuel path ρ ρ []
     (razborovDecode.go f w (enc.2.length + 1) enc.1 enc.1 enc.2).1 = ρ := by
@@ -337,7 +337,7 @@ private lemma go_roundtrip {n : ℕ} (f : DNF n) (w : ℕ) (hw : f.width ≤ w)
 /-- The round-trip: decoding the encoding of ρ recovers ρ. -/
 lemma razborovDecode_encode {n : ℕ} (f : DNF n) (w d : ℕ) (ρ : Restriction n)
     (_hbad : IsBadRestriction f.eval d ρ) (hw : f.width ≤ w)
-    (hnd : ∀ t ∈ f, ∀ l₁ ∈ t, ∀ l₂ ∈ t, l₁.var = l₂.var → l₁ = l₂) :
+    (hnd : ∀ t ∈ f.terms, ∀ l₁ ∈ t, ∀ l₂ ∈ t, l₁.var = l₂.var → l₁ = l₂) :
     razborovDecode f w (razborovEncode f w d ρ).1 (razborovEncode f w d ρ).2 = ρ := by
   unfold razborovDecode razborovEncode
   exact go_roundtrip f w hw hnd _ _ ρ
@@ -347,7 +347,7 @@ theorem razborovEncode_injective {n : ℕ} (f : DNF n) (w d : ℕ)
     (ρ₁ ρ₂ : Restriction n)
     (hbad₁ : IsBadRestriction f.eval d ρ₁) (hbad₂ : IsBadRestriction f.eval d ρ₂)
     (hw : f.width ≤ w)
-    (hnd : ∀ t ∈ f, ∀ l₁ ∈ t, ∀ l₂ ∈ t, l₁.var = l₂.var → l₁ = l₂)
+    (hnd : ∀ t ∈ f.terms, ∀ l₁ ∈ t, ∀ l₂ ∈ t, l₁.var = l₂.var → l₁ = l₂)
     (henc : razborovEncode f w d ρ₁ = razborovEncode f w d ρ₂) :
     ρ₁ = ρ₂ := by
   rw [← razborovDecode_encode f w d ρ₁ hbad₁ hw hnd,

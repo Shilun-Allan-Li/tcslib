@@ -18,7 +18,7 @@ fraction of the random seeds produce a wrong value.
 \lean{BoolCircuit.stdGateOps}
 \label{BoolCircuit.stdGateOps}
 \leanok
-\uses{BoolCircuit.FeedForward.GateOp.id}
+\uses{BoolCircuit.LayeredCircuit.GateOp.id}
 The set of plain $\mathrm{AC}^0$ gate operations on the alphabet $\mathrm{Fin}\,2$: the
 identity gate, the NOT gate $x \mapsto 1 - x_0$, and, for every arity $n$, the unbounded
 fan-in AND gate $x \mapsto \prod_{i} x_i$.
@@ -430,7 +430,7 @@ A_S(y)\ \neq\ \prod_{k=1}^{\mathrm{width}}\Bigl(1-\bigl(1-P_k(y)\bigr)^{p-1}\Big
 \lean{RazborovSmolensky.ACp_GateOps_cases}
 \label{RazborovSmolensky.ACp_GateOps_cases}
 \leanok
-\uses{BoolCircuit.stdGateOps, RazborovSmolensky.ACp_GateOps, BoolCircuit.FeedForward.GateOp.id, RazborovSmolensky.modGateOp}
+\uses{BoolCircuit.stdGateOps, RazborovSmolensky.ACp_GateOps, BoolCircuit.LayeredCircuit.GateOp.id, RazborovSmolensky.modGateOp}
 \difficulty{3}
 Let $p$ be a prime, and let $\mathrm{op}$ be a gate operation belonging to the
 $\mathrm{AC}^0[p]$ gate set over the alphabet $\mathrm{Fin}\,2$. Then $\mathrm{op}$ is

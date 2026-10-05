@@ -18,9 +18,11 @@ import TCSlib.Complexity.CircuitComplexity.UnaryLanguages
 
 * `Nat.Partrec.Code.not_computablePred_mem_haltingSet` — `haltingSet` is undecidable.
 * `Language.not_computablePred_mem_unary` — `unary S` is undecidable when `S` is.
-* `Language.uhalt_inPPoly` — `UHALT` is in `P/poly`.
+* `Language.uhalt_inLayeredPPoly`, `Language.uhalt_inPPoly` — `UHALT` is in `P/poly` (layered,
+  and the book's).
 * `Language.not_computablePred_mem_uhalt` — `UHALT` is undecidable.
-* `Language.exists_le_allOnes_inPPoly_not_computablePred` — [AB09, p.110].
+* `Language.exists_le_allOnes_inLayeredPPoly_not_computablePred`,
+  `Language.exists_le_allOnes_inPPoly_not_computablePred` — [AB09, p.110].
 
 ## Divergences from Arora–Barak p.110
 
@@ -35,7 +37,7 @@ sits beside `Nat.Partrec.Code.eval` rather than in `Language`.
 AB concludes `P ⊊ P/poly`. AB's route also needs Theorem 6.6 (`P ⊆ P/poly`);
 the machine model, the class `P`, and the oblivious-simulation layer all live
 on this branch now, and the bridge theorem is tracked in `backlog.md` §3. Only
-the statable half is here: `exists_le_allOnes_inPPoly_not_computablePred`.
+the statable half is here: `exists_le_allOnes_inLayeredPPoly_not_computablePred`.
 The undecidability half is not reproved from AB: it is Mathlib's
 `ComputablePred.halting_problem`, transported along the pairing.
 
@@ -90,13 +92,21 @@ theorem not_computablePred_mem_unary {S : Set ℕ} (hS : ¬ ComputablePred (· �
 def uhalt : Language Bool := unary Nat.Partrec.Code.haltingSet
 
 /-- `UHALT` is in `P/poly`. -/
-theorem uhalt_inPPoly : uhalt.InPPoly := unary_inPPoly _
+theorem uhalt_inLayeredPPoly : uhalt.InLayeredPPoly := unary_inLayeredPPoly _
 
 /-- `UHALT` is undecidable. -/
 theorem not_computablePred_mem_uhalt : ¬ ComputablePred (· ∈ uhalt) :=
   not_computablePred_mem_unary Nat.Partrec.Code.not_computablePred_mem_haltingSet
 
 /-- Some unary language is in `P/poly` and is not computable.  [AB09, p.110] -/
+theorem exists_le_allOnes_inLayeredPPoly_not_computablePred :
+    ∃ L : Language Bool, L ≤ allOnes ∧ L.InLayeredPPoly ∧ ¬ ComputablePred (· ∈ L) :=
+  ⟨uhalt, unary_le_allOnes _, uhalt_inLayeredPPoly, not_computablePred_mem_uhalt⟩
+
+/-- `UHALT` is in the book's `P/poly`.  [AB09, p.110] -/
+theorem uhalt_inPPoly : uhalt.InPPoly := uhalt_inLayeredPPoly.inPPoly
+
+/-- Some unary language is in the book's `P/poly` and is not computable.  [AB09, p.110] -/
 theorem exists_le_allOnes_inPPoly_not_computablePred :
     ∃ L : Language Bool, L ≤ allOnes ∧ L.InPPoly ∧ ¬ ComputablePred (· ∈ L) :=
   ⟨uhalt, unary_le_allOnes _, uhalt_inPPoly, not_computablePred_mem_uhalt⟩

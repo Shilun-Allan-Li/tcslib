@@ -6,19 +6,27 @@ Authors: Hydroxyi
 import Mathlib.Data.Nat.Notation
 
 /-!
-# Literals, Terms, and DNF/CNF Formulas
+# Literals, Literal Lists, and DNF/CNF Formulas
 
-`Literal` / `Term` / `DNF` / `CNF`: the flat formula representations used by the
-switching lemma, with their `eval` and `width` measures.  `width` is the
-bottom-layer fan-in that the switching lemma is parameterized by.
+`Literal` / `LitList` / `Depth2`: the flat formula syntax used by the switching
+lemma, and `DNF` / `CNF`: its two readings.  A `LitList` is read as a `Term`
+(conjunction) or a `Clause` (disjunction); a `Depth2` shape is wrapped as a
+`DNF` (OR of terms) or a `CNF` (AND of clauses).  The wrappers are distinct
+structures, so a CNF cannot be passed where a DNF is expected without an
+explicit conversion (`CNF.dual`, `DNF.dual`).  `width` is reading-independent
+and is the bottom-layer fan-in that the switching lemma is parameterized by.
 
 These are independent of `TCSlib.Complexity.CircuitComplexity.Basic`; the bridge
 between the two lives in `TCSlib.BooleanAnalysis.LMN.NormalFormConversion`.
 
 ## Main definitions
 
-* `Literal`, `Term`, `DNF`, `CNF` — the formula types, with `Term.width`,
-  `DNF.width`, `CNF.width` and the `eval` semantics of each.
+* `Literal`, `LitList`, `Depth2` — reading-neutral syntax, with
+  `LitList.width` and `Depth2.width`.
+* `Term`, `Clause` — a `LitList` read as AND / OR, with `Term.eval`,
+  `Clause.eval`.
+* `DNF`, `CNF` — structures wrapping the term / clause list, with `width` and
+  `eval`.
 
 ## Main results
 
@@ -26,7 +34,7 @@ None; this file is definitions only.
 
 ## Divergences from [OD14, §4.1]
 
-A `Term` is a plain list, so it may hold both a variable and its negation, which
+A `LitList` is a plain list, so it may hold both a variable and its negation, which
 [OD14, Def 4.1] forbids; the development imposes `Nodup` only where it needs it,
 at the base clauses of `Basic.lean`'s normal-form circuits.  [OD14, Def 4.3] also
 gives a formula a *size*, its number of terms; no size measure is defined here.
@@ -43,7 +51,7 @@ set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
 set_option autoImplicit false
 
-/-! ## Literals, Terms, and DNF/CNF formulas -/
+/-! ## Literals, literal lists, and DNF/CNF formulas -/
 
 /-- A literal: variable `var : Fin n` with polarity `neg` (true = negated literal).
 [OD14, Def 4.1] -/
@@ -56,37 +64,84 @@ structure Literal (n : ℕ) where
 def Literal.eval {n : ℕ} (l : Literal n) (x : Fin n → Bool) : Bool :=
   if l.neg then !x l.var else x l.var
 
-/-- A term is a conjunction of literals.  [OD14, Def 4.1] -/
-abbrev Term (n : ℕ) := List (Literal n)
+/-- A finite list of literals, with no AND/OR reading attached: the common
+syntax of a term (read as a conjunction) and a clause (read as a disjunction). -/
+abbrev LitList (n : ℕ) := List (Literal n)
 
-/-- Width of a term (number of literals).  [OD14, Def 4.1] -/
-def Term.width {n : ℕ} (t : Term n) : ℕ := t.length
+/-- Width of a literal list (number of literals); reading-independent.
+[OD14, Def 4.1] -/
+def LitList.width {n : ℕ} (t : LitList n) : ℕ := t.length
+
+/-- A term: a literal list read as a conjunction.  [OD14, Def 4.1] -/
+abbrev Term (n : ℕ) := LitList n
+
+/-- A clause: a literal list read as a disjunction.  [OD14, Def 4.4] -/
+abbrev Clause (n : ℕ) := LitList n
 
 /-- Evaluate term `t` as a conjunction: all literals must hold. -/
 def Term.eval {n : ℕ} (t : Term n) (x : Fin n → Bool) : Bool :=
   t.all (fun l => l.eval x)
 
-/-- A DNF formula is a disjunction of terms.  [OD14, Def 4.1] -/
-abbrev DNF (n : ℕ) := List (Term n)
+/-- Evaluate clause `c` as a disjunction: some literal must hold. -/
+def Clause.eval {n : ℕ} (c : Clause n) (x : Fin n → Bool) : Bool :=
+  c.any (fun l => l.eval x)
+
+/-- A depth-2 formula shape: a list of literal lists, with no reading fixed.
+`DNF` and `CNF` wrap it with their two readings; `width` does not depend on the
+reading. -/
+abbrev Depth2 (n : ℕ) := List (LitList n)
+
+/-- Width of a depth-2 shape (maximum inner width; 0 for empty).  [OD14, Def 4.3] -/
+def Depth2.width {n : ℕ} (F : Depth2 n) : ℕ := (F.map LitList.width).foldr max 0
+
+/-- A DNF formula: a depth-2 shape read as a disjunction of terms.
+[OD14, Def 4.1] -/
+structure DNF (n : ℕ) where
+  /-- The terms of the DNF, read as conjunctions. -/
+  terms : List (Term n)
+  deriving Inhabited
+
+/-- A CNF formula: a depth-2 shape read as a conjunction of clauses.
+[OD14, Def 4.4] -/
+structure CNF (n : ℕ) where
+  /-- The clauses of the CNF, read as disjunctions. -/
+  clauses : List (Clause n)
+  deriving Inhabited
 
 /-- Width of a DNF formula (maximum term width; 0 for empty).  [OD14, Def 4.3] -/
-def DNF.width {n : ℕ} (d : DNF n) : ℕ := (d.map Term.width).foldr max 0
+def DNF.width {n : ℕ} (d : DNF n) : ℕ := Depth2.width d.terms
 
 /-- Evaluate DNF `d`: at least one term must hold. -/
 def DNF.eval {n : ℕ} (d : DNF n) (x : Fin n → Bool) : Bool :=
-  d.any (fun t => t.eval x)
-
-/-- A CNF formula is a conjunction of clauses, each a disjunction of literals.
-[OD14, Def 4.4] -/
-abbrev CNF (n : ℕ) := List (Term n)
+  d.terms.any (fun t => Term.eval t x)
 
 /-- Width of a CNF formula (maximum clause width).  [OD14, Def 4.4] -/
-def CNF.width {n : ℕ} (c : CNF n) : ℕ := (c.map Term.width).foldr max 0
-
-/-- Evaluate a single clause as a disjunction: some literal must hold. -/
-def CNF.evalClause {n : ℕ} (t : Term n) (x : Fin n → Bool) : Bool :=
-  t.any (fun l => l.eval x)
+def CNF.width {n : ℕ} (c : CNF n) : ℕ := Depth2.width c.clauses
 
 /-- Evaluate CNF `c`: all clauses must hold. -/
 def CNF.eval {n : ℕ} (c : CNF n) (x : Fin n → Bool) : Bool :=
-  c.all (fun t => CNF.evalClause t x)
+  c.clauses.all (fun c => Clause.eval c x)
+
+/-! ### Evaluation simp lemmas -/
+
+@[simp] theorem Term.eval_nil {n : ℕ} (x : Fin n → Bool) : Term.eval [] x = true := rfl
+
+@[simp] theorem Term.eval_cons {n : ℕ} (l : Literal n) (t : Term n) (x : Fin n → Bool) :
+    Term.eval (l :: t) x = (l.eval x && Term.eval t x) := rfl
+
+@[simp] theorem Clause.eval_nil {n : ℕ} (x : Fin n → Bool) : Clause.eval [] x = false := rfl
+
+@[simp] theorem Clause.eval_cons {n : ℕ} (l : Literal n) (c : Clause n) (x : Fin n → Bool) :
+    Clause.eval (l :: c) x = (l.eval x || Clause.eval c x) := rfl
+
+@[simp] theorem DNF.eval_mk {n : ℕ} (ts : List (Term n)) (x : Fin n → Bool) :
+    (DNF.mk ts).eval x = ts.any (fun t => Term.eval t x) := rfl
+
+@[simp] theorem CNF.eval_mk {n : ℕ} (cs : List (Clause n)) (x : Fin n → Bool) :
+    (CNF.mk cs).eval x = cs.all (fun c => Clause.eval c x) := rfl
+
+@[simp] theorem DNF.width_mk {n : ℕ} (ts : List (Term n)) :
+    (DNF.mk ts).width = Depth2.width ts := rfl
+
+@[simp] theorem CNF.width_mk {n : ℕ} (cs : List (Clause n)) :
+    (CNF.mk cs).width = Depth2.width cs := rfl

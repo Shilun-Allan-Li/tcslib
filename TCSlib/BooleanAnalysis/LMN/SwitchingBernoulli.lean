@@ -94,8 +94,8 @@ From the counting switching lemma: `fixedSizeRestrProb(dtDepth > d)(k) ≤ (10kw
 lemma switching_fixedSize_bound_small (f : DNF n) (w k d : ℕ)
     (hn : 0 < n) (hw : f.width ≤ w)
     (hk : 5 * k ≤ n)
-    (hnd : ∀ t ∈ f, ∀ l₁ ∈ t, ∀ l₂ ∈ t, l₁.var = l₂.var → l₁ = l₂)
-    (hnodup : ∀ t ∈ f, t.Nodup) :
+    (hnd : ∀ t ∈ f.terms, ∀ l₁ ∈ t, ∀ l₂ ∈ t, l₁.var = l₂.var → l₁ = l₂)
+    (hnodup : ∀ t ∈ f.terms, t.Nodup) :
     fixedSizeRestrProb (fun ρ => dtDepth (restrictFn f.eval ρ) > d) k ≤
     (10 * ↑k * ↑w / ↑n) ^ d := by
   convert SwitchingLemma.switching_lemma hn f w k d hw hk hnd hnodup using 1;
@@ -121,8 +121,8 @@ For all `k ≤ n`, `fixedSizeRestrProb(dtDepth > d)(k) ≤ (10kw/n)^d`.
 lemma switching_fixedSize_bound (f : DNF n) (w k d : ℕ)
     (hn : 0 < n) (hw : f.width ≤ w) (hw_pos : 0 < w)
     (_hk : k ≤ n)
-    (hnd : ∀ t ∈ f, ∀ l₁ ∈ t, ∀ l₂ ∈ t, l₁.var = l₂.var → l₁ = l₂)
-    (hnodup : ∀ t ∈ f, t.Nodup) :
+    (hnd : ∀ t ∈ f.terms, ∀ l₁ ∈ t, ∀ l₂ ∈ t, l₁.var = l₂.var → l₁ = l₂)
+    (hnodup : ∀ t ∈ f.terms, t.Nodup) :
     fixedSizeRestrProb (fun ρ => dtDepth (restrictFn f.eval ρ) > d) k ≤
     (10 * ↑k * ↑w / ↑n) ^ d := by
   -- We split into two cases: $5k \le n$ and $5k > n$.
@@ -135,8 +135,8 @@ lemma switching_fixedSize_bound (f : DNF n) (w k d : ℕ)
 lemma switching_fixedSize_bound_rescaled (f : DNF n) (w k d : ℕ)
     (hn : 0 < n) (hw : f.width ≤ w) (hw_pos : 0 < w)
     (hk : k ≤ n)
-    (hnd : ∀ t ∈ f, ∀ l₁ ∈ t, ∀ l₂ ∈ t, l₁.var = l₂.var → l₁ = l₂)
-    (hnodup : ∀ t ∈ f, t.Nodup) :
+    (hnd : ∀ t ∈ f.terms, ∀ l₁ ∈ t, ∀ l₂ ∈ t, l₁.var = l₂.var → l₁ = l₂)
+    (hnodup : ∀ t ∈ f.terms, t.Nodup) :
     fixedSizeRestrProb (fun ρ => dtDepth (restrictFn f.eval ρ) > d) k ≤
     (5 * ↑k * ↑(2 * w) / ↑n) ^ d := by
   have h := switching_fixedSize_bound f w k d hn hw hw_pos hk hnd hnodup
@@ -159,8 +159,8 @@ the unlikely event that the restriction leaves too many variables free.
 -/
 theorem switching_bernoulli_dtDepth_dnf (f : DNF n) (w : ℕ)
     (hw : f.width ≤ w) (hw_pos : 0 < w)
-    (hnd : ∀ t ∈ f, ∀ l₁ ∈ t, ∀ l₂ ∈ t, l₁.var = l₂.var → l₁ = l₂)
-    (hnodup : ∀ t ∈ f, t.Nodup)
+    (hnd : ∀ t ∈ f.terms, ∀ l₁ ∈ t, ∀ l₂ ∈ t, l₁.var = l₂.var → l₁ = l₂)
+    (hnodup : ∀ t ∈ f.terms, t.Nodup)
     (hn : 0 < n)
     (p : ℝ) (hp_pos : 0 < p) (hp_le : p ≤ 1 / (40 * ↑w)) (hp1 : p ≤ 1)
     (t : ℕ) :
@@ -183,8 +183,8 @@ Same as `switching_bernoulli_dtDepth_dnf` but for CNF formulas.
 -/
 theorem switching_bernoulli_dtDepth_cnf (f : CNF n) (w : ℕ)
     (hw : f.width ≤ w) (hw_pos : 0 < w)
-    (hnd : ∀ c ∈ f, ∀ l₁ ∈ c, ∀ l₂ ∈ c, l₁.var = l₂.var → l₁ = l₂)
-    (hnodup : ∀ c ∈ f, c.Nodup)
+    (hnd : ∀ c ∈ f.clauses, ∀ l₁ ∈ c, ∀ l₂ ∈ c, l₁.var = l₂.var → l₁ = l₂)
+    (hnodup : ∀ c ∈ f.clauses, c.Nodup)
     (hn : 0 < n)
     (p : ℝ) (hp_pos : 0 < p) (hp_le : p ≤ 1 / (40 * ↑w)) (hp1 : p ≤ 1)
     (t : ℕ) :
@@ -192,17 +192,17 @@ theorem switching_bernoulli_dtDepth_cnf (f : CNF n) (w : ℕ)
       (fun ρ => dtDepth (restrictFn (CNF.eval f) ρ) > t) ≤
     (1 / 2 : ℝ) ^ t + Real.exp (-(↑n * p / 3)) := by
   -- Apply the switching lemma for DNFs to the dual DNF of f.
-  have h_dual : bernoulliRestrProb p (fun ρ => dtDepth (restrictFn (cnfToDualDNF f).eval ρ) > t) ≤ (1 / 2 : ℝ) ^ t + Real.exp (-(n * p / 3)) := by
+  have h_dual : bernoulliRestrProb p (fun ρ => dtDepth (restrictFn (CNF.dual f).eval ρ) > t) ≤ (1 / 2 : ℝ) ^ t + Real.exp (-(n * p / 3)) := by
     apply SwitchingBernoulli.switching_bernoulli_dtDepth_dnf;
     convert hw using 1;
     any_goals assumption;
-    · exact cnfToDualDNF_width f;
-    · convert SwitchingLemmaCNF.cnfToDualDNF_inj f hnd using 1;
-    · exact fun t a => SwitchingLemmaCNF.cnfToDualDNF_nodup f hnodup t a;
+    · exact CNF.dual_width f;
+    · convert CNF.dual_inj f hnd using 1;
+    · exact fun t a => CNF.dual_nodup f hnodup t a;
   convert h_dual using 1;
-  -- By definition of `cnfToDualDNF`, we have `restrictFn f.eval ρ = fun x => !(restrictFn (cnfToDualDNF f).eval ρ x)`.
-  have h_restrict : ∀ ρ : Restriction n, restrictFn f.eval ρ = fun x => !(restrictFn (cnfToDualDNF f).eval ρ x) := by
-    intro ρ; funext x; simp +decide [ restrictFn, cnfToDualDNF_eval ] ;
+  -- By definition of `CNF.dual`, we have `restrictFn f.eval ρ = fun x => !(restrictFn (CNF.dual f).eval ρ x)`.
+  have h_restrict : ∀ ρ : Restriction n, restrictFn f.eval ρ = fun x => !(restrictFn (CNF.dual f).eval ρ x) := by
+    intro ρ; funext x; simp +decide [ restrictFn, CNF.dual_eval ] ;
   simp +decide only [h_restrict, dtDepth_neg]
 
 end SwitchingBernoulli

@@ -49,7 +49,7 @@ variable {n : ℕ}
     size `≤ s`, fan-in `≤ w` has Fourier weight at most
     `4(ε + Chernoff tails)` above degree `3(t+1)/composedDelta w l d`,
     whenever the switching parameters satisfy `s·2⁻ˡ ≤ ε/2` and `2⁻ᵗ ≤ ε/2`. -/
-theorem circuit_fourier_concentration (c : Circuit n) (d s w l t : ℕ)
+theorem circuit_fourier_concentration (c : TreeCircuit n) (d s w l t : ℕ)
     (hd : c.depth ≤ d) (hs : c.size ≤ s) (hw : c.maxFanin ≤ w)
     (hd2 : 2 ≤ d) (hs_pos : 0 < s) (hw_pos : 0 < w) (hl_pos : 0 < l)
     (hn : 0 < n) (ε : ℝ) (hε_pos : 0 < ε)
@@ -110,7 +110,7 @@ lemma composedDelta_mul_card_iff (w l d : ℕ) (hw : 0 < w) (hl : 0 < l)
     Chernoff tails above degree
     `3(⌈log₂(2/ε)⌉₊+1) · 40w · (40⌈log₂(2s/ε)⌉₊)^{d−2}` —
     i.e. `O(w·log(s/ε)^{d−2}·log(1/ε))`. -/
-theorem circuit_fourier_concentration_log (c : Circuit n) (d s w : ℕ)
+theorem circuit_fourier_concentration_log (c : TreeCircuit n) (d s w : ℕ)
     (hd : c.depth ≤ d) (hs : c.size ≤ s) (hw : c.maxFanin ≤ w)
     (hd2 : 2 ≤ d) (hs_pos : 0 < s) (hw_pos : 0 < w) (hn : 0 < n)
     (ε : ℝ) (hε_pos : 0 < ε) (hε_le : ε ≤ 1) :

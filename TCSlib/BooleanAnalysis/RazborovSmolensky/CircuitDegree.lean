@@ -15,7 +15,7 @@ universe u v
 
 namespace RazborovSmolensky
 
-open BoolCircuit BoolCircuit.FeedForward
+open BoolCircuit BoolCircuit.LayeredCircuit
 
 variable (p : ℕ) [Fact (Nat.Prime p)]
 
@@ -35,9 +35,9 @@ lemma bitify_boolVal (b : Fin 2) :
     bitify (p := p) (boolVal (p := p) b) = b := by
   fin_cases b <;> simp [bitify, boolVal]
 
-/-- One-step unfolding of `FeedForward.evalNode` at a successor layer. -/
+/-- One-step unfolding of `LayeredCircuit.evalNode` at a successor layer. -/
 lemma evalNode_succ_eq {α : Type u} {inp out : Type v}
-    (F : FeedForward α inp out) (d : Fin F.depth)
+    (F : LayeredCircuit α inp out) (d : Fin F.depth)
     (u : F.nodes d.succ) (x : inp → α) :
     F.evalNode (d := d.succ) u x =
       (F.gates d u).op.func
@@ -50,7 +50,7 @@ def circuitDegreeBound (p ℓ d : ℕ) : ℕ :=
 
 /-- Number of non-input gates in the first `d` layers. -/
 noncomputable def gateCountBefore {out : Type} {n : ℕ}
-    (F : FeedForward (Fin 2) (Fin n) out)
+    (F : LayeredCircuit (Fin 2) (Fin n) out)
     [∀ i, Fintype (F.nodes i)] :
     (d : ℕ) → d ≤ F.depth → ℕ
   | 0, _ => 0
@@ -59,13 +59,13 @@ noncomputable def gateCountBefore {out : Type} {n : ℕ}
         Fintype.card (F.nodes ⟨d + 1, Nat.lt_succ_of_le hd⟩)
 
 @[simp] lemma gateCountBefore_zero {out : Type} {n : ℕ}
-    (F : FeedForward (Fin 2) (Fin n) out)
+    (F : LayeredCircuit (Fin 2) (Fin n) out)
     [∀ i, Fintype (F.nodes i)] (hd : 0 ≤ F.depth) :
     gateCountBefore F 0 hd = 0 := by
   simp [gateCountBefore]
 
 @[simp] lemma gateCountBefore_succ {out : Type} {n d : ℕ}
-    (F : FeedForward (Fin 2) (Fin n) out)
+    (F : LayeredCircuit (Fin 2) (Fin n) out)
     [∀ i, Fintype (F.nodes i)] (hd : d + 1 ≤ F.depth) :
     gateCountBefore F (d + 1) hd =
       gateCountBefore F d (Nat.le_trans (Nat.le_succ d) hd) +
@@ -517,7 +517,7 @@ noncomputable def gatePolyFamily (n ℓ : ℕ)
 
 /-- A simultaneous polynomial distribution for one layer of a circuit. -/
 structure LayerPolyFamily (p : ℕ) [Fact (Nat.Prime p)] {n : ℕ} {out : Type}
-    (F : FeedForward (Fin 2) (Fin n) out)
+    (F : LayeredCircuit (Fin 2) (Fin n) out)
     [∀ i, Fintype (F.nodes i)] [∀ i, DecidableEq (F.nodes i)]
     (ℓ : ℕ) (d : ℕ) (hd : d ≤ F.depth) where
   Seed : Type
@@ -537,7 +537,7 @@ structure LayerPolyFamily (p : ℕ) [Fact (Nat.Prime p)] {n : ℕ} {out : Type}
 attribute [instance] LayerPolyFamily.seedFintype LayerPolyFamily.seedDecEq
 
 noncomputable def inputLayerFamily {n : ℕ} {out : Type}
-    (F : FeedForward (Fin 2) (Fin n) out)
+    (F : LayeredCircuit (Fin 2) (Fin n) out)
     [∀ i, Fintype (F.nodes i)] [∀ i, DecidableEq (F.nodes i)]
     (ℓ : ℕ) (hd : 0 ≤ F.depth) : LayerPolyFamily p F ℓ 0 hd := by
   classical
@@ -562,7 +562,7 @@ noncomputable def inputLayerFamily {n : ℕ} {out : Type}
         have hcorrect :
             (MvPolynomial.X (F.nodes_zero ▸ u)).eval (boolInput (p := p) x) =
               (((F.evalNode (d := ⟨0, Nat.lt_succ_of_le hd⟩) u x : Fin 2) : Nat) : ZMod p) := by
-          simp [FeedForward.evalNode, boolInput]
+          simp [LayeredCircuit.evalNode, boolInput]
         exact False.elim (hu hcorrect)
       · intro hs
         cases hs
@@ -570,7 +570,7 @@ noncomputable def inputLayerFamily {n : ℕ} {out : Type}
     simp [gateCountBefore]
 
 noncomputable def stepLayerFamily {n : ℕ} {out : Type}
-    (F : FeedForward (Fin 2) (Fin n) out)
+    (F : LayeredCircuit (Fin 2) (Fin n) out)
     [∀ i, Fintype (F.nodes i)] [∀ i, DecidableEq (F.nodes i)]
     (hUses : F.onlyUsesGates (ACp_GateOps p))
     (ℓ d : ℕ) (hdlt : d < F.depth)
@@ -751,7 +751,7 @@ noncomputable def stepLayerFamily {n : ℕ} {out : Type}
             ring_nf
 
 noncomputable def buildLayerFamily {n : ℕ} {out : Type}
-    (F : FeedForward (Fin 2) (Fin n) out)
+    (F : LayeredCircuit (Fin 2) (Fin n) out)
     [∀ i, Fintype (F.nodes i)] [∀ i, DecidableEq (F.nodes i)]
     (hUses : F.onlyUsesGates (ACp_GateOps p))
     (ℓ : ℕ) : (d : ℕ) → (hd : d ≤ F.depth) → LayerPolyFamily p F ℓ d hd
@@ -763,7 +763,7 @@ noncomputable def buildLayerFamily {n : ℕ} {out : Type}
 
 /-- Simultaneous pointwise polynomial distribution for all output nodes. -/
 theorem exists_poly_distribution_for_circuit_outputs {n : ℕ} {out : Type}
-    (F : FeedForward (Fin 2) (Fin n) out)
+    (F : LayeredCircuit (Fin 2) (Fin n) out)
     [∀ i, Fintype (F.nodes i)]
     [Fintype out]
     (hUses : F.onlyUsesGates (ACp_GateOps p)) (ℓ : ℕ) :
@@ -800,14 +800,14 @@ theorem exists_poly_distribution_for_circuit_outputs {n : ℕ} {out : Type}
       rcases (Finset.mem_filter.mp hs).2 with ⟨o, ho⟩
       refine Finset.mem_filter.mpr ⟨by simp, ?_⟩
       refine ⟨F.nodes_last.symm.rec o, ?_⟩
-      simpa [FeedForward.eval] using ho
+      simpa [LayeredCircuit.eval] using ho
     exact le_trans
       (Nat.mul_le_mul_right (2 ^ ℓ) (Finset.card_le_card hsub))
       (A.bad x)
 
 /-- Pointwise distribution for a single-output circuit. -/
 theorem exists_poly_distribution_for_circuit_one {n : ℕ} {out : Type}
-    (F : FeedForward (Fin 2) (Fin n) out)
+    (F : LayeredCircuit (Fin 2) (Fin n) out)
     [∀ i, Fintype (F.nodes i)]
     [Unique out]
     (hUses : F.onlyUsesGates (ACp_GateOps p)) (ℓ : ℕ) :
@@ -842,7 +842,7 @@ theorem exists_poly_distribution_for_circuit_one {n : ℕ} {out : Type}
       intro s hs
       refine Finset.mem_filter.mpr ⟨by simp, ?_⟩
       refine ⟨outNode, ?_⟩
-      simpa [FeedForward.eval₁, FeedForward.eval, outNode] using (Finset.mem_filter.mp hs).2
+      simpa [LayeredCircuit.eval₁, LayeredCircuit.eval, outNode] using (Finset.mem_filter.mp hs).2
     exact le_trans
       (Nat.mul_le_mul_right (2 ^ ℓ) (Finset.card_le_card hsub))
       (A.bad x)
@@ -850,7 +850,7 @@ theorem exists_poly_distribution_for_circuit_one {n : ℕ} {out : Type}
 /-- Same single-output theorem, presented as a list of polynomials with
 multiplicity, one entry per global random seed. -/
 theorem exists_poly_list_for_circuit_one {n : ℕ} {out : Type}
-    (F : FeedForward (Fin 2) (Fin n) out)
+    (F : LayeredCircuit (Fin 2) (Fin n) out)
     [∀ i, Fintype (F.nodes i)]
     [Unique out]
     (hUses : F.onlyUsesGates (ACp_GateOps p)) (ℓ : ℕ) :
