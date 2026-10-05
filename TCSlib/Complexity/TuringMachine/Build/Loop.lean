@@ -2778,10 +2778,18 @@ witness through the capture wrapper, **logged** — record overwritten
 symbols and head moves, the A-continuation's proved log/undo pattern —
 then undo, charging the whole visited region to the elapsed run;
 install the captured result on tape zero; erase the log; rewind. Every
-phase is charged to `T`, the argument length, or the result length. -/
+phase is charged to `T`, the argument length, or the result length.
+
+The `0 < C.k` clause is load-bearing (emitter-infra round-2 audit,
+finding 1): at tape count zero, `stateWord 0 a = stateWord 0 b` for all
+`a, b` — the empty-domain degeneracy — and a two-state zero-tape machine
+would satisfy the rest of this conclusion for an arbitrary, even
+noncomputable, `f`. The positive tape count makes the seam equality
+yield `bufferTape (f arg)` at the genuine index zero, so the installed
+result is actually extractable by the caller. -/
 theorem exists_installCallTM (M : FinTM Bool) (f : List Bool → List Bool)
     (T : ℕ → ℕ) (hM : M.ComputesFunInTime f T) :
-    ∃ (C : FinTM Bool) (entry exit : C.State) (c : ℕ),
+    ∃ (C : FinTM Bool) (entry exit : C.State) (c : ℕ), 0 < C.k ∧
       ∀ (x arg : List Bool),
         ∃ t ≤ c * (T arg.length + arg.length + (f arg).length + 1),
           0 < t ∧
@@ -2807,10 +2815,14 @@ restored, the chunk emitted.
 
 **Construction sketch.** As the install call, with the captured result
 replayed through `Turing.emitAction`-style forwarding and then erased,
-instead of installed; the argument word is never consumed. -/
+instead of installed; the argument word is never consumed. The
+`0 < C.k` clause mirrors the install call's (round-2 finding 1): the
+physical output prevents the zero-tape degeneracy for nonconstant `f`,
+but the preserved tape-resident argument is a promise of this
+interface too, and it needs a genuine tape to live on. -/
 theorem exists_emitCallTM (M : FinTM Bool) (f : List Bool → List Bool)
     (T : ℕ → ℕ) (hM : M.ComputesFunInTime f T) :
-    ∃ (C : FinTM Bool) (entry exit : C.State) (c : ℕ),
+    ∃ (C : FinTM Bool) (entry exit : C.State) (c : ℕ), 0 < C.k ∧
       ∀ (x arg : List Bool),
         ∃ t ≤ c * (T arg.length + arg.length + (f arg).length + 1),
           0 < t ∧

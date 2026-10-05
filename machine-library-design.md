@@ -500,6 +500,9 @@ Refinements against §11 as drafted, all narrowing:
 1. **P17 is subsumed** (no new statement): a constant chunk emission is
    `emitPhase` (E2) applied to the existing P2 `constTM` — recorded here
    the way D4 recorded the prefix/fixed-pair subsumptions.
+   *[Superseded by §11b item 6 and §11c: the discharging rule is body
+   finite control for fixed words, or `exists_emitCallTM` for computed
+   chunks — never the private `constTM` (round-2 audit, finding 3).]*
 2. **P18 narrowed to `computesFunInTime_appendBit`**: the drafted
    accumulator row conflated the append atom with cross-phase persistence,
    and persistence is already the loop engine's state-word mechanism; the
@@ -615,3 +618,75 @@ the five contracts; both majors are adequacy obligations, repaired here.
 
 Spec surface after round 2: **seven sorried contracts** (round 1's five
 plus the two bridges), two transformers, two vocabulary definitions.
+
+## 11c. Round-3 repairs (2026-10-05, after `audits/emitter-infra-r2-findings.md`)
+
+Round 2: **0 blockers, 2 majors, 1 minor** — round-1 findings 3–5 closed;
+the bridge construction and the 3B normalization validated (r2 findings
+4–5, including a 5,908-case finite corroboration of the normalized
+schedule); the two cumulative majors repaired here.
+
+1. **Positive tape count on both bridges (r2 finding 1, major).** At
+   `C.k = 0`, `stateWord 0 a = stateWord 0 b` by empty domain, so the
+   install conclusion was satisfiable by a two-state zero-tape machine
+   for an arbitrary — even noncomputable — `f`: vacuous as a data
+   interface. Both conclusions now carry `0 < C.k`, making the seam
+   equality yield the genuine `bufferTape` content at index zero. The
+   auditor's r2 finding 4 confirms the log/undo construction delivers
+   the strengthened interface at the stated envelope.
+2. **The 4A mapping rewritten (r2 finding 2, major) — this supersedes
+   §11b item 3 in full.** §11b item 3 wrongly substituted parser
+   validation for Cook–Levin's silent preparation stages: the 4A source
+   is an arbitrary `NP` language, every binary word is a legitimate
+   instance, and there is no CNF well-formedness condition on `x` (the
+   auditor's empty-language witness: validation-plus-fallback would
+   emit the satisfiable `serialize [] = [false]` for a no-instance).
+   Parse-before-emission belongs to the 3B/4B decode-based transducers
+   only. The corrected stage-to-seam mapping:
+   - **Silent preparation (inherited stages s1–s5).** A silent startup
+     phase computes and packs the preparation records into `s0 x`:
+     exact `Q(n)`, `m = n + Q(n)`, and the horizon `T` (s1, exact
+     arithmetic, certificate length never enlarged); the virtual
+     reference input `false^m` with clamped virtual head, source
+     writes/moves executed on the halting transition, source output
+     suppressed and halt internalized (s2–s3, through the capture and
+     install-call interfaces at positive tape count); the inclusive
+     trajectory records for **all** times `0..T` with administrative
+     transitions outside simulated time and frozen positions after an
+     early halt (s4); greatest-strictly-earlier-visit records with
+     sequential comparison costs (s5). All of s1–s5 end with empty
+     physical output and the packed records as the clean persistent
+     word — the emitting loop's `s0`.
+   - **Ordered emission (s6).** One **family member per round**, the
+     cursor walking the fixed family order of the phase-4 contract.
+     With `T + 1` snapshot times and `k` work tapes, the six families
+     have `n, 1, T, T+1, k(T+1), T` members; the round count is their
+     sum: `R = n + (k+3)·T + k + 1` (an input-length-only polynomial).
+     Rounds with empty template output still take positive time. The
+     single final formula terminator is appended to the last round's
+     chunk. The serialization-length ledger is the exact sum
+     `1 + 2·#clauses + Σ (v+3)` over literal occurrences — total
+     output `O_M(T²)`, never constant-per-clause.
+   - The alternative `R = T` time-major grouping is **not** adopted:
+     it would need a separate proof that its interleaving reserializes
+     to the fixed family order.
+   Certification of this mapping against the phase-4 round-2
+   boundary-check table is round 3's business — that table
+   (`audits/ch2-phase4-reaudit-findings.md`) rides in the r3 bundle,
+   and the 4A brief inherits it verbatim per the standing rule.
+3. **P17 cross-reference (r2 finding 3, minor).** §11a item 1 now
+   carries an explicit supersession marker pointing at §11b item 6;
+   the historical text is preserved as history.
+4. **Provenance upgrades for round 3.** The log/undo fill route now has
+   fresh in-repo provenance beyond the epoch-2 enumerator: the
+   A-continuation checkpoint (integrated 2026-10-05) banked exactly the
+   track/clear/compare phase family the r2 finding-4 construction
+   describes (`e3cTrackTM`/`e3c_track_run`/`e3cClearTM`/`e3c_clear_run`
+   — logged simulation over a visited interval with origin markers,
+   exact single-triple cleanup at `6T+7`, positive first returns), as
+   proved privates in `Nondeterminism.lean`; its REPORT and source ride
+   in the r3 bundle.
+
+Spec surface after round 3: unchanged in count — **seven sorried
+contracts** (the two bridges now carrying `0 < C.k`), two transformers,
+two vocabulary definitions.
