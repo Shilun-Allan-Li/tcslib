@@ -363,10 +363,16 @@ uncomputability chapter.
   countdown); targets 4/5 escalated over a recorded maintainer
   scoping erratum (the Thm 2.22 route cites the excluded
   `EXP_subset_NEXP`) and move to **A-cont-3, now covering 1/6/3/4/5**
-  post-`splitSolveWith`. Tree at **18 admissions** (12 campaign + 6
-  spec). L and P in flight. Next: integrate L/P → A-cont-3 +
-  3B-cont; 4A waits for the fills it consumes; then the epoch-3
-  audit.
+  post-`splitSolveWith`. **P integrated** (2/3: appendBit + unaryToken closed;
+  `splitSolveWith` at the body wall with 83 privates banked incl.
+  the whole-bank cleaner `emitterBankTM` + the conditional
+  `emitterSplit_of_body`). **L integrated — COMPLETE 3/3**
+  (`Loop.lean` admission-free, 5,713 lines, 119 privates; unified
+  `emCallTM` bridge controller at the audited envelope; forwarding
+  host + `emLoop_sum`). **The emitter layer stands at 6/7**; tree at
+  **13 admissions** (12 campaign + `splitSolveWith`). Next: the P2
+  continuation brief → emitter fill-audit pack → A-cont-3 (1/6/3/4/5)
+  + 3B-cont; 4A next; then the epoch-3 audit.
   Subsumes 2C's
   `prefixTM`/`fixedPair` promotion requests. Dedup of superseded batch
   privates is an E5 closure task. Mathlib TM2 rejected as substrate
