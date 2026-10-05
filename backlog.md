@@ -268,8 +268,12 @@ uncomputability chapter.
   first halt, definitional table coincidence; independent kernel
   traversal `audits/logs/ch2-e2cont-B2-axioms.log`). Tree: 57/57 zero
   errors, **21 admissions** (5 padding + `EXP_subset_NEXP` + 15 E3/E4
-  statement layer); ch2 ledger **38/59 proved**. Next: the epoch-2
-  audit pack, then the post-gate serial queue (D6, D7, E5). Subsumes 2C's
+  statement layer); ch2 ledger **38/59 proved**. **Epoch-2 audit pack
+  prepared 2026-10-05** (`audits/ch2-epoch2-{pack,bundle}.md` + the
+  whole-span attestation under `audits/evidence/ch2-epoch2/`; 34
+  attachments; gate closes on zero blockers/majors, findings to
+  `audits/ch2-epoch2-findings.md`). After the gate: the post-gate
+  serial queue (D6, D7 incl. the ClassNP splits, E5 dedup). Subsumes 2C's
   `prefixTM`/`fixedPair` promotion requests. Dedup of superseded batch
   privates is an E5 closure task. Mathlib TM2 rejected as substrate
   (evaluation recorded in the ch1 decision log).
