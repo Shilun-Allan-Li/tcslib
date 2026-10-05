@@ -4330,6 +4330,596 @@ theorem ntime_expPow_subset_NEXP (c : ℕ) : NTIME (fun n => 2 ^ n ^ c) ⊆ NEXP
     obtain ⟨M, D, hM⟩ := e3_split_of_body a c body anchor A r hstart hround
     exact e3_verifier_of_split N a c M D (r + 1) hM
 
+/-! ### A2 binary-countdown reverse host -/
+
+/-- Fixed-width little-endian decrement and its success flag. Underflow
+sets the existing cells to true and returns false, without extending the word. -/
+private def a2Debit : List Bool → List Bool × Bool
+  | [] => ([], false)
+  | true :: bs => (false :: bs, true)
+  | false :: bs => (true :: (a2Debit bs).1, (a2Debit bs).2)
+
+/-- Number of low zero bits traversed by a borrow. -/
+private def a2BorrowPos : List Bool → ℕ
+  | false :: bs => a2BorrowPos bs + 1
+  | _ => 0
+
+/-- The borrow scan cannot cross more cells than the fixed width. -/
+private lemma a2BorrowPos_le (u : List Bool) : a2BorrowPos u ≤ u.length := by
+  induction u with
+  | nil => rfl
+  | cons b u ih => cases b <;> simp only [a2BorrowPos, List.length_cons] <;> omega
+
+/-- Both successful decrements and underflow preserve the counter width. -/
+private lemma a2Debit_length (u : List Bool) : (a2Debit u).1.length = u.length := by
+  induction u with
+  | nil => rfl
+  | cons b u ih => cases b <;> simp [a2Debit, ih]
+
+/-- Little-endian counter value; high zero cells contribute nothing. -/
+private def a2Value : List Bool → ℕ
+  | [] => 0
+  | b :: bs => 2 * a2Value bs + if b then 1 else 0
+
+/-- The fuel machine's binary word has its declared numerical value. -/
+private lemma a2Value_bits (n : ℕ) : a2Value n.bits = n := by
+  induction n using Nat.binaryRec' with
+  | zero => simp [a2Value]
+  | bit b n hn ih =>
+    rw [Nat.bits_append_bit n b hn]
+    cases b <;> simp [a2Value, ih, Nat.bit_val]
+
+/-- A successful debit reduces value by one; underflow occurs only at zero.
+**Proof sketch.** A low one is cleared immediately. A low zero becomes one
+while the inductive debit reduces the higher part; doubling that equation
+gives the successor equation for the full word. -/
+private lemma a2Debit_value (u : List Bool) :
+    if (a2Debit u).2 then a2Value (a2Debit u).1 + 1 = a2Value u
+    else a2Value u = 0 := by
+  induction u with
+  | nil => rfl
+  | cons b u ih =>
+    cases b with
+    | true => simp [a2Debit, a2Value]
+    | false =>
+      cases h : (a2Debit u).2 <;>
+        simp only [a2Debit, h, Bool.false_eq_true, ↓reduceIte,
+          a2Value, Nat.add_zero] at ih ⊢ <;> omega
+
+/-- The borrow returns success exactly for positive counter values. -/
+private lemma a2Debit_success (u : List Bool) :
+    (a2Debit u).2 = true ↔ 0 < a2Value u := by
+  have h := a2Debit_value u
+  cases hb : (a2Debit u).2
+  · simp only [hb, Bool.false_eq_true, ↓reduceIte] at h
+    simp [h]
+  · simp only [hb, ↓reduceIte] at h
+    simp only [true_iff]
+    omega
+
+/-- Read the first bit of a suffix, with the empty suffix represented by blank. -/
+private lemma a2Buffer_read (pre bs : List Bool) :
+    bufferTape (pre ++ bs) pre.length = bs.head? := by
+  simp only [bufferTape_nat, List.getElem?_append_right (le_refl _), Nat.sub_self]
+  cases bs <;> rfl
+
+/-- Writing at the start of a nonempty suffix preserves the prefix and width.
+**Proof sketch.** At the write position use the new bit. Before and after
+that position both tapes read the same unchanged entries. -/
+private lemma a2Buffer_write (pre bs : List Bool) (old new : Bool) :
+    Function.update (bufferTape (pre ++ old :: bs)) (pre.length : ℤ) (some new) =
+      bufferTape (pre ++ new :: bs) := by
+  funext z
+  by_cases hz : z = (pre.length : ℤ)
+  · subst z; simp
+  · rw [Function.update_of_ne hz]
+    unfold bufferTape
+    by_cases hn : 0 ≤ z
+    · simp only [if_pos hn]
+      by_cases hl : z.toNat < pre.length
+      · rw [List.getElem?_append_left hl, List.getElem?_append_left hl]
+      · have hg : pre.length < z.toNat := by omega
+        rw [List.getElem?_append_right (by omega), List.getElem?_append_right (by omega)]
+        simp only [List.getElem?_cons, if_neg (by omega : z.toNat - pre.length ≠ 0)]
+    · simp only [if_neg hn]
+
+/-- A native binary countdown emitter. Startup copies the input and rewinds;
+borrow/rewind transitions implement fixed-width subtraction. Each successful
+subtraction emits one `true` at its return state; underflow halts silently.
+The debit subroutine is adapted in-file from the proved private template in
+`Build/Loop.lean` at the pinned base; no emitter spec contract is used. -/
+private def a2DebitTM : FinTM Bool where
+  k := 1
+  State := Bool ⊕ (Option Bool ⊕ Bool)
+  tm :=
+    { q₀ := .inl false
+      tr := fun q inp work => match q with
+        | .inl false => match inp with
+          | some b => ⟨1, fun _ => (some (some b), 1), none, some (.inl false)⟩
+          | none => ⟨0, fun _ => (none, -1), none, some (.inl true)⟩
+        | .inl true => match work 0 with
+          | some _ => ⟨0, fun _ => (none, -1), none, some (.inl true)⟩
+          | none => ⟨0, fun _ => (none, 1), none, some (.inr (.inl none))⟩
+        | .inr (.inl none) => match work 0 with
+          | some false => ⟨0, fun _ => (some (some true), 1), none,
+              some (.inr (.inl none))⟩
+          | some true => ⟨0, fun _ => (some (some false), -1), none,
+              some (.inr (.inl (some true)))⟩
+          | none => ⟨0, fun _ => (none, -1), none,
+              some (.inr (.inl (some false)))⟩
+        | .inr (.inl (some b)) => match work 0 with
+          | some _ => ⟨0, fun _ => (none, -1), none, some (.inr (.inl (some b)))⟩
+          | none => ⟨0, fun _ => (none, 1), none, some (.inr (.inr b))⟩
+        | .inr (.inr true) =>
+          ⟨0, fun _ => (none, 0), some true, some (.inr (.inl none))⟩
+        | .inr (.inr false) => controlAction 0 none }
+
+/-- A candidate on the borrow tape, with arbitrary native input-head position. -/
+private def a2DebitCfg (out : List Bool) (x : List Bool) (p : Fin (x.length + 2))
+    (q : Option Bool ⊕ Bool) (z : ℤ) (u : List Bool) :
+    Cfg a2DebitTM.k Bool a2DebitTM.State x :=
+  ⟨some (.inr q), p, fun _ => bufferTape u, fun _ => z, out⟩
+
+/-- One borrow transition writes only inside the fixed-width word, or detects
+the right blank without writing to it. -/
+private lemma a2Borrow_step (out : List Bool) (x : List Bool) (p : Fin (x.length + 2))
+    (pre bs : List Bool) :
+    a2DebitTM.tm.step (a2DebitCfg out x p (.inl none) pre.length (pre ++ bs)) =
+      match bs with
+      | [] => a2DebitCfg out x p (.inl (some false)) (pre.length - 1) pre
+      | true :: us => a2DebitCfg out x p (.inl (some true)) (pre.length - 1) (pre ++ false :: us)
+      | false :: us => a2DebitCfg out x p (.inl none) (pre.length + 1) (pre ++ true :: us) := by
+  unfold MultiTapeTM.step
+  change (a2DebitTM.tm.tr (.inr (.inl none)) _ _).apply _ = _
+  simp only [a2DebitTM, a2DebitCfg, Cfg.workTapeSymbols, a2Buffer_read]
+  cases bs with
+  | nil =>
+    refine Cfg.ext rfl (moveInputPos_zero p) ?_ ?_ (by simp [Action.apply])
+    · simp
+    · funext i; simp [Action.apply, sub_eq_add_neg]
+  | cons b bs =>
+    cases b <;> refine Cfg.ext rfl (moveInputPos_zero p) ?_ ?_ (by simp [Action.apply])
+    all_goals first
+      | (funext i; exact a2Buffer_write pre bs _ _)
+      | (funext i; simp [Action.apply, sub_eq_add_neg])
+
+/-- The borrow phase takes one step beyond the leading false prefix, including
+one blank test on underflow.
+**Proof sketch.** Induct on the remaining candidate. Each false bit is set
+and added to the processed prefix. A true bit or the right blank starts
+rewind without changing the width. -/
+private lemma a2Borrow_run (out : List Bool) (x : List Bool) (p : Fin (x.length + 2))
+    (u : List Bool) : ∀ pre : List Bool,
+    a2DebitTM.tm.runFrom (a2DebitCfg out x p (.inl none) pre.length (pre ++ u))
+        (a2BorrowPos u + 1) =
+      a2DebitCfg out x p (.inl (some (a2Debit u).2))
+        ((pre.length : ℤ) + a2BorrowPos u - 1) (pre ++ (a2Debit u).1) := by
+  induction u with
+  | nil =>
+    intro pre
+    simpa [a2BorrowPos, a2Debit, MultiTapeTM.runFrom_succ_eq_step] using
+      a2Borrow_step out x p pre []
+  | cons b u ih =>
+    intro pre
+    cases b with
+    | true =>
+      simpa [a2BorrowPos, a2Debit, MultiTapeTM.runFrom_succ_eq_step] using
+        a2Borrow_step out x p pre (true :: u)
+    | false =>
+      simp only [a2BorrowPos]
+      rw [MultiTapeTM.runFrom_succ_eq_step, a2Borrow_step]
+      simpa [a2Debit, List.append_assoc, Nat.cast_add, Nat.cast_one,
+        add_assoc, add_comm, add_left_comm] using ih (pre ++ [true])
+
+/-- Rewind over `j` known candidate cells to the left blank, then return at
+cell zero in exactly `j+1` steps, retaining the candidate and success flag. -/
+private lemma a2Borrow_rewind (out : List Bool) (x : List Bool) (p : Fin (x.length + 2))
+    (u : List Bool) (b : Bool) : ∀ j, j ≤ u.length →
+    a2DebitTM.tm.runFrom (a2DebitCfg out x p (.inl (some b)) ((j : ℤ) - 1) u)
+        (j + 1) = a2DebitCfg out x p (.inr b) 0 u := by
+  intro j
+  induction j with
+  | zero =>
+    intro hj
+    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+    simp only [Nat.cast_zero, zero_sub]
+    unfold MultiTapeTM.step
+    simp only [a2DebitTM, a2DebitCfg, Cfg.workTapeSymbols, bufferTape_left]
+    refine Cfg.ext rfl (moveInputPos_zero p) rfl ?_ (by simp [Action.apply])
+    funext i; simp [Action.apply]
+  | succ j ih =>
+    intro hj
+    rw [MultiTapeTM.runFrom_succ_eq_step]
+    have hstep : a2DebitTM.tm.step
+        (a2DebitCfg out x p (.inl (some b)) ((j + 1 : ℕ) - 1) u) =
+          a2DebitCfg out x p (.inl (some b)) ((j : ℤ) - 1) u := by
+      have hz : ((j + 1 : ℕ) : ℤ) - 1 = (j : ℤ) := by omega
+      rw [hz]
+      unfold MultiTapeTM.step
+      simp only [a2DebitTM, a2DebitCfg, Cfg.workTapeSymbols, bufferTape_nat,
+        List.getElem?_eq_getElem (by omega : j < u.length)]
+      refine Cfg.ext rfl (moveInputPos_zero p) rfl ?_ (by simp [Action.apply])
+      funext i; simp [Action.apply, sub_eq_add_neg]
+    rw [hstep]
+    exact ih (by omega)
+
+/-- A complete fixed-width decrement and rewind costs `2j+2 ≤ 2|u|+2`,
+where `j` is the leading false-prefix length. It returns live at cell zero,
+retains the input head and already-emitted prefix, and emits nothing.
+Width zero returns underflow after a blank test and rewind. -/
+private lemma a2Borrow_correct (out : List Bool) (x : List Bool) (p : Fin (x.length + 2))
+    (u : List Bool) :
+    2 * a2BorrowPos u + 2 ≤ 2 * u.length + 2 ∧
+      a2DebitTM.tm.runFrom (a2DebitCfg out x p (.inl none) 0 u)
+          (2 * a2BorrowPos u + 2) =
+        a2DebitCfg out x p (.inr (a2Debit u).2) 0 (a2Debit u).1 := by
+  refine ⟨by have := a2BorrowPos_le u; omega, ?_⟩
+  have hr := a2Borrow_run out x p u []
+  simp only [List.length_nil, Nat.cast_zero, List.nil_append, zero_add] at hr
+  rw [show 2 * a2BorrowPos u + 2 = (a2BorrowPos u + 1) + (a2BorrowPos u + 1) by omega,
+    MultiTapeTM.runFrom_add, hr]
+  exact a2Borrow_rewind out x p (a2Debit u).1 (a2Debit u).2 _
+    (by rw [a2Debit_length]; exact a2BorrowPos_le u)
+
+/-- Exhausting the countdown emits exactly its numerical value, with arbitrary
+already-emitted output retained. Each round dispatches at the actual debit
+return, then emits once or halts; the budget is only an upper bound.
+**Proof sketch.** Strong induction on counter value. A successful fixed-width
+debit lowers the value by one and preserves width. Its return transition
+emits one symbol. Underflow proves value zero and halts without emission. -/
+private lemma a2_countdown (x : List Bool) (p : Fin (x.length + 2)) (n : ℕ) :
+    ∀ (u out : List Bool), a2Value u = n →
+    ∃ t ≤ (n + 1) * (2 * u.length + 3),
+      (a2DebitTM.tm.runFrom (a2DebitCfg out x p (.inl none) 0 u) t).state = none ∧
+      (a2DebitTM.tm.runFrom (a2DebitCfg out x p (.inl none) 0 u) t).output =
+        out ++ List.replicate n true := by
+  induction n using Nat.strong_induction_on with
+  | h n ih =>
+    intro u out hv
+    obtain ⟨hb, hr⟩ := a2Borrow_correct out x p u
+    have hd := a2Debit_value u
+    cases hs : (a2Debit u).2 with
+    | false =>
+      simp only [hs, Bool.false_eq_true, ↓reduceIte] at hd
+      have hn : n = 0 := hv.symm.trans hd
+      rw [hn]
+      refine ⟨(2 * a2BorrowPos u + 2) + 1, by omega, ?_⟩
+      rw [MultiTapeTM.runFrom_add, hr]
+      simp [MultiTapeTM.runFrom, MultiTapeTM.step, a2DebitCfg, a2DebitTM,
+        hs, controlAction, Action.apply]
+    | true =>
+      simp only [hs, ↓reduceIte] at hd
+      have hlt : a2Value (a2Debit u).1 < n := by omega
+      obtain ⟨t, ht, hh, ho⟩ := ih _ hlt (a2Debit u).1 (out ++ [true]) rfl
+      have hstep : a2DebitTM.tm.runFrom
+          (a2DebitCfg out x p (.inr true) 0 (a2Debit u).1) 1 =
+          a2DebitCfg (out ++ [true]) x p (.inl none) 0 (a2Debit u).1 := by
+        refine Cfg.ext rfl (moveInputPos_zero p) rfl ?_ rfl
+        funext i; simp [MultiTapeTM.runFrom, MultiTapeTM.step, a2DebitCfg,
+          a2DebitTM, Action.apply]
+      refine ⟨(2 * a2BorrowPos u + 2) + 1 + t, ?_, ?_⟩
+      · rw [a2Debit_length] at ht
+        have he : n = a2Value (a2Debit u).1 + 1 := by omega
+        rw [he, Nat.add_mul, Nat.one_mul]
+        omega
+      · rw [MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_add, hr, hs, hstep]
+        refine ⟨hh, ?_⟩
+        rw [ho, List.append_assoc]
+        have he : n = a2Value (a2Debit u).1 + 1 := by omega
+        simp [he, List.replicate_succ]
+
+/-- The countdown's startup buffer, before entering the borrow states. -/
+private def a2LoadCfg (x : List Bool) (q : Bool) (p : Fin (x.length + 2))
+    (u : List Bool) (z : ℤ) : Cfg a2DebitTM.k Bool a2DebitTM.State x :=
+  ⟨some (.inl q), p, fun _ => bufferTape u, fun _ => z, []⟩
+
+/-- Copy one original input bit to the counter without emitting it. -/
+private lemma a2_copy_step (x : List Bool) (i : ℕ) (hi : i < x.length) :
+    a2DebitTM.tm.step (a2LoadCfg x false ⟨i + 1, by omega⟩ (x.take i) i) =
+      a2LoadCfg x false ⟨i + 2, by omega⟩ (x.take (i + 1)) (i + 1) := by
+  have hr : (a2LoadCfg x false ⟨i + 1, by omega⟩ (x.take i) i).inputSymbol =
+      some x[i] := inputSymbolInner i (by simp [a2LoadCfg]; omega) hi
+  unfold MultiTapeTM.step
+  change (a2DebitTM.tm.tr (.inl false) _ _).apply _ = _
+  dsimp only [a2DebitTM]
+  rw [hr]
+  refine Cfg.ext rfl ?_ ?_ ?_ rfl
+  · apply Fin.ext
+    change (moveInputPos (⟨i + 1, by omega⟩ : Fin (x.length + 2)) .pos).val = i + 2
+    rw [moveInputPos_pos_of_ne_right _ (by simp; omega)]
+  · funext j
+    simp only [Action.apply, a2LoadCfg]
+    rw [List.take_succ_eq_append_getElem hi, bufferTape_append,
+      List.length_take_of_le (Nat.le_of_lt hi)]
+  · funext j; simp [Action.apply, a2LoadCfg]
+
+/-- Startup copies every bit from the genuine blank-tape initial configuration.
+Induction follows the physical input and buffer heads in lockstep. -/
+private lemma a2_copy_run (x : List Bool) (i : ℕ) (hi : i ≤ x.length) :
+    a2DebitTM.tm.runFrom (a2DebitTM.tm.initCfg x) i =
+      a2LoadCfg x false ⟨i + 1, by omega⟩ (x.take i) i := by
+  induction i with
+  | zero =>
+    refine Cfg.ext rfl rfl ?_ rfl rfl
+    funext j z
+    simp [MultiTapeTM.initCfg, Cfg.init, a2LoadCfg, bufferTape]
+  | succ i ih =>
+    rw [MultiTapeTM.runFrom_succ_eq_step', ih (by omega), a2_copy_step x i (by omega)]
+    simp only [Nat.cast_add, Nat.cast_one, Nat.add_assoc]
+
+/-- Rewind the copied counter from a known right-hand position; a mandatory
+left move before this phase distinguishes the two blanks for empty input. -/
+private lemma a2_load_rewind (x : List Bool) (p : Fin (x.length + 2))
+    (u : List Bool) (j : ℕ) (hj : j ≤ u.length) :
+    a2DebitTM.tm.runFrom (a2LoadCfg x true p u ((j : ℤ) - 1)) (j + 1) =
+      a2DebitCfg [] x p (.inl none) 0 u := by
+  induction j with
+  | zero =>
+    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+    simp only [Nat.cast_zero, zero_sub]
+    unfold MultiTapeTM.step
+    simp only [a2DebitTM, a2LoadCfg, Cfg.workTapeSymbols, bufferTape_left]
+    refine Cfg.ext rfl (moveInputPos_zero p) rfl ?_ rfl
+    funext i; simp [Action.apply, a2DebitCfg]
+  | succ j ih =>
+    rw [MultiTapeTM.runFrom_succ_eq_step]
+    have hstep : a2DebitTM.tm.step
+        (a2LoadCfg x true p u ((j + 1 : ℕ) - 1)) =
+          a2LoadCfg x true p u ((j : ℤ) - 1) := by
+      have hz : ((j + 1 : ℕ) : ℤ) - 1 = (j : ℤ) := by omega
+      rw [hz]
+      unfold MultiTapeTM.step
+      simp only [a2DebitTM, a2LoadCfg, Cfg.workTapeSymbols, bufferTape_nat,
+        List.getElem?_eq_getElem (by omega : j < u.length)]
+      refine Cfg.ext rfl (moveInputPos_zero p) rfl ?_ rfl
+      funext i; simp [Action.apply, a2LoadCfg, sub_eq_add_neg]
+    rw [hstep]
+    exact ih (by omega)
+
+/-- Genuine startup reaches the full countdown configuration in `2|x|+2`
+steps, with head zero and empty output, including empty binary input. -/
+private lemma a2_start (x : List Bool) :
+    a2DebitTM.tm.runFrom (a2DebitTM.tm.initCfg x) (2 * x.length + 2) =
+      a2DebitCfg [] x ⟨x.length + 1, by omega⟩ (.inl none) 0 x := by
+  have hc := a2_copy_run x x.length (le_refl _)
+  rw [List.take_length] at hc
+  have hstep : a2DebitTM.tm.step
+      (a2LoadCfg x false ⟨x.length + 1, by omega⟩ x x.length) =
+      a2LoadCfg x true ⟨x.length + 1, by omega⟩ x ((x.length : ℤ) - 1) := by
+    have hr : (a2LoadCfg x false ⟨x.length + 1, by omega⟩ x x.length).inputSymbol = none :=
+      by simp [Cfg.inputSymbol, a2LoadCfg]
+    unfold MultiTapeTM.step
+    change (a2DebitTM.tm.tr (.inl false) _ _).apply _ = _
+    dsimp only [a2DebitTM]
+    rw [hr]
+    refine Cfg.ext rfl (moveInputPos_zero _) rfl ?_ rfl
+    funext i; simp [Action.apply, a2LoadCfg, sub_eq_add_neg]
+  have henter : a2DebitTM.tm.runFrom (a2DebitTM.tm.initCfg x) (x.length + 1) =
+      a2LoadCfg x true ⟨x.length + 1, by omega⟩ x ((x.length : ℤ) - 1) := by
+    rw [MultiTapeTM.runFrom_succ_eq_step', hc, hstep]
+  rw [show 2 * x.length + 2 = (x.length + 1) + (x.length + 1) by omega,
+    MultiTapeTM.runFrom_add, henter]
+  exact a2_load_rewind x _ x x.length (le_refl _)
+
+/-- The native emitter decodes an arbitrary fixed-width binary word. Its
+complete time bound includes genuine input copying and the final underflow. -/
+private lemma a2_decode_computes (x : List Bool) :
+    a2DebitTM.ComputesInTime x (List.replicate (a2Value x) true)
+      (2 * x.length + 2 + (a2Value x + 1) * (2 * x.length + 3)) := by
+  obtain ⟨t, ht, hh, ho⟩ := a2_countdown x ⟨x.length + 1, by omega⟩ (a2Value x) x [] rfl
+  have hc : a2DebitTM.ComputesInTime x (List.replicate (a2Value x) true)
+      (2 * x.length + 2 + t) := by
+    apply (computesInTime_iff _ _ _ _).mpr
+    rw [MultiTapeTM.runFrom_add, a2_start]
+    exact ⟨hh, by simpa using ho⟩
+  exact hc.mono (by omega)
+
+/-- Binary evaluation followed by one bespoke countdown-emission phase
+produces the exact exponential guess count. This is a timed native
+composition, dispatching on actual completed evaluation states.
+**Proof sketch.** Capture the proved evaluator's bits, rewind its completed
+output, and run the native countdown on that exact intermediate word. Its
+width is bounded by the evaluator's time on every input. All copying,
+rewinding, decrements and the final underflow fit the displayed envelope. -/
+private lemma a2_exp_scheduler (C c : ℕ) :
+    ∃ (S : FinTM Bool) (B : ℕ), S.ComputesFunInTime
+      (fun x => List.replicate (C * 2 ^ (x.length + 1) ^ c) true)
+      (fun n => B * (n + C * 2 ^ (n + 1) ^ c + 1) ^ (c + 2)) := by
+  obtain ⟨E, A, hE⟩ := e3_exp_bits_timed C c
+  refine ⟨bufferedCompTM E a2DebitTM, 6 * A + 7, fun x => ?_⟩
+  let R := C * 2 ^ (x.length + 1) ^ c
+  let bits := Nat.bits R
+  let P := (x.length + 1) ^ (c + 1)
+  let m := x.length + R + 1
+  have he : E.ComputesInTime x bits (A * P) := hE x
+  have hlen : bits.length ≤ A * P := by
+    have ho := ((computesInTime_iff _ _ _ _).mp he).2
+    simpa only [ho] using E.tm.output_length_le x (A * P)
+  obtain ⟨a, p, tapes, heads, ha, hstart⟩ := bufferedComp_start E a2DebitTM x bits _ he
+  let T := 2 * bits.length + 2 + (R + 1) * (2 * bits.length + 3)
+  have hd : a2DebitTM.ComputesInTime bits (List.replicate R true) T := by
+    simpa only [bits, a2Value_bits] using a2_decode_computes bits
+  obtain ⟨tag, _, hr⟩ := bufferedSecondCfg_run E a2DebitTM
+    (a2DebitTM.tm.initCfg bits) true
+    (by simp [VirtualTag, MultiTapeTM.initCfg, Cfg.init]) p tapes heads T
+  have hc := (computesInTime_iff _ _ _ _).mp hd
+  have hcomp : (bufferedCompTM E a2DebitTM).ComputesInTime x
+      (List.replicate R true) (a + T) := by
+    apply (computesInTime_iff _ _ _ _).mpr
+    rw [MultiTapeTM.runFrom_add, hstart, hr]
+    exact ⟨by simpa only [bufferedSecondCfg, Option.map_eq_none_iff] using hc.1, hc.2⟩
+  apply hcomp.mono
+  have hp : 1 ≤ P := Nat.one_le_pow _ _ (Nat.succ_pos _)
+  have hm : 0 < m := by dsimp [m]; omega
+  have hP : P ≤ m ^ (c + 1) := Nat.pow_le_pow_left (by dsimp [m]; omega) _
+  have hR : R + 1 ≤ m := by dsimp [m]; omega
+  have hprod : (R + 1) * P ≤ m ^ (c + 2) := by
+    calc (R + 1) * P ≤ m * m ^ (c + 1) := Nat.mul_le_mul hR hP
+         _ = m ^ (c + 2) := by rw [Nat.pow_succ]; ring
+  have hsmall : a + T ≤ (6 * A + 7) * ((R + 1) * P) := by
+    have hlin : a + (2 * bits.length + 2) ≤ (4 * A + 4) * P := by
+      calc a + (2 * bits.length + 2) ≤ 4 * (A * P) + 4 := by omega
+           _ ≤ 4 * (A * P) + 4 * P := by omega
+           _ = _ := by ring
+    have hround : 2 * bits.length + 3 ≤ (2 * A + 3) * P := by
+      calc 2 * bits.length + 3 ≤ 2 * (A * P) + 3 * P := by omega
+           _ = _ := by ring
+    have hbase : (4 * A + 4) * P ≤ (R + 1) * ((4 * A + 4) * P) :=
+      Nat.le_mul_of_pos_left _ (Nat.succ_pos R)
+    calc a + T = (a + (2 * bits.length + 2)) +
+             (R + 1) * (2 * bits.length + 3) := by dsimp [T]; omega
+         _ ≤ (R + 1) * ((4 * A + 4) * P) +
+             (R + 1) * ((2 * A + 3) * P) :=
+           Nat.add_le_add (hlin.trans hbase) (Nat.mul_le_mul_left _ hround)
+         _ = _ := by ring
+  exact hsmall.trans (Nat.mul_le_mul_left _ hprod)
+
+/-- The B2 host's complete ledger fits a polynomial in the input plus the
+exact exponential certificate length. The scheduler's actual first halt is
+bounded, never used as a native clock. -/
+private lemma a2_host_bound (Q B r A d n T : ℕ)
+    (hT : T ≤ B * (n + Q + 1) ^ r) :
+    2 * n + 2 + T + (n + Q + 2 + (A * (n + Q + 1) ^ d + 1)) ≤
+      (B + A + 5) * (n + Q + 1) ^ (r + d + 1) := by
+  let m := n + Q + 1
+  have hm : 0 < m := by dsimp [m]; omega
+  have hs : T ≤ B * m ^ (r + d + 1) := hT.trans
+    (Nat.mul_le_mul_left B (Nat.pow_le_pow_right hm (by omega)))
+  have hv : A * m ^ d ≤ A * m ^ (r + d + 1) :=
+    Nat.mul_le_mul_left A (Nat.pow_le_pow_right hm (by omega))
+  have hl : 3 * n + Q + 5 ≤ 5 * m ^ (r + d + 1) := by
+    have hp : m ≤ m ^ (r + d + 1) := by
+      simpa only [Nat.pow_one] using Nat.pow_le_pow_right hm (by omega : 1 ≤ r + d + 1)
+    exact (show 3 * n + Q + 5 ≤ 5 * m by dsimp [m]; omega).trans
+      (Nat.mul_le_mul_left 5 hp)
+  change 2 * n + 2 + T + (n + Q + 2 + (A * m ^ d + 1)) ≤ _
+  calc
+    _ ≤ B * m ^ (r + d + 1) + A * m ^ (r + d + 1) + 5 * m ^ (r + d + 1) := by omega
+    _ = _ := by dsimp [m]; ring
+
+/-- The integrated reverse compiler decides the certificate language on all
+branches within the required envelope.
+**Proof sketch.** Instantiate the binary countdown scheduler and use its
+length-indexed first halt. The host contract gives all-branch termination,
+exact-length extraction, and coverage at the complete phase ledger. The
+certificate characterization turns its verifier outputs into language
+acceptance. Enlarge to the common polynomial envelope in input plus
+certificate length using halting absorption in both directions, including nonaccepting branches. -/
+private lemma a2_compile (L : Language Bool) (C c : ℕ) (V : Language Bool)
+    (hcert : ∀ x, x ∈ L ↔ ∃ u : List Bool,
+      u.length = C * 2 ^ (x.length + 1) ^ c ∧ x ++ u ∈ V)
+    (M : FinTM Bool) (A d : ℕ)
+    (hM : M.DecidesInTime V (fun n => A * (n + 1) ^ d)) :
+    ∃ (K r : ℕ) (N : FinNDTM Bool),
+      N.DecidesInTime L (fun n => K * (n + C * 2 ^ (n + 1) ^ c + 1) ^ r) := by
+  classical
+  obtain ⟨S, B, hS⟩ := a2_exp_scheduler C c
+  obtain ⟨τ, hτ⟩ := b2_unary_first S (fun n => List.replicate (C * 2 ^ (n + 1) ^ c) true)
+    (fun n => B * (n + C * 2 ^ (n + 1) ^ c + 1) ^ (c + 2)) (fun n => by
+      simpa only [List.length_replicate] using hS (List.replicate n true))
+  refine ⟨B + A + 5, (c + 2) + d + 1, b2Host S M, fun x => ?_⟩
+  let H := 2 * x.length + 2 + τ x.length + (x.length + C * 2 ^ (x.length + 1) ^ c + 2 +
+    (A * (x.length + C * 2 ^ (x.length + 1) ^ c + 1) ^ d + 1))
+  have hc := b2_host_contract S M V x (List.replicate (C * 2 ^ (x.length + 1) ^ c) true)
+    (τ x.length) A d (hτ x).2.1 (hτ x).2.2 hM
+  simp only [List.length_replicate] at hc
+  have hhalt : (b2Host S M).tm.HaltsWithin x H := by
+    intro w hw
+    obtain ⟨u, _, hh, _⟩ := hc.1 w hw
+    exact hh
+  have hacc : x ∈ L ↔ (b2Host S M).AcceptsWithin x H := by
+    rw [hcert x]
+    constructor
+    · rintro ⟨u, hu, hv⟩
+      obtain ⟨w, hw, hh, ho⟩ := hc.2 u hu
+      refine ⟨w, hw, hh, ?_⟩
+      rw [ho]
+      simp [MultiTapeTM.indicator, hv]
+    · rintro ⟨w, hw, _, ho⟩
+      obtain ⟨u, hu, _, hout⟩ := hc.1 w hw
+      refine ⟨u, hu, ?_⟩
+      have he := hout.symm.trans ho
+      by_contra hv
+      simp [MultiTapeTM.indicator, hv] at he
+  have ht := a2_host_bound (C * 2 ^ (x.length + 1) ^ c) B (c + 2) A d x.length (τ x.length) (hτ x).1
+  exact ⟨hhalt.mono ht, hacc.trans (acceptsWithin_iff_of_halts hhalt ht).symm⟩
+
+/-- A fixed polynomial in `n+1` in the exponent is absorbed into `n^e`,
+with a uniform multiplicative constant for lengths zero and one.
+**Proof sketch.** For `n ≥ 2`, use `K ≤ 2^K ≤ n^K` and `n+1 ≤ n^2`.
+For `n ≤ 1`, bound the exponent by `K·2^k` and absorb its exponential. -/
+private lemma a2_exponent_bound (K k : ℕ) :
+    ∃ A e : ℕ, ∀ n : ℕ, 2 ^ (K * (n + 1) ^ k) ≤ A * 2 ^ n ^ e := by
+  refine ⟨2 ^ (K * 2 ^ k), K + 2 * k, fun n => ?_⟩
+  by_cases hn : 2 ≤ n
+  · have hK : K ≤ n ^ K :=
+      (Nat.le_of_lt (Nat.lt_two_pow_self (n := K))).trans (Nat.pow_le_pow_left hn K)
+    have hn' : n + 1 ≤ n ^ 2 := by
+      calc n + 1 ≤ 2 * n := by omega
+           _ ≤ n * n := Nat.mul_le_mul_right n hn
+           _ = n ^ 2 := by ring
+    have hexp : K * (n + 1) ^ k ≤ n ^ (K + 2 * k) := by
+      calc K * (n + 1) ^ k ≤ n ^ K * (n ^ 2) ^ k :=
+             Nat.mul_le_mul hK (Nat.pow_le_pow_left hn' k)
+           _ = n ^ (K + 2 * k) := by rw [← Nat.pow_mul, ← Nat.pow_add]
+    exact (Nat.pow_le_pow_right (by omega) hexp).trans
+      (Nat.le_mul_of_pos_left _ (Nat.pow_pos (by omega)))
+  · have hs : (n + 1) ^ k ≤ 2 ^ k := Nat.pow_le_pow_left (by omega) k
+    calc 2 ^ (K * (n + 1) ^ k) ≤ 2 ^ (K * 2 ^ k) :=
+           Nat.pow_le_pow_right (by omega) (Nat.mul_le_mul_left K hs)
+         _ ≤ 2 ^ (K * 2 ^ k) * 2 ^ n ^ (K + 2 * k) :=
+           Nat.le_mul_of_pos_right _ (Nat.pow_pos (by omega))
+
+
+/-- Every fixed polynomial in input length plus exponential certificate
+length fits a fixed-exponent `NTIME` budget, with a uniform constant for all
+small lengths and zero coefficients/degrees.
+**Proof sketch.** Bound the sum by `(C+1)` times an exponential whose exponent
+is `(n+1)^(c+1)`. Raising to the fixed polynomial degree multiplies that
+exponent. The preceding absorption lemma handles all input lengths. -/
+private lemma a2_envelope (C c K r : ℕ) :
+    ∃ A e : ℕ, ∀ n : ℕ,
+      K * (n + C * 2 ^ (n + 1) ^ c + 1) ^ r ≤ A * 2 ^ n ^ e := by
+  obtain ⟨A, e, hA⟩ := a2_exponent_bound r (c + 1)
+  refine ⟨K * (C + 1) ^ r * A, e, fun n => ?_⟩
+  have hc : (n + 1) ^ c ≤ (n + 1) ^ (c + 1) :=
+    Nat.pow_le_pow_right (Nat.succ_pos n) (by omega)
+  have hn : n + 1 ≤ (n + 1) ^ (c + 1) := by
+    simpa only [Nat.pow_one] using
+      Nat.pow_le_pow_right (Nat.succ_pos n) (by omega : 1 ≤ c + 1)
+  have hnexp : n + 1 ≤ 2 ^ (n + 1) ^ (c + 1) :=
+    (Nat.le_of_lt (Nat.lt_two_pow_self (n := n + 1))).trans
+      (Nat.pow_le_pow_right (by omega) hn)
+  have hsum : n + C * 2 ^ (n + 1) ^ c + 1 ≤
+      (C + 1) * 2 ^ (n + 1) ^ (c + 1) := by
+    have hm := Nat.mul_le_mul_left C (Nat.pow_le_pow_right (by omega : 0 < 2) hc)
+    rw [Nat.add_mul, Nat.one_mul]
+    omega
+  calc
+    K * (n + C * 2 ^ (n + 1) ^ c + 1) ^ r ≤
+        K * ((C + 1) * 2 ^ (n + 1) ^ (c + 1)) ^ r :=
+      Nat.mul_le_mul_left K (Nat.pow_le_pow_left hsum r)
+    _ = (K * (C + 1) ^ r) * 2 ^ (r * (n + 1) ^ (c + 1)) := by
+      rw [Nat.mul_pow, ← Nat.pow_mul, Nat.mul_comm ((n + 1) ^ (c + 1)) r,
+        Nat.mul_assoc]
+    _ ≤ (K * (C + 1) ^ r) * (A * 2 ^ n ^ e) :=
+      Nat.mul_le_mul_left _ (hA n)
+    _ = _ := by ring
+
+/-- Complete all-branch decoding at an exponential polynomial envelope gives
+one component of the exponential `NTIME` union. Halting absorption proves
+backward truncation as well as forward accepting-branch padding. -/
+private lemma a2_normalize (L : Language Bool) (C c : ℕ)
+    (h : ∃ (K r : ℕ) (N : FinNDTM Bool),
+      N.DecidesInTime L (fun n => K * (n + C * 2 ^ (n + 1) ^ c + 1) ^ r)) :
+    L ∈ ⋃ e : ℕ, NTIME fun n => 2 ^ n ^ e := by
+  obtain ⟨K, r, N, hN⟩ := h
+  obtain ⟨A, e, hA⟩ := a2_envelope C c K r
+  refine Set.mem_iUnion.mpr ⟨e, A, N, fun x => ?_⟩
+  have ht := hA x.length
+  exact ⟨(hN x).1.mono ht,
+    (hN x).2.trans (acceptsWithin_iff_of_halts (hN x).1 ht).symm⟩
+
 /-- **Guess the exponential certificate**: the certificate-form `Complexity.NEXP` is
 contained in the union of the fixed-exponent `NTIME (2^(n^c))` classes.
 
@@ -4347,9 +4937,25 @@ at most `2^(n^e)` for a fixed `e` (say `e = c + d + 2`) once `n` exceeds a fixed
 threshold, with the finitely many inputs of smaller lengths absorbed into `NTIME`'s
 constant (their maximal halting time is a number; the truncation argument of
 `Complexity.NTIME.mono` keeps the acceptance equivalence at the padded budget). Land
-`L` in the exponent-`e` component. -/
+`L` in the exponent-`e` component.
+
+**A2 completion.** `a2DebitTM` copies a binary word onto a fixed-width
+counter, decrements with deterministic borrow/rewind steps, and emits once
+per successful debit. `a2_countdown` proves the exact count and complete
+round budget, including underflow and zero width. `a2_exp_scheduler`
+composes it with the proved binary evaluator by actual captured-phase
+configuration equalities. `b2_unary_first` supplies length-only first halts
+and hence a branch-independent emission mask; `a2_compile` instantiates
+the unchanged B2 host with exact witness extraction and coverage, native
+startup and assembly, guarded captured verification, and all-branch totality.
+The inherited `b2_tables_coincide` gives definitional table coincidence
+outside guessing. `a2_envelope` and `a2_normalize` finish all-length budget
+absorption. No admitted library contract or out-of-scope target is cited. -/
 theorem NEXP_subset_iUnion_NTIME : NEXP ⊆ ⋃ c : ℕ, NTIME fun n => 2 ^ n ^ c := by
-  sorry
+  rintro L ⟨C, c, V, hV, hcert⟩
+  obtain ⟨A, d, M, hM⟩ := mem_P_iff.mp hV
+  apply a2_normalize L C c
+  exact a2_compile L C c V hcert M A d hM
 
 /-- **The `NTIME` form of `NEXP`** [AB09, §2.6.2 reconciled with Exercise 2.27]:
 `NEXP = ⋃ c, NTIME (2^(n^c))`. [AB09] *defines* `NEXP` by the right-hand side;
