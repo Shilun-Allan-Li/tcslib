@@ -351,9 +351,13 @@ uncomputability chapter.
   **EMITTER GATE CLOSED 2026-10-05** (round 3: 0/0/1 —
   `audits/emitter-infra-resolutions.md`; the attribution minor swept
   comment-only in the closing commit; binding fill/brief handoffs
-  recorded). Next: the three fill batches by file ownership
-  (Loop / Primitives / Wrappers) → A-cont-3 (targets 1/3/6) +
-  3B-cont; 4A's brief now unblocked by decision 11.3 but waits for
+  recorded). **Fill briefs issued 2026-10-05**
+  (`briefs/emitter-fill-batch{L,P,W}.md`, base `d7b5b6f9`; L ≈ 17 pts
+  bridges-then-emitLoop via the forwarding host, P ≈ 10 pts
+  splitSolveWith under the gate disciplines, W 3 pts emit_run; zero
+  sanctioned admissions each; the `e3c*` family as harvest template;
+  completion drops the tree 20 → 13). Next: dispatch the three; on
+  fills complete → A-cont-3 (targets 1/3/6) + 3B-cont; 4A waits for
   the fills it consumes; then the epoch-3 audit.
   Subsumes 2C's
   `prefixTM`/`fixedPair` promotion requests. Dedup of superseded batch
