@@ -177,7 +177,7 @@ theorem oblivious_schedule_eq {M : FinTM Bool} (hM : M.Oblivious)
     (x : List Bool) (t : ℕ) :
     ((M.tm.runFrom (M.tm.initCfg x) t).inputPos : ℕ) = inputPosAt M x.length t ∧
     (M.tm.runFrom (M.tm.initCfg x) t).workTapePos = workPosAt M x.length t := by
-  sorry
+  exact hM x (List.replicate x.length false) (by simp) t
 
 /-- **The initial snapshot** [AB09, condition 2, adapted to our
 initialization]: at time `0` the machine is in its initial state, the input
@@ -191,7 +191,11 @@ both cases; the initial work tapes are the constant-`none` function, so every
 work read is blank. -/
 theorem snapshotAt_zero (M : FinTM Bool) (x : List Bool) :
     snapshotAt M x 0 = ⟨some M.tm.q₀, inputBitAt x 1, fun _ => none⟩ := by
-  sorry
+  have hi : (M.tm.initCfg x).inputSymbol = inputBitAt x 1 := by
+    simpa [inputBitAt] using
+      FinTM.inputSymbol_at (M.tm.initCfg x) 0 (Nat.zero_le _) (by simp)
+  simp only [snapshotAt, MultiTapeTM.runFrom_zero, hi]
+  rfl
 
 /-- **The state component is locally determined** (any machine, oblivious or
 not): the state at time `t + 1` is `stepState` of the snapshot at time `t`.
@@ -203,7 +207,9 @@ selected by exactly the state and read symbols — the snapshot's data — whose
 `Turing.Action.apply` sets the successor state to the action's state field. -/
 theorem snapshotAt_state_succ (M : FinTM Bool) (x : List Bool) (t : ℕ) :
     (snapshotAt M x (t + 1)).1 = stepState M (snapshotAt M x t) := by
-  sorry
+  cases hs : (M.tm.runFrom (M.tm.initCfg x) t).state <;>
+    simp only [snapshotAt, stepState, MultiTapeTM.runFrom_succ_eq_step',
+      MultiTapeTM.step, hs, Action.apply]
 
 /-- **The input component reads the scheduled position** [AB09, the
 `y_inputpos(i)` wiring]: on an oblivious machine, the input symbol of the
@@ -217,7 +223,93 @@ every position `p ≤ |x| + 1`; positions are always in that range
 theorem snapshotAt_inputSymbol {M : FinTM Bool} (hM : M.Oblivious)
     (x : List Bool) (t : ℕ) :
     (snapshotAt M x t).2.1 = inputBitAt x (inputPosAt M x.length t) := by
-  sorry
+  rw [← (oblivious_schedule_eq hM x t).1]
+  let c := M.tm.runFrom (M.tm.initCfg x) t
+  change c.inputSymbol = inputBitAt x c.inputPos.val
+  by_cases h0 : c.inputPos.val = 0
+  · have hp : c.inputPos = 0 := Fin.val_eq_zero_iff.mp h0
+    simp [Cfg.inputSymbol, hp, inputBitAt]
+  · have hb := c.inputPos.isLt
+    rw [inputBitAt, if_neg h0]
+    exact FinTM.inputSymbol_at c (c.inputPos.val - 1) (by omega) (by omega)
+
+/-- A step changes only the old head cell, leaving `writtenOrKept` there.
+[AB09, eq. (2.3)], cell recurrence in the phase-4 audit's Derivation A.
+
+**Proof sketch.** Split on the source state and use the public optional-write
+normalization `Turing.Action.apply_workTapes`. A halted source preserves the
+tape; a live source performs its write before moving, regardless of the
+successor state. Thus `none` keeps the old cell, whereas `some none` writes
+blank, including on a halting transition. -/
+private lemma workCell_succ (M : FinTM Bool) (x : List Bool) (t : ℕ)
+    (τ : Fin M.k) (p : ℤ) :
+    (M.tm.runFrom (M.tm.initCfg x) (t + 1)).workTapes τ p =
+      if p = (M.tm.runFrom (M.tm.initCfg x) t).workTapePos τ then
+        writtenOrKept M (snapshotAt M x t) τ
+      else (M.tm.runFrom (M.tm.initCfg x) t).workTapes τ p := by
+  rw [MultiTapeTM.runFrom_succ_eq_step']
+  cases hs : (M.tm.runFrom (M.tm.initCfg x) t).state with
+  | none =>
+    simp only [MultiTapeTM.step, hs, writtenOrKept, snapshotAt,
+      Cfg.workTapeSymbols]
+    split_ifs with hp
+    · exact congrArg ((M.tm.runFrom (M.tm.initCfg x) t).workTapes τ) hp
+    · rfl
+  | some q =>
+    simp only [MultiTapeTM.step, Action.apply_workTapes, snapshotAt,
+      writtenOrKept, hs, Function.update_apply]
+
+/-- A cell stays constant over a time interval with no visit to that cell.
+
+**Proof sketch.** Induct on the interval's upper endpoint. A nonempty
+interval ends with a step away from this cell, so `workCell_succ` leaves
+its content unchanged and the induction hypothesis covers the prefix. -/
+private lemma workCell_eq_of_no_visit (M : FinTM Bool) (x : List Bool)
+    (τ : Fin M.k) (p : ℤ) (a b : ℕ) (hab : a ≤ b)
+    (h : ∀ r, a ≤ r → r < b →
+      p ≠ (M.tm.runFrom (M.tm.initCfg x) r).workTapePos τ) :
+    (M.tm.runFrom (M.tm.initCfg x) b).workTapes τ p =
+      (M.tm.runFrom (M.tm.initCfg x) a).workTapes τ p := by
+  induction b generalizing a with
+  | zero =>
+    have ha : a = 0 := by omega
+    subst a
+    rfl
+  | succ b ih =>
+    by_cases hb : a ≤ b
+    · rw [workCell_succ, if_neg (h b hb (by omega))]
+      exact ih a hb (fun r har hr => h r har (by omega))
+    · have ha : a = b + 1 := by omega
+      subst a
+      rfl
+
+/-- An absent previous visit means no strictly earlier scheduled position
+equals the current one. -/
+private lemma prevVisit_none_no_visit {M : FinTM Bool} {n t : ℕ}
+    {τ : Fin M.k} (hprev : prevVisit M n t τ = none) :
+    ∀ r, r < t → workPosAt M n r τ ≠ workPosAt M n t τ := by
+  have hnil := List.max?_eq_none_iff.mp hprev
+  intro r hr he
+  have hmem : r ∈ (List.range t).filter
+      (fun s => workPosAt M n s τ == workPosAt M n t τ) := by
+    simpa only [List.mem_filter, List.mem_range, beq_iff_eq] using And.intro hr he
+  rw [hnil] at hmem
+  simp at hmem
+
+/-- A previous visit is strictly earlier, visits the current cell, and is
+followed by no further visit before the current time.
+
+**Proof sketch.** Membership of the filtered range supplies the strict time
+bound and position equality. Maximality excludes any later member. -/
+private lemma prevVisit_some_last {M : FinTM Bool} {n t s : ℕ}
+    {τ : Fin M.k} (hprev : prevVisit M n t τ = some s) :
+    s < t ∧ workPosAt M n s τ = workPosAt M n t τ ∧
+      ∀ r, s < r → r < t → workPosAt M n r τ ≠ workPosAt M n t τ := by
+  have hmax := List.max?_eq_some_iff.mp hprev
+  simp only [List.mem_filter, List.mem_range, beq_iff_eq] at hmax
+  refine ⟨hmax.1.1, hmax.1.2, ?_⟩
+  intro r hsr hrt he
+  exact Nat.not_le_of_lt hsr (hmax.2 r ⟨hrt, he⟩)
 
 /-- **Computation is local** [AB09, eq. (2.3) with footnote 6]: on an
 oblivious machine, the symbol read by work head `τ` at time `t` is the
@@ -247,6 +339,30 @@ theorem snapshotAt_workSymbol {M : FinTM Bool} (hM : M.Oblivious)
       match prevVisit M x.length t τ with
       | none => none
       | some s => writtenOrKept M (snapshotAt M x s) τ := by
-  sorry
+  have hp (r : ℕ) : (M.tm.runFrom (M.tm.initCfg x) r).workTapePos τ =
+      workPosAt M x.length r τ :=
+    congrFun (oblivious_schedule_eq hM x r).2 τ
+  change (M.tm.runFrom (M.tm.initCfg x) t).workTapes τ
+    ((M.tm.runFrom (M.tm.initCfg x) t).workTapePos τ) = _
+  rw [hp t]
+  cases hprev : prevVisit M x.length t τ with
+  | none =>
+    -- No earlier visit: transport the initial blank along the whole interval.
+    have hn := prevVisit_none_no_visit hprev
+    have hc := workCell_eq_of_no_visit M x τ (workPosAt M x.length t τ)
+      0 t (Nat.zero_le _) (by
+        intro r _ hr
+        rw [hp r]
+        exact Ne.symm (hn r hr))
+    exact hc
+  | some s =>
+    -- The strict last visit supplies one write, followed by an untouched interval.
+    obtain ⟨hst, hpos, hn⟩ := prevVisit_some_last hprev
+    have hc := workCell_eq_of_no_visit M x τ (workPosAt M x.length t τ)
+      (s + 1) t (by omega) (by
+        intro r hr hrt
+        rw [hp r]
+        exact Ne.symm (hn r (by omega) hrt))
+    rw [hc, workCell_succ, if_pos ((hp s).trans hpos).symm]
 
 end Complexity
