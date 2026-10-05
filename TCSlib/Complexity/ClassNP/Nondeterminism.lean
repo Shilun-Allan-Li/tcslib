@@ -1511,6 +1511,954 @@ private lemma cont_poly_guess_phase (C c : ℕ) :
       simpa only [List.length_replicate] using hM (List.replicate n true))
   simpa only [List.length_replicate] using h
 
+/-- Normalize each nonblank physical input read to `true`. The physical input
+and its head are retained; source work symbols are not normalized. -/
+private def b2UnaryTM (M : FinTM Bool) : FinTM Bool where
+  k := M.k
+  State := M.State
+  tm := ⟨M.tm.q₀, fun q inp work => M.tm.tr q (inp.map fun _ => true) work⟩
+
+/-- View an arbitrary-input configuration over the unary word of the same
+length, leaving its state, work tapes, heads, and output unchanged. -/
+private def b2UnaryCfg {k : ℕ} {S : Type} {x : List Bool}
+    (c : Cfg k Bool S x) : Cfg k Bool S (List.replicate x.length true) :=
+  ⟨c.state, ⟨c.inputPos.val, by simp⟩,
+    c.workTapes, c.workTapePos, c.output⟩
+
+/-- Normalization preserves both input blanks and maps every interior symbol
+to the corresponding unary symbol, including at empty input. -/
+private lemma b2_unary_read {k : ℕ} {S : Type} {x : List Bool}
+    (c : Cfg k Bool S x) :
+    (b2UnaryCfg c).inputSymbol = c.inputSymbol.map (fun _ => true) := by
+  by_cases h0 : c.inputPos.val = 0 <;>
+    by_cases h1 : c.inputPos.val = x.length + 1 <;>
+    simp [Cfg.inputSymbol, b2UnaryCfg, Fin.ext_iff, h0, h1]
+
+/-- Applying an action commutes with changing to an equal-length unary input:
+native clamping uses only the length, and no work symbol is changed. -/
+private lemma b2_unary_apply {k : ℕ} {S : Type} {x : List Bool}
+    (a : Action k Bool S) (c : Cfg k Bool S x) :
+    b2UnaryCfg (a.apply c) = a.apply (b2UnaryCfg c) := by
+  refine Cfg.ext rfl ?_ rfl rfl rfl
+  apply Fin.ext
+  simp only [b2UnaryCfg, Action.apply, moveInputPos, List.length_replicate]
+  split <;> rfl
+
+/-- One step of the input-normalized scheduler is exactly a native step on
+the unary word, including the absorbing halted case. -/
+private lemma b2_unary_step (M : FinTM Bool) {x : List Bool}
+    (c : Cfg M.k Bool M.State x) :
+    b2UnaryCfg ((b2UnaryTM M).tm.step c) = M.tm.step (b2UnaryCfg c) := by
+  cases hs : c.state with
+  | none => simp [MultiTapeTM.step, b2UnaryTM, b2UnaryCfg, hs]
+  | some q =>
+    simp only [MultiTapeTM.step, hs, b2UnaryTM]
+    change b2UnaryCfg ((M.tm.tr q (c.inputSymbol.map fun _ => true)
+      c.workTapeSymbols).apply c) = _
+    rw [b2_unary_apply]
+    have hs' : (b2UnaryCfg c).state = some q := hs
+    simp only [hs', b2_unary_read]
+    rfl
+
+/-- Every elapsed time, not just a declared upper bound, has exactly the
+unary scheduler configuration. Thus first halts and emission times can be
+selected from the input length alone. -/
+private lemma b2_unary_run (M : FinTM Bool) {x : List Bool}
+    (c : Cfg M.k Bool M.State x) (t : ℕ) :
+    b2UnaryCfg ((b2UnaryTM M).tm.runFrom c t) =
+      M.tm.runFrom (b2UnaryCfg c) t := by
+  induction t generalizing c with
+  | zero => rfl
+  | succ t ih =>
+    rw [MultiTapeTM.runFrom_succ_eq_step, ih, b2_unary_step,
+      MultiTapeTM.runFrom_succ_eq_step]
+
+/-- The normalized scheduler's genuine startup corresponds to the genuine
+unary startup, with blank work tapes and initial input head one. -/
+private lemma b2_unary_initial (M : FinTM Bool) (x : List Bool) :
+    b2UnaryCfg ((b2UnaryTM M).tm.initCfg x) =
+      M.tm.initCfg (List.replicate x.length true) := by
+  refine Cfg.ext rfl ?_ rfl rfl rfl
+  apply Fin.ext
+  simp [b2UnaryCfg, b2UnaryTM, MultiTapeTM.initCfg, Cfg.init]
+
+/-- Normalizing input reads also preserves every emission position; no
+assumption of value-independent timing is extracted from a function contract. -/
+private lemma b2_unary_mask (M : FinTM Bool) {x : List Bool}
+    (c : Cfg M.k Bool M.State x) (t : ℕ) :
+    contEmissionMask (b2UnaryTM M) c t = contEmissionMask M (b2UnaryCfg c) t := by
+  induction t generalizing c with
+  | zero => rfl
+  | succ t ih =>
+    rw [contEmissionMask, contEmissionMask, ih, b2_unary_step]
+    congr 1
+    have hs' : (b2UnaryCfg c).state = c.state := rfl
+    cases hs : c.state <;>
+      simp only [MultiTapeTM.outputSymbol, b2UnaryTM, hs', hs, b2_unary_read]
+    rfl
+
+/-- A unary timed computation transfers to every original word of that
+length, at exactly the same time and with exactly the same completed output. -/
+private lemma b2_unary_computes (M : FinTM Bool) (x v : List Bool) (t : ℕ)
+    (hM : M.ComputesInTime (List.replicate x.length true) v t) :
+    (b2UnaryTM M).ComputesInTime x v t := by
+  have hr := b2_unary_run M ((b2UnaryTM M).tm.initCfg x) t
+  rw [b2_unary_initial] at hr
+  have hc := (computesInTime_iff _ _ _ _).mp hM
+  apply (computesInTime_iff _ _ _ _).mpr
+  exact ⟨(congrArg Cfg.state hr).trans hc.1, (congrArg Cfg.output hr).trans hc.2⟩
+
+/-- A total unary scheduler has a first halt depending only on input length.
+The bound is used to prove existence, never as a native phase-dispatch clock.
+**Proof sketch.** Choose the least halting time on each unary input. Absorption
+identifies its output with the output at the given bound. Exact normalized
+lockstep transfers the first halt and all earlier live states to every word
+of that length. -/
+private lemma b2_unary_first (M : FinTM Bool) (f : ℕ → List Bool) (T : ℕ → ℕ)
+    (hM : ∀ n, M.ComputesInTime (List.replicate n true) (f n) (T n)) :
+    ∃ τ : ℕ → ℕ, ∀ x : List Bool,
+      τ x.length ≤ T x.length ∧
+      (b2UnaryTM M).ComputesInTime x (f x.length) (τ x.length) ∧
+      ∀ s < τ x.length, ((b2UnaryTM M).tm.runFrom
+        ((b2UnaryTM M).tm.initCfg x) s).state ≠ none := by
+  classical
+  have hex (n : ℕ) : ∃ t, (M.tm.runFrom
+      (M.tm.initCfg (List.replicate n true)) t).state = none :=
+    ⟨T n, ((computesInTime_iff _ _ _ _).mp (hM n)).1⟩
+  refine ⟨fun n => Nat.find (hex n), fun x => ?_⟩
+  have hh := Nat.find_spec (hex x.length)
+  have ht := Nat.find_min' (hex x.length)
+    ((computesInTime_iff _ _ _ _).mp (hM x.length)).1
+  have ho := M.tm.runFrom_output_eq_of_halt
+    (M.tm.initCfg (List.replicate x.length true)) ht hh
+  have hc : M.ComputesInTime (List.replicate x.length true) (f x.length)
+      (Nat.find (hex x.length)) := (computesInTime_iff _ _ _ _).mpr
+    ⟨hh, ho.symm.trans ((computesInTime_iff _ _ _ _).mp (hM x.length)).2⟩
+  refine ⟨ht, b2_unary_computes M x _ _ hc, fun s hs hh' => ?_⟩
+  have hr := congrArg Cfg.state (b2_unary_run M ((b2UnaryTM M).tm.initCfg x) s)
+  rw [b2_unary_initial] at hr
+  exact Nat.find_min (hex x.length) hs (hr.symm.trans hh')
+
+/-- The host's four disjoint tape banks: scheduler, assembled input, verifier,
+and verifier output. Each machine bank has a private final buffer slot. -/
+private def b2Slots {α : Type} (S V : FinTM Bool) (s : Fin S.k → α)
+    (input : α) (v : Fin V.k → α) (output : α) :
+    Fin ((S.k + 1) + (V.k + 1)) → α :=
+  Fin.addCases
+    (fun i => if h : i.val < S.k then s ⟨i, h⟩ else input)
+    (fun i => if h : i.val < V.k then v ⟨i, h⟩ else output)
+
+/-- Native reverse host. Administrative states copy the input, rewind its
+physical head, and rewind the assembled buffer. The scheduler reads the
+normalized physical input; its emissions append choices to the copied input.
+The verifier uses only its own bank and the guarded virtual assembly input.
+Both tables are definitionally identical outside live guessing states. -/
+private def b2Host (S V : FinTM Bool) : FinNDTM Bool where
+  k := (S.k + 1) + (V.k + 1)
+  State := Fin 3 ⊕ (Option S.State ⊕ (Option V.State × Bool × Option Bool))
+  tm :=
+    { q₀ := .inl 0
+      tr := fun bit q inp work => match q with
+        | .inl q =>
+          if q = 0 then
+            match inp with
+            | some b =>
+              ⟨1, b2Slots S V (fun _ => (none, 0)) (some (some b), 1)
+                (fun _ => (none, 0)) (none, 0), none, some (.inl 0)⟩
+            | none => controlAction (-1) (some (.inl 1))
+          else if q = 1 then
+            match inp with
+            | some _ => controlAction (-1) (some (.inl 1))
+            | none => controlAction 1 (some (.inr (.inl (some S.tm.q₀))))
+          else
+            let inp := work (Fin.castAdd (V.k + 1) (Fin.last S.k))
+            ⟨0, b2Slots S V (fun _ => (none, 0))
+              (none, if inp.isSome then -1 else 1)
+              (fun _ => (none, 0)) (none, 0), none,
+              some (if inp.isSome then .inl 2
+                else .inr (.inr (some V.tm.q₀, true, none)))⟩
+        | .inr (.inl q) => match q with
+          | none =>
+            ⟨0, b2Slots S V (fun _ => (none, 0)) (none, -1)
+              (fun _ => (none, 0)) (none, 0), none, some (.inl 2)⟩
+          | some q =>
+            leftAction (V.k + 1) (fun q => .inr (.inl q))
+              ((contGuessTM (b2UnaryTM S)).tm.tr bit (some q) inp
+                (fun i => work (Fin.castAdd (V.k + 1) i)))
+        | .inr (.inr (q, tag, summary)) => match q with
+          | none =>
+            ⟨0, fun _ => (none, 0), some (decide (summary = some true)), none⟩
+          | some q =>
+            let inp := work (Fin.castAdd (V.k + 1) (Fin.last S.k))
+            let a := V.tm.tr q inp
+              (fun i => work (Fin.natAdd (S.k + 1) i.castSucc))
+            let m := virtualMove tag inp a.inputTape
+            ⟨0, b2Slots S V (fun _ => (none, 0)) (none, m) a.workTapes
+              (a.output.map some, if a.output.isSome then 1 else 0), none,
+              some (.inr (.inr (a.state, virtualNextTag tag m,
+                captureEmission summary a.output)))⟩ }
+
+/-- Embed the guessing phase with the original word already on its buffer.
+The verifier bank and its output capture remain blank throughout this phase. -/
+private def b2GuessCfg (S V : FinTM Bool) {x : List Bool}
+    (c : Cfg S.k Bool S.State x) (u : List Bool) :
+    Cfg (b2Host S V).k Bool (b2Host S V).State x :=
+  leftCfg (fun q => .inr (.inl q)) (contGuessCfg (b2UnaryTM S) c (x ++ u))
+    (fun _ _ => none) (fun _ => 0)
+
+/-- Outside a live guessing state, the two native transition tables coincide
+by the definition of the host, for every possible tuple of symbols. -/
+private lemma b2_tables_coincide (S V : FinTM Bool) (q : (b2Host S V).State)
+    (hq : ∀ s, q ≠ .inr (.inl (some s))) (inp : Option Bool)
+    (work : Fin (b2Host S V).k → Option Bool) :
+    (b2Host S V).tm.tr false q inp work = (b2Host S V).tm.tr true q inp work := by
+  rcases q with q | (q | q)
+  · rfl
+  · cases q with
+    | none => rfl
+    | some q => exact False.elim (hq q rfl)
+  · rfl
+
+/-- A live host guessing step is the banked native guessing transition with
+an inactive verifier bank. In particular a halting emission is appended before
+the host enters its scheduler-return state.
+**Proof sketch.** The left-bank projection has precisely the standalone
+phase's reads. The library's disjoint-bank action identity embeds its step;
+the predecessor's guessing-step invariant supplies the exact appended bit. -/
+private lemma b2_guess_step (S V : FinTM Bool) {x : List Bool}
+    (c : Cfg S.k Bool S.State x) (hc : c.state ≠ none) (u : List Bool) (bit : Bool) :
+    (b2Host S V).tm.stepWith bit (b2GuessCfg S V c u) =
+      b2GuessCfg S V ((b2UnaryTM S).tm.step c)
+        (u ++ if ((b2UnaryTM S).tm.outputSymbol c).isSome then [bit] else []) := by
+  cases hs : c.state with
+  | none => exact False.elim (hc hs)
+  | some q =>
+    let g := contGuessCfg (b2UnaryTM S) c (x ++ u)
+    have hstate : (b2GuessCfg S V c u).state = some (.inr (.inl (some q))) := by
+      simp [b2GuessCfg, leftCfg, contGuessCfg, hs]
+    have hi : (b2GuessCfg S V c u).inputSymbol = g.inputSymbol := rfl
+    have hw : (fun i : Fin (S.k + 1) => (b2GuessCfg S V c u).workTapeSymbols
+        (Fin.castAdd (V.k + 1) i)) = g.workTapeSymbols := by
+      funext i
+      simp [b2GuessCfg, leftCfg, Cfg.workTapeSymbols, g]
+    unfold NDTM.stepWith
+    rw [hstate]
+    dsimp only [b2Host]
+    simp only [hi]
+    simp only [b2GuessCfg, leftCfg, Cfg.workTapeSymbols, Fin.addCases_left]
+    change (leftAction (V.k + 1) (fun q : Option S.State => (Sum.inr (Sum.inl q) : (b2Host S V).State))
+      ((contGuessTM (b2UnaryTM S)).tm.tr bit (some q) g.inputSymbol g.workTapeSymbols)).apply
+        (leftCfg (fun q : Option S.State => (Sum.inr (Sum.inl q) : (b2Host S V).State)) g (fun _ _ => none) (fun _ => 0)) = _
+    rw [leftCfg_apply]
+    have hg : ((contGuessTM (b2UnaryTM S)).tm.tr bit (some q)
+        g.inputSymbol g.workTapeSymbols).apply g =
+        (contGuessTM (b2UnaryTM S)).tm.stepWith bit g := by
+      simp [NDTM.stepWith, g, contGuessCfg, hs]
+    rw [hg]
+    dsimp only [g]
+    rw [cont_guess_step]
+    simp only [List.append_assoc]
+    rfl
+
+/-- The host follows the standalone emission mask until the actual first
+scheduler halt. The preserved original input is a prefix of the assembly
+buffer, and every other bank remains isolated.
+**Proof sketch.** Induct on the physical choice word. The strict liveness
+guard permits one guessing step, including the final source-halting step;
+shift the guard by one for the remaining choices. -/
+private lemma b2_guess_run (S V : FinTM Bool) {x : List Bool}
+    (c : Cfg S.k Bool S.State x) (u w : List Bool)
+    (hlive : ∀ s < w.length, ((b2UnaryTM S).tm.runFrom c s).state ≠ none) :
+    (b2Host S V).tm.runWith w (b2GuessCfg S V c u) =
+      b2GuessCfg S V ((b2UnaryTM S).tm.runFrom c w.length)
+        (u ++ contSelect (contEmissionMask (b2UnaryTM S) c w.length) w) := by
+  induction w generalizing c u with
+  | nil => simp [contEmissionMask, contSelect]
+  | cons bit w ih =>
+    have hc : c.state ≠ none := hlive 0 (by simp)
+    have ht : ∀ s < w.length,
+        ((b2UnaryTM S).tm.runFrom ((b2UnaryTM S).tm.step c) s).state ≠ none := by
+      intro s hs
+      rw [← MultiTapeTM.runFrom_succ_eq_step]
+      exact hlive (s + 1) (by simpa using hs)
+    rw [NDTM.runWith_cons, b2_guess_step S V c hc, ih _ _ ht]
+    simp only [List.length_cons, contEmissionMask, contSelect,
+      MultiTapeTM.runFrom_succ_eq_step, List.append_assoc]
+
+/-- Loader configuration: all machine tapes are blank and only the assembly
+buffer is populated. The physical input is retained verbatim. -/
+private def b2LoadCfg (S V : FinTM Bool) {x : List Bool} (q : Fin 3)
+    (p : Fin (x.length + 2)) (pre : List Bool) (j : ℤ) :
+    Cfg (b2Host S V).k Bool (b2Host S V).State x :=
+  ⟨some (.inl q), p,
+    b2Slots S V (fun _ _ => none) (bufferTape pre) (fun _ _ => none) (fun _ => none),
+    b2Slots S V (fun _ => 0) j (fun _ => 0) 0, []⟩
+
+/-- One copy transition appends exactly the next original input bit; its
+physical choice is ignored and every scheduler/verifier tape stays blank. -/
+private lemma b2_copy_step (S V : FinTM Bool) (x : List Bool) (i : ℕ)
+    (hi : i < x.length) (bit : Bool) :
+    (b2Host S V).tm.stepWith bit
+      (b2LoadCfg S V (x := x) 0 ⟨i + 1, by omega⟩ (x.take i) i) =
+        b2LoadCfg S V (x := x) 0 ⟨i + 2, by omega⟩ (x.take (i + 1)) (i + 1) := by
+  have hr : (b2LoadCfg S V (x := x) 0 ⟨i + 1, by omega⟩ (x.take i) i).inputSymbol =
+      some x[i] := inputSymbolInner i (by simp [b2LoadCfg]; omega) hi
+  unfold NDTM.stepWith
+  change ((b2Host S V).tm.tr bit (.inl 0) _ _).apply _ = _
+  dsimp only [b2Host]
+  rw [if_pos rfl, hr]
+  dsimp only
+  refine Cfg.ext rfl ?_ ?_ ?_ rfl
+  · apply Fin.ext
+    change (moveInputPos (⟨i + 1, by omega⟩ : Fin (x.length + 2)) .pos).val = i + 2
+    rw [moveInputPos_pos_of_ne_right _ (by simp; omega)]
+  · funext j
+    refine Fin.addCases ?_ ?_ j <;> intro j
+    · by_cases hj : j.val < S.k
+      · simp [b2LoadCfg, b2Slots, hj]
+      · simp only [b2LoadCfg, b2Slots, Action.apply, Fin.addCases_left, dif_neg hj]
+        rw [List.take_succ_eq_append_getElem hi, bufferTape_append,
+          List.length_take_of_le (Nat.le_of_lt hi)]
+    · by_cases hj : j.val < V.k <;> simp [b2LoadCfg, b2Slots]
+  · funext j
+    refine Fin.addCases ?_ ?_ j <;> intro j
+    · by_cases hj : j.val < S.k <;> simp [b2LoadCfg, b2Slots, hj]
+    · by_cases hj : j.val < V.k <;> simp [b2LoadCfg, b2Slots]
+
+/-- The original input prefix is copied in exactly one transition per bit,
+independently of all physical choices. Induction on the consumed choices
+uses the one-step copier and never reads the guessed-data buffer. -/
+private lemma b2_copy_run (S V : FinTM Bool) (x w : List Bool)
+    (i : ℕ) (hi : i + w.length ≤ x.length) :
+    (b2Host S V).tm.runWith w
+      (b2LoadCfg S V (x := x) 0 ⟨i + 1, by omega⟩ (x.take i) i) =
+        b2LoadCfg S V (x := x) 0 ⟨i + w.length + 1, by omega⟩
+          (x.take (i + w.length)) (i + w.length) := by
+  induction w generalizing i with
+  | nil => simp
+  | cons bit w ih =>
+    rw [NDTM.runWith_cons, b2_copy_step S V x i (by simp only [List.length_cons] at hi; omega)]
+    simpa [Nat.add_assoc, Nat.add_comm, Nat.add_left_comm, Nat.cast_add,
+      add_assoc, add_comm, add_left_comm] using
+      ih (i + 1) (by simp only [List.length_cons] at hi; omega)
+
+/-- At the left blank, one choice-independent transition starts the scheduler
+at head one with blank source tapes and the preserved original input buffer. -/
+private lemma b2_rewind_done (S V : FinTM Bool) (x : List Bool) (bit : Bool) :
+    (b2Host S V).tm.stepWith bit (b2LoadCfg S V (x := x) 1 0 x x.length) =
+      b2GuessCfg S V ((b2UnaryTM S).tm.initCfg x) [] := by
+  have hr : (b2LoadCfg S V (x := x) 1 0 x x.length).inputSymbol = none := by
+    simp [b2LoadCfg, Cfg.inputSymbol]
+  unfold NDTM.stepWith
+  change ((b2Host S V).tm.tr bit (.inl 1) _ _).apply _ = _
+  dsimp only [b2Host]
+  rw [if_neg (by decide : (1 : Fin 3) ≠ 0), if_pos rfl, hr, controlAction_apply]
+  refine Cfg.ext rfl ?_ ?_ ?_ rfl
+  · apply Fin.ext
+    simp [b2LoadCfg, b2GuessCfg, leftCfg, contGuessCfg, MultiTapeTM.initCfg,
+      Cfg.init, moveInputPos]
+  · funext i
+    refine Fin.addCases ?_ ?_ i <;> intro i
+    · by_cases h : i.val < S.k <;>
+        simp [b2LoadCfg, b2Slots, b2GuessCfg, leftCfg, contGuessCfg, b2UnaryTM, h,
+          MultiTapeTM.initCfg, Cfg.init]
+    · by_cases h : i.val < V.k <;>
+        simp [b2LoadCfg, b2Slots, b2GuessCfg, leftCfg, contGuessCfg]
+  · funext i
+    refine Fin.addCases ?_ ?_ i <;> intro i
+    · by_cases h : i.val < S.k <;>
+        simp [b2LoadCfg, b2Slots, b2GuessCfg, leftCfg, contGuessCfg, b2UnaryTM, h,
+          MultiTapeTM.initCfg, Cfg.init]
+    · by_cases h : i.val < V.k <;>
+        simp [b2LoadCfg, b2Slots, b2GuessCfg, leftCfg, contGuessCfg]
+
+/-- Each interior rewind transition moves the physical input head left by
+one, preserving the copied word and both blank machine banks. -/
+private lemma b2_rewind_step (S V : FinTM Bool) (x : List Bool) (j : ℕ)
+    (hj : j < x.length) (bit : Bool) :
+    (b2Host S V).tm.stepWith bit
+      (b2LoadCfg S V (x := x) 1 ⟨j + 1, by omega⟩ x x.length) =
+        b2LoadCfg S V (x := x) 1 ⟨j, by omega⟩ x x.length := by
+  have hr : (b2LoadCfg S V (x := x) 1 ⟨j + 1, by omega⟩ x x.length).inputSymbol =
+      some x[j] := inputSymbolInner j (by simp [b2LoadCfg]; omega) hj
+  unfold NDTM.stepWith
+  change ((b2Host S V).tm.tr bit (.inl 1) _ _).apply _ = _
+  dsimp only [b2Host]
+  rw [if_neg (by decide : (1 : Fin 3) ≠ 0), if_pos rfl, hr, controlAction_apply]
+  refine Cfg.ext rfl ?_ rfl rfl rfl
+  apply Fin.ext
+  change (moveInputPos (⟨j + 1, by omega⟩ : Fin (x.length + 2)) .neg).val = j
+  rw [moveInputPos_neg_val]
+  simp
+
+/-- The physical rewind reaches the genuine scheduler startup in exactly
+`j+1` steps from position `j`. Decreasing-position induction applies to
+every choice word, including the empty-input left blank. -/
+private lemma b2_rewind_run (S V : FinTM Bool) (x : List Bool) (j : ℕ)
+    (hj : j ≤ x.length) (w : List Bool) (hw : w.length = j + 1) :
+    (b2Host S V).tm.runWith w
+      (b2LoadCfg S V (x := x) 1 ⟨j, by omega⟩ x x.length) =
+        b2GuessCfg S V ((b2UnaryTM S).tm.initCfg x) [] := by
+  induction j generalizing w with
+  | zero =>
+    cases w with
+    | nil => simp at hw
+    | cons bit w =>
+      have he : w = [] := by simpa using hw
+      subst w
+      exact b2_rewind_done S V x bit
+  | succ j ih =>
+    cases w with
+    | nil => simp at hw
+    | cons bit w =>
+      rw [NDTM.runWith_cons, b2_rewind_step S V x j (by omega)]
+      exact ih (by omega) w (by simpa using hw)
+
+/-- The host's blank-tape initial configuration is exactly the empty loader
+configuration, rather than an assumed prepared assembly tape. -/
+private lemma b2_initial (S V : FinTM Bool) (x : List Bool) :
+    (b2Host S V).tm.initCfg x = b2LoadCfg S V (x := x) 0 1 [] 0 := by
+  refine Cfg.ext rfl rfl ?_ ?_ rfl
+  · funext i
+    refine Fin.addCases ?_ ?_ i <;> intro i
+    · by_cases h : i.val < S.k <;> simp [b2LoadCfg, b2Slots]
+    · by_cases h : i.val < V.k <;> simp [b2LoadCfg, b2Slots]
+  · funext i
+    refine Fin.addCases ?_ ?_ i <;> intro i
+    · by_cases h : i.val < S.k <;> simp [b2LoadCfg, b2Slots]
+    · by_cases h : i.val < V.k <;> simp [b2LoadCfg, b2Slots]
+
+/-- The right input blank triggers a mandatory left move before the rewind
+scan, so an empty input is handled without confusing its two boundaries. -/
+private lemma b2_copy_done (S V : FinTM Bool) (x : List Bool) (bit : Bool) :
+    (b2Host S V).tm.stepWith bit
+      (b2LoadCfg S V (x := x) 0 ⟨x.length + 1, by omega⟩ x x.length) =
+        b2LoadCfg S V (x := x) 1 ⟨x.length, by omega⟩ x x.length := by
+  have hr : (b2LoadCfg S V (x := x) 0 ⟨x.length + 1, by omega⟩ x x.length).inputSymbol =
+      none := (inputSymbol_at _ x.length (le_refl _) rfl).trans (by simp)
+  unfold NDTM.stepWith
+  change ((b2Host S V).tm.tr bit (.inl 0) _ _).apply _ = _
+  dsimp only [b2Host]
+  rw [if_pos rfl, hr, controlAction_apply]
+  refine Cfg.ext rfl ?_ rfl rfl rfl
+  apply Fin.ext
+  change (moveInputPos (⟨x.length + 1, by omega⟩ : Fin (x.length + 2)) .neg).val = x.length
+  rw [moveInputPos_neg_val]
+  simp
+
+/-- Startup preserves the original input and installs the normalized scheduler
+after exactly `2*|x|+2` physical choices, all ignored.
+**Proof sketch.** Split off `|x|` choices for the copier. One blank transition
+starts the rewind; the remaining `|x|+1` choices return the input head to one
+with blank scheduler/verifier banks and assembly buffer exactly `x`. -/
+private lemma b2_start (S V : FinTM Bool) (x w : List Bool)
+    (hw : w.length = 2 * x.length + 2) :
+    (b2Host S V).tm.runWith w ((b2Host S V).tm.initCfg x) =
+      b2GuessCfg S V ((b2UnaryTM S).tm.initCfg x) [] := by
+  have hp : (w.take x.length).length = x.length := List.length_take_of_le (by omega)
+  have hcopy : (b2Host S V).tm.runWith (w.take x.length)
+      ((b2Host S V).tm.initCfg x) =
+        b2LoadCfg S V (x := x) 0 ⟨x.length + 1, by omega⟩ x x.length := by
+    rw [b2_initial]
+    simpa [hp] using b2_copy_run S V x (w.take x.length) 0 (by omega)
+  have hdlen : (w.drop x.length).length = x.length + 2 := by
+    rw [List.length_drop, hw]
+    omega
+  cases hd : w.drop x.length with
+  | nil => simp [hd] at hdlen
+  | cons bit rest =>
+    have hrest : rest.length = x.length + 1 := by simpa [hd] using hdlen
+    have hsplit : w = w.take x.length ++ bit :: rest := by
+      rw [← hd, List.take_append_drop]
+    rw [hsplit, NDTM.runWith_append, hcopy, NDTM.runWith_cons, b2_copy_done]
+    exact b2_rewind_run S V x x.length (le_refl _) rest hrest
+
+/-- A captured guessing word is determined by its tape contents. This reads
+every nonnegative tape cell, so it also covers the zero-length word. -/
+private lemma b2_guess_word_injective (M : FinTM Bool) {x : List Bool}
+    (c : Cfg M.k Bool M.State x) {u v : List Bool}
+    (h : contGuessCfg M c u = contGuessCfg M c v) : u = v := by
+  apply List.ext_getElem?
+  intro i
+  have he := congrArg (fun g => g.workTapes (Fin.last M.k) (i : ℤ)) h
+  simpa [contGuessCfg] using he
+
+/-- Reuse the predecessor's native coverage at the actual first scheduler
+halt, and transfer its full-word extraction/coverage into the host. The
+assembly buffer has original prefix `x` and exactly the extracted suffix.
+**Proof sketch.** Standalone coverage supplies the guessed word. Equality of
+its capture tape identifies that word with physical-mask selection; the
+guarded host run then gives the same selection after the preserved prefix. -/
+private lemma b2_guess_coverage (S V : FinTM Bool) (x v : List Bool) (T : ℕ)
+    (hS : (b2UnaryTM S).ComputesInTime x v T)
+    (hlive : ∀ s < T, ((b2UnaryTM S).tm.runFrom
+      ((b2UnaryTM S).tm.initCfg x) s).state ≠ none) :
+    (∀ w : List Bool, w.length = T → ∃ u : List Bool, u.length = v.length ∧
+      (b2Host S V).tm.runWith w
+        (b2GuessCfg S V ((b2UnaryTM S).tm.initCfg x) []) =
+          b2GuessCfg S V ((b2UnaryTM S).tm.runFrom
+            ((b2UnaryTM S).tm.initCfg x) T) u) ∧
+    (∀ u : List Bool, u.length = v.length → ∃ w : List Bool, w.length = T ∧
+      (b2Host S V).tm.runWith w
+        (b2GuessCfg S V ((b2UnaryTM S).tm.initCfg x) []) =
+          b2GuessCfg S V ((b2UnaryTM S).tm.runFrom
+            ((b2UnaryTM S).tm.initCfg x) T) u) := by
+  have hcov := cont_guess_coverage (b2UnaryTM S) x v T hS
+  have htransfer (w u : List Bool) (hw : w.length = T)
+      (hr : (contGuessTM (b2UnaryTM S)).tm.runWith w
+        ((contGuessTM (b2UnaryTM S)).tm.initCfg x) =
+          contGuessCfg (b2UnaryTM S) ((b2UnaryTM S).tm.runFrom
+            ((b2UnaryTM S).tm.initCfg x) T) u) :
+      (b2Host S V).tm.runWith w
+        (b2GuessCfg S V ((b2UnaryTM S).tm.initCfg x) []) =
+          b2GuessCfg S V ((b2UnaryTM S).tm.runFrom
+            ((b2UnaryTM S).tm.initCfg x) T) u := by
+    rw [cont_guess_initial, cont_guess_run, hw, List.nil_append] at hr
+    have hu := b2_guess_word_injective _ _ hr
+    rw [b2_guess_run S V _ [] w (by simpa [hw] using hlive), hw, List.nil_append, hu]
+  constructor
+  · intro w hw
+    obtain ⟨u, hu, hr⟩ := hcov.1 w hw
+    exact ⟨u, hu, htransfer w u hw hr⟩
+  · intro u hu
+    obtain ⟨w, hw, hr⟩ := hcov.2 u hu
+    exact ⟨w, hw, htransfer w u hw hr⟩
+
+/-- Verifier invariant: its input is the assembly buffer with a guarded
+virtual head, its own source tapes are exact, all emitted bits are captured,
+and the scheduler's bank remains unchanged. Physical output is still empty. -/
+private def b2VerifyCfg (S V : FinTM Bool) {x y : List Bool}
+    (c : Cfg V.k Bool V.State y) (tag : Bool) (p : Fin (x.length + 2))
+    (tapes : Fin S.k → ℤ → Option Bool) (heads : Fin S.k → ℤ) :
+    Cfg (b2Host S V).k Bool (b2Host S V).State x :=
+  ⟨some (.inr (.inr (c.state, tag, capturedSummary c.output))), p,
+    b2Slots S V tapes (bufferTape y) c.workTapes (bufferTape c.output),
+    b2Slots S V heads ((c.inputPos.val : ℤ) - 1) c.workTapePos c.output.length, []⟩
+
+/-- The assembled-input rewind retains the completed scheduler bank and
+the blank verifier bank. Its assembly head is explicitly recorded. -/
+private def b2ReadyCfg (S V : FinTM Bool) {x : List Bool}
+    (c : Cfg S.k Bool S.State x) (y : List Bool) (j : ℤ) :
+    Cfg (b2Host S V).k Bool (b2Host S V).State x :=
+  ⟨some (.inl 2), c.inputPos,
+    b2Slots S V c.workTapes (bufferTape y) (fun _ _ => none) (fun _ => none),
+    b2Slots S V c.workTapePos j (fun _ => 0) 0, []⟩
+
+/-- A live verifier step reads the exact assembly input, clamps both virtual
+boundaries correctly, and captures even an emission on a halting transition.
+Its physical choice is ignored.
+**Proof sketch.** The assembly-buffer read is the source input read. The
+library virtual-head identity supplies the new head and boundary tag. Check
+the scheduler/assembly and verifier/capture banks separately; the capture
+append identity and finite-summary update retain the whole emitted word. -/
+private lemma b2_verify_step (S V : FinTM Bool) {x y : List Bool}
+    (c : Cfg V.k Bool V.State y) (hc : c.state ≠ none)
+    (tag : Bool) (htag : VirtualTag c.inputPos tag) (p : Fin (x.length + 2))
+    (tapes : Fin S.k → ℤ → Option Bool) (heads : Fin S.k → ℤ) (bit : Bool) :
+    ∃ tag', VirtualTag (V.tm.step c).inputPos tag' ∧
+      (b2Host S V).tm.stepWith bit (b2VerifyCfg S V c tag p tapes heads) =
+        b2VerifyCfg S V (V.tm.step c) tag' p tapes heads := by
+  cases hs : c.state with
+  | none => exact False.elim (hc hs)
+  | some q =>
+    let a := V.tm.tr q c.inputSymbol c.workTapeSymbols
+    let m := virtualMove tag c.inputSymbol a.inputTape
+    have hm := virtualMove_correct c tag htag a.inputTape
+    have hstep : V.tm.step c = a.apply c := by simp [MultiTapeTM.step, hs, a]
+    have hi : (b2VerifyCfg S V c tag p tapes heads).workTapeSymbols
+        (Fin.castAdd (V.k + 1) (Fin.last S.k)) = c.inputSymbol := by
+      simp [b2VerifyCfg, b2Slots, Cfg.workTapeSymbols, bufferTape_inputSymbol]
+    have hw : (fun i : Fin V.k => (b2VerifyCfg S V c tag p tapes heads).workTapeSymbols
+        (Fin.natAdd (S.k + 1) i.castSucc)) = c.workTapeSymbols := by
+      funext i
+      simp [b2VerifyCfg, b2Slots, Cfg.workTapeSymbols, i.isLt]
+    refine ⟨virtualNextTag tag m, ?_, ?_⟩
+    · simpa only [hstep, Action.apply] using hm.2
+    · rw [hstep]
+      unfold NDTM.stepWith
+      change ((b2Host S V).tm.tr bit
+        (.inr (.inr (c.state, tag, capturedSummary c.output))) _ _).apply _ = _
+      rw [hs]
+      dsimp only [b2Host]
+      rw [hi, hw]
+      change (Action.mk 0 (b2Slots S V (fun _ => (none, 0)) (none, m) a.workTapes
+        (a.output.map some, if a.output.isSome then 1 else 0)) none
+        (some (.inr (.inr (a.state, virtualNextTag tag m,
+          captureEmission (capturedSummary c.output) a.output))))).apply
+            (b2VerifyCfg S V c tag p tapes heads) = _
+      refine Cfg.ext (by simp [b2VerifyCfg, captureEmission_correct])
+        (moveInputPos_zero _) ?_ ?_ rfl
+      · funext i
+        refine Fin.addCases ?_ ?_ i <;> intro i
+        · by_cases h : i.val < S.k <;> simp [b2VerifyCfg, b2Slots, h]
+        · by_cases h : i.val < V.k
+          · simp [b2VerifyCfg, b2Slots, h]
+          · cases he : a.output <;> simp [b2VerifyCfg, b2Slots, h, he, bufferTape_append]
+      · funext i
+        refine Fin.addCases ?_ ?_ i <;> intro i
+        · by_cases h : i.val < S.k
+          · simp [b2VerifyCfg, b2Slots, h]
+          · simpa [b2VerifyCfg, b2Slots, h, m] using hm.1
+        · by_cases h : i.val < V.k
+          · simp [b2VerifyCfg, b2Slots, h]
+          · cases he : a.output <;> simp [b2VerifyCfg, b2Slots, h, he]
+
+/-- Every physical choice word simulates the same verifier until its first
+halt, with exact output capture and a valid boundary tag. Induction applies
+the choice-independent one-step invariant and shifts the liveness guard. -/
+private lemma b2_verify_run (S V : FinTM Bool) {x y : List Bool}
+    (c : Cfg V.k Bool V.State y) (tag : Bool) (htag : VirtualTag c.inputPos tag)
+    (p : Fin (x.length + 2)) (tapes : Fin S.k → ℤ → Option Bool)
+    (heads : Fin S.k → ℤ) (w : List Bool)
+    (hlive : ∀ s < w.length, (V.tm.runFrom c s).state ≠ none) :
+    ∃ tag', VirtualTag (V.tm.runFrom c w.length).inputPos tag' ∧
+      (b2Host S V).tm.runWith w (b2VerifyCfg S V c tag p tapes heads) =
+        b2VerifyCfg S V (V.tm.runFrom c w.length) tag' p tapes heads := by
+  induction w generalizing c tag with
+  | nil => exact ⟨tag, htag, rfl⟩
+  | cons bit w ih =>
+    obtain ⟨tag', htag', hs⟩ := b2_verify_step S V c (hlive 0 (by simp))
+      tag htag p tapes heads bit
+    have ht : ∀ s < w.length, (V.tm.runFrom (V.tm.step c) s).state ≠ none := by
+      intro s hs
+      rw [← MultiTapeTM.runFrom_succ_eq_step]
+      exact hlive (s + 1) (by simpa using hs)
+    obtain ⟨tag'', htag'', hr⟩ := ih (V.tm.step c) tag' htag' ht
+    refine ⟨tag'', ?_, ?_⟩
+    · simpa only [List.length_cons, MultiTapeTM.runFrom_succ_eq_step] using htag''
+    · rw [NDTM.runWith_cons, hs, hr]
+      simp only [List.length_cons, MultiTapeTM.runFrom_succ_eq_step]
+
+/-- After the verifier halts, one physical transition emits exactly one
+verdict bit and halts the host. Acceptance tests the entire captured word. -/
+private lemma b2_verify_finish (S V : FinTM Bool) {x y : List Bool}
+    (c : Cfg V.k Bool V.State y) (hc : c.state = none) (tag : Bool)
+    (p : Fin (x.length + 2)) (tapes : Fin S.k → ℤ → Option Bool)
+    (heads : Fin S.k → ℤ) (bit : Bool) :
+    let out := (b2Host S V).tm.stepWith bit (b2VerifyCfg S V c tag p tapes heads)
+    out.state = none ∧ out.output = [decide (c.output = [true])] := by
+  simp [NDTM.stepWith, b2Host, b2VerifyCfg, hc, capturedSummary_true]
+
+/-- The actual scheduler-return state dispatches to assembly rewind. This
+transition is available only after the represented scheduler has halted. -/
+private lemma b2_guess_return (S V : FinTM Bool) {x : List Bool}
+    (c : Cfg S.k Bool S.State x) (hc : c.state = none) (u : List Bool) (bit : Bool) :
+    (b2Host S V).tm.stepWith bit (b2GuessCfg S V c u) =
+      b2ReadyCfg S V c (x ++ u) ((x ++ u).length - 1 : ℤ) := by
+  have hs : (b2GuessCfg S V c u).state = some (.inr (.inl none)) := by
+    simp [b2GuessCfg, leftCfg, contGuessCfg, hc]
+  unfold NDTM.stepWith
+  rw [hs]
+  dsimp only [b2Host]
+  refine Cfg.ext rfl (moveInputPos_zero _) ?_ ?_ rfl
+  · funext i
+    refine Fin.addCases ?_ ?_ i <;> intro i
+    · by_cases h : i.val < S.k <;>
+        simp [b2GuessCfg, leftCfg, contGuessCfg, b2UnaryTM, b2ReadyCfg, b2Slots, h]
+    · by_cases h : i.val < V.k <;>
+        simp [b2GuessCfg, leftCfg, b2ReadyCfg, b2Slots]
+  · funext i
+    refine Fin.addCases ?_ ?_ i <;> intro i
+    · by_cases h : i.val < S.k <;>
+        simp [b2GuessCfg, leftCfg, contGuessCfg, b2UnaryTM, b2ReadyCfg, b2Slots, h,
+          sub_eq_add_neg]
+    · by_cases h : i.val < V.k <;>
+        simp [b2GuessCfg, leftCfg, b2ReadyCfg, b2Slots]
+
+/-- The assembly rewind moves left across a populated cell while retaining
+the entire assembled word and the completed scheduler configuration. -/
+private lemma b2_ready_step (S V : FinTM Bool) {x : List Bool}
+    (c : Cfg S.k Bool S.State x) (y : List Bool) (j : ℕ)
+    (hj : j < y.length) (bit : Bool) :
+    (b2Host S V).tm.stepWith bit (b2ReadyCfg S V c y j) =
+      b2ReadyCfg S V c y ((j : ℤ) - 1) := by
+  have hr : (b2ReadyCfg S V c y j).workTapeSymbols
+      (Fin.castAdd (V.k + 1) (Fin.last S.k)) = some y[j] := by
+    simp [b2ReadyCfg, b2Slots, Cfg.workTapeSymbols, List.getElem?_eq_getElem hj]
+  unfold NDTM.stepWith
+  change ((b2Host S V).tm.tr bit (.inl 2) _ _).apply _ = _
+  dsimp only [b2Host]
+  rw [if_neg (by decide : (2 : Fin 3) ≠ 0),
+    if_neg (by decide : (2 : Fin 3) ≠ 1), hr]
+  refine Cfg.ext rfl (moveInputPos_zero _) ?_ ?_ rfl
+  · funext i
+    refine Fin.addCases ?_ ?_ i <;> intro i
+    · by_cases h : i.val < S.k <;> simp [b2ReadyCfg, b2Slots, h]
+    · by_cases h : i.val < V.k <;> simp [b2ReadyCfg, b2Slots]
+  · funext i
+    refine Fin.addCases ?_ ?_ i <;> intro i
+    · by_cases h : i.val < S.k <;> simp [b2ReadyCfg, b2Slots, h, sub_eq_add_neg]
+    · by_cases h : i.val < V.k <;> simp [b2ReadyCfg, b2Slots]
+
+/-- The assembly's left blank starts the verifier at its genuine initial
+configuration: virtual head one, blank source tapes, and empty captured output.
+This applies equally to an empty assembled input. -/
+private lemma b2_ready_done (S V : FinTM Bool) {x : List Bool}
+    (c : Cfg S.k Bool S.State x) (y : List Bool) (bit : Bool) :
+    (b2Host S V).tm.stepWith bit (b2ReadyCfg S V c y (-1)) =
+      b2VerifyCfg S V (V.tm.initCfg y) true c.inputPos c.workTapes c.workTapePos := by
+  have hr : (b2ReadyCfg S V c y (-1)).workTapeSymbols
+      (Fin.castAdd (V.k + 1) (Fin.last S.k)) = none := by
+    simp [b2ReadyCfg, b2Slots, Cfg.workTapeSymbols]
+  unfold NDTM.stepWith
+  change ((b2Host S V).tm.tr bit (.inl 2) _ _).apply _ = _
+  dsimp only [b2Host]
+  rw [if_neg (by decide : (2 : Fin 3) ≠ 0),
+    if_neg (by decide : (2 : Fin 3) ≠ 1), hr]
+  refine Cfg.ext rfl (moveInputPos_zero _) ?_ ?_ rfl
+  · funext i
+    refine Fin.addCases ?_ ?_ i <;> intro i
+    · by_cases h : i.val < S.k <;> simp [b2ReadyCfg, b2VerifyCfg, b2Slots, h]
+    · by_cases h : i.val < V.k <;>
+        simp [b2ReadyCfg, b2VerifyCfg, b2Slots, MultiTapeTM.initCfg, Cfg.init]
+  · funext i
+    refine Fin.addCases ?_ ?_ i <;> intro i
+    · by_cases h : i.val < S.k <;>
+        simp [b2ReadyCfg, b2VerifyCfg, b2Slots, h, MultiTapeTM.initCfg, Cfg.init]
+    · by_cases h : i.val < V.k <;>
+        simp [b2ReadyCfg, b2VerifyCfg, b2Slots, MultiTapeTM.initCfg, Cfg.init]
+
+/-- Assembly rewind takes exactly `j+1` transitions from head `j-1`, with
+every physical choice ignored. Decreasing-head induction ends with the
+proper verifier startup, including the empty-buffer case. -/
+private lemma b2_ready_run (S V : FinTM Bool) {x : List Bool}
+    (c : Cfg S.k Bool S.State x) (y : List Bool) (j : ℕ) (hj : j ≤ y.length)
+    (w : List Bool) (hw : w.length = j + 1) :
+    (b2Host S V).tm.runWith w (b2ReadyCfg S V c y ((j : ℤ) - 1)) =
+      b2VerifyCfg S V (V.tm.initCfg y) true c.inputPos c.workTapes c.workTapePos := by
+  induction j generalizing w with
+  | zero =>
+    cases w with
+    | nil => simp at hw
+    | cons bit w =>
+      have he : w = [] := by simpa using hw
+      subst w
+      simpa using b2_ready_done S V c y bit
+  | succ j ih =>
+    cases w with
+    | nil => simp at hw
+    | cons bit w =>
+      have he : ((j + 1 : ℕ) : ℤ) - 1 = j := by omega
+      rw [NDTM.runWith_cons, he, b2_ready_step S V c y j (by omega)]
+      exact ih (by omega) w (by simpa using hw)
+
+/-- From an actual scheduler halt, `|x++u|+2` transitions install the
+relocated verifier. The guessed suffix is already appended to the preserved
+prefix, so assembly needs only a rewind and dispatch. -/
+private lemma b2_assembly (S V : FinTM Bool) {x : List Bool}
+    (c : Cfg S.k Bool S.State x) (hc : c.state = none) (u w : List Bool)
+    (hw : w.length = (x ++ u).length + 2) :
+    (b2Host S V).tm.runWith w (b2GuessCfg S V c u) =
+      b2VerifyCfg S V (V.tm.initCfg (x ++ u)) true c.inputPos c.workTapes c.workTapePos := by
+  cases w with
+  | nil => simp at hw
+  | cons bit w =>
+    rw [NDTM.runWith_cons, b2_guess_return S V c hc]
+    exact b2_ready_run S V c (x ++ u) (x ++ u).length (le_refl _) w (by simpa using hw)
+
+/-- Every branch of the verifier phase halts with its single verdict within
+the source budget plus one. Actual first halts may depend on the assembled
+certificate; the declared upper bound is common.
+**Proof sketch.** Take the source's first halt, simulate the corresponding
+choice prefix, and execute one verdict transition. All remaining choices
+are absorbed by the halted host. Output uniqueness identifies the completed
+source output with its specified singleton. -/
+private lemma b2_verify_timed (S V : FinTM Bool) {x : List Bool}
+    (y : List Bool) (b : Bool) (T : ℕ) (hV : V.ComputesInTime y [b] T)
+    (p : Fin (x.length + 2)) (tapes : Fin S.k → ℤ → Option Bool)
+    (heads : Fin S.k → ℤ) (w : List Bool) (hw : w.length = T + 1) :
+    let out := (b2Host S V).tm.runWith w
+      (b2VerifyCfg S V (V.tm.initCfg y) true p tapes heads)
+    out.state = none ∧ out.output = [b] := by
+  classical
+  have hex : ∃ t, (V.tm.runFrom (V.tm.initCfg y) t).state = none :=
+    ⟨T, ((computesInTime_iff _ _ _ _).mp hV).1⟩
+  let t := Nat.find hex
+  let c := V.tm.runFrom (V.tm.initCfg y) t
+  have ht : t ≤ T := Nat.find_min' hex ((computesInTime_iff _ _ _ _).mp hV).1
+  have hc : c.state = none := Nat.find_spec hex
+  have hcomp : V.ComputesInTime y c.output t :=
+    (computesInTime_iff _ _ _ _).mpr ⟨hc, rfl⟩
+  have ho : c.output = [b] := hcomp.output_unique hV
+  have hp : (w.take t).length = t := List.length_take_of_le (by omega)
+  obtain ⟨tag, _, hr⟩ := b2_verify_run S V (V.tm.initCfg y) true
+    (by simp [VirtualTag, MultiTapeTM.initCfg, Cfg.init]) p tapes heads (w.take t)
+    (fun s hs => Nat.find_min hex (show s < t from hp ▸ hs))
+  rw [hp] at hr
+  have hlen : 0 < (w.drop t).length := by rw [List.length_drop]; omega
+  cases hd : w.drop t with
+  | nil => simp [hd] at hlen
+  | cons bit rest =>
+    have hf := b2_verify_finish S V c hc tag p tapes heads bit
+    have hout : ((b2Host S V).tm.stepWith bit
+        (b2VerifyCfg S V c tag p tapes heads)).output = [b] := by
+      rw [hf.2, ho]
+      cases b <;> simp
+    have hsplit : w = w.take t ++ bit :: rest := by rw [← hd, List.take_append_drop]
+    dsimp only
+    rw [hsplit, NDTM.runWith_append, hr, NDTM.runWith_cons,
+      NDTM.runWith_of_halt _ hf.1]
+    exact ⟨hf.1, hout⟩
+
+/-- Assembly and verification terminate on every suffix choice word at a
+common bound and emit the verifier's single decision bit.
+**Proof sketch.** Split the physical word at the exact assembly-rewind
+length; the rest has the verifier budget plus its verdict transition. Apply
+the two timed phase contracts in order. -/
+private lemma b2_finish (S V : FinTM Bool) {x : List Bool}
+    (c : Cfg S.k Bool S.State x) (hc : c.state = none) (u : List Bool)
+    (b : Bool) (T : ℕ) (hV : V.ComputesInTime (x ++ u) [b] T)
+    (w : List Bool) (hw : w.length = (x ++ u).length + 2 + (T + 1)) :
+    let out := (b2Host S V).tm.runWith w (b2GuessCfg S V c u)
+    out.state = none ∧ out.output = [b] := by
+  let a := (x ++ u).length + 2
+  have hp : (w.take a).length = a := List.length_take_of_le (by dsimp [a]; omega)
+  have ht : (w.drop a).length = T + 1 := by rw [List.length_drop, hw]; dsimp [a]; omega
+  have hr := b2_assembly S V c hc u (w.take a) hp
+  have hf := b2_verify_timed S V (x ++ u) b T hV c.inputPos c.workTapes
+    c.workTapePos (w.drop a) ht
+  dsimp only at hf ⊢
+  rw [← hr, ← NDTM.runWith_append, List.take_append_drop] at hf
+  exact hf
+
+/-- The integrated host has both branch extraction and witness coverage at
+one common budget. Guess positions are offset by the exact startup length;
+administrative choices may all be false. Every branch, accepted or rejected,
+halts with the verifier's single bit for an exact-length certificate.
+**Proof sketch.** Split each full choice word into startup, the actual
+scheduler interval, and a completion suffix. Native coverage gives the
+unique scheduled certificate length. Startup, guessing, and completion run
+contracts compose at their actual configurations. Conversely, choose any
+covered guessing word and surround it by arbitrary administrative choices. -/
+private lemma b2_host_contract (S M : FinTM Bool) (V : Language Bool)
+    (x v : List Bool) (T A d : ℕ)
+    (hS : (b2UnaryTM S).ComputesInTime x v T)
+    (hlive : ∀ s < T, ((b2UnaryTM S).tm.runFrom
+      ((b2UnaryTM S).tm.initCfg x) s).state ≠ none)
+    (hM : M.DecidesInTime V (fun n => A * (n + 1) ^ d)) :
+    let H := 2 * x.length + 2 + T +
+      (x.length + v.length + 2 + (A * (x.length + v.length + 1) ^ d + 1))
+    (∀ w : List Bool, w.length = H → ∃ u : List Bool, u.length = v.length ∧
+      ((b2Host S M).tm.runWith w ((b2Host S M).tm.initCfg x)).state = none ∧
+      ((b2Host S M).tm.runWith w ((b2Host S M).tm.initCfg x)).output =
+        [MultiTapeTM.indicator V (x ++ u)]) ∧
+    (∀ u : List Bool, u.length = v.length → ∃ w : List Bool, w.length = H ∧
+      ((b2Host S M).tm.runWith w ((b2Host S M).tm.initCfg x)).state = none ∧
+      ((b2Host S M).tm.runWith w ((b2Host S M).tm.initCfg x)).output =
+        [MultiTapeTM.indicator V (x ++ u)]) := by
+  let c := (b2UnaryTM S).tm.runFrom ((b2UnaryTM S).tm.initCfg x) T
+  have hc : c.state = none := ((computesInTime_iff _ _ _ _).mp hS).1
+  let B := x.length + v.length + 2 + (A * (x.length + v.length + 1) ^ d + 1)
+  have hcov := b2_guess_coverage S M x v T hS hlive
+  have hpieces (a g z u : List Bool) (ha : a.length = 2 * x.length + 2)
+      (hu : u.length = v.length) (hz : z.length = B)
+      (hg : (b2Host S M).tm.runWith g
+        (b2GuessCfg S M ((b2UnaryTM S).tm.initCfg x) []) = b2GuessCfg S M c u) :
+      ((b2Host S M).tm.runWith (a ++ g ++ z) ((b2Host S M).tm.initCfg x)).state = none ∧
+      ((b2Host S M).tm.runWith (a ++ g ++ z) ((b2Host S M).tm.initCfg x)).output =
+        [MultiTapeTM.indicator V (x ++ u)] := by
+    rw [NDTM.runWith_append, NDTM.runWith_append, b2_start S M x a ha, hg]
+    exact b2_finish S M c hc u (MultiTapeTM.indicator V (x ++ u))
+      (A * ((x ++ u).length + 1) ^ d) (hM (x ++ u)) z
+      (by simpa only [List.length_append, hu] using hz)
+  dsimp only
+  constructor
+  · intro w hw
+    let a := w.take (2 * x.length + 2)
+    let rest := w.drop (2 * x.length + 2)
+    let g := rest.take T
+    let z := rest.drop T
+    have ha : a.length = 2 * x.length + 2 := List.length_take_of_le (by omega)
+    have hr : rest.length = T + B := by dsimp [rest, B]; rw [List.length_drop, hw]; omega
+    have hglen : g.length = T := List.length_take_of_le (by omega)
+    have hz : z.length = B := by dsimp [z]; rw [List.length_drop, hr]; omega
+    have he : a ++ g ++ z = w := by
+      dsimp [a, g, z, rest]
+      rw [List.append_assoc, List.take_append_drop, List.take_append_drop]
+    obtain ⟨u, hu, hg⟩ := hcov.1 g hglen
+    exact ⟨u, hu, he ▸ hpieces a g z u ha hu hz hg⟩
+  · intro u hu
+    obtain ⟨g, hglen, hg⟩ := hcov.2 u hu
+    let a := List.replicate (2 * x.length + 2) false
+    let z := List.replicate B false
+    refine ⟨a ++ g ++ z, ?_, hpieces a g z u (by simp [a]) hu (by simp [z]) hg⟩
+    simp only [List.length_append, List.length_replicate, a, z, hglen, B]
+
+/-- The complete native ledger fits the required polynomial envelope, even
+at zero coefficient/degree and empty input. Startup and assembly contribute
+`3n+Q(n)+5`; scheduler and verifier contribute their actual proved budgets.
+**Proof sketch.** Set the envelope degree to `c+d+1`. Its base dominates
+`n+1`, and its degree dominates both `c+1` and `d`, as well as one. Bound the
+linear overhead by five times the base, then add all three coefficients. -/
+private lemma b2_host_bound (C c B A d n T : ℕ)
+    (hT : T ≤ B * (n + 1) ^ (c + 1)) :
+    2 * n + 2 + T + (n + C * (n + 1) ^ c + 2 +
+      (A * (n + C * (n + 1) ^ c + 1) ^ d + 1)) ≤
+      (B + A + 5) * (n + C * (n + 1) ^ c + 1) ^ (c + d + 1) := by
+  let m := n + C * (n + 1) ^ c + 1
+  have hm : 0 < m := by dsimp [m]; omega
+  have hs : T ≤ B * m ^ (c + d + 1) := hT.trans
+    (Nat.mul_le_mul_left B ((Nat.pow_le_pow_left (by dsimp [m]; omega) (c + 1)).trans
+      (Nat.pow_le_pow_right hm (by omega : c + 1 ≤ c + d + 1))))
+  have hv : A * m ^ d ≤ A * m ^ (c + d + 1) :=
+    Nat.mul_le_mul_left A (Nat.pow_le_pow_right hm (by omega))
+  have hl : 3 * n + C * (n + 1) ^ c + 5 ≤ 5 * m ^ (c + d + 1) := by
+    have hp : m ≤ m ^ (c + d + 1) := by
+      simpa only [Nat.pow_one] using Nat.pow_le_pow_right hm (by omega : 1 ≤ c + d + 1)
+    exact (show 3 * n + C * (n + 1) ^ c + 5 ≤ 5 * m by dsimp [m]; omega).trans
+      (Nat.mul_le_mul_left 5 hp)
+  change 2 * n + 2 + T + (n + C * (n + 1) ^ c + 2 + (A * m ^ d + 1)) ≤ _
+  calc
+    _ ≤ B * m ^ (c + d + 1) + A * m ^ (c + d + 1) + 5 * m ^ (c + d + 1) := by omega
+    _ = _ := by dsimp [m]; ring
+
+/-- The integrated reverse compiler decides the certificate language on all
+branches within the required envelope.
+**Proof sketch.** Instantiate the unary polynomial scheduler and use its
+length-indexed first halt. The host contract gives all-branch termination,
+exact-length extraction, and coverage at the complete phase ledger. The
+certificate characterization turns its verifier outputs into language
+acceptance. Enlarge to the common polynomial envelope using halting
+absorption in both directions, including nonaccepting branches. -/
+private lemma b2_compile (L : Language Bool) (C c : ℕ) (V : Language Bool)
+    (hcert : ∀ x, x ∈ L ↔ ∃ u : List Bool,
+      u.length = C * (x.length + 1) ^ c ∧ x ++ u ∈ V)
+    (M : FinTM Bool) (A d : ℕ)
+    (hM : M.DecidesInTime V (fun n => A * (n + 1) ^ d)) :
+    ∃ (K r : ℕ) (N : FinNDTM Bool),
+      N.DecidesInTime L (fun n => K * (n + C * (n + 1) ^ c + 1) ^ r) := by
+  classical
+  obtain ⟨S, B, hS⟩ := computesFunInTime_polyUnary C c
+  obtain ⟨τ, hτ⟩ := b2_unary_first S (fun n => List.replicate (C * (n + 1) ^ c) true)
+    (fun n => B * (n + 1) ^ (c + 1)) (fun n => by
+      simpa only [List.length_replicate] using hS (List.replicate n true))
+  refine ⟨B + A + 5, c + d + 1, b2Host S M, fun x => ?_⟩
+  let H := 2 * x.length + 2 + τ x.length + (x.length + C * (x.length + 1) ^ c + 2 +
+    (A * (x.length + C * (x.length + 1) ^ c + 1) ^ d + 1))
+  have hc := b2_host_contract S M V x (List.replicate (C * (x.length + 1) ^ c) true)
+    (τ x.length) A d (hτ x).2.1 (hτ x).2.2 hM
+  simp only [List.length_replicate] at hc
+  have hhalt : (b2Host S M).tm.HaltsWithin x H := by
+    intro w hw
+    obtain ⟨u, _, hh, _⟩ := hc.1 w hw
+    exact hh
+  have hacc : x ∈ L ↔ (b2Host S M).AcceptsWithin x H := by
+    rw [hcert x]
+    constructor
+    · rintro ⟨u, hu, hv⟩
+      obtain ⟨w, hw, hh, ho⟩ := hc.2 u hu
+      refine ⟨w, hw, hh, ?_⟩
+      rw [ho]
+      simp [MultiTapeTM.indicator, hv]
+    · rintro ⟨w, hw, _, ho⟩
+      obtain ⟨u, hu, _, hout⟩ := hc.1 w hw
+      refine ⟨u, hu, ?_⟩
+      have he := hout.symm.trans ho
+      by_contra hv
+      simp [MultiTapeTM.indicator, hv] at he
+  have ht := b2_host_bound C c B A d x.length (τ x.length) (hτ x).1
+  exact ⟨hhalt.mono ht, hacc.trans (acceptsWithin_iff_of_halts hhalt ht).symm⟩
+
 /-- **Guess the certificate** [AB09, Theorem 2.6, ⊇-direction of the union]: `NP` is
 contained in the union of the fixed-degree nondeterministic time classes.
 
@@ -1551,17 +2499,25 @@ installing the scheduler/countdown in a host, assembling `x++u`, and the
 captured verifier phase with all-branch totality remain open. The exact
 remaining machine-existence goal is exposed below; `cont_guess_normalize`
 proves all final exponent/coefficient arithmetic and budget padding once that
-machine contract is supplied. -/
+machine contract is supplied.
+
+**B2 completion.** The reverse host is now complete. `b2UnaryTM` normalizes
+only input reads; `b2_unary_run` and `b2_unary_first` prove exact unary
+lockstep and length-only first halts. Startup copies `x` before guessing;
+`b2_guess_coverage` lifts the banked phase at its actual completion, and
+`b2_host_contract` accounts for the startup offset in full branch words.
+Guesses append directly after `x`; `b2_assembly` installs the relocated
+verifier with blank tapes, and `b2_verify_timed` captures all output before
+emitting one verdict. `b2_tables_coincide` is by construction. `b2_compile`
+proves all-branch totality and acceptance at a common envelope with coefficient
+`B+A+5` and degree `c+d+1`, then the banked normalization closes the target.
+The emission scheduler implements the exact guess count; no upper bound is
+used as a native clock and no untimed composition is used. -/
 theorem NP_subset_iUnion_NTIME : NP ⊆ ⋃ c : ℕ, NTIME fun n => n ^ c + 1 := by
   rintro L ⟨C, c, V, hV, hcert⟩
   obtain ⟨A, d, M, hM⟩ := mem_P_iff.mp hV
   apply cont_guess_normalize L C c
-  -- Exact continuation frontier: construct one finite NDTM deciding L within
-  -- K*(n + C*(n+1)^c + 1)^r on every branch. The native guessing phase and
-  -- its bidirectional physical-position witness contract are proved above;
-  -- preserving x, installing the length-only scheduler/countdown, assembling
-  -- x++u, relocated verifier dispatch, and all-branch termination remain.
-  sorry
+  exact b2_compile L C c V hcert M A d hM
 
 /-- **Theorem 2.6** [AB09]: `NP = ⋃ c, NTIME (n^c + 1)` — the verifier-certificate
 definition and the nondeterministic-machine definition of `NP` coincide (with the
@@ -1571,7 +2527,8 @@ definition and the nondeterministic-machine definition of `NP` coincide (with th
 `Set.iUnion_subset` with `Complexity.ntime_poly_subset_NP` at every degree the
 other. -/
 theorem NP_eq_iUnion_NTIME : NP = ⋃ c : ℕ, NTIME fun n => n ^ c + 1 := by
-  sorry
+  exact Set.Subset.antisymm NP_subset_iUnion_NTIME
+    (Set.iUnion_subset fun c => ntime_poly_subset_NP c)
 
 /-- **Exponential choice words are exponential certificates**: every fixed-exponent
 `NTIME (2^(n^c))` class is contained in the certificate-form `Complexity.NEXP`.
