@@ -4415,4 +4415,66 @@ theorem computesFunInTime_incFixed :
       M.ComputesFunInTime (fun x => (incFixed x).getD []) fun n => c * (n + 1) := by
   exact ⟨incFixedTM, 3, incFixed_computes⟩
 
+/-- **E4′, width-parametric split search** (spec, fill pending — design
+§11; customers: 3A-cont's exponential padding equation — whose bespoke
+body is this contract's harvest template — and every later padding
+argument, including the ch3 hierarchy theorems). The generalization of
+`Turing.FinTM.computesFunInTime_splitSolve` from the hardwired polynomial
+family to a hypothesis-supplied width evaluator: given a machine `E`
+computing the binary representation of `f` of the input length within a
+monotone budget `TE`, a machine solving `i + f i = n` by first-success
+search, emitting the threaded split of the original input, and `[]` on
+exhaustion, inside the loopFind envelope over `TE`. At
+`f = fun i => C * (i + 1) ^ e` the computed function definitionally
+recovers the catalog split's.
+
+**Construction sketch.** The `exists_loopFindTM` engine with candidate
+word as loop state: per round, run `E` on the prepared candidate prefix
+with captured output (charging `TE` before any validity check), compare
+whole canonical binary words against the suffix length, restore scratch,
+advance by one; the one-past-end candidate takes a positive silent
+stall. 3A-cont's displayed body contracts are exactly this round
+discipline. -/
+theorem computesFunInTime_splitSolveWith (f : ℕ → ℕ) (E : FinTM Bool)
+    (TE : ℕ → ℕ) (hTE : Monotone TE)
+    (hE : E.ComputesFunInTime (fun s => Nat.bits (f s.length)) TE) :
+    ∃ (M : FinTM Bool) (c : ℕ),
+      M.ComputesFunInTime
+        (fun w => match solveSplitWith f w.length with
+          | some i => pairEncode (w.take i) (w.drop i)
+          | none => [])
+        fun n => c * (n + 1) * (TE (n + 1) + n + 2) := by
+  sorry
+
+/-- **P16, the unary token step** (spec, fill pending — design §11;
+customers: 3B-cont's streaming scanner, the Cook-Levin emitter's index
+reads (4A), 4B's dual scanner — the fourth re-derivation of this atom
+otherwise, after 2D's parsers, 3B's `satScanTM`, and 3D's six-state
+scan). Split off the leading unary token (`Turing.unaryTokenSplit`) as a
+self-delimiting pair, in linear time.
+
+**Construction sketch.** One left-to-right scan emitting the token bits
+as read, the delimiter, the pair framing, and the remainder — the proved
+scanner stages of the 3B and 3D deliveries are the harvest sources. -/
+theorem computesFunInTime_unaryToken :
+    ∃ (M : FinTM Bool) (c : ℕ),
+      M.ComputesFunInTime
+        (fun x => pairEncode (unaryTokenSplit x).1 (unaryTokenSplit x).2)
+        fun n => c * (n + 1) := by
+  sorry
+
+/-- **P18′, append one bit** (spec, fill pending — design §11, narrowed at
+spec time from the drafted accumulator row: cross-round persistence is the
+loop engine's state-word mechanism, so the catalog atom is just the
+append; customers: fresh-variable counters in 3B-cont and 4A, via the
+loop state word). Append a single fixed bit to the input word, in linear
+time.
+
+**Construction sketch.** Copy the input verbatim, emit `b`, halt — P1's
+copier with one extra emission on the halting transition. -/
+theorem computesFunInTime_appendBit (b : Bool) :
+    ∃ (M : FinTM Bool) (c : ℕ),
+      M.ComputesFunInTime (fun x => x ++ [b]) fun n => c * (n + 1) := by
+  sorry
+
 end Turing.FinTM

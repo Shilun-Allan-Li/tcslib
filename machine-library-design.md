@@ -488,3 +488,44 @@ hierarchy pads the same way).
   vs a generalization replacing it (touches audited statements — not
   recommended); (11.3) whether 4A's brief waits for this gate to close
   (recommended) or anticipates it.
+
+## 11a. Spec-phase refinements (2026-10-05, recorded when the emitter spec landed)
+
+Decisions 11.1–11.3 resolved by the user (2026-10-05): increment approved;
+E1 is a **sibling** contract beside `exists_loopCfgTM` (no audited statement
+is generalized or touched); 4A's brief **waits** for this gate.
+
+Refinements against §11 as drafted, all narrowing:
+
+1. **P17 is subsumed** (no new statement): a constant chunk emission is
+   `emitPhase` (E2) applied to the existing P2 `constTM` — recorded here
+   the way D4 recorded the prefix/fixed-pair subsumptions.
+2. **P18 narrowed to `computesFunInTime_appendBit`**: the drafted
+   accumulator row conflated the append atom with cross-phase persistence,
+   and persistence is already the loop engine's state-word mechanism; the
+   catalog takes only the atom.
+3. **E4′ lives in `Primitives.lean`**, not `Loop.lean`: its conclusion
+   speaks `pairEncode`, which `Loop.lean` does not import, and P15's own
+   public contract already lives there — the engine/contract split follows
+   P15 exactly. Its pure vocabulary `solveSplitWith` joins `Convention.lean`
+   beside `solveSplit`, which it definitionally generalizes.
+4. **E1 is function-level only** (`exists_emitLoopTM` concluding a
+   `ComputesFunInTime` of the chunk concatenation): all three named
+   customers deliver `PolyTimeComputable` reductions, i.e. function-level
+   contracts, and in-host composition of an emitter is E2's job, which
+   takes function-level transducers. The round-2 lesson (final-answer vs
+   configuration gap) was checked against each customer before choosing
+   this form; a configuration-level export would follow the round-3
+   precedent if a consumer ever surfaces.
+5. **No emission-size hypothesis on E1**: the round seam equality itself
+   bounds each chunk by the round's duration (output grows by at most one
+   symbol per step), so the statement carries no redundant bound to drift.
+
+Spec surface: **five sorried contracts** (`Turing.emit_run`,
+`Turing.FinTM.exists_emitLoopTM`,
+`Turing.FinTM.computesFunInTime_splitSolveWith`,
+`Turing.FinTM.computesFunInTime_unaryToken`,
+`Turing.FinTM.computesFunInTime_appendBit`), two real transformers
+(`emitAction`, `emitCfg`), two pure vocabulary definitions
+(`solveSplitWith`, `unaryTokenSplit`). Convention's module-docstring
+vocabulary bullets extend at fill time (append-only).

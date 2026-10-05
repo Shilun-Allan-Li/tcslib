@@ -203,6 +203,59 @@ theorem capture_run {input : List Bool} (tm : MultiTapeTM k Bool S)
     rw [MultiTapeTM.runFrom_succ_eq_step', ih (fun s hs => hlive s (by omega)),
       hstep _ (hlive t (by omega)), MultiTapeTM.runFrom_succ_eq_step']
 
+/-- **E2 action transformer** (design §11, spec phase): the forwarding dual
+of `Turing.captureAction`. Transform one source action into a host action
+over the **same** tapes: input move and work-tape actions are kept
+verbatim; the source's emission, **if any, is forwarded as the host's
+physical emission** — including an emission on the halting transition; a
+live source successor is embedded via `emb`, and a halting source action
+transfers control to the designated live return state `ret`. This is what
+lets a proved transducer serve as one emission stage of a larger host. -/
+def emitAction (emb : S → H) (ret : H) (a : Action k Bool S) :
+    Action k Bool H where
+  inputTape := a.inputTape
+  workTapes := a.workTapes
+  output := a.output
+  state := some ((a.state.map emb).getD ret)
+
+/-- **E2 configuration correspondence** (design §11, spec phase): a source
+configuration `c`, viewed inside the host — state embedded (a halted source
+appears at the live return state `ret`), tapes, heads, and input position
+verbatim, and the host's physical output equal to the host's prior output
+`pre` followed by everything the source has emitted. -/
+def emitCfg {input : List Bool} (emb : S → H) (ret : H)
+    (pre : List Bool) (c : Cfg k Bool S input) :
+    Cfg k Bool H input where
+  state := some ((c.state.map emb).getD ret)
+  inputPos := c.inputPos
+  workTapes := c.workTapes
+  workTapePos := c.workTapePos
+  output := pre ++ c.output
+
+/-- **E2, the forwarding wrapper** (spec, fill pending — design §11;
+customers: the emitting loop's per-round chunk calls, the Cook-Levin
+clause-group emission (4A), 3B-cont's fresh-literal chains). Any host
+machine agreeing with the transformed table on an embedded copy of the
+source states runs the source in lockstep while **appending the source's
+output to the host's physical output**, the exact dual of
+`Turing.capture_run`: source tapes verbatim, the halting transition's
+emission forwarded like any other, and the host landing in the live
+return state at the source's halt.
+
+**Construction sketch.** Mirror `capture_run`: one `emitAction`-apply
+lemma (source fields preserved; the optional emission appended to the
+host output after `pre`), then induction over the guarded run, the guard
+supplying a genuine source step including at the final halt. -/
+theorem emit_run {input : List Bool} (tm : MultiTapeTM k Bool S)
+    (host : MultiTapeTM k Bool H) (emb : S → H) (ret : H)
+    (hagree : ∀ (s : S) (inp : Option Bool) (w : Fin k → Option Bool),
+      host.tr (emb s) inp w = emitAction emb ret (tm.tr s inp w))
+    (pre : List Bool) (c₀ : Cfg k Bool S input) (t : ℕ)
+    (hlive : ∀ t' < t, ¬(tm.runFrom c₀ t').Halted) :
+    host.runFrom (emitCfg emb ret pre c₀) t =
+      emitCfg emb ret pre (tm.runFrom c₀ t) := by
+  sorry
+
 end Turing
 
 namespace Turing.FinTM

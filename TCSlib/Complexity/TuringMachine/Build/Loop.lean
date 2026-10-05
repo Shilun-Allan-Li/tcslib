@@ -2695,4 +2695,58 @@ theorem exists_loopFindTM (body F : FinTM Bool) (anchor : body.State)
       simp only [Nat.mul_add, Nat.mul_one, Nat.mul_two]
       omega
 
+/-- **E1, the emitting loop** (spec, fill pending — design §11; customers:
+the Cook-Levin clause-group emitter (4A), 3B-cont's streaming reduction
+transducer, 4B's dual-reduction emitter). The emitting sibling of
+`Turing.FinTM.exists_loopCfgTM`: the same anchored round discipline —
+startup within the envelope and no earlier anchor visit; per-round
+positive duration, anchor exclusion, and input-length-only budgets — but
+each round, instead of staying silent and either accepting or advancing,
+**advances and appends its exact chunk** `emitF x s` to the physical
+output. The machine runs all `R + 1` rounds and computes the
+concatenation of the chunks in order. There is no verdict bit and no
+deciding variant: compose with the existing decision layer instead
+(design §11 non-goals).
+
+Each round's seam is stated from the canonical clean configuration; the
+round equality itself bounds the chunk length by the round's duration
+(output grows by at most one symbol per step), so no separate emission
+bound is hypothesized.
+
+**Construction sketch.** The find-mode `loopHost` is the engine: its
+exhaustion terminal appends nothing, so with every round advancing, the
+accumulated output survives to the halt. Re-derive the host contract
+with the output-prefixed seam (runs commute with output prefixes — the
+transition table never reads the output tape), and thread the
+concatenation through `loop_run`'s summation template. The fuel counter,
+startup, and countdown machinery are reused unchanged; they are silent. -/
+theorem exists_emitLoopTM (body F : FinTM Bool) (anchor : body.State)
+    (Inv : List Bool → List Bool → Prop)
+    (stepF emitF : List Bool → List Bool → List Bool)
+    (s0 : List Bool → List Bool) (R T : ℕ → ℕ)
+    (hF : F.ComputesFunInTime (fun x => Nat.bits (R x.length)) T)
+    (hInv0 : ∀ x : List Bool, Inv x (s0 x))
+    (hInvStep : ∀ (x s : List Bool), Inv x s → Inv x (stepF x s))
+    (hstart : ∀ x : List Bool, ∃ t ≤ T x.length,
+      (∀ t' < t,
+        (body.tm.runFrom (body.tm.initCfg x) t').state ≠ some anchor) ∧
+      body.tm.runFrom (body.tm.initCfg x) t =
+        Cfg.ofWords anchor (stateWord body.k (s0 x)))
+    (hround : ∀ (x s : List Bool), Inv x s →
+      ∃ t, 0 < t ∧ t ≤ T x.length ∧
+        (∀ t', 0 < t' → t' < t →
+          (body.tm.runFrom
+            (Cfg.ofWords (input := x) anchor (stateWord body.k s)) t').state
+              ≠ some anchor) ∧
+        body.tm.runFrom
+          (Cfg.ofWords (input := x) anchor (stateWord body.k s)) t =
+            { Cfg.ofWords (input := x) anchor (stateWord body.k (stepF x s))
+                with output := emitF x s }) :
+    ∃ (E : FinTM Bool) (c : ℕ),
+      E.ComputesFunInTime
+        (fun x => (List.range (R x.length + 1)).flatMap
+          (fun i => emitF x ((stepF x)^[i] (s0 x))))
+        (fun n => c * (T n + 1) * (R n + 2)) := by
+  sorry
+
 end Turing.FinTM

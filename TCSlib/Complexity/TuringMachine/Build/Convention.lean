@@ -119,4 +119,28 @@ def incFixed : List Bool → Option (List Bool)
   | false :: rest => some (true :: rest)
   | true :: rest => (incFixed rest).map (false :: ·)
 
+/-- **Emitter-increment vocabulary** (design §11, spec phase): least
+solution `i ≤ n` of the width-parametric split equation `i + f i = n`, or
+`none` — the generalization of `Turing.solveSplit` from the hardwired
+polynomial family to an arbitrary width function. At
+`f = fun i => C * (i + 1) ^ e` this definitionally recovers
+`solveSplit C e n`. -/
+def solveSplitWith (f : ℕ → ℕ) (n : ℕ) : Option ℕ :=
+  (List.range (n + 1)).find? fun i => i + f i == n
+
+/-- **Emitter-increment vocabulary** (design §11, spec phase): split off
+the leading unary token — the maximal `true`-prefix together with its
+terminating `false` delimiter — returning the token and the remainder. A
+word with no delimiter yields the whole word as an unterminated token with
+empty remainder; the empty word yields two empty words; a leading `false`
+is the length-zero token `[false]`. This is the shared atom of the
+serialization grammars (unary indices with terminators); single-bit
+markers are read by the same step at token length zero or one. -/
+def unaryTokenSplit : List Bool → List Bool × List Bool
+  | [] => ([], [])
+  | false :: rest => ([false], rest)
+  | true :: rest =>
+    let (tok, r) := unaryTokenSplit rest
+    (true :: tok, r)
+
 end Turing
