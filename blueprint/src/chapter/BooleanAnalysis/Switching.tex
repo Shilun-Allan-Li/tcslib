@@ -320,7 +320,7 @@ $\rho$. Then there exists a map $g$ from auxiliary lists to functions $\mathrm{F
   {switching-lemma}
   {pdf-b5e074215b9e-p001-b004}
 \proofstep
-  {Term.width}
+  {LitList.width}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p001-b004}
@@ -662,7 +662,7 @@ $\mathrm{aux}_\rho$ arising from such $\rho$ is at most $(4w)^d$.
   {switching-lemma}
   {pdf-b5e074215b9e-p001-b004}
 \proofstep
-  {Term.width}
+  {LitList.width}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p001-b004}
@@ -2795,7 +2795,7 @@ exactly $s - d$ free variables.
   {switching-lemma}
   {pdf-b5e074215b9e-p001-b004}
 \proofstep
-  {Term.width}
+  {LitList.width}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p001-b004}
@@ -3620,7 +3620,7 @@ equals $f(x)$ for every input $x$.
   {switching-lemma}
   {pdf-b5e074215b9e-p001-b004}
 \proofstep
-  {Term.width}
+  {LitList.width}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p001-b004}
@@ -3635,7 +3635,7 @@ equals $f(x)$ for every input $x$.
   {switching-lemma}
   {pdf-b5e074215b9e-p001-b004}
 \proofstep
-  {CNF.evalClause}
+  {Clause.eval}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p001-b004}
@@ -3724,7 +3724,7 @@ equals $f(x)$ for every input $x$.
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p003-b003}
-\uses{CNF, CNF.eval, CNF.evalClause, CNF.width, DNF, DNF.eval, DNF.width, DecisionTree, DecisionTree.depth, DecisionTree.eval, Literal.eval, SwitchingLemma.dtDepth_witness, SwitchingLemma.toCNF, SwitchingLemma.toDNF, Term.eval, dtDepth}
+\uses{CNF, CNF.eval, Clause.eval, CNF.width, DNF, DNF.eval, DNF.width, DecisionTree, DecisionTree.depth, DecisionTree.eval, Literal.eval, SwitchingLemma.dtDepth_witness, SwitchingLemma.toCNF, SwitchingLemma.toDNF, Term.eval, dtDepth}
 \difficulty{6}
 Let $f : (\mathrm{Fin}\,n \to \bbf_2) \to \{0,1\}$ be a Boolean function, and let $d$ be
 a natural number such that the decision-tree depth of $f$ is at most $d$. Then $f$ is
@@ -3779,8 +3779,8 @@ operation is injective: if two literals have the same polarity flip, they are eq
 \end{lemma}
 
 \begin{definition}[CNF to De Morgan dual DNF]
-\lean{cnfToDualDNF}
-\label{cnfToDualDNF}
+\lean{CNF.dual}
+\label{CNF.dual}
 \leanok
 \uses{CNF, DNF, Literal.flipNeg}
 Converts a CNF $\psi$ to its De Morgan dual DNF by negating every literal, so each
@@ -3789,10 +3789,10 @@ $\lnot\bigl(\bigwedge_i \bigvee_j l_{ij}\bigr) = \bigvee_i \bigl(\bigwedge_j \ln
 \end{definition}
 
 \begin{lemma}[Width is preserved under De Morgan dualization]
-\lean{cnfToDualDNF_width}
-\label{cnfToDualDNF_width}
+\lean{CNF.dual_width}
+\label{CNF.dual_width}
 \leanok
-\uses{CNF, CNF.width, DNF.width, Term.width, cnfToDualDNF}
+\uses{CNF, CNF.width, DNF.width, LitList.width, CNF.dual}
 \difficulty{2}
 Let $\psi$ be a CNF formula over $n$ variables, and let $\psi^{*}$ be its De Morgan dual
 DNF, obtained by negating every literal so that each clause becomes a term. Then
@@ -3801,11 +3801,11 @@ $\psi^{*}$ equals the maximum clause-width of $\psi$.
 \end{lemma}
 
 \begin{lemma}[De Morgan dual of a CNF computes its negation]
-\lean{cnfToDualDNF_eval}
-\label{cnfToDualDNF_eval}
+\lean{CNF.dual_eval}
+\label{CNF.dual_eval}
 \leanok
 \statementsource{boolean-ch04-dnf-switching-lmn}{pdf-fc447f326910-p002-b005}
-\uses{CNF, CNF.eval, CNF.evalClause, DNF.eval, Literal.flipNeg_eval, Term.eval, cnfToDualDNF}
+\uses{CNF, CNF.eval, Clause.eval, DNF.eval, Literal.flipNeg_eval, Term.eval, CNF.dual}
 \difficulty{4}
 Let $\psi$ be a formula in conjunctive normal form over $n$ Boolean variables — a
 conjunction of clauses, each clause a disjunction of literals — and let its De Morgan
@@ -3884,10 +3884,10 @@ greater than $d$ exactly when the restricted function of $f$ under $\rho$ does.
 \end{lemma}
 
 \begin{lemma}[Dual DNF preserves duplicate-free clauses]
-\lean{SwitchingLemmaCNF.cnfToDualDNF_nodup}
-\label{SwitchingLemmaCNF.cnfToDualDNF_nodup}
+\lean{CNF.dual_nodup}
+\label{CNF.dual_nodup}
 \leanok
-\uses{CNF, Literal.flipNeg_injective, cnfToDualDNF}
+\uses{CNF, Literal.flipNeg_injective, CNF.dual}
 \difficulty{2}
 Let $\psi$ be a CNF formula whose clauses are lists of literals, and suppose that every
 clause of $\psi$ contains no repeated literal. Then every term of the De Morgan dual DNF
@@ -3896,10 +3896,10 @@ contains no repeated literal.
 \end{lemma}
 
 \begin{lemma}[Dual DNF preserves within-clause variable-distinctness]
-\lean{SwitchingLemmaCNF.cnfToDualDNF_inj}
-\label{SwitchingLemmaCNF.cnfToDualDNF_inj}
+\lean{CNF.dual_inj}
+\label{CNF.dual_inj}
 \leanok
-\uses{CNF, Literal.flipNeg_var, cnfToDualDNF}
+\uses{CNF, Literal.flipNeg_var, CNF.dual}
 \difficulty{3}
 Let $\psi$ be a CNF formula on $n$ variables with the property that, within each of its
 clauses, any two literals having the same variable are in fact the same literal (so no
@@ -3947,7 +3947,7 @@ term by term: within each of its terms, any two literals sharing a variable are 
   {switching-lemma}
   {pdf-b5e074215b9e-p001-b004}
 \proofstep
-  {Term.width}
+  {LitList.width}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p001-b004}
@@ -3962,7 +3962,7 @@ term by term: within each of its terms, any two literals sharing a variable are 
   {switching-lemma}
   {pdf-b5e074215b9e-p001-b004}
 \proofstep
-  {CNF.evalClause}
+  {Clause.eval}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p001-b004}
@@ -4699,17 +4699,17 @@ term by term: within each of its terms, any two literals sharing a variable are 
   {switching-lemma}
   {pdf-b5e074215b9e-p003-b003}
 \proofstep
-  {cnfToDualDNF}
+  {CNF.dual}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p003-b001}
 \proofstep
-  {cnfToDualDNF_width}
+  {CNF.dual_width}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p003-b004}
 \proofstep
-  {cnfToDualDNF_eval}
+  {CNF.dual_eval}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p003-b003}
@@ -4739,16 +4739,16 @@ term by term: within each of its terms, any two literals sharing a variable are 
   {switching-lemma}
   {pdf-b5e074215b9e-p001-b007}
 \proofstep
-  {SwitchingLemmaCNF.cnfToDualDNF_nodup}
+  {CNF.dual_nodup}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p003-b003}
 \proofstep
-  {SwitchingLemmaCNF.cnfToDualDNF_inj}
+  {CNF.dual_inj}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p003-b003}
-\uses{CNF, CNF.eval, CNF.width, DNF.eval, DNF.width, SwitchingLemma.IsBadRestriction, SwitchingLemma.IsRestriction, SwitchingLemma.Restriction, SwitchingLemma.numSRestrictions, SwitchingLemma.switching_lemma, SwitchingLemmaCNF.cnfToDualDNF_inj, SwitchingLemmaCNF.cnfToDualDNF_nodup, SwitchingLemmaCNF.restrictFn_neg, cnfToDualDNF, cnfToDualDNF_eval, cnfToDualDNF_width, dtDepth_neg}
+\uses{CNF, CNF.eval, CNF.width, DNF.eval, DNF.width, SwitchingLemma.IsBadRestriction, SwitchingLemma.IsRestriction, SwitchingLemma.Restriction, SwitchingLemma.numSRestrictions, SwitchingLemma.switching_lemma, CNF.dual_inj, CNF.dual_nodup, SwitchingLemmaCNF.restrictFn_neg, CNF.dual, CNF.dual_eval, CNF.dual_width, dtDepth_neg}
 \difficulty{4}
 Let $\psi$ be a CNF formula on $n \ge 1$ Boolean variables whose width is at most $w$,
 and suppose that within each clause no literal is repeated and any two literals on the

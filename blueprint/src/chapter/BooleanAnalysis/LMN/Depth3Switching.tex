@@ -212,7 +212,7 @@ within each remaining clause.
 \lean{LMN.cleanCNF_D3_eval}
 \label{LMN.cleanCNF_D3_eval}
 \leanok
-\uses{CNF, CNF.eval, CNF.evalClause, LMN.clauseIsTaut, LMN.clauseIsTaut_eval_true, LMN.cleanCNF_D3}
+\uses{CNF, CNF.eval, Clause.eval, LMN.clauseIsTaut, LMN.clauseIsTaut_eval_true, LMN.cleanCNF_D3}
 \difficulty{4}
 Let $\psi$ be a CNF formula over $n$ Boolean variables — a conjunction of clauses, each
 clause a disjunction of literals — and let $x \in \{0,1\}^n$ be an assignment. Form the
@@ -227,7 +227,7 @@ same Boolean value on $x$.
 \lean{LMN.cleanCNF_D3_width_le}
 \label{LMN.cleanCNF_D3_width_le}
 \leanok
-\uses{CNF, CNF.width, LMN.cleanCNF_D3, LMN.dedupClauseVars_length_le, Term, Term.width}
+\uses{CNF, CNF.width, LMN.cleanCNF_D3, LMN.dedupClauseVars_length_le, Term, LitList.width}
 \difficulty{5}
 Let $\psi$ be a CNF formula over $n$ variables, and form its cleaned version by
 discarding every tautological clause (one containing two literals on the same variable
@@ -311,7 +311,7 @@ variable.
   {switching-lemma}
   {pdf-b5e074215b9e-p001-b004}
 \proofstep
-  {Term.width}
+  {LitList.width}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p001-b004}
@@ -326,7 +326,7 @@ variable.
   {switching-lemma}
   {pdf-b5e074215b9e-p001-b004}
 \proofstep
-  {CNF.evalClause}
+  {Clause.eval}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p001-b004}
@@ -536,7 +536,7 @@ repeated, and no two literals share the same underlying variable.
   {switching-lemma}
   {pdf-b5e074215b9e-p001-b004}
 \proofstep
-  {Term.width}
+  {LitList.width}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p001-b004}
@@ -716,7 +716,7 @@ $\rho_1$ for which $A(\rho_1)$ fails, one has $\Pr_{p_2}[\,E(\rho_1 \circ \rho_2
   {boolean-ch04-dnf-switching-lmn}
   {pdf-fc447f326910-p001-b004}
 \proofstep
-  {Term.width}
+  {LitList.width}
   {context}
   {boolean-ch04-dnf-switching-lmn}
   {pdf-fc447f326910-p001-b004}
@@ -731,7 +731,7 @@ $\rho_1$ for which $A(\rho_1)$ fails, one has $\Pr_{p_2}[\,E(\rho_1 \circ \rho_2
   {boolean-ch04-dnf-switching-lmn}
   {pdf-fc447f326910-p002-b004}
 \proofstep
-  {CNF.evalClause}
+  {Clause.eval}
   {context}
   {boolean-ch04-dnf-switching-lmn}
   {pdf-fc447f326910-p002-b004}
@@ -1041,7 +1041,7 @@ and then $\rho_2$ on the coordinates left free by $\rho_1$, we have
   {boolean-ch04-dnf-switching-lmn}
   {pdf-fc447f326910-p001-b004}
 \proofstep
-  {Term.width}
+  {LitList.width}
   {context}
   {boolean-ch04-dnf-switching-lmn}
   {pdf-fc447f326910-p001-b004}
@@ -1056,7 +1056,7 @@ and then $\rho_2$ on the coordinates left free by $\rho_1$, we have
   {boolean-ch04-dnf-switching-lmn}
   {pdf-fc447f326910-p002-b004}
 \proofstep
-  {CNF.evalClause}
+  {Clause.eval}
   {context}
   {boolean-ch04-dnf-switching-lmn}
   {pdf-fc447f326910-p002-b004}
@@ -1911,17 +1911,17 @@ and then $\rho_2$ on the coordinates left free by $\rho_1$, we have
   {boolean-ch04-dnf-switching-lmn}
   {pdf-fc447f326910-p002-b005}
 \proofstep
-  {cnfToDualDNF}
+  {CNF.dual}
   {context}
   {boolean-ch04-dnf-switching-lmn}
   {pdf-fc447f326910-p002-b005}
 \proofstep
-  {cnfToDualDNF_width}
+  {CNF.dual_width}
   {context}
   {boolean-ch04-dnf-switching-lmn}
   {pdf-fc447f326910-p002-b005}
 \proofstep
-  {cnfToDualDNF_eval}
+  {CNF.dual_eval}
   {direct}
   {boolean-ch04-dnf-switching-lmn}
   {pdf-fc447f326910-p002-b005}
@@ -1946,12 +1946,12 @@ and then $\rho_2$ on the coordinates left free by $\rho_1$, we have
   {boolean-ch04-dnf-switching-lmn}
   {pdf-fc447f326910-p002-b005}
 \proofstep
-  {SwitchingLemmaCNF.cnfToDualDNF_nodup}
+  {CNF.dual_nodup}
   {context}
   {boolean-ch04-dnf-switching-lmn}
   {pdf-fc447f326910-p002-b005}
 \proofstep
-  {SwitchingLemmaCNF.cnfToDualDNF_inj}
+  {CNF.dual_inj}
   {context}
   {boolean-ch04-dnf-switching-lmn}
   {pdf-fc447f326910-p002-b005}
@@ -2252,7 +2252,7 @@ $f\restriction_\rho$ for the restricted function $x \mapsto f(\rho\text{-extensi
   {boolean-ch04-dnf-switching-lmn}
   {pdf-fc447f326910-p001-b004}
 \proofstep
-  {Term.width}
+  {LitList.width}
   {context}
   {boolean-ch04-dnf-switching-lmn}
   {pdf-fc447f326910-p001-b004}
@@ -2267,7 +2267,7 @@ $f\restriction_\rho$ for the restricted function $x \mapsto f(\rho\text{-extensi
   {boolean-ch04-dnf-switching-lmn}
   {pdf-fc447f326910-p002-b004}
 \proofstep
-  {CNF.evalClause}
+  {Clause.eval}
   {context}
   {boolean-ch04-dnf-switching-lmn}
   {pdf-fc447f326910-p002-b004}
@@ -3101,17 +3101,17 @@ $f\restriction_\rho$ for the restricted function $x \mapsto f(\rho\text{-extensi
   {boolean-ch04-dnf-switching-lmn}
   {pdf-fc447f326910-p002-b005}
 \proofstep
-  {cnfToDualDNF}
+  {CNF.dual}
   {context}
   {boolean-ch04-dnf-switching-lmn}
   {pdf-fc447f326910-p002-b005}
 \proofstep
-  {cnfToDualDNF_width}
+  {CNF.dual_width}
   {context}
   {boolean-ch04-dnf-switching-lmn}
   {pdf-fc447f326910-p002-b005}
 \proofstep
-  {cnfToDualDNF_eval}
+  {CNF.dual_eval}
   {direct}
   {boolean-ch04-dnf-switching-lmn}
   {pdf-fc447f326910-p002-b005}
@@ -3136,12 +3136,12 @@ $f\restriction_\rho$ for the restricted function $x \mapsto f(\rho\text{-extensi
   {boolean-ch04-dnf-switching-lmn}
   {pdf-fc447f326910-p002-b005}
 \proofstep
-  {SwitchingLemmaCNF.cnfToDualDNF_nodup}
+  {CNF.dual_nodup}
   {context}
   {boolean-ch04-dnf-switching-lmn}
   {pdf-fc447f326910-p002-b005}
 \proofstep
-  {SwitchingLemmaCNF.cnfToDualDNF_inj}
+  {CNF.dual_inj}
   {context}
   {boolean-ch04-dnf-switching-lmn}
   {pdf-fc447f326910-p002-b005}
@@ -3435,7 +3435,7 @@ function has decision-tree depth exceeding $t$ obeys
   {boolean-ch04-dnf-switching-lmn}
   {pdf-fc447f326910-p001-b004}
 \proofstep
-  {Term.width}
+  {LitList.width}
   {context}
   {boolean-ch04-dnf-switching-lmn}
   {pdf-fc447f326910-p001-b004}
@@ -3450,7 +3450,7 @@ function has decision-tree depth exceeding $t$ obeys
   {boolean-ch04-dnf-switching-lmn}
   {pdf-fc447f326910-p002-b004}
 \proofstep
-  {CNF.evalClause}
+  {Clause.eval}
   {context}
   {boolean-ch04-dnf-switching-lmn}
   {pdf-fc447f326910-p002-b004}
@@ -4288,17 +4288,17 @@ function has decision-tree depth exceeding $t$ obeys
   {boolean-ch04-dnf-switching-lmn}
   {pdf-fc447f326910-p002-b005}
 \proofstep
-  {cnfToDualDNF}
+  {CNF.dual}
   {context}
   {boolean-ch04-dnf-switching-lmn}
   {pdf-fc447f326910-p002-b005}
 \proofstep
-  {cnfToDualDNF_width}
+  {CNF.dual_width}
   {context}
   {boolean-ch04-dnf-switching-lmn}
   {pdf-fc447f326910-p002-b005}
 \proofstep
-  {cnfToDualDNF_eval}
+  {CNF.dual_eval}
   {context}
   {boolean-ch04-dnf-switching-lmn}
   {pdf-fc447f326910-p002-b005}
@@ -4323,12 +4323,12 @@ function has decision-tree depth exceeding $t$ obeys
   {boolean-ch04-dnf-switching-lmn}
   {pdf-fc447f326910-p002-b005}
 \proofstep
-  {SwitchingLemmaCNF.cnfToDualDNF_nodup}
+  {CNF.dual_nodup}
   {context}
   {boolean-ch04-dnf-switching-lmn}
   {pdf-fc447f326910-p002-b005}
 \proofstep
-  {SwitchingLemmaCNF.cnfToDualDNF_inj}
+  {CNF.dual_inj}
   {context}
   {boolean-ch04-dnf-switching-lmn}
   {pdf-fc447f326910-p002-b005}

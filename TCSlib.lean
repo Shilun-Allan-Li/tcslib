@@ -16,6 +16,7 @@ import TCSlib.BooleanAnalysis.ArrowTheorem
 import TCSlib.BooleanAnalysis.Hypercontractivity.Main
 import TCSlib.BooleanAnalysis.Switching
 import TCSlib.BooleanAnalysis.KKL
+import TCSlib.BooleanAnalysis.polylogIndep
 
 import TCSlib.CommunicationComplexity.DeterministicCC
 import TCSlib.CommunicationComplexity.NewmanTheorem

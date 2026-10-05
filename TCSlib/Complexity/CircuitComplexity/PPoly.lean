@@ -1,138 +1,75 @@
 /-
-Copyright (c) 2026 Yichuan Wang. All rights reserved.
+Copyright (c) 2026 TCSlib contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Yichuan Wang
+Authors: Hydroxyi
 -/
-import Mathlib.Computability.Language
-import TCSlib.Complexity.CircuitComplexity.FeedForward
+import TCSlib.Complexity.CircuitComplexity.DAGCircuit
 
 /-!
-# P/poly
+# `SIZE(T)` and `P/poly`
 
-The class of languages decided by polynomial-size non-uniform Boolean circuit
-families, built on `BoolCircuit.FeedForward` (the model used by the Razborov–Smolensky
-development) and shaped after Mathlib's `Language.IsRegular`: a complexity class
-is a predicate on languages.
+The circuit size classes of [AB09, Defs 6.2 and 6.5], over the book's circuit model
+`BoolCircuit.DAGCircuit`: fan-in-two DAGs whose size counts every vertex, inputs included.
 
 ## Main definitions
 
-* `BoolCircuit.CircuitFamily` — one single-output circuit per input length, all layers finite.
 * `Language.InSIZE` — [AB09, Def 6.2].
 * `Language.InPPoly` — [AB09, Def 6.5], `P/poly = ⋃_c SIZE(n^c)`.
 * `BoolCircuit.PPoly` — the same class as a `Set (Language Bool)`.
 
 ## Main results
 
-* `Language.inPPoly_iff` — `P/poly` membership repackaged as one family that
-  carries its own size bound.
+* `Language.InSIZE.mono`, `Language.InSIZE.inPPoly` — monotonicity, and polynomial
+  `SIZE` classes lie in `P/poly`.
+* `Language.inPPoly_iff` — `P/poly` membership as one family carrying its own size bound.
 
-## Alphabet
+The same class over the layered model of the Razborov–Smolensky development is
+`Language.InLayeredPPoly`; `LayeredDAG.lean` proves the two coincide.
 
-Languages are over `Bool`, matching `Turing.FinEncoding`'s binary encodings and
-cslib's `MultiTapeTM k Bool State`, so that a future `P ⊆ P/poly` is statable
-without transport.  Circuits stay on `Fin 2` internally (the Razborov–Smolensky
-gate sets are `GateOp (Fin 2)`); `finTwoEquiv` converts at the boundary.
+## Divergences from [AB09, Defs 6.2 and 6.5]
 
-## Divergences from Arora–Barak §6.1
-
-All preserve the polynomial union `P/poly`; **none is claimed to preserve a
-fixed class `SIZE(T)`**, and in general none does: `Language.allOnes` lies in
-this file's `InSIZE (fun _ => 1)` (`SizeClasses.lean`), while [AB09, Def 6.1]
-counts the `n` input vertices, so no size-`1` circuit exists there for `n ≥ 2`.
-`Language.InSIZE` is the finite, layered, unbounded-fan-in, non-input-counting
-size class of *this* model; quantitative transfer to AB's `SIZE(T)` needs an
-explicit simulation with a transformed budget. AB Def 6.1 fixes fan-in 2; we use unbounded `stdGateOps`,
-which AB calls "essentially without loss of generality" (fan-in `f` costs `f - 1`
-gates) and which is AB's own convention for `AC` (Def 6.25) — for *polynomial-size
-existence* the fan-in choice is immaterial (budgets change by the `f - 1` factor);
-exact size budgets do feel it, which is part of why fixed `SIZE(T)` is not
-preserved (above).  `P/poly` imposes no depth restriction. AB's basis is `{∧, ∨, ¬}`;
-ours adds `id` (needed for layer padding) and recovers `∨` by De Morgan. AB counts
-input vertices in `|C|` and allows arbitrary DAGs; we count non-input nodes and
-require layering, costing `+n` and a factor `≤ s` respectively. AB writes
-`∃ c, ∀ n, |C n| ≤ n ^ c`; we write `∃ a k, ∀ n, size ≤ a * (n + 1) ^ k`, which
-repairs a degeneracy in AB's literal form (`n ^ c` forces `|C 0| ≤ 0`).
-Further graph conventions, collected: a singleton output type does not forbid
-unused nodes on earlier layers; inputs may go unread; `Gate.inputs` need not be
-injective, so repeated wires are allowed — all harmless for computational
-power, with size/depth accounting model-specific.  `stdGateOps` contains
-`andGateOp 0`, the empty product, i.e. a **constant-one** operation; there is
-no primitive constant-false (`NOT` of the empty `AND` provides it).
-
-## Trap
-
-`FeedForward.size` is `Nat.card`-based, so it returns `0` on an infinite type:
-without `CircuitFamily.finite`, `IsPolySize` would hold vacuously and `P/poly`
-would be every language.
+* The model's own divergences (fan-in at most two rather than exactly two, constants via
+  fan-in-zero gates, a single output) are listed in `DAGCircuit.lean`.
+* [AB09] writes `P/poly = ⋃_c SIZE(n^c)`; we write `∃ a k, SIZE(a * (n + 1) ^ k)`.  Since a
+  circuit has at least one vertex, `n ^ c` would force `|C_0| ≤ 0`, so the literal form
+  excludes every language at length `0`; `a * (n + 1) ^ k` repairs that and is otherwise
+  the same union.
 
 ## References
 
 * [AB09] S. Arora, B. Barak, *Computational Complexity: A Modern Approach*,
-  Cambridge University Press, 2009.
+  Cambridge University Press, 2009.  (§6.1, Definitions 6.2 and 6.5.)
 -/
 
-set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
 set_option autoImplicit false
 
-namespace BoolCircuit
-
-open FeedForward
-
-/-- A non-uniform family of single-output Boolean circuits, one per input length. -/
-structure CircuitFamily where
-  /-- The circuit handling inputs of length `n`. -/
-  circuit : (n : ℕ) → FeedForward (Fin 2) (Fin n) Unit
-  /-- Every layer of every circuit in the family is finite. -/
-  finite : ∀ n, (circuit n).Finite
-
-namespace CircuitFamily
-
-variable (C : CircuitFamily)
-
-/-- The family accepts `w` when the circuit for length `w.length` outputs `1`.
-Words are `List Bool`; `finTwoEquiv` converts at the circuit boundary. -/
-def Accepts (w : List Bool) : Prop :=
-  (C.circuit w.length).eval₁ (fun i => finTwoEquiv.symm (w.get i)) = 1
-
-/-- The language decided by the family. -/
-def language : Language Bool :=
-  {w | C.Accepts w}
-
-/-- Membership in the decided language, unfolded to the circuit's output. -/
-@[simp]
-theorem mem_language_iff (w : List Bool) :
-    w ∈ C.language ↔
-      (C.circuit w.length).eval₁ (fun i => finTwoEquiv.symm (w.get i)) = 1 :=
-  Iff.rfl
-
-/-- Every circuit in the family draws its gates from `S`. -/
-def OnlyUsesGates (S : Set (GateOp (Fin 2))) : Prop :=
-  ∀ n, (C.circuit n).onlyUsesGates S
-
-/-- The family has polynomial size. -/
-def IsPolySize : Prop :=
-  ∃ a k : ℕ, ∀ n, (C.circuit n).size ≤ a * (n + 1) ^ k
-
-end CircuitFamily
-
-end BoolCircuit
-
-/-- `L ∈ SIZE(T)`: some `stdGateOps` family decides `L` with the length-`n`
-circuit of size at most `T n`.  [AB09, Def 6.2] -/
+/-- `L ∈ SIZE(T)`: some fan-in-two circuit family decides `L` with the length-`n` circuit
+of size at most `T n`.  [AB09, Def 6.2] -/
 def Language.InSIZE (T : ℕ → ℕ) (L : Language Bool) : Prop :=
-  ∃ C : BoolCircuit.CircuitFamily,
-    C.OnlyUsesGates BoolCircuit.stdGateOps ∧ (∀ n, (C.circuit n).size ≤ T n) ∧ C.language = L
+  ∃ C : BoolCircuit.DAGCircuitFamily,
+    C.HasFaninTwo ∧ (∀ n, (C.circuit n).size ≤ T n) ∧ C.language = L
 
-/-- A language is in `P/poly` when some polynomial-size circuit family decides
-it.  [AB09, Def 6.5] -/
+/-- `L ∈ P/poly`: some polynomial-size fan-in-two circuit family decides `L`.
+[AB09, Def 6.5] -/
 def Language.InPPoly (L : Language Bool) : Prop :=
   ∃ a k : ℕ, L.InSIZE (fun n => a * (n + 1) ^ k)
 
+/-- `SIZE(T) ⊆ SIZE(T')` whenever `T ≤ T'` pointwise. -/
+theorem Language.InSIZE.mono {T T' : ℕ → ℕ} {L : Language Bool} (hL : L.InSIZE T)
+    (h : ∀ n, T n ≤ T' n) : L.InSIZE T' := by
+  obtain ⟨C, hG, hS, hC⟩ := hL
+  exact ⟨C, hG, fun n => (hS n).trans (h n), hC⟩
+
+/-- A language in `SIZE(T)` for a polynomially bounded `T` is in `P/poly`. -/
+theorem Language.InSIZE.inPPoly {T : ℕ → ℕ} {L : Language Bool} {a k : ℕ}
+    (hL : L.InSIZE T) (hT : ∀ n, T n ≤ a * (n + 1) ^ k) : L.InPPoly :=
+  ⟨a, k, hL.mono hT⟩
+
 /-- `P/poly` membership as one family carrying its own size bound. -/
 theorem Language.inPPoly_iff (L : Language Bool) :
-    L.InPPoly ↔ ∃ C : BoolCircuit.CircuitFamily,
-      C.OnlyUsesGates BoolCircuit.stdGateOps ∧ C.IsPolySize ∧ C.language = L := by
+    L.InPPoly ↔ ∃ C : BoolCircuit.DAGCircuitFamily,
+      C.HasFaninTwo ∧ C.IsPolySize ∧ C.language = L := by
   constructor
   · rintro ⟨a, k, C, hG, hS, hL⟩
     exact ⟨C, hG, ⟨a, k, hS⟩, hL⟩
@@ -141,7 +78,7 @@ theorem Language.inPPoly_iff (L : Language Bool) :
 
 namespace BoolCircuit
 
-/-- `P/poly` packaged as a set of languages, for `L ∈ PPoly` notation. -/
+/-- `P/poly` as a set of languages.  [AB09, Def 6.5] -/
 def PPoly : Set (Language Bool) :=
   {L | L.InPPoly}
 

@@ -455,9 +455,12 @@ are exactly the machine-facing ones:
   branch has Tseitin equisatisfiability + size bounds only).
 * **Interface guidance inherited from the ch6-circuit audit**
   (`audits/ch6-circuits-findings.md`, notes 12–15): (i) build Thm 6.6's
-  circuit family gate by gate against `OnlyUsesGates stdGateOps` —
-  `Circuit.toFeedForward` is a semantic wrapper and supplies no general basis
-  guarantee; (ii) reduce to tree CKT-SAT from the audited
+  circuit family gate by gate — now most naturally as a book-model
+  `DAGCircuitFamily` (`Language.InPPoly`, [AB09, Def 6.1]); the layered
+  `Language.InLayeredPPoly` is equivalent (`Language.inPPoly_iff_inLayeredPPoly`),
+  and `TreeCircuit.toLayered` is the gate-level tree → layered map (the old
+  `toLayeredWrapper`, formerly `Circuit.toFeedForward`, is only a semantic
+  wrapper); (ii) reduce to tree CKT-SAT from the audited
   `Std.Sat.CNF ℕ` carrier (or via a finite-DAG Tseitin step), with a total
   string map sending malformed inputs to a fixed rejecting word such as
   `encodeSigma ⟨0, .node false []⟩`; (iii) renumber variables densely before
@@ -478,7 +481,8 @@ are exactly the machine-facing ones:
   material → `BoolCircuit`, the Razborov–Smolensky chain →
   `RazborovSmolensky`, `AC_GateOps` → `BoolCircuit.stdGateOps`);
   `FeedForwardCircuit.lean` relocated to
-  `Complexity/CircuitComplexity/FeedForward.lean`, so `Complexity` no
+  `Complexity/CircuitComplexity/FeedForward.lean` (since renamed
+  `LayeredCircuit.lean`), so `Complexity` no
   longer imports from `BooleanAnalysis` (verification:
   `scripts/circuit_module_order.txt`, the 23-module dependency sweep).
   Still open: their `Formulas.lean` defines `Literal`/`Term`/`DNF`/`CNF`

@@ -18,7 +18,7 @@ depth of a node after a further random restriction.
 \lean{LMN.children_depth_le}
 \label{LMN.children_depth_le}
 \leanok
-\uses{BoolCircuit.Circuit, BoolCircuit.Circuit.depth}
+\uses{BoolCircuit.TreeCircuit, BoolCircuit.TreeCircuit.depth}
 \difficulty{4}
 Let $C$ be a Boolean circuit on $n$ variables of the form of a single gate — an AND gate
 or an OR gate — applied to a list of child circuits, and let $c$ be one of those
@@ -29,7 +29,7 @@ children. If the depth of $C$ is at most $d$, then the depth of $c$ is at most $
 \lean{LMN.children_size_sum_le}
 \label{LMN.children_size_sum_le}
 \leanok
-\uses{BoolCircuit.Circuit, BoolCircuit.Circuit.size}
+\uses{BoolCircuit.TreeCircuit, BoolCircuit.TreeCircuit.size}
 \difficulty{2}
 Let $g = \mathrm{node}\,(\mathit{isAnd},\, cs)$ be an internal gate of a Boolean circuit
 on $n$ variables, with $cs$ the list of its child subcircuits, and let $s$ be a natural
@@ -42,7 +42,7 @@ subtraction).
 \lean{LMN.children_maxFanin_le}
 \label{LMN.children_maxFanin_le}
 \leanok
-\uses{BoolCircuit.Circuit, BoolCircuit.Circuit.maxFanin}
+\uses{BoolCircuit.TreeCircuit, BoolCircuit.TreeCircuit.maxFanin}
 \difficulty{4}
 Let $g$ be an internal gate of a Boolean circuit on $n$ variables — either an AND gate
 or an OR gate — applied to a list of child circuits, and suppose its maximum fanin is at
@@ -54,7 +54,7 @@ $w$.
 \lean{LMN.child_size_le_parent}
 \label{LMN.child_size_le_parent}
 \leanok
-\uses{BoolCircuit.Circuit, BoolCircuit.Circuit.size, LMN.children_size_sum_le}
+\uses{BoolCircuit.TreeCircuit, BoolCircuit.TreeCircuit.size, LMN.children_size_sum_le}
 \difficulty{4}
 Let $g$ be a Boolean circuit on $n$ variables that is a single gate — an AND or OR gate
 applied to a list of child circuits — and let $c$ be one of those children. If the size
@@ -66,7 +66,7 @@ is at most $s - 1$.
 \lean{LMN.restrictFn_node_eval}
 \label{LMN.restrictFn_node_eval}
 \leanok
-\uses{BoolCircuit.Circuit, BoolCircuit.Circuit.eval, SwitchingLemma.Restriction, SwitchingLemma.restrictFn}
+\uses{BoolCircuit.TreeCircuit, BoolCircuit.TreeCircuit.eval, SwitchingLemma.Restriction, SwitchingLemma.restrictFn}
 \difficulty{2}
 Fix $n$ variables and let $C_1,\dots,C_k$ be a finite list of Boolean circuits on them,
 let $\rho$ be a restriction, and let $b$ be a Boolean flag. For a Boolean function $f$
@@ -106,12 +106,12 @@ empty conjunction is $\mathrm{true}$, and an empty disjunction is $\mathrm{false
   {boolean-ch04-dnf-switching-lmn}
   {pdf-fc447f326910-p001-b004}
 \proofstep
-  {BoolCircuit.Circuit}
+  {BoolCircuit.TreeCircuit}
   {context}
   {boolean-ch04-dnf-switching-lmn}
   {pdf-fc447f326910-p011-b004}
 \proofstep
-  {BoolCircuit.Circuit.eval}
+  {BoolCircuit.TreeCircuit.eval}
   {context}
   {boolean-ch04-dnf-switching-lmn}
   {pdf-fc447f326910-p011-b004}
@@ -131,7 +131,7 @@ empty conjunction is $\mathrm{true}$, and an empty disjunction is $\mathrm{false
   {boolean-ch04-dnf-switching-lmn}
   {pdf-fc447f326910-p001-b004}
 \proofstep
-  {Term.width}
+  {LitList.width}
   {context}
   {boolean-ch04-dnf-switching-lmn}
   {pdf-fc447f326910-p001-b004}
@@ -146,7 +146,7 @@ empty conjunction is $\mathrm{true}$, and an empty disjunction is $\mathrm{false
   {boolean-ch04-dnf-switching-lmn}
   {pdf-fc447f326910-p002-b004}
 \proofstep
-  {CNF.evalClause}
+  {Clause.eval}
   {context}
   {boolean-ch04-dnf-switching-lmn}
   {pdf-fc447f326910-p002-b004}
@@ -283,7 +283,7 @@ empty conjunction is $\mathrm{true}$, and an empty disjunction is $\mathrm{false
   {context}
   {boolean-ch04-dnf-switching-lmn}
   {pdf-fc447f326910-p013-b002}
-\uses{BoolCircuit.Circuit, BoolCircuit.Circuit.eval, CNF, CNF.eval, CNF.width, LMN.compression_and_of_cnfs, LMN.restrictFn_node_eval, LMN.restricted_has_small_cnf_of_dtDepth_le, SwitchingLemma.Restriction, SwitchingLemma.restrictFn, dtDepth}
+\uses{BoolCircuit.TreeCircuit, BoolCircuit.TreeCircuit.eval, CNF, CNF.eval, CNF.width, LMN.compression_and_of_cnfs, LMN.restrictFn_node_eval, LMN.restricted_has_small_cnf_of_dtDepth_le, SwitchingLemma.Restriction, SwitchingLemma.restrictFn, dtDepth}
 \difficulty{4}
 Let $cs$ be a finite list of Boolean circuits on $n$ variables, let $\rho$ be a
 restriction on those variables, and let $l$ be a natural number. Suppose that for every
@@ -313,12 +313,12 @@ assignment $x : \mathrm{Fin}\,n \to \mathrm{Bool}$.
   {boolean-ch04-dnf-switching-lmn}
   {pdf-fc447f326910-p001-b004}
 \proofstep
-  {BoolCircuit.Circuit}
+  {BoolCircuit.TreeCircuit}
   {context}
   {boolean-ch04-dnf-switching-lmn}
   {pdf-fc447f326910-p011-b004}
 \proofstep
-  {BoolCircuit.Circuit.eval}
+  {BoolCircuit.TreeCircuit.eval}
   {context}
   {boolean-ch04-dnf-switching-lmn}
   {pdf-fc447f326910-p011-b004}
@@ -338,7 +338,7 @@ assignment $x : \mathrm{Fin}\,n \to \mathrm{Bool}$.
   {boolean-ch04-dnf-switching-lmn}
   {pdf-fc447f326910-p001-b004}
 \proofstep
-  {Term.width}
+  {LitList.width}
   {context}
   {boolean-ch04-dnf-switching-lmn}
   {pdf-fc447f326910-p001-b004}
@@ -353,7 +353,7 @@ assignment $x : \mathrm{Fin}\,n \to \mathrm{Bool}$.
   {boolean-ch04-dnf-switching-lmn}
   {pdf-fc447f326910-p002-b004}
 \proofstep
-  {CNF.evalClause}
+  {Clause.eval}
   {context}
   {boolean-ch04-dnf-switching-lmn}
   {pdf-fc447f326910-p002-b004}
@@ -444,12 +444,12 @@ assignment $x : \mathrm{Fin}\,n \to \mathrm{Bool}$.
   {boolean-ch04-dnf-switching-lmn}
   {pdf-fc447f326910-p002-b005}
 \proofstep
-  {cnfToDualDNF}
+  {CNF.dual}
   {context}
   {boolean-ch04-dnf-switching-lmn}
   {pdf-fc447f326910-p002-b005}
 \proofstep
-  {cnfToDualDNF_width}
+  {CNF.dual_width}
   {context}
   {boolean-ch04-dnf-switching-lmn}
   {pdf-fc447f326910-p002-b005}
@@ -499,7 +499,7 @@ assignment $x : \mathrm{Fin}\,n \to \mathrm{Bool}$.
   {context}
   {boolean-ch04-dnf-switching-lmn}
   {pdf-fc447f326910-p012-b004}
-\uses{BoolCircuit.Circuit, BoolCircuit.Circuit.eval, DNF, DNF.eval, DNF.width, LMN.compression_or_of_dnfs, LMN.restrictFn_node_eval, SwitchingLemma.Restriction, SwitchingLemma.dtDepth_le_implies_small_dnf_cnf, SwitchingLemma.restrictFn, dtDepth}
+\uses{BoolCircuit.TreeCircuit, BoolCircuit.TreeCircuit.eval, DNF, DNF.eval, DNF.width, LMN.compression_or_of_dnfs, LMN.restrictFn_node_eval, SwitchingLemma.Restriction, SwitchingLemma.dtDepth_le_implies_small_dnf_cnf, SwitchingLemma.restrictFn, dtDepth}
 \difficulty{4}
 Let $c_1,\dots,c_m$ be Boolean circuits on $n$ variables, let $\rho$ be a restriction of
 those variables, and let $l$ be a natural number. For a Boolean function $g$ write
@@ -539,12 +539,12 @@ evaluates to the disjunction of the values $c_1,\dots,c_m$.
   {boolean-ch04-dnf-switching-lmn}
   {pdf-fc447f326910-p001-b004}
 \proofstep
-  {BoolCircuit.Circuit}
+  {BoolCircuit.TreeCircuit}
   {context}
   {boolean-ch04-dnf-switching-lmn}
   {pdf-fc447f326910-p011-b004}
 \proofstep
-  {BoolCircuit.Circuit.eval}
+  {BoolCircuit.TreeCircuit.eval}
   {context}
   {boolean-ch04-dnf-switching-lmn}
   {pdf-fc447f326910-p011-b004}
@@ -564,7 +564,7 @@ evaluates to the disjunction of the values $c_1,\dots,c_m$.
   {boolean-ch04-dnf-switching-lmn}
   {pdf-fc447f326910-p001-b004}
 \proofstep
-  {Term.width}
+  {LitList.width}
   {context}
   {boolean-ch04-dnf-switching-lmn}
   {pdf-fc447f326910-p001-b004}
@@ -579,7 +579,7 @@ evaluates to the disjunction of the values $c_1,\dots,c_m$.
   {boolean-ch04-dnf-switching-lmn}
   {pdf-fc447f326910-p002-b004}
 \proofstep
-  {CNF.evalClause}
+  {Clause.eval}
   {context}
   {boolean-ch04-dnf-switching-lmn}
   {pdf-fc447f326910-p002-b004}
@@ -1396,17 +1396,17 @@ evaluates to the disjunction of the values $c_1,\dots,c_m$.
   {boolean-ch04-dnf-switching-lmn}
   {pdf-fc447f326910-p002-b005}
 \proofstep
-  {cnfToDualDNF}
+  {CNF.dual}
   {context}
   {boolean-ch04-dnf-switching-lmn}
   {pdf-fc447f326910-p002-b005}
 \proofstep
-  {cnfToDualDNF_width}
+  {CNF.dual_width}
   {context}
   {boolean-ch04-dnf-switching-lmn}
   {pdf-fc447f326910-p002-b005}
 \proofstep
-  {cnfToDualDNF_eval}
+  {CNF.dual_eval}
   {context}
   {boolean-ch04-dnf-switching-lmn}
   {pdf-fc447f326910-p002-b005}
@@ -1431,12 +1431,12 @@ evaluates to the disjunction of the values $c_1,\dots,c_m$.
   {boolean-ch04-dnf-switching-lmn}
   {pdf-fc447f326910-p002-b005}
 \proofstep
-  {SwitchingLemmaCNF.cnfToDualDNF_nodup}
+  {CNF.dual_nodup}
   {context}
   {boolean-ch04-dnf-switching-lmn}
   {pdf-fc447f326910-p002-b005}
 \proofstep
-  {SwitchingLemmaCNF.cnfToDualDNF_inj}
+  {CNF.dual_inj}
   {context}
   {boolean-ch04-dnf-switching-lmn}
   {pdf-fc447f326910-p002-b005}
@@ -1690,7 +1690,7 @@ evaluates to the disjunction of the values $c_1,\dots,c_m$.
   {context}
   {boolean-ch04-dnf-switching-lmn}
   {pdf-fc447f326910-p012-b004}
-\uses{BoolCircuit.Circuit, BoolCircuit.Circuit.eval, CNF.eval, DNF.eval, LMN.and_children_have_cnf, LMN.composeRestr, LMN.or_children_have_dnf, LMN.restrictFn_composeRestr, LMN.switching_bernoulli_dtDepth_cnf_general, LMN.switching_bernoulli_dtDepth_dnf_general, SwitchingLemma.Restriction, SwitchingLemma.bernoulliRestrProb, SwitchingLemma.restrictFn, dtDepth}
+\uses{BoolCircuit.TreeCircuit, BoolCircuit.TreeCircuit.eval, CNF.eval, DNF.eval, LMN.and_children_have_cnf, LMN.composeRestr, LMN.or_children_have_dnf, LMN.restrictFn_composeRestr, LMN.switching_bernoulli_dtDepth_cnf_general, LMN.switching_bernoulli_dtDepth_dnf_general, SwitchingLemma.Restriction, SwitchingLemma.bernoulliRestrProb, SwitchingLemma.restrictFn, dtDepth}
 \difficulty{5}
 Fix $n \ge 1$, an integer $l \ge 1$, and a natural number $t$, and write $D(g)$ for the
 decision-tree depth of a Boolean function $g$ on $n$ variables, that is, the least depth

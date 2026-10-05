@@ -3,7 +3,7 @@ Copyright (c) 2026 Yichuan Wang. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Yichuan Wang
 -/
-import TCSlib.Complexity.CircuitComplexity.FeedForward
+import TCSlib.Complexity.CircuitComplexity.LayeredCircuit
 import Mathlib.Algebra.Field.ZMod
 import Mathlib.Algebra.MvPolynomial.CommRing
 import Mathlib.Algebra.MvPolynomial.Degrees
@@ -19,7 +19,7 @@ open scoped BigOperators
 
 namespace RazborovSmolensky
 
-open BoolCircuit BoolCircuit.FeedForward
+open BoolCircuit BoolCircuit.LayeredCircuit
 
 variable (p : ℕ) [Fact (Nat.Prime p)]
 

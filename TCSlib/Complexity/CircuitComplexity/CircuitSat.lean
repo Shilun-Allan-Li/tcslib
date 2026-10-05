@@ -13,16 +13,16 @@ Arora–Barak Definition 6.9 and Lemma 6.11.
 
 ## Main definitions
 
-* `BoolCircuit.Circuit.Satisfiable`, `BoolCircuit.CktSat` — [AB09, Def 6.9].
+* `BoolCircuit.TreeCircuit.Satisfiable`, `BoolCircuit.CktSat` — [AB09, Def 6.9].
 * `BoolCircuit.CktVar` — the Tseitin variables: one per input, one per subcircuit.
-* `BoolCircuit.Circuit.toCNF` — the gate clauses plus the output unit clause.
+* `BoolCircuit.TreeCircuit.toCNF` — the gate clauses plus the output unit clause.
 
 ## Main results
 
-* `BoolCircuit.Circuit.satisfiable_iff_isSatisfiable` — both directions of
+* `BoolCircuit.TreeCircuit.satisfiable_iff_isSatisfiable` — both directions of
   [AB09, Lem 6.11], before the 3-CNF step.
 * `BoolCircuit.mem_cktSat_iff_is3Satisfiable` — [AB09, Lem 6.11], equisatisfiability only.
-* `BoolCircuit.Circuit.toCNF_length_le` — the intermediate `C.toCNF` has at most
+* `BoolCircuit.TreeCircuit.toCNF_length_le` — the intermediate `C.toCNF` has at most
   `3 * C.size` clauses.
 
 ## Divergences from Arora–Barak §6.1.2
@@ -32,27 +32,27 @@ reduction's *cost*.  The campaign's machine model and class `P` live on this bra
 (`TuringMachine/`, `ClassP/`); what is missing here is a machine-level implementation
 of the reduction. `toCNF_length_le` counts the clauses of the
 intermediate `C.toCNF` and no more — clause *width* is unbounded (see fan-in below),
-and `CktVar n`, indexed by all of `Circuit n`, is infinite, so the output formula has no
+and `CktVar n`, indexed by all of `TreeCircuit n`, is infinite, so the output formula has no
 bit length here.  Relatedly, AB's CKT-SAT is a language of *strings representing*
 circuits, whereas `CktSat` is a set of circuits: the Tseitin proof must not depend on an
 encoding.  `CircuitComplexity.Encoding` supplies one downstream, and with it a clause
 count bounded in the encoded input length — still not a `≤p` claim.
 
-Model: `BoolCircuit.Circuit`, a tree, not the DAG `BoolCircuit.FeedForward` of `PPoly.lean`. The
+Model: `BoolCircuit.TreeCircuit`, a tree, not the DAG `BoolCircuit.LayeredCircuit` of `LayeredPPoly.lean`. The
 tree is the chosen carrier, not a forced one: a gate's
 membership in these gate sets *can* be cased on: `RazborovSmolensky.ACp_GateOps_cases`
 (`ACpGates.lean:579`) does it for `ACp_GateOps p`, unfolding the `⋃` through
 `Set.mem_iUnion.mp`, and `ACp_GateOps = stdGateOps ∪ ⋃ n, {modGateOp p n}` — no
-`stdGateOps_cases` exists, but nothing obstructs one.  A clause map over `FeedForward` is
+`stdGateOps_cases` exists, but nothing obstructs one.  A clause map over `LayeredCircuit` is
 **unimplemented, not impossible**: `id` and `NOT` each admit two binary Tseitin
-clauses (they lack `Circuit` *nodes*, which only blocks reuse of this file's
+clauses (they lack `TreeCircuit` *nodes*, which only blocks reuse of this file's
 unroller), and the dependent sum of layer/node types — the same index
-`FeedForward.size` counts — would serve as a Tseitin variable type.  Missing
+`LayeredCircuit.size` counts — would serve as a Tseitin variable type.  Missing
 are that implementation and its cost bounds.  No equivalence of the two models is claimed, and none is
-available here. `Circuit` has no `NOT` gate — negation
+available here. `TreeCircuit` has no `NOT` gate — negation
 lives in the leaf literals — so AB's `zᵢ ↔ ¬z_j` pair occurs exactly at a negative leaf.
 
-Fan-in stays unbounded, as in `PPoly.lean`, so a width-`w` `AND` needs one clause of
+Fan-in stays unbounded, as in `LayeredPPoly.lean`, so a width-`w` `AND` needs one clause of
 width `w + 1` and `toCNF` is CNF, not 3-CNF; rather than pre-reduce to fan-in 2 we
 compose with `SATTo3SAT.to3SAT`. Equal subcircuits share a variable — Tseitin sharing.
 
@@ -75,34 +75,34 @@ variable {n : ℕ}
 /-! ## CKT-SAT -/
 
 /-- A circuit is satisfiable when some input makes it output `true`. -/
-def Circuit.Satisfiable (C : Circuit n) : Prop :=
+def TreeCircuit.Satisfiable (C : TreeCircuit n) : Prop :=
   ∃ u : Fin n → Bool, C.eval u = true
 
 /-- CKT-SAT: the satisfiable circuits, indexed by their arity.  [AB09, Def 6.9] -/
-def CktSat : Set ((n : ℕ) × Circuit n) :=
+def CktSat : Set ((n : ℕ) × TreeCircuit n) :=
   {C | C.2.Satisfiable}
 
 /-- Membership in `CktSat` is satisfiability of the underlying circuit. -/
 @[simp]
-theorem mem_cktSat_iff (C : (n : ℕ) × Circuit n) : C ∈ CktSat ↔ C.2.Satisfiable :=
+theorem mem_cktSat_iff (C : (n : ℕ) × TreeCircuit n) : C ∈ CktSat ↔ C.2.Satisfiable :=
   Iff.rfl
 
 /-! `CktSat` is neither empty nor everything: on zero inputs the empty `AND` is
 satisfiable and the empty `OR` is not. -/
 
-example : (⟨0, .node true []⟩ : (n : ℕ) × Circuit n) ∈ CktSat :=
-  ⟨finZeroElim, by simp [Circuit.eval]⟩
+example : (⟨0, .node true []⟩ : (n : ℕ) × TreeCircuit n) ∈ CktSat :=
+  ⟨finZeroElim, by simp [TreeCircuit.eval]⟩
 
-example : (⟨0, .node false []⟩ : (n : ℕ) × Circuit n) ∉ CktSat := by
+example : (⟨0, .node false []⟩ : (n : ℕ) × TreeCircuit n) ∉ CktSat := by
   rintro ⟨u, hu⟩
-  simp [Circuit.eval] at hu
+  simp [TreeCircuit.eval] at hu
 
 /-! ## The Tseitin encoding -/
 
 /-- The variables of the encoding: the circuit's inputs, and one per subcircuit. -/
 inductive CktVar (n : ℕ) where
   | input : Fin n → CktVar n
-  | gate : Circuit n → CktVar n
+  | gate : TreeCircuit n → CktVar n
 
 /-- The literal over `CktVar n` that holds exactly when the leaf literal `l` does. -/
 def Lit.toCktLiteral (l : Lit n) : Literal (CktVar n) :=
@@ -114,7 +114,7 @@ def Lit.toCktLiteralNeg (l : Lit n) : Literal (CktVar n) :=
 
 /-- The clauses forcing `z ↔ ⋀ zᵢ` (`isAnd = true`) or `z ↔ ⋁ zᵢ`, where `z` is the
 variable of `node isAnd cs` and the `zᵢ` are those of its children. -/
-def gateClauses : Bool → List (Circuit n) → CNFFormula (CktVar n)
+def gateClauses : Bool → List (TreeCircuit n) → CNFFormula (CktVar n)
   | true, cs =>
       (Literal.pos (.gate (.node true cs)) :: cs.map fun c => Literal.neg (.gate c)) ::
         cs.map fun c => [Literal.neg (.gate (.node true cs)), Literal.pos (.gate c)]
@@ -123,7 +123,7 @@ def gateClauses : Bool → List (Circuit n) → CNFFormula (CktVar n)
         cs.map fun c => [Literal.pos (.gate (.node false cs)), Literal.neg (.gate c)]
 
 /-- The gate clauses of every subcircuit of `C`. -/
-def Circuit.tseitin : Circuit n → CNFFormula (CktVar n)
+def TreeCircuit.tseitin : TreeCircuit n → CNFFormula (CktVar n)
   | .lit l =>
       [[Literal.neg (.gate (.lit l)), l.toCktLiteral],
        [Literal.pos (.gate (.lit l)), l.toCktLiteralNeg]]
@@ -131,7 +131,7 @@ def Circuit.tseitin : Circuit n → CNFFormula (CktVar n)
 
 /-- The CNF formula the reduction produces: the gate clauses together with the unit
 clause on the output node. -/
-def Circuit.toCNF (C : Circuit n) : CNFFormula (CktVar n) :=
+def TreeCircuit.toCNF (C : TreeCircuit n) : CNFFormula (CktVar n) :=
   [Literal.pos (.gate C)] :: C.tseitin
 
 /-- The assignment reading the inputs off `u` and every subcircuit variable off that
@@ -170,35 +170,35 @@ evaluates to true: if it does, so does the gate, satisfying the gate's positive
 literal; if it does not, the child's negative literal is satisfied.  In the AND
 case the witness for the long clause in the false branch is a child that fails,
 obtained by contraposing the unbounded AND semantics. -/
-theorem gateClauses_satisfied (u : Fin n → Bool) (b : Bool) (cs : List (Circuit n)) :
+theorem gateClauses_satisfied (u : Fin n → Bool) (b : Bool) (cs : List (TreeCircuit n)) :
     formulaSatisfied (tseitinAssignment u) (gateClauses b cs) := by
   cases b
   · intro c hc
     simp only [gateClauses, List.mem_cons, List.mem_map] at hc
     rcases hc with rfl | ⟨d, hd, rfl⟩
-    · by_cases hz : (Circuit.node false cs).eval u = true
-      · obtain ⟨d, hd, hdv⟩ := (Circuit.eval_node_false_iff cs u).mp hz
+    · by_cases hz : (TreeCircuit.node false cs).eval u = true
+      · obtain ⟨d, hd, hdv⟩ := (TreeCircuit.eval_node_false_iff cs u).mp hz
         exact ⟨Literal.pos (.gate d),
           List.mem_cons_of_mem _ (List.mem_map.mpr ⟨d, hd, rfl⟩), hdv⟩
       · exact ⟨Literal.neg (.gate (.node false cs)), List.mem_cons_self, hz⟩
     · by_cases hdv : d.eval u = true
       · exact ⟨Literal.pos (.gate (.node false cs)), List.mem_cons_self,
-          (Circuit.eval_node_false_iff cs u).mpr ⟨d, hd, hdv⟩⟩
+          (TreeCircuit.eval_node_false_iff cs u).mpr ⟨d, hd, hdv⟩⟩
       · exact ⟨Literal.neg (.gate d), List.mem_cons_of_mem _ List.mem_cons_self, hdv⟩
   · intro c hc
     simp only [gateClauses, List.mem_cons, List.mem_map] at hc
     rcases hc with rfl | ⟨d, hd, rfl⟩
-    · by_cases hz : (Circuit.node true cs).eval u = true
+    · by_cases hz : (TreeCircuit.node true cs).eval u = true
       · exact ⟨Literal.pos (.gate (.node true cs)), List.mem_cons_self, hz⟩
       · obtain ⟨d, hd, hdv⟩ : ∃ d ∈ cs, ¬ d.eval u = true := by
           by_contra hcon
           push_neg at hcon
-          exact hz ((Circuit.eval_node_true_iff cs u).mpr hcon)
+          exact hz ((TreeCircuit.eval_node_true_iff cs u).mpr hcon)
         exact ⟨Literal.neg (.gate d),
           List.mem_cons_of_mem _ (List.mem_map.mpr ⟨d, hd, rfl⟩), hdv⟩
-    · by_cases hz : (Circuit.node true cs).eval u = true
+    · by_cases hz : (TreeCircuit.node true cs).eval u = true
       · exact ⟨Literal.pos (.gate d), List.mem_cons_of_mem _ List.mem_cons_self,
-          (Circuit.eval_node_true_iff cs u).mp hz d hd⟩
+          (TreeCircuit.eval_node_true_iff cs u).mp hz d hd⟩
       · exact ⟨Literal.neg (.gate (.node true cs)), List.mem_cons_self, hz⟩
 
 /-- The canonical assignment satisfies every gate clause of `C`.
@@ -210,17 +210,17 @@ leaf's value, so splitting on that value picks, in each of the two clauses, a
 literal that holds.  At a gate the clause set is the gate's own clauses followed
 by the clauses of the children: the first are covered by the preceding lemma,
 the second by the induction hypothesis. -/
-theorem tseitin_satisfied (u : Fin n → Bool) (C : Circuit n) :
+theorem tseitin_satisfied (u : Fin n → Bool) (C : TreeCircuit n) :
     formulaSatisfied (tseitinAssignment u) C.tseitin := by
   have hu : ∀ i, u i = true ↔ tseitinAssignment u (CktVar.input i) := fun _ => Iff.rfl
-  induction C using Circuit.ind with
+  induction C using TreeCircuit.ind with
   | hlit l =>
       intro c hc
       have e1 := evalLiteral_toCktLiteral_iff (α := tseitinAssignment u) hu l
       have e2 := evalLiteral_toCktLiteralNeg_iff (α := tseitinAssignment u) hu l
       have hval : tseitinAssignment u (CktVar.gate (.lit l)) ↔ l.eval u = true := by
-        simp [tseitinAssignment, Circuit.eval_lit]
-      simp only [Circuit.tseitin, List.mem_cons, List.not_mem_nil, or_false] at hc
+        simp [tseitinAssignment, TreeCircuit.eval_lit]
+      simp only [TreeCircuit.tseitin, List.mem_cons, List.not_mem_nil, or_false] at hc
       by_cases hg : l.eval u = true
       · rcases hc with rfl | rfl
         · exact ⟨l.toCktLiteral, List.mem_cons_of_mem _ List.mem_cons_self, e1.mpr hg⟩
@@ -230,7 +230,7 @@ theorem tseitin_satisfied (u : Fin n → Bool) (C : Circuit n) :
         · exact ⟨l.toCktLiteralNeg, List.mem_cons_of_mem _ List.mem_cons_self, e2.mpr hg⟩
   | hnode b cs ih =>
       intro c hc
-      simp only [Circuit.tseitin, List.mem_append, List.mem_flatMap] at hc
+      simp only [TreeCircuit.tseitin, List.mem_append, List.mem_flatMap] at hc
       rcases hc with hc | ⟨d, hd, hcd⟩
       · exact gateClauses_satisfied u b cs c hc
       · exact ih d hd c hcd
@@ -247,9 +247,9 @@ is true exactly when some child is, an AND gate exactly when all are — and eac
 direction of the goal is one of those two facts composed with the hypothesis
 that every child's variable already agrees with that child's value. -/
 theorem eval_node_iff_of_gateClauses {α : Assignment (CktVar n)} {u : Fin n → Bool}
-    (b : Bool) (cs : List (Circuit n)) (hgate : formulaSatisfied α (gateClauses b cs))
+    (b : Bool) (cs : List (TreeCircuit n)) (hgate : formulaSatisfied α (gateClauses b cs))
     (key : ∀ c ∈ cs, (c.eval u = true ↔ α (CktVar.gate c))) :
-    (Circuit.node b cs).eval u = true ↔ α (CktVar.gate (.node b cs)) := by
+    (TreeCircuit.node b cs).eval u = true ↔ α (CktVar.gate (.node b cs)) := by
   cases b
   · have hmain : ¬ α (CktVar.gate (.node false cs)) ∨ ∃ c ∈ cs, α (CktVar.gate c) := by
       simpa [clauseSatisfied, evalLiteral] using
@@ -260,7 +260,7 @@ theorem eval_node_iff_of_gateClauses {α : Assignment (CktVar n)} {u : Fin n →
       simpa [clauseSatisfied, evalLiteral] using
         hgate [Literal.pos (.gate (.node false cs)), Literal.neg (.gate c)]
           (List.mem_cons_of_mem _ (List.mem_map.mpr ⟨c, hc, rfl⟩))
-    rw [Circuit.eval_node_false_iff]
+    rw [TreeCircuit.eval_node_false_iff]
     constructor
     · rintro ⟨c, hc, hcv⟩
       exact (hside c hc).resolve_right (not_not_intro ((key c hc).mp hcv))
@@ -276,7 +276,7 @@ theorem eval_node_iff_of_gateClauses {α : Assignment (CktVar n)} {u : Fin n →
       simpa [clauseSatisfied, evalLiteral] using
         hgate [Literal.neg (.gate (.node true cs)), Literal.pos (.gate c)]
           (List.mem_cons_of_mem _ (List.mem_map.mpr ⟨c, hc, rfl⟩))
-    rw [Circuit.eval_node_true_iff]
+    rw [TreeCircuit.eval_node_true_iff]
     constructor
     · intro hall
       refine hmain.resolve_right ?_
@@ -296,14 +296,14 @@ into the gate's own clauses and the children's; the children's halves give, by
 induction, that each child's variable agrees with its value, and the preceding
 lemma then transfers that agreement to the gate itself. -/
 theorem eval_iff_of_tseitin_satisfied {α : Assignment (CktVar n)} {u : Fin n → Bool}
-    (hu : ∀ i, u i = true ↔ α (CktVar.input i)) (C : Circuit n)
+    (hu : ∀ i, u i = true ↔ α (CktVar.input i)) (C : TreeCircuit n)
     (h : formulaSatisfied α C.tseitin) :
     C.eval u = true ↔ α (CktVar.gate C) := by
-  induction C using Circuit.ind with
+  induction C using TreeCircuit.ind with
   | hlit l =>
       have e1 := evalLiteral_toCktLiteral_iff hu l
       have e2 := evalLiteral_toCktLiteralNeg_iff hu l
-      simp only [Circuit.tseitin] at h
+      simp only [TreeCircuit.tseitin] at h
       have h1 : ¬ α (CktVar.gate (.lit l)) ∨ l.eval u = true := by
         obtain ⟨p, hp, hv⟩ :=
           h [Literal.neg (.gate (.lit l)), l.toCktLiteral] List.mem_cons_self
@@ -318,15 +318,15 @@ theorem eval_iff_of_tseitin_satisfied {α : Assignment (CktVar n)} {u : Fin n �
         rcases hp with rfl | rfl
         · exact Or.inl hv
         · exact Or.inr (e2.mp hv)
-      rw [Circuit.eval_lit]
+      rw [TreeCircuit.eval_lit]
       tauto
   | hnode b cs ih =>
       refine eval_node_iff_of_gateClauses b cs (fun c hc => h c ?_) (fun c hc => ih c hc ?_)
-      · simp only [Circuit.tseitin, List.mem_append]
+      · simp only [TreeCircuit.tseitin, List.mem_append]
         exact Or.inl hc
       · intro d hd
         refine h d ?_
-        simp only [Circuit.tseitin, List.mem_append, List.mem_flatMap]
+        simp only [TreeCircuit.tseitin, List.mem_append, List.mem_flatMap]
         exact Or.inr ⟨c, hc, hd⟩
 
 /-- A circuit is satisfiable exactly when the CNF formula the reduction produces is.
@@ -338,14 +338,14 @@ outputs true, and the gate clauses hold by the completeness lemma above.  From a
 satisfying assignment, read an input off its values on the input variables: the
 unit clause forces the output variable true, and the soundness lemma turns that
 into the circuit evaluating to true on the read-off input. -/
-theorem Circuit.satisfiable_iff_isSatisfiable (C : Circuit n) :
+theorem TreeCircuit.satisfiable_iff_isSatisfiable (C : TreeCircuit n) :
     C.Satisfiable ↔ isSatisfiable C.toCNF := by
   classical
   constructor
   · rintro ⟨u, hu⟩
     refine ⟨tseitinAssignment u, ?_⟩
     intro c hc
-    simp only [Circuit.toCNF, List.mem_cons] at hc
+    simp only [TreeCircuit.toCNF, List.mem_cons] at hc
     rcases hc with rfl | hc
     · exact ⟨Literal.pos (.gate C), List.mem_cons_self, hu⟩
     · exact tseitin_satisfied u C c hc
@@ -362,7 +362,7 @@ theorem Circuit.satisfiable_iff_isSatisfiable (C : Circuit n) :
 
 /-- A circuit is satisfiable exactly when the 3-CNF formula built from its gate
 clauses is.  [AB09, Lem 6.11] -/
-theorem mem_cktSat_iff_is3Satisfiable (C : (n : ℕ) × Circuit n) :
+theorem mem_cktSat_iff_is3Satisfiable (C : (n : ℕ) × TreeCircuit n) :
     C ∈ CktSat ↔ is3Satisfiable (to3SAT C.2.toCNF) :=
   (C.2.satisfiable_iff_isSatisfiable).trans (SAT_to_3SAT_equivalence _)
 
@@ -380,12 +380,12 @@ contribution is exactly one clause per child plus the long clause, and the
 gate's size is one more than its children's total, so the three units of slack
 the gate's own node contributes absorb the long clause; linear arithmetic
 finishes. -/
-theorem Circuit.tseitin_length_lt (C : Circuit n) :
+theorem TreeCircuit.tseitin_length_lt (C : TreeCircuit n) :
     C.tseitin.length < 3 * C.size := by
-  induction C using Circuit.ind with
-  | hlit l => simp [Circuit.tseitin, Circuit.size]
+  induction C using TreeCircuit.ind with
+  | hlit l => simp [TreeCircuit.tseitin, TreeCircuit.size]
   | hnode b cs ih =>
-      have hlist : ∀ ds : List (Circuit n),
+      have hlist : ∀ ds : List (TreeCircuit n),
           (∀ d ∈ ds, d.tseitin.length < 3 * d.size) →
           (ds.flatMap fun d => d.tseitin).length + ds.length ≤
             3 * ds.foldr (fun d acc => d.size + acc) 0 := by
@@ -401,13 +401,13 @@ theorem Circuit.tseitin_length_lt (C : Circuit n) :
       have hsum := hlist cs ih
       have hg : (gateClauses b cs).length = cs.length + 1 := by
         cases b <;> simp [gateClauses]
-      simp only [Circuit.tseitin, List.length_append, Circuit.size, hg]
+      simp only [TreeCircuit.tseitin, List.length_append, TreeCircuit.size, hg]
       omega
 
 /-- The reduction produces at most `3 * C.size` clauses. -/
-theorem Circuit.toCNF_length_le (C : Circuit n) : C.toCNF.length ≤ 3 * C.size := by
+theorem TreeCircuit.toCNF_length_le (C : TreeCircuit n) : C.toCNF.length ≤ 3 * C.size := by
   have h := C.tseitin_length_lt
-  simp only [Circuit.toCNF, List.length_cons]
+  simp only [TreeCircuit.toCNF, List.length_cons]
   omega
 
 end BoolCircuit

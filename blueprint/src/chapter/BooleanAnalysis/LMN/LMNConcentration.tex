@@ -17,7 +17,7 @@ $O\!\left(w \log(s/\varepsilon)^{d-2} \log(1/\varepsilon)\right)$.
 \lean{RestrictionFourier.circuit_fourier_concentration}
 \label{RestrictionFourier.circuit_fourier_concentration}
 \leanok
-\uses{BoolCircuit.Circuit, BoolCircuit.Circuit.depth, BoolCircuit.Circuit.eval, BoolCircuit.Circuit.maxFanin, BoolCircuit.Circuit.size, BooleanAnalysis.boolToSign, BooleanAnalysis.fourierCoeff, LMN.composedDelta, LMN.composedDelta_le_one, LMN.composedDelta_pos, LMN.odonnell_lemma_4_28, RestrictionFourier.odonnell_lemma_4_21, SwitchingLemma.bernoulliRestrProb, SwitchingLemma.restrictFn, dtDepth}
+\uses{BoolCircuit.TreeCircuit, BoolCircuit.TreeCircuit.depth, BoolCircuit.TreeCircuit.eval, BoolCircuit.TreeCircuit.maxFanin, BoolCircuit.TreeCircuit.size, BooleanAnalysis.boolToSign, BooleanAnalysis.fourierCoeff, LMN.composedDelta, LMN.composedDelta_le_one, LMN.composedDelta_pos, LMN.odonnell_lemma_4_28, RestrictionFourier.odonnell_lemma_4_21, SwitchingLemma.bernoulliRestrProb, SwitchingLemma.restrictFn, dtDepth}
 \difficulty{4}
 Let $C$ be a Boolean circuit on $n \ge 1$ input bits with depth at most $d$, size at
 most $s$, and gate fan-in at most $w$, where $d \ge 2$ and $s, w \ge 1$. Let $l \ge 1$
@@ -59,7 +59,7 @@ $O\!\left(w \log(s/\varepsilon)^{d-2} \log(1/\varepsilon)\right)$.)
 \lean{RestrictionFourier.circuit_fourier_concentration_log}
 \label{RestrictionFourier.circuit_fourier_concentration_log}
 \leanok
-\uses{BoolCircuit.Circuit, BoolCircuit.Circuit.depth, BoolCircuit.Circuit.eval, BoolCircuit.Circuit.maxFanin, BoolCircuit.Circuit.size, BooleanAnalysis.boolToSign, BooleanAnalysis.fourierCoeff, LMN.composedDelta, LMN.logb_2s_div_eps_pos, LMN.size_times_two_pow_neg_l_le, LMN.two_pow_neg_logb_2_div_eps, RestrictionFourier.circuit_fourier_concentration}
+\uses{BoolCircuit.TreeCircuit, BoolCircuit.TreeCircuit.depth, BoolCircuit.TreeCircuit.eval, BoolCircuit.TreeCircuit.maxFanin, BoolCircuit.TreeCircuit.size, BooleanAnalysis.boolToSign, BooleanAnalysis.fourierCoeff, LMN.composedDelta, LMN.logb_2s_div_eps_pos, LMN.size_times_two_pow_neg_l_le, LMN.two_pow_neg_logb_2_div_eps, RestrictionFourier.circuit_fourier_concentration}
 \difficulty{4}
 Let $C$ be a Boolean circuit on $n \ge 1$ input bits with depth at most $d$, size at
 most $s$, and gate fan-in at most $w$, where $d \ge 2$ and $s, w \ge 1$, and let

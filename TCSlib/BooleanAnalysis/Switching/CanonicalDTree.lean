@@ -38,7 +38,7 @@ lemma numFree_update_lt {n : ℕ} (ρ : Restriction n) (v : Fin n) (b : Bool)
     exact hv_not hv
 
 private lemma exists_free_of_not_killed_not_fixed {n : ℕ} (f : DNF n) (ρ : Restriction n)
-    (h1 : ¬∀ t ∈ f, Term.killedBy t ρ) (h2 : ¬∃ t ∈ f, Term.fixedBy t ρ) :
+    (h1 : ¬∀ t ∈ f.terms, Term.killedBy t ρ) (h2 : ¬∃ t ∈ f.terms, Term.fixedBy t ρ) :
     ∃ v : Fin n, v ∈ ρ.freeVars := by
   by_contra hall
   push_neg at hall
@@ -63,7 +63,7 @@ private lemma exists_free_of_not_killed_not_fixed {n : ℕ} (f : DNF n) (ρ : Re
 
 noncomputable def selectBranchVar {n : ℕ} (f : DNF n) (ρ : Restriction n) :
     Option (Fin n) :=
-  match f.find? (fun t => decide (¬Term.killedBy t ρ)) with
+  match f.terms.find? (fun t => decide (¬Term.killedBy t ρ)) with
   | none => none
   | some t =>
     match t.find? (fun l => decide (l.var ∈ ρ.freeVars)) with
@@ -71,21 +71,21 @@ noncomputable def selectBranchVar {n : ℕ} (f : DNF n) (ρ : Restriction n) :
     | some l => some l.var
 
 private lemma selectBranchVar_spec {n : ℕ} (f : DNF n) (ρ : Restriction n)
-    (h1 : ¬∀ t ∈ f, Term.killedBy t ρ) (h2 : ¬∃ t ∈ f, Term.fixedBy t ρ) :
+    (h1 : ¬∀ t ∈ f.terms, Term.killedBy t ρ) (h2 : ¬∃ t ∈ f.terms, Term.fixedBy t ρ) :
     ∃ v, selectBranchVar f ρ = some v ∧ v ∈ ρ.freeVars := by
   unfold selectBranchVar
-  have h1' : f.find? (fun t => decide (¬Term.killedBy t ρ)) ≠ none := by
+  have h1' : f.terms.find? (fun t => decide (¬Term.killedBy t ρ)) ≠ none := by
     intro habs; rw [List.find?_eq_none] at habs
     push_neg at h1; obtain ⟨t, htm, htnk⟩ := h1
     exact (habs t htm) (by simp [htnk])
-  obtain ⟨t, ht_eq⟩ : ∃ t, f.find? (fun t => decide (¬Term.killedBy t ρ)) = some t := by
-    cases hf : f.find? (fun t => decide (¬Term.killedBy t ρ)) with
+  obtain ⟨t, ht_eq⟩ : ∃ t, f.terms.find? (fun t => decide (¬Term.killedBy t ρ)) = some t := by
+    cases hf : f.terms.find? (fun t => decide (¬Term.killedBy t ρ)) with
     | none => exact absurd hf h1'
     | some t => exact ⟨t, rfl⟩
   simp only [ht_eq]
   have ht_nk : ¬Term.killedBy t ρ := by
     have := List.find?_some ht_eq; simp at this; exact this
-  have ht_mem : t ∈ f := List.mem_of_find?_eq_some ht_eq
+  have ht_mem : t ∈ f.terms := List.mem_of_find?_eq_some ht_eq
   have ht_nf : ¬Term.fixedBy t ρ := fun hf => h2 ⟨t, ht_mem, hf⟩
   have h3 : t.find? (fun l => decide (l.var ∈ ρ.freeVars)) ≠ none := by
     intro hall
@@ -134,10 +134,10 @@ where
   go (f : DNF n) : ℕ → Restriction n → DecisionTree n
     | 0, _ => .leaf false
     | fuel + 1, ρ =>
-      if _h1 : ∀ t ∈ f, Term.killedBy t ρ then .leaf false
-      else if _h2 : ∃ t ∈ f, Term.fixedBy t ρ then .leaf true
+      if _h1 : ∀ t ∈ f.terms, Term.killedBy t ρ then .leaf false
+      else if _h2 : ∃ t ∈ f.terms, Term.fixedBy t ρ then .leaf true
       else
-        match f.find? (fun t => decide (¬Term.killedBy t ρ)) with
+        match f.terms.find? (fun t => decide (¬Term.killedBy t ρ)) with
         | none => .leaf false
         | some t =>
           termSubTree t ρ (fun ρ' =>
@@ -439,7 +439,7 @@ lemma canonicalDTree_go_fuel_invariant {n : ℕ} (f : DNF n) :
         -- t has a free literal in ρ (since it's not killed and not fixed).
         have ht_nk : ¬ Term.killedBy t ρ := by
           have := List.find?_some hfind; simp at this; exact this
-        have ht_mem : t ∈ f := List.mem_of_find?_eq_some hfind
+        have ht_mem : t ∈ f.terms := List.mem_of_find?_eq_some hfind
         have ht_nf : ¬ Term.fixedBy t ρ := fun hf => hfixed ⟨t, ht_mem, hf⟩
         have hex : ∃ l ∈ t, l.var ∈ ρ.freeVars := by
           by_contra hall
@@ -477,14 +477,14 @@ The continuation of termSubTree at the restriction reached after traversing
     with `fuel ≥ ρ'.numFree + 1`, then `cont ρ'` and `canonicalDTree f ρ'` are
     identical, because:
     - If `fixedBy t ρ'`: `cont ρ'` is `leaf true`, and `canonicalDTree f ρ'` is
-      `leaf true` (since `t ∈ f` and `fixedBy t ρ'` means the fixed-clause
+      `leaf true` (since `t ∈ f.terms` and `fixedBy t ρ'` means the fixed-clause
       check fires).
     - If `¬fixedBy t ρ'`: `cont ρ'` is `go f fuel ρ'`, and `canonicalDTree f ρ'`
       is `go f (ρ'.numFree + 1) ρ'`. By `canonicalDTree_go_fuel_invariant`,
       these are equal.
 -/
 lemma cont_eq_canonicalDTree {n : ℕ} (f : DNF n) (ρ_orig : Restriction n)
-    (t : Term n) (ht_mem : t ∈ f) (ρ' : Restriction n)
+    (t : Term n) (ht_mem : t ∈ f.terms) (ρ' : Restriction n)
     (hfuel : ρ_orig.numFree ≥ ρ'.numFree + 1) :
     (if decide (Term.fixedBy t ρ') then DecisionTree.leaf true
      else canonicalDTree.go f ρ_orig.numFree ρ') =
@@ -492,11 +492,11 @@ lemma cont_eq_canonicalDTree {n : ℕ} (f : DNF n) (ρ_orig : Restriction n)
   split_ifs <;> simp_all +decide [ SwitchingLemma.canonicalDTree ];
   · rw [ SwitchingLemma.canonicalDTree.go ];
     split_ifs;
-    · have := ‹∀ t ∈ f, Term.killedBy t ρ'› t ht_mem;
+    · have := ‹∀ t ∈ f.terms, Term.killedBy t ρ'› t ht_mem;
       obtain ⟨ l, hl₁, hl₂ ⟩ := this;
       exact absurd ( ‹Term.fixedBy t ρ'› l hl₁ ) ( by unfold Literal.fixedBy; unfold Literal.killedBy at hl₂; aesop );
     · rfl;
-    · exact False.elim <| ‹¬∃ t ∈ f, Term.fixedBy t ρ'› ⟨ t, ht_mem, by assumption ⟩;
+    · exact False.elim <| ‹¬∃ t ∈ f.terms, Term.fixedBy t ρ'› ⟨ t, ht_mem, by assumption ⟩;
   · apply SwitchingLemma.canonicalDTree_go_fuel_invariant;
     exacts [ rfl, hfuel, Nat.lt_succ_self _ ]
 
@@ -650,10 +650,10 @@ lemma termSubTree_deepPath_split {n : ℕ} :
     "fixed? → leaf true; else recurse" continuation. -/
 lemma canonicalDTree_alive_eq_termSubTree {n : ℕ} (f : DNF n) (ρ : Restriction n)
     (fuel : ℕ)
-    (h1 : ¬ ∀ t ∈ f, Term.killedBy t ρ)
-    (h2 : ¬ ∃ t ∈ f, Term.fixedBy t ρ)
+    (h1 : ¬ ∀ t ∈ f.terms, Term.killedBy t ρ)
+    (h2 : ¬ ∃ t ∈ f.terms, Term.fixedBy t ρ)
     (t : Term n)
-    (hfind : f.find? (fun t => decide (¬Term.killedBy t ρ)) = some t) :
+    (hfind : f.terms.find? (fun t => decide (¬Term.killedBy t ρ)) = some t) :
     canonicalDTree.go f (fuel + 1) ρ =
       termSubTree t ρ (fun ρ' =>
         if decide (Term.fixedBy t ρ') then .leaf true
@@ -666,10 +666,10 @@ lemma canonicalDTree_alive_eq_termSubTree {n : ℕ} (f : DNF n) (ρ : Restrictio
     Top-level wrapper around `canonicalDTree_alive_eq_termSubTree` for
     `canonicalDTree` itself (not `canonicalDTree.go`). -/
 lemma canonicalDTree_alive_eq_termSubTree' {n : ℕ} (f : DNF n) (ρ : Restriction n)
-    (h1 : ¬ ∀ t ∈ f, Term.killedBy t ρ)
-    (h2 : ¬ ∃ t ∈ f, Term.fixedBy t ρ)
+    (h1 : ¬ ∀ t ∈ f.terms, Term.killedBy t ρ)
+    (h2 : ¬ ∃ t ∈ f.terms, Term.fixedBy t ρ)
     (t : Term n)
-    (hfind : f.find? (fun t => decide (¬Term.killedBy t ρ)) = some t) :
+    (hfind : f.terms.find? (fun t => decide (¬Term.killedBy t ρ)) = some t) :
     canonicalDTree f ρ =
       termSubTree t ρ (fun ρ' =>
         if decide (Term.fixedBy t ρ') then .leaf true

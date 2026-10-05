@@ -5,11 +5,14 @@ Authors: Seyoon Ragavan
 -/
 import TCSlib.BooleanAnalysis.DecisionTree
 import TCSlib.Complexity.CircuitComplexity.Basic
-import TCSlib.Complexity.CircuitComplexity.FeedForward
-import TCSlib.Complexity.CircuitComplexity.Formulas
-import TCSlib.Complexity.CircuitComplexity.NCAC
+import TCSlib.Complexity.CircuitComplexity.DAGCircuit
 import TCSlib.Complexity.CircuitComplexity.PPoly
+import TCSlib.Complexity.CircuitComplexity.LayeredCircuit
+import TCSlib.Complexity.CircuitComplexity.Formulas
+import TCSlib.Complexity.CircuitComplexity.TreeNCAC
+import TCSlib.Complexity.CircuitComplexity.LayeredPPoly
 import TCSlib.Complexity.Formulas.CNF
+import TCSlib.Complexity.Formulas.DNF
 import TCSlib.Complexity.NPReductions.SATTo3SAT
 import TCSlib.Complexity.TuringMachine.Deterministic
 import TCSlib.Complexity.TuringMachine.Finite
@@ -30,20 +33,28 @@ under `Complexity/`.
 
 ## Models
 
-* `BoolCircuit.Circuit n` — tree-shaped Boolean circuits: unbounded fan-in
-  AND/OR nodes over polarity-carrying literals
+* `BoolCircuit.DAGCircuit n` — the book's Boolean circuits [AB09, Def 6.1]:
+  topologically numbered DAGs of `∧`/`∨`/`¬` gates, size counting every vertex
+  (`Complexity/CircuitComplexity/DAGCircuit.lean`).
+* `BoolCircuit.DAGCircuitFamily` — non-uniform families of `DAGCircuit`s; the
+  carrier of the book's `SIZE`, `P/poly`, `NC`, `AC`
+  (`Complexity/CircuitComplexity/PPoly.lean`, `NCAC.lean`).
+* `BoolCircuit.TreeCircuit n` — tree-shaped Boolean circuits (formulas):
+  unbounded fan-in AND/OR nodes over polarity-carrying literals
   (`Complexity/CircuitComplexity/Basic.lean`).
-* `BoolCircuit.CircuitFamily` — non-uniform families of `FeedForward`
-  circuits, one per input length; the carrier of `Language.InSIZE` and
-  `P/poly` (`Complexity/CircuitComplexity/PPoly.lean`).
-* `BoolCircuit.FeedForward α inp out` — layered DAG circuits over an
+* `BoolCircuit.LayeredCircuitFamily` — non-uniform families of `LayeredCircuit`
+  circuits, one per input length; the carrier of `Language.InLayeredSIZE` and
+  `P/poly` (`Complexity/CircuitComplexity/LayeredPPoly.lean`).
+* `BoolCircuit.LayeredCircuit α inp out` — layered DAG circuits over an
   arbitrary alphabet; the raw model enforces no gate basis, and classes impose
   `stdGateOps` via `OnlyUsesGates`
-  (`Complexity/CircuitComplexity/FeedForward.lean`).
+  (`Complexity/CircuitComplexity/LayeredCircuit.lean`).
 * `BoolCircuit.TreeCircuitFamily` — non-uniform families of tree circuits;
-  the carrier of `NC` and `AC` (`Complexity/CircuitComplexity/NCAC.lean`).
-* `CNF n` / `DNF n`, over `Literal n` and `Term n` — flat width-measured
-  formulas for the switching-lemma development [OD14]
+  the carrier of the formula classes `TreeNC` and `TreeAC`
+  (`Complexity/CircuitComplexity/TreeNCAC.lean`).
+* `CNF n` / `DNF n` — the two readings (AND of clauses / OR of terms) of a
+  reading-neutral `Depth2 n` shape of `LitList n`s over `Literal n`; flat
+  width-measured formulas for the switching-lemma development [OD14]
   (`Complexity/CircuitComplexity/Formulas.lean`).
 * `DecisionTree n` — binary decision trees, with `dtDepth` the least depth
   computing a given function [OD14] (`BooleanAnalysis/DecisionTree.lean`).
@@ -65,20 +76,31 @@ under `Complexity/`.
 * `Std.Sat.CNF ℕ` — Lean core's clause-list CNF, the campaign's SAT/3SAT
   carrier; TCSlib's layer over it is in `Complexity/Formulas/CNF.lean`,
   with serialization in `Complexity/Formulas/CNFEncoding.lean`.
+* `Std.Sat.DNF` — the same list-of-literal-lists shape read as an OR of ANDs,
+  in its own type; the TAUTOLOGY carrier (`Complexity/Formulas/DNF.lean`).
 
 ## Conversions
 
 Model-to-model maps (pointers only — their files are not imported here):
 
-* `BoolCircuit.Circuit.toFeedForward` — a semantic wrapper, not an embedding:
+* `BoolCircuit.TreeCircuit.toDAG` / `BoolCircuit.DAGCircuit.toTree` — formulas → DAGs
+  (linear) and DAGs → formulas (exponential in depth)
+  (`Complexity/CircuitComplexity/TreeDAG.lean`).
+* `BoolCircuit.DAGCircuit.toLayered` / `BoolCircuit.LayeredCircuit.toDAG` — DAGs ↔ layered
+  circuits over `stdGateOps`, polynomial both ways; `BoolCircuit.TreeCircuit.toLayered` —
+  formulas → layered circuits, gate by gate
+  (`Complexity/CircuitComplexity/LayeredDAG.lean`).
+* `BoolCircuit.DAGCircuit.binarize` / `BoolCircuit.DAGCircuit.deMorgan` — fan-in reduction
+  and `∨`-elimination on DAGs (`Complexity/CircuitComplexity/DAGFanin.lean`).
+* `BoolCircuit.TreeCircuit.toLayeredWrapper` — a semantic wrapper, not an embedding:
   the tree's evaluation becomes a single unrestricted first-layer gate, so only
   evaluation is preserved, with no general gate-basis guarantee
-  (`Complexity/CircuitComplexity/FeedForward.lean`).
-* `BoolCircuit.Circuit.tseitin` / `Circuit.toCNF` — circuits →
+  (`Complexity/CircuitComplexity/LayeredCircuit.lean`).
+* `BoolCircuit.TreeCircuit.tseitin` / `TreeCircuit.toCNF` — circuits →
   equisatisfiable `NPReductions.CNFFormula`
   (`Complexity/CircuitComplexity/CircuitSat.lean`).
-* `BoolCircuit.FeedForward.toCircuit` — DAG → tree unrolling, exponential
-  in depth (`Complexity/CircuitComplexity/FeedForward.lean`).
+* `BoolCircuit.LayeredCircuit.toTreeCircuit` — DAG → tree unrolling, exponential
+  in depth (`Complexity/CircuitComplexity/LayeredCircuit.lean`).
 * `FinTM.toFinNDTM` — deterministic machines as nondeterministic ones, in
   lockstep (`Complexity/TuringMachine/Nondeterministic.lean`).
 * `LMN.NormalFormConversion` — normal-form tree circuits ↔ `CNF`/`DNF`

@@ -27,7 +27,7 @@ outer list. Used to merge the clause (or term) lists of several CNFs (or DNFs).
 \lean{LMN.width_le_iff_forall}
 \label{LMN.width_le_iff_forall}
 \leanok
-\uses{Term, Term.width}
+\uses{Term, LitList.width}
 \difficulty{4}
 Let $t_1, \dots, t_k$ be a finite list of terms, each a conjunction of literals, and let
 $\ell$ be a natural number; write $w(t)$ for the width of a term (its number of
@@ -65,7 +65,7 @@ only if every $\psi_i$ evaluates to true at $x$.
 \lean{LMN.dnf_concat_width_le}
 \label{LMN.dnf_concat_width_le}
 \leanok
-\uses{CNF, CNF.width, DNF, DNF.width, LMN.cnf_concat_width_le, LMN.listConcat, Term.width, cnfToDualDNF_width}
+\uses{CNF, CNF.width, DNF, DNF.width, LMN.cnf_concat_width_le, LMN.listConcat, LitList.width, CNF.dual_width}
 \difficulty{6}
 Let $\varphi_1, \dots, \varphi_s$ be DNF formulas over $n$ variables, and let $\ell$ be
 a natural number such that each $\varphi_i$ has width at most $\ell$ (that is, every
@@ -190,7 +190,7 @@ $l$ is at most
   {switching-lemma}
   {pdf-b5e074215b9e-p001-b004}
 \proofstep
-  {Term.width}
+  {LitList.width}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p001-b004}

@@ -712,11 +712,11 @@ The encoder does not kill the first clause found by `find?`.
 -/
 set_option maxHeartbeats 800000 in
 lemma encode_go_not_kills_first_clause {n : ℕ} (f : DNF n) (w : ℕ)
-    (hnd : ∀ t ∈ f, ∀ l₁ ∈ t, ∀ l₂ ∈ t, l₁.var = l₂.var → l₁ = l₂)
+    (hnd : ∀ t ∈ f.terms, ∀ l₁ ∈ t, ∀ l₂ ∈ t, l₁.var = l₂.var → l₁ = l₂)
     (enc_fuel : ℕ) (path : List (Fin n × Bool)) (ρ₀ σ : Restriction n)
     (hE : ∀ v, ρ₀ v = none → σ v = none)
     (t : Term n)
-    (hfind : f.find? (fun t => decide (¬Term.killedBy t ρ₀)) = some t)
+    (hfind : f.terms.find? (fun t => decide (¬Term.killedBy t ρ₀)) = some t)
     (l : Literal n) (hl : l ∈ t) (hfree : ρ₀ l.var = none) :
     (razborovEncode.go f w enc_fuel path ρ₀ σ []).1 l.var ≠ some l.neg := by
   induction' enc_fuel with enc_fuel ih generalizing path ρ₀ σ <;> simp_all +decide ;
@@ -748,7 +748,7 @@ lemma encode_go_not_kills_first_clause {n : ℕ} (f : DNF n) (w : ℕ)
             · exact fun i => fun hi => hfl ⟨ i + 1, by linarith [ Fin.is_lt i ] ⟩ ( by simpa [ Fin.add_def, Nat.mod_eq_of_lt ] using hi );
           · grind +splitImp;
         rw [ SwitchingLemma.razborovEncode.go ];
-        rw [ show List.find? ( fun t => decide ¬Term.killedBy t ρ₀ ) f = some t from by simpa using hfind ];
+        rw [ show List.find? ( fun t => decide ¬Term.killedBy t ρ₀ ) f.terms = some t from by simpa using hfind ];
         simp +decide [ hpcl_path, hfl ];
         rw [ SwitchingLemma.razborovEncode.go ];
         simp only []
@@ -778,7 +778,7 @@ lemma encode_go_not_kills_first_clause {n : ℕ} (f : DNF n) (w : ℕ)
           rw [encode_go_fst_acc]
           exact encode_go_fst_nonfree f w enc_fuel _ _ _ [] l.var (by push_neg at hpcl; exact hpcl)
         rw [ SwitchingLemma.razborovEncode.go ];
-        rw [ show List.find? ( fun t => decide ¬Term.killedBy t ρ₀ ) f = some t from by simpa using hfind ] ; simp +decide [ hfl ] ;
+        rw [ show List.find? ( fun t => decide ¬Term.killedBy t ρ₀ ) f.terms = some t from by simpa using hfind ] ; simp +decide [ hfl ] ;
         rw [hkey]
         exact processClauseLits_sigma_ne_neg _ _ _ _ _ hnd_lits (by rw [hE _ hfree]; simp)
 
