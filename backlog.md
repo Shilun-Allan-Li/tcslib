@@ -356,9 +356,17 @@ uncomputability chapter.
   bridges-then-emitLoop via the forwarding host, P ≈ 10 pts
   splitSolveWith under the gate disciplines, W 3 pts emit_run; zero
   sanctioned admissions each; the `e3c*` family as harvest template;
-  completion drops the tree 20 → 13). Next: dispatch the three; on
-  fills complete → A-cont-3 (targets 1/3/6) + 3B-cont; 4A waits for
-  the fills it consumes; then the epoch-3 audit.
+  completion drops the tree 20 → 13). **W integrated 2026-10-05**
+  (`emit_run` proved, one private, Wrappers admission-free; spec
+  7 → 6). **A-cont-2 integrated 2026-10-05**: the exponential
+  reverse host closed (29 `a2*` privates; B2 host + native binary
+  countdown); targets 4/5 escalated over a recorded maintainer
+  scoping erratum (the Thm 2.22 route cites the excluded
+  `EXP_subset_NEXP`) and move to **A-cont-3, now covering 1/6/3/4/5**
+  post-`splitSolveWith`. Tree at **18 admissions** (12 campaign + 6
+  spec). L and P in flight. Next: integrate L/P → A-cont-3 +
+  3B-cont; 4A waits for the fills it consumes; then the epoch-3
+  audit.
   Subsumes 2C's
   `prefixTM`/`fixedPair` promotion requests. Dedup of superseded batch
   privates is an E5 closure task. Mathlib TM2 rejected as substrate
