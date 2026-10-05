@@ -305,7 +305,16 @@ uncomputability chapter.
   cluster 26 pts / 3B SAT track 24 pts (continuation anticipated) / 3C
   snapshot locality 22 pts / 3D TAUTOLOGY membership 6 pts; zero
   sanctioned admissions; completion closes the E3 statement layer at
-  15 targets). Next: dispatch, then integration + the epoch-3 audit.
+  15 targets). **Integrated 2026-10-05: C/D COMPLETE, B 2-of-3, A at
+  the exponential split body** — 8 new closures (the five snapshot
+  locality lemmas, both SAT memberships, TAUTOLOGY membership); tree
+  57/57 zero errors, **13 admissions**; ledger **46/59 proved**. Two
+  new size exceptions recorded (SAT 2,363; Tautology 1,278). A's
+  frontier: the native exponential split-search body existential
+  (five-step plan in its REPORT; 35 `e3_*` privates banked). B's
+  frontier: run lemmas + time proof for `satRedTM`'s streaming states
+  9–34 (startup proved; all reduction mathematics banked). Next: A/B
+  continuation briefs, then the epoch-3 audit.
   Subsumes 2C's
   `prefixTM`/`fixedPair` promotion requests. Dedup of superseded batch
   privates is an E5 closure task. Mathlib TM2 rejected as substrate
