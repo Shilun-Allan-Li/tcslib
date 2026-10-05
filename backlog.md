@@ -348,9 +348,13 @@ uncomputability chapter.
   rev-parse-verified; targets 2/4/5 only — 1/3/6 deferred to
   post-fill instantiation via `splitSolveWith`; ≈ 13 pts, zero
   sanctioned admissions, dispatches in parallel with the r3 audit).
-  Next: emitter gate (round 3) → three fill batches by file
-  (Loop/Primitives/Wrappers) → A-cont-3 (targets 1/3/6) + 3B-cont;
-  4A waits on the gate (decision 11.3); then the epoch-3 audit.
+  **EMITTER GATE CLOSED 2026-10-05** (round 3: 0/0/1 —
+  `audits/emitter-infra-resolutions.md`; the attribution minor swept
+  comment-only in the closing commit; binding fill/brief handoffs
+  recorded). Next: the three fill batches by file ownership
+  (Loop / Primitives / Wrappers) → A-cont-3 (targets 1/3/6) +
+  3B-cont; 4A's brief now unblocked by decision 11.3 but waits for
+  the fills it consumes; then the epoch-3 audit.
   Subsumes 2C's
   `prefixTM`/`fixedPair` promotion requests. Dedup of superseded batch
   privates is an E5 closure task. Mathlib TM2 rejected as substrate

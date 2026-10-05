@@ -690,3 +690,24 @@ schedule); the two cumulative majors repaired here.
 Spec surface after round 3: unchanged in count — **seven sorried
 contracts** (the two bridges now carrying `0 < C.k`), two transformers,
 two vocabulary definitions.
+
+## 11d. Gate close (2026-10-05, after `audits/emitter-infra-r3-findings.md`)
+
+Round 3: **0 blockers, 0 majors, 1 minor, 4 notes — GATE CLOSED**
+(`audits/emitter-infra-resolutions.md`). Both cumulative majors
+discharged: the positive-tape bridges export the data interface (the
+auditor's projection-table derivation), and §11c's 4A mapping is
+certified against the inherited boundary table, including the exact
+per-member chunk rule. The minor — swept in the closing commit — was an
+attribution error of §11b item 1/§11c item 4 and the install-call
+sketch: the A-continuation's delivered provenance is
+**visited-interval tracking and clearing** (`e3cTrackTM`/`e3cClearTM`),
+not an overwritten-symbol history/undo implementation; at a clean
+entry seam, clearing is restoring, so the track/clear route fills the
+bridges directly, and history/undo stands only as the independently
+derived alternative (r2 finding 4). Two clarifications from r3
+finding 3 bind the 4A brief: `R = n+(k+3)T+k+1` is the last round
+index (member count `R + 1`), and the chunk rule emits per-member
+flatMaps with the single terminator on the last chunk only. Fill
+batches proceed under the resolutions' binding section, partitioned
+Loop / Primitives / Wrappers.

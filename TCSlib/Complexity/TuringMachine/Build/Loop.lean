@@ -2772,13 +2772,20 @@ reaches, at its first positive visit to `exit`, exactly
 `Cfg.ofWords exit (stateWord C.k (f arg))`: the result installed, all
 scratch restored, nothing emitted.
 
-**Construction sketch.** Prepare a virtual input from the tape-resident
-argument (the relocated-read discipline of the proved hosts); run the
-witness through the capture wrapper, **logged** — record overwritten
-symbols and head moves, the A-continuation's proved log/undo pattern —
-then undo, charging the whole visited region to the elapsed run;
-install the captured result on tape zero; erase the log; rewind. Every
-phase is charged to `T`, the argument length, or the result length.
+**Construction sketch** (attribution corrected per the emitter-infra
+round-3 audit, finding 1). Prepare a virtual input from the
+tape-resident argument (the relocated-read discipline of the proved
+hosts); run the witness through the capture wrapper over **tracked
+banks** — the A-continuation's proved visited-interval/origin-marker
+family (`e3cTrackTM`/`e3c_track_run`, `e3cClearTM`/`e3c_clear_run`) —
+then sequence the per-triple cleaner over the fixed `M.k` banks: at a
+clean entry seam the module's scratch starts blank, so clearing the
+tracked interval **is** the restoration, and no overwritten-symbol
+history is needed; install the captured result on tape zero (or replay
+it, in emit mode); erase the capture; rewind. The history/undo
+alternative remains valid independently (round-2 audit, finding 4),
+but is not what the delivered continuation proves. Every phase is
+charged to `T`, the argument length, or the result length.
 
 The `0 < C.k` clause is load-bearing (emitter-infra round-2 audit,
 finding 1): at tape count zero, `stateWord 0 a = stateWord 0 b` for all
