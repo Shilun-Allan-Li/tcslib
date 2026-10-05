@@ -183,6 +183,28 @@ lemma runFrom_add (cfg : Cfg k Symbol State input) (a b : ℕ) :
   unfold runFrom
   rw [Nat.add_comm, Function.iterate_add_apply]
 
+/-- The physical input head can move right by at most one cell per step.
+**Proof sketch.** Clamping never increases a proposed position. Check the
+three movements, then induct over the run, treating halted steps as stationary. -/
+lemma timed_input_bound (cfg : Cfg k Symbol State input) (t : ℕ) :
+    (tm.runFrom cfg t).inputPos.val ≤ cfg.inputPos.val + t := by
+  have hm (p : Fin (input.length + 2)) (m : SignType) :
+      (moveInputPos p m).val ≤ p.val + 1 := by
+    dsimp only [moveInputPos]
+    split <;> dsimp <;> cases m <;> simp_all [SignType.cast] <;> omega
+  have hstep (d : Cfg k Symbol State input) :
+      (tm.step d).inputPos.val ≤ d.inputPos.val + 1 := by
+    cases hs : d.state with
+    | none => simp only [MultiTapeTM.step, hs]; omega
+    | some q =>
+      simpa only [MultiTapeTM.step, hs, Action.apply] using
+        hm d.inputPos (tm.tr q d.inputSymbol d.workTapeSymbols).inputTape
+  induction t with
+  | zero => simp
+  | succ t ih =>
+    rw [MultiTapeTM.runFrom_succ_eq_step']
+    exact (hstep _).trans (by omega)
+
 /-- If a function `f` that maps the configurations of one TM to those of another one commutes with
 their `step` function, then it also commutes with their `runFrom` function. -/
 lemma runFrom_comm_of_step {k' : ℕ} {State' : Type*} {input input' : List Symbol}

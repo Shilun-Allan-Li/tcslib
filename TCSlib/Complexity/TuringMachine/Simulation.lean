@@ -439,6 +439,35 @@ lemma rewind_from_any {k : ℕ} {S : Type} {x : List Bool}
   rw [hfirst, rewind_scan tm scan dest hscan c hc hp]
   simp only [c, hstep]
 
+/-- A quantitative refinement of `rewind_from_any`: its construction takes
+at most the current input position plus two steps, preserving all work and output.
+**Proof sketch.** The mandatory first left move puts the head at most at the
+last input symbol. `rewind_scan` then takes exactly the new position plus one. -/
+lemma timed_rewind {k : ℕ} {S : Type} {x : List Bool}
+    (tm : MultiTapeTM k Bool S) (start scan : S) (dest : Option S)
+    (hstart : ∀ inp work, tm.tr start inp work = controlAction .neg (some scan))
+    (hscan : ∀ inp work, tm.tr scan inp work = match inp with
+      | some _ => controlAction .neg (some scan)
+      | none => controlAction .pos dest)
+    (c : Cfg k Bool S x) (hs : c.state = some start) :
+    ∃ r ≤ c.inputPos.val + 2,
+      tm.runFrom c r = {c with state := dest, inputPos := 1} := by
+  have hstep : tm.step c =
+      {c with state := some scan, inputPos := moveInputPos c.inputPos .neg} := by
+    unfold MultiTapeTM.step
+    rw [hs]
+    dsimp only
+    rw [hstart, controlAction_apply]
+  have hp : (moveInputPos c.inputPos .neg).val ≤ x.length := by
+    rw [moveInputPos_neg_val]
+    have := c.inputPos.isLt
+    omega
+  refine ⟨1 + ((moveInputPos c.inputPos .neg).val + 1), ?_, ?_⟩
+  · rw [moveInputPos_neg_val]; omega
+  · rw [MultiTapeTM.runFrom_add]
+    change tm.runFrom (tm.step c) _ = _
+    rw [hstep, rewind_scan tm scan dest hscan _ rfl hp]
+
 /-- Assemble the left work block, one buffer tape, and the right work block.
 All three projections use the same nested `Fin.addCases` partition. -/
 def tapeBlocks {α : Type} {k l : ℕ} (left : Fin k → α) (buffer : α)

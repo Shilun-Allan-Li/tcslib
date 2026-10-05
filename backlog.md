@@ -277,7 +277,13 @@ uncomputability chapter.
   rebuilt all 57 modules from empty oleans and verified all 386
   privates / 1,167 kernel declarations admission-free. **Epoch 2 is
   complete and audited end to end.** The post-gate serial queue is
-  unblocked, in order: D6 promotions, D7 splits (now incl. the three
+  unblocked, in order: **D6 promotions — EXECUTED 2026-10-05**
+  (`Turing.MultiTapeTM.timed_input_bound` in `Deterministic.lean`,
+  symbol-generalized; `Turing.FinTM.timed_rewind` in `Simulation.lean`
+  verbatim; Wrappers privates removed, clients on the public API;
+  57/57 zero errors, 21 admissions unchanged, promoted lemmas +
+  epoch-2 closure regressions all clean —
+  `audits/logs/d6-promotion-{sweep,axioms,lint}.log`), then D7 splits (now incl. the three
   ClassNP size exceptions, full discipline binding), E5 dedup (under
   the resolutions' binding live/dead inventory: `enumLoop_run`,
   `prefixTM`/`fixedPair_polyTime`, `polyUnaryTM`/`poly_unary_computes`

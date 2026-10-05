@@ -76,6 +76,14 @@ The conditional controller instantiates `capture_run` on a padded decider,
 reads its singleton output, and uses a quantitative refinement of
 `rewind_from_any`. Its branch-start prefix is at most twice the decider's
 budget plus five, yielding the uniform multiplier `5` in the frozen bound.
+
+**Maintainer note (D6 promotion).** Batch W's two shared-lemma promotion
+requests are executed: `timed_input_bound` is now the public
+`Turing.MultiTapeTM.timed_input_bound` in `Deterministic.lean` (generalized
+from `Bool` to an arbitrary symbol type; the proof was symbol-free), and
+`timed_rewind` is the public `Turing.FinTM.timed_rewind` in
+`Simulation.lean`, verbatim. The private copies formerly here are removed;
+the two call sites below consume the public lemmas.
 -/
 
 namespace Turing
@@ -450,57 +458,6 @@ private lemma timed_control_init (D M₁ M₂ : FinTM Bool) (x : List Bool) :
       exact (Fin.addCases (fun _ => by simp) (fun _ => by simp) ⟨i, hi⟩)
     · simp [timedControlCfg, captureCfg, leftCfg, hi]
 
-/-- The physical input head can move right by at most one cell per step.
-**Proof sketch.** Clamping never increases a proposed position. Check the
-three movements, then induct over the run, treating halted steps as stationary. -/
-private lemma timed_input_bound {k : ℕ} {S : Type} {x : List Bool}
-    (tm : MultiTapeTM k Bool S) (c : Cfg k Bool S x) (t : ℕ) :
-    (tm.runFrom c t).inputPos.val ≤ c.inputPos.val + t := by
-  have hm (p : Fin (x.length + 2)) (m : SignType) :
-      (moveInputPos p m).val ≤ p.val + 1 := by
-    dsimp only [moveInputPos]
-    split <;> dsimp <;> cases m <;> simp_all [SignType.cast] <;> omega
-  have hstep (d : Cfg k Bool S x) : (tm.step d).inputPos.val ≤ d.inputPos.val + 1 := by
-    cases hs : d.state with
-    | none => simp only [MultiTapeTM.step, hs]; omega
-    | some q =>
-      simpa only [MultiTapeTM.step, hs, Action.apply] using
-        hm d.inputPos (tm.tr q d.inputSymbol d.workTapeSymbols).inputTape
-  induction t with
-  | zero => simp
-  | succ t ih =>
-    rw [MultiTapeTM.runFrom_succ_eq_step']
-    exact (hstep _).trans (by omega)
-
-/-- A quantitative refinement of `rewind_from_any`: its construction takes
-at most the current input position plus two steps, preserving all work and output.
-**Proof sketch.** The mandatory first left move puts the head at most at the
-last input symbol. `rewind_scan` then takes exactly the new position plus one. -/
-private lemma timed_rewind {k : ℕ} {S : Type} {x : List Bool}
-    (tm : MultiTapeTM k Bool S) (start scan : S) (dest : Option S)
-    (hstart : ∀ inp work, tm.tr start inp work = controlAction .neg (some scan))
-    (hscan : ∀ inp work, tm.tr scan inp work = match inp with
-      | some _ => controlAction .neg (some scan)
-      | none => controlAction .pos dest)
-    (c : Cfg k Bool S x) (hs : c.state = some start) :
-    ∃ r ≤ c.inputPos.val + 2,
-      tm.runFrom c r = {c with state := dest, inputPos := 1} := by
-  have hstep : tm.step c =
-      {c with state := some scan, inputPos := moveInputPos c.inputPos .neg} := by
-    unfold MultiTapeTM.step
-    rw [hs]
-    dsimp only
-    rw [hstart, controlAction_apply]
-  have hp : (moveInputPos c.inputPos .neg).val ≤ x.length := by
-    rw [moveInputPos_neg_val]
-    have := c.inputPos.isLt
-    omega
-  refine ⟨1 + ((moveInputPos c.inputPos .neg).val + 1), ?_, ?_⟩
-  · rw [moveInputPos_neg_val]; omega
-  · rw [MultiTapeTM.runFrom_add]
-    change tm.runFrom (tm.step c) _ = _
-    rw [hstep, rewind_scan tm scan dest hscan _ rfl hp]
-
 /-- Once dispatched, the selected branch runs in lockstep while the old
 decider tapes and singleton capture tape remain idle.
 **Proof sketch.** The branch action is a right-block embedding followed by
@@ -636,7 +593,7 @@ private lemma timed_start (D M₁ M₂ : FinTM Bool) (x : List Bool) (b : Bool) 
   refine ⟨t + 2 + r, ?_, c.workTapes, c.workTapePos, ?_⟩
   · have hp : c.inputPos.val ≤ 1 + t := by
       simpa only [MultiTapeTM.initCfg, Cfg.init, Fin.val_one] using
-        timed_input_bound D.tm (D.tm.initCfg x) t
+        MultiTapeTM.timed_input_bound (tm := D.tm) (D.tm.initCfg x) t
     change r ≤ c.inputPos.val + 2 at hrle
     omega
   · rw [MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_add, hcap,
