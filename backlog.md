@@ -338,8 +338,14 @@ uncomputability chapter.
   admissions; full-print regressions PASS) and **round-2 pack
   prepared** (`audits/emitter-infra-r2-{pack,bundle}.md`, 31
   attachments incl. the evidence addendum both majors demanded).
-  Next: emitter gate (round 2) → fills → 3B-cont brief; 4A waits on
-  the gate (decision 11.3); then the epoch-3 audit.
+  **Round 2: 0 blockers / 2 majors / 1 minor** (R1 3–5 closed;
+  constructions validated); **round-3 repairs landed** (`0 < C.k` on
+  both bridges — the zero-tape degeneracy; §11c's corrected 4A
+  stage-to-seam mapping superseding §11b item 3; the §11a marker) and
+  the **round-3 pack prepared** (36 attachments incl. the phase-4
+  reaudit table and the A-cont `e3c*` provenance). Next: emitter gate
+  (round 3) → fills → 3B-cont brief → A-cont-2 brief; 4A waits on the
+  gate (decision 11.3); then the epoch-3 audit.
   Subsumes 2C's
   `prefixTM`/`fixedPair` promotion requests. Dedup of superseded batch
   privates is an E5 closure task. Mathlib TM2 rejected as substrate

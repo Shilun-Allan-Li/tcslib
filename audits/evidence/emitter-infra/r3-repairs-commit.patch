@@ -1,0 +1,176 @@
+From 22d3d6bdd34b27704db62b3bcf7f29a932ffd3ff Mon Sep 17 00:00:00 2001
+From: Seyoon Ragavan <complexzetaprime@gmail.com>
+Date: Mon, 5 Oct 2026 15:58:10 -0400
+Subject: [PATCH] Emitter round-3 repairs: positive-tape bridges, the 4A
+ mapping rewritten
+
+Repairs both round-2 majors and the minor. The bridge contracts now
+require 0 < C.k, closing the zero-tape degeneracy under which
+stateWord 0 identifies all arguments and the install conclusion was
+satisfiable for an arbitrary noncomputable function; the docstrings
+record the auditor's witness and why the clause is load-bearing.
+Design section 11c supersedes 11b item 3 in full: the parser-validation
+framing is withdrawn (every binary word is a legitimate Cook-Levin
+source instance; the auditor's empty-language witness is recorded) and
+replaced by the real stage-to-seam mapping -- silent preparation packs
+the inherited s1-s5 records into the loop's initial state word, then
+one family member per round over the fixed family order with
+R = n+(k+3)T+k+1, positive-duration empty rounds, the terminator on
+the last chunk, and the exact serialization ledger. Section 11a
+carries the supersession marker the auditor requested.
+
+Verification: combined fresh 57/57 sweep (with the A-continuation
+integration), zero error lines, 20 admissions; the full-print closure
+regression passes; Build lint unchanged.
+
+Co-Authored-By: Claude Fable 5 <noreply@anthropic.com>
+---
+ AroraBarakChapter1Plan.md                     |  1 +
+ .../Complexity/TuringMachine/Build/Loop.lean  | 20 ++++-
+ machine-library-design.md                     | 75 +++++++++++++++++++
+ 3 files changed, 92 insertions(+), 4 deletions(-)
+
+diff --git a/AroraBarakChapter1Plan.md b/AroraBarakChapter1Plan.md
+index 6bd66942..b1216dc6 100644
+--- a/AroraBarakChapter1Plan.md
++++ b/AroraBarakChapter1Plan.md
+@@ -367,3 +367,4 @@ audit documents cite.
+ | **Emitter-increment audit pack prepared** (2026-10-05, `audits/emitter-infra-{pack,bundle}.md`, bundle SHA-256 `3f9d7fe76067e78272c3be86e8957256c8acb28adb31ac33418373a4f3ce6a77`, 14 attachments, 11,793 lines): the statements-first adversarial round over the five sorried contracts, two transformers, and two vocabulary defs, explicitly inviting the original infra gate's scrutiny (the round-1 `exists_loopTM` falseness and round-2 configuration-gap lessons are named). Priorities riskiest-first: `exists_emitLoopTM` (output-prefix commutation as a model fact; the no-emission-size-hypothesis self-bounding claim; round-count alignment incl. the find-mode exhaustion terminal; vacuity/information-flow transcription from the audited sibling; envelope; sketch feasibility), `emit_run` (same-tape-count dual transcription; forwarded halting emission; guard semantics; embedding composability), `splitSolveWith` (envelope truth under monotone `TE` alone; definitional recovery of `solveSplit`; edges), `unaryToken` conventions vs the three grammars, the §11a narrowings, and **customer fit now, not at fill time** (3B-cont's states 9–34 as an emitLoop instantiation; 4A per decision 11.3; 3A-cont's body as the splitSolveWith template). Maintainer attestations: append-only spec commit (1,467 insertions, zero deletions); 18 = 13 + 5 exactly; regression program PASS; lint 0 FAIL / 2 WARN. Epoch-3 REPORTs attached as frontier evidence, explicitly not audited material. Gate closes on zero blockers/majors; findings to `audits/emitter-infra-findings.md`; pack immutable once sent | Decided |
+ | **Emitter round-1 findings + round-2 repairs** (2026-10-05, `audits/emitter-infra-findings.md`: **0 blockers, 2 majors, 3 minors** — no false statement among the five contracts; finding 6 independently re-derived the output-prefix commutation, the self-bounding-chunk claim, the round count, and a 10·(T+1)(R+2) forwarding-variant ledger). Majors were adequacy: (1) function contracts cannot deliver the loop seam (a witness may dirty scratch on its final transition) — repaired by **two new sorried bridge contracts** in `Loop.lean`, `exists_installCallTM`/`exists_emitCallTM` (canonical `ofWords`/`stateWord` entry AND exit seams, first-positive-visit discipline, envelope `c(T+|arg|+|f arg|+1)`; fill route = the A-continuation's proved log/undo pattern), plus the **3B normalization mapping** (§11b item 2: state word encodes cursor/consumed-prefix/phase; the permanent marker eliminated; absorbing finished phase; R = serialized length) and the **4A stage mapping** (§11b item 3: validation as a decision prefix before any irreversible emission; R = snapshot bound; ledger = sum of chunk lengths); (2) missing evidence — repaired by the r2 bundle's addendum (model definitions, phase-4 records, customer grammars incl. the full `satRedTM` table, both pinned spec-commit patches, the closure+lint programs, full-print regression log). Minors swept: the **unchanged-host sketch refuted and corrected** to the forwarding variant with a new prefix-summation lemma (the auditor's one-state witness acknowledged in the docstring); `unaryTokenSplit`'s marker overclaim corrected with the separating example; definition docs completed and attestation 4 restated precisely; P17's rule named (finite control or the emit call, never the private `constTM`). Verification: 57/57 zero errors, **20 = 13 + 7 admissions exactly**; regression with all 18 root prints PASS; lint 0 FAIL / 2 WARN (`audits/logs/emitter-r2-{sweep,axioms,lint}.log`). Round-2 pack prepared (`audits/emitter-infra-r2-{pack,bundle}.md`, 30 attachments) | Decided |
+ | **Emitter round-2 pack prepared** (2026-10-05, `audits/emitter-infra-r2-{pack,bundle}.md`, bundle SHA-256 `b10adf015b1feb689bffab8385644b7f19dbe105b1704d629f2f80d0de57e672`, **31 attachments**, 22,935 lines — the manifest arithmetic recount caught a stated-total slip pre-ship, 30 → 31). Repairs mapped one-to-one to round-1 findings; the evidence addendum attaches everything finding 2 named (model definitions, phase-4 records, the full `satRedTM` table, grammars, both pinned spec-commit patches, closure + lint programs, full-print regression log) and the re-audit questions are posed cumulatively (certify-or-refute the customer fit round 1 correctly refused to certify). Gate closes on zero blockers/majors across cumulative findings; findings to `audits/emitter-infra-r2-findings.md` | Decided |
++| **Emitter round-2 findings + round-3 repairs** (2026-10-05, `audits/emitter-infra-r2-findings.md`: **0 blockers, 2 majors, 1 minor** — R1 findings 3–5 closed; the bridge construction validated at the strengthened interface incl. an independent undo-correctness derivation; the 3B normalization validated against the actual `satRedTM` table with a 5,908-case finite corroboration; both pinned patches blob-verified, lint reproduced byte-for-byte). The majors, repaired: (1) **the zero-tape degeneracy** — `stateWord 0 a = stateWord 0 b` by empty domain, so the install bridge was vacuous as a data interface (satisfiable for arbitrary noncomputable `f` by a two-state zero-tape machine); both bridges now carry **`0 < C.k`** with the degeneracy named in their docstrings; (2) **the 4A mapping was wrong** — §11b item 3 substituted parser validation for Cook–Levin's silent preparation stages (the auditor's empty-language witness: validation+fallback emits a SAT yes-instance for a no-instance; every binary word is a legitimate 4A source instance); superseded in full by **§11c**: silent startup packs the s1–s5 records into `s0 x`, one family member per round over the fixed family order, `R = n+(k+3)T+k+1` from the family counts `n,1,T,T+1,k(T+1),T`, empty rounds at positive duration, terminator on the last chunk, exact ledger `1+2·#clauses+Σ(v+3)`, the time-major alternative explicitly not adopted. Minor swept: §11a item 1 carries an inline supersession marker. Verification: combined fresh 57/57 sweep zero errors, 20 = 13 + 7 admissions; full-print regression PASS; Build lint 0 FAIL / 2 WARN (`audits/logs/{e3contA-r3-sweep,emitter-r3-{axioms,lint}}.log`) | Decided |
+diff --git a/TCSlib/Complexity/TuringMachine/Build/Loop.lean b/TCSlib/Complexity/TuringMachine/Build/Loop.lean
+index 515b027e..18a8ceb9 100644
+--- a/TCSlib/Complexity/TuringMachine/Build/Loop.lean
++++ b/TCSlib/Complexity/TuringMachine/Build/Loop.lean
+@@ -2778,10 +2778,18 @@ witness through the capture wrapper, **logged** — record overwritten
+ symbols and head moves, the A-continuation's proved log/undo pattern —
+ then undo, charging the whole visited region to the elapsed run;
+ install the captured result on tape zero; erase the log; rewind. Every
+-phase is charged to `T`, the argument length, or the result length. -/
++phase is charged to `T`, the argument length, or the result length.
++
++The `0 < C.k` clause is load-bearing (emitter-infra round-2 audit,
++finding 1): at tape count zero, `stateWord 0 a = stateWord 0 b` for all
++`a, b` — the empty-domain degeneracy — and a two-state zero-tape machine
++would satisfy the rest of this conclusion for an arbitrary, even
++noncomputable, `f`. The positive tape count makes the seam equality
++yield `bufferTape (f arg)` at the genuine index zero, so the installed
++result is actually extractable by the caller. -/
+ theorem exists_installCallTM (M : FinTM Bool) (f : List Bool → List Bool)
+     (T : ℕ → ℕ) (hM : M.ComputesFunInTime f T) :
+-    ∃ (C : FinTM Bool) (entry exit : C.State) (c : ℕ),
++    ∃ (C : FinTM Bool) (entry exit : C.State) (c : ℕ), 0 < C.k ∧
+       ∀ (x arg : List Bool),
+         ∃ t ≤ c * (T arg.length + arg.length + (f arg).length + 1),
+           0 < t ∧
+@@ -2807,10 +2815,14 @@ restored, the chunk emitted.
+ 
+ **Construction sketch.** As the install call, with the captured result
+ replayed through `Turing.emitAction`-style forwarding and then erased,
+-instead of installed; the argument word is never consumed. -/
++instead of installed; the argument word is never consumed. The
++`0 < C.k` clause mirrors the install call's (round-2 finding 1): the
++physical output prevents the zero-tape degeneracy for nonconstant `f`,
++but the preserved tape-resident argument is a promise of this
++interface too, and it needs a genuine tape to live on. -/
+ theorem exists_emitCallTM (M : FinTM Bool) (f : List Bool → List Bool)
+     (T : ℕ → ℕ) (hM : M.ComputesFunInTime f T) :
+-    ∃ (C : FinTM Bool) (entry exit : C.State) (c : ℕ),
++    ∃ (C : FinTM Bool) (entry exit : C.State) (c : ℕ), 0 < C.k ∧
+       ∀ (x arg : List Bool),
+         ∃ t ≤ c * (T arg.length + arg.length + (f arg).length + 1),
+           0 < t ∧
+diff --git a/machine-library-design.md b/machine-library-design.md
+index 9ecd6342..6a340205 100644
+--- a/machine-library-design.md
++++ b/machine-library-design.md
+@@ -500,6 +500,9 @@ Refinements against §11 as drafted, all narrowing:
+ 1. **P17 is subsumed** (no new statement): a constant chunk emission is
+    `emitPhase` (E2) applied to the existing P2 `constTM` — recorded here
+    the way D4 recorded the prefix/fixed-pair subsumptions.
++   *[Superseded by §11b item 6 and §11c: the discharging rule is body
++   finite control for fixed words, or `exists_emitCallTM` for computed
++   chunks — never the private `constTM` (round-2 audit, finding 3).]*
+ 2. **P18 narrowed to `computesFunInTime_appendBit`**: the drafted
+    accumulator row conflated the append atom with cross-phase persistence,
+    and persistence is already the loop engine's state-word mechanism; the
+@@ -615,3 +618,75 @@ the five contracts; both majors are adequacy obligations, repaired here.
+ 
+ Spec surface after round 2: **seven sorried contracts** (round 1's five
+ plus the two bridges), two transformers, two vocabulary definitions.
++
++## 11c. Round-3 repairs (2026-10-05, after `audits/emitter-infra-r2-findings.md`)
++
++Round 2: **0 blockers, 2 majors, 1 minor** — round-1 findings 3–5 closed;
++the bridge construction and the 3B normalization validated (r2 findings
++4–5, including a 5,908-case finite corroboration of the normalized
++schedule); the two cumulative majors repaired here.
++
++1. **Positive tape count on both bridges (r2 finding 1, major).** At
++   `C.k = 0`, `stateWord 0 a = stateWord 0 b` by empty domain, so the
++   install conclusion was satisfiable by a two-state zero-tape machine
++   for an arbitrary — even noncomputable — `f`: vacuous as a data
++   interface. Both conclusions now carry `0 < C.k`, making the seam
++   equality yield the genuine `bufferTape` content at index zero. The
++   auditor's r2 finding 4 confirms the log/undo construction delivers
++   the strengthened interface at the stated envelope.
++2. **The 4A mapping rewritten (r2 finding 2, major) — this supersedes
++   §11b item 3 in full.** §11b item 3 wrongly substituted parser
++   validation for Cook–Levin's silent preparation stages: the 4A source
++   is an arbitrary `NP` language, every binary word is a legitimate
++   instance, and there is no CNF well-formedness condition on `x` (the
++   auditor's empty-language witness: validation-plus-fallback would
++   emit the satisfiable `serialize [] = [false]` for a no-instance).
++   Parse-before-emission belongs to the 3B/4B decode-based transducers
++   only. The corrected stage-to-seam mapping:
++   - **Silent preparation (inherited stages s1–s5).** A silent startup
++     phase computes and packs the preparation records into `s0 x`:
++     exact `Q(n)`, `m = n + Q(n)`, and the horizon `T` (s1, exact
++     arithmetic, certificate length never enlarged); the virtual
++     reference input `false^m` with clamped virtual head, source
++     writes/moves executed on the halting transition, source output
++     suppressed and halt internalized (s2–s3, through the capture and
++     install-call interfaces at positive tape count); the inclusive
++     trajectory records for **all** times `0..T` with administrative
++     transitions outside simulated time and frozen positions after an
++     early halt (s4); greatest-strictly-earlier-visit records with
++     sequential comparison costs (s5). All of s1–s5 end with empty
++     physical output and the packed records as the clean persistent
++     word — the emitting loop's `s0`.
++   - **Ordered emission (s6).** One **family member per round**, the
++     cursor walking the fixed family order of the phase-4 contract.
++     With `T + 1` snapshot times and `k` work tapes, the six families
++     have `n, 1, T, T+1, k(T+1), T` members; the round count is their
++     sum: `R = n + (k+3)·T + k + 1` (an input-length-only polynomial).
++     Rounds with empty template output still take positive time. The
++     single final formula terminator is appended to the last round's
++     chunk. The serialization-length ledger is the exact sum
++     `1 + 2·#clauses + Σ (v+3)` over literal occurrences — total
++     output `O_M(T²)`, never constant-per-clause.
++   - The alternative `R = T` time-major grouping is **not** adopted:
++     it would need a separate proof that its interleaving reserializes
++     to the fixed family order.
++   Certification of this mapping against the phase-4 round-2
++   boundary-check table is round 3's business — that table
++   (`audits/ch2-phase4-reaudit-findings.md`) rides in the r3 bundle,
++   and the 4A brief inherits it verbatim per the standing rule.
++3. **P17 cross-reference (r2 finding 3, minor).** §11a item 1 now
++   carries an explicit supersession marker pointing at §11b item 6;
++   the historical text is preserved as history.
++4. **Provenance upgrades for round 3.** The log/undo fill route now has
++   fresh in-repo provenance beyond the epoch-2 enumerator: the
++   A-continuation checkpoint (integrated 2026-10-05) banked exactly the
++   track/clear/compare phase family the r2 finding-4 construction
++   describes (`e3cTrackTM`/`e3c_track_run`/`e3cClearTM`/`e3c_clear_run`
++   — logged simulation over a visited interval with origin markers,
++   exact single-triple cleanup at `6T+7`, positive first returns), as
++   proved privates in `Nondeterminism.lean`; its REPORT and source ride
++   in the r3 bundle.
++
++Spec surface after round 3: unchanged in count — **seven sorried
++contracts** (the two bridges now carrying `0 < C.k`), two transformers,
++two vocabulary definitions.
+-- 
+2.50.1 (Apple Git-155)
+
