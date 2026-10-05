@@ -300,7 +300,13 @@ uncomputability chapter.
   21 admissions unchanged, closure regressions PASS —
   `audits/logs/e5-dedup-{sweep,axioms,lint}.log`; D7 re-measured
   post-E5: 34/43/24/13/8, deferral confirmed). **The post-gate serial
-  queue is complete.** Next: the E3 briefs. Subsumes 2C's
+  queue is complete.** **E3 briefs issued 2026-10-05**
+  (`briefs/ch2-epoch3-batch{A,B,C,D}.md`, base `b55180a8`; 3A padding
+  cluster 26 pts / 3B SAT track 24 pts (continuation anticipated) / 3C
+  snapshot locality 22 pts / 3D TAUTOLOGY membership 6 pts; zero
+  sanctioned admissions; completion closes the E3 statement layer at
+  15 targets). Next: dispatch, then integration + the epoch-3 audit.
+  Subsumes 2C's
   `prefixTM`/`fixedPair` promotion requests. Dedup of superseded batch
   privates is an E5 closure task. Mathlib TM2 rejected as substrate
   (evaluation recorded in the ch1 decision log).
