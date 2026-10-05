@@ -210,7 +210,10 @@ verbatim; the source's emission, **if any, is forwarded as the host's
 physical emission** — including an emission on the halting transition; a
 live source successor is embedded via `emb`, and a halting source action
 transfers control to the designated live return state `ret`. This is what
-lets a proved transducer serve as one emission stage of a larger host. -/
+lets a proved transducer serve as one emission stage of a larger host.
+Customers: the forwarding loop-host variant behind `exists_emitLoopTM`,
+and `exists_emitCallTM`'s module. Construction: a record map, no
+machine content. -/
 def emitAction (emb : S → H) (ret : H) (a : Action k Bool S) :
     Action k Bool H where
   inputTape := a.inputTape
@@ -222,7 +225,12 @@ def emitAction (emb : S → H) (ret : H) (a : Action k Bool S) :
 configuration `c`, viewed inside the host — state embedded (a halted source
 appears at the live return state `ret`), tapes, heads, and input position
 verbatim, and the host's physical output equal to the host's prior output
-`pre` followed by everything the source has emitted. -/
+`pre` followed by everything the source has emitted. It deliberately does
+**not** normalize the source's terminal tapes or heads: clean returns are
+the separate bridge contracts' job (`exists_installCallTM`,
+`exists_emitCallTM` — emitter-infra round-1 audit, finding 1). Customers:
+`emit_run`'s statement and the bridge fills. Construction: a record map,
+no machine content. -/
 def emitCfg {input : List Bool} (emb : S → H) (ret : H)
     (pre : List Bool) (c : Cfg k Bool S input) :
     Cfg k Bool H input where

@@ -2713,13 +2713,19 @@ round equality itself bounds the chunk length by the round's duration
 (output grows by at most one symbol per step), so no separate emission
 bound is hypothesized.
 
-**Construction sketch.** The find-mode `loopHost` is the engine: its
-exhaustion terminal appends nothing, so with every round advancing, the
-accumulated output survives to the halt. Re-derive the host contract
-with the output-prefixed seam (runs commute with output prefixes — the
-transition table never reads the output tape), and thread the
-concatenation through `loop_run`'s summation template. The fuel counter,
-startup, and countdown machinery are reused unchanged; they are silent. -/
+**Construction sketch** (corrected per the emitter-infra round-1 audit,
+finding 3: the unchanged find-mode host routes body actions through
+`captureAction`, whose physical output is always `none`, so captured
+chunks never reach the physical output — a one-state self-emitting body
+refutes the literal reuse). Build a **forwarding host variant**: the
+same skeleton with the body dispatched through `Turing.emitAction`
+(chunks land on the physical output), the fuel capture and silent
+countdown machinery reused as they stand. Its contracts are proved over
+configurations with arbitrary accumulated output (runs commute with
+output prefixes — the transition table never reads the output tape),
+and the concatenation is threaded through a **new** prefix-summation
+lemma modeled on `loop_run`; the frozen empty-output `loop_run` itself
+is not reusable for this. -/
 theorem exists_emitLoopTM (body F : FinTM Bool) (anchor : body.State)
     (Inv : List Bool → List Bool → Prop)
     (stepF emitF : List Bool → List Bool → List Bool)
@@ -2747,6 +2753,75 @@ theorem exists_emitLoopTM (body F : FinTM Bool) (anchor : body.State)
         (fun x => (List.range (R x.length + 1)).flatMap
           (fun i => emitF x ((stepF x)^[i] (s0 x))))
         (fun n => c * (T n + 1) * (R n + 2)) := by
+  sorry
+
+/-- **E5a, the install-mode clean call** (spec, added at the emitter-infra
+round-1 repair — finding 1's prepared-input/clean-return bridge;
+customers: loop and emit-loop bodies calling a catalog transducer on
+their tape-resident data, in particular `computesFunInTime_splitSolveWith`'s
+evaluator rounds and 3B-cont's token/counter installs). A function-level
+contract says nothing about a witness's terminal heads or scratch — a
+machine may dirty a tape on its final transition and still compute `f`
+within `T` — so the bridge supplies what the function contract cannot:
+for any such witness, a **callable module** with designated entry and
+exit states whose entry and exit are both the canonical clean seam. From
+`Cfg.ofWords entry (stateWord C.k arg)` — the argument as the sole
+tape-resident word, every other tape blank, input head at one, empty
+output, over an **arbitrary, untouched** native input — the module
+reaches, at its first positive visit to `exit`, exactly
+`Cfg.ofWords exit (stateWord C.k (f arg))`: the result installed, all
+scratch restored, nothing emitted.
+
+**Construction sketch.** Prepare a virtual input from the tape-resident
+argument (the relocated-read discipline of the proved hosts); run the
+witness through the capture wrapper, **logged** — record overwritten
+symbols and head moves, the A-continuation's proved log/undo pattern —
+then undo, charging the whole visited region to the elapsed run;
+install the captured result on tape zero; erase the log; rewind. Every
+phase is charged to `T`, the argument length, or the result length. -/
+theorem exists_installCallTM (M : FinTM Bool) (f : List Bool → List Bool)
+    (T : ℕ → ℕ) (hM : M.ComputesFunInTime f T) :
+    ∃ (C : FinTM Bool) (entry exit : C.State) (c : ℕ),
+      ∀ (x arg : List Bool),
+        ∃ t ≤ c * (T arg.length + arg.length + (f arg).length + 1),
+          0 < t ∧
+          (∀ t', 0 < t' → t' < t →
+            (C.tm.runFrom
+              (Cfg.ofWords (input := x) entry (stateWord C.k arg)) t').state
+                ≠ some exit) ∧
+          C.tm.runFrom
+            (Cfg.ofWords (input := x) entry (stateWord C.k arg)) t =
+              Cfg.ofWords exit (stateWord C.k (f arg)) := by
+  sorry
+
+/-- **E5b, the emit-mode clean call** (spec, added at the emitter-infra
+round-1 repair — the forwarding half of finding 1's bridge; customers:
+`exists_emitLoopTM` bodies emitting per-round chunks computed by a
+catalog transducer — 3B-cont's clause fragments, 4A's clause groups).
+Identical seam discipline to the install call, but the computed word is
+**forwarded to the physical output** and the tape-resident argument is
+preserved: from `Cfg.ofWords entry (stateWord C.k arg)`, the module
+reaches, at its first positive visit to `exit`, exactly the entry seam
+with `exit` control and output `f arg` — argument intact, scratch
+restored, the chunk emitted.
+
+**Construction sketch.** As the install call, with the captured result
+replayed through `Turing.emitAction`-style forwarding and then erased,
+instead of installed; the argument word is never consumed. -/
+theorem exists_emitCallTM (M : FinTM Bool) (f : List Bool → List Bool)
+    (T : ℕ → ℕ) (hM : M.ComputesFunInTime f T) :
+    ∃ (C : FinTM Bool) (entry exit : C.State) (c : ℕ),
+      ∀ (x arg : List Bool),
+        ∃ t ≤ c * (T arg.length + arg.length + (f arg).length + 1),
+          0 < t ∧
+          (∀ t', 0 < t' → t' < t →
+            (C.tm.runFrom
+              (Cfg.ofWords (input := x) entry (stateWord C.k arg)) t').state
+                ≠ some exit) ∧
+          C.tm.runFrom
+            (Cfg.ofWords (input := x) entry (stateWord C.k arg)) t =
+              { Cfg.ofWords (input := x) exit (stateWord C.k arg)
+                  with output := f arg } := by
   sorry
 
 end Turing.FinTM

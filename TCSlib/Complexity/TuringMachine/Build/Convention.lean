@@ -124,7 +124,9 @@ solution `i ≤ n` of the width-parametric split equation `i + f i = n`, or
 `none` — the generalization of `Turing.solveSplit` from the hardwired
 polynomial family to an arbitrary width function. At
 `f = fun i => C * (i + 1) ^ e` this definitionally recovers
-`solveSplit C e n`. -/
+`solveSplit C e n`. Customers: the 3A-continuation's exponential padding
+equation (through `computesFunInTime_splitSolveWith`) and later padding
+arguments. No machine content: `List.range` search, first match. -/
 def solveSplitWith (f : ℕ → ℕ) (n : ℕ) : Option ℕ :=
   (List.range (n + 1)).find? fun i => i + f i == n
 
@@ -133,9 +135,16 @@ the leading unary token — the maximal `true`-prefix together with its
 terminating `false` delimiter — returning the token and the remainder. A
 word with no delimiter yields the whole word as an unterminated token with
 empty remainder; the empty word yields two empty words; a leading `false`
-is the length-zero token `[false]`. This is the shared atom of the
-serialization grammars (unary indices with terminators); single-bit
-markers are read by the same step at token length zero or one. -/
+is the length-zero token `[false]`. This operation consumes **unary
+tokens** — the shared atom of the serialization grammars (unary indices
+with terminators). It does not consume standalone single-bit markers or
+polarity bits: `unaryTokenSplit [true, false, true] =
+([true, false], [true])`, a terminated unary-one token, not a lone
+`true` marker — scanners handle markers and polarity by their own
+grammar states (emitter-infra round-1 audit, finding 4). Customers: the
+3B continuation's streaming scanner, the Cook-Levin emitter's index
+reads (4A), 4B's dual scanner. No machine content: structural recursion
+on the word. -/
 def unaryTokenSplit : List Bool → List Bool × List Bool
   | [] => ([], [])
   | false :: rest => ([false], rest)

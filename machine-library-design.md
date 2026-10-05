@@ -529,3 +529,89 @@ Spec surface: **five sorried contracts** (`Turing.emit_run`,
 (`emitAction`, `emitCfg`), two pure vocabulary definitions
 (`solveSplitWith`, `unaryTokenSplit`). Convention's module-docstring
 vocabulary bullets extend at fill time (append-only).
+
+## 11b. Round-2 repairs (2026-10-05, after `audits/emitter-infra-findings.md`)
+
+Round 1: **0 blockers, 2 majors, 3 minors** — no false statement among
+the five contracts; both majors are adequacy obligations, repaired here.
+
+1. **The clean-call bridge (finding 1, major).** A function-level
+   contract cannot deliver the loop seam: a witness may dirty scratch or
+   leave heads displaced on its final transition and still compute `f`
+   within `T`. Two new sorried bridge contracts supply the
+   prepared-input/clean-return interface, both with canonical
+   `Cfg.ofWords`/`stateWord` entry **and** exit seams, first-positive-
+   visit discipline, and envelopes charged to `T + |arg| + |f arg| + 1`:
+   `Turing.FinTM.exists_installCallTM` (result installed as the
+   tape-resident word, nothing emitted) and
+   `Turing.FinTM.exists_emitCallTM` (argument preserved, the computed
+   chunk forwarded to physical output). Both live in `Loop.lean` beside
+   the seams they serve (`stateWord` is defined there). Fill route: the
+   A-continuation's proved log/undo pattern around the capture wrapper,
+   with virtual-input preparation from the tape-resident argument.
+   `emitCfg`'s docstring now states explicitly that it does not
+   normalize terminal configurations — the bridges do.
+2. **The 3B normalization mapping (finding 1, required resolution).**
+   The reported `satRedTM` is **not** the promised instantiation as it
+   stands (its permanent position-−1 marker contradicts the blank
+   `ofWords` seam; its raw head positions cannot cross seams). The
+   committed instantiation plan: loop state word encodes
+   `(cursor, consumed-prefix length, phase tag)` via the audited pairing
+   vocabulary — the raw streaming position is re-derived each round by
+   advancing past the consumed prefix, and **the permanent marker is
+   eliminated** (round-local buffering restores its tape by round end).
+   Per round: decode the state word; `exists_installCallTM` over
+   `computesFunInTime_unaryToken` reads the next token of the remaining
+   serialization; finite control classifies marker/polarity bits; the
+   emitted clause fragment goes out through `exists_emitCallTM` (chunks
+   are of token-bounded length) or directly by finite control for
+   fixed fragments; the fresh-variable counter updates through
+   `computesFunInTime_appendBit` + install. Rounds have positive
+   duration and input-length-only budget; `R` = the serialized input
+   length (each round consumes at least one input position); once the
+   formula terminator is consumed, an **absorbing finished phase emits
+   empty chunks** for all remaining rounds. Token output is decoded by
+   `pairDecode`-side vocabulary (proved); append output becomes the
+   next state word by the install call. The banked `satReduction_*`
+   semantics close the function identity; `satRed_start`'s proved
+   maximum-pass survives as the `s0` computation.
+3. **The 4A stage mapping (finding 2, required resolution — recorded
+   here, certified against the attached phase-4 records in round 2).**
+   All-string validation runs **before any irreversible emission**: the
+   validation stages run as a decision prefix (the audited conditional
+   W3 over the parser/boundary checks); only the valid branch enters
+   the emitting loop, and the invalid branch emits the fixed fallback
+   through finite control. Logical round count: `R` = the
+   snapshot-index bound of the six-stage contract (an input-length-only
+   polynomial), one clause group per round through `exists_emitCallTM`;
+   the exact serialization-length ledger is the sum of the per-round
+   chunk lengths — never constant-per-clause, exactly as the phase-4
+   ledger demands. Serialization terminators: the final terminator is
+   the last round's chunk tail (or a post-loop constant emission by
+   finite control); both options keep the concatenation exact.
+4. **Host routing correction (finding 3, minor).**
+   `exists_emitLoopTM`'s construction sketch now specifies the
+   **forwarding host variant** (body dispatched through `emitAction`;
+   fuel/countdown machinery reused; contracts proved over
+   arbitrary-accumulated-output configurations; a **new**
+   prefix-summation lemma modeled on `loop_run`) — the unchanged
+   find-mode host is refuted by the auditor's one-state witness, since
+   `captureAction` suppresses the body's physical output.
+5. **Token conventions (finding 4, minor).** `unaryTokenSplit`'s
+   docstring now states it consumes unary tokens only, with the
+   auditor's separating example; standalone markers and polarity bits
+   are scanner grammar states.
+6. **P17's actual rule (finding 1's visibility note).** Fixed
+   finite-control chunks are emitted directly by body control (no
+   primitive, no appeal to the private `constTM`); unbounded
+   tape-dependent chunks go through `exists_emitCallTM`. §11a item 1 is
+   corrected accordingly: the subsumption's discharging rule is body
+   finite control, or the emit call, never the private constant
+   machine.
+7. **Documentation (finding 5, minor).** The four definitions now carry
+   customers and construction notes; attestation 4's "every new
+   declaration" claim is restated in the round-2 pack as exactly what
+   each class of declaration carries.
+
+Spec surface after round 2: **seven sorried contracts** (round 1's five
+plus the two bridges), two transformers, two vocabulary definitions.
