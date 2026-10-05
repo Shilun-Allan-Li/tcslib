@@ -370,9 +370,13 @@ uncomputability chapter.
   (`Loop.lean` admission-free, 5,713 lines, 119 privates; unified
   `emCallTM` bridge controller at the audited envelope; forwarding
   host + `emLoop_sum`). **The emitter layer stands at 6/7**; tree at
-  **13 admissions** (12 campaign + `splitSolveWith`). Next: the P2
-  continuation brief → emitter fill-audit pack → A-cont-3 (1/6/3/4/5)
-  + 3B-cont; 4A next; then the epoch-3 audit.
+  **13 admissions** (12 campaign + `splitSolveWith`). **P2 brief issued 2026-10-05**
+  (`briefs/emitter-fill-batchP2.md`, base `08884731`; the last
+  contract against the predecessor's five-step plan, with the proved
+  W/L layer now citable and L's `emCallTM` as the controller
+  precedent; completion = emitter 7/7, tree 12). Next: dispatch P2 →
+  emitter fill-audit pack → A-cont-3 (1/6/3/4/5) + 3B-cont; 4A next;
+  then the epoch-3 audit.
   Subsumes 2C's
   `prefixTM`/`fixedPair` promotion requests. Dedup of superseded batch
   privates is an E5 closure task. Mathlib TM2 rejected as substrate
