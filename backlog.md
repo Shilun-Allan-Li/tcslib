@@ -382,9 +382,12 @@ uncomputability chapter.
   prepared 2026-10-05** (`audits/emitter-fill-{pack,bundle}.md`, 22
   attachments; whole-span attestation name-exact at 271 privates;
   gate on zero blockers/majors, findings to
-  `audits/emitter-fill-findings.md`). On close: A-cont-3 (1/6/3/4/5)
-  + 3B-cont + 4A unblock with every dependency proved; then the
-  epoch-3 audit.
+  `audits/emitter-fill-findings.md`). **FILL GATE CLOSED 2026-10-05, PASS
+  in one round (0/0/2/7)** — the emitter increment is complete and
+  audited end to end (`audits/emitter-fill-resolutions.md`; both
+  minors maintainer errata, swept). A-cont-3 (1/6/3/4/5) + 3B-cont
+  + 4A are unblocked with every dependency proved and audited; then
+  the epoch-3 audit.
   Subsumes 2C's
   `prefixTM`/`fixedPair` promotion requests. Dedup of superseded batch
   privates is an E5 closure task. Mathlib TM2 rejected as substrate
