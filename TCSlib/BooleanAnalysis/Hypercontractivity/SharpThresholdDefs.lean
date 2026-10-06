@@ -112,6 +112,6 @@ def IsGraphProperty {v n : ℕ} (edge : Fin n ≃ GraphEdge v)
 
 /-- A monotone DNF uses only positive literals in every term, reusing the repository syntax.
 [OD14, §10.5, Friedgut's Sharp Threshold Theorem] -/
-def IsMonotoneDNF {n : ℕ} (d : DNF n) : Prop := ∀ t ∈ d, ∀ l ∈ t, l.neg = false
+def IsMonotoneDNF {n : ℕ} (d : DNF n) : Prop := ∀ t ∈ d.terms, ∀ l ∈ t, l.neg = false
 
 end BooleanAnalysis.Hypercontractivity
