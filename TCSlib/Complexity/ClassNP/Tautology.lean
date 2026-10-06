@@ -1251,6 +1251,470 @@ and the verifier accepts them with any certificate (`DNF.eval` of `⟨[]⟩` is
 theorem TAUTOLOGY_mem_coNP : TAUTOLOGY ∈ coNP := by
   exact taut_membership_of_verifier taut_verifier_mem_P
 
+/-! **Epoch-4 fill addition.** Exact parse–dual–serialize emission. The
+inherited syntax scanner is reused without changing its implementation. -/
+
+/-- Only the final bit of a literal record changes under the De Morgan dual. -/
+private def tautDualBit (q : TautSyntax) (b : Bool) : Bool :=
+  if q = .polarity then !b else b
+
+/-- A streaming copy with the inherited grammar state and polarity flips. -/
+private def tautDualScan : TautSyntax → List Bool → List Bool
+  | _, [] => []
+  | q, b :: r => tautDualBit q b :: tautDualScan (tautSyntaxStep q b) r
+
+/-- A unary index is copied verbatim and leaves the scanner in unary control. -/
+private lemma tautDual_unary (n : ℕ) (r : List Bool) :
+    tautDualScan .unary (List.replicate n true ++ r) =
+      List.replicate n true ++ tautDualScan .unary r := by
+  induction n with
+  | zero => rfl
+  | succ n ih => simpa [List.replicate_succ, tautDualScan, tautDualBit,
+      tautSyntaxStep] using congrArg (true :: ·) ih
+
+/-- A complete literal preserves its unary index and flips precisely its polarity. -/
+private lemma tautDual_literal (ℓ : Std.Sat.Literal ℕ) (r : List Bool) :
+    tautDualScan .clause (CNF.serializeLit ℓ ++ r) =
+      CNF.serializeLit (ℓ.1, !ℓ.2) ++ tautDualScan .clause r := by
+  delta CNF.serializeLit
+  simp only [List.append_assoc, List.replicate_succ, List.cons_append,
+    tautDualScan, tautSyntaxStep, tautDualBit]
+  rw [tautDual_unary]
+  rfl
+
+/-- Every clause becomes the corresponding term, with its closing marker retained.
+
+**Proof sketch.** Induct on the literal list, applying the exact literal
+identity to the first record. The empty clause copies its terminator and
+returns to formula control, so the empty-term case is kept distinct. -/
+private lemma tautDual_clause (C : CNF.Clause ℕ) (r : List Bool) :
+    tautDualScan .clause (CNF.serializeClause C ++ r) =
+      CNF.serializeClause (C.map fun ℓ => (ℓ.1, !ℓ.2)) ++
+        tautDualScan .formula r := by
+  induction C with
+  | nil => rfl
+  | cons ℓ C ih =>
+    have hc : CNF.serializeClause (ℓ :: C) =
+        CNF.serializeLit ℓ ++ CNF.serializeClause C := by
+      simp [CNF.serializeClause, List.append_assoc]
+    rw [hc, List.append_assoc, tautDual_literal, ih]
+    simp [CNF.serializeClause, List.append_assoc]
+
+/-- The valid-input stream is exactly the audited DNF serialization.
+
+**Proof sketch.** Induct on the clause list. Copy each formula-level marker,
+use the clause lemma, and finally copy the unique formula terminator. -/
+private lemma tautDual_serialize (φ : CNF ℕ) :
+    tautDualScan .formula (CNF.serialize φ) = DNF.serialize (CNF.dual φ) := by
+  induction φ with
+  | nil => rfl
+  | cons C φ ih =>
+    have hs : CNF.serialize (C :: φ) = true ::
+        (CNF.serializeClause C ++ CNF.serialize φ) := by
+      simp [CNF.serialize, List.append_assoc]
+    rw [hs]
+    change true :: tautDualScan .clause (CNF.serializeClause C ++ CNF.serialize φ) = _
+    rw [tautDual_clause, ih]
+    delta DNF.serialize CNF.dual
+    simp [CNF.serialize, List.append_assoc]
+
+/-- Whole-string validation precedes all irreversible output. Failure emits
+the serialization of the empty dual, including for the empty input. -/
+private def tautDualOutput (x : List Bool) : List Bool :=
+  if x.foldl tautSyntaxStep .formula = .done then tautDualScan .formula x else [false]
+
+/-- The guarded stream implements total decode–dual–serialize on every input. -/
+private lemma tautDual_output (x : List Bool) :
+    tautDualOutput x = DNF.serialize (CNF.dual (CNF.decode x)) := by
+  have hp := taut_syntax_parse x
+  cases hx : CNF.parse x with
+  | none =>
+    have hn : x.foldl tautSyntaxStep .formula ≠ .done := by
+      intro h
+      simp [tautSyntaxAccept, h, hx] at hp
+    simp only [tautDualOutput, if_neg hn, CNF.decode, hx, Option.getD_none]
+    rfl
+  | some φ =>
+    have hy : x.foldl tautSyntaxStep .formula = .done := by
+      simpa [tautSyntaxAccept, hx] using hp
+    rw [tautDualOutput, if_pos hy]
+    simp only [CNF.decode, hx, Option.getD_some]
+    rw [taut_parse_shape hx]
+    exact tautDual_serialize φ
+
+/-- The finite controller separates validation, emission, and silent rewinds.
+The Boolean rewind tag selects either emission or the final clean return. -/
+private inductive TautDualControl where
+  | anchor | scan (q : TautSyntax) | copy (q : TautSyntax) | rewind (finish : Bool)
+
+/-- Equality of the finite transducer control is private. -/
+private instance tautDualControlDecidableEq : DecidableEq TautDualControl :=
+  (proxy_equiv% TautDualControl).symm.decidableEq
+
+/-- The transducer has a fixed finite transition table. -/
+private instance tautDualControlFintype : Fintype TautDualControl := derive_fintype% _
+
+/-- A native-head movement, optional emission, and next finite state; no work tapes. -/
+private def tautDualAction (d : SignType) (q : TautDualControl)
+    (o : Option Bool := none) : Action 0 Bool TautDualControl :=
+  ⟨d, fun i => i.elim0, o, some q⟩
+
+/-- A complete clean round first validates the entire native input. On success
+it rewinds and flips literal polarities in-stream; on failure it emits only
+`[false]`. The final rewind restores native position one before returning.
+There is no input-sized control, uncharged scan, work marker, or stored result. -/
+private def tautDualTM : FinTM Bool where
+  k := 0
+  State := TautDualControl
+  tm := { q₀ := .anchor, tr := fun q inp _ => match q with
+    | .anchor => tautDualAction 0 (.scan .formula)
+    | .scan s => match inp with
+      | some b => tautDualAction 1 (.scan (tautSyntaxStep s b))
+      | none => if s = .done then tautDualAction (-1) (.rewind false)
+        else tautDualAction (-1) (.rewind true) (some false)
+    | .copy s => match inp with
+      | some b => tautDualAction 1 (.copy (tautSyntaxStep s b)) (some (tautDualBit s b))
+      | none => tautDualAction (-1) (.rewind true)
+    | .rewind finish => match inp with
+      | some _ => tautDualAction (-1) (.rewind finish)
+      | none => tautDualAction 1 (if finish then .anchor else .copy .formula) }
+
+/-- Exact native configurations, including both boundary blanks. -/
+private def tautDualCfg (x : List Bool) (q : TautDualControl)
+    (p : Fin (x.length + 2)) (out : List Bool) : Cfg 0 Bool TautDualControl x :=
+  ⟨some q, p, fun i => i.elim0, fun i => i.elim0, out⟩
+
+/-- The no-work-tape action has exactly the stated native and output effects. -/
+private lemma tautDual_action (x : List Bool) (q q' : TautDualControl)
+    (p : Fin (x.length + 2)) (out : List Bool) (d : SignType) (o : Option Bool) :
+    (tautDualAction d q' o).apply (tautDualCfg x q p out) =
+      tautDualCfg x q' (moveInputPos p d) (out ++ o.toList) := by
+  exact Cfg.ext_zero_tapes rfl rfl rfl
+
+/-- Exact input lookup, with consumed-prefix indexing and right-blank handling. -/
+private lemma tautDual_read (x : List Bool) (q : TautDualControl)
+    (i : ℕ) (hi : i ≤ x.length) (out : List Bool) :
+    (tautDualCfg x q ⟨i+1, by omega⟩ out).inputSymbol = x[i]? :=
+  FinTM.inputSymbol_at _ i hi rfl
+
+/-- A segment records its exact endpoint and excludes the anchor strictly
+before that endpoint. It is used only after the initial release transition. -/
+private def tautDualSegment {x : List Bool}
+    (c d : Cfg 0 Bool TautDualControl x) (t : ℕ) : Prop :=
+  tautDualTM.tm.runFrom c t = d ∧
+    ∀ j < t, (tautDualTM.tm.runFrom c j).state ≠ some .anchor
+
+/-- A zero-length segment has no strict prefix. -/
+private lemma tautDual_segment_zero {x : List Bool} (c : Cfg 0 Bool TautDualControl x) :
+    tautDualSegment c c 0 := by
+  exact ⟨rfl, by intro j hj; omega⟩
+
+/-- A single non-anchor transition is a first-return segment. -/
+private lemma tautDual_segment_one {x : List Bool} (c d : Cfg 0 Bool TautDualControl x)
+    (h : tautDualTM.tm.step c = d) (hq : c.state ≠ some .anchor) :
+    tautDualSegment c d 1 := by
+  refine ⟨h, ?_⟩
+  intro j hj
+  have : j = 0 := by omega
+  subst j
+  exact hq
+
+/-- Consecutive exact segments compose without hiding an earlier anchor visit. -/
+private lemma tautDual_segment_add {x : List Bool}
+    {c d e : Cfg 0 Bool TautDualControl x} {a b : ℕ}
+    (h : tautDualSegment c d a) (h' : tautDualSegment d e b) :
+    tautDualSegment c e (a+b) := by
+  refine ⟨by rw [MultiTapeTM.runFrom_add, h.1, h'.1], ?_⟩
+  intro j hj
+  by_cases ha : j < a
+  · exact h.2 j ha
+  · have he : j = a + (j-a) := by omega
+    rw [he, MultiTapeTM.runFrom_add, h.1]
+    exact h'.2 (j-a) (by omega)
+
+/-- A silent syntax pass consumes exactly the suffix length and preserves
+physical output. Its endpoint records the complete inherited scanner state.
+
+**Proof sketch.** Induct on the suffix. One actual native transition consumes
+the first bit and updates the grammar state; concatenating its segment with
+the induction hypothesis also proves exclusion of an early anchor visit. -/
+private lemma tautDual_scan (r : List Bool) :
+    ∀ (x pre out : List Bool) (q : TautSyntax) (hx : x = pre ++ r),
+    tautDualSegment
+      (tautDualCfg x (.scan q) ⟨pre.length+1, by simp [hx]; omega⟩ out)
+      (tautDualCfg x (.scan (r.foldl tautSyntaxStep q)) ⟨x.length+1, by omega⟩ out)
+      r.length := by
+  induction r with
+  | nil =>
+    intro x pre out q hx
+    subst x
+    simpa using tautDual_segment_zero
+      (tautDualCfg (pre ++ []) (.scan q) ⟨pre.length+1, by simp⟩ out)
+  | cons b r ih =>
+    intro x pre out q hx
+    have hx' : x = (pre ++ [b]) ++ r := by simpa [List.append_assoc] using hx
+    have hs : tautDualTM.tm.step
+        (tautDualCfg x (.scan q) ⟨pre.length+1, by simp [hx]; omega⟩ out) =
+        tautDualCfg x (.scan (tautSyntaxStep q b))
+          ⟨(pre ++ [b]).length+1, by simp [hx']⟩ out := by
+      change (tautDualTM.tm.tr (.scan q) _ _).apply _ = _
+      rw [tautDual_read x _ pre.length (by simp [hx]) out]
+      have hb : x[pre.length]? = some b := by simp [hx]
+      rw [hb]
+      rw [show tautDualTM.tm.tr (.scan q) (some b) _ =
+        tautDualAction 1 (.scan (tautSyntaxStep q b)) by rfl, tautDual_action]
+      simp only [Option.toList_none, List.append_nil]
+      congr 1
+      simpa using moveInputPos_pos_of_ne_right
+        (⟨pre.length+1, by simp [hx]; omega⟩ : Fin (x.length+2))
+        (by simp [hx])
+    have h1 := tautDual_segment_one _ _ hs (by simp [tautDualCfg])
+    simpa only [List.length_cons, List.foldl_cons, Nat.add_comm] using
+      tautDual_segment_add h1 (ih x (pre ++ [b]) out (tautSyntaxStep q b) hx')
+
+/-- The emitting pass copies one native bit per transition, using exactly
+`tautDualScan`; the arbitrary output prefix is preserved in chronological order.
+
+**Proof sketch.** Induct on the remaining suffix, appending the first bit's
+possibly flipped value. Segment composition retains the first-return guard. -/
+private lemma tautDual_copy (r : List Bool) :
+    ∀ (x pre out : List Bool) (q : TautSyntax) (hx : x = pre ++ r),
+    tautDualSegment
+      (tautDualCfg x (.copy q) ⟨pre.length+1, by simp [hx]; omega⟩ out)
+      (tautDualCfg x (.copy (r.foldl tautSyntaxStep q)) ⟨x.length+1, by omega⟩
+        (out ++ tautDualScan q r)) r.length := by
+  induction r with
+  | nil =>
+    intro x pre out q hx
+    subst x
+    simpa [tautDualScan] using tautDual_segment_zero
+      (tautDualCfg (pre ++ []) (.copy q) ⟨pre.length+1, by simp⟩ out)
+  | cons b r ih =>
+    intro x pre out q hx
+    have hx' : x = (pre ++ [b]) ++ r := by simpa [List.append_assoc] using hx
+    have hs : tautDualTM.tm.step
+        (tautDualCfg x (.copy q) ⟨pre.length+1, by simp [hx]; omega⟩ out) =
+        tautDualCfg x (.copy (tautSyntaxStep q b))
+          ⟨(pre ++ [b]).length+1, by simp [hx']⟩ (out ++ [tautDualBit q b]) := by
+      change (tautDualTM.tm.tr (.copy q) _ _).apply _ = _
+      rw [tautDual_read x _ pre.length (by simp [hx]) out]
+      have hb : x[pre.length]? = some b := by simp [hx]
+      rw [hb]
+      rw [show tautDualTM.tm.tr (.copy q) (some b) _ =
+        tautDualAction 1 (.copy (tautSyntaxStep q b)) (some (tautDualBit q b)) by rfl,
+        tautDual_action]
+      simp only [Option.toList_some]
+      congr 1
+      simpa using moveInputPos_pos_of_ne_right
+        (⟨pre.length+1, by simp [hx]; omega⟩ : Fin (x.length+2))
+        (by simp [hx])
+    have h1 := tautDual_segment_one _ _ hs (by simp [tautDualCfg])
+    simpa only [List.length_cons, List.foldl_cons, Nat.add_comm, tautDualScan,
+      List.append_assoc, List.singleton_append] using
+      tautDual_segment_add h1
+        (ih x (pre ++ [b]) (out ++ [tautDualBit q b]) (tautSyntaxStep q b) hx')
+
+/-- A left scan starts inside the native input, reaches the actual left blank,
+and returns to position one. It stays silent and never returns early.
+
+**Proof sketch.** Induct on the native position. A positive position contains
+an input bit and decreases by one; position zero is the boundary blank and
+takes the unique right-moving dispatch transition. This includes empty input. -/
+private lemma tautDual_rewind (x out : List Bool) (finish : Bool) :
+    ∀ p (hp : p ≤ x.length), tautDualSegment
+      (tautDualCfg x (.rewind finish) ⟨p, by omega⟩ out)
+      (tautDualCfg x (if finish then .anchor else .copy .formula) 1 out) (p+1) := by
+  intro p
+  induction p with
+  | zero =>
+    intro hp
+    apply tautDual_segment_one
+    · change (tautDualTM.tm.tr (.rewind finish) _ _).apply _ = _
+      have hb : (tautDualCfg x (.rewind finish) ⟨0, by omega⟩ out).inputSymbol = none := by
+        simp [tautDualCfg, Cfg.inputSymbol]
+      rw [hb]
+      change (tautDualAction 1 (if finish then .anchor else .copy .formula)).apply _ = _
+      rw [tautDual_action]
+      simp only [Option.toList_none, List.append_nil]
+      congr 1
+      simpa using moveInputPos_pos_of_ne_right (0 : Fin (x.length+2)) (by simp)
+    · simp [tautDualCfg]
+  | succ p ih =>
+    intro hp
+    have hs : tautDualTM.tm.step
+        (tautDualCfg x (.rewind finish) ⟨p+1, by omega⟩ out) =
+        tautDualCfg x (.rewind finish) ⟨p, by omega⟩ out := by
+      change (tautDualTM.tm.tr (.rewind finish) _ _).apply _ = _
+      rw [tautDual_read x _ p (by omega) out, List.getElem?_eq_getElem (by omega)]
+      change (tautDualAction (-1) (.rewind finish)).apply _ = _
+      rw [tautDual_action]
+      simp only [Option.toList_none, List.append_nil]
+      congr 1
+      simpa using moveInputPos_neg_of_ne_left
+        (⟨p+1, by omega⟩ : Fin (x.length+2)) (by simp)
+    have h1 := tautDual_segment_one _ _ hs (by simp [tautDualCfg])
+    simpa only [Nat.add_comm] using tautDual_segment_add h1 (ih (by omega))
+
+/-- The post-copy right-blank transition begins a silent final rewind. -/
+private lemma tautDual_copy_end (x out : List Bool) (q : TautSyntax) :
+    tautDualSegment
+      (tautDualCfg x (.copy q) ⟨x.length+1, by omega⟩ out)
+      (tautDualCfg x (.rewind true) ⟨x.length, by omega⟩ out) 1 := by
+  apply tautDual_segment_one
+  · change (tautDualTM.tm.tr (.copy q) _ _).apply _ = _
+    rw [tautDual_read x _ x.length (by omega) out, List.getElem?_length]
+    change (tautDualAction (-1) (.rewind true)).apply _ = _
+    rw [tautDual_action]
+    simp only [Option.toList_none, List.append_nil]
+    congr 1
+    simpa using moveInputPos_neg_of_ne_left
+      (⟨x.length+1, by omega⟩ : Fin (x.length+2)) (by simp)
+  · simp [tautDualCfg]
+
+/-- Successful whole-string validation dispatches to the emitting pass with
+empty output. The complete copy and final rewind preserve its exact result. -/
+private lemma tautDual_valid (x : List Bool)
+    (hx : x.foldl tautSyntaxStep .formula = .done) :
+    tautDualSegment
+      (tautDualCfg x (.scan .formula) 1 [])
+      (tautDualCfg x .anchor 1 (tautDualScan .formula x)) (4*x.length+4) := by
+  have hscan := tautDual_scan x x [] [] .formula (by simp)
+  simp only [List.length_nil, Nat.zero_add, hx] at hscan
+  have hend : tautDualSegment
+      (tautDualCfg x (.scan .done) ⟨x.length+1, by omega⟩ [])
+      (tautDualCfg x (.rewind false) ⟨x.length, by omega⟩ []) 1 := by
+    apply tautDual_segment_one
+    · change (tautDualTM.tm.tr (.scan .done) _ _).apply _ = _
+      rw [tautDual_read x _ x.length (by omega) [], List.getElem?_length]
+      change (tautDualAction (-1) (.rewind false)).apply _ = _
+      rw [tautDual_action]
+      simp only [Option.toList_none, List.append_nil]
+      congr 1
+      simpa using moveInputPos_neg_of_ne_left
+        (⟨x.length+1, by omega⟩ : Fin (x.length+2)) (by simp)
+    · simp [tautDualCfg]
+  have hback := tautDual_rewind x [] false x.length (by omega)
+  have hcopy := tautDual_copy x x [] [] .formula (by simp)
+  simp only [List.length_nil, Nat.zero_add, List.nil_append] at hcopy
+  have hclose := tautDual_copy_end x (tautDualScan .formula x)
+    (x.foldl tautSyntaxStep .formula)
+  have hreturn := tautDual_rewind x (tautDualScan .formula x) true x.length (by omega)
+  have h := tautDual_segment_add (tautDual_segment_add (tautDual_segment_add
+    (tautDual_segment_add (tautDual_segment_add hscan hend) hback) hcopy) hclose) hreturn
+  convert h using 1
+  omega
+
+/-- Failed validation emits just the empty-dual serialization and rewinds.
+No input prefix was emitted during the preceding full syntax scan. -/
+private lemma tautDual_invalid (x : List Bool)
+    (hx : x.foldl tautSyntaxStep .formula ≠ .done) :
+    tautDualSegment
+      (tautDualCfg x (.scan .formula) 1 [])
+      (tautDualCfg x .anchor 1 [false]) (2*x.length+2) := by
+  have hscan := tautDual_scan x x [] [] .formula (by simp)
+  simp only [List.length_nil, Nat.zero_add] at hscan
+  have hend : tautDualSegment
+      (tautDualCfg x (.scan (x.foldl tautSyntaxStep .formula)) ⟨x.length+1, by omega⟩ [])
+      (tautDualCfg x (.rewind true) ⟨x.length, by omega⟩ [false]) 1 := by
+    apply tautDual_segment_one
+    · change (tautDualTM.tm.tr (.scan _) _ _).apply _ = _
+      rw [tautDual_read x _ x.length (by omega) [], List.getElem?_length]
+      change (if x.foldl tautSyntaxStep .formula = .done then
+        tautDualAction (-1) (.rewind false) else
+        tautDualAction (-1) (.rewind true) (some false)).apply _ = _
+      rw [if_neg hx, tautDual_action]
+      simp only [Option.toList_some, List.nil_append]
+      congr 1
+      simpa using moveInputPos_neg_of_ne_left
+        (⟨x.length+1, by omega⟩ : Fin (x.length+2)) (by simp)
+    · simp [tautDualCfg]
+  have hreturn := tautDual_rewind x [false] true x.length (by omega)
+  have h := tautDual_segment_add (tautDual_segment_add hscan hend) hreturn
+  convert h using 1
+  omega
+
+/-- The body returns for the first positive time with the entire exact
+transformed word and the full canonical seam. Entry and exit are the same
+anchor; the release transition is charged explicitly. -/
+private lemma tautDual_round (x : List Bool) :
+    ∃ t, 0 < t ∧ t ≤ 4*x.length+5 ∧
+      (∀ j, 0 < j → j < t →
+        (tautDualTM.tm.runFrom
+          (Cfg.ofWords (input := x) TautDualControl.anchor (stateWord 0 [])) j).state
+          ≠ some .anchor) ∧
+      tautDualTM.tm.runFrom
+        (Cfg.ofWords (input := x) TautDualControl.anchor (stateWord 0 [])) t =
+          { Cfg.ofWords (input := x) TautDualControl.anchor (stateWord 0 [])
+              with output := tautDualOutput x } := by
+  have hseam (o : List Bool) :
+      { Cfg.ofWords (input := x) TautDualControl.anchor (stateWord 0 []) with output := o } =
+        tautDualCfg x .anchor 1 o := Cfg.ext_zero_tapes rfl rfl rfl
+  have hrelease : tautDualTM.tm.step
+      (Cfg.ofWords (input := x) TautDualControl.anchor (stateWord 0 [])) =
+        tautDualCfg x (.scan .formula) 1 [] := by
+    apply Cfg.ext_zero_tapes
+    · rfl
+    · exact moveInputPos_zero _
+    · rfl
+  have hsegment : ∃ t ≤ 4*x.length+4, tautDualSegment
+      (tautDualCfg x (.scan .formula) 1 [])
+      (tautDualCfg x .anchor 1 (tautDualOutput x)) t := by
+    by_cases hx : x.foldl tautSyntaxStep .formula = .done
+    · exact ⟨4*x.length+4, by omega, by
+        simpa only [tautDualOutput, if_pos hx] using tautDual_valid x hx⟩
+    · exact ⟨2*x.length+2, by omega, by
+        simpa only [tautDualOutput, if_neg hx] using tautDual_invalid x hx⟩
+  obtain ⟨t, ht, hrun, hguard⟩ := hsegment
+  refine ⟨t+1, by omega, by omega, ?_, ?_⟩
+  · intro j hj hjt
+    obtain ⟨j, rfl⟩ := Nat.exists_eq_succ_of_ne_zero (by omega : j ≠ 0)
+    rw [MultiTapeTM.runFrom_succ_eq_step, hrelease]
+    exact hguard j (by omega)
+  · rw [MultiTapeTM.runFrom_succ_eq_step, hrelease, hrun, hseam]
+
+/-- The native parse–dual–serialize function is polynomial-time computable.
+
+**Proof sketch.** Instantiate the audited emitting loop with zero fuel, hence
+exactly one positive round. The whole validation/streaming/rewind controller
+is that round; no mutable state crosses its seam. Its bound is `4n+5`, and
+the constant-empty binary fuel machine fits the common envelope
+`a(n+1)+4n+5`. The loop's cost is bounded by `2c(a+6)(n+1)`.
+The output identity is proved on every string before any language reduction
+is used. This one-round specialization retains the normalized clean-return
+and exact chronological-emission obligations without a persistent cursor. -/
+private lemma tautDual_poly :
+    PolyTimeComputable (fun x => DNF.serialize (CNF.dual (CNF.decode x))) := by
+  obtain ⟨F, a, hF⟩ := FinTM.computesFunInTime_const ([] : List Bool)
+  let T : ℕ → ℕ := fun n => a*(n+1)+4*n+5
+  have hf : F.ComputesFunInTime (fun x => Nat.bits ((fun _ : ℕ => 0) x.length)) T := by
+    intro x
+    change F.ComputesInTime x (Nat.bits 0) (T x.length)
+    rw [Nat.zero_bits]
+    apply (hF x).mono
+    dsimp [T]
+    omega
+  obtain ⟨E, c, hE⟩ := FinTM.exists_emitLoopTM tautDualTM F TautDualControl.anchor
+    (fun _ s => s = []) (fun _ _ => []) (fun x _ => tautDualOutput x)
+    (fun _ => []) (fun _ => 0) T hf (fun _ => rfl) (fun _ _ _ => rfl)
+    (fun x => ⟨0, by dsimp [T]; omega, by intro j hj; omega,
+      Cfg.ext_zero_tapes rfl rfl rfl⟩)
+    (by
+      intro x s hs
+      subst s
+      obtain ⟨t, ht, hb, hg, he⟩ := tautDual_round x
+      exact ⟨t, ht, by dsimp [T]; omega, hg, he⟩)
+  refine ⟨E, 2*c*(a+6), 1, fun x => ?_⟩
+  have he := hE x
+  simp only [Nat.zero_add, List.range_one, List.flatMap_cons, List.flatMap_nil,
+    List.append_nil, tautDual_output] at he
+  apply he.mono
+  dsimp [T]
+  simp only [Nat.pow_one]
+  calc
+    _ ≤ c*((a+6)*(x.length+1))*2 := Nat.mul_le_mul_right 2
+      (Nat.mul_le_mul_left c (by rw [Nat.add_mul]; omega))
+    _ = _ := by ring
+
 /-- **Example 2.21** [AB09]: `TAUTOLOGY` is `coNP`-complete (DNF fragment).
 
 **Proof sketch.** Membership is `Complexity.TAUTOLOGY_mem_coNP`. Hardness:
@@ -1269,6 +1733,17 @@ transform, the dual being a literal-polarity flip emitted in-stream (the
 polarity bit is the last bit of each literal record). Conclude
 `Complexity.coNPHard` and assemble `Complexity.coNPComplete`. -/
 theorem TAUTOLOGY_coNPComplete : coNPComplete TAUTOLOGY := by
-  sorry
+  classical
+  refine ⟨TAUTOLOGY_mem_coNP, ?_⟩
+  intro L hL
+  obtain ⟨f, hf, hred⟩ := SAT_NPHard Lᶜ hL
+  refine ⟨(fun x => DNF.serialize (CNF.dual (CNF.decode x))) ∘ f,
+    tautDual_poly.comp hf, ?_⟩
+  intro z
+  change z ∈ L ↔ (DNF.decode (DNF.serialize (CNF.dual (CNF.decode (f z))))).Tautology
+  rw [DNF.decode_serialize, CNF.tautology_dual_iff]
+  have h := not_congr (hred z)
+  change (¬¬z ∈ L) ↔ ¬(CNF.decode (f z)).Satisfiable at h
+  simpa only [not_not] using h
 
 end Complexity
