@@ -392,8 +392,12 @@ uncomputability chapter.
   r2-finding-5 schedule; zero sanctioned), 4A
   (`briefs/ch2-epoch4-batchA.md`, the summit under the embedded
   boundary table; one sanctioned root via 3B-cont for the SAT3
-  pair; Astra distillation explicitly non-binding). On returns →
-  4B → the epoch-3/4 audit → E5 closure.
+  pair; Astra distillation explicitly non-binding). **A-3 (run β of a
+  recorded parallel-run incident; α discarded whole under logged
+  criteria) and 3B-cont integrated 2026-10-05**: the padding cluster,
+  `EXP_subset_NEXP`, and `SAT_reducible_SAT3` closed; tree at **6
+  admissions** (`TAUTOLOGY_coNPComplete` + Hardness five); ledger
+  **53/59**. 4A in flight → 4B → the epoch-3/4 audit → E5 closure.
   Subsumes 2C's
   `prefixTM`/`fixedPair` promotion requests. Dedup of superseded batch
   privates is an E5 closure task. Mathlib TM2 rejected as substrate
