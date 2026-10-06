@@ -2514,6 +2514,705 @@ theorem NP_subset_EXP : NP ⊆ EXP := by
   rw [heq] at hE
   exact Set.mem_iUnion.mpr ⟨f, A, E, fun x => (hE x).mono (hbound x.length)⟩
 
+/-! ### A3 exponential split and clean padding verifier
+The binary evaluator below is re-derived from the pinned `e3ShiftTM`
+family in `Nondeterminism.lean`, under the private-harvest rule; the original
+family remains unchanged and no file-scoped declaration is cited. -/
+
+/-- Multiplication by a power of two prefixes zeroes to a nonzero binary word.
+This is an exact binary representation, not an exponential unary emission. -/
+private lemma a3_bits_shift (C p : ℕ) (hC : C ≠ 0) :
+    Nat.bits (C * 2 ^ p) = List.replicate p false ++ Nat.bits C := by
+  induction p with
+  | zero => simp
+  | succ p ih =>
+    have hp : C * 2 ^ p ≠ 0 := Nat.mul_ne_zero hC (Nat.ne_of_gt (Nat.pow_pos (by omega)))
+    rw [show C * 2 ^ (p + 1) = 2 * (C * 2 ^ p) by ring, Nat.bit0_bits _ hp, ih]
+    simp [List.replicate_succ]
+
+/-- Replace each input symbol by a zero bit, then append a fixed binary word.
+The scanner and fixed emission chain use no work tapes. -/
+private def a3ShiftTM (w : List Bool) : FinTM Bool where
+  k := 0
+  State := Unit ⊕ Fin (w.length + 1)
+  tm := {
+    q₀ := .inl ()
+    tr := fun q inp _ => match q with
+      | .inl _ => match inp with
+        | some _ => ⟨.pos, fun i => i.elim0, some false, some (.inl ())⟩
+        | none => controlAction 0 (some (.inr 0))
+      | .inr i => emitAction w Sum.inr i }
+
+/-- The shift scanner advances one input position and emits one zero per
+step, retaining its live scanner state until the boundary blank.
+**Proof sketch.** Induct on the number of consumed symbols. The input-head invariant
+identifies the next bit, and the transition advances the head and appends
+exactly one false bit without entering the fixed emission chain. -/
+private lemma a3_shift_scan (w x : List Bool) : ∀ t, t ≤ x.length →
+    ((a3ShiftTM w).tm.runFrom ((a3ShiftTM w).tm.initCfg x) t).state = some (.inl ()) ∧
+    (((a3ShiftTM w).tm.runFrom ((a3ShiftTM w).tm.initCfg x) t).inputPos : ℕ) = t + 1 ∧
+    ((a3ShiftTM w).tm.runFrom ((a3ShiftTM w).tm.initCfg x) t).output =
+      List.replicate t false := by
+  intro t
+  induction t with
+  | zero =>
+    intro _
+    refine ⟨rfl, ?_, rfl⟩
+    simp [MultiTapeTM.runFrom]
+  | succ t ih =>
+    intro ht
+    obtain ⟨hs, hp, ho⟩ := ih (by omega)
+    have hstep : (a3ShiftTM w).tm.runFrom ((a3ShiftTM w).tm.initCfg x) (t + 1) =
+        ((a3ShiftTM w).tm.tr (.inl ()) (some (x[t]'(by omega)))
+          (((a3ShiftTM w).tm.runFrom ((a3ShiftTM w).tm.initCfg x) t).workTapeSymbols)).apply
+          ((a3ShiftTM w).tm.runFrom ((a3ShiftTM w).tm.initCfg x) t) := by
+      rw [MultiTapeTM.runFrom_succ_eq_step']
+      unfold MultiTapeTM.step
+      rw [hs]
+      dsimp only
+      rw [inputSymbolInner (p := t) (by omega) (by omega)]
+    refine ⟨?_, ?_, ?_⟩
+    · rw [hstep]
+      simp [a3ShiftTM, Action.apply]
+    · rw [hstep]
+      simp only [a3ShiftTM, Action.apply]
+      rw [moveInputPos_pos_of_ne_right _ (by omega)]
+      show (((a3ShiftTM w).tm.runFrom ((a3ShiftTM w).tm.initCfg x) t).inputPos : ℕ) + 1 = t + 2
+      omega
+    · rw [hstep]
+      simp only [a3ShiftTM, Action.apply, ho]
+      exact List.replicate_succ'.symm
+
+/-- The scanner's blank transition enters the emission chain; the final
+halting transition is charged explicitly. The total is `|x|+|w|+2`.
+**Proof sketch.** Use the scanner invariant at the right boundary. The blank
+transition enters the fixed emission chain with the accumulated zero bits;
+the library emission theorem supplies the remaining word and halting step. -/
+private lemma a3_shift_computes (w x : List Bool) :
+    (a3ShiftTM w).ComputesInTime x (List.replicate x.length false ++ w)
+      (x.length + w.length + 2) := by
+  obtain ⟨hs, hp, ho⟩ := a3_shift_scan w x x.length (le_refl _)
+  let cfg := (a3ShiftTM w).tm.runFrom ((a3ShiftTM w).tm.initCfg x) x.length
+  have hp' : (cfg.inputPos : ℕ) = x.length + 1 := hp
+  have hzero : cfg.inputPos ≠ 0 := by
+    intro h
+    rw [h] at hp'
+    simp at hp'
+  have hinp : cfg.inputSymbol = none := by
+    unfold Cfg.inputSymbol
+    rw [dif_neg hzero, dif_pos (by omega)]
+  have henter : (a3ShiftTM w).tm.runFrom ((a3ShiftTM w).tm.initCfg x) (x.length + 1) =
+      (controlAction 0 (some (.inr (0 : Fin (w.length + 1))))).apply cfg := by
+    rw [MultiTapeTM.runFrom_succ_eq_step']
+    change (a3ShiftTM w).tm.step cfg = _
+    simp only [MultiTapeTM.step, show cfg.state = some (.inl ()) from hs, a3ShiftTM, hinp]
+  let next := (a3ShiftTM w).tm.runFrom ((a3ShiftTM w).tm.initCfg x) (x.length + 1)
+  have hnext : next.state = some (.inr (0 : Fin (w.length + 1))) := by
+    dsimp only [next]
+    rw [henter]
+    rfl
+  have houtput : next.output = List.replicate x.length false := by
+    dsimp only [next]
+    rw [henter]
+    simp only [controlAction, Action.apply, Option.toList_none, List.append_nil]
+    exact ho
+  obtain ⟨hh, hout⟩ := emit_halts (a3ShiftTM w).tm w Sum.inr
+    (fun _ _ _ => rfl) next hnext
+  apply (computesInTime_iff _ _ _ _).mpr
+  rw [show x.length + w.length + 2 = (x.length + 1) + (w.length + 1) by omega,
+    MultiTapeTM.runFrom_add]
+  exact ⟨hh, by simpa only [houtput] using hout⟩
+
+/-- The fixed-word binary shift has a monotone linear budget on all inputs. -/
+private lemma a3_shift_timed (w : List Bool) :
+    (a3ShiftTM w).ComputesFunInTime (fun x => List.replicate x.length false ++ w)
+      (fun n => (w.length + 2) * (n + 1)) := by
+  intro x
+  apply (a3_shift_computes w x).mono
+  simp only [Nat.add_mul, Nat.mul_add, Nat.mul_one]
+  omega
+
+/-- The exact binary value of exponential padding is polynomial-time
+computable before any validity check.
+**Proof sketch.** At coefficient zero emit the empty binary word. Otherwise
+the catalog emits `(n+1)^c` unary symbols. The native shift scanner emits
+that many zeroes followed by the fixed nonzero coefficient's bits. Timed
+buffered composition and the binary shift identity identify the value;
+the monotone linear second-stage cost yields degree `c+1` uniformly. -/
+private lemma a3_exp_bits_timed (C c : ℕ) :
+    ∃ (M : FinTM Bool) (A : ℕ),
+      M.ComputesFunInTime (fun x => Nat.bits (C * 2 ^ (x.length + 1) ^ c))
+        (fun n => A * (n + 1) ^ (c + 1)) := by
+  by_cases hC : C = 0
+  · obtain ⟨M, A, hM⟩ := computesFunInTime_const ([] : List Bool)
+    refine ⟨M, A, fun x => ?_⟩
+    simpa only [hC, Nat.zero_mul, Nat.zero_bits] using (hM x).mono
+      (Nat.mul_le_mul_left A (by
+        simpa only [Nat.pow_one] using Nat.pow_le_pow_right (Nat.succ_pos x.length)
+          (show 1 ≤ c + 1 by omega)))
+  · obtain ⟨U, a, hU⟩ := computesFunInTime_polyUnary 1 c
+    obtain ⟨M, b, hM⟩ := computesFunInTime_comp hU (a3_shift_timed (Nat.bits C))
+      (by intro m n h; exact Nat.mul_le_mul_left _ (Nat.add_le_add_right h 1))
+    let k := (Nat.bits C).length + 2
+    refine ⟨M, b * (a + 1) * (k + 1), fun x => ?_⟩
+    have hc := hM x
+    simp only [Function.comp_apply, List.length_replicate, Nat.one_mul,
+      ← a3_bits_shift C _ hC] at hc
+    apply hc.mono
+    let p := (x.length + 1) ^ (c + 1)
+    have hp : 1 ≤ p := Nat.one_le_pow _ _ (Nat.succ_pos _)
+    change b * (a * p + k * (a * p + 1) + 1) ≤ b * (a + 1) * (k + 1) * p
+    calc
+      _ = b * (a * (k + 1) * p + (k + 1)) := by ring
+      _ ≤ b * (a * (k + 1) * p + (k + 1) * p) :=
+        Nat.mul_le_mul_left b (Nat.add_le_add_left (Nat.le_mul_of_pos_right _ hp) _)
+      _ = _ := by ring
+
+/-- Turn a clean installed singleton call into an ordinary decider. Copying
+and simultaneous rewinding prepare the exact argument seam. The dedicated
+entry state executes one source action before testing the return state. -/
+private def a3RunTM (C : FinTM Bool) (hk : 0 < C.k) (entry exit : C.State) : FinTM Bool where
+  k := C.k
+  State := Fin 3 ⊕ C.State
+  tm := {
+    q₀ := .inl 0
+    tr := fun q inp work => match q with
+      | .inl i => if i = 0 then
+          match inp with
+          | some b => ⟨.pos, fun j => if j.val = 0 then (some (some b), .pos)
+              else (none, 0), none, some (.inl 0)⟩
+          | none => ⟨.neg, fun j => if j.val = 0 then (none, .neg)
+              else (none, 0), none, some (.inl 1)⟩
+        else if i = 1 then
+          match work ⟨0, hk⟩ with
+          | some _ => ⟨.neg, fun j => if j.val = 0 then (none, .neg)
+              else (none, 0), none, some (.inl 1)⟩
+          | none => ⟨.pos, fun j => if j.val = 0 then (none, .pos)
+              else (none, 0), none, some (.inl 2)⟩
+        else (C.tm.tr entry inp work).mapState Sum.inr
+      | .inr q => if q = exit then
+          ⟨0, fun _ => (none, 0), work ⟨0, hk⟩, none⟩
+        else (C.tm.tr q inp work).mapState Sum.inr }
+
+/-- The copy/rewind phase keeps all scratch tapes blank. -/
+private def a3LoadCfg (C : FinTM Bool) {x : List Bool} (q : Fin 3)
+    (p : Fin (x.length + 2)) (u : List Bool) (h : ℤ) :
+    Cfg C.k Bool (Fin 3 ⊕ C.State) x :=
+  ⟨some (.inl q), p, (fun i => if i.val = 0 then bufferTape u else fun _ => none),
+    (fun i => if i.val = 0 then h else 0), []⟩
+
+/-- One copy transition appends the next input bit to tape zero.
+**Proof sketch.** Read the current input symbol using its indexed position.
+The tape-update identity appends it to the copied prefix, while every other
+tape remains blank and stationary; both active heads advance together. -/
+private lemma a3_copy_step (C : FinTM Bool) (hk : 0 < C.k) (entry exit : C.State)
+    (x : List Bool) (i : ℕ) (hi : i < x.length) :
+    (a3RunTM C hk entry exit).tm.step
+      (a3LoadCfg C (x := x) 0 ⟨i + 1, by omega⟩ (x.take i) i) =
+      a3LoadCfg C (x := x) 0 ⟨i + 2, by omega⟩ (x.take (i + 1)) (i + 1) := by
+  have hr : (a3LoadCfg C (x := x) 0 ⟨i + 1, by omega⟩ (x.take i) i).inputSymbol =
+      some x[i] := inputSymbolInner i (by simp [a3LoadCfg]; omega) hi
+  unfold MultiTapeTM.step
+  change ((a3RunTM C hk entry exit).tm.tr (.inl 0) _ _).apply _ = _
+  simp only [a3RunTM, ↓reduceIte]
+  rw [hr]
+  refine Cfg.ext rfl ?_ ?_ ?_ rfl
+  · apply Fin.ext
+    change (moveInputPos (⟨i + 1, by omega⟩ : Fin (x.length + 2)) .pos).val = i + 2
+    rw [moveInputPos_pos_of_ne_right _ (by simp; omega)]
+  · funext j
+    by_cases hz : j.val = 0
+    · simp only [Action.apply, a3LoadCfg, hz, ↓reduceIte]
+      rw [List.take_succ_eq_append_getElem hi, bufferTape_append,
+        List.length_take_of_le (Nat.le_of_lt hi)]
+    · simp [Action.apply, a3LoadCfg, hz]
+  · funext j; by_cases hz : j.val = 0 <;> simp [Action.apply, a3LoadCfg, hz]
+
+/-- Copying starts from genuine blank tapes and charges every input symbol. -/
+private lemma a3_copy_run (C : FinTM Bool) (hk : 0 < C.k) (entry exit : C.State)
+    (x : List Bool) (i : ℕ) (hi : i ≤ x.length) :
+    (a3RunTM C hk entry exit).tm.runFrom ((a3RunTM C hk entry exit).tm.initCfg x) i =
+      a3LoadCfg C (x := x) 0 ⟨i + 1, by omega⟩ (x.take i) i := by
+  induction i with
+  | zero =>
+    refine Cfg.ext rfl rfl ?_ ?_ rfl
+    · funext j z; simp [MultiTapeTM.initCfg, Cfg.init, a3LoadCfg, bufferTape]
+    · funext j; simp [MultiTapeTM.initCfg, Cfg.init, a3LoadCfg]
+  | succ i ih =>
+    rw [MultiTapeTM.runFrom_succ_eq_step', ih (by omega), a3_copy_step C hk entry exit x i (by omega)]
+    simp only [Nat.cast_add, Nat.cast_one, Nat.add_assoc]
+
+/-- Rewind input and copied argument together, including the empty input.
+The mandatory left move preceding this phase starts at the correct blank.
+**Proof sketch.** Induct on the number of copied cells still to cross. Each
+nonblank cell moves both heads left. At the left blank, one right move
+places both heads at zero and leaves all other tapes at their blank seam. -/
+private lemma a3_load_rewind (C : FinTM Bool) (hk : 0 < C.k) (entry exit : C.State)
+    (x : List Bool) (j : ℕ) (hj : j ≤ x.length) :
+    (a3RunTM C hk entry exit).tm.runFrom
+      (a3LoadCfg C (x := x) 1 ⟨j, by omega⟩ x ((j : ℤ) - 1)) (j + 1) =
+      Cfg.ofWords (.inl (2 : Fin 3)) (stateWord C.k x) := by
+  induction j with
+  | zero =>
+    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+    unfold MultiTapeTM.step
+    simp only [a3RunTM, a3LoadCfg, Cfg.workTapeSymbols, Nat.cast_zero, zero_sub,
+      show (1 : Fin 3) ≠ 0 by decide, ↓reduceIte, bufferTape_left]
+    refine Cfg.ext rfl ?_ ?_ ?_ rfl
+    · apply Fin.ext
+      change (moveInputPos (⟨0, by omega⟩ : Fin (x.length + 2)) .pos).val = 1
+      rw [moveInputPos_pos_of_ne_right _ (by simp)]
+    · funext i; by_cases hz : i.val = 0 <;> simp [Action.apply, Cfg.ofWords, stateWord, bufferTape, hz]
+    · funext i; by_cases hz : i.val = 0 <;> simp [Action.apply, Cfg.ofWords, hz]
+  | succ j ih =>
+    rw [MultiTapeTM.runFrom_succ_eq_step]
+    have hs : (a3RunTM C hk entry exit).tm.step
+        (a3LoadCfg C (x := x) 1 ⟨j + 1, by omega⟩ x ((j + 1 : ℕ) - 1)) =
+        a3LoadCfg C (x := x) 1 ⟨j, by omega⟩ x ((j : ℤ) - 1) := by
+      have hz : ((j + 1 : ℕ) : ℤ) - 1 = (j : ℤ) := by omega
+      rw [hz]
+      unfold MultiTapeTM.step
+      simp only [a3RunTM, a3LoadCfg, Cfg.workTapeSymbols,
+        show (1 : Fin 3) ≠ 0 by decide, ↓reduceIte, bufferTape_nat,
+        List.getElem?_eq_getElem (by omega : j < x.length)]
+      refine Cfg.ext rfl ?_ ?_ ?_ rfl
+      · apply Fin.ext
+        change (moveInputPos (⟨j + 1, by omega⟩ : Fin (x.length + 2)) .neg).val = j
+        rw [moveInputPos_neg_val]
+        simp
+      · funext i; by_cases hz : i.val = 0 <;> simp [Action.apply, a3LoadCfg, hz]
+      · funext i; by_cases hz : i.val = 0 <;> simp [Action.apply, a3LoadCfg, hz, sub_eq_add_neg]
+    rw [hs]
+    exact ih (by omega)
+
+/-- The ordinary input loader reaches the exact clean-call seam in linear time.
+**Proof sketch.** Copy the entire input, take the mandatory left move at its
+right blank, and apply the rewind invariant. The two phases and their
+boundary actions cost exactly twice the input length plus two. -/
+private lemma a3_run_start (C : FinTM Bool) (hk : 0 < C.k) (entry exit : C.State)
+    (x : List Bool) :
+    (a3RunTM C hk entry exit).tm.runFrom ((a3RunTM C hk entry exit).tm.initCfg x)
+      (2 * x.length + 2) = Cfg.ofWords (.inl (2 : Fin 3)) (stateWord C.k x) := by
+  have hc := a3_copy_run C hk entry exit x x.length (le_refl _)
+  rw [List.take_length] at hc
+  have hs : (a3RunTM C hk entry exit).tm.step
+      (a3LoadCfg C (x := x) 0 ⟨x.length + 1, by omega⟩ x x.length) =
+      a3LoadCfg C (x := x) 1 ⟨x.length, by omega⟩ x ((x.length : ℤ) - 1) := by
+    have hr : (a3LoadCfg C (x := x) 0 ⟨x.length + 1, by omega⟩ x x.length).inputSymbol = none :=
+      by simp [Cfg.inputSymbol, a3LoadCfg]
+    unfold MultiTapeTM.step
+    change ((a3RunTM C hk entry exit).tm.tr (.inl 0) _ _).apply _ = _
+    simp only [a3RunTM, ↓reduceIte]
+    rw [hr]
+    refine Cfg.ext rfl ?_ ?_ ?_ rfl
+    · apply Fin.ext
+      change (moveInputPos (⟨x.length + 1, by omega⟩ : Fin (x.length + 2)) .neg).val = x.length
+      rw [moveInputPos_neg_val]
+      simp
+    · funext i; by_cases hz : i.val = 0 <;> simp [Action.apply, a3LoadCfg, hz]
+    · funext i; by_cases hz : i.val = 0 <;> simp [Action.apply, a3LoadCfg, hz, sub_eq_add_neg]
+  have he : (a3RunTM C hk entry exit).tm.runFrom
+      ((a3RunTM C hk entry exit).tm.initCfg x) (x.length + 1) =
+      a3LoadCfg C (x := x) 1 ⟨x.length, by omega⟩ x ((x.length : ℤ) - 1) := by
+    rw [MultiTapeTM.runFrom_succ_eq_step', hc, hs]
+  rw [show 2 * x.length + 2 = (x.length + 1) + (x.length + 1) by omega,
+    MultiTapeTM.runFrom_add, he]
+  exact a3_load_rewind C hk entry exit x x.length (le_refl _)
+
+/-- The host follows a clean call until its first return, preserving every
+configuration field through state renaming. -/
+private lemma a3_run_guarded (C : FinTM Bool) (hk : 0 < C.k) (entry exit : C.State)
+    {x : List Bool} (cfg : Cfg C.k Bool C.State x) (t : ℕ)
+    (hguard : ∀ j < t, (C.tm.runFrom cfg j).state ≠ some exit) :
+    (a3RunTM C hk entry exit).tm.runFrom (cfg.mapState Sum.inr) t =
+      (C.tm.runFrom cfg t).mapState Sum.inr := by
+  induction t with
+  | zero => rfl
+  | succ t ih =>
+    rw [MultiTapeTM.runFrom_succ_eq_step', ih (fun j hj => hguard j (by omega)),
+      MultiTapeTM.runFrom_succ_eq_step']
+    cases hs : (C.tm.runFrom cfg t).state with
+    | none => simp [MultiTapeTM.step, Cfg.mapState, hs]
+    | some q =>
+      have hq : q ≠ exit := by intro he; subst q; exact hguard t (by omega) hs
+      simp only [MultiTapeTM.step, Cfg.mapState, hs, Option.map_some]
+      simp only [a3RunTM, if_neg hq]
+      rfl
+
+/-- A dedicated entry action handles the permitted entry-equals-exit case;
+all later actions dispatch at the actual first positive return.
+**Proof sketch.** Execute the first source action unconditionally, then transfer
+the remaining source run through the state embedding. The first-positive-
+return hypothesis prevents any earlier interception, including when the
+entry and return states coincide. -/
+private lemma a3_run_call (C : FinTM Bool) (hk : 0 < C.k) (entry exit : C.State)
+    (x y : List Bool) (t : ℕ) (ht : 0 < t)
+    (hfirst : ∀ j, 0 < j → j < t →
+      (C.tm.runFrom (Cfg.ofWords (input := x) entry (stateWord C.k x)) j).state ≠ some exit)
+    (hr : C.tm.runFrom (Cfg.ofWords (input := x) entry (stateWord C.k x)) t =
+      Cfg.ofWords exit (stateWord C.k y)) :
+    (a3RunTM C hk entry exit).tm.runFrom
+      (Cfg.ofWords (input := x) (.inl (2 : Fin 3)) (stateWord C.k x)) t =
+      (Cfg.ofWords exit (stateWord C.k y)).mapState Sum.inr := by
+  let cfg := Cfg.ofWords (input := x) entry (stateWord C.k x)
+  have hstep : (a3RunTM C hk entry exit).tm.step
+      (Cfg.ofWords (input := x) (.inl (2 : Fin 3)) (stateWord C.k x)) =
+      (C.tm.step cfg).mapState Sum.inr := by
+    simp only [MultiTapeTM.step, Cfg.ofWords, a3RunTM,
+      show (2 : Fin 3) ≠ 0 by decide, show (2 : Fin 3) ≠ 1 by decide, ↓reduceIte]
+    rfl
+  have hguard : ∀ j < t - 1, (C.tm.runFrom (C.tm.step cfg) j).state ≠ some exit := by
+    intro j hj
+    have h := hfirst (j + 1) (by omega) (by omega)
+    simpa only [MultiTapeTM.runFrom_succ_eq_step] using h
+  have hrun := a3_run_guarded C hk entry exit (C.tm.step cfg) (t - 1) hguard
+  have hrest : C.tm.runFrom (C.tm.step cfg) (t - 1) =
+      Cfg.ofWords exit (stateWord C.k y) := by
+    rw [← MultiTapeTM.runFrom_succ_eq_step, Nat.sub_add_cancel ht]
+    exact hr
+  rw [hrest] at hrun
+  conv_lhs => rw [← Nat.sub_add_cancel ht, MultiTapeTM.runFrom_succ_eq_step, hstep]
+  exact hrun
+
+/-- Extract the installed singleton from a genuine tape zero, after the
+complete captured call and cleanup. No source emission is exposed early. -/
+private lemma a3_run_singleton (C : FinTM Bool) (hk : 0 < C.k) (entry exit : C.State)
+    (x : List Bool) (b : Bool) (t : ℕ) (ht : 0 < t)
+    (hfirst : ∀ j, 0 < j → j < t →
+      (C.tm.runFrom (Cfg.ofWords (input := x) entry (stateWord C.k x)) j).state ≠ some exit)
+    (hr : C.tm.runFrom (Cfg.ofWords (input := x) entry (stateWord C.k x)) t =
+      Cfg.ofWords exit (stateWord C.k [b])) :
+    (a3RunTM C hk entry exit).ComputesInTime x [b] (2 * x.length + 2 + t + 1) := by
+  apply (computesInTime_iff _ _ _ _).mpr
+  rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_add,
+    a3_run_start, a3_run_call C hk entry exit x [b] t ht hfirst hr]
+  simp [MultiTapeTM.step, Cfg.mapState, Cfg.ofWords, stateWord, a3RunTM,
+    Cfg.workTapeSymbols, Action.apply, bufferTape]
+
+/-- An installed clean call implements an ordinary decider with explicit
+linear loading overhead. The result may subsequently be run on a recovered
+prefix with the source time charged at that prefix's actual length.
+**Proof sketch.** The public install bridge supplies positive tape count,
+first positive return, and a fully restored singleton-result seam. Copy and
+rewind the ordinary input, execute the mandatory first action, follow the
+call until its observed return, then emit the installed decision bit. -/
+private lemma a3_decider_clean (M : FinTM Bool) (L : Language Bool) (T : ℕ → ℕ)
+    (hM : M.DecidesInTime L T) :
+    ∃ (R : FinTM Bool) (B : ℕ),
+      R.DecidesInTime L (fun n => B * (T n + n + 2)) := by
+  classical
+  obtain ⟨C, entry, exit, A, hk, hC⟩ := exists_installCallTM M
+    (fun x => [MultiTapeTM.indicator L x]) T hM
+  refine ⟨a3RunTM C hk entry exit, A + 3, fun x => ?_⟩
+  obtain ⟨t, ht, hp, hfirst, hr⟩ := hC x x
+  have h := a3_run_singleton C hk entry exit x (MultiTapeTM.indicator L x) t hp hfirst hr
+  apply h.mono
+  have ht' : t ≤ A * (T x.length + x.length + 2) := by
+    simpa only [List.length_singleton, Nat.add_assoc] using ht
+  calc
+    _ ≤ A * (T x.length + x.length + 2) + 3 * (T x.length + x.length + 2) := by omega
+    _ = _ := by ring
+
+/-- Timed buffered composition at the actual intermediate word. This keeps
+source time bounds at their validated lengths rather than at a coarse
+output-size majorant. -/
+private lemma a3_comp_at (F G : FinTM Bool) (x y z : List Bool) (s t : ℕ)
+    (hF : F.ComputesInTime x y s) (hG : G.ComputesInTime y z t) :
+    (bufferedCompTM F G).ComputesInTime x z (s + y.length + 2 + t) := by
+  obtain ⟨a, p, tapes, heads, ha, hstart⟩ := bufferedComp_start F G x y s hF
+  obtain ⟨tag, _, hr⟩ := bufferedSecondCfg_run F G (G.tm.initCfg y) true
+    (by simp [VirtualTag, MultiTapeTM.initCfg, Cfg.init]) p tapes heads t
+  have hc := (computesInTime_iff _ _ _ _).mp hG
+  have hh : (bufferedCompTM F G).ComputesInTime x z (a + t) := by
+    apply (computesInTime_iff _ _ _ _).mpr
+    rw [MultiTapeTM.runFrom_add, hstart, hr]
+    exact ⟨by simpa only [bufferedSecondCfg, Option.map_eq_none_iff] using hc.1, hc.2⟩
+  exact hh.mono (by omega)
+
+/-- Reject an empty failure payload; on a nonempty payload start the
+supplied machine from its genuine initial configuration after one step. -/
+private def a3NonemptyTM (M : FinTM Bool) : FinTM Bool where
+  k := M.k
+  State := Unit ⊕ M.State
+  tm := {
+    q₀ := .inl ()
+    tr := fun q inp work => match q with
+      | .inl _ => match inp with
+        | none => ⟨0, fun _ => (none, 0), some false, none⟩
+        | some _ => controlAction 0 (some (.inr M.tm.q₀))
+      | .inr q => (M.tm.tr q inp work).mapState Sum.inr }
+
+/-- After the nonempty guard, the source run is preserved exactly. -/
+private lemma a3_nonempty_run (M : FinTM Bool) {x : List Bool}
+    (cfg : Cfg M.k Bool M.State x) (t : ℕ) :
+    (a3NonemptyTM M).tm.runFrom (cfg.mapState Sum.inr) t =
+      (M.tm.runFrom cfg t).mapState Sum.inr := by
+  apply MultiTapeTM.runFrom_comm_of_step (fun cfg => cfg.mapState Sum.inr) ?_ cfg t
+  intro cfg
+  cases hs : cfg.state with
+  | none => simp only [MultiTapeTM.step, Cfg.mapState, hs, Option.map_none]
+  | some q =>
+    simp only [MultiTapeTM.step, Cfg.mapState, hs, Option.map_some]
+    rfl
+
+/-- The failed-search payload emits exactly one rejecting bit. -/
+private lemma a3_nonempty_nil (M : FinTM Bool) :
+    (a3NonemptyTM M).ComputesInTime [] [false] 1 := by
+  apply (computesInTime_iff _ _ _ _).mpr
+  simp [MultiTapeTM.runFrom, MultiTapeTM.step, MultiTapeTM.initCfg, Cfg.init,
+    Cfg.inputSymbol, a3NonemptyTM, Action.apply]
+
+/-- Successful split payloads enter the source machine, charging the guard. -/
+private lemma a3_nonempty_computes (M : FinTM Bool) (x y : List Bool) (t : ℕ)
+    (hx : x ≠ []) (hM : M.ComputesInTime x y t) :
+    (a3NonemptyTM M).ComputesInTime x y (t + 1) := by
+  have hs : (a3NonemptyTM M).tm.step ((a3NonemptyTM M).tm.initCfg x) =
+      (M.tm.initCfg x).mapState Sum.inr := by
+    cases x with
+    | nil => contradiction
+    | cons b x =>
+      simp [MultiTapeTM.step, MultiTapeTM.initCfg, Cfg.init, Cfg.inputSymbol,
+        a3NonemptyTM, controlAction, Action.apply, Cfg.mapState, moveInputPos_zero]
+  apply (computesInTime_iff _ _ _ _).mpr
+  rw [MultiTapeTM.runFrom_succ_eq_step, hs, a3_nonempty_run]
+  have hc := (computesInTime_iff _ _ _ _).mp hM
+  exact ⟨by simpa only [Cfg.mapState, Option.map_eq_none_iff] using hc.1, hc.2⟩
+
+/-- Exponential padding has a unique split, including coefficient zero and
+degree zero: the prefix length increases strictly and the suffix length
+is nondecreasing. -/
+private lemma a3_split_strictMono (C c : ℕ) :
+    StrictMono (fun n : ℕ => n + C * 2 ^ (n + 1) ^ c) := by
+  intro n m hnm
+  exact Nat.add_lt_add_of_lt_of_le hnm (Nat.mul_le_mul_left C
+    (Nat.pow_le_pow_right (by omega) (Nat.pow_le_pow_left (by omega) c)))
+
+/-- Exact exponential widths make both parts of a concatenation unique. -/
+private lemma a3_split_unique (C c : ℕ) {x u y v : List Bool}
+    (hu : u.length = C * 2 ^ (x.length + 1) ^ c)
+    (hv : v.length = C * 2 ^ (y.length + 1) ^ c) (h : x ++ u = y ++ v) :
+    x = y ∧ u = v := by
+  have hlen := congrArg List.length h
+  simp only [List.length_append, hu, hv] at hlen
+  have hx := (a3_split_strictMono C c).injective hlen
+  exact ⟨List.append_inj_left h hx, List.append_inj_right h hx⟩
+
+/-- The finite exponential-length search, with an explicit failure value. -/
+private def a3Split (C c m : ℕ) : Option ℕ :=
+  (List.range (m + 1)).find? (fun n => decide (n + C * 2 ^ (n + 1) ^ c = m))
+
+/-- A successful search certifies its exact length equation and input bound. -/
+private lemma a3_split_spec (C c m n : ℕ) (h : a3Split C c m = some n) :
+    n ≤ m ∧ n + C * 2 ^ (n + 1) ^ c = m := by
+  have hn := List.mem_of_find?_eq_some h
+  have he := List.find?_some h
+  exact ⟨Nat.le_of_lt_succ (List.mem_range.mp hn), of_decide_eq_true he⟩
+
+/-- Exhaustion excludes every natural split, not only a chosen default. -/
+private lemma a3_split_none_iff (C c m : ℕ) :
+    a3Split C c m = none ↔ ¬∃ n, n + C * 2 ^ (n + 1) ^ c = m := by
+  rw [a3Split, List.find?_eq_none]
+  constructor
+  · intro h hex
+    obtain ⟨n, hn⟩ := hex
+    exact h n (List.mem_range.mpr (by omega)) (by simpa using hn)
+  · intro h n _ hn
+    exact h ⟨n, of_decide_eq_true hn⟩
+
+/-- Every valid exponential split is recovered by the finite search. -/
+private lemma a3_split_complete (C c m n : ℕ)
+    (hn : n + C * 2 ^ (n + 1) ^ c = m) : a3Split C c m = some n := by
+  cases hs : a3Split C c m with
+  | none => exact False.elim ((a3_split_none_iff C c m).mp hs ⟨n, hn⟩)
+  | some k =>
+    have hk := (a3_split_spec C c m k hs).2
+    exact congrArg some ((a3_split_strictMono C c).injective (hk.trans hn.symm))
+
+/-- A positive exponential coefficient rejects the empty verifier input. -/
+private lemma a3_split_empty (C c : ℕ) (hC : 0 < C) : a3Split C c 0 = none := by
+  apply (a3_split_none_iff C c 0).mpr
+  rintro ⟨n, hn⟩
+  have hp : 0 < C * 2 ^ (n + 1) ^ c := Nat.mul_pos hC (Nat.pow_pos (by omega))
+  omega
+
+/-- The exponential search returns a threaded pair, or an empty rejection word. -/
+private def a3SplitWord (C c : ℕ) (y : List Bool) : List Bool :=
+  match a3Split C c y.length with
+  | some i => pairEncode (y.take i) (y.drop i)
+  | none => []
+
+/-- The emitted split has a linear length bound, including malformed inputs. -/
+private lemma a3_split_length (C c : ℕ) (y : List Bool) :
+    (a3SplitWord C c y).length ≤ 2 * y.length + 2 := by
+  cases hs : a3Split C c y.length with
+  | none => simp [a3SplitWord, hs]
+  | some i =>
+    have hi := (a3_split_spec C c y.length i hs).1
+    simp [a3SplitWord, hs, pairEncode]
+    omega
+
+/-- The width-parametric search has a polynomial budget before validation.
+**Proof sketch.** Instantiate the public search at the exponential binary
+width evaluator. Its candidate length is at most one past the input length;
+`n+2 ≤ 2(n+1)` absorbs this allowance and the linear search overhead. -/
+private lemma a3_split_timed (C c : ℕ) :
+    ∃ (M : FinTM Bool) (A : ℕ), M.ComputesFunInTime (a3SplitWord C c)
+      (fun n => A * (n + 1) ^ (c + 2)) := by
+  obtain ⟨E, B, hE⟩ := a3_exp_bits_timed C c
+  obtain ⟨M, D, hM⟩ := computesFunInTime_splitSolveWith
+    (fun n => C * 2 ^ (n + 1) ^ c) E (fun n => B * (n + 1) ^ (c + 1))
+    (by
+      intro n m h
+      exact Nat.mul_le_mul_left B
+        (Nat.pow_le_pow_left (Nat.add_le_add_right h 1) (c + 1))) hE
+  refine ⟨M, D * (B * 2 ^ (c + 1) + 2), fun w => ?_⟩
+  have halign : a3Split C c w.length =
+      solveSplitWith (fun n => C * 2 ^ (n + 1) ^ c) w.length := by
+    simp only [a3Split, solveSplitWith, Bool.beq_eq_decide_eq]
+  have hm := hM w
+  change M.ComputesInTime w (a3SplitWord C c w) _
+  unfold a3SplitWord
+  rw [halign]
+  apply hm.mono
+  have hp : w.length + 1 ≤ (w.length + 1) ^ (c + 1) := by
+    simpa only [Nat.pow_one] using Nat.pow_le_pow_right (Nat.succ_pos w.length)
+      (show 1 ≤ c + 1 by omega)
+  have hshift : (w.length + 1 + 1) ^ (c + 1) ≤
+      2 ^ (c + 1) * (w.length + 1) ^ (c + 1) := by
+    simpa only [Nat.mul_pow] using Nat.pow_le_pow_left
+      (show w.length + 1 + 1 ≤ 2 * (w.length + 1) by omega) (c + 1)
+  have hsum : B * (w.length + 1 + 1) ^ (c + 1) + w.length + 2 ≤
+      (B * 2 ^ (c + 1) + 2) * (w.length + 1) ^ (c + 1) := by
+    have h := Nat.mul_le_mul_left B hshift
+    calc
+      _ ≤ B * (2 ^ (c + 1) * (w.length + 1) ^ (c + 1)) +
+          2 * (w.length + 1) ^ (c + 1) := by omega
+      _ = _ := by ring
+  calc
+    _ ≤ D * (w.length + 1) *
+        ((B * 2 ^ (c + 1) + 2) * (w.length + 1) ^ (c + 1)) :=
+      Nat.mul_le_mul_left _ hsum
+    _ = _ := by rw [Nat.pow_succ]; ring
+
+/-- The padding verifier ignores certificate bits and decides the unique
+recovered prefix. Failed split searches reject explicitly. -/
+private def a3Verifier (L : Language Bool) (c : ℕ) : Language Bool :=
+  {y | match a3Split 1 c y.length with
+    | none => False
+    | some n => y.take n ∈ L}
+
+/-- On every exact-width concatenation, split recovery returns its own prefix. -/
+private lemma a3_verifier_append (L : Language Bool) (c : ℕ) (x u : List Bool)
+    (hu : u.length = 2 ^ (x.length + 1) ^ c) :
+    x ++ u ∈ a3Verifier L c ↔ x ∈ L := by
+  have hs := a3_split_complete 1 c (x ++ u).length x.length
+    (by simp [hu])
+  change (match a3Split 1 c (x ++ u).length with
+    | none => False | some n => (x ++ u).take n ∈ L) ↔ x ∈ L
+  simp only [hs, List.take_left]
+
+/-- The exact split equation bounds the captured source deadline by the
+whole verifier-input length, including degree zero. -/
+private lemma a3_source_budget (a c m n : ℕ)
+    (h : a3Split 1 c m = some n) : a * 2 ^ n ^ c ≤ a * m := by
+  have he := (a3_split_spec 1 c m n h).2
+  simp only [Nat.one_mul] at he
+  have hp : 2 ^ n ^ c ≤ 2 ^ (n + 1) ^ c :=
+    Nat.pow_le_pow_right (by omega) (Nat.pow_le_pow_left (Nat.le_succ n) c)
+  exact Nat.mul_le_mul_left a (by omega)
+
+/-- Split recovery, failed-search rejection, and a captured clean decider
+call form a polynomial-time verifier.
+**Proof sketch.** First recover the pair, with an empty failure payload.
+A native one-step guard rejects failure. On success, extract the prefix
+and run the clean installed source decider on its actual length. The split
+equation bounds the source exponential time by the whole input length;
+the pair has linear length. Timed buffered composition includes every
+capture, rewind, and dispatch cost, uniformly over all inputs. -/
+private lemma a3_verifier_mem_P (L : Language Bool) (a c : ℕ) (M : FinTM Bool)
+    (hM : M.DecidesInTime L (fun n => a * 2 ^ n ^ c)) : a3Verifier L c ∈ P := by
+  classical
+  obtain ⟨R, B, hR⟩ := a3_decider_clean M L _ hM
+  obtain ⟨F, A, hF⟩ := computesFunInTime_pairFst
+  obtain ⟨S, D, hS⟩ := a3_split_timed 1 c
+  let H := a3NonemptyTM (bufferedCompTM F R)
+  let K := 3 * A + B * (a + 3) + 10
+  refine mem_P_iff.mpr ⟨D + K, c + 2, bufferedCompTM S H, fun w => ?_⟩
+  let P := (w.length + 1) ^ (c + 2)
+  have hp : w.length + 1 ≤ P := by
+    simpa only [Nat.pow_one] using Nat.pow_le_pow_right (Nat.succ_pos w.length)
+      (show 1 ≤ c + 2 by omega)
+  cases hs : a3Split 1 c w.length with
+  | none =>
+    have hsource : S.ComputesInTime w [] (D * P) := by
+      simpa only [a3SplitWord, hs] using hS w
+    have hd : H.ComputesInTime [] [false] 1 := a3_nonempty_nil _
+    have hc := a3_comp_at S H w [] [false] (D * P) 1 hsource hd
+    have hv : MultiTapeTM.indicator (a3Verifier L c) w = false := by
+      simp [MultiTapeTM.indicator, a3Verifier, hs]
+    rw [hv]
+    apply hc.mono
+    simp only [List.length_nil]
+    have hk : 3 ≤ K := by dsimp [K]; omega
+    have hkP : 3 ≤ K * P := hk.trans (Nat.le_mul_of_pos_right K (by omega))
+    calc
+      _ ≤ D * P + K * P := by omega
+      _ = _ := by dsimp [P]; ring
+  | some n =>
+    let x := w.take n
+    let u := w.drop n
+    let y := pairEncode x u
+    obtain ⟨hn, he⟩ := a3_split_spec 1 c w.length n hs
+    have hx : x.length = n := List.length_take_of_le hn
+    have hy : y.length ≤ 2 * w.length + 2 := by
+      have h := a3_split_length 1 c w
+      simpa only [a3SplitWord, hs] using h
+    have hF' : F.ComputesInTime y x (A * (y.length + 1)) := by
+      simpa only [y, pairDecode_pairEncode, Option.map_some, Prod.fst,
+        Option.getD_some] using hF y
+    have hr : R.ComputesInTime x [MultiTapeTM.indicator L x]
+        (B * (a * 2 ^ n ^ c + n + 2)) := by
+      simpa only [hx] using hR x
+    have hc := a3_comp_at F R y x [MultiTapeTM.indicator L x]
+      (A * (y.length + 1)) (B * (a * 2 ^ n ^ c + n + 2)) hF' hr
+    have hyne : y ≠ [] := by
+      intro hz
+      have hlen := congrArg List.length hz
+      simp [y, pairEncode] at hlen
+    have hg := a3_nonempty_computes (bufferedCompTM F R) y
+      [MultiTapeTM.indicator L x] _ hyne hc
+    have hsource : S.ComputesInTime w y (D * P) := by
+      simpa only [a3SplitWord, hs] using hS w
+    have hcomp := a3_comp_at S H w y [MultiTapeTM.indicator L x] (D * P) _ hsource hg
+    have hv : MultiTapeTM.indicator (a3Verifier L c) w = MultiTapeTM.indicator L x := by
+      simp only [MultiTapeTM.indicator, a3Verifier, Set.mem_setOf_eq, hs, x]
+    rw [hv]
+    apply hcomp.mono
+    have hb := a3_source_budget a c w.length n hs
+    have htime : B * (a * 2 ^ n ^ c + n + 2) ≤
+        B * (a + 3) * (w.length + 1) := by
+      calc
+        _ ≤ B * ((a + 3) * (w.length + 1)) := Nat.mul_le_mul_left B (by
+          simp only [Nat.add_mul, Nat.mul_add, Nat.mul_one]
+          omega)
+        _ = _ := by ring
+    have hlinear : A * (y.length + 1) ≤ 3 * A * (w.length + 1) := by
+      calc
+        _ ≤ A * (3 * (w.length + 1)) := Nat.mul_le_mul_left A (by omega)
+        _ = _ := by ring
+    have hsum : y.length + 2 +
+        (A * (y.length + 1) + x.length + 2 + B * (a * 2 ^ n ^ c + n + 2) + 1) ≤
+        K * (w.length + 1) := by
+      rw [hx]
+      calc
+        _ ≤ 3 * A * (w.length + 1) + B * (a + 3) * (w.length + 1) +
+            10 * (w.length + 1) := by omega
+        _ = _ := by dsimp [K]; ring
+    calc
+      _ ≤ D * P + K * (w.length + 1) := by omega
+      _ ≤ D * P + K * P := Nat.add_le_add_left (Nat.mul_le_mul_left K hp) _
+      _ = _ := by dsimp [P]; ring
+
 /-- **`EXP ⊆ NEXP`** [AB09, §2.6.2].
 
 **Proof sketch.** Given `L ∈ EXP` decided in time `2^(n^c)`, take `C = 1` and
@@ -2527,8 +3226,27 @@ in `m`, the audit's own check), reject if no split exists (including `m = 0`),
 split off `x`, and run `L`'s decider: its `a · 2^(n^c)` budget is at most
 `a · m`. Fixed-degree arithmetic and the split/copy machinery are named new
 machine obligations for the fill. Certificates carry no information; padding
-buys the verifier its time. -/
+buys the verifier its time.
+
+**A3 completion.** The local `a3ShiftTM` family re-derives the binary
+width evaluator from the frozen in-file-scope predecessor template.
+`a3_split_timed` instantiates the proved width-parametric search, and
+`a3_nonempty_nil` rejects its empty failure payload, including input length
+zero by `a3_split_empty`. `a3_decider_clean` uses `exists_installCallTM`
+with its positive-tape and first-positive-return clauses; `a3_source_budget`
+charges the relocated captured decider at the uniquely recovered prefix
+length. `a3_verifier_mem_P` accounts for the complete timed pipeline. -/
 theorem EXP_subset_NEXP : EXP ⊆ NEXP := by
-  sorry
+  intro L hL
+  obtain ⟨c, a, M, hM⟩ := Set.mem_iUnion.mp hL
+  refine ⟨1, c, a3Verifier L c, a3_verifier_mem_P L a c M hM, fun x => ?_⟩
+  constructor
+  · intro hx
+    let u := List.replicate (2 ^ (x.length + 1) ^ c) false
+    have hu : u.length = 2 ^ (x.length + 1) ^ c := List.length_replicate ..
+    exact ⟨u, by simpa only [Nat.one_mul] using hu,
+      (a3_verifier_append L c x u hu).mpr hx⟩
+  · rintro ⟨u, hu, hv⟩
+    exact (a3_verifier_append L c x u (by simpa only [Nat.one_mul] using hu)).mp hv
 
 end Complexity

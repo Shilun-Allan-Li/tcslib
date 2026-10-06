@@ -4292,43 +4292,54 @@ contracts. The controller that prepares the suffix, connects comparison
 and cleanup, restores every administrative tape, increments the candidate,
 and establishes the startup and positive first-return round contracts is
 still missing. The body existential below and all six public target
-admissions are unchanged. No new private helper is admitted. -/
+admissions are unchanged. No new private helper is admitted.
+
+**A3 completion.** The proved width-parametric split search now supplies the
+entire native search body. Its predicate agrees with `e3Split` after unfolding
+and converting Boolean equality to decidable equality. The binary evaluator's
+monotone budget is charged on every candidate, before validation; replacing
+`n+2` by `2(n+1)` gives a degree-`c+2` search budget. The unchanged
+`e3_verifier_of_split` supplies the captured choice simulation and explicit
+failed-search rejection. The historical partial frontiers above are closed. -/
 theorem ntime_expPow_subset_NEXP (c : ℕ) : NTIME (fun n => 2 ^ n ^ c) ⊆ NEXP := by
   rintro L ⟨a, N, hN⟩
-  have ha : 0 < a := e3_coefficient_pos N L a c hN
   refine ⟨a, c, e3ChoiceVerifier N a c, ?_, e3_choice_certificate N L a c hN⟩
-  by_cases hc : c = 0
-  · subst c
-    obtain ⟨M, A, hM⟩ := e3_split_degree_zero a
-    exact e3_verifier_of_split N a 0 M A 1 hM
-  · obtain ⟨Eval, B, hEval⟩ := e3_exp_bits_timed a c
-    -- Native frontier: consume the proved binary evaluator on the current
-    -- candidate, with a length-only polynomial bound on every round state.
-    -- Both the successful output and the complete restored seam are required.
-    obtain ⟨body, anchor, A, r, hstart, hround⟩ :
-        ∃ (body : FinTM Bool) (anchor : body.State) (A r : ℕ),
-          (∀ w : List Bool, ∃ t ≤ A * (w.length + 1) ^ (r + 1),
-            (∀ t' < t, (body.tm.runFrom (body.tm.initCfg w) t').state ≠ some anchor) ∧
-            body.tm.runFrom (body.tm.initCfg w) t =
-              Cfg.ofWords anchor (stateWord body.k [])) ∧
-          (∀ (w s : List Bool), s.length ≤ w.length + 1 →
-            ∃ t, 0 < t ∧ t ≤ A * (w.length + 1) ^ (r + 1) ∧
-              (∀ t', 0 < t' → t' < t →
-                (body.tm.runFrom (Cfg.ofWords (input := w) anchor
-                  (stateWord body.k s)) t').state ≠ some anchor) ∧
-              if e3SplitAccept a c w s then
-                (body.tm.runFrom (Cfg.ofWords (input := w) anchor
-                  (stateWord body.k s)) t).state = none ∧
-                (body.tm.runFrom (Cfg.ofWords (input := w) anchor
-                  (stateWord body.k s)) t).output =
-                    pairEncode (w.take s.length) (w.drop s.length)
-              else
-                body.tm.runFrom (Cfg.ofWords (input := w) anchor
-                  (stateWord body.k s)) t =
-                    Cfg.ofWords anchor (stateWord body.k (e3SplitStep w s))) := by
-      sorry
-    obtain ⟨M, D, hM⟩ := e3_split_of_body a c body anchor A r hstart hround
-    exact e3_verifier_of_split N a c M D (r + 1) hM
+  obtain ⟨E, B, hE⟩ := e3_exp_bits_timed a c
+  obtain ⟨M, D, hM⟩ := computesFunInTime_splitSolveWith
+    (fun n => a * 2 ^ (n + 1) ^ c) E (fun n => B * (n + 1) ^ (c + 1))
+    (by
+      intro n m h
+      exact Nat.mul_le_mul_left B
+        (Nat.pow_le_pow_left (Nat.add_le_add_right h 1) (c + 1))) hE
+  apply e3_verifier_of_split N a c M (D * (B * 2 ^ (c + 1) + 2)) (c + 1)
+  intro w
+  have halign : e3Split a c w.length =
+      solveSplitWith (fun n => a * 2 ^ (n + 1) ^ c) w.length := by
+    simp only [e3Split, solveSplitWith, Bool.beq_eq_decide_eq]
+  have hm := hM w
+  change M.ComputesInTime w (e3SplitWord a c w) _
+  unfold e3SplitWord
+  rw [halign]
+  apply hm.mono
+  have hp : w.length + 1 ≤ (w.length + 1) ^ (c + 1) := by
+    simpa only [Nat.pow_one] using Nat.pow_le_pow_right (Nat.succ_pos w.length)
+      (show 1 ≤ c + 1 by omega)
+  have hshift : (w.length + 1 + 1) ^ (c + 1) ≤
+      2 ^ (c + 1) * (w.length + 1) ^ (c + 1) := by
+    simpa only [Nat.mul_pow] using Nat.pow_le_pow_left
+      (show w.length + 1 + 1 ≤ 2 * (w.length + 1) by omega) (c + 1)
+  have hsum : B * (w.length + 1 + 1) ^ (c + 1) + w.length + 2 ≤
+      (B * 2 ^ (c + 1) + 2) * (w.length + 1) ^ (c + 1) := by
+    have h := Nat.mul_le_mul_left B hshift
+    calc
+      _ ≤ B * (2 ^ (c + 1) * (w.length + 1) ^ (c + 1)) +
+          2 * (w.length + 1) ^ (c + 1) := by omega
+      _ = _ := by ring
+  calc
+    _ ≤ D * (w.length + 1) *
+        ((B * 2 ^ (c + 1) + 2) * (w.length + 1) ^ (c + 1)) :=
+      Nat.mul_le_mul_left _ hsum
+    _ = _ := by rw [Nat.pow_succ]; ring
 
 /-! ### A2 binary-countdown reverse host -/
 
@@ -4966,7 +4977,803 @@ the reconciliation obligation recorded at its definition.
 `Set.iUnion_subset` with `Complexity.ntime_expPow_subset_NEXP` at every exponent the
 other. -/
 theorem NEXP_eq_iUnion_NTIME : NEXP = ⋃ c : ℕ, NTIME fun n => 2 ^ n ^ c := by
-  sorry
+  exact Set.Subset.antisymm NEXP_subset_iUnion_NTIME
+    (Set.iUnion_subset ntime_expPow_subset_NEXP)
+
+/-! ### A3 exact paired padding checks
+The polynomial catalog adapters below are re-derived from the pinned
+`NP.lean` verifier adapters under the private-harvest policy. The paired
+comparison is a deterministic native machine, used only on constructed
+pairs; grammar guards separately cover every malformed outer input. -/
+
+/-- A linear machine contract is already in the polynomial normal form. -/
+private lemma a3n_poly_linear {f : List Bool → List Bool}
+    (h : ∃ (M : FinTM Bool) (a : ℕ),
+      M.ComputesFunInTime f (fun n => a * (n + 1))) : PolyTimeComputable f := by
+  obtain ⟨M, a, hM⟩ := h
+  exact ⟨M, a, 1, by simpa only [Nat.pow_one] using hM⟩
+
+/-- Fixed output words are polynomial-time computable. -/
+private lemma a3n_poly_const (w : List Bool) :
+    PolyTimeComputable (fun _ => w) :=
+  a3n_poly_linear (FinTM.computesFunInTime_const w)
+
+/-- A captured Boolean test selects one of two polynomial-time computations.
+
+**Proof sketch.** The audited timed branch captures the test's complete output,
+rewinds, and starts the selected branch on the same input. Enlarge the three
+polynomial degrees to their maximum and absorb the final constant there. -/
+private lemma a3n_poly_cond {p : List Bool → Bool}
+    {f g : List Bool → List Bool}
+    (hp : PolyTimeComputable (fun x => [p x]))
+    (hf : PolyTimeComputable f) (hg : PolyTimeComputable g) :
+    PolyTimeComputable (fun x => if p x then f x else g x) := by
+  obtain ⟨D, A, a, hD⟩ := hp
+  obtain ⟨F, B, b, hF⟩ := hf
+  obtain ⟨G, C, c, hG⟩ := hg
+  obtain ⟨M, K, hM⟩ := FinTM.computesFunInTime_cond hD hF hG
+  let e := max a (max b c)
+  refine ⟨M, K * (A + B + C + 1), e, fun x => (hM x).mono ?_⟩
+  have hpow (d : ℕ) (hd : d ≤ e) : (x.length + 1) ^ d ≤ (x.length + 1) ^ e :=
+    Nat.pow_le_pow_right (Nat.succ_pos _) hd
+  have ha := Nat.mul_le_mul_left A (hpow a (Nat.le_max_left _ _))
+  have hb := Nat.mul_le_mul_left B (hpow b
+    ((Nat.le_max_left b c).trans (Nat.le_max_right a (max b c))))
+  have hc := Nat.mul_le_mul_left C (hpow c
+    ((Nat.le_max_right b c).trans (Nat.le_max_right a (max b c))))
+  have hbc : max (B * (x.length + 1) ^ b) (C * (x.length + 1) ^ c) ≤
+      B * (x.length + 1) ^ e + C * (x.length + 1) ^ e := by
+    exact max_le (by omega) (by omega)
+  have hone := Nat.one_le_pow e (x.length + 1) (Nat.succ_pos _)
+  calc
+    _ ≤ K * (A * (x.length + 1) ^ e +
+        (B * (x.length + 1) ^ e + C * (x.length + 1) ^ e) +
+        (x.length + 1) ^ e) :=
+      Nat.mul_le_mul_left K (Nat.add_le_add (Nat.add_le_add ha hbc) hone)
+    _ = _ := by ring
+
+/-- Total first-component projection; malformed words produce the empty word. -/
+private def a3n_fst (z : List Bool) : List Bool :=
+  ((pairDecode z).map Prod.fst).getD []
+
+/-- Total second-component projection; malformed words produce the empty word. -/
+private def a3n_snd (z : List Bool) : List Bool :=
+  ((pairDecode z).map Prod.snd).getD []
+
+/-- The catalog's guarded pair-to-concatenation function. -/
+private def a3n_concat (z : List Bool) : List Bool :=
+  match pairDecode z with
+  | some (a, b) => a ++ b
+  | none => []
+
+/-- The catalog's payload map retains the head and rejects malformed words. -/
+private def a3n_map (g : List Bool → List Bool) (z : List Bool) : List Bool :=
+  match pairDecode z with
+  | some (a, b) => pairEncode a (g b)
+  | none => []
+
+/-- The threaded map preserves polynomial time.
+
+**Proof sketch.** Apply C1 with the monotone polynomial majorant. Degree `c+1`
+dominates both the input scan and the payload computation, including `c=0`. -/
+private lemma a3n_poly_map {g : List Bool → List Bool}
+    (hg : PolyTimeComputable g) : PolyTimeComputable (a3n_map g) := by
+  obtain ⟨G, C, c, hG⟩ := hg
+  obtain ⟨M, K, hM⟩ := FinTM.computesFunInTime_pairMapSnd hG
+    (by
+      intro m n h
+      exact Nat.mul_le_mul_left C (Nat.pow_le_pow_left (Nat.add_le_add_right h 1) c))
+  refine ⟨M, K * (C + 1), c + 1, fun x => (hM x).mono ?_⟩
+  have hn : x.length + 1 ≤ (x.length + 1) ^ (c + 1) := by
+    simpa only [Nat.pow_one] using
+      Nat.pow_le_pow_right (Nat.succ_pos x.length) (show 1 ≤ c + 1 by omega)
+  have hc := Nat.mul_le_mul_left C
+    (Nat.pow_le_pow_right (Nat.succ_pos x.length) (Nat.le_succ c))
+  calc
+    _ ≤ K * ((x.length + 1) ^ (c + 1) + C * (x.length + 1) ^ (c + 1)) :=
+      Nat.mul_le_mul_left K (Nat.add_le_add hn hc)
+    _ = _ := by ring
+
+/-- General pairing follows the audit's retained-request `H/s/t` recipe.
+
+**Proof sketch.** First compute `H x = pairEncode (f x) []`, then retain the
+whole input in `s x = pairEncode x (H x)`. Duplicate `s x` and map
+`g ∘ pairFst` on its payload to obtain `t x = pairEncode (s x) (g x)`.
+Concatenating this pair and extracting its second component yields exactly
+`pairEncode (f x) (g x)`. Every payload map acts only on its own payload. -/
+private lemma a3n_poly_pair {f g : List Bool → List Bool}
+    (hf : PolyTimeComputable f) (hg : PolyTimeComputable g) :
+    PolyTimeComputable (fun x => pairEncode (f x) (g x)) := by
+  have hdup := a3n_poly_linear FinTM.computesFunInTime_pairDup
+  have hfst : PolyTimeComputable a3n_fst :=
+    a3n_poly_linear FinTM.computesFunInTime_pairFst
+  have hsnd : PolyTimeComputable a3n_snd :=
+    a3n_poly_linear FinTM.computesFunInTime_pairSnd
+  have hcat : PolyTimeComputable a3n_concat :=
+    a3n_poly_linear FinTM.computesFunInTime_pairConcat
+  have hH : PolyTimeComputable (fun x => pairEncode (f x) []) := by
+    simpa only [Function.comp_def, a3n_map, pairDecode_pairEncode] using
+      (a3n_poly_map (a3n_poly_const [])).comp (hdup.comp hf)
+  have hs : PolyTimeComputable (fun x => pairEncode x (pairEncode (f x) [])) := by
+    simpa only [Function.comp_def, a3n_map, pairDecode_pairEncode] using
+      (a3n_poly_map hH).comp hdup
+  have ht : PolyTimeComputable
+      (fun x => pairEncode (pairEncode x (pairEncode (f x) [])) (g x)) := by
+    simpa only [Function.comp_def, a3n_map, a3n_fst, pairDecode_pairEncode,
+      Option.map_some, Option.getD_some] using
+      (a3n_poly_map (hg.comp hfst)).comp (hdup.comp hs)
+  convert hsnd.comp (hcat.comp ht) using 1
+  funext x
+  simp only [Function.comp_apply, a3n_concat, pairDecode_pairEncode]
+  have heq : pairEncode x (pairEncode (f x) []) ++ g x =
+      pairEncode x (pairEncode (f x) (g x)) := by
+    simp only [pairEncode, List.append_nil, List.append_assoc]
+  rw [heq]
+  simp only [a3n_snd, pairDecode_pairEncode, Option.map_some, Option.getD_some]
+
+/-- Timed buffered composition at the actual intermediate word. This keeps
+source time bounds at their validated lengths rather than at a coarse
+output-size majorant. -/
+private lemma a3n_comp_at (F G : FinTM Bool) (x y z : List Bool) (s t : ℕ)
+    (hF : F.ComputesInTime x y s) (hG : G.ComputesInTime y z t) :
+    (bufferedCompTM F G).ComputesInTime x z (s + y.length + 2 + t) := by
+  obtain ⟨a, p, tapes, heads, ha, hstart⟩ := bufferedComp_start F G x y s hF
+  obtain ⟨tag, _, hr⟩ := bufferedSecondCfg_run F G (G.tm.initCfg y) true
+    (by simp [VirtualTag, MultiTapeTM.initCfg, Cfg.init]) p tapes heads t
+  have hc := (computesInTime_iff _ _ _ _).mp hG
+  have hh : (bufferedCompTM F G).ComputesInTime x z (a + t) := by
+    apply (computesInTime_iff _ _ _ _).mpr
+    rw [MultiTapeTM.runFrom_add, hstart, hr]
+    exact ⟨by simpa only [bufferedSecondCfg, Option.map_eq_none_iff] using hc.1, hc.2⟩
+  exact hh.mono (by omega)
+
+/-- Compare the two components of a constructed pair. The prefix parser
+stores its decoded bits, rewinds that tape, then compares each suffix bit
+and the final blank. No output is emitted before the single final verdict. -/
+private def a3nEqTM : FinTM Bool where
+  k := 1
+  State := Fin 5 × Bool
+  tm := { q₀ := (0, true), tr := fun q inp work =>
+    match q.1.val with
+    | 0 => match inp with
+      | some b => ⟨1, fun _ => (none, 0), none, some (if b then 2 else 1, true)⟩
+      | none => ⟨0, fun _ => (none, 0), some false, none⟩
+    | 1 => match inp with
+      | some false => ⟨1, fun _ => (some (some false), 1), none, some (0, true)⟩
+      | some true => ⟨1, fun _ => (none, -1), none, some (3, true)⟩
+      | none => ⟨0, fun _ => (none, 0), some false, none⟩
+    | 2 => match inp with
+      | some true => ⟨1, fun _ => (some (some true), 1), none, some (0, true)⟩
+      | _ => ⟨0, fun _ => (none, 0), some false, none⟩
+    | 3 => match work 0 with
+      | some _ => ⟨0, fun _ => (none, -1), none, some (3, true)⟩
+      | none => ⟨0, fun _ => (none, 1), none, some (4, true)⟩
+    | _ => match inp with
+      | some b => ⟨1, fun _ => (none, 1), none,
+          some (4, q.2 && decide (work 0 = some b))⟩
+      | none => ⟨0, fun _ => (none, 0), some (q.2 && decide (work 0 = none)), none⟩ }
+
+/-- The paired comparator's sole work tape holds the decoded first word. -/
+private def a3nEqCfg (y : List Bool) (q : Fin 5) (b : Bool)
+    (p : Fin (y.length + 2)) (u : List Bool) (h : ℤ) : Cfg 1 Bool a3nEqTM.State y :=
+  ⟨some (q, b), p, fun _ => bufferTape u, fun _ => h, []⟩
+
+/-- Two parser transitions decode one doubled prefix bit.
+**Proof sketch.** Read the two equal input bits in order. The first selects
+the parser branch, and the second appends the decoded bit to the work tape;
+configuration extensionality checks both head moves and silent output. -/
+private lemma a3n_eq_double (y pre rest u : List Bool) (b : Bool)
+    (hy : y = pre ++ b :: b :: rest) :
+    a3nEqTM.tm.runFrom
+      (a3nEqCfg y 0 true ⟨pre.length + 1, by simp [hy] <;> omega⟩ u u.length) 2 =
+      a3nEqCfg y 0 true ⟨pre.length + 3, by simp [hy] <;> omega⟩
+        (u ++ [b]) (u ++ [b]).length := by
+  have h0 : (a3nEqCfg y 0 true ⟨pre.length + 1, by simp [hy] <;> omega⟩ u u.length).inputSymbol =
+      some b := by
+    rw [inputSymbolInner (p := pre.length) (by dsimp [a3nEqCfg]; omega) (by simp [hy])]
+    simp [hy]
+  have h1 : (a3nEqCfg y (if b then 2 else 1) true
+      ⟨pre.length + 2, by simp [hy] <;> omega⟩ u u.length).inputSymbol = some b := by
+    rw [inputSymbolInner (p := pre.length + 1) (by dsimp [a3nEqCfg]; omega) (by simp [hy])]
+    simp [hy, List.getElem_append_right]
+  have hs : a3nEqTM.tm.step
+      (a3nEqCfg y 0 true ⟨pre.length + 1, by simp [hy] <;> omega⟩ u u.length) =
+      a3nEqCfg y (if b then 2 else 1) true
+        ⟨pre.length + 2, by simp [hy] <;> omega⟩ u u.length := by
+    unfold MultiTapeTM.step
+    change (a3nEqTM.tm.tr (0, true) _ _).apply _ = _
+    simp only [a3nEqTM, h0]
+    refine Cfg.ext rfl ?_ rfl ?_ rfl
+    · apply Fin.ext
+      change (moveInputPos (⟨pre.length + 1, by simp [hy] <;> omega⟩ : Fin (y.length + 2)) .pos).val = pre.length + 2
+      rw [moveInputPos_pos_of_ne_right _ (by simp [hy])]
+    · funext i; simp [Action.apply, a3nEqCfg]
+  rw [MultiTapeTM.runFrom_succ_eq_step, hs,
+    MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+  unfold MultiTapeTM.step
+  change (a3nEqTM.tm.tr (if b then 2 else 1, true) _ _).apply _ = _
+  rw [h1]
+  cases b <;> refine Cfg.ext rfl ?_ ?_ ?_ rfl
+  all_goals first
+    | (apply Fin.ext; change (moveInputPos (⟨pre.length + 2, by simp [hy] <;> omega⟩ : Fin (y.length + 2)) .pos).val = pre.length + 3
+       rw [moveInputPos_pos_of_ne_right _ (by simp [hy])])
+    | (funext i; exact (bufferTape_append u _).symm)
+    | (funext i; simp [a3nEqTM, Action.apply, a3nEqCfg])
+
+/-- The aligned separator starts rewind without copying either delimiter.
+**Proof sketch.** The first delimiter enters the false-bit parser branch;
+the second selects rewind instead of a tape write. Check the two physical
+input moves and the single left work-head move, keeping the suffix intact. -/
+private lemma a3n_eq_separator (y pre v u : List Bool)
+    (hy : y = pre ++ false :: true :: v) :
+    a3nEqTM.tm.runFrom
+      (a3nEqCfg y 0 true ⟨pre.length + 1, by simp [hy] <;> omega⟩ u u.length) 2 =
+      a3nEqCfg y 3 true ⟨pre.length + 3, by simp [hy] <;> omega⟩ u ((u.length : ℤ) - 1) := by
+  have h0 : (a3nEqCfg y 0 true ⟨pre.length + 1, by simp [hy] <;> omega⟩ u u.length).inputSymbol =
+      some false := by
+    rw [inputSymbolInner (p := pre.length) (by dsimp [a3nEqCfg]; omega) (by simp [hy])]
+    simp [hy]
+  have h1 : (a3nEqCfg y 1 true ⟨pre.length + 2, by simp [hy] <;> omega⟩ u u.length).inputSymbol =
+      some true := by
+    rw [inputSymbolInner (p := pre.length + 1) (by dsimp [a3nEqCfg]; omega) (by simp [hy])]
+    simp [hy, List.getElem_append_right]
+  have hs : a3nEqTM.tm.step
+      (a3nEqCfg y 0 true ⟨pre.length + 1, by simp [hy] <;> omega⟩ u u.length) =
+      a3nEqCfg y 1 true ⟨pre.length + 2, by simp [hy] <;> omega⟩ u u.length := by
+    unfold MultiTapeTM.step
+    change (a3nEqTM.tm.tr (0, true) _ _).apply _ = _
+    simp only [a3nEqTM, h0]
+    refine Cfg.ext rfl ?_ rfl ?_ rfl
+    · apply Fin.ext
+      change (moveInputPos (⟨pre.length + 1, by simp [hy] <;> omega⟩ : Fin (y.length + 2)) .pos).val = pre.length + 2
+      rw [moveInputPos_pos_of_ne_right _ (by simp [hy])]
+    · funext i; simp [Action.apply, a3nEqCfg]
+  rw [MultiTapeTM.runFrom_succ_eq_step, hs,
+    MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+  unfold MultiTapeTM.step
+  change (a3nEqTM.tm.tr (1, true) _ _).apply _ = _
+  simp only [a3nEqTM, h1]
+  refine Cfg.ext rfl ?_ rfl ?_ rfl
+  · apply Fin.ext
+    change (moveInputPos (⟨pre.length + 2, by simp [hy] <;> omega⟩ : Fin (y.length + 2)) .pos).val = pre.length + 3
+    rw [moveInputPos_pos_of_ne_right _ (by simp [hy])]
+  · funext i; simp [Action.apply, a3nEqCfg, sub_eq_add_neg]
+
+/-- Parsing a constructed pair retains exactly its first word; malformed
+outer inputs will be handled by separate grammar guards before construction.
+**Proof sketch.** Decode doubled bits inductively and then the unique aligned
+separator. Every parser transition is silent and the suffix is untouched. -/
+private lemma a3n_eq_parse (y u v : List Bool) :
+    ∀ (pre a : List Bool) (hy : y = pre ++ pairEncode u v),
+    a3nEqTM.tm.runFrom
+      (a3nEqCfg y 0 true ⟨pre.length + 1, by simp [hy] <;> omega⟩ a a.length)
+      (2 * u.length + 2) =
+      a3nEqCfg y 3 true ⟨pre.length + 2 * u.length + 3, by simp [hy, pairEncode]; omega⟩
+        (a ++ u) ((a ++ u).length - 1) := by
+  induction u with
+  | nil =>
+    intro pre a hy
+    simpa [pairEncode] using a3n_eq_separator y pre v a (by simpa [pairEncode] using hy)
+  | cons b u ih =>
+    intro pre a hy
+    have hy' : y = pre ++ b :: b :: pairEncode u v := by
+      simpa [pairEncode, List.append_assoc] using hy
+    have hr := a3n_eq_double y pre (pairEncode u v) a b hy'
+    have hh : y = (pre ++ [b, b]) ++ pairEncode u v := by simpa [List.append_assoc] using hy'
+    rw [show 2 * (b :: u).length + 2 = 2 + (2 * u.length + 2) by simp; omega,
+      MultiTapeTM.runFrom_add, hr]
+    simpa [List.append_assoc, Nat.add_assoc, Nat.add_comm, Nat.add_left_comm, Nat.mul_add] using
+      ih (pre ++ [b, b]) (a ++ [b]) hh
+
+/-- Rewind the decoded prefix to its first cell, including an empty prefix.
+**Proof sketch.** Induct on the remaining prefix length. A nonblank work cell
+moves the head left; the left boundary blank then moves it right into the
+comparison state. This also covers the empty decoded prefix. -/
+private lemma a3n_eq_rewind (y u : List Bool) (p : Fin (y.length + 2))
+    (j : ℕ) (hj : j ≤ u.length) :
+    a3nEqTM.tm.runFrom (a3nEqCfg y 3 true p u ((j : ℤ) - 1)) (j + 1) =
+      a3nEqCfg y 4 true p u 0 := by
+  induction j with
+  | zero =>
+    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+    simp only [Nat.cast_zero, zero_sub]
+    unfold MultiTapeTM.step
+    simp only [a3nEqTM, a3nEqCfg, Cfg.workTapeSymbols, bufferTape_left]
+    refine Cfg.ext rfl (moveInputPos_zero p) rfl ?_ rfl
+    funext i; simp [Action.apply, a3nEqCfg]
+  | succ j ih =>
+    rw [MultiTapeTM.runFrom_succ_eq_step]
+    have hs : a3nEqTM.tm.step (a3nEqCfg y 3 true p u ((j + 1 : ℕ) - 1)) =
+        a3nEqCfg y 3 true p u ((j : ℤ) - 1) := by
+      have hz : ((j + 1 : ℕ) : ℤ) - 1 = j := by omega
+      rw [hz]
+      unfold MultiTapeTM.step
+      simp only [a3nEqTM, a3nEqCfg, Cfg.workTapeSymbols, bufferTape_nat,
+        List.getElem?_eq_getElem (by omega : j < u.length)]
+      refine Cfg.ext rfl (moveInputPos_zero p) rfl ?_ rfl
+      funext i; simp [Action.apply, a3nEqCfg, sub_eq_add_neg]
+    rw [hs]
+    exact ih (by omega)
+
+/-- The suffix scan records equality of complete prefixes, including missing
+bits on the decoded-word tape. The physical input advances once per suffix bit.
+**Proof sketch.** Apply the optional-next-bit characterization of prefix
+equality, which also distinguishes a missing bit from a present false bit. -/
+private lemma a3n_eq_scan (y pre u v : List Bool) (hy : y = pre ++ v) :
+    ∀ j (hj : j ≤ v.length), a3nEqTM.tm.runFrom
+      (a3nEqCfg y 4 true ⟨pre.length + 1, by simp [hy] <;> omega⟩ u 0) j =
+      a3nEqCfg y 4 (decide (u.take j = v.take j))
+        ⟨pre.length + j + 1, by simp [hy] <;> omega⟩ u j := by
+  intro j
+  induction j with
+  | zero => intro _; simp [a3nEqCfg]
+  | succ j ih =>
+    intro hj
+    rw [MultiTapeTM.runFrom_succ_eq_step', ih (by omega)]
+    have hi : (a3nEqCfg y 4 (decide (u.take j = v.take j))
+        ⟨pre.length + j + 1, by simp [hy] <;> omega⟩ u j).inputSymbol =
+        some (v[j]'(by omega)) := by
+      rw [inputSymbolInner (p := pre.length + j) (by dsimp [a3nEqCfg]; omega) (by simp [hy] <;> omega)]
+      simp [hy, List.getElem_append_right]
+    have he : (decide (u.take j = v.take j) && decide (u[j]? = some (v[j]'(by omega)))) =
+        decide (u.take (j + 1) = v.take (j + 1)) := by
+      apply Bool.eq_iff_iff.mpr
+      simp only [Bool.and_eq_true, decide_eq_true_eq, e3c_take_succ_eq,
+        List.getElem?_eq_getElem (by omega : j < v.length)]
+    unfold MultiTapeTM.step
+    change (a3nEqTM.tm.tr (4, decide (u.take j = v.take j)) _ _).apply _ = _
+    dsimp only [a3nEqTM]
+    rw [hi]
+    simp only [a3nEqCfg, Cfg.workTapeSymbols, bufferTape_nat]
+    refine Cfg.ext (by simpa [Action.apply] using congrArg (fun b => some ((4 : Fin 5), b)) he)
+      ?_ rfl ?_ rfl
+    · apply Fin.ext
+      change (moveInputPos (⟨pre.length + j + 1, by simp [hy]; omega⟩ : Fin (y.length + 2)) .pos).val = pre.length + (j + 1) + 1
+      rw [moveInputPos_pos_of_ne_right _ (by simp [hy]; omega)]
+      simp only [Fin.val_mk]
+      omega
+    · funext i; simp [Action.apply]
+
+/-- Complete prefix equality and the immediately following blank characterize
+whole-word equality; neither a proper extension nor a proper prefix passes. -/
+private lemma a3n_eq_end (u v : List Bool) :
+    (u.take v.length = v ∧ u[v.length]? = none) ↔ u = v := by
+  constructor
+  · rintro ⟨h, hn⟩
+    have hu : u.length ≤ v.length := List.getElem?_eq_none_iff.mp hn
+    simpa only [List.take_of_length_le hu] using h
+  · intro h; subst u; simp
+
+/-- The last blank emits the whole-word comparison result and halts.
+**Proof sketch.** Apply the scan invariant at the suffix boundary. The final
+input blank combines prefix equality with absence of a further decoded
+bit, which is exactly whole-word equality, and emits that single verdict. -/
+private lemma a3n_eq_compare (y pre u v : List Bool) (hy : y = pre ++ v) :
+    let start := a3nEqCfg y 4 true ⟨pre.length + 1, by simp [hy] <;> omega⟩ u 0
+    (a3nEqTM.tm.runFrom start (v.length + 1)).state = none ∧
+    (a3nEqTM.tm.runFrom start (v.length + 1)).output = [decide (u = v)] := by
+  dsimp only
+  rw [MultiTapeTM.runFrom_succ_eq_step', a3n_eq_scan y pre u v hy v.length (le_refl _)]
+  have hp : pre.length + v.length + 1 = y.length + 1 := by simp [hy]
+  have hi : (a3nEqCfg y 4 (decide (u.take v.length = v.take v.length))
+      ⟨pre.length + v.length + 1, by simp [hy] <;> omega⟩ u v.length).inputSymbol = none := by
+    simp [Cfg.inputSymbol, a3nEqCfg, hp]
+  have he : (decide (u.take v.length = v) && decide (u[v.length]? = none)) = decide (u = v) := by
+    apply Bool.eq_iff_iff.mpr
+    simp only [Bool.and_eq_true, decide_eq_true_eq, a3n_eq_end]
+  unfold MultiTapeTM.step
+  change ((a3nEqTM.tm.tr (4, decide (u.take v.length = v.take v.length)) _ _).apply _).state = none ∧
+    ((a3nEqTM.tm.tr (4, decide (u.take v.length = v.take v.length)) _ _).apply _).output = _
+  dsimp only [a3nEqTM]
+  rw [hi]
+  simp only [a3nEqCfg, Cfg.workTapeSymbols, bufferTape_nat,
+    List.take_length, Action.apply, List.nil_append]
+  exact ⟨trivial, congrArg (fun b => [b]) he⟩
+
+/-- The comparator decides every constructed pair in linear time.
+**Proof sketch.** Genuine blank initialization precedes `2|u|+2` parsing
+steps, `|u|+1` rewind steps, and `|v|+1` comparison/halting steps. The only
+physical output is the completed comparison bit. -/
+private lemma a3n_eq_computes (u v : List Bool) :
+    a3nEqTM.ComputesInTime (pairEncode u v) [decide (u = v)]
+      (3 * u.length + v.length + 4) := by
+  let y := pairEncode u v
+  let pre := u.flatMap (fun b => [b, b]) ++ [false, true]
+  have hy : y = pre ++ v := by simp [y, pre, pairEncode, List.append_assoc]
+  have hpre : pre.length = 2 * u.length + 2 := by simp [pre, Nat.mul_comm]
+  have hinit : a3nEqTM.tm.initCfg y =
+      a3nEqCfg y 0 true ⟨([] : List Bool).length + 1, by simp⟩ [] ([] : List Bool).length := by
+    refine Cfg.ext rfl rfl ?_ rfl rfl
+    funext i z; simp [MultiTapeTM.initCfg, Cfg.init, a3nEqCfg, bufferTape]
+  have hp := a3n_eq_parse y u v [] [] (by simp [y])
+  simp only [List.length_nil, List.nil_append, Nat.zero_add] at hp
+  have hc := a3n_eq_compare y pre u v hy
+  apply (computesInTime_iff _ _ _ _).mpr
+  rw [show 3 * u.length + v.length + 4 = (2 * u.length + 2) + (u.length + 1) + (v.length + 1) by omega,
+    MultiTapeTM.runFrom_add _ ((2 * u.length + 2) + (u.length + 1)) (v.length + 1),
+    MultiTapeTM.runFrom_add _ (2 * u.length + 2) (u.length + 1), hinit]
+  simp only [List.length_nil, Nat.cast_zero, Nat.zero_add] at hp ⊢
+  rw [hp, a3n_eq_rewind y u _ u.length (le_refl _)]
+  simpa only [hpre, Nat.add_assoc] using hc
+
+/-- Equality of two polynomial-time computed words is a polynomial-time
+Boolean test. All comparator inputs are constructed pairs, on every input.
+**Proof sketch.** Retained-request pairing computes both words. Its output
+length is bounded by its own time; the comparator's linear scan and both
+buffered-composition phases fit a fixed multiple of that polynomial. -/
+private lemma a3n_poly_eq {f g : List Bool → List Bool}
+    (hf : PolyTimeComputable f) (hg : PolyTimeComputable g) :
+    PolyTimeComputable (fun x => [decide (f x = g x)]) := by
+  obtain ⟨M, A, d, hM⟩ := a3n_poly_pair hf hg
+  refine ⟨bufferedCompTM M a3nEqTM, 5 * A + 6, d, fun x => ?_⟩
+  have hh := a3n_eq_computes (f x) (g x)
+  have hc := a3n_comp_at M a3nEqTM x (pairEncode (f x) (g x)) [decide (f x = g x)]
+    _ _ (hM x) hh
+  dsimp only at hc
+  apply hc.mono
+  have hl : (pairEncode (f x) (g x)).length ≤ A * (x.length + 1) ^ d := by
+    have ho := ((computesInTime_iff _ _ _ _).mp (hM x)).2
+    simpa only [ho] using M.tm.output_length_le x (A * (x.length + 1) ^ d)
+  have h1 : 1 ≤ (x.length + 1) ^ d := Nat.one_le_pow _ _ (Nat.succ_pos _)
+  have hsize : (pairEncode (f x) (g x)).length = 2 * (f x).length + 2 + (g x).length := by
+    simp [pairEncode, Nat.mul_comm]
+    omega
+  calc
+    _ ≤ 5 * (A * (x.length + 1) ^ d) + 6 * (x.length + 1) ^ d := by omega
+    _ = _ := by ring
+
+/-- Equality with an entire fixed answer is a polynomial-time bit test. -/
+private lemma a3n_poly_fixed_eq (w : List Bool) :
+    PolyTimeComputable (fun x => [decide (x = w)]) := by
+  have h := a3n_poly_linear (FinTM.computesFunInTime_ifEq w [true] [false])
+  convert h using 1
+  funext x
+  by_cases hx : x = w <;> simp [hx]
+
+/-- A fixed-width increment never successfully returns the empty word. -/
+private lemma a3n_inc_nonempty (w : List Bool) : incFixed w ≠ some [] := by
+  cases w with
+  | nil => simp [incFixed]
+  | cons b w => cases b <;> cases h : incFixed w <;> simp [incFixed, h]
+
+/-- Overflow is exactly the all-true unary shape, including length zero. -/
+private lemma a3n_inc_none (w : List Bool) :
+    incFixed w = none ↔ w = List.replicate w.length true := by
+  induction w with
+  | nil => simp [incFixed]
+  | cons b w ih => cases b <;> simp [incFixed, List.replicate_succ, ih]
+
+/-- The exact all-true shape is decided by P11 overflow and whole-word equality. -/
+private lemma a3n_poly_unary :
+    PolyTimeComputable (fun x => [decide (x = List.replicate x.length true)]) := by
+  have h := (a3n_poly_fixed_eq []).comp (a3n_poly_linear FinTM.computesFunInTime_incFixed)
+  convert h using 1
+  funext x
+  have he : (incFixed x).getD [] = [] ↔ x = List.replicate x.length true := by
+    rw [← a3n_inc_none]
+    cases hi : incFixed x with
+    | none => simp
+    | some w =>
+      have hw : w ≠ [] := by intro hw; subst w; exact a3n_inc_nonempty x hi
+      simp [hw]
+  simp only [Function.comp_apply, he]
+
+/-- A successful parser returns the unique original pair encoding.
+The proof follows the aligned two-bit grammar, without identifying parse
+failure with an empty first or second component. -/
+private lemma a3n_pair_inverse (z : List Bool) :
+    ∀ a b, pairDecode z = some (a,b) → z = pairEncode a b := by
+  induction z using List.twoStepInduction with
+  | nil => intro a b h; simp [pairDecode] at h
+  | singleton v => intro a b h; cases v <;> simp [pairDecode] at h
+  | cons_cons v w rest ih _ =>
+    intro a b h
+    cases v <;> cases w
+    · obtain ⟨⟨u,v⟩, hp, he⟩ := Option.map_eq_some_iff.mp h
+      cases he
+      rw [ih u v hp]
+      rfl
+    · cases h; rfl
+    · simp [pairDecode] at h
+    · obtain ⟨⟨u,v⟩, hp, he⟩ := Option.map_eq_some_iff.mp h
+      cases he
+      rw [ih u v hp]
+      rfl
+
+/-- The paired verifier parses outermost first, validates an exact all-true
+exponential pad and an independently exact witness length, then runs the
+original certificate verifier. Either parse failure rejects. -/
+private def a3nVerifier (C c : ℕ) (V : Language Bool) : Language Bool :=
+  {w | match pairDecode w with
+    | none => False
+    | some (x', u) => match pairDecode x' with
+      | none => False
+      | some (x, pad) => pad = List.replicate (C * 2 ^ (x.length + 1) ^ c) true ∧
+        u.length = C * 2 ^ (x.length + 1) ^ c ∧ x ++ u ∈ V}
+
+/-- Shape and exact length together characterize the required unary pad. -/
+private lemma a3n_pad_eq (pad : List Bool) (n : ℕ) :
+    (pad = List.replicate pad.length true ∧ pad.length = n) ↔
+      pad = List.replicate n true := by
+  constructor
+  · rintro ⟨hp, hn⟩; simpa only [hn] using hp
+  · intro hp; subst pad; simp
+
+/-- Both exact checks are polynomial-time before any validity assumption.
+**Proof sketch.** Total projections parse the outer pair before the inner
+one. Evaluate the exponential width in binary on the parsed original input;
+its degree-`c+1` budget is unconditional. Compare the complete resulting word
+separately with the binary lengths of the pad and witness. An overflow test
+checks the pad's all-true shape. Captured Boolean branches reject either
+malformed pair or failed exact check before the assembled original verifier
+call. Every composition uses the proved polynomial-time calculus. -/
+private lemma a3n_verifier_mem_P (C c : ℕ) (V : Language Bool) (hV : V ∈ P) :
+    a3nVerifier C c V ∈ P := by
+  classical
+  have hf : PolyTimeComputable a3n_fst := a3n_poly_linear computesFunInTime_pairFst
+  have hs : PolyTimeComputable a3n_snd := a3n_poly_linear computesFunInTime_pairSnd
+  have hx := hf.comp hf
+  have hpad := hs.comp hf
+  have hbits := a3n_poly_linear computesFunInTime_lengthBits
+  obtain ⟨E, B, hE⟩ := e3_exp_bits_timed C c
+  have he : PolyTimeComputable (fun x => Nat.bits (C * 2 ^ (x.length + 1) ^ c)) :=
+    ⟨E, B, c + 1, hE⟩
+  have hpadlen := a3n_poly_eq (hbits.comp hpad) (he.comp hx)
+  have hwitlen := a3n_poly_eq (hbits.comp hs) (he.comp hx)
+  have hshape := a3n_poly_unary.comp hpad
+  have hvalid := a3n_poly_linear computesFunInTime_pairValid
+  have hfalse := a3n_poly_const [false]
+  have hcat : PolyTimeComputable a3n_concat := a3n_poly_linear computesFunInTime_pairConcat
+  obtain ⟨A, d, M, hM⟩ := mem_P_iff.mp hV
+  have hv : PolyTimeComputable (fun x => [MultiTapeTM.indicator V x]) := ⟨M, A, d, hM⟩
+  have hrun := hv.comp (hcat.comp (a3n_poly_pair hx hs))
+  have hfinal := a3n_poly_cond hvalid
+    (a3n_poly_cond (hvalid.comp hf)
+      (a3n_poly_cond hshape
+        (a3n_poly_cond hpadlen (a3n_poly_cond hwitlen hrun hfalse) hfalse) hfalse)
+      hfalse) hfalse
+  obtain ⟨D, K, r, hD⟩ := hfinal
+  refine mem_P_iff.mpr ⟨K, r, D, fun w => ?_⟩
+  convert hD w using 1
+  cases hw : pairDecode w with
+  | none => simp [a3nVerifier, MultiTapeTM.indicator, hw]
+  | some p =>
+    rcases p with ⟨x', u⟩
+    cases hx' : pairDecode x' with
+    | none => simp [a3nVerifier, MultiTapeTM.indicator, hw, a3n_fst, hx']
+    | some p =>
+      rcases p with ⟨x, pad⟩
+      have hmem : w ∈ a3nVerifier C c V ↔
+          (pad = List.replicate pad.length true ∧ pad.length = C * 2 ^ (x.length + 1) ^ c) ∧
+          u.length = C * 2 ^ (x.length + 1) ^ c ∧ x ++ u ∈ V := by
+        change (match pairDecode w with
+          | none => False | some (x', u) => match pairDecode x' with
+            | none => False | some (x, pad) => pad = List.replicate (C * 2 ^ (x.length + 1) ^ c) true ∧
+              u.length = C * 2 ^ (x.length + 1) ^ c ∧ x ++ u ∈ V) ↔ _
+        simp only [hw, hx', a3n_pad_eq]
+      simp only [MultiTapeTM.indicator, hmem, Function.comp_apply,
+        a3n_fst, a3n_snd, a3n_concat, hw, hx', pairDecode_pairEncode,
+        Option.map_some, Option.getD_some, Option.isSome_some, Bool.true_eq,
+        if_true, e3c_bits_injective.eq_iff, decide_eq_true_eq, ite_and]
+      split_ifs <;> rfl
+
+/-- The padded language retains the original input and its exact all-true pad. -/
+private def a3nPadLanguage (L : Language Bool) (C c : ℕ) : Language Bool :=
+  {z | ∃ x, x ∈ L ∧ z = pairEncode x (List.replicate (C * 2 ^ (x.length + 1) ^ c) true)}
+
+/-- Membership on an exact padded input is precisely original membership. -/
+private lemma a3n_pad_member (L : Language Bool) (C c : ℕ) (x : List Bool) :
+    pairEncode x (List.replicate (C * 2 ^ (x.length + 1) ^ c) true) ∈
+      a3nPadLanguage L C c ↔ x ∈ L := by
+  constructor
+  · rintro ⟨y, hy, he⟩
+    have hp := @pairEncode_injective
+      (x, List.replicate (C * 2 ^ (x.length + 1) ^ c) true)
+      (y, List.replicate (C * 2 ^ (y.length + 1) ^ c) true) he
+    have hx : x = y := congrArg Prod.fst hp
+    simpa only [hx] using hy
+  · intro hx; exact ⟨x, hx, rfl⟩
+
+/-- The bounded paired certificate characterization recognizes every padded
+input and rejects malformed inputs; its witness bound never replaces either
+exact-length test in the verifier.
+**Proof sketch.** A valid original certificate fits the padded input's
+length. Conversely, decode both pairs, use the two exact checks, and invoke
+the original certificate equivalence. Parser inversion reconstructs the
+original padded input rather than silently substituting another word. -/
+private lemma a3n_pad_mem_NP (L V : Language Bool) (C c : ℕ) (hV : V ∈ P)
+    (hcert : ∀ x, x ∈ L ↔ ∃ u : List Bool,
+      u.length = C * 2 ^ (x.length + 1) ^ c ∧ x ++ u ∈ V) :
+    a3nPadLanguage L C c ∈ NP := by
+  apply mem_NP_iff_exists_length_le.mpr
+  refine ⟨1, 1, a3nVerifier C c V, a3n_verifier_mem_P C c V hV, fun z => ?_⟩
+  constructor
+  · rintro ⟨x, hx, rfl⟩
+    obtain ⟨u, hu, hv⟩ := (hcert x).mp hx
+    refine ⟨u, ?_, ?_⟩
+    · simp only [Nat.pow_one, Nat.one_mul, hu]
+      simp [pairEncode]
+      omega
+    · change (match pairDecode (pairEncode (pairEncode x
+          (List.replicate (C * 2 ^ (x.length + 1) ^ c) true)) u) with
+        | none => False | some (x', u) => match pairDecode x' with
+          | none => False | some (x, pad) => _)
+      simp only [pairDecode_pairEncode]
+      exact ⟨trivial, hu, hv⟩
+  · rintro ⟨u, _, hv⟩
+    have hv' : (match pairDecode z with
+        | none => False | some (x, pad) => pad = List.replicate (C * 2 ^ (x.length + 1) ^ c) true ∧
+          u.length = C * 2 ^ (x.length + 1) ^ c ∧ x ++ u ∈ V) := by
+      change (match pairDecode (pairEncode z u) with
+        | none => False | some (z, u) => match pairDecode z with
+          | none => False | some (x, pad) => pad = List.replicate (C * 2 ^ (x.length + 1) ^ c) true ∧
+            u.length = C * 2 ^ (x.length + 1) ^ c ∧ x ++ u ∈ V) at hv
+      simpa only [pairDecode_pairEncode] using hv
+    cases hz : pairDecode z with
+    | none => simp only [hz] at hv'
+    | some p =>
+      rcases p with ⟨x, pad⟩
+      simp only [hz] at hv'
+      exact ⟨x, (hcert x).mpr ⟨u, hv'.2.1, hv'.2.2⟩,
+        (a3n_pair_inverse z x pad hz).trans (congrArg (pairEncode x) hv'.1)⟩
+
+/-- Parsed original inputs are length-bounded before either exact padding
+check. The binary width bound therefore uses no accepted-input assumption. -/
+private lemma a3n_prevalidation (C c : ℕ) (w x' u x pad : List Bool)
+    (ho : pairDecode w = some (x', u)) (hi : pairDecode x' = some (x, pad)) :
+    x.length ≤ w.length ∧
+      (Nat.bits (C * 2 ^ (x.length + 1) ^ c)).length ≤
+        (w.length + 1) ^ c + (Nat.bits C).length := by
+  have hw := a3n_pair_inverse w x' u ho
+  have hx := a3n_pair_inverse x' x pad hi
+  have hlen : x.length ≤ w.length := by
+    rw [hw, hx]
+    simp [pairEncode]
+    omega
+  exact ⟨hlen, e3_bits_length_bound C c x.length w.length hlen⟩
+
+/-- A polynomial in a linearly rescaled exponential width still has an
+`EXP` budget, with uniform constants at all small lengths and zero parameters.
+**Proof sketch.** The exponent is bounded by `(s^c+1)(n+1)^(c+1)`.
+Both `n+1` and the width are bounded by its power of two. After taking the
+fixed polynomial power, the existing all-length absorption lemma handles
+zero and one separately and absorbs the fixed exponent coefficient. -/
+private lemma a3n_scaled_envelope (C c K r s : ℕ) :
+    ∃ A e : ℕ, ∀ n : ℕ,
+      K * (n + C * 2 ^ (s * (n + 1)) ^ c + 1) ^ r ≤ A * 2 ^ n ^ e := by
+  obtain ⟨A, e, hA⟩ := a2_exponent_bound (r * (s ^ c + 1)) (c + 1)
+  refine ⟨K * (C + 1) ^ r * A, e, fun n => ?_⟩
+  let p := (s ^ c + 1) * (n + 1) ^ (c + 1)
+  have hc : (s * (n + 1)) ^ c ≤ p := by
+    rw [Nat.mul_pow]
+    exact Nat.mul_le_mul (Nat.le_succ _) (Nat.pow_le_pow_right (Nat.succ_pos _) (Nat.le_succ c))
+  have hn : n + 1 ≤ p := by
+    have hh : n + 1 ≤ (n + 1) ^ (c + 1) := by
+      simpa only [Nat.pow_one] using Nat.pow_le_pow_right (Nat.succ_pos n)
+        (show 1 ≤ c + 1 by omega)
+    exact hh.trans (Nat.le_mul_of_pos_left _ (Nat.succ_pos _))
+  have hnexp : n + 1 ≤ 2 ^ p :=
+    (Nat.le_of_lt (Nat.lt_two_pow_self (n := n + 1))).trans
+      (Nat.pow_le_pow_right (by omega) hn)
+  have hwidth : C * 2 ^ (s * (n + 1)) ^ c ≤ C * 2 ^ p :=
+    Nat.mul_le_mul_left C (Nat.pow_le_pow_right (by omega) hc)
+  have hsum : n + C * 2 ^ (s * (n + 1)) ^ c + 1 ≤ (C + 1) * 2 ^ p := by
+    rw [Nat.add_mul, Nat.one_mul]
+    omega
+  calc
+    _ ≤ K * ((C + 1) * 2 ^ p) ^ r := Nat.mul_le_mul_left K (Nat.pow_le_pow_left hsum r)
+    _ = (K * (C + 1) ^ r) * 2 ^ ((r * (s ^ c + 1)) * (n + 1) ^ (c + 1)) := by
+      rw [Nat.mul_pow, ← Nat.pow_mul]
+      have he : p * r = (r * (s ^ c + 1)) * (n + 1) ^ (c + 1) := by
+        dsimp [p]
+        ring
+      rw [he]
+      ring
+    _ ≤ (K * (C + 1) ^ r) * (A * 2 ^ n ^ e) := Nat.mul_le_mul_left _ (hA n)
+    _ = _ := by ring
+
+/-- Emit the exact padded pair by a single binary-countdown emission phase.
+**Proof sketch.** Duplicate the original input. The catalog's retained-head
+map runs A2's proved evaluator/countdown on the second copy, preserving the
+first copy while emitting the exact pad. Charge the map's declared budget
+at the real encoded input length; its factor-three rescaling is explicit. -/
+private lemma a3n_pad_emit (C c : ℕ) :
+    ∃ (M : FinTM Bool) (K : ℕ), M.ComputesFunInTime
+      (fun x => pairEncode x (List.replicate (C * 2 ^ (x.length + 1) ^ c) true))
+      (fun n => K * (n + C * 2 ^ (3 * (n + 1)) ^ c + 1) ^ (c + 2)) := by
+  obtain ⟨S, B, hS⟩ := a2_exp_scheduler C c
+  obtain ⟨R, D, hR⟩ := computesFunInTime_pairMapSnd hS (by
+    intro n m h
+    apply Nat.mul_le_mul_left B
+    apply Nat.pow_le_pow_left _ (c + 2)
+    have hp := Nat.mul_le_mul_left C (Nat.pow_le_pow_right (by omega : 0 < 2)
+      (Nat.pow_le_pow_left (Nat.add_le_add_right h 1) c))
+    omega)
+  obtain ⟨F, A, hF⟩ := computesFunInTime_pairDup
+  refine ⟨bufferedCompTM F R, A + 5 + D * (3 + B * 3 ^ (c + 2)), fun x => ?_⟩
+  let y := pairEncode x x
+  let m := x.length + C * 2 ^ (3 * (x.length + 1)) ^ c + 1
+  let P := m ^ (c + 2)
+  have hm : x.length + 1 ≤ m := by dsimp [m]; omega
+  have hp : m ≤ P := by
+    simpa only [Nat.pow_one] using Nat.pow_le_pow_right (by omega : 0 < m)
+      (show 1 ≤ c + 2 by omega)
+  have hy : y.length = 3 * x.length + 2 := by simp [y, pairEncode]; omega
+  have hc := a3n_comp_at F R x y
+    (pairEncode x (List.replicate (C * 2 ^ (x.length + 1) ^ c) true))
+    (A * (x.length + 1)) _ (hF x)
+    (by simpa only [y, pairDecode_pairEncode] using hR y)
+  apply hc.mono
+  dsimp only
+  have he : y.length + 1 = 3 * (x.length + 1) := by omega
+  have hb : y.length + C * 2 ^ (y.length + 1) ^ c + 1 ≤ 3 * m := by
+    rw [he]
+    dsimp [m]
+    omega
+  have hpow : (y.length + C * 2 ^ (y.length + 1) ^ c + 1) ^ (c + 2) ≤
+      3 ^ (c + 2) * P := by
+    simpa only [Nat.mul_pow] using Nat.pow_le_pow_left hb (c + 2)
+  have ht : y.length + 1 + B * (y.length + C * 2 ^ (y.length + 1) ^ c + 1) ^ (c + 2) ≤
+      (3 + B * 3 ^ (c + 2)) * P := by
+    have h := Nat.mul_le_mul_left B hpow
+    calc
+      _ ≤ 3 * P + B * (3 ^ (c + 2) * P) := by omega
+      _ = _ := by ring
+  calc
+    _ ≤ A * P + 5 * P + D * ((3 + B * 3 ^ (c + 2)) * P) :=
+      Nat.add_le_add (by have h := Nat.mul_le_mul_left A (hm.trans hp); omega)
+        (Nat.mul_le_mul_left D ht)
+    _ = _ := by dsimp [P, m]; ring
+
+/-- A polynomial decider for the exact padded language yields an exponential
+decider for the original language.
+**Proof sketch.** Emit the exact padded pair with A2's countdown, then run
+the captured polynomial decider at that actual word. Its length and the
+emission budget fit a fixed polynomial in the rescaled exponential width;
+the all-length envelope lemma places the complete computation in `EXP`. -/
+private lemma a3n_unpad_EXP (L : Language Bool) (C c : ℕ)
+    (hP : a3nPadLanguage L C c ∈ P) : L ∈ EXP := by
+  classical
+  obtain ⟨A, d, D, hD⟩ := mem_P_iff.mp hP
+  obtain ⟨F, B, hF⟩ := a3n_pad_emit C c
+  let r := c + 2 + d + 1
+  let K := B + 4 + A * 3 ^ d
+  obtain ⟨a, e, ha⟩ := a3n_scaled_envelope C c K r 3
+  refine Set.mem_iUnion.mpr ⟨e, a, bufferedCompTM F D, fun x => ?_⟩
+  let y := pairEncode x (List.replicate (C * 2 ^ (x.length + 1) ^ c) true)
+  let m := x.length + C * 2 ^ (3 * (x.length + 1)) ^ c + 1
+  have hm : x.length + 1 ≤ m := by dsimp [m]; omega
+  have hwidth : C * 2 ^ (x.length + 1) ^ c ≤ C * 2 ^ (3 * (x.length + 1)) ^ c :=
+    Nat.mul_le_mul_left C (Nat.pow_le_pow_right (by omega)
+      (Nat.pow_le_pow_left (by omega) c))
+  have hlen : y.length = 2 * x.length + 2 + C * 2 ^ (x.length + 1) ^ c := by
+    simp [y, pairEncode]; omega
+  have hy : y.length + 1 ≤ 3 * m := by dsimp [m]; omega
+  have hv : MultiTapeTM.indicator (a3nPadLanguage L C c) y = MultiTapeTM.indicator L x := by
+    have he : y ∈ a3nPadLanguage L C c ↔ x ∈ L := a3n_pad_member L C c x
+    unfold MultiTapeTM.indicator
+    rw [he]
+  have hc := a3n_comp_at F D x y [MultiTapeTM.indicator L x]
+    (B * m ^ (c + 2)) (A * (y.length + 1) ^ d) (hF x) (by simpa only [hv] using hD y)
+  apply hc.mono
+  apply le_trans _ (ha x.length)
+  change B * m ^ (c + 2) + y.length + 2 + A * (y.length + 1) ^ d ≤ K * m ^ r
+  have hp : m ≤ m ^ r := by
+    simpa only [Nat.pow_one] using Nat.pow_le_pow_right (by omega : 0 < m)
+      (show 1 ≤ r by dsimp [r]; omega)
+  have hf : m ^ (c + 2) ≤ m ^ r := Nat.pow_le_pow_right (by omega) (by dsimp [r]; omega)
+  have hd : (y.length + 1) ^ d ≤ 3 ^ d * m ^ r := by
+    calc
+      _ ≤ (3 * m) ^ d := Nat.pow_le_pow_left hy d
+      _ = 3 ^ d * m ^ d := Nat.mul_pow _ _ _
+      _ ≤ 3 ^ d * m ^ r := Nat.mul_le_mul_left _
+        (Nat.pow_le_pow_right (by omega) (by dsimp [r]; omega))
+  calc
+    _ ≤ B * m ^ r + 4 * m ^ r + A * (3 ^ d * m ^ r) := by
+      have hh := Nat.mul_le_mul_left B hf
+      have hh' := Nat.mul_le_mul_left A hd
+      omega
+    _ = _ := by dsimp [K]; ring
 
 /-- **Padding scales collapses up** [AB09, Theorem 2.22, contrapositive form]: if
 `P = NP` then `EXP = NEXP`.
@@ -5000,14 +5807,29 @@ exponential time, which `EXP` affords), assemble `y = Turing.pairEncode x pad` b
 emission machine, run the relocated, captured `M_pad` on `y`, and forward the verdict.
 Total time is polynomial in `|y| = 2|x| + 2 + E |x|`, hence at most `2^(n^e)` for a
 fixed `e` beyond a fixed threshold, small lengths absorbed into `DTIME`'s constant:
-`L ∈ EXP`. -/
+`L ∈ EXP`.
+
+**A3 completion.** `a3n_verifier_mem_P` evaluates the binary width on the
+parsed original input with an unconditional polynomial budget;
+`a3n_prevalidation` records the corresponding substring and bit-length
+bounds. Its grammar guards reject malformed pairs, and its separate
+all-true, pad-length, and certificate-length tests enforce both exact
+checks. `a3n_pad_mem_NP` applies the bounded paired characterization.
+`a3n_pad_emit` retains the original input while A2's binary countdown emits
+the pad; `a3n_unpad_EXP` composes the resulting exact pair with the padded
+language's decider and absorbs the complete all-length budget. -/
 theorem EXP_eq_NEXP_of_P_eq_NP (h : P = NP) : EXP = NEXP := by
-  sorry
+  apply Set.Subset.antisymm EXP_subset_NEXP
+  rintro L ⟨C, c, V, hV, hcert⟩
+  have hpad : a3nPadLanguage L C c ∈ NP := a3n_pad_mem_NP L V C c hV hcert
+  have hpadP : a3nPadLanguage L C c ∈ P := h ▸ hpad
+  exact a3n_unpad_EXP L C c hpadP
 
 /-- **Theorem 2.22** [AB09]: if `EXP ≠ NEXP` then `P ≠ NP`.
 
 **Proof sketch.** Contraposition of `Complexity.EXP_eq_NEXP_of_P_eq_NP`. -/
 theorem P_ne_NP_of_EXP_ne_NEXP (h : EXP ≠ NEXP) : P ≠ NP := by
-  sorry
+  intro hPN
+  exact h (EXP_eq_NEXP_of_P_eq_NP hPN)
 
 end Complexity
