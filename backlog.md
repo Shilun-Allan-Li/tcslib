@@ -442,8 +442,23 @@ uncomputability chapter.
   header unpacking, row loader + greatest-strictly-earlier search
   with scratch resets and one charged ledger, the complete
   producer, then startup, the controller under `P` ≠ `T`, output
-  identity, equisatisfiability. → 4A-4 brief → 4B → the epoch-3/4
-  audit → E5 closure.
+  identity, equisatisfiability. **4A-4 complete-producer checkpoint
+  integrated 2026-10-06** (Codex `8e2d7ee1`): **step 1 closed** —
+  `clPackedRecords_machine` proves the entire packed result (header +
+  inclusive trajectory + full greatest-strictly-earlier visit table)
+  from native input in one machine with total ledger `a*(|x|+1)^r`;
+  176 new privates (455 total); no target closed, zero new
+  admissions, tree still at **5 admissions**, ledger **54/59**;
+  Hardness.lean 7,446 lines (exception continues; prime
+  routine-layer retrofit target); three-pass traversal 1191 decls /
+  4 roots / surface = five theorems
+  (`audits/logs/e4A4-checkpoint-*`). **4A-5 frontier (the body,
+  expected to close the gate)**: final install with the producer +
+  genuine `initCfg` startup → ordered controller with common budget
+  `P` (≠ `T`, ≠ producer ledger) → `clEmitter_of_body` +
+  `clTableau_chunks` output identity → pure equisatisfiability;
+  sanctioned checkpoint only at the proved output identity. → 4A-5
+  brief → 4B → the epoch-3/4 audit → E5 closure.
   Subsumes 2C's
   `prefixTM`/`fixedPair` promotion requests. Dedup of superseded batch
   privates is an E5 closure task. Mathlib TM2 rejected as substrate
