@@ -397,7 +397,15 @@ uncomputability chapter.
   criteria) and 3B-cont integrated 2026-10-05**: the padding cluster,
   `EXP_subset_NEXP`, and `SAT_reducible_SAT3` closed; tree at **6
   admissions** (`TAUTOLOGY_coNPComplete` + Hardness five); ledger
-  **53/59**. 4A in flight → 4B → the epoch-3/4 audit → E5 closure.
+  **53/59**. **4A checkpoint integrated 2026-10-05**: 1/5 closed +
+  77 privates banking the summit's whole pure layer (tableau,
+  product encoding, chunk-exact serialization identity, quadratic
+  ledger, oblivious normalization, certificate call, conditional
+  emitter assembly); frontier = the packed-record producer, the
+  round controller, equisatisfiability (four-step plan); tree at
+  **5 admissions**; ledger **54/59**; Hardness 1,193 lines (new
+  recorded exception). Next: 4A-2 continuation → 4B → the
+  epoch-3/4 audit → E5 closure.
   Subsumes 2C's
   `prefixTM`/`fixedPair` promotion requests. Dedup of superseded batch
   privates is an E5 closure task. Mathlib TM2 rejected as substrate
