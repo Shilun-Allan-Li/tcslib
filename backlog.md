@@ -468,11 +468,14 @@ uncomputability chapter.
   bodies; no-allowlist traversal 1550 decls / 0 sorryAx / surface =
   five theorems (`audits/logs/e4A5-closure-*`,
   `audits/programs/ch2-e4A5-ClosureAxioms.lean`). **Ledger 58/59;
-  tree at 1 admission** (`TAUTOLOGY_coNPComplete`). → 4B brief
-  (new DNF names binding) → the epoch-3/4 audit pack (ride-alongs
-  queued: colleague's DNF adaptation, the parallel-run provenance,
-  the discarded α hash) → E5 closure → the machine-routine layer
-  + retrofit (recorded decisions).
+  tree at 1 admission** (`TAUTOLOGY_coNPComplete`). **4B brief issued 2026-10-06**
+  (`briefs/ch2-epoch4-batchB.md`, base `b133a3d4`; the docstring
+  route binding; new DNF names binding; fallback-flips-sides and
+  empty-term/empty-DNF pitfalls pinned; ≈ 7 pts; completion = the
+  campaign tree admission-free). → the epoch-3/4 audit pack
+  (ride-alongs queued: colleague's DNF adaptation, the parallel-run
+  provenance, the discarded α hash) → E5 closure → the
+  machine-routine layer + retrofit (recorded decisions).
   Subsumes 2C's
   `prefixTM`/`fixedPair` promotion requests. Dedup of superseded batch
   privates is an E5 closure task. Mathlib TM2 rejected as substrate
