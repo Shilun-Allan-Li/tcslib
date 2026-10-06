@@ -583,5 +583,16 @@ are exactly the machine-facing ones:
 * **`audits/TEMPLATE.md`** predates the evolved pack format (attestation
   evidence separation, bundle conventions); refresh before the next fresh
   campaign starts from it.
+* **Statements-only package split (idea; no near-term action):** a
+  `concepts`/`proofs`-style two-package layout — frozen statement surfaces
+  compiled without proof code, importable by downstream chapters — would
+  mechanize the statement-freeze discipline the campaign currently enforces
+  by protocol (statement gates, briefs, audit packs). Observed in external
+  prior art: Lax Archive lax-429075/lax-434930 (Bonnet, Cook–Levin on Lean
+  4.33; examined 2026-10-05, scratchpad-only, Apache-2.0, non-binding, never
+  imported), where each claimed result is an `axiom` in a statements package
+  and a platform replay checks the proof network closes. Composes with the
+  §2 D7 internal-namespace visibility proposal; revisit no earlier than
+  that proposal, if at all. *Origin: prior-art comparison, 2026-10-05.*
 * **`HANDOFF.md`** — the have→lemma extractor campaign's own tracking
   document; deliberately *not* absorbed here.
