@@ -474,7 +474,8 @@ uncomputability chapter.
   empty-term/empty-DNF pitfalls pinned; ≈ 7 pts; completion = the
   campaign tree admission-free). → the epoch-3/4 audit pack
   (ride-alongs queued: colleague's DNF adaptation, the parallel-run
-  provenance, the discarded α hash) → E5 closure → the
+  provenance, the discarded α hash, **colleague merge #2's 9-module
+  private rewiring + the 57→65 order extension**) → E5 closure → the
   machine-routine layer + retrofit (recorded decisions).
   Subsumes 2C's
   `prefixTM`/`fixedPair` promotion requests. Dedup of superseded batch
