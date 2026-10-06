@@ -480,8 +480,8 @@ uncomputability chapter.
   (11,436 kernel declarations) admission-free
   (`audits/logs/e4B-closure-*`,
   `audits/programs/ch2-e4B-ClosureAxioms.lean`). → the epoch-3/4
-  audit pack
-  (ride-alongs queued: colleague's DNF adaptation, the parallel-run
+  audit pack — **ISSUED 2026-10-06**
+  (ride-alongs included: colleague's DNF adaptation, the parallel-run
   provenance, the discarded α hash, **colleague merge #2's 9-module
   private rewiring + the 57→65 order extension**) → E5 closure → the
   machine-routine layer + retrofit (recorded decisions).
