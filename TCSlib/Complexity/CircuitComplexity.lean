@@ -282,7 +282,8 @@ both ways, so the two `P/poly`s coincide).
   circuits.
 - `CircuitComplexity.CircuitSatNPHard`: [AB09, Lem 6.10] CKT-SAT is `NP`-hard (so
   `NP`-complete), and with Lem 6.11 the Cook–Levin theorem ([AB09, p. 111, Thm 2.10]):
-  `SAT` and `3SAT` are `NP`-complete (`…_viaCircuits`).
+  `3SAT` is `NP`-hard (`Complexity.SAT3_NPHard_viaCircuits`, the book's alternative proof; the
+  canonical Cook–Levin theorems are in `CookLevin/Hardness.lean`).
 
 - `CircuitComplexity.LogspaceUniform` (with `…AdjBasic` / `…Scan` / `…Walk` / `…Adj` /
   `…Canon` / `…Example`): [AB09, Def 6.14] logspace-uniform families (over

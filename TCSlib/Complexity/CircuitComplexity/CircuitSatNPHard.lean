@@ -26,16 +26,17 @@ iff some certificate makes `M` accept, i.e. iff `x ∈ L`.
 
 [AB09, p. 111]: "The Cook–Levin Theorem follows immediately from the next two lemmas"
 (Lem 6.10 and Lem 6.11, `CKT-SAT ≤p 3SAT`, `BoolCircuit.dagCktSatLang_polyTimeReducible_SAT3`):
-`3SAT` is `NP`-hard and `NP`-complete, and so is `SAT` (the Tseitin formulas are 3-CNFs, on
-which `SAT` and `3SAT` agree).
+`3SAT` is `NP`-hard (`Complexity.SAT3_NPHard_viaCircuits`). The library's canonical Cook–Levin
+theorems are proved by the direct route in `CookLevin/Hardness.lean`.
 
 ## Main results
 
 * `BoolCircuit.dagCktSatLang_NPHard` — CKT-SAT is `NP`-hard.  [AB09, Lem 6.10]
 * `BoolCircuit.dagCktSatLang_NPComplete` — CKT-SAT is `NP`-complete.
-* `Complexity.SAT3_NPHard_viaCircuits`, `Complexity.SAT3_NPComplete_viaCircuits`,
-  `Complexity.SAT_NPHard_viaCircuits`, `Complexity.SAT_NPComplete_viaCircuits` — the
-  Cook–Levin theorem [AB09, Thm 2.10], by Lem 6.10 and Lem 6.11 [AB09, p. 111].
+* `Complexity.SAT3_NPHard_viaCircuits` — the book's p. 111 alternative proof of Cook–Levin
+  [AB09, Thm 2.10]: `3SAT` is `NP`-hard by Lem 6.10 and Lem 6.11. The canonical Cook–Levin
+  theorems (`Complexity.SAT_NPComplete`, `Complexity.SAT3_NPComplete`) are those of
+  `CookLevin/Hardness.lean` (the direct [AB09, §2.3] route); they are not restated here.
 
 ## Divergences from [AB09]
 
@@ -44,10 +45,6 @@ which `SAT` and `3SAT` agree).
   (`Complexity.SAT3`, `Complexity.SAT`, over `Std.Sat.CNF.serialize`).
 * The circuit is the non-oblivious configuration tableau (see `UniformTableau.lean`), of size
   `O(T(T + n + m))` for the verifier's time bound `T`.
-* The declarations are named `…_viaCircuits` to keep them distinct from the
-  `Complexity.SAT_NPHard`/`Complexity.SAT3_NPHard` of `CookLevin/Hardness.lean`, a separate
-  campaign (the direct Cook–Levin reduction) in which those theorems are currently sorried;
-  the `…_viaCircuits` theorems here are sorry-free.
 
 ## References
 
@@ -132,54 +129,20 @@ theorem dagCktSatLang_NPHard : NPHard dagCktSatLang := by
 theorem dagCktSatLang_NPComplete : NPComplete dagCktSatLang :=
   ⟨dagCktSatLang_mem_NP, dagCktSatLang_NPHard⟩
 
-/-- The formula produced by the `CKT-SAT ≤p 3SAT` map is always a 3-CNF. -/
-theorem dagCktSatToCNF_widthAtMost (w : List Bool) : (dagCktSatToCNF w).WidthAtMost 3 := by
-  unfold dagCktSatToCNF
-  split
-  · split
-    · exact DAGCircuit.toCNF_widthAtMost _
-    · intro C hC; simp at hC; simp [hC]
-  · intro C hC; simp at hC; simp [hC]
-
-/-- On the outputs of the `CKT-SAT ≤p 3SAT` map, `SAT` and `3SAT` agree. -/
-theorem mem_SAT_iff_mem_SAT3_dagCktSatToSAT3 (w : List Bool) :
-    dagCktSatToSAT3 w ∈ Complexity.SAT ↔ dagCktSatToSAT3 w ∈ Complexity.SAT3 := by
-  change (Std.Sat.CNF.decode _).Satisfiable ↔
-    (Std.Sat.CNF.decode _).WidthAtMost 3 ∧ (Std.Sat.CNF.decode _).Satisfiable
-  rw [dagCktSatToSAT3, Std.Sat.CNF.decode_serialize]
-  exact ⟨fun h => ⟨dagCktSatToCNF_widthAtMost w, h⟩, fun h => h.2⟩
-
 end BoolCircuit
 
 namespace Complexity
 
 open BoolCircuit
 
-/-- **The Cook–Levin theorem through circuits: 3SAT is NP-hard** [AB09, p. 111: "The
-Cook–Levin Theorem follows immediately from the next two lemmas"]: every `NP` language
-reduces to CKT-SAT (`BoolCircuit.dagCktSatLang_NPHard`, [AB09, Lem 6.10]), which reduces to
-3SAT (`BoolCircuit.dagCktSatLang_polyTimeReducible_SAT3`, [AB09, Lem 6.11]); Karp reductions
-compose ([AB09, Thm 2.8]). -/
+/-- **The Cook–Levin theorem follows from Lemmas 6.10 and 6.11** [AB09, p. 111: "The
+Cook–Levin Theorem follows immediately from the next two lemmas"]: `3SAT` is `NP`-hard because
+every `NP` language reduces to CKT-SAT (`BoolCircuit.dagCktSatLang_NPHard`, [AB09, Lem 6.10]),
+which reduces to 3SAT (`BoolCircuit.dagCktSatLang_polyTimeReducible_SAT3`, [AB09, Lem 6.11]);
+Karp reductions compose ([AB09, Thm 2.8]). This is the book's alternative proof; the library's
+canonical Cook–Levin theorems (`Complexity.SAT_NPHard`, `SAT_NPComplete`, `SAT3_NPHard`,
+`SAT3_NPComplete`) are proved by the direct route in `CookLevin/Hardness.lean`. -/
 theorem SAT3_NPHard_viaCircuits : NPHard SAT3 :=
   fun L hL => (dagCktSatLang_NPHard L hL).trans dagCktSatLang_polyTimeReducible_SAT3
-
-/-- **3SAT is NP-complete** [AB09, Thm 2.10], via [AB09, Lem 6.10, Lem 6.11]: it is in `NP`
-(`Complexity.SAT3_mem_NP`) and `NP`-hard (`Complexity.SAT3_NPHard_viaCircuits`). -/
-theorem SAT3_NPComplete_viaCircuits : NPComplete SAT3 :=
-  ⟨SAT3_mem_NP, SAT3_NPHard_viaCircuits⟩
-
-/-- **SAT is NP-hard** [AB09, Thm 2.10], via [AB09, Lem 6.10, Lem 6.11]: the `CKT-SAT ≤p 3SAT`
-map produces 3-CNFs, on which `SAT` and `3SAT` agree, so it also reduces CKT-SAT to `SAT`. -/
-theorem SAT_NPHard_viaCircuits : NPHard SAT := by
-  intro L hL
-  refine (dagCktSatLang_NPHard L hL).trans ⟨dagCktSatToSAT3,
-    polyTimeComputable_dagCktSatToSAT3, fun w => ?_⟩
-  rw [mem_SAT_iff_mem_SAT3_dagCktSatToSAT3]
-  exact mem_dagCktSatLang_iff_mem_SAT3 w
-
-/-- **The Cook–Levin theorem: SAT is NP-complete** [AB09, Thm 2.10], via
-[AB09, Lem 6.10, Lem 6.11]. -/
-theorem SAT_NPComplete_viaCircuits : NPComplete SAT :=
-  ⟨SAT_mem_NP, SAT_NPHard_viaCircuits⟩
 
 end Complexity
