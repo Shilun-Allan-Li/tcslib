@@ -499,6 +499,24 @@ uncomputability chapter.
   3. **catalog promotion** of transfer/clear/copy/compare/increment as
      public machines with exact costs, seeded from the already-audited
      A-chain privates (D6-style promotion, not new proof work).
+  **Survey update 2026-10-06 (pre-§12, recorded ahead of the
+  colleague meeting 2026-10-07)**: the colleague's ch6 merge already
+  supplies the **function-level half** of this layer —
+  `TuringMachine/CounterProg{,Run}` (goto programs over unary
+  registers, compiled once into `FinTM`, `t` abstract steps ≤
+  `t(2t+3)` machine steps, FP bridge), `ClassNP/Transducer` (Mealy
+  machines as work-tape-free FinTMs in `|x|+1`), `ClassNP/
+  PolyTimePairing`/`PClosure` (FP/`P` closure, built ON our audited
+  catalog), `UnaryTape`. The §12 design must **consume, not
+  duplicate** these; the remaining gap is the **config-level half**
+  (bank-embedding, seam-composition at canonical `Cfg.ofWords`
+  seams — the emitter r1 finding stands: function contracts cannot
+  deliver clean-return seams) plus residual catalog promotions.
+  Items for the meeting: colleague roadmap (more campaign-module
+  rewiring?), `CounterProg` as general substrate vs. sibling
+  module, `Build/*` ownership during the retrofit window, ch3/
+  TimeHierarchy alignment. Citation duty now extends to the
+  colleague's modules alongside lax-434930.
   Mechanism: a design addendum (`machine-library-design.md` §12) →
   statement gate → fills → audit, folded into the queued D7
   internal-namespace visibility proposal. **Citation discipline
