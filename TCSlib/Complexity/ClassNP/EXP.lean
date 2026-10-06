@@ -58,7 +58,7 @@ declarations in all — was removed under the epoch-2 gate's binding
 live/dead inventory (`audits/ch2-epoch2-resolutions.md`): the
 continuation's `exists_loopCfgTM` route replaced it, and the auditor's
 kernel walk confirmed it absent from every final target closure. The
-live checkpoint route `enumLoop_run` (consumed by `enumDecider`) is
+live checkpoint route `enumLoop_run` (consumed by `exists_proj_decider`) is
 retained unchanged.
 -/
 
@@ -117,8 +117,9 @@ private def enumInc : List Bool → Option (List Bool)
   | false :: bs => some (true :: bs)
   | true :: bs => (enumInc bs).map (false :: ·)
 
-/-- A width-`w` little-endian representation of the low `w` bits of `i`. -/
-private def enumWord : ℕ → ℕ → List Bool
+/-- **The width-`w` little-endian binary word** of `i`: its low `w` bits, least
+significant first (high zeros kept). -/
+def enumWord : ℕ → ℕ → List Bool
   | 0, _ => []
   | w + 1, i => decide (i % 2 = 1) :: enumWord w (i / 2)
 
@@ -1263,9 +1264,9 @@ private lemma enumCont_round_seam (MV : FinTM Bool) (x s : List Bool) (phase : B
 /-- The prepared verifier call accepts the exact assembled input `x ++ s`.
 Its bound includes assembly, the buffer rewind, and the verifier's actual
 polynomial budget on that input. -/
-private lemma enumCont_verifier_call (MV : FinTM Bool) (V : Language Bool) (a d : ℕ)
-    (hV : MV.DecidesInTime V (fun n => a * (n + 1) ^ d)) (x s : List Bool) :
-    ∃ t ≤ a * (x.length + s.length + 1) ^ d + 2 * (x.length + s.length) + 4,
+private lemma enumCont_verifier_call (MV : FinTM Bool) (V : Language Bool) (Tv : ℕ → ℕ)
+    (hV : MV.DecidesInTime V Tv) (x s : List Bool) :
+    ∃ t ≤ Tv (x.length + s.length) + 2 * (x.length + s.length) + 4,
       ((bufferedCompTM enumCont_concatTM MV).tm.runFrom
         (Cfg.ofWords (input := x) (bufferedCompTM enumCont_concatTM MV).tm.q₀
           (stateWord (bufferedCompTM enumCont_concatTM MV).k s)) t).state = none ∧
@@ -1276,7 +1277,7 @@ private lemma enumCont_verifier_call (MV : FinTM Bool) (V : Language Bool) (a d 
   obtain ⟨t, ht, hh, ho⟩ := enumCont_prepared_comp enumCont_concatTM MV
     (Cfg.ofWords (input := x) false (fun _ => s)) (x ++ s)
     [MultiTapeTM.indicator V (x ++ s)] (x.length + s.length + 2)
-    (a * ((x ++ s).length + 1) ^ d)
+    (Tv (x ++ s).length)
     (by rw [enumCont_concat_run]; rfl) (by rw [enumCont_concat_run]; rfl) (hV (x ++ s))
   rw [enumCont_round_seam MV x s false] at hh ho
   simp only [List.length_append] at ht
@@ -1325,17 +1326,17 @@ private lemma enumCont_return_run {k : ℕ} {S H : Type} {x : List Bool}
 repeatable call: the candidate is retained, all other original source work
 is restored to blank, and the sole verdict is held on the capture tape.
 The concrete body still has to dispatch, clear that verdict, and increment. -/
-private lemma enumCont_clean_verifier (MV : FinTM Bool) (V : Language Bool) (a d : ℕ)
-    (hV : MV.DecidesInTime V (fun n => a * (n + 1) ^ d)) (x s : List Bool) :
+private lemma enumCont_clean_verifier (MV : FinTM Bool) (V : Language Bool) (Tv : ℕ → ℕ)
+    (hV : MV.DecidesInTime V Tv) (x s : List Bool) :
     let Q := bufferedCompTM enumCont_concatTM MV
     let c₀ := Cfg.ofWords (input := x) Q.tm.q₀ (stateWord Q.k s)
-    ∃ t ≤ 3 * (a * (x.length + s.length + 1) ^ d + 2 * (x.length + s.length) + 4) +
+    ∃ t ≤ 3 * (Tv (x.length + s.length) + 2 * (x.length + s.length) + 4) +
         x.length + 9,
       (enumCont_cleanTM Q).tm.runFrom
         (captureCfg Sum.inl (.inr (.inl 0)) [] [] (enumCont_logCfg c₀ [])) t =
         enumCont_cleanCfg Q c₀ [MultiTapeTM.indicator V (x ++ s)] none 1 0 := by
   dsimp only
-  obtain ⟨t, ht, hh, ho⟩ := enumCont_verifier_call MV V a d hV x s
+  obtain ⟨t, ht, hh, ho⟩ := enumCont_verifier_call MV V Tv hV x s
   obtain ⟨r, hr, he⟩ := enumCont_clean_complete (bufferedCompTM enumCont_concatTM MV)
     (Cfg.ofWords (input := x) (bufferedCompTM enumCont_concatTM MV).tm.q₀
       (stateWord (bufferedCompTM enumCont_concatTM MV).k s))
@@ -2222,31 +2223,6 @@ private lemma enumCont_lift_init (M B : FinTM Bool) (hk : M.k ≤ B.k)
   rw [hh]
   rfl
 
-/-- One input-independent polynomial bounds both body phases. The degree
-dominates the verifier degree, unary-generator degree, and linear scans;
-the coefficient absorbs every fixed administrative transition. -/
-private lemma enumCont_common_bound (a d f c j n w : ℕ) :
-    let P := (n + w + 1) ^ (d + c + 2)
-    let A := 3 * a + 3 * f + 3 * j + 60
-    3 * (f * (n + 1) ^ (c + 1)) + n + 3 * w + 10 ≤ A * P ∧
-      3 * (a * (n + w + 1) ^ d + 2 * (n + w) + 4) +
-        3 * ((j + 3) * (w + 1)) + 2 * n + 3 * w + 22 ≤ A * P := by
-  dsimp only
-  let P := (n + w + 1) ^ (d + c + 2)
-  have hn : n + w + 1 ≤ P := by
-    calc n + w + 1 = (n + w + 1) ^ 1 := by simp
-      _ ≤ P := Nat.pow_le_pow_right (by omega) (by omega)
-  have hd : (n + w + 1) ^ d ≤ P := Nat.pow_le_pow_right (by omega) (by omega)
-  have hf : (n + 1) ^ (c + 1) ≤ P :=
-    (Nat.pow_le_pow_left (by omega) _).trans (Nat.pow_le_pow_right (by omega) (by omega))
-  have ha' := Nat.mul_le_mul_left a hd
-  have hf' := Nat.mul_le_mul_left f hf
-  have hj' := Nat.mul_le_mul_left (j + 3) (show w + 1 ≤ P by omega)
-  change _ ≤ (3 * a + 3 * f + 3 * j + 60) * P ∧
-    _ ≤ (3 * a + 3 * f + 3 * j + 60) * P
-  simp only [Nat.add_mul, Nat.mul_assoc] at hj' ⊢
-  omega
-
 /-- A concrete body with polynomial startup and exact seam restoration gives
 the frozen enumerator configuration contract by the audited loop export.
 This lemma is conditional only on the two explicit body obligations below.
@@ -2256,15 +2232,15 @@ the common coefficient and degree to cover both fuel and body. Instantiate
 The terminal is `(2^w-1)+1=2^w`; on candidate indices use `enumCont_orbit`.
 Finally absorb the export's additive one using `1 ≤ (n+w+1)^D`, exactly as
 in infrastructure round 3, item 5. All constants are fixed before the input. -/
-private lemma enumCont_from_body (C c A D : ℕ) (V : Language Bool)
+private lemma enumCont_from_body (C c : ℕ) (G : ℕ → ℕ) (V : Language Bool)
     (body : FinTM Bool) (anchor : body.State)
     (hstart : ∀ x : List Bool,
-      ∃ t ≤ A * (x.length + C * (x.length + 1) ^ c + 1) ^ D,
+      ∃ t ≤ G x.length,
         (∀ t' < t, (body.tm.runFrom (body.tm.initCfg x) t').state ≠ some anchor) ∧
         body.tm.runFrom (body.tm.initCfg x) t =
           Cfg.ofWords anchor (stateWord body.k (List.replicate (C * (x.length + 1) ^ c) false)))
     (hround : ∀ (x s : List Bool), s.length = C * (x.length + 1) ^ c →
-      ∃ t, 0 < t ∧ t ≤ A * (x.length + C * (x.length + 1) ^ c + 1) ^ D ∧
+      ∃ t, 0 < t ∧ t ≤ G x.length ∧
         (∀ t', 0 < t' → t' < t →
           (body.tm.runFrom (Cfg.ofWords (input := x) anchor (stateWord body.k s)) t').state
             ≠ some anchor) ∧
@@ -2274,32 +2250,28 @@ private lemma enumCont_from_body (C c A D : ℕ) (V : Language Bool)
         else
           body.tm.runFrom (Cfg.ofWords (input := x) anchor (stateWord body.k s)) t =
             Cfg.ofWords anchor (stateWord body.k ((incFixed s).getD s))) :
-    ∃ (b e : ℕ) (E : FinTM Bool), ∀ x : List Bool,
+    ∃ (b : ℕ) (E : FinTM Bool), ∀ x : List Bool,
       ∃ (cfg : ℕ → Cfg E.k Bool E.State x) (startup : ℕ),
-        startup ≤ b * (x.length + C * (x.length + 1) ^ c + 1) ^ e ∧
+        startup ≤ b * (G x.length + (x.length + 1) ^ (c + 1) + 1) ∧
         E.tm.runFrom (E.tm.initCfg x) startup = cfg 0 ∧
         (cfg (2 ^ (C * (x.length + 1) ^ c))).state = none ∧
         (cfg (2 ^ (C * (x.length + 1) ^ c))).output = [false] ∧
         ∀ i, i < 2 ^ (C * (x.length + 1) ^ c) → ∃ t,
-          t ≤ b * (x.length + C * (x.length + 1) ^ c + 1) ^ e ∧
+          t ≤ b * (G x.length + (x.length + 1) ^ (c + 1) + 1) ∧
           if MultiTapeTM.indicator V (x ++ enumWord (C * (x.length + 1) ^ c) i) then
             (E.tm.runFrom (cfg i) t).state = none ∧
               (E.tm.runFrom (cfg i) t).output = [true]
           else E.tm.runFrom (cfg i) t = cfg (i + 1) := by
   obtain ⟨F, f, hF⟩ := computesFunInTime_polyUnary C c
-  let T := fun n => (A + f) * (n + C * (n + 1) ^ c + 1) ^ (D + c + 1)
-  have hbody (n : ℕ) : A * (n + C * (n + 1) ^ c + 1) ^ D ≤ T n := by
-    exact Nat.mul_le_mul (by omega) (Nat.pow_le_pow_right (by omega) (by omega))
+  let T := fun n => G n + f * (n + 1) ^ (c + 1)
+  have hbody (n : ℕ) : G n ≤ T n := Nat.le_add_right _ _
   have hfuel : F.ComputesFunInTime
       (fun x => Nat.bits (2 ^ (C * (x.length + 1) ^ c) - 1)) T := by
     intro x
     dsimp only
     rw [enumCont_fuel_bits]
     apply (hF x).mono
-    exact Nat.mul_le_mul (by omega)
-      ((Nat.pow_le_pow_left (by omega : x.length + 1 ≤
-        x.length + C * (x.length + 1) ^ c + 1) (c + 1)).trans
-        (Nat.pow_le_pow_right (by omega) (by omega)))
+    exact Nat.le_add_left _ _
   obtain ⟨E, K, hE⟩ := exists_loopCfgTM body F anchor
     (fun x s => s.length = C * (x.length + 1) ^ c)
     (fun _ s => (incFixed s).getD s)
@@ -2316,51 +2288,50 @@ private lemma enumCont_from_body (C c A D : ℕ) (V : Language Bool)
       intro x s hs
       obtain ⟨t, htpos, ht, hi, hh⟩ := hround x s hs
       exact ⟨t, htpos, ht.trans (hbody x.length), hi, hh⟩)
-  refine ⟨K * (A + f + 1), D + c + 1, E, fun x => ?_⟩
+  refine ⟨K * (f + 1), E, fun x => ?_⟩
   obtain ⟨cfg, startup, ht, hi, _, hend, hout, hr⟩ := hE x
   have hone : 1 ≤ 2 ^ (C * (x.length + 1) ^ c) := Nat.one_le_two_pow
   have hterminal : 2 ^ (C * (x.length + 1) ^ c) - 1 + 1 =
       2 ^ (C * (x.length + 1) ^ c) := Nat.sub_add_cancel hone
   rw [hterminal] at hend hout
-  have hbudget : K * (T x.length + 1) ≤ K * (A + f + 1) *
-      (x.length + C * (x.length + 1) ^ c + 1) ^ (D + c + 1) := by
-    have hp : 1 ≤ (x.length + C * (x.length + 1) ^ c + 1) ^ (D + c + 1) :=
-      Nat.one_le_pow _ _ (by omega)
-    calc K * (T x.length + 1) ≤ K * (T x.length +
-        (x.length + C * (x.length + 1) ^ c + 1) ^ (D + c + 1)) :=
-          Nat.mul_le_mul_left K (Nat.add_le_add_left hp _)
-      _ = _ := by dsimp [T]; ring
+  have hbudget : K * (T x.length + 1) ≤ K * (f + 1) *
+      (G x.length + (x.length + 1) ^ (c + 1) + 1) := by
+    rw [Nat.mul_assoc]
+    apply Nat.mul_le_mul_left K
+    dsimp only [T]
+    have e : (f + 1) * (G x.length + (x.length + 1) ^ (c + 1) + 1) =
+        f * G x.length + f * (x.length + 1) ^ (c + 1) + f + G x.length +
+          (x.length + 1) ^ (c + 1) + 1 := by ring
+    rw [e]
+    omega
   refine ⟨cfg, startup, ht.trans hbudget, hi, hend, hout, ?_⟩
   intro i hi
   obtain ⟨t, ht, hh⟩ := hr i (by omega)
   rw [enumCont_orbit _ i hi] at hh
   exact ⟨t, ht.trans hbudget, hh⟩
 
-/-- **Continuation frontier; admitted in this partial delivery.** There is one
-uniform finite machine with a polynomial startup and a polynomially bounded
-accept-or-advance segment for each exact-width candidate. The configuration
-after the last rejected candidate is a halted singleton rejection.
+/-- **The enumerator's configuration contract** (generalized verifier budget): one
+uniform finite machine, from its initial configuration, reaches the round of the first
+candidate within `b (Tv(n + w) + (n + w + 1)^{c+1})` steps (`w = C(n+1)^c`); each round
+either accepts (when `x ++ u ∈ V`) or advances to the next candidate within the same
+budget; after the last candidate it halts rejecting.
 
-**Proof sketch / remaining construction.** Evaluate `C(n+1)^c` and construct
-the all-false candidate while retaining the instance; assemble `x ++ u` on
-the virtual input buffer. Use `enumCapture_returns` for the captured call.
-On rejection, clear the bounded visited work region, reset all source and
-buffer heads and the captured bit, and use `enumCarry_correct` to increment.
-Its `enumBump_inc`/`enumInc_word` specification supplies the next rank or the
-overflow signal. Emit the single final answer only on acceptance or overflow.
-Prove the startup and per-round configuration equalities below with a uniform
-polynomial budget. These machine assembly and reset obligations are NOT
-discharged by the counter, capture, and abstract loop lemmas alone. -/
-private theorem enumMachine_contracts (C c a d : ℕ) (V : Language Bool)
-    (MV : FinTM Bool) (hV : MV.DecidesInTime V (fun n => a * (n + 1) ^ d)) :
-    ∃ (b e : ℕ) (E : FinTM Bool), ∀ x : List Bool,
+**Proof sketch.** Instantiate `enumCont_from_body` with the body of the original
+construction (unary width generator, captured verifier call on `x ++ u`, reversible
+cleanup, fixed-width increment), bounding its startup and round costs by
+`A (n + w + 1)^{c+1} + 3 Tv(n + w)`. -/
+private theorem enumMachine_contracts (C c : ℕ) (V : Language Bool) (Tv : ℕ → ℕ)
+    (MV : FinTM Bool) (hV : MV.DecidesInTime V Tv) :
+    ∃ (b : ℕ) (E : FinTM Bool), ∀ x : List Bool,
       ∃ (cfg : ℕ → Cfg E.k Bool E.State x) (startup : ℕ),
-        startup ≤ b * (x.length + C * (x.length + 1) ^ c + 1) ^ e ∧
+        startup ≤ b * (Tv (x.length + C * (x.length + 1) ^ c) +
+          (x.length + C * (x.length + 1) ^ c + 1) ^ (c + 1)) ∧
         E.tm.runFrom (E.tm.initCfg x) startup = cfg 0 ∧
         (cfg (2 ^ (C * (x.length + 1) ^ c))).state = none ∧
         (cfg (2 ^ (C * (x.length + 1) ^ c))).output = [false] ∧
         ∀ i, i < 2 ^ (C * (x.length + 1) ^ c) → ∃ t,
-          t ≤ b * (x.length + C * (x.length + 1) ^ c + 1) ^ e ∧
+          t ≤ b * (Tv (x.length + C * (x.length + 1) ^ c) +
+            (x.length + C * (x.length + 1) ^ c + 1) ^ (c + 1)) ∧
           if MultiTapeTM.indicator V (x ++ enumWord (C * (x.length + 1) ^ c) i) then
             (E.tm.runFrom (cfg i) t).state = none ∧
               (E.tm.runFrom (cfg i) t).output = [true]
@@ -2378,32 +2349,73 @@ private theorem enumMachine_contracts (C c a d : ℕ) (V : Language Bool)
   have hRB : R.k ≤ B.k := by dsimp [B, enumCont_sources]; omega
   have hUB : U.k ≤ B.k := by dsimp [B, enumCont_sources]; omega
   have hB : 0 < B.k := lt_of_lt_of_le hQ hQB
-  apply enumCont_from_body C c (3 * a + 3 * f + 3 * j + 60) (d + c + 2) V
-    (enumCont_bodyTM B qv qi false) (.inr 0)
-  · intro x
-    have hu := enumCont_lift_init U B hUB (fun q => .inr (.inr q))
-      (by intro q inp work; rfl) x (List.replicate (C * (x.length + 1) ^ c) true)
-      (f * (x.length + 1) ^ (c + 1)) (hU x)
-    obtain ⟨t, ht, hn, he⟩ := enumCont_body_start_guarded B hB qv qi x
-      (C * (x.length + 1) ^ c) (f * (x.length + 1) ^ (c + 1)) hu.1 hu.2
-    exact ⟨t, ht.trans (enumCont_common_bound a d f c j x.length
-      (C * (x.length + 1) ^ c)).1, hn, he⟩
-  · intro x s hs
-    obtain ⟨tv, htv, hhv, hov⟩ := enumCont_verifier_call MV V a d hV x s
-    obtain ⟨ti, hti, hhi, hoi⟩ := enumCont_increment_call I j hI x s
-    have hv := enumCont_lift_call Q B hQ hQB Sum.inl
-      (by intro q inp work; rfl) Q.tm.q₀ x s [MultiTapeTM.indicator V (x ++ s)] tv hhv hov
-    have hi := enumCont_lift_call R B hR hRB (fun q => .inr (.inl q))
-      (by intro q inp work; rfl) (.inl (some true)) x s ((incFixed s).getD []) ti hhi hoi
-    obtain ⟨t, htpos, ht, hn, he⟩ := enumCont_body_round_guarded B hB qv qi x s
-      (MultiTapeTM.indicator V (x ++ s)) tv ti hv hi
-    refine ⟨t, htpos, ?_, hn, he⟩
-    have hb := (enumCont_common_bound a d f c j x.length s.length).2
-    rw [hs] at hb
-    apply le_trans (show t ≤ 3 * (a * (x.length + s.length + 1) ^ d +
-      2 * (x.length + s.length) + 4) + 3 * ((j + 3) * (s.length + 1)) +
-      2 * x.length + 3 * s.length + 22 by omega)
-    simpa only [hs] using hb
+  let A := 3 * f + 3 * j + 60
+  let P := fun n => (n + C * (n + 1) ^ c + 1) ^ (c + 1)
+  let G := fun n => A * P n + 3 * Tv (n + C * (n + 1) ^ c)
+  have hP1 : ∀ n, n + C * (n + 1) ^ c + 1 ≤ P n := by
+    intro n
+    calc n + C * (n + 1) ^ c + 1 = (n + C * (n + 1) ^ c + 1) ^ 1 := (pow_one _).symm
+      _ ≤ P n := Nat.pow_le_pow_right (by omega) (by omega)
+  have hP2 : ∀ n, (n + 1) ^ (c + 1) ≤ P n := fun n => Nat.pow_le_pow_left (by omega) _
+  obtain ⟨b, E, hE⟩ := enumCont_from_body C c G V (enumCont_bodyTM B qv qi false) (.inr 0)
+    (by
+      intro x
+      have hu := enumCont_lift_init U B hUB (fun q => .inr (.inr q))
+        (by intro q inp work; rfl) x (List.replicate (C * (x.length + 1) ^ c) true)
+        (f * (x.length + 1) ^ (c + 1)) (hU x)
+      obtain ⟨t, ht, hn, he⟩ := enumCont_body_start_guarded B hB qv qi x
+        (C * (x.length + 1) ^ c) (f * (x.length + 1) ^ (c + 1)) hu.1 hu.2
+      refine ⟨t, ht.trans ?_, hn, he⟩
+      have h1 := hP1 x.length
+      have h2 := Nat.mul_le_mul_left f (hP2 x.length)
+      have e : (3 * f + 3 * j + 60) * P x.length =
+          3 * (f * P x.length) + 3 * (j * P x.length) + 60 * P x.length := by ring
+      show _ ≤ (3 * f + 3 * j + 60) * P x.length + 3 * Tv (x.length + C * (x.length + 1) ^ c)
+      rw [e]
+      have : 0 ≤ j * P x.length := Nat.zero_le _
+      omega)
+    (by
+      intro x s hs
+      obtain ⟨tv, htv, hhv, hov⟩ := enumCont_verifier_call MV V Tv hV x s
+      obtain ⟨ti, hti, hhi, hoi⟩ := enumCont_increment_call I j hI x s
+      have hv := enumCont_lift_call Q B hQ hQB Sum.inl
+        (by intro q inp work; rfl) Q.tm.q₀ x s [MultiTapeTM.indicator V (x ++ s)] tv hhv hov
+      have hi := enumCont_lift_call R B hR hRB (fun q => .inr (.inl q))
+        (by intro q inp work; rfl) (.inl (some true)) x s ((incFixed s).getD []) ti hhi hoi
+      obtain ⟨t, htpos, ht, hn, he⟩ := enumCont_body_round_guarded B hB qv qi x s
+        (MultiTapeTM.indicator V (x ++ s)) tv ti hv hi
+      refine ⟨t, htpos, ?_, hn, he⟩
+      have h1 := hP1 x.length
+      have h3 : (j + 3) * (s.length + 1) ≤ (j + 3) * P x.length :=
+        Nat.mul_le_mul_left _ (by rw [hs]; omega)
+      have ht' : t ≤ 3 * (Tv (x.length + s.length) + 2 * (x.length + s.length) + 4) +
+          3 * ((j + 3) * (s.length + 1)) + 2 * x.length + 3 * s.length + 22 := by omega
+      rw [hs] at ht' h3
+      have e : (3 * f + 3 * j + 60) * P x.length =
+          3 * (f * P x.length) + 3 * ((j + 3) * P x.length) + 51 * P x.length := by ring
+      show _ ≤ (3 * f + 3 * j + 60) * P x.length + 3 * Tv (x.length + C * (x.length + 1) ^ c)
+      rw [e]
+      have : 0 ≤ f * P x.length := Nat.zero_le _
+      omega)
+  refine ⟨b * (A + 3), E, fun x => ?_⟩
+  obtain ⟨cfg, startup, hst, hi, hend, hout, hr⟩ := hE x
+  have hbound : b * (G x.length + (x.length + 1) ^ (c + 1) + 1) ≤
+      b * (A + 3) * (Tv (x.length + C * (x.length + 1) ^ c) + P x.length) := by
+    rw [Nat.mul_assoc]
+    apply Nat.mul_le_mul_left b
+    have h1 := hP1 x.length
+    have h2 := hP2 x.length
+    show (A * P x.length + 3 * Tv (x.length + C * (x.length + 1) ^ c)) +
+      (x.length + 1) ^ (c + 1) + 1 ≤ (A + 3) * (Tv (x.length + C * (x.length + 1) ^ c) + P x.length)
+    have e : (A + 3) * (Tv (x.length + C * (x.length + 1) ^ c) + P x.length) =
+        A * Tv (x.length + C * (x.length + 1) ^ c) + 3 * Tv (x.length + C * (x.length + 1) ^ c) +
+          A * P x.length + 3 * P x.length := by ring
+    rw [e]
+    have : 0 ≤ A * Tv (x.length + C * (x.length + 1) ^ c) := Nat.zero_le _
+    omega
+  refine ⟨cfg, startup, hst.trans hbound, hi, hend, hout, fun i hi' => ?_⟩
+  obtain ⟨t, ht, hh⟩ := hr i hi'
+  exact ⟨t, ht.trans hbound, hh⟩
 
 /-! **Continuation completion note (batch E2-cont A).** The historical
 partial-fill descriptions above and below are retained under the statement
@@ -2415,24 +2427,28 @@ in-place candidate replacement, and positive first-return round contracts.
 catalog-generated `2^w-1` fuel, bounded rank orbit, terminal `2^w`, and
 uniform startup/round budgets. -/
 
-/-- Assuming the single machine-construction frontier, the proved loop
-invariant gives a decider with the audited exponential-times-polynomial
-budget. This lemma inherits exactly that pending admission.
-**Proof sketch.** Start the loop after initialization, apply `enumLoop_run`
-for all `2^width` candidates, and identify its Boolean answer using exact
-candidate coverage. Since `2^width ≥ 1`, startup is absorbed by doubling the
-coefficient. The final computation has exactly one output bit. -/
-private theorem enumDecider (C c a d : ℕ) (V : Language Bool)
-    (MV : FinTM Bool) (hV : MV.DecidesInTime V (fun n => a * (n + 1) ^ d)) :
-    ∃ (b e : ℕ) (E : FinTM Bool),
+/-- **Brute-force enumeration with an arbitrary-time verifier** [AB09, Claim 2.4, the
+enumeration argument]: if `MV` decides `V` within `Tv`, then some machine decides the
+existential projection `{x | ∃ u, |u| = C(|x|+1)^c ∧ x ++ u ∈ V}` within
+`b · 2^{C(n+1)^c} · (Tv(n + C(n+1)^c) + (n + C(n+1)^c + 1)^{c+1})`.
+
+**Proof sketch.** The loop combinator runs one round per candidate `u` of width
+`w = C(n+1)^c` (in fixed-width binary, starting from `0^w`); each round calls `MV` on
+the assembled input `x ++ u` (at most `Tv(n + w)` steps plus polynomial overhead),
+captures the verdict, restores the scratch tapes from a reversible log, and either halts
+accepting or increments `u`; after `2^w` rejecting rounds it halts rejecting. -/
+theorem exists_proj_decider (C c : ℕ) (V : Language Bool) (Tv : ℕ → ℕ)
+    (MV : FinTM Bool) (hV : MV.DecidesInTime V Tv) :
+    ∃ (b : ℕ) (E : FinTM Bool),
       E.DecidesInTime {x | ∃ u, u.length = C * (x.length + 1) ^ c ∧ x ++ u ∈ V}
-        (fun n => b * 2 ^ (C * (n + 1) ^ c) * (n + C * (n + 1) ^ c + 1) ^ e) := by
+        (fun n => b * 2 ^ (C * (n + 1) ^ c) *
+          (Tv (n + C * (n + 1) ^ c) + (n + C * (n + 1) ^ c + 1) ^ (c + 1))) := by
   classical
-  obtain ⟨b, e, E, hE⟩ := enumMachine_contracts C c a d V MV hV
-  refine ⟨2 * b, e, E, fun x => ?_⟩
+  obtain ⟨b, E, hE⟩ := enumMachine_contracts C c V Tv MV hV
+  refine ⟨2 * b, E, fun x => ?_⟩
   obtain ⟨cfg, startup, hstartup, hinit, hend, hout, hround⟩ := hE x
   let w := C * (x.length + 1) ^ c
-  let B := b * (x.length + w + 1) ^ e
+  let B := b * (Tv (x.length + w) + (x.length + w + 1) ^ (c + 1))
   let accept := fun i => MultiTapeTM.indicator V (x ++ enumWord w i)
   obtain ⟨t, ht, hh, ho⟩ := enumLoop_run E x cfg accept B 0 (2 ^ w)
     (by simpa only [Nat.zero_add] using And.intro hend hout)
@@ -2465,54 +2481,54 @@ private theorem enumDecider (C c a d : ℕ) (V : Language Bool)
   calc startup + t ≤ B + 2 ^ w * B := Nat.add_le_add hstartup ht
        _ ≤ 2 ^ w * B + 2 ^ w * B := Nat.add_le_add_right hB _
        _ = 2 * b * 2 ^ (C * (x.length + 1) ^ c) *
-           (x.length + C * (x.length + 1) ^ c + 1) ^ e := by dsimp [B, w]; ring
+           (Tv (x.length + C * (x.length + 1) ^ c) +
+             (x.length + C * (x.length + 1) ^ c + 1) ^ (c + 1)) := by dsimp [B, w]; ring
+
 
 /-- **`NP ⊆ EXP`** [AB09, Claim 2.4]: brute-force certificate enumeration.
 
 **Proof sketch.** Let `L ∈ NP` with certificate length exactly `Q n = C(n+1)^c`
 and verifier `V ∈ P` decided by machine `MV`. The deciding machine, on input
-`x` of length `n`: evaluate the explicit formula `Q n` (a polynomial-evaluation
-machine — a **new obligation**; the explicit formula is what makes the width
-computable at all, phase-1 audit finding 1 and question 4) and lay out a
-width-`Q n` all-`false` candidate certificate; in each round, assemble
-`x ++ u` on a buffer, run `MV`, accept if it accepts, else increment the
-candidate as a **fixed-width** counter and repeat, rejecting on width overflow
-after the `2^(Q n)`-th round. Enumeration is over certificates of exactly the
-definition's length — no majorant mismatch (audit question 4). The remaining
-machine obligations, named for the fill per phase-1 finding 5 and round-2
-finding 2: fixed-width increment with overflow detection (the private
-`counterInc` layer of `ClassP/TimeConstructible.lean` extends on overflow and
-is a template, not a citable API — promotion or private re-derivation is a
-fill-time decision); retention of `x` and the candidate across rounds;
-**a verifier-call simulation that captures `MV`'s decision bit in finite
-control, suppresses its physical emissions, and redirects its halt to the
-loop controller** — the output tape is append-only, so forwarding per-round
-emissions would accumulate (`[false, true]` across two rounds) and violate
-`DecidesInTime`'s singleton contract; the real output stays empty until the
-final answer (the capture-wrapper pattern of `Turing.universalCaptureTM` is
-the in-repo precedent); reset of `MV`'s simulated state, heads, work region,
-and the captured bit between rounds (a bounded region — each head moves at
-most one cell per step); and a timed loop invariant covering all of the above
-(the untimed `exists_cond` does not supply one; at `C = 0` the single round on
-the empty certificate still executes). Budget: at most `2^(Q n)` rounds of cost polynomial in
-`n + Q n + 1`, i.e. `a · 2^(Q n) (n + Q n + 1)^d ≤ 2^(n^e)` for a fixed degree
-`e`, small lengths absorbed into `DTIME`'s constant (the audit's own estimate):
-`L ∈ EXP`.
-+
-+**Partial-fill appendix.** The fixed-width carry, buffered captured-call
-+simulation, abstract timed-loop invariant, and final budget normalization
-+are proved below the class definitions. The machine's initialization,
-+reset, and controller assembly remain the single private admission
-+`enumMachine_contracts`; the present theorem still depends on `sorryAx`. -/
+`x` of length `n`: evaluate the explicit formula `Q n` (the explicit formula is
+what makes the width computable at all, phase-1 audit finding 1 and question 4)
+and lay out a width-`Q n` all-`false` candidate certificate; in each round,
+assemble `x ++ u` on a buffer, run `MV`, accept if it accepts, else increment
+the candidate as a **fixed-width** counter and repeat, rejecting on width
+overflow after the `2^(Q n)`-th round. Enumeration is over certificates of
+exactly the definition's length — no majorant mismatch (audit question 4). The
+verifier call is simulated with its decision bit captured in finite control, its
+physical emissions suppressed and its halt redirected to the loop controller, so
+the real output stays empty until the final answer (the output tape is
+append-only); `MV`'s simulated state, heads, work region and the captured bit are
+reset between rounds. This is the enumerator `Complexity.exists_proj_decider`
+(the fixed-width carry, buffered captured call, timed loop invariant and budget
+normalization are proved above), instantiated at `Tv = a (n+1)^d`. Budget: at
+most `2^(Q n)` rounds of cost polynomial in `n + Q n + 1`, i.e.
+`a · 2^(Q n) (n + Q n + 1)^d ≤ 2^(n^e)` for a fixed degree `e`, small lengths
+absorbed into `DTIME`'s constant: `L ∈ EXP`. -/
 theorem NP_subset_EXP : NP ⊆ EXP := by
   rintro L ⟨C, c, V, hV, hL⟩
   obtain ⟨a, d, MV, hMV⟩ := mem_P_iff.mp hV
-  obtain ⟨b, e, E, hE⟩ := enumDecider C c a d V MV hMV
-  obtain ⟨A, f, hbound⟩ := enumBudget_bound b C c e
+  obtain ⟨b, E, hE⟩ := exists_proj_decider C c V (fun n => a * (n + 1) ^ d) MV hMV
+  obtain ⟨A, f, hbound⟩ := enumBudget_bound (b * (a + 1)) C c (d + c + 1)
+  have hpoly : ∀ n : ℕ, b * 2 ^ (C * (n + 1) ^ c) *
+      (a * (n + C * (n + 1) ^ c + 1) ^ d + (n + C * (n + 1) ^ c + 1) ^ (c + 1)) ≤
+      b * (a + 1) * 2 ^ (C * (n + 1) ^ c) * (n + C * (n + 1) ^ c + 1) ^ (d + c + 1) := by
+    intro n
+    set X := n + C * (n + 1) ^ c + 1
+    have h1 : X ^ d ≤ X ^ (d + c + 1) := Nat.pow_le_pow_right (by omega) (by omega)
+    have h2 : X ^ (c + 1) ≤ X ^ (d + c + 1) := Nat.pow_le_pow_right (by omega) (by omega)
+    have h3 : a * X ^ d + X ^ (c + 1) ≤ (a + 1) * X ^ (d + c + 1) := by
+      have := Nat.mul_le_mul_left a h1
+      rw [Nat.add_mul, one_mul]; omega
+    calc b * 2 ^ (C * (n + 1) ^ c) * (a * X ^ d + X ^ (c + 1)) ≤
+        b * 2 ^ (C * (n + 1) ^ c) * ((a + 1) * X ^ (d + c + 1)) := Nat.mul_le_mul_left _ h3
+      _ = _ := by ring
   have heq : {x | ∃ u, u.length = C * (x.length + 1) ^ c ∧ x ++ u ∈ V} = L :=
     Set.ext (fun x => (hL x).symm)
   rw [heq] at hE
-  exact Set.mem_iUnion.mpr ⟨f, A, E, fun x => (hE x).mono (hbound x.length)⟩
+  exact Set.mem_iUnion.mpr ⟨f, A, E, fun x =>
+    (hE x).mono ((hpoly x.length).trans (hbound x.length))⟩
 
 /-! ### A3 exponential split and clean padding verifier
 The binary evaluator below is re-derived from the pinned `e3ShiftTM`

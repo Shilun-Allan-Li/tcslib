@@ -6,6 +6,7 @@ Authors: Seyoon Ragavan
 import Mathlib.Data.Fintype.EquivFin
 import Mathlib.Data.List.FinRange
 import Mathlib.Data.Nat.Bits
+import Mathlib.Data.Nat.Size
 import TCSlib.Complexity.TuringMachine.StateRenaming
 import TCSlib.Complexity.TuringMachine.Robustness.SingleTape
 
@@ -56,7 +57,7 @@ self-delimiting pairing used by the universal machine.
 * `Turing.CodeTM` — the code normal form; `Turing.CodeTM.toFinTM`;
   `Turing.CodeTM.serialize` — the fixed canonical serialization.
 * `Turing.pairEncode` — self-delimiting pairing (first component doubled bitwise,
-  separator `[false, true]`, second component verbatim).
+  separator `[false, true]`, second component verbatim); `Turing.dbl` — the doubling.
 * `Turing.MachineCode` — the algebraic representation-scheme laws [AB09, §1.4].
 * `Turing.EffectiveMachineCode` — a scheme together with an in-model machine
   computing `serialize ∘ decode`; the standing hypothesis of the universal machine.
@@ -65,6 +66,10 @@ self-delimiting pairing used by the universal machine.
 
 * `Turing.MachineCode.decode_encode` — decoding a code recovers the machine.
 * `Turing.pairEncode_injective` — the pairing is injective (aligned-pair parsing).
+* `Turing.length_pairEncode`, `Turing.pairEncode_eq_dbl`, `Turing.pairDecode_eq_none`,
+  `Turing.eq_pairEncode_of_pairDecode`, `Turing.pairEncode_replicate_inj` — the shape of
+  the pairing, shared by the machine-side developments.
+* `Turing.length_bits_le_self` — `|bits m| ≤ m`.
 * `Turing.computesFunInTime_pairEncode_diag` — the diagonal pairing `α ↦ ⟨α, α⟩` is
   computable in linear time (the only code computation the `HALT` reduction needs).
 * `Turing.exists_codeTM` — every one-work-tape binary machine is equivalent to a
@@ -142,6 +147,126 @@ theorem pairEncode_injective :
   intro p q h
   have := congrArg pairDecode h
   simpa only [pairDecode_pairEncode, Prod.mk.eta, Option.some.injEq] using this
+
+/-! ### Shape of the pairing
+
+Generic list facts about `pairEncode` and `pairDecode`, shared by the machine-side
+developments (the time hierarchy, the polynomial hierarchy, logspace machines, and
+the circuit-evaluation machines). -/
+
+/-- A word with every bit written twice — the first component of `Turing.pairEncode`. -/
+def dbl (w : List Bool) : List Bool := w.flatMap fun b => [b, b]
+
+/-- Doubling the empty word gives the empty word. -/
+@[simp] lemma dbl_nil : dbl [] = [] := rfl
+
+/-- Doubling `b :: w` is `b b` followed by doubling `w`. -/
+@[simp] lemma dbl_cons (b : Bool) (w : List Bool) : dbl (b :: w) = b :: b :: dbl w := rfl
+
+/-- Doubling a word doubles its length. -/
+@[simp] lemma length_dbl (w : List Bool) : (dbl w).length = 2 * w.length := by
+  induction w with
+  | nil => rfl
+  | cons b w ih => simp [ih]; ring
+
+/-- Both copies of bit `c` of a doubled word read `w[c]`. -/
+lemma getElem?_dbl (w : List Bool) (c : ℕ) (hc : c < w.length) (p : Bool) :
+    (dbl w)[2 * c + p.toNat]? = some w[c] := by
+  induction w generalizing c with
+  | nil => simp at hc
+  | cons b w ih =>
+    cases c with
+    | zero => cases p <;> simp
+    | succ c =>
+      have := ih c (by simpa using hc)
+      simp only [dbl_cons, List.getElem_cons_succ]
+      rw [show 2 * (c + 1) + p.toNat = (2 * c + p.toNat) + 1 + 1 by ring]
+      simpa using this
+
+/-- `pairEncode x y` is the doubled first word, the separator `[false, true]`, and the
+second word. -/
+lemma pairEncode_eq_dbl (x y : List Bool) : pairEncode x y = dbl x ++ [false, true] ++ y :=
+  rfl
+
+/-- The length of a pair: `|pairEncode x y| = 2|x| + 2 + |y|`. -/
+theorem length_pairEncode (x y : List Bool) :
+    (pairEncode x y).length = 2 * x.length + 2 + y.length := by
+  simp [pairEncode_eq_dbl]
+  omega
+
+/-- A string that is not a pair is a doubled word followed by a malformed tail: the end
+of the string, a lone bit, or the aligned pair `10`.
+
+**Proof sketch.** Functional induction along `pairDecode`: aligned `00`/`11` pairs extend
+the doubled prefix; in the remaining case the string matches none of `00`, `11`, `01`,
+so it is empty, a single bit, or starts with `10`. -/
+theorem pairDecode_eq_none (z : List Bool) (h : pairDecode z = none) :
+    ∃ w tail, z = dbl w ++ tail ∧
+      (tail = [] ∨ (∃ b, tail = [b]) ∨ ∃ r, tail = true :: false :: r) := by
+  induction z using pairDecode.induct with
+  | case1 xs ih =>
+    have h' : pairDecode xs = none := by simpa [pairDecode] using h
+    obtain ⟨w, tail, hw, ht⟩ := ih h'
+    exact ⟨false :: w, tail, by simp [hw], ht⟩
+  | case2 xs ih =>
+    have h' : pairDecode xs = none := by simpa [pairDecode] using h
+    obtain ⟨w, tail, hw, ht⟩ := ih h'
+    exact ⟨true :: w, tail, by simp [hw], ht⟩
+  | case3 xs => simp [pairDecode] at h
+  | case4 xs h₁ h₂ h₃ =>
+    refine ⟨[], xs, by simp, ?_⟩
+    rcases xs with _ | ⟨b, _ | ⟨c, r⟩⟩
+    · exact Or.inl rfl
+    · exact Or.inr (Or.inl ⟨b, rfl⟩)
+    · cases b <;> cases c
+      · exact absurd rfl (h₁ r)
+      · exact absurd rfl (h₃ r)
+      · exact Or.inr (Or.inr ⟨r, rfl⟩)
+      · exact absurd rfl (h₂ r)
+
+/-- A successfully decoded string is the pairing of its components.
+
+**Proof sketch.** Functional induction along `pairDecode`, inverting
+`pairDecode_pairEncode` one aligned pair at a time. -/
+theorem eq_pairEncode_of_pairDecode (z a b : List Bool) (h : pairDecode z = some (a, b)) :
+    z = pairEncode a b := by
+  induction z using pairDecode.induct generalizing a with
+  | case1 xs ih =>
+    cases hr : pairDecode xs with
+    | none => simp [pairDecode, hr] at h
+    | some p =>
+      rcases p with ⟨ys, tail⟩
+      simp only [pairDecode, hr, Option.map_some, Option.some.injEq, Prod.mk.injEq] at h
+      rcases h with ⟨rfl, rfl⟩
+      simpa [pairEncode] using congrArg (fun zs => false :: false :: zs) (ih ys hr)
+  | case2 xs ih =>
+    cases hr : pairDecode xs with
+    | none => simp [pairDecode, hr] at h
+    | some p =>
+      rcases p with ⟨ys, tail⟩
+      simp only [pairDecode, hr, Option.map_some, Option.some.injEq, Prod.mk.injEq] at h
+      rcases h with ⟨rfl, rfl⟩
+      simpa [pairEncode] using congrArg (fun zs => true :: true :: zs) (ih ys hr)
+  | case3 xs =>
+    simp only [pairDecode, Option.some.injEq, Prod.mk.injEq] at h
+    rcases h with ⟨rfl, rfl⟩
+    rfl
+  | case4 xs h₁ h₂ h₃ => simp [pairDecode] at h
+
+/-- A unary-first pair `⟨1ⁿ, u⟩` determines both `n` and `u`. -/
+lemma pairEncode_replicate_inj {n n' : ℕ} {u u' : List Bool}
+    (h : pairEncode (List.replicate n true) u = pairEncode (List.replicate n' true) u') :
+    n = n' ∧ u = u' := by
+  have := pairEncode_injective (a₁ := (List.replicate n true, u))
+    (a₂ := (List.replicate n' true, u')) h
+  simp only [Prod.mk.injEq] at this
+  obtain ⟨h1, h2⟩ := this
+  exact ⟨by simpa using congrArg List.length h1, h2⟩
+
+/-- The binary expansion of `m` has at most `m` bits. -/
+lemma length_bits_le_self (m : ℕ) : m.bits.length ≤ m := by
+  rw [Nat.size_eq_bits_len]
+  exact Nat.size_le.mpr Nat.lt_two_pow_self
 
 /-- Six-state pairing controller: double-stay, double-move, emit-true,
 first-left, rewind, and copy. The double-stay state's blank branch emits `false`. -/

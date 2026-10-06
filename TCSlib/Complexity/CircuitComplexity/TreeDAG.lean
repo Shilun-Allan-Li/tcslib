@@ -39,6 +39,7 @@ inputs) and `BoolCircuit.DAGCircuit` ([AB09, Def 6.1]) are related in both direc
   Cambridge University Press, 2009.  (§6.1; formulas as fan-out-one circuits.)
 -/
 
+set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
 set_option autoImplicit false
 
@@ -46,24 +47,7 @@ namespace BoolCircuit
 
 variable {n : ℕ}
 
-/-! ## Gate lists that read only earlier vertices -/
-
-/-- Every gate of `gs` reads only vertices below its own, `n` inputs coming first. -/
-def GatesAcyclic (n : ℕ) (gs : List DAGGate) : Prop :=
-  ∀ (i : ℕ) (h : i < gs.length), ∀ a ∈ (gs[i]).args, a < n + i
-
-theorem GatesAcyclic.nil : GatesAcyclic n [] := fun i h => absurd h (by simp)
-
-theorem GatesAcyclic.snoc {gs : List DAGGate} (h : GatesAcyclic n gs) {g : DAGGate}
-    (hg : ∀ a ∈ g.args, a < n + gs.length) : GatesAcyclic n (gs ++ [g]) := by
-  intro i hi a ha
-  rw [List.length_append, List.length_singleton] at hi
-  rcases Nat.lt_succ_iff_lt_or_eq.mp hi with hlt | rfl
-  · rw [List.getElem_append_left hlt] at ha
-    exact h i hlt a ha
-  · simp only [List.getElem_append_right (le_refl _), Nat.sub_self,
-      List.getElem_singleton] at ha
-    exact hg a ha
+/-! ## Vertex values and depths of a gate list -/
 
 /-- The value of vertex `v` after running `gs` on input `x`. -/
 def vertexValue (gs : List DAGGate) (x : Fin n → Bool) (v : ℕ) : Bool :=
@@ -73,36 +57,48 @@ def vertexValue (gs : List DAGGate) (x : Fin n → Bool) (v : ℕ) : Bool :=
 def vertexDepth (n : ℕ) (gs : List DAGGate) (v : ℕ) : ℕ :=
   (runWith DAGGate.depth gs (List.replicate n 0)).getD v 0
 
+/-- Appending gates does not change the value of an existing vertex: if `v` is below
+`n + gs.length` (an input or a gate of `gs`), its value under `gs ++ ext` equals its value
+under `gs`. -/
 theorem vertexValue_append (gs ext : List DAGGate) (x : Fin n → Bool) {v : ℕ}
     (hv : v < n + gs.length) : vertexValue (gs ++ ext) x v = vertexValue gs x v := by
   unfold vertexValue
   rw [runWith_append, runWith_getD_of_lt]
   simpa using hv
 
+/-- Appending gates does not change the depth of an existing vertex: if
+`v < n + gs.length`, its depth under `gs ++ ext` equals its depth under `gs`. -/
 theorem vertexDepth_append (gs ext : List DAGGate) {v : ℕ} (hv : v < n + gs.length) :
     vertexDepth n (gs ++ ext) v = vertexDepth n gs v := by
   unfold vertexDepth
   rw [runWith_append, runWith_getD_of_lt]
   simpa using hv
 
+/-- The value of the newly appended last vertex `n + gs.length` of `gs ++ [g]` is the
+gate `g` evaluated on the vertex values produced by `gs`. -/
 theorem vertexValue_last (gs : List DAGGate) (g : DAGGate) (x : Fin n → Bool) :
     vertexValue (gs ++ [g]) x (n + gs.length) =
       g.eval (runWith DAGGate.eval gs (List.ofFn x)) := by
   have := runWith_getD_last DAGGate.eval gs g (List.ofFn x) false
   simpa [vertexValue] using this
 
+/-- The depth of the newly appended last vertex `n + gs.length` of `gs ++ [g]` is the
+depth of `g` computed from the vertex depths produced by `gs` (one more than the
+deepest vertex it reads). -/
 theorem vertexDepth_last (gs : List DAGGate) (g : DAGGate) :
     vertexDepth n (gs ++ [g]) (n + gs.length) =
       g.depth (runWith DAGGate.depth gs (List.replicate n 0)) := by
   have := runWith_getD_last DAGGate.depth gs g (List.replicate n 0) 0
   simpa [vertexDepth] using this
 
+/-- The value of input vertex `i < n` is the input bit `x i`, whatever gates follow. -/
 theorem vertexValue_input (gs : List DAGGate) (x : Fin n → Bool) (i : Fin n) :
     vertexValue gs x i = x i := by
   unfold vertexValue
   rw [runWith_getD_of_lt _ _ _ (by simp)]
   simp
 
+/-- Every input vertex `i < n` has depth `0`, whatever gates follow. -/
 theorem vertexDepth_input (gs : List DAGGate) {i : ℕ} (hi : i < n) :
     vertexDepth n gs i = 0 := by
   unfold vertexDepth
@@ -125,10 +121,14 @@ private theorem foldr_max_le {l : List ℕ} {f : ℕ → ℕ} {B : ℕ} (h : ∀
     simp only [List.map_cons, List.foldr_cons]
     exact max_le (h a (by simp)) (ih fun b hb => h b (by simp [hb]))
 
+/-- An `∧`-node of a tree circuit evaluates to the conjunction (`List.all`) of its
+children's values. -/
 theorem TreeCircuit.eval_node_true (cs : List (TreeCircuit n)) (x : Fin n → Bool) :
     (TreeCircuit.node true cs).eval x = cs.all fun c => c.eval x := by
   rw [Bool.eq_iff_iff, TreeCircuit.eval_node_true_iff]; simp [List.all_eq_true]
 
+/-- An `∨`-node of a tree circuit evaluates to the disjunction (`List.any`) of its
+children's values. -/
 theorem TreeCircuit.eval_node_false (cs : List (TreeCircuit n)) (x : Fin n → Bool) :
     (TreeCircuit.node false cs).eval x = cs.any fun c => c.eval x := by
   rw [Bool.eq_iff_iff, TreeCircuit.eval_node_false_iff]; simp [List.any_eq_true]
@@ -158,10 +158,6 @@ def compileTrees (n : ℕ) : List (TreeCircuit n) → List DAGGate → List DAGG
     (r'.1, r.2 :: r'.2)
 end
 
-/-- A gate is well formed: no repeated input, and `¬` reads exactly one vertex. -/
-def DAGGate.WellFormed (g : DAGGate) : Prop :=
-  g.args.Nodup ∧ (g.kind = .not → g.args.length = 1)
-
 /-- What compiling one circuit guarantees. -/
 structure CompileSpec (n : ℕ) (c : TreeCircuit n) (gs : List DAGGate)
     (r : List DAGGate × ℕ) : Prop where
@@ -189,6 +185,19 @@ structure CompileListSpec (n : ℕ) (cs : List (TreeCircuit n)) (gs : List DAGGa
 private theorem drop_append_of_prefix {gs ext : List DAGGate} :
     (gs ++ ext).drop gs.length = ext := by simp
 
+/-- Correctness of compiling a list of tree circuits: if each circuit `c` in `cs`
+compiles correctly after any acyclic gate list (the `CompileSpec` invariants), then
+compiling `cs` in sequence after an acyclic `gs` meets `CompileListSpec`: it extends `gs`,
+stays acyclic, returns one in-range vertex per circuit holding that circuit's value, adds
+at most `sumSize cs` gates, each returned vertex has depth at most `maxDepth cs + 1`, and
+every new gate is well-formed with fan-in at most `max 1 (maxFaninL cs)`.
+
+**Proof sketch.** Induction on the list.  The empty list returns `gs` unchanged and no
+vertices.  For `c :: cs`, compile `c` after `gs` (hypothesis for `c`) and then `cs` after
+the result (induction hypothesis).  The second stage only appends gates, so the vertex
+for `c` keeps its value and depth (values/depths of existing vertices are stable under
+appending); the gate-count, depth and fan-in bounds add up or take maxima, matching
+`sumSize`, `maxDepth` and `maxFaninL` of the cons. -/
 theorem compileTrees_spec :
     ∀ (cs : List (TreeCircuit n)),
       (∀ c ∈ cs, ∀ gs, GatesAcyclic n gs → CompileSpec n c gs (compileTree n c gs)) →
@@ -237,6 +246,18 @@ theorem compileTrees_spec :
       · have := h2.new_gates g (by rw [he2]; simpa using hg)
         exact ⟨this.1, this.2.trans (by rw [TreeCircuit.maxFaninL_cons]; omega)⟩
 
+/-- Correctness of compiling one tree circuit: compiling `c` after an acyclic gate list
+`gs` yields an acyclic extension of `gs` and an in-range vertex that computes `c`, with
+at most `c.size` new gates, vertex depth at most `c.depth + 1`, and every new gate
+well-formed with fan-in at most `max 1 c.maxFanin` (the `CompileSpec` invariants).
+
+**Proof sketch.** Structural induction on `c`.  A positive literal returns its input
+vertex and adds nothing.  A negative literal appends one `¬` gate on its input vertex,
+of depth `1` and value the negated input.  A node first compiles its children (by
+`compileTrees_spec` and the induction hypothesis), then appends one `∧`/`∨` gate over
+the deduplicated child vertices: deduplication does not change `all`/`any`, so the gate
+computes the node's value; its depth is one more than the deepest child vertex, at most
+`maxDepth + 2 = depth + 1`; its fan-in is at most the number of children. -/
 theorem compileTree_spec (c : TreeCircuit n) :
     ∀ gs, GatesAcyclic n gs → CompileSpec n c gs (compileTree n c gs) := by
   induction c using TreeCircuit.ind with
@@ -331,6 +352,8 @@ def TreeCircuit.toDAG (c : TreeCircuit n) : DAGCircuit n where
   args_lt := (compileTree_spec c [] GatesAcyclic.nil).acyclic
   output_lt := (compileTree_spec c [] GatesAcyclic.nil).vertex_lt
 
+/-- The DAG compiled from a tree circuit computes the same Boolean function: for every
+input `x`, `c.toDAG.eval x = c.eval x`. -/
 theorem TreeCircuit.toDAG_eval (c : TreeCircuit n) (x : Fin n → Bool) :
     c.toDAG.eval x = c.eval x :=
   (compileTree_spec c [] GatesAcyclic.nil).value x
@@ -345,6 +368,8 @@ theorem TreeCircuit.toDAG_size_le (c : TreeCircuit n) : c.toDAG.size ≤ n + c.s
 theorem TreeCircuit.toDAG_depth_le (c : TreeCircuit n) : c.toDAG.depth ≤ c.depth + 1 :=
   (compileTree_spec c [] GatesAcyclic.nil).depth_le
 
+/-- The DAG compiled from a tree circuit is well-formed: every gate has duplicate-free
+arguments and every `¬` gate reads exactly one vertex. -/
 theorem TreeCircuit.toDAG_isWellFormed (c : TreeCircuit n) : c.toDAG.IsWellFormed := by
   intro g hg
   exact ((compileTree_spec c [] GatesAcyclic.nil).new_gates g (by simpa using hg)).1
@@ -357,9 +382,6 @@ theorem TreeCircuit.toDAG_isFaninTwo (c : TreeCircuit n) (hc : c.maxFanin ≤ 2)
   omega
 
 /-! ## DAG → Tree -/
-
-/-- The placeholder gate `gs.getD` returns out of range; never read in a circuit. -/
-def DAGGate.default : DAGGate := ⟨.and, []⟩
 
 /-- Unfold one gate whose inputs unfold by `t`, at polarity `pos`: `¬` flips the
 polarity, and a negated `∧` (`∨`) becomes an `∨` (`∧`) of negated children (De Morgan). -/
@@ -376,7 +398,7 @@ def unfoldVertex (n : ℕ) (gs : List DAGGate) : ℕ → ℕ → Bool → TreeCi
   | 0, _, _ => .node true []
   | fuel + 1, v, pos =>
     if h : v < n then .lit ⟨⟨v, h⟩, pos⟩
-    else unfoldGate (gs.getD (v - n) DAGGate.default) (unfoldVertex n gs fuel) pos
+    else unfoldGate (gs.getD (v - n) (constGate true)) (unfoldVertex n gs fuel) pos
 
 /-- Unfold a DAG circuit into a tree circuit, from its output. -/
 def DAGCircuit.toTree (C : DAGCircuit n) : TreeCircuit n :=
@@ -388,7 +410,8 @@ private theorem maxDepth_map {α : Type} (l : List α) (f : α → TreeCircuit n
   | nil => rfl
   | cons a l ih => simp [TreeCircuit.maxDepth_cons, ih]
 
-private theorem sumSize_map {α : Type} (l : List α) (f : α → TreeCircuit n) :
+/-- The total size of a mapped list of trees is the sum of the mapped sizes. -/
+theorem sumSize_map {α : Type} (l : List α) (f : α → TreeCircuit n) :
     TreeCircuit.sumSize (l.map f) = (l.map fun a => (f a).size).sum := by
   induction l with
   | nil => rfl
@@ -418,7 +441,14 @@ private theorem sum_le_card_mul {l : List ℕ} {f : ℕ → ℕ} {B : ℕ} (h : 
     simp only [List.map_cons, List.sum_cons, List.length_cons, Nat.succ_mul]
     have := h a (by simp); have := ih fun b hb => h b (by simp [hb]); omega
 
-/-- Unfolding a well-formed gate computes its value at the requested polarity. -/
+/-- Unfolding a well-formed gate computes its value at the requested polarity.
+
+**Proof sketch.** Case on the gate kind and the polarity.  At positive polarity an
+`∧` (`∨`) gate becomes an `∧` (`∨`) node of the positively unfolded arguments, which
+evaluates correctly by hypothesis.  At negative polarity De Morgan applies: `¬(⋀ aᵢ)`
+is the `∨` of the negated arguments and `¬(⋁ aᵢ)` the `∧` of them.  A `¬` gate has
+exactly one argument (well-formedness) and unfolds to that argument at flipped
+polarity. -/
 theorem unfoldGate_eval (g : DAGGate) (hg : g.WellFormed) (t : ℕ → Bool → TreeCircuit n)
     (vals : List Bool) (x : Fin n → Bool)
     (ht : ∀ a ∈ g.args, ∀ p : Bool,
@@ -473,6 +503,8 @@ theorem unfoldGate_depth_le (g : DAGGate) (hg : g.WellFormed) (t : ℕ → Bool 
   · obtain ⟨a, rfl⟩ : ∃ a, args = [a] := List.length_eq_one_iff.mp (hg.2 rfl)
     exact (ht a (by simp) _).trans (Nat.le_succ _)
 
+/-- Unfolding a well-formed gate with at most `k` arguments, whose argument trees all have
+fan-in at most `k`, gives a tree of fan-in at most `k`. -/
 theorem unfoldGate_maxFanin_le (g : DAGGate) (hg : g.WellFormed) (t : ℕ → Bool → TreeCircuit n)
     {k : ℕ} (hlen : g.args.length ≤ k) (ht : ∀ a ∈ g.args, ∀ p : Bool, (t a p).maxFanin ≤ k)
     (pos : Bool) : (unfoldGate g t pos).maxFanin ≤ k := by
@@ -487,6 +519,9 @@ theorem unfoldGate_maxFanin_le (g : DAGGate) (hg : g.WellFormed) (t : ℕ → Bo
   · obtain ⟨a, rfl⟩ : ∃ a, args = [a] := List.length_eq_one_iff.mp (hg.2 rfl)
     exact ht a (by simp) _
 
+/-- Size bound for unfolding a gate: if a well-formed gate has at most `k` arguments and
+every argument tree (at either polarity) has size at most `B`, the unfolded tree has size
+at most `1 + k * B`. -/
 theorem unfoldGate_size_le (g : DAGGate) (hg : g.WellFormed) (t : ℕ → Bool → TreeCircuit n)
     {k B : ℕ} (hlen : g.args.length ≤ k) (ht : ∀ a ∈ g.args, ∀ p : Bool, (t a p).size ≤ B) :
     ∀ pos, (unfoldGate g t pos).size ≤ 1 + k * B := by
@@ -512,7 +547,7 @@ namespace DAGCircuit
 variable (C : DAGCircuit n)
 
 private theorem getD_gates {i : ℕ} (hi : i < C.gates.length) :
-    C.gates.getD i DAGGate.default = C.gates[i] := List.getD_eq_getElem _ _ hi
+    C.gates.getD i (constGate true) = C.gates[i] := List.getD_eq_getElem _ _ hi
 
 /-- The args of the gate at vertex `v ≥ n`. -/
 private theorem args_lt_vertex {v : ℕ} (hn : ¬ v < n) (hv : v < n + C.gates.length) :
@@ -531,6 +566,9 @@ private theorem depthAt_lt_of_arg {v : ℕ} (hn : ¬ v < n) (hv : v < n + C.gate
   simp only [depthAt] at this ⊢
   omega
 
+/-- Correctness of unfolding a vertex: for a well-formed DAG and enough fuel (`v < fuel`),
+the tree obtained by unfolding vertex `v` at polarity `pos` evaluates to the vertex's
+value when `pos = true` and to its negation when `pos = false`. -/
 theorem unfoldVertex_eval (hwf : C.IsWellFormed) (x : Fin n → Bool) :
     ∀ (fuel v : ℕ) (pos : Bool), v < n + C.gates.length → v < fuel →
       (unfoldVertex n C.gates fuel v pos).eval x =
@@ -551,11 +589,15 @@ theorem unfoldVertex_eval (hwf : C.IsWellFormed) (x : Fin n → Bool) :
         (fun a ha p => unfoldVertex_eval hwf x fuel a p (by have := hargs a ha; omega)
           (by have := hargs a ha; omega)) pos
 
+/-- The tree circuit obtained by unfolding a well-formed DAG circuit computes the same
+Boolean function: `C.toTree.eval x = C.eval x` for every input `x`. -/
 theorem toTree_eval (hwf : C.IsWellFormed) (x : Fin n → Bool) :
     C.toTree.eval x = C.eval x := by
   rw [toTree, C.unfoldVertex_eval hwf x _ _ true C.output_lt (Nat.lt_succ_self _)]
   rfl
 
+/-- Unfolding vertex `v` of a well-formed DAG (with enough fuel, at either polarity)
+gives a tree of depth at most the depth of `v` in the DAG. -/
 theorem unfoldVertex_depth_le (hwf : C.IsWellFormed) :
     ∀ (fuel v : ℕ) (pos : Bool), v < n + C.gates.length → v < fuel →
       (unfoldVertex n C.gates fuel v pos).depth ≤ C.depthAt v
@@ -581,6 +623,8 @@ theorem unfoldVertex_depth_le (hwf : C.IsWellFormed) :
 theorem toTree_depth_le (hwf : C.IsWellFormed) : C.toTree.depth ≤ C.depth :=
   C.unfoldVertex_depth_le hwf _ _ _ C.output_lt (Nat.lt_succ_self _)
 
+/-- Unfolding any vertex of a well-formed DAG whose gates all read at most `k` vertices
+gives a tree of fan-in at most `k` (for any fuel and polarity). -/
 theorem unfoldVertex_maxFanin_le (hwf : C.IsWellFormed) {k : ℕ}
     (hk : ∀ g ∈ C.gates, g.args.length ≤ k) :
     ∀ (fuel v : ℕ) (pos : Bool), v < n + C.gates.length →
@@ -602,6 +646,15 @@ theorem toTree_maxFanin_le (hwf : C.IsWellFormed) {k : ℕ}
     (hk : ∀ g ∈ C.gates, g.args.length ≤ k) : C.toTree.maxFanin ≤ k :=
   C.unfoldVertex_maxFanin_le hwf hk _ _ _ C.output_lt
 
+/-- Size bound for unfolding a vertex: in a well-formed DAG whose gates read at most `k`
+vertices, unfolding vertex `v` (with enough fuel, at either polarity) gives a tree with
+at most `(k + 1) ^ d` nodes, where `d` is the depth of `v`.
+
+**Proof sketch.** Induction on the fuel.  An input vertex unfolds to a single literal,
+of size `1 ≤ (k + 1) ^ d`.  A gate vertex has depth `d ≥ 1`, and each vertex it reads is
+strictly shallower, so by induction each argument tree has size at most
+`(k + 1) ^ (d - 1)`.  Unfolding the gate gives size at most `1 + k (k + 1) ^ (d - 1)`,
+which is at most `(k + 1) (k + 1) ^ (d - 1) = (k + 1) ^ d`. -/
 theorem unfoldVertex_size_le (hwf : C.IsWellFormed) {k : ℕ}
     (hk : ∀ g ∈ C.gates, g.args.length ≤ k) :
     ∀ (fuel v : ℕ) (pos : Bool), v < n + C.gates.length → v < fuel →

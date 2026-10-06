@@ -55,7 +55,8 @@ ours adds `id` (needed for layer padding) and recovers `∨` by De Morgan. AB co
 input vertices in `|C|` and allows arbitrary DAGs; we count non-input nodes and
 require layering, costing `+n` and a factor `≤ s` respectively. AB writes
 `∃ c, ∀ n, |C n| ≤ n ^ c`; we write `∃ a k, ∀ n, size ≤ a * (n + 1) ^ k`, which
-repairs a degeneracy in AB's literal form (`n ^ c` forces `|C 0| ≤ 0`).
+repairs a degeneracy in AB's literal form (`n ^ c` forces `|C 0| ≤ 0`; over the book's DAG
+model the literal union is in fact empty, `Language.setOf_inSIZE_pow_eq_empty` in `PPoly.lean`).
 Further graph conventions, collected: a singleton output type does not forbid
 unused nodes on earlier layers; inputs may go unread; `Gate.inputs` need not be
 injective, so repeated wires are allowed — all harmless for computational

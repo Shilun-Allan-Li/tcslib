@@ -192,7 +192,13 @@ private def xorFuel : ℕ → List (TreeCircuit n × TreeCircuit n) → TreeCirc
   | _ + 1, [p] => p
   | k + 1, p :: q :: ps => xorFuel k (xorPairUp (p :: q :: ps))
 
-/-- The XOR tree computes the XOR, and its second component the negation. -/
+/-- The XOR tree computes the XOR, and its second component the negation.
+
+**Proof sketch.** Induction on the fuel `k`. With no pairs, or a single pair, the claim
+is immediate (the constant pair `(0, 1)`, resp. the given dual-rail pair). For two or
+more pairs, one round of pairing-up shrinks the list strictly, so the remaining fuel
+suffices; the round preserves the dual-rail invariant and the overall XOR, and the
+induction hypothesis on the paired-up list finishes. -/
 private theorem xorFuel_eval (x : Fin n → Bool) :
     ∀ (k : ℕ) (ps : List (TreeCircuit n × TreeCircuit n)), ps.length ≤ k →
       (∀ p ∈ ps, IsDual x p) →
@@ -215,7 +221,12 @@ private theorem xorFuel_eval (x : Fin n → Bool) :
       rw [ih.1, xorAll_xorPairUp x _ hd]
       exact ⟨rfl, ih.2⟩
 
-/-- The XOR tree has depth at most `2⌈log₂ m⌉ + 2` over its leaves. -/
+/-- The XOR tree has depth at most `2⌈log₂ m⌉ + 2` over its leaves.
+
+**Proof sketch.** Induction on the fuel `k`, following the recursion. The empty and
+singleton cases are direct. For a list of length `m ≥ 2`, one pairing round adds at most
+`2` to the leaf depth and maps length `m` to `⌈m/2⌉`, whose `⌈log₂⌉` is
+`⌈log₂ m⌉ - 1`; the induction hypothesis on the paired-up list then gives the bound. -/
 private theorem xorFuel_depth :
     ∀ (k : ℕ) (ps : List (TreeCircuit n × TreeCircuit n)), ps.length ≤ k →
       max (xorFuel k ps).1.depth (xorFuel k ps).2.depth

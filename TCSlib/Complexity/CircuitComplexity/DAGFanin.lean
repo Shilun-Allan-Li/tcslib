@@ -35,6 +35,7 @@ Two instances of the gate-rewriting pass of `DAGTransform.lean`.
   Cambridge University Press, 2009.  (§6.7.1, p. 118.)
 -/
 
+set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
 set_option autoImplicit false
 
@@ -50,20 +51,29 @@ def GateKind.op : GateKind → Bool → Bool → Bool
   | .or => (· || ·)
   | .not => fun a _ => !a
 
+/-- For an `∧` or `∨` gate of kind `k`, reading the concatenated input list `l₁ ++ l₂`
+yields the binary operation `k.op` applied to the values of the gates reading `l₁` and `l₂`
+separately (evaluated against the same vertex-value list). -/
 theorem DAGGate.eval_append {k : GateKind} (hk : k ≠ .not) (l₁ l₂ : List ℕ)
     (vals : List Bool) :
     (⟨k, l₁ ++ l₂⟩ : DAGGate).eval vals =
       k.op ((⟨k, l₁⟩ : DAGGate).eval vals) ((⟨k, l₂⟩ : DAGGate).eval vals) := by
   cases k <;> simp_all [DAGGate.eval, GateKind.op, List.all_append, List.any_append]
 
+/-- An `∧` or `∨` gate of kind `k` with exactly the two inputs `a`, `b` evaluates to
+`k.op` of the values of vertices `a` and `b` (missing vertices read as `false`). -/
 theorem DAGGate.eval_pair {k : GateKind} (hk : k ≠ .not) (a b : ℕ) (vals : List Bool) :
     (⟨k, [a, b]⟩ : DAGGate).eval vals = k.op (vals.getD a false) (vals.getD b false) := by
   cases k <;> simp_all [DAGGate.eval, GateKind.op]
 
+/-- An `∧` or `∨` gate with a single input `a` simply returns the value of vertex `a`
+(missing vertices read as `false`). -/
 theorem DAGGate.eval_singleton {k : GateKind} (hk : k ≠ .not) (a : ℕ) (vals : List Bool) :
     (⟨k, [a]⟩ : DAGGate).eval vals = vals.getD a false := by
   cases k <;> simp_all [DAGGate.eval]
 
+/-- Removing duplicate inputs does not change the value of an `∧` or `∨` gate: the gate
+reading `l.dedup` evaluates to the same bit as the gate reading `l`. -/
 theorem DAGGate.eval_dedup {k : GateKind} (hk : k ≠ .not) (l : List ℕ) (vals : List Bool) :
     (⟨k, l.dedup⟩ : DAGGate).eval vals = (⟨k, l⟩ : DAGGate).eval vals := by
   cases k
@@ -119,6 +129,21 @@ structure TreeSpec (n : ℕ) (k : GateKind) (vs : List ℕ) (gs : List DAGGate)
     Nat.clog 2 vs.length + 1 + (vs.map (vertexDepth n gs)).foldr max 0
   new_gates : ∀ h ∈ r.1.drop gs.length, h.kind = k ∧ h.args.Nodup ∧ h.args.length ≤ 2
 
+/-- Correctness of `emitTree`: for an `∧`/`∨` kind `k`, if `gs` is acyclic and every vertex of
+`vs` already exists, then emitting the balanced fan-in-two `k`-tree over `vs` after `gs`
+satisfies `TreeSpec` — it only appends to `gs`, stays acyclic, returns an existing vertex whose
+value is the fan-in-`|vs|` `k`-gate over `vs`, adds at most `treeCost |vs|` gates, raises the
+depth by at most `⌈log₂ |vs|⌉ + 1` over the deepest input, and every new gate is a `k`-gate
+with at most two distinct inputs.  [AB09, §6.7.1, p. 118]
+
+**Proof sketch.** Strong induction on `|vs|`.  With no leaf a single constant `k`-gate is
+emitted; with one leaf the leaf itself is returned and nothing is emitted.  Otherwise split
+`vs` into its first half and second half, build the two subtrees recursively (the second after
+the first), and append one `k`-gate reading both roots.  Its value is `k.op` of the two
+half-gates, which by associativity of `∧`/`∨` over concatenation is the gate over all of `vs`.
+The gate count is `treeCost` of each half plus one.  For depth, each half has length at most
+`⌈|vs|/2⌉`, so its tree has depth at most `⌈log₂ ⌈|vs|/2⌉⌉ + 1 = ⌈log₂ |vs|⌉` over its inputs,
+and the new root adds one more level. -/
 theorem emitTree_spec (k : GateKind) (hk : k ≠ .not) :
     ∀ (vs : List ℕ) (gs : List DAGGate), GatesAcyclic n gs → (∀ v ∈ vs, v < n + gs.length) →
       TreeSpec n k vs gs (emitTree n k vs gs)
@@ -234,13 +259,19 @@ def binarizeGadget (n : ℕ) (g : DAGGate) (gs : List DAGGate) : List DAGGate ×
   | .not => (gs ++ [g], n + gs.length)
   | k => emitTree n k g.args.dedup gs
 
-/-- Gates of the binarized circuit: well formed, fan-in at most two. -/
-def DAGGate.FaninTwo (g : DAGGate) : Prop :=
-  g.WellFormed ∧ g.args.length ≤ 2
-
+/-- The gate cost of a balanced tree over `k` leaves is at most `k + 2`. -/
 theorem treeCost_le (k : ℕ) : treeCost k ≤ k + 2 := by unfold treeCost; split_ifs <;> omega
 
-/-- The `∧`/`∨` case of the binarization gadget. -/
+/-- The `∧`/`∨` case of the binarization gadget: for an `∧`/`∨` gate of kind `k` with at most
+`K` existing inputs, the gadget meets `GadgetSpec` with depth increase `⌈log₂ K⌉ + 1`, cost
+fan-in plus two, and every new gate of fan-in two.
+
+**Proof sketch.** On an `∧`/`∨` gate the gadget is `emitTree` over the deduplicated inputs, so
+all fields come from `emitTree_spec`: the value agrees because deduplication does not change an
+`∧`/`∨` gate; the cost `treeCost` of the deduplicated list is at most fan-in plus two; the
+depth bound follows because the deduplicated list is no longer than `K` (so `⌈log₂⌉` is
+monotone) and its deepest input is among the original inputs; and each new `k`-gate has
+distinct inputs, at most two of them, and is not a `¬` gate. -/
 theorem binarizeGadget_andor (k : GateKind) (hk : k ≠ .not) (K : ℕ) (args : List ℕ)
     (gs : List DAGGate) (hgs : GatesAcyclic n gs) (hargs : ∀ a ∈ args, a < n + gs.length)
     (hK : args.length ≤ K) :
@@ -265,6 +296,14 @@ theorem binarizeGadget_andor (k : GateKind) (hk : k ≠ .not) (K : ℕ) (args : 
     obtain ⟨hkind, hnd, hlen⟩ := h.new_gates g hg
     exact ⟨⟨hnd, fun hn => absurd (hkind ▸ hn) hk⟩, hlen⟩
 
+/-- The binarization gadget is a correct gadget (in the sense of `GadgetCorrect`) with depth
+factor `⌈log₂ K⌉ + 1`: on every gate whose fan-in is at most `K` (and exactly one for `¬`),
+it emits only fan-in-two gates computing the same value, at cost at most fan-in plus two.
+[AB09, §6.7.1, p. 118]
+
+**Proof sketch.** Case on the gate kind.  A `¬` gate (with exactly one input) is copied
+unchanged: one new gate, depth increased by one, and it trivially has fan-in two.  An `∧` or
+`∨` gate is handled by `binarizeGadget_andor`, the balanced-tree case. -/
 theorem binarizeGadget_correct (K : ℕ) :
     GadgetCorrect n (Nat.clog 2 K + 1)
       (fun k l => (k = .not → l = 1) ∧ l ≤ K) DAGGate.FaninTwo (binarizeGadget n) := by
@@ -313,9 +352,13 @@ section Binarize
 
 variable (C : DAGCircuit n) (hwf : C.IsWellFormed)
 
+/-- Binarization preserves the function computed: on every input `x`, the binarized circuit
+outputs the same bit as `C`.  [AB09, §6.7.1, p. 118] -/
 theorem DAGCircuit.binarize_eval (x : Fin n → Bool) : (C.binarize hwf).eval x = C.eval x :=
   C.rewrite_eval _ _ _ x
 
+/-- The binarized circuit has fan-in two: every gate is well formed and reads at most two
+inputs.  [AB09, §6.7.1, p. 118] -/
 theorem DAGCircuit.binarize_isFaninTwo : (C.binarize hwf).IsFaninTwo :=
   ⟨fun g hg => (C.rewrite_new_gates _ _ _ g hg).1, fun g hg => (C.rewrite_new_gates _ _ _ g hg).2⟩
 
@@ -359,6 +402,18 @@ structure NotsSpec (n : ℕ) (as : List ℕ) (gs : List DAGGate) (r : List DAGGa
   depth_le : ∀ v ∈ r.2, vertexDepth n r.1 v ≤ 1 + (as.map (vertexDepth n gs)).foldr max 0
   new_gates : ∀ h ∈ r.1.drop gs.length, h.WellFormed ∧ h.kind = .not
 
+/-- Correctness of `emitNots`: if `gs` is acyclic and every vertex of `as` exists, then
+appending one `¬` gate per element of `as` satisfies `NotsSpec` — exactly `|as|` new gates,
+all well-formed `¬` gates, returning `|as|` distinct fresh vertices whose values are the
+negations of the values of `as` (in order) and whose depths exceed the deepest vertex of `as`
+by at most one.
+
+**Proof sketch.** Induction on `as`.  For `a :: as`, append the gate `¬ a` (its input exists,
+so acyclicity is preserved) and recurse on `as` after it.  The first returned vertex is the new
+gate, which is fresh (index `n + |gs|`) and evaluates to `¬ a`; its depth is one more than that
+of `a`.  The remaining vertices come from the induction hypothesis; since all of them lie at or
+after index `n + |gs| + 1`, they are distinct from the new one, and appending gates does not
+change the value or depth of previously existing vertices. -/
 theorem emitNots_spec : ∀ (as : List ℕ) (gs : List DAGGate), GatesAcyclic n gs →
     (∀ a ∈ as, a < n + gs.length) → NotsSpec n as gs (emitNots n as gs)
   | [], gs, hgs, _ => ⟨⟨[], by simp [emitNots]⟩, by simpa [emitNots] using hgs,
@@ -430,6 +485,17 @@ def deMorganGadget (n : ℕ) (g : DAGGate) (gs : List DAGGate) : List DAGGate ×
 def DAGGate.NoOr (K : ℕ) (g : DAGGate) : Prop :=
   g.WellFormed ∧ g.kind ≠ .or ∧ g.args.length ≤ max 1 K
 
+/-- The De Morgan gadget is a correct gadget (in the sense of `GadgetCorrect`) with depth
+factor `3`: on every gate whose fan-in is at most `K` (exactly one for `¬`), it emits only
+well-formed non-`∨` gates of fan-in at most `max 1 K` computing the same value, at cost at
+most fan-in plus two.
+
+**Proof sketch.** Case on the gate kind.  An `∧` gate is copied with deduplicated inputs
+(same value, depth increase one).  A `¬` gate is copied unchanged.  An `∨` gate over inputs
+`a₁,…,a_k` becomes `¬(¬a₁ ∧ ⋯ ∧ ¬a_k)` over the deduplicated inputs: `emitNots_spec` supplies
+the `k` negations, then one `∧` gate over them and one final `¬` gate are appended.  By
+De Morgan's law its value is `a₁ ∨ ⋯ ∨ a_k`; it uses `k + 2` gates and has depth at most three
+more than the deepest input. -/
 theorem deMorganGadget_correct (K : ℕ) :
     GadgetCorrect n 3 (fun k l => (k = .not → l = 1) ∧ l ≤ K) (DAGGate.NoOr K)
       (deMorganGadget n) := by
@@ -542,15 +608,22 @@ section DeMorgan
 
 variable (C : DAGCircuit n) (hwf : C.IsWellFormed)
 
+/-- De Morgan normalization preserves the function computed: on every input `x`, the
+normalized circuit outputs the same bit as `C`. -/
 theorem DAGCircuit.deMorgan_eval (x : Fin n → Bool) : (C.deMorgan hwf).eval x = C.eval x :=
   C.rewrite_eval _ _ _ x
 
+/-- The De Morgan-normalized circuit is well formed: every gate reads distinct inputs, and
+every `¬` gate reads exactly one. -/
 theorem DAGCircuit.deMorgan_isWellFormed : (C.deMorgan hwf).IsWellFormed :=
   fun g hg => (C.rewrite_new_gates _ _ _ g hg).1
 
+/-- The De Morgan-normalized circuit contains no `∨` gate: every gate is `∧` or `¬`. -/
 theorem DAGCircuit.deMorgan_kind_ne_or : ∀ g ∈ (C.deMorgan hwf).gates, g.kind ≠ .or :=
   fun g hg => (C.rewrite_new_gates _ _ _ g hg).2.1
 
+/-- De Morgan normalization increases size to at most `n + #gates · (size + 2)`, since each
+original gate is replaced by at most its fan-in plus two gates and fan-in is at most `size`. -/
 theorem DAGCircuit.deMorgan_size_le :
     (C.deMorgan hwf).size ≤ n + C.gates.length * (C.size + 2) := by
   have h1 := C.rewrite_length_le _ (deMorganGadget_correct C.size)
@@ -559,6 +632,7 @@ theorem DAGCircuit.deMorgan_size_le :
   simp only [DAGCircuit.size, DAGCircuit.deMorgan] at h1 h2 ⊢
   omega
 
+/-- De Morgan normalization at most triples the depth of the circuit. -/
 theorem DAGCircuit.deMorgan_depth_le : (C.deMorgan hwf).depth ≤ 3 * C.depth :=
   C.rewrite_depth_le _ _ _
 

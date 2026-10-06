@@ -53,7 +53,8 @@ are not what pushes us over; and a `k`-ary gate costs `1` here where AB's fan-in
 costs `k-1`, a saving large enough that the net excess over `n·2ⁿ - 1` is only
 `2ⁿ + 2`.  Same order as `n2ⁿ`, a larger number, and `2 ^ n * (n + 1) + 1` —
 attained at `f ≡ true` — is what is proved here.  [AB09, Exercise 6.1]'s sharper
-`O(2ⁿ/n)` is a different construction and is not attempted.
+`O(2ⁿ/n)` is a different construction, proved over the book's DAG model in `Lupanov.lean`
+(`BoolCircuit.exists_dagCircuit_faninTwo_mul_size_le`: `(n + 1) · size ≤ 40 · 2ⁿ`).
 
 ## Implementation notes
 

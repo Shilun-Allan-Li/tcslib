@@ -302,7 +302,14 @@ private theorem TreeCircuit.sumSize_add_length_le (m : ℕ) :
       simp only [TreeCircuit.sumSize_cons, List.length_cons, Nat.succ_mul]
       omega
 
-/-- A fan-in-2 circuit of depth `d` has at most `2 ^ (d + 1) - 1` nodes. -/
+/-- A fan-in-2 circuit of depth `d` has at most `2 ^ (d + 1) - 1` nodes.
+
+**Proof sketch.** Structural induction on the tree.  A literal has size `1` and depth `0`.  A
+node with at most two children, each of fan-in at most two, has children of depth at most
+`D` (the maximum child depth), so by induction each child contributes at most
+`2 ^ (D + 1) - 1` nodes.  Hence the node has at most `1 + 2 (2 ^ (D + 1) - 1) =
+2 ^ (D + 2) - 1` nodes, and its depth is `D + 1`; the cases of zero, one and two children are
+checked separately by linear arithmetic. -/
 theorem TreeCircuit.size_succ_le_two_pow : ∀ c : TreeCircuit n, c.maxFanin ≤ 2 →
     c.size + 1 ≤ 2 ^ (c.depth + 1) := by
   intro c

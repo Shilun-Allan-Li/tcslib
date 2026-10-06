@@ -6,6 +6,7 @@ Authors: Hydroxyi
 import Mathlib.Computability.Encoding
 import Mathlib.Computability.Language
 import TCSlib.Complexity.CircuitComplexity.CircuitSat
+import TCSlib.Complexity.CircuitComplexity.UnaryCode
 
 /-!
 # Encoding circuits, CKT-SAT as a language, and the clause count of Lemma 6.11
@@ -31,21 +32,22 @@ import TCSlib.Complexity.CircuitComplexity.CircuitSat
 
 ## Divergences from Arora–Barak §6.1.2 and §6.2
 
-**No `≤p` claim is made or supported here.** `≤p` is polynomial-*time*
-reducibility; no machine-level implementation of this reduction exists yet (the
-campaign's machine model and `P` live on this branch), so its cost is bounded
-nowhere and the time half of [AB09, Lem 6.11] remains unformalized, as `CircuitSat.lean` already records. What is added is a bound on
-the reduction's *output*, and only on its number of 3-clauses: the output's
-variable type `SATTo3SAT.AuxVar (BoolCircuit.CktVar n)` is infinite (`CktVar n`
-is indexed by all of `TreeCircuit n`), so no encoding of the output formula exists
-here and its bit length is not bounded.
+**No `≤p` claim is made here for the tree-circuit language.** `≤p` is
+polynomial-*time* reducibility. The book's CKT-SAT is over the DAG model, and there the
+full [AB09, Lem 6.11] is proved: `BoolCircuit.dagCktSatLang_polyTimeReducible_SAT3`
+(`CircuitSatReduction.lean`, on the descriptions `BoolCircuit.DAGCircuit.encode` of
+`Uniform.lean`). For the tree-circuit language `cktSatLang` of this file, what is added
+is only a bound on the reduction's *output*, and only on its number of 3-clauses: the
+output's variable type `SATTo3SAT.AuxVar (BoolCircuit.CktVar n)` is infinite (`CktVar n`
+is indexed by all of `TreeCircuit n`), so no encoding of the output formula exists here
+and its bit length is not bounded.
 
 AB's concrete representation ([AB09, p. 112]) is the `S × S` adjacency matrix of
 a size-`S` circuit's DAG plus an array of `S` gate labels, vertices identified
-with `[S]`.  `BoolCircuit.TreeCircuit` is a tree, and that representation is **not implemented**
-here: a finite tree could be numbered (preorder, say) and given an adjacency
-matrix, but no such numbering and none of the accessors `SIZE`/`TYPE`/`EDGE`
-are defined.  AB offers the matrix as "a concrete
+with `[S]`.  For the book's DAG model it is implemented by the `SIZE`/`TYPE`/`EDGE`
+languages of `LogspaceUniformAdjBasic.lean`.  `BoolCircuit.TreeCircuit` is a tree, and that
+representation is not used here: a finite tree could be numbered (preorder, say) and
+given an adjacency matrix, but no such numbering is defined for trees.  AB offers the matrix as "a concrete
 way", in a remark that [AB09, Def 6.14] "is robust to variations in how we
 represent circuits using strings" — a robustness AB asserts rather than proves,
 and which nothing below uses.  This file gives the concrete way for a tree: a
@@ -84,27 +86,11 @@ open SATTo3SAT
 
 /-! ## Serialising a circuit -/
 
-/-- `k` in unary: `k` `true`s terminated by a `false`. -/
-private def unaryBits (k : ℕ) : List Bool := List.replicate k true ++ [false]
-
-/-- Read one `unaryBits` block off the front of a bit string. -/
-private def readUnary : List Bool → Option (ℕ × List Bool)
-  | [] => none
-  | false :: rest => some (0, rest)
-  | true :: rest => (readUnary rest).map fun p => (p.1 + 1, p.2)
-
-/-- Reading back a `unaryBits` block returns its number and the untouched remainder. -/
-private theorem readUnary_unaryBits (k : ℕ) (rest : List Bool) :
-    readUnary (unaryBits k ++ rest) = some (k, rest) := by
-  induction k with
-  | zero => simp [unaryBits, readUnary]
-  | succ k ih => simpa [unaryBits, readUnary, List.replicate_succ] using ih
-
 /-- A circuit as a bit string: a leaf is `false`, its sign, its index in unary;
 a gate is `true`, its connective, then its children, each prefixed by `true` and
 the list terminated by `false`. -/
 def encodeCircuit {n : ℕ} : TreeCircuit n → List Bool
-  | .lit l => false :: l.sign :: unaryBits l.idx.val
+  | .lit l => false :: l.sign :: encodeNat l.idx.val
   | .node b cs => (true :: b :: (cs.flatMap fun c => true :: encodeCircuit c)) ++ [false]
 
 /-- The children block of a gate's encoding. -/
@@ -139,7 +125,7 @@ def readCircuit (n : ℕ) : ℕ → List Bool → Option (TreeCircuit n × List 
   | fuel + 1, bs =>
       match bs with
       | false :: s :: rest =>
-          match readUnary rest with
+          match decodeNat rest with
           | none => none
           | some (i, r) => if h : i < n then some (.lit ⟨⟨i, h⟩, s⟩, r) else none
       | true :: b :: rest =>
@@ -216,7 +202,7 @@ theorem readCircuit_encodeCircuit {n : ℕ} (C : TreeCircuit n) :
       | 0 => simp [encodeCircuit] at hf
       | f + 1 =>
           simp only [encodeCircuit, List.cons_append, readCircuit]
-          rw [readUnary_unaryBits]
+          rw [decodeNat_encodeNat]
           simp
   | hnode b cs ih =>
       intro fuel rest hf
@@ -232,12 +218,12 @@ theorem readCircuit_encodeCircuit {n : ℕ} (C : TreeCircuit n) :
 
 /-- An arity-tagged circuit as a bit string: the arity in unary, then the circuit. -/
 def encodeSigma : ((n : ℕ) × TreeCircuit n) → List Bool
-  | ⟨n, C⟩ => unaryBits n ++ encodeCircuit C
+  | ⟨n, C⟩ => encodeNat n ++ encodeCircuit C
 
 /-- Parse a bit string as an arity-tagged circuit, accepting only strings that
 re-encode to themselves. -/
 def decodeSigma (bs : List Bool) : Option ((n : ℕ) × TreeCircuit n) :=
-  match readUnary bs with
+  match decodeNat bs with
   | none => none
   | some (n, r) =>
       match readCircuit n r.length r with
@@ -248,7 +234,7 @@ def decodeSigma (bs : List Bool) : Option ((n : ℕ) × TreeCircuit n) :=
 theorem decodeSigma_encodeSigma (C : (n : ℕ) × TreeCircuit n) :
     decodeSigma (encodeSigma C) = some C := by
   obtain ⟨n, C⟩ := C
-  simp only [decodeSigma, encodeSigma, readUnary_unaryBits]
+  simp only [decodeSigma, encodeSigma, decodeNat_encodeNat]
   rw [show readCircuit n (encodeCircuit C).length (encodeCircuit C) = some (C, []) by
     simpa using readCircuit_encodeCircuit C (encodeCircuit C).length [] le_rfl]
   simp
@@ -312,10 +298,10 @@ theorem mem_cktSatLang_iff_exists (w : List Bool) :
 literal, and a string that encodes nothing. -/
 
 example : encodeSigma ⟨0, .node true []⟩ = [false, true, true, false] := by
-  simp [encodeSigma, encodeCircuit, unaryBits]
+  simp [encodeSigma, encodeCircuit, encodeNat]
 
 example : decodeSigma [false, true, true, false] = some ⟨0, .node true []⟩ := by
-  simp [decodeSigma, readUnary, readCircuit, readChildren, encodeSigma, encodeCircuit, unaryBits]
+  simp [decodeSigma, decodeNat, readCircuit, readChildren, encodeSigma, encodeCircuit, encodeNat]
 
 example : encodeSigma ⟨0, .node true []⟩ ∈ cktSatLang :=
   (mem_cktSatLang_iff _).mpr ⟨finZeroElim, by simp [TreeCircuit.eval]⟩
@@ -330,7 +316,7 @@ example : encodeSigma ⟨1, .lit ⟨0, true⟩⟩ ∈ cktSatLang :=
 
 example : ([] : List Bool) ∉ cktSatLang := by
   rintro ⟨C, hC, -⟩
-  simp [decodeSigma, readUnary] at hC
+  simp [decodeSigma, decodeNat] at hC
 
 /-! ## Clause count of the reduction to 3SAT -/
 
@@ -344,7 +330,7 @@ length, since each child contributes its own encoding and a continue bit. -/
 theorem size_le_length_encodeCircuit {n : ℕ} (C : TreeCircuit n) :
     C.size ≤ (encodeCircuit C).length := by
   induction C using TreeCircuit.ind with
-  | hlit l => simp [encodeCircuit, TreeCircuit.size, unaryBits]
+  | hlit l => simp [encodeCircuit, TreeCircuit.size, encodeNat]
   | hnode b cs ih =>
       have hlist : ∀ ds : List (TreeCircuit n), (∀ d ∈ ds, d.size ≤ (encodeCircuit d).length) →
           ds.foldr (fun d acc => d.size + acc) 0 ≤ (encodeChildren ds).length := by
@@ -367,7 +353,7 @@ theorem size_le_length_encodeSigma (C : (n : ℕ) × TreeCircuit n) :
     C.2.size ≤ (encodeSigma C).length := by
   obtain ⟨n, C⟩ := C
   have h := size_le_length_encodeCircuit C
-  simp only [encodeSigma, List.length_append, unaryBits, List.length_replicate,
+  simp only [encodeSigma, List.length_append, encodeNat, List.length_replicate,
     List.length_cons, List.length_nil]
   omega
 

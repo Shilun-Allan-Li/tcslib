@@ -53,7 +53,8 @@ the upper half carries over: `Language.InTreeSize.inSIZE` gives
 `TreeSize(T) ⊆ SIZE(n + 3 T)`.  DAG → tree (`DAGCircuit.toTree`) is exponential in depth,
 and a lower bound against formulas says nothing about circuits, so U10's hardness half does
 not carry over.  The hierarchy is therefore stated here over the model U9 and U10 live in,
-and `SIZE(T) ⊊ SIZE(T')` remains open: it needs a DAG-native counting argument.
+and `SIZE(T) ⊊ SIZE(T')` itself is not proved in the library: it needs a DAG-native
+counting argument (the counting half, [AB09, Thm 6.21], is `exists_hard_function_dag`).
 
 **The size measures also differ, in both directions.** `TreeCircuit.size` counts every node of a
 tree, so every literal *occurrence* costs a node and no gate can be reused, raising the count

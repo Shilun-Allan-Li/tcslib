@@ -131,11 +131,7 @@ theorem universal (c : EffectiveMachineCode) :
         omega
       · rw [MultiTapeTM.step_of_halt hs, MultiTapeTM.runFrom_of_halt _ hu]
         exact h
-    · -- Remaining obligation: execute one complete serialized-table lookup and
-      -- application block for a live source, with positive duration and the
-      -- code-dependent bound. Startup, boundary motion, and the two-clause
-      -- assembly are proved above; this concrete block proof remains open.
-      -- Completion (epoch 3B2): lift the proved interpreter block through capture.
+    · -- A live source: lift the proved interpreter block through capture.
       obtain ⟨p, tapes, heads, hp, rfl⟩ := h
       obtain ⟨d, p', hd, hB, hp', he⟩ := universal_live_block (c.decode α) α src p hp hs
       refine ⟨d, hd, hB, p', tapes, heads, hp', ?_⟩
@@ -2367,19 +2363,6 @@ private lemma timed_interpret_finishes (M : CodeTM) (α : List Bool) {x : List B
       · rw [MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_add, hreplay, hc]
         simpa only [timedAnswer, MultiTapeTM.runFrom_succ_eq_step] using hfinish
 
-/-- The binary clock's width is bounded even at deadline zero. -/
-private lemma timed_bits_length (t : ℕ) : t.bits.length ≤ t := by
-  induction t using Nat.binaryRec' with
-  | zero => simp
-  | bit b t ht ih =>
-    rw [Nat.bits_append_bit t b ht, List.length_cons]
-    cases b with
-    | false =>
-      have hn : t ≠ 0 := by intro h; have hh := ht h; cases hh
-      simp only [Nat.bit_val]
-      omega
-    | true => change t.bits.length + 1 ≤ 2 * t + 1; omega
-
 /-- The five fresh lanes are table, state, simulated work, input marker, and output. -/
 private def timedFive {A : Type} (core : Fin 4 → A) (buffer : A) : Fin 5 → A :=
   fun i => if i = 0 then core 0 else if i = 1 then core 1 else
@@ -2777,7 +2760,7 @@ private lemma timed_computes (c : EffectiveMachineCode) (α x : List Bool) (t : 
     (Nat.bits t) (timed_header_bound (c.decode α)) (timedValue_bits t)
   have htime : s + d ≤
       (timedStartupBound c α + universalBlockBound c α + 14) * (t + 1) ^ 2 := by
-    apply timed_cost_bound _ _ _ _ _ _ (timed_bits_length t) hs
+    apply timed_cost_bound _ _ _ _ _ _ (length_bits_le_self t) hs
     simpa only [universalBlockBound, MultiTapeTM.initCfg, Cfg.init, List.length_nil,
       Nat.mul_zero, Nat.add_zero] using hd
   have hcompute : (timedUniversalTM c).ComputesInTime

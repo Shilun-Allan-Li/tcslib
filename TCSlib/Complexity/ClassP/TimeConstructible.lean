@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Seyoon Ragavan
 -/
 import Mathlib.Data.Nat.Bits
-import TCSlib.Complexity.TuringMachine.Finite
+import TCSlib.Complexity.TuringMachine.Encoding
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -118,15 +118,6 @@ private lemma counterInc_length (bs : List Bool) :
   | nil => simp [counterInc, counterCarry]
   | cons b bs ih =>
     cases b <;> simp only [counterInc, counterCarry, List.length_cons] <;> omega
-
-/-- The final emission uses at most `n` symbol-writing steps. -/
-private lemma counter_bits_length (n : ℕ) : n.bits.length ≤ n := by
-  induction n with
-  | zero => simp
-  | succ n ih =>
-    rw [← counterInc_bits]
-    have := (counterInc_length n.bits).1
-    omega
 
 /-- One carry transition, with the first transition also advancing the input. -/
 private def counterBump (d : SignType) (w : Option Bool) : Action 1 Bool (Fin 4) :=
@@ -450,7 +441,7 @@ theorem timeConstructible_id : TimeConstructible id := by
     · rw [MultiTapeTM.runFrom_add, hstart]; exact he.1
     · rw [MultiTapeTM.runFrom_add, hstart]; exact he.2
   apply hbase.mono
-  have hl := counter_bits_length x.length
+  have hl := Turing.length_bits_le_self x.length
   change (t + 1) + (x.length.bits.length + 1) ≤ 5 * (x.length + 1)
   omega
 
