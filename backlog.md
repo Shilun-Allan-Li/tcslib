@@ -650,7 +650,7 @@ The machine-facing Chapter-6 bridge theorems this section used to list are all
   (`Complexity.UHALT_not_mem_P`, `UHaltMachine.lean`).
 * Lem 6.10 / 6.11 — `BoolCircuit.dagCktSatLang_NPComplete`,
   `BoolCircuit.dagCktSatLang_polyTimeReducible_SAT3`, and Cook–Levin via circuits
-  `Complexity.SAT3_NPComplete_viaCircuits`; CKT-SAT `∈ NP` is
+  `Complexity.SAT3_NPHard_viaCircuits` (the p. 111 alternative proof); CKT-SAT `∈ NP` is
   `BoolCircuit.dagCktSatLang_mem_NP`, circuit evaluation `BoolCircuit.CVAL_mem_P`.
 * Remark 6.7, Thm 6.13 — `Complexity.tabFamily_isPUniform`,
   `Language.mem_P_iff_exists_isPUniform`; Def 6.14, Thm 6.15 and the logspace half of
