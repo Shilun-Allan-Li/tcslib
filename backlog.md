@@ -457,8 +457,22 @@ uncomputability chapter.
   genuine `initCfg` startup → ordered controller with common budget
   `P` (≠ `T`, ≠ producer ledger) → `clEmitter_of_body` +
   `clTableau_chunks` output identity → pure equisatisfiability;
-  sanctioned checkpoint only at the proved output identity. → 4A-5
-  brief → 4B → the epoch-3/4 audit → E5 closure.
+  sanctioned checkpoint only at the proved output identity.
+  **4A CLOSED 2026-10-06** (Codex `57507830`+`06ce95fa`): the
+  five-target completion gate passes — Cook–Levin machine-checked
+  end to end on the campaign's own audited model; `SAT_NPHard`,
+  `SAT_NPComplete`, `SAT3_NPHard`, `SAT3_NPComplete` all empty
+  roots at the standard triple; `Hardness.lean` admission-free
+  (9,937 lines, 618 privates — THE prime routine-layer retrofit
+  target); net deletions = exactly the four authorized `sorry`
+  bodies; no-allowlist traversal 1550 decls / 0 sorryAx / surface =
+  five theorems (`audits/logs/e4A5-closure-*`,
+  `audits/programs/ch2-e4A5-ClosureAxioms.lean`). **Ledger 58/59;
+  tree at 1 admission** (`TAUTOLOGY_coNPComplete`). → 4B brief
+  (new DNF names binding) → the epoch-3/4 audit pack (ride-alongs
+  queued: colleague's DNF adaptation, the parallel-run provenance,
+  the discarded α hash) → E5 closure → the machine-routine layer
+  + retrofit (recorded decisions).
   Subsumes 2C's
   `prefixTM`/`fixedPair` promotion requests. Dedup of superseded batch
   privates is an E5 closure task. Mathlib TM2 rejected as substrate
