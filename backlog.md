@@ -484,8 +484,14 @@ uncomputability chapter.
   0 majors cumulative; findings/resolutions on record)
   (ride-alongs included: colleague's DNF adaptation, the parallel-run
   provenance, the discarded α hash, **colleague merge #2's 9-module
-  private rewiring + the 57→65 order extension**) → E5 closure → the
-  machine-routine layer + retrofit (recorded decisions).
+  private rewiring + the 57→65 order extension**) → E5 closure — **phase 1 complete 2026-10-06**
+  (dedup 153 privates, drift attestation CLEAN, closure pack,
+  zero-sorry sweep + traversal PASS); **phase 2 (blueprint
+  increment) pending a user decision on the dep-graph refresh**
+  (stale `dep_graph.json`; refresh needs the banned build —
+  options: one-off artifact build in a throwaway worktree, or
+  defer past the main merge) → the machine-routine layer +
+  retrofit (recorded decisions).
   Subsumes 2C's
   `prefixTM`/`fixedPair` promotion requests. Dedup of superseded batch
   privates is an E5 closure task — **auditor-adopted live/dead guidance (epoch-3/4 round 1, finding 14)**: `clFill*` → producer path is LIVE; `clCertificateCall` and `clTrack_schedule` dead at source; `e3c*` mixed (`e3c_bits_injective` live); SAT's max-pass prefix live; dedup from a kernel-derived inventory, never by prefix or checkpoint label. Also queued for the retrofit: the 11 disclosed generated kernel artifacts (imported-definition equation lemmas + the private-structure `deriving` instance in SAT.lean). Mathlib TM2 rejected as substrate
