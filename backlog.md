@@ -428,7 +428,22 @@ uncomputability chapter.
   search with a sequential-access ledger), genuine `initCfg`
   startup, the ordered emission controller under common budget
   `P` ≠ `T`, and the output-identity-then-equisatisfiability
-  close. → 4A-3 brief → 4B → the epoch-3/4 audit → E5 closure.
+  close. **4A-3 brief issued and the recording checkpoint
+  integrated 2026-10-06** (Codex `9f1808a6`): **150 more proved
+  privates** — the stored inclusive trajectory (`clRec_complete`,
+  rows `0..T`, silence + `(4l+7)(T+1)²` cost + `2l(T+1)²` length),
+  signed/clamped tracking, the cross-sum comparator, the charged
+  sequential field reader — no target closed, zero new admissions,
+  tree still at **5 admissions**, ledger **54/59**; Hardness.lean
+  4,471 lines (exception continues); three-pass traversal 757
+  decls / 4 roots / kernel surface = the five theorems
+  (`audits/logs/e4A3-checkpoint-*`). **4A-4 frontier (still step 1,
+  components complete — producer assembly is the minimum bar)**:
+  header unpacking, row loader + greatest-strictly-earlier search
+  with scratch resets and one charged ledger, the complete
+  producer, then startup, the controller under `P` ≠ `T`, output
+  identity, equisatisfiability. → 4A-4 brief → 4B → the epoch-3/4
+  audit → E5 closure.
   Subsumes 2C's
   `prefixTM`/`fixedPair` promotion requests. Dedup of superseded batch
   privates is an E5 closure task. Mathlib TM2 rejected as substrate
