@@ -8054,38 +8054,49 @@ private lemma clA5Drop_native {s u : List Bool → List Bool}
     simp [List.tail_drop]
 
 /-- Both decoded field components are bounded by the complete source word,
-including malformed input and an empty default. This is a storage estimate. -/
+including malformed input and an empty default. This is a storage estimate.
+**Proof sketch.** Strong induction on input length handles each two-bit
+parser prefix; recursive branches consume two bits before the smaller call.
+This local induction avoids generating an imported public induction theorem. -/
 private lemma clA5Pair_sizes (w : List Bool) :
     (clHeaderField 0 w).length ≤ w.length ∧ (clHeaderTail 1 w).length ≤ w.length := by
-  have h : ∀ w : List Bool, ∀ a b, pairDecode w = some (a,b) →
-      a.length + b.length ≤ w.length := by
-    intro w
-    induction w using pairDecode.induct with
-    | case1 rest ih =>
-      intro a b he
-      cases hd : pairDecode rest with
-      | none => simp [pairDecode, hd] at he
-      | some p =>
-        have hp := ih p.1 p.2 hd
-        simp only [pairDecode, hd, Option.map_some, Option.some.injEq, Prod.mk.injEq] at he
-        rcases he with ⟨rfl, rfl⟩
-        simp only [List.length_cons]; omega
-    | case2 rest ih =>
-      intro a b he
-      cases hd : pairDecode rest with
-      | none => simp [pairDecode, hd] at he
-      | some p =>
-        have hp := ih p.1 p.2 hd
-        simp only [pairDecode, hd, Option.map_some, Option.some.injEq, Prod.mk.injEq] at he
-        rcases he with ⟨rfl, rfl⟩
-        simp only [List.length_cons]; omega
-    | case3 rest =>
-      intro a b he
-      simp only [pairDecode, Option.some.injEq, Prod.mk.injEq] at he
-      rcases he with ⟨rfl, rfl⟩
-      simp only [List.length_nil, List.length_cons, zero_add]
-      omega
-    | case4 w hw => intro a b he; simp [pairDecode, hw] at he
+  have haux : ∀ n, ∀ w : List Bool, w.length = n → ∀ a b,
+      pairDecode w = some (a, b) → a.length + b.length ≤ w.length := by
+    intro n
+    induction n using Nat.strong_induction_on with
+    | h n ih =>
+      intro w hn a b he
+      cases w with
+      | nil => simp [pairDecode] at he
+      | cons c w =>
+        cases w with
+        | nil => cases c <;> simp [pairDecode] at he
+        | cons d rest =>
+          have hsmall : rest.length < n := by simp only [List.length_cons] at hn; omega
+          have ihrest := ih rest.length hsmall rest rfl
+          cases c <;> cases d
+          · cases hd : pairDecode rest with
+            | none => simp [pairDecode, hd] at he
+            | some p =>
+              have hp := ihrest p.1 p.2 hd
+              simp only [pairDecode, hd, Option.map_some, Option.some.injEq, Prod.mk.injEq] at he
+              rcases he with ⟨rfl, rfl⟩
+              simp only [List.length_cons]
+              omega
+          · simp only [pairDecode, Option.some.injEq, Prod.mk.injEq] at he
+            rcases he with ⟨rfl, rfl⟩
+            simp only [List.length_nil, List.length_cons, zero_add]
+            omega
+          · simp [pairDecode] at he
+          · cases hd : pairDecode rest with
+            | none => simp [pairDecode, hd] at he
+            | some p =>
+              have hp := ihrest p.1 p.2 hd
+              simp only [pairDecode, hd, Option.map_some, Option.some.injEq, Prod.mk.injEq] at he
+              rcases he with ⟨rfl, rfl⟩
+              simp only [List.length_cons]
+              omega
+  have h (w : List Bool) := haux w.length w rfl
   cases hd : pairDecode w with
   | none => simp [clHeaderField, clHeaderTail, hd]
   | some p =>
@@ -8505,17 +8516,21 @@ private lemma clA5Compare_compute (w : Fin 4 → List Bool) :
     rw [hv] at hstate
     have hb : b = v := Sum.inr.inj (Sum.inr.inj (Sum.inr.inj (Option.some.inj hstate)))
     exact hf j hj (by rw [hb]; exact hv)
+  have actionid (act : Action A.k Bool A.State) : Action.mapState id act = act := by
+    delta Action.mapState
+    simp only [Option.map_id]
+    rfl
   have run := clMap_run A.tm clA5CompareTM.tm id
     (fun q => ∀ v, q ≠ ret v) (by
       intro q hq inp work
       cases q with
-      | inl q => simp [clA5CompareTM, A, Action.mapState]
+      | inl q => rw [actionid]; rfl
       | inr q =>
         cases q with
-        | inl q => simp [clA5CompareTM, A, Action.mapState]
+        | inl q => rw [actionid]; rfl
         | inr q =>
           cases q with
-          | inl q => simp [clA5CompareTM, A, Action.mapState]
+          | inl q => rw [actionid]; rfl
           | inr v => exact False.elim (hq v rfl))
     (A.tm.initCfg arg) t (by intro j hj q hq v heq; subst q; exact guard j hj v hq)
   have mapid (cfg : Cfg A.k Bool A.State arg) : cfg.mapState id = cfg := by
@@ -9355,6 +9370,418 @@ private lemma clA5OutputIdentity (M : FinTM Bool) (code : CLFieldCode (Option M.
   exact clA5Output_of_nativeChunk M code C e c A d (clA5Emit M code)
     (clA5Emit_native M code) (fun x i _ => clA5Emit_exact M code C e c A d x i)
 
+/-! Pure correctness begins only after `clA5OutputIdentity`. Every block
+below remains a raw bit vector until its equality with an encoded genuine
+snapshot has been proved. -/
+
+/-- The raw snapshot block selected by a total SAT assignment. -/
+private def clA5Block (M : FinTM Bool) (code : CLFieldCode (Option M.State))
+    (m : ℕ) (a : ℕ → Bool) (t : ℕ) : Fin (clWidth M code) → Bool :=
+  fun i => a (clPack m (clWidth M code) t i.val)
+
+/-- Exact bit-level meaning of one wired protected template. -/
+private noncomputable def clA5Meaning (M : FinTM Bool) (code : CLFieldCode (Option M.State))
+    (kind : CLTemplateKind M.k) (m s t p : ℕ) (a : ℕ → Bool) : Prop :=
+  let source := clBlockDecode M code (clA5Block M code m a s)
+  let target := clA5Block M code m a t
+  match kind with
+  | CLTemplateKind.initial present => target = clBlockEncode M code
+      ⟨some M.tm.q₀, if present then some (a p) else none, fun _ => none⟩
+  | CLTemplateKind.state => clStateSlice M code target = (CLFieldCode.enc code) (stepState M source)
+  | CLTemplateKind.input present => clInputSlice M code target =
+      clSymbolCode (if present then some (a p) else none)
+  | CLTemplateKind.work τ previous => clWorkSlice M code target τ =
+      clSymbolCode (if previous then writtenOrKept M source τ else none)
+  | CLTemplateKind.accept => emitted M source ≠ some false
+
+/-- Wiring exposes the source and target raw blocks and the selected input
+bit exactly. Template satisfaction therefore means bitwise equations, never
+merely equality of decoded snapshots. -/
+private lemma clA5Group_eval (M : FinTM Bool) (code : CLFieldCode (Option M.State))
+    (kind : CLTemplateKind M.k) (m s t p : ℕ) (a : ℕ → Bool) :
+    (clGroup M code kind m s t p).eval a = true ↔ clA5Meaning M code kind m s t p a := by
+  classical
+  let B := clWidth M code
+  let window := fun j : Fin (2 * B + 1) => a (clWire m B s t p j.val)
+  have hs : clSourceBits B window = clA5Block M code m a s := by
+    funext i
+    simp [clSourceBits, window, clWire, clA5Block, B, i.isLt]
+  have ht : clTargetBits B window = clA5Block M code m a t := by
+    funext i
+    have h1 : ¬B + i.val < B := by omega
+    have h2 : B + i.val < 2 * B := by omega
+    simp [clTargetBits, window, clWire, clA5Block, h1, h2, B]
+  have hp : clWindowBit B window = a p := by
+    have h1 : ¬2 * B < B := by omega
+    simp [clWindowBit, window, clWire, h1]
+  unfold clGroup
+  rw [clTemplate_eval]
+  change clPredicate M code kind window = true ↔ _
+  unfold clPredicate
+  change (match kind with
+    | CLTemplateKind.initial present => decide (clTargetBits B window = clBlockEncode M code
+        ⟨some M.tm.q₀, if present then some (clWindowBit B window) else none, fun _ => none⟩)
+    | CLTemplateKind.state => decide (clStateSlice M code (clTargetBits B window) =
+        (CLFieldCode.enc code) (stepState M (clBlockDecode M code (clSourceBits B window))))
+    | CLTemplateKind.input present => decide (clInputSlice M code (clTargetBits B window) =
+        clSymbolCode (if present then some (clWindowBit B window) else none))
+    | CLTemplateKind.work τ previous => decide (clWorkSlice M code (clTargetBits B window) τ =
+        clSymbolCode (if previous then writtenOrKept M (clBlockDecode M code (clSourceBits B window)) τ else none))
+    | CLTemplateKind.accept => decide (emitted M (clBlockDecode M code (clSourceBits B window)) ≠ some false)) = true ↔ _
+  rw [hs, ht, hp]
+  cases kind <;> simp only [clA5Meaning, decide_eq_true_eq]
+
+/-- Flattening clause groups conjoins exactly their evaluations. -/
+private lemma clA5Flatten_eval (gs : List (Std.Sat.CNF ℕ)) (a : ℕ → Bool) :
+    Std.Sat.CNF.eval a gs.flatten = true ↔ ∀ g ∈ gs, g.eval a = true := by
+  induction gs with
+  | nil => simp
+  | cons g gs ih => simp [List.flatten_cons, Std.Sat.CNF.eval_append, Bool.and_eq_true, ih]
+
+/-- The six constraints extracted from the unchanged ordered tableau.
+The inclusive families keep `t ≤ T`; state and acceptance keep `t < T`. -/
+private lemma clA5Tableau_eval (M : FinTM Bool) (code : CLFieldCode (Option M.State))
+    (C e : ℕ) (x : List Bool) (T : ℕ) (a : ℕ → Bool) :
+    let m := x.length + C * (x.length + 1) ^ e
+    (clTableau M code C e x T).eval a = true ↔
+      (∀ j < x.length, a j = x[j]?.getD false) ∧
+      clA5Meaning M code (CLTemplateKind.initial (decide (0 < m))) m 0 0 0 a ∧
+      (∀ t < T, clA5Meaning M code CLTemplateKind.state m t (t + 1) 0 a) ∧
+      (∀ t ≤ T, (clInputGroup M code m t).eval a = true) ∧
+      (∀ t ≤ T, ∀ τ : Fin M.k, (clWorkGroup M code m t τ).eval a = true) ∧
+      (∀ t < T, clA5Meaning M code CLTemplateKind.accept m t 0 0 a) := by
+  dsimp only
+  simp only [clTableau, clA5Flatten_eval, clTableauGroups, clGroups,
+    List.mem_append, List.mem_map, List.mem_flatMap, List.mem_range, List.mem_singleton,
+    forall_eq, forall_exists_index, and_imp, forall_apply_eq_imp_iff₂,
+    or_imp, forall_and, clA5Group_eval]
+  simp only [Std.Sat.CNF.eval_cons, Std.Sat.CNF.eval_nil,
+    Std.Sat.CNF.Clause.eval_cons, Std.Sat.CNF.Clause.eval_nil, Bool.or_false,
+    Bool.and_true, beq_iff_eq, Nat.lt_succ_iff]
+  constructor
+  · rintro ⟨⟨⟨⟨⟨hp, hz⟩, hs⟩, hi⟩, hw⟩, ha⟩
+    refine ⟨hp, hz, hs, hi, ?_, ha⟩
+    intro t ht τ
+    exact hw _ t ht τ.val τ.isLt (by rw [dif_pos τ.isLt])
+  · rintro ⟨hp, hz, hs, hi, hw, ha⟩
+    refine ⟨⟨⟨⟨⟨hp, hz⟩, hs⟩, hi⟩, ?_⟩, ha⟩
+    intro g t ht τ hτ heq
+    subst g
+    simpa only [dif_pos hτ] using hw t ht ⟨τ, hτ⟩
+
+/-- Boundary-aware input symbols in terms of their literal input bit. -/
+private lemma clA5InputBit (y : List Bool) (p : ℕ) :
+    inputBitAt y p = if 0 < p ∧ p ≤ y.length then some (y[p - 1]?.getD false) else none := by
+  delta inputBitAt
+  by_cases h0 : p = 0
+  · simp [h0]
+  · by_cases hp : p ≤ y.length
+    · have hi : p - 1 < y.length := by omega
+      simp [h0, hp, show 0 < p by omega, List.getElem?_eq_getElem hi]
+    · have hi : y.length ≤ p - 1 := by omega
+      simp [h0, hp, List.getElem?_eq_none hi]
+
+/-- Input-family clauses specify the literal raw input-symbol slice. -/
+private lemma clA5Input_meaning (M : FinTM Bool) (code : CLFieldCode (Option M.State))
+    (m t : ℕ) (a : ℕ → Bool) (y : List Bool) (hy : y.length = m)
+    (ha : ∀ j < m, a j = y[j]?.getD false) :
+    (clInputGroup M code m t).eval a = true ↔
+      clInputSlice M code (clA5Block M code m a t) =
+        clSymbolCode (inputBitAt y (inputPosAt M m t)) := by
+  classical
+  unfold clInputGroup
+  dsimp only
+  rw [clA5InputBit, hy]
+  by_cases hp : 0 < inputPosAt M m t ∧ inputPosAt M m t ≤ m
+  · rw [if_pos hp, if_pos hp, clA5Group_eval]
+    change (_ = clSymbolCode (some (a (inputPosAt M m t - 1)))) ↔ _
+    rw [ha _ (by omega)]
+  · rw [if_neg hp, if_neg hp, clA5Group_eval]
+    rfl
+
+/-- The initial-family raw-block equation is exactly the proved initial
+snapshot, with the empty input case included. -/
+private lemma clA5Initial_meaning (M : FinTM Bool) (code : CLFieldCode (Option M.State))
+    (m : ℕ) (a : ℕ → Bool) (y : List Bool) (hy : y.length = m)
+    (ha : ∀ j < m, a j = y[j]?.getD false) :
+    clA5Meaning M code (CLTemplateKind.initial (decide (0 < m))) m 0 0 0 a ↔
+      clA5Block M code m a 0 = clBlockEncode M code (snapshotAt M y 0) := by
+  classical
+  rw [snapshotAt_zero, clA5InputBit, hy]
+  by_cases hp : 0 < m
+  · have hle : 1 ≤ m := by omega
+    simp [clA5Meaning, hp, hle, ha 0 hp]
+  · have hm : m = 0 := by omega
+    simp [clA5Meaning, hm]
+
+/-- Work-family clauses specify literal work-symbol bits. Strictly earlier
+visits retain the whole-block decoder until the time induction proves its
+argument is a genuine encoded block. -/
+private lemma clA5Work_meaning (M : FinTM Bool) (code : CLFieldCode (Option M.State))
+    (m t : ℕ) (τ : Fin M.k) (a : ℕ → Bool) :
+    (clWorkGroup M code m t τ).eval a = true ↔
+      clWorkSlice M code (clA5Block M code m a t) τ = clSymbolCode
+        (match prevVisit M m t τ with
+        | none => none
+        | some s => writtenOrKept M (clBlockDecode M code (clA5Block M code m a s)) τ) := by
+  unfold clWorkGroup
+  cases prevVisit M m t τ <;> rw [clA5Group_eval] <;> rfl
+
+/-- Bitwise reconstruction of every raw block by strong induction on time.
+**Proof sketch.** The initial family pins the entire initial encoding. At a
+successor, the state field uses the preceding encoded block; the input field
+uses the oblivious input schedule; each work field uses either blank or the
+strictly earlier encoded block named by the proved greatest-visit table.
+`clBlock_ext` combines equality of every field bit, excluding junk blocks. -/
+private lemma clA5Reconstruct (M : FinTM Bool) (code : CLFieldCode (Option M.State))
+    (hM : M.Oblivious) (m T : ℕ) (a : ℕ → Bool) (y : List Bool) (hy : y.length = m)
+    (hz : clA5Block M code m a 0 = clBlockEncode M code (snapshotAt M y 0))
+    (hs : ∀ t < T, clA5Meaning M code CLTemplateKind.state m t (t + 1) 0 a)
+    (hi : ∀ t ≤ T, clInputSlice M code (clA5Block M code m a t) =
+      clSymbolCode (inputBitAt y (inputPosAt M m t)))
+    (hw : ∀ t ≤ T, ∀ τ : Fin M.k,
+      clWorkSlice M code (clA5Block M code m a t) τ = clSymbolCode
+        (match prevVisit M m t τ with
+        | none => none
+        | some s => writtenOrKept M (clBlockDecode M code (clA5Block M code m a s)) τ)) :
+    ∀ t ≤ T, clA5Block M code m a t = clBlockEncode M code (snapshotAt M y t) := by
+  intro t
+  induction t using Nat.strong_induction_on with
+  | h t ih =>
+    intro ht
+    cases t with
+    | zero => exact hz
+    | succ t =>
+      apply clBlock_ext M code
+      · rw [clBlock_state, snapshotAt_state_succ]
+        have he := hs t (by omega)
+        change clStateSlice M code (clA5Block M code m a (t + 1)) =
+          (CLFieldCode.enc code) (stepState M (clBlockDecode M code (clA5Block M code m a t))) at he
+        rw [ih t (by omega) (by omega), clBlockDecode_encode] at he
+        exact he
+      · rw [clBlock_input, snapshotAt_inputSymbol hM, hy]
+        exact hi _ ht
+      · intro τ
+        rw [clBlock_work, snapshotAt_workSymbol hM, hy, hw _ ht τ]
+        cases hp : prevVisit M m (t + 1) τ with
+        | none => rfl
+        | some s =>
+          dsimp only
+          rw [ih s (clPrev_spec M m (t + 1) s τ hp).1 (by have := (clPrev_spec M m (t + 1) s τ hp).1; omega),
+            clBlockDecode_encode]
+
+/-- Read exactly the first `m` assignment bits as the verifier's input. -/
+private def clA5ReadInput (m : ℕ) (a : ℕ → Bool) : List Bool := List.ofFn (fun i : Fin m => a i.val)
+
+/-- Each recovered input bit is the assigned bit at that variable. -/
+private lemma clA5ReadInput_get (m : ℕ) (a : ℕ → Bool) (j : ℕ) (hj : j < m) :
+    (clA5ReadInput m a)[j]?.getD false = a j := by
+  simp [clA5ReadInput, hj]
+
+/-- Pinning recovers an exact-length certificate, without enlarging its
+polynomial or silently switching to a bounded-length witness. -/
+private lemma clA5Certificate (C e : ℕ) (x : List Bool) (a : ℕ → Bool)
+    (hp : ∀ j < x.length, a j = x[j]?.getD false) :
+    ∃ u : List Bool, u.length = C * (x.length + 1) ^ e ∧
+      clA5ReadInput (x.length + C * (x.length + 1) ^ e) a = x ++ u := by
+  let y := clA5ReadInput (x.length + C * (x.length + 1) ^ e) a
+  have hlen : y.length = x.length + C * (x.length + 1) ^ e := by simp [y, clA5ReadInput]
+  have ht : y.take x.length = x := by
+    apply List.ext_getElem (by simp [hlen])
+    intro j hj hk
+    have hbit := (clA5ReadInput_get (x.length + C * (x.length + 1) ^ e) a j (by omega)).trans (hp j hk)
+    simpa [y, List.getElem?_eq_getElem (show j < y.length by omega), List.getElem?_eq_getElem hk] using hbit
+  refine ⟨y.drop x.length, by simp [hlen], ?_⟩
+  change y = x ++ y.drop x.length
+  calc
+    y = y.take x.length ++ y.drop x.length := (List.take_append_drop _ _).symm
+    _ = x ++ y.drop x.length := by rw [ht]
+
+/-- Physical run output is precisely the chronological concatenation of
+snapshot emissions, including the write on a halting transition. -/
+private lemma clA5Run_output (M : FinTM Bool) (y : List Bool) (T : ℕ) :
+    (M.tm.runFrom (M.tm.initCfg y) T).output =
+      (List.range T).flatMap (fun t => (emitted M (snapshotAt M y t)).toList) := by
+  induction T with
+  | zero => rfl
+  | succ T ih =>
+    rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.step_output, ih,
+      List.range_succ, List.flatMap_append, List.flatMap_singleton]
+    congr 1
+    delta MultiTapeTM.outputSymbol emitted snapshotAt
+    cases (M.tm.runFrom (M.tm.initCfg y) T).state <;> rfl
+
+/-- No false emission is equivalent to no false bit in the append-only
+output prefix. This is an exact word statement, not a halting assumption. -/
+private lemma clA5NoFalse (M : FinTM Bool) (y : List Bool) (T : ℕ) :
+    false ∉ (M.tm.runFrom (M.tm.initCfg y) T).output ↔
+      ∀ t < T, emitted M (snapshotAt M y t) ≠ some false := by
+  rw [clA5Run_output]
+  constructor
+  · intro h t ht he
+    apply h
+    exact List.mem_flatMap.mpr ⟨t, List.mem_range.mpr ht, by rw [he]; simp⟩
+  · intro h hb
+    obtain ⟨t, ht, hb⟩ := List.mem_flatMap.mp hb
+    cases he : emitted M (snapshotAt M y t) with
+    | none => simp [he] at hb
+    | some b =>
+      have hh : b = false := by simpa [he, eq_comm] using hb
+      subst b
+      exact h t (List.mem_range.mp ht) he
+
+/-- A total decider's exact singleton output turns the local no-false
+condition into membership. In particular, silent or junk traces cannot
+satisfy this argument: the total decider supplies its actual verdict bit. -/
+private lemma clA5Decider_accept (M : FinTM Bool) (V : Language Bool) (y : List Bool) (T : ℕ)
+    (hM : M.ComputesInTime y [MultiTapeTM.indicator (V : Set (List Bool)) y] T) :
+    (∀ t < T, emitted M (snapshotAt M y t) ≠ some false) ↔ y ∈ V := by
+  classical
+  rw [← clA5NoFalse, ((FinTM.computesInTime_iff _ _ _ _).mp hM).2]
+  delta MultiTapeTM.indicator
+  by_cases h : y ∈ V <;> simp [h]
+
+/-- Every product code contains the two input-symbol bits. -/
+private lemma clA5Width_pos (M : FinTM Bool) (code : CLFieldCode (Option M.State)) :
+    0 < clWidth M code := by
+  unfold clWidth
+  omega
+
+/-- A genuine run supplies a total SAT assignment: literal input bits,
+then the raw encoding of every chronological snapshot block. -/
+private def clA5TraceAssignment (M : FinTM Bool) (code : CLFieldCode (Option M.State))
+    (y : List Bool) (v : ℕ) : Bool :=
+  if v < y.length then y[v]?.getD false else
+    clBlockEncode M code (snapshotAt M y ((v - y.length) / clWidth M code))
+      ⟨(v - y.length) % clWidth M code, Nat.mod_lt _ (clA5Width_pos M code)⟩
+
+/-- Input variables of the genuine assignment retain the literal bits. -/
+private lemma clA5Trace_input (M : FinTM Bool) (code : CLFieldCode (Option M.State))
+    (y : List Bool) (j : ℕ) (hj : j < y.length) :
+    clA5TraceAssignment M code y j = y[j]?.getD false := by
+  simp [clA5TraceAssignment, hj]
+
+/-- Quotient and remainder recover each complete raw snapshot block. -/
+private lemma clA5Trace_block (M : FinTM Bool) (code : CLFieldCode (Option M.State))
+    (y : List Bool) (t : ℕ) :
+    clA5Block M code y.length (clA5TraceAssignment M code y) t =
+      clBlockEncode M code (snapshotAt M y t) := by
+  funext i
+  let B := clWidth M code
+  have hn : ¬clPack y.length B t i.val < y.length := by unfold clPack; omega
+  have hd : clPack y.length B t i.val - y.length = t * B + i.val := by unfold clPack; omega
+  have hq : (t * B + i.val) / B = t := by
+    rw [Nat.add_comm, Nat.add_mul_div_right _ _ (clA5Width_pos M code), Nat.div_eq_of_lt i.isLt]
+    omega
+  have hr : (t * B + i.val) % B = i.val := by
+    simp only [Nat.add_mod, Nat.mul_mod_left, Nat.zero_add, Nat.mod_mod]
+    exact Nat.mod_eq_of_lt i.isLt
+  change (if clPack y.length B t i.val < y.length then _ else
+    clBlockEncode M code (snapshotAt M y ((clPack y.length B t i.val - y.length) / B))
+      ⟨(clPack y.length B t i.val - y.length) % B, _⟩) = _
+  rw [if_neg hn]
+  simp only [hd, hq]
+  apply congrArg (clBlockEncode M code (snapshotAt M y t))
+  exact Fin.ext hr
+
+/-- Soundness: a satisfying assignment determines an exact-length witness.
+The raw-block strong induction rules out junk assignments before any use of
+the decoder, and totality plus the no-false family forces the true verdict. -/
+private lemma clA5Sound (M : FinTM Bool) (code : CLFieldCode (Option M.State))
+    (hM : M.Oblivious) (V : Language Bool) (C e : ℕ) (x : List Bool) (T : ℕ)
+    (hD : ∀ y : List Bool, y.length = x.length + C * (x.length + 1) ^ e →
+      M.ComputesInTime y [MultiTapeTM.indicator (V : Set (List Bool)) y] T)
+    (hφ : (clTableau M code C e x T).Satisfiable) :
+    ∃ u : List Bool, u.length = C * (x.length + 1) ^ e ∧ x ++ u ∈ V := by
+  obtain ⟨a, ha⟩ := hφ
+  obtain ⟨hp, hz, hs, hi, hw, he⟩ := (clA5Tableau_eval M code C e x T a).mp ha
+  let m := x.length + C * (x.length + 1) ^ e
+  let y := clA5ReadInput m a
+  have hy : y.length = m := by simp [y, clA5ReadInput]
+  have hb : ∀ j < m, a j = y[j]?.getD false := fun j hj => (clA5ReadInput_get m a j hj).symm
+  have hraw := clA5Reconstruct M code hM m T a y hy
+    ((clA5Initial_meaning M code m a y hy hb).mp hz) hs
+    (fun t ht => (clA5Input_meaning M code m t a y hy hb).mp (hi t ht))
+    (fun t ht τ => (clA5Work_meaning M code m t τ a).mp (hw t ht τ))
+  have hfalse : ∀ t < T, emitted M (snapshotAt M y t) ≠ some false := by
+    intro t ht
+    have hh := he t ht
+    change emitted M (clBlockDecode M code (clA5Block M code m a t)) ≠ some false at hh
+    rwa [hraw t (by omega), clBlockDecode_encode] at hh
+  have hv : y ∈ V := (clA5Decider_accept M V y T (hD y hy)).mp hfalse
+  obtain ⟨u, hu, hxy⟩ := clA5Certificate C e x a hp
+  exact ⟨u, hu, hxy ▸ hv⟩
+
+/-- Completeness: an accepted exact-length witness gives the literal input
+assignment and raw encodings of its genuine snapshots. Each field equation
+is one of the proved snapshot APIs; the singleton true output supplies the
+no-false family. -/
+private lemma clA5Complete (M : FinTM Bool) (code : CLFieldCode (Option M.State))
+    (hM : M.Oblivious) (V : Language Bool) (C e : ℕ) (x : List Bool) (T : ℕ)
+    (hD : ∀ y : List Bool, y.length = x.length + C * (x.length + 1) ^ e →
+      M.ComputesInTime y [MultiTapeTM.indicator (V : Set (List Bool)) y] T)
+    (hcert : ∃ u : List Bool, u.length = C * (x.length + 1) ^ e ∧ x ++ u ∈ V) :
+    (clTableau M code C e x T).Satisfiable := by
+  obtain ⟨u, hu, hv⟩ := hcert
+  let m := x.length + C * (x.length + 1) ^ e
+  let y := x ++ u
+  let a := clA5TraceAssignment M code y
+  have hy : y.length = m := by simp [y, m, hu]
+  have hb : ∀ j < m, a j = y[j]?.getD false := by
+    intro j hj
+    exact clA5Trace_input M code y j (by omega)
+  have hraw (t : ℕ) : clA5Block M code m a t = clBlockEncode M code (snapshotAt M y t) := by
+    simpa only [hy] using clA5Trace_block M code y t
+  refine ⟨a, (clA5Tableau_eval M code C e x T a).mpr ?_⟩
+  refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩
+  · intro j hj
+    rw [hb j (by dsimp [m]; omega)]
+    exact congrArg (fun w : Option Bool => w.getD false) (List.getElem?_append_left hj)
+  · exact (clA5Initial_meaning M code m a y hy hb).mpr (hraw 0)
+  · intro t _
+    change clStateSlice M code (clA5Block M code m a (t + 1)) =
+      (CLFieldCode.enc code) (stepState M (clBlockDecode M code (clA5Block M code m a t)))
+    rw [hraw, hraw, clBlock_state, clBlockDecode_encode, snapshotAt_state_succ]
+  · intro t _
+    apply (clA5Input_meaning M code m t a y hy hb).mpr
+    rw [hraw, clBlock_input, snapshotAt_inputSymbol hM, hy]
+  · intro t _ τ
+    apply (clA5Work_meaning M code m t τ a).mpr
+    rw [hraw, clBlock_work, snapshotAt_workSymbol hM, hy]
+    cases prevVisit M m t τ with
+    | none => rfl
+    | some s => dsimp only; rw [hraw, clBlockDecode_encode]
+  · intro t ht
+    change emitted M (clBlockDecode M code (clA5Block M code m a t)) ≠ some false
+    rw [hraw, clBlockDecode_encode]
+    exact (clA5Decider_accept M V y T (hD y hy)).mpr hv t ht
+
+/-- The protected tableau is equisatisfiable with the original exact NP
+certificate relation. The emitter identity was proved before this pure layer. -/
+private lemma clA5Equisat (M : FinTM Bool) (code : CLFieldCode (Option M.State))
+    (hM : M.Oblivious) (V : Language Bool) (C e c A d : ℕ)
+    (hD : M.DecidesInTime V (fun n => c * (A * (n + 1) ^ d + 1) ^ 2)) (x : List Bool) :
+    (clTableau M code C e x (clProducerHorizon C e c A d x.length)).Satisfiable ↔
+      ∃ u : List Bool, u.length = C * (x.length + 1) ^ e ∧ x ++ u ∈ V := by
+  have hc : ∀ y : List Bool, y.length = x.length + C * (x.length + 1) ^ e →
+      M.ComputesInTime y [MultiTapeTM.indicator (V : Set (List Bool)) y]
+        (clProducerHorizon C e c A d x.length) := by
+    intro y hy
+    simpa only [hy, clProducerHorizon] using hD y
+  exact ⟨clA5Sound M code hM V C e x _ hc, clA5Complete M code hM V C e x _ hc⟩
+
+/-- The native exact serialization is a Karp reduction for each audited NP
+verifier. Neither the certificate parameters nor any public statement change. -/
+private lemma clA5Reduction {L : Language Bool} (hL : L ∈ NP) : L ≤ₚ SAT := by
+  obtain ⟨C, e, V, M, c, A, d, hcert, _, _, _, hM, hD⟩ := clNPVerifier hL
+  let code := clFieldCode (Option M.State)
+  refine ⟨fun x => Std.Sat.CNF.serialize (clTableau M code C e x (clProducerHorizon C e c A d x.length)),
+    clA5OutputIdentity M code C e c A d, ?_⟩
+  intro x
+  change x ∈ L ↔ (Std.Sat.CNF.decode (Std.Sat.CNF.serialize
+    (clTableau M code C e x (clProducerHorizon C e c A d x.length)))).Satisfiable
+  rw [Std.Sat.CNF.decode_serialize, clA5Equisat M code hM V C e c A d hD, hcert x]
+
 /-- **Lemma 2.11 (Cook-Levin hardness)** [AB09]: `SAT` is `NP`-hard.
 
 **Proof sketch.** Fix `L ∈ NP` with certificate length `Q n = C₀(n+1)^(c₀)`
@@ -9482,14 +9909,15 @@ polynomial in `n`, and time polynomial likewise.
 `Complexity.PolyTimeReducible`; quantify over `L ∈ NP` for
 `Complexity.NPHard`. -/
 theorem SAT_NPHard : NPHard SAT := by
-  sorry
+  intro L hL
+  exact clA5Reduction hL
 
 /-- **Theorem 2.10.1 (Cook-Levin)** [AB09]: `SAT` is `NP`-complete.
 
 **Proof sketch.** `Complexity.SAT_mem_NP` and `Complexity.SAT_NPHard`,
 assembled by the definition of `Complexity.NPComplete`. -/
 theorem SAT_NPComplete : NPComplete SAT := by
-  sorry
+  exact ⟨SAT_mem_NP, SAT_NPHard⟩
 
 /-- **`3SAT` is `NP`-hard** [AB09, Theorem 2.10.2, hardness half]:
 Cook-Levin followed by clause splitting.
@@ -9498,12 +9926,12 @@ Cook-Levin followed by clause splitting.
 `Complexity.SAT_reducible_SAT3` (Lemma 2.14) by
 `Complexity.NPHard.polyTimeReducible`. -/
 theorem SAT3_NPHard : NPHard SAT3 := by
-  sorry
+  exact SAT_NPHard.polyTimeReducible SAT_reducible_SAT3
 
 /-- **Theorem 2.10.2** [AB09]: `3SAT` is `NP`-complete.
 
 **Proof sketch.** `Complexity.SAT3_mem_NP` and `Complexity.SAT3_NPHard`. -/
 theorem SAT3_NPComplete : NPComplete SAT3 := by
-  sorry
+  exact ⟨SAT3_mem_NP, SAT3_NPHard⟩
 
 end Complexity
