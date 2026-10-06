@@ -407,8 +407,28 @@ uncomputability chapter.
   recorded exception). **4A-2 brief issued 2026-10-05**
   (`briefs/ch2-epoch4-batchA2.md`, base `f815da30`; the four-step
   plan binding; sanctioned root withdrawn — zero admissions
-  sanctioned; producer = the checkpoint boundary). → 4B → the
-  epoch-3/4 audit → E5 closure.
+  sanctioned; producer = the checkpoint boundary).
+  **4A-2 native-preparation checkpoint integrated 2026-10-06**
+  (Codex `a4ca9302`): a verified partial *earlier* than the
+  complete-producer boundary — **52 new proved privates** for the
+  native preparation phase (the exact arithmetic header
+  `clPrepHeader`, the all-false reference simulation
+  `clRef*`/`clRefClock*` identified with the public
+  `oblivious_schedule`, the in-place binary counter `clCount*`
+  with carry/rewind re-proved on a silent absorbing machine, and
+  the `clRefCount*` administrative frame); **no target closed,
+  zero new admissions**, tree still at **5 admissions**, ledger
+  **54/59** unchanged; Hardness.lean now 2,112 lines (size
+  exception continues). Verification independently reproduced
+  (checksums 25/25; freeze 919/0; byte-identical replay; 57/57
+  sweep; whole-module traversal = 375 decls / 4 sorry roots; lint
+  0 FAIL / 1 WARN; `audits/logs/e4A2-checkpoint-*`). **4A-3
+  frontier**: the complete packed-record producer (trajectory +
+  signed-position records + greatest-strictly-earlier last-visit
+  search with a sequential-access ledger), genuine `initCfg`
+  startup, the ordered emission controller under common budget
+  `P` ≠ `T`, and the output-identity-then-equisatisfiability
+  close. → 4A-3 brief → 4B → the epoch-3/4 audit → E5 closure.
   Subsumes 2C's
   `prefixTM`/`fixedPair` promotion requests. Dedup of superseded batch
   privates is an E5 closure task. Mathlib TM2 rejected as substrate
