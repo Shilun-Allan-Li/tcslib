@@ -205,3 +205,46 @@ record's replay and the campaign execution logs are correctly labeled
 **maintainer-verified** evidence (findings 4 and 7).
 
 Round-3 review scope: the pass-3 repair and the inventory review alone.
+
+
+---
+
+# Round 3 → GATE CLOSED
+
+Round 3 (`audits/ch2-epoch34-r3-findings.md`, preserved verbatim)
+returned **PASS — cumulative 0 blockers / 0 majors / 1 minor**. The
+surface major closed at the supplied-evidence standard, the auditor
+verifying the checker's executable semantics against eight negative
+fixture classes and independently re-deriving the 87-name accounting
+(45 + 27 + 8 + 7, per-module 15/22/15/24/6/5).
+
+Closing sweep (this record's commit):
+
+- **Finding 3 (minor)**: the inventory's seven derived-instance rows no
+  longer claim downstream unusability — the auditor's compiling
+  consumer refuted that rationale — and now state only that these are
+  non-private generated constants whose types mention a private
+  structure; a dated correction appendix is in the inventory file. All
+  seven remain certified inventory members.
+- **Note 4a**: the dead 11-entry `generatedExceptions` array is retired
+  from the committed `ch2-epoch34-R3Axioms.lean`; the cleaned program
+  was re-run against the same pinned snapshot and tree —
+  `R3 CLOSURE AUDIT PASS`, exit 0, identical pass lines
+  (`audits/logs/ch2-epoch34-close-axioms.log`). The round-3 pack's
+  literal "no exceptions array" claim is hereby corrected to "no
+  exception-based acceptance" for the as-sent program; the as-committed
+  program now satisfies the literal reading too.
+- **Note 4b**: `enumWord._unsafe_rec` is reclassified as the
+  partial-recursive implementation companion
+  (`addAndCompilePartialRec`), `_sunfold` as the smart-unfolding
+  auxiliary.
+- The round-2/3 evidence-boundary qualifications (maintainer-verified
+  execution records; census provenance) stand as permanent annotations.
+
+**Gate position: CLOSED — three rounds, final tally 0 blockers /
+0 majors; every minor swept or corrected on record.** The 21 epoch-3/4
+targets, their 1,206 net new privates, the carrier retype, the merge
+drift, and the duplicate-dispatch governance are audited. With the
+epoch-1, epoch-2, emitter-statement, and emitter-fill gates, every fill
+of the Chapter-2 campaign is externally audited; the campaign tree
+stands at zero admissions.

@@ -108,23 +108,6 @@ def ownedModules : Array (Name × Array Name × Array Name) := #[
 
 def orderModules : Array Name := #[`TCSlib.Complexity.TuringMachine.Configuration, `TCSlib.Complexity.TuringMachine.Deterministic, `TCSlib.Complexity.TuringMachine.StateRenaming, `TCSlib.Complexity.TuringMachine.Finite, `TCSlib.Complexity.TuringMachine.Oracle, `TCSlib.Complexity.TuringMachine.Simulation, `TCSlib.Complexity.TuringMachine.Sweep, `TCSlib.Complexity.TuringMachine.Composition, `TCSlib.Complexity.TuringMachine.Build.Convention, `TCSlib.Complexity.TuringMachine.Build.Wrappers, `TCSlib.Complexity.TuringMachine.Build.Loop, `TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction, `TCSlib.Complexity.TuringMachine.Robustness.SingleTape, `TCSlib.Complexity.TuringMachine.Robustness.Bidirectional, `TCSlib.Complexity.ClassP.DTIME, `TCSlib.Complexity.TuringMachine.Encoding, `TCSlib.Complexity.ClassP.TimeConstructible, `TCSlib.Complexity.TuringMachine.Robustness.ObliviousSchedule, `TCSlib.Complexity.TuringMachine.Robustness.ObliviousCandidate, `TCSlib.Complexity.TuringMachine.Robustness.ObliviousSetup, `TCSlib.Complexity.TuringMachine.Robustness.ObliviousLedger, `TCSlib.Complexity.TuringMachine.Robustness.Oblivious, `TCSlib.Complexity.ClassP.P, `TCSlib.Complexity.ClassP.ModelInvariance, `TCSlib.Complexity.ClassP.Examples, `TCSlib.Complexity.TuringMachine.Build.Primitives, `TCSlib.Complexity.TuringMachine.CodeParser, `TCSlib.Complexity.TuringMachine.MathlibBridge, `TCSlib.Complexity.TuringMachine.UniversalStartup, `TCSlib.Complexity.TuringMachine.UniversalInterpreter, `TCSlib.Complexity.TuringMachine.UniversalBlock, `TCSlib.Complexity.TuringMachine.Universal, `TCSlib.Complexity.Uncomputability.Computable, `TCSlib.Complexity.Uncomputability.Diagonalization, `TCSlib.Complexity.Uncomputability.Halting, `TCSlib.Complexity.TuringMachine.Nondeterministic, `TCSlib.Complexity.Formulas.CNF, `TCSlib.Complexity.Formulas.CNFEncoding, `TCSlib.Complexity.Formulas.DNF, `TCSlib.Complexity.ClassNP.PolyTime, `TCSlib.Complexity.ClassNP.PolyTimePairing, `TCSlib.Complexity.ClassNP.NP, `TCSlib.Complexity.ClassNP.CoNP, `TCSlib.Complexity.ClassNP.EXP, `TCSlib.Complexity.ClassNP.Reductions, `TCSlib.Complexity.ClassNP.NTIME, `TCSlib.Complexity.ClassNP.Nondeterminism, `TCSlib.Complexity.ClassNP.SAT, `TCSlib.Complexity.ClassNP.TMSAT, `TCSlib.Complexity.CookLevin.Snapshot, `TCSlib.Complexity.CookLevin.Hardness, `TCSlib.Complexity.ClassNP.Tautology, `TCSlib.Complexity.TuringMachine.UnaryTape, `TCSlib.Complexity.TuringMachine.CounterProg, `TCSlib.Complexity.TuringMachine.CounterProgRun, `TCSlib.Complexity.TuringMachine, `TCSlib.Complexity.ClassP, `TCSlib.Complexity.Uncomputability, `TCSlib.Complexity.Formulas, `TCSlib.Complexity.CookLevin, `TCSlib.Complexity.ClassNP.Transducer, `TCSlib.Complexity.ClassNP.CounterProgPolyTime, `TCSlib.Complexity.ClassNP.PClosure, `TCSlib.Complexity.ClassNP.ExpPoly, `TCSlib.Complexity.ClassNP]
 
-/-- Disclosed generated kernel artifacts in the owned modules, itemized for
-the auditor (round-2 resolutions, finding 1): eight equation lemmas
-auto-generated inside owned modules for PUBLIC definitions IMPORTED from
-`TuringMachine/Nondeterministic.lean`, `Build/Convention.lean`, and
-`Formulas/CNFEncoding.lean` (definitional restatements, no new claims, no
-axioms), and the `deriving DecidableEq` instance of the PRIVATE structure
-`SatStreamState` in `SAT.lean`, whose generated name is non-private by a
-known Lean naming quirk. Source fixes are queued to the routine-layer
-retrofit; the frozen audited sources are not edited mid-gate. -/
-def generatedExceptions : Array Name := #[
-  `Turing.NDTM.runWith.eq_def, `Turing.NDTM.runWith.eq_1, `Turing.NDTM.runWith.eq_2,
-  `Turing.NDTM.stepWith.eq_1, `Turing.solveSplitWith.eq_1,
-  `Std.Sat.CNF.WidthAtMost.eq_1, `Std.Sat.CNF.numVars.eq_1, `Std.Sat.CNF.fallback.eq_1,
-  `Complexity.instDecidableEqSatStreamState,
-  `Complexity.instDecidableEqSatStreamState.decEq,
-  `Complexity.instDecidableEqSatStreamState.decEq.match_1]
-
 def targets : Array Name := #[
   ``Complexity.ntime_expPow_subset_NEXP, ``Complexity.NEXP_eq_iUnion_NTIME,
   ``Complexity.NEXP_subset_iUnion_NTIME, ``Complexity.EXP_eq_NEXP_of_P_eq_NP,

@@ -44,8 +44,8 @@ auditor rejected) — corrected here in full.
 - `Complexity.P_subset_EXP` — **source public** (declared in this module)
 - `Complexity.P_subset_EXP._proof_1_1` — proof-extraction auxiliary auto-generated for the source public `Complexity.P_subset_EXP`
 - `Complexity.enumWord` — **source public** (declared in this module)
-- `Complexity.enumWord._sunfold` — structural-recursion unfolding auxiliary auto-generated for the source public `Complexity.enumWord`
-- `Complexity.enumWord._unsafe_rec` — structural-recursion unfolding auxiliary auto-generated for the source public `Complexity.enumWord`
+- `Complexity.enumWord._sunfold` — smart-unfolding auxiliary auto-generated for the source public `Complexity.enumWord`
+- `Complexity.enumWord._unsafe_rec` — partial-recursive implementation companion (Lean's `addAndCompilePartialRec`) auto-generated for the source public `Complexity.enumWord`
 - `Complexity.enumWord.eq_1` — equation lemma auto-generated for the source public `Complexity.enumWord`
 - `Complexity.enumWord.eq_2` — equation lemma auto-generated for the source public `Complexity.enumWord`
 - `Complexity.enumWord.eq_def` — equation lemma auto-generated for the source public `Complexity.enumWord`
@@ -61,13 +61,13 @@ auditor rejected) — corrected here in full.
 - `Complexity.SAT3_mem_NP` — **source public** (declared in this module)
 - `Complexity.SAT_mem_NP` — **source public** (declared in this module)
 - `Complexity.SAT_reducible_SAT3` — **source public** (declared in this module)
-- `Complexity.instDecidableEqSatStreamState` — member of the `deriving DecidableEq` family of the **private** `structure SatStreamState` (SAT.lean:2301); non-private name by Lean's derive-handler naming; unusable downstream (its type mentions a private structure)
-- `Complexity.instDecidableEqSatStreamState.decEq` — member of the `deriving DecidableEq` family of the **private** `structure SatStreamState` (SAT.lean:2301); non-private name by Lean's derive-handler naming; unusable downstream (its type mentions a private structure)
-- `Complexity.instDecidableEqSatStreamState.decEq._proof_1` — member of the `deriving DecidableEq` family of the **private** `structure SatStreamState` (SAT.lean:2301); non-private name by Lean's derive-handler naming; unusable downstream (its type mentions a private structure)
-- `Complexity.instDecidableEqSatStreamState.decEq._proof_2` — member of the `deriving DecidableEq` family of the **private** `structure SatStreamState` (SAT.lean:2301); non-private name by Lean's derive-handler naming; unusable downstream (its type mentions a private structure)
-- `Complexity.instDecidableEqSatStreamState.decEq._proof_3` — member of the `deriving DecidableEq` family of the **private** `structure SatStreamState` (SAT.lean:2301); non-private name by Lean's derive-handler naming; unusable downstream (its type mentions a private structure)
-- `Complexity.instDecidableEqSatStreamState.decEq._proof_4` — member of the `deriving DecidableEq` family of the **private** `structure SatStreamState` (SAT.lean:2301); non-private name by Lean's derive-handler naming; unusable downstream (its type mentions a private structure)
-- `Complexity.instDecidableEqSatStreamState.decEq.match_1` — member of the `deriving DecidableEq` family of the **private** `structure SatStreamState` (SAT.lean:2301); non-private name by Lean's derive-handler naming; unusable downstream (its type mentions a private structure)
+- `Complexity.instDecidableEqSatStreamState` — member of the `deriving DecidableEq` family of the **private** `structure SatStreamState` (SAT.lean:2301); a non-private generated constant whose type mentions the private structure (derive-handler naming)
+- `Complexity.instDecidableEqSatStreamState.decEq` — member of the `deriving DecidableEq` family of the **private** `structure SatStreamState` (SAT.lean:2301); a non-private generated constant whose type mentions the private structure (derive-handler naming)
+- `Complexity.instDecidableEqSatStreamState.decEq._proof_1` — member of the `deriving DecidableEq` family of the **private** `structure SatStreamState` (SAT.lean:2301); a non-private generated constant whose type mentions the private structure (derive-handler naming)
+- `Complexity.instDecidableEqSatStreamState.decEq._proof_2` — member of the `deriving DecidableEq` family of the **private** `structure SatStreamState` (SAT.lean:2301); a non-private generated constant whose type mentions the private structure (derive-handler naming)
+- `Complexity.instDecidableEqSatStreamState.decEq._proof_3` — member of the `deriving DecidableEq` family of the **private** `structure SatStreamState` (SAT.lean:2301); a non-private generated constant whose type mentions the private structure (derive-handler naming)
+- `Complexity.instDecidableEqSatStreamState.decEq._proof_4` — member of the `deriving DecidableEq` family of the **private** `structure SatStreamState` (SAT.lean:2301); a non-private generated constant whose type mentions the private structure (derive-handler naming)
+- `Complexity.instDecidableEqSatStreamState.decEq.match_1` — member of the `deriving DecidableEq` family of the **private** `structure SatStreamState` (SAT.lean:2301); a non-private generated constant whose type mentions the private structure (derive-handler naming)
 - `Std.Sat.CNF.WidthAtMost.eq_1` — equation lemma auto-generated in this module for the imported public definition `Std.Sat.CNF.WidthAtMost` (Formulas/CNFEncoding.lean); a definitional restatement, no new claim
 - `Std.Sat.CNF.fallback.eq_1` — equation lemma auto-generated in this module for the imported public definition `Std.Sat.CNF.fallback` (Formulas/CNFEncoding.lean:158); a definitional restatement, no new claim
 - `Std.Sat.CNF.numVars.eq_1` — equation lemma auto-generated in this module for the imported public definition `Std.Sat.CNF.numVars` (Formulas/CNFEncoding.lean); a definitional restatement, no new claim
@@ -119,3 +119,15 @@ auditor rejected) — corrected here in full.
 **Total: 87 names** = 45 source publics + 27 generated auxiliaries of
 source publics + 8 imported-definition equation lemmas + the 7-member
 derived-instance family of a private structure.
+
+---
+
+## Round-3 closing correction (finding 3 and note 4, swept at gate close)
+
+The seven `instDecidableEqSatStreamState` rows originally claimed the family
+was “unusable downstream.” The round-3 auditor refuted that rationale with a
+compiling consumer (aliasing the instance, recovering the type through an
+instance argument, and invoking it), so the rows above now state only the
+facts: non-private generated constants whose types mention a private
+structure. All seven remain in the certified inventory. The
+`enumWord._unsafe_rec` class wording was refined per the same report.
