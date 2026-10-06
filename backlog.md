@@ -487,7 +487,7 @@ uncomputability chapter.
   machine-routine layer + retrofit (recorded decisions).
   Subsumes 2C's
   `prefixTM`/`fixedPair` promotion requests. Dedup of superseded batch
-  privates is an E5 closure task. Mathlib TM2 rejected as substrate
+  privates is an E5 closure task — **auditor-adopted live/dead guidance (epoch-3/4 round 1, finding 14)**: `clFill*` → producer path is LIVE; `clCertificateCall` and `clTrack_schedule` dead at source; `e3c*` mixed (`e3c_bits_injective` live); SAT's max-pass prefix live; dedup from a kernel-derived inventory, never by prefix or checkpoint label. Also queued for the retrofit: the 11 disclosed generated kernel artifacts (imported-definition equation lemmas + the private-structure `deriving` instance in SAT.lean). Mathlib TM2 rejected as substrate
   (evaluation recorded in the ch1 decision log).
 * **Machine-routine layer (user decision 2026-10-06: build once
   chapter 2 is done, in the E5-closure/D7 window, before chapter 3).**
