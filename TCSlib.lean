@@ -13,9 +13,10 @@ import TCSlib.ErrorCorrectingCodes.MRRW
 import TCSlib.BooleanAnalysis.BLR
 import TCSlib.BooleanAnalysis.Basic
 import TCSlib.BooleanAnalysis.ArrowTheorem
-import TCSlib.BooleanAnalysis.Hypercontractivity.Main
+import TCSlib.BooleanAnalysis.Hypercontractivity
 import TCSlib.BooleanAnalysis.Switching
 import TCSlib.BooleanAnalysis.KKL
+import TCSlib.BooleanAnalysis.ThresholdFunctions
 import TCSlib.BooleanAnalysis.polylogIndep
 
 import TCSlib.CommunicationComplexity.DeterministicCC
@@ -36,24 +37,16 @@ import TCSlib.Complexity.SpaceComplexity
 import TCSlib.ComputationalModels
 
 import TCSlib.Cryptography.SchnorrProtocol
+import TCSlib.Cryptography.SecretSharing
+import TCSlib.Cryptography.MPC
+
+import TCSlib.InformationTheory
 
 import TCSlib.GraphTheory.Kruskal
 
 import TCSlib.KikuchiLDC.Main
 
-import TCSlib.LearningTheory.Halving
-import TCSlib.LearningTheory.WeightedMajority
-import TCSlib.LearningTheory.JohnsonLindenstrauss.Bernstein
-import TCSlib.LearningTheory.JohnsonLindenstrauss.ConcentrationBound
-import TCSlib.LearningTheory.JohnsonLindenstrauss.Rademacher
-import TCSlib.LearningTheory.JohnsonLindenstrauss.Main
-
+import TCSlib.LearningTheory.MistakeBounds
 import TCSlib.LearningTheory.Hedge
-import TCSlib.LearningTheory.Hedge.Episode
-import TCSlib.LearningTheory.Hedge.ConvexPrediction
-import TCSlib.LearningTheory.Minimax.FiniteMinimax
-import TCSlib.LearningTheory.Minimax.CCE
-import TCSlib.LearningTheory.Minimax.ConvexMinimaxCore
-import TCSlib.LearningTheory.Minimax.ConvexMinimaxSeparation
-import TCSlib.LearningTheory.Minimax.ConvexMinimaxNoRegret
+import TCSlib.LearningTheory.JohnsonLindenstrauss
 import TCSlib.LearningTheory.Minimax

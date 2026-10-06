@@ -188,3 +188,25 @@ f(x,y)$ is concave on $Y$. Then the minimax equality
 \]
 holds.
 \end{theorem}
+
+%%% added by the blueprint pipeline
+\section{Additional declarations}
+
+\begin{lemma}[Normalized separator bounds the constant by the average payoff]
+\lean{OnlineLearning.separating_functional_normalized_le}
+\label{OnlineLearning.separating_functional_normalized_le}
+\leanok
+\uses{OnlineLearning.continuousLinearMap_pi_apply_eq_sum_single, OnlineLearning.finiteUpperImage}
+\difficulty{5}
+Let $X, Y \subseteq \bbr$, let $f : \bbr \to \bbr \to \bbr$ be a payoff, let $u$ be a
+finite sample of columns from $Y$, and let $c \in \bbr$. Suppose $L : \bbr^u \to \bbr$
+is a continuous linear functional separating the constant vector $(c,\dots,c)$ from the
+finite upper image, i.e.\ $L(z) < L(c,\dots,c)$ for every $z \in U(X,f,u)$, and that
+the total weight $W = \sum_{y \in u} \bigl(-L(e_y)\bigr)$ is strictly positive, where
+$e_y$ is the standard basis vector at $y$. Then for every row $x \in X$,
+\[
+  c \;\le\; \sum_{y \in u} \frac{-L(e_y)}{W}\, f(x,y),
+\]
+that is, $c$ is at most the payoff of $x$ averaged under the normalized weights
+$-L(e_y)/W$.
+\end{lemma}

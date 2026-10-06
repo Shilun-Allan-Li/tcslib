@@ -447,3 +447,61 @@ bounded by
 The bound is Achlioptas's $\pm1$-entry variant of the Johnson–Lindenstrauss lemma, with
 the Dasgupta–Gupta exponent.
 \end{theorem}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% added by the blueprint pipeline
+\section{Additional declarations}
+
+\begin{lemma}[Sub-Gaussian parameter scales quadratically under constant multiples]
+\lean{hasSubgaussianMGF_const_mul}
+\label{hasSubgaussianMGF_const_mul}
+\leanok
+Let $X$ be a real random variable on a measure space $(\Omega,\mu)$ that is sub-Gaussian
+with variance proxy $\sigma \ge 0$, i.e.\ $e^{tX}$ is $\mu$-integrable and
+$\E_\mu[e^{tX}] \le \exp(\sigma t^2/2)$ for every $t \in \bbr$. Then for every constant
+$c \in \bbr$, the scaled variable $\omega \mapsto c\,X(\omega)$ is sub-Gaussian with
+variance proxy $c^2\sigma$:
+\[
+\E_\mu\!\left[e^{t\,cX}\right] \le \exp\!\left(\tfrac{1}{2}\,c^2\sigma\,t^2\right)
+\qquad\text{for all } t \in \bbr.
+\]
+\end{lemma}
+
+\begin{lemma}[Row projection as a sum of scaled entries]
+\lean{radMatrix_row_proj_eq_sum}
+\label{radMatrix_row_proj_eq_sum}
+\leanok
+\uses{RadΩ, radMatrix}
+Fix natural numbers $k, d$, a vector $x \in \bbr^d$, and a row index $i \in
+\{1,\dots,k\}$. For a sample $\omega$ in the Rademacher sample space
+$\mathrm{Rad\Omega}(k,d)$, let $A(\omega)$ be the Rademacher matrix with entries
+$\omega_{ij}/\sqrt{k}$. Then, as functions of $\omega$, the $i$-th coordinate of the
+image $A(\omega)x$ equals the sum of the scaled entries:
+\[
+\bigl(A(\omega)\,x\bigr)_i = \sum_{j} \frac{x_j}{\sqrt{k}}\,\omega_{ij}.
+\]
+\end{lemma}
+
+\begin{lemma}[Scaled entries within a row are mutually independent]
+\lean{radMatrix_scaled_row_iid}
+\label{radMatrix_scaled_row_iid}
+\leanok
+\uses{RadΩ, radJointMeasure, radJointMeasure_row_iid}
+Fix natural numbers $k, d$, a vector $x \in \bbr^d$, and a row index $i \in
+\{1,\dots,k\}$. Under the joint Rademacher product measure on
+$\mathrm{Rad\Omega}(k,d)$, the family of real random variables
+\[
+\omega \;\longmapsto\; \frac{x_j}{\sqrt{k}}\,\omega_{ij}, \qquad j \in \{1,\dots,d\},
+\]
+indexed by the columns of row $i$, is mutually independent.
+\end{lemma}
+
+\begin{lemma}[Squared norm over $k$ as a sum of squared coordinates over $k$]
+\lean{norm_sq_div_eq_sum}
+\label{norm_sq_div_eq_sum}
+\leanok
+For every natural number $k$ and every vector $x \in \bbr^d$ with its Euclidean norm,
+\[
+\frac{\norm{x}^2}{k} = \sum_{j} \frac{x_j^2}{k}.
+\]
+\end{lemma}

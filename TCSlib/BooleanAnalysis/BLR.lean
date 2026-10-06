@@ -30,4 +30,9 @@ including Fourier analysis on Boolean and ℤ_k^n domains, and low-degree testin
   (completeness, soundness for prime fields).
 - `TCSlib.BooleanAnalysis.BLR.LowDegree`: Low-degree (Reed-Muller) testing on the Boolean hypercube
   (Gowers norms, degree test completeness and soundness).
+
+## References
+
+* [OD14] Ryan O'Donnell, *Analysis of Boolean Functions*, Cambridge University Press, 2014;
+  arXiv edition, 2021, §§1.3--1.6.
 -/

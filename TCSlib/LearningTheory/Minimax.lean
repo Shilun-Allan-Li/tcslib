@@ -3,48 +3,30 @@ Copyright (c) 2026 Karim Abdel Sadek and Mark Bedaywi. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Karim Abdel Sadek, Mark Bedaywi
 -/
-
+import TCSlib.LearningTheory.Minimax.ZeroSumGame
+import TCSlib.LearningTheory.Minimax.HedgeInteraction
 import TCSlib.LearningTheory.Minimax.FiniteMinimax
 import TCSlib.LearningTheory.Minimax.CCE
 import TCSlib.LearningTheory.Minimax.ConvexMinimaxCore
 import TCSlib.LearningTheory.Minimax.ConvexMinimaxSeparation
 import TCSlib.LearningTheory.Minimax.ConvexMinimaxNoRegret
-
-set_option maxHeartbeats 0
-set_option relaxedAutoImplicit false
-set_option autoImplicit false
-
-open Real Finset BigOperators
-
-namespace OnlineLearning
+import TCSlib.LearningTheory.Minimax.ConvexMinimax
 
 /-!
-# Convex-Compact Minimax
+# Minimax Theorems via No-Regret Learning
 
-## Main results
+Finite zero-sum games, the Hedge-vs-best-response construction of approximate
+saddle points, coarse correlated equilibria, and two routes to the convex-compact
+minimax theorem (Cesa-Bianchi–Lugosi Thm 7.1).
 
-- `convex_compact_minimax`: proves equality of upper and lower values for payoff functions on subsets of ℝ under nonempty compact convex row set, nonempty convex column set, boundedness, convex-concavity, and continuity assumptions
+## Contents
 
-## References
-
-- Original formalization by Karim Abdel Sadek, Mark Bedaywi
+- `Minimax.ZeroSumGame`: finite zero-sum games, mixed strategies, best responses, weak duality
+- `Minimax.HedgeInteraction`: game loss sequence, average/empirical strategies, Hedge prefixes
+- `Minimax.FiniteMinimax`: regret-to-payoff bridge and the ε-approximate minimax theorem
+- `Minimax.CCE`: (approximate) coarse correlated equilibria; no-regret empirical play is an ε-CCE
+- `Minimax.ConvexMinimaxCore`: exact finite value, convex-compact hypotheses, Jensen, sublevel sets
+- `Minimax.ConvexMinimaxSeparation`: Hahn–Banach/finite-column route (unconditional)
+- `Minimax.ConvexMinimaxNoRegret`: no-regret/finite-approximation route, strengthened hypotheses
+- `Minimax.ConvexMinimax`: the public `convex_compact_minimax`
 -/
-
-/-- Public convex-compact minimax theorem for this project.
-
-The hypotheses are bundled in `ConvexCompactMinimaxHypotheses`: nonempty compact
-convex row set, nonempty convex column set, boundedness, convexity in the row
-variable, concavity in the column variable, and the relevant continuity
-assumptions.  The conclusion `ConvexCompactMinimaxStatement` is the equality of
-the upper and lower values.
-
-This theorem is intentionally a thin wrapper.  It hides the proof-route choice
-from downstream files and currently delegates to the completed separation proof. -/
-theorem convex_compact_minimax {X Y : Set ℝ} {f : ℝ → ℝ → ℝ}
-    (h : ConvexCompactMinimaxHypotheses X Y f) :
-    ConvexCompactMinimaxStatement X Y f := by
-  -- Keep the public theorem independent of proof-route details.  At present,
-  -- the separation proof is the strongest completed route.
-  exact convex_compact_minimax_by_separation h
-
-end OnlineLearning

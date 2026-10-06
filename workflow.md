@@ -157,7 +157,9 @@ pipeline detail).
 
   Admission counting is by `declaration uses 'sorry'` warnings in the sweep log; the
   expected count is attested in every pack.
-* **`scripts/style_lint.py`** — mechanical policy checks: statement-prose docstrings,
+* **`scripts/campaign_style_lint.py`** (named `scripts/style_lint.py` until the
+  main merge, which adopted main's per-file policy linter under that name — the
+  historical audit logs' invocations refer to this tool) — mechanical policy checks: statement-prose docstrings,
   sketch-before-sorry, file sizes, `## References`, facade coverage. Campaign
   baseline: zero FAIL (legacy pre-campaign files outside the audited surface are
   tolerated and listed).

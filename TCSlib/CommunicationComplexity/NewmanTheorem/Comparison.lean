@@ -17,14 +17,26 @@ set_option autoImplicit false
 /-!
 # Comparison Between Communication Complexity Models
 
+## Main definitions
+
+- `PublicCoin.Protocol.toDeterministic`, `PublicCoin.FiniteMessage.Protocol.toDeterministic`:
+  fix the public randomness of a public-coin protocol, giving a deterministic protocol
+- `Deterministic.FiniteMessage.Protocol.toPrivateCoin`: view a deterministic
+  finite-message protocol as a private-coin protocol that ignores its coins
+
 ## Main results
 
-- `PrivateCoin.communicationComplexity_le_deterministic`: private-coin communication complexity
-  is at most deterministic communication complexity for any non-negative error
+- `PrivateCoin.communicationComplexity_le_deterministic`: private-coin communication
+  complexity is at most deterministic communication complexity for any non-negative error
 
 ## References
 
-- Original formalization by Lucy Horowitz, Timothe Kasriel, Mihir Singhal
+* [RY20] A. Rao, A. Yehudayoff, *Communication Complexity and Applications*,
+  Cambridge University Press, 2020.
+* [KN97] E. Kushilevitz, N. Nisan, *Communication Complexity*, Cambridge University
+  Press, 1997.
+
+Original formalization by Lucy Horowitz, Timothe Kasriel, Mihir Singhal.
 -/
 
 namespace CommunicationComplexity
@@ -39,6 +51,9 @@ abbrev PublicCoin.Protocol.toDeterministic
     Deterministic.Protocol X Y α :=
   p.comap (Prod.mk ω) (Prod.mk ω)
 
+/-- Running the deterministic protocol obtained by fixing the randomness `ω` on `(x, y)`
+gives the same output as running the public-coin protocol on `(x, y)` with randomness
+`ω`. -/
 @[simp]
 theorem PublicCoin.Protocol.toDeterministic_run
     {Ω X Y α : Type*}
@@ -47,6 +62,8 @@ theorem PublicCoin.Protocol.toDeterministic_run
     (p.toDeterministic ω).run x y = p.rrun x y ω := by
   simp [toDeterministic, PublicCoin.Protocol.rrun]
 
+/-- Fixing the randomness of a public-coin protocol does not change its complexity (the
+protocol tree is unchanged). -/
 @[simp]
 theorem PublicCoin.Protocol.toDeterministic_complexity
     {Ω X Y α : Type*}
@@ -62,6 +79,9 @@ abbrev Deterministic.FiniteMessage.Protocol.toPrivateCoin
     PrivateCoin.FiniteMessage.Protocol Ω_X Ω_Y X Y α :=
   p.comap Prod.snd Prod.snd
 
+/-- A deterministic finite-message protocol viewed as a private-coin protocol outputs, on
+`(x, y)` and any coins `ω_x`, `ω_y`, the same value as the deterministic protocol on
+`(x, y)`. -/
 @[simp]
 theorem Deterministic.FiniteMessage.Protocol.toPrivateCoin_rrun
     {X Y α Ω_X Ω_Y : Type*}
@@ -73,6 +93,8 @@ theorem Deterministic.FiniteMessage.Protocol.toPrivateCoin_rrun
   simp [toPrivateCoin, PrivateCoin.FiniteMessage.Protocol.rrun,
     Deterministic.FiniteMessage.Protocol.comap_run]
 
+/-- Viewing a deterministic finite-message protocol as a private-coin protocol does not
+change its complexity. -/
 @[simp]
 theorem Deterministic.FiniteMessage.Protocol.toPrivateCoin_complexity
     {X Y α Ω_X Ω_Y : Type*}
@@ -90,6 +112,9 @@ abbrev PublicCoin.FiniteMessage.Protocol.toDeterministic
     Deterministic.FiniteMessage.Protocol X Y α :=
   p.comap (Prod.mk ω) (Prod.mk ω)
 
+/-- Running the deterministic finite-message protocol obtained by fixing the randomness
+`ω` on `(x, y)` gives the same output as running the public-coin finite-message protocol
+on `(x, y)` with randomness `ω`. -/
 @[simp]
 theorem PublicCoin.FiniteMessage.Protocol.toDeterministic_run
     {Ω X Y α : Type*}
@@ -99,6 +124,8 @@ theorem PublicCoin.FiniteMessage.Protocol.toDeterministic_run
   simp [toDeterministic, rrun,
     Deterministic.FiniteMessage.Protocol.comap_run]
 
+/-- Fixing the randomness of a public-coin finite-message protocol does not change its
+complexity. -/
 @[simp]
 theorem PublicCoin.FiniteMessage.Protocol.toDeterministic_complexity
     {Ω X Y α : Type*}
@@ -106,8 +133,19 @@ theorem PublicCoin.FiniteMessage.Protocol.toDeterministic_complexity
     (p.toDeterministic ω).complexity = p.complexity := by
   simp [toDeterministic]
 
-/-- Private-coin communication complexity is at most deterministic
-communication complexity (for any non-negative error). -/
+/-- Private-coin communication complexity at any nonnegative error `ε` is at most
+deterministic communication complexity: a deterministic protocol is a private-coin
+protocol that ignores its coins and errs with probability `0 ≤ ε`.
+[RY20, Ch. 3, §Variants of Randomized Protocols] ('every private-coin protocol is
+simulable by a public-coin protocol'; likewise a deterministic protocol is a private-coin
+protocol that ignores its coins).
+
+**Proof sketch.** If the deterministic complexity is infinite there is nothing to prove;
+otherwise it is some natural number `n`. (1) Pick a deterministic protocol `p` computing `f`
+with complexity at most `n`. (2) Convert it to a finite-message protocol with the same run
+and complexity. (3) By the finite-message characterisation of private-coin complexity it
+suffices to view that protocol as a private-coin protocol over zero-bit coin tapes: it
+computes `f` exactly, so its error `0` is at most `ε`, and its complexity is at most `n`. -/
 theorem PrivateCoin.communicationComplexity_le_deterministic
     {X Y α} (f : X → Y → α) (ε : ℝ) (hε : 0 ≤ ε) :
     PrivateCoin.communicationComplexity f ε ≤

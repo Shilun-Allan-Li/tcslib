@@ -1,192 +1,114 @@
 #!/usr/bin/env python3
-"""Mechanical policy.md conformance lint for the Arora-Barak Chapter 1 tree.
+"""
+Mechanical checks for policy.md (Review checklist items 1–5, presence only).
 
-Checks the mechanically checkable slice of policy.md (sections 1-3) plus the
-campaign's standing conventions, so external audit rounds can consume a
-reported attestation instead of performing style review (epoch-1/epoch-2
-practice; see AroraBarakChapter1Plan.md section 5).
+    python3 scripts/style_lint.py <file.lean>... | --area <Area>
 
-  FAIL  - unambiguous policy violation; exit code 1.
-  WARN  - needs a recorded justification (e.g. a file over the 1000-line
-          threshold with an escalation on file); exit code 0.
-  INFO  - context only.
-
-Usage: python3 scripts/style_lint.py [subtree]   (default: TCSlib/Complexity)
+Per file: copyright block; the three set_options; no bare `import Mathlib`; module
+docstring headings (# Title, ## Main definitions, ## Main results, ## References);
+placeholder References; facade has ## Contents; every public non-instance declaration
+has a `/-- … -/` docstring; proofs > 20 lines have **Proof sketch.**; size > 1000.
+Statement *quality* is review judgment, not checked here.  Exit 1 if any finding.
 """
 
+from __future__ import annotations
+
+import argparse
 import re
 import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-SUBTREE = Path(sys.argv[1]) if len(sys.argv) > 1 else Path("TCSlib/Complexity")
-
-SIZE_TARGET = 600     # policy section 1: target upper end
-SIZE_THRESHOLD = 1000 # policy section 1: split unless positively justified
-
-# Vendored files follow upstream style (policy section 2, Statement prose:
-# exempt from the docstring-presence requirement, and frozen anyway).
-VENDORED = {
-    "TCSlib/Complexity/TuringMachine/Configuration.lean",
-    "TCSlib/Complexity/TuringMachine/Deterministic.lean",
-}
-
-# Declaration kinds requiring statement prose (instances exempt per policy).
-DOC_DECL_RE = re.compile(
-    r"^\s*(?:@\[[^\]]*\]\s*)*(?:noncomputable\s+)?(private\s+)?(?:noncomputable\s+)?"
-    r"(theorem|lemma|def|structure|abbrev|inductive)\s+([A-Za-z0-9_.']+)"
-)
-ATTR_LINE_RE = re.compile(r"^@\[[^\]]*\]$")
-SET_OPTIONS = [
-    "set_option maxHeartbeats 0",
-    "set_option relaxedAutoImplicit false",
-    "set_option autoImplicit false",
-]
-DOCSTRING_RE = re.compile(r"/--.*?-/", re.S)
-DECL_RE = re.compile(
-    r"^(?:@\[[^\]]*\]\s*)?(?:noncomputable\s+)?(private\s+)?(?:noncomputable\s+)?"
-    r"(theorem|def|lemma|structure|abbrev|instance|inductive)\s+([A-Za-z0-9_.']+)",
-    re.M,
-)
-
-findings = []  # (level, path, message)
+DECL = re.compile(r"^(?:@\[[^\]]*\]\s*)?(private |protected |noncomputable |nonrec )*"
+                  r"(theorem|lemma|def|instance|structure|inductive|abbrev|class|opaque|axiom)\b")
+OPTS = ["set_option maxHeartbeats 0", "set_option relaxedAutoImplicit false",
+        "set_option autoImplicit false"]
+HEADINGS = ["## Main definitions", "## Main results", "## References"]
 
 
-def note(level, path, msg):
-    findings.append((level, str(path), msg))
+def lint(path: Path) -> list[str]:
+    out: list[str] = []
+    text = path.read_text()
+    lines = text.split("\n")
+    rel = path.resolve().relative_to(ROOT)
+    is_facade = (path.with_suffix("")).is_dir()
+
+    if "Copyright" not in text[:1500]:
+        out.append(f"{rel}: missing copyright block")
+    for o in OPTS:
+        if o not in text:
+            out.append(f"{rel}: missing `{o}`")
+    if re.search(r"^import Mathlib\s*$", text, re.M):
+        out.append(f"{rel}: bare `import Mathlib`")
+    m = re.search(r"/-!(.*?)-/", text, re.S)
+    doc = m.group(1) if m else ""
+    if not re.search(r"^# ", doc, re.M):
+        out.append(f"{rel}: module docstring has no `# Title`")
+    if is_facade:
+        if "## Contents" not in doc:
+            out.append(f"{rel}: facade without `## Contents`")
+    else:
+        for h in HEADINGS:
+            if h not in doc:
+                out.append(f"{rel}: module docstring missing `{h}`")
+        refs = doc.split("## References", 1)[1] if "## References" in doc else ""
+        if refs and not re.search(r"\[[A-Za-z]+\d{2}[a-z]?\]|\*[^*]+\*", refs):
+            out.append(f"{rel}: `## References` has no citation (placeholder?)")
+    if len(lines) > 1000:
+        out.append(f"{rel}: {len(lines)} lines (> 1000, must split)")
+
+    starts = [i for i, l in enumerate(lines) if DECL.match(l)]
+    starts.append(len(lines))
+    for k, i in enumerate(starts[:-1]):
+        mm = DECL.match(lines[i])
+        kind = mm.group(2)
+        private = "private " in (mm.group(0))
+        name = re.sub(r"^.*?\b" + kind + r"\s+", "", lines[i]).split()[0] if lines[i].split() else "?"
+        up = i - 1
+        while up >= 0 and (lines[up].strip() == "" or lines[up].lstrip().startswith("@[")):
+            up -= 1
+        has_doc = up >= 0 and lines[up].rstrip().endswith("-/") and "/-!" not in lines[up]
+        if kind != "instance" and not private and not has_doc:
+            out.append(f"{rel}:{i+1}: public `{kind} {name}` has no docstring")
+        if kind in ("theorem", "lemma"):
+            # proof region ends at the next declaration OR at the next docstring/module
+            # comment/attribute that introduces it (otherwise the next docstring is counted)
+            end = starts[k + 1]
+            for j in range(i + 1, starts[k + 1]):
+                if re.match(r"^\s*(/--|/-!|@\[)", lines[j]):
+                    end = j
+                    break
+            body = [l for l in lines[i:end] if l.strip() and not l.strip().startswith("--")]
+            if len(body) > 20:
+                # find the docstring block above
+                j = up
+                while j >= 0 and not lines[j].lstrip().startswith("/--"):
+                    j -= 1
+                ds = "\n".join(lines[max(j, 0):i]) if has_doc else ""
+                if "Proof sketch" not in ds:
+                    out.append(f"{rel}:{i+1}: `{name}` proof is {len(body)} lines, no **Proof sketch.**")
+    return out
 
 
-def strip_comments(src: str) -> str:
-    """Remove nesting-aware block comments (docstrings included) and line
-    comments, so declaration counting never matches prose like `lemma advances`
-    inside a docstring (epoch-2 audit, finding 3)."""
-    out, i, depth = [], 0, 0
-    while i < len(src):
-        if src.startswith("/-", i):
-            depth += 1
-            i += 2
-            continue
-        if src.startswith("-/", i) and depth > 0:
-            depth -= 1
-            i += 2
-            continue
-        if depth == 0:
-            out.append(src[i])
-        i += 1
-    return "\n".join(l.split("--")[0] for l in "".join(out).splitlines())
-
-
-def is_facade(path: Path) -> bool:
-    return (path.parent / path.stem).is_dir()
-
-
-def check_file(path: Path):
-    src = path.read_text()
-    lines = src.splitlines()
-    rel = path.relative_to(ROOT)
-
-    # 1. Size (policy section 1).
-    n = len(lines)
-    if n > SIZE_THRESHOLD:
-        note("WARN", rel, f"{n} lines > {SIZE_THRESHOLD}: policy requires a split "
-                          "or a recorded justification (escalation/decision log)")
-    elif n > SIZE_TARGET and not is_facade(path):
-        note("INFO", rel, f"{n} lines > target {SIZE_TARGET}")
-
-    # 2. Imports (policy section 1).
-    if re.search(r"^import Mathlib$", src, re.M):
-        note("FAIL", rel, "bare `import Mathlib`")
-
-    # 3. References section (policy section 2) - math files and facades alike.
-    if "## References" not in src and not is_facade(path):
-        note("FAIL", rel, "module docstring lacks a `## References` section")
-
-    # 4. Standard set_option header (campaign convention; facades exempt).
-    if not is_facade(path):
-        missing = [o for o in SET_OPTIONS if o not in src]
-        if missing:
-            note("WARN", rel, f"missing header option(s): {', '.join(missing)}")
-
-    # 5. Every sorry is preceded by a docstring mentioning a proof sketch
-    #    (policy section 3). Heuristic: nearest docstring above the sorry line.
-    for i, line in enumerate(lines):
-        if line.strip() == "sorry":
-            head = "\n".join(lines[:i])
-            docs = DOCSTRING_RE.findall(head)
-            if not docs or "sketch" not in docs[-1].lower():
-                note("FAIL", rel, f"line {i + 1}: `sorry` without a proof sketch "
-                                  "in the preceding docstring")
-
-    # 6. Public/private declaration tally (INFO - context for audit packs).
-    #    Counted on comment-stripped source (epoch-2 audit, finding 3).
-    stripped = strip_comments(src)
-    pub = sum(1 for m in DECL_RE.finditer(stripped) if not m.group(1))
-    priv = sum(1 for m in DECL_RE.finditer(stripped) if m.group(1))
-    note("INFO", rel, f"{n} lines; {pub} public / {priv} private declarations")
-
-    # 7. Statement prose (policy section 2): every public declaration
-    #    (instances and vendored files exempt) is immediately preceded by a
-    #    docstring, skipping attribute / `open ... in` / `noncomputable` lines.
-    #    Presence only; statement *quality* is review judgment.
-    if str(rel) not in VENDORED:
-        depth = 0
-        for idx, line in enumerate(lines):
-            if depth == 0:
-                m = DOC_DECL_RE.match(line)
-                if m and not m.group(1):
-                    j = idx - 1
-                    while j >= 0:
-                        prev = lines[j].strip()
-                        if (ATTR_LINE_RE.fullmatch(prev)
-                                or (prev.startswith("open ") and prev.endswith(" in"))
-                                or prev == "noncomputable"):
-                            j -= 1
-                            continue
-                        break
-                    if not (j >= 0 and lines[j].rstrip().endswith("-/")):
-                        note("FAIL", rel,
-                             f"line {idx + 1}: public {m.group(2)} "
-                             f"`{m.group(3)}` has no preceding docstring "
-                             "(policy section 2, statement prose)")
-            depth += line.count("/-") - line.count("-/")
-
-
-def check_facade(path: Path):
-    """Every child .lean under the facade's directory must be imported."""
-    src = path.read_text()
-    rel = path.relative_to(ROOT)
-    child_dir = path.parent / path.stem
-    for child in sorted(child_dir.rglob("*.lean")):
-        mod = ".".join(child.relative_to(ROOT).with_suffix("").parts)
-        if not is_facade(child) and f"import {mod}" not in src:
-            # A grandchild may legitimately be imported via its own facade.
-            inter = child.parent / (child.parent.name + ".lean")
-            covered = inter != path and inter.exists() and \
-                f"import {'.'.join(inter.relative_to(ROOT).with_suffix('').parts)}" in src
-            if not covered:
-                note("FAIL", rel, f"facade does not import child module `{mod}`")
-
-
-def main():
-    files = sorted((ROOT / SUBTREE).rglob("*.lean"))
-    if not files:
-        print(f"no .lean files under {SUBTREE}", file=sys.stderr)
-        return 2
+def main() -> int:
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--area", action="append", default=[])
+    ap.add_argument("--summary", action="store_true")
+    ap.add_argument("files", nargs="*")
+    a = ap.parse_args()
+    files = [Path(f) for f in a.files]
+    for ar in a.area:
+        files += sorted((ROOT / "TCSlib" / ar).rglob("*.lean"))
+    total = 0
     for f in files:
-        check_file(f)
-        if is_facade(f):
-            check_facade(f)
-
-    width = max(len(p) for _, p, _ in findings)
-    failed = False
-    for level in ("FAIL", "WARN", "INFO"):
-        for lv, p, msg in findings:
-            if lv == level:
-                print(f"{lv:4}  {p:<{width}}  {msg}")
-                failed |= lv == "FAIL"
-    print(f"\nstyle_lint: {sum(1 for l, _, _ in findings if l == 'FAIL')} FAIL, "
-          f"{sum(1 for l, _, _ in findings if l == 'WARN')} WARN over {len(files)} files")
-    return 1 if failed else 0
+        fs = lint(f)
+        total += len(fs)
+        if a.summary:
+            print(f"{len(fs):4d}  {f.resolve().relative_to(ROOT)}")
+        else:
+            print("\n".join(fs))
+    print(f"\n{total} findings in {len(files)} files", file=sys.stderr)
+    return 1 if total else 0
 
 
 if __name__ == "__main__":

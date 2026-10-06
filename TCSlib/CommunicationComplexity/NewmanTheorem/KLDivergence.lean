@@ -15,16 +15,36 @@ set_option autoImplicit false
 /-!
 # KL Divergence
 
+Finite-sum formulas for Mathlib's Kullback–Leibler divergence `InformationTheory.klDiv` on a
+finite measurable space, and the bridge to the real-valued `KLDiv` of the PFR project used by
+the entropy API. All logarithms are natural.
+
+## Main definitions
+
+None.
+
 ## Main results
 
 - `FiniteMeasureSpace.klDiv_eq_sum_llr`: on a finite measurable space, the KL divergence between
   finite measures equals the finite sum of the log-likelihood ratio against singleton masses
+  (or `∞` when absolute continuity fails)
 - `FiniteMeasureSpace.pmf_klDiv_eq_sum_llr`: on a finite measurable space, the KL divergence
   between PMFs is expressed as a finite sum over the PMF values
+- `FiniteMeasureSpace.klDiv_eq_sum_log`, `FiniteMeasureSpace.pmf_klDiv_eq_sum_log`: the same
+  formulas with the log-likelihood ratio unfolded to `log (μ {ω} / ν {ω})`
+- `FiniteMeasureSpace.klDiv_ne_top_of_forall_toPMF_ne_zero`: the divergence to a full-support
+  probability measure is finite
+- `toReal_klDiv_bool_eq_KLDiv`, `toReal_klDiv_map_bool_eq_KLDiv_of_measureReal_ne_zero`: on
+  one-bit laws, Mathlib's `klDiv` agrees with PFR's real-valued `KLDiv`
 
 ## References
 
-- Original formalization by Lucy Horowitz, Timothe Kasriel, Mihir Singhal
+* [RY20] A. Rao, A. Yehudayoff, *Communication Complexity and Applications*,
+  Cambridge University Press, 2020.
+* [CT06] T. M. Cover, J. A. Thomas, *Elements of Information Theory*, 2nd ed.,
+  Wiley, 2006.
+
+Original formalization by Lucy Horowitz, Timothe Kasriel, and Mihir Singhal.
 -/
 
 open MeasureTheory ProbabilityTheory
@@ -53,7 +73,17 @@ open Classical in
 /-- On a finite measurable space, the Kullback-Leibler divergence between finite measures is `∞`
 exactly in the displayed formula when some singleton has zero `ν`-mass and nonzero `μ`-mass;
 otherwise it is the finite sum of the log-likelihood ratio against the singleton masses, with
-Mathlib's finite-measure correction term. -/
+Mathlib's finite-measure correction term. [RY20, Ch. 6, Definition (Divergence)]
+(`D(p‖q) = Σ p(x) log(p(x)/q(x))`); deviation: natural logarithm, Mathlib's `ℝ≥0∞`-valued
+`klDiv` for general finite measures (the correction term `ν(Ω) − μ(Ω)` vanishes for probability
+measures), and the `∞` case made explicit.
+
+**Proof sketch.** Case on whether some singleton has zero `ν`-mass and nonzero `μ`-mass. If
+so, `μ` is not absolutely continuous with respect to `ν` (on a finite space absolute
+continuity says exactly that every `ν`-null singleton is `μ`-null), so the divergence is `∞`.
+Otherwise every `ν`-null singleton is `μ`-null, hence `μ ≪ ν`, and the displayed sum is
+Mathlib's integral formula for the divergence with the integral over the finite type
+expanded as a sum (`klDiv_eq_sum_llr_of_ac`). -/
 theorem FiniteMeasureSpace.klDiv_eq_sum_llr
     {Ω : Type*} [MeasurableSpace Ω] [FiniteMeasureSpace Ω]
     (μ ν : Measure Ω) [IsFiniteMeasure μ] [IsFiniteMeasure ν] :
@@ -78,7 +108,10 @@ theorem FiniteMeasureSpace.klDiv_eq_sum_llr
 
 open Classical in
 /-- On a finite measurable space, the Kullback-Leibler divergence between PMFs is `∞` if some
-point has zero `q`-mass and nonzero `p`-mass; otherwise it is a finite sum over the PMFs. -/
+point has zero `q`-mass and nonzero `p`-mass; otherwise it is the finite sum
+`Σ_ω p(ω) · llr(ω)` of the log-likelihood ratio weighted by `p`.
+[RY20, Ch. 6, Definition (Divergence)] (`D(p‖q) = Σ p(x) log(p(x)/q(x))`); deviation: natural
+logarithm and `ℝ≥0∞`-valued, with the `∞` case made explicit. -/
 theorem FiniteMeasureSpace.pmf_klDiv_eq_sum_llr
     {Ω : Type*} [MeasurableSpace Ω] [FiniteMeasureSpace Ω]
     (p q : PMF Ω) :
@@ -95,6 +128,8 @@ theorem FiniteMeasureSpace.pmf_klDiv_eq_sum_llr
   simp only [hp, hpω, hqω, measureReal_univ_eq_one, add_sub_cancel_right]
 
 open Classical in
+/-- On a finite measurable space with `μ ≪ ν`, the Radon–Nikodym derivative at a point `ω` of
+nonzero `ν`-mass is the ratio of singleton masses `μ {ω} / ν {ω}`. -/
 private theorem rnDeriv_toReal_eq_singleton_ratio
     {Ω : Type*} [MeasurableSpace Ω] [FiniteMeasureSpace Ω]
     {μ ν : Measure Ω} [IsFiniteMeasure μ] [IsFiniteMeasure ν] (h_ac : μ ≪ ν) (ω : Ω)
@@ -111,6 +146,8 @@ private theorem rnDeriv_toReal_eq_singleton_ratio
   exact hset
 
 open Classical in
+/-- On a finite measurable space with `μ ≪ ν`, the `μ {ω}`-weighted log-likelihood ratio at `ω`
+equals `μ {ω} · log (μ {ω} / ν {ω})` (both sides vanish when `μ {ω} = 0`). -/
 private theorem singleton_mass_mul_llr_eq_log_ratio
     {Ω : Type*} [MeasurableSpace Ω] [FiniteMeasureSpace Ω]
     {μ ν : Measure Ω} [IsFiniteMeasure μ] [IsFiniteMeasure ν] (h_ac : μ ≪ ν) (ω : Ω) :
@@ -129,7 +166,16 @@ private theorem singleton_mass_mul_llr_eq_log_ratio
 open Classical in
 /-- On a finite measurable space, the Kullback-Leibler divergence between finite measures is `∞`
 if some singleton has zero `ν`-mass and nonzero `μ`-mass; otherwise it is the finite sum of
-`μ {ω} * log (μ {ω} / ν {ω})`, with Mathlib's finite-measure correction term. -/
+`μ {ω} * log (μ {ω} / ν {ω})`, with Mathlib's finite-measure correction term.
+[RY20, Ch. 6, Definition (Divergence)] (`D(p‖q) = Σ p(x) log(p(x)/q(x))`); deviation: natural
+logarithm, `ℝ≥0∞`-valued for general finite measures (correction term `ν(Ω) − μ(Ω)`), with the
+`∞` case made explicit.
+
+**Proof sketch.** Start from `klDiv_eq_sum_llr` and split on the same condition. In the `∞`
+case both sides agree. Otherwise every `ν`-null singleton is `μ`-null, so `μ ≪ ν`, and the
+two sums agree term by term: for each `ω`, `μ{ω} · llr(ω) = μ{ω} · log(μ{ω} / ν{ω})`
+(`singleton_mass_mul_llr_eq_log_ratio`; if `μ{ω} = 0` both sides vanish, and otherwise
+`ν{ω} ≠ 0` and the Radon-Nikodym derivative at `ω` is the ratio of singleton masses). -/
 theorem FiniteMeasureSpace.klDiv_eq_sum_log
     {Ω : Type*} [MeasurableSpace Ω] [FiniteMeasureSpace Ω]
     (μ ν : Measure Ω) [IsFiniteMeasure μ] [IsFiniteMeasure ν] :
@@ -171,7 +217,9 @@ theorem FiniteMeasureSpace.klDiv_ne_top_of_forall_toPMF_ne_zero
 open Classical in
 /-- On a finite measurable space, the Kullback-Leibler divergence between PMFs is `∞` if some
 point has zero `q`-mass and nonzero `p`-mass; otherwise it is
-`∑ ω, p ω * log (p ω / q ω)`. -/
+`∑ ω, p ω * log (p ω / q ω)`. [RY20, Ch. 6, Definition (Divergence)]
+(`D(p‖q) = Σ p(x) log(p(x)/q(x))`); deviation: natural logarithm and `ℝ≥0∞`-valued, with the
+`∞` case made explicit. -/
 theorem FiniteMeasureSpace.pmf_klDiv_eq_sum_log
     {Ω : Type*} [MeasurableSpace Ω] [FiniteMeasureSpace Ω]
     (p q : PMF Ω) :
@@ -196,7 +244,12 @@ namespace ProbabilityTheory
 
 open Classical in
 /-- On one-bit probability measures, Mathlib's `klDiv` to any full-support bit law agrees with
-the real-valued PFR `KLDiv` used by the entropy API. -/
+the real-valued PFR `KLDiv` used by the entropy API: `(klDiv μ ν).toReal = KL[id ; μ # id ; ν]`.
+
+**Proof sketch.** Full support of `ν` rules out the `∞` branch of
+`FiniteMeasureSpace.klDiv_eq_sum_log`, leaving `ENNReal.ofReal` of the two-point sum
+`Σ_b μ{b} log (μ{b} / ν{b})`; PFR's `KLDiv_eq_sum` gives the same sum, and its nonnegativity
+(`KLDiv_nonneg`) lets `toReal ∘ ofReal` be removed. -/
 theorem toReal_klDiv_bool_eq_KLDiv
     (μ ν : Measure Bool) [IsProbabilityMeasure μ] [IsProbabilityMeasure ν]
     (hν : ∀ b, ν.toPMF b ≠ 0) :

@@ -1,7 +1,12 @@
 import TCSlib.BooleanAnalysis.Hypercontractivity.EvenMoments
 import TCSlib.BooleanAnalysis.Hypercontractivity.General
 import TCSlib.BooleanAnalysis.Hypercontractivity.OneBit
+import TCSlib.BooleanAnalysis.Hypercontractivity.CubeBasic
 import Mathlib.Analysis.Analytic.Binomial
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
 
 /-!
 # Reverse Bonami-Beckner inequality
@@ -18,7 +23,13 @@ The existing lemmas `OneBit.expect_abs_rpow_one_bit`, `Bonami.expect_succ_eq`,
 `SimpleHypercontractivity.noiseOp_snoc`, `SimpleHypercontractivity.noiseOp_compose`,
 and `BooleanAnalysis.noiseOp_self_adjoint` provide the Boolean-cube bookkeeping needed below.
 
-## Organisation
+## Main definitions
+
+* `IsNonnegative`: pointwise nonnegativity.
+* `lpMean`: the power mean for finite real exponents, including zero and negative exponents,
+  sharing its ordinary expression with `CubeBasic`.
+
+## Main results
 
 * `lpMean` and its elementary calculus (`lpMean_nonneg`, `lpMean_mono`,
   `lpMean_const_mul`, `lpMean_collapse_last`, `lpMean_comm`);
@@ -27,6 +38,11 @@ and `BooleanAnalysis.noiseOp_self_adjoint` provide the Boolean-cube bookkeeping 
 * the two-point inequality `reverse_bonami_beckner_one_bit`;
 * tensorization via `reverse_minkowski_mixed`;
 * reverse Hölder and the statement of the general theorem.
+
+## References
+
+* [OD14] Ryan O'Donnell, *Analysis of Boolean Functions*, Cambridge University Press, 2014;
+  arXiv edition, 2021, Exercises 10.6--10.9.
 -/
 
 open BooleanAnalysis Bonami OneBit SimpleHypercontractivity
@@ -35,19 +51,24 @@ namespace ReverseBonamiBeckner
 
 variable {n : ℕ}
 
+attribute [local simp] BooleanAnalysis.Hypercontractivity.cubeLpNorm
+
 /-! ### The extended `L^p` means -/
 
-/-- Pointwise nonnegativity, the natural domain of reverse hypercontractivity. -/
+/-- Pointwise nonnegativity, the natural domain of reverse hypercontractivity.
+[OD14, Exs. 10.6--10.9] -/
 def IsNonnegative (f : BooleanFunc n) : Prop :=
   ∀ x, 0 ≤ f x
 
 open Classical in
-/-- The extended uniform `L^p` mean.  At `p = 0` this is the geometric mean; for
-`p ≤ 0`, a function with a zero has mean zero. -/
+/-- The uniform `L^p` mean for finite real exponents. At `p = 0` this is the geometric mean; for
+`p ≤ 0`, a function with a zero has mean zero. [OD14, Exs. 10.6--10.9]
+The ordinary expression is shared with `Hypercontractivity.cubeLpNorm`. The source also
+defines the `p = -∞` mean as the minimum; that endpoint is not represented here. -/
 noncomputable def lpMean (p : ℝ) (f : BooleanFunc n) : ℝ :=
   if (∃ x, f x = 0) ∧ p ≤ 0 then 0
   else if p = 0 then Real.exp (expect (fun x ↦ Real.log |f x|))
-  else (expect (fun x ↦ |f x| ^ p)) ^ (1 / p)
+  else BooleanAnalysis.Hypercontractivity.cubeLpNorm p f
 
 /-- For positive exponents, `lpMean` is the usual power mean. -/
 lemma lpMean_of_pos (p : ℝ) (hp : 0 < p) (f : BooleanFunc n) :
@@ -66,7 +87,9 @@ lemma lpMean_mono (p : ℝ) (hp : 0 < p) {f g : BooleanFunc n} (hf : IsNonnegati
   rw [lpMean_of_pos p hp, lpMean_of_pos p hp]
   simp_rw [abs_of_nonneg (hf _), abs_of_nonneg (hg _)]
   refine Real.rpow_le_rpow
-    (OneBit.expect_nonneg_of_nonneg fun x ↦ Real.rpow_nonneg (hf x) p) ?_ (by positivity)
+    (by
+      rw [expect_eq_fintypeExpect]
+      exact Finset.expect_nonneg fun x _ ↦ Real.rpow_nonneg (hf x) p) ?_ (by positivity)
   exact mul_le_mul_of_nonneg_left
     (Finset.sum_le_sum fun x _ ↦ Real.rpow_le_rpow (hf x) (hfg x) hp.le)
     (pow_nonneg (by norm_num) _)
@@ -100,7 +123,9 @@ lemma lpMean_collapse_last (p : ℝ) (hp : 0 < p) (f : BooleanFunc (n + 1)) :
         lpMean p (fun y : BoolCube 1 ↦ f (Fin.snoc x (y 0)))) := by
   have hinner (x : BoolCube n) :
       0 ≤ expect (fun y : BoolCube 1 ↦ |f (Fin.snoc x (y 0))| ^ p) :=
-    OneBit.expect_nonneg_of_nonneg fun y ↦ Real.rpow_nonneg (abs_nonneg _) p
+    by
+      rw [expect_eq_fintypeExpect]
+      exact Finset.expect_nonneg fun y _ ↦ Real.rpow_nonneg (abs_nonneg _) p
   rw [lpMean_of_pos p hp, lpMean_of_pos p hp]
   simp_rw [lpMean_of_pos p hp, abs_of_nonneg (Real.rpow_nonneg (hinner _) _),
     ← Real.rpow_mul (hinner _), show 1 / p * p = 1 by field_simp, Real.rpow_one]
@@ -116,9 +141,13 @@ lemma lpMean_comm (p : ℝ) (hp : 0 < p) (F : BoolCube n → BoolCube 1 → ℝ)
     lpMean p (fun x ↦ lpMean p (fun y ↦ F x y)) =
       lpMean p (fun y ↦ lpMean p (fun x ↦ F x y)) := by
   have hx (x : BoolCube n) : 0 ≤ expect (fun y : BoolCube 1 ↦ |F x y| ^ p) :=
-    OneBit.expect_nonneg_of_nonneg fun y ↦ Real.rpow_nonneg (abs_nonneg _) p
+    by
+      rw [expect_eq_fintypeExpect]
+      exact Finset.expect_nonneg fun y _ ↦ Real.rpow_nonneg (abs_nonneg _) p
   have hy (y : BoolCube 1) : 0 ≤ expect (fun x : BoolCube n ↦ |F x y| ^ p) :=
-    OneBit.expect_nonneg_of_nonneg fun x ↦ Real.rpow_nonneg (abs_nonneg _) p
+    by
+      rw [expect_eq_fintypeExpect]
+      exact Finset.expect_nonneg fun x _ ↦ Real.rpow_nonneg (abs_nonneg _) p
   simp_rw [lpMean_of_pos p hp, abs_of_nonneg (Real.rpow_nonneg (hx _) _),
     abs_of_nonneg (Real.rpow_nonneg (hy _) _), ← Real.rpow_mul (hx _), ← Real.rpow_mul (hy _),
     show 1 / p * p = 1 by field_simp, Real.rpow_one]
@@ -527,7 +556,9 @@ private lemma continuous_lpMean_affine (s : ℝ) (hs : 0 < s) :
     (Continuous.abs (continuous_const.add (continuous_id.mul continuous_const)))
 
 /-- The complete two-point reverse Bonami-Beckner inequality.  Homogeneity and
-continuity discharge the zero function and the endpoints `a = ±1`. -/
+continuity discharge the zero function and the endpoints `a = ±1`.
+
+**Source:** [OD14, Exs. 10.6--10.9]. -/
 theorem reverse_bonami_beckner_one_bit (p q ρ : ℝ)
     (hq : 0 < q) (hqp : q < p) (hp : p < 1)
     (hρ0 : 0 ≤ ρ) (hρsq : ρ ^ 2 = (1 - p) / (1 - q))
@@ -580,7 +611,9 @@ private lemma finset_Lr_sum_le {ι κ : Type*} [DecidableEq ι] (r : ℝ) (hr : 
           add_le_add_left (ih fun k hk j hj ↦ ha k (Finset.mem_insert_of_mem hk) j hj) _
 
 /-- Reverse Minkowski in the mixed-norm form needed to exchange the last bit
-with the first `n` bits during tensorization. -/
+with the first `n` bits during tensorization.
+
+**Source:** [OD14, Exs. 10.6--10.9 (tensorization argument)]. -/
 lemma reverse_minkowski_mixed (p q : ℝ) (hq : 0 < q) (hqp : q ≤ p)
     (F : BoolCube n → BoolCube 1 → ℝ) (hF : ∀ x y, 0 ≤ F x y) :
     lpMean q (fun x ↦ lpMean p (fun y ↦ F x y)) ≥
@@ -590,9 +623,13 @@ lemma reverse_minkowski_mixed (p q : ℝ) (hq : 0 < q) (hqp : q ≤ p)
   set r := p / q with hr_def
   have hr : 1 ≤ r := (le_div_iff₀ hq).2 (by simpa using hqp)
   have hEp (x : BoolCube n) : 0 ≤ expect fun y : BoolCube 1 ↦ F x y ^ p :=
-    OneBit.expect_nonneg_of_nonneg fun y ↦ Real.rpow_nonneg (hF x y) p
+    by
+      rw [expect_eq_fintypeExpect]
+      exact Finset.expect_nonneg fun y _ ↦ Real.rpow_nonneg (hF x y) p
   have hEq (y : BoolCube 1) : 0 ≤ expect fun x : BoolCube n ↦ F x y ^ q :=
-    OneBit.expect_nonneg_of_nonneg fun x ↦ Real.rpow_nonneg (hF x y) q
+    by
+      rw [expect_eq_fintypeExpect]
+      exact Finset.expect_nonneg fun x _ ↦ Real.rpow_nonneg (hF x y) q
   rw [lpMean_of_pos q hq, lpMean_of_pos p hp0]
   simp_rw [lpMean_of_pos p hp0, lpMean_of_pos q hq, abs_of_nonneg (hF _ _),
     abs_of_nonneg (Real.rpow_nonneg (hEp _) _), abs_of_nonneg (Real.rpow_nonneg (hEq _) _),
@@ -600,10 +637,14 @@ lemma reverse_minkowski_mixed (p q : ℝ) (hq : 0 < q) (hqp : q ≤ p)
   ring_nf
   have hA0 : 0 ≤ expect fun x : BoolCube n ↦
       (expect fun y : BoolCube 1 ↦ F x y ^ p) ^ (p⁻¹ * q) :=
-    OneBit.expect_nonneg_of_nonneg fun x ↦ Real.rpow_nonneg (hEp x) _
+    by
+      rw [expect_eq_fintypeExpect]
+      exact Finset.expect_nonneg fun x _ ↦ Real.rpow_nonneg (hEp x) _
   have hB0 : 0 ≤ expect fun y : BoolCube 1 ↦
       (expect fun x : BoolCube n ↦ F x y ^ q) ^ (p * q⁻¹) :=
-    OneBit.expect_nonneg_of_nonneg fun y ↦ Real.rpow_nonneg (hEq y) _
+    by
+      rw [expect_eq_fintypeExpect]
+      exact Finset.expect_nonneg fun y _ ↦ Real.rpow_nonneg (hEq y) _
   apply (Real.rpow_le_rpow_iff (Real.rpow_nonneg hB0 _) (Real.rpow_nonneg hA0 _) hq).1
   rw [← Real.rpow_mul hB0, ← Real.rpow_mul hA0]
   ring_nf
@@ -647,7 +688,9 @@ lemma reverse_minkowski_mixed (p q : ℝ) (hq : 0 < q) (hqp : q ≤ p)
 
 /-- A one-bit reverse bound tensorizes to every Boolean cube.  The inductive
 step splits off the last bit with `noiseOp_snoc_slice` and `lpMean_collapse_last`,
-then exchanges the two blocks with `reverse_minkowski_mixed`. -/
+then exchanges the two blocks with `reverse_minkowski_mixed`.
+
+**Source:** [OD14, Exs. 10.6--10.9]. -/
 theorem tensorize_reverse_bonami_beckner (p q ρ : ℝ)
     (hq : 0 < q) (hqp : q < p)
     (hρ0 : 0 ≤ ρ) (hρ1 : ρ ≤ 1)
@@ -681,7 +724,9 @@ theorem tensorize_reverse_bonami_beckner (p q ρ : ℝ)
           (lpMean_comm p hp0 fun x y ↦ f (Fin.snoc x (y 0))).symm
         _ = lpMean p f := (lpMean_collapse_last p hp0 f).symm
 
-/-- The sharp-correlation theorem for `0 < q < p < 1`. -/
+/-- States reverse hypercontractivity at sharp correlation for `0 < q < p < 1`.
+
+**Source:** [OD14, Exs. 10.6--10.9]. -/
 theorem reverse_bonami_beckner_positive_sharp (p q ρ : ℝ)
     (hq : 0 < q) (hqp : q < p) (hp : p < 1)
     (hρ0 : 0 ≤ ρ) (hρ1 : ρ ≤ 1) (hρsq : ρ ^ 2 = (1 - p) / (1 - q))
@@ -705,8 +750,9 @@ lemma lpMean_noise_antitone (q ρ σ : ℝ) (hq : q < 1)
     split_ifs
     · exact le_rfl
     · positivity
-    · exact Real.rpow_nonneg (expect_nonneg_of_nonneg
-        fun x ↦ Real.rpow_nonneg (abs_nonneg (u x)) r) _
+    · exact Real.rpow_nonneg (by
+        rw [expect_eq_fintypeExpect]
+        exact Finset.expect_nonneg fun x _ ↦ Real.rpow_nonneg (abs_nonneg (u x)) r) _
   have expect_pos : ∀ (u : BooleanFunc n), (∀ x, 0 < u x) → 0 < expect u := by
     intro u hu
     unfold expect uniformWeight
@@ -821,7 +867,9 @@ lemma lpMean_noise_antitone (q ρ σ : ℝ) (hq : q < 1)
     · rw [lpMean_of_pos r hrpos, lpMean_of_pos r hrpos]
       simp_rw [abs_of_nonneg (hnoise _), abs_of_nonneg (hu _)]
       exact Real.rpow_le_rpow
-        (expect_nonneg_of_nonneg fun x ↦ Real.rpow_nonneg (hu x) r)
+        (by
+          rw [expect_eq_fintypeExpect]
+          exact Finset.expect_nonneg fun x _ ↦ Real.rpow_nonneg (hu x) r)
         (expect_rpow_le_noise r τ hrpos hr hτ0 hτ1 u hu)
         (by positivity)
     · have hrnonpos : r ≤ 0 := le_of_not_gt hrpos
@@ -938,7 +986,9 @@ private lemma reverse_holder_of_pos (r : ℝ) (hr0 : 0 < r) (hr1 : r < 1)
   · by_cases hvzero : ∃ x, v x = 0
     · -- a zero of `v` makes the right-hand side vanish
       rw [show lpMean s v = 0 by simp [lpMean, hvzero, hsneg.le], mul_zero]
-      exact expect_nonneg_of_nonneg fun x ↦ mul_nonneg (hu x) (hv x)
+      unfold innerProduct
+      rw [expect_eq_fintypeExpect]
+      exact Finset.expect_nonneg fun x _ ↦ mul_nonneg (hu x) (hv x)
     · have hvpos (x : BoolCube n) : 0 < v x :=
         (hv x).lt_of_ne (Ne.symm (not_exists.mp hvzero x))
       have hEu : 0 < expect (fun x ↦ u x ^ r) := expect_rpow_pos hu hupos
@@ -978,8 +1028,12 @@ private lemma reverse_holder_of_pos (r : ℝ) (hr0 : 0 < r) (hr1 : r < 1)
     obtain rfl : u = 0 := funext fun x ↦ le_antisymm (not_lt.mp (not_exists.mp hupos x)) (hu x)
     simp [innerProduct, lpMean, expect, uniformWeight, hr0.ne', not_le.mpr hr0]
 
-/-- Reverse Hölder for the extended means.  This is the duality input in
-Lemma A.3 and in the two-function corollary. -/
+/-- Reverse Hölder bounds the inner product below by the product of conjugate means
+for finite `p < 1`, `p ≠ 0`. This is the inequality consequence of the source's sharp
+infimum-duality identity, used in the two-function corollary; the full identity and
+its infinite-exponent endpoint are not asserted here.
+
+**Source:** [OD14, Exs. 10.6--10.9]. -/
 lemma reverse_holder (p : ℝ) (hp : p < 1) (hp0 : p ≠ 0)
     (f g : BooleanFunc n) (hf : IsNonnegative f) (hg : IsNonnegative g) :
     innerProduct f g ≥ lpMean p f * lpMean (p / (p - 1)) g := by
@@ -996,9 +1050,16 @@ lemma reverse_holder (p : ℝ) (hp : p < 1) (hp0 : p ≠ 0)
     simpa only [BooleanAnalysis.innerProduct_comm, mul_comm] using h
   · exact reverse_holder_of_pos p hppos hp f g hf hg
 
-/-- Lemma A.3: continuity at `p = 0, 1`, reverse Hölder for nonpositive
-exponents, and the semigroup factorization across zero reduce the full result
-to `reverse_bonami_beckner_positive_sharp`. -/
+/-- Reverse hypercontractivity extends to nonnegative functions for real exponents
+`q ≤ p ≤ 1` with `q < 1` and correlations `0 ≤ ρ ≤ 1` up to the sharp bound
+`ρ² ≤ (1-p)/(1-q)`.
+
+**Source:** [OD14, Exs. 10.6--10.9].
+
+**Proof sketch.** Continuity at exponents zero and one reaches the boundary cases.
+Reverse Hölder handles negative exponents, and the noise semigroup factors the case
+where the exponents lie on opposite sides of zero. These steps reduce the inequality
+to the positive-exponent sharp theorem. -/
 lemma extend_reverse_bonami_beckner (p q ρ : ℝ)
     (hq : q < 1) (hqp : q ≤ p) (hp : p ≤ 1)
     (hρ0 : 0 ≤ ρ) (hρ1 : ρ ≤ 1) (hρsq : ρ ^ 2 ≤ (1 - p) / (1 - q))
@@ -1010,8 +1071,9 @@ lemma extend_reverse_bonami_beckner (p q ρ : ℝ)
     split_ifs
     · exact le_rfl
     · positivity
-    · exact Real.rpow_nonneg
-        (expect_nonneg_of_nonneg fun x ↦ Real.rpow_nonneg (abs_nonneg _) r) _
+    · exact Real.rpow_nonneg (by
+        rw [expect_eq_fintypeExpect]
+        exact Finset.expect_nonneg fun x _ ↦ Real.rpow_nonneg (abs_nonneg _) r) _
   have noise_strict_pos : ∀ (R : ℝ), 0 ≤ R → R < 1 →
       ∀ (u : BooleanFunc n), IsNonnegative u → (∃ y, 0 < u y) →
         ∀ x, 0 < noiseOp R u x := by
@@ -1079,7 +1141,8 @@ lemma extend_reverse_bonami_beckner (p q ρ : ℝ)
       · subst r
         simp [lpMean, hnz, G, A, abs_of_pos (hu _)]
       · rw [lpMean]
-        simp only [hnz, false_and, if_neg hr]
+        simp only [hnz, false_and, if_neg hr,
+          BooleanAnalysis.Hypercontractivity.cubeLpNorm]
         have habs : expect (fun x ↦ |u x| ^ r) = M r := by
           have heq : (fun x ↦ |u x| ^ r) = fun x ↦ u x ^ r := by
             funext x
@@ -1244,7 +1307,7 @@ lemma extend_reverse_bonami_beckner (p q ρ : ℝ)
         dsimp [A]
         rw [lpMean]
         simp only [not_exists.mpr (fun x hx ↦ (hHpos x).ne' hx), false_and, if_false,
-          if_neg hQne]
+          if_neg hQne, BooleanAnalysis.Hypercontractivity.cubeLpNorm]
         simp_rw [abs_of_pos (hHpos _)]
       dsimp [H] at hA
       rw [← hA]
@@ -1325,7 +1388,7 @@ lemma extend_reverse_bonami_beckner (p q ρ : ℝ)
         simp [lpMean, hc0, abs_of_pos hcpos, expect, uniformWeight, Real.exp_log hcpos]
       · rw [lpMean]
         simp only [not_exists.mpr (fun _ h ↦ hc0 h), false_and, if_false, if_neg hr0,
-          abs_of_pos hcpos]
+          BooleanAnalysis.Hypercontractivity.cubeLpNorm, abs_of_pos hcpos]
         have he : expect (fun _ : BoolCube n ↦ c ^ r) = c ^ r := by
           simp [expect, uniformWeight]
         rw [he, ← Real.rpow_mul hcpos.le]
@@ -1350,7 +1413,9 @@ lemma extend_reverse_bonami_beckner (p q ρ : ℝ)
       nlinarith [sq_nonneg R]
     subst R
     rw [noiseOp_zero]
-    have hexpect : 0 ≤ expect u := expect_nonneg_of_nonneg hu
+    have hexpect : 0 ≤ expect u := by
+      rw [expect_eq_fintypeExpect]
+      exact Finset.expect_nonneg fun x _ ↦ hu x
     rw [lpMean_const Q (expect u) hexpect, lpMean_of_pos 1 (by norm_num)]
     simp_rw [abs_of_nonneg (hu _), Real.rpow_one]
     norm_num
@@ -1378,7 +1443,12 @@ lemma extend_reverse_bonami_beckner (p q ρ : ℝ)
       exact zero_subsharp p ρ hppos hp' hρ0 hρ1 (by simpa using hρsq) f hf
     · exact positive_subsharp p q ρ hqpos hqp'' hp' hρ0 hρ1 hρsq f hf
 
-/-- **Reverse Bonami-Beckner inequality.** -/
+/-- Reverse hypercontractivity holds for nonnegative cube functions and finite
+`q ≤ p ≤ 1`, `q < 1`, at the stated sharp correlation bound.
+The source's strict `q < p` theorem is extended here to equal finite exponents.
+Its `q = -∞` minimum-mean endpoint is not represented.
+
+**Source:** [OD14, Exs. 10.6--10.9]. -/
 theorem reverse_bonami_beckner (p q ρ : ℝ)
     (hq : q < 1) (hqp : q ≤ p) (hp : p ≤ 1)
     (hρ0 : 0 ≤ ρ) (hρ1 : ρ ≤ 1) (hρsq : ρ ^ 2 ≤ (1 - p) / (1 - q))
@@ -1386,6 +1456,12 @@ theorem reverse_bonami_beckner (p q ρ : ℝ)
     lpMean q (noiseOp ρ f) ≥ lpMean p f :=
   extend_reverse_bonami_beckner p q ρ hq hqp hp hρ0 hρ1 hρsq f hf
 
+/-- Extended power means of a nonnegative function are nondecreasing in their exponent
+up to one. [OD14, Exs. 10.6--10.9, extended-mean calculus]
+
+**Proof sketch.** Jensen's inequality for powers compares exponents of the same sign.
+Concavity of the logarithm compares either side with the geometric mean at zero.
+If a function has a zero, use the stipulated zero value of its nonpositive means. -/
 private lemma lpMean_exponent_mono (a b : ℝ) (hab : a ≤ b) (hb : b ≤ 1)
     (f : BooleanFunc n) (hf : IsNonnegative f) :
     lpMean a f ≤ lpMean b f := by
@@ -1394,8 +1470,9 @@ private lemma lpMean_exponent_mono (a b : ℝ) (hab : a ≤ b) (hb : b ≤ 1)
     split_ifs
     · exact le_rfl
     · positivity
-    · exact Real.rpow_nonneg (expect_nonneg_of_nonneg
-        fun x ↦ Real.rpow_nonneg (abs_nonneg (f x)) p) _
+    · exact Real.rpow_nonneg (by
+        rw [expect_eq_fintypeExpect]
+        exact Finset.expect_nonneg fun x _ ↦ Real.rpow_nonneg (abs_nonneg (f x)) p) _
   have expect_pos_of_pos (f : BooleanFunc n) (hf : ∀ x, 0 < f x) : 0 < expect f := by
     unfold expect uniformWeight
     exact mul_pos (pow_pos (by norm_num) _)
@@ -1427,9 +1504,13 @@ private lemma lpMean_exponent_mono (a b : ℝ) (hab : a ≤ b) (hb : b ≤ 1)
     rw [lpMean_of_pos a ha, lpMean_of_pos b hb]
     simp_rw [abs_of_nonneg (hf _)]
     have hA : 0 ≤ expect (fun x ↦ f x ^ a) :=
-      expect_nonneg_of_nonneg fun x ↦ Real.rpow_nonneg (hf x) a
+      by
+        rw [expect_eq_fintypeExpect]
+        exact Finset.expect_nonneg fun x _ ↦ Real.rpow_nonneg (hf x) a
     have hB : 0 ≤ expect (fun x ↦ f x ^ b) :=
-      expect_nonneg_of_nonneg fun x ↦ Real.rpow_nonneg (hf x) b
+      by
+        rw [expect_eq_fintypeExpect]
+        exact Finset.expect_nonneg fun x _ ↦ Real.rpow_nonneg (hf x) b
     have hratio : 1 ≤ b / a := by
       apply (le_div_iff₀ ha).2
       simpa using hab
@@ -1451,7 +1532,8 @@ private lemma lpMean_exponent_mono (a b : ℝ) (hab : a ≤ b) (hb : b ≤ 1)
       exact le_rfl
     · have hfpos : ∀ x, 0 < f x :=
         fun x ↦ lt_of_le_of_ne (hf x) (Ne.symm (not_exists.mp hz x))
-      simp only [lpMean, hz, false_and, if_false, if_neg ha.ne, if_neg hb.ne]
+      simp only [lpMean, hz, false_and, if_false, if_neg ha.ne, if_neg hb.ne,
+        BooleanAnalysis.Hypercontractivity.cubeLpNorm]
       simp_rw [abs_of_pos (hfpos _)]
       have hA : 0 < expect (fun x ↦ f x ^ a) :=
         expect_pos_of_pos _ fun x ↦ Real.rpow_pos_of_pos (hfpos x) a
@@ -1545,8 +1627,12 @@ private lemma lpMean_exponent_mono (a b : ℝ) (hab : a ≤ b) (hb : b ≤ 1)
       exact lpMean_zero_le_pos hbpos f hf
     · exact lpMean_mono_pos_exp hapos hab f hf
 
-/-- The two-function form: `E[f(x)g(y)] ≥ ‖f‖_p ‖g‖_q` for correlated
-Boolean strings. -/
+/-- The two-function form gives `E[f(x)g(y)] ≥ ‖f‖_p ‖g‖_q` for nonnegative
+functions on correlated Boolean strings and finite `p,q < 1`.
+The source also permits an exponent of one at correlation zero; those endpoint cases
+and infinite exponents are not represented by this declaration.
+
+**Source:** [OD14, Exs. 10.6--10.9]. -/
 theorem reverse_bonami_beckner_two_function (p q ρ : ℝ)
     (hp : p < 1) (hq : q < 1)
     (hρ0 : 0 ≤ ρ) (hρ1 : ρ ≤ 1) (hρsq : ρ ^ 2 ≤ (1 - p) * (1 - q))
@@ -1557,8 +1643,9 @@ theorem reverse_bonami_beckner_two_function (p q ρ : ℝ)
     split_ifs
     · exact le_rfl
     · exact (Real.exp_pos _).le
-    · exact Real.rpow_nonneg
-        (expect_nonneg_of_nonneg fun x ↦ Real.rpow_nonneg (abs_nonneg _) _) _
+    · exact Real.rpow_nonneg (by
+        rw [expect_eq_fintypeExpect]
+        exact Finset.expect_nonneg fun x _ ↦ Real.rpow_nonneg (abs_nonneg _) _) _
   have lpMean_zero_le_expect (u : BooleanFunc n) (hu : IsNonnegative u) :
       lpMean 0 u ≤ expect u := by
     convert lpMean_exponent_mono 0 1 (by norm_num) le_rfl u hu using 1
@@ -1570,10 +1657,14 @@ theorem reverse_bonami_beckner_two_function (p q ρ : ℝ)
     classical
     by_cases huzero : ∃ x, u x = 0
     · rw [show lpMean 0 u = 0 by simp [lpMean, huzero], zero_mul]
-      exact expect_nonneg_of_nonneg fun x ↦ mul_nonneg (hu x) (hv x)
+      unfold innerProduct
+      rw [expect_eq_fintypeExpect]
+      exact Finset.expect_nonneg fun x _ ↦ mul_nonneg (hu x) (hv x)
     · by_cases hvzero : ∃ x, v x = 0
       · rw [show lpMean 0 v = 0 by simp [lpMean, hvzero], mul_zero]
-        exact expect_nonneg_of_nonneg fun x ↦ mul_nonneg (hu x) (hv x)
+        unfold innerProduct
+        rw [expect_eq_fintypeExpect]
+        exact Finset.expect_nonneg fun x _ ↦ mul_nonneg (hu x) (hv x)
       · have hupos : ∀ x, 0 < u x := fun x ↦
             (hu x).lt_of_ne (Ne.symm (not_exists.mp huzero x))
         have hvpos : ∀ x, 0 < v x := fun x ↦
