@@ -448,6 +448,54 @@ uncomputability chapter.
   `prefixTM`/`fixedPair` promotion requests. Dedup of superseded batch
   privates is an E5 closure task. Mathlib TM2 rejected as substrate
   (evaluation recorded in the ch1 decision log).
+* **Machine-routine layer (user decision 2026-10-06: build once
+  chapter 2 is done, in the E5-closure/D7 window, before chapter 3).**
+  Three pieces, sized by the A-chain's evidence (≈ half of the A2/A3
+  deliveries' 202 native privates are hand-rebuilt universal routines;
+  `emitterBank*`/`emitterP2*` relocation privately re-harvested three
+  times; A3's proved costs `3|w|+3` copy / `2|w|+2` clear match the
+  prior art's `3w+2`/`2w+2` to within one step):
+  1. a generic **bank-embedding theorem** — a verified routine on its
+     own small tape set runs on any selected tape subset of a `k`-tape
+     machine, cost unchanged, all other tapes/heads framed (the public
+     generic form of `emitterBank*`/`clBank*`/`clSlot*`);
+  2. a generic **seam-composition lemma** — sequential composition of
+     two controllers at a canonical `Cfg.ofWords` seam with first-return
+     cuts and additive budgets (the generic form of the per-batch
+     dispatch gluing);
+  3. **catalog promotion** of transfer/clear/copy/compare/increment as
+     public machines with exact costs, seeded from the already-audited
+     A-chain privates (D6-style promotion, not new proof work).
+  Mechanism: a design addendum (`machine-library-design.md` §12) →
+  statement gate → fills → audit, folded into the queued D7
+  internal-namespace visibility proposal. **Citation discipline
+  (binding, user guideline 2026-10-06): diligently cite the code this
+  adapts — the design is inspired by Édouard Bonnet's
+  `classical-complexity` (Lax Archive lax-434930), module
+  `proofs/Lax434930Proofs/InclusionAux/TimeCompiler/` (StackProgram's
+  `compile_correct`, StackRename's `rename_executes`/`executes_in_sum`,
+  and the transfer/clear/copy/for/repeat routine catalog), commit
+  `0c0840319318215fd7b36a9a822b81ce55cf6941`, Apache-2.0. The §12
+  addendum, the affected module docstrings, and the blueprint entries
+  must each carry this citation. Adapt design, never code: different
+  toolchain (their Lean 4.33 / our 4.25) and machine model (TM2 keyed
+  stacks vs FinTM tapes with heads); nothing is imported or
+  transcribed, and the external files stay out of the repo.**
+* **Retrofit pass over chapters 1–2 with the routine layer (user
+  decision 2026-10-06: queued as backlog, explicitly important — to be
+  done at some point, not time-bound).** Once the machine-routine layer
+  is audited, revisit the existing ch1 and ch2 formalizations —
+  Cook–Levin included — and simplify them against it: replace the
+  privately re-derived bank/relocation/dispatch/frame families
+  (`emitterBank*`, `emitterP2*` relocation, `clBank*`/`clSlot*`,
+  `clCopy*`/`clCmp*`/`clRead*`/`clCount*`, and their ch1 analogues in
+  `Build/Primitives.lean`/`Build/Loop.lean`) with catalog citations and
+  the two generic theorems. Expected effect: large private-count and
+  line-count reductions in the five size-exception files, directly
+  serving the deferred D7 splits. Statement freeze applies — public
+  surfaces never change; every replacement batch goes through the
+  standard sweep + traversal + audit protocol. Prerequisite: the
+  machine-routine layer's gate is CLOSED.
 * **Audit-mandated fill-brief inheritances** (each brief must carry these
   verbatim from the cited records):
   - `NP_subset_EXP` enumerator: the contract-by-contract table —
