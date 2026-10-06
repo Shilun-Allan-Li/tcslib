@@ -404,7 +404,10 @@ uncomputability chapter.
   emitter assembly); frontier = the packed-record producer, the
   round controller, equisatisfiability (four-step plan); tree at
   **5 admissions**; ledger **54/59**; Hardness 1,193 lines (new
-  recorded exception). Next: 4A-2 continuation → 4B → the
+  recorded exception). **4A-2 brief issued 2026-10-05**
+  (`briefs/ch2-epoch4-batchA2.md`, base `f815da30`; the four-step
+  plan binding; sanctioned root withdrawn — zero admissions
+  sanctioned; producer = the checkpoint boundary). → 4B → the
   epoch-3/4 audit → E5 closure.
   Subsumes 2C's
   `prefixTM`/`fixedPair` promotion requests. Dedup of superseded batch
