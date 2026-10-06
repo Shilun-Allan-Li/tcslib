@@ -86,7 +86,7 @@ def publicsSnapshot : Array Name := #[`Complexity.Snapshot, `Complexity.emitted,
 def publicsTautology : Array Name := #[`Complexity.TAUTOLOGY, `Complexity.TAUTOLOGY_coNPComplete, `Complexity.TAUTOLOGY_mem_coNP, `Complexity.coNPComplete, `Complexity.coNPHard]
 def publicsHardness : Array Name := #[`Complexity.NPHard.polyTimeReducible, `Complexity.SAT3_NPComplete, `Complexity.SAT3_NPHard, `Complexity.SAT_NPComplete, `Complexity.SAT_NPHard]
 
-def inventoryNondeterminism : Array Name := #[`Complexity.EXP_eq_NEXP_of_P_eq_NP, `Complexity.NEXP_eq_iUnion_NTIME, `Complexity.NEXP_subset_iUnion_NTIME, `Complexity.NP_eq_iUnion_NTIME, `Complexity.NP_subset_iUnion_NTIME, `Complexity.P_ne_NP_of_EXP_ne_NEXP, `Complexity.ntime_expPow_subset_NEXP, `Complexity.ntime_expPow_subset_NEXP._proof_1_2, `Complexity.ntime_expPow_subset_NEXP._proof_1_3, `Complexity.ntime_expPow_subset_NEXP._proof_1_4, `Complexity.ntime_poly_subset_NP, `Turing.NDTM.runWith.eq_1, `Turing.NDTM.runWith.eq_2, `Turing.NDTM.runWith.eq_def, `Turing.NDTM.stepWith.eq_1]
+def inventoryNondeterminism : Array Name := #[`Complexity.EXP_eq_NEXP_of_P_eq_NP, `Complexity.NEXP_eq_iUnion_NTIME, `Complexity.NEXP_subset_iUnion_NTIME, `Complexity.NP_eq_iUnion_NTIME, `Complexity.NP_subset_iUnion_NTIME, `Complexity.P_ne_NP_of_EXP_ne_NEXP, `Complexity.ntime_expPow_subset_NEXP, `Complexity.ntime_expPow_subset_NEXP._proof_1_2, `Complexity.ntime_expPow_subset_NEXP._proof_1_3, `Complexity.ntime_expPow_subset_NEXP._proof_1_4, `Complexity.ntime_poly_subset_NP, `Turing.NDTM.stepWith.eq_1]
 
 def inventoryEXP : Array Name := #[`Complexity.EXP, `Complexity.EXP_subset_NEXP, `Complexity.ExpBound, `Complexity.NEXP, `Complexity.NP_subset_EXP, `Complexity.NP_subset_EXP._proof_1_1, `Complexity.NP_subset_EXP._proof_1_2, `Complexity.NP_subset_EXP._proof_1_3, `Complexity.NP_subset_EXP._proof_1_4, `Complexity.NP_subset_EXP._proof_1_5, `Complexity.P_subset_EXP, `Complexity.P_subset_EXP._proof_1_1, `Complexity.enumWord, `Complexity.enumWord._sunfold, `Complexity.enumWord._unsafe_rec, `Complexity.enumWord.eq_1, `Complexity.enumWord.eq_2, `Complexity.enumWord.eq_def, `Complexity.enumWord.match_1, `Complexity.exists_proj_decider, `Complexity.exists_proj_decider._proof_1_1, `Turing.solveSplitWith.eq_1]
 
@@ -180,7 +180,7 @@ run_cmd do
   unless tcslibBad.isEmpty do
     throwError "Declarations whose closures exceed the permitted axioms: {tcslibBad}"
   for (m, n) in moduleTotals do
-    logInfo m!"PASS 2/3 {m}: {n} checked declarations, all closures within the permitted triple; non-private kernel names match the reviewed 87-name inventory exactly (both directions)."
+    logInfo m!"PASS 2/3 {m}: {n} checked declarations, all closures within the permitted triple; non-private kernel names match the reviewed inventory exactly (87 names at the gate snapshot; 84 after the recorded E5 dedup) (both directions)."
   logInfo m!"PASS 4: {tcslibTotal} checked TCSlib declarations in the import closure; every transitive closure is within propext/Classical.choice/Quot.sound (sorryAx and any other axiom would fail this run)."
   logInfo "R3 CLOSURE AUDIT PASS: the round-2 finding-1 surface repair discharged -- exact two-directional inventory equality on all six owned modules; axiom, target, and coverage passes unchanged from round 2."
 

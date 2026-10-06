@@ -131,3 +131,15 @@ instance argument, and invoking it), so the rows above now state only the
 facts: non-private generated constants whose types mention a private
 structure. All seven remain in the certified inventory. The
 `enumWord._unsafe_rec` class wording was refined per the same report.
+
+---
+
+## E5-closure delta (recorded at dedup)
+
+The E5 dedup (private-deletion-only; `e5-dedup-inventory.md`) removed the
+elaboration sites that had generated three imported-definition equation
+lemmas in `Nondeterminism`: `Turing.NDTM.runWith.eq_1`, `.eq_2`, `.eq_def`.
+The post-dedup certified surface is therefore **84 names** (12/22/15/24/6/5
+per module); no source public and no other entry changed. The committed
+closure program's embedded inventory is updated accordingly; the 87-name
+inventory above remains the certified record of the gate-audited snapshot.

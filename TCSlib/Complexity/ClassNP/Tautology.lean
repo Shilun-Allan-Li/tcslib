@@ -179,27 +179,6 @@ private lemma taut_verifier_append (x u : List Bool) (hu : u.length = x.length +
   change tautVerifierBit (x ++ u) = true ↔ _
   simp only [tautVerifierBit, hs, List.take_left, List.drop_left, Bool.not_eq_true']
 
-/-- Even total input lengths are explicitly rejected, including length zero. -/
-private lemma taut_verifier_even (z : List Bool) (hz : z.length % 2 = 0) :
-    tautVerifierBit z = false := by
-  unfold tautVerifierBit
-  cases hs : Turing.solveSplit 1 1 z.length with
-  | none => rfl
-  | some i =>
-    have hi := taut_split_some z.length i hs
-    omega
-
-/-- Parse failure accepts every correctly sized certificate: the empty
-fallback has false DNF value, so it belongs to the complement. -/
-private lemma taut_malformed (x u : List Bool) (hx : CNF.parse x = none)
-    (hu : u.length = x.length + 1) :
-    x ∈ (TAUTOLOGYᶜ : Language Bool) ∧ x ++ u ∈ tautVerifier := by
-  have hv : (DNF.decode x).eval (tautAssignment u) = false := by
-    simp only [DNF.decode, CNF.decode, hx, Option.getD_none]
-    rfl
-  exact ⟨(taut_certificate_equiv x).mpr ⟨u, hu, hv⟩,
-    (taut_verifier_append x u hu).mpr hv⟩
-
 /-- Once the concrete verifier is polynomial-time, the audited parameters
 `(1,1)` close the original membership statement without any SAT dependency. -/
 private lemma taut_membership_of_verifier (hV : tautVerifier ∈ P) :

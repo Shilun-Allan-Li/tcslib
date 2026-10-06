@@ -1322,27 +1322,6 @@ private lemma enumCont_return_run {k : ℕ} {S H : Type} {x : List Bool}
       rw [htr]
       rfl
 
-/-- Combining the prepared verifier call with the clean wrapper gives a
-repeatable call: the candidate is retained, all other original source work
-is restored to blank, and the sole verdict is held on the capture tape.
-The concrete body still has to dispatch, clear that verdict, and increment. -/
-private lemma enumCont_clean_verifier (MV : FinTM Bool) (V : Language Bool) (Tv : ℕ → ℕ)
-    (hV : MV.DecidesInTime V Tv) (x s : List Bool) :
-    let Q := bufferedCompTM enumCont_concatTM MV
-    let c₀ := Cfg.ofWords (input := x) Q.tm.q₀ (stateWord Q.k s)
-    ∃ t ≤ 3 * (Tv (x.length + s.length) + 2 * (x.length + s.length) + 4) +
-        x.length + 9,
-      (enumCont_cleanTM Q).tm.runFrom
-        (captureCfg Sum.inl (.inr (.inl 0)) [] [] (enumCont_logCfg c₀ [])) t =
-        enumCont_cleanCfg Q c₀ [MultiTapeTM.indicator V (x ++ s)] none 1 0 := by
-  dsimp only
-  obtain ⟨t, ht, hh, ho⟩ := enumCont_verifier_call MV V Tv hV x s
-  obtain ⟨r, hr, he⟩ := enumCont_clean_complete (bufferedCompTM enumCont_concatTM MV)
-    (Cfg.ofWords (input := x) (bufferedCompTM enumCont_concatTM MV).tm.q₀
-      (stateWord (bufferedCompTM enumCont_concatTM MV).k s))
-    [MultiTapeTM.indicator V (x ++ s)] t hh ho
-  exact ⟨r, by simp only [List.length_singleton] at hr; omega, he⟩
-
 /-- Pad an action with inactive high tapes and embed its finite control. -/
 private def enumCont_padAction {k K : ℕ} {S H : Type}
     (emb : S → H) (a : Action k Bool S) : Action K Bool H :=
@@ -3002,16 +2981,6 @@ private lemma a3_split_strictMono (C c : ℕ) :
   intro n m hnm
   exact Nat.add_lt_add_of_lt_of_le hnm (Nat.mul_le_mul_left C
     (Nat.pow_le_pow_right (by omega) (Nat.pow_le_pow_left (by omega) c)))
-
-/-- Exact exponential widths make both parts of a concatenation unique. -/
-private lemma a3_split_unique (C c : ℕ) {x u y v : List Bool}
-    (hu : u.length = C * 2 ^ (x.length + 1) ^ c)
-    (hv : v.length = C * 2 ^ (y.length + 1) ^ c) (h : x ++ u = y ++ v) :
-    x = y ∧ u = v := by
-  have hlen := congrArg List.length h
-  simp only [List.length_append, hu, hv] at hlen
-  have hx := (a3_split_strictMono C c).injective hlen
-  exact ⟨List.append_inj_left h hx, List.append_inj_right h hx⟩
 
 /-- The finite exponential-length search, with an explicit failure value. -/
 private def a3Split (C c m : ℕ) : Option ℕ :=

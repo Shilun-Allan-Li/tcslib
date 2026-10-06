@@ -168,13 +168,6 @@ private lemma sat_split_exists (N i : ℕ) (h : i + (i + 1) = N) :
     congr 1
     omega
 
-/-- Even total lengths are rejected by the exact split search. -/
-private lemma sat_split_even (N : ℕ) (h : N % 2 = 0) :
-    solveSplit 1 1 N = none := by
-  cases hs : solveSplit 1 1 N with
-  | none => rfl
-  | some i => have hi := sat_split_some N i hs <;> omega
-
 /-- Boolean width test; repeated literals count as distinct occurrences. -/
 private def satWidth (φ : CNF ℕ) : Bool := φ.all fun C => decide (C.length ≤ 3)
 
@@ -1634,152 +1627,11 @@ private lemma satReduction_fallback (x : List Bool) (h : CNF.parse x = none) :
     satReduction x = CNF.serialize [] := by
   simp [satReduction, CNF.decode, h, CNF.fallback, satTransform, satTransformFrom]
 
-/-- A chain uses at most one fresh variable and one output clause per input
-tail literal; these coarse bounds include all unsplit cases. -/
-private lemma satChain_sizes (head : Std.Sat.Literal ℕ) (rest : CNF.Clause ℕ) (n : ℕ) :
-    (satChain head rest n).2 ≤ n + rest.length ∧
-      (satChain head rest n).1.length ≤ rest.length + 1 := by
-  induction rest generalizing head n with
-  | nil => simp [satChain]
-  | cons b rest ih =>
-    cases rest with
-    | nil => simp [satChain]
-    | cons c rest =>
-      cases rest with
-      | nil => simp [satChain]
-      | cons d rest =>
-        have ht := ih (n, false) (n + 1)
-        simp only [satChain, List.length_cons] at *
-        omega
-
-/-- Coarse clause allocation and output-count bounds, including the empty clause. -/
-private lemma satSplitClause_sizes (C : CNF.Clause ℕ) (n : ℕ) :
-    (satSplitClause C n).2 ≤ n + C.length ∧ (satSplitClause C n).1.length ≤ C.length + 1 := by
-  cases C with
-  | nil => simp [satSplitClause]
-  | cons head rest =>
-    have h := satChain_sizes head rest n
-    change (satChain head rest n).2 ≤ n + (rest.length + 1) ∧
-      (satChain head rest n).1.length ≤ rest.length + 1 + 1
-    omega
-
-/-- Number of literal occurrences plus number of clauses, used only for size
-bookkeeping; the empty clause contributes one. -/
-private def satMeasure (φ : CNF ℕ) : ℕ := (φ.map fun C => C.length + 1).sum
-
-/-- Freshness and linear combinatorial growth for the complete transformation.
-
-**Proof sketch.** Induct on clauses. Both allocators are monotone; their
-individual bounds add. First-chain variables stay below the cursor passed to
-the tail, while the induction hypothesis bounds all tail variables. -/
-private lemma satTransformFrom_bounds (φ : CNF ℕ) (n : ℕ)
-    (hvars : ∀ C ∈ φ, ∀ ℓ ∈ C, ℓ.1 < n) :
-    n ≤ (satTransformFrom φ n).2 ∧
-    (satTransformFrom φ n).2 ≤ n + satMeasure φ ∧
-    (satTransformFrom φ n).1.length ≤ satMeasure φ ∧
-    (∀ D ∈ (satTransformFrom φ n).1, ∀ ℓ ∈ D, ℓ.1 < (satTransformFrom φ n).2) := by
-  induction φ generalizing n with
-  | nil => simp [satTransformFrom, satMeasure]
-  | cons C φ ih =>
-    have hn := satSplitClause_cursor C n
-    have hc := satSplitClause_sizes C n
-    have ht := ih (satSplitClause C n).2
-      (fun D hD ℓ hℓ => Nat.lt_of_lt_of_le
-        (hvars D (List.mem_cons_of_mem C hD) ℓ hℓ) hn)
-    have hv := satSplitClause_vars C n (hvars C List.mem_cons_self)
-    change n ≤ (satTransformFrom φ (satSplitClause C n).2).2 ∧ _
-    refine ⟨Nat.le_trans hn ht.1, ?_, ?_, ?_⟩
-    · simp only [satTransformFrom, satMeasure, List.map_cons, List.sum_cons]
-      dsimp only [satMeasure] at ht
-      omega
-    · simp only [satTransformFrom, List.length_append, satMeasure, List.map_cons, List.sum_cons]
-      dsimp only [satMeasure] at ht
-      omega
-    · intro D hD ℓ hℓ
-      rcases List.mem_append.mp hD with hD | hD
-      · exact Nat.lt_of_lt_of_le (hv D hD ℓ hℓ) ht.1
-      · exact ht.2.2.2 D hD ℓ hℓ
-
 /-- Every clause's serialization has room for all its literal occurrences. -/
 private lemma sat_clause_measure (C : CNF.Clause ℕ) : C.length + 1 ≤ (CNF.serializeClause C).length := by
   induction C with
   | nil => simp [CNF.serializeClause]
   | cons ℓ C ih => simp [CNF.serializeClause, CNF.serializeLit] at *; omega
-
-/-- The combinatorial measure is bounded by the serialized input length. -/
-private lemma sat_measure_serialize (φ : CNF ℕ) : satMeasure φ ≤ (CNF.serialize φ).length := by
-  induction φ with
-  | nil => simp [satMeasure, CNF.serialize]
-  | cons C φ ih =>
-    have hc := sat_clause_measure C
-    have he : (CNF.serialize (C :: φ)).length =
-        1 + (CNF.serializeClause C).length + (CNF.serialize φ).length := by
-      simp [CNF.serialize, CNF.serializeClause]; omega
-    simp only [satMeasure, List.map_cons, List.sum_cons] at *
-    omega
-
-/-- The bound applies to the total decoder as well as successful parses. -/
-private lemma sat_measure_decode (x : List Bool) : satMeasure (CNF.decode x) ≤ x.length := by
-  cases hp : CNF.parse x with
-  | none => simp [CNF.decode, hp, CNF.fallback, satMeasure]
-  | some φ =>
-    have hx := sat_parse_repr hp
-    simpa [CNF.decode, hp, hx, CNF.parse_serialize] using sat_measure_serialize φ
-
-/-- Unary serialization of a variable-bounded clause has a linear size bound. -/
-private lemma sat_clause_serial_bound (C : CNF.Clause ℕ) (n : ℕ)
-    (hvars : ∀ ℓ ∈ C, ℓ.1 < n) :
-    (CNF.serializeClause C).length ≤ C.length * (n + 2) + 1 := by
-  induction C with
-  | nil => simp [CNF.serializeClause]
-  | cons ℓ C ih =>
-    have hv := hvars ℓ List.mem_cons_self
-    have ht := ih (fun d hd => hvars d (List.mem_cons_of_mem ℓ hd))
-    have he : (CNF.serializeClause (ℓ :: C)).length =
-        ℓ.1 + 3 + (CNF.serializeClause C).length := by
-      simp [CNF.serializeClause, CNF.serializeLit]; omega
-    rw [he, List.length_cons, Nat.add_mul, Nat.one_mul]
-    omega
-
-/-- Serialization of a variable-bounded 3CNF is linear in its clause count. -/
-private lemma sat_serial_bound (φ : CNF ℕ) (n : ℕ) (hwidth : φ.WidthAtMost 3)
-    (hvars : ∀ C ∈ φ, ∀ ℓ ∈ C, ℓ.1 < n) :
-    (CNF.serialize φ).length ≤ φ.length * (3 * n + 8) + 1 := by
-  induction φ with
-  | nil => simp [CNF.serialize]
-  | cons C φ ih =>
-    have hc := sat_clause_serial_bound C n (hvars C List.mem_cons_self)
-    have hm := Nat.mul_le_mul_right (n + 2) (hwidth C List.mem_cons_self)
-    have ht := ih (fun D hD => hwidth D (List.mem_cons_of_mem C hD))
-      (fun D hD => hvars D (List.mem_cons_of_mem C hD))
-    have he : (CNF.serialize (C :: φ)).length =
-        1 + (CNF.serializeClause C).length + (CNF.serialize φ).length := by
-      simp [CNF.serialize, CNF.serializeClause]; omega
-    rw [he, List.length_cons, Nat.add_mul, Nat.one_mul]
-    omega
-
-/-- The string reduction has quadratic output length on every input, including
-malformed input of length zero. This is a size bound, not a machine-time claim. -/
-private lemma satReduction_size (x : List Bool) :
-    (satReduction x).length ≤ 6 * x.length ^ 2 + 8 * x.length + 1 := by
-  let φ := CNF.decode x
-  have h := satTransformFrom_bounds φ φ.numVars
-    (fun C hC ℓ hℓ => sat_literal_lt_numVars φ C ℓ hC hℓ)
-  have hn := CNF.numVars_decode_le x
-  have hm := sat_measure_decode x
-  have hcursor : (satTransformFrom φ φ.numVars).2 ≤ 2 * x.length := by
-    change (satTransformFrom (CNF.decode x) (CNF.decode x).numVars).2 ≤ 2 * x.length
-    dsimp only [φ] at h
-    omega
-  have hclauses : (satTransform φ).length ≤ x.length := Nat.le_trans h.2.2.1 hm
-  have hs := sat_serial_bound (satTransform φ) (2 * x.length)
-    (satTransformFrom_width φ φ.numVars)
-    (fun D hD ℓ hℓ => Nat.lt_of_lt_of_le (h.2.2.2 D hD ℓ hℓ) hcursor)
-  calc
-    (satReduction x).length ≤ (satTransform φ).length * (3 * (2 * x.length) + 8) + 1 := hs
-    _ ≤ x.length * (3 * (2 * x.length) + 8) + 1 :=
-      Nat.add_le_add_right (Nat.mul_le_mul_right _ hclauses) 1
-    _ = 6 * x.length ^ 2 + 8 * x.length + 1 := by ring
 
 /-- Two-tape actions for the reduction: the first tape is a unary fresh
 cursor, the second a temporary literal buffer. -/
@@ -2729,38 +2581,6 @@ private lemma satStreamBound_size (x : List Bool) (s : SatStreamState)
   rw [satStreamWord_length]
   rcases hs with ⟨hp, hj⟩
   constructor <;> omega
-
-/-- Every emitted chunk is bounded by the original input length, even when
-one short token triggers two long fresh-index serializations. The largest
-fragment is at most `5n+11`, as required by the audited round schedule.
-**Proof sketch.** Successful parsing bounds the current literal by the unread
-suffix; the invariant gives `j ≤ 2n`. The fragment has two fresh literals,
-two clause-marker bits, and the copied literal. Other branches are shorter. -/
-private lemma satStreamRound_chunk_bound (x : List Bool) (s : SatStreamState)
-    (hs : satStreamBound x s) : (satStreamRound x s).2.length ≤ 5 * x.length + 11 := by
-  have hj := (satStreamBound_size x s hs).1
-  unfold satStreamRound
-  split
-  · simp
-  · cases hd : x.drop s.used with
-    | nil => simp
-    | cons b r =>
-      have hx := congrArg List.length hd
-      simp only [List.length_drop, List.length_cons] at hx
-      cases b with
-      | false => simp
-      | true =>
-        simp only
-        split
-        · simp
-        · cases hp : CNF.parseLit (true :: r) with
-          | none => simp
-          | some lr =>
-            rcases lr with ⟨l, rest⟩
-            have hl := congrArg List.length (sat_parseLit_repr hp)
-            simp only [List.length_append, List.length_cons] at hl
-            simp only
-            split <;> simp [CNF.serializeLit] at * <;> omega
 
 /-- Complete validation selects the startup state before emission. A failed
 parse starts at the right boundary in formula control; its first round emits
