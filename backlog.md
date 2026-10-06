@@ -472,7 +472,15 @@ uncomputability chapter.
   (`briefs/ch2-epoch4-batchB.md`, base `b133a3d4`; the docstring
   route binding; new DNF names binding; fallback-flips-sides and
   empty-term/empty-DNF pitfalls pinned; ≈ 7 pts; completion = the
-  campaign tree admission-free). → the epoch-3/4 audit pack
+  campaign tree admission-free). **4B CLOSED 2026-10-06** (Codex
+  `9e9494aa`): `TAUTOLOGY_coNPComplete` via the audited dual route —
+  the five definitional links + the `R(n)=0` one-round emit-loop
+  transducer (28 privates, linear time); **ledger 59/59, the
+  campaign tree at ZERO admissions** — the whole 65-module surface
+  (11,436 kernel declarations) admission-free
+  (`audits/logs/e4B-closure-*`,
+  `audits/programs/ch2-e4B-ClosureAxioms.lean`). → the epoch-3/4
+  audit pack
   (ride-alongs queued: colleague's DNF adaptation, the parallel-run
   provenance, the discarded α hash, **colleague merge #2's 9-module
   private rewiring + the 57→65 order extension**) → E5 closure → the
