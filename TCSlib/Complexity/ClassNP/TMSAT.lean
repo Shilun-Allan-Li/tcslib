@@ -6,7 +6,7 @@ Authors: Seyoon Ragavan
 import TCSlib.Complexity.TuringMachine.Encoding
 import TCSlib.Complexity.TuringMachine.Build.Primitives
 import TCSlib.Complexity.ClassP.TimeConstructible
-import TCSlib.Complexity.ClassNP.PolyTime
+import TCSlib.Complexity.ClassNP.PolyTimePairing
 import TCSlib.Complexity.ClassNP.Reductions
 import TCSlib.Complexity.TuringMachine.Universal
 import Mathlib.Tactic.Ring
@@ -862,134 +862,14 @@ private lemma tmsat_certificate_equiv (c : MachineCode) (y : List Bool) :
       exact (tmsat_quad_bounds α x n t).2.2.1
     rw [List.length_take, Nat.min_eq_left (by omega : n ≤ w.length)]
 
-/-- Timed buffered composition needs the second machine to terminate only on
-the first machine's image. Its bound is measured against the original input.
-
-**Proof sketch.** Capture the preprocessing output on the composition buffer,
-rewind and dispatch through the public `bufferedComp_start` theorem, then
-relocate the second run through `bufferedSecondCfg_run`. Output length is at
-most preprocessing time, so capture and rewind cost at most twice that time
-plus two. This also permits a timed universal machine that is partial on
-malformed requests, provided preprocessing always constructs a valid request. -/
-private lemma tmsat_comp_on_image (M U : FinTM Bool) (f g : List Bool → List Bool)
-    (T₁ T₂ : ℕ → ℕ) (hM : M.ComputesFunInTime f T₁)
-    (hU : ∀ x, U.ComputesInTime (f x) (g x) (T₂ x.length)) :
-    ∃ N : FinTM Bool, N.ComputesFunInTime g (fun n => 2 * T₁ n + T₂ n + 2) := by
-  refine ⟨FinTM.bufferedCompTM M U, ?_⟩
-  intro x
-  obtain ⟨a, p, tapes, heads, ha, hstart⟩ :=
-    FinTM.bufferedComp_start M U x (f x) (T₁ x.length) (hM x)
-  have hlen : (f x).length ≤ T₁ x.length := by
-    have ho := ((FinTM.computesInTime_iff _ _ _ _).mp (hM x)).2
-    simpa only [ho] using M.tm.output_length_le x (T₁ x.length)
-  obtain ⟨b, _, hr⟩ := FinTM.bufferedSecondCfg_run M U (U.tm.initCfg (f x)) true
-    (by simp [FinTM.VirtualTag, MultiTapeTM.initCfg, Cfg.init]) p tapes heads (T₂ x.length)
-  have hu := (FinTM.computesInTime_iff _ _ _ _).mp (hU x)
-  have hbase : (FinTM.bufferedCompTM M U).ComputesInTime x (g x) (a + T₂ x.length) := by
-    apply (FinTM.computesInTime_iff _ _ _ _).mpr
-    rw [MultiTapeTM.runFrom_add, hstart, hr]
-    exact ⟨by simpa only [FinTM.bufferedSecondCfg, Option.map_eq_none_iff] using hu.1, hu.2⟩
-  exact hbase.mono (by dsimp only; omega)
-
-/-- Linear-time catalog contracts are instances of the polynomial calculus. -/
-private lemma tmsat_pt_linear (f : List Bool → List Bool)
-    (h : ∃ (M : FinTM Bool) (C : ℕ),
-      M.ComputesFunInTime f (fun n => C * (n + 1))) : PolyTimeComputable f := by
-  obtain ⟨M, C, hM⟩ := h
-  exact ⟨M, C, 1, by simpa only [Nat.pow_one] using hM⟩
-
-/-- A fixed word is emitted from finite control. -/
-private lemma tmsat_pt_const (w : List Bool) : PolyTimeComputable (fun _ => w) := by
-  exact tmsat_pt_linear _ (FinTM.computesFunInTime_const w)
-
-/-- Total first projection; callers independently guard grammar validity. -/
-private def tmsatFst (z : List Bool) : List Bool := ((pairDecode z).map Prod.fst).getD []
-
-/-- Total second projection; callers independently guard grammar validity. -/
-private def tmsatSnd (z : List Bool) : List Bool := ((pairDecode z).map Prod.snd).getD []
-
 /-- The library's pair-to-concatenation function, including malformed inputs. -/
 private def tmsatConcat (z : List Bool) : List Bool :=
   match pairDecode z with | some (a,b) => a ++ b | none => []
 
-/-- The library's payload-only map; it never inspects the retained head. -/
-private def tmsatMap (g : List Bool → List Bool) (z : List Bool) : List Bool :=
-  match pairDecode z with | some (a,b) => pairEncode a (g b) | none => []
-
-/-- Polynomial payload maps follow C1, with a monotone polynomial runtime.
-The linear administrative term is absorbed at degree `max 1 e`. -/
-private lemma tmsat_pt_map {g : List Bool → List Bool} (hg : PolyTimeComputable g) :
-    PolyTimeComputable (tmsatMap g) := by
-  obtain ⟨G, C, e, hG⟩ := hg
-  obtain ⟨M, a, hM⟩ := FinTM.computesFunInTime_pairMapSnd hG
-    (by intro m n h; exact Nat.mul_le_mul_left C (Nat.pow_le_pow_left (by omega) e))
-  refine ⟨M, a * (C + 1), max 1 e, fun x => (hM x).mono ?_⟩
-  have hlin : x.length + 1 ≤ (x.length + 1) ^ max 1 e := by
-    simpa only [Nat.pow_one] using Nat.pow_le_pow_right (Nat.succ_pos x.length)
-      (Nat.le_max_left 1 e)
-  have hp := Nat.mul_le_mul_left C
-    (Nat.pow_le_pow_right (Nat.succ_pos x.length) (Nat.le_max_right 1 e))
-  simp only [Nat.succ_eq_add_one] at hp
-  calc
-    _ ≤ a * ((C + 1) * (x.length + 1) ^ max 1 e) :=
-      Nat.mul_le_mul_left a (by rw [Nat.add_mul, Nat.one_mul]; omega)
-    _ = _ := by ring
-
-/-- Assemble two computed values by the canonical §9c recipe.
-
-**Proof sketch.** Build `H x = pairEncode (f x) []`, retain the input in
-`s x = pairEncode x (H x)`, then retain `s x` while computing `g` from its
-first projection. Concatenation and second projection remove the two
-administrative encodings, leaving exactly `pairEncode (f x) (g x)`. -/
-private lemma tmsat_pt_pair {f g : List Bool → List Bool}
-    (hf : PolyTimeComputable f) (hg : PolyTimeComputable g) :
-    PolyTimeComputable (fun x => pairEncode (f x) (g x)) := by
-  have hd := tmsat_pt_linear _ FinTM.computesFunInTime_pairDup
-  have hp := tmsat_pt_linear _ FinTM.computesFunInTime_pairFst
-  have hs := tmsat_pt_linear _ FinTM.computesFunInTime_pairSnd
-  have hc := tmsat_pt_linear _ FinTM.computesFunInTime_pairConcat
-  have hH := ((tmsat_pt_map (tmsat_pt_const [])).comp hd).comp hf
-  have hS := (tmsat_pt_map hH).comp hd
-  have hT := ((tmsat_pt_map (hg.comp hp)).comp hd).comp hS
-  have h := hs.comp (hc.comp hT)
-  convert h using 1
-  funext x
-  simp only [Function.comp_apply, tmsatMap, pairDecode_pairEncode,
-    Option.map_some, Option.getD_some]
-  have he (a b c : List Bool) : pairEncode a b ++ c = pairEncode a (b ++ c) := by
-    simp [pairEncode, List.append_assoc]
-  rw [he, he]
-  simp [pairDecode_pairEncode]
-
-/-- Polynomial-time branches on the original input, using W3's captured
-single-bit decision. All three budgets fit their maximum degree. -/
-private lemma tmsat_pt_cond {p : List Bool → Bool} {f g : List Bool → List Bool}
-    (hp : PolyTimeComputable (fun x => [p x]))
-    (hf : PolyTimeComputable f) (hg : PolyTimeComputable g) :
-    PolyTimeComputable (fun x => if p x then f x else g x) := by
-  obtain ⟨P, A, a, hP⟩ := hp
-  obtain ⟨F, B, b, hF⟩ := hf
-  obtain ⟨G, C, c, hG⟩ := hg
-  obtain ⟨M, K, hM⟩ := FinTM.computesFunInTime_cond hP hF hG
-  let e := max a (max b c)
-  refine ⟨M, K * (A + B + C + 1), e, fun x => (hM x).mono ?_⟩
-  have ha := Nat.mul_le_mul_left A
-    (Nat.pow_le_pow_right (Nat.succ_pos x.length) (show a ≤ e by exact Nat.le_max_left _ _))
-  have hb := Nat.mul_le_mul_left B
-    (Nat.pow_le_pow_right (Nat.succ_pos x.length) (show b ≤ e by omega))
-  have hc := Nat.mul_le_mul_left C
-    (Nat.pow_le_pow_right (Nat.succ_pos x.length) (show c ≤ e by omega))
-  have h1 : 1 ≤ (x.length + 1) ^ e := Nat.one_le_pow _ _ (Nat.succ_pos _)
-  simp only [Nat.succ_eq_add_one] at ha hb hc
-  calc
-    _ ≤ K * ((A + B + C + 1) * (x.length + 1) ^ e) :=
-      Nat.mul_le_mul_left K (by simp only [Nat.add_mul, Nat.one_mul]; omega)
-    _ = _ := by ring
-
 /-- Equality with an entire fixed answer is a polynomial-time bit test. -/
 private lemma tmsat_pt_eq (w : List Bool) :
     PolyTimeComputable (fun x => [decide (x = w)]) := by
-  have h := tmsat_pt_linear _ (FinTM.computesFunInTime_ifEq w [true] [false])
+  have h := polyTimeComputable_of_linear (FinTM.computesFunInTime_ifEq w [true] [false])
   convert h using 1
   funext x
   by_cases hx : x = w <;> simp [hx]
@@ -1010,7 +890,7 @@ private lemma tmsat_inc_none (w : List Bool) :
 /-- The exact all-true shape is decided by P11 overflow and whole-word equality. -/
 private lemma tmsat_pt_unary :
     PolyTimeComputable (fun x => [decide (x = List.replicate x.length true)]) := by
-  have h := (tmsat_pt_eq []).comp (tmsat_pt_linear _ FinTM.computesFunInTime_incFixed)
+  have h := (tmsat_pt_eq []).comp (polyTimeComputable_of_linear FinTM.computesFunInTime_incFixed)
   convert h using 1
   funext x
   have he : (incFixed x).getD [] = [] ↔ x = List.replicate x.length true := by
@@ -1245,7 +1125,7 @@ Its time is bounded by that preprocessor's actual output-length guarantee. -/
 private lemma tmsat_pt_take {f g : List Bool → List Bool}
     (hf : PolyTimeComputable f) (hg : PolyTimeComputable g) :
     PolyTimeComputable (fun x => (g x).take (f x).length) := by
-  obtain ⟨M, C, e, hM⟩ := tmsat_pt_pair hf hg
+  obtain ⟨M, C, e, hM⟩ := hf.pairEncode hg
   have hT (x : List Bool) : tmsatTakeTM.ComputesInTime (pairEncode (f x) (g x))
       ((g x).take (f x).length) (C * (x.length+1)^e+1) := by
     apply (tmsat_take_computes (f x) (g x)).mono
@@ -1254,7 +1134,7 @@ private lemma tmsat_pt_take {f g : List Bool → List Bool}
     rw [ho] at hl
     dsimp only at hl
     omega
-  obtain ⟨N, hN⟩ := tmsat_comp_on_image M tmsatTakeTM _ (fun x => (g x).take (f x).length)
+  obtain ⟨N, hN⟩ := FinTM.exists_comp_on_image M tmsatTakeTM _ (fun x => (g x).take (f x).length)
     (fun n => C*(n+1)^e) (fun n => C*(n+1)^e+1) hM hT
   refine ⟨N, 3*(C+1), e, fun x => (hN x).mono ?_⟩
   have hp : 1 ≤ (x.length+1)^e := Nat.one_le_pow _ _ (Nat.succ_pos _)
@@ -1262,48 +1142,15 @@ private lemma tmsat_pt_take {f g : List Bool → List Bool}
   simp only [Nat.mul_add, Nat.add_mul, Nat.mul_one, Nat.mul_assoc]
   omega
 
-/-- Conjunction preserves short-circuit guard order: the second test runs
-only after the first succeeded. -/
-private lemma tmsat_pt_and {p q : List Bool → Bool}
-    (hp : PolyTimeComputable (fun x => [p x]))
-    (hq : PolyTimeComputable (fun x => [q x])) :
-    PolyTimeComputable (fun x => [p x && q x]) := by
-  have h := tmsat_pt_cond hp hq (tmsat_pt_const [false])
-  convert h using 1
-  funext x
-  cases p x <;> rfl
-
-/-- A successful parser returns the unique original pair encoding.
-The proof follows the aligned two-bit grammar, without identifying parse
-failure with an empty first or second component. -/
-private lemma tmsat_pair_inverse (z : List Bool) :
-    ∀ a b, pairDecode z = some (a,b) → z = pairEncode a b := by
-  induction z using List.twoStepInduction with
-  | nil => intro a b h; simp [pairDecode] at h
-  | singleton v => intro a b h; cases v <;> simp [pairDecode] at h
-  | cons_cons v w rest ih _ =>
-    intro a b h
-    cases v <;> cases w
-    · obtain ⟨⟨u,v⟩, hp, he⟩ := Option.map_eq_some_iff.mp h
-      cases he
-      rw [ih u v hp]
-      rfl
-    · cases h; rfl
-    · simp [pairDecode] at h
-    · obtain ⟨⟨u,v⟩, hp, he⟩ := Option.map_eq_some_iff.mp h
-      cases he
-      rw [ih u v hp]
-      rfl
-
 /-- On valid inputs the projections reconstruct the pair. -/
 private lemma tmsat_pair_valid (z : List Bool) (h : (pairDecode z).isSome = true) :
-    z = pairEncode (tmsatFst z) (tmsatSnd z) := by
+    z = pairEncode (pairFstD z) (pairSndD z) := by
   cases hd : pairDecode z with
   | none => simp [hd] at h
   | some p =>
     rcases p with ⟨a,b⟩
-    simpa only [tmsatFst, tmsatSnd, hd, Option.map_some, Option.getD_some] using
-      tmsat_pair_inverse z a b hd
+    simpa only [pairFstD, pairSndD, hd, Option.map_some, Option.getD_some] using
+      eq_pairEncode_of_pairDecode z a b hd
 
 /-- The exact odd split is the P10 search at coefficient and degree one. -/
 private def tmsatSplit (z : List Bool) : List Bool :=
@@ -1340,43 +1187,43 @@ private lemma tmsat_split_append (y w : List Bool) (hw : w.length=y.length+1) :
 /-- Both halves of a successful odd split retain their original native lengths. -/
 private lemma tmsat_split_components (z : List Bool)
     (h : (pairDecode (tmsatSplit z)).isSome = true) :
-    z = tmsatFst (tmsatSplit z) ++ tmsatSnd (tmsatSplit z) ∧
-    (tmsatSnd (tmsatSplit z)).length = (tmsatFst (tmsatSplit z)).length+1 := by
+    z = pairFstD (tmsatSplit z) ++ pairSndD (tmsatSplit z) ∧
+    (pairSndD (tmsatSplit z)).length = (pairFstD (tmsatSplit z)).length+1 := by
   cases hs : solveSplit 1 1 z.length with
   | none => simp [tmsatSplit, hs, pairDecode] at h
   | some i =>
     have hi := tmsat_split_some z.length i hs
-    simp only [tmsatSplit, hs, tmsatFst, tmsatSnd, pairDecode_pairEncode,
+    simp only [tmsatSplit, hs, pairFstD, pairSndD, pairDecode_pairEncode,
       Option.map_some, Option.getD_some]
     refine ⟨(List.take_append_drop i z).symm, ?_⟩
     simp only [List.length_take, List.length_drop]
     omega
 
 /-- The parsed instance is the first exact-split component. -/
-private def tmsatY (z : List Bool) : List Bool := tmsatFst (tmsatSplit z)
+private def tmsatY (z : List Bool) : List Bool := pairFstD (tmsatSplit z)
 
 /-- The padded certificate is the second exact-split component. -/
-private def tmsatW (z : List Bool) : List Bool := tmsatSnd (tmsatSplit z)
+private def tmsatW (z : List Bool) : List Bool := pairSndD (tmsatSplit z)
 
 /-- The retained code field. -/
-private def tmsatCode (z : List Bool) : List Bool := tmsatFst (tmsatY z)
+private def tmsatCode (z : List Bool) : List Bool := pairFstD (tmsatY z)
 
 /-- The retained source input field. -/
-private def tmsatInput (z : List Bool) : List Bool := tmsatFst (tmsatSnd (tmsatY z))
+private def tmsatInput (z : List Bool) : List Bool := pairFstD (pairSndD (tmsatY z))
 
 /-- The unary certificate-length field, before shape validation. -/
-private def tmsatWidth (z : List Bool) : List Bool := tmsatFst (tmsatSnd (tmsatSnd (tmsatY z)))
+private def tmsatWidth (z : List Bool) : List Bool := pairFstD (pairSndD (pairSndD (tmsatY z)))
 
 /-- The unary deadline field, before shape validation. -/
-private def tmsatClock (z : List Bool) : List Bool := tmsatSnd (tmsatSnd (tmsatSnd (tmsatY z)))
+private def tmsatClock (z : List Bool) : List Bool := pairSndD (pairSndD (pairSndD (tmsatY z)))
 
 /-- Grammar guards precede projections at all three quadruple spine levels;
 then both unary fields are checked in full, including the empty word. -/
 private def tmsatGood (z : List Bool) : Bool :=
   (pairDecode (tmsatSplit z)).isSome &&
   ((pairDecode (tmsatY z)).isSome &&
-  ((pairDecode (tmsatSnd (tmsatY z))).isSome &&
-  ((pairDecode (tmsatSnd (tmsatSnd (tmsatY z)))).isSome &&
+  ((pairDecode (pairSndD (tmsatY z))).isSome &&
+  ((pairDecode (pairSndD (pairSndD (tmsatY z)))).isSome &&
   (decide (tmsatWidth z = List.replicate (tmsatWidth z).length true) &&
    decide (tmsatClock z = List.replicate (tmsatClock z).length true)))))
 
@@ -1390,8 +1237,8 @@ private lemma tmsat_good_spec (z : List Bool) (h : tmsatGood z = true) :
   obtain ⟨hz, hw⟩ := tmsat_split_components z hs
   refine ⟨hz, hw, ?_⟩
   have h₀ := tmsat_pair_valid (tmsatY z) hy
-  have h₁ := tmsat_pair_valid (tmsatSnd (tmsatY z)) hx
-  have h₂ := tmsat_pair_valid (tmsatSnd (tmsatSnd (tmsatY z))) hn
+  have h₁ := tmsat_pair_valid (pairSndD (tmsatY z)) hx
+  have h₂ := tmsat_pair_valid (pairSndD (pairSndD (tmsatY z))) hn
   change tmsatY z = pairEncode (tmsatCode z)
     (pairEncode (tmsatInput z) (pairEncode (List.replicate _ true) (List.replicate _ true)))
   rw [← hwidth, ← hclock]
@@ -1408,7 +1255,7 @@ private lemma tmsat_good_quad (α x w : List Bool) (n t : ℕ)
   dsimp only
   simp only [tmsatGood, tmsatCode, tmsatInput, tmsatWidth, tmsatClock, tmsatW, tmsatY]
   simp only [tmsat_split_append _ _ hw]
-  simp [tmsatQuad, tmsatFst, tmsatSnd, pairDecode_pairEncode]
+  simp [tmsatQuad, pairFstD, pairSndD, pairDecode_pairEncode]
 
 /-- Computed fields and ordered validation use P10, P6, P11, and W3.
 Each projection consumes the preceding computed word; validity is still
@@ -1419,18 +1266,18 @@ private lemma tmsat_fields_poly :
     PolyTimeComputable tmsatW ∧ PolyTimeComputable (fun z => [tmsatGood z]) := by
   obtain ⟨S, A, hS⟩ := FinTM.computesFunInTime_splitSolve 1 1
   have hsplit : PolyTimeComputable tmsatSplit := ⟨S,A,3,hS⟩
-  have hf : PolyTimeComputable tmsatFst := tmsat_pt_linear _ FinTM.computesFunInTime_pairFst
-  have hs : PolyTimeComputable tmsatSnd := tmsat_pt_linear _ FinTM.computesFunInTime_pairSnd
-  have hv := tmsat_pt_linear _ FinTM.computesFunInTime_pairValid
+  have hf : PolyTimeComputable pairFstD := polyTimeComputable_pairFstD
+  have hs : PolyTimeComputable pairSndD := polyTimeComputable_pairSndD
+  have hv := polyTimeComputable_of_linear FinTM.computesFunInTime_pairValid
   have hy : PolyTimeComputable tmsatY := hf.comp hsplit
   have h₁ := hs.comp hy
   have h₂ := hs.comp h₁
   have hn : PolyTimeComputable tmsatWidth := hf.comp h₂
   have ht : PolyTimeComputable tmsatClock := hs.comp h₂
   refine ⟨hf.comp hy, hf.comp h₁, hn, ht, hs.comp hsplit, ?_⟩
-  exact tmsat_pt_and (hv.comp hsplit) (tmsat_pt_and (hv.comp hy)
-    (tmsat_pt_and (hv.comp h₁) (tmsat_pt_and (hv.comp h₂)
-      (tmsat_pt_and (tmsat_pt_unary.comp hn) (tmsat_pt_unary.comp ht)))))
+  exact polyTimeComputable_and (hv.comp hsplit) (polyTimeComputable_and (hv.comp hy)
+    (polyTimeComputable_and (hv.comp h₁) (polyTimeComputable_and (hv.comp h₂)
+      (polyTimeComputable_and (tmsat_pt_unary.comp hn) (tmsat_pt_unary.comp ht)))))
 
 /-- Invalid requests are replaced by a well-formed zero-deadline request,
 so the simulator is used only on its proved totality domain. -/
@@ -1457,16 +1304,16 @@ the exact prefix extractor's output. W3 chooses that request only after all
 guards succeed, otherwise emitting the fixed zero-deadline request. -/
 private lemma tmsat_request_poly : PolyTimeComputable tmsatRequest := by
   obtain ⟨ha,hx,hn,ht,hw,hgood⟩ := tmsat_fields_poly
-  have hb := tmsat_pt_linear _ FinTM.computesFunInTime_lengthBits
-  have hs := tmsat_pt_linear _ FinTM.computesFunInTime_pairSnd
+  have hb := polyTimeComputable_of_linear FinTM.computesFunInTime_lengthBits
+  have hs := polyTimeComputable_of_linear FinTM.computesFunInTime_pairSnd
   have hclock : PolyTimeComputable (fun z => Nat.bits (tmsatClock z).length) := by
-    have h := hs.comp ((tmsat_pt_map hb).comp (tmsat_pt_pair polyTimeComputable_id ht))
+    have h := hs.comp (hb.pairMapSnd.comp (polyTimeComputable_id.pairEncode ht))
     convert h using 1
     funext z
-    simp [Function.comp_apply, tmsatMap, pairDecode_pairEncode]
-  exact tmsat_pt_cond hgood
-    (tmsat_pt_pair (tmsat_pt_pair hclock ha) (tmsat_pt_pair hx (tmsat_pt_take hn hw)))
-    (tmsat_pt_const (pairEncode (pairEncode [] []) []))
+    simp [Function.comp_apply, pairMapSnd, pairDecode_pairEncode]
+  exact polyTimeComputable_ite hgood
+    ((hclock.pairEncode ha).pairEncode (hx.pairEncode (tmsat_pt_take hn hw)))
+    (polyTimeComputable_const (pairEncode (pairEncode [] []) []))
 
 /-- Valid code lengths and unary deadlines are bounded by the original
 verifier input length, so the simulator consumes the proved uniform budget. -/
@@ -1596,7 +1443,7 @@ theorem TMSAT_mem_NP (c : EffectiveMachineCode) (hc : PolyBound c.canonizerTime)
             (tmsatClock z).length).mono (hbudget z.length _ _ ha ht)
       · simpa only [tmsatRequest, tmsatResult, if_neg hg, show Nat.bits 0 = [] by simp] using
           (htotal [] [] 0).mono (hbudget z.length 0 0 (by omega) (by omega))
-    obtain ⟨N,hN⟩ := tmsat_comp_on_image M U tmsatRequest (tmsatResult c.toMachineCode)
+    obtain ⟨N,hN⟩ := FinTM.exists_comp_on_image M U tmsatRequest (tmsatResult c.toMachineCode)
       (fun n => C*(n+1)^e) (fun n => A*(n+1)^d) hM hs
     have hresult : PolyTimeComputable (tmsatResult c.toMachineCode) := by
       refine ⟨N,2*C+A+2,max e d,fun z => (hN z).mono ?_⟩
@@ -1760,9 +1607,9 @@ and degree zero emits its fixed unary word. Otherwise P5 uses exponent
 private lemma tmsat_certificate_unary (C c : ℕ) :
     PolyTimeComputable (fun x => List.replicate (C*(x.length+1)^c) true) := by
   by_cases hC : C = 0
-  · simpa [hC] using tmsat_pt_const []
+  · simpa [hC] using polyTimeComputable_const []
   · by_cases hc : c = 0
-    · simpa [hc] using tmsat_pt_const (List.replicate C true)
+    · simpa [hc] using polyTimeComputable_const (List.replicate C true)
     · obtain ⟨M,A,hM⟩ := FinTM.computesFunInTime_polyUnary C (c-1+1)
       have he : c-1+1 = c := by omega
       rw [he] at hM
@@ -1831,11 +1678,11 @@ theorem TMSAT_NPHard (c : MachineCode) : NPHard (TMSAT c) := by
     -- concatenated components, and reject malformed inputs via W3.
     have hv : PolyTimeComputable
         (fun z => [MultiTapeTM.indicator (V : Set (List Bool)) z]) := ⟨M_V,A,d,hM_V⟩
-    have hp := tmsat_pt_linear _ FinTM.computesFunInTime_pairValid
+    have hp := polyTimeComputable_of_linear FinTM.computesFunInTime_pairValid
     have hc : PolyTimeComputable tmsatConcat :=
-      tmsat_pt_linear _ FinTM.computesFunInTime_pairConcat
+      polyTimeComputable_of_linear FinTM.computesFunInTime_pairConcat
     have hw : PolyTimeComputable (tmsatWrapperOutput V) := by
-      have h := tmsat_pt_cond hp (hv.comp hc) (tmsat_pt_const [false])
+      have h := polyTimeComputable_ite hp (hv.comp hc) (polyTimeComputable_const [false])
       convert h using 1
       funext z
       cases hd : pairDecode z with
@@ -1886,8 +1733,8 @@ theorem TMSAT_NPHard (c : MachineCode) : NPHard (TMSAT c) := by
       have hexact : 2*e*r-1+1 = 2*e*r := by omega
       rw [hexact] at h
       exact ⟨polyUnaryTM (2*e*r-1) D,D+5*(2*e*r)+4,2*e*r,h⟩
-    have hinner := tmsat_pt_pair polyTimeComputable_id (tmsat_pt_pair hq ht)
-    have houter := tmsat_pt_linear _ (FinTM.computesFunInTime_pairEncodeFixed α₀)
+    have hinner := polyTimeComputable_id.pairEncode (hq.pairEncode ht)
+    have houter := polyTimeComputable_of_linear (FinTM.computesFunInTime_pairEncodeFixed α₀)
     exact houter.comp hinner
 
   exact ⟨_, hemit, tmsat_reduction_correct c L V C₀ c₀ α₀ T' hL hnormalized⟩

@@ -46,6 +46,7 @@ their relation to the formula (tree) versions `Language.InTreeNC` / `Language.In
   Cambridge University Press, 2009.  (§6.7.1, Definitions 6.24 and 6.25.)
 -/
 
+set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
 set_option autoImplicit false
 
@@ -75,9 +76,12 @@ def NC : Set (Language Bool) := ⋃ i ∈ Set.Ici 1, NCLevel i
 /-- `AC = ⋃_{i ≥ 0} AC^i`.  [AB09, Def 6.25] -/
 def AC : Set (Language Bool) := ⋃ i, ACLevel i
 
+/-- A language lies in `NC` iff it lies in `NC^i` for some level `i ≥ 1`.
+[AB09, Def 6.24] -/
 theorem mem_NC_iff (L : Language Bool) : L ∈ NC ↔ ∃ i, 1 ≤ i ∧ L.InNC i := by
   simp [NC, NCLevel, Set.mem_iUnion]
 
+/-- A language lies in `AC` iff it lies in `AC^i` for some level `i`.  [AB09, Def 6.25] -/
 theorem mem_AC_iff (L : Language Bool) : L ∈ AC ↔ ∃ i, L.InAC i := by
   simp [AC, ACLevel, Set.mem_iUnion]
 
@@ -114,18 +118,25 @@ private theorem polylog_add_one {b d L t : ℕ} (ht : t ≤ b * (L + 1) ^ d) :
 def TreeCircuitFamily.toDAG (C : TreeCircuitFamily) : DAGCircuitFamily :=
   ⟨fun n => (C.circuit n).toDAG⟩
 
+/-- Compiling each formula of a formula family to a DAG circuit preserves the decided
+language: `C.toDAG.language = C.language`. -/
 theorem TreeCircuitFamily.language_toDAG (C : TreeCircuitFamily) :
     C.toDAG.language = C.language := by
   ext w
   simp [TreeCircuitFamily.toDAG, DAGCircuitFamily.mem_language_iff,
     TreeCircuitFamily.mem_language_iff, TreeCircuit.toDAG_eval]
 
+/-- Compiling a polynomial-size formula family gives a polynomial-size circuit family:
+size `≤ a (n + 1) ^ k` becomes `≤ (a + 1) (n + 1) ^ (k + 1)` after adding the `n` input
+vertices. -/
 theorem TreeCircuitFamily.isPolySize_toDAG {C : TreeCircuitFamily} (h : C.IsPolySize) :
     C.toDAG.IsPolySize := by
   obtain ⟨a, k, hs⟩ := h
   exact ⟨a + 1, k + 1, fun n =>
     ((C.circuit n).toDAG_size_le).trans (poly_add_input (hs n))⟩
 
+/-- Compiling a formula family of depth `O(log^d n)` gives a circuit family of depth
+`O(log^d n)`: compilation adds at most one level, absorbed into the constant. -/
 theorem TreeCircuitFamily.hasPolylogDepth_toDAG {C : TreeCircuitFamily} {d : ℕ}
     (h : C.HasPolylogDepth d) : C.toDAG.HasPolylogDepth d := by
   obtain ⟨b, hb⟩ := h
@@ -157,6 +168,8 @@ namespace BoolCircuit
 def DAGCircuitFamily.toTree (C : DAGCircuitFamily) : TreeCircuitFamily :=
   ⟨fun n => (C.circuit n).toTree⟩
 
+/-- Unfolding each circuit of a well-formed circuit family into a formula preserves the
+decided language: `C.toTree.language = C.language`. -/
 theorem DAGCircuitFamily.language_toTree {C : DAGCircuitFamily} (h : C.IsWellFormed) :
     C.toTree.language = C.language := by
   ext w
@@ -226,7 +239,14 @@ theorem Language.InAC.inNC_one_of_zero {L : Language Bool} (h : L.InAC 0) : L.In
 
 open BoolCircuit in
 /-- `AC^i ⊆ NC^{i+1}`: binarize every gate.  A gate reads at most `size ≤ a (n + 1) ^ k`
-vertices, so each becomes a tree of depth `O(log n)`.  [AB09, p. 118] -/
+vertices, so each becomes a tree of depth `O(log n)`.  [AB09, p. 118]
+
+**Proof sketch.** Binarize every circuit of the `AC^d` family.  Size: the binarized
+circuit has at most `n + #gates · (size + 2) ≤ size · (size + 2)` vertices, which is
+polynomial since `size ≤ a (n + 1) ^ k`.  Depth: binarization multiplies depth by at
+most `⌈log₂ size⌉ + 1`, and `⌈log₂ (a (n + 1) ^ k)⌉ + 1 ≤ (a + k + 1)(log₂ n + 1)`, so
+depth `b (log₂ n + 1) ^ d` becomes `O((log₂ n + 1) ^ (d + 1))`.  Binarization preserves
+the Boolean function, so the language is unchanged. -/
 theorem Language.InAC.inNC_succ {d : ℕ} {L : Language Bool} (h : L.InAC d) :
     L.InNC (d + 1) := by
   obtain ⟨C, hwf, ⟨a, k, hs⟩, ⟨b, hb⟩, hL⟩ := h

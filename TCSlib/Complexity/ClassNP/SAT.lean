@@ -70,6 +70,44 @@ namespace Complexity
 open Std.Sat (CNF)
 open Turing
 
+/-! Local names for the shared polynomial-time toolkit (`ClassNP/PolyTimePairing.lean`,
+`TuringMachine/Composition.lean`), kept so this file's proofs can keep using its
+historical `sat_*` names. -/
+
+/-- A function computed in linear time is polynomial-time computable
+(`polyTimeComputable_of_linear`). -/
+private lemma sat_pt_linear (f : List Bool → List Bool)
+    (h : ∃ (M : FinTM Bool) (C : ℕ),
+      M.ComputesFunInTime f (fun n => C * (n + 1))) : PolyTimeComputable f :=
+  polyTimeComputable_of_linear h
+
+/-- A fixed word is polynomial-time computable (`polyTimeComputable_const`). -/
+private lemma sat_pt_const (w : List Bool) : PolyTimeComputable (fun _ => w) :=
+  polyTimeComputable_const w
+
+/-- Polynomial-time branching on a polynomial-time bit (`polyTimeComputable_ite`). -/
+private lemma sat_pt_cond {p : List Bool → Bool} {f g : List Bool → List Bool}
+    (hp : PolyTimeComputable (fun x => [p x]))
+    (hf : PolyTimeComputable f) (hg : PolyTimeComputable g) :
+    PolyTimeComputable (fun x => if p x then f x else g x) :=
+  polyTimeComputable_ite hp hf hg
+
+/-- The conjunction of two polynomial-time bits is polynomial-time
+(`polyTimeComputable_and`). -/
+private lemma sat_pt_and {p q : List Bool → Bool}
+    (hp : PolyTimeComputable (fun x => [p x]))
+    (hq : PolyTimeComputable (fun x => [q x])) :
+    PolyTimeComputable (fun x => [p x && q x]) :=
+  polyTimeComputable_and hp hq
+
+/-- Composition of a function machine with a machine correct on its image
+(`FinTM.exists_comp_on_image`). -/
+private lemma sat_comp_on_image (M U : FinTM Bool) (f g : List Bool → List Bool)
+    (T₁ T₂ : ℕ → ℕ) (hM : M.ComputesFunInTime f T₁)
+    (hU : ∀ x, U.ComputesInTime (f x) (g x) (T₂ x.length)) :
+    ∃ N : FinTM Bool, N.ComputesFunInTime g (fun n => 2 * T₁ n + T₂ n + 2) :=
+  FinTM.exists_comp_on_image M U f g T₁ T₂ hM hU
+
 /-- **The language `SAT`** [AB09, §2.3.1]: binary strings whose decoded CNF
 formula is satisfiable. Decoding is total ([AB09, footnote 3]), with the empty —
 satisfiable — formula as fallback, so every non-well-formed string is in `SAT`
@@ -981,79 +1019,6 @@ private lemma satEval_computes : ∃ (E : FinTM Bool) (A : ℕ),
   simp only [Nat.add_mul]
   omega
 
-/-- Compose a computed request with a machine proved only on that request image.
-The budget is measured at the original input length, as in the audited TMSAT construction. -/
-private lemma sat_comp_on_image (M U : FinTM Bool) (f g : List Bool → List Bool)
-    (T₁ T₂ : ℕ → ℕ) (hM : M.ComputesFunInTime f T₁)
-    (hU : ∀ x, U.ComputesInTime (f x) (g x) (T₂ x.length)) :
-    ∃ N : FinTM Bool, N.ComputesFunInTime g (fun n => 2 * T₁ n + T₂ n + 2) := by
-  refine ⟨FinTM.bufferedCompTM M U, ?_⟩
-  intro x
-  obtain ⟨a, p, tapes, heads, ha, hstart⟩ :=
-    FinTM.bufferedComp_start M U x (f x) (T₁ x.length) (hM x)
-  have hlen : (f x).length ≤ T₁ x.length := by
-    have ho := ((FinTM.computesInTime_iff _ _ _ _).mp (hM x)).2
-    simpa only [ho] using M.tm.output_length_le x (T₁ x.length)
-  obtain ⟨b, _, hr⟩ := FinTM.bufferedSecondCfg_run M U (U.tm.initCfg (f x)) true
-    (by simp [FinTM.VirtualTag, MultiTapeTM.initCfg, Cfg.init]) p tapes heads (T₂ x.length)
-  have hu := (FinTM.computesInTime_iff _ _ _ _).mp (hU x)
-  have hbase : (FinTM.bufferedCompTM M U).ComputesInTime x (g x) (a + T₂ x.length) := by
-    apply (FinTM.computesInTime_iff _ _ _ _).mpr
-    rw [MultiTapeTM.runFrom_add, hstart, hr]
-    exact ⟨by simpa only [FinTM.bufferedSecondCfg, Option.map_eq_none_iff] using hu.1, hu.2⟩
-  exact hbase.mono (by dsimp only; omega)
-
-/-- Linear-time catalog contracts are instances of the polynomial calculus. -/
-private lemma sat_pt_linear (f : List Bool → List Bool)
-    (h : ∃ (M : FinTM Bool) (C : ℕ),
-      M.ComputesFunInTime f (fun n => C * (n + 1))) : PolyTimeComputable f := by
-  obtain ⟨M, C, hM⟩ := h
-  exact ⟨M, C, 1, by simpa only [Nat.pow_one] using hM⟩
-
-/-- A fixed word is emitted from finite control. -/
-private lemma sat_pt_const (w : List Bool) : PolyTimeComputable (fun _ => w) := by
-  exact sat_pt_linear _ (FinTM.computesFunInTime_const w)
-
-/-- Polynomial-time branches on the original input, using W3's captured
-single-bit decision. All three budgets fit their maximum degree.
-
-**Proof sketch.** Use the audited conditional constructor on the three witnessing machines. Bound each
-monomial by the common maximum exponent and absorb the constructor overhead into one
-coefficient. -/
-private lemma sat_pt_cond {p : List Bool → Bool} {f g : List Bool → List Bool}
-    (hp : PolyTimeComputable (fun x => [p x]))
-    (hf : PolyTimeComputable f) (hg : PolyTimeComputable g) :
-    PolyTimeComputable (fun x => if p x then f x else g x) := by
-  obtain ⟨P, A, a, hP⟩ := hp
-  obtain ⟨F, B, b, hF⟩ := hf
-  obtain ⟨G, C, c, hG⟩ := hg
-  obtain ⟨M, K, hM⟩ := FinTM.computesFunInTime_cond hP hF hG
-  let e := max a (max b c)
-  refine ⟨M, K * (A + B + C + 1), e, fun x => (hM x).mono ?_⟩
-  have ha := Nat.mul_le_mul_left A
-    (Nat.pow_le_pow_right (Nat.succ_pos x.length) (show a ≤ e by exact Nat.le_max_left _ _))
-  have hb := Nat.mul_le_mul_left B
-    (Nat.pow_le_pow_right (Nat.succ_pos x.length) (show b ≤ e by omega))
-  have hc := Nat.mul_le_mul_left C
-    (Nat.pow_le_pow_right (Nat.succ_pos x.length) (show c ≤ e by omega))
-  have h1 : 1 ≤ (x.length + 1) ^ e := Nat.one_le_pow _ _ (Nat.succ_pos _)
-  simp only [Nat.succ_eq_add_one] at ha hb hc
-  calc
-    _ ≤ K * ((A + B + C + 1) * (x.length + 1) ^ e) :=
-      Nat.mul_le_mul_left K (by simp only [Nat.add_mul, Nat.one_mul]; omega)
-    _ = _ := by ring
-
-
-/-- Short-circuit conjunction preserves the order of two polynomial tests. -/
-private lemma sat_pt_and {p q : List Bool → Bool}
-    (hp : PolyTimeComputable (fun x => [p x]))
-    (hq : PolyTimeComputable (fun x => [q x])) :
-    PolyTimeComputable (fun x => [p x && q x]) := by
-  have h := sat_pt_cond hp hq (sat_pt_const [false])
-  convert h using 1
-  funext x
-  cases p x <;> rfl
-
 /-- The catalog split emits an encoded pair, or an empty failure result. -/
 private def satSplit (z : List Bool) : List Bool :=
   match solveSplit 1 1 z.length with
@@ -1141,11 +1106,11 @@ private lemma sat_pipeline_poly :
   obtain ⟨M, A, hM⟩ := FinTM.computesFunInTime_splitSolve 1 1
   have hs : PolyTimeComputable satSplit := ⟨M, A, 3, hM⟩
   have hv : PolyTimeComputable (fun z => [satSplitValid z]) :=
-    (sat_pt_linear _ FinTM.computesFunInTime_pairValid).comp hs
+    (polyTimeComputable_of_linear FinTM.computesFunInTime_pairValid).comp hs
   have hx : PolyTimeComputable satInstance :=
-    (sat_pt_linear _ FinTM.computesFunInTime_pairFst).comp hs
+    (polyTimeComputable_of_linear FinTM.computesFunInTime_pairFst).comp hs
   have hp : PolyTimeComputable (fun z => [satSyntax (satInstance z)]) := satSyntax_poly.comp hx
-  exact ⟨hv, hx, hp, sat_pt_cond (sat_pt_and hv hp) hs (sat_pt_const _)⟩
+  exact ⟨hv, hx, hp, polyTimeComputable_ite (polyTimeComputable_and hv hp) hs (polyTimeComputable_const _)⟩
 
 /-- The evaluator is polynomial on all safe requests.
 
@@ -1164,7 +1129,7 @@ private lemma satSafeValue_poly : PolyTimeComputable (fun z => [satSafeValue z])
       have hout := ((FinTM.computesInTime_iff _ _ _ _).mp (hM z)).2
       simpa only [hout] using M.tm.output_length_le z (C * (z.length + 1) ^ e)
     exact h.mono (Nat.mul_le_mul_left A (by omega))
-  obtain ⟨N, hN⟩ := sat_comp_on_image M E satSafe (fun z => [satSafeValue z])
+  obtain ⟨N, hN⟩ := FinTM.exists_comp_on_image M E satSafe (fun z => [satSafeValue z])
     (fun n => C * (n + 1) ^ e) (fun n => A * (C * (n + 1) ^ e + 1)) hM heval
   refine ⟨N, 2 * C + A * (C + 1) + 2, e, fun z => (hN z).mono ?_⟩
   have hp : 1 ≤ (z.length + 1) ^ e := Nat.one_le_pow _ _ (Nat.succ_pos _)
@@ -1177,7 +1142,7 @@ private lemma satSafeValue_poly : PolyTimeComputable (fun z => [satSafeValue z])
 /-- The SAT verifier rejects failed splits and otherwise uses the safe
 evaluation pipeline. Failed parses take its accepting fallback branch. -/
 private lemma satVerdict_false_poly : PolyTimeComputable (fun z => [satVerdict false z]) := by
-  have h := sat_pt_cond sat_pipeline_poly.1 satSafeValue_poly (sat_pt_const [false])
+  have h := polyTimeComputable_ite sat_pipeline_poly.1 satSafeValue_poly (polyTimeComputable_const [false])
   convert h using 1
   funext z
   cases hs : solveSplit 1 1 z.length with
@@ -1317,9 +1282,9 @@ only successfully parsed inputs reach the width scan. -/
 private lemma satVerdict_true_poly : PolyTimeComputable (fun z => [satVerdict true z]) := by
   have hw : PolyTimeComputable (fun z => [satWidthScan (satInstance z)]) :=
     satWidthScan_poly.comp sat_pipeline_poly.2.1
-  have hsem := sat_pt_and hw satSafeValue_poly
-  have hparse := sat_pt_cond sat_pipeline_poly.2.2.1 hsem (sat_pt_const [true])
-  have h := sat_pt_cond sat_pipeline_poly.1 hparse (sat_pt_const [false])
+  have hsem := polyTimeComputable_and hw satSafeValue_poly
+  have hparse := polyTimeComputable_ite sat_pipeline_poly.2.2.1 hsem (polyTimeComputable_const [true])
+  have h := polyTimeComputable_ite sat_pipeline_poly.1 hparse (polyTimeComputable_const [false])
   convert h using 1
   funext z
   cases hs : solveSplit 1 1 z.length with

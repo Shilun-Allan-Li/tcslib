@@ -172,7 +172,17 @@ private noncomputable def nodeToTreeCircuit
       .node (isAnd ⟨m, hm'⟩ v)
         (Finset.univ.val.toList.map fun i => ih _ ((F.gates ⟨m, hm'⟩ v).inputs i)))
 
-/-- Tree-unrolled circuit evaluates identically to the original feedforward circuit. -/
+/-- If every gate of the Boolean layered circuit `F` computes the AND (when `isAnd` says so)
+or the OR of its inputs, then for every node `v` on layer `m` and input `x`, the tree circuit
+obtained by unrolling `v` evaluates on `x` to the layered value of `v`.
+
+**Proof sketch.** Induction on the layer `m`.  On layer `0` the unrolled tree is the positive
+literal of the input variable `v` names, and the layered value of `v` is that input bit.  On
+layer `m + 1` the unrolled tree is an AND/OR node whose children are the unrollings of the
+gate's input nodes on layer `m`; the layered value is the gate's function applied to those
+input nodes' values.  By the AND/OR hypothesis the gate's function is the corresponding
+fold over its inputs, and by the induction hypothesis each child evaluates to its input
+node's value, so the two folds agree. -/
 theorem nodeToTreeCircuit_eval
     (F : LayeredCircuit Bool (Fin n) out)
     (isAnd : ∀ d : Fin F.depth, F.nodes d.succ → Bool)
@@ -212,10 +222,13 @@ theorem nodeToTreeCircuit_eval
     rw [h_node, h_eval, hcorrect ⟨m, hm'⟩ v]
     cases isAnd ⟨m, hm'⟩ v <;> simp [TreeCircuit.eval, List.foldr_map, h_ih]
 
-/-
-Size bound: tree-unrolled circuit at depth `m` has at most `(k + 1) ^ m` nodes,
-    where `k` bounds the fanin (number of input wires) of every gate.
--/
+/-- If every gate of the layered circuit `F` has at most `k` input wires, then the tree
+circuit obtained by unrolling a node on layer `m` has size at most `(k + 1) ^ m`.
+
+**Proof sketch.** Induction on `m`.  A layer-`0` node unrolls to a single literal, of size
+`1 = (k + 1)^0`.  A layer-`(m + 1)` node unrolls to one gate node plus the unrollings of at
+most `k` children on layer `m`, each of size at most `(k + 1)^m` by induction; so the size is
+at most `1 + k (k + 1)^m ≤ (k + 1)^(m + 1)`. -/
 theorem nodeToTreeCircuit_size_le
     (F : LayeredCircuit Bool (Fin n) out)
     (isAnd : ∀ d : Fin F.depth, F.nodes d.succ → Bool)

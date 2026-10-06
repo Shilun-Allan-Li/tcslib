@@ -7,6 +7,7 @@ import Mathlib.Computability.Language
 import Mathlib.Data.List.Dedup
 import Mathlib.Data.List.GetD
 import Mathlib.Data.Nat.Log
+import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Boolean circuits as directed acyclic graphs
@@ -35,14 +36,24 @@ and `LayeredDAG.lean`.
 * `BoolCircuit.DAGCircuit.IsFaninTwo` — well formed, and every gate has at most two inputs.
 * `BoolCircuit.DAGCircuitFamily` — one circuit per input length, with `language`,
   `IsPolySize`, `HasFaninTwo`, `IsWellFormed` and `HasPolylogDepth`.
+* `BoolCircuit.GatesAcyclic` — a bare gate list reads only earlier vertices (the
+  acyclicity field of `DAGCircuit`); `BoolCircuit.DAGGate.WellFormed`,
+  `BoolCircuit.DAGGate.FaninTwo` — the gate-level well-formedness predicates.
+* `BoolCircuit.constGate`, `BoolCircuit.constCircuit` — the model's constant gates
+  (fan-in-zero `∧`/`∨`) and constant circuits.
+* `BoolCircuit.DAGGate.remap` — rename the vertices a gate reads.
 
 ## Main results
 
 * `BoolCircuit.runWith_getD_gate` — the value (or depth) of gate `i` is computed from the
   vertices before it; `BoolCircuit.runWith_getD_of_lt` — appending gates never changes
   the value of an existing vertex.  These two facts drive every proof about the model.
-* `BoolCircuit.DAGCircuit.eval_gate`, `BoolCircuit.DAGCircuit.depthAt_gate` — the
+* `BoolCircuit.DAGCircuit.values_getD_gate`, `BoolCircuit.DAGCircuit.depthAt_gate` — the
   evaluation and depth recurrences at a gate vertex.
+* `BoolCircuit.DAGGate.eval_remap`, `BoolCircuit.runWith_remap_rel` — renaming vertices
+  commutes with evaluation, gate by gate and along a whole gate list.
+* `BoolCircuit.gatesAcyclic_append`, `BoolCircuit.gatesAcyclic_cons` — acyclicity of
+  concatenations.
 
 ## Divergences from [AB09, Def 6.1]
 
@@ -50,12 +61,27 @@ and `LayeredDAG.lean`.
   fan-in `2` and has no constants.  Taken literally, a circuit on `0` inputs has no
   vertex to output, so no language would be decidable at length `0`; allowing fan-in `0`
   gives the constants (`∧` of nothing is `true`, `∨` of nothing is `false`), and fan-in `1`
-  is an identity gate that can always be bypassed.
-* **Single output.**  [AB09, Def 6.1] allows `m` outputs; deciding a language needs one,
-  and every class in the book uses one.
-* **Unused gates.**  Gates from which no path reaches the output
-  are allowed and counted in `size`, as in [AB09] (whose size counts every
-  vertex).
+  is an identity gate that can always be bypassed.  The literal model is
+  `BoolCircuit.DAGCircuit.IsStrict` (`StrictCircuit.lean`).  It has no circuit at all on
+  `0` inputs (`DAGCircuit.not_isStrict_zero`).  For `n ≥ 1` the relaxation costs a
+  constant factor: `DAGCircuit.exists_isStrict` (`StrictSize.lean`) turns a fan-in-two
+  circuit of size `S` into a strict one of size `≤ 4S + 12`.  That circuit has no constants
+  or identity gates, and its output is the only sink, so unused gates and inputs are
+  attached as well.  `Language.inPPoly_iff_inStrictPPoly` shows `P/poly` is unchanged.
+* **Single output, as in the book.**  [AB09, Def 6.1] is single-output; the multi-output
+  generalization is only a remark on p. 107 ("it is trivial to generalize the
+  definition … though we typically will not need this generalization").  Multi-output
+  circuits, where needed (Karp–Lipton, p. 114), are `BoolCircuit.MultiDAGCircuit`.
+* **Gates not reaching the output are allowed (divergence).**  [AB09, Def 6.1] demands
+  exactly one sink, so every gate of a book circuit lies on a path to the output.  Here
+  the output is a designated vertex and other gates may be sinks; they are counted in
+  `size`.  The divergence is harmless for every size bound: deleting the gates that do
+  not reach the output preserves the computed function and only shrinks the size, so
+  dead gates never help an upper bound, and a lower bound here is at least as strong.
+  (An unread *input* would also be a second sink under the book's definition.)  The formal
+  bridge to the single-sink model is `DAGCircuit.seal` and `DAGCircuit.exists_isStrict`
+  (`StrictSize.lean`), which supersede pruning: they attach every dead vertex, unread
+  inputs included, neutrally to the output, at linear cost.
 
 ## References
 
@@ -63,6 +89,7 @@ and `LayeredDAG.lean`.
   Cambridge University Press, 2009.  (§6.1, Definitions 6.1 and 6.2.)
 -/
 
+set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
 set_option autoImplicit false
 
@@ -73,7 +100,7 @@ inductive GateKind where
   | and
   | or
   | not
-  deriving DecidableEq, Repr
+  deriving DecidableEq, Repr, Fintype
 
 /-- A gate: its label and the vertices it reads, in order. -/
 structure DAGGate where
@@ -114,18 +141,25 @@ section RunWith
 
 variable {β : Type} (f : DAGGate → List β → β)
 
+/-- Running the empty gate list leaves the initial vertex data unchanged. -/
 @[simp] theorem runWith_nil (init : List β) : runWith f [] init = init := rfl
 
+/-- Running `g :: gs` from `init` is running `gs` from `init` extended by the datum `f g init`
+of the first gate. -/
 theorem runWith_cons (g : DAGGate) (gs : List DAGGate) (init : List β) :
     runWith f (g :: gs) init = runWith f gs (init ++ [f g init]) := rfl
 
+/-- Running a concatenation `gs ++ hs` is running `hs` from the result of running `gs`. -/
 theorem runWith_append (gs hs : List DAGGate) (init : List β) :
     runWith f (gs ++ hs) init = runWith f hs (runWith f gs init) := by
   simp [runWith, List.foldl_append]
 
+/-- Running a single gate `g` from `init` appends exactly the datum `f g init`. -/
 theorem runWith_singleton (g : DAGGate) (init : List β) :
     runWith f [g] init = init ++ [f g init] := rfl
 
+/-- Running a gate list appends one datum per gate: the result has length
+`init.length + gs.length`. -/
 @[simp] theorem length_runWith (gs : List DAGGate) (init : List β) :
     (runWith f gs init).length = init.length + gs.length := by
   induction gs generalizing init with
@@ -182,14 +216,16 @@ end RunWith
 
 /-! ## Circuits -/
 
-private theorem all_congr_mem {l : List ℕ} {p q : ℕ → Bool} (h : ∀ a ∈ l, p a = q a) :
+/-- `List.all` depends only on the predicate's values on the list's members. -/
+theorem all_congr_mem {α : Type} {l : List α} {p q : α → Bool} (h : ∀ a ∈ l, p a = q a) :
     l.all p = l.all q := by
   induction l with
   | nil => rfl
   | cons a l ih =>
     simp only [List.all_cons, h a (by simp), ih (fun b hb => h b (by simp [hb]))]
 
-private theorem any_congr_mem {l : List ℕ} {p q : ℕ → Bool} (h : ∀ a ∈ l, p a = q a) :
+/-- `List.any` depends only on the predicate's values on the list's members. -/
+theorem any_congr_mem {α : Type} {l : List α} {p q : α → Bool} (h : ∀ a ∈ l, p a = q a) :
     l.any p = l.any q := by
   induction l with
   | nil => rfl
@@ -212,6 +248,197 @@ theorem DAGGate.depth_congr (g : DAGGate) {ds ds' : List ℕ}
     g.depth ds = g.depth ds' := by
   unfold DAGGate.depth
   rw [List.map_congr_left h]
+
+/-! ## Gate predicates, constant gates and renamed gates -/
+
+/-- A gate is well formed: no repeated input, and `¬` reads exactly one vertex.  A circuit
+is `DAGCircuit.IsWellFormed` iff all its gates are. -/
+def DAGGate.WellFormed (g : DAGGate) : Prop :=
+  g.args.Nodup ∧ (g.kind = .not → g.args.length = 1)
+
+/-- A gate admissible in a fan-in-two circuit: well formed, reading at most two
+vertices. -/
+def DAGGate.FaninTwo (g : DAGGate) : Prop :=
+  g.WellFormed ∧ g.args.length ≤ 2
+
+/-- The constant gate for the bit `b`: a fan-in-zero `∧` (value `true`) if `b`, a
+fan-in-zero `∨` (value `false`) otherwise.  These are the model's constants (see the
+fan-in divergence in the module docstring). -/
+def constGate (b : Bool) : DAGGate :=
+  ⟨if b then .and else .or, []⟩
+
+/-- The constant-`1` gate is the fan-in-zero `∧`. -/
+theorem constGate_true : constGate true = ⟨.and, []⟩ := rfl
+
+/-- The constant-`0` gate is the fan-in-zero `∨`. -/
+theorem constGate_false : constGate false = ⟨.or, []⟩ := rfl
+
+/-- A constant gate evaluates to its bit, whatever the vertex values. -/
+@[simp] theorem constGate_eval (b : Bool) (vals : List Bool) : (constGate b).eval vals = b := by
+  cases b <;> rfl
+
+/-- A constant gate has depth `1`. -/
+@[simp] theorem constGate_depth (b : Bool) (ds : List ℕ) : (constGate b).depth ds = 1 := by
+  cases b <;> rfl
+
+/-- A constant gate reads no vertex. -/
+@[simp] theorem constGate_args (b : Bool) : (constGate b).args = [] := rfl
+
+/-- A constant gate is not a `¬` gate. -/
+theorem constGate_kind_ne_not (b : Bool) : (constGate b).kind ≠ .not := by
+  cases b <;> simp [constGate]
+
+/-- A constant gate is admissible in a fan-in-two circuit. -/
+@[simp] theorem constGate_faninTwo (b : Bool) : (constGate b).FaninTwo :=
+  ⟨⟨by simp, fun h => absurd h (constGate_kind_ne_not b)⟩, by simp⟩
+
+/-- The gate `g` with every input vertex `a` renamed to `σ a`. -/
+def DAGGate.remap (σ : ℕ → ℕ) (g : DAGGate) : DAGGate :=
+  ⟨g.kind, g.args.map σ⟩
+
+/-- Renaming by the identity changes nothing. -/
+@[simp] theorem DAGGate.remap_id (g : DAGGate) : g.remap id = g := by
+  cases g; simp [DAGGate.remap]
+
+/-- A renamed gate has the original gate's value when every renamed input carries the
+original input's value. -/
+theorem DAGGate.eval_remap (g : DAGGate) (σ : ℕ → ℕ) {vals vals' : List Bool}
+    (h : ∀ a ∈ g.args, vals.getD (σ a) false = vals'.getD a false) :
+    (g.remap σ).eval vals = g.eval vals' := by
+  rcases g with ⟨k, args⟩
+  have hall : ((args.map σ).all fun a => vals.getD a false) =
+      args.all fun a => vals'.getD a false := by
+    rw [List.all_map]; exact all_congr_mem fun a ha => by simpa using h a ha
+  have hany : ((args.map σ).any fun a => vals.getD a false) =
+      args.any fun a => vals'.getD a false := by
+    rw [List.any_map]; exact any_congr_mem fun a ha => by simpa using h a ha
+  cases k <;> simp only [DAGGate.remap, DAGGate.eval, hall, hany]
+
+/-- **Renaming vertices commutes with running gates.**  Let `σ` send the `L` initial
+vertices of `init` to vertices among the `L'` initial vertices of `init'`, and send gate
+vertex `L + i` to `L' + i`.  If the gate step `f` turns a relation `R` between the data
+read through `σ` and the original data into `R` between the outputs, and `R` holds
+between `init'` (through `σ`) and `init`, then `R` holds at every vertex between running
+the renamed gates from `init'` and running the original gates from `init`.
+
+Technical glue with no textbook counterpart; used with `R` equality for values and
+`R a b ↔ a ≤ b + 1` for depths.
+
+**Proof sketch.** Induction on the gate list from the right.  Adding a last gate `g`
+leaves the data of every earlier vertex unchanged on both sides (gates only append), and
+`σ` keeps earlier vertices earlier, so the induction hypothesis covers them.  The new
+vertex `L + |old|` is sent by `σ` to `L' + |old|`, where the renamed side holds
+`f (g.remap σ)` of the renamed data and the original side `f g` of the original data;
+every input of `g` is an earlier vertex by acyclicity, so the hypothesis on `f` applies. -/
+theorem runWith_remap_rel {β : Type} (f : DAGGate → List β → β) (R : β → β → Prop) (d : β)
+    (σ : ℕ → ℕ)
+    (hf : ∀ (g : DAGGate) (vs vs' : List β),
+      (∀ a ∈ g.args, R (vs.getD (σ a) d) (vs'.getD a d)) → R (f (g.remap σ) vs) (f g vs'))
+    {L L' : ℕ} (init init' : List β) (hL : init.length = L) (hL' : init'.length = L')
+    (hσ_lt : ∀ v < L, σ v < L') (hσ_gate : ∀ i, σ (L + i) = L' + i)
+    (hinit : ∀ v < L, R (init'.getD (σ v) d) (init.getD v d)) (gs : List DAGGate)
+    (hgs : ∀ (i : ℕ) (h : i < gs.length), ∀ a ∈ (gs[i]).args, a < L + i) :
+    ∀ v < L + gs.length,
+      R ((runWith f (gs.map (DAGGate.remap σ)) init').getD (σ v) d)
+        ((runWith f gs init).getD v d) := by
+  induction gs using List.reverseRecOn with
+  | nil =>
+    intro v hv
+    simpa using hinit v (by simpa using hv)
+  | append_singleton old g ih =>
+    have hold : ∀ (i : ℕ) (h : i < old.length), ∀ a ∈ (old[i]).args, a < L + i :=
+      fun i hi a ha => hgs i (by simp; omega) a (by rwa [List.getElem_append_left hi])
+    have hg : ∀ a ∈ g.args, a < L + old.length := fun a ha =>
+      hgs old.length (by simp) a (by simpa using ha)
+    have ih := ih hold
+    have hlen : (runWith f (old.map (DAGGate.remap σ)) init').length = L' + old.length := by
+      simp [hL']
+    have hlen0 : (runWith f old init).length = L + old.length := by simp [hL]
+    -- vertices below the new gate keep their (renamed) data
+    have hσ_old : ∀ v < L + old.length, σ v < L' + old.length := by
+      intro v hv
+      by_cases hvL : v < L
+      · have := hσ_lt v hvL; omega
+      · obtain ⟨i, rfl⟩ := Nat.exists_eq_add_of_le (not_lt.mp hvL)
+        rw [hσ_gate]; omega
+    intro v hv
+    rw [List.map_append, List.map_singleton, runWith_append, runWith_append,
+      runWith_singleton, runWith_singleton]
+    simp only [List.length_append, List.length_singleton] at hv
+    rcases Nat.lt_succ_iff_lt_or_eq.mp (by omega : v < L + old.length + 1) with hv | rfl
+    · rw [List.getD_append _ _ _ _ (by rw [hlen]; exact hσ_old v hv),
+        List.getD_append _ _ _ _ (by rw [hlen0]; exact hv)]
+      exact ih v hv
+    · -- the new gate: its inputs carry related data by the induction hypothesis
+      rw [hσ_gate, List.getD_append_right _ _ _ _ (by omega),
+        List.getD_append_right _ _ _ _ (by omega), hlen, hlen0]
+      simp only [Nat.sub_self, List.getD_cons_zero]
+      exact hf g _ _ fun a ha => ih a (hg a ha)
+
+/-! ## Gate lists that read only earlier vertices -/
+
+/-- Every gate of `gs` reads only vertices below its own, `n` inputs coming first: the
+acyclicity condition `DAGCircuit.args_lt` for a bare gate list. -/
+def GatesAcyclic (n : ℕ) (gs : List DAGGate) : Prop :=
+  ∀ (i : ℕ) (h : i < gs.length), ∀ a ∈ (gs[i]).args, a < n + i
+
+/-- The empty gate list is acyclic. -/
+theorem GatesAcyclic.nil {n : ℕ} : GatesAcyclic n [] := fun i h => absurd h (by simp)
+
+/-- Appending a gate that reads only existing vertices keeps a gate list acyclic. -/
+theorem GatesAcyclic.snoc {n : ℕ} {gs : List DAGGate} (h : GatesAcyclic n gs) {g : DAGGate}
+    (hg : ∀ a ∈ g.args, a < n + gs.length) : GatesAcyclic n (gs ++ [g]) := by
+  intro i hi a ha
+  rw [List.length_append, List.length_singleton] at hi
+  rcases Nat.lt_succ_iff_lt_or_eq.mp hi with hlt | rfl
+  · rw [List.getElem_append_left hlt] at ha
+    exact h i hlt a ha
+  · simp only [List.getElem_append_right (le_refl _), Nat.sub_self,
+      List.getElem_singleton] at ha
+    exact hg a ha
+
+/-- Appending a gate list that reads only vertices before each of its own gates (counted
+from the end of the first list) keeps the whole list acyclic. -/
+theorem GatesAcyclic.append {n : ℕ} {gs hs : List DAGGate} (hg : GatesAcyclic n gs)
+    (hh : GatesAcyclic (n + gs.length) hs) : GatesAcyclic n (gs ++ hs) := by
+  intro i hi a ha
+  by_cases hlt : i < gs.length
+  · rw [List.getElem_append_left hlt] at ha
+    exact hg i hlt a ha
+  · rw [List.getElem_append_right (by omega)] at ha
+    have := hh (i - gs.length) (by simp at hi; omega) a ha
+    omega
+
+/-- The empty gate list is acyclic (as a `simp` rewrite). -/
+@[simp] theorem gatesAcyclic_nil {n : ℕ} : GatesAcyclic n [] ↔ True :=
+  iff_true_intro GatesAcyclic.nil
+
+/-- A gate list started at vertex `n` is acyclic iff its first gate reads only vertices
+below `n` and the rest, started at `n + 1`, is acyclic. -/
+@[simp] theorem gatesAcyclic_cons {n : ℕ} {g : DAGGate} {gs : List DAGGate} :
+    GatesAcyclic n (g :: gs) ↔ (∀ a ∈ g.args, a < n) ∧ GatesAcyclic (n + 1) gs := by
+  constructor
+  · intro h
+    refine ⟨fun a ha => by simpa using h 0 (by simp) a (by simpa using ha), ?_⟩
+    intro i hi a ha
+    have := h (i + 1) (by simp; omega) a (by simpa using ha)
+    omega
+  · rintro ⟨h0, h⟩ i hi a ha
+    cases i with
+    | zero => simpa using h0 a (by simpa using ha)
+    | succ i =>
+      have := h i (by simpa using hi) a (by simpa using ha)
+      omega
+
+/-- A concatenation is acyclic iff the first part is, started at `n`, and the second part
+is, started after the first. -/
+theorem gatesAcyclic_append {n : ℕ} {gs hs : List DAGGate} :
+    GatesAcyclic n (gs ++ hs) ↔ GatesAcyclic n gs ∧ GatesAcyclic (n + gs.length) hs := by
+  induction gs generalizing n with
+  | nil => simp
+  | cons g gs ih =>
+    simp only [List.cons_append, gatesAcyclic_cons, ih, List.length_cons, and_assoc]
+    rw [show n + 1 + gs.length = n + (gs.length + 1) by omega]
 
 /-- A Boolean circuit with `n` inputs and one output: a DAG whose vertices are numbered
 topologically.  Vertices `0, …, n - 1` are the inputs, vertex `n + i` is gate `i`, and
@@ -261,10 +488,14 @@ def IsWellFormed : Prop :=
 def IsFaninTwo : Prop :=
   C.IsWellFormed ∧ ∀ g ∈ C.gates, g.args.length ≤ 2
 
+/-- The vertex-value list of a circuit has one entry per vertex: `n` inputs plus one per
+gate. -/
 @[simp] theorem length_values (x : Fin n → Bool) :
     (C.values x).length = n + C.gates.length := by
   simp [values]
 
+/-- The vertex-depth list of a circuit has one entry per vertex: `n` inputs plus one per
+gate. -/
 @[simp] theorem length_depths : C.depths.length = n + C.gates.length := by
   simp [depths]
 
@@ -300,6 +531,28 @@ theorem depthAt_gate {i : ℕ} (hi : i < C.gates.length) :
 
 end DAGCircuit
 
+/-- The constant circuit on `n` inputs with output `b`: one constant gate
+(`constGate b`), which is the output. -/
+def constCircuit (n : ℕ) (b : Bool) : DAGCircuit n where
+  gates := [constGate b]
+  output := n
+  args_lt := by intro i hi a ha; simp at hi; subst hi; simp at ha
+  output_lt := by simp
+
+/-- The constant circuit outputs its bit. -/
+@[simp] theorem constCircuit_eval {n : ℕ} (b : Bool) (x : Fin n → Bool) :
+    (constCircuit n b).eval x = b := by
+  simp [DAGCircuit.eval, DAGCircuit.values, constCircuit, runWith_cons]
+
+/-- The constant circuit has fan-in two. -/
+theorem constCircuit_isFaninTwo (n : ℕ) (b : Bool) : (constCircuit n b).IsFaninTwo := by
+  refine ⟨fun g hg => ?_, fun g hg => ?_⟩ <;>
+    simp only [constCircuit, List.mem_singleton] at hg <;> subst hg <;>
+    cases b <;> simp [constGate]
+
+/-- The constant circuit has `n + 1` vertices. -/
+@[simp] theorem constCircuit_size (n : ℕ) (b : Bool) : (constCircuit n b).size = n + 1 := rfl
+
 /-! ## Circuit families -/
 
 /-- A non-uniform family of circuits, one per input length. -/
@@ -333,8 +586,10 @@ def IsWellFormed : Prop :=
 def HasFaninTwo : Prop :=
   ∀ n, (C.circuit n).IsFaninTwo
 
-/-- The family has polynomial size.  [AB09] writes `|C_n| ≤ n ^ c`; `a * (n + 1) ^ k`
-repairs the degeneracy at `n = 0`, where `n ^ c` would force size `0`. -/
+/-- The family has polynomial size.  [AB09] writes `|C_n| ≤ n ^ c`, which no family meets
+(`Language.not_inSIZE_pow`, `PPoly.lean`: `n ^ c` is `0` at `n = 0` for `c ≥ 1`, and `1` at
+`n = 2` for `c = 0`); `a * (n + 1) ^ k` repairs this, and differs from the literal bound only
+at the lengths `n ≤ 1` (`Language.inPPoly_iff_eventually`). -/
 def IsPolySize : Prop :=
   ∃ a k : ℕ, ∀ n, (C.circuit n).size ≤ a * (n + 1) ^ k
 
@@ -342,6 +597,8 @@ def IsPolySize : Prop :=
 def HasPolylogDepth (d : ℕ) : Prop :=
   ∃ b : ℕ, ∀ n, (C.circuit n).depth ≤ b * (Nat.log 2 n + 1) ^ d
 
+/-- A fan-in-two circuit family is in particular well formed: each of its circuits reads
+distinct inputs at every gate and exactly one input at every `¬` gate. -/
 theorem HasFaninTwo.isWellFormed {C : DAGCircuitFamily} (h : C.HasFaninTwo) :
     C.IsWellFormed :=
   fun n => (h n).1

@@ -35,6 +35,8 @@ design question 1**.
 
 * `Turing.exists_effectiveMachineCode` — a concrete effective representation
   scheme exists.
+* `Turing.codePrim_machine` — every primitive recursive string function is computed
+  by some finite binary machine (no time bound claimed).
 
 ## References
 
@@ -1033,9 +1035,16 @@ private lemma bridgePrimNumber : Primrec bridgeNumber :=
 private lemma bridgePrimUnnumber : Primrec bridgeUnnumber :=
   Primrec.list_reverse.comp (Primrec.list_tail.comp (Primrec.list_reverse.comp codePrimBits))
 
-/-- A primitive recursive string operation has an actual finite binary machine.
-The sentinel number code preserves trailing false bits and the empty word. -/
-private lemma codePrim_machine (f : List Bool → List Bool) (hf : Primrec f) :
+/-- Every primitive recursive string function `f : List Bool → List Bool` is computed by
+some finite binary machine: there are `M : FinTM Bool` and a time bound `T : ℕ → ℕ` with
+`M.ComputesFunInTime f T`. No bound on `T` is claimed (this is the arbitrary-time
+compiler route, cf. [AB09, §1.4]).
+
+**Proof sketch.** Number strings by the sentinel code `bridgeNumber` (which preserves
+trailing `false` bits and the empty word), so that `f` becomes a primitive recursive
+`ℕ → ℕ` map; Mathlib compiles it to a `ToPartrec.Code`, and `bridge_binary` turns that
+code into a binary machine computing `f` on the un-numbered strings. -/
+lemma codePrim_machine (f : List Bool → List Bool) (hf : Primrec f) :
     ∃ (M : FinTM Bool) (T : ℕ → ℕ), M.ComputesFunInTime f T := by
   have hn := bridgePrimNumber.comp (hf.comp (bridgePrimUnnumber.comp
     (Primrec.vector_head (n := 0))))

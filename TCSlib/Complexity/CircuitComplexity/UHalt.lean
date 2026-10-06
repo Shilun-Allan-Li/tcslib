@@ -34,12 +34,14 @@ through `Denumerable.ofNat Nat.Partrec.Code`, the second as its input, and
 `¬ ComputablePred (· ∈ L)`. `haltingSet` is a `Set ℕ`, not a language, so it
 sits beside `Nat.Partrec.Code.eval` rather than in `Language`.
 
-AB concludes `P ⊊ P/poly`. AB's route also needs Theorem 6.6 (`P ⊆ P/poly`);
-the machine model, the class `P`, and the oblivious-simulation layer all live
-on this branch now, and the bridge theorem is tracked in `backlog.md` §3. Only
-the statable half is here: `exists_le_allOnes_inLayeredPPoly_not_computablePred`.
-The undecidability half is not reproved from AB: it is Mathlib's
-`ComputablePred.halting_problem`, transported along the pairing.
+AB concludes `P ⊊ P/poly`. This file proves the circuit half — an undecidable (in
+Mathlib's `ComputablePred` sense) unary language in `P/poly`:
+`exists_le_allOnes_inPPoly_not_computablePred`. The undecidability is not reproved from
+AB: it is Mathlib's `ComputablePred.halting_problem`, transported along the pairing.
+The machine-side conclusion is in `CircuitComplexity/UHaltMachine.lean` (a machine-model
+`UHALT` with `Complexity.UHALT_not_mem_P`) and `CircuitComplexity/PSubsetPPoly.lean`
+(`Complexity.P_ssubset_PPoly`, combining it with [AB09, Thm 6.6]
+`Complexity.P_subset_PPoly`).
 
 ## References
 

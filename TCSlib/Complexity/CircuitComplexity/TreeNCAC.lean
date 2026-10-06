@@ -283,7 +283,13 @@ private theorem combineFuel_maxFanin (b : Bool) :
       show (combineFuel b k (pairUp b (c₁ :: c₂ :: cs))).maxFanin ≤ _
       omega
 
-/-- Combining `m` children costs `⌈log₂ m⌉` extra levels of depth. -/
+/-- Combining `m` children costs `⌈log₂ m⌉` extra levels of depth.
+
+**Proof sketch.** Induction on the fuel.  With no children, or one child, the bound is
+immediate.  With at least two children, one round of pairing halves the list (to
+`⌈m / 2⌉` entries) and raises the maximum child depth by at most one, while
+`⌈log₂ m⌉ = ⌈log₂ ⌈m / 2⌉⌉ + 1` for `m ≥ 2`; the induction hypothesis on the paired list
+then gives the bound. -/
 private theorem combineFuel_depth (b : Bool) :
     ∀ (k : ℕ) (cs : List (TreeCircuit n)), cs.length ≤ k →
       (combineFuel b k cs).depth ≤ TreeCircuit.maxDepth cs + Nat.clog 2 cs.length + 1

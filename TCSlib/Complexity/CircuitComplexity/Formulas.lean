@@ -124,24 +124,34 @@ def CNF.eval {n : ℕ} (c : CNF n) (x : Fin n → Bool) : Bool :=
 
 /-! ### Evaluation simp lemmas -/
 
+/-- The empty term (empty conjunction) evaluates to `true` on every input. -/
 @[simp] theorem Term.eval_nil {n : ℕ} (x : Fin n → Bool) : Term.eval [] x = true := rfl
 
+/-- A term `l :: t` holds exactly when the literal `l` holds and the rest `t` holds. -/
 @[simp] theorem Term.eval_cons {n : ℕ} (l : Literal n) (t : Term n) (x : Fin n → Bool) :
     Term.eval (l :: t) x = (l.eval x && Term.eval t x) := rfl
 
+/-- The empty clause (empty disjunction) evaluates to `false` on every input. -/
 @[simp] theorem Clause.eval_nil {n : ℕ} (x : Fin n → Bool) : Clause.eval [] x = false := rfl
 
+/-- A clause `l :: c` holds exactly when the literal `l` holds or the rest `c` holds. -/
 @[simp] theorem Clause.eval_cons {n : ℕ} (l : Literal n) (c : Clause n) (x : Fin n → Bool) :
     Clause.eval (l :: c) x = (l.eval x || Clause.eval c x) := rfl
 
+/-- The DNF with term list `ts` evaluates to `true` iff some term of `ts` holds. -/
 @[simp] theorem DNF.eval_mk {n : ℕ} (ts : List (Term n)) (x : Fin n → Bool) :
     (DNF.mk ts).eval x = ts.any (fun t => Term.eval t x) := rfl
 
+/-- The CNF with clause list `cs` evaluates to `true` iff every clause of `cs` holds. -/
 @[simp] theorem CNF.eval_mk {n : ℕ} (cs : List (Clause n)) (x : Fin n → Bool) :
     (CNF.mk cs).eval x = cs.all (fun c => Clause.eval c x) := rfl
 
+/-- The width of the DNF with term list `ts` is the depth-2 width of `ts` (its maximum term
+width). -/
 @[simp] theorem DNF.width_mk {n : ℕ} (ts : List (Term n)) :
     (DNF.mk ts).width = Depth2.width ts := rfl
 
+/-- The width of the CNF with clause list `cs` is the depth-2 width of `cs` (its maximum
+clause width). -/
 @[simp] theorem CNF.width_mk {n : ℕ} (cs : List (Clause n)) :
     (CNF.mk cs).width = Depth2.width cs := rfl

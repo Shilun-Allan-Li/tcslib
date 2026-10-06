@@ -584,7 +584,8 @@ uncomputability chapter.
   silently identified with the fragment. *Origin: ch2 phase-3/4 audits.*
 * **`MathlibBridge` poly-time upgrade** (open lever): `bridgeTM` costs O(1)
   native steps per TM2 operation, so a Mathlib `TM2ComputableInPolyTime`
-  certificate would transfer; would also serve the Chapter-6 bridges below.
+  certificate would transfer. (The Chapter-6 bridges were built on native
+  machines without it; see §3.)
   *Origin: ch2 plan decision log ("revisit at phase 3" — still open).*
 * **Oracle complexity classes** (Chapter 3): `Oracle.lean` has the raw model
   and both lockstep embeddings, audited; the class layer, the
@@ -593,40 +594,72 @@ uncomputability chapter.
   Solovay) are future Chapter-3 work. *Origin: ch1 plan §5 phase-2 notes;
   session assessment 2026-09-18.*
 
-### Chapter 6 bridge theorems (unblocked: surface audited, gate closed 2026-10-02)
+### Chapter 6 (Arora–Barak §§6.1–6.5): what is proved, and what remains
 
-The `complexity/arora-barak-ch6` branch (circuits, `P/poly` — proved,
-sorry-free) and this branch are complementary; the missing ch-6 headliners
-are exactly the machine-facing ones:
+The machine-facing Chapter-6 bridge theorems this section used to list are all
+**proved, sorry-free** (headline `#print axioms`: `propext`, `Classical.choice`,
+`Quot.sound` only), over the book's DAG model `BoolCircuit.DAGCircuit`:
 
-* **Theorem 6.6, `P ⊆ P/poly`** — their `SizeClasses.lean` defers it for
-  want of "a machine model, the class `P`, and the oblivious-simulation
-  theorem"; this branch supplies all three, and the phase-4 `Snapshot`
-  locality layer is essentially the tableau-to-circuit core.
-* **CKT-SAT `NP`-hardness** ([AB09] Thm 6.11's completeness half; their
-  branch has Tseitin equisatisfiability + size bounds only).
-* **Interface guidance inherited from the ch6-circuit audit**
-  (`audits/ch6-circuits-findings.md`, notes 12–15): (i) build Thm 6.6's
-  circuit family gate by gate — now most naturally as a book-model
-  `DAGCircuitFamily` (`Language.InPPoly`, [AB09, Def 6.1]); the layered
-  `Language.InLayeredPPoly` is equivalent (`Language.inPPoly_iff_inLayeredPPoly`),
-  and `TreeCircuit.toLayered` is the gate-level tree → layered map (the old
-  `toLayeredWrapper`, formerly `Circuit.toFeedForward`, is only a semantic
-  wrapper); (ii) reduce to tree CKT-SAT from the audited
-  `Std.Sat.CNF ℕ` carrier (or via a finite-DAG Tseitin step), with a total
-  string map sending malformed inputs to a fixed rejecting word such as
-  `encodeSigma ⟨0, .node false []⟩`; (iii) renumber variables densely before
-  unary indices (an identifier `2^k` costs `2^k` unary bits against a
-  `k+1`-bit name); (iv) `P ⊊ P/poly` additionally needs the
-  campaign-decidability → Mathlib `ComputablePred` bridge.
-* **Karp-Lipton** (Thm 6.19) — needs the polynomial hierarchy, a new
-  surface; **Meyer's theorem** — needs this branch's `EXP`.
+* Thm 6.6 `P ⊆ P/poly` — `Complexity.P_subset_PPoly` (oblivious tableau,
+  `CircuitComplexity/PSubsetPPoly*.lean`); `P ⊊ P/poly` (p. 110) —
+  `Complexity.P_ssubset_PPoly`, with the machine-model `UHALT`
+  (`Complexity.UHALT_not_mem_P`, `UHaltMachine.lean`).
+* Lem 6.10 / 6.11 — `BoolCircuit.dagCktSatLang_NPComplete`,
+  `BoolCircuit.dagCktSatLang_polyTimeReducible_SAT3`, and Cook–Levin via circuits
+  `Complexity.SAT3_NPComplete_viaCircuits`; CKT-SAT `∈ NP` is
+  `BoolCircuit.dagCktSatLang_mem_NP`, circuit evaluation `BoolCircuit.CVAL_mem_P`.
+* Remark 6.7, Thm 6.13 — `Complexity.tabFamily_isPUniform`,
+  `Language.mem_P_iff_exists_isPUniform`; Def 6.14, Thm 6.15 and the logspace half of
+  Remark 6.7 — `Complexity.tabFamily_isLogspaceUniform`,
+  `Language.mem_P_iff_exists_isLogspaceUniform`.
+* Def 6.16, Ex 6.17, Thm 6.18 — `Complexity.DTIMEAdvice`,
+  `Complexity.mem_PAdvicePoly_of_le_allOnes` (with the named `UHALT` instances
+  `Complexity.UHALT_mem_DTIMEAdvice_one`, `Complexity.UHALT_mem_PAdvicePoly`),
+  `Complexity.PPoly_eq_PAdvicePoly`, and the book's advice length `n^d` literally:
+  `Complexity.PPoly_eq_iUnion_DTIMEAdvice_pow` (`P/poly = ⋃ DTIME(n^c + 1)/n^d`,
+  `PAdviceSubsetPPoly.lean`). The time `n^c + 1` is forced, not cosmetic: the literal
+  `DTIME(n^c)/a` is empty for `c ≥ 1` (`Complexity.DTIMEAdvice_pow_eq_empty`, zero steps
+  on the empty input), so the literal union collapses to constant time
+  (`Complexity.iUnion_DTIMEAdvice_pow_eq`); also
+  `DTIME(T)/0 = DTIME(T)` for `T(n) ≥ n + 1` (`Complexity.DTIMEAdvice_zero_eq_DTIME`)
+  and `⋃_c DTIME(n^c + 1)/0 = P` (`Complexity.iUnion_DTIMEAdvice_zero_eq_P`).
+* Thm 6.19 Karp–Lipton — `Complexity.PH_eq_SigmaP_two_of_NP_subset_PPoly`; Thm 6.20
+  Meyer — `Complexity.EXP_eq_SigmaP_two_of_EXP_subset_PPoly`, and the p. 115 corollary
+  `Complexity.not_EXP_subset_PPoly_of_P_eq_NP`.
+* Thm 6.21 — `BoolCircuit.exists_hard_function_dag` (book bound `2ⁿ/(10n)`), with the
+  p. 115 probabilistic form `BoolCircuit.prob_computableDAG_shannon_le`, proved by the
+  book's steps: `BoolCircuit.prob_eval_eq_apply` (`Pr[C(x) = f(x)] = 1/2`),
+  `BoolCircuit.prob_computes` / `prob_computes_eq_prod` (`Pr[C computes f] = 2^{-2ⁿ}`, the
+  product of the per-input probabilities) and the union bound `BoolCircuit.prob_computableDAG_le_count`
+  (`ShannonProbabilistic.lean`).
+* p. 108 circuit remarks — Lupanov `O(2ⁿ/n)` (`BoolCircuit.exists_dagCircuit_faninTwo_size_le_div`,
+  `Lupanov.lean`); fan-out two (`DAGCircuit.exists_fanoutTwo`, `FanOut.lean`), including
+  `¬¬v` buffers under the literal fan-in-exactly-two convention
+  (`DAGCircuit.exists_fanoutTwo_notNot`, `5S`; `DAGCircuit.IsStrict.exists_fanoutTwo`,
+  `20S`; `StrictFanOut.lean`); the literal Def 6.1 (`DAGCircuit.IsStrict`,
+  `Language.inPPoly_iff_inStrictPPoly`); formulas as fan-out-one circuits, both ways
+  (`TreeCircuit.toDAG_fanout_le_one`, `DAGCircuit.exists_treeCircuit_of_fanout_le_one`,
+  `FormulaFanOut.lean`).
+* Def 6.5's literal `⋃_c SIZE(n^c)` — empty (`Language.not_inSIZE_pow`); `P/poly` is the
+  literal bound from length 2 on (`Language.inPPoly_iff_eventually`, `PPoly.lean`).
+
+Remaining Chapter-6 items (each documented as a divergence in its file):
+
+* **Thm 6.22, the size hierarchy over the book's `SIZE`** — only the tree-circuit
+  analogue exists (`BoolCircuit.treeSize_ssubset`, `Hierarchy.lean`); the DAG version
+  needs a DAG-native padding/counting argument on top of `exists_hard_function_dag`.
+* **Tree-circuit CKT-SAT** (`Encoding.lean`, `CircuitSat.lean`) carries no `≤ₚ` claim —
+  only equisatisfiability and a clause count; the book's Lem 6.11 is the DAG version
+  above.
+* The `O(T log T)` oblivious simulation (Remark 1.7) is Chapter 1's Phase 5 above; the
+  circuits of `P ⊆ P/poly` are quadratic instead, which suffices for every Chapter-6 use.
 
 ---
 
 ## 4. Decisions pending (user)
 
-* **Chapter-6 integration** — resolved in part: ch6 was merged into the
+* **Chapter-6 integration** — the Chapter-6 theorem surface is complete up to the
+  items listed in §3 (Chapter 6); resolved in part: ch6 was merged into the
   campaign branch (`a2a2728b`), and the circuit nomenclature pass agreed
   with the ch6 authors landed 2026-10-01 in three commits: `HasLogDepth`
   → `HasPolylogDepth`; the `ACP` namespace unbundled (generic circuit
@@ -645,13 +678,17 @@ are exactly the machine-facing ones:
   `NPReductions.CNFFormula V`, the audited `Std.Sat.CNF ℕ`) with three
   SAT→3SAT artifacts; `UHalt.lean` introduces a **second computability
   framework** (Mathlib `ComputablePred` vs. the campaign's quarantine and
-  its own `HALT_not_computable`); the merged circuit surface **passed the external audit protocol**
+  its own `HALT_not_computable`) — the machine-model counterpart
+  `UHaltMachine.lean` (`Complexity.UHALT_not_mem_P`) now carries `P ⊊ P/poly`,
+  so `UHalt.lean` is a parallel statement, not a dependency; the merged circuit
+  surface **passed the external audit protocol**
   2026-10-02 (three rounds, 0 blockers throughout;
   `audits/ch6-circuits-resolutions.md`, CLOSED) — campaign statements may
-  cite its definitions, subject to the recorded divergences and the §3
-  interface notes. The dangling `ch6/PLAN.md` references were repointed
+  cite its definitions, subject to the recorded divergences (the audit's
+  interface notes 12–15 in `audits/ch6-circuits-findings.md` were followed by the
+  bridge theorems now listed in §3). The dangling `ch6/PLAN.md` references were repointed
   here in the round-1 repairs. Loose ends for the colleagues:
-  `Basic.lean` at 674 lines (> 600 target); and the audit's sweep logs
+  `Basic.lean` at 691 lines (> 600 target); and the audit's sweep logs
   show the **LMN tree is not sorry-free** (five `sorry` warnings across
   `CircuitCompression`, `IterativeReduction`, `Depth3Switching`,
   `CircuitTreeManip`) — outside the audited surface, flagged for its

@@ -43,6 +43,7 @@ cost, so the two definitions of `P/poly` coincide.
   Cambridge University Press, 2009.  (§6.1.)
 -/
 
+set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
 set_option autoImplicit false
 
@@ -56,14 +57,20 @@ namespace LayeredCircuit
 
 variable {α : Type} {inp out : Type} (F : LayeredCircuit α inp out)
 
+/-- A node on the input layer (layer `0`) of a layered circuit evaluates to the input value it
+names, transported along `nodes_zero`. -/
 theorem evalNode_zero (h : 0 < F.depth + 1) (u : F.nodes ⟨0, h⟩) (xs : inp → α) :
     F.evalNode u xs = xs (F.nodes_zero ▸ u) := rfl
 
+/-- A node on layer `m + 1` of a layered circuit evaluates to its gate applied to the values of
+the layer-`m` nodes. -/
 theorem evalNode_succ {m : ℕ} (h : m + 1 < F.depth + 1) (u : F.nodes ⟨m + 1, h⟩)
     (xs : inp → α) :
     F.evalNode u xs = LayeredCircuit.Gate.eval (F.gates ⟨m, by omega⟩ u)
       (fun v => F.evalNode (d := ⟨m, by omega⟩) v xs) := rfl
 
+/-- The single output of a layered circuit (with a `Unique` output type) is the value of the
+unique node on the last layer. -/
 theorem eval₁_eq [Unique out] (xs : inp → α) :
     F.eval₁ xs = F.evalNode (d := Fin.last F.depth) (F.nodes_last.symm.rec default) xs := rfl
 
@@ -74,14 +81,20 @@ end LayeredCircuit
 /-- A bit as an element of `Fin 2`, the layered model's alphabet. -/
 abbrev b2f : Bool → Fin 2 := finTwoEquiv.symm
 
+/-- The bit encoding `b2f` turns Boolean conjunction into multiplication in `Fin 2`. -/
 theorem b2f_and (a b : Bool) : b2f (a && b) = b2f a * b2f b := by cases a <;> cases b <;> rfl
 
+/-- The bit encoding `b2f` turns Boolean negation into `1 - ·` in `Fin 2`. -/
 theorem b2f_not (a : Bool) : b2f (!a) = 1 - b2f a := by cases a <;> rfl
 
+/-- A bit encodes to `1 : Fin 2` exactly when it is `true`. -/
 theorem b2f_eq_one_iff (a : Bool) : b2f a = 1 ↔ a = true := by cases a <;> decide
 
+/-- The bit encoding `b2f : Bool → Fin 2` is injective. -/
 theorem b2f_injective : Function.Injective b2f := finTwoEquiv.symm.injective
 
+/-- For a list `l` of indices and a predicate `f`, the product over positions `j` of `b2f (f l[j])`
+equals `b2f` of "`f` holds on every entry of `l`" (conjunction as product in `Fin 2`). -/
 theorem prod_b2f_getElem (l : List ℕ) (f : ℕ → Bool) :
     ∏ j : Fin l.length, b2f (f l[j]) = b2f (l.all f) := by
   induction l with
@@ -106,6 +119,8 @@ def layerGateOf {D : Type} (g : DAGGate) (hg : g.WellFormed) (emb : (a : ℕ) �
   | .and => ⟨⟨Fin g.args.length, fun x => ∏ i, x i⟩, fun j => emb g.args[j] (List.getElem_mem _)⟩
   | .or => ⟨⟨Fin g.args.length, fun x => ∏ i, x i⟩, fun j => emb g.args[j] (List.getElem_mem _)⟩
 
+/-- The layered gate `layerGateOf g hg emb` built from a well-formed DAG gate uses an operation
+of `stdGateOps` (a negation or a conjunction of some arity). -/
 theorem layerGateOf_mem {D : Type} (g : DAGGate) (hg : g.WellFormed)
     (emb : (a : ℕ) → a ∈ g.args → D) : (layerGateOf g hg emb).op ∈ stdGateOps := by
   unfold layerGateOf
@@ -114,6 +129,9 @@ theorem layerGateOf_mem {D : Type} (g : DAGGate) (hg : g.WellFormed)
   · exact Or.inr (Set.mem_iUnion.mpr ⟨_, rfl⟩)
   · exact Or.inr (Set.mem_iUnion.mpr ⟨_, rfl⟩)
 
+/-- For a well-formed DAG gate `g` that is not an `∨` gate, if every argument node `emb a`
+carries the encoded value `b2f (vs.getD a false)`, then the layered gate `layerGateOf g hg emb`
+evaluates to `b2f (g.eval vs)`: the layered gate computes the DAG gate. -/
 theorem layerGateOf_eval {D : Type} (g : DAGGate) (hg : g.WellFormed) (hno : g.kind ≠ .or)
     (emb : (a : ℕ) → a ∈ g.args → D) (vals : D → Fin 2) (vs : List Bool)
     (h : ∀ a (ha : a ∈ g.args), vals (emb a ha) = b2f (vs.getD a false)) :
@@ -152,6 +170,7 @@ def ofNode {d : Fin (C.gates.length + 2)} (h : d.val ≤ C.gates.length) (u : C.
     Fin (n + d.val) :=
   cast (by rw [layerNodes, if_pos h]) u
 
+/-- Converting a vertex to a layer-`d` node and back returns the original vertex. -/
 @[simp] theorem ofNode_toNode {d : Fin (C.gates.length + 2)} (h : d.val ≤ C.gates.length)
     (i : Fin (n + d.val)) : C.ofNode h (C.toNode h i) = i := by
   simp [ofNode, toNode]
@@ -159,9 +178,13 @@ def ofNode {d : Fin (C.gates.length + 2)} (h : d.val ≤ C.gates.length) (u : C.
 instance (d : Fin (C.gates.length + 2)) : Finite (C.layerNodes d) := by
   unfold layerNodes; split <;> infer_instance
 
+/-- For a layer index `d < #gates + 1`, its embedding `d.castSucc` into the layers of
+`C.toLayered` is at most the number of gates (so that layer is a vertex layer). -/
 theorem castSucc_le (d : Fin (C.gates.length + 1)) : d.castSucc.val ≤ C.gates.length := by
   simp only [Fin.coe_castSucc]; omega
 
+/-- If `d < #gates`, then `d + 1` is at most the number of gates (so layer `d + 1` is a vertex
+layer, not the output layer). -/
 theorem succ_le {d : Fin (C.gates.length + 1)} (hd : d.val < C.gates.length) :
     d.succ.val ≤ C.gates.length := by
   simp only [Fin.val_succ]; omega
@@ -193,9 +216,12 @@ section ToLayered
 
 variable (hwf : C.IsWellFormed)
 
+/-- The layered circuit `C.toLayered hwf` has finitely many nodes on every layer. -/
 theorem toLayered_finite : (C.toLayered hwf).Finite := fun d => inferInstanceAs
   (Finite (C.layerNodes d))
 
+/-- Every gate of the layered circuit `C.toLayered hwf` is a standard gate (identity, negation, or
+conjunction of `stdGateOps`). -/
 theorem toLayered_onlyUsesGates : (C.toLayered hwf).onlyUsesGates stdGateOps := by
   intro d u
   show (C.layerGate hwf d u).op ∈ stdGateOps
@@ -206,7 +232,16 @@ theorem toLayered_onlyUsesGates : (C.toLayered hwf).onlyUsesGates stdGateOps := 
     · exact layerGateOf_mem _ _ _
   · exact Or.inl (Or.inl rfl)
 
-/-- Every node of layer `m` evaluates to its vertex's value. -/
+/-- For a well-formed DAG circuit `C` without `∨` gates and an input `x`, every node `u` of
+layer `m ≤ #gates` of `C.toLayered hwf` evaluates (on the encoded input) to the encoded value
+of the DAG vertex it stands for.
+
+**Proof sketch.** Induction on the layer `m`.  On layer `0` the node is an input vertex and
+both sides are the input bit.  On layer `m + 1` the node's gate is either an identity carrying
+an older vertex up from layer `m` (done by the induction hypothesis), or the node is the new
+vertex `n + m`, i.e. gate `m` of the DAG; then the layered gate is `layerGateOf` of that gate,
+whose arguments are layer-`m` nodes with the right values by induction, and the gate
+correspondence lemma (`∧`/`¬` as product/complement in `Fin 2`) finishes. -/
 theorem toLayered_evalNode (hno : ∀ g ∈ C.gates, g.kind ≠ .or) (x : Fin n → Bool) :
     ∀ (m : ℕ) (hm : m ≤ C.gates.length) (u : C.layerNodes ⟨m, by omega⟩),
       (C.toLayered hwf).evalNode (d := ⟨m, by simp [toLayered]; omega⟩) u (fun i => b2f (x i)) =
@@ -240,6 +275,9 @@ theorem toLayered_evalNode (hno : ∀ g ∈ C.gates, g.kind ≠ .or) (x : Fin n 
       intro a ha
       rw [ih, ofNode_toNode]
 
+/-- For a well-formed DAG circuit `C` without `∨` gates, the layered circuit `C.toLayered hwf`
+computes the same function: on input `x` (encoded bitwise into `Fin 2`), its output is
+`b2f (C.eval x)`.  [AB09, §6.1] -/
 theorem toLayered_eval₁ (hno : ∀ g ∈ C.gates, g.kind ≠ .or) (x : Fin n → Bool) :
     (C.toLayered hwf).eval₁ (fun i => b2f (x i)) = b2f (C.eval x) := by
   have key : ∀ u : C.layerNodes ⟨C.gates.length + 1, by omega⟩,
@@ -290,6 +328,9 @@ def GateShape.eval {D : Type} (vals : D → Fin 2) : GateShape D → Fin 2
   | .neg a => 1 - vals a
   | .conj as => (as.map vals).prod
 
+/-- Every gate of `stdGateOps` over node type `D` has a shape — a wire, a negation, or a
+conjunction of a list of inputs — whose value agrees with the gate's value on every
+assignment. -/
 theorem exists_gateShape {D : Type} (g : Gate (Fin 2) D) (h : g.op ∈ stdGateOps) :
     ∃ sh : GateShape D, ∀ vals, LayeredCircuit.Gate.eval g vals = sh.eval vals := by
   rcases g with ⟨op, inputs⟩
@@ -307,13 +348,18 @@ noncomputable def gateShape {D : Type} (g : Gate (Fin 2) D) (h : g.op ∈ stdGat
     GateShape D :=
   Classical.choose (exists_gateShape g h)
 
+/-- The classically chosen shape `gateShape g h` of a standard gate evaluates exactly like the
+gate `g` on every assignment `vals`. -/
 theorem gateShape_spec {D : Type} (g : Gate (Fin 2) D) (h : g.op ∈ stdGateOps) (vals : D → Fin 2) :
     LayeredCircuit.Gate.eval g vals = (gateShape g h).eval vals :=
   Classical.choose_spec (exists_gateShape g h) vals
 
+/-- "`p` holds on every entry" is unchanged by deduplicating the list. -/
 theorem all_dedup' {l : List ℕ} (p : ℕ → Bool) : l.dedup.all p = l.all p := by
   rw [Bool.eq_iff_iff]; simp [List.all_eq_true, List.mem_dedup]
 
+/-- The encoding of "`f` holds on every entry of `l`" is the product in `Fin 2` of the encoded
+values `b2f (f a)` over `l`. -/
 theorem b2f_all {α : Type} (l : List α) (f : α → Bool) :
     b2f (l.all f) = (l.map (b2f ∘ f)).prod := by
   induction l with
@@ -332,6 +378,8 @@ noncomputable def succCard (j : ℕ) : ℕ :=
 /-- The number of nodes on layers `1, …, m`: the DAG gates of those layers come first. -/
 noncomputable def offset (m : ℕ) : ℕ := ∑ j ∈ Finset.range m, F.succCard j
 
+/-- The offset of layer `m + 1` is the offset of layer `m` plus the number of nodes on layer
+`m + 1`. -/
 theorem offset_succ (m : ℕ) : F.offset (m + 1) = F.offset m + F.succCard m :=
   Finset.sum_range_succ _ _
 
@@ -365,12 +413,15 @@ noncomputable def gatesUpTo : ℕ → List DAGGate
           F.layerGate hfin hstd m h ((F.layerEnum hfin (m + 1) (by omega)).symm j)
       else []
 
+/-- The DAG gate list `gatesUpTo m` has length `offset m`, the number of nodes on layers
+`1, …, m`. -/
 theorem length_gatesUpTo : ∀ m, (F.gatesUpTo hfin hstd m).length = F.offset m
   | 0 => by simp [gatesUpTo, offset]
   | m + 1 => by
     rw [gatesUpTo, List.length_append, length_gatesUpTo m, offset_succ, succCard]
     split <;> simp
 
+/-- For `m ≤ M`, the gate list `gatesUpTo m` is a prefix of `gatesUpTo M`. -/
 theorem gatesUpTo_mono : ∀ {m M : ℕ}, m ≤ M →
     ∃ ext, F.gatesUpTo hfin hstd M = F.gatesUpTo hfin hstd m ++ ext
   | m, 0, h => ⟨[], by obtain rfl : m = 0 := (by omega); simp⟩
@@ -381,6 +432,8 @@ theorem gatesUpTo_mono : ∀ {m M : ℕ}, m ≤ M →
     · obtain ⟨ext, hext⟩ := gatesUpTo_mono hle
       exact ⟨ext ++ _, by rw [gatesUpTo, hext, List.append_assoc]⟩
 
+/-- The DAG vertex assigned to a node on layer `m` is below `n + offset m`, i.e. it is an input
+or one of the gates of layers `1, …, m`. -/
 theorem layerVertex_lt : ∀ (m : ℕ) (hm : m < F.depth + 1) (u : F.nodes ⟨m, hm⟩),
     F.layerVertex hfin m hm u < n + F.offset m
   | 0, _, u => by simp [layerVertex, offset]
@@ -391,6 +444,8 @@ theorem layerVertex_lt : ∀ (m : ℕ) (hm : m < F.depth + 1) (u : F.nodes ⟨m,
         Nat.card (F.nodes ⟨m + 1, hm⟩) := rfl
     omega
 
+/-- The DAG vertex assigned to a node on layer `m + 1` is at least `n + offset m`, i.e. it comes
+after the inputs and all gates of earlier layers. -/
 theorem layerVertex_ge (m : ℕ) (hm : m + 1 < F.depth + 1) (u : F.nodes ⟨m + 1, hm⟩) :
     n + F.offset m ≤ F.layerVertex hfin (m + 1) hm u := by
   simp [layerVertex]
@@ -417,6 +472,8 @@ theorem layerGate_args_lt (m : ℕ) (hm : m < F.depth) (u : F.nodes (⟨m, hm⟩
   · obtain ⟨b, -, rfl⟩ := List.mem_map.mp (List.mem_dedup.mp ha)
     exact F.layerVertex_lt hfin _ _ _
 
+/-- Every DAG gate `layerGate m hm u` built from a standard layered gate is well formed (its
+argument list is duplicate-free and a `¬` gate has exactly one argument). -/
 theorem layerGate_wellFormed (m : ℕ) (hm : m < F.depth) (u : F.nodes (⟨m, hm⟩ : Fin F.depth).succ) :
     (F.layerGate hfin hstd m hm u).WellFormed := by
   unfold layerGate
@@ -425,6 +482,8 @@ theorem layerGate_wellFormed (m : ℕ) (hm : m < F.depth) (u : F.nodes (⟨m, hm
   · exact ⟨List.nodup_singleton _, fun _ => rfl⟩
   · exact ⟨List.nodup_dedup _, fun h => by simp at h⟩
 
+/-- For every `m`, the gate list `gatesUpTo m` is acyclic over `n` inputs: each gate's arguments
+are earlier vertices. -/
 theorem gatesUpTo_acyclic : ∀ m, GatesAcyclic n (F.gatesUpTo hfin hstd m)
   | 0 => GatesAcyclic.nil
   | m + 1 => by
@@ -443,7 +502,19 @@ theorem gatesUpTo_acyclic : ∀ m, GatesAcyclic n (F.gatesUpTo hfin hstd m)
       rw [length_gatesUpTo] at hlt
       omega
 
-/-- Every node of layer `m` is computed, in `Fin 2`, by its DAG vertex. -/
+/-- For a finite standard layered circuit `F` and an input `x`, every node `u` of layer `m`
+is computed, in `Fin 2`, by its DAG vertex: the encoded value of vertex `layerVertex m u` in the
+DAG with gates `gatesUpTo m` equals the layered value of `u` on the encoded input.
+
+**Proof sketch.** Induction on `m`.  Layer-`0` nodes are input vertices.  For a node `u` on
+layer `m + 1`, its vertex is `n + offset m + j` where `j` is `u`'s index in the layer, and the
+DAG gate at that position is the gate built from the shape of `u`'s layered gate.  The value of
+that gate depends only on its arguments, which are layer-`m` vertices, all below
+`n + offset m`; since `gatesUpTo m` is a prefix of `gatesUpTo (m + 1)`, their values are those
+computed by `gatesUpTo m`, which by induction are the layered values.  It remains to match
+the three shapes: a wire is a fan-in-one `∧`, a negation a `¬`, and a conjunction an `∧` over
+the deduplicated inputs (deduplication does not change a conjunction, and conjunction is
+product in `Fin 2`). -/
 theorem layerVertex_value (x : Fin n → Bool) :
     ∀ (m : ℕ) (hm : m < F.depth + 1) (u : F.nodes ⟨m, hm⟩),
       b2f (vertexValue (F.gatesUpTo hfin hstd m) x (F.layerVertex hfin m hm u)) =
@@ -505,6 +576,8 @@ noncomputable def toDAG : DAGCircuit n where
   output_lt := by
     rw [length_gatesUpTo]; exact F.layerVertex_lt hfin _ _ _
 
+/-- The DAG `F.toDAG` computes the same function as the finite standard layered circuit `F`: on
+input `x`, the encoding of its output equals `F.eval₁` on the encoded input.  [AB09, §6.1] -/
 theorem toDAG_eval (x : Fin n → Bool) :
     b2f ((F.toDAG hfin hstd).eval x) = F.eval₁ (fun i => b2f (x i)) := by
   exact F.layerVertex_value hfin hstd x F.depth (Nat.lt_succ_self _) _
@@ -519,6 +592,7 @@ theorem toDAG_size : (F.toDAG hfin hstd).size = n + F.size := by
   intro d _
   simp [succCard, d.isLt]
 
+/-- Every gate in `gatesUpTo M` is well formed. -/
 theorem gatesUpTo_wellFormed : ∀ M, ∀ g ∈ F.gatesUpTo hfin hstd M, g.WellFormed
   | 0 => by simp [gatesUpTo]
   | M + 1 => by
@@ -531,6 +605,7 @@ theorem gatesUpTo_wellFormed : ∀ M, ∀ g ∈ F.gatesUpTo hfin hstd M, g.WellF
         exact F.layerGate_wellFormed hfin hstd M _ _
       · simp at hg
 
+/-- The DAG circuit `F.toDAG` translated from a finite standard layered circuit is well formed. -/
 theorem toDAG_isWellFormed : (F.toDAG hfin hstd).IsWellFormed :=
   fun g hg => F.gatesUpTo_wellFormed hfin hstd _ g hg
 
@@ -549,13 +624,18 @@ def toLayered : LayeredCircuit (Fin 2) (Fin n) Unit :=
   (c.toDAG.deMorgan c.toDAG_isWellFormed).toLayered
     (c.toDAG.deMorgan_isWellFormed c.toDAG_isWellFormed)
 
+/-- The gate-by-gate layered circuit of a tree circuit `c` computes `c`: on input `x` its output
+is `b2f (c.eval x)`. -/
 theorem toLayered_eval₁ (x : Fin n → Bool) :
     c.toLayered.eval₁ (fun i => b2f (x i)) = b2f (c.eval x) := by
   rw [toLayered, DAGCircuit.toLayered_eval₁ _ _ (DAGCircuit.deMorgan_kind_ne_or _ _),
     DAGCircuit.deMorgan_eval, toDAG_eval]
 
+/-- The gate-by-gate layered circuit of a tree circuit has finitely many nodes on every layer. -/
 theorem toLayered_finite : c.toLayered.Finite := DAGCircuit.toLayered_finite _ _
 
+/-- Every gate of the gate-by-gate layered circuit of a tree circuit is a standard gate of
+`stdGateOps`. -/
 theorem toLayered_onlyUsesGates : c.toLayered.onlyUsesGates stdGateOps :=
   DAGCircuit.toLayered_onlyUsesGates _ _
 
@@ -568,8 +648,15 @@ private theorem rewrite_size_le {n G S T : ℕ} (hS : S = n + G) (h : T ≤ n + 
     T ≤ S * (S + 2) := by
   subst hS; nlinarith
 
-/-- A polynomial-size layered family gives a polynomial-size fan-in-two DAG family: one gate
-per node, then binarization. -/
+/-- Every language in `LayeredPPoly` (decided by a polynomial-size family of finite layered
+circuits over `stdGateOps`) is in `P/poly` (decided by a polynomial-size family of fan-in-two
+DAG circuits): one gate per node, then binarization.  [AB09, Def 6.5]
+
+**Proof sketch.** Translate each layered circuit to a well-formed DAG with `toDAG` (one gate
+per non-input node, so size `n + size ≤ (a + 1)(n + 1)^(k + 1)`), then binarize it to fan-in
+two; binarization at most squares the size (bound `S (S + 2)`), giving a size bound
+`3 (a + 1)^2 (n + 1)^(2(k + 1))`.  Correctness: binarization preserves the computed function and
+`toDAG` computes the layered circuit's output, so the decided languages agree. -/
 theorem _root_.Language.InLayeredPPoly.inPPoly {L : Language Bool} (h : L.InLayeredPPoly) :
     L.InPPoly := by
   obtain ⟨C, hstd, ⟨a, k, hs⟩, hL⟩ := (Language.inLayeredPPoly_iff L).mp h
@@ -596,8 +683,16 @@ theorem _root_.Language.InLayeredPPoly.inPPoly {L : Language Bool} (h : L.InLaye
     rw [← b2f_eq_one_iff, hD]
     exact Eq.congr_left (LayeredCircuit.toDAG_eval _ _ _ _)
 
-/-- A polynomial-size fan-in-two DAG family gives a polynomial-size layered family over
-`stdGateOps`: De Morgan, then one gate per layer. -/
+/-- Every language in `P/poly` (decided by a polynomial-size family of fan-in-two DAG
+circuits) is in `LayeredPPoly` (decided by a polynomial-size family of finite layered circuits
+over `stdGateOps`): De Morgan, then one gate per layer.  [AB09, Def 6.5]
+
+**Proof sketch.** Remove `∨` gates from each circuit by De Morgan's law (size at most
+`S (S + 2)` for an original size `S`), then layer the result with one DAG vertex per layer
+(`toLayered`, size at most `(#gates + 1)(size + 1) ≤ (S + 1)^4`).  With
+`S + 1 ≤ (a + 1)(n + 1)^k` this gives the bound `(a + 1)^4 (n + 1)^(4k)`; finiteness and the
+use of standard gates come from the layering lemmas.  Correctness: De Morgan preserves the
+computed function and the layered circuit computes the `∨`-free DAG. -/
 theorem _root_.Language.InPPoly.inLayeredPPoly {L : Language Bool} (h : L.InPPoly) :
     L.InLayeredPPoly := by
   obtain ⟨C, hF, ⟨a, k, hs⟩, hL⟩ := (Language.inPPoly_iff L).mp h
@@ -633,6 +728,9 @@ theorem _root_.Language.inPPoly_iff_inLayeredPPoly (L : Language Bool) :
     L.InPPoly ↔ L.InLayeredPPoly :=
   ⟨Language.InPPoly.inLayeredPPoly, Language.InLayeredPPoly.inPPoly⟩
 
+/-- The complexity class `P/poly` of languages decided by polynomial-size fan-in-two DAG
+circuit families equals the class `LayeredPPoly` of languages decided by polynomial-size
+finite layered circuit families over `stdGateOps`.  [AB09, Def 6.5] -/
 theorem PPoly_eq_LayeredPPoly : PPoly = LayeredPPoly := by
   ext L; exact Language.inPPoly_iff_inLayeredPPoly L
 

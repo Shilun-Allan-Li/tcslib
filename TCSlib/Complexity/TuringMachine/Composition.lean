@@ -67,8 +67,9 @@ standard); this file keeps only its concrete machines and their theorems.
   `Turing.FinTM.exists_comp_partial` composes two arbitrary machines at the level of
   their halting relations, with the intermediate output buffered on a work tape;
   `Turing.FinTM.exists_cond` branches between two machines on a decided predicate.
-  Both are stated untimed; time-bounded refinements are deliberately deferred until
-  a result needs them.
+  Both are stated untimed; the forward time bound of the buffered composition is
+  `Turing.FinTM.bufferedCompTM_computesInTime`, and `Turing.FinTM.exists_comp_on_image`
+  composes with a second machine that is correct only on the first one's image.
 
 ## References
 
@@ -341,6 +342,29 @@ theorem computesFunInTime_ifEq (w₀ u v : List Bool) :
     ⟨_, hs, ho, rfl⟩
   exact hbase.mono (Nat.le_trans (by omega) (Nat.le_mul_of_pos_right _ (by omega)))
 
+/-- **Timed partial composition.** If `M₁` halts on `x` with output `y` within `t₁`
+steps and `M₂` halts on `y` with output `o` within `t₂` steps, then
+`bufferedCompTM M₁ M₂` halts on `x` with output `o` within `t₁ + |y| + 2 + t₂` steps.
+No totality is assumed of either machine (cf. `computesFunInTime_comp`, which
+requires it).
+
+**Proof sketch.** `Turing.FinTM.bufferedComp_start` reaches the second phase, with
+`M₂`'s initial configuration on virtual input `y`, within `t₁ + |y| + 2` steps;
+`Turing.FinTM.bufferedSecondCfg_run` then tracks `M₂`'s run step for step, and the
+embedding preserves halting and output. -/
+theorem bufferedCompTM_computesInTime (M₁ M₂ : FinTM Bool) {x y o : List Bool} {t₁ t₂ : ℕ}
+    (h₁ : M₁.ComputesInTime x y t₁) (h₂ : M₂.ComputesInTime y o t₂) :
+    (bufferedCompTM M₁ M₂).ComputesInTime x o (t₁ + y.length + 2 + t₂) := by
+  obtain ⟨a, p, tapes, heads, ha, hstart⟩ := bufferedComp_start M₁ M₂ x y t₁ h₁
+  obtain ⟨b, _, hr⟩ := bufferedSecondCfg_run M₁ M₂ (M₂.tm.initCfg y) true
+    (by simp [VirtualTag, MultiTapeTM.initCfg, Cfg.init]) p tapes heads t₂
+  have hc := (computesInTime_iff _ _ _ _).mp h₂
+  have hbase : (bufferedCompTM M₁ M₂).ComputesInTime x o (a + t₂) := by
+    apply (computesInTime_iff _ _ _ _).mpr
+    rw [MultiTapeTM.runFrom_add, hstart, hr]
+    exact ⟨by simpa only [bufferedSecondCfg, Option.map_eq_none_iff] using hc.1, hc.2⟩
+  exact hbase.mono (by omega)
+
 /-- **Composition.** If `f` is computable within `T₁` and `g` within a monotone `T₂`,
 then `g ∘ f` is computable within `c · (T₁ n + T₂ (T₁ n) + 1)`.
 
@@ -371,22 +395,32 @@ theorem computesFunInTime_comp {M₁ M₂ : FinTM Bool} {f g : List Bool → Lis
     ∃ (M : FinTM Bool) (c : ℕ),
       M.ComputesFunInTime (g ∘ f) fun n => c * (T₁ n + T₂ (T₁ n) + 1) := by
   refine ⟨bufferedCompTM M₁ M₂, 2, fun x => ?_⟩
-  obtain ⟨a, p, tapes, heads, ha, hstart⟩ :=
-    bufferedComp_start M₁ M₂ x (f x) (T₁ x.length) (h₁ x)
   have hlen : (f x).length ≤ T₁ x.length := by
     have ho := ((computesInTime_iff _ _ _ _).mp (h₁ x)).2
     simpa only [ho] using M₁.tm.output_length_le x (T₁ x.length)
   -- This is the only use of monotonicity: transfer the intermediate length bound.
   have htime : T₂ (f x).length ≤ T₂ (T₁ x.length) := hT₂ hlen
-  obtain ⟨b, _, hr⟩ := bufferedSecondCfg_run M₁ M₂ (M₂.tm.initCfg (f x)) true
-    (by simp [VirtualTag, MultiTapeTM.initCfg, Cfg.init]) p tapes heads (T₂ (f x).length)
-  have hc := (computesInTime_iff _ _ _ _).mp (h₂ (f x))
-  have hbase : (bufferedCompTM M₁ M₂).ComputesInTime x (g (f x))
-      (a + T₂ (f x).length) := by
-    apply (computesInTime_iff _ _ _ _).mpr
-    rw [MultiTapeTM.runFrom_add, hstart, hr]
-    exact ⟨by simpa only [bufferedSecondCfg, Option.map_eq_none_iff] using hc.1, hc.2⟩
-  exact hbase.mono (by dsimp only; omega)
+  exact (bufferedCompTM_computesInTime M₁ M₂ (h₁ x) (h₂ (f x))).mono
+    (by dsimp only; omega)
+
+/-- **Composition with a second machine correct only on the image.** If `M` computes `f`
+within `T₁` and, for every input `x`, `U` maps `f x` to `g x` within `T₂ |x|` steps (the
+budget measured at the *original* input length), then some machine computes `g` within
+`2 T₁ n + T₂ n + 2`. Unlike `computesFunInTime_comp`, `U` need not be total, and no
+monotonicity is assumed.
+
+**Proof sketch.** `bufferedCompTM M U` runs both phases
+(`bufferedCompTM_computesInTime`); the intermediate output is no longer than `M`'s
+running time, so capture and rewind cost at most `T₁ n + 2` more steps. -/
+theorem exists_comp_on_image (M U : FinTM Bool) (f g : List Bool → List Bool)
+    (T₁ T₂ : ℕ → ℕ) (hM : M.ComputesFunInTime f T₁)
+    (hU : ∀ x, U.ComputesInTime (f x) (g x) (T₂ x.length)) :
+    ∃ N : FinTM Bool, N.ComputesFunInTime g (fun n => 2 * T₁ n + T₂ n + 2) := by
+  refine ⟨bufferedCompTM M U, fun x => ?_⟩
+  have hlen : (f x).length ≤ T₁ x.length := by
+    have ho := ((computesInTime_iff _ _ _ _).mp (hM x)).2
+    simpa only [ho] using M.tm.output_length_le x (T₁ x.length)
+  exact (bufferedCompTM_computesInTime M U (hM x) (hU x)).mono (by dsimp only; omega)
 
 /-- **Partial (guarded) sequential composition** — the phase-4 API obligation
 identified by the phase-3 audit (round 2, finding 10 and Argument F):

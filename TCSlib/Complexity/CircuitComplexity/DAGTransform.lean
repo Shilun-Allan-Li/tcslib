@@ -39,6 +39,7 @@ them.  Two instances:
   `AC^i ⊆ NC^{i+1}`.)
 -/
 
+set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
 set_option autoImplicit false
 
@@ -114,34 +115,9 @@ private theorem le_foldr_max' {l : List ℕ} {f : ℕ → ℕ} {a : ℕ} (ha : a
     · exact le_max_left _ _
     · exact (ih ha).trans (le_max_right _ _)
 
-private theorem all_congr_mem' {l : List ℕ} {p q : ℕ → Bool} (h : ∀ a ∈ l, p a = q a) :
-    l.all p = l.all q := by
-  induction l with
-  | nil => rfl
-  | cons a l ih =>
-    simp only [List.all_cons, h a (by simp), ih (fun b hb => h b (by simp [hb]))]
-
-private theorem any_congr_mem' {l : List ℕ} {p q : ℕ → Bool} (h : ∀ a ∈ l, p a = q a) :
-    l.any p = l.any q := by
-  induction l with
-  | nil => rfl
-  | cons a l ih =>
-    simp only [List.any_cons, h a (by simp), ih (fun b hb => h b (by simp [hb]))]
-
-/-- Remapping a gate's inputs through `f` preserves its value when the remapped inputs
-carry the old values. -/
-theorem DAGGate.eval_remap (g : DAGGate) (f : ℕ → ℕ) {vals vals' : List Bool}
-    (h : ∀ a ∈ g.args, vals.getD (f a) false = vals'.getD a false) :
-    (⟨g.kind, g.args.map f⟩ : DAGGate).eval vals = g.eval vals' := by
-  rcases g with ⟨k, args⟩
-  have hall : ((args.map f).all fun a => vals.getD a false) =
-      args.all fun a => vals'.getD a false := by
-    rw [List.all_map]; exact all_congr_mem' fun a ha => by simpa using h a ha
-  have hany : ((args.map f).any fun a => vals.getD a false) =
-      args.any fun a => vals'.getD a false := by
-    rw [List.any_map]; exact any_congr_mem' fun a ha => by simpa using h a ha
-  cases k <;> simp only [DAGGate.eval, hall, hany]
-
+/-- The rewriting invariant holds at the start: with no old gates processed, the empty
+new gate list and the identity vertex map `0, …, n - 1` satisfy `RewriteInv` (each input
+vertex maps to itself, with the same value and depth `0`). -/
 theorem rewriteInv_nil (c : ℕ) (P : DAGGate → Prop) :
     RewriteInv n c P [] ([], List.range n) := by
   refine ⟨by simp, fun v hv => ?_, GatesAcyclic.nil, fun x v hv => ?_, fun v hv => ?_, by simp,
@@ -157,7 +133,17 @@ theorem rewriteInv_nil (c : ℕ) (P : DAGGate → Prop) :
     have := vertexDepth_input (n := n) ([] : List DAGGate) (i := v) (by simpa using hv)
     simp [vertexDepth] at this ⊢
 
-/-- One rewriting step preserves the invariant. -/
+/-- One rewriting step preserves the invariant.
+
+**Proof sketch.** Remap the new old gate `g`'s arguments through the current vertex
+map to get `g'`, whose arguments are existing new vertices, and apply the gadget
+specification to `g'`.  The gadget only appends gates, so every previously mapped vertex
+keeps its value and depth, and appending `g` to the old list likewise leaves earlier old
+vertices unchanged.  For the new vertex: its value is `g'` evaluated on new values, which
+by the invariant equal the old values `g` reads, hence `g`'s value.  Its depth is at most
+`c` plus the deepest remapped argument, which by the invariant is at most `c` times the
+deepest old argument, giving `c * (that + 1)`.  Gate-count and the predicate `P` add up
+from the gadget's cost and new-gate guarantees. -/
 theorem rewriteInv_step {c : ℕ} {Q : GateKind → ℕ → Prop} {P : DAGGate → Prop}
     {emit : DAGGate → List DAGGate → List DAGGate × ℕ} (hemit : GadgetCorrect n c Q P emit)
     {old : List DAGGate} {g : DAGGate} {s : List DAGGate × List ℕ}
@@ -272,16 +258,23 @@ variable (C : DAGCircuit n) {c : ℕ} {Q : GateKind → ℕ → Prop} {P : DAGGa
   (emit : DAGGate → List DAGGate → List DAGGate × ℕ) (hemit : GadgetCorrect n c Q P emit)
   (hnot : ∀ g ∈ C.gates, Q g.kind g.args.length)
 
+/-- Rewriting a DAG circuit gate by gate with a correct gadget preserves its Boolean
+function: `(C.rewrite emit …).eval x = C.eval x` for every input `x`. -/
 theorem DAGCircuit.rewrite_eval (x : Fin n → Bool) :
     (C.rewrite emit hemit hnot).eval x = C.eval x :=
   (rewriteGates_inv hemit C.gates C.args_lt hnot).value x _ C.output_lt
 
+/-- Rewriting with a gadget that adds at most `c` levels per gate multiplies depth by at
+most `c`: the rewritten circuit has depth at most `c * C.depth`. -/
 theorem DAGCircuit.rewrite_depth_le : (C.rewrite emit hemit hnot).depth ≤ c * C.depth :=
   (rewriteGates_inv hemit C.gates C.args_lt hnot).depth _ C.output_lt
 
+/-- Every gate of the rewritten circuit satisfies the gadget's output predicate `P`. -/
 theorem DAGCircuit.rewrite_new_gates : ∀ h ∈ (C.rewrite emit hemit hnot).gates, P h :=
   (rewriteGates_inv hemit C.gates C.args_lt hnot).new_gates
 
+/-- The rewritten circuit has at most `∑ (fan-in + 2)` gates, summed over the gates of
+the original circuit. -/
 theorem DAGCircuit.rewrite_length_le :
     (C.rewrite emit hemit hnot).gates.length ≤ (C.gates.map fun g => g.args.length + 2).sum :=
   (rewriteGates_inv hemit C.gates C.args_lt hnot).length_le

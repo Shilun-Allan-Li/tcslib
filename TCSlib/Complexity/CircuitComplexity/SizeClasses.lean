@@ -18,8 +18,9 @@ import TCSlib.Complexity.CircuitComplexity.LayeredDAG
 
 * `Language.InLayeredSIZE.mono` — `SIZE(T) ⊆ SIZE(T')` when `T ≤ T'` pointwise.
 * `Language.InLayeredSIZE.inLayeredPPoly` — `SIZE(T) ⊆ P/poly` when `T n ≤ a * (n + 1) ^ k`.
-* `Language.allOnes_inLayeredSIZE_linear` / `_inLayeredPPoly` — `{1ⁿ}` is linear-size, so in `P/poly`;
-  `Language.allOnes_inPPoly` — the same for the book's `P/poly`.
+* `Language.allOnes_inLayeredSIZE_linear` / `_inLayeredPPoly` — `{1ⁿ}` is linear-size, so in
+  the layered `P/poly`.  The book-model versions, `Language.allOnes_inSIZE_linear` and
+  `Language.allOnes_inPPoly`, are in `BookModelBasics.lean`.
 
 ## Divergences from Arora–Barak Example 6.3
 
@@ -31,13 +32,12 @@ which is all AB claims. AB writes `{1ⁿ : n ∈ ℤ}`; we read that `ℤ` as `�
 the empty product `1`, makes `C₀` accept `ε = 1⁰`. Words are `List Bool`, so AB's
 letter `1` is `true`, and `finTwoEquiv` converts at the circuit boundary.
 
-## Deferred: Theorem 6.6, `P ⊆ P/poly`
+## Theorem 6.6, `P ⊆ P/poly`
 
-Not formalized, and not stubbed with `sorry`. AB simulates an oblivious Turing
-machine (Remark 1.7) by a circuit, Cook–Levin style, which needs a machine model,
-the class `P`, and the oblivious-simulation theorem. All three now live on this
-branch (`TuringMachine/` with `Robustness/ObliviousSchedule.lean`, and
-`ClassP/`); the bridge theorem is tracked in `backlog.md` §3.
+Proved in `CircuitComplexity/PSubsetPPoly.lean` as `Complexity.P_subset_PPoly`: AB
+simulates an oblivious Turing machine (Remark 1.7, here
+`Complexity.oblivious_of_mem_DTIME`) by its tableau circuit
+(`Complexity.tableauCircuit`, `CircuitComplexity/PSubsetPPolyTableau.lean`).
 
 ## References
 
@@ -161,7 +161,3 @@ theorem Language.allOnes_inLayeredSIZE_linear : Language.allOnes.InLayeredSIZE (
 /-- [AB09, Ex 6.3], part 1: consequently `{1ⁿ} ∈ P/poly`. -/
 theorem Language.allOnes_inLayeredPPoly : Language.allOnes.InLayeredPPoly :=
   Language.allOnes_inLayeredSIZE_linear.inLayeredPPoly (a := 1) (k := 1) fun n => by simp
-
-/-- `{1ⁿ} ∈ P/poly` for the book's `P/poly`.  [AB09, Ex 6.3] -/
-theorem Language.allOnes_inPPoly : Language.allOnes.InPPoly :=
-  Language.allOnes_inLayeredPPoly.inPPoly

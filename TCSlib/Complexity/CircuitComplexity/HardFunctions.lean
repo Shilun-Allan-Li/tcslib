@@ -33,7 +33,8 @@ None — this file adds only theorems, over `BoolCircuit.TreeCircuit` and `BoolC
 ## Divergences from [AB09, Thm 6.21]
 
 **AB's size bound `2 ^ n / (10 n)` is not proved here, and the two statements are not
-comparable.** [AB09, Def 6.1]'s circuit is a DAG whose `∨`/`∧` gates have fan-in `2`
+comparable.** (The book's own statement, over the book's DAG model and with its bound, is
+`BoolCircuit.exists_hard_function_dag` in `CircuitComplexity.DAGHardFunctions`.) [AB09, Def 6.1]'s circuit is a DAG whose `∨`/`∧` gates have fan-in `2`
 and whose `¬` gates have fan-in `1`, with size its number of vertices — one source
 vertex per input variable, however often that variable is read.
 `BoolCircuit.TreeCircuit` is a *tree* with unbounded fan-in and negation folded into its
