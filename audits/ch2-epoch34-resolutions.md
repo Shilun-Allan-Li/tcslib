@@ -157,3 +157,51 @@ certification conditions are discharged by findings 1–2 above.
 Round-2 review scope: findings 1–3 (the repairs), plus any challenge to
 the new evidence. The confirmed notes need no re-review. Gate closes on
 zero blockers/majors across both rounds' open items.
+
+
+---
+
+# Round 2 → round 3
+
+The round-2 report (`audits/ch2-epoch34-r2-findings.md`, preserved
+verbatim) closed findings 2 and 3 and the axiom/target/coverage
+components of finding 1, leaving **one open major**: pass 3's kernel
+public-surface certification, with both probes accepted (prefix descent
+and `isInternal` are not provenance; no reverse existence check; the 11
+exceptions unbound).
+
+**Repair — exact two-directional inventory equality.**
+`audits/programs/ch2-epoch34-R3Axioms.lean` (attached, with its run log)
+replaces pass 3 entirely: no prefix inference, no `isInternal`
+exemption, no exceptions array. The program embeds, per owned module,
+the exact expected list of non-private kernel names — **87 names in
+total** — and asserts (i) every actual non-private name in the module is
+in the expected list, (ii) every expected name actually exists and is
+owned by exactly that module (the auditor's absent-`SurfaceProbe.b`
+case now throws), (iii) every source public is present and owned
+(reverse existence), and (iv) actual and expected sizes agree. An
+unlisted `a.extra`-style public theorem now fails the run; an absent
+expected declaration now fails the run. The 87-name list is reviewed
+name-by-name in the attached
+`audits/evidence/ch2-epoch34/kernel-surface-inventory.md`, each entry
+bound to its class and generating declaration: 45 source publics, 27
+generated auxiliaries of those publics, the 8 imported-definition
+equation lemmas, and — a correction the exact enumeration itself forced —
+the derived-instance family of the private `SatStreamState` has **seven**
+members, not the three round 2 disclosed: its four `._proof_N` members
+had been masked by precisely the `isInternal` exemption the auditor
+rejected. Passes 1, 2, 4, 5 are unchanged from round 2; the run is
+against the same pinned snapshot (the 65 sources were hash-asserted
+byte-identical to `final-source-manifest.md` before the run, the
+records-only commits since being source-free), and completed
+**R3 CLOSURE AUDIT PASS**, exit 0.
+
+**Wording corrections requested by the round-2 notes**, accepted: the
+round-2 resolutions' claim that the manifest "pins those endpoints" was
+too broad — the manifest pins the final-run commit only, and the
+59-commit census remains reproducible-from-history maintainer
+provenance, not supplied evidence (finding 6); the duplicate-run
+record's replay and the campaign execution logs are correctly labeled
+**maintainer-verified** evidence (findings 4 and 7).
+
+Round-3 review scope: the pass-3 repair and the inventory review alone.
