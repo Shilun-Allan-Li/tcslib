@@ -625,10 +625,22 @@ uncomputability chapter.
   `contPairTM`; `goes_loop` → `run_pos_le`, `MOp`;
   `pairedVerifier_malformed` → `paddedVerifier`; `emit_run` → `redirectTM`;
   `taut_membership_of_verifier` → `TautSyntax`; `taut_machine_pair` →
-  `tautSplit` (forward edge). The forward edges (a helper "using" the theorem it serves)
+  `tautSplit` (forward edge); `foldr_max_le_of_forall` →
+  `falsifyingClause_eval_false`; `polyTimeComputable_of_linear` →
+  `pairMapSnd`; `PolyTimeReducible.trans` → `mem_P_of_polyTimeReducible`;
+  `acceptTM_halts_iff` → `prefixTM`. The forward edges (a helper "using" the theorem it serves)
   suggest the planner attributes by source-range adjacency or docstring
   mentions rather than by kernel dependency; the kernel walker used for the
   E5 dedup could supply exact edges.
+* **Blueprint `\difficulty` calibration across writers** — parallel
+  writers split on trivial structural inductions whose cases each close in
+  one line: some rate them 3 (no real branching), others rubric-literal 4
+  (any induction or case split). Observed in the ch2 increment (NP,
+  Snapshot, CNFEncoding at 3; Nondeterministic, CounterProg at 4). The
+  dataset would benefit from one normalization pass, which is mechanically
+  detectable from the proof source; or tighten the rubric text in the
+  writer agent definition. *Origin: blueprint-writer reports, ch2
+  increment parts 2–3.*
 * **Stale module docstring: `Build/Primitives.lean`** — still says every
   theorem below is sorried; the emitter fill gate closed every one of them.
   Comment-only fix, eligible for the next comment-only sweep (comment-
