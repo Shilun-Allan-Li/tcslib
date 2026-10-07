@@ -395,3 +395,140 @@ such that for every input string $x$, every output string $w$, and every
 time bound $t$, the bundled machine of $M'$ halts on $x$ within $t$ steps
 with output $w$ if and only if $M$ does.
 \end{theorem}
+
+%%% added by the blueprint pipeline
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Additional declarations}
+
+\begin{definition}[Bitwise doubling of a word]
+\lean{Turing.dbl}
+\label{Turing.dbl}
+\leanok
+For a bit string $w = w_0 w_1 \cdots w_{n-1}$, its \emph{doubling}
+$\mathrm{dbl}(w)$ is the bit string $w_0 w_0 w_1 w_1 \cdots w_{n-1} w_{n-1}$
+obtained by writing every bit of $w$ twice in succession.
+\end{definition}
+
+\begin{lemma}[Doubling the empty word]
+\lean{Turing.dbl_nil}
+\label{Turing.dbl_nil}
+\leanok
+\uses{Turing.dbl}
+\difficulty{1}
+The doubling of the empty bit string (the string obtained by writing each of
+its bits twice in succession) is the empty bit string.
+\end{lemma}
+
+\begin{lemma}[Doubling a word with a leading bit]
+\lean{Turing.dbl_cons}
+\label{Turing.dbl_cons}
+\leanok
+\uses{Turing.dbl}
+\difficulty{1}
+For every bit $b$ and every bit string $w$, the doubling of the string $b\,w$
+(where $\mathrm{dbl}(v)$ writes each bit of $v$ twice in succession) is
+$b\,b$ followed by $\mathrm{dbl}(w)$; that is,
+$\mathrm{dbl}(b\,w) = b\,b\,\mathrm{dbl}(w)$.
+\end{lemma}
+
+\begin{lemma}[Length of a doubled word]
+\lean{Turing.length_dbl}
+\label{Turing.length_dbl}
+\leanok
+\uses{Turing.dbl}
+\difficulty{3}
+For every bit string $w$, its doubling $\mathrm{dbl}(w)$, obtained by writing
+each bit of $w$ twice in succession, has length
+$\abs{\mathrm{dbl}(w)} = 2\abs{w}$.
+\end{lemma}
+
+\begin{lemma}[Both copies of a doubled bit]
+\lean{Turing.getElem?_dbl}
+\label{Turing.getElem?_dbl}
+\leanok
+\uses{Turing.dbl, Turing.dbl_cons}
+\difficulty{5}
+Let $w = w_0 w_1 \cdots w_{n-1}$ be a bit string, let $c < n$, and let
+$p \in \{0, 1\}$.  Then the doubling $\mathrm{dbl}(w)$ (each bit of $w$
+written twice in succession, positions indexed from $0$) has a symbol at
+position $2c + p$, and that symbol is $w_c$.
+\end{lemma}
+
+\begin{lemma}[Pair encoding via doubling]
+\lean{Turing.pairEncode_eq_dbl}
+\label{Turing.pairEncode_eq_dbl}
+\leanok
+\uses{Turing.dbl, Turing.pairEncode}
+\difficulty{1}
+For all bit strings $x$ and $y$, the self-delimiting pair encoding
+$\langle x, y\rangle$ equals the concatenation
+\[
+  \langle x, y\rangle = \mathrm{dbl}(x)\; 0\, 1\; y,
+\]
+where $\mathrm{dbl}(x)$ is $x$ with every bit written twice in succession,
+followed by the separator bits $0$ then $1$, followed by $y$ verbatim.
+\end{lemma}
+
+\begin{theorem}[Length of the pair encoding]
+\lean{Turing.length_pairEncode}
+\label{Turing.length_pairEncode}
+\leanok
+\uses{Turing.pairEncode, Turing.pairEncode_eq_dbl}
+\difficulty{2}
+For all bit strings $x$ and $y$, the pair encoding $\langle x, y\rangle$
+(each bit of $x$ written twice, then the separator bits $0$ then $1$, then
+$y$ verbatim) has length
+$\abs{\langle x, y\rangle} = 2\abs{x} + 2 + \abs{y}$.
+\end{theorem}
+
+\begin{theorem}[Shape of strings that fail to parse as pairs]
+\lean{Turing.pairDecode_eq_none}
+\label{Turing.pairDecode_eq_none}
+\leanok
+\uses{Turing.dbl, Turing.pairDecode}
+\difficulty{5}
+Consider the aligned pair parser on bit strings, which reads aligned
+two-bit blocks from the left, treats the blocks $00$ and $11$ as data bits
+$0$ and $1$, and stops successfully at the first aligned block $01$.  If the
+parser fails on a bit string $z$, then $z = \mathrm{dbl}(w)\,\tau$ for some
+bit string $w$ (with $\mathrm{dbl}(w)$ denoting $w$ with every bit written
+twice) and some tail $\tau$ that is either empty, a single bit, or begins
+with the bits $1$ then $0$.
+\end{theorem}
+
+\begin{theorem}[Successful parses are pair encodings]
+\lean{Turing.eq_pairEncode_of_pairDecode}
+\label{Turing.eq_pairEncode_of_pairDecode}
+\leanok
+\uses{Turing.pairDecode, Turing.pairEncode}
+\difficulty{5}
+Let $z$, $a$, $b$ be bit strings, and consider the aligned pair parser,
+which reads aligned two-bit blocks from the left, collects the data bits
+$0$ and $1$ from the blocks $00$ and $11$, and at the first aligned block
+$01$ returns the collected bits together with the remaining suffix.  If the
+parser succeeds on $z$ and returns $(a, b)$, then $z$ is the pair encoding
+$\langle a, b\rangle$, i.e.\ $a$ with every bit written twice, then the
+separator bits $0$ then $1$, then $b$ verbatim.
+\end{theorem}
+
+\begin{lemma}[Injectivity of unary-first pairs]
+\lean{Turing.pairEncode_replicate_inj}
+\label{Turing.pairEncode_replicate_inj}
+\leanok
+\uses{Turing.pairEncode, Turing.pairEncode_injective}
+\difficulty{3}
+Let $n, n' \in \mathbb{N}$ and let $u, u'$ be bit strings.  Write
+$\langle x, y\rangle$ for the pair encoding of bit strings $x$ and $y$
+(each bit of $x$ written twice, then the separator bits $0$ then $1$, then
+$y$ verbatim).  If $\langle 1^n, u\rangle = \langle 1^{n'}, u'\rangle$, where
+$1^n$ denotes the string of $n$ ones, then $n = n'$ and $u = u'$.
+\end{lemma}
+
+\begin{lemma}[Binary expansion length bound]
+\lean{Turing.length_bits_le_self}
+\label{Turing.length_bits_le_self}
+\leanok
+\difficulty{2}
+For every natural number $m$, the binary expansion of $m$ without leading
+zeros (where $0$ has the empty expansion) consists of at most $m$ bits.
+\end{lemma}

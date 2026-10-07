@@ -641,6 +641,13 @@ uncomputability chapter.
   detectable from the proof source; or tighten the rubric text in the
   writer agent definition. *Origin: blueprint-writer reports, ch2
   increment parts 2–3.*
+* **For the colleague: `ClassNP/PClosure.lean` docstring/statement gap** —
+  the `lenEq_mem_P`/`lenLe_mem_P` docstrings speak of *pairs*, but the
+  languages range over all bit strings, the total projections sending a
+  non-pair to the empty word (so every non-pair lies in the `lenEq`
+  language). The statements are fine; the docstrings undersell their
+  domain. The blueprint documents the Lean behavior. *Origin:
+  blueprint-writer report, ch2 increment part 4.*
 * **Stale module docstring: `Build/Primitives.lean`** — still says every
   theorem below is sorried; the emitter fill gate closed every one of them.
   Comment-only fix, eligible for the next comment-only sweep (comment-
