@@ -7,7 +7,7 @@ import TCSlib.BooleanAnalysis.LMN.SwitchingBernoulli
 Helper lemmas for proving switching lemma bounds for depth-2 circuits.
 -/
 
-open BoolCircuit SwitchingLemma2 SwitchingBernoulli
+open BoolCircuit SwitchingLemma SwitchingBernoulli
 open Classical in
 attribute [local instance] Classical.propDecidable
 noncomputable section
@@ -30,35 +30,37 @@ lemma bernoulliRestrProb_congr_fn {f g : (Fin n → Bool) → Bool}
     bernoulliRestrProb p (fun ρ => dtDepth (restrictFn g ρ) > t) := by
   congr 1; ext ρ; rw [restrictFn_ext' h]
 
-/-! ## De-duplication of terms by variable -/
+/-! ## De-duplication of literal lists by variable -/
 
-/-- Remove literals whose variable already appeared earlier. -/
-def dedupTermVar (t : Term n) : Term n :=
+/-- Remove literals whose variable already appeared earlier.  Reading-neutral:
+used on both terms and clauses. -/
+def dedupTermVar (t : LitList n) : LitList n :=
   t.foldr (fun l acc =>
     if acc.any (fun l' => decide (l'.var = l.var)) then acc
     else l :: acc) []
 
-/-- Check if a term has contradictory literals. -/
-def termHasContradiction (t : Term n) : Bool :=
+/-- Check if a literal list contains a variable and its negation (a contradictory
+term, or equivalently a tautological clause). -/
+def termHasContradiction (t : LitList n) : Bool :=
   t.any (fun l₁ => t.any (fun l₂ => decide (l₁.var = l₂.var) && decide (l₁.neg ≠ l₂.neg)))
 
 /-- Clean a DNF: first remove contradictory terms, then de-duplicate each term. -/
 def cleanDNF (d : DNF n) : DNF n :=
-  (d.filter (fun t => !termHasContradiction t)).map dedupTermVar
+  ⟨(d.terms.filter (fun t => !termHasContradiction t)).map dedupTermVar⟩
 
 /-- Clean a CNF: first remove tautological clauses, then de-duplicate each clause. -/
 def cleanCNF (c : CNF n) : CNF n :=
-  (c.filter (fun t => !termHasContradiction t)).map dedupTermVar
+  ⟨(c.clauses.filter (fun c => !termHasContradiction c)).map dedupTermVar⟩
 
 /-! ## Properties of de-duplication -/
 
-lemma dedupTermVar_nodup (t : Term n) : (dedupTermVar t).Nodup := by
+lemma dedupTermVar_nodup (t : LitList n) : (dedupTermVar t).Nodup := by
   -- By induction on the list t, we can show that the foldr operation preserves the nodup property.
   have h_ind : ∀ (t : List (Literal n)) (acc : List (Literal n)), List.Nodup acc → List.Nodup (t.foldr (fun l acc => if acc.any (fun l' => decide (l'.var = l.var)) then acc else l :: acc) acc) := by
     intro t acc hacc; induction t <;> aesop;
   exact h_ind _ _ ( by simp +decide )
 
-lemma dedupTermVar_var_inj (t : Term n) :
+lemma dedupTermVar_var_inj (t : LitList n) :
     ∀ l₁ ∈ dedupTermVar t, ∀ l₂ ∈ dedupTermVar t, l₁.var = l₂.var → l₁ = l₂ := by
       have h_ind : ∀ (t : List (Literal n)) (acc : List (Literal n)), acc.Nodup → (∀ l₁ ∈ acc, ∀ l₂ ∈ acc, l₁.var = l₂.var → l₁ = l₂) → ∀ l₁ ∈ List.foldr (fun l acc => if acc.any (fun l' => decide (l'.var = l.var)) then acc else l :: acc) acc t, ∀ l₂ ∈ List.foldr (fun l acc => if acc.any (fun l' => decide (l'.var = l.var)) then acc else l :: acc) acc t, l₁.var = l₂.var → l₁ = l₂ := by
         intros t acc hacc hvar_inj
@@ -67,10 +69,10 @@ lemma dedupTermVar_var_inj (t : Term n) :
         · grind;
       exact h_ind _ _ ( by simp +decide ) ( by simp +decide )
 
-lemma dedupTermVar_width_le (t : Term n) :
+lemma dedupTermVar_width_le (t : LitList n) :
     (dedupTermVar t).length ≤ t.length := by
       -- By induction on the list t, we can show that the length of the deduplicated list is less than or equal to the original list length.
-      have dedupTermVar_length_le_induction (t : Term n) (acc : Term n) : List.length (List.foldr (fun l acc => if List.any acc (fun l' => decide (l'.var = l.var)) then acc else l :: acc) acc t) ≤ List.length t + List.length acc := by
+      have dedupTermVar_length_le_induction (t : LitList n) (acc : LitList n) : List.length (List.foldr (fun l acc => if List.any acc (fun l' => decide (l'.var = l.var)) then acc else l :: acc) acc t) ≤ List.length t + List.length acc := by
         induction' t with t_head t_tail ih generalizing acc;
         · simp +arith +decide;
         · grind;
@@ -117,29 +119,30 @@ cleanDNF preserves DNF evaluation.
 -/
 lemma cleanDNF_eval (d : DNF n) (x : Fin n → Bool) :
     (cleanDNF d).eval x = d.eval x := by
-      unfold DNF.eval cleanDNF;
+      obtain ⟨d⟩ := d
+      unfold DNF.eval cleanDNF; dsimp only
       induction' d with t d ih;
       · rfl;
       · by_cases h : termHasContradiction t <;> simp_all +decide [ dedupTermVar_preserves_term_eval ];
         exact fun h' => absurd h' ( by rw [ contradiction_term_eval_false t x h ] ; decide )
 
 /-
-A contradictory clause always evaluates to true under OR (CNF.evalClause).
+A contradictory clause always evaluates to true under OR (Clause.eval).
 -/
-lemma contradiction_clause_eval_true (t : Term n) (x : Fin n → Bool)
+lemma contradiction_clause_eval_true (t : Clause n) (x : Fin n → Bool)
     (hc : termHasContradiction t = true) :
-    CNF.evalClause t x = true := by
+    Clause.eval t x = true := by
       unfold termHasContradiction at hc;
-      unfold CNF.evalClause;
+      unfold Clause.eval;
       simp_all +decide [ Literal.eval ];
       grind
 
 /-
 De-duplication of a non-contradictory clause preserves OR evaluation.
 -/
-lemma dedupTermVar_preserves_clause_eval (t : Term n) (x : Fin n → Bool)
+lemma dedupTermVar_preserves_clause_eval (t : Clause n) (x : Fin n → Bool)
     (hnc : termHasContradiction t = false) :
-    CNF.evalClause (dedupTermVar t) x = CNF.evalClause t x := by
+    Clause.eval (dedupTermVar t) x = Clause.eval t x := by
       induction' t with l t ih generalizing x;
       · rfl;
       · by_cases h : (dedupTermVar t).any (fun l' => l'.var = l.var) <;> simp_all +decide [ dedupTermVar ];
@@ -149,13 +152,13 @@ lemma dedupTermVar_preserves_clause_eval (t : Term n) (x : Fin n → Bool)
             have h_eval_eq : ∀ {l : Literal n} {t : List (Literal n)}, l ∈ List.foldr (fun l acc => if ∃ x ∈ acc, x.var = l.var then acc else l :: acc) [] t → l ∈ t := by
               intros l t hl; induction t <;> aesop;
             unfold Literal.eval; aesop;
-          unfold CNF.evalClause at *; simp_all +decide [ List.any_cons ] ;
+          unfold Clause.eval at *; simp_all +decide ;
           rw [ ← ih x ];
           · grind;
           · unfold termHasContradiction at *; simp_all +decide [ List.any_cons ] ;
             exact fun x hx y hy hxy => hnc.2 x hx |>.2 y hy hxy;
         · simp_all +decide [termHasContradiction];
-          split_ifs <;> simp_all +decide [ CNF.evalClause ];
+          split_ifs <;> simp_all +decide [ Clause.eval ];
           · tauto;
           · rw [ ih x fun x hx y hy hxy => hnc.2 x hx |>.2 y hy hxy ]
 
@@ -164,7 +167,8 @@ cleanCNF preserves CNF evaluation.
 -/
 lemma cleanCNF_eval (c : CNF n) (x : Fin n → Bool) :
     CNF.eval (cleanCNF c) x = CNF.eval c x := by
-      unfold cleanCNF CNF.eval;
+      obtain ⟨c⟩ := c
+      unfold cleanCNF CNF.eval; dsimp only
       induction' c with t c ih <;> simp +decide [ * ];
       by_cases h : termHasContradiction t <;> simp +decide [ h, contradiction_clause_eval_true, dedupTermVar_preserves_clause_eval ];
       · grind
@@ -175,12 +179,13 @@ cleanDNF has width ≤ original width.
 -/
 lemma cleanDNF_width_le (d : DNF n) :
     (cleanDNF d).width ≤ d.width := by
-      simp_all +decide [ cleanDNF, DNF.width ];
+      obtain ⟨d⟩ := d
+      simp_all +decide [ cleanDNF, DNF.width, Depth2.width ];
       have h_foldr_max_le : ∀ {l1 l2 : List ℕ}, (∀ x ∈ l1, x ≤ List.foldr max 0 l2) → List.foldr max 0 l1 ≤ List.foldr max 0 l2 := by
         intros l1 l2 h; induction l1 <;> aesop;
       apply h_foldr_max_le;
       intro x hx
-      obtain ⟨t, ht⟩ : ∃ t ∈ d, x = Term.width (dedupTermVar t) ∧ !termHasContradiction t := by
+      obtain ⟨t, ht⟩ : ∃ t ∈ d, x = LitList.width (dedupTermVar t) ∧ !termHasContradiction t := by
         grind;
       have h_foldr_max_le : ∀ {l : List ℕ}, t.width ∈ l → List.foldr max 0 l ≥ t.width := by
         intros l hl; induction l <;> aesop;
@@ -195,26 +200,26 @@ lemma cleanCNF_width_le (c : CNF n) :
         exact fun h a ha => le_trans ha h;
       contrapose! h_max_le;
       exact absurd h_max_le ( not_lt_of_ge ( by
-        have h_foldr_le : ∀ (l : List (Term n)), (l.map (fun t => Term.width (dedupTermVar t))).foldr max 0 ≤ (l.map Term.width).foldr max 0 := by
+        have h_foldr_le : ∀ (l : List (Clause n)), (l.map (fun t => LitList.width (dedupTermVar t))).foldr max 0 ≤ (l.map LitList.width).foldr max 0 := by
           intro l
           induction' l with t l ih;
           · rfl;
           · exact max_le_max ( dedupTermVar_width_le t ) ih;
-        convert h_foldr_le ( List.filter ( fun t => !termHasContradiction t ) c ) |> le_trans <| ?_ using 1;
+        convert h_foldr_le ( List.filter ( fun t => !termHasContradiction t ) c.clauses ) |> le_trans <| ?_ using 1;
         · unfold cleanCNF;
-          unfold CNF.width; aesop;
-        · have h_foldr_le : ∀ (l : List (Term n)), (l.map Term.width).foldr max 0 ≥ ((l.filter (fun t => !termHasContradiction t)).map Term.width).foldr max 0 := by
+          unfold CNF.width Depth2.width; aesop;
+        · have h_foldr_le : ∀ (l : List (Clause n)), (l.map LitList.width).foldr max 0 ≥ ((l.filter (fun t => !termHasContradiction t)).map LitList.width).foldr max 0 := by
             intro l; induction l <;> simp +decide [ * ] ;
             grind;
-          exact h_foldr_le c ) )
+          exact h_foldr_le c.clauses ) )
 
 /-
 cleanDNF satisfies var_inj.
 -/
 lemma cleanDNF_var_inj (d : DNF n) :
-    ∀ t ∈ cleanDNF d, ∀ l₁ ∈ t, ∀ l₂ ∈ t, l₁.var = l₂.var → l₁ = l₂ := by
+    ∀ t ∈ (cleanDNF d).terms, ∀ l₁ ∈ t, ∀ l₂ ∈ t, l₁.var = l₂.var → l₁ = l₂ := by
       intro t ht l₁ hl₁ l₂ hl₂ hvar
-      have h_l1_l2 : ∃ t' ∈ d, t = dedupTermVar t' := by
+      have h_l1_l2 : ∃ t' ∈ d.terms, t = dedupTermVar t' := by
         unfold cleanDNF at ht; aesop;
       obtain ⟨t', ht', rfl⟩ := h_l1_l2
       exact dedupTermVar_var_inj t' l₁ hl₁ l₂ hl₂ hvar
@@ -223,7 +228,7 @@ lemma cleanDNF_var_inj (d : DNF n) :
 cleanDNF satisfies Nodup.
 -/
 lemma cleanDNF_nodup (d : DNF n) :
-    ∀ t ∈ cleanDNF d, t.Nodup := by
+    ∀ t ∈ (cleanDNF d).terms, t.Nodup := by
       intro t ht
       rw [cleanDNF] at ht
       rcases List.mem_map.mp ht with ⟨t₀, ht₀, rfl⟩
@@ -233,7 +238,7 @@ lemma cleanDNF_nodup (d : DNF n) :
 cleanCNF satisfies var_inj.
 -/
 lemma cleanCNF_var_inj (c : CNF n) :
-    ∀ t ∈ cleanCNF c, ∀ l₁ ∈ t, ∀ l₂ ∈ t, l₁.var = l₂.var → l₁ = l₂ := by
+    ∀ cl ∈ (cleanCNF c).clauses, ∀ l₁ ∈ cl, ∀ l₂ ∈ cl, l₁.var = l₂.var → l₁ = l₂ := by
       unfold cleanCNF;
       intro t ht l₁ hl₁ l₂ hl₂ hvar
       rcases List.mem_map.mp ht with ⟨t₀, -, rfl⟩
@@ -243,7 +248,7 @@ lemma cleanCNF_var_inj (c : CNF n) :
 cleanCNF satisfies Nodup.
 -/
 lemma cleanCNF_nodup (c : CNF n) :
-    ∀ t ∈ cleanCNF c, t.Nodup := by
+    ∀ cl ∈ (cleanCNF c).clauses, cl.Nodup := by
       unfold cleanCNF;
       intro t ht
       rcases List.mem_map.mp ht with ⟨t₀, -, rfl⟩
@@ -279,25 +284,25 @@ theorem switching_bernoulli_dtDepth_cnf_general (f : CNF n) (w : ℕ)
 
 /-! ## Depth constraints -/
 
-lemma depth_le_one_children_are_lits (cs : List (Circuit n)) (isAnd : Bool)
-    (hd : (Circuit.node isAnd cs).depth ≤ 1) :
+lemma depth_le_one_children_are_lits (cs : List (TreeCircuit n)) (isAnd : Bool)
+    (hd : (TreeCircuit.node isAnd cs).depth ≤ 1) :
     ∀ c ∈ cs, ∃ l : Lit n, c = .lit l := by
       intro c hc;
       have h_c_depth_zero : c.depth = 0 := by
-        have h_foldr : ∀ {l : List (Circuit n)}, c ∈ l → l.foldr (fun c acc => max c.depth acc) 0 ≥ c.depth := by
+        have h_foldr : ∀ {l : List (TreeCircuit n)}, c ∈ l → l.foldr (fun c acc => max c.depth acc) 0 ≥ c.depth := by
           intros l hl; induction l <;> aesop;
-        exact le_antisymm ( Nat.le_of_not_lt fun h => by have := h_foldr hc; exact absurd hd ( by unfold Circuit.depth; norm_num; linarith ) ) ( Nat.zero_le _ );
-      rcases c with ( _ | ⟨ isAnd, cs ⟩ ) <;> simp_all +decide [ Circuit.depth ]
+        exact le_antisymm ( Nat.le_of_not_lt fun h => by have := h_foldr hc; exact absurd hd ( by unfold TreeCircuit.depth; norm_num; linarith ) ) ( Nat.zero_le _ );
+      rcases c with ( _ | ⟨ isAnd, cs ⟩ ) <;> simp_all +decide [ TreeCircuit.depth ]
 
-lemma depth_le_two_children_depth_le_one (cs : List (Circuit n)) (isAnd : Bool)
-    (hd : (Circuit.node isAnd cs).depth ≤ 2) :
+lemma depth_le_two_children_depth_le_one (cs : List (TreeCircuit n)) (isAnd : Bool)
+    (hd : (TreeCircuit.node isAnd cs).depth ≤ 2) :
     ∀ c ∈ cs, c.depth ≤ 1 := by
-      induction' cs with c cs ih <;> simp_all +arith +decide [ Circuit.depth ]
+      induction' cs with c cs ih <;> simp_all +arith +decide [ TreeCircuit.depth ]
 
 /-! ## Depth-2 circuit to DNF/CNF -/
 
 /-- Convert a depth-≤-1 AND-subcircuit to a term: AND of its literal children. -/
-def depth1AndToTerm (c : Circuit n) : Term n :=
+def depth1AndToTerm (c : TreeCircuit n) : Term n :=
   match c with
   | .lit l => [l.toLiteral]
   | .node _ cs => cs.filterMap (fun c' =>
@@ -306,8 +311,8 @@ def depth1AndToTerm (c : Circuit n) : Term n :=
       | _ => none)
 
 /-- Convert a depth-≤-2 OR-top circuit to a DNF. -/
-def depth2OrToDNF (cs : List (Circuit n)) : DNF n :=
-  cs.flatMap (fun c =>
+def depth2OrToDNF (cs : List (TreeCircuit n)) : DNF n :=
+  ⟨cs.flatMap (fun c =>
     match c with
     | .lit l => [[l.toLiteral]]
     | .node true cs' => [cs'.filterMap (fun c' =>
@@ -317,11 +322,11 @@ def depth2OrToDNF (cs : List (Circuit n)) : DNF n :=
     | .node false cs' => cs'.filterMap (fun c' =>
         match c' with
         | .lit l => some [l.toLiteral]
-        | _ => none))
+        | _ => none))⟩
 
 /-- Convert a depth-≤-2 AND-top circuit to a CNF. -/
-def depth2AndToCNF (cs : List (Circuit n)) : CNF n :=
-  cs.flatMap (fun c =>
+def depth2AndToCNF (cs : List (TreeCircuit n)) : CNF n :=
+  ⟨cs.flatMap (fun c =>
     match c with
     | .lit l => [[l.toLiteral]]
     | .node false cs' => [cs'.filterMap (fun c' =>
@@ -331,79 +336,75 @@ def depth2AndToCNF (cs : List (Circuit n)) : CNF n :=
     | .node true cs' => cs'.filterMap (fun c' =>
         match c' with
         | .lit l => some [l.toLiteral]
-        | _ => none))
+        | _ => none))⟩
 
 /-
 depth2OrToDNF preserves evaluation for depth-≤-2 OR-circuits.
 -/
-lemma depth2OrToDNF_eval (cs : List (Circuit n))
-    (hd : (Circuit.node false cs).depth ≤ 2)
+lemma depth2OrToDNF_eval (cs : List (TreeCircuit n))
+    (hd : (TreeCircuit.node false cs).depth ≤ 2)
     (x : Fin n → Bool) :
-    (depth2OrToDNF cs).eval x = (Circuit.node false cs).eval x := by
+    (depth2OrToDNF cs).eval x = (TreeCircuit.node false cs).eval x := by
       -- For each child c with depth ≤ 1 (by depth_le_two_children_depth_le_one):
       -- - c = lit l: subcircuitToDNFContrib = [[l.toLiteral]], eval = l.eval x. DNF.eval of this = l.toLiteral.eval x = l.eval x (by Lit.eval_eq_toLiteral_eval).
       -- - c = node true cs': children of cs' are all lits (by depth_le_one_children_are_lits). subcircuitToDNFContrib returns [cs'.filterMap ...]. Since all children are lits, filterMap returns all their toLiterals. This term's eval = all literals evaluate to true = AND of lits = c.eval x.
-      have h_child_eval (c : Circuit n) (hc : c ∈ cs) : (depth2OrToDNF [c]).eval x = c.eval x := by
+      have h_child_eval (c : TreeCircuit n) (hc : c ∈ cs) : (depth2OrToDNF [c]).eval x = c.eval x := by
         rcases c with ( _ | ⟨ l ⟩ | ⟨ isAnd, cs ⟩ );
         · unfold depth2OrToDNF; simp +decide ;
-          unfold DNF.eval; simp +decide [ Circuit.eval ] ;
-          unfold Term.eval; simp +decide [ Lit.toLiteral ] ;
-          unfold Literal.eval; aesop;
-        · have h_lits : ∀ c' ∈ ‹List (Circuit n)›, ∃ l : Lit n, c' = .lit l := by
+          simp +decide [ TreeCircuit.eval, Lit.toLiteral, Literal.eval ] ; aesop;
+        · have h_lits : ∀ c' ∈ ‹List (TreeCircuit n)›, ∃ l : Lit n, c' = .lit l := by
             apply depth_le_one_children_are_lits;
             exact depth_le_two_children_depth_le_one cs false hd _ hc;
-          unfold depth2OrToDNF Circuit.eval; simp +decide ;
-          have h_lits : ∀ {l : List (Circuit n)}, (∀ c' ∈ l, ∃ l : Lit n, c' = .lit l) → DNF.eval (List.filterMap (fun c' => match c' with | .lit l => some [l.toLiteral] | _ => none) l) x = List.foldr (fun c acc => c.eval x || acc) false l := by
+          unfold depth2OrToDNF TreeCircuit.eval; simp +decide ;
+          have h_lits : ∀ {l : List (TreeCircuit n)}, (∀ c' ∈ l, ∃ l : Lit n, c' = .lit l) → DNF.eval ⟨List.filterMap (fun c' => match c' with | .lit l => some [l.toLiteral] | _ => none) l⟩ x = List.foldr (fun c acc => c.eval x || acc) false l := by
             intro l hl; induction l <;> simp_all +decide [ DNF.eval ] ;
-            rcases hl.1 with ⟨ l, rfl ⟩ ; simp +decide [ Circuit.eval ] ;
-            unfold Term.eval; simp +decide ;
+            rcases hl.1 with ⟨ l, rfl ⟩ ; simp +decide [ TreeCircuit.eval ] ;
             unfold Literal.eval; simp +decide [ Lit.toLiteral ] ;
             cases l.sign <;> simp +decide [ * ];
-          exact h_lits ‹_›;
+          simpa using h_lits ‹_›;
         · unfold depth2OrToDNF;
-          unfold DNF.eval Circuit.eval; simp +decide [ List.flatMap ] ;
+          unfold DNF.eval TreeCircuit.eval; simp +decide [ List.flatMap ] ;
           rename_i l;
           have h_lits : ∀ c ∈ l, ∃ l' : Lit n, c = .lit l' := by
             apply depth_le_one_children_are_lits;
             exact depth_le_two_children_depth_le_one cs false hd _ hc;
-          have h_lits : ∀ {l : List (Circuit n)}, (∀ c ∈ l, ∃ l' : Lit n, c = .lit l') → Term.eval (List.filterMap (fun c' => match c' with | .lit l => some l.toLiteral | _ => none) l) x = List.foldr (fun c acc => c.eval x && acc) true l := by
+          have h_lits : ∀ {l : List (TreeCircuit n)}, (∀ c ∈ l, ∃ l' : Lit n, c = .lit l') → Term.eval (List.filterMap (fun c' => match c' with | .lit l => some l.toLiteral | _ => none) l) x = List.foldr (fun c acc => c.eval x && acc) true l := by
             intros l hl; induction' l with c l ih <;> simp_all +decide [ Term.eval ] ;
-            rcases hl.1 with ⟨ l', rfl ⟩ ; simp +decide [ Circuit.eval ];
+            rcases hl.1 with ⟨ l', rfl ⟩ ; simp +decide [ TreeCircuit.eval ];
             unfold Literal.eval; simp +decide [ Lit.toLiteral ] ;
             cases l'.sign <;> simp +decide [ * ];
           exact h_lits ‹_›;
       -- By definition of `depth2OrToDNF`, we can rewrite the left-hand side of the equation.
-      have h_depth2OrToDNF : depth2OrToDNF cs = cs.flatMap (fun c => depth2OrToDNF [c]) := by
+      have h_depth2OrToDNF : (depth2OrToDNF cs).terms = cs.flatMap (fun c => (depth2OrToDNF [c]).terms) := by
         unfold depth2OrToDNF; aesop;
-      simp_all +decide [ DNF.eval, Circuit.eval ];
-      have h_foldr : ∀ (cs : List (Circuit n)), List.foldr (fun c acc => c.eval x || acc) false cs = decide (∃ c ∈ cs, c.eval x = true) := by
+      simp_all +decide [ DNF.eval, TreeCircuit.eval ];
+      have h_foldr : ∀ (cs : List (TreeCircuit n)), List.foldr (fun c acc => c.eval x || acc) false cs = decide (∃ c ∈ cs, c.eval x = true) := by
         intro cs; induction cs <;> aesop;
       grind
 
 /-
 depth2AndToCNF preserves evaluation for depth-≤-2 AND-circuits.
 -/
-lemma depth2AndToCNF_eval (cs : List (Circuit n))
-    (hd : (Circuit.node true cs).depth ≤ 2)
+lemma depth2AndToCNF_eval (cs : List (TreeCircuit n))
+    (hd : (TreeCircuit.node true cs).depth ≤ 2)
     (x : Fin n → Bool) :
-    CNF.eval (depth2AndToCNF cs) x = (Circuit.node true cs).eval x := by
+    CNF.eval (depth2AndToCNF cs) x = (TreeCircuit.node true cs).eval x := by
       -- Prove that for any child c ∈ cs with c.depth ≤ 1, the translation works.
-      have h_child (c : Circuit n) (hc : c ∈ cs) (hc_depth : c.depth ≤ 1) :
+      have h_child (c : TreeCircuit n) (hc : c ∈ cs) (hc_depth : c.depth ≤ 1) :
         CNF.eval (depth2AndToCNF [c]) x = c.eval x := by
-          rcases c with ( _ | ⟨ l ⟩ | ⟨ isAnd, cs ⟩ ) <;> simp_all +decide [ Circuit.depth ];
-          · unfold depth2AndToCNF; simp +decide [ Circuit.eval ] ;
-            unfold CNF.eval; simp +decide [ CNF.evalClause, Literal.eval ] ;
-            unfold Lit.toLiteral; aesop;
+          rcases c with ( _ | ⟨ l ⟩ | ⟨ isAnd, cs ⟩ ) <;> simp_all +decide [ TreeCircuit.depth ];
+          · unfold depth2AndToCNF; simp +decide [ TreeCircuit.eval ] ;
+            simp +decide [ Literal.eval, Lit.toLiteral ] ; aesop;
           · -- Since the depth of the node is 0, all its children must be literals.
-            have h_children_literals : ∀ c ∈ (‹List (Circuit n)›), ∃ l : Lit n, c = .lit l := by
-              have h_children_literals : ∀ c ∈ (‹List (Circuit n)›), c.depth ≤ 0 := by
+            have h_children_literals : ∀ c ∈ (‹List (TreeCircuit n)›), ∃ l : Lit n, c = .lit l := by
+              have h_children_literals : ∀ c ∈ (‹List (TreeCircuit n)›), c.depth ≤ 0 := by
                 -- Since the foldr result is zero, each element's depth must be zero.
-                have h_max_zero : ∀ {l : List (Circuit n)}, List.foldr (fun c acc => max c.depth acc) 0 l = 0 → ∀ c ∈ l, c.depth = 0 := by
+                have h_max_zero : ∀ {l : List (TreeCircuit n)}, List.foldr (fun c acc => max c.depth acc) 0 l = 0 → ∀ c ∈ l, c.depth = 0 := by
                   intros l hl c hc; induction l <;> aesop;
                 exact fun c hc => le_of_eq ( h_max_zero hc_depth c hc );
-              intro c hc; specialize h_children_literals c hc; rcases c with ( _ | ⟨ l ⟩ | ⟨ isAnd, cs ⟩ ) <;> simp_all +decide [ Circuit.depth ] ;
-            obtain ⟨lits, hlits⟩ : ∃ lits : List (Lit n), ‹List (Circuit n)› = lits.map (fun l => .lit l) := by
-              have h_children_literals : ∀ {l : List (Circuit n)}, (∀ c ∈ l, ∃ l' : Lit n, c = .lit l') → ∃ lits : List (Lit n), l = lits.map (fun l => .lit l) := by
+              intro c hc; specialize h_children_literals c hc; rcases c with ( _ | ⟨ l ⟩ | ⟨ isAnd, cs ⟩ ) <;> simp_all +decide [ TreeCircuit.depth ] ;
+            obtain ⟨lits, hlits⟩ : ∃ lits : List (Lit n), ‹List (TreeCircuit n)› = lits.map (fun l => .lit l) := by
+              have h_children_literals : ∀ {l : List (TreeCircuit n)}, (∀ c ∈ l, ∃ l' : Lit n, c = .lit l') → ∃ lits : List (Lit n), l = lits.map (fun l => .lit l) := by
                 intros l hl; induction' l with c l ih <;> simp_all +decide ;
                 rcases hl.1 with ⟨ l', rfl ⟩ ; obtain ⟨ lits, rfl ⟩ := ih; exact ⟨ l' :: lits, by simp +decide ⟩ ;
               exact h_children_literals ‹_›;
@@ -413,37 +414,36 @@ lemma depth2AndToCNF_eval (cs : List (Circuit n))
               rw [ List.filterMap_congr ];
               rotate_right;
               use fun l => some l.toLiteral;
-              · simp +decide [ CNF.eval, CNF.evalClause ];
+              · simp +decide [ Clause.eval ];
               · exact fun x hx => rfl;
             · convert foldr_or_lits_eq_clause_eval lits x using 1;
-              induction lits <;> simp +decide [ *, Circuit.eval ];
-              induction ‹List (Lit n)› <;> simp +decide [ *, Circuit.eval ];
+              induction lits <;> simp +decide [ *, TreeCircuit.eval ];
+              induction ‹List (Lit n)› <;> simp +decide [ *, TreeCircuit.eval ];
               congr! 2;
               rename_i k hk₁ hk₂;
-              exact List.recOn k rfl fun l k ih => by simp +decide [ *, Circuit.eval ] ;
+              exact List.recOn k rfl fun l k ih => by simp +decide [ *, TreeCircuit.eval ] ;
           · -- Since the depth of each child is ≤ 1, each child is either a literal or an OR node with literals.
-            have h_children : ∀ c ∈ ‹List (Circuit n)›, ∃ l : Lit n, c = .lit l := by
-              have h_children : ∀ c ∈ ‹List (Circuit n)›, c.depth ≤ 0 := by
+            have h_children : ∀ c ∈ ‹List (TreeCircuit n)›, ∃ l : Lit n, c = .lit l := by
+              have h_children : ∀ c ∈ ‹List (TreeCircuit n)›, c.depth ≤ 0 := by
                 intro c hc; contrapose! hc_depth;
-                have h_foldr_pos : ∀ {l : List (Circuit n)}, (∃ c ∈ l, 0 < c.depth) → 0 < List.foldr (fun c acc => max c.depth acc) 0 l := by
+                have h_foldr_pos : ∀ {l : List (TreeCircuit n)}, (∃ c ∈ l, 0 < c.depth) → 0 < List.foldr (fun c acc => max c.depth acc) 0 l := by
                   intros l hl; induction l <;> aesop;
                 exact ne_of_gt ( h_foldr_pos ⟨ c, hc, hc_depth ⟩ );
-              intro c hc; specialize h_children c hc; rcases c with ( _ | ⟨ l ⟩ | ⟨ isAnd, cs ⟩ ) <;> simp_all +decide [ Circuit.depth ] ;
-            unfold depth2AndToCNF; simp +decide [ Circuit.eval ] ;
+              intro c hc; specialize h_children c hc; rcases c with ( _ | ⟨ l ⟩ | ⟨ isAnd, cs ⟩ ) <;> simp_all +decide [ TreeCircuit.depth ] ;
+            unfold depth2AndToCNF; simp +decide [ TreeCircuit.eval ] ;
             rename_i k;
-            have h_foldr : ∀ (l : List (Circuit n)), (∀ c ∈ l, ∃ l' : Lit n, c = .lit l') → CNF.eval (List.filterMap (fun c' => match c' with | .lit l => some [l.toLiteral] | _ => none) l) x = List.foldr (fun c acc => c.eval x && acc) true l := by
+            have h_foldr : ∀ (l : List (TreeCircuit n)), (∀ c ∈ l, ∃ l' : Lit n, c = .lit l') → CNF.eval ⟨List.filterMap (fun c' => match c' with | .lit l => some [l.toLiteral] | _ => none) l⟩ x = List.foldr (fun c acc => c.eval x && acc) true l := by
               intro l hl; induction l <;> simp_all +decide [ CNF.eval ] ;
-              rcases hl.1 with ⟨ l, rfl ⟩ ; simp +decide [ Circuit.eval ] ;
-              unfold CNF.evalClause; simp +decide [ Lit.toLiteral ] ;
-              unfold Literal.eval; simp +decide ;
+              rcases hl.1 with ⟨ l, rfl ⟩ ; simp +decide [ TreeCircuit.eval ] ;
+              unfold Literal.eval; simp +decide [ Lit.toLiteral ] ;
               cases l.sign <;> simp +decide [ * ];
-            exact h_foldr k h_children;
+            simpa using h_foldr k h_children;
       -- By definition of `depth2AndToCNF`, we can rewrite the left-hand side as the flatMap of the translaton of each child.
       have h_flatMap : (depth2AndToCNF cs).eval x = List.all cs (fun c => CNF.eval (depth2AndToCNF [c]) x) := by
         unfold depth2AndToCNF; simp +decide [ CNF.eval ] ;
       -- Since each child c in cs has depth ≤ 1, we can apply h_child to each child.
       have h_all_child : List.all cs (fun c => CNF.eval (depth2AndToCNF [c]) x) = List.all cs (fun c => c.eval x) := by
-        suffices ∀ (l : List (Circuit n)), (∀ c ∈ l, c ∈ cs) →
+        suffices ∀ (l : List (TreeCircuit n)), (∀ c ∈ l, c ∈ cs) →
             List.all l (fun c => CNF.eval (depth2AndToCNF [c]) x) = List.all l (fun c => c.eval x) from
           this cs (fun c hc => hc)
         intro l hl
@@ -455,37 +455,37 @@ lemma depth2AndToCNF_eval (cs : List (Circuit n))
           rw [h_child c hc (depth_le_two_children_depth_le_one cs true hd c hc)]
           congr 1
           exact ih (fun c' hc' => hl c' (List.mem_cons.mpr (Or.inr hc')))
-      -- By definition of `Circuit.node`, the evaluation of a node with true is the conjunction of the evaluations of its children.
-      have h_node_true : ∀ (cs : List (Circuit n)), (Circuit.node true cs).eval x = List.all cs (fun c => c.eval x) := by
+      -- By definition of `TreeCircuit.node`, the evaluation of a node with true is the conjunction of the evaluations of its children.
+      have h_node_true : ∀ (cs : List (TreeCircuit n)), (TreeCircuit.node true cs).eval x = List.all cs (fun c => c.eval x) := by
         intros cs
-        simp [Circuit.eval];
+        simp [TreeCircuit.eval];
         induction cs <;> simp +decide [ * ];
       rw [h_flatMap, h_all_child, h_node_true]
 
 /-
 Width bound for depth2OrToDNF.
 -/
-lemma depth2OrToDNF_width_le (cs : List (Circuit n))
-    (hd : (Circuit.node false cs).depth ≤ 2) :
-    (depth2OrToDNF cs).width ≤ (Circuit.node false cs).maxFanin := by
+lemma depth2OrToDNF_width_le (cs : List (TreeCircuit n))
+    (hd : (TreeCircuit.node false cs).depth ≤ 2) :
+    (depth2OrToDNF cs).width ≤ (TreeCircuit.node false cs).maxFanin := by
       have h_term_width : ∀ c ∈ cs, (match c with
-        | Circuit.lit l => 1
-        | Circuit.node true cs' => cs'.length
-        | Circuit.node false cs' => 1) ≤ (Circuit.node false cs).maxFanin := by
+        | TreeCircuit.lit l => 1
+        | TreeCircuit.node true cs' => cs'.length
+        | TreeCircuit.node false cs' => 1) ≤ (TreeCircuit.node false cs).maxFanin := by
           intro c hc
-          have h_c_maxFanin : c.maxFanin ≤ (Circuit.node false cs).maxFanin := by
-            have h_max_fanin : ∀ {l : List (Circuit n)}, c ∈ l → c.maxFanin ≤ List.foldr (fun c acc => max c.maxFanin acc) 0 l := by
+          have h_c_maxFanin : c.maxFanin ≤ (TreeCircuit.node false cs).maxFanin := by
+            have h_max_fanin : ∀ {l : List (TreeCircuit n)}, c ∈ l → c.maxFanin ≤ List.foldr (fun c acc => max c.maxFanin acc) 0 l := by
               intros l hl; induction l <;> aesop;
-            exact le_trans ( h_max_fanin hc ) ( by cases cs <;> simp +decide [ Circuit.maxFanin ] );
-          cases c <;> simp_all +decide [ Circuit.maxFanin ];
+            exact le_trans ( h_max_fanin hc ) ( by cases cs <;> simp +decide [ TreeCircuit.maxFanin ] );
+          cases c <;> simp_all +decide [ TreeCircuit.maxFanin ];
           · exact Or.inl ( List.length_pos_iff.mpr ( by aesop_cat ) );
           · cases ‹Bool› <;> simp_all +decide; all_goals grind;
       have h_term_width : ∀ t ∈ List.flatMap (fun c => match c with
-        | Circuit.lit l => [[l.toLiteral]]
-        | Circuit.node true cs' => [List.filterMap (fun c' => match c' with | Circuit.lit l => some l.toLiteral | _ => none) cs']
-        | Circuit.node false cs' => List.filterMap (fun c' => match c' with | Circuit.lit l => some [l.toLiteral] | _ => none) cs') cs, t.length ≤ (Circuit.node false cs).maxFanin := by
+        | TreeCircuit.lit l => [[l.toLiteral]]
+        | TreeCircuit.node true cs' => [List.filterMap (fun c' => match c' with | TreeCircuit.lit l => some l.toLiteral | _ => none) cs']
+        | TreeCircuit.node false cs' => List.filterMap (fun c' => match c' with | TreeCircuit.lit l => some [l.toLiteral] | _ => none) cs') cs, t.length ≤ (TreeCircuit.node false cs).maxFanin := by
           grind +qlia;
-      have h_max_width : ∀ {l : List ℕ}, (∀ x ∈ l, x ≤ (Circuit.node false cs).maxFanin) → List.foldr max 0 l ≤ (Circuit.node false cs).maxFanin := by
+      have h_max_width : ∀ {l : List ℕ}, (∀ x ∈ l, x ≤ (TreeCircuit.node false cs).maxFanin) → List.foldr max 0 l ≤ (TreeCircuit.node false cs).maxFanin := by
         intros l hl; induction l <;> aesop;
       convert h_max_width _;
       exact fun x hx => by obtain ⟨ t, ht, rfl ⟩ := List.mem_map.mp hx; exact h_term_width t ht;
@@ -493,24 +493,24 @@ lemma depth2OrToDNF_width_le (cs : List (Circuit n))
 /-
 Width bound for depth2AndToCNF.
 -/
-lemma depth2AndToCNF_width_le (cs : List (Circuit n))
-    (hd : (Circuit.node true cs).depth ≤ 2) :
-    CNF.width (depth2AndToCNF cs) ≤ (Circuit.node true cs).maxFanin := by
+lemma depth2AndToCNF_width_le (cs : List (TreeCircuit n))
+    (hd : (TreeCircuit.node true cs).depth ≤ 2) :
+    CNF.width (depth2AndToCNF cs) ≤ (TreeCircuit.node true cs).maxFanin := by
       unfold depth2AndToCNF;
-      -- By definition of `Circuit.maxFanin`, we know that `Circuit.maxFanin (Circuit.node true cs) = max cs.length (cs.foldr (fun c acc => max c.maxFanin acc) 0)`. Since the maximum fan-in is at least the length of the list, we have `cs.length ≤ Circuit.maxFanin (Circuit.node true cs)`.
-      have h_maxFanin_ge_length : ∀ c ∈ cs, c.maxFanin ≤ (Circuit.node true cs).maxFanin := by
+      -- By definition of `TreeCircuit.maxFanin`, we know that `TreeCircuit.maxFanin (TreeCircuit.node true cs) = max cs.length (cs.foldr (fun c acc => max c.maxFanin acc) 0)`. Since the maximum fan-in is at least the length of the list, we have `cs.length ≤ TreeCircuit.maxFanin (TreeCircuit.node true cs)`.
+      have h_maxFanin_ge_length : ∀ c ∈ cs, c.maxFanin ≤ (TreeCircuit.node true cs).maxFanin := by
         intro c hc;
-        have h_maxFanin_ge_length : ∀ {l : List (Circuit n)}, c ∈ l → c.maxFanin ≤ List.foldr (fun c acc => max c.maxFanin acc) 0 l := by
+        have h_maxFanin_ge_length : ∀ {l : List (TreeCircuit n)}, c ∈ l → c.maxFanin ≤ List.foldr (fun c acc => max c.maxFanin acc) 0 l := by
           intros l hl; induction l <;> aesop;
-        simp only [Circuit.maxFanin]
+        simp only [TreeCircuit.maxFanin]
         exact le_trans (h_maxFanin_ge_length hc) (le_max_right _ _)
       have h_maxFanin_ge_length : ∀ c ∈ cs, (match c with
         | .lit l => 1
         | .node false cs' => cs'.length
-        | .node true cs' => 1) ≤ (Circuit.node true cs).maxFanin := by
+        | .node true cs' => 1) ≤ (TreeCircuit.node true cs).maxFanin := by
           intro c hc
           specialize h_maxFanin_ge_length c hc;
-          rcases c with ( _ | _ | _ ) <;> simp +decide [ Circuit.maxFanin ] at h_maxFanin_ge_length ⊢;
+          rcases c with ( _ | _ | _ ) <;> simp +decide [ TreeCircuit.maxFanin ] at h_maxFanin_ge_length ⊢;
           · exact Or.inl ( List.length_pos_iff.mpr ( by aesop_cat ) );
           · grind;
           · grind;
@@ -524,9 +524,9 @@ lemma depth2AndToCNF_width_le (cs : List (Circuit n))
         | .node true cs' => cs'.filterMap (fun c' =>
             match c' with
             | .lit l => some [l.toLiteral]
-            | _ => none)) cs, t.length ≤ (Circuit.node true cs).maxFanin := by
+            | _ => none)) cs, t.length ≤ (TreeCircuit.node true cs).maxFanin := by
               grind +splitImp;
-      have h_maxFanin_ge_length : ∀ {l : List ℕ}, (∀ x ∈ l, x ≤ (Circuit.node true cs).maxFanin) → List.foldr max 0 l ≤ (Circuit.node true cs).maxFanin := by
+      have h_maxFanin_ge_length : ∀ {l : List ℕ}, (∀ x ∈ l, x ≤ (TreeCircuit.node true cs).maxFanin) → List.foldr max 0 l ≤ (TreeCircuit.node true cs).maxFanin := by
         intros l hl; induction l <;> aesop;
       convert h_maxFanin_ge_length _;
       exact fun x hx => by obtain ⟨ t, ht, rfl ⟩ := List.mem_map.mp hx; exact ‹∀ t ∈ _, t.length ≤ _› t ht;

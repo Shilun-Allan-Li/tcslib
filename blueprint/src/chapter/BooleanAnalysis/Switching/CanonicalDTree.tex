@@ -12,10 +12,10 @@ of $f|_\rho$.
 \section{Declarations}
 
 \begin{lemma}[Fixing a free variable lowers the free count]
-\lean{SwitchingLemma2.numFree_update_lt}
-\label{SwitchingLemma2.numFree_update_lt}
+\lean{SwitchingLemma.numFree_update_lt}
+\label{SwitchingLemma.numFree_update_lt}
 \leanok
-\uses{SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.freeVars, SwitchingLemma2.Restriction.numFree}
+\uses{SwitchingLemma.Restriction, SwitchingLemma.Restriction.freeVars, SwitchingLemma.Restriction.numFree}
 \difficulty{4}
 Let $\rho$ be a restriction on $n$ variables, and let $v$ be a free variable of $\rho$.
 For any Boolean value $b$, let $\rho'$ be the restriction that agrees with $\rho$
@@ -24,11 +24,11 @@ variables of $\rho'$ is strictly less than the number of free variables of $\rho
 \end{lemma}
 
 \begin{lemma}[Existence of a free variable when no term is fixed and not all are killed]
-\lean{SwitchingLemma2.exists_free_of_not_killed_not_fixed}
+\lean{SwitchingLemma.exists_free_of_not_killed_not_fixed}
 \statementsource{switching-lemma}{pdf-b5e074215b9e-p002-b002}
-\label{SwitchingLemma2.exists_free_of_not_killed_not_fixed}
+\label{SwitchingLemma.exists_free_of_not_killed_not_fixed}
 \leanok
-\uses{DNF, SwitchingLemma2.Literal.killedBy, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.freeVars, SwitchingLemma2.Term.fixedBy, SwitchingLemma2.Term.killedBy}
+\uses{DNF, SwitchingLemma.Literal.killedBy, SwitchingLemma.Restriction, SwitchingLemma.Restriction.freeVars, SwitchingLemma.Term.fixedBy, SwitchingLemma.Term.killedBy}
 \difficulty{5}
 Let $f$ be a DNF formula on $n$ variables and let $\rho$ be a restriction on those
 variables. Suppose that not every term of $f$ is killed by $\rho$, and that no term of
@@ -37,19 +37,19 @@ exists an index $v \in \mathrm{Fin}\,n$ with $\rho(v)$ unset.
 \end{lemma}
 
 \begin{definition}[Branch variable selection]
-\lean{SwitchingLemma2.selectBranchVar}
-\label{SwitchingLemma2.selectBranchVar}
+\lean{SwitchingLemma.selectBranchVar}
+\label{SwitchingLemma.selectBranchVar}
 \leanok
 \statementsource{switching-lemma}{pdf-b5e074215b9e-p002-b002}
-\uses{DNF, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.freeVars, SwitchingLemma2.Term.killedBy}
+\uses{DNF, SwitchingLemma.Restriction, SwitchingLemma.Restriction.freeVars, SwitchingLemma.Term.killedBy}
 Given a DNF $f$ and restriction $\rho$, returns an optional variable in $\mathrm{Fin}\,n$:
 the variable on which the canonical tree should next branch, drawn from the free variables
 of the first term not killed by $\rho$.
 \end{definition}
 
 \begin{lemma}[Branch-variable selection returns a free variable]
-\lean{SwitchingLemma2.selectBranchVar_spec}
-\label{SwitchingLemma2.selectBranchVar_spec}
+\lean{SwitchingLemma.selectBranchVar_spec}
+\label{SwitchingLemma.selectBranchVar_spec}
 \leanok
 \proofsource{switching-lemma}{pdf-b5e074215b9e-p002-b002}
 \proofstep
@@ -78,36 +78,36 @@ of the first term not killed by $\rho$.
   {switching-lemma}
   {pdf-b5e074215b9e-p001-b004}
 \proofstep
-  {SwitchingLemma2.Restriction}
+  {SwitchingLemma.Restriction}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p001-b007}
 \proofstep
-  {SwitchingLemma2.Restriction.freeVars}
+  {SwitchingLemma.Restriction.freeVars}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p001-b007}
 \proofstep
-  {SwitchingLemma2.Literal.fixedBy}
+  {SwitchingLemma.Literal.fixedBy}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b004}
 \proofstep
-  {SwitchingLemma2.Term.killedBy}
+  {SwitchingLemma.Term.killedBy}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b002}
 \proofstep
-  {SwitchingLemma2.Term.fixedBy}
+  {SwitchingLemma.Term.fixedBy}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b002}
 \proofstep
-  {SwitchingLemma2.selectBranchVar}
+  {SwitchingLemma.selectBranchVar}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b002}
-\uses{DNF, SwitchingLemma2.Literal.killedBy, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.freeVars, SwitchingLemma2.Term.fixedBy, SwitchingLemma2.Term.killedBy, SwitchingLemma2.canonicalDTree, SwitchingLemma2.selectBranchVar}
+\uses{DNF, SwitchingLemma.Literal.killedBy, SwitchingLemma.Restriction, SwitchingLemma.Restriction.freeVars, SwitchingLemma.Term.fixedBy, SwitchingLemma.Term.killedBy, SwitchingLemma.canonicalDTree, SwitchingLemma.selectBranchVar}
 \difficulty{5}
 Let $f$ be a DNF formula on $n$ variables and $\rho$ a restriction. Suppose that at
 least one term of $f$ is not killed by $\rho$, and that no term of $f$ is fixed by
@@ -116,14 +116,14 @@ returning a variable $v$ that is free in $\rho$.
 \end{lemma}
 
 \begin{definition}[Sub-tree for a term]
-\lean{SwitchingLemma2.termSubTree}
-\label{SwitchingLemma2.termSubTree}
+\lean{SwitchingLemma.termSubTree}
+\label{SwitchingLemma.termSubTree}
 \leanok
 \statementsource{switching-lemma}{
   pdf-b5e074215b9e-p002-b002,
   pdf-b5e074215b9e-p002-b003
 }
-\uses{DecisionTree, Literal, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.freeVars}
+\uses{DecisionTree, Literal, SwitchingLemma.Restriction, SwitchingLemma.Restriction.freeVars}
 Builds a complete sub-tree for a term, queried as a list of literals: it branches on each
 free variable of the term in order, and at every leaf invokes a continuation
 $\mathrm{cont} : \mathrm{Restriction}\,n \to \mathrm{DecisionTree}\,n$ with the restriction updated
@@ -131,14 +131,14 @@ along that root-to-leaf path. Non-free literals are skipped.
 \end{definition}
 
 \begin{definition}[Canonical decision tree]
-\lean{SwitchingLemma2.canonicalDTree}
-\label{SwitchingLemma2.canonicalDTree}
+\lean{SwitchingLemma.canonicalDTree}
+\label{SwitchingLemma.canonicalDTree}
 \leanok
 \statementsource{switching-lemma}{
   pdf-b5e074215b9e-p002-b002,
   pdf-b5e074215b9e-p002-b003
 }
-\uses{DNF, DecisionTree, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.numFree}
+\uses{DNF, DecisionTree, SwitchingLemma.Restriction, SwitchingLemma.Restriction.numFree}
 The canonical decision tree for $f|_\rho$, following Razborov's construction. It is defined
 through a fuel-driven helper $\mathrm{canonicalDTree.go}$ initialized with fuel
 $\rho.\mathrm{numFree} + \text{(positive)}$, repeatedly selecting the first non-killed term and
@@ -146,10 +146,10 @@ expanding its free variables.
 \end{definition}
 
 \begin{lemma}[Updating a restriction at a free variable to match the point]
-\lean{SwitchingLemma2.extend_update_self}
-\label{SwitchingLemma2.extend_update_self}
+\lean{SwitchingLemma.extend_update_self}
+\label{SwitchingLemma.extend_update_self}
 \leanok
-\uses{SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.extend, SwitchingLemma2.Restriction.freeVars}
+\uses{SwitchingLemma.Restriction, SwitchingLemma.Restriction.extend, SwitchingLemma.Restriction.freeVars}
 \difficulty{3}
 Let $\rho$ be a restriction on $n$ variables, let $x : \mathrm{Fin}\,n \to
 \mathrm{Bool}$ be a point, and let $v \in \mathrm{Fin}\,n$ be a free variable of $\rho$
@@ -161,10 +161,10 @@ assignments.
 \end{lemma}
 
 \begin{lemma}[Semantic correctness of the term sub-tree]
-\lean{SwitchingLemma2.termSubTree_eval}
-\label{SwitchingLemma2.termSubTree_eval}
+\lean{SwitchingLemma.termSubTree_eval}
+\label{SwitchingLemma.termSubTree_eval}
 \leanok
-\uses{DecisionTree, DecisionTree.eval, Literal, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.freeVars, SwitchingLemma2.termSubTree}
+\uses{DecisionTree, DecisionTree.eval, Literal, SwitchingLemma.Restriction, SwitchingLemma.Restriction.freeVars, SwitchingLemma.termSubTree}
 \difficulty{4}
 Fix $n$, and let $\ell_1,\dots,\ell_m$ be a list of literals over $n$ variables, $\rho$
 a restriction on those variables, $\mathrm{cont}$ a map sending each restriction to a
@@ -178,10 +178,10 @@ restriction is left unchanged.
 \end{lemma}
 
 \begin{lemma}[Fixing free variables to a point preserves its extension]
-\lean{SwitchingLemma2.termSubTree_extend_eq}
-\label{SwitchingLemma2.termSubTree_extend_eq}
+\lean{SwitchingLemma.termSubTree_extend_eq}
+\label{SwitchingLemma.termSubTree_extend_eq}
 \leanok
-\uses{Literal, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.extend, SwitchingLemma2.Restriction.freeVars, SwitchingLemma2.extend_update_self}
+\uses{Literal, SwitchingLemma.Restriction, SwitchingLemma.Restriction.extend, SwitchingLemma.Restriction.freeVars, SwitchingLemma.extend_update_self}
 \difficulty{3}
 Let $\rho$ be a restriction on $n$ variables, let $x : \mathrm{Fin}\,n \to
 \mathrm{Bool}$ be a point, and let $\ell_1, \dots, \ell_m$ be a list of literals over
@@ -194,10 +194,10 @@ along $x$.
 \end{lemma}
 
 \begin{lemma}[Fixed variables survive the literal fold]
-\lean{SwitchingLemma2.termSubTree_foldl_preserves_nonnone}
-\label{SwitchingLemma2.termSubTree_foldl_preserves_nonnone}
+\lean{SwitchingLemma.termSubTree_foldl_preserves_nonnone}
+\label{SwitchingLemma.termSubTree_foldl_preserves_nonnone}
 \leanok
-\uses{Literal, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.freeVars}
+\uses{Literal, SwitchingLemma.Restriction, SwitchingLemma.Restriction.freeVars}
 \difficulty{3}
 Let $\rho : \mathrm{Fin}\,n \to \mathrm{Option}\,\mathrm{Bool}$ be a restriction on $n$
 variables, let $x : \mathrm{Fin}\,n \to \mathrm{Bool}$ be a Boolean assignment, and let
@@ -210,10 +210,10 @@ in the final restriction; the fold never frees an already-fixed variable.
 \end{lemma}
 
 \begin{lemma}[Folding literals fixes each initially free variable]
-\lean{SwitchingLemma2.termSubTree_foldl_sets_member}
-\label{SwitchingLemma2.termSubTree_foldl_sets_member}
+\lean{SwitchingLemma.termSubTree_foldl_sets_member}
+\label{SwitchingLemma.termSubTree_foldl_sets_member}
 \leanok
-\uses{Literal, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.freeVars, SwitchingLemma2.termSubTree_foldl_preserves_nonnone}
+\uses{Literal, SwitchingLemma.Restriction, SwitchingLemma.Restriction.freeVars, SwitchingLemma.termSubTree_foldl_preserves_nonnone}
 \difficulty{4}
 Fix $n$ variables, let $x : \mathrm{Fin}\,n \to \mathrm{Bool}$ be a Boolean assignment,
 let $\rho$ be a restriction on these variables, and let $\ell_1, \dots, \ell_m$ be a
@@ -228,10 +228,10 @@ $\ell.\mathrm{var}$ is not free in $\rho^*$.
 \end{lemma}
 
 \begin{lemma}[Sequential fixing strictly reduces the free count]
-\lean{SwitchingLemma2.termSubTree_foldl_numFree_lt}
-\label{SwitchingLemma2.termSubTree_foldl_numFree_lt}
+\lean{SwitchingLemma.termSubTree_foldl_numFree_lt}
+\label{SwitchingLemma.termSubTree_foldl_numFree_lt}
 \leanok
-\uses{Literal, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.freeVars, SwitchingLemma2.Restriction.numFree, SwitchingLemma2.termSubTree_foldl_preserves_nonnone, SwitchingLemma2.termSubTree_foldl_sets_member}
+\uses{Literal, SwitchingLemma.Restriction, SwitchingLemma.Restriction.freeVars, SwitchingLemma.Restriction.numFree, SwitchingLemma.termSubTree_foldl_preserves_nonnone, SwitchingLemma.termSubTree_foldl_sets_member}
 \difficulty{4}
 Let $\rho$ be a restriction on $n$ variables, let $x : \mathrm{Fin}\,n \to
 \mathrm{Bool}$ be a Boolean assignment, and let $\ell_1, \dots, \ell_k$ be a list of
@@ -244,11 +244,11 @@ $\rho$, then $\rho'$ has strictly fewer free variables than $\rho$.
 \end{lemma}
 
 \begin{lemma}[Correctness of the fuel-bounded decision-tree construction]
-\lean{SwitchingLemma2.canonicalDTree_go_correct}
-\label{SwitchingLemma2.canonicalDTree_go_correct}
+\lean{SwitchingLemma.canonicalDTree_go_correct}
+\label{SwitchingLemma.canonicalDTree_go_correct}
 \leanok
 \proofsource{switching-lemma}{pdf-b5e074215b9e-p002-b002}
-\uses{DNF, DNF.eval, DecisionTree.eval, SwitchingLemma2.Literal.fixedBy_eval_true, SwitchingLemma2.Literal.killedBy, SwitchingLemma2.Literal.killedBy_eval_false, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.extend, SwitchingLemma2.Restriction.freeVars, SwitchingLemma2.Restriction.numFree, SwitchingLemma2.Term.fixedBy, SwitchingLemma2.Term.killedBy, SwitchingLemma2.list_all_eq_false_of_mem, SwitchingLemma2.list_any_eq_false, SwitchingLemma2.restrictFn, SwitchingLemma2.termSubTree_eval, SwitchingLemma2.termSubTree_extend_eq, SwitchingLemma2.termSubTree_foldl_numFree_lt, Term.eval}
+\uses{DNF, DNF.eval, DecisionTree.eval, SwitchingLemma.Literal.fixedBy_eval_true, SwitchingLemma.Literal.killedBy, SwitchingLemma.Literal.killedBy_eval_false, SwitchingLemma.Restriction, SwitchingLemma.Restriction.extend, SwitchingLemma.Restriction.freeVars, SwitchingLemma.Restriction.numFree, SwitchingLemma.Term.fixedBy, SwitchingLemma.Term.killedBy, SwitchingLemma.list_all_eq_false_of_mem, SwitchingLemma.list_any_eq_false, SwitchingLemma.restrictFn, SwitchingLemma.termSubTree_eval, SwitchingLemma.termSubTree_extend_eq, SwitchingLemma.termSubTree_foldl_numFree_lt, Term.eval}
 \difficulty{6}
 Let $f$ be a DNF formula on $n$ Boolean variables, let $\rho$ be a restriction of those
 variables, and let $m$ be a natural number strictly greater than the number of free
@@ -261,8 +261,8 @@ and $x$'s value on each free coordinate.
 \end{lemma}
 
 \begin{lemma}[Correctness of the canonical decision tree]
-\lean{SwitchingLemma2.canonicalDTree_correct}
-\label{SwitchingLemma2.canonicalDTree_correct}
+\lean{SwitchingLemma.canonicalDTree_correct}
+\label{SwitchingLemma.canonicalDTree_correct}
 \leanok
 \proofsource{switching-lemma}{pdf-b5e074215b9e-p002-b002}
 \proofstep
@@ -301,111 +301,111 @@ and $x$'s value on each free coordinate.
   {switching-lemma}
   {pdf-b5e074215b9e-p001-b005}
 \proofstep
-  {SwitchingLemma2.Restriction}
+  {SwitchingLemma.Restriction}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p001-b007}
 \proofstep
-  {SwitchingLemma2.Restriction.freeVars}
+  {SwitchingLemma.Restriction.freeVars}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p001-b007}
 \proofstep
-  {SwitchingLemma2.Restriction.numFree}
+  {SwitchingLemma.Restriction.numFree}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p001-b007}
 \proofstep
-  {SwitchingLemma2.Restriction.extend}
+  {SwitchingLemma.Restriction.extend}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p001-b007}
 \proofstep
-  {SwitchingLemma2.Literal.fixedBy}
+  {SwitchingLemma.Literal.fixedBy}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b004}
 \proofstep
-  {SwitchingLemma2.Term.killedBy}
+  {SwitchingLemma.Term.killedBy}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b002}
 \proofstep
-  {SwitchingLemma2.Term.fixedBy}
+  {SwitchingLemma.Term.fixedBy}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b002}
 \proofstep
-  {SwitchingLemma2.restrictFn}
+  {SwitchingLemma.restrictFn}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p001-b007}
 \proofstep
-  {SwitchingLemma2.Literal.killedBy_eval_false}
+  {SwitchingLemma.Literal.killedBy_eval_false}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b002}
 \proofstep
-  {SwitchingLemma2.Literal.fixedBy_eval_true}
+  {SwitchingLemma.Literal.fixedBy_eval_true}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b002}
 \proofstep
-  {SwitchingLemma2.list_any_eq_false}
+  {SwitchingLemma.list_any_eq_false}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b002}
 \proofstep
-  {SwitchingLemma2.list_all_eq_false_of_mem}
+  {SwitchingLemma.list_all_eq_false_of_mem}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b002}
 \proofstep
-  {SwitchingLemma2.termSubTree}
+  {SwitchingLemma.termSubTree}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b002}
 \proofstep
-  {SwitchingLemma2.canonicalDTree}
+  {SwitchingLemma.canonicalDTree}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b002}
 \proofstep
-  {SwitchingLemma2.extend_update_self}
+  {SwitchingLemma.extend_update_self}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b002}
 \proofstep
-  {SwitchingLemma2.termSubTree_eval}
+  {SwitchingLemma.termSubTree_eval}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b002}
 \proofstep
-  {SwitchingLemma2.termSubTree_extend_eq}
+  {SwitchingLemma.termSubTree_extend_eq}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b002}
 \proofstep
-  {SwitchingLemma2.termSubTree_foldl_preserves_nonnone}
+  {SwitchingLemma.termSubTree_foldl_preserves_nonnone}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b002}
 \proofstep
-  {SwitchingLemma2.termSubTree_foldl_sets_member}
+  {SwitchingLemma.termSubTree_foldl_sets_member}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b002}
 \proofstep
-  {SwitchingLemma2.termSubTree_foldl_numFree_lt}
+  {SwitchingLemma.termSubTree_foldl_numFree_lt}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b002}
 \proofstep
-  {SwitchingLemma2.canonicalDTree_go_correct}
+  {SwitchingLemma.canonicalDTree_go_correct}
   {direct}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b002}
-\uses{DNF, DNF.eval, DecisionTree.eval, SwitchingLemma2.Restriction, SwitchingLemma2.canonicalDTree, SwitchingLemma2.canonicalDTree_go_correct, SwitchingLemma2.restrictFn}
+\uses{DNF, DNF.eval, DecisionTree.eval, SwitchingLemma.Restriction, SwitchingLemma.canonicalDTree, SwitchingLemma.canonicalDTree_go_correct, SwitchingLemma.restrictFn}
 \difficulty{1}
 Let $f$ be a DNF formula on $n$ Boolean variables and let $\rho$ be a restriction of
 those variables. Then the canonical decision tree of $f$ under $\rho$ computes exactly
@@ -416,10 +416,10 @@ coordinates.
 \end{lemma}
 
 \begin{lemma}[Fixing a variable does not increase the free count]
-\lean{SwitchingLemma2.numFree_update_le}
-\label{SwitchingLemma2.numFree_update_le}
+\lean{SwitchingLemma.numFree_update_le}
+\label{SwitchingLemma.numFree_update_le}
 \leanok
-\uses{SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.freeVars, SwitchingLemma2.Restriction.numFree}
+\uses{SwitchingLemma.Restriction, SwitchingLemma.Restriction.freeVars, SwitchingLemma.Restriction.numFree}
 \difficulty{3}
 Let $\rho$ be a restriction on $n$ variables, let $v \in \mathrm{Fin}\,n$, and let $b$
 be a Boolean value. Write $\rho[v \mapsto b]$ for the restriction that agrees with
@@ -428,10 +428,10 @@ free variables of $\rho[v \mapsto b]$ is at most the number of free variables of
 \end{lemma}
 
 \begin{lemma}[Continuation-extensionality of the term sub-tree]
-\lean{SwitchingLemma2.termSubTree_cont_congr}
-\label{SwitchingLemma2.termSubTree_cont_congr}
+\lean{SwitchingLemma.termSubTree_cont_congr}
+\label{SwitchingLemma.termSubTree_cont_congr}
 \leanok
-\uses{DecisionTree, Literal, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.freeVars, SwitchingLemma2.Restriction.numFree, SwitchingLemma2.numFree_update_le, SwitchingLemma2.termSubTree}
+\uses{DecisionTree, Literal, SwitchingLemma.Restriction, SwitchingLemma.Restriction.freeVars, SwitchingLemma.Restriction.numFree, SwitchingLemma.numFree_update_le, SwitchingLemma.termSubTree}
 \difficulty{4}
 Let $\ell$ be a list of literals on $n$ variables and let $\rho$ be a restriction. For a
 continuation $c : \mathrm{Restriction}\,n \to \mathrm{DecisionTree}\,n$, write $T(\ell,
@@ -443,10 +443,10 @@ $T(\ell, \rho, c_1) = T(\ell, \rho, c_2)$.
 \end{lemma}
 
 \begin{lemma}[Strict continuation-invariance of the term sub-tree]
-\lean{SwitchingLemma2.termSubTree_cont_congr_strict}
-\label{SwitchingLemma2.termSubTree_cont_congr_strict}
+\lean{SwitchingLemma.termSubTree_cont_congr_strict}
+\label{SwitchingLemma.termSubTree_cont_congr_strict}
 \leanok
-\uses{DecisionTree, Literal, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.freeVars, SwitchingLemma2.Restriction.numFree, SwitchingLemma2.numFree_update_lt, SwitchingLemma2.termSubTree, SwitchingLemma2.termSubTree_cont_congr}
+\uses{DecisionTree, Literal, SwitchingLemma.Restriction, SwitchingLemma.Restriction.freeVars, SwitchingLemma.Restriction.numFree, SwitchingLemma.numFree_update_lt, SwitchingLemma.termSubTree, SwitchingLemma.termSubTree_cont_congr}
 \difficulty{4}
 Let $L$ be a list of literals on $n$ variables and $\rho$ a restriction on those
 variables, and suppose at least one literal in $L$ has its variable free under $\rho$.
@@ -457,10 +457,10 @@ and the other using $c_2$, are identical.
 \end{lemma}
 
 \begin{lemma}[Fuel invariance of the canonical decision-tree recursion]
-\lean{SwitchingLemma2.canonicalDTree_go_fuel_invariant}
-\label{SwitchingLemma2.canonicalDTree_go_fuel_invariant}
+\lean{SwitchingLemma.canonicalDTree_go_fuel_invariant}
+\label{SwitchingLemma.canonicalDTree_go_fuel_invariant}
 \leanok
-\uses{DNF, SwitchingLemma2.Literal.killedBy, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.freeVars, SwitchingLemma2.Restriction.numFree, SwitchingLemma2.Term.fixedBy, SwitchingLemma2.Term.killedBy, SwitchingLemma2.termSubTree_cont_congr_strict}
+\uses{DNF, SwitchingLemma.Literal.killedBy, SwitchingLemma.Restriction, SwitchingLemma.Restriction.freeVars, SwitchingLemma.Restriction.numFree, SwitchingLemma.Term.fixedBy, SwitchingLemma.Term.killedBy, SwitchingLemma.termSubTree_cont_congr_strict}
 \difficulty{6}
 Let $f$ be a DNF formula on $n$ variables, and let $\rho$ be a restriction on those
 variables having $k$ free variables. Write $G(f, m, \rho)$ for the fuel-bounded
@@ -471,10 +471,10 @@ two trees coincide: $G(f, m_1, \rho) = G(f, m_2, \rho)$.
 \end{lemma}
 
 \begin{lemma}[Fuel invariance of the canonical decision tree continuation]
-\lean{SwitchingLemma2.cont_eq_canonicalDTree}
-\label{SwitchingLemma2.cont_eq_canonicalDTree}
+\lean{SwitchingLemma.cont_eq_canonicalDTree}
+\label{SwitchingLemma.cont_eq_canonicalDTree}
 \leanok
-\uses{DNF, SwitchingLemma2.Literal.fixedBy, SwitchingLemma2.Literal.killedBy, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.numFree, SwitchingLemma2.Term.fixedBy, SwitchingLemma2.canonicalDTree, SwitchingLemma2.canonicalDTree_go_fuel_invariant, Term}
+\uses{DNF, SwitchingLemma.Literal.fixedBy, SwitchingLemma.Literal.killedBy, SwitchingLemma.Restriction, SwitchingLemma.Restriction.numFree, SwitchingLemma.Term.fixedBy, SwitchingLemma.canonicalDTree, SwitchingLemma.canonicalDTree_go_fuel_invariant, Term}
 \difficulty{4}
 The canonical decision tree of a DNF formula $f$ under a restriction $\rho$ is built by
 a fuel-limited recursion; write $G_k(f,\rho)$ for the decision tree it returns when run
@@ -488,10 +488,10 @@ otherwise is equal to the canonical decision tree of $f$ under $\rho'$.
 \end{lemma}
 
 \begin{lemma}[Unfolding the term sub-tree at a free head literal]
-\lean{SwitchingLemma2.termSubTree_cons_free}
-\label{SwitchingLemma2.termSubTree_cons_free}
+\lean{SwitchingLemma.termSubTree_cons_free}
+\label{SwitchingLemma.termSubTree_cons_free}
 \leanok
-\uses{DecisionTree, Literal, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.freeVars, SwitchingLemma2.termSubTree}
+\uses{DecisionTree, Literal, SwitchingLemma.Restriction, SwitchingLemma.Restriction.freeVars, SwitchingLemma.termSubTree}
 \difficulty{1}
 Let $l$ be a literal on $n$ Boolean variables, write $i$ for its underlying variable,
 let $\mathit{rest}$ be a further list of literals, let $\rho$ be a restriction on these
@@ -505,10 +505,10 @@ continuation.
 \end{lemma}
 
 \begin{lemma}[Skipping a fixed head literal in the term sub-tree]
-\lean{SwitchingLemma2.termSubTree_cons_nonfree}
-\label{SwitchingLemma2.termSubTree_cons_nonfree}
+\lean{SwitchingLemma.termSubTree_cons_nonfree}
+\label{SwitchingLemma.termSubTree_cons_nonfree}
 \leanok
-\uses{DecisionTree, Literal, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.freeVars, SwitchingLemma2.termSubTree}
+\uses{DecisionTree, Literal, SwitchingLemma.Restriction, SwitchingLemma.Restriction.freeVars, SwitchingLemma.termSubTree}
 \difficulty{1}
 Let $\rho$ be a restriction on $n$ variables, let $l$ be a literal whose underlying
 variable $v$ is not free under $\rho$ (that is, $\rho$ already assigns $v$ a fixed
@@ -520,10 +520,10 @@ same continuation; the fixed head literal $l$ contributes no branch.
 \end{lemma}
 
 \begin{lemma}[Head of the deepest path through a term sub-tree]
-\lean{SwitchingLemma2.termSubTree_deepPath_head_free}
-\label{SwitchingLemma2.termSubTree_deepPath_head_free}
+\lean{SwitchingLemma.termSubTree_deepPath_head_free}
+\label{SwitchingLemma.termSubTree_deepPath_head_free}
 \leanok
-\uses{DecisionTree, DecisionTree.deepPath, Literal, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.freeVars, SwitchingLemma2.termSubTree, SwitchingLemma2.termSubTree_cons_free}
+\uses{DecisionTree, DecisionTree.deepPath, Literal, SwitchingLemma.Restriction, SwitchingLemma.Restriction.freeVars, SwitchingLemma.termSubTree, SwitchingLemma.termSubTree_cons_free}
 \difficulty{3}
 Fix a restriction $\rho$ on $n$ variables and a continuation $c$ that assigns a decision
 tree to each restriction. Let $l$ be a literal whose variable $v$ is free in $\rho$, and
@@ -536,10 +536,10 @@ and the same continuation $c$.
 \end{lemma}
 
 \begin{lemma}[Filtering literals by freeness is invariant under an unrelated update]
-\lean{SwitchingLemma2.filter_free_update_eq}
-\label{SwitchingLemma2.filter_free_update_eq}
+\lean{SwitchingLemma.filter_free_update_eq}
+\label{SwitchingLemma.filter_free_update_eq}
 \leanok
-\uses{Literal, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.freeVars}
+\uses{Literal, SwitchingLemma.Restriction, SwitchingLemma.Restriction.freeVars}
 \difficulty{3}
 Let $\rho : \mathrm{Fin}\,n \to \mathrm{Option}\,\mathrm{Bool}$ be a restriction, let
 $R$ be a list of literals on the variables $\mathrm{Fin}\,n$, and let $v \in
@@ -551,10 +551,10 @@ list as selecting those whose variable is free under $\rho$.
 \end{lemma}
 
 \begin{lemma}[Deep-path variables track the free literals of a term]
-\lean{SwitchingLemma2.termSubTree_deepPath_var_match}
-\label{SwitchingLemma2.termSubTree_deepPath_var_match}
+\lean{SwitchingLemma.termSubTree_deepPath_var_match}
+\label{SwitchingLemma.termSubTree_deepPath_var_match}
 \leanok
-\uses{DecisionTree, DecisionTree.deepPath, Literal, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.freeVars, SwitchingLemma2.filter_free_update_eq, SwitchingLemma2.termSubTree, SwitchingLemma2.termSubTree_cons_nonfree, SwitchingLemma2.termSubTree_deepPath_head_free}
+\uses{DecisionTree, DecisionTree.deepPath, Literal, SwitchingLemma.Restriction, SwitchingLemma.Restriction.freeVars, SwitchingLemma.filter_free_update_eq, SwitchingLemma.termSubTree, SwitchingLemma.termSubTree_cons_nonfree, SwitchingLemma.termSubTree_deepPath_head_free}
 \difficulty{5}
 Let $\mathit{lits}$ be a list of literals on $n$ Boolean variables whose variables are
 pairwise distinct, let $\rho$ be a restriction, and let $g$ be a map sending each
@@ -570,10 +570,10 @@ literal of $\mathit{lits}_\rho$.
 \end{lemma}
 
 \begin{lemma}[Deepest-path length of a term sub-tree]
-\lean{SwitchingLemma2.termSubTree_deepPath_append}
-\label{SwitchingLemma2.termSubTree_deepPath_append}
+\lean{SwitchingLemma.termSubTree_deepPath_append}
+\label{SwitchingLemma.termSubTree_deepPath_append}
 \leanok
-\uses{DecisionTree, DecisionTree.deepPath, Literal, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.freeVars, SwitchingLemma2.filter_free_update_eq, SwitchingLemma2.termSubTree, SwitchingLemma2.termSubTree_cons_nonfree, SwitchingLemma2.termSubTree_deepPath_head_free}
+\uses{DecisionTree, DecisionTree.deepPath, Literal, SwitchingLemma.Restriction, SwitchingLemma.Restriction.freeVars, SwitchingLemma.filter_free_update_eq, SwitchingLemma.termSubTree, SwitchingLemma.termSubTree_cons_nonfree, SwitchingLemma.termSubTree_deepPath_head_free}
 \difficulty{5}
 Let $\rho$ be a restriction on $n$ variables, let $\mathit{lits}$ be a list of literals
 whose underlying variables are pairwise distinct, and let $\mathrm{cont}$ be a
@@ -586,10 +586,10 @@ deepest root-to-leaf path of $\mathrm{cont}(\rho')$.
 \end{lemma}
 
 \begin{lemma}[Deepest-path split of a term's sub-tree]
-\lean{SwitchingLemma2.termSubTree_deepPath_split}
-\label{SwitchingLemma2.termSubTree_deepPath_split}
+\lean{SwitchingLemma.termSubTree_deepPath_split}
+\label{SwitchingLemma.termSubTree_deepPath_split}
 \leanok
-\uses{DecisionTree, DecisionTree.deepPath, Literal, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.freeVars, SwitchingLemma2.filter_free_update_eq, SwitchingLemma2.termSubTree, SwitchingLemma2.termSubTree_cons_nonfree, SwitchingLemma2.termSubTree_deepPath_head_free}
+\uses{DecisionTree, DecisionTree.deepPath, Literal, SwitchingLemma.Restriction, SwitchingLemma.Restriction.freeVars, SwitchingLemma.filter_free_update_eq, SwitchingLemma.termSubTree, SwitchingLemma.termSubTree_cons_nonfree, SwitchingLemma.termSubTree_deepPath_head_free}
 \difficulty{5}
 Let $\mathit{lits}$ be a list of literals on $n$ variables in which no two literals
 share the same variable, let $\rho$ be a restriction on $n$ variables, and let $c$ be a
@@ -603,10 +603,10 @@ $\mathit{lits}$.
 \end{lemma}
 
 \begin{lemma}[Alive step of the canonical decision-tree builder]
-\lean{SwitchingLemma2.canonicalDTree_alive_eq_termSubTree}
-\label{SwitchingLemma2.canonicalDTree_alive_eq_termSubTree}
+\lean{SwitchingLemma.canonicalDTree_alive_eq_termSubTree}
+\label{SwitchingLemma.canonicalDTree_alive_eq_termSubTree}
 \leanok
-\uses{DNF, SwitchingLemma2.Restriction, SwitchingLemma2.Term.fixedBy, SwitchingLemma2.Term.killedBy, SwitchingLemma2.termSubTree, Term}
+\uses{DNF, SwitchingLemma.Restriction, SwitchingLemma.Term.fixedBy, SwitchingLemma.Term.killedBy, SwitchingLemma.termSubTree, Term}
 \difficulty{2}
 Fix $n$ Boolean variables, and let $f$ be a DNF formula (a list of terms) and $\rho$ a
 restriction. Write $T(f, k, \rho)$ for the fuel-bounded canonical decision tree of $f$
@@ -623,10 +623,10 @@ when $t$ is fixed by $\rho'$, and to $T(f,\ \mathit{fuel},\ \rho')$ otherwise.
 \end{lemma}
 
 \begin{lemma}[One-step unfolding of the canonical tree at a live restriction]
-\lean{SwitchingLemma2.canonicalDTree_alive_eq_termSubTree'}
-\label{SwitchingLemma2.canonicalDTree_alive_eq_termSubTree'}
+\lean{SwitchingLemma.canonicalDTree_alive_eq_termSubTree'}
+\label{SwitchingLemma.canonicalDTree_alive_eq_termSubTree'}
 \leanok
-\uses{DNF, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.numFree, SwitchingLemma2.Term.fixedBy, SwitchingLemma2.Term.killedBy, SwitchingLemma2.canonicalDTree, SwitchingLemma2.canonicalDTree_alive_eq_termSubTree, SwitchingLemma2.termSubTree, Term}
+\uses{DNF, SwitchingLemma.Restriction, SwitchingLemma.Restriction.numFree, SwitchingLemma.Term.fixedBy, SwitchingLemma.Term.killedBy, SwitchingLemma.canonicalDTree, SwitchingLemma.canonicalDTree_alive_eq_termSubTree, SwitchingLemma.termSubTree, Term}
 \difficulty{1}
 Let $f$ be a DNF formula and $\rho$ a restriction on $n$ variables such that $\rho$ does
 not kill every term of $f$ and fixes no term of $f$, and let $t$ be the first term of
@@ -639,10 +639,10 @@ free variables of $\rho$.
 \end{lemma}
 
 \begin{lemma}[Dropping a variable-fixed prefix from the term sub-tree]
-\lean{SwitchingLemma2.termSubTree_skip_nonfree_prefix'}
-\label{SwitchingLemma2.termSubTree_skip_nonfree_prefix'}
+\lean{SwitchingLemma.termSubTree_skip_nonfree_prefix'}
+\label{SwitchingLemma.termSubTree_skip_nonfree_prefix'}
 \leanok
-\uses{DecisionTree, Literal, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.freeVars, SwitchingLemma2.termSubTree, SwitchingLemma2.termSubTree_cons_nonfree}
+\uses{DecisionTree, Literal, SwitchingLemma.Restriction, SwitchingLemma.Restriction.freeVars, SwitchingLemma.termSubTree, SwitchingLemma.termSubTree_cons_nonfree}
 \difficulty{3}
 Fix a restriction $\rho$ on $n$ variables and a continuation $c$ assigning a decision
 tree to each restriction. For a list of literals $L$, write $T(L)$ for the term sub-tree
@@ -659,10 +659,10 @@ where $P \frown R$ denotes the concatenation of $P$ followed by $R$.
 \end{lemma}
 
 \begin{lemma}[Skipping a fixed head literal in the term sub-tree]
-\lean{SwitchingLemma2.termSubTree_skip_updated_head}
-\label{SwitchingLemma2.termSubTree_skip_updated_head}
+\lean{SwitchingLemma.termSubTree_skip_updated_head}
+\label{SwitchingLemma.termSubTree_skip_updated_head}
 \leanok
-\uses{DecisionTree, Literal, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.freeVars, SwitchingLemma2.termSubTree, SwitchingLemma2.termSubTree_cons_nonfree}
+\uses{DecisionTree, Literal, SwitchingLemma.Restriction, SwitchingLemma.Restriction.freeVars, SwitchingLemma.termSubTree, SwitchingLemma.termSubTree_cons_nonfree}
 \difficulty{2}
 Let $\rho$ be a restriction on $n$ variables and $g$ a continuation assigning a decision
 tree to each restriction on $n$ variables. Fix a variable $v$, a Boolean value $b$, and
@@ -675,8 +675,8 @@ $\mathit{rest}$ alone under the same restriction and the same continuation.
 \end{lemma}
 
 \begin{lemma}[Depth bounds decision-tree depth]
-\lean{SwitchingLemma2.depth_ge_dtDepth}
-\label{SwitchingLemma2.depth_ge_dtDepth}
+\lean{SwitchingLemma.depth_ge_dtDepth}
+\label{SwitchingLemma.depth_ge_dtDepth}
 \leanok
 \proofsource{switching-lemma}{pdf-b5e074215b9e-p001-b005}
 \uses{DecisionTree, DecisionTree.depth, DecisionTree.eval, dtDepth}
@@ -689,10 +689,10 @@ depth of any decision tree computing $f$.
 \end{lemma}
 
 \begin{lemma}[Canonical tree depth lower-bounds decision-tree depth]
-\lean{SwitchingLemma2.canonicalDTree_depth_ge}
-\label{SwitchingLemma2.canonicalDTree_depth_ge}
+\lean{SwitchingLemma.canonicalDTree_depth_ge}
+\label{SwitchingLemma.canonicalDTree_depth_ge}
 \leanok
-\uses{DNF, DNF.eval, DecisionTree.depth, SwitchingLemma2.Restriction, SwitchingLemma2.canonicalDTree, SwitchingLemma2.canonicalDTree_correct, SwitchingLemma2.depth_ge_dtDepth, SwitchingLemma2.restrictFn, dtDepth}
+\uses{DNF, DNF.eval, DecisionTree.depth, SwitchingLemma.Restriction, SwitchingLemma.canonicalDTree, SwitchingLemma.canonicalDTree_correct, SwitchingLemma.depth_ge_dtDepth, SwitchingLemma.restrictFn, dtDepth}
 \difficulty{1}
 Let $f$ be a DNF formula on $n$ Boolean variables and let $\rho$ be a restriction on
 those variables, and write $f|_\rho$ for the restricted Boolean function $x \mapsto
@@ -704,10 +704,10 @@ computing $f|_\rho$ does not exceed the depth of the canonical tree.
 \end{lemma}
 
 \begin{lemma}[Decision-tree depth bounded by the number of free variables]
-\lean{SwitchingLemma2.dtDepth_restrictFn_le_numFree}
-\label{SwitchingLemma2.dtDepth_restrictFn_le_numFree}
+\lean{SwitchingLemma.dtDepth_restrictFn_le_numFree}
+\label{SwitchingLemma.dtDepth_restrictFn_le_numFree}
 \leanok
-\uses{DecisionTree, DecisionTree.depth, DecisionTree.eval, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.extend, SwitchingLemma2.Restriction.freeVars, SwitchingLemma2.Restriction.numFree, SwitchingLemma2.depth_ge_dtDepth, SwitchingLemma2.extend_update_self, SwitchingLemma2.numFree_update_lt, SwitchingLemma2.restrictFn, dtDepth}
+\uses{DecisionTree, DecisionTree.depth, DecisionTree.eval, SwitchingLemma.Restriction, SwitchingLemma.Restriction.extend, SwitchingLemma.Restriction.freeVars, SwitchingLemma.Restriction.numFree, SwitchingLemma.depth_ge_dtDepth, SwitchingLemma.extend_update_self, SwitchingLemma.numFree_update_lt, SwitchingLemma.restrictFn, dtDepth}
 \difficulty{5}
 Let $f : (\mathrm{Fin}\,n \to \mathrm{Bool}) \to \mathrm{Bool}$ be a Boolean function
 and let $\rho$ be a restriction on $n$ variables, fixing some coordinates to Boolean

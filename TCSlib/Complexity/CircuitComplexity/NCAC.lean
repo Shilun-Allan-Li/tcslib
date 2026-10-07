@@ -3,139 +3,64 @@ Copyright (c) 2026 TCSlib contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Hydroxyi
 -/
-import Mathlib.Computability.Language
-import Mathlib.Data.List.FinRange
-import Mathlib.Data.Nat.Log
-import TCSlib.Complexity.CircuitComplexity.Basic
+import TCSlib.Complexity.CircuitComplexity.DAGFanin
+import TCSlib.Complexity.CircuitComplexity.TreeNCAC
+import TCSlib.Complexity.CircuitComplexity.PPoly
 
 /-!
 # The circuit classes `NC` and `AC`
 
+[AB09, Defs 6.24 and 6.25] over the book's circuit model `BoolCircuit.DAGCircuit`, and
+their relation to the formula (tree) versions `Language.InTreeNC` / `Language.InTreeAC` of
+`TreeNCAC.lean`.
+
 ## Main definitions
 
-* `BoolCircuit.TreeCircuitFamily` — one `BoolCircuit.Circuit n` per input length,
-  with `language`, `IsPolySize`, `HasFaninTwo` and `HasLogDepth`.
 * `Language.InNC` — [AB09, Def 6.24], `NC^d`; `BoolCircuit.NC` — `⋃_{i ≥ 1} NC^i`.
 * `Language.InAC` — [AB09, Def 6.25], `AC^d`; `BoolCircuit.AC` — `⋃_{i ≥ 0} AC^i`.
-* `BoolCircuit.Circuit.toBinary` — rebuilds every unbounded gate as a balanced
-  binary tree of gates of the same type.
 
 ## Main results
 
-* `Language.InNC.inAC` and `Language.InAC.inNC_succ` — `NC^i ⊆ AC^i ⊆ NC^{i+1}`
-  [AB09, p. 118], hence `BoolCircuit.NC_eq_AC`.
-* `BoolCircuit.toBinary_eval`, `toBinary_maxFanin_le`, `toBinary_depth_le`,
-  `toBinary_size_le` — the four facts that inclusion needs.
+* `Language.InNC.inAC`, `Language.InAC.inNC_succ` — `NC^i ⊆ AC^i ⊆ NC^{i+1}` [AB09, p. 118],
+  hence `BoolCircuit.NC_eq_AC`.  The second inclusion binarizes every gate
+  (`DAGCircuit.binarize`), multiplying depth by `O(log n)`.
+* `Language.InTreeNC.inNC`, `Language.InTreeAC.inAC` — every formula class is inside the
+  circuit class of the same level (compile the formula, `TreeCircuit.toDAG`).
+* `Language.InNC.inPPoly`, `BoolCircuit.NC_subset_PPoly` — `NC ⊆ P/poly` [AB09, §6.7.1].
+* `Language.inNC_one_iff`, `Language.inAC_zero_iff` — at `NC¹` and `AC⁰` the formula and
+  circuit classes coincide: unfolding a DAG of depth `O(log n)` and fan-in two, or of
+  constant depth and polynomial fan-in, costs only polynomial size.  At higher levels the
+  unfolding is quasi-polynomial and no such equality is known.
 
-[AB09, Ex 6.26], `PARITY ∈ NC¹`, is in `TCSlib.Complexity.CircuitComplexity.Parity`.
-The size, depth and fan-in arithmetic these proofs run on is in
-`TCSlib.Complexity.CircuitComplexity.Basic`.
+## Divergences from [AB09, §6.7.1]
 
-## Divergences from Arora–Barak §6.7.1
-
-* **What is formalized.** `Language.InNC d` and `Language.InAC d` are AB's `NC^d` and
-  `AC^d` taken over `BoolCircuit.Circuit`, which is a *tree*: every gate feeds exactly
-  one parent.  They are therefore AB's classes with fan-out restricted to `1` (formulas),
-  where Def 6.1's circuits are DAGs.  AB's DAG classes are not defined anywhere in this
-  development, and **no comparison between them and these is formalized**.  The next
-  bullet describes the gap to AB; it is not a theorem of anything below.
-* **Informal expectation, not proved here.** Unfolding a fan-in-`f` DAG of depth `d` into
-  a tree duplicates a node once per consumer, blowing the node count up by a factor of at
-  most `f ^ d`, so the fan-out-1 restriction is expected to be harmless exactly where a
-  polynomial-size family stays polynomial: on the `NC` side at `i = 1` (`f = 2`,
-  `d = O(log n)`), and on the `AC` side at `i = 0` (`f = poly(n)`, `d = O(1)`).  The two
-  indices differ, so the `NC` boundary must not be carried across to `AC`.  Neither AB's
-  DAG classes nor this unfolding is formalized, so
-  **neither expectation is a theorem of this development**;
-  `Circuit.size_succ_le_two_pow` (`Basic.lean`) proves only the tree-side bound.
-* **Size measure.** `IsPolySize` is AB's "poly(n) size", measured by `Circuit.size`, which
-  diverges from Def 6.1 in both directions.  It *lowers* the count by charging `1` for a
-  `k`-ary gate where AB charges `k − 1` vertices — unbounded here, not a constant, since
-  `AC^i` is the unbounded-fan-in class — and by not counting AB's `n` input vertices.  It
-  *raises* the count by charging every literal occurrence a separate leaf, since a tree
-  has no shared input vertices and no gate reuse.
-* **Fan-in.** Bounded fan-in is the predicate `Circuit.maxFanin ≤ 2` over the one
-  unbounded-fan-in `Circuit` type, not a separate inductive type — this is the idiom the
-  LMN development already uses (`maxFanin ≤ w` as a hypothesis), and it lets
-  `toBinary : Circuit n → Circuit n` be a plain function whose four properties are
-  ordinary lemmas about one type.  `ACP.FeedForward`, the layered DAG `PPoly.lean` uses,
-  was rejected because `toBinary` recurses over a gate's child list, which it has not.
-* **Basis.** `Circuit` negates only at literals, so a `NOT` gate is free and contributes
-  no depth, where AB's Def 6.1 basis `{∧, ∨, ¬}` charges one for it.
-* **`O(log^d n)`.** Written `∃ b, ∀ n, depth ≤ b * (Nat.log 2 n + 1) ^ d`, the shape
-  `PPoly.lean` uses for size.  The `+ 1` repairs the same degeneracy: `Nat.log 2 n = 0`
-  for `n ≤ 1`, so `b * (Nat.log 2 n) ^ d` would force depth `0` at those lengths.
-* **`NC ⊆ P/poly`.** Statable — `BoolCircuit.NC` and `ACP.PPoly` are both
-  `Set (Language Bool)` — but not provable here: there is no bridge from
-  `BoolCircuit.Circuit` to `ACP.CircuitFamily` (`ch6/PLAN.md`, deferred follow-ups).
-* **Uniformity.** AB's "one can also define uniform `NC`" needs logspace and is out of
-  scope; see `ch6/NOT_FORMALIZED.md`.
+* The model's own divergences are listed in `DAGCircuit.lean`.
+* `O(log^d n)` is written `∃ b, ∀ n, depth ≤ b * (Nat.log 2 n + 1) ^ d`; the `+ 1` keeps
+  `n ≤ 1`, where `Nat.log 2 n = 0`, from forcing depth `0`.  Polynomial size is
+  `size ≤ a * (n + 1) ^ k`, as in `PPoly.lean`.
+* Uniform `NC` needs logspace machinery and is not defined.
 
 ## References
 
 * [AB09] S. Arora, B. Barak, *Computational Complexity: A Modern Approach*,
-  Cambridge University Press, 2009.
+  Cambridge University Press, 2009.  (§6.7.1, Definitions 6.24 and 6.25.)
 -/
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
 set_option autoImplicit false
 
-namespace BoolCircuit
-
-variable {n : ℕ}
-
-/-! ### Circuit families -/
-
-/-- A non-uniform family of Boolean circuits, one per input length. -/
-structure TreeCircuitFamily where
-  /-- The circuit handling inputs of length `n`. -/
-  circuit : (n : ℕ) → Circuit n
-
-namespace TreeCircuitFamily
-
-variable (C : TreeCircuitFamily)
-
-/-- The family accepts `w` when the circuit for length `w.length` outputs `true`. -/
-def Accepts (w : List Bool) : Prop :=
-  (C.circuit w.length).eval w.get = true
-
-/-- The language decided by the family. -/
-def language : Language Bool :=
-  {w | C.Accepts w}
-
-/-- Membership in the decided language, unfolded to the circuit's output. -/
-@[simp]
-theorem mem_language_iff (w : List Bool) :
-    w ∈ C.language ↔ (C.circuit w.length).eval w.get = true :=
-  Iff.rfl
-
-/-- The family has polynomial size. -/
-def IsPolySize : Prop :=
-  ∃ a k : ℕ, ∀ n, (C.circuit n).size ≤ a * (n + 1) ^ k
-
-/-- Every gate of every circuit in the family has at most two inputs. -/
-def HasFaninTwo : Prop :=
-  ∀ n, (C.circuit n).maxFanin ≤ 2
-
-/-- The family has depth `O(log^d n)`. -/
-def HasLogDepth (d : ℕ) : Prop :=
-  ∃ b : ℕ, ∀ n, (C.circuit n).depth ≤ b * (Nat.log 2 n + 1) ^ d
-
-end TreeCircuitFamily
-
-end BoolCircuit
-
-/-- `L ∈ NC^d`: a polynomial-size fan-in-2 family of depth `O(log^d n)` decides `L`.
-[AB09, Def 6.24] -/
+/-- `L ∈ NC^d`: a polynomial-size fan-in-two circuit family of depth `O(log^d n)` decides
+`L`.  [AB09, Def 6.24] -/
 def Language.InNC (d : ℕ) (L : Language Bool) : Prop :=
-  ∃ C : BoolCircuit.TreeCircuitFamily,
-    C.HasFaninTwo ∧ C.IsPolySize ∧ C.HasLogDepth d ∧ C.language = L
+  ∃ C : BoolCircuit.DAGCircuitFamily,
+    C.HasFaninTwo ∧ C.IsPolySize ∧ C.HasPolylogDepth d ∧ C.language = L
 
-/-- `L ∈ AC^d`: as `NC^d`, but gates may have unbounded fan-in.  [AB09, Def 6.25] -/
+/-- `L ∈ AC^d`: as `NC^d`, but `∧`/`∨` gates may have unbounded fan-in.
+[AB09, Def 6.25] -/
 def Language.InAC (d : ℕ) (L : Language Bool) : Prop :=
-  ∃ C : BoolCircuit.TreeCircuitFamily,
-    C.IsPolySize ∧ C.HasLogDepth d ∧ C.language = L
+  ∃ C : BoolCircuit.DAGCircuitFamily,
+    C.IsWellFormed ∧ C.IsPolySize ∧ C.HasPolylogDepth d ∧ C.language = L
 
 namespace BoolCircuit
 
@@ -151,11 +76,12 @@ def NC : Set (Language Bool) := ⋃ i ∈ Set.Ici 1, NCLevel i
 /-- `AC = ⋃_{i ≥ 0} AC^i`.  [AB09, Def 6.25] -/
 def AC : Set (Language Bool) := ⋃ i, ACLevel i
 
-/-- Membership in `NC` is membership in some `NC^i` with `i ≥ 1`. -/
+/-- A language lies in `NC` iff it lies in `NC^i` for some level `i ≥ 1`.
+[AB09, Def 6.24] -/
 theorem mem_NC_iff (L : Language Bool) : L ∈ NC ↔ ∃ i, 1 ≤ i ∧ L.InNC i := by
   simp [NC, NCLevel, Set.mem_iUnion]
 
-/-- Membership in `AC` is membership in some `AC^i`. -/
+/-- A language lies in `AC` iff it lies in `AC^i` for some level `i`.  [AB09, Def 6.25] -/
 theorem mem_AC_iff (L : Language Bool) : L ∈ AC ↔ ∃ i, L.InAC i := by
   simp [AC, ACLevel, Set.mem_iUnion]
 
@@ -163,369 +89,233 @@ end BoolCircuit
 
 /-- `NC^i ⊆ AC^i`: forget the fan-in bound.  [AB09, p. 118] -/
 theorem Language.InNC.inAC {d : ℕ} {L : Language Bool} (h : L.InNC d) : L.InAC d := by
-  obtain ⟨C, _, hs, hd, hl⟩ := h
-  exact ⟨C, hs, hd, hl⟩
+  obtain ⟨C, hF, hS, hD, hL⟩ := h
+  exact ⟨C, hF.isWellFormed, hS, hD, hL⟩
 
 namespace BoolCircuit
 
-variable {n : ℕ}
-
-/-! ### Simulating an unbounded gate by a balanced binary tree -/
-
-/-- Pair adjacent children under a gate of type `b`, halving the list. -/
-private def pairUp (b : Bool) : List (Circuit n) → List (Circuit n)
-  | [] => []
-  | [c] => [c]
-  | c₁ :: c₂ :: cs => Circuit.node b [c₁, c₂] :: pairUp b cs
-
-/-- Pairing halves the list, rounding up. -/
-private theorem length_pairUp (b : Bool) :
-    ∀ cs : List (Circuit n), (pairUp b cs).length = (cs.length + 1) / 2
-  | [] => by simp [pairUp]
-  | [_] => by simp [pairUp]
-  | _ :: _ :: cs => by
-      have := length_pairUp b cs
-      simp only [pairUp, List.length_cons] at *
-      omega
-
-/-- Pairing preserves the value of the surrounding gate. -/
-private theorem eval_node_pairUp (b : Bool) (x : Fin n → Bool) :
-    ∀ cs : List (Circuit n),
-      (Circuit.node b (pairUp b cs)).eval x = (Circuit.node b cs).eval x
-  | [] => rfl
-  | [_] => by cases b <;> simp [pairUp, Circuit.eval]
-  | c₁ :: c₂ :: cs => by
-      have := eval_node_pairUp b x cs
-      cases b <;>
-        simp only [pairUp, Circuit.eval, List.foldr_cons, List.foldr_nil] at * <;>
-        simp [this, Bool.and_assoc, Bool.or_assoc]
-
-/-- Pairing adds at most one to the depth. -/
-private theorem maxDepth_pairUp (b : Bool) :
-    ∀ cs : List (Circuit n), Circuit.maxDepth (pairUp b cs) ≤ 1 + Circuit.maxDepth cs
-  | [] => by simp [pairUp, Circuit.maxDepth_nil]
-  | [c] => by simp [pairUp]
-  | c₁ :: c₂ :: cs => by
-      have ih := maxDepth_pairUp b cs
-      have h1 : (Circuit.node b [c₁, c₂]).depth
-          = 1 + max c₁.depth (max c₂.depth 0) := by
-        rw [Circuit.depth_node, Circuit.maxDepth_cons, Circuit.maxDepth_cons, Circuit.maxDepth_nil]
-      simp only [pairUp, Circuit.maxDepth_cons, h1]
-      omega
-
-/-- Pairing does not increase the total size plus length. -/
-private theorem sumSize_pairUp (b : Bool) :
-    ∀ cs : List (Circuit n),
-      Circuit.sumSize (pairUp b cs) + (pairUp b cs).length ≤
-        Circuit.sumSize cs + cs.length
-  | [] => le_refl 0
-  | [_] => le_refl _
-  | c₁ :: c₂ :: cs => by
-      have ih := sumSize_pairUp b cs
-      have h1 : (Circuit.node b [c₁, c₂]).size = 1 + (c₁.size + (c₂.size + 0)) := by
-        rw [Circuit.size_node, Circuit.sumSize_cons, Circuit.sumSize_cons, Circuit.sumSize_nil]
-      simp only [pairUp, Circuit.sumSize_cons, h1, List.length_cons]
-      omega
-
-/-- Pairing introduces only fan-in-2 gates. -/
-private theorem maxFaninL_pairUp (b : Bool) :
-    ∀ cs : List (Circuit n), Circuit.maxFaninL (pairUp b cs) ≤ max 2 (Circuit.maxFaninL cs)
-  | [] => Nat.zero_le _
-  | [c] => by simp [pairUp, Circuit.maxFaninL_cons, Circuit.maxFaninL_nil]
-  | c₁ :: c₂ :: cs => by
-      have ih := maxFaninL_pairUp b cs
-      have h1 : (Circuit.node b [c₁, c₂]).maxFanin
-          = max 2 (max c₁.maxFanin (max c₂.maxFanin 0)) := by
-        rw [Circuit.maxFanin_node, Circuit.maxFaninL_cons, Circuit.maxFaninL_cons,
-          Circuit.maxFaninL_nil]
-        norm_num
-      simp only [pairUp, Circuit.maxFaninL_cons, h1]
-      omega
-
-/-- Repeatedly pair a child list, `k` rounds at most, into a single circuit. -/
-private def combineFuel (b : Bool) : ℕ → List (Circuit n) → Circuit n
-  | 0, cs => Circuit.node b cs
-  | _ + 1, [] => Circuit.node b []
-  | _ + 1, [c] => c
-  | k + 1, c₁ :: c₂ :: cs => combineFuel b k (pairUp b (c₁ :: c₂ :: cs))
-
-/-- Combine a child list into a balanced binary tree of gates of type `b`. -/
-private def combine (b : Bool) (cs : List (Circuit n)) : Circuit n :=
-  combineFuel b cs.length cs
-
-/-- Combining computes the same value as the unbounded gate. -/
-private theorem combineFuel_eval (b : Bool) (x : Fin n → Bool) :
-    ∀ (k : ℕ) (cs : List (Circuit n)),
-      (combineFuel b k cs).eval x = (Circuit.node b cs).eval x
-  | 0, _ => rfl
-  | _ + 1, [] => rfl
-  | _ + 1, [c] => by cases b <;> simp [combineFuel, Circuit.eval]
-  | k + 1, c₁ :: c₂ :: cs => by
-      show (combineFuel b k (pairUp b (c₁ :: c₂ :: cs))).eval x = _
-      rw [combineFuel_eval b x k, eval_node_pairUp]
-
-/-- Combining produces only fan-in-2 gates, given enough rounds. -/
-private theorem combineFuel_maxFanin (b : Bool) :
-    ∀ (k : ℕ) (cs : List (Circuit n)), cs.length ≤ k →
-      (combineFuel b k cs).maxFanin ≤ max 2 (Circuit.maxFaninL cs)
-  | 0, [], _ => by simp [combineFuel, Circuit.maxFanin_node, Circuit.maxFaninL_nil]
-  | 0, _ :: _, h => by simp at h
-  | _ + 1, [], _ => by simp [combineFuel, Circuit.maxFanin_node, Circuit.maxFaninL_nil]
-  | _ + 1, [c], _ => by
-      show c.maxFanin ≤ _
-      rw [Circuit.maxFaninL_cons, Circuit.maxFaninL_nil]
-      omega
-  | k + 1, c₁ :: c₂ :: cs, h => by
-      have hp := length_pairUp b (c₁ :: c₂ :: cs)
-      have hlen : (pairUp b (c₁ :: c₂ :: cs)).length ≤ k := by
-        simp only [List.length_cons] at h hp ⊢; omega
-      have ih := combineFuel_maxFanin b k _ hlen
-      have h2 := maxFaninL_pairUp b (c₁ :: c₂ :: cs)
-      show (combineFuel b k (pairUp b (c₁ :: c₂ :: cs))).maxFanin ≤ _
-      omega
-
-/-- Combining `m` children costs `⌈log₂ m⌉` extra levels of depth. -/
-private theorem combineFuel_depth (b : Bool) :
-    ∀ (k : ℕ) (cs : List (Circuit n)), cs.length ≤ k →
-      (combineFuel b k cs).depth ≤ Circuit.maxDepth cs + Nat.clog 2 cs.length + 1
-  | 0, [], _ => by simp [combineFuel, Circuit.depth_node, Circuit.maxDepth_nil]
-  | 0, _ :: _, h => by simp at h
-  | _ + 1, [], _ => by simp [combineFuel, Circuit.depth_node, Circuit.maxDepth_nil]
-  | _ + 1, [c], _ => by
-      show c.depth ≤ _
-      rw [Circuit.maxDepth_cons, Circuit.maxDepth_nil]
-      simp
-  | k + 1, c₁ :: c₂ :: cs, h => by
-      have hp := length_pairUp b (c₁ :: c₂ :: cs)
-      have hlen : (pairUp b (c₁ :: c₂ :: cs)).length ≤ k := by
-        simp only [List.length_cons] at h hp ⊢; omega
-      have ih := combineFuel_depth b k _ hlen
-      have h2 := maxDepth_pairUp b (c₁ :: c₂ :: cs)
-      have hclog : Nat.clog 2 (c₁ :: c₂ :: cs).length
-          = Nat.clog 2 ((pairUp b (c₁ :: c₂ :: cs)).length) + 1 := by
-        rw [hp]
-        have := Nat.clog_of_two_le (b := 2) (n := (c₁ :: c₂ :: cs).length)
-          (by norm_num) (by simp)
-        simpa using this
-      show (combineFuel b k (pairUp b (c₁ :: c₂ :: cs))).depth ≤ _
-      omega
-
-/-- Combining `m` children costs at most `m` extra gates. -/
-private theorem combineFuel_size (b : Bool) :
-    ∀ (k : ℕ) (cs : List (Circuit n)),
-      (combineFuel b k cs).size ≤ Circuit.sumSize cs + cs.length + 1
-  | 0, cs => by show (Circuit.node b cs).size ≤ _; rw [Circuit.size_node]; omega
-  | _ + 1, [] => by simp [combineFuel, Circuit.size_node, Circuit.sumSize_nil]
-  | _ + 1, [c] => by show c.size ≤ _; rw [Circuit.sumSize_cons, Circuit.sumSize_nil]; omega
-  | k + 1, c₁ :: c₂ :: cs => by
-      have ih := combineFuel_size b k (pairUp b (c₁ :: c₂ :: cs))
-      have h2 := sumSize_pairUp b (c₁ :: c₂ :: cs)
-      show (combineFuel b k (pairUp b (c₁ :: c₂ :: cs))).size ≤ _
-      omega
-
-/-- `combine` computes the unbounded gate. -/
-private theorem combine_eval (b : Bool) (cs : List (Circuit n)) (x : Fin n → Bool) :
-    (combine b cs).eval x = (Circuit.node b cs).eval x :=
-  combineFuel_eval b x _ cs
-
-/-- `combine` has fan-in 2, unless a child already had more. -/
-private theorem combine_maxFanin (b : Bool) (cs : List (Circuit n)) :
-    (combine b cs).maxFanin ≤ max 2 (Circuit.maxFaninL cs) :=
-  combineFuel_maxFanin b _ cs (le_refl _)
-
-/-- `combine` adds `⌈log₂ |cs|⌉ + 1` to the children's depth. -/
-private theorem combine_depth (b : Bool) (cs : List (Circuit n)) :
-    (combine b cs).depth ≤ Circuit.maxDepth cs + Nat.clog 2 cs.length + 1 :=
-  combineFuel_depth b _ cs (le_refl _)
-
-/-- `combine` adds `|cs| + 1` to the children's total size. -/
-private theorem combine_size (b : Bool) (cs : List (Circuit n)) :
-    (combine b cs).size ≤ Circuit.sumSize cs + cs.length + 1 :=
-  combineFuel_size b _ cs
-
-/-- Rebuild every gate of a circuit as a balanced binary tree of gates of the same
-type, so that the result has fan-in `2`.  [AB09, p. 118] -/
-def Circuit.toBinary : Circuit n → Circuit n
-  | .lit l => .lit l
-  | .node b cs => combine b (cs.map Circuit.toBinary)
-
-/-- A gate's value is unchanged when its children are replaced by equivalent ones. -/
-private theorem eval_node_map (b : Bool) (x : Fin n → Bool) (f : Circuit n → Circuit n) :
-    ∀ cs : List (Circuit n), (∀ c ∈ cs, (f c).eval x = c.eval x) →
-      (Circuit.node b (cs.map f)).eval x = (Circuit.node b cs).eval x
-  | [], _ => rfl
-  | c :: cs, h => by
-      have ih := eval_node_map b x f cs (fun d hd => h d (List.mem_cons_of_mem _ hd))
-      have hc := h c (List.mem_cons_self ..)
-      cases b <;>
-        simp only [List.map_cons, Circuit.eval, List.foldr_cons] at ih ⊢ <;>
-        rw [hc, ih]
-
-/-- A depth bound on every image element bounds the image's depth. -/
-private theorem maxDepth_map_le (f : Circuit n → Circuit n) (m : ℕ) :
-    ∀ cs : List (Circuit n), (∀ c ∈ cs, (f c).depth ≤ m) →
-      Circuit.maxDepth (cs.map f) ≤ m
-  | [], _ => Nat.zero_le _
-  | c :: cs, h => by
-      have ih := maxDepth_map_le f m cs (fun d hd => h d (List.mem_cons_of_mem _ hd))
-      have hc := h c (List.mem_cons_self ..)
-      simp only [List.map_cons, Circuit.maxDepth_cons]
-      omega
-
-/-- A fan-in bound on every image element bounds the image's fan-in. -/
-private theorem maxFaninL_map_le (f : Circuit n → Circuit n) (m : ℕ) :
-    ∀ cs : List (Circuit n), (∀ c ∈ cs, (f c).maxFanin ≤ m) →
-      Circuit.maxFaninL (cs.map f) ≤ m
-  | [], _ => Nat.zero_le _
-  | c :: cs, h => by
-      have ih := maxFaninL_map_le f m cs (fun d hd => h d (List.mem_cons_of_mem _ hd))
-      have hc := h c (List.mem_cons_self ..)
-      simp only [List.map_cons, Circuit.maxFaninL_cons]
-      omega
-
-/-- `toBinary` computes the same function. -/
-theorem toBinary_eval : ∀ (c : Circuit n) (x : Fin n → Bool), c.toBinary.eval x = c.eval x := by
-  intro c
-  induction c using Circuit.ind with
-  | hlit l => intro x; simp only [Circuit.toBinary]
-  | hnode b cs ih =>
-      intro x
-      simp only [Circuit.toBinary]
-      rw [combine_eval]
-      exact eval_node_map b x Circuit.toBinary cs (fun c hc => ih c hc x)
-
-/-- `toBinary` produces a fan-in-2 circuit. -/
-theorem toBinary_maxFanin_le : ∀ c : Circuit n, c.toBinary.maxFanin ≤ 2 := by
-  intro c
-  induction c using Circuit.ind with
-  | hlit l => simp [Circuit.toBinary, Circuit.maxFanin]
-  | hnode b cs ih =>
-      simp only [Circuit.toBinary]
-      have h1 := combine_maxFanin b (cs.map Circuit.toBinary)
-      have h2 := maxFaninL_map_le Circuit.toBinary 2 cs ih
-      omega
-
-/-- The list form of `toBinary_size_le`, in the strengthened form the induction needs. -/
-private theorem sumSize_map_toBinary :
-    ∀ cs : List (Circuit n), (∀ c ∈ cs, c.toBinary.size + 1 ≤ 3 * c.size) →
-      Circuit.sumSize (cs.map Circuit.toBinary) + cs.length ≤ 3 * Circuit.sumSize cs
-  | [], _ => by simp [Circuit.sumSize_nil]
-  | c :: cs, h => by
-      have ih := sumSize_map_toBinary cs (fun d hd => h d (List.mem_cons_of_mem _ hd))
-      have hc := h c (List.mem_cons_self ..)
-      simp only [List.map_cons, Circuit.sumSize_cons, List.length_cons]
-      omega
-
-/-- `toBinary` at most triples the size, with one unit to spare. -/
-private theorem toBinary_size_succ_le : ∀ c : Circuit n, c.toBinary.size + 1 ≤ 3 * c.size := by
-  intro c
-  induction c using Circuit.ind with
-  | hlit l => simp [Circuit.toBinary, Circuit.size]
-  | hnode b cs ih =>
-      simp only [Circuit.toBinary]
-      have h1 := combine_size b (cs.map Circuit.toBinary)
-      have h2 := sumSize_map_toBinary cs ih
-      rw [Circuit.size_node]
-      simp only [List.length_map] at h1
-      omega
-
-/-- `toBinary` at most triples the size. -/
-theorem toBinary_size_le (c : Circuit n) : c.toBinary.size ≤ 3 * c.size :=
-  le_trans (Nat.le_succ _) (toBinary_size_succ_le c)
-
-/-- `toBinary` multiplies the depth by `⌈log₂ w⌉ + 1`, where `w` bounds the fan-in. -/
-theorem toBinary_depth_le {w : ℕ} : ∀ c : Circuit n, c.maxFanin ≤ w →
-    c.toBinary.depth ≤ c.depth * (Nat.clog 2 w + 1) := by
-  intro c
-  induction c using Circuit.ind with
-  | hlit l => intro _; simp [Circuit.toBinary, Circuit.depth]
-  | hnode b cs ih =>
-      intro h
-      rw [Circuit.maxFanin_node] at h
-      have hlen : cs.length ≤ w := le_trans (le_max_left _ _) h
-      have hfan : Circuit.maxFaninL cs ≤ w := le_trans (le_max_right _ _) h
-      have hB : Circuit.maxDepth (cs.map Circuit.toBinary)
-          ≤ Circuit.maxDepth cs * (Nat.clog 2 w + 1) :=
-        maxDepth_map_le _ _ cs fun c hc =>
-          le_trans (ih c hc (le_trans (Circuit.maxFanin_le_maxFaninL hc) hfan))
-            (Nat.mul_le_mul_right _ (Circuit.depth_le_maxDepth hc))
-      have hC : Nat.clog 2 cs.length ≤ Nat.clog 2 w := Nat.clog_mono_right 2 hlen
-      simp only [Circuit.toBinary]
-      refine le_trans (combine_depth b (cs.map Circuit.toBinary)) ?_
-      rw [Circuit.depth_node, Nat.add_mul, Nat.one_mul, List.length_map]
-      omega
-
-/-- `⌈log₂⌉` of a polynomial is `O(log n)`. -/
-private theorem clog_poly_le (a k m : ℕ) :
-    Nat.clog 2 (a * (m + 1) ^ k) ≤ a + k * (Nat.log 2 m + 1) := by
-  rw [Nat.clog_le_iff_le_pow (by norm_num)]
-  calc a * (m + 1) ^ k
-      ≤ 2 ^ a * (2 ^ (Nat.log 2 m + 1)) ^ k :=
-        Nat.mul_le_mul (Nat.le_of_lt a.lt_two_pow_self)
-          (Nat.pow_le_pow_left (Nat.lt_pow_succ_log_self (by norm_num) m) k)
-    _ = 2 ^ (a + k * (Nat.log 2 m + 1)) := by
-        rw [← pow_mul, ← pow_add, Nat.mul_comm (Nat.log 2 m + 1) k]
-
-end BoolCircuit
-
-/-- `AC^i ⊆ NC^{i+1}`: rebuild every unbounded gate as a tree of fan-in-2 gates, which
-costs a factor `O(log n)` in depth because the fan-in is at most the size, hence
-`poly(n)`.  [AB09, p. 118]
-
-**Proof sketch.** Let `{Cₙ}` decide `L` with `|Cₙ| ≤ a(n+1)ᵏ` and `depth Cₙ ≤ b(log n+1)ⁱ`.
-A gate's fan-in never exceeds the circuit's size, so every gate of `Cₙ` has at most
-`w = a(n+1)ᵏ` children, and `⌈log₂ w⌉ + 1 ≤ (a+k+1)(log n + 1)`.  Replacing each gate by
-`Circuit.toBinary`'s balanced binary tree of gates of the same type multiplies the depth by
-`⌈log₂ w⌉ + 1`, so the new depth is at most `b(a+k+1)(log n+1)^{i+1}`; it at most triples
-the size, so the family is still polynomial; it has fan-in `2`; and it computes the same
-function, so it decides the same language. -/
-theorem Language.InAC.inNC_succ {d : ℕ} {L : Language Bool} (h : L.InAC d) :
-    L.InNC (d + 1) := by
-  classical
-  obtain ⟨C, ⟨a, k, hsize⟩, ⟨b, hdepth⟩, hlang⟩ := h
-  refine ⟨⟨fun n => (C.circuit n).toBinary⟩, fun n => BoolCircuit.toBinary_maxFanin_le _,
-    ⟨3 * a, k, fun n => ?_⟩, ⟨b * (a + k + 1), fun n => ?_⟩, ?_⟩
-  · calc ((C.circuit n).toBinary).size
-        ≤ 3 * (C.circuit n).size := BoolCircuit.toBinary_size_le _
-      _ ≤ 3 * (a * (n + 1) ^ k) := Nat.mul_le_mul_left 3 (hsize n)
-      _ = 3 * a * (n + 1) ^ k := (Nat.mul_assoc 3 a _).symm
-  · have hfan : (C.circuit n).maxFanin ≤ a * (n + 1) ^ k :=
-      le_trans (BoolCircuit.Circuit.maxFanin_le_size _) (hsize n)
-    have hK : Nat.clog 2 (a * (n + 1) ^ k) + 1 ≤ (a + k + 1) * (Nat.log 2 n + 1) := by
-      have hpoly := BoolCircuit.clog_poly_le a k n
-      have e1 : a ≤ a * (Nat.log 2 n + 1) := Nat.le_mul_of_pos_right a (by omega)
-      have e2 : (a + k + 1) * (Nat.log 2 n + 1)
-          = a * (Nat.log 2 n + 1) + k * (Nat.log 2 n + 1) + (Nat.log 2 n + 1) := by ring
-      omega
-    calc ((C.circuit n).toBinary).depth
-        ≤ (C.circuit n).depth * (Nat.clog 2 (a * (n + 1) ^ k) + 1) :=
-          BoolCircuit.toBinary_depth_le _ hfan
-      _ ≤ (b * (Nat.log 2 n + 1) ^ d) * ((a + k + 1) * (Nat.log 2 n + 1)) :=
-          Nat.mul_le_mul (hdepth n) hK
-      _ = b * (a + k + 1) * (Nat.log 2 n + 1) ^ (d + 1) := by ring
-  · rw [← hlang]
-    ext w
-    simp [BoolCircuit.TreeCircuitFamily.mem_language_iff, BoolCircuit.toBinary_eval]
-
-namespace BoolCircuit
-
-/-- `NC^i ⊆ AC^i`.  [AB09, p. 118] -/
+/-- `NC^i ⊆ AC^i`, as sets.  [AB09, p. 118] -/
 theorem NCLevel_subset_ACLevel (i : ℕ) : NCLevel i ⊆ ACLevel i :=
   fun _ h => Language.InNC.inAC h
 
-/-- `AC^i ⊆ NC^{i+1}`.  [AB09, p. 118] -/
+/-! ## Formula classes versus circuit classes -/
+
+/-- Compiling a polynomial-size formula family gives a polynomial-size circuit family. -/
+private theorem poly_add_input {a k n s : ℕ} (hs : s ≤ a * (n + 1) ^ k) :
+    n + s ≤ (a + 1) * (n + 1) ^ (k + 1) := by
+  have h1 : n + 1 ≤ (n + 1) ^ (k + 1) := Nat.le_self_pow (by omega) _
+  have h2 : (n + 1) ^ k ≤ (n + 1) ^ (k + 1) := Nat.pow_le_pow_right (by omega) (by omega)
+  have h3 : a * (n + 1) ^ k ≤ a * (n + 1) ^ (k + 1) := Nat.mul_le_mul_left _ h2
+  nlinarith
+
+/-- Depth grows by at most one under compilation, which `O(log^d n)` absorbs. -/
+private theorem polylog_add_one {b d L t : ℕ} (ht : t ≤ b * (L + 1) ^ d) :
+    t + 1 ≤ (b + 1) * (L + 1) ^ d := by
+  have : 1 ≤ (L + 1) ^ d := Nat.one_le_pow _ _ (by omega)
+  nlinarith
+
+/-- The circuit family compiled from a formula family. -/
+def TreeCircuitFamily.toDAG (C : TreeCircuitFamily) : DAGCircuitFamily :=
+  ⟨fun n => (C.circuit n).toDAG⟩
+
+/-- Compiling each formula of a formula family to a DAG circuit preserves the decided
+language: `C.toDAG.language = C.language`. -/
+theorem TreeCircuitFamily.language_toDAG (C : TreeCircuitFamily) :
+    C.toDAG.language = C.language := by
+  ext w
+  simp [TreeCircuitFamily.toDAG, DAGCircuitFamily.mem_language_iff,
+    TreeCircuitFamily.mem_language_iff, TreeCircuit.toDAG_eval]
+
+/-- Compiling a polynomial-size formula family gives a polynomial-size circuit family:
+size `≤ a (n + 1) ^ k` becomes `≤ (a + 1) (n + 1) ^ (k + 1)` after adding the `n` input
+vertices. -/
+theorem TreeCircuitFamily.isPolySize_toDAG {C : TreeCircuitFamily} (h : C.IsPolySize) :
+    C.toDAG.IsPolySize := by
+  obtain ⟨a, k, hs⟩ := h
+  exact ⟨a + 1, k + 1, fun n =>
+    ((C.circuit n).toDAG_size_le).trans (poly_add_input (hs n))⟩
+
+/-- Compiling a formula family of depth `O(log^d n)` gives a circuit family of depth
+`O(log^d n)`: compilation adds at most one level, absorbed into the constant. -/
+theorem TreeCircuitFamily.hasPolylogDepth_toDAG {C : TreeCircuitFamily} {d : ℕ}
+    (h : C.HasPolylogDepth d) : C.toDAG.HasPolylogDepth d := by
+  obtain ⟨b, hb⟩ := h
+  exact ⟨b + 1, fun n => ((C.circuit n).toDAG_depth_le).trans (polylog_add_one (hb n))⟩
+
+end BoolCircuit
+
+open BoolCircuit in
+/-- Every `NC^d` formula family compiles to an `NC^d` circuit family. -/
+theorem Language.InTreeNC.inNC {d : ℕ} {L : Language Bool} (h : L.InTreeNC d) :
+    L.InNC d := by
+  obtain ⟨C, hF, hS, hD, hL⟩ := h
+  exact ⟨C.toDAG, fun n => (C.circuit n).toDAG_isFaninTwo (hF n),
+    TreeCircuitFamily.isPolySize_toDAG hS, TreeCircuitFamily.hasPolylogDepth_toDAG hD,
+    by rw [TreeCircuitFamily.language_toDAG, hL]⟩
+
+open BoolCircuit in
+/-- Every `AC^d` formula family compiles to an `AC^d` circuit family. -/
+theorem Language.InTreeAC.inAC {d : ℕ} {L : Language Bool} (h : L.InTreeAC d) :
+    L.InAC d := by
+  obtain ⟨C, hS, hD, hL⟩ := h
+  exact ⟨C.toDAG, fun n => (C.circuit n).toDAG_isWellFormed,
+    TreeCircuitFamily.isPolySize_toDAG hS, TreeCircuitFamily.hasPolylogDepth_toDAG hD,
+    by rw [TreeCircuitFamily.language_toDAG, hL]⟩
+
+namespace BoolCircuit
+
+/-- The formula family unfolded from a circuit family. -/
+def DAGCircuitFamily.toTree (C : DAGCircuitFamily) : TreeCircuitFamily :=
+  ⟨fun n => (C.circuit n).toTree⟩
+
+/-- Unfolding each circuit of a well-formed circuit family into a formula preserves the
+decided language: `C.toTree.language = C.language`. -/
+theorem DAGCircuitFamily.language_toTree {C : DAGCircuitFamily} (h : C.IsWellFormed) :
+    C.toTree.language = C.language := by
+  ext w
+  simp [DAGCircuitFamily.toTree, DAGCircuitFamily.mem_language_iff,
+    TreeCircuitFamily.mem_language_iff, DAGCircuit.toTree_eval _ (h _)]
+
+/-- `3 ^ log₂ n ≤ (n + 1) ^ 2`. -/
+private theorem three_pow_log_le (n : ℕ) : 3 ^ Nat.log 2 n ≤ (n + 1) ^ 2 := by
+  have h2 : 2 ^ Nat.log 2 n ≤ n + 1 := by
+    rcases Nat.eq_zero_or_pos n with rfl | hn
+    · simp
+    · exact (Nat.pow_log_le_self 2 hn.ne').trans (Nat.le_succ n)
+  calc 3 ^ Nat.log 2 n ≤ 4 ^ Nat.log 2 n := Nat.pow_le_pow_left (by norm_num) _
+    _ = (2 ^ Nat.log 2 n) ^ 2 := by rw [← pow_mul, mul_comm, pow_mul]; norm_num
+    _ ≤ (n + 1) ^ 2 := Nat.pow_le_pow_left h2 _
+
+end BoolCircuit
+
+open BoolCircuit in
+/-- `NC¹` circuits unfold to `NC¹` formulas: depth `b (log₂ n + 1)` and fan-in two give at
+most `3 ^ (b (log₂ n + 1)) ≤ 3 ^ b (n + 1) ^ (2 b)` nodes. -/
+theorem Language.InNC.inTreeNC_one {L : Language Bool} (h : L.InNC 1) : L.InTreeNC 1 := by
+  obtain ⟨C, hF, hS, ⟨b, hb⟩, hL⟩ := h
+  have hwf := hF.isWellFormed
+  refine ⟨C.toTree, fun n => (C.circuit n).toTree_maxFanin_le (hwf n) (hF n).2,
+    ⟨3 ^ b, 2 * b, fun n => ?_⟩, ⟨b, fun n => ?_⟩, by rw [C.language_toTree hwf, hL]⟩
+  · have hd : (C.circuit n).depth ≤ b * (Nat.log 2 n + 1) := by simpa using hb n
+    calc (C.toTree.circuit n).size ≤ (2 + 1) ^ (C.circuit n).depth :=
+          (C.circuit n).toTree_size_le (hwf n) (hF n).2
+      _ ≤ 3 ^ (b * (Nat.log 2 n + 1)) := Nat.pow_le_pow_right (by norm_num) hd
+      _ = (3 * 3 ^ Nat.log 2 n) ^ b := by rw [mul_comm, pow_mul, pow_succ']
+      _ ≤ (3 * (n + 1) ^ 2) ^ b :=
+          Nat.pow_le_pow_left (Nat.mul_le_mul_left _ (three_pow_log_le n)) _
+      _ = 3 ^ b * (n + 1) ^ (2 * b) := by rw [mul_pow, ← pow_mul]
+  · exact ((C.circuit n).toTree_depth_le (hwf n)).trans (hb n)
+
+open BoolCircuit in
+/-- `AC⁰` circuits unfold to `AC⁰` formulas: constant depth `b` and fan-in at most the
+size `s` give at most `(s + 1) ^ b` nodes. -/
+theorem Language.InAC.inTreeAC_zero {L : Language Bool} (h : L.InAC 0) : L.InTreeAC 0 := by
+  obtain ⟨C, hwf, ⟨a, k, hs⟩, ⟨b, hb⟩, hL⟩ := h
+  refine ⟨C.toTree, ⟨(a + 1) ^ b, k * b, fun n => ?_⟩, ⟨b, fun n => ?_⟩,
+    by rw [C.language_toTree hwf, hL]⟩
+  · have hd : (C.circuit n).depth ≤ b := by simpa using hb n
+    calc (C.toTree.circuit n).size ≤ ((C.circuit n).size + 1) ^ (C.circuit n).depth :=
+          (C.circuit n).toTree_size_le (hwf n) ((C.circuit n).args_length_le_size (hwf n))
+      _ ≤ ((C.circuit n).size + 1) ^ b := Nat.pow_le_pow_right (by omega) hd
+      _ ≤ ((a + 1) * (n + 1) ^ k) ^ b := by
+          apply Nat.pow_le_pow_left
+          have := hs n
+          have : 1 ≤ (n + 1) ^ k := Nat.one_le_pow _ _ (by omega)
+          nlinarith
+      _ = (a + 1) ^ b * (n + 1) ^ (k * b) := by rw [mul_pow, ← pow_mul]
+  · simpa using ((C.circuit n).toTree_depth_le (hwf n)).trans (by simpa using hb n)
+
+/-- At `NC¹` the circuit and formula classes coincide. -/
+theorem Language.inNC_one_iff (L : Language Bool) : L.InNC 1 ↔ L.InTreeNC 1 :=
+  ⟨Language.InNC.inTreeNC_one, Language.InTreeNC.inNC⟩
+
+/-- At `AC⁰` the circuit and formula classes coincide. -/
+theorem Language.inAC_zero_iff (L : Language Bool) : L.InAC 0 ↔ L.InTreeAC 0 :=
+  ⟨Language.InAC.inTreeAC_zero, Language.InTreeAC.inAC⟩
+
+/-- `AC⁰ ⊆ NC¹`, through the formula classes.  [AB09, p. 118] -/
+theorem Language.InAC.inNC_one_of_zero {L : Language Bool} (h : L.InAC 0) : L.InNC 1 :=
+  (h.inTreeAC_zero.inTreeNC_succ).inNC
+
+open BoolCircuit in
+/-- `AC^i ⊆ NC^{i+1}`: binarize every gate.  A gate reads at most `size ≤ a (n + 1) ^ k`
+vertices, so each becomes a tree of depth `O(log n)`.  [AB09, p. 118]
+
+**Proof sketch.** Binarize every circuit of the `AC^d` family.  Size: the binarized
+circuit has at most `n + #gates · (size + 2) ≤ size · (size + 2)` vertices, which is
+polynomial since `size ≤ a (n + 1) ^ k`.  Depth: binarization multiplies depth by at
+most `⌈log₂ size⌉ + 1`, and `⌈log₂ (a (n + 1) ^ k)⌉ + 1 ≤ (a + k + 1)(log₂ n + 1)`, so
+depth `b (log₂ n + 1) ^ d` becomes `O((log₂ n + 1) ^ (d + 1))`.  Binarization preserves
+the Boolean function, so the language is unchanged. -/
+theorem Language.InAC.inNC_succ {d : ℕ} {L : Language Bool} (h : L.InAC d) :
+    L.InNC (d + 1) := by
+  obtain ⟨C, hwf, ⟨a, k, hs⟩, ⟨b, hb⟩, hL⟩ := h
+  refine ⟨⟨fun n => (C.circuit n).binarize (hwf n)⟩, fun n => (C.circuit n).binarize_isFaninTwo (hwf n),
+    ⟨a * (a + 2), 2 * k, fun n => ?_⟩, ⟨b * (a + k + 1), fun n => ?_⟩, ?_⟩
+  · have h1 := (C.circuit n).binarize_size_le (hwf n)
+    have hS := hs n
+    have hG : (C.circuit n).gates.length ≤ (C.circuit n).size := by
+      simp [DAGCircuit.size]
+    have hn : n ≤ (C.circuit n).size := by simp [DAGCircuit.size]
+    have hp : 1 ≤ (n + 1) ^ k := Nat.one_le_pow _ _ (by omega)
+    calc ((C.circuit n).binarize (hwf n)).size
+        ≤ n + (C.circuit n).gates.length * ((C.circuit n).size + 2) := h1
+      _ ≤ (C.circuit n).size * ((C.circuit n).size + 2) := by
+          have hSdef : (C.circuit n).size = n + (C.circuit n).gates.length := rfl
+          rw [hSdef]; nlinarith
+      _ ≤ (a * (n + 1) ^ k) * (a * (n + 1) ^ k + 2) := Nat.mul_le_mul hS (by omega)
+      _ ≤ (a * (n + 1) ^ k) * ((a + 2) * (n + 1) ^ k) := by
+          apply Nat.mul_le_mul_left; nlinarith
+      _ = a * (a + 2) * (n + 1) ^ (2 * k) := by ring
+  · have hK : Nat.clog 2 (C.circuit n).size + 1 ≤ (a + k + 1) * (Nat.log 2 n + 1) := by
+      have hc : Nat.clog 2 (C.circuit n).size ≤ Nat.clog 2 (a * (n + 1) ^ k) :=
+        Nat.clog_mono_right _ (hs n)
+      have hpoly := BoolCircuit.clog_poly_le a k n
+      have e2 : (a + k + 1) * (Nat.log 2 n + 1)
+          = a * (Nat.log 2 n + 1) + k * (Nat.log 2 n + 1) + (Nat.log 2 n + 1) := by ring
+      have e1 : a ≤ a * (Nat.log 2 n + 1) := Nat.le_mul_of_pos_right a (by omega)
+      omega
+    calc ((C.circuit n).binarize (hwf n)).depth
+        ≤ (Nat.clog 2 (C.circuit n).size + 1) * (C.circuit n).depth :=
+          (C.circuit n).binarize_depth_le _
+      _ ≤ ((a + k + 1) * (Nat.log 2 n + 1)) * (b * (Nat.log 2 n + 1) ^ d) :=
+          Nat.mul_le_mul hK (hb n)
+      _ = b * (a + k + 1) * (Nat.log 2 n + 1) ^ (d + 1) := by ring
+  · rw [← hL]; ext w
+    simp [DAGCircuitFamily.mem_language_iff, DAGCircuit.binarize_eval]
+
+namespace BoolCircuit
+
+/-- `AC^i ⊆ NC^{i+1}`, as sets.  [AB09, p. 118] -/
 theorem ACLevel_subset_NCLevel_succ (i : ℕ) : ACLevel i ⊆ NCLevel (i + 1) :=
   fun _ h => Language.InAC.inNC_succ h
 
-/-- The two inclusions collapse the hierarchies: `NC = AC`, a corollary of
-[AB09, p. 118], which states the inclusions only. -/
+/-- `NC = AC`.  [AB09, p. 118] -/
 theorem NC_eq_AC : NC = AC := by
   ext L
   rw [mem_NC_iff, mem_AC_iff]
   constructor
-  · rintro ⟨i, _, hi⟩
-    exact ⟨i, hi.inAC⟩
-  · rintro ⟨i, hi⟩
-    exact ⟨i + 1, Nat.le_add_left 1 i, hi.inNC_succ⟩
+  · rintro ⟨i, -, h⟩; exact ⟨i, h.inAC⟩
+  · rintro ⟨i, h⟩; exact ⟨i + 1, by omega, h.inNC_succ⟩
+
+end BoolCircuit
+
+/-- `NC^d ⊆ P/poly`: an `NC` family is a polynomial-size fan-in-two family.
+[AB09, §6.7.1] -/
+theorem Language.InNC.inPPoly {d : ℕ} {L : Language Bool} (h : L.InNC d) : L.InPPoly := by
+  obtain ⟨C, hF, hS, -, hL⟩ := h
+  exact (Language.inPPoly_iff L).mpr ⟨C, hF, hS, hL⟩
+
+/-- `AC^d ⊆ P/poly`, through `AC^d ⊆ NC^{d+1}`. -/
+theorem Language.InAC.inPPoly {d : ℕ} {L : Language Bool} (h : L.InAC d) : L.InPPoly :=
+  h.inNC_succ.inPPoly
+
+namespace BoolCircuit
+
+/-- `NC ⊆ P/poly`.  [AB09, §6.7.1] -/
+theorem NC_subset_PPoly : NC ⊆ PPoly := by
+  intro L hL
+  obtain ⟨i, -, h⟩ := (mem_NC_iff L).mp hL
+  exact h.inPPoly
 
 end BoolCircuit

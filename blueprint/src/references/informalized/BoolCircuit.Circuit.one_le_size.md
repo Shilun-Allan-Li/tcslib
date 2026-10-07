@@ -1,5 +1,5 @@
 <!-- generated-by: proofmatch informalization (uncited) -->
-<!-- lean-source: TCSlib/BooleanAnalysis/RazborovSmolensky/FeedForwardCircuit.lean :: Circuit.one_le_size -->
+<!-- lean-source: TCSlib/Complexity/CircuitComplexity/Basic.lean :: Circuit.one_le_size -->
 <!-- origin: no source citation; informalized directly from the Lean proof -->
 
 # Every circuit has at least one node
@@ -15,6 +15,6 @@ all nodes, being `1` on a literal leaf and `1 + Σ children sizes` on a gate.
 Because both branches only need the leading `1`, no induction over the child list is
 required.
 
-**Remark.** Stated with `_root_.` so it lands in the `BoolCircuit` namespace even though it
-is declared inside `ACP`; it exists purely to feed `Nat.le_mul_of_pos_left` in
+**Remark.** Declared in `CircuitComplexity/Basic.lean` inside the `BoolCircuit`
+namespace; it exists purely to feed `Nat.le_mul_of_pos_left` in
 `Circuit.toFeedForward_size_le`.

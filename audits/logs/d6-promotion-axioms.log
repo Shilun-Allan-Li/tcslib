@@ -1,0 +1,16 @@
+D6 promotion: axiom attestation
+HEAD: eba664a289bf60772f0f5e227ed0014abc185cf7 + working-tree D6 edits
+UTC: 2026-10-05T05:57:22Z
+--- promoted lemmas:
+ROOTS Turing.MultiTapeTM.timed_input_bound: []
+AXIOMS Turing.MultiTapeTM.timed_input_bound: [propext, Quot.sound, Classical.choice]
+ROOTS Turing.FinTM.timed_rewind: []
+AXIOMS Turing.FinTM.timed_rewind: [propext, Quot.sound, Classical.choice]
+D6 PROMOTION AUDIT PASS: both promoted lemmas admission-free, standard triple only.
+lean exit: 0
+--- epoch-2 closure regression program:
+ROOTS Turing.FinTM.computesFunInTime_splitSolve: []
+ROOTS Turing.capture_run: []
+ROOTS Complexity.EXP_subset_NEXP: [Complexity.EXP_subset_NEXP]
+B2 CLOSURE AUDIT PASS: all ten epoch-2 targets admission-free; Chapter-1 and library regressions unchanged; E3 statement layer at its own roots.
+lean exit: 0

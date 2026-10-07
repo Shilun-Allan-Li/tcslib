@@ -1,5 +1,5 @@
 import TCSlib.Complexity.CircuitComplexity.Formulas
-import TCSlib.Complexity.CircuitComplexity.DecisionTree
+import TCSlib.BooleanAnalysis.DecisionTree
 import Mathlib.Algebra.Order.Ring.Star
 import Mathlib.Analysis.Normed.Ring.Lemmas
 import Mathlib.Data.Int.Star
@@ -13,7 +13,7 @@ literals/terms/DNFs, and small auxiliary lemmas used throughout the proof.
 
 open Classical
 
-namespace SwitchingLemma2
+namespace SwitchingLemma
 
 variable {n : ℕ}
 
@@ -125,7 +125,7 @@ lemma list_all_eq_false_of_mem {α : Type*} {l : List α} {p : α → Bool}
 /-! ## Key structural lemmas -/
 
 lemma fixedTerm_implies_dtDepth_zero {n : ℕ} (f : DNF n) (ρ : Restriction n)
-    (h : ∃ t ∈ f, Term.fixedBy t ρ) :
+    (h : ∃ t ∈ f.terms, Term.fixedBy t ρ) :
     dtDepth (restrictFn f.eval ρ) = 0 := by
   apply Nat.eq_zero_of_le_zero
   apply dtDepth_le_of_tree (.leaf true) 0 (le_refl 0)
@@ -140,7 +140,7 @@ lemma fixedTerm_implies_dtDepth_zero {n : ℕ} (f : DNF n) (ρ : Restriction n)
   exact fun l hl => Literal.fixedBy_eval_true l ρ (ht_fixed l hl) x
 
 lemma killedAll_implies_dtDepth_zero {n : ℕ} (f : DNF n) (ρ : Restriction n)
-    (h : ∀ t ∈ f, Term.killedBy t ρ) :
+    (h : ∀ t ∈ f.terms, Term.killedBy t ρ) :
     dtDepth (restrictFn f.eval ρ) = 0 := by
   apply Nat.eq_zero_of_le_zero
   apply dtDepth_le_of_tree (.leaf false) 0 (le_refl 0)
@@ -168,10 +168,10 @@ lemma killedBy_of_nonfree_agree {n : ℕ} (t : Term n) (ρ σ : Restriction n)
     then `t` is also the first element satisfying `¬killedBy · σ`. -/
 lemma first_clause_preserved {n : ℕ} (f : DNF n) (ρ σ : Restriction n)
     (t : Term n)
-    (hfirst : f.find? (fun t => decide (¬Term.killedBy t ρ)) = some t)
+    (hfirst : f.terms.find? (fun t => decide (¬Term.killedBy t ρ)) = some t)
     (hagree : ∀ v, ρ v ≠ none → σ v = ρ v)
     (ht_alive : ¬Term.killedBy t σ) :
-    f.find? (fun t => decide (¬Term.killedBy t σ)) = some t := by
+    f.terms.find? (fun t => decide (¬Term.killedBy t σ)) = some t := by
   rw [List.find?_eq_some_iff_append] at hfirst ⊢
   obtain ⟨hpt, prefix_, suffix_, hf_eq, hprefix⟩ := hfirst
   refine ⟨by simp [ht_alive], prefix_, suffix_, hf_eq, fun t' ht'_mem => ?_⟩
@@ -181,9 +181,10 @@ lemma first_clause_preserved {n : ℕ} (f : DNF n) (ρ σ : Restriction n)
   simp [ht'_killed_σ]
 
 /-- A term's length is at most the DNF width. -/
-lemma term_length_le_width {n : ℕ} (f : DNF n) (t : Term n) (ht : t ∈ f) :
+lemma term_length_le_width {n : ℕ} (f : DNF n) (t : Term n) (ht : t ∈ f.terms) :
     t.length ≤ f.width := by
-  unfold DNF.width Term.width
+  obtain ⟨f⟩ := f
+  unfold DNF.width Depth2.width LitList.width
   induction f with
   | nil => simp at ht
   | cons hd tl ih =>
@@ -223,4 +224,4 @@ lemma zipIdx_filter_idx_lt {α : Type*} (t : List α) (p : α × ℕ → Bool)
   obtain ⟨_, hidx, _⟩ := List.mem_zipIdx hmem
   simp at hidx; omega
 
-end SwitchingLemma2
+end SwitchingLemma

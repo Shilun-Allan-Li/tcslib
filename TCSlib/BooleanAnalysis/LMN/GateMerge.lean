@@ -6,7 +6,7 @@ import TCSlib.BooleanAnalysis.LMN.CircuitReindex
 
 Infrastructure for merging two gate arrays indexed by `Fin m₁` and `Fin m₂`
 into one indexed by `Fin (m₁ + m₂)`, together with lemmas showing
-that `Circuit.reidx` correctly reroutes evaluation through the merged array.
+that `TreeCircuit.reidx` correctly reroutes evaluation through the merged array.
 -/
 
 open BoolCircuit
@@ -41,16 +41,16 @@ lemma mergeGates_natAdd {α : Type*} {m₁ m₂ : ℕ}
   simp [this]
 
 /-- Reidx into the left half + mergeGates = original evaluation. -/
-lemma reidx_eval_mergeGates_left {m₁ m₂ : ℕ} (c : Circuit m₁)
+lemma reidx_eval_mergeGates_left {m₁ m₂ : ℕ} (c : TreeCircuit m₁)
     (g₁ : Fin m₁ → Bool) (g₂ : Fin m₂ → Bool) :
-    (Circuit.reidx c (Fin.castAdd m₂)).eval (mergeGates g₁ g₂) = c.eval g₁ := by
-  rw [Circuit.reidx_eval]; congr 1; ext i; simp
+    (TreeCircuit.reidx c (Fin.castAdd m₂)).eval (mergeGates g₁ g₂) = c.eval g₁ := by
+  rw [TreeCircuit.reidx_eval]; congr 1; ext i; simp
 
 /-- Reidx into the right half + mergeGates = original evaluation. -/
-lemma reidx_eval_mergeGates_right {m₁ m₂ : ℕ} (c : Circuit m₂)
+lemma reidx_eval_mergeGates_right {m₁ m₂ : ℕ} (c : TreeCircuit m₂)
     (g₁ : Fin m₁ → Bool) (g₂ : Fin m₂ → Bool) :
-    (Circuit.reidx c (Fin.natAdd m₁)).eval (mergeGates g₁ g₂) = c.eval g₂ := by
-  rw [Circuit.reidx_eval]; congr 1; ext i; simp
+    (TreeCircuit.reidx c (Fin.natAdd m₁)).eval (mergeGates g₁ g₂) = c.eval g₂ := by
+  rw [TreeCircuit.reidx_eval]; congr 1; ext i; simp
 
 /-- Width preservation for merged gates (left part). -/
 lemma mergeGates_width_left {m₁ m₂ : ℕ}
@@ -77,19 +77,19 @@ lemma mergeGates_width {m₁ m₂ : ℕ}
 /-- Var injectivity for all merged gates. -/
 lemma mergeGates_varInj {m₁ m₂ : ℕ}
     (g₁ : Fin m₁ → DNF n) (g₂ : Fin m₂ → DNF n)
-    (h₁ : ∀ k, ∀ t ∈ g₁ k, ∀ l₁ ∈ t, ∀ l₂ ∈ t, l₁.var = l₂.var → l₁ = l₂)
-    (h₂ : ∀ k, ∀ t ∈ g₂ k, ∀ l₁ ∈ t, ∀ l₂ ∈ t, l₁.var = l₂.var → l₁ = l₂)
+    (h₁ : ∀ k, ∀ t ∈ (g₁ k).terms, ∀ l₁ ∈ t, ∀ l₂ ∈ t, l₁.var = l₂.var → l₁ = l₂)
+    (h₂ : ∀ k, ∀ t ∈ (g₂ k).terms, ∀ l₁ ∈ t, ∀ l₂ ∈ t, l₁.var = l₂.var → l₁ = l₂)
     (k : Fin (m₁ + m₂)) :
-    ∀ t ∈ mergeGates g₁ g₂ k, ∀ l₁ ∈ t, ∀ l₂ ∈ t, l₁.var = l₂.var → l₁ = l₂ := by
+    ∀ t ∈ (mergeGates g₁ g₂ k).terms, ∀ l₁ ∈ t, ∀ l₂ ∈ t, l₁.var = l₂.var → l₁ = l₂ := by
   unfold mergeGates; split <;> [exact h₁ _; exact h₂ _]
 
 /-- Nodup for all merged gates. -/
 lemma mergeGates_nodup {m₁ m₂ : ℕ}
     (g₁ : Fin m₁ → DNF n) (g₂ : Fin m₂ → DNF n)
-    (h₁ : ∀ k, ∀ t ∈ g₁ k, t.Nodup)
-    (h₂ : ∀ k, ∀ t ∈ g₂ k, t.Nodup)
+    (h₁ : ∀ k, ∀ t ∈ (g₁ k).terms, t.Nodup)
+    (h₂ : ∀ k, ∀ t ∈ (g₂ k).terms, t.Nodup)
     (k : Fin (m₁ + m₂)) :
-    ∀ t ∈ mergeGates g₁ g₂ k, t.Nodup := by
+    ∀ t ∈ (mergeGates g₁ g₂ k).terms, t.Nodup := by
   unfold mergeGates; split <;> [exact h₁ _; exact h₂ _]
 
 end LMN

@@ -3,7 +3,7 @@ Copyright (c) 2026 Yichuan Wang. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Yichuan Wang
 -/
-import TCSlib.BooleanAnalysis.RazborovSmolensky.FeedForwardCircuit
+import TCSlib.Complexity.CircuitComplexity.LayeredCircuit
 import Mathlib.Algebra.Field.ZMod
 import Mathlib.Algebra.MvPolynomial.CommRing
 import Mathlib.Algebra.MvPolynomial.Degrees
@@ -17,17 +17,11 @@ import Mathlib.Logic.Equiv.Basic
 open Finset
 open scoped BigOperators
 
-namespace ACP
+namespace RazborovSmolensky
 
-open FeedForward
+open BoolCircuit BoolCircuit.LayeredCircuit
 
 variable (p : ℕ) [Fact (Nat.Prime p)]
-
-/-- The plain `AC₀` gate set: identity, NOT, and unbounded AND. -/
-def AC_GateOps : Set (GateOp (Fin 2)) :=
-  {GateOp.id (Fin 2),
-   ⟨Fin 1, fun x ↦ 1 - x 0⟩} ∪
-  ⋃ n, {⟨Fin n, fun x ↦ ∏ i, x i⟩}
 
 /-- Count tuples satisfying a pointwise predicate. -/
 lemma tuple_fail_count {ι : Type} [Fintype ι] [DecidableEq ι]
@@ -117,7 +111,7 @@ def modGateOp (width : ℕ) : GateOp (Fin 2) where
 
 /-- `AC⁰[p]` gates: identity, NOT, unbounded AND, and unbounded `MOD p`. -/
 def ACp_GateOps : Set (GateOp (Fin 2)) :=
-  AC_GateOps ∪ ⋃ n, {modGateOp p n}
+  stdGateOps ∪ ⋃ n, {modGateOp p n}
 
 /-- Randomized OR-approximation over `ZMod p`. -/
 noncomputable def approxOr {vars width ℓ : ℕ}
@@ -588,7 +582,7 @@ lemma ACp_GateOps_cases {op : GateOp (Fin 2)} (h : op ∈ ACp_GateOps p) :
     (∃ n, op = ⟨Fin n, fun x ↦ ∏ i, x i⟩) ∨
     (∃ n, op = modGateOp p n) := by
   unfold ACp_GateOps at h
-  unfold AC_GateOps at h
+  unfold stdGateOps at h
   rcases h with h | h
   · rcases h with h | h
     · simp [GateOp.id] at h
@@ -839,4 +833,4 @@ lemma exists_poly_for_gate {n ℓ : ℕ}
         simp
 
 
-end ACP
+end RazborovSmolensky

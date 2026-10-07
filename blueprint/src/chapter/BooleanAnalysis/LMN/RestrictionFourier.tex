@@ -18,7 +18,7 @@ for the set $J$ of free coordinates.
 \lean{RestrictionFourier.restrictBF_boolToSign}
 \label{RestrictionFourier.restrictBF_boolToSign}
 \leanok
-\uses{BooleanAnalysis.boolToSign, SwitchingLemma2.Restriction, SwitchingLemma2.restrictFn}
+\uses{BooleanAnalysis.boolToSign, SwitchingLemma.Restriction, SwitchingLemma.restrictFn}
 \difficulty{1}
 Write $\sigma\colon\{0,1\}\to\{-1,1\}$ for the sign encoding, $\sigma(0)=1$ and
 $\sigma(1)=-1$, and for a function $g$ on the cube (Boolean- or real-valued) let
@@ -37,7 +37,7 @@ f)_\rho=\sigma\circ f_\rho$, so that for every point $x$,
 \lean{RestrictionFourier.mem_freeVars}
 \label{RestrictionFourier.mem_freeVars}
 \leanok
-\uses{SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.freeVars}
+\uses{SwitchingLemma.Restriction, SwitchingLemma.Restriction.freeVars}
 \difficulty{1}
 Let $\rho : \mathrm{Fin}\,n \to \mathrm{Option}\,\mathrm{Bool}$ be a restriction on $n$
 variables, and let $i \in \mathrm{Fin}\,n$ be a coordinate. Then $i$ belongs to the set
@@ -49,7 +49,7 @@ $\rho$ leaves the coordinate $i$ free rather than fixing it to a Boolean value.
 \lean{RestrictionFourier.chiS_extend}
 \label{RestrictionFourier.chiS_extend}
 \leanok
-\uses{BooleanAnalysis.BoolCube, BooleanAnalysis.chiS, RestrictionFourier.mem_freeVars, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.extend, SwitchingLemma2.Restriction.freeVars}
+\uses{BooleanAnalysis.BoolCube, BooleanAnalysis.chiS, RestrictionFourier.mem_freeVars, SwitchingLemma.Restriction, SwitchingLemma.Restriction.extend, SwitchingLemma.Restriction.freeVars}
 \difficulty{3}
 Let $\rho$ be a restriction on $n$ variables, let $J\subseteq[n]$ be its set of free
 coordinates, and let $U\subseteq[n]$ and $x\in\{0,1\}^n$ be arbitrary. Write $\hat x$
@@ -108,23 +108,23 @@ times a constant $\pm1$ sign contributed by the fixed coordinates of $U$.
   {boolean-ch03-spectral-learning-restrictions}
   {pdf-20e15a3d3d5e-p006-b001}
 \proofstep
-  {SwitchingLemma2.Restriction}
+  {SwitchingLemma.Restriction}
   {context}
   {boolean-ch03-spectral-learning-restrictions}
   {pdf-20e15a3d3d5e-p007-b001,
     pdf-20e15a3d3d5e-p006-b005}
 \proofstep
-  {SwitchingLemma2.Restriction.freeVars}
+  {SwitchingLemma.Restriction.freeVars}
   {context}
   {boolean-ch03-spectral-learning-restrictions}
   {pdf-20e15a3d3d5e-p007-b001}
 \proofstep
-  {SwitchingLemma2.Restriction.extend}
+  {SwitchingLemma.Restriction.extend}
   {context}
   {boolean-ch03-spectral-learning-restrictions}
   {pdf-20e15a3d3d5e-p007-b001}
 \proofstep
-  {SwitchingLemma2.Literal.fixedBy}
+  {SwitchingLemma.Literal.fixedBy}
   {context}
   {boolean-ch03-spectral-learning-restrictions}
   {pdf-20e15a3d3d5e-p007-b001}
@@ -343,7 +343,7 @@ times a constant $\pm1$ sign contributed by the fixed coordinates of $U$.
   {context}
   {boolean-ch03-spectral-learning-restrictions}
   {pdf-20e15a3d3d5e-p008-b003}
-\uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.chiS, BooleanAnalysis.fourierCoeff, BooleanAnalysis.walsh_expansion, DecisionTree.fourierCoeff_sum_chiS, RestrictionFourier.chiS_extend, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.extend, SwitchingLemma2.Restriction.freeVars}
+\uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.chiS, BooleanAnalysis.fourierCoeff, BooleanAnalysis.walsh_expansion, DecisionTree.fourierCoeff_sum_chiS, RestrictionFourier.chiS_extend, SwitchingLemma.Restriction, SwitchingLemma.Restriction.extend, SwitchingLemma.Restriction.freeVars}
 \difficulty{5}
 Let $f : \{0,1\}^n \to \bbr$, and let $\rho$ be a restriction on $n$ variables; write $J
 \subseteq [n]$ for its set of free coordinates, namely the coordinates left unset by
@@ -365,7 +365,7 @@ O'Donnell's Corollary 3.22.
 \lean{RestrictionFourier.sum_restriction_prod}
 \label{RestrictionFourier.sum_restriction_prod}
 \leanok
-\uses{SwitchingLemma2.Restriction}
+\uses{SwitchingLemma.Restriction}
 \difficulty{2}
 Fix $n \in \bbn$, and for each coordinate $i \in \{1,\dots,n\}$ let $h_i :
 \{\mathtt{true},\mathtt{false},\ast\} \to \bbr$ be a real-valued weight assigned to the
@@ -384,7 +384,7 @@ per-coordinate states.
 \lean{RestrictionFourier.sum_bernoulli_prod}
 \label{RestrictionFourier.sum_bernoulli_prod}
 \leanok
-\uses{LMN.bernoulliRestrWeight_eq_prod, LMN.varWeight, RestrictionFourier.sum_restriction_prod, SwitchingLemma2.Restriction, SwitchingLemma2.bernoulliRestrWeight}
+\uses{LMN.bernoulliRestrWeight_eq_prod, LMN.varWeight, RestrictionFourier.sum_restriction_prod, SwitchingLemma.Restriction, SwitchingLemma.bernoulliRestrWeight}
 \difficulty{3}
 Fix $n \in \bbn$ and a real parameter $p$, and recall that a restriction on $n$
 variables is a map $\rho : \mathrm{Fin}\,n \to \mathrm{Option}\,\mathrm{Bool}$ assigning
@@ -419,7 +419,7 @@ the sign contributed on $U \setminus S$.
 \lean{RestrictionFourier.indicator_signProd_eq_prod}
 \label{RestrictionFourier.indicator_signProd_eq_prod}
 \leanok
-\uses{BooleanAnalysis.boolToSign, RestrictionFourier.localFactor, RestrictionFourier.mem_freeVars, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.freeVars}
+\uses{BooleanAnalysis.boolToSign, RestrictionFourier.localFactor, RestrictionFourier.mem_freeVars, SwitchingLemma.Restriction, SwitchingLemma.Restriction.freeVars}
 \difficulty{5}
 Let $U, S \subseteq [n]$ with $S \subseteq U$, and let $\rho$ be a restriction on $n$
 variables whose free-variable set is $J$. Write $\sigma(b) \in \{\pm1\}$ for the sign
@@ -503,7 +503,7 @@ all $n$ coordinates equals
   pdf-fc447f326910-p007-b001
 }
 \statementsource{boolean-ch03-spectral-learning-restrictions}{pdf-20e15a3d3d5e-p009-b001}
-\uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.fourierCoeff, RestrictionFourier.fourierCoeff_restrictBF, RestrictionFourier.indicator_signProd_eq_prod, RestrictionFourier.sum_bernoulli_prod, RestrictionFourier.sum_varWeight_localFactor, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.freeVars, SwitchingLemma2.bernoulliRestrWeight}
+\uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.fourierCoeff, RestrictionFourier.fourierCoeff_restrictBF, RestrictionFourier.indicator_signProd_eq_prod, RestrictionFourier.sum_bernoulli_prod, RestrictionFourier.sum_varWeight_localFactor, SwitchingLemma.Restriction, SwitchingLemma.Restriction.freeVars, SwitchingLemma.bernoulliRestrWeight}
 \difficulty{5}
 Let $f:\{0,1\}^n\to\bbr$ be a Boolean function, let $S\subseteq[n]$ be a frequency set,
 and let $p\in\bbr$. For a restriction $\rho$ on $n$ variables, write $f_\rho$ for the
@@ -528,7 +528,7 @@ restriction, and the left-hand side is the expectation $\E_\rho[\widehat{f_\rho}
   pdf-fc447f326910-p007-b001
 }
 \statementsource{boolean-ch03-spectral-learning-restrictions}{pdf-20e15a3d3d5e-p009-b001}
-\uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.fourierCoeff, RestrictionFourier.fourierCoeff_restrictBF, RestrictionFourier.indicator_signProd_eq_prod, RestrictionFourier.localFactor, RestrictionFourier.prod_if_subset, RestrictionFourier.sum_bernoulli_prod, RestrictionFourier.sum_varWeight_localFactor_mul, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.freeVars, SwitchingLemma2.bernoulliRestrWeight}
+\uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.fourierCoeff, RestrictionFourier.fourierCoeff_restrictBF, RestrictionFourier.indicator_signProd_eq_prod, RestrictionFourier.localFactor, RestrictionFourier.prod_if_subset, RestrictionFourier.sum_bernoulli_prod, RestrictionFourier.sum_varWeight_localFactor_mul, SwitchingLemma.Restriction, SwitchingLemma.Restriction.freeVars, SwitchingLemma.bernoulliRestrWeight}
 \difficulty{6}
 Fix a dimension $n$, a real number $p$, a Boolean function $f:\{0,1\}^n\to\bbr$, and a
 set $S\subseteq[n]$. For a restriction $\rho$ on the $n$ variables, let $k(\rho)$ denote
@@ -555,7 +555,7 @@ random restriction.
 \lean{RestrictionFourier.signProd_sq}
 \label{RestrictionFourier.signProd_sq}
 \leanok
-\uses{BooleanAnalysis.boolToSign_sq, SwitchingLemma2.Restriction}
+\uses{BooleanAnalysis.boolToSign_sq, SwitchingLemma.Restriction}
 \difficulty{2}
 Let $\rho$ be a restriction on $n$ variables and let $T \subseteq [n]$, and write
 $s(\rho, T) \in \bbr$ for the sign product of the bits that $\rho$ fixes on $T$, that
@@ -567,7 +567,7 @@ product of values in $\{-1, 1\}$, it satisfies \[ s(\rho, T)^2 = 1. \]
 \lean{RestrictionFourier.bernoulliRestrProb_inter_freeVars}
 \label{RestrictionFourier.bernoulliRestrProb_inter_freeVars}
 \leanok
-\uses{BooleanAnalysis.chiS, BooleanAnalysis.fourierCoeff, BooleanAnalysis.fourier_coeff_chi, RestrictionFourier.expectation_fourierCoeff_sq_restrictBF, RestrictionFourier.fourierCoeff_restrictBF, RestrictionFourier.signProd_sq, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.freeVars, SwitchingLemma2.bernoulliRestrProb}
+\uses{BooleanAnalysis.chiS, BooleanAnalysis.fourierCoeff, BooleanAnalysis.fourier_coeff_chi, RestrictionFourier.expectation_fourierCoeff_sq_restrictBF, RestrictionFourier.fourierCoeff_restrictBF, RestrictionFourier.signProd_sq, SwitchingLemma.Restriction, SwitchingLemma.Restriction.freeVars, SwitchingLemma.bernoulliRestrProb}
 \difficulty{5}
 Fix $n$, a real parameter $p$, and two subsets $U, S \subseteq [n]$. Let $\rho$ be a
 Bernoulli($p$) random restriction on $n$ variables, meaning each restriction is drawn
@@ -593,7 +593,7 @@ exactly those of $S$ is
 \label{RestrictionFourier.restrictBF}
 \leanok
 \statementsource{boolean-ch04-dnf-switching-lmn}{pdf-fc447f326910-p006-b004}
-\uses{BooleanAnalysis.BooleanFunc, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.extend}
+\uses{BooleanAnalysis.BooleanFunc, SwitchingLemma.Restriction, SwitchingLemma.Restriction.extend}
 Given $f : \{0,1\}^n \to \bbr$ and a restriction $\rho$, the restricted function
 $f_\rho = \mathrm{restrictBF}\,f\,\rho$ is defined by
 \[
@@ -607,7 +607,7 @@ the real-valued analogue of $\mathrm{restrictFn}$.
 \lean{RestrictionFourier.signProd}
 \label{RestrictionFourier.signProd}
 \leanok
-\uses{BooleanAnalysis.boolToSign, SwitchingLemma2.Restriction}
+\uses{BooleanAnalysis.boolToSign, SwitchingLemma.Restriction}
 For a restriction $\rho$ and a set $T \subseteq [n]$,
 \[
   \mathrm{signProd}\,\rho\,T \;=\; \prod_{i \in T} \mathrm{boolToSign}\bigl((\rho\,i).\mathrm{getD}\ \mathtt{false}\bigr)

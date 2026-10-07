@@ -1,0 +1,22 @@
+ch1 bridge export + TMSAT discharge: axiom attestation
+UTC: 2026-10-03T07:13:19Z
+'Turing.timed_universal_concrete' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.timed_universal_quantitative' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.timed_universal' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.universal' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.universal_quadratic' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.exists_effectiveMachineCode' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.HALT_not_computable' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.TMSAT_mem_NP' depends on axioms: [propext, sorryAx, Classical.choice, Quot.sound]
+'Complexity.TMSAT_NPHard' depends on axioms: [propext, sorryAx, Classical.choice, Quot.sound]
+'Complexity.TMSAT_NPComplete' depends on axioms: [propext, sorryAx, Classical.choice, Quot.sound]
+ROOTS Turing.timed_universal_concrete: []
+ROOTS Complexity.timed_universal_quantitative: []
+ROOTS Turing.timed_universal: []
+ROOTS Complexity.TMSAT_mem_NP: [Complexity.TMSAT_mem_NP]
+ROOTS Complexity.TMSAT_NPHard: [Complexity.TMSAT_NPHard]
+ROOTS Complexity.TMSAT_NPComplete: [Complexity.TMSAT_NPHard, Complexity.TMSAT_mem_NP]
+ROOTS Complexity.NP_subset_EXP: [Complexity.enumMachine_contracts]
+ROOTS Complexity.HALT_NPHard: [Complexity.enumMachine_contracts]
+BRIDGE AUDIT PASS: the export and the discharged bridge are admission-free; TMSAT roots shrank exactly to their D-sites; headline and epoch-2 regressions unchanged.
+lean exit: 0

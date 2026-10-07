@@ -18,7 +18,7 @@ The simulation maintains two restrictions: ρ₀ follows the path directions
 
 open Classical
 
-namespace SwitchingLemma2
+namespace SwitchingLemma
 
 variable {n : ℕ}
 
@@ -69,7 +69,7 @@ where
     | 0, _, _, σ, acc => (σ, acc)
     | fuel + 1, step :: rest, ρ₀, σ, acc =>
       let path := step :: rest
-      match f.find? (fun t => decide (¬Term.killedBy t ρ₀)) with
+      match f.terms.find? (fun t => decide (¬Term.killedBy t ρ₀)) with
       | none => (σ, acc)
       | some t =>
         let freeLitsIdx := (t.zipIdx).filter (fun ⟨l, _⟩ => decide (l.var ∈ ρ₀.freeVars))
@@ -111,7 +111,7 @@ where
     | 0, σ, ρ₀, _ => (σ, ρ₀)
     | fuel + 1, σ, ρ₀, entry :: restAux =>
       let aux := entry :: restAux
-      match f.find? (fun t => decide (¬Term.killedBy t ρ₀)) with
+      match f.terms.find? (fun t => decide (¬Term.killedBy t ρ₀)) with
       | none => (σ, ρ₀)
       | some t =>
         let (σ', ρ₀', aux') := processEntries t w σ ρ₀ aux
@@ -132,4 +132,4 @@ lemma processClauseLits_path_le {n : ℕ}
       simp only [processClauseLits]
       exact le_trans (ih _ _ _) (Nat.le_succ _)
 
-end SwitchingLemma2
+end SwitchingLemma

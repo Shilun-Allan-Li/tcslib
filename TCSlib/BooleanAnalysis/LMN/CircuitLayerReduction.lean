@@ -47,7 +47,7 @@ terms telescope: `Σᵢ (sᵢ - 1 + 1) = Σᵢ sᵢ = s - 1`.
   arXiv edition, 2021, Lemma 4.28.
 -/
 
-open BoolCircuit SwitchingLemma2 SwitchingBernoulli LMN
+open BoolCircuit SwitchingLemma SwitchingBernoulli LMN
 open Classical in
 attribute [local instance] Classical.propDecidable
 noncomputable section
@@ -91,8 +91,8 @@ structure Layer2Data (n : ℕ) where
   width : ℕ
   widthBound : ∀ i, (gates i).width ≤ width
   widthPos : 0 < width
-  varInj : ∀ i, ∀ t ∈ gates i, ∀ l₁ ∈ t, ∀ l₂ ∈ t, l₁.var = l₂.var → l₁ = l₂
-  nodup : ∀ i, ∀ t ∈ gates i, t.Nodup
+  varInj : ∀ i, ∀ t ∈ (gates i).terms, ∀ l₁ ∈ t, ∀ l₂ ∈ t, l₁.var = l₂.var → l₁ = l₂
+  nodup : ∀ i, ∀ t ∈ (gates i).terms, t.Nodup
 
 theorem normalform_one_step_switching (data : Layer2Data n) (l : ℕ) (hn : 0 < n)
     (p : ℝ) (hp_pos : 0 < p) (hp_le : p ≤ 1 / (40 * ↑data.width)) (hp1 : p ≤ 1) :
@@ -164,7 +164,7 @@ lemma bernoulliRestrProb_congr_fn' {f g : (Fin n → Bool) → Bool}
 /-- Base case: depth-2 circuit → switching lemma bound. -/
 lemma depth2_circuit_switching_bound
     (f : (Fin n → Bool) → Bool) (s w : ℕ) (hw_pos : 0 < w) (hn : 0 < n)
-    (hc : ∃ c : Circuit n, c.depth ≤ 2 ∧ c.size ≤ s ∧ Circuit.maxFanin c ≤ w ∧
+    (hc : ∃ c : TreeCircuit n, c.depth ≤ 2 ∧ c.size ≤ s ∧ TreeCircuit.maxFanin c ≤ w ∧
       ∀ x, c.eval x = f x)
     (p : ℝ) (hp_pos : 0 < p) (hp_le : p ≤ 1 / (40 * ↑w)) (hp1 : p ≤ 1) (t : ℕ) :
     bernoulliRestrProb p (fun ρ => dtDepth (restrictFn f ρ) > t) ≤
@@ -173,15 +173,15 @@ lemma depth2_circuit_switching_bound
   rw [bernoulliRestrProb_congr_fn' (fun x => (hce x).symm)]
   cases c with
   | lit l =>
-    let lit_dnf : DNF n := [[l.toLiteral]]
+    let lit_dnf : DNF n := ⟨[[l.toLiteral]]⟩
     have h_eval : ∀ x, lit_dnf.eval x = Lit.eval l x := by
       intro x; simp [lit_dnf, DNF.eval, Term.eval, Literal.eval, Lit.eval, Lit.toLiteral]
       cases l.sign <;> simp
-    have h_circ_eval : (Circuit.lit l).eval = Lit.eval l := by ext x; simp [Circuit.eval]
-    have h_rw : (Circuit.lit l).eval = lit_dnf.eval := by rw [h_circ_eval]; exact funext (fun x => (h_eval x).symm)
+    have h_circ_eval : (TreeCircuit.lit l).eval = Lit.eval l := by ext x; simp [TreeCircuit.eval]
+    have h_rw : (TreeCircuit.lit l).eval = lit_dnf.eval := by rw [h_circ_eval]; exact funext (fun x => (h_eval x).symm)
     rw [h_rw]
     apply switching_bernoulli_dtDepth_dnf_general lit_dnf w
-    · simp [lit_dnf, DNF.width, Term.width]; omega
+    · simp [lit_dnf, Depth2.width, LitList.width]; omega
     · exact hw_pos
     · exact hn
     · exact hp_pos
@@ -190,17 +190,17 @@ lemma depth2_circuit_switching_bound
   | node isAnd cs =>
     cases isAnd with
     | false =>
-      have h_eval : ∀ x, (depth2OrToDNF cs).eval x = Circuit.eval (Circuit.node false cs) x :=
+      have h_eval : ∀ x, (depth2OrToDNF cs).eval x = TreeCircuit.eval (TreeCircuit.node false cs) x :=
         depth2OrToDNF_eval cs hcd
-      rw [show Circuit.eval (Circuit.node false cs) = (depth2OrToDNF cs).eval
+      rw [show TreeCircuit.eval (TreeCircuit.node false cs) = (depth2OrToDNF cs).eval
           from funext (fun x => (h_eval x).symm)]
       exact switching_bernoulli_dtDepth_dnf_general (depth2OrToDNF cs) w
         (le_trans (depth2OrToDNF_width_le cs hcd) hcf)
         hw_pos hn p hp_pos hp_le hp1 t
     | true =>
-      have h_eval : ∀ x, CNF.eval (depth2AndToCNF cs) x = Circuit.eval (Circuit.node true cs) x :=
+      have h_eval : ∀ x, CNF.eval (depth2AndToCNF cs) x = TreeCircuit.eval (TreeCircuit.node true cs) x :=
         depth2AndToCNF_eval cs hcd
-      rw [show Circuit.eval (Circuit.node true cs) = CNF.eval (depth2AndToCNF cs)
+      rw [show TreeCircuit.eval (TreeCircuit.node true cs) = CNF.eval (depth2AndToCNF cs)
           from funext (fun x => (h_eval x).symm)]
       exact switching_bernoulli_dtDepth_cnf_general (depth2AndToCNF cs) w
         (le_trans (depth2AndToCNF_width_le cs hcd) hcf)
@@ -228,8 +228,8 @@ lemma circuit_reduction_ind_base
     (f : (Fin n → Bool) → Bool) (s w : ℕ) (l t : ℕ)
     (hs_pos : 0 < s) (hw_pos : 0 < w) (hl_pos : 0 < l)
     (hn : 0 < n)
-    (h_circuit : ∃ c : Circuit n,
-      c.depth ≤ 2 ∧ c.size ≤ s ∧ Circuit.maxFanin c ≤ w ∧ ∀ x, c.eval x = f x) :
+    (h_circuit : ∃ c : TreeCircuit n,
+      c.depth ≤ 2 ∧ c.size ≤ s ∧ TreeCircuit.maxFanin c ≤ w ∧ ∀ x, c.eval x = f x) :
     bernoulliRestrProb (composedDelta w (↑l) 2) (fun ρ => dtDepth (restrictFn f ρ) > t) ≤
     (↑s - 1) * (1 / 2 : ℝ) ^ l + (1 / 2 : ℝ) ^ t +
     (↑s - 1) * Real.exp (-(↑n / (120 * ↑w))) +
@@ -247,7 +247,7 @@ lemma circuit_reduction_ind_base
         unfold dtDepth;
         simp +decide [ Nat.find_le_iff ];
         use 1;
-        simp +decide [ Circuit.eval ];
+        simp +decide [ TreeCircuit.eval ];
         use DecisionTree.branch (‹Lit n›.idx) (DecisionTree.leaf (if ‹Lit n›.sign then false else true)) (DecisionTree.leaf (if ‹Lit n›.sign then true else false));
         split_ifs <;> simp +decide [ *, DecisionTree.eval ]; all_goals exact Nat.le_add_left _ _;
       rcases t with ( _ | t ) <;> norm_num at *;
@@ -264,27 +264,27 @@ lemma circuit_reduction_ind_base
         rw [ Finset.sum_eq_zero ] <;> norm_num;
         · exact add_nonneg ( add_nonneg ( add_nonneg ( mul_nonneg ( sub_nonneg.mpr ( Nat.one_le_cast.mpr hs_pos ) ) ( pow_nonneg ( by norm_num ) _ ) ) ( pow_nonneg ( by norm_num ) _ ) ) ( mul_nonneg ( sub_nonneg.mpr ( Nat.one_le_cast.mpr hs_pos ) ) ( Real.exp_nonneg _ ) ) ) ( mul_nonneg ( Nat.cast_nonneg _ ) ( Real.exp_nonneg _ ) );
         · grind;
-    · rcases k : ‹List ( Circuit n ) › with ( _ | ⟨ _, _ | k ⟩ ) <;> simp_all +decide [ Circuit.depth, Circuit.size, Circuit.maxFanin ];
+    · rcases k : ‹List ( TreeCircuit n ) › with ( _ | ⟨ _, _ | k ⟩ ) <;> simp_all +decide [ TreeCircuit.depth, TreeCircuit.size, TreeCircuit.maxFanin ];
       · -- Since the function is constant, its decision tree depth is 0.
         have h_const : ∀ x, f x = false := by
-          exact fun x => hc x ▸ by simp +decide [ Circuit.eval ] ;
+          exact fun x => hc x ▸ by simp +decide [ TreeCircuit.eval ] ;
         unfold bernoulliRestrProb; norm_num [ h_const ] ;
         rw [ Finset.sum_eq_zero ] <;> norm_num;
         · positivity;
         · intro x hx; rw [ show f = _ from funext h_const ] at hx; simp_all +decide [ dtDepth ] ;
           specialize hx 0 bot_le ( DecisionTree.leaf false ) ; simp_all +decide [ restrictFn ];
           exact absurd ( hx rfl ) ( by simp +decide [ DecisionTree.eval ] );
-      · cases h : ‹Circuit n› <;> simp_all +decide [ Circuit.depth, Circuit.size, Circuit.maxFanin ];
+      · cases h : ‹TreeCircuit n› <;> simp_all +decide [ TreeCircuit.depth, TreeCircuit.size, TreeCircuit.maxFanin ];
       · rename_i a b c;
-        rcases a with ( _ | _ | a ) <;> rcases b with ( _ | _ | b ) <;> simp_all +decide [ Circuit.depth, Circuit.size, Circuit.maxFanin ];
-    · cases ‹List ( Circuit n ) › <;> simp_all +decide [ Circuit.depth, Circuit.size, Circuit.maxFanin ];
+        rcases a with ( _ | _ | a ) <;> rcases b with ( _ | _ | b ) <;> simp_all +decide [ TreeCircuit.depth, TreeCircuit.size, TreeCircuit.maxFanin ];
+    · cases ‹List ( TreeCircuit n ) › <;> simp_all +decide [ TreeCircuit.depth, TreeCircuit.size, TreeCircuit.maxFanin ];
       · -- Since $f$ is a constant function, its decision tree depth is 0.
         have h_const : ∀ ρ : Restriction n, dtDepth (restrictFn f ρ) = 0 := by
           unfold restrictFn; simp +decide [ show f = _ from funext fun x => Eq.symm ( hc x ) ] ;
-          unfold dtDepth; simp +decide [ Circuit.eval ] ;
+          unfold dtDepth; simp +decide [ TreeCircuit.eval ] ;
           exact ⟨ DecisionTree.leaf true, rfl, fun _ => rfl ⟩;
         by_cases ht : t = 0 <;> simp_all +decide [ bernoulliRestrProb ]; all_goals positivity;
-      · cases ‹Circuit n› <;> simp_all +decide [ Circuit.size ];
+      · cases ‹TreeCircuit n› <;> simp_all +decide [ TreeCircuit.size ];
   · -- For s ≥ 2, use depth2_circuit_switching_bound and nlinarith to close.
     have h_bound : bernoulliRestrProb (1 / (40 * w : ℝ)) (fun ρ => dtDepth (restrictFn f ρ) > t) ≤ (1 / 2 : ℝ) ^ t + Real.exp (-(n / (120 * w))) := by
       convert depth2_circuit_switching_bound f s w hw_pos hn ⟨ c, hc.1, hc.2.1, hc.2.2.1, hc.2.2.2 ⟩ ( 1 / ( 40 * w : ℝ ) ) ( by positivity ) ( by rw [ div_le_div_iff₀ ] <;> norm_cast <;> nlinarith ) ( by rw [ div_le_iff₀ ] <;> norm_cast <;> nlinarith ) t using 1 ; ring_nf;
@@ -296,8 +296,8 @@ lemma circuit_reduction_ind_base
 Union bound over a List: Pr[∃ c ∈ cs, bad c] ≤ Σ Pr[bad c].
 -/
 lemma bernoulliRestrProb_list_union_bound (p : ℝ) (hp : 0 ≤ p) (hp1 : p ≤ 1)
-    (cs : List (Circuit n))
-    (bad : Circuit n → Restriction n → Prop)
+    (cs : List (TreeCircuit n))
+    (bad : TreeCircuit n → Restriction n → Prop)
     [inst : ∀ c, DecidablePred (bad c)] :
     bernoulliRestrProb p (fun ρ => ∃ c ∈ cs, bad c ρ) ≤
     cs.foldr (fun c acc => bernoulliRestrProb p (bad c) + acc) 0 := by
@@ -315,11 +315,11 @@ lemma circuit_reduction_ind_step
     (f : (Fin n → Bool) → Bool) (d s w : ℕ) (l t : ℕ)
     (hd3 : 3 ≤ d) (hs_pos : 0 < s) (hw_pos : 0 < w) (hl_pos : 0 < l)
     (hn : 0 < n)
-    (h_circuit : ∃ c : Circuit n,
-      c.depth ≤ d ∧ c.size ≤ s ∧ Circuit.maxFanin c ≤ w ∧ ∀ x, c.eval x = f x)
+    (h_circuit : ∃ c : TreeCircuit n,
+      c.depth ≤ d ∧ c.size ≤ s ∧ TreeCircuit.maxFanin c ≤ w ∧ ∀ x, c.eval x = f x)
     (ih : ∀ (g : (Fin n → Bool) → Bool) (s' : ℕ),
       0 < s' →
-      (∃ c : Circuit n, c.depth ≤ d - 1 ∧ c.size ≤ s' ∧ Circuit.maxFanin c ≤ w ∧ ∀ x, c.eval x = g x) →
+      (∃ c : TreeCircuit n, c.depth ≤ d - 1 ∧ c.size ≤ s' ∧ TreeCircuit.maxFanin c ≤ w ∧ ∀ x, c.eval x = g x) →
       bernoulliRestrProb (composedDelta w (↑l) (d - 1)) (fun ρ => dtDepth (restrictFn g ρ) > l) ≤
       (↑s' - 1) * (1 / 2 : ℝ) ^ l + (1 / 2 : ℝ) ^ l +
       (↑s' - 1) * Real.exp (-(↑n / (120 * ↑w))) +
@@ -330,28 +330,28 @@ lemma circuit_reduction_ind_step
     ↑s * Real.exp (-(↑n / (120 * ↑l))) := by
   obtain ⟨c, hc⟩ := h_circuit
   generalize_proofs at *; (
-  by_cases hc_lit : ∃ a, c = Circuit.lit a;
+  by_cases hc_lit : ∃ a, c = TreeCircuit.lit a;
   · obtain ⟨a, rfl⟩ := hc_lit
-    have h_depth : ∀ ρ, dtDepth (restrictFn (Circuit.eval (Circuit.lit a)) ρ) ≤ 1 := by
+    have h_depth : ∀ ρ, dtDepth (restrictFn (TreeCircuit.eval (TreeCircuit.lit a)) ρ) ≤ 1 := by
       intro ρ
-      have h_depth : dtDepth (restrictFn (Circuit.eval (Circuit.lit a)) ρ) ≤ dtDepth (Circuit.eval (Circuit.lit a)) := by
+      have h_depth : dtDepth (restrictFn (TreeCircuit.eval (TreeCircuit.lit a)) ρ) ≤ dtDepth (TreeCircuit.eval (TreeCircuit.lit a)) := by
         apply dtDepth_restrictFn_le'
       generalize_proofs at *; (
       refine le_trans h_depth ?_;
-      unfold dtDepth; simp +decide [ Circuit.eval ] ;
+      unfold dtDepth; simp +decide [ TreeCircuit.eval ] ;
       use 1, by norm_num, .branch a.idx (.leaf false) (.leaf true) |> fun T => if a.sign then T else .branch a.idx (.leaf true) (.leaf false) ; simp +decide ;
       split_ifs <;> simp +decide [ DecisionTree.depth, DecisionTree.eval ])
     generalize_proofs at *; (
     by_cases ht : t ≥ 1 <;> simp +decide at h_depth ⊢
     generalize_proofs at *; (
-    rw [ show f = Circuit.eval ( Circuit.lit a ) from funext fun x => hc.2.2.2 x ▸ rfl ] ; simp +decide [ show ∀ ρ : Restriction n, ¬ ( dtDepth ( restrictFn ( Circuit.eval ( Circuit.lit a ) ) ρ ) > t ) from fun ρ => not_lt_of_ge ( le_trans ( h_depth ρ ) ( by linarith ) ) ] ; ring_nf ; norm_num [ hs_pos, hw_pos, hl_pos, hn ] ;
+    rw [ show f = TreeCircuit.eval ( TreeCircuit.lit a ) from funext fun x => hc.2.2.2 x ▸ rfl ] ; simp +decide [ show ∀ ρ : Restriction n, ¬ ( dtDepth ( restrictFn ( TreeCircuit.eval ( TreeCircuit.lit a ) ) ρ ) > t ) from fun ρ => not_lt_of_ge ( le_trans ( h_depth ρ ) ( by linarith ) ) ] ; ring_nf ; norm_num [ hs_pos, hw_pos, hl_pos, hn ] ;
     unfold bernoulliRestrProb; norm_num; ring_nf; norm_num [ hs_pos, hw_pos, hl_pos, hn ] ;
     nlinarith [ show ( s : ℝ ) ≥ 1 by norm_cast, show ( 1 / 2 : ℝ ) ^ l ≥ 0 by positivity, show ( 1 / 2 : ℝ ) ^ t ≥ 0 by positivity, show ( Real.exp ( - ( n * ( w : ℝ ) ⁻¹ * ( 1 / 120 ) ) ) ) ≥ 0 by positivity, show ( Real.exp ( - ( n * ( l : ℝ ) ⁻¹ * ( 1 / 120 ) ) ) ) ≥ 0 by positivity, show ( 1 / 2 : ℝ ) ^ l ≤ 1 by exact pow_le_one₀ ( by positivity ) ( by norm_num ), show ( 1 / 2 : ℝ ) ^ t ≤ 1 by exact pow_le_one₀ ( by positivity ) ( by norm_num ) ]);
     refine' le_trans ( bernoulliRestrProb_le_one' _ _ _ _ ) _ <;> norm_num [ show t = 0 by linarith ] at *;
     · exact le_of_lt ( composedDelta_pos _ _ _ hw_pos ( Nat.cast_pos.mpr hl_pos ) );
     · exact composedDelta_le_one _ _ _ ( by linarith ) ( by norm_cast ) ( by linarith );
     · exact le_add_of_le_of_nonneg ( le_add_of_le_of_nonneg ( le_add_of_nonneg_left <| mul_nonneg ( sub_nonneg.mpr <| Nat.one_le_cast.mpr hs_pos ) <| inv_nonneg.mpr <| pow_nonneg zero_le_two _ ) <| mul_nonneg ( sub_nonneg.mpr <| Nat.one_le_cast.mpr hs_pos ) <| Real.exp_nonneg _ ) <| mul_nonneg ( Nat.cast_nonneg _ ) <| Real.exp_nonneg _;);
-  · obtain ⟨isAnd, cs, hc⟩ : ∃ isAnd cs, c = Circuit.node isAnd cs := by
+  · obtain ⟨isAnd, cs, hc⟩ : ∃ isAnd cs, c = TreeCircuit.node isAnd cs := by
       cases c <;> tauto
     generalize_proofs at *; (
     -- Apply the two-stage bound with the composedDelta probability.
@@ -366,7 +366,7 @@ lemma circuit_reduction_ind_step
         · exact le_trans ( mul_le_mul_of_nonneg_right ( inv_le_one_of_one_le₀ ( mod_cast hl_pos ) ) ( by norm_num ) ) ( by norm_num );
         · positivity;
         · intro ρ₁ hρ₁
-          have h_restrict : f = fun x => Circuit.eval (Circuit.node isAnd cs) x := by
+          have h_restrict : f = fun x => TreeCircuit.eval (TreeCircuit.node isAnd cs) x := by
             grind +ring
           generalize_proofs at *; (
           convert compress_and_switch isAnd cs ρ₁ l t hl_pos hn hρ₁ using 1 ; norm_num [ h_restrict ])
@@ -383,18 +383,18 @@ lemma circuit_reduction_ind_step
     have h_induction : ∀ c₀ ∈ cs, bernoulliRestrProb (composedDelta w l (d - 1)) (fun ρ => dtDepth (restrictFn c₀.eval ρ) > l) ≤
       (c₀.size : ℝ) * (1 / 2 : ℝ) ^ l + (c₀.size - 1) * Real.exp (-(n / (120 * w))) + c₀.size * Real.exp (-(n / (120 * l))) := by
         intros c₀ hc₀
-        have h_circuit : ∃ c' : Circuit n, c'.depth ≤ d - 1 ∧ c'.size ≤ c₀.size ∧ c'.maxFanin ≤ w ∧ ∀ x, c'.eval x = c₀.eval x := by
+        have h_circuit : ∃ c' : TreeCircuit n, c'.depth ≤ d - 1 ∧ c'.size ≤ c₀.size ∧ c'.maxFanin ≤ w ∧ ∀ x, c'.eval x = c₀.eval x := by
           use c₀; simp_all +decide ;
           exact ⟨ children_depth_le isAnd cs c₀ hc₀ ( by tauto ), children_maxFanin_le isAnd cs c₀ hc₀ ( by tauto ) ⟩
         generalize_proofs at *; (
         by_cases hc₀_pos : 0 < c₀.size <;> simp_all +decide;
         · obtain ⟨ c', hc'₁, hc'₂, hc'₃, hc'₄ ⟩ := h_circuit; specialize ih c₀.eval c₀.size hc₀_pos c' hc'₁ hc'₂ hc'₃ hc'₄; ring_nf at *; linarith;
-        · obtain ⟨ c', hc'₁, hc'₂, hc'₃, hc'₄ ⟩ := h_circuit; simp_all +decide [ Circuit.size ] ;
-          cases c' <;> simp_all +decide [ Circuit.size ])
+        · obtain ⟨ c', hc'₁, hc'₂, hc'₃, hc'₄ ⟩ := h_circuit; simp_all +decide [ TreeCircuit.size ] ;
+          cases c' <;> simp_all +decide [ TreeCircuit.size ])
     generalize_proofs at *; (
     have h_sum_bound : cs.foldr (fun c acc => (c.size : ℝ) * (1 / 2 : ℝ) ^ l + (c.size - 1) * Real.exp (-(n / (120 * w))) + c.size * Real.exp (-(n / (120 * l))) + acc) 0 ≤ (s - 1 : ℝ) * (1 / 2 : ℝ) ^ l + (s - 1) * Real.exp (-(n / (120 * w))) + (s - 1) * Real.exp (-(n / (120 * l))) := by
       have h_sum_bound : cs.foldr (fun c acc => (c.size : ℝ) + acc) 0 ≤ s - 1 := by
-        have := children_size_sum_le isAnd cs ( show ( Circuit.node isAnd cs ).size ≤ s from by aesop ) ; norm_cast at *;
+        have := children_size_sum_le isAnd cs ( show ( TreeCircuit.node isAnd cs ).size ≤ s from by aesop ) ; norm_cast at *;
         rw [ Int.subNatNat_of_le ] <;> norm_cast;
         convert Nat.cast_le.mpr this using 1
         generalize_proofs at *; (
@@ -404,7 +404,7 @@ lemma circuit_reduction_ind_step
         · infer_instance
       generalize_proofs at *; (
       refine' le_trans _ ( add_le_add_three ( mul_le_mul_of_nonneg_right h_sum_bound <| by positivity ) ( mul_le_mul_of_nonneg_right h_sum_bound <| by positivity ) ( mul_le_mul_of_nonneg_right h_sum_bound <| by positivity ) );
-      have h_sum_bound : ∀ (cs : List (Circuit n)), List.foldr (fun c acc => (c.size : ℝ) * (1 / 2 : ℝ) ^ l + (c.size - 1) * Real.exp (-(n / (120 * w))) + c.size * Real.exp (-(n / (120 * l))) + acc) 0 cs ≤
+      have h_sum_bound : ∀ (cs : List (TreeCircuit n)), List.foldr (fun c acc => (c.size : ℝ) * (1 / 2 : ℝ) ^ l + (c.size - 1) * Real.exp (-(n / (120 * w))) + c.size * Real.exp (-(n / (120 * l))) + acc) 0 cs ≤
         List.foldr (fun c acc => (c.size : ℝ) + acc) 0 cs * (1 / 2 : ℝ) ^ l + List.foldr (fun c acc => (c.size : ℝ) + acc) 0 cs * Real.exp (-(n / (120 * w))) + List.foldr (fun c acc => (c.size : ℝ) + acc) 0 cs * Real.exp (-(n / (120 * l))) := by
           intro cs; induction cs <;> norm_num at * ; nlinarith [ Real.exp_pos ( - ( n / ( 120 * w ) ) ), Real.exp_pos ( - ( n / ( 120 * l ) ) ) ] ;
       generalize_proofs at *; (
@@ -412,7 +412,7 @@ lemma circuit_reduction_ind_step
     generalize_proofs at *; (
     have h_final_bound : List.foldr (fun c acc => bernoulliRestrProb (composedDelta w l (d - 1)) (fun ρ => dtDepth (restrictFn c.eval ρ) > l) + acc) 0 cs ≤
       List.foldr (fun c acc => (c.size : ℝ) * (1 / 2 : ℝ) ^ l + (c.size - 1) * Real.exp (-(n / (120 * w))) + c.size * Real.exp (-(n / (120 * l))) + acc) 0 cs := by
-        have h_final_bound : ∀ (cs : List (Circuit n)), (∀ c₀ ∈ cs, bernoulliRestrProb (composedDelta w l (d - 1)) (fun ρ => dtDepth (restrictFn c₀.eval ρ) > l) ≤ (c₀.size : ℝ) * (1 / 2 : ℝ) ^ l + (c₀.size - 1) * Real.exp (-(n / (120 * w))) + c₀.size * Real.exp (-(n / (120 * l)))) → List.foldr (fun c acc => bernoulliRestrProb (composedDelta w l (d - 1)) (fun ρ => dtDepth (restrictFn c.eval ρ) > l) + acc) 0 cs ≤ List.foldr (fun c acc => (c.size : ℝ) * (1 / 2 : ℝ) ^ l + (c.size - 1) * Real.exp (-(n / (120 * w))) + c.size * Real.exp (-(n / (120 * l))) + acc) 0 cs := by
+        have h_final_bound : ∀ (cs : List (TreeCircuit n)), (∀ c₀ ∈ cs, bernoulliRestrProb (composedDelta w l (d - 1)) (fun ρ => dtDepth (restrictFn c₀.eval ρ) > l) ≤ (c₀.size : ℝ) * (1 / 2 : ℝ) ^ l + (c₀.size - 1) * Real.exp (-(n / (120 * w))) + c₀.size * Real.exp (-(n / (120 * l)))) → List.foldr (fun c acc => bernoulliRestrProb (composedDelta w l (d - 1)) (fun ρ => dtDepth (restrictFn c.eval ρ) > l) + acc) 0 cs ≤ List.foldr (fun c acc => (c.size : ℝ) * (1 / 2 : ℝ) ^ l + (c.size - 1) * Real.exp (-(n / (120 * w))) + c.size * Real.exp (-(n / (120 * l))) + acc) 0 cs := by
           intro cs hcs; induction cs <;> simp +decide [ * ] ;
           rename_i k hk ihk; specialize ihk ( fun c₀ hc₀ => hcs c₀ ( List.mem_cons_of_mem _ hc₀ ) ) ; simp_all +decide ;
           exact add_le_add hcs.1 ihk
@@ -431,8 +431,8 @@ theorem circuit_reduction_ind
     (f : (Fin n → Bool) → Bool) (d s w : ℕ) (l t : ℕ)
     (hd2 : 2 ≤ d) (hs_pos : 0 < s) (hw_pos : 0 < w) (hl_pos : 0 < l)
     (hn : 0 < n)
-    (h_circuit : ∃ c : Circuit n,
-      c.depth ≤ d ∧ c.size ≤ s ∧ Circuit.maxFanin c ≤ w ∧ ∀ x, c.eval x = f x) :
+    (h_circuit : ∃ c : TreeCircuit n,
+      c.depth ≤ d ∧ c.size ≤ s ∧ TreeCircuit.maxFanin c ≤ w ∧ ∀ x, c.eval x = f x) :
     bernoulliRestrProb (composedDelta w (↑l) d) (fun ρ => dtDepth (restrictFn f ρ) > t) ≤
     (↑s - 1) * (1 / 2 : ℝ) ^ l + (1 / 2 : ℝ) ^ t +
     (↑s - 1) * Real.exp (-(↑n / (120 * ↑w))) +
@@ -449,8 +449,8 @@ theorem circuit_reduction_aux
     (f : (Fin n → Bool) → Bool) (d s w : ℕ) (l t : ℕ)
     (hd2 : 2 ≤ d) (hs_pos : 0 < s) (hw_pos : 0 < w) (hl_pos : 0 < l)
     (hn : 0 < n)
-    (h_circuit : ∃ c : Circuit n,
-      c.depth ≤ d ∧ c.size ≤ s ∧ Circuit.maxFanin c ≤ w ∧ ∀ x, c.eval x = f x) :
+    (h_circuit : ∃ c : TreeCircuit n,
+      c.depth ≤ d ∧ c.size ≤ s ∧ TreeCircuit.maxFanin c ≤ w ∧ ∀ x, c.eval x = f x) :
     bernoulliRestrProb (composedDelta w (↑l) d) (fun ρ => dtDepth (restrictFn f ρ) > t) ≤
     ↑s * (1 / 2 : ℝ) ^ l + (1 / 2 : ℝ) ^ t +
     ↑s * Real.exp (-(↑n / (120 * ↑w))) +
@@ -468,8 +468,8 @@ theorem circuit_reduction_aux
 theorem circuit_reduction_core
     (f : (Fin n → Bool) → Bool) (d s w : ℕ) (l t : ℕ)
     (hd2 : 2 ≤ d) (hs_pos : 0 < s) (hw_pos : 0 < w) (hl_pos : 0 < l) (hn : 0 < n)
-    (h_circuit : ∃ c : Circuit n,
-      c.depth ≤ d ∧ c.size ≤ s ∧ Circuit.maxFanin c ≤ w ∧ ∀ x, c.eval x = f x) :
+    (h_circuit : ∃ c : TreeCircuit n,
+      c.depth ≤ d ∧ c.size ≤ s ∧ TreeCircuit.maxFanin c ≤ w ∧ ∀ x, c.eval x = f x) :
     bernoulliRestrProb (composedDelta w (↑l) d) (fun ρ => dtDepth (restrictFn f ρ) > t) ≤
     ↑s * (1 / 2 : ℝ) ^ l + (1 / 2 : ℝ) ^ t +
     ↑s * Real.exp (-(↑n / (120 * ↑w))) +

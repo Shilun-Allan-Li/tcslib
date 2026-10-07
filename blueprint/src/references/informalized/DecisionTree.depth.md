@@ -21,6 +21,6 @@ by `max`-specific rewriting.
 
 **Used in.** The quantity minimised by `dtDepth f =
 Nat.find {d | ∃ T, T.depth ≤ d ∧ ∀ x, T.eval x = f x}`, bounded for the complete
-tree by `buildFullDTree_depth`, and matched to the extracted deepest path by
+tree by `DecisionTree.buildFull_depth`, and matched to the extracted deepest path by
 `DecisionTree.length_deepPath` (`T.deepPath.length = T.depth`). It is the
 complexity measure the switching lemma bounds.

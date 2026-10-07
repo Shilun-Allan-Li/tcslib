@@ -7,6 +7,8 @@ formal proof is accompanied by readable mathematics).
 
 It complements, and does not replace:
 
+- `workflow.md` — the campaign formalization process (phases, audit gates, fill epochs)
+  that produces code meeting these standards.
 - `.github/copilot-instructions.md` — build workflows, import rules, CI integration points.
 - `AGENTS.md` / `.claude/CLAUDE.md` — the sorry-ladder proof workflow and agent roster.
 - `blueprint/BLUEPRINT_PIPELINE.md` — how blueprint entries are generated and validated.
@@ -35,6 +37,10 @@ the file uses.
 **Namespaces.** Namespaces are area-local: pick one namespace root per topic and use it
 consistently within that topic. Do not leak auxiliary definitions into the root namespace;
 mark internal helpers `private` or put them in a dedicated inner namespace.
+*Model registry exception*: a model-defining **type** (a machine, circuit, formula, or
+decision-tree model) may live at the root namespace, Mathlib-style, provided it is
+registered in the catalog facade `TCSlib/ComputationalModels.lean`; its operations and
+lemmas still live in the type's own namespace. Anything else at root is a leak.
 
 **Layering.** Keep definition files separate from heavyweight theorem files, so that
 downstream work can import a model or a class definition without pulling in every proof about

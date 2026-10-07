@@ -15,7 +15,7 @@ together with the complement rule for Bernoulli-restriction probabilities.
 \lean{RestrictionFourier.indicator_subset_eq_prod}
 \label{RestrictionFourier.indicator_subset_eq_prod}
 \leanok
-\uses{RestrictionFourier.mem_freeVars, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.freeVars}
+\uses{RestrictionFourier.mem_freeVars, SwitchingLemma.Restriction, SwitchingLemma.Restriction.freeVars}
 \difficulty{4}
 Let $\rho$ be a restriction on $n$ variables — a map assigning each index $i \in
 \{0,\dots,n-1\}$ either a fixed Boolean value or the free mark — and let $T \subseteq
@@ -30,7 +30,7 @@ otherwise.
 \lean{RestrictionFourier.bernoulliRestrProb_subset_freeVars}
 \label{RestrictionFourier.bernoulliRestrProb_subset_freeVars}
 \leanok
-\uses{LMN.varWeight, RestrictionFourier.indicator_subset_eq_prod, RestrictionFourier.sum_bernoulli_prod, SwitchingLemma2.Restriction.freeVars, SwitchingLemma2.bernoulliRestrProb}
+\uses{LMN.varWeight, RestrictionFourier.indicator_subset_eq_prod, RestrictionFourier.sum_bernoulli_prod, SwitchingLemma.Restriction.freeVars, SwitchingLemma.bernoulliRestrProb}
 \difficulty{4}
 Fix $n \in \bbn$, a real parameter $p$, and a subset $T \subseteq \{1, \dots, n\}$ of
 the coordinates. Draw a Bernoulli($p$) random restriction $\rho$ on $n$ variables, and
@@ -47,7 +47,7 @@ $T$ equals $p^{\abs{T}}$.
 \lean{RestrictionFourier.card_inter_eq_sum}
 \label{RestrictionFourier.card_inter_eq_sum}
 \leanok
-\uses{RestrictionFourier.mem_freeVars, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.freeVars}
+\uses{RestrictionFourier.mem_freeVars, SwitchingLemma.Restriction, SwitchingLemma.Restriction.freeVars}
 \difficulty{3}
 Let $\rho$ be a restriction on $n$ variables, and let $U \subseteq \{1,\dots,n\}$ be a
 set of indices. Then the number of indices in $U$ at which $\rho$ is free (unset),
@@ -63,7 +63,7 @@ is unset and $0$ otherwise.
 \lean{RestrictionFourier.expectation_free_indicator}
 \label{RestrictionFourier.expectation_free_indicator}
 \leanok
-\uses{RestrictionFourier.bernoulliRestrProb_subset_freeVars, RestrictionFourier.mem_freeVars, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.freeVars, SwitchingLemma2.bernoulliRestrProb, SwitchingLemma2.bernoulliRestrWeight}
+\uses{RestrictionFourier.bernoulliRestrProb_subset_freeVars, RestrictionFourier.mem_freeVars, SwitchingLemma.Restriction, SwitchingLemma.Restriction.freeVars, SwitchingLemma.bernoulliRestrProb, SwitchingLemma.bernoulliRestrWeight}
 \difficulty{4}
 Fix a real parameter $p$ and a coordinate $i$ among the $n$ variables. Summing the
 Bernoulli weight of $\rho$ over all restrictions $\rho$ on $n$ variables that leave $i$
@@ -79,7 +79,7 @@ where $F(\rho)$ denotes the set of free variables of $\rho$.
 \lean{RestrictionFourier.expectation_free_indicator_pair}
 \label{RestrictionFourier.expectation_free_indicator_pair}
 \leanok
-\uses{RestrictionFourier.bernoulliRestrProb_subset_freeVars, RestrictionFourier.mem_freeVars, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.freeVars, SwitchingLemma2.bernoulliRestrProb, SwitchingLemma2.bernoulliRestrWeight}
+\uses{RestrictionFourier.bernoulliRestrProb_subset_freeVars, RestrictionFourier.mem_freeVars, SwitchingLemma.Restriction, SwitchingLemma.Restriction.freeVars, SwitchingLemma.bernoulliRestrProb, SwitchingLemma.bernoulliRestrWeight}
 \difficulty{4}
 Fix $n$ and two distinct variables $i \neq j$ among the $n$ variables, and let $p \in
 \bbr$. Write $w_p(\rho)$ for the Bernoulli weight of a restriction $\rho$ on $n$
@@ -96,7 +96,7 @@ carried by those $\rho$ that leave both $i$ and $j$ free equals $p^2$; that is,
 \lean{RestrictionFourier.expectation_card_inter}
 \label{RestrictionFourier.expectation_card_inter}
 \leanok
-\uses{RestrictionFourier.card_inter_eq_sum, RestrictionFourier.expectation_free_indicator, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.freeVars, SwitchingLemma2.bernoulliRestrWeight}
+\uses{RestrictionFourier.card_inter_eq_sum, RestrictionFourier.expectation_free_indicator, SwitchingLemma.Restriction, SwitchingLemma.Restriction.freeVars, SwitchingLemma.bernoulliRestrWeight}
 \difficulty{3}
 Fix $n$ and a real number $p$, and let $\rho$ range over all restrictions on the $n$
 variables, each weighted by its Bernoulli weight $w_p(\rho)$. Writing $J(\rho)$ for the
@@ -112,7 +112,7 @@ expected number of free variables landing in $U$ is $p\,\abs{U}$.
 \lean{RestrictionFourier.expectation_card_inter_sq}
 \label{RestrictionFourier.expectation_card_inter_sq}
 \leanok
-\uses{RestrictionFourier.card_inter_eq_sum, RestrictionFourier.expectation_free_indicator, RestrictionFourier.expectation_free_indicator_pair, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.freeVars, SwitchingLemma2.bernoulliRestrWeight}
+\uses{RestrictionFourier.card_inter_eq_sum, RestrictionFourier.expectation_free_indicator, RestrictionFourier.expectation_free_indicator_pair, SwitchingLemma.Restriction, SwitchingLemma.Restriction.freeVars, SwitchingLemma.bernoulliRestrWeight}
 \difficulty{5}
 Fix $n \in \bbn$, a parameter $p \in \bbr$, and a set of coordinates $U \subseteq
 \mathrm{Fin}\,n$. For a restriction $\rho$ on $n$ variables write $J(\rho)$ for its set
@@ -129,7 +129,7 @@ weight, one has
 \lean{RestrictionFourier.variance_card_inter}
 \label{RestrictionFourier.variance_card_inter}
 \leanok
-\uses{RestrictionFourier.expectation_card_inter, RestrictionFourier.expectation_card_inter_sq, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.freeVars, SwitchingLemma2.bernoulliRestrWeight, SwitchingLemma2.bernoulliRestrWeight_sum_one}
+\uses{RestrictionFourier.expectation_card_inter, RestrictionFourier.expectation_card_inter_sq, SwitchingLemma.Restriction, SwitchingLemma.Restriction.freeVars, SwitchingLemma.bernoulliRestrWeight, SwitchingLemma.bernoulliRestrWeight_sum_one}
 \difficulty{4}
 Let $0 \le p \le 1$, and let $U \subseteq \mathrm{Fin}\,n$ be a set of coordinates. For
 a restriction $\rho$ on $n$ variables, write $w_p(\rho)$ for its Bernoulli weight and
@@ -146,7 +146,7 @@ p\,\abs{U}\,(1 - p).
 \lean{RestrictionFourier.bernoulliRestrProb_card_inter_lt}
 \label{RestrictionFourier.bernoulliRestrProb_card_inter_lt}
 \leanok
-\uses{RestrictionFourier.variance_card_inter, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.freeVars, SwitchingLemma2.bernoulliRestrProb, SwitchingLemma2.bernoulliRestrWeight, SwitchingLemma2.bernoulliRestrWeight_nonneg'}
+\uses{RestrictionFourier.variance_card_inter, SwitchingLemma.Restriction, SwitchingLemma.Restriction.freeVars, SwitchingLemma.bernoulliRestrProb, SwitchingLemma.bernoulliRestrWeight, SwitchingLemma.bernoulliRestrWeight_nonneg'}
 \difficulty{6}
 Let $p \in \bbr$ satisfy $0 \le p \le 1$, let $U \subseteq \mathrm{Fin}\,n$ be a finite
 set of coordinates, and let $k$ be a positive integer with $3k \le p\,\abs{U}$. Writing
@@ -161,7 +161,7 @@ variables, the probability that fewer than $k$ coordinates of $U$ remain free sa
 \lean{RestrictionFourier.bernoulliRestrProb_not}
 \label{RestrictionFourier.bernoulliRestrProb_not}
 \leanok
-\uses{SwitchingLemma2.Restriction, SwitchingLemma2.bernoulliRestrProb, SwitchingLemma2.bernoulliRestrWeight_sum_one}
+\uses{SwitchingLemma.Restriction, SwitchingLemma.bernoulliRestrProb, SwitchingLemma.bernoulliRestrWeight_sum_one}
 \difficulty{3}
 Fix $n$ and a parameter $p$ with $0 \le p \le 1$, and consider the Bernoulli($p$) random
 restriction on $n$ variables, under which each restriction $\rho$ receives weight
@@ -178,7 +178,7 @@ one minus the probability that $E$ holds:
 \lean{RestrictionFourier.bernoulliRestrProb_card_inter_ge}
 \label{RestrictionFourier.bernoulliRestrProb_card_inter_ge}
 \leanok
-\uses{RestrictionFourier.bernoulliRestrProb_card_inter_lt, RestrictionFourier.bernoulliRestrProb_not, SwitchingLemma2.Restriction.freeVars, SwitchingLemma2.bernoulliRestrProb}
+\uses{RestrictionFourier.bernoulliRestrProb_card_inter_lt, RestrictionFourier.bernoulliRestrProb_not, SwitchingLemma.Restriction.freeVars, SwitchingLemma.bernoulliRestrProb}
 \difficulty{4}
 Fix $n$ and a parameter $p$ with $0 \le p \le 1$, let $U \subseteq \mathrm{Fin}\,n$ be a
 set of coordinates, and let $k \ge 1$ be an integer satisfying $3k \le p\,\abs{U}$. Draw

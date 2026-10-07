@@ -11,10 +11,10 @@ preserves circuit depth and commutes with evaluation.
 \section{Declarations}
 
 \begin{definition}[Re-indexing a circuit]
-\lean{BoolCircuit.Circuit.reidx}
-\label{BoolCircuit.Circuit.reidx}
+\lean{BoolCircuit.TreeCircuit.reidx}
+\label{BoolCircuit.TreeCircuit.reidx}
 \leanok
-\uses{BoolCircuit.Circuit}
+\uses{BoolCircuit.TreeCircuit}
 Given a circuit $c$ on $m$ variables and a function $f : \mathrm{Fin}\,m \to \mathrm{Fin}\,m'$,
 the re-indexed circuit $\mathrm{reidx}(c, f)$ on $m'$ variables is obtained by replacing
 each literal index $i$ by $f(i)$ (keeping its sign) and recursing structurally through the
@@ -22,10 +22,10 @@ $\mathrm{And}/\mathrm{Or}$ nodes.
 \end{definition}
 
 \begin{theorem}[Re-indexing preserves circuit depth]
-\lean{BoolCircuit.Circuit.reidx_depth}
-\label{BoolCircuit.Circuit.reidx_depth}
+\lean{BoolCircuit.TreeCircuit.reidx_depth}
+\label{BoolCircuit.TreeCircuit.reidx_depth}
 \leanok
-\uses{BoolCircuit.Circuit, BoolCircuit.Circuit.depth, BoolCircuit.Circuit.ind, BoolCircuit.Circuit.reidx}
+\uses{BoolCircuit.TreeCircuit, BoolCircuit.TreeCircuit.depth, BoolCircuit.TreeCircuit.ind, BoolCircuit.TreeCircuit.reidx}
 \difficulty{5}
 Let $c$ be a Boolean circuit on $m$ variables and let $f : \mathrm{Fin}\,m \to
 \mathrm{Fin}\,m'$ be any map of variable indices. Then re-indexing $c$ along $f$ leaves
@@ -33,10 +33,10 @@ its depth unchanged: $\mathrm{depth}(\mathrm{reidx}(c, f)) = \mathrm{depth}(c)$.
 \end{theorem}
 
 \begin{theorem}[Re-indexing commutes with evaluation]
-\lean{BoolCircuit.Circuit.reidx_eval}
-\label{BoolCircuit.Circuit.reidx_eval}
+\lean{BoolCircuit.TreeCircuit.reidx_eval}
+\label{BoolCircuit.TreeCircuit.reidx_eval}
 \leanok
-\uses{BoolCircuit.Circuit, BoolCircuit.Circuit.eval, BoolCircuit.Circuit.ind, BoolCircuit.Circuit.reidx, BoolCircuit.Lit.eval}
+\uses{BoolCircuit.TreeCircuit, BoolCircuit.TreeCircuit.eval, BoolCircuit.TreeCircuit.ind, BoolCircuit.TreeCircuit.reidx, BoolCircuit.Lit.eval}
 \difficulty{5}
 Let $c$ be a Boolean circuit on $m$ variables, let $f : \mathrm{Fin}\,m \to
 \mathrm{Fin}\,m'$ be a re-indexing map, and let $g : \mathrm{Fin}\,m' \to \bbf_2$ be an

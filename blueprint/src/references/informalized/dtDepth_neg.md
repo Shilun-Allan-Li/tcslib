@@ -12,7 +12,7 @@
 
 1. (`≤`) Unfold `dtDepth` and use `Nat.find_le`: it suffices to exhibit a tree of
    depth `≤ dtDepth f` computing `!f`.
-2. `Nat.find_spec` (with the same termination witness `buildFullDTree` used in the
+2. `Nat.find_spec` (with the same termination witness `DecisionTree.buildFull` used in the
    definition of `dtDepth`) supplies `T` with `T.depth ≤ dtDepth f` and
    `∀ x, T.eval x = f x`.
 3. `T.negateLeaves` is the witness: `DecisionTree.negateLeaves_depth` keeps the

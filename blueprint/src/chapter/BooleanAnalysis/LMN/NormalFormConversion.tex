@@ -48,12 +48,12 @@ through \texttt{Lit.toLiteral}.
 \end{definition}
 
 \begin{definition}[OR-clause to a term]
-\lean{BoolCircuit.NOrCircuit.clauseToTerm}
+\lean{BoolCircuit.NOrCircuit.clauseToClause}
 \statementsource{boolean-ch04-dnf-switching-lmn}{
   pdf-fc447f326910-p002-b004,
   pdf-fc447f326910-p011-b004
 }
-\label{BoolCircuit.NOrCircuit.clauseToTerm}
+\label{BoolCircuit.NOrCircuit.clauseToClause}
 \leanok
 \uses{BoolCircuit.Lit.toLiteral, Term}
 Sends an OR-clause $\texttt{NOrCircuit}.\mathrm{clause}\,lits$ to the $\texttt{Term}$
@@ -83,7 +83,7 @@ a bare clause maps to the empty DNF.
 }
 \label{BoolCircuit.NAndCircuit.toCNF}
 \leanok
-\uses{BoolCircuit.NAndCircuit, BoolCircuit.NOrCircuit.clauseToTerm, CNF}
+\uses{BoolCircuit.NAndCircuit, BoolCircuit.NOrCircuit.clauseToClause, CNF}
 Converts a depth-2 $\texttt{NAndCircuit}$ (an AND of OR-clauses) into a $\texttt{CNF}$, the
 list of clauses obtained by converting each OR-clause via \texttt{NOrCircuit.clauseToTerm};
 a bare clause maps to the empty CNF.
@@ -108,7 +108,7 @@ converting each circuit literal to its corresponding switching-lemma literal.
 \lean{BoolCircuit.foldr_or_lits_eq_clause_eval}
 \label{BoolCircuit.foldr_or_lits_eq_clause_eval}
 \leanok
-\uses{BoolCircuit.Lit, BoolCircuit.Lit.eval, BoolCircuit.Lit.toLiteral, CNF.evalClause}
+\uses{BoolCircuit.Lit, BoolCircuit.Lit.eval, BoolCircuit.Lit.toLiteral, Clause.eval}
 \difficulty{3}
 Let $\ell_1, \dots, \ell_k$ be a list of circuit literals on $n$ variables and let $x :
 \mathrm{Fin}\,n \to \mathrm{Bool}$ be an assignment. Then the right fold of disjunction
@@ -141,7 +141,7 @@ child AND-clause into a term.
 \lean{BoolCircuit.NAndCircuit.node_eval_eq_toCNF_eval}
 \label{BoolCircuit.NAndCircuit.node_eval_eq_toCNF_eval}
 \leanok
-\uses{BoolCircuit.NAndCircuit.eval, BoolCircuit.NAndCircuit.toCNF, BoolCircuit.NOrCircuit.clauseToTerm, BoolCircuit.NOrCircuit.eval, BoolCircuit.foldr_or_lits_eq_clause_eval, CNF.eval, CNF.evalClause, Term.eval}
+\uses{BoolCircuit.NAndCircuit.eval, BoolCircuit.NAndCircuit.toCNF, BoolCircuit.NOrCircuit.clauseToClause, BoolCircuit.NOrCircuit.eval, BoolCircuit.foldr_or_lits_eq_clause_eval, CNF.eval, Clause.eval, Term.eval}
 \difficulty{4}
 Let $cs$ be a list of normal-form OR circuits on $n$ variables, and suppose that every
 entry of $cs$ is an OR-clause — that is, a base clause given by a list of literals,
@@ -181,7 +181,7 @@ $\ell_1$ and $\ell_2$ have the same variable, then $\ell_1 = \ell_2$.
 \lean{BoolCircuit.NOrCircuit.clauseToTerm_nodup}
 \label{BoolCircuit.NOrCircuit.clauseToTerm_nodup}
 \leanok
-\uses{BoolCircuit.Lit, BoolCircuit.NAndCircuit.clauseToTerm_nodup, BoolCircuit.NOrCircuit.clauseToTerm}
+\uses{BoolCircuit.Lit, BoolCircuit.NAndCircuit.clauseToTerm_nodup, BoolCircuit.NOrCircuit.clauseToClause}
 \difficulty{1}
 Let $lits$ be a list of circuit literals in $n$ variables whose underlying variable
 indices are pairwise distinct. Then the term obtained by converting the OR-clause on
@@ -193,7 +193,7 @@ to its counterpart — has no repeated entries.
 \lean{BoolCircuit.NOrCircuit.clauseToTerm_var_inj}
 \label{BoolCircuit.NOrCircuit.clauseToTerm_var_inj}
 \leanok
-\uses{BoolCircuit.Lit, BoolCircuit.NAndCircuit.clauseToTerm_var_inj, BoolCircuit.NOrCircuit.clauseToTerm}
+\uses{BoolCircuit.Lit, BoolCircuit.NAndCircuit.clauseToTerm_var_inj, BoolCircuit.NOrCircuit.clauseToClause}
 \difficulty{1}
 Let $n \ge 0$ and let $lits$ be a list of circuit literals over $n$ variables whose
 variable indices are pairwise distinct, and form the term obtained by converting each
@@ -206,7 +206,7 @@ polarity). Then any two literals of this term that share the same variable $\mat
 \lean{BoolCircuit.NAndCircuit.clauseToTerm_width}
 \label{BoolCircuit.NAndCircuit.clauseToTerm_width}
 \leanok
-\uses{BoolCircuit.Lit, BoolCircuit.NAndCircuit.clauseToTerm, Term.width}
+\uses{BoolCircuit.Lit, BoolCircuit.NAndCircuit.clauseToTerm, LitList.width}
 \difficulty{1}
 Fix $n$, and let $lits$ be a list of circuit literals on $n$ variables whose variable
 indices are pairwise distinct. Form the normal-form AND-clause on this list, and convert
@@ -219,7 +219,7 @@ $lits$.
 \lean{BoolCircuit.NOrCircuit.clauseToTerm_width}
 \label{BoolCircuit.NOrCircuit.clauseToTerm_width}
 \leanok
-\uses{BoolCircuit.Lit, BoolCircuit.NOrCircuit.clauseToTerm, Term.width}
+\uses{BoolCircuit.Lit, BoolCircuit.NOrCircuit.clauseToClause, LitList.width}
 \difficulty{1}
 Let $\mathrm{lits}$ be a list of circuit literals over $n$ variables whose variable
 indices are pairwise distinct. Then the width of the term obtained from the OR-clause on
@@ -291,8 +291,8 @@ variable are identical.
 \end{theorem}
 
 \begin{theorem}[Duplicate-free clauses in the CNF of an AND-node]
-\lean{BoolCircuit.NAndCircuit.toCNF_terms_nodup}
-\label{BoolCircuit.NAndCircuit.toCNF_terms_nodup}
+\lean{BoolCircuit.NAndCircuit.toCNF_clauses_nodup}
+\label{BoolCircuit.NAndCircuit.toCNF_clauses_nodup}
 \leanok
 \uses{BoolCircuit.Lit, BoolCircuit.NAndCircuit.toCNF, BoolCircuit.NOrCircuit.clauseToTerm_nodup}
 \difficulty{3}
@@ -308,7 +308,7 @@ repeated entry.
 \lean{BoolCircuit.NAndCircuit.toCNF_var_inj}
 \label{BoolCircuit.NAndCircuit.toCNF_var_inj}
 \leanok
-\uses{BoolCircuit.Lit, BoolCircuit.NAndCircuit.toCNF, BoolCircuit.NOrCircuit.clauseToTerm, BoolCircuit.NOrCircuit.clauseToTerm_var_inj}
+\uses{BoolCircuit.Lit, BoolCircuit.NAndCircuit.toCNF, BoolCircuit.NOrCircuit.clauseToClause, BoolCircuit.NOrCircuit.clauseToTerm_var_inj}
 \difficulty{3}
 Let $cs$ be a list of normal-form OR circuits on $n$ variables, and suppose every member
 of $cs$ is a base OR-clause: for each $c \in cs$ there is a list of circuit literals

@@ -3479,7 +3479,7 @@ private def extractOneHaveViaGoal
              (finalSigLine.splitOn "._simp_").length ≥ 2 || (finalSigLine.splitOn "._proof_").length ≥ 2 || (finalSigLine.splitOn "._eq_").length ≥ 2 then
             plogInfo s!"[extract-probe] '{haveName}' variant rejected: captured sig carries sorry/match-aux"
           -- SELF-RECURSION GATE (#56): a have inside a `termination_by`
-          -- decl whose proof CALLS THE DECL ITSELF (buildFullDTree_depth's
+          -- decl whose proof CALLS THE DECL ITSELF (DecisionTree.buildFull_depth's
           -- h1/h2) cannot be extracted — the aux lemma is spliced ABOVE the
           -- decl, a forward reference. The gate can't see it: in the probe
           -- env the module is IMPORTED, so the self-call resolves against
@@ -5917,7 +5917,7 @@ private def persistFileAuxLemmas (lines : Array String)
   let kws : List String := ["private lemma ", "private theorem ", "private def ",
     "private noncomputable def ", "private abbrev "]
   -- Namespace tracking: a source file can reference its own private decls by
-  -- FULLY-QUALIFIED name (`SwitchingLemma2.canonicalDTree_depth_zero_of_fixed`
+  -- FULLY-QUALIFIED name (`SwitchingLemma.canonicalDTree_depth_zero_of_fixed`
   -- in Switching.lean line 1046) — an unqualified top-level copy can never
   -- satisfy that reference, wiping every probe of the containing decl. So
   -- copies of decls that live inside namespaces are persisted PUBLIC under

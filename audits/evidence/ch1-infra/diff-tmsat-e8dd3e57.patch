@@ -1,0 +1,107 @@
+diff --git a/TCSlib/Complexity/ClassNP/TMSAT.lean b/TCSlib/Complexity/ClassNP/TMSAT.lean
+index b513ff43..8492aea5 100644
+--- a/TCSlib/Complexity/ClassNP/TMSAT.lean
++++ b/TCSlib/Complexity/ClassNP/TMSAT.lean
+@@ -601,40 +601,6 @@ theorem timeConstructible_poly (C c : ℕ) (hC : 0 < C) :
+ 
+ /-! ### Quantitative timed-universal bridge -/
+ 
+-/-- A single timed simulator, selected before the code and input, preserves
+-both successful completion and timeout with the explicit budget
+-`(3|α| + 14*canonizerTime(|α|) + 50)*(t+1)^2`.
+-[AB09, §1.4.1, time-bounded universal simulation], with explicit constants.
+-
+-**The phase-3-mandated bridge statement: new public surface for the epoch-2
+-audit.** Its coefficient is the displayed function of the code length; no
+-bound on an arbitrary existential witness of `Turing.timed_universal` is asserted.
+-
+-**Proof sketch and escalation (bridge protocol, step 3).** Reuse the concrete
+-timed simulator's construction, bound the decoded serialization length by the
+-canonizer's output-time bound, and bound the state/header sizes by that
+-serialization. The existing proof's coefficient is then at most the displayed
+-coefficient. At this pin, the concrete simulator `timedUniversalTM`, its
+-`timedStartupBound`, and its exact bounded-answer lemma `timed_computes` in
+-`Universal.lean` are private. The public API exposes only the existential
+-coefficient, so the construction cannot be reused through that API. This single
+-bridge declaration is intentionally admitted under the brief's escalation
+-protocol: the maintainer must export a quantitative concrete bounded-answer
+-lemma from Chapter 1 (including its timeout branch) and discharge this proof.
+-Chapter-1 sources are unchanged. -/
+-theorem timed_universal_quantitative (c : EffectiveMachineCode) :
+-    ∃ U : FinTM Bool, ∀ (α x : List Bool) (t : ℕ),
+-      (∀ output : List Bool,
+-        (c.decode α).toFinTM.ComputesInTime x output t →
+-        U.ComputesInTime (pairEncode (pairEncode (Nat.bits t) α) x)
+-          (true :: output)
+-          ((3 * α.length + 14 * c.canonizerTime α.length + 50) * (t + 1) ^ 2)) ∧
+-      ((∀ output : List Bool, ¬(c.decode α).toFinTM.ComputesInTime x output t) →
+-        U.ComputesInTime (pairEncode (pairEncode (Nat.bits t) α) x)
+-          [false]
+-          ((3 * α.length + 14 * c.canonizerTime α.length + 50) * (t + 1) ^ 2)) := by
+-  sorry
+-
+ /-- The canonizer's completed serialization cannot be longer than its run. -/
+ private lemma tmsat_serialization_length (c : EffectiveMachineCode) (α : List Bool) :
+     (c.decode α).serialize.length ≤ c.canonizerTime α.length := by
+@@ -709,6 +675,61 @@ private lemma tmsat_concrete_coefficient (c : EffectiveMachineCode) (α : List B
+   unfold universalBlockBound
+   omega
+ 
++/-- A single timed simulator, selected before the code and input, preserves
++both successful completion and timeout with the explicit budget
++`(3|α| + 14*canonizerTime(|α|) + 50)*(t+1)^2`.
++[AB09, §1.4.1, time-bounded universal simulation], with explicit constants.
++
++**The phase-3-mandated bridge statement: new public surface for the epoch-2
++audit.** Its coefficient is the displayed function of the code length; no
++bound on an arbitrary existential witness of `Turing.timed_universal` is asserted.
++
++**Proof sketch and escalation (bridge protocol, step 3).** Reuse the concrete
++timed simulator's construction, bound the decoded serialization length by the
++canonizer's output-time bound, and bound the state/header sizes by that
++serialization. The existing proof's coefficient is then at most the displayed
++coefficient. At this pin, the concrete simulator `timedUniversalTM`, its
++`timedStartupBound`, and its exact bounded-answer lemma `timed_computes` in
++`Universal.lean` are private. The public API exposes only the existential
++coefficient, so the construction cannot be reused through that API. This single
++bridge declaration is intentionally admitted under the brief's escalation
++protocol: the maintainer must export a quantitative concrete bounded-answer
++lemma from Chapter 1 (including its timeout branch) and discharge this proof.
++Chapter-1 sources are unchanged.
++
++**Discharged (2026-10-03, maintainer serial merge).** Chapter 1 now exports
++`Turing.timed_universal_concrete`: the concrete simulator's bounded-answer
++theorem with the private startup expression expanded into public vocabulary
++and both clauses preserved. This proof is that export, the arithmetic bound
++`tmsat_concrete_coefficient` on its displayed coefficient, and
++`Turing.FinTM.ComputesInTime.mono`. The escalation paragraph above is
++retained as audit history; its final sentence described the pre-export
++state, and the export is flagged for the shared infrastructure audit
++round. -/
++theorem timed_universal_quantitative (c : EffectiveMachineCode) :
++    ∃ U : FinTM Bool, ∀ (α x : List Bool) (t : ℕ),
++      (∀ output : List Bool,
++        (c.decode α).toFinTM.ComputesInTime x output t →
++        U.ComputesInTime (pairEncode (pairEncode (Nat.bits t) α) x)
++          (true :: output)
++          ((3 * α.length + 14 * c.canonizerTime α.length + 50) * (t + 1) ^ 2)) ∧
++      ((∀ output : List Bool, ¬(c.decode α).toFinTM.ComputesInTime x output t) →
++        U.ComputesInTime (pairEncode (pairEncode (Nat.bits t) α) x)
++          [false]
++          ((3 * α.length + 14 * c.canonizerTime α.length + 50) * (t + 1) ^ 2)) := by
++  obtain ⟨U, hU⟩ := timed_universal_concrete c
++  refine ⟨U, fun α x t => ?_⟩
++  obtain ⟨hsucc, htimeout⟩ := hU α x t
++  have hle : (3 * α.length + c.canonizerTime α.length +
++      (c.decode α).serialize.length +
++      2 * (Nat.bits (c.decode α).numStates).length +
++      2 * (c.decode α).tm.q₀.val + 16 +
++      universalBlockBound c α + 14) * (t + 1) ^ 2 ≤
++      (3 * α.length + 14 * c.canonizerTime α.length + 50) * (t + 1) ^ 2 :=
++    Nat.mul_le_mul_right _ (tmsat_concrete_coefficient c α)
++  exact ⟨fun output hout => (hsucc output hout).mono hle,
++    fun hnone => (htimeout hnone).mono hle⟩
++
+ /-- The exact success-tagged output or timeout answer of a bounded source run. -/
+ private def tmsatAnswer (c : MachineCode) (α x : List Bool) (t : ℕ) : List Bool :=
+   let cfg := (c.decode α).tm.runFrom ((c.decode α).tm.initCfg x) t

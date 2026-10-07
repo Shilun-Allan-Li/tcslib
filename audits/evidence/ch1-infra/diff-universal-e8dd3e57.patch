@@ -1,0 +1,76 @@
+diff --git a/TCSlib/Complexity/TuringMachine/Universal.lean b/TCSlib/Complexity/TuringMachine/Universal.lean
+index facc8aec..f6bfefbf 100644
+--- a/TCSlib/Complexity/TuringMachine/Universal.lean
++++ b/TCSlib/Complexity/TuringMachine/Universal.lean
+@@ -2831,4 +2831,71 @@ theorem timed_universal (c : EffectiveMachineCode) :
+       exact hsource _ ((computesInTime_iff _ _ _ _).mpr ⟨hhalt, rfl⟩)
+     simpa only [timedAnswer, if_neg hh] using hu
+ 
++/-- **The concrete bounded-answer export** [AB09, §1.4.1, time-bounded universal
++simulation, with the realized constant]: the single simulator behind
++`Turing.timed_universal`, with its code-dependent quadratic coefficient written
++out in public vocabulary — the startup part
++`3|α| + canonizerTime(|α|) + |serialize| + 2·|bits(numStates)| + 2·q₀ + 16`
++plus the interpreter part `Turing.universalBlockBound` plus `14`. One simulator
++is chosen **before** the code, the input, and the deadline; both the success
++clause and the timeout clause of `Turing.timed_universal` are preserved
++verbatim.
++
++This is the maintainer export mandated by the Chapter-2 phase-3 audit and
++requested by the epoch-2 TMSAT delivery (bridge protocol, step 3): the Chapter-2
++bridge `timed_universal_quantitative` is discharged from this theorem by
++monotonicity, after its side's arithmetic bound on this displayed coefficient.
++No bound is asserted on the arbitrary existential witness of
++`Turing.timed_universal` — the witness exhibited here is the concrete machine of
++its proof, and the displayed coefficient is that proof's realized constant. No
++Chapter-2 notion appears. New public surface, flagged for the shared
++infrastructure audit round.
++
++**Proof sketch.** `timed_computes` states exactly this bound for the concrete
++simulator, with the startup written as `timedStartupBound`, whose definition is
++the displayed startup expression; the two clauses then follow from the
++deadline-inclusive answer `timedAnswer` by the same case analysis as
++`Turing.timed_universal` (success: the halted source's output is reported behind
++`true`; timeout: no completed output exists, so the source configuration is
++live and the answer is `[false]`). -/
++theorem timed_universal_concrete (c : EffectiveMachineCode) :
++    ∃ U : FinTM Bool, ∀ (α x : List Bool) (t : ℕ),
++      (∀ output : List Bool,
++        (c.decode α).toFinTM.ComputesInTime x output t →
++        U.ComputesInTime (pairEncode (pairEncode (Nat.bits t) α) x)
++          (true :: output)
++          ((3 * α.length + c.canonizerTime α.length +
++              (c.decode α).serialize.length +
++              2 * (Nat.bits (c.decode α).numStates).length +
++              2 * (c.decode α).tm.q₀.val + 16 +
++              universalBlockBound c α + 14) * (t + 1) ^ 2)) ∧
++      ((∀ output : List Bool, ¬(c.decode α).toFinTM.ComputesInTime x output t) →
++        U.ComputesInTime (pairEncode (pairEncode (Nat.bits t) α) x)
++          [false]
++          ((3 * α.length + c.canonizerTime α.length +
++              (c.decode α).serialize.length +
++              2 * (Nat.bits (c.decode α).numStates).length +
++              2 * (c.decode α).tm.q₀.val + 16 +
++              universalBlockBound c α + 14) * (t + 1) ^ 2)) := by
++  refine ⟨timedUniversalTM c, fun α x t => ?_⟩
++  -- The displayed coefficient is definitionally `timedStartupBound` expanded.
++  have hu : (timedUniversalTM c).ComputesInTime
++      (pairEncode (pairEncode (Nat.bits t) α) x)
++      (timedAnswer (c.decode α) ((c.decode α).tm.initCfg x) t)
++      ((3 * α.length + c.canonizerTime α.length +
++          (c.decode α).serialize.length +
++          2 * (Nat.bits (c.decode α).numStates).length +
++          2 * (c.decode α).tm.q₀.val + 16 +
++          universalBlockBound c α + 14) * (t + 1) ^ 2) :=
++    timed_computes c α x t
++  constructor
++  · intro output hsource
++    obtain ⟨hh, ho⟩ := (computesInTime_iff _ _ _ _).mp hsource
++    simpa only [timedAnswer, hh, if_pos, ho] using hu
++  · intro hsource
++    have hh : ((c.decode α).tm.runFrom ((c.decode α).tm.initCfg x) t).state ≠ none := by
++      intro hhalt
++      exact hsource _ ((computesInTime_iff _ _ _ _).mpr ⟨hhalt, rfl⟩)
++    simpa only [timedAnswer, if_neg hh] using hu
++
+ end Turing

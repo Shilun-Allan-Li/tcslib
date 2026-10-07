@@ -21,11 +21,11 @@ fixed to `true` or `false` each with probability `(1-p)/2`.
 - `bernoulliRestrProb_le_one'`: probabilities are at most 1.
 -/
 
-open Classical SwitchingLemma2
+open Classical SwitchingLemma
 
 noncomputable section
 
-namespace SwitchingLemma2
+namespace SwitchingLemma
 
 variable {n : ℕ}
 
@@ -85,6 +85,6 @@ lemma bernoulliRestrProb_le_one' (p : ℝ) (hp : 0 ≤ p) (hp1 : p ≤ 1)
           _ = bernoulliRestrWeight p ρ := by ring
     _ = 1 := bernoulliRestrWeight_sum_one p hp hp1
 
-end SwitchingLemma2
+end SwitchingLemma
 
 end
