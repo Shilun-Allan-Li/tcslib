@@ -60,15 +60,22 @@ adjacency matrix of a `d`-regular multigraph, `d·⟨𝐬, A𝐭⟩` is the numb
 edges `|E(S,T)|`, so multiplying through by `d` gives the book's statement
 `| |E(S,T)| − (d/n)|S||T| | ≤ λd√(|S||T|)`.  [AB09, Lem 7.37, via eq. (2)]
 
-**Proof sketch.** By Lemma 7.40 (`Expander.exists_decomposition`), write
-`A = (1−λ)J + λC` with `J` the all-`1/n` matrix and `‖C‖ ≤ 1`.  Then
-`⟨𝐬, A𝐭⟩ = (1−λ)⟨𝐬, J𝐭⟩ + λ⟨𝐬, C𝐭⟩`.  The first term is `(1−λ)|S||T|/n`
-since `⟨𝐬, J𝐭⟩ = |S||T|/n`; the second is at most `λ√(|S||T|)` in absolute
-value by Cauchy–Schwarz and `‖C‖ ≤ 1`, since `‖𝐬‖₂ = √|S|` and
-`‖𝐭‖₂ = √|T|`.  Combining, the deviation of `⟨𝐬, A𝐭⟩` from `|S||T|/n` is at
-most `λ|S||T|/n + λ√(|S||T|) − λ|S||T|/n`; more precisely both bounds
-`⟨𝐬,A𝐭⟩ ≤ |S||T|/n + λ√(|S||T|)` and `⟨𝐬,A𝐭⟩ ≥ |S||T|/n − λ√(|S||T|)`
-follow, using `|S||T|/n ≤ √(|S||T|)` for the lower one. -/
+**Proof sketch.** Decompose the indicator vectors against the uniform
+direction: `𝐬 = 𝐬∥ + 𝐬⊥` and `𝐭 = 𝐭∥ + 𝐭⊥` with `𝐬∥ = (|S|/n)·n𝟙`,
+`𝐭∥ = (|T|/n)·n𝟙` the components along `𝟙` and `𝐬⊥, 𝐭⊥ ⊥ 𝟙`.  Since
+`A𝐭∥ = 𝐭∥` and `A𝐭⊥ ⊥ 𝟙` (both from `IsSymmStochastic`),
+
+`⟨𝐬, A𝐭⟩ − |S||T|/n = ⟨𝐬⊥, A𝐭⊥⟩`,
+
+because `⟨𝐬, 𝐭∥⟩ = |S||T|/n` and the cross terms vanish by orthogonality.
+Now `|⟨𝐬⊥, A𝐭⊥⟩| ≤ ‖𝐬⊥‖₂·‖A𝐭⊥‖₂ ≤ λ‖𝐬⊥‖₂‖𝐭⊥‖₂ ≤ λ‖𝐬‖₂‖𝐭‖₂ = λ√(|S||T|)`
+by Cauchy–Schwarz, the defining property of `λ`
+(`Expander.norm_mulVec_le_lambda`), and Pythagoras (`‖𝐬⊥‖ ≤ ‖𝐬‖`).  Both
+bounds follow from the single absolute value.  (Deviation from the book's
+printed proof: [AB09] argues through the `A = (1−λ)J + λC` decomposition of
+Lemma 7.40, which cleanly yields only the upper bound — the lower bound
+needs the orthogonal-decomposition argument above, so we use it for
+both.) -/
 theorem inner_indicator_mulVec_le {A : Matrix (Fin n) (Fin n) ℝ}
     (hA : IsSymmStochastic A) {lam : ℝ} (hlam : lambda A ≤ lam)
     (S T : Finset (Fin n)) :

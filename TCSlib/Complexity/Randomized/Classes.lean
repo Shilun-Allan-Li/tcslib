@@ -205,12 +205,30 @@ def ClosedUnderAnswerIs : Prop :=
   ∀ M b, E.Eff M →
     E.Eff (boolVerifier fun x r => M x r = some b)
 
+/-- The `k`-fold repetition of a verifier accepting if *any* repetition
+accepts, on randomness split into `k` blocks of length `p(|x|)`: the
+one-sided amplifier (an `OR`, not a majority — a strict majority cannot
+amplify success probability exactly `1/2`, whereas for one-sided error the
+`OR` drives the failure probability to `(1/2)^k` without hurting
+soundness).  Used by [AB09, Thm 7.8]'s `ZPP ⊆ RP` direction. -/
+def anyVerifier (M : List Bool → List Bool → Bool) (p k : ℕ → ℕ) :
+    List Bool → List Bool → Bool := fun x r =>
+  (List.range (k x.length)).any fun i =>
+    M x ((r.drop (i * p x.length)).take (p x.length))
+
 /-- `E` can repeat a Boolean verifier a polynomial number of times, on blocks
 of polynomial length, and take the majority (closure of polynomial time under
 polynomial repetition). -/
 def ClosedUnderMajority : Prop :=
   ∀ M a k a' k', E.Eff (boolVerifier M) →
     E.Eff (boolVerifier (majorityVerifier M (polyLen a k) (polyLen a' k')))
+
+/-- `E` can repeat a Boolean verifier a polynomial number of times, on blocks
+of polynomial length, and accept if any repetition accepts (closure of
+polynomial time under polynomial repetition with an `OR`). -/
+def ClosedUnderAny : Prop :=
+  ∀ M a k a' k', E.Eff (boolVerifier M) →
+    E.Eff (boolVerifier (anyVerifier M (polyLen a k) (polyLen a' k')))
 
 /-- `E` can negate a Boolean verifier's answer (closure of polynomial time
 under complementation of the output). -/
@@ -237,18 +255,22 @@ theorem InBPP.compl (hNot : ClosedUnderNot E) {L : Language Bool}
 efficiency notion `E`, under the closure properties the two directions use.
 
 **Proof sketch.** (⊆) A zero-error verifier yields an `RP` verifier by
-answering `true` exactly on output `some true`: inputs outside `L` are never
-accepted (zero error), and inputs in `L` are accepted whenever the verifier
-does not abort, which has probability at least `1/2`; amplify `1/2` to `2/3`
-by one repetition (absorbed into the majority closure).  Symmetrically with
-`some false` for `Lᶜ`, giving `coRP`.  (⊇) Race an `RP` verifier `M₁` for `L`
-against an `RP` verifier `M₂` for `Lᶜ` on split randomness
+answering `true` exactly on output `some true` (`hAns`): inputs outside `L`
+are never accepted (zero error), and inputs in `L` are accepted whenever the
+verifier does not abort, hence with probability at least `1/2`.  Amplify
+`1/2` to `2/3` with a 2-fold `OR` (`anyVerifier`, `hAny`): soundness is
+preserved (an `OR` of never-accepting runs never accepts) and the failure
+probability drops to `(1/2)² = 1/4`, so success is `≥ 3/4 ≥ 2/3`.  (A strict
+*majority* cannot amplify success probability exactly `1/2`, which is why
+the one-sided `OR` closure is the right tool here.)  Symmetrically with
+`some false` for `Lᶜ`, giving `coRP`.  (⊇) Race an `RP` verifier `M₁` for
+`L` against an `RP` verifier `M₂` for `Lᶜ` on split randomness
 (`raceVerifier`): a definite answer is never wrong, since `M₁` accepting
 certifies `x ∈ L` and `M₂` accepting certifies `x ∉ L`; and whichever of the
 two is the "live" verifier for `x` accepts with probability ≥ `2/3`, so the
 race aborts with probability at most `1/3 ≤ 1/2`. -/
 theorem inZPP_iff_inRP_and_inCoRP (hRace : ClosedUnderRace E)
-    (hAns : ClosedUnderAnswerIs E) (hMaj : ClosedUnderMajority E)
+    (hAns : ClosedUnderAnswerIs E) (hAny : ClosedUnderAny E)
     (L : Language Bool) :
     InZPP E L ↔ InRP E L ∧ InCoRP E L := by
   sorry

@@ -8,6 +8,7 @@ import TCSlib.Complexity.Randomized.ErrorReduction
 import TCSlib.Complexity.Randomized.Classes
 import TCSlib.Complexity.Randomized.Adleman
 import TCSlib.Complexity.Randomized.SipserGacs
+import TCSlib.Complexity.Randomized.PolyTimeModel
 
 /-!
 # Randomized Computation
@@ -33,6 +34,9 @@ machines.
   `Language.InPPoly` from `CircuitComplexity.PPoly`.
 - `Randomized.SipserGacs`: certificate-style `Σ₂ᵖ`/`Π₂ᵖ` and
   `BPP ⊆ Σ₂ᵖ ∩ Π₂ᵖ` ([AB09, Thm 7.18]).
+- `Randomized.PolyTimeModel`: the instantiation of the abstract verifier
+  model by genuine polynomial-time machines (`Complexity.P`), discharging
+  the closure hypotheses and connecting `Σ₂` to `Complexity.SigmaP 2`.
 
 ## References
 

@@ -92,18 +92,26 @@ efficiency notion `E`, under the closure hypotheses the proof uses.
 
 **Proof sketch.** It suffices to prove `BPP ⊆ Σ₂ᵖ` and apply it to `Lᶜ`,
 since `BPP` is closed under complementation (`InBPP.compl`, which is where
-the hypothesis `hNot` is used).  Given `L ∈ BPP`, error reduction
-([AB09, Thm 7.10],
-`bpp_error_reduction`) yields a verifier `M` with `m = p n` random bits and
-error at most `2^{-n}`; let `S_x ⊆ {0,1}^m` be its accepting set on input
-`x`, so `|S_x| ≥ (1−2^{-n})2^m` if `x ∈ L` and `|S_x| ≤ 2^{-n}2^m`
-otherwise.  With `k = ⌈m/n⌉ + 1`: (Claim 1) if `|S_x| ≤ 2^{m-n}` then no `k`
-shifts of `S_x` cover `{0,1}^m`, since `|⋃ᵢ (S_x ⊕ uᵢ)| ≤ k|S_x| < 2^m`.
-(Claim 2) if `|S_x| ≥ (1−2^{-n})2^m` then random shifts cover: for fixed
-`v`, `Pr_{u₁,…,u_k}[∀ i, v ⊕ uᵢ ∉ S_x] ≤ 2^{-nk} < 2^{-m}`, so by a union
-bound over `v` some choice of shifts covers everything (the probabilistic
-method).  Hence `x ∈ L ↔ ∃ u₁,…,u_k ∀ v, ⋁ᵢ M(x, v ⊕ uᵢ)`, which is the
-`Σ₂`-shape `shiftOrVerifier` expresses. -/
+the hypothesis `hNot` is used).  Given `L ∈ BPP` with a verifier using
+`m₀ = polyLen a₀ k₀ |x|` random bits — padded so that `a₀ ≥ 7`, hence
+`m₀ ≥ 7` at every input length — amplify by majority (`hMaj`,
+`majority_error_le`) with `13·m₀` repetitions to error at most `2^{−m₀}`;
+the amplified verifier `M` uses `m = 13·m₀²` random bits.  Let
+`S_x ⊆ {0,1}^m` be its accepting set, so `|S_x| ≥ (1−2^{−m₀})2^m` if
+`x ∈ L` and `|S_x| ≤ 2^{−m₀}2^m` otherwise.  Take `k = 13·m₀ + 1` shifts.
+(Claim 1) if `|S_x| ≤ 2^{m−m₀}` then no `k` shifts of `S_x` cover
+`{0,1}^m`: `|⋃ᵢ (S_x ⊕ uᵢ)| ≤ k·2^{m−m₀} < 2^m` since `13m₀ + 1 < 2^{m₀}`
+(which holds for every length because `m₀ ≥ 7` — the book's choice
+`k = ⌈m/n⌉ + 1` needs `k < 2^n` and fails at small `n`, so we balance
+against `m₀` instead of `n`).  (Claim 2) if `|S_x| ≥ (1−2^{−m₀})2^m` then
+random shifts cover: for fixed `v`,
+`Pr_{u₁,…,u_k}[∀ i, v ⊕ uᵢ ∉ S_x] ≤ 2^{−m₀k} < 2^{−m}` since
+`m₀·k = 13m₀² + m₀ > m`, so a union bound over the `2^m` strings `v` leaves
+a positive-probability choice of shifts covering everything (the
+probabilistic method).  Hence
+`x ∈ L ↔ ∃ u₁,…,u_k ∀ v, ⋁ᵢ M(x, v ⊕ uᵢ)`, which is the `Σ₂`-shape
+`shiftOrVerifier` expresses; all the lengths involved are `polyLen`
+schedules. -/
 theorem sipser_gacs (hMaj : ClosedUnderMajority E)
     (hNot : ClosedUnderNot E) (hShift : ClosedUnderShiftOr E)
     {L : Language Bool} (hL : InBPP E L) :

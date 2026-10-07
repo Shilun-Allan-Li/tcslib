@@ -77,20 +77,23 @@ theorem opNorm_le_one {A : Matrix (Fin n) (Fin n) ℝ} (hA : IsSymmStochastic A)
   sorry
 
 /-- **Decomposition of an expander step.**  If `A` is symmetric stochastic and
-`λ(A) ≤ λ < 1` with `λ > 0`, then `A = (1−λ)J + λC` where `J` is the
-all-`1/n` matrix and `‖C‖ ≤ 1`: a step of the walk behaves, for the purposes
-of `L²` analysis, like moving to the uniform distribution with probability
-`1−λ`.  (`C` may have negative entries, so this is not a literal convex
-combination of walks.)  [AB09, Lem 7.40]
+`λ(A) ≤ λ` with `0 ≤ λ`, then `A = (1−λ)J + λC` where `J` is the all-`1/n`
+matrix and `‖C‖ ≤ 1`: a step of the walk behaves, for the purposes of `L²`
+analysis, like moving to the uniform distribution with probability `1−λ`.
+(`C` may have negative entries, so this is not a literal convex combination
+of walks.)  [AB09, Lem 7.40], including the degenerate case `λ = 0` the book
+permits (e.g. `A = J` itself).
 
-**Proof sketch.** Define `C = (1/λ)(A − (1−λ)J)`.  Decompose any `𝐯` as
-`𝐮 + 𝐰` with `𝐮 = α𝟙` and `𝐰 ⊥ 𝟙`.  Then `C𝐮 = 𝐮` (both `A` and `J` fix
-`𝟙`), and `C𝐰 = (1/λ)A𝐰` (as `J𝐰 = 0`), which has norm at most `‖𝐰‖₂` by the
-defining property of `λ`.  Since `C𝐮 = 𝐮 ⊥ C𝐰 ∈ 𝟙^⊥`, Pythagoras gives
-`‖C𝐯‖₂ ≤ ‖𝐯‖₂`. -/
+**Proof sketch.** For `λ > 0`, define `C = (1/λ)(A − (1−λ)J)`.  Decompose
+any `𝐯` as `𝐮 + 𝐰` with `𝐮 = α𝟙` and `𝐰 ⊥ 𝟙`.  Then `C𝐮 = 𝐮` (both `A` and
+`J` fix `𝟙`), and `C𝐰 = (1/λ)A𝐰` (as `J𝐰 = 0`), which has norm at most
+`‖𝐰‖₂` by the defining property of `λ`.  Since `C𝐮 = 𝐮 ⊥ C𝐰 ∈ 𝟙^⊥`,
+Pythagoras gives `‖C𝐯‖₂ ≤ ‖𝐯‖₂`.  For `λ = 0` the hypothesis forces `A` to
+annihilate `𝟙^⊥` (`‖A𝐰‖ ≤ 0`), and `A𝟙 = 𝟙 = J𝟙`, so `A = J`; take
+`C = 0`. -/
 theorem exists_decomposition {A : Matrix (Fin n) (Fin n) ℝ}
     (hA : IsSymmStochastic A) {lam : ℝ} (hlam : lambda A ≤ lam)
-    (h0 : 0 < lam) :
+    (hlam0 : 0 ≤ lam) :
     ∃ C : Matrix (Fin n) (Fin n) ℝ,
       A = (1 - lam) • unifMatrix n + lam • C ∧ ‖toCLM C‖ ≤ 1 := by
   sorry
