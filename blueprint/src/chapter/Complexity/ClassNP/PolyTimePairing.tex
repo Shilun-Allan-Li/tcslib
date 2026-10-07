@@ -20,7 +20,7 @@ Turing-machine constructions.
 \lean{Complexity.polyTimeComputable_of_linear}
 \label{Complexity.polyTimeComputable_of_linear}
 \leanok
-\uses{Complexity.PolyTimeComputable, Complexity.pairMapSnd, Turing.FinTM, Turing.FinTM.ComputesFunInTime}
+\uses{Complexity.PolyTimeComputable, Turing.FinTM, Turing.FinTM.ComputesFunInTime}
 \difficulty{2}
 Let $f$ be a function from bit strings to bit strings. If there are a finite binary Turing machine $M$ and a constant $a \in \mathbb{N}$ such that $M$ computes $f$ within $a(n+1)$ steps on every input of length $n$, then $f$ is polynomial-time computable, i.e.\ some finite binary Turing machine computes $f$ within $C(n+1)^c$ steps on every input of length $n$, for some constants $C, c \in \mathbb{N}$.
 \end{theorem}
@@ -55,7 +55,7 @@ Let $g$ be a function from bit strings to bit strings, let $\langle a,b\rangle$ 
 \lean{Complexity.PolyTimeComputable.pairMapSnd}
 \label{Complexity.PolyTimeComputable.pairMapSnd}
 \leanok
-\uses{Complexity.PolyTimeComputable, Complexity.PolyTimeComputable.pairEncode, Complexity.pairMapSnd, Turing.FinTM.ComputesInTime.mono, Turing.FinTM.computesFunInTime_pairMapSnd}
+\uses{Complexity.PolyTimeComputable, Complexity.pairMapSnd, Turing.FinTM.ComputesInTime.mono, Turing.FinTM.computesFunInTime_pairMapSnd}
 \difficulty{4}
 Let $g$ be a polynomial-time computable function on bit strings (computed by some finite binary Turing machine within $C(n+1)^c$ steps on inputs of length $n$, for some constants $C, c$). Then its threaded payload map, which sends a pair encoding $\langle a,b\rangle$ (every bit of $a$ doubled, then $01$, then $b$) to $\langle a, g(b)\rangle$ and every bit string that is not a pair encoding to the empty word, is also polynomial-time computable.
 \end{theorem}

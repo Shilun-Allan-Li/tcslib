@@ -491,7 +491,7 @@ key and the work read (in the same order) as the minor key.
 \lean{Turing.timedCut_Actions_lookup}
 \label{Turing.timedCut_Actions_lookup}
 \leanok
-\uses{Turing.CodeTM, Turing.timedCut_Actions, Turing.timedCut_Header,
+\uses{Turing.CodeTM, Turing.timedCut_Actions,
   Turing.universalRecordIndex}
 \difficulty{2}
 For every coded machine, state $q$, and pair of optional input and work reads,
@@ -623,7 +623,7 @@ case.
   Turing.Cfg.workTapeSymbols, Turing.CodeTM, Turing.CodeTM.serialize,
   Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step',
   Turing.MultiTapeTM.runFrom_zero, Turing.MultiTapeTM.step,
-  Turing.UniversalControl, Turing.pairEncode, Turing.timedClockPrefix,
+  Turing.UniversalControl, Turing.pairEncode,
   Turing.timedCutInterpreter, Turing.timedCut_Eval_step,
   Turing.timedCut_Header, Turing.timedCut_NextCost,
   Turing.timedCut_count_run, Turing.timedCut_initial_skip,
@@ -941,7 +941,7 @@ little-endian value is $0$.
 \lean{Turing.timedBorrow_value}
 \label{Turing.timedBorrow_value}
 \leanok
-\uses{Turing.TimedControl, Turing.timedBorrow, Turing.timedBorrow_false,
+\uses{Turing.timedBorrow, Turing.timedBorrow_false,
   Turing.timedValue}
 \difficulty{4}
 If a word has positive little-endian value, then the value of the word
@@ -1026,7 +1026,7 @@ empty; a halted four-tape control maps to the emission-start phase.
 \lean{Turing.timedCut_regular}
 \label{Turing.timedCut_regular}
 \leanok
-\uses{Turing.UniversalControl, Turing.timedAction_apply,
+\uses{Turing.UniversalControl,
   Turing.timedCutInterpreter, Turing.universalInterpreter}
 \difficulty{2}
 For every control state that is not a pending-action state, the transition
@@ -1039,8 +1039,7 @@ table interpreter on all reads.
 \label{Turing.timedCut_live_before}
 \leanok
 \uses{Turing.Cfg, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add,
-  Turing.MultiTapeTM.runFrom_of_halt, Turing.UniversalControl,
-  Turing.timedAction_apply, Turing.timedCutInterpreter}
+  Turing.MultiTapeTM.runFrom_of_halt, Turing.UniversalControl, Turing.timedCutInterpreter}
 \difficulty{3}
 If the stopped table interpreter has not halted after $t$ steps from a
 configuration, then it has not halted after any $s \le t$ steps from that
@@ -1682,7 +1681,7 @@ blank captured table and blank interpreter lanes.
 \uses{Turing.Action, Turing.Action.apply, Turing.Cfg, Turing.Cfg.inputSymbol,
   Turing.Cfg.workTapeSymbols, Turing.FinTM, Turing.FinTM.bufferTape_append,
   Turing.FinTM.tapeBlocks, Turing.MultiTapeTM.step, Turing.timedCaptureCfg,
-  Turing.timedCaptureTM, Turing.timedFrame}
+  Turing.timedCaptureTM}
 \difficulty{5}
 For every live configuration of the base machine, one step of the capture
 wrapper from its first-phase embedding equals the embedding of one step of the
@@ -1807,7 +1806,7 @@ transition.
 \uses{Turing.Cfg, Turing.FinTM, Turing.MultiTapeTM.runFrom,
   Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.TimedControl,
   Turing.timedCaptureTM, Turing.timedFrame, Turing.timedFrame_step,
-  Turing.timedInterpreter, Turing.timedUniversalTM}
+  Turing.timedInterpreter}
 \difficulty{3}
 For every $t$, running the assembled capture machine $t$ steps from a framed
 configuration equals the frame of the $t$-step timed-interpreter run, with the
@@ -1821,7 +1820,7 @@ inactive frame unchanged.
 \uses{Turing.Cfg, Turing.FinTM, Turing.FinTM.bufferTape,
   Turing.FinTM.tapeBlocks, Turing.timedCaptureCfg, Turing.timedCapturedCfg,
   Turing.timedCut_InterpreterInitial, Turing.timedFive, Turing.timedFrame,
-  Turing.timedLift, Turing.timedSix, Turing.timedUniversalTM,
+  Turing.timedLift, Turing.timedSix,
   Turing.universalFour}
 \difficulty{4}
 Let a halted configuration of the base machine hold, on the designated clock

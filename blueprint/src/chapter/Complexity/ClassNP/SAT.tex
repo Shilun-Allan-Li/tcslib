@@ -77,7 +77,7 @@ so is $x \mapsto [p(x) \wedge q(x)]$.
 \lean{Complexity.sat_comp_on_image}
 \label{Complexity.sat_comp_on_image}
 \leanok
-\uses{Complexity.SAT, Turing.FinTM, Turing.FinTM.ComputesFunInTime, Turing.FinTM.ComputesInTime, Turing.FinTM.exists_comp_on_image}
+\uses{Turing.FinTM, Turing.FinTM.ComputesFunInTime, Turing.FinTM.ComputesInTime, Turing.FinTM.exists_comp_on_image}
 \difficulty{1}
 Let $M$ and $U$ be finite multi-tape Turing machines over the binary alphabet, let
 $f, g$ be functions on binary strings and $T_1, T_2 : \mathbb{N} \to \mathbb{N}$ time
@@ -254,7 +254,7 @@ $r$.
 \lean{Complexity.sat_parseClause_repr}
 \label{Complexity.sat_parseClause_repr}
 \leanok
-\uses{Complexity.satSyntaxSuffix, Complexity.sat_parseLit_repr, Std.Sat.CNF.parseClause, Std.Sat.CNF.parseLit, Std.Sat.CNF.serializeClause}
+\uses{Complexity.sat_parseLit_repr, Std.Sat.CNF.parseClause, Std.Sat.CNF.parseLit, Std.Sat.CNF.serializeClause}
 \difficulty{5}
 If the fuel-indexed clause parser succeeds on a binary string $x$, returning a
 clause $C$ and a remainder $r$, then $x$ is exactly the serialization of $C$
@@ -265,7 +265,7 @@ clause $C$ and a remainder $r$, then $x$ is exactly the serialization of $C$
 \lean{Complexity.sat_parseClauses_repr}
 \label{Complexity.sat_parseClauses_repr}
 \leanok
-\uses{Complexity.satSyntaxSuffix, Complexity.sat_parseClause_repr, Std.Sat.CNF.parseClause, Std.Sat.CNF.parseClauses, Std.Sat.CNF.serialize, Std.Sat.CNF.serializeClause}
+\uses{Complexity.sat_parseClause_repr, Std.Sat.CNF.parseClause, Std.Sat.CNF.parseClauses, Std.Sat.CNF.serialize, Std.Sat.CNF.serializeClause}
 \difficulty{5}
 If the fuel-indexed formula parser succeeds on a binary string $x$, returning a
 formula $\varphi$ and a remainder $r$, then $x$ is exactly the serialization of
@@ -276,7 +276,7 @@ $\varphi$ — every clause marker and the final terminator — followed by $r$.
 \lean{Complexity.sat_parse_repr}
 \label{Complexity.sat_parse_repr}
 \leanok
-\uses{Complexity.satSyntaxSuffix, Complexity.sat_parseClauses_repr, Std.Sat.CNF.parse, Std.Sat.CNF.serialize}
+\uses{Complexity.sat_parseClauses_repr, Std.Sat.CNF.parse, Std.Sat.CNF.serialize}
 \difficulty{3}
 If the exact-consumption CNF parser succeeds on a binary string $x$, returning the
 formula $\varphi$, then $x$ equals the serialization of $\varphi$.
@@ -286,7 +286,6 @@ formula $\varphi$, then $x$ equals the serialization of $\varphi$.
 \lean{Complexity.satSyntaxStep}
 \label{Complexity.satSyntaxStep}
 \leanok
-\uses{Complexity.satSyntaxSuffix}
 The transition function of the six-state CNF syntax automaton over $\{0,1\}$ is
 defined on the positions formula, clause, unary index, polarity, exact end, and
 error as follows. At formula level a $1$ leads to clause level and a $0$ to exact
@@ -413,7 +412,7 @@ transition over $r$ from $q$; no earlier step emits.
 \lean{Complexity.satScan_computes}
 \label{Complexity.satScan_computes}
 \leanok
-\uses{Complexity.SatEvalControl, Complexity.satScanCfg, Complexity.satScanTM, Complexity.satScan_run, Turing.Cfg.ext_zero_tapes, Turing.FinTM.ComputesFunInTime, Turing.FinTM.computesInTime_iff, Turing.MultiTapeTM.initCfg}
+\uses{Complexity.satScanCfg, Complexity.satScanTM, Complexity.satScan_run, Turing.Cfg.ext_zero_tapes, Turing.FinTM.ComputesFunInTime, Turing.FinTM.computesInTime_iff, Turing.MultiTapeTM.initCfg}
 \difficulty{3}
 Let $S$ be a finite set with transition function
 $\delta : S \times \{0,1\} \to S$, start state $s_0 \in S$, and accepting
@@ -549,7 +548,7 @@ unchanged.
 \lean{Complexity.satEval_double}
 \label{Complexity.satEval_double}
 \leanok
-\uses{Complexity.satBits, Complexity.satEvalAction, Complexity.satEvalAction_apply, Complexity.satEvalCfg, Complexity.satEvalCfg_input, Complexity.satEvalQ, Complexity.satEvalTM, Complexity.satEval_skip, Turing.Action.apply, Turing.Cfg, Turing.Cfg.workTapeSymbols, Turing.FinTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.step, Turing.moveInputPos_pos_of_ne_right}
+\uses{Complexity.satEvalAction, Complexity.satEvalAction_apply, Complexity.satEvalCfg, Complexity.satEvalCfg_input, Complexity.satEvalQ, Complexity.satEvalTM, Complexity.satEval_skip, Turing.Action.apply, Turing.Cfg, Turing.Cfg.workTapeSymbols, Turing.FinTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.step, Turing.moveInputPos_pos_of_ne_right}
 \difficulty{4}
 Suppose the evaluator's transition at a semantic state on the current input bit is
 the administrative action moving right, displacing the certificate head by $d$, and
@@ -564,7 +563,7 @@ moves only on the first of the two physical transitions.
 \lean{Complexity.satEval_rewind}
 \label{Complexity.satEval_rewind}
 \leanok
-\uses{Complexity.SatEvalControl, Complexity.satBits, Complexity.satEvalAction, Complexity.satEvalAction_apply, Complexity.satEvalCfg, Complexity.satEvalCfg_work, Complexity.satEvalTM, Turing.Action.apply, Turing.Cfg, Turing.FinTM, Turing.FinTM.bufferTape, Turing.FinTM.bufferTape_left, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step, Turing.MultiTapeTM.runFrom_zero, Turing.MultiTapeTM.step, Turing.moveInputPos_zero}
+\uses{Complexity.SatEvalControl, Complexity.satEvalAction, Complexity.satEvalAction_apply, Complexity.satEvalCfg, Complexity.satEvalCfg_work, Complexity.satEvalTM, Turing.Action.apply, Turing.Cfg, Turing.FinTM, Turing.FinTM.bufferTape, Turing.FinTM.bufferTape_left, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step, Turing.MultiTapeTM.runFrom_zero, Turing.MultiTapeTM.step, Turing.moveInputPos_zero}
 \difficulty{5}
 Let $q$ be an evaluator control state whose transition moves the certificate head
 left while its cell is occupied and otherwise steps right into a destination state.
@@ -682,7 +681,7 @@ at $0$, formula phase with formula bit true, and empty output.
 \lean{Complexity.satEval_computes}
 \label{Complexity.satEval_computes}
 \leanok
-\uses{Complexity.satAssignment, Complexity.satBits, Complexity.satBits_length, Complexity.satEvalTM, Complexity.satEval_formula, Complexity.satEval_start, Complexity.satSplitValid, Std.Sat.CNF.serialize, Turing.FinTM, Turing.FinTM.ComputesInTime, Turing.FinTM.ComputesInTime.mono, Turing.FinTM.computesFunInTime_pairSnd, Turing.FinTM.computesInTime_iff, Turing.MultiTapeTM.runFrom_add, Turing.pairDecode_pairEncode, Turing.pairEncode}
+\uses{Complexity.satAssignment, Complexity.satBits, Complexity.satBits_length, Complexity.satEvalTM, Complexity.satEval_formula, Complexity.satEval_start, Std.Sat.CNF.serialize, Turing.FinTM, Turing.FinTM.ComputesInTime, Turing.FinTM.ComputesInTime.mono, Turing.FinTM.computesFunInTime_pairSnd, Turing.FinTM.computesInTime_iff, Turing.MultiTapeTM.runFrom_add, Turing.pairDecode_pairEncode, Turing.pairEncode}
 \difficulty{5}
 There exist a single finite machine $E$ and a constant $A$ such that for every CNF
 formula $\varphi$ and every certificate word $u$ covering all variables of
@@ -1073,7 +1072,7 @@ the chain construction at cursor $n$.
 \lean{Complexity.satChain_vars}
 \label{Complexity.satChain_vars}
 \leanok
-\uses{Complexity.satChain, Complexity.satChain_cursor, Complexity.satTransform}
+\uses{Complexity.satChain, Complexity.satChain_cursor}
 \difficulty{4}
 If every variable index of the input clause (head plus remaining literals) is below
 the starting cursor $n$, then every variable index occurring in the formula emitted
@@ -1179,7 +1178,7 @@ $\varphi$ also satisfies $\varphi$ itself, with the same assignment.
 \lean{Complexity.satTransformFrom_complete}
 \label{Complexity.satTransformFrom_complete}
 \leanok
-\uses{Complexity.eval_congr_of_lt_numVars, Complexity.satSplitClause, Complexity.satSplitClause_complete, Complexity.satSplitClause_cursor, Complexity.satSplitClause_vars, Complexity.satTransform, Complexity.satTransformFrom, Complexity.sat_numVars_le}
+\uses{Complexity.eval_congr_of_lt_numVars, Complexity.satSplitClause, Complexity.satSplitClause_complete, Complexity.satSplitClause_cursor, Complexity.satSplitClause_vars, Complexity.satTransformFrom, Complexity.sat_numVars_le}
 \difficulty{5}
 Let a CNF formula $\varphi$ have all variable indices below $n$, and let $a$ be an
 assignment satisfying $\varphi$. Then some assignment agreeing with $a$ on all
@@ -1693,7 +1692,7 @@ length, so no literal buffer survives a round boundary.
 \lean{Complexity.satStreamRun_tail}
 \label{Complexity.satStreamRun_tail}
 \leanok
-\uses{Complexity.satStreamRound_false, Complexity.satStreamRound_literal, Complexity.satStreamRun, Complexity.satStreamRun_correct, Complexity.satStreamStep, Complexity.satStreamTail, Std.Sat.CNF.serializeClause, Std.Sat.CNF.serializeLit}
+\uses{Complexity.satStreamRound_false, Complexity.satStreamRound_literal, Complexity.satStreamRun, Complexity.satStreamTail, Std.Sat.CNF.serializeClause, Std.Sat.CNF.serializeLit}
 \difficulty{5}
 Let the input contain a serialized clause tail $C$ at the consumed position, with
 the seam in the tail phase at cursor $j$. Then exactly $|C| + 1$ rounds — one per
@@ -1706,7 +1705,7 @@ phase, and leave the cursor at the tail's final value.
 \lean{Complexity.satStreamRun_clause}
 \label{Complexity.satStreamRun_clause}
 \leanok
-\uses{Complexity.satStreamClause, Complexity.satStreamCount, Complexity.satStreamRound_false, Complexity.satStreamRound_literal, Complexity.satStreamRun, Complexity.satStreamRun_tail, Std.Sat.CNF.serializeClause, Std.Sat.CNF.serializeLit}
+\uses{Complexity.satStreamClause, Complexity.satStreamRound_false, Complexity.satStreamRound_literal, Complexity.satStreamRun, Complexity.satStreamRun_tail, Std.Sat.CNF.serializeClause, Std.Sat.CNF.serializeLit}
 \difficulty{5}
 Let the input contain a serialized clause $C$ at the consumed position, with the
 seam in the first-literal phase at cursor $j$. Then exactly $|C| + 1$ rounds
@@ -2221,7 +2220,7 @@ applied to $q$ and $r$.
 \lean{Complexity.satMap_poly}
 \label{Complexity.satMap_poly}
 \leanok
-\uses{Complexity.PolyTimeComputable, Complexity.satMapCfg, Complexity.satMapTM, Complexity.satMapWord, Complexity.satMap_run, Complexity.sat_pt_unaryLength, Turing.Cfg.ext_zero_tapes, Turing.FinTM.computesInTime_iff, Turing.MultiTapeTM.initCfg}
+\uses{Complexity.PolyTimeComputable, Complexity.satMapCfg, Complexity.satMapTM, Complexity.satMapWord, Complexity.satMap_run, Turing.Cfg.ext_zero_tapes, Turing.FinTM.computesInTime_iff, Turing.MultiTapeTM.initCfg}
 \difficulty{3}
 For every finite state set with transition, per-bit emission, final emission, and
 start state, the associated word-transducer function on binary strings is
@@ -2395,7 +2394,7 @@ over the verified complete syntax scanner between the identity and a constant.
 \lean{Complexity.sat_pt_numVars}
 \label{Complexity.sat_pt_numVars}
 \leanok
-\uses{Complexity.PolyTimeComputable, Complexity.satDrop_double, Complexity.satMaxTM, Complexity.satMax_computes, Complexity.satStreamCanonical, Complexity.satStreamCanonical_poly, Complexity.satStreamCanonical_spec, Complexity.sat_comp_on_image, Std.Sat.CNF.decode, Std.Sat.CNF.numVars, Std.Sat.CNF.serialize, Turing.FinTM.ComputesInTime, Turing.FinTM.ComputesInTime.mono}
+\uses{Complexity.PolyTimeComputable, Complexity.satMaxTM, Complexity.satMax_computes, Complexity.satStreamCanonical, Complexity.satStreamCanonical_poly, Complexity.satStreamCanonical_spec, Complexity.sat_comp_on_image, Std.Sat.CNF.decode, Std.Sat.CNF.numVars, Std.Sat.CNF.serialize, Turing.FinTM.ComputesInTime, Turing.FinTM.ComputesInTime.mono}
 \difficulty{5}
 For a binary string $x$, let $\varphi_x$ be the CNF formula decoded from $x$ and
 $N(\varphi_x)$ its variable bound (one more than the largest variable index
@@ -2603,7 +2602,7 @@ emit every bit of $r$ and halt on the right blank, with the counter untouched.
 \lean{Complexity.satDrop_computes}
 \label{Complexity.satDrop_computes}
 \leanok
-\uses{Complexity.satBits, Complexity.satBits_length, Complexity.satDropCfg, Complexity.satDropTM, Complexity.satDrop_copy, Complexity.satDrop_dispatch, Complexity.satDrop_parse, Complexity.satDrop_rewind, Complexity.satDrop_separator, Complexity.satDrop_skip, Complexity.satRedCounter, Complexity.satStreamPos, Complexity.sat_pt_fields, Turing.Cfg.init, Turing.FinTM.ComputesInTime, Turing.FinTM.ComputesInTime.mono, Turing.FinTM.bufferTape, Turing.FinTM.computesInTime_iff, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.pairEncode}
+\uses{Complexity.satBits, Complexity.satBits_length, Complexity.satDropCfg, Complexity.satDropTM, Complexity.satDrop_copy, Complexity.satDrop_dispatch, Complexity.satDrop_parse, Complexity.satDrop_rewind, Complexity.satDrop_separator, Complexity.satDrop_skip, Complexity.satRedCounter, Complexity.satStreamPos, Turing.Cfg.init, Turing.FinTM.ComputesInTime, Turing.FinTM.ComputesInTime.mono, Turing.FinTM.bufferTape, Turing.FinTM.computesInTime_iff, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.pairEncode}
 \difficulty{6}
 For all binary words $u$ and $v$, the suffix extractor run on
 the pair encoding $\mathrm{pair}(u,v)$ (every bit of $u$ doubled, then the separator $01$, then $v$) halts within $3(\ell + 1)$ steps, where $\ell$ is the length of
@@ -2662,7 +2661,7 @@ one.
 \lean{Complexity.satToken_failure}
 \label{Complexity.satToken_failure}
 \leanok
-\uses{Complexity.satReqFresh, Complexity.satToken_shape, Std.Sat.CNF.parseLit, Std.Sat.CNF.takeTrues, Turing.unaryTokenSplit}
+\uses{Complexity.satToken_shape, Std.Sat.CNF.parseLit, Std.Sat.CNF.takeTrues, Turing.unaryTokenSplit}
 \difficulty{4}
 If the literal parser fails on a string starting with a one (a literal marker),
 then the unary token splitter on that string returns an empty suffix: there is no
@@ -2813,7 +2812,7 @@ its first $c$ bits dropped.
 \lean{Complexity.satReq_round}
 \label{Complexity.satReq_round}
 \leanok
-\uses{Complexity.SatStreamState, Complexity.satAppendTM, Complexity.satReqEmit, Complexity.satReqFragment, Complexity.satReqFresh, Complexity.satReqLink, Complexity.satReqLit, Complexity.satReqPack, Complexity.satReqPhase, Complexity.satReqPol, Complexity.satReqRest, Complexity.satReqStep, Complexity.satReqUsed, Complexity.satReq_fields, Complexity.satStreamFst, Complexity.satStreamRound, Complexity.satStreamSnd, Complexity.satStreamWord, Complexity.satToken_failure, Complexity.satToken_literal, Complexity.sat_parseLit_repr, Complexity.sat_take_one_true, Std.Sat.CNF.parseLit, Std.Sat.CNF.serializeLit, Turing.pairDecode_pairEncode, Turing.pairEncode}
+\uses{Complexity.SatStreamState, Complexity.satReqEmit, Complexity.satReqFragment, Complexity.satReqFresh, Complexity.satReqLink, Complexity.satReqLit, Complexity.satReqPack, Complexity.satReqPhase, Complexity.satReqPol, Complexity.satReqRest, Complexity.satReqStep, Complexity.satReqUsed, Complexity.satReq_fields, Complexity.satStreamFst, Complexity.satStreamRound, Complexity.satStreamSnd, Complexity.satStreamWord, Complexity.satToken_failure, Complexity.satToken_literal, Complexity.sat_parseLit_repr, Complexity.sat_take_one_true, Std.Sat.CNF.parseLit, Std.Sat.CNF.serializeLit, Turing.pairDecode_pairEncode, Turing.pairEncode}
 \difficulty{6}
 On every canonical round request — the pair encoding of the encoded seam word of
 any state $s$ (not only reachable ones) with the input $x$ — the word-level
@@ -2922,7 +2921,7 @@ head.
 \lean{Complexity.satAppend_copy}
 \label{Complexity.satAppend_copy}
 \leanok
-\uses{Complexity.SatClean, Complexity.satAppendCfg, Complexity.satAppendTM, Complexity.satStreamPos, Complexity.satStreamPos_read, Complexity.satStreamPos_succ, Turing.Action.apply, Turing.Cfg.inputSymbol, Turing.FinTM.bufferTape_append, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step, Turing.MultiTapeTM.runFrom_zero, Turing.MultiTapeTM.step, Turing.moveInputPos_zero}
+\uses{Complexity.satAppendCfg, Complexity.satAppendTM, Complexity.satStreamPos, Complexity.satStreamPos_read, Complexity.satStreamPos_succ, Turing.Action.apply, Turing.Cfg.inputSymbol, Turing.FinTM.bufferTape_append, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step, Turing.MultiTapeTM.runFrom_zero, Turing.MultiTapeTM.step, Turing.moveInputPos_zero}
 \difficulty{5}
 Let the native input decompose as $x = p \mathbin{+\!\!+} r$, with the appender
 in its copy state at clamped input offset $|p|$ and work tape holding
@@ -2960,7 +2959,7 @@ any endpoint.
 \lean{Complexity.satAppend_clean}
 \label{Complexity.satAppend_clean}
 \leanok
-\uses{Complexity.satAppendCfg, Complexity.satAppendTM, Complexity.satAppend_copy, Complexity.satAppend_rewind, Complexity.satAppend_seek, Complexity.satStop_step, Complexity.satStreamPos, Complexity.sat_call_first_halt, Turing.Cfg.Halted, Turing.Cfg.ofWords, Turing.FinTM.timed_rewind, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.stateWord}
+\uses{Complexity.satAppendCfg, Complexity.satAppendTM, Complexity.satAppend_copy, Complexity.satAppend_rewind, Complexity.satAppend_seek, Complexity.satStreamPos, Complexity.sat_call_first_halt, Turing.Cfg.Halted, Turing.Cfg.ofWords, Turing.FinTM.timed_rewind, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.stateWord}
 \difficulty{5}
 For every native input $x$ and existing word $w$ on the data tape, there is a
 positive time $t \le 2|w| + 3|x| + 6$ such that the appender, started at its
@@ -3146,7 +3145,7 @@ clean-call contracts restore the shared scratch before each next call.
 \lean{Complexity.satHost_seam}
 \label{Complexity.satHost_seam}
 \leanok
-\uses{Complexity.SatClean, Complexity.SatHostState, Complexity.satHostRet, Complexity.satPadCfg, Complexity.satPad_seam, Turing.Cfg, Turing.Cfg.ofWords, Turing.FinTM, Turing.emitCfg, Turing.stateWord}
+\uses{Complexity.SatHostState, Complexity.satHostRet, Complexity.satPadCfg, Complexity.satPad_seam, Turing.Cfg, Turing.Cfg.ofWords, Turing.FinTM, Turing.emitCfg, Turing.stateWord}
 \difficulty{3}
 For a module with positive tape count: forwarding a padded canonical
 configuration of the module (built from a state word, with a given output)
@@ -3159,7 +3158,7 @@ state maps to the module's return state.
 \lean{Complexity.satHost_call}
 \label{Complexity.satHost_call}
 \leanok
-\uses{Complexity.SatClean, Complexity.SatHostState, Complexity.satHostEntry, Complexity.satHostRet, Complexity.satHostTM, Complexity.satHost_seam, Complexity.satPadCfg, Complexity.satPadTM, Complexity.satPad_run, Turing.Cfg.Halted, Turing.Cfg.ofWords, Turing.FinTM, Turing.MultiTapeTM.runFrom, Turing.emitCfg, Turing.emit_run, Turing.stateWord}
+\uses{Complexity.SatHostState, Complexity.satHostEntry, Complexity.satHostRet, Complexity.satHostTM, Complexity.satHost_seam, Complexity.satPadCfg, Complexity.satPadTM, Complexity.satPad_run, Turing.Cfg.Halted, Turing.Cfg.ofWords, Turing.FinTM, Turing.MultiTapeTM.runFrom, Turing.emitCfg, Turing.emit_run, Turing.stateWord}
 \difficulty{5}
 Let the $i$-th module (with positive tape count), started at its own entry over
 the state word of an argument, stay live before time $t$ and halt at time $t$
@@ -3174,7 +3173,7 @@ $p \mathbin{+\!\!+} o$.
 \lean{Complexity.sat_guard_add}
 \label{Complexity.sat_guard_add}
 \leanok
-\uses{Complexity.SatClean, Turing.Cfg, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add}
+\uses{Turing.Cfg, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add}
 \difficulty{3}
 Let a machine avoid a designated anchor state for $a$ steps from $c$, reach $d$
 at time $a$, and avoid the anchor for $b$ further steps from $d$. Then it avoids
@@ -3238,7 +3237,7 @@ install module.
 \lean{Complexity.satClean_emit}
 \label{Complexity.satClean_emit}
 \leanok
-\uses{Complexity.PolyTimeComputable, Complexity.SatClean, Complexity.satClean_stop, Complexity.satPair_length, Complexity.satStopTM, Complexity.sat_bridge_bound, Turing.FinTM.computesInTime_iff, Turing.FinTM.exists_emitCallTM, Turing.MultiTapeTM.output_length_le}
+\uses{Complexity.PolyTimeComputable, Complexity.SatClean, Complexity.satClean_stop, Complexity.satStopTM, Complexity.sat_bridge_bound, Turing.FinTM.computesInTime_iff, Turing.FinTM.exists_emitCallTM, Turing.MultiTapeTM.output_length_le}
 \difficulty{4}
 For every polynomial-time computable word function $f$ there exist a module $M$
 and constants $A, d$ such that $M$ satisfies the clean-module contract with the
@@ -3275,7 +3274,7 @@ the original input length.
 \lean{Complexity.satHost_clean}
 \label{Complexity.satHost_clean}
 \leanok
-\uses{Complexity.SAT_reducible_SAT3, Complexity.SatClean, Complexity.satHostEntry, Complexity.satHostRet, Complexity.satHostTM, Complexity.satHost_call, Complexity.satReduction_poly, Turing.Cfg.ofWords, Turing.FinTM, Turing.MultiTapeTM.runFrom, Turing.stateWord}
+\uses{Complexity.SatClean, Complexity.satHostEntry, Complexity.satHostRet, Complexity.satHostTM, Complexity.satHost_call, Turing.Cfg.ofWords, Turing.FinTM, Turing.MultiTapeTM.runFrom, Turing.stateWord}
 \difficulty{2}
 Let the $i$-th module of the host satisfy the clean-module contract with result
 $f$, emission $g$, and budget $B$. Then for every native input, argument, and

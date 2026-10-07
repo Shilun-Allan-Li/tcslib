@@ -45,7 +45,7 @@ itself: $L \le_p L$ [AB09, Exercise~2.9].
 \lean{Complexity.PolyTimeReducible.trans}
 \label{Complexity.PolyTimeReducible.trans}
 \leanok
-\uses{Complexity.PolyTimeComputable.comp, Complexity.mem_P_of_polyTimeReducible}
+\uses{Complexity.PolyTimeComputable.comp}
 \difficulty{2}
 Let $L, L', L'' \subseteq \{0,1\}^{*}$ be languages. If $L \le_p L'$ and
 $L' \le_p L''$, where $\le_p$ denotes polynomial-time Karp reducibility, then
@@ -242,7 +242,7 @@ none).
 \lean{Complexity.acceptTM_halts_iff}
 \label{Complexity.acceptTM_halts_iff}
 \leanok
-\uses{Complexity.acceptState, Complexity.acceptTM, Complexity.acceptTM_run, Complexity.prefixTM, Turing.FinTM, Turing.FinTM.Computes, Turing.FinTM.ComputesInTime, Turing.FinTM.ComputesInTime.output_unique, Turing.FinTM.computesInTime_iff, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom}
+\uses{Complexity.acceptState, Complexity.acceptTM, Complexity.acceptTM_run, Turing.FinTM, Turing.FinTM.Computes, Turing.FinTM.ComputesInTime, Turing.FinTM.ComputesInTime.output_unique, Turing.FinTM.computesInTime_iff, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom}
 \difficulty{5}
 Let $M$ be a finite-state binary-alphabet Turing machine and
 $p : \{0,1\}^{*} \to \{0,1\}$ a predicate such that on every input $x$ the

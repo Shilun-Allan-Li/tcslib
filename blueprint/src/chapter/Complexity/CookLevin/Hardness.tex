@@ -22,7 +22,7 @@ $\mathrm{SAT}$ and $\mathrm{3SAT}$.
 \lean{Complexity.NPHard.polyTimeReducible}
 \label{Complexity.NPHard.polyTimeReducible}
 \leanok
-\uses{Complexity.NPHard, Complexity.PolyTimeReducible.trans, Complexity.clLastRound}
+\uses{Complexity.NPHard, Complexity.PolyTimeReducible.trans}
 \difficulty{1}
 Let $L$ and $L'$ be languages over the Boolean alphabet. If every language in $\mathrm{NP}$ polynomial-time many-one reduces to $L$, and $L$ polynomial-time reduces to $L'$, then every language in $\mathrm{NP}$ polynomial-time reduces to $L'$.
 \end{theorem}
@@ -45,7 +45,7 @@ Given an input length $n$, a tape count $k$, a horizon $T$, and six clause-famil
 \lean{Complexity.clGroups_length}
 \label{Complexity.clGroups_length}
 \leanok
-\uses{Complexity.clFragment, Complexity.clGroups, Complexity.clLastRound}
+\uses{Complexity.clGroups, Complexity.clLastRound}
 \difficulty{3}
 For every input length $n$, tape count $k$, horizon $T$, and any choice of the six clause-family generators, the ordered list of clause groups has length exactly $n + (k+3)T + k + 2$, one more than the last round index; groups are counted, not individual clauses.
 \end{lemma}
@@ -130,7 +130,7 @@ Let $V$ be a language in $\mathrm{P}$. Then there exist a finite machine $M$ and
 \lean{Complexity.clLoop_polyBound}
 \label{Complexity.clLoop_polyBound}
 \leanok
-\uses{Complexity.PolyBound, Complexity.clTemplate}
+\uses{Complexity.PolyBound}
 \difficulty{4}
 Let $P$ and $R$ be polynomially bounded functions on the naturals and let $c$ be a constant. Then the function $n \mapsto c\,(P(n)+1)(R(n)+2)$ is polynomially bounded.
 \end{lemma}
@@ -451,7 +451,7 @@ If $g$ is a polynomial-time computable string function, then so is the function 
 \lean{Complexity.clNative_pair}
 \label{Complexity.clNative_pair}
 \leanok
-\uses{Complexity.PolyTimeComputable, Complexity.PolyTimeComputable.comp, Complexity.clNative_append, Complexity.clNative_linear, Complexity.clNative_map, Turing.FinTM.computesFunInTime_const, Turing.FinTM.computesFunInTime_pairConcat, Turing.FinTM.computesFunInTime_pairDup, Turing.FinTM.computesFunInTime_pairFst, Turing.FinTM.computesFunInTime_pairSnd, Turing.pairDecode_pairEncode, Turing.pairEncode}
+\uses{Complexity.PolyTimeComputable, Complexity.PolyTimeComputable.comp, Complexity.clNative_linear, Complexity.clNative_map, Turing.FinTM.computesFunInTime_const, Turing.FinTM.computesFunInTime_pairConcat, Turing.FinTM.computesFunInTime_pairDup, Turing.FinTM.computesFunInTime_pairFst, Turing.FinTM.computesFunInTime_pairSnd, Turing.pairDecode_pairEncode, Turing.pairEncode}
 \difficulty{5}
 If $f$ and $g$ are polynomial-time computable string functions, then so is the function sending a string $x$ to the encoded pair of $f(x)$ and $g(x)$, where both component computations may consult the original input.
 \end{lemma}
@@ -469,7 +469,7 @@ If $f$ and $g$ are polynomial-time computable string functions, then so is the f
 \lean{Complexity.clNative_unary}
 \label{Complexity.clNative_unary}
 \leanok
-\uses{Complexity.PolyTimeComputable, Complexity.clFillTM, Turing.FinTM.computesFunInTime_polyUnary}
+\uses{Complexity.PolyTimeComputable, Turing.FinTM.computesFunInTime_polyUnary}
 \difficulty{1}
 For all constants $C$ and $e$, the function sending a string $x$ to the word of exactly $C(|x|+1)^e$ true bits is polynomial-time computable, including the zero-coefficient and zero-degree cases; the exact value is never replaced by a majorant.
 \end{lemma}
@@ -537,7 +537,7 @@ For an embedded source state, a position tag bit, the host work-tape reads, and 
 \lean{Complexity.clRef_apply}
 \label{Complexity.clRef_apply}
 \leanok
-\uses{Complexity.clRefAction, Complexity.clRefCfg, Complexity.clRefClockTM, Turing.Action.apply, Turing.Cfg, Turing.Cfg.inputSymbol, Turing.Cfg.workTapeSymbols, Turing.FinTM, Turing.FinTM.VirtualTag, Turing.FinTM.bufferTape_inputSymbol, Turing.FinTM.tapeBlocks_buffer, Turing.FinTM.virtualMove, Turing.FinTM.virtualMove_correct, Turing.FinTM.virtualNextTag, Turing.MultiTapeTM.step, Turing.MultiTapeTM.step_of_halt, Turing.moveInputPos_zero}
+\uses{Complexity.clRefAction, Complexity.clRefCfg, Turing.Action.apply, Turing.Cfg, Turing.Cfg.inputSymbol, Turing.Cfg.workTapeSymbols, Turing.FinTM, Turing.FinTM.VirtualTag, Turing.FinTM.bufferTape_inputSymbol, Turing.FinTM.tapeBlocks_buffer, Turing.FinTM.virtualMove, Turing.FinTM.virtualMove_correct, Turing.FinTM.virtualNextTag, Turing.MultiTapeTM.step, Turing.MultiTapeTM.step_of_halt, Turing.moveInputPos_zero}
 \difficulty{5}
 Let $c$ be a source configuration over a virtual input, with a valid position tag bit $b$. Applying the embedded reference action to the embedded host configuration of $c$ yields exactly the embedded configuration of the stepped source configuration, for some valid new tag bit: each administrative tape is updated by its requested write and head move, while the host input position and the physical output are unchanged.
 \end{lemma}
@@ -732,7 +732,7 @@ For a source machine, the host is a machine that runs the four-state binary incr
 \lean{Complexity.clRefCount_first}
 \label{Complexity.clRefCount_first}
 \leanok
-\uses{Complexity.clBankTM, Complexity.clCountCfg, Complexity.clCountInc_bits, Complexity.clCountTM, Complexity.clCountTape_eq, Complexity.clCount_first, Complexity.clRefCfg, Complexity.clRefCountTM, Turing.Cfg, Turing.FinTM, Turing.FinTM.bufferTape, Turing.FinTM.leftCfg, Turing.FinTM.leftCfg_run, Turing.FinTM.tapeBlocks, Turing.MultiTapeTM.runFrom}
+\uses{Complexity.clCountCfg, Complexity.clCountInc_bits, Complexity.clCountTM, Complexity.clCountTape_eq, Complexity.clCount_first, Complexity.clRefCfg, Complexity.clRefCountTM, Turing.Cfg, Turing.FinTM, Turing.FinTM.bufferTape, Turing.FinTM.leftCfg, Turing.FinTM.leftCfg_run, Turing.FinTM.tapeBlocks, Turing.MultiTapeTM.runFrom}
 \difficulty{5}
 For every source configuration, tag bit, and counter value $n$, there is a strictly positive time $t$, at most twice the binary length of $n$ plus two, such that the counter-beside-reference host first reaches its return control exactly at $t$, at which point the counter tape holds the binary representation of $n+1$ with its head restored to zero, while the source configuration, tag, and every bank tape and head are untouched, and the represented source clock has not advanced.
 \end{lemma}
@@ -741,7 +741,6 @@ For every source configuration, tag bit, and counter value $n$, there is a stric
 \lean{Complexity.clCount_width}
 \label{Complexity.clCount_width}
 \leanok
-\uses{Complexity.clBankTM}
 \difficulty{4}
 For all naturals $n$ and $w$ with $n < 2^w$, the binary representation of $n$ has at most $w$ bits, so one administrative increment is charged by two $w$-bit scans plus two transitions, with no unary representation of positions.
 \end{lemma}
@@ -909,7 +908,7 @@ If every movement count is at most $t$, then after advancing along any displacem
 \lean{Complexity.clSigned_eq}
 \label{Complexity.clSigned_eq}
 \leanok
-\uses{Complexity.clSigned, Complexity.clTrackTM}
+\uses{Complexity.clSigned}
 \difficulty{2}
 For movement-count vectors $n$ and $m$ and a coordinate $i$, the signed positions at $i$ agree exactly when the two cross-sums of first-bank and second-bank counts are equal; the criterion compares values rather than the non-unique two-counter codes.
 \end{lemma}
@@ -1132,7 +1131,7 @@ For a selected counter coordinate $i$, the selection maps counter tape $i$ back 
 \lean{Complexity.clRow_inverse}
 \label{Complexity.clRow_inverse}
 \leanok
-\uses{Complexity.clRowIndex, Complexity.clRowSelect, Complexity.clRowTM, Complexity.clTwo}
+\uses{Complexity.clRowIndex, Complexity.clRowSelect, Complexity.clTwo}
 \difficulty{2}
 For every selected counter coordinate $i$ and each of the two local copy tapes, the row-copy selection applied to the embedded slot returns that local tape, so both actual copy tapes are selected back to their local indices.
 \end{lemma}
@@ -1278,7 +1277,7 @@ For a source machine and a virtual input $y$, the movement counts at time $0$ ar
 \lean{Complexity.clCounts_succ}
 \label{Complexity.clCounts_succ}
 \leanok
-\uses{Complexity.clAdvance, Complexity.clCounts, Complexity.clMoves, Complexity.clMoves_tag, Complexity.clRecFields, Turing.Cfg.inputSymbol, Turing.Cfg.workTapeSymbols, Turing.FinTM, Turing.FinTM.VirtualTag, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom}
+\uses{Complexity.clAdvance, Complexity.clCounts, Complexity.clMoves, Complexity.clMoves_tag, Turing.Cfg.inputSymbol, Turing.Cfg.workTapeSymbols, Turing.FinTM, Turing.FinTM.VirtualTag, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom}
 \difficulty{1}
 For every source machine, virtual input $y$, time $t$, and valid tag $b$ for the position reached at time $t$, advancing the counts at time $t$ by the displacements computed from $b$ yields exactly the counts at time $t+1$.
 \end{lemma}
@@ -1287,7 +1286,7 @@ For every source machine, virtual input $y$, time $t$, and valid tag $b$ for the
 \lean{Complexity.clCounts_bound}
 \label{Complexity.clCounts_bound}
 \leanok
-\uses{Complexity.clAdvance_bound, Complexity.clCounts, Complexity.clRecFields, Turing.FinTM}
+\uses{Complexity.clAdvance_bound, Complexity.clCounts, Turing.FinTM}
 \difficulty{3}
 For every source machine, virtual input $y$, time $t$, and coordinate, the stored movement count at time $t$ is at most $t$.
 \end{lemma}
@@ -1296,7 +1295,7 @@ For every source machine, virtual input $y$, time $t$, and coordinate, the store
 \lean{Complexity.clCounts_positions}
 \label{Complexity.clCounts_positions}
 \leanok
-\uses{Complexity.clAdvance, Complexity.clCounts, Complexity.clMoves_correct, Complexity.clPositions, Complexity.clRecFields, Complexity.clSigned, Complexity.clSigned_advance, Complexity.clTag_valid, Turing.Cfg.init, Turing.FinTM, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step'}
+\uses{Complexity.clAdvance, Complexity.clCounts, Complexity.clMoves_correct, Complexity.clPositions, Complexity.clSigned, Complexity.clSigned_advance, Complexity.clTag_valid, Turing.Cfg.init, Turing.FinTM, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step'}
 \difficulty{4}
 For every source machine, virtual input $y$, time $t$, and coordinate, the signed value of the stored count pair equals the reference position of the configuration reached at time $t$: the shifted clamped input position on the first coordinate and the signed work-head positions on the rest.
 \end{lemma}
@@ -1403,7 +1402,7 @@ For a recorder control, a source configuration, movement counts, a stored record
 \lean{Complexity.clRec_row_frame}
 \label{Complexity.clRec_row_frame}
 \leanok
-\uses{Complexity.clRecCfg, Complexity.clRecFields, Complexity.clRecRowSelect, Complexity.clRecState, Complexity.clRec_stop, Complexity.clRowCfg, Complexity.clSlotCfg, Turing.Cfg, Turing.FinTM}
+\uses{Complexity.clRecCfg, Complexity.clRecFields, Complexity.clRecRowSelect, Complexity.clRecState, Complexity.clRowCfg, Complexity.clSlotCfg, Turing.Cfg, Turing.FinTM}
 \difficulty{3}
 For every source configuration, tag, movement counts, record, clock budget, logical time, field index, and copier control, relocating the row-copy seam into the recorder's tapes, retaining every inactive slot from the recorder configuration itself, yields exactly the recorder configuration in the row-copying phase; the inactive bank includes every source cell and head and the unchanged clock.
 \end{lemma}
@@ -1447,7 +1446,7 @@ For every right coordinate and left coordinate of a disjoint tape bank, the embe
 \lean{Complexity.clRec_tick}
 \label{Complexity.clRec_tick}
 \leanok
-\uses{Complexity.clBit, Complexity.clLeft_ne_right, Complexity.clRecCfg, Complexity.clRecClockIndex, Complexity.clRecFields, Complexity.clRecTM, Complexity.clRight_ne_left, Turing.Action.apply, Turing.Cfg, Turing.Cfg.workTapeSymbols, Turing.FinTM, Turing.FinTM.tapeBlocks, Turing.MultiTapeTM.step, Turing.moveInputPos_zero}
+\uses{Complexity.clLeft_ne_right, Complexity.clRecCfg, Complexity.clRecClockIndex, Complexity.clRecFields, Complexity.clRecTM, Complexity.clRight_ne_left, Turing.Action.apply, Turing.Cfg, Turing.Cfg.workTapeSymbols, Turing.FinTM, Turing.FinTM.tapeBlocks, Turing.MultiTapeTM.step, Turing.moveInputPos_zero}
 \difficulty{4}
 For every source configuration, tag, movement counts, record, clock budget $T$, and logical time $t < T$, one recorder step from the clock-test phase reads the live unary clock cell, advances only the clock head from $t$ to $t+1$, and enters the source-release phase; no source head moves and no record bit is appended.
 \end{lemma}
@@ -1456,7 +1455,7 @@ For every source configuration, tag, movement counts, record, clock budget $T$, 
 \lean{Complexity.clRec_stop}
 \label{Complexity.clRec_stop}
 \leanok
-\uses{Complexity.clBit, Complexity.clRecCfg, Complexity.clRecClockIndex, Complexity.clRecFields, Complexity.clRecTM, Turing.Action.apply, Turing.Cfg, Turing.Cfg.workTapeSymbols, Turing.FinTM, Turing.FinTM.controlAction_apply, Turing.MultiTapeTM.step, Turing.moveInputPos_zero}
+\uses{Complexity.clRecCfg, Complexity.clRecClockIndex, Complexity.clRecFields, Complexity.clRecTM, Turing.Action.apply, Turing.Cfg, Turing.Cfg.workTapeSymbols, Turing.FinTM, Turing.FinTM.controlAction_apply, Turing.MultiTapeTM.step, Turing.moveInputPos_zero}
 \difficulty{3}
 For every source configuration, tag, movement counts, record, and clock budget $T$, one recorder step from the clock-test phase at logical time $T$ reads the exhausted clock blank and yields the completed live control, silently; no further source transition can occur.
 \end{lemma}
@@ -1465,7 +1464,7 @@ For every source configuration, tag, movement counts, record, and clock budget $
 \lean{Complexity.clRec_track_frame}
 \label{Complexity.clRec_track_frame}
 \leanok
-\uses{Complexity.clBit, Complexity.clRecCfg, Complexity.clRecFields, Complexity.clRecState, Complexity.clRecTrackSelect, Complexity.clRefCfg, Complexity.clSlotCfg, Complexity.clTrackCfg, Turing.Cfg, Turing.FinTM, Turing.FinTM.tapeBlocks}
+\uses{Complexity.clRecCfg, Complexity.clRecFields, Complexity.clRecState, Complexity.clRecTrackSelect, Complexity.clRefCfg, Complexity.clSlotCfg, Complexity.clTrackCfg, Turing.Cfg, Turing.FinTM, Turing.FinTM.tapeBlocks}
 \difficulty{3}
 For every source configuration, tag, movement counts, record, clock budget, and logical time, relocating the canonical tracking seam into the recorder's tapes, retaining the record and clock slots from the recorder configuration itself, yields exactly the recorder configuration in the counter-update phase.
 \end{lemma}
@@ -1474,7 +1473,7 @@ For every source configuration, tag, movement counts, record, clock budget, and 
 \lean{Complexity.clRec_track_inactive}
 \label{Complexity.clRec_track_inactive}
 \leanok
-\uses{Complexity.clBit, Complexity.clRecCfg, Complexity.clRecFields, Complexity.clRecState, Complexity.clRecTrackSelect, Complexity.clSlotCfg, Complexity.clTrackTM, Turing.Cfg, Turing.FinTM}
+\uses{Complexity.clRecCfg, Complexity.clRecFields, Complexity.clRecState, Complexity.clRecTrackSelect, Complexity.clSlotCfg, Complexity.clTrackTM, Turing.Cfg, Turing.FinTM}
 \difficulty{3}
 The retained inactive tapes and heads used when relocating a tracking configuration into the recorder depend only on the stored record and clock, so they agree for any two source configurations, tags, and movement counts; source writes and counter updates therefore do not disturb the frame.
 \end{lemma}
@@ -1483,7 +1482,7 @@ The retained inactive tapes and heads used when relocating a tracking configurat
 \lean{Complexity.clSlot_release}
 \label{Complexity.clSlot_release}
 \leanok
-\uses{Complexity.clBit, Complexity.clSlotAction, Complexity.clSlotCfg, Complexity.clSlot_apply, Turing.Action.apply, Turing.Cfg, Turing.Cfg.inputSymbol, Turing.Cfg.workTapeSymbols, Turing.MultiTapeTM, Turing.MultiTapeTM.step}
+\uses{Complexity.clSlotAction, Complexity.clSlotCfg, Complexity.clSlot_apply, Turing.Action.apply, Turing.Cfg, Turing.Cfg.inputSymbol, Turing.Cfg.workTapeSymbols, Turing.MultiTapeTM, Turing.MultiTapeTM.step}
 \difficulty{4}
 Suppose a host control acts, on all reads, as the relocation of a smaller machine's transition at a fixed local state $q$, through a tape injection whose selection is a left inverse. Then one host step from the relocated configuration of any local configuration in state $q$, with its control replaced by that release control, equals the relocation of one local step. Executing the first action before observing any return guard handles equal entry and exit controls.
 \end{lemma}
@@ -1492,7 +1491,7 @@ Suppose a host control acts, on all reads, as the relocation of a smaller machin
 \lean{Complexity.clRec_advance}
 \label{Complexity.clRec_advance}
 \leanok
-\uses{Complexity.clAdvance, Complexity.clBit, Complexity.clMoves, Complexity.clRecCfg, Complexity.clRecFields, Complexity.clRecState, Complexity.clRecTM, Complexity.clRecTrackIndex, Complexity.clRecTrackSelect, Complexity.clRecTrack_inverse, Complexity.clRec_track_frame, Complexity.clRec_track_inactive, Complexity.clSlotCfg, Complexity.clSlot_release, Complexity.clSlot_run, Complexity.clTrackCfg, Complexity.clTrackTM, Complexity.clTrack_round, Turing.Cfg, Turing.Cfg.inputSymbol, Turing.Cfg.workTapeSymbols, Turing.FinTM, Turing.FinTM.VirtualTag, Turing.FinTM.controlAction_apply, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.MultiTapeTM.step, Turing.moveInputPos_zero}
+\uses{Complexity.clAdvance, Complexity.clMoves, Complexity.clRecCfg, Complexity.clRecFields, Complexity.clRecState, Complexity.clRecTM, Complexity.clRecTrackIndex, Complexity.clRecTrackSelect, Complexity.clRecTrack_inverse, Complexity.clRec_track_frame, Complexity.clRec_track_inactive, Complexity.clSlotCfg, Complexity.clSlot_release, Complexity.clSlot_run, Complexity.clTrackCfg, Complexity.clTrackTM, Complexity.clTrack_round, Turing.Cfg, Turing.Cfg.inputSymbol, Turing.Cfg.workTapeSymbols, Turing.FinTM, Turing.FinTM.VirtualTag, Turing.FinTM.controlAction_apply, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.MultiTapeTM.step, Turing.moveInputPos_zero}
 \difficulty{5}
 Let $c$ be a source configuration with a valid position tag, and let the movement counts have binary representations of width at most $W$. From the source-release phase, there is a time $s \le 2W + 5$ after which the recorder has executed exactly one source transition together with its full signed counter update and dispatched to the next row-copy phase, with a valid tag for the stepped configuration; the record and clock contents and heads are framed throughout.
 \end{lemma}
@@ -1501,7 +1500,7 @@ Let $c$ be a source configuration with a valid position tag, and let the movemen
 \lean{Complexity.clRec_prefix}
 \label{Complexity.clRec_prefix}
 \leanok
-\uses{Complexity.clBit, Complexity.clCounts, Complexity.clCounts_bound, Complexity.clCounts_succ, Complexity.clElapsed_width, Complexity.clRecCfg, Complexity.clRecFields, Complexity.clRecTM, Complexity.clRec_advance, Complexity.clRec_copy, Complexity.clRec_tick, Complexity.clRecords, Turing.Cfg.init, Turing.FinTM, Turing.FinTM.VirtualTag, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.MultiTapeTM.runFrom_succ_eq_step, Turing.MultiTapeTM.runFrom_succ_eq_step'}
+\uses{Complexity.clCounts, Complexity.clCounts_bound, Complexity.clCounts_succ, Complexity.clElapsed_width, Complexity.clRecCfg, Complexity.clRecFields, Complexity.clRecTM, Complexity.clRec_advance, Complexity.clRec_copy, Complexity.clRec_tick, Complexity.clRecords, Turing.Cfg.init, Turing.FinTM, Turing.FinTM.VirtualTag, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.MultiTapeTM.runFrom_succ_eq_step, Turing.MultiTapeTM.runFrom_succ_eq_step'}
 \difficulty{5}
 For every source machine, physical input, virtual input $y$, horizon $T$, and logical time $j \le T$, there is a time $s \le j\,(F(3T+4) + 2T + 7)$, where $F$ is the field count, after which the recorder, started from the prepared blank seam, holds on its record tape exactly the stored rows of times $0,\dots,j-1$, carries the movement counts and source configuration of time $j$ with a valid tag, and is ready to store the current row. The invariant concerns actual tape contents, not merely a running schedule.
 \end{lemma}
@@ -1510,7 +1509,7 @@ For every source machine, physical input, virtual input $y$, horizon $T$, and lo
 \lean{Complexity.clRec_complete}
 \label{Complexity.clRec_complete}
 \leanok
-\uses{Complexity.clBit, Complexity.clCounts, Complexity.clCounts_bound, Complexity.clElapsed_width, Complexity.clRecCfg, Complexity.clRecFields, Complexity.clRecTM, Complexity.clRec_copy, Complexity.clRec_prefix, Complexity.clRec_stop, Complexity.clRecords, Turing.FinTM, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.MultiTapeTM.runFrom_succ_eq_step'}
+\uses{Complexity.clCounts, Complexity.clCounts_bound, Complexity.clElapsed_width, Complexity.clRecCfg, Complexity.clRecFields, Complexity.clRecTM, Complexity.clRec_copy, Complexity.clRec_prefix, Complexity.clRec_stop, Complexity.clRecords, Turing.FinTM, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.MultiTapeTM.runFrom_succ_eq_step'}
 \difficulty{4}
 For every source machine, physical input, virtual input $y$, and horizon $T$, there is a time $s \le (T+1)(F(3T+4) + 2T + 7)$, where $F$ is the field count, after which the recorder, started from the prepared blank seam, is in its completed live control with the stored rows of all times $0,\dots,T$ on the record tape, the movement counts and the exact horizon configuration of the source, and an empty physical output.
 \end{lemma}
@@ -1519,7 +1518,7 @@ For every source machine, physical input, virtual input $y$, and horizon $T$, th
 \lean{Complexity.clRec_prepared}
 \label{Complexity.clRec_prepared}
 \leanok
-\uses{Complexity.clBit, Complexity.clRecCfg, Complexity.clRecFields, Complexity.clRecTM, Turing.Cfg.init, Turing.Cfg.ofWords, Turing.FinTM, Turing.FinTM.tapeBlocks, Turing.MultiTapeTM.initCfg}
+\uses{Complexity.clRecCfg, Complexity.clRecFields, Complexity.clRecTM, Turing.Cfg.init, Turing.Cfg.ofWords, Turing.FinTM, Turing.FinTM.tapeBlocks, Turing.MultiTapeTM.initCfg}
 \difficulty{3}
 For every source machine, physical input, virtual input $y$, and horizon $T$, the configuration assembled from words, blank movement counters, empty record, a unary clock of $T$ true cells, the virtual input, and blank source work tapes, equals the recorder's prepared seam at logical time zero over the initial source configuration. No claim is made about native initialization from raw input.
 \end{lemma}
@@ -1528,7 +1527,7 @@ For every source machine, physical input, virtual input $y$, and horizon $T$, th
 \lean{Complexity.clRec_cost_bound}
 \label{Complexity.clRec_cost_bound}
 \leanok
-\uses{Complexity.clBit, Complexity.clRecFields, Turing.FinTM}
+\uses{Complexity.clRecFields, Turing.FinTM}
 \difficulty{3}
 For every source machine and horizon $T$, the complete stored-row ledger $(T+1)(F(3T+4) + 2T + 7)$, where $F$ is the field count, is at most $(4F + 7)(T+1)^2$, so native recording work is polynomial in the source horizon, separately from the formula output size.
 \end{lemma}
@@ -1601,7 +1600,7 @@ For comparator registers and four remaining high words, the invariant states tha
 \lean{Complexity.clCmpUpdate_spec}
 \label{Complexity.clCmpUpdate_spec}
 \leanok
-\uses{Complexity.clAddColumn, Complexity.clAddColumn_value, Complexity.clBit, Complexity.clCmpPred, Complexity.clCmpUpdate, Complexity.clCmp_width, Complexity.clNum, Complexity.clNum_head}
+\uses{Complexity.clAddColumn, Complexity.clAddColumn_value, Complexity.clBit, Complexity.clCmpPred, Complexity.clCmpUpdate, Complexity.clNum, Complexity.clNum_head}
 \difficulty{5}
 For every comparator registers $q$ and four words, the comparator invariant on the full words holds exactly when it holds for the updated registers on the four tails: equal sums are equivalent to equal low bits together with equal remaining high sums, and unequal low bits have opposite parity, which no later column can repair.
 \end{lemma}
@@ -1668,7 +1667,7 @@ For all Boolean digits $a$ and $b$, their numeric values are equal exactly when 
 \lean{Complexity.clCmpVerdict_spec}
 \label{Complexity.clCmpVerdict_spec}
 \leanok
-\uses{Complexity.clBit_eq, Complexity.clCmpOrbit, Complexity.clCmpOrbit_spec, Complexity.clCmpPred, Complexity.clCmpSize, Complexity.clCmpTM, Complexity.clCmpVerdict, Complexity.clCmp_width, Complexity.clNum}
+\uses{Complexity.clBit_eq, Complexity.clCmpOrbit, Complexity.clCmpOrbit_spec, Complexity.clCmpPred, Complexity.clCmpSize, Complexity.clCmpVerdict, Complexity.clCmp_width, Complexity.clNum}
 \difficulty{3}
 For every four words, the verdict computed from the comparator control after scanning the common maximum width is true exactly when the value of the first word plus the second equals the value of the third plus the fourth.
 \end{lemma}
@@ -1896,7 +1895,7 @@ Let a machine run from a start configuration to a finish configuration in $B$ st
 \lean{Complexity.clMap_run}
 \label{Complexity.clMap_run}
 \leanok
-\uses{Complexity.clSlotCfg, Complexity.clSlot_run, Complexity.clWipeTM, Turing.Action.mapState, Turing.Cfg, Turing.Cfg.mapState, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom}
+\uses{Complexity.clSlotCfg, Complexity.clSlot_run, Turing.Action.mapState, Turing.Cfg, Turing.Cfg.mapState, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom}
 \difficulty{2}
 Suppose a host machine with the same tapes agrees, on every embedded control satisfying a guard, with a smaller machine's transition after relabeling states. Then for every start configuration and horizon $t$ whose strictly earlier controls all satisfy the guard, the host run equals the state-relabeled run of the smaller machine; all tape data is preserved exactly.
 \end{lemma}
@@ -1905,7 +1904,7 @@ Suppose a host machine with the same tapes agrees, on every embedded control sat
 \lean{Complexity.clErase_last}
 \label{Complexity.clErase_last}
 \leanok
-\uses{Complexity.clWipeTM, Turing.FinTM.bufferTape, Turing.FinTM.bufferTape_append, Turing.FinTM.bufferTape_nat}
+\uses{Turing.FinTM.bufferTape, Turing.FinTM.bufferTape_append, Turing.FinTM.bufferTape_nat}
 \difficulty{3}
 For every word $w$ and bit $b$, updating the buffer tape of $w$ extended by $b$ at cell $|w|$ with a blank yields exactly the buffer tape of $w$.
 \end{lemma}
@@ -1939,7 +1938,7 @@ For every input word, input position, stream, target word $w$, stream head, and 
 \lean{Complexity.clWipe_backward}
 \label{Complexity.clWipe_backward}
 \leanok
-\uses{Complexity.clErase_last, Complexity.clRecordCfg, Complexity.clTwo, Complexity.clWipeCfg, Complexity.clWipeTM, Turing.Action.apply, Turing.Cfg.workTapeSymbols, Turing.FinTM.bufferTape, Turing.FinTM.bufferTape_nat, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step, Turing.MultiTapeTM.runFrom_zero, Turing.MultiTapeTM.step, Turing.moveInputPos_zero}
+\uses{Complexity.clErase_last, Complexity.clTwo, Complexity.clWipeCfg, Complexity.clWipeTM, Turing.Action.apply, Turing.Cfg.workTapeSymbols, Turing.FinTM.bufferTape, Turing.FinTM.bufferTape_nat, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step, Turing.MultiTapeTM.runFrom_zero, Turing.MultiTapeTM.step, Turing.moveInputPos_zero}
 \difficulty{4}
 For every input word, input position, stream, stream head, and target word $w$, running the reset machine in its erasing control at cell $|w| - 1$ for $|w| + 1$ steps erases every occupied target cell, including the first one, and returns the target head to zero in the completed control; the stream is neither read nor modified.
 \end{lemma}
@@ -1957,7 +1956,7 @@ For every input word, input position, stream, target word $w$, and stream head, 
 \lean{Complexity.clWipe_idle}
 \label{Complexity.clWipe_idle}
 \leanok
-\uses{Complexity.clFreshTM, Complexity.clWipeTM, Turing.Action.apply, Turing.Cfg, Turing.FinTM.controlAction, Turing.FinTM.controlAction_apply, Turing.MultiTapeTM.step, Turing.moveInputPos_zero}
+\uses{Complexity.clWipeTM, Turing.Action.apply, Turing.Cfg, Turing.FinTM.controlAction, Turing.FinTM.controlAction_apply, Turing.MultiTapeTM.step, Turing.moveInputPos_zero}
 \difficulty{3}
 Every reset-machine configuration in the completed control is left entirely unchanged by one step.
 \end{lemma}
@@ -1966,7 +1965,7 @@ Every reset-machine configuration in the completed control is left entirely unch
 \lean{Complexity.clWipe_first}
 \label{Complexity.clWipe_first}
 \leanok
-\uses{Complexity.clFirst, Complexity.clFreshTM, Complexity.clWipeCfg, Complexity.clWipeTM, Complexity.clWipe_idle, Complexity.clWipe_run, Turing.MultiTapeTM.runFrom}
+\uses{Complexity.clFirst, Complexity.clWipeCfg, Complexity.clWipeTM, Complexity.clWipe_idle, Complexity.clWipe_run, Turing.MultiTapeTM.runFrom}
 \difficulty{1}
 For every input word, input position, stream, target word $w$, and stream head, there is a time $t$ with $0 < t \le 2|w| + 2$ such that the reset machine first reaches its completed control exactly at $t$, with the target erased, the target head at zero, and the stream untouched.
 \end{lemma}
@@ -2025,7 +2024,7 @@ For a target field coordinate $i$, the selection maps field tape $i$ back to the
 \lean{Complexity.clLoad_inverse}
 \label{Complexity.clLoad_inverse}
 \leanok
-\uses{Complexity.clLoadIndex, Complexity.clLoadSelect, Complexity.clLoadTM, Complexity.clTwo}
+\uses{Complexity.clLoadIndex, Complexity.clLoadSelect, Complexity.clTwo}
 \difficulty{2}
 For every target field coordinate $i$ and each of the two local loader tapes, the row-load selection applied to the embedded slot returns that local tape, and the two selected tapes are physically distinct.
 \end{lemma}
@@ -2075,7 +2074,7 @@ For old and new field words on $l$ coordinates and a count $j$, the intermediate
 \lean{Complexity.clLoadWords_step}
 \label{Complexity.clLoadWords_step}
 \leanok
-\uses{Complexity.clInputTM, Complexity.clLoadWords}
+\uses{Complexity.clLoadWords}
 \difficulty{3}
 For all old and new field words and every coordinate $i$, replacing field $i$ of the bank in which the first $i$ fields are new yields the bank in which the first $i + 1$ fields are new.
 \end{lemma}
@@ -2084,7 +2083,7 @@ For all old and new field words and every coordinate $i$, replacing field $i$ of
 \lean{Complexity.clLoad_split}
 \label{Complexity.clLoad_split}
 \leanok
-\uses{Complexity.clFields, Complexity.clFields_append, Complexity.clInputTM, Complexity.clPair_append, Turing.pairEncode}
+\uses{Complexity.clFields, Complexity.clFields_append, Complexity.clPair_append, Turing.pairEncode}
 \difficulty{4}
 For every row of field words, coordinate $i$, stream prefix, and trailer, the stream consisting of the prefix, the packed encoding of the whole row, and the trailer equals the prefix extended by the packed first $i$ fields, followed by the self-delimiting encoding of field $i$, whose payload is the packed remaining fields and the trailer. The suffix is preserved literally.
 \end{lemma}
@@ -2093,7 +2092,7 @@ For every row of field words, coordinate $i$, stream prefix, and trailer, the st
 \lean{Complexity.clLoad_prefix}
 \label{Complexity.clLoad_prefix}
 \leanok
-\uses{Complexity.clFields, Complexity.clFields_append, Complexity.clInputTM, Complexity.clLoadCfg, Complexity.clLoadTM, Complexity.clLoadWords, Complexity.clLoadWords_step, Complexity.clLoad_field, Complexity.clLoad_split, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.MultiTapeTM.runFrom_zero, Turing.pairEncode}
+\uses{Complexity.clFields, Complexity.clFields_append, Complexity.clLoadCfg, Complexity.clLoadTM, Complexity.clLoadWords, Complexity.clLoadWords_step, Complexity.clLoad_field, Complexity.clLoad_split, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.MultiTapeTM.runFrom_zero, Turing.pairEncode}
 \difficulty{5}
 For every input word, input position, old fields of length at most $U$, new fields of length at most $W$, stream prefix and trailer, and count $j \le l$, there is a time $t \le j\,(2U + 3W + 7)$ after which the row loader, started at field zero with the stream holding the packed new row, has loaded exactly the first $j$ new fields, restored every field head to zero, and advanced the stream cursor by the exact length of the packed first $j$ fields. Every field is reset even when revisiting a short row after a longer one.
 \end{lemma}
@@ -2102,7 +2101,7 @@ For every input word, input position, old fields of length at most $U$, new fiel
 \lean{Complexity.clLoad_complete}
 \label{Complexity.clLoad_complete}
 \leanok
-\uses{Complexity.clFields, Complexity.clInputTM, Complexity.clLoadCfg, Complexity.clLoadTM, Complexity.clLoadWords, Complexity.clLoad_prefix, Turing.MultiTapeTM.runFrom}
+\uses{Complexity.clFields, Complexity.clLoadCfg, Complexity.clLoadTM, Complexity.clLoadWords, Complexity.clLoad_prefix, Turing.MultiTapeTM.runFrom}
 \difficulty{2}
 For every input word, input position, old fields of length at most $U$, new fields of length at most $W$, and stream prefix and trailer, there is a time $t \le l\,(2U + 3W + 7)$ after which the row loader holds exactly the new row on its field tapes, with every field head restored, the full record stream retained, and the stream cursor immediately after the packed row; the load is a native call, not indexed list access.
 \end{lemma}
@@ -2111,7 +2110,7 @@ For every input word, input position, old fields of length at most $U$, new fiel
 \lean{Complexity.clLoad_idle}
 \label{Complexity.clLoad_idle}
 \leanok
-\uses{Complexity.clInputTM, Complexity.clLoadTM, Turing.Cfg, Turing.FinTM.controlAction_apply, Turing.MultiTapeTM.step, Turing.moveInputPos_zero}
+\uses{Complexity.clLoadTM, Turing.Cfg, Turing.FinTM.controlAction_apply, Turing.MultiTapeTM.step, Turing.moveInputPos_zero}
 \difficulty{3}
 Every row-loader configuration whose control is the final field index with a fresh loader control is left entirely unchanged by one step, including the empty-row case.
 \end{lemma}
@@ -2120,7 +2119,7 @@ Every row-loader configuration whose control is the final field index with a fre
 \lean{Complexity.clLoad_first}
 \label{Complexity.clLoad_first}
 \leanok
-\uses{Complexity.clFields, Complexity.clFirst, Complexity.clInputTM, Complexity.clLoadCfg, Complexity.clLoadTM, Complexity.clLoad_complete, Complexity.clLoad_idle, Turing.MultiTapeTM.runFrom}
+\uses{Complexity.clFields, Complexity.clFirst, Complexity.clLoadCfg, Complexity.clLoadTM, Complexity.clLoad_complete, Complexity.clLoad_idle, Turing.MultiTapeTM.runFrom}
 \difficulty{3}
 For a positive field count, every input word, input position, old fields of length at most $U$, new fields of length at most $W$, and stream prefix and trailer, there is a strictly positive time $t \le l\,(2U + 3W + 7)$ at which the row loader first reaches its complete-row return, holding the new row with all heads restored and the exact sequential stream cursor.
 \end{lemma}
@@ -2315,7 +2314,7 @@ From an encoded preparation header, the full layout places blank counters, an em
 \lean{Complexity.clHeaderLayout_native}
 \label{Complexity.clHeaderLayout_native}
 \leanok
-\uses{Complexity.PolyTimeComputable, Complexity.clFields, Complexity.clHeaderField_native, Complexity.clHeaderKeep, Complexity.clHeaderLayout, Complexity.clHeaderLayout_exact, Complexity.clHeaderTail_native, Complexity.clNative_fields, Complexity.clNative_linear, Complexity.clRecTM, Turing.FinTM, Turing.FinTM.computesFunInTime_const, Turing.FinTM.tapeBlocks}
+\uses{Complexity.PolyTimeComputable, Complexity.clFields, Complexity.clHeaderField_native, Complexity.clHeaderKeep, Complexity.clHeaderLayout, Complexity.clHeaderTail_native, Complexity.clNative_fields, Complexity.clNative_linear, Complexity.clRecTM, Turing.FinTM, Turing.FinTM.computesFunInTime_const, Turing.FinTM.tapeBlocks}
 \difficulty{4}
 For every source machine, the function sending an encoded header to the packed self-delimiting encoding of its full recorder layout is polynomial-time computable: every field is a constant empty word or a fixed composition of header projections, and the number of fields depends only on the machine.
 \end{lemma}
@@ -2445,7 +2444,7 @@ The search's comparison selection maps the positive and negative candidate field
 \lean{Complexity.clMatchCmp_inverse}
 \label{Complexity.clMatchCmp_inverse}
 \leanok
-\uses{Complexity.clMatchCmpIndex, Complexity.clMatchCmpSelect, Complexity.clMatchState}
+\uses{Complexity.clMatchCmpIndex, Complexity.clMatchCmpSelect}
 \difficulty{2}
 For distinct positive and negative coordinates and each of the four comparator tapes, the search's comparison selection applied to the embedded slot returns that tape, so the call is a genuine four-tape comparison.
 \end{lemma}
@@ -2532,7 +2531,7 @@ For every verdict bit $b$ and search seam in the comparison-finished control, on
 \lean{Complexity.clMatch_compare}
 \label{Complexity.clMatch_compare}
 \leanok
-\uses{Complexity.clCmpCfg, Complexity.clCmpTM, Complexity.clCmp_first, Complexity.clMatchCfg, Complexity.clMatchCmpIndex, Complexity.clMatchCmpSelect, Complexity.clMatchCmp_inverse, Complexity.clMatchState, Complexity.clMatchTM, Complexity.clMatchWords, Complexity.clMatch_cmp_frame, Complexity.clMatch_commit, Complexity.clNum, Complexity.clRows, Complexity.clSlot_run, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step'}
+\uses{Complexity.clCmpCfg, Complexity.clCmpTM, Complexity.clCmp_first, Complexity.clMatchCfg, Complexity.clMatchCmpIndex, Complexity.clMatchCmpSelect, Complexity.clMatchCmp_inverse, Complexity.clMatchState, Complexity.clMatchTM, Complexity.clMatchWords, Complexity.clMatch_cmp_frame, Complexity.clMatch_commit, Complexity.clNum, Complexity.clSlot_run, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step'}
 \difficulty{5}
 For distinct positive and negative coordinates, a candidate row and target words of length at most $W$, and any stream, cursor, clock data, and flags, there is a time $t \le 2W + 3$ and a bit $b$, true exactly when the row's positive count plus the second target equals the first target plus the row's negative count, such that the matcher completes the comparison, restores all four word heads, stores $b$ on the flag tape, and advances the clock; cross-sum equality, not the raw words, determines the flag.
 \end{lemma}
@@ -2558,7 +2557,7 @@ For every row family and all counts $n$ and $m$, the stream of the first $n + m$
 \lean{Complexity.clRows_split}
 \label{Complexity.clRows_split}
 \leanok
-\uses{Complexity.clFields, Complexity.clRows, Complexity.clRows_add, Complexity.clRows_records}
+\uses{Complexity.clFields, Complexity.clRows, Complexity.clRows_add}
 \difficulty{3}
 For every row family, bound $N$, time $j < N$, and trailer, there is a remainder word such that the full stream of $N$ rows plus trailer equals the stream of the first $j$ rows, followed by the packed encoding of row $j$, followed by that remainder; obtaining the row itself still requires the native loader.
 \end{lemma}
@@ -2584,7 +2583,7 @@ For positive and negative coordinates, a stored row, and two target count words,
 \lean{Complexity.clMatch_round}
 \label{Complexity.clMatch_round}
 \leanok
-\uses{Complexity.clFields, Complexity.clMatchCfg, Complexity.clMatchFlag, Complexity.clMatchTM, Complexity.clMatch_compare, Complexity.clMatch_load, Complexity.clMatch_tick, Complexity.clPriorRow, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.MultiTapeTM.runFrom_succ_eq_step}
+\uses{Complexity.clFields, Complexity.clMatchCfg, Complexity.clMatchFlag, Complexity.clMatchTM, Complexity.clMatch_compare, Complexity.clMatch_load, Complexity.clMatch_tick, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.MultiTapeTM.runFrom_succ_eq_step}
 \difficulty{4}
 For distinct coordinates, old and new candidate rows and target words of field length at most $W$, a stream exposing the packed new row, and a clock position $j < N$, there is a time $t \le l(5W+7) + 2W + 5$ after which the matcher has consumed one clock token, loaded row $j$, compared cross-sums, appended exactly the comparison flag of that row, and advanced its cursor past the row; every reset, stream read, comparison, dispatch, and flag write is included in the bound.
 \end{lemma}
@@ -2609,7 +2608,7 @@ For distinct coordinates, a row family with all fields of length at most $W$ amo
 \lean{Complexity.clMatch_complete}
 \label{Complexity.clMatch_complete}
 \leanok
-\uses{Complexity.clMatchCfg, Complexity.clMatchFlag, Complexity.clMatchTM, Complexity.clMatch_prefix, Complexity.clMatch_stop, Complexity.clPriorRow, Complexity.clRows, Complexity.clVisitCode, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step'}
+\uses{Complexity.clMatchCfg, Complexity.clMatchFlag, Complexity.clMatchTM, Complexity.clMatch_prefix, Complexity.clMatch_stop, Complexity.clPriorRow, Complexity.clRows, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step'}
 \difficulty{2}
 For distinct coordinates, a row family with fields of length at most $W$ among the first $N$ rows, target words of length at most $W$, and a trailer, there is a time $t \le N(l(5W+7) + 2W + 5) + 1$ after which the matcher is in its completed control holding exactly the $N$ comparison flags in source-time order; the next row and the arbitrary tail are untouched, and at $N = 0$ only the silent stop executes.
 \end{lemma}
@@ -2618,7 +2617,7 @@ For distinct coordinates, a row family with fields of length at most $W$ among t
 \lean{Complexity.clMatchFlag_schedule}
 \label{Complexity.clMatchFlag_schedule}
 \leanok
-\uses{Complexity.clCounts, Complexity.clCounts_schedule, Complexity.clMatchFlag, Complexity.clNum_bits, Complexity.clSigned_eq, Complexity.clTwo, Complexity.clVisitCode, Complexity.workPosAt, Turing.FinTM}
+\uses{Complexity.clCounts, Complexity.clCounts_schedule, Complexity.clMatchFlag, Complexity.clNum_bits, Complexity.clSigned_eq, Complexity.clTwo, Complexity.workPosAt, Turing.FinTM}
 \difficulty{3}
 For every oblivious machine, reference length $m$, times $s$ and $t$, and work tape $\tau$, the comparison flag of the stored row at time $s$ against the target counts at time $t$, taken at the positive and negative slots of $\tau$, is true exactly when the public work-head position on $\tau$ at time $s$ equals the position at time $t$.
 \end{lemma}
@@ -2677,7 +2676,7 @@ For every predicate $P$ and bound $n$, mapping the length over the last-true spl
 \lean{Complexity.clLastIndex_max}
 \label{Complexity.clLastIndex_max}
 \leanok
-\uses{Complexity.clLastIndex, Complexity.clReplayTM}
+\uses{Complexity.clLastIndex}
 \difficulty{4}
 For every predicate $P$ and bound $n$, the tracker's candidate below $n$ equals the maximum of the indices below $n$ satisfying $P$; in particular the empty candidate set at time zero is certified.
 \end{lemma}
@@ -2686,7 +2685,7 @@ For every predicate $P$ and bound $n$, the tracker's candidate below $n$ equals 
 \lean{Complexity.clLastCode_prev}
 \label{Complexity.clLastCode_prev}
 \leanok
-\uses{Complexity.clLastCode, Complexity.clLastIndex_marker, Complexity.clLastIndex_max, Complexity.clReplayTM, Complexity.clVisitCode, Complexity.prevVisit, Complexity.workPosAt, Turing.FinTM}
+\uses{Complexity.clLastCode, Complexity.clLastIndex_marker, Complexity.clLastIndex_max, Complexity.clVisitCode, Complexity.prevVisit, Complexity.workPosAt, Turing.FinTM}
 \difficulty{2}
 For every oblivious machine, reference length $m$, time $t$, and work tape $\tau$, the last-visit code of the flag word testing, for each $s < t$, whether the work position at $s$ equals the position at $t$, is exactly the optional-time code of the public last-visit value; the time is in canonical binary.
 \end{lemma}
@@ -2738,7 +2737,7 @@ For every input word, input position, buffer $w$, and output prefix, running the
 \lean{Complexity.clCompute_comp}
 \label{Complexity.clCompute_comp}
 \leanok
-\uses{Complexity.clOneSelect, Turing.Cfg.init, Turing.FinTM, Turing.FinTM.ComputesInTime, Turing.FinTM.ComputesInTime.mono, Turing.FinTM.VirtualTag, Turing.FinTM.bufferedCompTM, Turing.FinTM.bufferedComp_start, Turing.FinTM.bufferedSecondCfg, Turing.FinTM.bufferedSecondCfg_run, Turing.FinTM.computesInTime_iff, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.output_length_le, Turing.MultiTapeTM.runFrom_add}
+\uses{Turing.Cfg.init, Turing.FinTM, Turing.FinTM.ComputesInTime, Turing.FinTM.ComputesInTime.mono, Turing.FinTM.VirtualTag, Turing.FinTM.bufferedCompTM, Turing.FinTM.bufferedComp_start, Turing.FinTM.bufferedSecondCfg, Turing.FinTM.bufferedSecondCfg_run, Turing.FinTM.computesInTime_iff, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.output_length_le, Turing.MultiTapeTM.runFrom_add}
 \difficulty{4}
 Let a machine compute output $y$ from input $x$ within time $a$, and a second machine compute $z$ from $y$ within time $b$. Then the buffered composition of the two machines computes $z$ from $x$ within time $2a + b + 2$; the second machine's contract is needed only on the actual intermediate word.
 \end{lemma}
@@ -2787,7 +2786,7 @@ For a prepared machine, an input word, a stream cursor, and an inner configurati
 \lean{Complexity.clPrepared_run}
 \label{Complexity.clPrepared_run}
 \leanok
-\uses{Complexity.clFields, Complexity.clLoadCfg, Complexity.clMap_run, Complexity.clPrepareTM, Complexity.clPrepare_first, Complexity.clPreparedCfg, Complexity.clPreparedTM, Complexity.clPrepared_idle, Complexity.clSlotCfg, Complexity.clSlot_run, Turing.Action.apply, Turing.Cfg, Turing.Cfg.mapState, Turing.Cfg.ofWords, Turing.FinTM, Turing.FinTM.bufferTape, Turing.FinTM.controlAction_apply, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.MultiTapeTM.step, Turing.moveInputPos_zero}
+\uses{Complexity.clFields, Complexity.clLoadCfg, Complexity.clMap_run, Complexity.clPrepareTM, Complexity.clPrepare_first, Complexity.clPreparedCfg, Complexity.clPreparedTM, Complexity.clSlotCfg, Complexity.clSlot_run, Turing.Action.apply, Turing.Cfg, Turing.Cfg.mapState, Turing.Cfg.ofWords, Turing.FinTM, Turing.FinTM.bufferTape, Turing.FinTM.controlAction_apply, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.MultiTapeTM.step, Turing.moveInputPos_zero}
 \difficulty{5}
 Let work words of length at most $W$ and a trailer be given, and let the native input be their packed encoding followed by the trailer. Then there is a startup time $a \le 2|x| + 4 + k(3W+7)$, where $x$ is that input and $k$ the field count, such that for every duration $b$, running the loading-extended machine for $a + b$ steps equals the frame around the supplied machine's $b$-step run from the configuration assembled over the parsed words; no cleanup or random access is assumed.
 \end{lemma}
@@ -2865,7 +2864,7 @@ For every list of words and every member $w$ of the list, the length of $w$ is a
 \lean{Complexity.clRecord_idle}
 \label{Complexity.clRecord_idle}
 \leanok
-\uses{Complexity.clRecTM, Complexity.clRecordOutputTM, Complexity.clRecordSelect, Complexity.clRecordTM, Complexity.clSlotAction, Turing.Cfg, Turing.FinTM, Turing.FinTM.controlAction, Turing.FinTM.controlAction_apply, Turing.MultiTapeTM.step, Turing.moveInputPos_zero}
+\uses{Complexity.clRecTM, Complexity.clRecordSelect, Complexity.clRecordTM, Complexity.clSlotAction, Turing.Cfg, Turing.FinTM, Turing.FinTM.controlAction, Turing.FinTM.controlAction_apply, Turing.MultiTapeTM.step, Turing.moveInputPos_zero}
 \difficulty{3}
 Every configuration of the recorder host whose control is the recorder's completed return is left entirely unchanged by one step, with the full retained input and header frame unchanged.
 \end{lemma}
@@ -3046,7 +3045,7 @@ For a source machine, distinct positive and negative counter coordinates, and po
 \lean{Complexity.clPrev_native}
 \label{Complexity.clPrev_native}
 \leanok
-\uses{Complexity.PolyTimeComputable, Complexity.clLastCode_prev, Complexity.clMatchFlag_schedule, Complexity.clRecFields, Complexity.clSearch_native, Complexity.clVisitCode, Complexity.clVisitRow, Complexity.prevVisit, Turing.FinTM}
+\uses{Complexity.PolyTimeComputable, Complexity.clLastCode_prev, Complexity.clMatchFlag_schedule, Complexity.clRecFields, Complexity.clSearch_native, Complexity.clVisitCode, Complexity.prevVisit, Turing.FinTM}
 \difficulty{3}
 For a source machine, work tape $\tau$, and polynomial-time producers of a reference length (as an all-false word) and a unary time, the function sending an input to the optional-time code of the public greatest strictly earlier visit to the currently scanned cell of $\tau$ is polynomial-time computable, with the canonical binary time encoding.
 \end{lemma}
@@ -3491,7 +3490,7 @@ Over one shared padded work bank, the host runs the five modules through their c
 \lean{Complexity.clA5Host_seam}
 \label{Complexity.clA5Host_seam}
 \leanok
-\uses{Complexity.CLA5Clean, Complexity.CLA5HostState, Complexity.clA5HostRet, Complexity.clA5PadCfg, Complexity.clA5Pad_seam, Turing.Cfg, Turing.Cfg.ofWords, Turing.FinTM, Turing.emitCfg, Turing.stateWord}
+\uses{Complexity.CLA5HostState, Complexity.clA5HostRet, Complexity.clA5PadCfg, Complexity.clA5Pad_seam, Turing.Cfg, Turing.Cfg.ofWords, Turing.FinTM, Turing.emitCfg, Turing.stateWord}
 \difficulty{3}
 For every module with a positive tape count, control, stored word, output prefix, and optional state, forwarding the padded clean configuration yields the host's canonical seam over the shared bank's state word, with output exactly the prefix followed by the module's output.
 \end{lemma}
@@ -3500,7 +3499,7 @@ For every module with a positive tape count, control, stored word, output prefix
 \lean{Complexity.clA5Host_call}
 \label{Complexity.clA5Host_call}
 \leanok
-\uses{Complexity.CLA5Clean, Complexity.CLA5HostState, Complexity.clA5HostEntry, Complexity.clA5HostRet, Complexity.clA5HostTM, Complexity.clA5Host_seam, Complexity.clA5PadCfg, Complexity.clA5PadTM, Complexity.clA5Pad_run, Turing.Cfg.Halted, Turing.Cfg.ofWords, Turing.FinTM, Turing.MultiTapeTM.runFrom, Turing.emitCfg, Turing.emit_run, Turing.stateWord}
+\uses{Complexity.CLA5HostState, Complexity.clA5HostEntry, Complexity.clA5HostRet, Complexity.clA5HostTM, Complexity.clA5Host_seam, Complexity.clA5PadCfg, Complexity.clA5PadTM, Complexity.clA5Pad_run, Turing.Cfg.Halted, Turing.Cfg.ofWords, Turing.FinTM, Turing.MultiTapeTM.runFrom, Turing.emitCfg, Turing.emit_run, Turing.stateWord}
 \difficulty{5}
 Suppose a module runs from its start over an argument word to a halted canonical seam with a result word and output chunk in time $t$, never halting earlier. Then the host, started at that module's entry over the shared bank with an output prefix, never shows the loop anchor before $t$, and at $t$ sits at the module's resolved return over the result word with the output prefix extended by exactly the module's chunk.
 \end{lemma}
@@ -3509,7 +3508,7 @@ Suppose a module runs from its start over an argument word to a halted canonical
 \lean{Complexity.clA5_guard_add}
 \label{Complexity.clA5_guard_add}
 \leanok
-\uses{Complexity.CLA5Clean, Turing.Cfg, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add}
+\uses{Turing.Cfg, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add}
 \difficulty{3}
 If a run avoids an anchor control for $a$ steps, reaches a configuration $d$, and the run from $d$ avoids the anchor for $b$ steps, then the whole run avoids the anchor for $a + b$ steps.
 \end{lemma}
@@ -3690,7 +3689,7 @@ For every finite transducer, input split into a prefix and an unread suffix, sta
 \lean{Complexity.clA5Map_poly}
 \label{Complexity.clA5Map_poly}
 \leanok
-\uses{Complexity.PolyTimeComputable, Complexity.clA5MapCfg, Complexity.clA5MapTM, Complexity.clA5MapWord, Complexity.clA5Map_run, Complexity.clA5_pt_unaryLength, Turing.Cfg.ext_zero_tapes, Turing.FinTM.computesInTime_iff, Turing.MultiTapeTM.initCfg}
+\uses{Complexity.PolyTimeComputable, Complexity.clA5MapCfg, Complexity.clA5MapTM, Complexity.clA5MapWord, Complexity.clA5Map_run, Turing.Cfg.ext_zero_tapes, Turing.FinTM.computesInTime_iff, Turing.MultiTapeTM.initCfg}
 \difficulty{3}
 Every finite one-way word transducer computes its recursive word semantics within time equal to the input length plus one, and is in particular polynomial-time computable.
 \end{lemma}
@@ -3744,7 +3743,7 @@ Let $f$, an initial-word producer $s$, and a unary count producer $N$ be polynom
 \lean{Complexity.clA5Iter_shrinking}
 \label{Complexity.clA5Iter_shrinking}
 \leanok
-\uses{Complexity.PolyTimeComputable, Complexity.clA5Drop_native, Complexity.clA5Iter_native}
+\uses{Complexity.PolyTimeComputable, Complexity.clA5Iter_native}
 \difficulty{3}
 If a polynomial-time computable step function never increases word length, then for any polynomial-time initial-word and unary-count producers, the counted iterate is polynomial-time computable; repeated sequential projections and tail scans therefore need no random access.
 \end{lemma}
@@ -3858,7 +3857,7 @@ For every source machine, parameters, instance $x$, and cursor $i$, the retained
 \lean{Complexity.clA5StoredRound_native}
 \label{Complexity.clA5StoredRound_native}
 \leanok
-\uses{Complexity.PolyTimeComputable, Complexity.PolyTimeComputable.comp, Complexity.clA5Fuel, Complexity.clA5Instance, Complexity.clA5StoredHeader, Complexity.clA5StoredRound, Complexity.clA5Times_native, Complexity.clA5_pt_const, Complexity.clA5_pt_unaryLength, Complexity.clHeaderField_native, Complexity.clHeaderTail_native, Complexity.clLastRound, Complexity.clNative_append, Turing.FinTM}
+\uses{Complexity.PolyTimeComputable, Complexity.PolyTimeComputable.comp, Complexity.clA5Instance, Complexity.clA5StoredHeader, Complexity.clA5StoredRound, Complexity.clA5Times_native, Complexity.clA5_pt_const, Complexity.clA5_pt_unaryLength, Complexity.clHeaderField_native, Complexity.clHeaderTail_native, Complexity.clLastRound, Complexity.clNative_append, Turing.FinTM}
 \difficulty{3}
 For every source machine, the function sending a persistent body word to the unary word of its stored last-round index is polynomial-time computable; every projection and fixed repetition carries a native ledger.
 \end{lemma}
@@ -3955,7 +3954,7 @@ The extended comparator machine behaves as the natively loaded four-word compara
 \lean{Complexity.clA5Compare_compute}
 \label{Complexity.clA5Compare_compute}
 \leanok
-\uses{Complexity.clA5CompareTM, Complexity.clA5Data_exact, Complexity.clCmpCfg, Complexity.clCmpOrbit, Complexity.clCmpSize, Complexity.clCmpTM, Complexity.clCmpVerdict, Complexity.clCmpVerdict_spec, Complexity.clCmp_run, Complexity.clFields, Complexity.clFields_width, Complexity.clFirst, Complexity.clMap_run, Complexity.clNum, Complexity.clPreparedCfg, Complexity.clPreparedTM, Complexity.clPrepared_idle, Complexity.clPrepared_run, Complexity.clSlotCfg, Turing.Action, Turing.Action.apply, Turing.Action.mapState, Turing.Cfg, Turing.Cfg.mapState, Turing.Cfg.ofWords, Turing.FinTM.ComputesInTime, Turing.FinTM.ComputesInTime.mono, Turing.FinTM.computesInTime_iff, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.MultiTapeTM.step}
+\uses{Complexity.clA5CompareTM, Complexity.clCmpCfg, Complexity.clCmpOrbit, Complexity.clCmpSize, Complexity.clCmpTM, Complexity.clCmpVerdict, Complexity.clCmpVerdict_spec, Complexity.clCmp_run, Complexity.clFields, Complexity.clFields_width, Complexity.clFirst, Complexity.clMap_run, Complexity.clNum, Complexity.clPreparedCfg, Complexity.clPreparedTM, Complexity.clPrepared_idle, Complexity.clPrepared_run, Complexity.clSlotCfg, Turing.Action, Turing.Action.apply, Turing.Action.mapState, Turing.Cfg, Turing.Cfg.mapState, Turing.Cfg.ofWords, Turing.FinTM.ComputesInTime, Turing.FinTM.ComputesInTime.mono, Turing.FinTM.computesInTime_iff, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.MultiTapeTM.step}
 \difficulty{6}
 For every four words, the verdict-replaying comparator computes, from the packed encoding of the four words, the single bit deciding whether the value of the first word plus the second equals the value of the third plus the fourth, within $35$ times the encoded argument length plus one.
 \end{lemma}
@@ -4088,7 +4087,7 @@ For every row family with $l$ fields per row, bound $N$, time $t < N$, and coord
 \lean{Complexity.clA5Visits_rows}
 \label{Complexity.clA5Visits_rows}
 \leanok
-\uses{Complexity.clA5InputSize, Complexity.clRows, Complexity.clVisitCode, Complexity.clVisitRow_exact, Complexity.clVisitRows, Complexity.prevVisit, Turing.FinTM}
+\uses{Complexity.clRows, Complexity.clVisitCode, Complexity.clVisitRow_exact, Complexity.clVisitRows, Complexity.prevVisit, Turing.FinTM}
 \difficulty{3}
 For every source machine, parameters $C$ and $e$, instance $x$, and count $N$, the ordered visit table of $N$ rows equals the generic sequential row stream whose row at time $t$ lists, per work tape, the optional-time code of the greatest strictly earlier visit over the reference length $|x| + C(|x|+1)^e$; time zero is included.
 \end{lemma}
@@ -4129,7 +4128,7 @@ From the persistent body word, the stored inclusive visit table is the third hea
 \lean{Complexity.clA5Data_exact}
 \label{Complexity.clA5Data_exact}
 \leanok
-\uses{Complexity.clA5Horizon, Complexity.clA5InputSize, Complexity.clA5Pack, Complexity.clA5Sizes_native, Complexity.clA5StoredHeader, Complexity.clA5Trajectory, Complexity.clA5Visits, Complexity.clHeaderField, Complexity.clHeaderTail, Complexity.clPackedRecords, Complexity.clPrepHeader, Complexity.clProducerHorizon, Complexity.clRecords, Complexity.clVisitRows, Turing.FinTM, Turing.pairDecode_pairEncode}
+\uses{Complexity.clA5Horizon, Complexity.clA5InputSize, Complexity.clA5Pack, Complexity.clA5StoredHeader, Complexity.clA5Trajectory, Complexity.clA5Visits, Complexity.clHeaderField, Complexity.clHeaderTail, Complexity.clPackedRecords, Complexity.clPrepHeader, Complexity.clProducerHorizon, Complexity.clRecords, Complexity.clVisitRows, Turing.FinTM, Turing.pairDecode_pairEncode}
 \difficulty{1}
 For every source machine, parameters, instance $x$, and cursor $i$, the stored input length is $m = |x| + C(|x|+1)^e$, the stored horizon is the producer horizon $T$, the stored trajectory is the inclusive serialized trajectory of $T+1$ rows over the all-false input of length $m$, and the stored visit table is the ordered table of $T+1$ visit rows.
 \end{lemma}
@@ -4199,7 +4198,7 @@ If two unary values are polynomial-time computable, then the unary word of their
 \lean{Complexity.clA5Sub_native}
 \label{Complexity.clA5Sub_native}
 \leanok
-\uses{Complexity.PolyTimeComputable, Complexity.clA5Drop_native, Complexity.clA5InputPos}
+\uses{Complexity.PolyTimeComputable, Complexity.clA5Drop_native}
 \difficulty{1}
 If two unary values are polynomial-time computable, then the unary word of their truncated difference is polynomial-time computable by the charged repeated-tail operation.
 \end{lemma}
@@ -4490,7 +4489,7 @@ On a persistent body word, the selector emits, by successive guarded offsets of 
 \lean{Complexity.clA5Fragment_native}
 \label{Complexity.clA5Fragment_native}
 \leanok
-\uses{Complexity.CLFieldCode, Complexity.PolyTimeComputable, Complexity.PolyTimeComputable.comp, Complexity.clA5Add_native, Complexity.clA5Cursor_native, Complexity.clA5Eq_native, Complexity.clA5Fragment, Complexity.clA5Group_native, Complexity.clA5IfLt_native, Complexity.clA5IfZero_native, Complexity.clA5Indices_native, Complexity.clA5InputFragment_native, Complexity.clA5InputSize, Complexity.clA5Pin_native, Complexity.clA5Sizes_native, Complexity.clA5Times_native, Complexity.clA5WorkChoice_native, Complexity.clA5_pt_const, Complexity.clA5_pt_unaryLength, Complexity.clFragment, Complexity.clGroup, Turing.FinTM}
+\uses{Complexity.CLFieldCode, Complexity.PolyTimeComputable, Complexity.PolyTimeComputable.comp, Complexity.clA5Add_native, Complexity.clA5Cursor_native, Complexity.clA5Fragment, Complexity.clA5Group_native, Complexity.clA5IfLt_native, Complexity.clA5IfZero_native, Complexity.clA5Indices_native, Complexity.clA5InputFragment_native, Complexity.clA5InputSize, Complexity.clA5Pin_native, Complexity.clA5Sizes_native, Complexity.clA5Times_native, Complexity.clA5WorkChoice_native, Complexity.clA5_pt_const, Complexity.clA5_pt_unaryLength, Complexity.clFragment, Complexity.clGroup, Turing.FinTM}
 \difficulty{4}
 For every source machine and state code, the complete ordered fragment selector is one total polynomial-time transduction: every numeric operation is unary bounded, stored binary counters are decoded only within the explicit unary horizon, and templates and tape choices are fixed finite data of the machine.
 \end{lemma}
@@ -4499,7 +4498,7 @@ For every source machine and state code, the complete ordered fragment selector 
 \lean{Complexity.clA5Fragment_exact}
 \label{Complexity.clA5Fragment_exact}
 \leanok
-\uses{Complexity.CLFieldCode, Complexity.clA5AcceptIndex, Complexity.clA5Cursor, Complexity.clA5Data_exact, Complexity.clA5Fragment, Complexity.clA5GroupAt, Complexity.clA5GroupAt_exact, Complexity.clA5Horizon, Complexity.clA5InitialIndex, Complexity.clA5InputBit, Complexity.clA5InputFragment_exact, Complexity.clA5InputIndex, Complexity.clA5InputSize, Complexity.clA5Instance, Complexity.clA5Pack, Complexity.clA5StateIndex, Complexity.clA5Stored_exact, Complexity.clA5WorkChoice, Complexity.clA5WorkFragment_exact, Complexity.clA5WorkIndex, Complexity.clFragment, Complexity.clGroup, Complexity.clHeaderField, Complexity.clHeaderTail, Complexity.clInputGroup, Complexity.clProducerHorizon, Complexity.clTableauGroups, Complexity.clWorkGroup, Turing.FinTM, Turing.pairDecode_pairEncode}
+\uses{Complexity.CLFieldCode, Complexity.clA5AcceptIndex, Complexity.clA5Cursor, Complexity.clA5Data_exact, Complexity.clA5Fragment, Complexity.clA5GroupAt, Complexity.clA5GroupAt_exact, Complexity.clA5Horizon, Complexity.clA5InitialIndex, Complexity.clA5InputFragment_exact, Complexity.clA5InputIndex, Complexity.clA5InputSize, Complexity.clA5Instance, Complexity.clA5Pack, Complexity.clA5StateIndex, Complexity.clA5Stored_exact, Complexity.clA5WorkChoice, Complexity.clA5WorkFragment_exact, Complexity.clA5WorkIndex, Complexity.clFragment, Complexity.clGroup, Complexity.clHeaderField, Complexity.clHeaderTail, Complexity.clInputGroup, Complexity.clProducerHorizon, Complexity.clTableauGroups, Complexity.clWorkGroup, Turing.FinTM, Turing.pairDecode_pairEncode}
 \difficulty{5}
 For every source machine, state code, parameters, instance $x$, and cursor $j$, the native fragment selector on the body word at $j$ agrees word for word with the serialized fragment of the $j$-th member of the unchanged pure tableau group list at the producer horizon; the guarded offsets are precisely list lookup, and a work ordinal's quotient and remainder name its time and tape in the original order.
 \end{lemma}
@@ -4630,7 +4629,7 @@ For every input count $m$, time $t$, tape $\tau$, and assignment $a$, the work c
 \lean{Complexity.clA5Reconstruct}
 \label{Complexity.clA5Reconstruct}
 \leanok
-\uses{Complexity.CLFieldCode, Complexity.clA5Block, Complexity.clA5Meaning, Complexity.clA5ReadInput, Complexity.clA5ReadInput_get, Complexity.clBlockDecode, Complexity.clBlockDecode_encode, Complexity.clBlockEncode, Complexity.clBlock_ext, Complexity.clBlock_input, Complexity.clBlock_state, Complexity.clBlock_work, Complexity.clInputSlice, Complexity.clPrev_spec, Complexity.clStateSlice, Complexity.clSymbolCode, Complexity.clWorkSlice, Complexity.inputBitAt, Complexity.inputPosAt, Complexity.prevVisit, Complexity.snapshotAt, Complexity.snapshotAt_inputSymbol, Complexity.snapshotAt_state_succ, Complexity.snapshotAt_workSymbol, Complexity.stepState, Complexity.writtenOrKept, Turing.FinTM, Turing.FinTM.Oblivious}
+\uses{Complexity.CLFieldCode, Complexity.clA5Block, Complexity.clA5Meaning, Complexity.clBlockDecode, Complexity.clBlockDecode_encode, Complexity.clBlockEncode, Complexity.clBlock_ext, Complexity.clBlock_input, Complexity.clBlock_state, Complexity.clBlock_work, Complexity.clInputSlice, Complexity.clPrev_spec, Complexity.clStateSlice, Complexity.clSymbolCode, Complexity.clWorkSlice, Complexity.inputBitAt, Complexity.inputPosAt, Complexity.prevVisit, Complexity.snapshotAt, Complexity.snapshotAt_inputSymbol, Complexity.snapshotAt_state_succ, Complexity.snapshotAt_workSymbol, Complexity.stepState, Complexity.writtenOrKept, Turing.FinTM, Turing.FinTM.Oblivious}
 \difficulty{5}
 Let the machine be oblivious, let $y$ have length $m$, and suppose an assignment's raw blocks satisfy: the block at time zero is the encoded initial snapshot; the state meaning at every $t < T$; the input-slice equations at every $t \le T$; and the work-slice equations at every $t \le T$ on all tapes. Then for every $t \le T$ the raw block at $t$ equals the encoding of the genuine snapshot of the run on $y$ at time $t$; junk blocks are excluded bit for bit.
 \end{lemma}
@@ -4744,7 +4743,7 @@ Let an oblivious machine decide, within time $T$ and for every word $y$ of lengt
 \lean{Complexity.clA5Equisat}
 \label{Complexity.clA5Equisat}
 \leanok
-\uses{Complexity.CLFieldCode, Complexity.SAT_NPHard, Complexity.clA5Complete, Complexity.clA5Sound, Complexity.clProducerHorizon, Complexity.clTableau, Std.Sat.CNF.Satisfiable, Turing.FinTM, Turing.FinTM.ComputesInTime, Turing.FinTM.DecidesInTime, Turing.FinTM.Oblivious, Turing.MultiTapeTM.indicator}
+\uses{Complexity.CLFieldCode, Complexity.clA5Complete, Complexity.clA5Sound, Complexity.clProducerHorizon, Complexity.clTableau, Std.Sat.CNF.Satisfiable, Turing.FinTM, Turing.FinTM.ComputesInTime, Turing.FinTM.DecidesInTime, Turing.FinTM.Oblivious, Turing.MultiTapeTM.indicator}
 \difficulty{2}
 Let an oblivious machine decide a verifier language $V$ within time $c(A(n+1)^d+1)^2$. For every instance $x$, the Cook--Levin tableau of $x$ at the producer horizon is satisfiable exactly when some certificate $u$ of length $C(|x|+1)^e$ makes the concatenation of $x$ and $u$ belong to $V$.
 \end{lemma}
@@ -4753,7 +4752,7 @@ Let an oblivious machine decide a verifier language $V$ within time $c(A(n+1)^d+
 \lean{Complexity.clA5Reduction}
 \label{Complexity.clA5Reduction}
 \leanok
-\uses{Complexity.NP, Complexity.SAT, Complexity.SAT_NPHard, Complexity.clA5Equisat, Complexity.clA5OutputIdentity, Complexity.clFieldCode, Complexity.clNPVerifier, Complexity.clProducerHorizon, Complexity.clTableau, Std.Sat.CNF.Satisfiable, Std.Sat.CNF.decode, Std.Sat.CNF.decode_serialize, Std.Sat.CNF.serialize}
+\uses{Complexity.NP, Complexity.SAT, Complexity.clA5Equisat, Complexity.clA5OutputIdentity, Complexity.clFieldCode, Complexity.clNPVerifier, Complexity.clProducerHorizon, Complexity.clTableau, Std.Sat.CNF.Satisfiable, Std.Sat.CNF.decode, Std.Sat.CNF.decode_serialize, Std.Sat.CNF.serialize}
 \difficulty{3}
 For every language $L$ in $\mathrm{NP}$, the map sending an instance $x$ to the serialization of its Cook--Levin tableau at the producer horizon is a polynomial-time many-one reduction from $L$ to $\mathrm{SAT}$; neither the certificate parameters nor any public statement is modified.
 \end{lemma}

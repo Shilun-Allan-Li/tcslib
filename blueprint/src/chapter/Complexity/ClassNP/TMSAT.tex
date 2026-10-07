@@ -94,7 +94,7 @@ Let $c, C, q \in \mathbb{N}$, $x$ a bit string, $h \colon \{0,\dots,c\} \to \mat
 \lean{Complexity.poly_advance}
 \label{Complexity.poly_advance}
 \leanok
-\uses{Complexity.polyCfg, Complexity.polyCost, Complexity.polyMove_apply, Complexity.polyUnaryTM, Turing.MultiTapeTM.step}
+\uses{Complexity.polyCfg, Complexity.polyMove_apply, Complexity.polyUnaryTM, Turing.MultiTapeTM.step}
 \difficulty{2}
 Let $c, C, q \in \mathbb{N}$, $x$ a bit string, $h \colon \{0,\dots,c\} \to \mathbb{Z}$, $o$ an output word and $i \in \{0,\dots,c\}$. One step of $\mathcal{P}_{c,C}$ from $\Gamma_q(\mathrm{advance}_i, h, o)$ yields $\Gamma_q(\mathrm{loop}_i, h[i \mapsto h(i)+1], o)$; here $\mathcal{P}_{c,C}$ is the unary box-enumeration machine with $c+1$ work tapes, which writes $1^{|x|+1}$ on every work tape and then runs $c+1$ nested unary loops, emitting $C$ ones per innermost iteration, and $\mathrm{loop}_i$, $\mathrm{rewind}_i$, $\mathrm{advance}_i$, $\mathrm{emit}_j$ are its control states, $\Gamma_q(s,h,o)$ denotes its configuration on input $x$ in control state $s$, with the input head on the blank cell right of the input, every work tape holding $1^q$ in cells $0,\dots,q-1$ and blanks elsewhere, work head $k$ at position $h(k)$, and output $o$, and $h[i \mapsto v]$ is $h$ with its $i$-th entry replaced by $v$.
 \end{lemma}
@@ -286,7 +286,7 @@ For bit strings $\alpha, x$ and $n, t \in \mathbb{N}$, the quadruple encoding $\
 \lean{Complexity.tmsat_quad_bounds}
 \label{Complexity.tmsat_quad_bounds}
 \leanok
-\uses{Complexity.tmsatQuad, Complexity.tmsatVerifier, Turing.universal_pair_length}
+\uses{Complexity.tmsatQuad, Turing.universal_pair_length}
 \difficulty{2}
 For all bit strings $\alpha, x$ and all $n, t \in \mathbb{N}$, each of $|\alpha|$, $|x|$, $n$ and $t$ is at most the length of the quadruple encoding $\langle\alpha,\langle x,\langle 1^n,1^t\rangle\rangle\rangle$, where $\langle a,b\rangle$ is the self-delimiting pair encoding and $1^k$ is the word of $k$ ones.
 \end{lemma}
@@ -631,7 +631,6 @@ Let $c$ be an effective machine-representation scheme, assigning to each bit str
 \lean{Complexity.tmsat_deadline_bound}
 \label{Complexity.tmsat_deadline_bound}
 \leanok
-\uses{Complexity.TMSAT_NPHard, Complexity.tmsat_constant_poly}
 \difficulty{4}
 For all $K, B, e, C, c, n \in \mathbb{N}$, \[ K\bigl(B\,(2n + 2 + C(n+1)^c + 1)^e + 1\bigr)^2 \;\le\; (K+1)(B+1)^2(C+3)^{2e}\,(n+1)^{2e\max(1,c)}. \]
 \end{lemma}

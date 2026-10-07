@@ -10,6 +10,10 @@ Reports:
   * dangling \\uses      — reference with no matching \\lean{...} anywhere
   * uncovered decls      — documentable declarations with no \\lean entry yet
   * per-area coverage    — covered / total documentable declarations
+  * \\uses cycles        — dependency cycles between blueprint entries. The
+                           web build (plastexdepgraph) recurses through \\uses
+                           without cycle detection, so any cycle crashes it with
+                           RecursionError; cycles therefore always fail (exit 1).
 
 Usage:
     python3 scripts/blueprint_validate.py
@@ -91,6 +95,83 @@ def collect_labels():
     return leans, uses
 
 
+ENTRY_LEAN_RE = re.compile(r"^\s*\\lean\{([^}]*)\}")
+END_ENV_RE = re.compile(r"\\end\{\w+\}")
+
+
+def collect_entry_uses(chapter_dir: Path = CHAPTER_DIR) -> dict[str, set[str]]:
+    """label -> the labels named in that entry's \\uses (statement and proof alike)."""
+    edges: dict[str, set[str]] = {}
+    for tex in chapter_dir.rglob("*.tex"):
+        current: list[str] = []
+        for block in END_ENV_RE.split(tex.read_text(encoding="utf-8", errors="ignore")):
+            labels = []
+            for line in block.splitlines():
+                m = ENTRY_LEAN_RE.match(line)
+                if m:
+                    labels = [p.strip() for p in m.group(1).split(",") if p.strip()]
+            used = {p.strip() for m in USES_RE.finditer(block)
+                    for p in m.group(1).split(",") if p.strip()}
+            # A proof environment has no \\lean of its own; it belongs to the
+            # statement just before it.
+            owners = labels or current
+            for owner in owners:
+                edges.setdefault(owner, set()).update(used - {owner})
+            current = labels or current
+    return edges
+
+
+def find_cycles(edges: dict[str, set[str]]) -> list[list[str]]:
+    """Strongly connected components of size > 1 (or self-loops), found iteratively."""
+    index: dict[str, int] = {}
+    low: dict[str, int] = {}
+    on_stack: set[str] = set()
+    stack: list[str] = []
+    cycles: list[list[str]] = []
+    counter = 0
+    for root in edges:
+        if root in index:
+            continue
+        work = [(root, iter(sorted(edges.get(root, ()))))]
+        index[root] = low[root] = counter
+        counter += 1
+        stack.append(root)
+        on_stack.add(root)
+        while work:
+            node, it = work[-1]
+            advanced = False
+            for nxt in it:
+                if nxt not in edges:
+                    continue
+                if nxt not in index:
+                    index[nxt] = low[nxt] = counter
+                    counter += 1
+                    stack.append(nxt)
+                    on_stack.add(nxt)
+                    work.append((nxt, iter(sorted(edges.get(nxt, ())))))
+                    advanced = True
+                    break
+                if nxt in on_stack:
+                    low[node] = min(low[node], index[nxt])
+            if advanced:
+                continue
+            work.pop()
+            if work:
+                parent = work[-1][0]
+                low[parent] = min(low[parent], low[node])
+            if low[node] == index[node]:
+                comp = []
+                while True:
+                    w = stack.pop()
+                    on_stack.discard(w)
+                    comp.append(w)
+                    if w == node:
+                        break
+                if len(comp) > 1 or node in edges.get(node, ()):
+                    cycles.append(sorted(comp))
+    return cycles
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--strict", action="store_true")
@@ -142,6 +223,16 @@ def main():
     print()
     print(f"Remaining uncovered documentable decls: {len(uncovered)}")
 
+    cycles = find_cycles(collect_entry_uses())
+    print()
+    print(f"\\uses cycles (crash the plasTeX web build): {len(cycles)}")
+    for comp in cycles[:20]:
+        print("  ↻ " + " -> ".join(comp))
+    if len(cycles) > 20:
+        print(f"  ... and {len(cycles) - 20} more")
+
+    if cycles:
+        return 1
     if args.strict and (orphans or dangling):
         return 1
     return 0

@@ -40,7 +40,7 @@ with its head at the origin.
 \lean{Turing.FinTM.unusedTape_step}
 \label{Turing.FinTM.unusedTape_step}
 \leanok
-\uses{Turing.Cfg, Turing.Cfg.workTapeSymbols, Turing.FinTM, Turing.FinTM.SweepCell, Turing.FinTM.unusedTapeCfg, Turing.FinTM.unusedTapeTM, Turing.MultiTapeTM.step}
+\uses{Turing.Cfg, Turing.Cfg.workTapeSymbols, Turing.FinTM, Turing.FinTM.unusedTapeCfg, Turing.FinTM.unusedTapeTM, Turing.MultiTapeTM.step}
 \difficulty{4}
 Let $M$ be a Turing machine over an alphabet $\Gamma$ with no work tapes, and let $M'$
 be the machine obtained from $M$ by adding one unused work tape. For every configuration
@@ -54,7 +54,7 @@ holds when $c$ is halted.
 \lean{Turing.FinTM.unusedTape_computes}
 \label{Turing.FinTM.unusedTape_computes}
 \leanok
-\uses{Turing.FinTM, Turing.FinTM.ComputesFunInTime, Turing.FinTM.SweepCell, Turing.FinTM.computesInTime_iff, Turing.FinTM.unusedTapeCfg, Turing.FinTM.unusedTapeTM, Turing.FinTM.unusedTape_step, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom_comm_of_step}
+\uses{Turing.FinTM, Turing.FinTM.ComputesFunInTime, Turing.FinTM.computesInTime_iff, Turing.FinTM.unusedTapeCfg, Turing.FinTM.unusedTapeTM, Turing.FinTM.unusedTape_step, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom_comm_of_step}
 \difficulty{3}
 Let $M$ be a Turing machine over an alphabet $\Gamma$ with no work tapes that computes a
 function $f$ on words over $\Gamma$ within time $T$, i.e.\ on every input $x$ the run of
@@ -187,7 +187,7 @@ flags recorded.
 \lean{Turing.FinTM.write_zone}
 \label{Turing.FinTM.write_zone}
 \leanok
-\uses{Turing.Action, Turing.Action.apply, Turing.Cfg, Turing.FinTM.SweepAlphabet, Turing.FinTM.headAt, Turing.FinTM.sweepFold, Turing.FinTM.sweepFold_append, Turing.FinTM.tapeRow, Turing.FinTM.tapeZone, Turing.FinTM.writeVisit, Turing.FinTM.write_row}
+\uses{Turing.Action, Turing.Action.apply, Turing.Cfg, Turing.FinTM.headAt, Turing.FinTM.sweepFold, Turing.FinTM.sweepFold_append, Turing.FinTM.tapeRow, Turing.FinTM.tapeZone, Turing.FinTM.writeVisit, Turing.FinTM.write_row}
 \difficulty{4}
 Let $c$ be a configuration of a $k$-work-tape machine, $\alpha$ an action of that
 machine, $j \in \mathbb{Z}$, and $n \in \mathbb{N}$. The backward sweep for $\alpha$
@@ -580,7 +580,7 @@ source configuration with a zone of $n+2$ blocks starting at $a-1$.
 \lean{Turing.FinTM.sweep_step}
 \label{Turing.FinTM.sweep_step}
 \leanok
-\uses{Turing.Cfg, Turing.FinTM, Turing.FinTM.sweepStart, Turing.FinTM.sweepTM, Turing.FinTM.sweepTime, Turing.FinTM.sweep_finish, Turing.FinTM.sweep_prepare, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.MultiTapeTM.step}
+\uses{Turing.Cfg, Turing.FinTM, Turing.FinTM.sweepStart, Turing.FinTM.sweepTM, Turing.FinTM.sweep_finish, Turing.FinTM.sweep_prepare, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.MultiTapeTM.step}
 \difficulty{3}
 Let $M$ be a machine with $k \ge 1$ work tapes and let $c$ be a configuration in a
 non-halted state $q$ whose work-tape heads all lie in the interval $[a, a+n)$ and whose
