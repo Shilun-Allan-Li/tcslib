@@ -617,7 +617,23 @@ uncomputability chapter.
   concrete scheme and reconnect Q1(c). *Origin: ch2 phase-3 audit.*
 * **Blueprint planner refinement** — writers flagged planner `\uses` edges
   not present in the cited proofs (reproduced verbatim per pipeline rules).
-  *Origin: ch1 decision log, blueprint-extraction row.*
+  *Origin: ch1 decision log, blueprint-extraction row.* **Ch2 increment
+  instances (2026-10-06/07)**: `NPHard.polyTimeReducible` → `clLastRound`;
+  `clA5Equisat` → `SAT_NPHard` (forward edge); `sat_comp_on_image` → `SAT`;
+  `satHost_clean` → `SAT_reducible_SAT3` (forward edge);
+  `choice_certificate_iff` → `capturedSummary`; `cont_split_bridge` →
+  `contPairTM`; `goes_loop` → `run_pos_le`, `MOp`;
+  `pairedVerifier_malformed` → `paddedVerifier`; `emit_run` → `redirectTM`;
+  `taut_membership_of_verifier` → `TautSyntax`; `taut_machine_pair` →
+  `tautSplit` (forward edge). The forward edges (a helper "using" the theorem it serves)
+  suggest the planner attributes by source-range adjacency or docstring
+  mentions rather than by kernel dependency; the kernel walker used for the
+  E5 dedup could supply exact edges.
+* **Stale module docstring: `Build/Primitives.lean`** — still says every
+  theorem below is sorried; the emitter fill gate closed every one of them.
+  Comment-only fix, eligible for the next comment-only sweep (comment-
+  stripped byte-identity check per precedent). *Origin: blueprint-writer
+  report, ch2 increment part 1.*
 
 ### Chapters 2-3
 
