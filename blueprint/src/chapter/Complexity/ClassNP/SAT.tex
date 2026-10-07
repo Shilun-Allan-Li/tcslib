@@ -91,10 +91,10 @@ computes $g$ within time $n \mapsto 2\,T_1(n) + T_2(n) + 2$.
 \label{Complexity.SAT}
 \leanok
 \uses{Std.Sat.CNF.Satisfiable, Std.Sat.CNF.decode}
-The language $\mathrm{SAT}$ over the binary alphabet consists of all strings whose
-total CNF decoding is a satisfiable formula [AB09, \S2.3.1]. Decoding is total, with
-the empty — satisfiable — formula as fallback, so every non-well-formed string
-belongs to $\mathrm{SAT}$.
+The language $\mathrm{SAT}$ over the binary alphabet is the set of all strings
+whose total CNF decoding is a satisfiable formula [AB09, Section~2.3.1]. Decoding
+is total, with the empty (satisfiable) formula as fallback, so every
+non-well-formed string belongs to $\mathrm{SAT}$.
 \end{definition}
 
 \begin{definition}[The language 3SAT]
@@ -102,10 +102,11 @@ belongs to $\mathrm{SAT}$.
 \label{Complexity.SAT3}
 \leanok
 \uses{Std.Sat.CNF.Satisfiable, Std.Sat.CNF.WidthAtMost, Std.Sat.CNF.decode}
-The language $\mathrm{3SAT}$ over the binary alphabet consists of all strings whose
-decoded CNF formula has width at most three (every clause carries at most three
-literal occurrences) and is satisfiable [AB09, \S2.3.1]. The fallback formula has no
-clauses, so non-well-formed strings belong to $\mathrm{3SAT}$ as well.
+The language $\mathrm{3SAT}$ over the binary alphabet is the set of all strings
+whose decoded CNF formula has width at most three (every clause carries at most
+three literal occurrences) and is satisfiable [AB09, Section~2.3.1]. The fallback
+formula has no clauses, so non-well-formed strings belong to $\mathrm{3SAT}$ as
+well.
 \end{definition}
 
 \begin{definition}[Assignment carried by a certificate]
@@ -286,10 +287,13 @@ formula $\varphi$, then $x$ equals the serialization of $\varphi$.
 \label{Complexity.satSyntaxStep}
 \leanok
 \uses{Complexity.satSyntaxSuffix}
-The transition function of a six-state finite automaton for the CNF serialization
-grammar, with positions for formula level, clause level, unary index, polarity,
-exact end, and error; the exact-end position moves to the error position on any
-further input bit.
+The transition function of the six-state CNF syntax automaton over $\{0,1\}$ is
+defined on the positions formula, clause, unary index, polarity, exact end, and
+error as follows. At formula level a $1$ leads to clause level and a $0$ to exact
+end; at clause level a $1$ leads to the index position and a $0$ back to formula
+level; the index position stays on $1$ and moves to polarity on $0$; polarity
+returns to clause level on either bit; exact end and error move to error on every
+bit.
 \end{definition}
 
 \begin{definition}[Residual grammar of the syntax scanner]
@@ -297,13 +301,13 @@ further input bit.
 \label{Complexity.satSyntaxSuffix}
 \leanok
 \uses{Std.Sat.CNF.serialize, Std.Sat.CNF.serializeClause}
-For each of the six scanner positions, the set of binary strings that may legally
-remain: at formula level, serializations of a formula; at clause level, a serialized
-clause followed by a serialized formula; at index level, a unary run followed by a
-terminator, polarity bit, and the rest of a clause and formula; at polarity level,
-one bit followed by the rest; at exact end, only the empty string; and nothing at
-the error position. Unary indices remain unbounded; the finite control stores only
-the grammar position.
+For each of the six scanner positions, the residual grammar of that position is
+the set of binary strings that may legally remain to be read: at formula level,
+the serializations of CNF formulas; at clause level, a serialized clause followed
+by a serialized formula; at index level, a unary run $1^v$ followed by $0$, a
+polarity bit, a serialized clause, and a serialized formula; at polarity level,
+one arbitrary bit followed by a serialized clause and a serialized formula; at
+exact end, only the empty string; at the error position, no string at all.
 \end{definition}
 
 \begin{lemma}[One grammar bit per transition]
@@ -376,8 +380,10 @@ accepting predicate at the final state and halts.
 \label{Complexity.satScanCfg}
 \leanok
 \uses{Turing.Cfg}
-The configuration of a zero-work-tape machine on input $x$ with control state $q$,
-input head just before position $i \le |x|$, and empty output.
+For an input word $x$, a control state $q$, and a position $i \le |x|$, the
+scanner configuration is the configuration of a zero-work-tape machine on input
+$x$ in control state $q$, with the input head just before position $i$ and empty
+output.
 \end{definition}
 
 \begin{lemma}[One scanner step]
@@ -409,9 +415,12 @@ transition over $r$ from $q$; no earlier step emits.
 \leanok
 \uses{Complexity.SatEvalControl, Complexity.satScanCfg, Complexity.satScanTM, Complexity.satScan_run, Turing.Cfg.ext_zero_tapes, Turing.FinTM.ComputesFunInTime, Turing.FinTM.computesInTime_iff, Turing.MultiTapeTM.initCfg}
 \difficulty{3}
-Every one-way scanner computes, within exactly $n + 1$ steps on inputs of length
-$n$, the single-bit function obtained by folding its transition over the input from
-the start state and applying the accepting predicate.
+Let $S$ be a finite set with transition function
+$\delta : S \times \{0,1\} \to S$, start state $s_0 \in S$, and accepting
+predicate $\alpha$ on $S$. On every input $x$ of length $n$, the one-way scanner
+built from these data halts within $n + 1$ steps, and its output is the
+single bit $\alpha(\delta^*(s_0, x))$, where $\delta^*(s_0, x)$ is the state
+reached by folding $\delta$ over $x$ from $s_0$.
 \end{lemma}
 
 \begin{lemma}[The syntax pass is a real machine]
@@ -450,11 +459,12 @@ unless the skip flag is set.
 \label{Complexity.satEvalAction}
 \leanok
 \uses{Complexity.SatEvalControl, Turing.Action, Turing.FinTM}
-Given a base machine $M$ with $k$ work tapes, the administrative action of the
-evaluator built over $M$: it writes nothing, keeps the first $k$ work heads
-stationary, moves the input head and the last (certificate) head by the prescribed
-amounts, optionally emits one output bit, and switches to the prescribed control
-state.
+Let $M$ be a base machine with $k$ work tapes. Given an input move $m$, a
+certificate-head move $d$, an optional output bit $b$, and an optional target
+state $q$, the administrative evaluation action is the action of the evaluator
+over $M$ that writes nothing, keeps the first $k$ work heads stationary, moves the
+input head by $m$ and the last (certificate) head by $d$, emits $b$ when present,
+and switches to $q$ (halting when $q$ is absent).
 \end{definition}
 
 \begin{definition}[The streaming formula evaluator]
@@ -502,9 +512,11 @@ depend on the saved extractor bank.
 \leanok
 \uses{Complexity.SatEvalControl, Complexity.satEvalCfg, Turing.Cfg, Turing.Cfg.workTapeSymbols, Turing.FinTM, Turing.FinTM.bufferTape}
 \difficulty{1}
-In the canonical evaluation configuration with certificate word $u$ and certificate
-head at offset $j$, the last work head reads exactly the cell of the buffer tape of
-$u$ at offset $j$.
+Let $u$ be a certificate word and $j \in \mathbb{Z}$. In every canonical
+evaluation configuration with certificate $u$ and certificate head at offset $j$,
+the symbol read by the last work head is the cell of the buffer tape of $u$ at
+offset $j$, that is, the $j$-th bit of $u$ when $0 \le j < |u|$ and the blank
+otherwise.
 \end{lemma}
 
 \begin{lemma}[Administrative action on canonical configurations]
@@ -525,10 +537,12 @@ the stated amount; the saved extractor bank and the empty output are preserved.
 \leanok
 \uses{Complexity.satEvalAction, Complexity.satEvalAction_apply, Complexity.satEvalCfg, Complexity.satEvalQ, Complexity.satEvalTM, Turing.Action.apply, Turing.Cfg, Turing.FinTM, Turing.MultiTapeTM.step, Turing.moveInputPos_pos_of_ne_right}
 \difficulty{3}
-From a canonical semantic configuration with the skip flag set and the input head at
-a position $i$ strictly inside the input, one evaluator step consumes one input bit
-silently: the configuration advances to position $i + 1$ with the skip flag cleared
-and all other fields unchanged.
+Let $w$ be an input and $i < |w|$. From a canonical evaluation configuration at
+input position $i$ in a semantic state with phase $q$, accumulator bits $a$ and
+$c$, and the skip flag set, one evaluator step yields the canonical configuration
+at position $i + 1$ in the same phase with the same accumulator bits and the skip
+flag cleared; the certificate head, the saved bank, and the empty output are
+unchanged.
 \end{lemma}
 
 \begin{lemma}[Consuming a doubled bit]
@@ -610,14 +624,16 @@ $c \vee (u_v = b)$, and the certificate head returns to $0$.
 \leanok
 \uses{Complexity.satAssignment, Complexity.satBits, Complexity.satBits_length, Complexity.satEvalCfg, Complexity.satEvalQ, Complexity.satEvalTM, Complexity.satEval_double, Complexity.satEval_literal, Std.Sat.CNF.serializeClause, Std.Sat.CNF.serializeLit, Turing.Cfg, Turing.FinTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add}
 \difficulty{5}
-Let $C$ be a clause all of whose variable indices are below the certificate length,
-and suppose the input contains the doubling of the serialization of $C$ at the
-current position. Starting in the clause phase with formula bit $a$ and clause bit
-$c$, some number $t \le 3\,|{\rm ser}(C)|$ of steps (where ${\rm ser}(C)$ is the
-serialized clause) returns to the formula phase with formula bit
-$a \wedge (c \vee \mathrm{eval}(C))$ under the certificate assignment, the clause
-bit reset, the input advanced across the doubled clause, and the certificate head
-at $0$. No output bit is emitted by this pass, even for an empty or false clause.
+Let $u$ be the certificate word on the evaluator's last tape and $C$ a clause all
+of whose variable indices are below $|u|$, with serialization $\mathrm{ser}(C)$.
+Suppose the evaluator's input is a word $p$, followed by the doubling of
+$\mathrm{ser}(C)$, followed by a word $r$. Started at input position $|p|$ in the
+clause phase with formula bit $a$, clause bit $c$, and certificate head at $0$,
+there is a number $t \le 3\,|\mathrm{ser}(C)|$ of steps after which the evaluator
+is in the formula phase with formula bit $a \wedge (c \vee C(u))$, where $C(u)$ is
+the truth value of $C$ under the assignment read off $u$, with the clause bit
+reset, input position $|p| + 2\,|\mathrm{ser}(C)|$, and certificate head at $0$.
+No output bit is emitted by this pass, even for an empty or false clause.
 \end{lemma}
 
 \begin{lemma}[Formula evaluation pass]
@@ -626,12 +642,15 @@ at $0$. No output bit is emitted by this pass, even for an empty or false clause
 \leanok
 \uses{Complexity.satAssignment, Complexity.satBits, Complexity.satBits_length, Complexity.satEvalAction, Complexity.satEvalCfg, Complexity.satEvalCfg_input, Complexity.satEvalQ, Complexity.satEvalTM, Complexity.satEval_clause, Complexity.satEval_double, Std.Sat.CNF.serialize, Std.Sat.CNF.serializeClause, Turing.Cfg, Turing.Cfg.inputSymbol, Turing.FinTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.MultiTapeTM.runFrom_succ_eq_step, Turing.MultiTapeTM.runFrom_zero, Turing.MultiTapeTM.step}
 \difficulty{5}
-Let $\varphi$ be a CNF formula all of whose variable indices are below the
-certificate length, and suppose the input contains the doubling of the
-serialization of $\varphi$ at the current position. Starting in the formula phase
-with formula bit $a$, within $3\,|{\rm ser}(\varphi)|$ steps the evaluator halts
-with output the single bit $a \wedge \mathrm{eval}(\varphi)$ under the certificate
-assignment; only the final formula terminator emits.
+Let $u$ be the certificate word on the evaluator's last tape and $\varphi$ a CNF
+formula all of whose variable indices are below $|u|$, with serialization
+$\mathrm{ser}(\varphi)$. Suppose the evaluator's input is a word $p$, followed by
+the doubling of $\mathrm{ser}(\varphi)$, followed by a word $r$. Started at input
+position $|p|$ in the formula phase with formula bit $a$, clause bit false, and
+certificate head at $0$, there is a number $t \le 3\,|\mathrm{ser}(\varphi)|$ of
+steps after which the evaluator is halted and its output is the single bit
+$a \wedge \varphi(u)$, where $\varphi(u)$ is the truth value of $\varphi$ under the
+assignment read off $u$; only the final formula terminator emits.
 \end{lemma}
 
 \begin{lemma}[First halting time]
@@ -688,8 +707,9 @@ return the empty word as failure result.
 \label{Complexity.satInstance}
 \leanok
 \uses{Complexity.satSplit, Turing.pairDecode}
-The first component of the decoded catalog split of a string, with the empty word
-as default when the split or its decoding fails.
+For a binary string $z$, the recovered instance of $z$ is the first component of
+the decoded catalog split of $z$, and is the empty word when the split or its
+decoding fails.
 \end{definition}
 
 \begin{definition}[Recovered certificate]
@@ -697,8 +717,9 @@ as default when the split or its decoding fails.
 \label{Complexity.satWitness}
 \leanok
 \uses{Complexity.satSplit, Turing.pairDecode}
-The second component of the decoded catalog split of a string — the certificate
-region — with the empty word as default on failure.
+For a binary string $z$, the recovered certificate of $z$ is the second component
+of the decoded catalog split of $z$ (the certificate region), and is the empty
+word when the split or its decoding fails.
 \end{definition}
 
 \begin{definition}[Split validity]
@@ -715,9 +736,10 @@ in particular this is false for every string of even length.
 \label{Complexity.satGood}
 \leanok
 \uses{Complexity.satInstance, Complexity.satSplitValid, Complexity.satSyntax}
-The Boolean conjunction of split validity with the complete CNF syntax scan of the
-recovered instance; full syntax validation runs only after successful split
-recovery.
+For a binary string $z$, the full validity guard of $z$ is the Boolean
+conjunction of the split validity of $z$ with the complete CNF syntax scan of the
+instance recovered from $z$; in particular it is false whenever the split of $z$
+fails.
 \end{definition}
 
 \begin{definition}[Safe evaluator request]
@@ -828,8 +850,9 @@ certificate of exactly $|x| + 1$ bits, is verified in polynomial time.
 \lean{Complexity.satWidthCap}
 \label{Complexity.satWidthCap}
 \leanok
-The saturation of a natural number at three, stored as one of four values; the
-width scanner keeps this counter in finite control.
+For every $n \in \mathbb{N}$, the saturated width counter of $n$ is $\min(n, 3)$,
+viewed as one of the four values $0, 1, 2, 3$; the width scanner keeps this
+counter in finite control.
 \end{definition}
 
 \begin{definition}[Width-pass transition]
@@ -837,10 +860,15 @@ width scanner keeps this counter in finite control.
 \label{Complexity.satWidthStep}
 \leanok
 \uses{Complexity.satSyntaxStep, Complexity.satWidthCap}
-The transition of a separate finite-state width pass, run only after the complete
-syntax pass: the state couples the six-position grammar automaton with a saturated
-literal counter and a goodness flag. A fourth literal occurrence in a clause clears
-the flag; scanning continues without emitting.
+The transition of the separate width pass, which is run only after the complete
+syntax pass, acts on triples consisting of a position of the six-state syntax
+automaton, a saturated literal counter in $\{0,1,2,3\}$, and a goodness flag. At
+formula level it follows the syntax automaton and resets the counter; at clause
+level a $1$ (the start of a literal) moves to the index position, increments the
+saturated counter, and clears the flag if the counter was already $3$, while a
+$0$ returns to formula level with the counter reset; at every other position it
+follows the syntax automaton and leaves counter and flag unchanged. The pass never
+emits.
 \end{definition}
 
 \begin{lemma}[Index bits do not count]
@@ -849,8 +877,10 @@ the flag; scanning continues without emitting.
 \leanok
 \uses{Complexity.satSyntaxStep, Complexity.satWidthStep}
 \difficulty{2}
-Folding the width-pass transition over a unary run $1^n$ from the index position
-leaves the position, the saturated counter, and the goodness flag unchanged.
+For every $n \in \mathbb{N}$, every counter value $c$, and every flag $g$, folding
+the width-pass transition over the unary run $1^n$ from the index position with
+counter $c$ and flag $g$ returns exactly the same state: index bits change neither
+the position, nor the counter, nor the flag.
 \end{lemma}
 
 \begin{lemma}[One literal increments the counter once]
@@ -859,10 +889,11 @@ leaves the position, the saturated counter, and the goodness flag unchanged.
 \leanok
 \uses{Complexity.satWidthCap, Complexity.satWidthStep, Complexity.satWidth_index, Std.Sat.CNF.serializeLit}
 \difficulty{3}
-Folding the width-pass transition over one serialized literal from the clause
-position increments the saturated counter exactly once and conjoins the goodness
-flag with the test that the previous counter value was below three, independently
-of the literal's variable index and polarity.
+Let $\ell$ be a literal, $c \in \{0,1,2,3\}$ a counter value, and $g$ a Boolean
+flag. Folding the width-pass transition over the serialization of $\ell$, from the
+clause position with counter $c$ and flag $g$, returns the clause position with
+counter $\min(c + 1, 3)$ and flag $g \wedge [c < 3]$, independently of the
+variable index and polarity of $\ell$.
 \end{lemma}
 
 \begin{lemma}[Clause width fold]
@@ -871,10 +902,11 @@ of the literal's variable index and polarity.
 \leanok
 \uses{Complexity.satWidthCap, Complexity.satWidthStep, Complexity.satWidth_literal, Std.Sat.CNF.serializeClause, Std.Sat.CNF.serializeLit}
 \difficulty{4}
-Folding the width-pass transition over a serialized clause $C$ from the clause
-position with counter value $c$ returns to the formula position with the counter
-reset to zero and the goodness flag conjoined with the test $c + |C| \le 3$, where
-$|C|$ counts literal occurrences including repetitions.
+Let $C$ be a clause, $c \in \{0,1,2,3\}$ a counter value, and $g$ a Boolean flag.
+Folding the width-pass transition over the serialization of $C$, from the clause
+position with counter $c$ and flag $g$, returns the formula position with counter
+$0$ and flag $g \wedge [c + |C| \le 3]$, where $|C|$ counts literal occurrences
+including repetitions.
 \end{lemma}
 
 \begin{lemma}[Formula width fold]
@@ -894,8 +926,9 @@ every clause is checked and the empty formula passes vacuously.
 \label{Complexity.satWidthScan}
 \leanok
 \uses{Complexity.satWidthStep}
-The final goodness flag of the independent width pass folded over an arbitrary
-binary string from the initial state.
+For a binary string $x$, the width scan of $x$ is the final goodness flag obtained
+by folding the width-pass transition over $x$ from the initial state (formula
+position, counter $0$, flag true).
 \end{definition}
 
 \begin{lemma}[Width scan on serialized formulas]
@@ -904,8 +937,9 @@ binary string from the initial state.
 \leanok
 \uses{Complexity.satWidth, Complexity.satWidthScan, Complexity.satWidth_formula, Std.Sat.CNF.serialize}
 \difficulty{1}
-On the serialization of any CNF formula $\varphi$, the width scan computes exactly
-the Boolean width-three test of $\varphi$.
+For every CNF formula $\varphi$, the width scan of the serialization of $\varphi$
+equals the Boolean width-three test of $\varphi$, which is true exactly when every
+clause of $\varphi$ has at most three literal occurrences.
 \end{lemma}
 
 \begin{lemma}[The width pass is a real machine]
@@ -955,14 +989,15 @@ and under $b$.
 \lean{Complexity.satChain}
 \label{Complexity.satChain}
 \leanok
-The recursive chain construction of the SAT-to-3SAT reduction: given a head
-literal, a remaining clause, and a fresh-variable cursor $n$, a clause with at
-least three remaining literals $b, c, d, \ldots$ emits the link
-$[\mathrm{head},\, b,\, (n,\mathrm{true})]$ and recurses on the clause headed by
-the fresh negative literal $(n,\mathrm{false})$ with cursor $n + 1$; shorter
-clauses are emitted unchanged as a single clause. The construction returns the
-produced formula together with the next unused cursor.
-[AB09, \S2.3.5, proof of Lemma~2.14]
+Given a head literal $h$, a list $R$ of remaining literals, and a fresh-variable
+cursor $n \in \mathbb{N}$, the clause-splitting chain is defined by recursion on
+$R$ and returns a CNF formula together with the next unused cursor. If $R$ has at
+least three literals $b, c, d, \dots$, the chain is the link clause
+$[h,\, b,\, (n,\mathrm{true})]$ followed by the chain on head
+$(n,\mathrm{false})$, remaining literals $c, d, \dots$, and cursor $n + 1$, whose
+returned cursor is kept. Otherwise the chain is the single clause consisting of
+$h$ followed by $R$, with the cursor $n$ unchanged.
+[AB09, Section~2.3.5, proof of Lemma~2.14]
 \end{definition}
 
 \begin{definition}[Splitting one clause]
@@ -1102,10 +1137,11 @@ formula obtained by splitting $C$ at $n$.
 \label{Complexity.satTransformFrom}
 \leanok
 \uses{Complexity.satSplitClause}
-The clause-by-clause transform of a CNF formula: split each clause in order,
-threading one global fresh-variable cursor from clause to clause, and concatenate
-the resulting 3CNF pieces; the final cursor is returned alongside.
-[AB09, \S2.3.5, proof of Lemma~2.14]
+For a CNF formula $\varphi$ and a fresh-variable cursor $n$, the threaded clause
+transform of $\varphi$ at $n$ is obtained by splitting each clause of $\varphi$ in
+order, threading one global fresh-variable cursor from clause to clause starting
+at $n$, and concatenating the resulting 3CNF pieces; the final cursor is returned
+alongside. [AB09, Section~2.3.5, proof of Lemma~2.14]
 \end{definition}
 
 \begin{lemma}[Literal-wise bound gives the variable bound]
@@ -1176,9 +1212,11 @@ satisfiable if and only if $\varphi$ is satisfiable. [AB09, Lemma~2.14]
 \label{Complexity.satReduction}
 \leanok
 \uses{Complexity.satTransform, Std.Sat.CNF.decode, Std.Sat.CNF.serialize}
-The string-level SAT-to-3SAT reduction: decode the input string (with the empty
-formula as malformed-input fallback), apply the clause-splitting transform, and
-serialize the result. [AB09, Lemma~2.14]
+The string-level SAT-to-3SAT reduction is the map on binary strings that decodes
+its input to a CNF formula (with the empty formula as fallback for malformed
+inputs), applies the clause-splitting transform (fresh variables allocated from
+the decoded formula's variable bound upwards), and serializes the result.
+[AB09, Lemma~2.14]
 \end{definition}
 
 \begin{lemma}[Reduction correctness]
@@ -1217,10 +1255,11 @@ terminator.
 \label{Complexity.satRedAction}
 \leanok
 \uses{Turing.Action}
-The action constructor for the 35-state two-tape clause-splitting transducer:
-it specifies an input-head move, an optional write and a move for each of the two
-work tapes (a unary fresh-variable counter and a temporary literal buffer), an
-optional output bit, and an optional next state.
+Given an input move $m$, optional writes $w_0, w_1$ and head moves $d_0, d_1$ for
+the two work tapes, an optional output bit $b$, and an optional next state $q$,
+the two-tape reduction action is the action of the 35-state clause-splitting
+transducer performing exactly these operations; work tape $0$ is a unary
+fresh-variable counter and work tape $1$ a temporary literal buffer.
 \end{definition}
 
 \begin{definition}[Candidate clause-splitting transducer]
@@ -1242,9 +1281,10 @@ polynomial-time witness.
 \label{Complexity.satRedCounter}
 \leanok
 \uses{Turing.FinTM.bufferTape}
-The tape content consisting of $n$ consecutive one-cells starting at the origin
-and blanks elsewhere; its occupied length $n$ represents the next unused variable
-index.
+For every $n \in \mathbb{N}$, the canonical unary counter tape of length $n$ is
+the tape content holding a one at each offset $0, \dots, n - 1$ and a blank at
+every other integer offset; its occupied length $n$ represents the next unused
+variable index.
 \end{definition}
 
 \begin{definition}[Buffer with permanent marker]
@@ -1263,10 +1303,12 @@ return even after the payload has been completely erased.
 \label{Complexity.satRedCfg}
 \leanok
 \uses{Complexity.satRedCounter, Turing.Cfg}
-The canonical configuration of the 35-state transducer: a control state, an input
-position, the unary counter tape of a stated length with its head at a stated
-offset, an arbitrary buffer tape with its head at a stated offset, and the
-accumulated output word.
+Given an input $x$, an optional control state $q$, a position $i \le |x|$, a
+counter length $n$, a buffer tape $B$, head offsets $a, b \in \mathbb{Z}$, and an
+output word $o$, the canonical reduction frame is the configuration of the
+35-state transducer in control $q$, with the input head just before position $i$,
+the unary counter tape of length $n$ on work tape $0$ with head at $a$, the buffer
+tape $B$ on work tape $1$ with head at $b$, and accumulated output $o$.
 \end{definition}
 
 \begin{lemma}[Input symbol of the reduction frame]
@@ -1275,8 +1317,9 @@ accumulated output word.
 \leanok
 \uses{Complexity.satRedCfg, Turing.Cfg.inputSymbol, Turing.FinTM.inputSymbol_at}
 \difficulty{1}
-In the canonical reduction frame at input position $i$ on input $x$, the input
-head reads the optional $i$-th entry of $x$.
+Let $x$ be an input and $i \le |x|$. In every canonical reduction frame on input
+$x$ at input position $i$, the symbol read by the input head is the $i$-th bit of
+$x$ when $i < |x|$, and the blank when $i = |x|$.
 \end{lemma}
 
 \begin{lemma}[Reading the unary counter]
@@ -1305,10 +1348,10 @@ The unary counter tape of any length is blank at offset $-1$.
 \leanok
 \uses{Complexity.satRedCounter, Complexity.satRedCounter_read, Turing.FinTM.bufferTape_append}
 \difficulty{3}
-For $j \le n$, writing a one at offset $j$ of the unary counter tape of length $n$
-yields the unary counter tape of length $\max(n,\, j + 1)$: writing within the
-current prefix preserves it, while writing its right blank extends the maximum by
-one.
+Let $n, j \in \mathbb{N}$ with $j \le n$. Writing a one at offset $j$ of the unary
+counter tape of length $n$ yields the unary counter tape of length
+$\max(n, j + 1)$: writing within the current prefix preserves it, while writing
+its right blank extends the length by one.
 \end{lemma}
 
 \begin{lemma}[Action calculus on reduction frames]
@@ -1422,12 +1465,15 @@ variable bound of $\varphi$.
 \leanok
 \uses{Complexity.satClauseVars, Complexity.satRedCfg, Complexity.satRedTM, Complexity.satRed_maxLiteral, Complexity.satRed_move, Std.Sat.CNF.serializeClause, Std.Sat.CNF.serializeLit, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.MultiTapeTM.runFrom_succ_eq_step, Turing.MultiTapeTM.runFrom_zero, Turing.moveInputPos_pos_of_ne_right}
 \difficulty{5}
-Suppose the input contains a serialized clause $C$ at the current position and the
-transducer is in its clause-level maximum state with counter length $n$ and
-counter head at $0$. Then within $2\,|{\rm ser}(C)|$ silent transitions it returns
-to formula-level control with the input advanced across the clause, counter length
-$\max(n,\, m_C)$ where $m_C$ is the clause variable maximum of $C$, and both work
-heads back at their entry positions.
+Let $C$ be a clause with serialization $\mathrm{ser}(C)$, and let $m_C$ be the
+maximum of $v + 1$ over the literals $(v, b)$ of $C$ (or $0$ if $C$ is empty).
+Suppose the input is $x = p \mathbin{+\!\!+} \mathrm{ser}(C) \mathbin{+\!\!+} r$,
+and the transducer is in its clause-level maximum state at input position $|p|$,
+with counter length $n$, counter head at $0$, and arbitrary buffer, buffer head,
+and output. Then there is a number $t \le 2\,|\mathrm{ser}(C)|$ of silent steps
+after which the transducer is in formula-level maximum control at input position
+$|p| + |\mathrm{ser}(C)|$, with counter length $\max(n, m_C)$, counter head back
+at $0$, and buffer, buffer head, and output unchanged.
 \end{lemma}
 
 \begin{lemma}[Maximum pass over a formula]
@@ -1436,11 +1482,15 @@ heads back at their entry positions.
 \leanok
 \uses{Complexity.satClauseVars, Complexity.satRedCfg, Complexity.satRedTM, Complexity.satRed_maxClause, Complexity.satRed_move, Complexity.satRed_one, Complexity.sat_numVars_cons, Std.Sat.CNF.numVars, Std.Sat.CNF.serialize, Std.Sat.CNF.serializeClause, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.MultiTapeTM.runFrom_succ_eq_step, Turing.MultiTapeTM.runFrom_zero, Turing.MultiTapeTM.step, Turing.moveInputPos_pos_of_ne_right, Turing.moveInputPos_zero}
 \difficulty{5}
-Suppose the input contains the serialization of a formula $\varphi$ at the current
-position and the transducer is in formula-level maximum control with counter
-length $n$. Then within $2\,|{\rm ser}(\varphi)|$ silent transitions it reaches the
-rewind seam with counter length $\max(n,\, \mathrm{numVars}(\varphi))$ on the
-first tape and the input head one short of the end of the serialized formula.
+Let $\varphi$ be a CNF formula with serialization $\mathrm{ser}(\varphi)$ and
+its variable bound $N(\varphi)$ (one more than the largest variable index occurring in $\varphi$, or $0$ if no variable occurs). Suppose the input is
+$x = p \mathbin{+\!\!+} \mathrm{ser}(\varphi) \mathbin{+\!\!+} r$, and the
+transducer is in formula-level maximum control at input position $|p|$, with
+counter length $n$, counter head at $0$, and arbitrary buffer, buffer head, and
+output. Then there is a number $t \le 2\,|\mathrm{ser}(\varphi)|$ of silent steps
+after which the transducer is at its rewind seam at input position
+$|p| + |\mathrm{ser}(\varphi)| - 1$, with counter length $\max(n, N(\varphi))$,
+counter head at $0$, and buffer, buffer head, and output unchanged.
 \end{lemma}
 
 \begin{lemma}[The empty buffer]
@@ -1459,10 +1509,11 @@ updated with the permanent marker at offset $-1$.
 \leanok
 \uses{Complexity.satRedAction, Complexity.satRedAction_apply, Complexity.satRedBuffer, Complexity.satRedBuffer_empty, Complexity.satRedCfg, Complexity.satRedCounter, Complexity.satRedTM, Complexity.satRed_move, Complexity.satRed_one, Turing.Action.apply, Turing.FinTM.bufferTape, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step, Turing.MultiTapeTM.step, Turing.moveInputPos_zero}
 \difficulty{4}
-From its initial configuration on any input, the clause-splitting transducer takes
-exactly two silent transitions to install the permanent buffer marker: it reaches
-the maximum-pass entry state with empty counter, the empty marked buffer, both
-work heads at $0$, and empty output.
+For every input $x$, the first two steps of the clause-splitting transducer from
+its initial configuration on $x$ are silent and yield the canonical frame in the
+maximum-pass entry state with input head at $0$, empty counter, the empty marked
+buffer (blank except for the permanent marker at offset $-1$), both work heads at
+$0$, and empty output.
 \end{lemma}
 
 \begin{lemma}[Transducer startup seam]
@@ -1471,19 +1522,21 @@ work heads at $0$, and empty output.
 \leanok
 \uses{Complexity.satRedAction, Complexity.satRedBuffer, Complexity.satRedCfg, Complexity.satRedTM, Complexity.satRed_init, Complexity.satRed_maxFormula, Std.Sat.CNF.numVars, Std.Sat.CNF.serialize, Turing.FinTM.controlAction, Turing.FinTM.timed_rewind, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add}
 \difficulty{5}
-For every CNF formula $\varphi$, within $3\,|{\rm ser}(\varphi)| + 5$ steps from
-its initial configuration on the serialization of $\varphi$, the clause-splitting
-transducer reaches its streaming entry state with exactly
-$\mathrm{numVars}(\varphi)$ in unary on the counter tape, the empty marked buffer,
-the input head back at $0$, both work heads at $0$, and empty output.
+Let $\varphi$ be a CNF formula with serialization $\mathrm{ser}(\varphi)$ and
+its variable bound $N(\varphi)$ (one more than the largest variable index occurring in $\varphi$, or $0$ if no variable occurs). There is a time $t \le 3\,|\mathrm{ser}(\varphi)| + 5$ at which the
+clause-splitting transducer, started on $\mathrm{ser}(\varphi)$, is in its
+streaming entry state with exactly $1^{N(\varphi)}$ on the counter tape, the
+buffer empty apart from its permanent marker, the input head back at $0$, both
+work heads at $0$, and empty output.
 \end{lemma}
 \begin{definition}[Streaming seam state]
 \lean{Complexity.SatStreamState}
 \label{Complexity.SatStreamState}
 \leanok
-The persistent state carried across one round of the normalized streaming
-schedule: a fresh-variable cursor, the number of consumed input bits, and one of
-five grammar phases (formula, first literal, second literal, tail, finished).
+A streaming seam state is a triple consisting of a fresh-variable cursor in
+$\mathbb{N}$, a number of consumed input bits in $\mathbb{N}$, and one of five
+grammar phases (formula, first literal, second literal, tail, finished); it is the
+persistent state carried across one round of the normalized streaming schedule.
 \end{definition}
 
 \begin{lemma}[Literal parser round trip]
@@ -1539,9 +1592,9 @@ concatenated.
 \leanok
 \uses{Complexity.satStreamRound, Complexity.satStreamRun}
 \difficulty{2}
-Any number of streaming rounds started in the finished phase leaves the state
-unchanged and emits nothing: padding after the formula terminator contributes no
-further output.
+For every input $x$, every $k \in \mathbb{N}$, and every seam state in the
+finished phase, running $k$ streaming rounds returns the same state and the empty
+output: padding after the formula terminator contributes no further output.
 \end{lemma}
 
 \begin{definition}[Pending tail output]
@@ -1549,13 +1602,14 @@ further output.
 \label{Complexity.satStreamTail}
 \leanok
 \uses{Std.Sat.CNF.serializeLit}
-For a remaining clause tail and a fresh cursor $j$: the output still pending after
-the first two literals of a clause have been emitted, together with the final
-cursor. An empty tail emits just the clause terminator; a single literal is copied
-and terminated; otherwise one link is closed with the fresh positive literal
-$(j,\mathrm{true})$, a new clause is opened with $(j,\mathrm{false})$, the next
-original literal is copied, and the recursion continues at $j + 1$.
-[AB09, \S2.3.5, proof of Lemma~2.14]
+For a remaining clause tail and a fresh cursor $j$, the pending tail output is the
+output still to be emitted after the first two literals of a clause, together with
+the final cursor. An empty tail emits just the clause terminator $0$; a single
+literal is copied and followed by the terminator; otherwise one link is closed
+with the fresh positive literal $(j,\mathrm{true})$, a new clause is opened with
+$(j,\mathrm{false})$, the next original literal is copied, and the recursion
+continues on the rest of the tail at cursor $j + 1$.
+[AB09, Section~2.3.5, proof of Lemma~2.14]
 \end{definition}
 
 \begin{definition}[Emitted clause body]
@@ -1664,9 +1718,10 @@ $j$, return to the formula phase, and leave the cursor at the body's final value
 \lean{Complexity.satStreamCount}
 \label{Complexity.satStreamCount}
 \leanok
-The exact number of non-finished rounds needed for a formula: the sum over its
-clauses of (clause length plus two — a marker round and a terminator round) plus
-one final formula-terminator round.
+For a CNF formula $\varphi$ with clauses $C_1, \dots, C_m$, the round count of
+$\varphi$ is $1 + \sum_{k=1}^{m} (|C_k| + 2)$: per clause one marker round, one
+round per literal occurrence, and one terminator round, plus one final
+formula-terminator round.
 \end{definition}
 
 \begin{lemma}[Formula schedule emits the transform]
@@ -1699,11 +1754,12 @@ least one input bit, including for empty clauses and the empty formula.
 \leanok
 \uses{Complexity.satStreamCount, Complexity.satStreamCount_le, Complexity.satStreamRun, Complexity.satStreamRun_add, Complexity.satStreamRun_finished, Complexity.satStreamRun_formula, Complexity.satTransform, Std.Sat.CNF.numVars, Std.Sat.CNF.serialize}
 \difficulty{4}
-Running $|{\rm ser}(\varphi)| + 1$ rounds on the serialization of a formula
-$\varphi$, from the formula phase at cursor $\mathrm{numVars}(\varphi)$ with
-nothing consumed, emits exactly the serialization of the clause-splitting
-transform of $\varphi$: the semantic schedule finishes within the budget and all
-remaining rounds are empty.
+Let $\varphi$ be a CNF formula with serialization $\mathrm{ser}(\varphi)$ and
+its variable bound $N(\varphi)$ (one more than the largest variable index occurring in $\varphi$, or $0$ if no variable occurs). Running $|\mathrm{ser}(\varphi)| + 1$ streaming rounds on input
+$\mathrm{ser}(\varphi)$, starting from the formula phase with fresh cursor
+$N(\varphi)$ and nothing consumed, emits a word equal to the serialization of the
+clause-splitting transform of $\varphi$: the semantic schedule finishes within the
+budget and all remaining rounds are empty.
 \end{lemma}
 
 \begin{lemma}[Round output as an indexed concatenation]
@@ -1733,8 +1789,9 @@ contains no round-local literal buffer.
 \label{Complexity.satStreamFst}
 \leanok
 \uses{Turing.pairDecode}
-The total first projection of a pair-encoded word, returning the empty word on
-malformed inputs.
+For a word $w$, the first pair projection of $w$ is the first component of $w$
+decoded as a pair encoding, and is the empty word when $w$ is not a valid pair
+encoding.
 \end{definition}
 
 \begin{definition}[Second pair projection]
@@ -1742,8 +1799,9 @@ malformed inputs.
 \label{Complexity.satStreamSnd}
 \leanok
 \uses{Turing.pairDecode}
-The total second projection of a pair-encoded word, returning the empty word on
-malformed inputs.
+For a word $w$, the second pair projection of $w$ is the second component of $w$
+decoded as a pair encoding, and is the empty word when $w$ is not a valid pair
+encoding.
 \end{definition}
 
 \begin{definition}[Decoding a seam word]
@@ -1763,8 +1821,8 @@ is the identity on all reachable tags.
 \leanok
 \uses{Complexity.SatStreamState, Complexity.satStreamFst, Complexity.satStreamRead, Complexity.satStreamSnd, Complexity.satStreamWord, Turing.pairDecode_pairEncode}
 \difficulty{2}
-Decoding the encoded seam word of any seam state recovers all three fields
-exactly.
+For every seam state $s$, decoding the encoded seam word of $s$ returns exactly
+$s$: the fresh cursor, the consumed length, and the phase are all recovered.
 \end{lemma}
 
 \begin{lemma}[Length of a seam word]
@@ -1773,8 +1831,9 @@ exactly.
 \leanok
 \uses{Complexity.SatStreamState, Complexity.satStreamWord, Turing.pairEncode}
 \difficulty{2}
-The encoded seam word of a state with fresh cursor $f$, consumed length $u$, and
-phase $q$ has length exactly $2f + 2u + q + 4$: linear in its two unary counters.
+For every seam state with fresh cursor $f$, consumed length $c$, and phase
+$q \in \{0, \dots, 4\}$, the encoded seam word has length exactly
+$2f + 2c + q + 4$; in particular it is linear in the two unary counters.
 \end{lemma}
 
 \begin{definition}[Length invariant of the loop]
@@ -1827,8 +1886,9 @@ terminator and then finishes — even at input length zero.
 \leanok
 \uses{Complexity.satStreamBound, Complexity.satStreamStart, Std.Sat.CNF.numVars_decode_le}
 \difficulty{2}
-For every input string, both the valid and the fallback startup seam states
-satisfy the length invariant.
+For every input string $x$, the startup seam state of $x$ satisfies the length
+invariant on $x$; this holds both for the valid and for the fallback startup
+state.
 \end{lemma}
 
 \begin{lemma}[Fallback output]
@@ -1859,8 +1919,9 @@ any machine-computability claim.
 \label{Complexity.satStreamStep}
 \leanok
 \uses{Complexity.satStreamRead, Complexity.satStreamRound, Complexity.satStreamWord}
-The word-level next-state function consumed by the audited emitter interface:
-decode a seam word, apply one streaming round, and re-encode the resulting state.
+For an input $x$ and a word $w$, the encoded next-state function returns the
+encoded seam word of the state obtained by decoding $w$ and applying one streaming
+round on input $x$.
 \end{definition}
 
 \begin{definition}[Encoded chunk function]
@@ -1930,10 +1991,12 @@ emitting-loop constructor with round budget $R(n) = n$.
 \label{Complexity.satPairAction}
 \leanok
 \uses{Turing.Action, Turing.FinTM}
-Given a base machine $M$ with $k$ work tapes, the administrative action of the
-input-retaining pairing machine over $M$: it writes nothing, keeps the completed
-source bank (the first $k$ tapes) untouched, moves the input head and the capture
-head by the prescribed amounts, optionally emits one bit, and switches control.
+Let $M$ be a base machine with $k$ work tapes. Given an input move $m$, a
+capture-head move $d$, an optional output bit $b$, and an optional target state
+$q$, the pairing administrative action is the action of the pairing machine over
+$M$ that writes nothing, keeps the completed source bank (the first $k$ work
+heads) stationary, moves the input head by $m$ and the last (capture) head by $d$,
+emits $b$ when present, and switches to $q$.
 \end{definition}
 
 \begin{definition}[Input-retaining pairing machine]
@@ -1953,10 +2016,14 @@ output is therefore the pair encoding of $f(x)$ with $x$.
 \label{Complexity.satPairCfg}
 \leanok
 \uses{Complexity.satPairTM, Turing.Cfg, Turing.FinTM, Turing.FinTM.bufferTape}
-The canonical configuration of the pairing machine: a saved source bank of $M$ on
-the first $k$ tapes, the immutable captured word on the last tape with its head
-at a stated offset, a stated control state and input position, and the output
-emitted so far.
+Let $M$ be a finite machine with $k$ work tapes and $x$ an input. Given a
+configuration $s$ of $M$ on $x$ (the saved source bank), a captured word $u$, an
+optional control state $q$, a position $i \le |x|$, an offset $j \in \mathbb{Z}$,
+and an output word $o$, the canonical pairing configuration is the configuration
+of the pairing machine over $M$ whose first $k$ work tapes and heads are those of
+$s$, whose last tape holds $u$ with head at $j$, whose control is $q$ (halted when
+$q$ is absent), whose input head is just before position $i$, and whose output is
+$o$.
 \end{definition}
 
 \begin{lemma}[Pairing reads the native input]
@@ -1965,8 +2032,10 @@ emitted so far.
 \leanok
 \uses{Complexity.satPairCfg, Turing.Cfg, Turing.Cfg.inputSymbol, Turing.FinTM, Turing.FinTM.inputSymbol_at}
 \difficulty{1}
-In the canonical pairing configuration at input position $i$ on input $x$, the
-input head reads the optional $i$-th entry of $x$.
+Let $M$ be a finite machine, $x$ an input, and $i \le |x|$. In every canonical
+pairing configuration over $M$ on input $x$ at input position $i$, the symbol read
+by the input head is the $i$-th bit of $x$ when $i < |x|$, and the blank when
+$i = |x|$.
 \end{lemma}
 
 \begin{lemma}[Pairing reads the captured word]
@@ -1975,9 +2044,11 @@ input head reads the optional $i$-th entry of $x$.
 \leanok
 \uses{Complexity.satPairCfg, Turing.Cfg, Turing.Cfg.workTapeSymbols, Turing.FinTM, Turing.FinTM.bufferTape}
 \difficulty{1}
-In the canonical pairing configuration with captured word $u$ and capture head at
-offset $j$, the last work head reads exactly the cell of the buffer tape of $u$
-at $j$.
+Let $M$ be a finite machine, $u$ a captured word, and $j \in \mathbb{Z}$. In every
+canonical pairing configuration over $M$ with captured word $u$ and capture head
+at offset $j$, the symbol under the last work head is the cell of the buffer tape
+of $u$ at $j$, that is, the $j$-th bit of $u$ when $0 \le j < |u|$ and the blank
+otherwise.
 \end{lemma}
 
 \begin{lemma}[Pairing action on canonical configurations]
@@ -2103,10 +2174,12 @@ so is $x \mapsto f(x) \mathbin{+\!\!+} g(x)$.
 \lean{Complexity.satMapWord}
 \label{Complexity.satMapWord}
 \leanok
-The pure semantics of a finite one-way word transducer: given a state transition,
-a per-bit optional emission, and an optional final emission, process the input
-left to right, emitting at most one bit per input bit, and append the optional
-final bit at the end of the input.
+Given a state set $S$, a transition $\delta$, a per-bit optional emission
+$\varepsilon$, and an optional final emission $\phi$, the transducer semantics is
+the word function defined by recursion on the input: on the empty word from state
+$q$ it returns the final emission $\phi(q)$ (zero or one bit), and on a bit $b$
+followed by a word $r$ from state $q$ it returns the emission $\varepsilon(q, b)$
+followed by the semantics of $r$ from state $\delta(q, b)$.
 \end{definition}
 
 \begin{definition}[Finite word-transducer machine]
@@ -2114,9 +2187,11 @@ final bit at the end of the input.
 \label{Complexity.satMapTM}
 \leanok
 \uses{Turing.FinTM}
-The finite Turing machine with no work tapes realizing a one-way word transducer:
-on each input bit it applies the state transition and emits the per-bit optional
-output, and at the right boundary it emits the optional final bit and halts.
+Given a finite state set $S$ with a transition $\delta$, a per-bit optional
+emission, an optional final emission, and a start state, the word-transducer
+machine is the finite Turing machine with no work tapes that, on each input bit,
+applies $\delta$, emits the per-bit optional output, and moves right, and at the
+right boundary emits the optional final bit and halts.
 \end{definition}
 
 \begin{definition}[Transducer configuration]
@@ -2124,9 +2199,10 @@ output, and at the right boundary it emits the optional final bit and halts.
 \label{Complexity.satMapCfg}
 \leanok
 \uses{Turing.Cfg}
-The configuration of a zero-work-tape machine on input $x$ with control state
-$q$, input head before position $i \le |x|$, and an explicit already-emitted
-output prefix.
+For an input word $x$, a control state $q$, a position $i \le |x|$, and an output
+word $o$, the transducer configuration is the configuration of a zero-work-tape
+machine on input $x$ with control state $q$, input head just before position $i$,
+and already-emitted output $o$.
 \end{definition}
 
 \begin{lemma}[The transducer machine matches its semantics]
@@ -2237,11 +2313,13 @@ initialization and maximum pass apply unchanged.
 \leanok
 \uses{Complexity.satMaxTM, Complexity.satRedBuffer, Complexity.satRedCfg, Complexity.satRedTM, Complexity.satRed_start, Complexity.satRed_start_guard, Complexity.sat_run_agree, Std.Sat.CNF.numVars, Std.Sat.CNF.serialize, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.step}
 \difficulty{4}
-For every CNF formula $\varphi$, within $3\,|{\rm ser}(\varphi)| + 5$ steps from
-its initial configuration on the serialization of $\varphi$, the intercepted
-maximum-pass machine reaches the streaming entry frame with exactly
-$\mathrm{numVars}(\varphi)$ in unary on the counter tape, empty buffer payload,
-and empty output — the same endpoint as the unmodified transducer.
+Let $\varphi$ be a CNF formula with serialization $\mathrm{ser}(\varphi)$ and
+its variable bound $N(\varphi)$ (one more than the largest variable index occurring in $\varphi$, or $0$ if no variable occurs). There is a time $t \le 3\,|\mathrm{ser}(\varphi)| + 5$ at which the
+intercepted maximum-pass machine, started on $\mathrm{ser}(\varphi)$, is in its
+streaming entry state with the counter tape holding $1^{N(\varphi)}$, the buffer
+empty apart from its permanent marker, the input head and both work heads at $0$,
+and empty output. This is the same endpoint as for the unmodified
+clause-splitting transducer.
 \end{lemma}
 
 \begin{lemma}[Replaying the counter]
@@ -2262,9 +2340,12 @@ buffer movement occurs during the replay.
 \leanok
 \uses{Complexity.satMaxTM, Complexity.satMax_prefix, Complexity.satRedAction, Complexity.satRedCfg, Complexity.satRedCounter_read, Turing.Action.apply, Turing.Cfg.workTapeSymbols, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.MultiTapeTM.step, Turing.moveInputPos_zero}
 \difficulty{4}
-From the streaming entry frame with counter length $n$, exactly $n + 1$
-transitions of the intercepted machine emit the full unary counter $1^n$ and
-halt on the first blank without emitting an extra bit.
+Let $x$ be an input, $n \in \mathbb{N}$, and $B$ any buffer tape. Started in the
+streaming entry state with the input head at $0$, a unary counter of length $n$
+with head at $0$, the buffer $B$ with head at $0$, and empty output, the
+intercepted maximum-pass machine after exactly $n + 1$ steps is halted with output
+$1^n$ and counter head at $n$, all other fields unchanged; in particular the first
+blank after the counter halts the machine without an extra output bit.
 \end{lemma}
 
 \begin{lemma}[Computing the unary variable bound]
@@ -2273,9 +2354,10 @@ halt on the first blank without emitting an extra bit.
 \leanok
 \uses{Complexity.satMaxTM, Complexity.satMax_finish, Complexity.satMax_start, Std.Sat.CNF.decode_serialize, Std.Sat.CNF.numVars, Std.Sat.CNF.numVars_decode_le, Std.Sat.CNF.serialize, Turing.FinTM.ComputesInTime, Turing.FinTM.ComputesInTime.mono, Turing.FinTM.computesInTime_iff, Turing.MultiTapeTM.runFrom_add}
 \difficulty{3}
-For every CNF formula $\varphi$, the intercepted maximum-pass machine, run on the
-serialization of $\varphi$, halts within $4\,|{\rm ser}(\varphi)| + 6$ steps with
-output the unary word $1^{\mathrm{numVars}(\varphi)}$.
+Let $\varphi$ be a CNF formula with serialization $\mathrm{ser}(\varphi)$ and
+its variable bound $N(\varphi)$ (one more than the largest variable index occurring in $\varphi$, or $0$ if no variable occurs). The intercepted maximum-pass machine, run on
+$\mathrm{ser}(\varphi)$, halts within $4\,|\mathrm{ser}(\varphi)| + 6$ steps, and
+its output is the unary word $1^{N(\varphi)}$.
 \end{lemma}
 
 \begin{definition}[Input canonicalizer]
@@ -2283,9 +2365,9 @@ output the unary word $1^{\mathrm{numVars}(\varphi)}$.
 \label{Complexity.satStreamCanonical}
 \leanok
 \uses{Complexity.satSyntax}
-The canonicalization of a binary string: the string itself when the complete
-syntax scan accepts, and the one-bit word $0$ — the serialization of the empty
-fallback formula — otherwise.
+For a binary string $x$, the canonicalization of $x$ is $x$ itself when the
+complete syntax scan accepts $x$, and is the one-bit word $0$ (the serialization
+of the empty fallback formula) otherwise.
 \end{definition}
 
 \begin{lemma}[Canonicalizer specification]
@@ -2315,11 +2397,11 @@ over the verified complete syntax scanner between the identity and a constant.
 \leanok
 \uses{Complexity.PolyTimeComputable, Complexity.satDrop_double, Complexity.satMaxTM, Complexity.satMax_computes, Complexity.satStreamCanonical, Complexity.satStreamCanonical_poly, Complexity.satStreamCanonical_spec, Complexity.sat_comp_on_image, Std.Sat.CNF.decode, Std.Sat.CNF.numVars, Std.Sat.CNF.serialize, Turing.FinTM.ComputesInTime, Turing.FinTM.ComputesInTime.mono}
 \difficulty{5}
-The function sending a binary string $x$ to the unary word
-$1^{\mathrm{numVars}(\varphi_x)}$, where $\varphi_x$ is the formula decoded from
-$x$, is polynomial-time computable on all strings: the input is canonicalized
-before the intercepted maximum pass runs, so no behavior of that machine on
-malformed input is assumed.
+For a binary string $x$, let $\varphi_x$ be the CNF formula decoded from $x$ and
+$N(\varphi_x)$ its variable bound (one more than the largest variable index
+occurring in $\varphi_x$, or $0$ if no variable occurs). The function sending
+every binary string $x$ to the unary word $1^{N(\varphi_x)}$ is polynomial-time
+computable, on all strings including malformed ones.
 \end{lemma}
 
 \begin{lemma}[The encoded startup word is polynomial-time]
@@ -2336,9 +2418,9 @@ polynomial-time computable, before any clause emission.
 \lean{Complexity.satStreamPos}
 \label{Complexity.satStreamPos}
 \leanok
-For an input $x$ and a natural offset $i$, the native input-head position
-corresponding to $\min(i, |x|)$: a nonnegative offset clamped at the right
-boundary.
+For an input $x$ and an offset $i \in \mathbb{N}$, the clamped input offset is the
+native input-head position at index $\min(i, |x|)$; offsets beyond the right
+boundary are clamped to it.
 \end{definition}
 
 \begin{lemma}[Reading at a clamped offset]
@@ -2368,9 +2450,10 @@ stay clamped.
 \label{Complexity.satDropAction}
 \leanok
 \uses{Turing.Action}
-The one-tape action constructor for the length-controlled suffix extractor: an
-input move, one optional counter write with a move, an optional output bit, and
-an optional next state among six control states.
+Given an input-head move $m$, a counter-head move $d$, an optional counter write,
+an optional output bit, and an optional next state among six control states, the
+dropper action is the one-tape action performing exactly these operations; these
+are the actions of the length-controlled suffix extractor.
 \end{definition}
 
 \begin{definition}[Suffix-extraction machine]
@@ -2378,12 +2461,12 @@ an optional next state among six control states.
 \label{Complexity.satDropTM}
 \leanok
 \uses{Complexity.satDropAction, Turing.FinTM}
-A six-state, one-tape machine extracting a suffix controlled by an encoded
-length: on an input of the form $\mathrm{pair}(u, x)$, it counts the doubled
-prefix $u$ on a unary counter tape, recognizes the separator, rewinds the
-counter, skips exactly $|u|$ payload positions (with clamping at the boundary),
-and copies the remaining suffix. No output precedes recognition of the
-separator.
+The suffix-extraction machine is a six-state finite machine with one work tape.
+Given binary words $u$ and $v$ and the input
+the pair encoding $\mathrm{pair}(u,v)$ (every bit of $u$ doubled, then the separator $01$, then $v$), it counts the doubled prefix on a unary counter tape,
+recognizes the separator, rewinds the counter, skips exactly $|u|$ payload
+positions (clamping at the right boundary), and copies the remaining suffix of
+$v$. No output precedes recognition of the separator.
 \end{definition}
 
 \begin{definition}[Dropper configuration]
@@ -2391,9 +2474,11 @@ separator.
 \label{Complexity.satDropCfg}
 \leanok
 \uses{Complexity.satRedCounter, Complexity.satStreamPos, Turing.Cfg}
-The canonical configuration of the suffix extractor: a control state, a clamped
-native input offset, the unary counter tape of a stated length with its head at
-a stated offset, and the emitted output prefix.
+For an input $x$, an optional control state $q$, natural numbers $i$ and $n$, an
+offset $h \in \mathbb{Z}$, and an output word $o$, the canonical dropper
+configuration is the configuration of the suffix extractor in control $q$, with the
+input head at the clamped offset $\min(i, |x|)$, the unary counter tape of length
+$n$ with head at $h$, and emitted output $o$.
 \end{definition}
 
 \begin{lemma}[Silent dropper action]
@@ -2402,9 +2487,13 @@ a stated offset, and the emitted output prefix.
 \leanok
 \uses{Complexity.satDropAction, Complexity.satDropCfg, Complexity.satStreamPos, Turing.Action.apply, Turing.moveInputPos}
 \difficulty{2}
-Applying a dropper action with no counter write to a canonical dropper
-configuration preserves the counter and performs exactly the stated control
-switch, input move, counter-head displacement, and optional output append.
+Let $x$ be an input, and consider a dropper action with no counter write, input
+move $m$, counter-head move $d$, optional output bit $b$, and target state $q'$.
+If the move $m$ takes the clamped offset $i$ to the clamped offset $i'$, and
+$h + d = h'$, then applying the action to the canonical dropper configuration at
+offset $i$ with counter length $n$, counter head $h$, and output $o$ yields the
+canonical configuration in state $q'$ at offset $i'$ with the same counter, head
+at $h'$, and output $o$ followed by $b$ when present.
 \end{lemma}
 
 \begin{lemma}[Extending the counter]
@@ -2413,9 +2502,13 @@ switch, input move, counter-head displacement, and optional output append.
 \leanok
 \uses{Complexity.satDropAction, Complexity.satDropCfg, Complexity.satRedCounter_write, Complexity.satStreamPos_succ, Turing.Action.apply}
 \difficulty{3}
-Writing the counter's right blank while advancing both heads appends exactly one
-unary cell: from counter length $n$ with head at $n$, the configuration moves to
-counter length $n + 1$ with head at $n + 1$ and input advanced by one.
+Let $x$ be an input, $i$ a natural offset, and $n \in \mathbb{N}$. Applying the
+dropper action that writes a one under the counter head, moves the input head and
+the counter head right, and enters the counting state, to a canonical dropper
+configuration on $x$ at clamped offset $i$ whose unary counter has length $n$ and
+head at $n$ (with empty output), yields the canonical configuration in the
+counting state at clamped offset $i + 1$ with counter length $n + 1$ and counter
+head at $n + 1$: writing the counter's right blank appends exactly one unary cell.
 \end{lemma}
 
 \begin{lemma}[Counting one doubled bit]
@@ -2424,9 +2517,11 @@ counter length $n + 1$ with head at $n + 1$ and input advanced by one.
 \leanok
 \uses{Complexity.satDropCfg, Complexity.satDropTM, Complexity.satDrop_move, Complexity.satDrop_write, Complexity.satStreamPos_read, Complexity.satStreamPos_succ, Turing.Action.apply, Turing.Cfg.inputSymbol, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.step}
 \difficulty{4}
-If the input carries an aligned doubled bit $b\,b$ at the current position, two
-steps of the suffix extractor consume both copies and extend the unary counter by
-one cell, emitting nothing.
+Let $x$ be an input of the form $p$, followed by two copies of a bit $b$, followed
+by a word $r$, and let $n \in \mathbb{N}$. From the counting state at offset $|p|$
+with a unary counter of length $n$, counter head at $n$, and empty output, two
+steps of the suffix extractor yield the counting state at offset $|p| + 2$ with
+counter length $n + 1$ and counter head at $n + 1$; nothing is emitted.
 \end{lemma}
 
 \begin{lemma}[Parsing the doubled prefix]
@@ -2435,10 +2530,13 @@ one cell, emitting nothing.
 \leanok
 \uses{Complexity.satBits, Complexity.satBits_length, Complexity.satDropCfg, Complexity.satDropTM, Complexity.satDrop_double, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.MultiTapeTM.runFrom_zero, Turing.pairEncode}
 \difficulty{4}
-On the pair encoding of $u$ with $v$, having already counted a prefix $p$ of $u$
-(input at offset $2|p|$, counter length $|p|$), the suffix extractor consumes the
-rest of the doubled first component in $2(|u| - |p|)$ steps, ending with input
-offset $2|u|$ and the unary counter of length exactly $|u|$.
+Let $u$ and $v$ be binary words, with $u = p \mathbin{+\!\!+} r$ split into a
+prefix $p$ and a suffix $r$, and consider the input
+the pair encoding $\mathrm{pair}(u,v)$ (every bit of $u$ doubled, then the separator $01$, then $v$). Started in its counting state at input offset $2|p|$, with a
+unary counter of length $|p|$ and counter head at $|p|$ and empty output, the
+suffix extractor after exactly $2|r|$ steps is again in its counting state, at
+input offset $2|u|$, with a unary counter of length $|u|$ and counter head at
+$|u|$; nothing is emitted.
 \end{lemma}
 
 \begin{lemma}[Recognizing the separator]
@@ -2447,10 +2545,12 @@ offset $2|u|$ and the unary counter of length exactly $|u|$.
 \leanok
 \uses{Complexity.satBits, Complexity.satBits_length, Complexity.satDropCfg, Complexity.satDropTM, Complexity.satDrop_move, Complexity.satStreamPos_read, Complexity.satStreamPos_succ, Turing.Action.apply, Turing.Cfg.inputSymbol, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.step, Turing.pairEncode}
 \difficulty{4}
-On the pair encoding of $u$ with $v$, from input offset $2|u|$ with counter
-length $|u|$, two steps consume the aligned separator $01$, place the native head
-at the first payload bit, and start the leftward counter rewind from offset
-$|u| - 1$.
+Let $u$ and $v$ be binary words and consider the input
+the pair encoding $\mathrm{pair}(u,v)$ (every bit of $u$ doubled, then the separator $01$, then $v$). Started in its counting state at input offset $2|u|$, with a
+unary counter of length $|u|$, counter head at $|u|$, and empty output, the suffix
+extractor after exactly two steps is in its counter-rewind state at input offset
+$2|u| + 2$ (the first payload bit, just past the separator), with the counter
+unchanged, counter head at $|u| - 1$, and nothing emitted.
 \end{lemma}
 
 \begin{lemma}[Dropper counter rewind]
@@ -2481,8 +2581,11 @@ clamping makes this total even when the stored length exceeds the payload.
 \leanok
 \uses{Complexity.satDropCfg, Complexity.satDropTM, Complexity.satDrop_move, Complexity.satRedCounter_read, Turing.Action.apply, Turing.Cfg.workTapeSymbols, Turing.MultiTapeTM.step, Turing.moveInputPos_zero}
 \difficulty{3}
-In the skip state with the counter head on the first blank after the counter, one
-step enters the copy state without moving past the first unconsumed payload bit.
+Let $x$ be an input and $p, n \in \mathbb{N}$. From the skip state at clamped
+offset $p$, with a unary counter of length $n$ whose head is at the first blank
+$n$ and empty output, one step of the suffix extractor yields the configuration in
+the copy state with every other field unchanged; in particular the input head does
+not move past the first unconsumed payload bit.
 \end{lemma}
 
 \begin{lemma}[Copying the remaining suffix]
@@ -2502,10 +2605,10 @@ emit every bit of $r$ and halt on the right blank, with the counter untouched.
 \leanok
 \uses{Complexity.satBits, Complexity.satBits_length, Complexity.satDropCfg, Complexity.satDropTM, Complexity.satDrop_copy, Complexity.satDrop_dispatch, Complexity.satDrop_parse, Complexity.satDrop_rewind, Complexity.satDrop_separator, Complexity.satDrop_skip, Complexity.satRedCounter, Complexity.satStreamPos, Complexity.sat_pt_fields, Turing.Cfg.init, Turing.FinTM.ComputesInTime, Turing.FinTM.ComputesInTime.mono, Turing.FinTM.bufferTape, Turing.FinTM.computesInTime_iff, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.pairEncode}
 \difficulty{6}
-For all binary words $u$ and $v$, the suffix extractor, run on the pair encoding
-of $u$ with $v$, halts within $3(\ell + 1)$ steps — $\ell$ the paired input
-length — with output the suffix of $v$ obtained by dropping its first $|u|$
-bits.
+For all binary words $u$ and $v$, the suffix extractor run on
+the pair encoding $\mathrm{pair}(u,v)$ (every bit of $u$ doubled, then the separator $01$, then $v$) halts within $3(\ell + 1)$ steps, where $\ell$ is the length of
+that paired input, and its output is the suffix of $v$ obtained by dropping its
+first $|u|$ bits.
 \end{lemma}
 
 \begin{lemma}[Pair projections are polynomial-time]
@@ -2572,9 +2675,10 @@ malformed state--input combinations.
 \label{Complexity.satReqFresh}
 \leanok
 \uses{Complexity.satStreamFst}
-A round request pairs the persistent encoded seam word with a fresh copy of the
-native input. This read-only projection extracts the unary fresh-cursor field:
-the first component of the first component.
+A round request is the pair encoding of an encoded seam word with a fresh copy of
+the native input. For a word $z$, the fresh field of $z$ is the first component of
+the first component of $z$ (each projection defaulting to the empty word on
+malformed inputs); on a canonical request it is the unary fresh cursor.
 \end{definition}
 
 \begin{definition}[Round request: consumed field]
@@ -2582,8 +2686,10 @@ the first component of the first component.
 \label{Complexity.satReqUsed}
 \leanok
 \uses{Complexity.satStreamFst, Complexity.satStreamSnd}
-The read-only projection extracting the unary consumed-length field of a round
-request: the first component of the second component of the encoded seam word.
+For a word $z$, the consumed field of $z$ is the first component of the second
+component of the first component of $z$ (each projection defaulting to the empty
+word on malformed inputs); on a canonical round request it is the unary consumed
+length.
 \end{definition}
 
 \begin{definition}[Round request: phase field]
@@ -2591,8 +2697,9 @@ request: the first component of the second component of the encoded seam word.
 \label{Complexity.satReqPhase}
 \leanok
 \uses{Complexity.satStreamFst, Complexity.satStreamSnd}
-The read-only projection extracting the unary phase tag of a round request: the
-second component of the second component of the encoded seam word.
+For a word $z$, the phase field of $z$ is the second component of the second
+component of the first component of $z$ (each projection defaulting to the empty
+word on malformed inputs); on a canonical round request it is the unary phase tag.
 \end{definition}
 
 \begin{definition}[Round request: unread input]
@@ -2600,9 +2707,8 @@ second component of the second component of the encoded seam word.
 \label{Complexity.satReqRest}
 \leanok
 \uses{Complexity.satReqUsed, Complexity.satStreamSnd}
-The read-only projection extracting the unread native input of a round request:
-the second component of the request with as many leading bits dropped as the
-length of the consumed field.
+For a word $z$, the unread input of $z$ is the second component of $z$ with as
+many leading bits dropped as the length of the consumed field of $z$.
 \end{definition}
 
 \begin{definition}[Round request: polarity suffix]
@@ -2620,9 +2726,9 @@ read.
 \label{Complexity.satReqLit}
 \leanok
 \uses{Complexity.satReqPol, Complexity.satReqRest, Turing.unaryTokenSplit}
-The serialized literal currently under the head of a round request: the token
-returned by the unary token splitter on the unread input, extended by at most the
-first bit of the polarity suffix.
+For a word $z$, the current literal of $z$ is the token returned by the unary
+token splitter on the unread input of $z$, extended by at most the first bit of
+the polarity suffix of $z$.
 \end{definition}
 
 \begin{definition}[Tail-link decision]
@@ -2696,11 +2802,11 @@ only if the optional first bit of $x$ is a one.
 \leanok
 \uses{Complexity.SatStreamState, Complexity.satReqFresh, Complexity.satReqPhase, Complexity.satReqRest, Complexity.satReqUsed, Complexity.satStreamFst, Complexity.satStreamSnd, Complexity.satStreamWord, Turing.pairDecode_pairEncode, Turing.pairEncode}
 \difficulty{1}
-On the canonical round request — the pair encoding of the encoded seam word of a
-state $s$ with the native input $x$ — the four read-only projections recover
-exactly the unary fresh cursor, the unary consumed length, the unary phase tag,
-and the unread input $x$ with its first bits dropped — as many as the consumed
-length of $s$.
+Let $x$ be a binary word and $s$ a seam state with fresh cursor $f$, consumed
+length $c$, and phase $q$, and let $w_s$ be the encoded seam word of $s$. On the
+canonical round request $\mathrm{pair}(w_s, x)$, the fresh, consumed, phase, and
+unread-input projections return exactly $1^f$, $1^c$, $1^q$, and the word $x$ with
+its first $c$ bits dropped.
 \end{lemma}
 
 \begin{lemma}[The word programs implement the round]
@@ -3009,8 +3115,9 @@ anchor.
 \label{Complexity.satHostEntry}
 \leanok
 \uses{Complexity.SatHostState, Turing.FinTM}
-The host control state at the initial state of the $i$-th module, inside the
-finite body.
+Given six finite modules and an index $i \in \{0, \dots, 5\}$, the entry state of
+module $i$ is the host control state corresponding to the initial state of the
+$i$-th module inside the finite body.
 \end{definition}
 
 \begin{definition}[Module return state]

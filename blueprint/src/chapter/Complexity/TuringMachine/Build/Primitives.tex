@@ -66,10 +66,10 @@ output is $w$ followed by the first $i$ bits of $x$.
 \leanok
 \uses{Turing.Action.apply, Turing.Cfg.inputSymbol, Turing.FinTM.ComputesFunInTime, Turing.FinTM.catalogPrefixCfg, Turing.FinTM.catalogPrefixTM, Turing.FinTM.catalogPrefixTM_copy, Turing.FinTM.catalogPrefixTM_emit, Turing.FinTM.computesInTime_iff, Turing.MultiTapeTM.runFrom_add, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.MultiTapeTM.step}
 \difficulty{3}
-For every fixed word $w$, the prefix emitter computes the function
-$x \mapsto w x$ (the concatenation of $w$ and $x$) within
-$\abs{w} + \abs{x} + 1$ steps on every input $x$, the final step being the
-halting transition on the right blank.
+For every fixed word $w$ and every input $x$, the prefix emitter for $w$
+halts on $x$ within $\abs{w} + \abs{x} + 1$ steps, and its output is the
+concatenation $w x$; the final step is the halting transition on the right
+blank.
 \end{lemma}
 
 \begin{definition}[Zero-work-tape scan configuration]
@@ -195,11 +195,12 @@ $j \ge 0$ and tail $r$, and the fixed-width increment of $x$ is $0^j 1 r$.
 \label{Turing.FinTM.incFixedTM}
 \leanok
 \uses{Turing.FinTM, Turing.FinTM.controlAction}
-A four-state machine without work tapes computing the fixed-width binary
-increment of its input, read least-significant bit first: it scans the leading
-ones silently, and on reaching a $0$ it rewinds and re-scans, emitting a $0$
-for each carried $1$, a $1$ in place of the first $0$, and the remaining bits
-unchanged; an all-ones input halts with empty output.
+The fixed-width increment machine is a four-state machine without work
+tapes computing the fixed-width binary increment of its input, read
+least-significant bit first: it scans the leading ones silently, and on
+reaching a $0$ it rewinds and re-scans, emitting a $0$ for each carried $1$,
+a $1$ in place of the first $0$, and the remaining bits unchanged; an
+all-ones input halts with empty output.
 \end{definition}
 
 \begin{lemma}[Time bound for fixed-width increment]
@@ -271,9 +272,9 @@ recording whether $s$ is a valid self-delimiting pair code.
 \leanok
 \uses{Turing.Cfg.ext_zero_tapes, Turing.FinTM.ComputesInTime, Turing.FinTM.ComputesInTime.mono, Turing.FinTM.computesInTime_iff, Turing.FinTM.pairValidTM, Turing.FinTM.pairValid_run, Turing.FinTM.scanCfg, Turing.MultiTapeTM.initCfg, Turing.pairDecode}
 \difficulty{3}
-On every input $x$ the pair-validity tester halts within $\abs{x}+1$ steps
-with output the single bit recording whether $x$ decodes under the
-self-delimiting pair code.
+For every input $x$, the pair-validity tester halts on $x$ within
+$\abs{x}+1$ steps, and its output is the single bit recording whether $x$
+decodes under the self-delimiting pair code.
 \end{lemma}
 
 \begin{definition}[Pair component extractor]
@@ -294,10 +295,12 @@ set; invalid inputs make it halt silently.
 \label{Turing.FinTM.extractCfg}
 \leanok
 \uses{Turing.Cfg, Turing.FinTM.bufferTape}
-A configuration of the pair extractor on input $x$: an optional control state,
-an input position $i \le \abs{x}$, a buffered word $a$ stored on the single
-work tape with the work head at displacement $z$, and the output written so
-far.
+Given an input $x$, an optional control state, an input position
+$i \le \abs{x}$, a buffered word $a$, a work-head displacement $z$, and an
+output word, the extractor configuration is the configuration of the pair
+extractor with that control state, with its input head past the first $i$
+cells, with $a$ stored on its single work tape and the work head at $z$, and
+with the given output.
 \end{definition}
 
 \begin{lemma}[Input symbol of an extractor configuration]
@@ -428,10 +431,11 @@ and if $x$ is not a valid pair code the output is empty.
 \lean{Turing.FinTM.CatalogPolyControl}
 \label{Turing.FinTM.CatalogPolyControl}
 \leanok
-The finite control of the unary polynomial generator with $c+1$ nested loop
-levels and $C$ emissions per innermost visit: a copy state, a setup state, a
-loop state and a rewind state for each of the $c+1$ levels, an advance state
-for each level and one past the last, and an emission counter.
+For parameters $c$ and $C$, the control-state type of the unary polynomial
+generator has a copy state, a setup state, a loop state and a rewind state
+for each of the $c+1$ loop levels, an advance state for each of $c+2$
+indices (one per level and one past the last), and an emission state for
+each remaining count from $0$ to $C$.
 \end{definition}
 
 \begin{definition}[Unary tape of a given length]
@@ -447,9 +451,10 @@ for $0 \le z < q$ and is blank otherwise.
 \label{Turing.FinTM.catalogPolyMove}
 \leanok
 \uses{Turing.Action, Turing.FinTM.CatalogPolyControl}
-The machine action that moves one selected work head a single cell in a given
-direction and enters a given control state, writing no tape cell and emitting
-no output.
+Given a work-tape index $i$, a direction $d$, and a control state $s$, the
+head-only move action is the action that moves work head $i$ one cell in
+direction $d$, keeps the input head and all other work heads in place,
+writes no tape cell, emits no output, and enters $s$.
 \end{definition}
 
 \begin{definition}[Unary polynomial generator machine]
@@ -481,10 +486,11 @@ work-head positions, and accumulated output.
 \leanok
 \uses{Turing.Action.apply, Turing.FinTM.CatalogPolyControl, Turing.FinTM.catalogPolyCfg, Turing.FinTM.catalogPolyMove, Turing.moveInputPos_zero}
 \difficulty{3}
-Applying the head-only move action for work-tape index $i$ and direction $d$
-to a generator loop configuration updates exactly the $i$-th work-head
-position by $d$ and installs the designated control state, leaving all tapes,
-the input position, and the output unchanged.
+For every work-tape index $i$ and direction $d$, applying the head-only move
+action for $i$, $d$, and a target state to a generator loop configuration
+yields the loop configuration in that target state whose $i$-th work-head
+position is increased by $d$; all tapes, the input position, the other
+heads, and the output are unchanged.
 \end{lemma}
 
 \begin{lemma}[Emission chain of the generator]
@@ -516,18 +522,18 @@ accumulated output are unchanged.
 \leanok
 \uses{Turing.FinTM.catalogPolyCfg, Turing.FinTM.catalogPolyCost, Turing.FinTM.catalogPolyMove_apply, Turing.FinTM.catalogPolyUnaryTM, Turing.MultiTapeTM.step}
 \difficulty{2}
-One step from the advance state of loop level $i$ enters the loop state of
-level $i$ with head $i$ moved one cell to the right and everything else
-unchanged.
+For every loop level $i$, one step of the generator from the advance state
+of level $i$ yields the loop state of level $i$ with head $i$ moved one cell
+to the right, everything else being unchanged.
 \end{lemma}
 
 \begin{definition}[Exact cost of the loop nest]
 \lean{Turing.FinTM.catalogPolyCost}
 \label{Turing.FinTM.catalogPolyCost}
 \leanok
-The exact running time of a full nest of unary loops with side $q$ and $C$
-emissions per innermost visit, as a function of the number $r$ of loop levels:
-$T_0 = C + 1$ and $T_{r+1} = q\,(T_r + 2) + q + 2$.
+For a side length $q$, an emission count $C$, and a number $r$ of loop
+levels, the exact running time $T_r$ of a full nest of unary loops is
+defined by $T_0 = C + 1$ and $T_{r+1} = q\,(T_r + 2) + q + 2$.
 \end{definition}
 
 \begin{lemma}[Main loop invariant of the generator]
@@ -551,8 +557,8 @@ are arbitrary and remain unchanged.
 \leanok
 \uses{Turing.FinTM.catalogPolyTape}
 \difficulty{3}
-Writing a $1$ at cell $q$ of the unary tape of length $q$ yields the unary
-tape of length $q+1$.
+For every $q$, writing a $1$ at cell $q$ of the unary tape of length $q$
+yields the unary tape of length $q+1$.
 \end{lemma}
 
 \begin{lemma}[Linear bound on the loop cost]
@@ -603,10 +609,11 @@ lockstep and enter the outermost loop state, with empty output throughout.
 \leanok
 \uses{Turing.Action.apply, Turing.Cfg.inputSymbol, Turing.FinTM.catalogPolyCfg, Turing.FinTM.catalogPolyCopyCfg, Turing.FinTM.catalogPolyTape_write, Turing.FinTM.catalogPolyUnaryTM, Turing.FinTM.catalogPoly_copy, Turing.FinTM.catalogPoly_setup, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.MultiTapeTM.step, Turing.moveInputPos_zero}
 \difficulty{4}
-On input $x$, exactly $2(\abs{x}+1)$ steps from the generator's initial
-configuration install the unary word of length $\abs{x}+1$ on every work tape
-and reach the outermost loop state with all heads at displacement $0$ and
-empty output; the extra unary cell makes empty input need no special case.
+For every input $x$, running the generator for exactly $2(\abs{x}+1)$ steps
+from its initial configuration yields the configuration in which every work
+tape holds the unary word of length $\abs{x}+1$, the control is in the
+outermost loop state, all heads are at displacement $0$, and the output is
+empty; the extra unary cell makes empty input need no special case.
 \end{lemma}
 
 \begin{lemma}[Time bound for the unary generator]
@@ -626,10 +633,11 @@ and empty input.
 \label{Turing.FinTM.lenAction}
 \leanok
 \uses{Turing.Action, Turing.FinTM}
-For a machine $M$, an action of the length checker built over $M$: it moves
-the input head and the final (countdown) work head by the given directions,
-optionally emits one output bit, and passes to the given control state,
-writing no tape cell.
+For a machine $M$, the administrative action of the length checker built
+over $M$, given an input direction, a countdown direction, an optional bit,
+and a target state, is the action that moves the input head and the final
+(countdown) work head by those directions, emits the optional bit, passes to
+the target state, and writes no tape cell.
 \end{definition}
 
 \begin{definition}[Captured-length checker machine]
@@ -637,13 +645,13 @@ writing no tape cell.
 \label{Turing.FinTM.pairCountTM}
 \leanok
 \uses{Turing.FinTM, Turing.FinTM.controlAction, Turing.FinTM.lenAction, Turing.captureAction}
-Given a machine $M$, a machine with one additional work tape that first
-simulates $M$ on the input while capturing $M$'s output on the extra tape,
-rewinds the input head to the start, parses the input's doubled prefix under
-the self-delimiting pair grammar, and after the separator compares the length
-of the remaining suffix against the length of the captured word, emitting a
-single Boolean verdict; only the final comparison or a rejection emits
-output.
+Given a machine $M$, the captured-length checker over $M$ is a machine with
+one additional work tape that first simulates $M$ on the input while
+capturing the output of $M$ on the extra tape, rewinds the input head to the
+start, parses the input's doubled prefix under the self-delimiting pair
+grammar, and after the separator compares the length of the remaining suffix
+against the length of the captured word, emitting a single Boolean verdict;
+only the final comparison or a rejection emits output.
 \end{definition}
 
 \begin{definition}[Length-checker configuration]
@@ -651,10 +659,12 @@ output.
 \label{Turing.FinTM.lenCfg}
 \leanok
 \uses{Turing.Cfg, Turing.FinTM, Turing.FinTM.pairCountTM, Turing.captureCfg}
-A configuration of the length checker that retains the completed tape bank of
-the simulated machine together with its captured output, and records the
-checker's control state, the input position $i \le \abs{x}$, and the number
-$r$ of countdown cells still available on the capture tape.
+Given a machine $M$, an input $x$, a configuration $c$ of $M$ on $x$, a
+checker control state, an input position $i \le \abs{x}$, and a counter
+$r$, the length-checker configuration retains the tape bank of $c$ together
+with the output of $c$ captured on the extra tape, has the given control
+state and its input head past the first $i$ cells, and places the capture
+head at displacement $r - 1$, so that $r$ countdown cells remain available.
 \end{definition}
 
 \begin{lemma}[Input symbol of a checker configuration]
@@ -663,9 +673,9 @@ $r$ of countdown cells still available on the capture tape.
 \leanok
 \uses{Turing.Cfg, Turing.Cfg.inputSymbol, Turing.FinTM, Turing.FinTM.inputSymbol_at, Turing.FinTM.lenCfg, Turing.FinTM.pairCountTM}
 \difficulty{1}
-In a length-checker configuration at input position $i \le \abs{x}$, the
-input head reads the $i$-th bit of $x$ (the blank when $i = \abs{x}$),
-independently of the saved tape bank.
+For every input $x$ and every position $i \le \abs{x}$, in a length-checker
+configuration at input position $i$ the input head reads the $i$-th bit of
+$x$ (the blank when $i = \abs{x}$), independently of the saved tape bank.
 \end{lemma}
 
 \begin{lemma}[Effect of an administrative action]
@@ -790,10 +800,12 @@ halts silently during the reverse scan.
 \label{Turing.FinTM.stripCfg}
 \leanok
 \uses{Turing.Cfg, Turing.FinTM.bufferTape}
-A configuration of the marker-stripping machine on input $x$: an optional
-control state, an input position $i \le \abs{x}$, a contiguous buffer $w$ on
-the work tape with its head at displacement $h$, and the output written so
-far.
+Given an input $x$, an optional control state, an input position
+$i \le \abs{x}$, a buffer word $w$, a head displacement $h$, and an output
+word, the stripping-machine configuration is the configuration of the
+marker-stripping machine with that control state, with its input head past
+the first $i$ cells, with $w$ stored contiguously on its work tape and the
+work head at $h$, and with the given output.
 \end{definition}
 
 \begin{lemma}[Erasing the last buffer cell]
@@ -882,9 +894,10 @@ of $w$, and is empty when $w$ contains no $1$.
 \leanok
 \uses{Turing.Action.apply, Turing.Cfg.inputSymbol, Turing.FinTM.ComputesFunInTime, Turing.FinTM.ComputesInTime, Turing.FinTM.ComputesInTime.mono, Turing.FinTM.computesInTime_iff, Turing.FinTM.rawStripTM, Turing.FinTM.rawStrip_copy, Turing.FinTM.rawStrip_trim, Turing.FinTM.stripCfg, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.MultiTapeTM.step, Turing.splitAtLastTrue}
 \difficulty{4}
-The marker-stripping machine computes, within $4(n+1)$ steps on inputs of
-length $n$, the function sending $x$ to the prefix of $x$ strictly before its
-last $1$ bit, and to the empty word when $x$ contains no $1$.
+For every $n$ and every input $x$ of length $n$, the marker-stripping
+machine halts within $4(n+1)$ steps, and its output is the prefix of $x$
+strictly before its last $1$ bit, or the empty word when $x$ contains no
+$1$.
 \end{lemma}
 
 \begin{definition}[Marker-existence scanner]
@@ -915,8 +928,9 @@ single bit recording whether $s$ contains a $1$.
 \leanok
 \uses{Turing.Cfg.ext_zero_tapes, Turing.FinTM.ComputesFunInTime, Turing.FinTM.ComputesInTime, Turing.FinTM.ComputesInTime.mono, Turing.FinTM.anyTrueTM, Turing.FinTM.anyTrue_run, Turing.FinTM.computesInTime_iff, Turing.FinTM.scanCfg, Turing.MultiTapeTM.initCfg}
 \difficulty{3}
-The marker-existence scanner computes, within $n+1$ steps on inputs of length
-$n$, the one-bit function recording whether the input contains a $1$ bit.
+For every $n$ and every input of length $n$, the marker-existence scanner
+halts within $n+1$ steps, and its output is the single bit recording whether
+the input contains a $1$ bit.
 \end{lemma}
 
 \begin{lemma}[Decoding inverts the pair encoding]
@@ -1103,12 +1117,13 @@ state, writing no tape cell.
 \label{Turing.FinTM.pairMapTM}
 \leanok
 \uses{Turing.FinTM, Turing.FinTM.controlAction, Turing.FinTM.mapAction, Turing.captureAction}
-Given a machine $M$, a machine with one extra work tape that first simulates
-$M$ on the input while capturing $M$'s output on the extra tape, rewinds the
-capture head and the input, silently validates the input's membership in the
-self-delimiting pair code, and only on success rewinds the input once more
-and emits the input's doubled prefix and separator followed by the captured
-word; malformed inputs halt without any emission.
+Given a machine $M$, the threaded-map controller over $M$ is a machine with
+one extra work tape that first simulates $M$ on the input while capturing
+the output of $M$ on the extra tape, rewinds the capture head and the input,
+silently validates the input's membership in the self-delimiting pair code,
+and only on success rewinds the input once more and emits the input's
+doubled prefix and separator followed by the captured word; malformed inputs
+halt without any emission.
 \end{definition}
 
 \begin{definition}[Threaded-map configuration]
@@ -1228,10 +1243,11 @@ capture head still at displacement $0$.
 \leanok
 \uses{Turing.Action.apply, Turing.Cfg, Turing.Cfg.workTapeSymbols, Turing.FinTM, Turing.FinTM.mapAction_apply, Turing.FinTM.mapCfg, Turing.FinTM.pairMapTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.MultiTapeTM.step, Turing.captureCfg, Turing.moveInputPos_zero}
 \difficulty{4}
-From the controller's payload-replay state with the capture head at
-displacement $0$ and prior output $o$, for any $j$ at most the captured
-word's length, exactly $j$ steps emit the first $j$ captured bits after $o$
-and move the capture head to displacement $j$, preserving the bank.
+For every $j$ at most the captured word's length and every prior output
+$o$, running the controller for exactly $j$ steps from its payload-replay
+state with the capture head at displacement $0$ yields the payload-replay
+configuration with the capture head at displacement $j$ and output $o$
+followed by the first $j$ captured bits; the bank is preserved.
 \end{lemma}
 
 \begin{lemma}[End of captured-payload replay]
@@ -1252,8 +1268,8 @@ entire captured word.
 \leanok
 \uses{Turing.pairEncode}
 \difficulty{1}
-The self-delimiting pair encoding of $(a,b)$ has length exactly
-$2\abs{a} + 2 + \abs{b}$.
+For all words $a$ and $b$, the self-delimiting pair encoding of $(a,b)$ has
+length exactly $2\abs{a} + 2 + \abs{b}$.
 \end{lemma}
 
 \begin{lemma}[Time bound for the threaded-map controller]
@@ -1314,9 +1330,9 @@ component contains no $1$, or any malformed word, is sent to the empty word.
 \lean{Turing.FinTM.splitStep}
 \label{Turing.FinTM.splitStep}
 \leanok
-One step of the split search over a word $w$: a candidate word $s$ with
-$\abs{s} \le \abs{w}$ is extended by one $1$ bit, and any longer candidate is
-left unchanged.
+For a word $w$, the split-search step sends a candidate word $s$ with
+$\abs{s} \le \abs{w}$ to $s$ followed by one $1$ bit, and sends any longer
+candidate to itself.
 \end{definition}
 
 \begin{definition}[Split-search acceptance test]
@@ -1364,11 +1380,12 @@ searching for the first element satisfying the other.
 \leanok
 \uses{Turing.FinTM.catalogFind_congr, Turing.FinTM.splitAccept, Turing.FinTM.splitStep, Turing.FinTM.splitStep_orbit, Turing.solveSplit}
 \difficulty{3}
-Searching the indices $0, \dots, \abs{w}$ for the first $i$ at which the
-split-acceptance test succeeds on the $i$-th iterate of the split step
-returns exactly the arithmetic split search at parameters $C$, $e$, and
-$\abs{w}$, i.e.\ the least $i$ with $i + C\,(i+1)^{e} = \abs{w}$ when one
-exists and nothing otherwise.
+For all $C$ and $e$ and every word $w$, searching the indices
+$0, \dots, \abs{w}$ for the first $i$ at which the split-acceptance test
+succeeds on the $i$-th iterate of the split step returns exactly the
+arithmetic split search at parameters $C$, $e$, and $\abs{w}$, i.e.\ the
+least $i$ with $i + C\,(i+1)^{e} = \abs{w}$ when one exists and nothing
+otherwise.
 \end{lemma}
 
 \begin{lemma}[Failure of the split search]
@@ -1409,8 +1426,9 @@ For all naturals $c$, $A$, $e$, $n$,
 \lean{Turing.FinTM.splitPos}
 \label{Turing.FinTM.splitPos}
 \leanok
-The physical input-head position on input $w$ after consuming $j$ cells,
-saturated at the right boundary: position $\min(j, \abs{w}) + 1$.
+For an input $w$ and a count $j$, the saturated input position is
+$\min(j, \abs{w}) + 1$: the physical input-head position after consuming
+$j$ cells, saturated at the right boundary.
 \end{definition}
 
 \begin{lemma}[Reading at a saturated position]
@@ -1430,8 +1448,9 @@ the blank otherwise.
 \leanok
 \uses{Turing.FinTM.splitPos, Turing.moveInputPos, Turing.moveInputPos_pos_of_ne_right, Turing.moveInputPos_rightBoundary}
 \difficulty{3}
-Moving the input head one cell to the right from the saturated position for
-$j$ on input $w$ yields the saturated position for $j+1$.
+For every input $w$ and every count $j$, moving the input head one cell to
+the right from the saturated position for $j$ on $w$ yields the saturated
+position for $j+1$.
 \end{lemma}
 
 \begin{definition}[Partially cleared unary scratch tape]
@@ -1449,8 +1468,9 @@ otherwise.
 \leanok
 \uses{Turing.FinTM.splitScratch}
 \difficulty{3}
-Blanking cell $j$ of the unary scratch tape of length $q$ with $j$ cells
-already cleared yields the scratch tape with $j+1$ cells cleared.
+For all $q$ and $j$, blanking cell $j$ of the unary scratch tape of length
+$q$ with $j$ cells already cleared yields the scratch tape with $j+1$ cells
+cleared.
 \end{lemma}
 
 \begin{definition}[Rejection-cleanup machine of the split search]
@@ -1516,10 +1536,10 @@ configuration holding one split-search step applied to the candidate.
 \leanok
 \uses{Turing.Action.apply, Turing.Cfg.workTapeSymbols, Turing.FinTM.bufferTape_left, Turing.FinTM.bufferTape_nat, Turing.FinTM.splitRestoreClean, Turing.FinTM.splitRestoreScan, Turing.FinTM.splitRestoreTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step, Turing.MultiTapeTM.runFrom_zero, Turing.MultiTapeTM.step, Turing.moveInputPos_zero}
 \difficulty{4}
-From the cleaned configuration with all work heads at displacement $j-1$,
-for any $j$ at most the candidate's length, exactly $j+1$ steps of the
-cleanup machine restore every work head to displacement $0$, altering no
-candidate bit.
+For every $j$ at most the candidate's length, exactly $j+1$ steps of the
+cleanup machine from the cleaned configuration with all work heads at
+displacement $j-1$ yield the cleaned configuration of the next phase with
+every work head at displacement $0$; no candidate bit is altered.
 \end{lemma}
 
 \begin{lemma}[Complete rejection cleanup]
@@ -1689,9 +1709,9 @@ the input head at its saturated position for $j$.
 \uses{Turing.Action.apply, Turing.Cfg.workTapeSymbols, Turing.FinTM.catalogPolyTape_write, Turing.FinTM.splitCount_over, Turing.FinTM.splitPos_succ, Turing.FinTM.splitPrepareScan, Turing.FinTM.splitPrepareTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.MultiTapeTM.step}
 \difficulty{4}
 For every $j$ at most the candidate's length, $j$ steps of the preparation
-machine from the start of its scan reach the preparation scan configuration
-for $j$, reading and changing no candidate bit and emitting nothing; this
-covers candidates longer than the native input.
+machine from the start of its scan yield the preparation scan configuration
+for $j$; the candidate is unchanged and nothing is emitted, and this holds
+also for candidates longer than the native input.
 \end{lemma}
 
 \begin{definition}[Prepared configuration]
@@ -1711,9 +1731,11 @@ candidate is longer than the input.
 \leanok
 \uses{Turing.Action.apply, Turing.Cfg.workTapeSymbols, Turing.FinTM.catalogPolyTape_write, Turing.FinTM.splitPrepareReady, Turing.FinTM.splitPrepareScan, Turing.FinTM.splitPrepareTM, Turing.MultiTapeTM.step, Turing.moveInputPos_zero}
 \difficulty{3}
-One step of the preparation machine from the end of its scan writes one
-additional unary cell on every scratch tape and enters the rewind phase; the
-uniform extra cell makes the empty candidate need no special case.
+For every input $w$ and candidate $s$, one step of the preparation machine
+from the end of its scan yields the prepared configuration in its rewind
+phase, in which every scratch tape holds the unary word of length
+$\abs{s}+1$ and all work heads are at displacement $\abs{s}-1$; the uniform
+extra cell makes the empty candidate need no special case.
 \end{lemma}
 
 \begin{lemma}[Rewind of the prepared bank]
@@ -1722,10 +1744,11 @@ uniform extra cell makes the empty candidate need no special case.
 \leanok
 \uses{Turing.Action.apply, Turing.Cfg.workTapeSymbols, Turing.FinTM.bufferTape_left, Turing.FinTM.bufferTape_nat, Turing.FinTM.splitPrepareReady, Turing.FinTM.splitPrepareTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step, Turing.MultiTapeTM.runFrom_zero, Turing.MultiTapeTM.step, Turing.moveInputPos_zero}
 \difficulty{4}
-From the prepared configuration with all work heads at displacement $j-1$,
-for any $j$ at most the candidate's length, exactly $j+1$ steps of the
-preparation machine restore every head to displacement $0$; each scratch tape
-keeps its extra unary cell.
+For every $j$ at most the candidate's length, exactly $j+1$ steps of the
+preparation machine from the prepared configuration in its rewind phase with
+all work heads at displacement $j-1$ yield the prepared configuration in its
+return phase with every head at displacement $0$; each scratch tape keeps
+its extra unary cell.
 \end{lemma}
 
 \begin{lemma}[Exact cost of preparation]
@@ -1734,10 +1757,11 @@ keeps its extra unary cell.
 \leanok
 \uses{Turing.Cfg.ofWords, Turing.FinTM.catalogPolyTape, Turing.FinTM.splitPos, Turing.FinTM.splitPrepareReady, Turing.FinTM.splitPrepareScan, Turing.FinTM.splitPrepareTM, Turing.FinTM.splitPrepare_extra, Turing.FinTM.splitPrepare_rewind, Turing.FinTM.splitPrepare_scan, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.stateWord}
 \difficulty{4}
-Starting from the canonical anchored configuration whose stored words carry
-the candidate $s$, exactly $2(\abs{s}+1)$ silent steps of the preparation
-machine install the unary side length $\abs{s}+1$ on every scratch tape and
-reach the prepared configuration with every head at displacement $0$.
+For every input $w$ and candidate $s$, exactly $2(\abs{s}+1)$ silent steps
+of the preparation machine from the canonical anchored configuration whose
+stored words carry $s$ yield the prepared configuration, in which every
+scratch tape holds the unary word of length $\abs{s}+1$ and every head is at
+displacement $0$.
 \end{lemma}
 
 \begin{lemma}[First-entry form of preparation]
@@ -1926,9 +1950,12 @@ one split-search step applied to $s$; the whole trace avoids the anchor.
 \label{Turing.FinTM.splitEmitCfg}
 \leanok
 \uses{Turing.Cfg, Turing.FinTM.bufferTape, Turing.FinTM.catalogPolyTape, Turing.FinTM.splitPos}
-A configuration of the split emitter on input $w$ preserving the initialized
-scratch bank: a control state, the number $j$ of native cells passed, the
-candidate-counter head position $h$, and the output written so far.
+Given an input $w$, a candidate $s$, an optional control state, a count $j$,
+a counter-head position $h$, and an output word, the emitter configuration
+is the configuration of the split emitter with that control state, with its
+input head at the saturated position for $j$, with $s$ on its first work
+tape and the head there at $h$, with every scratch tape holding the unary
+word of length $\abs{s}+1$ and its head at $0$, and with the given output.
 \end{definition}
 
 \begin{lemma}[Doubling pass of the split emitter]
@@ -2041,10 +2068,11 @@ $i + C\,(i+1)^{e} = \abs{w}$, and to the empty word when no such $i$ exists.
 \leanok
 \uses{Turing.FinTM.catalogPolyCfg, Turing.FinTM.catalogPolyCost, Turing.FinTM.catalogPolyUnaryTM, Turing.FinTM.splitBank, Turing.FinTM.splitPoly_loop_end, Turing.MultiTapeTM.runFrom}
 \difficulty{1}
-The unary polynomial generator, started in its outermost loop state on the
-prepared bank for candidate $s$, halts after exactly one more step than the
-exact nest cost at side length $\abs{s}+1$, leaving the bank with captured
-output a run of $C\,(\abs{s}+1)^{c+1}$ ones.
+For all $c$ and $C$ and every candidate $s$, the unary polynomial generator
+with $c+1$ loop levels and $C$ emissions per innermost visit, started in its
+outermost loop state on the prepared bank for $s$, halts after exactly one
+more step than the exact nest cost at side length $\abs{s}+1$, and its
+captured output is a run of $C\,(\abs{s}+1)^{c+1}$ ones.
 \end{lemma}
 
 \begin{lemma}[Constant source for exponent zero]
@@ -2140,10 +2168,11 @@ $\abs{s} + f(\abs{s}) = \abs{w}$; no monotonicity of $f$ is assumed.
 \leanok
 \uses{Turing.FinTM.catalogFind_congr, Turing.FinTM.emitterSplitAccept, Turing.FinTM.splitStep, Turing.FinTM.splitStep_orbit, Turing.solveSplitWith}
 \difficulty{3}
-Searching the indices $0, \dots, \abs{w}$ for the first $i$ at which the
-width-parametric acceptance test succeeds on the $i$-th iterate of the split
-step (the unary candidate $1^i$) returns exactly the width-parametric split
-search for $f$ at length $\abs{w}$.
+For every function $f$ and every word $w$, searching the indices
+$0, \dots, \abs{w}$ for the first $i$ at which the width-parametric
+acceptance test succeeds on the $i$-th iterate of the split step (the unary
+candidate $1^i$) returns exactly the width-parametric split search for $f$
+at length $\abs{w}$.
 \end{lemma}
 
 \begin{lemma}[Result of the width-parametric search loop]
@@ -2288,10 +2317,11 @@ the phase never emits, and empty words follow the same positive-time path.
 \label{Turing.FinTM.emitterCompareCfg}
 \leanok
 \uses{Turing.Cfg, Turing.FinTM.bufferTape, Turing.FinTM.emitterCompareTM}
-A configuration of the two-word comparator on physical input $w$: both
-comparison heads aligned at a common displacement, the two compared words
-preserved on their tapes, the equality register in finite control, the
-physical input head untouched, and empty physical output.
+Given a physical input $w$, words $u$ and $v$, an input position $p$, a
+control phase $q$, a register bit $b$, and a displacement $h$, the
+comparator configuration is the configuration of the two-word comparator in
+state $(q, b)$ with input head at $p$, with $u$ on its first tape and $v$ on
+its second, both heads at displacement $h$, and empty physical output.
 \end{definition}
 
 \begin{lemma}[No false blank inside the compared region]
@@ -2334,10 +2364,10 @@ comparison register.
 \leanok
 \uses{Turing.Action.apply, Turing.Cfg.workTapeSymbols, Turing.FinTM.bufferTape_nat, Turing.FinTM.emitterCompareCfg, Turing.FinTM.emitterCompareTM, Turing.FinTM.emitter_compare_rewind, Turing.FinTM.emitter_compare_scan, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.MultiTapeTM.step, Turing.moveInputPos_zero}
 \difficulty{4}
-Whole-word comparison of $u$ and $v$ completes silently in exactly
-$2(\max(\abs{u}, \abs{v}) + 1)$ steps, ending in the return state with the
-register recording whether $u = v$, both word tapes unchanged and both heads
-back at zero.
+For all words $u$ and $v$, whole-word comparison of $u$ and $v$ completes
+silently in exactly $2(\max(\abs{u}, \abs{v}) + 1)$ steps, ending in the
+return state with the register recording whether $u = v$, both word tapes
+unchanged, and both heads back at zero.
 \end{lemma}
 
 \begin{definition}[Visited-interval marker]
@@ -2353,9 +2383,9 @@ the simulated data.
 \lean{Turing.FinTM.emitterCleared}
 \label{Turing.FinTM.emitterCleared}
 \leanok
-The data tape obtained from a given tape by blanking the first $j$ cells of
-the visited interval starting at a given left endpoint, leaving every other
-cell unchanged.
+For a data tape, a left endpoint $m$, and a count $j$, the partially cleared
+tape is blank at every cell $z$ with $m \le z < m + j$ and agrees with the
+data tape at every other cell.
 \end{definition}
 
 \begin{lemma}[One step of interval clearing]
@@ -2399,9 +2429,11 @@ untouched.
 \leanok
 \uses{Turing.Action.apply, Turing.Cfg.workTapeSymbols, Turing.FinTM.bufferTape, Turing.FinTM.emitterClearCfg, Turing.FinTM.emitterClearTM, Turing.FinTM.emitterInterval, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step, Turing.MultiTapeTM.step, Turing.moveInputPos_zero}
 \difficulty{4}
-Starting inside a marked interval at offset $j$ from its left end (with
-$j$ less than the width), $j+2$ steps of the cleaner reach the interval's
-left end in its clearing state, regardless of blank holes in the data.
+Let a marked interval have left endpoint $m$ and width $W$, and let
+$j < W$. Then $j+2$ steps of the cleaner, started in its initial scan state
+at offset $j$ from the left end, yield its clearing state at the left end
+$m$, regardless of blank holes in the data; the data, interval marker, and
+origin marker are unchanged.
 \end{lemma}
 
 \begin{lemma}[Clearing nothing changes nothing]
@@ -2410,7 +2442,8 @@ left end in its clearing state, regardless of blank holes in the data.
 \leanok
 \uses{Turing.FinTM.emitterCleared}
 \difficulty{1}
-Clearing zero cells of the visited interval leaves the data tape unchanged.
+For every data tape and every left endpoint, the tape obtained by clearing
+zero cells of the visited interval is the original data tape.
 \end{lemma}
 
 \begin{lemma}[Clearing the whole interval]
@@ -2430,10 +2463,11 @@ holes or values inside the interval.
 \leanok
 \uses{Turing.Action.apply, Turing.Cfg.workTapeSymbols, Turing.FinTM.bufferTape, Turing.FinTM.emitterClearCfg, Turing.FinTM.emitterClearTM, Turing.FinTM.emitterCleared, Turing.FinTM.emitterInterval, Turing.FinTM.emitter_cleared_step, Turing.FinTM.emitter_cleared_zero, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.MultiTapeTM.step, Turing.moveInputPos_zero}
 \difficulty{4}
-For every $j$ at most the interval width, $j$ steps of the cleaner from the
-interval's left end clear the first $j$ cells of both the data and the
-interval marker in lockstep, advancing all heads to offset $j$ and leaving
-the origin marker intact.
+Let a marked interval have left endpoint $m$ and width $W$, and let
+$j \le W$. Then $j$ steps of the cleaner from its clearing state at $m$
+yield the configuration in which the first $j$ cells of both the data and
+the interval marker are cleared and all heads are at offset $j$, while the
+origin marker is intact.
 \end{lemma}
 
 \begin{lemma}[Erasing the origin marker]
@@ -2442,8 +2476,8 @@ the origin marker intact.
 \leanok
 \uses{Turing.FinTM.bufferTape}
 \difficulty{3}
-Blanking cell $0$ of the tape holding the single-cell marker word makes the
-entire tape blank.
+The tape obtained by blanking cell $0$ of the tape holding the single-cell
+marker word is the all-blank tape.
 \end{lemma}
 
 \begin{lemma}[Origin-guided rewind of the cleaner]
@@ -2452,10 +2486,10 @@ entire tape blank.
 \leanok
 \uses{Turing.Action, Turing.Action.apply, Turing.Cfg.workTapeSymbols, Turing.FinTM.bufferTape, Turing.FinTM.bufferTape_nat, Turing.FinTM.emitterClearCfg, Turing.FinTM.emitterClearTM, Turing.FinTM.emitter_origin_erase, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step, Turing.MultiTapeTM.step, Turing.moveInputPos_zero}
 \difficulty{4}
-With data and interval-marker tapes already blank, from the cleaner's rewind
-state at displacement $n$, exactly $n+1$ steps return all heads to the
-origin and erase the origin marker, reaching the return state with all three
-tapes blank.
+For every $n$, if the data and interval-marker tapes are already blank and
+the cleaner is in its rewind state at displacement $n$, then exactly $n+1$
+steps return all heads to the origin and erase the origin marker, reaching
+the return state with all three tapes blank.
 \end{lemma}
 
 \begin{lemma}[Complete native cleanup of a marked interval]
@@ -2496,9 +2530,10 @@ $[\min(\mathrm{lo}, h), \max(\mathrm{hi}, h)]$.
 \lean{Turing.FinTM.emitterSlots}
 \label{Turing.FinTM.emitterSlots}
 \leanok
-The assembly of three equally sized banks --- simulated data, visited-cell
-markers, and origin markers --- into one family of $k + (k + k)$ tapes, so
-that corresponding heads in the three banks always move together.
+Given three families $D$, $V$, $O$, each indexed by $k$ positions, the
+three-bank layout is the family indexed by $k + (k + k)$ positions that
+lists $D$ first, then $V$, then $O$; it is used to place simulated data,
+visited-cell markers, and origin markers in corresponding slots.
 \end{definition}
 
 \begin{definition}[Tracked evaluator machine]
@@ -2568,9 +2603,10 @@ then dispatches the stored successor state.
 \label{Turing.FinTM.emitterLo}
 \leanok
 \uses{Turing.FinTM, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom}
-For a machine $M$ on input $x$, the leftmost position visited by each work
-head through time $t$, defined recursively from the initial origin by taking
-the minimum with the head position at each successive time.
+For a machine $M$, an input $x$, and a work tape, the leftmost visited
+position at time $0$ is $0$, and at time $t+1$ it is the minimum of its
+value at time $t$ and the position of that work head after $t+1$ steps of
+$M$ on $x$.
 \end{definition}
 
 \begin{definition}[Rightmost visited position]
@@ -2578,9 +2614,10 @@ the minimum with the head position at each successive time.
 \label{Turing.FinTM.emitterHi}
 \leanok
 \uses{Turing.FinTM, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom}
-For a machine $M$ on input $x$, the rightmost position visited by each work
-head through time $t$, defined recursively from the initial origin by taking
-the maximum with the head position at each successive time.
+For a machine $M$, an input $x$, and a work tape, the rightmost visited
+position at time $0$ is $0$, and at time $t+1$ it is the maximum of its
+value at time $t$ and the position of that work head after $t+1$ steps of
+$M$ on $x$.
 \end{definition}
 
 \begin{lemma}[Extent of the visited interval]
@@ -2621,10 +2658,11 @@ single-cell marker word.
 \leanok
 \uses{Turing.Action.apply, Turing.Cfg.init, Turing.FinTM, Turing.FinTM.bufferTape_append, Turing.FinTM.bufferTape_nil, Turing.FinTM.emitterSlots, Turing.FinTM.emitterTrackCfg, Turing.FinTM.emitterTrackTM, Turing.FinTM.emitter_span_zero, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.step, Turing.moveInputPos_zero}
 \difficulty{4}
-One step of the tracked evaluator from its initial configuration on input
-$x$ installs both origin markers on every marker tape and reaches the
-tracked configuration of the source machine's initial configuration, with
-blank source work tapes and empty output.
+For every machine $M$ and input $x$, one step of the tracked evaluator for
+$M$ from its initial configuration on $x$ yields the tracked configuration
+of the initial configuration of $M$ on $x$ with every visited span equal to
+$[0, 0]$: both origin markers are installed, the source work tapes are
+blank, and the output is empty.
 \end{lemma}
 
 \begin{lemma}[Main run of the tracked evaluator]
@@ -2727,9 +2765,9 @@ is injective: distinct natural numbers have distinct binary digit words.
 \lean{Turing.FinTM.emitterBankSymbols}
 \label{Turing.FinTM.emitterBankSymbols}
 \leanok
-The projection selecting, for a work tape index $i$, the triple of symbols
-(data, visited marker, origin marker) from the tracked three-bank tape
-layout.
+For a work-tape index $i$, the bank-triple projection sends a symbol vector
+over the tracked three-bank layout to the triple of its data, visited-marker,
+and origin-marker symbols at index $i$.
 \end{definition}
 
 \begin{definition}[One component of simultaneous cleanup]
@@ -2758,9 +2796,12 @@ component cleaner states, and no source-time clock is present.
 \label{Turing.FinTM.emitterBankCfg}
 \leanok
 \uses{Turing.Cfg, Turing.FinTM.emitterBankTM, Turing.FinTM.emitterSlots}
-The configuration of the simultaneous cleaner bank assembled from $k$
-individual cleaner configurations, with an arbitrary physical input-head
-position and empty physical output.
+Given $k$ interval-cleaner configurations on a physical input $w$ and an
+input-head position $p$, the assembled bank configuration is the
+configuration of the simultaneous cleaner bank whose control state is the
+vector of the $k$ cleaner states, whose data, visited-marker, and
+origin-marker banks carry the corresponding tapes and head positions of the
+$k$ cleaners, whose input head is at $p$, and whose physical output is empty.
 \end{definition}
 
 \begin{lemma}[Component projection of the bank]
@@ -2849,10 +2890,11 @@ endpoint; a bank over zero tapes may return at time zero.
 \label{Turing.FinTM.emitterRightTM}
 \leanok
 \uses{Turing.FinTM, Turing.FinTM.controlAction}
-Given a machine $M$, the wrapper that simulates $M$ exactly and, after $M$'s
-actual halt, moves the input head to the right input boundary without
-altering $M$'s output or work tapes; the initial positive move of the scan
-handles the two distinct blanks of an empty input correctly.
+Given a machine $M$, the right-boundary wrapper is the machine that
+simulates $M$ exactly and, after the actual halt of $M$, moves the input
+head to the right input boundary without altering the output or work tapes
+of $M$; the initial positive move of the scan handles the two distinct
+blanks of an empty input correctly.
 \end{definition}
 
 \begin{definition}[Wrapper configuration before the scan]
@@ -2904,10 +2946,11 @@ physical input position varies.
 \leanok
 \uses{Turing.Action.apply, Turing.Cfg, Turing.Cfg.inputSymbol, Turing.FinTM, Turing.FinTM.controlAction, Turing.FinTM.controlAction_apply, Turing.FinTM.emitterRightScan, Turing.FinTM.emitterRightTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step, Turing.MultiTapeTM.runFrom_zero, Turing.MultiTapeTM.step, Turing.inputSymbolInner, Turing.moveInputPos_pos_of_ne_right, Turing.moveInputPos_zero}
 \difficulty{4}
-From a scan position $j$ with $j + r = \abs{x}$, exactly $r + 1$ silent
-steps of the right-boundary wrapper reach the halted scan configuration at
-position $\abs{x}$; the scan never mistakes a blank work cell for the end of
-the input.
+Let $x$ be an input and let $c$ be a source configuration on $x$. For all
+$j$ and $r$ with $j + r = \abs{x}$, exactly $r + 1$ silent steps of the
+right-boundary wrapper from the scan configuration of $c$ at position $j$
+reach the halted scan configuration of $c$ at position $\abs{x}$; the scan
+never mistakes a blank work cell for the end of the input.
 \end{lemma}
 
 \begin{lemma}[Entering the rightward scan]
@@ -3066,9 +3109,11 @@ because the word is complete and canonical.
 \label{Turing.FinTM.emitterP2EraseCfg}
 \leanok
 \uses{Turing.Cfg, Turing.FinTM.bufferTape}
-A configuration of the administrative-word eraser: the word on its single
-tape with the head at a given displacement, the physical input head at the
-origin, and empty output.
+Given a physical input $w$, a word $u$, a control state $q$, and a
+displacement $h$, the eraser configuration is the configuration of the
+administrative-word eraser in state $q$ with $u$ on its single tape, its
+head at displacement $h$, the physical input head on the first input cell,
+and empty output.
 \end{definition}
 
 \begin{lemma}[Forward scan of the eraser]
@@ -3185,10 +3230,10 @@ either word; the native input position and the prepared suffix are fixed.
 \leanok
 \uses{Turing.Action.apply, Turing.Cfg.workTapeSymbols, Turing.FinTM.bufferTape_left, Turing.FinTM.bufferTape_nat, Turing.FinTM.emitterP2PrepareCfg, Turing.FinTM.emitterP2PrepareTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step, Turing.MultiTapeTM.runFrom_zero, Turing.MultiTapeTM.step, Turing.moveInputPos_zero}
 \difficulty{4}
-From the preparation machine's suffix-rewind phase with the suffix head at
-displacement $j - 1$, for any $j$ at most the suffix word's length, exactly
-$j+1$ steps restore the suffix head to the origin, preserving all three
-words.
+Let $j$ be at most the length of the suffix word. From the preparation
+machine's suffix-rewind phase with the suffix head at displacement $j - 1$,
+exactly $j+1$ steps yield the frame of the next phase with the suffix head at
+the origin; all three words are preserved.
 \end{lemma}
 
 \begin{lemma}[Joining exact phase endpoints]
@@ -3273,8 +3318,9 @@ bank carries a word and all other tapes are blank.
 \lean{Turing.FinTM.emitterP2LeftIndex}
 \label{Turing.FinTM.emitterP2LeftIndex}
 \leanok
-The injection placing the $i$-th tape of the width-call machine immediately
-after the preserved candidate tape in the host layout.
+For all bank sizes $k$ and $l$, the width-bank injection sends tape $i$ of the
+width-call machine (with $i < k$) to host position $i + 1$, immediately
+after the preserved candidate tape at position $0$.
 \end{definition}
 
 \begin{definition}[Width-bank selection]
@@ -3289,8 +3335,9 @@ host tapes.
 \lean{Turing.FinTM.emitterP2RightIndex}
 \label{Turing.FinTM.emitterP2RightIndex}
 \leanok
-The injection placing the $i$-th tape of the suffix-length-call machine
-immediately after the width-call bank in the host layout.
+For all bank sizes $k$ and $l$, the length-bank injection sends tape $i$ of the
+suffix-length-call machine (with $i < l$) to host position $k + i + 1$,
+immediately after the width-call bank.
 \end{definition}
 
 \begin{definition}[Length-bank selection]
@@ -3380,9 +3427,11 @@ the unique one-tape index.
 \leanok
 \uses{Turing.Cfg.ofWords, Turing.FinTM.bufferTape, Turing.FinTM.emitterP2Cfg, Turing.FinTM.emitterP2OneSelect}
 \difficulty{3}
-Relocating a canonical one-word configuration of a single-tape phase into a
-designated host slot replaces exactly that slot's word in the host layout,
-with all inactive words and all zero head positions preserved.
+For a host slot, a host word layout, a physical input $w$, a word $u$, and a
+state $q$, relocating the canonical one-word configuration of a single-tape
+phase (state $q$, word $u$) into that slot, with every other tape holding its
+layout word at head position $0$, yields the canonical host configuration
+whose layout equals the given layout with the slot's word replaced by $u$.
 \end{lemma}
 
 \begin{definition}[Administrative-triple injection]
@@ -3390,8 +3439,10 @@ with all inactive words and all zero head positions preserved.
 \label{Turing.FinTM.emitterP2SmallIndex}
 \leanok
 \uses{Turing.FinTM.emitterP2LeftIndex, Turing.FinTM.emitterP2RightIndex}
-The injection sending the preparation machine's three tapes to the
-candidate tape and the first tapes of the two positive call banks.
+For all positive bank sizes $k$ and $l$, the administrative-triple injection
+sends index $0$ to the candidate position $0$, index $1$ to host position
+$1$ (the first width-bank tape), and index $2$ to host position $k + 1$ (the
+first length-bank tape).
 \end{definition}
 
 \begin{definition}[Administrative-triple selection]
@@ -3493,20 +3544,21 @@ candidate and width words are preserved.
 \leanok
 \uses{Turing.FinTM.emitterP2Words}
 \difficulty{2}
-Replacing the word at the candidate slot of the host layout for
-$(s, u, v)$ by a word $a$ yields exactly the layout for $(a, u, v)$.
+For all words $s$, $u$, $v$, and $a$, replacing the word at the candidate
+slot of the host layout for $(s, u, v)$ by $a$ yields exactly the layout for
+$(a, u, v)$.
 \end{lemma}
 
 \begin{definition}[Controller phases of the width-split round]
 \lean{Turing.FinTM.EmitterP2State}
 \label{Turing.FinTM.EmitterP2State}
 \leanok
-The finite control of the width-parametric split-round controller over the
-state types of the width and length call machines: an anchor, a preparation
-phase, dedicated start states and running phases for the width call and the
-suffix-length call, a comparison phase, two erasure phases carrying the
-verdict, an advance (cleanup) phase, and an emission phase; all proper round
-interiors stay away from the anchor.
+Given state types $S$ and $T$ of the width and length call machines, the
+controller-phase type of the width-split round has an anchor, a preparation
+phase, dedicated start states and running phases (carrying a state of $S$,
+respectively $T$) for the width call and the suffix-length call, a
+comparison phase, two erasure phases carrying the verdict, an advance
+(cleanup) phase, and an emission phase.
 \end{definition}
 
 \begin{definition}[Width-split round controller]
@@ -3820,9 +3872,10 @@ $b = 1$ and passes to the separator phase when $b = 0$.
 \leanok
 \uses{Turing.Action.apply, Turing.Cfg.ext_zero_tapes, Turing.FinTM.emitterTokenTM, Turing.FinTM.scanCfg, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.MultiTapeTM.runFrom_zero, Turing.MultiTapeTM.step}
 \difficulty{2}
-Two transitions of the token encoder in its separator phase append the pair
-delimiter bits $0,1$ to the output without moving the input head, and enter
-the suffix-copying state.
+For every input $x$, position $i \le \abs{x}$, and prior output $o$, two
+transitions of the token encoder from its separator phase at position $i$
+yield the suffix-copying state at the same position $i$, with output $o$
+followed by the pair delimiter bits $0,1$.
 \end{lemma}
 
 \begin{lemma}[Main run of the token encoder]
@@ -3845,9 +3898,9 @@ $(a, b)$, the final step being the blank-reading halt.
 \leanok
 \uses{Turing.unaryTokenSplit}
 \difficulty{3}
-For every word $x$, the lengths of the leading unary token of $x$ and of
-the remainder sum to $\abs{x}$; this includes the empty input and an
-unterminated token.
+For every word $x$, the length of the leading unary token of $x$ plus the
+length of the remainder equals $\abs{x}$; this includes the empty input and
+an unterminated token.
 \end{lemma}
 
 \begin{theorem}[Unary token step, machine contract]
@@ -3868,9 +3921,9 @@ self-delimiting pair encoding of the token and the remainder.
 \label{Turing.FinTM.emitterAppendTM}
 \leanok
 \uses{Turing.FinTM}
-For a fixed bit $b$, a single-state machine without work tapes that copies
-each input bit to the output and emits $b$ on the right-blank halting
-transition.
+For a fixed bit $b$, the bit-appending machine is the single-state machine
+without work tapes that copies each input bit to the output and emits $b$ on
+the right-blank halting transition.
 \end{definition}
 
 \begin{lemma}[Copy phase of the bit appender]

@@ -59,8 +59,18 @@ statements cite it under the recorded divergences.
    post-dedup tree (`audits/logs/ch2-e5-closure-axioms.log`): the 21
    targets empty-rooted at the standard triple; the 87-name kernel
    surface unchanged by the dedup; the whole-closure axiom bound holds.
-5. **Blueprint increment** — the §5 pipeline over the chapter-2
-   surface; see the blueprint records.
+5. **Blueprint increment** — deferred to the main merge (user decision),
+   completed 2026-10-07 on the merged tree: dependency graph rebuilt from
+   the first post-ban `lake build` (425 modules / 9,707 declarations);
+   **all 33 campaign-surface modules documented, 2,259 entries**; a
+   uniform strict-rubric pass flagged 178 entries (all from five writers
+   that skipped the per-entry check), repaired with structural lines
+   verified byte-identical, re-run **0 quality / 0 hygiene flags**;
+   `blueprint_assemble.py` wired 28 new chapters; `blueprint_validate.py`
+   **0 dangling `\uses`, zero campaign-namespace orphans** (two stale ch1
+   entries for lemmas deduplicated by colleague merge #2 removed, their
+   edges retargeted to the shared `Turing.length_bits_le_self`). The 189
+   colleague-tree modules (3,574 declarations) are left to their owners.
 
 ## Final state
 

@@ -84,16 +84,6 @@ has length at most $|b| + 1$, and the carry length of $b$ is at most the length
 of the incremented word.
 \end{lemma}
 
-\begin{lemma}[Binary length bound]
-\lean{Complexity.counter_bits_length}
-\label{Complexity.counter_bits_length}
-\leanok
-\uses{Complexity.counterInc_bits, Complexity.counterInc_length}
-\difficulty{3}
-For every natural number $n$, the binary representation of $n$ (with no
-redundant leading zeros) has at most $n$ bits.
-\end{lemma}
-
 \begin{definition}[Single carry transition action]
 \lean{Complexity.counterBump}
 \label{Complexity.counterBump}
@@ -360,7 +350,7 @@ output equals $b$.
 \uses{Complexity.TimeConstructible,
   Complexity.counterCfg,
   Complexity.counterTM,
-  Complexity.counter_bits_length,
+  Turing.length_bits_le_self,
   Complexity.counter_count,
   Complexity.counter_emit,
   Turing.Action.apply,

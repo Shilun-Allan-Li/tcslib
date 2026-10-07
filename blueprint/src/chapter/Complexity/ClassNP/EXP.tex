@@ -21,8 +21,8 @@ exponential-split machinery.
 \label{Complexity.EXP}
 \leanok
 \uses{Complexity.DTIME}
-The class $\mathrm{EXP}$ consists of all languages over the binary alphabet that lie
-in $\mathrm{DTIME}(2^{n^c})$ for some constant $c \in \mathbb{N}$, i.e.\ that are
+A language $L$ over the binary alphabet belongs to $\mathrm{EXP}$ if and only if
+$L \in \mathrm{DTIME}(2^{n^c})$ for some constant $c \in \mathbb{N}$, i.e.\ $L$ is
 decided by some finite multi-tape Turing machine within $a \cdot 2^{n^c}$ steps on
 inputs of length $n$, for constants $a$ and $c$.
 \end{definition}
@@ -81,9 +81,9 @@ overflow (when the word is all ones); the empty word overflows.
 \lean{Complexity.enumWord}
 \label{Complexity.enumWord}
 \leanok
-For natural numbers $w$ and $i$, the width-$w$ little-endian binary word of $i$:
-the list of the $w$ lowest binary digits of $i$, least significant first, with
-high-order zeros retained.
+For all natural numbers $w$ and $i$, the width-$w$ little-endian binary word of
+$i$ is the list of the $w$ lowest binary digits of $i$, least significant first,
+with high-order zeros retained.
 \end{definition}
 
 \begin{lemma}[Value bound for a boolean word]
@@ -257,10 +257,10 @@ a \cdot 2^{C(n+1)^c} \cdot \bigl(n + C(n+1)^c + 1\bigr)^d \le A \cdot 2^{n^e}.
 \leanok
 \uses{Complexity.enumInc, Turing.incFixed}
 \difficulty{2}
-Two implementations of fixed-width little-endian binary increment --- the
-Turing-machine catalog's counter and the certificate-enumeration counter ---
-compute the same partial function on every boolean word: the same-length
-incremented word, or failure exactly on overflow (including the empty word).
+For every boolean word $s$, the fixed-width little-endian binary increment of $s$
+computed by the Turing-machine catalog's counter equals the one computed by the
+certificate-enumeration counter: both return the same-length incremented word, or
+both fail exactly on overflow (including on the empty word).
 \end{lemma}
 
 \begin{lemma}[The stalled increment preserves width]
@@ -270,7 +270,7 @@ incremented word, or failure exactly on overflow (including the empty word).
 \uses{Complexity.enumCont_inc_eq, Complexity.enumInc, Complexity.enumInc_spec, Turing.incFixed}
 \difficulty{2}
 For every boolean word $s$, applying the fixed-width increment and falling back to
-$s$ itself on overflow produces a word of length exactly $|s|$.
+$s$ itself on overflow yields a word whose length is exactly $|s|$.
 \end{lemma}
 
 \begin{lemma}[Orbit of the stalled increment]
@@ -320,26 +320,28 @@ is written.
 \leanok
 \uses{Complexity.enumCont_sparse, Complexity.enumCont_sparse_append}
 \difficulty{3}
-Blanking, in the sparse tape of a list extended by one entry, the position just
-past the original list recovers the sparse tape of the original list --- even when
-the appended entry was itself blank.
+Let $w$ be a finite list of possibly blank cells and $b$ a possibly blank entry.
+Blanking position $|w|$ of the sparse tape of $w$ extended by $b$ yields exactly
+the sparse tape of $w$; this holds even when $b$ is itself blank.
 \end{lemma}
 
 \begin{definition}[Encoding of head moves as tape symbols]
 \lean{Complexity.enumCont_moveCode}
 \label{Complexity.enumCont_moveCode}
 \leanok
-The encoding of the three head moves as tape symbols: a left move as a false bit,
-staying put as blank, and a right move as a true bit.
+The move code is the encoding of the three head moves as tape symbols: it sends a
+left move to a false bit, staying put to the blank symbol, and a right move to a
+true bit.
 \end{definition}
 
 \begin{definition}[Decoding of the inverse head move]
 \lean{Complexity.enumCont_unmove}
 \label{Complexity.enumCont_unmove}
 \leanok
-The decoding of a recorded move symbol to the \emph{inverse} head move, used by
-the backward restoration pass: a false bit decodes to a right move, blank to
-staying put, and a true bit to a left move.
+The inverse-move decoding is the map from recorded move symbols to head moves,
+used by the backward restoration pass, that sends a false bit to a right move, the
+blank symbol to staying put, and a true bit to a left move; thus every move symbol
+is decoded to the inverse of the move it encodes.
 \end{definition}
 
 \begin{lemma}[A move and its decoded inverse cancel]
@@ -356,9 +358,9 @@ move yields exactly the negation of $d$'s integer head displacement.
 \lean{Complexity.EnumContEntry}
 \label{Complexity.EnumContEntry}
 \leanok
-A history entry for one step of a machine with $k$ work tapes: the tuple of the
-symbols under the $k$ work heads before the step, together with the tuple of the
-$k$ head moves performed by the step.
+For a machine with $k$ work tapes, a history entry for one step is a pair
+consisting of the tuple of the $k$ symbols under the work heads before the step
+and the tuple of the $k$ head moves performed by the step.
 \end{definition}
 
 \begin{definition}[Logging instrumentation of one action]
@@ -378,10 +380,11 @@ the encoded head moves. Output and control are otherwise unchanged.
 \label{Complexity.enumCont_logTM}
 \leanok
 \uses{Complexity.enumCont_logAction, Turing.FinTM}
-For a finite machine $M$ with $k$ work tapes, the instrumented machine with the
-same finite state set and $k + (1 + (k + k))$ work tapes: every transition
-performs $M$'s transition on the first $k$ tapes while logging a clock mark, the
-overwritten symbols, and the head moves on the extra tapes.
+For a finite machine $M$ with $k$ work tapes, the logging machine of $M$ is the
+machine with the same finite state set and initial state and with
+$k + (1 + (k + k))$ work tapes, every transition of which performs $M$'s
+transition on the first $k$ tapes while logging a clock mark, the overwritten
+symbols, and the head moves on the extra tapes.
 \end{definition}
 
 \begin{definition}[Logged configuration]
@@ -461,9 +464,11 @@ history head inspects the last remaining entry.
 \label{Complexity.enumCont_undoResult}
 \leanok
 \uses{Complexity.enumCont_logCfg, Complexity.enumCont_undoTM, Turing.Cfg, Turing.FinTM.tapeBlocks}
-The final configuration of the restoration machine for a source configuration
-$c$: halted, with $c$'s work tapes and head positions intact, all history tapes
-blank with heads at zero, empty output, and the given input-head position.
+For a source configuration $c$ and an input-head position $p$, the completed
+restoration configuration is the halted configuration of the restoration machine
+whose input head is at $p$, whose source work tapes and head positions are those
+of $c$, whose clock and history tapes are all blank with heads at zero, and whose
+output is empty.
 \end{definition}
 
 \begin{lemma}[Undoing one tape write]
@@ -484,8 +489,8 @@ no-write actions and writes of the blank symbol.
 \leanok
 \uses{Turing.FinTM.bufferTape, Turing.FinTM.bufferTape_append}
 \difficulty{3}
-Blanking cell $n$ of the buffer tape holding $n + 1$ consecutive true marks yields
-the buffer tape holding $n$ consecutive true marks.
+For every $n$, blanking cell $n$ of the buffer tape holding $n + 1$ consecutive
+true marks yields the buffer tape holding $n$ consecutive true marks.
 \end{lemma}
 
 \begin{definition}[Mid-restoration configuration]
@@ -505,11 +510,13 @@ their pre-action positions, and the last history entry is already erased.
 \leanok
 \uses{Complexity.EnumContEntry, Complexity.enumCont_clock_erase, Complexity.enumCont_logCfg, Complexity.enumCont_moveCode, Complexity.enumCont_sparse, Complexity.enumCont_sparse_erase, Complexity.enumCont_undoCfg, Complexity.enumCont_undoMid, Complexity.enumCont_undoTM, Complexity.enumCont_unmove_cast, Turing.Action, Turing.Action.apply, Turing.Cfg, Turing.Cfg.workTapeSymbols, Turing.FinTM.tapeBlocks, Turing.MultiTapeTM.step, Turing.moveInputPos_zero}
 \difficulty{5}
-One step of the restoration machine, taken at the checkpoint for the configuration
-obtained by applying an action $a$ to $c$, with history extended by the entry
-recording $a$, reverses the recorded head moves, retains the overwritten symbols
-in finite control, and erases that entry's history cells, arriving at the
-mid-restoration configuration for $c$, $a$, and the shorter history.
+Let $c$ be a source configuration, $a$ an action, $h$ a history list, and $p$ an
+input-head position. One step of the restoration machine from the checkpoint at
+$p$ for the configuration obtained by applying $a$ to $c$, whose history is $h$
+extended by the entry recording $a$ (the symbols under the work heads of $c$ and
+the head moves of $a$), equals the mid-restoration configuration for $c$, $a$, $h$
+and $p$: the recorded head moves are reversed, the overwritten symbols are
+retained in finite control, and the cells of that history entry are erased.
 \end{lemma}
 
 \begin{lemma}[Second restoration transition: rewrite the old symbols]
@@ -518,10 +525,12 @@ mid-restoration configuration for $c$, $a$, and the shorter history.
 \leanok
 \uses{Complexity.EnumContEntry, Complexity.enumCont_logCfg, Complexity.enumCont_restore_cell, Complexity.enumCont_undoCfg, Complexity.enumCont_undoMid, Complexity.enumCont_undoTM, Turing.Action, Turing.Action.apply, Turing.Cfg, Turing.Cfg.workTapeSymbols, Turing.FinTM.tapeBlocks, Turing.MultiTapeTM.step, Turing.moveInputPos_zero}
 \difficulty{4}
-One step of the restoration machine from the mid-restoration configuration for
-$c$, $a$, and history $h$ writes the retained old symbols back onto the source
-tapes and moves the history heads to the preceding entry, arriving at the
-checkpoint configuration for $c$ and $h$.
+Let $c$ be a source configuration, $a$ an action, $h$ a history list, and $p$ an
+input-head position. One step of the restoration machine from the mid-restoration
+configuration for $c$, $a$, $h$ and $p$ equals the checkpoint configuration for $c$
+and $h$ at $p$: the retained old symbols are written back, restoring the source
+tapes to their contents in $c$, and the history heads move back onto the last
+entry of $h$.
 \end{lemma}
 
 \begin{lemma}[Final restoration transition on empty history]
@@ -567,9 +576,11 @@ $T$.
 \label{Complexity.enumCont_bufferAction}
 \leanok
 \uses{Turing.Action}
-An action on $L + 1$ work tapes that writes nothing and emits nothing, moves only
-the native input head and the head of the final (capture) tape by the given
-displacements, and selects the given next control state.
+Given displacements $m$ and $d$ and a next control state, the two-head
+administrative action is the action on $L + 1$ work tapes that writes nothing,
+emits nothing, moves the native input head by $m$ and the head of the last
+(capture) tape by $d$, leaves the heads of the first $L$ work tapes in place, and
+selects the given next control state.
 \end{definition}
 
 \begin{definition}[Entry action into restoration]
@@ -577,9 +588,10 @@ displacements, and selects the given next control state.
 \label{Complexity.enumCont_undoEntry}
 \leanok
 \uses{Complexity.enumCont_undoTM, Turing.Action, Turing.FinTM.tapeBlocks}
-The dispatch action that moves every history head of the restoration machine one
-cell left, from the right blank onto the newest recorded entry, leaving the
-source heads fixed and emitting nothing.
+The restoration entry action is the silent action that moves every history head
+of the restoration machine, including the clock head, one cell left, from the right
+blank onto the newest recorded entry; it writes nothing, leaves the source heads
+and the input head fixed, and selects the restoration machine's checkpoint state.
 \end{definition}
 
 \begin{definition}[Clean-call wrapper of a machine]
@@ -648,10 +660,12 @@ retained on the last tape, and the capture head stands at the end of that word.
 \leanok
 \uses{Complexity.enumCont_bufferAction, Complexity.enumCont_cleanCfg, Complexity.enumCont_cleanTM, Complexity.enumCont_concatTM, Complexity.enumCont_logTM, Turing.Action.apply, Turing.Cfg, Turing.FinTM, Turing.moveInputPos}
 \difficulty{3}
-Applying a two-head administrative action to an administrative configuration of
-the clean wrapper preserves every tape and the empty output, moves the native
-input head and the capture head by the given displacements, and updates the
-control state.
+For any displacements $m, d$ and control states $q, q'$, applying the two-head
+administrative action with displacements $m, d$ and next state $q'$ to an
+administrative configuration of the clean wrapper in state $q$ yields the
+administrative configuration with the same tapes, retained word and empty output,
+in state $q'$, with the native input head moved by $m$ and the capture head moved
+by $d$.
 \end{lemma}
 
 \begin{lemma}[Bounded input rewind]
@@ -663,9 +677,10 @@ control state.
 Consider a machine with a start state whose transition unconditionally steps the
 input head left into a scanning state, and a scanning state that keeps stepping
 left over input symbols and exits right into a destination state at the left
-blank. From any configuration in the start state, within (current input position
-$+\,2$) steps, the machine reaches the same configuration with control
-transferred to the destination and the input head at cell one.
+blank. Then from any configuration in the start state there is a number of steps,
+at most the current input position plus $2$, after which the configuration equals
+the original one with control transferred to the destination state and the input
+head at cell one.
 \end{lemma}
 
 \begin{lemma}[Rewinding the retained output word]
@@ -709,9 +724,10 @@ writing that tape, and halts at the word's right blank.
 \label{Complexity.enumCont_concatCfg}
 \leanok
 \uses{Turing.Cfg, Turing.FinTM.bufferTape}
-A configuration of the assembly machine: a control state, an input-head position,
-a candidate word held fixed on the single work tape with its head at a given
-cell, and the output prefix emitted so far.
+An assembly configuration is the configuration of the assembly machine on input
+$x$ determined by a control state, an input-head position, a candidate word $s$
+held fixed on the single work tape with its head at a given cell, and the output
+prefix emitted so far.
 \end{definition}
 
 \begin{lemma}[Input phase of assembly]
@@ -720,11 +736,12 @@ cell, and the output prefix emitted so far.
 \leanok
 \uses{Complexity.enumCont_concatCfg, Complexity.enumCont_concatTM, Turing.Action.apply, Turing.Cfg.inputSymbol, Turing.FinTM.controlAction_apply, Turing.FinTM.inputSymbol_at, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.MultiTapeTM.runFrom_zero, Turing.MultiTapeTM.step, Turing.moveInputPos_pos_of_ne_right, Turing.moveInputPos_zero}
 \difficulty{5}
-Suppose the input $x$ decomposes as $\mathit{pre} \mathbin{+\!\!+} \mathit{rest}$.
-From the input-scanning state of the assembly machine with input head just past
-$\mathit{pre}$ and output $\mathit{pre}$, exactly $|\mathit{rest}| + 1$ steps emit
-the remaining input, switch to the candidate phase, and park the input head at
-the right boundary, leaving the candidate tape and its head at zero untouched.
+Suppose the input $x$ decomposes as $\mathit{pre} \mathbin{+\!\!+} \mathit{rest}$,
+and let $s$ be a candidate word. After exactly $|\mathit{rest}| + 1$ steps from the
+input-phase configuration of the assembly machine with the input head on the first
+symbol of $\mathit{rest}$, candidate $s$ with its head at zero, and output
+$\mathit{pre}$, the machine is in the candidate phase with the input head at the
+right boundary, the candidate tape and its head at zero unchanged, and output $x$.
 \end{lemma}
 
 \begin{lemma}[Candidate phase of assembly]
@@ -734,11 +751,14 @@ the right boundary, leaving the candidate tape and its head at zero untouched.
 \uses{Complexity.enumCont_concatCfg, Complexity.enumCont_concatTM, Turing.Action.apply, Turing.Cfg.workTapeSymbols, Turing.FinTM.bufferTape_nat, Turing.FinTM.controlAction_apply, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.MultiTapeTM.runFrom_zero, Turing.MultiTapeTM.step, Turing.moveInputPos_zero}
 \difficulty{5}
 Suppose the candidate word $s$ decomposes as
-$\mathit{pre} \mathbin{+\!\!+} \mathit{rest}$. From the candidate-scanning state
-of the assembly machine with the work head at position $|\mathit{pre}|$ and output
-ending in $\mathit{pre}$, exactly $|\mathit{rest}| + 1$ steps append the rest of
-$s$ to the output and halt at its right blank, leaving the candidate tape
-unchanged. Empty candidates take the single final step.
+$\mathit{pre} \mathbin{+\!\!+} \mathit{rest}$, and let $\mathit{out}$ be a word and
+$p$ an input-head position. After exactly $|\mathit{rest}| + 1$ steps from the
+candidate-phase configuration of the assembly machine with input head at $p$,
+candidate head at position $|\mathit{pre}|$, and output
+$\mathit{out} \mathbin{+\!\!+} \mathit{pre}$, the machine is halted with the
+candidate tape unchanged, its head at position $|s|$, the input head still at $p$,
+and output $\mathit{out} \mathbin{+\!\!+} s$; an empty remainder takes the single
+final step.
 \end{lemma}
 
 \begin{lemma}[Assembly emits the padded input]
@@ -747,9 +767,11 @@ unchanged. Empty candidates take the single final step.
 \leanok
 \uses{Complexity.enumCont_concatCfg, Complexity.enumCont_concatTM, Complexity.enumCont_concat_candidate, Complexity.enumCont_concat_native, Turing.Cfg.ofWords, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add}
 \difficulty{3}
-From its initial phase on input $x$ with candidate $s$ on the work tape, the
-assembly machine halts after exactly $|x| + |s| + 2$ steps with output
-$x \mathbin{+\!\!+} s$, retaining the candidate tape.
+For all binary words $x$ and $s$, the assembly machine started in its input phase
+on input $x$, with $s$ on its work tape and all heads at their starting positions,
+is halted after exactly $|x| + |s| + 2$ steps with output $x \mathbin{+\!\!+} s$,
+its input head at the right boundary, the candidate tape unchanged, and the
+candidate head at position $|s|$.
 \end{lemma}
 
 \begin{lemma}[Buffered composition from a prepared first machine]
@@ -830,9 +852,11 @@ return state with the source's final writes and output.
 \label{Complexity.enumCont_padAction}
 \leanok
 \uses{Turing.Action}
-Pad an action of a $k$-tape machine to $K$ tapes: the first $k$ tapes act as
-before, the added tapes remain blank and stationary, and the control state is
-embedded along a given map.
+Given a map $\iota$ from source control states to host control states, the padding
+of an action $a$ of a $k$-tape machine to $K$ tapes is the action that performs
+$a$'s input move, output, writes and moves on the first $k$ work tapes, leaves
+every further tape unwritten and stationary, and replaces $a$'s next control state
+by its image under $\iota$ (halting stays halting).
 \end{definition}
 
 \begin{definition}[Padding a configuration to a larger tape bank]
@@ -884,10 +908,11 @@ either other routine without disturbing tape zero.
 \label{Complexity.enumCont_endsAction}
 \leanok
 \uses{Turing.Action}
-An action on $L + 1$ work tapes that may write and move only tape zero (the
-candidate tape) and the last tape (the capture tape), moving both heads by the
-same displacement, leaving every intervening tape untouched and emitting
-nothing.
+Given optional writes $a$ and $b$, a displacement $d$, and a next control state,
+the two-ended action is the action on $L + 1$ work tapes that performs write $a$ on
+tape zero and write $b$ on the last tape, moves both of these heads by $d$, leaves
+every intervening tape unwritten and stationary, keeps the input head fixed, and
+emits nothing.
 \end{definition}
 
 \begin{definition}[The enumerator body]
@@ -895,13 +920,13 @@ nothing.
 \label{Complexity.enumCont_bodyTM}
 \leanok
 \uses{Complexity.enumCont_cleanTM, Complexity.enumCont_endsAction, Complexity.enumCont_logTM, Complexity.enumCont_returnAction, Turing.FinTM, Turing.FinTM.controlAction}
-The concrete enumerator body built from a source machine $B$ with designated
-verification and increment entry states: it issues clean calls of $B$ (with halts
-redirected to live administrative states) for initialization, verification, and
-increment, coordinated by seven administrative states --- an anchor, a seed-copy
-phase, an unused reserve, a verdict test, an increment check, a result copy, and
-a synchronized rewind. A stopped variant turns only the anchor into a silent
-self-loop.
+Let $B$ be a finite source machine with designated verification and increment
+entry states. The enumerator body built from $B$ is the machine that issues clean
+calls of $B$ (with halts redirected to live administrative states) for
+initialization, verification, and increment, coordinated by seven administrative
+states: an anchor, a seed-copy phase, an unused reserve, a verdict test, an
+increment check, a result copy, and a synchronized rewind. Its stopped variant
+agrees with the active body except that the anchor is a silent self-loop.
 \end{definition}
 
 \begin{lemma}[A prepared increment call]
@@ -959,9 +984,10 @@ cell dropped; this includes the case of an empty $\mathit{old}$.
 \leanok
 \uses{Complexity.enumCont_sparse}
 \difficulty{4}
-In the sparse tape consisting of $p$ blank cells followed by the symbols of a
-word $b :: \mathit{rest}$, blanking position $p$ yields the sparse tape of $p+1$
-blank cells followed by the symbols of $\mathit{rest}$.
+For every $p$, every bit $b$, and every boolean word $\mathit{rest}$, blanking
+position $p$ of the sparse tape consisting of $p$ blank cells followed by the
+symbols of the word $b$ then $\mathit{rest}$ yields the sparse tape of $p + 1$ blank
+cells followed by the symbols of $\mathit{rest}$.
 \end{lemma}
 
 \begin{definition}[Two-ended administrative configurations]
@@ -981,10 +1007,13 @@ cell one, and the output is empty.
 \leanok
 \uses{Complexity.enumCont_endsAction, Complexity.enumCont_pairCfg, Turing.Action.apply, Turing.moveInputPos_zero}
 \difficulty{4}
-Applying a two-ended action to a two-ended configuration updates exactly the two
-designated cells under the common head, moves that head by the common
-displacement, changes only the control state otherwise, and preserves the input
-head and the empty output.
+Let $L > 0$, and consider a two-ended configuration on $L + 1$ work tapes whose
+tape zero holds $u$ and whose last tape holds $v$, with common head position $h$.
+Applying the two-ended action with optional writes $a$, $b$, displacement $d$ and
+next state $q'$ yields the two-ended configuration in state $q'$ whose tape zero is
+$u$ with cell $h$ overwritten by $a$ (if $a$ writes), whose last tape is $v$ with
+cell $h$ overwritten by $b$ (if $b$ writes), and whose common head position is
+$h + d$; the input head and the empty output are unchanged.
 \end{lemma}
 
 \begin{lemma}[A list of blanks induces the blank tape]
@@ -1143,10 +1172,12 @@ carrying the all-false candidate of width $w$.
 \leanok
 \uses{Complexity.enumCont_bodyTM, Complexity.enumCont_pairCfg, Complexity.enumCont_pair_words, Turing.Action.apply, Turing.Cfg.ofWords, Turing.FinTM, Turing.FinTM.bufferTape, Turing.FinTM.controlAction, Turing.FinTM.controlAction_apply, Turing.MultiTapeTM.step, Turing.moveInputPos_zero, Turing.stateWord}
 \difficulty{3}
-One silent stationary step of the active enumerator body from the anchor state
-over the seam carrying candidate $s$ enters the verification call: it reaches
-the two-ended configuration embedding the verifier entry state, with $s$
-preserved and the capture tape blank.
+For every input $x$ and candidate word $s$, one step of the active enumerator body
+from the anchor state over the canonical seam carrying $s$ on tape zero yields the
+two-ended configuration that enters the verification call (the source's verifier
+entry state in verification mode), with tape zero $s$, a blank capture tape, and
+both endpoint heads at zero; the step writes nothing, moves no head, and emits
+nothing.
 \end{lemma}
 
 \begin{lemma}[Acceptance emits the single true bit]
@@ -1155,8 +1186,10 @@ preserved and the capture tape blank.
 \leanok
 \uses{Complexity.enumCont_bodyTM, Complexity.enumCont_logTM, Complexity.enumCont_pairCfg, Turing.Action.apply, Turing.Cfg.workTapeSymbols, Turing.FinTM, Turing.FinTM.bufferTape, Turing.MultiTapeTM.step}
 \difficulty{2}
-From the verdict state of the enumerator body with a captured true bit, one step
-halts the machine and emits the single accepting output bit.
+For every candidate word $s$, after one step of the enumerator body (active or
+stopped) from the two-ended configuration in the verdict state with tape zero $s$
+and the captured word consisting of a single true bit, the machine is halted and
+its output is exactly the single bit true.
 \end{lemma}
 
 \begin{lemma}[Rejection erases the verdict]
@@ -1165,10 +1198,12 @@ halts the machine and emits the single accepting output bit.
 \leanok
 \uses{Complexity.enumCont_bodyTM, Complexity.enumCont_logTM, Complexity.enumCont_pairCfg, Turing.Action.apply, Turing.Cfg.workTapeSymbols, Turing.FinTM, Turing.FinTM.bufferTape, Turing.FinTM.bufferTape_append, Turing.MultiTapeTM.step, Turing.moveInputPos_zero}
 \difficulty{4}
-From the verdict state of the enumerator body with a captured false bit over
-candidate $s$, one step erases the captured verdict and enters the clean
-increment call: it reaches the two-ended configuration embedding the increment
-entry state with $s$ preserved and blank capture.
+For every candidate word $s$, one step of the enumerator body (active or stopped)
+from the two-ended configuration in the verdict state with tape zero $s$ and a
+captured single false bit yields the two-ended configuration that enters the
+increment call (the source's increment entry state in increment mode), with tape
+zero $s$, the captured verdict erased so that the capture tape is blank, and both
+endpoint heads at zero.
 \end{lemma}
 
 \begin{lemma}[Case analysis of the increment result]
@@ -1444,8 +1479,9 @@ so far is exactly $t$ false bits.
 \leanok
 \uses{Complexity.a3ShiftTM, Complexity.a3_shift_scan, Turing.Action.apply, Turing.Cfg.inputSymbol, Turing.FinTM.ComputesInTime, Turing.FinTM.computesInTime_iff, Turing.FinTM.controlAction, Turing.FinTM.emit_halts, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.MultiTapeTM.step}
 \difficulty{5}
-On every input $x$, the shift machine with suffix word $w$ computes the output
-consisting of $|x|$ false bits followed by $w$, within $|x| + |w| + 2$ steps.
+For every suffix word $w$ and every input $x$, the shift machine for $w$ halts on
+input $x$ within $|x| + |w| + 2$ steps, and its output is $|x|$ false bits followed
+by $w$.
 \end{lemma}
 
 \begin{lemma}[Monotone linear budget for the shift machine]
@@ -1454,9 +1490,9 @@ consisting of $|x|$ false bits followed by $w$, within $|x| + |w| + 2$ steps.
 \leanok
 \uses{Complexity.a3ShiftTM, Complexity.a3_shift_computes, Turing.FinTM.ComputesFunInTime, Turing.FinTM.ComputesInTime.mono}
 \difficulty{2}
-The shift machine with suffix word $w$ computes the function
-$x \mapsto 0^{|x|} \mathbin{+\!\!+} w$ within the monotone linear time budget
-$(|w| + 2)(n + 1)$.
+For every word $w$, the shift machine for $w$ computes the function mapping each
+input $x$ to $0^{|x|} \mathbin{+\!\!+} w$ within time $(|w| + 2)(n + 1)$ on inputs
+of length $n$; this time bound is monotone and linear in $n$.
 \end{lemma}
 
 \begin{lemma}[Exponential padding widths are computable in binary]
@@ -1487,9 +1523,11 @@ decision.
 \label{Complexity.a3LoadCfg}
 \leanok
 \uses{Turing.Cfg, Turing.FinTM, Turing.FinTM.bufferTape}
-A configuration of the decider wrapper's copy/rewind phase: a phase index, an
-input-head position, a copied word on tape zero with its head at a given cell,
-and all other work tapes blank with heads at zero.
+A load-phase configuration of the decider wrapper on input $x$ is determined by a
+phase index $q \in \{0, 1, 2\}$, an input-head position $p$, a word $u$, and a head
+position $h$: its control state is phase $q$, its input head is at $p$, tape zero
+holds $u$ with its head at $h$, every other work tape is blank with its head at
+zero, and the output is empty.
 \end{definition}
 
 \begin{lemma}[One copy transition]
@@ -1533,9 +1571,11 @@ empty input.
 \leanok
 \uses{Complexity.a3LoadCfg, Complexity.a3RunTM, Complexity.a3_copy_run, Complexity.a3_load_rewind, Turing.Action.apply, Turing.Cfg.inputSymbol, Turing.Cfg.ofWords, Turing.FinTM, Turing.FinTM.moveInputPos_neg_val, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.MultiTapeTM.step, Turing.moveInputPos, Turing.stateWord}
 \difficulty{4}
-From its initial configuration on input $x$, the decider wrapper reaches the
-dispatch seam --- dispatch state, $x$ on tape zero, all heads at the origin ---
-in exactly $2|x| + 2$ steps.
+Let $C$ be a finite machine with at least one work tape and designated entry and
+exit states, and let $x$ be an input. After exactly $2|x| + 2$ steps from its
+initial configuration on $x$, the decider wrapper of $C$ is in the dispatch seam
+configuration: the dispatch state, $x$ on tape zero, every other work tape blank,
+and all heads at their starting positions.
 \end{lemma}
 
 \begin{lemma}[Following the call until its first return]
@@ -1602,9 +1642,10 @@ $G$ computes $z$ from $x$ within $s + |y| + 2 + t$ steps.
 \label{Complexity.a3NonemptyTM}
 \leanok
 \uses{Turing.Action.mapState, Turing.FinTM, Turing.FinTM.controlAction}
-The guard of a machine $M$: on empty input it emits a single rejecting (false)
-bit and halts; on nonempty input it takes one silent step and then runs $M$ from
-$M$'s initial state.
+For a finite machine $M$, the nonempty-input guard of $M$ is the machine with the
+same work tapes that, on empty input, emits a single rejecting (false) bit and
+halts, and, on nonempty input, takes one silent step and then runs $M$ from $M$'s
+initial state.
 \end{definition}
 
 \begin{lemma}[The guard preserves the source run]
@@ -1624,8 +1665,8 @@ run.
 \leanok
 \uses{Complexity.a3NonemptyTM, Turing.Action.apply, Turing.Cfg.init, Turing.Cfg.inputSymbol, Turing.FinTM, Turing.FinTM.ComputesInTime, Turing.FinTM.computesInTime_iff, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.step}
 \difficulty{2}
-On the empty input, the guarded machine computes the single-bit output false in
-one step.
+For every finite machine $M$, the nonempty-input guard of $M$, run on the empty
+input, is halted after one step with output exactly the single bit false.
 \end{lemma}
 
 \begin{lemma}[The guard passes nonempty inputs through]
@@ -1694,8 +1735,9 @@ $(C, c, m)$ returns exactly $n$.
 \leanok
 \uses{Complexity.a3Split, Complexity.a3_split_none_iff}
 \difficulty{2}
-For every positive coefficient $C$, the exponential-split search on
-$(C, c, 0)$ fails.
+For every positive coefficient $C$ and every degree $c$, the exponential-split
+search on $(C, c, 0)$ returns the failure value, so length zero admits no
+exponential split.
 \end{lemma}
 
 \begin{definition}[The emitted split word]
@@ -1703,9 +1745,10 @@ $(C, c, 0)$ fails.
 \label{Complexity.a3SplitWord}
 \leanok
 \uses{Complexity.a3Split, Turing.pairEncode}
-Given constants $C, c$ and a word $y$: if the exponential-split search succeeds
-on $|y|$ with prefix length $i$, the paired encoding of the first $i$ symbols
-of $y$ and the remaining suffix; otherwise the empty word, signalling failure.
+Given constants $C, c$ and a word $y$, the split word of $y$ is the paired encoding
+of the first $i$ symbols of $y$ and the remaining suffix when the exponential-split
+search on $(C, c, |y|)$ returns $i$, and is the empty word, signalling failure,
+when the search fails.
 \end{definition}
 
 \begin{lemma}[Linear length of the split word]

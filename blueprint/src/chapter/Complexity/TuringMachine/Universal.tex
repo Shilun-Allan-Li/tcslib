@@ -1616,15 +1616,6 @@ $\mathrm{src}$ at budget $r$: halting on the final allowed transition counts
 as success.
 \end{lemma}
 
-\begin{lemma}[Width of the binary clock]
-\lean{Turing.timed_bits_length}
-\label{Turing.timed_bits_length}
-\leanok
-\difficulty{3}
-For every natural number $t$, the binary representation of $t$ has at most $t$
-bits; in particular the bound also holds at $t = 0$.
-\end{lemma}
-
 \begin{definition}[Five-lane assembly]
 \lean{Turing.timedFive}
 \label{Turing.timedFive}
@@ -1923,7 +1914,7 @@ $s + d \le (S + B + 14)(t+1)^2$.
   Turing.pairEncode, Turing.timedAnswer, Turing.timedCanonClock,
   Turing.timedCanonTM, Turing.timedCaptureTM, Turing.timedFrame,
   Turing.timedFrame_run, Turing.timedStartupBound, Turing.timedUniversalTM,
-  Turing.timedValue_bits, Turing.timed_bits_length, Turing.timed_cost_bound,
+  Turing.timedValue_bits, Turing.length_bits_le_self, Turing.timed_cost_bound,
   Turing.timed_header_bound, Turing.timed_initialized,
   Turing.timed_interpret_finishes, Turing.universalBlockBound}
 \difficulty{4}

@@ -648,11 +648,26 @@ uncomputability chapter.
   language). The statements are fine; the docstrings undersell their
   domain. The blueprint documents the Lean behavior. *Origin:
   blueprint-writer report, ch2 increment part 4.*
+* **Blueprint-writer process fix: require the per-entry strict check** —
+  in the ch2 increment, writers that ran `statement_quality.py` /
+  `dataset_hygiene.py` from the command line were grading the dataset
+  *cache*, not their chapter, and every one of the 178 strict-rubric
+  flags came from exactly those five writers (SAT, Primitives, EXP, CoNP,
+  PClosure); writers that imported `check(..., strict=True)` and ran it
+  per entry produced zero. Fix: state the per-entry function-call check
+  as a hard requirement in `.claude/agents/blueprint-writer.md` (and
+  ideally add a `--chapter` mode to the scripts). The orchestrator-side
+  uniform pass used here (`build_dataset.parse_blueprint` + both checks,
+  names demangled via `PRIVATE_RE`) could also become a `/blueprint-
+  extract` step. *Origin: ch2 increment, 2026-10-07.*
 * **Stale module docstring: `Build/Primitives.lean`** — still says every
   theorem below is sorried; the emitter fill gate closed every one of them.
   Comment-only fix, eligible for the next comment-only sweep (comment-
-  stripped byte-identity check per precedent). *Origin: blueprint-writer
-  report, ch2 increment part 1.*
+  stripped byte-identity check per precedent). Same sweep: the
+  `emitterP2EraseCfg` docstring says the input stays "at its origin", but
+  the definition places the head at position 1 (the first input cell) —
+  the blueprint now states the Lean behavior. *Origin: blueprint-writer
+  reports, ch2 increment parts 1 and 6.*
 
 ### Chapters 2-3
 
