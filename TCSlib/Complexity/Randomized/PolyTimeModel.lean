@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: TCSlib Contributors
 -/
 import TCSlib.Complexity.Randomized.SipserGacs
+import TCSlib.Complexity.Randomized.Adleman
 import TCSlib.Complexity.ClassP.P
 import TCSlib.Complexity.TuringMachine.Encoding
 import TCSlib.Complexity.PolyHierarchy.Defs
@@ -43,11 +44,11 @@ lemma about `P`, and the certificate-style `Σ₂` coincides with
 ## Deviations from the source
 
 None beyond those of `Randomized.Classes`: these declarations *discharge*
-the deviations by instantiating the abstract model.  [AB09, Thm 7.17]
-(Adleman) is not instantiated here because its remaining hypothesis is
-`P ⊆ P/poly` ([AB09, Thm 6.6]), which the library does not yet have; it
-stays conditional in `Randomized.Adleman` until the oblivious-TM-to-circuit
-simulation is formalized.
+the deviations by instantiating the abstract model.  With the library's
+`Complexity.P_subset_PPoly` ([AB09, Thm 6.6]) now available, Adleman's
+circuit hypothesis is dischargeable too
+(`Randomized.polyTimeModel_verifierHasCircuits`), so [AB09, Thm 7.17] is
+stated unconditionally as `Randomized.adleman_polyTime`.
 
 ## References
 
@@ -119,6 +120,29 @@ the results. -/
 theorem polyTimeModel_closedUnderShiftOr :
     ClosedUnderShiftOr polyTimeModel := by
   sorry
+
+/-- Polynomial-time verifiers have polynomial-size circuits when their
+random string is fixed, with one size bound uniform in the random string:
+the form of [AB09, Thm 6.6] that Adleman's counting argument consumes.
+**Proof sketch.** The paired language of the verifier is in `P`, so by the
+tableau construction behind `Complexity.P_subset_PPoly` it has a fan-in-two
+circuit family of size polynomial in the padded input length
+`|pairEncode x r|` — polynomial in `|x|` since `|r| = polyLen a k |x|`.
+Hardwire the `r`-input wires of the circuit for length `|pairEncode x r|`
+to the bits of `r` (`CircuitComplexity.HardWire`); the size bound is
+inherited from the family, hence uniform in `r`. -/
+theorem polyTimeModel_verifierHasCircuits :
+    ∀ M a k, polyTimeModel.Eff (boolVerifier M) →
+      VerifierHasCircuits M (polyLen a k) := by
+  sorry
+
+/-- **Adleman's theorem for polynomial-time machines** ([AB09, Thm 7.17],
+unconditionally): `BPP ⊆ P/poly`, with both sides the library's own classes
+(`InBPP polyTimeModel` and `Language.InPPoly`). -/
+theorem adleman_polyTime {L : Language Bool}
+    (hL : InBPP polyTimeModel L) : L.InPPoly :=
+  adleman polyTimeModel polyTimeModel_closedUnderMajority hL
+    polyTimeModel_verifierHasCircuits
 
 /-- Certificate-style `Σ₂` over the polynomial-time model coincides with the
 library's `Complexity.SigmaP 2` ([AB09, Definition 5.3]).

@@ -33,12 +33,14 @@ and hardwiring `r₀` turns the verifier into a circuit.
 
 In [AB09] the verifier is a polynomial-time TM, and the hardwiring step
 quotes the simulation of poly-time TMs by poly-size circuits
-([AB09, Thm 6.6], `P ⊆ P/poly`).  TCSlib's `CircuitComplexity` deliberately
-does not formalize Theorem 6.6 (no TM layer), so that simulation enters here
-as the explicit hypothesis `hCirc : … → VerifierHasCircuits M p` on the
-efficiency notion `E` — true for the intended "polynomial-time" instantiation.
-Circuits are the `ACP.FeedForward` model of `CircuitComplexity.PPoly`, and
-the conclusion is `Language.InPPoly` [AB09, Def 6.5].
+([AB09, Thm 6.6], `P ⊆ P/poly`).  At this file's abstract level that
+simulation enters as the explicit hypothesis
+`hCirc : … → VerifierHasCircuits M p` on the efficiency notion `E`; for the
+polynomial-time instantiation it is dischargeable from the library's
+`Complexity.P_subset_PPoly` tableau machinery (see
+`Randomized.PolyTimeModel`).  Circuits are the fan-in-two
+`BoolCircuit.DAGCircuit` model of `CircuitComplexity.PPoly`, and the
+conclusion is `Language.InPPoly` [AB09, Def 6.5].
 
 ## References
 
@@ -48,23 +50,23 @@ the conclusion is `Language.InPPoly` [AB09, Def 6.5].
 
 namespace Randomized
 
-open ACP FeedForward
+open BoolCircuit
 
 variable (E : VerifierModel)
 
 /-- The verifier `M` (with random strings of length `p n` on length-`n`
 inputs) turns into polynomial-size circuits when its random string is fixed:
 there are constants `a, k` such that for every `n` and every random string
-`r` of length `p n`, some finite `AC_GateOps` circuit of size at most
+`r` of length `p n`, some well-formed fan-in-two circuit of size at most
 `a·(n+1)^k` computes `x ↦ M x r` on length-`n` inputs.  This is what the
-polynomial-time simulation [AB09, Thm 6.6] provides for TM verifiers. -/
+polynomial-time simulation [AB09, Thm 6.6] provides for TM verifiers; note
+the single size bound uniform in `r`, which the counting argument needs. -/
 def VerifierHasCircuits (M : List Bool → List Bool → Bool) (p : ℕ → ℕ) :
     Prop :=
   ∃ a k : ℕ, ∀ (n : ℕ) (r : List Bool), r.length = p n →
-    ∃ C : FeedForward (Fin 2) (Fin n) Unit,
-      C.Finite ∧ C.onlyUsesGates AC_GateOps ∧ C.size ≤ a * (n + 1) ^ k ∧
-      ∀ v : Fin n → Bool,
-        (C.eval₁ fun i => finTwoEquiv.symm (v i)) = 1 ↔ M (List.ofFn v) r = true
+    ∃ D : DAGCircuit n,
+      D.IsWellFormed ∧ D.IsFaninTwo ∧ D.size ≤ a * (n + 1) ^ k ∧
+      ∀ v : Fin n → Bool, D.eval v = M (List.ofFn v) r
 
 /-- **Adleman's theorem: `BPP ⊆ P/poly`** ([AB09, Thm 7.17]).  Relative to
 the efficiency notion `E`: if `L ∈ BPP` and `E`-verifiers have circuits when
@@ -79,7 +81,9 @@ are bad, so at most `2^n · 2^m/2^{n+2} = 2^m/4 < 2^m` strings are bad for
 *some* length-`n` input.  Hence some `r₀ ∈ {0,1}^m` is good for every
 `x ∈ {0,1}^n`.  By `hCirc`, `x ↦ M x r₀` is computed by a circuit of size
 polynomial in `n`, and that circuit decides `L` on length-`n` inputs; the
-resulting family witnesses `L ∈ P/poly` via `Language.inPPoly_iff`. -/
+resulting `DAGCircuitFamily` (one good circuit per length, well-formed and
+fan-in-two with the uniform size bound) witnesses `L.InSIZE (polyLen a k)`
+and hence `L.InPPoly`. -/
 theorem adleman (hMaj : ClosedUnderMajority E) {L : Language Bool}
     (hL : InBPP E L)
     (hCirc : ∀ M a k, E.Eff (boolVerifier M) →
