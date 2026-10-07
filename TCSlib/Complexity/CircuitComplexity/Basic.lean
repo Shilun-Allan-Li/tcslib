@@ -22,42 +22,57 @@ import Mathlib.Tactic.Ring
 
 * `BoolCircuit.Lit` — a literal: an index `idx : Fin n` and a sign
   (`sign = true` is the positive literal).
-* `BoolCircuit.Circuit` — a Boolean circuit tree, `lit` or `node isAnd children`,
+* `BoolCircuit.TreeCircuit` — a Boolean circuit tree, `lit` or `node isAnd children`,
   with `eval`, `litCount`, `depth`, `size`, `maxFanin` and the list-level `maxDepth`,
   `sumSize`, `maxFaninL`.  Fan-in is unbounded; a bound is imposed downstream as a
   hypothesis `c.maxFanin ≤ w`, never as structure.
 * `BoolCircuit.NAndCircuit` / `NOrCircuit` — normal-form circuits, strictly
   alternating AND/OR with a `Nodup` variable-index invariant at the base clauses.
-* `BoolCircuit.Circuit.toNAnd` / `toNOr` — normalization into that form;
-  `NAndCircuit.toCircuit` / `NOrCircuit.toCircuit` — the forgetful map back.
+* `BoolCircuit.TreeCircuit.toNAnd` / `toNOr` — normalization into that form;
+  `NAndCircuit.toTreeCircuit` / `NOrCircuit.toTreeCircuit` — the forgetful map back.
 
 ## Main results
 
-* `Circuit.eval_lit`, `Circuit.eval_node_true_iff`, `Circuit.eval_node_false_iff`
+* `TreeCircuit.eval_lit`, `TreeCircuit.eval_node_true_iff`, `TreeCircuit.eval_node_false_iff`
   — the semantics of a leaf and of an unbounded AND / OR gate.
-* `Circuit.one_le_size`, `Circuit.maxFanin_le_size`, `Circuit.size_succ_le_two_pow` — a
+* `TreeCircuit.one_le_size`, `TreeCircuit.maxFanin_le_size`, `TreeCircuit.size_succ_le_two_pow` — a
   circuit has at least one node, a gate no more inputs than the circuit has nodes, and a
   fan-in-2 circuit's size is bounded by its depth.
-* `Circuit.depth_node` / `size_node` / `maxFanin_node` and the `_nil` / `_cons` unfoldings.
+* `TreeCircuit.depth_node` / `size_node` / `maxFanin_node` and the `_nil` / `_cons` unfoldings.
 * `toNAnd_eval` / `toNOr_eval`, `toNAnd_litCount` / `toNOr_litCount`,
   `toNAnd_size_le` / `toNOr_size_le` — normalization preserves semantics and
   literal count, and at most doubles the size.
 
 ## Divergences from [OD14, §4.5]
 
-`NAndCircuit` / `NOrCircuit` formalize [OD14, Def 4.26]'s alternating-layer
-circuits, with [OD14, Def 4.27]'s condition that no base gate reads a variable
-twice as the `Nodup` invariant.  `size` counts every node, leaves included, where
-[OD14, Def 4.27] counts only the internal layers, and no width measure is defined
-here — bottom-layer fan-in lives on `DNF` / `CNF` in `Formulas.lean`.  `Circuit`,
-the unconstrained AND/OR tree, matches no numbered definition: [OD14]'s circuits
-are DAGs.  `toNAnd` / `toNOr` are this library's own normalization; their
-factor-2 size bound is proved here, not taken from [OD14]'s `2 ^ d` remark.
+`NAndCircuit` / `NOrCircuit` are **alternating trees over base clauses**, not a
+direct realization of [OD14, Def 4.26]'s layered circuits: alternation holds
+between parent and child connectives, but there is no common input layer and no
+requirement that root-to-literal paths have equal length (an `AND` root may hold
+both an `OR` clause and an `OR` node over an `AND` clause).  [OD14, Def 4.27]'s
+condition that no base gate reads a variable twice is the `Nodup` invariant.
+The size/depth measures are **not interchangeable across the three carriers**:
+`TreeCircuit.size` counts every node, literal leaves included, where [OD14,
+Def 4.27] counts only the internal layers; `NAndCircuit.size` / `NOrCircuit.size`
+count clauses and nodes but not the literals inside a clause (a two-literal
+clause has normal-form size `1` and `toTreeCircuit` size `3`); normal-form `depth`
+gives every base clause depth `0` where its `toTreeCircuit` image has depth `1`;
+and the root is counted in both sizes where [OD14] excludes the input and
+output layers.  An empty `.node []` and an empty `.clause [] h` agree in value
+and size but differ in normal-form depth (`1` vs `0`), so no uniform
+depth-shift identity holds.  On `TreeCircuit` itself, `.node true []` evaluates to
+`true` and `.node false []` to `false` (the empty AND/OR), each with size `1`
+and depth `1`.  No width measure is defined here — bottom-layer fan-in lives
+on `DNF` / `CNF` in `Formulas.lean`.  `TreeCircuit`, the unconstrained AND/OR tree,
+matches no numbered definition: [OD14]'s circuits are DAGs.  `toNAnd` / `toNOr`
+are this library's own normalization, each theorem naming its actual source and
+target measures; their factor-2 size bound is proved here, not taken from
+[OD14]'s `2 ^ d` remark.
 
 ## Provenance
 
-`Circuit.one_le_size` was hoisted here from
-`TCSlib/BooleanAnalysis/RazborovSmolensky/FeedForwardCircuit.lean`, unchanged.
+`TreeCircuit.one_le_size` was hoisted here from
+`TCSlib/Complexity/CircuitComplexity/LayeredCircuit.lean`, unchanged.
 
 Split out of `TCSlib/BooleanAnalysis/Switching/Circuit.lean` (commit 94fd7c6),
 which carried no copyright header; `Authors` above is that file's git author.
@@ -104,19 +119,19 @@ def Lit.eval (l : Lit n) (x : Fin n → Bool) : Bool :=
     - `node isAnd children` applies an AND gate (`isAnd = true`) or OR gate
       (`isAnd = false`) to its children.
     No alternation or deduplication constraint is imposed. -/
-inductive Circuit (n : Nat) where
-  | lit  : Lit n → Circuit n
-  | node : (isAnd : Bool) → List (Circuit n) → Circuit n
+inductive TreeCircuit (n : Nat) where
+  | lit  : Lit n → TreeCircuit n
+  | node : (isAnd : Bool) → List (TreeCircuit n) → TreeCircuit n
 deriving Repr
 
-/-- Custom induction principle for `Circuit` that gives `∀ c ∈ cs, motive c` in the
+/-- Custom induction principle for `TreeCircuit` that gives `∀ c ∈ cs, motive c` in the
     `node` case, working around the limitation that `induction` doesn't support
     nested inductives directly. -/
-theorem Circuit.ind {n : Nat} {motive : Circuit n → Prop}
+theorem TreeCircuit.ind {n : Nat} {motive : TreeCircuit n → Prop}
     (hlit : ∀ l, motive (.lit l))
     (hnode : ∀ isAnd cs, (∀ c ∈ cs, motive c) → motive (.node isAnd cs)) :
     ∀ c, motive c :=
-  @Circuit.rec n motive (fun cs => ∀ c ∈ cs, motive c)
+  @TreeCircuit.rec n motive (fun cs => ∀ c ∈ cs, motive c)
     hlit
     (fun isAnd cs ih => hnode isAnd cs ih)
     (fun _ h => nomatch h)
@@ -126,57 +141,57 @@ theorem Circuit.ind {n : Nat} {motive : Circuit n → Prop}
       | tail _ h => exact ih_tail c h)
 
 /-- Evaluate a general circuit under assignment `x`. -/
-def Circuit.eval : Circuit n → (Fin n → Bool) → Bool
+def TreeCircuit.eval : TreeCircuit n → (Fin n → Bool) → Bool
   | .lit l, x => l.eval x
   | .node true cs, x  => cs.foldr (fun c acc => c.eval x && acc) true
   | .node false cs, x => cs.foldr (fun c acc => c.eval x || acc) false
 
 /-- A leaf evaluates to its literal. -/
-theorem Circuit.eval_lit {n : Nat} (l : Lit n) (x : Fin n → Bool) :
-    (Circuit.lit l).eval x = l.eval x := by
-  simp [Circuit.eval]
+theorem TreeCircuit.eval_lit {n : Nat} (l : Lit n) (x : Fin n → Bool) :
+    (TreeCircuit.lit l).eval x = l.eval x := by
+  simp [TreeCircuit.eval]
 
 /-- An unbounded `AND` gate is true exactly when every child is. -/
-theorem Circuit.eval_node_true_iff {n : Nat} (cs : List (Circuit n)) (x : Fin n → Bool) :
-    (Circuit.node true cs).eval x = true ↔ ∀ c ∈ cs, c.eval x = true := by
-  simp only [Circuit.eval]
+theorem TreeCircuit.eval_node_true_iff {n : Nat} (cs : List (TreeCircuit n)) (x : Fin n → Bool) :
+    (TreeCircuit.node true cs).eval x = true ↔ ∀ c ∈ cs, c.eval x = true := by
+  simp only [TreeCircuit.eval]
   induction cs with
   | nil => simp
   | cons c cs ih => simp [ih]
 
 /-- An unbounded `OR` gate is true exactly when some child is. -/
-theorem Circuit.eval_node_false_iff {n : Nat} (cs : List (Circuit n)) (x : Fin n → Bool) :
-    (Circuit.node false cs).eval x = true ↔ ∃ c ∈ cs, c.eval x = true := by
-  simp only [Circuit.eval]
+theorem TreeCircuit.eval_node_false_iff {n : Nat} (cs : List (TreeCircuit n)) (x : Fin n → Bool) :
+    (TreeCircuit.node false cs).eval x = true ↔ ∃ c ∈ cs, c.eval x = true := by
+  simp only [TreeCircuit.eval]
   induction cs with
   | nil => simp
   | cons c cs ih => simp [ih]
 
 /-- Number of literal occurrences in a circuit. -/
-def Circuit.litCount : Circuit n → Nat
+def TreeCircuit.litCount : TreeCircuit n → Nat
   | .lit _ => 1
   | .node _ cs => cs.foldr (fun c acc => c.litCount + acc) 0
 
 /-- Depth of a circuit (longest root-to-leaf path). -/
-def Circuit.depth : Circuit n → Nat
+def TreeCircuit.depth : TreeCircuit n → Nat
   | .lit _ => 0
   | .node _ cs => 1 + cs.foldr (fun c acc => max c.depth acc) 0
 
 /-- Total number of nodes (internal gates + literal leaves). -/
-def Circuit.size : Circuit n → Nat
+def TreeCircuit.size : TreeCircuit n → Nat
   | .lit _ => 1
   | .node _ cs => 1 + cs.foldr (fun c acc => c.size + acc) 0
 
 /-- Maximum depth over a list of circuits (used in depth of a node). -/
-def Circuit.maxDepth {n : Nat} (cs : List (Circuit n)) : Nat :=
+def TreeCircuit.maxDepth {n : Nat} (cs : List (TreeCircuit n)) : Nat :=
   cs.foldr (fun c acc => max c.depth acc) 0
 
 /-- Sum of sizes over a list of circuits (used in size of a node). -/
-def Circuit.sumSize {n : Nat} (cs : List (Circuit n)) : Nat :=
+def TreeCircuit.sumSize {n : Nat} (cs : List (TreeCircuit n)) : Nat :=
   cs.foldr (fun c acc => c.size + acc) 0
 
 /-- Maximum fanin of a circuit: maximum number of children of any gate, recursively. -/
-def Circuit.maxFanin : Circuit n → Nat
+def TreeCircuit.maxFanin : TreeCircuit n → Nat
   | .lit _ => 0
   | .node _ cs => max cs.length (cs.foldr (fun c acc => max c.maxFanin acc) 0)
 
@@ -185,132 +200,139 @@ def Circuit.maxFanin : Circuit n → Nat
 -- ----------------------------------------------------------------
 
 /-- Every circuit has at least one node. -/
-theorem Circuit.one_le_size (c : Circuit n) : 1 ≤ c.size := by
+theorem TreeCircuit.one_le_size (c : TreeCircuit n) : 1 ≤ c.size := by
   cases c with
-  | lit l => simp [Circuit.size]
-  | node isAnd cs => simp [Circuit.size]
+  | lit l => simp [TreeCircuit.size]
+  | node isAnd cs => simp [TreeCircuit.size]
 
 /-- Maximum fan-in over a list of circuits. -/
-def Circuit.maxFaninL (cs : List (Circuit n)) : ℕ :=
+def TreeCircuit.maxFaninL (cs : List (TreeCircuit n)) : ℕ :=
   cs.foldr (fun c acc => max c.maxFanin acc) 0
 
 /-- A gate's depth is one more than its children's. -/
-theorem Circuit.depth_node (b : Bool) (cs : List (Circuit n)) :
-    (Circuit.node b cs).depth = 1 + Circuit.maxDepth cs := by
-  simp [Circuit.depth, Circuit.maxDepth]
+theorem TreeCircuit.depth_node (b : Bool) (cs : List (TreeCircuit n)) :
+    (TreeCircuit.node b cs).depth = 1 + TreeCircuit.maxDepth cs := by
+  simp [TreeCircuit.depth, TreeCircuit.maxDepth]
 
 /-- A gate's size is one more than its children's total. -/
-theorem Circuit.size_node (b : Bool) (cs : List (Circuit n)) :
-    (Circuit.node b cs).size = 1 + Circuit.sumSize cs := by
-  simp [Circuit.size, Circuit.sumSize]
+theorem TreeCircuit.size_node (b : Bool) (cs : List (TreeCircuit n)) :
+    (TreeCircuit.node b cs).size = 1 + TreeCircuit.sumSize cs := by
+  simp [TreeCircuit.size, TreeCircuit.sumSize]
 
 /-- A gate's fan-in is its arity or its children's fan-in, whichever is larger. -/
-theorem Circuit.maxFanin_node (b : Bool) (cs : List (Circuit n)) :
-    (Circuit.node b cs).maxFanin = max cs.length (Circuit.maxFaninL cs) := by
-  simp [Circuit.maxFanin, Circuit.maxFaninL]
+theorem TreeCircuit.maxFanin_node (b : Bool) (cs : List (TreeCircuit n)) :
+    (TreeCircuit.node b cs).maxFanin = max cs.length (TreeCircuit.maxFaninL cs) := by
+  simp [TreeCircuit.maxFanin, TreeCircuit.maxFaninL]
 
 /-- `maxDepth` of the empty list. -/
-theorem Circuit.maxDepth_nil : Circuit.maxDepth ([] : List (Circuit n)) = 0 := rfl
+theorem TreeCircuit.maxDepth_nil : TreeCircuit.maxDepth ([] : List (TreeCircuit n)) = 0 := rfl
 
 /-- `maxDepth` on a cons cell. -/
-theorem Circuit.maxDepth_cons (c : Circuit n) (cs : List (Circuit n)) :
-    Circuit.maxDepth (c :: cs) = max c.depth (Circuit.maxDepth cs) := rfl
+theorem TreeCircuit.maxDepth_cons (c : TreeCircuit n) (cs : List (TreeCircuit n)) :
+    TreeCircuit.maxDepth (c :: cs) = max c.depth (TreeCircuit.maxDepth cs) := rfl
 
 /-- `sumSize` of the empty list. -/
-theorem Circuit.sumSize_nil : Circuit.sumSize ([] : List (Circuit n)) = 0 := rfl
+theorem TreeCircuit.sumSize_nil : TreeCircuit.sumSize ([] : List (TreeCircuit n)) = 0 := rfl
 
 /-- `sumSize` on a cons cell. -/
-theorem Circuit.sumSize_cons (c : Circuit n) (cs : List (Circuit n)) :
-    Circuit.sumSize (c :: cs) = c.size + Circuit.sumSize cs := rfl
+theorem TreeCircuit.sumSize_cons (c : TreeCircuit n) (cs : List (TreeCircuit n)) :
+    TreeCircuit.sumSize (c :: cs) = c.size + TreeCircuit.sumSize cs := rfl
 
-/-- `Circuit.maxFaninL` of the empty list. -/
-theorem Circuit.maxFaninL_nil : Circuit.maxFaninL ([] : List (Circuit n)) = 0 := rfl
+/-- `TreeCircuit.maxFaninL` of the empty list. -/
+theorem TreeCircuit.maxFaninL_nil : TreeCircuit.maxFaninL ([] : List (TreeCircuit n)) = 0 := rfl
 
-/-- `Circuit.maxFaninL` on a cons cell. -/
-theorem Circuit.maxFaninL_cons (c : Circuit n) (cs : List (Circuit n)) :
-    Circuit.maxFaninL (c :: cs) = max c.maxFanin (Circuit.maxFaninL cs) := rfl
+/-- `TreeCircuit.maxFaninL` on a cons cell. -/
+theorem TreeCircuit.maxFaninL_cons (c : TreeCircuit n) (cs : List (TreeCircuit n)) :
+    TreeCircuit.maxFaninL (c :: cs) = max c.maxFanin (TreeCircuit.maxFaninL cs) := rfl
 
 /-- Each child is no deeper than the deepest. -/
-theorem Circuit.depth_le_maxDepth {c : Circuit n} :
-    ∀ {cs : List (Circuit n)}, c ∈ cs → c.depth ≤ Circuit.maxDepth cs
+theorem TreeCircuit.depth_le_maxDepth {c : TreeCircuit n} :
+    ∀ {cs : List (TreeCircuit n)}, c ∈ cs → c.depth ≤ TreeCircuit.maxDepth cs
   | _ :: cs, h => by
       rcases List.mem_cons.mp h with rfl | h
       · exact le_max_left _ _
-      · exact (Circuit.depth_le_maxDepth h).trans (le_max_right _ _)
+      · exact (TreeCircuit.depth_le_maxDepth h).trans (le_max_right _ _)
 
 /-- Each child's fan-in is at most the list's. -/
-theorem Circuit.maxFanin_le_maxFaninL {c : Circuit n} :
-    ∀ {cs : List (Circuit n)}, c ∈ cs → c.maxFanin ≤ Circuit.maxFaninL cs
+theorem TreeCircuit.maxFanin_le_maxFaninL {c : TreeCircuit n} :
+    ∀ {cs : List (TreeCircuit n)}, c ∈ cs → c.maxFanin ≤ TreeCircuit.maxFaninL cs
   | _ :: cs, h => by
       rcases List.mem_cons.mp h with rfl | h
       · exact le_max_left _ _
-      · exact (Circuit.maxFanin_le_maxFaninL h).trans (le_max_right _ _)
+      · exact (TreeCircuit.maxFanin_le_maxFaninL h).trans (le_max_right _ _)
 
 /-- A circuit has at least one node, so a child list is no longer than its total size. -/
-theorem Circuit.length_le_sumSize : ∀ cs : List (Circuit n), cs.length ≤ Circuit.sumSize cs
+theorem TreeCircuit.length_le_sumSize : ∀ cs : List (TreeCircuit n), cs.length ≤ TreeCircuit.sumSize cs
   | [] => le_refl 0
   | c :: cs => by
-      have hc := Circuit.one_le_size c
-      have := Circuit.length_le_sumSize cs
-      simp only [List.length_cons, Circuit.sumSize_cons]
+      have hc := TreeCircuit.one_le_size c
+      have := TreeCircuit.length_le_sumSize cs
+      simp only [List.length_cons, TreeCircuit.sumSize_cons]
       omega
 
-/-- The list form of `Circuit.maxFanin_le_size`. -/
-theorem Circuit.maxFaninL_le_sumSize :
-    ∀ {cs : List (Circuit n)}, (∀ c ∈ cs, c.maxFanin ≤ c.size) →
-      Circuit.maxFaninL cs ≤ Circuit.sumSize cs
+/-- The list form of `TreeCircuit.maxFanin_le_size`. -/
+theorem TreeCircuit.maxFaninL_le_sumSize :
+    ∀ {cs : List (TreeCircuit n)}, (∀ c ∈ cs, c.maxFanin ≤ c.size) →
+      TreeCircuit.maxFaninL cs ≤ TreeCircuit.sumSize cs
   | [], _ => le_refl 0
   | c :: cs, h => by
       have h1 := h c (List.mem_cons_self ..)
-      have h2 := Circuit.maxFaninL_le_sumSize (fun d hd => h d (List.mem_cons_of_mem _ hd))
-      simp only [Circuit.maxFaninL_cons, Circuit.sumSize_cons]
+      have h2 := TreeCircuit.maxFaninL_le_sumSize (fun d hd => h d (List.mem_cons_of_mem _ hd))
+      simp only [TreeCircuit.maxFaninL_cons, TreeCircuit.sumSize_cons]
       omega
 
 /-- A circuit's fan-in is bounded by its size. -/
-theorem Circuit.maxFanin_le_size (c : Circuit n) : c.maxFanin ≤ c.size := by
-  induction c using Circuit.ind with
-  | hlit l => simp [Circuit.maxFanin, Circuit.size]
+theorem TreeCircuit.maxFanin_le_size (c : TreeCircuit n) : c.maxFanin ≤ c.size := by
+  induction c using TreeCircuit.ind with
+  | hlit l => simp [TreeCircuit.maxFanin, TreeCircuit.size]
   | hnode b cs ih =>
-      have h₁ := Circuit.length_le_sumSize cs
-      have h₂ := Circuit.maxFaninL_le_sumSize ih
-      rw [Circuit.maxFanin_node, Circuit.size_node]
+      have h₁ := TreeCircuit.length_le_sumSize cs
+      have h₂ := TreeCircuit.maxFaninL_le_sumSize ih
+      rw [TreeCircuit.maxFanin_node, TreeCircuit.size_node]
       omega
 
 /-- A uniform bound on the children bounds the total size plus length. -/
-private theorem Circuit.sumSize_add_length_le (m : ℕ) :
-    ∀ cs : List (Circuit n), (∀ c ∈ cs, c.size + 1 ≤ m) →
-      Circuit.sumSize cs + cs.length ≤ cs.length * m
-  | [], _ => by simp [Circuit.sumSize_nil]
+private theorem TreeCircuit.sumSize_add_length_le (m : ℕ) :
+    ∀ cs : List (TreeCircuit n), (∀ c ∈ cs, c.size + 1 ≤ m) →
+      TreeCircuit.sumSize cs + cs.length ≤ cs.length * m
+  | [], _ => by simp [TreeCircuit.sumSize_nil]
   | c :: cs, h => by
-      have ih := Circuit.sumSize_add_length_le m cs (fun d hd => h d (List.mem_cons_of_mem _ hd))
+      have ih := TreeCircuit.sumSize_add_length_le m cs (fun d hd => h d (List.mem_cons_of_mem _ hd))
       have hc := h c (List.mem_cons_self ..)
-      simp only [Circuit.sumSize_cons, List.length_cons, Nat.succ_mul]
+      simp only [TreeCircuit.sumSize_cons, List.length_cons, Nat.succ_mul]
       omega
 
-/-- A fan-in-2 circuit of depth `d` has at most `2 ^ (d + 1) - 1` nodes. -/
-theorem Circuit.size_succ_le_two_pow : ∀ c : Circuit n, c.maxFanin ≤ 2 →
+/-- A fan-in-2 circuit of depth `d` has at most `2 ^ (d + 1) - 1` nodes.
+
+**Proof sketch.** Structural induction on the tree.  A literal has size `1` and depth `0`.  A
+node with at most two children, each of fan-in at most two, has children of depth at most
+`D` (the maximum child depth), so by induction each child contributes at most
+`2 ^ (D + 1) - 1` nodes.  Hence the node has at most `1 + 2 (2 ^ (D + 1) - 1) =
+2 ^ (D + 2) - 1` nodes, and its depth is `D + 1`; the cases of zero, one and two children are
+checked separately by linear arithmetic. -/
+theorem TreeCircuit.size_succ_le_two_pow : ∀ c : TreeCircuit n, c.maxFanin ≤ 2 →
     c.size + 1 ≤ 2 ^ (c.depth + 1) := by
   intro c
-  induction c using Circuit.ind with
-  | hlit l => intro _; simp [Circuit.size, Circuit.depth]
+  induction c using TreeCircuit.ind with
+  | hlit l => intro _; simp [TreeCircuit.size, TreeCircuit.depth]
   | hnode b cs ih =>
       intro h
-      rw [Circuit.maxFanin_node] at h
+      rw [TreeCircuit.maxFanin_node] at h
       have hlen : cs.length ≤ 2 := le_trans (le_max_left _ _) h
-      have hfan : Circuit.maxFaninL cs ≤ 2 := le_trans (le_max_right _ _) h
-      have hchild : ∀ c ∈ cs, c.size + 1 ≤ 2 ^ (Circuit.maxDepth cs + 1) := fun c hc =>
-        le_trans (ih c hc (le_trans (Circuit.maxFanin_le_maxFaninL hc) hfan))
-          (Nat.pow_le_pow_right (by norm_num) (Nat.succ_le_succ (Circuit.depth_le_maxDepth hc)))
-      have hsum := Circuit.sumSize_add_length_le _ cs hchild
-      have hpos : 1 ≤ 2 ^ (Circuit.maxDepth cs + 1) := Nat.one_le_two_pow
-      have hD : (2 : ℕ) ^ (Circuit.maxDepth cs + 2) = 2 * 2 ^ (Circuit.maxDepth cs + 1) := by
+      have hfan : TreeCircuit.maxFaninL cs ≤ 2 := le_trans (le_max_right _ _) h
+      have hchild : ∀ c ∈ cs, c.size + 1 ≤ 2 ^ (TreeCircuit.maxDepth cs + 1) := fun c hc =>
+        le_trans (ih c hc (le_trans (TreeCircuit.maxFanin_le_maxFaninL hc) hfan))
+          (Nat.pow_le_pow_right (by norm_num) (Nat.succ_le_succ (TreeCircuit.depth_le_maxDepth hc)))
+      have hsum := TreeCircuit.sumSize_add_length_le _ cs hchild
+      have hpos : 1 ≤ 2 ^ (TreeCircuit.maxDepth cs + 1) := Nat.one_le_two_pow
+      have hD : (2 : ℕ) ^ (TreeCircuit.maxDepth cs + 2) = 2 * 2 ^ (TreeCircuit.maxDepth cs + 1) := by
         ring
-      rw [Circuit.size_node, Circuit.depth_node, show (1 : ℕ) + Circuit.maxDepth cs + 1
-        = Circuit.maxDepth cs + 2 from by omega]
+      rw [TreeCircuit.size_node, TreeCircuit.depth_node, show (1 : ℕ) + TreeCircuit.maxDepth cs + 1
+        = TreeCircuit.maxDepth cs + 2 from by omega]
       rcases Nat.lt_or_ge cs.length 1 with hz | hz
       · have hnil : cs = [] := List.eq_nil_of_length_eq_zero (by omega)
         subst hnil
-        simp only [Circuit.sumSize_nil]
+        simp only [TreeCircuit.sumSize_nil]
         omega
       · rcases Nat.lt_or_ge cs.length 2 with hz2 | hz2
         · rw [show cs.length = 1 from by omega, Nat.one_mul] at hsum
@@ -322,8 +344,10 @@ theorem Circuit.size_succ_le_two_pow : ∀ c : Circuit n, c.maxFanin ≤ 2 →
 -- Section 3: Normal-form circuit (alternating, nodup at base)
 -- ----------------------------------------------------------------
 
-/-! The alternating normal form of [OD14, Def 4.26], with [OD14, Def 4.27]'s
-condition that a base gate reads no variable twice, as the `Nodup` invariant. -/
+/-! The alternating normal form — alternating trees over base clauses (see the
+module docstring's Divergences; **not** [OD14, Def 4.26]'s layered circuits) —
+with [OD14, Def 4.27]'s condition that a base gate reads no variable twice as
+the `Nodup` invariant. -/
 
 mutual
 /-- A normal-form circuit whose root is an `AND`: either a base `clause` of
@@ -438,18 +462,18 @@ mutual
 /-- Normalize into `AND`-rooted alternating form: a leaf becomes a one-literal
     clause, an `AND` gate maps its children into `OR` form, and an `OR` gate
     becomes a one-child `AND` node over an `OR` node. -/
-def Circuit.toNAnd : Circuit n → NAndCircuit n
+def TreeCircuit.toNAnd : TreeCircuit n → NAndCircuit n
   | .lit l          => .clause [l] (List.nodup_singleton _)
-  | .node true  cs  => .node (cs.map Circuit.toNOr)
-  | .node false cs  => .node [NOrCircuit.node (cs.map Circuit.toNAnd)]
+  | .node true  cs  => .node (cs.map TreeCircuit.toNOr)
+  | .node false cs  => .node [NOrCircuit.node (cs.map TreeCircuit.toNAnd)]
 
 /-- Normalize into `OR`-rooted alternating form: a leaf becomes a one-literal
     clause, an `OR` gate maps its children into `AND` form, and an `AND` gate
     becomes a one-child `OR` node over an `AND` node. -/
-def Circuit.toNOr : Circuit n → NOrCircuit n
+def TreeCircuit.toNOr : TreeCircuit n → NOrCircuit n
   | .lit l          => .clause [l] (List.nodup_singleton _)
-  | .node false cs  => .node (cs.map Circuit.toNAnd)
-  | .node true  cs  => .node [NAndCircuit.node (cs.map Circuit.toNOr)]
+  | .node false cs  => .node (cs.map TreeCircuit.toNAnd)
+  | .node true  cs  => .node [NAndCircuit.node (cs.map TreeCircuit.toNOr)]
 end
 
 /-- Folding `&&` after `List.map h` agrees with folding `&&` directly, when
@@ -492,12 +516,12 @@ private theorem foldr_add_map_le {α β : Type*} {f : α → Nat} {g : β → Na
         linarith [ ih heq.2 ]
 
 /-- Combined semantics preservation theorem (proves both toNAnd and toNOr at once). -/
-theorem toNAnd_toNOr_eval (c : Circuit n) (x : Fin n → Bool) :
+theorem toNAnd_toNOr_eval (c : TreeCircuit n) (x : Fin n → Bool) :
     (c.toNAnd).eval x = c.eval x ∧ (c.toNOr).eval x = c.eval x := by
-      induction' c using Circuit.ind with l isAnd cs ih
-      · repeat' unfold Circuit.toNAnd Circuit.toNOr
-        unfold NAndCircuit.eval NOrCircuit.eval Circuit.eval; aesop
-      · unfold Circuit.toNAnd Circuit.toNOr Circuit.eval
+      induction' c using TreeCircuit.ind with l isAnd cs ih
+      · repeat' unfold TreeCircuit.toNAnd TreeCircuit.toNOr
+        unfold NAndCircuit.eval NOrCircuit.eval TreeCircuit.eval; aesop
+      · unfold TreeCircuit.toNAnd TreeCircuit.toNOr TreeCircuit.eval
         cases isAnd <;> simp +decide [ * ]
         · simp [NAndCircuit.eval]
           unfold NOrCircuit.eval; simp +decide [ List.foldr_map ]
@@ -507,11 +531,11 @@ theorem toNAnd_toNOr_eval (c : Circuit n) (x : Fin n → Bool) :
           induction cs <;> aesop
 
 /-- `toNAnd` preserves semantics. -/
-theorem toNAnd_eval (c : Circuit n) (x : Fin n → Bool) :
+theorem toNAnd_eval (c : TreeCircuit n) (x : Fin n → Bool) :
     (c.toNAnd).eval x = c.eval x := (toNAnd_toNOr_eval c x).1
 
 /-- `toNOr` preserves semantics. -/
-theorem toNOr_eval (c : Circuit n) (x : Fin n → Bool) :
+theorem toNOr_eval (c : TreeCircuit n) (x : Fin n → Bool) :
     (c.toNOr).eval x = c.eval x := (toNAnd_toNOr_eval c x).2
 
 /-- Combined literal-count preservation.
@@ -524,41 +548,41 @@ them in a single extra node; an extra node holds no literals, so in both cases
 the count is the sum over the children of their normalized counts.  A side
 induction on the child list then turns the induction hypothesis for each child
 into equality of the two folded sums. -/
-theorem toNAnd_toNOr_litCount (c : Circuit n) :
+theorem toNAnd_toNOr_litCount (c : TreeCircuit n) :
     (c.toNAnd).litCount = c.litCount ∧ (c.toNOr).litCount = c.litCount := by
       by_contra h_contra
       revert h_contra
-      induction' c using Circuit.ind with l isAnd cs ih
-      · unfold Circuit.toNAnd Circuit.toNOr
-        unfold NAndCircuit.litCount NOrCircuit.litCount Circuit.litCount; aesop
+      induction' c using TreeCircuit.ind with l isAnd cs ih
+      · unfold TreeCircuit.toNAnd TreeCircuit.toNOr
+        unfold NAndCircuit.litCount NOrCircuit.litCount TreeCircuit.litCount; aesop
       · cases isAnd <;> simp_all +decide
-        · unfold Circuit.toNAnd Circuit.toNOr
-          unfold NAndCircuit.litCount NOrCircuit.litCount Circuit.litCount
+        · unfold TreeCircuit.toNAnd TreeCircuit.toNOr
+          unfold NAndCircuit.litCount NOrCircuit.litCount TreeCircuit.litCount
           induction cs <;> simp_all +decide [ List.foldr ]
-        · unfold Circuit.toNAnd Circuit.toNOr
+        · unfold TreeCircuit.toNAnd TreeCircuit.toNOr
           constructor
-          · unfold NAndCircuit.litCount Circuit.litCount
-            have h_foldr : ∀ (cs : List (Circuit n)),
+          · unfold NAndCircuit.litCount TreeCircuit.litCount
+            have h_foldr : ∀ (cs : List (TreeCircuit n)),
                 (∀ c ∈ cs, c.toNOr.litCount = c.litCount) →
-                List.foldr (fun c acc => c.litCount + acc) 0 (List.map Circuit.toNOr cs) =
+                List.foldr (fun c acc => c.litCount + acc) 0 (List.map TreeCircuit.toNOr cs) =
                 List.foldr (fun c acc => c.litCount + acc) 0 cs := by
               intros cs hcs; induction cs <;> aesop
             exact h_foldr cs fun c hc => ih c hc |>.2
-          · unfold NOrCircuit.litCount Circuit.litCount; simp +decide
+          · unfold NOrCircuit.litCount TreeCircuit.litCount; simp +decide
             unfold NAndCircuit.litCount
-            have h_foldr : ∀ (cs : List (Circuit n)),
+            have h_foldr : ∀ (cs : List (TreeCircuit n)),
                 (∀ c ∈ cs, c.toNOr.litCount = c.litCount) →
-                List.foldr (fun c acc => c.litCount + acc) 0 (List.map Circuit.toNOr cs) =
+                List.foldr (fun c acc => c.litCount + acc) 0 (List.map TreeCircuit.toNOr cs) =
                 List.foldr (fun c acc => c.litCount + acc) 0 cs := by
               intros cs hcs; induction cs <;> aesop
             exact h_foldr cs fun c hc => ih c hc |>.2
 
 /-- `toNAnd` preserves the literal count. -/
-theorem toNAnd_litCount (c : Circuit n) :
+theorem toNAnd_litCount (c : TreeCircuit n) :
     (c.toNAnd).litCount = c.litCount := (toNAnd_toNOr_litCount c).1
 
 /-- `toNOr` preserves the literal count. -/
-theorem toNOr_litCount (c : Circuit n) :
+theorem toNOr_litCount (c : TreeCircuit n) :
     (c.toNOr).litCount = c.litCount := (toNAnd_toNOr_litCount c).2
 
 /-- Combined size bound.
@@ -573,29 +597,29 @@ size is at most twice its own, the sum of the normalized sizes is at most twice
 the sum of the sizes.  The gate's own size is one more than the children's total,
 so twice the gate's size leaves two units of slack over twice the children's
 total — exactly enough to pay for the inserted node. -/
-theorem toNAnd_toNOr_size_le (c : Circuit n) :
+theorem toNAnd_toNOr_size_le (c : TreeCircuit n) :
     (c.toNAnd).size ≤ 2 * c.size ∧ (c.toNOr).size ≤ 2 * c.size := by
-      induction' c using Circuit.ind with l isAnd cs ih
-      · simp +arith +decide [ Circuit.toNAnd, Circuit.toNOr ]
-        exact ⟨ by simp +arith +decide [ NAndCircuit.size, Circuit.size ],
-                by simp +arith +decide [ NOrCircuit.size, Circuit.size ] ⟩
+      induction' c using TreeCircuit.ind with l isAnd cs ih
+      · simp +arith +decide [ TreeCircuit.toNAnd, TreeCircuit.toNOr ]
+        exact ⟨ by simp +arith +decide [ NAndCircuit.size, TreeCircuit.size ],
+                by simp +arith +decide [ NOrCircuit.size, TreeCircuit.size ] ⟩
       · have h_ind : ∀ c ∈ cs, c.toNAnd.size ≤ 2 * c.size ∧ c.toNOr.size ≤ 2 * c.size :=
           ih
-        unfold Circuit.toNAnd Circuit.toNOr Circuit.size
+        unfold TreeCircuit.toNAnd TreeCircuit.toNOr TreeCircuit.size
         cases isAnd <;> simp +decide [ * ]
         · constructor
           · simp +arith +decide [ NAndCircuit.size ]
             unfold NOrCircuit.size; simp +arith +decide [ * ]
-            have h_foldr : ∀ (cs : List (Circuit n)),
+            have h_foldr : ∀ (cs : List (TreeCircuit n)),
                 (∀ c ∈ cs, c.toNAnd.size ≤ 2 * c.size) →
-                List.foldr (fun c acc => acc + c.size) 0 (List.map Circuit.toNAnd cs) ≤
+                List.foldr (fun c acc => acc + c.size) 0 (List.map TreeCircuit.toNAnd cs) ≤
                 2 * List.foldr (fun c acc => acc + c.size) 0 cs := by
               intro cs h_ind; induction cs <;> simp_all +decide [ mul_add ]
               grind
             exact h_foldr cs fun c hc => h_ind c hc |>.1
           · unfold NOrCircuit.size
             have h_foldr :
-                List.foldr (fun c acc => c.size + acc) 0 (List.map Circuit.toNAnd cs) ≤
+                List.foldr (fun c acc => c.size + acc) 0 (List.map TreeCircuit.toNAnd cs) ≤
                 2 * List.foldr (fun c acc => c.size + acc) 0 cs := by
               convert foldr_add_map_le _ using 1
               exact fun c hc => h_ind c hc |>.1
@@ -603,7 +627,7 @@ theorem toNAnd_toNOr_size_le (c : Circuit n) :
         · have h_node :
               (List.foldr (fun c acc => c.toNOr.size + acc) 0 cs) ≤
               2 * (List.foldr (fun c acc => c.size + acc) 0 cs) := by
-            have h_node : ∀ (cs : List (Circuit n)),
+            have h_node : ∀ (cs : List (TreeCircuit n)),
                 (∀ c ∈ cs, c.toNOr.size ≤ 2 * c.size) →
                 (List.foldr (fun c acc => c.toNOr.size + acc) 0 cs) ≤
                 2 * (List.foldr (fun c acc => c.size + acc) 0 cs) := by
@@ -626,11 +650,11 @@ theorem toNAnd_toNOr_size_le (c : Circuit n) :
             · ac_rfl
 
 /-- `toNAnd` at most doubles the size. -/
-theorem toNAnd_size_le (c : Circuit n) :
+theorem toNAnd_size_le (c : TreeCircuit n) :
     (c.toNAnd).size ≤ 2 * c.size := (toNAnd_toNOr_size_le c).1
 
 /-- `toNOr` at most doubles the size. -/
-theorem toNOr_size_le (c : Circuit n) :
+theorem toNOr_size_le (c : TreeCircuit n) :
     (c.toNOr).size ≤ 2 * c.size := (toNAnd_toNOr_size_le c).2
 
 -- ----------------------------------------------------------------
@@ -640,15 +664,15 @@ theorem toNOr_size_le (c : Circuit n) :
 mutual
 /-- Forget the normal form: a clause becomes an `AND` gate over its literal
     leaves, a node an `AND` gate over its converted children. -/
-def NAndCircuit.toCircuit : NAndCircuit n → Circuit n
+def NAndCircuit.toTreeCircuit : NAndCircuit n → TreeCircuit n
   | .clause lits _ => .node true (lits.map fun l => .lit l)
-  | .node cs       => .node true (cs.map NOrCircuit.toCircuit)
+  | .node cs       => .node true (cs.map NOrCircuit.toTreeCircuit)
 
 /-- Forget the normal form: a clause becomes an `OR` gate over its literal
     leaves, a node an `OR` gate over its converted children. -/
-def NOrCircuit.toCircuit : NOrCircuit n → Circuit n
+def NOrCircuit.toTreeCircuit : NOrCircuit n → TreeCircuit n
   | .clause lits _ => .node false (lits.map fun l => .lit l)
-  | .node cs       => .node false (cs.map NAndCircuit.toCircuit)
+  | .node cs       => .node false (cs.map NAndCircuit.toTreeCircuit)
 end
 
 -- ----------------------------------------------------------------

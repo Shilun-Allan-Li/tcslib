@@ -6796,3 +6796,18 @@ R^{\mathrm{pub}}_{1/32}\bigl(\mathrm{disjointness}_n\bigr),
 where the left-hand side is the floor of the real number $n / 2^{32}$ and the right-hand
 side is valued in $\bbn_\infty$.
 \end{theorem}
+
+%%% added by the blueprint pipeline
+\section{Additional declarations}
+
+\begin{definition}[Coordinate states of a disjoint pair]
+\lean{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.DisjointCoordinate}
+\label{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.DisjointCoordinate}
+\leanok
+A three-element type enumerating the possible states of a single coordinate of a
+pair of disjoint sets $X, Y \subseteq [n]$: a coordinate $i$ either lies in neither
+set ($i \notin X \cup Y$), only in the first set ($i \in X \setminus Y$), or only in
+the second set ($i \in Y \setminus X$). It parameterizes the coordinates away from
+the special coordinate when building the hard input distribution for the disjointness
+lower bound.
+\end{definition}

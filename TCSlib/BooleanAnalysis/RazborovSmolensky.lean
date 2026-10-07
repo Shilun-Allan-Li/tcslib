@@ -12,7 +12,9 @@ set_option linter.unnecessarySimpa false
 set_option linter.unusedSimpArgs false
 set_option linter.unusedSectionVars false
 
-namespace ACP
+namespace RazborovSmolensky
+
+open BoolCircuit
 
 section BooleanTransferAndFinalRoadmap
 
@@ -1204,7 +1206,7 @@ theorem MODq_notin_AC0p_quantitative
     {q n δ ℓ e B : ℕ} [Fact (Nat.Prime q)]
     (hpq : p ≠ q)
     {out : Type}
-    (F : FeedForward (Fin 2) (Fin (n + (q - 1))) out)
+    (F : LayeredCircuit (Fin 2) (Fin (n + (q - 1))) out)
     [∀ i, Finite (F.nodes i)]
     [Unique out]
     (hUses : F.onlyUsesGates (ACp_GateOps p))
@@ -1238,4 +1240,4 @@ theorem MODq_notin_AC0p_quantitative
 
 end BooleanTransferAndFinalRoadmap
 
-end ACP
+end RazborovSmolensky

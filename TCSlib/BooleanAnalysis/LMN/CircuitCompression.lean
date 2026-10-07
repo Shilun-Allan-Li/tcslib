@@ -26,7 +26,7 @@ The failure probability is at most s₂ · ((1/2)^l + exp(-np/3)), where s₂ is
 number of layer-2 gates.
 -/
 
-open BoolCircuit SwitchingLemma2 SwitchingBernoulli LMN
+open BoolCircuit SwitchingLemma SwitchingBernoulli LMN
 open Classical in
 attribute [local instance] Classical.propDecidable
 noncomputable section
@@ -52,13 +52,28 @@ When layer-2 DNF gates are replaced by width-l CNFs, the layer-3 AND gate
 AND-of-ANDs identity collapses layers 2 and 3 into a single CNF layer. -/
 
 /-
-Width of a term list is bounded iff all terms have bounded width.
+Width of a depth-2 shape is bounded iff every literal list in it has bounded width.
 -/
-private lemma width_le_iff_forall {ts : List (Term n)} {l : ℕ} :
-    (ts.map Term.width).foldr max 0 ≤ l ↔ ∀ t ∈ ts, t.width ≤ l := by
-  induction' ts with t ts ihizing l;
-  · norm_num +zetaDelta at *;
-  · grind +splitImp
+private lemma width_le_iff_forall {F : Depth2 n} {l : ℕ} :
+    Depth2.width F ≤ l ↔ ∀ t ∈ F, t.width ≤ l := by
+  induction F with
+  | nil => simp [Depth2.width]
+  | cons t F ih =>
+    simp only [Depth2.width, List.map_cons, List.foldr_cons, max_le_iff, List.mem_cons,
+      forall_eq_or_imp] at ih ⊢
+    rw [ih]
+
+private lemma mem_listConcat {α : Type u} {ls : List (List α)} {a : α} :
+    a ∈ listConcat ls ↔ ∃ l ∈ ls, a ∈ l := by
+  induction ls with
+  | nil => simp [listConcat]
+  | cons l ls ih => simp [listConcat, ih]
+
+/-- The conjunction of a list of CNFs: concatenate their clause lists. -/
+def cnfConcat (cnfs : List (CNF n)) : CNF n := ⟨listConcat (cnfs.map CNF.clauses)⟩
+
+/-- The disjunction of a list of DNFs: concatenate their term lists. -/
+def dnfConcat (dnfs : List (DNF n)) : DNF n := ⟨listConcat (dnfs.map DNF.terms)⟩
 
 /-
 **CNF concatenation preserves width.**
@@ -69,54 +84,44 @@ private lemma width_le_iff_forall {ts : List (Term n)} {l : ℕ} :
 -/
 lemma cnf_concat_width_le (cnfs : List (CNF n)) (l : ℕ)
     (h : ∀ ψ ∈ cnfs, CNF.width ψ ≤ l) :
-    CNF.width (listConcat cnfs) ≤ l := by
-  induction' cnfs with ψ cnfs ih;
-  · exact Nat.zero_le _;
-  · simp_all +decide [ listConcat ];
-    unfold CNF.width at *;
-    induction ψ <;> aesop
+    CNF.width (cnfConcat cnfs) ≤ l := by
+  simp only [cnfConcat, CNF.width_mk, width_le_iff_forall, mem_listConcat, List.mem_map]
+  rintro c ⟨_, ⟨ψ, hψ, rfl⟩, hc⟩
+  exact width_le_iff_forall.mp (h ψ hψ) c hc
 
 /-
 **CNF concatenation evaluates as conjunction.**
 -/
 lemma cnf_concat_eval (cnfs : List (CNF n)) (x : Fin n → Bool) :
-    CNF.eval (listConcat cnfs) x = cnfs.all (fun ψ => CNF.eval ψ x) := by
+    CNF.eval (cnfConcat cnfs) x = cnfs.all (fun ψ => CNF.eval ψ x) := by
   induction cnfs with
-  | nil => simp [listConcat, CNF.eval]
-  | cons head tail ih =>
-      simp only [listConcat, List.all_append, CNF.eval]
-      simp_all +decide [CNF.eval]
+  | nil => rfl
+  | cons ψ cnfs ih =>
+    simp only [cnfConcat, CNF.eval_mk, List.map_cons, listConcat, List.all_append,
+      List.all_cons] at ih ⊢
+    rw [ih]; rfl
 
 /-
 **DNF concatenation preserves width.**
 -/
 lemma dnf_concat_width_le (dnfs : List (DNF n)) (l : ℕ)
     (h : ∀ φ ∈ dnfs, DNF.width φ ≤ l) :
-    DNF.width (listConcat dnfs) ≤ l := by
-  convert cnf_concat_width_le ( List.map ( fun φ => φ.map ( fun clause => clause.map ( fun l => ⟨ l.var, !l.neg ⟩ ) ) ) dnfs ) l ?_ using 1;
-  · have h_width_eq : ∀ cnfs : List (CNF n), CNF.width (listConcat cnfs) = DNF.width (listConcat (List.map (fun φ => φ.map (fun clause => clause.map (fun l => ⟨l.var, !l.neg⟩))) cnfs)) := by
-      -- The width of a CNF is the maximum length of its clauses, and the width of a DNF is the maximum length of its terms. Since each clause in the CNF becomes a term in the DNF by negating the literals, the lengths of the clauses and terms are the same. Therefore, the maximum length (width) should be the same.
-      intros cnfs
-      simp [CNF.width, DNF.width];
-      induction' cnfs with cnfs ih <;> simp_all +decide [ listConcat ];
-      congr! 2;
-      ext; simp [Term.width];
-    convert h_width_eq ( List.map ( fun φ => φ.map ( fun clause => clause.map ( fun l => ⟨ l.var, !l.neg ⟩ ) ) ) dnfs ) |> Eq.symm using 1;
-    convert rfl using 2;
-    refine' congr_arg _ ( List.ext_get _ _ ) <;> aesop;
-  · simp +zetaDelta at *;
-    intro φ hφ;
-    convert h φ hφ using 1;
-    convert cnfToDualDNF_width φ using 1
+    DNF.width (dnfConcat dnfs) ≤ l := by
+  simp only [dnfConcat, DNF.width_mk, width_le_iff_forall, mem_listConcat, List.mem_map]
+  rintro t ⟨_, ⟨φ, hφ, rfl⟩, ht⟩
+  exact width_le_iff_forall.mp (h φ hφ) t ht
 
 /-
 **DNF concatenation evaluates as disjunction.**
 -/
 lemma dnf_concat_eval (dnfs : List (DNF n)) (x : Fin n → Bool) :
-    DNF.eval (listConcat dnfs) x = dnfs.any (fun φ => DNF.eval φ x) := by
-  induction' dnfs with dnfs ih <;> simp_all +decide [ DNF.eval ];
-  · tauto;
-  · rw [ ← ‹ ( ( listConcat ih ).any fun t => t.eval x ) = ih.any fun φ => List.any φ fun t => t.eval x ›, listConcat ] ; simp +decide [ List.any_append ] ;
+    DNF.eval (dnfConcat dnfs) x = dnfs.any (fun φ => DNF.eval φ x) := by
+  induction dnfs with
+  | nil => rfl
+  | cons φ dnfs ih =>
+    simp only [dnfConcat, DNF.eval_mk, List.map_cons, listConcat, List.any_append,
+      List.any_cons] at ih ⊢
+    rw [ih]; rfl
 
 /-
 **Circuit compression for CNFs under AND (Step 6, AND case).**
@@ -126,7 +131,7 @@ lemma dnf_concat_eval (dnfs : List (DNF n)) (x : Fin n → Bool) :
     can be expressed as a single CNF of width ≤ l.
 
     Proof: Each child function fᵢ has a CNF ψᵢ with width ≤ l.
-    Define ψ = ψ₁ ++ ψ₂ ++ ⋯ ++ ψₛ (concatenation of all clause lists).
+    Define ψ = cnfConcat [ψ₁, …, ψₛ] (concatenation of all clause lists).
     Then ψ.eval x = (ψ₁.eval x) && (ψ₂.eval x) && ⋯ = (f₁ x) && ⋯
     and ψ.width ≤ l since each ψᵢ.width ≤ l.
 
@@ -141,7 +146,7 @@ theorem compression_and_of_cnfs
     ∃ ψ : CNF n, CNF.width ψ ≤ l ∧
       ∀ x, CNF.eval ψ x = children.all (fun f => f x) := by
   choose! ψ hψ₁ hψ₂ using h_cnf;
-  refine' ⟨ LMN.listConcat ( List.map ψ children ), _, _ ⟩;
+  refine' ⟨ cnfConcat ( List.map ψ children ), _, _ ⟩;
   · exact cnf_concat_width_le _ _ fun ψ' hψ' => by aesop;
   · convert cnf_concat_eval ( List.map ψ children ) using 1;
     simp +decide [ List.all_map ];
@@ -162,7 +167,7 @@ theorem compression_or_of_dnfs
     ∃ φ : DNF n, DNF.width φ ≤ l ∧
       ∀ x, DNF.eval φ x = children.any (fun f => f x) := by
   choose! φ hφ using h_dnf;
-  refine' ⟨ LMN.listConcat ( children.map φ ), _, _ ⟩ <;> simp_all +decide [ LMN.dnf_concat_width_le, LMN.dnf_concat_eval ];
+  refine' ⟨ dnfConcat ( children.map φ ), _, _ ⟩ <;> simp_all +decide [ LMN.dnf_concat_width_le, LMN.dnf_concat_eval ];
   grind
 
 /-! ## Step 7: One-Step Reduction -/
@@ -180,8 +185,8 @@ theorem compression_or_of_dnfs
 theorem one_step_reduction_failure_bound
     (gates : Fin s₂ → DNF n) (w l : ℕ)
     (hw : ∀ i, (gates i).width ≤ w) (hw_pos : 0 < w)
-    (hnd : ∀ i, ∀ t ∈ gates i, ∀ l₁ ∈ t, ∀ l₂ ∈ t, l₁.var = l₂.var → l₁ = l₂)
-    (hnodup : ∀ i, ∀ t ∈ gates i, t.Nodup)
+    (hnd : ∀ i, ∀ t ∈ (gates i).terms, ∀ l₁ ∈ t, ∀ l₂ ∈ t, l₁.var = l₂.var → l₁ = l₂)
+    (hnodup : ∀ i, ∀ t ∈ (gates i).terms, t.Nodup)
     (hn : 0 < n)
     (p : ℝ) (hp_pos : 0 < p) (hp_le : p ≤ 1 / (40 * ↑w)) (hp1 : p ≤ 1) :
     bernoulliRestrProb p
@@ -207,8 +212,8 @@ theorem one_step_reduction_failure_bound
 theorem one_step_dtDepth_bound
     (gates : Fin s₂ → DNF n) (w l : ℕ)
     (hw : ∀ i, (gates i).width ≤ w) (hw_pos : 0 < w)
-    (hnd : ∀ i, ∀ t ∈ gates i, ∀ l₁ ∈ t, ∀ l₂ ∈ t, l₁.var = l₂.var → l₁ = l₂)
-    (hnodup : ∀ i, ∀ t ∈ gates i, t.Nodup)
+    (hnd : ∀ i, ∀ t ∈ (gates i).terms, ∀ l₁ ∈ t, ∀ l₂ ∈ t, l₁.var = l₂.var → l₁ = l₂)
+    (hnodup : ∀ i, ∀ t ∈ (gates i).terms, t.Nodup)
     (hn : 0 < n)
     (p : ℝ) (hp_pos : 0 < p) (hp_le : p ≤ 1 / (40 * ↑w)) (hp1 : p ≤ 1) :
     bernoulliRestrProb p
@@ -246,8 +251,8 @@ lemma bernoulliRestrProb_complement (p : ℝ) (hp : 0 ≤ p) (hp1 : p ≤ 1)
 theorem one_step_reduction_with_compression
     (gates : Fin s₂ → DNF n) (w l : ℕ)
     (hw : ∀ i, (gates i).width ≤ w) (hw_pos : 0 < w)
-    (hnd : ∀ i, ∀ t ∈ gates i, ∀ l₁ ∈ t, ∀ l₂ ∈ t, l₁.var = l₂.var → l₁ = l₂)
-    (hnodup : ∀ i, ∀ t ∈ gates i, t.Nodup)
+    (hnd : ∀ i, ∀ t ∈ (gates i).terms, ∀ l₁ ∈ t, ∀ l₂ ∈ t, l₁.var = l₂.var → l₁ = l₂)
+    (hnodup : ∀ i, ∀ t ∈ (gates i).terms, t.Nodup)
     (hn : 0 < n)
     (p : ℝ) (hp_pos : 0 < p) (hp_le : p ≤ 1 / (40 * ↑w)) (hp1 : p ≤ 1) :
     bernoulliRestrProb p

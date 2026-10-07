@@ -15,38 +15,38 @@ at degree $n/2$, and the final Hamming-ball counting obstruction.
 \section{Declarations}
 
 \begin{definition}[MOD $q$ target inside $\mathbb{Z}/p$]
-\lean{ACP.modQTarget}
-\label{ACP.modQTarget}
+\lean{RazborovSmolensky.modQTarget}
+\label{RazborovSmolensky.modQTarget}
 \leanok
-\uses{ACP.modGateOp}
+\uses{RazborovSmolensky.modGateOp}
 For a prime $q$, the Boolean function $\mathrm{MOD}_q$ on $n$ inputs viewed as a function
 $\{0,1\}^n \to \mathbb{Z}/p$: the output bit of the gate operation $\mathrm{modGateOp}\ q\ n$
 is cast into $\mathbb{Z}/p$.
 \end{definition}
 
 \begin{definition}[Bad input count on the Boolean cube]
-\lean{ACP.badInputCount}
-\label{ACP.badInputCount}
+\lean{RazborovSmolensky.badInputCount}
+\label{RazborovSmolensky.badInputCount}
 \leanok
-\uses{ACP.boolInput}
+\uses{RazborovSmolensky.boolInput}
 For a target $f : \{0,1\}^n \to \mathbb{Z}/p$ and a polynomial
 $P \in (\mathbb{Z}/p)[X_1,\dots,X_n]$, the number of Boolean inputs $x$ with
 $P(\mathrm{boolInput}(x)) \neq f(x)$.
 \end{definition}
 
 \begin{definition}[Low-degree bad-count lower bound]
-\lean{ACP.LowDegreeBadCountLB}
-\label{ACP.LowDegreeBadCountLB}
+\lean{RazborovSmolensky.LowDegreeBadCountLB}
+\label{RazborovSmolensky.LowDegreeBadCountLB}
 \leanok
-\uses{ACP.badInputCount}
+\uses{RazborovSmolensky.badInputCount}
 The predicate asserting that every polynomial $P$ of total degree at most $d$ has
 $E \le \mathrm{badInputCount}(f, P)$, i.e.\ $f$ cannot be computed by a degree-$d$
 polynomial on more than $2^n - E$ points of the Boolean cube.
 \end{definition}
 
 \begin{lemma}[Averaging a pointwise counting bound over parameters]
-\lean{ACP.exists_good_parameter_of_pointwise_bound}
-\label{ACP.exists_good_parameter_of_pointwise_bound}
+\lean{RazborovSmolensky.exists_good_parameter_of_pointwise_bound}
+\label{RazborovSmolensky.exists_good_parameter_of_pointwise_bound}
 \leanok
 \difficulty{5}
 Let $\alpha$ and $\beta$ be finite types with $\beta$ nonempty, let $\mathrm{Fail} :
@@ -63,10 +63,10 @@ Then there exists a single $b \in \beta$ for which
 \end{lemma}
 
 \begin{theorem}[A single polynomial from a pointwise error bound]
-\lean{ACP.exists_single_polynomial_from_pointwise_distribution}
-\label{ACP.exists_single_polynomial_from_pointwise_distribution}
+\lean{RazborovSmolensky.exists_single_polynomial_from_pointwise_distribution}
+\label{RazborovSmolensky.exists_single_polynomial_from_pointwise_distribution}
 \leanok
-\uses{ACP.badInputCount, ACP.boolInput, ACP.exists_good_parameter_of_pointwise_bound}
+\uses{RazborovSmolensky.badInputCount, RazborovSmolensky.boolInput, RazborovSmolensky.exists_good_parameter_of_pointwise_bound}
 \difficulty{2}
 Fix a prime $p$, and let $(P_s)_{s \in S}$ be a family of polynomials in
 $(\bbz/p)[X_1,\dots,X_n]$ indexed by a nonempty finite set $S$ of seeds, let $f :
@@ -84,10 +84,10 @@ Then there exists a seed $s \in S$ for which the number of Boolean inputs $x \in
 \end{theorem}
 
 \begin{theorem}[{Low-degree polynomial approximation of an AC⁰[p] circuit}]
-\lean{ACP.exists_single_poly_for_circuit_one_size}
-\label{ACP.exists_single_poly_for_circuit_one_size}
+\lean{RazborovSmolensky.exists_single_poly_for_circuit_one_size}
+\label{RazborovSmolensky.exists_single_poly_for_circuit_one_size}
 \leanok
-\uses{ACP.ACp_GateOps, ACP.FeedForward, ACP.FeedForward.eval₁, ACP.FeedForward.onlyUsesGates, ACP.FeedForward.size, ACP.badInputCount, ACP.circuitDegreeBound, ACP.exists_poly_distribution_for_circuit_one_size, ACP.exists_single_polynomial_from_pointwise_distribution}
+\uses{RazborovSmolensky.ACp_GateOps, BoolCircuit.LayeredCircuit, BoolCircuit.LayeredCircuit.eval₁, BoolCircuit.LayeredCircuit.onlyUsesGates, BoolCircuit.LayeredCircuit.size, RazborovSmolensky.badInputCount, RazborovSmolensky.circuitDegreeBound, RazborovSmolensky.exists_poly_distribution_for_circuit_one_size, RazborovSmolensky.exists_single_polynomial_from_pointwise_distribution}
 \difficulty{2}
 Let $p$ be a prime, let $n\in\bbn$, and let $F$ be a feedforward circuit over the
 alphabet $\{0,1\}$ with input type $\mathrm{Fin}\,n$, a unique output node, and finitely
@@ -106,10 +106,10 @@ where $\operatorname{size}(F)$ is the number of non-input nodes of $F$.
 \end{theorem}
 
 \begin{theorem}[Size lower bound from a low-degree bad-count bound]
-\lean{ACP.size_lower_bound_from_badCountLB}
-\label{ACP.size_lower_bound_from_badCountLB}
+\lean{RazborovSmolensky.size_lower_bound_from_badCountLB}
+\label{RazborovSmolensky.size_lower_bound_from_badCountLB}
 \leanok
-\uses{ACP.ACp_GateOps, ACP.FeedForward, ACP.FeedForward.eval₁, ACP.FeedForward.onlyUsesGates, ACP.FeedForward.size, ACP.LowDegreeBadCountLB, ACP.badInputCount, ACP.circuitDegreeBound, ACP.exists_single_poly_for_circuit_one_size, ACP.modGateOp, ACP.modQTarget}
+\uses{RazborovSmolensky.ACp_GateOps, BoolCircuit.LayeredCircuit, BoolCircuit.LayeredCircuit.eval₁, BoolCircuit.LayeredCircuit.onlyUsesGates, BoolCircuit.LayeredCircuit.size, RazborovSmolensky.LowDegreeBadCountLB, RazborovSmolensky.badInputCount, RazborovSmolensky.circuitDegreeBound, RazborovSmolensky.exists_single_poly_for_circuit_one_size, RazborovSmolensky.modGateOp, RazborovSmolensky.modQTarget}
 \difficulty{3}
 Let $p$ and $q$ be primes, and let $F$ be a feedforward circuit over the alphabet
 $\{0,1\}$ with input coordinates indexed by $\mathrm{Fin}\,n$, finitely many nodes in
@@ -129,10 +129,10 @@ where $\abs{F}$ is the number of non-input nodes of $F$.
 \end{theorem}
 
 \begin{theorem}[Size lower bound from a relative bad-count bound]
-\lean{ACP.size_lower_bound_from_relative_badCountLB}
-\label{ACP.size_lower_bound_from_relative_badCountLB}
+\lean{RazborovSmolensky.size_lower_bound_from_relative_badCountLB}
+\label{RazborovSmolensky.size_lower_bound_from_relative_badCountLB}
 \leanok
-\uses{ACP.ACp_GateOps, ACP.FeedForward, ACP.FeedForward.eval₁, ACP.FeedForward.onlyUsesGates, ACP.FeedForward.size, ACP.LowDegreeBadCountLB, ACP.circuitDegreeBound, ACP.modGateOp, ACP.modQTarget, ACP.size_lower_bound_from_badCountLB}
+\uses{RazborovSmolensky.ACp_GateOps, BoolCircuit.LayeredCircuit, BoolCircuit.LayeredCircuit.eval₁, BoolCircuit.LayeredCircuit.onlyUsesGates, BoolCircuit.LayeredCircuit.size, RazborovSmolensky.LowDegreeBadCountLB, RazborovSmolensky.circuitDegreeBound, RazborovSmolensky.modGateOp, RazborovSmolensky.modQTarget, RazborovSmolensky.size_lower_bound_from_badCountLB}
 \difficulty{3}
 Let $p$ and $q$ be primes, and let $F$ be a layered feedforward circuit over the Boolean
 alphabet with input coordinates $\mathrm{Fin}\,n$ and a single output, each of whose
@@ -147,16 +147,16 @@ Then the size of $F$ satisfies $\delta \cdot 2^{\ell} \le \abs{F}$.
 \end{theorem}
 
 \begin{definition}[Standard field $\mathbb{F}_{p^{q-1}}$]
-\lean{ACP.ModqField}
-\label{ACP.ModqField}
+\lean{RazborovSmolensky.ModqField}
+\label{RazborovSmolensky.ModqField}
 \leanok
 The Galois field $\mathbb{F}_{p^{q-1}}$, the standard field choice for the
 $\mathrm{MOD}_q$ lower bound.
 \end{definition}
 
 \begin{lemma}[The predecessor of a prime is nonzero]
-\lean{ACP.q_sub_one_ne_zero}
-\label{ACP.q_sub_one_ne_zero}
+\lean{RazborovSmolensky.q_sub_one_ne_zero}
+\label{RazborovSmolensky.q_sub_one_ne_zero}
 \leanok
 \difficulty{1}
 Let $q$ be a prime number. Then $q - 1 \neq 0$, where the subtraction is taken over the
@@ -164,20 +164,20 @@ natural numbers.
 \end{lemma}
 
 \begin{lemma}[Cardinality of the field $\mathbb{F}_{p^{q-1}}$]
-\lean{ACP.natCard_modqField}
-\label{ACP.natCard_modqField}
+\lean{RazborovSmolensky.natCard_modqField}
+\label{RazborovSmolensky.natCard_modqField}
 \leanok
-\uses{ACP.ModqField, ACP.q_sub_one_ne_zero}
+\uses{RazborovSmolensky.ModqField, RazborovSmolensky.q_sub_one_ne_zero}
 \difficulty{1}
 Let $p$ and $q$ be prime numbers. The Galois field $\mathbb{F}_{p^{q-1}}$ has exactly
 $p^{q-1}$ elements.
 \end{lemma}
 
 \begin{theorem}[An element of order $q$ in $\mathbb{F}_{p^{q-1}}^{\times}$]
-\lean{ACP.exists_unit_of_order_q_modqField}
-\label{ACP.exists_unit_of_order_q_modqField}
+\lean{RazborovSmolensky.exists_unit_of_order_q_modqField}
+\label{RazborovSmolensky.exists_unit_of_order_q_modqField}
 \leanok
-\uses{ACP.ModqField, ACP.natCard_modqField}
+\uses{RazborovSmolensky.ModqField, RazborovSmolensky.natCard_modqField}
 \difficulty{5}
 Let $p$ and $q$ be distinct prime numbers, and let $\mathbb{F}_{p^{q-1}}$ denote the
 finite field with $p^{q-1}$ elements. Then the multiplicative group
@@ -185,28 +185,28 @@ $\mathbb{F}_{p^{q-1}}^{\times}$ contains a unit $u$ whose order is exactly $q$.
 \end{theorem}
 
 \begin{theorem}[Nontrivial $q$-th root of unity in $\bbf_{p^{q-1}}$]
-\lean{ACP.exists_nontrivial_qth_root_modqField}
-\label{ACP.exists_nontrivial_qth_root_modqField}
+\lean{RazborovSmolensky.exists_nontrivial_qth_root_modqField}
+\label{RazborovSmolensky.exists_nontrivial_qth_root_modqField}
 \leanok
-\uses{ACP.ModqField, ACP.exists_unit_of_order_q_modqField}
+\uses{RazborovSmolensky.ModqField, RazborovSmolensky.exists_unit_of_order_q_modqField}
 \difficulty{3}
 Let $p$ and $q$ be distinct primes. Then the field $\bbf_{p^{q-1}}$ contains an element
 $\omega \neq 1$ satisfying $\omega^{q} = 1$; that is, a nontrivial $q$-th root of unity.
 \end{theorem}
 
 \begin{definition}[Root-of-unity cube $\{1,\omega\}^n$]
-\lean{ACP.rootCube}
-\label{ACP.rootCube}
+\lean{RazborovSmolensky.rootCube}
+\label{RazborovSmolensky.rootCube}
 \leanok
 The subtype of vectors $x : \mathrm{Fin}\,n \to K$ such that each coordinate satisfies
 $x_i = 1$ or $x_i = \omega$.
 \end{definition}
 
 \begin{theorem}[Polynomial representative on the root cube]
-\lean{ACP.exists_multilinear_representative_on_rootCube}
-\label{ACP.exists_multilinear_representative_on_rootCube}
+\lean{RazborovSmolensky.exists_multilinear_representative_on_rootCube}
+\label{RazborovSmolensky.exists_multilinear_representative_on_rootCube}
 \leanok
-\uses{ACP.rootCube}
+\uses{RazborovSmolensky.rootCube}
 \difficulty{6}
 Let $K$ be a field, let $\omega \in K$, and let $n$ be a natural number. Write
 $\{1,\omega\}^n$ for the root cube, the set of vectors $x = (x_1,\dots,x_n) \in K^n$
@@ -216,17 +216,17 @@ f(x)$ for all $x$ in the cube.
 \end{theorem}
 
 \begin{definition}[Squarefree monomial]
-\lean{ACP.squarefreeMonomial}
-\label{ACP.squarefreeMonomial}
+\lean{RazborovSmolensky.squarefreeMonomial}
+\label{RazborovSmolensky.squarefreeMonomial}
 \leanok
 For $s \subseteq \mathrm{Fin}\,n$, the monomial $\prod_{i \in s} X_i$.
 \end{definition}
 
 \begin{definition}[Squarefree (multilinear) polynomial from coefficients]
-\lean{ACP.squarefreePolynomial}
-\label{ACP.squarefreePolynomial}
+\lean{RazborovSmolensky.squarefreePolynomial}
+\label{RazborovSmolensky.squarefreePolynomial}
 \leanok
-\uses{ACP.squarefreeMonomial}
+\uses{RazborovSmolensky.squarefreeMonomial}
 Given coefficients $c_S$ indexed by subsets $S \subseteq \mathrm{Fin}\,n$, the polynomial
 \[
   \sum_{S} c_S \prod_{i \in S} X_i .
@@ -234,10 +234,10 @@ Given coefficients $c_S$ indexed by subsets $S \subseteq \mathrm{Fin}\,n$, the p
 \end{definition}
 
 \begin{theorem}[Evaluation of a squarefree monomial]
-\lean{ACP.squarefreeMonomial_eval}
-\label{ACP.squarefreeMonomial_eval}
+\lean{RazborovSmolensky.squarefreeMonomial_eval}
+\label{RazborovSmolensky.squarefreeMonomial_eval}
 \leanok
-\uses{ACP.squarefreeMonomial}
+\uses{RazborovSmolensky.squarefreeMonomial}
 \difficulty{1}
 Let $K$ be a field, let $n$ be a natural number, and let $s \subseteq \mathrm{Fin}\,n$.
 For every point $x : \mathrm{Fin}\,n \to K$, the squarefree monomial $\prod_{i \in s}
@@ -245,10 +245,10 @@ X_i$ evaluated at $x$ equals $\prod_{i \in s} x_i$.
 \end{theorem}
 
 \begin{theorem}[Affine map realises coordinatewise inversion on the cube]
-\lean{ACP.rootCube_affine_inverse}
-\label{ACP.rootCube_affine_inverse}
+\lean{RazborovSmolensky.rootCube_affine_inverse}
+\label{RazborovSmolensky.rootCube_affine_inverse}
 \leanok
-\uses{ACP.rootCube}
+\uses{RazborovSmolensky.rootCube}
 \difficulty{2}
 Let $K$ be a field, let $\omega \in K$ be a nonzero element, and let $x \in
 \{1,\omega\}^n$, so that each coordinate $x_i$ equals either $1$ or $\omega$. Then for
@@ -259,10 +259,10 @@ every coordinate $i$,
 \end{theorem}
 
 \begin{theorem}[Total degree of a squarefree monomial]
-\lean{ACP.squarefreeMonomial_totalDegree_le_card}
-\label{ACP.squarefreeMonomial_totalDegree_le_card}
+\lean{RazborovSmolensky.squarefreeMonomial_totalDegree_le_card}
+\label{RazborovSmolensky.squarefreeMonomial_totalDegree_le_card}
 \leanok
-\uses{ACP.squarefreeMonomial}
+\uses{RazborovSmolensky.squarefreeMonomial}
 \difficulty{2}
 Fix a field $K$ and let $s \subseteq \{0,1,\dots,n-1\}$ be a set of variable indices.
 The total degree of the squarefree monomial $\prod_{i \in s} X_i$ in the polynomial ring
@@ -270,10 +270,10 @@ $K[X_0,\dots,X_{n-1}]$ is at most $\abs{s}$.
 \end{theorem}
 
 \begin{theorem}[Coordinates of a root-cube vector are nonzero]
-\lean{ACP.rootCube_coord_ne_zero}
-\label{ACP.rootCube_coord_ne_zero}
+\lean{RazborovSmolensky.rootCube_coord_ne_zero}
+\label{RazborovSmolensky.rootCube_coord_ne_zero}
 \leanok
-\uses{ACP.rootCube}
+\uses{RazborovSmolensky.rootCube}
 \difficulty{2}
 Let $K$ be a field and let $\omega \in K$ with $\omega \neq 0$. If $x \in
 \{1,\omega\}^n$, that is, $x$ is a vector in $K^n$ each of whose coordinates equals
@@ -282,10 +282,10 @@ $i$.
 \end{theorem}
 
 \begin{theorem}[Top monomial times complementary inverse monomial]
-\lean{ACP.rootCube_top_mul_compl_inverse}
-\label{ACP.rootCube_top_mul_compl_inverse}
+\lean{RazborovSmolensky.rootCube_top_mul_compl_inverse}
+\label{RazborovSmolensky.rootCube_top_mul_compl_inverse}
 \leanok
-\uses{ACP.rootCube, ACP.rootCube_coord_ne_zero}
+\uses{RazborovSmolensky.rootCube, RazborovSmolensky.rootCube_coord_ne_zero}
 \difficulty{4}
 Let $K$ be a field, let $\omega \in K$ be nonzero, and let $x \in \{1,\omega\}^n$, that
 is, a vector $x \colon \mathrm{Fin}\,n \to K$ each of whose coordinates equals $1$ or
@@ -298,10 +298,10 @@ $s$.
 \end{theorem}
 
 \begin{theorem}[Splitting a multilinear polynomial at half degree on the cube $\{1,\omega\}^n$]
-\lean{ACP.split_multilinear_at_half_degree}
-\label{ACP.split_multilinear_at_half_degree}
+\lean{RazborovSmolensky.split_multilinear_at_half_degree}
+\label{RazborovSmolensky.split_multilinear_at_half_degree}
 \leanok
-\uses{ACP.rootCube, ACP.rootCube_affine_inverse, ACP.rootCube_top_mul_compl_inverse, ACP.squarefreeMonomial, ACP.squarefreeMonomial_totalDegree_le_card, ACP.squarefreePolynomial}
+\uses{RazborovSmolensky.rootCube, RazborovSmolensky.rootCube_affine_inverse, RazborovSmolensky.rootCube_top_mul_compl_inverse, RazborovSmolensky.squarefreeMonomial, RazborovSmolensky.squarefreeMonomial_totalDegree_le_card, RazborovSmolensky.squarefreePolynomial}
 \difficulty{6}
 Let $K$ be a field, let $\omega \in K$ be nonzero, and let $(c_S)_{S \subseteq
 \mathrm{Fin}\,n}$ be a family of coefficients in $K$ indexed by the subsets of
@@ -317,18 +317,18 @@ all $i$),
 \end{theorem}
 
 \begin{definition}[Affine inverse coordinate polynomial]
-\lean{ACP.affineInvPoly}
-\label{ACP.affineInvPoly}
+\lean{RazborovSmolensky.affineInvPoly}
+\label{RazborovSmolensky.affineInvPoly}
 \leanok
 The degree-one polynomial $1 + \omega^{-1} - \omega^{-1} X_i$, which on $\{1,\omega\}$
 with $\omega \neq 0$ computes $x \mapsto x^{-1}$.
 \end{definition}
 
 \begin{theorem}[Evaluation of the affine inverse polynomial]
-\lean{ACP.affineInvPoly_eval}
-\label{ACP.affineInvPoly_eval}
+\lean{RazborovSmolensky.affineInvPoly_eval}
+\label{RazborovSmolensky.affineInvPoly_eval}
 \leanok
-\uses{ACP.affineInvPoly}
+\uses{RazborovSmolensky.affineInvPoly}
 \difficulty{1}
 Let $K$ be a field, let $\omega \in K$, let $n$ be a natural number, and let $i \in
 \{0,\dots,n-1\}$ index one of the $n$ coordinates. Then for every point $x =
@@ -337,10 +337,10 @@ Let $K$ be a field, let $\omega \in K$, let $n$ be a natural number, and let $i 
 \end{theorem}
 
 \begin{theorem}[Total degree of the affine inverse coordinate polynomial]
-\lean{ACP.affineInvPoly_totalDegree_le_one}
-\label{ACP.affineInvPoly_totalDegree_le_one}
+\lean{RazborovSmolensky.affineInvPoly_totalDegree_le_one}
+\label{RazborovSmolensky.affineInvPoly_totalDegree_le_one}
 \leanok
-\uses{ACP.affineInvPoly}
+\uses{RazborovSmolensky.affineInvPoly}
 \difficulty{3}
 Let $K$ be a field, fix an element $\omega \in K$, and let $n$ be a natural number with
 a distinguished coordinate index $i \in \{0,\dots,n-1\}$. The polynomial $1 +
@@ -349,19 +349,19 @@ degree at most $1$.
 \end{theorem}
 
 \begin{definition}[Affine-substituted squarefree monomial]
-\lean{ACP.affineSquarefreeMonomial}
-\label{ACP.affineSquarefreeMonomial}
+\lean{RazborovSmolensky.affineSquarefreeMonomial}
+\label{RazborovSmolensky.affineSquarefreeMonomial}
 \leanok
-\uses{ACP.affineInvPoly}
+\uses{RazborovSmolensky.affineInvPoly}
 For $s \subseteq \mathrm{Fin}\,n$, the product $\prod_{i \in s}(1 + \omega^{-1} -
 \omega^{-1}X_i)$, i.e.\ the squarefree monomial after the affine inverse substitution.
 \end{definition}
 
 \begin{theorem}[Evaluation of the affine-substituted squarefree monomial]
-\lean{ACP.affineSquarefreeMonomial_eval}
-\label{ACP.affineSquarefreeMonomial_eval}
+\lean{RazborovSmolensky.affineSquarefreeMonomial_eval}
+\label{RazborovSmolensky.affineSquarefreeMonomial_eval}
 \leanok
-\uses{ACP.affineSquarefreeMonomial}
+\uses{RazborovSmolensky.affineSquarefreeMonomial}
 \difficulty{1}
 Let $K$ be a field, let $\omega \in K$, and fix $n \in \bbn$. For a subset $s \subseteq
 \{1,\dots,n\}$, form the polynomial $\prod_{i \in s}\bigl(1 + \omega^{-1} - \omega^{-1}
@@ -373,10 +373,10 @@ this polynomial evaluates at $x$ to
 \end{theorem}
 
 \begin{theorem}[Total degree of the affine-substituted squarefree monomial]
-\lean{ACP.affineSquarefreeMonomial_totalDegree_le_card}
-\label{ACP.affineSquarefreeMonomial_totalDegree_le_card}
+\lean{RazborovSmolensky.affineSquarefreeMonomial_totalDegree_le_card}
+\label{RazborovSmolensky.affineSquarefreeMonomial_totalDegree_le_card}
 \leanok
-\uses{ACP.affineInvPoly, ACP.affineInvPoly_totalDegree_le_one, ACP.affineSquarefreeMonomial}
+\uses{RazborovSmolensky.affineInvPoly, RazborovSmolensky.affineInvPoly_totalDegree_le_one, RazborovSmolensky.affineSquarefreeMonomial}
 \difficulty{2}
 Let $K$ be a field, let $\omega \in K$, and fix $n \in \bbn$ together with a subset $s
 \subseteq \{0, 1, \dots, n-1\}$. Then the total degree of the affine-substituted
@@ -385,10 +385,10 @@ viewed as a polynomial in $K[X_0, \dots, X_{n-1}]$, is at most $\abs{s}$.
 \end{theorem}
 
 \begin{theorem}[Direct half-degree split on the cube $\{1,\omega\}^n$]
-\lean{ACP.split_multilinear_at_half_degree_direct}
-\label{ACP.split_multilinear_at_half_degree_direct}
+\lean{RazborovSmolensky.split_multilinear_at_half_degree_direct}
+\label{RazborovSmolensky.split_multilinear_at_half_degree_direct}
 \leanok
-\uses{ACP.affineSquarefreeMonomial, ACP.affineSquarefreeMonomial_totalDegree_le_card, ACP.rootCube, ACP.rootCube_affine_inverse, ACP.rootCube_top_mul_compl_inverse, ACP.squarefreeMonomial, ACP.squarefreeMonomial_totalDegree_le_card, ACP.squarefreePolynomial}
+\uses{RazborovSmolensky.affineSquarefreeMonomial, RazborovSmolensky.affineSquarefreeMonomial_totalDegree_le_card, RazborovSmolensky.rootCube, RazborovSmolensky.rootCube_affine_inverse, RazborovSmolensky.rootCube_top_mul_compl_inverse, RazborovSmolensky.squarefreeMonomial, RazborovSmolensky.squarefreeMonomial_totalDegree_le_card, RazborovSmolensky.squarefreePolynomial}
 \difficulty{6}
 Let $K$ be a field, fix a scalar $\omega \in K$ with $\omega \neq 0$, and let $n$ be a
 natural number. For any family of coefficients $(c_S)$ indexed by the subsets $S
@@ -403,34 +403,34 @@ to $1$ or to $\omega$) one has
 \end{theorem}
 
 \begin{definition}[Bad count of a polynomial on the root cube]
-\lean{ACP.rootCubeBadCount}
-\label{ACP.rootCubeBadCount}
+\lean{RazborovSmolensky.rootCubeBadCount}
+\label{RazborovSmolensky.rootCubeBadCount}
 \leanok
-\uses{ACP.rootCube}
+\uses{RazborovSmolensky.rootCube}
 The number of points $x \in \{1,\omega\}^n$ on which $P(x) \neq f(x)$.
 \end{definition}
 
 \begin{definition}[Hamming distance between functions on the root cube]
-\lean{ACP.rootCubeFunctionBadCount}
-\label{ACP.rootCubeFunctionBadCount}
+\lean{RazborovSmolensky.rootCubeFunctionBadCount}
+\label{RazborovSmolensky.rootCubeFunctionBadCount}
 \leanok
-\uses{ACP.rootCube}
+\uses{RazborovSmolensky.rootCube}
 The number of points $x \in \{1,\omega\}^n$ on which two functions
 $f, g : \{1,\omega\}^n \to K$ differ.
 \end{definition}
 
 \begin{definition}[Hamming ball on the root cube]
-\lean{ACP.rootCubeBall}
-\label{ACP.rootCubeBall}
+\lean{RazborovSmolensky.rootCubeBall}
+\label{RazborovSmolensky.rootCubeBall}
 \leanok
-\uses{ACP.rootCube, ACP.rootCubeFunctionBadCount}
+\uses{RazborovSmolensky.rootCube, RazborovSmolensky.rootCubeFunctionBadCount}
 The finite set of functions $f : \{1,\omega\}^n \to K$ that differ from a given center
 function on at most $e$ points of the cube.
 \end{definition}
 
 \begin{theorem}[Covering by Hamming balls: a counting bound]
-\lean{ACP.finite_cover_by_hamming_balls_card_bound}
-\label{ACP.finite_cover_by_hamming_balls_card_bound}
+\lean{RazborovSmolensky.finite_cover_by_hamming_balls_card_bound}
+\label{RazborovSmolensky.finite_cover_by_hamming_balls_card_bound}
 \leanok
 \difficulty{5}
 Let $\alpha$, $\beta$, and $\mathrm{Cand}$ be finite sets, and assign to each candidate
@@ -444,10 +444,10 @@ $e$ coordinates, that is, with $\abs{\{a \in \alpha : \mathrm{center}(c)(a) \neq
 \end{theorem}
 
 \begin{theorem}[Counting obstruction to low-degree approximation on the root cube]
-\lean{ACP.rootCube_counting_obstruction}
-\label{ACP.rootCube_counting_obstruction}
+\lean{RazborovSmolensky.rootCube_counting_obstruction}
+\label{RazborovSmolensky.rootCube_counting_obstruction}
 \leanok
-\uses{ACP.finite_cover_by_hamming_balls_card_bound, ACP.rootCube, ACP.rootCubeBadCount, ACP.rootCubeBall, ACP.rootCubeFunctionBadCount}
+\uses{RazborovSmolensky.finite_cover_by_hamming_balls_card_bound, RazborovSmolensky.rootCube, RazborovSmolensky.rootCubeBadCount, RazborovSmolensky.rootCubeBall, RazborovSmolensky.rootCubeFunctionBadCount}
 \difficulty{4}
 Let $K$ be a finite field, fix an element $\omega \in K$, and let $n, D, e, B$ be
 natural numbers. Write $\{1,\omega\}^n$ for the cube of vectors in $\mathrm{Fin}\,n \to
@@ -463,10 +463,10 @@ degree at most $D$ differing from $f$ on at most $e$ points of the cube.
 \end{theorem}
 
 \begin{theorem}[Approximating the top monomial approximates every function]
-\lean{ACP.rootProd_approx_implies_all_functions_approx}
-\label{ACP.rootProd_approx_implies_all_functions_approx}
+\lean{RazborovSmolensky.rootProd_approx_implies_all_functions_approx}
+\label{RazborovSmolensky.rootProd_approx_implies_all_functions_approx}
 \leanok
-\uses{ACP.rootCube, ACP.rootCubeBadCount, ACP.split_multilinear_at_half_degree_direct, ACP.squarefreePolynomial}
+\uses{RazborovSmolensky.rootCube, RazborovSmolensky.rootCubeBadCount, RazborovSmolensky.split_multilinear_at_half_degree_direct, RazborovSmolensky.squarefreePolynomial}
 \difficulty{4}
 Let $K$ be a finite field and fix $\omega \in K$ with $\omega \neq 0$, and let $n$ be a
 natural number. Suppose that every function $f\colon \{1,\omega\}^n \to K$ agrees, at
@@ -479,10 +479,10 @@ n/2 \rfloor + d$ that disagrees with $f$ on at most $e$ points of the cube.
 \end{theorem}
 
 \begin{theorem}[No low-degree approximation of the top monomial on the root cube]
-\lean{ACP.no_low_degree_rootProd_approx}
-\label{ACP.no_low_degree_rootProd_approx}
+\lean{RazborovSmolensky.no_low_degree_rootProd_approx}
+\label{RazborovSmolensky.no_low_degree_rootProd_approx}
 \leanok
-\uses{ACP.rootCube, ACP.rootCubeBadCount, ACP.rootProd_approx_implies_all_functions_approx, ACP.squarefreePolynomial}
+\uses{RazborovSmolensky.rootCube, RazborovSmolensky.rootCubeBadCount, RazborovSmolensky.rootProd_approx_implies_all_functions_approx, RazborovSmolensky.squarefreePolynomial}
 \difficulty{2}
 Let $K$ be a finite field, let $\omega \in K$ be nonzero, and write $\{1,\omega\}^n$ for
 the set of vectors in $K^n$ each of whose coordinates equals $1$ or $\omega$. Suppose
@@ -496,10 +496,10 @@ cube. Then no polynomial $P$ of total degree at most $d$ agrees with the top mon
 \end{theorem}
 
 \begin{theorem}[Top-monomial inapproximability from finite counting data]
-\lean{ACP.no_low_degree_rootProd_approx_of_finite_counting}
-\label{ACP.no_low_degree_rootProd_approx_of_finite_counting}
+\lean{RazborovSmolensky.no_low_degree_rootProd_approx_of_finite_counting}
+\label{RazborovSmolensky.no_low_degree_rootProd_approx_of_finite_counting}
 \leanok
-\uses{ACP.no_low_degree_rootProd_approx, ACP.rootCube, ACP.rootCubeBadCount, ACP.rootCubeBall, ACP.rootCube_counting_obstruction, ACP.squarefreePolynomial}
+\uses{RazborovSmolensky.no_low_degree_rootProd_approx, RazborovSmolensky.rootCube, RazborovSmolensky.rootCubeBadCount, RazborovSmolensky.rootCubeBall, RazborovSmolensky.rootCube_counting_obstruction, RazborovSmolensky.squarefreePolynomial}
 \difficulty{1}
 Let $K$ be a finite field, let $\omega \in K$ be nonzero, and fix natural numbers $n, d,
 e, B$. Suppose that every function $f : \{1,\omega\}^n \to K$ agrees, at every point of

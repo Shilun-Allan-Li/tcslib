@@ -11,9 +11,9 @@ import TCSlib.Complexity.CircuitComplexity.SizeClasses
 ## Main definitions
 
 * `Language.unary` — the language `{1ⁿ : n ∈ S}`.
-* `ACP.notGateOp` / `ACP.constZeroCircuit` — the `NOT` gate and the circuit that
+* `BoolCircuit.notGateOp` / `BoolCircuit.constZeroCircuit` — the `NOT` gate and the circuit that
   outputs `0` on every input.
-* `ACP.unaryFamily` — [AB09, Claim 6.8]'s circuit family for a unary `L`.
+* `BoolCircuit.unaryFamily` — [AB09, Claim 6.8]'s circuit family for a unary `L`.
 
 ## Main results
 
@@ -21,15 +21,17 @@ import TCSlib.Complexity.CircuitComplexity.SizeClasses
 * `Language.mem_unary_iff`, `Language.unary_le_allOnes`,
   `Language.replicate_mem_unary_iff` — the `Language.unary` API.
 * `Language.exists_le_allOnes` — one unary language per `S : Set ℕ`.
-* `ACP.unaryFamily_language` — for a unary `L`, the family decides exactly `L`.
-* `Language.inSIZE_two_of_le_allOnes` — a unary language is in `SIZE(2)`.
-* `Language.inPPoly_of_le_allOnes` / `Language.unary_inPPoly` — [AB09, Claim 6.8],
+* `BoolCircuit.unaryFamily_language` — for a unary `L`, the family decides exactly `L`.
+* `Language.inLayeredSIZE_two_of_le_allOnes` — a unary language is in `SIZE(2)`.
+* `Language.unary_inPPoly` — [AB09, Claim 6.8] for the book's `P/poly`, transferred from:
+* `Language.inLayeredPPoly_of_le_allOnes` / `Language.unary_inLayeredPPoly` — [AB09, Claim 6.8],
   in general and for `Language.unary`.
 
 ## Design
 
-`AC_GateOps` has no constant gate, so `constZeroCircuit` builds one out of the
-two it uses: the empty `AND` is the empty product `1`, and `NOT` of that is `0`.
+`stdGateOps` has no primitive constant-**false** operation (`andGateOp 0`, the
+empty product, is constant *one*), so `constZeroCircuit` builds false out of the
+two operations it uses: the empty `AND` is the empty product `1`, and `NOT` of that is `0`.
 Hence depth `2` and size `2`.
 
 Whether `1ⁿ ∈ L` is in general undecidable, so `unaryFamily` chooses between the
@@ -39,8 +41,8 @@ true, and is how AB then puts an undecidable language in `P/poly`.
 `Language` has a `CompleteAtomicBooleanAlgebra` instance but no `HasSubset`, so
 AB's `L ⊆ {1ⁿ : n ∈ ℕ}` is written `L ≤ Language.allOnes`.
 
-AB describes a family of linear size; ours has size `2` at every length, so
-`Language.inSIZE_two_of_le_allOnes` states the constant bound and Claim 6.8
+AB describes a family of linear size; ours has size at most `2` at every length (`1` on the all-ones branch), so
+`Language.inLayeredSIZE_two_of_le_allOnes` states the constant bound and Claim 6.8
 follows from it with `a = 2`, `k = 0`.
 
 ## References
@@ -89,15 +91,15 @@ theorem Language.exists_le_allOnes (S : Set ℕ) :
   ⟨Language.unary S, Language.unary_le_allOnes S,
     fun n => Language.replicate_mem_unary_iff n⟩
 
-namespace ACP
+namespace BoolCircuit
 
-open FeedForward
+open LayeredCircuit
 
-/-- The `NOT` gate, in the shape used by `AC_GateOps`. -/
+/-- The `NOT` gate, in the shape used by `stdGateOps`. -/
 def notGateOp : GateOp (Fin 2) := ⟨Fin 1, fun x => 1 - x 0⟩
 
-/-- `notGateOp` is one of the `AC_GateOps`. -/
-theorem notGateOp_mem_AC_GateOps : notGateOp ∈ AC_GateOps :=
+/-- `notGateOp` is one of the `stdGateOps`. -/
+theorem notGateOp_mem_stdGateOps : notGateOp ∈ stdGateOps :=
   Set.mem_union_left _ (Set.mem_insert_iff.mpr (Or.inr rfl))
 
 /-- The three layers of `constZeroCircuit n`: the `n` inputs, then two
@@ -107,7 +109,7 @@ private def constZeroNodes (n : ℕ) : Fin 3 → Type
   | ⟨_ + 1, _⟩ => Unit
 
 /-- The depth-2 circuit computing the constant `0` on `n` inputs. -/
-def constZeroCircuit (n : ℕ) : FeedForward (Fin 2) (Fin n) Unit where
+def constZeroCircuit (n : ℕ) : LayeredCircuit (Fin 2) (Fin n) Unit where
   depth := 2
   nodes := constZeroNodes n
   gates := fun d => match d with
@@ -135,18 +137,18 @@ theorem constZeroCircuit_finite (n : ℕ) : (constZeroCircuit n).Finite := by
   · exact inferInstanceAs (Finite (Fin n))
   · exact inferInstanceAs (Finite Unit)
 
-/-- The circuit uses only `AC_GateOps`. -/
+/-- The circuit uses only `stdGateOps`. -/
 theorem constZeroCircuit_onlyUsesGates (n : ℕ) :
-    (constZeroCircuit n).onlyUsesGates AC_GateOps := by
+    (constZeroCircuit n).onlyUsesGates stdGateOps := by
   rintro ⟨_ | _ | d, hd⟩ u
-  · exact andGateOp_mem_AC_GateOps 0
-  · exact notGateOp_mem_AC_GateOps
+  · exact andGateOp_mem_stdGateOps 0
+  · exact notGateOp_mem_stdGateOps
   · exact absurd hd (by have : (constZeroCircuit n).depth = 2 := rfl; omega)
 
 open scoped Classical in
 /-- [AB09, Claim 6.8]'s family for `L`: the all-ones circuit at the lengths `n`
 with `1ⁿ ∈ L`, and the constant-`0` circuit at the others. -/
-noncomputable def unaryFamily (L : Language Bool) : CircuitFamily where
+noncomputable def unaryFamily (L : Language Bool) : LayeredCircuitFamily where
   circuit n := if List.replicate n true ∈ L then allOnesCircuit n else constZeroCircuit n
   finite n := by
     by_cases h : List.replicate n true ∈ L
@@ -163,9 +165,9 @@ theorem unaryFamily_circuit_of_not_mem {L : Language Bool} {n : ℕ}
     (h : List.replicate n true ∉ L) : (unaryFamily L).circuit n = constZeroCircuit n :=
   if_neg h
 
-/-- The family uses only `AC_GateOps`. -/
+/-- The family uses only `stdGateOps`. -/
 theorem unaryFamily_onlyUsesGates (L : Language Bool) :
-    (unaryFamily L).OnlyUsesGates AC_GateOps := by
+    (unaryFamily L).OnlyUsesGates stdGateOps := by
   intro n
   by_cases h : List.replicate n true ∈ L
   · rw [unaryFamily_circuit_of_mem h]; exact allOnesFamily_onlyUsesGates n
@@ -198,7 +200,7 @@ theorem unaryFamily_language {L : Language Bool} (hL : L ≤ Language.allOnes) :
     · rintro ⟨h₁, h₂⟩
       rwa [(Language.mem_allOnes_iff w).mp h₁]
   ext w
-  rw [CircuitFamily.mem_language_iff, key w]
+  rw [LayeredCircuitFamily.mem_language_iff, key w]
   by_cases h : List.replicate w.length true ∈ L
   · rw [unaryFamily_circuit_of_mem h]
     simp only [h, and_true]
@@ -207,19 +209,23 @@ theorem unaryFamily_language {L : Language Bool} (hL : L ≤ Language.allOnes) :
     simp only [h, and_false, iff_false]
     decide
 
-end ACP
+end BoolCircuit
 
-/-- A unary language is decided by circuits of size `2`.  [AB09, Claim 6.8] -/
-theorem Language.inSIZE_two_of_le_allOnes {L : Language Bool}
-    (hL : L ≤ Language.allOnes) : L.InSIZE (fun _ => 2) :=
-  ⟨ACP.unaryFamily L, ACP.unaryFamily_onlyUsesGates L, ACP.unaryFamily_size_le L,
-    ACP.unaryFamily_language hL⟩
+/-- A unary language is decided by circuits of size at most `2`.  [AB09, Claim 6.8] -/
+theorem Language.inLayeredSIZE_two_of_le_allOnes {L : Language Bool}
+    (hL : L ≤ Language.allOnes) : L.InLayeredSIZE (fun _ => 2) :=
+  ⟨BoolCircuit.unaryFamily L, BoolCircuit.unaryFamily_onlyUsesGates L, BoolCircuit.unaryFamily_size_le L,
+    BoolCircuit.unaryFamily_language hL⟩
 
 /-- Every unary language is in `P/poly`.  [AB09, Claim 6.8] -/
-theorem Language.inPPoly_of_le_allOnes {L : Language Bool}
-    (hL : L ≤ Language.allOnes) : L.InPPoly :=
-  (Language.inSIZE_two_of_le_allOnes hL).inPPoly (a := 2) (k := 0) fun _ => by simp
+theorem Language.inLayeredPPoly_of_le_allOnes {L : Language Bool}
+    (hL : L ≤ Language.allOnes) : L.InLayeredPPoly :=
+  (Language.inLayeredSIZE_two_of_le_allOnes hL).inLayeredPPoly (a := 2) (k := 0) fun _ => by simp
 
 /-- [AB09, Claim 6.8] for `Language.unary S`. -/
+theorem Language.unary_inLayeredPPoly (S : Set ℕ) : (Language.unary S).InLayeredPPoly :=
+  Language.inLayeredPPoly_of_le_allOnes (Language.unary_le_allOnes S)
+
+/-- Every unary language is in the book's `P/poly`.  [AB09, Claim 6.8] -/
 theorem Language.unary_inPPoly (S : Set ℕ) : (Language.unary S).InPPoly :=
-  Language.inPPoly_of_le_allOnes (Language.unary_le_allOnes S)
+  (Language.unary_inLayeredPPoly S).inPPoly

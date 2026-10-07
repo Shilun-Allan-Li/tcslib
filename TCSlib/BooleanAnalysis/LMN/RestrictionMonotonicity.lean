@@ -10,7 +10,7 @@ a key monotonicity: `Pr_{p·q}[dtDepth > t] ≤ Pr_p[dtDepth > t]`, which
 simplifies the high-probability depth reduction argument.
 -/
 
-open BoolCircuit SwitchingLemma2 SwitchingBernoulli LMN
+open BoolCircuit SwitchingLemma SwitchingBernoulli LMN
 open Classical in
 attribute [local instance] Classical.propDecidable
 noncomputable section
@@ -59,9 +59,9 @@ theorem dtDepth_restrictFn_le' (f : (Fin n → Bool) → Bool) (ρ : Restriction
     dtDepth (restrictFn f ρ) ≤ dtDepth f := by
   obtain ⟨T, hTd, hTe⟩ := Nat.find_spec
     (p := fun d => ∃ T : DecisionTree n, T.depth ≤ d ∧ ∀ x, T.eval x = f x)
-    ⟨n, buildFullDTree f 0 (fun _ => false),
-     buildFullDTree_depth f 0 (Nat.zero_le n) _,
-     fun x => buildFullDTree_eval f 0 (Nat.zero_le n) _ x (fun _ hi => by omega)⟩
+    ⟨n, DecisionTree.buildFull f 0 (fun _ => false),
+     DecisionTree.buildFull_depth f 0 (Nat.zero_le n) _,
+     fun x => DecisionTree.buildFull_eval f 0 (Nat.zero_le n) _ x (fun _ hi => by omega)⟩
   set T' := dtRestrict T ρ
   have hT'd : T'.depth ≤ dtDepth f := le_trans (dtRestrict_depth_le T ρ) hTd
   have hT'e : ∀ x, T'.eval x = restrictFn f ρ x := by

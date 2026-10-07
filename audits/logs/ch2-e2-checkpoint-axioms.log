@@ -1,0 +1,33 @@
+ch2 epoch-2 checkpoint integration axiom audit
+HEAD: 4b4cd4185046bf116d1838749426d79ba7c71284
+UTC: 2026-10-03T05:53:15Z
+'Complexity.NP_subset_EXP' depends on axioms: [propext, sorryAx, Classical.choice, Quot.sound]
+'Complexity.ntime_poly_subset_NP' depends on axioms: [propext, sorryAx, Classical.choice, Quot.sound]
+'Complexity.NP_subset_iUnion_NTIME' depends on axioms: [propext, sorryAx, Classical.choice, Quot.sound]
+'Complexity.NP_eq_iUnion_NTIME' depends on axioms: [propext, sorryAx, Classical.choice, Quot.sound]
+'Complexity.mem_NP_iff_exists_length_le' depends on axioms: [propext, sorryAx, Classical.choice, Quot.sound]
+'Complexity.HALT_NPHard' depends on axioms: [propext, sorryAx, Classical.choice, Quot.sound]
+'Complexity.HALT_not_mem_NP' depends on axioms: [propext, sorryAx, Classical.choice, Quot.sound]
+'Complexity.timeConstructible_poly' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.timed_universal_quantitative' depends on axioms: [propext, sorryAx, Classical.choice, Quot.sound]
+'Complexity.TMSAT_mem_NP' depends on axioms: [propext, sorryAx, Classical.choice, Quot.sound]
+'Complexity.TMSAT_NPHard' depends on axioms: [propext, sorryAx, Classical.choice, Quot.sound]
+'Complexity.TMSAT_NPComplete' depends on axioms: [propext, sorryAx, Classical.choice, Quot.sound]
+ROOTS Complexity.NP_subset_EXP: [Complexity.enumMachine_contracts]
+ROOTS Complexity.HALT_NPHard: [Complexity.enumMachine_contracts]
+ROOTS Complexity.HALT_not_mem_NP: [Complexity.enumMachine_contracts]
+ROOTS Complexity.mem_NP_iff_exists_length_le: [Complexity.mem_NP_iff_exists_length_le]
+ROOTS Complexity.ntime_poly_subset_NP: [Complexity.ntime_poly_subset_NP]
+ROOTS Complexity.NP_subset_iUnion_NTIME: [Complexity.NP_subset_iUnion_NTIME]
+ROOTS Complexity.NP_eq_iUnion_NTIME: [Complexity.NP_eq_iUnion_NTIME]
+ROOTS Complexity.timeConstructible_poly: []
+ROOTS Complexity.timed_universal_quantitative: [Complexity.timed_universal_quantitative]
+ROOTS Complexity.TMSAT_mem_NP: [Complexity.TMSAT_mem_NP, Complexity.timed_universal_quantitative]
+ROOTS Complexity.TMSAT_NPHard: [Complexity.TMSAT_NPHard]
+ROOTS Complexity.TMSAT_NPComplete: [Complexity.TMSAT_NPHard,
+ Complexity.TMSAT_mem_NP,
+ Complexity.timed_universal_quantitative]
+ROOTS (private) Complexity.enumMachine_contracts: [Complexity.enumMachine_contracts]
+ROOTS (private) Complexity.enumDecider: [Complexity.enumMachine_contracts]
+CHECKPOINT AUDIT PASS: every admission root is exactly as the four REPORTs disclose, translated to the integrated tree. This certifies the checkpoint's disclosed footprint, NOT a closed epoch gate.
+lean exit: 0

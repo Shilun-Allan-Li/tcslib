@@ -192,3 +192,16 @@ vertices for the clauses in which it occurs, and the three gadget vertices of ea
 clause joined pairwise into a triangle). Then $f$ is satisfiable if and only if
 $\Gamma(f)$ is 3-colorable.
 \end{theorem}
+
+%%% added by the blueprint pipeline
+\section{Additional declarations}
+
+\begin{definition}[Not-All-Equal clause]
+\lean{NAEtoColor.NAEclause}
+\label{NAEtoColor.NAEclause}
+\leanok
+A \emph{Not-All-Equal clause} over a variable type $V$ is an ordered triple
+$(v_0, v_1, v_2)$ of variables from $V$. It records the three variables of one
+NAE constraint; such a clause is meant to be satisfied by a Boolean assignment
+exactly when the values assigned to $v_0$, $v_1$, $v_2$ are not all equal.
+\end{definition}

@@ -9,7 +9,7 @@ Stability, bounds, and independence lemmas for `processClauseLits`,
 
 open Classical
 
-namespace SwitchingLemma2
+namespace SwitchingLemma
 
 variable {n : ℕ}
 
@@ -555,7 +555,7 @@ lemma processClauseLits_sigma_none_of_rho_none {n : ℕ}
   · cases path <;> aesop;
   · rcases path with ( _ | ⟨ x, path ⟩ ) <;> simp +decide [ processClauseLits ] at h ⊢;
     by_cases hvar : hd.1.var = v;
-    · exact absurd h ( by exact SwitchingLemma2.processClauseLits_rho_ne_none _ _ _ _ _ ( by aesop ) );
+    · exact absurd h ( by exact SwitchingLemma.processClauseLits_rho_ne_none _ _ _ _ _ ( by aesop ) );
     · convert ih path ( Function.update ρ₀ hd.1.var ( some x.2 ) ) ( Function.update σ hd.1.var ( some !hd.1.neg ) ) _ h using 1;
       · rw [ Function.update_apply ] ; aesop;
       · rw [ Function.update_apply ] ; aesop
@@ -712,15 +712,15 @@ The encoder does not kill the first clause found by `find?`.
 -/
 set_option maxHeartbeats 800000 in
 lemma encode_go_not_kills_first_clause {n : ℕ} (f : DNF n) (w : ℕ)
-    (hnd : ∀ t ∈ f, ∀ l₁ ∈ t, ∀ l₂ ∈ t, l₁.var = l₂.var → l₁ = l₂)
+    (hnd : ∀ t ∈ f.terms, ∀ l₁ ∈ t, ∀ l₂ ∈ t, l₁.var = l₂.var → l₁ = l₂)
     (enc_fuel : ℕ) (path : List (Fin n × Bool)) (ρ₀ σ : Restriction n)
     (hE : ∀ v, ρ₀ v = none → σ v = none)
     (t : Term n)
-    (hfind : f.find? (fun t => decide (¬Term.killedBy t ρ₀)) = some t)
+    (hfind : f.terms.find? (fun t => decide (¬Term.killedBy t ρ₀)) = some t)
     (l : Literal n) (hl : l ∈ t) (hfree : ρ₀ l.var = none) :
     (razborovEncode.go f w enc_fuel path ρ₀ σ []).1 l.var ≠ some l.neg := by
   induction' enc_fuel with enc_fuel ih generalizing path ρ₀ σ <;> simp_all +decide ;
-  · cases path <;> simp_all +decide [ SwitchingLemma2.razborovEncode.go ];
+  · cases path <;> simp_all +decide [ SwitchingLemma.razborovEncode.go ];
   · rcases path with ( _ | ⟨ step, rest ⟩ );
     · rw [ razborovEncode.go ] ; aesop;
     · obtain ⟨fl, fls, hfl⟩ : ∃ fl fls, (t.zipIdx).filter (fun ⟨l, _⟩ => decide (l.var ∈ ρ₀.freeVars)) = fl :: fls := by
@@ -731,9 +731,9 @@ lemma encode_go_not_kills_first_clause {n : ℕ} (f : DNF n) (w : ℕ)
           grind;
         exact List.exists_cons_of_ne_nil ( by rintro h; simp +decide [ h ] at h_mem );
       -- By definition of `processClauseLits`, we know that `pcl.2.1 l.var = none` or `pcl.2.1 l.var ≠ none`.
-      by_cases hpcl : (SwitchingLemma2.processClauseLits (fl :: fls) (step :: rest) ρ₀ σ).2.1 l.var = none;
-      · have hpcl_path : (SwitchingLemma2.processClauseLits (fl :: fls) (step :: rest) ρ₀ σ).1 = [] := by
-          apply SwitchingLemma2.processClauseLits_path_nil_of_rho_none_and_mem;
+      by_cases hpcl : (SwitchingLemma.processClauseLits (fl :: fls) (step :: rest) ρ₀ σ).2.1 l.var = none;
+      · have hpcl_path : (SwitchingLemma.processClauseLits (fl :: fls) (step :: rest) ρ₀ σ).1 = [] := by
+          apply SwitchingLemma.processClauseLits_path_nil_of_rho_none_and_mem;
           rotate_left;
           rotate_left;
           exact hfree;
@@ -747,10 +747,10 @@ lemma encode_go_not_kills_first_clause {n : ℕ} (f : DNF n) (w : ℕ)
             · exact fun h => hfl ⟨ 0, Nat.zero_lt_succ _ ⟩ ( by aesop );
             · exact fun i => fun hi => hfl ⟨ i + 1, by linarith [ Fin.is_lt i ] ⟩ ( by simpa [ Fin.add_def, Nat.mod_eq_of_lt ] using hi );
           · grind +splitImp;
-        rw [ SwitchingLemma2.razborovEncode.go ];
-        rw [ show List.find? ( fun t => decide ¬Term.killedBy t ρ₀ ) f = some t from by simpa using hfind ];
+        rw [ SwitchingLemma.razborovEncode.go ];
+        rw [ show List.find? ( fun t => decide ¬Term.killedBy t ρ₀ ) f.terms = some t from by simpa using hfind ];
         simp +decide [ hpcl_path, hfl ];
-        rw [ SwitchingLemma2.razborovEncode.go ];
+        rw [ SwitchingLemma.razborovEncode.go ];
         simp only []
         have hnd_lits : ∀ m ∈ (fl :: fls), m.1.var = l.var → m.1 = l := by
           intro m hm hmv
@@ -777,8 +777,8 @@ lemma encode_go_not_kills_first_clause {n : ℕ} (f : DNF n) (w : ℕ)
             = (processClauseLits (fl :: fls) (step :: rest) ρ₀ σ).2.2.1 l.var := by
           rw [encode_go_fst_acc]
           exact encode_go_fst_nonfree f w enc_fuel _ _ _ [] l.var (by push_neg at hpcl; exact hpcl)
-        rw [ SwitchingLemma2.razborovEncode.go ];
-        rw [ show List.find? ( fun t => decide ¬Term.killedBy t ρ₀ ) f = some t from by simpa using hfind ] ; simp +decide [ hfl ] ;
+        rw [ SwitchingLemma.razborovEncode.go ];
+        rw [ show List.find? ( fun t => decide ¬Term.killedBy t ρ₀ ) f.terms = some t from by simpa using hfind ] ; simp +decide [ hfl ] ;
         rw [hkey]
         exact processClauseLits_sigma_ne_neg _ _ _ _ _ hnd_lits (by rw [hE _ hfree]; simp)
 
@@ -819,4 +819,4 @@ lemma roundtrip_base {n : ℕ} (f : DNF n) (w : ℕ)
   | zero => simp [razborovDecode.go]; funext v; by_cases h : ρ₀ v = none <;> simp_all
   | succ _ => simp [razborovDecode.go]; funext v; by_cases h : ρ₀ v = none <;> simp_all
 
-end SwitchingLemma2
+end SwitchingLemma

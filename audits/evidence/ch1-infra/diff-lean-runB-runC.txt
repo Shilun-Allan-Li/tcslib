@@ -1,0 +1,110 @@
+Lean-source changes between e8dd3e57 (run B) and d576814c (run C):
+ TCSlib/Complexity/TuringMachine/Build/Loop.lean | 66 ++++++++++++++++++-------
+ 1 file changed, 47 insertions(+), 19 deletions(-)
+
+Full diff:
+diff --git a/TCSlib/Complexity/TuringMachine/Build/Loop.lean b/TCSlib/Complexity/TuringMachine/Build/Loop.lean
+index 259f4309..ea6deada 100644
+--- a/TCSlib/Complexity/TuringMachine/Build/Loop.lean
++++ b/TCSlib/Complexity/TuringMachine/Build/Loop.lean
+@@ -3,6 +3,7 @@ Copyright (c) 2026 Seyoon Ragavan. All rights reserved.
+ Released under Apache 2.0 license as described in the file LICENSE.
+ Authors: Seyoon Ragavan
+ -/
++import Mathlib.Data.Nat.Bits
+ import TCSlib.Complexity.TuringMachine.Build.Convention
+ import TCSlib.Complexity.TuringMachine.Composition
+ 
+@@ -100,14 +101,22 @@ namespace Turing.FinTM
+ 
+ /-- **The loop combinator** (spec, fill pending — the generic form of the
+ enumerator batch's admitted `enumMachine_contracts`; the construction is
+-the library fill's risk concentration). Given a body machine with
+-
+-* a **startup** contract: from its genuine initial configuration on `x` it
+-  reaches, within `T |x|`, the seam `Turing.Cfg.ofWords` carrying the
+-  initial state word `s0 x` on tape 0 (scratch blank), and
++the library fill's risk concentration). Given a fuel machine and a body
++machine with
++
++* a **fuel** contract: `F` writes the round bound `R |x|` in binary within
++  `T |x|` (an arbitrary `R : ℕ → ℕ` is not machine-evaluable, so the
++  combinator must be handed its fuel; the enumerator's `2^w` and the
++  split search's `n + 1` both have immediately writable bit patterns),
++* a **startup** contract: from its genuine initial configuration on `x`
++  the body reaches, within `T |x|`, the seam `Turing.Cfg.ofWords` carrying
++  the initial state word `s0 x` on tape 0 (scratch blank), **without
++  visiting the anchor state earlier**, and
+ * a **round** contract: from the seam carrying any state word `s` it
+   either halts with the verdict `[true]` within `T |x|` (when `acceptF s`)
+-  or reaches the seam carrying `stepF s` within `T |x|`,
++  or reaches the seam carrying `stepF s` within `T |x|` — in both cases
++  **without re-entering the anchor state strictly between the seam and
++  that endpoint**,
+ 
+ there is one finite machine that, on every input `x`, emits the single
+ verdict bit of the first `R |x| + 1` orbit points
+@@ -115,31 +124,50 @@ verdict bit of the first `R |x| + 1` orbit points
+ accepts (fuel exhaustion) — within a constant multiple of
+ `(T |x| + 1) · (R |x| + 2)`.
+ 
+-**Proof sketch.** The combinator machine embeds the body via the W1
+-capture discipline of `TCSlib.Complexity.TuringMachine.Build.Wrappers`
+-(the body's verdict is captured, never physically emitted until the end),
+-adds a fuel counter of `R |x|` in binary (`Turing.incFixed` is the counter
+-discipline; its startup uses the polynomial-evaluation primitive), runs
+-`Turing.loop_run` over the seam family, and emits the verdict or the
+-exhaustion rejection. The fuel arithmetic and phase overheads are absorbed
+-into `c`. -/
+-theorem exists_loopTM (body : FinTM Bool) (anchor : body.State)
++The two discipline clauses are load-bearing (maintainer pre-audit
++adversarial pass, recorded for the shared infrastructure round): the
++combinator's host detects round boundaries **as entries into the embedded
++anchor state**, so a mid-round anchor visit would decrement the fuel
++early and change the computed function; and without the fuel machine the
++statement would assert a finite machine materializing an arbitrary
++natural-number function of the input length.
++
++**Proof sketch.** The combinator machine runs `F` relocated-and-captured
++to lay the fuel word on a counter tape, rewinds, and embeds the body via
++the W1 capture discipline of
++`TCSlib.Complexity.TuringMachine.Build.Wrappers` (the body's verdict is
++captured, never physically emitted until the end). On each entry into the
++embedded anchor it decrements the binary counter in place; the borrow
++discipline is amortized — total countdown cost over all rounds is linear
++in `R |x|` plus the counter width, and exhaustion is detected exactly
++when a borrow runs off the counter's end, which is what keeps the stated
++budget at `(T + 1) · (R + 2)` rather than acquiring a logarithmic factor.
++`Turing.loop_run` sums the seam family; acceptance surfaces as the
++captured halt (`[true]`), and borrow-overflow emits the exhaustion
++rejection (`[false]`). Phase overheads are absorbed into `c`. -/
++theorem exists_loopTM (body F : FinTM Bool) (anchor : body.State)
+     (stepF : List Bool → List Bool) (acceptF : List Bool → Bool)
+     (s0 : List Bool → List Bool) (R T : ℕ → ℕ)
++    (hF : F.ComputesFunInTime (fun x => Nat.bits (R x.length)) T)
+     (hstart : ∀ x : List Bool, ∃ t ≤ T x.length,
++      (∀ t' < t,
++        (body.tm.runFrom (body.tm.initCfg x) t').state ≠ some anchor) ∧
+       body.tm.runFrom (body.tm.initCfg x) t =
+         Cfg.ofWords anchor (stateWord body.k (s0 x)))
+     (hround : ∀ (x : List Bool) (s : List Bool),
+-      if acceptF s then
+-        ∃ t ≤ T x.length,
++      ∃ t ≤ T x.length,
++        (∀ t', 0 < t' → t' < t →
++          (body.tm.runFrom
++            (Cfg.ofWords (input := x) anchor (stateWord body.k s)) t').state
++              ≠ some anchor) ∧
++        if acceptF s then
+           (body.tm.runFrom
+             (Cfg.ofWords (input := x) anchor (stateWord body.k s)) t).state
+               = none ∧
+           (body.tm.runFrom
+             (Cfg.ofWords (input := x) anchor (stateWord body.k s)) t).output
+               = [true]
+-      else
+-        ∃ t ≤ T x.length,
++        else
+           body.tm.runFrom
+             (Cfg.ofWords (input := x) anchor (stateWord body.k s)) t =
+               Cfg.ofWords anchor (stateWord body.k (stepF s))) :

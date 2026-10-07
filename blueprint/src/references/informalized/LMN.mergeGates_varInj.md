@@ -15,6 +15,6 @@ unfolding the defining `dite`, `split` leaves one goal per branch and each is an
 instantiation of `h₁` resp. `h₂` at that branch's index.
 
 **Remark.** This is the "no variable repeated in a term" hypothesis carried by
-the counting switching lemma (`SwitchingLemma2.switching_lemma`); merging gate
+the counting switching lemma (`SwitchingLemma.switching_lemma`); merging gate
 arrays must not destroy it. Currently unused: the intended consumer,
 `LMN.reduce_children`, has a `sorry`'d `cons` case.

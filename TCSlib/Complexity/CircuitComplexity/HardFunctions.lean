@@ -16,34 +16,42 @@ there are small circuits, so some function is computed by none of them.
 
 ## Main definitions
 
-None — this file adds only theorems, over `BoolCircuit.Circuit` and `ACP.encodeCircuit`.
+None — this file adds only theorems, over `BoolCircuit.TreeCircuit` and `BoolCircuit.encodeCircuit`.
 
 ## Main results
 
-* `ACP.length_encodeCircuit_succ_le` — a circuit of size `S` on `n` variables has an
+* `BoolCircuit.length_encodeCircuit_succ_le` — a circuit of size `S` on `n` variables has an
   encoding of fewer than `(n + 4) * S` bits.
-* `ACP.encodeCircuit_injective` — distinct circuits have distinct encodings.
-* `ACP.card_computable_le` — at most `2 ^ ((n + 4) * S)` functions
+* `BoolCircuit.encodeCircuit_injective` — distinct circuits have distinct encodings.
+* `BoolCircuit.card_computable_le` — at most `2 ^ ((n + 4) * S)` functions
   `(Fin n → Bool) → Bool` are computed by a circuit of size at most `S`.
-* `ACP.exists_not_eval_of_lt` — whenever `(n + 4) * S < 2 ^ n`, some function
+* `BoolCircuit.exists_not_eval_of_lt` — whenever `(n + 4) * S < 2 ^ n`, some function
   differs from every size-`≤ S` circuit at some input.  [AB09, Thm 6.21]
-* `ACP.exists_hard_function` — the same with the explicit size bound
+* `BoolCircuit.exists_hard_function` — the same with the explicit size bound
   `2 ^ n / (n + 5)`.  [AB09, Thm 6.21]
 
 ## Divergences from [AB09, Thm 6.21]
 
 **AB's size bound `2 ^ n / (10 n)` is not proved here, and the two statements are not
-comparable.** [AB09, Def 6.1]'s circuit is a DAG whose `∨`/`∧` gates have fan-in `2`
+comparable.** (The book's own statement, over the book's DAG model and with its bound, is
+`BoolCircuit.exists_hard_function_dag` in `CircuitComplexity.DAGHardFunctions`.) [AB09, Def 6.1]'s circuit is a DAG whose `∨`/`∧` gates have fan-in `2`
 and whose `¬` gates have fan-in `1`, with size its number of vertices — one source
 vertex per input variable, however often that variable is read.
-`BoolCircuit.Circuit` is a *tree* with unbounded fan-in and negation folded into its
-literals, and `Circuit.size` counts every node. Two effects push our count up: every
+`BoolCircuit.TreeCircuit` is a *tree* with unbounded fan-in and negation folded into its
+literals, and `TreeCircuit.size` counts every node. Two effects push our count up: every
 literal *occurrence* costs a node, and no gate may be reused. One pushes it down:
-`Circuit.size` charges `1` for a `k`-ary gate where Def 6.1 charges `k - 1` vertices.
-A size-`S` tree thus embeds in a DAG on at most `S + 2 * n` vertices while no bound
-runs the other way, so at the `S ≈ 2 ^ n / n` in play AB's conclusion is strictly the
-stronger — but not at every `S`: the three-literal `AND` on `n = 3` has
-`Circuit.size = 4`, whereas Def 6.1 needs at least `5` vertices for that function, so
+`TreeCircuit.size` charges `1` for a `k`-ary gate where Def 6.1 charges `k - 1` vertices.
+A size-`S` tree embeds in a DAG on at most `S + 2 * n` vertices; in the other
+direction only a depth-exponential unrolling is available, no polynomial bound.
+Neither quantified statement implies the other on the strength of that
+conversion: at `n = 20`, AB's cutoff `⌊2²⁰/200⌋ = 5242` transfers along
+`S + 2n` only to tree cutoff `5202`, far below the `⌊2²⁰/25⌋ = 41943` proved
+here, and the conversion gives no transfer in the other direction at these cutoffs
+(sharing can make a DAG smaller than every tree for the same function, and only
+a depth-exponential unrolling runs DAG-to-tree).  AB's theorem
+is about the more general model; this one has the larger cutoff in its narrower
+one — and the families are not nested at every `S`: the three-literal `AND` on `n = 3` has
+`TreeCircuit.size = 4`, whereas Def 6.1 needs at least `5` vertices for that function, so
 at `S = 4` AB's family is empty and ours is not. Neither comparison is formalized;
 both describe the gap to AB, not anything proved below.
 
@@ -53,14 +61,16 @@ being written in unary, and a gate costs three bits plus one per child, so size 
 fits in fewer than `(n + 4) * S` bits, against the `9 · S · log S` AB cites for an
 adjacency list. Since `n + 5 < 10 n` for `n ≥ 1`, `2 ^ n / (n + 5)` is the larger of
 the two numbers — a unary index costs `n` bits a leaf, the same order as AB's
-`log S ≈ n`, against AB's generous constant `9`. That is not a strengthening of AB: it
-is a weaker statement that happens to admit a larger constant. `n + 3` would close for
+`log S ≈ n`, against AB's generous constant `9`. That larger constant is **not** a strengthening of AB — and, per the
+comparison above, nor is it a weakening: it is a tree-counting analogue with a
+different cutoff in a different model, and the displayed conversion establishes
+neither implication between the two stated bounds. `n + 3` would close for
 every `n ≥ 1` — only `n = 0`, where `.node b []` meets `(n + 4) * 1` with equality,
 forces the `4` — but carrying `0 < n` through every downstream statement to move the
 denominator from `n + 5` to `n + 4` buys nothing.
 
 `n > 1` is not assumed. `(n + 4) * S < 2 ^ n` forces `S = 0` for `n ≤ 2`, and
-`Circuit.size` is never `0`, so the conclusion is vacuous there; it first has content
+`TreeCircuit.size` is never `0`, so the conclusion is vacuous there; it first has content
 at `n = 3`. AB's own `2 ^ n / (10 n)` is below `1` until `n = 6`.
 
 ## References
@@ -73,9 +83,7 @@ set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
 set_option autoImplicit false
 
-namespace ACP
-
-open BoolCircuit
+namespace BoolCircuit
 
 /-! ## Bit strings as numbers -/
 
@@ -121,12 +129,12 @@ private theorem bitsToNat_injective : Function.Injective bitsToNat := by
 in unary. -/
 private theorem length_encodeCircuit_lit {n : ℕ} :
     ∀ (k : ℕ) (h : k < n) (s : Bool),
-      (encodeCircuit (Circuit.lit (n := n) ⟨⟨k, h⟩, s⟩)).length = k + 3
+      (encodeCircuit (TreeCircuit.lit (n := n) ⟨⟨k, h⟩, s⟩)).length = k + 3
   | 0, _, _ => by simp only [encodeCircuit]; rfl
   | k + 1, h, s => by
       have h' : k < n := Nat.lt_of_succ_lt h
-      have step : (encodeCircuit (Circuit.lit (n := n) ⟨⟨k + 1, h⟩, s⟩)).length
-          = (encodeCircuit (Circuit.lit (n := n) ⟨⟨k, h'⟩, s⟩)).length + 1 := by
+      have step : (encodeCircuit (TreeCircuit.lit (n := n) ⟨⟨k + 1, h⟩, s⟩)).length
+          = (encodeCircuit (TreeCircuit.lit (n := n) ⟨⟨k, h'⟩, s⟩)).length + 1 := by
         simp only [encodeCircuit]; rfl
       rw [step, length_encodeCircuit_lit k h' s]
 
@@ -140,16 +148,16 @@ on the list of children shows the block is at most `(n + 4)` times the children'
 size, plus one — each child pays for its own continue bit out of the one bit of slack
 the statement carries. The gate's two tag bits, its stop bit and that slack come to
 four bits, which is at most the `n + 4` the gate's own node contributes. -/
-theorem length_encodeCircuit_succ_le {n : ℕ} (C : Circuit n) :
+theorem length_encodeCircuit_succ_le {n : ℕ} (C : TreeCircuit n) :
     (encodeCircuit C).length + 1 ≤ (n + 4) * C.size := by
-  induction C using Circuit.ind with
+  induction C using TreeCircuit.ind with
   | hlit l =>
       obtain ⟨⟨k, hk⟩, s⟩ := l
       rw [length_encodeCircuit_lit k hk s]
-      simp only [Circuit.size, Nat.mul_one]
+      simp only [TreeCircuit.size, Nat.mul_one]
       omega
   | hnode b cs ih =>
-      have hlist : ∀ ds : List (Circuit n),
+      have hlist : ∀ ds : List (TreeCircuit n),
           (∀ d ∈ ds, (encodeCircuit d).length + 1 ≤ (n + 4) * d.size) →
           (encodeChildren ds).length ≤
             (n + 4) * ds.foldr (fun d acc => d.size + acc) 0 + 1 := by
@@ -164,7 +172,7 @@ theorem length_encodeCircuit_succ_le {n : ℕ} (C : Circuit n) :
             omega
       have hsum := hlist cs ih
       rw [encodeCircuit_node]
-      simp only [List.length_cons, Circuit.size, Nat.mul_add, Nat.mul_one]
+      simp only [List.length_cons, TreeCircuit.size, Nat.mul_add, Nat.mul_one]
       omega
 
 /-- Distinct circuits have distinct encodings. -/
@@ -188,12 +196,12 @@ determines the circuit, and the circuit determines the function it computes. Its
 lie below `2 ^ ((n + 4) * S)`, because a circuit of size at most `S` encodes into fewer
 than `(n + 4) * S` bits. -/
 theorem card_computable_le (n S : ℕ) :
-    {f : (Fin n → Bool) → Bool | ∃ C : Circuit n, C.size ≤ S ∧ C.eval = f}.ncard
+    {f : (Fin n → Bool) → Bool | ∃ C : TreeCircuit n, C.size ≤ S ∧ C.eval = f}.ncard
       ≤ 2 ^ ((n + 4) * S) := by
   classical
-  haveI : Nonempty (Circuit n) := ⟨Circuit.node true []⟩
-  have key : ∀ f ∈ {f : (Fin n → Bool) → Bool | ∃ C : Circuit n, C.size ≤ S ∧ C.eval = f},
-      ∃ C : Circuit n, C.size ≤ S ∧ C.eval = f := fun _ hf => hf
+  haveI : Nonempty (TreeCircuit n) := ⟨TreeCircuit.node true []⟩
+  have key : ∀ f ∈ {f : (Fin n → Bool) → Bool | ∃ C : TreeCircuit n, C.size ≤ S ∧ C.eval = f},
+      ∃ C : TreeCircuit n, C.size ≤ S ∧ C.eval = f := fun _ hf => hf
   choose! g hg₁ hg₂ using key
   have hmain := Set.ncard_le_ncard_of_injOn
     (t := (↑(Finset.range (2 ^ ((n + 4) * S))) : Set ℕ))
@@ -221,10 +229,10 @@ size at most `S`; the hypothesis makes the second number the smaller, so the com
 ones are not all of them. A function outside that set is computed by no such circuit,
 and two Boolean functions that are not equal differ at a point. -/
 theorem exists_not_eval_of_lt {n S : ℕ} (h : (n + 4) * S < 2 ^ n) :
-    ∃ f : (Fin n → Bool) → Bool, ∀ C : Circuit n, C.size ≤ S → ∃ x, C.eval x ≠ f x := by
+    ∃ f : (Fin n → Bool) → Bool, ∀ C : TreeCircuit n, C.size ≤ S → ∃ x, C.eval x ≠ f x := by
   classical
   set T : Set ((Fin n → Bool) → Bool) :=
-    {f | ∃ C : Circuit n, C.size ≤ S ∧ C.eval = f}
+    {f | ∃ C : TreeCircuit n, C.size ≤ S ∧ C.eval = f}
   have hcard : T.ncard ≤ 2 ^ ((n + 4) * S) := card_computable_le n S
   have hcardF : Nat.card ((Fin n → Bool) → Bool) = 2 ^ 2 ^ n := by
     rw [Nat.card_eq_fintype_card, Fintype.card_fun, Fintype.card_fun]
@@ -248,7 +256,7 @@ the hypothesis is `0 < 2 ^ n`, and otherwise multiplying it by `n + 4` rather th
 below `2 ^ n`. -/
 theorem exists_hard_function (n : ℕ) :
     ∃ f : (Fin n → Bool) → Bool,
-      ∀ C : Circuit n, C.size ≤ 2 ^ n / (n + 5) → ∃ x, C.eval x ≠ f x := by
+      ∀ C : TreeCircuit n, C.size ≤ 2 ^ n / (n + 5) → ∃ x, C.eval x ≠ f x := by
   refine exists_not_eval_of_lt ?_
   rcases Nat.eq_zero_or_pos (2 ^ n / (n + 5)) with hq | hq
   · rw [hq, Nat.mul_zero]
@@ -258,17 +266,17 @@ theorem exists_hard_function (n : ℕ) :
       _ = 2 ^ n / (n + 5) * (n + 5) := Nat.mul_comm _ _
       _ ≤ 2 ^ n := Nat.div_mul_le_self _ _
 
-/-! Degenerate arities. `Circuit.size` is never `0` and `2 ^ n / (n + 5)` is `0` for
+/-! Degenerate arities. `TreeCircuit.size` is never `0` and `2 ^ n / (n + 5)` is `0` for
 `n ≤ 2`, so `exists_hard_function` says nothing below `n = 3`; at `n = 3` it excludes
 every literal and both empty gates. -/
 
-example (C : Circuit 2) : ¬ C.size ≤ 2 ^ 2 / (2 + 5) := by
-  cases C <;> simp [Circuit.size]
+example (C : TreeCircuit 2) : ¬ C.size ≤ 2 ^ 2 / (2 + 5) := by
+  cases C <;> simp [TreeCircuit.size]
 
 example : ∃ f : (Fin 3 → Bool) → Bool,
-    ∀ C : Circuit 3, C.size ≤ 1 → ∃ x, C.eval x ≠ f x := by
+    ∀ C : TreeCircuit 3, C.size ≤ 1 → ∃ x, C.eval x ≠ f x := by
   have h := exists_hard_function 3
   norm_num at h
   exact h
 
-end ACP
+end BoolCircuit

@@ -1,0 +1,132 @@
+
+### TCSlib/Complexity/TuringMachine/Build/Loop.lean
+body lines 117-2698: 2582 lines, 104 blocks, 95 privates, 2 multi-block clusters
+  cluster span blocks 5-102: lines 180-2697 (2518 lines)
+  cluster span blocks 99-100: lines 2437-2575 (139 lines)
+  legal cuts: 6
+  greedy parts (target 1100): 63, 2519
+
+### TCSlib/Complexity/TuringMachine/Build/Primitives.lean
+body lines 122-4418: 4297 lines, 184 blocks, 167 privates, 1 multi-block clusters
+  cluster span blocks 1-182: lines 124-4417 (4294 lines)
+  legal cuts: 2
+  greedy parts (target 1100): 2, 4295
+
+### TCSlib/Complexity/ClassNP/EXP.lean
+body lines 54-2887: 2834 lines, 139 blocks, 135 privates, 1 multi-block clusters
+  cluster span blocks 6-136: lines 95-2869 (2775 lines)
+  legal cuts: 8
+  greedy parts (target 1100): 41, 2792, 1
+
+### TCSlib/Complexity/ClassNP/Nondeterminism.lean
+body lines 66-2627: 2562 lines, 122 blocks, 110 privates, 2 multi-block clusters
+  cluster span blocks 3-114: lines 71-2521 (2451 lines)
+  cluster span blocks 27-34: lines 440-624 (185 lines)
+  legal cuts: 10
+  greedy parts (target 1100): 5, 2462, 95
+
+### TCSlib/Complexity/ClassNP/TMSAT.lean
+body lines 93-1908: 1816 lines, 96 blocks, 87 privates, 2 multi-block clusters
+  cluster span blocks 3-93: lines 109-1894 (1786 lines)
+  cluster span blocks 24-29: lines 603-733 (131 lines)
+  legal cuts: 5
+  greedy parts (target 1100): 16, 1799, 1
+
+### cut costs: TCSlib/Complexity/TuringMachine/Build/Loop.lean
+  cut after line 118: cost   0  parts 2/2580
+  cut after line 123: cost   0  parts 7/2575
+  cut after line 175: cost   0  parts 59/2523
+  cut after line 177: cost   0  parts 61/2521
+  cut after line 179: cost   0  parts 63/2519
+  cut after line 190: cost   1  parts 74/2508  hubs: loop_live_prefix
+  cut after line 200: cost   1  parts 84/2498  hubs: loop_live_prefix
+  cut after line 226: cost   2  parts 110/2472  hubs: loop_live_prefix, loop_first_halt
+  cut after line 237: cost   3  parts 121/2461  hubs: loop_live_prefix, loop_first_halt, loop_orbit_inv
+  cut after line 2359: cost   2  parts 2243/339  hubs: loopHost, loopHost_contracts
+  cut after line 2436: cost   2  parts 2320/262  hubs: loopHost, loopHost_contracts
+  cut after line 2476: cost   3  parts 2360/222  hubs: loopHost, loopHost_contracts, loop_halted_run
+  cut after line 2575: cost   2  parts 2459/123  hubs: loopHost, loopHost_contracts
+  cut after line 2697: cost   0  parts 2581/1
+
+### cut costs: TCSlib/Complexity/TuringMachine/Build/Primitives.lean
+  cut after line 123: cost   0  parts 2/4295
+  cut after line 141: cost   1  parts 20/4277  hubs: catalogPrefixTM
+  cut after line 146: cost   2  parts 25/4272  hubs: catalogPrefixTM, catalogPrefixCfg
+  cut after line 166: cost   3  parts 45/4252  hubs: catalogPrefixTM, catalogPrefixCfg, catalogPrefixTM_emit
+  cut after line 192: cost   4  parts 71/4226  hubs: catalogPrefixTM, catalogPrefixCfg, catalogPrefixTM_emit, catalogPrefixTM_copy
+  cut after line 210: cost   4  parts 89/4208  hubs: catalogPrefixTM, catalogPrefixCfg, catalogPrefixTM_emit, catalogPrefixTM_computes
+  cut after line 215: cost   5  parts 94/4203  hubs: catalogPrefixTM, catalogPrefixCfg, catalogPrefixTM_emit, catalogPrefixTM_computes, scanCfg
+  cut after line 226: cost   6  parts 105/4192  hubs: catalogPrefixTM, catalogPrefixCfg, catalogPrefixTM_emit, catalogPrefixTM_computes, scanCfg, scanCfg_read
+  cut after line 253: cost   7  parts 132/4165  hubs: catalogPrefixTM, catalogPrefixCfg, catalogPrefixTM_emit, catalogPrefixTM_computes, scanCfg, scanCfg_read, scanCopy_run
+  cut after line 268: cost   7  parts 147/4150  hubs: catalogPrefixTM, catalogPrefixCfg, catalogPrefixTM_emit, catalogPrefixTM_computes, scanCfg, scanCfg_read, scanCopy_finish
+  cut after line 369: cost   8  parts 248/4049  hubs: catalogPrefixTM, catalogPrefixCfg, catalogPrefixTM_emit, catalogPrefixTM_computes, scanCfg, scanCfg_read, pairDupTM, pairDup_computes
+  cut after line 4365: cost   3  parts 4244/53  hubs: incFixedTM, incFixed_computes, splitSolve_closed
+  cut after line 4400: cost   2  parts 4279/18  hubs: incFixedTM, incFixed_computes
+  cut after line 4417: cost   0  parts 4296/1
+
+### cut costs: TCSlib/Complexity/ClassNP/EXP.lean
+  cut after line 55: cost   0  parts 2/2832
+  cut after line 60: cost   0  parts 7/2827
+  cut after line 65: cost   0  parts 12/2822
+  cut after line 75: cost   0  parts 22/2812
+  cut after line 92: cost   0  parts 39/2795
+  cut after line 94: cost   0  parts 41/2793
+  cut after line 101: cost   1  parts 48/2786  hubs: enumValue
+  cut after line 108: cost   2  parts 55/2779  hubs: enumValue, enumInc
+  cut after line 113: cost   3  parts 60/2774  hubs: enumValue, enumInc, enumWord
+  cut after line 121: cost   4  parts 68/2766  hubs: enumValue, enumInc, enumWord, enumValue_lt
+  cut after line 127: cost   5  parts 74/2760  hubs: enumValue, enumInc, enumWord, enumValue_lt, enumWord_length
+  cut after line 2822: cost   2  parts 2769/65  hubs: enumBudget_bound, enumDecider
+  cut after line 2869: cost   0  parts 2816/18
+  cut after line 2886: cost   0  parts 2833/1
+
+### cut costs: TCSlib/Complexity/ClassNP/Nondeterminism.lean
+  cut after line 67: cost   0  parts 2/2560
+  cut after line 68: cost   0  parts 3/2559
+  cut after line 70: cost   0  parts 5/2557
+  cut after line 78: cost   1  parts 13/2549  hubs: certificate_split_strictMono
+  cut after line 89: cost   2  parts 24/2538  hubs: certificate_split_strictMono, certificate_split_unique
+  cut after line 94: cost   3  parts 29/2533  hubs: certificate_split_strictMono, certificate_split_unique, certificateSplit
+  cut after line 2461: cost   2  parts 2396/166  hubs: cont_guess_normalize, b2_compile
+  cut after line 2521: cost   0  parts 2456/106
+  cut after line 2532: cost   0  parts 2467/95
+  cut after line 2552: cost   0  parts 2487/75
+  cut after line 2573: cost   0  parts 2508/54
+  cut after line 2584: cost   0  parts 2519/43
+  cut after line 2620: cost   0  parts 2555/7
+  cut after line 2626: cost   0  parts 2561/1
+
+### cut costs: TCSlib/Complexity/ClassNP/TMSAT.lean
+  cut after line 94: cost   0  parts 2/1814
+  cut after line 96: cost   0  parts 4/1812
+  cut after line 108: cost   0  parts 16/1800
+  cut after line 124: cost   1  parts 32/1784  hubs: PolyControl
+  cut after line 128: cost   1  parts 36/1780  hubs: PolyControl
+  cut after line 132: cost   1  parts 40/1776  hubs: PolyControl
+  cut after line 136: cost   2  parts 44/1772  hubs: PolyControl, polyTape
+  cut after line 141: cost   3  parts 49/1767  hubs: PolyControl, polyTape, polyMove
+  cut after line 173: cost   4  parts 81/1735  hubs: PolyControl, polyTape, polyMove, polyUnaryTM
+  cut after line 541: cost   4  parts 449/1367  hubs: polyTape, polyUnaryTM, polyTape_write, poly_unary_computes
+  cut after line 602: cost   4  parts 510/1306  hubs: polyTape, polyUnaryTM, polyTape_write, poly_unary_computes
+  cut after line 733: cost   4  parts 641/1175  hubs: polyTape, polyUnaryTM, polyTape_write, poly_unary_computes
+  cut after line 1894: cost   0  parts 1802/14
+  cut after line 1907: cost   0  parts 1815/1
+
+=== DP: minimal visibility promotions for a full <=1100-line split ===
+TCSlib/Complexity/TuringMachine/Build/Loop.lean: minimal promotions for all parts <= 1100: 34 of 95 privates; 26 parts, sizes [2, 5, 52, 2, 2, 11, 10, 26, 11, 7, 30, 13, 35, 7, 5, 6, 6, 65, 6, 20, 126, 25, 12, 1075, 1022, 1]
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean: minimal promotions for all parts <= 1100: 43 of 167 privates; 35 parts, sizes [2, 18, 5, 20, 44, 5, 11, 143, 182, 16, 14, 81, 31, 285, 429, 349, 196, 960, 5, 4, 6, 62, 15, 5, 11, 15, 4, 183, 9, 9, 9, 75, 1076, 17, 1]
+TCSlib/Complexity/ClassNP/EXP.lean: minimal promotions for all parts <= 1100: 24 of 135 privates; 20 parts, sizes [2, 5, 5, 10, 17, 2, 674, 14, 5, 660, 15, 6, 169, 6, 33, 21, 1063, 109, 17, 1]
+TCSlib/Complexity/ClassNP/Nondeterminism.lean: minimal promotions for all parts <= 1100: 16 of 110 privates; 14 parts, sizes [2, 1, 2, 1097, 63, 1093, 198, 11, 20, 21, 11, 36, 6, 1]
+TCSlib/Complexity/ClassNP/TMSAT.lean: minimal promotions for all parts <= 1100: 8 of 87 privates; 13 parts, sizes [2, 2, 12, 433, 61, 131, 5, 27, 9, 34, 1086, 13, 1]
+
+=== cheapest balanced 2-way cut (both parts >= 800 lines) ===
+TCSlib/Complexity/TuringMachine/Build/Loop.lean: cost 29 at line 917 (parts 801/1781)
+   hubs: LoopHostState, loopBodyCfg, loopBodySource, loopBodyTM, loopBody_run, loopBody_stop, loopBorrowPos, loopBorrowPos_le, loopBuffer_read, loopBuffer_write, loopControlAction, loopDebit, loopDebit_iterate_length, loopDebit_iterate_value, loopDebit_length, loopDebit_success, loopFrame, loopFuelSource, loopHost, loopHost_body_capture, loopHost_fuel_capture, loopHost_init, loopHost_input_rewind, loop_first_halt, loop_fuel_width, loop_input_run_le, loop_live_prefix, loop_orbit_inv, loop_output_length_le
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean: cost 13 at line 2912 (parts 2791/1506)
+   hubs: catalogPolyCfg, catalogPolyCost, catalogPolyCost_le, catalogPolyTape, catalogPolyTape_write, catalogPolyUnaryTM, catalogPoly_loop, catalogPrefixCfg, catalogPrefixTM, catalogPrefixTM_emit, catalogRewind, incFixedTM, incFixed_computes
+TCSlib/Complexity/ClassNP/EXP.lean: cost 15 at line 1447 (parts 1394/1440)
+   hubs: enumAny, enumAny_certificates, enumBudget_bound, enumCont_cleanCfg, enumCont_cleanTM, enumCont_clean_complete, enumCont_first_halt, enumCont_fuel_bits, enumCont_logCfg, enumCont_logTM, enumCont_orbit, enumCont_sparse, enumCont_step_length, enumLoop_run, enumWord
+TCSlib/Complexity/ClassNP/Nondeterminism.lean: cost 5 at line 1230 (parts 1165/1397)
+   hubs: acceptsWithin_iff_of_halts, captureEmission, captureEmission_correct, capturedSummary, capturedSummary_true
+TCSlib/Complexity/ClassNP/TMSAT.lean: cost 13 at line 893 (parts 801/1015)
+   hubs: polyTape, polyTape_write, polyUnaryTM, poly_unary_computes, tmsatAnswer, tmsatAnswer_accept, tmsatQuad, tmsatVerifier, tmsat_certificate_equiv, tmsat_comp_on_image, tmsat_quad_bounds, tmsat_simulation_budget, tmsat_simulator_total

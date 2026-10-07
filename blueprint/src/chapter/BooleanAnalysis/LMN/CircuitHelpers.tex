@@ -16,7 +16,7 @@ from shallow Boolean circuits into DNF/CNF formulas.
 \lean{LMN.restrictFn_ext'}
 \label{LMN.restrictFn_ext'}
 \leanok
-\uses{SwitchingLemma2.Restriction, SwitchingLemma2.restrictFn}
+\uses{SwitchingLemma.Restriction, SwitchingLemma.restrictFn}
 \difficulty{1}
 Let $f, g : (\mathrm{Fin}\,n \to \mathrm{Bool}) \to \mathrm{Bool}$ be two Boolean
 functions that agree at every point, so that $f(x) = g(x)$ for all $x$. Then for every
@@ -28,7 +28,7 @@ of $f$ by $\rho$ equals the restriction of $g$ by $\rho$.
 \lean{LMN.bernoulliRestrProb_congr_fn}
 \label{LMN.bernoulliRestrProb_congr_fn}
 \leanok
-\uses{LMN.dedupTermVar, LMN.restrictFn_ext', SwitchingLemma2.bernoulliRestrProb, SwitchingLemma2.restrictFn, dtDepth}
+\uses{LMN.dedupTermVar, LMN.restrictFn_ext', SwitchingLemma.bernoulliRestrProb, SwitchingLemma.restrictFn, dtDepth}
 \difficulty{3}
 Let $f, g : (\mathrm{Fin}\,n \to \mathrm{Bool}) \to \mathrm{Bool}$ be Boolean functions
 on $n$ variables that agree at every input, and fix a real parameter $p$ and a threshold
@@ -162,7 +162,7 @@ true at $x$ if and only if $d$ does.
 \lean{LMN.contradiction_clause_eval_true}
 \label{LMN.contradiction_clause_eval_true}
 \leanok
-\uses{CNF.evalClause, LMN.termHasContradiction, Literal.eval, Term}
+\uses{Clause.eval, LMN.termHasContradiction, Literal.eval, Term}
 \difficulty{2}
 Let $t$ be a term over $n$ Boolean variables — a list of literals, each a variable
 together with a polarity — and suppose $t$ contains two literals on the same variable
@@ -176,7 +176,7 @@ every $x$.
 \lean{LMN.dedupTermVar_preserves_clause_eval}
 \label{LMN.dedupTermVar_preserves_clause_eval}
 \leanok
-\uses{CNF.evalClause, LMN.cleanDNF_width_le, LMN.dedupTermVar, LMN.termHasContradiction, Literal, Literal.eval, Term}
+\uses{Clause.eval, LMN.cleanDNF_width_le, LMN.dedupTermVar, LMN.termHasContradiction, Literal, Literal.eval, Term}
 \difficulty{5}
 Let $t$ be a term over the variables $x_0,\dots,x_{n-1}$, that is, a list of literals,
 and let $x \in \{0,1\}^n$ be an assignment. Suppose $t$ contains no two literals on the
@@ -208,7 +208,7 @@ the same Boolean value at $x$.
 \lean{LMN.cleanDNF_width_le}
 \label{LMN.cleanDNF_width_le}
 \leanok
-\uses{DNF, DNF.width, LMN.cleanDNF, LMN.dedupTermVar, LMN.dedupTermVar_width_le, LMN.termHasContradiction, Term.width}
+\uses{DNF, DNF.width, LMN.cleanDNF, LMN.dedupTermVar, LMN.dedupTermVar_width_le, LMN.termHasContradiction, LitList.width}
 \difficulty{5}
 Let $d$ be a DNF formula over $n$ variables — a disjunction of terms, each term a
 conjunction of literals — and form its cleaned version by first deleting every
@@ -223,7 +223,7 @@ empty formula). Then the width of the cleaned formula is at most the width of $d
 \lean{LMN.cleanCNF_width_le}
 \label{LMN.cleanCNF_width_le}
 \leanok
-\uses{CNF, CNF.width, LMN.cleanCNF, LMN.dedupTermVar, LMN.dedupTermVar_width_le, LMN.termHasContradiction, Term, Term.width}
+\uses{CNF, CNF.width, LMN.cleanCNF, LMN.dedupTermVar, LMN.dedupTermVar_width_le, LMN.termHasContradiction, Term, LitList.width}
 \difficulty{5}
 Let $c$ be a CNF formula, that is, a list of clauses, each clause being a list of
 literals over the variables $\{0,\dots,n-1\}$. Define the width of a clause to be its
@@ -304,7 +304,7 @@ literals, contains no repeated literal.
 }
 \label{LMN.switching_bernoulli_dtDepth_dnf_general}
 \leanok
-\uses{DNF, DNF.eval, DNF.width, LMN.cleanDNF, LMN.cleanDNF_eval, LMN.cleanDNF_nodup, LMN.cleanDNF_var_inj, LMN.cleanDNF_width_le, SwitchingBernoulli.switching_bernoulli_dtDepth_dnf, SwitchingLemma2.bernoulliRestrProb, SwitchingLemma2.restrictFn, dtDepth}
+\uses{DNF, DNF.eval, DNF.width, LMN.cleanDNF, LMN.cleanDNF_eval, LMN.cleanDNF_nodup, LMN.cleanDNF_var_inj, LMN.cleanDNF_width_le, SwitchingBernoulli.switching_bernoulli_dtDepth_dnf, SwitchingLemma.bernoulliRestrProb, SwitchingLemma.restrictFn, dtDepth}
 \difficulty{2}
 Let $f$ be a DNF formula on $n \ge 1$ Boolean variables whose width is at most $w$,
 where $w \ge 1$, and let $p \in \bbr$ satisfy $0 < p \le 1$ together with $p \le
@@ -330,7 +330,7 @@ least depth of a decision tree computing it.
 }
 \label{LMN.switching_bernoulli_dtDepth_cnf_general}
 \leanok
-\uses{CNF, CNF.eval, CNF.width, LMN.cleanCNF, LMN.cleanCNF_eval, LMN.cleanCNF_nodup, LMN.cleanCNF_var_inj, LMN.cleanCNF_width_le, SwitchingBernoulli.switching_bernoulli_dtDepth_cnf, SwitchingLemma2.bernoulliRestrProb, SwitchingLemma2.restrictFn, dtDepth}
+\uses{CNF, CNF.eval, CNF.width, LMN.cleanCNF, LMN.cleanCNF_eval, LMN.cleanCNF_nodup, LMN.cleanCNF_var_inj, LMN.cleanCNF_width_le, SwitchingBernoulli.switching_bernoulli_dtDepth_cnf, SwitchingLemma.bernoulliRestrProb, SwitchingLemma.restrictFn, dtDepth}
 \difficulty{2}
 Let $f$ be a CNF formula in $n \ge 1$ Boolean variables whose width is at most $w$, with
 $w \ge 1$, and let $p \in \bbr$ satisfy $0 < p \le 1/(40w)$ and $p \le 1$. Consider a
@@ -350,7 +350,7 @@ where $\mathrm{depth}(f_\rho)$ denotes the decision-tree depth of $f_\rho$.
 \lean{LMN.depth_le_one_children_are_lits}
 \label{LMN.depth_le_one_children_are_lits}
 \leanok
-\uses{BoolCircuit.Circuit, BoolCircuit.Circuit.depth, BoolCircuit.Lit}
+\uses{BoolCircuit.TreeCircuit, BoolCircuit.TreeCircuit.depth, BoolCircuit.Lit}
 \difficulty{4}
 Let $C$ be a Boolean circuit on $n$ variables of the form $g(c_1,\dots,c_k)$, a single
 gate $g$ (either AND or OR) applied to a list of child circuits $c_1,\dots,c_k$. If the
@@ -362,7 +362,7 @@ depth of $C$ is at most $1$, then every child $c_i$ is a literal, that is, $c_i 
 \lean{LMN.depth_le_two_children_depth_le_one}
 \label{LMN.depth_le_two_children_depth_le_one}
 \leanok
-\uses{BoolCircuit.Circuit, BoolCircuit.Circuit.depth}
+\uses{BoolCircuit.TreeCircuit, BoolCircuit.TreeCircuit.depth}
 \difficulty{2}
 Let $g = \mathrm{node}(\mathit{isAnd}, cs)$ be a Boolean circuit consisting of a single
 gate (an AND gate if $\mathit{isAnd}$ is true, an OR gate otherwise) applied to a list
@@ -374,7 +374,7 @@ every child circuit $c$ in $cs$ has depth $\mathrm{depth}(c) \le 1$.
 \lean{LMN.depth1AndToTerm}
 \label{LMN.depth1AndToTerm}
 \leanok
-\uses{BoolCircuit.Circuit, BoolCircuit.Lit.toLiteral, Term}
+\uses{BoolCircuit.TreeCircuit, BoolCircuit.Lit.toLiteral, Term}
 Converts a depth-$\le 1$ AND subcircuit to a term (a conjunction): a single literal becomes
 the one-element term, and an AND node becomes the list of its literal children translated
 via $\mathrm{toLiteral}$.
@@ -384,7 +384,7 @@ via $\mathrm{toLiteral}$.
 \lean{LMN.depth2OrToDNF}
 \label{LMN.depth2OrToDNF}
 \leanok
-\uses{BoolCircuit.Circuit, BoolCircuit.Lit.toLiteral, DNF}
+\uses{BoolCircuit.TreeCircuit, BoolCircuit.Lit.toLiteral, DNF}
 Converts a list of children $cs$ of a top OR gate (of depth $\le 2$) into a DNF: each literal
 child becomes a singleton term, each AND child becomes the term of its literals, and each OR
 child contributes the singleton terms of its literals.
@@ -394,7 +394,7 @@ child contributes the singleton terms of its literals.
 \lean{LMN.depth2AndToCNF}
 \label{LMN.depth2AndToCNF}
 \leanok
-\uses{BoolCircuit.Circuit, BoolCircuit.Lit.toLiteral, CNF}
+\uses{BoolCircuit.TreeCircuit, BoolCircuit.Lit.toLiteral, CNF}
 Converts a list of children $cs$ of a top AND gate (of depth $\le 2$) into a CNF: each literal
 child becomes a singleton clause, each OR child becomes the clause of its literals, and each
 AND child contributes the singleton clauses of its literals.
@@ -404,7 +404,7 @@ AND child contributes the singleton clauses of its literals.
 \lean{LMN.depth2OrToDNF_eval}
 \label{LMN.depth2OrToDNF_eval}
 \leanok
-\uses{BoolCircuit.Circuit, BoolCircuit.Circuit.depth, BoolCircuit.Circuit.eval, BoolCircuit.Lit, BoolCircuit.Lit.eval, BoolCircuit.Lit.eval_eq_toLiteral_eval, BoolCircuit.Lit.toLiteral, DNF.eval, LMN.depth2OrToDNF, LMN.depth_le_one_children_are_lits, LMN.depth_le_two_children_depth_le_one, Literal.eval, Term.eval}
+\uses{BoolCircuit.TreeCircuit, BoolCircuit.TreeCircuit.depth, BoolCircuit.TreeCircuit.eval, BoolCircuit.Lit, BoolCircuit.Lit.eval, BoolCircuit.Lit.eval_eq_toLiteral_eval, BoolCircuit.Lit.toLiteral, DNF.eval, LMN.depth2OrToDNF, LMN.depth_le_one_children_are_lits, LMN.depth_le_two_children_depth_le_one, Literal.eval, Term.eval}
 \difficulty{5}
 Let $cs$ be a finite list of Boolean circuits on $n$ variables, regarded as the children
 of a top-level OR gate $\varphi$, and suppose $\varphi$ has depth at most $2$. Form a
@@ -420,7 +420,7 @@ $\varphi$ compute the same Boolean function: $D(x) = \varphi(x)$ for every assig
 \lean{LMN.depth2AndToCNF_eval}
 \label{LMN.depth2AndToCNF_eval}
 \leanok
-\uses{BoolCircuit.Circuit, BoolCircuit.Circuit.depth, BoolCircuit.Circuit.eval, BoolCircuit.Lit, BoolCircuit.Lit.toLiteral, BoolCircuit.foldr_or_lits_eq_clause_eval, CNF.eval, CNF.evalClause, LMN.depth2AndToCNF, LMN.depth_le_two_children_depth_le_one, Literal.eval}
+\uses{BoolCircuit.TreeCircuit, BoolCircuit.TreeCircuit.depth, BoolCircuit.TreeCircuit.eval, BoolCircuit.Lit, BoolCircuit.Lit.toLiteral, BoolCircuit.foldr_or_lits_eq_clause_eval, CNF.eval, Clause.eval, LMN.depth2AndToCNF, LMN.depth_le_two_children_depth_le_one, Literal.eval}
 \difficulty{6}
 Let $cs$ be a list of Boolean circuits on $n$ variables, viewed as the children of a
 top-level AND gate, and suppose the AND-of-children circuit $\bigwedge cs$ has depth at
@@ -434,7 +434,7 @@ value of $\bigwedge cs$ at $x$.
 \lean{LMN.depth2OrToDNF_width_le}
 \label{LMN.depth2OrToDNF_width_le}
 \leanok
-\uses{BoolCircuit.Circuit, BoolCircuit.Circuit.depth, BoolCircuit.Circuit.maxFanin, BoolCircuit.Lit.toLiteral, DNF.width, LMN.depth2OrToDNF}
+\uses{BoolCircuit.TreeCircuit, BoolCircuit.TreeCircuit.depth, BoolCircuit.TreeCircuit.maxFanin, BoolCircuit.Lit.toLiteral, DNF.width, LMN.depth2OrToDNF}
 \difficulty{5}
 Let $cs$ be a list of Boolean circuits on $n$ variables, regarded as the children of a
 top-level OR gate, and suppose that this OR gate has depth at most $2$. Form the DNF
@@ -448,7 +448,7 @@ of its terms) is at most the maximum fan-in of the OR gate.
 \lean{LMN.depth2AndToCNF_width_le}
 \label{LMN.depth2AndToCNF_width_le}
 \leanok
-\uses{BoolCircuit.Circuit, BoolCircuit.Circuit.depth, BoolCircuit.Circuit.maxFanin, BoolCircuit.Lit.toLiteral, CNF.width, LMN.depth2AndToCNF}
+\uses{BoolCircuit.TreeCircuit, BoolCircuit.TreeCircuit.depth, BoolCircuit.TreeCircuit.maxFanin, BoolCircuit.Lit.toLiteral, CNF.width, LMN.depth2AndToCNF}
 \difficulty{5}
 Let $cs$ be a list of Boolean circuits on $n$ variables, regarded as the children of a
 top AND gate, and suppose this AND gate has depth at most $2$. Then the CNF formula

@@ -30,7 +30,7 @@ CNFs/DNFs at each level).
   `s · ((1/2)^l + exp(-np/3))`.
 -/
 
-open BoolCircuit SwitchingLemma2 SwitchingBernoulli
+open BoolCircuit SwitchingLemma SwitchingBernoulli
 open Classical in
 attribute [local instance] Classical.propDecidable
 noncomputable section
@@ -69,8 +69,8 @@ lemma bernoulliRestrProb_mono (p : ℝ) (hp : 0 ≤ p) (hp1 : p ≤ 1)
     The contrapositive gives us: if no width-`l` CNF exists, then `dtDepth > l`. -/
 theorem switching_bernoulli_gate_to_cnf (g : DNF n) (w l : ℕ)
     (hw : g.width ≤ w) (hw_pos : 0 < w)
-    (hnd : ∀ t ∈ g, ∀ l₁ ∈ t, ∀ l₂ ∈ t, l₁.var = l₂.var → l₁ = l₂)
-    (hnodup : ∀ t ∈ g, t.Nodup)
+    (hnd : ∀ t ∈ g.terms, ∀ l₁ ∈ t, ∀ l₂ ∈ t, l₁.var = l₂.var → l₁ = l₂)
+    (hnodup : ∀ t ∈ g.terms, t.Nodup)
     (hn : 0 < n)
     (p : ℝ) (hp_pos : 0 < p) (hp_le : p ≤ 1 / (40 * ↑w)) (hp1 : p ≤ 1) :
     bernoulliRestrProb p
@@ -90,8 +90,8 @@ theorem switching_bernoulli_gate_to_cnf (g : DNF n) (w l : ℕ)
     CNF gate can be expressed as a DNF of width at most `l` with high probability. -/
 theorem switching_bernoulli_gate_to_dnf_from_cnf (g : CNF n) (w l : ℕ)
     (hw : g.width ≤ w) (hw_pos : 0 < w)
-    (hnd : ∀ c ∈ g, ∀ l₁ ∈ c, ∀ l₂ ∈ c, l₁.var = l₂.var → l₁ = l₂)
-    (hnodup : ∀ c ∈ g, c.Nodup)
+    (hnd : ∀ c ∈ g.clauses, ∀ l₁ ∈ c, ∀ l₂ ∈ c, l₁.var = l₂.var → l₁ = l₂)
+    (hnodup : ∀ c ∈ g.clauses, c.Nodup)
     (hn : 0 < n)
     (p : ℝ) (hp_pos : 0 < p) (hp_le : p ≤ 1 / (40 * ↑w)) (hp1 : p ≤ 1) :
     bernoulliRestrProb p
@@ -136,8 +136,8 @@ theorem restricted_has_small_dnf_of_dtDepth_le
 theorem switching_bernoulli_union_bound
     (gates : Fin s → DNF n) (w l : ℕ)
     (hw : ∀ i, (gates i).width ≤ w) (hw_pos : 0 < w)
-    (hnd : ∀ i, ∀ t ∈ gates i, ∀ l₁ ∈ t, ∀ l₂ ∈ t, l₁.var = l₂.var → l₁ = l₂)
-    (hnodup : ∀ i, ∀ t ∈ gates i, t.Nodup)
+    (hnd : ∀ i, ∀ t ∈ (gates i).terms, ∀ l₁ ∈ t, ∀ l₂ ∈ t, l₁.var = l₂.var → l₁ = l₂)
+    (hnodup : ∀ i, ∀ t ∈ (gates i).terms, t.Nodup)
     (hn : 0 < n)
     (p : ℝ) (hp_pos : 0 < p) (hp_le : p ≤ 1 / (40 * ↑w)) (hp1 : p ≤ 1) :
     bernoulliRestrProb p
@@ -185,8 +185,8 @@ and then a union bound over the `s₂` gates.
 theorem layer2_cnf_replaceability_union_bound
     (gates : Fin s₂ → DNF n) (w l : ℕ)
     (hw : ∀ i, (gates i).width ≤ w) (hw_pos : 0 < w)
-    (hnd : ∀ i, ∀ t ∈ gates i, ∀ l₁ ∈ t, ∀ l₂ ∈ t, l₁.var = l₂.var → l₁ = l₂)
-    (hnodup : ∀ i, ∀ t ∈ gates i, t.Nodup)
+    (hnd : ∀ i, ∀ t ∈ (gates i).terms, ∀ l₁ ∈ t, ∀ l₂ ∈ t, l₁.var = l₂.var → l₁ = l₂)
+    (hnodup : ∀ i, ∀ t ∈ (gates i).terms, t.Nodup)
     (hn : 0 < n)
     (p : ℝ) (hp_pos : 0 < p) (hp_le : p ≤ 1 / (40 * ↑w)) (hp1 : p ≤ 1) :
     bernoulliRestrProb p
@@ -212,8 +212,8 @@ the exponential tail `s₂ · exp(-np/3)` is negligible, and the dominant term i
 theorem layer2_cnf_replaceability_simplified
     (gates : Fin s₂ → DNF n) (w l : ℕ)
     (hw : ∀ i, (gates i).width ≤ w) (hw_pos : 0 < w)
-    (hnd : ∀ i, ∀ t ∈ gates i, ∀ l₁ ∈ t, ∀ l₂ ∈ t, l₁.var = l₂.var → l₁ = l₂)
-    (hnodup : ∀ i, ∀ t ∈ gates i, t.Nodup)
+    (hnd : ∀ i, ∀ t ∈ (gates i).terms, ∀ l₁ ∈ t, ∀ l₂ ∈ t, l₁.var = l₂.var → l₁ = l₂)
+    (hnodup : ∀ i, ∀ t ∈ (gates i).terms, t.Nodup)
     (hn : 0 < n)
     (p : ℝ) (hp_pos : 0 < p) (hp_le : p ≤ 1 / (40 * ↑w)) (hp1 : p ≤ 1)
     (ε : ℝ) (_hε : 0 < ε)

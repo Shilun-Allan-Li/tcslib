@@ -40,7 +40,7 @@ untouched coordinates contribute `1`.
   arXiv edition, 2021, Prop. 4.17 and Cor. 3.22.
 -/
 
-open BooleanAnalysis SwitchingLemma2 LMN
+open BooleanAnalysis SwitchingLemma LMN
 open Classical
 
 noncomputable section

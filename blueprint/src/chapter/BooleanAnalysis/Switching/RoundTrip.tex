@@ -12,10 +12,10 @@ restrictions. The intermediate lemmas track invariants on the encoder/decoder st
 \section{Declarations}
 
 \begin{lemma}[Processing preserves free variables in the base restriction]
-\lean{SwitchingLemma2.pcl_none_implies_rho_free}
-\label{SwitchingLemma2.pcl_none_implies_rho_free}
+\lean{SwitchingLemma.pcl_none_implies_rho_free}
+\label{SwitchingLemma.pcl_none_implies_rho_free}
 \leanok
-\uses{Literal, SwitchingLemma2.Restriction, SwitchingLemma2.processClauseLits, SwitchingLemma2.processClauseLits_rho_ne_none}
+\uses{Literal, SwitchingLemma.Restriction, SwitchingLemma.processClauseLits, SwitchingLemma.processClauseLits_rho_ne_none}
 \difficulty{2}
 Fix a number $n$ of variables. Let $\mathrm{lits}$ be a list of literals, each paired
 with its position index in a clause; let $\mathrm{path}$ be a decision-tree path; let
@@ -26,12 +26,12 @@ $\sigma$. If $\rho_0'$ leaves $v$ free, then $\rho_0$ already leaves $v$ free.
 \end{lemma}
 
 \begin{lemma}[First surviving term preserved by the decoded restriction]
-\lean{SwitchingLemma2.find_clause_preserved_in_encode}
+\lean{SwitchingLemma.find_clause_preserved_in_encode}
 \proofsource{switching-lemma}{
   pdf-b5e074215b9e-p002-b004,
   pdf-b5e074215b9e-p002-b002
 }
-\label{SwitchingLemma2.find_clause_preserved_in_encode}
+\label{SwitchingLemma.find_clause_preserved_in_encode}
 \leanok
 \proofstep
   {BoolCircuit.Lit}
@@ -74,96 +74,96 @@ $\sigma$. If $\rho_0'$ leaves $v$ free, then $\rho_0$ already leaves $v$ free.
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b003}
 \proofstep
-  {SwitchingLemma2.Restriction}
+  {SwitchingLemma.Restriction}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p001-b007}
 \proofstep
-  {SwitchingLemma2.Restriction.freeVars}
+  {SwitchingLemma.Restriction.freeVars}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p001-b007}
 \proofstep
-  {SwitchingLemma2.Restriction.numFree}
+  {SwitchingLemma.Restriction.numFree}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p001-b007}
 \proofstep
-  {SwitchingLemma2.Literal.fixedBy}
+  {SwitchingLemma.Literal.fixedBy}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b004}
 \proofstep
-  {SwitchingLemma2.Term.killedBy}
+  {SwitchingLemma.Term.killedBy}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b002}
 \proofstep
-  {SwitchingLemma2.killedBy_of_nonfree_agree}
+  {SwitchingLemma.killedBy_of_nonfree_agree}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b004}
 \proofstep
-  {SwitchingLemma2.first_clause_preserved}
+  {SwitchingLemma.first_clause_preserved}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b004}
 \proofstep
-  {SwitchingLemma2.canonicalDTree}
+  {SwitchingLemma.canonicalDTree}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b002}
 \proofstep
-  {SwitchingLemma2.processClauseLits}
+  {SwitchingLemma.processClauseLits}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b003}
 \proofstep
-  {SwitchingLemma2.razborovEncode}
+  {SwitchingLemma.razborovEncode}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b003}
 \proofstep
-  {SwitchingLemma2.processClauseLits_sigma_stable}
+  {SwitchingLemma.processClauseLits_sigma_stable}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b003}
 \proofstep
-  {SwitchingLemma2.processClauseLits_rho_ne_none}
+  {SwitchingLemma.processClauseLits_rho_ne_none}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b003}
 \proofstep
-  {SwitchingLemma2.encode_go_fst_nonfree}
+  {SwitchingLemma.encode_go_fst_nonfree}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b004}
 \proofstep
-  {SwitchingLemma2.encode_go_acc}
+  {SwitchingLemma.encode_go_acc}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b003}
 \proofstep
-  {SwitchingLemma2.encode_go_fst_acc}
+  {SwitchingLemma.encode_go_fst_acc}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b003}
 \proofstep
-  {SwitchingLemma2.processClauseLits_sigma_ne_neg}
+  {SwitchingLemma.processClauseLits_sigma_ne_neg}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b004}
 \proofstep
-  {SwitchingLemma2.processClauseLits_path_nil_of_rho_none_and_mem}
+  {SwitchingLemma.processClauseLits_path_nil_of_rho_none_and_mem}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b003}
 \proofstep
-  {SwitchingLemma2.encode_go_not_kills_first_clause}
+  {SwitchingLemma.encode_go_not_kills_first_clause}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b004}
-\uses{DNF, SwitchingLemma2.Literal.killedBy, SwitchingLemma2.Restriction, SwitchingLemma2.Term.killedBy, SwitchingLemma2.encode_go_not_kills_first_clause, SwitchingLemma2.first_clause_preserved, Term}
+\uses{DNF, SwitchingLemma.Literal.killedBy, SwitchingLemma.Restriction, SwitchingLemma.Term.killedBy, SwitchingLemma.encode_go_not_kills_first_clause, SwitchingLemma.first_clause_preserved, Term}
 \difficulty{4}
 Let $f$ be a DNF formula on $n$ variables, viewed as an ordered list of terms, in which
 no term contains two distinct literals on the same variable. Fix restrictions $\rho_0$
@@ -179,10 +179,10 @@ order, that is not killed by $\rho_{\mathrm{dec}}$.
 \end{lemma}
 
 \begin{lemma}[Filtering enumerated literals by free variables]
-\lean{SwitchingLemma2.mem_filter_freeVars_zipIdx}
-\label{SwitchingLemma2.mem_filter_freeVars_zipIdx}
+\lean{SwitchingLemma.mem_filter_freeVars_zipIdx}
+\label{SwitchingLemma.mem_filter_freeVars_zipIdx}
 \leanok
-\uses{Literal, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.freeVars}
+\uses{Literal, SwitchingLemma.Restriction, SwitchingLemma.Restriction.freeVars}
 \difficulty{2}
 Fix a natural number $n$, a restriction $\rho_0$ on $n$ variables, and a list $t$ of
 literals. Enumerate $t$ as the list of pairs $(\ell, i)$, where $\ell$ ranges over the
@@ -193,10 +193,10 @@ variable $v$ is free under $\rho_0$, meaning $\rho_0$ leaves $v$ unset.
 \end{lemma}
 
 \begin{lemma}[No auxiliary entry targets a still-free variable]
-\lean{SwitchingLemma2.processClauseLits_aux_ne_of_pcl_none}
-\label{SwitchingLemma2.processClauseLits_aux_ne_of_pcl_none}
+\lean{SwitchingLemma.processClauseLits_aux_ne_of_pcl_none}
+\label{SwitchingLemma.processClauseLits_aux_ne_of_pcl_none}
 \leanok
-\uses{Literal, SwitchingLemma2.Restriction, SwitchingLemma2.processClauseLits, SwitchingLemma2.processClauseLits_rho_ne_none, SwitchingLemma2.zipIdx_drop_spec, Term}
+\uses{Literal, SwitchingLemma.Restriction, SwitchingLemma.processClauseLits, SwitchingLemma.processClauseLits_rho_ne_none, SwitchingLemma.zipIdx_drop_spec, Term}
 \difficulty{5}
 Let $t$ be a term on $n$ variables (a list of literals), let $L$ be a list of literals
 each paired with a natural-number position, let $\pi$ be a path (a list of
@@ -212,10 +212,10 @@ variable of $l$ is not $v$.
 \end{lemma}
 
 \begin{lemma}[Encoder first component matches the recursive step]
-\lean{SwitchingLemma2.encode_go_fst_eq_rec}
-\label{SwitchingLemma2.encode_go_fst_eq_rec}
+\lean{SwitchingLemma.encode_go_fst_eq_rec}
+\label{SwitchingLemma.encode_go_fst_eq_rec}
 \leanok
-\uses{DNF, Literal, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.freeVars, SwitchingLemma2.Term.killedBy, SwitchingLemma2.encode_go_fst_acc, SwitchingLemma2.processClauseLits, Term}
+\uses{DNF, Literal, SwitchingLemma.Restriction, SwitchingLemma.Restriction.freeVars, SwitchingLemma.Term.killedBy, SwitchingLemma.encode_go_fst_acc, SwitchingLemma.processClauseLits, Term}
 \difficulty{4}
 Fix a DNF formula $f$ on $n$ variables, two restrictions $\rho_0$ and $\sigma$, a fuel
 budget, and a path $\mathrm{step} :: \mathrm{rest}$ consisting of a first
@@ -231,10 +231,10 @@ started from the state obtained by processing the clause's free literals $\mathi
 \end{lemma}
 
 \begin{lemma}[Round-trip recovery of the restriction from a processed clause]
-\lean{SwitchingLemma2.roundtrip_inv_hC'}
-\label{SwitchingLemma2.roundtrip_inv_hC'}
+\lean{SwitchingLemma.roundtrip_inv_hC'}
+\label{SwitchingLemma.roundtrip_inv_hC'}
 \leanok
-\uses{Literal, SwitchingLemma2.Restriction, SwitchingLemma2.foldl_sigma_stable, SwitchingLemma2.processClauseLits, SwitchingLemma2.processClauseLits_aux_ne_nonfree, Term}
+\uses{Literal, SwitchingLemma.Restriction, SwitchingLemma.foldl_sigma_stable, SwitchingLemma.processClauseLits, SwitchingLemma.processClauseLits_aux_ne_nonfree, Term}
 \difficulty{4}
 Let $t$ be a term on $n$ variables, let $\mathit{lits}$ be a list of literals each
 tagged with a position index, and let $\mathit{path}$ be a list of variable–direction
@@ -253,10 +253,10 @@ when $i$ lies beyond the end of $t$) — agrees with $\sigma$ at $v$.
 \end{lemma}
 
 \begin{lemma}[Reconstructing the processed restriction from its auxiliary data]
-\lean{SwitchingLemma2.roundtrip_inv_hD'}
-\label{SwitchingLemma2.roundtrip_inv_hD'}
+\lean{SwitchingLemma.roundtrip_inv_hD'}
+\label{SwitchingLemma.roundtrip_inv_hD'}
 \leanok
-\uses{Literal, SwitchingLemma2.Restriction, SwitchingLemma2.foldl_rho_stable, SwitchingLemma2.processClauseLits, SwitchingLemma2.processClauseLits_foldl_rho_eq_of_set, SwitchingLemma2.processClauseLits_rho_stable, Term}
+\uses{Literal, SwitchingLemma.Restriction, SwitchingLemma.foldl_rho_stable, SwitchingLemma.processClauseLits, SwitchingLemma.processClauseLits_foldl_rho_eq_of_set, SwitchingLemma.processClauseLits_rho_stable, Term}
 \difficulty{4}
 Let $t$ be a term on $n$ variables (a list of literals), let $\mathit{lits}$ be a list
 of literals each paired with a position index, let a decision-tree path be given, and
@@ -275,12 +275,12 @@ reconstructed restriction and $\rho_0^{\ast}$ take the same value.
 \end{lemma}
 
 \begin{lemma}[Round-trip core of the Razborov encoding]
-\lean{SwitchingLemma2.go_roundtrip_gen}
+\lean{SwitchingLemma.go_roundtrip_gen}
 \proofsource{switching-lemma}{
   pdf-b5e074215b9e-p002-b004,
   pdf-b5e074215b9e-p002-b003
 }
-\label{SwitchingLemma2.go_roundtrip_gen}
+\label{SwitchingLemma.go_roundtrip_gen}
 \leanok
 \proofstep
   {BoolCircuit.Lit}
@@ -303,7 +303,7 @@ reconstructed restriction and $\rho_0^{\ast}$ take the same value.
   {switching-lemma}
   {pdf-b5e074215b9e-p001-b004}
 \proofstep
-  {Term.width}
+  {LitList.width}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p001-b004}
@@ -328,222 +328,222 @@ reconstructed restriction and $\rho_0^{\ast}$ take the same value.
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b003}
 \proofstep
-  {SwitchingLemma2.Restriction}
+  {SwitchingLemma.Restriction}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p001-b007}
 \proofstep
-  {SwitchingLemma2.Restriction.freeVars}
+  {SwitchingLemma.Restriction.freeVars}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p001-b007}
 \proofstep
-  {SwitchingLemma2.Restriction.numFree}
+  {SwitchingLemma.Restriction.numFree}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p001-b007}
 \proofstep
-  {SwitchingLemma2.Literal.fixedBy}
+  {SwitchingLemma.Literal.fixedBy}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b001}
 \proofstep
-  {SwitchingLemma2.Term.killedBy}
+  {SwitchingLemma.Term.killedBy}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b002}
 \proofstep
-  {SwitchingLemma2.killedBy_of_nonfree_agree}
+  {SwitchingLemma.killedBy_of_nonfree_agree}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b002}
 \proofstep
-  {SwitchingLemma2.first_clause_preserved}
+  {SwitchingLemma.first_clause_preserved}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b004}
 \proofstep
-  {SwitchingLemma2.term_length_le_width}
+  {SwitchingLemma.term_length_le_width}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p001-b004}
 \proofstep
-  {SwitchingLemma2.zipIdx_drop_spec}
+  {SwitchingLemma.zipIdx_drop_spec}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b003}
 \proofstep
-  {SwitchingLemma2.canonicalDTree}
+  {SwitchingLemma.canonicalDTree}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b002}
 \proofstep
-  {SwitchingLemma2.processClauseLits}
+  {SwitchingLemma.processClauseLits}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b003}
 \proofstep
-  {SwitchingLemma2.razborovEncode}
+  {SwitchingLemma.razborovEncode}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b003}
 \proofstep
-  {SwitchingLemma2.razborovDecode}
+  {SwitchingLemma.razborovDecode}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b004}
 \proofstep
-  {SwitchingLemma2.processClauseLits_sigma_stable}
+  {SwitchingLemma.processClauseLits_sigma_stable}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b003}
 \proofstep
-  {SwitchingLemma2.processClauseLits_rho_stable}
+  {SwitchingLemma.processClauseLits_rho_stable}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b003}
 \proofstep
-  {SwitchingLemma2.processClauseLits_rho_ne_none}
+  {SwitchingLemma.processClauseLits_rho_ne_none}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b003}
 \proofstep
-  {SwitchingLemma2.encode_go_fst_nonfree}
+  {SwitchingLemma.encode_go_fst_nonfree}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b003}
 \proofstep
-  {SwitchingLemma2.encode_go_acc}
+  {SwitchingLemma.encode_go_acc}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b003}
 \proofstep
-  {SwitchingLemma2.encode_go_fst_acc}
+  {SwitchingLemma.encode_go_fst_acc}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b003}
 \proofstep
-  {SwitchingLemma2.processClauseLits_sigma_indep}
+  {SwitchingLemma.processClauseLits_sigma_indep}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b003}
 \proofstep
-  {SwitchingLemma2.encode_go_snd_sigma_indep}
+  {SwitchingLemma.encode_go_snd_sigma_indep}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b003}
 \proofstep
-  {SwitchingLemma2.processClauseLits_aux_entries_from_lits}
+  {SwitchingLemma.processClauseLits_aux_entries_from_lits}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b003}
 \proofstep
-  {SwitchingLemma2.processClauseLits_aux_ne_nonfree}
+  {SwitchingLemma.processClauseLits_aux_ne_nonfree}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b003}
 \proofstep
-  {SwitchingLemma2.foldl_sigma_stable}
+  {SwitchingLemma.foldl_sigma_stable}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b004}
 \proofstep
-  {SwitchingLemma2.foldl_rho_stable}
+  {SwitchingLemma.foldl_rho_stable}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b004}
 \proofstep
-  {SwitchingLemma2.foldl_sigma_preserves_none}
+  {SwitchingLemma.foldl_sigma_preserves_none}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b004}
 \proofstep
-  {SwitchingLemma2.processClauseLits_foldl_sigma_none}
+  {SwitchingLemma.processClauseLits_foldl_sigma_none}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b004}
 \proofstep
-  {SwitchingLemma2.processClauseLits_foldl_rho_eq}
+  {SwitchingLemma.processClauseLits_foldl_rho_eq}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b004}
 \proofstep
-  {SwitchingLemma2.processClauseLits_foldl_rho_eq_of_set}
+  {SwitchingLemma.processClauseLits_foldl_rho_eq_of_set}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b004}
 \proofstep
-  {SwitchingLemma2.processClauseLits_sigma_at_v}
+  {SwitchingLemma.processClauseLits_sigma_at_v}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b003}
 \proofstep
-  {SwitchingLemma2.processClauseLits_sigma_none_of_rho_none}
+  {SwitchingLemma.processClauseLits_sigma_none_of_rho_none}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b003}
 \proofstep
-  {SwitchingLemma2.encode_go_fst_sigma_indep_at_free}
+  {SwitchingLemma.encode_go_fst_sigma_indep_at_free}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b003}
 \proofstep
-  {SwitchingLemma2.processEntries_of_processClauseLits}
+  {SwitchingLemma.processEntries_of_processClauseLits}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b004}
 \proofstep
-  {SwitchingLemma2.processClauseLits_sigma_ne_neg}
+  {SwitchingLemma.processClauseLits_sigma_ne_neg}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b002}
 \proofstep
-  {SwitchingLemma2.processClauseLits_path_nil_of_rho_none_and_mem}
+  {SwitchingLemma.processClauseLits_path_nil_of_rho_none_and_mem}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b003}
 \proofstep
-  {SwitchingLemma2.encode_go_not_kills_first_clause}
+  {SwitchingLemma.encode_go_not_kills_first_clause}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b002}
 \proofstep
-  {SwitchingLemma2.roundtrip_base}
+  {SwitchingLemma.roundtrip_base}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b004}
 \proofstep
-  {SwitchingLemma2.pcl_none_implies_rho_free}
+  {SwitchingLemma.pcl_none_implies_rho_free}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b003}
 \proofstep
-  {SwitchingLemma2.find_clause_preserved_in_encode}
+  {SwitchingLemma.find_clause_preserved_in_encode}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b004,
     pdf-b5e074215b9e-p002-b002}
 \proofstep
-  {SwitchingLemma2.mem_filter_freeVars_zipIdx}
+  {SwitchingLemma.mem_filter_freeVars_zipIdx}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b003}
 \proofstep
-  {SwitchingLemma2.processClauseLits_aux_ne_of_pcl_none}
+  {SwitchingLemma.processClauseLits_aux_ne_of_pcl_none}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b003}
 \proofstep
-  {SwitchingLemma2.roundtrip_inv_hC'}
+  {SwitchingLemma.roundtrip_inv_hC'}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b004}
 \proofstep
-  {SwitchingLemma2.roundtrip_inv_hD'}
+  {SwitchingLemma.roundtrip_inv_hD'}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b004}
-\uses{DNF, DNF.width, Literal, SwitchingLemma2.Restriction, SwitchingLemma2.Restriction.freeVars, SwitchingLemma2.Term.killedBy, SwitchingLemma2.encode_go_acc, SwitchingLemma2.encode_go_fst_sigma_indep_at_free, SwitchingLemma2.encode_go_snd_sigma_indep, SwitchingLemma2.find_clause_preserved_in_encode, SwitchingLemma2.foldl_rho_stable, SwitchingLemma2.foldl_sigma_stable, SwitchingLemma2.mem_filter_freeVars_zipIdx, SwitchingLemma2.pcl_none_implies_rho_free, SwitchingLemma2.processClauseLits, SwitchingLemma2.processClauseLits_aux_ne_of_pcl_none, SwitchingLemma2.processClauseLits_sigma_none_of_rho_none, SwitchingLemma2.processEntries_of_processClauseLits, SwitchingLemma2.roundtrip_base, SwitchingLemma2.roundtrip_inv_hC', SwitchingLemma2.roundtrip_inv_hD', SwitchingLemma2.term_length_le_width}
+\uses{DNF, DNF.width, Literal, SwitchingLemma.Restriction, SwitchingLemma.Restriction.freeVars, SwitchingLemma.Term.killedBy, SwitchingLemma.encode_go_acc, SwitchingLemma.encode_go_fst_sigma_indep_at_free, SwitchingLemma.encode_go_snd_sigma_indep, SwitchingLemma.find_clause_preserved_in_encode, SwitchingLemma.foldl_rho_stable, SwitchingLemma.foldl_sigma_stable, SwitchingLemma.mem_filter_freeVars_zipIdx, SwitchingLemma.pcl_none_implies_rho_free, SwitchingLemma.processClauseLits, SwitchingLemma.processClauseLits_aux_ne_of_pcl_none, SwitchingLemma.processClauseLits_sigma_none_of_rho_none, SwitchingLemma.processEntries_of_processClauseLits, SwitchingLemma.roundtrip_base, SwitchingLemma.roundtrip_inv_hC', SwitchingLemma.roundtrip_inv_hD', SwitchingLemma.term_length_le_width}
 \difficulty{7}
 Fix a DNF formula $f$ on $n$ variables whose width is at most $w$ and in which no term
 repeats a variable (within a single term, any two literals on the same variable are
@@ -560,9 +560,9 @@ $c$. Then the restriction returned by $D$ equals $\sigma$.
 \end{lemma}
 
 \begin{lemma}[Round-trip of the restriction encoder and decoder]
-\lean{SwitchingLemma2.go_roundtrip}
+\lean{SwitchingLemma.go_roundtrip}
 \proofsource{switching-lemma}{pdf-b5e074215b9e-p002-b004}
-\label{SwitchingLemma2.go_roundtrip}
+\label{SwitchingLemma.go_roundtrip}
 \leanok
 \proofstep
   {BoolCircuit.Lit}
@@ -585,7 +585,7 @@ $c$. Then the restriction returned by $D$ equals $\sigma$.
   {switching-lemma}
   {pdf-b5e074215b9e-p001-b004}
 \proofstep
-  {Term.width}
+  {LitList.width}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p001-b004}
@@ -610,228 +610,228 @@ $c$. Then the restriction returned by $D$ equals $\sigma$.
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b003}
 \proofstep
-  {SwitchingLemma2.Restriction}
+  {SwitchingLemma.Restriction}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p001-b007}
 \proofstep
-  {SwitchingLemma2.Restriction.freeVars}
+  {SwitchingLemma.Restriction.freeVars}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p001-b007}
 \proofstep
-  {SwitchingLemma2.Restriction.numFree}
+  {SwitchingLemma.Restriction.numFree}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p001-b007}
 \proofstep
-  {SwitchingLemma2.Literal.fixedBy}
+  {SwitchingLemma.Literal.fixedBy}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b001}
 \proofstep
-  {SwitchingLemma2.Term.killedBy}
+  {SwitchingLemma.Term.killedBy}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b002}
 \proofstep
-  {SwitchingLemma2.killedBy_of_nonfree_agree}
+  {SwitchingLemma.killedBy_of_nonfree_agree}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b002}
 \proofstep
-  {SwitchingLemma2.first_clause_preserved}
+  {SwitchingLemma.first_clause_preserved}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b002}
 \proofstep
-  {SwitchingLemma2.term_length_le_width}
+  {SwitchingLemma.term_length_le_width}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p001-b004}
 \proofstep
-  {SwitchingLemma2.zipIdx_drop_spec}
+  {SwitchingLemma.zipIdx_drop_spec}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b003}
 \proofstep
-  {SwitchingLemma2.canonicalDTree}
+  {SwitchingLemma.canonicalDTree}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b002}
 \proofstep
-  {SwitchingLemma2.processClauseLits}
+  {SwitchingLemma.processClauseLits}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b003}
 \proofstep
-  {SwitchingLemma2.razborovEncode}
+  {SwitchingLemma.razborovEncode}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b003}
 \proofstep
-  {SwitchingLemma2.razborovDecode}
+  {SwitchingLemma.razborovDecode}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b004}
 \proofstep
-  {SwitchingLemma2.processClauseLits_sigma_stable}
+  {SwitchingLemma.processClauseLits_sigma_stable}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b003}
 \proofstep
-  {SwitchingLemma2.processClauseLits_rho_stable}
+  {SwitchingLemma.processClauseLits_rho_stable}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b003}
 \proofstep
-  {SwitchingLemma2.processClauseLits_rho_ne_none}
+  {SwitchingLemma.processClauseLits_rho_ne_none}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b003}
 \proofstep
-  {SwitchingLemma2.encode_go_fst_nonfree}
+  {SwitchingLemma.encode_go_fst_nonfree}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b003}
 \proofstep
-  {SwitchingLemma2.encode_go_acc}
+  {SwitchingLemma.encode_go_acc}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b003}
 \proofstep
-  {SwitchingLemma2.encode_go_fst_acc}
+  {SwitchingLemma.encode_go_fst_acc}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b003}
 \proofstep
-  {SwitchingLemma2.processClauseLits_sigma_indep}
+  {SwitchingLemma.processClauseLits_sigma_indep}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b003}
 \proofstep
-  {SwitchingLemma2.encode_go_snd_sigma_indep}
+  {SwitchingLemma.encode_go_snd_sigma_indep}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b003}
 \proofstep
-  {SwitchingLemma2.processClauseLits_aux_entries_from_lits}
+  {SwitchingLemma.processClauseLits_aux_entries_from_lits}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b003}
 \proofstep
-  {SwitchingLemma2.processClauseLits_aux_ne_nonfree}
+  {SwitchingLemma.processClauseLits_aux_ne_nonfree}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b003}
 \proofstep
-  {SwitchingLemma2.foldl_sigma_stable}
+  {SwitchingLemma.foldl_sigma_stable}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b004}
 \proofstep
-  {SwitchingLemma2.foldl_rho_stable}
+  {SwitchingLemma.foldl_rho_stable}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b004}
 \proofstep
-  {SwitchingLemma2.foldl_sigma_preserves_none}
+  {SwitchingLemma.foldl_sigma_preserves_none}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b004}
 \proofstep
-  {SwitchingLemma2.processClauseLits_foldl_sigma_none}
+  {SwitchingLemma.processClauseLits_foldl_sigma_none}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b004}
 \proofstep
-  {SwitchingLemma2.processClauseLits_foldl_rho_eq}
+  {SwitchingLemma.processClauseLits_foldl_rho_eq}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b004}
 \proofstep
-  {SwitchingLemma2.processClauseLits_foldl_rho_eq_of_set}
+  {SwitchingLemma.processClauseLits_foldl_rho_eq_of_set}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b004}
 \proofstep
-  {SwitchingLemma2.processClauseLits_sigma_at_v}
+  {SwitchingLemma.processClauseLits_sigma_at_v}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b003}
 \proofstep
-  {SwitchingLemma2.processClauseLits_sigma_none_of_rho_none}
+  {SwitchingLemma.processClauseLits_sigma_none_of_rho_none}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b003}
 \proofstep
-  {SwitchingLemma2.encode_go_fst_sigma_indep_at_free}
+  {SwitchingLemma.encode_go_fst_sigma_indep_at_free}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b003}
 \proofstep
-  {SwitchingLemma2.processEntries_of_processClauseLits}
+  {SwitchingLemma.processEntries_of_processClauseLits}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b004}
 \proofstep
-  {SwitchingLemma2.processClauseLits_sigma_ne_neg}
+  {SwitchingLemma.processClauseLits_sigma_ne_neg}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b002}
 \proofstep
-  {SwitchingLemma2.processClauseLits_path_nil_of_rho_none_and_mem}
+  {SwitchingLemma.processClauseLits_path_nil_of_rho_none_and_mem}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b003}
 \proofstep
-  {SwitchingLemma2.encode_go_not_kills_first_clause}
+  {SwitchingLemma.encode_go_not_kills_first_clause}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b002}
 \proofstep
-  {SwitchingLemma2.roundtrip_base}
+  {SwitchingLemma.roundtrip_base}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b004}
 \proofstep
-  {SwitchingLemma2.pcl_none_implies_rho_free}
+  {SwitchingLemma.pcl_none_implies_rho_free}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b003}
 \proofstep
-  {SwitchingLemma2.find_clause_preserved_in_encode}
+  {SwitchingLemma.find_clause_preserved_in_encode}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b004,
     pdf-b5e074215b9e-p002-b002}
 \proofstep
-  {SwitchingLemma2.mem_filter_freeVars_zipIdx}
+  {SwitchingLemma.mem_filter_freeVars_zipIdx}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b003}
 \proofstep
-  {SwitchingLemma2.processClauseLits_aux_ne_of_pcl_none}
+  {SwitchingLemma.processClauseLits_aux_ne_of_pcl_none}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b003}
 \proofstep
-  {SwitchingLemma2.roundtrip_inv_hC'}
+  {SwitchingLemma.roundtrip_inv_hC'}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b004}
 \proofstep
-  {SwitchingLemma2.roundtrip_inv_hD'}
+  {SwitchingLemma.roundtrip_inv_hD'}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b004}
 \proofstep
-  {SwitchingLemma2.go_roundtrip_gen}
+  {SwitchingLemma.go_roundtrip_gen}
   {direct}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b004,
     pdf-b5e074215b9e-p002-b003}
-\uses{DNF, DNF.width, SwitchingLemma2.Restriction, SwitchingLemma2.encode_go_fst_nonfree, SwitchingLemma2.go_roundtrip_gen}
+\uses{DNF, DNF.width, SwitchingLemma.Restriction, SwitchingLemma.encode_go_fst_nonfree, SwitchingLemma.go_roundtrip_gen}
 \difficulty{2}
 Let $f$ be a DNF formula on $n$ variables whose width is at most $w$, and suppose that
 within every term of $f$ any two literals naming the same variable are in fact equal.
@@ -842,12 +842,12 @@ larger than that list's length — recovers $\rho$ exactly.
 \end{lemma}
 
 \begin{lemma}[Razborov decoding inverts encoding on bad restrictions]
-\lean{SwitchingLemma2.razborovDecode_encode}
+\lean{SwitchingLemma.razborovDecode_encode}
 \proofsource{switching-lemma}{
   pdf-b5e074215b9e-p002-b004,
   pdf-b5e074215b9e-p002-b003
 }
-\label{SwitchingLemma2.razborovDecode_encode}
+\label{SwitchingLemma.razborovDecode_encode}
 \leanok
 \proofstep
   {BoolCircuit.Lit}
@@ -875,7 +875,7 @@ larger than that list's length — recovers $\rho$ exactly.
   {switching-lemma}
   {pdf-b5e074215b9e-p001-b004}
 \proofstep
-  {Term.width}
+  {LitList.width}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p001-b004}
@@ -900,17 +900,17 @@ larger than that list's length — recovers $\rho$ exactly.
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b003}
 \proofstep
-  {buildFullDTree}
+  {DecisionTree.buildFull}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p001-b005}
 \proofstep
-  {buildFullDTree_depth}
+  {DecisionTree.buildFull_depth}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p001-b005}
 \proofstep
-  {buildFullDTree_eval}
+  {DecisionTree.buildFull_eval}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p001-b005}
@@ -920,246 +920,246 @@ larger than that list's length — recovers $\rho$ exactly.
   {switching-lemma}
   {pdf-b5e074215b9e-p001-b005}
 \proofstep
-  {SwitchingLemma2.Restriction}
+  {SwitchingLemma.Restriction}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p001-b007}
 \proofstep
-  {SwitchingLemma2.Restriction.freeVars}
+  {SwitchingLemma.Restriction.freeVars}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p001-b007}
 \proofstep
-  {SwitchingLemma2.Restriction.numFree}
+  {SwitchingLemma.Restriction.numFree}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p001-b007}
 \proofstep
-  {SwitchingLemma2.Restriction.extend}
+  {SwitchingLemma.Restriction.extend}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p001-b007}
 \proofstep
-  {SwitchingLemma2.Literal.fixedBy}
+  {SwitchingLemma.Literal.fixedBy}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b001}
 \proofstep
-  {SwitchingLemma2.Term.killedBy}
+  {SwitchingLemma.Term.killedBy}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b002}
 \proofstep
-  {SwitchingLemma2.restrictFn}
+  {SwitchingLemma.restrictFn}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p001-b007}
 \proofstep
-  {SwitchingLemma2.IsBadRestriction}
+  {SwitchingLemma.IsBadRestriction}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b001}
 \proofstep
-  {SwitchingLemma2.killedBy_of_nonfree_agree}
+  {SwitchingLemma.killedBy_of_nonfree_agree}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b004}
 \proofstep
-  {SwitchingLemma2.first_clause_preserved}
+  {SwitchingLemma.first_clause_preserved}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b004}
 \proofstep
-  {SwitchingLemma2.term_length_le_width}
+  {SwitchingLemma.term_length_le_width}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p001-b004}
 \proofstep
-  {SwitchingLemma2.zipIdx_drop_spec}
+  {SwitchingLemma.zipIdx_drop_spec}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b003}
 \proofstep
-  {SwitchingLemma2.canonicalDTree}
+  {SwitchingLemma.canonicalDTree}
   {direct}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b002}
 \proofstep
-  {SwitchingLemma2.processClauseLits}
+  {SwitchingLemma.processClauseLits}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b003}
 \proofstep
-  {SwitchingLemma2.razborovEncode}
+  {SwitchingLemma.razborovEncode}
   {direct}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b003}
 \proofstep
-  {SwitchingLemma2.razborovDecode}
+  {SwitchingLemma.razborovDecode}
   {direct}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b004}
 \proofstep
-  {SwitchingLemma2.processClauseLits_sigma_stable}
+  {SwitchingLemma.processClauseLits_sigma_stable}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b003}
 \proofstep
-  {SwitchingLemma2.processClauseLits_rho_stable}
+  {SwitchingLemma.processClauseLits_rho_stable}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b003}
 \proofstep
-  {SwitchingLemma2.processClauseLits_rho_ne_none}
+  {SwitchingLemma.processClauseLits_rho_ne_none}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b003}
 \proofstep
-  {SwitchingLemma2.encode_go_fst_nonfree}
+  {SwitchingLemma.encode_go_fst_nonfree}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b003}
 \proofstep
-  {SwitchingLemma2.encode_go_acc}
+  {SwitchingLemma.encode_go_acc}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b003}
 \proofstep
-  {SwitchingLemma2.encode_go_fst_acc}
+  {SwitchingLemma.encode_go_fst_acc}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b003}
 \proofstep
-  {SwitchingLemma2.processClauseLits_sigma_indep}
+  {SwitchingLemma.processClauseLits_sigma_indep}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b003}
 \proofstep
-  {SwitchingLemma2.encode_go_snd_sigma_indep}
+  {SwitchingLemma.encode_go_snd_sigma_indep}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b003}
 \proofstep
-  {SwitchingLemma2.processClauseLits_aux_entries_from_lits}
+  {SwitchingLemma.processClauseLits_aux_entries_from_lits}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b003}
 \proofstep
-  {SwitchingLemma2.processClauseLits_aux_ne_nonfree}
+  {SwitchingLemma.processClauseLits_aux_ne_nonfree}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b003}
 \proofstep
-  {SwitchingLemma2.foldl_sigma_stable}
+  {SwitchingLemma.foldl_sigma_stable}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b004}
 \proofstep
-  {SwitchingLemma2.foldl_rho_stable}
+  {SwitchingLemma.foldl_rho_stable}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b004}
 \proofstep
-  {SwitchingLemma2.foldl_sigma_preserves_none}
+  {SwitchingLemma.foldl_sigma_preserves_none}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b004}
 \proofstep
-  {SwitchingLemma2.processClauseLits_foldl_sigma_none}
+  {SwitchingLemma.processClauseLits_foldl_sigma_none}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b004}
 \proofstep
-  {SwitchingLemma2.processClauseLits_foldl_rho_eq}
+  {SwitchingLemma.processClauseLits_foldl_rho_eq}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b004}
 \proofstep
-  {SwitchingLemma2.processClauseLits_foldl_rho_eq_of_set}
+  {SwitchingLemma.processClauseLits_foldl_rho_eq_of_set}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b004}
 \proofstep
-  {SwitchingLemma2.processClauseLits_sigma_at_v}
+  {SwitchingLemma.processClauseLits_sigma_at_v}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b003}
 \proofstep
-  {SwitchingLemma2.processClauseLits_sigma_none_of_rho_none}
+  {SwitchingLemma.processClauseLits_sigma_none_of_rho_none}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b003}
 \proofstep
-  {SwitchingLemma2.encode_go_fst_sigma_indep_at_free}
+  {SwitchingLemma.encode_go_fst_sigma_indep_at_free}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b003}
 \proofstep
-  {SwitchingLemma2.processEntries_of_processClauseLits}
+  {SwitchingLemma.processEntries_of_processClauseLits}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b004}
 \proofstep
-  {SwitchingLemma2.processClauseLits_sigma_ne_neg}
+  {SwitchingLemma.processClauseLits_sigma_ne_neg}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b003}
 \proofstep
-  {SwitchingLemma2.processClauseLits_path_nil_of_rho_none_and_mem}
+  {SwitchingLemma.processClauseLits_path_nil_of_rho_none_and_mem}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b003}
 \proofstep
-  {SwitchingLemma2.encode_go_not_kills_first_clause}
+  {SwitchingLemma.encode_go_not_kills_first_clause}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b002}
 \proofstep
-  {SwitchingLemma2.roundtrip_base}
+  {SwitchingLemma.roundtrip_base}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b004}
 \proofstep
-  {SwitchingLemma2.pcl_none_implies_rho_free}
+  {SwitchingLemma.pcl_none_implies_rho_free}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b003}
 \proofstep
-  {SwitchingLemma2.find_clause_preserved_in_encode}
+  {SwitchingLemma.find_clause_preserved_in_encode}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b004}
 \proofstep
-  {SwitchingLemma2.mem_filter_freeVars_zipIdx}
+  {SwitchingLemma.mem_filter_freeVars_zipIdx}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b003}
 \proofstep
-  {SwitchingLemma2.processClauseLits_aux_ne_of_pcl_none}
+  {SwitchingLemma.processClauseLits_aux_ne_of_pcl_none}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b003}
 \proofstep
-  {SwitchingLemma2.roundtrip_inv_hC'}
+  {SwitchingLemma.roundtrip_inv_hC'}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b004}
 \proofstep
-  {SwitchingLemma2.roundtrip_inv_hD'}
+  {SwitchingLemma.roundtrip_inv_hD'}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b004}
 \proofstep
-  {SwitchingLemma2.go_roundtrip_gen}
+  {SwitchingLemma.go_roundtrip_gen}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b004}
 \proofstep
-  {SwitchingLemma2.go_roundtrip}
+  {SwitchingLemma.go_roundtrip}
   {direct}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b004}
-\uses{DNF, DNF.eval, DNF.width, SwitchingLemma2.IsBadRestriction, SwitchingLemma2.Restriction, SwitchingLemma2.go_roundtrip, SwitchingLemma2.razborovDecode, SwitchingLemma2.razborovEncode}
+\uses{DNF, DNF.eval, DNF.width, SwitchingLemma.IsBadRestriction, SwitchingLemma.Restriction, SwitchingLemma.go_roundtrip, SwitchingLemma.razborovDecode, SwitchingLemma.razborovEncode}
 \difficulty{1}
 Let $f$ be a DNF formula on $n$ variables whose width is at most $w$, and suppose that
 no term of $f$ contains two distinct literals on the same variable (within each term,
@@ -1172,9 +1172,9 @@ the original restriction $\rho$.
 \end{lemma}
 
 \begin{theorem}[Injectivity of the Razborov encoding on bad restrictions]
-\lean{SwitchingLemma2.razborovEncode_injective}
+\lean{SwitchingLemma.razborovEncode_injective}
 \proofsource{switching-lemma}{pdf-b5e074215b9e-p002-b004}
-\label{SwitchingLemma2.razborovEncode_injective}
+\label{SwitchingLemma.razborovEncode_injective}
 \leanok
 \proofstep
   {BoolCircuit.Lit}
@@ -1202,7 +1202,7 @@ the original restriction $\rho$.
   {switching-lemma}
   {pdf-b5e074215b9e-p001-b004}
 \proofstep
-  {Term.width}
+  {LitList.width}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p001-b004}
@@ -1227,17 +1227,17 @@ the original restriction $\rho$.
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b003}
 \proofstep
-  {buildFullDTree}
+  {DecisionTree.buildFull}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p001-b005}
 \proofstep
-  {buildFullDTree_depth}
+  {DecisionTree.buildFull_depth}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p001-b005}
 \proofstep
-  {buildFullDTree_eval}
+  {DecisionTree.buildFull_eval}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p001-b005}
@@ -1247,253 +1247,253 @@ the original restriction $\rho$.
   {switching-lemma}
   {pdf-b5e074215b9e-p001-b005}
 \proofstep
-  {SwitchingLemma2.Restriction}
+  {SwitchingLemma.Restriction}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p001-b007}
 \proofstep
-  {SwitchingLemma2.Restriction.freeVars}
+  {SwitchingLemma.Restriction.freeVars}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p001-b007}
 \proofstep
-  {SwitchingLemma2.Restriction.numFree}
+  {SwitchingLemma.Restriction.numFree}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p001-b007}
 \proofstep
-  {SwitchingLemma2.Restriction.extend}
+  {SwitchingLemma.Restriction.extend}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p001-b007}
 \proofstep
-  {SwitchingLemma2.Literal.fixedBy}
+  {SwitchingLemma.Literal.fixedBy}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b001}
 \proofstep
-  {SwitchingLemma2.Term.killedBy}
+  {SwitchingLemma.Term.killedBy}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b002}
 \proofstep
-  {SwitchingLemma2.restrictFn}
+  {SwitchingLemma.restrictFn}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p001-b007}
 \proofstep
-  {SwitchingLemma2.IsBadRestriction}
+  {SwitchingLemma.IsBadRestriction}
   {direct}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b001}
 \proofstep
-  {SwitchingLemma2.killedBy_of_nonfree_agree}
+  {SwitchingLemma.killedBy_of_nonfree_agree}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b004}
 \proofstep
-  {SwitchingLemma2.first_clause_preserved}
+  {SwitchingLemma.first_clause_preserved}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b004}
 \proofstep
-  {SwitchingLemma2.term_length_le_width}
+  {SwitchingLemma.term_length_le_width}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p001-b004}
 \proofstep
-  {SwitchingLemma2.zipIdx_drop_spec}
+  {SwitchingLemma.zipIdx_drop_spec}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b003}
 \proofstep
-  {SwitchingLemma2.canonicalDTree}
+  {SwitchingLemma.canonicalDTree}
   {direct}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b002}
 \proofstep
-  {SwitchingLemma2.processClauseLits}
+  {SwitchingLemma.processClauseLits}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b003}
 \proofstep
-  {SwitchingLemma2.razborovEncode}
+  {SwitchingLemma.razborovEncode}
   {direct}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b003}
 \proofstep
-  {SwitchingLemma2.razborovDecode}
+  {SwitchingLemma.razborovDecode}
   {direct}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b004}
 \proofstep
-  {SwitchingLemma2.processClauseLits_sigma_stable}
+  {SwitchingLemma.processClauseLits_sigma_stable}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b003}
 \proofstep
-  {SwitchingLemma2.processClauseLits_rho_stable}
+  {SwitchingLemma.processClauseLits_rho_stable}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b003}
 \proofstep
-  {SwitchingLemma2.processClauseLits_rho_ne_none}
+  {SwitchingLemma.processClauseLits_rho_ne_none}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b003}
 \proofstep
-  {SwitchingLemma2.encode_go_fst_nonfree}
+  {SwitchingLemma.encode_go_fst_nonfree}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b003}
 \proofstep
-  {SwitchingLemma2.encode_go_acc}
+  {SwitchingLemma.encode_go_acc}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b003}
 \proofstep
-  {SwitchingLemma2.encode_go_fst_acc}
+  {SwitchingLemma.encode_go_fst_acc}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b003}
 \proofstep
-  {SwitchingLemma2.processClauseLits_sigma_indep}
+  {SwitchingLemma.processClauseLits_sigma_indep}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b003}
 \proofstep
-  {SwitchingLemma2.encode_go_snd_sigma_indep}
+  {SwitchingLemma.encode_go_snd_sigma_indep}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b003}
 \proofstep
-  {SwitchingLemma2.processClauseLits_aux_entries_from_lits}
+  {SwitchingLemma.processClauseLits_aux_entries_from_lits}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b003}
 \proofstep
-  {SwitchingLemma2.processClauseLits_aux_ne_nonfree}
+  {SwitchingLemma.processClauseLits_aux_ne_nonfree}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b003}
 \proofstep
-  {SwitchingLemma2.foldl_sigma_stable}
+  {SwitchingLemma.foldl_sigma_stable}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b004}
 \proofstep
-  {SwitchingLemma2.foldl_rho_stable}
+  {SwitchingLemma.foldl_rho_stable}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b004}
 \proofstep
-  {SwitchingLemma2.foldl_sigma_preserves_none}
+  {SwitchingLemma.foldl_sigma_preserves_none}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b004}
 \proofstep
-  {SwitchingLemma2.processClauseLits_foldl_sigma_none}
+  {SwitchingLemma.processClauseLits_foldl_sigma_none}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b004}
 \proofstep
-  {SwitchingLemma2.processClauseLits_foldl_rho_eq}
+  {SwitchingLemma.processClauseLits_foldl_rho_eq}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b004}
 \proofstep
-  {SwitchingLemma2.processClauseLits_foldl_rho_eq_of_set}
+  {SwitchingLemma.processClauseLits_foldl_rho_eq_of_set}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b004}
 \proofstep
-  {SwitchingLemma2.processClauseLits_sigma_at_v}
+  {SwitchingLemma.processClauseLits_sigma_at_v}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b003}
 \proofstep
-  {SwitchingLemma2.processClauseLits_sigma_none_of_rho_none}
+  {SwitchingLemma.processClauseLits_sigma_none_of_rho_none}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b003}
 \proofstep
-  {SwitchingLemma2.encode_go_fst_sigma_indep_at_free}
+  {SwitchingLemma.encode_go_fst_sigma_indep_at_free}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b003}
 \proofstep
-  {SwitchingLemma2.processEntries_of_processClauseLits}
+  {SwitchingLemma.processEntries_of_processClauseLits}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b004}
 \proofstep
-  {SwitchingLemma2.processClauseLits_sigma_ne_neg}
+  {SwitchingLemma.processClauseLits_sigma_ne_neg}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b003}
 \proofstep
-  {SwitchingLemma2.processClauseLits_path_nil_of_rho_none_and_mem}
+  {SwitchingLemma.processClauseLits_path_nil_of_rho_none_and_mem}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b003}
 \proofstep
-  {SwitchingLemma2.encode_go_not_kills_first_clause}
+  {SwitchingLemma.encode_go_not_kills_first_clause}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b002,
     pdf-b5e074215b9e-p002-b004}
 \proofstep
-  {SwitchingLemma2.roundtrip_base}
+  {SwitchingLemma.roundtrip_base}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b004}
 \proofstep
-  {SwitchingLemma2.pcl_none_implies_rho_free}
+  {SwitchingLemma.pcl_none_implies_rho_free}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b003}
 \proofstep
-  {SwitchingLemma2.find_clause_preserved_in_encode}
+  {SwitchingLemma.find_clause_preserved_in_encode}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b004}
 \proofstep
-  {SwitchingLemma2.mem_filter_freeVars_zipIdx}
+  {SwitchingLemma.mem_filter_freeVars_zipIdx}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b003}
 \proofstep
-  {SwitchingLemma2.processClauseLits_aux_ne_of_pcl_none}
+  {SwitchingLemma.processClauseLits_aux_ne_of_pcl_none}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b003}
 \proofstep
-  {SwitchingLemma2.roundtrip_inv_hC'}
+  {SwitchingLemma.roundtrip_inv_hC'}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b004}
 \proofstep
-  {SwitchingLemma2.roundtrip_inv_hD'}
+  {SwitchingLemma.roundtrip_inv_hD'}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b004}
 \proofstep
-  {SwitchingLemma2.go_roundtrip_gen}
+  {SwitchingLemma.go_roundtrip_gen}
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b004}
 \proofstep
-  {SwitchingLemma2.go_roundtrip}
+  {SwitchingLemma.go_roundtrip}
   {direct}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b004}
 \proofstep
-  {SwitchingLemma2.razborovDecode_encode}
+  {SwitchingLemma.razborovDecode_encode}
   {direct}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b004,
     pdf-b5e074215b9e-p002-b001}
-\uses{DNF, DNF.eval, DNF.width, SwitchingLemma2.IsBadRestriction, SwitchingLemma2.Restriction, SwitchingLemma2.razborovDecode_encode, SwitchingLemma2.razborovEncode}
+\uses{DNF, DNF.eval, DNF.width, SwitchingLemma.IsBadRestriction, SwitchingLemma.Restriction, SwitchingLemma.razborovDecode_encode, SwitchingLemma.razborovEncode}
 \difficulty{2}
 Fix a DNF formula $f$ on $n$ variables and parameters $w, d \in \bbn$, and suppose that
 $f$ has width at most $w$ and that no term of $f$ repeats a variable — within any single

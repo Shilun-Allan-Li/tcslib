@@ -8,6 +8,14 @@ Official website at <https://shilun-allan-li.github.io/tcslib/>.
 
 TCSlib formalizes results in Theoretical Computer Science using [Lean 4](https://lean-lang.org) and [Mathlib](https://leanprover-community.github.io/mathlib4_docs/). Every theorem is machine-checked.
 
+Reading the sources without a Lean background? [`lean-glossary.md`](lean-glossary.md)
+briefly explains the Lean and Mathlib jargon (fuel, Sigma, `Prop` vs `Bool`, naming
+conventions, …) that appears in declaration names and docstrings.
+
+For a catalog of the models of computation the library formalizes — Turing machines,
+circuits, formulas, decision trees — and the conversions between them, see
+[`TCSlib/ComputationalModels.lean`](TCSlib/ComputationalModels.lean).
+
 ## Areas covered
 
 - **Boolean Function Analysis** — Fourier analysis over the Boolean hypercube, hypercontractivity, Arrow's theorem, and more.

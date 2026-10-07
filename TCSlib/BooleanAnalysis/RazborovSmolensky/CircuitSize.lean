@@ -8,21 +8,23 @@ import Mathlib.Algebra.BigOperators.Fin
 
 open scoped BigOperators
 
-namespace ACP
+namespace RazborovSmolensky
+
+open BoolCircuit
 
 variable (p : ℕ) [Fact (Nat.Prime p)]
 
 /-- The index of the `(j+1)`-st layer inside `F.nodes`, viewed as a node layer of
 `F`. This is convenient for summing the non-input layers `1, …, d`. -/
 def gateLayerIdx {out : Type} {n d : ℕ}
-    (F : FeedForward (Fin 2) (Fin n) out) (hd : d ≤ F.depth) (j : Fin d) :
+    (F : LayeredCircuit (Fin 2) (Fin n) out) (hd : d ≤ F.depth) (j : Fin d) :
     Fin (F.depth + 1) :=
   ⟨j.1 + 1, Nat.succ_lt_succ (Nat.lt_of_lt_of_le j.2 hd)⟩
 
 /-- `gateCountBefore` is the sum of the cardinalities of the first `d`
 non-input layers. -/
 lemma gateCountBefore_eq_sum_cards {out : Type} {n : ℕ}
-    (F : FeedForward (Fin 2) (Fin n) out)
+    (F : LayeredCircuit (Fin 2) (Fin n) out)
     [∀ i, Fintype (F.nodes i)] :
     ∀ d (hd : d ≤ F.depth),
       gateCountBefore F d hd =
@@ -71,17 +73,17 @@ lemma gateCountBefore_eq_sum_cards {out : Type} {n : ℕ}
 
 /-- The circuit size is the sum of the cardinalities of all non-input layers. -/
 lemma size_eq_sum_cards {out : Type} {n : ℕ}
-    (F : FeedForward (Fin 2) (Fin n) out)
+    (F : LayeredCircuit (Fin 2) (Fin n) out)
     [∀ i, Fintype (F.nodes i)] :
     F.size = ∑ d : Fin F.depth, Fintype.card (F.nodes d.succ) := by
-  rw [FeedForward.size, Nat.card_sigma]
+  rw [LayeredCircuit.size, Nat.card_sigma]
   refine Finset.sum_congr rfl ?_
   intro d _
   simp
 
 /-- At full depth, `gateCountBefore` is exactly the total circuit size. -/
 lemma gateCountBefore_depth_eq_size {out : Type} {n : ℕ}
-    (F : FeedForward (Fin 2) (Fin n) out)
+    (F : LayeredCircuit (Fin 2) (Fin n) out)
     [∀ i, Fintype (F.nodes i)] :
     gateCountBefore F F.depth (Nat.le_refl F.depth) = F.size := by
   calc
@@ -102,7 +104,7 @@ lemma gateCountBefore_depth_eq_size {out : Type} {n : ℕ}
 /-- Simultaneous pointwise polynomial distribution for all output nodes, with the
 error bound stated using the total number of gates. -/
 theorem exists_poly_distribution_for_circuit_outputs_size {n : ℕ} {out : Type}
-    (F : FeedForward (Fin 2) (Fin n) out)
+    (F : LayeredCircuit (Fin 2) (Fin n) out)
     [∀ i, Finite (F.nodes i)]
     [Fintype out]
     (hUses : F.onlyUsesGates (ACp_GateOps p)) (ℓ : ℕ) :
@@ -127,7 +129,7 @@ theorem exists_poly_distribution_for_circuit_outputs_size {n : ℕ} {out : Type}
 /-- Pointwise distribution for a single-output circuit, with the error bound
 stated using the total number of gates. -/
 theorem exists_poly_distribution_for_circuit_one_size {n : ℕ} {out : Type}
-    (F : FeedForward (Fin 2) (Fin n) out)
+    (F : LayeredCircuit (Fin 2) (Fin n) out)
     [∀ i, Finite (F.nodes i)]
     [Unique out]
     (hUses : F.onlyUsesGates (ACp_GateOps p)) (ℓ : ℕ) :
@@ -151,7 +153,7 @@ theorem exists_poly_distribution_for_circuit_one_size {n : ℕ} {out : Type}
 /-- The list formulation of the single-output circuit theorem, with the error
 bound stated using the total number of gates. -/
 theorem exists_poly_list_for_circuit_one_size {n : ℕ} {out : Type}
-    (F : FeedForward (Fin 2) (Fin n) out)
+    (F : LayeredCircuit (Fin 2) (Fin n) out)
     [∀ i, Finite (F.nodes i)]
     [Unique out]
     (hUses : F.onlyUsesGates (ACp_GateOps p)) (ℓ : ℕ) :
@@ -171,4 +173,4 @@ theorem exists_poly_list_for_circuit_one_size {n : ℕ} {out : Type}
   intro x
   simpa [gateCountBefore_depth_eq_size (F := F)] using hbad x
 
-end ACP
+end RazborovSmolensky

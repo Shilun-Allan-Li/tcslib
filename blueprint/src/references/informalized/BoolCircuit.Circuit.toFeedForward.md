@@ -1,5 +1,5 @@
 <!-- generated-by: proofmatch informalization (uncited) -->
-<!-- lean-source: TCSlib/BooleanAnalysis/RazborovSmolensky/FeedForwardCircuit.lean :: Circuit.toFeedForward -->
+<!-- lean-source: TCSlib/Complexity/CircuitComplexity/FeedForward.lean :: Circuit.toFeedForward -->
 <!-- origin: no source citation; informalized directly from the Lean proof -->
 
 # Embedding a Boolean circuit tree as a layered feedforward circuit

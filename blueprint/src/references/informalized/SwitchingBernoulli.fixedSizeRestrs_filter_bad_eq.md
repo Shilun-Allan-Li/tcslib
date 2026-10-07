@@ -23,5 +23,5 @@ counting-side filters.
 
 **Used in.** `switching_bernoulli` bridge lemma
 `switching_fixedSize_bound_small`, where it lets the counting-form conclusion of
-`SwitchingLemma2.switching_lemma` be substituted into the numerator of
+`SwitchingLemma.switching_lemma` be substituted into the numerator of
 `fixedSizeRestrProb`.

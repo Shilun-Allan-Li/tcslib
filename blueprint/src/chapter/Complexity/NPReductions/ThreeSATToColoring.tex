@@ -249,3 +249,16 @@ variable in $V$. Then $f$ is satisfiable — some Boolean assignment $V \to
 reduction graph associated to $f$ is 3-colorable, that is, admits a proper coloring by
 three colors.
 \end{theorem}
+
+%%% added by the blueprint pipeline
+\section{Additional declarations}
+
+\begin{definition}[Literal over a variable type]
+\lean{SATtoColor.Literal}
+\label{SATtoColor.Literal}
+\leanok
+Given a type $V$ of Boolean variables, a \emph{literal} over $V$ is either a
+positive occurrence $\mathrm{pos}(v)$ or a negative occurrence
+$\mathrm{neg}(v)$ of a variable $v \in V$; a positive literal asserts the
+variable and a negative literal asserts its negation.
+\end{definition}

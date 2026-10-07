@@ -11,23 +11,23 @@ import TCSlib.Complexity.CircuitComplexity.Basic
 # Universality: every Boolean function is computed by a circuit
 
 [AB09, Claim 2.13], in the form [AB09, p.108] cites it in Chapter 6: every
-`f : (Fin n → Bool) → Bool` is computed by a `BoolCircuit.Circuit n` of
+`f : (Fin n → Bool) → Bool` is computed by a `BoolCircuit.TreeCircuit n` of
 explicitly bounded size.
 
 ## Main definitions
 
-* `ACP.minterm v` — the `AND` of `n` literals that is true exactly at `v`.
-* `ACP.universalCircuit f` — the `OR` of the minterms of `f`'s satisfying
+* `BoolCircuit.minterm v` — the `AND` of `n` literals that is true exactly at `v`.
+* `BoolCircuit.universalCircuit f` — the `OR` of the minterms of `f`'s satisfying
   assignments.
 
 ## Main results
 
-* `ACP.universalCircuit_eval` — `universalCircuit f` computes `f`.
-* `ACP.universalCircuit_size` — its size is exactly `(n + 1)` times the number
+* `BoolCircuit.universalCircuit_eval` — `universalCircuit f` computes `f`.
+* `BoolCircuit.universalCircuit_size` — its size is exactly `(n + 1)` times the number
   of satisfying assignments, plus one.
-* `ACP.universalCircuit_size_le` — hence at most `2 ^ n * (n + 1) + 1`, a bound
-  `ACP.universalCircuit_const_true_size` shows is attained.
-* `ACP.exists_circuit_eval_eq_size_le` — the headline existence statement.
+* `BoolCircuit.universalCircuit_size_le` — hence at most `2 ^ n * (n + 1) + 1`, a bound
+  `BoolCircuit.universalCircuit_const_true_size` shows is attained.
+* `BoolCircuit.exists_circuit_eval_eq_size_le` — the headline existence statement.
 
 ## Divergences from [AB09, Claim 2.13]
 
@@ -45,21 +45,22 @@ binary `∧`, so `n·2ⁿ + 2n - 1` *vertices*.  The `∨` term is AB's own fan-
 expansion ([AB09, pp.107–108]: a fan-in-`f` gate becomes `f-1` binary ones),
 not a lower bound on what a DAG needs.
 
-`Circuit.size` measures a different object: nodes of an unbounded-fan-in *tree*.
+`TreeCircuit.size` measures a different object: nodes of an unbounded-fan-in *tree*.
 Ours has `n·2ⁿ` literal leaves (nothing is shared, and a sign rides on the leaf
 instead of a `¬` gate), `2ⁿ` minterm gates and one top gate — `2 ^ n * (n + 1) + 1`.
 The leaves alone already come to within one of AB's whole symbol count, so they
 are not what pushes us over; and a `k`-ary gate costs `1` here where AB's fan-in-2 expansion
 costs `k-1`, a saving large enough that the net excess over `n·2ⁿ - 1` is only
 `2ⁿ + 2`.  Same order as `n2ⁿ`, a larger number, and `2 ^ n * (n + 1) + 1` —
-attained at `f ≡ true` — is what is proved here.  [AB09, Ex 6.1]'s sharper
-`O(2ⁿ/n)` is a different construction and is not attempted.
+attained at `f ≡ true` — is what is proved here.  [AB09, Exercise 6.1]'s sharper
+`O(2ⁿ/n)` is a different construction, proved over the book's DAG model in `Lupanov.lean`
+(`BoolCircuit.exists_dagCircuit_faninTwo_mul_size_le`: `(n + 1) · size ≤ 40 · 2ⁿ`).
 
 ## Implementation notes
 
 `Formulas.lean`'s `DNF` is not used as the intermediate: it is built on
 `Literal`, a type distinct from `Basic.lean`'s `Lit`; it carries no size measure;
-and TCSlib has no `DNF → Circuit` map (`NOrCircuit.toDNF` and `depth2OrToDNF`
+and TCSlib has no `DNF → TreeCircuit` map (`NOrCircuit.toDNF` and `depth2OrToDNF`
 both run the other way).  Using it would mean adding both.  `universalCircuit`
 is `noncomputable` only because `Finset.toList` is.
 
@@ -73,9 +74,7 @@ set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
 set_option autoImplicit false
 
-open BoolCircuit
-
-namespace ACP
+namespace BoolCircuit
 
 variable {n : ℕ}
 
@@ -85,7 +84,7 @@ private theorem lit_eval_iff (i : Fin n) (b : Bool) (x : Fin n → Bool) :
   cases b <;> simp [Lit.eval]
 
 /-- Summed size of `l.map g` when every `g a` has size `k`. -/
-private theorem foldr_size_map {α : Type*} {k : ℕ} (g : α → Circuit n)
+private theorem foldr_size_map {α : Type*} {k : ℕ} (g : α → TreeCircuit n)
     (hg : ∀ a, (g a).size = k) (l : List α) :
     (l.map g).foldr (fun c acc => c.size + acc) 0 = l.length * k := by
   induction l with
@@ -94,39 +93,39 @@ private theorem foldr_size_map {α : Type*} {k : ℕ} (g : α → Circuit n)
 
 /-- The minterm of `v`: the `AND` over all `n` variables of the literal that `v`
 satisfies.  At `n = 0` this is the empty conjunction. -/
-def minterm (v : Fin n → Bool) : Circuit n :=
+def minterm (v : Fin n → Bool) : TreeCircuit n :=
   .node true ((List.finRange n).map fun i => .lit ⟨i, v i⟩)
 
 /-- `minterm v` accepts `v` and nothing else. -/
 theorem minterm_eval_iff (v x : Fin n → Bool) :
     (minterm v).eval x = true ↔ x = v := by
-  rw [minterm, Circuit.eval_node_true_iff]
+  rw [minterm, TreeCircuit.eval_node_true_iff]
   constructor
   · intro h
     funext i
     have hi := h (.lit ⟨i, v i⟩) (List.mem_map.mpr ⟨i, List.mem_finRange i, rfl⟩)
-    rw [Circuit.eval_lit] at hi
+    rw [TreeCircuit.eval_lit] at hi
     exact (lit_eval_iff i (v i) x).mp hi
   · rintro rfl c hc
     obtain ⟨i, -, rfl⟩ := List.mem_map.mp hc
-    rw [Circuit.eval_lit]
+    rw [TreeCircuit.eval_lit]
     exact (lit_eval_iff i (x i) x).mpr rfl
 
 /-- A minterm is one gate over `n` leaves. -/
 theorem minterm_size (v : Fin n → Bool) : (minterm v).size = n + 1 := by
-  rw [minterm, Circuit.size, foldr_size_map _ (fun _ => by simp [Circuit.size]) (k := 1),
+  rw [minterm, TreeCircuit.size, foldr_size_map _ (fun _ => by simp [TreeCircuit.size]) (k := 1),
     List.length_finRange]
   ring
 
 /-- The DNF of `f` as a circuit: the `OR` of the minterms of `f`'s satisfying
 assignments.  [AB09, Claim 2.13] -/
-noncomputable def universalCircuit (f : (Fin n → Bool) → Bool) : Circuit n :=
+noncomputable def universalCircuit (f : (Fin n → Bool) → Bool) : TreeCircuit n :=
   .node false ((Finset.univ.filter fun v => f v = true).toList.map minterm)
 
 /-- `universalCircuit f` computes `f`. -/
 theorem universalCircuit_eval (f : (Fin n → Bool) → Bool) (x : Fin n → Bool) :
     (universalCircuit f).eval x = f x := by
-  rw [Bool.eq_iff_iff, universalCircuit, Circuit.eval_node_false_iff]
+  rw [Bool.eq_iff_iff, universalCircuit, TreeCircuit.eval_node_false_iff]
   constructor
   · rintro ⟨c, hc, hce⟩
     obtain ⟨v, hv, rfl⟩ := List.mem_map.mp hc
@@ -140,7 +139,7 @@ theorem universalCircuit_eval (f : (Fin n → Bool) → Bool) (x : Fin n → Boo
 theorem universalCircuit_size (f : (Fin n → Bool) → Bool) :
     (universalCircuit f).size
       = (Finset.univ.filter fun v => f v = true).card * (n + 1) + 1 := by
-  rw [universalCircuit, Circuit.size, foldr_size_map minterm minterm_size,
+  rw [universalCircuit, TreeCircuit.size, foldr_size_map minterm minterm_size,
     Finset.length_toList]
   ring
 
@@ -156,7 +155,7 @@ theorem universalCircuit_size_le (f : (Fin n → Bool) → Bool) :
 /-- Every Boolean function on `n` bits is computed by a circuit of size at most
 `2 ^ n * (n + 1) + 1`.  [AB09, Claim 2.13], as cited at [AB09, p.108] -/
 theorem exists_circuit_eval_eq_size_le (f : (Fin n → Bool) → Bool) :
-    ∃ c : Circuit n, (∀ x, c.eval x = f x) ∧ c.size ≤ 2 ^ n * (n + 1) + 1 :=
+    ∃ c : TreeCircuit n, (∀ x, c.eval x = f x) ∧ c.size ≤ 2 ^ n * (n + 1) + 1 :=
   ⟨universalCircuit f, universalCircuit_eval f, universalCircuit_size_le f⟩
 
 /-! ### Degenerate cases -/
@@ -176,4 +175,4 @@ theorem universalCircuit_const_true_size :
 theorem minterm_eval_zero (v x : Fin 0 → Bool) : (minterm v).eval x = true :=
   (minterm_eval_iff v x).mpr (funext fun i => i.elim0)
 
-end ACP
+end BoolCircuit

@@ -33,7 +33,7 @@ stage has tail exp(-n/(120l)). This decomposition is handled by the
 two-stage bound infrastructure.
 -/
 
-open BoolCircuit SwitchingLemma2 SwitchingBernoulli LMN
+open BoolCircuit SwitchingLemma SwitchingBernoulli LMN
 open Classical in
 attribute [local instance] Classical.propDecidable
 noncomputable section

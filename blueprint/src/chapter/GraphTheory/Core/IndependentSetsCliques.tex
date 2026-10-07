@@ -894,3 +894,16 @@ on these points has at most $n$ edges.
 \leanok
 The radio-range graph: adjacent iff within \texttt{range}.
 \end{definition}
+
+%%% added by the blueprint pipeline
+\section{Additional declarations}
+
+\begin{theorem}[Turán's edge bound for clique-free graphs]
+\lean{SimpleGraph.turan_edge_bound}
+\label{SimpleGraph.turan_edge_bound}
+% not \leanok: the Lean proof body is currently sorry
+Let $V$ be a finite vertex set, let $m$ be a natural number, and let $G$ be a simple
+graph on $V$ that contains no clique on $m+1$ vertices. Then the number of edges of $G$
+is at most the number of edges of the Turán graph $T(\abs{V}, m)$, the complete
+$m$-partite graph on $\abs{V}$ vertices whose parts differ in size by at most one.
+\end{theorem}

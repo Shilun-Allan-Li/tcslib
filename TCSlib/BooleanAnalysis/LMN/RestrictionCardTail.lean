@@ -35,7 +35,7 @@ flagged as missing by the sorry in `CircuitCompression`.
   arXiv edition, 2021, Lemma 4.21.
 -/
 
-open BooleanAnalysis SwitchingLemma2 LMN
+open BooleanAnalysis SwitchingLemma LMN
 open Classical
 
 noncomputable section

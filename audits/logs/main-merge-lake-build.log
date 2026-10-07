@@ -1,0 +1,18 @@
+# Step-4 lake build record (first build since the campaign ban)
+
+Tree: merge 9926524d + the SharpThresholdDefs adaptation.
+
+First build: LAKE_BUILD_EXIT 1 — one module, merge-induced carrier-shape mismatch:
+
+    ✖ [3967/3998] Building TCSlib.BooleanAnalysis.Hypercontractivity.SharpThresholdDefs (4.0s)
+    error: TCSlib/BooleanAnalysis/Hypercontractivity/SharpThresholdDefs.lean:115:48: failed to synthesize
+    error: TCSlib/BooleanAnalysis/Hypercontractivity/SharpThresholdDefs.lean:115:66: Invalid field notation: Type of
+    error: Lean exited with code 1
+    error: build failed
+
+After the one-token shape adaptation (`∀ t ∈ d` → `∀ t ∈ d.terms`):
+
+    Build completed successfully (3998 jobs).
+    LAKE_BUILD_EXIT 0
+
+Zero error lines in the final build.
