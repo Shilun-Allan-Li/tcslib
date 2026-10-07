@@ -34,7 +34,7 @@ independent of the suffix $x$.
 \lean{Turing.universal_pair_get}
 \label{Turing.universal_pair_get}
 \leanok
-\uses{Turing.pairEncode, Turing.universalPrefixTM}
+\uses{Turing.pairEncode}
 \difficulty{4}
 Let $\alpha$ and $x$ be bit strings and let $j < \abs{\alpha}$.  In the
 self-delimiting pairing $\langle \alpha, x\rangle$ (each bit of $\alpha$
@@ -47,7 +47,7 @@ cells of a doubled code bit therefore lie before the separator.
 \lean{Turing.universal_pair_separator}
 \label{Turing.universal_pair_separator}
 \leanok
-\uses{Turing.pairEncode, Turing.universalPrefixTM}
+\uses{Turing.pairEncode}
 \difficulty{3}
 For all bit strings $\alpha$ and $x$, the cells of index $2\abs{\alpha}$ and
 $2\abs{\alpha}+1$ in the self-delimiting pairing $\langle \alpha, x\rangle$
@@ -370,7 +370,7 @@ blank table tape, blank interpreter tapes, and empty output.
 \lean{Turing.universalCapture_step}
 \label{Turing.universalCapture_step}
 \leanok
-\uses{Turing.Action, Turing.Action.apply, Turing.Cfg, Turing.Cfg.inputSymbol, Turing.Cfg.workTapeSymbols, Turing.FinTM, Turing.FinTM.bufferTape_append, Turing.FinTM.tapeBlocks, Turing.MultiTapeTM, Turing.MultiTapeTM.step, Turing.universalCaptureCfg, Turing.universalCaptureTM, Turing.universalCapture_run}
+\uses{Turing.Action, Turing.Action.apply, Turing.Cfg, Turing.Cfg.inputSymbol, Turing.Cfg.workTapeSymbols, Turing.FinTM, Turing.FinTM.bufferTape_append, Turing.FinTM.tapeBlocks, Turing.MultiTapeTM, Turing.MultiTapeTM.step, Turing.universalCaptureCfg, Turing.universalCaptureTM}
 \difficulty{5}
 Let $c$ be a configuration of a machine $M$ on input $x$ whose control state
 is live (not halted).  Then one transition of the output-capture wrapper of

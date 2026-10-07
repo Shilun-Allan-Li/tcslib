@@ -128,7 +128,7 @@ head position of $c$ plus $t$.
 \lean{Turing.FinTM.loop_output_length_le}
 \label{Turing.FinTM.loop_output_length_le}
 \leanok
-\uses{Turing.Cfg, Turing.FinTM.loopDebit, Turing.MultiTapeTM, Turing.MultiTapeTM.outputSymbol, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.MultiTapeTM.step, Turing.MultiTapeTM.step_output}
+\uses{Turing.Cfg, Turing.MultiTapeTM, Turing.MultiTapeTM.outputSymbol, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.MultiTapeTM.step, Turing.MultiTapeTM.step_output}
 \difficulty{4}
 Let $M$ be a multi-tape Turing machine over the Boolean alphabet and $c$ a configuration
 of $M$. After running $t$ steps from $c$, the output length is at most the output length
@@ -139,7 +139,7 @@ of $c$ plus $t$.
 \lean{Turing.FinTM.loop_rewind_bounded}
 \label{Turing.FinTM.loop_rewind_bounded}
 \leanok
-\uses{Turing.Cfg, Turing.FinTM.controlAction, Turing.FinTM.controlAction_apply, Turing.FinTM.loopDebit, Turing.FinTM.moveInputPos_neg_val, Turing.FinTM.rewind_scan, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.MultiTapeTM.step, Turing.moveInputPos}
+\uses{Turing.Cfg, Turing.FinTM.controlAction, Turing.FinTM.controlAction_apply, Turing.FinTM.moveInputPos_neg_val, Turing.FinTM.rewind_scan, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.MultiTapeTM.step, Turing.moveInputPos}
 \difficulty{5}
 Let $M$ be a multi-tape Turing machine over the Boolean alphabet with two distinguished
 control states: a start state whose every transition moves the input head left and
@@ -256,7 +256,7 @@ value exactly $R - i$.
 \lean{Turing.FinTM.loopBuffer_read}
 \label{Turing.FinTM.loopBuffer_read}
 \leanok
-\uses{Turing.FinTM.bufferTape, Turing.FinTM.bufferTape_nat, Turing.FinTM.loopDebitTM}
+\uses{Turing.FinTM.bufferTape, Turing.FinTM.bufferTape_nat}
 \difficulty{2}
 For all Boolean words $p$ and $b$, the buffer tape holding the concatenation of $p$ and
 $b$ (cells $0, \dots$ hold the word, every other cell is blank) reads, at cell $|p|$,
@@ -267,7 +267,7 @@ the first bit of $b$, or blank when $b$ is empty.
 \lean{Turing.FinTM.loopBuffer_write}
 \label{Turing.FinTM.loopBuffer_write}
 \leanok
-\uses{Turing.FinTM.bufferTape, Turing.FinTM.loopDebitTM}
+\uses{Turing.FinTM.bufferTape}
 \difficulty{4}
 For all Boolean words $p$ and $b$ and bits $u$ and $v$: updating cell $|p|$ of the
 buffer tape that holds $p$ followed by $u$ followed by $b$, writing the bit $v$ there,
@@ -416,7 +416,7 @@ set to $\mathrm{true}$ exactly when the body has halted at time $t$.
 \lean{Turing.FinTM.loopBody_capture}
 \label{Turing.FinTM.loopBody_capture}
 \leanok
-\uses{Turing.Cfg, Turing.Cfg.Halted, Turing.FinTM, Turing.FinTM.LoopHostState, Turing.FinTM.loopBodyCfg, Turing.FinTM.loopBodyTM, Turing.FinTM.loopBody_run, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.captureAction, Turing.captureCfg, Turing.capture_run}
+\uses{Turing.Cfg, Turing.Cfg.Halted, Turing.FinTM, Turing.FinTM.loopBodyCfg, Turing.FinTM.loopBodyTM, Turing.FinTM.loopBody_run, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.captureAction, Turing.captureCfg, Turing.capture_run}
 \difficulty{4}
 Let a host machine agree, on a family of embedded control states, with the capture
 transformation of the stop wrapper of a loop body, and let $c$ be a live body
@@ -566,7 +566,7 @@ under the head is replaced by the written symbol.
 \lean{Turing.FinTM.loopControl_apply}
 \label{Turing.FinTM.loopControl_apply}
 \leanok
-\uses{Turing.Action.apply, Turing.Cfg, Turing.FinTM, Turing.FinTM.LoopHostState, Turing.FinTM.loopControlAction, Turing.FinTM.loopFrame, Turing.FinTM.loopReplayTM, Turing.FinTM.loopWrite, Turing.moveInputPos}
+\uses{Turing.Action.apply, Turing.Cfg, Turing.FinTM, Turing.FinTM.LoopHostState, Turing.FinTM.loopControlAction, Turing.FinTM.loopFrame, Turing.FinTM.loopWrite, Turing.moveInputPos}
 \difficulty{4}
 Let a controller frame of the loop host be given, together with a controller action
 specified by an input direction, an optional flag write, counter and payload write-and-
@@ -702,7 +702,7 @@ the symbol scanned on the counter track of the frame is exactly $f(h)$.
 \lean{Turing.FinTM.loopHost_fuel_rewind}
 \label{Turing.FinTM.loopHost_fuel_rewind}
 \leanok
-\uses{Turing.Action.apply, Turing.Cfg, Turing.Cfg.workTapeSymbols, Turing.FinTM, Turing.FinTM.LoopHostState, Turing.FinTM.bufferTape, Turing.FinTM.bufferTape_left, Turing.FinTM.bufferTape_nat, Turing.FinTM.loopControlAction, Turing.FinTM.loopControl_apply, Turing.FinTM.loopCopyTape, Turing.FinTM.loopFrame, Turing.FinTM.loopFrame_payload, Turing.FinTM.loopHost, Turing.FinTM.loopWrite, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step, Turing.MultiTapeTM.runFrom_zero, Turing.MultiTapeTM.step}
+\uses{Turing.Action.apply, Turing.Cfg, Turing.Cfg.workTapeSymbols, Turing.FinTM, Turing.FinTM.LoopHostState, Turing.FinTM.bufferTape, Turing.FinTM.bufferTape_left, Turing.FinTM.bufferTape_nat, Turing.FinTM.loopControlAction, Turing.FinTM.loopControl_apply, Turing.FinTM.loopFrame, Turing.FinTM.loopFrame_payload, Turing.FinTM.loopHost, Turing.FinTM.loopWrite, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step, Turing.MultiTapeTM.runFrom_zero, Turing.MultiTapeTM.step}
 \difficulty{5}
 Let $w$ be a stored word and $j \le |w|$. Starting the loop host in its fuel-rewind
 phase on a controller frame whose payload track is the buffer tape of $w$ with payload
@@ -1066,7 +1066,7 @@ find mode and the single bit $\mathrm{false}$ in decision mode.
 \lean{Turing.FinTM.loopHost_payload_rewind}
 \label{Turing.FinTM.loopHost_payload_rewind}
 \leanok
-\uses{Turing.Action.apply, Turing.Cfg, Turing.Cfg.workTapeSymbols, Turing.FinTM, Turing.FinTM.LoopHostState, Turing.FinTM.bufferTape, Turing.FinTM.bufferTape_left, Turing.FinTM.bufferTape_nat, Turing.FinTM.emCallIdleTM, Turing.FinTM.loopControlAction, Turing.FinTM.loopControl_apply, Turing.FinTM.loopFrame, Turing.FinTM.loopFrame_payload, Turing.FinTM.loopHost, Turing.FinTM.loopWrite, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step, Turing.MultiTapeTM.runFrom_zero, Turing.MultiTapeTM.step}
+\uses{Turing.Action.apply, Turing.Cfg, Turing.Cfg.workTapeSymbols, Turing.FinTM, Turing.FinTM.LoopHostState, Turing.FinTM.bufferTape, Turing.FinTM.bufferTape_left, Turing.FinTM.bufferTape_nat, Turing.FinTM.loopControlAction, Turing.FinTM.loopControl_apply, Turing.FinTM.loopFrame, Turing.FinTM.loopFrame_payload, Turing.FinTM.loopHost, Turing.FinTM.loopWrite, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step, Turing.MultiTapeTM.runFrom_zero, Turing.MultiTapeTM.step}
 \difficulty{5}
 Let $w$ be a captured payload word and $j \le |w|$. Running the loop host for exactly $j
 + 1$ steps from its payload-rewind phase on a frame whose payload track is the buffer
@@ -1089,7 +1089,7 @@ After exactly $|w| + 1$ steps the host has halted and its output is exactly $w$.
 \lean{Turing.FinTM.loopHost_accept}
 \label{Turing.FinTM.loopHost_accept}
 \leanok
-\uses{Turing.Action.apply, Turing.Cfg, Turing.Cfg.workTapeSymbols, Turing.FinTM, Turing.FinTM.bufferTape, Turing.FinTM.leftCfg, Turing.FinTM.loopBodyCfg, Turing.FinTM.loopBodyPadded, Turing.FinTM.loopCall, Turing.FinTM.loopCall_frame, Turing.FinTM.loopControlAction, Turing.FinTM.loopControl_apply, Turing.FinTM.loopFrame, Turing.FinTM.loopFrame_flag, Turing.FinTM.loopHost, Turing.FinTM.loopHost_bound, Turing.FinTM.loopHost_frame_replay, Turing.FinTM.loopHost_payload_rewind, Turing.FinTM.loopWrite, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.MultiTapeTM.runFrom_succ_eq_step, Turing.MultiTapeTM.step, Turing.captureCfg}
+\uses{Turing.Action.apply, Turing.Cfg, Turing.Cfg.workTapeSymbols, Turing.FinTM, Turing.FinTM.bufferTape, Turing.FinTM.leftCfg, Turing.FinTM.loopBodyCfg, Turing.FinTM.loopBodyPadded, Turing.FinTM.loopCall, Turing.FinTM.loopCall_frame, Turing.FinTM.loopControlAction, Turing.FinTM.loopControl_apply, Turing.FinTM.loopFrame, Turing.FinTM.loopFrame_flag, Turing.FinTM.loopHost, Turing.FinTM.loopHost_frame_replay, Turing.FinTM.loopHost_payload_rewind, Turing.FinTM.loopWrite, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.MultiTapeTM.runFrom_succ_eq_step, Turing.MultiTapeTM.step, Turing.captureCfg}
 \difficulty{5}
 Let $c$ be a halted body configuration, $w$ a counter word, and $f$ a fuel
 configuration. Then there is a time $t \le 2\,|o| + 3$, where $o$ is the output of $c$,
@@ -1102,7 +1102,7 @@ $\mathrm{true}$ in decision mode.
 \lean{Turing.FinTM.loopHost_round}
 \label{Turing.FinTM.loopHost_round}
 \leanok
-\uses{Turing.Cfg, Turing.Cfg.ofWords, Turing.FinTM, Turing.FinTM.loopCall, Turing.FinTM.loopDebit, Turing.FinTM.loopHost, Turing.FinTM.loopHost_accept, Turing.FinTM.loopHost_anchor_return, Turing.FinTM.loopHost_bound, Turing.FinTM.loopHost_halt_return, Turing.FinTM.loopHost_reject, Turing.FinTM.loop_first_halt, Turing.FinTM.loop_output_length_le, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.stateWord}
+\uses{Turing.Cfg, Turing.Cfg.ofWords, Turing.FinTM, Turing.FinTM.loopCall, Turing.FinTM.loopDebit, Turing.FinTM.loopHost, Turing.FinTM.loopHost_accept, Turing.FinTM.loopHost_anchor_return, Turing.FinTM.loopHost_halt_return, Turing.FinTM.loopHost_reject, Turing.FinTM.loop_first_halt, Turing.FinTM.loop_output_length_le, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.stateWord}
 \difficulty{5}
 Let $s$ be a round word, $w$ a counter word, $f$ a fuel configuration, and $t > 0$ a
 time such that the body, started at the clean anchor seam carrying $s$, does not revisit
@@ -1127,7 +1127,7 @@ dispatch coefficients and serves as the per-segment budget multiplier of the loo
 \lean{Turing.FinTM.loopHost_contracts}
 \label{Turing.FinTM.loopHost_contracts}
 \leanok
-\uses{Turing.Cfg, Turing.Cfg.ofWords, Turing.FinTM, Turing.FinTM.ComputesFunInTime, Turing.FinTM.emCallIdleTM, Turing.FinTM.loopCall, Turing.FinTM.loopDebit, Turing.FinTM.loopDebit_iterate_length, Turing.FinTM.loopDebit_iterate_value, Turing.FinTM.loopDebit_success, Turing.FinTM.loopHost, Turing.FinTM.loopHost_bound, Turing.FinTM.loopHost_prepare, Turing.FinTM.loopHost_round, Turing.FinTM.loopHost_start, Turing.FinTM.loop_fuel_width, Turing.FinTM.loop_orbit_inv, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.stateWord}
+\uses{Turing.Cfg, Turing.Cfg.ofWords, Turing.FinTM, Turing.FinTM.ComputesFunInTime, Turing.FinTM.loopCall, Turing.FinTM.loopDebit, Turing.FinTM.loopDebit_iterate_length, Turing.FinTM.loopDebit_iterate_value, Turing.FinTM.loopDebit_success, Turing.FinTM.loopHost, Turing.FinTM.loopHost_bound, Turing.FinTM.loopHost_prepare, Turing.FinTM.loopHost_round, Turing.FinTM.loopHost_start, Turing.FinTM.loop_fuel_width, Turing.FinTM.loop_orbit_inv, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.stateWord}
 \difficulty{6}
 Let a loop body with anchor, a fuel machine computing the binary digits of $R(|x|)$ in
 time $T$, an invariant preserved from the initial word by the step function, a bounded
@@ -1146,7 +1146,7 @@ and reaches round $i + 1$ otherwise.
 \lean{Turing.FinTM.exists_loopCfgTM}
 \label{Turing.FinTM.exists_loopCfgTM}
 \leanok
-\uses{Turing.Cfg, Turing.Cfg.ofWords, Turing.FinTM, Turing.FinTM.ComputesFunInTime, Turing.FinTM.emCallIdleTM, Turing.FinTM.loopHost, Turing.FinTM.loopHost_contracts, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom, Turing.stateWord}
+\uses{Turing.Cfg, Turing.Cfg.ofWords, Turing.FinTM, Turing.FinTM.ComputesFunInTime, Turing.FinTM.loopHost, Turing.FinTM.loopHost_contracts, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom, Turing.stateWord}
 \difficulty{2}
 Let a loop body with anchor, a fuel machine computing the binary digits of $R(|x|)$ in
 time $T$, an invariant preserved from the initial word by the step function, a bounded
@@ -1164,7 +1164,7 @@ otherwise.
 \lean{Turing.FinTM.loop_halted_run}
 \label{Turing.FinTM.loop_halted_run}
 \leanok
-\uses{Turing.Cfg, Turing.FinTM.emCallIdleTM, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add}
+\uses{Turing.Cfg, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add}
 \difficulty{5}
 Let $M$ be a multi-tape Turing machine over the Boolean alphabet, let $c_0, \dots, c_N$
 be configurations of $M$ on a common input with $c_N$ halted with output the single bit
@@ -1179,7 +1179,7 @@ recording whether $a(j)$ holds for some $j < N$.
 \lean{Turing.FinTM.exists_loopTM}
 \label{Turing.FinTM.exists_loopTM}
 \leanok
-\uses{Turing.Cfg.ofWords, Turing.FinTM, Turing.FinTM.ComputesFunInTime, Turing.FinTM.ComputesInTime, Turing.FinTM.ComputesInTime.mono, Turing.FinTM.emCallIdleTM, Turing.FinTM.exists_loopCfgTM, Turing.FinTM.loop_halted_run, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.stateWord}
+\uses{Turing.Cfg.ofWords, Turing.FinTM, Turing.FinTM.ComputesFunInTime, Turing.FinTM.ComputesInTime, Turing.FinTM.ComputesInTime.mono, Turing.FinTM.exists_loopCfgTM, Turing.FinTM.loop_halted_run, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.stateWord}
 \difficulty{4}
 Let a loop body with anchor be given, a fuel machine computing the binary digits of
 $R(|x|)$ in time $T$, an invariant that holds at the initial word and is preserved by
@@ -1196,7 +1196,7 @@ among the first $R(|x|) + 1$ iterates of the initial word is accepted.
 \lean{Turing.FinTM.loop_find_run}
 \label{Turing.FinTM.loop_find_run}
 \leanok
-\uses{Turing.Cfg, Turing.FinTM.emCallIdleTM, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add}
+\uses{Turing.Cfg, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add}
 \difficulty{5}
 Let $M$ be a multi-tape Turing machine over the Boolean alphabet, let $c_0, \dots, c_N$
 be configurations of $M$ on a common input with $c_N$ halted with empty output, let $a$
@@ -1211,7 +1211,7 @@ accepting index $i < N$ when one exists and empty output otherwise.
 \lean{Turing.FinTM.exists_loopFindTM}
 \label{Turing.FinTM.exists_loopFindTM}
 \leanok
-\uses{Turing.Cfg.ofWords, Turing.FinTM, Turing.FinTM.ComputesFunInTime, Turing.FinTM.ComputesInTime, Turing.FinTM.ComputesInTime.mono, Turing.FinTM.emCallIdleTM, Turing.FinTM.loopHost, Turing.FinTM.loopHost_contracts, Turing.FinTM.loop_find_run, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.stateWord}
+\uses{Turing.Cfg.ofWords, Turing.FinTM, Turing.FinTM.ComputesFunInTime, Turing.FinTM.ComputesInTime, Turing.FinTM.ComputesInTime.mono, Turing.FinTM.loopHost, Turing.FinTM.loopHost_contracts, Turing.FinTM.loop_find_run, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.stateWord}
 \difficulty{4}
 Let a loop body with anchor be given, a fuel machine computing the binary digits of
 $R(|x|)$ in time $T$, an invariant that holds at the initial word and is preserved by
@@ -1318,7 +1318,7 @@ after erasing the first $j$ cells of the interval.
 \lean{Turing.FinTM.emCall_cleared_step}
 \label{Turing.FinTM.emCall_cleared_step}
 \leanok
-\uses{Turing.FinTM.emCallClearTM, Turing.FinTM.emCallCleared}
+\uses{Turing.FinTM.emCallCleared}
 \difficulty{3}
 For every data tape $d$, integer $\ell$, and count $j$, blanking the cell $\ell + j$ of
 the tape obtained from $d$ by erasing the first $j$ interval cells yields the tape
@@ -1622,7 +1622,7 @@ open interval marker starting at $\ell$ of width $h - \ell + 1$.
 \lean{Turing.FinTM.emCall_track_clearable}
 \label{Turing.FinTM.emCall_track_clearable}
 \leanok
-\uses{Turing.FinTM, Turing.FinTM.bufferTape, Turing.FinTM.emCallClearCfg, Turing.FinTM.emCallClearTM, Turing.FinTM.emCallFinishTM, Turing.FinTM.emCallHi, Turing.FinTM.emCallLo, Turing.FinTM.emCallSpan, Turing.FinTM.emCall_clear_run, Turing.FinTM.emCall_span_interval, Turing.FinTM.emCall_track_extent, Turing.FinTM.emCall_track_support, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom}
+\uses{Turing.FinTM, Turing.FinTM.bufferTape, Turing.FinTM.emCallClearCfg, Turing.FinTM.emCallClearTM, Turing.FinTM.emCallHi, Turing.FinTM.emCallLo, Turing.FinTM.emCallSpan, Turing.FinTM.emCall_clear_run, Turing.FinTM.emCall_span_interval, Turing.FinTM.emCall_track_extent, Turing.FinTM.emCall_track_support, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom}
 \difficulty{5}
 Let $M$ be a machine, $x$ an input, $T$ a time, and $i$ a work tape. Then there is a
 positive time $t \le 6T + 7$ after which the interval cleaner, started on the actual
@@ -1635,7 +1635,7 @@ with all three tapes blank and all heads at the origin.
 \lean{Turing.FinTM.emCall_first_entry}
 \label{Turing.FinTM.emCall_first_entry}
 \leanok
-\uses{Turing.Cfg, Turing.FinTM.emCallRightTM, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.MultiTapeTM.step}
+\uses{Turing.Cfg, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.MultiTapeTM.step}
 \difficulty{4}
 Let $M$ be a multi-tape Turing machine over the Boolean alphabet, let a set of stop
 control states be absorbing (a step from any configuration in a stop state changes
@@ -1648,7 +1648,7 @@ visited strictly before $t$ and the run from $c$ at time $t$ equals $d$.
 \lean{Turing.FinTM.emCall_clear_first}
 \label{Turing.FinTM.emCall_clear_first}
 \leanok
-\uses{Turing.Action.apply, Turing.FinTM, Turing.FinTM.bufferTape, Turing.FinTM.controlAction, Turing.FinTM.controlAction_apply, Turing.FinTM.emCallClearCfg, Turing.FinTM.emCallClearTM, Turing.FinTM.emCallHi, Turing.FinTM.emCallLo, Turing.FinTM.emCallRightTM, Turing.FinTM.emCallSpan, Turing.FinTM.emCall_first_entry, Turing.FinTM.emCall_track_clearable, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.step, Turing.moveInputPos_zero}
+\uses{Turing.Action.apply, Turing.FinTM, Turing.FinTM.bufferTape, Turing.FinTM.controlAction, Turing.FinTM.controlAction_apply, Turing.FinTM.emCallClearCfg, Turing.FinTM.emCallClearTM, Turing.FinTM.emCallHi, Turing.FinTM.emCallLo, Turing.FinTM.emCallSpan, Turing.FinTM.emCall_first_entry, Turing.FinTM.emCall_track_clearable, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.step, Turing.moveInputPos_zero}
 \difficulty{4}
 Let $M$ be a machine, $x$ an input, $T$ a time, and $i$ a work tape. Then there is a
 positive time $t \le 6T + 7$ such that the interval cleaner, started on the actual tape
@@ -1802,7 +1802,7 @@ embedding.
 \lean{Turing.FinTM.emCall_apply}
 \label{Turing.FinTM.emCall_apply}
 \leanok
-\uses{Turing.Action, Turing.Action.apply, Turing.Cfg, Turing.FinTM.emCallAction, Turing.FinTM.emCallCfg, Turing.FinTM.emCallFinishTM}
+\uses{Turing.Action, Turing.Action.apply, Turing.Cfg, Turing.FinTM.emCallAction, Turing.FinTM.emCallCfg}
 \difficulty{3}
 For every partial tape selection, control embedding, default tapes and heads, source
 action $a$, and source configuration $c$: applying the relocated action to the relocated
@@ -1814,7 +1814,7 @@ the write, head motion, and emission; unselected tapes and heads are fixed.
 \lean{Turing.FinTM.emCall_relocate_run}
 \label{Turing.FinTM.emCall_relocate_run}
 \leanok
-\uses{Turing.Cfg, Turing.Cfg.workTapeSymbols, Turing.FinTM.emCallAction, Turing.FinTM.emCallCfg, Turing.FinTM.emCallFinishTM, Turing.FinTM.emCall_apply, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.MultiTapeTM.step, Turing.MultiTapeTM.step_of_halt}
+\uses{Turing.Cfg, Turing.Cfg.workTapeSymbols, Turing.FinTM.emCallAction, Turing.FinTM.emCallCfg, Turing.FinTM.emCall_apply, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.MultiTapeTM.step, Turing.MultiTapeTM.step_of_halt}
 \difficulty{5}
 Let a source machine, a host machine, a tape index map with a partial inverse selection,
 and a control embedding be given such that on all good source states the host transition
@@ -1904,7 +1904,7 @@ word itself is still intact.
 \lean{Turing.FinTM.emCall_finish_erase}
 \label{Turing.FinTM.emCall_finish_erase}
 \leanok
-\uses{Turing.Action.apply, Turing.Cfg.workTapeSymbols, Turing.FinTM.bufferTape, Turing.FinTM.bufferTape_nat, Turing.FinTM.bufferTape_nil, Turing.FinTM.emCallFinishCfg, Turing.FinTM.emCallFinishTM, Turing.FinTM.emCallSource, Turing.FinTM.emCall_erase_last, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step, Turing.MultiTapeTM.runFrom_zero, Turing.MultiTapeTM.step, Turing.moveInputPos_zero}
+\uses{Turing.Action.apply, Turing.Cfg.workTapeSymbols, Turing.FinTM.bufferTape, Turing.FinTM.bufferTape_nat, Turing.FinTM.bufferTape_nil, Turing.FinTM.emCallFinishCfg, Turing.FinTM.emCallFinishTM, Turing.FinTM.emCall_erase_last, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step, Turing.MultiTapeTM.runFrom_zero, Turing.MultiTapeTM.step, Turing.moveInputPos_zero}
 \difficulty{4}
 Let the finalizer run in a fixed mode with a remaining captured word $p$. Starting from
 its erasure state with the capture head at cell $|p| - 1$ (and, in install mode, the
@@ -1917,7 +1917,7 @@ output untouched.
 \lean{Turing.FinTM.emCall_finish_run}
 \label{Turing.FinTM.emCall_finish_run}
 \leanok
-\uses{Turing.Action.apply, Turing.FinTM.bufferTape, Turing.FinTM.emCallFinishCfg, Turing.FinTM.emCallFinishTM, Turing.FinTM.emCallSource, Turing.FinTM.emCall_finish_arg, Turing.FinTM.emCall_finish_erase, Turing.FinTM.emCall_finish_rewind, Turing.FinTM.emCall_finish_transfer, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.MultiTapeTM.runFrom_succ_eq_step, Turing.MultiTapeTM.runFrom_zero, Turing.MultiTapeTM.step, Turing.moveInputPos_zero}
+\uses{Turing.Action.apply, Turing.FinTM.bufferTape, Turing.FinTM.emCallFinishCfg, Turing.FinTM.emCallFinishTM, Turing.FinTM.emCall_finish_arg, Turing.FinTM.emCall_finish_erase, Turing.FinTM.emCall_finish_rewind, Turing.FinTM.emCall_finish_transfer, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.MultiTapeTM.runFrom_succ_eq_step, Turing.MultiTapeTM.runFrom_zero, Turing.MultiTapeTM.step, Turing.moveInputPos_zero}
 \difficulty{5}
 Let the finalizer run in a fixed mode on an argument word $a$ and a capture word $c$,
 entering at its start state with the argument head at $|a|$ and the capture head at
@@ -2074,7 +2074,7 @@ slot and at the capture slot.
 \lean{Turing.FinTM.emCall_triple_other}
 \label{Turing.FinTM.emCall_triple_other}
 \leanok
-\uses{Turing.FinTM, Turing.FinTM.emCallFrame, Turing.FinTM.emCallTripleIndex, Turing.FinTM.emCallTripleSelect, Turing.FinTM.emCall_triple_inverse}
+\uses{Turing.FinTM, Turing.FinTM.emCallTripleIndex, Turing.FinTM.emCallTripleSelect, Turing.FinTM.emCall_triple_inverse}
 \difficulty{4}
 For all source tapes $i$ and $j$ and every component $r$, the triple selection of bank
 $i$ evaluated at the physical index of component $r$ of bank $j$ returns $r$ when $j =

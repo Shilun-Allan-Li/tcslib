@@ -426,7 +426,7 @@ first $t$ steps of the run. No entry is recorded once the machine has halted.
 \lean{Complexity.enumCont_log_run}
 \label{Complexity.enumCont_log_run}
 \leanok
-\uses{Complexity.enumCont_history, Complexity.enumCont_logAction, Complexity.enumCont_logCfg, Complexity.enumCont_logTM, Complexity.enumCont_log_apply, Complexity.enumCont_undoTM, Turing.Action.apply, Turing.Cfg, Turing.Cfg.workTapeSymbols, Turing.FinTM, Turing.FinTM.tapeBlocks, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.MultiTapeTM.step}
+\uses{Complexity.enumCont_history, Complexity.enumCont_logAction, Complexity.enumCont_logCfg, Complexity.enumCont_logTM, Complexity.enumCont_log_apply, Turing.Action.apply, Turing.Cfg, Turing.Cfg.workTapeSymbols, Turing.FinTM, Turing.FinTM.tapeBlocks, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.MultiTapeTM.step}
 \difficulty{5}
 For every finite machine $M$, start configuration $c_0$ (possibly prepared, not
 necessarily initial), and time $t$: running the logging machine of $M$ for $t$
@@ -621,7 +621,7 @@ position, and capture-head position are parameters. The output is empty.
 \lean{Complexity.enumCont_clean_capture}
 \label{Complexity.enumCont_clean_capture}
 \leanok
-\uses{Complexity.enumCont_cleanTM, Complexity.enumCont_concatTM, Complexity.enumCont_history, Complexity.enumCont_logCfg, Complexity.enumCont_logTM, Complexity.enumCont_log_run, Turing.Cfg, Turing.Cfg.Halted, Turing.FinTM, Turing.MultiTapeTM.runFrom, Turing.captureCfg, Turing.capture_run}
+\uses{Complexity.enumCont_cleanTM, Complexity.enumCont_history, Complexity.enumCont_logCfg, Complexity.enumCont_logTM, Complexity.enumCont_log_run, Turing.Cfg, Turing.Cfg.Halted, Turing.FinTM, Turing.MultiTapeTM.runFrom, Turing.captureCfg, Turing.capture_run}
 \difficulty{3}
 If a source machine $M$ is live for $t$ steps from a configuration $c_0$, then the
 clean wrapper of $M$, run for $t$ steps from the captured logged start of $c_0$,
@@ -633,7 +633,7 @@ $t$-step history; any halting emission of $M$ is retained on the capture tape.
 \lean{Complexity.enumCont_clean_undo_entry}
 \label{Complexity.enumCont_clean_undo_entry}
 \leanok
-\uses{Complexity.EnumContEntry, Complexity.enumCont_cleanTM, Complexity.enumCont_concatTM, Complexity.enumCont_logCfg, Complexity.enumCont_logTM, Complexity.enumCont_undoCfg, Complexity.enumCont_undoEntry, Complexity.enumCont_undoTM, Turing.Action.apply, Turing.Cfg, Turing.FinTM, Turing.FinTM.tapeBlocks, Turing.MultiTapeTM.step, Turing.captureAction, Turing.captureCfg, Turing.moveInputPos_zero}
+\uses{Complexity.EnumContEntry, Complexity.enumCont_cleanTM, Complexity.enumCont_logCfg, Complexity.enumCont_logTM, Complexity.enumCont_undoCfg, Complexity.enumCont_undoEntry, Complexity.enumCont_undoTM, Turing.Action.apply, Turing.Cfg, Turing.FinTM, Turing.FinTM.tapeBlocks, Turing.MultiTapeTM.step, Turing.captureAction, Turing.captureCfg, Turing.moveInputPos_zero}
 \difficulty{5}
 If the source configuration $c$ is halted, then one silent step of the clean
 wrapper from the captured logged configuration of $c$ with history $h$ parks
@@ -645,7 +645,7 @@ the checkpoint for $c$ and $h$, retaining $c$'s output on the capture tape.
 \lean{Complexity.enumCont_clean_restore}
 \label{Complexity.enumCont_clean_restore}
 \leanok
-\uses{Complexity.enumCont_cleanCfg, Complexity.enumCont_cleanTM, Complexity.enumCont_concatTM, Complexity.enumCont_first_halt, Complexity.enumCont_history, Complexity.enumCont_logCfg, Complexity.enumCont_logTM, Complexity.enumCont_undoCfg, Complexity.enumCont_undoResult, Complexity.enumCont_undoTM, Complexity.enumCont_undo_run, Turing.Cfg, Turing.Cfg.Halted, Turing.FinTM, Turing.MultiTapeTM.runFrom, Turing.captureCfg, Turing.capture_run}
+\uses{Complexity.enumCont_cleanCfg, Complexity.enumCont_cleanTM, Complexity.enumCont_first_halt, Complexity.enumCont_history, Complexity.enumCont_logCfg, Complexity.enumCont_logTM, Complexity.enumCont_undoCfg, Complexity.enumCont_undoResult, Complexity.enumCont_undoTM, Complexity.enumCont_undo_run, Turing.Cfg, Turing.Cfg.Halted, Turing.FinTM, Turing.MultiTapeTM.runFrom, Turing.captureCfg, Turing.capture_run}
 \difficulty{4}
 If the source $M$ is live for $t$ steps from $c_0$, then within $2t + 1$ steps the
 clean wrapper's captured restoration, started at the checkpoint of the time-$t$
@@ -658,7 +658,7 @@ retained on the last tape, and the capture head stands at the end of that word.
 \lean{Complexity.enumCont_buffer_apply}
 \label{Complexity.enumCont_buffer_apply}
 \leanok
-\uses{Complexity.enumCont_bufferAction, Complexity.enumCont_cleanCfg, Complexity.enumCont_cleanTM, Complexity.enumCont_concatTM, Complexity.enumCont_logTM, Turing.Action.apply, Turing.Cfg, Turing.FinTM, Turing.moveInputPos}
+\uses{Complexity.enumCont_bufferAction, Complexity.enumCont_cleanCfg, Complexity.enumCont_cleanTM, Complexity.enumCont_logTM, Turing.Action.apply, Turing.Cfg, Turing.FinTM, Turing.moveInputPos}
 \difficulty{3}
 For any displacements $m, d$ and control states $q, q'$, applying the two-head
 administrative action with displacements $m, d$ and next state $q'$ to an
@@ -672,7 +672,7 @@ by $d$.
 \lean{Complexity.enumCont_rewind}
 \label{Complexity.enumCont_rewind}
 \leanok
-\uses{Complexity.enumCont_concatTM, Turing.Cfg, Turing.FinTM.controlAction, Turing.FinTM.controlAction_apply, Turing.FinTM.moveInputPos_neg_val, Turing.FinTM.rewind_scan, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.MultiTapeTM.step, Turing.moveInputPos}
+\uses{Turing.Cfg, Turing.FinTM.controlAction, Turing.FinTM.controlAction_apply, Turing.FinTM.moveInputPos_neg_val, Turing.FinTM.rewind_scan, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.MultiTapeTM.step, Turing.moveInputPos}
 \difficulty{4}
 Consider a machine with a start state whose transition unconditionally steps the
 input head left into a scanning state, and a scanning state that keeps stepping
@@ -687,7 +687,7 @@ head at cell one.
 \lean{Complexity.enumCont_clean_buffer_rewind}
 \label{Complexity.enumCont_clean_buffer_rewind}
 \leanok
-\uses{Complexity.enumCont_buffer_apply, Complexity.enumCont_cleanCfg, Complexity.enumCont_cleanTM, Complexity.enumCont_concatTM, Complexity.enumCont_logTM, Turing.Action.apply, Turing.Cfg, Turing.Cfg.workTapeSymbols, Turing.FinTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.MultiTapeTM.runFrom_zero, Turing.MultiTapeTM.step}
+\uses{Complexity.enumCont_buffer_apply, Complexity.enumCont_cleanCfg, Complexity.enumCont_cleanTM, Complexity.enumCont_logTM, Turing.Action.apply, Turing.Cfg, Turing.Cfg.workTapeSymbols, Turing.FinTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.MultiTapeTM.runFrom_zero, Turing.MultiTapeTM.step}
 \difficulty{5}
 For every $j \le |y|$: from the administrative configuration of the clean wrapper
 with retained word $y$ and capture head just left of cell $j$, exactly $j + 1$
@@ -699,7 +699,7 @@ the final administrative state.
 \lean{Complexity.enumCont_clean_complete}
 \label{Complexity.enumCont_clean_complete}
 \leanok
-\uses{Complexity.enumCont_bufferAction, Complexity.enumCont_buffer_apply, Complexity.enumCont_cleanCfg, Complexity.enumCont_cleanTM, Complexity.enumCont_clean_buffer_rewind, Complexity.enumCont_clean_capture, Complexity.enumCont_clean_restore, Complexity.enumCont_clean_undo_entry, Complexity.enumCont_concatTM, Complexity.enumCont_first_halt, Complexity.enumCont_history, Complexity.enumCont_logCfg, Complexity.enumCont_rewind, Turing.Action.apply, Turing.Cfg, Turing.FinTM, Turing.FinTM.controlAction, Turing.FinTM.controlAction_apply, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.MultiTapeTM.step, Turing.captureCfg, Turing.moveInputPos_zero}
+\uses{Complexity.enumCont_bufferAction, Complexity.enumCont_buffer_apply, Complexity.enumCont_cleanCfg, Complexity.enumCont_cleanTM, Complexity.enumCont_clean_buffer_rewind, Complexity.enumCont_clean_capture, Complexity.enumCont_clean_restore, Complexity.enumCont_clean_undo_entry, Complexity.enumCont_first_halt, Complexity.enumCont_history, Complexity.enumCont_logCfg, Complexity.enumCont_rewind, Turing.Action.apply, Turing.Cfg, Turing.FinTM, Turing.FinTM.controlAction, Turing.FinTM.controlAction_apply, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.MultiTapeTM.step, Turing.captureCfg, Turing.moveInputPos_zero}
 \difficulty{6}
 If a machine $M$ halts within $T$ steps from configuration $c_0$ on input $x$ with
 output $y$, then within $3T + |x| + |y| + 8$ steps the clean wrapper of $M$,
@@ -883,7 +883,7 @@ tapes remain blank.
 \lean{Complexity.enumCont_pad_run}
 \label{Complexity.enumCont_pad_run}
 \leanok
-\uses{Complexity.enumCont_padAction, Complexity.enumCont_padCfg, Complexity.enumCont_pad_apply, Complexity.enumCont_sources, Turing.Cfg, Turing.Cfg.inputSymbol, Turing.Cfg.workTapeSymbols, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_comm_of_step, Turing.MultiTapeTM.step}
+\uses{Complexity.enumCont_padAction, Complexity.enumCont_padCfg, Complexity.enumCont_pad_apply, Turing.Cfg, Turing.Cfg.inputSymbol, Turing.Cfg.workTapeSymbols, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_comm_of_step, Turing.MultiTapeTM.step}
 \difficulty{4}
 Let $k \le K$ and suppose a host machine's transitions on embedded states are the
 padded transitions of a $k$-tape source machine, reading only the first $k$
@@ -1234,7 +1234,7 @@ to the result-copy state otherwise.
 \lean{Complexity.enumCont_body_increment}
 \label{Complexity.enumCont_body_increment}
 \leanok
-\uses{Complexity.enumCont_bodyTM, Complexity.enumCont_body_agree, Complexity.enumCont_body_call, Complexity.enumCont_body_check, Complexity.enumCont_copy_complete, Complexity.enumCont_increment_cases, Complexity.enumCont_logTM, Complexity.enumCont_pairCfg, Complexity.enumCont_pair_words, Turing.Cfg.ofWords, Turing.FinTM, Turing.FinTM.bufferTape, Turing.FinTM.bufferTape_nil, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.incFixed, Turing.stateWord}
+\uses{Complexity.enumCont_bodyTM, Complexity.enumCont_body_call, Complexity.enumCont_body_check, Complexity.enumCont_copy_complete, Complexity.enumCont_increment_cases, Complexity.enumCont_logTM, Complexity.enumCont_pairCfg, Complexity.enumCont_pair_words, Turing.Cfg.ofWords, Turing.FinTM, Turing.FinTM.bufferTape, Turing.FinTM.bufferTape_nil, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.incFixed, Turing.stateWord}
 \difficulty{5}
 Let $B$ be a source machine with at least one work tape that, started in the
 increment entry state at the seam with candidate $s$, halts within $T$ steps

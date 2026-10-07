@@ -170,7 +170,7 @@ beyond $|u|$).
 \lean{Complexity.taut_membership_of_verifier}
 \label{Complexity.taut_membership_of_verifier}
 \leanok
-\uses{Complexity.P, Complexity.TAUTOLOGY, Complexity.TautSyntax, Complexity.coNP, Complexity.tautVerifier, Complexity.taut_certificate_equiv, Complexity.taut_verifier_append}
+\uses{Complexity.P, Complexity.TAUTOLOGY, Complexity.coNP, Complexity.tautVerifier, Complexity.taut_certificate_equiv, Complexity.taut_verifier_append}
 \difficulty{3}
 Let $V$ be the set of binary strings $z$ with $|z| = i + (i + 1)$ for some $i$ such
 that the DNF decoded from the first $i$ bits of $z$ is false under the assignment
@@ -714,7 +714,7 @@ than the largest variable index occurring in $\varphi$.
 \lean{Complexity.taut_machine_pair}
 \label{Complexity.taut_machine_pair}
 \leanok
-\uses{Complexity.tautAssignment, Complexity.tautSplit, Complexity.tautTM, Complexity.taut_evaluation_start, Complexity.taut_formula_run, Complexity.taut_literal_lt, Complexity.taut_machine_malformed, Complexity.taut_parse_shape, Std.Sat.CNF.decode, Std.Sat.CNF.decode_serialize, Std.Sat.CNF.numVars_decode_le, Std.Sat.CNF.parse, Std.Sat.CNF.parse_serialize, Std.Sat.CNF.serialize, Std.Sat.DNF.decode, Std.Sat.DNF.decode_cnf_serialize, Std.Sat.DNF.eval, Turing.FinTM.ComputesInTime, Turing.FinTM.ComputesInTime.mono, Turing.FinTM.computesInTime_iff, Turing.MultiTapeTM.runFrom_add, Turing.pairEncode, Turing.universal_pair_length}
+\uses{Complexity.tautAssignment, Complexity.tautTM, Complexity.taut_evaluation_start, Complexity.taut_formula_run, Complexity.taut_literal_lt, Complexity.taut_machine_malformed, Complexity.taut_parse_shape, Std.Sat.CNF.decode, Std.Sat.CNF.decode_serialize, Std.Sat.CNF.numVars_decode_le, Std.Sat.CNF.parse, Std.Sat.CNF.parse_serialize, Std.Sat.CNF.serialize, Std.Sat.DNF.decode, Std.Sat.DNF.decode_cnf_serialize, Std.Sat.DNF.eval, Turing.FinTM.ComputesInTime, Turing.FinTM.ComputesInTime.mono, Turing.FinTM.computesInTime_iff, Turing.MultiTapeTM.runFrom_add, Turing.pairEncode, Turing.universal_pair_length}
 \difficulty{5}
 Let $x$ and $u$ be binary words with $|u| = |x| + 1$. The non-tautology verifier, run on
 $\mathrm{pair}(x, u)$, halts within $10(|\mathrm{pair}(x,u)| + 1)$ steps with output

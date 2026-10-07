@@ -99,7 +99,7 @@ phase, all tapes, and all work heads are unchanged.
 \lean{Complexity.setupCfg_reset}
 \label{Complexity.setupCfg_reset}
 \leanok
-\uses{Complexity.OblPhase, Complexity.OblSymbol, Complexity.copyGuide, Complexity.obliviousSchedule, Complexity.setupCfg, Complexity.setupCfg_apply, Complexity.setupCfg_input, Complexity.setupCfg_reset_scan, Complexity.setupWrite, Turing.Action.apply, Turing.Cfg, Turing.FinTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.MultiTapeTM.runFrom_succ_eq_step, Turing.MultiTapeTM.runFrom_zero, Turing.MultiTapeTM.step, Turing.moveInputPos}
+\uses{Complexity.OblPhase, Complexity.OblSymbol, Complexity.obliviousSchedule, Complexity.setupCfg, Complexity.setupCfg_apply, Complexity.setupCfg_input, Complexity.setupCfg_reset_scan, Complexity.setupWrite, Turing.Action.apply, Turing.Cfg, Turing.FinTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.MultiTapeTM.runFrom_succ_eq_step, Turing.MultiTapeTM.runFrom_zero, Turing.MultiTapeTM.step, Turing.moveInputPos}
 \difficulty{5}
 From a setup configuration in the reset-start phase with input head at an arbitrary
 position $p \in \{0,\dots,|x|+1\}$, running exactly $\max(p,1)+1$ steps of the
@@ -196,7 +196,7 @@ zone by writing one more mark, producing the partial guide with $|x|+1$ cells.
 \lean{Complexity.setupCfg_copy_return}
 \label{Complexity.setupCfg_copy_return}
 \leanok
-\uses{Complexity.OblPhase, Complexity.OblSymbol, Complexity.copyGuide, Complexity.copyGuide_origin, Complexity.obliviousSchedule, Complexity.setupCfg, Complexity.setupCfg_apply, Complexity.setupWrite, Complexity.unaryTape, Turing.Action.apply, Turing.Cfg, Turing.Cfg.workTapeSymbols, Turing.FinTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step, Turing.MultiTapeTM.runFrom_zero, Turing.moveInputPos_zero}
+\uses{Complexity.OblPhase, Complexity.OblSymbol, Complexity.copyGuide, Complexity.copyGuide_origin, Complexity.obliviousSchedule, Complexity.setupCfg, Complexity.setupCfg_apply, Complexity.setupWrite, Turing.Action.apply, Turing.Cfg, Turing.Cfg.workTapeSymbols, Turing.FinTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step, Turing.MultiTapeTM.runFrom_zero, Turing.moveInputPos_zero}
 \difficulty{5}
 For all $n, j \in \bbn$: from a setup configuration in the copy-return phase with guide
 head at $j$ over the partial guide with $n+1$ copied cells, exactly $j+1$ steps reach
@@ -447,7 +447,7 @@ follow the same path and differ only in their successor phase.
 \lean{Complexity.setupCfg_unary_rewind}
 \label{Complexity.setupCfg_unary_rewind}
 \leanok
-\uses{Complexity.OblPhase, Complexity.OblSymbol, Complexity.guideMark, Complexity.obliviousSchedule, Complexity.setupCfg, Complexity.setupCfg_apply, Complexity.setupWrite, Complexity.unaryRewindPhase, Complexity.unaryTape, Complexity.unaryTape_origin, Turing.Action.apply, Turing.Cfg, Turing.Cfg.workTapeSymbols, Turing.FinTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step, Turing.MultiTapeTM.runFrom_zero, Turing.MultiTapeTM.step}
+\uses{Complexity.OblPhase, Complexity.OblSymbol, Complexity.obliviousSchedule, Complexity.setupCfg, Complexity.setupCfg_apply, Complexity.setupWrite, Complexity.unaryRewindPhase, Complexity.unaryTape, Complexity.unaryTape_origin, Turing.Action.apply, Turing.Cfg, Turing.Cfg.workTapeSymbols, Turing.FinTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step, Turing.MultiTapeTM.runFrom_zero, Turing.MultiTapeTM.step}
 \difficulty{5}
 For every $j \in \bbn$ and either rewind variant: from a setup configuration in the
 corresponding unary rewind phase with unary head at cell $j$ over the unary tape with
@@ -460,7 +460,7 @@ cell $1$; no tape is written and all other heads are unchanged.
 \lean{Complexity.setupCfg_unary_start}
 \label{Complexity.setupCfg_unary_start}
 \leanok
-\uses{Complexity.OblPhase, Complexity.OblSymbol, Complexity.guideMark, Complexity.obliviousSchedule, Complexity.setupCfg, Complexity.setupCfg_apply, Complexity.setupCfg_unary_rewind, Complexity.setupWrite, Complexity.unaryRewindPhase, Complexity.unaryTape, Turing.Action.apply, Turing.Cfg, Turing.FinTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step, Turing.MultiTapeTM.step}
+\uses{Complexity.OblPhase, Complexity.OblSymbol, Complexity.obliviousSchedule, Complexity.setupCfg, Complexity.setupCfg_apply, Complexity.setupCfg_unary_rewind, Complexity.setupWrite, Complexity.unaryRewindPhase, Complexity.unaryTape, Turing.Action.apply, Turing.Cfg, Turing.FinTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step, Turing.MultiTapeTM.step}
 \difficulty{4}
 From a setup configuration in the unary-start phase with unary head at cell $N+1$ over
 the unary tape with $N$ markers, exactly $N+2$ steps rewind the entire newly
@@ -597,7 +597,7 @@ unary head moves once every three cells.
 \lean{Complexity.setupCfg_layout_end}
 \label{Complexity.setupCfg_layout_end}
 \leanok
-\uses{Complexity.OblPhase, Complexity.OblSymbol, Complexity.layoutMove, Complexity.layoutPhase, Complexity.obliviousSchedule, Complexity.rightGuide, Complexity.setupCfg, Complexity.setupCfg_apply, Complexity.setupWrite, Complexity.unaryTape, Complexity.unaryTape_end, Turing.Action.apply, Turing.Cfg, Turing.Cfg.workTapeSymbols, Turing.FinTM, Turing.MultiTapeTM.step}
+\uses{Complexity.OblPhase, Complexity.OblSymbol, Complexity.layoutMove, Complexity.layoutPhase, Complexity.obliviousSchedule, Complexity.setupCfg, Complexity.setupCfg_apply, Complexity.setupWrite, Complexity.unaryTape, Complexity.unaryTape_end, Turing.Action.apply, Turing.Cfg, Turing.Cfg.workTapeSymbols, Turing.FinTM, Turing.MultiTapeTM.step}
 \difficulty{4}
 From layout phase $0$ (of either direction) with unary head at cell $B+1$ --- the
 blank cell terminating the unary tape with $B$ markers --- and guide head at cell $g$,

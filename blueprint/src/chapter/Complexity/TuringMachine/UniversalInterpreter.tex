@@ -184,8 +184,7 @@ tapes.
 \label{Turing.universalAdmin_apply}
 \leanok
 \uses{Turing.Action.apply, Turing.Cfg, Turing.UniversalControl,
-  Turing.moveInputPos_zero, Turing.universalAdmin, Turing.universalEvalCfg,
-  Turing.universalStateWindow}
+  Turing.moveInputPos_zero, Turing.universalAdmin, Turing.universalEvalCfg}
 \difficulty{3}
 Applying the administrative action with target control state $q'$, table
 movement $d_t$, optional state-tape write $w$, and state movement $d_s$ to an
@@ -260,7 +259,7 @@ tape, state cursor, and all other data are unchanged.
   Turing.MultiTapeTM.runFrom_zero, Turing.MultiTapeTM.step,
   Turing.UniversalControl, Turing.universalEvalCfg,
   Turing.universalEval_step, Turing.universalFour,
-  Turing.universalInterpreter, Turing.universalStateWindow,
+  Turing.universalInterpreter,
   Turing.universal_table_read}
 \difficulty{5}
 Suppose the table is $l \cdot d(\beta) \cdot 01 \cdot r$, where $d(\beta)$
@@ -621,7 +620,7 @@ and head positions are retained unchanged as the inactive left block.
 \uses{Turing.Cfg, Turing.FinTM, Turing.FinTM.rightCfg,
   Turing.FinTM.rightCfg_run, Turing.MultiTapeTM.runFrom,
   Turing.UniversalControl, Turing.universalCaptureTM,
-  Turing.universalInterpreter, Turing.universalStartupBound}
+  Turing.universalInterpreter}
 \difficulty{1}
 Let $M$ be a finite-tape machine over $\{0,1\}$.  For every four-tape
 configuration of the table interpreter, every assignment of contents and head

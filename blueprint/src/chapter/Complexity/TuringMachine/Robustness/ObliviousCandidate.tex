@@ -283,7 +283,7 @@ $s$ is removed from the unprocessed list, and all other tapes and heads are unch
 \lean{Complexity.lane_run}
 \label{Complexity.lane_run}
 \leanok
-\uses{Complexity.budgetVisit, Complexity.laneAction, Complexity.laneCfg, Complexity.laneCfg_read, Complexity.laneCfg_right, Turing.Action.apply, Turing.Cfg, Turing.Cfg.workTapeSymbols, Turing.FinTM.sweepFold, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step, Turing.MultiTapeTM.runFrom_zero}
+\uses{Complexity.laneAction, Complexity.laneCfg, Complexity.laneCfg_read, Complexity.laneCfg_right, Turing.Action.apply, Turing.Cfg, Turing.Cfg.workTapeSymbols, Turing.FinTM.sweepFold, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step, Turing.MultiTapeTM.runFrom_zero}
 \difficulty{5}
 Let a $k$-tape machine, a designated lane, an encoding of transducer states into
 machine states, an encoding of transducer letters into tape symbols, and a local
@@ -348,7 +348,7 @@ $c \wedge \lnot b$.
 \lean{Complexity.obliviousSchedule_borrow_run}
 \label{Complexity.obliviousSchedule_borrow_run}
 \leanok
-\uses{Complexity.OblPhase, Complexity.OblSymbol, Complexity.budgetBorrow, Complexity.budgetFold, Complexity.budgetVisit, Complexity.inputPayload, Complexity.laneCfg, Complexity.lane_run, Complexity.obliviousSchedule, Complexity.obliviousSchedule_borrow, Turing.Cfg, Turing.FinTM, Turing.MultiTapeTM.runFrom}
+\uses{Complexity.OblPhase, Complexity.OblSymbol, Complexity.budgetBorrow, Complexity.budgetFold, Complexity.budgetVisit, Complexity.laneCfg, Complexity.lane_run, Complexity.obliviousSchedule, Complexity.obliviousSchedule_borrow, Turing.Cfg, Turing.FinTM, Turing.MultiTapeTM.runFrom}
 \difficulty{2}
 Let $W$ be a binary machine, $a$ a padding constant, and let a bit word $w$ be laid
 out as bit symbols on the budget lane of the schedule controller, starting in the
@@ -826,7 +826,7 @@ represented.
 \lean{Complexity.clockStageCfg_captures}
 \label{Complexity.clockStageCfg_captures}
 \leanok
-\uses{Complexity.clockStageCfg, Complexity.clockStageCfg_run, Complexity.guideTape, Complexity.maskedClock, Complexity.maskedClock_computes, Complexity.oblEmbed, Complexity.obliviousSchedule, Turing.Cfg, Turing.FinTM, Turing.FinTM.ComputesInTime, Turing.FinTM.ComputesInTime.output_unique, Turing.FinTM.computesInTime_iff, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom}
+\uses{Complexity.clockStageCfg, Complexity.clockStageCfg_run, Complexity.maskedClock, Complexity.maskedClock_computes, Complexity.oblEmbed, Complexity.obliviousSchedule, Turing.Cfg, Turing.FinTM, Turing.FinTM.ComputesInTime, Turing.FinTM.ComputesInTime.output_unique, Turing.FinTM.computesInTime_iff, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom}
 \difficulty{5}
 Let $W$ be a binary machine, let $a$ and $b$ be constants, and let a time bound $T$ be
 such that on every input $x$, the machine $W$ outputs the binary representation of

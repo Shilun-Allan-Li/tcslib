@@ -34,7 +34,7 @@ For all natural numbers $C$ and $c$, the map $n \mapsto n + C\,(n+1)^c$ on the n
 \lean{Complexity.certificate_split_unique}
 \label{Complexity.certificate_split_unique}
 \leanok
-\uses{Complexity.certificateSplit, Complexity.certificate_split_strictMono}
+\uses{Complexity.certificate_split_strictMono}
 \difficulty{3}
 Let $C, c$ be natural numbers and let $x, u, y, v$ be binary strings with $|u| = C\,(|x|+1)^c$ and $|v| = C\,(|y|+1)^c$. If the concatenations $x\,u$ and $y\,v$ are equal as strings, then $x = y$ and $u = v$.
 \end{lemma}
@@ -104,7 +104,7 @@ For all natural numbers $a$, $c$ and $n$, the inequality $a\,(n^c + 1) \le 2a\,(
 \lean{Complexity.choice_certificate_iff}
 \label{Complexity.choice_certificate_iff}
 \leanok
-\uses{Complexity.acceptsWithin_iff_of_halts, Complexity.capturedSummary, Complexity.choiceVerifier, Complexity.choiceVerifier_append, Complexity.choice_budget_le, Turing.FinNDTM, Turing.FinNDTM.DecidesInTime}
+\uses{Complexity.acceptsWithin_iff_of_halts, Complexity.choiceVerifier, Complexity.choiceVerifier_append, Complexity.choice_budget_le, Turing.FinNDTM, Turing.FinNDTM.DecidesInTime}
 \difficulty{3}
 Let $N$ be a nondeterministic Turing machine over the binary alphabet that decides a language $L$ within time $a\,(n^c+1)$ on inputs of length $n$, meaning that every branch halts within the budget and acceptance characterizes membership. Then for every binary string $x$: $x \in L$ if and only if there is a binary string $u$ with $|u| = 2a\,(|x|+1)^c$ such that the concatenation $x\,u$ lies in the choice-word verifier language of $N$ with parameters $2a$ and $c$.
 \end{lemma}
@@ -217,7 +217,7 @@ For every nondeterministic Turing machine $N$ over the binary alphabet and every
 \lean{Complexity.cont_split_bridge}
 \label{Complexity.cont_split_bridge}
 \leanok
-\uses{Complexity.certificateSplit, Complexity.contPairTM, Turing.solveSplit}
+\uses{Complexity.certificateSplit, Turing.solveSplit}
 \difficulty{1}
 For all natural numbers $C$, $c$ and $m$, the library split-search function and the local bounded split search return the same optional split position for the length equation $n + C\,(n+1)^c = m$.
 \end{lemma}
@@ -341,7 +341,7 @@ Let $N$ be a nondeterministic machine and suppose the physical input has the for
 \lean{Complexity.cont_parse_run}
 \label{Complexity.cont_parse_run}
 \leanok
-\uses{Complexity.contLoadCfg, Complexity.contPairTM, Complexity.contSplitWord, Complexity.cont_parse_double, Complexity.cont_parse_separator, Turing.FinNDTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.pairEncode}
+\uses{Complexity.contLoadCfg, Complexity.contPairTM, Complexity.cont_parse_double, Complexity.cont_parse_separator, Turing.FinNDTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.pairEncode}
 \difficulty{5}
 Let $N$ be a nondeterministic machine and suppose the physical input has the form $y = p\,e$ where $e$ is the self-delimiting encoding of a pair $(x, u)$. From the initial parser state at position $|p|+1$ with input buffer $a$, exactly $2|x| + 2$ steps of the pair-loader machine decode the doubled prefix and the separator, reaching the suffix-copy state at position $|p| + 2|x| + 3$ with input buffer $a\,x$ and the choice buffer still empty.
 \end{lemma}
@@ -456,7 +456,7 @@ For every deterministic machine $M$, configuration $d$ and step count $t$, the e
 \lean{Complexity.cont_mask_count}
 \label{Complexity.cont_mask_count}
 \leanok
-\uses{Complexity.contEmissionMask, Complexity.contGuessTM, Turing.Cfg, Turing.FinTM, Turing.MultiTapeTM.outputSymbol, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step, Turing.MultiTapeTM.step, Turing.MultiTapeTM.step_output}
+\uses{Complexity.contEmissionMask, Turing.Cfg, Turing.FinTM, Turing.MultiTapeTM.outputSymbol, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step, Turing.MultiTapeTM.step, Turing.MultiTapeTM.step_output}
 \difficulty{4}
 Let $M$ be a deterministic machine, $d$ a configuration and $t$ a step count. The output length of $d$ plus the number of $1$ entries in the emission mask over $t$ steps equals the output length of the configuration reached after $t$ steps of $M$ from $d$.
 \end{lemma}
@@ -908,7 +908,7 @@ For all natural numbers $C, c, B, A, d, n$ and $T$ with $T \le B(n+1)^{c+1}$, th
 \lean{Complexity.b2_compile}
 \label{Complexity.b2_compile}
 \leanok
-\uses{Complexity.acceptsWithin_iff_of_halts, Complexity.b2Host, Complexity.b2_host_bound, Complexity.b2_host_contract, Complexity.b2_unary_first, Complexity.e3_split_none_iff, Turing.FinNDTM, Turing.FinNDTM.AcceptsWithin, Turing.FinNDTM.DecidesInTime, Turing.FinTM, Turing.FinTM.DecidesInTime, Turing.FinTM.computesFunInTime_polyUnary, Turing.MultiTapeTM.indicator, Turing.NDTM.HaltsWithin, Turing.NDTM.HaltsWithin.mono}
+\uses{Complexity.acceptsWithin_iff_of_halts, Complexity.b2Host, Complexity.b2_host_bound, Complexity.b2_host_contract, Complexity.b2_unary_first, Turing.FinNDTM, Turing.FinNDTM.AcceptsWithin, Turing.FinNDTM.DecidesInTime, Turing.FinTM, Turing.FinTM.DecidesInTime, Turing.FinTM.computesFunInTime_polyUnary, Turing.MultiTapeTM.indicator, Turing.NDTM.HaltsWithin, Turing.NDTM.HaltsWithin.mono}
 \difficulty{5}
 Let $L$ be a language over the binary alphabet such that $x \in L$ exactly when some binary string $u$ with $|u| = C\,(|x|+1)^c$ has $x\,u \in V$, and let $M$ be a deterministic machine deciding the verifier language $V$ within time $A(m+1)^d$. Then there are constants $K, r$ and a nondeterministic machine deciding $L$ within time $K\,(n + C(n+1)^c + 1)^r$.
 \end{lemma}
@@ -945,7 +945,7 @@ For all natural numbers $C$ and $c$, the map $n \mapsto n + C \cdot 2^{(n+1)^c}$
 \lean{Complexity.e3_split_unique}
 \label{Complexity.e3_split_unique}
 \leanok
-\uses{Complexity.e3Split, Complexity.e3_split_strictMono}
+\uses{Complexity.e3_split_strictMono}
 \difficulty{3}
 Let $C, c$ be natural numbers and $x, u, y, v$ binary strings with $|u| = C\cdot 2^{(|x|+1)^c}$ and $|v| = C \cdot 2^{(|y|+1)^c}$. If $x\,u = y\,v$ as strings, then $x = y$ and $u = v$.
 \end{lemma}
@@ -1109,7 +1109,7 @@ Let $N$ be a nondeterministic Turing machine and $C, c$ natural numbers. For eve
 \lean{Complexity.e3_verifier_of_split}
 \label{Complexity.e3_verifier_of_split}
 \leanok
-\uses{Complexity.P, Complexity.contPairTM, Complexity.e3ChoiceVerifier, Complexity.e3SplitStep, Complexity.e3SplitWord, Complexity.e3_split_answer, Complexity.e3_split_length, Complexity.mem_P_iff, Turing.Cfg.init, Turing.FinNDTM, Turing.FinTM, Turing.FinTM.ComputesFunInTime, Turing.FinTM.ComputesInTime, Turing.FinTM.ComputesInTime.mono, Turing.FinTM.VirtualTag, Turing.FinTM.bufferedCompTM, Turing.FinTM.bufferedComp_start, Turing.FinTM.bufferedSecondCfg, Turing.FinTM.bufferedSecondCfg_run, Turing.FinTM.computesInTime_iff, Turing.MultiTapeTM.indicator, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom_add}
+\uses{Complexity.P, Complexity.contPairTM, Complexity.e3ChoiceVerifier, Complexity.e3SplitWord, Complexity.e3_split_answer, Complexity.e3_split_length, Complexity.mem_P_iff, Turing.Cfg.init, Turing.FinNDTM, Turing.FinTM, Turing.FinTM.ComputesFunInTime, Turing.FinTM.ComputesInTime, Turing.FinTM.ComputesInTime.mono, Turing.FinTM.VirtualTag, Turing.FinTM.bufferedCompTM, Turing.FinTM.bufferedComp_start, Turing.FinTM.bufferedSecondCfg, Turing.FinTM.bufferedSecondCfg_run, Turing.FinTM.computesInTime_iff, Turing.MultiTapeTM.indicator, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom_add}
 \difficulty{5}
 Let $N$ be a nondeterministic Turing machine and $C, c$ natural numbers. If some deterministic machine computes the exponential split-emitter function within time $A(n+1)^{r+1}$ for constants $A, r$, then the exponential choice-word verifier language of $N$ with parameters $C, c$ belongs to $\mathrm{P}$.
 \end{lemma}
@@ -1277,7 +1277,7 @@ For every binary word $u$: if the fixed-width decrement of $u$ succeeds, the val
 \lean{Complexity.a2Buffer_read}
 \label{Complexity.a2Buffer_read}
 \leanok
-\uses{Complexity.a2DebitTM, Turing.FinTM.bufferTape, Turing.FinTM.bufferTape_nat}
+\uses{Turing.FinTM.bufferTape, Turing.FinTM.bufferTape_nat}
 \difficulty{2}
 For all binary words $p$ and $s$, reading the buffer tape holding $p\,s$ at cell $|p|$ returns the first bit of $s$, or blank when $s$ is empty.
 \end{lemma}
@@ -1286,7 +1286,7 @@ For all binary words $p$ and $s$, reading the buffer tape holding $p\,s$ at cell
 \lean{Complexity.a2Buffer_write}
 \label{Complexity.a2Buffer_write}
 \leanok
-\uses{Complexity.a2DebitTM, Turing.FinTM.bufferTape}
+\uses{Turing.FinTM.bufferTape}
 \difficulty{4}
 For all binary words $p$ and $s$ and all bits $b, b'$, overwriting cell $|p|$ of the buffer tape holding $p\,b\,s$ with the bit $b'$ yields exactly the buffer tape holding $p\,b'\,s$.
 \end{lemma}
@@ -1654,7 +1654,7 @@ For all binary strings $u$ and $v$, the pair comparator, on the self-delimiting 
 \lean{Complexity.a3n_poly_eq}
 \label{Complexity.a3n_poly_eq}
 \leanok
-\uses{Complexity.PolyTimeComputable, Complexity.a3nEqTM, Complexity.a3nVerifier, Complexity.a3n_comp_at, Complexity.a3n_eq_computes, Complexity.a3n_poly_pair, Turing.FinTM.ComputesInTime.mono, Turing.FinTM.bufferedCompTM, Turing.FinTM.computesInTime_iff, Turing.MultiTapeTM.output_length_le, Turing.pairEncode}
+\uses{Complexity.PolyTimeComputable, Complexity.a3nEqTM, Complexity.a3n_comp_at, Complexity.a3n_eq_computes, Complexity.a3n_poly_pair, Turing.FinTM.ComputesInTime.mono, Turing.FinTM.bufferedCompTM, Turing.FinTM.computesInTime_iff, Turing.MultiTapeTM.output_length_le, Turing.pairEncode}
 \difficulty{4}
 Let $f$ and $g$ be polynomial-time computable functions on binary strings. Then the single-bit function recording whether $f(x) = g(x)$ is polynomial-time computable.
 \end{lemma}

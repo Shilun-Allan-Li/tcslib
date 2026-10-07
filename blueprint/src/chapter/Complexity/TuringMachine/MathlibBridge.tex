@@ -32,7 +32,6 @@ string contains no false bit --- is primitive recursive.
 \lean{Turing.codePrimBit}
 \label{Turing.codePrimBit}
 \leanok
-\uses{Turing.codePrimSkipFin}
 \difficulty{3}
 The two-argument operation taking a Boolean bit $b$ and a natural number $n$ to
 $2n + b$, i.e.\ appending $b$ as a new least-significant binary digit, is primitive
@@ -579,7 +578,7 @@ the finite statement support of the program.
 \lean{Turing.bridge_simulate}
 \label{Turing.bridge_simulate}
 \leanok
-\uses{Turing.BridgeAlphabet, Turing.bridgeCfg, Turing.bridgeExec, Turing.bridgeNumber, Turing.bridgeReach, Turing.bridgeReach_refl, Turing.bridgeReach_trans, Turing.bridgeTM, Turing.bridge_label, Turing.bridge_statement}
+\uses{Turing.BridgeAlphabet, Turing.bridgeCfg, Turing.bridgeExec, Turing.bridgeReach, Turing.bridgeReach_refl, Turing.bridgeReach_trans, Turing.bridgeTM, Turing.bridge_label, Turing.bridge_statement}
 \difficulty{5}
 Let $c$ be a program in Mathlib's partial-recursive language, and let $a, b$ be
 configurations of the compiled stack machine such that $b$ is reachable from $a$
@@ -635,7 +634,7 @@ symbols, then the sentinel true-bit symbol, then the list terminator.
 \lean{Turing.bridgeCfg_push_input}
 \label{Turing.bridgeCfg_push_input}
 \leanok
-\uses{Turing.Action.apply, Turing.BridgeAlphabet, Turing.BridgeQ, Turing.BridgeState, Turing.bridgeCfg, Turing.bridgeCfg_push, Turing.bridgeIndex, Turing.bridgeOne, Turing.bridgeStore, Turing.moveInputPos}
+\uses{Turing.Action.apply, Turing.BridgeAlphabet, Turing.BridgeQ, Turing.BridgeState, Turing.bridgeCfg, Turing.bridgeCfg_push, Turing.bridgeIndex, Turing.bridgeOne, Turing.moveInputPos}
 \difficulty{3}
 Performing the two-action push of a symbol $a$ onto the stack named $k$, where the
 second action additionally moves the input head in a direction $d$, transforms a

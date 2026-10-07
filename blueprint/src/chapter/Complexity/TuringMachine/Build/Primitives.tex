@@ -86,7 +86,7 @@ passed, and the output written so far.
 \lean{Turing.FinTM.scanCfg_read}
 \label{Turing.FinTM.scanCfg_read}
 \leanok
-\uses{Turing.Cfg.inputSymbol, Turing.FinTM.pairDupTM, Turing.FinTM.scanCfg, Turing.inputSymbolInner}
+\uses{Turing.Cfg.inputSymbol, Turing.FinTM.scanCfg, Turing.inputSymbolInner}
 \difficulty{3}
 In a scan configuration indexed by $i \le \abs{x}$, the symbol under the input
 head is the $i$-th bit of $x$ when $i < \abs{x}$, and the blank when
@@ -97,7 +97,7 @@ $i = \abs{x}$.
 \lean{Turing.FinTM.scanCopy_run}
 \label{Turing.FinTM.scanCopy_run}
 \leanok
-\uses{Turing.Action.apply, Turing.Cfg.ext_zero_tapes, Turing.Cfg.inputSymbol, Turing.FinTM.pairDupTM, Turing.FinTM.scanCfg, Turing.FinTM.scanCfg_read, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.MultiTapeTM.step, Turing.moveInputPos_pos_of_ne_right}
+\uses{Turing.Action.apply, Turing.Cfg.ext_zero_tapes, Turing.Cfg.inputSymbol, Turing.FinTM.scanCfg, Turing.FinTM.scanCfg_read, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.MultiTapeTM.step, Turing.moveInputPos_pos_of_ne_right}
 \difficulty{4}
 Suppose a control state $q$ of a machine without work tapes emits each scanned
 bit and moves right, and halts silently on the blank. Then for every
@@ -110,7 +110,7 @@ with output $o$ followed by the first $j$ bits of $x$.
 \lean{Turing.FinTM.scanCopy_finish}
 \label{Turing.FinTM.scanCopy_finish}
 \leanok
-\uses{Turing.Action.apply, Turing.Cfg.ext_zero_tapes, Turing.Cfg.inputSymbol, Turing.FinTM.pairDupTM, Turing.FinTM.scanCfg, Turing.FinTM.scanCfg_read, Turing.FinTM.scanCopy_run, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.MultiTapeTM.step}
+\uses{Turing.Action.apply, Turing.Cfg.ext_zero_tapes, Turing.Cfg.inputSymbol, Turing.FinTM.scanCfg, Turing.FinTM.scanCfg_read, Turing.FinTM.scanCopy_run, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.MultiTapeTM.step}
 \difficulty{3}
 Suppose a control state $q$ of a machine without work tapes emits each scanned
 bit and moves right, and halts silently on the blank. Then $\abs{x}+1$ steps
@@ -168,7 +168,7 @@ reach a halted configuration with output $o$ followed by $s$.
 \lean{Turing.FinTM.scanTrues_run}
 \label{Turing.FinTM.scanTrues_run}
 \leanok
-\uses{Turing.Action.apply, Turing.Cfg.ext_zero_tapes, Turing.FinTM.incFixedTM, Turing.FinTM.scanCfg, Turing.FinTM.scanCfg_read, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.MultiTapeTM.step, Turing.moveInputPos_pos_of_ne_right}
+\uses{Turing.Action.apply, Turing.Cfg.ext_zero_tapes, Turing.FinTM.scanCfg, Turing.FinTM.scanCfg_read, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.MultiTapeTM.step, Turing.moveInputPos_pos_of_ne_right}
 \difficulty{4}
 Suppose a control state $q$ of a machine without work tapes moves right on
 reading a $1$, emitting a $0$ when an emission flag is set and nothing
@@ -182,7 +182,7 @@ is set and empty output otherwise.
 \lean{Turing.FinTM.incFixed_cases}
 \label{Turing.FinTM.incFixed_cases}
 \leanok
-\uses{Turing.FinTM.incFixedTM, Turing.incFixed}
+\uses{Turing.incFixed}
 \difficulty{4}
 Every word $x \in \{0,1\}^*$, read least-significant bit first, satisfies
 exactly one of the following: $x$ consists entirely of ones and its
@@ -219,7 +219,7 @@ $x$ consists entirely of ones.
 \lean{Turing.FinTM.scanStep_right}
 \label{Turing.FinTM.scanStep_right}
 \leanok
-\uses{Turing.Action.apply, Turing.Cfg.ext_zero_tapes, Turing.FinTM.pairValidTM, Turing.FinTM.scanCfg, Turing.FinTM.scanCfg_read, Turing.MultiTapeTM, Turing.MultiTapeTM.step, Turing.moveInputPos_pos_of_ne_right}
+\uses{Turing.Action.apply, Turing.Cfg.ext_zero_tapes, Turing.FinTM.scanCfg, Turing.FinTM.scanCfg_read, Turing.MultiTapeTM, Turing.MultiTapeTM.step, Turing.moveInputPos_pos_of_ne_right}
 \difficulty{3}
 If at control state $q$ and input position $i < \abs{x}$ the transition of a
 machine without work tapes moves right, optionally emits a bit $e$, and passes
@@ -520,7 +520,7 @@ accumulated output are unchanged.
 \lean{Turing.FinTM.catalogPoly_advance}
 \label{Turing.FinTM.catalogPoly_advance}
 \leanok
-\uses{Turing.FinTM.catalogPolyCfg, Turing.FinTM.catalogPolyCost, Turing.FinTM.catalogPolyMove_apply, Turing.FinTM.catalogPolyUnaryTM, Turing.MultiTapeTM.step}
+\uses{Turing.FinTM.catalogPolyCfg, Turing.FinTM.catalogPolyMove_apply, Turing.FinTM.catalogPolyUnaryTM, Turing.MultiTapeTM.step}
 \difficulty{2}
 For every loop level $i$, one step of the generator from the advance state
 of level $i$ yields the loop state of level $i$ with head $i$ moved one cell
@@ -1276,7 +1276,7 @@ length exactly $2\abs{a} + 2 + \abs{b}$.
 \lean{Turing.FinTM.pairMap_computes}
 \label{Turing.FinTM.pairMap_computes}
 \leanok
-\uses{Turing.FinTM, Turing.FinTM.ComputesFunInTime, Turing.FinTM.ComputesInTime, Turing.FinTM.ComputesInTime.mono, Turing.FinTM.catalogPair_inverse, Turing.FinTM.catalogPair_length, Turing.FinTM.catalogRewind, Turing.FinTM.computesFunInTime_pairLenCheck, Turing.FinTM.computesInTime_iff, Turing.FinTM.mapCfg, Turing.FinTM.mapPayload_finish, Turing.FinTM.mapPrefix_replay, Turing.FinTM.mapStart, Turing.FinTM.mapValidate, Turing.FinTM.pairMapTM, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.output_length_le, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.pairDecode, Turing.pairEncode}
+\uses{Turing.FinTM, Turing.FinTM.ComputesFunInTime, Turing.FinTM.ComputesInTime, Turing.FinTM.ComputesInTime.mono, Turing.FinTM.catalogPair_inverse, Turing.FinTM.catalogPair_length, Turing.FinTM.catalogRewind, Turing.FinTM.computesInTime_iff, Turing.FinTM.mapCfg, Turing.FinTM.mapPayload_finish, Turing.FinTM.mapPrefix_replay, Turing.FinTM.mapStart, Turing.FinTM.mapValidate, Turing.FinTM.pairMapTM, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.output_length_le, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.pairDecode, Turing.pairEncode}
 \difficulty{5}
 Let $M$ compute the total function $f$ within time $T$. Then the threaded-map
 controller built over $M$ computes, within $4(T(n) + n + 3)$ steps on inputs
@@ -1659,7 +1659,7 @@ anchored return configuration carrying one split-search step applied to $s$.
 \lean{Turing.FinTM.splitCount_accept}
 \label{Turing.FinTM.splitCount_accept}
 \leanok
-\uses{Turing.Cfg, Turing.Cfg.inputSymbol, Turing.FinTM.splitCountCfg, Turing.FinTM.splitPos_read, Turing.FinTM.splitPrepareTM}
+\uses{Turing.Cfg, Turing.Cfg.inputSymbol, Turing.FinTM.splitCountCfg, Turing.FinTM.splitPos_read}
 \difficulty{3}
 In the counting-host embedding of a source configuration, the conjunction of
 the negated overflow flag with the test that the native input read is blank
@@ -1671,7 +1671,7 @@ equals the input length.
 \lean{Turing.FinTM.splitCount_firstHalt}
 \label{Turing.FinTM.splitCount_firstHalt}
 \leanok
-\uses{Turing.Cfg, Turing.FinTM.splitCountAction, Turing.FinTM.splitCountCfg, Turing.FinTM.splitCount_run, Turing.FinTM.splitPrepareTM, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.MultiTapeTM.runFrom_of_halt}
+\uses{Turing.Cfg, Turing.FinTM.splitCountAction, Turing.FinTM.splitCountCfg, Turing.FinTM.splitCount_run, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.MultiTapeTM.runFrom_of_halt}
 \difficulty{4}
 Suppose the host's transitions on embedded states agree with the
 emission-counting transform of the source's transitions, and the source run
@@ -1801,7 +1801,7 @@ run from $c$ is anchor-free for $u + v$ steps.
 \lean{Turing.FinTM.splitEmbed_cut}
 \label{Turing.FinTM.splitEmbed_cut}
 \leanok
-\uses{Turing.Action.mapState, Turing.Cfg, Turing.Cfg.mapState, Turing.FinTM.splitRewindTM, Turing.FinTM.splitSafe, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.MultiTapeTM.step}
+\uses{Turing.Action.mapState, Turing.Cfg, Turing.Cfg.mapState, Turing.FinTM.splitSafe, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.MultiTapeTM.step}
 \difficulty{5}
 Let a source machine have a class of terminal control states on which it
 stalls, and let a host machine agree, on the images of non-terminal states
@@ -2203,7 +2203,7 @@ For all naturals $c$, $A$, $n$, $t$,
 \lean{Turing.FinTM.emitterSplit_of_body}
 \label{Turing.FinTM.emitterSplit_of_body}
 \leanok
-\uses{Turing.Cfg.ofWords, Turing.FinTM, Turing.FinTM.ComputesFunInTime, Turing.FinTM.ComputesInTime.mono, Turing.FinTM.computesFunInTime_lengthBits, Turing.FinTM.emitterIdleTM, Turing.FinTM.emitterSplitAccept, Turing.FinTM.emitterSplit_loop_bound, Turing.FinTM.emitterSplit_result, Turing.FinTM.exists_loopFindTM, Turing.FinTM.splitStep, Turing.FinTM.splitStep_inv, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom, Turing.pairEncode, Turing.solveSplitWith, Turing.stateWord}
+\uses{Turing.Cfg.ofWords, Turing.FinTM, Turing.FinTM.ComputesFunInTime, Turing.FinTM.ComputesInTime.mono, Turing.FinTM.computesFunInTime_lengthBits, Turing.FinTM.emitterSplitAccept, Turing.FinTM.emitterSplit_loop_bound, Turing.FinTM.emitterSplit_result, Turing.FinTM.exists_loopFindTM, Turing.FinTM.splitStep, Turing.FinTM.splitStep_inv, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom, Turing.pairEncode, Turing.solveSplitWith, Turing.stateWord}
 \difficulty{5}
 Let a body machine with an anchor state satisfy a startup contract and a
 round contract with common envelope $A\,(T_E(n+1) + n + 2)$, where the round
@@ -2279,7 +2279,7 @@ whose stored words carry $s$, at the evaluator's initial virtual state.
 \lean{Turing.FinTM.emitter_eval_first}
 \label{Turing.FinTM.emitter_eval_first}
 \leanok
-\uses{Turing.Cfg.init, Turing.FinTM, Turing.FinTM.ComputesInTime, Turing.FinTM.ComputesInTime.output_unique, Turing.FinTM.VirtualTag, Turing.FinTM.bufferedSecondCfg, Turing.FinTM.computesInTime_iff, Turing.FinTM.emitterCompareTM, Turing.FinTM.emitterEvalCfg, Turing.FinTM.emitterEvalTM, Turing.FinTM.emitter_eval_run, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom, Turing.captureCfg}
+\uses{Turing.Cfg.init, Turing.FinTM, Turing.FinTM.ComputesInTime, Turing.FinTM.ComputesInTime.output_unique, Turing.FinTM.VirtualTag, Turing.FinTM.bufferedSecondCfg, Turing.FinTM.computesInTime_iff, Turing.FinTM.emitterEvalCfg, Turing.FinTM.emitterEvalTM, Turing.FinTM.emitter_eval_run, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom, Turing.captureCfg}
 \difficulty{5}
 Let $M$, on the candidate $s$, halt within $T$ steps with output $o$. Then
 there is a time $t \le T$ at which $M$'s run on $s$ has first halted, with
@@ -2293,7 +2293,6 @@ holding exactly $o$.
 \lean{Turing.FinTM.emitter_take_succ_eq}
 \label{Turing.FinTM.emitter_take_succ_eq}
 \leanok
-\uses{Turing.FinTM.emitterCompareTM}
 \difficulty{3}
 For words $u, v$ and an index $j$, the length-$(j+1)$ prefixes of $u$ and
 $v$ agree if and only if their length-$j$ prefixes agree and their optional
@@ -2392,7 +2391,7 @@ data tape at every other cell.
 \lean{Turing.FinTM.emitter_cleared_step}
 \label{Turing.FinTM.emitter_cleared_step}
 \leanok
-\uses{Turing.FinTM.emitterClearTM, Turing.FinTM.emitterCleared}
+\uses{Turing.FinTM.emitterCleared}
 \difficulty{3}
 Blanking the cell at offset $j$ from the left endpoint of a tape whose first
 $j$ interval cells are already cleared yields the tape with $j+1$ interval
@@ -2876,7 +2875,7 @@ control field changes on further steps.
 \lean{Turing.FinTM.emitterBank_first}
 \label{Turing.FinTM.emitterBank_first}
 \leanok
-\uses{Turing.FinTM, Turing.FinTM.bufferTape, Turing.FinTM.catalogFirstEntry, Turing.FinTM.emitterBankCfg, Turing.FinTM.emitterBankTM, Turing.FinTM.emitterBank_clear, Turing.FinTM.emitterBank_fixed, Turing.FinTM.emitterClearCfg, Turing.FinTM.emitterHi, Turing.FinTM.emitterLo, Turing.FinTM.emitterRightTM, Turing.FinTM.emitterSpan, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom}
+\uses{Turing.FinTM, Turing.FinTM.bufferTape, Turing.FinTM.catalogFirstEntry, Turing.FinTM.emitterBankCfg, Turing.FinTM.emitterBankTM, Turing.FinTM.emitterBank_clear, Turing.FinTM.emitterBank_fixed, Turing.FinTM.emitterClearCfg, Turing.FinTM.emitterHi, Turing.FinTM.emitterLo, Turing.FinTM.emitterSpan, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom}
 \difficulty{2}
 After a source machine has run for $T$ steps, there is a time
 $t \le 6T + 7$ such that the simultaneous cleaner bank, started on the
@@ -3071,7 +3070,7 @@ the source's physical output.
 \lean{Turing.FinTM.emitterP2_apply}
 \label{Turing.FinTM.emitterP2_apply}
 \leanok
-\uses{Turing.Action, Turing.Action.apply, Turing.Cfg, Turing.FinTM.emitterP2Action, Turing.FinTM.emitterP2Cfg, Turing.FinTM.emitterP2EraseTM}
+\uses{Turing.Action, Turing.Action.apply, Turing.Cfg, Turing.FinTM.emitterP2Action, Turing.FinTM.emitterP2Cfg}
 \difficulty{3}
 Applying a relocated action to a relocated configuration equals relocating
 the result of applying the original action: the write, head motion, and
@@ -3083,7 +3082,7 @@ and positions are fixed.
 \lean{Turing.FinTM.emitterP2_relocate_run}
 \label{Turing.FinTM.emitterP2_relocate_run}
 \leanok
-\uses{Turing.Cfg, Turing.Cfg.workTapeSymbols, Turing.FinTM.emitterP2Action, Turing.FinTM.emitterP2Cfg, Turing.FinTM.emitterP2EraseTM, Turing.FinTM.emitterP2_apply, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.MultiTapeTM.step, Turing.MultiTapeTM.step_of_halt}
+\uses{Turing.Cfg, Turing.Cfg.workTapeSymbols, Turing.FinTM.emitterP2Action, Turing.FinTM.emitterP2Cfg, Turing.FinTM.emitterP2_apply, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.MultiTapeTM.step, Turing.MultiTapeTM.step_of_halt}
 \difficulty{4}
 Let the host's transitions on embedded good states equal the relocated
 source transitions, with the selection map a left inverse of the tape
@@ -3143,7 +3142,7 @@ blank tape.
 \lean{Turing.FinTM.emitterP2_erase_run}
 \label{Turing.FinTM.emitterP2_erase_run}
 \leanok
-\uses{Turing.Action.apply, Turing.Cfg.workTapeSymbols, Turing.FinTM.bufferTape_nat, Turing.FinTM.emitterP2EraseCfg, Turing.FinTM.emitterP2EraseTM, Turing.FinTM.emitterP2PrepareTM, Turing.FinTM.emitterP2_erase_back, Turing.FinTM.emitterP2_erase_scan, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.MultiTapeTM.step, Turing.moveInputPos_zero}
+\uses{Turing.Action.apply, Turing.Cfg.workTapeSymbols, Turing.FinTM.bufferTape_nat, Turing.FinTM.emitterP2EraseCfg, Turing.FinTM.emitterP2EraseTM, Turing.FinTM.emitterP2_erase_back, Turing.FinTM.emitterP2_erase_scan, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.MultiTapeTM.step, Turing.moveInputPos_zero}
 \difficulty{3}
 Erasing a complete administrative word $u$ costs exactly $2(\abs{u}+1)$
 steps of the eraser, after which the tape is blank, the head and native
@@ -3154,7 +3153,7 @@ input position are restored, and nothing has been emitted.
 \lean{Turing.FinTM.emitterP2_erase_first}
 \label{Turing.FinTM.emitterP2_erase_first}
 \leanok
-\uses{Turing.Action.apply, Turing.FinTM.controlAction, Turing.FinTM.controlAction_apply, Turing.FinTM.emitterP2EraseCfg, Turing.FinTM.emitterP2EraseTM, Turing.FinTM.emitterP2PrepareTM, Turing.FinTM.emitterP2_erase_run, Turing.FinTM.emitter_first_entry, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.step, Turing.moveInputPos_zero}
+\uses{Turing.Action.apply, Turing.FinTM.controlAction, Turing.FinTM.controlAction_apply, Turing.FinTM.emitterP2EraseCfg, Turing.FinTM.emitterP2EraseTM, Turing.FinTM.emitterP2_erase_run, Turing.FinTM.emitter_first_entry, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.step, Turing.moveInputPos_zero}
 \difficulty{3}
 For any word $u$, there is a time $t$ with $0 < t \le 2(\abs{u}+1)$ such
 that the eraser never visits its return state before $t$ and at time $t$
@@ -3703,7 +3702,7 @@ with value $s$.
 \lean{Turing.FinTM.emitterP2_body_advance}
 \label{Turing.FinTM.emitterP2_body_advance}
 \leanok
-\uses{Turing.Cfg.ofWords, Turing.FinTM, Turing.FinTM.EmitterP2State, Turing.FinTM.bufferTape, Turing.FinTM.emitterP2BodyTM, Turing.FinTM.emitterP2OneSelect, Turing.FinTM.emitterP2Words, Turing.FinTM.emitterP2_advance_initial, Turing.FinTM.emitterP2_body_emit, Turing.FinTM.emitterP2_one_frame, Turing.FinTM.emitterP2_one_inverse, Turing.FinTM.emitterP2_segment, Turing.FinTM.emitterP2_stateWord_one, Turing.FinTM.emitterP2_update_candidate, Turing.FinTM.splitRestoreScan, Turing.FinTM.splitRestoreTM, Turing.FinTM.splitRestore_first, Turing.FinTM.splitSafe, Turing.FinTM.splitStep, Turing.MultiTapeTM.runFrom, Turing.stateWord}
+\uses{Turing.Cfg.ofWords, Turing.FinTM, Turing.FinTM.EmitterP2State, Turing.FinTM.bufferTape, Turing.FinTM.emitterP2BodyTM, Turing.FinTM.emitterP2OneSelect, Turing.FinTM.emitterP2Words, Turing.FinTM.emitterP2_advance_initial, Turing.FinTM.emitterP2_one_frame, Turing.FinTM.emitterP2_one_inverse, Turing.FinTM.emitterP2_segment, Turing.FinTM.emitterP2_stateWord_one, Turing.FinTM.emitterP2_update_candidate, Turing.FinTM.splitRestoreScan, Turing.FinTM.splitRestoreTM, Turing.FinTM.splitRestore_first, Turing.FinTM.splitSafe, Turing.FinTM.splitStep, Turing.MultiTapeTM.runFrom, Turing.stateWord}
 \difficulty{4}
 There is a time $t \le 2\abs{s} + \abs{w} + 5$ after which the controller,
 from its advance seam carrying the candidate $s$, has replaced $s$ by one
@@ -3814,7 +3813,7 @@ the canonical anchored seam carrying the stepped candidate.
 \lean{Turing.FinTM.emitterP2_closed}
 \label{Turing.FinTM.emitterP2_closed}
 \leanok
-\uses{Turing.FinTM, Turing.FinTM.ComputesFunInTime, Turing.FinTM.computesFunInTime_lengthBits, Turing.FinTM.computesInTime_iff, Turing.FinTM.emitterP2BodyTM, Turing.FinTM.emitterP2_body_round, Turing.FinTM.emitterP2_body_start, Turing.FinTM.emitterSplit_of_body, Turing.FinTM.emitterTokenTM, Turing.FinTM.emitter_width_budget, Turing.FinTM.exists_installCallTM, Turing.MultiTapeTM.output_length_le, Turing.pairEncode, Turing.solveSplitWith}
+\uses{Turing.FinTM, Turing.FinTM.ComputesFunInTime, Turing.FinTM.computesFunInTime_lengthBits, Turing.FinTM.computesInTime_iff, Turing.FinTM.emitterP2BodyTM, Turing.FinTM.emitterP2_body_round, Turing.FinTM.emitterP2_body_start, Turing.FinTM.emitterSplit_of_body, Turing.FinTM.emitter_width_budget, Turing.FinTM.exists_installCallTM, Turing.MultiTapeTM.output_length_le, Turing.pairEncode, Turing.solveSplitWith}
 \difficulty{5}
 Let a machine $E$ compute the binary representation of $f$ applied to the
 input length within a monotone time bound $T_E$. Then there exist a machine
@@ -3828,7 +3827,7 @@ and to the empty word when no such $i$ exists.
 \lean{Turing.FinTM.computesFunInTime_splitSolveWith}
 \label{Turing.FinTM.computesFunInTime_splitSolveWith}
 \leanok
-\uses{Turing.FinTM, Turing.FinTM.ComputesFunInTime, Turing.FinTM.emitterP2_closed, Turing.FinTM.emitterTokenTM, Turing.pairEncode, Turing.solveSplitWith}
+\uses{Turing.FinTM, Turing.FinTM.ComputesFunInTime, Turing.FinTM.emitterP2_closed, Turing.pairEncode, Turing.solveSplitWith}
 \difficulty{1}
 Let $f : \mathbb{N} \to \mathbb{N}$ and let a machine $E$ compute the
 function sending an input of length $m$ to the little-endian binary
