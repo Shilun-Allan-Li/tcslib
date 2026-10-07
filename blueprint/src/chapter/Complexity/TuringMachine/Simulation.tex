@@ -727,3 +727,27 @@ on $x$ yields the second-phase embedding of the initial configuration of
 $M_2$ on virtual input $y$, with arrival tag true, physical position $p$, and
 that inactive left-block data.
 \end{lemma}
+
+%%% added by the blueprint pipeline
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Additional declarations}
+
+\begin{lemma}[Rewind within position plus two steps]
+\lean{Turing.FinTM.timed_rewind}
+\label{Turing.FinTM.timed_rewind}
+\leanok
+\uses{Turing.Cfg, Turing.FinTM.controlAction, Turing.FinTM.controlAction_apply, Turing.FinTM.moveInputPos_neg_val, Turing.FinTM.rewind_scan, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.MultiTapeTM.step, Turing.moveInputPos}
+\difficulty{4}
+Let $M$ be a multi-tape Turing machine with $k$ work tapes over the Boolean
+alphabet on input $x$, with a start state $r$, a scanning state $s$, and an
+optional dispatch state $d$, such that regardless of the symbols read: from $r$
+the machine always moves the input head left (clamped at the left boundary
+blank) and enters $s$; from $s$ it moves left and stays in $s$ when an input
+symbol is scanned, and moves right and passes to $d$ when a blank is scanned;
+and none of these transitions touches a work tape, a work head, or the output.
+Let $c$ be a configuration of $M$ in state $r$ whose input head is at position
+$p \in \{0,\dots,\abs{x}+1\}$, where position $0$ is the left boundary blank.
+Then there exists $t \le p + 2$ such that running $M$ for $t$ steps from $c$
+yields the configuration that agrees with $c$ in every component except that
+its state is $d$ and its input head is at position $1$.
+\end{lemma}

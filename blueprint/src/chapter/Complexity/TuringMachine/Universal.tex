@@ -1958,3 +1958,39 @@ the single timeout tag $0$ within the same bound.  Halting is checked after
 every simulated transition including the $t$-th, so halting exactly at the
 deadline counts as success.
 \end{theorem}
+
+%%% added by the blueprint pipeline
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Additional declarations}
+
+\begin{theorem}[Time-bounded universal machine with explicit constant]
+\lean{Turing.timed_universal_concrete}
+\label{Turing.timed_universal_concrete}
+\leanok
+\uses{Turing.CodeTM.serialize, Turing.CodeTM.toFinTM,
+  Turing.EffectiveMachineCode, Turing.FinTM, Turing.FinTM.ComputesInTime,
+  Turing.FinTM.computesInTime_iff, Turing.MultiTapeTM.initCfg,
+  Turing.MultiTapeTM.runFrom, Turing.pairEncode, Turing.timedAnswer,
+  Turing.timedUniversalTM, Turing.timed_computes, Turing.universalBlockBound}
+\difficulty{4}
+Let $c$ be an effective machine-coding scheme whose canonizer runs in time
+$T \colon \mathbb{N} \to \mathbb{N}$; for a bit string $\alpha$ let $M_\alpha$
+be the machine $\alpha$ decodes to, $L_\alpha$ the length of its canonical
+serialization, $N_\alpha$ its number of states and $q_\alpha$ the index of its
+initial state, write $\mathrm{bin}(n)$ for the binary representation of $n$
+(least significant bit first) and $\langle a, b\rangle$ for the pair encoding
+of bit strings (each bit of $a$ doubled, then $01$, then $b$), and set
+\[
+  C_\alpha = \bigl(3|\alpha| + T(|\alpha|) + L_\alpha
+    + 2\,|\mathrm{bin}(N_\alpha)| + 2q_\alpha + 16\bigr)
+    + \bigl(3L_\alpha + 5(N_\alpha + 1) + 20\bigr) + 14 .
+\]
+Then there is a single finite-tape machine $U$ over $\{0,1\}$ such that for
+every bit string $\alpha$, input $x$ and deadline $t \in \mathbb{N}$: if
+$M_\alpha$ halts on $x$ within $t$ steps with output $w$, then $U$ on
+$\langle\langle \mathrm{bin}(t), \alpha\rangle, x\rangle$ halts within
+$C_\alpha (t+1)^2$ steps with output $1$ followed by $w$; and if there is no
+string $w$ such that $M_\alpha$ halts on $x$ within $t$ steps with output $w$,
+then $U$ on $\langle\langle \mathrm{bin}(t), \alpha\rangle, x\rangle$ halts
+within $C_\alpha (t+1)^2$ steps with output the single bit $0$.
+\end{theorem}

@@ -402,3 +402,19 @@ not halted.  If running $M$ for $t + 1$ steps from $c$ returns to $c$ itself,
 then the computation of $M$ from $c$ never halts: for every number of steps
 $t'$, the configuration reached after $t'$ steps from $c$ is not halted.
 \end{lemma}
+
+%%% added by the blueprint pipeline
+\section{Additional declarations}
+
+\begin{lemma}[Input head moves right at most one cell per step]
+\lean{Turing.MultiTapeTM.timed_input_bound}
+\label{Turing.MultiTapeTM.timed_input_bound}
+\leanok
+\uses{Turing.Action.apply, Turing.Cfg, Turing.Cfg.inputSymbol, Turing.Cfg.workTapeSymbols, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.MultiTapeTM.step, Turing.moveInputPos}
+\difficulty{4}
+Let $M$ be a multi-tape Turing machine on an input word $x$, whose input-head
+position ranges over $\{0, 1, \dots, |x| + 1\}$, and let $c$ be a
+configuration of $M$ with input-head position $p$.  Then for every
+$t \in \mathbb{N}$, the input-head position in the configuration reached by
+running $M$ for $t$ steps from $c$ is at most $p + t$.
+\end{lemma}
