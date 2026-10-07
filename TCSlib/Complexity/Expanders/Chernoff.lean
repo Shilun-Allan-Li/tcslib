@@ -65,8 +65,8 @@ spectral gap `1−λ` using first-order perturbation theory, and conclude by the
 exponential Markov inequality applied to both tails. -/
 theorem walk_visits_concentration {A : Matrix (Fin n) (Fin n) ℝ}
     (hA : IsSymmStochastic A) {lam : ℝ} (hlam : lambda A ≤ lam)
-    {B : Finset (Fin n)} {β δ : ℝ} (hB : (B.card : ℝ) = β * n)
-    (hδ : 0 < δ) (k : ℕ) :
+    (hlam0 : 0 ≤ lam) (hlam1 : lam ≤ 1) {B : Finset (Fin n)} {β δ : ℝ}
+    (hB : (B.card : ℝ) = β * n) (hδ : 0 < δ) (k : ℕ) :
     (walkPMF hA k).toMeasure
         {f | δ < |(∑ i, if f i ∈ B then (1 : ℝ) else 0) / (k + 1) - β|} <
       ENNReal.ofReal (2 * Real.exp (-((1 - lam) * δ ^ 2 * (k + 1)) / 60)) := by

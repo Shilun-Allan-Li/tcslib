@@ -82,8 +82,8 @@ polynomial in `n`, and that circuit decides `L` on length-`n` inputs; the
 resulting family witnesses `L ∈ P/poly` via `Language.inPPoly_iff`. -/
 theorem adleman (hMaj : ClosedUnderMajority E) {L : Language Bool}
     (hL : InBPP E L)
-    (hCirc : ∀ M p, E.Eff (boolVerifier M) → PolyGrowth p →
-      VerifierHasCircuits M p) :
+    (hCirc : ∀ M a k, E.Eff (boolVerifier M) →
+      VerifierHasCircuits M (polyLen a k)) :
     L.InPPoly := by
   sorry
 

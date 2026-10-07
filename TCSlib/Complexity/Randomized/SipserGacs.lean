@@ -58,11 +58,11 @@ predicate `N` and polynomial witness-length bounds such that
 `x ∈ L ↔ ∃ u ∀ v, N(x, u, v)`.  [AB09, Thm 7.18]'s target class, defined in
 the style of [AB09, Def 7.4] (see the module docstring's **Deviations**). -/
 def InSigma2 (L : Language Bool) : Prop :=
-  ∃ (N : List Bool → List Bool → List Bool → Bool) (q₁ q₂ : ℕ → ℕ),
-    E.EffTwoWitness N ∧ PolyGrowth q₁ ∧ PolyGrowth q₂ ∧
+  ∃ (N : List Bool → List Bool → List Bool → Bool) (a₁ k₁ a₂ k₂ : ℕ),
+    E.EffTwoWitness N ∧
     ∀ x : List Bool,
-      x ∈ L ↔ ∃ u : List Bool, u.length = q₁ x.length ∧
-        ∀ v : List Bool, v.length = q₂ x.length → N x u v = true
+      x ∈ L ↔ ∃ u : List Bool, u.length = polyLen a₁ k₁ x.length ∧
+        ∀ v : List Bool, v.length = polyLen a₂ k₂ x.length → N x u v = true
 
 /-- `L ∈ Π₂ᵖ` iff its complement is in `Σ₂ᵖ` (equivalently,
 `x ∈ L ↔ ∀ u ∃ v, …`). -/
@@ -81,18 +81,19 @@ def shiftOrVerifier (M : List Bool → List Bool → Bool) (p k : ℕ → ℕ) :
 
 /-- `E` recognizes the shifted-OR construction: from an efficient Boolean
 verifier, the predicate `shiftOrVerifier M p k` is an efficient two-witness
-predicate whenever `k` is polynomially bounded (closure of polynomial time
-under XOR-shifts and a polynomial OR). -/
+predicate for polynomial block lengths `p` and shift counts `k` (closure of
+polynomial time under XOR-shifts and a polynomial OR). -/
 def ClosedUnderShiftOr : Prop :=
-  ∀ M p k, E.Eff (boolVerifier M) → PolyGrowth k →
-    E.EffTwoWitness (shiftOrVerifier M p k)
+  ∀ M a k a' k', E.Eff (boolVerifier M) →
+    E.EffTwoWitness (shiftOrVerifier M (polyLen a k) (polyLen a' k'))
 
 /-- **Sipser–Gács** ([AB09, Thm 7.18]): `BPP ⊆ Σ₂ᵖ ∩ Π₂ᵖ` — relative to the
 efficiency notion `E`, under the closure hypotheses the proof uses.
 
 **Proof sketch.** It suffices to prove `BPP ⊆ Σ₂ᵖ` and apply it to `Lᶜ`,
-since `BPP` is closed under complementation (swap the two clauses of
-`InBPP`).  Given `L ∈ BPP`, error reduction ([AB09, Thm 7.10],
+since `BPP` is closed under complementation (`InBPP.compl`, which is where
+the hypothesis `hNot` is used).  Given `L ∈ BPP`, error reduction
+([AB09, Thm 7.10],
 `bpp_error_reduction`) yields a verifier `M` with `m = p n` random bits and
 error at most `2^{-n}`; let `S_x ⊆ {0,1}^m` be its accepting set on input
 `x`, so `|S_x| ≥ (1−2^{-n})2^m` if `x ∈ L` and `|S_x| ≤ 2^{-n}2^m`
@@ -104,7 +105,8 @@ bound over `v` some choice of shifts covers everything (the probabilistic
 method).  Hence `x ∈ L ↔ ∃ u₁,…,u_k ∀ v, ⋁ᵢ M(x, v ⊕ uᵢ)`, which is the
 `Σ₂`-shape `shiftOrVerifier` expresses. -/
 theorem sipser_gacs (hMaj : ClosedUnderMajority E)
-    (hShift : ClosedUnderShiftOr E) {L : Language Bool} (hL : InBPP E L) :
+    (hNot : ClosedUnderNot E) (hShift : ClosedUnderShiftOr E)
+    {L : Language Bool} (hL : InBPP E L) :
     InSigma2 E L ∧ InPi2 E L := by
   sorry
 

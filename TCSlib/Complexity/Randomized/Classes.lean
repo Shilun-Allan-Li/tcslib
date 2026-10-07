@@ -24,6 +24,8 @@ decides membership with the class's acceptance-probability profile.
 
 * `Randomized.randProb` — the probability of an event over a uniform random
   string of a given length, as a rational counting ratio.
+* `Randomized.polyLen` — the canonical polynomial length schedule
+  `n ↦ a·(n+1)^k` for random strings.
 * `Randomized.VerifierModel` — an abstract *efficiency notion* standing in for
   "polynomial-time Turing machine" (see **Deviations** below).
 * `Randomized.InBPP` — [AB09, Def 7.4] (equivalently Def 7.1 via the
@@ -38,6 +40,7 @@ decides membership with the class's acceptance-probability profile.
 ## Main results (sorry-stubbed)
 
 * `Randomized.inZPP_iff_inRP_and_inCoRP` — `ZPP = RP ∩ coRP` [AB09, Thm 7.8].
+* `Randomized.InBPP.compl` — `BPP = coBPP` (used by [AB09, Thm 7.18]).
 * `Randomized.bpp_error_reduction` — error reduction [AB09, Thm 7.10].
 * `Randomized.inBPPWeak_iff_inBPP` — `BPP_{n^{-c}} = BPP` [AB09, Lem 7.9].
 
@@ -49,10 +52,19 @@ decides membership with the class's acceptance-probability profile.
   "`M` is a polynomial-time TM" by membership in an abstract
   `VerifierModel` `E`, a predicate on verifiers.  Every class and theorem is
   parametrized by `E`.  The closure properties that [AB09]'s proofs use
-  (building the race, majority, and projection verifiers out of given ones)
-  are stated as explicit named hypotheses (`ClosedUnder…`), all of which hold
-  for the intended instantiation "computable in polynomial time"; a future
-  computability layer can instantiate `E` and discharge them.
+  (building the race, majority, complement, and projection verifiers out of
+  given ones) are stated as explicit named hypotheses (`ClosedUnder…`), all of
+  which hold for the intended instantiation "computable in polynomial time".
+  Intended instantiation targets, once a uniform-computability layer is
+  available: the `P`/`PolyTime` development of the `complexity/arora-barak-ch1`
+  branch, or Mathlib's `Turing.TM2ComputableInPolyTime`.
+* **Length schedules.** [AB09, Def 7.4] draws `r ∈ {0,1}^{p(|x|)}` for a
+  polynomial `p`.  We fix the canonical schedule `polyLen a k : n ↦ a·(n+1)^k`
+  (existentially quantified over `a, k : ℕ`) rather than an arbitrary
+  `p : ℕ → ℕ` with a polynomial bound: an arbitrary bounded `p` need not be
+  computable and could smuggle undecidable information through the schedule
+  itself.  Every polynomial is dominated by some `polyLen a k`, and a verifier
+  can ignore padding bits, so the class is unchanged.
 * **Probability.** `Pr_{r ∈ {0,1}^m}` is the counting ratio
   `#{r : accepted}/2^m` valued in `ℚ`; random strings of length `m` are
   `Fin m → Bool`, passed to verifiers as lists via `List.ofFn`.
@@ -63,6 +75,11 @@ decides membership with the class's acceptance-probability profile.
   ("don't know") with probability at most `1/2`.  [AB09, §7.4.2] sketches the
   equivalence of expected-time and worst-case formulations (truncation via
   Markov's inequality).
+* **The weak threshold of Lemma 7.9.** The book's success threshold
+  `1/2 + |x|^{-c}` exceeds `1` for `|x| ≤ 1`, making the literal class
+  `BPP_{n^{-c}}` empty; we require advantage `min (1/6) ((|x|+1)^{-c})`
+  instead, which agrees with the book's (up to the `n+1` shift) for
+  `|x| ≥ 5` and makes `BPP ⊆ BPP_{n^{-c}}` hold as the book intends.
 * The constant `2/3` follows [AB09, Defs 7.1/7.6]; `1/2` in `InZPP` is the
   conventional choice (any constant in `(0,1)` gives the same class, by the
   same repetition argument as [AB09, §7.4.1]).
@@ -83,10 +100,12 @@ event `A` holds of `r` (as a list): the counting ratio `#{r : A r}/2^m`.
 def randProb (m : ℕ) (A : List Bool → Prop) [DecidablePred A] : ℚ :=
   ((univ.filter fun r : Fin m → Bool => A (List.ofFn r)).card : ℚ) / 2 ^ m
 
-/-- A function `p : ℕ → ℕ` is polynomially bounded.  Written in the
-`a * (n+1)^k` normal form used by `CircuitComplexity.PPoly`. -/
-def PolyGrowth (p : ℕ → ℕ) : Prop :=
-  ∃ a k : ℕ, ∀ n, p n ≤ a * (n + 1) ^ k
+/-- The canonical polynomial length schedule `n ↦ a·(n+1)^k` for random
+strings — a concrete, computable stand-in for [AB09, Def 7.4]'s "polynomial
+`p`" (see the module docstring's **Deviations**: an arbitrary polynomially
+*bounded* `ℕ → ℕ` need not be computable and would let the schedule itself
+decide undecidable languages). -/
+def polyLen (a k : ℕ) : ℕ → ℕ := fun n => a * (n + 1) ^ k
 
 /-- An abstract *efficiency notion* for verifiers, standing in for
 "polynomial-time Turing machine" in [AB09, Def 7.4] (see the module
@@ -94,7 +113,9 @@ docstring's **Deviations**).  `Eff M` reads "`M` is an efficient verifier";
 verifiers are `Option Bool`-valued so that zero-error ("don't know") verifiers
 and ordinary Boolean verifiers share one notion.  `EffTwoWitness N` is the
 corresponding notion for predicates of an input and two witness strings, the
-verifier format of `Σ₂`-statements (used by [AB09, Thm 7.18]). -/
+verifier format of `Σ₂`-statements (used by [AB09, Thm 7.18]).  Intended
+instantiations: a polynomial-time TM layer (the `complexity/arora-barak-ch1`
+branch's `PolyTime`, or Mathlib's `Turing.TM2ComputableInPolyTime`). -/
 structure VerifierModel where
   /-- "`M` is an efficient (poly-time) verifier." -/
   Eff : (List Bool → List Bool → Option Bool) → Prop
@@ -108,25 +129,26 @@ def boolVerifier (M : List Bool → List Bool → Bool) :
 
 variable (E : VerifierModel)
 
-/-- `L ∈ BPP`: some efficient verifier `M` with polynomially-bounded
-randomness decides `L` with two-sided error at most `1/3` — for every input
-`x`, `Pr_{r ∈ {0,1}^{p(|x|)}}[M(x,r) = L(x)] ≥ 2/3`.  [AB09, Def 7.4]
-(the certificate form of [AB09, Def 7.1]). -/
+/-- `L ∈ BPP`: some efficient verifier `M` with polynomially-long randomness
+decides `L` with two-sided error at most `1/3` — for every input `x`,
+`Pr_{r ∈ {0,1}^{p(|x|)}}[M(x,r) = L(x)] ≥ 2/3`, where `p = polyLen a k`.
+[AB09, Def 7.4] (the certificate form of [AB09, Def 7.1]). -/
 def InBPP (L : Language Bool) : Prop :=
-  ∃ (M : List Bool → List Bool → Bool) (p : ℕ → ℕ),
-    E.Eff (boolVerifier M) ∧ PolyGrowth p ∧
+  ∃ (M : List Bool → List Bool → Bool) (a k : ℕ),
+    E.Eff (boolVerifier M) ∧
     ∀ x : List Bool,
-      (x ∈ L → 2/3 ≤ randProb (p x.length) fun r => M x r = true) ∧
-      (x ∉ L → 2/3 ≤ randProb (p x.length) fun r => M x r = false)
+      (x ∈ L → 2/3 ≤ randProb (polyLen a k x.length) fun r => M x r = true) ∧
+      (x ∉ L → 2/3 ≤ randProb (polyLen a k x.length) fun r => M x r = false)
 
 /-- `L ∈ RP`: one-sided error — inputs in `L` are accepted with probability
 at least `2/3`, inputs outside `L` are *never* accepted.  [AB09, Def 7.6] -/
 def InRP (L : Language Bool) : Prop :=
-  ∃ (M : List Bool → List Bool → Bool) (p : ℕ → ℕ),
-    E.Eff (boolVerifier M) ∧ PolyGrowth p ∧
+  ∃ (M : List Bool → List Bool → Bool) (a k : ℕ),
+    E.Eff (boolVerifier M) ∧
     ∀ x : List Bool,
-      (x ∈ L → 2/3 ≤ randProb (p x.length) fun r => M x r = true) ∧
-      (x ∉ L → ∀ r : Fin (p x.length) → Bool, M x (List.ofFn r) = false)
+      (x ∈ L → 2/3 ≤ randProb (polyLen a k x.length) fun r => M x r = true) ∧
+      (x ∉ L → ∀ r : Fin (polyLen a k x.length) → Bool,
+        M x (List.ofFn r) = false)
 
 /-- `L ∈ coRP` iff its complement is in `RP`: one-sided error in the other
 direction.  [AB09, §7.3: "`coRP = {L | L̄ ∈ RP}`"] -/
@@ -138,12 +160,14 @@ def InCoRP (L : Language Bool) : Prop :=
 an answer, the answer is correct.  [AB09, Def 7.7], in the equivalent
 Las Vegas formulation (see the module docstring's **Deviations**). -/
 def InZPP (L : Language Bool) : Prop :=
-  ∃ (M : List Bool → List Bool → Option Bool) (p : ℕ → ℕ),
-    E.Eff M ∧ PolyGrowth p ∧
+  ∃ (M : List Bool → List Bool → Option Bool) (a k : ℕ),
+    E.Eff M ∧
     ∀ x : List Bool,
-      (x ∈ L → ∀ r : Fin (p x.length) → Bool, M x (List.ofFn r) ≠ some false) ∧
-      (x ∉ L → ∀ r : Fin (p x.length) → Bool, M x (List.ofFn r) ≠ some true) ∧
-      randProb (p x.length) (fun r => M x r = none) ≤ 1/2
+      (x ∈ L → ∀ r : Fin (polyLen a k x.length) → Bool,
+        M x (List.ofFn r) ≠ some false) ∧
+      (x ∉ L → ∀ r : Fin (polyLen a k x.length) → Bool,
+        M x (List.ofFn r) ≠ some true) ∧
+      randProb (polyLen a k x.length) (fun r => M x r = none) ≤ 1/2
 
 section Constructions
 
@@ -167,11 +191,12 @@ def majorityVerifier (M : List Bool → List Bool → Bool) (p k : ℕ → ℕ) 
     M x ((r.drop (i * p n)).take (p n))
   k n < 2 * votes
 
-/-- `E` can race two of its Boolean verifiers (closure of polynomial time
-under running two machines on split randomness). -/
+/-- `E` can race two of its Boolean verifiers on a polynomial split point
+(closure of polynomial time under running two machines on split
+randomness). -/
 def ClosedUnderRace : Prop :=
-  ∀ M₁ M₂ p₁, E.Eff (boolVerifier M₁) → E.Eff (boolVerifier M₂) →
-    E.Eff (raceVerifier M₁ M₂ p₁)
+  ∀ M₁ M₂ a k, E.Eff (boolVerifier M₁) → E.Eff (boolVerifier M₂) →
+    E.Eff (raceVerifier M₁ M₂ (polyLen a k))
 
 /-- `E` can turn a zero-error verifier into the Boolean verifier answering
 "did it output `some b`?" (closure of polynomial time under postprocessing
@@ -180,13 +205,33 @@ def ClosedUnderAnswerIs : Prop :=
   ∀ M b, E.Eff M →
     E.Eff (boolVerifier fun x r => M x r = some b)
 
-/-- `E` can repeat a Boolean verifier polynomially many times and take the
-majority (closure of polynomial time under polynomial repetition). -/
+/-- `E` can repeat a Boolean verifier a polynomial number of times, on blocks
+of polynomial length, and take the majority (closure of polynomial time under
+polynomial repetition). -/
 def ClosedUnderMajority : Prop :=
-  ∀ M p k, E.Eff (boolVerifier M) → PolyGrowth k →
-    E.Eff (boolVerifier (majorityVerifier M p k))
+  ∀ M a k a' k', E.Eff (boolVerifier M) →
+    E.Eff (boolVerifier (majorityVerifier M (polyLen a k) (polyLen a' k')))
+
+/-- `E` can negate a Boolean verifier's answer (closure of polynomial time
+under complementation of the output). -/
+def ClosedUnderNot : Prop :=
+  ∀ M, E.Eff (boolVerifier M) →
+    E.Eff (boolVerifier fun x r => !(M x r))
 
 end Constructions
+
+/-- `BPP` is closed under complementation (`BPP = coBPP`): swap the two
+acceptance clauses and negate the verifier's answer.  Used by
+[AB09, Thm 7.18]'s proof ("it is enough to prove `BPP ⊆ Σ₂ᵖ` because `BPP`
+is closed under complementation").
+
+**Proof sketch.** If `M` decides `L` with two-sided error `1/3`, then
+`¬M` decides `Lᶜ` with the same error: the `x ∈ Lᶜ` clause for `¬M` is the
+`x ∉ L` clause for `M` and vice versa, since
+`¬M x r = true ↔ M x r = false`. -/
+theorem InBPP.compl (hNot : ClosedUnderNot E) {L : Language Bool}
+    (hL : InBPP E L) : InBPP E Lᶜ := by
+  sorry
 
 /-- **`ZPP = RP ∩ coRP`** ([AB09, Thm 7.8]).  Stated relative to the
 efficiency notion `E`, under the closure properties the two directions use.
@@ -208,58 +253,67 @@ theorem inZPP_iff_inRP_and_inCoRP (hRace : ClosedUnderRace E)
     InZPP E L ↔ InRP E L ∧ InCoRP E L := by
   sorry
 
+/-- The advantage demanded of a weak `BPP` verifier on inputs of length `n`:
+`min (1/6) ((n+1)^{-c})`.  For `n ≥ 5` this is the book's `n^{-c}` up to the
+`n+1` shift; the cap `1/6` keeps the threshold `1/2 + weakAdv c n ≤ 2/3`
+attainable at small lengths, where the book's literal `1/2 + n^{-c}`
+exceeds `1` (see the module docstring's **Deviations**). -/
+def weakAdv (c n : ℕ) : ℚ :=
+  min (1/6) (((n : ℚ) + 1)⁻¹ ^ c)
+
 /-- `L ∈ BPP_{n^{-c}}`: like `InBPP`, but with success probability only
-`1/2 + |x|^{-c}` — formally, `1/2 + (|x|+1)^{-c}` to avoid the degenerate
-division at `|x| = 0` (deviation: the book writes `|x|^{-c}`, which is
-ill-defined on the empty input).  [AB09, Lem 7.9] -/
+`1/2 + weakAdv c |x|`, i.e. an inverse-polynomial advantage over guessing.
+[AB09, Lem 7.9], with the small-length repair described in the module
+docstring. -/
 def InBPPWeak (c : ℕ) (L : Language Bool) : Prop :=
-  ∃ (M : List Bool → List Bool → Bool) (p : ℕ → ℕ),
-    E.Eff (boolVerifier M) ∧ PolyGrowth p ∧
+  ∃ (M : List Bool → List Bool → Bool) (a k : ℕ),
+    E.Eff (boolVerifier M) ∧
     ∀ x : List Bool,
-      (x ∈ L → 1/2 + ((x.length + 1 : ℚ))⁻¹ ^ c ≤
-        randProb (p x.length) fun r => M x r = true) ∧
-      (x ∉ L → 1/2 + ((x.length + 1 : ℚ))⁻¹ ^ c ≤
-        randProb (p x.length) fun r => M x r = false)
+      (x ∈ L → 1/2 + weakAdv c x.length ≤
+        randProb (polyLen a k x.length) fun r => M x r = true) ∧
+      (x ∉ L → 1/2 + weakAdv c x.length ≤
+        randProb (polyLen a k x.length) fun r => M x r = false)
 
 /-- `L ∈ BPP` with error at most `2^{-(|x|+1)^d}` — the amplified form
 produced by error reduction.  (The exponent `(|x|+1)^d ≥ |x|^d` strengthens
 [AB09, Thm 7.10]'s `2^{-|x|^d}` uniformly in `|x|`.) -/
 def InBPPStrong (d : ℕ) (L : Language Bool) : Prop :=
-  ∃ (M : List Bool → List Bool → Bool) (p : ℕ → ℕ),
-    E.Eff (boolVerifier M) ∧ PolyGrowth p ∧
+  ∃ (M : List Bool → List Bool → Bool) (a k : ℕ),
+    E.Eff (boolVerifier M) ∧
     ∀ x : List Bool,
       (x ∈ L → 1 - (1/2 : ℚ) ^ (x.length + 1) ^ d ≤
-        randProb (p x.length) fun r => M x r = true) ∧
+        randProb (polyLen a k x.length) fun r => M x r = true) ∧
       (x ∉ L → 1 - (1/2 : ℚ) ^ (x.length + 1) ^ d ≤
-        randProb (p x.length) fun r => M x r = false)
+        randProb (polyLen a k x.length) fun r => M x r = false)
 
-/-- **Error reduction** ([AB09, Thm 7.10]).  A language decidable with
-success probability `1/2 + |x|^{-c}` is decidable with success probability
-`1 − 2^{-|x|^d}`, for every constant `d` — relative to `E`, assuming `E` is
-closed under polynomial majority repetition.
+/-- **Error reduction** ([AB09, Thm 7.10]).  A language decidable with an
+inverse-polynomial advantage is decidable with success probability
+`1 − 2^{-(|x|+1)^d}`, for every constant `d` — relative to `E`, assuming `E`
+is closed under polynomial majority repetition.
 
-**Proof sketch.** Run the weak verifier `k = 8·(n+1)^{2d+c}` times on
+**Proof sketch.** Run the weak verifier `k(n) = 13·(n+1)^{2c+d}` times on
 independent blocks of randomness and take the majority
 (`majorityVerifier`).  The votes are i.i.d. Bernoulli with success
-probability `p ≥ 1/2 + (n+1)^{-c}`, so by the Chernoff bound
-([AB09, Cor 7.11]; `Randomized.majority_error_le` in
+probability `p ≥ 1/2 + ε` where `ε = weakAdv c n ≥ (n+1)^{-c}/6`, so by
+Hoeffding's inequality (`Randomized.majority_error_le` in
 `Randomized.ErrorReduction`, transported from the product measure to the
 counting probability `randProb`) the majority errs with probability at most
-`e^{−(n+1)^{-2c}·p·k/16} ≤ 2^{-(n+1)^d}`. -/
+`e^{−2ε²k} ≤ e^{−13(n+1)^d/18} ≤ 2^{-(n+1)^d}`. -/
 theorem bpp_error_reduction (hMaj : ClosedUnderMajority E) {c : ℕ}
     {L : Language Bool} (hL : InBPPWeak E c L) (d : ℕ) :
     InBPPStrong E d L := by
   sorry
 
 /-- **`BPP_{n^{-c}} = BPP`** ([AB09, Lem 7.9]): the success threshold `2/3`
-in the definition of `BPP` can be weakened to `1/2 + |x|^{-c}` without
-changing the class.
+in the definition of `BPP` can be weakened to an inverse-polynomial advantage
+over `1/2` without changing the class.
 
-**Proof sketch.** `BPP ⊆ BPP_{n^{-c}}` since `2/3 ≥ 1/2 + (n+1)^{-c}` for
-all but finitely many `n` — and for the finitely many small `n` the weak
-threshold still follows from `2/3` once `c ≥ 2` (for `c < 2` adjust by one
-round of majority amplification, absorbed in `hMaj`).  The converse applies
-`bpp_error_reduction` with `d = 1` and weakens `1 − 2^{-(n+1)}` to `2/3`. -/
+**Proof sketch.** `BPP ⊆ BPP_{n^{-c}}` since `weakAdv c n ≤ 1/6` makes the
+weak threshold at most `2/3` at every length.  Conversely, from advantage
+`ε = weakAdv c n ≥ (n+1)^{-c}/6`, run the weak verifier
+`k(n) = 324·(n+1)^{2c}` times and take the majority: by Hoeffding
+(`majority_error_le`), the majority errs with probability at most
+`e^{−2ε²k} ≤ e^{-9/2} ≤ 1/3`. -/
 theorem inBPPWeak_iff_inBPP (hMaj : ClosedUnderMajority E) (c : ℕ)
     (L : Language Bool) :
     InBPPWeak E c L ↔ InBPP E L := by

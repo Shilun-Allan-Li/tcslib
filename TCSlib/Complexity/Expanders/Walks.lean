@@ -124,7 +124,10 @@ walk stays inside `B` for all of its `k+1` visited vertices is at most
 `((1−λ)√β + λ)^k`.
 
 (The book's statement, with `k` visited vertices, has exponent `k−1`; note
-that if `λ, β < 1` are constants then so is `(1−λ)√β + λ`.)
+that if `λ, β < 1` are constants then so is `(1−λ)√β + λ`.  The hypothesis
+`lam ≤ 1` makes explicit the `λ < 1` of the book's `(N,d,λ)`-graph
+[AB09, Def 7.31]; without it the base `(1−λ)√β + λ` can be negative and the
+bound false.)
 
 **Proof sketch.** With `B̂` the diagonal projection that zeroes coordinates
 outside `B`, the probability equals `|(B̂A)^k B̂𝟙|₁`.  By Lemma 7.40,
@@ -135,8 +138,8 @@ get `‖(B̂A)^k B̂𝟙‖₂ ≤ ((1−λ)√β + λ)^k √β/√N`, and `|�
 (Note 7.24) concludes, dropping the extra factor `√β ≤ 1`. -/
 theorem walk_all_mem_le {A : Matrix (Fin n) (Fin n) ℝ}
     (hA : IsSymmStochastic A) {lam : ℝ} (hlam : lambda A ≤ lam)
-    (hlam0 : 0 ≤ lam) {B : Finset (Fin n)} {β : ℝ} (hβ0 : 0 ≤ β)
-    (hB : (B.card : ℝ) ≤ β * n) (k : ℕ) :
+    (hlam0 : 0 ≤ lam) (hlam1 : lam ≤ 1) {B : Finset (Fin n)} {β : ℝ}
+    (hβ0 : 0 ≤ β) (hB : (B.card : ℝ) ≤ β * n) (k : ℕ) :
     (walkPMF hA k).toMeasure {f | ∀ i, f i ∈ B} ≤
       ENNReal.ofReal (((1 - lam) * Real.sqrt β + lam) ^ k) := by
   sorry
