@@ -88,8 +88,9 @@ theorem NP_subset_PSPACE : NP ⊆ PSPACE := by
 /-- `3SAT` is decidable in polynomial space. [AB09, Example 4.6]
 
 **Proof sketch.** `Complexity.SAT3_mem_NP` with `Complexity.NP_subset_PSPACE`.
-(The book's direct cycling-through-assignments machine is subsumed by the
-general certificate cycle.) -/
+Delivered strength: **polynomial** space (the route through arbitrary `NP`
+membership fixes no degree); the book example's sharper linear-space direct
+machine is not claimed (P4.1 round 1, note 9). -/
 theorem SAT3_mem_PSPACE : SAT3 ∈ PSPACE := by
   sorry
 

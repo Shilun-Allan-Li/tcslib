@@ -35,14 +35,7 @@ import TCSlib.Complexity.Diagonalization
 import TCSlib.Complexity.TuringMachine.Build.Embed
 import TCSlib.Complexity.TuringMachine.Build.Seam
 import TCSlib.Complexity.TuringMachine.Build.Catalog
-import TCSlib.Complexity.SpaceComplexity.ConfigGraph
-import TCSlib.Complexity.SpaceComplexity.Savitch
 import TCSlib.Complexity.ClassPSPACE
-import TCSlib.Complexity.SpaceComplexity.Hierarchy
-import TCSlib.Complexity.SpaceComplexity.Logspace.Reductions
-import TCSlib.Complexity.SpaceComplexity.Logspace.Path
-import TCSlib.Complexity.SpaceComplexity.Logspace.ImmermanSzelepcsenyi
-import TCSlib.Complexity.SpaceComplexity.Logspace.Mult
 import TCSlib.Complexity.PolyHierarchy
 import TCSlib.Complexity.TimeHierarchy
 import TCSlib.Complexity.SpaceComplexity

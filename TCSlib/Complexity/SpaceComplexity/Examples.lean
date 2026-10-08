@@ -48,15 +48,17 @@ def evenLang : Language Bool :=
 which the `c · logSpace n` budget absorbs since `logSpace n ≥ 1`.
 [AB09, Example 4.7]
 
-**Proof sketch.** A two-state one-work-tape machine scans the input left to
-right, keeping the running parity in its control state, never moving its work
-head (one visited cell), and at the end-of-input emits `[true]` iff the parity
-state is even. Space: `1 ≤ 1 · logSpace n` visited cells; halting at time
-`n + O(1)`. The machine is a `Turing.FinTM` built directly (the
-`Turing.MultiTapeTM.indicator` output convention of
-`Turing.FinTM.DecidesInSpace`); correctness is a single left-to-right scan
-invariant — parity of the consumed prefix — in the style of the received
-`Complexity.dblLang_mem` but without the ARM layer. -/
+**Proof sketch.** A direct `Turing.FinTM` with the running parity in control:
+either the two-state **zero-work-tape** scanner (space `0`, the round-2 P0
+witness construction — `Complexity.exists_zeroTape_parity_decider` in
+`SpaceComplexity/ZeroSpace.lean` states exactly this machine, and that file
+imports this one, so this proof must be **direct rather than derived from it**:
+the reverse dependency would be an import cycle, P4.1 round 1, finding 4) or
+the one-work-tape variant (one visited cell); either is within
+`1 ≤ 1 · logSpace n`. Correctness is the left-to-right scan invariant —
+parity of the consumed prefix — with the final emission
+`[Turing.MultiTapeTM.indicator evenLang x]` at the input boundary, halting at
+time `n + O(1)`. -/
 theorem evenLang_mem_LOGSPACE : evenLang ∈ LOGSPACE := by
   sorry
 

@@ -24,7 +24,9 @@ has a mechanical oracle counterpart.
 ## Design
 
 * **`NPᴼ` is machine-first.** Unrelativized `NP` is verifier-first and
-  `NP = ⋃ c, NTIME (n^c)` is Theorem 2.6; but [AB09, Definition 3.5] *defines*
+  `NP = ⋃ c, NTIME (fun n => n ^ c + 1)` is Theorem 2.6 (the `+ 1` is load-bearing
+  under the exact-budget conventions — P3.1 round 1, finding 1); but
+  [AB09, Definition 3.5] *defines*
   `NPᴼ` directly by nondeterministic oracle machines, so here the `NTIMEOracle`
   union **is** the definition and no certificate form is claimed (a relativized
   certificate characterization would need oracle-aware verifiers and is not in
@@ -168,16 +170,24 @@ theorem compl_mem_POracle {L O : Language Bool} (h : L ∈ POracle O) :
 `L` with oracle `O` in time `c·(n^k + 1)`, and let `D` decide `O` in time
 `d·(n^e + 1)`. Fill obligations, named for the brief: build a plain machine
 simulating `M` step by step, where each `qQuery` step is replaced by running `D`
-on the current query string. (i) The query string lives on a work tape, so `D`
-is run on a **virtual input** read from that tape — the virtual-input technique
-of the universal machine (`TCSlib.Complexity.TuringMachine.UniversalStartup`
-precedent), with `D`'s run captured (W1) so the simulation's output stays
-silent; (ii) each simulated query costs `O(d·(q+1)^e)` with `q ≤` the elapsed
-budget (`Turing.OracleTM.queryString_length_le`), so the total is polynomial
-with exponent `k·e + O(1)`; (iii) the step-by-step simulation of `M`'s
-non-query steps is lockstep (the `Turing.OracleTM.step_eq_of_ne_qQuery`
-oracle-independence away from queries). The composite bound sits inside
-`P`'s `⋃ c` by the usual `PolyBound` absorption. -/
+on the current query string. (i) At each query the host copies the query
+tape's **extracted prefix only** — cell `0` up to the first blank — onto a
+clean virtual-input region, blanks beyond it (garbage past the first blank or
+at negative cells must not reach `D`: the round-1 audit's cell-`1` instance),
+runs `D` there with output captured (W1) so the host stays silent, clears
+`D`'s scratch, restores the suspended heads, and resumes in the answer state;
+(ii) **the ledger, explicitly** (round-1 audit, finding 2): with oracle-time
+budget `t = c·(n^k + 1)` there are at most `t` queries, each of length at most
+`t` (`Turing.OracleTM.queryString_length_le`); positioning, prefix copy and
+restoration cost `O(t + 1)` per query and `D`'s run plus cleanup
+`O(d·((t+1)^e + 1))`, so the total is
+`O(t + t·(t + 1 + d·((t+1)^e + 1))) = O((t+1)^(1+max 1 e)) =
+O((n+1)^(k·(1+max 1 e)))` — the exponent depends on `k` and `e` jointly,
+not `k·e + O(1)`; (iii) non-query steps are lockstep
+(`Turing.OracleTM.step_eq_of_ne_qQuery`), and the preservation/reset
+invariants (suspended tapes untouched, scratch cleared, fixed windows) are
+named fill obligations. The composite bound sits inside `P`'s `⋃ c` by the
+absorption `(n+1)^c ≤ 2^c·(n^c + 1)`. -/
 theorem POracle_eq_P_of_mem_P {O : Language Bool} (h : O ∈ P) : POracle O = P := by
   sorry
 

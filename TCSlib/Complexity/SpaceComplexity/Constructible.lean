@@ -17,8 +17,12 @@ set_option autoImplicit false
 computes `S(|x|)` from `x` within `O(S(|x|))` space, and the book's standing
 convention is `S(n) > log n`. The definition mirrors
 `Complexity.TimeConstructible` — output in binary (`Nat.bits`), constant slack
-`c · S n` (the exact-bound variant is refuted in this model for the same reason
-as in time, `audits/phase1-findings.md` finding 1) — and carries the book's
+`c · S n`, which implements the book's own asymptotic space convention
+([AB09, p. 79]: "computes `S(|x|)` in `O(S(|x|))` space"); whether an
+exact-space variant is also satisfiable is a separate question this campaign
+does not pose (the chapter-1 exact-**time** refutation does not transfer: a
+space deadline forces no premature halt — round-1 audit, finding 3) — and
+carries the book's
 convention as the conjunct `∀ n, logSpace n ≤ S n`, so that downstream
 statements (the space hierarchy, Savitch) can draw on it without restating it;
 results needing only weaker hypotheses must say so (seeded to the P4.1 audit).
@@ -60,22 +64,31 @@ interest, including `log n`, …, are space-constructible"]
 **Proof sketch.** Fill obligations: a machine that (i) counts the input length
 in binary on a work tape by one left-to-right input scan with a binary
 increment at each step (the `Turing.counterTM`/`incrementTM` idiom — P11 of
-`machine-library-design.md` §4, space-annotated per §12 R3), using
-`|bits n| = logSpace n` cells for the counter; then (ii) computes the bit-length
-of that counter word — a second unary-to-binary count over `logSpace n` cells —
-and emits its bits. Total space `O(logSpace n)`; the dominance conjunct is
-`le_refl` at `S = logSpace`. -/
+`machine-library-design.md` §4, space-annotated per §12 R3) — the counter word
+has `|Nat.bits n| = logSpace n` cells **for `n > 0` only** (`Nat.bits 0 = []`
+has length `0 ≠ logSpace 0 = 1`; round-1 audit, finding 1), so (ii) the empty
+input is special-cased to emit `(logSpace 0).bits = [true]` directly, and
+otherwise the machine computes the counter word's bit-length by a second count
+and emits its bits. Space: the counters and markers fit in
+`A·(logSpace n + 1) ≤ 2A·logSpace n` visited cells (boundary cells included
+before absorbing, since `logSpace n ≥ 1`); the dominance conjunct is `le_refl`
+at `S = logSpace`. -/
 theorem spaceConstructible_logSpace : SpaceConstructible logSpace := by
   sorry
 
 /-- **Linear space is constructible**: `n ↦ n + 1` is space-constructible (the
-`+ 1` avoids the vacuous zero bound at `n = 0`, as in the campaign's polynomial
-normal forms).
+`+ 1` prevents the inherited zero-bound collapse at `n = 0` — the P0
+convention, `SpaceComplexity/ZeroSpace.lean` — and satisfies the dominance
+conjunct; zero-space classes are nonempty, so this is about collapse, not
+vacuity).
 
-**Proof sketch.** The same input-scan counter as in
-`Complexity.spaceConstructible_logSpace`, with the space budget now dominated by
-the counter's `logSpace n ≤ n + 1` cells; dominance is `logSpace n ≤ n + 1`
-(`Nat.log_lt` / induction — a small arithmetic lemma). -/
+**Proof sketch.** The input-scan counter of
+`Complexity.spaceConstructible_logSpace`, **initialized at `1`** so that after
+`n` consumed symbols it holds `n + 1` (an uncorrected length counter holds `n`
+and emits the wrong word — round-1 audit, finding 2); emit its bits. Space:
+the counter's binary width plus fixed administrative cells fit in
+`A·(n + 2) ≤ 2A·(n + 1)` visited cells; dominance is `logSpace n ≤ n + 1`
+(`1 ≤ 1` at `n = 0`; a small arithmetic lemma otherwise). -/
 theorem spaceConstructible_linear : SpaceConstructible fun n => n + 1 := by
   sorry
 

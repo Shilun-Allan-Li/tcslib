@@ -38,6 +38,13 @@ import TCSlib.Complexity.SpaceComplexity.Constructible
 import TCSlib.Complexity.SpaceComplexity.Inclusions
 import TCSlib.Complexity.SpaceComplexity.Examples
 import TCSlib.Complexity.SpaceComplexity.ZeroSpace
+import TCSlib.Complexity.SpaceComplexity.ConfigGraph
+import TCSlib.Complexity.SpaceComplexity.Savitch
+import TCSlib.Complexity.SpaceComplexity.Hierarchy
+import TCSlib.Complexity.SpaceComplexity.Logspace.Reductions
+import TCSlib.Complexity.SpaceComplexity.Logspace.Path
+import TCSlib.Complexity.SpaceComplexity.Logspace.ImmermanSzelepcsenyi
+import TCSlib.Complexity.SpaceComplexity.Logspace.Mult
 
 /-!
 # Space complexity
@@ -101,6 +108,13 @@ running counter program is simulated by an abstract register machine in
 - `SpaceComplexity.Examples`: Example 4.7's parity language
 - `SpaceComplexity.ZeroSpace`: the zero-bound collapse of unnormalized `SPACE` and the
   positive-normalization identities (P0 reception audit, round 1)
+- `SpaceComplexity.ConfigGraph`: configuration graphs, the ND Claim 4.4(1), Thm 4.2(iii),
+  `NL ⊆ P`, Ex 4.3 (chapters-3-4 campaign, phase P4.2)
+- `SpaceComplexity.Savitch`: Savitch's theorem and `PSPACE = NPSPACE` (phase P4.2)
+- `SpaceComplexity.Hierarchy`: the space-bounded universal machine, Thm 4.8,
+  `L ⊊ PSPACE`, Ex 3.2 (phase P4.3)
+- `SpaceComplexity.Logspace.{Reductions, Path, ImmermanSzelepcsenyi, Mult}`: `≤ₗ` and
+  Lemma 4.17, `PATH` and Thm 4.18, Thm 4.20 and Cor 4.21, `MULT ∈ L` (phase P4.4)
 
 ## References
 
