@@ -7,7 +7,9 @@ import Mathlib.Computability.Language
 import Mathlib.Data.Fintype.Pi
 import Mathlib.Data.Fintype.BigOperators
 import Mathlib.Data.Rat.Defs
+import Mathlib.Data.Nat.Choose.Sum
 import Mathlib.Algebra.Order.Field.Basic
+import Mathlib.Algebra.BigOperators.Ring.Finset
 import Mathlib.Logic.Equiv.Fin.Basic
 import Mathlib.Data.List.OfFn
 import Mathlib.Tactic.Positivity
@@ -367,6 +369,313 @@ def ClosedUnderNot : Prop :=
     E.Eff (boolVerifier fun x r => !(M x r))
 
 end Constructions
+
+section Counting
+
+/-- `Pr[∅] = 0`. -/
+theorem randProb_false {m : ℕ} : randProb m (fun _ => False) = 0 := by
+  unfold randProb
+  rw [Finset.filter_false]
+  simp
+
+/-- Additivity over disjoint events. -/
+theorem randProb_or_disjoint {m : ℕ} (A B : List Bool → Prop)
+    [DecidablePred A] [DecidablePred B]
+    (h : ∀ r : Fin m → Bool, ¬ (A (List.ofFn r) ∧ B (List.ofFn r))) :
+    randProb m (fun l => A l ∨ B l) = randProb m A + randProb m B := by
+  unfold randProb
+  rw [← add_div, ← Nat.cast_add]
+  congr 2
+  rw [Finset.filter_or]
+  refine Finset.card_union_of_disjoint ?_
+  rw [Finset.disjoint_left]
+  intro r hrA hrB
+  rw [Finset.mem_filter] at hrA hrB
+  exact h r ⟨hrA.2, hrB.2⟩
+
+/-- Partitioning by the value of a natural-number statistic. -/
+theorem randProb_mem_eq_sum {m : ℕ} (g : List Bool → ℕ) (T : Finset ℕ) :
+    randProb m (fun l => g l ∈ T) = ∑ j ∈ T, randProb m (fun l => g l = j) := by
+  induction T using Finset.induction_on with
+  | empty =>
+    rw [Finset.sum_empty,
+      randProb_congr (B := fun _ => False) fun r => by simp]
+    exact randProb_false
+  | insert a T ha ih =>
+    rw [Finset.sum_insert ha, ← ih,
+      randProb_congr (B := fun l => g l = a ∨ g l ∈ T) fun r => by
+        simp [Finset.mem_insert]]
+    exact randProb_or_disjoint _ _ fun r ⟨h1, h2⟩ => ha (h1 ▸ h2)
+
+/-- `Pr[B = false] = 1 − Pr[B = true]` for a Boolean test. -/
+theorem randProb_bool_false {m : ℕ} (B : List Bool → Bool) :
+    randProb m (fun l => B l = false) =
+      1 - randProb m (fun l => B l = true) := by
+  rw [randProb_congr (B := fun l => ¬ (B l = true)) fun r => by simp]
+  exact randProb_not _
+
+/-- The number of the `K` successive length-`q` blocks of `l` on which the
+Boolean test `B` succeeds: the vote count of `majorityVerifier` and
+`anyVerifier`, abstracted over the test. -/
+def blockCount (q K : ℕ) (B : List Bool → Bool) (l : List Bool) : ℕ :=
+  (List.range K).countP fun i => B ((l.drop (i * q)).take q)
+
+theorem blockCount_le (q K : ℕ) (B : List Bool → Bool) (l : List Bool) :
+    blockCount q K B l ≤ K := by
+  calc blockCount q K B l ≤ (List.range K).length := List.countP_le_length ..
+    _ = K := List.length_range ..
+
+/-- Peeling off the first block. -/
+theorem blockCount_succ (q K : ℕ) (B : List Bool → Bool) (l : List Bool) :
+    blockCount q (K + 1) B l =
+      (if B (l.take q) then 1 else 0) + blockCount q K B (l.drop q) := by
+  unfold blockCount
+  rw [List.range_succ_eq_map, List.countP_cons, List.countP_map]
+  have hfun : ((fun i => B ((l.drop (i * q)).take q)) ∘ Nat.succ)
+      = fun i => B (((l.drop q).drop (i * q)).take q) := by
+    funext i
+    simp only [Function.comp_apply]
+    rw [Nat.succ_mul, Nat.add_comm (i * q) q, ← List.drop_drop]
+  rw [hfun, zero_mul, List.drop_zero]
+  exact Nat.add_comm _ _
+
+/-- **The vote count is binomially distributed**: over a uniform string of
+`K` blocks of `q` bits each, `Pr[blockCount = j] = C(K,j)·s^j·(1−s)^{K−j}`,
+where `s` is the single-block success probability. -/
+theorem randProb_blockCount (q : ℕ) (B : List Bool → Bool) :
+    ∀ K j : ℕ, j ≤ K →
+      randProb (K * q) (fun l => blockCount q K B l = j) =
+        (K.choose j : ℚ) * (randProb q (fun l => B l = true)) ^ j *
+          (1 - randProb q (fun l => B l = true)) ^ (K - j)
+  | 0, 0, _ => by
+    rw [randProb_congr (B := fun _ => True) fun r => by simp [blockCount],
+      randProb_true]
+    simp
+  | 0, j + 1, h => absurd h (by omega)
+  | K + 1, 0, _ => by
+    have hmul : (K + 1) * q = q + K * q := by ring
+    rw [hmul]
+    have hev : randProb (q + K * q) (fun l => blockCount q (K + 1) B l = 0)
+        = randProb (q + K * q) (fun l =>
+            (fun l' => B l' = false) (l.take q) ∧
+            (fun w => blockCount q K B w = 0) (l.drop q)) :=
+      randProb_congr fun r => by
+        rw [blockCount_succ]
+        rcases hb : B ((List.ofFn r).take q) <;> simp [hb]
+    rw [hev, randProb_split q (K * q) (fun l' => B l' = false)
+        (fun w => blockCount q K B w = 0),
+      randProb_bool_false, randProb_blockCount q B K 0 (by omega)]
+    simp [pow_succ]
+    ring
+  | K + 1, j + 1, h => by
+    have hmul : (K + 1) * q = q + K * q := by ring
+    rw [hmul]
+    have hev : randProb (q + K * q)
+        (fun l => blockCount q (K + 1) B l = j + 1)
+        = randProb (q + K * q) (fun l =>
+            ((fun l' => B l' = true) (l.take q) ∧
+              (fun w => blockCount q K B w = j) (l.drop q)) ∨
+            ((fun l' => B l' = false) (l.take q) ∧
+              (fun w => blockCount q K B w = j + 1) (l.drop q))) :=
+      randProb_congr fun r => by
+        rw [blockCount_succ]
+        rcases hb : B ((List.ofFn r).take q) <;> simp [hb] <;> omega
+    rw [hev, randProb_or_disjoint _ _ (fun r => by
+      rintro ⟨⟨h1, -⟩, h2, -⟩
+      rw [h1] at h2
+      exact absurd h2 (by simp)),
+      randProb_split q (K * q) (fun l' => B l' = true)
+        (fun w => blockCount q K B w = j),
+      randProb_split q (K * q) (fun l' => B l' = false)
+        (fun w => blockCount q K B w = j + 1),
+      randProb_bool_false]
+    rcases Nat.lt_or_ge j K with hjK | hjK
+    · rw [randProb_blockCount q B K j (by omega),
+        randProb_blockCount q B K (j + 1) (by omega)]
+      have hpascal : (((K + 1).choose (j + 1) : ℕ) : ℚ)
+          = (K.choose j : ℚ) + (K.choose (j + 1) : ℚ) := by
+        exact_mod_cast Nat.choose_succ_succ K j
+      have he1 : K + 1 - (j + 1) = K - j := by omega
+      have he2 : K - j = (K - (j + 1)) + 1 := by omega
+      rw [he1, hpascal, he2, pow_succ]
+      ring
+    · have hjeq : j = K := by omega
+      rw [hjeq, randProb_blockCount q B K K (le_refl _)]
+      have hzero : randProb (K * q)
+          (fun w => blockCount q K B w = K + 1) = 0 := by
+        rw [randProb_congr (B := fun _ => False) fun r => by
+          have := blockCount_le q K B (List.ofFn r)
+          simp
+          omega]
+        exact randProb_false
+      rw [hzero, mul_zero, add_zero]
+      simp [Nat.choose_self, Nat.sub_self, pow_succ]
+      ring
+
+/-- **Elementary Chernoff-type tail bound** for the vote count: if each
+block succeeds with probability at most `1/2 − ε`, then at least half of
+the `K` blocks succeed with probability at most `2·(1 − 4ε²)^⌊K/2⌋`.
+(The elementary `2^K·(s(1−s))^{⌊K/2⌋}` estimate; no exponential function
+is needed, which keeps the whole development inside `ℚ`.) -/
+theorem randProb_tail_le (q K : ℕ) (B : List Bool → Bool) {ε : ℚ}
+    (hε0 : 0 ≤ ε) (hs : randProb q (fun l => B l = true) ≤ 1/2 - ε) :
+    randProb (K * q) (fun l => K ≤ 2 * blockCount q K B l) ≤
+      2 * (1 - 4 * ε ^ 2) ^ (K / 2) := by
+  have hs0 : (0:ℚ) ≤ randProb q (fun l => B l = true) := randProb_nonneg
+  have hs1 : randProb q (fun l => B l = true) ≤ 1 := randProb_le_one
+  set s : ℚ := randProb q (fun l => B l = true) with hs_def
+  have hf0 : (0:ℚ) ≤ 1 - s := by linarith
+  have hεhalf : ε ≤ 1/2 := by linarith
+  set T : Finset ℕ := (Finset.range (K + 1)).filter (fun j => K ≤ 2 * j)
+    with hT
+  have hev : randProb (K * q) (fun l => K ≤ 2 * blockCount q K B l)
+      = ∑ j ∈ T, randProb (K * q) (fun l => blockCount q K B l = j) := by
+    rw [← randProb_mem_eq_sum (fun l => blockCount q K B l) T]
+    refine randProb_congr fun r => ?_
+    rw [hT]
+    simp only [Finset.mem_filter, Finset.mem_range]
+    constructor
+    · intro h
+      exact ⟨Nat.lt_succ_of_le (blockCount_le q K B _), h⟩
+    · exact fun h => h.2
+  rw [hev]
+  have hterm : ∀ j ∈ T, randProb (K * q) (fun l => blockCount q K B l = j)
+      ≤ (K.choose j : ℚ) * (s * (1 - s)) ^ (K / 2) := by
+    intro j hj
+    rw [hT, Finset.mem_filter, Finset.mem_range] at hj
+    obtain ⟨hjK, hKj⟩ := hj
+    have hjK' : j ≤ K := by omega
+    rw [randProb_blockCount q B K j hjK', ← hs_def]
+    have hj₀ : K - K / 2 ≤ j := by omega
+    have hsf : s ≤ 1 - s := by linarith
+    -- shift the exponent towards the balanced point
+    have hstep1 : s ^ j * (1 - s) ^ (K - j)
+        ≤ s ^ (K - K / 2) * (1 - s) ^ (K / 2) := by
+      have e1 : s ^ j = s ^ (K - K / 2) * s ^ (j - (K - K / 2)) := by
+        rw [← pow_add]
+        congr 1
+        omega
+      have e2 : (1 - s) ^ (K / 2)
+          = (1 - s) ^ (K - j) * (1 - s) ^ (j - (K - K / 2)) := by
+        rw [← pow_add]
+        congr 1
+        omega
+      rw [e1, e2]
+      have hpow : s ^ (j - (K - K / 2)) ≤ (1 - s) ^ (j - (K - K / 2)) :=
+        pow_le_pow_left₀ hs0 hsf _
+      calc s ^ (K - K / 2) * s ^ (j - (K - K / 2)) * (1 - s) ^ (K - j)
+          ≤ s ^ (K - K / 2) * (1 - s) ^ (j - (K - K / 2)) *
+              (1 - s) ^ (K - j) := by
+            refine mul_le_mul_of_nonneg_right
+              (mul_le_mul_of_nonneg_left hpow (by positivity)) (by positivity)
+        _ = s ^ (K - K / 2) * ((1 - s) ^ (K - j) *
+              (1 - s) ^ (j - (K - K / 2))) := by ring
+    have hstep2 : s ^ (K - K / 2) * (1 - s) ^ (K / 2)
+        ≤ (s * (1 - s)) ^ (K / 2) := by
+      have e3 : s ^ (K - K / 2) = s ^ (K / 2) * s ^ (K - 2 * (K / 2)) := by
+        rw [← pow_add]
+        congr 1
+        omega
+      rw [e3, mul_pow]
+      have hle1 : s ^ (K - 2 * (K / 2)) ≤ 1 := pow_le_one₀ hs0 hs1
+      calc s ^ (K / 2) * s ^ (K - 2 * (K / 2)) * (1 - s) ^ (K / 2)
+          ≤ s ^ (K / 2) * 1 * (1 - s) ^ (K / 2) := by
+            refine mul_le_mul_of_nonneg_right
+              (mul_le_mul_of_nonneg_left hle1 (by positivity)) (by positivity)
+        _ = s ^ (K / 2) * (1 - s) ^ (K / 2) := by ring
+    have hmono := hstep1.trans hstep2
+    calc (K.choose j : ℚ) * s ^ j * (1 - s) ^ (K - j)
+        = (K.choose j : ℚ) * (s ^ j * (1 - s) ^ (K - j)) := by ring
+      _ ≤ (K.choose j : ℚ) * ((s * (1 - s)) ^ (K / 2)) :=
+          mul_le_mul_of_nonneg_left hmono (by positivity)
+  have hTsub : T ⊆ Finset.range (K + 1) := by
+    rw [hT]
+    exact Finset.filter_subset _ _
+  have hsum2 : ∑ j ∈ T, (K.choose j : ℚ) * (s * (1 - s)) ^ (K / 2)
+      ≤ ∑ j ∈ Finset.range (K + 1),
+          (K.choose j : ℚ) * (s * (1 - s)) ^ (K / 2) :=
+    Finset.sum_le_sum_of_subset_of_nonneg hTsub fun j _ _ => by positivity
+  have hsum3 : ∑ j ∈ Finset.range (K + 1),
+      (K.choose j : ℚ) * (s * (1 - s)) ^ (K / 2)
+      = (2 : ℚ) ^ K * (s * (1 - s)) ^ (K / 2) := by
+    rw [← Finset.sum_mul]
+    congr 1
+    rw [← Nat.cast_sum, Nat.sum_range_choose]
+    push_cast
+    rfl
+  have hprod : s * (1 - s) ≤ 1/4 - ε ^ 2 := by nlinarith
+  have hprod0 : (0:ℚ) ≤ s * (1 - s) := by positivity
+  have hfinal : (2 : ℚ) ^ K * (s * (1 - s)) ^ (K / 2)
+      ≤ 2 * (1 - 4 * ε ^ 2) ^ (K / 2) := by
+    have h2K : (2 : ℚ) ^ K ≤ 2 * 4 ^ (K / 2) := by
+      have e4 : K = 2 * (K / 2) + K % 2 := by omega
+      calc (2 : ℚ) ^ K = 2 ^ (2 * (K / 2)) * 2 ^ (K % 2) := by
+            rw [← pow_add, ← e4]
+        _ ≤ 2 ^ (2 * (K / 2)) * 2 ^ 1 := by
+            refine mul_le_mul_of_nonneg_left
+              (pow_le_pow_right₀ (by norm_num) (by omega)) (by positivity)
+        _ = 2 * 4 ^ (K / 2) := by
+            rw [pow_mul]
+            norm_num
+            ring
+    have hpow : (s * (1 - s)) ^ (K / 2) ≤ (1/4 - ε ^ 2) ^ (K / 2) :=
+      pow_le_pow_left₀ hprod0 hprod _
+    calc (2 : ℚ) ^ K * (s * (1 - s)) ^ (K / 2)
+        ≤ (2 * 4 ^ (K / 2)) * (1/4 - ε ^ 2) ^ (K / 2) := by
+          refine mul_le_mul h2K hpow (by positivity) (by positivity)
+      _ = 2 * (4 * (1/4 - ε ^ 2)) ^ (K / 2) := by
+          rw [mul_pow]
+          ring
+      _ = 2 * (1 - 4 * ε ^ 2) ^ (K / 2) := by
+          congr 2
+          ring
+  calc ∑ j ∈ T, randProb (K * q) (fun l => blockCount q K B l = j)
+      ≤ ∑ j ∈ T, (K.choose j : ℚ) * (s * (1 - s)) ^ (K / 2) :=
+        Finset.sum_le_sum hterm
+    _ ≤ ∑ j ∈ Finset.range (K + 1),
+          (K.choose j : ℚ) * (s * (1 - s)) ^ (K / 2) := hsum2
+    _ = (2 : ℚ) ^ K * (s * (1 - s)) ^ (K / 2) := hsum3
+    _ ≤ 2 * (1 - 4 * ε ^ 2) ^ (K / 2) := hfinal
+
+/-- The rational Bernoulli estimate `(1−x)^m ≤ 1/2` once `m·x ≥ 1`:
+`(1−x)^m·(1+mx) ≤ 1` by induction, and `1+mx ≥ 2`. -/
+theorem one_sub_pow_le_half {x : ℚ} (_hx0 : 0 ≤ x) (hx1 : x ≤ 1) {m : ℕ}
+    (hm : 1 ≤ (m : ℚ) * x) : (1 - x) ^ m ≤ 1/2 := by
+  have key : ∀ m' : ℕ, (1 - x) ^ m' * (1 + (m' : ℚ) * x) ≤ 1 := by
+    intro m'
+    induction m' with
+    | zero => simp
+    | succ m' ih =>
+      have h1 : (0:ℚ) ≤ (1 - x) ^ m' := pow_nonneg (by linarith) m'
+      have hstep : (1 - x) * (1 + ((m' : ℚ) + 1) * x) ≤ 1 + (m' : ℚ) * x := by
+        have hnn : 0 ≤ ((m' : ℚ) + 1) * x ^ 2 := by positivity
+        have hexp : (1 - x) * (1 + ((m' : ℚ) + 1) * x)
+            = 1 + (m' : ℚ) * x - ((m' : ℚ) + 1) * x ^ 2 := by ring
+        rw [hexp]
+        linarith
+      calc (1 - x) ^ (m' + 1) * (1 + ((m' + 1 : ℕ) : ℚ) * x)
+          = (1 - x) ^ m' * ((1 - x) * (1 + ((m' : ℚ) + 1) * x)) := by
+            push_cast
+            ring
+        _ ≤ (1 - x) ^ m' * (1 + (m' : ℚ) * x) :=
+            mul_le_mul_of_nonneg_left hstep h1
+        _ ≤ 1 := ih
+  have h3 := key m
+  nlinarith [pow_nonneg (by linarith : (0:ℚ) ≤ 1 - x) m]
+
+/-- Iterating `one_sub_pow_le_half`: `(1−x)^e ≤ (1/2)^T` once `e ≥ m·T`
+with `m·x ≥ 1`. -/
+theorem one_sub_pow_le_half_pow {x : ℚ} (hx0 : 0 ≤ x) (hx1 : x ≤ 1)
+    {m T e : ℕ} (hm : 1 ≤ (m : ℚ) * x) (he : m * T ≤ e) :
+    (1 - x) ^ e ≤ (1/2 : ℚ) ^ T := by
+  calc (1 - x) ^ e ≤ (1 - x) ^ (m * T) :=
+      pow_le_pow_of_le_one (by linarith) (by linarith) he
+    _ = ((1 - x) ^ m) ^ T := by rw [pow_mul]
+    _ ≤ (1/2 : ℚ) ^ T :=
+      pow_le_pow_left₀ (pow_nonneg (by linarith) m)
+        (one_sub_pow_le_half hx0 hx1 hm) T
+
+end Counting
 
 /-- `BPP` is closed under complementation (`BPP = coBPP`): swap the two
 acceptance clauses and negate the verifier's answer.  Used by
