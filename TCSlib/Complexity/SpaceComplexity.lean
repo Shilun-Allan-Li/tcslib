@@ -32,6 +32,11 @@ import TCSlib.Complexity.SpaceComplexity.UnaryLogspace
 import TCSlib.Complexity.SpaceComplexity.CounterProgSim
 import TCSlib.Complexity.SpaceComplexity.CounterProgSimRun
 import TCSlib.Complexity.SpaceComplexity.ImplicitPoly
+import TCSlib.Complexity.SpaceComplexity.NSPACE
+import TCSlib.Complexity.SpaceComplexity.SpaceClasses
+import TCSlib.Complexity.SpaceComplexity.Constructible
+import TCSlib.Complexity.SpaceComplexity.Inclusions
+import TCSlib.Complexity.SpaceComplexity.Examples
 
 /-!
 # Space complexity
@@ -86,6 +91,13 @@ running counter program is simulated by an abstract register machine in
   space (`UnaryLogspace`, `unaryExt`)
 - `SpaceComplexity.CounterProgSim`, `SpaceComplexity.CounterProgSimRun`: polynomially
   running counter programs on unary-logspace inputs are unary-logspace
+- `SpaceComplexity.NSPACE`: Def 4.1's nondeterministic clause, `NSPACE(s)` (chapters-3-4
+  campaign, phase P4.1)
+- `SpaceComplexity.SpaceClasses`: Def 4.5's `PSPACE`, `NPSPACE`, `NL`, and `coNL`
+- `SpaceComplexity.Constructible`: space-constructible functions (p. 79)
+- `SpaceComplexity.Inclusions`: Thm 4.2's first two inclusions; `P ⊆ PSPACE`;
+  Example 4.6 (`NP ⊆ PSPACE`, `3SAT ∈ PSPACE`)
+- `SpaceComplexity.Examples`: Example 4.7's parity language
 
 ## References
 

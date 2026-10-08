@@ -817,8 +817,10 @@ for here).
 
 ### Open decisions (human review; audit verifies, never disposes)
 
-* **12.1** R2 space accounting: per-tape sum, or the sharper max for
-  disjointly-owned tapes.
+* **12.1** R2 space accounting — **answered (user, 2026-10-08): the sharper
+  form.** The spec states per-tape bounds, with the max for disjointly-owned
+  tapes (sharpest available; downstream applications may depend on the
+  sharpness).
 * **12.2** R3's file name and the `Build/` size-policy layout.
 * **12.3** Space retro-annotation of P1-P12/P16-P18: in this increment (default,
   per the amply-support mandate) or lazily per consumer.
