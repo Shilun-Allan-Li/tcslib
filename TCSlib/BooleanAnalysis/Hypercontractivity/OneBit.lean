@@ -1,3 +1,8 @@
+/-
+Copyright (c) 2026 TCSlib Contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: TCSlib Contributors
+-/
 import Mathlib.Analysis.Convex.SpecificFunctions.Pow
 import Mathlib.Analysis.SpecialFunctions.Pow.Deriv
 import Mathlib.Data.Real.ConjExponents
@@ -499,5 +504,51 @@ theorem one_bit_2q_hypercontractivity (q : ℝ) (hq2 : 2 ≤ q) (g : BooleanFunc
   -- Finally, apply the duality theorem and substitute the noise parameter
   have h_dual := noise_operator_duality hpq hp1 h_hyp g
   rwa [h_sqrt] at h_dual
+
+/-- For real `q ≥ 2` and arbitrary real `a` and `t`, the average of
+`|a + t|^q` and `|a - t|^q` is at most `(a² + (q - 1)t²)^(q/2)`.
+This is a numerical reformulation of two-point `(2,q)`-hypercontractivity.
+[OD14, Thm. 9.17]
+
+**Proof sketch.** Apply one-bit hypercontractivity with noise parameter
+`1 / √(q - 1)` to the affine function
+with coefficients `a` and `√(q - 1) * t`. Compute its two-point norms and raise
+the resulting inequality to the positive power `q`. -/
+theorem two_point_rpow_le (q : ℝ) (hq : 2 ≤ q) (a t : ℝ) :
+    (|a + t| ^ q + |a - t| ^ q) / 2 ≤
+      (a ^ 2 + (q - 1) * t ^ 2) ^ (q / 2) :=
+  (by
+  classical
+  have hq0 : 0 < q := by linarith
+  let s : ℝ := Real.sqrt (q - 1)
+  have hs : 0 < s := by
+    exact Real.sqrt_pos.2 (by linarith)
+  have hs2 : s ^ 2 = q - 1 := by
+    exact Real.sq_sqrt (by linarith)
+  let g : BooleanFunc 1 := fun x => a + s * t * boolToSign (x 0)
+  have hg : fourierCoeff g ∅ = a ∧ fourierCoeff g {⟨0, by omega⟩} = s * t := by
+    have hf := OneBit.one_bit_val_false g
+    have ht := OneBit.one_bit_val_true g
+    have hfval : g (fun _ => false) = a + s * t := by simp [g, boolToSign]
+    have htval : g (fun _ => true) = a - s * t := by simp [g, boolToSign, sub_eq_add_neg]
+    rw [hfval] at hf
+    rw [htval] at ht
+    constructor <;> linarith
+  have hb := OneBit.one_bit_2q_hypercontractivity q hq g
+  rw [OneBit.expect_abs_rpow_one_bit, OneBit.expect_abs_rpow_one_bit] at hb
+  simp only [noiseOp_fourier, Finset.card_empty, Finset.card_singleton, pow_zero, pow_one, one_mul, hg.1, hg.2] at hb
+  change ((|a + (1 / s) * (s * t)| ^ q + |a - (1 / s) * (s * t)| ^ q) / 2) ^ (1 / q) ≤ ((|a + s * t| ^ (2 : ℝ) + |a - s * t| ^ (2 : ℝ)) / 2) ^ (1 / 2 : ℝ) at hb
+  have hc : (1 / s) * (s * t) = t := by field_simp [hs.ne']
+  rw [hc] at hb
+  simp only [Real.rpow_two, sq_abs] at hb
+  have hsq : ((a + s * t) ^ 2 + (a - s * t) ^ 2) / 2 = a ^ 2 + (q - 1) * t ^ 2 := by
+    calc
+      _ = a ^ 2 + s ^ 2 * t ^ 2 := by ring
+      _ = _ := by rw [hs2]
+  rw [hsq] at hb
+  have hp := Real.rpow_le_rpow (by positivity : 0 ≤ ((|a + t| ^ q + |a - t| ^ q) / 2) ^ (1 / q)) hb hq0.le
+  rw [← Real.rpow_mul (by positivity), show (1 / q) * q = 1 by field_simp [hq0.ne'], Real.rpow_one, ← Real.rpow_mul (add_nonneg (sq_nonneg a) (mul_nonneg (by linarith) (sq_nonneg t))), show (1 / 2 : ℝ) * q = q / 2 by ring] at hp
+  exact hp
+)
 
 end OneBit

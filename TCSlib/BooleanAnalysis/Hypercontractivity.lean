@@ -11,14 +11,27 @@ import TCSlib.BooleanAnalysis.Hypercontractivity.CubeConsequences
 import TCSlib.BooleanAnalysis.Hypercontractivity.Decomposition
 import TCSlib.BooleanAnalysis.Hypercontractivity.EvenMoments
 import TCSlib.BooleanAnalysis.Hypercontractivity.General
+import TCSlib.BooleanAnalysis.Hypercontractivity.FiniteNoiseDuality
+import TCSlib.BooleanAnalysis.Hypercontractivity.FiniteNoiseContraction
+import TCSlib.BooleanAnalysis.Hypercontractivity.FiniteNoiseOptimization
 import TCSlib.BooleanAnalysis.Hypercontractivity.KKLStatements
 import TCSlib.BooleanAnalysis.Hypercontractivity.OneBit
+import TCSlib.BooleanAnalysis.Hypercontractivity.BiasedTwoPoint
+import TCSlib.BooleanAnalysis.Hypercontractivity.BiasedTwoPointContraction
 import TCSlib.BooleanAnalysis.Hypercontractivity.MomentBounds
 import TCSlib.BooleanAnalysis.Hypercontractivity.Parameters
+import TCSlib.BooleanAnalysis.Hypercontractivity.SharpParameters
 import TCSlib.BooleanAnalysis.Hypercontractivity.ProductSpace
 import TCSlib.BooleanAnalysis.Hypercontractivity.ProductHypercontractivity
 import TCSlib.BooleanAnalysis.Hypercontractivity.ProductApplications
 import TCSlib.BooleanAnalysis.Hypercontractivity.RandomVariablesBasic
+import TCSlib.BooleanAnalysis.Hypercontractivity.RandomVariablesFiniteLaw
+import TCSlib.BooleanAnalysis.Hypercontractivity.RandomVariablesTwoPoint
+import TCSlib.BooleanAnalysis.Hypercontractivity.RandomVariablesSharp
+import TCSlib.BooleanAnalysis.Hypercontractivity.RandomVariablesPolynomial
+import TCSlib.BooleanAnalysis.Hypercontractivity.RandomVariablesTensorization
+import TCSlib.BooleanAnalysis.Hypercontractivity.RandomVariablesNorms
+import TCSlib.BooleanAnalysis.Hypercontractivity.RandomVariablesSymmetric
 import TCSlib.BooleanAnalysis.Hypercontractivity.RandomVariables
 import TCSlib.BooleanAnalysis.Hypercontractivity.RandomizationDefs
 import TCSlib.BooleanAnalysis.Hypercontractivity.Randomization
@@ -58,15 +71,28 @@ Hypercontractive inequalities and their concentration, influence, junta, and thr
 * `Decomposition`: coordinate decomposition.
 * `EvenMoments`: even-moment hypercontractivity.
 * `General`: general-exponent hypercontractivity on the cube.
+* `FiniteNoiseDuality`: signed witnesses and duality for finite weighted noise.
+* `FiniteNoiseContraction`: grouping finite functions and sharp noise contraction.
+* `FiniteNoiseOptimization`: compactness and variational reduction for finite weighted noise.
 * `KKLStatements`: full KKL and dimension-independent exponential junta skeletons.
 * `MomentBounds`: fourth-moment and Paley–Zygmund bounds.
 * `OneBit`: two-point inequalities.
+* `BiasedTwoPoint`: scalar calculus for the sharp biased two-point inequality.
+* `BiasedTwoPointContraction`: sharp inequalities for signed two-point inputs.
 * `Parameters`: sharp noise radii and limiting norm constants.
+* `SharpParameters`: identities and bounds for sharp discrete parameters.
 * `ProductSpace`: heterogeneous finite-product definitions.
 * `ProductHypercontractivity`: the General Hypercontractivity Theorem.
 * `ProductApplications`: low-degree norms, concentration, KKL, and juntas on products.
 * `RandomVariablesBasic`: hypercontractive random-variable definitions.
-* `RandomVariables`: general random-variable inequalities and symmetrization.
+* `RandomVariablesFiniteLaw`: finite-law expectation and norm computations.
+* `RandomVariablesTwoPoint`: sharp contraction for centered two-point laws.
+* `RandomVariablesSharp`: sharp finite-law contraction for arbitrary probability spaces.
+* `RandomVariablesPolynomial`: fourth moments of independent multilinear polynomials.
+* `RandomVariablesTensorization`: product-law contraction, including infinite exponents.
+* `RandomVariablesNorms`: symmetrization and randomization of affine norms.
+* `RandomVariablesSymmetric`: hypercontractivity of symmetric random variables.
+* `RandomVariables`: general and discrete random-variable inequalities.
 * `RandomizationDefs`: randomized components and notable-coordinate families.
 * `Randomization`: Fourier identities, norm contraction, and low-degree projection skeletons.
 * `ReverseBonamiBeckner`: reverse hypercontractivity.
