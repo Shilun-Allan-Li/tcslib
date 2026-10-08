@@ -83,57 +83,34 @@ theorem inner_indicator_mulVec_le {A : Matrix (Fin n) (Fin n) ℝ}
         (S.card * T.card : ℝ) / n| ≤
       lam * Real.sqrt (S.card * T.card) := by
   classical
-  -- Coordinate formula for the real inner product.
-  have hinner : ∀ x y : EuclideanSpace ℝ (Fin n), inner ℝ x y = ∑ i, x i * y i :=
-    fun x y => by
-      simp only [PiLp.inner_apply, RCLike.inner_apply, starRingEnd_apply,
-        star_trivial]
-      exact Finset.sum_congr rfl fun i _ => mul_comm _ _
-  -- `A` is self-adjoint: `⟪Ax, y⟫ = ⟪x, Ay⟫`.
-  have hself : ∀ x y : EuclideanSpace ℝ (Fin n),
-      inner ℝ (toCLM A x) y = inner ℝ x (toCLM A y) := fun x y => by
-    rw [hinner, hinner]
-    have hx : ∀ i, toCLM A x i = ∑ j, A i j * x j := fun i => rfl
-    have hy : ∀ i, toCLM A y i = ∑ j, A i j * y j := fun i => rfl
-    simp_rw [hx, hy, Finset.sum_mul, Finset.mul_sum]
-    rw [Finset.sum_comm]
-    refine Finset.sum_congr rfl fun j _ => Finset.sum_congr rfl fun i _ => ?_
-    rw [hA.symm.apply j i]
-    ring
   -- Inner products against the uniform vector.
   have hu : ∀ U : Finset (Fin n),
       inner ℝ (indicator U) (uniform n) = (U.card : ℝ) * (n : ℝ)⁻¹ := fun U => by
-    rw [hinner]
+    rw [inner_eq_sum]
     show ∑ i, (if i ∈ U then (1 : ℝ) else 0) * (n : ℝ)⁻¹ = _
     rw [← Finset.sum_mul, Finset.sum_ite_mem, Finset.univ_inter, Finset.sum_const,
       nsmul_eq_mul, mul_one]
-  have huu : inner ℝ (uniform n) (uniform n) = (n : ℝ)⁻¹ := by
-    rw [hinner]
-    show ∑ _i : Fin n, (n : ℝ)⁻¹ * (n : ℝ)⁻¹ = (n : ℝ)⁻¹
-    rw [Finset.sum_const, Finset.card_univ, Fintype.card_fin, nsmul_eq_mul]
-    rcases eq_or_ne (n : ℝ) 0 with h | h
-    · rw [h]; simp
-    · field_simp
   -- The components of the indicators orthogonal to the uniform direction.
   set sp : EuclideanSpace ℝ (Fin n) :=
     indicator S - (S.card : ℝ) • uniform n with hsp_def
   set tp : EuclideanSpace ℝ (Fin n) :=
     indicator T - (T.card : ℝ) • uniform n with htp_def
   have hsu : inner ℝ sp (uniform n) = 0 := by
-    rw [hsp_def, inner_sub_left, real_inner_smul_left, hu, huu, sub_self]
+    rw [hsp_def, inner_sub_left, real_inner_smul_left, hu, inner_uniform_self, sub_self]
   have htu : inner ℝ tp (uniform n) = 0 := by
-    rw [htp_def, inner_sub_left, real_inner_smul_left, hu, huu, sub_self]
+    rw [htp_def, inner_sub_left, real_inner_smul_left, hu, inner_uniform_self, sub_self]
   -- The deviation equals `⟪s^⊥, A t^⊥⟫`.
   have hAt : toCLM A (indicator T) = toCLM A tp + (T.card : ℝ) • uniform n := by
     rw [htp_def, map_sub, map_smul, mulVec_uniform hA, sub_add_cancel]
   have h1 : inner ℝ sp ((T.card : ℝ) • uniform n) = 0 := by
     rw [real_inner_smul_right, hsu, mul_zero]
   have h2 : inner ℝ ((S.card : ℝ) • uniform n) (toCLM A tp) = 0 := by
-    rw [real_inner_smul_left, ← hself, mulVec_uniform hA, real_inner_comm, htu,
+    rw [real_inner_smul_left, ← inner_toCLM_right hA.symm, mulVec_uniform hA,
+      real_inner_comm, htu,
       mul_zero]
   have h3 : inner ℝ ((S.card : ℝ) • uniform n) ((T.card : ℝ) • uniform n) =
       (S.card * T.card : ℝ) / n := by
-    rw [real_inner_smul_left, real_inner_smul_right, huu, div_eq_mul_inv]
+    rw [real_inner_smul_left, real_inner_smul_right, inner_uniform_self, div_eq_mul_inv]
     ring
   have key : inner ℝ (indicator S) (toCLM A (indicator T)) -
       (S.card * T.card : ℝ) / n = inner ℝ sp (toCLM A tp) := by

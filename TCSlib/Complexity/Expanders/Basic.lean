@@ -83,6 +83,59 @@ noncomputable def toCLM (A : Matrix (Fin n) (Fin n) ℝ) :
     EuclideanSpace ℝ (Fin n) →L[ℝ] EuclideanSpace ℝ (Fin n) :=
   Matrix.toEuclideanCLM (𝕜 := ℝ) A
 
+/-- Each coordinate of the uniform vector is `1/n`. -/
+@[simp] theorem uniform_apply (i : Fin n) : uniform n i = (n : ℝ)⁻¹ := rfl
+
+/-- `toCLM` acts coordinatewise as matrix–vector multiplication. -/
+theorem toCLM_apply_coord (A : Matrix (Fin n) (Fin n) ℝ)
+    (v : EuclideanSpace ℝ (Fin n)) (i : Fin n) :
+    toCLM A v i = ∑ j, A i j * v j := rfl
+
+/-- The real Euclidean inner product, in coordinates. -/
+theorem inner_eq_sum (x y : EuclideanSpace ℝ (Fin n)) :
+    inner ℝ x y = ∑ i, x i * y i := by
+  simp only [PiLp.inner_apply, RCLike.inner_apply, starRingEnd_apply,
+    star_trivial]
+  exact Finset.sum_congr rfl fun i _ => mul_comm _ _
+
+/-- A symmetric matrix is self-adjoint for the Euclidean inner product:
+`⟨A𝐱, 𝐲⟩ = ⟨𝐱, A𝐲⟩`. -/
+theorem inner_toCLM_right {A : Matrix (Fin n) (Fin n) ℝ} (hA : A.IsSymm)
+    (x y : EuclideanSpace ℝ (Fin n)) :
+    inner ℝ (toCLM A x) y = inner ℝ x (toCLM A y) := by
+  rw [inner_eq_sum, inner_eq_sum]
+  simp_rw [toCLM_apply_coord, Finset.sum_mul, Finset.mul_sum]
+  rw [Finset.sum_comm]
+  refine Finset.sum_congr rfl fun j _ => Finset.sum_congr rfl fun i _ => ?_
+  rw [hA.apply j i]
+  ring
+
+/-- `⟨𝟙, 𝟙⟩ = 1/n` (also for `n = 0`, where both sides vanish). -/
+theorem inner_uniform_self :
+    inner ℝ (uniform n) (uniform n) = (n : ℝ)⁻¹ := by
+  rw [inner_eq_sum]
+  show ∑ _i : Fin n, (n : ℝ)⁻¹ * (n : ℝ)⁻¹ = (n : ℝ)⁻¹
+  rw [Finset.sum_const, Finset.card_univ, Fintype.card_fin, nsmul_eq_mul]
+  rcases eq_or_ne (n : ℝ) 0 with h | h
+  · rw [h]; simp
+  · field_simp
+
+/-- `toCLM` commutes with scalar multiplication of the matrix. -/
+theorem toCLM_smul (c : ℝ) (A : Matrix (Fin n) (Fin n) ℝ) :
+    toCLM (c • A) = c • toCLM A := by
+  refine ContinuousLinearMap.ext fun v => PiLp.ext fun i => ?_
+  show ∑ j, c * A i j * v j = c * ∑ j, A i j * v j
+  rw [Finset.mul_sum]
+  exact Finset.sum_congr rfl fun j _ => by ring
+
+/-- `toCLM` commutes with matrix subtraction. -/
+theorem toCLM_sub (A B : Matrix (Fin n) (Fin n) ℝ) :
+    toCLM (A - B) = toCLM A - toCLM B := by
+  refine ContinuousLinearMap.ext fun v => PiLp.ext fun i => ?_
+  show ∑ j, (A i j - B i j) * v j = (∑ j, A i j * v j) - ∑ j, B i j * v j
+  rw [← Finset.sum_sub_distrib]
+  exact Finset.sum_congr rfl fun j _ => by ring
+
 /-- The parameter `λ(A)`, also written `λ(G)` for the normalized adjacency
 matrix of a graph `G`: the maximum of `‖A𝐯‖₂` over all unit vectors `𝐯`
 orthogonal to the uniform distribution.  For a symmetric stochastic matrix

@@ -73,8 +73,10 @@ noncomputable def unifMatrix (n : ℕ) : Matrix (Fin n) (Fin n) ℝ :=
 Cauchy–Schwarz with the weights `Aᵢⱼ` in each coordinate, using that every
 row and every column of `A` sums to one. -/
 theorem opNorm_le_one {A : Matrix (Fin n) (Fin n) ℝ} (hA : IsSymmStochastic A) :
-    ‖toCLM A‖ ≤ 1 := by
-  sorry
+    ‖toCLM A‖ ≤ 1 :=
+  ContinuousLinearMap.opNorm_le_bound _ zero_le_one fun v => by
+    rw [one_mul]
+    exact norm_toCLM_apply_le hA v
 
 /-- **Decomposition of an expander step.**  If `A` is symmetric stochastic and
 `λ(A) ≤ λ` with `0 ≤ λ`, then `A = (1−λ)J + λC` where `J` is the all-`1/n`
@@ -96,7 +98,123 @@ theorem exists_decomposition {A : Matrix (Fin n) (Fin n) ℝ}
     (hlam0 : 0 ≤ lam) :
     ∃ C : Matrix (Fin n) (Fin n) ℝ,
       A = (1 - lam) • unifMatrix n + lam • C ∧ ‖toCLM C‖ ≤ 1 := by
-  sorry
+  classical
+  rcases hlam0.eq_or_lt' with rfl | hpos
+  · -- `λ = 0`: the hypothesis forces `A` to annihilate `𝟙^⊥`, so `A = J`.
+    refine ⟨0, ?_, ?_⟩
+    · have hzero : ∀ w : EuclideanSpace ℝ (Fin n),
+          inner ℝ w (uniform n) = 0 → toCLM A w = 0 := fun w hw => by
+        have h0 : ‖toCLM A w‖ ≤ 0 :=
+          (norm_mulVec_le_lambda hA hw).trans
+            (mul_nonpos_of_nonpos_of_nonneg hlam (norm_nonneg _))
+        simpa using le_antisymm h0 (norm_nonneg _)
+      have hone : ∀ j : Fin n,
+          inner ℝ (EuclideanSpace.single j (1 : ℝ)) (uniform n) =
+            (n : ℝ)⁻¹ := fun j => by
+        rw [inner_eq_sum]
+        simp only [EuclideanSpace.single_apply, ite_mul, one_mul, zero_mul,
+          Finset.sum_ite_eq', Finset.mem_univ, if_true, uniform_apply]
+      have hAe : ∀ j : Fin n,
+          toCLM A (EuclideanSpace.single j (1 : ℝ)) = uniform n := fun j => by
+        have hw : inner ℝ (EuclideanSpace.single j (1 : ℝ) - uniform n)
+            (uniform n) = 0 := by
+          rw [inner_sub_left, hone, inner_uniform_self, sub_self]
+        have hsplit : toCLM A (EuclideanSpace.single j (1 : ℝ)) =
+            toCLM A (EuclideanSpace.single j (1 : ℝ) - uniform n) +
+              toCLM A (uniform n) := by
+          rw [← map_add, sub_add_cancel]
+        rw [hsplit, hzero _ hw, mulVec_uniform hA, zero_add]
+      simp only [sub_zero, one_smul, zero_smul, add_zero]
+      ext i j
+      show A i j = (n : ℝ)⁻¹
+      have h2 : toCLM A (EuclideanSpace.single j (1 : ℝ)) i = uniform n i := by
+        rw [hAe j]
+      rw [toCLM_apply_coord] at h2
+      simpa only [EuclideanSpace.single_apply, mul_ite, mul_one, mul_zero,
+        Finset.sum_ite_eq', Finset.mem_univ, if_true, uniform_apply] using h2
+    · have h0 : toCLM (0 : Matrix (Fin n) (Fin n) ℝ) = 0 :=
+        map_zero (Matrix.toEuclideanCLM (𝕜 := ℝ))
+      rw [h0]
+      simp
+  · -- `λ > 0`: take `C = (1/λ)(A − (1−λ)J)` and check it contracts.
+    refine ⟨lam⁻¹ • (A - (1 - lam) • unifMatrix n), ?_, ?_⟩
+    · rw [smul_smul, mul_inv_cancel₀ hpos.ne', one_smul]
+      abel
+    · refine ContinuousLinearMap.opNorm_le_bound _ zero_le_one fun v => ?_
+      rw [one_mul]
+      rcases Nat.eq_zero_or_pos n with rfl | hn
+      · -- `n = 0`: the space is trivial, both norms vanish.
+        have hz : ∀ x : EuclideanSpace ℝ (Fin 0), ‖x‖ = 0 := fun x => by
+          rw [EuclideanSpace.norm_eq]
+          simp
+        simp [hz]
+      · have hne : (n : ℝ) ≠ 0 := Nat.cast_ne_zero.mpr hn.ne'
+        -- Decompose `v = p + w`, `p` along `𝟙` and `w ⊥ 𝟙`.
+        set p : EuclideanSpace ℝ (Fin n) :=
+          ((n : ℝ) * inner ℝ v (uniform n)) • uniform n with hp_def
+        set w : EuclideanSpace ℝ (Fin n) := v - p with hw_def
+        have hvpw : v = p + w := by rw [hw_def, add_comm, sub_add_cancel]
+        have hwu : inner ℝ w (uniform n) = 0 := by
+          rw [hw_def, hp_def, inner_sub_left, real_inner_smul_left,
+            inner_uniform_self, mul_comm ((n : ℝ)) _, mul_assoc,
+            mul_inv_cancel₀ hne, mul_one, sub_self]
+        have hsumw : (∑ j, w j) = 0 := by
+          have h := hwu
+          rw [inner_eq_sum] at h
+          simp only [uniform_apply] at h
+          rw [← Finset.sum_mul] at h
+          exact (mul_eq_zero.mp h).resolve_right (inv_ne_zero hne)
+        have hJw : toCLM (unifMatrix n) w = 0 := by
+          refine PiLp.ext fun i => ?_
+          show ∑ j, (n : ℝ)⁻¹ * w j = 0
+          rw [← Finset.mul_sum, hsumw, mul_zero]
+        have hJu : toCLM (unifMatrix n) (uniform n) = uniform n := by
+          refine PiLp.ext fun i => ?_
+          show ∑ _j : Fin n, (n : ℝ)⁻¹ * (n : ℝ)⁻¹ = (n : ℝ)⁻¹
+          rw [Finset.sum_const, Finset.card_univ, Fintype.card_fin, nsmul_eq_mul]
+          field_simp
+        have hJp : toCLM (unifMatrix n) p = p := by rw [hp_def, map_smul, hJu]
+        have hAp : toCLM A p = p := by
+          rw [hp_def, map_smul, mulVec_uniform hA]
+        -- `Cv = p + (1/λ)·Aw`.
+        have hCv : toCLM (lam⁻¹ • (A - (1 - lam) • unifMatrix n)) v
+            = p + lam⁻¹ • toCLM A w := by
+          rw [toCLM_smul, toCLM_sub, toCLM_smul]
+          simp only [ContinuousLinearMap.smul_apply, ContinuousLinearMap.sub_apply]
+          rw [hvpw, map_add, map_add, hAp, hJp, hJw, add_zero]
+          have hcomb : p + toCLM A w - (1 - lam) • p = lam • p + toCLM A w := by
+            rw [sub_smul, one_smul]
+            abel
+          rw [hcomb, smul_add, smul_smul, inv_mul_cancel₀ hpos.ne', one_smul]
+        -- Orthogonality of the two components, before and after `C`.
+        have hpw : inner ℝ p w = 0 := by
+          rw [hp_def, real_inner_smul_left, real_inner_comm w (uniform n), hwu,
+            mul_zero]
+        have hpq : inner ℝ p (lam⁻¹ • toCLM A w) = 0 := by
+          rw [real_inner_smul_right, hp_def, real_inner_smul_left,
+            ← inner_toCLM_right hA.symm, mulVec_uniform hA,
+            real_inner_comm w (uniform n), hwu]
+          ring
+        -- Norm bound on the orthogonal part.
+        have hq_le : ‖lam⁻¹ • toCLM A w‖ ≤ ‖w‖ := by
+          rw [norm_smul, norm_inv, Real.norm_eq_abs, abs_of_pos hpos,
+            inv_mul_le_iff₀ hpos]
+          exact (norm_mulVec_le_lambda hA hwu).trans
+            (mul_le_mul_of_nonneg_right hlam (norm_nonneg _))
+        -- Pythagoras twice.
+        have hv2 : ‖v‖ ^ 2 = ‖p‖ ^ 2 + ‖w‖ ^ 2 := by
+          conv_lhs => rw [hvpw]
+          rw [norm_add_sq_real, hpw]
+          ring
+        have hC2 : ‖p + lam⁻¹ • toCLM A w‖ ^ 2 ≤ ‖v‖ ^ 2 := by
+          rw [norm_add_sq_real, hpq, hv2]
+          nlinarith [hq_le, norm_nonneg (lam⁻¹ • toCLM A w), norm_nonneg w]
+        rw [hCv]
+        calc ‖p + lam⁻¹ • toCLM A w‖
+            = Real.sqrt (‖p + lam⁻¹ • toCLM A w‖ ^ 2) :=
+              (Real.sqrt_sq (norm_nonneg _)).symm
+          _ ≤ Real.sqrt (‖v‖ ^ 2) := Real.sqrt_le_sqrt hC2
+          _ = ‖v‖ := Real.sqrt_sq (norm_nonneg _)
 
 /-- One step of the random walk from vertex `i`: move to `j` with probability
 `A i j`.  For the normalized adjacency matrix of a `d`-regular multigraph
