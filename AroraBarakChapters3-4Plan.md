@@ -37,7 +37,7 @@ first candidates to descope), **deferred** (backlog).
 | Ex 3.6(3) `P^EXPCOM = NP^EXPCOM = EXP` | Missing | Depends on CH34-Q4 |
 | **Thm 3.7** Baker-Gill-Solovay | Missing | Core (P3.2) |
 | Ex 3.5 a non-time-constructible function | Missing | Core (P3.2, cheap) |
-| **Thm 3.2** nondeterministic time hierarchy (lazy diagonalization), with Ex 2.6 universal NDTM | Missing (no NDTM codes, no universal NDTM) | **Core, mandatory** (user decision 2026-10-08; P3.3). Overhead strength of the universal NDTM: open (CH34-Q8) |
+| **Thm 3.2** nondeterministic time hierarchy (lazy diagonalization), with Ex 2.6 universal NDTM | Missing (no NDTM codes, no universal NDTM) | **Core, mandatory, book strength** — linear-overhead universal NDTM (user decisions 2026-10-08; P3.3, CH34-Q8) |
 | **Thm 3.3** Ladner, its Claim, and Ex 3.6(a)(b) | Missing | Core-late (P3.4) |
 | Ex 3.1, 3.3, 3.4, 3.7-3.9; relativized hierarchy statements; Remark 3.8 and §3.4.1 (expository) | — | Deferred |
 
@@ -198,9 +198,15 @@ This requires Hydroxyi's agreement, since these are their modules (CH34-Q2).
   one-work-tape binary normal form. So either the Chapter-1 robustness conversions
   (`one_work_tape`, alphabet reduction) gain space theorems, or a fresh space-universal
   machine takes multi-tape codes. This is the largest single risk in Chapter 4 (§6).
-- **Thm 3.2 needs NDTM codes and a clocked universal NDTM (Ex 2.6).** At polynomial
-  overhead it delivers `f(n+1)^c = o(g(n))` rather than the book's `f(n+1) = o(g(n))`,
-  which is the same delivered-strength convention as §2.1.
+- **Thm 3.2 needs NDTM codes and a clocked universal NDTM (Ex 2.6), at linear
+  overhead** (user decision 2026-10-08, CH34-Q8). Polynomial overhead would deliver only
+  `f(n+1)^c = o(g(n))`; linear overhead gives the book's `f(n+1) = o(g(n))`. The
+  guess-then-verify technique (guess the whole tableau of choice/configuration data,
+  then check each tape's consistency in one pass — Book-Greibach style) achieves a
+  code-dependent constant factor, which is the strongest form possible: a simulation of
+  `t` steps cannot run faster than the `t` steps it reproduces, and the code-dependent
+  constant is necessary for the same reason as chapter 1's Argument E. Another
+  routine-layer consumer.
 
 ## 3. Architecture and module layout
 
@@ -343,10 +349,9 @@ the record, and `backlog.md` §1 gets only the open ones.
 5. **CH34-Q5 — QBF matrix.** **Answered: CNF.**
 6. **CH34-Q6 — tiers.** **Answered: Thm 3.2 mandatory; Thm 3.3 (Ladner) core-late.**
 7. **CH34-Q7 — `NSPACE` halting convention.** **Answered: all branches halt.**
-8. **CH34-Q8 — universal-NDTM overhead (new, open).** Thm 3.2 at book strength
-   (`f(n+1) = o(g(n))`) needs a *linear*-overhead universal NDTM (guess-then-verify,
-   Book-Greibach style — another routine-layer consumer); a polynomial-overhead one
-   delivers only `f(n+1)^c = o(g(n))`. Which strength is required?
+8. **CH34-Q8 — universal-NDTM overhead.** **Answered (2026-10-08): linear overhead**,
+   the strongest form possible (§2.7) — Thm 3.2 lands at the book's
+   `f(n+1) = o(g(n))`.
 
 ## 8. Decision log
 
@@ -358,5 +363,6 @@ the record, and `backlog.md` §1 gets only the open ones.
 | Chapter 4 machine work goes through program layers (`LogProg.ARM`, `CounterProg`, proposed extensions §2.5) | Proposed |
 | §2 foundation choices and §7 provisional answers | **Answered 2026-10-08** (user): Q1 yes to both, Q2 extend in place co-owned, Q3 strengthen, Q5 CNF, Q6 Thm 3.2 mandatory / Ladner core-late, Q7 all branches halt. Q4 and Q8 open |
 | Routine layer set up in parallel with the statement phases, scoped to **amply support the ch-1/2 retrofit** (full bank/relocation/dispatch/frame catalog), with space costs throughout; Hennie-Stearns + two-tape universal as first consumers; retrofit itself not a gate (§4a) | Decided (user, 2026-10-08) |
+| CH34-Q8 answered (user, 2026-10-08): the universal NDTM is built at **linear overhead** (guess-then-verify), so Thm 3.2 lands at book strength `f(n+1) = o(g(n))` | Decided |
 | CH34-Q4 research (2026-10-08): the machine-light oracle `A = K(A)` **is** [BGS75]'s own Theorem 1 (verified against the scanned original, pp. 433-434), so no deviation from the primary source; [AB09]'s `EXPCOM` is the substitution. Awaiting maintainer confirmation of the route | Recorded |
 | Citation audit (2026-10-08), prompted by the maintainer: no missing code-inspiration citation found in campaign-authored Lean code — vendored cslib files carry full headers (pin `a3747758`), `Composition.lean` cites [Balbach22], `Build/*` + `machine-library-design.md` §1-11 were frozen 2026-10-03, two days **before** the first Bonnet examination (2026-10-05, scratchpad-only, never imported; backlog records the after-the-fact cost comparison as convergence). No brief ever carried external code. Hydroxyi's `TimeHierarchy//SpaceComplexity//PolyHierarchy/` trees cite only [AB09]; two design similarities flagged to *ask* (not assertions): `LogProg` compiler vs lax-434930's `TimeCompiler`; `ConfigCount.core` vs cslib `ConfigBound`'s `Cfg.core` (upstream 2026-09-14). §12 citation duty ([lax-434930], Apache-2.0) remains binding when that design is written | Recorded |
