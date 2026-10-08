@@ -1,5 +1,5 @@
 import Mathlib.Analysis.SpecialFunctions.Complex.LogBounds
-import TCSlib.BooleanAnalysis.Hypercontractivity.General
+import TCSlib.BooleanAnalysis.Hypercontractivity.Cube.General
 import TCSlib.BooleanAnalysis.ThresholdFunctions.Polynomial
 
 set_option maxHeartbeats 0
@@ -46,7 +46,7 @@ private lemma noise_degree_lower {n k : ℕ} (p : MultilinearPolynomial n)
     (hdeg : p.HasDegreeAtMost k) (ρ : ℝ) (hρ0 : 0 ≤ ρ) (hρ1 : ρ ≤ 1) :
     ρ ^ (2 * k) * (∑ S : Finset (Fin n), p S ^ 2) ≤
       expect (fun x ↦ (noiseOp ρ p.eval x) ^ 2) := by
-  have hnoise := SimpleHypercontractivity.noise_l2_fourier ρ p.eval
+  have hnoise := BooleanAnalysis.Hypercontractivity.noise_l2_fourier ρ p.eval
   have heq : expect (fun x ↦ (noiseOp ρ p.eval x) ^ 2) =
       innerProduct (noiseOp ρ p.eval) (noiseOp ρ p.eval) := by
     simp [innerProduct, sq]
@@ -81,7 +81,7 @@ private lemma low_degree_moment_bound {n k : ℕ} (p : MultilinearPolynomial n)
     linarith
   have hρ : ρ ≤ Real.sqrt ((t - 1) / ((2 : ℝ) - 1)) := by
     norm_num [ρ]
-  have hHC := GeneralHypercontractivity.general_one_function_hypercontractivity
+  have hHC := BooleanAnalysis.Hypercontractivity.general_one_function_hypercontractivity
     t 2 (by linarith) (by linarith) (by norm_num)
     ρ hρ0 hρ1 hρ p.eval
   have hmoment : expect (fun x ↦ |noiseOp ρ p.eval x| ^ (2 : ℝ)) =
@@ -91,9 +91,9 @@ private lemma low_degree_moment_bound {n k : ℕ} (p : MultilinearPolynomial n)
     norm_num [Real.rpow_natCast, sq_abs]
   rw [hmoment] at hHC
   have hleft : 0 ≤ expect (fun x ↦ (noiseOp ρ p.eval x) ^ 2) :=
-    SimpleHypercontractivity.expect_sq_noiseOp_nonneg ρ p.eval
+    BooleanAnalysis.Hypercontractivity.expect_sq_noiseOp_nonneg ρ p.eval
   have hright : 0 ≤ (expect (fun x ↦ |p.eval x| ^ t)) ^ (1 / t) :=
-    Real.rpow_nonneg (SimpleHypercontractivity.expect_rpow_abs_nonneg _ _) _
+    Real.rpow_nonneg (BooleanAnalysis.Hypercontractivity.expect_rpow_abs_nonneg _ _) _
   have hsq := (sq_le_sq₀ (Real.rpow_nonneg hleft _) hright).mpr hHC
   have hleft_eq : (expect (fun x ↦ (noiseOp ρ p.eval x) ^ 2)) ^ (1 / (2 : ℝ)) =
       Real.sqrt (expect (fun x ↦ (noiseOp ρ p.eval x) ^ 2)) := by
@@ -103,7 +103,7 @@ private lemma low_degree_moment_bound {n k : ℕ} (p : MultilinearPolynomial n)
       ((expect (fun x ↦ |p.eval x| ^ t)) ^ (1 / t)) ^ 2 =
         (expect (fun x ↦ |p.eval x| ^ t)) ^ (2 / t) := by
     rw [← Real.rpow_natCast]
-    rw [← Real.rpow_mul (SimpleHypercontractivity.expect_rpow_abs_nonneg _ _)]
+    rw [← Real.rpow_mul (BooleanAnalysis.Hypercontractivity.expect_rpow_abs_nonneg _ _)]
     congr 1
     ring
   rw [hright_eq] at hsq
@@ -361,7 +361,7 @@ theorem low_degree_l1_l2_sq {n k : ℕ} (p : MultilinearPolynomial n)
       nlinarith
     let M := expect (fun x ↦ |p.eval x| ^ t)
     have hM : 0 ≤ M :=
-      SimpleHypercontractivity.expect_rpow_abs_nonneg t p.eval
+      BooleanAnalysis.Hypercontractivity.expect_rpow_abs_nonneg t p.eval
     have hHC := low_degree_moment_bound p hdeg t ht1 ht2
     change (t - 1) ^ k * B ≤ M ^ (2 / t) at hHC
     have hInt := moment_interpolation p.eval t ht1 ht2

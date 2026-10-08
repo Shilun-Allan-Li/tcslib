@@ -1,3 +1,9 @@
+/-
+Copyright (c) 2026 TCSlib Contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Owen McGinty
+-/
+
 import TCSlib.BooleanAnalysis.Basic
 import Mathlib.Probability.Moments.Basic
 import Mathlib.MeasureTheory.MeasurableSpace.Basic
@@ -12,6 +18,10 @@ import Mathlib.MeasureTheory.Measure.ProbabilityMeasure
 import Mathlib.Analysis.SpecialFunctions.Pow.Real
 import Mathlib.MeasureTheory.Integral.MeanInequalities
 import Mathlib.Probability.Distributions.Uniform
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
 
 /-!
 # Moment bounds and anticoncentration
@@ -38,7 +48,7 @@ functions.
   arXiv edition, 2021, §9.1.
 -/
 
-namespace Bonami
+namespace BooleanAnalysis.Hypercontractivity
 open BooleanAnalysis
 
 section
@@ -247,7 +257,13 @@ variable {Ω : Type*} [MeasurableSpace Ω] {μ : Measure Ω} [IsProbabilityMeasu
 
 /-- Gives the Paley--Zygmund lower bound for a nonnegative integrable random variable.
 
-**Source:** [OD14, Prop. 9.4]. -/
+**Source:** [OD14, Prop. 9.4].
+
+**Proof sketch.** Split the first moment over Z > θ E[Z] and its complement. The complementary
+contribution is at most θ E[Z]. Cauchy–Schwarz on the event, followed by enlarging its second
+moment to the full second moment, bounds ((1−θ)E[Z])² by μ(Z > θ E[Z])E[Z²]. Handle a zero
+second moment directly and otherwise divide by it.
+-/
 lemma paley_zygmund_ineq
   {Z : Ω → ℝ}
   (h_meas : Measurable Z)
@@ -477,4 +493,4 @@ lemma b_reasonable_anticon_zero -- anticoncentration bound with theta = 0; gener
   exact le_trans h_bound h_pz_mapped
 
 end
-end Bonami
+end BooleanAnalysis.Hypercontractivity

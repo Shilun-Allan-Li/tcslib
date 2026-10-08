@@ -112,7 +112,7 @@ LEAN_PATH="$LP" lean -o .lake/build/lib/lean/TCSlib/Tactics/ExtractHavesFile.ole
   `:: count_bad_S` (parameterized haves, incl. `have h_term (k) :` — binder with no
   ascription)
 - `CommunicationComplexity/DeterministicCC/Hamming.lean :: piece_card` (6)
-- `BooleanAnalysis/Hypercontractivity/Bonami.lean :: min_prob_b_reasonable` (5)
+- `BooleanAnalysis/Hypercontractivity/MomentBounds.lean :: min_prob_b_reasonable` (5)
 Remaining #69 candidate decls after that: `Simple :: hypercontractivity_algebra`,
 `Kruskal/Exchange :: reduce_to_rest`, `Pinsker`, `FuncDisjointnessLowerBound`,
 `GilbertVarshamov :: prob_leq_ball_size`.

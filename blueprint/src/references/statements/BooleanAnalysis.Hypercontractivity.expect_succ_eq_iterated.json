@@ -1,0 +1,14 @@
+{
+ "lean_name": "BooleanAnalysis.Hypercontractivity.expect_succ_eq_iterated",
+ "key": "fcb4aaee76f83afb",
+ "kind": "lemma",
+ "title": "Iterated expectation on the cube",
+ "statement": "Let $n$ be a natural number and let $h : \\{0,1\\}^{n+1} \\to \\bbr$ be a Boolean function on $n+1$ bits. Writing $(x', b)\n\\in \\{0,1\\}^n \\times \\{0,1\\}$ for the point of $\\{0,1\\}^{n+1}$ obtained by appending the\nbit $b$ to $x'$ as its last coordinate, the uniform expectation of $h$ can be computed\nby first averaging over the last bit and then over the remaining $n$ bits:\n\\[\n  \\E[h] \\;=\\; \\E_{x' \\in \\{0,1\\}^n}\\Bigl[\\tfrac12\\bigl(h(x', 0) + h(x', 1)\\bigr)\\Bigr].\n\\]",
+ "hypotheses_covered": [
+  "h is a Boolean function on n+1 bits"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For $h : \\mathrm{BoolCube}\\,(n+1) \\to \\bbr$,\n\\[\n  \\E[h] \\;=\\; \\E_{x'}\\Bigl[\\tfrac12\\bigl(h(\\mathrm{snoc}(x',\\mathit{false})) + h(\\mathrm{snoc}(x',\\mathit{true}))\\bigr)\\Bigr],\n\\]\nthe outer expectation being over $x' \\in \\mathrm{BoolCube}\\,n$."
+}

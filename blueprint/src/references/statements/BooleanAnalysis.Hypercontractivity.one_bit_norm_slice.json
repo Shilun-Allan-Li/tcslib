@@ -1,0 +1,16 @@
+{
+ "lean_name": "BooleanAnalysis.Hypercontractivity.one_bit_norm_slice",
+ "key": "ec1993e29021e20a",
+ "kind": "lemma",
+ "title": "Norm of a one-bit slice",
+ "statement": "Fix a natural number $n$ and $p > 0$, let $f : \\{0,1\\}^{n+1} \\to \\bbr$ be a Boolean function, and let $x' \\in\n\\{0,1\\}^n$. Writing $(x', b) \\in \\{0,1\\}^{n+1}$ for the point obtained by appending a\nbit $b \\in \\{0,1\\}$ to $x'$, and taking the expectation over the single free bit under\nthe uniform measure, one has\n\\[\n  \\Bigl(\\E_{b \\in \\{0,1\\}}\\bigl[\\,\\abs{f(x', b)}^p\\,\\bigr]\\Bigr)^{1/p}\n  \\;=\\;\n  \\left(\\frac{\\abs{f(x', 0)}^p + \\abs{f(x', 1)}^p}{2}\\right)^{1/p}.\n\\]",
+ "hypotheses_covered": [
+  "p &gt; 0",
+  "f a Boolean function on the (n+1)-cube",
+  "x' a point of the n-cube"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For $p > 0$, $f : \\mathrm{BoolCube}\\,(n+1) \\to \\bbr$ and $x' \\in \\mathrm{BoolCube}\\,n$,\n\\[\n  \\Bigl(\\E_{t \\in \\mathrm{BoolCube}\\,1}\\bigl[\\abs{f(\\mathrm{snoc}(x',t_0))}^p\\bigr]\\Bigr)^{1/p}\n  \\;=\\;\n  \\Bigl(\\tfrac{\\abs{f(\\mathrm{snoc}(x',\\mathit{false}))}^p + \\abs{f(\\mathrm{snoc}(x',\\mathit{true}))}^p}{2}\\Bigr)^{1/p}.\n\\]"
+}

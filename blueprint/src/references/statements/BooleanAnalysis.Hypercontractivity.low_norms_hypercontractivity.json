@@ -1,0 +1,19 @@
+{
+ "lean_name": "BooleanAnalysis.Hypercontractivity.low_norms_hypercontractivity",
+ "key": "3cd41ed3068e7f7d",
+ "kind": "theorem",
+ "title": "Low-norms cube hypercontractivity",
+ "statement": "Fix a dimension $n$ and real exponents $p, u$ with $1 < p \\le u \\le 2$, and set the\nnoise rate\n\\[\n  \\rho \\;=\\; \\sqrt{\\frac{p-1}{u-1}} \\;\\in\\; (0,1].\n\\]\nThen for every function $f : \\{0,1\\}^n \\to \\bbr$ on the Boolean hypercube, the noise\noperator $T_\\rho$ contracts $L^p$ into $L^u$:\n\\[\n  \\bigl(\\E\\bigl[\\,\\abs{T_\\rho f}^{\\,u}\\,\\bigr]\\bigr)^{1/u}\n  \\;\\le\\;\n  \\bigl(\\E\\bigl[\\,\\abs{f}^{\\,p}\\,\\bigr]\\bigr)^{1/p},\n\\]\nwhere the expectations are taken with respect to the uniform measure on $\\{0,1\\}^n$.",
+ "hypotheses_covered": [
+  "1 < p",
+  "p ≤ u",
+  "u ≤ 2",
+  "arbitrary dimension n",
+  "arbitrary Boolean function f",
+  "noise rate ρ = √((p-1)/(u-1))"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For $1 < p \\le u \\le 2$, any $n$, $f : \\mathrm{BoolCube}\\,n \\to \\bbr$ and\n$\\rho = \\sqrt{(p-1)/(u-1)}$,\n\\[\n  \\bigl(\\E[\\abs{T_\\rho f}^u]\\bigr)^{1/u} \\;\\le\\; \\bigl(\\E[\\abs{f}^p]\\bigr)^{1/p}.\n\\]"
+}

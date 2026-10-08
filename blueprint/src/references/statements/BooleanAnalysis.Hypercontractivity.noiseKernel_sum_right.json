@@ -1,0 +1,17 @@
+{
+ "lean_name": "BooleanAnalysis.Hypercontractivity.noiseKernel_sum_right",
+ "key": "7d727044a945978d",
+ "kind": "lemma",
+ "title": "Noise kernel rows sum to one",
+ "statement": "Let $n$ be a natural number, let $0\\le\\rho\\le1$, and fix $x\\in\\{0,1\\}^n$.\nThe noise kernel\n$K_\\rho(x,y)=\\prod_{i=1}^{n}\\frac{1+\\rho\\,\\sigma(x_i)\\,\\sigma(y_i)}{2}$,\nwhere $\\sigma(0)=1$ and $\\sigma(1)=-1$, satisfies\n\\[\n  \\sum_{y\\in\\{0,1\\}^n}K_\\rho(x,y)=1.\n\\]",
+ "hypotheses_covered": [
+  "ρ real with 0 ≤ ρ",
+  "ρ ≤ 1",
+  "x a point of the Boolean hypercube of dimension n",
+  "sum over all y in the cube of K_ρ(x,y) equals 1"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For $0 \\le \\rho \\le 1$ and any fixed $x \\in \\mathrm{BoolCube}\\,n$,\n$\\sum_{y} K_\\rho(x,y) = 1$."
+}

@@ -181,16 +181,19 @@ def detect_kind_and_doc(lines: list[str], start: int, end: int, expected: str | 
 
 def extract_signature(lines: list[str], decl_idx: int, end: int, cap: int = 25) -> str:
     """Statement head: from the keyword line up to (and including) the proof/body `:=`."""
-    out = []
+    if __package__:
+        from .build_dataset import split_signature
+    else:
+        from build_dataset import split_signature
+
     hi = min(len(lines), max(end, decl_idx + 1))
-    for i in range(decl_idx, min(decl_idx + cap, hi)):
-        line = lines[i]
-        if ":=" in line:
-            out.append(line[: line.index(":=") + 2])
-            break
-        out.append(line)
-        if i == decl_idx + cap - 1:
-            out.append("    ...")
+    text = "\n".join(lines[decl_idx:hi])
+    signature = split_signature(text)
+    out = signature.splitlines()
+    if len(out) > cap:
+        out = out[:cap] + ["    ..."]
+    elif len(signature) < len(text.rstrip()):
+        out[-1] += " :="
     return "\n".join(s.rstrip() for s in out).strip()
 
 

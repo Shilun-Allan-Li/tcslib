@@ -1,0 +1,14 @@
+{
+ "lean_name": "BooleanAnalysis.Hypercontractivity.one_bit_val_true",
+ "key": "628df28c1a29d4e3",
+ "kind": "lemma",
+ "title": "Recovering a one-bit function's value from its Fourier coefficients",
+ "statement": "Let $f\\colon\\{0,1\\}^1\\to\\bbr$ be a function of a single bit, and write $\\hat\nf(\\emptyset)$ and $\\hat f(\\{0\\})$ for its two Fourier--Walsh coefficients, where $\\{0\\}$\nis the singleton frequency consisting of the sole coordinate. If $x_1$ is the input\nwhose single coordinate is $1$ (the bit value corresponding to $-1$ under the sign\nencoding), its value is the difference of these two coefficients,\n\\[\n  f(x_1) \\;=\\; \\hat f(\\emptyset) - \\hat f(\\{0\\}).\n\\]",
+ "hypotheses_covered": [
+  "f is a Boolean function of arity 1"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For a one-bit function $f$, its value on the all-$\\mathit{true}$ input is the difference of\nits two Fourier coefficients:\n$f(\\mathit{true}) = \\widehat{f}(\\emptyset) - \\widehat{f}(\\{0\\})$."
+}

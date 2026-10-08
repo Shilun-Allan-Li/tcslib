@@ -45,7 +45,9 @@ def build_decl_ranges(refs: dict) -> dict[str, list[int]]:
             and isinstance(tuple_[4], str)
         ):
             name = tuple_[4]
-            sl, el = tuple_[5], tuple_[7]
+            # Lean's .ilean positions are zero-based; the graph exposes source
+            # locations as one-based line numbers.
+            sl, el = tuple_[5] + 1, tuple_[7] + 1
             if name not in ranges:
                 ranges[name] = [sl, el]
             else:
@@ -103,7 +105,7 @@ def parse_ilean(path: Path) -> dict:
                 enclosing = usage[4]
             else:
                 # Inter-module: map usage line to enclosing decl via ranges
-                enclosing = find_enclosing_decl(usage[0], sorted_ranges)
+                enclosing = find_enclosing_decl(usage[0] + 1, sorted_ranges)
 
             if enclosing and enclosing in deps:
                 if not (src_module == module and const_name == enclosing):
@@ -134,6 +136,10 @@ def build_graph(root: Path) -> dict:
         module = parsed["module"]
         if not module:
             module = ilean_module_name(path, root)
+        # Renamed/deleted modules can leave cached artifacts behind. Only live
+        # source modules belong in the declaration graph.
+        if not Path(module.replace(".", "/")).with_suffix(".lean").is_file():
+            continue
         graph[module] = {
             "directImports": parsed["directImports"],
             "declarations": parsed["declarations"],

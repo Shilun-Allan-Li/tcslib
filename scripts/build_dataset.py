@@ -494,17 +494,67 @@ def decl_end(lines: list[str], kidx: int) -> int:
 
 
 def split_signature(text: str) -> str:
-    """Everything up to the first top-level `:=` (proof separator), depth-aware."""
+    """Keep the declaration type, including term-local let/have assignments.
+
+    A top-level ``:=`` can bind a local name inside the result type rather than
+    begin the proof. Ignore those assignments, as well as binder defaults,
+    comments, strings and quoted identifiers, when locating the proof separator.
+    """
     depth = 0
+    pending_bindings = 0
     i = 0
     n = len(text)
     while i < n:
+        if text.startswith("--", i):
+            end = text.find("\n", i)
+            i = n if end < 0 else end + 1
+            continue
+        if text.startswith("/-", i):
+            comment_depth = 1
+            i += 2
+            while i < n and comment_depth:
+                if text.startswith("/-", i):
+                    comment_depth += 1
+                    i += 2
+                elif text.startswith("-/", i):
+                    comment_depth -= 1
+                    i += 2
+                else:
+                    i += 1
+            continue
         c = text[i]
+        char_literal = c == "'" and i + 2 < n and (
+            text[i + 2] == "'" or text[i + 1] == "\\"
+        )
+        if c == '"' or c == "«" or char_literal:
+            closing = "»" if c == "«" else c
+            i += 1
+            while i < n:
+                if closing in {'"', "'"} and text[i] == "\\":
+                    i += 2
+                elif text[i] == closing:
+                    i += 1
+                    break
+                else:
+                    i += 1
+            continue
         if c in _OPEN_DELIM:
             depth += 1
         elif c in _CLOSE_DELIM:
             depth -= 1
+        elif c.isalpha() or c == "_":
+            end = i + 1
+            while end < n and (text[end].isalnum() or text[end] in "_'"):
+                end += 1
+            if depth == 0 and text[i:end] in {"let", "letI", "have"}:
+                pending_bindings += 1
+            i = end
+            continue
         elif depth == 0 and c == ":" and i + 1 < n and text[i + 1] == "=":
+            if pending_bindings:
+                pending_bindings -= 1
+                i += 2
+                continue
             return text[:i].rstrip()
         i += 1
     return text.rstrip()

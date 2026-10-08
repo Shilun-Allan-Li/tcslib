@@ -1,0 +1,18 @@
+{
+ "lean_name": "BooleanAnalysis.Hypercontractivity.noise_operator_duality",
+ "key": "df0be6258127ee6c",
+ "kind": "theorem",
+ "title": "Duality of the noise operator's hypercontractive bound",
+ "statement": "Let $p,p'>1$ be real Hölder conjugate exponents, so that $1/p + 1/p' = 1$.\nWrite $\\E$ for uniform expectation on $\\{0,1\\}^1$ and $T_{\\sqrt{p-1}}$ for the\nFourier multiplier that sends the coefficient at a coordinate subset $S$ to\n$(\\sqrt{p-1})^{|S|}$ times that coefficient. Suppose that\n\\[\n\\E\\!\\left[\\,\\bigl|T_{\\sqrt{p-1}} f\\bigr|^{2}\\,\\right]^{1/2} \\;\\le\\;\n\\E\\!\\left[\\,|f|^{p}\\,\\right]^{1/p}\n\\]\nholds for every one-bit Boolean function $f$. Then for every one-bit Boolean function\n$g$,\n\\[\n\\E\\!\\left[\\,\\bigl|T_{\\sqrt{p-1}} g\\bigr|^{p'}\\,\\right]^{1/p'} \\;\\le\\;\n\\E\\!\\left[\\,|g|^{2}\\,\\right]^{1/2}.\n\\]",
+ "hypotheses_covered": [
+  "$p$ and $p'$ are Hölder conjugate ($1/p+1/p'=1$)",
+  "$1 \\le p$",
+  "the $(p \\to 2)$ bound $\\E[|T_{\\sqrt{p-1}}f|^2]^{1/2} \\le \\E[|f|^p]^{1/p}$ holds for every one-bit Boolean function $f$",
+  "noise rate is $\\sqrt{p-1}$",
+  "conclusion holds for every one-bit Boolean function $g$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nIf, for H\\\"older conjugate exponents $p$ and $p'$ with $1 \\le p$, the noise operator with rate\n$\\sqrt{p-1}$ satisfies the $(p,2)$-hypercontractive bound for every one-bit function, then it also\nsatisfies the dual $(2,p')$-hypercontractive bound: for every $g$,\n\\[\n  \\big(\\E[|T_{\\sqrt{p-1}} g|^{p'}]\\big)^{1/p'} \\le \\big(\\E[g^2]\\big)^{1/2}.\n\\]"
+}

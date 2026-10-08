@@ -1,0 +1,16 @@
+{
+ "lean_name": "BooleanAnalysis.Hypercontractivity.noiseKernel_sum_left",
+ "key": "3216dbcdb20ff224",
+ "kind": "lemma",
+ "title": "Noise kernel sums to one over the cube",
+ "statement": "Let $n$ be a natural number, let $0\\le\\rho\\le1$, and fix $y\\in\\{0,1\\}^n$.\nThe noise kernel\n$K_\\rho(x,y)=\\prod_{i=1}^{n}\\frac{1+\\rho\\,\\sigma(x_i)\\,\\sigma(y_i)}{2}$,\nwhere $\\sigma(0)=1$ and $\\sigma(1)=-1$, satisfies\n\\[\n  \\sum_{x\\in\\{0,1\\}^n}K_\\rho(x,y)=1.\n\\]\nThus $K_\\rho(\\cdot,y)$ is a probability distribution on the cube.",
+ "hypotheses_covered": [
+  "$0 \\le \\rho$",
+  "$\\rho \\le 1$",
+  "$y$ a fixed point of the Boolean hypercube $\\{0,1\\}^n$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For $0 \\le \\rho \\le 1$ and any fixed $y \\in \\mathrm{BoolCube}\\,n$,\n$\\sum_{x} K_\\rho(x,y) = 1$."
+}

@@ -1,0 +1,16 @@
+{
+ "lean_name": "BooleanAnalysis.Hypercontractivity.innerProduct_noiseOp_eq_weighted_sum",
+ "key": "41b676a83d976838",
+ "kind": "lemma",
+ "title": "Noise inner product as a double sum",
+ "statement": "Fix a dimension $n$ and a real number $\\rho$. For any two Boolean functions $f, g :\n\\{0,1\\}^n \\to \\bbr$, the $L^2$ inner product of $f$ with the noised function $T_\\rho g$\ncan be written as a kernel-weighted double sum:\n\\[\n\\langle f, T_\\rho g\\rangle \\;=\\; 2^{-n} \\sum_{x \\in \\{0,1\\}^n} \\sum_{y \\in \\{0,1\\}^n}\nK_\\rho(x,y)\\, f(x)\\, g(y),\n\\]\nwhere $K_\\rho(x,y) = \\prod_{i} \\tfrac{1 + \\rho\\,\\sigma(x_i)\\,\\sigma(y_i)}{2}$ is the\nnoise kernel and $\\sigma$ is the $\\pm 1$ sign encoding of a bit.",
+ "hypotheses_covered": [
+  "real parameter $\\rho$ (arbitrary, no range restriction)",
+  "Boolean functions $f, g : \\{0,1\\}^n \\to \\bbr$",
+  "dimension $n$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For all $f, g : \\mathrm{BoolCube}\\,n \\to \\bbr$,\n\\[\n  \\inn{f, T_\\rho g} \\;=\\; \\frac{1}{2^n} \\sum_{x} \\sum_{y} K_\\rho(x,y)\\, f(x)\\, g(y).\n\\]"
+}

@@ -21,11 +21,8 @@ pairing with `← mul_pow` and `inv_mul_cancel₀`, which is how the normalisati
 cancels against the `2ⁿ`-point sum (`innerProduct_self_pm_one`,
 `influence_chi`).
 
-**Used in.** Pervasively — the most-cited definition in the Fourier
-development. 23 occurrences in `Basic.lean` itself, plus
-`Hypercontractivity/General.lean` (21), `Hypercontractivity/Bonami.lean` (13),
-`KKL.lean` (12), `Hypercontractivity/Simple.lean` (12),
-`Hypercontractivity/OneBit.lean` (10), `LMN/DecisionTreeFourier.lean` (6),
-`Hypercontractivity/Applications.lean` (2) and `BLR/BoolFourier.lean` (1).
-Almost always as part of the idiom `simp only [innerProduct, expect,
-uniformWeight]`, which unfolds an inner product down to a bare weighted sum.
+**Used in.** The uniform weight occurs throughout the Fourier and hypercontractivity
+developments, often when expanding an expectation or inner product into a finite sum.
+The cube calculations live in `Hypercontractivity/Cube/Decomposition.lean`,
+`Hypercontractivity/Cube/FourthMoment.lean`, `Hypercontractivity/Cube/EvenMoments.lean`,
+and `Hypercontractivity/Cube/General/Kernel.lean`.

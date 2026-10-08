@@ -1,0 +1,16 @@
+{
+ "lean_name": "BooleanAnalysis.Hypercontractivity.noiseKernel_snoc",
+ "key": "26352c252ba3c41b",
+ "kind": "lemma",
+ "title": "Noise kernel factorization along the final coordinate",
+ "statement": "Fix a natural number $n$, $\\rho \\in \\bbr$, and points $x', y'$ in the Boolean hypercube $\\{0,1\\}^n$, and bits $b,\nb'$. Write $(x', b)$ and $(y', b')$ for the points of $\\{0,1\\}^{n+1}$ obtained by\nappending $b$ and $b'$, respectively, as the final coordinate. Then the noise kernel of\nthe extended pair factors as\n\\[\n  K_\\rho\\bigl((x', b),\\, (y', b')\\bigr)\n  \\;=\\; K_\\rho(x', y') \\cdot \\frac{1 + \\rho\\,\\chi(b)\\,\\chi(b')}{2},\n\\]\nwhere $\\chi(0)=1$ and $\\chi(1)=-1$.",
+ "hypotheses_covered": [
+  "ρ a real number",
+  "x', y' points of the n-dimensional Boolean hypercube",
+  "b, b' bits"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For $x', y' \\in \\mathrm{BoolCube}\\,n$ and bits $b, b'$,\n\\[\n  K_\\rho\\bigl(\\mathrm{snoc}(x',b),\\ \\mathrm{snoc}(y',b')\\bigr)\n  \\;=\\; K_\\rho(x',y') \\cdot \\frac{1 + \\rho\\,\\chi(b)\\,\\chi(b')}{2}.\n\\]"
+}

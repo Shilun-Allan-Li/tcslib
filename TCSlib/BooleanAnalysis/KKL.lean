@@ -1,5 +1,5 @@
 import TCSlib.BooleanAnalysis.Basic
-import TCSlib.BooleanAnalysis.Hypercontractivity.Bonami
+import TCSlib.BooleanAnalysis.Hypercontractivity.Cube.Bonami
 import Mathlib.Analysis.SpecialFunctions.Log.Basic
 import Mathlib.Analysis.MeanInequalities
 import Mathlib.Algebra.Order.Chebyshev

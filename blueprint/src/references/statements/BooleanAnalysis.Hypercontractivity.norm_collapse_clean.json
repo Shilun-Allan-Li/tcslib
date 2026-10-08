@@ -1,0 +1,15 @@
+{
+ "lean_name": "BooleanAnalysis.Hypercontractivity.norm_collapse_clean",
+ "key": "a8560d7930655cf4",
+ "kind": "lemma",
+ "title": "Final-coordinate averaging preserves the power mean",
+ "statement": "Let $n$ be a natural number, let $p \\ge 1$ and let $f : \\{0,1\\}^{n+1} \\to \\bbr$ be a Boolean function on the\n$(n+1)$-dimensional cube. For a point $x' \\in \\{0,1\\}^n$, write $(x',0)$ and $(x',1)$\nfor the two extensions of $x'$ obtained by appending a final bit. Then averaging over\nthe last coordinate leaves the expected $p$-th power of $\\abs{f}$ unchanged:\n\\[\n  \\E_{x' \\in \\{0,1\\}^n}\\!\\left[\\frac{\\abs{f(x',0)}^p + \\abs{f(x',1)}^p}{2}\\right]\n  \\;=\\; \\E_{x \\in \\{0,1\\}^{n+1}}\\!\\bigl[\\abs{f(x)}^p\\bigr],\n\\]\nwhere both expectations are taken with respect to the uniform measure.",
+ "hypotheses_covered": [
+  "p ≥ 1",
+  "f is a Boolean function of arity n+1"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For $p \\ge 1$ and $f : \\mathrm{BoolCube}\\,(n+1) \\to \\bbr$,\n\\[\n  \\E_{x'}\\Bigl[\\tfrac{\\abs{f(\\mathrm{snoc}(x',\\mathit{false}))}^p + \\abs{f(\\mathrm{snoc}(x',\\mathit{true}))}^p}{2}\\Bigr]\n  \\;=\\; \\E\\bigl[\\abs{f}^p\\bigr].\n\\]"
+}
