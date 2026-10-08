@@ -16,7 +16,7 @@ Arora–Barak's Lemma 7.37: in an `(n,d,λ)`-graph, the number of edges between
 any two vertex sets `S` and `T` deviates from its "random-graph" expectation
 `(d/n)|S||T|` by at most `λd√(|S||T|)`.
 
-## Main results (sorry-stubbed)
+## Main results
 
 * `Expander.inner_indicator_mulVec_le` — the normalized form
   `|𝐬ᵀA𝐭 − |S||T|/n| ≤ λ√(|S||T|)`, which is [AB09, Lem 7.37, eq. (2)].
@@ -82,6 +82,110 @@ theorem inner_indicator_mulVec_le {A : Matrix (Fin n) (Fin n) ℝ}
     |inner ℝ (indicator S) (toCLM A (indicator T)) -
         (S.card * T.card : ℝ) / n| ≤
       lam * Real.sqrt (S.card * T.card) := by
-  sorry
+  classical
+  -- Coordinate formula for the real inner product.
+  have hinner : ∀ x y : EuclideanSpace ℝ (Fin n), inner ℝ x y = ∑ i, x i * y i :=
+    fun x y => by
+      simp only [PiLp.inner_apply, RCLike.inner_apply, starRingEnd_apply,
+        star_trivial]
+      exact Finset.sum_congr rfl fun i _ => mul_comm _ _
+  -- `A` is self-adjoint: `⟪Ax, y⟫ = ⟪x, Ay⟫`.
+  have hself : ∀ x y : EuclideanSpace ℝ (Fin n),
+      inner ℝ (toCLM A x) y = inner ℝ x (toCLM A y) := fun x y => by
+    rw [hinner, hinner]
+    have hx : ∀ i, toCLM A x i = ∑ j, A i j * x j := fun i => rfl
+    have hy : ∀ i, toCLM A y i = ∑ j, A i j * y j := fun i => rfl
+    simp_rw [hx, hy, Finset.sum_mul, Finset.mul_sum]
+    rw [Finset.sum_comm]
+    refine Finset.sum_congr rfl fun j _ => Finset.sum_congr rfl fun i _ => ?_
+    rw [hA.symm.apply j i]
+    ring
+  -- Inner products against the uniform vector.
+  have hu : ∀ U : Finset (Fin n),
+      inner ℝ (indicator U) (uniform n) = (U.card : ℝ) * (n : ℝ)⁻¹ := fun U => by
+    rw [hinner]
+    show ∑ i, (if i ∈ U then (1 : ℝ) else 0) * (n : ℝ)⁻¹ = _
+    rw [← Finset.sum_mul, Finset.sum_ite_mem, Finset.univ_inter, Finset.sum_const,
+      nsmul_eq_mul, mul_one]
+  have huu : inner ℝ (uniform n) (uniform n) = (n : ℝ)⁻¹ := by
+    rw [hinner]
+    show ∑ _i : Fin n, (n : ℝ)⁻¹ * (n : ℝ)⁻¹ = (n : ℝ)⁻¹
+    rw [Finset.sum_const, Finset.card_univ, Fintype.card_fin, nsmul_eq_mul]
+    rcases eq_or_ne (n : ℝ) 0 with h | h
+    · rw [h]; simp
+    · field_simp
+  -- The components of the indicators orthogonal to the uniform direction.
+  set sp : EuclideanSpace ℝ (Fin n) :=
+    indicator S - (S.card : ℝ) • uniform n with hsp_def
+  set tp : EuclideanSpace ℝ (Fin n) :=
+    indicator T - (T.card : ℝ) • uniform n with htp_def
+  have hsu : inner ℝ sp (uniform n) = 0 := by
+    rw [hsp_def, inner_sub_left, real_inner_smul_left, hu, huu, sub_self]
+  have htu : inner ℝ tp (uniform n) = 0 := by
+    rw [htp_def, inner_sub_left, real_inner_smul_left, hu, huu, sub_self]
+  -- The deviation equals `⟪s^⊥, A t^⊥⟫`.
+  have hAt : toCLM A (indicator T) = toCLM A tp + (T.card : ℝ) • uniform n := by
+    rw [htp_def, map_sub, map_smul, mulVec_uniform hA, sub_add_cancel]
+  have h1 : inner ℝ sp ((T.card : ℝ) • uniform n) = 0 := by
+    rw [real_inner_smul_right, hsu, mul_zero]
+  have h2 : inner ℝ ((S.card : ℝ) • uniform n) (toCLM A tp) = 0 := by
+    rw [real_inner_smul_left, ← hself, mulVec_uniform hA, real_inner_comm, htu,
+      mul_zero]
+  have h3 : inner ℝ ((S.card : ℝ) • uniform n) ((T.card : ℝ) • uniform n) =
+      (S.card * T.card : ℝ) / n := by
+    rw [real_inner_smul_left, real_inner_smul_right, huu, div_eq_mul_inv]
+    ring
+  have key : inner ℝ (indicator S) (toCLM A (indicator T)) -
+      (S.card * T.card : ℝ) / n = inner ℝ sp (toCLM A tp) := by
+    have hs : indicator S = sp + (S.card : ℝ) • uniform n := by
+      rw [hsp_def, sub_add_cancel]
+    rw [hAt]
+    conv_lhs => rw [hs]
+    rw [inner_add_left, inner_add_right, inner_add_right, h1, h2, h3]
+    ring
+  -- Pythagoras: dropping the uniform component shrinks the norm.
+  have hperp_le : ∀ x y : EuclideanSpace ℝ (Fin n),
+      inner ℝ (x - y) y = 0 → ‖x - y‖ ≤ ‖x‖ := fun x y hxy => by
+    have h := norm_add_sq_real (x - y) y
+    rw [sub_add_cancel, hxy] at h
+    have h2 : ‖x - y‖ ^ 2 ≤ ‖x‖ ^ 2 := by nlinarith [sq_nonneg ‖y‖]
+    calc ‖x - y‖ = Real.sqrt (‖x - y‖ ^ 2) := (Real.sqrt_sq (norm_nonneg _)).symm
+      _ ≤ Real.sqrt (‖x‖ ^ 2) := Real.sqrt_le_sqrt h2
+      _ = ‖x‖ := Real.sqrt_sq (norm_nonneg _)
+  -- The norm of an indicator vector is `√|U|`.
+  have hnormInd : ∀ U : Finset (Fin n),
+      ‖indicator U‖ = Real.sqrt U.card := fun U => by
+    rw [EuclideanSpace.norm_eq]
+    congr 1
+    have hcoord : ∀ i, ‖indicator U i‖ ^ 2 = if i ∈ U then (1 : ℝ) else 0 :=
+      fun i => by
+        show ‖(if i ∈ U then (1 : ℝ) else 0)‖ ^ 2 = _
+        split <;> simp
+    rw [Finset.sum_congr rfl fun i _ => hcoord i, Finset.sum_ite_mem,
+      Finset.univ_inter, Finset.sum_const, nsmul_eq_mul, mul_one]
+  have hps : ‖sp‖ ≤ Real.sqrt S.card := by
+    rw [← hnormInd S]
+    refine hperp_le _ _ ?_
+    rw [real_inner_smul_right, hsu, mul_zero]
+  have hpt : ‖tp‖ ≤ Real.sqrt T.card := by
+    rw [← hnormInd T]
+    refine hperp_le _ _ ?_
+    rw [real_inner_smul_right, htu, mul_zero]
+  -- `λ ≥ 0`, so the hypothesis `λ(A) ≤ lam` makes `lam` nonnegative.
+  have hlam0 : 0 ≤ lam :=
+    le_trans (Real.sSup_nonneg fun x hx => by
+      obtain ⟨v, -, rfl⟩ := hx; exact norm_nonneg _) hlam
+  -- Put it together with Cauchy–Schwarz and the defining property of `λ`.
+  rw [key]
+  calc |inner ℝ sp (toCLM A tp)|
+      ≤ ‖sp‖ * ‖toCLM A tp‖ := abs_real_inner_le_norm _ _
+    _ ≤ ‖sp‖ * (lam * ‖tp‖) := by
+        refine mul_le_mul_of_nonneg_left ?_ (norm_nonneg _)
+        exact (norm_mulVec_le_lambda hA htu).trans
+          (mul_le_mul_of_nonneg_right hlam (norm_nonneg _))
+    _ ≤ Real.sqrt S.card * (lam * Real.sqrt T.card) := by gcongr
+    _ = lam * Real.sqrt (S.card * T.card) := by
+        rw [Real.sqrt_mul (Nat.cast_nonneg _)]
+        ring
 
 end Expander
