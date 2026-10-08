@@ -22,7 +22,7 @@ Mathlib already proves the core inequality
 sharp "count the zeros" form); this file only restates it in the book's form,
 so the lemma is *reused*, not re-proved.
 
-## Main results (sorry-stubbed)
+## Main results
 
 * `Randomized.schwartz_zippel` — [AB09, Lem 7.5].
 
@@ -62,6 +62,30 @@ theorem schwartz_zippel {m : ℕ} {p : MvPolynomial (Fin m) ℤ} (hp : p ≠ 0)
     (1 : ℚ≥0) - d / S.card ≤
       ({f ∈ piFinset fun _ : Fin m => S | eval f p ≠ 0}.card : ℚ≥0) /
         (S.card ^ m : ℚ≥0) := by
-  sorry
+  have hS0 : (0 : ℚ≥0) < (S.card : ℚ≥0) := by exact_mod_cast hS.card_pos
+  have hT : (0 : ℚ≥0) < (S.card : ℚ≥0) ^ m := pow_pos hS0 m
+  have hmain : ({f ∈ piFinset fun _ : Fin m => S | eval f p = 0}.card : ℚ≥0) /
+      (S.card ^ m : ℚ≥0) ≤ (d : ℚ≥0) / S.card :=
+    (MvPolynomial.schwartz_zippel_totalDegree hp S).trans
+      (by gcongr)
+  have hsplit := Finset.filter_card_add_filter_neg_card_eq_card
+    (s := piFinset fun _ : Fin m => S) (p := fun f => eval f p = 0)
+  have hpi : (piFinset fun _ : Fin m => S).card = S.card ^ m := by
+    simp [Fintype.card_piFinset]
+  have hNZ : {f ∈ piFinset fun _ : Fin m => S | eval f p ≠ 0}.card
+      + {f ∈ piFinset fun _ : Fin m => S | eval f p = 0}.card
+      = S.card ^ m := by
+    have h2 : {f ∈ piFinset fun _ : Fin m => S | eval f p = 0}.card
+        + {f ∈ piFinset fun _ : Fin m => S | eval f p ≠ 0}.card
+        = S.card ^ m := by
+      rw [← hpi]
+      simpa using hsplit
+    omega
+  have hcount : ({f ∈ piFinset fun _ : Fin m => S | eval f p ≠ 0}.card : ℚ≥0)
+      = (S.card : ℚ≥0) ^ m -
+        ({f ∈ piFinset fun _ : Fin m => S | eval f p = 0}.card : ℚ≥0) :=
+    eq_tsub_of_add_eq (by exact_mod_cast hNZ)
+  rw [hcount, tsub_div, div_self hT.ne']
+  exact tsub_le_tsub_left hmain 1
 
 end Randomized
