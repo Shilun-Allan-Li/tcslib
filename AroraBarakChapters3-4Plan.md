@@ -30,14 +30,14 @@ first candidates to descope), **deferred** (backlog).
 | Item | Status on `main` | Tier |
 |---|---|---|
 | Machines as strings: every string is a code, every machine has infinitely many codes (§3 intro) | Exists (ch-1 `Encoding`, padding lemmas) | — |
-| **Thm 3.1** time hierarchy | Exists at **`f²` strength**: `Complexity.time_hierarchy` (`A·(f n + n + 1)² ≤ g n` eventually ⇒ `DTIME f ⊂ DTIME (g + 1)`), `time_hierarchy_of_pos`, `P_ssubset_EXP` (`TimeHierarchy/`) | Received in P0; book strength deferred (§2.1) |
+| **Thm 3.1** time hierarchy | Exists at **`f²` strength**: `Complexity.time_hierarchy` (`A·(f n + n + 1)² ≤ g n` eventually ⇒ `DTIME f ⊂ DTIME (g + 1)`), `time_hierarchy_of_pos`, `P_ssubset_EXP` (`TimeHierarchy/`) | Received in P0; **strengthened to book form via Hennie-Stearns** (user decision 2026-10-08, §2.1) |
 | Def 3.4 oracle TMs | Raw model exists: `Turing.OracleTM`, `WellFormed`, lockstep embeddings (`TuringMachine/Oracle.lean`, audited ch-1) | Core: bundle + oracle NDTM (P3.1) |
 | Def 3.5 `Pᴼ`, `NPᴼ` | Missing | Core (P3.1) |
 | Ex 3.6(1) `co-SAT ∈ P^SAT`; (2) `O ∈ P ⇒ Pᴼ = P` | Missing | Core (P3.1) |
 | Ex 3.6(3) `P^EXPCOM = NP^EXPCOM = EXP` | Missing | Depends on CH34-Q4 |
 | **Thm 3.7** Baker-Gill-Solovay | Missing | Core (P3.2) |
 | Ex 3.5 a non-time-constructible function | Missing | Core (P3.2, cheap) |
-| **Thm 3.2** nondeterministic time hierarchy (lazy diagonalization), with Ex 2.6 universal NDTM | Missing (no NDTM codes, no universal NDTM) | Core-late (P3.3) |
+| **Thm 3.2** nondeterministic time hierarchy (lazy diagonalization), with Ex 2.6 universal NDTM | Missing (no NDTM codes, no universal NDTM) | **Core, mandatory** (user decision 2026-10-08; P3.3). Overhead strength of the universal NDTM: open (CH34-Q8) |
 | **Thm 3.3** Ladner, its Claim, and Ex 3.6(a)(b) | Missing | Core-late (P3.4) |
 | Ex 3.1, 3.3, 3.4, 3.7-3.9; relativized hierarchy statements; Remark 3.8 and §3.4.1 (expository) | — | Deferred |
 
@@ -68,15 +68,22 @@ first candidates to descope), **deferred** (backlog).
 
 ## 2. Foundation decisions (proposed; each is seeded to the relevant audit)
 
-### 2.1 Thm 3.1 is received at `f²` strength
+### 2.1 Thm 3.1 is received at `f²` strength, then strengthened to book form
 
 Hydroxyi's theorem consumes the linear-time `Turing.universal` over one-work-tape codes,
 so converting an arbitrary machine to that normal form costs a square. The book's
 `f log f` needs the Hennie-Stearns `O(T log T)` simulation ([AB09] §1.7), which the
 Chapter-1 plan deferred as phase 5. The received form still yields `P ⊊ EXP`, but **not**
-the book's illustrative `DTIME(n) ⊊ DTIME(n^1.5)`, since `n²` exceeds `n^1.5`. This must be
-stated in the docstrings as delivered strength, never as Thm 3.1 verbatim. Book strength
-stays deferred behind §1.7 (CH34-Q3).
+the book's illustrative `DTIME(n) ⊊ DTIME(n^1.5)`, since `n²` exceeds `n^1.5`.
+
+**Decision (user, 2026-10-08, CH34-Q3): strengthen.** Before the chapter-3/4 fill
+epochs, the campaign builds (a) the Hennie-Stearns `k`-work-tapes-to-2 conversion at
+`C·T log T` ([AB09] §1.7: parallel tracks, buffer zones of size `2^i`, amortized
+shifts), and (b) a universal machine over *two-work-tape* codes at linear overhead.
+Hydroxyi's diagonal argument then re-derives Thm 3.1 at `f log f`, and Theorem 1.9
+reaches book strength, closing chapter 1's deferred phase 5. Until that lands, the
+received form is documented as delivered strength, never as Thm 3.1 verbatim. Both
+constructions are consumers of the machine-routine layer (§4a).
 
 ### 2.2 Oracle classes
 
@@ -231,11 +238,33 @@ Chapter 4, then Chapter 3's two heavy diagonalizations.
 
 That is roughly 75 new audited statements, against Chapter 2's 59.
 
+### 4a. Pre-campaign infrastructure (user decisions 2026-10-08)
+
+The machine-routine layer and its two headline consumers run **in parallel with the
+statement phases**, and gate only the fill epochs:
+
+1. **The routine layer** (`machine-library-design.md` §12, to be written): bank
+   embedding, seam composition, catalog promotion — **scoped to amply support the
+   chapter-1/2 retrofit**, not just the new consumers. Its catalog therefore covers the
+   privately re-derived bank / relocation / dispatch / frame families of `Build/*`,
+   `Universal*`, and `CookLevin/Hardness.lean` (the backlog retrofit entry's list), and
+   **every routine carries a space cost alongside its time cost** from the start, so
+   chapter 4 and the space statements (P4.x) can consume it without a second pass. The
+   P0/P4.1 space statements are drafted while the layer is being designed, precisely so
+   they can inform what else the layer needs (CH34-Q1).
+2. **Hennie-Stearns + the two-work-tape universal machine** (§2.1): the layer's first
+   new consumers, giving Thms 1.9 and 3.1 at book strength. The two-tape universal is a
+   rewrite of `Universal.lean`, making it the natural retrofit pilot. Candidate bonus,
+   to be checked at design time: carrying space bounds through it may also yield the
+   space-efficient universal machine that Thm 4.8 needs (Ex 4.1).
+3. **The chapter-1/2 retrofit** itself is *not* a gate for chapters 3-4: public surfaces
+   are frozen, so retrofit batches run alongside the chapter-3/4 phases under the
+   standard sweep + traversal + audit protocol.
+
 **Fill campaign.** Fill work starts after the gates close, in epochs ordered by risk as
 before. Two infrastructure prerequisites gate the machine-heavy epochs:
 
-- the machine-routine layer (backlog §2; `machine-library-design.md` §12, not yet
-  written), whose 2026-10-06 placement "before chapter 3" CH34-Q1 asks to refine;
+- the machine-routine layer as scoped above;
 - the ARM extensions of §2.5.
 
 **Integration with `main`.** Proposed: one PR per closed chapter (Chapter 3's light half
@@ -290,28 +319,34 @@ build.
 
 ## 7. Open design questions (human review required)
 
-These go into `backlog.md` §1 once the plan is approved. The IDs are stable.
+Answered 2026-10-08 by the maintainer except where marked open; the register below is
+the record, and `backlog.md` §1 gets only the open ones.
 
-1. **CH34-Q1 — sequencing against the machine-routine layer.** The 2026-10-06 decision put
-   the routine layer before Chapter 3. Statement phases need no routines, so the proposal
-   is to run P0-P3.2 now and put §12 before the first *fill* epoch. Separately, §12's
-   catalog should record space costs alongside time, so Chapter 4 does not force a
-   retrofit. Provisional: both.
-2. **CH34-Q2 — alignment with Hydroxyi.** Should we extend `SpaceComplexity/` and
-   `LogProg.ARM` in place (with their review) or build sibling campaign modules that import
-   them? Who owns the ARM extensions? What came out of the 2026-10-07 meeting on
-   "ch3/TimeHierarchy alignment"? Provisional: extend in place, co-owned.
-3. **CH34-Q3 — Thm 3.1 strength.** Accept the received `f²` form as the campaign's Thm 3.1
-   (book strength deferred to §1.7), or schedule Hennie-Stearns? Provisional: accept.
-4. **CH34-Q4 — the `A` half of Thm 3.7.** Book route (`EXPCOM` with Ex 3.6(3), a summit)
-   or self-referential oracle (machine-light, a recorded deviation)? Provisional:
-   self-referential, with Ex 3.6(3) deferred.
-5. **CH34-Q5 — QBF matrix.** CNF matrix (reuse) or a general-formula carrier (new, shared
-   with Chapter 5)? Provisional: CNF.
-6. **CH34-Q6 — tiers.** Are Thm 3.2 and Thm 3.3 core-late as proposed, or mandatory?
-   Provisional: core-late.
-7. **CH34-Q7 — `NSPACE` halting convention.** All branches halt (provisional) or no halting
-   requirement (Remark 4.3's main text)?
+1. **CH34-Q1 — sequencing against the machine-routine layer.** **Answered: yes to
+   both.** Statement phases run in parallel with the §12 design; the space statements
+   are drafted early to inform the layer's scope; the catalog records space costs
+   alongside time. Addendum (same date): the layer is scoped to **amply support the
+   chapter-1/2 retrofit** as well (§4a).
+2. **CH34-Q2 — alignment with Hydroxyi.** **Answered: extend in place, co-owned.**
+3. **CH34-Q3 — Thm 3.1 strength.** **Answered: strengthen** — Hennie-Stearns + the
+   two-work-tape universal before the fill epochs (§2.1, §4a).
+4. **CH34-Q4 — the `A` half of Thm 3.7.** **Open — explanation delivered, awaiting
+   confirmation.** Correction to the first draft: the "self-referential" oracle
+   `A = K(A) = {⟨i, x, 0ⁿ⟩ : NPᵢᴬ accepts x in < n steps}` is **the original proof** —
+   Baker-Gill-Solovay 1975, Lemma 1 + Theorem 1 (SIAM J. Comput. 4(4), pp. 433-434;
+   well-defined because a `< n`-step run queries only strings shorter than `n`); their
+   Theorem 2 is the PSPACE-complete-oracle variant, and [AB09]'s `EXPCOM` is a textbook
+   substitution. So the machine-light route follows the primary source, cited [BGS75],
+   with [AB09]'s Ex 3.6(3) deferred. One detail for the P3.1 audit: [BGS75] requires
+   the polynomial clock to hold under *every* oracle, which constrains how `Pᴼ`/`NPᴼ`
+   quantify the time bound.
+5. **CH34-Q5 — QBF matrix.** **Answered: CNF.**
+6. **CH34-Q6 — tiers.** **Answered: Thm 3.2 mandatory; Thm 3.3 (Ladner) core-late.**
+7. **CH34-Q7 — `NSPACE` halting convention.** **Answered: all branches halt.**
+8. **CH34-Q8 — universal-NDTM overhead (new, open).** Thm 3.2 at book strength
+   (`f(n+1) = o(g(n))`) needs a *linear*-overhead universal NDTM (guess-then-verify,
+   Book-Greibach style — another routine-layer consumer); a polynomial-overhead one
+   delivers only `f(n+1)^c = o(g(n))`. Which strength is required?
 
 ## 8. Decision log
 
@@ -321,4 +356,7 @@ These go into `backlog.md` §1 once the plan is approved. The IDs are stable.
 | Existing sorry-free Chapter-3/4 material on `main` (Hydroxyi, `f70c57c2`) is received and audited (P0), never duplicated | Proposed |
 | Prior-art survey (2026-10-08): repository inventory (§1 tables); Bonnet lax-434930/362205/783278, cslib `ConfigBound`, Toruńczyk lax-218471 (§5) | Recorded |
 | Chapter 4 machine work goes through program layers (`LogProg.ARM`, `CounterProg`, proposed extensions §2.5) | Proposed |
-| §2 foundation choices and §7 provisional answers | Proposed — awaiting maintainer review |
+| §2 foundation choices and §7 provisional answers | **Answered 2026-10-08** (user): Q1 yes to both, Q2 extend in place co-owned, Q3 strengthen, Q5 CNF, Q6 Thm 3.2 mandatory / Ladner core-late, Q7 all branches halt. Q4 and Q8 open |
+| Routine layer set up in parallel with the statement phases, scoped to **amply support the ch-1/2 retrofit** (full bank/relocation/dispatch/frame catalog), with space costs throughout; Hennie-Stearns + two-tape universal as first consumers; retrofit itself not a gate (§4a) | Decided (user, 2026-10-08) |
+| CH34-Q4 research (2026-10-08): the machine-light oracle `A = K(A)` **is** [BGS75]'s own Theorem 1 (verified against the scanned original, pp. 433-434), so no deviation from the primary source; [AB09]'s `EXPCOM` is the substitution. Awaiting maintainer confirmation of the route | Recorded |
+| Citation audit (2026-10-08), prompted by the maintainer: no missing code-inspiration citation found in campaign-authored Lean code — vendored cslib files carry full headers (pin `a3747758`), `Composition.lean` cites [Balbach22], `Build/*` + `machine-library-design.md` §1-11 were frozen 2026-10-03, two days **before** the first Bonnet examination (2026-10-05, scratchpad-only, never imported; backlog records the after-the-fact cost comparison as convergence). No brief ever carried external code. Hydroxyi's `TimeHierarchy//SpaceComplexity//PolyHierarchy/` trees cite only [AB09]; two design similarities flagged to *ask* (not assertions): `LogProg` compiler vs lax-434930's `TimeCompiler`; `ConfigCount.core` vs cslib `ConfigBound`'s `Cfg.core` (upstream 2026-09-14). §12 citation duty ([lax-434930], Apache-2.0) remains binding when that design is written | Recorded |
