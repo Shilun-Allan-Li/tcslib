@@ -78,7 +78,7 @@ decides membership with the class's acceptance-probability profile.
 * **The weak threshold of Lemma 7.9.** The book's success threshold
   `1/2 + |x|^{-c}` exceeds `1` for `|x| ≤ 1`, making the literal class
   `BPP_{n^{-c}}` empty; we require advantage `min (1/6) ((|x|+1)^{-c})`
-  instead, which agrees with the book's (up to the `n+1` shift) for
+  instead, which for `c ≥ 1` agrees with the book's (up to the `n+1` shift) for
   `|x| ≥ 5` and makes `BPP ⊆ BPP_{n^{-c}}` hold as the book intends.
 * The constant `2/3` follows [AB09, Defs 7.1/7.6]; `1/2` in `InZPP` is the
   conventional choice (any constant in `(0,1)` gives the same class, by the
@@ -303,7 +303,8 @@ produced by error reduction.  The exponent `(|x|+1)^d + 1 ≥ |x|^d`
 strengthens [AB09, Thm 7.10]'s `2^{-|x|^d}` uniformly in `|x|`, and the
 `+ 1` keeps the success threshold at least `3/4 > 2/3` at *every* length
 and every `d` (including `d = 0` and the empty input), so
-`InBPPStrong E d L → InBPP E L` holds definitionally, with no closure
+`InBPPStrong E d L → InBPP E L` follows directly using the same witnesses
+(via the arithmetic inequality `2/3 ≤ 1 − (1/2)^{(n+1)^d + 1}`), with no closure
 assumption on `E`.  (With the bare exponent `(|x|+1)^d`, a fair coin would
 satisfy the definition at `d = 0` for every language, and at `|x| = 0` for
 every `d` — a finite exception that cannot be patched for an abstract
@@ -319,8 +320,8 @@ def InBPPStrong (d : ℕ) (L : Language Bool) : Prop :=
 
 /-- **Error reduction** ([AB09, Thm 7.10]).  A language decidable with an
 inverse-polynomial advantage is decidable with success probability
-`1 − 2^{-(|x|+1)^d}`, for every constant `d` — relative to `E`, assuming `E`
-is closed under polynomial majority repetition.
+`1 − 2^{-((|x|+1)^d + 1)}`, for every constant `d` — relative to `E`,
+assuming `E` is closed under polynomial majority repetition.
 
 **Proof sketch.** Run the weak verifier `k(n) = 26·(n+1)^{2c+d}` times on
 independent blocks of randomness and take the majority
