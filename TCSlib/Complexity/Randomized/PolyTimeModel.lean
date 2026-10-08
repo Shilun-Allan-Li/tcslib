@@ -86,11 +86,33 @@ theorem polyTimeModel_closedUnderRace : ClosedUnderRace polyTimeModel := by
   sorry
 
 /-- Polynomial time is closed under the output-postprocessing construction.
-**Proof sketch.** The `some b`-set of `M` is literally one of the two
-`P`-languages witnessing `Eff M`. -/
+**Proof.** The `some b`-set of `M` is literally one of the two
+`P`-languages witnessing `Eff M`, and the `some (!b)`-set of the resulting
+Boolean verifier is its complement (`Complexity.compl_mem_P`). -/
 theorem polyTimeModel_closedUnderAnswerIs :
     ClosedUnderAnswerIs polyTimeModel := by
-  sorry
+  rintro M b ⟨V₁, V₀, hV₁, hV₀, hM⟩
+  cases b
+  · refine ⟨V₀, V₀ᶜ, hV₀, compl_mem_P hV₀, fun x r => ?_⟩
+    have h := (hM x r).2
+    constructor
+    · show some (decide (M x r = some false)) = some true ↔ _
+      simp only [Option.some.injEq, decide_eq_true_eq]
+      exact h
+    · show some (decide (M x r = some false)) = some false ↔ _
+      simp only [Option.some.injEq, decide_eq_false_iff_not]
+      rw [h]
+      exact Iff.rfl
+  · refine ⟨V₁, V₁ᶜ, hV₁, compl_mem_P hV₁, fun x r => ?_⟩
+    have h := (hM x r).1
+    constructor
+    · show some (decide (M x r = some true)) = some true ↔ _
+      simp only [Option.some.injEq, decide_eq_true_eq]
+      exact h
+    · show some (decide (M x r = some true)) = some false ↔ _
+      simp only [Option.some.injEq, decide_eq_false_iff_not]
+      rw [h]
+      exact Iff.rfl
 
 /-- Polynomial time is closed under polynomial majority repetition.
 **Proof sketch.** A counting loop over `polyLen a' k' |x|` blocks, each
@@ -108,9 +130,14 @@ theorem polyTimeModel_closedUnderAny : ClosedUnderAny polyTimeModel := by
   sorry
 
 /-- Polynomial time is closed under negating the verifier's answer.
-**Proof sketch.** Swap the two witnessing `P`-languages. -/
+**Proof.** Swap the two witnessing `P`-languages. -/
 theorem polyTimeModel_closedUnderNot : ClosedUnderNot polyTimeModel := by
-  sorry
+  rintro M ⟨V₁, V₀, hV₁, hV₀, hM⟩
+  refine ⟨V₀, V₁, hV₀, hV₁, fun x r => ?_⟩
+  have h := hM x r
+  simp only [boolVerifier, Option.some.injEq] at h ⊢
+  rw [Bool.not_eq_true', Bool.not_eq_false']
+  exact ⟨h.2, h.1⟩
 
 /-- Polynomial time recognizes the shifted-OR construction.
 **Proof sketch.** Decode the nested pair, slice `u` into its
