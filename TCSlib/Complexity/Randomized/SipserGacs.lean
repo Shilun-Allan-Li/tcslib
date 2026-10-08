@@ -98,16 +98,18 @@ the hypothesis `hNot` is used).  Given `L ∈ BPP` with a verifier using
 `majority_error_le`) with `13·m₀` repetitions to error at most `2^{−m₀}`;
 the amplified verifier `M` uses `m = 13·m₀²` random bits.  Let
 `S_x ⊆ {0,1}^m` be its accepting set, so `|S_x| ≥ (1−2^{−m₀})2^m` if
-`x ∈ L` and `|S_x| ≤ 2^{−m₀}2^m` otherwise.  Take `k = 13·m₀ + 1` shifts.
-(Claim 1) if `|S_x| ≤ 2^{m−m₀}` then no `k` shifts of `S_x` cover
-`{0,1}^m`: `|⋃ᵢ (S_x ⊕ uᵢ)| ≤ k·2^{m−m₀} < 2^m` since `13m₀ + 1 < 2^{m₀}`
-(which holds for every length because `m₀ ≥ 7` — the book's choice
+`x ∈ L` and `|S_x| ≤ 2^{−m₀}2^m` otherwise.  Take `k = 14·m₀` shifts —
+note `14·m₀ = (14a₀)·(n+1)^{k₀}` *is* a `polyLen` schedule, as the
+`shiftOrVerifier` closure requires.  (Claim 1) if `|S_x| ≤ 2^{m−m₀}` then
+no `k` shifts of `S_x` cover `{0,1}^m`: `|⋃ᵢ (S_x ⊕ uᵢ)| ≤ k·2^{m−m₀} <
+2^m` since `14m₀ < 2^{m₀}` (which holds for every length because `m₀ ≥ 7`:
+`98 < 128` and the right side doubles per step — the book's choice
 `k = ⌈m/n⌉ + 1` needs `k < 2^n` and fails at small `n`, so we balance
 against `m₀` instead of `n`).  (Claim 2) if `|S_x| ≥ (1−2^{−m₀})2^m` then
 random shifts cover: for fixed `v`,
 `Pr_{u₁,…,u_k}[∀ i, v ⊕ uᵢ ∉ S_x] ≤ 2^{−m₀k} < 2^{−m}` since
-`m₀·k = 13m₀² + m₀ > m`, so a union bound over the `2^m` strings `v` leaves
-a positive-probability choice of shifts covering everything (the
+`m₀·k = 14m₀² > 13m₀² = m`, so a union bound over the `2^m` strings `v`
+leaves a positive-probability choice of shifts covering everything (the
 probabilistic method).  Hence
 `x ∈ L ↔ ∃ u₁,…,u_k ∀ v, ⋁ᵢ M(x, v ⊕ uᵢ)`, which is the `Σ₂`-shape
 `shiftOrVerifier` expresses; all the lengths involved are `polyLen`

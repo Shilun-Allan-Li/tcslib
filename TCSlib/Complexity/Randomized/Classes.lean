@@ -276,10 +276,12 @@ theorem inZPP_iff_inRP_and_inCoRP (hRace : ClosedUnderRace E)
   sorry
 
 /-- The advantage demanded of a weak `BPP` verifier on inputs of length `n`:
-`min (1/6) ((n+1)^{-c})`.  For `n ≥ 5` this is the book's `n^{-c}` up to the
-`n+1` shift; the cap `1/6` keeps the threshold `1/2 + weakAdv c n ≤ 2/3`
-attainable at small lengths, where the book's literal `1/2 + n^{-c}`
-exceeds `1` (see the module docstring's **Deviations**). -/
+`min (1/6) ((n+1)^{-c})`.  For `c ≥ 1` and `n ≥ 5` this is the book's
+`n^{-c}` up to the `n+1` shift (for `c = 0` both the book's `n^{-c}` and
+`(n+1)^{-c}` are the constant `1`, and the cap takes over); the cap `1/6`
+keeps the threshold `1/2 + weakAdv c n ≤ 2/3` attainable at small lengths,
+where the book's literal `1/2 + n^{-c}` exceeds `1` (see the module
+docstring's **Deviations**). -/
 def weakAdv (c n : ℕ) : ℚ :=
   min (1/6) (((n : ℚ) + 1)⁻¹ ^ c)
 
@@ -296,16 +298,23 @@ def InBPPWeak (c : ℕ) (L : Language Bool) : Prop :=
       (x ∉ L → 1/2 + weakAdv c x.length ≤
         randProb (polyLen a k x.length) fun r => M x r = false)
 
-/-- `L ∈ BPP` with error at most `2^{-(|x|+1)^d}` — the amplified form
-produced by error reduction.  (The exponent `(|x|+1)^d ≥ |x|^d` strengthens
-[AB09, Thm 7.10]'s `2^{-|x|^d}` uniformly in `|x|`.) -/
+/-- `L ∈ BPP` with error at most `2^{-((|x|+1)^d + 1)}` — the amplified form
+produced by error reduction.  The exponent `(|x|+1)^d + 1 ≥ |x|^d`
+strengthens [AB09, Thm 7.10]'s `2^{-|x|^d}` uniformly in `|x|`, and the
+`+ 1` keeps the success threshold at least `3/4 > 2/3` at *every* length
+and every `d` (including `d = 0` and the empty input), so
+`InBPPStrong E d L → InBPP E L` holds definitionally, with no closure
+assumption on `E`.  (With the bare exponent `(|x|+1)^d`, a fair coin would
+satisfy the definition at `d = 0` for every language, and at `|x| = 0` for
+every `d` — a finite exception that cannot be patched for an abstract
+model.) -/
 def InBPPStrong (d : ℕ) (L : Language Bool) : Prop :=
   ∃ (M : List Bool → List Bool → Bool) (a k : ℕ),
     E.Eff (boolVerifier M) ∧
     ∀ x : List Bool,
-      (x ∈ L → 1 - (1/2 : ℚ) ^ (x.length + 1) ^ d ≤
+      (x ∈ L → 1 - (1/2 : ℚ) ^ ((x.length + 1) ^ d + 1) ≤
         randProb (polyLen a k x.length) fun r => M x r = true) ∧
-      (x ∉ L → 1 - (1/2 : ℚ) ^ (x.length + 1) ^ d ≤
+      (x ∉ L → 1 - (1/2 : ℚ) ^ ((x.length + 1) ^ d + 1) ≤
         randProb (polyLen a k x.length) fun r => M x r = false)
 
 /-- **Error reduction** ([AB09, Thm 7.10]).  A language decidable with an
@@ -313,14 +322,14 @@ inverse-polynomial advantage is decidable with success probability
 `1 − 2^{-(|x|+1)^d}`, for every constant `d` — relative to `E`, assuming `E`
 is closed under polynomial majority repetition.
 
-**Proof sketch.** Run the weak verifier `k(n) = 13·(n+1)^{2c+d}` times on
+**Proof sketch.** Run the weak verifier `k(n) = 26·(n+1)^{2c+d}` times on
 independent blocks of randomness and take the majority
 (`majorityVerifier`).  The votes are i.i.d. Bernoulli with success
 probability `p ≥ 1/2 + ε` where `ε = weakAdv c n ≥ (n+1)^{-c}/6`, so by
 Hoeffding's inequality (`Randomized.majority_error_le` in
 `Randomized.ErrorReduction`, transported from the product measure to the
 counting probability `randProb`) the majority errs with probability at most
-`e^{−2ε²k} ≤ e^{−13(n+1)^d/18} ≤ 2^{-(n+1)^d}`. -/
+`e^{−2ε²k} ≤ e^{−26(n+1)^d/18} ≤ 2^{-((n+1)^d + 1)}`. -/
 theorem bpp_error_reduction (hMaj : ClosedUnderMajority E) {c : ℕ}
     {L : Language Bool} (hL : InBPPWeak E c L) (d : ℕ) :
     InBPPStrong E d L := by

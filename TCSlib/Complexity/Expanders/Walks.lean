@@ -132,13 +132,18 @@ that if `λ, β < 1` are constants then so is `(1−λ)√β + λ`.  The hypothe
 [AB09, Def 7.31]; without it the base `(1−λ)√β + λ` can be negative and the
 bound false.)
 
-**Proof sketch.** With `B̂` the diagonal projection that zeroes coordinates
-outside `B`, the probability equals `|(B̂A)^k B̂𝟙|₁`.  By Lemma 7.40,
-`B̂A = B̂((1−λ)J + λC)`, so `‖B̂A‖ ≤ (1−λ)‖B̂J‖ + λ‖B̂C‖ ≤ (1−λ)√β + λ`,
-since `J`'s image consists of uniform vectors of which `B̂` keeps a
-`β`-fraction of coordinates, and `‖B̂‖, ‖C‖ ≤ 1`.  As `‖B̂𝟙‖₂ = √β/√N`, we
-get `‖(B̂A)^k B̂𝟙‖₂ ≤ ((1−λ)√β + λ)^k √β/√N`, and `|𝐯|₁ ≤ √N ‖𝐯‖₂`
-(Note 7.24) concludes, dropping the extra factor `√β ≤ 1`. -/
+**Proof sketch.** If `β ≥ 1` the bound is trivial: `lam ≤ 1` makes the base
+`(1−λ)√β + λ ≥ (1−λ) + λ = 1`, so the right-hand side is at least `1` and
+every probability qualifies.  So assume `β < 1`.  With `B̂` the diagonal
+projection that zeroes coordinates outside `B`, the probability equals
+`|(B̂A)^k B̂𝟙|₁`.  By Lemma 7.40, `B̂A = B̂((1−λ)J + λC)`, so
+`‖B̂A‖ ≤ (1−λ)‖B̂J‖ + λ‖B̂C‖ ≤ (1−λ)√β + λ`, since `J`'s image consists of
+uniform vectors of which `B̂` keeps `|B| ≤ βN` coordinates, and
+`‖B̂‖, ‖C‖ ≤ 1`.  As `‖B̂𝟙‖₂ = √|B|/N ≤ √β/√N` (the hypothesis `hB` is an
+inequality, not an equality), we get
+`‖(B̂A)^k B̂𝟙‖₂ ≤ ((1−λ)√β + λ)^k √β/√N`, and `|𝐯|₁ ≤ √N ‖𝐯‖₂`
+(Note 7.24) concludes, dropping the extra factor `√β`, which is `≤ 1` in
+the case `β < 1` under consideration. -/
 theorem walk_all_mem_le {A : Matrix (Fin n) (Fin n) ℝ}
     (hA : IsSymmStochastic A) {lam : ℝ} (hlam : lambda A ≤ lam)
     (hlam0 : 0 ≤ lam) (hlam1 : lam ≤ 1) {B : Finset (Fin n)} {β : ℝ}
