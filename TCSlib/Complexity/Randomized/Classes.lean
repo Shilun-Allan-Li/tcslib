@@ -5,7 +5,15 @@ Authors: TCSlib Contributors
 -/
 import Mathlib.Computability.Language
 import Mathlib.Data.Fintype.Pi
+import Mathlib.Data.Fintype.BigOperators
 import Mathlib.Data.Rat.Defs
+import Mathlib.Algebra.Order.Field.Basic
+import Mathlib.Logic.Equiv.Fin.Basic
+import Mathlib.Data.List.OfFn
+import Mathlib.Tactic.Positivity
+import Mathlib.Tactic.FieldSimp
+import Mathlib.Tactic.Linarith
+import Mathlib.Tactic.Ring
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -108,6 +116,119 @@ theorem randProb_congr {m : ℕ} {A B : List Bool → Prop} [DecidablePred A]
     randProb m A = randProb m B := by
   unfold randProb
   rw [Finset.filter_congr fun r _ => h r]
+
+/-- Probabilities are nonnegative. -/
+theorem randProb_nonneg {m : ℕ} {A : List Bool → Prop} [DecidablePred A] :
+    0 ≤ randProb m A := by
+  unfold randProb
+  positivity
+
+/-- There are `2^m` random strings of length `m`. -/
+theorem card_univ_bitstrings (m : ℕ) :
+    (univ : Finset (Fin m → Bool)).card = 2 ^ m := by
+  rw [Finset.card_univ, Fintype.card_fun, Fintype.card_bool, Fintype.card_fin]
+
+/-- Probabilities are at most one. -/
+theorem randProb_le_one {m : ℕ} {A : List Bool → Prop} [DecidablePred A] :
+    randProb m A ≤ 1 := by
+  unfold randProb
+  rw [div_le_one (by positivity)]
+  calc ((univ.filter fun r : Fin m → Bool => A (List.ofFn r)).card : ℚ)
+      ≤ ((univ : Finset (Fin m → Bool)).card : ℚ) := by
+        exact_mod_cast Finset.card_filter_le _ _
+    _ = 2 ^ m := by rw [card_univ_bitstrings]; push_cast; rfl
+
+/-- Probability is monotone in the event. -/
+theorem randProb_mono {m : ℕ} {A B : List Bool → Prop} [DecidablePred A]
+    [DecidablePred B]
+    (h : ∀ r : Fin m → Bool, A (List.ofFn r) → B (List.ofFn r)) :
+    randProb m A ≤ randProb m B := by
+  unfold randProb
+  gcongr
+  exact h _
+
+/-- Complement rule: `Pr[¬A] = 1 − Pr[A]`. -/
+theorem randProb_not {m : ℕ} (A : List Bool → Prop) [DecidablePred A] :
+    randProb m (fun l => ¬ A l) = 1 - randProb m A := by
+  have hsplit := Finset.filter_card_add_filter_neg_card_eq_card
+    (s := (univ : Finset (Fin m → Bool))) (p := fun r => A (List.ofFn r))
+  rw [card_univ_bitstrings] at hsplit
+  have h2 : ((2 : ℚ) ^ m) ≠ 0 := by positivity
+  have hcast : ((univ.filter fun r : Fin m → Bool => ¬ A (List.ofFn r)).card : ℚ)
+      = 2 ^ m - ((univ.filter fun r : Fin m → Bool => A (List.ofFn r)).card : ℚ) := by
+    have h3 : ((univ.filter fun r : Fin m → Bool => A (List.ofFn r)).card : ℚ)
+        + ((univ.filter fun r : Fin m → Bool => ¬ A (List.ofFn r)).card : ℚ)
+        = 2 ^ m := by
+      exact_mod_cast hsplit
+    linarith
+  show ((univ.filter fun r : Fin m → Bool => ¬ A (List.ofFn r)).card : ℚ) / 2 ^ m
+      = 1 - randProb m A
+  unfold randProb
+  rw [hcast, sub_div, div_self h2]
+
+/-- The certain event has probability one. -/
+theorem randProb_true {m : ℕ} : randProb m (fun _ => True) = 1 := by
+  unfold randProb
+  rw [Finset.filter_true_of_mem fun _ _ => trivial, card_univ_bitstrings]
+  push_cast
+  exact div_self (by positivity)
+
+/-- Every list of length `m` arises from a tuple of `m` bits. -/
+theorem exists_ofFn_eq {l : List Bool} {m : ℕ} (h : l.length = m) :
+    ∃ r : Fin m → Bool, l = List.ofFn r := by
+  refine ⟨fun i => l[(i : ℕ)]'(by omega), ?_⟩
+  apply List.ext_getElem
+  · simp [h]
+  · intro i h1 h2
+    simp
+
+/-- **Independence of disjoint segments**: if the event is a conjunction of a
+condition on the first `m₁` bits and a condition on the remaining `m₂` bits,
+the probability factors. -/
+theorem randProb_split (m₁ m₂ : ℕ) (A B : List Bool → Prop)
+    [DecidablePred A] [DecidablePred B] :
+    randProb (m₁ + m₂) (fun r => A (r.take m₁) ∧ B (r.drop m₁)) =
+      randProb m₁ A * randProb m₂ B := by
+  unfold randProb
+  rw [div_mul_div_comm, ← pow_add, ← Nat.cast_mul]
+  congr 2
+  rw [← Finset.card_product]
+  refine (Finset.card_bij (fun uv _ => Fin.append uv.1 uv.2) ?_ ?_ ?_).symm
+  · rintro ⟨u, v⟩ huv
+    rw [Finset.mem_product, Finset.mem_filter, Finset.mem_filter] at huv
+    rw [Finset.mem_filter]
+    refine ⟨Finset.mem_univ _, ?_, ?_⟩
+    · rw [List.ofFn_fin_append, List.take_left' (by simp)]
+      exact huv.1.2
+    · rw [List.ofFn_fin_append, List.drop_left' (by simp)]
+      exact huv.2.2
+  · intro uv huv uv' huv' h
+    exact (Fin.appendEquiv m₁ m₂).injective (by exact h)
+  · intro r hr
+    rw [Finset.mem_filter] at hr
+    obtain ⟨-, hA, hB⟩ := hr
+    have hdec : Fin.append (fun i => r (Fin.castAdd m₂ i))
+        (fun i => r (Fin.natAdd m₁ i)) = r := Fin.append_castAdd_natAdd
+    refine ⟨(fun i => r (Fin.castAdd m₂ i), fun i => r (Fin.natAdd m₁ i)),
+      ?_, hdec⟩
+    rw [Finset.mem_product, Finset.mem_filter, Finset.mem_filter]
+    rw [← hdec, List.ofFn_fin_append] at hA hB
+    rw [List.take_left' (by simp)] at hA
+    rw [List.drop_left' (by simp)] at hB
+    exact ⟨⟨Finset.mem_univ _, hA⟩, Finset.mem_univ _, hB⟩
+
+/-- A condition on only the first `m₁ ≤ m` bits has the same probability over
+`m`-bit strings as over `m₁`-bit strings: padding bits are ignored. -/
+theorem randProb_take {m₁ m : ℕ} (h : m₁ ≤ m) (A : List Bool → Prop)
+    [DecidablePred A] :
+    randProb m (fun r => A (r.take m₁)) = randProb m₁ A := by
+  obtain ⟨m₂, rfl⟩ := Nat.exists_eq_add_of_le h
+  calc randProb (m₁ + m₂) (fun r => A (r.take m₁))
+      = randProb (m₁ + m₂) (fun r => A (r.take m₁) ∧ (fun _ => True) (r.drop m₁)) :=
+        randProb_congr fun r => by simp
+    _ = randProb m₁ A * randProb m₂ (fun _ => True) :=
+        randProb_split m₁ m₂ A (fun _ => True)
+    _ = randProb m₁ A := by rw [randProb_true, mul_one]
 
 /-- The canonical polynomial length schedule `n ↦ a·(n+1)^k` for random
 strings — a concrete, computable stand-in for [AB09, Def 7.4]'s "polynomial
