@@ -128,6 +128,14 @@ theorem toCLM_smul (c : ℝ) (A : Matrix (Fin n) (Fin n) ℝ) :
   rw [Finset.mul_sum]
   exact Finset.sum_congr rfl fun j _ => by ring
 
+/-- `toCLM` commutes with matrix addition. -/
+theorem toCLM_add (A B : Matrix (Fin n) (Fin n) ℝ) :
+    toCLM (A + B) = toCLM A + toCLM B := by
+  refine ContinuousLinearMap.ext fun v => PiLp.ext fun i => ?_
+  show ∑ j, (A i j + B i j) * v j = (∑ j, A i j * v j) + ∑ j, B i j * v j
+  rw [← Finset.sum_add_distrib]
+  exact Finset.sum_congr rfl fun j _ => by ring
+
 /-- `toCLM` commutes with matrix subtraction. -/
 theorem toCLM_sub (A B : Matrix (Fin n) (Fin n) ℝ) :
     toCLM (A - B) = toCLM A - toCLM B := by
