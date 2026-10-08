@@ -827,9 +827,13 @@ for here).
   the later refactor toward the symmetrical per-theme layout (option (c)),
   via the D7 split window.
 * **12.3** Space retro-annotation — **answered (user, 2026-10-08): the refined
-  now-option**: primitives (P1-P18), wrappers (W1-W3) and the loop (L) get
-  `spaceUsed` theorems in this increment; the emitter combinators (E1-E4′)
-  stay lazy until a space consumer appears.
+  now-option**: the primitives as realized (P1-P15), wrappers (W1-W3) and the
+  loop (L) get `spaceUsed` theorems in this increment; the emitter combinators
+  (E1-E4′) stay lazy until a space consumer appears, **and the E3′ stream rows
+  P16-P18 ride with that lazy scope** (their only consumers are the emitters —
+  scope clarification recorded at skeleton time, 2026-10-08, flagged to the
+  §12 statement-gate audit and reversible there if the gate reads the
+  original "P1-P18" wording as binding).
 * **12.4** R1 emission policy — **answered (user, 2026-10-08): two named
   transformers** (suppressing and forwarding) over a shared private core, so
   each spec stays crisp and downstream applications cite whichever fits.

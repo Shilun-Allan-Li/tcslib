@@ -31,6 +31,10 @@ import TCSlib.Complexity.Formulas
 import TCSlib.Complexity.CookLevin
 import TCSlib.Complexity.ClassNP
 import TCSlib.Complexity.ClassOracle
+import TCSlib.Complexity.Diagonalization
+import TCSlib.Complexity.TuringMachine.Build.Embed
+import TCSlib.Complexity.TuringMachine.Build.Seam
+import TCSlib.Complexity.TuringMachine.Build.Catalog
 import TCSlib.Complexity.PolyHierarchy
 import TCSlib.Complexity.TimeHierarchy
 import TCSlib.Complexity.SpaceComplexity
