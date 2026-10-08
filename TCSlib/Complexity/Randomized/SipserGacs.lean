@@ -27,8 +27,9 @@ whose translates of `S_x` cover `{0,1}^m`" — distinguish the two cases.
   `(u, v) ↦ ⋁_{i ≤ k} M(x, v ⊕ uᵢ)` built from a `BPP` verifier, where `u`
   encodes the `k` shifts `u₁,…,u_k` as one concatenated string.
 
-## Main results (sorry-stubbed)
+## Main results
 
+* `Randomized.bpp_subset_sigma2` — `BPP ⊆ Σ₂ᵖ`, the core argument.
 * `Randomized.sipser_gacs` — [AB09, Thm 7.18].
 
 ## Deviations from the source
@@ -330,37 +331,305 @@ theorem amplify_concrete (hMaj : ClosedUnderMajority E) {L : Language Bool}
 
 end Helpers
 
+/-- A set smaller than the whole type misses some element. -/
+theorem exists_notMem_of_card_lt {α : Type*} [Fintype α]
+    {S : Finset α} (h : S.card < Fintype.card α) : ∃ a, a ∉ S := by
+  by_contra hall
+  push_neg at hall
+  have heq : S = Finset.univ := Finset.eq_univ_iff_forall.mpr hall
+  rw [heq, Finset.card_univ] at h
+  exact absurd h (lt_irrefl _)
+
+/-- **`BPP ⊆ Σ₂ᵖ`**, the core of [AB09, Thm 7.18]. -/
+theorem bpp_subset_sigma2 (hMaj : ClosedUnderMajority E)
+    (hShift : ClosedUnderShiftOr E) {L : Language Bool} (hL : InBPP E L) :
+    InSigma2 E L := by
+  classical
+  obtain ⟨M₀, a₀, k₀, hM₀, hprop₀⟩ := hL
+  obtain ⟨M, hM, hprop⟩ := amplify_concrete E hMaj hM₀ hprop₀ (a₀ + 7) k₀
+  refine ⟨shiftOrVerifier M (polyLen ((18 * (a₀ + 7) + 18) * a₀) (k₀ + k₀))
+      (polyLen (19 * a₀ + 20) k₀),
+    (19 * a₀ + 20) * ((18 * (a₀ + 7) + 18) * a₀), k₀ + (k₀ + k₀),
+    (18 * (a₀ + 7) + 18) * a₀, k₀ + k₀,
+    hShift M ((18 * (a₀ + 7) + 18) * a₀) (k₀ + k₀) (19 * a₀ + 20) k₀ hM,
+    fun x => ?_⟩
+  set n := x.length with hn
+  set m := polyLen ((18 * (a₀ + 7) + 18) * a₀) (k₀ + k₀) n with hm
+  set T := polyLen (a₀ + 7) k₀ n with hT
+  set ks := polyLen (19 * a₀ + 20) k₀ n with hks
+  have hX1 : 1 ≤ (n + 1) ^ k₀ := Nat.one_le_pow _ _ (by omega)
+  have hulen : polyLen ((19 * a₀ + 20) * ((18 * (a₀ + 7) + 18) * a₀))
+      (k₀ + (k₀ + k₀)) n = ks * m := by
+    rw [hks, hm]
+    unfold polyLen
+    ring
+  have hclaim1 : ((ks : ℕ) : ℚ) < 2 ^ T := by
+    rw [hks, hT]
+    unfold polyLen
+    exact_mod_cast shift_count_lt_two_pow a₀ ((n + 1) ^ k₀) hX1
+  have hclaim2 : m < T * ks := by
+    rw [hm, hT, hks]
+    unfold polyLen
+    have hXX : (n + 1) ^ (k₀ + k₀) = (n + 1) ^ k₀ * (n + 1) ^ k₀ :=
+      pow_add _ _ _
+    rw [hXX]
+    have hC : (18 * (a₀ + 7) + 18) * a₀ < (a₀ + 7) * (19 * a₀ + 20) := by
+      nlinarith
+    calc (18 * (a₀ + 7) + 18) * a₀ * ((n + 1) ^ k₀ * (n + 1) ^ k₀)
+        < (a₀ + 7) * (19 * a₀ + 20) * ((n + 1) ^ k₀ * (n + 1) ^ k₀) := by
+          have hXp : 0 < (n + 1) ^ k₀ * (n + 1) ^ k₀ := by positivity
+          exact (Nat.mul_lt_mul_right hXp).mpr hC
+      _ = (a₀ + 7) * (n + 1) ^ k₀ * ((19 * a₀ + 20) * (n + 1) ^ k₀) := by
+          ring
+  have hacc := hprop x
+  rw [← hn, ← hm, ← hT] at hacc
+  constructor
+  · -- `x ∈ L`: the probabilistic method produces covering shifts
+    intro hx
+    have haccx := hacc.1 hx
+    have hs1 : randProb m (fun l => M x l = true) ≤ 1 := randProb_le_one
+    have hfail : 1 - randProb m (fun l => M x l = true) ≤ (1/2 : ℚ) ^ T := by
+      linarith
+    have hfail0 : (0:ℚ) ≤ 1 - randProb m (fun l => M x l = true) := by
+      linarith
+    have hbadv : ∀ v : Fin m → Bool,
+        ((Finset.univ.filter fun u : Fin (ks * m) → Bool =>
+          blockCount m ks (fun w => M x (List.zipWith xor (List.ofFn v) w))
+            (List.ofFn u) = 0).card : ℚ)
+          ≤ (1/2 : ℚ) ^ (T * ks) * 2 ^ (ks * m) := by
+      intro v
+      have hsB : randProb m (fun w =>
+          M x (List.zipWith xor (List.ofFn v) w) = true)
+          = randProb m (fun l => M x l = true) :=
+        randProb_xor_right v (fun w => M x w = true)
+      have hdist := randProb_blockCount m
+        (fun w => M x (List.zipWith xor (List.ofFn v) w)) ks 0
+        (Nat.zero_le _)
+      rw [hsB] at hdist
+      simp only [Nat.choose_zero_right, pow_zero, Nat.cast_one, one_mul,
+        Nat.sub_zero] at hdist
+      have hle : randProb (ks * m) (fun l =>
+          blockCount m ks (fun w => M x (List.zipWith xor (List.ofFn v) w))
+            l = 0) ≤ (1/2 : ℚ) ^ (T * ks) := by
+        rw [hdist]
+        calc (1 - randProb m (fun l => M x l = true)) ^ ks
+            ≤ ((1/2 : ℚ) ^ T) ^ ks := pow_le_pow_left₀ hfail0 hfail ks
+          _ = (1/2 : ℚ) ^ (T * ks) := by rw [← pow_mul]
+      unfold randProb at hle
+      rw [div_le_iff₀ (by positivity)] at hle
+      exact hle
+    have hexists : ∃ u : Fin (ks * m) → Bool, ∀ v : Fin m → Bool,
+        blockCount m ks (fun w => M x (List.zipWith xor (List.ofFn v) w))
+          (List.ofFn u) ≠ 0 := by
+      by_contra hforall
+      push_neg at hforall
+      have hcover : (Finset.univ : Finset (Fin (ks * m) → Bool)) ⊆
+          Finset.univ.biUnion (fun v : Fin m → Bool =>
+            Finset.univ.filter fun u : Fin (ks * m) → Bool =>
+              blockCount m ks
+                (fun w => M x (List.zipWith xor (List.ofFn v) w))
+                (List.ofFn u) = 0) := by
+        intro u _
+        obtain ⟨v, hv⟩ := hforall u
+        exact Finset.mem_biUnion.mpr ⟨v, Finset.mem_univ v,
+          Finset.mem_filter.mpr ⟨Finset.mem_univ u, hv⟩⟩
+      have h1 : (2:ℕ) ^ (ks * m) ≤ (Finset.univ.biUnion
+          (fun v : Fin m → Bool =>
+            Finset.univ.filter fun u : Fin (ks * m) → Bool =>
+              blockCount m ks
+                (fun w => M x (List.zipWith xor (List.ofFn v) w))
+                (List.ofFn u) = 0)).card := by
+        rw [← card_univ_bitstrings (ks * m)]
+        exact Finset.card_le_card hcover
+      have h2 := Finset.card_biUnion_le
+        (s := (Finset.univ : Finset (Fin m → Bool)))
+        (t := fun v : Fin m → Bool =>
+          Finset.univ.filter fun u : Fin (ks * m) → Bool =>
+            blockCount m ks
+              (fun w => M x (List.zipWith xor (List.ofFn v) w))
+              (List.ofFn u) = 0)
+      have h3 : ((2:ℚ)) ^ (ks * m) ≤
+          ∑ v : Fin m → Bool, ((Finset.univ.filter
+            fun u : Fin (ks * m) → Bool =>
+              blockCount m ks
+                (fun w => M x (List.zipWith xor (List.ofFn v) w))
+                (List.ofFn u) = 0).card : ℚ) := by
+        rw [← Nat.cast_sum]
+        exact_mod_cast le_trans h1 h2
+      have h4 : ((2:ℚ)) ^ (ks * m) ≤
+          (2:ℚ) ^ m * ((1/2 : ℚ) ^ (T * ks) * 2 ^ (ks * m)) := by
+        calc ((2:ℚ)) ^ (ks * m)
+            ≤ ∑ _v : Fin m → Bool, ((1/2 : ℚ) ^ (T * ks) * 2 ^ (ks * m)) :=
+              le_trans h3 (Finset.sum_le_sum fun v _ => hbadv v)
+          _ = (2:ℚ) ^ m * ((1/2 : ℚ) ^ (T * ks) * 2 ^ (ks * m)) := by
+              rw [Finset.sum_const, card_univ_bitstrings, nsmul_eq_mul]
+              push_cast
+              ring
+      have hlt : ((2:ℚ)) ^ m < 2 ^ (T * ks) :=
+        pow_lt_pow_right₀ (by norm_num) hclaim2
+      have hfrac : (2:ℚ) ^ m * (1/2 : ℚ) ^ (T * ks) < 1 := by
+        rw [div_pow, one_pow, mul_one_div, div_lt_one (by positivity)]
+        exact hlt
+      nlinarith [pow_pos (show (0:ℚ) < 2 by norm_num) (ks * m), h4, hfrac]
+    obtain ⟨u, hu⟩ := hexists
+    refine ⟨List.ofFn u, ?_, ?_⟩
+    · rw [List.length_ofFn]
+      exact hulen.symm
+    · intro v hvlen
+      obtain ⟨v', hv'⟩ := exists_ofFn_eq hvlen
+      have hbc := hu v'
+      have hpos : 0 < blockCount m ks
+          (fun w => M x (List.zipWith xor (List.ofFn v') w))
+          (List.ofFn u) := Nat.pos_of_ne_zero hbc
+      unfold blockCount at hpos
+      rw [List.countP_pos_iff] at hpos
+      obtain ⟨i, hi_mem, hi⟩ := hpos
+      show (List.range ks).any _ = true
+      rw [List.any_eq_true]
+      refine ⟨i, hi_mem, ?_⟩
+      rw [hv']
+      exact hi
+  · -- `x ∉ L`: no shifts can cover, by counting the accepted strings
+    rintro ⟨u, hu_len, hall⟩
+    by_contra hx
+    have hrej := hacc.2 hx
+    have hboolf := randProb_bool_false (m := m) (M x)
+    have hst : randProb m (fun l => M x l = true) ≤ (1/2 : ℚ) ^ T := by
+      linarith
+    rw [hulen] at hu_len
+    have hblock_len : ∀ i, i < ks → ((u.drop (i * m)).take m).length = m := by
+      intro i hi
+      have h1 : (i + 1) * m ≤ ks * m := Nat.mul_le_mul_right m (by omega)
+      rw [Nat.succ_mul] at h1
+      rw [List.length_take, List.length_drop, hu_len]
+      omega
+    have hacc_card : ∀ i ∈ Finset.range ks,
+        ((Finset.univ.filter fun v : Fin m → Bool =>
+          M x (List.zipWith xor (List.ofFn v) ((u.drop (i * m)).take m))
+            = true).card : ℚ) ≤ (1/2 : ℚ) ^ T * 2 ^ m := by
+      intro i hi
+      obtain ⟨ci, hci⟩ := exists_ofFn_eq (hblock_len i (Finset.mem_range.mp hi))
+      have hxor : randProb m (fun l =>
+          M x (List.zipWith xor l (List.ofFn ci)) = true)
+          = randProb m (fun l => M x l = true) :=
+        randProb_xor_left ci (fun w => M x w = true)
+      have hle : randProb m (fun l =>
+          M x (List.zipWith xor l ((u.drop (i * m)).take m)) = true)
+          ≤ (1/2 : ℚ) ^ T := by
+        rw [show (u.drop (i * m)).take m = List.ofFn ci from hci, hxor]
+        exact hst
+      unfold randProb at hle
+      rw [div_le_iff₀ (by positivity)] at hle
+      exact hle
+    have hcover : (Finset.univ.filter fun v : Fin m → Bool =>
+        ∃ i ∈ Finset.range ks,
+          M x (List.zipWith xor (List.ofFn v) ((u.drop (i * m)).take m))
+            = true) ⊆
+        (Finset.range ks).biUnion (fun i =>
+          Finset.univ.filter fun v : Fin m → Bool =>
+            M x (List.zipWith xor (List.ofFn v) ((u.drop (i * m)).take m))
+              = true) := by
+      intro v hv
+      rw [Finset.mem_filter] at hv
+      obtain ⟨-, i, hi, hMi⟩ := hv
+      exact Finset.mem_biUnion.mpr ⟨i, hi,
+        Finset.mem_filter.mpr ⟨Finset.mem_univ _, hMi⟩⟩
+    have hcard : ((Finset.univ.filter fun v : Fin m → Bool =>
+        ∃ i ∈ Finset.range ks,
+          M x (List.zipWith xor (List.ofFn v) ((u.drop (i * m)).take m))
+            = true).card : ℚ) < 2 ^ m := by
+      have h1 := Finset.card_le_card hcover
+      have h2 := Finset.card_biUnion_le (s := Finset.range ks)
+        (t := fun i => Finset.univ.filter fun v : Fin m → Bool =>
+          M x (List.zipWith xor (List.ofFn v) ((u.drop (i * m)).take m))
+            = true)
+      have h3 : ((Finset.univ.filter fun v : Fin m → Bool =>
+          ∃ i ∈ Finset.range ks, M x (List.zipWith xor (List.ofFn v)
+            ((u.drop (i * m)).take m)) = true).card : ℚ) ≤
+          ∑ i ∈ Finset.range ks, ((Finset.univ.filter
+            fun v : Fin m → Bool => M x (List.zipWith xor (List.ofFn v)
+              ((u.drop (i * m)).take m)) = true).card : ℚ) := by
+        rw [← Nat.cast_sum]
+        exact_mod_cast le_trans h1 h2
+      have h6 : (ks : ℚ) * ((1/2 : ℚ) ^ T * 2 ^ m) < 2 ^ m := by
+        have h7 : (ks : ℚ) * (1/2 : ℚ) ^ T < 1 := by
+          rw [div_pow, one_pow, mul_one_div, div_lt_one (by positivity)]
+          exact hclaim1
+        nlinarith [pow_pos (show (0:ℚ) < 2 by norm_num) m, h7]
+      calc ((Finset.univ.filter fun v : Fin m → Bool =>
+          ∃ i ∈ Finset.range ks, M x (List.zipWith xor (List.ofFn v)
+            ((u.drop (i * m)).take m)) = true).card : ℚ)
+          ≤ ∑ i ∈ Finset.range ks, ((Finset.univ.filter
+              fun v : Fin m → Bool => M x (List.zipWith xor (List.ofFn v)
+                ((u.drop (i * m)).take m)) = true).card : ℚ) := h3
+        _ ≤ ∑ _i ∈ Finset.range ks, ((1/2 : ℚ) ^ T * 2 ^ m) :=
+            Finset.sum_le_sum hacc_card
+        _ = (ks : ℚ) * ((1/2 : ℚ) ^ T * 2 ^ m) := by
+            rw [Finset.sum_const, Finset.card_range, nsmul_eq_mul]
+        _ < 2 ^ m := h6
+    have hcardN : (Finset.univ.filter fun v : Fin m → Bool =>
+        ∃ i ∈ Finset.range ks,
+          M x (List.zipWith xor (List.ofFn v) ((u.drop (i * m)).take m))
+            = true).card < Fintype.card (Fin m → Bool) := by
+      have hcardfun : Fintype.card (Fin m → Bool) = 2 ^ m := by
+        rw [← card_univ_bitstrings m, Finset.card_univ]
+      rw [hcardfun]
+      exact_mod_cast hcard
+    obtain ⟨v', hv'⟩ := exists_notMem_of_card_lt hcardN
+    have hvfalse : ∀ i ∈ List.range ks,
+        M x (List.zipWith xor (List.ofFn v')
+          ((u.drop (i * m)).take m)) = false := by
+      intro i hi
+      rw [List.mem_range] at hi
+      rcases hb : M x (List.zipWith xor (List.ofFn v')
+          ((u.drop (i * m)).take m))
+      · rfl
+      · exact absurd (Finset.mem_filter.mpr ⟨Finset.mem_univ _,
+          ⟨i, Finset.mem_range.mpr hi, hb⟩⟩) hv'
+    have hN := hall (List.ofFn v') (by rw [List.length_ofFn])
+    have hfalse : shiftOrVerifier M
+        (polyLen ((18 * (a₀ + 7) + 18) * a₀) (k₀ + k₀))
+        (polyLen (19 * a₀ + 20) k₀) x u (List.ofFn v') = false := by
+      show (List.range ks).any _ = false
+      rw [List.any_eq_false]
+      intro i hi
+      show ¬ (M x (List.zipWith xor (List.ofFn v')
+        ((u.drop (i * m)).take m)) = true)
+      rw [hvfalse i hi]
+      simp
+    rw [hN] at hfalse
+    exact absurd hfalse (by simp)
+
 /-- **Sipser–Gács** ([AB09, Thm 7.18]): `BPP ⊆ Σ₂ᵖ ∩ Π₂ᵖ` — relative to the
 efficiency notion `E`, under the closure hypotheses the proof uses.
 
-**Proof sketch.** It suffices to prove `BPP ⊆ Σ₂ᵖ` and apply it to `Lᶜ`,
-since `BPP` is closed under complementation (`InBPP.compl`, which is where
-the hypothesis `hNot` is used).  Given `L ∈ BPP` with a verifier using
-`m₀ = polyLen a₀ k₀ |x|` random bits — padded so that `a₀ ≥ 7`, hence
-`m₀ ≥ 7` at every input length — amplify by majority (`hMaj`,
-`majority_error_le`) with `13·m₀` repetitions to error at most `2^{−m₀}`;
-the amplified verifier `M` uses `m = 13·m₀²` random bits.  Let
-`S_x ⊆ {0,1}^m` be its accepting set, so `|S_x| ≥ (1−2^{−m₀})2^m` if
-`x ∈ L` and `|S_x| ≤ 2^{−m₀}2^m` otherwise.  Take `k = 14·m₀` shifts —
-note `14·m₀ = (14a₀)·(n+1)^{k₀}` *is* a `polyLen` schedule, as the
-`shiftOrVerifier` closure requires.  (Claim 1) if `|S_x| ≤ 2^{m−m₀}` then
-no `k` shifts of `S_x` cover `{0,1}^m`: `|⋃ᵢ (S_x ⊕ uᵢ)| ≤ k·2^{m−m₀} <
-2^m` since `14m₀ < 2^{m₀}` (which holds for every length because `m₀ ≥ 7`:
-`98 < 128` and the right side doubles per step — the book's choice
-`k = ⌈m/n⌉ + 1` needs `k < 2^n` and fails at small `n`, so we balance
-against `m₀` instead of `n`).  (Claim 2) if `|S_x| ≥ (1−2^{−m₀})2^m` then
-random shifts cover: for fixed `v`,
-`Pr_{u₁,…,u_k}[∀ i, v ⊕ uᵢ ∉ S_x] ≤ 2^{−m₀k} < 2^{−m}` since
-`m₀·k = 14m₀² > 13m₀² = m`, so a union bound over the `2^m` strings `v`
-leaves a positive-probability choice of shifts covering everything (the
-probabilistic method).  Hence
-`x ∈ L ↔ ∃ u₁,…,u_k ∀ v, ⋁ᵢ M(x, v ⊕ uᵢ)`, which is the `Σ₂`-shape
+**Proof.** It suffices to prove `BPP ⊆ Σ₂ᵖ` (`bpp_subset_sigma2`) and
+apply it to `Lᶜ` as well, since `BPP` is closed under complementation
+(`InBPP.compl`, which is where the hypothesis `hNot` is used).  Given
+`L ∈ BPP` with witness `(M₀, a₀, k₀)`, amplify by majority
+(`amplify_concrete`, using `hMaj`) to error `2^{−T(n)}` with
+`T(n) = (a₀+7)(n+1)^{k₀}`; the amplified verifier uses
+`m(n) = (18(a₀+7)+18)·a₀·(n+1)^{2k₀}` random bits.  Take
+`k(n) = (19a₀+20)(n+1)^{k₀}` shifts — a `polyLen` schedule, as the
+`shiftOrVerifier` closure (`hShift`) requires.  The two counting claims
+are balanced against `T` rather than the book's `n` (whose choice
+`k = ⌈m/n⌉ + 1` needs `k < 2^n` and fails at small `n`):
+(Claim 1) `k(n) < 2^{T(n)}` (`shift_count_lt_two_pow`), so for `x ∉ L`
+the `k` translates of the accepting set, each of measure `≤ 2^{−T}`,
+cannot cover `{0,1}^m`; a union bound exhibits an uncovered `v` for
+every `u`.  (Claim 2) `m(n) < T(n)·k(n)`, so for `x ∈ L` the probability
+that `k` random shifts miss some `v` is at most `2^m·2^{−Tk} < 1`
+(the vote-count distribution `randProb_blockCount` at `j = 0` and the
+XOR-invariance `randProb_xor_right`), and the probabilistic method
+yields covering shifts.  Hence
+`x ∈ L ↔ ∃ u₁,…,u_k ∀ v, ⋁ᵢ M(x, v ⊕ uᵢ)`, the `Σ₂`-shape
 `shiftOrVerifier` expresses; all the lengths involved are `polyLen`
 schedules. -/
 theorem sipser_gacs (hMaj : ClosedUnderMajority E)
     (hNot : ClosedUnderNot E) (hShift : ClosedUnderShiftOr E)
     {L : Language Bool} (hL : InBPP E L) :
-    InSigma2 E L ∧ InPi2 E L := by
-  sorry
+    InSigma2 E L ∧ InPi2 E L :=
+  ⟨bpp_subset_sigma2 E hMaj hShift hL,
+    bpp_subset_sigma2 E hMaj hShift (InBPP.compl E hNot hL)⟩
 
 end Randomized
