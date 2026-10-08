@@ -24,3 +24,5 @@ The formula layer of the Arora-Barak Chapter 2 development (see
 * `DNF` — the DNF reading of the same carrier, the De Morgan dual, and the
   dual-tautology pivot [AB09, §2.6.1].
 -/
+import TCSlib.Complexity.Formulas.QBF
+import TCSlib.Complexity.Formulas.QBFEncoding
