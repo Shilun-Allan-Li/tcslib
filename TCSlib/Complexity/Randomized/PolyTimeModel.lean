@@ -8,6 +8,8 @@ import TCSlib.Complexity.Randomized.Adleman
 import TCSlib.Complexity.ClassP.P
 import TCSlib.Complexity.TuringMachine.Encoding
 import TCSlib.Complexity.PolyHierarchy.Defs
+import TCSlib.Complexity.PolyHierarchy.Normalize
+import TCSlib.Complexity.PolyHierarchy.Collapse
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -180,7 +182,51 @@ are identical, so the translation is a re-bracketing of the quantifiers
 plus padding of the two block lengths to a common bound. -/
 theorem inSigma2_polyTimeModel_iff (L : Language Bool) :
     InSigma2 polyTimeModel L ↔ L ∈ SigmaP 2 := by
-  sorry
+  classical
+  constructor
+  · rintro ⟨N, a₁, k₁, a₂, k₂, ⟨V, hV, hN⟩, hiff⟩
+    have h₁ : PolyHierarchy.UnaryPT
+        (fun y : List Bool => polyLen a₁ k₁ y.length) := by
+      have h := PolyHierarchy.unaryPT_poly a₁ k₁ polyTimeComputable_id
+      simpa [polyLen] using h
+    have h₂ : PolyHierarchy.UnaryPT
+        (fun y : List Bool => polyLen a₂ k₂ y.length) := by
+      have h := PolyHierarchy.unaryPT_poly a₂ k₂ polyTimeComputable_id
+      simpa [polyLen] using h
+    have hmem := PolyHierarchy.mem_altClass_of_normal (b := true) (i := 1)
+      hV polyTimeComputable_id h₁ h₂
+    have hkey : L = {y | qStep true (polyLen a₁ k₁ y.length)
+        fun U => altQuant V (polyLen a₂ k₂ y.length) false 1
+          (id (Turing.pairEncode y U))} := by
+      ext y
+      rw [Set.mem_setOf_eq, hiff y]
+      constructor
+      · rintro ⟨u, hu, hall⟩
+        refine ⟨u, hu, fun v hv => ?_⟩
+        show Turing.pairEncode (Turing.pairEncode y u) v ∈ V
+        exact (hN y u v).mp (hall v hv)
+      · rintro ⟨u, hu, hall⟩
+        refine ⟨u, hu, fun v hv => ?_⟩
+        exact (hN y u v).mpr (hall v hv)
+    rw [hkey]
+    exact hmem
+  · intro hL
+    obtain ⟨C, c, V, hV, hiff⟩ := mem_SigmaP_two_iff_exists_forall.mp hL
+    refine ⟨fun x u v =>
+        decide (Turing.pairEncode (Turing.pairEncode x u) v ∈ V),
+      C, c, C, c,
+      ⟨V, hV, fun x u v => by rw [decide_eq_true_eq]⟩, fun x => ?_⟩
+    rw [hiff x]
+    constructor
+    · rintro ⟨u, hu, hall⟩
+      refine ⟨u, hu, fun v hv => ?_⟩
+      rw [decide_eq_true_eq]
+      exact hall v hv
+    · rintro ⟨u, hu, hall⟩
+      refine ⟨u, hu, fun v hv => ?_⟩
+      have h := hall v hv
+      rw [decide_eq_true_eq] at h
+      exact h
 
 /-- **`ZPP = RP ∩ coRP` for polynomial-time machines** ([AB09, Thm 7.8],
 unconditionally): the abstract theorem at `polyTimeModel`, with every
@@ -201,6 +247,10 @@ half). -/
 theorem sipser_gacs_polyTime {L : Language Bool}
     (hL : InBPP polyTimeModel L) :
     L ∈ SigmaP 2 ∧ L ∈ PiP 2 := by
-  sorry
+  obtain ⟨h1, h2⟩ := sipser_gacs polyTimeModel
+    polyTimeModel_closedUnderMajority polyTimeModel_closedUnderNot
+    polyTimeModel_closedUnderShiftOr hL
+  exact ⟨(inSigma2_polyTimeModel_iff L).mp h1,
+    (inSigma2_polyTimeModel_iff Lᶜ).mp h2⟩
 
 end Randomized
