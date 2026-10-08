@@ -109,6 +109,18 @@ run. When starting a new chapter or paper, ingest it as a reference pair
 header and license notice, and its file docstring names the source project, the commit it
 was taken from, and a summary of local modifications.
 
+**Design adaptation.** When a construction, proof architecture, or module design is
+adapted from — or materially inspired by — another project's code, the debt is cited even
+when no code is transcribed. The module docstring's `## References` section names the
+source project, author, module or archive entry, the commit or version consulted, and its
+license, with a short tag usable at declaration level; the precedent is
+`TuringMachine/Composition.lean`'s `[Balbach22]` for the Isabelle AFP `Cook_Levin`
+composition-combinator architecture. Design documents and blueprint entries built on the
+adapted design carry the same citation. Examining external code purely for comparison,
+with nothing taken, creates no citation duty, but on a campaign it belongs in the
+campaign's records (plan decision log or backlog) so the provenance question is answerable
+later. (Maintainer guideline, binding, 2026-10-06.)
+
 ## 3. Proof sketches
 
 Every nontrivial formal proof is accompanied by a human-readable English proof sketch, kept
