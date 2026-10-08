@@ -18,7 +18,9 @@ collapses to the zero-work-tape class as soon as `s` has a **single** zero — i
 particular the literal `SPACE (fun n => n)` is not linear space — while additive
 normalization by `+ 1` is harmless for everywhere-positive bounds. These
 statements pin the campaign convention (every asymptotic chapter bound is
-everywhere positive) to machine-checked facts, so it cannot be overlooked. The
+everywhere positive) to elaborated sanity statements — their proofs are fill
+obligations; the round-2 audit certified each statement true as stated — so
+the convention cannot be overlooked. The
 zero-space class is nevertheless not trivial: constant languages and the parity
 language have zero-work-tape deciders (input is read in finite control).
 
@@ -37,6 +39,10 @@ language have zero-work-tape deciders (input is read in finite control).
 * `Complexity.trueLang_mem_SPACE_zero`, `Complexity.evenLang_mem_SPACE_zero` —
   S6: the zero-space class contains constants and parity (so it is not empty,
   and not only constants).
+* `Complexity.exists_zeroTape_const_oneStep`,
+  `Complexity.exists_zeroTape_parity_decider` — S6 with the explicit time
+  contracts (P0 round 2, finding 12): the one-step constant machine and the
+  `n + 1`-step parity decider, both with zero work tapes.
 
 ## References
 
@@ -177,6 +183,35 @@ parity and halts; the scan invariant is the parity of the consumed prefix, as
 in the direct machine of `Complexity.evenLang_mem_LOGSPACE`'s sketch, minus the
 work tape. -/
 theorem evenLang_mem_SPACE_zero : evenLang ∈ SPACE fun _ => 0 := by
+  sorry
+
+/-- **S6a with the time contract** (P0 round 2, finding 12): a zero-work-tape
+machine computes `[true]` within **one step** on every input — the explicit
+witness behind `Complexity.trueLang_mem_SPACE_zero`, whose membership statement
+alone leaves the halting time an unspecified existential.
+
+**Proof sketch.** One live state, `k = 0`; the single transition emits `true`
+and halts (`state := none`); `Turing.FinTM.ComputesInTime x [true] 1` holds on
+every input, and the space is the empty sum. -/
+theorem exists_zeroTape_const_oneStep :
+    ∃ M : Turing.FinTM Bool, M.k = 0 ∧
+      ∀ x : List Bool, M.ComputesInTime x [true] 1 := by
+  sorry
+
+/-- **S6b with the time contract** (P0 round 2, finding 12): a zero-work-tape
+machine decides the parity language within `n + 1` steps — the explicit
+witness behind `Complexity.evenLang_mem_SPACE_zero`. The construction is the
+round-2 report's: two live control states carrying the parity of the consumed
+prefix (toggle on `true`, keep on `false`), `x.length` symbol steps and one
+final emit-and-halt step at the right blank.
+
+**Proof sketch.** The scan invariant "control state = parity of
+`(x.take j).count true`" by induction on the consumed prefix; at the boundary
+emit `[Turing.MultiTapeTM.indicator evenLang x]` and halt, within
+`x.length + 1` steps; `k = 0` makes the space the empty sum. -/
+theorem exists_zeroTape_parity_decider :
+    ∃ M : Turing.FinTM Bool, M.k = 0 ∧
+      M.DecidesInTime evenLang fun n => n + 1 := by
   sorry
 
 end Complexity

@@ -302,15 +302,18 @@ lemma skipPrefix_run (P : RProg m d Λ) (oracle : Fin d → List Bool → Bool) 
 /-- A run reaching a configuration with the head of register `r` in `[-1, L]` at every
 step **strictly before the endpoint**: the reached configuration itself is not bounded by
 this relation (`T = 0` gives a reflexive instance with the head anywhere). Consumers
-needing the inclusive bound add the endpoint hypothesis, cf. `Reaches.toB`
-(P0 round 1, finding 6). -/
+needing the inclusive bound must add a separate endpoint hypothesis
+(`-1 ≤ c₁.workTapePos r ∧ c₁.workTapePos r ≤ L`); note that `Reaches.toB` does
+NOT supply it — it only converts a fixed pre-final coordinate bound into this
+pre-final interval bound (P0 round 1 finding 6; round 2, residual). -/
 def ReachesB (P : RProg m d Λ) (oracle : Fin d → List Bool → Bool) (c₀ c₁ c : Cfg m Bool Λ x)
     (r : Fin m) (L : ℤ) : Prop :=
   ∃ T, rrun P oracle c₀ T = c₁ ∧
     ∀ t < T, ∃ s ip q, rrun P oracle c₀ t = xCfg c s ip r q ∧ P.call s = none ∧ -1 ≤ q ∧ q ≤ L
 
-/-- A run ending with the register head at `p ∈ [-1, L]` is a run ending with the register
-head within `[-1, L]`. -/
+/-- A run whose pre-final steps all keep the register head at the fixed coordinate
+`p ∈ [-1, L]` is a run whose pre-final steps keep it within `[-1, L]` — no bound on the
+*reached* configuration's head is given or implied (P0 round 2, finding 6). -/
 lemma Reaches.toB {P : RProg m d Λ} {oracle : Fin d → List Bool → Bool} {c₀ c₁ c : Cfg m Bool Λ x}
     {r : Fin m} {p L : ℤ} (h : Reaches P oracle c₀ c₁ c r p) (hp : -1 ≤ p ∧ p ≤ L) :
     ReachesB P oracle c₀ c₁ c r L := by
