@@ -30,10 +30,10 @@ Chapter-2 fill batch privately rebuilt, stated once as machine contracts.
 `TCSlib.Complexity.TuringMachine.Composition`) are catalog entries P1–P2
 and already proved; this module states the rest.
 
-**Status: spec phase.** Every theorem below is sorried; roughly half are
-harvests — their fills adapt already-proved private constructions from the
-Chapter-2 epoch-2 batches (named per entry) — and the rest are new small
-machines. Following the house idiom of
+**Status: proved.** Every theorem below is proved; roughly half were
+harvests — their fills adapted already-proved private constructions from
+the Chapter-2 epoch-2 batches (named per entry) — and the rest are new
+small machines. Following the house idiom of
 `TCSlib.Complexity.TuringMachine.Composition`, the contracts are
 existentially packaged; each fill implements a named private machine with
 its run invariants and closes the existential. Multi-argument interfaces

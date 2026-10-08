@@ -18,10 +18,12 @@ notion that the library's control combinators speak, plus the pure list/
 arithmetic functions that the primitive contracts in
 `TCSlib.Complexity.TuringMachine.Build.Primitives` are stated against.
 
-**Status: spec phase.** This module is fully proved (definitions and two
-glue lemmas); the sibling `Build` modules state sorried contracts against
-it. The whole `Build` surface is new Chapter-1 growth, flagged for the
-shared infrastructure audit round (with the `Universal` bridge export).
+**Status: proved.** This module is fully proved (definitions and two
+glue lemmas), and the sibling `Build` modules' contracts stated against
+it are now all proved as well (library fill batches and the emitter
+increment; zero sorries). The `Build` surface was new Chapter-1 growth,
+audited in the shared infrastructure and emitter rounds
+(`audits/ch1-infra-*`, `audits/emitter-*`).
 
 ## The seam notion
 
@@ -119,7 +121,7 @@ def incFixed : List Bool → Option (List Bool)
   | false :: rest => some (true :: rest)
   | true :: rest => (incFixed rest).map (false :: ·)
 
-/-- **Emitter-increment vocabulary** (design §11, spec phase): least
+/-- **Emitter-increment vocabulary** (design §11): least
 solution `i ≤ n` of the width-parametric split equation `i + f i = n`, or
 `none` — the generalization of `Turing.solveSplit` from the hardwired
 polynomial family to an arbitrary width function. At
@@ -130,7 +132,7 @@ arguments. No machine content: `List.range` search, first match. -/
 def solveSplitWith (f : ℕ → ℕ) (n : ℕ) : Option ℕ :=
   (List.range (n + 1)).find? fun i => i + f i == n
 
-/-- **Emitter-increment vocabulary** (design §11, spec phase): split off
+/-- **Emitter-increment vocabulary** (design §11): split off
 the leading unary token — the maximal `true`-prefix together with its
 terminating `false` delimiter — returning the token and the remainder. A
 word with no delimiter yields the whole word as an unterminated token with

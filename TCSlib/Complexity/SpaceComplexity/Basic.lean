@@ -64,6 +64,11 @@ shape of [AB09, Fig. 4.1]:
 * **Halting.** Deciding (resp. computing) includes halting on every input, as in [AB09]
   ("a TM M deciding L"); the space bound is checked at the halting time, and since space is
   monotone in time and frozen after halting this is the space of the whole computation.
+* **One measure for both classes.** [AB09, Def 4.1]'s own wording splits: *visited*
+  work-tape locations for `SPACE` (the clause quoted above) but *nonblank* locations for
+  `NSPACE`. The campaign convention is the visited-cells measure for both; the planned
+  `NSPACE` (`AroraBarakChapters3-4Plan.md`, phase P4.1) counts visited cells along every
+  choice word, with all branches halting.
 
 ## References
 

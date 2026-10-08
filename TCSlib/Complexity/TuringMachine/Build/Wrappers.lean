@@ -24,11 +24,11 @@ every source emission is captured, **including an emission on the halting
 transition**; the wrapper's physical output stays untouched; the completed
 source configuration is preserved at the return.
 
-**Status: spec phase.** The two action/configuration transformers and the
+**Status: proved.** The two action/configuration transformers and the
 derived machine are real definitions; the four contract theorems are
-sorried, to be filled from the existing private proofs (harvest) in the
-library fill batches. New Chapter-1 surface, flagged for the shared
-infrastructure audit round.
+proved (filled from the existing private proofs in the library fill
+batches; gates closed). New Chapter-1 surface, audited in the shared
+infrastructure round.
 
 ## Design
 
@@ -58,11 +58,11 @@ infrastructure audit round.
 ## Main declarations
 
 * `Turing.captureAction`, `Turing.captureCfg` — the W1 transformers.
-* `Turing.capture_run` — the W1 lockstep/capture/silence contract (sorried).
+* `Turing.capture_run` — the W1 lockstep/capture/silence contract.
 * `Turing.FinTM.redirectTM` — the W2 transformation.
 * `Turing.FinTM.redirectTM_computes`, `Turing.FinTM.redirectTM_live` — the
-  W2 contract pair (sorried).
-* `Turing.FinTM.computesFunInTime_cond` — the W3 timed branch (sorried).
+  W2 contract pair.
+* `Turing.FinTM.computesFunInTime_cond` — the W3 timed branch.
 
 ## References
 
@@ -208,7 +208,7 @@ theorem capture_run {input : List Bool} (tm : MultiTapeTM k Bool S)
     rw [MultiTapeTM.runFrom_succ_eq_step', ih (fun s hs => hlive s (by omega)),
       hstep _ (hlive t (by omega)), MultiTapeTM.runFrom_succ_eq_step']
 
-/-- **E2 action transformer** (design §11, spec phase): the forwarding dual
+/-- **E2 action transformer** (design §11): the forwarding dual
 of `Turing.captureAction`. Transform one source action into a host action
 over the **same** tapes: input move and work-tape actions are kept
 verbatim; the source's emission, **if any, is forwarded as the host's
@@ -226,7 +226,7 @@ def emitAction (emb : S → H) (ret : H) (a : Action k Bool S) :
   output := a.output
   state := some ((a.state.map emb).getD ret)
 
-/-- **E2 configuration correspondence** (design §11, spec phase): a source
+/-- **E2 configuration correspondence** (design §11): a source
 configuration `c`, viewed inside the host — state embedded (a halted source
 appears at the live return state `ret`), tapes, heads, and input position
 verbatim, and the host's physical output equal to the host's prior output

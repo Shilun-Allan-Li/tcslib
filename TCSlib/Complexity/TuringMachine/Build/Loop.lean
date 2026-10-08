@@ -47,7 +47,7 @@ four granularities.
   accepting orbit point's payload (`[]` on exhaustion) — the form the
   split search (catalog P10) and the reduction emitters instantiate.
 
-**Status: spec phase, round-2 repair.** The round-1 audit
+**Status: proved; the statements are the round-2 repair.** The round-1 audit
 (`audits/ch1-infra-findings.md`) refuted the previous combinator: finding
 1 (blocker) exhibited a zero-step "advance" (`stepF = id`, `t = 0`) that
 made the hypotheses vacuously satisfiable and the conclusion contradict
