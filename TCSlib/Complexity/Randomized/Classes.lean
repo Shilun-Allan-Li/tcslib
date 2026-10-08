@@ -47,7 +47,7 @@ decides membership with the class's acceptance-probability profile.
 * `Randomized.raceVerifier`, `Randomized.majorityVerifier` — the two verifier
   constructions used by Theorems 7.8 and 7.10.
 
-## Main results (sorry-stubbed)
+## Main results
 
 * `Randomized.inZPP_iff_inRP_and_inCoRP` — `ZPP = RP ∩ coRP` [AB09, Thm 7.8].
 * `Randomized.InBPP.compl` — `BPP = coBPP` (used by [AB09, Thm 7.18]).
@@ -509,7 +509,7 @@ theorem randProb_blockCount (q : ℕ) (B : List Bool → Bool) :
           omega]
         exact randProb_false
       rw [hzero, mul_zero, add_zero]
-      simp [Nat.choose_self, Nat.sub_self, pow_succ]
+      simp [Nat.choose_self, pow_succ]
       ring
 
 /-- **Elementary Chernoff-type tail bound** for the vote count: if each
@@ -985,6 +985,80 @@ docstring's **Deviations**). -/
 def weakAdv (c n : ℕ) : ℚ :=
   min (1/6) (((n : ℚ) + 1)⁻¹ ^ c)
 
+theorem weakAdv_pos (c n : ℕ) : 0 < weakAdv c n := by
+  unfold weakAdv
+  refine lt_min (by norm_num) ?_
+  positivity
+
+theorem weakAdv_le_sixth (c n : ℕ) : weakAdv c n ≤ 1/6 :=
+  min_le_left _ _
+
+theorem weakAdv_ge (c n : ℕ) :
+    (((n : ℚ) + 1)⁻¹) ^ c / 6 ≤ weakAdv c n := by
+  have hy0 : (0:ℚ) ≤ (((n : ℚ) + 1)⁻¹) ^ c := by positivity
+  have hy1 : (((n : ℚ) + 1)⁻¹) ^ c ≤ 1 := by
+    refine pow_le_one₀ (by positivity) ?_
+    rw [inv_le_one₀ (by positivity)]
+    have := Nat.cast_nonneg (α := ℚ) n
+    linarith
+  unfold weakAdv
+  exact le_min (by linarith) (by linarith)
+
+/-- The arithmetic core of the amplification: with
+`k(n) = 56·(n+1)^{2c+d}` repetitions, the elementary tail bound beats
+`2^{-((n+1)^d + 1)}`. -/
+theorem weakAdv_tail_bound (c d n : ℕ) :
+    2 * (1 - 4 * weakAdv c n ^ 2) ^ (polyLen 56 (2 * c + d) n / 2) ≤
+      (1/2 : ℚ) ^ ((n + 1) ^ d + 1) := by
+  have hε0 : 0 < weakAdv c n := weakAdv_pos c n
+  have hε6 : weakAdv c n ≤ 1/6 := weakAdv_le_sixth c n
+  set ε := weakAdv c n with hε
+  have hx1 : 4 * ε ^ 2 ≤ 1 := by nlinarith
+  have hx0 : (0:ℚ) ≤ 4 * ε ^ 2 := by positivity
+  have hy0 : (0:ℚ) ≤ (((n : ℚ) + 1)⁻¹) ^ c := by positivity
+  have hc0 : (0:ℚ) ≤ ((n : ℚ) + 1) ^ c := by positivity
+  have hcancel : ((n : ℚ) + 1) ^ c * (((n : ℚ) + 1)⁻¹) ^ c = 1 := by
+    rw [← mul_pow, mul_inv_cancel₀ (by positivity), one_pow]
+  have hεge : (((n : ℚ) + 1)⁻¹) ^ c / 6 ≤ ε := weakAdv_ge c n
+  have hm : 1 ≤ ((9 * (n + 1) ^ (2 * c) : ℕ) : ℚ) * (4 * ε ^ 2) := by
+    have hcast : ((9 * (n + 1) ^ (2 * c) : ℕ) : ℚ)
+        = 9 * ((n : ℚ) + 1) ^ (2 * c) := by
+      push_cast
+      ring
+    rw [hcast]
+    have h1 : (((n : ℚ) + 1)⁻¹) ^ c ≤ 6 * ε := by linarith
+    have h2 : (((n : ℚ) + 1)⁻¹) ^ c * (((n : ℚ) + 1)⁻¹) ^ c
+        ≤ (6 * ε) * (6 * ε) := mul_self_le_mul_self hy0 h1
+    have h3 : ((n : ℚ) + 1) ^ (2 * c) *
+        ((((n : ℚ) + 1)⁻¹) ^ c * (((n : ℚ) + 1)⁻¹) ^ c) = 1 := by
+      rw [two_mul, pow_add]
+      calc ((n : ℚ) + 1) ^ c * ((n : ℚ) + 1) ^ c *
+            ((((n : ℚ) + 1)⁻¹) ^ c * (((n : ℚ) + 1)⁻¹) ^ c)
+          = (((n : ℚ) + 1) ^ c * (((n : ℚ) + 1)⁻¹) ^ c) *
+            (((n : ℚ) + 1) ^ c * (((n : ℚ) + 1)⁻¹) ^ c) := by ring
+        _ = 1 := by rw [hcancel, one_mul]
+    have h4 : ((n : ℚ) + 1) ^ (2 * c) *
+        ((((n : ℚ) + 1)⁻¹) ^ c * (((n : ℚ) + 1)⁻¹) ^ c)
+        ≤ ((n : ℚ) + 1) ^ (2 * c) * ((6 * ε) * (6 * ε)) := by
+      refine mul_le_mul_of_nonneg_left h2 (by positivity)
+    nlinarith [h3, h4]
+  have hexp : (9 * (n + 1) ^ (2 * c)) * ((n + 1) ^ d + 2) ≤
+      polyLen 56 (2 * c + d) n / 2 := by
+    have h562 : polyLen 56 (2 * c + d) n / 2 = 28 * (n + 1) ^ (2 * c + d) := by
+      unfold polyLen
+      omega
+    rw [h562, pow_add]
+    have hge1 : 1 ≤ (n + 1) ^ d := Nat.one_le_pow _ _ (by omega)
+    have hge2 : 1 ≤ (n + 1) ^ (2 * c) := Nat.one_le_pow _ _ (by omega)
+    nlinarith [hge1, hge2]
+  have hhalf := one_sub_pow_le_half_pow hx0 hx1 hm hexp
+  calc 2 * (1 - 4 * ε ^ 2) ^ (polyLen 56 (2 * c + d) n / 2)
+      ≤ 2 * (1/2 : ℚ) ^ ((n + 1) ^ d + 2) :=
+        mul_le_mul_of_nonneg_left hhalf (by norm_num)
+    _ = (1/2 : ℚ) ^ ((n + 1) ^ d + 1) := by
+        rw [show (n + 1) ^ d + 2 = ((n + 1) ^ d + 1) + 1 from rfl, pow_succ]
+        ring
+
 /-- `L ∈ BPP_{n^{-c}}`: like `InBPP`, but with success probability only
 `1/2 + weakAdv c |x|`, i.e. an inverse-polynomial advantage over guessing.
 [AB09, Lem 7.9], with the small-length repair described in the module
@@ -1023,32 +1097,162 @@ inverse-polynomial advantage is decidable with success probability
 `1 − 2^{-((|x|+1)^d + 1)}`, for every constant `d` — relative to `E`,
 assuming `E` is closed under polynomial majority repetition.
 
-**Proof sketch.** Run the weak verifier `k(n) = 26·(n+1)^{2c+d}` times on
+**Proof.** Run the weak verifier `k(n) = 56·(n+1)^{2c+d}` times on
 independent blocks of randomness and take the majority
-(`majorityVerifier`).  The votes are i.i.d. Bernoulli with success
-probability `p ≥ 1/2 + ε` where `ε = weakAdv c n ≥ (n+1)^{-c}/6`, so by
-Hoeffding's inequality (`Randomized.majority_error_le` in
-`Randomized.ErrorReduction`, transported from the product measure to the
-counting probability `randProb`) the majority errs with probability at most
-`e^{−2ε²k} ≤ e^{−26(n+1)^d/18} ≤ 2^{-((n+1)^d + 1)}`. -/
+(`majorityVerifier`).  The vote count is binomially distributed
+(`randProb_blockCount`), and the elementary tail estimate
+`randProb_tail_le` bounds the error by `2·(1 − 4ε²)^{⌊k/2⌋}` with
+`ε = weakAdv c n ≥ (n+1)^{-c}/6`; the rational Bernoulli bound
+`one_sub_pow_le_half_pow` then gives `≤ 2^{-((n+1)^d + 1)}`
+(`weakAdv_tail_bound`).  (The book computes with `e^{−2ε²k}`; the
+elementary `(4p(1−p))^{k/2}` bound proves the same statement while keeping
+every quantity rational.) -/
 theorem bpp_error_reduction (hMaj : ClosedUnderMajority E) {c : ℕ}
     {L : Language Bool} (hL : InBPPWeak E c L) (d : ℕ) :
     InBPPStrong E d L := by
-  sorry
+  classical
+  obtain ⟨M, a, k, hM, hprop⟩ := hL
+  refine ⟨majorityVerifier M (polyLen a k) (polyLen 56 (2 * c + d)),
+    56 * a, 2 * c + d + k, hMaj M a k 56 (2 * c + d) hM, fun x => ?_⟩
+  have hqK : polyLen (56 * a) (2 * c + d + k) x.length
+      = polyLen 56 (2 * c + d) x.length * polyLen a k x.length := by
+    unfold polyLen
+    ring
+  set n := x.length with hn
+  set q := polyLen a k n with hq
+  set K := polyLen 56 (2 * c + d) n with hK
+  have hε0 : 0 < weakAdv c n := weakAdv_pos c n
+  -- The majority verifier accepts iff more than half the blocks accept.
+  have hmaj_iff : ∀ l : List Bool,
+      majorityVerifier M (polyLen a k) (polyLen 56 (2 * c + d)) x l = true ↔
+        K < 2 * blockCount q K (M x) l := by
+    intro l
+    show decide (K < 2 * blockCount q K (M x) l) = true ↔ _
+    rw [decide_eq_true_iff]
+  -- Complementary vote counts.
+  have hcount : ∀ l : List Bool,
+      blockCount q K (M x) l +
+        blockCount q K (fun l' => !(M x l')) l = K := by
+    intro l
+    unfold blockCount
+    have haux : ∀ (p : ℕ → Bool) (li : List ℕ),
+        li.countP p + li.countP (fun i => !(p i)) = li.length := by
+      intro p li
+      induction li with
+      | nil => simp
+      | cons hd tl ih =>
+        rw [List.countP_cons, List.countP_cons, List.length_cons]
+        rcases hp : p hd <;> simp [hp] <;> omega
+    rw [haux (fun i => M x ((l.drop (i * q)).take q)) (List.range K)]
+    exact List.length_range
+  -- Single-run probabilities.
+  have hs_false : randProb q (fun l => M x l = false)
+      = 1 - randProb q (fun l => M x l = true) := randProb_bool_false (M x)
+  have hs_not : randProb q (fun l => (!(M x l)) = true)
+      = randProb q (fun l => M x l = false) :=
+    randProb_congr fun r => by simp
+  rw [hqK]
+  constructor
+  · -- `x ∈ L`: the failure event is `K ≤ 2·(false votes)`
+    intro hx
+    have hW := (hprop x).1 hx
+    have hsf : randProb q (fun l => (!(M x l)) = true) ≤ 1/2 - weakAdv c n := by
+      rw [hs_not, hs_false]
+      linarith
+    have htail := randProb_tail_le q K (fun l' => !(M x l')) hε0.le hsf
+    have hev : randProb (K * q)
+        (fun l => ¬ (majorityVerifier M (polyLen a k)
+          (polyLen 56 (2 * c + d)) x l = true))
+        = randProb (K * q) (fun l =>
+            K ≤ 2 * blockCount q K (fun l' => !(M x l')) l) :=
+      randProb_congr fun r => by
+        rw [hmaj_iff]
+        have := hcount (List.ofFn r)
+        constructor
+        · intro h
+          omega
+        · intro h
+          omega
+    have hnot := randProb_not (m := K * q)
+      (fun l => majorityVerifier M (polyLen a k)
+        (polyLen 56 (2 * c + d)) x l = true)
+    have hbound := weakAdv_tail_bound c d n
+    rw [hev] at hnot
+    have : randProb (K * q) (fun l =>
+        K ≤ 2 * blockCount q K (fun l' => !(M x l')) l)
+        ≤ (1/2 : ℚ) ^ ((n + 1) ^ d + 1) := le_trans htail (by
+      rw [hK]
+      exact hbound)
+    linarith
+  · -- `x ∉ L`: the failure event is `K < 2·(true votes)`
+    intro hx
+    have hW := (hprop x).2 hx
+    have hst : randProb q (fun l => M x l = true) ≤ 1/2 - weakAdv c n := by
+      have := hs_false
+      linarith
+    have htail := randProb_tail_le q K (M x) hε0.le hst
+    have hmono : randProb (K * q)
+        (fun l => ¬ (majorityVerifier M (polyLen a k)
+          (polyLen 56 (2 * c + d)) x l = false))
+        ≤ randProb (K * q) (fun l => K ≤ 2 * blockCount q K (M x) l) := by
+      refine randProb_mono fun r hr => ?_
+      have h1 : majorityVerifier M (polyLen a k)
+          (polyLen 56 (2 * c + d)) x (List.ofFn r) = true := by
+        rcases hb : majorityVerifier M (polyLen a k)
+          (polyLen 56 (2 * c + d)) x (List.ofFn r)
+        · exact absurd hb hr
+        · rfl
+      have h2 := (hmaj_iff (List.ofFn r)).mp h1
+      omega
+    have hnot := randProb_not (m := K * q)
+      (fun l => majorityVerifier M (polyLen a k)
+        (polyLen 56 (2 * c + d)) x l = false)
+    have hbound := weakAdv_tail_bound c d n
+    have : randProb (K * q) (fun l => K ≤ 2 * blockCount q K (M x) l)
+        ≤ (1/2 : ℚ) ^ ((n + 1) ^ d + 1) := le_trans htail (by
+      rw [hK]
+      exact hbound)
+    linarith
+
+/-- The amplified form implies plain `BPP` membership: the success
+threshold `1 − 2^{-((|x|+1)^d+1)}` is at least `3/4 ≥ 2/3` at every length,
+using the same witnesses. -/
+theorem InBPPStrong.toInBPP {d : ℕ} {L : Language Bool}
+    (hL : InBPPStrong E d L) : InBPP E L := by
+  obtain ⟨M, a, k, hM, hprop⟩ := hL
+  refine ⟨M, a, k, hM, fun x => ?_⟩
+  have he : 2 ≤ (x.length + 1) ^ d + 1 := by
+    have := Nat.one_le_pow d (x.length + 1) (by omega)
+    omega
+  have hth : (2/3 : ℚ) ≤ 1 - (1/2 : ℚ) ^ ((x.length + 1) ^ d + 1) := by
+    have h2 : (1/2 : ℚ) ^ ((x.length + 1) ^ d + 1) ≤ (1/2 : ℚ) ^ 2 :=
+      pow_le_pow_of_le_one (by norm_num) (by norm_num) he
+    norm_num at h2
+    linarith
+  exact ⟨fun hx => hth.trans ((hprop x).1 hx),
+    fun hx => hth.trans ((hprop x).2 hx)⟩
 
 /-- **`BPP_{n^{-c}} = BPP`** ([AB09, Lem 7.9]): the success threshold `2/3`
 in the definition of `BPP` can be weakened to an inverse-polynomial advantage
 over `1/2` without changing the class.
 
-**Proof sketch.** `BPP ⊆ BPP_{n^{-c}}` since `weakAdv c n ≤ 1/6` makes the
-weak threshold at most `2/3` at every length.  Conversely, from advantage
-`ε = weakAdv c n ≥ (n+1)^{-c}/6`, run the weak verifier
-`k(n) = 324·(n+1)^{2c}` times and take the majority: by Hoeffding
-(`majority_error_le`), the majority errs with probability at most
-`e^{−2ε²k} ≤ e^{-9/2} ≤ 1/3`. -/
+**Proof.** `BPP ⊆ BPP_{n^{-c}}` since `weakAdv c n ≤ 1/6` makes the
+weak threshold at most `2/3` at every length.  Conversely, error reduction
+at `d = 0` (`bpp_error_reduction`) amplifies the weak advantage to success
+probability `1 − (1/2)^{(n+1)^0+1} ≥ 3/4 ≥ 2/3`
+(`InBPPStrong.toInBPP`). -/
 theorem inBPPWeak_iff_inBPP (hMaj : ClosedUnderMajority E) (c : ℕ)
     (L : Language Bool) :
     InBPPWeak E c L ↔ InBPP E L := by
-  sorry
+  constructor
+  · intro hL
+    exact (bpp_error_reduction E hMaj hL 0).toInBPP
+  · rintro ⟨M, a, k, hM, hprop⟩
+    refine ⟨M, a, k, hM, fun x => ?_⟩
+    have hadv : 1/2 + weakAdv c x.length ≤ 2/3 := by
+      have := weakAdv_le_sixth c x.length
+      linarith
+    exact ⟨fun hx => hadv.trans ((hprop x).1 hx),
+      fun hx => hadv.trans ((hprop x).2 hx)⟩
 
 end Randomized
