@@ -100,6 +100,15 @@ event `A` holds of `r` (as a list): the counting ratio `#{r : A r}/2^m`.
 def randProb (m : ℕ) (A : List Bool → Prop) [DecidablePred A] : ℚ :=
   ((univ.filter fun r : Fin m → Bool => A (List.ofFn r)).card : ℚ) / 2 ^ m
 
+/-- Two events that agree on every random string have the same
+probability. -/
+theorem randProb_congr {m : ℕ} {A B : List Bool → Prop} [DecidablePred A]
+    [DecidablePred B]
+    (h : ∀ r : Fin m → Bool, A (List.ofFn r) ↔ B (List.ofFn r)) :
+    randProb m A = randProb m B := by
+  unfold randProb
+  rw [Finset.filter_congr fun r _ => h r]
+
 /-- The canonical polynomial length schedule `n ↦ a·(n+1)^k` for random
 strings — a concrete, computable stand-in for [AB09, Def 7.4]'s "polynomial
 `p`" (see the module docstring's **Deviations**: an arbitrary polynomially
@@ -249,7 +258,21 @@ is closed under complementation").
 `¬M x r = true ↔ M x r = false`. -/
 theorem InBPP.compl (hNot : ClosedUnderNot E) {L : Language Bool}
     (hL : InBPP E L) : InBPP E Lᶜ := by
-  sorry
+  obtain ⟨M, a, k, hM, hacc⟩ := hL
+  refine ⟨fun x r => !(M x r), a, k, hNot M hM, fun x => ?_⟩
+  constructor
+  · intro hx
+    calc (2/3 : ℚ)
+        ≤ randProb (polyLen a k x.length) fun r => M x r = false :=
+          (hacc x).2 hx
+      _ = randProb (polyLen a k x.length) fun r => (!(M x r)) = true :=
+          randProb_congr fun r => by simp
+  · intro hx
+    calc (2/3 : ℚ)
+        ≤ randProb (polyLen a k x.length) fun r => M x r = true :=
+          (hacc x).1 (Set.not_notMem.mp hx)
+      _ = randProb (polyLen a k x.length) fun r => (!(M x r)) = false :=
+          randProb_congr fun r => by simp
 
 /-- **`ZPP = RP ∩ coRP`** ([AB09, Thm 7.8]).  Stated relative to the
 efficiency notion `E`, under the closure properties the two directions use.
