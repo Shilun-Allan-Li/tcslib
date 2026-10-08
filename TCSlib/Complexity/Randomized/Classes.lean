@@ -395,6 +395,125 @@ theorem InBPP.compl (hNot : ClosedUnderNot E) {L : Language Bool}
       _ = randProb (polyLen a k x.length) fun r => (!(M x r)) = false :=
           randProb_congr fun r => by simp
 
+/-- From a zero-error verifier whose definite answers are never wrong, a
+one-sided witness: on members it answers `some b` with probability at least
+`1/2` (it never answers `some (!b)` and aborts with probability at most
+`1/2`), and on non-members it never answers `some b`; a 2-fold `OR`
+(`anyVerifier`) amplifies `1/2` to `3/4 ≥ 2/3`.  The common core of the
+inclusions `ZPP ⊆ RP` and `ZPP ⊆ coRP` in [AB09, Thm 7.8]. -/
+theorem inRP_of_zeroError (hAns : ClosedUnderAnswerIs E)
+    (hAny : ClosedUnderAny E) {M : List Bool → List Bool → Option Bool}
+    {a k : ℕ} (hM : E.Eff M) (L' : Language Bool) (b : Bool)
+    (hin : ∀ x ∈ L', (∀ r : Fin (polyLen a k x.length) → Bool,
+        M x (List.ofFn r) ≠ some (!b)) ∧
+        randProb (polyLen a k x.length) (fun r => M x r = none) ≤ 1/2)
+    (hout : ∀ x ∉ L', ∀ r : Fin (polyLen a k x.length) → Bool,
+        M x (List.ofFn r) ≠ some b) :
+    InRP E L' := by
+  classical
+  refine ⟨anyVerifier (fun x r => decide (M x r = some b)) (polyLen a k)
+    (polyLen 2 0), 2 * a, k, hAny _ a k 2 0 (hAns M b hM), fun x => ?_⟩
+  have hlen : polyLen (2 * a) k x.length
+      = polyLen a k x.length + polyLen a k x.length := by
+    unfold polyLen
+    ring
+  -- Unfold the 2-fold `OR` on an arbitrary random string.
+  have hN_iff : ∀ l : List Bool,
+      anyVerifier (fun x r => decide (M x r = some b)) (polyLen a k)
+          (polyLen 2 0) x l = true ↔
+        (M x (l.take (polyLen a k x.length)) = some b ∨
+          M x ((l.drop (polyLen a k x.length)).take
+            (polyLen a k x.length)) = some b) := by
+    intro l
+    unfold anyVerifier
+    rw [show polyLen 2 0 x.length = 2 from by unfold polyLen; ring,
+      show List.range 2 = [0, 1] from rfl]
+    simp
+  constructor
+  · -- members are accepted with probability at least `3/4`
+    intro hx
+    obtain ⟨hnever, habort⟩ := hin x hx
+    -- one run answers `some b` with probability at least `1/2`
+    have hone : 1/2 ≤ randProb (polyLen a k x.length)
+        (fun l => M x l = some b) := by
+      have hmono : randProb (polyLen a k x.length)
+          (fun l => ¬ (M x l = none)) ≤
+          randProb (polyLen a k x.length) (fun l => M x l = some b) := by
+        refine randProb_mono fun r hr => ?_
+        rcases hcase : M x (List.ofFn r) with _ | b'
+        · exact absurd hcase hr
+        · have hb' : b' ≠ !b := fun h => hnever r (h ▸ hcase)
+          have hbb : b' = b := by cases b <;> cases b' <;> simp_all
+          rw [hbb]
+      have hnot := randProb_not (m := polyLen a k x.length)
+        (fun l => M x l = none)
+      linarith
+    rw [hlen]
+    have hstep1 : randProb (polyLen a k x.length + polyLen a k x.length)
+        (fun l => ¬ (anyVerifier (fun x r => decide (M x r = some b))
+          (polyLen a k) (polyLen 2 0) x l = true)) =
+        randProb (polyLen a k x.length + polyLen a k x.length)
+          (fun l => (fun l' => ¬ (M x l' = some b))
+              (l.take (polyLen a k x.length)) ∧
+            (fun w => ¬ (M x (w.take (polyLen a k x.length)) = some b))
+              (l.drop (polyLen a k x.length))) :=
+      randProb_congr fun rr => by
+        rw [hN_iff (List.ofFn rr)]
+        exact not_or
+    have hstep2 := randProb_split (polyLen a k x.length) (polyLen a k x.length)
+      (fun l' => ¬ (M x l' = some b))
+      (fun w => ¬ (M x (w.take (polyLen a k x.length)) = some b))
+    have hstep3 := randProb_take (le_refl (polyLen a k x.length))
+      (fun l' => ¬ (M x l' = some b))
+    have hfail : randProb (polyLen a k x.length + polyLen a k x.length)
+        (fun l => ¬ (anyVerifier (fun x r => decide (M x r = some b))
+          (polyLen a k) (polyLen 2 0) x l = true)) =
+        randProb (polyLen a k x.length) (fun l => ¬ (M x l = some b)) *
+          randProb (polyLen a k x.length) (fun l => ¬ (M x l = some b)) := by
+      rw [hstep1, hstep2, hstep3]
+    have hs_le : randProb (polyLen a k x.length)
+        (fun l => ¬ (M x l = some b)) ≤ 1/2 := by
+      rw [randProb_not]
+      linarith
+    have hs_nonneg : (0 : ℚ) ≤ randProb (polyLen a k x.length)
+        (fun l => ¬ (M x l = some b)) := randProb_nonneg
+    have hfail_le : randProb (polyLen a k x.length + polyLen a k x.length)
+        (fun l => ¬ (anyVerifier (fun x r => decide (M x r = some b))
+          (polyLen a k) (polyLen 2 0) x l = true)) ≤ 1/4 := by
+      rw [hfail]
+      calc randProb (polyLen a k x.length) (fun l => ¬ (M x l = some b)) *
+            randProb (polyLen a k x.length) (fun l => ¬ (M x l = some b))
+          ≤ (1/2) * (1/2) := mul_le_mul hs_le hs_le hs_nonneg (by norm_num)
+        _ = 1/4 := by norm_num
+    have hnotN := randProb_not
+      (m := polyLen a k x.length + polyLen a k x.length)
+      (fun l => anyVerifier (fun x r => decide (M x r = some b))
+        (polyLen a k) (polyLen 2 0) x l = true)
+    linarith
+  · -- non-members are never accepted
+    intro hx rr
+    rw [Bool.eq_false_iff]
+    intro hacc
+    rw [hN_iff (List.ofFn rr)] at hacc
+    have hlen' : (List.ofFn rr).length
+        = polyLen a k x.length + polyLen a k x.length := by
+      rw [List.length_ofFn, hlen]
+    rcases hacc with h | h
+    · have hb1 : ((List.ofFn rr).take (polyLen a k x.length)).length
+          = polyLen a k x.length := by
+        rw [List.length_take, hlen']
+        omega
+      obtain ⟨r', hr'⟩ := exists_ofFn_eq hb1
+      rw [hr'] at h
+      exact hout x hx r' h
+    · have hb2 : (((List.ofFn rr).drop (polyLen a k x.length)).take
+          (polyLen a k x.length)).length = polyLen a k x.length := by
+        rw [List.length_take, List.length_drop, hlen']
+        omega
+      obtain ⟨r', hr'⟩ := exists_ofFn_eq hb2
+      rw [hr'] at h
+      exact hout x hx r' h
+
 /-- **`ZPP = RP ∩ coRP`** ([AB09, Thm 7.8]).  Stated relative to the
 efficiency notion `E`, under the closure properties the two directions use.
 
@@ -417,7 +536,135 @@ theorem inZPP_iff_inRP_and_inCoRP (hRace : ClosedUnderRace E)
     (hAns : ClosedUnderAnswerIs E) (hAny : ClosedUnderAny E)
     (L : Language Bool) :
     InZPP E L ↔ InRP E L ∧ InCoRP E L := by
-  sorry
+  classical
+  constructor
+  · rintro ⟨M, a, k, hM, hprop⟩
+    constructor
+    · refine inRP_of_zeroError E hAns hAny hM L true
+        (fun x hx => ⟨?_, (hprop x).2.2⟩) (fun x hx => (hprop x).2.1 hx)
+      simpa using (hprop x).1 hx
+    · refine inRP_of_zeroError E hAns hAny hM Lᶜ false
+        (fun x hx => ⟨?_, (hprop x).2.2⟩)
+        (fun x hx => (hprop x).1 (Set.not_notMem.mp hx))
+      simpa using (hprop x).2.1 hx
+  · rintro ⟨⟨M₁, a₁, k₁, hM₁, h₁⟩, M₂, a₂, k₂, hM₂, h₂⟩
+    -- Trim `M₂` to its first `polyLen a₂ k₂` bits, then race.
+    set M₂' : List Bool → List Bool → Bool :=
+      anyVerifier M₂ (polyLen a₂ k₂) (polyLen 1 0) with hM₂'def
+    have hM₂'eff : E.Eff (boolVerifier M₂') := hAny M₂ a₂ k₂ 1 0 hM₂
+    have hM₂'eq : ∀ (x : List Bool) (w : List Bool),
+        M₂' x w = M₂ x (w.take (polyLen a₂ k₂ x.length)) := by
+      intro x w
+      show (List.range (polyLen 1 0 x.length)).any _ = _
+      rw [show polyLen 1 0 x.length = 1 by simp [polyLen]]
+      show (List.range 1).any _ = _
+      rw [show List.range 1 = [0] from rfl]
+      simp [List.any_cons]
+    refine ⟨raceVerifier M₁ M₂' (polyLen a₁ k₁), a₁ + a₂, k₁ + k₂,
+      hRace M₁ M₂' a₁ k₁ hM₁ hM₂'eff, fun x => ?_⟩
+    set n := x.length
+    set q₁ := polyLen a₁ k₁ n with hq₁
+    set q₂ := polyLen a₂ k₂ n with hq₂
+    set Q := polyLen (a₁ + a₂) (k₁ + k₂) n with hQ
+    have hone : 1 ≤ n + 1 := Nat.le_add_left 1 n
+    have hQ₁ : q₁ ≤ Q := by
+      rw [hq₁, hQ]
+      unfold polyLen
+      calc a₁ * (n + 1) ^ k₁ ≤ a₁ * (n + 1) ^ (k₁ + k₂) :=
+            Nat.mul_le_mul_left _ (Nat.pow_le_pow_right hone (by omega))
+        _ ≤ (a₁ + a₂) * (n + 1) ^ (k₁ + k₂) :=
+            Nat.mul_le_mul_right _ (by omega)
+    have hQ₂ : q₁ + q₂ ≤ Q := by
+      rw [hq₁, hq₂, hQ]
+      unfold polyLen
+      have e₁ : a₁ * (n + 1) ^ k₁ ≤ a₁ * (n + 1) ^ (k₁ + k₂) :=
+        Nat.mul_le_mul_left _ (Nat.pow_le_pow_right hone (by omega))
+      have e₂ : a₂ * (n + 1) ^ k₂ ≤ a₂ * (n + 1) ^ (k₁ + k₂) :=
+        Nat.mul_le_mul_left _ (Nat.pow_le_pow_right hone (by omega))
+      calc a₁ * (n + 1) ^ k₁ + a₂ * (n + 1) ^ k₂
+          ≤ a₁ * (n + 1) ^ (k₁ + k₂) + a₂ * (n + 1) ^ (k₁ + k₂) := by omega
+        _ = (a₁ + a₂) * (n + 1) ^ (k₁ + k₂) := by ring
+    -- Lengths of the two segments fed to the verifiers.
+    have hlen₁ : ∀ rr : Fin Q → Bool, ((List.ofFn rr).take q₁).length = q₁ := by
+      intro rr
+      simp [List.length_take, List.length_ofFn]
+      omega
+    have hlen₂ : ∀ rr : Fin Q → Bool,
+        (((List.ofFn rr).drop q₁).take q₂).length = q₂ := by
+      intro rr
+      simp [List.length_take, List.length_drop, List.length_ofFn]
+      omega
+    -- The three branches of the race on a concrete random string.
+    have hrace_val : ∀ rr : Fin Q → Bool,
+        raceVerifier M₁ M₂' (polyLen a₁ k₁) x (List.ofFn rr) =
+          if M₁ x ((List.ofFn rr).take q₁) then some true
+          else if M₂ x (((List.ofFn rr).drop q₁).take q₂) then some false
+          else none := by
+      intro rr
+      show (if M₁ x ((List.ofFn rr).take q₁) then some true
+        else if M₂' x ((List.ofFn rr).drop q₁) then some false else none) = _
+      rw [hM₂'eq]
+    refine ⟨fun hx rr => ?_, fun hx rr => ?_, ?_⟩
+    · -- `x ∈ L`: never answers `some false`
+      rw [hrace_val rr]
+      have hx' : x ∉ Lᶜ := Set.not_notMem.mpr hx
+      obtain ⟨r₂, hr₂⟩ := exists_ofFn_eq (hlen₂ rr)
+      have hM₂false : M₂ x (((List.ofFn rr).drop q₁).take q₂) = false := by
+        rw [hr₂]
+        exact (h₂ x).2 hx' r₂
+      rw [hM₂false]
+      split
+      · simp
+      · simp
+    · -- `x ∉ L`: never answers `some true`
+      rw [hrace_val rr]
+      obtain ⟨r₁, hr₁⟩ := exists_ofFn_eq (hlen₁ rr)
+      have hM₁false : M₁ x ((List.ofFn rr).take q₁) = false := by
+        rw [hr₁]
+        exact (h₁ x).2 hx r₁
+      rw [hM₁false]
+      split
+      · simp_all
+      · split <;> simp
+    · -- aborts with probability at most `1/2`
+      obtain ⟨m₂, hm₂⟩ : ∃ m₂, Q = q₁ + m₂ := ⟨Q - q₁, by omega⟩
+      have hq₂m₂ : q₂ ≤ m₂ := by omega
+      have hs1 : randProb Q
+          (fun l => raceVerifier M₁ M₂' (polyLen a₁ k₁) x l = none) =
+          randProb Q (fun l => (fun l' => ¬ (M₁ x l' = true)) (l.take q₁) ∧
+            (fun w => ¬ (M₂ x (w.take q₂) = true)) (l.drop q₁)) :=
+        randProb_congr fun rr => by
+          rw [hrace_val rr]
+          rcases hb₁ : M₁ x ((List.ofFn rr).take q₁) <;>
+            rcases hb₂ : M₂ x (((List.ofFn rr).drop q₁).take q₂) <;> simp_all
+      have hs3 := randProb_split q₁ m₂ (fun l' => ¬ (M₁ x l' = true))
+        (fun w => ¬ (M₂ x (w.take q₂) = true))
+      have hs4 := randProb_take hq₂m₂ (fun l' => ¬ (M₂ x l' = true))
+      have hnone_eq : randProb Q
+          (fun l => raceVerifier M₁ M₂' (polyLen a₁ k₁) x l = none) =
+          randProb q₁ (fun l => ¬ (M₁ x l = true)) *
+            randProb q₂ (fun l => ¬ (M₂ x l = true)) := by
+        rw [hs1, hm₂, hs3, hs4]
+      rw [hnone_eq]
+      by_cases hx : x ∈ L
+      · have hacc := (h₁ x).1 hx
+        have h1 : randProb q₁ (fun l => ¬ (M₁ x l = true)) ≤ 1/3 := by
+          rw [randProb_not]
+          linarith
+        calc randProb q₁ (fun l => ¬ (M₁ x l = true)) *
+              randProb q₂ (fun l => ¬ (M₂ x l = true))
+            ≤ (1/3) * 1 := by
+              refine mul_le_mul h1 randProb_le_one randProb_nonneg (by norm_num)
+          _ ≤ 1/2 := by norm_num
+      · have hacc := (h₂ x).1 hx
+        have h2 : randProb q₂ (fun l => ¬ (M₂ x l = true)) ≤ 1/3 := by
+          rw [randProb_not]
+          linarith
+        calc randProb q₁ (fun l => ¬ (M₁ x l = true)) *
+              randProb q₂ (fun l => ¬ (M₂ x l = true))
+            ≤ 1 * (1/3) := by
+              refine mul_le_mul randProb_le_one h2 randProb_nonneg (by norm_num)
+          _ ≤ 1/2 := by norm_num
 
 /-- The advantage demanded of a weak `BPP` verifier on inputs of length `n`:
 `min (1/6) ((n+1)^{-c})`.  For `c ≥ 1` and `n ≥ 5` this is the book's
