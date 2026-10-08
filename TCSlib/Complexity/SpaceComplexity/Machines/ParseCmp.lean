@@ -299,7 +299,11 @@ lemma skipPrefix_run (P : RProg m d Λ) (oracle : Fin d → List Bool → Bool) 
   convert this using 3
   omega
 
-/-- A run reaching a configuration with the head of register `r` in `[-1, L]` throughout. -/
+/-- A run reaching a configuration with the head of register `r` in `[-1, L]` at every
+step **strictly before the endpoint**: the reached configuration itself is not bounded by
+this relation (`T = 0` gives a reflexive instance with the head anywhere). Consumers
+needing the inclusive bound add the endpoint hypothesis, cf. `Reaches.toB`
+(P0 round 1, finding 6). -/
 def ReachesB (P : RProg m d Λ) (oracle : Fin d → List Bool → Bool) (c₀ c₁ c : Cfg m Bool Λ x)
     (r : Fin m) (L : ℤ) : Prop :=
   ∃ T, rrun P oracle c₀ T = c₁ ∧

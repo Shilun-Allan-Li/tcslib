@@ -25,7 +25,8 @@ ranges plus the deciders' space (`Complexity.LogProg.compile_space`).
 
 * `Complexity.LogProg.tapeWord` — the word stored on a register tape.
 * `Complexity.LogProg.rstep` — one step of a program, calls being atomic oracle questions.
-* `Complexity.LogProg.CallsOK` — the preconditions of every call along a run.
+* `Complexity.LogProg.CallOK` — the precondition of one call, required at every step
+  along the run by the compilation theorems' `hcalls` hypotheses.
 * `Complexity.LogProg.compileFinTM` — the compiled machine as a bundled finite machine.
 
 ## Main results

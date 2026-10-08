@@ -821,11 +821,18 @@ for here).
   form.** The spec states per-tape bounds, with the max for disjointly-owned
   tapes (sharpest available; downstream applications may depend on the
   sharpness).
-* **12.2** R3's file name and the `Build/` size-policy layout.
-* **12.3** Space retro-annotation of P1-P12/P16-P18: in this increment (default,
-  per the amply-support mandate) or lazily per consumer.
-* **12.4** R1 emission policy: one transformer with a mode parameter, or a
-  suppressing and a forwarding transformer.
+* **12.2** R3's file layout — **answered (user, 2026-10-08): option (a)**, a
+  new `Build/Catalog.lean` holding the new rows and the space lemmas for the
+  old rows, keeping `Primitives.lean` byte-identical; a backlog item records
+  the later refactor toward the symmetrical per-theme layout (option (c)),
+  via the D7 split window.
+* **12.3** Space retro-annotation — **answered (user, 2026-10-08): the refined
+  now-option**: primitives (P1-P18), wrappers (W1-W3) and the loop (L) get
+  `spaceUsed` theorems in this increment; the emitter combinators (E1-E4′)
+  stay lazy until a space consumer appears.
+* **12.4** R1 emission policy — **answered (user, 2026-10-08): two named
+  transformers** (suppressing and forwarding) over a shared private core, so
+  each spec stays crisp and downstream applications cite whichever fits.
 
 ### Citations (policy.md §2, *Design adaptation*)
 

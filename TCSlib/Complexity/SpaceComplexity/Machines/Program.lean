@@ -40,8 +40,11 @@ running counter program is simulated by an abstract register machine in
 ## Main definitions
 
 * `Complexity.LogProg.Mode` — which part of the real input opens the virtual input: all of
-  it, doubled (`whole`, giving `Turing.pairEncode x _`), or its leading run of `1`s, plain
-  (`unaryFst`, giving `Turing.pairEncode 1ⁿ _` on inputs `Turing.pairEncode 1ⁿ _`).
+  it, doubled (`whole`, giving `Turing.pairEncode x _` when the call has at least one
+  argument), or its leading run of `1`s, plain (`unaryFst`, giving `Turing.pairEncode 1ⁿ _`
+  on inputs `Turing.pairEncode 1ⁿ _`, again with at least one argument). A call with no
+  arguments has a single-segment virtual input with no separator — for `whole` on `x = []`
+  it is the empty word, not a pair encoding (P0 round 1, finding 3).
 * `Complexity.LogProg.CallSpec`, `Complexity.LogProg.RProg` — call nodes and programs.
 * `Complexity.LogProg.callSegs` — the segments of the virtual input of a call.
 * `Complexity.LogProg.CSt`, `Complexity.LogProg.ctr`, `Complexity.LogProg.compileTM` — the
@@ -65,10 +68,12 @@ open Turing
 
 /-- Which part of the real input opens a virtual input. -/
 inductive Mode where
-  /-- the whole input, doubled: virtual inputs `pairEncode x _` -/
+  /-- the whole input, doubled: virtual inputs `pairEncode x _` (when the call has at
+  least one argument; with none, the virtual input is the doubled input alone, with no
+  separator) -/
   | whole
   /-- the leading run of `1`s of the input, plain: on an input `pairEncode 1ⁿ _` this is
-  `1²ⁿ`, so the virtual inputs are `pairEncode 1ⁿ _` -/
+  `1²ⁿ`, so the virtual inputs are `pairEncode 1ⁿ _` (again given at least one argument) -/
   | unaryFst
   deriving DecidableEq
 

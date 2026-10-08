@@ -547,6 +547,14 @@ uncomputability chapter.
   toolchain (their Lean 4.33 / our 4.25) and machine model (TM2 keyed
   stacks vs FinTM tapes with heads); nothing is imported or
   transcribed, and the external files stay out of the repo.**
+* **`Build/` catalog layout refactor toward per-theme files (queued;
+  user decision 2026-10-08, §12 open decision 12.2).** The routine layer's
+  new catalog rows land in a single `Build/Catalog.lean` (option (a)) to
+  keep the audited `Primitives.lean` byte-identical; once the retrofit
+  shrinks the `Build/` files, refactor the catalog toward the symmetrical
+  per-theme layout (option (c): `Build/Catalog/{Transfer,Arith,…}.lean`),
+  folded into the queued D7 split window. *Origin:
+  `machine-library-design.md` §12, decision 12.2.*
 * **Retrofit pass over chapters 1–2 with the routine layer (user
   decision 2026-10-06: queued as backlog, explicitly important — to be
   done at some point, not time-bound).** Once the machine-routine layer

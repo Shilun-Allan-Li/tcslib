@@ -69,6 +69,18 @@ shape of [AB09, Fig. 4.1]:
   `NSPACE`. The campaign convention is the visited-cells measure for both; the planned
   `NSPACE` (`AroraBarakChapters3-4Plan.md`, phase P4.1) counts visited cells along every
   choice word, with all branches halting.
+* **Zero bounds collapse the class** (P0 reception audit, round 1, finding 1): every
+  work tape's visited set contains its origin, so every machine satisfies
+  `M.k ≤ spaceUsed` on every input at every time. A single length with `s n = 0`
+  therefore forces a deciding machine to have **no work tapes at all** — and then it
+  has zero space on *every* input — so `SPACE s = SPACE (fun _ => 0)` (semantically
+  the two-way-finite-automaton class) whenever `s` has a zero; multiplicative
+  absorption cannot repair this, since `c * 0 = 0`. In particular the literal
+  `SPACE (fun n => n)` is **not** linear space: `n = 0` collapses it. **Campaign
+  convention:** every asymptotic chapter statement uses an everywhere-positive bound —
+  `fun n => n + 1`, `fun n => n ^ c + 1`, `Complexity.logSpace` — never a bound with a
+  zero. The characterization and the harmless-normalization identities are the sanity
+  layer `TCSlib.Complexity.SpaceComplexity.ZeroSpace`.
 
 ## References
 

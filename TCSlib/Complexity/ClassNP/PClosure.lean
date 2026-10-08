@@ -157,13 +157,17 @@ theorem mem_P_of_atoms {ι : Type} [Fintype ι] [DecidableEq ι] (b : ι → Lis
 
 /-! ### Length comparisons -/
 
-/-- The pairs whose two components have equal length form a language in `P`. -/
+/-- The words whose two components under the total default projections
+(`pairFstD`/`pairSndD`, both `[]` on malformed input) have equal length form a language
+in `P`. Malformed words project to `([], [])` and are therefore members — e.g. `[]`
+itself; the well-formed-pair corollaries below are unaffected (P0 round 1, finding 5). -/
 theorem lenEq_mem_P : {z : List Bool | (pairFstD z).length = (pairSndD z).length} ∈ P := by
   have h := mem_P_of_test polyTimeComputable_lenEq
   simpa using h
 
-/-- The pairs whose second component is at most as long as the first form a language
-in `P`. -/
+/-- The words whose second default-projected component is at most as long as the first
+form a language in `P` — with the same totalization as `Complexity.lenEq_mem_P`:
+malformed words project to `([], [])` and are members. -/
 theorem lenLe_mem_P : {z : List Bool | (pairSndD z).length ≤ (pairFstD z).length} ∈ P := by
   have h := mem_P_of_test polyTimeComputable_lenLe
   simpa using h

@@ -305,8 +305,11 @@ variable (P : Λ → Instr R Λ) (x : List Bool) [Fintype Λ] [DecidableEq Λ] (
 
 /-! ## Simulation of a run -/
 
-/-- **A run of `t` abstract steps is at most `t (2B + 3)` machine steps** when all registers
-stay below `B` (it suffices that they start `t` below it).
+/-- **A run of `t` abstract steps is at most `t (2B + 3)` machine steps** when every
+register starts at least `t` below `B` — growth by at most one per step then keeps every
+intermediate valuation within `B`. (A bound on the intermediate valuations alone does not
+satisfy this hypothesis; that broader interface is
+`Complexity.CounterProg.sim_run_of_regs_le` below — P0 round 1, findings 2/S9.)
 
 **Proof sketch.** Induction on `t`: a halted state is a halted configuration; otherwise
 simulate one step (`sim_step`) and continue, registers having grown by at most one. -/
@@ -325,6 +328,22 @@ theorem sim_run (B : ℕ) : ∀ (t : ℕ) (s : St R Λ), s.pos ≤ x.length → 
         (fun r => by have := hB r; have := step_regs_le P x s r; omega)
       refine ⟨t₁ + t₂, by nlinarith, ?_⟩
       rw [MultiTapeTM.runFrom_add, h₁, h₂, run_succ]
+
+/-- **The reachable-bound run interface** (P0 round 1, sanity target S9): the simulation
+bound of `Complexity.CounterProg.sim_run`, under a bound on every register valuation
+actually reached strictly before the end of the run — rather than the start-`t`-below-`B`
+headroom — at the per-step cost `2B + 5` (each pre-step valuation is at most `B`, so a
+mid-step increment stays within `B + 1` and `Complexity.CounterProg.sim_step` at `B + 1`
+costs at most `2(B + 1) + 3`).
+
+**Proof sketch.** Induction on `t` exactly as in `Complexity.CounterProg.sim_run`, except
+that each step's register bound comes from the reachability hypothesis at that step
+(instantiated at `j`, then `Turing.CounterProg`-style `step_regs_le` gives the mid-step
+`B + 1`) instead of the decreasing headroom; `step_pos_le` preserves the position bound. -/
+theorem sim_run_of_regs_le (B : ℕ) (t : ℕ) (s : St R Λ) (hp : s.pos ≤ x.length)
+    (hB : ∀ j < t, ∀ r, (run P x s j).regs r ≤ B) :
+    ∃ t' ≤ t * (2 * B + 5), (toTM P l₀).tm.runFrom (enc x s) t' = enc x (run P x s t) := by
+  sorry
 
 /-- **A counter program is a Turing machine**: if the program halts on `x` after `t`
 abstract steps, its machine computes the program's output within `t (2t + 3)` steps.

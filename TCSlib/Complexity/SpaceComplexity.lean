@@ -37,6 +37,7 @@ import TCSlib.Complexity.SpaceComplexity.SpaceClasses
 import TCSlib.Complexity.SpaceComplexity.Constructible
 import TCSlib.Complexity.SpaceComplexity.Inclusions
 import TCSlib.Complexity.SpaceComplexity.Examples
+import TCSlib.Complexity.SpaceComplexity.ZeroSpace
 
 /-!
 # Space complexity
@@ -98,6 +99,8 @@ running counter program is simulated by an abstract register machine in
 - `SpaceComplexity.Inclusions`: Thm 4.2's first two inclusions; `P ⊆ PSPACE`;
   Example 4.6 (`NP ⊆ PSPACE`, `3SAT ∈ PSPACE`)
 - `SpaceComplexity.Examples`: Example 4.7's parity language
+- `SpaceComplexity.ZeroSpace`: the zero-bound collapse of unnormalized `SPACE` and the
+  positive-normalization identities (P0 reception audit, round 1)
 
 ## References
 
