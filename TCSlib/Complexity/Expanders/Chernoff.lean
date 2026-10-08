@@ -19,7 +19,7 @@ samples.  This is the tool behind randomness-efficient error reduction for
 *two-sided* error algorithms (run the algorithm on the `k` coin strings
 visited by a walk and take the majority).
 
-## Main results (sorry-stubbed)
+## Main results (intentionally statement-only)
 
 * `Expander.walk_visits_concentration` — [AB09, Thm 7.41].
 
