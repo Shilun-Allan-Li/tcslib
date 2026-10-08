@@ -34,7 +34,7 @@ first candidates to descope), **deferred** (backlog).
 | Def 3.4 oracle TMs | Raw model exists: `Turing.OracleTM`, `WellFormed`, lockstep embeddings (`TuringMachine/Oracle.lean`, audited ch-1) | Core: bundle + oracle NDTM (P3.1) |
 | Def 3.5 `Pᴼ`, `NPᴼ` | Missing | Core (P3.1) |
 | Ex 3.6(1) `co-SAT ∈ P^SAT`; (2) `O ∈ P ⇒ Pᴼ = P` | Missing | Core (P3.1) |
-| Ex 3.6(3) `P^EXPCOM = NP^EXPCOM = EXP` | Missing | Depends on CH34-Q4 |
+| Ex 3.6(3) `P^EXPCOM = NP^EXPCOM = EXP` | Missing | **Core** (user decision 2026-10-08, CH34-Q4; P3.2) |
 | **Thm 3.7** Baker-Gill-Solovay | Missing | Core (P3.2) |
 | Ex 3.5 a non-time-constructible function | Missing | Core (P3.2, cheap) |
 | **Thm 3.2** nondeterministic time hierarchy (lazy diagonalization), with Ex 2.6 universal NDTM | Missing (no NDTM codes, no universal NDTM) | **Core, mandatory, book strength** — linear-overhead universal NDTM (user decisions 2026-10-08; P3.3, CH34-Q8) |
@@ -109,16 +109,24 @@ constructions are consumers of the machine-routine layer (§4a).
   most `t` strings, each of length at most `t` (`queryString_length_le` exists); and
   `FinOracleTM`s can be enumerated with every machine recurring infinitely often, through
   `Fintype.equivFin` plus state relabelling, with no universal oracle machine needed.
-- **The `A` half is a route decision (CH34-Q4).**
-  - The book's route uses `A = EXPCOM` via Ex 3.6(3). `EXP ⊆ P^EXPCOM` is cheap through
-    the §2.2 lemma, but `NP^EXPCOM ⊆ EXP` needs an exponential-time deterministic
-    simulation of oracle NDTMs that answers `EXPCOM` queries by clocked universal
-    simulation. That is a summit-sized machine.
-  - The alternative is a self-referential oracle: `A = {⟨N, x, 1ᵗ⟩ : N^A accepts x within
-    t steps}`. It is well-defined by recursion on length, because a `t`-step run queries
-    only strings shorter than `⟨N, x, 1ᵗ⟩`. Then `NPᴬ ⊆ Pᴬ` takes one query through the
-    §2.2 lemma. This is machine-light, but it deviates from the book, and a published
-    attribution must still be sourced (policy §2).
+- **The `A` half takes the book's route: `A = EXPCOM`** (user decision 2026-10-08,
+  CH34-Q4 — preferred as the more natural oracle, with `P^EXPCOM = NP^EXPCOM = EXP` the
+  memorable byproduct), via the chain `EXP ⊆ P^EXPCOM ⊆ NP^EXPCOM ⊆ EXP` (Ex 3.6(3)).
+  - `EXP ⊆ P^EXPCOM`: the reduction `x ↦ ⟨M_L, x, 1^(n+1)^c⟩` (constant prefix, copy,
+    unary padding emitter — chapter-2 padding-cluster precedents), then one query
+    through the §2.2 lemma.
+  - `NP^EXPCOM ⊆ EXP` is **a fill summit**: for each language, a deterministic
+    exponential-time machine that enumerates all choice words of the fixed oracle NDTM
+    (the `NP_subset_EXP` enumerator pattern), simulates it step by step under each word
+    (2B-style invariant), and answers each query `⟨M', x', 1^(n')⟩` by parsing it
+    (CodeParser) and running the timed universal machine for `2^(n')` steps (the
+    `timed_universal` bridge), under a `2^O(p(n))` ledger. Continuation budget certain.
+  - The machine-light alternative — [BGS75, Thm 1]'s own self-referential
+    `A = K(A) = {⟨i, x, 0ⁿ⟩ : NPᵢᴬ accepts x in < n steps}`, well-founded because a
+    `< n`-step run queries only shorter strings — is **recorded as the fallback**: if
+    the summit stalls, switching requires only the oracle-locality lemma (needed for
+    the `B` half anyway) plus a maintainer sign-off, and the blueprint would cite
+    [BGS75, Thm 1] with a deviation note.
 
 ### 2.4 Space
 
@@ -234,7 +242,7 @@ Chapter 4, then Chapter 3's two heavy diagonalizations.
 |---|---|---|
 | **P0 — Reception** | Statements-only audit of the existing surface the campaign will build on: `time_hierarchy`, `P_ssubset_EXP`, `SPACE`, `LOGSPACE`, `ImplicitlyLogspaceComputable`, `LOGSPACE_subset_P`, `ComputesInTime.of_spaceUsed_le`, and the `arm_decides` and `compile_space` contracts. Docstring fixes (the §2.4 inconsistency; the stale "spec phase, sorried" notes in `Build/*`). Drift baseline recorded. No new sorries. | 0 |
 | **P3.1 — Oracle classes** | `FinOracleTM`, the oracle NDTM, `Pᴼ`, `NPᴼ`; `P ⊆ Pᴼ`, `NPᴼ` contains `Pᴼ`; the `≤ₚ ⇒ Pᴼ` lemma; Ex 3.6(1)(2); `NP ⊆ P^SAT` as a sanity theorem | ~10 |
-| **P3.2 — Relativization** | Oracle-machine enumeration; `U_B ∈ NP^B`; the stage construction; Thm 3.7; the `A` half per CH34-Q4; Ex 3.5 | ~8 |
+| **P3.2 — Relativization** | Oracle-machine enumeration; `U_B ∈ NP^B`; the stage construction; the EXPCOM cluster (`EXPCOM`, `EXP ⊆ P^EXPCOM`, `NP^EXPCOM ⊆ EXP`, `P^EXPCOM = NP^EXPCOM = EXP` — Ex 3.6(3)); Thm 3.7; Ex 3.5 | ~11 |
 | **P4.1 — Space classes** | NDTM space measure, `NSPACE`, space-constructibility, the classes; Thm 4.2(i)(ii); `L ⊆ NL`; `3SAT ∈ PSPACE`, `NP ⊆ PSPACE`; `EVEN`, `MULT ∈ L`; the nondeterministic and polynomial-width ARM interfaces | ~14 |
 | **P4.2 — Configuration graphs** | The configuration codec; Claim 4.4(1) for NDTMs; Thm 4.2(iii); Savitch; `PSPACE = NPSPACE`; `NL ⊆ P`; Ex 4.3 | ~10 |
 | **P4.3 — `PSPACE`-completeness and space hierarchy** | Def 4.9; the QBF carrier, `TQBF`, Claim 4.4(2), Thm 4.13 (both halves); the space-universal machine (Ex 4.1); Thm 4.8; `L ⊊ PSPACE`; Ex 3.2; Ex 4.10 | ~12 |
@@ -242,7 +250,7 @@ Chapter 4, then Chapter 3's two heavy diagonalizations.
 | **P3.3 — Nondeterministic hierarchy** | NDTM codes, the clocked universal NDTM (Ex 2.6), Thm 3.2 at delivered strength | ~6 |
 | **P3.4 — Ladner** | `SAT_H`; Ex 3.6(a) (`H` in polynomial time); the Claim; Ex 3.6(b); Thm 3.3 | ~6 |
 
-That is roughly 75 new audited statements, against Chapter 2's 59.
+That is roughly 78 new audited statements, against Chapter 2's 59.
 
 ### 4a. Pre-campaign infrastructure (user decisions 2026-10-08)
 
@@ -308,13 +316,15 @@ build.
 - **The summits**, in rough order of size:
   1. the space-universal machine plus Thm 4.8 (or space theorems for the Chapter-1
      conversions);
-  2. `TQBF` hardness (a polynomial-time emitter of the `ψᵢ` formula, comparable to the
+  2. the `NP^EXPCOM ⊆ EXP` simulator (§2.3 — choice-word enumeration, per-step oracle
+     NDTM simulation, and timed-universal query answering compounded in one machine);
+  3. `TQBF` hardness (a polynomial-time emitter of the `ψᵢ` formula, comparable to the
      Cook-Levin emitter);
-  3. Ladner's `H` in polynomial time;
-  4. the universal NDTM;
-  5. Thm 4.2(iii) and Savitch over the configuration codec;
-  6. Immerman-Szelepcsényi;
-  7. Lemma 4.17.
+  4. Ladner's `H` in polynomial time;
+  5. the universal NDTM at linear overhead (guess-then-verify, §2.7);
+  6. Thm 4.2(iii) and Savitch over the configuration codec;
+  7. Immerman-Szelepcsényi;
+  8. Lemma 4.17.
 - **Delivered-strength honesty**: Thms 3.1 and 3.2 land weaker than the book unless
   Hennie-Stearns is built. Every docstring must say so; this was the round-1 lesson of
   every prior audit.
@@ -336,16 +346,13 @@ the record, and `backlog.md` §1 gets only the open ones.
 2. **CH34-Q2 — alignment with Hydroxyi.** **Answered: extend in place, co-owned.**
 3. **CH34-Q3 — Thm 3.1 strength.** **Answered: strengthen** — Hennie-Stearns + the
    two-work-tape universal before the fill epochs (§2.1, §4a).
-4. **CH34-Q4 — the `A` half of Thm 3.7.** **Open — explanation delivered, awaiting
-   confirmation.** Correction to the first draft: the "self-referential" oracle
-   `A = K(A) = {⟨i, x, 0ⁿ⟩ : NPᵢᴬ accepts x in < n steps}` is **the original proof** —
-   Baker-Gill-Solovay 1975, Lemma 1 + Theorem 1 (SIAM J. Comput. 4(4), pp. 433-434;
-   well-defined because a `< n`-step run queries only strings shorter than `n`); their
-   Theorem 2 is the PSPACE-complete-oracle variant, and [AB09]'s `EXPCOM` is a textbook
-   substitution. So the machine-light route follows the primary source, cited [BGS75],
-   with [AB09]'s Ex 3.6(3) deferred. One detail for the P3.1 audit: [BGS75] requires
-   the polynomial clock to hold under *every* oracle, which constrains how `Pᴼ`/`NPᴼ`
-   quantify the time bound.
+4. **CH34-Q4 — the `A` half of Thm 3.7.** **Answered (2026-10-08): the book's
+   `EXPCOM` route** — more natural, and `P^EXPCOM = NP^EXPCOM = EXP` is the memorable
+   identity; Ex 3.6(3) is core and `NP^EXPCOM ⊆ EXP` joins the summit list. Research
+   note retained: the machine-light self-referential oracle is [BGS75, Thm 1]'s own
+   proof (verified against the scanned original, pp. 433-434) and stays recorded as
+   the fallback (§2.3). [BGS75] detail for the P3.1 audit: the polynomial clock must
+   hold under *every* oracle, which constrains how `Pᴼ`/`NPᴼ` quantify the time bound.
 5. **CH34-Q5 — QBF matrix.** **Answered: CNF.**
 6. **CH34-Q6 — tiers.** **Answered: Thm 3.2 mandatory; Thm 3.3 (Ladner) core-late.**
 7. **CH34-Q7 — `NSPACE` halting convention.** **Answered: all branches halt.**
@@ -363,6 +370,7 @@ the record, and `backlog.md` §1 gets only the open ones.
 | Chapter 4 machine work goes through program layers (`LogProg.ARM`, `CounterProg`, proposed extensions §2.5) | Proposed |
 | §2 foundation choices and §7 provisional answers | **Answered 2026-10-08** (user): Q1 yes to both, Q2 extend in place co-owned, Q3 strengthen, Q5 CNF, Q6 Thm 3.2 mandatory / Ladner core-late, Q7 all branches halt. Q4 and Q8 open |
 | Routine layer set up in parallel with the statement phases, scoped to **amply support the ch-1/2 retrofit** (full bank/relocation/dispatch/frame catalog), with space costs throughout; Hennie-Stearns + two-tape universal as first consumers; retrofit itself not a gate (§4a) | Decided (user, 2026-10-08) |
+| CH34-Q4 answered (user, 2026-10-08): **EXPCOM route** for the `A` half of Thm 3.7 — Ex 3.6(3) promoted to core, the `NP^EXPCOM ⊆ EXP` simulator added to the summit list (continuation budget certain); [BGS75, Thm 1]'s self-referential oracle recorded as fallback | Decided |
 | CH34-Q8 answered (user, 2026-10-08): the universal NDTM is built at **linear overhead** (guess-then-verify), so Thm 3.2 lands at book strength `f(n+1) = o(g(n))` | Decided |
 | CH34-Q4 research (2026-10-08): the machine-light oracle `A = K(A)` **is** [BGS75]'s own Theorem 1 (verified against the scanned original, pp. 433-434), so no deviation from the primary source; [AB09]'s `EXPCOM` is the substitution. Awaiting maintainer confirmation of the route | Recorded |
 | Citation audit (2026-10-08), prompted by the maintainer: no missing code-inspiration citation found in campaign-authored Lean code — vendored cslib files carry full headers (pin `a3747758`), `Composition.lean` cites [Balbach22], `Build/*` + `machine-library-design.md` §1-11 were frozen 2026-10-03, two days **before** the first Bonnet examination (2026-10-05, scratchpad-only, never imported; backlog records the after-the-fact cost comparison as convergence). No brief ever carried external code. Hydroxyi's `TimeHierarchy//SpaceComplexity//PolyHierarchy/` trees cite only [AB09]; two design similarities flagged to *ask* (not assertions): `LogProg` compiler vs lax-434930's `TimeCompiler`; `ConfigCount.core` vs cslib `ConfigBound`'s `Cfg.core` (upstream 2026-09-14). §12 citation duty ([lax-434930], Apache-2.0) remains binding when that design is written | Recorded |
