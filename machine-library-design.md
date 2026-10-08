@@ -711,3 +711,131 @@ index (member count `R + 1`), and the chunk rule emits per-member
 flatMaps with the single terminator on the last chunk only. Fill
 batches proceed under the resolutions' binding section, partitioned
 Loop / Primitives / Wrappers.
+
+## 12. The routine layer (proposed 2026-10-08, pre-ch3/4 campaign)
+
+**Mandate** (user decisions 2026-10-06 and 2026-10-08, recorded in `backlog.md` §2
+and `AroraBarakChapters3-4Plan.md` §4a/§8): built after the Chapter-2 closure and
+**before the chapter-3/4 fill epochs**, in parallel with their statement phases;
+scoped to **amply support the chapter-1/2 retrofit**, not merely the new
+consumers; and — superseding §1's "no space bounds" non-goal for this increment —
+**every item below carries a space clause alongside its time cost**, so that the
+chapter-4 campaign and the P4.x statements consume the layer without a second
+pass. The space measure is the house one: `Turing.MultiTapeTM.spaceUsed`
+(work-tape cells visited; input and output tapes excluded).
+
+**Evidence.** The 4A chain is the measurement: roughly half of the A2/A3
+deliveries' 202 native privates are hand-rebuilt bank/relocation/dispatch
+routines; the `emitterBank*`/`emitterP2*` relocation family was privately
+re-harvested three times; and A3's proved costs (`3|w| + 3` copy, `2|w| + 2`
+clear) match the external prior art's `3w + 2`/`2w + 2` to within one step —
+independent convergence on the same catalog, discovered in the 2026-10-06
+survey. The emitter round-1 finding stands: *function-level* contracts cannot
+deliver clean-return seams, so the gap is configuration-level. §5 deferred the
+general tape-embedding transformation "until a third site needs it"; the third,
+fourth, and fifth sites have now arrived (the retrofit families, the
+Hennie-Stearns conversion, the two-work-tape universal machine).
+
+**What already exists and is consumed, not duplicated** (colleague modules,
+Hydroxyi/Jason Dong, on `main` since `f70c57c2`): the *function-level half* —
+`TuringMachine/CounterProg{,Run}.lean` (goto programs over unary registers
+compiled once into `FinTM`, `t` abstract steps within `t(2t+3)` machine steps,
+FP bridge via `ClassNP/CounterProgPolyTime.lean`), `ClassNP/Transducer.lean`,
+`ClassNP/{PolyTimePairing,PClosure}.lean`, `TuringMachine/UnaryTape.lean`; and,
+on the space side, `SpaceComplexity/Machines/` (the `LogProg` register-program
+compiler with `compile_space`/`arm_decides`). §12 supplies the
+configuration-level half those layers sit on.
+
+### R1. Bank embedding (the §5 deferral, promoted)
+
+A verified routine on its own `m`-tape set runs on any injectively selected
+subset of a `k`-tape host's work tapes, cost unchanged, everything else framed.
+Spec shape (final quantifiers fixed at spec time, audited): for an embedding
+`ι : Fin m ↪ Fin k`, transported actions and configurations with
+
+* **lockstep** — transported `runFrom` commutes with the source `runFrom`;
+* **frame** — tapes outside `range ι` are byte-identical before and after, their
+  heads unmoved; input position tracks the source; emission policy is a
+  parameter (suppressed or forwarded — the W1/E2 pair fixes the two modes;
+  whether this is one transformer with a mode or two transformers is open
+  decision 12.4);
+* **time** — step count preserved exactly;
+* **space** — cells visited on host tape `ι i` equal cells visited on source
+  tape `i`; unselected tapes visit nothing new.
+
+Generic form of: `emitterBank*`, the `emitterP2*` relocation family,
+`clBank*`/`clSlot*` (4A chain), and their chapter-1 analogues in
+`Build/Primitives.lean`/`Build/Loop.lean` internals.
+
+### R2. Seam composition
+
+Sequential composition of two controllers at a canonical `Turing.Cfg.ofWords`
+seam (Convention.lean's ABI notion): if `M₁` carries seam `c₀` to seam `c₁`
+within `T₁` under a first-return cut, and `M₂` carries `c₁` to `c₂` within
+`T₂`, the dispatch-glued machine carries `c₀` to `c₂` within `T₁ + T₂ + O(1)`,
+with the glue state-sum and dispatch lemmas owned by the combinator. Space
+clause: visited sets union, so per-tape space is bounded by the sum of the
+parts' per-tape spaces (whether the spec states the sharper per-tape `max` for
+disjointly-owned tapes is open decision 12.1). Generic form of the per-batch
+dispatch gluing re-proved in every A-chain and emitter batch.
+
+### R3. Catalog promotion, with space costs
+
+Promotion of the remaining audited A-chain privates as public machines with
+exact time *and* space costs: transfer (word from tape `i` to tape `j`,
+`3|w| + 3`), copy (`3|w| + 3`), clear (`2m + 2`, = P12's engine), compare, and
+increment — D6-style promotion, not new proof work, seeded from the named
+private families. Additionally, the existing catalog rows (P1-P12, P16-P18)
+and the W/L/E combinators are **retro-annotated with space theorems** — new
+`spaceUsed` lemmas beside the existing specs, no signature changes, so the
+audited statement surface is untouched (additive growth; open decision 12.3 on
+doing this here versus lazily per consumer — the amply-support mandate argues
+for here).
+
+### Consumers (rule-of-admission check, §4: two named customers per item)
+
+| Consumer | Uses |
+|---|---|
+| Chapter-1/2 retrofit (backlog §2) | R1 for the bank/relocation families; R2 for the dispatch families; R3 for `clCopy*`/`clCmp*`/`clRead*`/`clCount*` and the `Build/` harvest families |
+| Hennie-Stearns `k`→2 conversion ([AB09] §1.7; ch3-4 plan §2.1) | zones as banks (R1), shifts as R3 transfers, seam discipline (R2); the amortization is mathematics on top |
+| Two-work-tape universal machine (ch3-4 plan §2.1, §4a) | R1 + R2 throughout; the retrofit pilot; candidate space-bounded variant feeding Thm 4.8 / Ex 4.1 |
+| Chapter-4 ARM extensions (ch3-4 plan §2.5: nondeterministic and polynomial-width variants of `LogProg`) | R1/R2 at their `FinTM` compilation boundary; R3 space rows |
+
+### Placement, sequencing, cost
+
+* New files `Build/Embed.lean` (R1) and `Build/Seam.lean` (R2); R3's new rows in
+  a new `Build/Catalog.lean` (`Primitives.lean` is already over the size policy;
+  final name is open decision 12.2, settled before the spec audit per §9.6).
+  Namespace `Turing.FinTM`; order list after `Build/Loop`.
+* Process per `workflow.md`: maintainer-serial spec layer (quantifier-sensitive,
+  as §10), statement gate, fills as harvest-adaptation batches, fill audit. The
+  gate must close before the first chapter-3/4 fill epoch (plan §4a); statement
+  phases of chapters 3-4 run in parallel.
+* Estimate (campaign points): R1 spec+fill ≈ 10 (the lockstep is the risk
+  concentration, L-style), R2 ≈ 8, R3 promotions + space retro-annotation ≈ 12,
+  serial spec layer ≈ 6. Total ≈ 36, one mid-size batch equivalent.
+
+### Open decisions (human review; audit verifies, never disposes)
+
+* **12.1** R2 space accounting: per-tape sum, or the sharper max for
+  disjointly-owned tapes.
+* **12.2** R3's file name and the `Build/` size-policy layout.
+* **12.3** Space retro-annotation of P1-P12/P16-P18: in this increment (default,
+  per the amply-support mandate) or lazily per consumer.
+* **12.4** R1 emission policy: one transformer with a mode parameter, or a
+  suppressing and a forwarding transformer.
+
+### Citations (policy.md §2, *Design adaptation*)
+
+The configuration-level design is adapted from — with nothing transcribed —
+**Édouard Bonnet's `classical-complexity`** (Lax Archive lax-434930), module
+`proofs/Lax434930Proofs/InclusionAux/TimeCompiler/`: `StackProgram`'s
+`compile_correct`, `StackRename`'s `rename_executes`/`executes_in_sum` (the
+bank-embedding and seam-composition shapes), and the
+transfer/clear/copy/for/repeat routine catalog; commit
+`0c0840319318215fd7b36a9a822b81ce55cf6941`, Apache-2.0; examined 2026-10-05,
+different toolchain (Lean 4.33 vs our 4.25) and machine model (TM2-style keyed
+stacks vs `FinTM` tapes with heads). Suggested tag: `[Bon26]`. The R-modules'
+docstrings and their blueprint entries must carry this citation, alongside the
+existing `[Balbach22]` (AFP `Cook_Levin`) for the composition architecture and
+the in-repo credits to the colleague modules named above.
