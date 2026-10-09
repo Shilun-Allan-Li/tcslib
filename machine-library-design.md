@@ -1122,3 +1122,26 @@ first, the payload bank after it — and **relocation is not baked in**:
 a consumer needing the buffer or bank elsewhere composes with R1. One
 shared hosting core; `silent`/`emit` flavors per 12.4; the tag lives in
 the transported control state (the `a2_MapState.run q tag` precedent).
+
+### 13b. A-S1 gate close (2026-10-09, after `audits/vhost-infra-findings.md`)
+
+Round-1 **PASS, 0 blockers / 0 majors / 2 minors**; loop summary
+`audits/vhost-infra-resolutions.md`. Minor sweep recorded here per the
+audit's proposed fix (A-S1-2): the Z1 rider's promised **`ofWords`
+transport form is supplied by specialization** of the four delivered
+selected-tape projections (instantiate `c := Cfg.ofWords …`); no
+separately named specialization is exported now — if a consumer wants the
+whole-configuration identity (with its frame, capture, head, and output
+parameters spelled out), it is commissioned on need at the 12.2c window.
+A-S1-1 (the pack under-counted the definitions: eight with
+`MultiTapeTM.AgreeOn`, 23 audited declarations) is acknowledged as a pack
+erratum; shipped packs stay verbatim. The audit's four recommended sanity
+exports (initial-tag validity + `q₀`-independence, fixed-parameter
+transport injectivity, native-head constancy for arbitrary host
+configurations, named boundary/seam specializations) are **adopted as
+optional permanent lemmas of the A-S1 fill brief** — offered, not
+required. The audit's Z5 composition-of-responsibilities reading is
+affirmed and binding on retrofit consumers: Z5 equates runs on one
+carrier; heterogeneous `clSlot_run`-style sites first transport
+(R1 + state renaming), then agree — a public guarded
+configuration-transport theorem is a possible later export, not promised.
