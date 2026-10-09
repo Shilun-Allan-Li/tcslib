@@ -570,6 +570,20 @@ uncomputability chapter.
   surfaces never change; every replacement batch goes through the
   standard sweep + traversal + audit protocol. Prerequisite: the
   machine-routine layer's gate is CLOSED.
+  **Inventories + partition recorded 2026-10-09** (plan §4d; verbatim
+  reports `audits/retrofit-inventory/`): realizable conservative scope
+  ≈ −98 privates / −1,900 lines, dominated by dead code (`emitterBank*`
+  itself is dead — delete, not port); the R1/R2/catalog-shaped glue is
+  overwhelmingly LEAVE under the strict-simplification bar (monolithic
+  hosts, loop back-edges, canonical-only rows, missing selected-tape
+  exports). Batches RB1 (Loop) / RB2 (Primitives) / RB3 (Hardness),
+  `Universal*` excluded; **integration by side branch + PR, user merges
+  manually** (user rule 2026-10-09). Decisions D-R1 (Embed selected-tape
+  exports, proposed to ride the §13 Z1 gate), D-R2 (Primitives ownership
+  — option (a) deferred to 12.2c with feasibility proven; stretch (c)
+  inside RB2), D-R3 (machine-agreement transfer lemma, deferred) are in
+  §4d. The artifact-count note above corrects to **12** generated kernel
+  artifacts, located in `Nondeterminism`/`EXP`/`SAT`, none in Hardness.
 * **Audit-mandated fill-brief inheritances** (each brief must carry these
   verbatim from the cited records):
   - `NP_subset_EXP` enumerator: the contract-by-contract table —

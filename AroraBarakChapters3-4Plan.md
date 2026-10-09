@@ -370,6 +370,79 @@ integration). Every brief embeds its inherited audit material verbatim:
 the movement tables (F1C), the through-halt induction (F1A), the general-
 seam decomposition (F1B), and the R4/R5/answer-5 ledgers (F2A).
 
+### 4d. Chapter-1/2 retrofit: inventories, partition, decisions (recorded 2026-10-09)
+
+Three commissioned read-only inventories (verbatim under
+`audits/retrofit-inventory/{primitives,loop,hardness}.md`; source-text
+liveness — token matching, comments stripped, reachability from the public
+declarations; deletion safety at integration is the compile sweep, since a
+falsely-dead private fails loudly). Ground rules: the **strict-simplification
+bar** (replace only where the citation is strictly simpler; non-canonical
+seams are LEAVE), public surfaces byte-identical, the **`Universal*` cluster
+excluded** (two-tape-universal pilot territory), and the **integration rule**:
+retrofit output goes to a side branch and a PR into the campaign branch; the
+user merges manually.
+
+**What the inventories established.** The §12-shaped glue in the old files is
+overwhelmingly **LEAVE** for structural reasons the agents verified against
+the sources: the hosts are monolithic hand-built transition tables (R2
+composes exactly two machines, has no back-edge, and cannot start inside a
+phase); catalog rows are canonical-`Cfg.ofWords`-only; and R1 exports no
+selected-tape facts (`embedSlot_selected`/`_unselected` are private) nor an
+agreeing-host (`hagree`) lockstep. The realizable conservative scope is
+dominated by **dead code** (76 privates, ≈1,505 lines — including
+`emitterBank*`, the backlog's named R1 target, which was superseded rather
+than consumed) plus a handful of clean replacements:
+
+| Batch | File | Contents | Net impact |
+|---|---|---|---|
+| **RB1** (maintainer-serial proposed) | `Build/Loop.lean` | 8 dead privates (the standalone debit machine F4 + 2 orphans); H4's local `emit_run` re-derivation → the now-proved `Turing.emit_run` + `leftCfg_run`; the stale docstring sentence at 2205 | ≈ −200 lines |
+| **RB2** (one external batch) | `Build/Primitives.lean` | 62 dead privates (the superseded emitter batch F24a–f + 3 split orphans); `emitterCompare*` → `compareTM` and `emitterP2Erase*` → `clearTM` (both seams verified canonical, glue itemized in the inventory); the two `Encoding.lean` duplicate swaps; the three stale comment blocks. **Optional stretch (D-R2(c))**: derive `splitSolve` from `splitSolveWith` + `polyBits` (−38 more privates, ≈ −909 lines, one new bound proof, no new import) | ≈ −1,520 lines (−2,430 with the stretch) |
+| **RB3** (maintainer-serial proposed) | `CookLevin/Hardness.lean` | 6 dead privates; `clCompute_comp` → the public composition row; `clBuffer_append_bit` → `bufferTape_append`; `clA5_pt_unaryLength` → `clNative_fill true`; `clFresh*` → R2 (seams match `seamCompTM_run_ofCfg` exactly, no glue); the `clCount_width` docstring fix | ≈ −190 lines |
+
+All three batches are file-disjoint and can run in parallel; each ships with
+the full verification protocol (public-surface byte-identity, fresh sweeps,
+axiom prints of the file's publics unchanged, lint) on its side branch.
+Honest total: ≈ **−98 privates / −1,900 lines** — consistent with the
+recorded expectation that the retrofit's payoff is hygiene and idiom, not
+transformation; the five theorems of Hardness lose at most ~6% of their file
+even in the best case.
+
+**Decisions (user):**
+- **D-R1 — R1 selected-tape exports.** All three inventories independently
+  hit the same blocker: `Embed.lean` exports no selected-tape field lemmas
+  and no agreeing-host lockstep. Adding them is additive Embed surface
+  growth and unlocks ≈ −300–350 further lines in Hardness (families M/N/AM/U
+  and the Z/AB/AG glue) and the strongest Loop/Primitives R1 candidates.
+  **Proposed: fold into the §13 (Z1) statement phase** — same file family,
+  same audit gate, one shared-file window instead of two.
+- **D-R2 — Primitives ownership.** The inventory proved Catalog does *not*
+  import Primitives: the catalog's rows rest on `f2_` copies of 150
+  Primitives privates (147 byte-identical; correspondence mapped). Option
+  (a) — import Catalog into Primitives (no cycle, verified) and project 11
+  public rows from their twins — frees a further −100 privates/−2,370
+  lines but inverts the layer's ownership; **proposed: defer (a) to the
+  recorded 12.2c window** (feasibility now on record), take the (c) stretch
+  inside RB2, and let 12.2c also consume the complete Loop↔Catalog
+  correspondence map (95 privates, 92 byte-identical) the Loop inventory
+  produced.
+- **D-R3 — machine-agreement transfer lemma** (deferred candidate): Loop's
+  largest duplication is internal (14 phase lemmas, ≈550 lines, re-proved
+  verbatim for the forwarding host); an agreement-transfer lemma would
+  collapse it and is the same `hagree` genre as D-R1. Weigh at the §13 spec
+  phase; not part of this retrofit.
+
+**Logged housekeeping (maintainer, not retrofit output):** stale "statement
+skeleton / sorried" module headers in `Embed`/`Seam`/`Catalog` (all
+zero-sorry since today); two library-docstring overclaims (Embed's R1 "is
+the generic form of `clBank*`" — `clBankTM` is a simultaneous product, not
+a relocation; Catalog's copy/compare row provenance wording vs
+`clCopyTM`/`clCmpTM`'s actual semantics); bookkeeping corrections — the
+generated-kernel-artifact count is 12 (in `Nondeterminism`/`EXP`/`SAT`, none
+in Hardness), Hardness holds 553 privates (618 at A5 close − 65 at E5), and
+two kernel-dead names (`clRefClockCfg`, `clReadFields`) are missing from the
+E5 record.
+
 ## 5. Prior art to consult (design only; cite, never transcribe)
 
 - **Édouard Bonnet's Lax Archive entries** (Lean 4.33, Mathlib `db584cd6`). They use a
