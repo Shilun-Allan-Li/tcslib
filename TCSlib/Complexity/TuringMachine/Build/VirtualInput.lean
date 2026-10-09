@@ -52,12 +52,14 @@ transformer pair.
   choosing the seam, belong to the consumer (the A2 controller's parse
   stages are the precedent), seamed with R2.
 
-## Status: statement skeleton (§13 statement phase, tranche A-S1)
+## Status: proved (A-S1 gate closed round 1; fill epoch vhost-f1)
 
-The transformers and the configuration transport below are real
-definitions; every contract is `sorry`d with a proof sketch, awaiting the
-A-S1 statement gate and its fill epoch. The sketches name the proved
-template each fill adapts.
+Every contract below is kernel-checked. The statement gate closed at
+`audits/vhost-infra-resolutions.md`; the fill (one batch, 11 targets,
+report `audits/vhost-agent-reports/f1-REPORT.md`) followed the gate
+audit's per-statement routes, adapting the proved
+`Turing.FinTM.bufferedSecondCfg` template. The original proof sketches
+are retained on the contracts as the audit record.
 
 ## Main definitions and results
 
