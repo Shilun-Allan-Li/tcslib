@@ -21,8 +21,9 @@ corollary `PSPACE = NPSPACE` ([AB09, §4.2.1]) closes the polynomial level.
 Phase P4.2 of `AroraBarakChapters3-4Plan.md`.
 
 **Status: statement skeleton (phase P4.2).** Every contract is sorried with a
-sketch naming its fill obligations. The `SpaceComplexity.lean` facade is frozen
-under the live P4.1 gate; this module is wired through the root import only.
+sketch naming its fill obligations. The `SpaceComplexity.lean` facade has
+carried this module since the P4.1 gate closed (root-wired while that gate
+was live).
 
 ## Design
 

@@ -42,8 +42,9 @@ positive normalization per the P0 convention —
   `g` drives the budget computation and the clock, constructibility of `f`
   is carried for fidelity (the proof uses only `g`'s — recorded in the
   sketch, seeded to the audit).
-* The facade is frozen under the live P4.1 gate: wired through the root
-  import only.
+* Facade wiring: root-wired while the P4.1 gate was live; the
+  `SpaceComplexity.lean` facade has carried this module since that gate
+  closed.
 
 ## Main results (all sorried; phase-P4.3 statements)
 

@@ -49,9 +49,9 @@ contract is sorried with a sketch naming its fill obligations.
   reachability; the finite counting enters only through the (sorried) bounds.
   Efficient vertex *encoding* reuses `Turing.MultiTapeTM.ConfigCount.coreCode`;
   the adjacency CNF of Claim 4.4(2) is deliberately phase P4.3.
-* **The facade is frozen under the live P4.1 gate**: this module (and
-  `Savitch`) are wired through the root import only; facade wiring happens at
-  that gate's close.
+* **Facade wiring**: root-wired while the P4.1 gate was live; since that
+  gate closed (round 1, PASS), the `SpaceComplexity.lean` facade carries this
+  module and `Savitch`.
 
 ## Main definitions
 
