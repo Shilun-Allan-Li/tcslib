@@ -70,6 +70,17 @@ tale. The same discipline applies to circuit construction once `CircuitComplexit
 layer exists: gadgets, wiring combinators, and size/depth ledgers get one shared home and a
 registry, and new circuits are assembled from it.
 
+**Duplication.** Some duplication is mechanically forced by the campaign discipline —
+exclusive file ownership, the statement freeze, and `private` visibility leave a fill batch
+no other legal way to use another file's unexported machinery — and occasionally it is the
+right engineering call. It is never silently acceptable: **every instance of duplicated
+proved material must be human-approved.** A fill batch discloses each copy in its report;
+the maintainer's integration ledger totals copied material per file (`workflow.md` §4); and
+the audit template treats accumulated duplication as a major finding that a gate cannot
+close over without the human maintainer explicitly accepting the debt and naming where and
+when it is paid back (the registry's dedup/refactor queue). Duplication that was never
+disclosed is a freeze violation, not debt.
+
 **File header.** Every math file begins with the Mathlib-style copyright block, its imports,
 the repo-standard options
 

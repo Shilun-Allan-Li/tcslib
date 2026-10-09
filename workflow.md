@@ -123,13 +123,21 @@ the full source files, a `git format-patch` series, a git bundle, the batch's sw
 log, the axiom-print log, and `SHA256SUMS`. The maintainer verifies before
 integrating: checksums; the statement freeze (comment-stripped comparison of every
 audited signature); enumeration of any removals; public-declaration drift; a full
-fresh sweep; the headline axiom prints. Integration is `git am -3` from the patch
-series, preserving the agent's authorship. Large fills that exhaust one agent's budget
+fresh sweep; the headline axiom prints; and the **duplication ledger** — every
+private copy of existing proved material in the delivery enumerated, with each
+touched file's cumulative copied-material count and fraction. If a delivery pushes a
+file past **one fifth copied material**, or adds copies to a file that already
+received copies in an earlier epoch, the maintainer opens a `backlog.md` §1
+human-review item before the epoch's audit pack ships — no discretion. Integration
+is `git am -3` from the patch series, preserving the agent's authorship. Large fills that exhaust one agent's budget
 continue via a continuation brief to a fresh agent (the `universal` B2 precedent).
 
 **Epoch boundaries**: the maintainer re-runs the full sweep, produces a **drift
-attestation** (§6), and prepares the epoch's audit pack with elaboration evidence;
-the epoch's gate follows the same zero-blockers/majors rule as phase gates.
+attestation** (§6), and prepares the epoch's audit pack with elaboration evidence
+and the epoch's **duplication ledger**, which the auditor verifies independently
+(audit template failure mode 5); the epoch's gate follows the same
+zero-blockers/majors rule as phase gates, and a debt major closes only by explicit
+human acknowledgment recorded in the resolutions file.
 
 ## 5. Closure
 
