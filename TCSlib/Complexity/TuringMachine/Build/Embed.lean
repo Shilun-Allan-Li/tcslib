@@ -510,7 +510,16 @@ theorem embedSilentRetTM_run (ι : Fin m ↪ Fin k) (cap : Fin k)
 /-- **R1′ through-halt contract, forwarding flavor** (spec, fill pending —
 round-1 repair R1): as `Turing.embedSilentRetTM_run` with the final
 emission forwarded to the physical output (`pre ++ (M.runFrom c T).output`
-at the anchor). -/
+at the anchor).
+
+**Proof sketch.** As `embedSilentRetTM_run`, with the forwarding core: live
+times transport under `Cfg.mapState Sum.inl` by `embedEmitTM_runFrom`'s
+one-step commutation, the halting step applies the closed forwarding core's
+tape and output effects (the final emission appended to the physical
+output) with the successor `Option.elim` landing in `Sum.inr ()`, and the
+first-visit clause projects from the `Sum.inl` lockstep. Fill obligations,
+named: the successor equations; the through-halt step case; the
+first-visit projection. -/
 theorem embedEmitRetTM_run (ι : Fin m ↪ Fin k) (M : MultiTapeTM m Bool S)
     (tapes : Fin k → ℤ → Option Bool) (heads : Fin k → ℤ)
     (pre : List Bool) (c : Cfg m Bool S x) (T : ℕ)
@@ -552,7 +561,12 @@ theorem embedSilentRetTM_visitedByTapeHead (ι : Fin m ↪ Fin k) (cap : Fin k)
 
 /-- **R1′ space, forwarding flavor** (spec, fill pending — round-1 repair
 R1): the forwarding analogue of
-`Turing.embedSilentRetTM_visitedByTapeHead`. -/
+`Turing.embedSilentRetTM_visitedByTapeHead`.
+
+**Proof sketch.** As the suppressing flavor: identical tape actions through
+the first source halt, then the live idle and the halted absorption are
+both stationary, freezing both visited sets — the trajectories coincide at
+every time. -/
 theorem embedEmitRetTM_visitedByTapeHead (ι : Fin m ↪ Fin k)
     (M : MultiTapeTM m Bool S)
     (tapes : Fin k → ℤ → Option Bool) (heads : Fin k → ℤ)
