@@ -1,0 +1,38 @@
+diff --git a/TCSlib/Complexity/TuringMachine/Build/Embed.lean b/TCSlib/Complexity/TuringMachine/Build/Embed.lean
+index e1d69d24..b44c4479 100644
+--- a/TCSlib/Complexity/TuringMachine/Build/Embed.lean
++++ b/TCSlib/Complexity/TuringMachine/Build/Embed.lean
+@@ -472,10 +472,13 @@ embedding runs in `Sum.inl`-lockstep through every live time and, at `T`,
+ sits at the **live return anchor** over the completed transport — the
+ halting transition's emission recorded on `cap`, the source tape residue
+ preserved on the selected bank, the frame untouched — having visited the
+-anchor first exactly there. The smallest case is the round-1 counterexample
+-cured: a one-state source that emits and halts on its first transition
+-lands at time `1` in `Sum.inr ()` with `pre ++ [b]` on the capture tape
+-(the audit's S8 check).
++anchor first exactly there. The start must be **live** (`hc` — round-2
++blocker: an initially halted `c` at `T = 0` satisfies the other hypotheses
++vacuously while the handover state projection would demand
++`none = some (Sum.inr ())`; under `hhalt`, `hc` is equivalent to `0 < T`).
++The smallest case is the round-1 counterexample cured: a one-state source
++that emits and halts on its first transition lands at time `1` in
++`Sum.inr ()` with `pre ++ [b]` on the capture tape (the audit's S8 check).
+ 
+ **Proof sketch.** Live times: the `Sum.inl` branch applies the very core of
+ `Turing.embedSilentTM`, so `embedSilentTM_runFrom`'s one-step commutation
+@@ -490,6 +493,7 @@ theorem embedSilentRetTM_run (ι : Fin m ↪ Fin k) (cap : Fin k)
+     (hcap : cap ∉ Set.range ι) (M : MultiTapeTM m Bool S)
+     (tapes : Fin k → ℤ → Option Bool) (heads : Fin k → ℤ)
+     (pre out₀ : List Bool) (c : Cfg m Bool S x) (T : ℕ)
++    (hc : c.state ≠ none)
+     (hlive : ∀ t < T, (M.runFrom c t).state ≠ none)
+     (hhalt : (M.runFrom c T).state = none) :
+     (∀ t < T,
+@@ -523,6 +527,7 @@ first-visit projection. -/
+ theorem embedEmitRetTM_run (ι : Fin m ↪ Fin k) (M : MultiTapeTM m Bool S)
+     (tapes : Fin k → ℤ → Option Bool) (heads : Fin k → ℤ)
+     (pre : List Bool) (c : Cfg m Bool S x) (T : ℕ)
++    (hc : c.state ≠ none)
+     (hlive : ∀ t < T, (M.runFrom c t).state ≠ none)
+     (hhalt : (M.runFrom c T).state = none) :
+     (∀ t < T,
