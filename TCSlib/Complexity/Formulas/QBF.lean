@@ -109,7 +109,7 @@ is exactly satisfiability of the matrix.
 
 **Proof sketch.** Forward: the recursion's witnesses assemble an assignment
 on `[0, n)` under which the matrix evaluates `true`; variables `≥ n` carry
-the base `false`, and `Std.Sat.CNF.eval_congr_of_lt_numVars` (chapter 2)
+the base `false`, and `Complexity.eval_congr_of_lt_numVars` (chapter 2)
 transports evaluation to the assembled assignment. Backward: given a
 satisfying `σ`, choose the witness `σ i` at step `i`; after `n` updates the
 built assignment agrees with `σ` below `numVars m ≤ n`, and
