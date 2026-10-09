@@ -116,7 +116,10 @@ Savitch's quadratic overhead is absorbed.
 
 **Proof sketch.** `⊆` is `Complexity.PSPACE_subset_NPSPACE` (phase P4.1).
 `⊇`: a member of `NPSPACE` lives in some `NSPACE (n ^ c + 1)`; route `c = 0`
-into `c = 1` by `Complexity.NSPACE.mono`; for `1 ≤ c`,
+into `c = 1` by the class's constant absorption — a decider within
+`c₁ · (n ^ 0 + 1) = 2 · c₁` cells is a decider within `2c₁ · (n ^ 1 + 1)`
+cells (bare `Complexity.NSPACE.mono` does not apply: its pointwise hypothesis
+fails at `n = 0`, where `n ^ 0 + 1 = 2 > n + 1 = 1`); for `1 ≤ c`,
 `Complexity.savitch` with `Complexity.spaceConstructible_poly` gives
 membership in `SPACE ((n^c + 1) · (n^c + 1))`, and
 `(n^c + 1)² ≤ 4 · (n^{2c} + 1)` lets `Complexity.SPACE.mono` plus the class's

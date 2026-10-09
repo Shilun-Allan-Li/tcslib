@@ -188,9 +188,11 @@ and `accept` as a final summary is acceptance, outputs being read only through
 the summary. Iterate until all vertices along the branch are distinct; their
 codes (`Turing.MultiTapeTM.ConfigCount.coreCode` within the window, paired
 with the summary) are injective (`coreCode_inj`), so the branch length is at
-most `N.configBound x.length s`; if the original `T` is already smaller, pad
-instead (`Turing.FinNDTM.AcceptsWithin.mono`, and the padded siblings stay
-halted by `Turing.NDTM.runWith_of_halt`). -/
+most `N.configBound x.length s`, and the shortened word pads back up to the
+exact count (`Turing.FinNDTM.AcceptsWithin.mono` — `AcceptsWithin` demands
+exact word length); if the original `T` is already smaller, pad directly
+instead (the same `mono`, and the padded siblings stay halted by
+`Turing.NDTM.runWith_of_halt`). -/
 theorem acceptsWithin_of_spaceUsedWith_le (N : FinNDTM Bool) {x : List Bool}
     {T s : ℕ} (hacc : N.AcceptsWithin x T)
     (hs : ∀ w : List Bool, w.length = T →
