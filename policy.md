@@ -52,6 +52,24 @@ internal plumbing.
 **Helpers.** Foundational helper lemmas that serve a whole area belong in that area's
 `Basic.lean`, not in the file that first needed them.
 
+**Construction reuse.** Machines are built from the verified construction layers, not from
+scratch: the combinators and routine catalog of `TCSlib/Complexity/TuringMachine/Build/`
+(conventions, wrappers, loops, primitives, embeddings, seams, and the catalog rows —
+`machine-library-design.md` is the registry), and the program layers (`LogProg.ARM`,
+`CounterProg`) where a register-level description suffices. Before writing a transition
+table by hand, check the registry; a routine that exists is cited, not re-derived. A routine
+that *almost* exists is the interesting case: do not write a third private variant — either
+consume the general form, or commission the missing form into the shared layer (during a
+fill batch: a `private` local copy plus a "requested shared lemma" in the report, promoted
+at the next shared-file window). A hand-built machine is acceptable only when no layer
+covers the need, and its docstring must say so and name what was missing — that sentence is
+what turns the gap into the next catalog row. The chapter-1/2 files that predate this layer
+re-derived the same bank/relocation/dispatch/frame families four times over (`emitterBank*`,
+`clBank*`, `clSlot*`, …); the retrofit paying that debt back is the standing cautionary
+tale. The same discipline applies to circuit construction once `CircuitComplexity`'s gadget
+layer exists: gadgets, wiring combinators, and size/depth ledgers get one shared home and a
+registry, and new circuits are assembled from it.
+
 **File header.** Every math file begins with the Mathlib-style copyright block, its imports,
 the repo-standard options
 
