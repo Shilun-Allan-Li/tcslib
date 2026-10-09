@@ -5024,58 +5024,6 @@ private def emLoopForwardCfg {k : ℕ} {S H : Type} {x : List Bool}
     Cfg (k + 1) Bool H x :=
   leftCfg id (Turing.emitCfg emb ret pre c) (fun _ : Fin 1 => bufferTape []) (fun _ => 0)
 
-/-- A forwarded action preserves the padded source configuration and appends
-its optional bit after the accumulated prefix, including on a halting action. -/
-private lemma emLoop_forward_apply {k : ℕ} {S H : Type} {x : List Bool}
-    (emb : S → H) (ret : H) (pre : List Bool)
-    (a : Action k Bool S) (c : Cfg k Bool S x) :
-    (leftAction 1 id (Turing.emitAction emb ret a)).apply (emLoopForwardCfg emb ret pre c) =
-      emLoopForwardCfg emb ret pre (a.apply c) := by
-  unfold emLoopForwardCfg
-  rw [leftCfg_apply]
-  have he : (Turing.emitAction emb ret a).apply (Turing.emitCfg emb ret pre c) =
-      Turing.emitCfg emb ret pre (a.apply c) := by
-    refine Cfg.ext rfl rfl rfl rfl ?_
-    simp only [Turing.emitAction, Turing.emitCfg, Action.apply, List.append_assoc]
-  rw [he]
-
-/-- Guarded forwarding with one inactive tape, proved locally so this batch
-does not depend on the concurrent `Turing.emit_run` admission.
-**Proof sketch.** The host sees exactly the source's active symbols. Apply
-the forwarded-action identity once per live source step and induct; the source
-may halt on the final action, after that action's emission is forwarded. -/
-private lemma emLoop_forward_run {k : ℕ} {S H : Type} {x : List Bool}
-    (src : MultiTapeTM k Bool S) (host : MultiTapeTM (k + 1) Bool H)
-    (emb : S → H) (ret : H)
-    (hagree : ∀ q inp work, host.tr (emb q) inp work =
-      leftAction 1 id (Turing.emitAction emb ret (src.tr q inp (fun i => work i.castSucc))))
-    (pre : List Bool) (c : Cfg k Bool S x) (t : ℕ)
-    (hlive : ∀ j < t, (src.runFrom c j).state ≠ none) :
-    host.runFrom (emLoopForwardCfg emb ret pre c) t =
-      emLoopForwardCfg emb ret pre (src.runFrom c t) := by
-  have hs (d : Cfg k Bool S x) (hd : d.state ≠ none) :
-      host.step (emLoopForwardCfg emb ret pre d) =
-        emLoopForwardCfg emb ret pre (src.step d) := by
-    cases hq : d.state with
-    | none => exact False.elim (hd hq)
-    | some q =>
-      have hstate : (emLoopForwardCfg emb ret pre d).state = some (emb q) := by
-        simp [emLoopForwardCfg, leftCfg, Turing.emitCfg, hq]
-      have hwork : (fun i => (emLoopForwardCfg emb ret pre d).workTapeSymbols i.castSucc) =
-          d.workTapeSymbols := by
-        funext i
-        simp [emLoopForwardCfg, leftCfg, Turing.emitCfg, Cfg.workTapeSymbols,
-          Fin.addCases, i.isLt]
-      have hin : (emLoopForwardCfg emb ret pre d).inputSymbol = d.inputSymbol := rfl
-      simp only [MultiTapeTM.step, hstate, hq]
-      rw [hagree, hwork, hin]
-      exact emLoop_forward_apply emb ret pre _ d
-  induction t with
-  | zero => rfl
-  | succ t ih =>
-    rw [MultiTapeTM.runFrom_succ_eq_step', ih (fun j hj => hlive j (by omega)),
-      hs _ (hlive t (by omega)), MultiTapeTM.runFrom_succ_eq_step']
-
 /-- The forwarding call stores output physically and keeps the former payload
 tape blank at zero. All body, counter, and fuel data use the existing layout. -/
 private def emLoopCall (body F : FinTM Bool) (anchor : body.State) {x : List Bool}
@@ -5119,8 +5067,25 @@ private lemma emLoopHost_body_forward (body F : FinTM Bool) (anchor : body.State
       emLoopForwardCfg (fun s => .inr (.inl (startup, s)))
         (.inr (.inr (if startup then 6 else 7 : Fin 14))) pre
         ((loopBodySource body F anchor).runFrom c t) := by
-  exact emLoop_forward_run (loopBodySource body F anchor) (emLoopHost body F anchor findMode).tm
-    _ _ (by intros; rfl) pre c t hlive
+  -- Pad the stopped body, then use the public forwarding contract in this host.
+  let src := loopBodySource body F anchor
+  let padded : MultiTapeTM (body.k + 1 + (1 + F.k) + 1) Bool (body.State × Bool) :=
+    ⟨src.q₀, fun q inp work => leftAction 1 id (src.tr q inp (fun i => work i.castSucc))⟩
+  have hrun (u : ℕ) := leftCfg_run src padded id (fun _ _ _ => rfl)
+    c (fun _ : Fin 1 => bufferTape []) (fun _ => 0) u
+  have hcfg (emb : body.State × Bool → LoopHostState body F) (ret : LoopHostState body F)
+      (d : Cfg (body.k + 1 + (1 + F.k)) Bool (body.State × Bool) x) :
+      Turing.emitCfg emb ret pre (leftCfg id d (fun _ : Fin 1 => bufferTape []) (fun _ => 0)) =
+        emLoopForwardCfg emb ret pre d := by
+    refine Cfg.ext ?_ rfl rfl rfl rfl
+    simp [Turing.emitCfg, emLoopForwardCfg, leftCfg]
+  rw [← hcfg]
+  rw [Turing.emit_run padded _ _ _ ?_ pre _ t ?_, hrun t, hcfg]
+  · intro q inp work
+    simp [padded, src, emLoopHost, Turing.emitAction, leftAction, Option.map_id]
+  · intro u hu
+    rw [hrun u]
+    simpa [Cfg.Halted, leftCfg] using hlive u hu
 
 /-- A live anchor endpoint is forwarded after one additional stop step.
 The exact endpoint keeps every inactive tape and carries the false stop flag.
