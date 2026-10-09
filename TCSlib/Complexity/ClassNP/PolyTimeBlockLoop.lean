@@ -257,6 +257,33 @@ def blockDone : List Bool := pairEncode [] []
 `Complexity.polyTimeComputable_ite` consumes. -/
 def isNilB (w : List Bool) : Bool := decide (w = [])
 
+/-- Keeping only the head symbol is polynomial-time computable.
+**Proof sketch.** `w.take 1` is the length-gated take
+`Complexity.PrefixByLength.take` applied to `Turing.pairEncode [true] w`. -/
+theorem polyTimeComputable_take1 : PolyTimeComputable (fun w => w.take 1) := by
+  have henc : PolyTimeComputable (fun w => pairEncode [true] w) :=
+    (polyTimeComputable_const [true]).pairEncode polyTimeComputable_id
+  have heq : (fun w : List Bool => w.take 1) =
+      PrefixByLength.take ∘ (fun w => pairEncode [true] w) := by
+    funext w
+    simp [Function.comp, PrefixByLength.take]
+  rw [heq]
+  exact polyTimeComputable_takePrefixByLength.comp henc
+
+/-- The head bit (defaulting to `false`) is polynomial-time computable as a
+one-bit output.
+**Proof sketch.** `[w.headD false] = (w ++ [false]).take 1`. -/
+theorem polyTimeComputable_headD :
+    PolyTimeComputable (fun w => [w.headD false]) := by
+  have happ : PolyTimeComputable (fun w : List Bool => w ++ [false]) :=
+    PolyTimeComputable.append polyTimeComputable_id (polyTimeComputable_const [false])
+  have heq : (fun w : List Bool => [w.headD false]) =
+      (fun w : List Bool => w.take 1) ∘ (fun w : List Bool => w ++ [false]) := by
+    funext w
+    cases w <;> simp [Function.comp]
+  rw [heq]
+  exact polyTimeComputable_take1.comp happ
+
 /-! ### The emit-iteration combinator -/
 
 /-- **The bounded loop of polynomial-time rounds** — the machine-level engine
@@ -295,20 +322,170 @@ component (`List.zipWith` semantics); malformed pairs give `[]`. -/
 def xorD (z : List Bool) : List Bool :=
   List.zipWith xor (pairFstD z) (pairSndD z)
 
+/-- One round of the XOR transducer: drop the head of both components. -/
+private def xorPairStep (s : List Bool) : List Bool :=
+  pairEncode ((pairFstD s).drop 1) ((pairSndD s).drop 1)
+
+/-- The XOR transducer's chunk: one XOR bit while both components are
+nonempty, nothing afterwards. -/
+private def xorPairEmit (s : List Bool) : List Bool :=
+  if isNilB (pairFstD s) || isNilB (pairSndD s) then []
+  else if (pairFstD s).headD false then
+    if (pairSndD s).headD false then [false] else [true]
+  else
+    if (pairSndD s).headD false then [true] else [false]
+
+private theorem polyTimeComputable_xorPairStep : PolyTimeComputable xorPairStep :=
+  (polyTimeComputable_tail.comp polyTimeComputable_pairFstD).pairEncode
+    (polyTimeComputable_tail.comp polyTimeComputable_pairSndD)
+
+private theorem polyTimeComputable_xorPairEmit : PolyTimeComputable xorPairEmit := by
+  have hguard : PolyTimeComputable (fun s =>
+      [isNilB (pairFstD s) || isNilB (pairSndD s)]) :=
+    polyTimeComputable_or (polyTimeComputable_isNil.comp polyTimeComputable_pairFstD)
+      (polyTimeComputable_isNil.comp polyTimeComputable_pairSndD)
+  have hd1 : PolyTimeComputable (fun s => [(pairFstD s).headD false]) :=
+    polyTimeComputable_headD.comp polyTimeComputable_pairFstD
+  have hd2 : PolyTimeComputable (fun s => [(pairSndD s).headD false]) :=
+    polyTimeComputable_headD.comp polyTimeComputable_pairSndD
+  exact polyTimeComputable_ite hguard (polyTimeComputable_const [])
+    (polyTimeComputable_ite hd1
+      (polyTimeComputable_ite hd2 (polyTimeComputable_const [false])
+        (polyTimeComputable_const [true]))
+      (polyTimeComputable_ite hd2 (polyTimeComputable_const [true])
+        (polyTimeComputable_const [false])))
+
+/-- One XOR round never grows the state beyond `max` with the empty pair. -/
+private theorem length_xorPairStep_le (s : List Bool) :
+    (xorPairStep s).length ≤ max s.length 2 := by
+  cases h : pairDecode s with
+  | none =>
+    have h1 : pairFstD s = [] := by simp [pairFstD, h]
+    have h2 : pairSndD s = [] := by simp [pairSndD, h]
+    refine le_trans ?_ (le_max_right _ _)
+    simp [xorPairStep, h1, h2, length_pairEncode]
+  | some ab =>
+    obtain ⟨a, b⟩ := ab
+    have hz := eq_pairEncode_of_pairDecode s a b h
+    refine le_trans ?_ (le_max_left _ _)
+    rw [hz]
+    simp only [xorPairStep, pairFstD_pairEncode, pairSndD_pairEncode, length_pairEncode,
+      List.length_drop]
+    omega
+
+/-- Orbit envelope for the XOR transducer. -/
+private theorem length_xorPairStep_iterate (w : List Bool) (i : ℕ) :
+    (xorPairStep^[i] w).length ≤ 2 * (w.length + 1) ^ 1 := by
+  have hmax : (xorPairStep^[i] w).length ≤ max w.length 2 := by
+    induction i with
+    | zero => simpa using le_max_left _ _
+    | succ i ih =>
+      rw [Function.iterate_succ_apply']
+      exact le_trans (length_xorPairStep_le _) (max_le ih (le_max_right _ _))
+  refine le_trans hmax ?_
+  rw [pow_one]
+  exact max_le (by omega) (by omega)
+
+/-- The XOR transducer's orbit drops both components one symbol per round. -/
+private theorem xorPairStep_orbit (p u : List Bool) (i : ℕ) :
+    xorPairStep^[i] (pairEncode p u) = pairEncode (p.drop i) (u.drop i) := by
+  induction i with
+  | zero => simp
+  | succ i ih =>
+    rw [Function.iterate_succ_apply', ih]
+    simp only [xorPairStep, pairFstD_pairEncode, pairSndD_pairEncode, List.drop_drop]
+
+/-- On two nonempty components the chunk is the single XOR bit of the heads. -/
+private theorem xorPairEmit_cons (b c : Bool) (p u : List Bool) :
+    xorPairEmit (pairEncode (b :: p) (c :: u)) = [xor b c] := by
+  cases b <;> cases c <;> simp [xorPairEmit, isNilB]
+
+/-- Once a component is exhausted the chunk is empty. -/
+private theorem xorPairEmit_nil {p u : List Bool} (h : p = [] ∨ u = []) :
+    xorPairEmit (pairEncode p u) = [] := by
+  rcases h with rfl | rfl <;> simp [xorPairEmit, isNilB]
+
+/-- The concatenated chunks of the XOR transducer compute `List.zipWith xor`.
+**Proof sketch.** Induction on the round budget, generalizing the two
+components: each cons-cons round contributes its head XOR
+(`xorPairEmit_cons`) and the orbit shifts both tails; an exhausted component
+silences every later round. -/
+private theorem xorPair_output : ∀ (N : ℕ) (p u : List Bool),
+    min p.length u.length ≤ N →
+    (List.range N).flatMap (fun i => xorPairEmit (pairEncode (p.drop i) (u.drop i))) =
+      List.zipWith xor p u := by
+  intro N
+  induction N with
+  | zero =>
+    intro p u h
+    have : p = [] ∨ u = [] := by
+      rcases p with _ | ⟨b, p⟩
+      · exact Or.inl rfl
+      rcases u with _ | ⟨c, u⟩
+      · exact Or.inr rfl
+      simp at h
+    rcases this with rfl | rfl <;> simp
+  | succ N ih =>
+    intro p u h
+    rw [List.range_succ_eq_map, List.flatMap_cons, List.flatMap_map]
+    rcases p with _ | ⟨b, p⟩
+    · simp only [List.zipWith_nil_left, List.drop_nil]
+      rw [xorPairEmit_nil (Or.inl rfl), List.nil_append]
+      refine List.flatMap_eq_nil_iff.mpr (fun i _ => ?_)
+      exact xorPairEmit_nil (Or.inl rfl)
+    rcases u with _ | ⟨c, u⟩
+    · simp only [List.zipWith_nil_right, List.drop_nil]
+      rw [xorPairEmit_nil (Or.inr rfl), List.nil_append]
+      refine List.flatMap_eq_nil_iff.mpr (fun i _ => ?_)
+      exact xorPairEmit_nil (Or.inr rfl)
+    rw [List.drop_zero, List.drop_zero, xorPairEmit_cons, List.zipWith_cons_cons]
+    have hrest : (List.range N).flatMap
+        (fun i => xorPairEmit (pairEncode ((b :: p).drop (i + 1)) ((c :: u).drop (i + 1)))) =
+        List.zipWith xor p u := by
+      have heq : (fun i => xorPairEmit (pairEncode ((b :: p).drop (i + 1))
+          ((c :: u).drop (i + 1)))) =
+          (fun i => xorPairEmit (pairEncode (p.drop i) (u.drop i))) := by
+        funext i
+        rfl
+      rw [heq]
+      exact ih p u (by simp at h; omega)
+    rw [hrest]
+    rfl
+
 /-- `xorD` is polynomial-time computable.
-**Proof sketch.** A single left-to-right pass (`Complexity.CounterProg`):
-parse the doubled first component while emitting nothing, keeping the last
-parsed data bit in finite control — impossible, the first component is
-unbounded; instead, a two-phase counter program interleaves: it re-reads the
-input once per output symbol.  Concretely, for each index `j`, the `j`-th
-output bit is `xor` of the `j`-th bits of the two components; a one-register
-program emits it by scanning the doubled prefix with an offset counter.  The
-abstract step count is quadratic in `|z|`, which
-`Complexity.CounterProg.polyTimeComputable_of_goes` still compiles to a
-polynomial bound.  (The truncating semantics on unequal lengths is the
+**Proof sketch.** An instance of `Complexity.polyTimeComputable_emitIter`:
+the loop state is the pair of not-yet-consumed components; each round emits
+the XOR of the two head bits (nothing once either component is exhausted) and
+drops both heads, so the concatenated output is exactly the truncating
+`List.zipWith xor`.  The round budget `|z|+1` dominates the shorter
+component's length.  (The truncating semantics on unequal lengths is the
 audited ch7-phase1 finding 1 convention.) -/
 theorem polyTimeComputable_xorD : PolyTimeComputable xorD := by
-  sorry
+  have hloop := polyTimeComputable_emitIter polyTimeComputable_xorPairStep
+    polyTimeComputable_xorPairEmit 1 1 2 1 (fun w i => length_xorPairStep_iterate w i)
+  have hinit : PolyTimeComputable (fun z => pairEncode (pairFstD z) (pairSndD z)) :=
+    polyTimeComputable_pairFstD.pairEncode polyTimeComputable_pairSndD
+  have heq : xorD = (fun w => (List.range (1 * (w.length + 1) ^ 1 + 1)).flatMap
+      (fun i => xorPairEmit (xorPairStep^[i] w))) ∘
+      (fun z => pairEncode (pairFstD z) (pairSndD z)) := by
+    funext z
+    rw [Function.comp_apply]
+    have horb : ∀ i, xorPairStep^[i] (pairEncode (pairFstD z) (pairSndD z)) =
+        pairEncode ((pairFstD z).drop i) ((pairSndD z).drop i) :=
+      xorPairStep_orbit (pairFstD z) (pairSndD z)
+    have hbudget : min (pairFstD z).length (pairSndD z).length ≤
+        1 * ((pairEncode (pairFstD z) (pairSndD z)).length + 1) ^ 1 + 1 := by
+      have h1 := length_pairFstD_le z
+      rw [pow_one, length_pairEncode]
+      omega
+    calc xorD z = List.zipWith xor (pairFstD z) (pairSndD z) := rfl
+      _ = (List.range (1 * ((pairEncode (pairFstD z) (pairSndD z)).length + 1) ^ 1 + 1)).flatMap
+          (fun i => xorPairEmit (pairEncode ((pairFstD z).drop i) ((pairSndD z).drop i))) :=
+        (xorPair_output _ (pairFstD z) (pairSndD z) hbudget).symm
+      _ = _ := by
+        simp only [horb]
+  rw [heq]
+  exact hloop.comp hinit
 
 /-- `xorD` computes the truncating bitwise XOR on genuine pairs. -/
 @[simp]
