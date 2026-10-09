@@ -93,8 +93,11 @@ output tape (the `Turing.MultiTapeTM.ConfigCount` arithmetic as in
 `ComputesInTime.of_spaceUsed_le`). (iii) **Probe silently, then replay**:
 streamed output cannot be retracted when a later overflow or clock
 exhaustion must yield exactly `[false]`, so the first pass runs with output
-captured (W1); on success the machine resets the simulated banks, emits
-`true`, and replays the run forwarding output — fixed banks reused between
+captured (W1 — *captured* meaning discarded up to a finite summary: a
+bounded-workspace run can emit far more than its workspace, so the wrapper
+must never buffer the emitted word; round-2 finding 7); on success the
+machine resets the simulated banks, emits `true`, and replays the run
+forwarding output — fixed banks reused between
 the passes. (iv) The canonizer cost is a **finite code-dependent constant**
 absorbed into `C` (the effective scheme supplies no bound linear in the code
 length, and none is claimed). The `+ logSpace n` addend pays for the clock's
@@ -157,7 +160,8 @@ inside `[-g n, g n]` — a cap depending only on that machine's fixed tape
 count, hence uniform in `α`; capped or failed attempts advance the budget;
 (iii) answers the **opposite** of the first successful attempt's verdict,
 retaining only a three-valued attempt summary (failure, success with
-`[true]`, success otherwise; output suppressed, W1), and a fixed answer if
+`[true]`, success otherwise; output suppressed — discarded to that finite
+summary, never buffered; W1), and a fixed answer if
 every attempt caps out. `D ∈ SPACE g`: the universal's fixed tapes confined
 to the cap, the budget and address counters, and the bank resets are
 `O(g n)` cells, uniformly in the input's code part. If `D ∈ SPACE f` via
@@ -207,8 +211,9 @@ under `≤ₚ` (the chapter-2 bounded-certificate transport — a derived
 obligation from `Complexity.mem_NP_iff_exists_length_le`, Exercise 2.1's
 bounded form, named for the brief). Padding transfers space bounds down:
 for `L ∈ SPACE (n² + 1)`, the padded language
-`L' := {pairEncode x (List.replicate (|x|²) true)}` — padded length exactly
-`m = n² + 2n + 2`, syntax validated — lies in `SPACE (m + 1)` in the padded
+`L' := {y | ∃ x ∈ L, y = pairEncode x (List.replicate (|x|²) true)}` —
+membership restricted to padded members of `L` (round-2 finding 5); padded
+length exactly `m = n² + 2n + 2`, syntax validated — lies in `SPACE (m + 1)` in the padded
 length (validate, then run the `L`-decider on the first component; the pad
 supplies the room — the chapter-2 padding-cluster discipline,
 `EXP_subset_NEXP`'s precedent), so `L' ∈ NP` by the assumption, and
