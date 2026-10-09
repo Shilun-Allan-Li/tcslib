@@ -189,16 +189,6 @@ private lemma loop_live_prefix {k : ℕ} {S : Type*} {x : List Bool}
       MultiTapeTM.runFrom_of_halt _ hh]
   exact ht (by rw [he]; exact hh)
 
-/-- An empty final output forces every earlier output to be empty. -/
-private lemma loop_silent_prefix {k : ℕ} {S : Type*} {x : List Bool}
-    (tm : MultiTapeTM k Bool S) (cfg : Cfg k Bool S x) (t : ℕ)
-    (ht : (tm.runFrom cfg t).output = []) :
-    ∀ u ≤ t, (tm.runFrom cfg u).output = [] := by
-  intro u hu
-  have hp := tm.output_prefix cfg hu
-  rw [ht] at hp
-  simpa using hp
-
 /-- Replace a possibly padded halting-time witness by its first halt,
 retaining the entire endpoint configuration.
 **Proof sketch.** Choose the least halting time. Minimality supplies the
@@ -436,132 +426,6 @@ private lemma loopBuffer_write (pre bs : List Bool) (old new : Bool) :
         simp only [List.getElem?_cons, if_neg (by omega : z.toNat - pre.length ≠ 0)]
     · simp only [if_neg hn]
 
-/-- One-tape fixed-width decrement, followed by a rewind. The live states are
-borrow (`inl none`), rewind with success flag (`inl (some b)`), and return
-(`inr b`). No transition emits physical output. Return states wait for a
-surrounding controller. This privately re-derives the counter template. -/
-private def loopDebitTM : FinTM Bool where
-  k := 1
-  State := Option Bool ⊕ Bool
-  tm :=
-    { q₀ := .inl none
-      tr := fun q _ work => match q with
-        | .inl none => match work 0 with
-          | some false => ⟨0, fun _ => (some (some true), .pos), none, some (.inl none)⟩
-          | some true => ⟨0, fun _ => (some (some false), .neg), none, some (.inl (some true))⟩
-          | none => ⟨0, fun _ => (none, .neg), none, some (.inl (some false))⟩
-        | .inl (some b) => match work 0 with
-          | some _ => ⟨0, fun _ => (none, .neg), none, some (.inl (some b))⟩
-          | none => ⟨0, fun _ => (none, .pos), none, some (.inr b)⟩
-        | .inr b => controlAction 0 (some (.inr b)) }
-
-/-- A candidate on the borrow tape, with arbitrary native input-head position. -/
-private def loopDebitCfg (x : List Bool) (p : Fin (x.length + 2))
-    (q : Option Bool ⊕ Bool) (z : ℤ) (u : List Bool) :
-    Cfg loopDebitTM.k Bool loopDebitTM.State x :=
-  ⟨some q, p, fun _ => bufferTape u, fun _ => z, []⟩
-
-/-- One borrow transition writes only inside the fixed-width word, or detects
-the right blank without writing to it. -/
-private lemma loopBorrow_step (x : List Bool) (p : Fin (x.length + 2))
-    (pre bs : List Bool) :
-    loopDebitTM.tm.step (loopDebitCfg x p (.inl none) pre.length (pre ++ bs)) =
-      match bs with
-      | [] => loopDebitCfg x p (.inl (some false)) (pre.length - 1) pre
-      | true :: us => loopDebitCfg x p (.inl (some true)) (pre.length - 1) (pre ++ false :: us)
-      | false :: us => loopDebitCfg x p (.inl none) (pre.length + 1) (pre ++ true :: us) := by
-  unfold MultiTapeTM.step
-  change (loopDebitTM.tm.tr (.inl none) _ _).apply _ = _
-  simp only [loopDebitTM, loopDebitCfg, Cfg.workTapeSymbols, loopBuffer_read]
-  cases bs with
-  | nil =>
-    refine Cfg.ext rfl (moveInputPos_zero p) ?_ ?_ rfl
-    · simp
-    · funext i; simp [Action.apply, sub_eq_add_neg]
-  | cons b bs =>
-    cases b <;> refine Cfg.ext rfl (moveInputPos_zero p) ?_ ?_ rfl
-    all_goals first
-      | (funext i; exact loopBuffer_write pre bs _ _)
-      | (funext i; simp [Action.apply, sub_eq_add_neg])
-
-/-- The borrow phase takes one step beyond the leading false prefix, including
-one blank test on underflow.
-**Proof sketch.** Induct on the remaining candidate. Each false bit is set
-and added to the processed prefix. A true bit or the right blank starts
-rewind without changing the width. -/
-private lemma loopBorrow_run (x : List Bool) (p : Fin (x.length + 2))
-    (u : List Bool) : ∀ pre : List Bool,
-    loopDebitTM.tm.runFrom (loopDebitCfg x p (.inl none) pre.length (pre ++ u))
-        (loopBorrowPos u + 1) =
-      loopDebitCfg x p (.inl (some (loopDebit u).2))
-        ((pre.length : ℤ) + loopBorrowPos u - 1) (pre ++ (loopDebit u).1) := by
-  induction u with
-  | nil =>
-    intro pre
-    simpa [loopBorrowPos, loopDebit, MultiTapeTM.runFrom_succ_eq_step] using
-      loopBorrow_step x p pre []
-  | cons b u ih =>
-    intro pre
-    cases b with
-    | true =>
-      simpa [loopBorrowPos, loopDebit, MultiTapeTM.runFrom_succ_eq_step] using
-        loopBorrow_step x p pre (true :: u)
-    | false =>
-      simp only [loopBorrowPos]
-      rw [MultiTapeTM.runFrom_succ_eq_step, loopBorrow_step]
-      simpa [loopDebit, List.append_assoc, Nat.cast_add, Nat.cast_one,
-        add_assoc, add_comm, add_left_comm] using ih (pre ++ [true])
-
-/-- Rewind over `j` known candidate cells to the left blank, then return at
-cell zero in exactly `j+1` steps, retaining the candidate and success flag. -/
-private lemma loopBorrow_rewind (x : List Bool) (p : Fin (x.length + 2))
-    (u : List Bool) (b : Bool) : ∀ j, j ≤ u.length →
-    loopDebitTM.tm.runFrom (loopDebitCfg x p (.inl (some b)) ((j : ℤ) - 1) u)
-        (j + 1) = loopDebitCfg x p (.inr b) 0 u := by
-  intro j
-  induction j with
-  | zero =>
-    intro hj
-    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
-    simp only [Nat.cast_zero, zero_sub]
-    unfold MultiTapeTM.step
-    simp only [loopDebitTM, loopDebitCfg, Cfg.workTapeSymbols, bufferTape_left]
-    refine Cfg.ext rfl (moveInputPos_zero p) rfl ?_ rfl
-    funext i; simp [Action.apply]
-  | succ j ih =>
-    intro hj
-    rw [MultiTapeTM.runFrom_succ_eq_step]
-    have hstep : loopDebitTM.tm.step
-        (loopDebitCfg x p (.inl (some b)) ((j + 1 : ℕ) - 1) u) =
-          loopDebitCfg x p (.inl (some b)) ((j : ℤ) - 1) u := by
-      have hz : ((j + 1 : ℕ) : ℤ) - 1 = (j : ℤ) := by omega
-      rw [hz]
-      unfold MultiTapeTM.step
-      simp only [loopDebitTM, loopDebitCfg, Cfg.workTapeSymbols, bufferTape_nat,
-        List.getElem?_eq_getElem (by omega : j < u.length)]
-      refine Cfg.ext rfl (moveInputPos_zero p) rfl ?_ rfl
-      funext i; simp [Action.apply, sub_eq_add_neg]
-    rw [hstep]
-    exact ih (by omega)
-
-/-- A complete fixed-width decrement and rewind costs `2j+2 ≤ 2|u|+2`,
-where `j` is the leading false-prefix length. It returns live at cell zero,
-retains the input head, and emits nothing. Width zero returns underflow only
-when this subroutine is called, so enumeration can process `[]` first. -/
-private lemma loopBorrow_correct (x : List Bool) (p : Fin (x.length + 2))
-    (u : List Bool) :
-    2 * loopBorrowPos u + 2 ≤ 2 * u.length + 2 ∧
-      loopDebitTM.tm.runFrom (loopDebitCfg x p (.inl none) 0 u)
-          (2 * loopBorrowPos u + 2) =
-        loopDebitCfg x p (.inr (loopDebit u).2) 0 (loopDebit u).1 := by
-  refine ⟨by have := loopBorrowPos_le u; omega, ?_⟩
-  have hr := loopBorrow_run x p u []
-  simp only [List.length_nil, Nat.cast_zero, List.nil_append, zero_add] at hr
-  rw [show 2 * loopBorrowPos u + 2 = (loopBorrowPos u + 1) + (loopBorrowPos u + 1) by omega,
-    MultiTapeTM.runFrom_add, hr]
-  exact loopBorrow_rewind x p (loopDebit u).1 (loopDebit u).2 _
-    (by rw [loopDebit_length]; exact loopBorrowPos_le u)
-
 /-- Stop the body at the next anchor entry, distinguishing that return from
 a genuine source halt on an extra one-cell flag tape. A true release bit
 forces one source action, even at the anchor; every source successor clears
@@ -688,33 +552,6 @@ private lemma loopBody_run (body : FinTM Bool) (anchor : body.State) {x : List B
         exact hn hq
     rw [if_neg ht, loopBody_step body anchor _ q _ none hq hgo]
     simp only [Nat.succ_ne_zero, ↓reduceIte, MultiTapeTM.runFrom_succ_eq_step']
-
-/-- W1 captures the stopped body's complete trace in any agreeing controller.
-This includes an output bit emitted by the halting transition.
-**Proof sketch.** The preceding simulation gives strict liveness of the
-stop wrapper before the endpoint. Apply the audited capture contract with
-the supplied controller as host, then substitute the simulated endpoint. -/
-private lemma loopBody_capture (body : FinTM Bool) (anchor : body.State)
-    {H : Type*} {x : List Bool} (host : MultiTapeTM (body.k + 1 + 1) Bool H)
-    (emb : body.State × Bool → H) (ret : H)
-    (hagree : ∀ s inp work, host.tr (emb s) inp work =
-      captureAction emb ret ((loopBodyTM body anchor).tm.tr s inp fun i => work i.castSucc))
-    (c : Cfg body.k Bool body.State x) (release : Bool) (hc : c.state ≠ none)
-    (t : ℕ) (hlive : ∀ u < t, (body.tm.runFrom c u).state ≠ none)
-    (hanchor : ∀ u < t, (u = 0 ∧ release = true) ∨
-      (body.tm.runFrom c u).state ≠ some anchor) :
-    host.runFrom (captureCfg emb ret [] [] (loopBodyCfg body anchor c release none)) t =
-      captureCfg emb ret [] []
-        (loopBodyCfg body anchor (body.tm.runFrom c t) (if t = 0 then release else false)
-          (if (body.tm.runFrom c t).state = none then some true else none)) := by
-  have hguard : ∀ u < t,
-      ¬((loopBodyTM body anchor).tm.runFrom (loopBodyCfg body anchor c release none) u).Halted := by
-    intro u hu
-    rw [loopBody_run body anchor c release hc u
-      (fun v hv => hlive v (by omega)) (fun v hv => hanchor v (by omega))]
-    simpa [Cfg.Halted, loopBodyCfg] using hlive u hu
-  rw [capture_run (loopBodyTM body anchor).tm host emb ret hagree [] [] _ t hguard,
-    loopBody_run body anchor c release hc t hlive hanchor]
 
 /-- Disjoint finite control for fuel, body calls, and fourteen controller phases. -/
 private abbrev LoopHostState (body F : FinTM Bool) :=
@@ -2202,8 +2039,8 @@ iterated body word and `loopDebit` word, retaining the fuel work residue.
 `loop_orbit_inv` supplies every local body premise. The body simulation and
 first-halt lemmas identify the first stop; W1 preserves its full payload.
 Phase 7 either emits/replays that payload or starts the width-bounded
-borrow. `loopBorrow_correct` is the standalone counter template to be
-lifted into phases 8--10. Final zero underflow and phase 11 belong to the
+borrow. The host performs the counter borrow and rewind
+in phases 8--10. Final zero underflow and phase 11 belong to the
 last rejecting segment. If the last candidate accepts, choose any halted
 false/empty terminal. Sum the phase constants with the audit's maximum
 ledger. The missing proof is precisely the controller-level lifting and
