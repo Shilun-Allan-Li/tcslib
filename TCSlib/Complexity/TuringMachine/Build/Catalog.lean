@@ -4619,6 +4619,787 @@ theorem computesFunInTime_incFixed_spaceUsed :
   rw [MultiTapeTM.spaceUsed_zero_tapes_eq_zero _ _ rfl]
   omega
 
+/-- Control of the forwarding map: silent pair validation and buffering,
+separate buffer rewinds, doubled-prefix emission, and clamped virtual input. -/
+private inductive a2_MapState (Q : Type) where
+  | parse (pending : Option Bool)
+  | copyB | backB | backA | emitA | emitAgain (b : Bool) | separator
+  | run (q : Q) (tag : Bool)
+  deriving DecidableEq
+
+private instance a2_mapStateFintype (Q : Type) [Fintype Q] : Fintype (a2_MapState Q) :=
+  derive_fintype% _
+
+/-- Administration touches only the two input buffers, and never a payload tape. -/
+private def a2_mapAct (M : FinTM Bool) (inp : SignType)
+    (a b : Option (Option Bool) × SignType) (out : Option Bool)
+    (next : Option (a2_MapState M.State)) : Action (1 + (1 + M.k)) Bool (a2_MapState M.State) :=
+  ⟨inp, tapeBlocks (fun _ => a) b (fun _ => (none, 0)), out, next⟩
+
+/-- The commissioned forwarding controller. The two buffers contain the
+components, never the payload output. In setup mode the payload entry is a
+stationary live seam, used only to certify its first arrival. In forwarding
+mode each payload step has exactly its original work actions and emission;
+`virtualMove` clamps both virtual-input boundaries, including empty input. -/
+private def a2_mapTM (M : FinTM Bool) (forward : Bool) : FinTM Bool where
+  k := 1 + (1 + M.k)
+  State := a2_MapState M.State
+  tm := {
+    q₀ := .parse none
+    tr := fun q inp work =>
+      let act := a2_mapAct M
+      let first := work (Fin.castAdd (1 + M.k) (0 : Fin 1))
+      let second := work (Fin.natAdd 1 (Fin.castAdd M.k (0 : Fin 1)))
+      match q with
+      | .parse none => match inp with
+        | none => act 0 (none, 0) (none, 0) none none
+        | some b => act .pos (none, 0) (none, 0) none (some (.parse (some b)))
+      | .parse (some b) => match inp with
+        | none => act 0 (none, 0) (none, 0) none none
+        | some d => if b = d then
+            act .pos (some (some b), .pos) (none, 0) none (some (.parse none))
+          else if b then act .pos (none, 0) (none, 0) none none
+          else act .pos (none, .neg) (none, 0) none (some .copyB)
+      | .copyB => match inp with
+        | some b => act .pos (none, 0) (some (some b), .pos) none (some .copyB)
+        | none => act 0 (none, 0) (none, .neg) none (some .backB)
+      | .backB => match second with
+        | some _ => act 0 (none, 0) (none, .neg) none (some .backB)
+        | none => act 0 (none, 0) (none, .pos) none (some .backA)
+      | .backA => match first with
+        | some _ => act 0 (none, .neg) (none, 0) none (some .backA)
+        | none => act 0 (none, .pos) (none, 0) none (some .emitA)
+      | .emitA => match first with
+        | some b => act 0 (none, 0) (none, 0) (some b) (some (.emitAgain b))
+        | none => act 0 (none, 0) (none, 0) (some false) (some .separator)
+      | .emitAgain b => act 0 (none, .pos) (none, 0) (some b) (some .emitA)
+      | .separator => act 0 (none, 0) (none, 0) (some true) (some (.run M.tm.q₀ true))
+      | .run q b => if forward then
+          let a := M.tm.tr q second (fun i => work (Fin.natAdd 1 (Fin.natAdd 1 i)))
+          let m := virtualMove b second a.inputTape
+          ⟨0, tapeBlocks (fun _ => (none, 0)) (none, m) a.workTapes,
+            a.output, a.state.map (fun q => .run q (virtualNextTag b m))⟩
+        else controlAction 0 (some (.run q b)) }
+
+/-- Administrative configurations have two buffered words and an untouched
+blank payload bank. The physical output is explicit. -/
+private def a2_mapCfg (M : FinTM Bool) (x : List Bool) (q : Option (a2_MapState M.State))
+    (p : Fin (x.length + 2)) (a b : List Bool) (ha hb : ℤ) (out : List Bool) :
+    Cfg (1 + (1 + M.k)) Bool (a2_MapState M.State) x where
+  state := q
+  inputPos := p
+  workTapes := tapeBlocks (fun _ => bufferTape a) (bufferTape b) (fun _ _ => none)
+  workTapePos := tapeBlocks (fun _ => ha) hb (fun _ => 0)
+  output := out
+
+/-- The forwarding configuration retains the physical input, first buffer,
+and already emitted prefix; the second buffer is the source's virtual input. -/
+private def a2_mapVirtual (M : FinTM Bool) {x y : List Bool}
+    (c : Cfg M.k Bool M.State y) (tag : Bool) (p : Fin (x.length + 2))
+    (a pre : List Bool) : Cfg (1 + (1 + M.k)) Bool (a2_MapState M.State) x where
+  state := c.state.map (fun q => .run q tag)
+  inputPos := p
+  workTapes := tapeBlocks (fun _ => bufferTape a) (bufferTape y) c.workTapes
+  workTapePos := tapeBlocks (fun _ => (a.length : ℤ)) ((c.inputPos.val : ℤ) - 1) c.workTapePos
+  output := pre ++ c.output
+
+/-- The parser reads its native input independently of both buffers. -/
+private lemma a2_mapCfg_read (M : FinTM Bool) (x : List Bool) (q : Option (a2_MapState M.State))
+    (i : ℕ) (hi : i ≤ x.length) (a b : List Bool) (ha hb : ℤ) (out : List Bool) :
+    (a2_mapCfg M x q ⟨i + 1, by omega⟩ a b ha hb out).inputSymbol = x[i]? :=
+  inputSymbol_at _ i hi rfl
+
+/-- Administrative actions with no writes only change the two buffer heads,
+control, input position, and the physical output. -/
+private lemma a2_map_move (M : FinTM Bool) (x : List Bool)
+    (q q' : Option (a2_MapState M.State)) (p : Fin (x.length + 2))
+    (a b : List Bool) (ha hb : ℤ) (out : List Bool)
+    (mi ma mb : SignType) (emit : Option Bool) :
+    (a2_mapAct M mi (none, ma) (none, mb) emit q').apply
+      (a2_mapCfg M x q p a b ha hb out) =
+      a2_mapCfg M x q' (moveInputPos p mi) a b (ha + ma.cast) (hb + mb.cast)
+        (out ++ emit.toList) := by
+  refine Cfg.ext rfl rfl ?_ ?_ rfl
+  · funext i
+    refine Fin.addCases (fun j => ?_) (fun j => ?_) i
+    · simp [a2_mapAct, a2_mapCfg, Action.apply]
+    · refine Fin.addCases (fun j => ?_) (fun j => ?_) j <;>
+        simp [a2_mapAct, a2_mapCfg, Action.apply]
+  · funext i
+    refine Fin.addCases (fun j => ?_) (fun j => ?_) i
+    · simp [a2_mapAct, a2_mapCfg, Action.apply]
+    · refine Fin.addCases (fun j => ?_) (fun j => ?_) j <;>
+        simp [a2_mapAct, a2_mapCfg, Action.apply]
+
+/-- Reading the first half of an aligned block changes only finite control
+and the native input head. No physical output is emitted. -/
+private lemma a2_map_first (M : FinTM Bool) (x pre rest a : List Bool) (b : Bool)
+    (hx : x = pre ++ b :: rest) :
+    (a2_mapTM M false).tm.step
+      (a2_mapCfg M x (some (.parse none)) ⟨pre.length + 1, by simp [hx] <;> omega⟩
+        a [] a.length 0 []) =
+      a2_mapCfg M x (some (.parse (some b))) ⟨pre.length + 2, by simp [hx] <;> omega⟩
+        a [] a.length 0 [] := by
+  unfold MultiTapeTM.step
+  change ((a2_mapTM M false).tm.tr (.parse none) _ _).apply _ = _
+  rw [a2_mapCfg_read M x _ pre.length (by simp [hx])]
+  have hr : x[pre.length]? = some b := by simp [hx]
+  rw [hr]
+  change (a2_mapAct M .pos (none, 0) (none, 0) none _).apply _ = _
+  rw [a2_map_move]
+  simp only [SignType.cast, add_zero, Option.toList_none,
+    List.append_nil]
+  congr 1
+  exact moveInputPos_pos_of_ne_right _ (by simp [hx])
+
+/-- Doubled blocks append one bit to the first buffer. `01` starts suffix
+buffering; `10` rejects before emitting. Both missing-bit cases are handled
+by the surrounding parser induction. -/
+private lemma a2_map_block (M : FinTM Bool) (x pre rest a : List Bool) (b c : Bool)
+    (hx : x = pre ++ b :: c :: rest) :
+    (a2_mapTM M false).tm.runFrom
+      (a2_mapCfg M x (some (.parse none)) ⟨pre.length + 1, by simp [hx] <;> omega⟩
+        a [] a.length 0 []) 2 =
+      if b = c then a2_mapCfg M x (some (.parse none))
+        ⟨pre.length + 3, by simp [hx] <;> omega⟩ (a ++ [b]) [] (a ++ [b]).length 0 []
+      else if b then a2_mapCfg M x none
+        ⟨pre.length + 3, by simp [hx] <;> omega⟩ a [] a.length 0 []
+      else a2_mapCfg M x (some .copyB)
+        ⟨pre.length + 3, by simp [hx] <;> omega⟩ a [] (a.length - 1) 0 [] := by
+  change (a2_mapTM M false).tm.step ((a2_mapTM M false).tm.step _) = _
+  rw [a2_map_first M x pre (c :: rest) a b hx]
+  unfold MultiTapeTM.step
+  change ((a2_mapTM M false).tm.tr (.parse (some b)) _ _).apply _ = _
+  rw [a2_mapCfg_read M x _ (pre.length + 1) (by simp [hx])]
+  have hr : x[pre.length + 1]? = some c := by simp [hx]
+  rw [hr]
+  have hm : moveInputPos (⟨pre.length + 2, by simp [hx] <;> omega⟩ : Fin (x.length + 2)) .pos =
+      ⟨pre.length + 3, by simp [hx] <;> omega⟩ :=
+    moveInputPos_pos_of_ne_right _ (by simp [hx])
+  cases b <;> cases c <;> simp only [a2_mapTM, Bool.false_eq_true, Bool.true_eq_false, ↓reduceIte]
+  all_goals refine Cfg.ext rfl hm ?_ ?_ rfl
+  all_goals first
+    | (funext i
+       refine Fin.addCases (fun j => ?_) (fun j => ?_) i
+       · simpa only [a2_mapAct, a2_mapCfg, Action.apply, tapeBlocks_left] using (bufferTape_append a _).symm
+       · refine Fin.addCases (fun j => ?_) (fun j => ?_) j <;>
+           simp [a2_mapAct, a2_mapCfg, Action.apply])
+    | (funext i
+       refine Fin.addCases (fun j => ?_) (fun j => ?_) i
+       · simp [a2_mapAct, a2_mapCfg, Action.apply, sub_eq_add_neg]
+       · refine Fin.addCases (fun j => ?_) (fun j => ?_) j <;>
+           simp [a2_mapAct, a2_mapCfg, Action.apply])
+
+/-- After validation, the complete suffix is buffered silently. Its right
+blank is turned left exactly once, including when the suffix is empty. -/
+private lemma a2_map_suffix (M : FinTM Bool) (x rest a : List Bool) :
+    ∀ pre b (hx : x = pre ++ rest),
+    (a2_mapTM M false).tm.runFrom
+      (a2_mapCfg M x (some .copyB) ⟨pre.length + 1, by simp [hx] <;> omega⟩
+        a b (a.length - 1) b.length []) (rest.length + 1) =
+      a2_mapCfg M x (some .backB) ⟨x.length + 1, by omega⟩
+        a (b ++ rest) (a.length - 1) ((b ++ rest).length - 1) [] := by
+  induction rest with
+  | nil =>
+    intro pre b hx
+    simp only [List.length_nil, Nat.zero_add, MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+    unfold MultiTapeTM.step
+    change ((a2_mapTM M false).tm.tr .copyB _ _).apply _ = _
+    rw [a2_mapCfg_read M x _ pre.length (by simp [hx])]
+    have hr : x[pre.length]? = none := by simp [hx]
+    rw [hr]
+    change (a2_mapAct M 0 (none, 0) (none, .neg) none _).apply _ = _
+    rw [a2_map_move]
+    simp [hx, sub_eq_add_neg]
+  | cons d rest ih =>
+    intro pre b hx
+    have hs : (a2_mapTM M false).tm.step
+        (a2_mapCfg M x (some .copyB) ⟨pre.length + 1, by simp [hx] <;> omega⟩
+          a b (a.length - 1) b.length []) =
+        a2_mapCfg M x (some .copyB) ⟨(pre ++ [d]).length + 1, by simp [hx] <;> omega⟩
+          a (b ++ [d]) (a.length - 1) (b ++ [d]).length [] := by
+      unfold MultiTapeTM.step
+      change ((a2_mapTM M false).tm.tr .copyB _ _).apply _ = _
+      rw [a2_mapCfg_read M x _ pre.length (by simp [hx])]
+      have hr : x[pre.length]? = some d := by simp [hx]
+      rw [hr]
+      refine Cfg.ext rfl ?_ ?_ ?_ rfl
+      · simpa only [List.length_append, List.length_singleton] using
+          moveInputPos_pos_of_ne_right
+            (⟨pre.length + 1, by simp [hx] <;> omega⟩ : Fin (x.length + 2)) (by simp [hx])
+      · funext i
+        refine Fin.addCases (fun j => ?_) (fun j => ?_) i
+        · simp [a2_mapTM, a2_mapAct, a2_mapCfg, Action.apply]
+        · refine Fin.addCases (fun j => ?_) (fun j => ?_) j
+          · simpa only [a2_mapTM, a2_mapAct, a2_mapCfg, Action.apply, tapeBlocks_buffer] using
+              (bufferTape_append b d).symm
+          · simp [a2_mapTM, a2_mapAct, a2_mapCfg, Action.apply]
+      · funext i
+        refine Fin.addCases (fun j => ?_) (fun j => ?_) i
+        · simp [a2_mapTM, a2_mapAct, a2_mapCfg, Action.apply]
+        · refine Fin.addCases (fun j => ?_) (fun j => ?_) j <;>
+            simp [a2_mapTM, a2_mapAct, a2_mapCfg, Action.apply]
+    simp only [List.length_cons]
+    rw [MultiTapeTM.runFrom_succ_eq_step, hs]
+    simpa only [List.append_assoc, List.singleton_append] using
+      ih (pre ++ [d]) (b ++ [d]) (by simpa [List.append_assoc] using hx)
+
+/-- Rewind the second buffer to zero, preserving the first buffer and the
+blank payload bank. The left-blank step is present even at width zero. -/
+private lemma a2_map_backB (M : FinTM Bool) (x a b : List Bool)
+    (p : Fin (x.length + 2)) : ∀ j, j ≤ b.length →
+    (a2_mapTM M false).tm.runFrom
+      (a2_mapCfg M x (some .backB) p a b (a.length - 1) ((j : ℤ) - 1) []) (j + 1) =
+      a2_mapCfg M x (some .backA) p a b (a.length - 1) 0 [] := by
+  intro j
+  induction j with
+  | zero =>
+    intro hj
+    simp only [List.length_nil, Nat.zero_add, MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+    unfold MultiTapeTM.step
+    simp only [a2_mapTM, a2_mapCfg, Cfg.workTapeSymbols, tapeBlocks_buffer,
+      Nat.cast_zero, zero_sub, bufferTape_left]
+    change (a2_mapAct M 0 (none, 0) (none, .pos) none _).apply
+      (a2_mapCfg M x (some .backB) p a b (a.length - 1) (-1) []) = _
+    rw [a2_map_move]
+    simp [a2_mapCfg]
+  | succ j ih =>
+    intro hj
+    have hr : bufferTape b (((j + 1 : ℕ) : ℤ) - 1) = some b[j] := by
+      rw [show (((j + 1 : ℕ) : ℤ) - 1) = (j : ℤ) by omega,
+        bufferTape_nat, List.getElem?_eq_getElem (by omega)]
+    have hs : (a2_mapTM M false).tm.step
+        (a2_mapCfg M x (some .backB) p a b (a.length - 1) (((j + 1 : ℕ) : ℤ) - 1) []) =
+        a2_mapCfg M x (some .backB) p a b (a.length - 1) ((j : ℤ) - 1) [] := by
+      unfold MultiTapeTM.step
+      simp only [a2_mapTM, a2_mapCfg, Cfg.workTapeSymbols, tapeBlocks_buffer, hr]
+      change (a2_mapAct M 0 (none, 0) (none, .neg) none _).apply
+        (a2_mapCfg M x (some .backB) p a b (a.length - 1) (((j + 1 : ℕ) : ℤ) - 1) []) = _
+      rw [a2_map_move]
+      simp [a2_mapCfg, sub_eq_add_neg]
+    rw [MultiTapeTM.runFrom_succ_eq_step, hs]
+    exact ih (by omega)
+
+/-- The corresponding first-buffer rewind, leaving virtual input at zero. -/
+private lemma a2_map_backA (M : FinTM Bool) (x a b : List Bool)
+    (p : Fin (x.length + 2)) : ∀ j, j ≤ a.length →
+    (a2_mapTM M false).tm.runFrom
+      (a2_mapCfg M x (some .backA) p a b ((j : ℤ) - 1) 0 []) (j + 1) =
+      a2_mapCfg M x (some .emitA) p a b 0 0 [] := by
+  intro j
+  induction j with
+  | zero =>
+    intro hj
+    simp only [List.length_nil, Nat.zero_add, MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+    unfold MultiTapeTM.step
+    simp only [a2_mapTM, a2_mapCfg, Cfg.workTapeSymbols, tapeBlocks_left,
+      Nat.cast_zero, zero_sub, bufferTape_left]
+    change (a2_mapAct M 0 (none, .pos) (none, 0) none _).apply
+      (a2_mapCfg M x (some .backA) p a b (-1) 0 []) = _
+    rw [a2_map_move]
+    simp [a2_mapCfg]
+  | succ j ih =>
+    intro hj
+    have hr : bufferTape a (((j + 1 : ℕ) : ℤ) - 1) = some a[j] := by
+      rw [show (((j + 1 : ℕ) : ℤ) - 1) = (j : ℤ) by omega,
+        bufferTape_nat, List.getElem?_eq_getElem (by omega)]
+    have hs : (a2_mapTM M false).tm.step
+        (a2_mapCfg M x (some .backA) p a b (((j + 1 : ℕ) : ℤ) - 1) 0 []) =
+        a2_mapCfg M x (some .backA) p a b ((j : ℤ) - 1) 0 [] := by
+      unfold MultiTapeTM.step
+      simp only [a2_mapTM, a2_mapCfg, Cfg.workTapeSymbols, tapeBlocks_left, hr]
+      change (a2_mapAct M 0 (none, .neg) (none, 0) none _).apply
+        (a2_mapCfg M x (some .backA) p a b (((j + 1 : ℕ) : ℤ) - 1) 0 []) = _
+      rw [a2_map_move]
+      simp [a2_mapCfg, sub_eq_add_neg]
+    rw [MultiTapeTM.runFrom_succ_eq_step, hs]
+    exact ih (by omega)
+
+/-- Emit each retained first-component bit twice, then `01`, and enter the
+payload seam. The second buffer and payload bank are unchanged.
+**Proof sketch.** Each nonblank first-buffer cell takes two emission steps;
+the second advances the head. At the right blank, two further transitions
+emit the delimiter and enter the source's start state with right-arrival tag. -/
+private lemma a2_map_emit (M : FinTM Bool) (x a b rest : List Bool)
+    (p : Fin (x.length + 2)) : ∀ pre out, a = pre ++ rest →
+    (a2_mapTM M false).tm.runFrom
+      (a2_mapCfg M x (some .emitA) p a b pre.length 0 out) (2 * rest.length + 2) =
+      a2_mapCfg M x (some (.run M.tm.q₀ true)) p a b a.length 0
+        (out ++ rest.flatMap (fun d => [d, d]) ++ [false, true]) := by
+  induction rest with
+  | nil =>
+    intro pre out he
+    simp only [List.append_nil] at he
+    subst a
+    have hs : (a2_mapTM M false).tm.step
+        (a2_mapCfg M x (some .emitA) p pre b pre.length 0 out) =
+        a2_mapCfg M x (some .separator) p pre b pre.length 0 (out ++ [false]) := by
+      unfold MultiTapeTM.step
+      simp only [a2_mapTM, a2_mapCfg, Cfg.workTapeSymbols, tapeBlocks_left,
+        bufferTape_nat, List.getElem?_length]
+      change (a2_mapAct M 0 (none, 0) (none, 0) (some false) _).apply
+        (a2_mapCfg M x (some .emitA) p pre b pre.length 0 out) = _
+      rw [a2_map_move]
+      simp [a2_mapCfg]
+    change (a2_mapTM M false).tm.step ((a2_mapTM M false).tm.step _) = _
+    rw [hs]
+    change (a2_mapAct M 0 (none, 0) (none, 0) (some true) _).apply _ = _
+    rw [a2_map_move]
+    simp [List.append_assoc]
+  | cons d rest ih =>
+    intro pre out he
+    have hr : bufferTape a pre.length = some d := by simp [he]
+    have hs : (a2_mapTM M false).tm.runFrom
+        (a2_mapCfg M x (some .emitA) p a b pre.length 0 out) 2 =
+        a2_mapCfg M x (some .emitA) p a b (pre ++ [d]).length 0 (out ++ [d, d]) := by
+      change (a2_mapTM M false).tm.step ((a2_mapTM M false).tm.step _) = _
+      have hfirst : (a2_mapTM M false).tm.step
+          (a2_mapCfg M x (some .emitA) p a b pre.length 0 out) =
+          a2_mapCfg M x (some (.emitAgain d)) p a b pre.length 0 (out ++ [d]) := by
+        unfold MultiTapeTM.step
+        simp only [a2_mapTM, a2_mapCfg, Cfg.workTapeSymbols, tapeBlocks_left, hr]
+        change (a2_mapAct M 0 (none, 0) (none, 0) (some d) _).apply
+          (a2_mapCfg M x (some .emitA) p a b pre.length 0 out) = _
+        rw [a2_map_move]
+        simp [a2_mapCfg]
+      rw [hfirst]
+      change (a2_mapAct M 0 (none, .pos) (none, 0) (some d) _).apply _ = _
+      rw [a2_map_move]
+      simp [List.append_assoc]
+    rw [show 2 * (d :: rest).length + 2 = 2 + (2 * rest.length + 2) by simp; omega,
+      MultiTapeTM.runFrom_add, hs]
+    simpa only [List.flatMap_cons, List.append_assoc, List.cons_append, List.nil_append] using
+      ih (pre ++ [d]) (out ++ [d, d]) (by simpa [List.append_assoc] using he)
+
+/-- Successful suffix buffering, two rewinds, and encoded-prefix emission
+reach the initialized payload seam within `3|a|+2|b|+5` transitions. -/
+private lemma a2_map_finish (M : FinTM Bool) (x pre a b : List Bool)
+    (hx : x = pre ++ b) :
+    (a2_mapTM M false).tm.runFrom
+      (a2_mapCfg M x (some .copyB) ⟨pre.length + 1, by simp [hx] <;> omega⟩
+        a [] (a.length - 1) 0 []) (3 * a.length + 2 * b.length + 5) =
+      a2_mapVirtual M (M.tm.initCfg b) true ⟨x.length + 1, by omega⟩ a (pairEncode a []) := by
+  rw [show 3 * a.length + 2 * b.length + 5 =
+      ((b.length + 1) + (b.length + 1) + (a.length + 1)) + (2 * a.length + 2) by omega,
+    MultiTapeTM.runFrom_add (a := (b.length + 1) + (b.length + 1) + (a.length + 1)) (b := 2 * a.length + 2),
+    MultiTapeTM.runFrom_add (a := (b.length + 1) + (b.length + 1)) (b := a.length + 1),
+    MultiTapeTM.runFrom_add (a := b.length + 1) (b := b.length + 1)]
+  have hcopy := a2_map_suffix M x b a pre [] hx
+  simp only [List.nil_append, List.length_nil, Nat.cast_zero] at hcopy
+  rw [hcopy]
+  rw [a2_map_backB M x a b _ _ (le_refl _), a2_map_backA M x a b _ _ (le_refl _)]
+  have he := a2_map_emit M x a b a (⟨x.length + 1, by omega⟩) [] [] (by simp)
+  simp only [List.length_nil, Nat.cast_zero, List.nil_append] at he
+  rw [he]
+  refine Cfg.ext rfl rfl rfl ?_ ?_
+  · funext i
+    simp [a2_mapCfg, a2_mapVirtual, MultiTapeTM.initCfg, Cfg.init]
+  · simp [a2_mapCfg, a2_mapVirtual, MultiTapeTM.initCfg, Cfg.init, pairEncode]
+
+/-- The validating setup either halts silently on malformed input or reaches
+exactly the required payload seam with the encoded first component emitted.
+**Proof sketch.** Induct on aligned pairs. Equal bits add one buffered bit;
+`10`, a missing bit, or a missing delimiter reject. At `01`, buffer the entire
+suffix and apply the rewind/emission ledger. No payload transition is used. -/
+private lemma a2_map_parse (M : FinTM Bool) (x rest : List Bool) :
+    ∀ pre a (hx : x = pre ++ rest), ∃ t ≤ 3 * rest.length + 3 * a.length + 5,
+      match pairDecode rest with
+      | some (d, b) => (a2_mapTM M false).tm.runFrom
+          (a2_mapCfg M x (some (.parse none)) ⟨pre.length + 1, by simp [hx] <;> omega⟩
+            a [] a.length 0 []) t =
+          a2_mapVirtual M (M.tm.initCfg b) true ⟨x.length + 1, by omega⟩
+            (a ++ d) (pairEncode (a ++ d) [])
+      | none =>
+          ((a2_mapTM M false).tm.runFrom
+            (a2_mapCfg M x (some (.parse none)) ⟨pre.length + 1, by simp [hx] <;> omega⟩
+              a [] a.length 0 []) t).state = none ∧
+          ((a2_mapTM M false).tm.runFrom
+            (a2_mapCfg M x (some (.parse none)) ⟨pre.length + 1, by simp [hx] <;> omega⟩
+              a [] a.length 0 []) t).output = [] := by
+  induction rest using List.twoStepInduction with
+  | nil =>
+    intro pre a hx
+    refine ⟨1, by simp, ?_⟩
+    simp only [pairDecode, MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+    unfold MultiTapeTM.step
+    change (((a2_mapTM M false).tm.tr (.parse none) _ _).apply _).state = none ∧ _
+    rw [a2_mapCfg_read M x _ pre.length (by simp [hx])]
+    simp [hx, a2_mapTM, a2_mapAct, Action.apply, a2_mapCfg]
+  | singleton b =>
+    intro pre a hx
+    refine ⟨2, by simp, ?_⟩
+    have hd : pairDecode [b] = none := by cases b <;> rfl
+    rw [hd]
+    change ((a2_mapTM M false).tm.step ((a2_mapTM M false).tm.step _)).state = none ∧
+      ((a2_mapTM M false).tm.step ((a2_mapTM M false).tm.step _)).output = []
+    rw [a2_map_first M x pre [] a b hx]
+    unfold MultiTapeTM.step
+    change (((a2_mapTM M false).tm.tr (.parse (some b)) _ _).apply _).state = none ∧ _
+    rw [a2_mapCfg_read M x _ (pre.length + 1) (by simp [hx])]
+    cases b <;> simp [hx, a2_mapTM, a2_mapAct, Action.apply, a2_mapCfg, pairDecode]
+  | cons_cons b c rest ih _ =>
+    intro pre a hx
+    by_cases h : b = c
+    · subst c
+      obtain ⟨t, ht, he⟩ := ih (pre ++ [b, b]) (a ++ [b])
+        (by simpa [List.append_assoc] using hx)
+      refine ⟨2 + t, by simp only [List.length_append, List.length_cons, List.length_nil] at *; omega, ?_⟩
+      have hr := a2_map_block M x pre rest a b b hx
+      simp only [if_pos rfl] at hr
+      simp only [List.length_append, List.length_cons, List.length_nil] at he
+      cases b <;> cases hd : pairDecode rest with
+      | none =>
+        simp only [pairDecode, hd] at he ⊢
+        rw [MultiTapeTM.runFrom_add, hr]
+        simpa [List.append_assoc, Nat.add_assoc] using he
+      | some p =>
+        rcases p with ⟨d, v⟩
+        simp only [pairDecode, hd] at he ⊢
+        rw [MultiTapeTM.runFrom_add, hr]
+        simpa [List.append_assoc, Nat.add_assoc] using he
+    · cases b <;> cases c
+      · exact False.elim (h rfl)
+      · refine ⟨2 + (3 * a.length + 2 * rest.length + 5), by simp only [List.length_cons]; omega, ?_⟩
+        simp only [pairDecode, List.append_nil]
+        rw [MultiTapeTM.runFrom_add, a2_map_block M x pre rest a false true hx]
+        simp only [Bool.false_eq_true, ↓reduceIte]
+        simpa only [List.length_append, List.length_cons, List.length_nil] using
+          a2_map_finish M x (pre ++ [false, true]) a rest (by simpa [List.append_assoc] using hx)
+      · refine ⟨2, by simp, ?_⟩
+        rw [a2_map_block M x pre rest a true false hx]
+        simp [a2_mapCfg, pairDecode]
+      · exact False.elim (h rfl)
+
+/-- Starting with empty buffers gives a uniform linear setup budget on every
+input, including malformed encodings. -/
+private lemma a2_map_setup (M : FinTM Bool) (x : List Bool) :
+    ∃ t ≤ 5 * (x.length + 1),
+      match pairDecode x with
+      | some (a, b) => (a2_mapTM M false).tm.runFrom ((a2_mapTM M false).tm.initCfg x) t =
+          a2_mapVirtual M (M.tm.initCfg b) true ⟨x.length + 1, by omega⟩ a (pairEncode a [])
+      | none => ((a2_mapTM M false).tm.runFrom ((a2_mapTM M false).tm.initCfg x) t).state = none ∧
+          ((a2_mapTM M false).tm.runFrom ((a2_mapTM M false).tm.initCfg x) t).output = [] := by
+  obtain ⟨t, ht, he⟩ := a2_map_parse M x x [] [] rfl
+  have hi : (a2_mapTM M false).tm.initCfg x =
+      a2_mapCfg M x (some (.parse none)) ⟨1, by omega⟩ [] [] 0 0 [] := by
+    refine Cfg.ext rfl rfl ?_ ?_ rfl
+    · funext i
+      refine Fin.addCases (fun j => ?_) (fun j => ?_) i
+      · simp [a2_mapCfg, MultiTapeTM.initCfg, Cfg.init]
+      · refine Fin.addCases (fun j => ?_) (fun j => ?_) j <;>
+          simp [a2_mapCfg, MultiTapeTM.initCfg, Cfg.init]
+    · funext i
+      refine Fin.addCases (fun j => ?_) (fun j => ?_) i
+      · simp [a2_mapCfg, MultiTapeTM.initCfg, Cfg.init]
+      · refine Fin.addCases (fun j => ?_) (fun j => ?_) j <;>
+          simp [a2_mapCfg, MultiTapeTM.initCfg, Cfg.init]
+  refine ⟨t, by simp only [List.length_nil, mul_zero, add_zero] at ht; omega, ?_⟩
+  rw [hi]
+  simpa only [List.nil_append, List.length_nil, Nat.cast_zero] using he
+
+/-- One forwarded payload step has exactly the source work actions and
+emission. `virtualMove_correct` proves both boundary clamps and preserves
+its arrival tag, without a nonempty-input assumption. -/
+private lemma a2_mapVirtual_step (M : FinTM Bool) {x y : List Bool}
+    (c : Cfg M.k Bool M.State y) (tag : Bool) (hb : VirtualTag c.inputPos tag)
+    (p : Fin (x.length + 2)) (a pre : List Bool) :
+    ∃ tag', VirtualTag (M.tm.step c).inputPos tag' ∧
+      (a2_mapTM M true).tm.step (a2_mapVirtual M c tag p a pre) =
+        a2_mapVirtual M (M.tm.step c) tag' p a pre := by
+  cases hq : c.state with
+  | none =>
+    refine ⟨tag, ?_, ?_⟩
+    · simpa only [MultiTapeTM.step_of_halt hq] using hb
+    · rw [MultiTapeTM.step_of_halt hq, MultiTapeTM.step_of_halt]
+      simp [a2_mapVirtual, hq]
+  | some q =>
+    let act := M.tm.tr q c.inputSymbol c.workTapeSymbols
+    let mv := virtualMove tag c.inputSymbol act.inputTape
+    have hm := virtualMove_correct c tag hb act.inputTape
+    have hc : M.tm.step c = act.apply c := by simp only [MultiTapeTM.step, hq, act]
+    refine ⟨virtualNextTag tag mv, ?_, ?_⟩
+    · simpa only [hc, Action.apply] using hm.2
+    · have hs : (a2_mapVirtual M c tag p a pre).state = some (.run q tag) := by
+        simp [a2_mapVirtual, hq]
+      have hv : (a2_mapVirtual M c tag p a pre).workTapeSymbols
+          (Fin.natAdd 1 (Fin.castAdd M.k (0 : Fin 1))) = c.inputSymbol := by
+        simp [a2_mapVirtual, Cfg.workTapeSymbols, bufferTape_inputSymbol]
+      have hr : (fun i => (a2_mapVirtual M c tag p a pre).workTapeSymbols
+          (Fin.natAdd 1 (Fin.natAdd 1 i))) = c.workTapeSymbols := by
+        funext i
+        simp [a2_mapVirtual, Cfg.workTapeSymbols]
+      unfold MultiTapeTM.step
+      rw [hs]
+      dsimp only [a2_mapTM]
+      rw [hv, hr, hq]
+      change (Action.apply _ _) = a2_mapVirtual M (act.apply c) _ p a pre
+      refine Cfg.ext rfl (moveInputPos_zero _) ?_ ?_ ?_
+      · funext i
+        refine Fin.addCases (fun j => ?_) (fun j => ?_) i
+        · simp [a2_mapVirtual, Action.apply, act]
+        · refine Fin.addCases (fun j => ?_) (fun j => ?_) j <;>
+            simp [a2_mapVirtual, Action.apply, act]
+      · funext i
+        refine Fin.addCases (fun j => ?_) (fun j => ?_) i
+        · simp [a2_mapVirtual, Action.apply, act]
+        · refine Fin.addCases (fun j => ?_) (fun j => ?_) j
+          · simpa only [a2_mapVirtual, Action.apply, tapeBlocks_buffer, ↓reduceIte] using hm.1
+          · simp [a2_mapVirtual, Action.apply, act]
+      · exact List.append_assoc pre c.output act.output.toList
+
+/-- Payload forwarding preserves its entire source trajectory at all times,
+including the final halting action and the stationary halted tail. -/
+private lemma a2_mapVirtual_run (M : FinTM Bool) {x y : List Bool}
+    (c : Cfg M.k Bool M.State y) (tag : Bool) (hb : VirtualTag c.inputPos tag)
+    (p : Fin (x.length + 2)) (a pre : List Bool) (t : ℕ) :
+    ∃ tag', VirtualTag (M.tm.runFrom c t).inputPos tag' ∧
+      (a2_mapTM M true).tm.runFrom (a2_mapVirtual M c tag p a pre) t =
+        a2_mapVirtual M (M.tm.runFrom c t) tag' p a pre := by
+  induction t with
+  | zero => exact ⟨tag, hb, rfl⟩
+  | succ t ih =>
+    obtain ⟨b, hb, he⟩ := ih
+    obtain ⟨d, hd, hs⟩ := a2_mapVirtual_step M _ b hb p a pre
+    refine ⟨d, ?_, ?_⟩
+    · simpa only [MultiTapeTM.runFrom_succ_eq_step'] using hd
+    · rw [MultiTapeTM.runFrom_succ_eq_step', he, hs, MultiTapeTM.runFrom_succ_eq_step']
+
+/-- A setup configuration is at the payload seam if its control is a
+payload state; this includes the source start state on empty virtual input. -/
+private def a2_mapEntered (M : FinTM Bool) {x : List Bool}
+    (c : Cfg (1 + (1 + M.k)) Bool (a2_MapState M.State) x) : Prop :=
+  ∃ q tag, c.state = some (.run q tag)
+
+/-- Setup mode freezes every field once it reaches a payload state. -/
+private lemma a2_mapSetup_stationary (M : FinTM Bool) {x : List Bool}
+    (c : Cfg (1 + (1 + M.k)) Bool (a2_MapState M.State) x)
+    (h : a2_mapEntered M c) (t : ℕ) : (a2_mapTM M false).tm.runFrom c t = c := by
+  obtain ⟨q, tag, hs⟩ := h
+  have he : (a2_mapTM M false).tm.step c = c := by
+    simp only [MultiTapeTM.step, hs, a2_mapTM, Bool.false_eq_true, ↓reduceIte,
+      controlAction_apply, moveInputPos_zero]
+    cases c
+    simp_all
+  induction t with
+  | zero => rfl
+  | succ t ih => rw [MultiTapeTM.runFrom_succ_eq_step', ih, he]
+
+/-- Before the payload seam the operational and setup transition tables
+coincide, on all configurations rather than just well-formed buffers. -/
+private lemma a2_mapSetup_step (M : FinTM Bool) {x : List Bool}
+    (c : Cfg (1 + (1 + M.k)) Bool (a2_MapState M.State) x)
+    (h : ¬a2_mapEntered M c) :
+    (a2_mapTM M true).tm.step c = (a2_mapTM M false).tm.step c := by
+  cases hs : c.state with
+  | none => simp only [MultiTapeTM.step, hs]
+  | some q =>
+    cases q with
+    | run q tag => exact (h ⟨q, tag, hs⟩).elim
+    | parse pending => cases pending <;> simp only [MultiTapeTM.step, hs, a2_mapTM]
+    | _ => simp only [MultiTapeTM.step, hs, a2_mapTM]
+
+/-- Transfer an entire setup prefix through the final entry action. -/
+private lemma a2_mapSetup_run (M : FinTM Bool) (x : List Bool) (t : ℕ)
+    (h : ∀ u < t, ¬a2_mapEntered M
+      ((a2_mapTM M false).tm.runFrom ((a2_mapTM M false).tm.initCfg x) u)) :
+    (a2_mapTM M true).tm.runFrom ((a2_mapTM M true).tm.initCfg x) t =
+      (a2_mapTM M false).tm.runFrom ((a2_mapTM M false).tm.initCfg x) t := by
+  induction t with
+  | zero => rfl
+  | succ t ih =>
+    rw [MultiTapeTM.runFrom_succ_eq_step', ih (fun u hu => h u (by omega)),
+      a2_mapSetup_step M _ (h t (by omega)), MultiTapeTM.runFrom_succ_eq_step']
+
+/-- Every setup action leaves each payload work head fixed. -/
+private lemma a2_mapSetup_head_step (M : FinTM Bool) {x : List Bool}
+    (c : Cfg (1 + (1 + M.k)) Bool (a2_MapState M.State) x) (i : Fin M.k) :
+    ((a2_mapTM M false).tm.step c).workTapePos (Fin.natAdd 1 (Fin.natAdd 1 i)) =
+      c.workTapePos (Fin.natAdd 1 (Fin.natAdd 1 i)) := by
+  have ha (q : a2_MapState M.State) (inp : Option Bool)
+      (work : Fin (1 + (1 + M.k)) → Option Bool) :
+      ((a2_mapTM M false).tm.tr q inp work).workTapes (Fin.natAdd 1 (Fin.natAdd 1 i)) =
+        (none, 0) := by
+    cases q with
+    | parse pending =>
+      cases pending with
+      | none => cases inp <;> simp [a2_mapTM, a2_mapAct]
+      | some b =>
+        cases inp with
+        | none => simp [a2_mapTM, a2_mapAct]
+        | some d =>
+          by_cases he : b = d
+          · simp [a2_mapTM, he, a2_mapAct]
+          · cases b <;> simp [a2_mapTM, he, a2_mapAct]
+    | copyB => cases inp <;> simp [a2_mapTM, a2_mapAct]
+    | backB =>
+      cases h : work (Fin.natAdd 1 (Fin.castAdd M.k (0 : Fin 1))) <;>
+        simp only [a2_mapTM, h, a2_mapAct, tapeBlocks_right]
+    | backA =>
+      cases h : work (Fin.castAdd (1 + M.k) (0 : Fin 1)) <;>
+        simp only [a2_mapTM, h, a2_mapAct, tapeBlocks_right]
+    | emitA =>
+      cases h : work (Fin.castAdd (1 + M.k) (0 : Fin 1)) <;>
+        simp only [a2_mapTM, h, a2_mapAct, tapeBlocks_right]
+    | emitAgain b => simp [a2_mapTM, a2_mapAct]
+    | separator => simp [a2_mapTM, a2_mapAct]
+    | run q tag => rfl
+  unfold MultiTapeTM.step
+  cases hs : c.state with
+  | none => rfl
+  | some q => simp only [Action.apply, ha]; simp
+
+/-- The payload bank stays at its initial origin throughout setup, with no
+condition on grammar validity, buffer widths, or elapsed time. -/
+private lemma a2_mapSetup_heads (M : FinTM Bool) (x : List Bool) (t : ℕ) (i : Fin M.k) :
+    ((a2_mapTM M false).tm.runFrom ((a2_mapTM M false).tm.initCfg x) t).workTapePos
+      (Fin.natAdd 1 (Fin.natAdd 1 i)) = 0 := by
+  induction t with
+  | zero => rfl
+  | succ t ih => rw [MultiTapeTM.runFrom_succ_eq_step', a2_mapSetup_head_step, ih]
+
+/-- Choose the first payload entry, then transfer every prefix to the
+operational host. The stationary setup seam identifies this first entry
+with the complete validating/buffering/emission endpoint, so no payload
+work is hidden in the administrative time bound. -/
+private lemma a2_map_launch (M : FinTM Bool) (x a b : List Bool)
+    (hd : pairDecode x = some (a, b)) :
+    ∃ u ≤ 5 * (x.length + 1),
+      (a2_mapTM M true).tm.runFrom ((a2_mapTM M true).tm.initCfg x) u =
+        a2_mapVirtual M (M.tm.initCfg b) true ⟨x.length + 1, by omega⟩ a (pairEncode a []) ∧
+      ∀ v ≤ u, (a2_mapTM M true).tm.runFrom ((a2_mapTM M true).tm.initCfg x) v =
+        (a2_mapTM M false).tm.runFrom ((a2_mapTM M false).tm.initCfg x) v := by
+  classical
+  obtain ⟨t, ht, he⟩ := a2_map_setup M x
+  simp only [hd] at he
+  have hex : ∃ u, a2_mapEntered M
+      ((a2_mapTM M false).tm.runFrom ((a2_mapTM M false).tm.initCfg x) u) := by
+    refine ⟨t, M.tm.q₀, true, ?_⟩
+    rw [he]
+    rfl
+  let u := Nat.find hex
+  have hu : u ≤ t := Nat.find_min' hex (by rw [he]; exact ⟨M.tm.q₀, true, rfl⟩)
+  have hg : ∀ v < u, ¬a2_mapEntered M
+      ((a2_mapTM M false).tm.runFrom ((a2_mapTM M false).tm.initCfg x) v) :=
+    fun v hv => Nat.find_min hex hv
+  have hprefix (v : ℕ) (hv : v ≤ u) := a2_mapSetup_run M x v
+    (fun w hw => hg w (by omega))
+  refine ⟨u, hu.trans ht, ?_, hprefix⟩
+  rw [hprefix u (le_refl _)]
+  have hs := a2_mapSetup_stationary M _ (Nat.find_spec hex) (t - u)
+  have hh : (a2_mapTM M false).tm.runFrom ((a2_mapTM M false).tm.initCfg x) t =
+      (a2_mapTM M false).tm.runFrom ((a2_mapTM M false).tm.initCfg x) u := by
+    rw [show t = u + (t - u) by omega, MultiTapeTM.runFrom_add]
+    exact hs
+  rw [← hh, he]
+
+/-- A malformed encoding never reaches a payload state, since such a setup
+state would remain live forever. Hence its entire operational trajectory
+agrees with setup, including the silent halt and every later time. -/
+private lemma a2_map_reject (M : FinTM Bool) (x : List Bool)
+    (hd : pairDecode x = none) :
+    ∃ u ≤ 5 * (x.length + 1),
+      ((a2_mapTM M true).tm.runFrom ((a2_mapTM M true).tm.initCfg x) u).state = none ∧
+      ((a2_mapTM M true).tm.runFrom ((a2_mapTM M true).tm.initCfg x) u).output = [] ∧
+      ∀ v, (a2_mapTM M true).tm.runFrom ((a2_mapTM M true).tm.initCfg x) v =
+        (a2_mapTM M false).tm.runFrom ((a2_mapTM M false).tm.initCfg x) v := by
+  obtain ⟨u, hu, he⟩ := a2_map_setup M x
+  simp only [hd] at he
+  have hn (v : ℕ) : ¬a2_mapEntered M
+      ((a2_mapTM M false).tm.runFrom ((a2_mapTM M false).tm.initCfg x) v) := by
+    intro hv
+    obtain ⟨q, tag, hq⟩ := hv
+    by_cases h : v ≤ u
+    · have hrun : (a2_mapTM M false).tm.runFrom ((a2_mapTM M false).tm.initCfg x) u =
+          (a2_mapTM M false).tm.runFrom ((a2_mapTM M false).tm.initCfg x) v := by
+        rw [show u = v + (u - v) by omega, MultiTapeTM.runFrom_add]
+        exact a2_mapSetup_stationary M _ ⟨q, tag, hq⟩ _
+      have hh := he.1
+      rw [hrun, hq] at hh
+      contradiction
+    · have hh : (a2_mapTM M false).tm.runFrom ((a2_mapTM M false).tm.initCfg x) v =
+          (a2_mapTM M false).tm.runFrom ((a2_mapTM M false).tm.initCfg x) u := by
+        rw [show v = u + (v - u) by omega, MultiTapeTM.runFrom_add,
+          MultiTapeTM.runFrom_of_halt _ he.1]
+      rw [hh, he.1] at hq
+      contradiction
+  have heq (v : ℕ) := a2_mapSetup_run M x v (fun w _ => hn w)
+  refine ⟨u, hu, ?_, ?_, heq⟩ <;> rw [heq u]
+  · exact he.1
+  · exact he.2
+
+/-- Explicit equivalence between a disjoint pair of banks and their concatenation. -/
+private def a2_mapSumEquiv (a b : ℕ) : Fin a ⊕ Fin b ≃ Fin (a + b) where
+  toFun := Sum.elim (Fin.castAdd b) (Fin.natAdd a)
+  invFun := fun i => if h : (i : ℕ) < a then Sum.inl ⟨i, h⟩
+    else Sum.inr ⟨i - a, by have := i.isLt; omega⟩
+  left_inv := by
+    intro i
+    cases i with
+    | inl i => simp [i.isLt]
+    | inr i =>
+      simp only [Sum.elim_inr, Fin.coe_natAdd, not_lt.mpr (Nat.le_add_right _ _), ↓reduceDIte]
+      congr 1
+      apply Fin.ext
+      simp
+  right_inv := by
+    intro i
+    dsimp only
+    split
+    · rfl
+    · apply Fin.ext
+      dsimp only [Sum.elim_inr, Fin.coe_natAdd]
+      omega
+
+/-- Sum a finite tape bank by its two disjoint blocks. -/
+private lemma a2_map_sum {a b : ℕ} (f : Fin (a + b) → ℕ) :
+    (∑ i : Fin (a + b), f i) =
+      (∑ i : Fin a, f (Fin.castAdd b i)) + ∑ i : Fin b, f (Fin.natAdd a i) := by
+  rw [Fintype.sum_equiv (a2_mapSumEquiv a b).symm f (fun i => f ((a2_mapSumEquiv a b).toFun i))]
+  · exact Finset.sum_disjSum Finset.univ Finset.univ _
+  · intro x
+    simp only [Equiv.toFun_as_coe, Equiv.apply_symm_apply]
+
+/-- Count the two administrative tapes by fixed integer intervals, and the
+payload bank by containment in one source trajectory. No coefficient is
+introduced on the source-bank sum. -/
+private lemma a2_map_space (M : FinTM Bool) (x y : List Bool) (t D S : ℕ)
+    (hfirst : ∀ u ≤ t, -(D : ℤ) ≤
+        ((a2_mapTM M true).tm.runFrom ((a2_mapTM M true).tm.initCfg x) u).workTapePos
+          (Fin.castAdd (1 + M.k) (0 : Fin 1)) ∧
+      ((a2_mapTM M true).tm.runFrom ((a2_mapTM M true).tm.initCfg x) u).workTapePos
+          (Fin.castAdd (1 + M.k) (0 : Fin 1)) ≤ D)
+    (hsecond : ∀ u ≤ t, -(D : ℤ) ≤
+        ((a2_mapTM M true).tm.runFrom ((a2_mapTM M true).tm.initCfg x) u).workTapePos
+          (Fin.natAdd 1 (Fin.castAdd M.k (0 : Fin 1))) ∧
+      ((a2_mapTM M true).tm.runFrom ((a2_mapTM M true).tm.initCfg x) u).workTapePos
+          (Fin.natAdd 1 (Fin.castAdd M.k (0 : Fin 1))) ≤ D)
+    (hsource : ∀ i, (a2_mapTM M true).tm.visitedByTapeHead ((a2_mapTM M true).tm.initCfg x) t
+        (Fin.natAdd 1 (Fin.natAdd 1 i)) ⊆ M.tm.visitedByTapeHead (M.tm.initCfg y) t i)
+    (hs : M.tm.spaceUsed (M.tm.initCfg y) t ≤ S) :
+    (a2_mapTM M true).tm.spaceUsed ((a2_mapTM M true).tm.initCfg x) t ≤ S + 2 * (2 * D + 1) := by
+  have hc (i : Fin (1 + (1 + M.k)))
+      (h : ∀ u ≤ t, -(D : ℤ) ≤
+          ((a2_mapTM M true).tm.runFrom ((a2_mapTM M true).tm.initCfg x) u).workTapePos i ∧
+        ((a2_mapTM M true).tm.runFrom ((a2_mapTM M true).tm.initCfg x) u).workTapePos i ≤ D) :
+      (a2_mapTM M true).tm.spaceUsedByTape ((a2_mapTM M true).tm.initCfg x) t i ≤ 2 * D + 1 := by
+    have hsub : (a2_mapTM M true).tm.visitedByTapeHead ((a2_mapTM M true).tm.initCfg x) t i ⊆
+        Finset.Icc (-(D : ℤ)) (D : ℤ) := by
+      intro z hz
+      obtain ⟨u, hu, rfl⟩ := Finset.mem_image.mp hz
+      exact Finset.mem_Icc.mpr (h u (by have := Finset.mem_range.mp hu; omega))
+    exact (Finset.card_le_card hsub).trans (by rw [Int.card_Icc]; omega)
+  have ha := hc _ hfirst
+  have hb := hc _ hsecond
+  have hp : (∑ i : Fin M.k, (a2_mapTM M true).tm.spaceUsedByTape
+      ((a2_mapTM M true).tm.initCfg x) t (Fin.natAdd 1 (Fin.natAdd 1 i))) ≤ S := by
+    exact (Finset.sum_le_sum (fun i _ => Finset.card_le_card (hsource i))).trans hs
+  change (∑ i : Fin (1 + (1 + M.k)),
+    (a2_mapTM M true).tm.spaceUsedByTape ((a2_mapTM M true).tm.initCfg x) t i) ≤ _
+  rw [a2_map_sum, a2_map_sum]
+  simp only [Fintype.sum_unique]
+  simp only [show (default : Fin 1) = 0 from Subsingleton.elim _ _]
+  omega
+
 /-- **Threaded-map space row** (spec, fill pending — design §12 R3;
 annotates `Turing.FinTM.computesFunInTime_pairMapSnd`, the round-2
 catalog addition). Given a payload machine with its own space bound
@@ -4656,7 +5437,135 @@ theorem computesFunInTime_pairMapSnd_spaceUsed {Mg : FinTM Bool}
       ∀ (x : List Bool) (t : ℕ),
         M.tm.spaceUsed (M.tm.initCfg x) t
           ≤ Sg x.length + c * (x.length + 1) := by
-  sorry
+  let M := a2_mapTM Mg true
+  refine ⟨M, 22, ?_, ?_⟩
+  · intro x
+    cases hd : pairDecode x with
+    | none =>
+      obtain ⟨u, hu, hh, ho, _⟩ := a2_map_reject Mg x hd
+      have ht : M.ComputesInTime x [] u := ⟨_, hh, ho, rfl⟩
+      simpa only [hd] using ht.mono (show u ≤ 22 * (x.length + 1 + Tg x.length) by omega)
+    | some ab =>
+      rcases ab with ⟨a, b⟩
+      obtain ⟨u, hu, hinit, _⟩ := a2_map_launch Mg x a b hd
+      have hlen : b.length ≤ x.length := by
+        have h := congrArg List.length (eq_pairEncode_of_pairDecode x a b hd)
+        rw [length_pairEncode] at h
+        omega
+      obtain ⟨tag, _, hr⟩ := a2_mapVirtual_run Mg (x := x) (Mg.tm.initCfg b) true
+        (by simp [VirtualTag, MultiTapeTM.initCfg, Cfg.init])
+        (⟨x.length + 1, by omega⟩) a (pairEncode a []) (Tg b.length)
+      obtain ⟨space, hh, ho, _⟩ := hg b
+      have hrun : M.tm.runFrom (M.tm.initCfg x) (u + Tg b.length) =
+          a2_mapVirtual Mg (Mg.tm.runFrom (Mg.tm.initCfg b) (Tg b.length)) tag
+            ⟨x.length + 1, by omega⟩ a (pairEncode a []) := by
+        rw [MultiTapeTM.runFrom_add, hinit]
+        exact hr
+      have ht : M.ComputesInTime x (pairEncode a (g b)) (u + Tg b.length) := by
+        refine ⟨_, ?_, ?_, rfl⟩
+        · rw [hrun]
+          change Option.map (fun q => a2_MapState.run q tag)
+            (Mg.tm.runFrom (Mg.tm.initCfg b) (Tg b.length)).state = none
+          rw [hh]
+          rfl
+        · rw [hrun]
+          change pairEncode a [] ++
+            (Mg.tm.runFrom (Mg.tm.initCfg b) (Tg b.length)).output = pairEncode a (g b)
+          rw [ho]
+          simp [pairEncode, List.append_assoc]
+      have hT := hTg hlen
+      simpa only [hd] using ht.mono
+        (show u + Tg b.length ≤ 22 * (x.length + 1 + Tg x.length) by omega)
+  · intro x t
+    let D := 5 * (x.length + 1)
+    have hshort (v : ℕ) (hv : v ≤ D) (i : Fin M.k) :
+        -(D : ℤ) ≤ (M.tm.runFrom (M.tm.initCfg x) v).workTapePos i ∧
+        (M.tm.runFrom (M.tm.initCfg x) v).workTapePos i ≤ D := by
+      have h := f2_head_steps M.tm (M.tm.initCfg x) v i
+      rw [show (M.tm.initCfg x).workTapePos i = 0 from rfl, zero_sub, zero_add] at h
+      constructor <;> omega
+    cases hd : pairDecode x with
+    | none =>
+      obtain ⟨u, hu, hh, _, heq⟩ := a2_map_reject Mg x hd
+      have hheads (v : ℕ) (i : Fin M.k) :
+          -(D : ℤ) ≤ (M.tm.runFrom (M.tm.initCfg x) v).workTapePos i ∧
+          (M.tm.runFrom (M.tm.initCfg x) v).workTapePos i ≤ D := by
+        by_cases hv : v ≤ u
+        · exact hshort v (hv.trans hu) i
+        · rw [show v = u + (v - u) by omega, MultiTapeTM.runFrom_add,
+            MultiTapeTM.runFrom_of_halt _ hh]
+          exact hshort u hu i
+      have hp (i : Fin Mg.k) : M.tm.visitedByTapeHead (M.tm.initCfg x) t
+          (Fin.natAdd 1 (Fin.natAdd 1 i)) ⊆ Mg.tm.visitedByTapeHead (Mg.tm.initCfg x) t i := by
+        intro z hz
+        obtain ⟨v, hv, rfl⟩ := Finset.mem_image.mp hz
+        change ((a2_mapTM Mg true).tm.runFrom _ v).workTapePos _ ∈ _
+        rw [heq v, a2_mapSetup_heads]
+        exact Finset.mem_image.mpr ⟨0, by simp, rfl⟩
+      have hs := a2_map_space Mg x x t D (Sg x.length)
+        (fun v _ => hheads v _) (fun v _ => hheads v _) hp (hgs x t)
+      change M.tm.spaceUsed (M.tm.initCfg x) t ≤ _ at hs
+      dsimp only [D] at hs
+      omega
+    | some ab =>
+      rcases ab with ⟨a, b⟩
+      obtain ⟨u, hu, hinit, hprefix⟩ := a2_map_launch Mg x a b hd
+      have hlen : a.length ≤ x.length ∧ b.length ≤ x.length := by
+        have h := congrArg List.length (eq_pairEncode_of_pairDecode x a b hd)
+        rw [length_pairEncode] at h
+        omega
+      have hrun (v : ℕ) : ∃ tag,
+          M.tm.runFrom (M.tm.initCfg x) (u + v) =
+            a2_mapVirtual Mg (Mg.tm.runFrom (Mg.tm.initCfg b) v) tag
+              ⟨x.length + 1, by omega⟩ a (pairEncode a []) := by
+        obtain ⟨tag, _, he⟩ := a2_mapVirtual_run Mg (x := x) (Mg.tm.initCfg b) true
+          (by simp [VirtualTag, MultiTapeTM.initCfg, Cfg.init])
+          (⟨x.length + 1, by omega⟩) a (pairEncode a []) v
+        refine ⟨tag, ?_⟩
+        rw [MultiTapeTM.runFrom_add, hinit]
+        exact he
+      have ha (v : ℕ) : -(D : ℤ) ≤
+          (M.tm.runFrom (M.tm.initCfg x) v).workTapePos (Fin.castAdd (1 + Mg.k) (0 : Fin 1)) ∧
+          (M.tm.runFrom (M.tm.initCfg x) v).workTapePos (Fin.castAdd (1 + Mg.k) (0 : Fin 1)) ≤ D := by
+        by_cases hv : v ≤ u
+        · exact hshort v (hv.trans hu) _
+        · obtain ⟨tag, he⟩ := hrun (v - u)
+          rw [show v = u + (v - u) by omega, he]
+          simp only [a2_mapVirtual, tapeBlocks_left]
+          dsimp only [D]
+          constructor <;> omega
+      have hb (v : ℕ) : -(D : ℤ) ≤
+          (M.tm.runFrom (M.tm.initCfg x) v).workTapePos (Fin.natAdd 1 (Fin.castAdd Mg.k (0 : Fin 1))) ∧
+          (M.tm.runFrom (M.tm.initCfg x) v).workTapePos (Fin.natAdd 1 (Fin.castAdd Mg.k (0 : Fin 1))) ≤ D := by
+        by_cases hv : v ≤ u
+        · exact hshort v (hv.trans hu) _
+        · obtain ⟨tag, he⟩ := hrun (v - u)
+          rw [show v = u + (v - u) by omega, he]
+          simp only [a2_mapVirtual, tapeBlocks_buffer]
+          have hp := (Mg.tm.runFrom (Mg.tm.initCfg b) (v - u)).inputPos.isLt
+          dsimp only [D]
+          constructor <;> omega
+      -- Each payload-bank head is either still at its source origin or is
+      -- exactly a source position at a time no greater than this horizon.
+      have hp (i : Fin Mg.k) : M.tm.visitedByTapeHead (M.tm.initCfg x) t
+          (Fin.natAdd 1 (Fin.natAdd 1 i)) ⊆ Mg.tm.visitedByTapeHead (Mg.tm.initCfg b) t i := by
+        intro z hz
+        obtain ⟨v, hv, rfl⟩ := Finset.mem_image.mp hz
+        have hvt : v ≤ t := by have := Finset.mem_range.mp hv; omega
+        by_cases hvu : v ≤ u
+        · change ((a2_mapTM Mg true).tm.runFrom _ v).workTapePos _ ∈ _
+          rw [hprefix v hvu, a2_mapSetup_heads]
+          exact Finset.mem_image.mpr ⟨0, by simp, rfl⟩
+        · obtain ⟨tag, he⟩ := hrun (v - u)
+          change (M.tm.runFrom (M.tm.initCfg x) v).workTapePos _ ∈ _
+          rw [show v = u + (v - u) by omega, he]
+          simp only [a2_mapVirtual, tapeBlocks_right]
+          exact Finset.mem_image.mpr ⟨v - u, Finset.mem_range.mpr (by omega), rfl⟩
+      have hs := a2_map_space Mg x b t D (Sg x.length)
+        (fun v _ => ha v) (fun v _ => hb v) hp ((hgs b t).trans (hSg hlen.2))
+      change M.tm.spaceUsed (M.tm.initCfg x) t ≤ _ at hs
+      dsimp only [D] at hs
+      omega
 
 /-- A live endpoint rules out a halt anywhere in its preceding run. -/
 private lemma f2_loop_live_prefix {k : ℕ} {S : Type*} {x : List Bool}
