@@ -475,7 +475,9 @@ preserved on the selected bank, the frame untouched — having visited the
 anchor first exactly there. The start must be **live** (`hc` — round-2
 blocker: an initially halted `c` at `T = 0` satisfies the other hypotheses
 vacuously while the handover state projection would demand
-`none = some (Sum.inr ())`; under `hhalt`, `hc` is equivalent to `0 < T`).
+`none = some (Sum.inr ())`; under `hlive` **and** `hhalt` together, `hc` is
+equivalent to `0 < T` — the forward direction uses `hhalt`, the reverse
+`hlive 0` (round-3 finding 1 sharpened the earlier `hhalt`-only phrasing).
 The smallest case is the round-1 counterexample cured: a one-state source
 that emits and halts on its first transition lands at time `1` in
 `Sum.inr ()` with `pre ++ [b]` on the capture tape (the audit's S8 check).

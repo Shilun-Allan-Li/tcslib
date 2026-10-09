@@ -19,6 +19,9 @@ import TCSlib.Complexity.TuringMachine.Build.Convention
 import TCSlib.Complexity.TuringMachine.Build.Wrappers
 import TCSlib.Complexity.TuringMachine.Build.Loop
 import TCSlib.Complexity.TuringMachine.Build.Primitives
+import TCSlib.Complexity.TuringMachine.Build.Embed
+import TCSlib.Complexity.TuringMachine.Build.Seam
+import TCSlib.Complexity.TuringMachine.Build.Catalog
 import TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction
 import TCSlib.Complexity.TuringMachine.Robustness.SingleTape
 import TCSlib.Complexity.TuringMachine.Robustness.Bidirectional
@@ -79,6 +82,11 @@ for the local modifications.
 * `CounterProg`, `CounterProgRun` — counter programs (goto programs over unary registers)
   compiled into machines, with Hoare-style run lemmas; the model of the polynomial-time
   emitters of [AB09, Remark 6.7] (polynomial time: `ClassNP/CounterProgPolyTime`).
+* `Build/Embed`, `Build/Seam`, `Build/Catalog` — the §12 routine layer
+  (`machine-library-design.md` §12, gate closed round 3): the bank-embedding
+  transformers with their returning flavors, seam composition with the
+  general-configuration forms and the release adapter, and the space-annotated
+  catalog rows.
 * `Build/Convention`, `Build/Wrappers`, `Build/Loop`, `Build/Primitives` — the
   machine-construction library (`machine-library-design.md`): the `Cfg.ofWords` seam
   discipline, the capture/silence and halt-redirect wrappers with the timed branch,
