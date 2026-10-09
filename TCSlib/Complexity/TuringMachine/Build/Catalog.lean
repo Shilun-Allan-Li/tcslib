@@ -9326,6 +9326,466 @@ theorem computesFunInTime_cond_spaceUsed {D M₁ M₂ : FinTM Bool}
     have hm2 := Nat.le_max_right (s₁ x.length) (s₂ x.length)
     split at h <;> omega
 
+/-- A unit-step head starting at zero visits every integer between zero and
+its endpoint. Thus a bound on total visited space bounds its displacement.
+**Proof sketch.** Induct on time to put the intervening integer interval in
+the visited set: a unit step adds at most its new endpoint. Take interval
+cardinalities and use the inclusion of this tape's space in total space. -/
+private lemma a2_source_radius {k : ℕ} {Q : Type} {x : List Bool}
+    (tm : MultiTapeTM k Bool Q) (c : Cfg k Bool Q x) (t B : ℕ)
+    (hc : ∀ i, c.workTapePos i = 0) (hb : tm.spaceUsed c t ≤ B) (i : Fin k) :
+    -(B : ℤ) ≤ (tm.runFrom c t).workTapePos i ∧
+      (tm.runFrom c t).workTapePos i ≤ B := by
+  have hinter (u : ℕ) : Finset.Icc (min 0 ((tm.runFrom c u).workTapePos i))
+      (max 0 ((tm.runFrom c u).workTapePos i)) ⊆ tm.visitedByTapeHead c u i := by
+    induction u with
+    | zero =>
+      intro z hz
+      simp only [MultiTapeTM.runFrom_zero, hc, min_self, max_self,
+        Finset.mem_Icc] at hz
+      have hz0 : z = 0 := by omega
+      subst z
+      exact Finset.mem_image.mpr ⟨0, by simp, by simpa using hc i⟩
+    | succ u ih =>
+      intro z hz
+      have hd := tm.workTapePos_step_le (tm.runFrom c u) i
+      rw [abs_le] at hd
+      rw [← MultiTapeTM.runFrom_succ_eq_step'] at hd
+      by_cases hp : z ∈ Finset.Icc (min 0 ((tm.runFrom c u).workTapePos i))
+          (max 0 ((tm.runFrom c u).workTapePos i))
+      · obtain ⟨v, hv, he⟩ := Finset.mem_image.mp (ih hp)
+        exact Finset.mem_image.mpr ⟨v, Finset.mem_range.mpr
+          (by have := Finset.mem_range.mp hv; omega), he⟩
+      · simp only [Finset.mem_Icc] at hz hp
+        have he : (tm.runFrom c (u + 1)).workTapePos i = z := by omega
+        exact Finset.mem_image.mpr ⟨u + 1, by simp, he⟩
+  have hcard := Finset.card_le_card (hinter t)
+  rw [Int.card_Icc] at hcard
+  have htotal := tm.spaceUsedByTape_le_spaceUsed c t i
+  change (tm.visitedByTapeHead c t i).card ≤ tm.spaceUsed c t at htotal
+  omega
+
+/-- All physical heads lie in one fixed origin-centred integer interval. -/
+private def a2_heads {k : ℕ} {Q : Type} {x : List Bool}
+    (c : Cfg k Bool Q x) (B : ℕ) : Prop :=
+  ∀ i, -(B : ℤ) ≤ c.workTapePos i ∧ c.workTapePos i ≤ B
+
+/-- Enlarging the common interval preserves a head bound. -/
+private lemma a2_heads_mono {k : ℕ} {Q : Type} {x : List Bool}
+    {c : Cfg k Bool Q x} {A B : ℕ} (h : a2_heads c A) (hle : A ≤ B) :
+    a2_heads c B := by
+  intro i
+  have := h i
+  constructor <;> omega
+
+/-- A short administrative segment enlarges its starting interval by at
+most its duration, including every intermediate work-head position. -/
+private lemma a2_heads_steps {k : ℕ} {Q : Type} {x : List Bool}
+    (tm : MultiTapeTM k Bool Q) (c : Cfg k Bool Q x) (A B t : ℕ)
+    (h : a2_heads c A) (ht : t ≤ B) : a2_heads (tm.runFrom c t) (A + B) := by
+  intro i
+  have hs := h i
+  have hm := f2_head_steps tm c t i
+  constructor <;> omega
+
+/-- Concatenating two bounded traces reuses their common interval. -/
+private lemma a2_heads_join {k : ℕ} {Q : Type} {x : List Bool}
+    (tm : MultiTapeTM k Bool Q) (c : Cfg k Bool Q x) (a b B : ℕ)
+    (ha : ∀ u ≤ a, a2_heads (tm.runFrom c u) B)
+    (hb : ∀ u ≤ b, a2_heads (tm.runFrom (tm.runFrom c a) u) B) :
+    ∀ u ≤ a + b, a2_heads (tm.runFrom c u) B := by
+  intro u hu
+  by_cases h : u ≤ a
+  · exact ha u h
+  · rw [show u = a + (u - a) by omega, MultiTapeTM.runFrom_add]
+    exact hb (u - a) (by omega)
+
+/-- After a halting endpoint, every later head is that same endpoint head. -/
+private lemma a2_heads_halted {k : ℕ} {Q : Type} {x : List Bool}
+    (tm : MultiTapeTM k Bool Q) (c : Cfg k Bool Q x) (a B : ℕ)
+    (hh : (tm.runFrom c a).state = none)
+    (ha : ∀ u ≤ a, a2_heads (tm.runFrom c u) B) :
+    ∀ u, a2_heads (tm.runFrom c u) B := by
+  intro u
+  by_cases h : u ≤ a
+  · exact ha u h
+  · rw [show u = a + (u - a) by omega, MultiTapeTM.runFrom_add,
+      MultiTapeTM.runFrom_of_halt _ hh]
+    exact ha a (le_refl _)
+
+/-- Project a captured body call onto its body, stationary flag, fixed
+counter origin, retained fuel bank, and current output-length head. -/
+private lemma a2_call_heads (body F : FinTM Bool) (anchor : body.State)
+    {x : List Bool} (startup : Bool) (c : Cfg body.k Bool body.State x)
+    (release : Bool) (flag : Option Bool) (word : List Bool)
+    (fuel : Cfg F.k Bool F.State x) (B : ℕ)
+    (hb : a2_heads c B) (hf : a2_heads fuel B) (ho : c.output.length ≤ B) :
+    a2_heads (f2_loopCall body F anchor startup c release flag word fuel) B := by
+  intro i
+  refine Fin.lastCases ?_ (fun j => ?_) i
+  · simp only [f2_loopCall, captureCfg, Fin.val_last, lt_self_iff_false, ↓reduceDIte,
+      f2_loopBodyPadded, leftCfg, f2_loopBodyCfg, List.nil_append]
+    constructor <;> omega
+  · simp only [f2_loopCall, captureCfg, Fin.coe_castSucc, dif_pos j.isLt]
+    change -(B : ℤ) ≤ (f2_loopBodyPadded body F anchor c release flag word fuel).workTapePos j ∧
+      (f2_loopBodyPadded body F anchor c release flag word fuel).workTapePos j ≤ B
+    simp only [f2_loopBodyPadded, leftCfg]
+    refine Fin.addCases (fun j => ?_) (fun j => ?_) j
+    · simp only [Fin.addCases_left, f2_loopBodyCfg]
+      split
+      · exact hb _
+      · constructor <;> omega
+    · simp only [Fin.addCases_right]
+      refine Fin.addCases (fun j => ?_) (fun j => ?_) j
+      · simp only [Fin.addCases_left]; constructor <;> omega
+      · simpa only [Fin.addCases_right] using hf j
+
+/-- Fuel capture preserves its source heads, leaves the other banks at
+zero, and places its last head at the current fuel output length. -/
+private lemma a2_fuel_heads (body F : FinTM Bool) {x : List Bool}
+    (c : Cfg F.k Bool F.State x) (B : ℕ)
+    (hf : a2_heads c B) (ho : c.output.length ≤ B) :
+    a2_heads (f2_loopFuelCaptured body F c) B := by
+  intro i
+  refine Fin.lastCases ?_ (fun j => ?_) i
+  · simp only [f2_loopFuelCaptured, captureCfg, Fin.val_last, lt_self_iff_false,
+      ↓reduceDIte, f2_loopFuelCfg, rightCfg, List.nil_append]
+    constructor <;> omega
+  · simp only [f2_loopFuelCaptured, captureCfg, Fin.coe_castSucc, dif_pos j.isLt]
+    change -(B : ℤ) ≤ (f2_loopFuelCfg body F c).workTapePos j ∧
+      (f2_loopFuelCfg body F c).workTapePos j ≤ B
+    simp only [f2_loopFuelCfg, rightCfg]
+    refine Fin.addCases (fun j => ?_) (fun j => ?_) j
+    · simp only [Fin.addCases_left]; constructor <;> omega
+    · simp only [Fin.addCases_right]
+      refine Fin.addCases (fun j => ?_) (fun j => ?_) j
+      · simp only [Fin.addCases_left]; constructor <;> omega
+      · simpa only [Fin.addCases_right] using hf j
+
+/-- Every prefix of a captured body call is the same prefix of its source,
+with the release bit consumed once and the halt flag set on the last action. -/
+private lemma a2_call_run (body F : FinTM Bool) (anchor : body.State)
+    (findMode startup : Bool) {x : List Bool}
+    (c : Cfg body.k Bool body.State x) (release : Bool) (t : ℕ)
+    (word : List Bool) (fuel : Cfg F.k Bool F.State x) (hc : c.state ≠ none)
+    (hlive : ∀ u < t, (body.tm.runFrom c u).state ≠ none)
+    (hanchor : ∀ u < t, (u = 0 ∧ release = true) ∨
+      (body.tm.runFrom c u).state ≠ some anchor) :
+    (f2_loopHost body F anchor findMode).tm.runFrom
+        (f2_loopCall body F anchor startup c release none word fuel) t =
+      f2_loopCall body F anchor startup (body.tm.runFrom c t)
+        (if t = 0 then release else false)
+        (if (body.tm.runFrom c t).state = none then some true else none) word fuel := by
+  unfold f2_loopCall f2_loopBodyPadded
+  rw [f2_loopHost_body_capture]
+  · rw [f2_loopBodySource_run, f2_loopBody_run body anchor c release hc t hlive hanchor]
+  · intro u hu
+    rw [f2_loopBodySource_run, f2_loopBody_run body anchor c release hc u
+      (fun v hv => hlive v (by omega)) (fun v hv => hanchor v (by omega))]
+    simpa [Cfg.Halted, leftCfg, f2_loopBodyCfg] using hlive u hu
+
+/-- Budgeted source space bounds all captured-call prefixes. Empty final
+output gives no capture growth; a singleton final verdict gives at most one
+cell of growth, including a verdict emitted by the halting action. -/
+private lemma a2_call_prefix (body F : FinTM Bool) (anchor : body.State)
+    (startup : Bool) {x : List Bool}
+    (c : Cfg body.k Bool body.State x) (release : Bool) (t B : ℕ)
+    (word : List Bool) (fuel : Cfg F.k Bool F.State x) (hc : c.state ≠ none)
+    (hzero : ∀ i, c.workTapePos i = 0)
+    (hlive : ∀ u < t, (body.tm.runFrom c u).state ≠ none)
+    (hanchor : ∀ u < t, (u = 0 ∧ release = true) ∨
+      (body.tm.runFrom c u).state ≠ some anchor)
+    (hspace : ∀ u ≤ t, body.tm.spaceUsed c u ≤ B)
+    (hf : a2_heads fuel B) (hout : (body.tm.runFrom c t).output.length ≤ B) :
+    ∀ u ≤ t, a2_heads ((f2_loopHost body F anchor false).tm.runFrom
+      (f2_loopCall body F anchor startup c release none word fuel) u) B := by
+  intro u hu
+  rw [a2_call_run body F anchor false startup c release u word fuel hc
+    (fun v hv => hlive v (by omega)) (fun v hv => hanchor v (by omega))]
+  exact a2_call_heads body F anchor startup _ _ _ word fuel B
+    (a2_source_radius body.tm c u B hzero (hspace u hu)) hf
+    (((body.tm.output_prefix c hu).length_le).trans hout)
+
+/-- Fuel capture and installation have a width-bounded space ledger.
+The fuel source is charged to its space hypothesis; the three installation
+scans cost `3*width+4`, and the possibly long input rewind moves no work head.
+**Proof sketch.** Capture to the first halt, project the source heads and
+output lengths at every prefix, then concatenate the setup and input-only
+rewind traces. Retain the source endpoint's `B` bound for all later calls. -/
+private lemma a2_loop_prepare (body F : FinTM Bool) (anchor : body.State)
+    (R T S : ℕ → ℕ)
+    (hF : F.ComputesFunInTime (fun x => Nat.bits (R x.length)) T)
+    (hspace : ∀ x t, F.tm.spaceUsed (F.tm.initCfg x) t ≤ S x.length)
+    (x : List Bool) :
+    ∃ (c : Cfg F.k Bool F.State x) (t : ℕ),
+      c.state = none ∧ c.output = Nat.bits (R x.length) ∧ t ≤ 5 * T x.length + 7 ∧
+      (f2_loopHost body F anchor false).tm.runFrom
+        ((f2_loopHost body F anchor false).tm.initCfg x) t = f2_loopReady body F c ∧
+      a2_heads c (S x.length) ∧
+      ∀ u ≤ t, a2_heads ((f2_loopHost body F anchor false).tm.runFrom
+        ((f2_loopHost body F anchor false).tm.initCfg x) u)
+        (S x.length + 4 * (Nat.bits (R x.length)).length + 4) := by
+  obtain ⟨space, hhalt, hout, _⟩ := hF x
+  obtain ⟨u, hu, hut, hlive, huh, hue⟩ :=
+    f2_loop_first_halt F.tm (F.tm.initCfg x) (T x.length)
+      (by simp [MultiTapeTM.initCfg, Cfg.init]) hhalt
+  let c := F.tm.runFrom (F.tm.initCfg x) u
+  have hc : c.state = none := huh
+  have ho : c.output = Nat.bits (R x.length) := by dsimp only [c]; rw [hue]; exact hout
+  have hcap (v : ℕ) (hv : v ≤ u) : (f2_loopHost body F anchor false).tm.runFrom
+      ((f2_loopHost body F anchor false).tm.initCfg x) v =
+        f2_loopFuelCaptured body F (F.tm.runFrom (F.tm.initCfg x) v) := by
+    rw [f2_loopHost_init, f2_loopFuel_init, f2_loopHost_fuel_capture]
+    · rw [f2_loopFuel_run]; rfl
+    · intro w hw
+      rw [f2_loopFuel_run]
+      simpa [Cfg.Halted, f2_loopFuelCfg, rightCfg] using hlive w (by omega)
+  have hs (v : ℕ) : a2_heads (F.tm.runFrom (F.tm.initCfg x) v) (S x.length) :=
+    a2_source_radius F.tm (F.tm.initCfg x) v _ (fun _ => rfl) (hspace x v)
+  have hpref (v : ℕ) (hv : v ≤ u) : a2_heads
+      ((f2_loopHost body F anchor false).tm.runFrom
+        ((f2_loopHost body F anchor false).tm.initCfg x) v)
+      (S x.length + c.output.length) := by
+    rw [hcap v hv]
+    apply a2_fuel_heads
+    · exact a2_heads_mono (hs v) (by omega)
+    · have := (F.tm.output_prefix (F.tm.initCfg x) hv).length_le
+      change (F.tm.runFrom (F.tm.initCfg x) v).output.length ≤ c.output.length at this
+      omega
+  let prepared := f2_loopFrame body F (f2_loopFuelCaptured body F c)
+    (some (.inr (.inr 4))) c.inputPos (bufferTape []) (bufferTape c.output)
+    (bufferTape []) 0 0 []
+  have hsetup : (f2_loopHost body F anchor false).tm.runFrom
+      (f2_loopFuelCaptured body F c) (3 * c.output.length + 4) = prepared := by
+    conv_lhs => arg 1; rw [f2_loopFuelCaptured_frame body F c hc]
+    exact f2_loopHost_fuel_setup body F anchor false _ _ _ _ _
+  obtain ⟨v, hv, hrew, hrewheads⟩ := f2_rewind_heads
+    (f2_loopHost body F anchor false).tm (.inr (.inr 4)) (.inr (.inr 5))
+    (.some (.inr (.inl (true, (body.tm.q₀, false)))))
+    (fun _ _ => f2_loopControl_idle body F .neg _)
+    (fun inp _ => by cases inp <;> exact f2_loopControl_idle body F _ _) prepared rfl
+  have hw : c.output.length ≤ T x.length := by rw [ho]; exact f2_loop_fuel_width F R T hF x
+  have hi : c.inputPos.val ≤ 1 + u := f2_loop_input_run_le F.tm (F.tm.initCfg x) u
+  have hinstall (w : ℕ) (hw : w ≤ 3 * c.output.length + 4) :
+      a2_heads ((f2_loopHost body F anchor false).tm.runFrom
+        (f2_loopFuelCaptured body F c) w) (S x.length + 4 * c.output.length + 4) := by
+    have hb := hpref u (le_refl _)
+    rw [hcap u (le_refl _)] at hb
+    have hh := a2_heads_steps (f2_loopHost body F anchor false).tm
+      (f2_loopFuelCaptured body F c) _ (3 * c.output.length + 4) w hb hw
+    convert hh using 1 <;> omega
+  refine ⟨c, u + (3 * c.output.length + 4) + v, hc, ho, ?_, ?_, hs u, ?_⟩
+  · change v ≤ c.inputPos.val + 2 at hv
+    omega
+  · rw [MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_add,
+      hcap u (le_refl _), hsetup, hrew]
+    rfl
+  · rw [← ho]
+    apply a2_heads_join
+    · apply a2_heads_join
+      · intro w hw
+        exact a2_heads_mono (hpref w hw) (by omega)
+      · rw [hcap u (le_refl _)]
+        exact hinstall
+    · rw [MultiTapeTM.runFrom_add, hcap u (le_refl _), hsetup]
+      intro w hw i
+      rw [hrewheads w hw]
+      have hh := hinstall (3 * c.output.length + 4) (le_refl _)
+      rw [hsetup] at hh
+      exact hh i
+
+/-- Startup uses its space hypothesis only up to the supplied first anchor;
+the silent stop and release add two bounded administrative steps. -/
+private lemma a2_loop_start_prefix (body F : FinTM Bool) (anchor : body.State)
+    {x : List Bool} (s : List Bool) (t B : ℕ) (fuel : Cfg F.k Bool F.State x)
+    (hguard : ∀ u < t, (body.tm.runFrom (body.tm.initCfg x) u).state ≠ some anchor)
+    (hend : body.tm.runFrom (body.tm.initCfg x) t = Cfg.ofWords anchor (stateWord body.k s))
+    (hs : ∀ u ≤ t, body.tm.spaceUsed (body.tm.initCfg x) u ≤ B)
+    (hf : a2_heads fuel B) :
+    ∀ u ≤ t + 2, a2_heads ((f2_loopHost body F anchor false).tm.runFrom
+      (f2_loopReady body F fuel) u) (B + 2) := by
+  rw [f2_loopReady_call body F anchor]
+  have hl := f2_loop_live_prefix body.tm (body.tm.initCfg x) t
+    (by rw [hend]; simp [Cfg.ofWords])
+  have hp := a2_call_prefix body F anchor true (body.tm.initCfg x) false t B
+    fuel.output fuel (by simp [MultiTapeTM.initCfg, Cfg.init]) (fun _ => rfl)
+    (fun u hu => hl u (by omega)) (fun u hu => Or.inr (hguard u hu)) hs hf
+    (by rw [hend]; simp [Cfg.ofWords])
+  apply a2_heads_join
+  · intro u hu
+    exact a2_heads_mono (hp u hu) (by omega)
+  · intro u hu
+    exact a2_heads_steps _ _ B 2 u (hp t (le_refl _)) hu
+
+/-- A decision round has a single fixed space interval, independent of its
+index. The source bank uses the budgeted source hypothesis, the retained
+fuel bank starts within the same bound, and debit administration is charged
+only to the unchanged counter width.
+**Proof sketch.** At acceptance use the actual first halt; append-only output
+bounds capture by one. At rejection the source endpoint is silent and has
+origin heads. The stop plus the received borrow/rewind/underflow segment
+costs at most `2*width+5`. Concatenate prefix bounds, including both endings. -/
+private lemma a2_loop_round (body F : FinTM Bool) (anchor : body.State)
+    {x : List Bool} (s next : List Bool) (accepted : Bool)
+    (word : List Bool) (fuel : Cfg F.k Bool F.State x) (t B : ℕ) (ht : 0 < t)
+    (hanchor : ∀ u, 0 < u → u < t →
+      (body.tm.runFrom (Cfg.ofWords (input := x) anchor (stateWord body.k s)) u).state ≠ some anchor)
+    (hend : if accepted then
+      (body.tm.runFrom (Cfg.ofWords (input := x) anchor (stateWord body.k s)) t).state = none ∧
+      (body.tm.runFrom (Cfg.ofWords (input := x) anchor (stateWord body.k s)) t).output = [true]
+      else body.tm.runFrom (Cfg.ofWords (input := x) anchor (stateWord body.k s)) t =
+        Cfg.ofWords anchor (stateWord body.k next))
+    (hspace : ∀ u ≤ t, body.tm.spaceUsed
+      (Cfg.ofWords (input := x) anchor (stateWord body.k s)) u ≤ B)
+    (hf : a2_heads fuel B) :
+    ∃ v,
+      (∀ u ≤ v, a2_heads ((f2_loopHost body F anchor false).tm.runFrom
+        (f2_loopCall body F anchor false (Cfg.ofWords anchor (stateWord body.k s))
+          true none word fuel) u) (B + 2 * word.length + 6)) ∧
+      ((f2_loopHost body F anchor false).tm.runFrom
+        (f2_loopCall body F anchor false (Cfg.ofWords anchor (stateWord body.k s))
+          true none word fuel) v).state = none ∨
+      ∃ v, (f2_loopDebit word).2 = true ∧
+        (∀ u ≤ v, a2_heads ((f2_loopHost body F anchor false).tm.runFrom
+          (f2_loopCall body F anchor false (Cfg.ofWords anchor (stateWord body.k s))
+            true none word fuel) u) (B + 2 * word.length + 6)) ∧
+        (f2_loopHost body F anchor false).tm.runFrom
+          (f2_loopCall body F anchor false (Cfg.ofWords anchor (stateWord body.k s))
+            true none word fuel) v =
+          f2_loopCall body F anchor false (Cfg.ofWords anchor (stateWord body.k next))
+            true none (f2_loopDebit word).1 fuel := by
+  let start := Cfg.ofWords (input := x) anchor (stateWord body.k s)
+  have hzero (i) : start.workTapePos i = 0 := rfl
+  have hc : start.state ≠ none := by simp [start, Cfg.ofWords]
+  have hg : ∀ u < t, (u = 0 ∧ true = true) ∨ (body.tm.runFrom start u).state ≠ some anchor := by
+    intro u hu
+    by_cases hz : u = 0
+    · exact Or.inl ⟨hz, rfl⟩
+    · exact Or.inr (hanchor u (by omega) hu)
+  by_cases ha : accepted = true
+  · simp only [ha, if_true] at hend
+    obtain ⟨u, hu, hut, hlive, hhalt, he⟩ := f2_loop_first_halt body.tm start t hc hend.1
+    have hcap := f2_loopHost_halt_return body F anchor false start u word fuel hu hlive
+      (fun v hv hvu => hanchor v hv (by omega)) hhalt
+    obtain ⟨v, hv, hstop, _⟩ := f2_loopHost_accept body F anchor false
+      (body.tm.runFrom start u) word fuel hhalt
+    have ho : (body.tm.runFrom start u).output = [true] := by rw [he]; exact hend.2
+    have hv5 : v ≤ 5 := by simpa [ho] using hv
+    have hp := a2_call_prefix body F anchor false start true u (B + 1) word fuel hc hzero
+      hlive (fun w hw => hg w (by omega))
+      (fun w hw => (hspace w (by omega)).trans (by omega))
+      (a2_heads_mono hf (by omega)) (by simp [ho])
+    refine ⟨u + v, ?_⟩
+    left
+    constructor
+    · apply a2_heads_join
+      · intro w hw
+        exact a2_heads_mono (hp w hw) (by omega)
+      · intro w hw
+        exact a2_heads_mono (a2_heads_steps _ _ (B + 1) 5 w
+          (hp u (le_refl _)) (by omega)) (by omega)
+    · rw [MultiTapeTM.runFrom_add, hcap]
+      exact hstop
+  · simp only [ha] at hend
+    have hl := f2_loop_live_prefix body.tm start t (by rw [hend]; simp [Cfg.ofWords])
+    have hp := a2_call_prefix body F anchor false start true t B word fuel hc hzero
+      (fun w hw => hl w (by omega)) hg hspace hf (by rw [hend]; simp [Cfg.ofWords])
+    have hcap := f2_loopHost_anchor_return body F anchor false false start true t word fuel
+      (by rw [hend]; rfl) (by intro hz; omega) hg
+    rw [show body.tm.runFrom start t = Cfg.ofWords anchor (stateWord body.k next) from hend] at hcap
+    obtain ⟨v, hv, hfinish⟩ := f2_loopHost_reject body F anchor false
+      {Cfg.ofWords (input := x) anchor (stateWord body.k next) with state := none}
+      word fuel rfl rfl
+    have hpall : ∀ u ≤ (t + 1) + v, a2_heads
+        ((f2_loopHost body F anchor false).tm.runFrom
+          (f2_loopCall body F anchor false start true none word fuel) u)
+        (B + 2 * word.length + 6) := by
+      rw [show (t + 1) + v = t + (1 + v) by omega]
+      apply a2_heads_join
+      · intro w hw
+        exact a2_heads_mono (hp w hw) (by omega)
+      · intro w hw
+        exact a2_heads_mono (a2_heads_steps _ _ B (2 * word.length + 5) w
+          (hp t (le_refl _)) (by omega)) (by omega)
+    refine ⟨(t + 1) + v, ?_⟩
+    by_cases hd : (f2_loopDebit word).2 = true
+    · right
+      refine ⟨(t + 1) + v, hd, hpall, ?_⟩
+      rw [MultiTapeTM.runFrom_add, hcap]
+      simpa only [hd, if_true] using hfinish
+    · left
+      refine ⟨hpall, ?_⟩
+      rw [MultiTapeTM.runFrom_add, hcap]
+      simp only [hd, Bool.false_eq_true, ↓reduceIte] at hfinish
+      exact hfinish.1
+
+/-- A finite chain of returning or halting segments reuses one interval.
+The last segment must halt; every earlier halt supplies a stationary tail.
+The interval is never multiplied by the number of segments. -/
+private lemma a2_segments {k : ℕ} {Q : Type} {x : List Bool}
+    (tm : MultiTapeTM k Bool Q) (cfg : ℕ → Cfg k Bool Q x) (N B : ℕ)
+    (hN : 0 < N)
+    (hround : ∀ i < N, ∃ u,
+      (∀ v ≤ u, a2_heads (tm.runFrom (cfg i) v) B) ∧
+      ((tm.runFrom (cfg i) u).state = none ∨
+        i + 1 < N ∧ tm.runFrom (cfg i) u = cfg (i + 1))) :
+    ∀ t, a2_heads (tm.runFrom (cfg 0) t) B := by
+  induction N generalizing cfg with
+  | zero => omega
+  | succ N ih =>
+    obtain ⟨u, hp, he⟩ := hround 0 (by omega)
+    intro t
+    by_cases ht : t ≤ u
+    · exact hp t ht
+    · rw [show t = u + (t - u) by omega, MultiTapeTM.runFrom_add]
+      rcases he with hh | ⟨hn, hr⟩
+      · rw [MultiTapeTM.runFrom_of_halt _ hh]
+        exact hp u (le_refl _)
+      · rw [hr]
+        exact ih (fun i => cfg (i + 1)) (by omega)
+          (fun i hi => by
+            obtain ⟨v, hv, he⟩ := hround (i + 1) (by omega)
+            refine ⟨v, hv, ?_⟩
+            rcases he with hh | ⟨hj, hr⟩
+            · exact Or.inl hh
+            · exact Or.inr ⟨by omega, hr⟩) (t - u)
+
+/-- Sum the received decision segments, with an already halted false terminal.
+**Proof sketch.** Induct on the candidate count; acceptance stops, while a
+rejection composes the next segment and shifts the Boolean list test. -/
+private lemma a2_loop_halted_run {k : ℕ} {S : Type*} {x : List Bool}
+    (tm : MultiTapeTM k Bool S) (cfg : ℕ → Cfg k Bool S x)
+    (accept : ℕ → Bool) (B N : ℕ)
+    (hend : (cfg N).state = none ∧ (cfg N).output = [false])
+    (hround : ∀ j < N, ∃ t ≤ B,
+      if accept j then
+        (tm.runFrom (cfg j) t).state = none ∧
+          (tm.runFrom (cfg j) t).output = [true]
+      else tm.runFrom (cfg j) t = cfg (j + 1)) :
+    ∃ t ≤ N * B, (tm.runFrom (cfg 0) t).state = none ∧
+      (tm.runFrom (cfg 0) t).output = [(List.range N).any accept] := by
+  induction N generalizing cfg accept with
+  | zero => exact ⟨0, by simp, by simpa using hend⟩
+  | succ N ih =>
+    obtain ⟨t, ht, hc⟩ := hround 0 (by omega)
+    have hany : (List.range (N + 1)).any accept =
+        (accept 0 || (List.range N).any (fun j => accept (j + 1))) := by
+      simp [List.range_succ_eq_map, List.any_map, Function.comp_def]
+    by_cases hb : accept 0 = true
+    · simp only [hb, ↓reduceIte] at hc
+      refine ⟨t, ht.trans ?_, hc.1, ?_⟩
+      · exact Nat.le_mul_of_pos_left B (by omega)
+      · simpa [hany, hb] using hc.2
+    · simp only [hb] at hc
+      obtain ⟨s, hs, hhalt, hout⟩ := ih
+        (fun j => cfg (j + 1)) (fun j => accept (j + 1)) hend
+        (fun j hj => hround (j + 1) (by omega))
+      refine ⟨t + s, ?_, ?_, ?_⟩
+      · rw [Nat.succ_mul]; omega
+      · rw [MultiTapeTM.runFrom_add, hc]; exact hhalt
+      · rw [MultiTapeTM.runFrom_add, hc]
+        simpa [hany, hb] using hout
+
 /-- **L space row** (spec, fill pending — design §12 R3, decision 12.3;
 annotates `Turing.FinTM.exists_loopTM`; the `exists_loopCfgTM` and
 `exists_loopFindTM` siblings inherit the same host at fill time). Same
@@ -9399,6 +9859,109 @@ theorem exists_loopTM_spaceUsed (body F : FinTM Bool) (anchor : body.State)
       ∀ (x : List Bool) (t : ℕ),
         E.tm.spaceUsed (E.tm.initCfg x) t
           ≤ c * (S x.length + T x.length + 1) := by
-  sorry
+  obtain ⟨c, hc⟩ := f2_loopHost_contracts body F anchor Inv stepF acceptF
+    (fun _ _ => [true]) false s0 R T hF hInv0 hInvStep hstart hround
+  let E := f2_loopHost body F anchor false
+  have htime : E.ComputesFunInTime
+      (fun x => [(List.range (R x.length + 1)).any
+        fun i => acceptF x ((stepF x)^[i] (s0 x))])
+      (fun n => c * (T n + 1) * (R n + 2)) := by
+    intro x
+    obtain ⟨cfg, startup, hs, hinit, _, hend, hout, hsegments, _, _⟩ := hc x
+    obtain ⟨t, ht, hhalt, houtput⟩ := a2_loop_halted_run E.tm cfg
+      (fun i => acceptF x ((stepF x)^[i] (s0 x))) (c * (T x.length + 1))
+      (R x.length + 1) ⟨hend, by simpa using hout⟩
+      (fun j hj => by simpa using hsegments j (by omega))
+    have hrun := E.tm.runFrom_add (E.tm.initCfg x) startup t
+    rw [hinit] at hrun
+    have hcompute : E.ComputesInTime x
+        [(List.range (R x.length + 1)).any
+          (fun i => acceptF x ((stepF x)^[i] (s0 x)))] (startup + t) := by
+      refine ⟨_, ?_, ?_, rfl⟩
+      · rw [hrun]; exact hhalt
+      · rw [hrun]; exact houtput
+    apply hcompute.mono
+    calc startup + t ≤ c * (T x.length + 1) +
+          (R x.length + 1) * (c * (T x.length + 1)) := Nat.add_le_add hs ht
+      _ = c * (T x.length + 1) * (R x.length + 2) := by ring
+  refine ⟨E, c + 19 * E.k, ?_, ?_⟩
+  · intro x
+    exact (htime x).mono (Nat.mul_le_mul_right _
+      (Nat.mul_le_mul_right _ (Nat.le_add_right _ _)))
+  · intro x t
+    -- Fuel: capture has its source's space bound and its actual output width.
+    obtain ⟨fuel, ftime, hfh, hfo, hft, hprepare, hfuel, hprepareSpace⟩ :=
+      a2_loop_prepare body F anchor R T S hF hFspace x
+    obtain ⟨btime, hbt, hbguard, hbend⟩ := hstart x
+    let words (i : ℕ) := (fun w => (f2_loopDebit w).1)^[i] (Nat.bits (R x.length))
+    let orbit (i : ℕ) := (stepF x)^[i] (s0 x)
+    let cfg (i : ℕ) := f2_loopCall body F anchor false
+      (Cfg.ofWords (input := x) anchor (stateWord body.k (orbit i))) true none (words i) fuel
+    let B := S x.length + 4 * (Nat.bits (R x.length)).length + 8
+    have hwidth (i : ℕ) : (words i).length = (Nat.bits (R x.length)).length :=
+      f2_loopDebit_iterate_length _ _
+    have hsuccess (i : ℕ) (hi : i ≤ R x.length) :
+        (f2_loopDebit (words i)).2 = true ↔ i < R x.length := by
+      rw [f2_loopDebit_success]
+      dsimp only [words]
+      rw [f2_loopDebit_iterate_value _ _ hi]
+      omega
+    -- Every admissible source call starts at zero. Its captured prefixes
+    -- are bounded before the common, fixed-width administrative allowance.
+    have hlocal : ∀ i < R x.length + 1, ∃ u,
+        (∀ v ≤ u, a2_heads (E.tm.runFrom (cfg i) v) B) ∧
+        ((E.tm.runFrom (cfg i) u).state = none ∨
+          i + 1 < R x.length + 1 ∧ E.tm.runFrom (cfg i) u = cfg (i + 1)) := by
+      intro i hi
+      have hinv := f2_loop_orbit_inv Inv stepF s0 hInv0 hInvStep x i
+      obtain ⟨u, hup, hut, hguard, hend⟩ := hround x (orbit i) hinv
+      obtain ⟨v, he⟩ := a2_loop_round body F anchor (orbit i) (stepF x (orbit i))
+        (acceptF x (orbit i)) (words i) fuel u (S x.length) hup hguard hend
+        (fun w hw => hroundSpace x (orbit i) hinv w (hw.trans hut)) hfuel
+      have hbound : S x.length + 2 * (words i).length + 6 ≤ B := by
+        rw [hwidth]
+        dsimp [B]
+        omega
+      rcases he with ⟨hp, hh⟩ | ⟨v', hd, hp, he⟩
+      · exact ⟨v, fun w hw => a2_heads_mono (hp w hw) hbound, Or.inl hh⟩
+      · refine ⟨v', fun w hw => a2_heads_mono (hp w hw) hbound,
+          Or.inr ⟨by have := (hsuccess i (by omega)).mp hd; omega, ?_⟩⟩
+        simpa only [cfg, words, orbit, Function.iterate_succ_apply'] using he
+    have hrounds := a2_segments E.tm cfg (R x.length + 1) B (by omega) hlocal
+    -- Startup has no captured output, and its stop/release is two steps.
+    have hinit : E.tm.runFrom (E.tm.initCfg x) (ftime + (btime + 2)) = cfg 0 := by
+      rw [MultiTapeTM.runFrom_add, hprepare,
+        f2_loopHost_start body F anchor false (s0 x) btime fuel hbguard hbend]
+      simp only [cfg, words, orbit, Function.iterate_zero_apply, hfo]
+    have hstartup : ∀ u ≤ ftime + (btime + 2),
+        a2_heads (E.tm.runFrom (E.tm.initCfg x) u) B := by
+      apply a2_heads_join
+      · intro u hu
+        exact a2_heads_mono (hprepareSpace u hu) (by dsimp [B]; omega)
+      · rw [hprepare]
+        intro u hu
+        exact a2_heads_mono (a2_loop_start_prefix body F anchor (s0 x) btime
+          (S x.length) fuel hbguard hbend
+          (fun v hv => hstartSpace x v (hv.trans hbt)) hfuel u hu)
+          (by dsimp [B]; omega)
+    -- Reuse the same interval over every round and every halted tail.
+    have hall : ∀ u, a2_heads (E.tm.runFrom (E.tm.initCfg x) u) B := by
+      intro u
+      by_cases hu : u ≤ ftime + (btime + 2)
+      · exact hstartup u hu
+      · rw [show u = (ftime + (btime + 2)) + (u - (ftime + (btime + 2))) by omega,
+          MultiTapeTM.runFrom_add, hinit]
+        exact hrounds _
+    have hs := f2_space_radius E x B hall t
+    have hw := f2_loop_fuel_width F R T hF x
+    have hb : 2 * B + 1 ≤ 19 * (S x.length + T x.length + 1) := by
+      dsimp only [B]
+      omega
+    calc
+      E.tm.spaceUsed (E.tm.initCfg x) t ≤ E.k * (2 * B + 1) := hs
+      _ ≤ E.k * (19 * (S x.length + T x.length + 1)) := Nat.mul_le_mul_left _ hb
+      _ = (19 * E.k) * (S x.length + T x.length + 1) := by ring
+      _ ≤ (c + 19 * E.k) * (S x.length + T x.length + 1) :=
+        Nat.mul_le_mul_right _ (Nat.le_add_left _ _)
 
 end Turing.FinTM
