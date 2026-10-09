@@ -10,6 +10,7 @@ import TCSlib.Complexity.ClassNP.PolyTimePrefix
 import TCSlib.Complexity.TuringMachine.CounterProgInput
 import TCSlib.Complexity.TuringMachine.Build.Loop
 import TCSlib.Complexity.TuringMachine.Build.Primitives
+import TCSlib.Complexity.TuringMachine.Build.EmitIterBody
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -293,19 +294,18 @@ chunk `e` of each iterate, is again polynomial-time, provided every iterate
 stays inside one polynomial length envelope `b·(n+1)^l` of the *original*
 input length.
 
-**Proof sketch.** An instance of `Turing.FinTM.exists_emitLoopTM`.  The body
-machine copies its input onto work tape zero (the loop's round state) and
-enters the anchor; each round is two clean calls on the tape-resident state
-word — an emit-mode call (`Turing.FinTM.exists_emitCallTM`) forwarding the
-chunk `e s` to the physical output, then an install-mode call
-(`Turing.FinTM.exists_installCallTM`) replacing the word by `g s` — glued by
-a constant number of control states.  The host's admissibility invariant is
-"the state word is an orbit point of `g` from the input", so the orbit-only
+**Proof sketch.** Unpack the two machines and apply
+`Turing.FinTM.exists_emitIterTM` (in
+`TCSlib.Complexity.TuringMachine.Build.EmitIterBody`): an instance of
+`Turing.FinTM.exists_emitLoopTM` whose body copies its input onto work tape
+zero and runs each round as two clean calls on the tape-resident state word —
+an emit-mode call (`Turing.FinTM.exists_emitCallTM`) forwarding the chunk
+`e s`, then an install-mode call (`Turing.FinTM.exists_installCallTM`)
+replacing the word by `g s`.  The host's admissibility invariant is "the
+state word is an orbit point of `g` from the input", so the orbit-only
 length envelope `horbit` bounds each call's budget by one polynomial in the
-input length (the pattern of the proved Cook–Levin emitter assembly); the
-fuel machine is `Turing.FinTM.computesFunInTime_polyBits`.  The loop host
-then computes exactly the stated concatenation within `c·(T+1)·(R+2)`
-steps. -/
+input length; the fuel machine is
+`Turing.FinTM.computesFunInTime_polyBits`. -/
 theorem polyTimeComputable_emitIter {g e : List Bool → List Bool}
     (hg : PolyTimeComputable g) (he : PolyTimeComputable e)
     (a' k' b l : ℕ)
@@ -313,7 +313,11 @@ theorem polyTimeComputable_emitIter {g e : List Bool → List Bool}
       (g^[i] w).length ≤ b * (w.length + 1) ^ l) :
     PolyTimeComputable (fun w =>
       (List.range (a' * (w.length + 1) ^ k' + 1)).flatMap (fun i => e (g^[i] w))) := by
-  sorry
+  obtain ⟨G, CG, cG, hG⟩ := hg
+  obtain ⟨E, CE, cE, hE⟩ := he
+  obtain ⟨M, C, c, hM⟩ :=
+    FinTM.exists_emitIterTM G E g e CG cG CE cE hG hE a' k' b l horbit
+  exact ⟨M, C, c, hM⟩
 
 /-! ### Truncating bitwise XOR -/
 
