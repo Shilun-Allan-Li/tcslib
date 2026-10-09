@@ -36,14 +36,21 @@ only, with facade wiring at that gate's close (the P4.2 precedent).
   step 1 says "if `M_i` has not halted in this time, then halt and accept";
   the campaign's universal instead delivers, on every budget-shaped input,
   all-branch halting within `C·(t+1)` **and** acceptance iff the coded
-  machine accepts within `t`. Under the contradiction's assumption the coded
-  machine beats the budget, so the timeout polarity never bites — the
-  packaging is a simplification, not a strengthening.
+  machine accepts within `t` — so a branch cut by the clock rejects. The
+  honest reason this is sound (round-1 finding 7 — it is **not** that every
+  coded branch finishes: the normal form guarantees no all-branch halting,
+  and its guess phase has infinite non-accepting branches even for total
+  deciders): accepting witnesses finish within the forward transfer bound,
+  every completed accepting display is sound, and the backward direction
+  uses the *original* decider's all-branch halting for truncation. Cut
+  branches reject, which can never create a false positive.
 * **Linear overhead `C·(t+1)` with `C` per code** (decision CH34-Q8): the
-  clock is fused into the interpreter loop (a countdown tick per simulated
-  step), not the deterministic `clockTM`'s re-scan — the received
-  `Turing.timed_universal` pays `C·(t+1)²` exactly there, and the quadratic
-  would surrender the book-strength hierarchy.
+  clock is fused into the interpreter loop — one countdown tick per
+  simulated step, with **amortized** linear total cost (a single decrement
+  can borrow across the whole counter width; the borrows sum to
+  `Σⱼ ν₂(j) ≤ t`, round-1 finding 5) — not the deterministic `clockTM`'s
+  re-scan: the received `Turing.timed_universal` pays `C·(t+1)²` exactly
+  there, and the quadratic would surrender the book-strength hierarchy.
 * **The domination hypothesis carries an extra `f n` addend**:
   `∀ A, A·(f(n+1) + f n + n + 1) ≤ g n` eventually. The `f(n+1)` term is the
   book's `f(n+1) = o(g(n))`; the `f n` term covers the inclusion half
@@ -99,12 +106,16 @@ corresponding table row, so `UN`'s branches at length `C·(t+1)` project onto
 the coded machine's branches at length `t` (the alignment lemma, both
 directions of the iff; deterministic bookkeeping steps ignore their bits, the
 binary-choice semantics' absorption). The clock is the budget word `bits t`
-counted **down one tick per simulated step, fused into the interpreter loop**
-— not the deterministic `clockTM` re-scan, whose `C·(t+1)²` is exactly what
-decision CH34-Q8 forbids — and every branch halts when the counter dies or
-the simulated machine halts, whichever is first. Per simulated step the cost
-is one table scan plus the tick, `O(|table|)` — a constant for fixed `α`,
-absorbed into `C`. Fill obligations, named: the startup reuse at the
+counted **down one tick per simulated step, fused into the interpreter
+loop** — not the deterministic `clockTM` re-scan, whose `C·(t+1)²` is
+exactly what decision CH34-Q8 forbids — and every branch halts when the
+counter dies or the simulated machine halts, whichever is first. The tick
+is **amortized**, not pointwise (round-1 finding 5): a decrement from `j`
+borrows across `ν₂(j)` trailing zeros, unbounded for a single tick, but
+`Σ_{j≤t} ν₂(j) ≤ t`, so a counter that maintains its significant end and
+tests zero without full-width scans has linear total cost. Per simulated
+step the remaining cost is one table scan, `O(|table|)` — a constant for
+fixed `α`, absorbed into `C`. Fill obligations, named: the startup reuse at the
 ND record format; the fused countdown; the two alignment directions; the
 halting absorption on exhausted budgets; the `C`-ledger per code. -/
 theorem exists_timed_universal_NDTM (c : EffectiveNDMachineCode) :
@@ -163,7 +174,9 @@ the simulator's finite control). Then the non-local reads are verified in
 against the real input tape, and each work tape `j` by replaying tape `j` on
 tape B — B's head tracks tape `j`'s claimed head, so each step checks the
 claimed read against B's cell and applies the claimed write at unit cost —
-rewinding A and clearing B between sweeps. Total `O_N(k · t) = C·(t+1)`.
+rewinding A and clearing B between sweeps. Total `O_N((k+1)·(t+1)) =
+C·(t+1)` — the `k+1` covers the zero-work-tape case, where the display
+guess and the input sweep remain (round-1 finding 6).
 Forward transfer: a genuine accepting run of length `t` yields the accepting
 display, guessed and verified within `C·(t+1)`. Backward: a verified display
 **is** a genuine run (the sweeps force consistency), so an accepting branch
@@ -202,37 +215,63 @@ square.
 
 **Proof sketch.** *Inclusion:* the hypothesis at `A = 1` gives
 `f n ≤ g n` eventually (the `f n` addend); finitely many lengths absorb into
-the constant (the received `Complexity.time_hierarchy` `F`-sum idiom).
-*Strictness* is lazy diagonalization [AB09, proof of Theorem 3.2 and
-Figure 3.1], over a scheme fixed by `Turing.exists_effectiveNDMachineCode`
-(the fill introduces the global scheme constant, mirroring
-`Complexity.TimeHierarchy.code`), with `UN` and `BF` its universal and
-evaluator. Fill obligations, named: **(i) the stage ladder**
-`ℓ₁ := 2`, `ℓ_{i+1} := (BF's bound at budget(ℓ_i + 1)) + ℓ_i + 1`, and its
-locator machine finding the sandwich `ℓ_i < n ≤ ℓ_{i+1}` within `O(g n)`
-(iterated `f`-witness runs and doubling counters — the book's `O(n^{1.5})`
-locating step); **(ii) the diagonal NDTM `D`**: on `1^n` with
-`ℓ_i < n < ℓ_{i+1}`, run `UN` on the virtual input
-`⟨bits (budget n), α_i, 1^{n+1}⟩` — `α_i` the `i`-th binary string
-(unranking), `budget` computed from `g`'s constructibility witness — and
-answer `UN`'s verdict; on `1^{ℓ_{i+1}}`, run `BF` at the stage bottom
-`⟨bits (budget (ℓ_i + 1)), α_i, 1^{ℓ_i + 1}⟩` and **flip**; reject non-unary
-inputs; **(iii) `D ∈ NTIME (g + 1)`**: `UN`'s unconditional all-branch clock,
-`BF`'s determinism with its bound at most `ℓ_{i+1} ≤ n ≤ g n` by the ladder's
-very definition and constructibility's floor `n ≤ g n`, and the locator
-ledger; **(iv) `L(D) ∉ NTIME f`**: given `N` deciding `L(D)` within
-`c₀ · f`, take `M'` and `C₁` from
-`Turing.FinNDTM.exists_codeNDTM_accepts_linear N`, and by true-padding
-(`Turing.NDMachineCode.decode_encode_pad`) pick `i` arbitrarily large with
-`decode α_i = M'` and `C₁·(c₀·f(n+1) + 1) ≤ budget n` on the whole stage
-(the domination hypothesis at the assembled constant — the `f(n+1)` and
-`n + 1` addends); then mid-rung `D(1^n) = [M' accepts 1^{n+1} within budget]`
-equals `[1^{n+1} ∈ L(D)]` — forward by the linear transfer and
-`Turing.FinNDTM.AcceptsWithin.mono`, backward by the unbounded transfer plus
-the truncation of `N`'s accepting word at `N`'s own all-branch budget
-(`Turing.NDTM.runWith_of_halt`) — which is the chain (3.3), while the top
-rung flips the stage bottom, (3.4); `N` agreeing with `D` on the whole stage
-collapses the chain into the contradiction of [AB09, Figure 3.1]. -/
+the constant (the received `Complexity.time_hierarchy` `F`-sum idiom; no
+monotonicity needed). *Strictness* is lazy diagonalization [AB09, proof of
+Theorem 3.2 and Figure 3.1], over a scheme fixed by
+`Turing.exists_effectiveNDMachineCode`, rebuilt per the round-1 audit (its
+two majors: a per-code universal constant cannot be absorbed by choosing a
+padded large index — padding preserves `decode`, no law preserves cost —
+and the stage locator must be computable within the allowance). The
+repaired construction: **(i) the fixed-code stage schedule**: stage
+`i = pair(j, r)` runs the `j`-th binary string `α_j` (unranking), so every
+code recurs at infinitely many stages — no padded-index selection, and the
+alleged decider's constants stay fixed along its own stage subsequence (the
+same discipline as the P3.2 enumeration's repetition coordinate).
+**(ii) the `f`-adaptive ladder with capped comparisons**: with
+`a := ℓ_i + 1` the stage bottom, `T*_i := (f a + a + 1)²` and
+`ℓ_{i+1} := 2^{(T*_i)²}` — an explicit recurrence over `f`'s
+constructibility witness; the locator compares `n` against `ℓ_{i+1}` by
+**bit-length arithmetic with capped witness runs** (the ladder value is
+never materialized in unary, and a capped run that fails to finish itself
+decides the comparison: an unfinished `f`-witness already certifies
+`ℓ_{i+1} > n`), with the completed stages' costs summing geometrically and
+the one incomplete evaluation capped — total `O(g n + 1)` after computing
+`g n` once by `g`'s witness. **(iii) the self-clocked mid-rung**: for
+`ℓ_i < n < ℓ_{i+1}`, `D` runs the fixed interpreter core on the virtual
+input `⟨α_j, 1^{n+1}⟩` at nominal simulated budget `g n`, under `D`'s
+**own fused countdown of `K·(g n + 1)` steps** — `K` fixed by `D`'s
+architecture, independent of the code — passing its choice bits through;
+branches cut by the countdown **reject** (sound: a cut branch is
+non-accepting, and completed accepting simulations are sound).
+**(iv) the top rung**: at `n = ℓ_{i+1}`, `D` runs `BF` on
+`⟨bits T*_i, α_j, 1^{a}⟩` under the same self-cap and **flips** a completed
+verdict (default answer if the cap trips); non-unary inputs reject.
+`D ∈ NTIME (g + 1)` **by construction**: every phase is cut by the
+`K·(g n + 1)` countdown, uniformly in the code. *The chain, for the alleged
+decider:* given `N` deciding `L(D)` within `c₀ · f`, take `M'` and `C₁`
+from `Turing.FinNDTM.exists_codeNDTM_accepts_linear N` and let `α` be
+`M'`'s code with its **fixed** interpreter constant `C_α`. Mid-rung, at the
+late stages of `α`'s subsequence: the genuine simulation of an accepting
+`N`-branch costs at most `C_α·(C₁·(c₀·f(n+1) + 1) + 1) ≤ A*·(f(n+1) + 1)`
+host steps with `A* := C_α·(C₁·c₀ + C₁ + 1) + 1` **fixed**, which the
+domination hypothesis (its `f(n+1)` addend) puts below `K·(g n + 1)`
+eventually — so the countdown never cuts the relevant branches, and
+`D(1^n) = [M'` accepts `1^{n+1}` within the window`] = [1^{n+1} ∈ L(D)]`
+(forward by the linear transfer and `AcceptsWithin.mono`; backward by the
+unbounded transfer plus truncation at `N`'s own all-branch budget,
+`Turing.NDTM.runWith_of_halt`) — the chain (3.3). Top rung: the flip needs
+the transfer at the **bottom** length `a` — the hypothesis's `f n` addend,
+instantiated at `n = a` — with `T*_i = (f a + a + 1)² ≥ C₁·(c₀·f a + 1)`
+eventually (fixed constants against a square), and `BF`'s cost
+`C_BF·2^{C_BF·(T*_i + 1)} ≤ K·(g n + 1)` eventually along the subsequence
+since `g n ≥ n = 2^{(T*_i)²}` — the ladder's square in the exponent
+outruns any fixed linear exponent — which is the chain's (3.4); `N`
+agreeing with `D` on the whole stage collapses (3.3) into (3.4)'s flip,
+the contradiction of [AB09, Figure 3.1]. Fill obligations, named: the
+schedule and unranking; the ladder recurrence and the capped-comparison
+locator with its amortized ledger; the self-clocked interpreter core at
+fixed `K`; the two transfer instantiations (at `f(n+1)` mid-rung, at `f a`
+bottom); the chain induction. -/
 theorem ntime_hierarchy {f g : ℕ → ℕ} (hf : TimeConstructible f)
     (hg : TimeConstructible g)
     (hfg : ∀ A : ℕ, ∃ N, ∀ n ≥ N, A * (f (n + 1) + f n + n + 1) ≤ g n) :
@@ -259,7 +298,8 @@ instance `NTIME(n) ⊊ NTIME(n^{1.5})` (fractional exponents have no ℕ-valued
 normal form in the campaign; the square is the nearest constructible bound).
 This is exactly what decision CH34-Q8 buys: under the received
 **deterministic** hierarchy's quadratic overhead, `A·(2n + 2)² ≤ (n + 1)²`
-fails for every `A`, so no square-overhead route separates these two classes
+fails for every **positive** `A` (round-1 finding 9; `A = 0` holds
+vacuously), so no square-overhead route separates these two classes
 — the linear-overhead universal is load-bearing.
 
 **Proof sketch.** `Complexity.ntime_hierarchy_of_pos` at `f := n + 1`,

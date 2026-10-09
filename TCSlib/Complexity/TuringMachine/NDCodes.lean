@@ -171,12 +171,17 @@ format: `encode := CodeNDTM.serialize` itself; `decode` parses the
 `Turing.pairEncode`d state count, the initial state, and the two transition
 tables by the received parser architecture
 (`TCSlib.Complexity.TuringMachine.CodeParser`, retargeted to the
-`Turing.actionBits₂` record — the table is `2 · 9` records per state in the
-fixed enumeration order), with the single-state do-nothing machine as the
-fallback on parse failure and trailing `true`-padding tolerated by the
-end-marker discipline (property 2); the canonizer re-serializes the parsed
-record within a polynomial of the code length (the received parser/emitter
-time ledgers). Fill obligations, named: the record parser and its fallback
+`Turing.actionBits₂` record — the table is `2 · 27 = 54` records per state
+in the fixed enumeration order, two choices by three reads on each of the
+input and both work tapes; round-1 finding 3 corrected the earlier `2 · 9`
+miscount, and the parser's minimum-length guard scales accordingly), with
+the single-state do-nothing machine as the fallback on parse failure and
+trailing `true`-padding tolerated by the end-marker discipline
+(property 2); the canonizer re-serializes the parsed record by the
+**arbitrary-time computability route of the received construction** — the
+deterministic `MathlibBridge` explicitly supersedes its polynomial variant,
+and `canonizerTime` is an arbitrary bound, so no polynomial ND canonizer is
+claimed or needed by this phase's consumers (round-1 finding 4). Fill obligations, named: the record parser and its fallback
 totalization; the pad-tolerance lemma (`decode_encode_pad`); the canonizer
 assembly and its time bound. -/
 theorem exists_effectiveNDMachineCode : Nonempty EffectiveNDMachineCode := by
