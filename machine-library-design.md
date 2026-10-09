@@ -954,6 +954,36 @@ halt seam. Generic form of: `a2_mapVirtual*` (A2), `f2_splitCount*` (F2A,
 the `y = []` specialization), the universal interpreter's input phase, and
 the query simulation every oracle-summit machine will need.
 
+**Z1 rider — the R1 selected-tape exports (decision D-R1, user
+2026-10-09, from the retrofit inventories, plan §4d).** The three retrofit
+inventories independently identified the same R1 API gap: `Embed.lean`
+exports no selected-tape field lemmas (`embedSlot_selected`/`_unselected`
+are private) and no agreeing-host lockstep, so no old-code R1 consumer can
+be proved from the public surface. This statement phase adds, **additively
+in `Embed.lean`** (shared-file mechanism, audited under this gate): public
+selected-tape projections of `embedSilentCfg`/`embedEmitCfg` (contents and
+head of tape `ι i`), and an `ofWords` transport form. Unlocks the blocked
+Hardness families (M/N/AM/U, Z/AB/AG — ≈ 300-350 lines) at the next
+retrofit window.
+
+### Z5. Machine-agreement transfer (decision D-R3, user 2026-10-09)
+
+A general lockstep-transfer lemma, the `hagree` genre of
+`capture_run`/`emit_run` made standalone: two machines over the same tape
+count and state type whose transition tables **agree on a set of states**
+run identically, configuration for configuration, from agreeing starts for
+as long as the run stays inside the agreement set; a guarded variant takes
+the agreement hypothesis per reachable state. Natural home:
+`Simulation.lean` beside the existing lockstep gadgets (placement open
+decision 13.5: Simulation versus a `Build/` module). Customers (rule of
+admission): the Loop forwarding host (H3's 14 verbatim re-proved phase
+lemmas, ≈ 550 lines, collapse to one transfer — `emLoopHost` agrees with
+`loopHost` on every non-body state); the 13 guarded `clSlot_run` agreement
+sites in `CookLevin/Hardness.lean`; every future mode-variant host (the
+§12 loop hosts' decision/find/emit triplet is exactly this pattern).
+Estimate: ≈ 4 points spec + fill; the risk is quantifier placement on the
+agreement set, not proof content.
+
 ### Z2. Zoned tape carrier (the Hennie-Stearns representation)
 
 The representation of `m` virtual work tapes on **one** physical tape with
@@ -1058,3 +1088,5 @@ gate, so the chapter-4 risk register (§6 summit 1) is settled either way.
    the frozen `Encoding.lean`.
 4. **13.4 Z1 mode shape**: one transformer with an emission-mode parameter
    versus two transformers — inherits open decision 12.4's resolution.
+5. **13.5 Z5 placement**: the agreement-transfer lemma in `Simulation.lean`
+   beside the lockstep gadgets (proposed) versus a `Build/` module.

@@ -432,6 +432,14 @@ even in the best case.
   collapse it and is the same `hagree` genre as D-R1. Weigh at the §13 spec
   phase; not part of this retrofit.
 
+**D-R1 and D-R3 RESOLVED (user, 2026-10-09):** D-R1 — the R1 selected-tape
+exports ride the §13 Z1 statement gate (additive `Embed.lean` growth,
+recorded as the Z1 rider in `machine-library-design.md`); D-R3 — the
+machine-agreement transfer lemma is **commissioned** as §13 item **Z5**
+(the `hagree` lockstep made standalone; collapses Loop's ≈550-line
+forwarding-host duplication and serves Hardness's 13 guarded agreement
+sites; placement open decision 13.5). D-R2 under discussion.
+
 **Logged housekeeping (maintainer, not retrofit output):** stale "statement
 skeleton / sorried" module headers in `Embed`/`Seam`/`Catalog` (all
 zero-sorry since today); two library-docstring overclaims (Embed's R1 "is
