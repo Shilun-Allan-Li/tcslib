@@ -6,6 +6,8 @@ Authors: Seyoon Ragavan
 import TCSlib.Complexity.Formulas.CNF
 import TCSlib.Complexity.Formulas.CNFEncoding
 import TCSlib.Complexity.Formulas.DNF
+import TCSlib.Complexity.Formulas.QBF
+import TCSlib.Complexity.Formulas.QBFEncoding
 
 /-!
 # Complexity — Boolean formulas
@@ -23,6 +25,8 @@ The formula layer of the Arora-Barak Chapter 2 development (see
   parser, and the fixed-fallback totalization [AB09, §2.3.1, footnote 3].
 * `DNF` — the DNF reading of the same carrier, the De Morgan dual, and the
   dual-tautology pivot [AB09, §2.6.1].
+* `QBF` — prenex quantified Boolean formulas with CNF matrix, their truth
+  semantics, and the `SAT` embedding [AB09, §4.2, Definition 4.10].
+* `QBFEncoding` — the quantifier-prefix serialization over the CNF encoding,
+  with the fixed-fallback totalization [AB09, §4.2].
 -/
-import TCSlib.Complexity.Formulas.QBF
-import TCSlib.Complexity.Formulas.QBFEncoding
