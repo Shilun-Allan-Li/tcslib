@@ -880,3 +880,181 @@ blockers, 4 majors) drove four repairs, landed with the round-2 pack:
 Scope notes R9 (physical-tape selection is not zone multiplexing) and R10
 (loop sibling contracts not exported) are recorded at their definition
 sites.
+
+## 13. The zone and virtual-input layer (proposed 2026-10-09, post-§12 close)
+
+**Mandate** (user direction 2026-10-09, at the §12 fill-campaign close —
+track A of the two parallel tracks, the other being the chapter-1/2
+retrofit): the §12 scope note **R9 promoted**. R9 drew the line at
+physical-tape selection — `ι` relocates whole tapes and "the Hennie-Stearns
+and universal-machine consumers get their zone/virtual-input representation
+layers separately" (`Build/Embed.lean` header). This increment is that
+separate layer. It gates the two stage-1 builds (the Hennie-Stearns `k`→2
+conversion and the two-work-tape universal machine, plan §2.1/§4b) and is
+scoped, like §12, beyond its first consumers: the virtual-input half serves
+the `NP^EXPCOM ⊆ EXP` summit and the 12.2c dedup, and the zone half is
+shaped so the chapter-1 Robustness conversions can gain **space theorems
+additively** (plan §2.7's fallback route to Ex 4.1/Thm 4.8). §12's space
+mandate continues: **every item carries a space clause alongside its time
+cost** (`Turing.MultiTapeTM.spaceUsed`, work tapes only).
+
+**Evidence.** The virtual-input pattern has now been hand-built four times
+over the proved corpus: the A2 forwarding controller's
+`a2_mapVirtual`/`a2_mapVirtual_step`/`a2_mapVirtual_run` lockstep (15 of
+its 45 privates; both boundary clamps, empty-word case, halt absorption —
+all proved), F2A's `f2_splitCountAction`/`f2_splitCount_run`
+(virtual *empty* input over preinstalled banks), the universal
+interpreter's prefix-input discipline, and the oblivious candidate's
+`obliviousVisit` virtual-tape transduction. All four sit on the same public
+primitive — `virtualMove`/`VirtualTag`/`virtualNextTag` and
+`bufferTape_inputSymbol` (`Simulation.lean`) — and each rebuilt the hosting
+and lockstep privately. On the zone side, the in-repo precedents are the
+`SingleTape.lean` multiplexing encoding (`SweepCell`/`tapeRow`) and
+`ObliviousSetup.lean`'s guide-zone layout with its two-directional run
+identities; what does not exist anywhere is a *reusable* zoned carrier with
+shift routines. The F2 epoch audit's three optional regression corollaries
+(zero-time startup, both virtual-input clamps, setup followed by an
+emitting halting step) are adopted here as permanent lemmas of Z1.
+
+**What already exists and is consumed, not duplicated**: the §12 layer
+itself (R1/R2 and the catalog rows are the assembly language of every
+construction below); `virtualMove`/`VirtualTag` (`Simulation.lean`);
+`Turing.actionBits₂` and the `CodeNDTM` two-work-tape serialization
+(`NDCodes.lean`, statement-frozen under the closed P3.3 gate) — Z3 builds
+the deterministic sibling against the same record format, never a second
+serialization; `UnaryTape.lean`; the harvest policy of §8 (reimplement
+against the ABI with the original proof as template; audited originals stay
+in place until the separately-tracked retrofit/12.2c dedup).
+
+### Z1. Virtual-input hosting (the `a2_mapVirtual` pattern, promoted)
+
+A transformer hosting a machine whose input is a **designated buffered
+word** rather than the native input: given a host with an injective tape
+selection (R1's `ι`) plus one buffer tape holding `y`, the hosted machine
+runs with `y` as its virtual input, buffer head at
+`source.inputPos - 1` under a `VirtualTag` boundary discipline. Spec shape:
+
+* **lockstep** — one host step per source step, transported `runFrom`
+  identity (the A2 `a2_mapVirtual_run` shape, generalized from its
+  two-buffer controller to the R1 selection);
+* **clamps** — both boundary clamps hold with **no nonempty-`y` premise**
+  (empty `y`: position `0` is the right boundary, `-1` the left; outward
+  moves stay, inward moves cross) — the binding A2/F2 audit contract;
+* **halt absorption** — the source's halting action executes before the
+  host control dies; later times are fixed;
+* **emission policy** — suppressed or forwarded, mirroring R1's two modes
+  (open decision 12.4 resolves both at once);
+* **time** — exact; **space** — coefficient-one containment: each selected
+  tape's host visited set is contained in the source's visited set on `y`
+  at the same horizon (the R4 ledger shape, proved in `a2_map_space`).
+
+Permanent regression lemmas (audit-adopted): the zero-time startup
+instance, the two empty-`y` clamp instances, and the setup-then-emitting-
+halt seam. Generic form of: `a2_mapVirtual*` (A2), `f2_splitCount*` (F2A,
+the `y = []` specialization), the universal interpreter's input phase, and
+the query simulation every oracle-summit machine will need.
+
+### Z2. Zoned tape carrier (the Hennie-Stearns representation)
+
+The representation of `m` virtual work tapes on **one** physical tape with
+amortizable locality: a `ZoneLayout` (level count `ℓ`; per-level zones
+`L_i`/`R_i` of capacity `2^i` around a home origin, [AB09] §1.7) and a
+carrier predicate `ZoneCfg` relating one physical word to `m` virtual words
+plus per-zone fullness states (empty / half / full). The layer owns:
+
+* **the carrier** — `ZoneCfg` well-formedness, read/write-at-home
+  contracts (the virtual heads always sit at the physical origin), and the
+  cell-encoding convention (open decision 13.2: how `Option Bool` virtual
+  cells embed into binary physical cells — paired-cell presence/data
+  tracks, with `SingleTape.lean`'s `SweepCell` encoding as the precedent);
+* **the shift routines** — per-level `shiftIn`/`shiftOut` rebalancing
+  rows with **exact** costs `O(2^i)`, assembled from R3
+  transfer/copy/clear via R2 seams, each with its space row (visited cells
+  within the touched zones);
+* **the cardinality lemmas** — visited-set bookkeeping for multiplexed
+  tapes: physical space bounded by the sum of touched zone extents, the
+  piece the Robustness space annotation (Z4) consumes.
+
+Explicitly **on top, not inside**: the `2^i`-fullness invariant across a
+run, the amortized `O(T log T)` charge, and the simulation theorem itself —
+those are the Hennie-Stearns consumer's mathematics (plan §2.1), as the
+§12 precedent kept the loop ledgers out of the loop host. Scope note:
+Z2 is sized for the H-S discipline (one zoned tape + one scratch tape);
+a general `k`→`k'` conversion is not in scope.
+
+### Z3. Two-work-tape codes (the deterministic `actionBits₂` sibling)
+
+The deterministic code layer currently covers only the one-work-tape
+binary normal form (`EffectiveMachineCode`/`UniformMachineCode`,
+`Encoding.lean`), which is why Thm 3.1 arrives at `f²` (plan §2.1). Z3
+extends it: a deterministic two-work-tape code scheme over the
+**same `actionBits₂` record format** as `CodeNDTM` (one branch instead of
+two), with the `CodeParser` extension and the `UniformMachineCode`-style
+uniform-decoding clause (the P3.2 lesson: variable-code consumers need the
+uniformly-timed form). The two-work-tape **universal machine itself** is
+the stage-1 consumer build, not part of this layer; Z3 ships the codes it
+reads. Space rows on the parser rows from the start.
+
+### Z4. Space annotation for the Robustness conversions (consumer-driven)
+
+Additive `spaceUsed` theorems for the chapter-1 conversions
+(`one_work_tape`, the alphabet reduction) via Z2's cardinality lemmas — no
+signature changes, the audited surface untouched (the R3 retro-annotation
+precedent). This is plan §2.7's fallback route to the space-efficient
+universal (Ex 4.1, Thm 4.8). **Design-time obligation, recorded here**: at
+the Z1-Z3 spec phase, assess whether the two-work-tape universal carrying
+Z1/Z2 space rows yields Ex 4.1 directly; the answer (and hence whether Z4
+is needed at all, and at which strength) is recorded before the statement
+gate, so the chapter-4 risk register (§6 summit 1) is settled either way.
+
+### Consumers (rule-of-admission check, §4: two named customers per item)
+
+| Item | Customers |
+|---|---|
+| Z1 virtual-input hosting | the two-work-tape universal (stage 1); the `NP^EXPCOM ⊆ EXP` summit's query simulation; the 12.2c dedup of `a2_mapVirtual*`/`f2_splitCount*`; the P3.3 universal-NDTM fill's code/input discipline |
+| Z2 zoned carrier + shifts | the Hennie-Stearns `k`→2 conversion (plan §2.1); the Robustness space annotation (Z4); the Ex 1.6 oblivious sharpening (recorded stretch goal, `Robustness/Oblivious.lean`) |
+| Z3 two-work-tape codes | the two-work-tape universal; the Thm 3.1 re-derivation at `f log f` (Hydroxyi's diagonal argument over the new codes) |
+| Z4 space annotation | Thm 4.8/Ex 4.1 fallback (plan §2.7); `L ⊊ PSPACE`/space-hierarchy fills (P4.3) if the universal route stalls |
+
+### Placement, sequencing, cost
+
+* New files `Build/VirtualInput.lean` (Z1) and `Build/Zone.lean` (Z2),
+  namespace `Turing.FinTM`, order list after `Build/Catalog`; Z3 as a new
+  `TuringMachine/Codes2.lean` beside `Encoding.lean` (placement open
+  decision 13.3: a new file versus extending `Encoding.lean` — the frozen
+  audited surface of `Encoding.lean` argues for the new file); Z4 lands
+  additively in the `Robustness/` files through the shared-file mechanism,
+  flagged for its own audit.
+* Process per `workflow.md`, the §12 precedent verbatim: maintainer-serial
+  spec layer (quantifier-sensitive), statement gate by external audit,
+  fills as briefed batches with exclusive ownership, epoch-boundary fill
+  audit. The gate must close before the H-S/two-tape-universal builds
+  start; chapter-3/4 fill briefs written while this layer is open simply
+  do not cite it (the EXPCOM brief prefers Z1 only if Z1 is closed).
+* Estimate (campaign points): Z1 ≈ 8 (harvest-grade — the lockstep is
+  proved four times over; the risk is quantifier hygiene, not proof
+  content), Z2 ≈ 14 (genuinely new; the carrier predicate is the risk
+  concentration, L-style), Z3 ≈ 6 (format fixed by `actionBits₂`), Z4 ≈ 6
+  (retro-annotation against Z2's lemmas). Total ≈ 34, between the §12
+  statement layer and one fill epoch.
+* **Citation duty** (binding, the 2026-10-06 guideline and the 2026-10-08
+  citation-audit row): the design adapts [AB09] §1.7 (Hennie-Stearns) and
+  Exercise 1.5/1.6; the §12 duty extends here — Édouard Bonnet's
+  lax-434930 `classical-complexity` (Apache-2.0, commit `0c084031…`) is
+  cited in this addendum, the module docstrings, and the blueprint entries
+  wherever its stack-machine routine catalog informed a row's shape; no
+  external code is imported or transcribed.
+
+### Open decisions (13.x, for the user at spec time)
+
+1. **13.1 Zone discipline**: zones-with-fullness (the [AB09] §1.7 layout,
+   proposed) versus plain interleaving (simpler carrier, no amortized
+   locality — insufficient for H-S alone, but cheaper if Z2's only
+   customer were Z4). Proposed: zones; interleaving is not built.
+2. **13.2 Cell encoding**: how `Option Bool` virtual cells embed in binary
+   physical cells (paired presence/data cells proposed; `SweepCell` as
+   precedent).
+3. **13.3 Z3 placement**: new `Codes2.lean` (proposed) versus extending
+   the frozen `Encoding.lean`.
+4. **13.4 Z1 mode shape**: one transformer with an emission-mode parameter
+   versus two transformers — inherits open decision 12.4's resolution.
