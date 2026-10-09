@@ -451,7 +451,19 @@ frozen public names, consuming the recorded dedup maps (Primitives↔Catalog
 150 twins, Loop↔Catalog 95, the Wrappers copies), dropping the dead twins
 on both sides, and folding in the F2-audit dedup assignments and the
 queued `redirectTM` projection. 12.2c runs with its own audit gate under
-the new duplication governance.
+the new duplication governance. **Sequencing amendment (user, 2026-10-09):**
+the two RB2 catalog replacements (F25a `emitterCompare*` → `compareTM`,
+F27a `emitterP2Erase*` → `clearTM`) **move out of RB2 into the 12.2c
+window** — they require the Catalog→Primitives import that 12.2c redesigns,
+and doing them first would wire and then rewire it. RB2 is thereby purely
+layout-independent (deletions, in-file swaps, the stretch), ≈ −1,260 lines
+(−2,170 with the stretch); RB1/RB3 unchanged and churn-free against 12.2c
+(RB1's edits survive any later layout verbatim; Hardness is untouched by
+12.2c). Order confirmed: **RB1 ∥ RB2 ∥ RB3 → 12.2c** (dead code dies
+before anything moves; the split runs on the shrunken files per its
+recorded precondition; the structural change gets its own clean review).
+Retrofit epoch **R1** = the three batches, briefs
+`briefs/retrofit-rb{1,2,3}.md`.
 
 **Duplication-governance amendments landed (user-directed, 2026-10-09; from
 the D-R2 post-mortem — the `f2_` accumulation was disclosed and recorded at
