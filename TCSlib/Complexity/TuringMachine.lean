@@ -34,6 +34,7 @@ import TCSlib.Complexity.TuringMachine.UniversalStartup
 import TCSlib.Complexity.TuringMachine.UniversalInterpreter
 import TCSlib.Complexity.TuringMachine.UniversalBlock
 import TCSlib.Complexity.TuringMachine.Universal
+import TCSlib.Complexity.TuringMachine.NDCodes
 
 /-!
 # Complexity — Turing machines
@@ -63,6 +64,9 @@ for the local modifications.
   deterministic embedding (the classes live in `ClassNP/NTIME`).
 * `Oracle` — oracle machines `OracleTM` [AB09, §3.4]: same configurations, oracle-dependent
   step; the embedding of plain machines and its oracle-independence sanity theorems.
+* `NDCodes` — codes for nondeterministic machines [AB09, §1.4, §3.2]: the two-work-tape
+  coded normal form, its fixed serialization, and the scheme laws with the effective
+  (canonizer) form.
 * `Simulation` — generic machine-construction gadgets: emission chains, control
   actions, disjoint tape-block embeddings with lockstep run lemmas, the input-head
   rewind, and the two-machine branch union.

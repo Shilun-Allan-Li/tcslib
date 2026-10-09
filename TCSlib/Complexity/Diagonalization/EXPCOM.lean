@@ -116,22 +116,32 @@ structure UniformMachineCode extends EffectiveMachineCode where
 /-- **A uniformly-timed scheme exists** (spec, fill pending — phase P3.2
 round 2): the chapter-1 concrete scheme, with its time analysis made uniform.
 
-**Proof sketch.** The concrete scheme behind
-`Turing.exists_effectiveMachineCode`: its parser and canonizer
-(`TCSlib.Complexity.TuringMachine.CodeParser`) run within a fixed polynomial
-of the code length — the received construction's ledgers are per-phase
-polynomial, only never previously assembled into one exported bound — and
-the interpreter architecture of `Turing.timed_universal` costs a fixed
-polynomial of the **table size** per simulated step plus a clocked startup;
-the table size is itself polynomial in the code length. Reassembling the
-two-clause timed interface with these ledgers made explicit gives one
-degree in `|α| + |x| + t + 1` jointly. Fill obligations, named: the parser
-and canonizer uniform ledgers; the per-step interpreter cost as a
-polynomial of the code length; the clocked two-clause assembly
-(`timed_universal`'s packaging with the quadratic clock absorbed into the
-joint polynomial); the final degree arithmetic. **Continuation budget
-certain** (a re-derivation of the chapter-1 universal's time analysis with
-the code-length dependence exported). -/
+**Proof sketch.** The concrete grammar of the chapter-1 scheme
+(`encode := CodeTM.serialize`, `decode := codeDecode`, the encoding law from
+`codeDecode_serialize_pad`), with an **independently constructed**
+polynomial parser/simulator — the received generic compiler route is
+arbitrary-time and its polynomial variant is explicitly superseded
+(`MathlibBridge`), so no received time ledger is claimed (round-2 finding
+1); the decoder's *correctness* lemmas are reused, its complexity is not.
+The construction: (i) parse the nested simulator input keeping the deadline
+in binary, and check the table's minimum-length guard
+(`81 · (numStates + 1) ≤ rest.length`, `CodeParser`'s grammar) by **binary**
+arithmetic before any per-state iteration — a huge declared state count
+must never be expanded in unary; (ii) on success scan the linearly many
+records with range checks (whence
+`|(codeDecode α).serialize| ≤ max |α| 84`, the fallback's exact length);
+(iii) simulate at most `t` source transitions under a binary countdown,
+tracking the finite table, the heads, the visited work interval, and a
+**three-way output status** (empty / exactly `[true]` / permanently other —
+append-only output never returns), testing haltedness after the `t`-th
+transition before declaring timeout; (iv) with `S := |α| + |x| + t + 1`,
+bounded scans, lookups, and at most `t` rounds give `C·S^e` for a fixed
+multitape machine, and `d ≥ max 1 (max C e)` gives `C·S^e ≤ d·S^d`. The
+same parser emits the serialization prefix or the fallback serialization,
+supplying the inherited canonizer field. Fill obligations, named: the
+binary-guard parser; the simulation invariant with the three-way status;
+the polynomial ledger; the degree arithmetic. **Continuation budget
+certain.** -/
 theorem exists_uniformMachineCode : Nonempty UniformMachineCode := by
   sorry
 

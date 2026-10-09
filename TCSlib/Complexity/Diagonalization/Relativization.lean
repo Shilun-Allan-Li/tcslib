@@ -149,7 +149,7 @@ state. Fill obligations, named for the brief: the `OracleTM` relabelling lemma
 this phase's files — flagged for promotion); transfer of `ComputesInTime`
 across the configuration bijection (`Turing.Cfg.mapState` preserves
 haltedness and output, as in `Turing.exists_codeTM`); the arithmetic of the
-triple pairing. -/
+four-coordinate pairing (round-2 finding 2). -/
 theorem exists_finOracleTM_enumeration :
     ∃ N : ℕ → FinOracleTM Bool,
       ∀ (M : FinOracleTM Bool) (i₀ : ℕ),

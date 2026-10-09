@@ -229,8 +229,11 @@ alleged decider's constants stay fixed along its own stage subsequence (the
 same discipline as the P3.2 enumeration's repetition coordinate).
 **(ii) the `f`-adaptive ladder with capped comparisons**: with
 `a := ℓ_i + 1` the stage bottom, `T*_i := (f a + a + 1)²` and
-`ℓ_{i+1} := 2^{(T*_i)²}` — an explicit recurrence over `f`'s
-constructibility witness; the locator compares `n` against `ℓ_{i+1}` by
+`ℓ_{i+1} := 2^{(T*_i)²}`, seeded at `ℓ₀ := 2` with the finitely many
+lengths at or below the seed rejected (round-2 finding 1 fixed the seed
+and this formula as *the* sequence — the round-2 pack's paraphrase
+differed by an offset, a pack erratum acknowledged in the resolutions) —
+an explicit recurrence over `f`'s constructibility witness; the locator compares `n` against `ℓ_{i+1}` by
 **bit-length arithmetic with capped witness runs** (the ladder value is
 never materialized in unary, and a capped run that fails to finish itself
 decides the comparison: an unfinished `f`-witness already certifies
@@ -240,9 +243,17 @@ the one incomplete evaluation capped — total `O(g n + 1)` after computing
 `ℓ_i < n < ℓ_{i+1}`, `D` runs the fixed interpreter core on the virtual
 input `⟨α_j, 1^{n+1}⟩` at nominal simulated budget `g n`, under `D`'s
 **own fused countdown of `K·(g n + 1)` steps** — `K` fixed by `D`'s
-architecture, independent of the code — passing its choice bits through;
-branches cut by the countdown **reject** (sound: a cut branch is
-non-accepting, and completed accepting simulations are sound).
+architecture, independent of the code, **with the allowance split stated**
+(round-2 finding 2): a fixed share is reserved ahead of simulation for the
+one `g`-witness run (bounded by its own `c_g·(g n + 1)` clause — it runs
+*before* the countdown exists and is not cut by it), for budget and
+countdown preparation, and for the worst single binary borrow; the
+interpreter core carries a named **prefix-bound obligation** (an accepting
+simulation prefix under a larger nominal budget costs at most its own step
+count times the fixed per-step constant), so the remaining share covers
+the relevant branches — passing its choice bits through; branches cut by
+the countdown **reject** (sound: a cut branch is non-accepting, and
+completed accepting simulations are sound).
 **(iv) the top rung**: at `n = ℓ_{i+1}`, `D` runs `BF` on
 `⟨bits T*_i, α_j, 1^{a}⟩` under the same self-cap and **flips** a completed
 verdict (default answer if the cap trips); non-unary inputs reject.
@@ -260,9 +271,10 @@ eventually — so the countdown never cuts the relevant branches, and
 (forward by the linear transfer and `AcceptsWithin.mono`; backward by the
 unbounded transfer plus truncation at `N`'s own all-branch budget,
 `Turing.NDTM.runWith_of_halt`) — the chain (3.3). Top rung: the flip needs
-the transfer at the **bottom** length `a` — the hypothesis's `f n` addend,
-instantiated at `n = a` — with `T*_i = (f a + a + 1)² ≥ C₁·(c₀·f a + 1)`
-eventually (fixed constants against a square), and `BF`'s cost
+the transfer at the **bottom** length `a`:
+`T*_i = (f a + a + 1)² ≥ C₁·(c₀·f a + 1)` eventually — the square against
+fixed constants, no `g a` comparison needed; the hypothesis's `f n` addend
+serves the inclusion half (round-2 note 3) — and `BF`'s cost
 `C_BF·2^{C_BF·(T*_i + 1)} ≤ K·(g n + 1)` eventually along the subsequence
 since `g n ≥ n = 2^{(T*_i)²}` — the ladder's square in the exponent
 outruns any fixed linear exponent — which is the chain's (3.4); `N`

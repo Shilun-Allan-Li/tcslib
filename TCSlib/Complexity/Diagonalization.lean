@@ -7,6 +7,7 @@ import TCSlib.Complexity.TuringMachine.OracleAgreement
 import TCSlib.Complexity.Diagonalization.EXPCOM
 import TCSlib.Complexity.Diagonalization.Relativization
 import TCSlib.Complexity.Diagonalization.NotTimeConstructible
+import TCSlib.Complexity.Diagonalization.NTimeHierarchy
 
 /-!
 # Diagonalization: relativization and its limits
@@ -17,7 +18,9 @@ supporting cast. The headline results are `Complexity.baker_gill_solovay`
 [BGS75]), the `EXPCOM` identities `Complexity.POracle_EXPCOM_eq_EXP` /
 `Complexity.NPOracle_EXPCOM_eq_EXP` ([AB09, Example 3.6(3)]), and the
 non-time-constructible function `Complexity.exists_not_timeConstructible`
-([AB09, Exercise 3.5]).
+([AB09, Exercise 3.5]), and the nondeterministic time hierarchy theorem
+`Complexity.ntime_hierarchy` at book strength ([AB09, Theorem 3.2],
+[Coo72], decision CH34-Q8).
 
 ## Contents
 
@@ -32,6 +35,10 @@ non-time-constructible function `Complexity.exists_not_timeConstructible`
   finite oracle machines, the stage construction, and Theorem 3.7
 - `Diagonalization.NotTimeConstructible`: a function dominating the identity
   that is not time-constructible
+- `Diagonalization.NTimeHierarchy`: the clocked universal NDTM at linear
+  overhead ([AB09, Exercise 2.6]), the exponential deterministic evaluator,
+  the linear coded normal form, and [AB09, Theorem 3.2] with its positive
+  form and the `NTIME(n+1) ⊊ NTIME((n+1)²)` showcase
 
 ## References
 
