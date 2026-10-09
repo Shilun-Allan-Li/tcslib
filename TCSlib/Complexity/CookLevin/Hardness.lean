@@ -1591,13 +1591,6 @@ private lemma clTrack_round (M : FinTM Bool) {x y : List Bool}
       (clTrack_frame M (M.tm.step c) b' (fun _ => 0) (clAdvance d n))).trans
         (clTrack_dispatch M (M.tm.step c) b' (clAdvance d n))
 
-/-- Appending one bit at a contiguous buffer's right blank changes no other
-cell, including negative cells and the empty-buffer boundary. -/
-private lemma clBuffer_append_bit (w : List Bool) (b : Bool) :
-    Function.update (FinTM.bufferTape w) (w.length : ℤ) (some b) =
-      FinTM.bufferTape (w ++ [b]) := by
-  simpa only [List.append_nil, List.tail_nil, clCountTape_eq] using clCountTape_write w [] b
-
 /-- Two disjoint fixed tape slots, with no run-time indexing assumption. -/
 private def clTwo {α : Type} (a b : α) : Fin 2 → α := fun i => if i = 0 then a else b
 
@@ -1639,7 +1632,7 @@ private lemma clCopy_write (x : List Bool) (q q' : Fin 5) (p : Fin (x.length + 2
   · funext i
     fin_cases i
     · rfl
-    · exact clBuffer_append_bit record b
+    · exact (FinTM.bufferTape_append record b).symm
   · funext i
     fin_cases i <;> simp [clTwo, clCopyCfg, Action.apply]
 
@@ -4754,28 +4747,6 @@ private lemma clReplay_run (x : List Bool) (p : Fin (x.length + 2)) (w out : Lis
   simpa only [Nat.sub_zero, Nat.cast_zero, List.drop_zero] using
     clReplay_forward x p w 0 (by omega) out
 
-/-- Quantitative composition on actual completed words; the second machine
-need only be proved on the first machine's image. This uses the public
-buffered composition and its real capture/rewind startup ledger.
-**Proof sketch.** Start the second machine after the first completed run
-and its captured-output rewind. The public source-time lockstep then
-preserves the second computation, including its terminal emission. -/
-private lemma clCompute_comp (A B : FinTM Bool) (x y z : List Bool) (a b : ℕ)
-    (ha : A.ComputesInTime x y a) (hb : B.ComputesInTime y z b) :
-    (FinTM.bufferedCompTM A B).ComputesInTime x z (2 * a + b + 2) := by
-  obtain ⟨s, p, tapes, heads, hs, he⟩ := FinTM.bufferedComp_start A B x y a ha
-  obtain ⟨tag, _, hr⟩ := FinTM.bufferedSecondCfg_run A B (B.tm.initCfg y) true
-    (by simp [FinTM.VirtualTag, MultiTapeTM.initCfg, Cfg.init]) p tapes heads b
-  have endB := (FinTM.computesInTime_iff _ _ _ _).mp hb
-  have hc : (FinTM.bufferedCompTM A B).ComputesInTime x z (s + b) := by
-    apply (FinTM.computesInTime_iff _ _ _ _).mpr
-    rw [MultiTapeTM.runFrom_add, he, hr]
-    exact ⟨by simpa only [FinTM.bufferedSecondCfg, Option.map_eq_none_iff] using endB.1, endB.2⟩
-  have hlen : y.length ≤ a := by
-    have ho := ((FinTM.computesInTime_iff _ _ _ _).mp ha).2
-    simpa only [ho] using A.tm.output_length_le x a
-  exact hc.mono (by omega)
-
 /-- Select one physical tape while framing every other tape and head. -/
 private def clOneSelect {k : ℕ} (i : Fin k) : Fin k → Option (Fin 1) :=
   fun j => if j = i then some 0 else none
@@ -5033,9 +5004,16 @@ private lemma clQueryCode_machine {l : ℕ} (pos neg : Fin l) (hne : pos ≠ neg
   refine ⟨FinTM.bufferedCompTM (clQueryFlagsTM pos neg) L, c, e, ?_⟩
   intro row target N W U tail hRow hTarget hWords
   have hQ := clQueryFlags_compute pos neg hne row target N W U tail hRow hTarget hWords
-  have h := clCompute_comp (clQueryFlagsTM pos neg) L _ _ _ _ _ hQ
+  have h := FinTM.bufferedCompTM_computesInTime (clQueryFlagsTM pos neg) L hQ
     (hL ((List.range N).map (fun s => clMatchFlag pos neg (row s) target)))
-  simpa only [List.length_map, List.length_range] using h
+  have hlen : ((List.range N).map (fun s => clMatchFlag pos neg (row s) target)).length ≤
+      2 * (clFields (List.ofFn (clQueryWords l target (clRows row N ++ tail) N)) ++ []).length +
+        9 + (l + 5) * (3 * U + 7) + N * (l * (5 * W + 7) + 2 * W + 7) := by
+    rw [← ((FinTM.computesInTime_iff _ _ _ _).mp hQ).2]
+    exact (clQueryFlagsTM pos neg).tm.output_length_le _ _
+  apply h.mono
+  simp only [List.length_map, List.length_range] at hlen ⊢
+  omega
 
 /-- Each field's complete word is contained, doubled, in the actual encoded
 argument; the bound includes separators and does not assume random access. -/
@@ -5187,7 +5165,7 @@ private lemma clNative_image {f g : List Bool → List Bool} (hf : PolyTimeCompu
   obtain ⟨A, a, d, hA⟩ := hf
   refine ⟨FinTM.bufferedCompTM A B, 2 * a + b * (a + 1) ^ r + 2, d * (r + 1), ?_⟩
   intro x
-  have hc := clCompute_comp A B x (f x) (g x) _ _ (hA x) (hB x)
+  have hc := FinTM.bufferedCompTM_computesInTime A B (hA x) (hB x)
   apply hc.mono
   have ho := ((FinTM.computesInTime_iff _ _ _ _).mp (hA x)).2
   have hlen : (f x).length ≤ a * (x.length + 1) ^ d := by
@@ -5205,6 +5183,9 @@ private lemma clNative_image {f g : List Bool → List Bool} (hf : PolyTimeCompu
   have hfirst := Nat.mul_le_mul_left (2 * a) hd
   have hlast : 1 ≤ (x.length + 1) ^ (d * (r + 1)) := Nat.one_le_pow _ _ (by omega)
   calc
+    _ ≤ 2 * (a * (x.length + 1) ^ d) + b * ((f x).length + 1) ^ r + 2 := by
+      dsimp only
+      omega
     _ ≤ (2 * a) * (x.length + 1) ^ (d * (r + 1)) +
         (b * (a + 1) ^ r) * (x.length + 1) ^ (d * (r + 1)) +
         2 * (x.length + 1) ^ (d * (r + 1)) := by
@@ -6768,19 +6749,6 @@ private lemma clA5Map_poly {S : Type} [Fintype S] [DecidableEq S]
   simpa only [Nat.pow_one, Nat.one_mul, hi, List.length_nil, List.nil_append] using
     clA5Map_run next emit finish start x x [] (by simp) start []
 
-/-- Replacing every bit by `true` computes the exact unary input length. -/
-private lemma clA5_pt_unaryLength : PolyTimeComputable (fun x => List.replicate x.length true) := by
-  have h := clA5Map_poly (S := Unit) (fun _ _ => ()) (fun _ _ => some true) (fun _ => none) ()
-  have he (x : List Bool) :
-      clA5MapWord (fun (_ : Unit) _ => ()) (fun _ _ => some true) (fun _ => none) () x =
-        List.replicate x.length true := by
-    induction x with
-    | nil => rfl
-    | cons b r ih => simpa [clA5MapWord, List.replicate_succ] using congrArg (true :: ·) ih
-  convert h using 1
-  funext x
-  exact (he x).symm
-
 /-- Removing the first bit is a two-state finite transduction. -/
 private lemma clA5_pt_tail : PolyTimeComputable List.tail := by
   let emit (q b : Bool) : Option Bool := if q then some b else none
@@ -6885,7 +6853,7 @@ of native tail calls. Each call is charged even after the word becomes empty. -/
 private lemma clA5Drop_native {s u : List Bool → List Bool}
     (hs : PolyTimeComputable s) (hu : PolyTimeComputable u) :
     PolyTimeComputable (fun x => (s x).drop (u x).length) := by
-  have h := clA5Iter_shrinking clA5_pt_tail hs (clA5_pt_unaryLength.comp hu)
+  have h := clA5Iter_shrinking clA5_pt_tail hs ((clNative_fill true).comp hu)
     (fun w => by simp [List.length_tail])
   convert h using 1
   funext x
@@ -6953,7 +6921,7 @@ private lemma clA5Field_native {s u : List Bool → List Bool}
     (hs : PolyTimeComputable s) (hu : PolyTimeComputable u) :
     PolyTimeComputable (fun x => clHeaderField (u x).length (s x)) := by
   have h := clA5Iter_shrinking (clHeaderTail_native 1) hs
-    (clA5_pt_unaryLength.comp hu) (fun w => (clA5Pair_sizes w).2)
+    ((clNative_fill true).comp hu) (fun w => (clA5Pair_sizes w).2)
   have hi (j : ℕ) (w : List Bool) : (clHeaderTail 1)^[j] w = clHeaderTail j w := by
     induction j with
     | zero => rfl
@@ -7064,8 +7032,8 @@ private lemma clA5StoredRound_native (M : FinTM Bool) :
     PolyTimeComputable (fun z => List.replicate (clA5StoredRound M z) true) := by
   have hh : PolyTimeComputable clA5StoredHeader :=
     (clHeaderField_native 0).comp (clHeaderTail_native 1)
-  have hx := clA5_pt_unaryLength.comp ((clHeaderField_native 0).comp hh)
-  have ht := clA5_pt_unaryLength.comp ((clHeaderTail_native 5).comp hh)
+  have hx := (clNative_fill true).comp ((clHeaderField_native 0).comp hh)
+  have ht := (clNative_fill true).comp ((clHeaderTail_native 5).comp hh)
   have h := clNative_append (clNative_append hx (clA5Times_native ht (M.k + 3)))
     (clA5_pt_const (List.replicate (M.k + 1) true))
   simpa only [clA5StoredRound, clLastRound, clA5Instance, ← Nat.add_assoc,
@@ -7081,7 +7049,7 @@ private def clA5Next (M : FinTM Bool) (z : List Bool) : List Bool :=
 /-- Saturating cursor update is an actual native word computation. -/
 private lemma clA5Next_native (M : FinTM Bool) : PolyTimeComputable (clA5Next M) := by
   have hu := clHeaderField_native 0
-  have hp := clA5Le_native (clA5_pt_unaryLength.comp hu) (clA5StoredRound_native M)
+  have hp := clA5Le_native ((clNative_fill true).comp hu) (clA5StoredRound_native M)
   have hc := clA5_pt_cond hp
     (clNative_append hu (clA5_pt_const [true])) hu
   simpa only [clA5Next, decide_eq_true_eq] using clNative_pair hc (clHeaderTail_native 1)
@@ -7622,8 +7590,8 @@ private lemma clA5Sizes_native :
     PolyTimeComputable (fun z => List.replicate (clA5Horizon z) true) := by
   have hh : PolyTimeComputable clA5StoredHeader :=
     (clHeaderField_native 0).comp (clHeaderTail_native 1)
-  exact ⟨clA5_pt_unaryLength.comp ((clHeaderField_native 4).comp hh),
-    clA5_pt_unaryLength.comp ((clHeaderTail_native 5).comp hh)⟩
+  exact ⟨(clNative_fill true).comp ((clHeaderField_native 4).comp hh),
+    (clNative_fill true).comp ((clHeaderTail_native 5).comp hh)⟩
 
 /-- Bounded numeric interpretation, total also on malformed requests. -/
 private def clA5SmallNum (w : List Bool) (N : ℕ) : ℕ := if clNum w ≤ N then clNum w else 0
@@ -7985,7 +7953,7 @@ private def clA5Cursor (z : List Bool) : ℕ := (clHeaderField 0 z).length
 private lemma clA5Cursor_native :
     PolyTimeComputable (fun z => List.replicate (clA5Cursor z) true) ∧
     PolyTimeComputable clA5Instance :=
-  ⟨clA5_pt_unaryLength.comp (clHeaderField_native 0),
+  ⟨(clNative_fill true).comp (clHeaderField_native 0),
     (clHeaderField_native 0).comp ((clHeaderField_native 0).comp (clHeaderTail_native 1))⟩
 
 /-- Residual ordinal after the pin family, before the singleton initial family. -/
@@ -8007,7 +7975,7 @@ private lemma clA5Indices_native (M : FinTM Bool) :
     PolyTimeComputable (fun z => List.replicate (clA5InputIndex z) true) ∧
     PolyTimeComputable (fun z => List.replicate (clA5WorkIndex z) true) ∧
     PolyTimeComputable (fun z => List.replicate (clA5AcceptIndex M z) true) := by
-  have hi := clA5Sub_native clA5Cursor_native.1 (clA5_pt_unaryLength.comp clA5Cursor_native.2)
+  have hi := clA5Sub_native clA5Cursor_native.1 ((clNative_fill true).comp clA5Cursor_native.2)
   have hs := clA5Sub_native hi (clA5_pt_const (List.replicate 1 true))
   have hn := clA5Sub_native hs clA5Sizes_native.2
   have hw := clA5Sub_native hn (clA5Add_native clA5Sizes_native.2 (clA5_pt_const (List.replicate 1 true)))
@@ -8084,7 +8052,7 @@ private lemma clA5Fragment_native (M : FinTM Bool) (code : CLFieldCode (Option M
     convert h using 1
     funext z
     by_cases hp : 0 < clA5InputSize z <;> simp [hp]
-  exact clA5IfLt_native clA5Cursor_native.1 (clA5_pt_unaryLength.comp clA5Cursor_native.2)
+  exact clA5IfLt_native clA5Cursor_native.1 ((clNative_fill true).comp clA5Cursor_native.2)
     (clA5Pin_native clA5Cursor_native.2 clA5Cursor_native.1)
     (clA5IfZero_native hi hinit (clA5IfLt_native hs hT
       (clA5Group_native M code CLTemplateKind.state hm hs (clA5Add_native hs ho) hz)
