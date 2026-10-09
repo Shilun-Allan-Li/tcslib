@@ -40,8 +40,8 @@ positive normalization per the P0 convention —
   `S(n) > log n` convention.
 * **Both bounds space-constructible**, as in the book; constructibility of
   `g` drives the budget computation and the clock, constructibility of `f`
-  is carried for fidelity (the proof uses only `g`'s — recorded in the
-  sketch, seeded to the audit).
+  is carried for fidelity (the proof uses only `g`'s witness and `f`'s
+  bundled `logSpace` floor — round-1 confirmed, recorded in the sketch).
 * Facade wiring: root-wired while the P4.1 gate was live; the
   `SpaceComplexity.lean` facade has carried this module since that gate
   closed.
@@ -75,21 +75,35 @@ logarithmic addend; the time is existential, as
 `Turing.FinTM.ComputesInTime`'s halting demands, with no stated bound).
 
 **Proof sketch.** The interpreter of the chapter-1 `universal` machine
-(table capture, virtual input, one simulated work tape held on one real
-tape) is already constant-factor in *space*: the simulated tape occupies
-one bank of at most `s` cells plus markers, the captured table and state
-word are `O(|α|) ≤ C` cells, and the virtual-input discipline reads `x`
-from the real input tape without copying. Non-halting-within-space is
-detected by the configuration-count clock: a binary step counter of
-`log₂ (configBound) = O(s + logSpace n)` bits (the
-`Turing.MultiTapeTM.ConfigCount` arithmetic as in
-`ComputesInTime.of_spaceUsed_le`), decremented per simulated step; window
-overflow (the simulated head leaving `[-s, s]`) and counter exhaustion both
-produce the `[false]` clause. Fill obligations, named: the space ledger of
-the interpreter's banks (a §12 R1/R3 consumer — bank embedding and the
-catalog space rows); the clock machine (`incrementTM` discipline at width
-`O(s + logSpace n)`); the overflow detector; the two-clause assembly
-mirroring `Turing.timed_universal`'s packaging. -/
+(table capture, virtual input, the simulated work tape held on one real
+bank) is constant-factor in *space*; the budget test and the output contract
+need care (round-1 finding 4). (i) **Space is tested as visited-interval
+cardinality, not window membership**: maintain the simulated head's minimum
+and maximum positions — both start at `0`, so one cell is visited
+immediately, and at `s = 0` the failure clause fires on every input; unit
+moves make `max − min + 1` exactly the visited count, checked **including
+the final configuration**, with `max − min + 1 > s` rejecting (head
+membership in `[-s, s]` does not count cells: visiting `0` then `1` uses two
+cells inside `[-1, 1]`). (ii) **Non-halting-within-space is detected by the
+core-count clock**: a binary counter of `O_α(s + logSpace n)` bits bounding
+`(|Q|+1)·(n+2)·3^{2s+1}·(2s+1)` — a deterministic run repeating a live core
+inside the window is periodic forever, so no first halt occurs after an
+undetected repeat; outputs never enter the argument, cores excluding the
+output tape (the `Turing.MultiTapeTM.ConfigCount` arithmetic as in
+`ComputesInTime.of_spaceUsed_le`). (iii) **Probe silently, then replay**:
+streamed output cannot be retracted when a later overflow or clock
+exhaustion must yield exactly `[false]`, so the first pass runs with output
+captured (W1); on success the machine resets the simulated banks, emits
+`true`, and replays the run forwarding output — fixed banks reused between
+the passes. (iv) The canonizer cost is a **finite code-dependent constant**
+absorbed into `C` (the effective scheme supplies no bound linear in the code
+length, and none is claimed). The `+ logSpace n` addend pays for the clock's
+input-position factor under this construction — no lower-bound claim against
+other universal simulations — and is absorbed under the standing
+`s ≥ logSpace n` convention (`s + logSpace n + 1 ≤ 3s`). Fill obligations,
+named: the interval counters with the final-configuration check; the
+core-count clock at the stated width; the probe/replay two-pass assembly
+over fixed banks (a §12 R1/R3 consumer); the per-code constant ledger. -/
 theorem space_universal :
     ∃ SU : FinTM Bool, ∀ α : List Bool, ∃ C : ℕ, 0 < C ∧
       ∀ (s : ℕ) (x : List Bool),
@@ -131,22 +145,38 @@ floor, so the P0 zero-bound convention needs no side condition.
 
 **Proof sketch.** The diagonal language of the padded-code discipline
 (`TCSlib.Complexity.TimeHierarchy.CodePrefix`'s `preTM`/`scanPre`
-self-application, exactly as the received time hierarchy): on input
-`pairEncode α w`, compute the budget `g(n)` bits by `g`'s constructibility
-witness (space `O(g n)`), run `Complexity.space_universal`'s interpreter on
-the self-applied input at window budget proportional to `g n`, and flip the
-answer; the flip is total because the universal's second clause answers
-`[false]` on window or clock overflow. `D ∈ SPACE g` by the universal's
-`C · (g n + logSpace n + 1)` bound and the floor `logSpace ≤ g`. If
-`D ∈ SPACE f` via machine `M` with constant `c₀`, normal-form and code `M`
-(the scheme's canonization), pad to a code string `α_M` long enough that
-`C_M · (c₀ · f n + logSpace n + 1) ≤ g n` at the diagonal length — the
-eventual-domination hypothesis instantiated at the constant assembled from
-`C_M`, `c₀`, and the floor — and the flipped verdict contradicts `M`'s on
-that input, both runs fitting inside the simulated window. Fill
-obligations, named: the budget computation and window wiring; the
-self-application assembly (`scanPre_pairEncode_append` precedent); the
-contradiction arithmetic; `D`'s `DecidesInSpace` packaging. -/
+self-application), with a **capped increasing-budget loop** that removes the
+per-code constant from the space ledger (round-1 finding 5: `∀ α, ∃ Cα`
+gives no uniform `O(g)` bound when the code is read off the input, and
+padding a code can change its constant): on input `pairEncode α w`, `D`
+(i) computes `g n` by `g`'s constructibility witness (space `O(g n)`);
+(ii) tries budgets `s = 0, 1, …, g n`, reusing fixed banks, running
+`Complexity.space_universal`'s machine on the self-applied virtual input at
+budget `s` while **hard-capping the fixed universal's own work heads**
+inside `[-g n, g n]` — a cap depending only on that machine's fixed tape
+count, hence uniform in `α`; capped or failed attempts advance the budget;
+(iii) answers the **opposite** of the first successful attempt's verdict,
+retaining only a three-valued attempt summary (failure, success with
+`[true]`, success otherwise; output suppressed, W1), and a fixed answer if
+every attempt caps out. `D ∈ SPACE g`: the universal's fixed tapes confined
+to the cap, the budget and address counters, and the bank resets are
+`O(g n)` cells, uniformly in the input's code part. If `D ∈ SPACE f` via
+machine `M` with constant `c₀`: put `M` into a **space-preserving
+one-work-tape coded normal form** — a named fill obligation; the chapter-1
+time-only normal form is not a space ledger — with fixed code `α_M`, and pad
+the **payload**, never the code (the `CodePrefix` discipline keeps one code
+fixed so a single constant `C_{α_M}` applies). By the eventual-domination
+hypothesis at the assembled constant `A := C_{α_M} · (c₀ + 2)`, using the
+bundled floors `logSpace n ≤ f n` and `1 ≤ f n`,
+`C_{α_M}·(c₀·f n + logSpace n + 1) ≤ C_{α_M}·(c₀ + 2)·f n ≤ g n` eventually,
+so some attempt at budget at most `c₀ · f n` succeeds within every cap, and
+every successful attempt reports `M`'s deterministic verdict on the
+self-applied input — which `D` flips: contradiction. Constructibility of `f`
+contributes only its bundled floor. Fill obligations, named: the budget loop
+with fixed-bank resets and the uniform cap; the attempt-summary discipline;
+the space-preserving normal form; the self-application assembly
+(`scanPre_pairEncode_append` precedent); the contradiction arithmetic;
+`D`'s `DecidesInSpace` packaging. -/
 theorem space_hierarchy (f g : ℕ → ℕ) (hf : SpaceConstructible f)
     (hg : SpaceConstructible g)
     (hfg : ∀ A : ℕ, ∃ N, ∀ n ≥ N, A * f n ≤ g n) :
@@ -177,11 +207,15 @@ under `≤ₚ` (the chapter-2 bounded-certificate transport — a derived
 obligation from `Complexity.mem_NP_iff_exists_length_le`, Exercise 2.1's
 bounded form, named for the brief). Padding transfers space bounds down:
 for `L ∈ SPACE (n² + 1)`, the padded language
-`L' := {x ++ 1^(|x|²) markers}` lies in `SPACE (m + 1)` in the padded
-length `m` (run the `L`-decider on the unpadded prefix; the pad supplies
-the room — the chapter-2 padding-cluster discipline, `EXP_subset_NEXP`'s
-precedent), so `L' ∈ NP` by the assumption, and `L ≤ₚ L'` by the padding
-reduction (a `polyUnary` emitter), so `L ∈ NP = SPACE (n + 1)`. Hence
+`L' := {pairEncode x (List.replicate (|x|²) true)}` — padded length exactly
+`m = n² + 2n + 2`, syntax validated — lies in `SPACE (m + 1)` in the padded
+length (validate, then run the `L`-decider on the first component; the pad
+supplies the room — the chapter-2 padding-cluster discipline,
+`EXP_subset_NEXP`'s precedent), so `L' ∈ NP` by the assumption, and
+`L ≤ₚ L'` by the padding reduction (a `polyUnary` emitter; the **unpadded**
+language reduces to the **padded** one), so `L ∈ NP = SPACE (n + 1)` — the
+`NP` pullback composing the reduction with the bounded-certificate verifier
+at the reduction's polynomial output length. Hence
 `SPACE (n² + 1) ⊆ SPACE (n + 1)`, contradicting
 `Complexity.space_hierarchy` at the constructible pair
 (`Complexity.spaceConstructible_linear`,

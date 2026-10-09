@@ -80,15 +80,17 @@ is determined — exactly one quantifier alternation wins, so in particular
 one of the players has a winning strategy.
 
 **Proof sketch.** Backward induction on the remaining plies, generalized
-over the history prefix: the position value
-`V h := "the mover from h can force a win for their side"` satisfies the
-alternating recursion `V h = ∃/∀ b, V (h ++ [b])` by ply parity, with the
-base `V` of complete histories read off `W`; classical excluded middle turns
-"not every move loses" into a winning move at each `∀`-node (the
-`Complexity.QBF.truthAux` recursion is the same shape, which is Example
-4.15's point). Assembling the per-position choices into whole strategies is
-the only bookkeeping: define `s₁` by choosing a winning move wherever `V`
-holds (classical choice), arbitrary elsewhere. Mutual exclusion (`¬(FirstWins
+over the history prefix: the position value is taken at the **fixed player-one
+perspective**, `V h := "player one can force W = true from h"` — a
+mover-relative value flips polarity with the turn and breaks the recursion
+(round-1 finding 9) — and satisfies `V h = ∃ b, V (h ++ [b])` at even
+histories, `V h = ∀ b, V (h ++ [b])` at odd ones, with the base read off `W`
+(the `Complexity.QBF.truthAux` recursion is the same shape, which is Example
+4.15's point). Strategy assembly covers both polarities: if `V []` holds,
+`s₁` picks a true-valued child at every even node it can reach; if not, `s₂`
+picks a false-valued child at every odd node — each extended arbitrarily off
+its winning tree. At fixed horizon the case analysis is finite, so classical
+instances are available but not essential. Mutual exclusion (`¬(FirstWins
 ∧ SecondWins)`) follows by playing the two winning strategies against each
 other — not claimed in this statement, which renders the exercise's "one of
 the two players has a winning strategy" disjunction. -/
