@@ -78,14 +78,133 @@ noncomputable def polyTimeModel : VerifierModel where
     ∀ x u v : List Bool,
       (N x u v = true ↔ Turing.pairEncode (Turing.pairEncode x u) v ∈ V)
 
-/-- Polynomial time is closed under the race construction.
-**Proof sketch.** Decode the pair, split the random string at the
-(poly-time computable) point `polyLen a k |x|`, run both `P`-verifiers
-(`Complexity.PClosure`-style composition), and combine the answers; each
-output set is a `P`-language by closure of `P` under the pairing plumbing
-of `Complexity.PolyTimePairing`. -/
-theorem polyTimeModel_closedUnderRace : ClosedUnderRace polyTimeModel := by
+/-- Keep the input `x` and the first `polyLen a k |x|` bits of the random
+string: the pair-level reindexing behind the race and shifted constructions.
+On `Turing.pairEncode x r` it returns `Turing.pairEncode x (r.take (polyLen a k |x|))`. -/
+def sliceTake (a k : ℕ) (z : List Bool) : List Bool :=
+  Turing.pairEncode (pairFstD z) ((pairSndD z).take (polyLen a k (pairFstD z).length))
+
+/-- Keep the input `x` and drop the first `polyLen a k |x|` bits of the random
+string.  On `Turing.pairEncode x r` it returns
+`Turing.pairEncode x (r.drop (polyLen a k |x|))`. -/
+def sliceDrop (a k : ℕ) (z : List Bool) : List Bool :=
+  Turing.pairEncode (pairFstD z) ((pairSndD z).drop (polyLen a k (pairFstD z).length))
+
+/-- Take, from the second component of a pair, a prefix as long as the first
+component: on `Turing.pairEncode u s` it returns `s.take |u|`.  The
+length-gated prefix primitive underlying `sliceTake` (and the block slicing of
+the shifted construction); the polynomial `polyLen a k` enters only through the
+unary length `u`, so no in-machine exponentiation is needed. -/
+def takePrefixByLen (p : List Bool) : List Bool := (pairSndD p).take (pairFstD p).length
+
+/-- Drop, from the second component of a pair, a prefix as long as the first
+component: on `Turing.pairEncode u s` it returns `s.drop |u|`. -/
+def dropPrefixByLen (p : List Bool) : List Bool := (pairSndD p).drop (pairFstD p).length
+
+/-- `takePrefixByLen` is polynomial-time computable.
+**Proof sketch.** A single left-to-right pass (`Complexity.CounterProg`):
+mirror `Turing.pairDecode` over the doubled first component, counting its
+length `|u|` into a register; at the separator, copy the second component
+while the register counts down, truncating once it reaches zero.  Malformed
+inputs (`pairDecode = none`) halt with empty output, matching
+`pairFstD`/`pairSndD = []`.  The abstract step count is linear in `|p|`, so
+`Complexity.CounterProg.polyTimeComputable` applies. -/
+theorem polyTimeComputable_takePrefixByLen : PolyTimeComputable takePrefixByLen := by
   sorry
+
+/-- `dropPrefixByLen` is polynomial-time computable.
+**Proof sketch.** As `takePrefixByLen`, but the copy phase emits only after the
+length register has counted down past the first `|u|` bits of the second
+component. -/
+theorem polyTimeComputable_dropPrefixByLen : PolyTimeComputable dropPrefixByLen := by
+  sorry
+
+/-- `sliceTake a k` is polynomial-time computable.
+**Proof.** `polyLen a k |x| = a·(|x|+1)^k` is available as a *unary* string via
+`Complexity.polyTimeComputable_polyUnary`; pair it with the random string and
+apply `takePrefixByLen`, which truncates to that length without any in-machine
+exponentiation. -/
+theorem polyTimeComputable_sliceTake (a k : ℕ) :
+    PolyTimeComputable (sliceTake a k) := by
+  have hu : PolyTimeComputable
+      (fun z => List.replicate (polyLen a k (pairFstD z).length) true) :=
+    (polyTimeComputable_polyUnary a k).comp polyTimeComputable_pairFstD
+  have henc : PolyTimeComputable (fun z => Turing.pairEncode
+      (List.replicate (polyLen a k (pairFstD z).length) true) (pairSndD z)) :=
+    PolyTimeComputable.pairEncode hu polyTimeComputable_pairSndD
+  have hg : PolyTimeComputable
+      (fun z => (pairSndD z).take (polyLen a k (pairFstD z).length)) := by
+    have heq : (fun z => (pairSndD z).take (polyLen a k (pairFstD z).length)) =
+        takePrefixByLen ∘ (fun z => Turing.pairEncode
+          (List.replicate (polyLen a k (pairFstD z).length) true) (pairSndD z)) := by
+      funext z
+      simp only [Function.comp, takePrefixByLen, pairFstD_pairEncode, pairSndD_pairEncode,
+        List.length_replicate]
+    rw [heq]
+    exact polyTimeComputable_takePrefixByLen.comp henc
+  exact PolyTimeComputable.pairEncode polyTimeComputable_pairFstD hg
+
+/-- `sliceDrop a k` is polynomial-time computable.
+**Proof.** As `sliceTake`, with `dropPrefixByLen` in place of
+`takePrefixByLen`. -/
+theorem polyTimeComputable_sliceDrop (a k : ℕ) :
+    PolyTimeComputable (sliceDrop a k) := by
+  have hu : PolyTimeComputable
+      (fun z => List.replicate (polyLen a k (pairFstD z).length) true) :=
+    (polyTimeComputable_polyUnary a k).comp polyTimeComputable_pairFstD
+  have henc : PolyTimeComputable (fun z => Turing.pairEncode
+      (List.replicate (polyLen a k (pairFstD z).length) true) (pairSndD z)) :=
+    PolyTimeComputable.pairEncode hu polyTimeComputable_pairSndD
+  have hg : PolyTimeComputable
+      (fun z => (pairSndD z).drop (polyLen a k (pairFstD z).length)) := by
+    have heq : (fun z => (pairSndD z).drop (polyLen a k (pairFstD z).length)) =
+        dropPrefixByLen ∘ (fun z => Turing.pairEncode
+          (List.replicate (polyLen a k (pairFstD z).length) true) (pairSndD z)) := by
+      funext z
+      simp only [Function.comp, dropPrefixByLen, pairFstD_pairEncode, pairSndD_pairEncode,
+        List.length_replicate]
+    rw [heq]
+    exact polyTimeComputable_dropPrefixByLen.comp henc
+  exact PolyTimeComputable.pairEncode polyTimeComputable_pairFstD hg
+
+/-- Polynomial time is closed under the race construction.
+**Proof.** The `some true`-set of the race is the preimage of `M₁`'s
+`some true`-set `V₁` under `sliceTake a k`, and the `some false`-set is the
+intersection of the complement of that preimage with the preimage of `M₂`'s
+`some true`-set `V₂` under `sliceDrop a k`; both are in `P` by
+`Complexity.preimage_mem_P`, `Complexity.compl_mem_P`, and
+`Complexity.inter_mem_P`, once `sliceTake`/`sliceDrop` are polynomial-time
+(`polyTimeComputable_sliceTake`/`_sliceDrop`).  The off-pair freedom in the
+efficiency notion lets us use these preimages verbatim. -/
+theorem polyTimeModel_closedUnderRace : ClosedUnderRace polyTimeModel := by
+  rintro M₁ M₂ a k ⟨V₁, _, hV₁, _, hM₁⟩ ⟨V₂, _, hV₂, _, hM₂⟩
+  refine ⟨sliceTake a k ⁻¹' V₁,
+    {z | z ∈ (sliceTake a k ⁻¹' V₁)ᶜ ∧ z ∈ sliceDrop a k ⁻¹' V₂},
+    preimage_mem_P hV₁ (polyTimeComputable_sliceTake a k),
+    inter_mem_P (compl_mem_P (preimage_mem_P hV₁ (polyTimeComputable_sliceTake a k)))
+      (preimage_mem_P hV₂ (polyTimeComputable_sliceDrop a k)),
+    fun x r => ?_⟩
+  have hv1 : (Turing.pairEncode x r ∈ sliceTake a k ⁻¹' V₁) ↔
+      M₁ x (r.take (polyLen a k x.length)) = true := by
+    simp only [Set.mem_preimage, sliceTake, pairFstD_pairEncode, pairSndD_pairEncode]
+    have h := (hM₁ x (r.take (polyLen a k x.length))).1
+    simp only [boolVerifier, Option.some.injEq] at h
+    exact h.symm
+  have hv2 : (Turing.pairEncode x r ∈ sliceDrop a k ⁻¹' V₂) ↔
+      M₂ x (r.drop (polyLen a k x.length)) = true := by
+    simp only [Set.mem_preimage, sliceDrop, pairFstD_pairEncode, pairSndD_pairEncode]
+    have h := (hM₂ x (r.drop (polyLen a k x.length))).1
+    simp only [boolVerifier, Option.some.injEq] at h
+    exact h.symm
+  refine ⟨?_, ?_⟩
+  · rw [hv1]
+    cases h1 : M₁ x (r.take (polyLen a k x.length)) <;>
+      cases h2 : M₂ x (r.drop (polyLen a k x.length)) <;>
+      simp [raceVerifier, h1, h2]
+  · rw [Set.mem_setOf_eq, Set.mem_compl_iff, hv1, hv2]
+    cases h1 : M₁ x (r.take (polyLen a k x.length)) <;>
+      cases h2 : M₂ x (r.drop (polyLen a k x.length)) <;>
+      simp [raceVerifier, h1, h2]
 
 /-- Polynomial time is closed under the output-postprocessing construction.
 **Proof.** The `some b`-set of `M` is literally one of the two
