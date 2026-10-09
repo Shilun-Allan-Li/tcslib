@@ -7,6 +7,7 @@ import TCSlib.Complexity.ClassNP.PolyTime
 import TCSlib.Complexity.ClassNP.PolyTimePairing
 import TCSlib.Complexity.ClassNP.Transducer
 import TCSlib.Complexity.ClassNP.CounterProgPolyTime
+import TCSlib.Complexity.ClassNP.PolyTimePrefix
 import TCSlib.Complexity.ClassNP.NP
 import TCSlib.Complexity.ClassNP.CoNP
 import TCSlib.Complexity.ClassNP.PClosure
@@ -18,6 +19,10 @@ import TCSlib.Complexity.ClassNP.Nondeterminism
 import TCSlib.Complexity.ClassNP.SAT
 import TCSlib.Complexity.ClassNP.TMSAT
 import TCSlib.Complexity.ClassNP.Tautology
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
 
 /-!
 # Complexity — NP and NP-completeness
@@ -35,6 +40,8 @@ The classes and reduction notions of [AB09, ch. 2] (see
 * `Transducer` — one-pass transducers (Mealy machines) run in linear time.
 * `CounterProgPolyTime` — counter programs halting in polynomially many steps compute
   polynomial-time functions.
+* `PolyTimePrefix` — take or drop a prefix of a pair's second component at the
+  length of its first component, in polynomial time.
 * `NP` — the class `NP` via polynomial-time verifiers [AB09, Definition 2.1]
   and the bounded-length certificate variant [AB09, Exercise 2.1].
 * `CoNP` — the class `coNP`, its ∀-certificate characterization

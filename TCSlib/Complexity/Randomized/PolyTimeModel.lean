@@ -6,6 +6,9 @@ Authors: TCSlib Contributors
 import TCSlib.Complexity.Randomized.SipserGacs
 import TCSlib.Complexity.Randomized.Adleman
 import TCSlib.Complexity.ClassP.P
+import TCSlib.Complexity.ClassNP.PolyTimePrefix
+import TCSlib.Complexity.CircuitComplexity.PSubsetPPoly
+import TCSlib.Complexity.CircuitComplexity.PairEncode
 import TCSlib.Complexity.TuringMachine.Encoding
 import TCSlib.Complexity.PolyHierarchy.Defs
 import TCSlib.Complexity.PolyHierarchy.Normalize
@@ -23,7 +26,7 @@ Turing machines, now that the Chapter 1–2 development (`Complexity.P`,
 `Complexity.PolyTimeComputable`, `Turing.pairEncode`, `Complexity.SigmaP`)
 is on `main`.  This connects the abstract Chapter 7 class theorems to the
 book's machine-based statements: each `ClosedUnder…` hypothesis becomes a
-lemma about `P`, and the certificate-style `Σ₂` coincides with
+a result about `P`, and the certificate-style `Σ₂` coincides with
 `Complexity.SigmaP 2`.
 
 ## Main definitions
@@ -31,7 +34,7 @@ lemma about `P`, and the certificate-style `Σ₂` coincides with
 * `Randomized.polyTimeModel` — the `VerifierModel` whose efficient verifiers
   are those computed by a `P`-language on the `Turing.pairEncode`d input.
 
-## Main results (sorry-stubbed)
+## Main results
 
 * `Randomized.polyTimeModel_closedUnderRace` /
   `…_closedUnderAnswerIs` / `…_closedUnderMajority` / `…_closedUnderAny` /
@@ -110,14 +113,16 @@ inputs (`pairDecode = none`) halt with empty output, matching
 `pairFstD`/`pairSndD = []`.  The abstract step count is linear in `|p|`, so
 `Complexity.CounterProg.polyTimeComputable` applies. -/
 theorem polyTimeComputable_takePrefixByLen : PolyTimeComputable takePrefixByLen := by
-  sorry
+  simpa only [takePrefixByLen, Complexity.PrefixByLength.take] using
+    Complexity.polyTimeComputable_takePrefixByLength
 
 /-- `dropPrefixByLen` is polynomial-time computable.
 **Proof sketch.** As `takePrefixByLen`, but the copy phase emits only after the
 length register has counted down past the first `|u|` bits of the second
 component. -/
 theorem polyTimeComputable_dropPrefixByLen : PolyTimeComputable dropPrefixByLen := by
-  sorry
+  simpa only [dropPrefixByLen, Complexity.PrefixByLength.drop] using
+    Complexity.polyTimeComputable_dropPrefixByLength
 
 /-- `sliceTake a k` is polynomial-time computable.
 **Proof.** `polyLen a k |x| = a·(|x|+1)^k` is available as a *unary* string via
@@ -168,7 +173,7 @@ theorem polyTimeComputable_sliceDrop (a k : ℕ) :
   exact PolyTimeComputable.pairEncode polyTimeComputable_pairFstD hg
 
 /-- Polynomial time is closed under the race construction.
-**Proof.** The `some true`-set of the race is the preimage of `M₁`'s
+**Proof sketch.** The `some true`-set of the race is the preimage of `M₁`'s
 `some true`-set `V₁` under `sliceTake a k`, and the `some false`-set is the
 intersection of the complement of that preimage with the preimage of `M₂`'s
 `some true`-set `V₂` under `sliceDrop a k`; both are in `P` by
@@ -207,7 +212,7 @@ theorem polyTimeModel_closedUnderRace : ClosedUnderRace polyTimeModel := by
       simp [raceVerifier, h1, h2]
 
 /-- Polynomial time is closed under the output-postprocessing construction.
-**Proof.** The `some b`-set of `M` is literally one of the two
+**Proof sketch.** The `some b`-set of `M` is literally one of the two
 `P`-languages witnessing `Eff M`, and the `some (!b)`-set of the resulting
 Boolean verifier is its complement (`Complexity.compl_mem_P`). -/
 theorem polyTimeModel_closedUnderAnswerIs :
@@ -272,17 +277,81 @@ theorem polyTimeModel_closedUnderShiftOr :
 /-- Polynomial-time verifiers have polynomial-size circuits when their
 random string is fixed, with one size bound uniform in the random string:
 the form of [AB09, Thm 6.6] that Adleman's counting argument consumes.
-**Proof sketch.** The paired language of the verifier is in `P`, so by the
-tableau construction behind `Complexity.P_subset_PPoly` it has a fan-in-two
-circuit family of size polynomial in the padded input length
-`|pairEncode x r|` — polynomial in `|x|` since `|r| = polyLen a k |x|`.
-Hardwire the `r`-input wires of the circuit for length `|pairEncode x r|`
-to the bits of `r` (`CircuitComplexity.HardWire`); the size bound is
-inherited from the family, hence uniform in `r`. -/
+**Proof sketch.** Apply `Complexity.P_subset_PPoly` to the verifier's paired
+acceptance language. For each input length and fixed random string, the
+resulting circuit reads the doubled input bits, the separator, and the
+random bits. A buffer supplies two distinct copies of each input bit and
+constants for the separator and random string. Shifting all old vertex
+numbers preserves distinct gate inputs and fan-in at most two.
+
+The buffer adds exactly the number of free input bits to the old circuit
+size. The paired length is bounded by a polynomial in the input length,
+with coefficients depending only on the original randomness schedule.
+Composing this bound with the circuit family's size polynomial gives one
+bound uniform in the contents of the fixed random string. -/
 theorem polyTimeModel_verifierHasCircuits :
     ∀ M a k, polyTimeModel.Eff (boolVerifier M) →
       VerifierHasCircuits M (polyLen a k) := by
-  sorry
+  classical
+  rintro M a k ⟨V₁, V₀, hV₁, hV₀, hM⟩
+  have hPoly : V₁.InPPoly := Complexity.P_subset_PPoly hV₁
+  obtain ⟨b, j, F, hF, hSize, hLanguage⟩ := hPoly
+  refine ⟨b * (a + 3) ^ j + 1, (k + 1) * (j + 1), fun n r hr => ?_⟩
+  let ell := 2 * n + 2 + r.length
+  let C := F.circuit ell
+  let D : BoolCircuit.DAGCircuit n := BoolCircuit.DAGCircuit.pairEncode r C
+  have hD : D.IsFaninTwo :=
+    BoolCircuit.DAGCircuit.pairEncode_isFaninTwo r C (hF ell)
+  refine ⟨D, hD.1, hD, ?_, fun v => ?_⟩
+  · -- The paired length is polynomial in n, uniformly in the chosen random string.
+    have hN : 0 < n + 1 := Nat.succ_pos n
+    have hnPow : n + 1 ≤ (n + 1) ^ (k + 1) :=
+      Nat.le_self_pow (Nat.succ_ne_zero k) (n + 1)
+    have hkPow : (n + 1) ^ k ≤ (n + 1) ^ (k + 1) :=
+      Nat.pow_le_pow_right hN (Nat.le_succ k)
+    have hLen : ell + 1 ≤ (a + 3) * (n + 1) ^ (k + 1) := by
+      dsimp only [ell]
+      rw [hr]
+      unfold polyLen
+      nlinarith [Nat.mul_le_mul_left a hkPow]
+    have hCircuit : C.size ≤
+        b * (a + 3) ^ j * (n + 1) ^ ((k + 1) * j) := by
+      calc
+        C.size ≤ b * (ell + 1) ^ j := hSize ell
+        _ ≤ b * ((a + 3) * (n + 1) ^ (k + 1)) ^ j :=
+          Nat.mul_le_mul_left b (Nat.pow_le_pow_left hLen j)
+        _ = b * (a + 3) ^ j * (n + 1) ^ ((k + 1) * j) := by
+          rw [mul_pow, ← pow_mul]
+          ring
+    have hExponent : (k + 1) * j ≤ (k + 1) * (j + 1) :=
+      Nat.mul_le_mul_left (k + 1) (Nat.le_succ j)
+    have hCircuit' : C.size ≤
+        b * (a + 3) ^ j * (n + 1) ^ ((k + 1) * (j + 1)) :=
+      hCircuit.trans (Nat.mul_le_mul_left (b * (a + 3) ^ j)
+        (Nat.pow_le_pow_right hN hExponent))
+    have hPositive : 0 < (k + 1) * (j + 1) :=
+      Nat.mul_pos (Nat.succ_pos k) (Nat.succ_pos j)
+    have hnSize : n ≤ (n + 1) ^ ((k + 1) * (j + 1)) :=
+      (Nat.le_succ n).trans
+        (Nat.le_self_pow (Nat.ne_of_gt hPositive) (n + 1))
+    calc
+      D.size = n + C.size := BoolCircuit.DAGCircuit.pairEncode_size r C
+      _ ≤ (n + 1) ^ ((k + 1) * (j + 1)) +
+          b * (a + 3) ^ j * (n + 1) ^ ((k + 1) * (j + 1)) :=
+        Nat.add_le_add hnSize hCircuit'
+      _ = (b * (a + 3) ^ j + 1) *
+          (n + 1) ^ ((k + 1) * (j + 1)) := by ring
+  · -- The buffer feeds the old circuit exactly the encoded pair (x,r).
+    rw [BoolCircuit.DAGCircuit.pairEncode_eval r C v]
+    have hAccept : C.eval (BoolCircuit.pairEncodeInput r v) = true ↔
+        Turing.pairEncode (List.ofFn v) r ∈ V₁ := by
+      rw [← hLanguage]
+      exact BoolCircuit.DAGCircuitFamily.pairEncode_eval_eq_true_iff F r v
+    have hVerifier := (hM (List.ofFn v) r).1
+    simp only [boolVerifier, Option.some.injEq] at hVerifier
+    have hCorrect := hAccept.trans hVerifier.symm
+    cases hC : C.eval (BoolCircuit.pairEncodeInput r v) <;>
+      cases hV : M (List.ofFn v) r <;> simp_all
 
 /-- **Adleman's theorem for polynomial-time machines** ([AB09, Thm 7.17],
 unconditionally): `BPP ⊆ P/poly`, with both sides the library's own classes
