@@ -597,8 +597,6 @@ uncomputability chapter.
     lemma — phase-4 round 1, note 6.
 * **Chapter-2 blueprint increment** — at campaign closure (E5), per the
   Chapter-1 precedent (dep-graph merge, writer agents, validator).
-
----
 * **P3.4 — Ladner's theorem (queued; user decision 2026-10-08: CH34-Q6
   core-late, moved to backlog at the P3.3 draft).** The last undrafted
   statement phase of the chapters-3-4 campaign
@@ -612,6 +610,7 @@ uncomputability chapter.
   layer, and is independent of P3.3's code layer. *Origin:
   `AroraBarakChapters3-4Plan.md` §4 (P3.4 row), decision CH34-Q6.*
 
+---
 
 ## 3. Deferred formalizations
 
