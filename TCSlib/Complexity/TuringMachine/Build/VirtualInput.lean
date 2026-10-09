@@ -189,7 +189,47 @@ theorem vhostEmitTM_step (M : MultiTapeTM m Bool S) (c : Cfg m Bool S y)
     ∃ b', FinTM.VirtualTag (M.step c).inputPos b' ∧
       (vhostEmitTM M).step (vhostCfg c b p pre) =
         vhostCfg (M.step c) b' p pre := by
-  sorry
+  cases hq : c.state with
+  | none =>
+    refine ⟨b, ?_, ?_⟩
+    · simpa only [MultiTapeTM.step_of_halt hq] using hb
+    · rw [MultiTapeTM.step_of_halt hq, MultiTapeTM.step_of_halt]
+      simp [vhostCfg, hq]
+  | some q =>
+    have hs : (vhostCfg c b p pre).state = some (q, b) := by
+      simp [vhostCfg, hq]
+    have hv : (vhostCfg c b p pre).workTapeSymbols (vhostBuffer m) =
+        c.inputSymbol := by
+      change FinTM.bufferTape y ((c.inputPos.val : ℤ) - 1) = c.inputSymbol
+      exact FinTM.bufferTape_inputSymbol (c.mapState (fun _ => ()))
+    have hr : (fun i => (vhostCfg c b p pre).workTapeSymbols (vhostBank i)) =
+        c.workTapeSymbols := by
+      funext i
+      simp [vhostCfg, vhostBank, Cfg.workTapeSymbols]
+    let a := M.tr q c.inputSymbol c.workTapeSymbols
+    let mv := FinTM.virtualMove b c.inputSymbol a.inputTape
+    -- The input-only facts specialize through Unit, preserving arbitrary state universes.
+    have hm := FinTM.virtualMove_correct (c.mapState (fun _ => ())) b hb a.inputTape
+    have hc : M.step c = a.apply c := by
+      simp only [MultiTapeTM.step, hq, a]
+    refine ⟨FinTM.virtualNextTag b mv, ?_, ?_⟩
+    · simpa only [hc, Action.apply] using hm.2
+    · unfold MultiTapeTM.step
+      rw [hs]
+      dsimp only [vhostEmitTM]
+      rw [hv, hr, hq]
+      change (Action.apply _ _) = vhostCfg (a.apply c) _ p pre
+      refine Cfg.ext rfl (moveInputPos_zero _) ?_ ?_ ?_
+      · funext i
+        refine Fin.addCases ?_ ?_ i <;> intro j <;>
+          simp [vhostCfg, Action.apply, a]
+      · funext i
+        refine Fin.addCases ?_ ?_ i
+        · intro j
+          simpa only [vhostCfg, Action.apply, Fin.addCases_left] using hm.1
+        · intro j
+          simp [vhostCfg, Action.apply, a]
+      · simp only [Action.apply, vhostCfg, List.append_assoc, a]
 
 /-- The forwarding lockstep at every time: one host step per source step,
 with a valid arrival tag at the endpoint. Completed outputs are preserved
@@ -204,7 +244,14 @@ theorem vhostEmitTM_runFrom (M : MultiTapeTM m Bool S) (c : Cfg m Bool S y)
     ∃ b', FinTM.VirtualTag (M.runFrom c t).inputPos b' ∧
       (vhostEmitTM M).runFrom (vhostCfg c b p pre) t =
         vhostCfg (M.runFrom c t) b' p pre := by
-  sorry
+  induction t with
+  | zero => exact ⟨b, hb, rfl⟩
+  | succ t ih =>
+    obtain ⟨b', hb', he⟩ := ih
+    obtain ⟨b'', hb'', he'⟩ := vhostEmitTM_step M _ b' hb' p pre
+    refine ⟨b'', ?_, ?_⟩
+    · simpa only [MultiTapeTM.runFrom_succ_eq_step'] using hb''
+    · rw [MultiTapeTM.runFrom_succ_eq_step', he, he', MultiTapeTM.runFrom_succ_eq_step']
 
 /-- Bank tape `i` of the forwarding host visits exactly the cells the
 source's tape `i` visits, at every horizon.
@@ -218,7 +265,12 @@ theorem vhostEmitTM_visitedByTapeHead_bank (M : MultiTapeTM m Bool S)
     (p : Fin (x.length + 2)) (pre : List Bool) (t : ℕ) (i : Fin m) :
     (vhostEmitTM M).visitedByTapeHead (vhostCfg c b p pre) t (vhostBank i) =
       M.visitedByTapeHead c t i := by
-  sorry
+  unfold MultiTapeTM.visitedByTapeHead
+  congr 1
+  funext u
+  obtain ⟨b', _, he⟩ := vhostEmitTM_runFrom M c b hb p pre u
+  rw [he]
+  simp [vhostCfg, vhostBank]
 
 /-- The buffer head's trajectory is exactly the source's input trajectory
 shifted by one: at every horizon, the buffer tape's visited set is the
@@ -233,7 +285,12 @@ theorem vhostEmitTM_visitedByTapeHead_buffer (M : MultiTapeTM m Bool S)
     (vhostEmitTM M).visitedByTapeHead (vhostCfg c b p pre) t (vhostBuffer m) =
       (Finset.range (t + 1)).image
         (fun u => ((M.runFrom c u).inputPos.val : ℤ) - 1) := by
-  sorry
+  unfold MultiTapeTM.visitedByTapeHead
+  congr 1
+  funext u
+  obtain ⟨b', _, he⟩ := vhostEmitTM_runFrom M c b hb p pre u
+  rw [he]
+  simp [vhostCfg, vhostBuffer]
 
 /-- The buffer head stays inside `[-1, y.length]` at every time — the
 permanent form of the two boundary clamps, the empty buffered word
@@ -248,7 +305,11 @@ theorem vhostCfg_buffer_head_mem (M : MultiTapeTM m Bool S)
     (p : Fin (x.length + 2)) (pre : List Bool) (t : ℕ) :
     ((vhostEmitTM M).runFrom (vhostCfg c b p pre) t).workTapePos
         (vhostBuffer m) ∈ Finset.Icc (-1 : ℤ) (y.length : ℤ) := by
-  sorry
+  obtain ⟨b', _, he⟩ := vhostEmitTM_runFrom M c b hb p pre t
+  rw [he]
+  simp only [vhostCfg, vhostBuffer, Fin.addCases_left, Finset.mem_Icc]
+  have hp := (M.runFrom c t).inputPos.isLt
+  constructor <;> omega
 
 /-- The coefficient-one space ledger of the forwarding host: host space is
 at most source space plus the buffer interval. No term depends on the
@@ -264,7 +325,47 @@ theorem vhostEmitTM_spaceUsed_le (M : MultiTapeTM m Bool S)
     (p : Fin (x.length + 2)) (pre : List Bool) (t : ℕ) :
     (vhostEmitTM M).spaceUsed (vhostCfg c b p pre) t ≤
       M.spaceUsed c t + (y.length + 2) := by
-  sorry
+  have hbuffer : (vhostEmitTM M).spaceUsedByTape (vhostCfg c b p pre) t
+      (vhostBuffer m) ≤ y.length + 2 := by
+    calc
+      _ ≤ (Finset.Icc (-1 : ℤ) (y.length : ℤ)).card := by
+        apply Finset.card_le_card
+        intro z hz
+        obtain ⟨u, _, rfl⟩ := Finset.mem_image.mp hz
+        exact vhostCfg_buffer_head_mem M c b hb p pre u
+      _ = y.length + 2 := by
+        rw [Int.card_Icc]
+        omega
+  have hbank (i : Fin m) :
+      (vhostEmitTM M).spaceUsedByTape (vhostCfg c b p pre) t (vhostBank i) =
+        M.spaceUsedByTape c t i :=
+    congrArg Finset.card (vhostEmitTM_visitedByTapeHead_bank M c b hb p pre t i)
+  have hsum : M.spaceUsed c t =
+      ∑ j ∈ Finset.univ.erase (vhostBuffer m),
+        (vhostEmitTM M).spaceUsedByTape (vhostCfg c b p pre) t j := by
+    apply Finset.sum_bij (fun i _ => vhostBank i)
+    · intro i _
+      simp [vhostBank, vhostBuffer, Fin.ext_iff]
+    · intro i _ j _ hij
+      apply Fin.ext
+      have hval := congrArg Fin.val hij
+      simpa [vhostBank] using hval
+    · intro j
+      refine Fin.addCases ?_ ?_ j
+      · intro i hi
+        have hi0 : i = 0 := Subsingleton.elim _ _
+        subst i
+        simp [vhostBuffer] at hi
+      · intro i _
+        exact ⟨i, Finset.mem_univ i, rfl⟩
+    · intro i _
+      exact (hbank i).symm
+  calc
+    _ = M.spaceUsed c t +
+        (vhostEmitTM M).spaceUsedByTape (vhostCfg c b p pre) t (vhostBuffer m) := by
+      rw [hsum]
+      exact (Finset.sum_erase_add _ _ (Finset.mem_univ _)).symm
+    _ ≤ M.spaceUsed c t + (y.length + 2) := by omega
 
 /-- A source halting step that emits is forwarded before the host control
 dies: the emitted bit lands on the host output and the host halts in the
@@ -285,7 +386,39 @@ theorem vhostEmitTM_emitting_halt (M : MultiTapeTM m Bool S)
     ((vhostEmitTM M).step (vhostCfg c b p pre)).state = none ∧
       ((vhostEmitTM M).step (vhostCfg c b p pre)).output =
         pre ++ c.output ++ [bit] := by
-  sorry
+  obtain ⟨b', _, he⟩ := vhostEmitTM_step M c b hb p pre
+  rw [he]
+  simp [vhostCfg, MultiTapeTM.step, hq, ha, ho, List.append_assoc]
+
+/-- The silent selection consists of all indices below the final capture
+tape, and its complement is exactly that tape, including when `m = 0`.
+
+**Proof sketch.** The embedding preserves index values, and every value
+below `1 + m` has a preimage. An unselected index is at least `1 + m` and
+strictly below `(1 + m) + 1`, so it is the capture index. -/
+private theorem vhostSilent_layout (j : Fin ((1 + m) + 1)) :
+    (j ∈ Set.range (Fin.castAddEmb 1 : Fin (1 + m) ↪ Fin ((1 + m) + 1)) ↔
+      j.val < 1 + m) ∧
+    (j ∉ Set.range (Fin.castAddEmb 1 : Fin (1 + m) ↪ Fin ((1 + m) + 1)) ↔
+      j = vhostCap m) := by
+  have hselected :
+      j ∈ Set.range (Fin.castAddEmb 1 : Fin (1 + m) ↪ Fin ((1 + m) + 1)) ↔
+        j.val < 1 + m := by
+    constructor
+    · rintro ⟨i, rfl⟩
+      exact i.isLt
+    · intro hj
+      exact ⟨⟨j.val, hj⟩, Fin.ext rfl⟩
+  refine ⟨hselected, ?_⟩
+  rw [hselected]
+  constructor
+  · intro hj
+    apply Fin.ext
+    have hlt := j.isLt
+    change j.val = 1 + m + 0
+    omega
+  · rintro rfl
+    simp [vhostCap]
 
 /-- The suppressing lockstep at every time: capture records the source's
 emissions after the prior capture prefix, the physical output stays
@@ -302,7 +435,11 @@ theorem vhostSilentTM_runFrom (M : MultiTapeTM m Bool S) (c : Cfg m Bool S y)
     ∃ b', FinTM.VirtualTag (M.runFrom c t).inputPos b' ∧
       (vhostSilentTM M).runFrom (vhostSilentCfg c b p capPre out₀) t =
         vhostSilentCfg (M.runFrom c t) b' p capPre out₀ := by
-  sorry
+  have hcap := (vhostSilent_layout (vhostCap m)).2.mpr rfl
+  obtain ⟨b', hb', he⟩ := vhostEmitTM_runFrom M c b hb p [] t
+  refine ⟨b', hb', ?_⟩
+  unfold vhostSilentTM vhostSilentCfg
+  rw [embedSilentTM_runFrom _ _ hcap, he]
 
 /-- The suppressing flavor's space ledger: source space, the buffer
 interval, and the capture word — coefficient one on the source term.
@@ -318,6 +455,52 @@ theorem vhostSilentTM_spaceUsed_le (M : MultiTapeTM m Bool S)
     (vhostSilentTM M).spaceUsed (vhostSilentCfg c b p capPre out₀) t ≤
       M.spaceUsed c t + (y.length + 2) +
         ((capPre ++ (M.runFrom c t).output).length + 1) := by
-  sorry
+  have hcap := (vhostSilent_layout (vhostCap m)).2.mpr rfl
+  have hselected (i : Fin (1 + m)) :
+      (vhostSilentTM M).spaceUsedByTape (vhostSilentCfg c b p capPre out₀) t
+          (Fin.castAddEmb 1 i) =
+        (vhostEmitTM M).spaceUsedByTape (vhostCfg c b p []) t i :=
+    (embedSilentTM_visitedByTapeHead (Fin.castAddEmb 1) (vhostCap m) hcap
+      (vhostEmitTM M) (fun _ _ => none) (fun _ => 0) capPre out₀
+      (vhostCfg c b p []) t i).2
+  have hcapture :
+      (vhostSilentTM M).spaceUsedByTape (vhostSilentCfg c b p capPre out₀) t
+          (vhostCap m) ≤ (capPre ++ (M.runFrom c t).output).length + 1 := by
+    have hgrowth := embedSilentTM_spaceUsedByTape_cap (Fin.castAddEmb 1)
+      (vhostCap m) hcap (vhostEmitTM M) (fun _ _ => none) (fun _ => 0)
+      capPre out₀ (vhostCfg c b p []) t
+    obtain ⟨b', _, he⟩ := vhostEmitTM_runFrom M c b hb p [] t
+    rw [he] at hgrowth
+    change (vhostSilentTM M).spaceUsedByTape (vhostSilentCfg c b p capPre out₀) t
+        (vhostCap m) ≤ (M.runFrom c t).output.length - c.output.length + 1 at hgrowth
+    simp only [List.length_append]
+    omega
+  have hsum : (vhostEmitTM M).spaceUsed (vhostCfg c b p []) t =
+      ∑ j ∈ Finset.univ.erase (vhostCap m),
+        (vhostSilentTM M).spaceUsedByTape (vhostSilentCfg c b p capPre out₀) t j := by
+    apply Finset.sum_bij (fun i _ => Fin.castAddEmb 1 i)
+    · intro i _
+      refine Finset.mem_erase.mpr ⟨?_, Finset.mem_univ _⟩
+      intro hi
+      exact hcap ⟨i, hi⟩
+    · intro i _ j _ hij
+      exact (Fin.castAddEmb 1).injective hij
+    · intro j hj
+      have hne := (Finset.mem_erase.mp hj).1
+      have hin : j ∈ Set.range (Fin.castAddEmb 1 : Fin (1 + m) ↪
+          Fin ((1 + m) + 1)) := by
+        by_contra hout
+        exact hne ((vhostSilent_layout j).2.mp hout)
+      obtain ⟨i, rfl⟩ := hin
+      exact ⟨i, Finset.mem_univ _, rfl⟩
+    · intro i _
+      exact (hselected i).symm
+  calc
+    _ = (vhostEmitTM M).spaceUsed (vhostCfg c b p []) t +
+        (vhostSilentTM M).spaceUsedByTape (vhostSilentCfg c b p capPre out₀) t
+          (vhostCap m) := by
+      rw [hsum]
+      exact (Finset.sum_erase_add _ _ (Finset.mem_univ _)).symm
+    _ ≤ _ := Nat.add_le_add (vhostEmitTM_spaceUsed_le M c b hb p [] t) hcapture
 
 end Turing

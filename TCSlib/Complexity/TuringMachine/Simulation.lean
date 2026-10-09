@@ -983,7 +983,11 @@ theorem step_eq_of_agreeOn {k : ℕ} {Symbol State : Type*}
     (h : M.AgreeOn N Q) {input : List Symbol} (c : Cfg k Symbol State input)
     (hq : ∀ q, c.state = some q → q ∈ Q) :
     N.step c = M.step c := by
-  sorry
+  cases hs : c.state with
+  | none => simp only [step_of_halt hs]
+  | some q =>
+    simp only [step, hs]
+    rw [h q (hq q hs)]
 
 /-- A whole run transfers across an agreement: if every control state the
 `M`-run visits strictly before time `t` lies in the agreement set, the two
@@ -1000,6 +1004,11 @@ theorem runFrom_eq_of_agreeOn {k : ℕ} {Symbol State : Type*}
     (h : M.AgreeOn N Q) {input : List Symbol} (c : Cfg k Symbol State input)
     (t : ℕ) (hq : ∀ u < t, ∀ q, (M.runFrom c u).state = some q → q ∈ Q) :
     N.runFrom c t = M.runFrom c t := by
-  sorry
+  induction t with
+  | zero => rfl
+  | succ t ih =>
+    rw [runFrom_succ_eq_step', ih (fun u hu => hq u (by omega)),
+      runFrom_succ_eq_step']
+    exact step_eq_of_agreeOn h _ (hq t (by omega))
 
 end Turing.MultiTapeTM
