@@ -1,0 +1,370 @@
+From 4938f0fe9610c724d6c011f44013307ac285303a Mon Sep 17 00:00:00 2001
+From: Codex <codex@openai.com>
+Date: Fri, 9 Oct 2026 13:38:59 +0800
+Subject: [PATCH] Fill section-12 seam composition and release proofs
+
+---
+ .../Complexity/TuringMachine/Build/Seam.lean  | 264 +++++++++++++++++-
+ 1 file changed, 253 insertions(+), 11 deletions(-)
+
+diff --git a/TCSlib/Complexity/TuringMachine/Build/Seam.lean b/TCSlib/Complexity/TuringMachine/Build/Seam.lean
+index ef9ebc4b..8d88eac9 100644
+--- a/TCSlib/Complexity/TuringMachine/Build/Seam.lean
++++ b/TCSlib/Complexity/TuringMachine/Build/Seam.lean
+@@ -123,6 +123,163 @@ def seamCompTM [DecidableEq S₁] (M₁ : MultiTapeTM k Bool S₁) (exit : S₁)
+       let a := M₂.tr s inp w
+       ⟨a.inputTape, a.workTapes, a.output, a.state.map Sum.inr⟩
+ 
++/-- Away from the exit, one left step is exactly the state-mapped source step,
++including the absorbing halted case. -/
++private lemma seamComp_step_left [DecidableEq S₁]
++    (M₁ : MultiTapeTM k Bool S₁) (exit : S₁)
++    (M₂ : MultiTapeTM k Bool S₂) (entry : S₂)
++    (c : Cfg k Bool S₁ x) (hc : c.state ≠ some exit) :
++    (seamCompTM M₁ exit M₂ entry).step (c.mapState Sum.inl) =
++      (M₁.step c).mapState Sum.inl := by
++  cases hs : c.state with
++  | none => simp [MultiTapeTM.step, Cfg.mapState, hs]
++  | some q =>
++    have hq : q ≠ exit := fun h => hc (hs.trans (congrArg some h))
++    simp only [MultiTapeTM.step, Cfg.mapState, hs, Option.map_some]
++    dsimp only [seamCompTM]
++    rw [if_neg hq]
++    rfl
++
++/-- Right steps commute with state mapping, even after a source halt. -/
++private lemma seamComp_step_right [DecidableEq S₁]
++    (M₁ : MultiTapeTM k Bool S₁) (exit : S₁)
++    (M₂ : MultiTapeTM k Bool S₂) (entry : S₂) (c : Cfg k Bool S₂ x) :
++    (seamCompTM M₁ exit M₂ entry).step (c.mapState Sum.inr) =
++      (M₂.step c).mapState Sum.inr := by
++  cases hs : c.state with
++  | none => simp [MultiTapeTM.step, Cfg.mapState, hs]
++  | some q =>
++    simp only [MultiTapeTM.step, Cfg.mapState, hs, Option.map_some]
++    rfl
++
++/-- A stationary, silent, write-free action changes only the control field. -/
++private lemma seam_stationary_apply (c : Cfg k Bool S₁ x) (q : S₁) :
++    (Action.mk 0 (fun _ => (none, 0)) none (some q)).apply c =
++      { c with state := some q } := by
++  simp [Action.apply]
++
++/-- Dispatch preserves all data of an arbitrary live exit configuration. -/
++private lemma seamComp_dispatch [DecidableEq S₁]
++    (M₁ : MultiTapeTM k Bool S₁) (exit : S₁)
++    (M₂ : MultiTapeTM k Bool S₂) (entry : S₂)
++    (c : Cfg k Bool S₁ x) (hc : c.state = some exit) :
++    (seamCompTM M₁ exit M₂ entry).step (c.mapState Sum.inl) =
++      (c.mapState fun _ => entry).mapState Sum.inr := by
++  unfold MultiTapeTM.step
++  simp only [Cfg.mapState, hc, Option.map_some]
++  dsimp only [seamCompTM]
++  rw [if_pos rfl, seam_stationary_apply]
++
++/-- The whole left trajectory agrees through the exit time.
++**Proof sketch.** Induct on the time; the cut licenses the left-step
++identity at every predecessor strictly before the endpoint. -/
++private lemma seamComp_left [DecidableEq S₁]
++    (M₁ : MultiTapeTM k Bool S₁) (exit : S₁)
++    (M₂ : MultiTapeTM k Bool S₂) (entry : S₂)
++    {c : Cfg k Bool S₁ x} {T : ℕ}
++    (hcut : ∀ t < T, (M₁.runFrom c t).state ≠ some exit)
++    (t : ℕ) (ht : t ≤ T) :
++    (seamCompTM M₁ exit M₂ entry).runFrom (c.mapState Sum.inl) t =
++      (M₁.runFrom c t).mapState Sum.inl := by
++  induction t with
++  | zero => rfl
++  | succ t ih =>
++    rw [MultiTapeTM.runFrom_succ_eq_step', ih (by omega),
++      seamComp_step_left M₁ exit M₂ entry _ (hcut t (by omega)),
++      MultiTapeTM.runFrom_succ_eq_step']
++
++/-- After the one-step dispatch, the entire right trajectory agrees.
++**Proof sketch.** Split the run at the dispatch, use left lockstep and
++the exit equation, then iterate the unconditional right-step identity. -/
++private lemma seamComp_right [DecidableEq S₁]
++    (M₁ : MultiTapeTM k Bool S₁) (exit : S₁)
++    (M₂ : MultiTapeTM k Bool S₂) (entry : S₂)
++    {c₀ c₁ : Cfg k Bool S₁ x} {T₁ : ℕ}
++    (h₁ : M₁.runFrom c₀ T₁ = c₁) (hexit : c₁.state = some exit)
++    (hcut : ∀ t < T₁, (M₁.runFrom c₀ t).state ≠ some exit) (t : ℕ) :
++    (seamCompTM M₁ exit M₂ entry).runFrom (c₀.mapState Sum.inl)
++        (T₁ + 1 + t) =
++      (M₂.runFrom (c₁.mapState fun _ => entry) t).mapState Sum.inr := by
++  rw [MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_succ_eq_step',
++    seamComp_left M₁ exit M₂ entry hcut T₁ le_rfl, h₁,
++    seamComp_dispatch M₁ exit M₂ entry c₁ hexit]
++  exact MultiTapeTM.runFrom_comm_of_step (Cfg.mapState Sum.inr)
++    (seamComp_step_right M₁ exit M₂ entry) _ t
++
++/-- General endpoint composition, shared by the frozen public forms. -/
++private lemma seamComp_run_general [DecidableEq S₁]
++    (M₁ : MultiTapeTM k Bool S₁) (exit : S₁)
++    (M₂ : MultiTapeTM k Bool S₂) (entry : S₂)
++    {c₀ c₁ : Cfg k Bool S₁ x} {c₃ : Cfg k Bool S₂ x} {T₁ T₂ : ℕ}
++    (h₁ : M₁.runFrom c₀ T₁ = c₁) (hexit : c₁.state = some exit)
++    (hcut : ∀ t < T₁, (M₁.runFrom c₀ t).state ≠ some exit)
++    (h₂ : M₂.runFrom (c₁.mapState fun _ => entry) T₂ = c₃) :
++    (seamCompTM M₁ exit M₂ entry).runFrom (c₀.mapState Sum.inl)
++        (T₁ + 1 + T₂) = c₃.mapState Sum.inr :=
++  (seamComp_right M₁ exit M₂ entry h₁ hexit hcut T₂).trans
++    (congrArg (Cfg.mapState Sum.inr) h₂)
++
++/-- The right final anchor is absent before the total time.
++**Proof sketch.** Through the left endpoint, constructor disjointness
++excludes the anchor. Afterwards, right lockstep transports the phase-two
++cut at the time remaining after dispatch. -/
++private lemma seamComp_firstReturn_general [DecidableEq S₁]
++    (M₁ : MultiTapeTM k Bool S₁) (exit : S₁)
++    (M₂ : MultiTapeTM k Bool S₂) (entry q₂ : S₂)
++    {c₀ c₁ : Cfg k Bool S₁ x} {T₁ T₂ : ℕ}
++    (h₁ : M₁.runFrom c₀ T₁ = c₁) (hexit : c₁.state = some exit)
++    (hcut : ∀ t < T₁, (M₁.runFrom c₀ t).state ≠ some exit)
++    (hcut₂ : ∀ t < T₂,
++      (M₂.runFrom (c₁.mapState fun _ => entry) t).state ≠ some q₂) :
++    ∀ t < T₁ + 1 + T₂,
++      ((seamCompTM M₁ exit M₂ entry).runFrom (c₀.mapState Sum.inl) t).state ≠
++        some (Sum.inr q₂) := by
++  intro t ht
++  by_cases hleft : t ≤ T₁
++  · rw [seamComp_left M₁ exit M₂ entry hcut t hleft]
++    cases (M₁.runFrom c₀ t).state <;> simp [Cfg.mapState]
++  · have htime : t = T₁ + 1 + (t - (T₁ + 1)) := by omega
++    rw [htime, seamComp_right M₁ exit M₂ entry h₁ hexit hcut]
++    intro heq
++    apply hcut₂ (t - (T₁ + 1)) (by omega)
++    change Option.map Sum.inr
++      (M₂.runFrom (c₁.mapState fun _ => entry) (t - (T₁ + 1))).state =
++        some (Sum.inr q₂) at heq
++    obtain ⟨q, hq, heq⟩ := Option.map_eq_some_iff.mp heq
++    exact hq.trans (congrArg some (Sum.inr.inj heq))
++
++/-- Every visited position belongs to one of the two exact run segments.
++**Proof sketch.** A time at most the left duration uses left lockstep.
++Every later time is dispatch time plus a unique nonnegative offset, at
++most the right duration; right lockstep supplies its image witness. -/
++private lemma seamComp_visited_general [DecidableEq S₁]
++    (M₁ : MultiTapeTM k Bool S₁) (exit : S₁)
++    (M₂ : MultiTapeTM k Bool S₂) (entry : S₂)
++    {c₀ c₁ : Cfg k Bool S₁ x} {T₁ T₂ : ℕ}
++    (h₁ : M₁.runFrom c₀ T₁ = c₁) (hexit : c₁.state = some exit)
++    (hcut : ∀ t < T₁, (M₁.runFrom c₀ t).state ≠ some exit) (i : Fin k) :
++    (seamCompTM M₁ exit M₂ entry).visitedByTapeHead (c₀.mapState Sum.inl)
++        (T₁ + 1 + T₂) i ⊆
++      M₁.visitedByTapeHead c₀ T₁ i ∪
++        M₂.visitedByTapeHead (c₁.mapState fun _ => entry) T₂ i := by
++  intro z hz
++  obtain ⟨t, ht, rfl⟩ := Finset.mem_image.mp hz
++  have ht' := Finset.mem_range.mp ht
++  by_cases hleft : t ≤ T₁
++  · rw [seamComp_left M₁ exit M₂ entry hcut t hleft]
++    apply Finset.mem_union_left
++    exact Finset.mem_image.mpr ⟨t, Finset.mem_range.mpr (by omega), rfl⟩
++  · have htime : t = T₁ + 1 + (t - (T₁ + 1)) := by omega
++    rw [htime, seamComp_right M₁ exit M₂ entry h₁ hexit hcut]
++    apply Finset.mem_union_right
++    exact Finset.mem_image.mpr
++      ⟨t - (T₁ + 1), Finset.mem_range.mpr (by omega), rfl⟩
++
++/-- State mapping of a canonical seam changes only its anchor. -/
++private lemma seam_ofWords_mapState {S₃ : Type*} (f : S₁ → S₃)
++    (q : S₁) (w : Fin k → List Bool) :
++    (Cfg.ofWords (input := x) q w).mapState f = Cfg.ofWords (f q) w := rfl
++
+ /-- **R2, seam-to-seam composition** (spec, fill pending — design §12;
+ [Bon26], `executes_in_sum`). If `M₁` carries the seam
+ `Cfg.ofWords start w₀` to the seam `Cfg.ofWords exit w₁` in exactly `T₁`
+@@ -159,7 +316,12 @@ theorem seamCompTM_run [DecidableEq S₁] (M₁ : MultiTapeTM k Bool S₁)
+     (seamCompTM M₁ exit M₂ entry).runFrom
+         (Cfg.ofWords (input := x) (Sum.inl start) w₀) (T₁ + 1 + T₂) =
+       Cfg.ofWords (Sum.inr q₂) w₂ := by
+-  sorry
++  have h₂' : M₂.runFrom
++      ((Cfg.ofWords (input := x) exit w₁).mapState fun _ => entry) T₂ =
++        Cfg.ofWords q₂ w₂ := by
++    simpa only [seam_ofWords_mapState] using h₂
++  simpa only [seam_ofWords_mapState] using
++    seamComp_run_general M₁ exit M₂ entry h₁ rfl hcut h₂'
+ 
+ /-- **R2, the inherited first-return cut** (spec, fill pending — design
+ §12). Under the hypotheses of `seamCompTM_run`, if additionally `M₂` does
+@@ -190,7 +352,12 @@ theorem seamCompTM_firstReturn [DecidableEq S₁] (M₁ : MultiTapeTM k Bool S
+       ((seamCompTM M₁ exit M₂ entry).runFrom
+           (Cfg.ofWords (input := x) (Sum.inl start) w₀) t).state ≠
+         some (Sum.inr q₂) := by
+-  sorry
++  have hcut₂' : ∀ t < T₂,
++      (M₂.runFrom ((Cfg.ofWords (input := x) exit w₁).mapState fun _ => entry)
++        t).state ≠ some q₂ := by
++    simpa only [seam_ofWords_mapState] using hcut₂
++  simpa only [seam_ofWords_mapState] using
++    seamComp_firstReturn_general M₁ exit M₂ entry q₂ h₁ rfl hcut hcut₂'
+ 
+ /-- **R2 space, the per-tape headline** (spec, fill pending — design §12,
+ frozen decision 12.1: the sharp per-tape form). On every work tape `i`,
+@@ -223,7 +390,8 @@ theorem seamCompTM_visitedByTapeHead [DecidableEq S₁]
+         (Cfg.ofWords (input := x) (Sum.inl start) w₀) (T₁ + 1 + T₂) i ⊆
+       M₁.visitedByTapeHead (Cfg.ofWords (input := x) start w₀) T₁ i ∪
+         M₂.visitedByTapeHead (Cfg.ofWords (input := x) entry w₁) T₂ i := by
+-  sorry
++  simpa only [seam_ofWords_mapState] using
++    seamComp_visited_general (T₂ := T₂) M₁ exit M₂ entry h₁ rfl hcut i
+ 
+ /-- **R2 space, the per-tape sum corollary** (spec, fill pending — design
+ §12, decision 12.1). On every work tape, the composite's space usage is
+@@ -245,7 +413,9 @@ theorem seamCompTM_spaceUsedByTape_le_add [DecidableEq S₁]
+         (Cfg.ofWords (input := x) (Sum.inl start) w₀) (T₁ + 1 + T₂) i ≤
+       M₁.spaceUsedByTape (Cfg.ofWords (input := x) start w₀) T₁ i +
+         M₂.spaceUsedByTape (Cfg.ofWords (input := x) entry w₁) T₂ i := by
+-  sorry
++  exact (Finset.card_le_card
++    (seamCompTM_visitedByTapeHead M₁ exit M₂ entry start q₂ w₀ w₁ w₂
++      T₁ T₂ h₁ hcut h₂ i)).trans (Finset.card_union_le _ _)
+ 
+ /-- **R2 space, the total sum corollary** (spec, fill pending — design
+ §12). The composite's total space usage is at most the sum of the
+@@ -267,7 +437,11 @@ theorem seamCompTM_spaceUsed_le_add [DecidableEq S₁]
+         (Cfg.ofWords (input := x) (Sum.inl start) w₀) (T₁ + 1 + T₂) ≤
+       M₁.spaceUsed (Cfg.ofWords (input := x) start w₀) T₁ +
+         M₂.spaceUsed (Cfg.ofWords (input := x) entry w₁) T₂ := by
+-  sorry
++  unfold MultiTapeTM.spaceUsed
++  rw [← Finset.sum_add_distrib]
++  exact Finset.sum_le_sum fun i _ =>
++    seamCompTM_spaceUsedByTape_le_add M₁ exit M₂ entry start q₂ w₀ w₁ w₂
++      T₁ T₂ h₁ hcut h₂ i
+ 
+ /-- **R2 space, the max corollary for disjointly-owned tapes** (spec, fill
+ pending — design §12, frozen decision 12.1: the sharpest available form).
+@@ -301,7 +475,21 @@ theorem seamCompTM_spaceUsedByTape_le_max [DecidableEq S₁]
+         (Cfg.ofWords (input := x) (Sum.inl start) w₀) (T₁ + 1 + T₂) i ≤
+       max (M₁.spaceUsedByTape (Cfg.ofWords (input := x) start w₀) T₁ i)
+         (M₂.spaceUsedByTape (Cfg.ofWords (input := x) entry w₁) T₂ i) := by
+-  sorry
++  have hzero₁ : (0 : ℤ) ∈
++      M₁.visitedByTapeHead (Cfg.ofWords (input := x) start w₀) T₁ i :=
++    Finset.mem_image.mpr ⟨0, Finset.mem_range.mpr (Nat.zero_lt_succ T₁), rfl⟩
++  have hzero₂ : (0 : ℤ) ∈
++      M₂.visitedByTapeHead (Cfg.ofWords (input := x) entry w₁) T₂ i :=
++    Finset.mem_image.mpr ⟨0, Finset.mem_range.mpr (Nat.zero_lt_succ T₂), rfl⟩
++  have hsub := seamCompTM_visitedByTapeHead M₁ exit M₂ entry start q₂
++    w₀ w₁ w₂ T₁ T₂ h₁ hcut h₂ i
++  rcases hown with hown | hown
++  · rw [hown, Finset.union_eq_right.mpr
++      (Finset.singleton_subset_iff.mpr hzero₂)] at hsub
++    exact (Finset.card_le_card hsub).trans (le_max_right _ _)
++  · rw [hown, Finset.union_eq_left.mpr
++      (Finset.singleton_subset_iff.mpr hzero₁)] at hsub
++    exact (Finset.card_le_card hsub).trans (le_max_left _ _)
+ 
+ /-- **R2′, general-configuration seam-to-seam composition** (spec, fill
+ pending — round-1 repair R2): the `Cfg.ofWords` restriction of
+@@ -335,7 +523,7 @@ theorem seamCompTM_run_ofCfg [DecidableEq S₁] (M₁ : MultiTapeTM k Bool S₁)
+     (seamCompTM M₁ exit M₂ entry).runFrom (c₀.mapState Sum.inl)
+         (T₁ + 1 + T₂) =
+       c₃.mapState Sum.inr := by
+-  sorry
++  exact seamComp_run_general M₁ exit M₂ entry h₁ hexit hcut h₂
+ 
+ /-- **R2′, the general inherited first-return cut** (spec, fill pending —
+ round-1 repair R2): under the hypotheses of
+@@ -359,7 +547,7 @@ theorem seamCompTM_firstReturn_ofCfg [DecidableEq S₁]
+     ∀ t < T₁ + 1 + T₂,
+       ((seamCompTM M₁ exit M₂ entry).runFrom (c₀.mapState Sum.inl) t).state ≠
+         some (Sum.inr q₂) := by
+-  sorry
++  exact seamComp_firstReturn_general M₁ exit M₂ entry q₂ h₁ hexit hcut hcut₂
+ 
+ /-- **R2′ space, the general per-tape headline** (spec, fill pending —
+ round-1 repair R2): under the hypotheses of `Turing.seamCompTM_run_ofCfg`,
+@@ -381,7 +569,7 @@ theorem seamCompTM_visitedByTapeHead_ofCfg [DecidableEq S₁]
+         (T₁ + 1 + T₂) i ⊆
+       M₁.visitedByTapeHead c₀ T₁ i ∪
+         M₂.visitedByTapeHead (c₁.mapState fun _ => entry) T₂ i := by
+-  sorry
++  exact seamComp_visited_general M₁ exit M₂ entry h₁ hexit hcut i
+ 
+ variable {S : Type*}
+ 
+@@ -408,6 +596,40 @@ def seamReleaseTM (M : MultiTapeTM k Bool S) (anchor : S) :
+       let a := M.tr s inp w
+       ⟨a.inputTape, a.workTapes, a.output, a.state.map Sum.inr⟩
+ 
++/-- The fresh state executes the anchor action without a dispatch step. -/
++private lemma seamRelease_fresh_step (M : MultiTapeTM k Bool S) (anchor : S)
++    (c : Cfg k Bool S x) (hc : c.state = some anchor) :
++    (seamReleaseTM M anchor).step (c.mapState fun _ => Sum.inl ()) =
++      (M.step c).mapState Sum.inr := by
++  simp only [MultiTapeTM.step, Cfg.mapState, hc, Option.map_some]
++  rfl
++
++/-- In the right copy, release steps commute with state mapping. -/
++private lemma seamRelease_step_right (M : MultiTapeTM k Bool S) (anchor : S)
++    (c : Cfg k Bool S x) :
++    (seamReleaseTM M anchor).step (c.mapState Sum.inr) =
++      (M.step c).mapState Sum.inr := by
++  cases hs : c.state with
++  | none => simp [MultiTapeTM.step, Cfg.mapState, hs]
++  | some q =>
++    simp only [MultiTapeTM.step, Cfg.mapState, hs, Option.map_some]
++    rfl
++
++/-- At every positive time, release runs are the right-mapped source runs.
++**Proof sketch.** Execute the fresh step once, then iterate the right-step
++identity. This also covers a source that halts or never returns. -/
++private lemma seamRelease_run_pos (M : MultiTapeTM k Bool S) (anchor : S)
++    (c : Cfg k Bool S x) (hc : c.state = some anchor) (t : ℕ) (ht : 0 < t) :
++    (seamReleaseTM M anchor).runFrom (c.mapState fun _ => Sum.inl ()) t =
++      (M.runFrom c t).mapState Sum.inr := by
++  cases t with
++  | zero => omega
++  | succ t =>
++    rw [MultiTapeTM.runFrom_succ_eq_step, seamRelease_fresh_step M anchor c hc,
++      MultiTapeTM.runFrom_succ_eq_step]
++    exact MultiTapeTM.runFrom_comm_of_step (Cfg.mapState Sum.inr)
++      (seamRelease_step_right M anchor) _ t
++
+ /-- **R3′, the positive first return through the adapter** (spec, fill
+ pending — round-1 repair R3): if `M`, started at its anchor, first
+ re-visits the anchor at a strictly positive time `T`, then the adapter,
+@@ -433,7 +655,19 @@ theorem seamReleaseTM_firstReturn (M : MultiTapeTM k Bool S) (anchor : S)
+         ((seamReleaseTM M anchor).runFrom
+             (c.mapState fun _ => Sum.inl ()) t).state ≠
+           some (Sum.inr anchor) := by
+-  sorry
++  constructor
++  · rw [seamRelease_run_pos M anchor c hc T hT, h]
++  · intro t ht
++    by_cases htpos : 0 < t
++    · rw [seamRelease_run_pos M anchor c hc t htpos]
++      intro heq
++      apply hcut t htpos ht
++      change Option.map Sum.inr (M.runFrom c t).state =
++        some (Sum.inr anchor) at heq
++      obtain ⟨q, hq, heq⟩ := Option.map_eq_some_iff.mp heq
++      exact hq.trans (congrArg some (Sum.inr.inj heq))
++    · have htzero : t = 0 := by omega
++      simp [htzero, Cfg.mapState, hc]
+ 
+ /-- **R3′ space** (spec, fill pending — round-1 repair R3): the adapter's
+ visited sets equal `M`'s at every time and on every tape — the trajectories
+@@ -449,6 +683,14 @@ theorem seamReleaseTM_visitedByTapeHead (M : MultiTapeTM k Bool S)
+     (seamReleaseTM M anchor).visitedByTapeHead
+         (c.mapState fun _ => Sum.inl ()) t i =
+       M.visitedByTapeHead c t i := by
+-  sorry
++  unfold MultiTapeTM.visitedByTapeHead
++  apply Finset.image_congr
++  intro s _
++  dsimp only
++  by_cases hs : s = 0
++  · subst s
++    rfl
++  · rw [seamRelease_run_pos M anchor c hc s (Nat.pos_of_ne_zero hs)]
++    rfl
+ 
+ end Turing
+-- 
+2.51.1
+
