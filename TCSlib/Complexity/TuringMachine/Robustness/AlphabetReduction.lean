@@ -598,3 +598,32 @@ theorem alphabet_reduction {Γ : Type} [Fintype Γ] [DecidableEq Γ] (e : Bool �
 end
 
 end Turing.FinTM
+
+/-! ### Space annotation (§13 Z4; additive, shared-file mechanism, flagged
+for the A-S2 audit) -/
+
+namespace Turing.FinTM
+
+/-- The alphabet reduction preserves space up to a constant: the binary
+machine of `Turing.FinTM.alphabet_reduction` can be taken with an all-time
+space bound of coefficient-constant shape in the source's. Part of the Z4
+space annotation (`machine-library-design.md` §13), plan §2.7's fallback
+route to the space-efficient universal (Ex 4.1).
+
+**Proof sketch.** The received `arTM` witness codes each source cell as a
+fixed-width block of the fixed code `arCode`; a visited binary cell lies
+inside the block of a visited source cell (plus the block in progress), so
+each tape's visited set scales by the block width plus a boundary
+allowance, all-time because a halted simulation is fixed and a mid-block
+head stays inside its block. The `+ 1` absorbs the origin of an untouched
+tape. -/
+theorem alphabet_reduction_spaceUsed {Γ : Type} [Fintype Γ] [DecidableEq Γ]
+    (e : Bool ↪ Γ) (M : FinTM Γ) (f : List Bool → List Bool) (T S : ℕ → ℕ)
+    (hM : M.ComputesFunInTimeVia e f T)
+    (hS : ∀ x t, M.tm.spaceUsed (M.tm.initCfg x) t ≤ S x.length) :
+    ∃ (c : ℕ) (M' : FinTM Bool), M'.k = M.k ∧
+      M'.ComputesFunInTime f (fun n => c * (T n + 1)) ∧
+      ∀ x t, M'.tm.spaceUsed (M'.tm.initCfg x) t ≤ c * (S x.length + 1) := by
+  sorry
+
+end Turing.FinTM

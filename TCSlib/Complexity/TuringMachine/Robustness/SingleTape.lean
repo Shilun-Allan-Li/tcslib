@@ -979,3 +979,51 @@ theorem one_work_tape_binary (M : FinTM Bool) (f : List Bool → List Bool) (T :
     _ = c₂ * (c₁ + 1) * (T x.length + 1) ^ 2 := by ring
 
 end Turing.FinTM
+
+/-! ### Space annotation (§13 Z4; additive, shared-file mechanism, flagged
+for the A-S2 audit) -/
+
+namespace Turing.FinTM
+
+/-- The one-work-tape reduction preserves space up to a constant: the
+single-tape machine of `Turing.FinTM.one_work_tape` can be taken with an
+all-time space bound of coefficient-constant shape in the source's. Part
+of the Z4 space annotation (`machine-library-design.md` §13), plan §2.7's
+fallback route to the space-efficient universal (Ex 4.1).
+
+**Proof sketch.** The received `sweepTM` witness stacks the `k` source
+tapes on one product-alphabet tape: its single head sweeps the union of
+the source tapes' visited intervals, each containing the origin, so the
+union's cardinality is at most the sum of the source cardinalities — the
+total source space — plus the two boundary-marker cells of the sweep
+discipline; all-time because every mid-sweep position lies inside the
+swept extent and a halted simulation is fixed. -/
+theorem one_work_tape_spaceUsed {Γ : Type} [Fintype Γ] [DecidableEq Γ]
+    (M : FinTM Γ) (f : List Γ → List Γ) (T S : ℕ → ℕ)
+    (hM : M.ComputesFunInTime f T)
+    (hS : ∀ x t, M.tm.spaceUsed (M.tm.initCfg x) t ≤ S x.length) :
+    ∃ (Γ' : Type) (_ : Fintype Γ') (_ : DecidableEq Γ') (e : Γ ↪ Γ')
+      (M' : FinTM Γ') (c : ℕ),
+      M'.k = 1 ∧ M'.ComputesFunInTimeVia e f (fun n => c * (T n + 1) ^ 2) ∧
+      ∀ x t, M'.tm.spaceUsed (M'.tm.initCfg x) t ≤ c * (S x.length + 1) := by
+  sorry
+
+/-- The binary one-work-tape normal form preserves space up to a constant:
+the composed conversion of `Turing.FinTM.one_work_tape_binary` with the
+space clause carried through both stages. This is the exact deliverable
+shape of plan §2.7's fallback for Ex 4.1/Thm 4.8: a space-faithful route
+into the one-tape binary normal form.
+
+**Proof sketch.** Chain `Turing.FinTM.one_work_tape_spaceUsed` with
+`Turing.FinTM.alphabet_reduction_spaceUsed`; the two constants multiply
+and the two `+ 1` allowances compose into one. -/
+theorem one_work_tape_binary_spaceUsed (M : FinTM Bool)
+    (f : List Bool → List Bool) (T S : ℕ → ℕ)
+    (hM : M.ComputesFunInTime f T)
+    (hS : ∀ x t, M.tm.spaceUsed (M.tm.initCfg x) t ≤ S x.length) :
+    ∃ (M' : FinTM Bool) (c : ℕ),
+      M'.k = 1 ∧ M'.ComputesFunInTime f (fun n => c * (T n + 1) ^ 2) ∧
+      ∀ x t, M'.tm.spaceUsed (M'.tm.initCfg x) t ≤ c * (S x.length + 1) := by
+  sorry
+
+end Turing.FinTM
