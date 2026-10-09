@@ -35,6 +35,8 @@ import TCSlib.Complexity.Diagonalization
 import TCSlib.Complexity.TuringMachine.Build.Embed
 import TCSlib.Complexity.TuringMachine.Build.Seam
 import TCSlib.Complexity.TuringMachine.Build.Catalog
+import TCSlib.Complexity.TuringMachine.NDCodes
+import TCSlib.Complexity.Diagonalization.NTimeHierarchy
 import TCSlib.Complexity.ClassPSPACE
 import TCSlib.Complexity.PolyHierarchy
 import TCSlib.Complexity.TimeHierarchy

@@ -599,6 +599,19 @@ uncomputability chapter.
   Chapter-1 precedent (dep-graph merge, writer agents, validator).
 
 ---
+* **P3.4 — Ladner's theorem (queued; user decision 2026-10-08: CH34-Q6
+  core-late, moved to backlog at the P3.3 draft).** The last undrafted
+  statement phase of the chapters-3-4 campaign
+  (`AroraBarakChapters3-4Plan.md` §4): `Diagonalization/Ladner.lean` with
+  `SAT_H` (SAT padded by the diagonal gaps of `H`), Ex 3.6(a) (`H`
+  computable in polynomial time), the Claim of [AB09, Theorem 3.3]'s proof,
+  Ex 3.6(b), and Theorem 3.3 itself (`P ≠ NP` gives an `NP`-intermediate
+  language), ~6 sorried statements. Draft when the live rounds settle (the
+  `Diagonalization.lean` facade unfreezes at the P3.2 close); it consumes
+  the closed chapter-2 `SAT` surface and the received `polyTimeComputable`
+  layer, and is independent of P3.3's code layer. *Origin:
+  `AroraBarakChapters3-4Plan.md` §4 (P3.4 row), decision CH34-Q6.*
+
 
 ## 3. Deferred formalizations
 
