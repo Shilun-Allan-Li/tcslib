@@ -852,3 +852,31 @@ stacks vs `FinTM` tapes with heads). Suggested tag: `[Bon26]`. The R-modules'
 docstrings and their blueprint entries must carry this citation, alongside the
 existing `[Balbach22]` (AFP `Cook_Levin`) for the composition architecture and
 the in-repo credits to the colleague modules named above.
+
+### 12.5 Round-1 audit repairs (2026-10-09)
+
+The §12 statement-gate round 1 (`audits/routine-infra-findings.md`: 0
+blockers, 4 majors) drove four repairs, landed with the round-2 pack:
+
+* **R1 → the returning embeddings** `embedSilentRetTM`/`embedEmitRetTM`
+  (states `S ⊕ Unit`): the closed transformers lose a final halting
+  emission to either the halt or a premature seam dispatch — the audit's
+  formal trace. The returning flavors execute every source action through
+  the halting transition and land in the live anchor `Sum.inr ()`.
+* **R2 → general-configuration seam composition**
+  (`seamCompTM_run_ofCfg` + first-return and visited forms): the canonical
+  `Cfg.ofWords` theorems cannot consume arbitrary frames, displaced
+  inactive heads, or accumulated output; the general form starts phase two
+  from phase one's returned configuration with only the control state
+  replaced.
+* **R3 → the fresh-entry/release adapter** `seamReleaseTM`: positive
+  calls returning to their own anchor are now seam-consumable (the entry
+  action executes unconditionally from a fresh start state).
+* **R4 → the threaded-map witness** is re-commissioned as a forwarding
+  controller (validate/buffer, emit prefix, forward payload output);
+  the received captured-payload machine is refuted as a witness for the
+  linear-administration bound.
+
+Scope notes R9 (physical-tape selection is not zone multiplexing) and R10
+(loop sibling contracts not exported) are recorded at their definition
+sites.

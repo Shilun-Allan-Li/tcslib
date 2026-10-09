@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Seyoon Ragavan
 -/
 import TCSlib.Complexity.TuringMachine.Build.Convention
+import TCSlib.Complexity.TuringMachine.StateRenaming
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -58,7 +59,20 @@ All sorried (statement phase):
 * `Turing.seamCompTM_run` — seam-to-seam composition within
   `T₁ + 1 + T₂`.
 * `Turing.seamCompTM_firstReturn` — the composite inherits a first-return
-  cut at the final anchor, so composites chain.
+  cut at the final anchor, so composites **whose phases satisfy the stated
+  cuts** chain (round-1 finding R3: the cut excludes positive
+  entry-equals-exit calls — those route through the release adapter below).
+* `Turing.seamCompTM_run_ofCfg`, `Turing.seamCompTM_firstReturn_ofCfg`,
+  `Turing.seamCompTM_visitedByTapeHead_ofCfg` — the **general-configuration**
+  composition (round-1 repair R2): phase two starts from phase one's
+  returned configuration with only the control state replaced, so arbitrary
+  frames, displaced inactive heads, and accumulated output cross the
+  dispatch intact; the canonical `Cfg.ofWords` theorems are its instances.
+* `Turing.seamReleaseTM`, `Turing.seamReleaseTM_firstReturn`,
+  `Turing.seamReleaseTM_visitedByTapeHead` — the **fresh-entry/release
+  adapter** (round-1 repair R3): the entry action executes unconditionally
+  from a fresh start state, so a positive call that returns to its own
+  anchor becomes seam-consumable.
 * `Turing.seamCompTM_visitedByTapeHead` — per-tape visited-set
   containment (the headline space clause, decision 12.1).
 * `Turing.seamCompTM_spaceUsedByTape_le_add`,
@@ -287,6 +301,154 @@ theorem seamCompTM_spaceUsedByTape_le_max [DecidableEq S₁]
         (Cfg.ofWords (input := x) (Sum.inl start) w₀) (T₁ + 1 + T₂) i ≤
       max (M₁.spaceUsedByTape (Cfg.ofWords (input := x) start w₀) T₁ i)
         (M₂.spaceUsedByTape (Cfg.ofWords (input := x) entry w₁) T₂ i) := by
+  sorry
+
+/-- **R2′, general-configuration seam-to-seam composition** (spec, fill
+pending — round-1 repair R2): the `Cfg.ofWords` restriction of
+`Turing.seamCompTM_run` is lifted. If `M₁` carries an arbitrary
+configuration `c₀` to `c₁` in exactly `T₁` steps, first reaching the anchor
+`exit` there, and `M₂` carries `c₁` **with only the control state replaced
+by `entry`** to `c₃` in `T₂` steps, then the composite carries the
+`Sum.inl`-mapped `c₀` to the `Sum.inr`-mapped `c₃` in exactly
+`T₁ + 1 + T₂` steps: the dispatch step is stationary, silent, and
+write-free, so displaced inactive heads, noncanonical tape contents, the
+input position, and **accumulated output** all cross it intact — exactly
+the seams the round-1 audit exhibited (`emitterP2_relocate_run`'s arbitrary
+frames, `exists_emitCallTM`'s nonempty output) that no `Cfg.ofWords`
+endpoint can describe. The canonical `seamCompTM_run` is the
+`Cfg.ofWords` instance.
+
+**Proof sketch.** Identical three-segment decomposition to
+`seamCompTM_run` — phase-one `Sum.inl` lockstep under the cut, one
+dispatch step, phase-two `Sum.inr` lockstep via `Cfg.mapState_apply` —
+with the single new observation that a stationary write-free action fixes
+**every** field of an arbitrary configuration, not only a canonical one
+(`Turing.Action.apply` componentwise). Fill obligations, named: the two
+lockstep inductions over `Cfg.mapState`, the dispatch-step field check,
+and the `ofWords` specialization recovering the canonical theorem. -/
+theorem seamCompTM_run_ofCfg [DecidableEq S₁] (M₁ : MultiTapeTM k Bool S₁)
+    (exit : S₁) (M₂ : MultiTapeTM k Bool S₂) (entry : S₂)
+    {c₀ c₁ : Cfg k Bool S₁ x} {c₃ : Cfg k Bool S₂ x} {T₁ T₂ : ℕ}
+    (h₁ : M₁.runFrom c₀ T₁ = c₁) (hexit : c₁.state = some exit)
+    (hcut : ∀ t < T₁, (M₁.runFrom c₀ t).state ≠ some exit)
+    (h₂ : M₂.runFrom (c₁.mapState fun _ => entry) T₂ = c₃) :
+    (seamCompTM M₁ exit M₂ entry).runFrom (c₀.mapState Sum.inl)
+        (T₁ + 1 + T₂) =
+      c₃.mapState Sum.inr := by
+  sorry
+
+/-- **R2′, the general inherited first-return cut** (spec, fill pending —
+round-1 repair R2): under the hypotheses of
+`Turing.seamCompTM_run_ofCfg`, if `M₂` first reaches `q₂` at `T₂`, the
+composite first reaches `Sum.inr q₂` at `T₁ + 1 + T₂`.
+
+**Proof sketch.** As `seamCompTM_firstReturn`, over the general lockstep
+segments: left times produce `Sum.inl` states, right times the
+`Sum.inr`-mapped `M₂` states at shifted time, and injectivity of the
+constructors transports the cuts. -/
+theorem seamCompTM_firstReturn_ofCfg [DecidableEq S₁]
+    (M₁ : MultiTapeTM k Bool S₁) (exit : S₁)
+    (M₂ : MultiTapeTM k Bool S₂) (entry : S₂) (q₂ : S₂)
+    {c₀ c₁ : Cfg k Bool S₁ x} {c₃ : Cfg k Bool S₂ x} {T₁ T₂ : ℕ}
+    (h₁ : M₁.runFrom c₀ T₁ = c₁) (hexit : c₁.state = some exit)
+    (hcut : ∀ t < T₁, (M₁.runFrom c₀ t).state ≠ some exit)
+    (h₂ : M₂.runFrom (c₁.mapState fun _ => entry) T₂ = c₃)
+    (hq : c₃.state = some q₂)
+    (hcut₂ : ∀ t < T₂,
+      (M₂.runFrom (c₁.mapState fun _ => entry) t).state ≠ some q₂) :
+    ∀ t < T₁ + 1 + T₂,
+      ((seamCompTM M₁ exit M₂ entry).runFrom (c₀.mapState Sum.inl) t).state ≠
+        some (Sum.inr q₂) := by
+  sorry
+
+/-- **R2′ space, the general per-tape headline** (spec, fill pending —
+round-1 repair R2): under the hypotheses of `Turing.seamCompTM_run_ofCfg`,
+on every work tape the composite's visited set over the composed run is
+contained in the union of the two phases' visited sets — the
+general-configuration form of `Turing.seamCompTM_visitedByTapeHead`, from
+which the canonical corollaries project.
+
+**Proof sketch.** As the canonical headline: the two lockstep segments
+reproduce the phases' trajectories, and the dispatch step is stationary at
+a point both phases' endpoint/start configurations already visit. -/
+theorem seamCompTM_visitedByTapeHead_ofCfg [DecidableEq S₁]
+    (M₁ : MultiTapeTM k Bool S₁) (exit : S₁)
+    (M₂ : MultiTapeTM k Bool S₂) (entry : S₂)
+    {c₀ c₁ : Cfg k Bool S₁ x} {T₁ T₂ : ℕ}
+    (h₁ : M₁.runFrom c₀ T₁ = c₁) (hexit : c₁.state = some exit)
+    (hcut : ∀ t < T₁, (M₁.runFrom c₀ t).state ≠ some exit) (i : Fin k) :
+    (seamCompTM M₁ exit M₂ entry).visitedByTapeHead (c₀.mapState Sum.inl)
+        (T₁ + 1 + T₂) i ⊆
+      M₁.visitedByTapeHead c₀ T₁ i ∪
+        M₂.visitedByTapeHead (c₁.mapState fun _ => entry) T₂ i := by
+  sorry
+
+variable {S : Type*}
+
+/-- **R3′, the fresh-entry/release adapter** (round-1 repair R3). The seam
+combinator dispatches at its exit anchor **before** that state's action, so
+a positive call that starts and ends at one anchor cannot be cut
+(`seamCompTM_firstReturn`'s cut is contradictory at zero — the round-1
+finding, witnessed by `exists_installCallTM`/`exists_emitCallTM`'s
+strictly-positive interior promises and `emitterP2_call_segment`'s
+execute-first discipline). The adapter runs `M` on states `Unit ⊕ S` with a
+fresh start `Sum.inl ()` that executes the anchor's action
+**unconditionally**, after which control lives in the `Sum.inr` copy — so
+the *first re-arrival* at `Sum.inr anchor` is a genuine positive-time
+event a seam can consume as its left exit. -/
+def seamReleaseTM (M : MultiTapeTM k Bool S) (anchor : S) :
+    MultiTapeTM k Bool (Unit ⊕ S) where
+  q₀ := Sum.inl ()
+  tr := fun q inp w =>
+    match q with
+    | Sum.inl _ =>
+      let a := M.tr anchor inp w
+      ⟨a.inputTape, a.workTapes, a.output, a.state.map Sum.inr⟩
+    | Sum.inr s =>
+      let a := M.tr s inp w
+      ⟨a.inputTape, a.workTapes, a.output, a.state.map Sum.inr⟩
+
+/-- **R3′, the positive first return through the adapter** (spec, fill
+pending — round-1 repair R3): if `M`, started at its anchor, first
+re-visits the anchor at a strictly positive time `T`, then the adapter,
+started at its fresh state over the same configuration, reaches
+`Sum.inr anchor` first at exactly `T`, over the `Sum.inr`-transported run.
+The audit's S7 check is the smallest case: a two-step write-then-return
+call executes both source actions before any seam dispatch can fire.
+
+**Proof sketch.** The fresh step applies the anchor's action verbatim
+(`Cfg.mapState_apply` at the constant relabeling), after which every step
+is `Sum.inr`-lockstep with `M`'s run; the first-visit clause is the
+transported cut, with time zero excluded by the fresh constructor
+(`Sum.inl ≠ Sum.inr`). Fill obligations, named: the fresh-step equation,
+the lockstep induction, and the cut transport. -/
+theorem seamReleaseTM_firstReturn (M : MultiTapeTM k Bool S) (anchor : S)
+    {c c' : Cfg k Bool S x} {T : ℕ}
+    (hc : c.state = some anchor) (hT : 0 < T) (h : M.runFrom c T = c')
+    (hc' : c'.state = some anchor)
+    (hcut : ∀ t, 0 < t → t < T → (M.runFrom c t).state ≠ some anchor) :
+    (seamReleaseTM M anchor).runFrom (c.mapState fun _ => Sum.inl ()) T =
+        c'.mapState Sum.inr ∧
+      ∀ t < T,
+        ((seamReleaseTM M anchor).runFrom
+            (c.mapState fun _ => Sum.inl ()) t).state ≠
+          some (Sum.inr anchor) := by
+  sorry
+
+/-- **R3′ space** (spec, fill pending — round-1 repair R3): the adapter's
+visited sets equal `M`'s at every time and on every tape — the trajectories
+coincide step for step.
+
+**Proof sketch.** Every adapter step applies the very action `M` applies at
+the corresponding state (the fresh step at the anchor, `Sum.inr` steps at
+their carried state), so the head trajectories agree; project
+`seamReleaseTM_firstReturn`'s lockstep. -/
+theorem seamReleaseTM_visitedByTapeHead (M : MultiTapeTM k Bool S)
+    (anchor : S) {c : Cfg k Bool S x} (hc : c.state = some anchor)
+    (t : ℕ) (i : Fin k) :
+    (seamReleaseTM M anchor).visitedByTapeHead
+        (c.mapState fun _ => Sum.inl ()) t i =
+      M.visitedByTapeHead c t i := by
   sorry
 
 end Turing

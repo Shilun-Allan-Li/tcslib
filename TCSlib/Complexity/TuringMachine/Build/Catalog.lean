@@ -437,12 +437,14 @@ two compared tapes visit at most `min(|w fst|, |w snd|) + 2` cells (the
 scanned interval plus both boundary cells); every other tape exactly its
 origin singleton.
 
-**Proof sketch.** The scan depth is bounded by `min + 1` (it stops at the
-shorter word's blank at the latest), the return pass overshoots to `-1`,
-so both touched trajectories lie in `[-1, min + 1]` — hence at most
-`min + 2` *visited* cells, since the scan turns strictly before `min + 1`
-whenever a mismatch occurs; untouched tapes receive `(none, 0)`
-throughout. -/
+**Proof sketch.** Exact position counting, uniformly over mismatches,
+equal words, and unequal lengths (round-1 finding 6 — the earlier
+`[-1, min + 1]` interval argument did not cover equal inputs): with `d`
+the first differing position or the first position where a word ends
+(`d ≤ min`), the scan turns at `d`, the return pass overshoots to `-1`,
+and both touched trajectories are exactly the integers of `[-1, d]` —
+`d + 2 ≤ min + 2` visited cells in every case, aliased indices included;
+untouched tapes receive `(none, 0)` throughout. -/
 theorem compareTM_spaceUsedByTape (k : ℕ) (fst snd : Fin k)
     (w : Fin k → List Bool) (t : ℕ) :
     (compareTM k fst snd).spaceUsedByTape
@@ -464,11 +466,12 @@ seam carrying the success verdict and the incremented word `v` in place.
 
 **Proof sketch.** The carry pass flips the maximal `true`-prefix to
 `false` and the first `false` to `true`, which is exactly
-`Turing.incFixed`'s recursion; it ends at depth `p + 1` where `p` is the
-first `false` position. The return pass over the freshly written `false`
-prefix overshoots to `-1` and enters `done true` at the origin: at most
-`2p + 4 ≤ 2|w i| + 2` steps for `p < |w i|` — the fill proves the exact
-count `2p + 2` plus the two boundary steps. -/
+`Turing.incFixed`'s recursion. With `p` the first `false` position, the
+machine takes `p` carry steps, one left-turn/write step, `p` rewind
+steps, and one right-entry step — **exactly `2p + 2 ≤ 2|w i|` steps**,
+visited interval `[-1, p]`; it never visits `p + 1` on success, and
+`[false]` returns in two steps (round-1 finding 7 corrected the earlier
+mixed count). The looser public `2|w i| + 2` is deliberate slack. -/
 theorem incrementTM_run_succ (k : ℕ) (i : Fin k) (w : Fin k → List Bool)
     (v : List Bool) (hv : incFixed (w i) = some v) :
     ∃ T ≤ 2 * (w i).length + 2,
@@ -642,12 +645,15 @@ honest bound (a logarithmic-space evaluator would be a new machine, out
 of this increment's scope; recorded as a deviation from the sharpest
 conceivable form).
 
-**Proof sketch.** The buffered composition's buffer tape replays the
-unary intermediate of length `C·(n+1)^e` — but the *composed* witness
-bounds its space by the first stage's output written on the buffer; the
-fill either bounds that tape by the linear bank the harvest source
-exhibits or re-routes through the counter directly; the remaining tapes
-are the unary generator's (linear) and the counter's (logarithmic). -/
+**Proof sketch.** Split on the coefficient and exponent (round-1
+finding 5 — the unqualified buffered-generator route fails at `C = 0`,
+where the old generator still initializes length-`n + 1` unary banks
+against a constant bound): for `C = 0`, and likewise for `e = 0`, the
+witness is the constant-output family (zero work tapes, constant
+space); for `C > 0` and `e > 0`, where `n + 1 ≤ C·(n+1)^e`, the buffered
+composition's buffer holds the unary intermediate of length
+`C·(n+1)^e`, the generator's banks are linear, and the counter is
+logarithmic — all inside the stated value-linear bound. -/
 theorem computesFunInTime_polyBits_spaceUsed (C e : ℕ) :
     ∃ (M : FinTM Bool) (c : ℕ),
       M.ComputesFunInTime (fun x => Nat.bits (C * (x.length + 1) ^ e))
@@ -776,14 +782,17 @@ theorem computesFunInTime_pairLenCheck_spaceUsed (C e : ℕ) :
 
 /-- **P9 space row, marker stripping** (spec, fill pending — design §12
 R3; annotates `Turing.FinTM.computesFunInTime_stripLast`). The marker
-stripper runs in linear work-tape space: it buffers the whole original
-encoding once (its quadratic time comes from replays, not from larger
-banks).
+stripper runs in linear work-tape space: the raw buffer and the guard
+banks are each linear, and the quadratic **time** contract is deliberate
+slack over the construction's actual linear-derived bound (round-1
+finding/note 8 — the attached witness proves a linear intermediate
+before weakening; no replay story is needed).
 
-**Proof sketch.** The witness buffers the encoding (at most `n` cells)
-and erases its final marker run in place; every head stays inside
-`[-1, n + 1]` across the replays, so revisits cost time but no new
-cells. -/
+**Proof sketch.** The witness's guard/extraction banks and the raw-strip
+buffer are each at most linear (`O(n + 1)` cells); the timed conditional
+keeps them disjoint; every head stays inside linear intervals, and the
+retained `(n+1)²` time clause is slack, not a resource actually spent on
+space. -/
 theorem computesFunInTime_stripLast_spaceUsed :
     ∃ (M : FinTM Bool) (c : ℕ),
       M.ComputesFunInTime
@@ -819,15 +828,23 @@ annotates `Turing.FinTM.computesFunInTime_pairMapSnd`, the round-2
 catalog addition). Given a payload machine with its own space bound
 `Sg` (monotone, since the payload runs on the second component, which is
 no longer than the whole input), the threaded-map controller's space is
-the payload's plus linear administration: the capture bank, the buffered
-prefix, and the replay tapes are all linear in the input.
+the payload's plus linear administration. **The witness is a new
+forwarding controller, not the received captured-payload machine**
+(round-1 finding 4, the witness-honesty refutation: `pairMapTM`'s
+capture tape visits `|g b| + 1` cells — the unary-square payload defeats
+any linear administrative claim about it; output length is not bounded
+by the payload's work space).
 
-**Proof sketch.** The controller's tapes split into the payload's own
-bank — bounded by `Sg` via the lockstep of the capture discipline — and
-the administrative tapes (buffer, capture, rewind), each of whose heads
-stays inside `[-1, n + Tg n + 1]`-independent linear intervals; the
-`Monotone Sg` hypothesis transports the payload bound from `|b|` to
-`n`. -/
+**Proof sketch.** The commissioned controller: validate and buffer the
+input pair (`O(n + 1)` cells), emit the encoded first component, then
+simulate `Mg` on the buffered second component **forwarding its output**
+(the E2/`embedEmitTM` discipline — emissions go to the physical output,
+never to a work bank), leaving the payload's work-head trajectories
+unchanged — coefficient `1` on `Sg` — plus the linear buffer and
+administration; the `Monotone Sg` hypothesis transports the payload
+bound from `|b|` to `n`. Named construction obligations for the brief:
+the validating buffer stage, the forwarding payload stage, and their
+seam. -/
 theorem computesFunInTime_pairMapSnd_spaceUsed {Mg : FinTM Bool}
     {g : List Bool → List Bool} {Tg : ℕ → ℕ} (Sg : ℕ → ℕ)
     (hg : Mg.ComputesFunInTime g Tg) (hTg : Monotone Tg)
@@ -937,7 +954,12 @@ tape holds the fuel word, of length at most `T n`
 place by the debits; the capture tape records one verdict per round and
 is rewound with the round, staying within a constant; the fuel machine's
 own banks are bounded by `hFspace`. Sum the groups and absorb tape
-counts into `c`. -/
+counts into `c`.  **Scope note (round-1 note R10)**: this row annotates the
+decision-loop export (`Turing.exists_loopTM`) only; the configuration- and
+result-bearing siblings (`exists_loopCfgTM`, `exists_loopFindTM`) carry no
+exported space clause here — same-witness conjunctions for them are a
+recorded future addition, commissioned when a consumer needs them, not an
+implied theorem. -/
 theorem exists_loopTM_spaceUsed (body F : FinTM Bool) (anchor : body.State)
     (Inv : List Bool → List Bool → Prop)
     (stepF : List Bool → List Bool → List Bool)
