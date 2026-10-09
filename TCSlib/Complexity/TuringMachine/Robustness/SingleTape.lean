@@ -991,13 +991,26 @@ all-time space bound of coefficient-constant shape in the source's. Part
 of the Z4 space annotation (`machine-library-design.md` §13), plan §2.7's
 fallback route to the space-efficient universal (Ex 4.1).
 
-**Proof sketch.** The received `sweepTM` witness stacks the `k` source
-tapes on one product-alphabet tape: its single head sweeps the union of
-the source tapes' visited intervals, each containing the origin, so the
-union's cardinality is at most the sum of the source cardinalities — the
-total source space — plus the two boundary-marker cells of the sweep
-discipline; all-time because every mid-sweep position lies inside the
-swept extent and a halted simulation is fixed. -/
+**Proof sketch** (round-1 repair, A-S2-2 of `audits/zone-infra-findings.md`
+— the received `sweepTM` witness does NOT satisfy this bound: its
+`.growLeft`/`.growRight` phases extend the swept window unconditionally
+every macro-step, so a stationary-work-head input scanner has source space
+`1` but simulator space `Ω(n)`; the audit's counterexample is binding).
+The fill constructs a **demand-grown** sweep witness, reusing and
+refactoring the existing sweep infrastructure without copying it: extend a
+boundary only when a simulated head first crosses it. Each source tape's
+visited interval contains the origin, so the union's cardinality is at
+most the sum of the source cardinalities — the total source space; an
+interleaved `M.k`-cells-per-coordinate realization pays a factor `M.k`
+and a constant boundary allowance, absorbed into `c`. Mid-sweep visits lie
+inside the represented source-visited intervals through the current
+transition plus the allowance; a halted simulation is fixed. The space
+conclusion ranges over **all** `Γ'`-words: for nonempty `Γ`, a
+finite-control retraction fixing `e` simulates the same-length retracted
+source input (so `hS` applies with no monotonicity); for empty `Γ`, every
+source word is empty and an immediately halting one-tape machine suffices;
+for `M.k = 0`, the unused-tape embedding visits one cell, inside
+`c * (S + 1)`. -/
 theorem one_work_tape_spaceUsed {Γ : Type} [Fintype Γ] [DecidableEq Γ]
     (M : FinTM Γ) (f : List Γ → List Γ) (T S : ℕ → ℕ)
     (hM : M.ComputesFunInTime f T)
@@ -1014,9 +1027,12 @@ space clause carried through both stages. This is the exact deliverable
 shape of plan §2.7's fallback for Ex 4.1/Thm 4.8: a space-faithful route
 into the one-tape binary normal form.
 
-**Proof sketch.** Chain `Turing.FinTM.one_work_tape_spaceUsed` with
-`Turing.FinTM.alphabet_reduction_spaceUsed`; the two constants multiply
-and the two `+ 1` allowances compose into one. -/
+**Proof sketch.** Chain the **corrected** first stage
+(`Turing.FinTM.one_work_tape_spaceUsed`, whose round-2 route is the
+demand-grown witness) with `Turing.FinTM.alphabet_reduction_spaceUsed`;
+with first-stage coefficient `c₁` and second-stage `c₂`, both clauses are
+absorbed by the single coefficient `c₂ * (c₁ + 1)` (the round-1 audit's
+composition calculation). -/
 theorem one_work_tape_binary_spaceUsed (M : FinTM Bool)
     (f : List Bool → List Bool) (T S : ℕ → ℕ)
     (hM : M.ComputesFunInTime f T)

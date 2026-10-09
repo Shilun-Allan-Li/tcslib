@@ -1145,3 +1145,39 @@ affirmed and binding on retrofit consumers: Z5 equates runs on one
 carrier; heterogeneous `clSlot_run`-style sites first transport
 (R1 + state renaming), then agree — a public guarded
 configuration-transport theorem is a possible later export, not promised.
+
+### 13c. A-S2 round-1 repairs (2026-10-09, after `audits/zone-infra-findings.md`)
+
+The A-S2 statement gate returned **FAIL: 1 blocker, 1 major, 2 minors**;
+repairs landed with the round-2 pack:
+
+* **A-S2-1 (blocker) → the inward room premise removed and the wrappers
+  split.** The spec had one shared room hypothesis on both shift
+  directions; inward shifts *remove* donor cells, so a full donor — the
+  exact classical case — was illegal, and the audit's full-chain family
+  showed the delivered interface forcing `Ω(T²)` behavior. Repair:
+  `zoneShiftInW` carries no room condition; `zoneShiftOutW`'s receiving
+  room moved **inside its guard**; the contents wrappers are the
+  hypothesis-free `zoneShiftIn`/`zoneShiftOut`; the head steps gain the
+  guarded-total `zoneMove`; and the audit's required gate material landed —
+  the full-donor regression (`zoneShiftInW_full_donor`) and the cascade
+  statements (`zoneCascadeRight` with its represented-word, length, and
+  geometric-cost lemmas), whose proofs adopt the audit's schedule analysis
+  as the binding route. The rows now realize the **total guarded
+  operation, identity branch included**.
+* **A-S2-2 (major) → the Z4 one-tape sketch replaced.** The received
+  `sweepTM` grows its window unconditionally (the audit's stationary-head
+  scanner refutes it as a witness); the statement stands, and the binding
+  route is now a **demand-grown** sweep witness with the audit's
+  union-of-origin-intervals bound, interleaving factor, and the
+  all-`Γ'`-inputs retraction (empty-alphabet and zero-tape cases named).
+* **A-S2-5 (note, adopted) → the Ex 4.1 assessment stands as a
+  *design-level* verdict, not an implementation discharge**: the stage-1
+  universal must specify a space-accounted input interface (native/suffix
+  access or an accounted buffer — a materialized input copy costs
+  `Ω(|x|)` work cells, absent from the sketched ledger) and a parser with
+  its own space ledger; the uniform scheme (Z3), not an arbitrary
+  effective scheme, is what a space-accounted canonizer route would use.
+* Minors: the pack's definition count corrected (22, not 25; inventory in
+  the findings); the module's export list and the guard semantics
+  docstrings corrected in place (A-S2-4).

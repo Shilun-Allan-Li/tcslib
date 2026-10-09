@@ -24,26 +24,27 @@ representation ([AB09] §1.7): the virtual head always reads at the home,
 and locality is restored by per-level rebalancing shifts whose costs are
 geometric in the level.
 
-## Design (13a; spec-time refinements recorded here)
+## Design (13a; spec-time refinements, amended by the round-1 audit)
 
 * **The carrier is data, the invariant is the consumer's.** `ZoneContents`
   carries per-zone words bounded by capacity; the Hennie-Stearns
   `{empty, half, full}` fullness discipline, the `2^i`-credit amortization,
-  and the simulation theorem live with the consumer (plan §2.1), exactly
-  as the §12 loop host kept the space ledgers outside.
-* **Shifts are pairwise and order-preserving** (spec-time refinement): the
-  level-`i` inward shift moves the inner `2^(i-1)` stored cells of zone
-  `i` into the empty zone `i - 1`; the outward shift moves the outer half
-  of a full zone `i - 1` onto the front of zone `i`. Each preserves the
-  represented virtual word *by construction* (lists concatenate in the
-  same order), and the classical cascade is a sequence of these ops —
-  mathematics on top, not a machine obligation.
+  and the simulation theorem live with the consumer (plan §2.1).
+* **Shifts are pairwise, order-preserving, and totally guarded** (round-1
+  repair, finding A-S2-1): the level-`i` inward shift moves the inner
+  `2^(i-1)` stored cells of zone `i` into the **empty** zone `i - 1`, and
+  carries **no room premise** — it removes cells from the donor, so a full
+  donor is always a legal source. The outward shift moves the outer half
+  of a **full** zone `i - 1` onto the front of zone `i`, and its room
+  condition on the receiving zone lives **inside its guard**. Outside its
+  guard every operation is the identity, and the machine rows realize the
+  total guarded operation — identity branch included. The classical
+  multi-level rebalance is the descending/move/ascending cascade of these
+  ops (`zoneCascadeRight` below), whose represented-word, length, and
+  geometric-cost statements are part of this gate per the round-1 audit.
 * **One shift machine per direction and side**, taking the level in unary
   on the scratch tape: the Hennie-Stearns simulator is a single machine,
-  so the level cannot be baked into finite control. The rows below are
-  existential seam-to-seam contracts over arbitrary configurations
-  (`Cfg.ofWords` does not reach negative cells), with exact geometric
-  budgets and visited-interval clauses.
+  so the level cannot be baked into finite control.
 * **Left/right asymmetry of the cell pairing** is fixed by the layout
   (below) and documented once: on the right, even offsets carry presence
   bits; on the left, odd offsets do.
@@ -58,9 +59,13 @@ Home: cells `0` (presence) and `1` (data). Right virtual slot `s`: cells
 of the inner capacities). Every integer cell is owned by exactly one slot
 or the home.
 
-## Status: statement skeleton (§13 statement phase, tranche A-S2)
+## Status: statement skeleton (§13 statement phase, tranche A-S2, round 2)
 
-Definitions are real; every contract is `sorry`d with a proof sketch.
+Definitions are real; every contract is `sorry`d with a proof sketch. The
+round-1 gate (`audits/zone-infra-findings.md`) returned one blocker
+(A-S2-1, repaired here: the inward room premise removed, the wrappers
+split, the cascade statements added) and docstring corrections (A-S2-4,
+applied).
 
 ## Main definitions and results
 
@@ -69,18 +74,29 @@ Definitions are real; every contract is `sorry`d with a proof sketch.
   realization.
 * `Turing.zoneSide` — the represented virtual half-word (inner zones
   first).
-* `Turing.zoneShiftIn`/`Turing.zoneShiftOut` — the pure pairwise
-  rebalancing ops, with `Turing.zoneSide_shiftIn`/`_shiftOut` the
-  honesty lemmas: rebalancing never changes the represented word.
-* `Turing.zoneMoveRight`/`Turing.zoneMoveLeft`,
-  `Turing.zoneHomeWrite` — the pure head-step and write ops with their
-  readout lemmas.
+* `Turing.zoneShiftInW`/`Turing.zoneShiftOutW` — the pure pairwise
+  rebalancing ops on one side's family, totally guarded, with
+  `Turing.zoneSide_shiftInW`/`Turing.zoneSide_shiftOutW` the honesty
+  lemmas: rebalancing never changes the represented word.
+* `Turing.zoneShiftIn`/`Turing.zoneShiftOut` — the hypothesis-free
+  contents-level wrappers (round-1 repair).
+* `Turing.zoneMoveRight`/`Turing.zoneMoveLeft`, `Turing.zoneMove`,
+  `Turing.zoneHomeWrite` — the pure head-step and write ops.
+* `Turing.zoneShiftInW_full_donor` — the full-donor regression required by
+  the round-1 audit: a full donor above an empty zone shifts inward with
+  no side condition.
+* `Turing.zoneCascadeRight`, `Turing.zoneSide_cascadeRight`,
+  `Turing.zoneCascadeRight_lengths`, `Turing.zoneCascade_cost_le` — the
+  classical rebalance as a cascade of pairwise ops: it realizes one
+  virtual right move, leaves every inner level half-full, and its summed
+  row budgets stay geometric.
 * `Turing.FinTM.exists_zoneShiftInTM`/`exists_zoneShiftOutTM` — the
   machine rows: one two-tape machine per direction and side, level in
   unary on the scratch tape, exact `O(2^i)` budgets, visited sets inside
-  the level-`i` physical extent.
-* `Turing.zoneTape_blank_outside`, `Turing.spaceUsedByTape_le_card_Icc` —
-  the cardinality exports the Z4 space annotation consumes.
+  the level-`i` physical extent, realizing the total guarded op.
+* `Turing.zoneTape_blank_outside`,
+  `Turing.MultiTapeTM.spaceUsedByTape_le_card_Icc` — the cardinality
+  exports the Z4 space annotation consumes.
 
 ## References
 
@@ -88,10 +104,8 @@ Definitions are real; every contract is `sorry`d with a proof sketch.
   Approach*, Cambridge University Press, 2009. (§1.7, the Hennie-Stearns
   simulation; Exercise 1.6.)
 * In-repo precedents: `SweepCell`/`SweepAlphabet`
-  (`Robustness/SingleTape.lean`, the product-cell multiplexing this
-  pairing replaces at binary alphabet); `ObliviousSetup.lean`'s guide-zone
-  layout (the oblivious schedule's zones, harvested for the layout
-  arithmetic's shape).
+  (`Robustness/SingleTape.lean`); `ObliviousSetup.lean`'s guide-zone
+  layout.
 -/
 
 namespace Turing
@@ -131,9 +145,11 @@ def zoneIndex (s : ℕ) : ℕ := Nat.log2 (s / 2 + 1)
 /-- `zoneIndex` is the inverse of the base arithmetic: a slot lies in the
 zone it indexes.
 
-**Proof sketch.** `zoneBase i ≤ s < zoneBase (i + 1)` unfolds to
-`2^i ≤ s / 2 + 1 < 2^(i+1)` by the division arithmetic of the even bases,
-and `Nat.log2` is characterized by exactly that sandwich. -/
+**Proof sketch.** Write `s = 2r + ε`; both base endpoints are even, so the
+sandwich `zoneBase i ≤ s < zoneBase (i + 1)` is equivalent to
+`2^i ≤ r + 1 < 2^(i+1)`, which characterizes `Nat.log2 (r + 1)` (the
+argument is positive, so there is no logarithm-at-zero case). The round-1
+audit's independent derivation is the route. -/
 theorem zoneIndex_eq_iff (s i : ℕ) :
     zoneIndex s = i ↔ zoneBase i ≤ s ∧ s < zoneBase (i + 1) := by
   sorry
@@ -143,7 +159,9 @@ theorem zoneIndex_eq_iff (s i : ℕ) :
 /-- The zone contents of one tape: the home cell and, per level and side,
 the stored word (inner end first), bounded by capacity. Fullness
 discipline is deliberately **not** carried here (design §13a): the
-Hennie-Stearns `{empty, half, full}` invariant is the consumer's. -/
+Hennie-Stearns `{empty, half, full}` invariant is the consumer's, and the
+round-1 audit's cascade analysis confirms intermediate cascade states
+leave the discipline anyway. -/
 structure ZoneContents (ℓ : ℕ) where
   /-- the virtual cell under the virtual head -/
   home : Option Bool
@@ -210,7 +228,9 @@ outside `[-(2 * zoneBase ℓ + 1), 2 * zoneBase ℓ + 1]`.
 
 **Proof sketch.** A cell at distance beyond the extent maps to a slot
 `s ≥ zoneBase ℓ`; `zoneIndex_eq_iff` puts `zoneIndex s ≥ ℓ`, so `zoneSlot`
-returns `none` by its guard. -/
+returns `none` by its guard. (The round-1 audit computed the sharper
+asymmetric extent `[-2·zoneBase ℓ, 2·zoneBase ℓ + 1]`; the stated
+symmetric bound is the safe envelope.) -/
 theorem zoneTape_blank_outside {ℓ : ℕ} (z : ZoneContents ℓ) (c : ℤ)
     (hc : (2 * zoneBase ℓ + 1 : ℤ) < |c|) : zoneTape z c = none := by
   sorry
@@ -222,12 +242,14 @@ concatenated inner-first. -/
 def zoneSide {ℓ : ℕ} (w : Fin ℓ → List (Option Bool)) : List (Option Bool) :=
   (List.finRange ℓ).flatMap fun i => w i
 
-/-! ### Pure rebalancing (pairwise, order-preserving) -/
+/-! ### Pure rebalancing (pairwise, order-preserving, totally guarded) -/
 
-/-- The level-`i` inward shift on one side's family (`1 ≤ i`): if zone
-`i - 1` is empty, move the inner `2^(i-1)` stored cells (or all of them,
-if fewer) of zone `i` into it. Total, with the identity outside its
-guard. -/
+/-- The level-`i` inward shift on one side's family: when `1 ≤ i < ℓ` and
+zone `i - 1` is **empty**, move the inner `2^(i-1)` stored cells (or all
+of them, if fewer) of zone `i` into it; identity otherwise. **No room
+premise exists** (round-1 repair, A-S2-1): the operation removes cells
+from the donor, so a full donor is always legal — the exact case the
+classical rebalance needs. -/
 def zoneShiftInW {ℓ : ℕ} (i : ℕ) (w : Fin ℓ → List (Option Bool)) :
     Fin ℓ → List (Option Bool) := fun j =>
   if hi : 1 ≤ i ∧ i < ℓ then
@@ -238,14 +260,17 @@ def zoneShiftInW {ℓ : ℕ} (i : ℕ) (w : Fin ℓ → List (Option Bool)) :
     else w j
   else w j
 
-/-- The level-`i` outward shift on one side's family (`1 ≤ i`): if zone
-`i - 1` is full, move its outer half onto the front of zone `i`. Total,
-with the identity outside its guard; the capacity obligation on zone `i`
-is part of the machine row's precondition, not of the pure op. -/
+/-- The level-`i` outward shift on one side's family: when `1 ≤ i < ℓ`,
+zone `i - 1` is **full**, and the receiving zone `i` has room for the
+moved half, move zone `i - 1`'s outer half onto the front of zone `i`;
+identity otherwise. The room condition lives **inside the guard**
+(round-1 repair): no caller carries a hypothesis, and a cramped receiver
+makes the op the identity rather than ill-defined. -/
 def zoneShiftOutW {ℓ : ℕ} (i : ℕ) (w : Fin ℓ → List (Option Bool)) :
     Fin ℓ → List (Option Bool) := fun j =>
   if hi : 1 ≤ i ∧ i < ℓ then
-    if (w ⟨i - 1, by omega⟩).length = zoneCapacity (i - 1) then
+    if (w ⟨i - 1, by omega⟩).length = zoneCapacity (i - 1) ∧
+        (w ⟨i, hi.2⟩).length + 2 ^ (i - 1) ≤ zoneCapacity i then
       if j.val = i - 1 then (w ⟨i - 1, by omega⟩).take (2 ^ (i - 1))
       else if j.val = i then
         (w ⟨i - 1, by omega⟩).drop (2 ^ (i - 1)) ++ w ⟨i, hi.2⟩
@@ -255,43 +280,61 @@ def zoneShiftOutW {ℓ : ℕ} (i : ℕ) (w : Fin ℓ → List (Option Bool)) :
 
 /-- Inward rebalancing never changes the represented half-word.
 
-**Proof sketch.** Only zones `i - 1` and `i` change; in the inner-first
-concatenation they are adjacent, zone `i - 1` was empty, and
-`take ++ drop` restores zone `i`'s word, so the concatenation is
-unchanged. -/
+**Proof sketch.** A disabled guard gives the identity. When enabled, zones
+`i - 1` and `i` are adjacent in the inner-first concatenation, zone
+`i - 1` was empty, and `take ++ drop` restores zone `i`'s word, so the
+concatenation is unchanged. -/
 theorem zoneSide_shiftInW {ℓ : ℕ} (i : ℕ) (w : Fin ℓ → List (Option Bool)) :
     zoneSide (zoneShiftInW i w) = zoneSide w := by
   sorry
 
 /-- Outward rebalancing never changes the represented half-word.
 
-**Proof sketch.** Adjacent zones again: `take` keeps zone `i - 1`'s inner
-half in place and the dropped outer half is prepended to zone `i`, so the
-two-zone segment of the concatenation is literally re-associated. -/
+**Proof sketch.** A disabled guard gives the identity. When enabled, the
+adjacent two-zone segment is literally re-associated:
+`take q ++ (drop q ++ wᵢ) = wᵢ₋₁ ++ wᵢ` at the cutoff `q = 2^(i-1)`. -/
 theorem zoneSide_shiftOutW {ℓ : ℕ} (i : ℕ) (w : Fin ℓ → List (Option Bool)) :
     zoneSide (zoneShiftOutW i w) = zoneSide w := by
   sorry
 
-/-- Lift a one-side rebalancing to contents: `side = false` acts on the
-left family, `side = true` on the right. The capacity proofs transport
-because `take`/`drop` never exceed the moved words' lengths and the
-outward target's room is the machine row's precondition.
+/-- **The full-donor regression** (required by the round-1 audit,
+A-S2-1): above an empty zone, a donor of any length — a full one included —
+shifts inward with no side condition: the receiving zone gets the inner
+`2^(i-1)` cells (or all, if fewer) and the donor keeps the rest.
 
-**Proof sketch** (for the embedded capacity fields): `take (2^(i-1))` has
-length at most `2^(i-1) ≤ zoneCapacity (i-1)`; the outward target's
-length is `2^(i-1) + (w i).length`, bounded by the row's precondition
-`(w i).length + 2^(i-1) ≤ zoneCapacity i` — carried here as a hypothesis. -/
-def zoneShift {ℓ : ℕ} (inward : Bool) (side : Bool) (i : ℕ)
-    (z : ZoneContents ℓ)
-    (hroom : ∀ hi : i < ℓ,
-      ((if side then z.right else z.left) ⟨i, hi⟩).length + 2 ^ (i - 1) ≤
-        zoneCapacity i) : ZoneContents ℓ where
+**Proof sketch.** Unfold `zoneShiftInW`: both guards fire by the
+hypotheses, and the two branch equations are the stated `take`/`drop`. -/
+theorem zoneShiftInW_full_donor {ℓ : ℕ} (i : ℕ) (hi : 1 ≤ i) (hℓ : i < ℓ)
+    (w : Fin ℓ → List (Option Bool)) (hempty : w ⟨i - 1, by omega⟩ = []) :
+    zoneShiftInW i w ⟨i - 1, by omega⟩ = (w ⟨i, hℓ⟩).take (2 ^ (i - 1)) ∧
+    zoneShiftInW i w ⟨i, hℓ⟩ = (w ⟨i, hℓ⟩).drop (2 ^ (i - 1)) := by
+  sorry
+
+/-- Lift the inward shift to contents: `side = false` acts on the left
+family, `side = true` on the right. Hypothesis-free (round-1 repair).
+
+**Proof sketch** (capacity fields): the receiving zone gets at most
+`2^(i-1) ≤ zoneCapacity (i-1)` cells; the donor's word only shrinks;
+untouched zones keep their bounds. -/
+def zoneShiftIn {ℓ : ℕ} (side : Bool) (i : ℕ) (z : ZoneContents ℓ) :
+    ZoneContents ℓ where
   home := z.home
-  left := if side then z.left
-    else (if inward then zoneShiftInW i z.left else zoneShiftOutW i z.left)
-  right := if side then
-    (if inward then zoneShiftInW i z.right else zoneShiftOutW i z.right)
-    else z.right
+  left := if side then z.left else zoneShiftInW i z.left
+  right := if side then zoneShiftInW i z.right else z.right
+  left_le := by sorry
+  right_le := by sorry
+
+/-- Lift the outward shift to contents. Hypothesis-free: the receiving
+zone's room condition is inside the family op's guard.
+
+**Proof sketch** (capacity fields): when the guard fires, the shrunk
+lower word fits trivially and the enlarged upper word fits by the guard's
+own room conjunct; otherwise everything is unchanged. -/
+def zoneShiftOut {ℓ : ℕ} (side : Bool) (i : ℕ) (z : ZoneContents ℓ) :
+    ZoneContents ℓ where
+  home := z.home
+  left := if side then z.left else zoneShiftOutW i z.left
+  right := if side then zoneShiftOutW i z.right else z.right
   left_le := by sorry
   right_le := by sorry
 
@@ -316,7 +359,8 @@ the left stack's zone `0`, and the new home is popped from the right
 stack's zone `0` (blank when that zone is empty — the virtual tape is
 blank past its stored extent; the Hennie-Stearns consumer's invariant
 makes this the genuinely-blank case). Capacity of `L_0` is the consumer's
-rebalancing obligation, carried here as a hypothesis. -/
+rebalancing obligation, carried here as a hypothesis; the hypothesis-free
+guarded form is `Turing.zoneMove`. -/
 def zoneMoveRight {ℓ : ℕ} (hℓ : 0 < ℓ) (z : ZoneContents ℓ)
     (hroom : (z.left ⟨0, hℓ⟩).length + 1 ≤ zoneCapacity 0) :
     ZoneContents ℓ where
@@ -336,6 +380,22 @@ def zoneMoveLeft {ℓ : ℕ} (hℓ : 0 < ℓ) (z : ZoneContents ℓ)
   left_le := by sorry
   right_le := by sorry
 
+/-- The totally guarded head step (`dir = true` is right): acts when
+`0 < ℓ` and the pushed side has room, else identity — the foldable form
+the cascade uses. -/
+def zoneMove {ℓ : ℕ} (dir : Bool) (z : ZoneContents ℓ) : ZoneContents ℓ :=
+  if hℓ : 0 < ℓ then
+    match dir with
+    | true =>
+      if h : (z.left ⟨0, hℓ⟩).length + 1 ≤ zoneCapacity 0 then
+        zoneMoveRight hℓ z h
+      else z
+    | false =>
+      if h : (z.right ⟨0, hℓ⟩).length + 1 ≤ zoneCapacity 0 then
+        zoneMoveLeft hℓ z h
+      else z
+  else z
+
 /-- A right step transforms the represented tape as the virtual head move:
 the old home joins the left word's inner end, and the right word loses its
 inner cell (a nonempty `R_0` case; the blank-extension case pads with the
@@ -350,6 +410,81 @@ theorem zoneSide_moveRight {ℓ : ℕ} (hℓ : 0 < ℓ) (z : ZoneContents ℓ)
     zoneSide (zoneMoveRight hℓ z hroom).right = (zoneSide z.right).tail := by
   sorry
 
+/-! ### The classical rebalance as a cascade (round-1 repair, A-S2-1)
+
+The round-1 audit supplied the schedule and its analysis; the statements
+below are the required gate material. One classical right move at index
+`j`: a descending pass of inward-right/outward-left pairs from level `j`
+down to `1`, the head step, and the ascending pass back up. -/
+
+/-- One cascade stage at level `i`: shift inward on the right (feeding the
+head's side) and outward on the left (draining the side the head leaves). -/
+def zoneStepPair {ℓ : ℕ} (i : ℕ) (z : ZoneContents ℓ) : ZoneContents ℓ :=
+  zoneShiftOut false i (zoneShiftIn true i z)
+
+/-- The classical right-move rebalance at index `j`: descend `j → 1`,
+step right, ascend `1 → j`. -/
+def zoneCascadeRight {ℓ : ℕ} (j : ℕ) (z : ZoneContents ℓ) : ZoneContents ℓ :=
+  (List.range j).foldl (fun z i => zoneStepPair (i + 1) z)
+    (zoneMove true
+      ((List.range j).reverse.foldl (fun z i => zoneStepPair (i + 1) z) z))
+
+/-- The cascade realizes exactly one virtual right move. Preconditions are
+the classical pre-state at index `j`: on the right, zones below `j` empty
+and the donor `j` nonempty; on the left, zones below `j` full.
+
+**Proof sketch** (the round-1 audit's schedule analysis, adopted as the
+binding route): on the descending pass each inward-right guard fires into
+an empty lower zone and each outward-left guard fires from a full lower
+zone with room above; after the head step, the ascending pass re-fires the
+same guards on the half-full intermediate state. Order preservation of the
+raw ops (`zoneSide_shiftInW`/`OutW`) and the single nonempty level-zero pop
+(`zoneSide_moveRight`) give the stated word transformation. -/
+theorem zoneSide_cascadeRight {ℓ : ℕ} (j : ℕ) (hj : j < ℓ)
+    (z : ZoneContents ℓ)
+    (hr : ∀ k (hk : k < j), z.right ⟨k, by omega⟩ = [])
+    (hl : ∀ k (hk : k < j),
+      (z.left ⟨k, by omega⟩).length = zoneCapacity k)
+    (hdonor : z.right ⟨j, hj⟩ ≠ []) :
+    zoneSide (zoneCascadeRight j z).left = z.home :: zoneSide z.left ∧
+    zoneSide (zoneCascadeRight j z).right = (zoneSide z.right).tail := by
+  sorry
+
+/-- The cascade restores the half-full discipline below its index: after a
+classical right move at index `j` from a donor holding at least `2^j`
+cells, every level below `j` is half-full on both sides, the right donor
+loses exactly `2^j` cells, and the left zone `j` gains exactly `2^j`.
+
+**Proof sketch.** Track the two passes level by level (the round-1 audit's
+ledger): the descending pass makes each lower receiving word half-full and
+leaves the remainder upstairs; the ascending pass halves the level-zero
+surplus back upward symmetrically. -/
+theorem zoneCascadeRight_lengths {ℓ : ℕ} (j : ℕ) (hj : j < ℓ)
+    (z : ZoneContents ℓ)
+    (hr : ∀ k (hk : k < j), z.right ⟨k, by omega⟩ = [])
+    (hl : ∀ k (hk : k < j),
+      (z.left ⟨k, by omega⟩).length = zoneCapacity k)
+    (hdonor : 2 ^ j ≤ (z.right ⟨j, hj⟩).length) :
+    (∀ k (hk : k < j),
+      ((zoneCascadeRight j z).right ⟨k, by omega⟩).length = 2 ^ k ∧
+      ((zoneCascadeRight j z).left ⟨k, by omega⟩).length = 2 ^ k) ∧
+    ((zoneCascadeRight j z).right ⟨j, hj⟩).length =
+      (z.right ⟨j, hj⟩).length - 2 ^ j ∧
+    ((zoneCascadeRight j z).left ⟨j, hj⟩).length =
+      (z.left ⟨j, hj⟩).length + 2 ^ j := by
+  sorry
+
+/-- The cascade's summed row budgets stay geometric: the charge lemma the
+Hennie-Stearns amortization consumes (two shift pairs per level, each
+within the row budget `2^i + i + 1`).
+
+**Proof sketch.** `i + 1 ≤ 2^i` for `i ≥ 1`, so each summand is at most
+`4 · 2 · 2^i = 8 · 2^i`, and the geometric sum over `1 ≤ i ≤ j` is
+`8 · (2^(j+1) - 2) ≤ 16 · 2^j` — the round-1 audit's charge calculation. -/
+theorem zoneCascade_cost_le (j : ℕ) :
+    ∑ i ∈ Finset.range j, 4 * (2 ^ (i + 1) + (i + 1) + 1) ≤ 16 * 2 ^ j := by
+  sorry
+
 /-! ### The machine rows -/
 
 namespace FinTM
@@ -357,27 +492,26 @@ namespace FinTM
 /-- **Z2, the inward shift row.** One two-tape machine per side: tape `0`
 carries a zoned tape, tape `1` the level in unary (`replicate i true` as a
 buffered word). From any configuration holding `zoneTape z` at origin and
-the level word at origin, the machine halts at the rebalanced tape with
-both heads home, the level word intact, within `c * (2^i + i + 1)` steps,
-first return at the halt, and the visited sets inside the level-`i + 1`
-physical extent on tape `0` and a `c * (2^i + i + 1)`-cell interval on
-tape `1`. No fullness hypothesis beyond the pure op's guard: the row
-realizes `zoneShift` exactly where the guard fires and must not be invoked
-elsewhere (the consumer's invariant supplies the guard).
+the level word at origin, the machine halts at
+`zoneTape (zoneShiftIn side i z)` — **realizing the total guarded
+operation, identity branch included** (round-1 repair: there is no room
+premise, and a false guard means the machine restores the original tape) —
+with both heads home, the level word intact, within `c * (2^i + i + 1)`
+steps, first return at the halt, the data head inside the level-`i + 1`
+physical extent, and the scratch tape's space in the same budget.
 
-**Proof sketch** (fill plan): scan the level word to locate zone `i`'s
-physical window (the bases are computable by doubling a unary counter —
-`2^(i-1)` cells staged on tape `1` past the level word); move the inner
-`2^(i-1)` stored pairs of zone `i` inward with the R3 transfer discipline
-staged through tape `1`; R2 seams between the scan, stage, and write-back
-phases; the budget is geometric because every phase is one pass over the
-level-`i` window. -/
+**Proof sketch** (fill plan): scan the level word; test the lower zone's
+emptiness by one pass over its window (a stored virtual blank occupies two
+nonblank cells, so word ends are detectable); on a live guard, stage the
+donor's inner `2^(i-1)` pairs through tape `1` with the R3 transfer
+discipline and write them inward; on a dead guard, rewind and halt with
+the tape untouched. Navigation counters follow the round-1 audit's
+geometric-ledger route (anchored binary countdown, `O(2^i)` total carry
+work; unary-level initialization polynomial in `i`, absorbed). R2 seams
+join the constantly many phases. -/
 theorem exists_zoneShiftInTM (side : Bool) :
     ∃ (Z : FinTM Bool) (c : ℕ), Z.k = 2 ∧
       ∀ (ℓ i : ℕ) (hi : 1 ≤ i) (hℓ : i < ℓ) (z : ZoneContents ℓ)
-        (hroom : ∀ hi' : i < ℓ,
-          ((if side then z.right else z.left) ⟨i, hi'⟩).length + 2 ^ (i - 1) ≤
-            zoneCapacity i)
         {x : List Bool} (d : Cfg Z.k Bool Z.State x)
         (hstate : d.state = some Z.tm.q₀)
         (htape : d.workTapes = fun j =>
@@ -386,7 +520,7 @@ theorem exists_zoneShiftInTM (side : Bool) :
         ∃ T ≤ c * (2 ^ i + i + 1),
           (Z.tm.runFrom d T).state = none ∧
           (Z.tm.runFrom d T).workTapes = (fun j =>
-            if j.val = 0 then zoneTape (zoneShift true side i z hroom)
+            if j.val = 0 then zoneTape (zoneShiftIn side i z)
             else bufferTape (List.replicate i true)) ∧
           (Z.tm.runFrom d T).workTapePos = (fun _ => 0) ∧
           (Z.tm.runFrom d T).output = [] ∧
@@ -401,20 +535,19 @@ theorem exists_zoneShiftInTM (side : Bool) :
   sorry
 
 /-- **Z2, the outward shift row**: the mirrored contract realizing the
-outward `zoneShift`, with the same budget shape, interval clause, and
-scratch bound.
+total guarded outward operation (the room condition is inside the pure
+op's guard; a cramped receiver yields the identity), with the same budget
+shape, interval clause, and scratch bound.
 
-**Proof sketch** (fill plan): as the inward row with the transfer
-direction reversed; the full zone `i - 1`'s outer half is staged through
+**Proof sketch** (fill plan): as the inward row with the fullness and
+room tests up front (both by bounded window passes) and the transfer
+direction reversed; the full lower zone's outer half is staged through
 tape `1` and written to zone `i`'s front after its stored word is slid
 outward by `2^(i-1)` slots — one extra pass over the level-`i` window,
 inside the same geometric budget. -/
 theorem exists_zoneShiftOutTM (side : Bool) :
     ∃ (Z : FinTM Bool) (c : ℕ), Z.k = 2 ∧
       ∀ (ℓ i : ℕ) (hi : 1 ≤ i) (hℓ : i < ℓ) (z : ZoneContents ℓ)
-        (hroom : ∀ hi' : i < ℓ,
-          ((if side then z.right else z.left) ⟨i, hi'⟩).length + 2 ^ (i - 1) ≤
-            zoneCapacity i)
         {x : List Bool} (d : Cfg Z.k Bool Z.State x)
         (hstate : d.state = some Z.tm.q₀)
         (htape : d.workTapes = fun j =>
@@ -423,7 +556,7 @@ theorem exists_zoneShiftOutTM (side : Bool) :
         ∃ T ≤ c * (2 ^ i + i + 1),
           (Z.tm.runFrom d T).state = none ∧
           (Z.tm.runFrom d T).workTapes = (fun j =>
-            if j.val = 0 then zoneTape (zoneShift false side i z hroom)
+            if j.val = 0 then zoneTape (zoneShiftOut side i z)
             else bufferTape (List.replicate i true)) ∧
           (Z.tm.runFrom d T).workTapePos = (fun _ => 0) ∧
           (Z.tm.runFrom d T).output = [] ∧
