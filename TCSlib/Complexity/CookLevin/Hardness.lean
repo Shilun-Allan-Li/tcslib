@@ -7,6 +7,7 @@ import TCSlib.Complexity.ClassNP.SAT
 import TCSlib.Complexity.ClassNP.TMSAT
 import TCSlib.Complexity.TuringMachine.Robustness.Oblivious
 import TCSlib.Complexity.CookLevin.Snapshot
+import TCSlib.Complexity.TuringMachine.Build.Seam
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -3382,12 +3383,7 @@ the banked reader. Stream positions and all reset/read transitions are charged. 
 private def clFreshTM : FinTM Bool where
   k := 2
   State := (Fin 3) ⊕ clReadTM.State
-  tm := {
-    q₀ := .inl 0
-    tr := fun q inp work => match q with
-      | .inl q => if q = 2 then FinTM.controlAction 0 (some (.inr (.inl none)))
-          else (clWipeTM.tm.tr q inp work).mapState Sum.inl
-      | .inr q => (clReadTM.tm.tr q inp work).mapState Sum.inr }
+  tm := seamCompTM clWipeTM.tm 2 clReadTM.tm (.inl none)
 
 /-- Whole-configuration unrestricted loading, with a separate cost for
 clearing the old target. The new field may be empty, shorter, or unrelated.
@@ -3402,28 +3398,9 @@ private lemma clFresh_run (x : List Bool) (p : Fin (x.length + 2))
         (clReadCfg x p (.inr true) (pre ++ pairEncode w tail) w
           (pre.length + 2 * w.length + 2) 0).mapState Sum.inr := by
   obtain ⟨a, ha, _, hf, he⟩ := clWipe_first x p (pre ++ pairEncode w tail) old pre.length
-  have lift := clMap_run clWipeTM.tm clFreshTM.tm Sum.inl (fun q => q ≠ (2 : Fin 3))
-    (by intro q hq inp work; simp only [clFreshTM, if_neg hq])
-    (clWipeCfg x p 0 (pre ++ pairEncode w tail) old pre.length 0) a
-    (by intro j hj q hq heq; subst q; exact hf j hj hq)
-  rw [he] at lift
-  have dispatch : clFreshTM.tm.step
-      ((clWipeCfg x p 2 (pre ++ pairEncode w tail) [] pre.length 0).mapState Sum.inl) =
-      (clReadCfg x p (.inl none) (pre ++ pairEncode w tail) [] pre.length 0).mapState Sum.inr := by
-    change (FinTM.controlAction 0 (some (Sum.inr (.inl none) : clFreshTM.State))).apply _ = _
-    rw [FinTM.controlAction_apply, moveInputPos_zero]
-    rfl
-  have readRun := clMap_run clReadTM.tm clFreshTM.tm Sum.inr (fun _ => True)
-    (by intro q _ inp work; rfl)
-    (clReadCfg x p (.inl none) (pre ++ pairEncode w tail) [] pre.length 0)
-    (3 * w.length + 3) (by intros; trivial)
-  rw [clRead_run x p pre w tail [] (by simp)] at readRun
-  have arrived : clFreshTM.tm.runFrom
-      ((clWipeCfg x p 0 (pre ++ pairEncode w tail) old pre.length 0).mapState Sum.inl) (a + 1) =
-      (clReadCfg x p (.inl none) (pre ++ pairEncode w tail) [] pre.length 0).mapState Sum.inr := by
-    rw [MultiTapeTM.runFrom_succ_eq_step', lift, dispatch]
   refine ⟨a + 1 + (3 * w.length + 3), by omega, ?_⟩
-  rw [MultiTapeTM.runFrom_add, arrived, readRun]
+  exact seamCompTM_run_ofCfg clWipeTM.tm (2 : Fin 3) clReadTM.tm (.inl none)
+    he rfl hf (clRead_run x p pre w tail [] (by simp))
 
 /-- The unrestricted loader's completed state is absorbing. -/
 private lemma clFresh_idle {x : List Bool} (c : Cfg 2 Bool clFreshTM.State x)
