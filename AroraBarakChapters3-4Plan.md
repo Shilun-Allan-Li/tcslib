@@ -464,6 +464,7 @@ before anything moves; the split runs on the shrunken files per its
 recorded precondition; the structural change gets its own clean review).
 Retrofit epoch **R1** = the three batches, briefs
 `briefs/retrofit-rb{1,2,3}.md`.
+| **§13 decisions 13.1-13.5 resolved; track A opens in two tranches** (user, 2026-10-09): zones-with-fullness; paired presence/data cells; new file renamed **`Codes2Tape.lean`**; Z1 mode shape inherits 12.4 (silent/emit pair over one core); Z5 in `Simulation.lean`. Statement phase split (`machine-library-design.md` §13a): **A-S1** = the virtual-input half (Z5 + Z1 + the Z1 rider — harvest-grade, near-term consumers: the blocked retrofit R1 families, 12.2c, Loop H3, EXPCOM) then its gate; **A-S2** = the zone half (Z2 + Z3 + Z4 — the carrier is the design risk and gets an undiluted gate; the Ex 4.1 bonus check discharges in its pack). Z1 canonical shape recorded: `1 + M.k` tapes (buffer first), relocation by R1 composition, never baked in. A-S1 spec layer is maintainer-serial, in progress | Decided |
 
 **Duplication-governance amendments landed (user-directed, 2026-10-09; from
 the D-R2 post-mortem — the `f2_` accumulation was disclosed and recorded at

@@ -1090,3 +1090,35 @@ gate, so the chapter-4 risk register (§6 summit 1) is settled either way.
    versus two transformers — inherits open decision 12.4's resolution.
 5. **13.5 Z5 placement**: the agreement-transfer lemma in `Simulation.lean`
    beside the lockstep gadgets (proposed) versus a `Build/` module.
+
+### 13a. Decisions resolved; epoch structure (user, 2026-10-09)
+
+All five open decisions resolved as proposed, with one rename:
+**13.1** zones-with-fullness (interleaving is not built); **13.2** paired
+presence/data cells (`SweepCell` precedent); **13.3** a new file, renamed
+**`TuringMachine/Codes2Tape.lean`** so the "2" reads as *two-tape*;
+**13.4** Z1 inherits 12.4's resolution (a silent/emit transformer pair over
+one shared core); **13.5** Z5 lands in `Simulation.lean`.
+
+**The statement phase runs in two tranches, each with its own gate:**
+
+* **A-S1 — the virtual-input half**: Z5 (the agreement transfer,
+  `Simulation.lean`, additive), Z1 (`Build/VirtualInput.lean`, new), and
+  the Z1 rider (the R1 selected-tape exports, `Embed.lean`, additive via
+  the shared-file mechanism). Rationale: harvest-grade risk (the lockstep
+  is proved four times over; the rider's facts are proved privately), and
+  its consumers are the *near-term* ones — the blocked retrofit R1
+  families, the 12.2c dedup, the Loop H3 collapse, the EXPCOM summit.
+* **A-S2 — the zone half**: Z2 (`Build/Zone.lean`), Z3
+  (`Codes2Tape.lean`), Z4 (the Robustness space annotation). Rationale:
+  Z2's carrier predicate is the genuine design risk and deserves an
+  undiluted gate; its consumers (Hennie-Stearns, the two-tape universal)
+  sit one stage later. The Z4 design-time obligation (does the two-tape
+  universal's space bonus yield Ex 4.1?) is discharged in the A-S2 pack.
+
+The canonical Z1 shape (spec-time refinement, recorded before drafting):
+the transformer is defined on exactly `1 + M.k` work tapes — the buffer
+first, the payload bank after it — and **relocation is not baked in**:
+a consumer needing the buffer or bank elsewhere composes with R1. One
+shared hosting core; `silent`/`emit` flavors per 12.4; the tag lives in
+the transported control state (the `a2_MapState.run q tag` precedent).
