@@ -170,7 +170,7 @@ private theorem goes_payload (keep : Bool) (r : List Bool) (n : ℕ) :
         have hhalt : Goes (program true) (b :: r) .stop (regs 0) 0
             none (regs 0) 0 [] 1 := goes_halt rfl
         exact (htest.trans hhalt).congr rfl (by simp) rfl (by simp) (by simp)
-          (by simp; omega)
+          (by simp)
     | succ n =>
       have htest : Goes (program keep) (b :: r) .head (regs (n + 1)) 0
           (some .read) (regs (n + 1)) 0 [] 1 :=
@@ -347,8 +347,7 @@ theorem polyTimeComputable_takePrefixByLength :
   apply CounterProg.polyTimeComputable_of_goes
     (PrefixByLength.program true) PrefixByLength.Label.scan PrefixByLength.take 5 1
   intro z
-  simpa only [Bool.true_eq_true, if_true, Nat.pow_one] using
-    PrefixByLength.goes_total true z
+  simpa using PrefixByLength.goes_total true z
 
 /-- Dropping from the second component of a pair a prefix as long as its first
 component is polynomial-time computable. Malformed inputs return `[]`.
@@ -361,7 +360,6 @@ theorem polyTimeComputable_dropPrefixByLength :
   apply CounterProg.polyTimeComputable_of_goes
     (PrefixByLength.program false) PrefixByLength.Label.scan PrefixByLength.drop 5 1
   intro z
-  simpa only [Bool.false_eq_true, if_false, Nat.pow_one] using
-    PrefixByLength.goes_total false z
+  simpa using PrefixByLength.goes_total false z
 
 end Complexity

@@ -43,16 +43,16 @@ def shiftInput (n : ℕ) (s : St R Λ) : St R Λ :=
   { s with pos := n + s.pos }
 
 /-- Indexing after a prefix reads the corresponding symbol of the suffix. -/
-theorem getElem?_append_length_add (prefix suffix : List Bool) (p : ℕ) :
-    (prefix ++ suffix)[prefix.length + p]? = suffix[p]? := by
+theorem getElem?_append_length_add (pre suffix : List Bool) (p : ℕ) :
+    (pre ++ suffix)[pre.length + p]? = suffix[p]? := by
   rw [List.getElem?_append_right (Nat.le_add_right _ _)]
   simp
 
 /-- A program step after a consumed prefix is the corresponding suffix step with its
 input position shifted. -/
-theorem step_shiftInput (P : Λ → Instr R Λ) (prefix suffix : List Bool) (s : St R Λ) :
-    step P (prefix ++ suffix) (shiftInput prefix.length s) =
-      shiftInput prefix.length (step P suffix s) := by
+theorem step_shiftInput (P : Λ → Instr R Λ) (pre suffix : List Bool) (s : St R Λ) :
+    step P (pre ++ suffix) (shiftInput pre.length s) =
+      shiftInput pre.length (step P suffix s) := by
   rcases s with ⟨lbl, ρ, p, o⟩
   cases lbl with
   | none => rfl
@@ -68,10 +68,10 @@ theorem step_shiftInput (P : Λ → Instr R Λ) (prefix suffix : List Bool) (s :
 position shifted.
 
 **Proof sketch.** Induct on the number of steps, using the one-step input-shift identity. -/
-theorem run_shiftInput (P : Λ → Instr R Λ) (prefix suffix : List Bool)
+theorem run_shiftInput (P : Λ → Instr R Λ) (pre suffix : List Bool)
     (s : St R Λ) (t : ℕ) :
-    run P (prefix ++ suffix) (shiftInput prefix.length s) t =
-      shiftInput prefix.length (run P suffix s t) := by
+    run P (pre ++ suffix) (shiftInput pre.length s) t =
+      shiftInput pre.length (run P suffix s t) := by
   induction t generalizing s with
   | zero => rfl
   | succ t ih =>
@@ -81,13 +81,13 @@ theorem run_shiftInput (P : Λ → Instr R Λ) (prefix suffix : List Bool)
 initial and final input positions both increase by the prefix length. -/
 theorem Goes.prepend_input {P : Λ → Instr R Λ} {suffix : List Bool} {l : Λ}
     {l' : Option Λ} {ρ ρ' : Fin R → ℕ} {p p' : ℕ} {e : List Bool} {b : ℕ}
-    (h : Goes P suffix l ρ p l' ρ' p' e b) (prefix : List Bool) :
-    Goes P (prefix ++ suffix) l ρ (prefix.length + p) l' ρ' (prefix.length + p') e b := by
+    (h : Goes P suffix l ρ p l' ρ' p' e b) (pre : List Bool) :
+    Goes P (pre ++ suffix) l ρ (pre.length + p) l' ρ' (pre.length + p') e b := by
   intro o
   obtain ⟨t, ht, hrun⟩ := h o
   refine ⟨t, ht, ?_⟩
-  change run P (prefix ++ suffix) (shiftInput prefix.length ⟨some l, ρ, p, o⟩) t =
-    shiftInput prefix.length ⟨l', ρ', p', o ++ e⟩
+  change run P (pre ++ suffix) (shiftInput pre.length ⟨some l, ρ, p, o⟩) t =
+    shiftInput pre.length ⟨l', ρ', p', o ++ e⟩
   rw [run_shiftInput, hrun]
 
 end Complexity.CounterProg

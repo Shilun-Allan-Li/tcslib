@@ -98,11 +98,10 @@ def DAGCircuit.bufferInputs {n m : ℕ} (C : DAGCircuit m)
     · rw [List.getElem_append_right (by rw [hlen]; omega)] at ha
       simp only [List.getElem_map, DAGGate.remap, List.mem_map] at ha
       obtain ⟨b, hb, rfl⟩ := ha
-      rw [hlen] at hb
-      have hiC : i - m < C.gates.length := by
+      have hiC : i - (inputBuffer s).length < C.gates.length := by
         simp only [List.length_append, List.length_map, hlen] at hi
         omega
-      have hargs := C.args_lt (i - m) hiC b hb
+      have hargs := C.args_lt (i - (inputBuffer s).length) hiC b hb
       omega
   output_lt := by
     have houtput := C.output_lt
@@ -146,8 +145,8 @@ theorem DAGCircuit.bufferInputs_eval {n m : ℕ}
     (runWith DAGGate.eval (inputBuffer s) (List.ofFn x))
     (by simp)
     (by simp [inputBuffer])
-    (fun v hv => by omega)
-    (fun i => by omega)
+    (fun v hv => by simp only []; omega)
+    (fun i => by simp only []; omega)
     (fun v hv => by
       simpa [List.getD_eq_getD_getElem?, hv] using inputBuffer_value s x ⟨v, hv⟩)
     C.gates C.args_lt C.output C.output_lt
@@ -236,8 +235,10 @@ def vectorOfList {α : Type*} {m : ℕ} (l : List α) (h : l.length = m) :
 @[simp] theorem vectorOfList_ofFn {α : Type*} {m : ℕ}
     (l : List α) (h : l.length = m) :
     List.ofFn (vectorOfList l h) = l := by
-  subst m
-  simpa [vectorOfList] using List.ofFn_get l
+  apply List.ext_getElem
+  · simp [h]
+  · intro i h1 h2
+    simp [List.getElem_ofFn, vectorOfList, List.get_eq_getElem, Fin.coe_cast]
 
 /-- The vector of source wires for the self-delimiting paired input. -/
 def pairWiring (n : ℕ) (r : List Bool) : Fin (2 * n + 2 + r.length) → Fin n ⊕ Bool :=
@@ -258,10 +259,12 @@ def DAGCircuit.pairEncode {n : ℕ} (r : List Bool)
 /-- Converting the paired input vector to a word gives the exact library encoding. -/
 theorem pairEncodeInput_ofFn {n : ℕ} (r : List Bool) (v : Fin n → Bool) :
     List.ofFn (pairEncodeInput r v) = Turing.pairEncode (List.ofFn v) r := by
-  change List.ofFn (fun i =>
-    (fun s : Fin n ⊕ Bool => match s with | .inl j => v j | .inr b => b)
-      (pairWiring n r i)) = _
-  rw [List.ofFn_comp']
+  have e1 : List.ofFn (pairEncodeInput r v)
+      = (List.ofFn (pairWiring n r)).map
+          (fun s : Fin n ⊕ Bool => match s with | .inl j => v j | .inr b => b) := by
+    rw [List.map_ofFn]
+    rfl
+  rw [e1]
   unfold pairWiring
   rw [vectorOfList_ofFn]
   exact (pairWireList_spec n r).2 v
