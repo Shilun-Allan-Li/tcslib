@@ -282,6 +282,592 @@ def incrementTM (k : ℕ) (i : Fin k) : MultiTapeTM k Bool FlagPhase where
           none, some (.done v)⟩
     | .done v => ⟨0, fun _ => (none, 0), none, some (.done v)⟩
 
+/-- Configuration at a scan position, with explicit words and head positions. -/
+private def catalogCfg {S : Type*} (q : S) (w : Fin k → List Bool)
+    (heads : Fin k → ℤ) : Cfg k Bool S x :=
+  { Cfg.ofWords q w with workTapePos := heads }
+
+/-- The chronological trace of a forward scan, left turn, return, and entry.
+The return index is the number of nonblank cells still to erase or cross. -/
+private def catalogTrace {S : Type*} (F R : ℕ → Cfg k Bool S x)
+    (D : Cfg k Bool S x) (L t : ℕ) : Cfg k Bool S x :=
+  if t ≤ L then F t else if t ≤ 2 * L + 1 then R (2 * L + 1 - t) else D
+
+/-- Local transition equations determine the complete trace, including all
+stationary steps after the exit. **Proof sketch.** Induct on elapsed time;
+split at the forward endpoint, return endpoint, and stationary tail. -/
+private lemma catalog_trace_run {S : Type*} (M : MultiTapeTM k Bool S)
+    (F R : ℕ → Cfg k Bool S x) (D : Cfg k Bool S x) (L : ℕ)
+    (hF : ∀ r < L, M.step (F r) = F (r + 1))
+    (hturn : M.step (F L) = R L)
+    (hR : ∀ r < L, M.step (R (r + 1)) = R r)
+    (hentry : M.step (R 0) = D) (hD : M.step D = D) (t : ℕ) :
+    M.runFrom (F 0) t = catalogTrace F R D L t := by
+  induction t with
+  | zero => simp [catalogTrace]
+  | succ t ih =>
+    rw [MultiTapeTM.runFrom_succ_eq_step', ih]
+    by_cases h₁ : t < L
+    · simpa [catalogTrace, show t ≤ L by omega, show t + 1 ≤ L by omega]
+        using hF t h₁
+    · by_cases h₂ : t = L
+      · subst t
+        simpa [catalogTrace, show ¬L + 1 ≤ L by omega,
+          show L + 1 ≤ 2 * L + 1 by omega, show 2 * L + 1 - (L + 1) = L by omega]
+          using hturn
+      · by_cases h₃ : t < 2 * L + 1
+        · have he : 2 * L + 1 - t = (2 * L - t) + 1 := by omega
+          simpa [catalogTrace, show ¬t ≤ L by omega, show ¬t + 1 ≤ L by omega,
+            show t ≤ 2 * L + 1 by omega, show t + 1 ≤ 2 * L + 1 by omega,
+            he, show 2 * L + 1 - (t + 1) = 2 * L - t by omega]
+            using hR (2 * L - t) (by omega)
+        · by_cases h₄ : t = 2 * L + 1
+          · subst t
+            simpa [catalogTrace, show ¬2 * L + 1 ≤ L by omega,
+              show ¬2 * L + 1 + 1 ≤ L by omega] using hentry
+          · simpa [catalogTrace, show ¬t ≤ L by omega,
+              show ¬t + 1 ≤ L by omega, show ¬t ≤ 2 * L + 1 by omega,
+              show ¬t + 1 ≤ 2 * L + 1 by omega] using hD
+
+/-- A head confined to the inclusive interval from minus one to `L` visits
+at most `L+2` cells. -/
+private lemma catalog_space_bound {S : Type*} (M : MultiTapeTM k Bool S)
+    (c : Cfg k Bool S x) (L t : ℕ) (i : Fin k)
+    (h : ∀ u, -1 ≤ (M.runFrom c u).workTapePos i ∧
+      (M.runFrom c u).workTapePos i ≤ (L : ℤ)) :
+    M.spaceUsedByTape c t i ≤ L + 2 := by
+  have hs : M.visitedByTapeHead c t i ⊆ Finset.Icc (-1 : ℤ) (L : ℤ) := by
+    intro z hz
+    obtain ⟨u, _, rfl⟩ := Finset.mem_image.mp hz
+    exact Finset.mem_Icc.mpr (h u)
+  exact (Finset.card_le_card hs).trans (by rw [Int.card_Icc]; omega)
+
+/-- A head stationary at zero has exactly its origin singleton as visited set. -/
+private lemma catalog_space_one {S : Type*} (M : MultiTapeTM k Bool S)
+    (c : Cfg k Bool S x) (t : ℕ) (i : Fin k)
+    (h : ∀ u, (M.runFrom c u).workTapePos i = 0) :
+    M.spaceUsedByTape c t i = 1 := by
+  simp only [MultiTapeTM.spaceUsedByTape, MultiTapeTM.visitedByTapeHead, h]
+  rw [Finset.image_const Finset.nonempty_range_add_one]
+  rfl
+
+/-- Erasing the last cell of a prefix shortens that prefix by one.
+**Proof sketch.** Read the last cell, earlier cells, and outside cells separately. -/
+private lemma catalog_erase_take (w : List Bool) (r : ℕ) (hr : r < w.length) :
+    Function.update (FinTM.bufferTape (w.take (r + 1))) (r : ℤ) none =
+      FinTM.bufferTape (w.take r) := by
+  funext z
+  by_cases hz : z = (r : ℤ)
+  · subst z
+    simp [FinTM.bufferTape, List.getElem?_eq_none]
+  · rw [Function.update_of_ne hz]
+    by_cases h0 : 0 ≤ z
+    · simp only [FinTM.bufferTape, if_pos h0]
+      by_cases hzr : z.toNat < r
+      · simp [List.getElem?_take, hzr, show z.toNat < r + 1 by omega]
+      · have hzr' : r + 1 ≤ z.toNat := by omega
+        rw [List.getElem?_eq_none (by simp; omega),
+          List.getElem?_eq_none (by simp; omega)]
+    · simp [FinTM.bufferTape, h0]
+
+/-- Appending the next original bit extends a copied prefix by one. -/
+private lemma catalog_write_take (w : List Bool) (r : ℕ) (hr : r < w.length) :
+    Function.update (FinTM.bufferTape (w.take r)) (r : ℤ) (some w[r]) =
+      FinTM.bufferTape (w.take (r + 1)) := by
+  rw [List.take_succ_eq_append_getElem hr]
+  simpa only [List.length_take, Nat.min_eq_left (Nat.le_of_lt hr)] using
+    (FinTM.bufferTape_append (w.take r) w[r]).symm
+
+/-- Clear's forward phase has intact words; the return phase retains exactly
+the unerased prefix below and at the head. -/
+private def catalogClearF (i : Fin k) (w : Fin k → List Bool) (r : ℕ) :
+    Cfg k Bool SweepPhase x :=
+  catalogCfg .sweep w (fun j => if j = i then (r : ℤ) else 0)
+
+/-- Clear's return index counts the remaining unerased cells. -/
+private def catalogClearR (i : Fin k) (w : Fin k → List Bool) (r : ℕ) :
+    Cfg k Bool SweepPhase x :=
+  catalogCfg .rewind (Function.update w i ((w i).take r))
+    (fun j => if j = i then (r : ℤ) - 1 else 0)
+
+/-- Clear's exact phase invariant. **Proof sketch.** During the scan the
+word is intact. The turn reads its right blank. Each return transition erases
+just the last remaining cell; the final left blank makes the right-entry. -/
+private lemma catalog_clear_trace (i : Fin k) (w : Fin k → List Bool) (t : ℕ) :
+    (clearTM k i).runFrom (Cfg.ofWords (input := x) .sweep w) t =
+      catalogTrace (catalogClearF i w) (catalogClearR i w)
+        (Cfg.ofWords .done (Function.update w i [])) (w i).length t := by
+  have h0 : catalogClearF (x := x) i w 0 = Cfg.ofWords .sweep w := by
+    apply Cfg.ext <;> simp [catalogClearF, catalogCfg, Cfg.ofWords]
+  rw [← h0]
+  apply catalog_trace_run
+  · intro r hr
+    have hs : (catalogClearF (x := x) i w r).workTapeSymbols i = some (w i)[r] := by
+      simp [catalogClearF, catalogCfg, Cfg.ofWords, Cfg.workTapeSymbols,
+        FinTM.bufferTape_nat, List.getElem?_eq_getElem hr]
+    change ((clearTM k i).tr .sweep _ _).apply _ = _
+    simp only [clearTM, hs]
+    apply Cfg.ext <;> simp [Action.apply, catalogClearF, catalogCfg, Cfg.ofWords]
+    all_goals
+      funext j
+      split_ifs <;> simp_all [SignType.cast, sub_eq_add_neg] <;> omega
+  · have hs : (catalogClearF (x := x) i w (w i).length).workTapeSymbols i = none := by
+      simp [catalogClearF, catalogCfg, Cfg.ofWords, Cfg.workTapeSymbols]
+    change ((clearTM k i).tr .sweep _ _).apply _ = _
+    simp only [clearTM, hs]
+    apply Cfg.ext <;> simp [Action.apply, catalogClearF, catalogClearR, catalogCfg, Cfg.ofWords]
+    · funext j
+      by_cases hj : j = i <;> simp [hj]
+    · funext j
+      split_ifs <;> simp_all [SignType.cast, sub_eq_add_neg]
+  · intro r hr
+    have hs : (catalogClearR (x := x) i w (r + 1)).workTapeSymbols i =
+        some (w i)[r] := by
+      simp [catalogClearR, catalogCfg, Cfg.ofWords, Cfg.workTapeSymbols,
+        show (r + 1 : ℕ) - (1 : ℤ) = (r : ℤ) by omega,
+        List.getElem?_take, List.getElem?_eq_getElem hr]
+    change ((clearTM k i).tr .rewind _ _).apply _ = _
+    simp only [clearTM, hs]
+    apply Cfg.ext <;> simp [Action.apply, catalogClearF, catalogClearR, catalogCfg, Cfg.ofWords]
+    · funext j
+      by_cases hj : j = i
+      · subst j
+        simpa [show ((r + 1 : ℕ) : ℤ) - 1 = (r : ℤ) by omega] using
+          catalog_erase_take (w i) r hr
+      · simp [hj]
+    · funext j
+      split_ifs <;> simp_all [SignType.cast, sub_eq_add_neg] <;> omega
+  · apply Cfg.ext <;>
+      simp [MultiTapeTM.step, clearTM, catalogClearR, catalogCfg, Cfg.ofWords,
+        Cfg.workTapeSymbols, Action.apply]
+    all_goals
+      funext j
+      split_ifs <;> simp_all [SignType.cast]
+  · apply Cfg.ext <;>
+      simp [MultiTapeTM.step, clearTM, Cfg.ofWords, Action.apply]
+
+/-- Copy and transfer share the forward phase: the destination holds the copied
+prefix and the source remains intact, with both heads at its end. -/
+private def catalogCopyF (src dst : Fin k) (w : Fin k → List Bool) (r : ℕ) :
+    Cfg k Bool SweepPhase x :=
+  catalogCfg .sweep (Function.update w dst ((w src).take r))
+    (fun j => if j = src ∨ j = dst then (r : ℤ) else 0)
+
+/-- During copy's return the words are complete and unchanged. -/
+private def catalogCopyR (src dst : Fin k) (w : Fin k → List Bool) (r : ℕ) :
+    Cfg k Bool SweepPhase x :=
+  catalogCfg .rewind (Function.update w dst (w src))
+    (fun j => if j = src ∨ j = dst then (r : ℤ) - 1 else 0)
+
+/-- During transfer's return the source retains exactly the unerased prefix. -/
+private def catalogTransferR (src dst : Fin k) (w : Fin k → List Bool) (r : ℕ) :
+    Cfg k Bool SweepPhase x :=
+  catalogCfg .rewind (Function.update (Function.update w src ((w src).take r)) dst (w src))
+    (fun j => if j = src ∨ j = dst then (r : ℤ) - 1 else 0)
+
+/-- The common forward transition copies exactly the next source bit. -/
+private lemma catalog_copy_forward (src dst : Fin k) (hne : src ≠ dst)
+    (w : Fin k → List Bool) (r : ℕ) (hr : r < (w src).length) :
+    (copyTM k src dst).step (catalogCopyF (x := x) src dst w r) =
+      catalogCopyF src dst w (r + 1) := by
+  have hs : (catalogCopyF (x := x) src dst w r).workTapeSymbols src =
+      some (w src)[r] := by
+    simp [catalogCopyF, catalogCfg, Cfg.ofWords, Cfg.workTapeSymbols, hne,
+      List.getElem?_eq_getElem hr]
+  change ((copyTM k src dst).tr .sweep _ _).apply _ = _
+  simp only [copyTM, hs]
+  apply Cfg.ext <;> simp [Action.apply, catalogCopyF, catalogCfg, Cfg.ofWords]
+  · funext j
+    by_cases hj : j = dst
+    · subst j
+      simpa using catalog_write_take (w src) r hr
+    · by_cases hs : j = src <;> simp [hj, hs, hne, Ne.symm hne]
+  · funext j
+    by_cases hd : j = dst <;> by_cases hs : j = src <;>
+      simp [hd, hs, hne, SignType.cast] <;> omega
+
+/-- Copy's exact phase invariant, including the stationary exit. -/
+private lemma catalog_copy_trace (src dst : Fin k) (hne : src ≠ dst)
+    (w : Fin k → List Bool) (hdst : w dst = []) (t : ℕ) :
+    (copyTM k src dst).runFrom (Cfg.ofWords (input := x) .sweep w) t =
+      catalogTrace (catalogCopyF src dst w) (catalogCopyR src dst w)
+        (Cfg.ofWords .done (Function.update w dst (w src))) (w src).length t := by
+  have h0 : catalogCopyF (x := x) src dst w 0 = Cfg.ofWords .sweep w := by
+    apply Cfg.ext <;> simp [catalogCopyF, catalogCfg, Cfg.ofWords]
+    funext j
+    by_cases hj : j = dst
+    · subst j; simp [hdst]
+    · simp [hj]
+  rw [← h0]
+  apply catalog_trace_run
+  · exact catalog_copy_forward src dst hne w
+  · have hs : (catalogCopyF (x := x) src dst w (w src).length).workTapeSymbols src =
+        none := by
+      simp [catalogCopyF, catalogCfg, Cfg.ofWords, Cfg.workTapeSymbols, hne]
+    change ((copyTM k src dst).tr .sweep _ _).apply _ = _
+    simp only [copyTM, hs]
+    apply Cfg.ext <;> simp [Action.apply, catalogCopyF, catalogCopyR, catalogCfg, Cfg.ofWords]
+    all_goals
+      funext j
+      split_ifs <;> simp_all [SignType.cast, sub_eq_add_neg]
+  · intro r hr
+    have hs : (catalogCopyR (x := x) src dst w (r + 1)).workTapeSymbols src =
+        some (w src)[r] := by
+      simp [catalogCopyR, catalogCfg, Cfg.ofWords, Cfg.workTapeSymbols, hne,
+        show ((r + 1 : ℕ) : ℤ) - 1 = (r : ℤ) by omega,
+        List.getElem?_eq_getElem hr]
+    change ((copyTM k src dst).tr .rewind _ _).apply _ = _
+    simp only [copyTM, hs]
+    apply Cfg.ext <;> simp [Action.apply, catalogCopyR, catalogCfg, Cfg.ofWords]
+    all_goals
+      funext j
+      split_ifs <;> simp_all [SignType.cast, sub_eq_add_neg] <;> omega
+  · apply Cfg.ext <;>
+      simp [MultiTapeTM.step, copyTM, catalogCopyR, catalogCfg, Cfg.ofWords,
+        Cfg.workTapeSymbols, hne, Action.apply]
+    all_goals
+      funext j
+      split_ifs <;> simp_all [SignType.cast]
+  · apply Cfg.ext <;>
+      simp [MultiTapeTM.step, copyTM, Cfg.ofWords, Action.apply]
+
+/-- Transfer's exact phase invariant. The forward transitions are copy's;
+on return, erasure is behind the head, leaving every cell still to read intact. -/
+private lemma catalog_transfer_trace (src dst : Fin k) (hne : src ≠ dst)
+    (w : Fin k → List Bool) (hdst : w dst = []) (t : ℕ) :
+    (transferTM k src dst).runFrom (Cfg.ofWords (input := x) .sweep w) t =
+      catalogTrace (catalogCopyF src dst w) (catalogTransferR src dst w)
+        (Cfg.ofWords .done (Function.update (Function.update w src []) dst (w src)))
+        (w src).length t := by
+  have h0 : catalogCopyF (x := x) src dst w 0 = Cfg.ofWords .sweep w := by
+    apply Cfg.ext <;> simp [catalogCopyF, catalogCfg, Cfg.ofWords]
+    funext j
+    by_cases hj : j = dst
+    · subst j; simp [hdst]
+    · simp [hj]
+  rw [← h0]
+  apply catalog_trace_run
+  · intro r hr
+    exact catalog_copy_forward src dst hne w r hr
+  · have hs : (catalogCopyF (x := x) src dst w (w src).length).workTapeSymbols src =
+        none := by
+      simp [catalogCopyF, catalogCfg, Cfg.ofWords, Cfg.workTapeSymbols, hne]
+    change ((transferTM k src dst).tr .sweep _ _).apply _ = _
+    simp only [transferTM, hs]
+    apply Cfg.ext <;>
+      simp [Action.apply, catalogCopyF, catalogTransferR, catalogCfg, Cfg.ofWords]
+    · funext j
+      by_cases hd : j = dst <;> by_cases hs : j = src <;> simp [hd, hs]
+    · funext j
+      split_ifs <;> simp_all [SignType.cast, sub_eq_add_neg]
+  · intro r hr
+    have hs : (catalogTransferR (x := x) src dst w (r + 1)).workTapeSymbols src =
+        some (w src)[r] := by
+      simp [catalogTransferR, catalogCfg, Cfg.ofWords, Cfg.workTapeSymbols, hne,
+        show ((r + 1 : ℕ) : ℤ) - 1 = (r : ℤ) by omega,
+        List.getElem?_take, List.getElem?_eq_getElem hr]
+    change ((transferTM k src dst).tr .rewind _ _).apply _ = _
+    simp only [transferTM, hs]
+    apply Cfg.ext <;> simp [Action.apply, catalogTransferR, catalogCfg, Cfg.ofWords]
+    · funext j
+      by_cases hs : j = src
+      · subst j
+        simpa [hne, show ((r + 1 : ℕ) : ℤ) - 1 = (r : ℤ) by omega] using
+          catalog_erase_take (w src) r hr
+      · by_cases hd : j = dst
+        · subst j; simp [hne, Ne.symm hne]
+        · simp [hs, hd]
+    · funext j
+      by_cases hs : j = src <;> by_cases hd : j = dst <;>
+        simp [hs, hd, hne, Ne.symm hne, SignType.cast] <;> omega
+  · apply Cfg.ext <;>
+      simp [MultiTapeTM.step, transferTM, catalogTransferR, catalogCfg, Cfg.ofWords,
+        Cfg.workTapeSymbols, hne, Action.apply]
+    all_goals
+      funext j
+      split_ifs <;> simp_all [SignType.cast]
+  · apply Cfg.ext <;>
+      simp [MultiTapeTM.step, transferTM, Cfg.ofWords, Action.apply]
+
+/-- The first unequal or terminating cells occur after a common nonblank
+prefix, and equality at those terminating cells is precisely word equality.
+**Proof sketch.** Remove equal leading bits recursively; unequal bits or either
+empty list stop immediately. This also covers aliased physical tape indices. -/
+private lemma catalog_compare_stop (u v : List Bool) :
+    ∃ d ≤ min u.length v.length,
+      (∀ r < d, ∃ b, u[r]? = some b ∧ v[r]? = some b) ∧
+      (¬∃ b, u[d]? = some b ∧ v[d]? = some b) ∧
+      (u[d]? = v[d]? ↔ u = v) := by
+  induction u generalizing v with
+  | nil =>
+    cases v with
+    | nil => exact ⟨0, by simp, by simp, by simp, by simp⟩
+    | cons b v => exact ⟨0, by simp, by simp, by simp, by simp⟩
+  | cons a u ih =>
+    cases v with
+    | nil => exact ⟨0, by simp, by simp, by simp, by simp⟩
+    | cons b v =>
+      by_cases hab : a = b
+      · subst b
+        obtain ⟨d, hd, hp, hs, he⟩ := ih v
+        refine ⟨d + 1, by simpa using hd, ?_, ?_, ?_⟩
+        · intro r hr
+          cases r with
+          | zero => exact ⟨a, rfl, rfl⟩
+          | succ r => simpa using hp r (by omega)
+        · simpa using hs
+        · simpa using he
+      · refine ⟨0, by simp, by simp, ?_, ?_⟩
+        · simpa [eq_comm] using hab
+        · simp [hab]
+
+/-- Comparison's forward configuration retains every word and advances the
+selected physical heads once each, including when the two indices coincide. -/
+private def catalogCompareF (fst snd : Fin k) (w : Fin k → List Bool) (r : ℕ) :
+    Cfg k Bool FlagPhase x :=
+  catalogCfg .run w (fun j => if j = fst ∨ j = snd then (r : ℤ) else 0)
+
+/-- Comparison's return configuration carries the verdict without changing words. -/
+private def catalogCompareR (fst snd : Fin k) (w : Fin k → List Bool)
+    (v : Bool) (r : ℕ) : Cfg k Bool FlagPhase x :=
+  catalogCfg (.rewind v) w
+    (fun j => if j = fst ∨ j = snd then (r : ℤ) - 1 else 0)
+
+/-- Comparison's exact configuration invariant, at a first differing or blank
+position. **Proof sketch.** The common-prefix condition supplies every forward
+read and every first-tape return read. The stopping condition determines the
+turn and verdict. The heads then return from `d-1` through `-1` to zero. -/
+private lemma catalog_compare_trace (fst snd : Fin k) (w : Fin k → List Bool)
+    (d : ℕ) (hd : d ≤ min (w fst).length (w snd).length)
+    (hp : ∀ r < d, ∃ b, (w fst)[r]? = some b ∧ (w snd)[r]? = some b)
+    (hs : ¬∃ b, (w fst)[d]? = some b ∧ (w snd)[d]? = some b)
+    (he : ((w fst)[d]? = (w snd)[d]?) ↔ w fst = w snd) (t : ℕ) :
+    (compareTM k fst snd).runFrom (Cfg.ofWords (input := x) .run w) t =
+      catalogTrace (catalogCompareF fst snd w)
+        (catalogCompareR fst snd w (decide (w fst = w snd)))
+        (Cfg.ofWords (.done (decide (w fst = w snd))) w) d t := by
+  have h0 : catalogCompareF (x := x) fst snd w 0 = Cfg.ofWords .run w := by
+    apply Cfg.ext <;> simp [catalogCompareF, catalogCfg, Cfg.ofWords]
+  rw [← h0]
+  apply catalog_trace_run
+  · intro r hr
+    obtain ⟨b, hf, hg⟩ := hp r hr
+    have hsf : (catalogCompareF (x := x) fst snd w r).workTapeSymbols fst = some b := by
+      simpa [catalogCompareF, catalogCfg, Cfg.ofWords, Cfg.workTapeSymbols] using hf
+    have hsg : (catalogCompareF (x := x) fst snd w r).workTapeSymbols snd = some b := by
+      simpa [catalogCompareF, catalogCfg, Cfg.ofWords, Cfg.workTapeSymbols] using hg
+    change ((compareTM k fst snd).tr .run _ _).apply _ = _
+    simp only [compareTM, hsf, hsg, ↓reduceIte]
+    apply Cfg.ext <;> simp [Action.apply, catalogCompareF, catalogCfg, Cfg.ofWords]
+    all_goals
+      funext j
+      split_ifs <;> simp_all [SignType.cast, sub_eq_add_neg] <;> omega
+  · have hread : (catalogCompareF (x := x) fst snd w d).workTapeSymbols =
+        fun j => FinTM.bufferTape (w j) (if j = fst ∨ j = snd then (d : ℤ) else 0) := rfl
+    have ht : (compareTM k fst snd).tr .run
+        (catalogCompareF (x := x) fst snd w d).inputSymbol
+        (catalogCompareF (x := x) fst snd w d).workTapeSymbols =
+        ⟨0, (fun j => if j = fst ∨ j = snd then (none, SignType.neg) else (none, 0)),
+          none, some (.rewind (decide (w fst = w snd)))⟩ := by
+      simp only [compareTM, hread, if_pos (Or.inl rfl : fst = fst ∨ fst = snd),
+        if_pos (Or.inr rfl : snd = fst ∨ snd = snd), FinTM.bufferTape_nat]
+      cases hf : (w fst)[d]? with
+      | none =>
+        cases hg : (w snd)[d]? with
+        | none =>
+          have heq : w fst = w snd := he.mp (by rw [hf, hg])
+          simp [hf, hg, heq]
+        | some b =>
+          have hneq : w fst ≠ w snd := by
+            intro h
+            have h' := he.mpr h
+            simp only [hf, hg, reduceCtorEq] at h'
+          simp [hf, hg, hneq]
+      | some a =>
+        cases hg : (w snd)[d]? with
+        | none =>
+          have hneq : w fst ≠ w snd := by
+            intro h
+            have h' := he.mpr h
+            simp only [hf, hg, reduceCtorEq] at h'
+          simp [hf, hg, hneq]
+        | some b =>
+          have hab : a ≠ b := by
+            intro h
+            subst b
+            exact hs ⟨a, hf, hg⟩
+          have hneq : w fst ≠ w snd := by
+            intro h
+            have h' := he.mpr h
+            exact hab (by simpa only [hf, hg, Option.some.injEq] using h')
+          simp [hf, hg, hab, hneq]
+    change ((compareTM k fst snd).tr .run _ _).apply _ = _
+    rw [ht]
+    apply Cfg.ext <;> simp [Action.apply, catalogCompareF, catalogCompareR, catalogCfg, Cfg.ofWords]
+    all_goals
+      funext j
+      split_ifs <;> simp_all [SignType.cast, sub_eq_add_neg]
+  · intro r hr
+    obtain ⟨b, hf, _⟩ := hp r hr
+    have hread : (catalogCompareR (x := x) fst snd w (decide (w fst = w snd))
+        (r + 1)).workTapeSymbols fst = some b := by
+      simpa [catalogCompareR, catalogCfg, Cfg.ofWords, Cfg.workTapeSymbols,
+        show ((r + 1 : ℕ) : ℤ) - 1 = (r : ℤ) by omega] using hf
+    change ((compareTM k fst snd).tr (.rewind _) _ _).apply _ = _
+    simp only [compareTM, hread]
+    apply Cfg.ext <;> simp [Action.apply, catalogCompareR, catalogCfg, Cfg.ofWords]
+    all_goals
+      funext j
+      split_ifs <;> simp_all [SignType.cast, sub_eq_add_neg] <;> omega
+  · apply Cfg.ext <;>
+      simp [MultiTapeTM.step, compareTM, catalogCompareR, catalogCfg, Cfg.ofWords,
+        Cfg.workTapeSymbols, Action.apply]
+    all_goals
+      funext j
+      split_ifs <;> simp_all [SignType.cast]
+  · apply Cfg.ext <;>
+      simp [MultiTapeTM.step, compareTM, Cfg.ofWords, Action.apply]
+
+/-- A word consists of its leading true bits followed by either a first false
+bit and its tail, or no remaining bits. -/
+private lemma catalog_increment_split (w : List Bool) :
+    ∃ p : ℕ, ∃ tail : Option (List Bool),
+      w = List.replicate p true ++ tail.elim [] (false :: ·) := by
+  induction w with
+  | nil => exact ⟨0, none, rfl⟩
+  | cons b w ih =>
+    cases b with
+    | false => exact ⟨0, some w, rfl⟩
+    | true =>
+      obtain ⟨p, tail, hw⟩ := ih
+      exact ⟨p + 1, tail, by simp [List.replicate_succ, hw]⟩
+
+/-- Fixed-width increment flips the leading true prefix and the first false;
+an absent first false gives overflow. -/
+private lemma catalog_increment_value (p : ℕ) (tail : Option (List Bool)) :
+    incFixed (List.replicate p true ++ tail.elim [] (false :: ·)) =
+      tail.map (fun v => List.replicate p false ++ true :: v) := by
+  induction p with
+  | zero => cases tail <;> rfl
+  | succ p ih =>
+    simp only [List.replicate_succ, List.cons_append, incFixed, ih]
+    cases tail <;> rfl
+
+/-- Changing the cell immediately after a prefix changes exactly that bit.
+**Proof sketch.** At the selected cell use list indexing at the prefix length;
+elsewhere, the suffix and prefix lookups are unchanged. -/
+private lemma catalog_write_middle (pre rest : List Bool) (a b : Bool) :
+    Function.update (FinTM.bufferTape (pre ++ a :: rest)) (pre.length : ℤ) (some b) =
+      FinTM.bufferTape (pre ++ b :: rest) := by
+  funext z
+  by_cases hz : z = (pre.length : ℤ)
+  · subst z
+    simp [FinTM.bufferTape]
+  · rw [Function.update_of_ne hz]
+    by_cases h0 : 0 ≤ z
+    · simp only [FinTM.bufferTape, if_pos h0, List.getElem?_append]
+      by_cases hlt : z.toNat < pre.length
+      · simp [hlt]
+      · have he : z.toNat - pre.length = (z.toNat - pre.length - 1) + 1 := by omega
+        simp only [if_neg hlt]
+        rw [he]
+        rfl
+    · simp [FinTM.bufferTape, h0]
+
+/-- Increment's carry configuration: the first `r` bits have been reset, the
+remaining true prefix and stopping suffix are intact, and the head is at `r`. -/
+private def catalogIncF (i : Fin k) (w : Fin k → List Bool) (p : ℕ)
+    (tail : Option (List Bool)) (r : ℕ) : Cfg k Bool FlagPhase x :=
+  catalogCfg .run (Function.update w i
+    (List.replicate r false ++ List.replicate (p - r) true ++ tail.elim [] (false :: ·)))
+    (fun j => if j = i then (r : ℤ) else 0)
+
+/-- Increment's return configuration holds the complete updated or wrapped
+word and carries the success bit, with the head immediately before cell `r`. -/
+private def catalogIncR (i : Fin k) (w : Fin k → List Bool) (p : ℕ)
+    (tail : Option (List Bool)) (r : ℕ) : Cfg k Bool FlagPhase x :=
+  catalogCfg (.rewind tail.isSome)
+    (Function.update w i (List.replicate p false ++ tail.elim [] (true :: ·)))
+    (fun j => if j = i then (r : ℤ) - 1 else 0)
+
+/-- Increment's exact phase invariant. **Proof sketch.** Each carry step resets
+one true bit; the first false is changed on the left-turn itself, so cell `p+1`
+is not visited. With no false, the right blank turns without writing. Both cases
+return over the reset prefix and enter the live exit after exactly `2p+2` steps. -/
+private lemma catalog_increment_trace (i : Fin k) (w : Fin k → List Bool)
+    (p : ℕ) (tail : Option (List Bool))
+    (hw : w i = List.replicate p true ++ tail.elim [] (false :: ·)) (t : ℕ) :
+    (incrementTM k i).runFrom (Cfg.ofWords (input := x) .run w) t =
+      catalogTrace (catalogIncF i w p tail) (catalogIncR i w p tail)
+        (Cfg.ofWords (.done tail.isSome)
+          (Function.update w i (List.replicate p false ++ tail.elim [] (true :: ·)))) p t := by
+  have h0 : catalogIncF (x := x) i w p tail 0 = Cfg.ofWords .run w := by
+    apply Cfg.ext <;> simp [catalogIncF, catalogCfg, Cfg.ofWords, ← hw]
+  rw [← h0]
+  apply catalog_trace_run
+  · intro r hr
+    have hpr : p - r = (p - (r + 1)) + 1 := by omega
+    have hs : (catalogIncF (x := x) i w p tail r).workTapeSymbols i = some true := by
+      simp [catalogIncF, catalogCfg, Cfg.ofWords, Cfg.workTapeSymbols,
+        hpr, List.replicate_succ, List.append_assoc]
+    change ((incrementTM k i).tr .run _ _).apply _ = _
+    simp only [incrementTM, hs]
+    apply Cfg.ext <;> simp [Action.apply, catalogIncF, catalogCfg, Cfg.ofWords]
+    · funext j
+      by_cases hj : j = i
+      · subst j
+        have hh := catalog_write_middle (List.replicate r false)
+          (List.replicate (p - (r + 1)) true ++ tail.elim [] (false :: ·)) true false
+        simp only [ite_true, Function.update_self]
+        rw [hpr, List.replicate_succ, List.cons_append]
+        simpa only [List.length_replicate, List.replicate_succ',
+          List.append_assoc, List.singleton_append] using hh
+      · simp [hj]
+    · funext j
+      split_ifs <;> simp_all [SignType.cast, sub_eq_add_neg] <;> omega
+  · cases tail with
+    | none =>
+      have hs : (catalogIncF (x := x) i w p none p).workTapeSymbols i = none := by
+        simp [catalogIncF, catalogCfg, Cfg.ofWords, Cfg.workTapeSymbols]
+      change ((incrementTM k i).tr .run _ _).apply _ = _
+      simp only [incrementTM, hs]
+      apply Cfg.ext <;> simp [Action.apply, catalogIncF, catalogIncR, catalogCfg, Cfg.ofWords]
+      all_goals
+        funext j
+        split_ifs <;> simp_all [SignType.cast, sub_eq_add_neg]
+    | some v =>
+      have hs : (catalogIncF (x := x) i w p (some v) p).workTapeSymbols i = some false := by
+        simp [catalogIncF, catalogCfg, Cfg.ofWords, Cfg.workTapeSymbols]
+      change ((incrementTM k i).tr .run _ _).apply _ = _
+      simp only [incrementTM, hs]
+      apply Cfg.ext <;> simp [Action.apply, catalogIncF, catalogIncR, catalogCfg, Cfg.ofWords]
+      · funext j
+        by_cases hj : j = i
+        · subst j
+          simpa using catalog_write_middle (List.replicate p false) v false true
+        · simp [hj]
+      · funext j
+        split_ifs <;> simp_all [SignType.cast, sub_eq_add_neg]
+  · intro r hr
+    have hs : (catalogIncR (x := x) i w p tail (r + 1)).workTapeSymbols i = some false := by
+      simp [catalogIncR, catalogCfg, Cfg.ofWords, Cfg.workTapeSymbols,
+        show ((r + 1 : ℕ) : ℤ) - 1 = (r : ℤ) by omega,
+        List.getElem?_append, hr]
+    change ((incrementTM k i).tr (.rewind _) _ _).apply _ = _
+    simp only [incrementTM, hs]
+    apply Cfg.ext <;> simp [Action.apply, catalogIncR, catalogCfg, Cfg.ofWords]
+    all_goals
+      funext j
+      split_ifs <;> simp_all [SignType.cast, sub_eq_add_neg] <;> omega
+  · apply Cfg.ext <;>
+      simp [MultiTapeTM.step, incrementTM, catalogIncR, catalogCfg, Cfg.ofWords,
+        Cfg.workTapeSymbols, Action.apply]
+    all_goals
+      funext j
+      split_ifs <;> simp_all [SignType.cast]
+  · apply Cfg.ext <;>
+      simp [MultiTapeTM.step, incrementTM, Cfg.ofWords, Action.apply]
+
 /-- **Transfer, the run contract** (spec, fill pending — design §12 R3;
 [Bon26]). From the seam with word `w src` on the source and a blank
 destination, the routine reaches — within `3|w src| + 3` steps and
@@ -305,7 +891,14 @@ theorem transferTM_run (k : ℕ) (src dst : Fin k) (hne : src ≠ dst)
           (Cfg.ofWords (input := x) SweepPhase.sweep w) T =
         Cfg.ofWords SweepPhase.done
           (Function.update (Function.update w src []) dst (w src)) := by
-  sorry
+  refine ⟨2 * (w src).length + 2, by omega, ?_, ?_⟩
+  · intro t ht
+    rw [catalog_transfer_trace src dst hne w hdst]
+    simp only [catalogTrace]
+    split_ifs <;> simp_all [catalogCopyF, catalogTransferR, catalogCfg, Cfg.ofWords]
+    omega
+  · rw [catalog_transfer_trace src dst hne w hdst]
+    simp [catalogTrace, show ¬2 * (w src).length + 2 ≤ (w src).length by omega]
 
 /-- **Transfer, per-tape space** (spec, fill pending — design §12 R3).
 The two touched tapes visit at most the word interval plus the two
@@ -328,7 +921,21 @@ theorem transferTM_spaceUsedByTape (k : ℕ) (src dst : Fin k)
     ∀ j : Fin k, j ≠ src → j ≠ dst →
       (transferTM k src dst).spaceUsedByTape
           (Cfg.ofWords (input := x) SweepPhase.sweep w) t j = 1 := by
-  sorry
+  have hb (j : Fin k) : (transferTM k src dst).spaceUsedByTape
+      (Cfg.ofWords (input := x) .sweep w) t j ≤ (w src).length + 2 := by
+    apply catalog_space_bound
+    intro u
+    rw [catalog_transfer_trace src dst hne w hdst]
+    simp only [catalogTrace]
+    split_ifs <;> simp only [catalogCopyF, catalogTransferR, catalogCfg, Cfg.ofWords] <;>
+      (try split_ifs) <;> omega
+  refine ⟨hb src, hb dst, ?_⟩
+  intro j hs hd
+  apply catalog_space_one
+  intro u
+  rw [catalog_transfer_trace src dst hne w hdst]
+  simp only [catalogTrace]
+  split_ifs <;> simp [catalogCopyF, catalogTransferR, catalogCfg, Cfg.ofWords, hs, hd]
 
 /-- **Copy, the run contract** (spec, fill pending — design §12 R3;
 [Bon26]; the A3 `3|w| + 3` row). From the seam with word `w src` on the
@@ -348,7 +955,14 @@ theorem copyTM_run (k : ℕ) (src dst : Fin k) (hne : src ≠ dst)
       (copyTM k src dst).runFrom
           (Cfg.ofWords (input := x) SweepPhase.sweep w) T =
         Cfg.ofWords SweepPhase.done (Function.update w dst (w src)) := by
-  sorry
+  refine ⟨2 * (w src).length + 2, by omega, ?_, ?_⟩
+  · intro t ht
+    rw [catalog_copy_trace src dst hne w hdst]
+    simp only [catalogTrace]
+    split_ifs <;> simp_all [catalogCopyF, catalogCopyR, catalogCfg, Cfg.ofWords]
+    omega
+  · rw [catalog_copy_trace src dst hne w hdst]
+    simp [catalogTrace, show ¬2 * (w src).length + 2 ≤ (w src).length by omega]
 
 /-- **Copy, per-tape space** (spec, fill pending — design §12 R3). As the
 transfer routine: the two touched tapes visit at most `|w src| + 2` cells
@@ -369,7 +983,21 @@ theorem copyTM_spaceUsedByTape (k : ℕ) (src dst : Fin k) (hne : src ≠ dst)
     ∀ j : Fin k, j ≠ src → j ≠ dst →
       (copyTM k src dst).spaceUsedByTape
           (Cfg.ofWords (input := x) SweepPhase.sweep w) t j = 1 := by
-  sorry
+  have hb (j : Fin k) : (copyTM k src dst).spaceUsedByTape
+      (Cfg.ofWords (input := x) .sweep w) t j ≤ (w src).length + 2 := by
+    apply catalog_space_bound
+    intro u
+    rw [catalog_copy_trace src dst hne w hdst]
+    simp only [catalogTrace]
+    split_ifs <;> simp only [catalogCopyF, catalogCopyR, catalogCfg, Cfg.ofWords] <;>
+      (try split_ifs) <;> omega
+  refine ⟨hb src, hb dst, ?_⟩
+  intro j hs hd
+  apply catalog_space_one
+  intro u
+  rw [catalog_copy_trace src dst hne w hdst]
+  simp only [catalogTrace]
+  split_ifs <;> simp [catalogCopyF, catalogCopyR, catalogCfg, Cfg.ofWords, hs, hd]
 
 /-- **Clear, the run contract** (spec, fill pending — design §12 R3;
 [Bon26]; the A3 `2|w| + 2` row, P12's engine). From the seam with word
@@ -389,7 +1017,14 @@ theorem clearTM_run (k : ℕ) (i : Fin k) (w : Fin k → List Bool) :
       (clearTM k i).runFrom
           (Cfg.ofWords (input := x) SweepPhase.sweep w) T =
         Cfg.ofWords SweepPhase.done (Function.update w i []) := by
-  sorry
+  refine ⟨2 * (w i).length + 2, le_rfl, ?_, ?_⟩
+  · intro t ht
+    rw [catalog_clear_trace]
+    simp only [catalogTrace]
+    split_ifs <;> simp_all [catalogClearF, catalogClearR, catalogCfg, Cfg.ofWords]
+    omega
+  · rw [catalog_clear_trace]
+    simp [catalogTrace, show ¬2 * (w i).length + 2 ≤ (w i).length by omega]
 
 /-- **Clear, per-tape space** (spec, fill pending — design §12 R3). Tape
 `i` visits at most `|w i| + 2` cells (the word interval plus both
@@ -406,7 +1041,18 @@ theorem clearTM_spaceUsedByTape (k : ℕ) (i : Fin k)
     ∀ j : Fin k, j ≠ i →
       (clearTM k i).spaceUsedByTape
           (Cfg.ofWords (input := x) SweepPhase.sweep w) t j = 1 := by
-  sorry
+  constructor
+  · apply catalog_space_bound
+    intro u
+    rw [catalog_clear_trace]
+    simp only [catalogTrace]
+    split_ifs <;> simp [catalogClearF, catalogClearR, catalogCfg, Cfg.ofWords] <;> omega
+  · intro j hj
+    apply catalog_space_one
+    intro u
+    rw [catalog_clear_trace]
+    simp only [catalogTrace]
+    split_ifs <;> simp [catalogClearF, catalogClearR, catalogCfg, Cfg.ofWords, hj]
 
 /-- **Compare, the run contract** (spec, fill pending — design §12 R3;
 [Bon26]). From the seam, the routine reaches — within
@@ -430,7 +1076,15 @@ theorem compareTM_run (k : ℕ) (fst snd : Fin k) (w : Fin k → List Bool) :
       (compareTM k fst snd).runFrom
           (Cfg.ofWords (input := x) FlagPhase.run w) T =
         Cfg.ofWords (FlagPhase.done (decide (w fst = w snd))) w := by
-  sorry
+  obtain ⟨d, hd, hp, hs, he⟩ := catalog_compare_stop (w fst) (w snd)
+  refine ⟨2 * d + 2, by omega, ?_, ?_⟩
+  · intro t ht v
+    rw [catalog_compare_trace fst snd w d hd hp hs he]
+    simp only [catalogTrace]
+    split_ifs <;> simp_all [catalogCompareF, catalogCompareR, catalogCfg, Cfg.ofWords]
+    omega
+  · rw [catalog_compare_trace fst snd w d hd hp hs he]
+    simp [catalogTrace, show ¬2 * d + 2 ≤ d by omega]
 
 /-- **Compare, per-tape space** (spec, fill pending — design §12 R3). The
 two compared tapes visit at most `min(|w fst|, |w snd|) + 2` cells (the
@@ -456,7 +1110,22 @@ theorem compareTM_spaceUsedByTape (k : ℕ) (fst snd : Fin k)
     ∀ j : Fin k, j ≠ fst → j ≠ snd →
       (compareTM k fst snd).spaceUsedByTape
           (Cfg.ofWords (input := x) FlagPhase.run w) t j = 1 := by
-  sorry
+  obtain ⟨d, hd, hp, hs, he⟩ := catalog_compare_stop (w fst) (w snd)
+  have hb (j : Fin k) : (compareTM k fst snd).spaceUsedByTape
+      (Cfg.ofWords (input := x) .run w) t j ≤ d + 2 := by
+    apply catalog_space_bound
+    intro u
+    rw [catalog_compare_trace fst snd w d hd hp hs he]
+    simp only [catalogTrace]
+    split_ifs <;> simp only [catalogCompareF, catalogCompareR, catalogCfg, Cfg.ofWords] <;>
+      (try split_ifs) <;> omega
+  refine ⟨(hb fst).trans (by omega), (hb snd).trans (by omega), ?_⟩
+  intro j hf hg
+  apply catalog_space_one
+  intro u
+  rw [catalog_compare_trace fst snd w d hd hp hs he]
+  simp only [catalogTrace]
+  split_ifs <;> simp [catalogCompareF, catalogCompareR, catalogCfg, Cfg.ofWords, hf, hg]
 
 /-- **Increment, the success contract** (spec, fill pending — design §12
 R3). If the word on tape `i` has a successor at its width
@@ -481,7 +1150,21 @@ theorem incrementTM_run_succ (k : ℕ) (i : Fin k) (w : Fin k → List Bool)
       (incrementTM k i).runFrom
           (Cfg.ofWords (input := x) FlagPhase.run w) T =
         Cfg.ofWords (FlagPhase.done true) (Function.update w i v) := by
-  sorry
+  obtain ⟨p, tail, hw⟩ := catalog_increment_split (w i)
+  rw [hw, catalog_increment_value] at hv
+  cases tail with
+  | none => simp at hv
+  | some tail =>
+    have hv' : v = List.replicate p false ++ true :: tail := by simpa using hv.symm
+    have hp : p < (w i).length := by simp [hw]
+    refine ⟨2 * p + 2, by omega, ?_, ?_⟩
+    · intro t ht b
+      rw [catalog_increment_trace i w p (some tail) hw]
+      simp only [catalogTrace]
+      split_ifs <;> simp_all [catalogIncF, catalogIncR, catalogCfg, Cfg.ofWords]
+      omega
+    · rw [catalog_increment_trace i w p (some tail) hw]
+      simp [catalogTrace, show ¬2 * p + 2 ≤ p by omega, hv']
 
 /-- **Increment, the overflow contract** (spec, fill pending — design §12
 R3). If the word on tape `i` is all `true` (`Turing.incFixed (w i) =
@@ -504,7 +1187,20 @@ theorem incrementTM_run_overflow (k : ℕ) (i : Fin k)
           (Cfg.ofWords (input := x) FlagPhase.run w) T =
         Cfg.ofWords (FlagPhase.done false)
           (Function.update w i (List.replicate (w i).length false)) := by
-  sorry
+  obtain ⟨p, tail, hw⟩ := catalog_increment_split (w i)
+  rw [hw, catalog_increment_value] at hv
+  cases tail with
+  | some tail => simp at hv
+  | none =>
+    have hp : (w i).length = p := by simp [hw]
+    refine ⟨2 * p + 2, by omega, ?_, ?_⟩
+    · intro t ht b
+      rw [catalog_increment_trace i w p none hw]
+      simp only [catalogTrace]
+      split_ifs <;> simp_all [catalogIncF, catalogIncR, catalogCfg, Cfg.ofWords]
+      omega
+    · rw [catalog_increment_trace i w p none hw]
+      simp [catalogTrace, show ¬2 * p + 2 ≤ p by omega, hp]
 
 /-- **Increment, per-tape space** (spec, fill pending — design §12 R3).
 Tape `i` visits at most `|w i| + 2` cells; every other tape exactly its
@@ -521,7 +1217,23 @@ theorem incrementTM_spaceUsedByTape (k : ℕ) (i : Fin k)
     ∀ j : Fin k, j ≠ i →
       (incrementTM k i).spaceUsedByTape
           (Cfg.ofWords (input := x) FlagPhase.run w) t j = 1 := by
-  sorry
+  obtain ⟨p, tail, hw⟩ := catalog_increment_split (w i)
+  have hp : p ≤ (w i).length := by simp [hw]
+  constructor
+  · have hb : (incrementTM k i).spaceUsedByTape
+        (Cfg.ofWords (input := x) .run w) t i ≤ p + 2 := by
+      apply catalog_space_bound
+      intro u
+      rw [catalog_increment_trace i w p tail hw]
+      simp only [catalogTrace]
+      split_ifs <;> simp [catalogIncF, catalogIncR, catalogCfg, Cfg.ofWords] <;> omega
+    omega
+  · intro j hj
+    apply catalog_space_one
+    intro u
+    rw [catalog_increment_trace i w p tail hw]
+    simp only [catalogTrace]
+    split_ifs <;> simp [catalogIncF, catalogIncR, catalogCfg, Cfg.ofWords, hj]
 
 /-- **W1 space row** (spec, fill pending — design §12 R3, decision 12.3).
 Under the hypotheses of `Turing.capture_run`, the host's source-bank
@@ -550,7 +1262,41 @@ theorem capture_visitedByTapeHead {k : ℕ} {S H : Type*} {x : List Bool}
         = tm.spaceUsedByTape c₀ t i) ∧
     host.spaceUsedByTape (captureCfg emb ret pre out₀ c₀) t (Fin.last k)
       ≤ (tm.runFrom c₀ t).output.length - c₀.output.length + 1 := by
-  sorry
+  have hr (u : ℕ) (hu : u ≤ t) :=
+    capture_run tm host emb ret hagree pre out₀ c₀ u
+      (fun v hv => hlive v (by omega))
+  constructor
+  · intro i
+    have he : host.visitedByTapeHead (captureCfg emb ret pre out₀ c₀) t i.castSucc =
+        tm.visitedByTapeHead c₀ t i := by
+      unfold MultiTapeTM.visitedByTapeHead
+      apply Finset.image_congr
+      intro u hu
+      dsimp only
+      rw [hr u (by simpa using Nat.le_of_lt_succ (Finset.mem_range.mp hu))]
+      simp [captureCfg, i.isLt]
+    exact ⟨he, congrArg Finset.card he⟩
+  · have hmono {u v : ℕ} (huv : u ≤ v) :
+        (tm.runFrom c₀ u).output.length ≤ (tm.runFrom c₀ v).output.length :=
+      (tm.output_prefix c₀ huv).length_le
+    have hbound : c₀.output.length ≤ (tm.runFrom c₀ t).output.length :=
+      hmono (Nat.zero_le t)
+    have hsub : host.visitedByTapeHead (captureCfg emb ret pre out₀ c₀) t (Fin.last k) ⊆
+        Finset.Icc ((pre.length + c₀.output.length : ℕ) : ℤ)
+          ((pre.length + (tm.runFrom c₀ t).output.length : ℕ) : ℤ) := by
+      intro z hz
+      obtain ⟨u, hu, rfl⟩ := Finset.mem_image.mp hz
+      have hut : u ≤ t := by have := Finset.mem_range.mp hu; omega
+      rw [hr u hut]
+      simp only [captureCfg, Fin.val_last, lt_self_iff_false, ↓reduceDIte,
+        List.length_append, Finset.mem_Icc]
+      have hlo := hmono (Nat.zero_le u)
+      have hhi := hmono hut
+      simp only [MultiTapeTM.runFrom_zero] at hlo
+      constructor <;> omega
+    exact (Finset.card_le_card hsub).trans (by
+      rw [Int.card_Icc]
+      omega)
 
 end Turing
 
@@ -885,6 +1631,93 @@ theorem computesFunInTime_splitSolve_spaceUsed (C e : ℕ) :
         M.tm.spaceUsed (M.tm.initCfg x) t ≤ c * (x.length + 1) ^ (e + 1) := by
   sorry
 
+/- Local copies of the W2 correspondence from Build/Wrappers.lean.
+The originals are private; the all-time trajectory is needed for the space row. -/
+/-- Map a source state and its last-emission register to simulation, halt,
+or the stationary live loop. An empty register never matches a bit. -/
+private def catalog_redirectState {S : Type} (haltOn : Bool) (q : Option S)
+    (r : Option Bool) : Option ((S × Option Bool) ⊕ Unit) :=
+  match q with
+  | some s => some (.inl (s, r))
+  | none => if r = some haltOn then none else some (.inr ())
+
+/-- Suppress physical emission, updating the register before the halt test. -/
+private def catalog_redirectAction {k : ℕ} {S : Type} (haltOn : Bool)
+    (a : Action k Bool S) (r : Option Bool) : Action k Bool ((S × Option Bool) ⊕ Unit) :=
+  ⟨a.inputTape, a.workTapes, none, catalog_redirectState haltOn a.state (a.output.or r)⟩
+
+/-- The source tapes and input head are unchanged; its last emitted bit is
+remembered in control and the physical output is empty. -/
+private def catalog_redirectCfg (M : FinTM Bool) (haltOn : Bool) {x : List Bool}
+    (c : Cfg M.k Bool M.State x) : Cfg (redirectTM M haltOn).k Bool
+      (redirectTM M haltOn).State x :=
+  ⟨catalog_redirectState haltOn c.state c.output.getLast?, c.inputPos,
+    c.workTapes, c.workTapePos, []⟩
+
+/-- The stationary live loop is fixed by every subsequent transition. -/
+private lemma catalog_redirect_loop (M : FinTM Bool) (haltOn : Bool) {x : List Bool}
+    (c : Cfg (redirectTM M haltOn).k Bool (redirectTM M haltOn).State x)
+    (hs : c.state = some (.inr ())) (t : ℕ) :
+    (redirectTM M haltOn).tm.runFrom c t = c := by
+  induction t with
+  | zero => rfl
+  | succ t ih =>
+    rw [MultiTapeTM.runFrom_succ_eq_step', ih]
+    apply Cfg.ext <;> simp [MultiTapeTM.step, hs, redirectTM, Action.apply]
+
+/-- Capture and application commute because the last entry of an appended
+singleton is the new bit, while no emission leaves the old register intact. -/
+private lemma catalog_redirect_apply (M : FinTM Bool) (haltOn : Bool) {x : List Bool}
+    (c : Cfg M.k Bool M.State x) (a : Action M.k Bool M.State) :
+    (catalog_redirectAction haltOn a c.output.getLast?).apply (catalog_redirectCfg M haltOn c) =
+      catalog_redirectCfg M haltOn (a.apply c) := by
+  have hlast : (c.output ++ a.output.toList).getLast? = a.output.or c.output.getLast? := by
+    cases a.output <;> simp
+  refine Cfg.ext ?_ rfl rfl rfl rfl
+  dsimp only [catalog_redirectCfg, catalog_redirectAction, Action.apply]
+  rw [hlast]
+
+/-- The correspondence also holds after a source halt: a matching result
+is absorbed as halted, and a mismatching result is absorbed in the live loop.
+This adapts `acceptCfg_step` in the HALT reduction to an optional register. -/
+private lemma catalog_redirect_step (M : FinTM Bool) (haltOn : Bool) {x : List Bool}
+    (c : Cfg M.k Bool M.State x) :
+    (redirectTM M haltOn).tm.step (catalog_redirectCfg M haltOn c) =
+      catalog_redirectCfg M haltOn (M.tm.step c) := by
+  cases hs : c.state with
+  | none =>
+    rw [MultiTapeTM.step_of_halt hs]
+    by_cases hr : c.output.getLast? = some haltOn
+    · exact MultiTapeTM.step_of_halt (by simp [catalog_redirectCfg, catalog_redirectState, hs, hr])
+    · exact catalog_redirect_loop M haltOn (catalog_redirectCfg M haltOn c)
+        (by simp [catalog_redirectCfg, catalog_redirectState, hs, hr]) 1
+  | some q =>
+    have hi : (catalog_redirectCfg M haltOn c).inputSymbol = c.inputSymbol := rfl
+    have hw : (catalog_redirectCfg M haltOn c).workTapeSymbols = c.workTapeSymbols := rfl
+    have hstate : (catalog_redirectCfg M haltOn c).state = some (.inl (q, c.output.getLast?)) := by
+      simp only [catalog_redirectCfg, catalog_redirectState, hs]
+    simp only [MultiTapeTM.step, hstate, hs]
+    rw [hi, hw]
+    have htr : (redirectTM M haltOn).tm.tr (.inl (q, c.output.getLast?))
+        c.inputSymbol c.workTapeSymbols =
+        catalog_redirectAction haltOn (M.tm.tr q c.inputSymbol c.workTapeSymbols) c.output.getLast? := by
+      cases hq : (M.tm.tr q c.inputSymbol c.workTapeSymbols).state <;>
+        cases ho : (M.tm.tr q c.inputSymbol c.workTapeSymbols).output <;>
+          simp [redirectTM, catalog_redirectAction, catalog_redirectState, hq, ho]
+    rw [htr]
+    exact catalog_redirect_apply M haltOn c _
+
+/-- Initialized runs commute with redirection at every time, including
+after a source halt. This is the last-emission invariant for both clauses. -/
+private lemma catalog_redirect_run (M : FinTM Bool) (haltOn : Bool) (x : List Bool) (t : ℕ) :
+    (redirectTM M haltOn).tm.runFrom ((redirectTM M haltOn).tm.initCfg x) t =
+      catalog_redirectCfg M haltOn (M.tm.runFrom (M.tm.initCfg x) t) := by
+  have hi : (redirectTM M haltOn).tm.initCfg x = catalog_redirectCfg M haltOn (M.tm.initCfg x) := rfl
+  rw [hi]
+  exact MultiTapeTM.runFrom_comm_of_step (catalog_redirectCfg M haltOn) (catalog_redirect_step M haltOn)
+    (M.tm.initCfg x) t
+
+
 /-- **W2 space row** (spec, fill pending — design §12 R3, decision 12.3;
 annotates `Turing.FinTM.redirectTM` beside its
 `redirectTM_computes`/`redirectTM_live` contract pair). Redirection costs
@@ -900,7 +1733,13 @@ theorem redirectTM_spaceUsedByTape (M : FinTM Bool) (haltOn : Bool)
     (redirectTM M haltOn).tm.spaceUsedByTape
         ((redirectTM M haltOn).tm.initCfg x) t i
       = M.tm.spaceUsedByTape (M.tm.initCfg x) t i := by
-  sorry
+  unfold MultiTapeTM.spaceUsedByTape MultiTapeTM.visitedByTapeHead
+  congr 1
+  apply Finset.image_congr
+  intro u _
+  dsimp only
+  rw [catalog_redirect_run]
+  rfl
 
 /-- **W3 space row** (spec, fill pending — design §12 R3, decision 12.3;
 annotates `Turing.FinTM.computesFunInTime_cond`). Given space bounds for
