@@ -22,6 +22,14 @@ review tactic scripts for correctness. The failure modes you are hunting are:
    `k = 0` tapes, constant absorption).
 4. **Missing hypotheses** — especially finiteness, positivity, and well-formedness side
    conditions the informal source leaves implicit.
+5. **Debt** — wholesale duplication of existing proved material (private copies of
+   another file's declarations, re-derivations of registry routines), even when
+   disclosed and mechanically forced by file ownership. Report it at **major** with
+   the proposed fix "human acknowledgment required": it does not block the gate on
+   soundness, but the gate must not close without the human maintainer explicitly
+   accepting the debt and naming its scheduled resolution. Screen for it
+   cumulatively — verify the pack's duplication ledger (per-file copied-material
+   totals) rather than assessing each copy in isolation.
 
 For **every definition** in scope: restate it in your own mathematical English *without
 looking at the docstring first*, then compare your restatement against the cited source
@@ -59,5 +67,7 @@ must be accompanied by the per-definition restatements that justify it.
 | 1 | blocker / major / minor / note | | | | |
 
 Severity guide: **blocker** = a downstream phase would build on a wrong statement;
-**major** = statement is fixable but materially misleading as is; **minor** = edge case
-or naming/attribution defect; **note** = observation, no change required.
+**major** = statement is fixable but materially misleading as is, **or** accumulated
+debt (failure mode 5) that the gate may not close over without explicit human
+acknowledgment; **minor** = edge case or naming/attribution defect; **note** =
+observation, no change required.
