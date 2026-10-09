@@ -946,3 +946,60 @@ lemma bufferedComp_start (M₁ M₂ : FinTM Bool) (x y : List Bool) (t₁ : ℕ)
   exact hf
 
 end Turing.FinTM
+
+/-! ### Machine-agreement transfer (§13, Z5)
+
+Two machines over the same tape count and state type whose transition
+tables agree on a set of control states run identically for as long as the
+run's control stays inside that set. This is the `hagree` genre of
+`Turing.capture_run`/`Turing.emit_run` made standalone: those lemmas carry
+a per-state agreement hypothesis for one specific wrapper, re-proved ad hoc
+at every host; the standalone form transfers whole runs between any two
+agreeing tables (design `machine-library-design.md` §13, item Z5; decision
+D-R3). First customers: the forwarding loop host of `Build/Loop.lean`
+(whose fourteen phase lemmas are verbatim re-proofs of the capturing
+host's, since the two tables agree on every non-body state) and the
+guarded `clSlot_run` agreement sites of `CookLevin/Hardness.lean`. -/
+
+namespace Turing.MultiTapeTM
+
+/-- The two transition tables agree on every control state in `Q`: from any
+such state, both machines take the identical action on identical reads.
+Nothing is assumed about states outside `Q`, about `q₀`, or about
+halting. -/
+def AgreeOn {k : ℕ} {Symbol State : Type*} (M N : MultiTapeTM k Symbol State)
+    (Q : Set State) : Prop :=
+  ∀ q ∈ Q, ∀ inp work, M.tr q inp work = N.tr q inp work
+
+/-- One step transfers across an agreement: if the configuration's control
+state (when live) lies in the agreement set, both machines step it to the
+same configuration. Halted configurations step to themselves on both sides.
+
+**Proof sketch.** On `c.state = none` both steps are the identity. On
+`c.state = some q` with `q ∈ Q`, unfold `step`: both sides apply the same
+action `M.tr q c.inputSymbol c.workTapeSymbols = N.tr q …` to `c`. -/
+theorem step_eq_of_agreeOn {k : ℕ} {Symbol State : Type*}
+    {M N : MultiTapeTM k Symbol State} {Q : Set State}
+    (h : M.AgreeOn N Q) {input : List Symbol} (c : Cfg k Symbol State input)
+    (hq : ∀ q, c.state = some q → q ∈ Q) :
+    N.step c = M.step c := by
+  sorry
+
+/-- A whole run transfers across an agreement: if every control state the
+`M`-run visits strictly before time `t` lies in the agreement set, the two
+runs coincide at time `t` (and hence at every earlier time, by
+instantiating `t`). The endpoint itself may leave the set or halt; no
+liveness is assumed, and `t = 0` is the trivial case.
+
+**Proof sketch.** Induct on `t`. The inductive hypothesis transfers the
+run at `t`; the visit hypothesis at `u = t` puts its live control in `Q`,
+so `step_eq_of_agreeOn` transfers the final step. Halted intermediate
+configurations step identically on both sides without the hypothesis. -/
+theorem runFrom_eq_of_agreeOn {k : ℕ} {Symbol State : Type*}
+    {M N : MultiTapeTM k Symbol State} {Q : Set State}
+    (h : M.AgreeOn N Q) {input : List Symbol} (c : Cfg k Symbol State input)
+    (t : ℕ) (hq : ∀ u < t, ∀ q, (M.runFrom c u).state = some q → q ∈ Q) :
+    N.runFrom c t = M.runFrom c t := by
+  sorry
+
+end Turing.MultiTapeTM

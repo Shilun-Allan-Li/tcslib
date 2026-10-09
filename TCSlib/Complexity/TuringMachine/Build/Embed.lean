@@ -928,4 +928,48 @@ theorem embedEmitRetTM_visitedByTapeHead (ι : Fin m ↪ Fin k)
   exact embedReturn_visited (embedEmitTM ι M) (embedEmitRetTM ι M)
     (fun _ _ _ => rfl) (fun _ _ => rfl) (embedEmitCfg ι tapes heads pre c) t j
 
+
+/-! ### Selected-tape exports (§13 Z1 rider, decision D-R1)
+
+The retrofit inventories (`audits/retrofit-inventory/`) found, three times
+independently, that no old-code R1 consumer can be proved from this file's
+public surface: the frame lemmas cover only unselected tapes, and
+`embedSlot_selected` is private. These four projections export the
+selected-tape fields of the two configuration transports. They are
+skeleton-time proofs (statement-phase additions flagged for the A-S1
+audit): each is definitional at `embedSlot_selected`. -/
+
+/-- The silent transport holds the source's tape `i` on host tape `ι i`. -/
+theorem embedSilentCfg_selected_tape (ι : Fin m ↪ Fin k) (cap : Fin k)
+    (tapes : Fin k → ℤ → Option Bool) (heads : Fin k → ℤ)
+    (pre out₀ : List Bool) (c : Cfg m Bool S x) (i : Fin m) :
+    (embedSilentCfg ι cap tapes heads pre out₀ c).workTapes (ι i) =
+      c.workTapes i := by
+  simp [embedSilentCfg, embedSlot_selected]
+
+/-- The silent transport holds the source's tape-`i` head on host tape
+`ι i`. -/
+theorem embedSilentCfg_selected_pos (ι : Fin m ↪ Fin k) (cap : Fin k)
+    (tapes : Fin k → ℤ → Option Bool) (heads : Fin k → ℤ)
+    (pre out₀ : List Bool) (c : Cfg m Bool S x) (i : Fin m) :
+    (embedSilentCfg ι cap tapes heads pre out₀ c).workTapePos (ι i) =
+      c.workTapePos i := by
+  simp [embedSilentCfg, embedSlot_selected]
+
+/-- The forwarding transport holds the source's tape `i` on host tape
+`ι i`. -/
+theorem embedEmitCfg_selected_tape (ι : Fin m ↪ Fin k)
+    (tapes : Fin k → ℤ → Option Bool) (heads : Fin k → ℤ)
+    (pre : List Bool) (c : Cfg m Bool S x) (i : Fin m) :
+    (embedEmitCfg ι tapes heads pre c).workTapes (ι i) = c.workTapes i := by
+  simp [embedEmitCfg, embedSlot_selected]
+
+/-- The forwarding transport holds the source's tape-`i` head on host tape
+`ι i`. -/
+theorem embedEmitCfg_selected_pos (ι : Fin m ↪ Fin k)
+    (tapes : Fin k → ℤ → Option Bool) (heads : Fin k → ℤ)
+    (pre : List Bool) (c : Cfg m Bool S x) (i : Fin m) :
+    (embedEmitCfg ι tapes heads pre c).workTapePos (ι i) = c.workTapePos i := by
+  simp [embedEmitCfg, embedSlot_selected]
+
 end Turing
