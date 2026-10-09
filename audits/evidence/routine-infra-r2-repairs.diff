@@ -1,0 +1,613 @@
+diff --git a/TCSlib/Complexity/TuringMachine/Build/Catalog.lean b/TCSlib/Complexity/TuringMachine/Build/Catalog.lean
+index c2a03f24..3b6303a6 100644
+--- a/TCSlib/Complexity/TuringMachine/Build/Catalog.lean
++++ b/TCSlib/Complexity/TuringMachine/Build/Catalog.lean
+@@ -437,12 +437,14 @@ two compared tapes visit at most `min(|w fst|, |w snd|) + 2` cells (the
+ scanned interval plus both boundary cells); every other tape exactly its
+ origin singleton.
+ 
+-**Proof sketch.** The scan depth is bounded by `min + 1` (it stops at the
+-shorter word's blank at the latest), the return pass overshoots to `-1`,
+-so both touched trajectories lie in `[-1, min + 1]` — hence at most
+-`min + 2` *visited* cells, since the scan turns strictly before `min + 1`
+-whenever a mismatch occurs; untouched tapes receive `(none, 0)`
+-throughout. -/
++**Proof sketch.** Exact position counting, uniformly over mismatches,
++equal words, and unequal lengths (round-1 finding 6 — the earlier
++`[-1, min + 1]` interval argument did not cover equal inputs): with `d`
++the first differing position or the first position where a word ends
++(`d ≤ min`), the scan turns at `d`, the return pass overshoots to `-1`,
++and both touched trajectories are exactly the integers of `[-1, d]` —
++`d + 2 ≤ min + 2` visited cells in every case, aliased indices included;
++untouched tapes receive `(none, 0)` throughout. -/
+ theorem compareTM_spaceUsedByTape (k : ℕ) (fst snd : Fin k)
+     (w : Fin k → List Bool) (t : ℕ) :
+     (compareTM k fst snd).spaceUsedByTape
+@@ -464,11 +466,12 @@ seam carrying the success verdict and the incremented word `v` in place.
+ 
+ **Proof sketch.** The carry pass flips the maximal `true`-prefix to
+ `false` and the first `false` to `true`, which is exactly
+-`Turing.incFixed`'s recursion; it ends at depth `p + 1` where `p` is the
+-first `false` position. The return pass over the freshly written `false`
+-prefix overshoots to `-1` and enters `done true` at the origin: at most
+-`2p + 4 ≤ 2|w i| + 2` steps for `p < |w i|` — the fill proves the exact
+-count `2p + 2` plus the two boundary steps. -/
++`Turing.incFixed`'s recursion. With `p` the first `false` position, the
++machine takes `p` carry steps, one left-turn/write step, `p` rewind
++steps, and one right-entry step — **exactly `2p + 2 ≤ 2|w i|` steps**,
++visited interval `[-1, p]`; it never visits `p + 1` on success, and
++`[false]` returns in two steps (round-1 finding 7 corrected the earlier
++mixed count). The looser public `2|w i| + 2` is deliberate slack. -/
+ theorem incrementTM_run_succ (k : ℕ) (i : Fin k) (w : Fin k → List Bool)
+     (v : List Bool) (hv : incFixed (w i) = some v) :
+     ∃ T ≤ 2 * (w i).length + 2,
+@@ -642,12 +645,15 @@ honest bound (a logarithmic-space evaluator would be a new machine, out
+ of this increment's scope; recorded as a deviation from the sharpest
+ conceivable form).
+ 
+-**Proof sketch.** The buffered composition's buffer tape replays the
+-unary intermediate of length `C·(n+1)^e` — but the *composed* witness
+-bounds its space by the first stage's output written on the buffer; the
+-fill either bounds that tape by the linear bank the harvest source
+-exhibits or re-routes through the counter directly; the remaining tapes
+-are the unary generator's (linear) and the counter's (logarithmic). -/
++**Proof sketch.** Split on the coefficient and exponent (round-1
++finding 5 — the unqualified buffered-generator route fails at `C = 0`,
++where the old generator still initializes length-`n + 1` unary banks
++against a constant bound): for `C = 0`, and likewise for `e = 0`, the
++witness is the constant-output family (zero work tapes, constant
++space); for `C > 0` and `e > 0`, where `n + 1 ≤ C·(n+1)^e`, the buffered
++composition's buffer holds the unary intermediate of length
++`C·(n+1)^e`, the generator's banks are linear, and the counter is
++logarithmic — all inside the stated value-linear bound. -/
+ theorem computesFunInTime_polyBits_spaceUsed (C e : ℕ) :
+     ∃ (M : FinTM Bool) (c : ℕ),
+       M.ComputesFunInTime (fun x => Nat.bits (C * (x.length + 1) ^ e))
+@@ -776,14 +782,17 @@ theorem computesFunInTime_pairLenCheck_spaceUsed (C e : ℕ) :
+ 
+ /-- **P9 space row, marker stripping** (spec, fill pending — design §12
+ R3; annotates `Turing.FinTM.computesFunInTime_stripLast`). The marker
+-stripper runs in linear work-tape space: it buffers the whole original
+-encoding once (its quadratic time comes from replays, not from larger
+-banks).
+-
+-**Proof sketch.** The witness buffers the encoding (at most `n` cells)
+-and erases its final marker run in place; every head stays inside
+-`[-1, n + 1]` across the replays, so revisits cost time but no new
+-cells. -/
++stripper runs in linear work-tape space: the raw buffer and the guard
++banks are each linear, and the quadratic **time** contract is deliberate
++slack over the construction's actual linear-derived bound (round-1
++finding/note 8 — the attached witness proves a linear intermediate
++before weakening; no replay story is needed).
++
++**Proof sketch.** The witness's guard/extraction banks and the raw-strip
++buffer are each at most linear (`O(n + 1)` cells); the timed conditional
++keeps them disjoint; every head stays inside linear intervals, and the
++retained `(n+1)²` time clause is slack, not a resource actually spent on
++space. -/
+ theorem computesFunInTime_stripLast_spaceUsed :
+     ∃ (M : FinTM Bool) (c : ℕ),
+       M.ComputesFunInTime
+@@ -819,15 +828,23 @@ annotates `Turing.FinTM.computesFunInTime_pairMapSnd`, the round-2
+ catalog addition). Given a payload machine with its own space bound
+ `Sg` (monotone, since the payload runs on the second component, which is
+ no longer than the whole input), the threaded-map controller's space is
+-the payload's plus linear administration: the capture bank, the buffered
+-prefix, and the replay tapes are all linear in the input.
+-
+-**Proof sketch.** The controller's tapes split into the payload's own
+-bank — bounded by `Sg` via the lockstep of the capture discipline — and
+-the administrative tapes (buffer, capture, rewind), each of whose heads
+-stays inside `[-1, n + Tg n + 1]`-independent linear intervals; the
+-`Monotone Sg` hypothesis transports the payload bound from `|b|` to
+-`n`. -/
++the payload's plus linear administration. **The witness is a new
++forwarding controller, not the received captured-payload machine**
++(round-1 finding 4, the witness-honesty refutation: `pairMapTM`'s
++capture tape visits `|g b| + 1` cells — the unary-square payload defeats
++any linear administrative claim about it; output length is not bounded
++by the payload's work space).
++
++**Proof sketch.** The commissioned controller: validate and buffer the
++input pair (`O(n + 1)` cells), emit the encoded first component, then
++simulate `Mg` on the buffered second component **forwarding its output**
++(the E2/`embedEmitTM` discipline — emissions go to the physical output,
++never to a work bank), leaving the payload's work-head trajectories
++unchanged — coefficient `1` on `Sg` — plus the linear buffer and
++administration; the `Monotone Sg` hypothesis transports the payload
++bound from `|b|` to `n`. Named construction obligations for the brief:
++the validating buffer stage, the forwarding payload stage, and their
++seam. -/
+ theorem computesFunInTime_pairMapSnd_spaceUsed {Mg : FinTM Bool}
+     {g : List Bool → List Bool} {Tg : ℕ → ℕ} (Sg : ℕ → ℕ)
+     (hg : Mg.ComputesFunInTime g Tg) (hTg : Monotone Tg)
+@@ -937,7 +954,12 @@ tape holds the fuel word, of length at most `T n`
+ place by the debits; the capture tape records one verdict per round and
+ is rewound with the round, staying within a constant; the fuel machine's
+ own banks are bounded by `hFspace`. Sum the groups and absorb tape
+-counts into `c`. -/
++counts into `c`.  **Scope note (round-1 note R10)**: this row annotates the
++decision-loop export (`Turing.exists_loopTM`) only; the configuration- and
++result-bearing siblings (`exists_loopCfgTM`, `exists_loopFindTM`) carry no
++exported space clause here — same-witness conjunctions for them are a
++recorded future addition, commissioned when a consumer needs them, not an
++implied theorem. -/
+ theorem exists_loopTM_spaceUsed (body F : FinTM Bool) (anchor : body.State)
+     (Inv : List Bool → List Bool → Prop)
+     (stepF : List Bool → List Bool → List Bool)
+diff --git a/TCSlib/Complexity/TuringMachine/Build/Embed.lean b/TCSlib/Complexity/TuringMachine/Build/Embed.lean
+index 351d3652..e1d69d24 100644
+--- a/TCSlib/Complexity/TuringMachine/Build/Embed.lean
++++ b/TCSlib/Complexity/TuringMachine/Build/Embed.lean
+@@ -5,6 +5,7 @@ Authors: Seyoon Ragavan
+ -/
+ import Mathlib.Data.List.FinRange
+ import TCSlib.Complexity.TuringMachine.Simulation
++import TCSlib.Complexity.TuringMachine.StateRenaming
+ 
+ set_option maxHeartbeats 0
+ set_option relaxedAutoImplicit false
+@@ -19,8 +20,14 @@ The general tape-embedding layer of the machine-construction library
+ work tapes, cost unchanged, everything else framed. This is the §5
+ deferral promoted — the design deferred the general form "until a third
+ site needs it", and the third, fourth, and fifth sites have arrived (the
+-chapter-1/2 retrofit families, the Hennie–Stearns `k`→2 conversion, the
+-two-work-tape universal machine). It is the generic form of the private
++chapter-1/2 retrofit families, the Hennie–Stearns conversion, the
++two-work-tape universal machine). **Scope, stated precisely** (round-1
++note R9): `ι` selects whole distinct physical tapes with coordinates
++intact — it does not multiplex several virtual tapes onto zones of one
++physical tape, shrink the tape count, or alter the source input word; the
++Hennie–Stearns and universal-machine consumers get their zone/virtual-input
++representation layers separately, with this module supplying only the
++fixed-physical-bank routine relocation. It is the generic form of the private
+ `emitterBank*`/`emitterP2*` relocation families of
+ `TCSlib.Complexity.TuringMachine.Build.Primitives`, of the 4A chain's
+ `clBank*`/`clSlot*` families, and of the retained-tape disciplines that
+@@ -42,14 +49,22 @@ consumer cites whichever fits:
+ * `Turing.embedEmitTM` — the E2/forwarding flavor: emissions pass to the
+   host's physical output verbatim.
+ 
+-Both transformers preserve the source state type and map the source halt
+-to the host halt; redirecting the halt into a live dispatch state is
+-deliberately **not** this module's job but the seam combinator's
+-(`TCSlib.Complexity.TuringMachine.Build.Seam`), mirroring how
+-`Turing.capture_run`'s `ret` clause is consumed there. Lockstep is
+-therefore unguarded: it holds at every time, with the step count preserved
+-exactly. `Turing.captureAction`/`Turing.capture_run` and
+-`Turing.emitAction`/`Turing.emit_run` are the two fixed-shape precursors
++The two **closed** transformers preserve the source state type and map
++the source halt to the host halt; their lockstep is unguarded, holding at
++every time with the step count preserved exactly. The round-1 audit
++(finding R1) refuted the earlier claim that live-return dispatch could be
++left to the seam combinator: a source whose final transition emits and
++halts loses that emission either way — the closed embedding is halted
++after it, and a seam exit at the sole live state dispatches *before* it.
++The **returning** flavors below repair this with an explicit halt-to-live
++adapter built into the action core: `Turing.embedSilentRetTM` and
++`Turing.embedEmitRetTM` run the source on states `S ⊕ Unit`, execute every
++source action **through the halting transition** — the final emission
++included — and land in the live return anchor `Sum.inr ()`, which a seam
++then consumes as its left exit (`Turing.captureAction`'s and
++`Turing.emitterRightTM`'s halt-to-live discipline, now exported).
++`Turing.captureAction`/`Turing.capture_run` and
++`Turing.emitAction`/`Turing.emit_run` are the fixed-shape precursors
+ (last-tape capture, identity selection); their statements are untouched.
+ 
+ ## Main definitions
+@@ -57,8 +72,11 @@ exactly. `Turing.captureAction`/`Turing.capture_run` and
+ * `Turing.embedSilentCfg`, `Turing.embedEmitCfg` — a source configuration
+   transported along `ι : Fin m ↪ Fin k`, with the unselected host tapes
+   carried as frame parameters.
+-* `Turing.embedSilentTM`, `Turing.embedEmitTM` — the two machine
++* `Turing.embedSilentTM`, `Turing.embedEmitTM` — the two closed machine
+   transformers.
++* `Turing.embedSilentRetTM`, `Turing.embedEmitRetTM` — the two returning
++  transformers (round-1 repair R1): source halts land in the live return
++  anchor `Sum.inr ()`, with the halting transition executed in full.
+ 
+ ## Main results
+ 
+@@ -74,6 +92,13 @@ All sorried (statement phase):
+   `Turing.embedSilentTM_spaceUsedByTape_cap` — per-tape space: host tape
+   `ι i` visits exactly the source's tape-`i` cells, unselected tapes visit
+   nothing new, and the capture tape is bounded by the recorded output.
++* `Turing.embedSilentRetTM_run`, `Turing.embedEmitRetTM_run` — the
++  through-halt contracts: live lockstep, then the handover at the source's
++  first halt, final emission and source residue preserved, with the return
++  anchor reached first exactly there.
++* `Turing.embedSilentRetTM_visitedByTapeHead`,
++  `Turing.embedEmitRetTM_visitedByTapeHead` — the returning flavors visit
++  exactly what the closed flavors visit, at every time.
+ 
+ ## References
+ 
+@@ -137,8 +162,10 @@ recorded so far after a pre-existing prefix — with its head one past that
+ word, every other unselected tape holding the ambient frame `tapes j` with
+ its head at `heads j`, and the host's physical output the untouched
+ `out₀`. Generic form of the `emitterBank*`/`clBank*` configuration
+-correspondences; at `m = k`-with-last-tape-selection it degenerates to
+-`Turing.captureCfg` up to the state embedding. [Bon26] -/
++correspondences; for a source of `m` tapes in a host of `m + 1` with the
++last tape selected as capture, it degenerates to `Turing.captureCfg` up to
++the state embedding (round-1 restatement note: the specialization enlarges
++the tape count by one — it is not `m = k`). [Bon26] -/
+ def embedSilentCfg (ι : Fin m ↪ Fin k) (cap : Fin k)
+     (tapes : Fin k → ℤ → Option Bool) (heads : Fin k → ℤ)
+     (pre out₀ : List Bool) (c : Cfg m Bool S x) : Cfg k Bool S x where
+@@ -403,4 +430,151 @@ theorem embedEmitTM_visitedByTapeHead_frame (ι : Fin m ↪ Fin k)
+         (embedEmitCfg ι tapes heads pre c) t j = 1 := by
+   sorry
+ 
++/-- **R1′, the returning suppressing embedding** (round-1 repair R1). As
++`Turing.embedSilentTM`, on states `S ⊕ Unit`: live source states run the
++capture-flavored core, but a source action whose successor is `none` lands
++in the **live return anchor** `Sum.inr ()` — the halting transition is
++executed in full, its emission recorded on `cap`, before control arrives at
++the anchor (the `Turing.captureAction`/`Turing.emitterRightTM` halt-to-live
++discipline, exported). The anchor itself idles (stationary, silent, live),
++which is exactly what a seam combinator overrides as its left exit. -/
++def embedSilentRetTM (ι : Fin m ↪ Fin k) (cap : Fin k)
++    (M : MultiTapeTM m Bool S) : MultiTapeTM k Bool (S ⊕ Unit) where
++  q₀ := Sum.inl M.q₀
++  tr := fun q inp w =>
++    match q with
++    | Sum.inl s =>
++      let a := M.tr s inp fun i => w (ι i)
++      let h := embedActionCore ι (some cap) a
++      ⟨h.inputTape, h.workTapes, h.output,
++        some (a.state.elim (Sum.inr ()) Sum.inl)⟩
++    | Sum.inr _ => ⟨0, fun _ => (none, 0), none, some (Sum.inr ())⟩
++
++/-- **R1′, the returning forwarding embedding** (round-1 repair R1). As
++`Turing.embedEmitTM`, on states `S ⊕ Unit`, with source halts landing in
++the live return anchor `Sum.inr ()` after the halting transition — its
++forwarded emission included — has executed in full. -/
++def embedEmitRetTM (ι : Fin m ↪ Fin k) (M : MultiTapeTM m Bool S) :
++    MultiTapeTM k Bool (S ⊕ Unit) where
++  q₀ := Sum.inl M.q₀
++  tr := fun q inp w =>
++    match q with
++    | Sum.inl s =>
++      let a := M.tr s inp fun i => w (ι i)
++      let h := embedActionCore ι none a
++      ⟨h.inputTape, h.workTapes, h.output,
++        some (a.state.elim (Sum.inr ()) Sum.inl)⟩
++    | Sum.inr _ => ⟨0, fun _ => (none, 0), none, some (Sum.inr ())⟩
++
++/-- **R1′ through-halt contract, suppressing flavor** (spec, fill pending —
++round-1 repair R1): if the source first halts at time `T`, the returning
++embedding runs in `Sum.inl`-lockstep through every live time and, at `T`,
++sits at the **live return anchor** over the completed transport — the
++halting transition's emission recorded on `cap`, the source tape residue
++preserved on the selected bank, the frame untouched — having visited the
++anchor first exactly there. The smallest case is the round-1 counterexample
++cured: a one-state source that emits and halts on its first transition
++lands at time `1` in `Sum.inr ()` with `pre ++ [b]` on the capture tape
++(the audit's S8 check).
++
++**Proof sketch.** Live times: the `Sum.inl` branch applies the very core of
++`Turing.embedSilentTM`, so `embedSilentTM_runFrom`'s one-step commutation
++transports verbatim under `Cfg.mapState Sum.inl` (`Cfg.mapState_apply`).
++At the halting step, the source action's tape and capture effects are those
++of the closed flavor — `Turing.FinTM.bufferTape_append` records the final
++emission — while the successor `Option.elim` lands in `Sum.inr ()` instead
++of `none`; the anchor cannot occur earlier because live source states map
++into `Sum.inl`. Fill obligations, named: the two `Option.elim` successor
++equations; the through-halt step case; the first-visit projection. -/
++theorem embedSilentRetTM_run (ι : Fin m ↪ Fin k) (cap : Fin k)
++    (hcap : cap ∉ Set.range ι) (M : MultiTapeTM m Bool S)
++    (tapes : Fin k → ℤ → Option Bool) (heads : Fin k → ℤ)
++    (pre out₀ : List Bool) (c : Cfg m Bool S x) (T : ℕ)
++    (hlive : ∀ t < T, (M.runFrom c t).state ≠ none)
++    (hhalt : (M.runFrom c T).state = none) :
++    (∀ t < T,
++      (embedSilentRetTM ι cap M).runFrom
++          ((embedSilentCfg ι cap tapes heads pre out₀ c).mapState Sum.inl) t =
++        (embedSilentCfg ι cap tapes heads pre out₀
++          (M.runFrom c t)).mapState Sum.inl) ∧
++    (embedSilentRetTM ι cap M).runFrom
++        ((embedSilentCfg ι cap tapes heads pre out₀ c).mapState Sum.inl) T =
++      { embedSilentCfg ι cap tapes heads pre out₀ (M.runFrom c T) with
++          state := some (Sum.inr ()) } ∧
++    ∀ t < T,
++      ((embedSilentRetTM ι cap M).runFrom
++          ((embedSilentCfg ι cap tapes heads pre out₀ c).mapState Sum.inl)
++          t).state ≠ some (Sum.inr ()) := by
++  sorry
++
++/-- **R1′ through-halt contract, forwarding flavor** (spec, fill pending —
++round-1 repair R1): as `Turing.embedSilentRetTM_run` with the final
++emission forwarded to the physical output (`pre ++ (M.runFrom c T).output`
++at the anchor).
++
++**Proof sketch.** As `embedSilentRetTM_run`, with the forwarding core: live
++times transport under `Cfg.mapState Sum.inl` by `embedEmitTM_runFrom`'s
++one-step commutation, the halting step applies the closed forwarding core's
++tape and output effects (the final emission appended to the physical
++output) with the successor `Option.elim` landing in `Sum.inr ()`, and the
++first-visit clause projects from the `Sum.inl` lockstep. Fill obligations,
++named: the successor equations; the through-halt step case; the
++first-visit projection. -/
++theorem embedEmitRetTM_run (ι : Fin m ↪ Fin k) (M : MultiTapeTM m Bool S)
++    (tapes : Fin k → ℤ → Option Bool) (heads : Fin k → ℤ)
++    (pre : List Bool) (c : Cfg m Bool S x) (T : ℕ)
++    (hlive : ∀ t < T, (M.runFrom c t).state ≠ none)
++    (hhalt : (M.runFrom c T).state = none) :
++    (∀ t < T,
++      (embedEmitRetTM ι M).runFrom
++          ((embedEmitCfg ι tapes heads pre c).mapState Sum.inl) t =
++        (embedEmitCfg ι tapes heads pre (M.runFrom c t)).mapState Sum.inl) ∧
++    (embedEmitRetTM ι M).runFrom
++        ((embedEmitCfg ι tapes heads pre c).mapState Sum.inl) T =
++      { embedEmitCfg ι tapes heads pre (M.runFrom c T) with
++          state := some (Sum.inr ()) } ∧
++    ∀ t < T,
++      ((embedEmitRetTM ι M).runFrom
++          ((embedEmitCfg ι tapes heads pre c).mapState Sum.inl) t).state ≠
++        some (Sum.inr ()) := by
++  sorry
++
++/-- **R1′ space, suppressing flavor** (spec, fill pending — round-1 repair
++R1): at every time and on every tape, the returning embedding's visited set
++from the `Sum.inl`-mapped seam equals the closed embedding's from the plain
++seam — the trajectories coincide through the halt, and afterwards one idles
++at the live anchor while the other sits halted, both stationary.
++
++**Proof sketch.** For `t` up to the first source halt, both machines apply
++identical tape actions (`embedSilentRetTM_run`'s lockstep and the halting
++step's shared core); beyond it, the anchor's idle action and the halted
++absorption are both stationary, freezing both visited sets. -/
++theorem embedSilentRetTM_visitedByTapeHead (ι : Fin m ↪ Fin k) (cap : Fin k)
++    (M : MultiTapeTM m Bool S)
++    (tapes : Fin k → ℤ → Option Bool) (heads : Fin k → ℤ)
++    (pre out₀ : List Bool) (c : Cfg m Bool S x) (t : ℕ) (j : Fin k) :
++    (embedSilentRetTM ι cap M).visitedByTapeHead
++        ((embedSilentCfg ι cap tapes heads pre out₀ c).mapState Sum.inl) t j =
++      (embedSilentTM ι cap M).visitedByTapeHead
++        (embedSilentCfg ι cap tapes heads pre out₀ c) t j := by
++  sorry
++
++/-- **R1′ space, forwarding flavor** (spec, fill pending — round-1 repair
++R1): the forwarding analogue of
++`Turing.embedSilentRetTM_visitedByTapeHead`.
++
++**Proof sketch.** As the suppressing flavor: identical tape actions through
++the first source halt, then the live idle and the halted absorption are
++both stationary, freezing both visited sets — the trajectories coincide at
++every time. -/
++theorem embedEmitRetTM_visitedByTapeHead (ι : Fin m ↪ Fin k)
++    (M : MultiTapeTM m Bool S)
++    (tapes : Fin k → ℤ → Option Bool) (heads : Fin k → ℤ)
++    (pre : List Bool) (c : Cfg m Bool S x) (t : ℕ) (j : Fin k) :
++    (embedEmitRetTM ι M).visitedByTapeHead
++        ((embedEmitCfg ι tapes heads pre c).mapState Sum.inl) t j =
++      (embedEmitTM ι M).visitedByTapeHead
++        (embedEmitCfg ι tapes heads pre c) t j := by
++  sorry
++
+ end Turing
+diff --git a/TCSlib/Complexity/TuringMachine/Build/Seam.lean b/TCSlib/Complexity/TuringMachine/Build/Seam.lean
+index 5579ef61..ef9ebc4b 100644
+--- a/TCSlib/Complexity/TuringMachine/Build/Seam.lean
++++ b/TCSlib/Complexity/TuringMachine/Build/Seam.lean
+@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
+ Authors: Seyoon Ragavan
+ -/
+ import TCSlib.Complexity.TuringMachine.Build.Convention
++import TCSlib.Complexity.TuringMachine.StateRenaming
+ 
+ set_option maxHeartbeats 0
+ set_option relaxedAutoImplicit false
+@@ -58,7 +59,20 @@ All sorried (statement phase):
+ * `Turing.seamCompTM_run` — seam-to-seam composition within
+   `T₁ + 1 + T₂`.
+ * `Turing.seamCompTM_firstReturn` — the composite inherits a first-return
+-  cut at the final anchor, so composites chain.
++  cut at the final anchor, so composites **whose phases satisfy the stated
++  cuts** chain (round-1 finding R3: the cut excludes positive
++  entry-equals-exit calls — those route through the release adapter below).
++* `Turing.seamCompTM_run_ofCfg`, `Turing.seamCompTM_firstReturn_ofCfg`,
++  `Turing.seamCompTM_visitedByTapeHead_ofCfg` — the **general-configuration**
++  composition (round-1 repair R2): phase two starts from phase one's
++  returned configuration with only the control state replaced, so arbitrary
++  frames, displaced inactive heads, and accumulated output cross the
++  dispatch intact; the canonical `Cfg.ofWords` theorems are its instances.
++* `Turing.seamReleaseTM`, `Turing.seamReleaseTM_firstReturn`,
++  `Turing.seamReleaseTM_visitedByTapeHead` — the **fresh-entry/release
++  adapter** (round-1 repair R3): the entry action executes unconditionally
++  from a fresh start state, so a positive call that returns to its own
++  anchor becomes seam-consumable.
+ * `Turing.seamCompTM_visitedByTapeHead` — per-tape visited-set
+   containment (the headline space clause, decision 12.1).
+ * `Turing.seamCompTM_spaceUsedByTape_le_add`,
+@@ -289,4 +303,152 @@ theorem seamCompTM_spaceUsedByTape_le_max [DecidableEq S₁]
+         (M₂.spaceUsedByTape (Cfg.ofWords (input := x) entry w₁) T₂ i) := by
+   sorry
+ 
++/-- **R2′, general-configuration seam-to-seam composition** (spec, fill
++pending — round-1 repair R2): the `Cfg.ofWords` restriction of
++`Turing.seamCompTM_run` is lifted. If `M₁` carries an arbitrary
++configuration `c₀` to `c₁` in exactly `T₁` steps, first reaching the anchor
++`exit` there, and `M₂` carries `c₁` **with only the control state replaced
++by `entry`** to `c₃` in `T₂` steps, then the composite carries the
++`Sum.inl`-mapped `c₀` to the `Sum.inr`-mapped `c₃` in exactly
++`T₁ + 1 + T₂` steps: the dispatch step is stationary, silent, and
++write-free, so displaced inactive heads, noncanonical tape contents, the
++input position, and **accumulated output** all cross it intact — exactly
++the seams the round-1 audit exhibited (`emitterP2_relocate_run`'s arbitrary
++frames, `exists_emitCallTM`'s nonempty output) that no `Cfg.ofWords`
++endpoint can describe. The canonical `seamCompTM_run` is the
++`Cfg.ofWords` instance.
++
++**Proof sketch.** Identical three-segment decomposition to
++`seamCompTM_run` — phase-one `Sum.inl` lockstep under the cut, one
++dispatch step, phase-two `Sum.inr` lockstep via `Cfg.mapState_apply` —
++with the single new observation that a stationary write-free action fixes
++**every** field of an arbitrary configuration, not only a canonical one
++(`Turing.Action.apply` componentwise). Fill obligations, named: the two
++lockstep inductions over `Cfg.mapState`, the dispatch-step field check,
++and the `ofWords` specialization recovering the canonical theorem. -/
++theorem seamCompTM_run_ofCfg [DecidableEq S₁] (M₁ : MultiTapeTM k Bool S₁)
++    (exit : S₁) (M₂ : MultiTapeTM k Bool S₂) (entry : S₂)
++    {c₀ c₁ : Cfg k Bool S₁ x} {c₃ : Cfg k Bool S₂ x} {T₁ T₂ : ℕ}
++    (h₁ : M₁.runFrom c₀ T₁ = c₁) (hexit : c₁.state = some exit)
++    (hcut : ∀ t < T₁, (M₁.runFrom c₀ t).state ≠ some exit)
++    (h₂ : M₂.runFrom (c₁.mapState fun _ => entry) T₂ = c₃) :
++    (seamCompTM M₁ exit M₂ entry).runFrom (c₀.mapState Sum.inl)
++        (T₁ + 1 + T₂) =
++      c₃.mapState Sum.inr := by
++  sorry
++
++/-- **R2′, the general inherited first-return cut** (spec, fill pending —
++round-1 repair R2): under the hypotheses of
++`Turing.seamCompTM_run_ofCfg`, if `M₂` first reaches `q₂` at `T₂`, the
++composite first reaches `Sum.inr q₂` at `T₁ + 1 + T₂`.
++
++**Proof sketch.** As `seamCompTM_firstReturn`, over the general lockstep
++segments: left times produce `Sum.inl` states, right times the
++`Sum.inr`-mapped `M₂` states at shifted time, and injectivity of the
++constructors transports the cuts. -/
++theorem seamCompTM_firstReturn_ofCfg [DecidableEq S₁]
++    (M₁ : MultiTapeTM k Bool S₁) (exit : S₁)
++    (M₂ : MultiTapeTM k Bool S₂) (entry : S₂) (q₂ : S₂)
++    {c₀ c₁ : Cfg k Bool S₁ x} {c₃ : Cfg k Bool S₂ x} {T₁ T₂ : ℕ}
++    (h₁ : M₁.runFrom c₀ T₁ = c₁) (hexit : c₁.state = some exit)
++    (hcut : ∀ t < T₁, (M₁.runFrom c₀ t).state ≠ some exit)
++    (h₂ : M₂.runFrom (c₁.mapState fun _ => entry) T₂ = c₃)
++    (hq : c₃.state = some q₂)
++    (hcut₂ : ∀ t < T₂,
++      (M₂.runFrom (c₁.mapState fun _ => entry) t).state ≠ some q₂) :
++    ∀ t < T₁ + 1 + T₂,
++      ((seamCompTM M₁ exit M₂ entry).runFrom (c₀.mapState Sum.inl) t).state ≠
++        some (Sum.inr q₂) := by
++  sorry
++
++/-- **R2′ space, the general per-tape headline** (spec, fill pending —
++round-1 repair R2): under the hypotheses of `Turing.seamCompTM_run_ofCfg`,
++on every work tape the composite's visited set over the composed run is
++contained in the union of the two phases' visited sets — the
++general-configuration form of `Turing.seamCompTM_visitedByTapeHead`, from
++which the canonical corollaries project.
++
++**Proof sketch.** As the canonical headline: the two lockstep segments
++reproduce the phases' trajectories, and the dispatch step is stationary at
++a point both phases' endpoint/start configurations already visit. -/
++theorem seamCompTM_visitedByTapeHead_ofCfg [DecidableEq S₁]
++    (M₁ : MultiTapeTM k Bool S₁) (exit : S₁)
++    (M₂ : MultiTapeTM k Bool S₂) (entry : S₂)
++    {c₀ c₁ : Cfg k Bool S₁ x} {T₁ T₂ : ℕ}
++    (h₁ : M₁.runFrom c₀ T₁ = c₁) (hexit : c₁.state = some exit)
++    (hcut : ∀ t < T₁, (M₁.runFrom c₀ t).state ≠ some exit) (i : Fin k) :
++    (seamCompTM M₁ exit M₂ entry).visitedByTapeHead (c₀.mapState Sum.inl)
++        (T₁ + 1 + T₂) i ⊆
++      M₁.visitedByTapeHead c₀ T₁ i ∪
++        M₂.visitedByTapeHead (c₁.mapState fun _ => entry) T₂ i := by
++  sorry
++
++variable {S : Type*}
++
++/-- **R3′, the fresh-entry/release adapter** (round-1 repair R3). The seam
++combinator dispatches at its exit anchor **before** that state's action, so
++a positive call that starts and ends at one anchor cannot be cut
++(`seamCompTM_firstReturn`'s cut is contradictory at zero — the round-1
++finding, witnessed by `exists_installCallTM`/`exists_emitCallTM`'s
++strictly-positive interior promises and `emitterP2_call_segment`'s
++execute-first discipline). The adapter runs `M` on states `Unit ⊕ S` with a
++fresh start `Sum.inl ()` that executes the anchor's action
++**unconditionally**, after which control lives in the `Sum.inr` copy — so
++the *first re-arrival* at `Sum.inr anchor` is a genuine positive-time
++event a seam can consume as its left exit. -/
++def seamReleaseTM (M : MultiTapeTM k Bool S) (anchor : S) :
++    MultiTapeTM k Bool (Unit ⊕ S) where
++  q₀ := Sum.inl ()
++  tr := fun q inp w =>
++    match q with
++    | Sum.inl _ =>
++      let a := M.tr anchor inp w
++      ⟨a.inputTape, a.workTapes, a.output, a.state.map Sum.inr⟩
++    | Sum.inr s =>
++      let a := M.tr s inp w
++      ⟨a.inputTape, a.workTapes, a.output, a.state.map Sum.inr⟩
++
++/-- **R3′, the positive first return through the adapter** (spec, fill
++pending — round-1 repair R3): if `M`, started at its anchor, first
++re-visits the anchor at a strictly positive time `T`, then the adapter,
++started at its fresh state over the same configuration, reaches
++`Sum.inr anchor` first at exactly `T`, over the `Sum.inr`-transported run.
++The audit's S7 check is the smallest case: a two-step write-then-return
++call executes both source actions before any seam dispatch can fire.
++
++**Proof sketch.** The fresh step applies the anchor's action verbatim
++(`Cfg.mapState_apply` at the constant relabeling), after which every step
++is `Sum.inr`-lockstep with `M`'s run; the first-visit clause is the
++transported cut, with time zero excluded by the fresh constructor
++(`Sum.inl ≠ Sum.inr`). Fill obligations, named: the fresh-step equation,
++the lockstep induction, and the cut transport. -/
++theorem seamReleaseTM_firstReturn (M : MultiTapeTM k Bool S) (anchor : S)
++    {c c' : Cfg k Bool S x} {T : ℕ}
++    (hc : c.state = some anchor) (hT : 0 < T) (h : M.runFrom c T = c')
++    (hc' : c'.state = some anchor)
++    (hcut : ∀ t, 0 < t → t < T → (M.runFrom c t).state ≠ some anchor) :
++    (seamReleaseTM M anchor).runFrom (c.mapState fun _ => Sum.inl ()) T =
++        c'.mapState Sum.inr ∧
++      ∀ t < T,
++        ((seamReleaseTM M anchor).runFrom
++            (c.mapState fun _ => Sum.inl ()) t).state ≠
++          some (Sum.inr anchor) := by
++  sorry
++
++/-- **R3′ space** (spec, fill pending — round-1 repair R3): the adapter's
++visited sets equal `M`'s at every time and on every tape — the trajectories
++coincide step for step.
++
++**Proof sketch.** Every adapter step applies the very action `M` applies at
++the corresponding state (the fresh step at the anchor, `Sum.inr` steps at
++their carried state), so the head trajectories agree; project
++`seamReleaseTM_firstReturn`'s lockstep. -/
++theorem seamReleaseTM_visitedByTapeHead (M : MultiTapeTM k Bool S)
++    (anchor : S) {c : Cfg k Bool S x} (hc : c.state = some anchor)
++    (t : ℕ) (i : Fin k) :
++    (seamReleaseTM M anchor).visitedByTapeHead
++        (c.mapState fun _ => Sum.inl ()) t i =
++      M.visitedByTapeHead c t i := by
++  sorry
++
+ end Turing
+diff --git a/machine-library-design.md b/machine-library-design.md
+index a20f337e..2d2ebd49 100644
+--- a/machine-library-design.md
++++ b/machine-library-design.md
+@@ -852,3 +852,31 @@ stacks vs `FinTM` tapes with heads). Suggested tag: `[Bon26]`. The R-modules'
+ docstrings and their blueprint entries must carry this citation, alongside the
+ existing `[Balbach22]` (AFP `Cook_Levin`) for the composition architecture and
+ the in-repo credits to the colleague modules named above.
++
++### 12.5 Round-1 audit repairs (2026-10-09)
++
++The §12 statement-gate round 1 (`audits/routine-infra-findings.md`: 0
++blockers, 4 majors) drove four repairs, landed with the round-2 pack:
++
++* **R1 → the returning embeddings** `embedSilentRetTM`/`embedEmitRetTM`
++  (states `S ⊕ Unit`): the closed transformers lose a final halting
++  emission to either the halt or a premature seam dispatch — the audit's
++  formal trace. The returning flavors execute every source action through
++  the halting transition and land in the live anchor `Sum.inr ()`.
++* **R2 → general-configuration seam composition**
++  (`seamCompTM_run_ofCfg` + first-return and visited forms): the canonical
++  `Cfg.ofWords` theorems cannot consume arbitrary frames, displaced
++  inactive heads, or accumulated output; the general form starts phase two
++  from phase one's returned configuration with only the control state
++  replaced.
++* **R3 → the fresh-entry/release adapter** `seamReleaseTM`: positive
++  calls returning to their own anchor are now seam-consumable (the entry
++  action executes unconditionally from a fresh start state).
++* **R4 → the threaded-map witness** is re-commissioned as a forwarding
++  controller (validate/buffer, emit prefix, forward payload output);
++  the received captured-payload machine is refuted as a witness for the
++  linear-administration bound.
++
++Scope notes R9 (physical-tape selection is not zone multiplexing) and R10
++(loop sibling contracts not exported) are recorded at their definition
++sites.
