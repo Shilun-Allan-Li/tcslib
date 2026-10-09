@@ -7022,8 +7022,10 @@ private lemma f2_loopHost_release (body F : FinTM Bool) (anchor : body.State)
 
 /-- Genuine body startup reaches the released first candidate in at most
 its source startup time plus two host steps.
-**Proof sketch.** The no-anchor prefix includes time zero, so startup is
-captured without a premature stop. Its live endpoint yields the false flag;
+**Proof sketch.** When the startup time is positive, the no-anchor prefix is
+captured without a premature stop; a zero-time startup already occupies the
+anchor (the no-anchor premise is vacuous) and takes the two administrative
+steps directly. In either case the anchor endpoint yields the false flag;
 one stop step and phase 6's flag-clear step release the initial candidate. -/
 private lemma f2_loopHost_start (body F : FinTM Bool) (anchor : body.State)
     (findMode : Bool) {x : List Bool} (s : List Bool) (t : ℕ)
