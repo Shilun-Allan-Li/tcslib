@@ -2008,30 +2008,6 @@ private lemma anyTrue_computes : anyTrueTM.ComputesFunInTime
     exact ⟨hs, ho⟩
   exact hc.mono ht
 
-/-- A successful aligned parse reconstructs the input's exact encoding.
-**Proof sketch.** Induct over two-bit blocks: equal bits prepend one decoded
-bit; the separator exposes the entire remaining suffix. -/
-private lemma catalogPair_inverse (x : List Bool) :
-    ∀ a v, pairDecode x = some (a, v) → x = pairEncode a v := by
-  induction x using List.twoStepInduction with
-  | nil => intro a v h; simp [pairDecode] at h
-  | singleton b => intro a v h; cases b <;> simp [pairDecode] at h
-  | cons_cons b d rest ih _ =>
-    intro a v h
-    cases b <;> cases d
-    · obtain ⟨p, hp, he⟩ := Option.map_eq_some_iff.mp h
-      rcases p with ⟨u, w⟩
-      cases he
-      rw [ih u w hp]
-      rfl
-    · cases h; rfl
-    · simp [pairDecode] at h
-    · obtain ⟨p, hp, he⟩ := Option.map_eq_some_iff.mp h
-      rcases p with ⟨u, w⟩
-      cases he
-      rw [ih u w hp]
-      rfl
-
 /-- Marker absence is exactly the false verdict; a present marker can be
 stripped after any fixed prefix without disturbing that prefix.
 **Proof sketch.** Right induction follows `reverse.dropWhile`: append-false
@@ -2869,7 +2845,7 @@ theorem computesFunInTime_stripLast :
       rcases catalogMarker_cases v with ⟨ha, hs⟩ | ⟨w, ha, hs, hp⟩
       · simpa [hd, ha, hs] using hm
       · have hx : splitAtLastTrue x = some (pairEncode u w) := by
-          rw [catalogPair_inverse x u v hd]
+          rw [Turing.eq_pairEncode_of_pairDecode x u v hd]
           exact hp _
         simpa [hd, ha, hs, hx] using hm
   apply hh.mono
