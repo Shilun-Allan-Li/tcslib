@@ -129,10 +129,15 @@ of [BGS75]'s machine/clock-exponent pairing).
 **Proof sketch.** For fixed tape count `k` and state count `m + 1`, the oracle
 machines over `Bool` with state space `Fin (m + 1)` form a finite type (the
 transition table is a function between finite types), so `Fintype.equivFin`
-enumerates the well-formed ones; a pairing of `ℕ` with `ℕ × ℕ × ℕ` (tape
-count, state count, table rank — with infinite fibers, supplying the
-recurrence and the unbounded clock exponents) produces the family, totalized
-by a fixed well-formed one-state default at indices whose rank overflows.
+enumerates the well-formed ones; a pairing of `ℕ` with `ℕ × ℕ × ℕ × ℕ` —
+tape count, state count, table rank, and an explicit **repetition
+coordinate** (a bijective pairing alone has singleton fibers; the fourth
+coordinate supplies the recurrence and the unbounded clock exponents —
+round-1 finding 2) — produces the family, totalized by a fixed well-formed
+**three-state** default at indices whose rank overflows (well-formedness
+demands three pairwise-distinct special states, so no one-state machine
+qualifies — round-1 finding 2; equivalently, embed a one-state plain
+machine by `Turing.FinTM.toFinOracleTM`, which adjoins them).
 Every bundled `M : Turing.FinOracleTM Bool` relabels its state type along
 `Fintype.equivFin` to some `Fin (m + 1)`, preserving runs
 configuration-by-configuration under every oracle — the oracle transport of
