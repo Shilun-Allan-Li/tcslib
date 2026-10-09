@@ -438,7 +438,20 @@ recorded as the Z1 rider in `machine-library-design.md`); D-R3 — the
 machine-agreement transfer lemma is **commissioned** as §13 item **Z5**
 (the `hagree` lockstep made standalone; collapses Loop's ≈550-line
 forwarding-host duplication and serves Hardness's 13 guarded agreement
-sites; placement open decision 13.5). D-R2 under discussion.
+sites; placement open decision 13.5).
+
+**D-R2 RESOLVED (user, 2026-10-09):** conservative RB2 plus the stretch
+(c) (`splitSolve` via `splitSolveWith` — a logical subsumption that
+survives any layout); **no option (a)** (a half-measure 12.2c would
+churn); and **12.2c is PROMOTED** from "queued indefinitely" to **the next
+window after the RB batches land** — the per-theme split making each
+implementation live once with both its time and space contracts,
+`Primitives.lean` and `Catalog.lean` reduced to facades re-exporting the
+frozen public names, consuming the recorded dedup maps (Primitives↔Catalog
+150 twins, Loop↔Catalog 95, the Wrappers copies), dropping the dead twins
+on both sides, and folding in the F2-audit dedup assignments and the
+queued `redirectTM` projection. 12.2c runs with its own audit gate under
+the new duplication governance.
 
 **Duplication-governance amendments landed (user-directed, 2026-10-09; from
 the D-R2 post-mortem — the `f2_` accumulation was disclosed and recorded at
