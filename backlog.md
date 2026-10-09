@@ -609,6 +609,28 @@ uncomputability chapter.
   the closed chapter-2 `SAT` surface and the received `polyTimeComputable`
   layer, and is independent of P3.3's code layer. *Origin:
   `AroraBarakChapters3-4Plan.md` §4 (P3.4 row), decision CH34-Q6.*
+* **ARM extensions + colleague sync (moved to backlog 2026-10-09; user
+  decision — outreach to Hydroxyi/Jason Dong initiated the same day).**
+  The three proposed extensions to the co-owned `LogProg` tree
+  (`AroraBarakChapters3-4Plan.md` §2.5), each a future infrastructure
+  statement phase with its own audit gate once agreed: (1) a
+  **nondeterministic ARM** — a `choose` instruction compiling to
+  `FinNDTM` with the space theorem carried over (customers: `PATH ∈ NL`,
+  Immerman-Szelepcsényi, Cor 4.21); (2) a **polynomial-width ARM
+  variant** — `poly(n)`-bit registers for the `PSPACE`-level algorithms
+  (`TQBF ∈ PSPACE`, `NP ⊆ PSPACE`, Savitch at polynomial level); (3) the
+  **configuration codec as a program** — extends Hydroxyi's deterministic
+  `ConfigCount` to NDTMs, adapting (citing, never vendoring) cslib's
+  upstream `ConfigBound` design. Also on the sync agenda: `CounterProg`'s
+  one-way input (the `2^O(S)` searches need indexed access or a rewind
+  instruction), and the two citation-audit provenance questions, asked as
+  questions (their `LogProg` compiler vs lax-434930's `TimeCompiler`;
+  `ConfigCount.core` vs cslib `ConfigBound`'s `Cfg.core`). **Blocks fills
+  only, never statements**: the machine-heavy P4.x fills named above plus
+  the ARM interface statements deferred out of P4.1; every other fill
+  epoch and the retrofit proceed. Returns to the plan on Hydroxyi's
+  reply. *Origin: plan §2.5, §4a/§4b stage 1, CH34-Q2; the 2026-10-08
+  citation-audit row.*
 
 ---
 
