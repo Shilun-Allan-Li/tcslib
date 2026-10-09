@@ -1,176 +1,136 @@
 # External audit pack — Chapter 7, Phase 1 (randomized computation, full statement surface)
 
-Audits commit `03ed4568` on `complexity/arora-barak-ch7` (the Chapter-7 campaign
-backfill; the **Lean statement surface is unchanged since `243b106b`** — `03ed4568`
-adds only `AroraBarakChapter7Plan.md` and `scripts/ab_ch7_module_order.txt`). This is
-the **statement-audit gate of the Chapter 7 campaign** (`AroraBarakChapter7Plan.md`),
-covering the chapter's full statement surface in one phase (Tier A probability/spectral
-facts, Tier B randomized classes over an abstract verifier model, and the
-polynomial-time machine instantiation). Record findings in
-`audits/ch7-phase1-findings.md`.
+Audited Lean surface: commit `76fe2f46` on `complexity/arora-barak-ch7` (green,
+repaired). This pack/bundle were regenerated on top of it. This is the
+**statement-audit gate of the Chapter 7 campaign** (`AroraBarakChapter7Plan.md`),
+covering the full statement surface in one phase: Tier A probability/spectral facts,
+Tier B randomized classes over an abstract verifier model, the polynomial-time machine
+instantiation, **and the three new support modules that the recent fill added**
+(counter-program input-shift, a poly-time prefix calculus, and the `pairEncode`
+fixed-randomness circuit builder). Record findings in `audits/ch7-phase1-findings.md`.
 
-> **Unusual provenance — read first.** This gate is being run **retroactively**. The
-> statement surface was previously reviewed by the maintainer over three fidelity
-> rounds (approved at `4a683979`), and fill has already begun: of the headline
-> results, Tier A and the Tier-B *abstract* class theorems are proved, and in the
-> machine instantiation `polyTimeModel_closedUnderRace`/`_closedUnderAnswerIs`/
-> `_closedUnderNot` and `inSigma2_polyTimeModel_iff` are proved. Those proofs are
-> machine-checked; **do not review tactic scripts**. The product under audit is the
-> **statements, their conventions, and (for the remaining `sorry`s) their proof
-> sketches** — exactly as at any statement gate. The already-proved tactic proofs are
-> re-audited at fill closure, not here. Please treat a proved statement no more gently
-> than a sorried one: a *wrong but proved* statement is the worst outcome.
+> **Provenance — read first.** This gate runs **retroactively**, and the surface has
+> two layers:
+> 1. The original 10-module surface (Tier A + Tier B + `PolyTimeModel` skeleton),
+>    maintainer-reviewed over three fidelity rounds, approved at `4a683979`.
+> 2. Three **new** support modules and three filled `PolyTimeModel` targets delivered
+>    by a *different-vendor model* (commit `722738a1`). That commit **did not compile**
+>    as delivered (its author could not run Lean); it was repaired to green at
+>    `76fe2f46` with **no statement or signature changed** (see attestation 1). The
+>    repairs were pure proof-engineering.
+>
+> The product under audit is the **statements, their definitions, and (for the
+> remaining `sorry`s) their proof sketches** — not tactic scripts, which Lean checks.
+> Treat every statement, proved or sorried, with equal suspicion: a *wrong-but-proved*
+> statement is the worst outcome, and the new modules are externally-drafted, so
+> blind-restate them like any other surface.
 
-Source text: [AB09] ch. 7 (2007 web draft; the reference pair is under
-`blueprint/src/references/`). Specifically: Lemma 7.5 (Schwartz-Zippel); Definition 7.4
-(`BPP`/`RP`/`coRP`/`ZPP`); Theorem 7.8 (`ZPP = RP ∩ coRP`); Theorem 7.10 and its
-Corollary 7.11 (error reduction); Lemma 7.9 (`BPP_{n^{-c}} = BPP`); Theorem 7.17
-(`BPP ⊆ P/poly`, Adleman); Theorem 7.18 (`BPP ⊆ Σ₂ᵖ ∩ Π₂ᵖ`, Sipser-Gács); and §7.B
-Lemma 7.37 (mixing), Theorem 7.38 (walks), Lemma 7.40, Theorem 7.41 (expander
-Chernoff). The auditor must have the chapter at hand.
+Source text: [AB09] ch. 7 (2007 web draft; reference pair under
+`blueprint/src/references/`): Lemma 7.5; Definition 7.4 (`BPP`/`RP`/`coRP`/`ZPP`);
+Theorem 7.8; Theorem 7.10 + Corollary 7.11; Lemma 7.9; Theorem 7.17; Theorem 7.18; and
+§7.B Lemma 7.37, Theorem 7.38, Lemma 7.40, Theorem 7.41. The auditor must have the
+chapter at hand.
 
 ## Repository-side attestations (maintainer, remote machine — verify or challenge)
 
-1. **Freeze.** The backfill commit `03ed4568` touches exactly two files —
-   `AroraBarakChapter7Plan.md` (new) and `scripts/ab_ch7_module_order.txt` (new) —
-   and **no `.lean` file** (verifiable by path enumeration of `243b106b..03ed4568`).
-   The Chapter-7 Lean surface is therefore exactly as at `243b106b`. Upstream `main`
-   (Boolean-analysis reorganization, Chapter 10, the design-adaptation policy row) was
-   merged at `440e5034`; no upstream `.lean` file is modified by the Chapter-7 work
-   (the ch7 modules are all new files under `Complexity/Expanders/` and
-   `Complexity/Randomized/`).
-2. **Elaboration.** Full 10-module fresh-olean sweep via `scripts/lean_check_tree.sh`
-   in `scripts/ab_ch7_module_order.txt` order (Lean 4.25.0, Mathlib at the branch
-   pin), **`lake build` not used** (banned on the campaign branch). Every module
-   exits 0, emits a fresh `.olean`, and reports **zero `error:` lines**. Disclosure:
-   `Adleman` and `PolyTimeModel` import upstream modules (`CircuitComplexity.PPoly`,
-   `PolyHierarchy.*`, `ClassP.P`, `TuringMachine.Encoding`) that are not in the ch7
-   order list; the scratch olean tree was seeded with the already-built dependency
-   oleans so those imports resolve, then the two modules were re-elaborated fresh.
-3. **Admissions inventory.** Exactly **7** `declaration uses 'sorry'` warnings
-   tree-wide, all in the ch7 surface:
+1. **Statement freeze.** The fill modified one previously-audited file,
+   `Randomized/PolyTimeModel.lean`, by replacing three `sorry` bodies only: a
+   comment-stripped comparison of `243b106b` (pre-fill) vs `76fe2f46` (post-repair)
+   shows the **same 20 declarations with zero signatures changed, added, or removed**.
+   The three new modules and the three one-line facade imports are **pure additions**.
+   No other audited `.lean` file is touched.
+2. **Elaboration.** Full **13-module** fresh-olean sweep via `scripts/lean_check_tree.sh`
+   in `scripts/ab_ch7_module_order.txt` order (Lean 4.25.0, Mathlib at the branch pin;
+   **`lake build` not used** — banned on the campaign branch): every module exits 0,
+   emits a fresh `.olean`, **zero `error:` lines**.
+3. **Admissions inventory.** Exactly **4** `declaration uses 'sorry'` warnings
+   tree-wide:
    * `Expanders/Chernoff.lean:66` — `walk_visits_concentration` (Theorem 7.41),
-     **intentional and permanent** (book omits the proof; see Known deviations).
-   * `Randomized/PolyTimeModel.lean` — six open fill targets:
-     `polyTimeComputable_takePrefixByLen` (112), `…_dropPrefixByLen` (119),
-     `polyTimeModel_closedUnderMajority` (243), `…_closedUnderAny` (250),
-     `…_closedUnderShiftOr` (268), `polyTimeModel_verifierHasCircuits` (282).
-   No other module admits a `sorry`. Each sorried declaration sits under a docstring
-   whose **Proof sketch** names its intended construction.
-4. **Policy conformance — a disclosed gap.** `scripts/style_lint.py` (the per-file
-   policy linter adopted under this name at the main merge) reports **35 findings**
-   over the ten ch7 files. They are **fill-style**, not statement-fidelity, and are
-   scoped to fill closure, but are disclosed here in full honesty:
-   * the majority are *landed proofs longer than the linter's threshold without a
-     `**Proof sketch.**` docstring marker* (the sketches were written at skeleton time
-     for the `sorry`s; several filled proofs did not re-assert the marker);
-   * `Randomized/Classes.lean` is 1259 lines (> 1000; a facade split is a closure
-     task);
-   * a few helper theorems (`blockCount_le`, `weakAdv_pos/le_sixth/ge`) lack
-     docstrings;
-   * one **false positive**: `PolyTimeModel.lean:26` is prose inside the module
-     docstring ("each `ClosedUnder…` hypothesis becomes a lemma about `P`"), which the
-     regex misreads as a declaration named `about`.
-   None of these alters a statement; the maintainer will clear them before the fill
-   gate. Flag any that you believe *do* bear on fidelity.
-5. **New surface inventory.** The ch7 surface is 10 new modules: Tier A —
-   `Expanders/{Basic,Mixing,Walks,Chernoff}`, `Randomized/{SchwartzZippel,
-   ErrorReduction}`; Tier B — `Randomized/{Classes,Adleman,SipserGacs}`; instantiation
-   — `Randomized/PolyTimeModel`. The headline results are the ten theorems named under
-   "Source text"; the modules additionally carry the supporting definitions
-   (`IsSymmStochastic`, `lambda`, `VerifierModel`, `polyLen`, the class predicates
-   `InBPP/InRP/InCoRP/InZPP/InSigma2/InPi2`, the verifier constructions, the `randProb`
-   counting calculus) and their lemmas, all in namespace `Randomized` (Tier A defs
-   model-free) building only on Mathlib and the frozen Chapter-1/2 + circuit surfaces.
+     **intentional and permanent** (book omits the proof).
+   * `Randomized/PolyTimeModel.lean:248,255,273` — `polyTimeModel_closedUnderMajority`,
+     `…_closedUnderAny`, `…_closedUnderShiftOr`: the three open fill targets (a
+     polynomial loop of `P`-decider queries with vote/OR aggregation). Each carries a
+     proof sketch.
+4. **Axiom hygiene (anti-tamper).** `#print axioms` on the fresh olean tree: the fill's
+   closed leaves — `CounterProg.run_shiftInput`, `CounterProg.Goes.prepend_input`,
+   `polyTimeComputable_takePrefixByLength`/`…dropPrefixByLength`,
+   `DAGCircuit.pairEncode_eval`/`…_size`, `DAGCircuitFamily.pairEncode_eval_eq_true_iff`,
+   `Randomized.polyTimeComputable_takePrefixByLen`/`…dropPrefixByLen`,
+   `polyTimeModel_verifierHasCircuits`, `polyTimeModel_closedUnderRace` — all print
+   exactly `[propext, Classical.choice, Quot.sound]` (a subset for two of them); **no
+   `sorryAx`**. `adleman_polyTime` prints `sorryAx` as expected, via the still-open
+   `closedUnderMajority`.
+5. **Policy conformance.** `scripts/style_lint.py` reports fill-style findings (missing
+   `**Proof sketch.**` markers on some landed proofs, `Classes.lean` > 1000 lines, a
+   few undocstringed helpers, Lean "unused simp arg" / "unnecessary simpa" linter
+   warnings in the repaired modules). These are scoped to fill closure and alter no
+   statement; flag any you believe bear on fidelity.
 
 ## What is under audit
 
-| Module | Key definitions | Headline statements |
+The original surface, unchanged (see the prior pack revision for its full table): Tier A
+(`Expanders/{Basic,Mixing,Walks,Chernoff}`, `Randomized/{SchwartzZippel,ErrorReduction}`)
+and Tier B (`Randomized/{Classes,Adleman,SipserGacs}`), headline results Lemma 7.5,
+Theorems 7.8/7.10/7.17/7.18, Lemma 7.9, §7.B Lemmas 7.37/7.40 + Theorems 7.38/7.41.
+`Randomized/PolyTimeModel.lean` instantiates the abstract model; `closedUnderRace`,
+`closedUnderAnswerIs`, `closedUnderNot`, `verifierHasCircuits`, and
+`inSigma2_polyTimeModel_iff` are proved, the three closures above remain `sorry`.
+
+**New support surface (this revision):**
+
+| Module | Key definitions | Key statements |
 |---|---|---|
-| `Expanders/Basic.lean` | `IsSymmStochastic`, `uniform`, `toCLM`, `lambda` (λ(G)) | `mulVec_uniform`, `norm_mulVec_le_lambda`, `norm_toCLM_apply_le` (L²-contraction, Ex. 10), `lambda_nonneg`, `lambda_le_one` |
-| `Expanders/Mixing.lean` | `indicator` | `inner_indicator_mulVec_le` (Expander Mixing Lemma, Lemma 7.37, normalized) |
-| `Expanders/Walks.lean` | `unifMatrix`, `walkPMF`, `resMatrix`/`resVec` | `exists_decomposition` (Lemma 7.40), `walk_filter_sum`, `walk_all_mem_le` (expander-walk Theorem 7.38) |
-| `Expanders/Chernoff.lean` | — | `walk_visits_concentration` (Theorem 7.41) — **statement-only** |
-| `Randomized/SchwartzZippel.lean` | — | `schwartz_zippel` (Lemma 7.5) |
-| `Randomized/ErrorReduction.lean` | `iidBernoulli`, `successCount` | `iidBernoulli_tail_le`, `iid_bernoulli_avg_concentration`, `majority_error_le` (Hoeffding + the corrected Cor 7.11 / Thm 7.10 calculation) |
-| `Randomized/Classes.lean` | `randProb`, `polyLen`, `VerifierModel`, `boolVerifier`, `InBPP/InRP/InCoRP/InZPP`, `raceVerifier`/`majorityVerifier`/`anyVerifier`, the `ClosedUnder*` predicates, `blockCount`, `InBPPWeak/Strong` | `InBPP.compl`, `inZPP_iff_inRP_and_inCoRP` (Theorem 7.8), `bpp_error_reduction` + `inBPPWeak_iff_inBPP` (Theorem 7.10 / Lemma 7.9), the `randProb`/`blockCount`/tail calculus |
-| `Randomized/Adleman.lean` | `VerifierHasCircuits` | `adleman` (Theorem 7.17) |
-| `Randomized/SipserGacs.lean` | `InSigma2`, `InPi2`, `shiftOrVerifier`, `ClosedUnderShiftOr`, `amplify_concrete` | `bpp_subset_sigma2` (Theorem 7.18) + the XOR-shift / shift-count lemmas |
-| `Randomized/PolyTimeModel.lean` | `polyTimeModel`, `sliceTake`/`sliceDrop`, `takePrefixByLen`/`dropPrefixByLen` | the `polyTimeModel_closedUnder*` discharges, `verifierHasCircuits`, `inSigma2_polyTimeModel_iff`, and the poly-time `sipser_gacs`/`adleman`/`zpp` corollaries |
+| `TuringMachine/CounterProgInput.lean` | `CounterProg.shiftInput` (shift an abstract state's input position) | `run_shiftInput`, `Goes.prepend_input` — a bounded suffix run stays valid after prepending already-consumed input, with positions shifted |
+| `ClassNP/PolyTimePrefix.lean` | `PrefixByLength.take`/`drop` (on `pairEncode u s`, return `s.take \|u\|` / `s.drop \|u\|`; malformed pairs → `[]`), via a counter program | `polyTimeComputable_takePrefixByLength`, `…_dropPrefixByLength` |
+| `CircuitComplexity/PairEncode.lean` | `DAGCircuit.bufferInputs` (route a circuit's inputs through buffered copies/constants), `DAGCircuit.pairEncode` (compute `C` on `pairEncode x r` with `r` fixed), `pairWiring`/`pairEncodeInput` | `pairEncode_eval`, `pairEncode_isFaninTwo`/`isWellFormed`, `pairEncode_size` (`= n + C.size`), `DAGCircuitFamily.pairEncode_eval_eq_true_iff` |
 
-## Known deviations (declared by the authors — verify they are benign, flag any others)
+These discharge, respectively, `takePrefixByLen`/`dropPrefixByLen` (hence
+`closedUnderRace`) and `verifierHasCircuits` (hence Adleman's circuit hypothesis).
 
-* **Probability is done in ℚ by exact counting**, not via the book's `e^{-2ε²k}`
-  bound: `randProb` is a rational counting ratio over `{0,1}^m`; vote counts have an
-  exact binomial distribution; the tail uses the elementary `2^K (s(1-s))^{⌊K/2⌋}`
-  max-term estimate plus a rational Bernoulli inequality. Claim: the **class
-  statements** (7.8/7.9/7.10/7.17/7.18) are the intended ones; the analytic bound is a
-  dispensable intermediate. (CH7-Q1.)
-* **`ZPP` is in Las Vegas / abort form** (output `some b` or abort `none`, abort
-  probability bounded), not expected running time. (CH7-Q2.)
-* **Theorem 7.41 is statement-only**, with a **sign-corrected** bound (book omits the
-  proof; Gillman 1998 out of scope). (CH7-Q3.)
-* **Error reduction carries the Cor 7.11 erratum correction** (the book's stated
-  constant is off); the corrected two-sided bound is used.
-* **Randomness/length schedules are explicit** `polyLen a k n = a·(n+1)^k`, never an
-  abstract bounded function (the Chapter-2 Argument-A discipline).
-* **Randomized classes are certificate-first over an abstract `VerifierModel`**, with
-  the machine closures (`ClosedUnder*`, `VerifierHasCircuits`) as named hypotheses
-  discharged only in `PolyTimeModel.lean` against `Complexity.P`. (CH7-Q4.)
-* **`BPP ⊆ P/poly` uses the fixed-randomness circuit route** (`P_subset_PPoly` with the
-  random bits hard-wired), not PTM snapshots.
-* **λ(G)** is developed via the operator norm on the orthogonal complement of the
-  all-ones vector over `EuclideanSpace`/`WithLp`.
+## Known deviations (verify benign; flag others)
+
+All deviations from the prior pack revision still apply (ℚ-counting Chernoff — **CH7-Q1,
+highest priority**; Las Vegas `ZPP` — CH7-Q2; statement-only sign-corrected Thm 7.41 —
+CH7-Q3; explicit `polyLen a k n = a·(n+1)^k`; certificate `VerifierModel` with named
+closures — CH7-Q4; Cor 7.11 erratum; fixed-randomness circuit route). New with this
+revision:
+
+* **The circuit buffer adds `n` vertices** (`pairEncode_size = n + C.size`), because the
+  library's `pairEncode` *doubles* the first component, so each free input feeds two
+  encoded coordinates via two buffered copies, with the separator and the fixed word `r`
+  as constants. The overhead is polynomial and independent of `r`'s contents.
+* **`PrefixByLength.take`/`drop` are total**: on a malformed pair (`pairDecode = none`,
+  e.g. the forbidden aligned `10`) they return `[]`, matching `pairFstD`/`pairSndD = []`.
 
 ## Specific questions for this phase
 
-1. **CH7-Q1 (highest priority).** Is the ℚ-counting Chernoff development a *faithful*
-   rendering of Theorems 7.10/7.17/7.18 and Lemma 7.9 — i.e. are the proved class
-   statements the intended ones, with the particular tail constant immaterial? Look
-   hardest for a statement that the counting route silently *weakens* (e.g. an
-   amplification target reachable only because the ℚ bound is looser/tighter than
-   `e^{-2ε²k}` at the used parameters).
-2. **CH7-Q2.** Does the Las Vegas / abort-form `ZPP` (and `inZPP_iff_inRP_and_inCoRP`)
-   state Theorem 7.8 faithfully, with no degenerate satisfaction (e.g. an abort bound
-   that makes `ZPP` collapse to `P` or to everything)?
-3. **CH7-Q3.** Is the sign-corrected Theorem 7.41 the intended inequality, and is a
-   proof-free statement acceptable here?
-4. **CH7-Q4.** Is `polyTimeModel` a faithful instantiation of "`M` is a polynomial-time
-   TM" (Definition 7.4): efficiency as `P`-membership of the `some true`/`some false`
-   sets of `M ∘ pairEncode`, and `EffTwoWitness` via the nested `SigmaP` pairing? And
-   are the abstract `ClosedUnder*`/`VerifierHasCircuits` hypotheses *exactly* the
-   book's implicit machine closures — neither too strong (smuggling the conclusion)
-   nor too weak?
-5. **Drafting-time doubts.** (a) `polyLen a k` degenerate cases (`a = 0`, `k = 0`,
-   `n = 0`): do any amplification statements become vacuous or false at the boundary?
-   (b) `InBPP.compl` and the `raceVerifier`/`majorityVerifier`/`anyVerifier`/
-   `shiftOrVerifier` constructions — are the some-true/some-false set definitions and
-   the `blockCount` vote predicate stated so that the intended event probability is
-   what `randProb` computes (no off-by-one in `k(n) < 2·votes`, no block-misalignment
-   in `(r.drop (i·p)).take p`)? (c) the Sipser-Gács balanced shift count
-   `(19a₀+20)(n+1)^{k₀} < 2^{T(n)}` and `m < T·ks` — do the concrete parameter
-   inequalities hold at every input length including `n = 0`?
+Carry over CH7-Q1..Q4 from the prior revision (CH7-Q1 — ℚ-Chernoff fidelity — remains
+priority one). New, on the added surface:
+
+5. **Circuit fidelity.** Does `pairWiring`/`pairEncodeInput` realize the library's
+   `Turing.pairEncode (List.ofFn v) r` *exactly* as circuit input wires (doubled first
+   component as two copies per bit, constant separator `[false,true]`, constant `r`)?
+   Does `DAGCircuitFamily.pairEncode_eval_eq_true_iff` state the intended acceptance
+   correspondence that `polyTimeModel_verifierHasCircuits` consumes — neither off by a
+   coordinate nor collapsing when `n = 0` or `r = []`?
+6. **Prefix fidelity + the bridge.** Do `PrefixByLength.take`/`drop` agree with
+   `Randomized.takePrefixByLen`/`dropPrefixByLen` as used in `closedUnderRace` (the fill
+   bridges them by `simp` unfolding — confirm the two definitions are the same
+   function, so the poly-time proof is about the function `closedUnderRace` actually
+   uses)? Is the malformed-input convention (`→ []`) faithful to `pairFstD`/`pairSndD`?
+7. **Input-shift semantics.** Do `CounterProg.run_shiftInput` / `Goes.prepend_input`
+   state the "execute on the suffix = execute on the whole with position shifted"
+   property correctly, with no sign/▸off-by-one in the position arithmetic?
 
 ## Brief for the auditor
 
-You are auditing the **trusted surface** of a Lean 4 formalization: definitions,
-theorem statements, and the `sorry`s' proof sketches. Proofs that exist are
-machine-checked — do not review tactic scripts. Hunt for: **infidelity** (a definition
-not meaning what [AB09] means), **trivialization** (a statement satisfiable for
-degenerate reasons — a collapsing class, a vacuous probability event, an encoding that
-empties a theorem), **unprovability** (a sorried statement false as stated, or subtly
-weaker/stronger than intended), and **missing hypotheses** (finiteness, symmetry/
-stochasticity, positivity, length side conditions).
-
-For **every definition** in scope, restate it in your own mathematical English
-*before* reading the docstring, compare against the cited [AB09] location, and report
-any daylight. For **every sorried statement** (the Theorem-7.41 stub and the six
-`PolyTimeModel` targets), argue in 2-5 sentences why it is true as literally stated, or
-exhibit the problem. Attempt at least **3 adversarial instantiations** — e.g. the
-`n = 0` input, a constant verifier, the complete graph / a disconnected graph for
-λ(G), `a = 0` or `k = 0` schedules — plugged into the definitions. Propose any
-machine-checkable sanity theorems you believe are missing. No blanket approval: an
-empty findings table must be justified by the per-definition restatements.
+As before: audit the trusted surface (definitions, statements, sketches); do not review
+tactic scripts. Hunt infidelity, trivialization, unprovability, missing hypotheses.
+Blind-restate every definition (old and new) before reading its docstring; argue each
+sorried statement (Thm 7.41 and the three closures) true-as-stated or exhibit the
+problem; attempt ≥3 adversarial instantiations (`n = 0`, `r = []`, a constant verifier,
+a degenerate graph). No blanket approval; justify an empty table with the restatements.
+The gate closes only on a round reporting **zero blockers and zero majors**.
 
 ## Findings format (auditor fills)
 
@@ -179,9 +139,8 @@ empty findings table must be justified by the per-definition restatements.
 | 1 | blocker / major / minor / note | | | | |
 
 Severity guide: **blocker** = downstream work would build on a wrong statement;
-**major** = statement fixable but materially misleading as is; **minor** = edge case or
-naming/attribution defect; **note** = observation, no change required. The gate closes
-only on a round reporting **zero blockers and zero majors**.
+**major** = statement fixable but materially misleading; **minor** = edge case or
+naming/attribution; **note** = observation.
 
 
 ## ===== AroraBarakChapter7Plan.md =====
@@ -413,6 +372,8 @@ numbering below is what audit documents cite.
 | Upstream `main` (hypercontractivity reorganization + Chapter 10 + the design-adaptation citation policy, `4aea7cfd`) merged into the branch via the fork sync; branch head `440e5034`, full tree builds green | Decided |
 | Tier A + Tier B fill landed (21 of the original stubs proved); `PolyTimeModel` partially filled — `closedUnderAnswerIs`/`closedUnderNot`/`inSigma2_polyTimeModel_iff` proved, then `closedUnderRace` proved at `243b106b` (reduced to the `takePrefixByLen`/`dropPrefixByLen` slicing primitive via the unary `polyUnary` length, no in-machine exponentiation) | Decided |
 | **Plan backfilled and the external cross-vendor statement-audit gate opened retroactively** (2026-10-09), over the frozen statement surface, per the maintainer's "do it by the book" instruction; fill paused pending gate closure; no proved Lean discarded | Decided |
+| External proof-fill delivered (`722738a1`, authored by a different-vendor model the maintainer drove): three new support modules (`TuringMachine/CounterProgInput`, `CircuitComplexity/PairEncode`, `ClassNP/PolyTimePrefix`) closing `takePrefixByLen`/`dropPrefixByLen` and `verifierHasCircuits`, dropping `PolyTimeModel` from 6 open targets to 3. The author could not run Lean; the commit as delivered **did not elaborate** (reserved-keyword `prefix` parse errors; five `PairEncode` proof errors; a stray `omega`; nonexistent `Bool.true_eq_true`/`Bool.false_eq_true`). Mechanical gate (fresh sweep) **rejected** it on arrival | **Superseded** by the repair row below |
+| Repaired to green (`76fe2f46`) with **no statement or signature changed** (comment-stripped freeze check: `PolyTimeModel` 20 declarations identical; the three new modules are pure additions). Fixes were purely proof-engineering (keyword rename, dependent-`rw` avoidance, beta-before-`omega`, two re-proved list lemmas, lemma-name corrections). Verified: 13-module `lean_check_tree` sweep green; the four closed leaves (`takePrefixByLen`/`dropPrefixByLen`/`verifierHasCircuits`/`closedUnderRace`) print `[propext, Classical.choice, Quot.sound]` — no `sorryAx`; `adleman_polyTime` still carries `sorryAx` via the open `closedUnderMajority`, as expected. New trusted surface (the three modules) folded into the ch7-phase1 audit scope; the pack/bundle regenerated at this commit. Remaining machine sorries: `closedUnderMajority`/`closedUnderAny`/`closedUnderShiftOr` (+ the intentional Thm 7.41) | Decided |
 
 ## References
 
@@ -807,7 +768,71 @@ TCSlib/Complexity/Randomized/ErrorReduction
 TCSlib/Complexity/Randomized/Classes
 TCSlib/Complexity/Randomized/Adleman
 TCSlib/Complexity/Randomized/SipserGacs
+TCSlib/Complexity/TuringMachine/CounterProgInput
+TCSlib/Complexity/CircuitComplexity/PairEncode
+TCSlib/Complexity/ClassNP/PolyTimePrefix
 TCSlib/Complexity/Randomized/PolyTimeModel
+```
+
+## ===== audits/ch7-prefix-circuits-source-review.md =====
+
+```
+# Chapter 7: prefix operations and fixed-randomness circuits
+
+Base: `69a606dac3366a878f98683812b69c40356e4c0b`, branch
+`complexity/arora-barak-ch7`.
+
+Proof implementations replace three stubs in `Randomized/PolyTimeModel.lean`:
+
+- `polyTimeComputable_takePrefixByLen`
+- `polyTimeComputable_dropPrefixByLen`
+- `polyTimeModel_verifierHasCircuits`
+
+All 20 pre-existing definition and theorem signatures in that file are unchanged.
+The new support modules contain no admissions or additional axioms. Their imports
+are added to the existing topic facades. These are additive infrastructure changes
+in the Chapter 1–2 function, machine, and circuit layers; existing declarations in
+those layers are unchanged.
+
+## Proof arguments
+
+The shared prefix program counts one source bit per aligned doubled pair. At the
+separator it either copies that many payload bits or skips them and copies the
+remaining payload. Incomplete encodings and the forbidden aligned pair `10`
+halt without output. The abstract step bound is `5(|z|+1)`; the existing
+counter-program compiler gives polynomial-time machines.
+
+The circuit construction applies the proved `P ⊆ P/poly` theorem to the verifier's
+paired acceptance language. Each encoded input coordinate receives a distinct
+buffer vertex: the doubled input bits are copies, and the separator and random
+bits are constants. Shifting all old vertex numbers preserves distinct inputs and
+fan-in. The resulting circuit has exactly `n + C.size` vertices. The proof composes
+the paired-length polynomial with the family's size polynomial to obtain a bound
+independent of the random string's contents.
+
+## Validation
+
+- Independent source reviews of both constructions and the main circuit proof.
+- `scripts/style_lint.py`: zero findings in all seven touched Lean files.
+- Prefix-program model: all 8,190 input/mode combinations for bit strings of
+  length at most 11 passed output and abstract-time checks.
+- Circuit-buffer model: 2,790 evaluation and well-formedness checks passed,
+  including empty input and random strings and gates reading both doubled copies.
+- Uniform circuit-size arithmetic: 7,776 parameter combinations passed,
+  including zero coefficients and exponents.
+- No public-statement drift in `PolyTimeModel.lean`; no new `sorry`, `admit`,
+  custom `axiom`, or `unsafe` declaration in the support modules.
+
+**Lean elaboration and kernel checking remain unverified.** The execution environment
+has no Lean runtime or working LeanInfoView, and `AGENTS.md` requires proof-state
+checking through LeanInfoView rather than shell build commands. The finite model
+checks above validate the algorithms and arithmetic; they do not certify the Lean
+proof terms. This commit is a proof implementation awaiting that check.
+
+Three machine-model admissions remain: majority, OR repetition, and shifted OR.
+The separate expander-Chernoff theorem remains intentionally statement-only.
+The specialized ZPP, Adleman, and Sipser–Gács corollaries consequently still depend
+on unfinished closure proofs.
 ```
 
 ## ===== TCSlib/Complexity/Expanders/Basic.lean =====
@@ -4627,6 +4652,804 @@ theorem sipser_gacs (hMaj : ClosedUnderMajority E)
 end Randomized
 ```
 
+## ===== TCSlib/Complexity/TuringMachine/CounterProgInput.lean =====
+
+```
+/-
+Copyright (c) 2026 TCSlib contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: TCSlib contributors
+-/
+import TCSlib.Complexity.TuringMachine.CounterProgRun
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+/-!
+# Shifting the input of a counter program
+
+Counter programs read their input from left to right. Once a prefix has been consumed,
+executing on the remaining suffix is equivalent to executing on the original input with
+the input position shifted by the prefix length.
+
+## Main definitions
+
+* `Complexity.CounterProg.shiftInput` shifts an abstract state's input position.
+
+## Main results
+
+* `Complexity.CounterProg.run_shiftInput` transports a run from a suffix to a prefixed input.
+* `Complexity.CounterProg.Goes.prepend_input` transports the bounded run relation.
+
+## References
+
+* [AB09] S. Arora, B. Barak, *Computational Complexity: A Modern Approach*,
+  Cambridge University Press, 2009. (§1.2: the machine model.)
+
+The lemmas below are technical facts about the counter-program implementation, rather
+than additional textbook claims.
+-/
+
+namespace Complexity.CounterProg
+
+variable {R : ℕ} {Λ : Type}
+
+/-- Shift only the input position of an abstract state by `n`. -/
+def shiftInput (n : ℕ) (s : St R Λ) : St R Λ :=
+  { s with pos := n + s.pos }
+
+/-- Indexing after a prefix reads the corresponding symbol of the suffix. -/
+theorem getElem?_append_length_add (pre suffix : List Bool) (p : ℕ) :
+    (pre ++ suffix)[pre.length + p]? = suffix[p]? := by
+  rw [List.getElem?_append_right (Nat.le_add_right _ _)]
+  simp
+
+/-- A program step after a consumed prefix is the corresponding suffix step with its
+input position shifted. -/
+theorem step_shiftInput (P : Λ → Instr R Λ) (pre suffix : List Bool) (s : St R Λ) :
+    step P (pre ++ suffix) (shiftInput pre.length s) =
+      shiftInput pre.length (step P suffix s) := by
+  rcases s with ⟨lbl, ρ, p, o⟩
+  cases lbl with
+  | none => rfl
+  | some l =>
+    cases hP : P l <;> simp only [step, shiftInput, hP]
+    all_goals try rfl
+    rw [getElem?_append_length_add]
+    cases hread : suffix[p]? with
+    | none => rfl
+    | some b => cases b <;> simp [shiftInput, Nat.add_assoc]
+
+/-- A run after a consumed prefix is the corresponding suffix run with its input
+position shifted.
+
+**Proof sketch.** Induct on the number of steps, using the one-step input-shift identity. -/
+theorem run_shiftInput (P : Λ → Instr R Λ) (pre suffix : List Bool)
+    (s : St R Λ) (t : ℕ) :
+    run P (pre ++ suffix) (shiftInput pre.length s) t =
+      shiftInput pre.length (run P suffix s t) := by
+  induction t generalizing s with
+  | zero => rfl
+  | succ t ih =>
+    rw [run_succ, step_shiftInput, ih, run_succ]
+
+/-- A bounded suffix run remains valid after prepending input already consumed; its
+initial and final input positions both increase by the prefix length. -/
+theorem Goes.prepend_input {P : Λ → Instr R Λ} {suffix : List Bool} {l : Λ}
+    {l' : Option Λ} {ρ ρ' : Fin R → ℕ} {p p' : ℕ} {e : List Bool} {b : ℕ}
+    (h : Goes P suffix l ρ p l' ρ' p' e b) (pre : List Bool) :
+    Goes P (pre ++ suffix) l ρ (pre.length + p) l' ρ' (pre.length + p') e b := by
+  intro o
+  obtain ⟨t, ht, hrun⟩ := h o
+  refine ⟨t, ht, ?_⟩
+  change run P (pre ++ suffix) (shiftInput pre.length ⟨some l, ρ, p, o⟩) t =
+    shiftInput pre.length ⟨l', ρ', p', o ++ e⟩
+  rw [run_shiftInput, hrun]
+
+end Complexity.CounterProg
+```
+
+## ===== TCSlib/Complexity/CircuitComplexity/PairEncode.lean =====
+
+```
+/-
+Copyright (c) 2026 TCSlib contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: TCSlib Contributors
+-/
+import Mathlib.Data.List.OfFn
+import TCSlib.Complexity.CircuitComplexity.DAGCircuit
+import TCSlib.Complexity.TuringMachine.Encoding
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+/-!
+# Circuits with paired inputs and fixed randomness
+
+The hard-wiring step of [AB09, Thm 7.17], for the library's self-delimiting
+`Turing.pairEncode`. The first component is doubled, so simply fixing a suffix
+is insufficient: two buffered copies of each free input supply its two encoded
+coordinates, followed by constants for the separator and the fixed second word.
+
+## Main definitions
+
+* `BoolCircuit.inputGate`, `inputBuffer`, `inputValues` — copy or fix circuit inputs.
+* `BoolCircuit.DAGCircuit.bufferInputs` — replace a circuit's inputs by buffered sources.
+* `BoolCircuit.DAGCircuit.pairEncode` — compute a circuit on `pairEncode x r` with `r` fixed.
+
+## Main results
+
+* `BoolCircuit.DAGCircuit.pairEncode_eval` — the paired circuit computes the original
+  circuit on the encoded input and fixed random word.
+* `BoolCircuit.DAGCircuit.pairEncode_isFaninTwo`, `pairEncode_size` — fan-in is preserved
+  and buffering adds exactly one free-input vertex per input bit.
+
+## Deviations from the source
+
+The book's hard-wiring preserves size; explicitly buffering the doubled first
+component adds `n` vertices. The overhead is polynomial and independent of the
+contents of the fixed word. Copies remain distinct vertices, preserving the
+model's requirement that a gate does not read the same vertex twice.
+
+## References
+
+* [AB09] S. Arora, B. Barak, *Computational Complexity: A Modern Approach*,
+  Cambridge University Press, 2009. (§7.6, Theorem 7.17; §6.3, Theorem 6.18.)
+-/
+
+namespace BoolCircuit
+
+/-- A source input is copied by a singleton `∧`; a fixed bit is supplied by a constant. -/
+def inputGate {n : ℕ} : Fin n ⊕ Bool → DAGGate
+  | .inl i => ⟨.and, [i.val]⟩
+  | .inr b => constGate b
+
+/-- One buffer gate for each original input vertex. -/
+def inputBuffer {n m : ℕ} (s : Fin m → Fin n ⊕ Bool) : List DAGGate :=
+  List.ofFn fun i => inputGate (s i)
+
+/-- The original inputs supplied by the free input vector and fixed source bits. -/
+def inputValues {n m : ℕ} (s : Fin m → Fin n ⊕ Bool) (x : Fin n → Bool) :
+    Fin m → Bool := fun i =>
+  match s i with
+  | .inl j => x j
+  | .inr b => b
+
+/-- A buffer gate reads only free input vertices. -/
+theorem inputGate_args_lt {n : ℕ} (s : Fin n ⊕ Bool) :
+    ∀ a ∈ (inputGate s).args, a < n := by
+  cases s with
+  | inl i =>
+      intro a ha
+      simp only [inputGate, List.mem_singleton] at ha
+      subst a
+      exact i.isLt
+  | inr b =>
+      intro a ha
+      simp [inputGate] at ha
+
+/-- Replace each original input by a distinct copy or constant vertex, then shift
+every original gate and its output by the number of free inputs.
+
+**Proof sketch.** Buffer gates read only the `n` free inputs. Each original
+gate has all of its vertex numbers shifted by `n`, so its earlier-vertex
+inequalities remain valid after the `m` buffer gates. The output is shifted
+by the same amount and remains within the enlarged circuit. -/
+def DAGCircuit.bufferInputs {n m : ℕ} (C : DAGCircuit m)
+    (s : Fin m → Fin n ⊕ Bool) : DAGCircuit n where
+  gates := inputBuffer s ++ C.gates.map (DAGGate.remap fun v => n + v)
+  output := n + C.output
+  args_lt := by
+    intro i hi a ha
+    have hlen : (inputBuffer s).length = m := by simp [inputBuffer]
+    by_cases him : i < m
+    · rw [List.getElem_append_left (by rw [hlen]; exact him)] at ha
+      have hargs := inputGate_args_lt (s ⟨i, him⟩) a
+        (by simpa [inputBuffer] using ha)
+      omega
+    · rw [List.getElem_append_right (by rw [hlen]; omega)] at ha
+      simp only [List.getElem_map, DAGGate.remap, List.mem_map] at ha
+      obtain ⟨b, hb, rfl⟩ := ha
+      have hiC : i - (inputBuffer s).length < C.gates.length := by
+        simp only [List.length_append, List.length_map, hlen] at hi
+        omega
+      have hargs := C.args_lt (i - (inputBuffer s).length) hiC b hb
+      omega
+  output_lt := by
+    have houtput := C.output_lt
+    simp only [List.length_append, List.length_map, inputBuffer, List.length_ofFn]
+    omega
+
+/-- Buffer gate `i` evaluates to its selected source input bit or constant. -/
+theorem inputBuffer_value {n m : ℕ}
+    (s : Fin m → Fin n ⊕ Bool) (x : Fin n → Bool) (i : Fin m) :
+    (runWith DAGGate.eval (inputBuffer s) (List.ofFn x)).getD
+      (n + i.val) false = inputValues s x i := by
+  have hi : i.val < (inputBuffer s).length := by
+    simpa [inputBuffer] using i.isLt
+  have hg := runWith_getD_gate DAGGate.eval (inputBuffer s) (List.ofFn x) hi false
+  simp only [List.length_ofFn] at hg
+  rw [hg]
+  have hgate : (inputBuffer s)[i.val] = inputGate (s i) := by
+    simp [inputBuffer]
+  rw [hgate]
+  cases hsi : s i with
+  | inl j =>
+      simpa [inputGate, DAGGate.eval, inputValues, hsi,
+        List.getD_eq_getD_getElem?, j.isLt] using
+        (runWith_getD_of_lt DAGGate.eval ((inputBuffer s).take i.val)
+          (List.ofFn x) (v := j.val) (by simpa using j.isLt) false)
+  | inr b =>
+      simp [inputGate, inputValues, hsi]
+
+/-- Buffered inputs preserve the original circuit's value on the supplied input vector.
+
+**Proof sketch.** Each buffer vertex holds its selected input or constant. Shift every
+original vertex by `n`; gate evaluation commutes with this renaming, so the shifted
+output has the original output's value. -/
+theorem DAGCircuit.bufferInputs_eval {n m : ℕ}
+    (C : DAGCircuit m) (s : Fin m → Fin n ⊕ Bool) (x : Fin n → Bool) :
+    (C.bufferInputs s).eval x = C.eval (inputValues s x) := by
+  have key := runWith_remap_rel DAGGate.eval Eq false (fun v => n + v)
+    (fun g _ _ h => DAGGate.eval_remap g _ h)
+    (L := m) (L' := n + m)
+    (List.ofFn (inputValues s x))
+    (runWith DAGGate.eval (inputBuffer s) (List.ofFn x))
+    (by simp)
+    (by simp [inputBuffer])
+    (fun v hv => by simp only []; omega)
+    (fun i => by simp only []; omega)
+    (fun v hv => by
+      simpa [List.getD_eq_getD_getElem?, hv] using inputBuffer_value s x ⟨v, hv⟩)
+    C.gates C.args_lt C.output C.output_lt
+  unfold DAGCircuit.eval DAGCircuit.values DAGCircuit.bufferInputs
+  dsimp only
+  rw [runWith_append]
+  exact key
+
+/-- Buffering inputs preserves well-formedness and fan-in at most two, and adds
+exactly `n` vertices to the original circuit's size.
+
+**Proof sketch.** Each buffer is either a singleton identity gate or a constant gate.
+Shifting every old vertex number by `n` is injective, so it preserves distinct gate
+inputs, gate kinds, and fan-in. There are `n` inputs, `m` buffer gates, and all
+of the original gates. -/
+theorem DAGCircuit.bufferInputs_structure {n m : ℕ} (C : DAGCircuit m)
+    (s : Fin m → Fin n ⊕ Bool) (hC : C.IsFaninTwo) :
+    (C.bufferInputs s).IsWellFormed ∧
+      (C.bufferInputs s).IsFaninTwo ∧
+      (C.bufferInputs s).size = n + C.size := by
+  have hall : ∀ g ∈ (C.bufferInputs s).gates, g.FaninTwo := by
+    intro g hg
+    change g ∈ inputBuffer s ++ C.gates.map (DAGGate.remap (fun v => n + v)) at hg
+    rcases List.mem_append.mp hg with hg | hg
+    · change g ∈ List.ofFn (fun i => inputGate (s i)) at hg
+      obtain ⟨i, rfl⟩ := List.mem_ofFn.mp hg
+      cases hs : s i with
+      | inl j =>
+          simp [inputGate, hs, DAGGate.FaninTwo, DAGGate.WellFormed]
+      | inr b =>
+          simpa [inputGate, hs] using constGate_faninTwo b
+    · obtain ⟨g₀, hg₀, rfl⟩ := List.mem_map.mp hg
+      obtain ⟨hnd, hnot⟩ := hC.1 g₀ hg₀
+      refine ⟨⟨hnd.map (fun a b hab => Nat.add_left_cancel hab), ?_⟩, ?_⟩
+      · intro h
+        simpa [DAGGate.remap] using hnot h
+      · simpa [DAGGate.remap] using hC.2 g₀ hg₀
+  have hw : (C.bufferInputs s).IsWellFormed := fun g hg => (hall g hg).1
+  refine ⟨hw, ⟨hw, fun g hg => (hall g hg).2⟩, ?_⟩
+  simp [DAGCircuit.size, DAGCircuit.bufferInputs, inputBuffer, Nat.add_assoc]
+
+/-- The doubled free-input sources, followed by the separator and fixed-word constants. -/
+def pairWireList (n : ℕ) (r : List Bool) : List (Fin n ⊕ Bool) :=
+  (List.ofFn (fun i : Fin n => Sum.inl i)).flatMap (fun s => [s, s]) ++
+    ([false, true] ++ r).map Sum.inr
+
+/-- The wire list has the paired input's length, and evaluating its sources produces
+the self-delimiting encoding of the free input and fixed word.
+
+**Proof sketch.** Mapping source values through a duplicated list duplicates their
+values, by induction on that list. The remaining sources are constants supplying the
+separator and fixed word. Taking lengths gives the stated size. -/
+theorem pairWireList_spec (n : ℕ) (r : List Bool) :
+    (pairWireList n r).length = 2 * n + 2 + r.length ∧
+      ∀ v : Fin n → Bool,
+        (pairWireList n r).map (fun s =>
+          match s with
+          | .inl i => v i
+          | .inr b => b) = Turing.pairEncode (List.ofFn v) r := by
+  have hdup (f : Fin n ⊕ Bool → Bool) (l : List (Fin n ⊕ Bool)) :
+      (l.flatMap (fun s => [s, s])).map f =
+        (l.map f).flatMap (fun b => [b, b]) := by
+    induction l with
+    | nil => rfl
+    | cons a l ih =>
+        simp only [List.flatMap_cons, List.map_append, List.map_cons,
+          List.map_nil, ih]
+  have hmap (v : Fin n → Bool) :
+      (pairWireList n r).map (fun s =>
+        match s with
+        | .inl i => v i
+        | .inr b => b) = Turing.pairEncode (List.ofFn v) r := by
+    unfold pairWireList
+    rw [List.map_append, hdup]
+    simp [Turing.pairEncode, List.map_map, Function.comp_def, List.append_assoc]
+  refine ⟨?_, hmap⟩
+  have hlen := congrArg List.length (hmap (fun _ => false))
+  simpa only [List.length_map, Turing.length_pairEncode, List.length_ofFn] using hlen
+
+/-- View a list of length `m` as a vector indexed by `Fin m`. -/
+def vectorOfList {α : Type*} {m : ℕ} (l : List α) (h : l.length = m) :
+    Fin m → α :=
+  fun i => l.get (Fin.cast h.symm i)
+
+/-- Turning a list into its indexed vector and back recovers the list. -/
+@[simp] theorem vectorOfList_ofFn {α : Type*} {m : ℕ}
+    (l : List α) (h : l.length = m) :
+    List.ofFn (vectorOfList l h) = l := by
+  apply List.ext_getElem
+  · simp [h]
+  · intro i h1 h2
+    simp [List.getElem_ofFn, vectorOfList, List.get_eq_getElem, Fin.coe_cast]
+
+/-- The vector of source wires for the self-delimiting paired input. -/
+def pairWiring (n : ℕ) (r : List Bool) : Fin (2 * n + 2 + r.length) → Fin n ⊕ Bool :=
+  vectorOfList (pairWireList n r) (pairWireList_spec n r).1
+
+/-- The input vector encoding the free word and the fixed second word. -/
+def pairEncodeInput {n : ℕ} (r : List Bool) (v : Fin n → Bool) :
+    Fin (2 * n + 2 + r.length) → Bool :=
+  inputValues (pairWiring n r) v
+
+/-- The circuit computing `C` on the self-delimiting pair of its free input and fixed
+word `r`. This is the hard-wiring construction of [AB09, Thm 7.17], with explicit
+copies for the doubled first component of the library's encoding. -/
+def DAGCircuit.pairEncode {n : ℕ} (r : List Bool)
+    (C : DAGCircuit (2 * n + 2 + r.length)) : DAGCircuit n :=
+  C.bufferInputs (pairWiring n r)
+
+/-- Converting the paired input vector to a word gives the exact library encoding. -/
+theorem pairEncodeInput_ofFn {n : ℕ} (r : List Bool) (v : Fin n → Bool) :
+    List.ofFn (pairEncodeInput r v) = Turing.pairEncode (List.ofFn v) r := by
+  have e1 : List.ofFn (pairEncodeInput r v)
+      = (List.ofFn (pairWiring n r)).map
+          (fun s : Fin n ⊕ Bool => match s with | .inl j => v j | .inr b => b) := by
+    rw [List.map_ofFn]
+    rfl
+  rw [e1]
+  unfold pairWiring
+  rw [vectorOfList_ofFn]
+  exact (pairWireList_spec n r).2 v
+
+/-- The paired circuit computes the original circuit on `pairEncode x r`, with `r`
+fixed. This is the circuit step of [AB09, Thm 7.17]. -/
+theorem DAGCircuit.pairEncode_eval {n : ℕ} (r : List Bool)
+    (C : DAGCircuit (2 * n + 2 + r.length)) (v : Fin n → Bool) :
+    (C.pairEncode r).eval v = C.eval (pairEncodeInput r v) :=
+  C.bufferInputs_eval (pairWiring n r) v
+
+/-- Encoding and fixing a word preserves fan-in at most two, as needed in
+[AB09, Thm 7.17]. -/
+theorem DAGCircuit.pairEncode_isFaninTwo {n : ℕ} (r : List Bool)
+    (C : DAGCircuit (2 * n + 2 + r.length)) (hC : C.IsFaninTwo) :
+    (C.pairEncode r).IsFaninTwo :=
+  (C.bufferInputs_structure (pairWiring n r) hC).2.1
+
+/-- Encoding and fixing a word preserves well-formedness for a fan-in-two circuit. -/
+theorem DAGCircuit.pairEncode_isWellFormed {n : ℕ} (r : List Bool)
+    (C : DAGCircuit (2 * n + 2 + r.length)) (hC : C.IsFaninTwo) :
+    (C.pairEncode r).IsWellFormed :=
+  (C.bufferInputs_structure (pairWiring n r) hC).1
+
+/-- Buffering an encoded input adds exactly `n` vertices. The overhead in the
+hard-wiring step of [AB09, Thm 7.17] is independent of the fixed word's bits. -/
+theorem DAGCircuit.pairEncode_size {n : ℕ} (r : List Bool)
+    (C : DAGCircuit (2 * n + 2 + r.length)) :
+    (C.pairEncode r).size = n + C.size := by
+  simp [DAGCircuit.size, DAGCircuit.pairEncode, DAGCircuit.bufferInputs,
+    inputBuffer, Nat.add_assoc]
+
+/-- A circuit family's language contains a word formed from a vector exactly when
+the circuit at that vector's length accepts the vector. -/
+theorem DAGCircuitFamily.mem_language_ofFn {m : ℕ} (F : DAGCircuitFamily)
+    (v : Fin m → Bool) :
+    List.ofFn v ∈ F.language ↔ (F.circuit m).eval v = true := by
+  have htuple :
+      (⟨(List.ofFn v).length, (List.ofFn v).get⟩ :
+        Σ k : ℕ, Fin k → Bool) = ⟨m, v⟩ :=
+    List.equivSigmaTuple.right_inv ⟨m, v⟩
+  exact (F.mem_language_iff (List.ofFn v)).trans
+    (Iff.of_eq (congrArg
+      (fun p : Σ k : ℕ, Fin k → Bool =>
+        (F.circuit p.1).eval p.2 = true) htuple))
+
+/-- Acceptance of an encoded input vector is membership of the exact paired word in
+the circuit family's language. This avoids index casts in [AB09, Thm 7.17]'s use of
+the polynomial-size family. -/
+theorem DAGCircuitFamily.pairEncode_eval_eq_true_iff {n : ℕ}
+    (F : DAGCircuitFamily) (r : List Bool) (v : Fin n → Bool) :
+    (F.circuit (2 * n + 2 + r.length)).eval (pairEncodeInput r v) = true ↔
+      Turing.pairEncode (List.ofFn v) r ∈ F.language :=
+  (F.mem_language_ofFn (pairEncodeInput r v)).symm.trans
+    (Iff.of_eq (congrArg (fun w : List Bool => w ∈ F.language)
+      (pairEncodeInput_ofFn r v)))
+
+end BoolCircuit
+```
+
+## ===== TCSlib/Complexity/ClassNP/PolyTimePrefix.lean =====
+
+```
+/-
+Copyright (c) 2026 The TCSlib Authors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: TCSlib Contributors
+-/
+import TCSlib.Complexity.ClassNP.CounterProgPolyTime
+import TCSlib.Complexity.ClassNP.PolyTimePairing
+import TCSlib.Complexity.TuringMachine.CounterProgInput
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+/-!
+# Polynomial-time prefix operations
+
+The second component of a self-delimiting pair can be truncated, or have its
+prefix removed, at the length of the first component. A one-register counter
+program counts the doubled first component, then copies or skips that many
+symbols of the second component. Malformed pairs produce the empty string.
+
+## Main definitions
+
+* `Complexity.PrefixByLength.take` and `drop` — total prefix operations on pairs.
+
+## Main results
+
+* `Complexity.polyTimeComputable_takePrefixByLength` and
+  `polyTimeComputable_dropPrefixByLength` — both operations are polynomial-time.
+
+## References
+
+* [AB09] S. Arora, B. Barak, *Computational Complexity: A Modern Approach*,
+  Cambridge University Press, 2009. (§7.3: splitting random strings in the
+  proof of Theorem 7.8; §7.4.1: repeated trials.)
+-/
+
+namespace Complexity
+
+namespace PrefixByLength
+
+open Turing CounterProg
+
+/-- Take a prefix of the second component of a pair as long as its first component;
+malformed inputs return the empty string. -/
+def take (z : List Bool) : List Bool :=
+  (pairSndD z).take (pairFstD z).length
+
+/-- Drop a prefix of the second component of a pair as long as its first component;
+malformed inputs return the empty string. -/
+def drop (z : List Bool) : List Bool :=
+  (pairSndD z).drop (pairFstD z).length
+
+/-- Control states of the shared prefix-copying program. -/
+private inductive Label where
+  | scan | secondFalse | secondTrue | bump | head | read | dec
+  | emit (b : Bool) | copy | copyEmit (b : Bool) | stop
+  deriving DecidableEq, Fintype
+
+/-- One register stores the remaining number of prefix symbols. -/
+private def regs (n : ℕ) : Fin 1 → ℕ := fun _ => n
+
+/-- The program parses aligned doubled bits before the separator. In take mode
+it copies until the counter reaches zero; in drop mode it skips that prefix,
+then copies everything remaining. -/
+private def program (keep : Bool) : Label → Instr 1 Label
+  | .scan => .rd .stop .secondFalse .secondTrue
+  | .secondFalse => .rd .stop .bump .head
+  | .secondTrue => .rd .stop .stop .bump
+  | .bump => .inc 0 .scan
+  | .head => .jz 0 (if keep then .stop else .copy) .read
+  | .read => if keep then .rd .stop (.emit false) (.emit true)
+      else .rd .stop .dec .dec
+  | .dec => .dec 0 .head
+  | .emit b => .out b .dec
+  | .copy => .rd .stop (.copyEmit false) (.copyEmit true)
+  | .copyEmit b => .out b .copy
+  | .stop => .halt
+
+/-- Updating the only register replaces its constant value. -/
+private theorem update_regs (n m : ℕ) :
+    Function.update (regs n) (0 : Fin 1) m = regs m := by
+  funext i
+  have hi : i = (0 : Fin 1) := Subsingleton.elim _ _
+  subst hi
+  simp [regs]
+
+/-- The final copying phase prints the unread suffix in two steps per bit.
+**Proof sketch.** Each read selects an output instruction and returns to the
+copying state. At the end, one read and one halt finish the computation. -/
+private theorem goes_copy (keep : Bool) (n : ℕ) (r : List Bool) :
+    Goes (program keep) r .copy (regs n) 0 none (regs n) r.length r
+      (2 * r.length + 2) := by
+  induction r with
+  | nil =>
+    have hread : Goes (program keep) [] .copy (regs n) 0
+        (some .stop) (regs n) 0 [] 1 :=
+      goes_rd_end rfl (by simp)
+    have hhalt : Goes (program keep) [] .stop (regs n) 0 none (regs n) 0 [] 1 :=
+      goes_halt rfl
+    simpa using hread.trans hhalt
+  | cons b r ih =>
+    have hread : Goes (program keep) (b :: r) .copy (regs n) 0
+        (some (.copyEmit b)) (regs n) 1 [] 1 := by
+      cases b
+      · exact goes_rd_false rfl (by simp)
+      · exact goes_rd_true rfl (by simp)
+    have hwrite : Goes (program keep) (b :: r) (.copyEmit b) (regs n) 1
+        (some .copy) (regs n) 1 [b] 1 :=
+      goes_out rfl
+    have hrest := ih.prepend_input [b]
+    have h := (hread.trans hwrite).trans hrest
+    exact h.congr rfl rfl rfl (by simp; omega) (by simp) (by simp; omega)
+
+/-- The countdown instruction removes one from the only register. -/
+private theorem goes_dec_one (keep : Bool) (x : List Bool) (n p : ℕ) :
+    Goes (program keep) x .dec (regs (n + 1)) p (some .head) (regs n) p [] 1 := by
+  have h : Goes (program keep) x .dec (regs (n + 1)) p (some .head)
+      (Function.update (regs (n + 1)) 0 ((regs (n + 1)) 0 - 1)) p [] 1 :=
+    goes_dec rfl
+  have he : (regs (n + 1)) (0 : Fin 1) - 1 = n := by simp [regs]
+  rw [he, update_regs] at h
+  exact h
+
+/-- Starting with a counter of value `n`, the payload phase produces the
+requested prefix or suffix in a linear number of steps.
+**Proof sketch.** Induct on the payload. A positive counter consumes one bit
+and decrements. A zero counter either halts immediately (take mode), or
+enters the copying phase (drop mode). End-of-input halts in either mode. -/
+private theorem goes_payload (keep : Bool) (r : List Bool) (n : ℕ) :
+    Goes (program keep) r .head (regs n) 0 none (regs (n - r.length))
+      (if keep then min n r.length else r.length)
+      (if keep then r.take n else r.drop n) (4 * r.length + 3) := by
+  induction r generalizing n with
+  | nil =>
+    cases n with
+    | zero =>
+      cases keep
+      · have htest : Goes (program false) [] .head (regs 0) 0
+            (some .copy) (regs 0) 0 [] 1 :=
+          goes_jz_zero rfl rfl
+        simpa using htest.trans (goes_copy false 0 [])
+      · have htest : Goes (program true) [] .head (regs 0) 0
+            (some .stop) (regs 0) 0 [] 1 :=
+          goes_jz_zero rfl rfl
+        have hhalt : Goes (program true) [] .stop (regs 0) 0
+            none (regs 0) 0 [] 1 := goes_halt rfl
+        exact (htest.trans hhalt).congr rfl rfl rfl (by simp) (by simp) (by simp)
+    | succ n =>
+      have htest : Goes (program keep) [] .head (regs (n + 1)) 0
+          (some .read) (regs (n + 1)) 0 [] 1 :=
+        goes_jz_pos rfl (by simp [regs])
+      have hread : Goes (program keep) [] .read (regs (n + 1)) 0
+          (some .stop) (regs (n + 1)) 0 [] 1 := by
+        cases keep <;> exact goes_rd_end rfl (by simp)
+      have hhalt : Goes (program keep) [] .stop (regs (n + 1)) 0
+          none (regs (n + 1)) 0 [] 1 := goes_halt rfl
+      exact ((htest.trans hread).trans hhalt).congr rfl (by simp) rfl
+        (by cases keep <;> simp) (by cases keep <;> simp) (by simp)
+  | cons b r ih =>
+    cases n with
+    | zero =>
+      cases keep
+      · have htest : Goes (program false) (b :: r) .head (regs 0) 0
+            (some .copy) (regs 0) 0 [] 1 := goes_jz_zero rfl rfl
+        exact (htest.trans (goes_copy false 0 (b :: r))).congr rfl (by simp) rfl
+          (by simp) (by simp) (by simp; omega)
+      · have htest : Goes (program true) (b :: r) .head (regs 0) 0
+            (some .stop) (regs 0) 0 [] 1 := goes_jz_zero rfl rfl
+        have hhalt : Goes (program true) (b :: r) .stop (regs 0) 0
+            none (regs 0) 0 [] 1 := goes_halt rfl
+        exact (htest.trans hhalt).congr rfl (by simp) rfl (by simp) (by simp)
+          (by simp)
+    | succ n =>
+      have htest : Goes (program keep) (b :: r) .head (regs (n + 1)) 0
+          (some .read) (regs (n + 1)) 0 [] 1 :=
+        goes_jz_pos rfl (by simp [regs])
+      have hbody : Goes (program keep) (b :: r) .read (regs (n + 1)) 0
+          (some .head) (regs n) 1 (if keep then [b] else []) 3 := by
+        cases keep
+        · have hread : Goes (program false) (b :: r) .read (regs (n + 1)) 0
+              (some .dec) (regs (n + 1)) 1 [] 1 := by
+            cases b
+            · exact goes_rd_false rfl (by simp)
+            · exact goes_rd_true rfl (by simp)
+          exact (hread.trans (goes_dec_one false (b :: r) n 1)).congr
+            rfl rfl rfl rfl (by simp) (by omega)
+        · have hread : Goes (program true) (b :: r) .read (regs (n + 1)) 0
+              (some (.emit b)) (regs (n + 1)) 1 [] 1 := by
+            cases b
+            · exact goes_rd_false rfl (by simp)
+            · exact goes_rd_true rfl (by simp)
+          have hwrite : Goes (program true) (b :: r) (.emit b) (regs (n + 1)) 1
+              (some .dec) (regs (n + 1)) 1 [b] 1 := goes_out rfl
+          simpa using (hread.trans hwrite).trans (goes_dec_one true (b :: r) n 1)
+      have hrest := (ih n).prepend_input [b]
+      exact ((htest.trans hbody).trans hrest).congr rfl (by simp) rfl
+        (by cases keep <;> simp <;> omega)
+        (by cases keep <;> simp)
+        (by simp; omega)
+
+/-- Each doubled source bit increments the length counter once. -/
+private theorem goes_inc_one (keep : Bool) (x : List Bool) (n p : ℕ) :
+    Goes (program keep) x .bump (regs n) p (some .scan) (regs (n + 1)) p [] 1 := by
+  have h : Goes (program keep) x .bump (regs n) p (some .scan)
+      (Function.update (regs n) 0 ((regs n) 0 + 1)) p [] 1 := goes_inc rfl
+  have he : (regs n) (0 : Fin 1) + 1 = n + 1 := rfl
+  rw [he, update_regs] at h
+  exact h
+
+/-- Parsing a doubled prefix adds its length to the counter and prints nothing.
+**Proof sketch.** Induct on the prefix. Two reads recognize each equal bit
+pair, then one increment returns to the scanning state. The remainder of
+the run is transported past the two consumed input bits. -/
+private theorem goes_doubled (keep : Bool) (u tail : List Bool) (n : ℕ) :
+    Goes (program keep) (dbl u ++ tail) .scan (regs n) 0 (some .scan)
+      (regs (n + u.length)) (2 * u.length) [] (3 * u.length) := by
+  induction u generalizing n with
+  | nil =>
+    simp only [dbl_nil, List.nil_append, List.length_nil, Nat.add_zero, Nat.mul_zero]
+    intro o
+    exact ⟨0, le_rfl, by simp [run_zero]⟩
+  | cons b u ih =>
+    have hfirst : Goes (program keep) (dbl (b :: u) ++ tail) .scan (regs n) 0
+        (some (if b then .secondTrue else .secondFalse)) (regs n) 1 [] 1 := by
+      cases b
+      · exact goes_rd_false rfl (by simp)
+      · exact goes_rd_true rfl (by simp)
+    have hsecond : Goes (program keep) (dbl (b :: u) ++ tail)
+        (if b then .secondTrue else .secondFalse) (regs n) 1
+        (some .bump) (regs n) 2 [] 1 := by
+      cases b
+      · exact goes_rd_false rfl (by simp)
+      · exact goes_rd_true rfl (by simp)
+    have hinc := goes_inc_one keep (dbl (b :: u) ++ tail) n 2
+    have hrest := (ih (n + 1)).prepend_input [b, b]
+    have h := ((hfirst.trans hsecond).trans hinc).trans hrest
+    exact h.congr rfl (by congr 1; simp; omega) rfl (by simp; omega)
+      (by simp) (by simp; omega)
+
+/-- On a well-formed pair the complete program computes the desired prefix
+operation with at most `5(|z|+1)` abstract steps.
+**Proof sketch.** Parse the doubled first component, consume the separator,
+then run the payload phase with the counted length. The three linear time
+bounds add to a linear bound in the encoded input length. -/
+private theorem goes_pair (keep : Bool) (u r : List Bool) :
+    ∃ (ρ : Fin 1 → ℕ) (p : ℕ), Goes (program keep) (pairEncode u r) .scan (regs 0) 0
+      none ρ p (if keep then r.take u.length else r.drop u.length)
+      (5 * ((pairEncode u r).length + 1)) := by
+  have hfirst : Goes (program keep) ([false, true] ++ r) .scan (regs u.length) 0
+      (some .secondFalse) (regs u.length) 1 [] 1 :=
+    goes_rd_false rfl (by simp)
+  have hsecond : Goes (program keep) ([false, true] ++ r) .secondFalse
+      (regs u.length) 1 (some .head) (regs u.length) 2 [] 1 :=
+    goes_rd_true rfl (by simp)
+  have hhead := (goes_payload keep r u.length).prepend_input [false, true]
+  have hsep := (hfirst.trans hsecond).trans hhead
+  have hprefix : Goes (program keep) (dbl u ++ ([false, true] ++ r)) .scan (regs 0) 0
+      (some .scan) (regs u.length) (2 * u.length) [] (3 * u.length) := by
+    simpa using goes_doubled keep u ([false, true] ++ r) 0
+  have hshift : Goes (program keep) (dbl u ++ ([false, true] ++ r)) .scan
+      (regs u.length) (2 * u.length) none (regs (u.length - r.length))
+      (2 * u.length + 2 + (if keep then min u.length r.length else r.length))
+      (if keep then r.take u.length else r.drop u.length) (4 * r.length + 5) := by
+    exact (hsep.prepend_input (dbl u)).congr rfl rfl (by simp)
+      (by simp; omega) (by simp) (by omega)
+  have hrun := hprefix.trans hshift
+  have he : dbl u ++ ([false, true] ++ r) = pairEncode u r := by
+    simp [pairEncode_eq_dbl, List.append_assoc]
+  rw [he] at hrun
+  refine ⟨regs (u.length - r.length),
+    2 * u.length + 2 + (if keep then min u.length r.length else r.length), ?_⟩
+  exact hrun.congr rfl rfl rfl rfl (by simp) (by simp [length_pairEncode]; omega)
+
+/-- An incomplete or forbidden aligned pair halts without printing.
+**Proof sketch.** The only invalid tails are an empty word, one bit, or a
+tail starting with `10`. At most two reads reach the halt instruction. -/
+private theorem goes_bad_tail (keep : Bool) (tail : List Bool) (n : ℕ)
+    (htail : tail = [] ∨ (∃ b, tail = [b]) ∨ ∃ r, tail = true :: false :: r) :
+    ∃ p : ℕ, Goes (program keep) tail .scan (regs n) 0 none (regs n) p [] 3 := by
+  rcases htail with rfl | ⟨b, rfl⟩ | ⟨r, rfl⟩
+  · have hread : Goes (program keep) [] .scan (regs n) 0
+        (some .stop) (regs n) 0 [] 1 := goes_rd_end rfl (by simp)
+    have hhalt : Goes (program keep) [] .stop (regs n) 0
+        none (regs n) 0 [] 1 := goes_halt rfl
+    exact ⟨0, (hread.trans hhalt).congr rfl rfl rfl rfl (by simp) (by omega)⟩
+  · have hfirst : Goes (program keep) [b] .scan (regs n) 0
+        (some (if b then .secondTrue else .secondFalse)) (regs n) 1 [] 1 := by
+      cases b
+      · exact goes_rd_false rfl (by simp)
+      · exact goes_rd_true rfl (by simp)
+    have hsecond : Goes (program keep) [b]
+        (if b then .secondTrue else .secondFalse) (regs n) 1
+        (some .stop) (regs n) 1 [] 1 := by
+      cases b <;> exact goes_rd_end rfl (by simp)
+    have hhalt : Goes (program keep) [b] .stop (regs n) 1
+        none (regs n) 1 [] 1 := goes_halt rfl
+    exact ⟨1, by simpa using (hfirst.trans hsecond).trans hhalt⟩
+  · have hfirst : Goes (program keep) (true :: false :: r) .scan (regs n) 0
+        (some .secondTrue) (regs n) 1 [] 1 := goes_rd_true rfl (by simp)
+    have hsecond : Goes (program keep) (true :: false :: r) .secondTrue (regs n) 1
+        (some .stop) (regs n) 2 [] 1 := goes_rd_false rfl (by simp)
+    have hhalt : Goes (program keep) (true :: false :: r) .stop (regs n) 2
+        none (regs n) 2 [] 1 := goes_halt rfl
+    exact ⟨2, by simpa using (hfirst.trans hsecond).trans hhalt⟩
+
+/-- The complete program computes the total prefix operation on every input.
+**Proof sketch.** A decoded pair is handled by `goes_pair`. If decoding
+fails, the input consists of a doubled prefix followed by an invalid tail;
+parse that prefix and apply `goes_bad_tail`. Neither phase prints anything,
+agreeing with the empty total projections of a malformed pair. -/
+private theorem goes_total (keep : Bool) (z : List Bool) :
+    ∃ (ρ : Fin 1 → ℕ) (p : ℕ), Goes (program keep) z .scan (regs 0) 0
+      none ρ p (if keep then take z else drop z) (5 * (z.length + 1)) := by
+  cases hz : pairDecode z with
+  | some ab =>
+    obtain ⟨u, r⟩ := ab
+    have he := eq_pairEncode_of_pairDecode z u r hz
+    subst z
+    simpa [take, drop] using goes_pair keep u r
+  | none =>
+    obtain ⟨u, tail, he, htail⟩ := pairDecode_eq_none z hz
+    subst z
+    have hprefix : Goes (program keep) (dbl u ++ tail) .scan (regs 0) 0
+        (some .scan) (regs u.length) (2 * u.length) [] (3 * u.length) := by
+      simpa using goes_doubled keep u tail 0
+    obtain ⟨p, hbad⟩ := goes_bad_tail keep tail u.length htail
+    have hshift : Goes (program keep) (dbl u ++ tail) .scan (regs u.length)
+        (2 * u.length) none (regs u.length) (2 * u.length + p) [] 3 := by
+      simpa using hbad.prepend_input (dbl u)
+    have hrun := hprefix.trans hshift
+    refine ⟨regs u.length, 2 * u.length + p, ?_⟩
+    exact hrun.congr rfl rfl rfl rfl
+      (by cases keep <;> simp [take, drop, pairFstD, pairSndD, hz])
+      (by simp; omega)
+
+end PrefixByLength
+
+/-- Taking from the second component of a pair a prefix as long as its first
+component is polynomial-time computable. Malformed inputs return `[]`.
+**Proof sketch.** Compile the one-register prefix program. Its abstract run
+takes at most `5(|z|+1)` steps; counter-program simulation has polynomial
+overhead. This implements the splitting operation used in [AB09, §7.3,
+Theorem 7.8]. -/
+theorem polyTimeComputable_takePrefixByLength :
+    PolyTimeComputable PrefixByLength.take := by
+  apply CounterProg.polyTimeComputable_of_goes
+    (PrefixByLength.program true) PrefixByLength.Label.scan PrefixByLength.take 5 1
+  intro z
+  simpa using PrefixByLength.goes_total true z
+
+/-- Dropping from the second component of a pair a prefix as long as its first
+component is polynomial-time computable. Malformed inputs return `[]`.
+**Proof sketch.** Use the same program in drop mode: skip the counted
+prefix, then copy the remaining input. Its abstract time bound is still
+`5(|z|+1)`, so compilation gives a polynomial-time machine. This is the
+other splitting operation used in [AB09, §7.3, Theorem 7.8]. -/
+theorem polyTimeComputable_dropPrefixByLength :
+    PolyTimeComputable PrefixByLength.drop := by
+  apply CounterProg.polyTimeComputable_of_goes
+    (PrefixByLength.program false) PrefixByLength.Label.scan PrefixByLength.drop 5 1
+  intro z
+  simpa using PrefixByLength.goes_total false z
+
+end Complexity
+```
+
 ## ===== TCSlib/Complexity/Randomized/PolyTimeModel.lean =====
 
 ```
@@ -4638,6 +5461,9 @@ Authors: TCSlib Contributors
 import TCSlib.Complexity.Randomized.SipserGacs
 import TCSlib.Complexity.Randomized.Adleman
 import TCSlib.Complexity.ClassP.P
+import TCSlib.Complexity.ClassNP.PolyTimePrefix
+import TCSlib.Complexity.CircuitComplexity.PSubsetPPoly
+import TCSlib.Complexity.CircuitComplexity.PairEncode
 import TCSlib.Complexity.TuringMachine.Encoding
 import TCSlib.Complexity.PolyHierarchy.Defs
 import TCSlib.Complexity.PolyHierarchy.Normalize
@@ -4655,7 +5481,7 @@ Turing machines, now that the Chapter 1–2 development (`Complexity.P`,
 `Complexity.PolyTimeComputable`, `Turing.pairEncode`, `Complexity.SigmaP`)
 is on `main`.  This connects the abstract Chapter 7 class theorems to the
 book's machine-based statements: each `ClosedUnder…` hypothesis becomes a
-lemma about `P`, and the certificate-style `Σ₂` coincides with
+a result about `P`, and the certificate-style `Σ₂` coincides with
 `Complexity.SigmaP 2`.
 
 ## Main definitions
@@ -4663,7 +5489,7 @@ lemma about `P`, and the certificate-style `Σ₂` coincides with
 * `Randomized.polyTimeModel` — the `VerifierModel` whose efficient verifiers
   are those computed by a `P`-language on the `Turing.pairEncode`d input.
 
-## Main results (sorry-stubbed)
+## Main results
 
 * `Randomized.polyTimeModel_closedUnderRace` /
   `…_closedUnderAnswerIs` / `…_closedUnderMajority` / `…_closedUnderAny` /
@@ -4742,14 +5568,16 @@ inputs (`pairDecode = none`) halt with empty output, matching
 `pairFstD`/`pairSndD = []`.  The abstract step count is linear in `|p|`, so
 `Complexity.CounterProg.polyTimeComputable` applies. -/
 theorem polyTimeComputable_takePrefixByLen : PolyTimeComputable takePrefixByLen := by
-  sorry
+  simpa only [takePrefixByLen, Complexity.PrefixByLength.take] using
+    Complexity.polyTimeComputable_takePrefixByLength
 
 /-- `dropPrefixByLen` is polynomial-time computable.
 **Proof sketch.** As `takePrefixByLen`, but the copy phase emits only after the
 length register has counted down past the first `|u|` bits of the second
 component. -/
 theorem polyTimeComputable_dropPrefixByLen : PolyTimeComputable dropPrefixByLen := by
-  sorry
+  simpa only [dropPrefixByLen, Complexity.PrefixByLength.drop] using
+    Complexity.polyTimeComputable_dropPrefixByLength
 
 /-- `sliceTake a k` is polynomial-time computable.
 **Proof.** `polyLen a k |x| = a·(|x|+1)^k` is available as a *unary* string via
@@ -4800,7 +5628,7 @@ theorem polyTimeComputable_sliceDrop (a k : ℕ) :
   exact PolyTimeComputable.pairEncode polyTimeComputable_pairFstD hg
 
 /-- Polynomial time is closed under the race construction.
-**Proof.** The `some true`-set of the race is the preimage of `M₁`'s
+**Proof sketch.** The `some true`-set of the race is the preimage of `M₁`'s
 `some true`-set `V₁` under `sliceTake a k`, and the `some false`-set is the
 intersection of the complement of that preimage with the preimage of `M₂`'s
 `some true`-set `V₂` under `sliceDrop a k`; both are in `P` by
@@ -4839,7 +5667,7 @@ theorem polyTimeModel_closedUnderRace : ClosedUnderRace polyTimeModel := by
       simp [raceVerifier, h1, h2]
 
 /-- Polynomial time is closed under the output-postprocessing construction.
-**Proof.** The `some b`-set of `M` is literally one of the two
+**Proof sketch.** The `some b`-set of `M` is literally one of the two
 `P`-languages witnessing `Eff M`, and the `some (!b)`-set of the resulting
 Boolean verifier is its complement (`Complexity.compl_mem_P`). -/
 theorem polyTimeModel_closedUnderAnswerIs :
@@ -4904,17 +5732,81 @@ theorem polyTimeModel_closedUnderShiftOr :
 /-- Polynomial-time verifiers have polynomial-size circuits when their
 random string is fixed, with one size bound uniform in the random string:
 the form of [AB09, Thm 6.6] that Adleman's counting argument consumes.
-**Proof sketch.** The paired language of the verifier is in `P`, so by the
-tableau construction behind `Complexity.P_subset_PPoly` it has a fan-in-two
-circuit family of size polynomial in the padded input length
-`|pairEncode x r|` — polynomial in `|x|` since `|r| = polyLen a k |x|`.
-Hardwire the `r`-input wires of the circuit for length `|pairEncode x r|`
-to the bits of `r` (`CircuitComplexity.HardWire`); the size bound is
-inherited from the family, hence uniform in `r`. -/
+**Proof sketch.** Apply `Complexity.P_subset_PPoly` to the verifier's paired
+acceptance language. For each input length and fixed random string, the
+resulting circuit reads the doubled input bits, the separator, and the
+random bits. A buffer supplies two distinct copies of each input bit and
+constants for the separator and random string. Shifting all old vertex
+numbers preserves distinct gate inputs and fan-in at most two.
+
+The buffer adds exactly the number of free input bits to the old circuit
+size. The paired length is bounded by a polynomial in the input length,
+with coefficients depending only on the original randomness schedule.
+Composing this bound with the circuit family's size polynomial gives one
+bound uniform in the contents of the fixed random string. -/
 theorem polyTimeModel_verifierHasCircuits :
     ∀ M a k, polyTimeModel.Eff (boolVerifier M) →
       VerifierHasCircuits M (polyLen a k) := by
-  sorry
+  classical
+  rintro M a k ⟨V₁, V₀, hV₁, hV₀, hM⟩
+  have hPoly : V₁.InPPoly := Complexity.P_subset_PPoly hV₁
+  obtain ⟨b, j, F, hF, hSize, hLanguage⟩ := hPoly
+  refine ⟨b * (a + 3) ^ j + 1, (k + 1) * (j + 1), fun n r hr => ?_⟩
+  let ell := 2 * n + 2 + r.length
+  let C := F.circuit ell
+  let D : BoolCircuit.DAGCircuit n := BoolCircuit.DAGCircuit.pairEncode r C
+  have hD : D.IsFaninTwo :=
+    BoolCircuit.DAGCircuit.pairEncode_isFaninTwo r C (hF ell)
+  refine ⟨D, hD.1, hD, ?_, fun v => ?_⟩
+  · -- The paired length is polynomial in n, uniformly in the chosen random string.
+    have hN : 0 < n + 1 := Nat.succ_pos n
+    have hnPow : n + 1 ≤ (n + 1) ^ (k + 1) :=
+      Nat.le_self_pow (Nat.succ_ne_zero k) (n + 1)
+    have hkPow : (n + 1) ^ k ≤ (n + 1) ^ (k + 1) :=
+      Nat.pow_le_pow_right hN (Nat.le_succ k)
+    have hLen : ell + 1 ≤ (a + 3) * (n + 1) ^ (k + 1) := by
+      dsimp only [ell]
+      rw [hr]
+      unfold polyLen
+      nlinarith [Nat.mul_le_mul_left a hkPow]
+    have hCircuit : C.size ≤
+        b * (a + 3) ^ j * (n + 1) ^ ((k + 1) * j) := by
+      calc
+        C.size ≤ b * (ell + 1) ^ j := hSize ell
+        _ ≤ b * ((a + 3) * (n + 1) ^ (k + 1)) ^ j :=
+          Nat.mul_le_mul_left b (Nat.pow_le_pow_left hLen j)
+        _ = b * (a + 3) ^ j * (n + 1) ^ ((k + 1) * j) := by
+          rw [mul_pow, ← pow_mul]
+          ring
+    have hExponent : (k + 1) * j ≤ (k + 1) * (j + 1) :=
+      Nat.mul_le_mul_left (k + 1) (Nat.le_succ j)
+    have hCircuit' : C.size ≤
+        b * (a + 3) ^ j * (n + 1) ^ ((k + 1) * (j + 1)) :=
+      hCircuit.trans (Nat.mul_le_mul_left (b * (a + 3) ^ j)
+        (Nat.pow_le_pow_right hN hExponent))
+    have hPositive : 0 < (k + 1) * (j + 1) :=
+      Nat.mul_pos (Nat.succ_pos k) (Nat.succ_pos j)
+    have hnSize : n ≤ (n + 1) ^ ((k + 1) * (j + 1)) :=
+      (Nat.le_succ n).trans
+        (Nat.le_self_pow (Nat.ne_of_gt hPositive) (n + 1))
+    calc
+      D.size = n + C.size := BoolCircuit.DAGCircuit.pairEncode_size r C
+      _ ≤ (n + 1) ^ ((k + 1) * (j + 1)) +
+          b * (a + 3) ^ j * (n + 1) ^ ((k + 1) * (j + 1)) :=
+        Nat.add_le_add hnSize hCircuit'
+      _ = (b * (a + 3) ^ j + 1) *
+          (n + 1) ^ ((k + 1) * (j + 1)) := by ring
+  · -- The buffer feeds the old circuit exactly the encoded pair (x,r).
+    rw [BoolCircuit.DAGCircuit.pairEncode_eval r C v]
+    have hAccept : C.eval (BoolCircuit.pairEncodeInput r v) = true ↔
+        Turing.pairEncode (List.ofFn v) r ∈ V₁ := by
+      rw [← hLanguage]
+      exact BoolCircuit.DAGCircuitFamily.pairEncode_eval_eq_true_iff F r v
+    have hVerifier := (hM (List.ofFn v) r).1
+    simp only [boolVerifier, Option.some.injEq] at hVerifier
+    have hCorrect := hAccept.trans hVerifier.symm
+    cases hC : C.eval (BoolCircuit.pairEncodeInput r v) <;>
+      cases hV : M (List.ofFn v) r <;> simp_all
 
 /-- **Adleman's theorem for polynomial-time machines** ([AB09, Thm 7.17],
 unconditionally): `BPP ⊆ P/poly`, with both sides the library's own classes

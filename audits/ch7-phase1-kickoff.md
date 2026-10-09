@@ -18,6 +18,12 @@ are already proved and machine-checked, but treat a proved statement no more gen
 than a sorried one (a wrong-but-proved statement is the worst outcome). Your job is to
 find infidelity, trivialization, unprovability, and missing hypotheses.
 
+Note: part of this surface — three support modules (`CounterProgInput`, `PairEncode`,
+`PolyTimePrefix`) and three filled `PolyTimeModel` targets — was drafted by a different
+AI model and repaired to compile; blind-restate it like any other surface, and pay
+particular attention to the circuit-encoding and prefix-operation fidelity questions
+(pack questions 5–7).
+
 Work the pack's "Brief for the auditor" and "Specific questions" in order. Priority
 one is **CH7-Q1**: whether carrying all class-level probability in ℚ by exact counting
 (instead of the book's `e^{-2ε²k}` bound) faithfully proves Theorems 7.10/7.17/7.18 and
