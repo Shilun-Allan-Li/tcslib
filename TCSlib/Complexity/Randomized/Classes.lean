@@ -826,6 +826,13 @@ theorem inRP_of_zeroError (hAns : ClosedUnderAnswerIs E)
 /-- **`ZPP = RP ∩ coRP`** ([AB09, Thm 7.8]).  Stated relative to the
 efficiency notion `E`, under the closure properties the two directions use.
 
+This is the identity for the **Las Vegas / abort-form** `ZPP` (`InZPP`: a
+zero-error verifier that outputs `some b` or aborts with `none`, abort
+probability `≤ 1/2`), **not** the book's expected-polynomial-time formulation
+([AB09, Def 7.7]).  The two are equivalent by the standard truncate-and-repeat
+bridge, which is not formalized here; until it is, read this as the abort-form
+identity (the documented deviation, plan question CH7-Q2).
+
 **Proof sketch.** (⊆) A zero-error verifier yields an `RP` verifier by
 answering `true` exactly on output `some true` (`hAns`): inputs outside `L`
 are never accepted (zero error), and inputs in `L` are accepted whenever the

@@ -267,9 +267,12 @@ theorem polyTimeModel_closedUnderNot : ClosedUnderNot polyTimeModel := by
 
 /-- Polynomial time recognizes the shifted-OR construction.
 **Proof sketch.** Decode the nested pair, slice `u` into its
-`polyLen a' k' |x|` shift blocks, XOR each with `v` (bitwise XOR of
-equal-length lists is poly-time), run the `P`-verifier on each, and `OR`
-the results. -/
+`polyLen a' k' |x|` shift blocks, and XOR each with `v`.  Here
+`shiftOrVerifier` uses `List.zipWith xor v block`, which is poly-time on
+lists of *arbitrary* lengths and truncates to the shorter of `|v|` and the
+block length; the exact-length witnesses quantified in `InSigma2` (where
+`|v|` equals the block length) recover the book's equal-length bitwise XOR.
+Run the `P`-verifier on each XORed block and `OR` the results. -/
 theorem polyTimeModel_closedUnderShiftOr :
     ClosedUnderShiftOr polyTimeModel := by
   sorry
