@@ -440,6 +440,23 @@ machine-agreement transfer lemma is **commissioned** as §13 item **Z5**
 forwarding-host duplication and serves Hardness's 13 guarded agreement
 sites; placement open decision 13.5). D-R2 under discussion.
 
+**Duplication-governance amendments landed (user-directed, 2026-10-09; from
+the D-R2 post-mortem — the `f2_` accumulation was disclosed and recorded at
+every step but never escalated to a human decision):** `audits/TEMPLATE.md`
+failure mode 5 (**debt**, reported at major; gates cannot close over it
+without explicit human acknowledgment; screened cumulatively);
+`workflow.md` §4 duplication ledger at maintainer verification (hard
+escalation threshold: one-fifth copied material, or repeat copies across
+epochs, auto-opens a backlog §1 item) and in every epoch pack, auditor-
+verified; `policy.md` **Duplication.** paragraph — forced or deliberate,
+duplication of proved material is always disclosed, always ledgered,
+**always human-approved**; undisclosed duplication is a freeze violation.
+Campaign branch `2f61ef88`; **merged to `main` via PR #8** (single
+cherry-picked commit, the PR #6/#7 precedent); all three files verified
+byte-identical on both branches. Noted in passing: `main` has moved
+substantially (colleague activity in `BooleanAnalysis/`) — relevant to the
+pending colleague sync.
+
 **Logged housekeeping (maintainer, not retrofit output):** stale "statement
 skeleton / sorried" module headers in `Embed`/`Seam`/`Catalog` (all
 zero-sorry since today); two library-docstring overclaims (Embed's R1 "is
