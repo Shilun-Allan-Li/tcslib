@@ -1,0 +1,1535 @@
+From 35a96f2c9598541d9260b87911f7e98c513f0bdb Mon Sep 17 00:00:00 2001
+From: Codex <codex@openai.com>
+Date: Fri, 9 Oct 2026 09:56:53 -0500
+Subject: [PATCH 1/2] Prove the catalog decision-loop space ledger
+
+---
+ .../TuringMachine/Build/Catalog.lean          | 565 +++++++++++++++++-
+ 1 file changed, 564 insertions(+), 1 deletion(-)
+
+diff --git a/TCSlib/Complexity/TuringMachine/Build/Catalog.lean b/TCSlib/Complexity/TuringMachine/Build/Catalog.lean
+index f4b449b2..e43131ac 100644
+--- a/TCSlib/Complexity/TuringMachine/Build/Catalog.lean
++++ b/TCSlib/Complexity/TuringMachine/Build/Catalog.lean
+@@ -9326,6 +9326,466 @@ theorem computesFunInTime_cond_spaceUsed {D M₁ M₂ : FinTM Bool}
+     have hm2 := Nat.le_max_right (s₁ x.length) (s₂ x.length)
+     split at h <;> omega
+ 
++/-- A unit-step head starting at zero visits every integer between zero and
++its endpoint. Thus a bound on total visited space bounds its displacement.
++**Proof sketch.** Induct on time to put the intervening integer interval in
++the visited set: a unit step adds at most its new endpoint. Take interval
++cardinalities and use the inclusion of this tape's space in total space. -/
++private lemma a2_source_radius {k : ℕ} {Q : Type} {x : List Bool}
++    (tm : MultiTapeTM k Bool Q) (c : Cfg k Bool Q x) (t B : ℕ)
++    (hc : ∀ i, c.workTapePos i = 0) (hb : tm.spaceUsed c t ≤ B) (i : Fin k) :
++    -(B : ℤ) ≤ (tm.runFrom c t).workTapePos i ∧
++      (tm.runFrom c t).workTapePos i ≤ B := by
++  have hinter (u : ℕ) : Finset.Icc (min 0 ((tm.runFrom c u).workTapePos i))
++      (max 0 ((tm.runFrom c u).workTapePos i)) ⊆ tm.visitedByTapeHead c u i := by
++    induction u with
++    | zero =>
++      intro z hz
++      simp only [MultiTapeTM.runFrom_zero, hc, min_self, max_self,
++        Finset.mem_Icc] at hz
++      have hz0 : z = 0 := by omega
++      subst z
++      exact Finset.mem_image.mpr ⟨0, by simp, by simpa using hc i⟩
++    | succ u ih =>
++      intro z hz
++      have hd := tm.workTapePos_step_le (tm.runFrom c u) i
++      rw [abs_le] at hd
++      rw [← MultiTapeTM.runFrom_succ_eq_step'] at hd
++      by_cases hp : z ∈ Finset.Icc (min 0 ((tm.runFrom c u).workTapePos i))
++          (max 0 ((tm.runFrom c u).workTapePos i))
++      · obtain ⟨v, hv, he⟩ := Finset.mem_image.mp (ih hp)
++        exact Finset.mem_image.mpr ⟨v, Finset.mem_range.mpr
++          (by have := Finset.mem_range.mp hv; omega), he⟩
++      · simp only [Finset.mem_Icc] at hz hp
++        have he : (tm.runFrom c (u + 1)).workTapePos i = z := by omega
++        exact Finset.mem_image.mpr ⟨u + 1, by simp, he⟩
++  have hcard := Finset.card_le_card (hinter t)
++  rw [Int.card_Icc] at hcard
++  have htotal := tm.spaceUsedByTape_le_spaceUsed c t i
++  change (tm.visitedByTapeHead c t i).card ≤ tm.spaceUsed c t at htotal
++  omega
++
++/-- All physical heads lie in one fixed origin-centred integer interval. -/
++private def a2_heads {k : ℕ} {Q : Type} {x : List Bool}
++    (c : Cfg k Bool Q x) (B : ℕ) : Prop :=
++  ∀ i, -(B : ℤ) ≤ c.workTapePos i ∧ c.workTapePos i ≤ B
++
++/-- Enlarging the common interval preserves a head bound. -/
++private lemma a2_heads_mono {k : ℕ} {Q : Type} {x : List Bool}
++    {c : Cfg k Bool Q x} {A B : ℕ} (h : a2_heads c A) (hle : A ≤ B) :
++    a2_heads c B := by
++  intro i
++  have := h i
++  constructor <;> omega
++
++/-- A short administrative segment enlarges its starting interval by at
++most its duration, including every intermediate work-head position. -/
++private lemma a2_heads_steps {k : ℕ} {Q : Type} {x : List Bool}
++    (tm : MultiTapeTM k Bool Q) (c : Cfg k Bool Q x) (A B t : ℕ)
++    (h : a2_heads c A) (ht : t ≤ B) : a2_heads (tm.runFrom c t) (A + B) := by
++  intro i
++  have hs := h i
++  have hm := f2_head_steps tm c t i
++  constructor <;> omega
++
++/-- Concatenating two bounded traces reuses their common interval. -/
++private lemma a2_heads_join {k : ℕ} {Q : Type} {x : List Bool}
++    (tm : MultiTapeTM k Bool Q) (c : Cfg k Bool Q x) (a b B : ℕ)
++    (ha : ∀ u ≤ a, a2_heads (tm.runFrom c u) B)
++    (hb : ∀ u ≤ b, a2_heads (tm.runFrom (tm.runFrom c a) u) B) :
++    ∀ u ≤ a + b, a2_heads (tm.runFrom c u) B := by
++  intro u hu
++  by_cases h : u ≤ a
++  · exact ha u h
++  · rw [show u = a + (u - a) by omega, MultiTapeTM.runFrom_add]
++    exact hb (u - a) (by omega)
++
++/-- After a halting endpoint, every later head is that same endpoint head. -/
++private lemma a2_heads_halted {k : ℕ} {Q : Type} {x : List Bool}
++    (tm : MultiTapeTM k Bool Q) (c : Cfg k Bool Q x) (a B : ℕ)
++    (hh : (tm.runFrom c a).state = none)
++    (ha : ∀ u ≤ a, a2_heads (tm.runFrom c u) B) :
++    ∀ u, a2_heads (tm.runFrom c u) B := by
++  intro u
++  by_cases h : u ≤ a
++  · exact ha u h
++  · rw [show u = a + (u - a) by omega, MultiTapeTM.runFrom_add,
++      MultiTapeTM.runFrom_of_halt _ hh]
++    exact ha a (le_refl _)
++
++/-- Project a captured body call onto its body, stationary flag, fixed
++counter origin, retained fuel bank, and current output-length head. -/
++private lemma a2_call_heads (body F : FinTM Bool) (anchor : body.State)
++    {x : List Bool} (startup : Bool) (c : Cfg body.k Bool body.State x)
++    (release : Bool) (flag : Option Bool) (word : List Bool)
++    (fuel : Cfg F.k Bool F.State x) (B : ℕ)
++    (hb : a2_heads c B) (hf : a2_heads fuel B) (ho : c.output.length ≤ B) :
++    a2_heads (f2_loopCall body F anchor startup c release flag word fuel) B := by
++  intro i
++  refine Fin.lastCases ?_ (fun j => ?_) i
++  · simp only [f2_loopCall, captureCfg, Fin.val_last, lt_self_iff_false, ↓reduceDIte,
++      f2_loopBodyPadded, leftCfg, f2_loopBodyCfg, List.nil_append]
++    constructor <;> omega
++  · simp only [f2_loopCall, captureCfg, Fin.coe_castSucc, dif_pos j.isLt]
++    change -(B : ℤ) ≤ (f2_loopBodyPadded body F anchor c release flag word fuel).workTapePos j ∧
++      (f2_loopBodyPadded body F anchor c release flag word fuel).workTapePos j ≤ B
++    simp only [f2_loopBodyPadded, leftCfg]
++    refine Fin.addCases (fun j => ?_) (fun j => ?_) j
++    · simp only [Fin.addCases_left, f2_loopBodyCfg]
++      split
++      · exact hb _
++      · constructor <;> omega
++    · simp only [Fin.addCases_right]
++      refine Fin.addCases (fun j => ?_) (fun j => ?_) j
++      · simp only [Fin.addCases_left]; constructor <;> omega
++      · simpa only [Fin.addCases_right] using hf j
++
++/-- Fuel capture preserves its source heads, leaves the other banks at
++zero, and places its last head at the current fuel output length. -/
++private lemma a2_fuel_heads (body F : FinTM Bool) {x : List Bool}
++    (c : Cfg F.k Bool F.State x) (B : ℕ)
++    (hf : a2_heads c B) (ho : c.output.length ≤ B) :
++    a2_heads (f2_loopFuelCaptured body F c) B := by
++  intro i
++  refine Fin.lastCases ?_ (fun j => ?_) i
++  · simp only [f2_loopFuelCaptured, captureCfg, Fin.val_last, lt_self_iff_false,
++      ↓reduceDIte, f2_loopFuelCfg, rightCfg, List.nil_append]
++    constructor <;> omega
++  · simp only [f2_loopFuelCaptured, captureCfg, Fin.coe_castSucc, dif_pos j.isLt]
++    change -(B : ℤ) ≤ (f2_loopFuelCfg body F c).workTapePos j ∧
++      (f2_loopFuelCfg body F c).workTapePos j ≤ B
++    simp only [f2_loopFuelCfg, rightCfg]
++    refine Fin.addCases (fun j => ?_) (fun j => ?_) j
++    · simp only [Fin.addCases_left]; constructor <;> omega
++    · simp only [Fin.addCases_right]
++      refine Fin.addCases (fun j => ?_) (fun j => ?_) j
++      · simp only [Fin.addCases_left]; constructor <;> omega
++      · simpa only [Fin.addCases_right] using hf j
++
++/-- Every prefix of a captured body call is the same prefix of its source,
++with the release bit consumed once and the halt flag set on the last action. -/
++private lemma a2_call_run (body F : FinTM Bool) (anchor : body.State)
++    (findMode startup : Bool) {x : List Bool}
++    (c : Cfg body.k Bool body.State x) (release : Bool) (t : ℕ)
++    (word : List Bool) (fuel : Cfg F.k Bool F.State x) (hc : c.state ≠ none)
++    (hlive : ∀ u < t, (body.tm.runFrom c u).state ≠ none)
++    (hanchor : ∀ u < t, (u = 0 ∧ release = true) ∨
++      (body.tm.runFrom c u).state ≠ some anchor) :
++    (f2_loopHost body F anchor findMode).tm.runFrom
++        (f2_loopCall body F anchor startup c release none word fuel) t =
++      f2_loopCall body F anchor startup (body.tm.runFrom c t)
++        (if t = 0 then release else false)
++        (if (body.tm.runFrom c t).state = none then some true else none) word fuel := by
++  unfold f2_loopCall f2_loopBodyPadded
++  rw [f2_loopHost_body_capture]
++  · rw [f2_loopBodySource_run, f2_loopBody_run body anchor c release hc t hlive hanchor]
++  · intro u hu
++    rw [f2_loopBodySource_run, f2_loopBody_run body anchor c release hc u
++      (fun v hv => hlive v (by omega)) (fun v hv => hanchor v (by omega))]
++    simpa [Cfg.Halted, leftCfg, f2_loopBodyCfg] using hlive u hu
++
++/-- Budgeted source space bounds all captured-call prefixes. Empty final
++output gives no capture growth; a singleton final verdict gives at most one
++cell of growth, including a verdict emitted by the halting action. -/
++private lemma a2_call_prefix (body F : FinTM Bool) (anchor : body.State)
++    (startup : Bool) {x : List Bool}
++    (c : Cfg body.k Bool body.State x) (release : Bool) (t B : ℕ)
++    (word : List Bool) (fuel : Cfg F.k Bool F.State x) (hc : c.state ≠ none)
++    (hzero : ∀ i, c.workTapePos i = 0)
++    (hlive : ∀ u < t, (body.tm.runFrom c u).state ≠ none)
++    (hanchor : ∀ u < t, (u = 0 ∧ release = true) ∨
++      (body.tm.runFrom c u).state ≠ some anchor)
++    (hspace : ∀ u ≤ t, body.tm.spaceUsed c u ≤ B)
++    (hf : a2_heads fuel B) (hout : (body.tm.runFrom c t).output.length ≤ B) :
++    ∀ u ≤ t, a2_heads ((f2_loopHost body F anchor false).tm.runFrom
++      (f2_loopCall body F anchor startup c release none word fuel) u) B := by
++  intro u hu
++  rw [a2_call_run body F anchor false startup c release u word fuel hc
++    (fun v hv => hlive v (by omega)) (fun v hv => hanchor v (by omega))]
++  exact a2_call_heads body F anchor startup _ _ _ word fuel B
++    (a2_source_radius body.tm c u B hzero (hspace u hu)) hf
++    (((body.tm.output_prefix c hu).length_le).trans hout)
++
++/-- Fuel capture and installation have a width-bounded space ledger.
++The fuel source is charged to its space hypothesis; the three installation
++scans cost `3*width+4`, and the possibly long input rewind moves no work head.
++**Proof sketch.** Capture to the first halt, project the source heads and
++output lengths at every prefix, then concatenate the setup and input-only
++rewind traces. Retain the source endpoint's `B` bound for all later calls. -/
++private lemma a2_loop_prepare (body F : FinTM Bool) (anchor : body.State)
++    (R T S : ℕ → ℕ)
++    (hF : F.ComputesFunInTime (fun x => Nat.bits (R x.length)) T)
++    (hspace : ∀ x t, F.tm.spaceUsed (F.tm.initCfg x) t ≤ S x.length)
++    (x : List Bool) :
++    ∃ (c : Cfg F.k Bool F.State x) (t : ℕ),
++      c.state = none ∧ c.output = Nat.bits (R x.length) ∧ t ≤ 5 * T x.length + 7 ∧
++      (f2_loopHost body F anchor false).tm.runFrom
++        ((f2_loopHost body F anchor false).tm.initCfg x) t = f2_loopReady body F c ∧
++      a2_heads c (S x.length) ∧
++      ∀ u ≤ t, a2_heads ((f2_loopHost body F anchor false).tm.runFrom
++        ((f2_loopHost body F anchor false).tm.initCfg x) u)
++        (S x.length + 4 * (Nat.bits (R x.length)).length + 4) := by
++  obtain ⟨space, hhalt, hout, _⟩ := hF x
++  obtain ⟨u, hu, hut, hlive, huh, hue⟩ :=
++    f2_loop_first_halt F.tm (F.tm.initCfg x) (T x.length)
++      (by simp [MultiTapeTM.initCfg, Cfg.init]) hhalt
++  let c := F.tm.runFrom (F.tm.initCfg x) u
++  have hc : c.state = none := huh
++  have ho : c.output = Nat.bits (R x.length) := by dsimp only [c]; rw [hue]; exact hout
++  have hcap (v : ℕ) (hv : v ≤ u) : (f2_loopHost body F anchor false).tm.runFrom
++      ((f2_loopHost body F anchor false).tm.initCfg x) v =
++        f2_loopFuelCaptured body F (F.tm.runFrom (F.tm.initCfg x) v) := by
++    rw [f2_loopHost_init, f2_loopFuel_init, f2_loopHost_fuel_capture]
++    · rw [f2_loopFuel_run]; rfl
++    · intro w hw
++      rw [f2_loopFuel_run]
++      simpa [Cfg.Halted, f2_loopFuelCfg, rightCfg] using hlive w (by omega)
++  have hs (v : ℕ) : a2_heads (F.tm.runFrom (F.tm.initCfg x) v) (S x.length) :=
++    a2_source_radius F.tm (F.tm.initCfg x) v _ (fun _ => rfl) (hspace x v)
++  have hpref (v : ℕ) (hv : v ≤ u) : a2_heads
++      ((f2_loopHost body F anchor false).tm.runFrom
++        ((f2_loopHost body F anchor false).tm.initCfg x) v)
++      (S x.length + c.output.length) := by
++    rw [hcap v hv]
++    apply a2_fuel_heads
++    · exact a2_heads_mono (hs v) (by omega)
++    · have := (F.tm.output_prefix (F.tm.initCfg x) hv).length_le
++      change (F.tm.runFrom (F.tm.initCfg x) v).output.length ≤ c.output.length at this
++      omega
++  let prepared := f2_loopFrame body F (f2_loopFuelCaptured body F c)
++    (some (.inr (.inr 4))) c.inputPos (bufferTape []) (bufferTape c.output)
++    (bufferTape []) 0 0 []
++  have hsetup : (f2_loopHost body F anchor false).tm.runFrom
++      (f2_loopFuelCaptured body F c) (3 * c.output.length + 4) = prepared := by
++    conv_lhs => arg 1; rw [f2_loopFuelCaptured_frame body F c hc]
++    exact f2_loopHost_fuel_setup body F anchor false _ _ _ _ _
++  obtain ⟨v, hv, hrew, hrewheads⟩ := f2_rewind_heads
++    (f2_loopHost body F anchor false).tm (.inr (.inr 4)) (.inr (.inr 5))
++    (.some (.inr (.inl (true, (body.tm.q₀, false)))))
++    (fun _ _ => f2_loopControl_idle body F .neg _)
++    (fun inp _ => by cases inp <;> exact f2_loopControl_idle body F _ _) prepared rfl
++  have hw : c.output.length ≤ T x.length := by rw [ho]; exact f2_loop_fuel_width F R T hF x
++  have hi : c.inputPos.val ≤ 1 + u := f2_loop_input_run_le F.tm (F.tm.initCfg x) u
++  have hinstall (w : ℕ) (hw : w ≤ 3 * c.output.length + 4) :
++      a2_heads ((f2_loopHost body F anchor false).tm.runFrom
++        (f2_loopFuelCaptured body F c) w) (S x.length + 4 * c.output.length + 4) := by
++    have hb := hpref u (le_refl _)
++    rw [hcap u (le_refl _)] at hb
++    have hh := a2_heads_steps (f2_loopHost body F anchor false).tm
++      (f2_loopFuelCaptured body F c) _ (3 * c.output.length + 4) w hb hw
++    convert hh using 1 <;> omega
++  refine ⟨c, u + (3 * c.output.length + 4) + v, hc, ho, ?_, ?_, hs u, ?_⟩
++  · change v ≤ c.inputPos.val + 2 at hv
++    omega
++  · rw [MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_add,
++      hcap u (le_refl _), hsetup, hrew]
++    rfl
++  · rw [← ho]
++    apply a2_heads_join
++    · apply a2_heads_join
++      · intro w hw
++        exact a2_heads_mono (hpref w hw) (by omega)
++      · rw [hcap u (le_refl _)]
++        exact hinstall
++    · rw [MultiTapeTM.runFrom_add, hcap u (le_refl _), hsetup]
++      intro w hw i
++      rw [hrewheads w hw]
++      have hh := hinstall (3 * c.output.length + 4) (le_refl _)
++      rw [hsetup] at hh
++      exact hh i
++
++/-- Startup uses its space hypothesis only up to the supplied first anchor;
++the silent stop and release add two bounded administrative steps. -/
++private lemma a2_loop_start_prefix (body F : FinTM Bool) (anchor : body.State)
++    {x : List Bool} (s : List Bool) (t B : ℕ) (fuel : Cfg F.k Bool F.State x)
++    (hguard : ∀ u < t, (body.tm.runFrom (body.tm.initCfg x) u).state ≠ some anchor)
++    (hend : body.tm.runFrom (body.tm.initCfg x) t = Cfg.ofWords anchor (stateWord body.k s))
++    (hs : ∀ u ≤ t, body.tm.spaceUsed (body.tm.initCfg x) u ≤ B)
++    (hf : a2_heads fuel B) :
++    ∀ u ≤ t + 2, a2_heads ((f2_loopHost body F anchor false).tm.runFrom
++      (f2_loopReady body F fuel) u) (B + 2) := by
++  rw [f2_loopReady_call body F anchor]
++  have hl := f2_loop_live_prefix body.tm (body.tm.initCfg x) t
++    (by rw [hend]; simp [Cfg.ofWords])
++  have hp := a2_call_prefix body F anchor true (body.tm.initCfg x) false t B
++    fuel.output fuel (by simp [MultiTapeTM.initCfg, Cfg.init]) (fun _ => rfl)
++    (fun u hu => hl u (by omega)) (fun u hu => Or.inr (hguard u hu)) hs hf
++    (by rw [hend]; simp [Cfg.ofWords])
++  apply a2_heads_join
++  · intro u hu
++    exact a2_heads_mono (hp u hu) (by omega)
++  · intro u hu
++    exact a2_heads_steps _ _ B 2 u (hp t (le_refl _)) hu
++
++/-- A decision round has a single fixed space interval, independent of its
++index. The source bank uses the budgeted source hypothesis, the retained
++fuel bank starts within the same bound, and debit administration is charged
++only to the unchanged counter width.
++**Proof sketch.** At acceptance use the actual first halt; append-only output
++bounds capture by one. At rejection the source endpoint is silent and has
++origin heads. The stop plus the received borrow/rewind/underflow segment
++costs at most `2*width+5`. Concatenate prefix bounds, including both endings. -/
++private lemma a2_loop_round (body F : FinTM Bool) (anchor : body.State)
++    {x : List Bool} (s next : List Bool) (accepted : Bool)
++    (word : List Bool) (fuel : Cfg F.k Bool F.State x) (t B : ℕ) (ht : 0 < t)
++    (hanchor : ∀ u, 0 < u → u < t →
++      (body.tm.runFrom (Cfg.ofWords (input := x) anchor (stateWord body.k s)) u).state ≠ some anchor)
++    (hend : if accepted then
++      (body.tm.runFrom (Cfg.ofWords (input := x) anchor (stateWord body.k s)) t).state = none ∧
++      (body.tm.runFrom (Cfg.ofWords (input := x) anchor (stateWord body.k s)) t).output = [true]
++      else body.tm.runFrom (Cfg.ofWords (input := x) anchor (stateWord body.k s)) t =
++        Cfg.ofWords anchor (stateWord body.k next))
++    (hspace : ∀ u ≤ t, body.tm.spaceUsed
++      (Cfg.ofWords (input := x) anchor (stateWord body.k s)) u ≤ B)
++    (hf : a2_heads fuel B) :
++    ∃ v,
++      (∀ u ≤ v, a2_heads ((f2_loopHost body F anchor false).tm.runFrom
++        (f2_loopCall body F anchor false (Cfg.ofWords anchor (stateWord body.k s))
++          true none word fuel) u) (B + 2 * word.length + 6)) ∧
++      ((f2_loopHost body F anchor false).tm.runFrom
++        (f2_loopCall body F anchor false (Cfg.ofWords anchor (stateWord body.k s))
++          true none word fuel) v).state = none ∨
++      ∃ v, (f2_loopDebit word).2 = true ∧
++        (∀ u ≤ v, a2_heads ((f2_loopHost body F anchor false).tm.runFrom
++          (f2_loopCall body F anchor false (Cfg.ofWords anchor (stateWord body.k s))
++            true none word fuel) u) (B + 2 * word.length + 6)) ∧
++        (f2_loopHost body F anchor false).tm.runFrom
++          (f2_loopCall body F anchor false (Cfg.ofWords anchor (stateWord body.k s))
++            true none word fuel) v =
++          f2_loopCall body F anchor false (Cfg.ofWords anchor (stateWord body.k next))
++            true none (f2_loopDebit word).1 fuel := by
++  let start := Cfg.ofWords (input := x) anchor (stateWord body.k s)
++  have hzero (i) : start.workTapePos i = 0 := rfl
++  have hc : start.state ≠ none := by simp [start, Cfg.ofWords]
++  have hg : ∀ u < t, (u = 0 ∧ true = true) ∨ (body.tm.runFrom start u).state ≠ some anchor := by
++    intro u hu
++    by_cases hz : u = 0
++    · exact Or.inl ⟨hz, rfl⟩
++    · exact Or.inr (hanchor u (by omega) hu)
++  by_cases ha : accepted = true
++  · simp only [ha, if_true] at hend
++    obtain ⟨u, hu, hut, hlive, hhalt, he⟩ := f2_loop_first_halt body.tm start t hc hend.1
++    have hcap := f2_loopHost_halt_return body F anchor false start u word fuel hu hlive
++      (fun v hv hvu => hanchor v hv (by omega)) hhalt
++    obtain ⟨v, hv, hstop, _⟩ := f2_loopHost_accept body F anchor false
++      (body.tm.runFrom start u) word fuel hhalt
++    have ho : (body.tm.runFrom start u).output = [true] := by rw [he]; exact hend.2
++    have hv5 : v ≤ 5 := by simpa [ho] using hv
++    have hp := a2_call_prefix body F anchor false start true u (B + 1) word fuel hc hzero
++      hlive (fun w hw => hg w (by omega))
++      (fun w hw => (hspace w (by omega)).trans (by omega))
++      (a2_heads_mono hf (by omega)) (by simp [ho])
++    refine ⟨u + v, ?_⟩
++    left
++    constructor
++    · apply a2_heads_join
++      · intro w hw
++        exact a2_heads_mono (hp w hw) (by omega)
++      · intro w hw
++        exact a2_heads_mono (a2_heads_steps _ _ (B + 1) 5 w
++          (hp u (le_refl _)) (by omega)) (by omega)
++    · rw [MultiTapeTM.runFrom_add, hcap]
++      exact hstop
++  · simp only [ha] at hend
++    have hl := f2_loop_live_prefix body.tm start t (by rw [hend]; simp [Cfg.ofWords])
++    have hp := a2_call_prefix body F anchor false start true t B word fuel hc hzero
++      (fun w hw => hl w (by omega)) hg hspace hf (by rw [hend]; simp [Cfg.ofWords])
++    have hcap := f2_loopHost_anchor_return body F anchor false false start true t word fuel
++      (by rw [hend]; rfl) (by intro hz; omega) hg
++    rw [show body.tm.runFrom start t = Cfg.ofWords anchor (stateWord body.k next) from hend] at hcap
++    obtain ⟨v, hv, hfinish⟩ := f2_loopHost_reject body F anchor false
++      {Cfg.ofWords (input := x) anchor (stateWord body.k next) with state := none}
++      word fuel rfl rfl
++    have hpall : ∀ u ≤ (t + 1) + v, a2_heads
++        ((f2_loopHost body F anchor false).tm.runFrom
++          (f2_loopCall body F anchor false start true none word fuel) u)
++        (B + 2 * word.length + 6) := by
++      rw [show (t + 1) + v = t + (1 + v) by omega]
++      apply a2_heads_join
++      · intro w hw
++        exact a2_heads_mono (hp w hw) (by omega)
++      · intro w hw
++        exact a2_heads_mono (a2_heads_steps _ _ B (2 * word.length + 5) w
++          (hp t (le_refl _)) (by omega)) (by omega)
++    refine ⟨(t + 1) + v, ?_⟩
++    by_cases hd : (f2_loopDebit word).2 = true
++    · right
++      refine ⟨(t + 1) + v, hd, hpall, ?_⟩
++      rw [MultiTapeTM.runFrom_add, hcap]
++      simpa only [hd, if_true] using hfinish
++    · left
++      refine ⟨hpall, ?_⟩
++      rw [MultiTapeTM.runFrom_add, hcap]
++      simp only [hd, Bool.false_eq_true, ↓reduceIte] at hfinish
++      exact hfinish.1
++
++/-- A finite chain of returning or halting segments reuses one interval.
++The last segment must halt; every earlier halt supplies a stationary tail.
++The interval is never multiplied by the number of segments. -/
++private lemma a2_segments {k : ℕ} {Q : Type} {x : List Bool}
++    (tm : MultiTapeTM k Bool Q) (cfg : ℕ → Cfg k Bool Q x) (N B : ℕ)
++    (hN : 0 < N)
++    (hround : ∀ i < N, ∃ u,
++      (∀ v ≤ u, a2_heads (tm.runFrom (cfg i) v) B) ∧
++      ((tm.runFrom (cfg i) u).state = none ∨
++        i + 1 < N ∧ tm.runFrom (cfg i) u = cfg (i + 1))) :
++    ∀ t, a2_heads (tm.runFrom (cfg 0) t) B := by
++  induction N generalizing cfg with
++  | zero => omega
++  | succ N ih =>
++    obtain ⟨u, hp, he⟩ := hround 0 (by omega)
++    intro t
++    by_cases ht : t ≤ u
++    · exact hp t ht
++    · rw [show t = u + (t - u) by omega, MultiTapeTM.runFrom_add]
++      rcases he with hh | ⟨hn, hr⟩
++      · rw [MultiTapeTM.runFrom_of_halt _ hh]
++        exact hp u (le_refl _)
++      · rw [hr]
++        exact ih (fun i => cfg (i + 1)) (by omega)
++          (fun i hi => by
++            obtain ⟨v, hv, he⟩ := hround (i + 1) (by omega)
++            refine ⟨v, hv, ?_⟩
++            rcases he with hh | ⟨hj, hr⟩
++            · exact Or.inl hh
++            · exact Or.inr ⟨by omega, hr⟩) (t - u)
++
++/-- Sum the received decision segments, with an already halted false terminal.
++**Proof sketch.** Induct on the candidate count; acceptance stops, while a
++rejection composes the next segment and shifts the Boolean list test. -/
++private lemma a2_loop_halted_run {k : ℕ} {S : Type*} {x : List Bool}
++    (tm : MultiTapeTM k Bool S) (cfg : ℕ → Cfg k Bool S x)
++    (accept : ℕ → Bool) (B N : ℕ)
++    (hend : (cfg N).state = none ∧ (cfg N).output = [false])
++    (hround : ∀ j < N, ∃ t ≤ B,
++      if accept j then
++        (tm.runFrom (cfg j) t).state = none ∧
++          (tm.runFrom (cfg j) t).output = [true]
++      else tm.runFrom (cfg j) t = cfg (j + 1)) :
++    ∃ t ≤ N * B, (tm.runFrom (cfg 0) t).state = none ∧
++      (tm.runFrom (cfg 0) t).output = [(List.range N).any accept] := by
++  induction N generalizing cfg accept with
++  | zero => exact ⟨0, by simp, by simpa using hend⟩
++  | succ N ih =>
++    obtain ⟨t, ht, hc⟩ := hround 0 (by omega)
++    have hany : (List.range (N + 1)).any accept =
++        (accept 0 || (List.range N).any (fun j => accept (j + 1))) := by
++      simp [List.range_succ_eq_map, List.any_map, Function.comp_def]
++    by_cases hb : accept 0 = true
++    · simp only [hb, ↓reduceIte] at hc
++      refine ⟨t, ht.trans ?_, hc.1, ?_⟩
++      · exact Nat.le_mul_of_pos_left B (by omega)
++      · simpa [hany, hb] using hc.2
++    · simp only [hb] at hc
++      obtain ⟨s, hs, hhalt, hout⟩ := ih
++        (fun j => cfg (j + 1)) (fun j => accept (j + 1)) hend
++        (fun j hj => hround (j + 1) (by omega))
++      refine ⟨t + s, ?_, ?_, ?_⟩
++      · rw [Nat.succ_mul]; omega
++      · rw [MultiTapeTM.runFrom_add, hc]; exact hhalt
++      · rw [MultiTapeTM.runFrom_add, hc]
++        simpa [hany, hb] using hout
++
+ /-- **L space row** (spec, fill pending — design §12 R3, decision 12.3;
+ annotates `Turing.FinTM.exists_loopTM`; the `exists_loopCfgTM` and
+ `exists_loopFindTM` siblings inherit the same host at fill time). Same
+@@ -9399,6 +9859,109 @@ theorem exists_loopTM_spaceUsed (body F : FinTM Bool) (anchor : body.State)
+       ∀ (x : List Bool) (t : ℕ),
+         E.tm.spaceUsed (E.tm.initCfg x) t
+           ≤ c * (S x.length + T x.length + 1) := by
+-  sorry
++  obtain ⟨c, hc⟩ := f2_loopHost_contracts body F anchor Inv stepF acceptF
++    (fun _ _ => [true]) false s0 R T hF hInv0 hInvStep hstart hround
++  let E := f2_loopHost body F anchor false
++  have htime : E.ComputesFunInTime
++      (fun x => [(List.range (R x.length + 1)).any
++        fun i => acceptF x ((stepF x)^[i] (s0 x))])
++      (fun n => c * (T n + 1) * (R n + 2)) := by
++    intro x
++    obtain ⟨cfg, startup, hs, hinit, _, hend, hout, hsegments, _, _⟩ := hc x
++    obtain ⟨t, ht, hhalt, houtput⟩ := a2_loop_halted_run E.tm cfg
++      (fun i => acceptF x ((stepF x)^[i] (s0 x))) (c * (T x.length + 1))
++      (R x.length + 1) ⟨hend, by simpa using hout⟩
++      (fun j hj => by simpa using hsegments j (by omega))
++    have hrun := E.tm.runFrom_add (E.tm.initCfg x) startup t
++    rw [hinit] at hrun
++    have hcompute : E.ComputesInTime x
++        [(List.range (R x.length + 1)).any
++          (fun i => acceptF x ((stepF x)^[i] (s0 x)))] (startup + t) := by
++      refine ⟨_, ?_, ?_, rfl⟩
++      · rw [hrun]; exact hhalt
++      · rw [hrun]; exact houtput
++    apply hcompute.mono
++    calc startup + t ≤ c * (T x.length + 1) +
++          (R x.length + 1) * (c * (T x.length + 1)) := Nat.add_le_add hs ht
++      _ = c * (T x.length + 1) * (R x.length + 2) := by ring
++  refine ⟨E, c + 19 * E.k, ?_, ?_⟩
++  · intro x
++    exact (htime x).mono (Nat.mul_le_mul_right _
++      (Nat.mul_le_mul_right _ (Nat.le_add_right _ _)))
++  · intro x t
++    -- Fuel: capture has its source's space bound and its actual output width.
++    obtain ⟨fuel, ftime, hfh, hfo, hft, hprepare, hfuel, hprepareSpace⟩ :=
++      a2_loop_prepare body F anchor R T S hF hFspace x
++    obtain ⟨btime, hbt, hbguard, hbend⟩ := hstart x
++    let words (i : ℕ) := (fun w => (f2_loopDebit w).1)^[i] (Nat.bits (R x.length))
++    let orbit (i : ℕ) := (stepF x)^[i] (s0 x)
++    let cfg (i : ℕ) := f2_loopCall body F anchor false
++      (Cfg.ofWords (input := x) anchor (stateWord body.k (orbit i))) true none (words i) fuel
++    let B := S x.length + 4 * (Nat.bits (R x.length)).length + 8
++    have hwidth (i : ℕ) : (words i).length = (Nat.bits (R x.length)).length :=
++      f2_loopDebit_iterate_length _ _
++    have hsuccess (i : ℕ) (hi : i ≤ R x.length) :
++        (f2_loopDebit (words i)).2 = true ↔ i < R x.length := by
++      rw [f2_loopDebit_success]
++      dsimp only [words]
++      rw [f2_loopDebit_iterate_value _ _ hi]
++      omega
++    -- Every admissible source call starts at zero. Its captured prefixes
++    -- are bounded before the common, fixed-width administrative allowance.
++    have hlocal : ∀ i < R x.length + 1, ∃ u,
++        (∀ v ≤ u, a2_heads (E.tm.runFrom (cfg i) v) B) ∧
++        ((E.tm.runFrom (cfg i) u).state = none ∨
++          i + 1 < R x.length + 1 ∧ E.tm.runFrom (cfg i) u = cfg (i + 1)) := by
++      intro i hi
++      have hinv := f2_loop_orbit_inv Inv stepF s0 hInv0 hInvStep x i
++      obtain ⟨u, hup, hut, hguard, hend⟩ := hround x (orbit i) hinv
++      obtain ⟨v, he⟩ := a2_loop_round body F anchor (orbit i) (stepF x (orbit i))
++        (acceptF x (orbit i)) (words i) fuel u (S x.length) hup hguard hend
++        (fun w hw => hroundSpace x (orbit i) hinv w (hw.trans hut)) hfuel
++      have hbound : S x.length + 2 * (words i).length + 6 ≤ B := by
++        rw [hwidth]
++        dsimp [B]
++        omega
++      rcases he with ⟨hp, hh⟩ | ⟨v', hd, hp, he⟩
++      · exact ⟨v, fun w hw => a2_heads_mono (hp w hw) hbound, Or.inl hh⟩
++      · refine ⟨v', fun w hw => a2_heads_mono (hp w hw) hbound,
++          Or.inr ⟨by have := (hsuccess i (by omega)).mp hd; omega, ?_⟩⟩
++        simpa only [cfg, words, orbit, Function.iterate_succ_apply'] using he
++    have hrounds := a2_segments E.tm cfg (R x.length + 1) B (by omega) hlocal
++    -- Startup has no captured output, and its stop/release is two steps.
++    have hinit : E.tm.runFrom (E.tm.initCfg x) (ftime + (btime + 2)) = cfg 0 := by
++      rw [MultiTapeTM.runFrom_add, hprepare,
++        f2_loopHost_start body F anchor false (s0 x) btime fuel hbguard hbend]
++      simp only [cfg, words, orbit, Function.iterate_zero_apply, hfo]
++    have hstartup : ∀ u ≤ ftime + (btime + 2),
++        a2_heads (E.tm.runFrom (E.tm.initCfg x) u) B := by
++      apply a2_heads_join
++      · intro u hu
++        exact a2_heads_mono (hprepareSpace u hu) (by dsimp [B]; omega)
++      · rw [hprepare]
++        intro u hu
++        exact a2_heads_mono (a2_loop_start_prefix body F anchor (s0 x) btime
++          (S x.length) fuel hbguard hbend
++          (fun v hv => hstartSpace x v (hv.trans hbt)) hfuel u hu)
++          (by dsimp [B]; omega)
++    -- Reuse the same interval over every round and every halted tail.
++    have hall : ∀ u, a2_heads (E.tm.runFrom (E.tm.initCfg x) u) B := by
++      intro u
++      by_cases hu : u ≤ ftime + (btime + 2)
++      · exact hstartup u hu
++      · rw [show u = (ftime + (btime + 2)) + (u - (ftime + (btime + 2))) by omega,
++          MultiTapeTM.runFrom_add, hinit]
++        exact hrounds _
++    have hs := f2_space_radius E x B hall t
++    have hw := f2_loop_fuel_width F R T hF x
++    have hb : 2 * B + 1 ≤ 19 * (S x.length + T x.length + 1) := by
++      dsimp only [B]
++      omega
++    calc
++      E.tm.spaceUsed (E.tm.initCfg x) t ≤ E.k * (2 * B + 1) := hs
++      _ ≤ E.k * (19 * (S x.length + T x.length + 1)) := Nat.mul_le_mul_left _ hb
++      _ = (19 * E.k) * (S x.length + T x.length + 1) := by ring
++      _ ≤ (c + 19 * E.k) * (S x.length + T x.length + 1) :=
++        Nat.mul_le_mul_right _ (Nat.le_add_left _ _)
+ 
+ end Turing.FinTM
+-- 
+2.51.1
+
+From ed8819661a78c1c9a50da95bfd65ffa93b4cde12 Mon Sep 17 00:00:00 2001
+From: Codex <codex@openai.com>
+Date: Fri, 9 Oct 2026 10:18:37 -0500
+Subject: [PATCH 2/2] Prove the forwarding pairMapSnd time and space contract
+
+---
+ .../TuringMachine/Build/Catalog.lean          | 911 +++++++++++++++++-
+ 1 file changed, 910 insertions(+), 1 deletion(-)
+
+diff --git a/TCSlib/Complexity/TuringMachine/Build/Catalog.lean b/TCSlib/Complexity/TuringMachine/Build/Catalog.lean
+index e43131ac..798fb8ac 100644
+--- a/TCSlib/Complexity/TuringMachine/Build/Catalog.lean
++++ b/TCSlib/Complexity/TuringMachine/Build/Catalog.lean
+@@ -4619,6 +4619,787 @@ theorem computesFunInTime_incFixed_spaceUsed :
+   rw [MultiTapeTM.spaceUsed_zero_tapes_eq_zero _ _ rfl]
+   omega
+ 
++/-- Control of the forwarding map: silent pair validation and buffering,
++separate buffer rewinds, doubled-prefix emission, and clamped virtual input. -/
++private inductive a2_MapState (Q : Type) where
++  | parse (pending : Option Bool)
++  | copyB | backB | backA | emitA | emitAgain (b : Bool) | separator
++  | run (q : Q) (tag : Bool)
++  deriving DecidableEq
++
++private instance a2_mapStateFintype (Q : Type) [Fintype Q] : Fintype (a2_MapState Q) :=
++  derive_fintype% _
++
++/-- Administration touches only the two input buffers, and never a payload tape. -/
++private def a2_mapAct (M : FinTM Bool) (inp : SignType)
++    (a b : Option (Option Bool) × SignType) (out : Option Bool)
++    (next : Option (a2_MapState M.State)) : Action (1 + (1 + M.k)) Bool (a2_MapState M.State) :=
++  ⟨inp, tapeBlocks (fun _ => a) b (fun _ => (none, 0)), out, next⟩
++
++/-- The commissioned forwarding controller. The two buffers contain the
++components, never the payload output. In setup mode the payload entry is a
++stationary live seam, used only to certify its first arrival. In forwarding
++mode each payload step has exactly its original work actions and emission;
++`virtualMove` clamps both virtual-input boundaries, including empty input. -/
++private def a2_mapTM (M : FinTM Bool) (forward : Bool) : FinTM Bool where
++  k := 1 + (1 + M.k)
++  State := a2_MapState M.State
++  tm := {
++    q₀ := .parse none
++    tr := fun q inp work =>
++      let act := a2_mapAct M
++      let first := work (Fin.castAdd (1 + M.k) (0 : Fin 1))
++      let second := work (Fin.natAdd 1 (Fin.castAdd M.k (0 : Fin 1)))
++      match q with
++      | .parse none => match inp with
++        | none => act 0 (none, 0) (none, 0) none none
++        | some b => act .pos (none, 0) (none, 0) none (some (.parse (some b)))
++      | .parse (some b) => match inp with
++        | none => act 0 (none, 0) (none, 0) none none
++        | some d => if b = d then
++            act .pos (some (some b), .pos) (none, 0) none (some (.parse none))
++          else if b then act .pos (none, 0) (none, 0) none none
++          else act .pos (none, .neg) (none, 0) none (some .copyB)
++      | .copyB => match inp with
++        | some b => act .pos (none, 0) (some (some b), .pos) none (some .copyB)
++        | none => act 0 (none, 0) (none, .neg) none (some .backB)
++      | .backB => match second with
++        | some _ => act 0 (none, 0) (none, .neg) none (some .backB)
++        | none => act 0 (none, 0) (none, .pos) none (some .backA)
++      | .backA => match first with
++        | some _ => act 0 (none, .neg) (none, 0) none (some .backA)
++        | none => act 0 (none, .pos) (none, 0) none (some .emitA)
++      | .emitA => match first with
++        | some b => act 0 (none, 0) (none, 0) (some b) (some (.emitAgain b))
++        | none => act 0 (none, 0) (none, 0) (some false) (some .separator)
++      | .emitAgain b => act 0 (none, .pos) (none, 0) (some b) (some .emitA)
++      | .separator => act 0 (none, 0) (none, 0) (some true) (some (.run M.tm.q₀ true))
++      | .run q b => if forward then
++          let a := M.tm.tr q second (fun i => work (Fin.natAdd 1 (Fin.natAdd 1 i)))
++          let m := virtualMove b second a.inputTape
++          ⟨0, tapeBlocks (fun _ => (none, 0)) (none, m) a.workTapes,
++            a.output, a.state.map (fun q => .run q (virtualNextTag b m))⟩
++        else controlAction 0 (some (.run q b)) }
++
++/-- Administrative configurations have two buffered words and an untouched
++blank payload bank. The physical output is explicit. -/
++private def a2_mapCfg (M : FinTM Bool) (x : List Bool) (q : Option (a2_MapState M.State))
++    (p : Fin (x.length + 2)) (a b : List Bool) (ha hb : ℤ) (out : List Bool) :
++    Cfg (1 + (1 + M.k)) Bool (a2_MapState M.State) x where
++  state := q
++  inputPos := p
++  workTapes := tapeBlocks (fun _ => bufferTape a) (bufferTape b) (fun _ _ => none)
++  workTapePos := tapeBlocks (fun _ => ha) hb (fun _ => 0)
++  output := out
++
++/-- The forwarding configuration retains the physical input, first buffer,
++and already emitted prefix; the second buffer is the source's virtual input. -/
++private def a2_mapVirtual (M : FinTM Bool) {x y : List Bool}
++    (c : Cfg M.k Bool M.State y) (tag : Bool) (p : Fin (x.length + 2))
++    (a pre : List Bool) : Cfg (1 + (1 + M.k)) Bool (a2_MapState M.State) x where
++  state := c.state.map (fun q => .run q tag)
++  inputPos := p
++  workTapes := tapeBlocks (fun _ => bufferTape a) (bufferTape y) c.workTapes
++  workTapePos := tapeBlocks (fun _ => (a.length : ℤ)) ((c.inputPos.val : ℤ) - 1) c.workTapePos
++  output := pre ++ c.output
++
++/-- The parser reads its native input independently of both buffers. -/
++private lemma a2_mapCfg_read (M : FinTM Bool) (x : List Bool) (q : Option (a2_MapState M.State))
++    (i : ℕ) (hi : i ≤ x.length) (a b : List Bool) (ha hb : ℤ) (out : List Bool) :
++    (a2_mapCfg M x q ⟨i + 1, by omega⟩ a b ha hb out).inputSymbol = x[i]? :=
++  inputSymbol_at _ i hi rfl
++
++/-- Administrative actions with no writes only change the two buffer heads,
++control, input position, and the physical output. -/
++private lemma a2_map_move (M : FinTM Bool) (x : List Bool)
++    (q q' : Option (a2_MapState M.State)) (p : Fin (x.length + 2))
++    (a b : List Bool) (ha hb : ℤ) (out : List Bool)
++    (mi ma mb : SignType) (emit : Option Bool) :
++    (a2_mapAct M mi (none, ma) (none, mb) emit q').apply
++      (a2_mapCfg M x q p a b ha hb out) =
++      a2_mapCfg M x q' (moveInputPos p mi) a b (ha + ma.cast) (hb + mb.cast)
++        (out ++ emit.toList) := by
++  refine Cfg.ext rfl rfl ?_ ?_ rfl
++  · funext i
++    refine Fin.addCases (fun j => ?_) (fun j => ?_) i
++    · simp [a2_mapAct, a2_mapCfg, Action.apply]
++    · refine Fin.addCases (fun j => ?_) (fun j => ?_) j <;>
++        simp [a2_mapAct, a2_mapCfg, Action.apply]
++  · funext i
++    refine Fin.addCases (fun j => ?_) (fun j => ?_) i
++    · simp [a2_mapAct, a2_mapCfg, Action.apply]
++    · refine Fin.addCases (fun j => ?_) (fun j => ?_) j <;>
++        simp [a2_mapAct, a2_mapCfg, Action.apply]
++
++/-- Reading the first half of an aligned block changes only finite control
++and the native input head. No physical output is emitted. -/
++private lemma a2_map_first (M : FinTM Bool) (x pre rest a : List Bool) (b : Bool)
++    (hx : x = pre ++ b :: rest) :
++    (a2_mapTM M false).tm.step
++      (a2_mapCfg M x (some (.parse none)) ⟨pre.length + 1, by simp [hx] <;> omega⟩
++        a [] a.length 0 []) =
++      a2_mapCfg M x (some (.parse (some b))) ⟨pre.length + 2, by simp [hx] <;> omega⟩
++        a [] a.length 0 [] := by
++  unfold MultiTapeTM.step
++  change ((a2_mapTM M false).tm.tr (.parse none) _ _).apply _ = _
++  rw [a2_mapCfg_read M x _ pre.length (by simp [hx])]
++  have hr : x[pre.length]? = some b := by simp [hx]
++  rw [hr]
++  change (a2_mapAct M .pos (none, 0) (none, 0) none _).apply _ = _
++  rw [a2_map_move]
++  simp only [SignType.cast, add_zero, Option.toList_none,
++    List.append_nil]
++  congr 1
++  exact moveInputPos_pos_of_ne_right _ (by simp [hx])
++
++/-- Doubled blocks append one bit to the first buffer. `01` starts suffix
++buffering; `10` rejects before emitting. Both missing-bit cases are handled
++by the surrounding parser induction. -/
++private lemma a2_map_block (M : FinTM Bool) (x pre rest a : List Bool) (b c : Bool)
++    (hx : x = pre ++ b :: c :: rest) :
++    (a2_mapTM M false).tm.runFrom
++      (a2_mapCfg M x (some (.parse none)) ⟨pre.length + 1, by simp [hx] <;> omega⟩
++        a [] a.length 0 []) 2 =
++      if b = c then a2_mapCfg M x (some (.parse none))
++        ⟨pre.length + 3, by simp [hx] <;> omega⟩ (a ++ [b]) [] (a ++ [b]).length 0 []
++      else if b then a2_mapCfg M x none
++        ⟨pre.length + 3, by simp [hx] <;> omega⟩ a [] a.length 0 []
++      else a2_mapCfg M x (some .copyB)
++        ⟨pre.length + 3, by simp [hx] <;> omega⟩ a [] (a.length - 1) 0 [] := by
++  change (a2_mapTM M false).tm.step ((a2_mapTM M false).tm.step _) = _
++  rw [a2_map_first M x pre (c :: rest) a b hx]
++  unfold MultiTapeTM.step
++  change ((a2_mapTM M false).tm.tr (.parse (some b)) _ _).apply _ = _
++  rw [a2_mapCfg_read M x _ (pre.length + 1) (by simp [hx])]
++  have hr : x[pre.length + 1]? = some c := by simp [hx]
++  rw [hr]
++  have hm : moveInputPos (⟨pre.length + 2, by simp [hx] <;> omega⟩ : Fin (x.length + 2)) .pos =
++      ⟨pre.length + 3, by simp [hx] <;> omega⟩ :=
++    moveInputPos_pos_of_ne_right _ (by simp [hx])
++  cases b <;> cases c <;> simp only [a2_mapTM, Bool.false_eq_true, Bool.true_eq_false, ↓reduceIte]
++  all_goals refine Cfg.ext rfl hm ?_ ?_ rfl
++  all_goals first
++    | (funext i
++       refine Fin.addCases (fun j => ?_) (fun j => ?_) i
++       · simpa only [a2_mapAct, a2_mapCfg, Action.apply, tapeBlocks_left] using (bufferTape_append a _).symm
++       · refine Fin.addCases (fun j => ?_) (fun j => ?_) j <;>
++           simp [a2_mapAct, a2_mapCfg, Action.apply])
++    | (funext i
++       refine Fin.addCases (fun j => ?_) (fun j => ?_) i
++       · simp [a2_mapAct, a2_mapCfg, Action.apply, sub_eq_add_neg]
++       · refine Fin.addCases (fun j => ?_) (fun j => ?_) j <;>
++           simp [a2_mapAct, a2_mapCfg, Action.apply])
++
++/-- After validation, the complete suffix is buffered silently. Its right
++blank is turned left exactly once, including when the suffix is empty. -/
++private lemma a2_map_suffix (M : FinTM Bool) (x rest a : List Bool) :
++    ∀ pre b (hx : x = pre ++ rest),
++    (a2_mapTM M false).tm.runFrom
++      (a2_mapCfg M x (some .copyB) ⟨pre.length + 1, by simp [hx] <;> omega⟩
++        a b (a.length - 1) b.length []) (rest.length + 1) =
++      a2_mapCfg M x (some .backB) ⟨x.length + 1, by omega⟩
++        a (b ++ rest) (a.length - 1) ((b ++ rest).length - 1) [] := by
++  induction rest with
++  | nil =>
++    intro pre b hx
++    simp only [List.length_nil, Nat.zero_add, MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
++    unfold MultiTapeTM.step
++    change ((a2_mapTM M false).tm.tr .copyB _ _).apply _ = _
++    rw [a2_mapCfg_read M x _ pre.length (by simp [hx])]
++    have hr : x[pre.length]? = none := by simp [hx]
++    rw [hr]
++    change (a2_mapAct M 0 (none, 0) (none, .neg) none _).apply _ = _
++    rw [a2_map_move]
++    simp [hx, sub_eq_add_neg]
++  | cons d rest ih =>
++    intro pre b hx
++    have hs : (a2_mapTM M false).tm.step
++        (a2_mapCfg M x (some .copyB) ⟨pre.length + 1, by simp [hx] <;> omega⟩
++          a b (a.length - 1) b.length []) =
++        a2_mapCfg M x (some .copyB) ⟨(pre ++ [d]).length + 1, by simp [hx] <;> omega⟩
++          a (b ++ [d]) (a.length - 1) (b ++ [d]).length [] := by
++      unfold MultiTapeTM.step
++      change ((a2_mapTM M false).tm.tr .copyB _ _).apply _ = _
++      rw [a2_mapCfg_read M x _ pre.length (by simp [hx])]
++      have hr : x[pre.length]? = some d := by simp [hx]
++      rw [hr]
++      refine Cfg.ext rfl ?_ ?_ ?_ rfl
++      · simpa only [List.length_append, List.length_singleton] using
++          moveInputPos_pos_of_ne_right
++            (⟨pre.length + 1, by simp [hx] <;> omega⟩ : Fin (x.length + 2)) (by simp [hx])
++      · funext i
++        refine Fin.addCases (fun j => ?_) (fun j => ?_) i
++        · simp [a2_mapTM, a2_mapAct, a2_mapCfg, Action.apply]
++        · refine Fin.addCases (fun j => ?_) (fun j => ?_) j
++          · simpa only [a2_mapTM, a2_mapAct, a2_mapCfg, Action.apply, tapeBlocks_buffer] using
++              (bufferTape_append b d).symm
++          · simp [a2_mapTM, a2_mapAct, a2_mapCfg, Action.apply]
++      · funext i
++        refine Fin.addCases (fun j => ?_) (fun j => ?_) i
++        · simp [a2_mapTM, a2_mapAct, a2_mapCfg, Action.apply]
++        · refine Fin.addCases (fun j => ?_) (fun j => ?_) j <;>
++            simp [a2_mapTM, a2_mapAct, a2_mapCfg, Action.apply]
++    simp only [List.length_cons]
++    rw [MultiTapeTM.runFrom_succ_eq_step, hs]
++    simpa only [List.append_assoc, List.singleton_append] using
++      ih (pre ++ [d]) (b ++ [d]) (by simpa [List.append_assoc] using hx)
++
++/-- Rewind the second buffer to zero, preserving the first buffer and the
++blank payload bank. The left-blank step is present even at width zero. -/
++private lemma a2_map_backB (M : FinTM Bool) (x a b : List Bool)
++    (p : Fin (x.length + 2)) : ∀ j, j ≤ b.length →
++    (a2_mapTM M false).tm.runFrom
++      (a2_mapCfg M x (some .backB) p a b (a.length - 1) ((j : ℤ) - 1) []) (j + 1) =
++      a2_mapCfg M x (some .backA) p a b (a.length - 1) 0 [] := by
++  intro j
++  induction j with
++  | zero =>
++    intro hj
++    simp only [List.length_nil, Nat.zero_add, MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
++    unfold MultiTapeTM.step
++    simp only [a2_mapTM, a2_mapCfg, Cfg.workTapeSymbols, tapeBlocks_buffer,
++      Nat.cast_zero, zero_sub, bufferTape_left]
++    change (a2_mapAct M 0 (none, 0) (none, .pos) none _).apply
++      (a2_mapCfg M x (some .backB) p a b (a.length - 1) (-1) []) = _
++    rw [a2_map_move]
++    simp [a2_mapCfg]
++  | succ j ih =>
++    intro hj
++    have hr : bufferTape b (((j + 1 : ℕ) : ℤ) - 1) = some b[j] := by
++      rw [show (((j + 1 : ℕ) : ℤ) - 1) = (j : ℤ) by omega,
++        bufferTape_nat, List.getElem?_eq_getElem (by omega)]
++    have hs : (a2_mapTM M false).tm.step
++        (a2_mapCfg M x (some .backB) p a b (a.length - 1) (((j + 1 : ℕ) : ℤ) - 1) []) =
++        a2_mapCfg M x (some .backB) p a b (a.length - 1) ((j : ℤ) - 1) [] := by
++      unfold MultiTapeTM.step
++      simp only [a2_mapTM, a2_mapCfg, Cfg.workTapeSymbols, tapeBlocks_buffer, hr]
++      change (a2_mapAct M 0 (none, 0) (none, .neg) none _).apply
++        (a2_mapCfg M x (some .backB) p a b (a.length - 1) (((j + 1 : ℕ) : ℤ) - 1) []) = _
++      rw [a2_map_move]
++      simp [a2_mapCfg, sub_eq_add_neg]
++    rw [MultiTapeTM.runFrom_succ_eq_step, hs]
++    exact ih (by omega)
++
++/-- The corresponding first-buffer rewind, leaving virtual input at zero. -/
++private lemma a2_map_backA (M : FinTM Bool) (x a b : List Bool)
++    (p : Fin (x.length + 2)) : ∀ j, j ≤ a.length →
++    (a2_mapTM M false).tm.runFrom
++      (a2_mapCfg M x (some .backA) p a b ((j : ℤ) - 1) 0 []) (j + 1) =
++      a2_mapCfg M x (some .emitA) p a b 0 0 [] := by
++  intro j
++  induction j with
++  | zero =>
++    intro hj
++    simp only [List.length_nil, Nat.zero_add, MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
++    unfold MultiTapeTM.step
++    simp only [a2_mapTM, a2_mapCfg, Cfg.workTapeSymbols, tapeBlocks_left,
++      Nat.cast_zero, zero_sub, bufferTape_left]
++    change (a2_mapAct M 0 (none, .pos) (none, 0) none _).apply
++      (a2_mapCfg M x (some .backA) p a b (-1) 0 []) = _
++    rw [a2_map_move]
++    simp [a2_mapCfg]
++  | succ j ih =>
++    intro hj
++    have hr : bufferTape a (((j + 1 : ℕ) : ℤ) - 1) = some a[j] := by
++      rw [show (((j + 1 : ℕ) : ℤ) - 1) = (j : ℤ) by omega,
++        bufferTape_nat, List.getElem?_eq_getElem (by omega)]
++    have hs : (a2_mapTM M false).tm.step
++        (a2_mapCfg M x (some .backA) p a b (((j + 1 : ℕ) : ℤ) - 1) 0 []) =
++        a2_mapCfg M x (some .backA) p a b ((j : ℤ) - 1) 0 [] := by
++      unfold MultiTapeTM.step
++      simp only [a2_mapTM, a2_mapCfg, Cfg.workTapeSymbols, tapeBlocks_left, hr]
++      change (a2_mapAct M 0 (none, .neg) (none, 0) none _).apply
++        (a2_mapCfg M x (some .backA) p a b (((j + 1 : ℕ) : ℤ) - 1) 0 []) = _
++      rw [a2_map_move]
++      simp [a2_mapCfg, sub_eq_add_neg]
++    rw [MultiTapeTM.runFrom_succ_eq_step, hs]
++    exact ih (by omega)
++
++/-- Emit each retained first-component bit twice, then `01`, and enter the
++payload seam. The second buffer and payload bank are unchanged.
++**Proof sketch.** Each nonblank first-buffer cell takes two emission steps;
++the second advances the head. At the right blank, two further transitions
++emit the delimiter and enter the source's start state with right-arrival tag. -/
++private lemma a2_map_emit (M : FinTM Bool) (x a b rest : List Bool)
++    (p : Fin (x.length + 2)) : ∀ pre out, a = pre ++ rest →
++    (a2_mapTM M false).tm.runFrom
++      (a2_mapCfg M x (some .emitA) p a b pre.length 0 out) (2 * rest.length + 2) =
++      a2_mapCfg M x (some (.run M.tm.q₀ true)) p a b a.length 0
++        (out ++ rest.flatMap (fun d => [d, d]) ++ [false, true]) := by
++  induction rest with
++  | nil =>
++    intro pre out he
++    simp only [List.append_nil] at he
++    subst a
++    have hs : (a2_mapTM M false).tm.step
++        (a2_mapCfg M x (some .emitA) p pre b pre.length 0 out) =
++        a2_mapCfg M x (some .separator) p pre b pre.length 0 (out ++ [false]) := by
++      unfold MultiTapeTM.step
++      simp only [a2_mapTM, a2_mapCfg, Cfg.workTapeSymbols, tapeBlocks_left,
++        bufferTape_nat, List.getElem?_length]
++      change (a2_mapAct M 0 (none, 0) (none, 0) (some false) _).apply
++        (a2_mapCfg M x (some .emitA) p pre b pre.length 0 out) = _
++      rw [a2_map_move]
++      simp [a2_mapCfg]
++    change (a2_mapTM M false).tm.step ((a2_mapTM M false).tm.step _) = _
++    rw [hs]
++    change (a2_mapAct M 0 (none, 0) (none, 0) (some true) _).apply _ = _
++    rw [a2_map_move]
++    simp [List.append_assoc]
++  | cons d rest ih =>
++    intro pre out he
++    have hr : bufferTape a pre.length = some d := by simp [he]
++    have hs : (a2_mapTM M false).tm.runFrom
++        (a2_mapCfg M x (some .emitA) p a b pre.length 0 out) 2 =
++        a2_mapCfg M x (some .emitA) p a b (pre ++ [d]).length 0 (out ++ [d, d]) := by
++      change (a2_mapTM M false).tm.step ((a2_mapTM M false).tm.step _) = _
++      have hfirst : (a2_mapTM M false).tm.step
++          (a2_mapCfg M x (some .emitA) p a b pre.length 0 out) =
++          a2_mapCfg M x (some (.emitAgain d)) p a b pre.length 0 (out ++ [d]) := by
++        unfold MultiTapeTM.step
++        simp only [a2_mapTM, a2_mapCfg, Cfg.workTapeSymbols, tapeBlocks_left, hr]
++        change (a2_mapAct M 0 (none, 0) (none, 0) (some d) _).apply
++          (a2_mapCfg M x (some .emitA) p a b pre.length 0 out) = _
++        rw [a2_map_move]
++        simp [a2_mapCfg]
++      rw [hfirst]
++      change (a2_mapAct M 0 (none, .pos) (none, 0) (some d) _).apply _ = _
++      rw [a2_map_move]
++      simp [List.append_assoc]
++    rw [show 2 * (d :: rest).length + 2 = 2 + (2 * rest.length + 2) by simp; omega,
++      MultiTapeTM.runFrom_add, hs]
++    simpa only [List.flatMap_cons, List.append_assoc, List.cons_append, List.nil_append] using
++      ih (pre ++ [d]) (out ++ [d, d]) (by simpa [List.append_assoc] using he)
++
++/-- Successful suffix buffering, two rewinds, and encoded-prefix emission
++reach the initialized payload seam within `3|a|+2|b|+5` transitions. -/
++private lemma a2_map_finish (M : FinTM Bool) (x pre a b : List Bool)
++    (hx : x = pre ++ b) :
++    (a2_mapTM M false).tm.runFrom
++      (a2_mapCfg M x (some .copyB) ⟨pre.length + 1, by simp [hx] <;> omega⟩
++        a [] (a.length - 1) 0 []) (3 * a.length + 2 * b.length + 5) =
++      a2_mapVirtual M (M.tm.initCfg b) true ⟨x.length + 1, by omega⟩ a (pairEncode a []) := by
++  rw [show 3 * a.length + 2 * b.length + 5 =
++      ((b.length + 1) + (b.length + 1) + (a.length + 1)) + (2 * a.length + 2) by omega,
++    MultiTapeTM.runFrom_add (a := (b.length + 1) + (b.length + 1) + (a.length + 1)) (b := 2 * a.length + 2),
++    MultiTapeTM.runFrom_add (a := (b.length + 1) + (b.length + 1)) (b := a.length + 1),
++    MultiTapeTM.runFrom_add (a := b.length + 1) (b := b.length + 1)]
++  have hcopy := a2_map_suffix M x b a pre [] hx
++  simp only [List.nil_append, List.length_nil, Nat.cast_zero] at hcopy
++  rw [hcopy]
++  rw [a2_map_backB M x a b _ _ (le_refl _), a2_map_backA M x a b _ _ (le_refl _)]
++  have he := a2_map_emit M x a b a (⟨x.length + 1, by omega⟩) [] [] (by simp)
++  simp only [List.length_nil, Nat.cast_zero, List.nil_append] at he
++  rw [he]
++  refine Cfg.ext rfl rfl rfl ?_ ?_
++  · funext i
++    simp [a2_mapCfg, a2_mapVirtual, MultiTapeTM.initCfg, Cfg.init]
++  · simp [a2_mapCfg, a2_mapVirtual, MultiTapeTM.initCfg, Cfg.init, pairEncode]
++
++/-- The validating setup either halts silently on malformed input or reaches
++exactly the required payload seam with the encoded first component emitted.
++**Proof sketch.** Induct on aligned pairs. Equal bits add one buffered bit;
++`10`, a missing bit, or a missing delimiter reject. At `01`, buffer the entire
++suffix and apply the rewind/emission ledger. No payload transition is used. -/
++private lemma a2_map_parse (M : FinTM Bool) (x rest : List Bool) :
++    ∀ pre a (hx : x = pre ++ rest), ∃ t ≤ 3 * rest.length + 3 * a.length + 5,
++      match pairDecode rest with
++      | some (d, b) => (a2_mapTM M false).tm.runFrom
++          (a2_mapCfg M x (some (.parse none)) ⟨pre.length + 1, by simp [hx] <;> omega⟩
++            a [] a.length 0 []) t =
++          a2_mapVirtual M (M.tm.initCfg b) true ⟨x.length + 1, by omega⟩
++            (a ++ d) (pairEncode (a ++ d) [])
++      | none =>
++          ((a2_mapTM M false).tm.runFrom
++            (a2_mapCfg M x (some (.parse none)) ⟨pre.length + 1, by simp [hx] <;> omega⟩
++              a [] a.length 0 []) t).state = none ∧
++          ((a2_mapTM M false).tm.runFrom
++            (a2_mapCfg M x (some (.parse none)) ⟨pre.length + 1, by simp [hx] <;> omega⟩
++              a [] a.length 0 []) t).output = [] := by
++  induction rest using List.twoStepInduction with
++  | nil =>
++    intro pre a hx
++    refine ⟨1, by simp, ?_⟩
++    simp only [pairDecode, MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
++    unfold MultiTapeTM.step
++    change (((a2_mapTM M false).tm.tr (.parse none) _ _).apply _).state = none ∧ _
++    rw [a2_mapCfg_read M x _ pre.length (by simp [hx])]
++    simp [hx, a2_mapTM, a2_mapAct, Action.apply, a2_mapCfg]
++  | singleton b =>
++    intro pre a hx
++    refine ⟨2, by simp, ?_⟩
++    have hd : pairDecode [b] = none := by cases b <;> rfl
++    rw [hd]
++    change ((a2_mapTM M false).tm.step ((a2_mapTM M false).tm.step _)).state = none ∧
++      ((a2_mapTM M false).tm.step ((a2_mapTM M false).tm.step _)).output = []
++    rw [a2_map_first M x pre [] a b hx]
++    unfold MultiTapeTM.step
++    change (((a2_mapTM M false).tm.tr (.parse (some b)) _ _).apply _).state = none ∧ _
++    rw [a2_mapCfg_read M x _ (pre.length + 1) (by simp [hx])]
++    cases b <;> simp [hx, a2_mapTM, a2_mapAct, Action.apply, a2_mapCfg, pairDecode]
++  | cons_cons b c rest ih _ =>
++    intro pre a hx
++    by_cases h : b = c
++    · subst c
++      obtain ⟨t, ht, he⟩ := ih (pre ++ [b, b]) (a ++ [b])
++        (by simpa [List.append_assoc] using hx)
++      refine ⟨2 + t, by simp only [List.length_append, List.length_cons, List.length_nil] at *; omega, ?_⟩
++      have hr := a2_map_block M x pre rest a b b hx
++      simp only [if_pos rfl] at hr
++      simp only [List.length_append, List.length_cons, List.length_nil] at he
++      cases b <;> cases hd : pairDecode rest with
++      | none =>
++        simp only [pairDecode, hd] at he ⊢
++        rw [MultiTapeTM.runFrom_add, hr]
++        simpa [List.append_assoc, Nat.add_assoc] using he
++      | some p =>
++        rcases p with ⟨d, v⟩
++        simp only [pairDecode, hd] at he ⊢
++        rw [MultiTapeTM.runFrom_add, hr]
++        simpa [List.append_assoc, Nat.add_assoc] using he
++    · cases b <;> cases c
++      · exact False.elim (h rfl)
++      · refine ⟨2 + (3 * a.length + 2 * rest.length + 5), by simp only [List.length_cons]; omega, ?_⟩
++        simp only [pairDecode, List.append_nil]
++        rw [MultiTapeTM.runFrom_add, a2_map_block M x pre rest a false true hx]
++        simp only [Bool.false_eq_true, ↓reduceIte]
++        simpa only [List.length_append, List.length_cons, List.length_nil] using
++          a2_map_finish M x (pre ++ [false, true]) a rest (by simpa [List.append_assoc] using hx)
++      · refine ⟨2, by simp, ?_⟩
++        rw [a2_map_block M x pre rest a true false hx]
++        simp [a2_mapCfg, pairDecode]
++      · exact False.elim (h rfl)
++
++/-- Starting with empty buffers gives a uniform linear setup budget on every
++input, including malformed encodings. -/
++private lemma a2_map_setup (M : FinTM Bool) (x : List Bool) :
++    ∃ t ≤ 5 * (x.length + 1),
++      match pairDecode x with
++      | some (a, b) => (a2_mapTM M false).tm.runFrom ((a2_mapTM M false).tm.initCfg x) t =
++          a2_mapVirtual M (M.tm.initCfg b) true ⟨x.length + 1, by omega⟩ a (pairEncode a [])
++      | none => ((a2_mapTM M false).tm.runFrom ((a2_mapTM M false).tm.initCfg x) t).state = none ∧
++          ((a2_mapTM M false).tm.runFrom ((a2_mapTM M false).tm.initCfg x) t).output = [] := by
++  obtain ⟨t, ht, he⟩ := a2_map_parse M x x [] [] rfl
++  have hi : (a2_mapTM M false).tm.initCfg x =
++      a2_mapCfg M x (some (.parse none)) ⟨1, by omega⟩ [] [] 0 0 [] := by
++    refine Cfg.ext rfl rfl ?_ ?_ rfl
++    · funext i
++      refine Fin.addCases (fun j => ?_) (fun j => ?_) i
++      · simp [a2_mapCfg, MultiTapeTM.initCfg, Cfg.init]
++      · refine Fin.addCases (fun j => ?_) (fun j => ?_) j <;>
++          simp [a2_mapCfg, MultiTapeTM.initCfg, Cfg.init]
++    · funext i
++      refine Fin.addCases (fun j => ?_) (fun j => ?_) i
++      · simp [a2_mapCfg, MultiTapeTM.initCfg, Cfg.init]
++      · refine Fin.addCases (fun j => ?_) (fun j => ?_) j <;>
++          simp [a2_mapCfg, MultiTapeTM.initCfg, Cfg.init]
++  refine ⟨t, by simp only [List.length_nil, mul_zero, add_zero] at ht; omega, ?_⟩
++  rw [hi]
++  simpa only [List.nil_append, List.length_nil, Nat.cast_zero] using he
++
++/-- One forwarded payload step has exactly the source work actions and
++emission. `virtualMove_correct` proves both boundary clamps and preserves
++its arrival tag, without a nonempty-input assumption. -/
++private lemma a2_mapVirtual_step (M : FinTM Bool) {x y : List Bool}
++    (c : Cfg M.k Bool M.State y) (tag : Bool) (hb : VirtualTag c.inputPos tag)
++    (p : Fin (x.length + 2)) (a pre : List Bool) :
++    ∃ tag', VirtualTag (M.tm.step c).inputPos tag' ∧
++      (a2_mapTM M true).tm.step (a2_mapVirtual M c tag p a pre) =
++        a2_mapVirtual M (M.tm.step c) tag' p a pre := by
++  cases hq : c.state with
++  | none =>
++    refine ⟨tag, ?_, ?_⟩
++    · simpa only [MultiTapeTM.step_of_halt hq] using hb
++    · rw [MultiTapeTM.step_of_halt hq, MultiTapeTM.step_of_halt]
++      simp [a2_mapVirtual, hq]
++  | some q =>
++    let act := M.tm.tr q c.inputSymbol c.workTapeSymbols
++    let mv := virtualMove tag c.inputSymbol act.inputTape
++    have hm := virtualMove_correct c tag hb act.inputTape
++    have hc : M.tm.step c = act.apply c := by simp only [MultiTapeTM.step, hq, act]
++    refine ⟨virtualNextTag tag mv, ?_, ?_⟩
++    · simpa only [hc, Action.apply] using hm.2
++    · have hs : (a2_mapVirtual M c tag p a pre).state = some (.run q tag) := by
++        simp [a2_mapVirtual, hq]
++      have hv : (a2_mapVirtual M c tag p a pre).workTapeSymbols
++          (Fin.natAdd 1 (Fin.castAdd M.k (0 : Fin 1))) = c.inputSymbol := by
++        simp [a2_mapVirtual, Cfg.workTapeSymbols, bufferTape_inputSymbol]
++      have hr : (fun i => (a2_mapVirtual M c tag p a pre).workTapeSymbols
++          (Fin.natAdd 1 (Fin.natAdd 1 i))) = c.workTapeSymbols := by
++        funext i
++        simp [a2_mapVirtual, Cfg.workTapeSymbols]
++      unfold MultiTapeTM.step
++      rw [hs]
++      dsimp only [a2_mapTM]
++      rw [hv, hr, hq]
++      change (Action.apply _ _) = a2_mapVirtual M (act.apply c) _ p a pre
++      refine Cfg.ext rfl (moveInputPos_zero _) ?_ ?_ ?_
++      · funext i
++        refine Fin.addCases (fun j => ?_) (fun j => ?_) i
++        · simp [a2_mapVirtual, Action.apply, act]
++        · refine Fin.addCases (fun j => ?_) (fun j => ?_) j <;>
++            simp [a2_mapVirtual, Action.apply, act]
++      · funext i
++        refine Fin.addCases (fun j => ?_) (fun j => ?_) i
++        · simp [a2_mapVirtual, Action.apply, act]
++        · refine Fin.addCases (fun j => ?_) (fun j => ?_) j
++          · simpa only [a2_mapVirtual, Action.apply, tapeBlocks_buffer, ↓reduceIte] using hm.1
++          · simp [a2_mapVirtual, Action.apply, act]
++      · exact List.append_assoc pre c.output act.output.toList
++
++/-- Payload forwarding preserves its entire source trajectory at all times,
++including the final halting action and the stationary halted tail. -/
++private lemma a2_mapVirtual_run (M : FinTM Bool) {x y : List Bool}
++    (c : Cfg M.k Bool M.State y) (tag : Bool) (hb : VirtualTag c.inputPos tag)
++    (p : Fin (x.length + 2)) (a pre : List Bool) (t : ℕ) :
++    ∃ tag', VirtualTag (M.tm.runFrom c t).inputPos tag' ∧
++      (a2_mapTM M true).tm.runFrom (a2_mapVirtual M c tag p a pre) t =
++        a2_mapVirtual M (M.tm.runFrom c t) tag' p a pre := by
++  induction t with
++  | zero => exact ⟨tag, hb, rfl⟩
++  | succ t ih =>
++    obtain ⟨b, hb, he⟩ := ih
++    obtain ⟨d, hd, hs⟩ := a2_mapVirtual_step M _ b hb p a pre
++    refine ⟨d, ?_, ?_⟩
++    · simpa only [MultiTapeTM.runFrom_succ_eq_step'] using hd
++    · rw [MultiTapeTM.runFrom_succ_eq_step', he, hs, MultiTapeTM.runFrom_succ_eq_step']
++
++/-- A setup configuration is at the payload seam if its control is a
++payload state; this includes the source start state on empty virtual input. -/
++private def a2_mapEntered (M : FinTM Bool) {x : List Bool}
++    (c : Cfg (1 + (1 + M.k)) Bool (a2_MapState M.State) x) : Prop :=
++  ∃ q tag, c.state = some (.run q tag)
++
++/-- Setup mode freezes every field once it reaches a payload state. -/
++private lemma a2_mapSetup_stationary (M : FinTM Bool) {x : List Bool}
++    (c : Cfg (1 + (1 + M.k)) Bool (a2_MapState M.State) x)
++    (h : a2_mapEntered M c) (t : ℕ) : (a2_mapTM M false).tm.runFrom c t = c := by
++  obtain ⟨q, tag, hs⟩ := h
++  have he : (a2_mapTM M false).tm.step c = c := by
++    simp only [MultiTapeTM.step, hs, a2_mapTM, Bool.false_eq_true, ↓reduceIte,
++      controlAction_apply, moveInputPos_zero]
++    cases c
++    simp_all
++  induction t with
++  | zero => rfl
++  | succ t ih => rw [MultiTapeTM.runFrom_succ_eq_step', ih, he]
++
++/-- Before the payload seam the operational and setup transition tables
++coincide, on all configurations rather than just well-formed buffers. -/
++private lemma a2_mapSetup_step (M : FinTM Bool) {x : List Bool}
++    (c : Cfg (1 + (1 + M.k)) Bool (a2_MapState M.State) x)
++    (h : ¬a2_mapEntered M c) :
++    (a2_mapTM M true).tm.step c = (a2_mapTM M false).tm.step c := by
++  cases hs : c.state with
++  | none => simp only [MultiTapeTM.step, hs]
++  | some q =>
++    cases q with
++    | run q tag => exact (h ⟨q, tag, hs⟩).elim
++    | parse pending => cases pending <;> simp only [MultiTapeTM.step, hs, a2_mapTM]
++    | _ => simp only [MultiTapeTM.step, hs, a2_mapTM]
++
++/-- Transfer an entire setup prefix through the final entry action. -/
++private lemma a2_mapSetup_run (M : FinTM Bool) (x : List Bool) (t : ℕ)
++    (h : ∀ u < t, ¬a2_mapEntered M
++      ((a2_mapTM M false).tm.runFrom ((a2_mapTM M false).tm.initCfg x) u)) :
++    (a2_mapTM M true).tm.runFrom ((a2_mapTM M true).tm.initCfg x) t =
++      (a2_mapTM M false).tm.runFrom ((a2_mapTM M false).tm.initCfg x) t := by
++  induction t with
++  | zero => rfl
++  | succ t ih =>
++    rw [MultiTapeTM.runFrom_succ_eq_step', ih (fun u hu => h u (by omega)),
++      a2_mapSetup_step M _ (h t (by omega)), MultiTapeTM.runFrom_succ_eq_step']
++
++/-- Every setup action leaves each payload work head fixed. -/
++private lemma a2_mapSetup_head_step (M : FinTM Bool) {x : List Bool}
++    (c : Cfg (1 + (1 + M.k)) Bool (a2_MapState M.State) x) (i : Fin M.k) :
++    ((a2_mapTM M false).tm.step c).workTapePos (Fin.natAdd 1 (Fin.natAdd 1 i)) =
++      c.workTapePos (Fin.natAdd 1 (Fin.natAdd 1 i)) := by
++  have ha (q : a2_MapState M.State) (inp : Option Bool)
++      (work : Fin (1 + (1 + M.k)) → Option Bool) :
++      ((a2_mapTM M false).tm.tr q inp work).workTapes (Fin.natAdd 1 (Fin.natAdd 1 i)) =
++        (none, 0) := by
++    cases q with
++    | parse pending =>
++      cases pending with
++      | none => cases inp <;> simp [a2_mapTM, a2_mapAct]
++      | some b =>
++        cases inp with
++        | none => simp [a2_mapTM, a2_mapAct]
++        | some d =>
++          by_cases he : b = d
++          · simp [a2_mapTM, he, a2_mapAct]
++          · cases b <;> simp [a2_mapTM, he, a2_mapAct]
++    | copyB => cases inp <;> simp [a2_mapTM, a2_mapAct]
++    | backB =>
++      cases h : work (Fin.natAdd 1 (Fin.castAdd M.k (0 : Fin 1))) <;>
++        simp only [a2_mapTM, h, a2_mapAct, tapeBlocks_right]
++    | backA =>
++      cases h : work (Fin.castAdd (1 + M.k) (0 : Fin 1)) <;>
++        simp only [a2_mapTM, h, a2_mapAct, tapeBlocks_right]
++    | emitA =>
++      cases h : work (Fin.castAdd (1 + M.k) (0 : Fin 1)) <;>
++        simp only [a2_mapTM, h, a2_mapAct, tapeBlocks_right]
++    | emitAgain b => simp [a2_mapTM, a2_mapAct]
++    | separator => simp [a2_mapTM, a2_mapAct]
++    | run q tag => rfl
++  unfold MultiTapeTM.step
++  cases hs : c.state with
++  | none => rfl
++  | some q => simp only [Action.apply, ha]; simp
++
++/-- The payload bank stays at its initial origin throughout setup, with no
++condition on grammar validity, buffer widths, or elapsed time. -/
++private lemma a2_mapSetup_heads (M : FinTM Bool) (x : List Bool) (t : ℕ) (i : Fin M.k) :
++    ((a2_mapTM M false).tm.runFrom ((a2_mapTM M false).tm.initCfg x) t).workTapePos
++      (Fin.natAdd 1 (Fin.natAdd 1 i)) = 0 := by
++  induction t with
++  | zero => rfl
++  | succ t ih => rw [MultiTapeTM.runFrom_succ_eq_step', a2_mapSetup_head_step, ih]
++
++/-- Choose the first payload entry, then transfer every prefix to the
++operational host. The stationary setup seam identifies this first entry
++with the complete validating/buffering/emission endpoint, so no payload
++work is hidden in the administrative time bound. -/
++private lemma a2_map_launch (M : FinTM Bool) (x a b : List Bool)
++    (hd : pairDecode x = some (a, b)) :
++    ∃ u ≤ 5 * (x.length + 1),
++      (a2_mapTM M true).tm.runFrom ((a2_mapTM M true).tm.initCfg x) u =
++        a2_mapVirtual M (M.tm.initCfg b) true ⟨x.length + 1, by omega⟩ a (pairEncode a []) ∧
++      ∀ v ≤ u, (a2_mapTM M true).tm.runFrom ((a2_mapTM M true).tm.initCfg x) v =
++        (a2_mapTM M false).tm.runFrom ((a2_mapTM M false).tm.initCfg x) v := by
++  classical
++  obtain ⟨t, ht, he⟩ := a2_map_setup M x
++  simp only [hd] at he
++  have hex : ∃ u, a2_mapEntered M
++      ((a2_mapTM M false).tm.runFrom ((a2_mapTM M false).tm.initCfg x) u) := by
++    refine ⟨t, M.tm.q₀, true, ?_⟩
++    rw [he]
++    rfl
++  let u := Nat.find hex
++  have hu : u ≤ t := Nat.find_min' hex (by rw [he]; exact ⟨M.tm.q₀, true, rfl⟩)
++  have hg : ∀ v < u, ¬a2_mapEntered M
++      ((a2_mapTM M false).tm.runFrom ((a2_mapTM M false).tm.initCfg x) v) :=
++    fun v hv => Nat.find_min hex hv
++  have hprefix (v : ℕ) (hv : v ≤ u) := a2_mapSetup_run M x v
++    (fun w hw => hg w (by omega))
++  refine ⟨u, hu.trans ht, ?_, hprefix⟩
++  rw [hprefix u (le_refl _)]
++  have hs := a2_mapSetup_stationary M _ (Nat.find_spec hex) (t - u)
++  have hh : (a2_mapTM M false).tm.runFrom ((a2_mapTM M false).tm.initCfg x) t =
++      (a2_mapTM M false).tm.runFrom ((a2_mapTM M false).tm.initCfg x) u := by
++    rw [show t = u + (t - u) by omega, MultiTapeTM.runFrom_add]
++    exact hs
++  rw [← hh, he]
++
++/-- A malformed encoding never reaches a payload state, since such a setup
++state would remain live forever. Hence its entire operational trajectory
++agrees with setup, including the silent halt and every later time. -/
++private lemma a2_map_reject (M : FinTM Bool) (x : List Bool)
++    (hd : pairDecode x = none) :
++    ∃ u ≤ 5 * (x.length + 1),
++      ((a2_mapTM M true).tm.runFrom ((a2_mapTM M true).tm.initCfg x) u).state = none ∧
++      ((a2_mapTM M true).tm.runFrom ((a2_mapTM M true).tm.initCfg x) u).output = [] ∧
++      ∀ v, (a2_mapTM M true).tm.runFrom ((a2_mapTM M true).tm.initCfg x) v =
++        (a2_mapTM M false).tm.runFrom ((a2_mapTM M false).tm.initCfg x) v := by
++  obtain ⟨u, hu, he⟩ := a2_map_setup M x
++  simp only [hd] at he
++  have hn (v : ℕ) : ¬a2_mapEntered M
++      ((a2_mapTM M false).tm.runFrom ((a2_mapTM M false).tm.initCfg x) v) := by
++    intro hv
++    obtain ⟨q, tag, hq⟩ := hv
++    by_cases h : v ≤ u
++    · have hrun : (a2_mapTM M false).tm.runFrom ((a2_mapTM M false).tm.initCfg x) u =
++          (a2_mapTM M false).tm.runFrom ((a2_mapTM M false).tm.initCfg x) v := by
++        rw [show u = v + (u - v) by omega, MultiTapeTM.runFrom_add]
++        exact a2_mapSetup_stationary M _ ⟨q, tag, hq⟩ _
++      have hh := he.1
++      rw [hrun, hq] at hh
++      contradiction
++    · have hh : (a2_mapTM M false).tm.runFrom ((a2_mapTM M false).tm.initCfg x) v =
++          (a2_mapTM M false).tm.runFrom ((a2_mapTM M false).tm.initCfg x) u := by
++        rw [show v = u + (v - u) by omega, MultiTapeTM.runFrom_add,
++          MultiTapeTM.runFrom_of_halt _ he.1]
++      rw [hh, he.1] at hq
++      contradiction
++  have heq (v : ℕ) := a2_mapSetup_run M x v (fun w _ => hn w)
++  refine ⟨u, hu, ?_, ?_, heq⟩ <;> rw [heq u]
++  · exact he.1
++  · exact he.2
++
++/-- Explicit equivalence between a disjoint pair of banks and their concatenation. -/
++private def a2_mapSumEquiv (a b : ℕ) : Fin a ⊕ Fin b ≃ Fin (a + b) where
++  toFun := Sum.elim (Fin.castAdd b) (Fin.natAdd a)
++  invFun := fun i => if h : (i : ℕ) < a then Sum.inl ⟨i, h⟩
++    else Sum.inr ⟨i - a, by have := i.isLt; omega⟩
++  left_inv := by
++    intro i
++    cases i with
++    | inl i => simp [i.isLt]
++    | inr i =>
++      simp only [Sum.elim_inr, Fin.coe_natAdd, not_lt.mpr (Nat.le_add_right _ _), ↓reduceDIte]
++      congr 1
++      apply Fin.ext
++      simp
++  right_inv := by
++    intro i
++    dsimp only
++    split
++    · rfl
++    · apply Fin.ext
++      dsimp only [Sum.elim_inr, Fin.coe_natAdd]
++      omega
++
++/-- Sum a finite tape bank by its two disjoint blocks. -/
++private lemma a2_map_sum {a b : ℕ} (f : Fin (a + b) → ℕ) :
++    (∑ i : Fin (a + b), f i) =
++      (∑ i : Fin a, f (Fin.castAdd b i)) + ∑ i : Fin b, f (Fin.natAdd a i) := by
++  rw [Fintype.sum_equiv (a2_mapSumEquiv a b).symm f (fun i => f ((a2_mapSumEquiv a b).toFun i))]
++  · exact Finset.sum_disjSum Finset.univ Finset.univ _
++  · intro x
++    simp only [Equiv.toFun_as_coe, Equiv.apply_symm_apply]
++
++/-- Count the two administrative tapes by fixed integer intervals, and the
++payload bank by containment in one source trajectory. No coefficient is
++introduced on the source-bank sum. -/
++private lemma a2_map_space (M : FinTM Bool) (x y : List Bool) (t D S : ℕ)
++    (hfirst : ∀ u ≤ t, -(D : ℤ) ≤
++        ((a2_mapTM M true).tm.runFrom ((a2_mapTM M true).tm.initCfg x) u).workTapePos
++          (Fin.castAdd (1 + M.k) (0 : Fin 1)) ∧
++      ((a2_mapTM M true).tm.runFrom ((a2_mapTM M true).tm.initCfg x) u).workTapePos
++          (Fin.castAdd (1 + M.k) (0 : Fin 1)) ≤ D)
++    (hsecond : ∀ u ≤ t, -(D : ℤ) ≤
++        ((a2_mapTM M true).tm.runFrom ((a2_mapTM M true).tm.initCfg x) u).workTapePos
++          (Fin.natAdd 1 (Fin.castAdd M.k (0 : Fin 1))) ∧
++      ((a2_mapTM M true).tm.runFrom ((a2_mapTM M true).tm.initCfg x) u).workTapePos
++          (Fin.natAdd 1 (Fin.castAdd M.k (0 : Fin 1))) ≤ D)
++    (hsource : ∀ i, (a2_mapTM M true).tm.visitedByTapeHead ((a2_mapTM M true).tm.initCfg x) t
++        (Fin.natAdd 1 (Fin.natAdd 1 i)) ⊆ M.tm.visitedByTapeHead (M.tm.initCfg y) t i)
++    (hs : M.tm.spaceUsed (M.tm.initCfg y) t ≤ S) :
++    (a2_mapTM M true).tm.spaceUsed ((a2_mapTM M true).tm.initCfg x) t ≤ S + 2 * (2 * D + 1) := by
++  have hc (i : Fin (1 + (1 + M.k)))
++      (h : ∀ u ≤ t, -(D : ℤ) ≤
++          ((a2_mapTM M true).tm.runFrom ((a2_mapTM M true).tm.initCfg x) u).workTapePos i ∧
++        ((a2_mapTM M true).tm.runFrom ((a2_mapTM M true).tm.initCfg x) u).workTapePos i ≤ D) :
++      (a2_mapTM M true).tm.spaceUsedByTape ((a2_mapTM M true).tm.initCfg x) t i ≤ 2 * D + 1 := by
++    have hsub : (a2_mapTM M true).tm.visitedByTapeHead ((a2_mapTM M true).tm.initCfg x) t i ⊆
++        Finset.Icc (-(D : ℤ)) (D : ℤ) := by
++      intro z hz
++      obtain ⟨u, hu, rfl⟩ := Finset.mem_image.mp hz
++      exact Finset.mem_Icc.mpr (h u (by have := Finset.mem_range.mp hu; omega))
++    exact (Finset.card_le_card hsub).trans (by rw [Int.card_Icc]; omega)
++  have ha := hc _ hfirst
++  have hb := hc _ hsecond
++  have hp : (∑ i : Fin M.k, (a2_mapTM M true).tm.spaceUsedByTape
++      ((a2_mapTM M true).tm.initCfg x) t (Fin.natAdd 1 (Fin.natAdd 1 i))) ≤ S := by
++    exact (Finset.sum_le_sum (fun i _ => Finset.card_le_card (hsource i))).trans hs
++  change (∑ i : Fin (1 + (1 + M.k)),
++    (a2_mapTM M true).tm.spaceUsedByTape ((a2_mapTM M true).tm.initCfg x) t i) ≤ _
++  rw [a2_map_sum, a2_map_sum]
++  simp only [Fintype.sum_unique]
++  simp only [show (default : Fin 1) = 0 from Subsingleton.elim _ _]
++  omega
++
+ /-- **Threaded-map space row** (spec, fill pending — design §12 R3;
+ annotates `Turing.FinTM.computesFunInTime_pairMapSnd`, the round-2
+ catalog addition). Given a payload machine with its own space bound
+@@ -4656,7 +5437,135 @@ theorem computesFunInTime_pairMapSnd_spaceUsed {Mg : FinTM Bool}
+       ∀ (x : List Bool) (t : ℕ),
+         M.tm.spaceUsed (M.tm.initCfg x) t
+           ≤ Sg x.length + c * (x.length + 1) := by
+-  sorry
++  let M := a2_mapTM Mg true
++  refine ⟨M, 22, ?_, ?_⟩
++  · intro x
++    cases hd : pairDecode x with
++    | none =>
++      obtain ⟨u, hu, hh, ho, _⟩ := a2_map_reject Mg x hd
++      have ht : M.ComputesInTime x [] u := ⟨_, hh, ho, rfl⟩
++      simpa only [hd] using ht.mono (show u ≤ 22 * (x.length + 1 + Tg x.length) by omega)
++    | some ab =>
++      rcases ab with ⟨a, b⟩
++      obtain ⟨u, hu, hinit, _⟩ := a2_map_launch Mg x a b hd
++      have hlen : b.length ≤ x.length := by
++        have h := congrArg List.length (eq_pairEncode_of_pairDecode x a b hd)
++        rw [length_pairEncode] at h
++        omega
++      obtain ⟨tag, _, hr⟩ := a2_mapVirtual_run Mg (x := x) (Mg.tm.initCfg b) true
++        (by simp [VirtualTag, MultiTapeTM.initCfg, Cfg.init])
++        (⟨x.length + 1, by omega⟩) a (pairEncode a []) (Tg b.length)
++      obtain ⟨space, hh, ho, _⟩ := hg b
++      have hrun : M.tm.runFrom (M.tm.initCfg x) (u + Tg b.length) =
++          a2_mapVirtual Mg (Mg.tm.runFrom (Mg.tm.initCfg b) (Tg b.length)) tag
++            ⟨x.length + 1, by omega⟩ a (pairEncode a []) := by
++        rw [MultiTapeTM.runFrom_add, hinit]
++        exact hr
++      have ht : M.ComputesInTime x (pairEncode a (g b)) (u + Tg b.length) := by
++        refine ⟨_, ?_, ?_, rfl⟩
++        · rw [hrun]
++          change Option.map (fun q => a2_MapState.run q tag)
++            (Mg.tm.runFrom (Mg.tm.initCfg b) (Tg b.length)).state = none
++          rw [hh]
++          rfl
++        · rw [hrun]
++          change pairEncode a [] ++
++            (Mg.tm.runFrom (Mg.tm.initCfg b) (Tg b.length)).output = pairEncode a (g b)
++          rw [ho]
++          simp [pairEncode, List.append_assoc]
++      have hT := hTg hlen
++      simpa only [hd] using ht.mono
++        (show u + Tg b.length ≤ 22 * (x.length + 1 + Tg x.length) by omega)
++  · intro x t
++    let D := 5 * (x.length + 1)
++    have hshort (v : ℕ) (hv : v ≤ D) (i : Fin M.k) :
++        -(D : ℤ) ≤ (M.tm.runFrom (M.tm.initCfg x) v).workTapePos i ∧
++        (M.tm.runFrom (M.tm.initCfg x) v).workTapePos i ≤ D := by
++      have h := f2_head_steps M.tm (M.tm.initCfg x) v i
++      rw [show (M.tm.initCfg x).workTapePos i = 0 from rfl, zero_sub, zero_add] at h
++      constructor <;> omega
++    cases hd : pairDecode x with
++    | none =>
++      obtain ⟨u, hu, hh, _, heq⟩ := a2_map_reject Mg x hd
++      have hheads (v : ℕ) (i : Fin M.k) :
++          -(D : ℤ) ≤ (M.tm.runFrom (M.tm.initCfg x) v).workTapePos i ∧
++          (M.tm.runFrom (M.tm.initCfg x) v).workTapePos i ≤ D := by
++        by_cases hv : v ≤ u
++        · exact hshort v (hv.trans hu) i
++        · rw [show v = u + (v - u) by omega, MultiTapeTM.runFrom_add,
++            MultiTapeTM.runFrom_of_halt _ hh]
++          exact hshort u hu i
++      have hp (i : Fin Mg.k) : M.tm.visitedByTapeHead (M.tm.initCfg x) t
++          (Fin.natAdd 1 (Fin.natAdd 1 i)) ⊆ Mg.tm.visitedByTapeHead (Mg.tm.initCfg x) t i := by
++        intro z hz
++        obtain ⟨v, hv, rfl⟩ := Finset.mem_image.mp hz
++        change ((a2_mapTM Mg true).tm.runFrom _ v).workTapePos _ ∈ _
++        rw [heq v, a2_mapSetup_heads]
++        exact Finset.mem_image.mpr ⟨0, by simp, rfl⟩
++      have hs := a2_map_space Mg x x t D (Sg x.length)
++        (fun v _ => hheads v _) (fun v _ => hheads v _) hp (hgs x t)
++      change M.tm.spaceUsed (M.tm.initCfg x) t ≤ _ at hs
++      dsimp only [D] at hs
++      omega
++    | some ab =>
++      rcases ab with ⟨a, b⟩
++      obtain ⟨u, hu, hinit, hprefix⟩ := a2_map_launch Mg x a b hd
++      have hlen : a.length ≤ x.length ∧ b.length ≤ x.length := by
++        have h := congrArg List.length (eq_pairEncode_of_pairDecode x a b hd)
++        rw [length_pairEncode] at h
++        omega
++      have hrun (v : ℕ) : ∃ tag,
++          M.tm.runFrom (M.tm.initCfg x) (u + v) =
++            a2_mapVirtual Mg (Mg.tm.runFrom (Mg.tm.initCfg b) v) tag
++              ⟨x.length + 1, by omega⟩ a (pairEncode a []) := by
++        obtain ⟨tag, _, he⟩ := a2_mapVirtual_run Mg (x := x) (Mg.tm.initCfg b) true
++          (by simp [VirtualTag, MultiTapeTM.initCfg, Cfg.init])
++          (⟨x.length + 1, by omega⟩) a (pairEncode a []) v
++        refine ⟨tag, ?_⟩
++        rw [MultiTapeTM.runFrom_add, hinit]
++        exact he
++      have ha (v : ℕ) : -(D : ℤ) ≤
++          (M.tm.runFrom (M.tm.initCfg x) v).workTapePos (Fin.castAdd (1 + Mg.k) (0 : Fin 1)) ∧
++          (M.tm.runFrom (M.tm.initCfg x) v).workTapePos (Fin.castAdd (1 + Mg.k) (0 : Fin 1)) ≤ D := by
++        by_cases hv : v ≤ u
++        · exact hshort v (hv.trans hu) _
++        · obtain ⟨tag, he⟩ := hrun (v - u)
++          rw [show v = u + (v - u) by omega, he]
++          simp only [a2_mapVirtual, tapeBlocks_left]
++          dsimp only [D]
++          constructor <;> omega
++      have hb (v : ℕ) : -(D : ℤ) ≤
++          (M.tm.runFrom (M.tm.initCfg x) v).workTapePos (Fin.natAdd 1 (Fin.castAdd Mg.k (0 : Fin 1))) ∧
++          (M.tm.runFrom (M.tm.initCfg x) v).workTapePos (Fin.natAdd 1 (Fin.castAdd Mg.k (0 : Fin 1))) ≤ D := by
++        by_cases hv : v ≤ u
++        · exact hshort v (hv.trans hu) _
++        · obtain ⟨tag, he⟩ := hrun (v - u)
++          rw [show v = u + (v - u) by omega, he]
++          simp only [a2_mapVirtual, tapeBlocks_buffer]
++          have hp := (Mg.tm.runFrom (Mg.tm.initCfg b) (v - u)).inputPos.isLt
++          dsimp only [D]
++          constructor <;> omega
++      -- Each payload-bank head is either still at its source origin or is
++      -- exactly a source position at a time no greater than this horizon.
++      have hp (i : Fin Mg.k) : M.tm.visitedByTapeHead (M.tm.initCfg x) t
++          (Fin.natAdd 1 (Fin.natAdd 1 i)) ⊆ Mg.tm.visitedByTapeHead (Mg.tm.initCfg b) t i := by
++        intro z hz
++        obtain ⟨v, hv, rfl⟩ := Finset.mem_image.mp hz
++        have hvt : v ≤ t := by have := Finset.mem_range.mp hv; omega
++        by_cases hvu : v ≤ u
++        · change ((a2_mapTM Mg true).tm.runFrom _ v).workTapePos _ ∈ _
++          rw [hprefix v hvu, a2_mapSetup_heads]
++          exact Finset.mem_image.mpr ⟨0, by simp, rfl⟩
++        · obtain ⟨tag, he⟩ := hrun (v - u)
++          change (M.tm.runFrom (M.tm.initCfg x) v).workTapePos _ ∈ _
++          rw [show v = u + (v - u) by omega, he]
++          simp only [a2_mapVirtual, tapeBlocks_right]
++          exact Finset.mem_image.mpr ⟨v - u, Finset.mem_range.mpr (by omega), rfl⟩
++      have hs := a2_map_space Mg x b t D (Sg x.length)
++        (fun v _ => ha v) (fun v _ => hb v) hp ((hgs b t).trans (hSg hlen.2))
++      change M.tm.spaceUsed (M.tm.initCfg x) t ≤ _ at hs
++      dsimp only [D] at hs
++      omega
+ 
+ /-- A live endpoint rules out a halt anywhere in its preceding run. -/
+ private lemma f2_loop_live_prefix {k : ℕ} {S : Type*} {x : List Bool}
+-- 
+2.51.1
+
