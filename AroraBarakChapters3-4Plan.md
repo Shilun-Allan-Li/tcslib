@@ -294,6 +294,82 @@ may go earlier), not one campaign-sized PR like #3. Main's CI runs only on pushe
 `main`, so each PR carries the local evidence: sweep, axiom prints, and the blueprint web
 build.
 
+### 4b. Post-statement-program roadmap (recorded 2026-10-09; user-directed)
+
+Recorded at the close of the statement program — every statement gate shut
+(P0, P3.1-P3.3, P4.1-P4.4, §12; decision log) — with roughly 150
+audited-true sorried statements frozen and the carried obligations
+collected in the nine `audits/*-resolutions.md` files. The remaining
+stages, in order:
+
+1. **Fill prerequisites** (gate the machine-heavy epochs, per §4a):
+   - the **§12 routine-layer fill** (56 statements; partition in §4c) —
+     the engine nearly every chapter-3/4 sketch names;
+   - the **ARM extensions** (§2.5: nondeterministic and polynomial-width
+     program layers; first customers the `PATH` walk and the counting
+     verifier) — the open **colleague-sync item** on Hydroxyi's `LogProg`
+     tree;
+   - **Hennie-Stearns + the two-work-tape universal** (§2.1, CH34-Q3):
+     Thms 1.9/3.1 to book strength; the retrofit pilot; candidate bonus:
+     space bounds through it may yield Ex 4.1's space-efficient universal
+     for the Thm 4.8 fill.
+2. **The fill epochs** (`workflow.md` §4): sequential, risk-ordered,
+   parallel disjoint-ownership batches from `briefs/`, epoch-boundary
+   audits. Summit order per §6: the space-universal + Thm 4.8; the
+   `NP^EXPCOM ⊆ EXP` simulator; the `TQBF` `ψᵢ` emitter; the
+   linear-overhead universal NDTM; Thm 4.2(iii) + Savitch; Immerman-
+   Szelepcsényi; Lemma 4.17. (Ladner's `H` rides with P3.4.)
+3. **P3.4 (Ladner)** — on hold (user, 2026-10-09); drafts from the
+   backlog §2 entry whenever called, independent of the fills.
+4. **The chapter-1/2 retrofit** — not a gate; batches alongside the
+   epochs. Queued housekeeping with it: the per-theme `Catalog` split
+   (12.2c), the P3.1 natural-home promotions (unblocked), the additive
+   sanity layers (`NSPACE` twins, `mem_NL_of_logspaceReducible`,
+   `Cfg.InWindow` promotion).
+5. **Closure** (`workflow.md` §5): zero-sorry sweep, campaign-wide drift
+   attestation, final audit pack, blueprint increment (late-bound).
+6. **Integration with `main`**: one PR per closed chapter (chapter 3's
+   light half may go early), each carrying sweep, axiom prints, and the
+   blueprint build, since main's CI runs only on `main`.
+
+### 4c. Routine-layer fill: epoch/batch partition (recorded 2026-10-09)
+
+The §12 surface is three files, 56 audited-true statements (Embed 13,
+Seam 11, Catalog 32). Exclusive file ownership (workflow §4, ground
+rule 1) shapes the partition; the proof plans inherited from the audit
+loop (`audits/routine-infra-{findings,r2-findings,r3-findings}.md`,
+summarized in `audits/routine-infra-resolutions.md`) make this the
+best-documented fill surface of the campaign.
+
+**Epoch F1 — kernels and routines (3 parallel batches, 37 targets).**
+
+| Batch | Owns | Targets | Contents and risk notes |
+|---|---|---|---|
+| F1A | `Build/Embed.lean` | 13 | The `embedSlot` equations and one-step commutation core first, then the four flavor families: silent lockstep/frame/visited/cap (5), emit lockstep/frame/visited (4), the returning through-halt contracts and visited equalities (4). The round-3 report's five-step induction (component check, `Option.elim` successor equations, last-step case) is the mandated proof plan for the returning pair; the `hc ↔ 0 < T` equivalence uses both first-halt hypotheses |
+| F1B | `Build/Seam.lean` | 11 | The **general-configuration trio first** (`_ofCfg` run / first-return / visited — the round-2/3 reports verify the lockstep decomposition and the `(Cfg.ofWords q w).mapState f = Cfg.ofWords (f q) w` identity), then the four canonical statements **as instances**, the two additive and one max space corollaries by projection, and the release pair (fresh-step equation + `Sum.inr` lockstep) |
+| F1C | `Build/Catalog.lean` | 13 | Part 1: the five routines' 11 run/space contracts — the round-1 report's exact movement table (forward `L`/`d`/`p`, one turn, return, one entry; visited exactly `[-1, ·]`) is the mandated ledger, including equal-word compare, aliased indices, and the `2p + 2` increment count — plus W1 (`capture_visitedByTapeHead`, prefix-by-prefix over `capture_run`) and W2 (`redirectTM_spaceUsedByTape`, trajectory agreement through and past the halt) |
+
+No F1 batch consumes another's file or fills; Part-1 routines are
+self-contained transition inductions. Epoch-boundary audit after F1.
+
+**Epoch F2 — the space annotations (1 batch, 19 targets, Catalog-owned).**
+
+| Batch | Owns | Targets | Contents and risk notes |
+|---|---|---|---|
+| F2A | `Build/Catalog.lean` | 19 | The Part-2 rows, risk-ordered: (i) same-witness constant rows (`id`, `const`, `prepend`, `pairEncodeFixed`, `pairValid`, `pairDup`, `incFixed`); (ii) same-witness linear rows (`pairFst`, `pairSnd`, `pairConcat`); (iii) the case-split rows (`polyUnary`; `polyBits` with the **mandatory `C = 0` / `e = 0` constant-witness splits**, round-1 R5); (iv) `lengthBits` (the direct variable-width-counter construction — the imported sharp witness is explicitly not relied on), `pairLenCheck`, `stripLast` (linear banks; quadratic time is slack), `splitSolve`; (v) `cond` (W3: disjoint decider/branch banks) and `exists_loopTM_spaceUsed` (L: the round-1 answer-5 ledger — interval-union argument, fuel width `\|bits (R n)\|`, no per-round accumulation); (vi) **`pairMapSnd` last — the epoch summit and the only new machine of the fill**: the commissioned forwarding controller (validate/buffer, emit prefix, forward payload output; coefficient 1 on `Sg`; the round-2 R4 ledger), with the captured-payload witness disclaimed. Continuation brief anticipated |
+
+F2 follows F1 so its constructions may consume proved F1 seams, though
+none is required to. Epoch-boundary audit after F2 closes the §12 fill;
+the S1-S12 sanity statements of the round-1 report are offered to both
+epochs as optional permanent lemmas, landing wherever their batch owns.
+
+**Ground rules** as `workflow.md` §4 (exclusive ownership, statement
+freeze with escalation on unprovable-as-stated, per-batch sweeps over the
+owned file, zip delivery with freeze verification, `git am -3`
+integration). Every brief embeds its inherited audit material verbatim:
+the movement tables (F1C), the through-halt induction (F1A), the general-
+seam decomposition (F1B), and the R4/R5/answer-5 ledgers (F2A).
+
 ## 5. Prior art to consult (design only; cite, never transcribe)
 
 - **Édouard Bonnet's Lax Archive entries** (Lean 4.33, Mathlib `db584cd6`). They use a
@@ -404,6 +480,7 @@ the record, and `backlog.md` §1 gets only the open ones.
 | **P4.3 gate CLOSED** (round 3, 2026-10-09: **PASS, 0 blockers / 0 majors / 0 minors / 2 notes** — `audits/ch4-p43-r3-findings.md` verbatim; loop summary `audits/ch4-p43-resolutions.md`, the campaign's first three-round statement loop). The amended `s+n+2` base verified with one shared constant uniformly; the factorization iff and all five wordings accepted; no sweeps. Carried: the uniform-emitter family and the quotient path lift as private hardness-fill obligations; the probe-then-replay universal and capped increasing-budget hierarchy disciplines. **Chapter 4 fully closed at the statement level** | Recorded |
 | **§12 round 2: FAIL — repaired, round-3 pack out** (2026-10-09: **1 blocker / 0 majors / 0 minors / 1 note** — `audits/routine-infra-r2-findings.md` verbatim; the seven other new contracts and all round-1 dispositions accepted, S7/S8/S9 replayed successfully). The blocker: both through-halt contracts were false at `T = 0` for an initially halted configuration (the handover projection demands `none = some (Sum.inr ())`). Repair at `2b82cbb3`: `(hc : c.state ≠ none)` on both — equivalent to `0 < T` under the first-halt hypothesis — with the counterexample recorded in the docstring. The round-2 pack's 6+3 inventory subdivision acknowledged as an erratum (5 run/first-return + 4 visited-set). Round-3 pack `audits/routine-infra-r3-{pack,bundle}.md` (bundle sha256 `bb651440…`, 21 attachments, the 38-line diff attached); fresh sweep 56/0, lint 0 FAIL. **The §12 round is the campaign's last open statement gate** | Recorded |
 | **§12 gate CLOSED** (round 3, 2026-10-09: **PASS, 0 blockers / 0 majors / 1 minor / 0 notes** — `audits/routine-infra-r3-findings.md` verbatim; loop summary `audits/routine-infra-resolutions.md`, a three-round loop). The round-2 counterexample verified excluded, the full positive-time through-halt induction supplied, consumers discharge `hc` at every live seam, byte-identity confirmed to blob hashes. Minor swept: the `hc ↔ 0 < T` equivalence stated under **both** first-halt hypotheses (forward `hhalt`, reverse `hlive 0`); two pack errata acknowledged in the resolutions. **Facade wiring**: `Build/{Embed,Seam,Catalog}.lean` join `TuringMachine.lean`, root temporary imports removed. **EVERY STATEMENT GATE OF THE CAMPAIGN IS NOW CLOSED** (P0, P3.1-P3.3, P4.1-P4.4, §12); remaining statement work: P3.4 (Ladner, backlog); next: fill epochs | Recorded |
+| **Post-statement-program roadmap and §12 fill partition recorded** (user-directed, 2026-10-09): new plan sections **§4b** (the six remaining stages: fill prerequisites — §12 fill, ARM extensions with the colleague sync, Hennie-Stearns + two-tape universal; the fill epochs on the §6 summit order; P3.4 on hold; the ch1-2 retrofit alongside; closure; one PR per chapter) and **§4c** (the routine-layer fill partition: **epoch F1**, 3 parallel disjoint-file batches — F1A Embed 13, F1B Seam 11 general-trio-first, F1C Catalog Part 1 + W1/W2 13 — then **epoch F2**, F2A the 19 Part-2 space rows risk-ordered with the `pairMapSnd` forwarding controller as summit; audit at each epoch boundary; briefs embed the audit-inherited proof plans verbatim). P3.4 explicitly held (user, 2026-10-09) | Recorded |
 | **P3.2 gate CLOSED** (round 2, 2026-10-09: **PASS, 0 blockers / 0 majors / 2 minors / 1 note** — `audits/ch3-p32-r2-findings.md` verbatim; loop summary `audits/ch3-p32-resolutions.md`). Both round-1 counterconstructions verified to violate the new `UniformMachineCode` clauses; `exists_uniformMachineCode` confirmed true by the auditor's independent polynomial construction over the concrete grammar (adopted into the sketch — minor R2-1: the received compiler route is arbitrary-time, no received polynomial ledger is claimed); "four-coordinate pairing" wording (R2-2). Carried: the fill-gate axiom-closure check for the choice-over-sorried-existence chain. **Natural-home promotions into the P3.1 files unblocked** | Recorded |
 | **P3.3 gate CLOSED** (round 2, 2026-10-09: **PASS, 0 blockers / 0 majors / 2 minors / 2 notes** — `audits/ch3-p33-r2-findings.md` verbatim; loop summary `audits/ch3-p33-resolutions.md`). Both round-1 majors closed (fixed-code repetition; the concrete O(n) capped locator, no monotonicity needed). Minors swept: the ladder pinned (`ℓ₀ := 2` seed, the source formula authoritative — round-2 pack paraphrase acknowledged as an offset erratum) and the clock-allowance split stated with the interpreter prefix-bound obligation; the stage-bottom comparison attributed to the square (note 3). **Facade rewiring**: `NDCodes` joins `TuringMachine.lean`, `NTimeHierarchy` joins `Diagonalization.lean` (P3.2+P3.3 both closed), the root's two temporary imports removed; `Robustness/Bidirectional` added to the scratch tree (facade sweep gap). **Every drafted phase of the chapter-3/4 statement program is now gated closed except the §12 routine layer**; P3.4 (Ladner) remains the sole undrafted phase | Recorded |
 | CH34-Q4 answered (user, 2026-10-08): **EXPCOM route** for the `A` half of Thm 3.7 — Ex 3.6(3) promoted to core, the `NP^EXPCOM ⊆ EXP` simulator added to the summit list (continuation budget certain); [BGS75, Thm 1]'s self-referential oracle recorded as fallback | Decided |
