@@ -64,11 +64,10 @@ P10's narrowing is recorded, and result-bearing search is now
   Cambridge University Press, 2009. (§1.2–§1.4: all entries are the
   folklore tape subroutines of the textbook's simulation arguments.)
 
-**Implementation note (batch P, partial).** The first eleven targets in the
-batch brief's fill order are now proved. The four continuation targets are
-`pairLenCheck`, `stripLast`, `pairMapSnd`, and `splitSolve`; their audited
-statements and admissions remain unchanged. The original spec-phase prose
-above and on the contracts is retained as the audit record. The length
+**Implementation note (batch P).** The first eleven targets in the batch
+brief's fill order and the four continuation targets `pairLenCheck`,
+`stripLast`, `pairMapSnd`, and `splitSolve` are proved. The original spec-phase
+prose above and on the contracts is retained as the audit record. The length
 counter is obtained from the public `Complexity.timeConstructible_id`, whose
 proved machine implements precisely the sketched amortized counter. The three
 extractors share one private buffered parser, so suffix-only extraction also
@@ -77,9 +76,8 @@ is unchanged. The fixed-width incrementer adapts the enumerator's carry
 semantics to two native-input scans, validating before physical emission.
 
 
-**Implementation note (batch P2, partial).** The threaded length checker and
-marker stripper are now proved; the threaded map and split search remain the
-unchanged continuation frontier. The length checker composes the existing
+**Implementation note (batch P2).** The threaded length checker, marker stripper,
+threaded map, and split search are proved. The length checker composes the existing
 buffered first extractor with the unary generator, captures the result with
 `capture_run`, then reparses and counts down on the native payload. Malformed
 inputs emit only `[false]`. The marker stripper first guards on a valid
@@ -88,25 +86,25 @@ whole original encoding, erases its final marker/false-run, and replays the
 retained encoding. The guard is complete before any physical output. Both
 routes reuse the in-file parser/scan invariant patterns and proved public
 wrappers. `catalogPayload_computes` supplies a proved relocated-simulation
-component for the next target, with its time evaluated at the actual suffix
-length; the retained-prefix/captured-output controller remains to be built.
+component for the threaded map, with its time evaluated at the actual suffix
+length; the retained-prefix/captured-output controller is proved below.
 
 
-**Implementation note (batch P3, partial).** The threaded map is now proved.
+**Implementation note (batch P3).** The threaded map is proved.
 `pairMapTM` captures `catalogPayload_computes` on the original physical input,
 rewinds the capture and input, validates without emission, then replays the
 original encoded prefix and captured result. `pairMap_computes` bounds this
 controller by `4 * (T n + n + 3)` and the public theorem uses coefficient 40.
 All original contract docstrings are retained as the audit record.
 
-The split-search theorem remains the unchanged admitted frontier. Its new
-private, admission-free components are the unary orbit/search bridges and
+The split-search theorem is proved. Its private components include the unary
+orbit/search bridges and
 `splitSolve_of_body`, which closes the public result only when supplied the
 actual startup and round contracts; a candidate-preserving unary-bank
 preparer; a counted source-simulation correspondence; the generator's exact
 loop endpoint; and a scratch-restoration controller with a positive first
-return and no earlier visit to its return state. These separate component
-proofs do not yet constitute a combined body or a proof of its `hround`.
+return and no earlier visit to its return state. The combined `splitBodyTM`
+and `splitBody_round` assemble these components and prove `hround`.
 -/
 
 /-! Batch P4 closure note: the split-search body is now constructed and proved.
@@ -2067,7 +2065,7 @@ private lemma catalogPayload_length (x : List Bool) :
   | none => simp
   | some p =>
     rcases p with ⟨a, b⟩
-    have hx := catalogPair_inverse x a b hd
+    have hx := Turing.eq_pairEncode_of_pairDecode x a b hd
     simp only [Option.map_some, Option.getD_some]
     rw [hx]
     simp only [pairEncode, List.length_append]
@@ -2656,12 +2654,6 @@ private lemma mapPayload_finish (M : FinTM Bool) {x : List Bool}
   simp [MultiTapeTM.step, pairMapTM, mapCfg, captureCfg, Cfg.workTapeSymbols,
     mapAction, Action.apply]
 
-/-- The encoding has exactly two symbols per first-component bit and two
-separator symbols, followed by the unmodified payload. -/
-private lemma catalogPair_length (a b : List Bool) :
-    (pairEncode a b).length = 2 * a.length + 2 + b.length := by
-  simp [pairEncode, Nat.mul_comm, Nat.add_assoc, Nat.add_comm, Nat.add_left_comm]
-
 /-- The complete controller retains the first component and appends the
 source's captured result, rejecting malformed inputs without any emission.
 **Proof sketch.** Concatenate capture/rewind, silent validation, input rewind,
@@ -2706,7 +2698,7 @@ private lemma pairMap_computes {M : FinTM Bool} {f : List Bool → List Bool}
         (mapCfg M c (some (.inr (.inl 4))) p 0 []) r =
         mapCfg M c (some (.inr (.inr (true, none)))) 1 0 [] := hr
     obtain ⟨p', hp'⟩ := mapPrefix_replay M c a b [] []
-      (by simpa using catalogPair_inverse x a b hd)
+      (by simpa using Turing.eq_pairEncode_of_pairDecode x a b hd)
     simp only [List.length_nil, Nat.zero_add, List.nil_append] at hp'
     rw [hpos] at hp'
     have hprefix : (pairMapTM M).tm.runFrom ((pairMapTM M).tm.initCfg x)
@@ -2726,7 +2718,7 @@ private lemma pairMap_computes {M : FinTM Bool} {f : List Bool → List Bool}
     have hpbound := p.isLt
     change r ≤ p.val + 2 at hrle
     have hxlen : x.length = 2 * a.length + 2 + b.length := by
-      rw [catalogPair_inverse x a b hd, catalogPair_length]
+      rw [Turing.eq_pairEncode_of_pairDecode x a b hd, Turing.length_pairEncode]
     omega
 
 /-- **C1, the threaded map combinator** (spec, fill pending; round-2
@@ -4367,27 +4359,18 @@ theorem computesFunInTime_incFixed :
       M.ComputesFunInTime (fun x => (incFixed x).getD []) fun n => c * (n + 1) := by
   exact ⟨incFixedTM, 3, incFixed_computes⟩
 
-/-! Emitter batch P checkpoint. The append-bit and unary-token contracts are
+/-! Emitter implementation. The append-bit and unary-token contracts are
 proved below with coefficients one and three. The width-parametric split
-contract remains admitted: the full native body is not yet assembled.
+contract is proved by the native `emitterP2*` controller.
 
 The `emitterSplit*` layer generalizes the in-file loop closure without any
-monotonicity assumption on the width function. The `emitterEval*`,
-`emitterCompare*`, `emitterClear*`, `emitterTrack*`, and `emitterRight*` families
-are reimplemented in this file from the A-continuation's `e3c*` templates in
+monotonicity assumption on the width function. The `emitterCompare*` family
+is reimplemented in this file from the A-continuation's `e3c*` templates in
 `ClassNP/Nondeterminism.lean` at base d7b5b6f94d28df8095165dd4dfe82fd09ba0d414.
 Those originals are unchanged and are not cited as imported privates. The
-native accepting emitter already exists here as `splitEmitTM`/`splitEmit_run`.
-
-The new `emitterBank*` product controller clears all tracked source triples
-simultaneously and dispatches on their actual completion. This supplies a
-whole-bank phase, but not the outer controller's embeddings or cleanup of
-argument/capture buffers. `emitter_width_eval_first` retains evaluation on the
-actual candidate before using monotonicity to enlarge its bound. A continuation
-must still connect those phases, prepare/evaluate the native suffix length,
-clear administrative words, restore every head, implement the positive
-past-end stall, and discharge `emitterSplit_of_body`'s literal configuration
-and strict-interior anchor contracts. No additional admissions are introduced. -/
+native accepting emitter is `splitEmitTM`/`splitEmit_run`. The controller below
+discharges `emitterSplit_of_body`'s literal configuration and strict-interior
+anchor contracts. -/
 
 /-- Width-parametric acceptance tests the exact length equation. It makes
 no monotonicity assumption on the width function. -/
@@ -4731,10 +4714,11 @@ private lemma emitter_width_budget (f : ℕ → ℕ) (E : FinTM Bool)
   refine ⟨he, ?_, hTE hs⟩
   simpa only [hout] using E.tm.output_length_le s (TE s.length)
 
-/-! **Emitter P2 implementation.** The generic relocation layer below is
-reimplemented from batch L's `emCall` family in `Build/Loop.lean`, per the
-private-harvest policy. It preserves inactive storage and follows observed
-returns, including the mandatory first action when entry equals exit. -/
+/-! **Emitter P2 implementation.** The controller below proves the
+width-parametric split contract. Its generic relocation layer is reimplemented
+from batch L's `emCall` family in `Build/Loop.lean`, per the private-harvest
+policy. It preserves inactive storage and follows observed returns, including
+the mandatory first action when entry equals exit. -/
 
 /-- Relocate an action to an arbitrary fixed set of host tape slots. The
 partial inverse selects active tapes; every inactive tape is stationary. -/
