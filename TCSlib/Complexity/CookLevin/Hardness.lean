@@ -892,31 +892,6 @@ private lemma clRef_apply (M : FinTM Bool) {l : ℕ} {S : Type}
             simpa only [clRefCfg, Action.apply, FinTM.tapeBlocks_buffer] using hm.1
           · intro j; simp [Action.apply, clRefCfg, a]
 
-/-- The bounded reference runner consumes one unary clock cell per source
-step. Clock exhaustion dispatches to a live return state; source halting
-does not dispatch. The initial configuration in its contract is prepared,
-not claimed to arise from native initialization without header installation. -/
-private def clRefClockTM (M : FinTM Bool) : FinTM Bool where
-  k := 1 + (1 + M.k)
-  State := (Option M.State × Bool) ⊕ Unit
-  tm := {
-    q₀ := .inl (some M.tm.q₀, true)
-    tr := fun q _ work => match q with
-      | .inr _ => FinTM.controlAction 0 (some (.inr ()))
-      | .inl (s, b) =>
-        if work (Fin.castAdd (1 + M.k) (0 : Fin 1)) = none then
-          FinTM.controlAction 0 (some (.inr ()))
-        else
-          clRefAction M (fun q b => .inl (q, b)) s b work (fun _ => (none, .pos)) }
-
-/-- Running configuration of the clocked reference component. Its clock
-head records source time, separately from any future administrative cost. -/
-private def clRefClockCfg (M : FinTM Bool) {x y : List Bool}
-    (c : Cfg M.k Bool M.State y) (b : Bool) (T t : ℕ) :
-    Cfg (clRefClockTM M).k Bool (clRefClockTM M).State x :=
-  clRefCfg M (fun q b => .inl (q, b)) c b 1
-    (fun _ : Fin 1 => FinTM.bufferTape (List.replicate T true)) (fun _ => t) []
-
 /-- Increment a little-endian binary word, extending it on overflow. -/
 private def clCountInc : List Bool → List Bool
   | [] => [true]
@@ -1142,104 +1117,14 @@ private lemma clCount_idle_run {x : List Bool} (c : Cfg 1 Bool (Fin 4) x)
   | zero => rfl
   | succ t ih => rw [MultiTapeTM.runFrom_succ_eq_step, clCount_idle c hc, ih]
 
-/-- The complete increment reaches its result at a strictly positive
-first return, within two scans of the input counter plus two steps.
-**Proof sketch.** Minimize the first return-state occurrence before the
-proved completion time. Since that state is absorbing on the entire
-configuration, its first occurrence already has the proved final word
-and restored head. Initial carry control excludes duration zero. -/
-private lemma clCount_first (x : List Bool) (p : Fin (x.length + 2)) (w : List Bool) :
-    ∃ t ≤ 2 * w.length + 2, 0 < t ∧
-      (∀ j, j < t → (clCountTM.tm.runFrom (clCountCfg x 1 p 0 w []) j).state ≠ some (0 : Fin 4)) ∧
-      clCountTM.tm.runFrom (clCountCfg x 1 p 0 w []) t =
-        clCountCfg x 0 p 0 (clCountInc w) [] := by
-  let B := 2 * clCountCarry w + 2
-  have hfinish := clCount_run x p w
-  have hex : ∃ t, t ≤ B ∧ (clCountTM.tm.runFrom (clCountCfg x 1 p 0 w []) t).state = some (0 : Fin 4) :=
-    ⟨B, le_rfl, by rw [hfinish]; rfl⟩
-  let t := Nat.find hex
-  have ht := Nat.find_spec hex
-  have hp : 0 < t := by
-    by_contra h
-    have hz : t = 0 := by omega
-    have hs := ht.2
-    change (clCountTM.tm.runFrom (clCountCfg x 1 p 0 w []) t).state = some (0 : Fin 4) at hs
-    rw [hz, MultiTapeTM.runFrom_zero] at hs
-    norm_num [clCountCfg] at hs
-  refine ⟨t, ht.1.trans (by dsimp [B]; have := clCountCarry_le w; omega), hp, ?_, ?_⟩
-  · intro j hj hs
-    have hmin := Nat.find_min' hex (show j ≤ B ∧
-      (clCountTM.tm.runFrom (clCountCfg x 1 p 0 w []) j).state = some (0 : Fin 4) from ⟨by omega, hs⟩)
-    omega
-  · have hstay := clCount_idle_run
-      (clCountTM.tm.runFrom (clCountCfg x 1 p 0 w []) t) ht.2 (B - t)
-    rw [← MultiTapeTM.runFrom_add, Nat.add_sub_of_le ht.1] at hstay
-    exact hstay.symm.trans hfinish
-
 /-- The harvested tape representation is the library's canonical buffer,
 including every negative cell and both empty-word boundaries. -/
 private lemma clCountTape_eq (w : List Bool) : clCountTape w = FinTM.bufferTape w := by
   funext z
   by_cases hz : z < 0 <;> simp [clCountTape, FinTM.bufferTape, hz, show 0 ≤ z ↔ ¬z < 0 by omega]
 
-/-- Run an administrative binary-counter increment while retaining the
-entire virtual reference configuration in a disjoint bank. The finite
-control stores the source state and boundary tag throughout the call. -/
-private def clRefCountTM (M : FinTM Bool) : FinTM Bool where
-  k := 1 + (1 + M.k)
-  State := Option M.State × Bool × Fin 4
-  tm := {
-    q₀ := (some M.tm.q₀, true, 1)
-    tr := fun q inp work =>
-      FinTM.leftAction (1 + M.k) (fun s => (q.1, q.2.1, s))
-        (clCountTM.tm.tr q.2.2 inp (fun i => work (Fin.castAdd (1 + M.k) i))) }
-
-/-- A complete native counter update consumes physical time without
-advancing the represented source clock or disturbing any source tape or
-head. The counter returns canonical binary successor, with strict first
-return and an explicit sequential-scan bound.
-**Proof sketch.** Lift the proved in-place counter into the left bank.
-The right bank contains the virtual input and every source tape and head;
-the public disjoint-bank run theorem preserves that whole bank. The
-injective counter-state projection transfers the first-return property. -/
-private lemma clRefCount_first (M : FinTM Bool) {x y : List Bool}
-    (c : Cfg M.k Bool M.State y) (b : Bool) (n : ℕ) :
-    ∃ t ≤ 2 * n.bits.length + 2, 0 < t ∧
-      (∀ j, j < t →
-        ((clRefCountTM M).tm.runFrom
-          (clRefCfg M (fun s b => (s, b, (1 : Fin 4))) c b (1 : Fin (x.length + 2))
-            (fun _ : Fin 1 => FinTM.bufferTape n.bits) (fun _ => 0) []) j).state ≠
-          some (c.state, b, (0 : Fin 4))) ∧
-      (clRefCountTM M).tm.runFrom
-        (clRefCfg M (fun s b => (s, b, (1 : Fin 4))) c b (1 : Fin (x.length + 2))
-          (fun _ : Fin 1 => FinTM.bufferTape n.bits) (fun _ => 0) []) t =
-        clRefCfg M (fun s b => (s, b, (0 : Fin 4))) c b (1 : Fin (x.length + 2))
-          (fun _ : Fin 1 => FinTM.bufferTape (n + 1).bits) (fun _ => 0) [] := by
-  obtain ⟨t, ht, hp, hf, hr⟩ := clCount_first x 1 n.bits
-  have lift (j : ℕ) := FinTM.leftCfg_run clCountTM.tm (clRefCountTM M).tm
-    (fun s => (c.state, b, s)) (fun _ _ _ => rfl) (clCountCfg x 1 1 0 n.bits [])
-    (Fin.addCases (fun _ : Fin 1 => FinTM.bufferTape y) c.workTapes)
-    (Fin.addCases (fun _ : Fin 1 => (c.inputPos.val : ℤ) - 1) c.workTapePos) j
-  refine ⟨t, ht, hp, ?_, ?_⟩
-  · intro j hj hs
-    have hequiv := congrArg Cfg.state (lift j)
-    have hs' : (FinTM.leftCfg (fun s => (c.state, b, s))
-        (clCountTM.tm.runFrom (clCountCfg x 1 1 0 n.bits []) j)
-        (Fin.addCases (fun _ : Fin 1 => FinTM.bufferTape y) c.workTapes)
-        (Fin.addCases (fun _ : Fin 1 => (c.inputPos.val : ℤ) - 1) c.workTapePos)).state =
-          some (c.state, b, (0 : Fin 4)) := by
-      apply hequiv.symm.trans
-      simpa [FinTM.leftCfg, clCountCfg, clRefCfg, FinTM.tapeBlocks, clCountTape_eq] using hs
-    apply hf j hj
-    have he := congrArg (fun s => s.map (fun z => z.2.2)) hs'
-    simpa only [FinTM.leftCfg, Option.map_map, Function.comp_def, Option.map_id',
-      Option.map_some] using he
-  · have h := lift t
-    rw [hr, clCountInc_bits] at h
-    simpa [FinTM.leftCfg, clCountCfg, clRefCfg, FinTM.tapeBlocks, clCountTape_eq] using h
-
-/-- A counter below `2^w` occupies at most `w` bits. Together with
-`clRefCount_first`, this charges one administrative increment by two
+/-- A counter below `2^w` occupies at most `w` bits. Together with the
+counter runtime bound, this charges one administrative increment by two
 binary scans plus two transitions, with no unary-position representation. -/
 private lemma clCount_width (n w : ℕ) (hn : n < 2 ^ w) : n.bits.length ≤ w := by
   induction n using Nat.binaryRec' generalizing w with
@@ -3127,15 +3012,6 @@ private lemma clRowPrefix_fields {l : ℕ} (w : Fin l → List Bool) : ∀ j, j 
     intro hj
     rw [List.take_succ_eq_append_getElem (by simpa using (show j < l by omega)), clFields_append]
     simp [clRowPrefix, show j < l by omega, ih (by omega), clFields]
-
-/-- Sequentially parse a specified number of self-delimiting fields.
-Malformed words return `none`; a successful parse retains the exact suffix. -/
-private def clReadFields : ℕ → List Bool → Option (List (List Bool) × List Bool)
-  | 0, xs => some ([], xs)
-  | n + 1, xs => do
-    let (w, rest) ← pairDecode xs
-    let (ws, tail) ← clReadFields n rest
-    pure (w :: ws, tail)
 
 /-- A native sequential field reader on two work tapes. It consumes an
 aligned doubled-bit field from a read-only stream, overwrites the target
