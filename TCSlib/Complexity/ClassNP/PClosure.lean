@@ -5,7 +5,7 @@ Authors: Hydroxyi
 -/
 import TCSlib.Complexity.ClassNP.CoNP
 import TCSlib.Complexity.ClassNP.PolyTimePairing
-import TCSlib.Complexity.ClassNP.PolyTimeBlockLoop
+import TCSlib.Complexity.ClassNP.PolyTimeBlockMajority
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false

@@ -30,8 +30,6 @@ stated in `TCSlib.Complexity.ClassNP.PClosure`, which imports this file.
 
 ## Main definitions
 
-* `Complexity.blockAt` — the `i`-th length-`a·(n+1)^k` block of the second
-  component of a pair, where `n` is the first component's length.
 * `Complexity.sliceTakeAt` / `Complexity.sliceDropAt` — keep the first
   component and take/drop a polynomial-length prefix of the second.
 * `Complexity.xorD` — truncating bitwise XOR of the two components of a pair.
@@ -47,10 +45,8 @@ stated in `TCSlib.Complexity.ClassNP.PClosure`, which imports this file.
   `exists_emitCallTM`) as the per-round body.
 * `Complexity.polyTimeComputable_xorD` — truncating bitwise XOR is
   polynomial-time (a one-pass counter program).
-* `Complexity.polyTimeComputable_blockAnyTest` /
-  `_blockMajorityTest` / `_blockXorAnyTest` — the one-bit aggregated block
-  tests (OR, strict majority, XOR-then-OR) of a polynomial-time one-bit
-  indicator are polynomial-time.
+* The aggregated one-bit block tests live in
+  `TCSlib.Complexity.ClassNP.PolyTimeBlockTests`.
 
 ## References
 
@@ -177,6 +173,90 @@ theorem polyTimeComputable_not {p : List Bool → Bool}
   funext x
   cases p x <;> rfl
 
+/-- The first projection of the empty word. -/
+theorem pairFstD_nil : pairFstD ([] : List Bool) = [] := rfl
+
+/-- The second component of a pair is shorter than the pair. -/
+theorem length_pairSndD_le (z : List Bool) : (pairSndD z).length ≤ z.length := by
+  cases h : pairDecode z with
+  | none => simp [pairSndD, h]
+  | some ab =>
+    obtain ⟨p, u⟩ := ab
+    have hz := eq_pairEncode_of_pairDecode z p u h
+    rw [hz, pairSndD_pairEncode, length_pairEncode]
+    omega
+
+/-- A word with a nonempty first projection is a genuine pair. -/
+theorem eq_pairEncode_of_pairFstD_ne {z : List Bool} (h : pairFstD z ≠ []) :
+    z = pairEncode (pairFstD z) (pairSndD z) := by
+  cases hd : pairDecode z with
+  | none => exact absurd (by simp [pairFstD, hd]) h
+  | some ab =>
+    obtain ⟨p, u⟩ := ab
+    have hz := eq_pairEncode_of_pairDecode z p u hd
+    rw [hz, pairFstD_pairEncode, pairSndD_pairEncode]
+
+/-- Both projections of a word fit inside it, jointly and doubled. -/
+theorem length_pair_components_le (y : List Bool) :
+    2 * (pairFstD y).length + (pairSndD y).length ≤ y.length := by
+  cases hd : pairDecode y with
+  | none =>
+    have hf : pairFstD y = [] := by simp [pairFstD, hd]
+    have hs : pairSndD y = [] := by simp [pairSndD, hd]
+    simp [hf, hs]
+  | some ab =>
+    obtain ⟨p, u⟩ := ab
+    have hz := eq_pairEncode_of_pairDecode y p u hd
+    conv_rhs => rw [hz]
+    rw [length_pairEncode, hz, pairFstD_pairEncode, pairSndD_pairEncode]
+    omega
+
+/-- Dropping a slice never grows a word beyond `max` with the constant pair. -/
+theorem length_sliceDropAt_le (a k : ℕ) (z : List Bool) :
+    (sliceDropAt a k z).length ≤ max z.length 2 := by
+  cases h : pairDecode z with
+  | none =>
+    have h1 : pairFstD z = [] := by simp [pairFstD, h]
+    have h2 : pairSndD z = [] := by simp [pairSndD, h]
+    refine le_trans ?_ (le_max_right _ _)
+    simp [sliceDropAt, h1, h2, length_pairEncode]
+  | some ab =>
+    obtain ⟨p, u⟩ := ab
+    have hz := eq_pairEncode_of_pairDecode z p u h
+    refine le_trans ?_ (le_max_left _ _)
+    rw [hz]
+    simp only [sliceDropAt, pairFstD_pairEncode, pairSndD_pairEncode, length_pairEncode,
+      List.length_drop]
+    omega
+
+/-- A range-indexed concatenation with a single live chunk is that chunk. -/
+theorem flatMap_range_eq_single {c : ℕ → List Bool} {N K : ℕ} {b : List Bool}
+    (hKN : K < N) (hc : ∀ i < N, c i = if i = K then b else []) :
+    (List.range N).flatMap c = b := by
+  induction N with
+  | zero => omega
+  | succ N ih =>
+    rw [List.range_succ, List.flatMap_append]
+    by_cases hNK : N = K
+    · subst hNK
+      have hpre : (List.range N).flatMap c = [] := by
+        refine List.flatMap_eq_nil_iff.mpr (fun i hi => ?_)
+        have hiN := List.mem_range.mp hi
+        rw [hc i (by omega), if_neg (by omega)]
+      rw [hpre, List.nil_append, List.flatMap_cons, List.flatMap_nil, List.append_nil,
+        hc N (by omega), if_pos rfl]
+    · have hKN' : K < N := by omega
+      rw [ih hKN' (fun i hi => hc i (by omega))]
+      rw [List.flatMap_cons, hc N (by omega), if_neg hNK]
+      simp
+
+/-- The absorbing end state of the block loops. -/
+def blockDone : List Bool := pairEncode [] []
+
+/-- The Boolean emptiness test, in the shape
+`Complexity.polyTimeComputable_ite` consumes. -/
+def isNilB (w : List Bool) : Bool := decide (w = [])
+
 /-! ### The emit-iteration combinator -/
 
 /-- **The bounded loop of polynomial-time rounds** — the machine-level engine
@@ -192,17 +272,18 @@ enters the anchor; each round is two clean calls on the tape-resident state
 word — an emit-mode call (`Turing.FinTM.exists_emitCallTM`) forwarding the
 chunk `e s` to the physical output, then an install-mode call
 (`Turing.FinTM.exists_installCallTM`) replacing the word by `g s` — glued by
-a constant number of control states.  The invariant `|s| ≤ b·(|w|+1)^l` is
-preserved by hypothesis, so each call's budget is one polynomial in the input
-length; the fuel machine is `Turing.FinTM.computesFunInTime_polyBits`.  The
-loop host then computes exactly the stated concatenation within
-`c·(T+1)·(R+2)` steps. -/
+a constant number of control states.  The host's admissibility invariant is
+"the state word is an orbit point of `g` from the input", so the orbit-only
+length envelope `horbit` bounds each call's budget by one polynomial in the
+input length (the pattern of the proved Cook–Levin emitter assembly); the
+fuel machine is `Turing.FinTM.computesFunInTime_polyBits`.  The loop host
+then computes exactly the stated concatenation within `c·(T+1)·(R+2)`
+steps. -/
 theorem polyTimeComputable_emitIter {g e : List Bool → List Bool}
     (hg : PolyTimeComputable g) (he : PolyTimeComputable e)
     (a' k' b l : ℕ)
-    (hinit : ∀ n : ℕ, n ≤ b * (n + 1) ^ l)
-    (hgrow : ∀ w s : List Bool, s.length ≤ b * (w.length + 1) ^ l →
-      (g s).length ≤ b * (w.length + 1) ^ l) :
+    (horbit : ∀ (w : List Bool) (i : ℕ),
+      (g^[i] w).length ≤ b * (w.length + 1) ^ l) :
     PolyTimeComputable (fun w =>
       (List.range (a' * (w.length + 1) ^ k' + 1)).flatMap (fun i => e (g^[i] w))) := by
   sorry
@@ -229,78 +310,10 @@ audited ch7-phase1 finding 1 convention.) -/
 theorem polyTimeComputable_xorD : PolyTimeComputable xorD := by
   sorry
 
-/-! ### The aggregated block tests
-
-`blockAt a k z i` is the `i`-th block of length `a·(n+1)^k` of the second
-component of the pair `z`, where `n` is the first component's length.  The
-three aggregated one-bit tests below are the `PolyTimeComputable` engines of
-the `P`-closure lemmas `Complexity.mem_P_of_blockAny` /
-`_blockMajority` / `_blockXorAny` in `TCSlib.Complexity.ClassNP.PClosure`. -/
-
-/-- The `i`-th length-`a·(n+1)^k` block of the second component of a pair,
-where `n` is the first component's length. -/
-def blockAt (a k : ℕ) (z : List Bool) (i : ℕ) : List Bool :=
-  ((pairSndD z).drop (i * (a * ((pairFstD z).length + 1) ^ k))).take
-    (a * ((pairFstD z).length + 1) ^ k)
-
-/-- The OR-aggregated block test of a polynomial-time one-bit indicator is
-polynomial-time: one bit saying whether some of the `a'·(n+1)^k'` blocks of
-length `a·(n+1)^k` passes the test on `Turing.pairEncode`d (first component,
-block).
-
-**Proof sketch.** An instance of `Complexity.polyTimeComputable_emitIter`.
-The loop state is `pairEncode [flag] (pairEncode countdown (pairEncode x rem))`
-with a unary countdown initialized at `a'·(|x|+1)^k'`
-(`Complexity.polyTimeComputable_polyUnary`); each round ORs the indicator of
-`sliceTakeAt a k` into the flag, drops the block (`sliceDropAt a k`), and
-decrements; the chunk function emits `[flag]` exactly at countdown exhaustion
-(the step then moves to an absorbing done state), so the concatenated output
-is the single aggregated bit.  The orbit is computed in closed form by
-induction on the round index. -/
-theorem polyTimeComputable_blockAnyTest {V : Language Bool}
-    (hV : PolyTimeComputable (fun z => [MultiTapeTM.indicator V z]))
-    (a k a' k' : ℕ) :
-    PolyTimeComputable (fun z =>
-      [(List.range (a' * ((pairFstD z).length + 1) ^ k')).any
-        (fun i => MultiTapeTM.indicator V (pairEncode (pairFstD z) (blockAt a k z i)))]) := by
-  sorry
-
-/-- The strict-majority-aggregated block test of a polynomial-time one-bit
-indicator is polynomial-time.
-
-**Proof sketch.** As `Complexity.polyTimeComputable_blockAnyTest`, with the
-flag replaced by two unary vote counters (passed and failed blocks); at
-countdown exhaustion the emitted bit is the strict comparison of their
-lengths (`Complexity.polyTimeComputable_lenLe` after a `pairSwap`), which
-equals `a'·(n+1)^k' < 2·(passed votes)` since the counts sum to the round
-total. -/
-theorem polyTimeComputable_blockMajorityTest {V : Language Bool}
-    (hV : PolyTimeComputable (fun z => [MultiTapeTM.indicator V z]))
-    (a k a' k' : ℕ) :
-    PolyTimeComputable (fun z =>
-      [decide (a' * ((pairFstD z).length + 1) ^ k' <
-        2 * (List.range (a' * ((pairFstD z).length + 1) ^ k')).countP
-          (fun i => MultiTapeTM.indicator V
-            (pairEncode (pairFstD z) (blockAt a k z i))))]) := by
-  sorry
-
-/-- The XOR-then-OR aggregated block test of a polynomial-time one-bit
-indicator is polynomial-time: the input is a nested pair
-`⟨⟨x, u⟩, v⟩`; block `i` is drawn from `u`, XORed bitwise with `v`
-(truncating, `Complexity.xorD`), and tested paired with `x`.
-
-**Proof sketch.** As `Complexity.polyTimeComputable_blockAnyTest`, with the
-per-round test precomposed with the XOR mask: the loop state additionally
-carries `v`, and the round's test input is
-`pairEncode x (xorD (pairEncode v block))`
-(`Complexity.polyTimeComputable_xorD`). -/
-theorem polyTimeComputable_blockXorAnyTest {V : Language Bool}
-    (hV : PolyTimeComputable (fun z => [MultiTapeTM.indicator V z]))
-    (a k a' k' : ℕ) :
-    PolyTimeComputable (fun w =>
-      [(List.range (a' * ((pairFstD (pairFstD w)).length + 1) ^ k')).any
-        (fun i => MultiTapeTM.indicator V (pairEncode (pairFstD (pairFstD w))
-          (List.zipWith xor (pairSndD w) (blockAt a k (pairFstD w) i))))]) := by
-  sorry
+/-- `xorD` computes the truncating bitwise XOR on genuine pairs. -/
+@[simp]
+theorem xorD_pairEncode (a b : List Bool) :
+    xorD (pairEncode a b) = List.zipWith xor a b := by
+  simp [xorD]
 
 end Complexity
