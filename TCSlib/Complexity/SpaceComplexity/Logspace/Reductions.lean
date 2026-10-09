@@ -104,13 +104,18 @@ theorem LogspaceReducible.trans {B C D : Language Bool} (h₁ : B ≤ₗ C)
 spec, fill pending): if `B ≤ₗ C` and `C ∈ LOGSPACE` then `B ∈ LOGSPACE`.
 
 **Proof sketch.** [AB09]'s own route: `C`'s characteristic function is
-implicitly logspace computable (its bit language at index `0` is `C`'s
-decider; its length language is total — a one-bit output), so the
+implicitly logspace computable (its bit language holds at a genuine pair
+`⟨x, i⟩` iff `i = 0 ∧ x ∈ C`; its length language is **exactly**
+`{pairEncode x [] | x}` — a regular language, not a total one: index `1` and
+every malformed string are rejected; round-1 audit, finding 1), so the
 composition `χ_C ∘ f` is implicitly logspace computable by
 `Complexity.ImplicitlyLogspaceComputable.comp`, and deciding `B` is its bit
-query at index `0` — a `LOGSPACE` membership by the `indexLang` conjunct
-specialized to the fixed index (a fixed-suffix specialization, named fill
-obligation). -/
+query at index `0` — a `LOGSPACE` membership by a fixed-index
+**paired-input** specialization (named fill obligation): the index-`0` query
+string is `pairEncode x [] = dbl x ++ [false, true]`, the *doubled* word with
+its separator, not `x` itself, so the specialization simulates the query
+decider on that doubled virtual input directly — independent of this very
+theorem, avoiding circularity (round-1 audit, finding 2). -/
 theorem mem_LOGSPACE_of_logspaceReducible {B C : Language Bool} (h : B ≤ₗ C)
     (hC : C ∈ LOGSPACE) : B ∈ LOGSPACE := by
   sorry

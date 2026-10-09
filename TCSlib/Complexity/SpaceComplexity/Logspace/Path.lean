@@ -114,9 +114,11 @@ coded configuration-graph vertices of
 `Turing.NDTM.coreSum`/`Turing.FinNDTM.configBound` at window
 `c₀ · logSpace |x|` — polynomially many, each code logarithmically
 indexable — with the accepting side normalized to a single target vertex
-(the erase-and-park normalization; the received `Machines/Clean` cleanTM
-discipline is the model, and the P0 fitness note's unique-terminal caveat
-is discharged exactly here). `x ∈ B` iff the target is reachable
+(the erase-and-park normalization — **assigned for discharge here**, not
+already closed: the received `Machines/Clean` cleanTM is the model only, and
+the P0 record notes it does not reset the input head, so the normalization
+must also park the input head and re-prove acceptance, all-branch halting,
+and the space constant for the normalized machine; round-1 audit, note 4). `x ∈ B` iff the target is reachable
 (`Turing.FinNDTM.DecidesInSpace.mem_iff_acceptsWithin_configBound` with
 `Turing.NDTM.reflTransGen_cfgStep_iff`, phase P4.2). The reduction is
 **implicitly logspace computable**: a bit query `⟨x, i⟩` locates `i` inside

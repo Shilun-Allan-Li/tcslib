@@ -164,7 +164,7 @@ namespace FinNDTM
 
 /-- The configuration-graph **vertex count** of `N` on inputs of length `n`
 with window radius `s`: three (the output summaries) times the deterministic
-core-code count of `Turing.MultiTapeTM.ConfigCount.configBound` —
+core-code count of `Turing.FinTM.configBound` —
 `3 · (|Q| + 1) · (n + 2) · 3^{k(2s+1)} · (2s+1)^k`. [AB09, Claim 4.4(1), with
 the campaign's explicit constants] -/
 def configBound (N : FinNDTM Bool) (n s : ℕ) : ℕ :=
@@ -191,8 +191,10 @@ with the summary) are injective (`coreCode_inj`), so the branch length is at
 most `N.configBound x.length s`, and the shortened word pads back up to the
 exact count (`Turing.FinNDTM.AcceptsWithin.mono` — `AcceptsWithin` demands
 exact word length); if the original `T` is already smaller, pad directly
-instead (the same `mono`, and the padded siblings stay halted by
-`Turing.NDTM.runWith_of_halt`). -/
+instead (the same `mono`). In either case it is the **accepting branch**
+that stays halted under padding (`Turing.NDTM.runWith_of_halt`): the
+statement carries no sibling-halting hypothesis and needs none (round-1
+audit, finding 1). -/
 theorem acceptsWithin_of_spaceUsedWith_le (N : FinNDTM Bool) {x : List Bool}
     {T s : ℕ} (hacc : N.AcceptsWithin x T)
     (hs : ∀ w : List Bool, w.length = T →
@@ -231,9 +233,11 @@ open Turing
 /-- **Nondeterministic space sits inside exponential time**
 ([AB09, Theorem 4.2, third inclusion]): for space-constructible `S`,
 `NSPACE S ⊆ ⋃ c, DTIME (2 ^ (c · (S n + 1)))`. The union over `c` renders the
-book's `2^{O(S(n))}`; the `+ 1` keeps the exponent positive and absorbs the
-input-head factor (`n + 2 ≤ 2 ^ (S n + 1)`, since `SpaceConstructible` bundles
-`logSpace n ≤ S n`).
+book's `2^{O(S(n))}`; the `+ 1` is a harmless normalization whose job is the
+input-head absorption (`n + 2 ≤ 2 ^ (S n + 1)`, since `SpaceConstructible`
+bundles `logSpace n ≤ S n`) — the displayed time bound is everywhere positive
+regardless, and the `c = 0` component has exponent `0` (round-1 audit,
+finding 5).
 
 **Proof sketch.** Let `N` decide `L` in space `c₀ · s`. The deterministic
 simulator, on input `x`: (i) computes the window radius `c₀ · S |x|` from the
@@ -267,8 +271,10 @@ count is polynomial, so the breadth-first search runs in polynomial time.
 `N.configBound n (c₀ · logSpace n)` is bounded by a fixed polynomial in `n`
 (the received `Turing.FinTM.configBound_logSpace_le` arithmetic, times three),
 so the BFS with its table fits in `DTIME (n^d + 1)` for a fixed `d` —
-mirroring the received `Complexity.LOGSPACE_subset_P`, whose proof is the
-deterministic special case of the same search. Continuation budget
+with count arithmetic analogous to the received
+`Complexity.LOGSPACE_subset_P` — whose own proof keeps the original machine
+and bounds its halting time through `ComputesInSpace`, constructing no
+search or visited table (round-1 audit, finding 4). Continuation budget
 anticipated: the external prior art's `NL ⊆ P` was a full submission on its
 own ([Bon26] context in `machine-library-design.md` §12 — reachability-table
 construction; design only, nothing ported). -/
@@ -280,7 +286,11 @@ theorem NL_subset_P : NL ⊆ P := by
 `NL`-hard under polynomial-time Karp reductions — so `NL`-completeness is
 only meaningful for the logspace reductions of phase P4.4
 ([AB09, Definition 4.16]; the exercise's intended moral, recorded in its
-docstring rather than left implicit).
+docstring rather than left implicit). **Corrects the exercise's printed
+wording**: p. 93 says "complete for `NL`" for an arbitrary nontrivial target,
+which is false without target membership in `NL` (an undecidable nontrivial
+target defeats completeness); only hardness is claimed here, and
+completeness additionally requires `L ∈ NL` (round-1 audit, finding 2).
 
 **Proof sketch.** Fix witnesses `y₀ ∈ L` and `z₀ ∉ L` (classical choice). For
 `L' ∈ NL`, `Complexity.NL_subset_P` gives a polynomial-time decider of `L'`;
