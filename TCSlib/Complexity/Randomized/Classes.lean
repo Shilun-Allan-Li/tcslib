@@ -186,7 +186,15 @@ theorem exists_ofFn_eq {l : List Bool} {m : ℕ} (h : l.length = m) :
 
 /-- **Independence of disjoint segments**: if the event is a conjunction of a
 condition on the first `m₁` bits and a condition on the remaining `m₂` bits,
-the probability factors. -/
+the probability factors.
+
+**Proof sketch.** Combine the denominators by `2^{m₁+m₂} = 2^{m₁}·2^{m₂}`;
+the numerators then agree via `Finset.card_bij` with the bijection
+`(u, v) ↦ Fin.append u v` from pairs of accepted strings to accepted
+concatenations.  `List.ofFn_fin_append` together with `List.take_left'` /
+`List.drop_left'` matches the events on each side, injectivity is that of
+`Fin.appendEquiv`, and surjectivity splits an arbitrary `r` by
+`Fin.append_castAdd_natAdd`. -/
 theorem randProb_split (m₁ m₂ : ℕ) (A B : List Bool → Prop)
     [DecidablePred A] [DecidablePred B] :
     randProb (m₁ + m₂) (fun r => A (r.take m₁) ∧ B (r.drop m₁)) =
@@ -420,6 +428,8 @@ Boolean test `B` succeeds: the vote count of `majorityVerifier` and
 def blockCount (q K : ℕ) (B : List Bool → Bool) (l : List Bool) : ℕ :=
   (List.range K).countP fun i => B ((l.drop (i * q)).take q)
 
+/-- The vote count over `K` blocks is at most `K`: it counts a subset of the
+`K` block indices. -/
 theorem blockCount_le (q K : ℕ) (B : List Bool → Bool) (l : List Bool) :
     blockCount q K B l ≤ K := by
   calc blockCount q K B l ≤ (List.range K).length := List.countP_le_length ..
@@ -441,7 +451,15 @@ theorem blockCount_succ (q K : ℕ) (B : List Bool → Bool) (l : List Bool) :
 
 /-- **The vote count is binomially distributed**: over a uniform string of
 `K` blocks of `q` bits each, `Pr[blockCount = j] = C(K,j)·s^j·(1−s)^{K−j}`,
-where `s` is the single-block success probability. -/
+where `s` is the single-block success probability.
+
+**Proof sketch.** Recursion on the number of blocks.  `blockCount_succ`
+peels off the first block, and splitting the event by that block's outcome
+gives a disjoint union (`randProb_or_disjoint`) whose branches factor into
+first-block times remaining-blocks probabilities by `randProb_split`; the
+recursive values recombine through Pascal's rule `Nat.choose_succ_succ`.
+In the boundary case `j = K`, the branch asking for `K + 1` successes among
+`K` blocks has probability zero by `blockCount_le`. -/
 theorem randProb_blockCount (q : ℕ) (B : List Bool → Bool) :
     ∀ K j : ℕ, j ≤ K →
       randProb (K * q) (fun l => blockCount q K B l = j) =
@@ -516,7 +534,16 @@ theorem randProb_blockCount (q : ℕ) (B : List Bool → Bool) :
 block succeeds with probability at most `1/2 − ε`, then at least half of
 the `K` blocks succeed with probability at most `2·(1 − 4ε²)^⌊K/2⌋`.
 (The elementary `2^K·(s(1−s))^{⌊K/2⌋}` estimate; no exponential function
-is needed, which keeps the whole development inside `ℚ`.) -/
+is needed, which keeps the whole development inside `ℚ`.)
+
+**Proof sketch.** Partition the tail event by the exact vote count `j`
+ranging over `{j ≤ K : K ≤ 2j}` (`randProb_mem_eq_sum`) and expand each
+term with the binomial formula `randProb_blockCount`.  Since `s ≤ 1 − s`,
+shifting exponents toward the balanced point bounds each
+`s^j·(1−s)^{K−j}` by `(s(1−s))^{⌊K/2⌋}`, and summing *all* binomial
+coefficients (`Nat.sum_range_choose`) leaves `2^K·(s(1−s))^{⌊K/2⌋}`.
+Finally `s(1−s) ≤ 1/4 − ε²` and `2^K ≤ 2·4^{⌊K/2⌋}` reshape this into
+`2·(1 − 4ε²)^{⌊K/2⌋}`. -/
 theorem randProb_tail_le (q K : ℕ) (B : List Bool → Bool) {ε : ℚ}
     (hε0 : 0 ≤ ε) (hs : randProb q (fun l => B l = true) ≤ 1/2 - ε) :
     randProb (K * q) (fun l => K ≤ 2 * blockCount q K B l) ≤
@@ -638,7 +665,14 @@ theorem randProb_tail_le (q K : ℕ) (B : List Bool → Bool) {ε : ℚ}
     _ ≤ 2 * (1 - 4 * ε ^ 2) ^ (K / 2) := hfinal
 
 /-- The rational Bernoulli estimate `(1−x)^m ≤ 1/2` once `m·x ≥ 1`:
-`(1−x)^m·(1+mx) ≤ 1` by induction, and `1+mx ≥ 2`. -/
+`(1−x)^m·(1+mx) ≤ 1` by induction, and `1+mx ≥ 2`.
+
+**Proof sketch.** The key inequality `(1−x)^{m'}·(1 + m'·x) ≤ 1` holds for
+every `m'` by induction: the step rewrites
+`(1−x)·(1 + (m'+1)·x) = 1 + m'·x − (m'+1)·x²` and drops the nonnegative
+correction term.  At `m' = m` the hypothesis gives `1 + m·x ≥ 2`, and
+nonlinear arithmetic turns `(1−x)^m·(1 + m·x) ≤ 1` into
+`(1−x)^m ≤ 1/2`. -/
 theorem one_sub_pow_le_half {x : ℚ} (_hx0 : 0 ≤ x) (hx1 : x ≤ 1) {m : ℕ}
     (hm : 1 ≤ (m : ℚ) * x) : (1 - x) ^ m ≤ 1/2 := by
   have key : ∀ m' : ℕ, (1 - x) ^ m' * (1 + (m' : ℚ) * x) ≤ 1 := by
@@ -709,7 +743,18 @@ one-sided witness: on members it answers `some b` with probability at least
 `1/2` (it never answers `some (!b)` and aborts with probability at most
 `1/2`), and on non-members it never answers `some b`; a 2-fold `OR`
 (`anyVerifier`) amplifies `1/2` to `3/4 ≥ 2/3`.  The common core of the
-inclusions `ZPP ⊆ RP` and `ZPP ⊆ coRP` in [AB09, Thm 7.8]. -/
+inclusions `ZPP ⊆ RP` and `ZPP ⊆ coRP` in [AB09, Thm 7.8].
+
+**Proof sketch.** The `RP` witness is `anyVerifier` over the test
+`M x r = some b`, run on two independent randomness blocks.  For `x ∈ L'`,
+one run answers `some b` with probability at least `1/2`: a non-aborting
+answer is never `some (!b)`, so `randProb_mono` lifts `Pr[¬abort] ≥ 1/2`
+(from `randProb_not` and the abort bound) to `Pr[some b] ≥ 1/2`; the OR
+fails only when both halves fail, a product `≤ (1/2)² = 1/4` by
+`randProb_split` and `randProb_take`, so acceptance is `≥ 3/4 ≥ 2/3`.
+For `x ∉ L'`, each half of the random string is a genuine length-`q`
+string (`exists_ofFn_eq`) on which `hout` forbids the answer `some b`, so
+the OR never accepts. -/
 theorem inRP_of_zeroError (hAns : ClosedUnderAnswerIs E)
     (hAny : ClosedUnderAny E) {M : List Bool → List Bool → Option Bool}
     {a k : ℕ} (hM : E.Eff M) (L' : Language Bool) (b : Bool)
@@ -992,14 +1037,21 @@ docstring's **Deviations**). -/
 def weakAdv (c n : ℕ) : ℚ :=
   min (1/6) (((n : ℚ) + 1)⁻¹ ^ c)
 
+/-- The weak advantage is positive: both the cap `1/6` and the
+inverse-polynomial `(n+1)^{-c}` are positive. -/
 theorem weakAdv_pos (c n : ℕ) : 0 < weakAdv c n := by
   unfold weakAdv
   refine lt_min (by norm_num) ?_
   positivity
 
+/-- The weak advantage never exceeds its cap `1/6`, keeping the weak success
+threshold `1/2 + weakAdv c n` at most `2/3` at every length. -/
 theorem weakAdv_le_sixth (c n : ℕ) : weakAdv c n ≤ 1/6 :=
   min_le_left _ _
 
+/-- The weak advantage is inverse-polynomially large: `weakAdv c n` is at
+least `(n+1)^{-c}/6`, since `(n+1)^{-c} ≤ 1` puts a sixth of it below both
+branches of the `min`. -/
 theorem weakAdv_ge (c n : ℕ) :
     (((n : ℚ) + 1)⁻¹) ^ c / 6 ≤ weakAdv c n := by
   have hy0 : (0:ℚ) ≤ (((n : ℚ) + 1)⁻¹) ^ c := by positivity
@@ -1013,7 +1065,15 @@ theorem weakAdv_ge (c n : ℕ) :
 
 /-- The arithmetic core of the amplification: with
 `k(n) = 56·(n+1)^{2c+d}` repetitions, the elementary tail bound beats
-`2^{-((n+1)^d + 1)}`. -/
+`2^{-((n+1)^d + 1)}`.
+
+**Proof sketch.** Write `ε = weakAdv c n`; by `weakAdv_ge`,
+`6ε ≥ (n+1)^{-c}`, whence `9·(n+1)^{2c}·(4ε²) ≥ 1` — the hypothesis
+`m·x ≥ 1` of the Bernoulli bound, with `m = 9(n+1)^{2c}` and `x = 4ε²`.
+The exponent `⌊56(n+1)^{2c+d}/2⌋ = 28(n+1)^{2c+d}` dominates
+`9(n+1)^{2c}·((n+1)^d + 2)`, so `one_sub_pow_le_half_pow` yields
+`(1 − 4ε²)^{⌊k/2⌋} ≤ (1/2)^{(n+1)^d + 2}`, and the leading factor `2`
+absorbs one halving. -/
 theorem weakAdv_tail_bound (c d n : ℕ) :
     2 * (1 - 4 * weakAdv c n ^ 2) ^ (polyLen 56 (2 * c + d) n / 2) ≤
       (1/2 : ℚ) ^ ((n + 1) ^ d + 1) := by
@@ -1104,16 +1164,19 @@ inverse-polynomial advantage is decidable with success probability
 `1 − 2^{-((|x|+1)^d + 1)}`, for every constant `d` — relative to `E`,
 assuming `E` is closed under polynomial majority repetition.
 
-**Proof.** Run the weak verifier `k(n) = 56·(n+1)^{2c+d}` times on
+**Proof sketch.** Run the weak verifier `k(n) = 56·(n+1)^{2c+d}` times on
 independent blocks of randomness and take the majority
-(`majorityVerifier`).  The vote count is binomially distributed
-(`randProb_blockCount`), and the elementary tail estimate
-`randProb_tail_le` bounds the error by `2·(1 − 4ε²)^{⌊k/2⌋}` with
-`ε = weakAdv c n ≥ (n+1)^{-c}/6`; the rational Bernoulli bound
-`one_sub_pow_le_half_pow` then gives `≤ 2^{-((n+1)^d + 1)}`
-(`weakAdv_tail_bound`).  (The book computes with `e^{−2ε²k}`; the
-elementary `(4p(1−p))^{k/2}` bound proves the same statement while keeping
-every quantity rational.) -/
+(`majorityVerifier`).  In each of the two symmetric cases the failure
+event is a vote-count tail — for `x ∈ L` the *false* votes reach `k/2`
+(rephrased through the complementary vote-count identity), for `x ∉ L`
+the *true* votes do — where each single block errs with probability
+`≤ 1/2 − ε` with `ε = weakAdv c n ≥ (n+1)^{-c}/6`, so the elementary tail
+estimate `randProb_tail_le` (built on the binomial distribution
+`randProb_blockCount`) bounds it by `2·(1 − 4ε²)^{⌊k/2⌋}`; the arithmetic
+crunch `weakAdv_tail_bound` (via the rational Bernoulli bound
+`one_sub_pow_le_half_pow`) then gives `≤ 2^{-((n+1)^d + 1)}`.  (The book
+computes with `e^{−2ε²k}`; the elementary `(4p(1−p))^{k/2}` bound proves
+the same statement while keeping every quantity rational.) -/
 theorem bpp_error_reduction (hMaj : ClosedUnderMajority E) {c : ℕ}
     {L : Language Bool} (hL : InBPPWeak E c L) (d : ℕ) :
     InBPPStrong E d L := by

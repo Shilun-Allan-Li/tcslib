@@ -16,6 +16,11 @@ Arora–Barak's Lemma 7.37: in an `(n,d,λ)`-graph, the number of edges between
 any two vertex sets `S` and `T` deviates from its "random-graph" expectation
 `(d/n)|S||T|` by at most `λd√(|S||T|)`.
 
+## Main definitions
+
+* `Expander.indicator` — the `0`/`1` indicator vector of a finite vertex set,
+  as an element of `EuclideanSpace ℝ (Fin n)`.
+
 ## Main results
 
 * `Expander.inner_indicator_mulVec_le` — the normalized form

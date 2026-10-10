@@ -3,7 +3,10 @@
 Baseline: the ch7-phase1 gate-audited surface, commit `76fe2f46` (the pack/bundle
 commit; the post-gate minor/note sweeps at `c4114867` were comment-only and vanish
 under comment stripping). Current: the campaign head carrying the completed fill
-(`d450376` plus this closure commit). Method per `workflow.md` §6: strip comments
+(`d450376` plus this closure commit, which also carries the closure documentation
+sweep — 31 comment-only docstring/sketch additions across nine audited modules,
+each mechanically verified comment-only and therefore invisible to the comparison
+below). Method per `workflow.md` §6: strip comments
 from every module, compare the ordered declaration sequence and multiset against
 the baseline, and enumerate public declarations gained / lost / signature-changed.
 Signature comparison splits each declaration at its first top-level `:=`
