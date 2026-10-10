@@ -31,3 +31,35 @@ commissions the fill batch.
 The fill batch. Its brief is drafted once RB5 merges, so that the host proof
 can cite the promoted `Turing.MultiTapeTM.runFrom_mapState_of_agreeOn`
 (RB5 Task 1). ZF-B3's continuation (B4) follows the fill.
+
+## Fill integrated (2026-10-10)
+
+The fill batch (`briefs/s12-counter-fill.md`) delivered **10/10** at base
+`c9a0b431`. It is integrated by `git am -3` as `2e99bda1`, with Codex
+authorship; the agent's report is `audits/s12-counter-agent-reports/fill-REPORT.md`.
+
+- **Routes followed:** one direct one-step symbol transport; **one** decrement
+  run transport (`counter_decrement_run`) for both decrement contracts, with
+  no trace; the auditor's telescoping potential; **one** round induction
+  (`counter_rounds`) for both host theorems; and the body phase as one
+  explicit step followed by guarded transport through the public RB5 lemma.
+- **Freeze** (independent declaration-level check): 24 public declarations
+  before and after. No statement changed, and exactly the ten theorem bodies
+  changed. Two docstring appendices on the amortization theorems keep the
+  original text as a prefix, as does the module status appendix. 25 new
+  privates; imports unchanged.
+- **Replay:** `Build/CounterLoop` and the `TuringMachine` facade both have
+  0 errors and 0 sorries. Nothing imports `CounterLoop`.
+- **Axioms** (`audits/logs/s12-counter-fill-axioms.log`): all 24 public
+  declarations are within `[propext, Classical.choice, Quot.sound]`, several
+  at proper subsets. No `sorryAx`.
+- **Lint:** 0 FAIL. `CounterLoop.lean` is 1,205 lines, over the 1,000-line
+  mark; the justification is in the plan's decision log.
+- **Duplication:** the maintainer's run of the copy-text screen over
+  CounterLoop, Catalog, Embed, Loop and StateRenaming reproduces the agent's
+  after-output exactly (686 pairs, 282,786 characters). There is no new
+  cross-file pair, and the four new in-file pairs all lie below 90%, each
+  justified.
+
+The fill rides a §12.7 fill-gate audit.
+

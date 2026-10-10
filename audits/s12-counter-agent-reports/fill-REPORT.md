@@ -1,0 +1,1689 @@
+# §12.7 counter-loop fill — complete
+
+**10/10 targets proved. No frontier remains.** The delivery changes only
+`TCSlib/Complexity/TuringMachine/Build/CounterLoop.lean` in the git history.
+No theorem statement, definition, instance, or import was changed. All new
+declarations are private. No PR or push was made.
+
+Delivery commit: `80b068c765c57b2f8e6bba299431eb29a01ba9fe`.
+
+Source SHA-256: `9a059f2d6b9039344062ddf3793f88faf41799140ff6b62d9022ad3374c25bf6`.
+
+## Baseline and branch
+
+- Repository: `https://github.com/Shilun-Allan-Li/tcslib`.
+- Campaign branch: `complexity/arora-barak-ch3-4`.
+- Pulled with `git pull --ff-only origin complexity/arora-barak-ch3-4`; already current.
+- Recorded base: `c9a0b4312dd156bc353d2ced1aec5df8f18146c7`.
+- Required ancestor: `fe89d903db48bf07a67f67dba5d0d95439ff0e9a`.
+  `git merge-base --is-ancestor` succeeded before editing and again before delivery.
+- Working branch: `fill/s12-counter`, created from the recorded base; never rebased.
+- Instructions read in full: `briefs/s12-counter-fill.md`,
+  `audits/s12-counter-findings.md`, `audits/s12-counter-resolutions.md`,
+  `machine-library-design.md` §12.7, `AGENTS.md`, and `policy.md`.
+  The pre-ship injectivity checks and RB5's worked one-step transport pattern
+  were also inspected.
+
+## Completed targets and proof routes
+
+| Target | Proof and citations |
+|---|---|
+| `MultiTapeTM.mapWorkSymbols_runFrom` | The new direct one-step lemma `counter_work_step` cancels inverse reads and commutes renamed writes with cell updates. `MultiTapeTM.runFrom_comm_of_step` iterates it. No state-renaming proof is copied. |
+| `decrementTM_run_succ_ofCfg` | `counter_dec_complement` converts the word premise; `counter_decrement_run` is the single decrement run transport. Apply `incrementTM_run_succ_ofCfg`, complement the final frame, and project cuts and head bounds. |
+| `decrementTM_run_underflow_ofCfg` | Apply `incrementTM_run_overflow_ofCfg` through the same `counter_decrement_run`; complement the all-false wrap. There is no private decrement trace. |
+| `counterWord_length` | `counter_dec_spec` proves width preservation by word induction; `counter_word_succ` gives the iteration recurrence. |
+| `counterWord_value` | The same `counter_dec_spec` gives the exact predecessor value; `counter_dec_zero` excludes underflow during the successful prefix. Induct on the iteration count. |
+| `counterOverhead_le_of_le` | `counter_potential` proves the auditor's exact telescoping identity using `List.count true`. Apply `List.count_le_length` and `counterWord_length`. No Legendre/Kummer dependency. |
+| `counterOverhead_le` | Specialize the potential identity at exhaustion; `counter_word_exhausted` makes its terminal potential zero. Add the full-width underflow cost using `Finset.sum_range_succ`. |
+| `counterLoopTM_run_done` | Instantiate the single round induction `counter_rounds` at the counter value; returning endpoints give the next decrement state. Append `counter_debit`'s underflow segment with `counter_span_append`. The zero-value case never assumes anything about the initial body state. |
+| `counterLoopTM_run_escape` | Instantiate the same `counter_rounds` at `r₀ + 1` with an unrestricted final body state, then use `hexit` and `e ≠ a`. The budget premise ensures every debit succeeds; no trailing underflow is added, including on the last permitted round. |
+| `counterLoop_time_le` | `Finset.sum_le_card_nsmul` bounds the body-round sum; combine it with `counterOverhead_le`. |
+
+The host phase proofs use the public
+`MultiTapeTM.runFrom_mapState_of_agreeOn`, the proved decrement contracts,
+`embedEmitTM_runFrom`, `embedEmitCfg_selected_tape`,
+`embedEmitCfg_selected_pos`, and `embedEmitTM_frame`. The two state maps are
+proved injective. The decrement guard excludes verdict controls. The body
+phase executes its entry action explicitly and transports the suffix only
+on states avoiding the anchor and optional exit. Both head-range and body-head
+witness clauses are preserved at every intermediate time, including phase
+boundaries.
+
+`counter_rounds` is one induction, shared by both public host theorems. Its
+final state is unrestricted: after a positive number of rounds it is the
+redirection of the final body state. On a returning prefix this is precisely
+the invariant before the next decrement. This stronger final-state form also
+handles the final escaping round without a second induction.
+
+## New private declarations
+
+| Declaration | Role |
+|---|---|
+| `counter_work_step` | Direct one-step work-symbol conjugation. |
+| `counter_dec_complement` | Word-level complement/carry/borrow identity. |
+| `counter_complement_twice` | Involutivity on every configuration work cell. |
+| `counter_buffer_complement` | Complementing a buffered word, including blanks. |
+| `counter_decrement_run` | The one shared transport of decrement runs to complemented increment runs. |
+| `counter_dec_spec` | One word induction: underflow word, successful length/value/potential facts. |
+| `counter_word_succ` | Frozen word-orbit recurrence. |
+| `counter_dec_zero` | Equivalence between underflow and zero binary value. |
+| `counter_word_decrement` | The next frozen word is the physical predecessor before exhaustion. |
+| `counter_potential` | Exact successful-prefix telescoping cost identity. |
+| `counter_word_exhausted` | Exhaustion leaves the original width filled with false bits. |
+| `counter_last_unselected` | The counter tape is outside `Fin.castSuccEmb`'s image. |
+| `counter_cfg_eq` | Host configuration fields, derived from R1 selected-bank/frame exports. |
+| `counter_dec_injective` | Injectivity of decrement-successor redirection. |
+| `counter_redirect_injective` | Injectivity of body-successor redirection, including anchor priority. |
+| `counterSpan` | Private predicate collecting cuts, counter-head range, and a body-head-vector relation. |
+| `counter_span_append` | Concatenation of those segment invariants via run addition. |
+| `counterPatch` | Private word-interval overwrite, preserving the outer counter frame. |
+| `counter_patch_initial` | Installing an already present word changes no tape cell. |
+| `counter_patch_twice` | Equal-width overwrites compose without changing the original outer frame. |
+| `counter_patch_frame` | Equal-width overwrites retain the two blank delimiters. |
+| `counter_debit` | Shared host decrement phase, covering success and underflow by contracts and guarded transport. |
+| `counter_body` | One explicit entry step, then guarded transport of the embedded body suffix. |
+| `counter_orbit_succ` | Body configuration-orbit recurrence. |
+| `counter_rounds` | The single round induction: exact configuration/time, cuts, and all-time trajectories. |
+
+**Requested shared lemmas: none. Imports added: none. New copies: none.**
+No optional public space corollary was added; the requested trajectory clauses
+are proved in full.
+
+## Freeze and documentation
+
+The executable freeze check compares all 24 explicit public declarations
+against the recorded base: all ten theorem signatures, all 13 definitions/type,
+and the explicit Fintype instance. It also checks the unchanged deriving clause
+for DecidableEq, public declaration order, imports, original documentation, the
+absence of source admissions, and the tracked-file scope.
+
+Three permitted docstring appendices are flagged:
+
+1. The module docstring gains a status/proof-route appendix. Its historical
+   statement-skeleton wording is retained verbatim before that appendix.
+2. `counterOverhead_le_of_le` gains the actual telescoping-potential proof sketch.
+3. `counterOverhead_le` gains the potential-at-exhaustion proof sketch.
+
+All other original docstrings are byte-identical. Existing text in the three
+amended docstrings is retained before the appended material.
+
+The file exceeds the policy's 1000-line warning threshold. It is kept together
+because this brief grants exclusive ownership of this file and freezes the
+public surface; a split would add files/import changes outside the brief.
+The private phase and prefix lemmas keep the development modular within that
+constraint. The standing §12.2c reorganization is the appropriate shared-file
+window for a later split. The style check has **0 FAIL**.
+
+## Duplication review
+
+The required unmodified screen was run on CounterLoop, Catalog, Embed, Loop,
+and StateRenaming before editing and after the final source. Both complete
+outputs are quoted below and also supplied as logs. Existing pairs among the
+other four files are unchanged.
+
+The first diagnostic pass found three cross-file overlaps made of short tactic
+idioms. They were eliminated by factoring the direct symbol-step lemma from its
+iteration theorem, using the conditional-equality criterion for the initial
+counter overwrite, and expressing the body's entry/suffix composition uniformly
+with `runFrom_add`. No declaration from another file was transcribed or renamed.
+The final screen has **no new cross-file pair involving CounterLoop**.
+
+Every new in-file pair is listed here; none reaches the brief's 90% copy cutoff:
+
+| Target reproduces source | Shared/source text | Justification |
+|---|---:|---|
+| `decrementTM_run_succ_ofCfg` → `counter_complement_twice` | 67/88 = 76% | Shared extensionality and double-`Option.map` simplification idioms; the former transports a framed increment result, while the latter proves configuration involutivity. The run transport already cites the involutivity lemma. |
+| `decrementTM_run_underflow_ofCfg` → `counter_complement_twice` | 62/88 = 70% | The same elementary double-complement simplification appears in the unchanged outer frame of the underflow result; the decrement run transport itself is shared. |
+| `counterWord_value` → `counter_word_decrement` | 94/150 = 63% | Both use the already shared zero-underflow characterization to eliminate the impossible failure branch; one proves the numerical orbit value by induction, the other identifies its optional predecessor. |
+| `decrementTM_run_succ_ofCfg` → `decrementTM_run_underflow_ofCfg` | 448/750 = 60% | Framed-interface assembly, configuration extensionality, and projections of cuts/heads are parallel; all run transport is factored through `counter_decrement_run`. The two increment contracts supply different word premises and endpoints. |
+
+These are screening candidates consisting of common glue, not duplicated
+proved developments. The decrement machine and traces, body embedding, and
+round induction each have one proof source. **New copies: none.**
+
+## Verification and reproduction
+
+Lean is the pinned 4.25.0; mathlib is pinned at
+`029db123ddaa7f8fd0d18cea3b1b33bf84dacd1e`. Dependency cache retrieval used
+`lake exe cache get Mathlib.Data.Nat.Digits.Defs Mathlib.Logic.Equiv.Bool`.
+All source checks used `scripts/lean_check_tree.sh`; no project-wide build was
+invoked. The current Embed → Loop → Primitives → Catalog dependency chain was
+refreshed through that checker so the promoted RB5 lemma was present in the
+checked imports.
+
+The runtime used the existing pinned Lean distribution and its `/proc/self/exe`
+path-compatibility shim. Neither Lean source, the required checker, nor the
+repository's screen/lint scripts were altered.
+
+Required final checks:
+
+- `Build/CounterLoop`: zero errors, zero sorry warnings, fresh `.olean`.
+- `TuringMachine` facade: zero errors, zero sorry warnings, fresh `.olean`.
+- Axiom prints: all ten theorems, all thirteen definitions/type, and both
+  instances. Every dependency is in `[propext, Classical.choice, Quot.sound]`;
+  no `sorryAx` or other axiom.
+- `python3 scripts/campaign_style_lint.py TCSlib/Complexity/TuringMachine/Build`:
+  0 FAIL (file-size warnings are disclosed above).
+- `git diff --check`: pass.
+- Frozen-source comparison: pass.
+- Patch-series replay on a clean checkout of the recorded base: delivered
+  source blob reproduced exactly.
+- `git bundle verify`: pass; the incremental bundle requires the recorded base.
+
+The ZIP has no enclosing directory. It contains the full source at its repository
+path, the format-patch series, incremental git bundle, this report, final sweep,
+axiom/lint/freeze logs, both text screens, and SHA256SUMS. The axiom-print input and
+freeze checker are included as evidence. To reproduce, apply the patch to the
+recorded base, make the pinned dependency cache available, and run:
+
+```sh
+bash scripts/lean_check_tree.sh TCSlib/Complexity/TuringMachine/Build/CounterLoop
+bash scripts/lean_check_tree.sh TCSlib/Complexity/TuringMachine
+cp evidence/CounterLoopAxioms.lean.txt CounterLoopAxioms.lean
+bash scripts/lean_check_tree.sh CounterLoopAxioms
+python3 scripts/campaign_style_lint.py TCSlib/Complexity/TuringMachine/Build
+```
+
+The report's remaining sections contain the exact final logs and full before/after
+screen outputs. No statement-gate executable sample is represented as a new kernel
+proof; the certification here comes from the final checker and axiom outputs.
+
+## Final sweep
+
+```text
+Lean 4.25.0; all checks through scripts/lean_check_tree.sh
+Source SHA256: 9a059f2d6b9039344062ddf3793f88faf41799140ff6b62d9022ad3374c25bf6
+PASS 1/2 TCSlib/Complexity/TuringMachine/Build/CounterLoop: exit=0; errors=0; sorry_warnings=0; fresh_olean_bytes=2247488; seconds=4.21
+PASS 2/2 TCSlib/Complexity/TuringMachine: exit=0; errors=0; sorry_warnings=0; fresh_olean_bytes=45400; seconds=1.22
+```
+
+## Axiom prints (25 declarations)
+
+```text
+'Turing.Action.mapWorkSymbols' depends on axioms: [Quot.sound]
+'Turing.Cfg.mapWorkSymbols' depends on axioms: [Quot.sound]
+'Turing.MultiTapeTM.mapWorkSymbols' depends on axioms: [Quot.sound]
+'Turing.MultiTapeTM.mapWorkSymbols_runFrom' depends on axioms: [propext, Quot.sound]
+'Turing.decFixed' does not depend on any axioms
+'Turing.decrementTM' depends on axioms: [Quot.sound]
+'Turing.decrementTM_run_succ_ofCfg' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.decrementTM_run_underflow_ofCfg' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.counterWord' does not depend on any axioms
+'Turing.counterOverhead' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.counterWord_length' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.counterWord_value' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.counterOverhead_le_of_le' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.counterOverhead_le' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.CounterLoopState' does not depend on any axioms
+'Turing.counterLoopStateFintype' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.counterLoopRedirect' does not depend on any axioms
+'Turing.counterLoopDecExit' does not depend on any axioms
+'Turing.counterLoopTM' depends on axioms: [Quot.sound]
+'Turing.counterLoopCfg' does not depend on any axioms
+'Turing.counterLoopOrbit' depends on axioms: [propext, Quot.sound]
+'Turing.counterLoopTM_run_done' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.counterLoopTM_run_escape' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.counterLoop_time_le' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.instDecidableEqCounterLoopState' does not depend on any axioms
+```
+
+## Style lint
+
+```text
+WARN  TCSlib/Complexity/TuringMachine/Build/Catalog.lean        11263 lines > 1000: policy requires a split or a recorded justification (escalation/decision log)
+WARN  TCSlib/Complexity/TuringMachine/Build/CounterLoop.lean    1205 lines > 1000: policy requires a split or a recorded justification (escalation/decision log)
+WARN  TCSlib/Complexity/TuringMachine/Build/Embed.lean          1023 lines > 1000: policy requires a split or a recorded justification (escalation/decision log)
+WARN  TCSlib/Complexity/TuringMachine/Build/Loop.lean           5472 lines > 1000: policy requires a split or a recorded justification (escalation/decision log)
+WARN  TCSlib/Complexity/TuringMachine/Build/Primitives.lean     6309 lines > 1000: policy requires a split or a recorded justification (escalation/decision log)
+WARN  TCSlib/Complexity/TuringMachine/Build/Zone.lean           1191 lines > 1000: policy requires a split or a recorded justification (escalation/decision log)
+INFO  TCSlib/Complexity/TuringMachine/Build/Catalog.lean        11263 lines; 44 public / 384 private declarations
+INFO  TCSlib/Complexity/TuringMachine/Build/Convention.lean     157 lines; 8 public / 0 private declarations
+INFO  TCSlib/Complexity/TuringMachine/Build/CounterLoop.lean    1205 lines; 24 public / 25 private declarations
+INFO  TCSlib/Complexity/TuringMachine/Build/Embed.lean          1023 lines; 24 public / 16 private declarations
+INFO  TCSlib/Complexity/TuringMachine/Build/EmitIterBody.lean   909 lines > target 600
+INFO  TCSlib/Complexity/TuringMachine/Build/EmitIterBody.lean   909 lines; 1 public / 18 private declarations
+INFO  TCSlib/Complexity/TuringMachine/Build/EmitIterEmbed.lean  326 lines; 18 public / 0 private declarations
+INFO  TCSlib/Complexity/TuringMachine/Build/Loop.lean           5472 lines; 8 public / 190 private declarations
+INFO  TCSlib/Complexity/TuringMachine/Build/Primitives.lean     6309 lines; 18 public / 241 private declarations
+INFO  TCSlib/Complexity/TuringMachine/Build/Seam.lean           693 lines > target 600
+INFO  TCSlib/Complexity/TuringMachine/Build/Seam.lean           693 lines; 13 public / 13 private declarations
+INFO  TCSlib/Complexity/TuringMachine/Build/VirtualInput.lean   508 lines; 16 public / 1 private declarations
+INFO  TCSlib/Complexity/TuringMachine/Build/Wrappers.lean       739 lines > target 600
+INFO  TCSlib/Complexity/TuringMachine/Build/Wrappers.lean       739 lines; 10 public / 19 private declarations
+INFO  TCSlib/Complexity/TuringMachine/Build/Zone.lean           1191 lines; 38 public / 16 private declarations
+
+style_lint: 0 FAIL, 6 WARN over 12 files
+```
+
+## Freeze check
+
+```text
+PASS: all 24 explicit public declarations preserved: 10 theorem signatures, 13 definitions/type, 1 explicit instance.
+PASS: the deriving DecidableEq clause is byte-identical.
+PASS: imports byte-identical; no new imports.
+PASS: all original declaration docstrings intact, with only the two flagged amortization appendices.
+PASS: module documentation retained with one flagged status/proof-route appendix.
+PASS: zero sorry or axiom declarations in the modified source.
+PASS: only CounterLoop.lean differs from the base in tracked source.
+PRIVATE HELPERS (25):
+counter_work_step
+counter_dec_complement
+counter_complement_twice
+counter_buffer_complement
+counter_decrement_run
+counter_dec_spec
+counter_word_succ
+counter_dec_zero
+counter_word_decrement
+counter_potential
+counter_word_exhausted
+counter_last_unselected
+counter_cfg_eq
+counter_dec_injective
+counter_redirect_injective
+counterSpan
+counter_span_append
+counterPatch
+counter_patch_initial
+counter_patch_twice
+counter_patch_frame
+counter_debit
+counter_body
+counter_orbit_succ
+counter_rounds
+SOURCE SHA256: 9a059f2d6b9039344062ddf3793f88faf41799140ff6b62d9022ad3374c25bf6
+```
+
+## Duplication delta
+
+```text
+declarations screened: 597; copy pairs (target reproduces >= half of source): 682; reproduced text: 282,115 chars
+declarations screened: 627; copy pairs (target reproduces >= half of source): 686; reproduced text: 282,786 chars
+PASS: all pre-existing pairs and measurements are unchanged.
+PASS: no new cross-file pair involving CounterLoop.
+PASS: four new in-file candidates; none reaches 90%.
+CounterLoop.lean::counterWord_value reproduces CounterLoop.lean::counter_word_decrement: 94/150 = 63%
+CounterLoop.lean::decrementTM_run_succ_ofCfg reproduces CounterLoop.lean::counter_complement_twice: 67/88 = 76%
+CounterLoop.lean::decrementTM_run_succ_ofCfg reproduces CounterLoop.lean::decrementTM_run_underflow_ofCfg: 448/750 = 60%
+CounterLoop.lean::decrementTM_run_underflow_ofCfg reproduces CounterLoop.lean::counter_complement_twice: 62/88 = 70%
+```
+
+## Before screen — complete output
+
+```text
+declarations screened: 597; copy pairs (target reproduces >= half of source): 682; reproduced text: 282,115 chars
+   Catalog.lean::f2_loopHost  reproduces  Loop.lean::loopHost: 2477/2477 = 100%
+   Catalog.lean::f2_loopBody_step  reproduces  Loop.lean::loopBody_step: 1094/1094 = 100%
+   Loop.lean::loop_find_run  reproduces  Catalog.lean::f2_loop_find_run: 678/678 = 100%
+   Catalog.lean::f2_loop_find_run  reproduces  Loop.lean::loop_find_run: 678/678 = 100%
+   Loop.lean::loop_halted_run  reproduces  Catalog.lean::a2_loop_halted_run: 659/659 = 100%
+   Catalog.lean::a2_loop_halted_run  reproduces  Loop.lean::loop_halted_run: 659/659 = 100%
+   Loop.lean::loop_rewind_bounded  reproduces  Catalog.lean::f2_loop_rewind_bounded: 514/514 = 100%
+   Catalog.lean::f2_loop_rewind_bounded  reproduces  Loop.lean::loop_rewind_bounded: 514/514 = 100%
+   Catalog.lean::f2_loopBody_run  reproduces  Loop.lean::loopBody_run: 452/452 = 100%
+   Loop.lean::loopBodyTM  reproduces  Catalog.lean::f2_loopBodyTM: 428/428 = 100%
+   Catalog.lean::f2_loopBodyTM  reproduces  Loop.lean::loopBodyTM: 428/428 = 100%
+   Catalog.lean::f2_loopFuel_init  reproduces  Loop.lean::loopFuel_init: 410/410 = 100%
+   Loop.lean::loopBuffer_write  reproduces  Catalog.lean::f2_loopBuffer_write: 408/408 = 100%
+   Catalog.lean::f2_loopBuffer_write  reproduces  Loop.lean::loopBuffer_write: 408/408 = 100%
+   Catalog.lean::f2_finSumEquiv  reproduces  Catalog.lean::a2_mapSumEquiv: 362/362 = 100%
+   Catalog.lean::a2_mapSumEquiv  reproduces  Catalog.lean::f2_finSumEquiv: 362/362 = 100%
+   Catalog.lean::f2_loop_input_run_le  reproduces  Loop.lean::loop_input_run_le: 361/361 = 100%
+   Catalog.lean::f2_loopBody_stop  reproduces  Loop.lean::loopBody_stop: 346/346 = 100%
+   Catalog.lean::f2_loopReplay_run  reproduces  Loop.lean::loopReplay_run: 345/345 = 100%
+   Loop.lean::loop_first_halt  reproduces  Catalog.lean::f2_loop_first_halt: 341/341 = 100%
+   Catalog.lean::f2_loop_first_halt  reproduces  Loop.lean::loop_first_halt: 341/341 = 100%
+   Catalog.lean::f2_loopCopy_erase  reproduces  Loop.lean::loopCopy_erase: 285/285 = 100%
+   Loop.lean::loopFrame  reproduces  Catalog.lean::f2_loopFrame: 270/270 = 100%
+   Catalog.lean::f2_loopFrame  reproduces  Loop.lean::loopFrame: 270/270 = 100%
+   Loop.lean::loop_output_length_le  reproduces  Catalog.lean::f2_loop_output_length_le: 254/254 = 100%
+   Catalog.lean::f2_loop_output_length_le  reproduces  Loop.lean::loop_output_length_le: 254/254 = 100%
+   Catalog.lean::f2_loopFuel_run  reproduces  Loop.lean::loopFuel_run: 230/230 = 100%
+   Loop.lean::loop_input_move_le  reproduces  Catalog.lean::f2_loop_input_move_le: 222/222 = 100%
+   Catalog.lean::f2_loop_input_move_le  reproduces  Loop.lean::loop_input_move_le: 222/222 = 100%
+   Loop.lean::loopBodyCfg  reproduces  Catalog.lean::f2_loopBodyCfg: 212/212 = 100%
+   Catalog.lean::f2_loopBodyCfg  reproduces  Loop.lean::loopBodyCfg: 212/212 = 100%
+   Loop.lean::loop_live_prefix  reproduces  Catalog.lean::f2_loop_live_prefix: 156/156 = 100%
+   Catalog.lean::f2_loop_live_prefix  reproduces  Loop.lean::loop_live_prefix: 156/156 = 100%
+   Loop.lean::loopControlAction  reproduces  Catalog.lean::f2_loopControlAction: 150/150 = 100%
+   Catalog.lean::f2_loopControlAction  reproduces  Loop.lean::loopControlAction: 150/150 = 100%
+   Catalog.lean::f2_loopCall  reproduces  Loop.lean::loopCall: 141/141 = 100%
+   Catalog.lean::f2_loopValue_bits  reproduces  Loop.lean::loopValue_bits: 135/135 = 100%
+   Loop.lean::loopReplayTM  reproduces  Catalog.lean::f2_loopReplayTM: 130/130 = 100%
+   Catalog.lean::f2_loopReplayTM  reproduces  Loop.lean::loopReplayTM: 130/130 = 100%
+   Loop.lean::loopFuelSource  reproduces  Catalog.lean::f2_loopFuelSource: 122/122 = 100%
+   Catalog.lean::f2_loopFuelSource  reproduces  Loop.lean::loopFuelSource: 122/122 = 100%
+   Catalog.lean::f2_loopBodySource  reproduces  Loop.lean::loopBodySource: 119/119 = 100%
+   Loop.lean::emCall_erase_last  reproduces  Catalog.lean::f2_catalogBuffer_erase: 118/118 = 100%
+   Catalog.lean::f2_loopCopy_final  reproduces  Loop.lean::loopCopy_final: 110/110 = 100%
+   Loop.lean::loop_orbit_inv  reproduces  Catalog.lean::f2_loop_orbit_inv: 94/94 = 100%
+   Catalog.lean::f2_loop_orbit_inv  reproduces  Loop.lean::loop_orbit_inv: 94/94 = 100%
+   Catalog.lean::f2_loopBorrowPos_le  reproduces  Loop.lean::loopBorrowPos_le: 93/93 = 100%
+   Loop.lean::loopFuelCfg  reproduces  Catalog.lean::f2_loopFuelCfg: 90/90 = 100%
+   Catalog.lean::f2_loopFuelCfg  reproduces  Loop.lean::loopFuelCfg: 90/90 = 100%
+   Loop.lean::loopBuffer_read  reproduces  Catalog.lean::f2_loopBuffer_read: 89/89 = 100%
+   Catalog.lean::f2_loopBuffer_read  reproduces  Loop.lean::loopBuffer_read: 89/89 = 100%
+   Loop.lean::loop_fuel_width  reproduces  Catalog.lean::f2_loop_fuel_width: 87/87 = 100%
+   Catalog.lean::f2_loop_fuel_width  reproduces  Loop.lean::loop_fuel_width: 87/87 = 100%
+   Catalog.lean::f2_loopFrame_payload  reproduces  Loop.lean::loopFrame_payload: 79/79 = 100%
+   Catalog.lean::f2_loopFlag_clear  reproduces  Loop.lean::loopFlag_clear: 60/60 = 100%
+   Catalog.lean::f2_loopHost_payload_rewind  reproduces  Catalog.lean::f2_loopHost_fuel_rewind: 1304/1306 = 100%
+   Loop.lean::loopHost_payload_rewind  reproduces  Loop.lean::loopHost_fuel_rewind: 1259/1261 = 100%
+   Catalog.lean::transferTM  reproduces  Catalog.lean::copyTM: 475/476 = 100%
+   Loop.lean::emLoopHost_round  reproduces  Loop.lean::loopHost_reject: 2361/2367 = 100%
+   Loop.lean::emLoopHost_prepare  reproduces  Loop.lean::loopHost_input_rewind: 232/233 = 100%
+   Catalog.lean::f2_loopHost_contracts  reproduces  Loop.lean::loopHost_contracts: 3565/3586 = 99%
+   Loop.lean::loopBody_run  reproduces  Catalog.lean::f2_loopBody_run: 452/455 = 99%
+   Loop.lean::emLoopHost_prepare  reproduces  Loop.lean::loopHost_prepare: 1273/1282 = 99%
+   Loop.lean::loopHost  reproduces  Catalog.lean::f2_loopHost: 2477/2495 = 99%
+   Catalog.lean::f2_loopHost_fuel_rewind  reproduces  Catalog.lean::f2_loopHost_payload_rewind: 1304/1314 = 99%
+   Loop.lean::loopHost_fuel_rewind  reproduces  Loop.lean::loopHost_payload_rewind: 1259/1269 = 99%
+   Loop.lean::loop_input_run_le  reproduces  Catalog.lean::f2_loop_input_run_le: 361/364 = 99%
+   Loop.lean::loopBody_step  reproduces  Catalog.lean::f2_loopBody_step: 1094/1109 = 99%
+   Loop.lean::loopBody_stop  reproduces  Catalog.lean::f2_loopBody_stop: 346/352 = 98%
+   Loop.lean::loopReplay_run  reproduces  Catalog.lean::f2_loopReplay_run: 345/351 = 98%
+   Catalog.lean::f2_loopHost_start  reproduces  Loop.lean::loopHost_start: 275/280 = 98%
+   Embed.lean::embedSilentRetTM  reproduces  Embed.lean::embedEmitRetTM: 215/219 = 98%
+   Catalog.lean::f2_loopHost_round  reproduces  Loop.lean::loopHost_round: 2009/2051 = 98%
+   Loop.lean::loopCopy_erase  reproduces  Catalog.lean::f2_loopCopy_erase: 285/291 = 98%
+   Loop.lean::loopCall  reproduces  Catalog.lean::f2_loopCall: 141/144 = 98%
+   Catalog.lean::f2_loopHost_accept  reproduces  Loop.lean::loopHost_accept: 2165/2219 = 98%
+   Loop.lean::loopBodySource  reproduces  Catalog.lean::f2_loopBodySource: 119/122 = 98%
+   Catalog.lean::f2_lenSuffix_run  reproduces  Catalog.lean::f2_lenParse_first: 312/320 = 98%
+   Loop.lean::loopFuel_run  reproduces  Catalog.lean::f2_loopFuel_run: 230/236 = 97%
+   Loop.lean::loopFuel_init  reproduces  Catalog.lean::f2_loopFuel_init: 410/422 = 97%
+   Catalog.lean::computesFunInTime_pairSnd_spaceUsed  reproduces  Catalog.lean::computesFunInTime_pairConcat_spaceUsed: 305/314 = 97%
+   Catalog.lean::computesFunInTime_pairFst_spaceUsed  reproduces  Catalog.lean::computesFunInTime_pairConcat_spaceUsed: 305/314 = 97%
+   Catalog.lean::transferTM_run_ofCfg  reproduces  Catalog.lean::copyTM_run_ofCfg: 403/415 = 97%
+   Catalog.lean::f2_scanTrues_run  reproduces  Catalog.lean::f2_scanStep_right: 159/164 = 97%
+   Loop.lean::loopBorrowPos_le  reproduces  Catalog.lean::f2_loopBorrowPos_le: 93/96 = 97%
+   Catalog.lean::f2_loopHost_replay  reproduces  Loop.lean::loopHost_replay: 1032/1069 = 97%
+   Catalog.lean::f2_loopHost_fuel_return  reproduces  Loop.lean::loopHost_fuel_return: 1275/1321 = 97%
+   Catalog.lean::f2_loopHost_borrow_rewind  reproduces  Loop.lean::loopHost_borrow_rewind: 1238/1284 = 96%
+   Catalog.lean::f2_loopHost_prepare  reproduces  Loop.lean::loopHost_prepare: 1236/1282 = 96%
+   Catalog.lean::f2_loopHost_payload_rewind  reproduces  Loop.lean::loopHost_payload_rewind: 1223/1269 = 96%
+   Catalog.lean::f2_loopHost_fuel_rewind  reproduces  Loop.lean::loopHost_fuel_rewind: 1215/1261 = 96%
+   Loop.lean::loopFrame_payload  reproduces  Catalog.lean::f2_loopFrame_payload: 79/82 = 96%
+   Catalog.lean::f2_loopHost_fuel_setup  reproduces  Loop.lean::loopHost_fuel_setup: 858/891 = 96%
+   Catalog.lean::computesFunInTime_pairConcat_spaceUsed  reproduces  Catalog.lean::computesFunInTime_pairSnd_spaceUsed: 305/317 = 96%
+   Catalog.lean::computesFunInTime_pairConcat_spaceUsed  reproduces  Catalog.lean::computesFunInTime_pairFst_spaceUsed: 305/317 = 96%
+   Catalog.lean::f2_loopHost_frame_replay  reproduces  Loop.lean::loopHost_frame_replay: 888/923 = 96%
+   Catalog.lean::f2_loopReplay_step  reproduces  Loop.lean::loopReplay_step: 316/329 = 96%
+   Catalog.lean::transferTM_run  reproduces  Catalog.lean::copyTM_run: 388/404 = 96%
+   Embed.lean::embedEmitRetTM  reproduces  Embed.lean::embedSilentRetTM: 215/224 = 96%
+   Loop.lean::loopValue_bits  reproduces  Catalog.lean::f2_loopValue_bits: 135/141 = 96%
+   Catalog.lean::f2_loopControl_payload  reproduces  Loop.lean::loopControl_payload: 235/246 = 96%
+   Catalog.lean::f2_extract_replay  reproduces  Catalog.lean::f2_rawStrip_replay: 393/412 = 95%
+   Loop.lean::loopFlag_clear  reproduces  Catalog.lean::f2_loopFlag_clear: 60/63 = 95%
+   Catalog.lean::f2_loopHost_anchor_return  reproduces  Loop.lean::loopHost_anchor_return: 871/915 = 95%
+   Loop.lean::loopHost_start  reproduces  Catalog.lean::f2_loopHost_start: 275/289 = 95%
+   Loop.lean::loop_run  reproduces  Loop.lean::loop_halted_run: 627/659 = 95%
+   Loop.lean::loop_run  reproduces  Catalog.lean::a2_loop_halted_run: 627/659 = 95%
+   Loop.lean::loopCall_reframe  reproduces  Loop.lean::loopCall_frame: 464/488 = 95%
+   Loop.lean::loopHost_round  reproduces  Catalog.lean::f2_loopHost_round: 2009/2114 = 95%
+   Catalog.lean::f2_loopDebit_value  reproduces  Loop.lean::loopDebit_value: 187/197 = 95%
+   Catalog.lean::f2_loopHost_anchor_return  reproduces  Catalog.lean::a2_call_run: 299/315 = 95%
+   Catalog.lean::f2_loopCall_reframe  reproduces  Catalog.lean::f2_loopCall_frame: 500/527 = 95%
+   Catalog.lean::transferTM_spaceUsedByTape  reproduces  Catalog.lean::copyTM_spaceUsedByTape: 551/581 = 95%
+   Loop.lean::loopCopy_final  reproduces  Catalog.lean::f2_loopCopy_final: 110/116 = 95%
+   Loop.lean::emLoopHost_anchor_return  reproduces  Loop.lean::loopHost_anchor_return: 867/915 = 95%
+   Catalog.lean::f2_loopHost_borrow_run  reproduces  Loop.lean::loopHost_borrow_run: 489/517 = 95%
+   Loop.lean::emCall_bank_final  reproduces  Loop.lean::emCall_bank_initial: 3070/3250 = 94%
+   Loop.lean::loopControl_payload  reproduces  Catalog.lean::f2_loopControl_payload: 235/249 = 94%
+   Loop.lean::loopHost_accept  reproduces  Catalog.lean::f2_loopHost_accept: 2165/2297 = 94%
+   Catalog.lean::f2_loopDebit_success  reproduces  Loop.lean::loopDebit_success: 141/150 = 94%
+   Catalog.lean::f2_incFixed_computes  reproduces  Catalog.lean::f2_scanStep_right: 154/164 = 94%
+   Catalog.lean::f2_exists_loopFind_space  reproduces  Loop.lean::exists_loopFindTM: 851/910 = 94%
+   Catalog.lean::copyTM  reproduces  Catalog.lean::transferTM: 475/508 = 94%
+   Loop.lean::loopHost_replay  reproduces  Catalog.lean::f2_loopHost_replay: 1032/1105 = 93%
+   Loop.lean::loopHost_fuel_return  reproduces  Catalog.lean::f2_loopHost_fuel_return: 1275/1366 = 93%
+   Catalog.lean::f2_loopBodyPadded  reproduces  Loop.lean::loopBodyPadded: 137/147 = 93%
+   Loop.lean::loopHost_frame_replay  reproduces  Catalog.lean::f2_loopHost_frame_replay: 888/953 = 93%
+   Loop.lean::loopHost_fuel_setup  reproduces  Catalog.lean::f2_loopHost_fuel_setup: 858/921 = 93%
+   Loop.lean::loopHost_borrow_rewind  reproduces  Catalog.lean::f2_loopHost_borrow_rewind: 1238/1329 = 93%
+   Loop.lean::loopHost_payload_rewind  reproduces  Catalog.lean::f2_loopHost_payload_rewind: 1223/1314 = 93%
+   Loop.lean::loopHost_fuel_rewind  reproduces  Catalog.lean::f2_loopHost_fuel_rewind: 1215/1306 = 93%
+   Catalog.lean::f2_loopHost_fuel_copy  reproduces  Loop.lean::loopHost_fuel_copy: 1356/1458 = 93%
+   Catalog.lean::catalog_transfer_trace  reproduces  Catalog.lean::catalog_copy_trace: 1160/1250 = 93%
+   Catalog.lean::f2_pairDup_double  reproduces  Catalog.lean::f2_scanStep_right: 152/164 = 93%
+   Loop.lean::loopReplay_step  reproduces  Catalog.lean::f2_loopReplay_step: 316/341 = 93%
+   Catalog.lean::computesFunInTime_pairSnd_spaceUsed  reproduces  Catalog.lean::computesFunInTime_pairFst_spaceUsed: 293/317 = 92%
+   Catalog.lean::computesFunInTime_pairFst_spaceUsed  reproduces  Catalog.lean::computesFunInTime_pairSnd_spaceUsed: 293/317 = 92%
+   Catalog.lean::f2_loopHost_payload_rewind  reproduces  Loop.lean::loopHost_fuel_rewind: 1161/1261 = 92%
+   Catalog.lean::f2_branch_space  reproduces  Catalog.lean::catalog_space_one: 115/125 = 92%
+   Loop.lean::emLoopHost_start  reproduces  Loop.lean::loopHost_start: 257/280 = 92%
+   Catalog.lean::f2_loopHost_fuel_rewind  reproduces  Loop.lean::loopHost_payload_rewind: 1161/1269 = 91%
+   Catalog.lean::a2_map_block  reproduces  Catalog.lean::a2_map_move: 331/362 = 91%
+   Loop.lean::loopBodyPadded  reproduces  Catalog.lean::f2_loopBodyPadded: 137/150 = 91%
+   Catalog.lean::f2_rewind_heads  reproduces  Catalog.lean::f2_catalogRewind: 395/435 = 91%
+   Catalog.lean::f2_loopFuelCaptured_frame  reproduces  Loop.lean::loopFuelCaptured_frame: 1423/1570 = 91%
+   Loop.lean::loopHost_anchor_return  reproduces  Catalog.lean::f2_loopHost_anchor_return: 871/963 = 90%
+   Loop.lean::loopDebit_success  reproduces  Catalog.lean::f2_loopDebit_success: 141/156 = 90%
+   Catalog.lean::transferTM  reproduces  Catalog.lean::clearTM: 369/409 = 90%
+   Catalog.lean::copyTM  reproduces  Catalog.lean::clearTM: 369/409 = 90%
+   Catalog.lean::a2_map_suffix  reproduces  Catalog.lean::a2_map_move: 326/362 = 90%
+   Catalog.lean::incrementTM_run_succ_ofCfg  reproduces  Catalog.lean::incrementTM_run_overflow_ofCfg: 617/686 = 90%
+   Loop.lean::loopHost_borrow_run  reproduces  Catalog.lean::f2_loopHost_borrow_run: 489/544 = 90%
+   Catalog.lean::f2_exists_loopFind_space  reproduces  Loop.lean::exists_loopTM: 687/770 = 89%
+   Loop.lean::exists_loopFindTM  reproduces  Loop.lean::exists_loopTM: 686/770 = 89%
+   Loop.lean::loopHost_payload_rewind  reproduces  Catalog.lean::f2_loopHost_fuel_rewind: 1161/1306 = 89%
+   Catalog.lean::f2_loopReady  reproduces  Loop.lean::loopReady: 119/134 = 89%
+   Catalog.lean::f2_loopHost_reject  reproduces  Loop.lean::loopHost_reject: 2102/2367 = 89%
+   Loop.lean::loopHost_fuel_copy  reproduces  Catalog.lean::f2_loopHost_fuel_copy: 1356/1527 = 89%
+   Catalog.lean::f2_loopHost_halt_return  reproduces  Catalog.lean::a2_call_run: 279/315 = 89%
+   Catalog.lean::f2_splitCount_run  reproduces  Loop.lean::emCall_right_run: 152/172 = 88%
+   Loop.lean::loopHost_fuel_rewind  reproduces  Catalog.lean::f2_loopHost_payload_rewind: 1161/1314 = 88%
+   Loop.lean::loopDebit_value  reproduces  Catalog.lean::f2_loopDebit_value: 187/212 = 88%
+   Catalog.lean::f2_catalogBuffer_erase  reproduces  Loop.lean::emCall_erase_last: 118/134 = 88%
+   Loop.lean::emLoopHost_start  reproduces  Catalog.lean::f2_loopHost_start: 254/289 = 88%
+   Catalog.lean::copyTM_spaceUsedByTape  reproduces  Catalog.lean::transferTM_spaceUsedByTape: 551/627 = 88%
+   Loop.lean::emLoopHost_anchor_return  reproduces  Catalog.lean::f2_loopHost_anchor_return: 843/963 = 88%
+   Catalog.lean::copyTM_run  reproduces  Catalog.lean::clearTM_run: 336/385 = 87%
+   Loop.lean::emCall_first_entry  reproduces  Catalog.lean::f2_catalogFirstEntry: 327/375 = 87%
+   Catalog.lean::f2_extract_rewind  reproduces  Catalog.lean::f2_rawStrip_rewind: 632/725 = 87%
+   Catalog.lean::f2_loopHost_halt_return  reproduces  Loop.lean::loopHost_halt_return: 421/484 = 87%
+   Catalog.lean::f2_loopHost_borrow_run  reproduces  Catalog.lean::f2_loopBorrow_run: 414/476 = 87%
+   Catalog.lean::a2_map_backB  reproduces  Catalog.lean::a2_map_backA: 806/927 = 87%
+   Loop.lean::loopFuelCaptured_frame  reproduces  Catalog.lean::f2_loopFuelCaptured_frame: 1423/1639 = 87%
+   Catalog.lean::f2_loopBodySource_run  reproduces  Loop.lean::loopBodySource_run: 78/90 = 87%
+   Catalog.lean::f2_loopHost_borrow_step  reproduces  Loop.lean::loopHost_borrow_step: 581/671 = 87%
+   Catalog.lean::f2_loopHost_body_capture  reproduces  Catalog.lean::f2_loopHost_fuel_capture: 96/111 = 86%
+   Embed.lean::embedSilentCfg  reproduces  Embed.lean::embedEmitCfg: 165/192 = 86%
+   Loop.lean::emCall_finish_arg  reproduces  Loop.lean::emCall_finish_rewind: 1025/1195 = 86%
+   Loop.lean::emCall_triple_pair  reproduces  Loop.lean::emCall_pair_triple: 138/161 = 86%
+   Catalog.lean::f2_splitRestore_rewind  reproduces  Catalog.lean::f2_splitPrepare_rewind: 664/776 = 86%
+   Catalog.lean::f2_loopDebit_iterate_value  reproduces  Loop.lean::loopDebit_iterate_value: 248/290 = 86%
+   Loop.lean::emCall_right_run  reproduces  Loop.lean::emLoop_run_prefix: 110/129 = 85%
+   Catalog.lean::a2_mapSetup_run  reproduces  Loop.lean::emLoop_run_prefix: 110/129 = 85%
+   Loop.lean::loopReady  reproduces  Catalog.lean::f2_loopReady: 119/140 = 85%
+   Loop.lean::loopHost_reject  reproduces  Catalog.lean::f2_loopHost_reject: 2102/2493 = 84%
+   Catalog.lean::copyTM_run_ofCfg  reproduces  Catalog.lean::transferTM_run_ofCfg: 403/478 = 84%
+   Loop.lean::emLoopHost_round  reproduces  Catalog.lean::f2_loopHost_reject: 2098/2493 = 84%
+   Catalog.lean::a2_call_heads  reproduces  Catalog.lean::a2_fuel_heads: 515/615 = 84%
+   Catalog.lean::f2_splitCount_run  reproduces  Loop.lean::emLoop_run_prefix: 108/129 = 84%
+   Loop.lean::emCall_bank_initial  reproduces  Loop.lean::emCall_bank_final: 3070/3669 = 84%
+   Catalog.lean::f2_loopHost_fuel_return  reproduces  Catalog.lean::f2_loopHost_fuel_rewind: 1092/1306 = 84%
+   Catalog.lean::clearTM_run  reproduces  Catalog.lean::copyTM_run: 336/404 = 83%
+   Catalog.lean::f2_loopHost_fuel_return  reproduces  Catalog.lean::f2_loopHost_payload_rewind: 1092/1314 = 83%
+   Loop.lean::loopHost_fuel_return  reproduces  Loop.lean::loopHost_fuel_rewind: 1047/1261 = 83%
+   Catalog.lean::f2_loopCopy_initial  reproduces  Loop.lean::loopCopy_initial: 78/94 = 83%
+   Catalog.lean::f2_loopHost_body_capture  reproduces  Loop.lean::loopHost_body_capture: 92/111 = 83%
+   Loop.lean::loopHost_halt_return  reproduces  Catalog.lean::f2_loopHost_halt_return: 421/508 = 83%
+   Catalog.lean::a2_map_backA  reproduces  Catalog.lean::a2_map_backB: 806/975 = 83%
+   Loop.lean::loopHost_borrow_step  reproduces  Catalog.lean::f2_loopHost_borrow_step: 581/704 = 83%
+   Loop.lean::loopHost_fuel_return  reproduces  Loop.lean::loopHost_payload_rewind: 1047/1269 = 83%
+   Loop.lean::loopHost_prepare  reproduces  Catalog.lean::f2_loopHost_prepare: 1236/1499 = 82%
+   Catalog.lean::f2_rawStrip_rewind  reproduces  Catalog.lean::f2_extract_rewind: 632/767 = 82%
+   Loop.lean::exists_emitCallTM  reproduces  Loop.lean::exists_installCallTM: 194/236 = 82%
+   Catalog.lean::f2_loopHost_fuel_capture  reproduces  Catalog.lean::f2_loopHost_body_capture: 96/117 = 82%
+   Loop.lean::loopHost_contracts  reproduces  Catalog.lean::f2_loopHost_contracts: 3565/4347 = 82%
+   Loop.lean::emLoopHost_prepare  reproduces  Catalog.lean::f2_loopHost_prepare: 1228/1499 = 82%
+   Catalog.lean::f2_splitPrepare_rewind  reproduces  Catalog.lean::f2_splitRestore_rewind: 664/814 = 82%
+   Catalog.lean::transferTM_run  reproduces  Catalog.lean::clearTM_run: 314/385 = 82%
+   Embed.lean::MultiTapeTM.runFrom_mapState_of_agreeOn  reproduces  Catalog.lean::f2_splitEmbed_run: 153/188 = 81%
+   Catalog.lean::f2_sum_add  reproduces  Catalog.lean::a2_map_sum: 153/188 = 81%
+   Catalog.lean::a2_map_sum  reproduces  Catalog.lean::f2_sum_add: 153/188 = 81%
+   Loop.lean::loopBodySource_run  reproduces  Catalog.lean::f2_loopBodySource_run: 78/96 = 81%
+   Catalog.lean::f2_loopControl_apply  reproduces  Loop.lean::loopControl_apply: 643/792 = 81%
+   Catalog.lean::f2_catalogFirstEntry  reproduces  Loop.lean::emCall_first_entry: 327/403 = 81%
+   Loop.lean::loop_halted_run  reproduces  Loop.lean::loop_run: 627/773 = 81%
+   Catalog.lean::a2_loop_halted_run  reproduces  Loop.lean::loop_run: 627/773 = 81%
+   Catalog.lean::exists_loopTM_spaceUsed  reproduces  Loop.lean::exists_loopTM: 624/770 = 81%
+   Catalog.lean::f2_loopHost_fuel_return  reproduces  Catalog.lean::f2_loopHost_borrow_rewind: 1077/1329 = 81%
+   Loop.lean::loopHost_fuel_return  reproduces  Loop.lean::loopHost_borrow_rewind: 1035/1284 = 81%
+   Loop.lean::loopDebit_iterate_value  reproduces  Catalog.lean::f2_loopDebit_iterate_value: 248/308 = 81%
+   Catalog.lean::f2_counter_count_space  reproduces  Catalog.lean::f2_counter_count: 363/452 = 80%
+   Embed.lean::embedSilent_step  reproduces  Embed.lean::embedEmit_step: 315/393 = 80%
+   Catalog.lean::f2_loopHost_payload_rewind  reproduces  Catalog.lean::f2_loopHost_fuel_return: 1092/1366 = 80%
+   Catalog.lean::f2_loopHost_fuel_rewind  reproduces  Catalog.lean::f2_loopHost_fuel_return: 1092/1366 = 80%
+   Catalog.lean::f2_extract_suffix  reproduces  Catalog.lean::f2_extract_first: 238/300 = 79%
+   Loop.lean::loopHost_payload_rewind  reproduces  Loop.lean::loopHost_fuel_return: 1047/1321 = 79%
+   Loop.lean::loopHost_fuel_rewind  reproduces  Loop.lean::loopHost_fuel_return: 1047/1321 = 79%
+   Embed.lean::embedSilentRet_step  reproduces  Embed.lean::embedSilentRetTM_visitedByTapeHead: 106/134 = 79%
+   Catalog.lean::a2_call_heads  reproduces  Catalog.lean::f2_loopCall_heads: 520/658 = 79%
+   Catalog.lean::f2_splitRestore_scan  reproduces  Catalog.lean::f2_splitPrepare_scan: 526/666 = 79%
+   Catalog.lean::f2_loopHost_borrow_rewind  reproduces  Catalog.lean::f2_loopHost_fuel_return: 1077/1366 = 79%
+   Loop.lean::loopHost_body_capture  reproduces  Catalog.lean::f2_loopHost_body_capture: 92/117 = 79%
+   Catalog.lean::f2_loopHost_input_rewind  reproduces  Loop.lean::loopHost_input_rewind: 183/233 = 79%
+   Loop.lean::emCall_finish_final  reproduces  Loop.lean::emCall_finish_initial: 1279/1629 = 79%
+   Loop.lean::loopHost_borrow_rewind  reproduces  Loop.lean::loopHost_fuel_return: 1035/1321 = 78%
+   Catalog.lean::copyTM_run_ofCfg  reproduces  Catalog.lean::clearTM_run_ofCfg: 313/400 = 78%
+   Loop.lean::exists_installCallTM  reproduces  Loop.lean::exists_emitCallTM: 194/248 = 78%
+   Catalog.lean::incrementTM_run_succ  reproduces  Catalog.lean::incrementTM_run_overflow: 383/491 = 78%
+   Loop.lean::loopCopy_initial  reproduces  Catalog.lean::f2_loopCopy_initial: 78/100 = 78%
+   Catalog.lean::a2_loop_prepare  reproduces  Catalog.lean::f2_loopHost_prepare: 1165/1499 = 78%
+   Catalog.lean::incrementTM_run_overflow  reproduces  Catalog.lean::clearTM_run: 299/385 = 78%
+   Catalog.lean::compareTM  reproduces  Catalog.lean::incrementTM: 408/526 = 78%
+   Catalog.lean::clearTM  reproduces  Catalog.lean::copyTM: 369/476 = 78%
+   Catalog.lean::transferTM_run_ofCfg  reproduces  Catalog.lean::clearTM_run_ofCfg: 310/400 = 78%
+   Catalog.lean::f2_loopDebit_iterate_length  reproduces  Loop.lean::loopDebit_iterate_length: 68/88 = 77%
+   Loop.lean::loopControl_apply  reproduces  Catalog.lean::f2_loopControl_apply: 643/834 = 77%
+   Loop.lean::emCall_finish_arg  reproduces  Loop.lean::emCall_finish_erase: 972/1264 = 77%
+   Loop.lean::emCall_right_run  reproduces  Catalog.lean::a2_mapSetup_run: 125/163 = 77%
+   Catalog.lean::copyTM_spaceUsedByTape  reproduces  Catalog.lean::clearTM_spaceUsedByTape: 331/434 = 76%
+   Catalog.lean::f2_counterTape_write  reproduces  Loop.lean::loopBuffer_write: 311/408 = 76%
+   Catalog.lean::f2_counterTape_write  reproduces  Catalog.lean::f2_loopBuffer_write: 311/408 = 76%
+   Catalog.lean::f2_scanCopy_run  reproduces  Catalog.lean::f2_scanStep_right: 125/164 = 76%
+   Catalog.lean::f2_loopBorrow_run  reproduces  Catalog.lean::f2_loopHost_borrow_run: 414/544 = 76%
+   Catalog.lean::transferTM_spaceUsedByTape  reproduces  Catalog.lean::clearTM_spaceUsedByTape: 329/434 = 76%
+   Catalog.lean::f2_loopBorrow_step  reproduces  Catalog.lean::f2_loopReplay_step: 258/341 = 76%
+   Embed.lean::embedEmitRet_step  reproduces  Embed.lean::embedEmitRetTM_visitedByTapeHead: 87/115 = 76%
+   Catalog.lean::f2_splitCount_run  reproduces  Catalog.lean::a2_mapSetup_run: 123/163 = 75%
+   Catalog.lean::f2_splitPrepare_scan  reproduces  Catalog.lean::f2_splitPrepare_extra: 356/472 = 75%
+   Catalog.lean::clearTM_run_ofCfg  reproduces  Catalog.lean::copyTM_run_ofCfg: 313/415 = 75%
+   Loop.lean::exists_loopTM  reproduces  Loop.lean::exists_loopFindTM: 686/910 = 75%
+   Catalog.lean::f2_extract_replay  reproduces  Catalog.lean::f2_extract_replay_finish: 230/307 = 75%
+   Loop.lean::loopDebit_iterate_length  reproduces  Catalog.lean::f2_loopDebit_iterate_length: 68/91 = 75%
+   Loop.lean::loopHost_input_rewind  reproduces  Catalog.lean::f2_loopHost_input_rewind: 183/245 = 75%
+   Catalog.lean::exists_loopTM_spaceUsed  reproduces  Loop.lean::exists_loopFindTM: 679/910 = 75%
+   Catalog.lean::incrementTM  reproduces  Catalog.lean::clearTM: 305/409 = 75%
+   Catalog.lean::compareTM_spaceUsedByTape  reproduces  Catalog.lean::compareTM_run: 237/318 = 75%
+   Loop.lean::emLoop_run_prefix  reproduces  Catalog.lean::a2_mapSetup_heads: 73/98 = 74%
+   Loop.lean::emCall_right_run  reproduces  Catalog.lean::a2_mapSetup_heads: 73/98 = 74%
+   Catalog.lean::catalog_redirect_loop  reproduces  Catalog.lean::a2_mapSetup_heads: 73/98 = 74%
+   Catalog.lean::a2_mapSetup_run  reproduces  Catalog.lean::a2_mapSetup_heads: 73/98 = 74%
+   Catalog.lean::f2_counterInc_potential  reproduces  Catalog.lean::f2_counterInc_length: 106/143 = 74%
+   Catalog.lean::f2_extract_block  reproduces  Catalog.lean::f2_extract_first: 222/300 = 74%
+   Catalog.lean::f2_loopCall_heads  reproduces  Catalog.lean::a2_call_heads: 520/703 = 74%
+   Loop.lean::emCall_finish_initial  reproduces  Loop.lean::emCall_finish_final: 1279/1731 = 74%
+   Catalog.lean::f2_space_radius  reproduces  Catalog.lean::catalog_space_bound: 140/190 = 74%
+   Catalog.lean::incrementTM_run_overflow_ofCfg  reproduces  Catalog.lean::incrementTM_run_succ_ofCfg: 617/839 = 74%
+   Loop.lean::loop_find_run  reproduces  Loop.lean::loop_halted_run: 484/659 = 73%
+   Loop.lean::loop_find_run  reproduces  Catalog.lean::a2_loop_halted_run: 484/659 = 73%
+   Catalog.lean::f2_loop_find_run  reproduces  Loop.lean::loop_halted_run: 484/659 = 73%
+   Catalog.lean::f2_loop_find_run  reproduces  Catalog.lean::a2_loop_halted_run: 484/659 = 73%
+   Embed.lean::embedEmit_step  reproduces  Embed.lean::embedSilent_step: 315/429 = 73%
+   Loop.lean::loopFrame  reproduces  Loop.lean::loopControlAction: 110/150 = 73%
+   Loop.lean::loopFrame  reproduces  Catalog.lean::f2_loopControlAction: 110/150 = 73%
+   Catalog.lean::f2_loopFrame  reproduces  Loop.lean::loopControlAction: 110/150 = 73%
+   Catalog.lean::f2_loopFrame  reproduces  Catalog.lean::f2_loopControlAction: 110/150 = 73%
+   Catalog.lean::f2_incFixedTM  reproduces  Catalog.lean::f2_pairDupTM: 283/386 = 73%
+   Catalog.lean::a2_fuel_heads  reproduces  Catalog.lean::a2_call_heads: 515/703 = 73%
+   Catalog.lean::f2_poly_space  reproduces  Catalog.lean::catalog_space_bound: 139/190 = 73%
+   Embed.lean::embedSilentTM_visitedByTapeHead_frame  reproduces  Embed.lean::embedEmitTM_visitedByTapeHead_frame: 204/279 = 73%
+   Catalog.lean::f2_loopHost_init  reproduces  Loop.lean::loopHost_init: 65/89 = 73%
+   Catalog.lean::f2_counterTape_read  reproduces  Loop.lean::loopBuffer_read: 65/89 = 73%
+   Catalog.lean::f2_counterTape_read  reproduces  Catalog.lean::f2_loopBuffer_read: 65/89 = 73%
+   Catalog.lean::f2_catalogPoly_setup  reproduces  Catalog.lean::f2_catalogPoly_emit: 384/527 = 73%
+   Catalog.lean::a2_mapSetup_run  reproduces  Loop.lean::emCall_right_run: 125/172 = 73%
+   Catalog.lean::clearTM  reproduces  Catalog.lean::transferTM: 369/508 = 73%
+   Catalog.lean::f2_counter_space  reproduces  Catalog.lean::catalog_space_bound: 138/190 = 73%
+   Catalog.lean::f2_loopHost_anchor_return  reproduces  Catalog.lean::f2_loopBody_capture: 270/372 = 73%
+   Embed.lean::embedSilentTM_visitedByTapeHead_frame  reproduces  Embed.lean::embedSilentTM_frame: 82/113 = 73%
+   Catalog.lean::f2_splitCount_run  reproduces  Catalog.lean::a2_mapSetup_heads: 71/98 = 72%
+   Catalog.lean::a2_mapSetup_stationary  reproduces  Catalog.lean::a2_mapSetup_heads: 71/98 = 72%
+   Loop.lean::loopBuffer_write  reproduces  Catalog.lean::f2_counterTape_write: 311/432 = 72%
+   Catalog.lean::f2_loopBuffer_write  reproduces  Catalog.lean::f2_counterTape_write: 311/432 = 72%
+   Catalog.lean::f2_splitRestoreScan  reproduces  Catalog.lean::f2_splitPrepareScan: 74/103 = 72%
+   Catalog.lean::f2_splitRestore_append  reproduces  Catalog.lean::f2_splitPrepare_extra: 338/472 = 72%
+   Loop.lean::emLoopHost_round  reproduces  Loop.lean::loopHost_borrow_rewind: 917/1284 = 71%
+   Loop.lean::loop_halted_run  reproduces  Loop.lean::loop_find_run: 484/678 = 71%
+   Loop.lean::loop_halted_run  reproduces  Catalog.lean::f2_loop_find_run: 484/678 = 71%
+   Catalog.lean::a2_loop_halted_run  reproduces  Loop.lean::loop_find_run: 484/678 = 71%
+   Catalog.lean::a2_loop_halted_run  reproduces  Catalog.lean::f2_loop_find_run: 484/678 = 71%
+   Loop.lean::emCall_finish_rewind  reproduces  Loop.lean::emCall_finish_arg: 1025/1438 = 71%
+   Catalog.lean::f2_loopReady_call  reproduces  Loop.lean::loopReady_call: 708/994 = 71%
+   Catalog.lean::f2_loopHost_borrow  reproduces  Catalog.lean::f2_loopBorrow_correct: 261/367 = 71%
+   Catalog.lean::a2_map_setup  reproduces  Catalog.lean::a2_map_move: 257/362 = 71%
+   Catalog.lean::f2_loopHost_fuel_return  reproduces  Loop.lean::loopHost_borrow_rewind: 909/1284 = 71%
+   Catalog.lean::f2_rawStripTM  reproduces  Loop.lean::loopReplayTM: 92/130 = 71%
+   Catalog.lean::f2_rawStripTM  reproduces  Catalog.lean::f2_loopReplayTM: 92/130 = 71%
+   Embed.lean::embedSilentTM_visitedByTapeHead  reproduces  Embed.lean::embedEmitTM_visitedByTapeHead: 171/242 = 71%
+   Catalog.lean::f2_cond_ledger  reproduces  Catalog.lean::f2_timed_start: 754/1073 = 70%
+   Catalog.lean::f2_loopHost_fuel_return  reproduces  Loop.lean::loopHost_fuel_rewind: 885/1261 = 70%
+   Catalog.lean::f2_splitRestoreTM  reproduces  Catalog.lean::f2_splitPrepareTM: 280/399 = 70%
+   Embed.lean::embedSilentTM_visitedByTapeHead_frame  reproduces  Embed.lean::embedSilentTM_visitedByTapeHead: 188/268 = 70%
+   Catalog.lean::incrementTM_run_succ  reproduces  Catalog.lean::clearTM_run: 270/385 = 70%
+   Catalog.lean::f2_extract_rewind  reproduces  Catalog.lean::f2_extract_replay_finish: 215/307 = 70%
+   Catalog.lean::catalog_copy_trace  reproduces  Catalog.lean::catalog_transfer_trace: 1160/1657 = 70%
+   Loop.lean::emCall_triple_other  reproduces  Loop.lean::emCall_triple_inverse: 128/183 = 70%
+   Catalog.lean::a2_heads_halted  reproduces  Catalog.lean::a2_heads_join: 72/103 = 70%
+   Loop.lean::emCall_finish_erase  reproduces  Loop.lean::emCall_finish_rewind: 835/1195 = 70%
+   Catalog.lean::f2_loopHost_fuel_return  reproduces  Loop.lean::loopHost_payload_rewind: 885/1269 = 70%
+   Catalog.lean::f2_loopBody_step  reproduces  Catalog.lean::f2_loopBody_stop: 245/352 = 70%
+   Catalog.lean::f2_lenParse_block  reproduces  Catalog.lean::f2_lenParse_first: 222/320 = 69%
+   Catalog.lean::incrementTM_run_overflow  reproduces  Catalog.lean::copyTM_run: 280/404 = 69%
+   Catalog.lean::a2_mapVirtual  reproduces  Catalog.lean::a2_mapCfg: 92/133 = 69%
+   Catalog.lean::a2_loop_prepare  reproduces  Loop.lean::loopHost_prepare: 886/1282 = 69%
+   Catalog.lean::catalogIncF  reproduces  Catalog.lean::catalogIncR: 152/220 = 69%
+   Loop.lean::loopBody_step  reproduces  Loop.lean::loopBody_stop: 239/346 = 69%
+   Catalog.lean::f2_counterInc_bits  reproduces  Loop.lean::loopValue_bits: 93/135 = 69%
+   Catalog.lean::f2_loopHost_borrow_rewind  reproduces  Loop.lean::loopHost_fuel_return: 909/1321 = 69%
+   Catalog.lean::computesFunInTime_incFixed_spaceUsed  reproduces  Catalog.lean::computesFunInTime_pairDup_spaceUsed: 74/108 = 69%
+   Loop.lean::loopHost_init  reproduces  Catalog.lean::f2_loopHost_init: 65/95 = 68%
+   Loop.lean::loopHost_fuel_return  reproduces  Catalog.lean::f2_loopHost_borrow_rewind: 909/1329 = 68%
+   Catalog.lean::f2_counter_heads  reproduces  Catalog.lean::f2_counter_computes: 666/977 = 68%
+   Catalog.lean::f2_counterInc_bits  reproduces  Catalog.lean::f2_loopValue_bits: 96/141 = 68%
+   Loop.lean::loopHost_fuel_return  reproduces  Catalog.lean::f2_loopHost_fuel_rewind: 885/1306 = 68%
+   Loop.lean::emCall_finish_erase  reproduces  Loop.lean::emCall_finish_arg: 972/1438 = 68%
+   Loop.lean::emLoop_run_prefix  reproduces  Catalog.lean::a2_mapSetup_run: 110/163 = 67%
+   Loop.lean::loopHost_fuel_return  reproduces  Catalog.lean::f2_loopHost_payload_rewind: 885/1314 = 67%
+   Catalog.lean::f2_loopHost_anchor_return  reproduces  Catalog.lean::f2_loopHost_halt_return: 342/508 = 67%
+   Catalog.lean::computesFunInTime_pairDup_spaceUsed  reproduces  Catalog.lean::computesFunInTime_incFixed_spaceUsed: 74/110 = 67%
+   Catalog.lean::f2_rawStrip_replay  reproduces  Catalog.lean::f2_extract_replay_finish: 206/307 = 67%
+   Catalog.lean::f2_loopHost_payload_rewind  reproduces  Loop.lean::loopHost_fuel_return: 885/1321 = 67%
+   Catalog.lean::f2_loopHost_fuel_rewind  reproduces  Loop.lean::loopHost_fuel_return: 885/1321 = 67%
+   Catalog.lean::f2_rawStrip_rewind  reproduces  Catalog.lean::f2_rawStrip_replay: 276/412 = 67%
+   Catalog.lean::f2_rawStrip_replay  reproduces  Catalog.lean::f2_extract_replay: 393/587 = 67%
+   Embed.lean::embedEmitTM_visitedByTapeHead_frame  reproduces  Embed.lean::embedSilentTM_visitedByTapeHead_frame: 204/305 = 67%
+   Catalog.lean::f2_loopHost_fuel_copy  reproduces  Catalog.lean::f2_loopHost_fuel_rewind: 872/1306 = 67%
+   Catalog.lean::f2_extract_run  reproduces  Catalog.lean::f2_lenParse_run: 1137/1703 = 67%
+   Catalog.lean::catalogIncR  reproduces  Catalog.lean::catalogIncF: 152/228 = 67%
+   Loop.lean::emCall_triple_pair  reproduces  Loop.lean::emCall_triple_inverse: 122/183 = 67%
+   Catalog.lean::f2_loopDebit  reproduces  Loop.lean::loopDebit: 62/93 = 67%
+   Catalog.lean::incrementTM_run_succ  reproduces  Catalog.lean::copyTM_run: 269/404 = 67%
+   Loop.lean::loopHost_borrow_rewind  reproduces  Catalog.lean::f2_loopHost_fuel_return: 909/1366 = 67%
+   Catalog.lean::f2_loopHost_fuel_copy  reproduces  Catalog.lean::f2_loopHost_payload_rewind: 874/1314 = 67%
+   Catalog.lean::f2_scanCopy_suffix  reproduces  Catalog.lean::f2_scanStep_right: 109/164 = 66%
+   Loop.lean::loopReady_call  reproduces  Catalog.lean::f2_loopReady_call: 708/1066 = 66%
+   Embed.lean::embedSilent_apply  reproduces  Embed.lean::embedEmit_apply: 168/253 = 66%
+   Catalog.lean::f2_catalogRewind  reproduces  Catalog.lean::f2_rewind_heads: 395/597 = 66%
+   Catalog.lean::a2_map_suffix  reproduces  Catalog.lean::a2_map_first: 232/351 = 66%
+   Loop.lean::loop_run  reproduces  Loop.lean::loop_find_run: 448/678 = 66%
+   Loop.lean::loop_run  reproduces  Catalog.lean::f2_loop_find_run: 448/678 = 66%
+   Catalog.lean::f2_splitPrepareScan  reproduces  Catalog.lean::f2_splitRestoreScan: 74/112 = 66%
+   Loop.lean::emCall_finish_rewind  reproduces  Loop.lean::emCall_finish_erase: 835/1264 = 66%
+   Catalog.lean::f2_incFixedTM  reproduces  Catalog.lean::f2_splitRewindTM: 122/185 = 66%
+   Loop.lean::emLoopHost_round  reproduces  Catalog.lean::f2_loopHost_borrow_rewind: 876/1329 = 66%
+   Catalog.lean::f2_loopBody_step  reproduces  Loop.lean::loopBody_stop: 228/346 = 66%
+   Loop.lean::emLoopHost_prepare  reproduces  Catalog.lean::f2_loopHost_input_rewind: 161/245 = 66%
+   Loop.lean::loopHost_fuel_copy  reproduces  Loop.lean::loopHost_fuel_rewind: 827/1261 = 66%
+   Loop.lean::loopHost_fuel_copy  reproduces  Loop.lean::loopHost_payload_rewind: 829/1269 = 65%
+   Catalog.lean::f2_loopHost_borrow  reproduces  Loop.lean::loopHost_borrow: 271/415 = 65%
+   Catalog.lean::f2_loopReady_call  reproduces  Catalog.lean::f2_loopCall_frame: 344/527 = 65%
+   Loop.lean::emCall_triple_other  reproduces  Loop.lean::emCall_triple_pair: 152/233 = 65%
+   Catalog.lean::f2_poly_space  reproduces  Catalog.lean::f2_space_radius: 239/367 = 65%
+   Catalog.lean::clearTM_run_ofCfg  reproduces  Catalog.lean::transferTM_run_ofCfg: 310/478 = 65%
+   Loop.lean::loopHost_payload_rewind  reproduces  Catalog.lean::f2_loopHost_fuel_return: 885/1366 = 65%
+   Loop.lean::loopHost_fuel_rewind  reproduces  Catalog.lean::f2_loopHost_fuel_return: 885/1366 = 65%
+   Loop.lean::loopBody_step  reproduces  Catalog.lean::f2_loopBody_stop: 228/352 = 65%
+   Loop.lean::emCall_track_action  reproduces  Loop.lean::emCall_right_step: 134/207 = 65%
+   Catalog.lean::f2_loopCall_reframe  reproduces  Loop.lean::loopCall_reframe: 484/749 = 65%
+   Catalog.lean::f2_timed_read  reproduces  Catalog.lean::f2_control_heads: 109/169 = 64%
+   Loop.lean::emCall_track_action  reproduces  Loop.lean::emCall_track_stamp: 450/698 = 64%
+   Catalog.lean::f2_splitEmbed_cut  reproduces  Catalog.lean::f2_splitEmbed_run: 121/188 = 64%
+   Catalog.lean::f2_loopHost_release  reproduces  Loop.lean::loopHost_release: 524/815 = 64%
+   Catalog.lean::f2_catalogPoly_emit  reproduces  Catalog.lean::f2_catalogPoly_setup: 384/598 = 64%
+   Catalog.lean::f2_counter_rewind  reproduces  Catalog.lean::f2_counter_emit_run: 431/672 = 64%
+   Loop.lean::emLoop_run_prefix  reproduces  Loop.lean::emCall_right_run: 110/172 = 64%
+   Loop.lean::loopHost_body_capture  reproduces  Loop.lean::loopHost_fuel_capture: 67/105 = 64%
+   Embed.lean::embedEmitTM_visitedByTapeHead  reproduces  Embed.lean::embedSilentTM_visitedByTapeHead: 171/268 = 64%
+   Catalog.lean::f2_extract_suffix  reproduces  Catalog.lean::f2_scanCopy_suffix: 553/868 = 64%
+   Catalog.lean::f2_splitBody_rewind  reproduces  Catalog.lean::f2_splitBody_restore: 333/523 = 64%
+   Catalog.lean::f2_loopCall_frame  reproduces  Loop.lean::loopCall_frame: 310/488 = 64%
+   Catalog.lean::f2_splitPrepare_rewind  reproduces  Catalog.lean::f2_rawStrip_rewind: 460/725 = 63%
+   Catalog.lean::catalog_clear_trace  reproduces  Catalog.lean::catalog_copy_trace: 793/1250 = 63%
+   Loop.lean::loopReady_call  reproduces  Loop.lean::loopCall_frame: 308/488 = 63%
+   Catalog.lean::f2_pairExtractTM  reproduces  Loop.lean::loopReplayTM: 82/130 = 63%
+   Catalog.lean::f2_pairExtractTM  reproduces  Catalog.lean::f2_loopReplayTM: 82/130 = 63%
+   Loop.lean::emLoopHost_round  reproduces  Loop.lean::loopHost_borrow: 261/415 = 63%
+   Loop.lean::loopBody_run  reproduces  Loop.lean::emLoop_run_prefix: 81/129 = 63%
+   Catalog.lean::f2_loopBody_run  reproduces  Loop.lean::emLoop_run_prefix: 81/129 = 63%
+   Catalog.lean::f2_read_heads  reproduces  Catalog.lean::f2_control_heads: 106/169 = 63%
+   Catalog.lean::f2_pairDupTM  reproduces  Catalog.lean::f2_splitRewindTM: 116/185 = 63%
+   Catalog.lean::incrementTM  reproduces  Catalog.lean::compareTM: 408/651 = 63%
+   Loop.lean::loopDebit  reproduces  Catalog.lean::f2_loopDebit: 62/99 = 63%
+   Catalog.lean::f2_pairDup_double  reproduces  Catalog.lean::f2_scanCopy_run: 311/497 = 63%
+   Catalog.lean::f2_loopBorrow_rewind  reproduces  Catalog.lean::f2_rawStrip_rewind: 453/725 = 62%
+   Catalog.lean::f2_extract_rewind  reproduces  Catalog.lean::f2_rawStrip_replay: 257/412 = 62%
+   Catalog.lean::f2_rawStrip_rewind  reproduces  Catalog.lean::f2_extract_replay_finish: 191/307 = 62%
+   Catalog.lean::f2_counterInc_length  reproduces  Catalog.lean::f2_counterInc_potential: 106/171 = 62%
+   Loop.lean::loopCall_frame  reproduces  Loop.lean::loopCall_reframe: 464/749 = 62%
+   Embed.lean::embedSilentTM_spaceUsedByTape_cap  reproduces  Embed.lean::embedSilentTM_frame: 70/113 = 62%
+   Catalog.lean::f2_loopHost_fuel_capture  reproduces  Loop.lean::loopHost_fuel_capture: 65/105 = 62%
+   Catalog.lean::f2_loopHost_body_capture  reproduces  Loop.lean::loopHost_fuel_capture: 65/105 = 62%
+   Catalog.lean::f2_lenSuffix_run  reproduces  Catalog.lean::f2_anyTrue_run: 512/828 = 62%
+   Catalog.lean::f2_pairExtractTM  reproduces  Catalog.lean::f2_rawStripTM: 285/461 = 62%
+   Catalog.lean::f2_loopCall_frame  reproduces  Catalog.lean::f2_loopCall_reframe: 500/809 = 62%
+   Embed.lean::embedSilentTM_visitedByTapeHead  reproduces  Embed.lean::embedSilentTM_visitedByTapeHead_frame: 188/305 = 62%
+   Catalog.lean::f2_loopReplay_step  reproduces  Catalog.lean::f2_loopBorrow_step: 258/421 = 61%
+   Embed.lean::embedEmitCfg  reproduces  Embed.lean::embedSilentCfg: 165/270 = 61%
+   Catalog.lean::f2_splitPrepare_scan  reproduces  Catalog.lean::f2_splitRestore_scan: 526/861 = 61%
+   Catalog.lean::f2_splitRestore_rewind  reproduces  Catalog.lean::f2_rawStrip_rewind: 442/725 = 61%
+   Loop.lean::loopHost_anchor_return  reproduces  Loop.lean::loopHost_halt_return: 295/484 = 61%
+   Loop.lean::loopHost_borrow  reproduces  Catalog.lean::f2_loopHost_borrow: 271/445 = 61%
+   Catalog.lean::clearTM_run  reproduces  Catalog.lean::incrementTM_run_overflow: 299/491 = 61%
+   Catalog.lean::a2_map_space  reproduces  Catalog.lean::catalog_space_bound: 115/190 = 61%
+   Loop.lean::loopHost_borrow_run  reproduces  Catalog.lean::f2_loopBorrow_run: 288/476 = 61%
+   Catalog.lean::f2_splitPrepare_rewind  reproduces  Catalog.lean::f2_extract_rewind: 464/767 = 60%
+   Loop.lean::emCall_finish_transfer  reproduces  Loop.lean::emCall_finish_erase: 764/1264 = 60%
+   Loop.lean::emCall_finish_transfer  reproduces  Loop.lean::emCall_finish_rewind: 722/1195 = 60%
+   Loop.lean::loopHost_fuel_capture  reproduces  Loop.lean::loopHost_body_capture: 67/111 = 60%
+   Catalog.lean::f2_splitEmitCfg  reproduces  Catalog.lean::f2_splitPrepareScan: 62/103 = 60%
+   Loop.lean::loopHost_release  reproduces  Catalog.lean::f2_loopHost_release: 524/872 = 60%
+   Catalog.lean::f2_counter_emit_run  reproduces  Catalog.lean::f2_counter_emit: 378/630 = 60%
+   Loop.lean::loopCall_reframe  reproduces  Catalog.lean::f2_loopCall_reframe: 484/809 = 60%
+   Catalog.lean::f2_extract_rewind  reproduces  Catalog.lean::f2_splitPrepare_rewind: 464/776 = 60%
+   Catalog.lean::exists_loopTM_spaceUsed  reproduces  Loop.lean::exists_loopCfgTM: 95/159 = 60%
+   Catalog.lean::f2_pairDupTM  reproduces  Catalog.lean::f2_incFixedTM: 283/474 = 60%
+   Loop.lean::loopCall  reproduces  Loop.lean::emLoopCall: 80/134 = 60%
+   Catalog.lean::a2_loop_prepare  reproduces  Catalog.lean::f2_loopHost_input_rewind: 146/245 = 60%
+   Catalog.lean::f2_lenParse_run  reproduces  Catalog.lean::f2_extract_run: 1137/1908 = 60%
+   Catalog.lean::f2_splitBody_restore  reproduces  Catalog.lean::f2_splitBody_rewind: 333/559 = 60%
+   Catalog.lean::f2_scanCopy_suffix  reproduces  Catalog.lean::f2_scanCopy_finish: 160/269 = 59%
+   Catalog.lean::f2_extract_rewind  reproduces  Catalog.lean::f2_loopBorrow_rewind: 454/764 = 59%
+   Catalog.lean::a2_mapVirtual_step  reproduces  Catalog.lean::a2_map_move: 215/362 = 59%
+   Loop.lean::exists_emitLoopTM  reproduces  Loop.lean::exists_loopTM: 457/770 = 59%
+   Catalog.lean::f2_rawStrip_rewind  reproduces  Catalog.lean::f2_loopBorrow_rewind: 453/764 = 59%
+   Catalog.lean::f2_rawStrip_rewind  reproduces  Catalog.lean::f2_splitPrepare_rewind: 460/776 = 59%
+   Loop.lean::emCall_pair_triple  reproduces  Loop.lean::emCall_triple_pair: 138/233 = 59%
+   Catalog.lean::f2_loopBorrow_rewind  reproduces  Catalog.lean::f2_extract_rewind: 454/767 = 59%
+   Catalog.lean::f2_splitEmit_double  reproduces  Catalog.lean::f2_splitPrepare_scan: 394/666 = 59%
+   Catalog.lean::f2_loopHost_borrow_rewind  reproduces  Catalog.lean::f2_loopHost_fuel_rewind: 772/1306 = 59%
+   Catalog.lean::f2_loopCall  reproduces  Loop.lean::emLoopCall: 79/134 = 59%
+   Loop.lean::loopCall_frame  reproduces  Catalog.lean::f2_loopCall_frame: 310/527 = 59%
+   Catalog.lean::f2_catalogFirstEntry  reproduces  Catalog.lean::f2_splitCount_firstHalt: 198/337 = 59%
+   Catalog.lean::f2_loopHost_borrow_rewind  reproduces  Catalog.lean::f2_loopHost_payload_rewind: 772/1314 = 59%
+   Catalog.lean::f2_loopBorrow_correct  reproduces  Catalog.lean::f2_loopHost_borrow: 261/445 = 59%
+   Catalog.lean::f2_splitRestore_scan  reproduces  Catalog.lean::f2_splitCount_over: 82/140 = 59%
+   Loop.lean::loopHost_fuel_capture  reproduces  Catalog.lean::f2_loopHost_fuel_capture: 65/111 = 59%
+   Loop.lean::loopHost_body_capture  reproduces  Catalog.lean::f2_loopHost_fuel_capture: 65/111 = 59%
+   Catalog.lean::f2_loopHost_fuel_capture  reproduces  Loop.lean::loopHost_body_capture: 65/111 = 59%
+   Catalog.lean::f2_splitPrepareScan  reproduces  Catalog.lean::f2_splitEmitCfg: 62/106 = 58%
+   Catalog.lean::f2_splitPrepareReady  reproduces  Catalog.lean::f2_splitEmitCfg: 62/106 = 58%
+   Catalog.lean::f2_loopBody_capture  reproduces  Catalog.lean::a2_call_run: 184/315 = 58%
+   Catalog.lean::f2_loopCall_reframe  reproduces  Loop.lean::loopCall_frame: 285/488 = 58%
+   Catalog.lean::f2_pairValid_run  reproduces  Catalog.lean::f2_anyTrue_run: 483/828 = 58%
+   Catalog.lean::f2_loopBorrow_rewind  reproduces  Catalog.lean::f2_rawStrip_replay: 240/412 = 58%
+   Catalog.lean::f2_splitRestore_rewind  reproduces  Catalog.lean::f2_extract_rewind: 446/767 = 58%
+   Catalog.lean::catalog_redirect_loop  reproduces  Loop.lean::emLoop_run_prefix: 75/129 = 58%
+   Loop.lean::loopHost_borrow_rewind  reproduces  Loop.lean::loopHost_fuel_rewind: 733/1261 = 58%
+   Catalog.lean::f2_loopHost_payload_rewind  reproduces  Catalog.lean::f2_loopHost_borrow_rewind: 772/1329 = 58%
+   Catalog.lean::f2_loopHost_fuel_rewind  reproduces  Catalog.lean::f2_loopHost_borrow_rewind: 772/1329 = 58%
+   Catalog.lean::clearTM  reproduces  Catalog.lean::incrementTM: 305/526 = 58%
+   Loop.lean::loop_find_run  reproduces  Loop.lean::loop_run: 448/773 = 58%
+   Catalog.lean::f2_loop_find_run  reproduces  Loop.lean::loop_run: 448/773 = 58%
+   Catalog.lean::computesFunInTime_pairLenCheck_spaceUsed  reproduces  Catalog.lean::computesFunInTime_stripLast_spaceUsed: 298/515 = 58%
+   Loop.lean::exists_loopFindTM  reproduces  Loop.lean::exists_loopCfgTM: 92/159 = 58%
+   Loop.lean::emCall_clear_left  reproduces  Loop.lean::emCall_clear_scan: 369/638 = 58%
+   Loop.lean::loopHost_borrow_rewind  reproduces  Loop.lean::loopHost_payload_rewind: 733/1269 = 58%
+   Embed.lean::embedSilentRetTM_run  reproduces  Embed.lean::embedSilentTM_runFrom: 68/118 = 58%
+   Loop.lean::emCallTripleEmbedding  reproduces  Loop.lean::emCallPairEmbedding: 69/120 = 57%
+   Loop.lean::emCall_track_stamp  reproduces  Loop.lean::emCall_track_initial: 398/693 = 57%
+   Catalog.lean::f2_splitEmbed_cut  reproduces  Loop.lean::emLoop_run_prefix: 74/129 = 57%
+   Catalog.lean::a2_mapSetup_stationary  reproduces  Loop.lean::emLoop_run_prefix: 74/129 = 57%
+   Catalog.lean::f2_catalogPoly_unary_computes  reproduces  Catalog.lean::f2_splitPoly_loop_end: 423/739 = 57%
+   Catalog.lean::f2_loopHost_payload_rewind  reproduces  Catalog.lean::f2_loopHost_fuel_copy: 874/1527 = 57%
+   Catalog.lean::f2_splitEmit_double  reproduces  Catalog.lean::f2_splitEmit_separator: 460/804 = 57%
+   Loop.lean::emCall_triple_inverse  reproduces  Loop.lean::emCall_pair_triple: 92/161 = 57%
+   Catalog.lean::f2_loopHost_fuel_rewind  reproduces  Catalog.lean::f2_loopHost_fuel_copy: 872/1527 = 57%
+   Loop.lean::loopHost_payload_rewind  reproduces  Loop.lean::loopHost_borrow_rewind: 733/1284 = 57%
+   Loop.lean::loopHost_fuel_rewind  reproduces  Loop.lean::loopHost_borrow_rewind: 733/1284 = 57%
+   Loop.lean::loop_input_run_le  reproduces  Loop.lean::loop_output_length_le: 145/254 = 57%
+   Loop.lean::loop_input_run_le  reproduces  Catalog.lean::f2_loop_output_length_le: 145/254 = 57%
+   Catalog.lean::f2_loop_input_run_le  reproduces  Loop.lean::loop_output_length_le: 145/254 = 57%
+   Catalog.lean::f2_loop_input_run_le  reproduces  Catalog.lean::f2_loop_output_length_le: 145/254 = 57%
+   Catalog.lean::copyTM_run  reproduces  Catalog.lean::transferTM_run: 388/680 = 57%
+   Catalog.lean::copyTM_run  reproduces  Catalog.lean::incrementTM_run_overflow: 280/491 = 57%
+   Embed.lean::embedEmitTM_visitedByTapeHead_frame  reproduces  Embed.lean::embedEmitTM_visitedByTapeHead: 138/242 = 57%
+   Loop.lean::emCall_track_initial  reproduces  Loop.lean::emCall_track_stamp: 398/698 = 57%
+   Catalog.lean::clearTM_spaceUsedByTape  reproduces  Catalog.lean::copyTM_spaceUsedByTape: 331/581 = 57%
+   Loop.lean::emCall_finish_transfer  reproduces  Loop.lean::emCall_finish_arg: 819/1438 = 57%
+   Loop.lean::loopHost_payload_rewind  reproduces  Loop.lean::loopHost_fuel_copy: 829/1458 = 57%
+   Loop.lean::emLoopCall  reproduces  Loop.lean::loopCall: 80/141 = 57%
+   Loop.lean::loopHost_fuel_rewind  reproduces  Loop.lean::loopHost_fuel_copy: 827/1458 = 57%
+   Embed.lean::embedThroughHalt  reproduces  Loop.lean::emLoop_run_prefix: 73/129 = 57%
+   Catalog.lean::a2_mapSetup_heads  reproduces  Loop.lean::emLoop_run_prefix: 73/129 = 57%
+   Embed.lean::embedSilentRetTM_visitedByTapeHead  reproduces  Embed.lean::embedEmitRetTM_visitedByTapeHead: 65/115 = 57%
+   Catalog.lean::a2_map_suffix  reproduces  Catalog.lean::a2_map_block: 540/956 = 56%
+   Loop.lean::emCallPairIndex  reproduces  Loop.lean::emCallPairSelect: 61/108 = 56%
+   Catalog.lean::computesFunInTime_prepend_spaceUsed  reproduces  Catalog.lean::computesFunInTime_pairDup_spaceUsed: 61/108 = 56%
+   Catalog.lean::computesFunInTime_pairValid_spaceUsed  reproduces  Catalog.lean::computesFunInTime_pairDup_spaceUsed: 61/108 = 56%
+   Catalog.lean::computesFunInTime_id_spaceUsed  reproduces  Catalog.lean::computesFunInTime_pairDup_spaceUsed: 61/108 = 56%
+   Catalog.lean::computesFunInTime_const_spaceUsed  reproduces  Catalog.lean::computesFunInTime_pairDup_spaceUsed: 61/108 = 56%
+   Loop.lean::loop_rewind_bounded  reproduces  Catalog.lean::f2_catalogRewind: 245/435 = 56%
+   Catalog.lean::f2_loop_rewind_bounded  reproduces  Catalog.lean::f2_catalogRewind: 245/435 = 56%
+   Catalog.lean::f2_splitEmit_double  reproduces  Catalog.lean::f2_rawStrip_replay: 232/412 = 56%
+   Catalog.lean::f2_counter_emit  reproduces  Catalog.lean::f2_counter_emit_run: 378/672 = 56%
+   Catalog.lean::compareTM  reproduces  Catalog.lean::clearTM: 230/409 = 56%
+   Catalog.lean::incrementTM_spaceUsedByTape  reproduces  Catalog.lean::clearTM_spaceUsedByTape: 244/434 = 56%
+   Loop.lean::emCall_finish_arg  reproduces  Loop.lean::emCall_finish_transfer: 819/1459 = 56%
+   Catalog.lean::f2_splitRestore_first  reproduces  Catalog.lean::f2_splitPrepare_first: 151/269 = 56%
+   Catalog.lean::a2_mapVirtual_run  reproduces  Loop.lean::emLoop_run_prefix: 72/129 = 56%
+   Catalog.lean::a2_heads_join  reproduces  Catalog.lean::a2_heads_halted: 72/129 = 56%
+   Catalog.lean::transferTM_run  reproduces  Catalog.lean::incrementTM_run_overflow: 274/491 = 56%
+   Embed.lean::embedSilentTM_visitedByTapeHead  reproduces  Embed.lean::embedSilentTM_frame: 63/113 = 56%
+   Catalog.lean::f2_loopBorrow_run  reproduces  Loop.lean::loopHost_borrow_run: 288/517 = 56%
+   Loop.lean::loopHost_fuel_capture  reproduces  Catalog.lean::f2_loopHost_body_capture: 65/117 = 56%
+   Loop.lean::emCall_bank_final  reproduces  Loop.lean::emCall_finish_initial: 904/1629 = 55%
+   Catalog.lean::computesFunInTime_prepend_spaceUsed  reproduces  Catalog.lean::computesFunInTime_incFixed_spaceUsed: 61/110 = 55%
+   Catalog.lean::computesFunInTime_pairValid_spaceUsed  reproduces  Catalog.lean::computesFunInTime_incFixed_spaceUsed: 61/110 = 55%
+   Catalog.lean::computesFunInTime_id_spaceUsed  reproduces  Catalog.lean::computesFunInTime_incFixed_spaceUsed: 61/110 = 55%
+   Catalog.lean::computesFunInTime_const_spaceUsed  reproduces  Catalog.lean::computesFunInTime_incFixed_spaceUsed: 61/110 = 55%
+   Loop.lean::emLoopHost_round  reproduces  Loop.lean::loopHost_fuel_return: 731/1321 = 55%
+   Catalog.lean::f2_extract_run  reproduces  Catalog.lean::f2_pairValid_run: 679/1231 = 55%
+   Loop.lean::emLoopHost_round  reproduces  Loop.lean::emLoop_run_prefix: 71/129 = 55%
+   Loop.lean::emCall_track_run  reproduces  Loop.lean::emLoop_run_prefix: 71/129 = 55%
+   Catalog.lean::f2_scanCopy_run  reproduces  Catalog.lean::f2_scanCopy_finish: 148/269 = 55%
+   Catalog.lean::copyTM_spaceUsedByTape  reproduces  Catalog.lean::compareTM_spaceUsedByTape: 315/573 = 55%
+   Catalog.lean::a2_call_run  reproduces  Catalog.lean::f2_loopHost_halt_return: 279/508 = 55%
+   Loop.lean::emLoopCall  reproduces  Catalog.lean::f2_loopCall: 79/144 = 55%
+   Catalog.lean::f2_splitEmbed_cut  reproduces  Loop.lean::emCall_first_entry: 221/403 = 55%
+   Catalog.lean::f2_extract_rewind  reproduces  Catalog.lean::f2_splitRestore_rewind: 446/814 = 55%
+   Loop.lean::loopHost_anchor_return  reproduces  Catalog.lean::f2_loopBody_capture: 203/372 = 55%
+   Loop.lean::emLoopHost_anchor_return  reproduces  Catalog.lean::f2_loopBody_capture: 203/372 = 55%
+   Loop.lean::emLoopHost_round  reproduces  Loop.lean::loopHost_borrow_step: 366/671 = 55%
+   Catalog.lean::f2_splitBody_prepare  reproduces  Catalog.lean::f2_splitBody_restore: 285/523 = 54%
+   Catalog.lean::f2_extract_run  reproduces  Catalog.lean::a2_map_parse: 1035/1903 = 54%
+   Catalog.lean::f2_rawStrip_rewind  reproduces  Catalog.lean::f2_splitRestore_rewind: 442/814 = 54%
+   Catalog.lean::transferTM_spaceUsedByTape  reproduces  Catalog.lean::compareTM_spaceUsedByTape: 311/573 = 54%
+   Catalog.lean::f2_lenParse_run  reproduces  Catalog.lean::f2_pairValid_run: 668/1231 = 54%
+   Catalog.lean::f2_splitEmit_double  reproduces  Loop.lean::emLoop_run_prefix: 70/129 = 54%
+   Catalog.lean::f2_pairDup_double  reproduces  Loop.lean::emLoop_run_prefix: 70/129 = 54%
+   Catalog.lean::f2_pairDup_computes  reproduces  Loop.lean::emLoop_run_prefix: 70/129 = 54%
+   Catalog.lean::f2_incFixed_computes  reproduces  Loop.lean::emLoop_run_prefix: 70/129 = 54%
+   Catalog.lean::computesFunInTime_pairMapSnd_spaceUsed  reproduces  Catalog.lean::a2_heads_halted: 70/129 = 54%
+   Catalog.lean::a2_map_parse  reproduces  Catalog.lean::f2_extract_run: 1035/1908 = 54%
+   Catalog.lean::compareTM_spaceUsedByTape  reproduces  Catalog.lean::copyTM_spaceUsedByTape: 315/581 = 54%
+   Catalog.lean::f2_splitEmit_suffix  reproduces  Loop.lean::loopReplay_run: 187/345 = 54%
+   Catalog.lean::f2_splitEmit_double  reproduces  Catalog.lean::f2_pairDup_double: 656/1212 = 54%
+   Loop.lean::loopCall_reframe  reproduces  Catalog.lean::f2_loopCall_frame: 285/527 = 54%
+   Loop.lean::loopHost_anchor_return  reproduces  Catalog.lean::a2_call_run: 170/315 = 54%
+   Loop.lean::exists_emitLoopTM  reproduces  Loop.lean::exists_loopFindTM: 491/910 = 54%
+   Loop.lean::emCallPairEmbedding  reproduces  Loop.lean::emCallTripleEmbedding: 69/128 = 54%
+   Loop.lean::emCall_track_run  reproduces  Loop.lean::emCall_track_extent: 145/269 = 54%
+   Catalog.lean::f2_loopHost_fuel_copy  reproduces  Catalog.lean::f2_loopHost_fuel_return: 736/1366 = 54%
+   Catalog.lean::catalog_transfer_trace  reproduces  Catalog.lean::catalog_clear_trace: 869/1617 = 54%
+   Loop.lean::emLoop_run_prefix  reproduces  Catalog.lean::catalog_redirect_loop: 75/140 = 54%
+   Loop.lean::emCall_right_run  reproduces  Catalog.lean::catalog_redirect_loop: 75/140 = 54%
+   Catalog.lean::a2_mapSetup_run  reproduces  Catalog.lean::catalog_redirect_loop: 75/140 = 54%
+   Catalog.lean::f2_loopCall_heads  reproduces  Catalog.lean::a2_fuel_heads: 329/615 = 53%
+   Catalog.lean::f2_space_of_time  reproduces  Catalog.lean::a2_heads_halted: 69/129 = 53%
+   Catalog.lean::a2_segments  reproduces  Catalog.lean::a2_heads_halted: 69/129 = 53%
+   Catalog.lean::f2_splitPrepare_extra  reproduces  Catalog.lean::f2_splitPrepare_scan: 356/666 = 53%
+   Loop.lean::emCall_track_action  reproduces  Loop.lean::emCall_track_initial: 370/693 = 53%
+   Loop.lean::emCall_bank_initial  reproduces  Loop.lean::emCall_prepare_final: 377/707 = 53%
+   Catalog.lean::f2_splitEmit_suffix  reproduces  Catalog.lean::f2_loopReplay_run: 187/351 = 53%
+   Catalog.lean::catalog_copy_trace  reproduces  Catalog.lean::catalog_copy_forward: 259/489 = 53%
+   Loop.lean::emCall_triple_pair  reproduces  Loop.lean::emCall_triple_other: 152/287 = 53%
+   Catalog.lean::f2_loopBorrow_step  reproduces  Loop.lean::loopReplay_step: 174/329 = 53%
+   Catalog.lean::f2_pairValid_computes  reproduces  Catalog.lean::f2_anyTrue_computes: 140/265 = 53%
+   Catalog.lean::f2_splitCount_firstHalt  reproduces  Catalog.lean::f2_catalogFirstEntry: 198/375 = 53%
+   Loop.lean::loopHost_borrow_run  reproduces  Loop.lean::emLoop_run_prefix: 68/129 = 53%
+   Loop.lean::emCall_finish_transfer  reproduces  Loop.lean::emLoop_run_prefix: 68/129 = 53%
+   Loop.lean::emCall_finish_rewind  reproduces  Loop.lean::emLoop_run_prefix: 68/129 = 53%
+   Loop.lean::emCall_finish_erase  reproduces  Loop.lean::emLoop_run_prefix: 68/129 = 53%
+   Loop.lean::emCall_finish_arg  reproduces  Loop.lean::emLoop_run_prefix: 68/129 = 53%
+   Catalog.lean::f2_splitEmit_suffix  reproduces  Loop.lean::emLoop_run_prefix: 68/129 = 53%
+   Catalog.lean::f2_scanCopy_suffix  reproduces  Loop.lean::emLoop_run_prefix: 68/129 = 53%
+   Catalog.lean::f2_loopHost_borrow_run  reproduces  Loop.lean::emLoop_run_prefix: 68/129 = 53%
+   Catalog.lean::f2_loopBorrow_run  reproduces  Loop.lean::emLoop_run_prefix: 68/129 = 53%
+   Catalog.lean::f2_extract_suffix  reproduces  Loop.lean::emLoop_run_prefix: 68/129 = 53%
+   Catalog.lean::f2_counter_carry  reproduces  Loop.lean::emLoop_run_prefix: 68/129 = 53%
+   Catalog.lean::f2_catalogPoly_loop  reproduces  Loop.lean::emLoop_run_prefix: 68/129 = 53%
+   Catalog.lean::a2_map_suffix  reproduces  Loop.lean::emLoop_run_prefix: 68/129 = 53%
+   Catalog.lean::a2_map_backB  reproduces  Loop.lean::emLoop_run_prefix: 68/129 = 53%
+   Catalog.lean::a2_map_backA  reproduces  Loop.lean::emLoop_run_prefix: 68/129 = 53%
+   Embed.lean::embedSilentTM_spaceUsedByTape_cap  reproduces  Embed.lean::embedSilentTM_visitedByTapeHead: 141/268 = 53%
+   Catalog.lean::a2_map_block  reproduces  Catalog.lean::f2_extract_block: 355/675 = 53%
+   Catalog.lean::clearTM_spaceUsedByTape  reproduces  Catalog.lean::transferTM_spaceUsedByTape: 329/627 = 52%
+   Catalog.lean::catalog_clear_trace  reproduces  Catalog.lean::catalog_transfer_trace: 869/1657 = 52%
+   Catalog.lean::f2_pairDup_computes  reproduces  Catalog.lean::f2_scanStep_right: 86/164 = 52%
+   Loop.lean::emCall_finish_erase  reproduces  Loop.lean::emCall_finish_transfer: 764/1459 = 52%
+   Loop.lean::emCall_triple_inverse  reproduces  Loop.lean::emCall_triple_pair: 122/233 = 52%
+   Catalog.lean::exists_loopTM_spaceUsed  reproduces  Loop.lean::exists_emitLoopTM: 1179/2254 = 52%
+   Catalog.lean::a2_map_setup  reproduces  Loop.lean::loopFuel_init: 214/410 = 52%
+   Catalog.lean::f2_splitCount_run  reproduces  Catalog.lean::catalog_redirect_loop: 73/140 = 52%
+   Catalog.lean::f2_catalogPoly_setup  reproduces  Catalog.lean::catalog_redirect_loop: 73/140 = 52%
+   Catalog.lean::f2_catalogPoly_emit  reproduces  Catalog.lean::catalog_redirect_loop: 73/140 = 52%
+   Catalog.lean::a2_mapSetup_stationary  reproduces  Catalog.lean::catalog_redirect_loop: 73/140 = 52%
+   Catalog.lean::a2_mapSetup_heads  reproduces  Catalog.lean::catalog_redirect_loop: 73/140 = 52%
+   Catalog.lean::f2_timed_control_init  reproduces  Catalog.lean::f2_control_heads: 88/169 = 52%
+   Catalog.lean::f2_loopReady_call  reproduces  Catalog.lean::f2_loopCall_reframe: 421/809 = 52%
+   Loop.lean::loopFuelCaptured_frame  reproduces  Loop.lean::loopControl_payload: 128/246 = 52%
+   Catalog.lean::f2_loopFuelCaptured_frame  reproduces  Loop.lean::loopControl_payload: 128/246 = 52%
+   Catalog.lean::f2_rawStrip_copy  reproduces  Catalog.lean::f2_rawStrip_replay: 214/412 = 52%
+   Loop.lean::loopHost_reject  reproduces  Loop.lean::emLoop_run_prefix: 67/129 = 52%
+   Loop.lean::loopHost_payload_rewind  reproduces  Loop.lean::emLoop_run_prefix: 67/129 = 52%
+   Loop.lean::loopHost_fuel_rewind  reproduces  Loop.lean::emLoop_run_prefix: 67/129 = 52%
+   Loop.lean::loopHost_fuel_return  reproduces  Loop.lean::emLoop_run_prefix: 67/129 = 52%
+   Loop.lean::loopHost_borrow_rewind  reproduces  Loop.lean::emLoop_run_prefix: 67/129 = 52%
+   Loop.lean::emCall_right_scan  reproduces  Loop.lean::emLoop_run_prefix: 67/129 = 52%
+   Catalog.lean::f2_splitRestore_rewind  reproduces  Loop.lean::emLoop_run_prefix: 67/129 = 52%
+   Catalog.lean::f2_splitPrepare_rewind  reproduces  Loop.lean::emLoop_run_prefix: 67/129 = 52%
+   Catalog.lean::f2_rawStrip_trim  reproduces  Loop.lean::emLoop_run_prefix: 67/129 = 52%
+   Catalog.lean::f2_rawStrip_rewind  reproduces  Loop.lean::emLoop_run_prefix: 67/129 = 52%
+   Catalog.lean::f2_loopHost_reject  reproduces  Loop.lean::emLoop_run_prefix: 67/129 = 52%
+   Catalog.lean::f2_loopHost_payload_rewind  reproduces  Loop.lean::emLoop_run_prefix: 67/129 = 52%
+   Catalog.lean::f2_loopHost_fuel_rewind  reproduces  Loop.lean::emLoop_run_prefix: 67/129 = 52%
+   Catalog.lean::f2_loopHost_fuel_return  reproduces  Loop.lean::emLoop_run_prefix: 67/129 = 52%
+   Catalog.lean::f2_loopHost_borrow_rewind  reproduces  Loop.lean::emLoop_run_prefix: 67/129 = 52%
+   Catalog.lean::f2_loopBorrow_rewind  reproduces  Loop.lean::emLoop_run_prefix: 67/129 = 52%
+   Catalog.lean::f2_extract_rewind  reproduces  Loop.lean::emLoop_run_prefix: 67/129 = 52%
+   Catalog.lean::f2_counter_increment  reproduces  Loop.lean::emLoop_run_prefix: 67/129 = 52%
+   Catalog.lean::f2_catalogPoly_setup  reproduces  Loop.lean::emLoop_run_prefix: 67/129 = 52%
+   Catalog.lean::f2_catalogPoly_rewind  reproduces  Loop.lean::emLoop_run_prefix: 67/129 = 52%
+   Catalog.lean::f2_catalogPoly_emit  reproduces  Loop.lean::emLoop_run_prefix: 67/129 = 52%
+   Catalog.lean::f2_anyTrue_run  reproduces  Loop.lean::emLoop_run_prefix: 67/129 = 52%
+   Catalog.lean::f2_poly_step  reproduces  Catalog.lean::a2_mapSetup_step: 113/218 = 52%
+   Catalog.lean::f2_loopBorrow_rewind  reproduces  Catalog.lean::f2_extract_replay_finish: 159/307 = 52%
+   Loop.lean::emCall_finish_initial  reproduces  Loop.lean::emCall_prepare_final: 366/707 = 52%
+   Loop.lean::emLoopHost_round  reproduces  Loop.lean::emLoopHost_start: 497/965 = 52%
+   Loop.lean::loopFuelCaptured_frame  reproduces  Catalog.lean::f2_loopControl_payload: 128/249 = 51%
+   Catalog.lean::f2_loopFuelCaptured_frame  reproduces  Catalog.lean::f2_loopControl_payload: 128/249 = 51%
+   Catalog.lean::compareTM_spaceUsedByTape  reproduces  Catalog.lean::clearTM_spaceUsedByTape: 223/434 = 51%
+   Catalog.lean::catalog_transfer_trace  reproduces  Catalog.lean::catalog_copy_forward: 251/489 = 51%
+   Catalog.lean::exists_loopTM_spaceUsed  reproduces  Catalog.lean::f2_exists_loopFind_space: 939/1831 = 51%
+   Loop.lean::loopReplay_run  reproduces  Loop.lean::emLoop_run_prefix: 66/129 = 51%
+   Catalog.lean::f2_loopReplay_run  reproduces  Loop.lean::emLoop_run_prefix: 66/129 = 51%
+   Catalog.lean::f2_counter_rewind  reproduces  Loop.lean::emLoop_run_prefix: 66/129 = 51%
+   Catalog.lean::f2_loopHost_fuel_copy  reproduces  Loop.lean::loopHost_fuel_rewind: 645/1261 = 51%
+   Catalog.lean::f2_loopHost_release  reproduces  Catalog.lean::f2_loopCall_frame: 269/527 = 51%
+   Catalog.lean::f2_splitRestore_scan  reproduces  Catalog.lean::f2_splitPrepare_extra: 240/472 = 51%
+   Loop.lean::loopHost_frame_replay  reproduces  Loop.lean::loopControl_payload: 125/246 = 51%
+   Catalog.lean::f2_loopHost_frame_replay  reproduces  Loop.lean::loopControl_payload: 125/246 = 51%
+   Catalog.lean::f2_splitPrepare_rewind  reproduces  Catalog.lean::f2_loopBorrow_rewind: 388/764 = 51%
+   Catalog.lean::f2_counter_rewind  reproduces  Catalog.lean::catalog_redirect_loop: 71/140 = 51%
+   Catalog.lean::a2_map_setup  reproduces  Catalog.lean::f2_loopFuel_init: 214/422 = 51%
+   Catalog.lean::a2_map_reject  reproduces  Catalog.lean::a2_map_launch: 374/741 = 50%
+   Loop.lean::loopHost_fuel_copy  reproduces  Loop.lean::emLoop_run_prefix: 65/129 = 50%
+   Catalog.lean::f2_splitEmit_separator  reproduces  Loop.lean::emLoop_run_prefix: 65/129 = 50%
+   Catalog.lean::f2_loopHost_fuel_copy  reproduces  Loop.lean::emLoop_run_prefix: 65/129 = 50%
+   Catalog.lean::f2_lenSuffix_run  reproduces  Loop.lean::emLoop_run_prefix: 65/129 = 50%
+   Loop.lean::emCall_clear_run  reproduces  Loop.lean::emCall_clear_origin: 428/850 = 50%
+   Loop.lean::emCall_track_computes  reproduces  Loop.lean::emCall_right_computes: 77/153 = 50%
+   Loop.lean::emCall_right_computes  reproduces  Loop.lean::emCall_track_computes: 77/153 = 50%
+   Loop.lean::emCall_pair_triple  reproduces  Loop.lean::emCall_triple_inverse: 92/183 = 50%
+   Loop.lean::loopHost_frame_replay  reproduces  Catalog.lean::f2_loopControl_payload: 125/249 = 50%
+   Catalog.lean::f2_loopHost_frame_replay  reproduces  Catalog.lean::f2_loopControl_payload: 125/249 = 50%
+   Catalog.lean::f2_loopHost_fuel_copy  reproduces  Loop.lean::loopHost_payload_rewind: 637/1269 = 50%
+   Catalog.lean::computesFunInTime_id_spaceUsed  reproduces  Catalog.lean::f2_idTM_run: 388/773 = 50%
+   Catalog.lean::computesFunInTime_polyUnary_spaceUsed  reproduces  Catalog.lean::f2_unary_sharp: 176/351 = 50%
+   Catalog.lean::a2_loop_round  reproduces  Catalog.lean::f2_loopHost_round: 1059/2114 = 50%
+   Catalog.lean::f2_loopBorrow_rewind  reproduces  Catalog.lean::f2_splitPrepare_rewind: 388/776 = 50%
+   Catalog.lean::a2_fuel_heads  reproduces  Catalog.lean::f2_loopCall_heads: 329/658 = 50%
+   Catalog.lean::f2_pairExtractTM  reproduces  Catalog.lean::f2_loopDebitTM: 219/438 = 50%
+   Catalog.lean::f2_extract_replay_finish  reproduces  Catalog.lean::f2_rawStrip_replay: 206/412 = 50%
+```
+
+## After screen — complete output
+
+```text
+declarations screened: 627; copy pairs (target reproduces >= half of source): 686; reproduced text: 282,786 chars
+   Catalog.lean::f2_loopHost  reproduces  Loop.lean::loopHost: 2477/2477 = 100%
+   Catalog.lean::f2_loopBody_step  reproduces  Loop.lean::loopBody_step: 1094/1094 = 100%
+   Loop.lean::loop_find_run  reproduces  Catalog.lean::f2_loop_find_run: 678/678 = 100%
+   Catalog.lean::f2_loop_find_run  reproduces  Loop.lean::loop_find_run: 678/678 = 100%
+   Loop.lean::loop_halted_run  reproduces  Catalog.lean::a2_loop_halted_run: 659/659 = 100%
+   Catalog.lean::a2_loop_halted_run  reproduces  Loop.lean::loop_halted_run: 659/659 = 100%
+   Loop.lean::loop_rewind_bounded  reproduces  Catalog.lean::f2_loop_rewind_bounded: 514/514 = 100%
+   Catalog.lean::f2_loop_rewind_bounded  reproduces  Loop.lean::loop_rewind_bounded: 514/514 = 100%
+   Catalog.lean::f2_loopBody_run  reproduces  Loop.lean::loopBody_run: 452/452 = 100%
+   Loop.lean::loopBodyTM  reproduces  Catalog.lean::f2_loopBodyTM: 428/428 = 100%
+   Catalog.lean::f2_loopBodyTM  reproduces  Loop.lean::loopBodyTM: 428/428 = 100%
+   Catalog.lean::f2_loopFuel_init  reproduces  Loop.lean::loopFuel_init: 410/410 = 100%
+   Loop.lean::loopBuffer_write  reproduces  Catalog.lean::f2_loopBuffer_write: 408/408 = 100%
+   Catalog.lean::f2_loopBuffer_write  reproduces  Loop.lean::loopBuffer_write: 408/408 = 100%
+   Catalog.lean::f2_finSumEquiv  reproduces  Catalog.lean::a2_mapSumEquiv: 362/362 = 100%
+   Catalog.lean::a2_mapSumEquiv  reproduces  Catalog.lean::f2_finSumEquiv: 362/362 = 100%
+   Catalog.lean::f2_loop_input_run_le  reproduces  Loop.lean::loop_input_run_le: 361/361 = 100%
+   Catalog.lean::f2_loopBody_stop  reproduces  Loop.lean::loopBody_stop: 346/346 = 100%
+   Catalog.lean::f2_loopReplay_run  reproduces  Loop.lean::loopReplay_run: 345/345 = 100%
+   Loop.lean::loop_first_halt  reproduces  Catalog.lean::f2_loop_first_halt: 341/341 = 100%
+   Catalog.lean::f2_loop_first_halt  reproduces  Loop.lean::loop_first_halt: 341/341 = 100%
+   Catalog.lean::f2_loopCopy_erase  reproduces  Loop.lean::loopCopy_erase: 285/285 = 100%
+   Loop.lean::loopFrame  reproduces  Catalog.lean::f2_loopFrame: 270/270 = 100%
+   Catalog.lean::f2_loopFrame  reproduces  Loop.lean::loopFrame: 270/270 = 100%
+   Loop.lean::loop_output_length_le  reproduces  Catalog.lean::f2_loop_output_length_le: 254/254 = 100%
+   Catalog.lean::f2_loop_output_length_le  reproduces  Loop.lean::loop_output_length_le: 254/254 = 100%
+   Catalog.lean::f2_loopFuel_run  reproduces  Loop.lean::loopFuel_run: 230/230 = 100%
+   Loop.lean::loop_input_move_le  reproduces  Catalog.lean::f2_loop_input_move_le: 222/222 = 100%
+   Catalog.lean::f2_loop_input_move_le  reproduces  Loop.lean::loop_input_move_le: 222/222 = 100%
+   Loop.lean::loopBodyCfg  reproduces  Catalog.lean::f2_loopBodyCfg: 212/212 = 100%
+   Catalog.lean::f2_loopBodyCfg  reproduces  Loop.lean::loopBodyCfg: 212/212 = 100%
+   Loop.lean::loop_live_prefix  reproduces  Catalog.lean::f2_loop_live_prefix: 156/156 = 100%
+   Catalog.lean::f2_loop_live_prefix  reproduces  Loop.lean::loop_live_prefix: 156/156 = 100%
+   Loop.lean::loopControlAction  reproduces  Catalog.lean::f2_loopControlAction: 150/150 = 100%
+   Catalog.lean::f2_loopControlAction  reproduces  Loop.lean::loopControlAction: 150/150 = 100%
+   Catalog.lean::f2_loopCall  reproduces  Loop.lean::loopCall: 141/141 = 100%
+   Catalog.lean::f2_loopValue_bits  reproduces  Loop.lean::loopValue_bits: 135/135 = 100%
+   Loop.lean::loopReplayTM  reproduces  Catalog.lean::f2_loopReplayTM: 130/130 = 100%
+   Catalog.lean::f2_loopReplayTM  reproduces  Loop.lean::loopReplayTM: 130/130 = 100%
+   Loop.lean::loopFuelSource  reproduces  Catalog.lean::f2_loopFuelSource: 122/122 = 100%
+   Catalog.lean::f2_loopFuelSource  reproduces  Loop.lean::loopFuelSource: 122/122 = 100%
+   Catalog.lean::f2_loopBodySource  reproduces  Loop.lean::loopBodySource: 119/119 = 100%
+   Loop.lean::emCall_erase_last  reproduces  Catalog.lean::f2_catalogBuffer_erase: 118/118 = 100%
+   Catalog.lean::f2_loopCopy_final  reproduces  Loop.lean::loopCopy_final: 110/110 = 100%
+   Loop.lean::loop_orbit_inv  reproduces  Catalog.lean::f2_loop_orbit_inv: 94/94 = 100%
+   Catalog.lean::f2_loop_orbit_inv  reproduces  Loop.lean::loop_orbit_inv: 94/94 = 100%
+   Catalog.lean::f2_loopBorrowPos_le  reproduces  Loop.lean::loopBorrowPos_le: 93/93 = 100%
+   Loop.lean::loopFuelCfg  reproduces  Catalog.lean::f2_loopFuelCfg: 90/90 = 100%
+   Catalog.lean::f2_loopFuelCfg  reproduces  Loop.lean::loopFuelCfg: 90/90 = 100%
+   Loop.lean::loopBuffer_read  reproduces  Catalog.lean::f2_loopBuffer_read: 89/89 = 100%
+   Catalog.lean::f2_loopBuffer_read  reproduces  Loop.lean::loopBuffer_read: 89/89 = 100%
+   Loop.lean::loop_fuel_width  reproduces  Catalog.lean::f2_loop_fuel_width: 87/87 = 100%
+   Catalog.lean::f2_loop_fuel_width  reproduces  Loop.lean::loop_fuel_width: 87/87 = 100%
+   Catalog.lean::f2_loopFrame_payload  reproduces  Loop.lean::loopFrame_payload: 79/79 = 100%
+   Catalog.lean::f2_loopFlag_clear  reproduces  Loop.lean::loopFlag_clear: 60/60 = 100%
+   Catalog.lean::f2_loopHost_payload_rewind  reproduces  Catalog.lean::f2_loopHost_fuel_rewind: 1304/1306 = 100%
+   Loop.lean::loopHost_payload_rewind  reproduces  Loop.lean::loopHost_fuel_rewind: 1259/1261 = 100%
+   Catalog.lean::transferTM  reproduces  Catalog.lean::copyTM: 475/476 = 100%
+   Loop.lean::emLoopHost_round  reproduces  Loop.lean::loopHost_reject: 2361/2367 = 100%
+   Loop.lean::emLoopHost_prepare  reproduces  Loop.lean::loopHost_input_rewind: 232/233 = 100%
+   Catalog.lean::f2_loopHost_contracts  reproduces  Loop.lean::loopHost_contracts: 3565/3586 = 99%
+   Loop.lean::loopBody_run  reproduces  Catalog.lean::f2_loopBody_run: 452/455 = 99%
+   Loop.lean::emLoopHost_prepare  reproduces  Loop.lean::loopHost_prepare: 1273/1282 = 99%
+   Loop.lean::loopHost  reproduces  Catalog.lean::f2_loopHost: 2477/2495 = 99%
+   Catalog.lean::f2_loopHost_fuel_rewind  reproduces  Catalog.lean::f2_loopHost_payload_rewind: 1304/1314 = 99%
+   Loop.lean::loopHost_fuel_rewind  reproduces  Loop.lean::loopHost_payload_rewind: 1259/1269 = 99%
+   Loop.lean::loop_input_run_le  reproduces  Catalog.lean::f2_loop_input_run_le: 361/364 = 99%
+   Loop.lean::loopBody_step  reproduces  Catalog.lean::f2_loopBody_step: 1094/1109 = 99%
+   Loop.lean::loopBody_stop  reproduces  Catalog.lean::f2_loopBody_stop: 346/352 = 98%
+   Loop.lean::loopReplay_run  reproduces  Catalog.lean::f2_loopReplay_run: 345/351 = 98%
+   Catalog.lean::f2_loopHost_start  reproduces  Loop.lean::loopHost_start: 275/280 = 98%
+   Embed.lean::embedSilentRetTM  reproduces  Embed.lean::embedEmitRetTM: 215/219 = 98%
+   Catalog.lean::f2_loopHost_round  reproduces  Loop.lean::loopHost_round: 2009/2051 = 98%
+   Loop.lean::loopCopy_erase  reproduces  Catalog.lean::f2_loopCopy_erase: 285/291 = 98%
+   Loop.lean::loopCall  reproduces  Catalog.lean::f2_loopCall: 141/144 = 98%
+   Catalog.lean::f2_loopHost_accept  reproduces  Loop.lean::loopHost_accept: 2165/2219 = 98%
+   Loop.lean::loopBodySource  reproduces  Catalog.lean::f2_loopBodySource: 119/122 = 98%
+   Catalog.lean::f2_lenSuffix_run  reproduces  Catalog.lean::f2_lenParse_first: 312/320 = 98%
+   Loop.lean::loopFuel_run  reproduces  Catalog.lean::f2_loopFuel_run: 230/236 = 97%
+   Loop.lean::loopFuel_init  reproduces  Catalog.lean::f2_loopFuel_init: 410/422 = 97%
+   Catalog.lean::computesFunInTime_pairSnd_spaceUsed  reproduces  Catalog.lean::computesFunInTime_pairConcat_spaceUsed: 305/314 = 97%
+   Catalog.lean::computesFunInTime_pairFst_spaceUsed  reproduces  Catalog.lean::computesFunInTime_pairConcat_spaceUsed: 305/314 = 97%
+   Catalog.lean::transferTM_run_ofCfg  reproduces  Catalog.lean::copyTM_run_ofCfg: 403/415 = 97%
+   Catalog.lean::f2_scanTrues_run  reproduces  Catalog.lean::f2_scanStep_right: 159/164 = 97%
+   Loop.lean::loopBorrowPos_le  reproduces  Catalog.lean::f2_loopBorrowPos_le: 93/96 = 97%
+   Catalog.lean::f2_loopHost_replay  reproduces  Loop.lean::loopHost_replay: 1032/1069 = 97%
+   Catalog.lean::f2_loopHost_fuel_return  reproduces  Loop.lean::loopHost_fuel_return: 1275/1321 = 97%
+   Catalog.lean::f2_loopHost_borrow_rewind  reproduces  Loop.lean::loopHost_borrow_rewind: 1238/1284 = 96%
+   Catalog.lean::f2_loopHost_prepare  reproduces  Loop.lean::loopHost_prepare: 1236/1282 = 96%
+   Catalog.lean::f2_loopHost_payload_rewind  reproduces  Loop.lean::loopHost_payload_rewind: 1223/1269 = 96%
+   Catalog.lean::f2_loopHost_fuel_rewind  reproduces  Loop.lean::loopHost_fuel_rewind: 1215/1261 = 96%
+   Loop.lean::loopFrame_payload  reproduces  Catalog.lean::f2_loopFrame_payload: 79/82 = 96%
+   Catalog.lean::f2_loopHost_fuel_setup  reproduces  Loop.lean::loopHost_fuel_setup: 858/891 = 96%
+   Catalog.lean::computesFunInTime_pairConcat_spaceUsed  reproduces  Catalog.lean::computesFunInTime_pairSnd_spaceUsed: 305/317 = 96%
+   Catalog.lean::computesFunInTime_pairConcat_spaceUsed  reproduces  Catalog.lean::computesFunInTime_pairFst_spaceUsed: 305/317 = 96%
+   Catalog.lean::f2_loopHost_frame_replay  reproduces  Loop.lean::loopHost_frame_replay: 888/923 = 96%
+   Catalog.lean::f2_loopReplay_step  reproduces  Loop.lean::loopReplay_step: 316/329 = 96%
+   Catalog.lean::transferTM_run  reproduces  Catalog.lean::copyTM_run: 388/404 = 96%
+   Embed.lean::embedEmitRetTM  reproduces  Embed.lean::embedSilentRetTM: 215/224 = 96%
+   Loop.lean::loopValue_bits  reproduces  Catalog.lean::f2_loopValue_bits: 135/141 = 96%
+   Catalog.lean::f2_loopControl_payload  reproduces  Loop.lean::loopControl_payload: 235/246 = 96%
+   Catalog.lean::f2_extract_replay  reproduces  Catalog.lean::f2_rawStrip_replay: 393/412 = 95%
+   Loop.lean::loopFlag_clear  reproduces  Catalog.lean::f2_loopFlag_clear: 60/63 = 95%
+   Catalog.lean::f2_loopHost_anchor_return  reproduces  Loop.lean::loopHost_anchor_return: 871/915 = 95%
+   Loop.lean::loopHost_start  reproduces  Catalog.lean::f2_loopHost_start: 275/289 = 95%
+   Loop.lean::loop_run  reproduces  Loop.lean::loop_halted_run: 627/659 = 95%
+   Loop.lean::loop_run  reproduces  Catalog.lean::a2_loop_halted_run: 627/659 = 95%
+   Loop.lean::loopCall_reframe  reproduces  Loop.lean::loopCall_frame: 464/488 = 95%
+   Loop.lean::loopHost_round  reproduces  Catalog.lean::f2_loopHost_round: 2009/2114 = 95%
+   Catalog.lean::f2_loopDebit_value  reproduces  Loop.lean::loopDebit_value: 187/197 = 95%
+   Catalog.lean::f2_loopHost_anchor_return  reproduces  Catalog.lean::a2_call_run: 299/315 = 95%
+   Catalog.lean::f2_loopCall_reframe  reproduces  Catalog.lean::f2_loopCall_frame: 500/527 = 95%
+   Catalog.lean::transferTM_spaceUsedByTape  reproduces  Catalog.lean::copyTM_spaceUsedByTape: 551/581 = 95%
+   Loop.lean::loopCopy_final  reproduces  Catalog.lean::f2_loopCopy_final: 110/116 = 95%
+   Loop.lean::emLoopHost_anchor_return  reproduces  Loop.lean::loopHost_anchor_return: 867/915 = 95%
+   Catalog.lean::f2_loopHost_borrow_run  reproduces  Loop.lean::loopHost_borrow_run: 489/517 = 95%
+   Loop.lean::emCall_bank_final  reproduces  Loop.lean::emCall_bank_initial: 3070/3250 = 94%
+   Loop.lean::loopControl_payload  reproduces  Catalog.lean::f2_loopControl_payload: 235/249 = 94%
+   Loop.lean::loopHost_accept  reproduces  Catalog.lean::f2_loopHost_accept: 2165/2297 = 94%
+   Catalog.lean::f2_loopDebit_success  reproduces  Loop.lean::loopDebit_success: 141/150 = 94%
+   Catalog.lean::f2_incFixed_computes  reproduces  Catalog.lean::f2_scanStep_right: 154/164 = 94%
+   Catalog.lean::f2_exists_loopFind_space  reproduces  Loop.lean::exists_loopFindTM: 851/910 = 94%
+   Catalog.lean::copyTM  reproduces  Catalog.lean::transferTM: 475/508 = 94%
+   Loop.lean::loopHost_replay  reproduces  Catalog.lean::f2_loopHost_replay: 1032/1105 = 93%
+   Loop.lean::loopHost_fuel_return  reproduces  Catalog.lean::f2_loopHost_fuel_return: 1275/1366 = 93%
+   Catalog.lean::f2_loopBodyPadded  reproduces  Loop.lean::loopBodyPadded: 137/147 = 93%
+   Loop.lean::loopHost_frame_replay  reproduces  Catalog.lean::f2_loopHost_frame_replay: 888/953 = 93%
+   Loop.lean::loopHost_fuel_setup  reproduces  Catalog.lean::f2_loopHost_fuel_setup: 858/921 = 93%
+   Loop.lean::loopHost_borrow_rewind  reproduces  Catalog.lean::f2_loopHost_borrow_rewind: 1238/1329 = 93%
+   Loop.lean::loopHost_payload_rewind  reproduces  Catalog.lean::f2_loopHost_payload_rewind: 1223/1314 = 93%
+   Loop.lean::loopHost_fuel_rewind  reproduces  Catalog.lean::f2_loopHost_fuel_rewind: 1215/1306 = 93%
+   Catalog.lean::f2_loopHost_fuel_copy  reproduces  Loop.lean::loopHost_fuel_copy: 1356/1458 = 93%
+   Catalog.lean::catalog_transfer_trace  reproduces  Catalog.lean::catalog_copy_trace: 1160/1250 = 93%
+   Catalog.lean::f2_pairDup_double  reproduces  Catalog.lean::f2_scanStep_right: 152/164 = 93%
+   Loop.lean::loopReplay_step  reproduces  Catalog.lean::f2_loopReplay_step: 316/341 = 93%
+   Catalog.lean::computesFunInTime_pairSnd_spaceUsed  reproduces  Catalog.lean::computesFunInTime_pairFst_spaceUsed: 293/317 = 92%
+   Catalog.lean::computesFunInTime_pairFst_spaceUsed  reproduces  Catalog.lean::computesFunInTime_pairSnd_spaceUsed: 293/317 = 92%
+   Catalog.lean::f2_loopHost_payload_rewind  reproduces  Loop.lean::loopHost_fuel_rewind: 1161/1261 = 92%
+   Catalog.lean::f2_branch_space  reproduces  Catalog.lean::catalog_space_one: 115/125 = 92%
+   Loop.lean::emLoopHost_start  reproduces  Loop.lean::loopHost_start: 257/280 = 92%
+   Catalog.lean::f2_loopHost_fuel_rewind  reproduces  Loop.lean::loopHost_payload_rewind: 1161/1269 = 91%
+   Catalog.lean::a2_map_block  reproduces  Catalog.lean::a2_map_move: 331/362 = 91%
+   Loop.lean::loopBodyPadded  reproduces  Catalog.lean::f2_loopBodyPadded: 137/150 = 91%
+   Catalog.lean::f2_rewind_heads  reproduces  Catalog.lean::f2_catalogRewind: 395/435 = 91%
+   Catalog.lean::f2_loopFuelCaptured_frame  reproduces  Loop.lean::loopFuelCaptured_frame: 1423/1570 = 91%
+   Loop.lean::loopHost_anchor_return  reproduces  Catalog.lean::f2_loopHost_anchor_return: 871/963 = 90%
+   Loop.lean::loopDebit_success  reproduces  Catalog.lean::f2_loopDebit_success: 141/156 = 90%
+   Catalog.lean::transferTM  reproduces  Catalog.lean::clearTM: 369/409 = 90%
+   Catalog.lean::copyTM  reproduces  Catalog.lean::clearTM: 369/409 = 90%
+   Catalog.lean::a2_map_suffix  reproduces  Catalog.lean::a2_map_move: 326/362 = 90%
+   Catalog.lean::incrementTM_run_succ_ofCfg  reproduces  Catalog.lean::incrementTM_run_overflow_ofCfg: 617/686 = 90%
+   Loop.lean::loopHost_borrow_run  reproduces  Catalog.lean::f2_loopHost_borrow_run: 489/544 = 90%
+   Catalog.lean::f2_exists_loopFind_space  reproduces  Loop.lean::exists_loopTM: 687/770 = 89%
+   Loop.lean::exists_loopFindTM  reproduces  Loop.lean::exists_loopTM: 686/770 = 89%
+   Loop.lean::loopHost_payload_rewind  reproduces  Catalog.lean::f2_loopHost_fuel_rewind: 1161/1306 = 89%
+   Catalog.lean::f2_loopReady  reproduces  Loop.lean::loopReady: 119/134 = 89%
+   Catalog.lean::f2_loopHost_reject  reproduces  Loop.lean::loopHost_reject: 2102/2367 = 89%
+   Loop.lean::loopHost_fuel_copy  reproduces  Catalog.lean::f2_loopHost_fuel_copy: 1356/1527 = 89%
+   Catalog.lean::f2_loopHost_halt_return  reproduces  Catalog.lean::a2_call_run: 279/315 = 89%
+   Catalog.lean::f2_splitCount_run  reproduces  Loop.lean::emCall_right_run: 152/172 = 88%
+   Loop.lean::loopHost_fuel_rewind  reproduces  Catalog.lean::f2_loopHost_payload_rewind: 1161/1314 = 88%
+   Loop.lean::loopDebit_value  reproduces  Catalog.lean::f2_loopDebit_value: 187/212 = 88%
+   Catalog.lean::f2_catalogBuffer_erase  reproduces  Loop.lean::emCall_erase_last: 118/134 = 88%
+   Loop.lean::emLoopHost_start  reproduces  Catalog.lean::f2_loopHost_start: 254/289 = 88%
+   Catalog.lean::copyTM_spaceUsedByTape  reproduces  Catalog.lean::transferTM_spaceUsedByTape: 551/627 = 88%
+   Loop.lean::emLoopHost_anchor_return  reproduces  Catalog.lean::f2_loopHost_anchor_return: 843/963 = 88%
+   Catalog.lean::copyTM_run  reproduces  Catalog.lean::clearTM_run: 336/385 = 87%
+   Loop.lean::emCall_first_entry  reproduces  Catalog.lean::f2_catalogFirstEntry: 327/375 = 87%
+   Catalog.lean::f2_extract_rewind  reproduces  Catalog.lean::f2_rawStrip_rewind: 632/725 = 87%
+   Catalog.lean::f2_loopHost_halt_return  reproduces  Loop.lean::loopHost_halt_return: 421/484 = 87%
+   Catalog.lean::f2_loopHost_borrow_run  reproduces  Catalog.lean::f2_loopBorrow_run: 414/476 = 87%
+   Catalog.lean::a2_map_backB  reproduces  Catalog.lean::a2_map_backA: 806/927 = 87%
+   Loop.lean::loopFuelCaptured_frame  reproduces  Catalog.lean::f2_loopFuelCaptured_frame: 1423/1639 = 87%
+   Catalog.lean::f2_loopBodySource_run  reproduces  Loop.lean::loopBodySource_run: 78/90 = 87%
+   Catalog.lean::f2_loopHost_borrow_step  reproduces  Loop.lean::loopHost_borrow_step: 581/671 = 87%
+   Catalog.lean::f2_loopHost_body_capture  reproduces  Catalog.lean::f2_loopHost_fuel_capture: 96/111 = 86%
+   Embed.lean::embedSilentCfg  reproduces  Embed.lean::embedEmitCfg: 165/192 = 86%
+   Loop.lean::emCall_finish_arg  reproduces  Loop.lean::emCall_finish_rewind: 1025/1195 = 86%
+   Loop.lean::emCall_triple_pair  reproduces  Loop.lean::emCall_pair_triple: 138/161 = 86%
+   Catalog.lean::f2_splitRestore_rewind  reproduces  Catalog.lean::f2_splitPrepare_rewind: 664/776 = 86%
+   Catalog.lean::f2_loopDebit_iterate_value  reproduces  Loop.lean::loopDebit_iterate_value: 248/290 = 86%
+   Loop.lean::emCall_right_run  reproduces  Loop.lean::emLoop_run_prefix: 110/129 = 85%
+   Catalog.lean::a2_mapSetup_run  reproduces  Loop.lean::emLoop_run_prefix: 110/129 = 85%
+   Loop.lean::loopReady  reproduces  Catalog.lean::f2_loopReady: 119/140 = 85%
+   Loop.lean::loopHost_reject  reproduces  Catalog.lean::f2_loopHost_reject: 2102/2493 = 84%
+   Catalog.lean::copyTM_run_ofCfg  reproduces  Catalog.lean::transferTM_run_ofCfg: 403/478 = 84%
+   Loop.lean::emLoopHost_round  reproduces  Catalog.lean::f2_loopHost_reject: 2098/2493 = 84%
+   Catalog.lean::a2_call_heads  reproduces  Catalog.lean::a2_fuel_heads: 515/615 = 84%
+   Catalog.lean::f2_splitCount_run  reproduces  Loop.lean::emLoop_run_prefix: 108/129 = 84%
+   Loop.lean::emCall_bank_initial  reproduces  Loop.lean::emCall_bank_final: 3070/3669 = 84%
+   Catalog.lean::f2_loopHost_fuel_return  reproduces  Catalog.lean::f2_loopHost_fuel_rewind: 1092/1306 = 84%
+   Catalog.lean::clearTM_run  reproduces  Catalog.lean::copyTM_run: 336/404 = 83%
+   Catalog.lean::f2_loopHost_fuel_return  reproduces  Catalog.lean::f2_loopHost_payload_rewind: 1092/1314 = 83%
+   Loop.lean::loopHost_fuel_return  reproduces  Loop.lean::loopHost_fuel_rewind: 1047/1261 = 83%
+   Catalog.lean::f2_loopCopy_initial  reproduces  Loop.lean::loopCopy_initial: 78/94 = 83%
+   Catalog.lean::f2_loopHost_body_capture  reproduces  Loop.lean::loopHost_body_capture: 92/111 = 83%
+   Loop.lean::loopHost_halt_return  reproduces  Catalog.lean::f2_loopHost_halt_return: 421/508 = 83%
+   Catalog.lean::a2_map_backA  reproduces  Catalog.lean::a2_map_backB: 806/975 = 83%
+   Loop.lean::loopHost_borrow_step  reproduces  Catalog.lean::f2_loopHost_borrow_step: 581/704 = 83%
+   Loop.lean::loopHost_fuel_return  reproduces  Loop.lean::loopHost_payload_rewind: 1047/1269 = 83%
+   Loop.lean::loopHost_prepare  reproduces  Catalog.lean::f2_loopHost_prepare: 1236/1499 = 82%
+   Catalog.lean::f2_rawStrip_rewind  reproduces  Catalog.lean::f2_extract_rewind: 632/767 = 82%
+   Loop.lean::exists_emitCallTM  reproduces  Loop.lean::exists_installCallTM: 194/236 = 82%
+   Catalog.lean::f2_loopHost_fuel_capture  reproduces  Catalog.lean::f2_loopHost_body_capture: 96/117 = 82%
+   Loop.lean::loopHost_contracts  reproduces  Catalog.lean::f2_loopHost_contracts: 3565/4347 = 82%
+   Loop.lean::emLoopHost_prepare  reproduces  Catalog.lean::f2_loopHost_prepare: 1228/1499 = 82%
+   Catalog.lean::f2_splitPrepare_rewind  reproduces  Catalog.lean::f2_splitRestore_rewind: 664/814 = 82%
+   Catalog.lean::transferTM_run  reproduces  Catalog.lean::clearTM_run: 314/385 = 82%
+   Embed.lean::MultiTapeTM.runFrom_mapState_of_agreeOn  reproduces  Catalog.lean::f2_splitEmbed_run: 153/188 = 81%
+   Catalog.lean::f2_sum_add  reproduces  Catalog.lean::a2_map_sum: 153/188 = 81%
+   Catalog.lean::a2_map_sum  reproduces  Catalog.lean::f2_sum_add: 153/188 = 81%
+   Loop.lean::loopBodySource_run  reproduces  Catalog.lean::f2_loopBodySource_run: 78/96 = 81%
+   Catalog.lean::f2_loopControl_apply  reproduces  Loop.lean::loopControl_apply: 643/792 = 81%
+   Catalog.lean::f2_catalogFirstEntry  reproduces  Loop.lean::emCall_first_entry: 327/403 = 81%
+   Loop.lean::loop_halted_run  reproduces  Loop.lean::loop_run: 627/773 = 81%
+   Catalog.lean::a2_loop_halted_run  reproduces  Loop.lean::loop_run: 627/773 = 81%
+   Catalog.lean::exists_loopTM_spaceUsed  reproduces  Loop.lean::exists_loopTM: 624/770 = 81%
+   Catalog.lean::f2_loopHost_fuel_return  reproduces  Catalog.lean::f2_loopHost_borrow_rewind: 1077/1329 = 81%
+   Loop.lean::loopHost_fuel_return  reproduces  Loop.lean::loopHost_borrow_rewind: 1035/1284 = 81%
+   Loop.lean::loopDebit_iterate_value  reproduces  Catalog.lean::f2_loopDebit_iterate_value: 248/308 = 81%
+   Catalog.lean::f2_counter_count_space  reproduces  Catalog.lean::f2_counter_count: 363/452 = 80%
+   Embed.lean::embedSilent_step  reproduces  Embed.lean::embedEmit_step: 315/393 = 80%
+   Catalog.lean::f2_loopHost_payload_rewind  reproduces  Catalog.lean::f2_loopHost_fuel_return: 1092/1366 = 80%
+   Catalog.lean::f2_loopHost_fuel_rewind  reproduces  Catalog.lean::f2_loopHost_fuel_return: 1092/1366 = 80%
+   Catalog.lean::f2_extract_suffix  reproduces  Catalog.lean::f2_extract_first: 238/300 = 79%
+   Loop.lean::loopHost_payload_rewind  reproduces  Loop.lean::loopHost_fuel_return: 1047/1321 = 79%
+   Loop.lean::loopHost_fuel_rewind  reproduces  Loop.lean::loopHost_fuel_return: 1047/1321 = 79%
+   Embed.lean::embedSilentRet_step  reproduces  Embed.lean::embedSilentRetTM_visitedByTapeHead: 106/134 = 79%
+   Catalog.lean::a2_call_heads  reproduces  Catalog.lean::f2_loopCall_heads: 520/658 = 79%
+   Catalog.lean::f2_splitRestore_scan  reproduces  Catalog.lean::f2_splitPrepare_scan: 526/666 = 79%
+   Catalog.lean::f2_loopHost_borrow_rewind  reproduces  Catalog.lean::f2_loopHost_fuel_return: 1077/1366 = 79%
+   Loop.lean::loopHost_body_capture  reproduces  Catalog.lean::f2_loopHost_body_capture: 92/117 = 79%
+   Catalog.lean::f2_loopHost_input_rewind  reproduces  Loop.lean::loopHost_input_rewind: 183/233 = 79%
+   Loop.lean::emCall_finish_final  reproduces  Loop.lean::emCall_finish_initial: 1279/1629 = 79%
+   Loop.lean::loopHost_borrow_rewind  reproduces  Loop.lean::loopHost_fuel_return: 1035/1321 = 78%
+   Catalog.lean::copyTM_run_ofCfg  reproduces  Catalog.lean::clearTM_run_ofCfg: 313/400 = 78%
+   Loop.lean::exists_installCallTM  reproduces  Loop.lean::exists_emitCallTM: 194/248 = 78%
+   Catalog.lean::incrementTM_run_succ  reproduces  Catalog.lean::incrementTM_run_overflow: 383/491 = 78%
+   Loop.lean::loopCopy_initial  reproduces  Catalog.lean::f2_loopCopy_initial: 78/100 = 78%
+   Catalog.lean::a2_loop_prepare  reproduces  Catalog.lean::f2_loopHost_prepare: 1165/1499 = 78%
+   Catalog.lean::incrementTM_run_overflow  reproduces  Catalog.lean::clearTM_run: 299/385 = 78%
+   Catalog.lean::compareTM  reproduces  Catalog.lean::incrementTM: 408/526 = 78%
+   Catalog.lean::clearTM  reproduces  Catalog.lean::copyTM: 369/476 = 78%
+   Catalog.lean::transferTM_run_ofCfg  reproduces  Catalog.lean::clearTM_run_ofCfg: 310/400 = 78%
+   Catalog.lean::f2_loopDebit_iterate_length  reproduces  Loop.lean::loopDebit_iterate_length: 68/88 = 77%
+   Loop.lean::loopControl_apply  reproduces  Catalog.lean::f2_loopControl_apply: 643/834 = 77%
+   Loop.lean::emCall_finish_arg  reproduces  Loop.lean::emCall_finish_erase: 972/1264 = 77%
+   Loop.lean::emCall_right_run  reproduces  Catalog.lean::a2_mapSetup_run: 125/163 = 77%
+   Catalog.lean::copyTM_spaceUsedByTape  reproduces  Catalog.lean::clearTM_spaceUsedByTape: 331/434 = 76%
+   Catalog.lean::f2_counterTape_write  reproduces  Loop.lean::loopBuffer_write: 311/408 = 76%
+   Catalog.lean::f2_counterTape_write  reproduces  Catalog.lean::f2_loopBuffer_write: 311/408 = 76%
+   Catalog.lean::f2_scanCopy_run  reproduces  Catalog.lean::f2_scanStep_right: 125/164 = 76%
+   CounterLoop.lean::decrementTM_run_succ_ofCfg  reproduces  CounterLoop.lean::counter_complement_twice: 67/88 = 76%
+   Catalog.lean::f2_loopBorrow_run  reproduces  Catalog.lean::f2_loopHost_borrow_run: 414/544 = 76%
+   Catalog.lean::transferTM_spaceUsedByTape  reproduces  Catalog.lean::clearTM_spaceUsedByTape: 329/434 = 76%
+   Catalog.lean::f2_loopBorrow_step  reproduces  Catalog.lean::f2_loopReplay_step: 258/341 = 76%
+   Embed.lean::embedEmitRet_step  reproduces  Embed.lean::embedEmitRetTM_visitedByTapeHead: 87/115 = 76%
+   Catalog.lean::f2_splitCount_run  reproduces  Catalog.lean::a2_mapSetup_run: 123/163 = 75%
+   Catalog.lean::f2_splitPrepare_scan  reproduces  Catalog.lean::f2_splitPrepare_extra: 356/472 = 75%
+   Catalog.lean::clearTM_run_ofCfg  reproduces  Catalog.lean::copyTM_run_ofCfg: 313/415 = 75%
+   Loop.lean::exists_loopTM  reproduces  Loop.lean::exists_loopFindTM: 686/910 = 75%
+   Catalog.lean::f2_extract_replay  reproduces  Catalog.lean::f2_extract_replay_finish: 230/307 = 75%
+   Loop.lean::loopDebit_iterate_length  reproduces  Catalog.lean::f2_loopDebit_iterate_length: 68/91 = 75%
+   Loop.lean::loopHost_input_rewind  reproduces  Catalog.lean::f2_loopHost_input_rewind: 183/245 = 75%
+   Catalog.lean::exists_loopTM_spaceUsed  reproduces  Loop.lean::exists_loopFindTM: 679/910 = 75%
+   Catalog.lean::incrementTM  reproduces  Catalog.lean::clearTM: 305/409 = 75%
+   Catalog.lean::compareTM_spaceUsedByTape  reproduces  Catalog.lean::compareTM_run: 237/318 = 75%
+   Loop.lean::emLoop_run_prefix  reproduces  Catalog.lean::a2_mapSetup_heads: 73/98 = 74%
+   Loop.lean::emCall_right_run  reproduces  Catalog.lean::a2_mapSetup_heads: 73/98 = 74%
+   Catalog.lean::catalog_redirect_loop  reproduces  Catalog.lean::a2_mapSetup_heads: 73/98 = 74%
+   Catalog.lean::a2_mapSetup_run  reproduces  Catalog.lean::a2_mapSetup_heads: 73/98 = 74%
+   Catalog.lean::f2_counterInc_potential  reproduces  Catalog.lean::f2_counterInc_length: 106/143 = 74%
+   Catalog.lean::f2_extract_block  reproduces  Catalog.lean::f2_extract_first: 222/300 = 74%
+   Catalog.lean::f2_loopCall_heads  reproduces  Catalog.lean::a2_call_heads: 520/703 = 74%
+   Loop.lean::emCall_finish_initial  reproduces  Loop.lean::emCall_finish_final: 1279/1731 = 74%
+   Catalog.lean::f2_space_radius  reproduces  Catalog.lean::catalog_space_bound: 140/190 = 74%
+   Catalog.lean::incrementTM_run_overflow_ofCfg  reproduces  Catalog.lean::incrementTM_run_succ_ofCfg: 617/839 = 74%
+   Loop.lean::loop_find_run  reproduces  Loop.lean::loop_halted_run: 484/659 = 73%
+   Loop.lean::loop_find_run  reproduces  Catalog.lean::a2_loop_halted_run: 484/659 = 73%
+   Catalog.lean::f2_loop_find_run  reproduces  Loop.lean::loop_halted_run: 484/659 = 73%
+   Catalog.lean::f2_loop_find_run  reproduces  Catalog.lean::a2_loop_halted_run: 484/659 = 73%
+   Embed.lean::embedEmit_step  reproduces  Embed.lean::embedSilent_step: 315/429 = 73%
+   Loop.lean::loopFrame  reproduces  Loop.lean::loopControlAction: 110/150 = 73%
+   Loop.lean::loopFrame  reproduces  Catalog.lean::f2_loopControlAction: 110/150 = 73%
+   Catalog.lean::f2_loopFrame  reproduces  Loop.lean::loopControlAction: 110/150 = 73%
+   Catalog.lean::f2_loopFrame  reproduces  Catalog.lean::f2_loopControlAction: 110/150 = 73%
+   Catalog.lean::f2_incFixedTM  reproduces  Catalog.lean::f2_pairDupTM: 283/386 = 73%
+   Catalog.lean::a2_fuel_heads  reproduces  Catalog.lean::a2_call_heads: 515/703 = 73%
+   Catalog.lean::f2_poly_space  reproduces  Catalog.lean::catalog_space_bound: 139/190 = 73%
+   Embed.lean::embedSilentTM_visitedByTapeHead_frame  reproduces  Embed.lean::embedEmitTM_visitedByTapeHead_frame: 204/279 = 73%
+   Catalog.lean::f2_loopHost_init  reproduces  Loop.lean::loopHost_init: 65/89 = 73%
+   Catalog.lean::f2_counterTape_read  reproduces  Loop.lean::loopBuffer_read: 65/89 = 73%
+   Catalog.lean::f2_counterTape_read  reproduces  Catalog.lean::f2_loopBuffer_read: 65/89 = 73%
+   Catalog.lean::f2_catalogPoly_setup  reproduces  Catalog.lean::f2_catalogPoly_emit: 384/527 = 73%
+   Catalog.lean::a2_mapSetup_run  reproduces  Loop.lean::emCall_right_run: 125/172 = 73%
+   Catalog.lean::clearTM  reproduces  Catalog.lean::transferTM: 369/508 = 73%
+   Catalog.lean::f2_counter_space  reproduces  Catalog.lean::catalog_space_bound: 138/190 = 73%
+   Catalog.lean::f2_loopHost_anchor_return  reproduces  Catalog.lean::f2_loopBody_capture: 270/372 = 73%
+   Embed.lean::embedSilentTM_visitedByTapeHead_frame  reproduces  Embed.lean::embedSilentTM_frame: 82/113 = 73%
+   Catalog.lean::f2_splitCount_run  reproduces  Catalog.lean::a2_mapSetup_heads: 71/98 = 72%
+   Catalog.lean::a2_mapSetup_stationary  reproduces  Catalog.lean::a2_mapSetup_heads: 71/98 = 72%
+   Loop.lean::loopBuffer_write  reproduces  Catalog.lean::f2_counterTape_write: 311/432 = 72%
+   Catalog.lean::f2_loopBuffer_write  reproduces  Catalog.lean::f2_counterTape_write: 311/432 = 72%
+   Catalog.lean::f2_splitRestoreScan  reproduces  Catalog.lean::f2_splitPrepareScan: 74/103 = 72%
+   Catalog.lean::f2_splitRestore_append  reproduces  Catalog.lean::f2_splitPrepare_extra: 338/472 = 72%
+   Loop.lean::emLoopHost_round  reproduces  Loop.lean::loopHost_borrow_rewind: 917/1284 = 71%
+   Loop.lean::loop_halted_run  reproduces  Loop.lean::loop_find_run: 484/678 = 71%
+   Loop.lean::loop_halted_run  reproduces  Catalog.lean::f2_loop_find_run: 484/678 = 71%
+   Catalog.lean::a2_loop_halted_run  reproduces  Loop.lean::loop_find_run: 484/678 = 71%
+   Catalog.lean::a2_loop_halted_run  reproduces  Catalog.lean::f2_loop_find_run: 484/678 = 71%
+   Loop.lean::emCall_finish_rewind  reproduces  Loop.lean::emCall_finish_arg: 1025/1438 = 71%
+   Catalog.lean::f2_loopReady_call  reproduces  Loop.lean::loopReady_call: 708/994 = 71%
+   Catalog.lean::f2_loopHost_borrow  reproduces  Catalog.lean::f2_loopBorrow_correct: 261/367 = 71%
+   Catalog.lean::a2_map_setup  reproduces  Catalog.lean::a2_map_move: 257/362 = 71%
+   Catalog.lean::f2_loopHost_fuel_return  reproduces  Loop.lean::loopHost_borrow_rewind: 909/1284 = 71%
+   Catalog.lean::f2_rawStripTM  reproduces  Loop.lean::loopReplayTM: 92/130 = 71%
+   Catalog.lean::f2_rawStripTM  reproduces  Catalog.lean::f2_loopReplayTM: 92/130 = 71%
+   Embed.lean::embedSilentTM_visitedByTapeHead  reproduces  Embed.lean::embedEmitTM_visitedByTapeHead: 171/242 = 71%
+   CounterLoop.lean::decrementTM_run_underflow_ofCfg  reproduces  CounterLoop.lean::counter_complement_twice: 62/88 = 70%
+   Catalog.lean::f2_cond_ledger  reproduces  Catalog.lean::f2_timed_start: 754/1073 = 70%
+   Catalog.lean::f2_loopHost_fuel_return  reproduces  Loop.lean::loopHost_fuel_rewind: 885/1261 = 70%
+   Catalog.lean::f2_splitRestoreTM  reproduces  Catalog.lean::f2_splitPrepareTM: 280/399 = 70%
+   Embed.lean::embedSilentTM_visitedByTapeHead_frame  reproduces  Embed.lean::embedSilentTM_visitedByTapeHead: 188/268 = 70%
+   Catalog.lean::incrementTM_run_succ  reproduces  Catalog.lean::clearTM_run: 270/385 = 70%
+   Catalog.lean::f2_extract_rewind  reproduces  Catalog.lean::f2_extract_replay_finish: 215/307 = 70%
+   Catalog.lean::catalog_copy_trace  reproduces  Catalog.lean::catalog_transfer_trace: 1160/1657 = 70%
+   Loop.lean::emCall_triple_other  reproduces  Loop.lean::emCall_triple_inverse: 128/183 = 70%
+   Catalog.lean::a2_heads_halted  reproduces  Catalog.lean::a2_heads_join: 72/103 = 70%
+   Loop.lean::emCall_finish_erase  reproduces  Loop.lean::emCall_finish_rewind: 835/1195 = 70%
+   Catalog.lean::f2_loopHost_fuel_return  reproduces  Loop.lean::loopHost_payload_rewind: 885/1269 = 70%
+   Catalog.lean::f2_loopBody_step  reproduces  Catalog.lean::f2_loopBody_stop: 245/352 = 70%
+   Catalog.lean::f2_lenParse_block  reproduces  Catalog.lean::f2_lenParse_first: 222/320 = 69%
+   Catalog.lean::incrementTM_run_overflow  reproduces  Catalog.lean::copyTM_run: 280/404 = 69%
+   Catalog.lean::a2_mapVirtual  reproduces  Catalog.lean::a2_mapCfg: 92/133 = 69%
+   Catalog.lean::a2_loop_prepare  reproduces  Loop.lean::loopHost_prepare: 886/1282 = 69%
+   Catalog.lean::catalogIncF  reproduces  Catalog.lean::catalogIncR: 152/220 = 69%
+   Loop.lean::loopBody_step  reproduces  Loop.lean::loopBody_stop: 239/346 = 69%
+   Catalog.lean::f2_counterInc_bits  reproduces  Loop.lean::loopValue_bits: 93/135 = 69%
+   Catalog.lean::f2_loopHost_borrow_rewind  reproduces  Loop.lean::loopHost_fuel_return: 909/1321 = 69%
+   Catalog.lean::computesFunInTime_incFixed_spaceUsed  reproduces  Catalog.lean::computesFunInTime_pairDup_spaceUsed: 74/108 = 69%
+   Loop.lean::loopHost_init  reproduces  Catalog.lean::f2_loopHost_init: 65/95 = 68%
+   Loop.lean::loopHost_fuel_return  reproduces  Catalog.lean::f2_loopHost_borrow_rewind: 909/1329 = 68%
+   Catalog.lean::f2_counter_heads  reproduces  Catalog.lean::f2_counter_computes: 666/977 = 68%
+   Catalog.lean::f2_counterInc_bits  reproduces  Catalog.lean::f2_loopValue_bits: 96/141 = 68%
+   Loop.lean::loopHost_fuel_return  reproduces  Catalog.lean::f2_loopHost_fuel_rewind: 885/1306 = 68%
+   Loop.lean::emCall_finish_erase  reproduces  Loop.lean::emCall_finish_arg: 972/1438 = 68%
+   Loop.lean::emLoop_run_prefix  reproduces  Catalog.lean::a2_mapSetup_run: 110/163 = 67%
+   Loop.lean::loopHost_fuel_return  reproduces  Catalog.lean::f2_loopHost_payload_rewind: 885/1314 = 67%
+   Catalog.lean::f2_loopHost_anchor_return  reproduces  Catalog.lean::f2_loopHost_halt_return: 342/508 = 67%
+   Catalog.lean::computesFunInTime_pairDup_spaceUsed  reproduces  Catalog.lean::computesFunInTime_incFixed_spaceUsed: 74/110 = 67%
+   Catalog.lean::f2_rawStrip_replay  reproduces  Catalog.lean::f2_extract_replay_finish: 206/307 = 67%
+   Catalog.lean::f2_loopHost_payload_rewind  reproduces  Loop.lean::loopHost_fuel_return: 885/1321 = 67%
+   Catalog.lean::f2_loopHost_fuel_rewind  reproduces  Loop.lean::loopHost_fuel_return: 885/1321 = 67%
+   Catalog.lean::f2_rawStrip_rewind  reproduces  Catalog.lean::f2_rawStrip_replay: 276/412 = 67%
+   Catalog.lean::f2_rawStrip_replay  reproduces  Catalog.lean::f2_extract_replay: 393/587 = 67%
+   Embed.lean::embedEmitTM_visitedByTapeHead_frame  reproduces  Embed.lean::embedSilentTM_visitedByTapeHead_frame: 204/305 = 67%
+   Catalog.lean::f2_loopHost_fuel_copy  reproduces  Catalog.lean::f2_loopHost_fuel_rewind: 872/1306 = 67%
+   Catalog.lean::f2_extract_run  reproduces  Catalog.lean::f2_lenParse_run: 1137/1703 = 67%
+   Catalog.lean::catalogIncR  reproduces  Catalog.lean::catalogIncF: 152/228 = 67%
+   Loop.lean::emCall_triple_pair  reproduces  Loop.lean::emCall_triple_inverse: 122/183 = 67%
+   Catalog.lean::f2_loopDebit  reproduces  Loop.lean::loopDebit: 62/93 = 67%
+   Catalog.lean::incrementTM_run_succ  reproduces  Catalog.lean::copyTM_run: 269/404 = 67%
+   Loop.lean::loopHost_borrow_rewind  reproduces  Catalog.lean::f2_loopHost_fuel_return: 909/1366 = 67%
+   Catalog.lean::f2_loopHost_fuel_copy  reproduces  Catalog.lean::f2_loopHost_payload_rewind: 874/1314 = 67%
+   Catalog.lean::f2_scanCopy_suffix  reproduces  Catalog.lean::f2_scanStep_right: 109/164 = 66%
+   Loop.lean::loopReady_call  reproduces  Catalog.lean::f2_loopReady_call: 708/1066 = 66%
+   Embed.lean::embedSilent_apply  reproduces  Embed.lean::embedEmit_apply: 168/253 = 66%
+   Catalog.lean::f2_catalogRewind  reproduces  Catalog.lean::f2_rewind_heads: 395/597 = 66%
+   Catalog.lean::a2_map_suffix  reproduces  Catalog.lean::a2_map_first: 232/351 = 66%
+   Loop.lean::loop_run  reproduces  Loop.lean::loop_find_run: 448/678 = 66%
+   Loop.lean::loop_run  reproduces  Catalog.lean::f2_loop_find_run: 448/678 = 66%
+   Catalog.lean::f2_splitPrepareScan  reproduces  Catalog.lean::f2_splitRestoreScan: 74/112 = 66%
+   Loop.lean::emCall_finish_rewind  reproduces  Loop.lean::emCall_finish_erase: 835/1264 = 66%
+   Catalog.lean::f2_incFixedTM  reproduces  Catalog.lean::f2_splitRewindTM: 122/185 = 66%
+   Loop.lean::emLoopHost_round  reproduces  Catalog.lean::f2_loopHost_borrow_rewind: 876/1329 = 66%
+   Catalog.lean::f2_loopBody_step  reproduces  Loop.lean::loopBody_stop: 228/346 = 66%
+   Loop.lean::emLoopHost_prepare  reproduces  Catalog.lean::f2_loopHost_input_rewind: 161/245 = 66%
+   Loop.lean::loopHost_fuel_copy  reproduces  Loop.lean::loopHost_fuel_rewind: 827/1261 = 66%
+   Loop.lean::loopHost_fuel_copy  reproduces  Loop.lean::loopHost_payload_rewind: 829/1269 = 65%
+   Catalog.lean::f2_loopHost_borrow  reproduces  Loop.lean::loopHost_borrow: 271/415 = 65%
+   Catalog.lean::f2_loopReady_call  reproduces  Catalog.lean::f2_loopCall_frame: 344/527 = 65%
+   Loop.lean::emCall_triple_other  reproduces  Loop.lean::emCall_triple_pair: 152/233 = 65%
+   Catalog.lean::f2_poly_space  reproduces  Catalog.lean::f2_space_radius: 239/367 = 65%
+   Catalog.lean::clearTM_run_ofCfg  reproduces  Catalog.lean::transferTM_run_ofCfg: 310/478 = 65%
+   Loop.lean::loopHost_payload_rewind  reproduces  Catalog.lean::f2_loopHost_fuel_return: 885/1366 = 65%
+   Loop.lean::loopHost_fuel_rewind  reproduces  Catalog.lean::f2_loopHost_fuel_return: 885/1366 = 65%
+   Loop.lean::loopBody_step  reproduces  Catalog.lean::f2_loopBody_stop: 228/352 = 65%
+   Loop.lean::emCall_track_action  reproduces  Loop.lean::emCall_right_step: 134/207 = 65%
+   Catalog.lean::f2_loopCall_reframe  reproduces  Loop.lean::loopCall_reframe: 484/749 = 65%
+   Catalog.lean::f2_timed_read  reproduces  Catalog.lean::f2_control_heads: 109/169 = 64%
+   Loop.lean::emCall_track_action  reproduces  Loop.lean::emCall_track_stamp: 450/698 = 64%
+   Catalog.lean::f2_splitEmbed_cut  reproduces  Catalog.lean::f2_splitEmbed_run: 121/188 = 64%
+   Catalog.lean::f2_loopHost_release  reproduces  Loop.lean::loopHost_release: 524/815 = 64%
+   Catalog.lean::f2_catalogPoly_emit  reproduces  Catalog.lean::f2_catalogPoly_setup: 384/598 = 64%
+   Catalog.lean::f2_counter_rewind  reproduces  Catalog.lean::f2_counter_emit_run: 431/672 = 64%
+   Loop.lean::emLoop_run_prefix  reproduces  Loop.lean::emCall_right_run: 110/172 = 64%
+   Loop.lean::loopHost_body_capture  reproduces  Loop.lean::loopHost_fuel_capture: 67/105 = 64%
+   Embed.lean::embedEmitTM_visitedByTapeHead  reproduces  Embed.lean::embedSilentTM_visitedByTapeHead: 171/268 = 64%
+   Catalog.lean::f2_extract_suffix  reproduces  Catalog.lean::f2_scanCopy_suffix: 553/868 = 64%
+   Catalog.lean::f2_splitBody_rewind  reproduces  Catalog.lean::f2_splitBody_restore: 333/523 = 64%
+   Catalog.lean::f2_loopCall_frame  reproduces  Loop.lean::loopCall_frame: 310/488 = 64%
+   Catalog.lean::f2_splitPrepare_rewind  reproduces  Catalog.lean::f2_rawStrip_rewind: 460/725 = 63%
+   Catalog.lean::catalog_clear_trace  reproduces  Catalog.lean::catalog_copy_trace: 793/1250 = 63%
+   Loop.lean::loopReady_call  reproduces  Loop.lean::loopCall_frame: 308/488 = 63%
+   Catalog.lean::f2_pairExtractTM  reproduces  Loop.lean::loopReplayTM: 82/130 = 63%
+   Catalog.lean::f2_pairExtractTM  reproduces  Catalog.lean::f2_loopReplayTM: 82/130 = 63%
+   Loop.lean::emLoopHost_round  reproduces  Loop.lean::loopHost_borrow: 261/415 = 63%
+   Loop.lean::loopBody_run  reproduces  Loop.lean::emLoop_run_prefix: 81/129 = 63%
+   Catalog.lean::f2_loopBody_run  reproduces  Loop.lean::emLoop_run_prefix: 81/129 = 63%
+   Catalog.lean::f2_read_heads  reproduces  Catalog.lean::f2_control_heads: 106/169 = 63%
+   Catalog.lean::f2_pairDupTM  reproduces  Catalog.lean::f2_splitRewindTM: 116/185 = 63%
+   Catalog.lean::incrementTM  reproduces  Catalog.lean::compareTM: 408/651 = 63%
+   CounterLoop.lean::counterWord_value  reproduces  CounterLoop.lean::counter_word_decrement: 94/150 = 63%
+   Loop.lean::loopDebit  reproduces  Catalog.lean::f2_loopDebit: 62/99 = 63%
+   Catalog.lean::f2_pairDup_double  reproduces  Catalog.lean::f2_scanCopy_run: 311/497 = 63%
+   Catalog.lean::f2_loopBorrow_rewind  reproduces  Catalog.lean::f2_rawStrip_rewind: 453/725 = 62%
+   Catalog.lean::f2_extract_rewind  reproduces  Catalog.lean::f2_rawStrip_replay: 257/412 = 62%
+   Catalog.lean::f2_rawStrip_rewind  reproduces  Catalog.lean::f2_extract_replay_finish: 191/307 = 62%
+   Catalog.lean::f2_counterInc_length  reproduces  Catalog.lean::f2_counterInc_potential: 106/171 = 62%
+   Loop.lean::loopCall_frame  reproduces  Loop.lean::loopCall_reframe: 464/749 = 62%
+   Embed.lean::embedSilentTM_spaceUsedByTape_cap  reproduces  Embed.lean::embedSilentTM_frame: 70/113 = 62%
+   Catalog.lean::f2_loopHost_fuel_capture  reproduces  Loop.lean::loopHost_fuel_capture: 65/105 = 62%
+   Catalog.lean::f2_loopHost_body_capture  reproduces  Loop.lean::loopHost_fuel_capture: 65/105 = 62%
+   Catalog.lean::f2_lenSuffix_run  reproduces  Catalog.lean::f2_anyTrue_run: 512/828 = 62%
+   Catalog.lean::f2_pairExtractTM  reproduces  Catalog.lean::f2_rawStripTM: 285/461 = 62%
+   Catalog.lean::f2_loopCall_frame  reproduces  Catalog.lean::f2_loopCall_reframe: 500/809 = 62%
+   Embed.lean::embedSilentTM_visitedByTapeHead  reproduces  Embed.lean::embedSilentTM_visitedByTapeHead_frame: 188/305 = 62%
+   Catalog.lean::f2_loopReplay_step  reproduces  Catalog.lean::f2_loopBorrow_step: 258/421 = 61%
+   Embed.lean::embedEmitCfg  reproduces  Embed.lean::embedSilentCfg: 165/270 = 61%
+   Catalog.lean::f2_splitPrepare_scan  reproduces  Catalog.lean::f2_splitRestore_scan: 526/861 = 61%
+   Catalog.lean::f2_splitRestore_rewind  reproduces  Catalog.lean::f2_rawStrip_rewind: 442/725 = 61%
+   Loop.lean::loopHost_anchor_return  reproduces  Loop.lean::loopHost_halt_return: 295/484 = 61%
+   Loop.lean::loopHost_borrow  reproduces  Catalog.lean::f2_loopHost_borrow: 271/445 = 61%
+   Catalog.lean::clearTM_run  reproduces  Catalog.lean::incrementTM_run_overflow: 299/491 = 61%
+   Catalog.lean::a2_map_space  reproduces  Catalog.lean::catalog_space_bound: 115/190 = 61%
+   Loop.lean::loopHost_borrow_run  reproduces  Catalog.lean::f2_loopBorrow_run: 288/476 = 61%
+   Catalog.lean::f2_splitPrepare_rewind  reproduces  Catalog.lean::f2_extract_rewind: 464/767 = 60%
+   Loop.lean::emCall_finish_transfer  reproduces  Loop.lean::emCall_finish_erase: 764/1264 = 60%
+   Loop.lean::emCall_finish_transfer  reproduces  Loop.lean::emCall_finish_rewind: 722/1195 = 60%
+   Loop.lean::loopHost_fuel_capture  reproduces  Loop.lean::loopHost_body_capture: 67/111 = 60%
+   Catalog.lean::f2_splitEmitCfg  reproduces  Catalog.lean::f2_splitPrepareScan: 62/103 = 60%
+   Loop.lean::loopHost_release  reproduces  Catalog.lean::f2_loopHost_release: 524/872 = 60%
+   Catalog.lean::f2_counter_emit_run  reproduces  Catalog.lean::f2_counter_emit: 378/630 = 60%
+   Loop.lean::loopCall_reframe  reproduces  Catalog.lean::f2_loopCall_reframe: 484/809 = 60%
+   Catalog.lean::f2_extract_rewind  reproduces  Catalog.lean::f2_splitPrepare_rewind: 464/776 = 60%
+   Catalog.lean::exists_loopTM_spaceUsed  reproduces  Loop.lean::exists_loopCfgTM: 95/159 = 60%
+   CounterLoop.lean::decrementTM_run_succ_ofCfg  reproduces  CounterLoop.lean::decrementTM_run_underflow_ofCfg: 448/750 = 60%
+   Catalog.lean::f2_pairDupTM  reproduces  Catalog.lean::f2_incFixedTM: 283/474 = 60%
+   Loop.lean::loopCall  reproduces  Loop.lean::emLoopCall: 80/134 = 60%
+   Catalog.lean::a2_loop_prepare  reproduces  Catalog.lean::f2_loopHost_input_rewind: 146/245 = 60%
+   Catalog.lean::f2_lenParse_run  reproduces  Catalog.lean::f2_extract_run: 1137/1908 = 60%
+   Catalog.lean::f2_splitBody_restore  reproduces  Catalog.lean::f2_splitBody_rewind: 333/559 = 60%
+   Catalog.lean::f2_scanCopy_suffix  reproduces  Catalog.lean::f2_scanCopy_finish: 160/269 = 59%
+   Catalog.lean::f2_extract_rewind  reproduces  Catalog.lean::f2_loopBorrow_rewind: 454/764 = 59%
+   Catalog.lean::a2_mapVirtual_step  reproduces  Catalog.lean::a2_map_move: 215/362 = 59%
+   Loop.lean::exists_emitLoopTM  reproduces  Loop.lean::exists_loopTM: 457/770 = 59%
+   Catalog.lean::f2_rawStrip_rewind  reproduces  Catalog.lean::f2_loopBorrow_rewind: 453/764 = 59%
+   Catalog.lean::f2_rawStrip_rewind  reproduces  Catalog.lean::f2_splitPrepare_rewind: 460/776 = 59%
+   Loop.lean::emCall_pair_triple  reproduces  Loop.lean::emCall_triple_pair: 138/233 = 59%
+   Catalog.lean::f2_loopBorrow_rewind  reproduces  Catalog.lean::f2_extract_rewind: 454/767 = 59%
+   Catalog.lean::f2_splitEmit_double  reproduces  Catalog.lean::f2_splitPrepare_scan: 394/666 = 59%
+   Catalog.lean::f2_loopHost_borrow_rewind  reproduces  Catalog.lean::f2_loopHost_fuel_rewind: 772/1306 = 59%
+   Catalog.lean::f2_loopCall  reproduces  Loop.lean::emLoopCall: 79/134 = 59%
+   Loop.lean::loopCall_frame  reproduces  Catalog.lean::f2_loopCall_frame: 310/527 = 59%
+   Catalog.lean::f2_catalogFirstEntry  reproduces  Catalog.lean::f2_splitCount_firstHalt: 198/337 = 59%
+   Catalog.lean::f2_loopHost_borrow_rewind  reproduces  Catalog.lean::f2_loopHost_payload_rewind: 772/1314 = 59%
+   Catalog.lean::f2_loopBorrow_correct  reproduces  Catalog.lean::f2_loopHost_borrow: 261/445 = 59%
+   Catalog.lean::f2_splitRestore_scan  reproduces  Catalog.lean::f2_splitCount_over: 82/140 = 59%
+   Loop.lean::loopHost_fuel_capture  reproduces  Catalog.lean::f2_loopHost_fuel_capture: 65/111 = 59%
+   Loop.lean::loopHost_body_capture  reproduces  Catalog.lean::f2_loopHost_fuel_capture: 65/111 = 59%
+   Catalog.lean::f2_loopHost_fuel_capture  reproduces  Loop.lean::loopHost_body_capture: 65/111 = 59%
+   Catalog.lean::f2_splitPrepareScan  reproduces  Catalog.lean::f2_splitEmitCfg: 62/106 = 58%
+   Catalog.lean::f2_splitPrepareReady  reproduces  Catalog.lean::f2_splitEmitCfg: 62/106 = 58%
+   Catalog.lean::f2_loopBody_capture  reproduces  Catalog.lean::a2_call_run: 184/315 = 58%
+   Catalog.lean::f2_loopCall_reframe  reproduces  Loop.lean::loopCall_frame: 285/488 = 58%
+   Catalog.lean::f2_pairValid_run  reproduces  Catalog.lean::f2_anyTrue_run: 483/828 = 58%
+   Catalog.lean::f2_loopBorrow_rewind  reproduces  Catalog.lean::f2_rawStrip_replay: 240/412 = 58%
+   Catalog.lean::f2_splitRestore_rewind  reproduces  Catalog.lean::f2_extract_rewind: 446/767 = 58%
+   Catalog.lean::catalog_redirect_loop  reproduces  Loop.lean::emLoop_run_prefix: 75/129 = 58%
+   Loop.lean::loopHost_borrow_rewind  reproduces  Loop.lean::loopHost_fuel_rewind: 733/1261 = 58%
+   Catalog.lean::f2_loopHost_payload_rewind  reproduces  Catalog.lean::f2_loopHost_borrow_rewind: 772/1329 = 58%
+   Catalog.lean::f2_loopHost_fuel_rewind  reproduces  Catalog.lean::f2_loopHost_borrow_rewind: 772/1329 = 58%
+   Catalog.lean::clearTM  reproduces  Catalog.lean::incrementTM: 305/526 = 58%
+   Loop.lean::loop_find_run  reproduces  Loop.lean::loop_run: 448/773 = 58%
+   Catalog.lean::f2_loop_find_run  reproduces  Loop.lean::loop_run: 448/773 = 58%
+   Catalog.lean::computesFunInTime_pairLenCheck_spaceUsed  reproduces  Catalog.lean::computesFunInTime_stripLast_spaceUsed: 298/515 = 58%
+   Loop.lean::exists_loopFindTM  reproduces  Loop.lean::exists_loopCfgTM: 92/159 = 58%
+   Loop.lean::emCall_clear_left  reproduces  Loop.lean::emCall_clear_scan: 369/638 = 58%
+   Loop.lean::loopHost_borrow_rewind  reproduces  Loop.lean::loopHost_payload_rewind: 733/1269 = 58%
+   Embed.lean::embedSilentRetTM_run  reproduces  Embed.lean::embedSilentTM_runFrom: 68/118 = 58%
+   Loop.lean::emCallTripleEmbedding  reproduces  Loop.lean::emCallPairEmbedding: 69/120 = 57%
+   Loop.lean::emCall_track_stamp  reproduces  Loop.lean::emCall_track_initial: 398/693 = 57%
+   Catalog.lean::f2_splitEmbed_cut  reproduces  Loop.lean::emLoop_run_prefix: 74/129 = 57%
+   Catalog.lean::a2_mapSetup_stationary  reproduces  Loop.lean::emLoop_run_prefix: 74/129 = 57%
+   Catalog.lean::f2_catalogPoly_unary_computes  reproduces  Catalog.lean::f2_splitPoly_loop_end: 423/739 = 57%
+   Catalog.lean::f2_loopHost_payload_rewind  reproduces  Catalog.lean::f2_loopHost_fuel_copy: 874/1527 = 57%
+   Catalog.lean::f2_splitEmit_double  reproduces  Catalog.lean::f2_splitEmit_separator: 460/804 = 57%
+   Loop.lean::emCall_triple_inverse  reproduces  Loop.lean::emCall_pair_triple: 92/161 = 57%
+   Catalog.lean::f2_loopHost_fuel_rewind  reproduces  Catalog.lean::f2_loopHost_fuel_copy: 872/1527 = 57%
+   Loop.lean::loopHost_payload_rewind  reproduces  Loop.lean::loopHost_borrow_rewind: 733/1284 = 57%
+   Loop.lean::loopHost_fuel_rewind  reproduces  Loop.lean::loopHost_borrow_rewind: 733/1284 = 57%
+   Loop.lean::loop_input_run_le  reproduces  Loop.lean::loop_output_length_le: 145/254 = 57%
+   Loop.lean::loop_input_run_le  reproduces  Catalog.lean::f2_loop_output_length_le: 145/254 = 57%
+   Catalog.lean::f2_loop_input_run_le  reproduces  Loop.lean::loop_output_length_le: 145/254 = 57%
+   Catalog.lean::f2_loop_input_run_le  reproduces  Catalog.lean::f2_loop_output_length_le: 145/254 = 57%
+   Catalog.lean::copyTM_run  reproduces  Catalog.lean::transferTM_run: 388/680 = 57%
+   Catalog.lean::copyTM_run  reproduces  Catalog.lean::incrementTM_run_overflow: 280/491 = 57%
+   Embed.lean::embedEmitTM_visitedByTapeHead_frame  reproduces  Embed.lean::embedEmitTM_visitedByTapeHead: 138/242 = 57%
+   Loop.lean::emCall_track_initial  reproduces  Loop.lean::emCall_track_stamp: 398/698 = 57%
+   Catalog.lean::clearTM_spaceUsedByTape  reproduces  Catalog.lean::copyTM_spaceUsedByTape: 331/581 = 57%
+   Loop.lean::emCall_finish_transfer  reproduces  Loop.lean::emCall_finish_arg: 819/1438 = 57%
+   Loop.lean::loopHost_payload_rewind  reproduces  Loop.lean::loopHost_fuel_copy: 829/1458 = 57%
+   Loop.lean::emLoopCall  reproduces  Loop.lean::loopCall: 80/141 = 57%
+   Loop.lean::loopHost_fuel_rewind  reproduces  Loop.lean::loopHost_fuel_copy: 827/1458 = 57%
+   Embed.lean::embedThroughHalt  reproduces  Loop.lean::emLoop_run_prefix: 73/129 = 57%
+   Catalog.lean::a2_mapSetup_heads  reproduces  Loop.lean::emLoop_run_prefix: 73/129 = 57%
+   Embed.lean::embedSilentRetTM_visitedByTapeHead  reproduces  Embed.lean::embedEmitRetTM_visitedByTapeHead: 65/115 = 57%
+   Catalog.lean::a2_map_suffix  reproduces  Catalog.lean::a2_map_block: 540/956 = 56%
+   Loop.lean::emCallPairIndex  reproduces  Loop.lean::emCallPairSelect: 61/108 = 56%
+   Catalog.lean::computesFunInTime_prepend_spaceUsed  reproduces  Catalog.lean::computesFunInTime_pairDup_spaceUsed: 61/108 = 56%
+   Catalog.lean::computesFunInTime_pairValid_spaceUsed  reproduces  Catalog.lean::computesFunInTime_pairDup_spaceUsed: 61/108 = 56%
+   Catalog.lean::computesFunInTime_id_spaceUsed  reproduces  Catalog.lean::computesFunInTime_pairDup_spaceUsed: 61/108 = 56%
+   Catalog.lean::computesFunInTime_const_spaceUsed  reproduces  Catalog.lean::computesFunInTime_pairDup_spaceUsed: 61/108 = 56%
+   Loop.lean::loop_rewind_bounded  reproduces  Catalog.lean::f2_catalogRewind: 245/435 = 56%
+   Catalog.lean::f2_loop_rewind_bounded  reproduces  Catalog.lean::f2_catalogRewind: 245/435 = 56%
+   Catalog.lean::f2_splitEmit_double  reproduces  Catalog.lean::f2_rawStrip_replay: 232/412 = 56%
+   Catalog.lean::f2_counter_emit  reproduces  Catalog.lean::f2_counter_emit_run: 378/672 = 56%
+   Catalog.lean::compareTM  reproduces  Catalog.lean::clearTM: 230/409 = 56%
+   Catalog.lean::incrementTM_spaceUsedByTape  reproduces  Catalog.lean::clearTM_spaceUsedByTape: 244/434 = 56%
+   Loop.lean::emCall_finish_arg  reproduces  Loop.lean::emCall_finish_transfer: 819/1459 = 56%
+   Catalog.lean::f2_splitRestore_first  reproduces  Catalog.lean::f2_splitPrepare_first: 151/269 = 56%
+   Catalog.lean::a2_mapVirtual_run  reproduces  Loop.lean::emLoop_run_prefix: 72/129 = 56%
+   Catalog.lean::a2_heads_join  reproduces  Catalog.lean::a2_heads_halted: 72/129 = 56%
+   Catalog.lean::transferTM_run  reproduces  Catalog.lean::incrementTM_run_overflow: 274/491 = 56%
+   Embed.lean::embedSilentTM_visitedByTapeHead  reproduces  Embed.lean::embedSilentTM_frame: 63/113 = 56%
+   Catalog.lean::f2_loopBorrow_run  reproduces  Loop.lean::loopHost_borrow_run: 288/517 = 56%
+   Loop.lean::loopHost_fuel_capture  reproduces  Catalog.lean::f2_loopHost_body_capture: 65/117 = 56%
+   Loop.lean::emCall_bank_final  reproduces  Loop.lean::emCall_finish_initial: 904/1629 = 55%
+   Catalog.lean::computesFunInTime_prepend_spaceUsed  reproduces  Catalog.lean::computesFunInTime_incFixed_spaceUsed: 61/110 = 55%
+   Catalog.lean::computesFunInTime_pairValid_spaceUsed  reproduces  Catalog.lean::computesFunInTime_incFixed_spaceUsed: 61/110 = 55%
+   Catalog.lean::computesFunInTime_id_spaceUsed  reproduces  Catalog.lean::computesFunInTime_incFixed_spaceUsed: 61/110 = 55%
+   Catalog.lean::computesFunInTime_const_spaceUsed  reproduces  Catalog.lean::computesFunInTime_incFixed_spaceUsed: 61/110 = 55%
+   Loop.lean::emLoopHost_round  reproduces  Loop.lean::loopHost_fuel_return: 731/1321 = 55%
+   Catalog.lean::f2_extract_run  reproduces  Catalog.lean::f2_pairValid_run: 679/1231 = 55%
+   Loop.lean::emLoopHost_round  reproduces  Loop.lean::emLoop_run_prefix: 71/129 = 55%
+   Loop.lean::emCall_track_run  reproduces  Loop.lean::emLoop_run_prefix: 71/129 = 55%
+   Catalog.lean::f2_scanCopy_run  reproduces  Catalog.lean::f2_scanCopy_finish: 148/269 = 55%
+   Catalog.lean::copyTM_spaceUsedByTape  reproduces  Catalog.lean::compareTM_spaceUsedByTape: 315/573 = 55%
+   Catalog.lean::a2_call_run  reproduces  Catalog.lean::f2_loopHost_halt_return: 279/508 = 55%
+   Loop.lean::emLoopCall  reproduces  Catalog.lean::f2_loopCall: 79/144 = 55%
+   Catalog.lean::f2_splitEmbed_cut  reproduces  Loop.lean::emCall_first_entry: 221/403 = 55%
+   Catalog.lean::f2_extract_rewind  reproduces  Catalog.lean::f2_splitRestore_rewind: 446/814 = 55%
+   Loop.lean::loopHost_anchor_return  reproduces  Catalog.lean::f2_loopBody_capture: 203/372 = 55%
+   Loop.lean::emLoopHost_anchor_return  reproduces  Catalog.lean::f2_loopBody_capture: 203/372 = 55%
+   Loop.lean::emLoopHost_round  reproduces  Loop.lean::loopHost_borrow_step: 366/671 = 55%
+   Catalog.lean::f2_splitBody_prepare  reproduces  Catalog.lean::f2_splitBody_restore: 285/523 = 54%
+   Catalog.lean::f2_extract_run  reproduces  Catalog.lean::a2_map_parse: 1035/1903 = 54%
+   Catalog.lean::f2_rawStrip_rewind  reproduces  Catalog.lean::f2_splitRestore_rewind: 442/814 = 54%
+   Catalog.lean::transferTM_spaceUsedByTape  reproduces  Catalog.lean::compareTM_spaceUsedByTape: 311/573 = 54%
+   Catalog.lean::f2_lenParse_run  reproduces  Catalog.lean::f2_pairValid_run: 668/1231 = 54%
+   Catalog.lean::f2_splitEmit_double  reproduces  Loop.lean::emLoop_run_prefix: 70/129 = 54%
+   Catalog.lean::f2_pairDup_double  reproduces  Loop.lean::emLoop_run_prefix: 70/129 = 54%
+   Catalog.lean::f2_pairDup_computes  reproduces  Loop.lean::emLoop_run_prefix: 70/129 = 54%
+   Catalog.lean::f2_incFixed_computes  reproduces  Loop.lean::emLoop_run_prefix: 70/129 = 54%
+   Catalog.lean::computesFunInTime_pairMapSnd_spaceUsed  reproduces  Catalog.lean::a2_heads_halted: 70/129 = 54%
+   Catalog.lean::a2_map_parse  reproduces  Catalog.lean::f2_extract_run: 1035/1908 = 54%
+   Catalog.lean::compareTM_spaceUsedByTape  reproduces  Catalog.lean::copyTM_spaceUsedByTape: 315/581 = 54%
+   Catalog.lean::f2_splitEmit_suffix  reproduces  Loop.lean::loopReplay_run: 187/345 = 54%
+   Catalog.lean::f2_splitEmit_double  reproduces  Catalog.lean::f2_pairDup_double: 656/1212 = 54%
+   Loop.lean::loopCall_reframe  reproduces  Catalog.lean::f2_loopCall_frame: 285/527 = 54%
+   Loop.lean::loopHost_anchor_return  reproduces  Catalog.lean::a2_call_run: 170/315 = 54%
+   Loop.lean::exists_emitLoopTM  reproduces  Loop.lean::exists_loopFindTM: 491/910 = 54%
+   Loop.lean::emCallPairEmbedding  reproduces  Loop.lean::emCallTripleEmbedding: 69/128 = 54%
+   Loop.lean::emCall_track_run  reproduces  Loop.lean::emCall_track_extent: 145/269 = 54%
+   Catalog.lean::f2_loopHost_fuel_copy  reproduces  Catalog.lean::f2_loopHost_fuel_return: 736/1366 = 54%
+   Catalog.lean::catalog_transfer_trace  reproduces  Catalog.lean::catalog_clear_trace: 869/1617 = 54%
+   Loop.lean::emLoop_run_prefix  reproduces  Catalog.lean::catalog_redirect_loop: 75/140 = 54%
+   Loop.lean::emCall_right_run  reproduces  Catalog.lean::catalog_redirect_loop: 75/140 = 54%
+   Catalog.lean::a2_mapSetup_run  reproduces  Catalog.lean::catalog_redirect_loop: 75/140 = 54%
+   Catalog.lean::f2_loopCall_heads  reproduces  Catalog.lean::a2_fuel_heads: 329/615 = 53%
+   Catalog.lean::f2_space_of_time  reproduces  Catalog.lean::a2_heads_halted: 69/129 = 53%
+   Catalog.lean::a2_segments  reproduces  Catalog.lean::a2_heads_halted: 69/129 = 53%
+   Catalog.lean::f2_splitPrepare_extra  reproduces  Catalog.lean::f2_splitPrepare_scan: 356/666 = 53%
+   Loop.lean::emCall_track_action  reproduces  Loop.lean::emCall_track_initial: 370/693 = 53%
+   Loop.lean::emCall_bank_initial  reproduces  Loop.lean::emCall_prepare_final: 377/707 = 53%
+   Catalog.lean::f2_splitEmit_suffix  reproduces  Catalog.lean::f2_loopReplay_run: 187/351 = 53%
+   Catalog.lean::catalog_copy_trace  reproduces  Catalog.lean::catalog_copy_forward: 259/489 = 53%
+   Loop.lean::emCall_triple_pair  reproduces  Loop.lean::emCall_triple_other: 152/287 = 53%
+   Catalog.lean::f2_loopBorrow_step  reproduces  Loop.lean::loopReplay_step: 174/329 = 53%
+   Catalog.lean::f2_pairValid_computes  reproduces  Catalog.lean::f2_anyTrue_computes: 140/265 = 53%
+   Catalog.lean::f2_splitCount_firstHalt  reproduces  Catalog.lean::f2_catalogFirstEntry: 198/375 = 53%
+   Loop.lean::loopHost_borrow_run  reproduces  Loop.lean::emLoop_run_prefix: 68/129 = 53%
+   Loop.lean::emCall_finish_transfer  reproduces  Loop.lean::emLoop_run_prefix: 68/129 = 53%
+   Loop.lean::emCall_finish_rewind  reproduces  Loop.lean::emLoop_run_prefix: 68/129 = 53%
+   Loop.lean::emCall_finish_erase  reproduces  Loop.lean::emLoop_run_prefix: 68/129 = 53%
+   Loop.lean::emCall_finish_arg  reproduces  Loop.lean::emLoop_run_prefix: 68/129 = 53%
+   Catalog.lean::f2_splitEmit_suffix  reproduces  Loop.lean::emLoop_run_prefix: 68/129 = 53%
+   Catalog.lean::f2_scanCopy_suffix  reproduces  Loop.lean::emLoop_run_prefix: 68/129 = 53%
+   Catalog.lean::f2_loopHost_borrow_run  reproduces  Loop.lean::emLoop_run_prefix: 68/129 = 53%
+   Catalog.lean::f2_loopBorrow_run  reproduces  Loop.lean::emLoop_run_prefix: 68/129 = 53%
+   Catalog.lean::f2_extract_suffix  reproduces  Loop.lean::emLoop_run_prefix: 68/129 = 53%
+   Catalog.lean::f2_counter_carry  reproduces  Loop.lean::emLoop_run_prefix: 68/129 = 53%
+   Catalog.lean::f2_catalogPoly_loop  reproduces  Loop.lean::emLoop_run_prefix: 68/129 = 53%
+   Catalog.lean::a2_map_suffix  reproduces  Loop.lean::emLoop_run_prefix: 68/129 = 53%
+   Catalog.lean::a2_map_backB  reproduces  Loop.lean::emLoop_run_prefix: 68/129 = 53%
+   Catalog.lean::a2_map_backA  reproduces  Loop.lean::emLoop_run_prefix: 68/129 = 53%
+   Embed.lean::embedSilentTM_spaceUsedByTape_cap  reproduces  Embed.lean::embedSilentTM_visitedByTapeHead: 141/268 = 53%
+   Catalog.lean::a2_map_block  reproduces  Catalog.lean::f2_extract_block: 355/675 = 53%
+   Catalog.lean::clearTM_spaceUsedByTape  reproduces  Catalog.lean::transferTM_spaceUsedByTape: 329/627 = 52%
+   Catalog.lean::catalog_clear_trace  reproduces  Catalog.lean::catalog_transfer_trace: 869/1657 = 52%
+   Catalog.lean::f2_pairDup_computes  reproduces  Catalog.lean::f2_scanStep_right: 86/164 = 52%
+   Loop.lean::emCall_finish_erase  reproduces  Loop.lean::emCall_finish_transfer: 764/1459 = 52%
+   Loop.lean::emCall_triple_inverse  reproduces  Loop.lean::emCall_triple_pair: 122/233 = 52%
+   Catalog.lean::exists_loopTM_spaceUsed  reproduces  Loop.lean::exists_emitLoopTM: 1179/2254 = 52%
+   Catalog.lean::a2_map_setup  reproduces  Loop.lean::loopFuel_init: 214/410 = 52%
+   Catalog.lean::f2_splitCount_run  reproduces  Catalog.lean::catalog_redirect_loop: 73/140 = 52%
+   Catalog.lean::f2_catalogPoly_setup  reproduces  Catalog.lean::catalog_redirect_loop: 73/140 = 52%
+   Catalog.lean::f2_catalogPoly_emit  reproduces  Catalog.lean::catalog_redirect_loop: 73/140 = 52%
+   Catalog.lean::a2_mapSetup_stationary  reproduces  Catalog.lean::catalog_redirect_loop: 73/140 = 52%
+   Catalog.lean::a2_mapSetup_heads  reproduces  Catalog.lean::catalog_redirect_loop: 73/140 = 52%
+   Catalog.lean::f2_timed_control_init  reproduces  Catalog.lean::f2_control_heads: 88/169 = 52%
+   Catalog.lean::f2_loopReady_call  reproduces  Catalog.lean::f2_loopCall_reframe: 421/809 = 52%
+   Loop.lean::loopFuelCaptured_frame  reproduces  Loop.lean::loopControl_payload: 128/246 = 52%
+   Catalog.lean::f2_loopFuelCaptured_frame  reproduces  Loop.lean::loopControl_payload: 128/246 = 52%
+   Catalog.lean::f2_rawStrip_copy  reproduces  Catalog.lean::f2_rawStrip_replay: 214/412 = 52%
+   Loop.lean::loopHost_reject  reproduces  Loop.lean::emLoop_run_prefix: 67/129 = 52%
+   Loop.lean::loopHost_payload_rewind  reproduces  Loop.lean::emLoop_run_prefix: 67/129 = 52%
+   Loop.lean::loopHost_fuel_rewind  reproduces  Loop.lean::emLoop_run_prefix: 67/129 = 52%
+   Loop.lean::loopHost_fuel_return  reproduces  Loop.lean::emLoop_run_prefix: 67/129 = 52%
+   Loop.lean::loopHost_borrow_rewind  reproduces  Loop.lean::emLoop_run_prefix: 67/129 = 52%
+   Loop.lean::emCall_right_scan  reproduces  Loop.lean::emLoop_run_prefix: 67/129 = 52%
+   Catalog.lean::f2_splitRestore_rewind  reproduces  Loop.lean::emLoop_run_prefix: 67/129 = 52%
+   Catalog.lean::f2_splitPrepare_rewind  reproduces  Loop.lean::emLoop_run_prefix: 67/129 = 52%
+   Catalog.lean::f2_rawStrip_trim  reproduces  Loop.lean::emLoop_run_prefix: 67/129 = 52%
+   Catalog.lean::f2_rawStrip_rewind  reproduces  Loop.lean::emLoop_run_prefix: 67/129 = 52%
+   Catalog.lean::f2_loopHost_reject  reproduces  Loop.lean::emLoop_run_prefix: 67/129 = 52%
+   Catalog.lean::f2_loopHost_payload_rewind  reproduces  Loop.lean::emLoop_run_prefix: 67/129 = 52%
+   Catalog.lean::f2_loopHost_fuel_rewind  reproduces  Loop.lean::emLoop_run_prefix: 67/129 = 52%
+   Catalog.lean::f2_loopHost_fuel_return  reproduces  Loop.lean::emLoop_run_prefix: 67/129 = 52%
+   Catalog.lean::f2_loopHost_borrow_rewind  reproduces  Loop.lean::emLoop_run_prefix: 67/129 = 52%
+   Catalog.lean::f2_loopBorrow_rewind  reproduces  Loop.lean::emLoop_run_prefix: 67/129 = 52%
+   Catalog.lean::f2_extract_rewind  reproduces  Loop.lean::emLoop_run_prefix: 67/129 = 52%
+   Catalog.lean::f2_counter_increment  reproduces  Loop.lean::emLoop_run_prefix: 67/129 = 52%
+   Catalog.lean::f2_catalogPoly_setup  reproduces  Loop.lean::emLoop_run_prefix: 67/129 = 52%
+   Catalog.lean::f2_catalogPoly_rewind  reproduces  Loop.lean::emLoop_run_prefix: 67/129 = 52%
+   Catalog.lean::f2_catalogPoly_emit  reproduces  Loop.lean::emLoop_run_prefix: 67/129 = 52%
+   Catalog.lean::f2_anyTrue_run  reproduces  Loop.lean::emLoop_run_prefix: 67/129 = 52%
+   Catalog.lean::f2_poly_step  reproduces  Catalog.lean::a2_mapSetup_step: 113/218 = 52%
+   Catalog.lean::f2_loopBorrow_rewind  reproduces  Catalog.lean::f2_extract_replay_finish: 159/307 = 52%
+   Loop.lean::emCall_finish_initial  reproduces  Loop.lean::emCall_prepare_final: 366/707 = 52%
+   Loop.lean::emLoopHost_round  reproduces  Loop.lean::emLoopHost_start: 497/965 = 52%
+   Loop.lean::loopFuelCaptured_frame  reproduces  Catalog.lean::f2_loopControl_payload: 128/249 = 51%
+   Catalog.lean::f2_loopFuelCaptured_frame  reproduces  Catalog.lean::f2_loopControl_payload: 128/249 = 51%
+   Catalog.lean::compareTM_spaceUsedByTape  reproduces  Catalog.lean::clearTM_spaceUsedByTape: 223/434 = 51%
+   Catalog.lean::catalog_transfer_trace  reproduces  Catalog.lean::catalog_copy_forward: 251/489 = 51%
+   Catalog.lean::exists_loopTM_spaceUsed  reproduces  Catalog.lean::f2_exists_loopFind_space: 939/1831 = 51%
+   Loop.lean::loopReplay_run  reproduces  Loop.lean::emLoop_run_prefix: 66/129 = 51%
+   Catalog.lean::f2_loopReplay_run  reproduces  Loop.lean::emLoop_run_prefix: 66/129 = 51%
+   Catalog.lean::f2_counter_rewind  reproduces  Loop.lean::emLoop_run_prefix: 66/129 = 51%
+   Catalog.lean::f2_loopHost_fuel_copy  reproduces  Loop.lean::loopHost_fuel_rewind: 645/1261 = 51%
+   Catalog.lean::f2_loopHost_release  reproduces  Catalog.lean::f2_loopCall_frame: 269/527 = 51%
+   Catalog.lean::f2_splitRestore_scan  reproduces  Catalog.lean::f2_splitPrepare_extra: 240/472 = 51%
+   Loop.lean::loopHost_frame_replay  reproduces  Loop.lean::loopControl_payload: 125/246 = 51%
+   Catalog.lean::f2_loopHost_frame_replay  reproduces  Loop.lean::loopControl_payload: 125/246 = 51%
+   Catalog.lean::f2_splitPrepare_rewind  reproduces  Catalog.lean::f2_loopBorrow_rewind: 388/764 = 51%
+   Catalog.lean::f2_counter_rewind  reproduces  Catalog.lean::catalog_redirect_loop: 71/140 = 51%
+   Catalog.lean::a2_map_setup  reproduces  Catalog.lean::f2_loopFuel_init: 214/422 = 51%
+   Catalog.lean::a2_map_reject  reproduces  Catalog.lean::a2_map_launch: 374/741 = 50%
+   Loop.lean::loopHost_fuel_copy  reproduces  Loop.lean::emLoop_run_prefix: 65/129 = 50%
+   Catalog.lean::f2_splitEmit_separator  reproduces  Loop.lean::emLoop_run_prefix: 65/129 = 50%
+   Catalog.lean::f2_loopHost_fuel_copy  reproduces  Loop.lean::emLoop_run_prefix: 65/129 = 50%
+   Catalog.lean::f2_lenSuffix_run  reproduces  Loop.lean::emLoop_run_prefix: 65/129 = 50%
+   Loop.lean::emCall_clear_run  reproduces  Loop.lean::emCall_clear_origin: 428/850 = 50%
+   Loop.lean::emCall_track_computes  reproduces  Loop.lean::emCall_right_computes: 77/153 = 50%
+   Loop.lean::emCall_right_computes  reproduces  Loop.lean::emCall_track_computes: 77/153 = 50%
+   Loop.lean::emCall_pair_triple  reproduces  Loop.lean::emCall_triple_inverse: 92/183 = 50%
+   Loop.lean::loopHost_frame_replay  reproduces  Catalog.lean::f2_loopControl_payload: 125/249 = 50%
+   Catalog.lean::f2_loopHost_frame_replay  reproduces  Catalog.lean::f2_loopControl_payload: 125/249 = 50%
+   Catalog.lean::f2_loopHost_fuel_copy  reproduces  Loop.lean::loopHost_payload_rewind: 637/1269 = 50%
+   Catalog.lean::computesFunInTime_id_spaceUsed  reproduces  Catalog.lean::f2_idTM_run: 388/773 = 50%
+   Catalog.lean::computesFunInTime_polyUnary_spaceUsed  reproduces  Catalog.lean::f2_unary_sharp: 176/351 = 50%
+   Catalog.lean::a2_loop_round  reproduces  Catalog.lean::f2_loopHost_round: 1059/2114 = 50%
+   Catalog.lean::f2_loopBorrow_rewind  reproduces  Catalog.lean::f2_splitPrepare_rewind: 388/776 = 50%
+   Catalog.lean::a2_fuel_heads  reproduces  Catalog.lean::f2_loopCall_heads: 329/658 = 50%
+   Catalog.lean::f2_pairExtractTM  reproduces  Catalog.lean::f2_loopDebitTM: 219/438 = 50%
+   Catalog.lean::f2_extract_replay_finish  reproduces  Catalog.lean::f2_rawStrip_replay: 206/412 = 50%
+```
