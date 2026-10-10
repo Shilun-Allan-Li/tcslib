@@ -1060,10 +1060,34 @@ No loop-host proof is copied.
 6. **Scope: the amortized total is stated over the whole run**, not only
    per round.
 
-Next: sorried statements, the executed pre-ship check (mandatory
-practice), and a statement gate; then a fill batch. ZF-B3's continuation
-follows that fill. The existing private clocks are on the 12.2c tasklist as
-re-derivation targets (plan §4d, item 12).
+**Statement phase (2026-10-10).** `Build/CounterLoop.lean` landed with 13
+definitions and 10 sorried theorems. The refinements made while drafting:
+
+- **The exit is an `Option S`.** The no-escape corollary is the
+  instantiation `exit = none`, so no separate statement is needed.
+- **The round hypotheses are stated along the orbit**, not through an
+  invariant `P`. This is weaker and so more general; a consumer with an
+  invariant derives them.
+- **The uniform-bound corollary is pure arithmetic** over the exact time
+  (`counterLoop_time_le`). Two amortization lemmas are stated: one for
+  prefixes (`4r + 2|w|`) and one for the whole run (`4d + 2|w| + 2`).
+- **`decrementTM` is defined as the conjugate** of `incrementTM` by
+  `Equiv.boolNot`, through a generic `MultiTapeTM.mapWorkSymbols`. The C1
+  contracts are therefore transports of the §12.6 ones.
+- **The host has no dispatch steps.** Transitions into the anchor and the
+  exit are redirected in place, so the time is exactly the round times plus
+  `counterOverhead`.
+- **Imports.** Seam is not imported, since consumers compose through
+  `seamCompTM_run_ofCfg`. As with `Build/Zone.lean`, the file stays out of
+  the `TuringMachine` facade during the statement phase.
+- **The counter value** is Mathlib's `Nat.ofDigits 2 (w.map Bool.toNat)`,
+  written inline; no new value function is defined.
+
+The executed pre-ship check is `audits/evidence/s12-counter/`, and the gate
+pack is `audits/s12-counter-{pack,bundle}.md`. Next: the statement gate, then
+a fill batch; ZF-B3's continuation follows that fill. The existing private
+clocks are on the 12.2c tasklist as re-derivation targets (plan §4d,
+item 12).
 
 ## 13. The zone and virtual-input layer (proposed 2026-10-09, post-§12 close)
 
