@@ -1412,3 +1412,204 @@ repairs landed with the round-2 pack:
 * Minors: the pack's definition count corrected (22, not 25; inventory in
   the findings); the module's export list and the guard semantics
   docstrings corrected in place (A-S2-4).
+
+### 13d. Revision: the zone layer at the book's design (draft, 2026-10-10)
+
+**Status: design draft for user review. No Lean change has been made.**
+
+**Process rule (user, 2026-10-10, binding for this revision).** Every Lean change
+that results from this revision goes through **both** human approval, as a PR
+the user merges, **and** a separate audit gate. Nothing is pushed directly to
+the campaign branch. This covers the library generalization (G1), every new
+statement phase, and every fill.
+
+#### Why
+
+ZF-A3 (`zone-f1-A3.zip`, held and not integrated) proved infrastructure only:
+a geometric counter schedule, counter-driven navigation, a counter built from
+the unary level, a window readout, and counter removal, 952 lines in all.
+Neither shift machine was proved. A comparison with [AB09] §1.7 traces the
+cost to four of our choices, not to the mathematics:
+
+1. **A supplied level with pairwise shifts.** Each pairwise shift starts from
+   home, so the machine must count its way to level `i`. In [AB09] the index
+   `i₀` is *discovered* by scanning outward, and one sweep does all the work
+   between adjacent zones where the head already is.
+2. **No markers.** A binary physical tape carries no zone boundaries, which
+   forces the binary counter.
+3. **Catalog reuse on packed zones.** The generic routines need a blank on
+   each side of a word, but packed zones abut, hence the save, blank, call,
+   restore cycle around every call.
+4. **Exactly two tapes per row,** so the counter shares the scratch tape with
+   the level word.
+
+There is also a **gap independent of the controller**. Plan §2.1 specifies
+the book's route ("parallel tracks, buffer zones of size `2^i`, amortized
+shifts"), but `ZoneContents` holds **one** simulated tape, and both rows
+operate on a tape dedicated to it. In a two-tape simulator only one tape can
+be zoned, so the present carrier serves only machines with one work tape,
+and Hennie–Stearns needs each of `k` tracks to shift independently.
+
+#### Decisions taken (user, 2026-10-10)
+
+- **A rich alphabet, finished by alphabet reduction.** The Hennie–Stearns
+  simulator is a two-tape `FinTM Γ` over a large alphabet `Γ`, as in [AB09]
+  via Claim 1.5, and the public `Turing.FinTM.alphabet_reduction`
+  (`Robustness/AlphabetReduction.lean`) finishes it. That theorem preserves
+  the work-tape count (`M'.k = M.k`), costs `3(|Γ|+1) + 2` steps per source
+  step, and is stated at the function level (`ComputesFunInTimeVia e f T`
+  gives `ComputesFunInTime f (c·(T+1))`). A space form exists
+  (`alphabet_reduction_spaceUsed`).
+- **Option (b): generalize the library to arbitrary alphabets** rather than
+  building a parallel `Γ`-only toolkit. Large-alphabet machines will recur.
+
+#### Components
+
+**G1. Alphabet-generic library (in place).** Change `Bool` to an arbitrary
+`{Symbol : Type*}`, with `DecidableEq` where needed, in:
+
+- **`Build/Seam.lean`:** `seamCompTM`, `seamReleaseTM`, and their
+  general-configuration theorems (the `_ofCfg` trio and the release pair).
+  The canonical `Cfg.ofWords` theorems stay Bool-specific and become
+  instances of the general ones.
+- **`Build/Embed.lean`:** the transformers, transports and all their
+  theorems, including the RB5 state-transport lemma. The capture tape's
+  buffer generalizes with `bufferTape`.
+- **`FinTM.bufferTape`** (`Simulation.lean`): from `List Bool` to
+  `List Symbol`. The definition is unchanged.
+- **The R3 sweep rows in `Build/Catalog.lean`:** `transferTM`, `copyTM`,
+  `clearTM`, `compareTM`, and their §12.6 framed contracts. Their tables
+  never inspect a symbol's value except for equality, so they generalize.
+  `incrementTM`, the canonical rows and the Part 2 space rows stay
+  Bool-specific.
+
+**Binding constraint:** every existing Bool statement either keeps its
+statement verbatim or becomes a definitional instance at `Symbol := Bool`
+that its consumers elaborate unchanged. The full downstream replay is the
+evidence. This is a change of audited public signatures, so it gets **its
+own gate**, before anything consumes it.
+
+**G2. Mapped sweeps (new, alphabet-generic catalog rows).** Per-track
+shifting moves one *component* of each cell and leaves the other tracks in
+place, which whole-symbol copying cannot do. The rows are `copyMapTM` and
+`transferMapTM`, parameterized by `extract : Γ → Δ` and
+`merge : Γ → Δ → Γ`: they write `merge (dst cell) (extract src cell)`. Their
+framed contracts follow the §12.6 shape (exact time `2|w| + 2`, finish
+configuration, no earlier exit, trajectory). At `merge := fun _ s => s` they
+are the plain rows. This is the reusable large-alphabet primitive. Its proofs
+must share the generalized R3 trace, not copy it (one trace per routine
+family, as §12.6 established).
+
+**G3. The multi-track zoned carrier over `Γ`.**
+
+- **Alphabet:** `ZoneSym k := Bool ⊕ ZoneCell k`, where
+  `ZoneCell k := Fin k → Option (Option Bool)`. Per track, `none` is the
+  buffer symbol `⊠` (an unoccupied slot) and `some v` an occupied slot
+  storing the virtual symbol `v`. `Sum.inl` embeds the binary input and
+  output (the `e` of `ComputesFunInTimeVia`). It is finite, so it is a
+  `Fintype`.
+- **Contents:** `Fin k → ZoneContents ℓ`. **The pure layer is reused
+  verbatim per track:** the codec is unneeded, but the layout arithmetic,
+  `ZoneContents`, `zoneSlot`, `zoneSide`, the pairwise ops and their
+  word-preservation lemmas, the head steps, and the cascade with its
+  lemmas all carry over.
+- **Layout:** one physical cell per virtual slot, holding the whole tuple,
+  with the home at cell 0 and **one blank separator cell between consecutive
+  zones** on each side (decision 13d.1). Each zone is then a blank-delimited
+  nonblank word of length `zoneCapacity i`, so the generalized framed sweeps
+  (G1, G2) apply directly, with **no save/restore**. The separators also mark
+  zone boundaries, so **no counter** is needed.
+- **The home cell** holds all `k` tracks' virtual symbols, so the simulator
+  reads and writes the virtual heads in one step.
+
+**G4. Rebalance rows.** For a direction `d` and a track `t` (`t` in finite
+control, since `k` is fixed for a given simulated machine), one machine:
+
+1. starts at home and **scans outward** across zones, using the separators,
+   to find `i₀ := zoneShiftIndex d (z t)`, the least level whose zone on the
+   feeding side is non-empty. This is a new pure definition;
+2. realizes the pure cascade at `i₀` on track `t` in a single
+   outward-then-inward sweep, with mapped sweeps between adjacent zones and
+   the scratch tape as the buffer;
+3. leaves every other track and the separators unchanged, and returns home.
+
+Its contract has the same shape as the current rows: exact final tape, live
+exit or halt as the consumer needs, time `O(2^{i₀})`, the head within the
+level-`(i₀+1)` extent, and scratch space `O(2^{i₀})`.
+
+- **The left-move mirror** `zoneCascadeLeft` is new. It is defined through a
+  pure left/right swap of `ZoneContents`, with its lemmas derived by
+  symmetry, never copied.
+- **The extent:** the carrier lays out `ℓ` levels, and a separate
+  **extension row** lays out level `ℓ` (separator plus a half-full fresh
+  zone, as in [AB09]'s "first time we encounter it") in `O(2^ℓ)`
+  (decision 13d.2).
+
+**G5. The assembly (stage-1 consumer, sketched for fit, not part of this
+layer).** One simulated step:
+
+1. read the home tuple;
+2. apply M's transition in finite control;
+3. write the home tuple;
+4. rebalance each track by its head's move: `k` calls of G4, plus extension
+   when needed;
+5. handle the input and output tapes directly.
+
+The amortization `Σ_i T/2^{i-1} · 2^i = O(T log T)` is the consumer's
+mathematics, as before. Then `alphabet_reduction` turns the two-tape
+`ZoneSym k` machine into a two-tape binary machine. With the Z3 two-tape
+codes and the two-tape universal machine, Thm 3.1 follows at `f log f`.
+
+#### What stays and what goes
+
+- **Kept unchanged:**
+  - the pure zone layer in `Build/Zone.lean` (about 820 of its 1,191
+    lines): layout arithmetic, carrier, represented word, pairwise ops, head
+    steps, the cascade and its lemmas, and the cardinality export. Its
+    statements are untouched;
+  - the rest of §13: Z1, Z3, Z5;
+  - §12.6 and §12.7.
+
+  No other file imports `Zone.lean`.
+- **Superseded, to be retired through the G3/G4 gate:**
+  - the binary physical realization `zoneTape`, `zoneTape_empty`,
+    `zoneTape_blank_outside` and `zoneTape_homeWrite`;
+  - the paired-cell codec, unneeded with a rich alphabet;
+  - ZF-A2's seven staging-window lemmas;
+  - the two current row statements, `exists_zoneShiftInTM` and
+    `exists_zoneShiftOutTM`, to be replaced by the G4 rows.
+- **ZF-A3's checkpoint** is held, not integrated. Almost all of it (counter
+  navigation, counter construction, the binary window readout) becomes
+  unnecessary. Integrate nothing from it unless G4's design reuses a piece.
+
+#### Sequencing (each Lean step a PR plus its own gate, per the rule above)
+
+1. **G1:** the generalization as one batch, its statements verified as
+   instances, with the full downstream replay; then a **G1 audit gate**.
+2. **G2–G4 statements:** the mapped sweeps, the carrier, the rebalance and
+   extension rows, the swap mirror and the index function, with an executed
+   pre-ship check on concrete instances; then a **statement gate**.
+3. **Fill batches** for G2 and G4, then a **fill gate**.
+4. The stage-1 Hennie–Stearns assembly, which needs its own statement
+   phase.
+
+#### Open decisions (13d.x, for the user)
+
+1. **Zone boundaries:** blank separator cells (proposed; they give the
+   catalog delimiters and boundaries at once) or a boundary flag in `Γ`
+   (needs predicate-stopping sweeps instead).
+2. **The extent:** a laid-out `ℓ` plus an extension row (proposed), or
+   rows that extend lazily themselves.
+3. **Rebalance totality:** realize the total pure cascade at the scanned
+   index for every input (proposed; the A-S2 totality lesson, and the pure
+   ops are already total), or a contract conditional on the classical
+   fullness invariant.
+4. **The track index:** in finite control, one row instance per
+   `(direction, track)` (proposed), or on a tape.
+5. **The shape of `Γ`:** `Bool ⊕ ZoneCell k` (proposed) or a structure
+   with a bit field.
+6. **Retiring the superseded declarations:** delete them through the G3/G4
+   gate (proposed, since nothing imports them), or deprecate them first.
+7. **G1's extent:** whether `Build/Loop.lean`'s public hosts also
+   generalize now, or only when a large-alphabet consumer needs them.
+   Proposed: only Seam, Embed, `bufferTape` and the R3 sweeps now.
