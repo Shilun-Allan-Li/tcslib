@@ -31,6 +31,15 @@ review tactic scripts for correctness. The failure modes you are hunting are:
    cumulatively — verify the pack's duplication ledger (per-file copied-material
    totals) rather than assessing each copy in isolation.
 
+   **Accounting inside an acknowledged family is a minor.** Once the human
+   maintainer has acknowledged a debt family and named its resolution, a later
+   correction to that family's *accounting* is reported at **minor**, not major.
+   Examples are a missed member, a miscounted span, or an imprecise description of
+   the screen. Such a correction does not change what was approved. It is a
+   **major** again only if it changes the approval itself: the correction pushes a
+   further file past the one-fifth threshold, reveals copies outside the
+   acknowledged family's named scope, or shows the named resolution cannot work.
+
 For **every definition** in scope: restate it in your own mathematical English *without
 looking at the docstring first*, then compare your restatement against the cited source
 location, and report any daylight. For **every `sorry`d theorem**: argue in 2-5 sentences
@@ -69,5 +78,6 @@ must be accompanied by the per-definition restatements that justify it.
 Severity guide: **blocker** = a downstream phase would build on a wrong statement;
 **major** = statement is fixable but materially misleading as is, **or** accumulated
 debt (failure mode 5) that the gate may not close over without explicit human
-acknowledgment; **minor** = edge case or naming/attribution defect; **note** =
+acknowledgment (accounting corrections inside an already-acknowledged family are
+minors; see failure mode 5); **minor** = edge case or naming/attribution defect; **note** =
 observation, no change required.
