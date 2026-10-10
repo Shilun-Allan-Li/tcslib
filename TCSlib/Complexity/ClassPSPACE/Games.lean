@@ -40,7 +40,7 @@ same binary granularity as `Complexity.QBF`. Phase P4.3 of
 * `Complexity.Game.FirstWins`, `Complexity.Game.SecondWins` — the two
   winning-strategy predicates.
 
-## Main results (sorried; phase-P4.3 statement)
+## Main results
 
 * `Complexity.Game.determined` — [AB09, Exercise 4.10].
 
@@ -74,8 +74,72 @@ strategy of player one. -/
 def SecondWins (n : ℕ) (W : List Bool → Bool) : Prop :=
   ∃ s₂ : List Bool → Bool, ∀ s₁ : List Bool → Bool, W (playOut s₁ s₂ n) = false
 
-/-- **Zermelo determinacy** ([AB09, Exercise 4.10]; spec, fill pending —
-phase P4.3): every finite two-person perfect-information game without draws
+/-- G1: the remaining-game value, always from player one's perspective:
+terminal value is `W`, even plies use OR and odd plies use AND. -/
+private def positionValue (W : List Bool → Bool) : ℕ → List Bool → Bool
+  | 0, h => W h
+  | r + 1, h =>
+      if h.length % 2 = 0 then
+        positionValue W r (h ++ [true]) || positionValue W r (h ++ [false])
+      else
+        positionValue W r (h ++ [true]) && positionValue W r (h ++ [false])
+
+/-- G2: append the move prescribed by the current mover's strategy. -/
+private def ply (s₁ s₂ : List Bool → Bool) (h : List Bool) : List Bool :=
+  h ++ [if h.length % 2 = 0 then s₁ h else s₂ h]
+
+/-- The recursive play history takes one ply at its successor horizon. -/
+private theorem playOut_succ_ply (s₁ s₂ : List Bool → Bool) (r : ℕ) :
+    playOut s₁ s₂ (r + 1) = ply s₁ s₂ (playOut s₁ s₂ r) := rfl
+
+/-- G2: playing from the empty history is iteration of the one-ply map. -/
+private theorem playOut_eq_iterate (s₁ s₂ : List Bool → Bool) (r : ℕ) :
+    playOut s₁ s₂ r = (ply s₁ s₂)^[r] [] := by
+  induction r with
+  | zero => rfl
+  | succ r ih => rw [playOut_succ_ply, ih, Function.iterate_succ_apply']
+
+/-- G3: player one takes the true move exactly when that child has true
+value at the remaining horizon. -/
+private def firstGreedy (n : ℕ) (W : List Bool → Bool) (h : List Bool) : Bool :=
+  positionValue W (n - (h.length + 1)) (h ++ [true])
+
+/-- G3: player two takes the true move exactly when that child's value is
+false at the remaining horizon. -/
+private def secondGreedy (n : ℕ) (W : List Bool → Bool) (h : List Bool) : Bool :=
+  !(firstGreedy n W h)
+
+/-- G4: the player selected by the target bit can maintain the current
+value through the remaining play by following its greedy strategy.
+
+**Proof sketch.** Induct on the remaining plies. The horizon equation makes
+the greedy look-ahead equal to the child's remaining horizon. At the
+constrained player's turn the greedy move preserves the value. At the
+other player's turn, a false OR or a true AND fixes both child values.
+The induction hypothesis applies to the chosen child. At horizon zero
+position value is the terminal predicate. -/
+private theorem winner_of_value (n : ℕ) (W : List Bool → Bool)
+    (s₁ s₂ : List Bool → Bool) (b : Bool)
+    (hs₁ : b = true → s₁ = firstGreedy n W)
+    (hs₂ : b = false → s₂ = secondGreedy n W)
+    (r : ℕ) (h : List Bool) (hlen : h.length + r = n)
+    (hv : positionValue W r h = b) :
+    W ((ply s₁ s₂)^[r] h) = b := by
+  induction r generalizing h with
+  | zero => exact hv
+  | succ r ih =>
+      have hr : n - (h.length + 1) = r := by omega
+      rw [Function.iterate_succ_apply]
+      refine ih (ply s₁ s₂ h) ?_ ?_
+      · simp only [ply, List.length_append, List.length_singleton]
+        omega
+      · cases b <;> by_cases heven : h.length % 2 = 0 <;>
+          cases htrue : positionValue W r (h ++ [true]) <;>
+          cases hfalse : positionValue W r (h ++ [false]) <;>
+          cases hmove : (if h.length % 2 = 0 then s₁ h else s₂ h) <;>
+          simp_all [positionValue, ply, firstGreedy, secondGreedy]
+
+/-- **Zermelo determinacy** ([AB09, Exercise 4.10]): every finite two-person perfect-information game without draws
 is determined — exactly one quantifier alternation wins, so in particular
 one of the players has a winning strategy.
 
@@ -96,6 +160,16 @@ other — not claimed in this statement, which renders the exercise's "one of
 the two players has a winning strategy" disjunction. -/
 theorem determined (n : ℕ) (W : List Bool → Bool) :
     FirstWins n W ∨ SecondWins n W := by
-  sorry
+  cases hv : positionValue W n [] with
+  | false =>
+      refine Or.inr ⟨secondGreedy n W, fun s₁ => ?_⟩
+      rw [playOut_eq_iterate]
+      exact winner_of_value n W s₁ (secondGreedy n W) false
+        (by simp) (fun _ => rfl) n [] (by simp) hv
+  | true =>
+      refine Or.inl ⟨firstGreedy n W, fun s₂ => ?_⟩
+      rw [playOut_eq_iterate]
+      exact winner_of_value n W (firstGreedy n W) s₂ true
+        (fun _ => rfl) (by simp) n [] (by simp) hv
 
 end Complexity.Game

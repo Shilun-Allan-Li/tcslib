@@ -29,7 +29,7 @@ remains the special case.
 * `Complexity.NLComplete` — `NL`-membership plus `NL`-hardness under `≤ₗ`.
   [AB09, Definition 4.16]
 
-## Main results (all sorried; phase-P4.4 statements)
+## Main results (four phase-P4.4 statements remain sorried)
 
 * `Complexity.ImplicitlyLogspaceComputable.comp` — the composition engine
   ([AB09, Lemma 4.17's proof], Figure 4.3's virtual input tape).
@@ -120,7 +120,7 @@ theorem mem_LOGSPACE_of_logspaceReducible {B C : Language Bool} (h : B ≤ₗ C)
     (hC : C ∈ LOGSPACE) : B ∈ LOGSPACE := by
   sorry
 
-/-- **`≤ₗ` refines `≤ₚ`** (spec, fill pending): a logspace reduction is in
+/-- **`≤ₗ` refines `≤ₚ`**: a logspace reduction is in
 particular a polynomial-time reduction.
 
 **Proof sketch.** The received
@@ -129,7 +129,8 @@ implicit witness into a whole-output polynomial-time machine; the
 equivalences carry over verbatim. -/
 theorem LogspaceReducible.polyTimeReducible {B C : Language Bool}
     (h : B ≤ₗ C) : B ≤ₚ C := by
-  sorry
+  obtain ⟨f, hf, hB⟩ := h
+  exact ⟨f, hf.polyTimeComputable, hB⟩
 
 /-- **An `NL`-complete language in `L` collapses `NL`** ([AB09, the remark
 after Lemma 4.17]; spec, fill pending): if `C` is `NL`-complete and
