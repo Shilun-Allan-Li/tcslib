@@ -237,9 +237,14 @@ contract. -/
 def counterWord (w : List Bool) (r : ℕ) : List Bool :=
   (fun u => (decFixed u).getD u)^[r] w
 
-/-- The exact cost of the first `r` decrements of the counter `w`: the
-decrement of the word `u` costs `2 * (u.takeWhile not).length + 2`, which is
-also the underflow cost `2|u| + 2` when `u` is all `false`. -/
+/-- The cost sum of the first `r` decrements along the frozen word orbit
+`Turing.counterWord`: the decrement of the word `u` costs
+`2 * (u.takeWhile not).length + 2`, which is also the underflow cost
+`2|u| + 2` when `u` is all `false`. Because `counterWord` freezes at value
+zero while the machine wraps on underflow, the sum equals the physical
+countdown's cost only through its first underflow, that is for
+`r ≤ value + 1`. That range covers every use in this file (§12.7 statement
+gate, SC-1). -/
 def counterOverhead (w : List Bool) (r : ℕ) : ℕ :=
   ∑ j ∈ Finset.range r, (2 * ((counterWord w j).takeWhile not).length + 2)
 
