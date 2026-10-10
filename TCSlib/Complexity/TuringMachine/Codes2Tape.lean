@@ -7,6 +7,8 @@ import TCSlib.Complexity.TuringMachine.Encoding
 import TCSlib.Complexity.TuringMachine.NDCodes
 import TCSlib.Complexity.TuringMachine.MathlibBridge
 import Mathlib.Tactic.FinCases
+import TCSlib.Complexity.TuringMachine.Build.VirtualInput
+import TCSlib.Complexity.TuringMachine.Build.Catalog
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -575,6 +577,268 @@ structure UniformMachineCode2 extends EffectiveMachineCode2 where
     ¬(decode α).toFinTM.ComputesInTime x [true] t →
     simulator.ComputesInTime (pairEncode (pairEncode (Nat.bits t) α) x) [false]
       (simDegree * (α.length + x.length + t + 1) ^ simDegree)
+
+/-! ### Uniform-simulator preparation (ZF-B3)
+
+The two added Build imports are sanctioned by the B3 brief. The following
+facts concern the concrete decoder, the finite output summary, and a real
+deadline test assembled from public machines. They do not assert a running
+time for the primitive-recursive canonizer or implement the table interpreter.
+-/
+
+/-- The decoded table is no longer than the code, except for the fixed
+354-bit fallback. This bounds stored data, not the canonizer's running time.
+
+**Proof sketch.** Cite the scanner/canonizer equality. A successful scan
+selects a prefix of the input; an unsuccessful scan selects the fallback. -/
+private lemma zfB3_decode_length (α : List Bool) :
+    (zfBDecode α).serialize.length ≤ max α.length 354 := by
+  rw [← zfBCanonical_eq]
+  unfold zfBCanonical
+  cases zfBScan α with
+  | none => exact zfBFallback_serialize_length.le.trans (Nat.le_max_right _ _)
+  | some tail =>
+    exact (List.length_take_le' _ _).trans (Nat.le_max_left _ _)
+
+/-- The decoded state table has a linear size bound, including malformed
+codes. The table guard is used before its state-indexed reader is evaluated. -/
+private lemma zfB3_decode_states (α : List Bool) :
+    351 * ((zfBDecode α).numStates + 1) ≤ max α.length 354 := by
+  have htable := zfBTable_length (zfBDecode α)
+  have hsize := zfB3_decode_length α
+  unfold Code2TM.serialize at hsize
+  rw [length_pairEncode, List.length_append] at hsize
+  omega
+
+/-- A failed lower-length guard chooses the fallback without invoking the
+initial-state or transition-table readers, even for an enormous binary count. -/
+private lemma zfB3_guard_failure (α bits rest : List Bool)
+    (hp : pairDecode α = some (bits, rest))
+    (hg : rest.length < 351 * (codeBitsNat bits + 1)) :
+    zfBDecode α = zfBFallback := by
+  simp [zfBDecode, zfBParse, hp, hg]
+
+/-- Output summary: `none` means empty, `some true` means exactly `[true]`,
+and `some false` means any other output. The last class is irreversible. -/
+private def zfB3Output : List Bool → Option Bool
+  | [] => none
+  | [true] => some true
+  | _ => some false
+
+/-- Update the three-way summary for the emission of one source transition. -/
+private def zfB3Emit : Option Bool → Option Bool → Option Bool
+  | s, none => s
+  | none, some true => some true
+  | _, some _ => some false
+
+/-- Summary update accounts for the symbol on a halting transition as well. -/
+private lemma zfB3Output_append (w : List Bool) (b : Option Bool) :
+    zfB3Output (w ++ b.toList) = zfB3Emit (zfB3Output w) b := by
+  cases b with
+  | none => simp [zfB3Emit]
+  | some b =>
+    cases w with
+    | nil => cases b <;> rfl
+    | cons a w =>
+      cases w with
+      | nil => cases a <;> cases b <;> rfl
+      | cons c w => cases a <;> cases b <;> rfl
+
+/-- The summary's accepting value characterizes the exact singleton output. -/
+private lemma zfB3Output_true (w : List Bool) :
+    zfB3Output w = some true ↔ w = [true] := by
+  cases w with
+  | nil => simp [zfB3Output]
+  | cons b w =>
+    cases w with
+    | nil => cases b <;> simp [zfB3Output]
+    | cons c w => cases b <;> simp [zfB3Output]
+
+/-- Once the summary is other, no subsequent emission can repair it. -/
+private lemma zfB3Emit_other (b : Option Bool) :
+    zfB3Emit (some false) b = some false := by
+  cases b with
+  | none => rfl
+  | some b => cases b <;> rfl
+
+/-- Semantic clock for the two-tape simulator. It performs exactly the
+permitted number of source steps, maintaining only the finite output summary,
+and then inspects halting and exact output. This is a specification function,
+not a finite-machine construction or a claim about machine time. -/
+private def zfB3Clock (M : Code2TM) {x : List Bool} :
+    ℕ → Cfg 2 Bool (Fin (M.numStates + 1)) x → Option Bool → Bool
+  | 0, c, s => c.state.isNone && (s == some true)
+  | t + 1, c, s =>
+    zfB3Clock M t (M.tm.step c) (zfB3Emit s (M.tm.outputSymbol c))
+
+/-- The clock's final inspection includes the last permitted transition.
+Halted configurations are allowed, so the equation also covers padding an
+early halt to the deadline.
+
+**Proof sketch.** Induct on the deadline. The output-summary update is
+exactly append by the step's optional emission; cite the public run and
+output-step equations to identify the residual run. -/
+private lemma zfB3Clock_correct (M : Code2TM) {x : List Bool}
+    (c : Cfg 2 Bool (Fin (M.numStates + 1)) x) (t : ℕ) :
+    zfB3Clock M t c (zfB3Output c.output) =
+      ((M.tm.runFrom c t).state.isNone &&
+        (zfB3Output (M.tm.runFrom c t).output == some true)) := by
+  induction t generalizing c with
+  | zero => rfl
+  | succ t ih =>
+    rw [zfB3Clock, ← zfB3Output_append, ← MultiTapeTM.step_output, ih]
+    rw [MultiTapeTM.runFrom_succ_eq_step]
+
+/-- Bounded acceptance for the concrete decoder, with the three-way summary.
+The deadline here is a semantic natural number; the implementation must keep
+its representation in binary. -/
+private def zfB3Answer (α x : List Bool) (t : ℕ) : Bool :=
+  zfB3Clock (zfBDecode α) t ((zfBDecode α).tm.initCfg x) none
+
+/-- Both answer branches have the exact frozen bounded-acceptance meaning. -/
+private lemma zfB3Answer_correct (α x : List Bool) (t : ℕ) :
+    zfB3Answer α x t = true ↔
+      (zfBDecode α).toFinTM.ComputesInTime x [true] t := by
+  unfold zfB3Answer
+  change zfB3Clock (zfBDecode α) t ((zfBDecode α).tm.initCfg x)
+    (zfB3Output ((zfBDecode α).tm.initCfg x).output) = true ↔ _
+  rw [zfB3Clock_correct, FinTM.computesInTime_iff]
+  simp only [Bool.and_eq_true, Option.isNone_iff_eq_none, beq_iff_eq,
+    zfB3Output_true, Code2TM.toFinTM]
+
+/-- Deadline zero rejects by the public source-side zero-time impossibility. -/
+private lemma zfB3Answer_zero (α x : List Bool) : zfB3Answer α x 0 = false := by
+  apply Bool.eq_false_iff.mpr
+  intro h
+  exact FinTM.not_computesInTime_zero (zfBDecode α).toFinTM x [true]
+    ((zfB3Answer_correct α x 0).mp h)
+
+/-- Any malformed code selects a silent fallback and hence rejects at every
+deadline, including zero. No simulation of a putative huge table is needed.
+
+**Proof sketch.** At zero cite the public impossibility theorem. At a
+positive deadline the fallback halts silently on its first transition;
+the public absorbing-halt equation preserves its empty output thereafter. -/
+private lemma zfB3Answer_malformed (α x : List Bool) (t : ℕ)
+    (hparse : zfBParse α = none) : zfB3Answer α x t = false := by
+  apply Bool.eq_false_iff.mpr
+  intro ht
+  have h := (zfB3Answer_correct α x t).mp ht
+  have hd : zfBDecode α = zfBFallback := by simp [zfBDecode, hparse]
+  rw [hd] at h
+  cases t with
+  | zero => exact FinTM.not_computesInTime_zero _ _ _ h
+  | succ t =>
+    have hout := ((FinTM.computesInTime_iff _ _ _ _).mp h).2
+    change (zfBFallback.tm.runFrom (zfBFallback.tm.initCfg x) (t + 1)).output =
+      [true] at hout
+    have hh : (zfBFallback.tm.step (zfBFallback.tm.initCfg x)).state = none := rfl
+    rw [MultiTapeTM.runFrom_succ_eq_step,
+      MultiTapeTM.runFrom_of_halt _ hh] at hout
+    contradiction
+
+/-- One real finite machine tests whether the nested binary deadline is positive in a
+linear joint budget. It does not expand the deadline or enumerate states.
+
+**Proof sketch.** Extract the first component twice by the public catalog
+row, then use the public empty-word comparator. Compose with the pointwise
+time theorem, so the cost is charged to these particular intermediate words.
+The pairing length identity and `length_bits_le_self` give the joint bound.
+It returns `[false]` at deadline zero and a continuation flag at positive
+deadlines. The continuation flag is not an acceptance verdict. -/
+private lemma zfB3_deadline_test :
+    ∃ (D : FinTM Bool) (c : ℕ), ∀ (α x : List Bool) (t : ℕ),
+      D.ComputesInTime (pairEncode (pairEncode t.bits α) x) [decide (t ≠ 0)]
+        (c * (α.length + x.length + t + 1)) := by
+  obtain ⟨F, a, hF, _⟩ := FinTM.computesFunInTime_pairFst_spaceUsed
+  obtain ⟨E, b, hE⟩ := FinTM.computesFunInTime_ifEq [] [false] [true]
+  refine ⟨FinTM.bufferedCompTM (FinTM.bufferedCompTM F F) E,
+    10 * a + b + 6, ?_⟩
+  intro α x t
+  have h₁ := hF (pairEncode (pairEncode t.bits α) x)
+  have h₂ := hF (pairEncode t.bits α)
+  simp only [pairDecode_pairEncode, Option.map_some, Option.getD_some] at h₁ h₂
+  have h₃ := FinTM.bufferedCompTM_computesInTime F F h₁ h₂
+  have h₄ := hE t.bits
+  have hout : (if t.bits = [] then [false] else [true]) = [decide (t ≠ 0)] := by
+    have hz : t.bits = [] ↔ t = 0 := by
+      constructor
+      · intro h
+        have hvalue := codeBitsNat_bits t
+        rw [h] at hvalue
+        exact hvalue.symm
+      · intro h
+        simp [h]
+    simp only [hz]
+    by_cases h : t = 0 <;> simp [h]
+  dsimp only at h₄
+  rw [hout] at h₄
+  apply (FinTM.bufferedCompTM_computesInTime (FinTM.bufferedCompTM F F) E h₃ h₄).mono
+  let N := α.length + x.length + t + 1
+  have hbits := length_bits_le_self t
+  have hi : (pairEncode (pairEncode t.bits α) x).length + 1 ≤ 7 * N := by
+    simp only [length_pairEncode]
+    dsimp only [N]
+    omega
+  have hp : (pairEncode t.bits α).length + 1 ≤ 3 * N := by
+    simp only [length_pairEncode]
+    dsimp only [N]
+    omega
+  have ht : t.bits.length + 1 ≤ N := by dsimp only [N]; omega
+  have hbridge₁ : (pairEncode t.bits α).length + 2 ≤ 4 * N := by
+    simp only [length_pairEncode]
+    dsimp only [N]
+    omega
+  have hbridge₂ : t.bits.length + 2 ≤ 2 * N := by dsimp only [N]; omega
+  have ha₁ : a * ((pairEncode (pairEncode t.bits α) x).length + 1) ≤ 7 * (a * N) :=
+    (Nat.mul_le_mul_left a hi).trans_eq (by ac_rfl)
+  have ha₂ : a * ((pairEncode t.bits α).length + 1) ≤ 3 * (a * N) :=
+    (Nat.mul_le_mul_left a hp).trans_eq (by ac_rfl)
+  have hb : b * (t.bits.length + 1) ≤ b * N := Nat.mul_le_mul_left b ht
+  change _ ≤ (10 * a + b + 6) * N
+  simp only [Nat.add_mul, Nat.mul_assoc]
+  omega
+
+/-- A concrete simulator with one joint monomial bound suffices for the
+frozen uniform scheme. Both verdicts use the same degree and coefficient.
+
+**Proof sketch.** Assemble the same concrete effective scheme with the
+public primitive-recursive canonizer theorem. Increase the simulator's
+coefficient and exponent together to `C + e + 1`; the joint size is positive.
+The clock correctness equation supplies both complementary verdicts. This
+lemma is conditional: its simulator hypothesis is the remaining construction
+obligation, not an arbitrary-time compiler conclusion. -/
+private lemma zfB3_uniform_of_simulator (S : FinTM Bool) (C e : ℕ)
+    (hS : ∀ (α x : List Bool) (t : ℕ),
+      S.ComputesInTime (pairEncode (pairEncode t.bits α) x) [zfB3Answer α x t]
+        (C * (α.length + x.length + t + 1) ^ e)) :
+    Nonempty UniformMachineCode2 := by
+  obtain ⟨M, T, hM⟩ := codePrim_machine zfBCanonical zfBPrimCanonical
+  have hbound (α x : List Bool) (t : ℕ) :
+      C * (α.length + x.length + t + 1) ^ e ≤
+        (C + e + 1) * (α.length + x.length + t + 1) ^ (C + e + 1) :=
+    Nat.mul_le_mul (by omega)
+      (Nat.pow_le_pow_right (by omega) (by omega))
+  refine ⟨{
+    encode := Code2TM.serialize
+    decode := zfBDecode
+    decode_encode_pad := zfBDecode_serialize_pad
+    canonizer := M
+    canonizerTime := T
+    canonizer_computes := ?_
+    simulator := S
+    simDegree := C + e + 1
+    simulator_accepts := ?_
+    simulator_rejects := ?_ }⟩
+  · simpa only [show zfBCanonical = fun xs => (zfBDecode xs).serialize from
+      funext zfBCanonical_eq] using hM
+  · intro α x t h
+    have ha := (zfB3Answer_correct α x t).mpr h
+    simpa only [ha] using (hS α x t).mono (hbound α x t)
+  · intro α x t h
+    have ha : zfB3Answer α x t = false :=
+      Bool.eq_false_iff.mpr (fun ht => h ((zfB3Answer_correct α x t).mp ht))
+    simpa only [ha] using (hS α x t).mono (hbound α x t)
 
 /-- **A uniformly timed two-tape scheme exists** (spec, fill pending —
 tranche A-S2).
