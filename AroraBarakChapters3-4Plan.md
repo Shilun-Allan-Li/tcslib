@@ -642,6 +642,7 @@ layout or dedup change behind unchanged public names.
 | **§13d decisions 13d.1–13d.7 TAKEN, all as proposed** (user, 2026-10-10): blank separators; a laid-out `ℓ` plus an extension row; total rebalance contracts; the track index in finite control; `ZoneSym k := Bool ⊕ ZoneCell k`; the superseded declarations deleted through the G3/G4 gate; G1 limited to Seam, Embed, `bufferTape` and the R3 sweeps. In the sweeps, the definitions of transfer, copy, clear and compare and the three framed sweep contracts generalize, while the canonical rows, the space rows, the compare contracts and increment stay `Bool`. The G1 brief is issued as `briefs/s13d-g1-generalize.md`; under the PR-plus-gate rule, its delivery is integrated on a side branch with a PR and its own audit gate | Decided |
 | **G1 brief issued** (`briefs/s13d-g1-generalize.md`; the base must contain `2724d6ec`). In-place `Bool → Symbol` generalization of `FinTM.bufferTape` and four of its lemmas; all of `Build/Embed.lean`; Seam's composite, release adapter and general-configuration theorems, with the canonical `Cfg.ofWords` theorems kept at `Bool`; and Catalog's transfer, copy, clear and compare definitions with the three framed sweep contracts and their traces, while increment, the canonical rows, the space rows and Part 2 stay `Bool`. Binding: statement shape is the substitution only; an **instance attestation** (each base `Bool` statement, copied verbatim, proved by the generalized theorem); **no consumer edits**, with per-declaration escalation; no parallel copies; full downstream replay (about 191 modules) with the sorry-warning set unchanged; axiom prints byte-identical; a text screen with no new pair. Pre-ship check executed (`audits/evidence/s13d/G1PreShip.lean.txt`): implicit-alphabet inference holds in the canonical `Cfg.ofWords`, `simp` and large-alphabet patterns; a use with no context needs an annotation, which escalates. Delivery `s13d-g1.zip` → side branch, PR and G1 gate | Recorded |
 | **§12.7 fill INTEGRATED, 10/10** (2026-10-10; Codex commit `2e99bda1`, `git am -3` at base `c9a0b431`). The routes were followed as bound: one symbol-step lemma, one decrement transport (no trace), the telescoping potential, one round induction, and the one-step-then-transport body phase through RB5's public lemma. Maintainer verification: checksums OK, no C files; freeze clean (24 publics, statements unchanged, exactly the ten bodies, docstring appendices prefix-preserving); CounterLoop and the facade at 0 errors and 0 sorries; 24/24 axiom prints within the standard triple; lint 0 FAIL; the copy-text screen reproduced exactly, with no new cross-file pair. **Size justification recorded here:** `CounterLoop.lean` is 1,205 lines, over the 1,000 line. The fill owned exactly this file with a frozen surface, so it stays whole until the 12.2c per-theme reorganization of `Build/`. **§12.7 is complete through fill; its fill gate follows.** ZF-B4 (Codes2Tape's uniform machine code) is now unblocked | Recorded |
+| **Chapter fill-epoch plan DRAFTED** (2026-10-10; §4e, for user review). All 94 chapter statements are inventoried by their audited sketches' named obligations: **A light, 42; B machine constructions on existing infrastructure, 40, in eight summit clusters; C blocked, 12** (the NTIME hierarchy with the ND code scheme, and ND logspace). Correction recorded: the deterministic logspace statements are unblocked via the received `LogProg` layer. Proposed: **epoch C1**, the light epoch, as 4 disjoint batches (38 statements), plus a **summit batch S1** in parallel (`ConfigGraph.lean` whole: the BFS simulator, `NL ⊆ P`, Ex 4.3, and its 4 light lemmas). Then B1 oracle machines → B3 Savitch with the rest of B2 → B4 TQBF → **B5, the joint format-parameterized uniform interpreter**, which also discharges ZF-B4 and avoids repeating CH34-D2, with the EXPCOM summit and BGS → B6 space hierarchy; B7 (deterministic logspace) independent, from epoch 2; B8. Fill gate per epoch. Citation rule: batches may cite unfilled audited statements, and are reported as "proved modulo" them | Recorded |
 
 **Duplication-governance amendments landed (user-directed, 2026-10-09; from
 the D-R2 post-mortem — the `f2_` accumulation was disclosed and recorded at
@@ -670,6 +671,128 @@ generated-kernel-artifact count is 12 (in `Nondeterminism`/`EXP`/`SAT`, none
 in Hardness), Hardness holds 553 privates (618 at A5 close − 65 at E5), and
 two kernel-dead names (`clRefClockCfg`, `clReadFields`) are missing from the
 E5 record.
+
+### 4e. Chapter fill epochs: inventory and partition (drafted 2026-10-10, for user review)
+
+**Why now.** The infrastructure most chapter-3/4 summits need is in place:
+the §12 library (core, §12.6, §12.7), virtual-input hosting (Z1), the
+agreement transfer (Z5), and the received program layers. Only the
+Hennie–Stearns line (§13d) and the nondeterministic logspace layer (§2.5,
+waiting on Hydroxyi) are outstanding, and both sit off most of the critical
+path. The chapter fills therefore start in parallel with the §13d work
+(user, 2026-10-10).
+
+**Inventory method.** Every sorried chapter declaration was read with its
+audited docstring. Each is classified by the fill obligations its proof
+sketch names (`audits/*-resolutions.md` hold the binding routes):
+
+- **A, light:** run-level inductions, class inclusions, arithmetic, pure
+  combinatorics, or tiny explicit machines;
+- **B, a machine construction whose infrastructure exists;**
+- **C, blocked.**
+
+**There are 94 chapter statements.** That count excludes the infrastructure
+targets (`Zone` 2, `Codes2Tape` 1) and ch7's disclosed Chernoff stub.
+
+**Correction to the earlier summary.** The *deterministic* logspace
+statements are **not** blocked. Their sketches instantiate the received
+deterministic `LogProg` layer (`compile_correct`/`compile_space`,
+`arm_decides`): `ImplicitlyLogspaceComputable.comp`, `LogspaceReducible.trans`,
+`mem_LOGSPACE_of_logspaceReducible` and `multLang_mem_LOGSPACE`. Only the
+nondeterministic ones wait on the §2.5 extensions.
+
+**Citation rule for parallel batches.** A batch may cite any audited
+statement, filled or not. A target that is proved but cites an unfilled one
+is reported as "proved modulo" those citations, and its axiom print then
+shows `sorryAx` until they land. Each epoch's fill gate reports its
+modulo-set.
+
+#### Group A — light (42 statements)
+
+| File | Targets | Named obligations, from the sketches |
+|---|---|---|
+| `TuringMachine/OracleAgreement` | all 7: length- and query-locality, deterministic and branchwise; the query-length and query-count bounds | `≤ t`-indexed run inductions; `step_eq_of_ne_qQuery` and an ND analogue; a `runWith` head/blank invariant (flagged for promotion) |
+| `TuringMachine/OracleNondeterministic` | `OracleTM.toOracleNDTM_runWith` | induction on the choice word |
+| `TuringMachine/NondeterministicSpace` | both | prefix-image arguments |
+| `TuringMachine/CounterProgRun` | `sim_run_of_regs_le` (P0 sanity target S9) | the `sim_run` induction with a reachability bound |
+| `SpaceComplexity/NSPACE` | both | monotonicity; the `toNDTM` embedding |
+| `SpaceComplexity/SpaceClasses` | all 3 | unions plus `SPACE_subset_NSPACE` |
+| `SpaceComplexity/ZeroSpace` | all 11 | cardinality facts, `pairEncode`/`bits` injectivity, four tiny zero-tape machines |
+| `SpaceComplexity/Examples` | `evenLang_mem_LOGSPACE` | a direct two-state machine (it must not be derived from `ZeroSpace`: import cycle) |
+| `SpaceComplexity/Inclusions` | `DTIME_subset_SPACE`, `P_subset_PSPACE` | the visited-cells-per-step bound |
+| `SpaceComplexity/ConfigGraph` (part) | `reflTransGen_cfgStep_iff`, `coreSum_stepWith`, `acceptsWithin_of_spaceUsedWith_le`, `DecidesInSpace.mem_iff_acceptsWithin_configBound` | the choice-word dictionary; core compatibility; cycle splicing with the injective core code |
+| `ClassOracle/Classes` (part) | `P_subset_POracle`, `POracle_subset_NPOracle` | the proved `toFinOracleTM_computesInTime`; `toOracleNDTM_runWith` |
+| `Formulas/QBF`, `Formulas/QBFEncoding` | both | the prefix/assignment induction; `pairDecode`/`CNF.decode` laws |
+| `ClassPSPACE/Games` | `determined` | backward induction at the fixed player-one perspective |
+| `ClassPSPACE/TQBF` (part) | `PSPACE_eq_P_of_pspaceComplete_mem_P` | `P_subset_PSPACE` plus downward closure of `P` |
+| `SpaceComplexity/Logspace/Reductions` (part) | `LogspaceReducible.polyTimeReducible` | the received `ImplicitlyLogspaceComputable.polyTimeComputable` |
+| `Diagonalization/Relativization` (part) | `exists_finOracleTM_enumeration` | a finite-type enumeration with a repetition coordinate (pure, but substantial) |
+
+#### Group B — machine constructions on existing infrastructure (40 statements)
+
+| Summit cluster | Targets | What it needs |
+|---|---|---|
+| **B1 Oracle machines** | `mem_POracle_of_polyTimeReducible`, `compl_mem_POracle`, `POracle_eq_P_of_mem_P` (heavy), `unaryWitnessLang_mem_NPOracle`; then `oracle_mem_POracle`, `SATOracle` ×3, `exists_oracle_ne` (stage construction, over OracleAgreement and the enumeration) | capture retargeted to the query tape (W1), a four-state query tail, oracle-call simulation with a per-query decider run |
+| **B2 Configuration-graph simulation** | `NSPACE_subset_exp_dtime`, `NL_subset_P`, `polyTimeReducible_of_mem_NL` (ConfigGraph); `NP_subset_PSPACE`, `SAT3_mem_PSPACE` (Inclusions) | BFS over coded vertices with a visited table (catalog copy/compare/increment, loop host); a certificate enumerator over a virtual-input decider |
+| **B3 Savitch and constructibility** | `savitch`, `PSPACE_eq_NPSPACE`, `spaceConstructible_poly` (Savitch); `spaceConstructible_logSpace`, `spaceConstructible_linear` (Constructible) | a midpoint-recursion frame stack (catalog plus loop); counter machines with space clauses |
+| **B4 TQBF** | `exists_adjacency_codec_cnf` (combinatorial: codec plus three CNFs), `TQBF_mem_PSPACE`, `TQBF_PSPACEHard` (**summit**: the `ψᵢ` emitter), `TQBF_PSPACEComplete` | a depth-first assignment walker plus a CNF evaluator; the emitter at the Cook–Levin emitter's scale |
+| **B5 Uniform interpreters and EXPCOM** | `exists_uniformMachineCode` (EXPCOM; **jointly with ZF-B4's** `exists_uniformMachineCode2`); `EXP_subset_POracle_EXPCOM`; `NPOracle_EXPCOM_subset_EXP` (**summit**); the three EXPCOM equalities; `baker_gill_solovay` | the §12.7 counter-driven loop (now proved); **one format-parameterized interpreter** for the one-tape and two-tape codes, so CH34-D2 is not repeated (12.2c item 8's direction); choice-word enumeration |
+| **B6 Space hierarchy** | `space_universal` (**summit**), `space_hierarchy`, `LOGSPACE_ssubset_PSPACE`, `SPACE_linear_ne_NP` | the chapter-1 universal interpreter's constant-factor space, plus the §12.7 core-count clock; a capped increasing-budget loop |
+| **B7 Deterministic logspace** | `ImplicitlyLogspaceComputable.comp`, `LogspaceReducible.trans`, `mem_LOGSPACE_of_logspaceReducible`, `NL_eq_LOGSPACE_of_nlComplete_mem_LOGSPACE`, `multLang_mem_LOGSPACE` | the received `LogProg` call protocol and `arm_decides` |
+| **B8 Non-constructibility** | `exists_not_timeConstructible` | rank/unrank, a unary emitter and an equality tail (no time bound) |
+
+#### Group C — blocked (12 statements)
+
+| Cluster | Targets | Blocker |
+|---|---|---|
+| **C1 NTIME hierarchy** | all 6 of `NTimeHierarchy`; `exists_effectiveNDMachineCode` (NDCodes) | a nondeterministic lifting of the §12.7 counter loop (statement note SC-3: a design plus a gate); the ND code scheme waits on the format-parameterized parse layer (12.2c item 8, CH34-D2), or on an explicitly accepted third instance |
+| **C2 ND logspace** | `PATH_mem_NL`, `PATH_NLComplete`, `compl_PATH_mem_NL`, `NL_eq_coNL`, `NSPACE_compl_eq` | the §2.5 nondeterministic program layer (Hydroxyi). `PATH_NLComplete`'s hardness half needs only B2 and the deterministic layer, but its statement bundles membership |
+
+Book-strength Thm 3.1 has no sorried statement yet; it arrives with stage 1
+(§13d).
+
+#### Proposed epochs (disjoint file ownership within an epoch)
+
+- **Epoch C1, the light epoch:** group A except `ConfigGraph`'s four light
+  targets, which go to S1 with their file. That is 38 statements, as four
+  parallel batches:
+  - **C1a** — `NondeterministicSpace`, `NSPACE`, `SpaceClasses`, and
+    `Inclusions` (its two light targets).
+  - **C1b** — `ZeroSpace`, `Examples`, `CounterProgRun`.
+  - **C1c** — `OracleAgreement`, `OracleNondeterministic`, and `Classes`
+    (its two light targets).
+  - **C1d** — `QBF`, `QBFEncoding`, `Games`, `TQBF`'s collapse corollary,
+    `Reductions`' `polyTimeReducible`, and `Relativization`'s enumeration.
+
+  A batch that owns part of a shared file owns the whole file for the epoch
+  and touches only its own targets. The file passes to the group-B owner
+  afterwards.
+- **Summit batch S1, alongside C1:** B2's configuration-graph core,
+  `ConfigGraph.lean` whole (all 7, its 4 light ones included). It is the
+  base of Savitch, `NL ⊆ P`, Ex 4.3 and the C2 completeness half, and it
+  exercises the §12/§12.7 machinery at scale early. This follows the
+  workflow's risk ordering.
+- **Later epochs, in order:**
+  1. B1 oracle machines, with `exists_oracle_ne`;
+  2. B3 Savitch plus constructibility, and the remainder of B2;
+  3. B4 TQBF;
+  4. B5, the joint uniform interpreter, which **also discharges ZF-B4**, plus
+     the EXPCOM summit and BGS;
+  5. B6 space hierarchy;
+  6. B7 deterministic logspace (can start as early as epoch 2, being
+     independent);
+  7. B8.
+
+  C1 and C2 wait on their blockers.
+- **Each epoch ends with a fill gate**, as `workflow.md` §4 requires. The
+  duplication governance is as in the §12/§13 fills: a text-level screen per
+  batch, with no new cross-file copies.
+
+**Interaction with in-flight work.** G1 changes only `Build/` and
+`Simulation.lean` signatures, and keeps every `Bool` statement valid, so
+the chapter fills are unaffected. Its maintainer replay covers whatever
+fills have landed. The §13d rule (a PR plus a gate) applies to §13d work
+only. Chapter fills follow the standing fill workflow.
 
 ## 5. Prior art to consult (design only; cite, never transcribe)
 
