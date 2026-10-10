@@ -1,0 +1,10 @@
+Base: 0658eb8c73271de708557ce1b72e6223d32fb719
+PASS: all 44 explicit public declarations retain byte-identical statements.
+PASS: all 30 other explicit public declarations retain byte-identical full declarations.
+PASS: private count 384 -> 384; delta +0.
+Removed private: ['catalog_erase_take']
+New private: ['catalogTape']
+Replaced private: ['catalogClearF', 'catalogClearR', 'catalogCopyF', 'catalogCopyR', 'catalogIncF', 'catalogIncR', 'catalogTransferR', 'catalog_clear_trace', 'catalog_copy_forward', 'catalog_copy_trace', 'catalog_increment_trace', 'catalog_transfer_trace', 'catalog_write_middle', 'catalog_write_take']
+Changed public proof bodies: ['clearTM_run', 'clearTM_run_ofCfg', 'clearTM_spaceUsedByTape', 'copyTM_run', 'copyTM_run_ofCfg', 'copyTM_spaceUsedByTape', 'incrementTM_run_overflow', 'incrementTM_run_overflow_ofCfg', 'incrementTM_run_succ', 'incrementTM_run_succ_ofCfg', 'incrementTM_spaceUsedByTape', 'transferTM_run', 'transferTM_run_ofCfg', 'transferTM_spaceUsedByTape']
+PASS: imports unchanged; zero admissions; tracked diff only Catalog.lean.
+PASS: catalogCfg, catalogTrace, catalog_trace_run and all compare declarations byte-identical.
