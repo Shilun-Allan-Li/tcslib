@@ -1613,3 +1613,23 @@ codes and the two-tape universal machine, Thm 3.1 follows at `f log f`.
 7. **G1's extent:** whether `Build/Loop.lean`'s public hosts also
    generalize now, or only when a large-alphabet consumer needs them.
    Proposed: only Seam, Embed, `bufferTape` and the R3 sweeps now.
+
+#### Decisions 13d.1–13d.7 taken (user, 2026-10-10): all as proposed
+
+1. Zone boundaries are **blank separator cells**.
+2. **A laid-out `ℓ` plus an extension row.**
+3. **Total rebalance contracts**: the rows realize the total pure cascade at
+   the scanned index for every input.
+4. **The track index lives in finite control.**
+5. **`ZoneSym k := Bool ⊕ ZoneCell k`.**
+6. The superseded declarations are **deleted through the G3/G4 gate**.
+7. **G1 covers only Seam, Embed, `bufferTape` and the R3 sweeps.** What this
+   means for the sweeps: the *definitions* of `transferTM`, `copyTM`,
+   `clearTM` and `compareTM` (the last needs `[DecidableEq Symbol]`), and the
+   three framed sweep contracts `transferTM_run_ofCfg`, `copyTM_run_ofCfg`
+   and `clearTM_run_ofCfg`, generalize. The canonical `Cfg.ofWords` rows,
+   the space rows, the compare contracts, and everything about `incrementTM`
+   stay Bool-specific. The generalized definitions instantiate at `Bool`.
+
+The G1 brief is `briefs/s13d-g1-generalize.md`.
+
