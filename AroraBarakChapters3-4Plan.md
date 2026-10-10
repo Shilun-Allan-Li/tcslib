@@ -491,7 +491,11 @@ new items are added here).** 12.2c is the user's own refactor window. It
 runs with its own audit gate under the duplication governance. It is armed
 by the retrofit-R1 gate's close, after RB4 lands; the ch7 items also wait
 for the ch7 fill gate. Statements stay frozen throughout: every task is a
-layout or dedup change behind unchanged public names.
+layout or dedup change behind unchanged public names. **Placement (user,
+2026-10-10):** 12.2c is no longer one serial window. It runs as a parallel
+track in three tranches (T1 now, T2 after the G1 gate, T3 after the G2
+fill), sequenced against §13d only. Each tranche goes through a PR and its
+own gate. The tranche table is in §4e.
 
 1. **Per-theme split of `Build/Catalog.lean`.** `Build/Primitives.lean`
    and `Build/Catalog.lean` become facades re-exporting the frozen public
@@ -643,6 +647,7 @@ layout or dedup change behind unchanged public names.
 | **G1 brief issued** (`briefs/s13d-g1-generalize.md`; the base must contain `2724d6ec`). In-place `Bool → Symbol` generalization of `FinTM.bufferTape` and four of its lemmas; all of `Build/Embed.lean`; Seam's composite, release adapter and general-configuration theorems, with the canonical `Cfg.ofWords` theorems kept at `Bool`; and Catalog's transfer, copy, clear and compare definitions with the three framed sweep contracts and their traces, while increment, the canonical rows, the space rows and Part 2 stay `Bool`. Binding: statement shape is the substitution only; an **instance attestation** (each base `Bool` statement, copied verbatim, proved by the generalized theorem); **no consumer edits**, with per-declaration escalation; no parallel copies; full downstream replay (about 191 modules) with the sorry-warning set unchanged; axiom prints byte-identical; a text screen with no new pair. Pre-ship check executed (`audits/evidence/s13d/G1PreShip.lean.txt`): implicit-alphabet inference holds in the canonical `Cfg.ofWords`, `simp` and large-alphabet patterns; a use with no context needs an annotation, which escalates. Delivery `s13d-g1.zip` → side branch, PR and G1 gate | Recorded |
 | **§12.7 fill INTEGRATED, 10/10** (2026-10-10; Codex commit `2e99bda1`, `git am -3` at base `c9a0b431`). The routes were followed as bound: one symbol-step lemma, one decrement transport (no trace), the telescoping potential, one round induction, and the one-step-then-transport body phase through RB5's public lemma. Maintainer verification: checksums OK, no C files; freeze clean (24 publics, statements unchanged, exactly the ten bodies, docstring appendices prefix-preserving); CounterLoop and the facade at 0 errors and 0 sorries; 24/24 axiom prints within the standard triple; lint 0 FAIL; the copy-text screen reproduced exactly, with no new cross-file pair. **Size justification recorded here:** `CounterLoop.lean` is 1,205 lines, over the 1,000 line. The fill owned exactly this file with a frozen surface, so it stays whole until the 12.2c per-theme reorganization of `Build/`. **§12.7 is complete through fill; its fill gate follows.** ZF-B4 (Codes2Tape's uniform machine code) is now unblocked | Recorded |
 | **Chapter fill-epoch plan DRAFTED** (2026-10-10; §4e, for user review). All 94 chapter statements are inventoried by their audited sketches' named obligations: **A light, 42; B machine constructions on existing infrastructure, 40, in eight summit clusters; C blocked, 12** (the NTIME hierarchy with the ND code scheme, and ND logspace). Correction recorded: the deterministic logspace statements are unblocked via the received `LogProg` layer. Proposed: **epoch C1**, the light epoch, as 4 disjoint batches (38 statements), plus a **summit batch S1** in parallel (`ConfigGraph.lean` whole: the BFS simulator, `NL ⊆ P`, Ex 4.3, and its 4 light lemmas). Then B1 oracle machines → B3 Savitch with the rest of B2 → B4 TQBF → **B5, the joint format-parameterized uniform interpreter**, which also discharges ZF-B4 and avoids repeating CH34-D2, with the EXPCOM summit and BGS → B6 space hierarchy; B7 (deterministic logspace) independent, from epoch 2; B8. Fill gate per epoch. Citation rule: batches may cite unfilled audited statements, and are reported as "proved modulo" them | Recorded |
+| **Chapter fill-epoch plan APPROVED; 12.2c placed as three tranches** (user, 2026-10-10). All four §4e proposals taken: epoch C1 (four batches, 38 statements) and summit S1 (`ConfigGraph.lean` whole) dispatched now; B5 builds one format-parameterized uniform interpreter, discharging ZF-B4, on 12.2c item 8's parse layer; the "proved modulo" citation rule. **12.2c is no longer one serial window**: tranche T1 now (item 8 first; item 11 with CH7-D2's library half; item 7 with Aparna; item 12 after item 11 and the §12.7 fill gate), T2 after the G1 gate (item 6's export, then items 13 and 6; item 5's sweep half folded into G2), T3 after the G2 fill (the Catalog core, items 1–4 and the rest of 5; item 9 after the G3/G4 gate). G2 before the split, to keep the split off the Hennie–Stearns critical path. Each tranche: side branch, PR, own gate. Table in §4e | Decided |
 
 **Duplication-governance amendments landed (user-directed, 2026-10-09; from
 the D-R2 post-mortem — the `f2_` accumulation was disclosed and recorded at
@@ -672,7 +677,16 @@ in Hardness), Hardness holds 553 privates (618 at A5 close − 65 at E5), and
 two kernel-dead names (`clRefClockCfg`, `clReadFields`) are missing from the
 E5 record.
 
-### 4e. Chapter fill epochs: inventory and partition (drafted 2026-10-10, for user review)
+### 4e. Chapter fill epochs: inventory and partition (drafted 2026-10-10; APPROVED by the user the same day)
+
+**Decisions (user, 2026-10-10).** The plan below is approved as drafted:
+
+1. epoch C1's four batches and summit batch S1 are dispatched now;
+2. B5 builds one format-parameterized uniform interpreter and discharges
+   ZF-B4, on top of 12.2c item 8's parameterized parse layer;
+3. the "proved modulo" citation rule is adopted;
+4. 12.2c runs as a parallel track in three tranches; see "12.2c placement"
+   at the end of this section.
 
 **Why now.** The infrastructure most chapter-3/4 summits need is in place:
 the §12 library (core, §12.6, §12.7), virtual-input hosting (Z1), the
@@ -793,6 +807,45 @@ Book-strength Thm 3.1 has no sorried statement yet; it arrives with stage 1
 the chapter fills are unaffected. Its maintainer replay covers whatever
 fills have landed. The §13d rule (a PR plus a gate) applies to §13d work
 only. Chapter fills follow the standing fill workflow.
+
+#### 12.2c placement: three tranches (user, 2026-10-10)
+
+12.2c keeps every public name and statement, and no 12.2c item touches a
+chapter file. Chapter fills therefore neither wait for it nor need edits
+after it; each landed fill simply joins 12.2c's downstream replay. A
+group-B request for a shared lemma in a file that a 12.2c batch currently
+owns is queued to that batch.
+
+§13d is what 12.2c is sequenced against:
+
+- G1 owns `Embed`, `Seam`, `Catalog` and `Simulation.lean` while it is out;
+- G2's mapped sweeps are item 5's common scanner (`copyTM` and
+  `transferTM` are mapped sweeps at `merge := fun _ s => s`), and G2 must
+  share Catalog's private R3 trace, so it lives in Catalog;
+- G3/G4 retire about 370 lines of `Zone.lean`, which reshapes item 9's
+  Zone split.
+
+| Tranche | When | Items |
+|---|---|---|
+| **T1** | Now, alongside G1, C1 and S1; touches none of G1's files | **Item 8** first, because B5 and `NDCodes` wait on it. **Item 11 plus CH7-D2's library half**, as one batch, since both edit Loop: the run facts get public homes in `Deterministic`/`Finite`, and Loop's three private copies are deleted. **Item 7** (CH7-D1), coordinated with Aparna. **Item 12** after item 11 lands and the §12.7 fill gate closes, except its Catalog piece |
+| **T2** | After the G1 gate closes | Item 6's action export in `Embed` (small, additive), then items 13 and 6, with CH7-D2's EmitIter half (coordinated with Aparna). **Item 5's sweep half is folded into G2**: one mapped-sweep trace, from which copy, transfer and clear are derived, under G2's PR and gate |
+| **T3** | After the G2 fill lands | The Catalog core: items 1–4, the rest of item 5, and item 12's Catalog piece, alongside the G3/G4 fill (separate files) and the Hennie–Stearns assembly statement phase. After the G3/G4 gate: item 9's Zone split, re-decided; item 10 |
+
+**G2 comes before the Catalog split.** The split is large (Catalog's census
+alone is 318 member pairs) and only moves code behind unchanged names, so it
+absorbs G2's rows like any others. Splitting first would delay Hennie–Stearns
+by the split's whole duration. Splitting after delays nothing that waits on
+it. The census debt stays open longer, but it is acknowledged, and the
+per-batch screens keep it from growing.
+
+**Consequences for the chapter plan.** B5 builds its interpreter on item 8's
+parameterized parse layer. `exists_effectiveNDMachineCode` leaves group C
+once item 8 lands; only the NTIME hierarchy then waits, on SC-3.
+
+**Governance.** Each tranche is integrated on a side branch with a PR the
+user merges, and has its own audit gate under the duplication governance,
+as for the retrofit batches. Items folded into a §13d step fall under that
+step's PR and gate.
 
 ## 5. Prior art to consult (design only; cite, never transcribe)
 
