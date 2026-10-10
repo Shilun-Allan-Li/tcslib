@@ -36,35 +36,83 @@ computed values where available and estimates under the same rule marked
 | File | Total decls | Original-side members | Copy-side members | All members | Fraction | Lines in member blocks |
 |---|---:|---:|---:|---:|---:|---:|
 | `Build/Loop.lean` | 212 | 87 →Catalog (of the historical 95; strict 85) + 4 relocation originals (`emCallAction`/`emCallCfg`/`emCall_apply`/`emCall_relocate_run`, the batch-L source of the three-file family) | 13 H3 exact copies (`emLoopHost_*`; their `loopHost_*` originals are already in the 87 and are not double-counted; the `_init` near-copy noted, uncounted) | **104** | **49.1%** | 2,009 (auditor) + 73 + ≈512 |
-| `Build/Primitives.lean` | 272 | 146 →Catalog (of the historical 150; strict 143) | 4 relocation copies (`emitterP2Action`/`emitterP2Cfg`/`emitterP2_apply`/`emitterP2_relocate_run` — **byte-identical to Loop's after identifier substitution**, round-2 verified) | **150** | **55.1%** | 3,162 (auditor) + 73 |
+| `Build/Primitives.lean` | 272 | 146 →Catalog (of the historical 150; strict 143) + **6 public originals** reproduced in Catalog (round-5 screen: `computesFunInTime_stripLast` → the adaptation `f2_strip_linear`; `_prepend`, `_pairEncodeFixed`, `_pairFst`, `_pairSnd`, `_pairConcat` → their strengthened `_spaceUsed` counterparts) | 4 relocation copies (`emitterP2Action`/`emitterP2Cfg`/`emitterP2_apply`/`emitterP2_relocate_run` — **byte-identical to Loop's after identifier substitution**, round-2 verified) | **156** | **57.4%** | **3,407** (3,162 + 73 relocation + 81 `stripLast` + 91 for the five pair/prepend publics; round-5 measured) |
 | `CookLevin/Hardness.lean` | 549 | 0 | 4 relocation copies (`clSlotAction`/`clSlotCfg`/`clSlot_apply`/`clSlot_run` — likewise byte-identical) | **4** | **0.73%** | 73 |
-| `Build/Catalog.lean` | 423 | 2 in-file originals (`f2_finSumEquiv`, `f2_sum_add` — their `a2_` copies are normalized-identical, round-3 verified) | 150 Primitives-sourced + 95 Loop-sourced + 17 Wrappers-sourced (10 `f2_timed*`, 7 `catalog_redirect*`) + 2 in-file `a2_` copies + **3 Composition-sourced** (`f2_idTM`, `f2_idTM_run`, `f2_constTM` — maintainer-reconciled normalized-identical to `Composition.lean`'s originals) + **20 counter-block members** (`f2_counterInc` … `f2_counter_computes` — maintainer reconciliation, declaration by declaration: **19 normalized-identical** to `ClassP/TimeConstructible.lean`'s originals, and `f2_counter_computes` a **near-copy adaptation** of the proof body of the public `timeConstructible_id`) + **2 strengthened public counterparts** (`computesFunInTime_id_spaceUsed`, `computesFunInTime_const_spaceUsed` — their time-conjunct proofs reproduce `Composition.lean`'s public `computesFunInTime_id`/`_const` proofs verbatim after renaming; round-4 finding, maintainer-screened) | **291** | **68.8%** (strict — excluding the 7 strengthened counterparts and the 1 near-copy: 283, 66.9%) | **6,267** (round-4 measured spans: Primitives 3,249 + Loop 2,200 + Wrappers 297 + internal 60 + Composition-private 51 + counter 345 + the two public counterparts 65) |
+| `Build/Catalog.lean` | 423 | 2 in-file originals (`f2_finSumEquiv`, `f2_sum_add` — their `a2_` copies are normalized-identical, round-3 verified) | 150 Primitives-sourced + 95 Loop-sourced + 17 Wrappers-sourced (10 `f2_timed*`, 7 `catalog_redirect*`) + 2 in-file `a2_` copies + **3 Composition-sourced** (`f2_idTM`, `f2_idTM_run`, `f2_constTM` — maintainer-reconciled normalized-identical to `Composition.lean`'s originals) + **20 counter-block members** (`f2_counterInc` … `f2_counter_computes` — maintainer reconciliation, declaration by declaration: **19 normalized-identical** to `ClassP/TimeConstructible.lean`'s originals, and `f2_counter_computes` a **near-copy adaptation** of the proof body of the public `timeConstructible_id`) + **7 strengthened public counterparts** whose time conjuncts reproduce a public source proof (`computesFunInTime_id_spaceUsed`/`_const_spaceUsed` ← `Composition.lean`, round 4; `_prepend`/`_pairEncodeFixed`/`_pairFst`/`_pairSnd`/`_pairConcat_spaceUsed` ← `Build/Primitives.lean`, round 5 — 89-100% of each source proof reproduced) + **2 F2A adaptations** of public proofs (`f2_strip_linear` ← `computesFunInTime_stripLast`, 86% of the source reproduced — round-5 finding R5-1; `f2_counter_heads` ← `timeConstructible_id`, 64% — round-5 screen) | **298** | **70.4%** (strict — excluding the 14 strengthened counterparts/adaptations and the 1 near-copy: **283, 66.9%**, unchanged) | **6,491** (6,267 round-4 measured + 224 for the seven round-5 members: 64 + 45 + 22 + 16 + 26 + 24 + 27) |
 | `Build/Wrappers.lean` | 29 (10 pub + 19 priv) | 17 | 0 | **17** | **58.6%** | 297 (round-3 span count: 77 redirect + 220 timed) |
-| `ClassP/TimeConstructible.lean` | 21 | 20 (the 19 identical counter originals + `timeConstructible_id`, the near-copy's source) | 0 | **20** | **95.2%** (strict: 19, 90.5%) | 355 (round-4 measured) |
+| `ClassP/TimeConstructible.lean` | 21 | 20 (the 19 identical counter originals + `timeConstructible_id`, the source of both the near-copy `f2_counter_computes` and the adaptation `f2_counter_heads`) | 0 | **20** | **95.2%** (strict: 19, 90.5%) | 355 (round-4 measured) |
 | `TuringMachine/Composition.lean` | 19 | 5 (`idTM`, `idTM_run`, `constTM` + the public `computesFunInTime_id`, `computesFunInTime_const` whose proofs the Catalog rows reproduce) | 0 | **5** | **26.3%** (strict: 3, 15.8%) | 97 (51 private + 46 public, round-4 measured) |
 | `Build/Embed.lean`, `Build/Seam.lean`, `Build/VirtualInput.lean`, `Build/Zone.lean`, `Simulation.lean`, `Codes2Tape.lean` | — | 0 | 0 | 0 | 0% | 0 |
 
 **Reconciliation notes (rounds 3-4 repairs)**: the F2A report's 306
 inventory entries decompose as **150 Primitives + 94 Loop + 10 Wrappers +
-3 Composition copies + 20 counter members + 2 in-file originals + 27
-nonmembers** (the round-4 correction: the old "29 outside" wrongly
-included the two counted in-file originals); the 27 are genuinely new
-space-proof material (the `f2_polyHeads`/`f2_space_of_time`/
+3 Composition copies + 20 counter members + 2 in-file originals + 2
+adaptations of public proofs (`f2_strip_linear`, `f2_counter_heads`;
+round 5) + 25 nonmembers** (the round-4 correction: the old "29 outside"
+wrongly included the two counted in-file originals); the 25 are new
+space-proof material by the round-5 screen below (the `f2_polyHeads`/`f2_space_of_time`/
 `f2_segment_heads`-class engines and strengthenings — round-4 sampled and
 accepted). The A2 report's 45 declarations contribute 2 in-file copies +
 `a2_loop_halted_run` (in the Loop 95) + 42 new constructions.
 
-**The public-proof screen (round-4 repair, R4-1)**: every public
-`computesFunInTime_*` of `Composition.lean` and `Build/Primitives.lean`
-with a Catalog `_spaceUsed` counterpart was screened for reproduction of
-its proof inside the counterpart's time conjunct (normalized
-comment/whitespace-stripped containment after `f2_` renaming, segments ≥
-60 characters). **Hits: exactly the two Composition rows** (`id`, `const`
-— now counted on both sides above). **All 16 screened Primitives rows are
-distinct**: their space-row proofs are separate trajectory arguments, as
-the F2A per-target routes describe. Coverage qualification: the screen
-detects substantial contiguous reproduction, not partial adaptation below
-the threshold; the strict metric is unaffected either way.
+**The public-proof screen (round-5 repair of R4-1; R5-1/R5-2/R5-3).**
+Published as `audits/evidence/retrofit/r1-public-proof-screen.py` with its
+output `r1-public-proof-screen.out`. *Erratum:* the round-4 run tested
+whether a source proof was contained **whole** in its counterpart, but the
+round-4 text described "segments ≥ 60 characters". The round-5 auditor ran
+the method as described and found six fragment hits that the containment
+test could not see. The method below is the one actually run.
+
+- **Method.** Strip comments and all whitespace. Rename each source
+  identifier `h` to `f2_h` wherever Catalog declares `f2_h` (dotted names
+  split). Report two measures:
+  - the **longest common contiguous segment** (LCS), with the literal ≥ 60
+    candidate threshold;
+  - the **shared length**: greedy string tiling with blocks of at least 25
+    characters, as a fraction of the **source** proof.
+- **Rule.** A pair is a **member** when at least half of the source proof
+  reappears in the target, with an absolute floor of 60 shared characters
+  so that a one-line citation of a public lemma counts as reuse. Any other
+  shared tiling of at least 60 characters is a recorded **fragment**, not
+  counted. The rest are citations or no match.
+- **Population (R5-3).** 17 eligible pairs: 2 from Composition (`id`,
+  `const`) and **15** from Primitives, not the 16 stated in round 4. Five
+  source theorems have no `_spaceUsed` counterpart: `ifEq`, `comp`,
+  `splitSolveWith`, `unaryToken`, `appendBit`.
+- **Pass 1, direct pairs.**
+  - Members (7): `id` 96.5%, `const` 97.1%, `prepend` 93.9%,
+    `pairEncodeFixed` 100%, `pairFst`/`pairSnd` 88.8%, `pairConcat`
+    88.7%.
+  - Fragments, recorded and not counted (3): `polyUnary` (119 characters
+    shared, 46.7%); `pairLenCheck` (305, 21.9%; its LCS is the 91-character
+    `Nat.pow_one` bound); `stripLast` (221, 11.7%; its LCS is the
+    121-character `have hn` weakening).
+  - Citations or no match (7): `lengthBits`, `polyBits`, `pairValid`,
+    `pairDup`, `pairMapSnd`, `splitSolve` (the auditor's 27-character
+    citation), `incFixed`.
+  - The literal ≥ 60 LCS screen reproduces the auditor's hit set exactly
+    (`id` 776, `const` 273, and 62/75/75/75/91/121 for the six Primitives
+    pairs). One member falls below the 60-character LCS threshold:
+    `pairEncodeFixed`, whose longest block is 53 characters but whose whole
+    91-character source proof reappears. This is why the rule measures
+    coverage, not contiguity alone.
+- **Pass 2, residual helpers.** Each of the 27 nonmembers recorded in
+  round 4 is screened against every public proof of Composition,
+  Primitives and TimeConstructible, taking the best match by shared length.
+  - Members (2): `f2_strip_linear` (86.0% of `computesFunInTime_stripLast`;
+    R5-1) and `f2_counter_heads` (64.1% of `timeConstructible_id`; the
+    auditor's 215-character partial-reuse candidate, which crosses the
+    member bar once measured by tiling).
+  - Fragments, recorded (6): `f2_counter_count_space` 6.5%,
+    `f2_unary_sharp` 35.7%, `f2_cond_time` 30.0% (vs
+    `bufferedCompTM_computesInTime`, a candidate the auditor did not list),
+    `f2_rewind_scan_heads` 7.4%, `f2_rewind_heads` 6.0%,
+    `f2_cond_ledger` 11.7%.
+  - The remaining 19 share under 60 characters with any public proof.
+- **Coverage qualification.** The screen covers public proofs of the
+  three source files, so a private-to-private adaptation in other files is
+  outside it. The strict metric counts whole-declaration twins only and is
+  unaffected.
 
 Copy-side counts deliberately include copies whose originals were deleted
 in R1 (the copies persist; deletion of an original does not shrink the
@@ -93,7 +141,7 @@ declarations (76 dead + 7 replaced).
 
 | Debt family | Acknowledgment | Cleanup owner and window |
 |---|---|---|
-| Catalog's 291 expanded members (↔ Primitives/Loop/Wrappers/Composition/TimeConstructible + in-file) | **D-R2** (user, 2026-10-09) | the **12.2c** per-theme refactor, promoted to the next window after R1; precondition (shrunken `Build/` files) met |
+| Catalog's 298 expanded members (↔ Primitives/Loop/Wrappers/Composition/TimeConstructible + in-file) | **D-R2** (user, 2026-10-09) | the **12.2c** per-theme refactor, promoted to the next window after R1; precondition (shrunken `Build/` files) met |
 | Loop's 13 H3 copies (+1 near-copy) | **D-R3** (user, 2026-10-09) commissioned the collapse mechanism — §13 Z5, **now proved** (vhost-f1) | **ACKNOWLEDGED (user, 2026-10-09): retrofit batch RB4** (Loop), consuming Z5, window: after the A-S1 fill gate closes |
 | The three-file relocation family (4 decls × 3 files; pre-policy legacy, disclosed at its batches as "private harvest" but verbatim in fact) | **the user, 2026-10-09** (the round-2 audit's R2-2 disposition) | **ACKNOWLEDGED (user, 2026-10-09): the same RB4** (all three files), replacing the family with the R1 selected-tape exports (D-R1, proved) + Z5 agreement transfer, per the inventories' own analysis of what unlocks it |
 | **ch7 block stack's per-loop lemma family** (PR #11, 2026-10-10): the OR/XOR/majority loops re-prove one orbit/length/init lemma set under renaming — 6 `private` members: `PolyTimeBlockMajority` **4/14 = 28.6% (85 lines), over one fifth**; `PolyTimeBlockTests` 2/25. Per-delivery ledger line: `audits/evidence/ch7/ch7-fill-duplication-screen.md` | **ACKNOWLEDGED (user, 2026-10-10)** — `backlog.md` §1 **CH7-D1**, opened under the one-fifth rule and answered | the **12.2c** per-theme refactor (the user's own window; colleagues spared deduplication work): one generic lemma set in `PolyTimeBlockLoop`, statements unchanged, coordinated with the ch7 owner, after the ch7 fill gate closes |

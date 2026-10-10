@@ -1,0 +1,67 @@
+== Pass 1: direct public pairs (source computesFunInTime_X  ->  Catalog X_spaceUsed)
+   Composition id               LCS  776 (>=60)  shared  776 = 96.5% of source   804  -> MEMBER
+   Composition const            LCS  273 (>=60)  shared  305 = 97.1% of source   314  -> MEMBER
+   Composition ifEq             (no Catalog counterpart)
+   Composition comp             (no Catalog counterpart)
+   Primitives  prepend          LCS   62 (>=60)  shared  138 = 93.9% of source   147  -> MEMBER
+   Primitives  lengthBits       LCS    6         shared    0 =  0.0% of source    66  -> none
+   Primitives  polyUnary        LCS   44         shared  119 = 46.7% of source   255  -> fragment (recorded)
+   Primitives  polyBits         LCS   25         shared   25 =  3.9% of source   636  -> citation/none
+   Primitives  pairEncodeFixed  LCS   53         shared   91 = 100.0% of source    91  -> MEMBER
+   Primitives  pairFst          LCS   75 (>=60)  shared  143 = 88.8% of source   161  -> MEMBER
+   Primitives  pairSnd          LCS   75 (>=60)  shared  143 = 88.8% of source   161  -> MEMBER
+   Primitives  pairValid        LCS   32         shared   32 = 48.5% of source    66  -> citation/none
+   Primitives  pairConcat       LCS   75 (>=60)  shared  141 = 88.7% of source   159  -> MEMBER
+   Primitives  pairDup          LCS   35         shared   35 = 81.4% of source    43  -> citation/none
+   Primitives  pairMapSnd       LCS   30         shared   30 =  7.2% of source   414  -> citation/none
+   Primitives  pairLenCheck     LCS   91 (>=60)  shared  305 = 21.9% of source  1391  -> fragment (recorded)
+   Primitives  stripLast        LCS  121 (>=60)  shared  221 = 11.7% of source  1890  -> fragment (recorded)
+   Primitives  splitSolve       LCS   29         shared   29 = 100.0% of source    29  -> citation/none
+   Primitives  incFixed         LCS   37         shared   37 = 82.2% of source    45  -> citation/none
+   Primitives  splitSolveWith   (no Catalog counterpart)
+   Primitives  unaryToken       (no Catalog counterpart)
+   Primitives  appendBit        (no Catalog counterpart)
+   eligible pairs: 17
+== Pass 2: the 27 F2A nonmembers against every public proof of Composition/Primitives/TimeConstructible
+   f2_polyHeads               LCS   11         shared    0 =  0.0% of source  1890  vs Primitives::computesFunInTime_stripLast  -> none
+   f2_polyHeads_bounds        LCS   12         shared    0 =  0.0% of source   804  vs Composition::computesFunInTime_id  -> none
+   f2_poly_step               LCS   22         shared    0 =  0.0% of source   314  vs Composition::computesFunInTime_const  -> none
+   f2_head_steps              LCS   37         shared   37 =  4.6% of source   804  vs Composition::computesFunInTime_id  -> citation/none
+   f2_poly_space              LCS   37         shared   37 =  4.6% of source   804  vs Composition::computesFunInTime_id  -> citation/none
+   f2_counter_count_space     LCS   29         shared   82 =  6.5% of source  1254  vs Composition::exists_comp_partial  -> fragment (recorded)
+   f2_counter_heads           LCS  215 (>=60)  shared  666 = 64.1% of source  1039  vs TimeConstructible::timeConstructible_id  -> MEMBER
+   f2_counter_space           LCS   26         shared   26 =  2.5% of source  1039  vs TimeConstructible::timeConstructible_id  -> citation/none
+   f2_space_of_time           LCS   31         shared   31 =  2.5% of source  1254  vs Composition::exists_comp_partial  -> citation/none
+   f2_unary_sharp             LCS   52         shared   91 = 35.7% of source   255  vs Primitives::computesFunInTime_polyUnary  -> fragment (recorded)
+   f2_first_length            LCS   36         shared   36 =  2.6% of source  1391  vs Primitives::computesFunInTime_pairLenCheck  -> citation/none
+   f2_strip_linear            LCS  706 (>=60)  shared 1625 = 86.0% of source  1890  vs Primitives::computesFunInTime_stripLast  -> MEMBER
+   f2_loopCall_heads          LCS   12         shared    0 =  0.0% of source   804  vs Composition::computesFunInTime_id  -> none
+   f2_segment_heads           LCS   24         shared    0 =  0.0% of source  1039  vs TimeConstructible::timeConstructible_id  -> none
+   f2_space_radius            LCS   19         shared    0 =  0.0% of source  1039  vs TimeConstructible::timeConstructible_id  -> none
+   f2_seamed_space            LCS   25         shared   25 =  2.4% of source  1039  vs TimeConstructible::timeConstructible_id  -> citation/none
+   f2_exists_loopFind_space   LCS   32         shared   32 =  4.0% of source   804  vs Composition::computesFunInTime_id  -> citation/none
+   f2_cond_time               LCS   72 (>=60)  shared  135 = 30.0% of source   450  vs Composition::bufferedCompTM_computesInTime  -> fragment (recorded)
+   f2_rewind_scan_heads       LCS   42         shared   77 =  7.4% of source  1039  vs TimeConstructible::timeConstructible_id  -> fragment (recorded)
+   f2_rewind_heads            LCS   35         shared   62 =  6.0% of source  1039  vs TimeConstructible::timeConstructible_id  -> fragment (recorded)
+   f2_branch_space            LCS   17         shared    0 =  0.0% of source   314  vs Composition::computesFunInTime_const  -> none
+   f2_condHeads               LCS    6         shared    0 =  0.0% of source   903  vs Composition::exists_cond  -> none
+   f2_control_heads           LCS    8         shared    0 =  0.0% of source  1039  vs TimeConstructible::timeConstructible_id  -> none
+   f2_branch_heads            LCS    3         shared    0 =  0.0% of source  1039  vs TimeConstructible::timeConstructible_id  -> none
+   f2_read_heads              LCS   21         shared    0 =  0.0% of source  1039  vs TimeConstructible::timeConstructible_id  -> none
+   f2_cond_ledger             LCS   38         shared  147 = 11.7% of source  1254  vs Composition::exists_comp_partial  -> fragment (recorded)
+   f2_cond_space              LCS   30         shared   30 =  2.2% of source  1391  vs Primitives::computesFunInTime_pairLenCheck  -> citation/none
+SPAN Primitives::computesFunInTime_stripLast = 81
+SPAN Catalog::f2_strip_linear = 64
+SPAN Catalog::computesFunInTime_id_spaceUsed = 44
+SPAN Catalog::computesFunInTime_const_spaceUsed = 21
+SPAN Catalog::f2_counter_heads = 45
+SPAN Catalog::computesFunInTime_prepend_spaceUsed = 22
+SPAN Catalog::computesFunInTime_pairEncodeFixed_spaceUsed = 16
+SPAN Catalog::computesFunInTime_pairFst_spaceUsed = 26
+SPAN Catalog::computesFunInTime_pairSnd_spaceUsed = 24
+SPAN Catalog::computesFunInTime_pairConcat_spaceUsed = 27
+SPAN Primitives::computesFunInTime_prepend = 16
+SPAN Primitives::computesFunInTime_pairEncodeFixed = 17
+SPAN Primitives::computesFunInTime_pairFst = 18
+SPAN Primitives::computesFunInTime_pairSnd = 18
+SPAN Primitives::computesFunInTime_pairConcat = 22
