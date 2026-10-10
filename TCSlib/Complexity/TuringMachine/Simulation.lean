@@ -491,21 +491,21 @@ def tapeBlocks {α : Type} {k l : ℕ} (left : Fin k → α) (buffer : α)
     tapeBlocks a b c (Fin.natAdd k (Fin.natAdd 1 i)) = c i := by simp [tapeBlocks]
 
 /-- A word stored contiguously from cell zero, blank at every other integer cell. -/
-def bufferTape (w : List Bool) (z : ℤ) : Option Bool :=
+def bufferTape {Symbol : Type*} (w : List Symbol) (z : ℤ) : Option Symbol :=
   if 0 ≤ z then w[z.toNat]? else none
 
 /-- An empty buffer is blank everywhere. -/
-@[simp] lemma bufferTape_nil : bufferTape [] = fun _ => none := by
+@[simp] lemma bufferTape_nil {Symbol : Type*} : bufferTape (Symbol := Symbol) [] = fun _ => none := by
   funext z
   simp [bufferTape]
 
 /-- The buffer cell at any nonnegative natural position reads the corresponding
 optional word entry, so position `w.length` is the right blank. -/
-@[simp] lemma bufferTape_nat (w : List Bool) (i : ℕ) :
+@[simp] lemma bufferTape_nat {Symbol : Type*} (w : List Symbol) (i : ℕ) :
     bufferTape w i = w[i]? := by simp [bufferTape]
 
 /-- Cell minus one is the left blank, including for an empty word. -/
-@[simp] lemma bufferTape_left (w : List Bool) : bufferTape w (-1) = none := by
+@[simp] lemma bufferTape_left {Symbol : Type*} (w : List Symbol) : bufferTape w (-1) = none := by
   simp [bufferTape]
 
 /-- Appending one emitted bit changes just the old right-blank cell.
@@ -513,7 +513,7 @@ optional word entry, so position `w.length` is the right blank. -/
 **Proof sketch.** At that cell the appended singleton is read. At a smaller
 nonnegative cell, list lookup stays in the old prefix. Larger cells and all
 negative cells remain blank. -/
-lemma bufferTape_append (w : List Bool) (b : Bool) :
+lemma bufferTape_append {Symbol : Type*} (w : List Symbol) (b : Symbol) :
     bufferTape (w ++ [b]) = Function.update (bufferTape w) (w.length : ℤ) (some b) := by
   funext z
   by_cases hz : z = (w.length : ℤ)

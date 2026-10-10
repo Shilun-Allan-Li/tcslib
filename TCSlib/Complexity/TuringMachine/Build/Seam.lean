@@ -105,9 +105,9 @@ phase halts), except that the designated left anchor `exit` takes one
 stationary, silent, write-free dispatch step to the right anchor `entry`.
 The composite starts at `M₁`'s initial state; a run launched at a left
 seam anchor is the intended use. -/
-def seamCompTM [DecidableEq S₁] (M₁ : MultiTapeTM k Bool S₁) (exit : S₁)
-    (M₂ : MultiTapeTM k Bool S₂) (entry : S₂) :
-    MultiTapeTM k Bool (S₁ ⊕ S₂) where
+def seamCompTM {Symbol : Type*} [DecidableEq S₁] (M₁ : MultiTapeTM k Symbol S₁) (exit : S₁)
+    (M₂ : MultiTapeTM k Symbol S₂) (entry : S₂) :
+    MultiTapeTM k Symbol (S₁ ⊕ S₂) where
   q₀ := Sum.inl M₁.q₀
   tr := fun q inp w =>
     match q with
@@ -122,10 +122,10 @@ def seamCompTM [DecidableEq S₁] (M₁ : MultiTapeTM k Bool S₁) (exit : S₁)
 
 /-- Away from the exit, one left step is exactly the state-mapped source step,
 including the absorbing halted case. -/
-private lemma seamComp_step_left [DecidableEq S₁]
-    (M₁ : MultiTapeTM k Bool S₁) (exit : S₁)
-    (M₂ : MultiTapeTM k Bool S₂) (entry : S₂)
-    (c : Cfg k Bool S₁ x) (hc : c.state ≠ some exit) :
+private lemma seamComp_step_left {Symbol : Type*} {x : List Symbol} [DecidableEq S₁]
+    (M₁ : MultiTapeTM k Symbol S₁) (exit : S₁)
+    (M₂ : MultiTapeTM k Symbol S₂) (entry : S₂)
+    (c : Cfg k Symbol S₁ x) (hc : c.state ≠ some exit) :
     (seamCompTM M₁ exit M₂ entry).step (c.mapState Sum.inl) =
       (M₁.step c).mapState Sum.inl := by
   cases hs : c.state with
@@ -138,9 +138,9 @@ private lemma seamComp_step_left [DecidableEq S₁]
     rfl
 
 /-- Right steps commute with state mapping, even after a source halt. -/
-private lemma seamComp_step_right [DecidableEq S₁]
-    (M₁ : MultiTapeTM k Bool S₁) (exit : S₁)
-    (M₂ : MultiTapeTM k Bool S₂) (entry : S₂) (c : Cfg k Bool S₂ x) :
+private lemma seamComp_step_right {Symbol : Type*} {x : List Symbol} [DecidableEq S₁]
+    (M₁ : MultiTapeTM k Symbol S₁) (exit : S₁)
+    (M₂ : MultiTapeTM k Symbol S₂) (entry : S₂) (c : Cfg k Symbol S₂ x) :
     (seamCompTM M₁ exit M₂ entry).step (c.mapState Sum.inr) =
       (M₂.step c).mapState Sum.inr := by
   cases hs : c.state with
@@ -150,16 +150,16 @@ private lemma seamComp_step_right [DecidableEq S₁]
     rfl
 
 /-- A stationary, silent, write-free action changes only the control field. -/
-private lemma seam_stationary_apply (c : Cfg k Bool S₁ x) (q : S₁) :
+private lemma seam_stationary_apply {Symbol : Type*} {x : List Symbol} (c : Cfg k Symbol S₁ x) (q : S₁) :
     (Action.mk 0 (fun _ => (none, 0)) none (some q)).apply c =
       { c with state := some q } := by
   simp [Action.apply]
 
 /-- Dispatch preserves all data of an arbitrary live exit configuration. -/
-private lemma seamComp_dispatch [DecidableEq S₁]
-    (M₁ : MultiTapeTM k Bool S₁) (exit : S₁)
-    (M₂ : MultiTapeTM k Bool S₂) (entry : S₂)
-    (c : Cfg k Bool S₁ x) (hc : c.state = some exit) :
+private lemma seamComp_dispatch {Symbol : Type*} {x : List Symbol} [DecidableEq S₁]
+    (M₁ : MultiTapeTM k Symbol S₁) (exit : S₁)
+    (M₂ : MultiTapeTM k Symbol S₂) (entry : S₂)
+    (c : Cfg k Symbol S₁ x) (hc : c.state = some exit) :
     (seamCompTM M₁ exit M₂ entry).step (c.mapState Sum.inl) =
       (c.mapState fun _ => entry).mapState Sum.inr := by
   unfold MultiTapeTM.step
@@ -170,10 +170,10 @@ private lemma seamComp_dispatch [DecidableEq S₁]
 /-- The whole left trajectory agrees through the exit time.
 **Proof sketch.** Induct on the time; the cut licenses the left-step
 identity at every predecessor strictly before the endpoint. -/
-private lemma seamComp_left [DecidableEq S₁]
-    (M₁ : MultiTapeTM k Bool S₁) (exit : S₁)
-    (M₂ : MultiTapeTM k Bool S₂) (entry : S₂)
-    {c : Cfg k Bool S₁ x} {T : ℕ}
+private lemma seamComp_left {Symbol : Type*} {x : List Symbol} [DecidableEq S₁]
+    (M₁ : MultiTapeTM k Symbol S₁) (exit : S₁)
+    (M₂ : MultiTapeTM k Symbol S₂) (entry : S₂)
+    {c : Cfg k Symbol S₁ x} {T : ℕ}
     (hcut : ∀ t < T, (M₁.runFrom c t).state ≠ some exit)
     (t : ℕ) (ht : t ≤ T) :
     (seamCompTM M₁ exit M₂ entry).runFrom (c.mapState Sum.inl) t =
@@ -188,10 +188,10 @@ private lemma seamComp_left [DecidableEq S₁]
 /-- After the one-step dispatch, the entire right trajectory agrees.
 **Proof sketch.** Split the run at the dispatch, use left lockstep and
 the exit equation, then iterate the unconditional right-step identity. -/
-private lemma seamComp_right [DecidableEq S₁]
-    (M₁ : MultiTapeTM k Bool S₁) (exit : S₁)
-    (M₂ : MultiTapeTM k Bool S₂) (entry : S₂)
-    {c₀ c₁ : Cfg k Bool S₁ x} {T₁ : ℕ}
+private lemma seamComp_right {Symbol : Type*} {x : List Symbol} [DecidableEq S₁]
+    (M₁ : MultiTapeTM k Symbol S₁) (exit : S₁)
+    (M₂ : MultiTapeTM k Symbol S₂) (entry : S₂)
+    {c₀ c₁ : Cfg k Symbol S₁ x} {T₁ : ℕ}
     (h₁ : M₁.runFrom c₀ T₁ = c₁) (hexit : c₁.state = some exit)
     (hcut : ∀ t < T₁, (M₁.runFrom c₀ t).state ≠ some exit) (t : ℕ) :
     (seamCompTM M₁ exit M₂ entry).runFrom (c₀.mapState Sum.inl)
@@ -204,10 +204,10 @@ private lemma seamComp_right [DecidableEq S₁]
     (seamComp_step_right M₁ exit M₂ entry) _ t
 
 /-- General endpoint composition, shared by the frozen public forms. -/
-private lemma seamComp_run_general [DecidableEq S₁]
-    (M₁ : MultiTapeTM k Bool S₁) (exit : S₁)
-    (M₂ : MultiTapeTM k Bool S₂) (entry : S₂)
-    {c₀ c₁ : Cfg k Bool S₁ x} {c₃ : Cfg k Bool S₂ x} {T₁ T₂ : ℕ}
+private lemma seamComp_run_general {Symbol : Type*} {x : List Symbol} [DecidableEq S₁]
+    (M₁ : MultiTapeTM k Symbol S₁) (exit : S₁)
+    (M₂ : MultiTapeTM k Symbol S₂) (entry : S₂)
+    {c₀ c₁ : Cfg k Symbol S₁ x} {c₃ : Cfg k Symbol S₂ x} {T₁ T₂ : ℕ}
     (h₁ : M₁.runFrom c₀ T₁ = c₁) (hexit : c₁.state = some exit)
     (hcut : ∀ t < T₁, (M₁.runFrom c₀ t).state ≠ some exit)
     (h₂ : M₂.runFrom (c₁.mapState fun _ => entry) T₂ = c₃) :
@@ -220,10 +220,10 @@ private lemma seamComp_run_general [DecidableEq S₁]
 **Proof sketch.** Through the left endpoint, constructor disjointness
 excludes the anchor. Afterwards, right lockstep transports the phase-two
 cut at the time remaining after dispatch. -/
-private lemma seamComp_firstReturn_general [DecidableEq S₁]
-    (M₁ : MultiTapeTM k Bool S₁) (exit : S₁)
-    (M₂ : MultiTapeTM k Bool S₂) (entry q₂ : S₂)
-    {c₀ c₁ : Cfg k Bool S₁ x} {T₁ T₂ : ℕ}
+private lemma seamComp_firstReturn_general {Symbol : Type*} {x : List Symbol} [DecidableEq S₁]
+    (M₁ : MultiTapeTM k Symbol S₁) (exit : S₁)
+    (M₂ : MultiTapeTM k Symbol S₂) (entry q₂ : S₂)
+    {c₀ c₁ : Cfg k Symbol S₁ x} {T₁ T₂ : ℕ}
     (h₁ : M₁.runFrom c₀ T₁ = c₁) (hexit : c₁.state = some exit)
     (hcut : ∀ t < T₁, (M₁.runFrom c₀ t).state ≠ some exit)
     (hcut₂ : ∀ t < T₂,
@@ -249,10 +249,10 @@ private lemma seamComp_firstReturn_general [DecidableEq S₁]
 **Proof sketch.** A time at most the left duration uses left lockstep.
 Every later time is dispatch time plus a unique nonnegative offset, at
 most the right duration; right lockstep supplies its image witness. -/
-private lemma seamComp_visited_general [DecidableEq S₁]
-    (M₁ : MultiTapeTM k Bool S₁) (exit : S₁)
-    (M₂ : MultiTapeTM k Bool S₂) (entry : S₂)
-    {c₀ c₁ : Cfg k Bool S₁ x} {T₁ T₂ : ℕ}
+private lemma seamComp_visited_general {Symbol : Type*} {x : List Symbol} [DecidableEq S₁]
+    (M₁ : MultiTapeTM k Symbol S₁) (exit : S₁)
+    (M₂ : MultiTapeTM k Symbol S₂) (entry : S₂)
+    {c₀ c₁ : Cfg k Symbol S₁ x} {T₁ T₂ : ℕ}
     (h₁ : M₁.runFrom c₀ T₁ = c₁) (hexit : c₁.state = some exit)
     (hcut : ∀ t < T₁, (M₁.runFrom c₀ t).state ≠ some exit) (i : Fin k) :
     (seamCompTM M₁ exit M₂ entry).visitedByTapeHead (c₀.mapState Sum.inl)
@@ -511,9 +511,9 @@ with the single new observation that a stationary write-free action fixes
 (`Turing.Action.apply` componentwise). Fill obligations, named: the two
 lockstep inductions over `Cfg.mapState`, the dispatch-step field check,
 and the `ofWords` specialization recovering the canonical theorem. -/
-theorem seamCompTM_run_ofCfg [DecidableEq S₁] (M₁ : MultiTapeTM k Bool S₁)
-    (exit : S₁) (M₂ : MultiTapeTM k Bool S₂) (entry : S₂)
-    {c₀ c₁ : Cfg k Bool S₁ x} {c₃ : Cfg k Bool S₂ x} {T₁ T₂ : ℕ}
+theorem seamCompTM_run_ofCfg {Symbol : Type*} {x : List Symbol} [DecidableEq S₁] (M₁ : MultiTapeTM k Symbol S₁)
+    (exit : S₁) (M₂ : MultiTapeTM k Symbol S₂) (entry : S₂)
+    {c₀ c₁ : Cfg k Symbol S₁ x} {c₃ : Cfg k Symbol S₂ x} {T₁ T₂ : ℕ}
     (h₁ : M₁.runFrom c₀ T₁ = c₁) (hexit : c₁.state = some exit)
     (hcut : ∀ t < T₁, (M₁.runFrom c₀ t).state ≠ some exit)
     (h₂ : M₂.runFrom (c₁.mapState fun _ => entry) T₂ = c₃) :
@@ -531,10 +531,10 @@ composite first reaches `Sum.inr q₂` at `T₁ + 1 + T₂`.
 segments: left times produce `Sum.inl` states, right times the
 `Sum.inr`-mapped `M₂` states at shifted time, and injectivity of the
 constructors transports the cuts. -/
-theorem seamCompTM_firstReturn_ofCfg [DecidableEq S₁]
-    (M₁ : MultiTapeTM k Bool S₁) (exit : S₁)
-    (M₂ : MultiTapeTM k Bool S₂) (entry : S₂) (q₂ : S₂)
-    {c₀ c₁ : Cfg k Bool S₁ x} {c₃ : Cfg k Bool S₂ x} {T₁ T₂ : ℕ}
+theorem seamCompTM_firstReturn_ofCfg {Symbol : Type*} {x : List Symbol} [DecidableEq S₁]
+    (M₁ : MultiTapeTM k Symbol S₁) (exit : S₁)
+    (M₂ : MultiTapeTM k Symbol S₂) (entry : S₂) (q₂ : S₂)
+    {c₀ c₁ : Cfg k Symbol S₁ x} {c₃ : Cfg k Symbol S₂ x} {T₁ T₂ : ℕ}
     (h₁ : M₁.runFrom c₀ T₁ = c₁) (hexit : c₁.state = some exit)
     (hcut : ∀ t < T₁, (M₁.runFrom c₀ t).state ≠ some exit)
     (h₂ : M₂.runFrom (c₁.mapState fun _ => entry) T₂ = c₃)
@@ -556,10 +556,10 @@ which the canonical corollaries project.
 **Proof sketch.** As the canonical headline: the two lockstep segments
 reproduce the phases' trajectories, and the dispatch step is stationary at
 a point both phases' endpoint/start configurations already visit. -/
-theorem seamCompTM_visitedByTapeHead_ofCfg [DecidableEq S₁]
-    (M₁ : MultiTapeTM k Bool S₁) (exit : S₁)
-    (M₂ : MultiTapeTM k Bool S₂) (entry : S₂)
-    {c₀ c₁ : Cfg k Bool S₁ x} {T₁ T₂ : ℕ}
+theorem seamCompTM_visitedByTapeHead_ofCfg {Symbol : Type*} {x : List Symbol} [DecidableEq S₁]
+    (M₁ : MultiTapeTM k Symbol S₁) (exit : S₁)
+    (M₂ : MultiTapeTM k Symbol S₂) (entry : S₂)
+    {c₀ c₁ : Cfg k Symbol S₁ x} {T₁ T₂ : ℕ}
     (h₁ : M₁.runFrom c₀ T₁ = c₁) (hexit : c₁.state = some exit)
     (hcut : ∀ t < T₁, (M₁.runFrom c₀ t).state ≠ some exit) (i : Fin k) :
     (seamCompTM M₁ exit M₂ entry).visitedByTapeHead (c₀.mapState Sum.inl)
@@ -581,8 +581,8 @@ fresh start `Sum.inl ()` that executes the anchor's action
 **unconditionally**, after which control lives in the `Sum.inr` copy — so
 the *first re-arrival* at `Sum.inr anchor` is a genuine positive-time
 event a seam can consume as its left exit. -/
-def seamReleaseTM (M : MultiTapeTM k Bool S) (anchor : S) :
-    MultiTapeTM k Bool (Unit ⊕ S) where
+def seamReleaseTM {Symbol : Type*} (M : MultiTapeTM k Symbol S) (anchor : S) :
+    MultiTapeTM k Symbol (Unit ⊕ S) where
   q₀ := Sum.inl ()
   tr := fun q inp w =>
     match q with
@@ -594,16 +594,16 @@ def seamReleaseTM (M : MultiTapeTM k Bool S) (anchor : S) :
       ⟨a.inputTape, a.workTapes, a.output, a.state.map Sum.inr⟩
 
 /-- The fresh state executes the anchor action without a dispatch step. -/
-private lemma seamRelease_fresh_step (M : MultiTapeTM k Bool S) (anchor : S)
-    (c : Cfg k Bool S x) (hc : c.state = some anchor) :
+private lemma seamRelease_fresh_step {Symbol : Type*} {x : List Symbol} (M : MultiTapeTM k Symbol S) (anchor : S)
+    (c : Cfg k Symbol S x) (hc : c.state = some anchor) :
     (seamReleaseTM M anchor).step (c.mapState fun _ => Sum.inl ()) =
       (M.step c).mapState Sum.inr := by
   simp only [MultiTapeTM.step, Cfg.mapState, hc, Option.map_some]
   rfl
 
 /-- In the right copy, release steps commute with state mapping. -/
-private lemma seamRelease_step_right (M : MultiTapeTM k Bool S) (anchor : S)
-    (c : Cfg k Bool S x) :
+private lemma seamRelease_step_right {Symbol : Type*} {x : List Symbol} (M : MultiTapeTM k Symbol S) (anchor : S)
+    (c : Cfg k Symbol S x) :
     (seamReleaseTM M anchor).step (c.mapState Sum.inr) =
       (M.step c).mapState Sum.inr := by
   cases hs : c.state with
@@ -615,8 +615,8 @@ private lemma seamRelease_step_right (M : MultiTapeTM k Bool S) (anchor : S)
 /-- At every positive time, release runs are the right-mapped source runs.
 **Proof sketch.** Execute the fresh step once, then iterate the right-step
 identity. This also covers a source that halts or never returns. -/
-private lemma seamRelease_run_pos (M : MultiTapeTM k Bool S) (anchor : S)
-    (c : Cfg k Bool S x) (hc : c.state = some anchor) (t : ℕ) (ht : 0 < t) :
+private lemma seamRelease_run_pos {Symbol : Type*} {x : List Symbol} (M : MultiTapeTM k Symbol S) (anchor : S)
+    (c : Cfg k Symbol S x) (hc : c.state = some anchor) (t : ℕ) (ht : 0 < t) :
     (seamReleaseTM M anchor).runFrom (c.mapState fun _ => Sum.inl ()) t =
       (M.runFrom c t).mapState Sum.inr := by
   cases t with
@@ -641,8 +641,8 @@ is `Sum.inr`-lockstep with `M`'s run; the first-visit clause is the
 transported cut, with time zero excluded by the fresh constructor
 (`Sum.inl ≠ Sum.inr`). Fill obligations, named: the fresh-step equation,
 the lockstep induction, and the cut transport. -/
-theorem seamReleaseTM_firstReturn (M : MultiTapeTM k Bool S) (anchor : S)
-    {c c' : Cfg k Bool S x} {T : ℕ}
+theorem seamReleaseTM_firstReturn {Symbol : Type*} {x : List Symbol} (M : MultiTapeTM k Symbol S) (anchor : S)
+    {c c' : Cfg k Symbol S x} {T : ℕ}
     (hc : c.state = some anchor) (hT : 0 < T) (h : M.runFrom c T = c')
     (hc' : c'.state = some anchor)
     (hcut : ∀ t, 0 < t → t < T → (M.runFrom c t).state ≠ some anchor) :
@@ -674,8 +674,8 @@ coincide step for step.
 the corresponding state (the fresh step at the anchor, `Sum.inr` steps at
 their carried state), so the head trajectories agree; project
 `seamReleaseTM_firstReturn`'s lockstep. -/
-theorem seamReleaseTM_visitedByTapeHead (M : MultiTapeTM k Bool S)
-    (anchor : S) {c : Cfg k Bool S x} (hc : c.state = some anchor)
+theorem seamReleaseTM_visitedByTapeHead {Symbol : Type*} {x : List Symbol} (M : MultiTapeTM k Symbol S)
+    (anchor : S) {c : Cfg k Symbol S x} (hc : c.state = some anchor)
     (t : ℕ) (i : Fin k) :
     (seamReleaseTM M anchor).visitedByTapeHead
         (c.mapState fun _ => Sum.inl ()) t i =

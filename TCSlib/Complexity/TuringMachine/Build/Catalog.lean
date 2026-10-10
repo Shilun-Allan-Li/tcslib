@@ -137,7 +137,7 @@ lockstep), the turn at the source's right blank starts the return pass,
 which erases the source on the way back, and the overshoot to the left
 blank steps right into the live `done` anchor with both heads at the
 origin. -/
-def transferTM (k : ℕ) (src dst : Fin k) : MultiTapeTM k Bool SweepPhase where
+def transferTM {Symbol : Type*} (k : ℕ) (src dst : Fin k) : MultiTapeTM k Symbol SweepPhase where
   q₀ := .sweep
   tr := fun q _ w =>
     match q with
@@ -165,7 +165,7 @@ def transferTM (k : ℕ) (src dst : Fin k) : MultiTapeTM k Bool SweepPhase where
 Copy the word stored on tape `src` onto tape `dst`, keeping the source:
 the same two-pass sweep as `Turing.transferTM` without the erasure on the
 return pass. -/
-def copyTM (k : ℕ) (src dst : Fin k) : MultiTapeTM k Bool SweepPhase where
+def copyTM {Symbol : Type*} (k : ℕ) (src dst : Fin k) : MultiTapeTM k Symbol SweepPhase where
   q₀ := .sweep
   tr := fun q _ w =>
     match q with
@@ -193,7 +193,7 @@ def copyTM (k : ℕ) (src dst : Fin k) : MultiTapeTM k Bool SweepPhase where
 primitive). Blank the word on tape `i`: a forward pass to the right blank,
 then a return pass erasing each cell, with the left-blank overshoot
 stepping right into the live `done` anchor at the origin. -/
-def clearTM (k : ℕ) (i : Fin k) : MultiTapeTM k Bool SweepPhase where
+def clearTM {Symbol : Type*} (k : ℕ) (i : Fin k) : MultiTapeTM k Symbol SweepPhase where
   q₀ := .sweep
   tr := fun q _ w =>
     match q with
@@ -222,7 +222,7 @@ differing pair, or one word ending early) selects the `false` verdict, a
 simultaneous double blank selects `true` — then a return pass guided by
 `fst`'s intact content carries the verdict to the live `done` anchor with
 both heads at the origin and both words untouched. -/
-def compareTM (k : ℕ) (fst snd : Fin k) : MultiTapeTM k Bool FlagPhase where
+def compareTM {Symbol : Type*} [DecidableEq Symbol] (k : ℕ) (fst snd : Fin k) : MultiTapeTM k Symbol FlagPhase where
   q₀ := .run
   tr := fun q _ w =>
     match q with
@@ -292,15 +292,15 @@ private def catalogCfg {S : Type*} (q : S) (w : Fin k → List Bool)
 
 /-- The chronological trace of a forward scan, left turn, return, and entry.
 The return index is the number of nonblank cells still to erase or cross. -/
-private def catalogTrace {S : Type*} (F R : ℕ → Cfg k Bool S x)
-    (D : Cfg k Bool S x) (L t : ℕ) : Cfg k Bool S x :=
+private def catalogTrace {Symbol : Type*} {x : List Symbol} {S : Type*} (F R : ℕ → Cfg k Symbol S x)
+    (D : Cfg k Symbol S x) (L t : ℕ) : Cfg k Symbol S x :=
   if t ≤ L then F t else if t ≤ 2 * L + 1 then R (2 * L + 1 - t) else D
 
 /-- Local transition equations determine the complete trace, including all
 stationary steps after the exit. **Proof sketch.** Induct on elapsed time;
 split at the forward endpoint, return endpoint, and stationary tail. -/
-private lemma catalog_trace_run {S : Type*} (M : MultiTapeTM k Bool S)
-    (F R : ℕ → Cfg k Bool S x) (D : Cfg k Bool S x) (L : ℕ)
+private lemma catalog_trace_run {Symbol : Type*} {x : List Symbol} {S : Type*} (M : MultiTapeTM k Symbol S)
+    (F R : ℕ → Cfg k Symbol S x) (D : Cfg k Symbol S x) (L : ℕ)
     (hF : ∀ r < L, M.step (F r) = F (r + 1))
     (hturn : M.step (F L) = R L)
     (hR : ∀ r < L, M.step (R (r + 1)) = R r)
@@ -356,15 +356,15 @@ private lemma catalog_space_one {S : Type*} (M : MultiTapeTM k Bool S)
 
 /-- Replace one finite word interval, keeping every exterior cell from the
 arbitrary original tape. Coordinates remain integers throughout. -/
-private def catalogTape (f : ℤ → Option Bool) (a : ℤ) (w : List Bool) (q : ℤ) :
-    Option Bool :=
+private def catalogTape {Symbol : Type*} (f : ℤ → Option Symbol) (a : ℤ) (w : List Symbol) (q : ℤ) :
+    Option Symbol :=
   if a ≤ q ∧ q < a + (w.length : ℤ) then FinTM.bufferTape w (q - a) else f q
 
 /-- Extending a framed copied prefix writes exactly its next cell.
 **Proof sketch.** Split off the new endpoint; away from it, the two integer
 interval tests agree. The untouched suffix keeps its original arbitrary values. -/
-private lemma catalog_write_take (f : ℤ → Option Bool) (a : ℤ)
-    (w : List Bool) (r : ℕ) (hr : r < w.length) :
+private lemma catalog_write_take {Symbol : Type*} (f : ℤ → Option Symbol) (a : ℤ)
+    (w : List Symbol) (r : ℕ) (hr : r < w.length) :
     Function.update
       (fun q => if a ≤ q ∧ q < a + (r : ℤ) then FinTM.bufferTape w (q - a) else f q)
       (a + (r : ℤ)) (some w[r]) =
@@ -379,15 +379,15 @@ private lemma catalog_write_take (f : ℤ → Option Bool) (a : ℤ)
 
 /-- Clear's forward phase preserves the entire arbitrary frame and translates
 only the selected head. -/
-private def catalogClearF (i : Fin k) (d : Cfg k Bool SweepPhase x) (r : ℕ) :
-    Cfg k Bool SweepPhase x :=
+private def catalogClearF {Symbol : Type*} {x : List Symbol} (i : Fin k) (d : Cfg k Symbol SweepPhase x) (r : ℕ) :
+    Cfg k Symbol SweepPhase x :=
   { d with state := some .sweep
            workTapePos := fun j => d.workTapePos j + if j = i then (r : ℤ) else 0 }
 
 /-- Clear's return index counts the remaining unerased cells. The erased
 suffix is bounded above by the original word's right delimiter. -/
-private def catalogClearR (i : Fin k) (d : Cfg k Bool SweepPhase x) (n r : ℕ) :
-    Cfg k Bool SweepPhase x :=
+private def catalogClearR {Symbol : Type*} {x : List Symbol} (i : Fin k) (d : Cfg k Symbol SweepPhase x) (n r : ℕ) :
+    Cfg k Symbol SweepPhase x :=
   { d with state := some .rewind
            workTapes := fun j q =>
              if j = i ∧ d.workTapePos j + (r : ℤ) ≤ q ∧ q < d.workTapePos j + (n : ℤ)
@@ -398,8 +398,8 @@ private def catalogClearR (i : Fin k) (d : Cfg k Bool SweepPhase x) (n r : ℕ) 
 the original interval. The right blank turns without writing. Each return
 step erases just the last remaining cell, and the left blank restores the head.
 All cells outside the interval and all other configuration fields are retained. -/
-private lemma catalog_clear_trace (i : Fin k) (w : List Bool)
-    (d : Cfg k Bool SweepPhase x) (hstate : d.state = some .sweep)
+private lemma catalog_clear_trace {Symbol : Type*} {x : List Symbol} (i : Fin k) (w : List Symbol)
+    (d : Cfg k Symbol SweepPhase x) (hstate : d.state = some .sweep)
     (hw : ∀ p : ℤ, -1 ≤ p → p ≤ (w.length : ℤ) →
       d.workTapes i (d.workTapePos i + p) = FinTM.bufferTape w p) (t : ℕ) :
     (clearTM k i).runFrom d t =
@@ -462,8 +462,8 @@ private lemma catalog_clear_trace (i : Fin k) (w : List Bool)
 
 /-- Copy and transfer share the framed forward phase: only the destination
 prefix has been overwritten; both selected heads have the same relative offset. -/
-private def catalogCopyF (src dst : Fin k) (w : List Bool)
-    (d : Cfg k Bool SweepPhase x) (r : ℕ) : Cfg k Bool SweepPhase x :=
+private def catalogCopyF {Symbol : Type*} {x : List Symbol} (src dst : Fin k) (w : List Symbol)
+    (d : Cfg k Symbol SweepPhase x) (r : ℕ) : Cfg k Symbol SweepPhase x :=
   { d with state := some .sweep
            workTapes := fun j q =>
              if j = dst ∧ d.workTapePos j ≤ q ∧ q < d.workTapePos j + (r : ℤ)
@@ -472,8 +472,8 @@ private def catalogCopyF (src dst : Fin k) (w : List Bool)
              d.workTapePos j + if j = src ∨ j = dst then (r : ℤ) else 0 }
 
 /-- Copy returns over the complete destination interval without further writes. -/
-private def catalogCopyR (src dst : Fin k) (w : List Bool)
-    (d : Cfg k Bool SweepPhase x) (r : ℕ) : Cfg k Bool SweepPhase x :=
+private def catalogCopyR {Symbol : Type*} {x : List Symbol} (src dst : Fin k) (w : List Symbol)
+    (d : Cfg k Symbol SweepPhase x) (r : ℕ) : Cfg k Symbol SweepPhase x :=
   { catalogCopyF src dst w d w.length with
       state := some .rewind
       workTapePos := fun j =>
@@ -481,16 +481,16 @@ private def catalogCopyR (src dst : Fin k) (w : List Bool)
 
 /-- Transfer's return erases exactly the already-crossed source suffix and
 preserves the complete copied destination interval and both outer frames. -/
-private def catalogTransferR (src dst : Fin k) (w : List Bool)
-    (d : Cfg k Bool SweepPhase x) (r : ℕ) : Cfg k Bool SweepPhase x :=
+private def catalogTransferR {Symbol : Type*} {x : List Symbol} (src dst : Fin k) (w : List Symbol)
+    (d : Cfg k Symbol SweepPhase x) (r : ℕ) : Cfg k Symbol SweepPhase x :=
   { catalogCopyR src dst w d r with
       workTapes := fun j q =>
         if j = src ∧ d.workTapePos j + (r : ℤ) ≤ q ∧ q < d.workTapePos j + (w.length : ℤ)
           then none else (catalogCopyR src dst w d r).workTapes j q }
 
 /-- The common forward transition copies exactly the next original source bit. -/
-private lemma catalog_copy_forward (src dst : Fin k) (hne : src ≠ dst)
-    (w : List Bool) (d : Cfg k Bool SweepPhase x)
+private lemma catalog_copy_forward {Symbol : Type*} {x : List Symbol} (src dst : Fin k) (hne : src ≠ dst)
+    (w : List Symbol) (d : Cfg k Symbol SweepPhase x)
     (hw : ∀ p : ℤ, -1 ≤ p → p ≤ (w.length : ℤ) →
       d.workTapes src (d.workTapePos src + p) = FinTM.bufferTape w p)
     (r : ℕ) (hr : r < w.length) :
@@ -514,8 +514,8 @@ private lemma catalog_copy_forward (src dst : Fin k) (hne : src ≠ dst)
 /-- Copy's exact framed phase invariant. **Proof sketch.** The shared forward
 step writes one destination cell. Both delimiter turns and the entire return
 pass are read-only; the unchanged source window supplies every branch decision. -/
-private lemma catalog_copy_trace (src dst : Fin k) (hne : src ≠ dst)
-    (w : List Bool) (d : Cfg k Bool SweepPhase x) (hstate : d.state = some .sweep)
+private lemma catalog_copy_trace {Symbol : Type*} {x : List Symbol} (src dst : Fin k) (hne : src ≠ dst)
+    (w : List Symbol) (d : Cfg k Symbol SweepPhase x) (hstate : d.state = some .sweep)
     (hw : ∀ p : ℤ, -1 ≤ p → p ≤ (w.length : ℤ) →
       d.workTapes src (d.workTapePos src + p) = FinTM.bufferTape w p) (t : ℕ) :
     (copyTM k src dst).runFrom d t =
@@ -563,8 +563,8 @@ private lemma catalog_copy_trace (src dst : Fin k) (hne : src ≠ dst)
 forward transition. On return each source write extends the erased suffix by
 one cell, leaving the next read unchanged. The two delimiter cells are never
 written, so the final entry restores both original head positions. -/
-private lemma catalog_transfer_trace (src dst : Fin k) (hne : src ≠ dst)
-    (w : List Bool) (d : Cfg k Bool SweepPhase x) (hstate : d.state = some .sweep)
+private lemma catalog_transfer_trace {Symbol : Type*} {x : List Symbol} (src dst : Fin k) (hne : src ≠ dst)
+    (w : List Symbol) (d : Cfg k Symbol SweepPhase x) (hstate : d.state = some .sweep)
     (hw : ∀ p : ℤ, -1 ≤ p → p ≤ (w.length : ℤ) →
       d.workTapes src (d.workTapePos src + p) = FinTM.bufferTape w p) (t : ℕ) :
     (transferTM k src dst).runFrom d t =
@@ -789,8 +789,8 @@ private lemma catalog_increment_value (p : ℕ) (tail : Option (List Bool)) :
 **Proof sketch.** At the write coordinate use indexing at the prefix length.
 Elsewhere the frame tests agree; inside the window, prefix and suffix lookups
 agree away from the changed bit. -/
-private lemma catalog_write_middle (f : ℤ → Option Bool) (z : ℤ)
-    (pre rest : List Bool) (a b : Bool) :
+private lemma catalog_write_middle {Symbol : Type*} (f : ℤ → Option Symbol) (z : ℤ)
+    (pre rest : List Symbol) (a b : Symbol) :
     Function.update (catalogTape f z (pre ++ a :: rest)) (z + (pre.length : ℤ)) (some b) =
       catalogTape f z (pre ++ b :: rest) := by
   funext q
@@ -970,8 +970,8 @@ steps copying source to destination in lockstep without touching the source.
 The source's right delimiter turns both heads in one step. The rewind takes
 `|w|` steps erasing exactly the source interior. The left delimiter supplies
 the final entry step. -/
-theorem transferTM_run_ofCfg {k : ℕ} {x : List Bool} (src dst : Fin k)
-    (hne : src ≠ dst) (w : List Bool) (d : Cfg k Bool SweepPhase x)
+theorem transferTM_run_ofCfg {Symbol : Type*} {k : ℕ} {x : List Symbol} (src dst : Fin k)
+    (hne : src ≠ dst) (w : List Symbol) (d : Cfg k Symbol SweepPhase x)
     (hstate : d.state = some SweepPhase.sweep)
     (hw : ∀ p : ℤ, -1 ≤ p → p ≤ (w.length : ℤ) →
       d.workTapes src (d.workTapePos src + p) = FinTM.bufferTape w p) :
@@ -1013,8 +1013,8 @@ unchanged. This specializes to `Turing.copyTM_run`.
 **Proof sketch.** The transfer's trace without the erasure. The rewind is
 guided by the intact source word, whose left delimiter at `-1` is the first
 blank met moving left. -/
-theorem copyTM_run_ofCfg {k : ℕ} {x : List Bool} (src dst : Fin k)
-    (hne : src ≠ dst) (w : List Bool) (d : Cfg k Bool SweepPhase x)
+theorem copyTM_run_ofCfg {Symbol : Type*} {k : ℕ} {x : List Symbol} (src dst : Fin k)
+    (hne : src ≠ dst) (w : List Symbol) (d : Cfg k Symbol SweepPhase x)
     (hstate : d.state = some SweepPhase.sweep)
     (hw : ∀ p : ℤ, -1 ≤ p → p ≤ (w.length : ℤ) →
       d.workTapes src (d.workTapePos src + p) = FinTM.bufferTape w p) :
@@ -1055,8 +1055,8 @@ interval. This specializes to `Turing.clearTM_run`.
 **Proof sketch.** The forward pass walks right over the intact word in `|w|`
 steps, the right delimiter turns the head in one step, the rewind erases the
 interior in `|w|` steps, and the left delimiter supplies the entry step. -/
-theorem clearTM_run_ofCfg {k : ℕ} {x : List Bool} (i : Fin k) (w : List Bool)
-    (d : Cfg k Bool SweepPhase x) (hstate : d.state = some SweepPhase.sweep)
+theorem clearTM_run_ofCfg {Symbol : Type*} {k : ℕ} {x : List Symbol} (i : Fin k) (w : List Symbol)
+    (d : Cfg k Symbol SweepPhase x) (hstate : d.state = some SweepPhase.sweep)
     (hw : ∀ p : ℤ, -1 ≤ p → p ≤ (w.length : ℤ) →
       d.workTapes i (d.workTapePos i + p) = FinTM.bufferTape w p) :
     (clearTM k i).runFrom d (2 * w.length + 2) =
