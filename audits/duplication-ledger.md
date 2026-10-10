@@ -1,50 +1,71 @@
 # Cumulative duplication ledger
 
 The standing per-file accounting of copied proved material that
-`workflow.md` §4 requires at every epoch boundary (introduced as the
-retrofit-R1 round-1 repair, finding R1-2 of
-`audits/retrofit-r1-findings.md`). Updated at each integration that
-creates, deletes, or re-homes copies; the epoch packs cite the current
-state and the auditor verifies it.
+`workflow.md` §4 requires at every epoch boundary. Created as the
+retrofit-R1 round-1 repair (R1-2); **rebuilt at round 2** (R2-1/R2-2 of
+`audits/retrofit-r1-r2-findings.md`): the first version's arithmetic was
+inconsistent (summands 261 against a printed 249), its inclusion rule was
+applied asymmetrically, and it **misclassified an exact three-file copy
+family as "design-harvest reimplementation"** — the round-2 auditor
+proved the four relocation declarations byte-identical across `Loop`,
+`Primitives`, and `Hardness` after consistent identifier substitution,
+and found the 13 exact Loop-internal H3 copies omitted. This version
+adopts one inclusion rule, enumerates every family, and uses the
+auditor's independently computed figures wherever they exist.
 
-**Counting convention.** The unit is a *source declaration that is a
-member of a recorded byte-level twin correspondence* — the maps of
-`audits/retrofit-inventory/{loop,primitives}.md` (produced 2026-10-09 by
-comment/whitespace-normalized comparison) plus the A2/F2A reports'
-declared copies. Each pair has an **original** side (the file that first
-proved it) and a **copy** side (the file that re-derived it under the
-fill-batch private-copy mechanism). Fractions are twin-member
-declarations over the file's total declarations, and the line figures are
-the inventories' docstring-inclusive block estimates. Disclosed
-*design-harvest reimplementations* (re-derivations against the ABI with
-the original as template, per `machine-library-design.md` §8 — e.g. the
-Primitives P2 relocation layer from Loop's `emCall` family, and
-`emitterCompare*` from `e3c*`) are listed separately: they are not
-byte-level copies, and the construction-reuse policy governs them going
-forward.
+## Counting convention (one rule)
 
-## State after retrofit epoch R1 (base `5588628c` → the merged PRs #9/#10)
+**Primary rule — expanded correspondence membership**: a declaration is a
+ledger member iff it belongs to a *recorded cross-declaration
+correspondence* — the retrofit inventories' twin maps **including their
+strengthened-counterpart rows**, the A2/F2A reports' declared copies, and
+the round-2 audit's verified relocation and H3 families. Each member is
+counted **once per file it inhabits**. (Secondary, where it differs: the
+*strict normalized-byte-twin* count excludes the five strengthened
+counterparts — Loop's `loopHost_prepare`/`loopHost_contracts`,
+Primitives' `splitSolve_of_body`/`_source`/`_closed` — and H3's one
+near-copy `_init` pair.) Fractions are members over the file's total
+declarations. Line figures use the round-2 audit's span rule — attached
+docstring and intervening closure note through the last code line,
+excluding separating blank/module-note blocks — with the auditor's
+computed values where available and estimates under the same rule marked
+`≈`.
 
-| File | Total decls (final) | Twin members (original side) | Twin members (copy side) | Copied-material fraction (decls) | Approx lines in twin blocks | Disposition |
-|---|---:|---:|---:|---:|---:|---|
-| `Build/Loop.lean` | 212 (204 priv + 8 pub) | **87** (was 95; 8 dead originals deleted in RB1) | 0 | 41% | ≈ 2,350 of 5,515 | originals retained as the live loop engine; the Catalog copies collapse to one owner at **12.2c** (D-R2) |
-| `Build/Primitives.lean` | 272 (254 priv + 18 pub) | **146** (was 150; 3 dead orphans + `catalogPair_inverse` deleted) | 0 | 54% | ≈ 3,300 of 6,374 | same 12.2c disposition; the four deleted originals' Catalog twins become sole owners or dead (below) |
-| `Build/Catalog.lean` | 423 | 0 | **249** = 143 Primitives-sourced live pairs + 3 now-sole owners + 1 dead (`f2_catalogPair_inverse`-class) + 87 Loop-sourced live pairs + 8 dead Loop-twin copies + 17 Wrappers-sourced (10 `f2_timed*`, 7 `catalog_redirect*`) + 2 in-file `a2_` duplicates of `f2_` sum facts (approximate partition; the exact pair lists are the inventories') | 59% | ≈ 6,000 of 10,876 | **the 12.2c refactor's object**: per-theme files own each implementation once with time and space contracts; the 8 + 1 dead copies are dropped on sight; the `redirectTM` projection promotion rides along (F1 queue) |
-| `Build/Wrappers.lean` | — | 17 (the `f2_timed*`/`catalog_redirect*` originals) | 0 | small | ≈ 450 | originals stay; copies collapse at 12.2c |
-| `Build/Embed.lean`, `Build/Seam.lean`, `Build/VirtualInput.lean`, `Simulation.lean` | — | 0 | 0 | 0% | 0 | clean (the vhost-f1 and A-S1/A-S2 ledgers are "new copies: none", auditor-verified) |
-| `CookLevin/Hardness.lean` | 549 | 0 cross-file | 0 | 0% cross-file | — | internal near-duplicates flagged by the inventory (`clCountTape ≡ bufferTape` noted; `clA5_pt_unaryLength` eliminated in RB3); the disclosed `emCall`-family design harvest is a reimplementation, not a copy |
+## State after retrofit epoch R1 (the merged PRs #9/#10)
 
-**Epoch R1 delta**: new copies **0**; original-side twin members
-95 + 150 = 245 → **233** (twelve dead originals deleted); one cross-file
-Encoding duplicate pair (`catalogPair_inverse` ↔
-`Turing.eq_pairEncode_of_pairDecode`) collapsed by the human-approved E1;
-net lines −1,639, net private declarations −83 (76 dead + 7 eliminated by
-replacement).
+| File | Total decls | Original-side members | Copy-side members | All members | Fraction | Lines in member blocks |
+|---|---:|---:|---:|---:|---:|---:|
+| `Build/Loop.lean` | 212 | 87 →Catalog (of the historical 95; strict 85) + 4 relocation originals (`emCallAction`/`emCallCfg`/`emCall_apply`/`emCall_relocate_run`, the batch-L source of the three-file family) | 13 H3 exact copies (`emLoopHost_*`; their `loopHost_*` originals are already in the 87 and are not double-counted; the `_init` near-copy noted, uncounted) | **104** | **49.1%** | 2,009 (auditor) + 73 + ≈512 |
+| `Build/Primitives.lean` | 272 | 146 →Catalog (of the historical 150; strict 143) | 4 relocation copies (`emitterP2Action`/`emitterP2Cfg`/`emitterP2_apply`/`emitterP2_relocate_run` — **byte-identical to Loop's after identifier substitution**, round-2 verified) | **150** | **55.1%** | 3,162 (auditor) + 73 |
+| `CookLevin/Hardness.lean` | 549 | 0 | 4 relocation copies (`clSlotAction`/`clSlotCfg`/`clSlot_apply`/`clSlot_run` — likewise byte-identical) | **4** | **0.73%** | 73 |
+| `Build/Catalog.lean` | 423 | 0 | 150 Primitives-sourced + 95 Loop-sourced + 17 Wrappers-sourced (10 `f2_timed*`, 7 `catalog_redirect*`) + 2 in-file `a2_` duplicates of `f2_` sum facts | **264** | **62.4%** (strict: 259, 61.2%) | ≈6,000 |
+| `Build/Wrappers.lean` | 29 (10 pub + 19 priv) | 17 | 0 | **17** | **58.6%** | ≈450 |
+| `Build/Embed.lean`, `Build/Seam.lean`, `Build/VirtualInput.lean`, `Build/Zone.lean`, `Simulation.lean`, `Codes2Tape.lean` | — | 0 | 0 | 0 | 0% | 0 |
 
-**Human-acknowledgment state**: the accumulated Catalog copy debt is
-acknowledged and scheduled by the recorded decisions **D-R2** (12.2c
-promoted to the next window after R1; precondition met) and **D-R3** (the
-agreement-transfer lemma for the Loop-internal H3 duplication, landed as
-§13 Z5 and proved in vhost-f1). No unacknowledged debt is known; any new
-copy in a future delivery re-enters through the per-delivery ledger and
-the one-fifth escalation rule of `workflow.md` §4.
+Copy-side counts deliberately include copies whose originals were deleted
+in R1 (the copies persist; deletion of an original does not shrink the
+copy side). The Loop inventory's recorded dispositions — the 8 dead
+Loop-twin copies in Catalog (`f2_loop_silent_prefix`,
+`f2_loopBody_capture`, the six `f2_loopDebit*`/`f2_loopBorrow*`) and the
+orphans' dead twins — are **dispositions for 12.2c, not subtractions
+here**; sole-owner/dead labels require Catalog's reference graph and are
+settled at that window. Internal near-duplicates flagged by the
+inventories but outside the rule (`clCountTape ≡ bufferTape`, the H3
+`_init` pair) are noted, uncounted.
+
+**Epoch R1 delta**: new copies **0**; the historical maps lost **eleven
+dead originals plus one live original eliminated by replacement**
+(`catalogPair_inverse`, the human-approved E1) — 245 → 233 surviving
+→Catalog originals (R2-3 wording); net −1,639 lines, −83 private
+declarations (76 dead + 7 replaced).
+
+## Acknowledgment and disposition state
+
+| Debt family | Acknowledgment | Cleanup owner and window |
+|---|---|---|
+| Catalog's 264 copy-side members (↔ Primitives/Loop/Wrappers + in-file) | **D-R2** (user, 2026-10-09) | the **12.2c** per-theme refactor, promoted to the next window after R1; precondition (shrunken `Build/` files) met |
+| Loop's 13 H3 copies (+1 near-copy) | **D-R3** (user, 2026-10-09) commissioned the collapse mechanism — §13 Z5, **now proved** (vhost-f1) | **proposed: retrofit batch RB4** (Loop), consuming Z5, window: after the A-S1 fill gate closes — *pending explicit user acknowledgment per `workflow.md` §4* |
+| The three-file relocation family (4 decls × 3 files; pre-policy legacy, disclosed at its batches as "private harvest" but verbatim in fact) | **none yet** — the round-2 audit's R2-2 requires a named owner and window | **proposed: the same RB4** (all three files), replacing the family with the R1 selected-tape exports (D-R1, proved) + Z5 agreement transfer, per the inventories' own analysis of what unlocks it — *pending explicit user acknowledgment* |
+
+Any new copy in a future delivery enters through the per-delivery ledger
+and the one-fifth escalation rule of `workflow.md` §4.
