@@ -604,6 +604,240 @@ for the A-S2 audit) -/
 
 namespace Turing.FinTM
 
+/-- The four configurations already used by the block simulation cover every
+physical instant: a macro boundary, a read, a write, or a move. -/
+private def arSpacePhase {Γ : Type} [DecidableEq Γ] {N k : ℕ} {Q : Type}
+    (E : Option Γ ↪ ArBlock N) (e : Bool ↪ Γ) (tm : MultiTapeTM k Γ Q)
+    {x : List Bool} (c : Cfg k Γ Q (x.map e))
+    (d : Cfg k Bool (ArState Γ Q k N) x) : Prop :=
+  d = arCfg E e c ∨ ∃ q, c.state = some q ∧
+    ((∃ j, d = arReadCfg E e c q j) ∨
+      (∃ j, d = arWriteCfg E e c (tm.tr q c.inputSymbol c.workTapeSymbols) j) ∨
+      (∃ r, d = arMoveCfg E e c (tm.tr q c.inputSymbol c.workTapeSymbols) r))
+
+/-- One physical transition stays in the current source cycle, or completes it.
+**Proof sketch.** Split the four phases and cite the existing transition lemmas.
+Only finishing the move advances the source; a halted boundary is absorbing. -/
+private lemma arSpacePhase_step {Γ : Type} [Fintype Γ] [DecidableEq Γ] {N : ℕ}
+    (E : Option Γ ↪ ArBlock N) (e : Bool ↪ Γ) (M : FinTM Γ) {x : List Bool}
+    (c : Cfg M.k Γ M.State (x.map e))
+    (d : Cfg M.k Bool (ArState Γ M.State M.k N) x)
+    (h : arSpacePhase E e M.tm c d) :
+    arSpacePhase E e M.tm c ((arTM E e M).tm.step d) ∨
+      arSpacePhase E e M.tm (M.tm.step c) ((arTM E e M).tm.step d) := by
+  rcases h with rfl | ⟨q, hq, h⟩
+  · cases hq : c.state with
+    | none =>
+      left; left
+      exact MultiTapeTM.step_of_halt (by simp [arCfg, hq])
+    | some q =>
+      left; right
+      refine ⟨q, hq, Or.inl ⟨⟨1, by omega⟩, ?_⟩⟩
+      rw [← arReadCfg_zero E e c q hq]
+      exact arReadCfg_step E e M c q 0 (by simp)
+  · rcases h with ⟨j, rfl⟩ | ⟨j, rfl⟩ | ⟨r, rfl⟩
+    · left; right
+      refine ⟨q, hq, ?_⟩
+      by_cases hj : j.val < N + 1
+      · exact Or.inl ⟨⟨j.val + 1, by omega⟩, arReadCfg_step E e M c q j hj⟩
+      · have he : j = ⟨N + 1, by omega⟩ := Fin.ext (by dsimp only; have := j.isLt; omega)
+        rw [he]
+        exact Or.inr (Or.inl ⟨⟨N, by omega⟩, arReadCfg_dispatch E e M c q⟩)
+    · left; right
+      refine ⟨q, hq, Or.inr ?_⟩
+      by_cases hj : j.val = 0
+      · have he : j = 0 := Fin.ext hj
+        subst j
+        exact Or.inr ⟨⟨N + 1, by omega⟩, arWriteCfg_finish E e M c _⟩
+      · exact Or.inl ⟨⟨j.val - 1, by omega⟩, arWriteCfg_step E e M c _ j hj⟩
+    · by_cases hr : r.val = 0
+      · have he : r = 0 := Fin.ext hr
+        subst r
+        right; left
+        rw [arMoveCfg_finish]
+        simp only [MultiTapeTM.step, hq]
+      · left; right
+        exact ⟨q, hq, Or.inr (Or.inr
+          ⟨⟨r.val - 1, by omega⟩, arMoveCfg_step E e M c _ r hr⟩)⟩
+
+/-- Every physical horizon belongs to a source cycle whose index is no larger.
+**Proof sketch.** Induct over physical time and use the phase transition lemma;
+its second branch advances both the source-cycle index and the time bound. -/
+private lemma arSpacePhase_run {Γ : Type} [Fintype Γ] [DecidableEq Γ] {N : ℕ}
+    (E : Option Γ ↪ ArBlock N) (e : Bool ↪ Γ) (M : FinTM Γ) {x : List Bool}
+    (c : Cfg M.k Γ M.State (x.map e)) (t : ℕ) :
+    ∃ s ≤ t, arSpacePhase E e M.tm (M.tm.runFrom c s)
+      ((arTM E e M).tm.runFrom (arCfg E e c) t) := by
+  induction t with
+  | zero => exact ⟨0, le_refl _, Or.inl rfl⟩
+  | succ t ih =>
+    obtain ⟨s, hs, hp⟩ := ih
+    rcases arSpacePhase_step E e M _ _ hp with h | h
+    · refine ⟨s, by omega, ?_⟩
+      simpa only [MultiTapeTM.runFrom_succ_eq_step'] using h
+    · refine ⟨s + 1, by omega, ?_⟩
+      simpa only [MultiTapeTM.runFrom_succ_eq_step'] using h
+
+/-- During a whole-block move a physical head lies in the closed block of
+one of the two source endpoints. The closed upper endpoint counts the read
+pass's one-cell overshoot as well. -/
+private lemma arMoveCfg_position {Γ Q : Type} [DecidableEq Γ] {N k : ℕ}
+    (E : Option Γ ↪ ArBlock N) (e : Bool ↪ Γ) {x : List Bool}
+    (c : Cfg k Γ Q (x.map e)) (a : Action k Γ Q) (r : Fin (N + 2)) (i : Fin k) :
+    (∃ j ≤ N + 1, (arMoveCfg E e c a r).workTapePos i =
+      arPos N (c.workTapePos i) j) ∨
+    (∃ j ≤ N + 1, (arMoveCfg E e c a r).workTapePos i =
+      arPos N ((a.apply c).workTapePos i) j) := by
+  have hr : r.val ≤ N + 1 := by have := r.isLt; omega
+  cases hd : (a.workTapes i).2 with
+  | neg =>
+    right
+    refine ⟨r.val, hr, ?_⟩
+    simp only [arMoveCfg, arPos, Action.apply, hd, SignType.cast, Nat.cast_zero]
+    ring
+  | zero =>
+    left
+    refine ⟨0, Nat.zero_le _, ?_⟩
+    simp [arMoveCfg, arPos, hd]
+  | pos =>
+    left
+    refine ⟨N + 1 - r.val, by omega, ?_⟩
+    have hcast : ((N + 1 - r.val : ℕ) : ℤ) = (N : ℤ) + 1 - r.val := by omega
+    simp [arMoveCfg, arPos, hd, hcast]
+
+/-- Trajectory containment at every physical instant: the head is in a closed
+block belonging to a source position visited by the following source horizon.
+This includes intermediate reads, writes, moves, and every post-halt instant.
+**Proof sketch.** The phase invariant gives a source cycle. Read and write
+positions are explicit offsets; a move uses one of that cycle's endpoints. -/
+private lemma arTM_position_visited {Γ : Type} [Fintype Γ] [DecidableEq Γ] {N : ℕ}
+    (E : Option Γ ↪ ArBlock N) (e : Bool ↪ Γ) (M : FinTM Γ) {x : List Bool}
+    (c : Cfg M.k Γ M.State (x.map e)) (t : ℕ) (i : Fin M.k) :
+    ∃ s ≤ t + 1, ∃ j ≤ N + 1,
+      ((arTM E e M).tm.runFrom (arCfg E e c) t).workTapePos i =
+        arPos N ((M.tm.runFrom c s).workTapePos i) j := by
+  obtain ⟨s, hs, hp⟩ := arSpacePhase_run E e M c t
+  rcases hp with h | ⟨q, hq, h⟩
+  · exact ⟨s, by omega, 0, Nat.zero_le _, congrArg (fun d => d.workTapePos i) h⟩
+  · rcases h with ⟨j, h⟩ | ⟨j, h⟩ | ⟨r, h⟩
+    · exact ⟨s, by omega, j.val, by have := j.isLt; omega,
+        congrArg (fun d => d.workTapePos i) h⟩
+    · exact ⟨s, by omega, j.val, by have := j.isLt; omega,
+        congrArg (fun d => d.workTapePos i) h⟩
+    · rw [h]
+      rcases arMoveCfg_position E e (M.tm.runFrom c s) _ r i with h | h
+      · obtain ⟨j, hj, hp⟩ := h
+        exact ⟨s, by omega, j, hj, hp⟩
+      · obtain ⟨j, hj, hp⟩ := h
+        refine ⟨s + 1, by omega, j, hj, ?_⟩
+        simpa only [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.step, hq] using hp
+
+/-- A source cell's closed physical block includes the extra read boundary. -/
+private def arSpaceBlock (N : ℕ) (z : ℤ) : Finset ℤ :=
+  Finset.Icc (arPos N z 0) (arPos N z (N + 1))
+
+/-- A closed block has its width plus one cells. -/
+private lemma arSpaceBlock_card (N : ℕ) (z : ℤ) :
+    (arSpaceBlock N z).card = N + 2 := by
+  have he : arPos N z (N + 1) + 1 - arPos N z 0 = ((N + 2 : ℕ) : ℤ) := by
+    simp only [arPos, Nat.cast_add, Nat.cast_one, Nat.cast_ofNat, Nat.cast_zero]
+    omega
+  rw [arSpaceBlock, Int.card_Icc, he, Int.toNat_natCast]
+
+/-- Closed blocks at consecutive (or equal) source positions overlap. -/
+private lemma arSpaceBlock_inter (N : ℕ) (p q : ℤ) (h : |p - q| ≤ 1) :
+    (arSpaceBlock N p ∩ arSpaceBlock N q).Nonempty := by
+  have habs := abs_le.mp h
+  have hW : 0 ≤ (N : ℤ) + 1 := by omega
+  by_cases hp : p ≤ q
+  · refine ⟨arPos N q 0, ?_⟩
+    have hlo := Int.mul_le_mul_of_nonneg_left hp hW
+    have hhi := Int.mul_le_mul_of_nonneg_left (show q ≤ p + 1 by omega) hW
+    simp only [mul_add, mul_one] at hhi
+    simp only [Finset.mem_inter, arSpaceBlock, Finset.mem_Icc, arPos,
+      Nat.cast_add, Nat.cast_one, Nat.cast_zero, add_zero]
+    omega
+  · refine ⟨arPos N p 0, ?_⟩
+    have hlo := Int.mul_le_mul_of_nonneg_left (show q ≤ p by omega) hW
+    have hhi := Int.mul_le_mul_of_nonneg_left (show p ≤ q + 1 by omega) hW
+    simp only [mul_add, mul_one] at hhi
+    simp only [Finset.mem_inter, arSpaceBlock, Finset.mem_Icc, arPos,
+      Nat.cast_add, Nat.cast_one, Nat.cast_zero, add_zero]
+    omega
+
+/-- Expanding a source trajectory into closed blocks costs its width per
+visited source cell, with just one extra boundary cell on each tape.
+**Proof sketch.** Initially there is one closed block. A repeated source
+position adds nothing. A new position is adjacent to the preceding one,
+so its block overlaps the existing cover and adds at most its width.
+This is the cardinality ledger for the source's visited interval. -/
+private lemma arSpaceCover_card {Γ Q : Type} {k : ℕ} {x : List Γ}
+    (tm : MultiTapeTM k Γ Q) (c : Cfg k Γ Q x) (i : Fin k) (N t : ℕ) :
+    ((tm.visitedByTapeHead c t i).biUnion (arSpaceBlock N)).card ≤
+      (N + 1) * tm.spaceUsedByTape c t i + 1 := by
+  have hvis (s : ℕ) : tm.visitedByTapeHead c (s + 1) i =
+      insert ((tm.runFrom c (s + 1)).workTapePos i) (tm.visitedByTapeHead c s i) := by
+    simp only [MultiTapeTM.visitedByTapeHead, Finset.range_add_one, Finset.image_insert]
+  unfold MultiTapeTM.spaceUsedByTape
+  induction t with
+  | zero => simp [MultiTapeTM.visitedByTapeHead, arSpaceBlock_card]
+  | succ t ih =>
+    rw [hvis]
+    by_cases hp : (tm.runFrom c (t + 1)).workTapePos i ∈ tm.visitedByTapeHead c t i
+    · simpa only [Finset.insert_eq_of_mem hp] using ih
+    · rw [Finset.biUnion_insert, Finset.card_insert_of_notMem hp]
+      have hprev : (tm.runFrom c t).workTapePos i ∈ tm.visitedByTapeHead c t i :=
+        Finset.mem_image.mpr ⟨t, Finset.mem_range.mpr (by omega), rfl⟩
+      have hd : |(tm.runFrom c (t + 1)).workTapePos i -
+          (tm.runFrom c t).workTapePos i| ≤ 1 := by
+        rw [MultiTapeTM.runFrom_succ_eq_step']
+        exact tm.workTapePos_step_le _ i
+      obtain ⟨p, hp⟩ := arSpaceBlock_inter N _ _ hd
+      obtain ⟨hp₁, hp₂⟩ := Finset.mem_inter.mp hp
+      have hinter : 1 ≤ (arSpaceBlock N ((tm.runFrom c (t + 1)).workTapePos i) ∩
+          (tm.visitedByTapeHead c t i).biUnion (arSpaceBlock N)).card := by
+        apply Finset.one_le_card.mpr
+        exact ⟨p, Finset.mem_inter.mpr ⟨hp₁,
+          Finset.mem_biUnion.mpr ⟨_, hprev, hp₂⟩⟩⟩
+      have hc := Finset.card_union_add_card_inter
+        (arSpaceBlock N ((tm.runFrom c (t + 1)).workTapePos i))
+        ((tm.visitedByTapeHead c t i).biUnion (arSpaceBlock N))
+      rw [arSpaceBlock_card] at hc
+      simp only [Nat.mul_add, Nat.mul_one]
+      omega
+
+/-- At every horizon, alphabet reduction uses at most the block width times
+source space through `t+1`, plus one boundary cell per work tape.
+**Proof sketch.** Include every physical visit in the closed-block cover
+of the source trajectory, apply its cardinality bound, and sum over tapes. -/
+private lemma arTM_spaceUsed {Γ : Type} [Fintype Γ] [DecidableEq Γ] {N : ℕ}
+    (E : Option Γ ↪ ArBlock N) (e : Bool ↪ Γ) (M : FinTM Γ) {x : List Bool}
+    (c : Cfg M.k Γ M.State (x.map e)) (t : ℕ) :
+    (arTM E e M).tm.spaceUsed (arCfg E e c) t ≤
+      (N + 1) * M.tm.spaceUsed c (t + 1) + M.k := by
+  have htape (i : Fin M.k) :
+      (arTM E e M).tm.spaceUsedByTape (arCfg E e c) t i ≤
+        (N + 1) * M.tm.spaceUsedByTape c (t + 1) i + 1 := by
+    have hsub : (arTM E e M).tm.visitedByTapeHead (arCfg E e c) t i ⊆
+        (M.tm.visitedByTapeHead c (t + 1) i).biUnion (arSpaceBlock N) := by
+      intro p hp
+      obtain ⟨u, hu, rfl⟩ := Finset.mem_image.mp hp
+      have hu' : u ≤ t := by simpa only [Finset.mem_range, Nat.lt_succ_iff] using hu
+      obtain ⟨s, hs, j, hj, he⟩ := arTM_position_visited E e M c u i
+      refine Finset.mem_biUnion.mpr ⟨(M.tm.runFrom c s).workTapePos i,
+        Finset.mem_image.mpr ⟨s, Finset.mem_range.mpr (by omega), rfl⟩, ?_⟩
+      rw [he]
+      simp only [arSpaceBlock, Finset.mem_Icc, arPos, Nat.cast_zero, add_zero,
+        Nat.cast_add, Nat.cast_one]
+      omega
+    exact (Finset.card_le_card hsub).trans (arSpaceCover_card M.tm c i N (t + 1))
+  have hmul := Finset.sum_nsmul (M := ℕ) Finset.univ (N + 1)
+    (fun i => M.tm.spaceUsedByTape c (t + 1) i)
+  simp only [Nat.nsmul_eq_mul] at hmul
+  have h := Finset.sum_le_sum (s := Finset.univ) (fun i _ => htape i)
+  simpa only [MultiTapeTM.spaceUsed, Finset.sum_add_distrib, hmul,
+    Finset.sum_const, Finset.card_univ, Fintype.card_fin, Nat.nsmul_eq_mul, mul_one] using h
+
 /-- The alphabet reduction preserves space up to a constant: the binary
 machine of `Turing.FinTM.alphabet_reduction` can be taken with an all-time
 space bound of coefficient-constant shape in the source's. Part of the Z4
@@ -624,6 +858,27 @@ theorem alphabet_reduction_spaceUsed {Γ : Type} [Fintype Γ] [DecidableEq Γ]
     ∃ (c : ℕ) (M' : FinTM Bool), M'.k = M.k ∧
       M'.ComputesFunInTime f (fun n => c * (T n + 1)) ∧
       ∀ x t, M'.tm.spaceUsed (M'.tm.initCfg x) t ≤ c * (S x.length + 1) := by
-  sorry
+  let E := arCode (Γ := Γ)
+  have hE : E none = fun _ => none := rfl
+  refine ⟨3 * (Fintype.card Γ + 1) + 2, arTM E e M, rfl, ?_, ?_⟩
+  · intro x
+    exact (arTM_computes E hE e M x (f x) (T x.length) (hM x)).mono
+      (Nat.mul_le_mul_left _ (Nat.le_succ _))
+  · intro x t
+    rw [arCfg_init E hE]
+    have hs := hS (x.map e) (t + 1)
+    simp only [List.length_map] at hs
+    have hk : M.k ≤ S x.length := by
+      have hz := hS (x.map e) 0
+      simpa [MultiTapeTM.spaceUsed, MultiTapeTM.spaceUsedByTape,
+        MultiTapeTM.visitedByTapeHead] using hz
+    calc
+      _ ≤ (Fintype.card Γ + 1) * M.tm.spaceUsed (M.tm.initCfg (x.map e)) (t + 1) +
+          M.k := arTM_spaceUsed E e M _ t
+      _ ≤ (Fintype.card Γ + 1) * S x.length + S x.length :=
+        Nat.add_le_add (Nat.mul_le_mul_left _ hs) hk
+      _ = (Fintype.card Γ + 2) * S x.length := by ring
+      _ ≤ (3 * (Fintype.card Γ + 1) + 2) * (S x.length + 1) :=
+        Nat.mul_le_mul (by omega) (Nat.le_succ _)
 
 end Turing.FinTM
