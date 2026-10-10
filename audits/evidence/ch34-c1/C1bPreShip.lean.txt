@@ -1,0 +1,341 @@
+/-
+C1b pre-ship probe (maintainer evidence; not a library file).
+
+Elaborate against the issue-commit tree: the C1b bootstrap order, then this
+file. Every block checks one contract that the C1b brief prescribes.
+Expected result before the fill:
+* zero errors;
+* exactly one `sorry` warning, from the stand-in
+  `C1bProbe.scanTM_decidesInTime` (section 5b);
+* the 13 target prints in section 7 show `sorryAx` until the fill lands.
+
+After the fill:
+* delete sections 5a/5b (the stand-ins);
+* uncomment the export prints in section 7;
+* rerun the file as the C1b axiom probe.
+-/
+import TCSlib.Complexity.SpaceComplexity.ZeroSpace
+import TCSlib.Complexity.SpaceComplexity.Machines.Bin
+import TCSlib.Complexity.TuringMachine.CounterProgRun
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+/-! ## 1. The frozen statements elaborate as the brief reads them -/
+
+section Frozen
+open Turing Complexity
+
+example (M : FinTM Bool) (x : List Bool) (t : ℕ) :
+    M.k ≤ M.tm.spaceUsed (M.tm.initCfg x) t :=
+  FinTM.k_le_spaceUsed M x t
+
+example {M : FinTM Bool} {f : List Bool → List Bool} {s : ℕ → ℕ}
+    (h : M.ComputesInSpace f s) (hz : ∃ n, s n = 0) : M.k = 0 :=
+  FinTM.ComputesInSpace.k_eq_zero_of_exists_zero h hz
+
+example {s : ℕ → ℕ} (hz : ∃ n, s n = 0) : SPACE s = SPACE (fun _ => 0) :=
+  SPACE_eq_zero_of_exists_zero hz
+
+example : SPACE (fun n => n) = SPACE (fun _ => 0) :=
+  SPACE_id_eq_SPACE_zero
+
+example {s : ℕ → ℕ} (hpos : ∀ n, 0 < s n) : SPACE s = SPACE (fun n => s n + 1) :=
+  SPACE_succ_of_pos hpos
+
+example (s : ℕ → ℕ) : SPACE (fun n => s n + 1) = SPACE (fun n => max 1 (s n)) :=
+  SPACE_succ_eq_max_one s
+
+example (x y : List Bool) (i j : ℕ) :
+    pairEncode x (Nat.bits i) = pairEncode y (Nat.bits j) ↔ x = y ∧ i = j :=
+  pairEncode_bits_inj x y i j
+
+example : ({x | True} : Language Bool) ∈ SPACE fun _ => 0 :=
+  trueLang_mem_SPACE_zero
+
+example : evenLang ∈ SPACE fun _ => 0 :=
+  evenLang_mem_SPACE_zero
+
+example : ∃ M : FinTM Bool, M.k = 0 ∧ ∀ x : List Bool, M.ComputesInTime x [true] 1 :=
+  exists_zeroTape_const_oneStep
+
+example : ∃ M : FinTM Bool, M.k = 0 ∧ M.DecidesInTime evenLang fun n => n + 1 :=
+  exists_zeroTape_parity_decider
+
+example : evenLang ∈ LOGSPACE :=
+  evenLang_mem_LOGSPACE
+
+end Frozen
+
+/-! ## 2. The two pre-landed lemmas, and their use at the Z3/Z5/Z6 shapes -/
+
+section Shared
+open Turing Complexity
+
+example {s₁ s₂ : ℕ → ℕ} {a : ℕ} (h : ∀ n, s₁ n ≤ a * s₂ n) : SPACE s₁ ⊆ SPACE s₂ :=
+  SPACE.mono_const h
+
+example {M : FinTM Bool} {f : List Bool → List Bool} (hk : M.k = 0)
+    (h : ∀ x, ∃ t, M.ComputesInTime x (f x) t) : M.ComputesInSpace f fun _ => 0 :=
+  FinTM.computesInSpace_zero_of_k_eq_zero hk h
+
+-- Z3 `⊆` shape. Z2 is applied by dot notation through `DecidesInSpace`
+-- (brief pitfall). The bridge is called with an explicit `M`, and `.mono`
+-- fixes `f`.
+example {L : Language Bool} {s : ℕ → ℕ} {c : ℕ} {M : FinTM Bool}
+    (hM : M.DecidesInSpace L fun n => c * s n) (hz : ∃ n, s n = 0) :
+    L ∈ SPACE fun _ => 0 := by
+  have hk : M.k = 0 := hM.k_eq_zero_of_exists_zero (by
+    obtain ⟨n, hn⟩ := hz
+    exact ⟨n, by simp [hn]⟩)
+  refine ⟨0, M, ?_⟩
+  refine (FinTM.computesInSpace_zero_of_k_eq_zero (M := M) hk ?_).mono ?_
+  · intro x
+    exact (hM x).imp fun _ h => h.1
+  · intro n
+    exact Nat.zero_le _
+
+-- Z3 `⊇` shape.
+example (s : ℕ → ℕ) : SPACE (fun _ => 0) ⊆ SPACE s :=
+  SPACE.mono fun _ => Nat.zero_le _
+
+-- Z5 `⊆` and `⊇` shapes (`mono_const` at `a = 2`).
+example (s : ℕ → ℕ) : SPACE s ⊆ SPACE (fun n => s n + 1) :=
+  SPACE.mono fun n => Nat.le_succ (s n)
+
+example {s : ℕ → ℕ} (hpos : ∀ n, 0 < s n) : SPACE (fun n => s n + 1) ⊆ SPACE s :=
+  SPACE.mono_const (a := 2) fun n => show s n + 1 ≤ 2 * s n by
+    have := hpos n
+    omega
+
+-- Z6 shapes (`omega` with `max`).
+example (s : ℕ → ℕ) : SPACE (fun n => s n + 1) ⊆ SPACE (fun n => max 1 (s n)) :=
+  SPACE.mono_const (a := 2) fun n => show s n + 1 ≤ 2 * max 1 (s n) by omega
+
+example (s : ℕ → ℕ) : SPACE (fun n => max 1 (s n)) ⊆ SPACE (fun n => s n + 1) :=
+  SPACE.mono fun n => show max 1 (s n) ≤ s n + 1 by omega
+
+end Shared
+
+/-! ## 3. `Bin` after the import: names, no clash, use inside `namespace Turing` (Z7) -/
+
+#check @Complexity.LogProg.bits_injective
+#check @Complexity.LogProg.bitsVal_bits
+
+namespace Turing
+
+example (i j : ℕ) (h : Nat.bits i = Nat.bits j) : i = j :=
+  Complexity.LogProg.bits_injective h
+
+example (x y : List Bool) (i j : ℕ)
+    (h : pairEncode x (Nat.bits i) = pairEncode y (Nat.bits j)) :
+    (x, Nat.bits i) = (y, Nat.bits j) :=
+  pairEncode_injective (a₁ := (x, Nat.bits i)) (a₂ := (y, Nat.bits j)) h
+
+end Turing
+
+/-! ## 4. Zero-tape configuration infrastructure (E1, Z8) -/
+
+section ZeroTape
+open Turing
+
+example {x : List Bool} {c₁ c₂ : Cfg 0 Bool Bool x} (h1 : c₁.state = c₂.state)
+    (h2 : c₁.inputPos = c₂.inputPos) (h3 : c₁.output = c₂.output) : c₁ = c₂ :=
+  Cfg.ext_zero_tapes h1 h2 h3
+
+-- The right blank reads `none` (`inputSymbol_at` at `i = x.length`).
+example {x : List Bool} (c : Cfg 0 Bool Bool x) (hp : c.inputPos.val = x.length + 1) :
+    c.inputSymbol = none := by
+  rw [FinTM.inputSymbol_at c x.length le_rfl hp]
+  simp
+
+-- The `t = 0` guards: the input head starts at position `0 + 1`, and the
+-- output starts empty.
+example (M : FinTM Bool) (x : List Bool) : (M.tm.initCfg x).inputPos.val = 0 + 1 := rfl
+example (M : FinTM Bool) (x : List Bool) : (M.tm.initCfg x).output = [] := rfl
+
+#check @moveInputPos_pos_of_ne_right
+#check @FinTM.controlAction
+
+end ZeroTape
+
+/-! ## 5. The two machines' contract shapes (stand-ins; delete after the fill) -/
+
+namespace C1bProbe
+open Turing Complexity
+
+/-! ### 5a. The Z8/Z10 constant machine: emit `true` and halt, in one action -/
+
+/-- Probe stand-in for C1b's private constant machine. -/
+def constTrueTM : FinTM Bool where
+  k := 0
+  State := Unit
+  tm := { q₀ := (), tr := fun _ _ _ => ⟨0, fun i => i.elim0, some true, none⟩ }
+
+/-- The one-step contract (`t = 0` guard: halted at time `1` with `[true]`). -/
+theorem constTrueTM_computesInTime (x : List Bool) : constTrueTM.ComputesInTime x [true] 1 :=
+  (FinTM.computesInTime_iff _ _ _ _).mpr ⟨rfl, rfl⟩
+
+-- Z10 shape.
+example : ∃ M : FinTM Bool, M.k = 0 ∧ ∀ x : List Bool, M.ComputesInTime x [true] 1 :=
+  ⟨constTrueTM, rfl, constTrueTM_computesInTime⟩
+
+-- Z8 shape: the bridge, plus `indicator {x | True} x = true`.
+example : ({x | True} : Language Bool) ∈ SPACE fun _ => 0 := by
+  refine ⟨0, constTrueTM, ?_⟩
+  refine (FinTM.computesInSpace_zero_of_k_eq_zero (M := constTrueTM) rfl ?_).mono ?_
+  · intro x
+    refine ⟨1, ?_⟩
+    simpa [MultiTapeTM.indicator] using constTrueTM_computesInTime x
+  · intro n
+    exact Nat.zero_le _
+
+/-! ### 5b. The `Examples` export shape (`evenScanTM`, `evenScanTM_decidesInTime`) -/
+
+/-- Probe stand-in for `Complexity.evenScanTM`. The state `true` means odd
+parity; scan transitions go through `controlAction`. -/
+def scanTM : FinTM Bool where
+  k := 0
+  State := Bool
+  tm :=
+    { q₀ := false
+      tr := fun q inp _ => match inp with
+        | some b => FinTM.controlAction .pos (some (if b then !q else q))
+        | none => ⟨0, fun i => i.elim0, some (!q), none⟩ }
+
+/-- Probe stand-in for `Complexity.evenScanTM_decidesInTime`. It is the
+fill's to prove; the stand-in is sorried.
+
+**Proof sketch.** The brief's route 1 (scan invariant on `j ≤ x.length`). -/
+theorem scanTM_decidesInTime : scanTM.DecidesInTime evenLang fun n => n + 1 := by
+  sorry
+
+-- Z11 shape.
+example : ∃ M : FinTM Bool, M.k = 0 ∧ M.DecidesInTime evenLang fun n => n + 1 :=
+  ⟨scanTM, rfl, scanTM_decidesInTime⟩
+
+-- Z9 shape: the export plus the bridge. `0 * (fun _ => 0) n` needs only `.mono`.
+example : evenLang ∈ SPACE fun _ => 0 := by
+  refine ⟨0, scanTM, ?_⟩
+  refine (FinTM.computesInSpace_zero_of_k_eq_zero (M := scanTM) rfl ?_).mono ?_
+  · intro x
+    exact ⟨x.length + 1, scanTM_decidesInTime x⟩
+  · intro n
+    exact Nat.zero_le _
+
+-- E1 shape: the same, at `logSpace`, inside `Examples`' import surface.
+example : evenLang ∈ LOGSPACE := by
+  unfold LOGSPACE
+  refine ⟨0, scanTM, ?_⟩
+  refine (FinTM.computesInSpace_zero_of_k_eq_zero (M := scanTM) rfl ?_).mono ?_
+  · intro x
+    exact ⟨x.length + 1, scanTM_decidesInTime x⟩
+  · intro n
+    exact Nat.zero_le _
+
+end C1bProbe
+
+/-! ## 6. C1: the S9 statement, and the headroom-1 route's step shapes -/
+
+section C1
+open Complexity.CounterProg
+
+variable {R : ℕ} {Λ : Type} (P : Λ → Instr R Λ) (x : List Bool)
+  [Fintype Λ] [DecidableEq Λ] (l₀ : Λ)
+
+-- The frozen statement, restated.
+example (B t : ℕ) (s : St R Λ) (hp : s.pos ≤ x.length)
+    (hB : ∀ j < t, ∀ r, (run P x s j).regs r ≤ B) :
+    ∃ t' ≤ t * (2 * B + 5), (toTM P l₀).tm.runFrom (enc x s) t' = enc x (run P x s t) :=
+  sim_run_of_regs_le P x l₀ B t s hp hB
+
+-- One step via `sim_run` at headroom 1: the bound is `1 * (2 * (B + 1) + 3)`.
+example (B : ℕ) (s : St R Λ) (hp : s.pos ≤ x.length)
+    (h0 : ∀ r, (run P x s 0).regs r ≤ B) :
+    ∃ t' ≤ 1 * (2 * (B + 1) + 3),
+      (toTM P l₀).tm.runFrom (enc x s) t' = enc x (run P x s 1) :=
+  sim_run P x l₀ (B + 1) 1 s hp fun r => by
+    have h := h0 r
+    rw [run_zero] at h
+    omega
+
+-- `run P x s 1 = step P x s`, as the pitfall prescribes.
+example (s : St R Λ) : run P x s 1 = step P x s :=
+  (run_succ P x s 0).trans (run_zero P x _)
+
+-- The suffix keeps the position bound.
+example (s : St R Λ) (hp : s.pos ≤ x.length) : (run P x s 1).pos ≤ x.length := by
+  have h1 : run P x s 1 = step P x s := (run_succ P x s 0).trans (run_zero P x _)
+  rw [h1]
+  exact step_pos_le P x s hp
+
+-- The register hypothesis shifts via `run_add`.
+example (B t : ℕ) (s : St R Λ) (hB : ∀ j < t + 1, ∀ r, (run P x s j).regs r ≤ B) :
+    ∀ j < t, ∀ r, (run P x (run P x s 1) j).regs r ≤ B := by
+  intro j hj r
+  have h := hB (1 + j) (by omega) r
+  rwa [run_add] at h
+
+-- Composition of the physical runs.
+example (t t₁ t₂ : ℕ) (s : St R Λ)
+    (h₁ : (toTM P l₀).tm.runFrom (enc x s) t₁ = enc x (run P x s 1))
+    (h₂ : (toTM P l₀).tm.runFrom (enc x (run P x s 1)) t₂ =
+      enc x (run P x (run P x s 1) t)) :
+    (toTM P l₀).tm.runFrom (enc x s) (t₁ + t₂) = enc x (run P x s (t + 1)) := by
+  rw [Turing.MultiTapeTM.runFrom_add, h₁, h₂, ← run_add, Nat.add_comm 1 t]
+
+-- The time arithmetic: exactly the stated constant.
+example (B t t₁ t₂ : ℕ) (h₁ : t₁ ≤ 1 * (2 * (B + 1) + 3)) (h₂ : t₂ ≤ t * (2 * B + 5)) :
+    t₁ + t₂ ≤ (t + 1) * (2 * B + 5) := by
+  nlinarith
+
+end C1
+
+/-! ## 7. Axiom prints -/
+
+-- The 13 targets. Before the fill they show `sorryAx`. After it, each must
+-- show at most `[propext, Classical.choice, Quot.sound]`.
+#print axioms Turing.FinTM.k_le_spaceUsed
+#print axioms Turing.FinTM.ComputesInSpace.k_eq_zero_of_exists_zero
+#print axioms Complexity.SPACE_eq_zero_of_exists_zero
+#print axioms Complexity.SPACE_id_eq_SPACE_zero
+#print axioms Complexity.SPACE_succ_of_pos
+#print axioms Complexity.SPACE_succ_eq_max_one
+#print axioms Turing.pairEncode_bits_inj
+#print axioms Complexity.trueLang_mem_SPACE_zero
+#print axioms Complexity.evenLang_mem_SPACE_zero
+#print axioms Complexity.exists_zeroTape_const_oneStep
+#print axioms Complexity.exists_zeroTape_parity_decider
+#print axioms Complexity.evenLang_mem_LOGSPACE
+#print axioms Complexity.CounterProg.sim_run_of_regs_le
+
+-- The two `Examples` exports (uncomment after the fill).
+-- #print axioms Complexity.evenScanTM
+-- #print axioms Complexity.evenScanTM_decidesInTime
+
+-- Cited proved declarations. Expected: no `sorryAx` now.
+#print axioms Complexity.SPACE.mono_const
+#print axioms Turing.FinTM.computesInSpace_zero_of_k_eq_zero
+#print axioms Complexity.SPACE.mono
+#print axioms Turing.FinTM.ComputesInSpace.mono
+#print axioms Turing.MultiTapeTM.spaceUsed_zero_tapes_eq_zero
+#print axioms Turing.MultiTapeTM.runFrom_add
+#print axioms Turing.Cfg.ext_zero_tapes
+#print axioms Turing.moveInputPos_pos_of_ne_right
+#print axioms Turing.FinTM.inputSymbol_at
+#print axioms Turing.FinTM.computesInTime_iff
+#print axioms Complexity.DTIME_eq_empty_of_exists_zero
+#print axioms Turing.pairEncode_injective
+#print axioms Complexity.LogProg.bits_injective
+#print axioms Complexity.CounterProg.sim_run
+#print axioms Complexity.CounterProg.sim_step
+#print axioms Complexity.CounterProg.step_pos_le
+#print axioms Complexity.CounterProg.run_add
+#print axioms Complexity.CounterProg.run_succ
+#print axioms Complexity.CounterProg.run_zero
+
+-- The stand-ins (section 5). `scanTM_decidesInTime` shows `sorryAx` by
+-- design.
+#print axioms C1bProbe.constTrueTM_computesInTime
+#print axioms C1bProbe.scanTM_decidesInTime
