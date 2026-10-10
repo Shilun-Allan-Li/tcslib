@@ -941,6 +941,127 @@ configuration, the no-earlier-exit clause and the trajectory were compared:
 63 cases, all pass, and a wrong-time negative control fails
 (`audits/evidence/s12-framed/`).
 
+### 12.7 Counter-driven loops (design draft, 2026-10-10, after ZF-B3's escalation)
+
+**The gap.** ZF-B3 (`audits/zone-agent-reports/f1-B3-REPORT.md`,
+`f1-B3-CONTINUATION.md`) stopped on two shared-interface requests:
+
+- a public fixed-width **decrement** routine with a framed contract;
+- a loop whose number of rounds is a **binary counter read from a tape**,
+  with the body's state kept on **persistent, arbitrarily positioned tapes**.
+
+Every public loop host (`exists_loopTM`, `exists_loopCfgTM`,
+`exists_loopFindTM`, `exists_emitLoopTM`) does something else. It runs
+`R x.length` rounds, a count fixed by the input's *length* through a fuel
+machine, and every round runs between canonical
+`Cfg.ofWords anchor (stateWord …)` seams. A simulator would therefore have to
+re-serialize its two simulated work tapes every round, which ZF-B3 rightly
+refused.
+
+**This is a shared need, not a ZF-B3 one.**
+
+| Consumer | Status | What it needs |
+|---|---|---|
+| `Codes2Tape.exists_uniformMachineCode2` | ZF-B3's open target | Simulate at most `t` source steps, `t` in binary on a tape, over two persistent source tapes; one joint polynomial |
+| `Diagonalization/EXPCOM.lean` | sorried | The same pattern ("simulate at most `t` source transitions under a binary countdown") |
+| `Diagonalization/NTimeHierarchy.lean` | sorried | A **fused** countdown at **linear** overhead: one tick per simulated step, the borrow cost amortized by `Σⱼ ν₂(j) ≤ t` (round-1 finding 5). It needs an **amortized total**, not a per-tick worst case |
+| `SpaceComplexity/Hierarchy.lean` | sorried | A configuration-count clock |
+
+**Existing clocks, all private or super-linear.** These are 12.2c candidates
+for re-derivation as consumers of the shared host, not inputs to copy:
+
+- `Build/Loop.lean`'s fuel debit: `loopDebit`, `loopValue`, `loopHost_borrow*`.
+- `Build/Catalog.lean`'s `f2_loopDebitTM` / `f2_loopBorrow_correct`. This is a
+  clean 1-tape little-endian decrement: exact `2·(borrow position) + 2`
+  steps, zero wraps to all-`true` with an underflow verdict. It is stated
+  only canonically.
+- `Universal.lean`'s private deadline interpreter `timedUniversalTM`, the
+  quadratic one-tape clock behind `timed_universal`.
+- `TimeHierarchy/ClockMachine.lean`'s `clockTM`, the deterministic quadratic
+  re-scan. These are colleagues' files; under the user's standing preference
+  any dedup there is 12.2c work, not theirs.
+
+**Proposed components.**
+
+**C1 — `decrementTM k i : MultiTapeTM k Bool FlagPhase`**, an R3-family row,
+the mirror of `incrementTM`. It scans `false` cells to `true` moving right; the
+first `true` becomes `false`, with the success verdict; reaching the right
+blank, the word is all `false`, so the value is `0`, and the verdict is
+underflow, leaving the word all `true`. It returns to the origin through a
+`rewind` phase. Framed contracts, in the §12.6 shape:
+
+- `decrementTM_run_succ_ofCfg`, at exact time `2q + 2` where
+  `q = (w.takeWhile (· = false)).length`;
+- `decrementTM_run_underflow_ofCfg`, at `2|w| + 2`.
+
+The **proof route must not copy the increment proof.** `decrementTM` is
+`incrementTM` conjugated by bit complement, so derive its contracts from
+increment's by a transport lemma, or parameterize the carry trace by the
+scanned bit (decision 12.7.4).
+
+**C2 — `counterLoopTM`, the counter-driven loop host.** Given a body
+`B : MultiTapeTM k Bool S` with a re-entry anchor `a`, the host has
+`k + 1` tapes, the last one the counter, and states `S ⊕ FlagPhase`.
+
+- At the anchor it runs `decrementTM` on the counter.
+- On success it re-enters the body at `a`.
+- On underflow it exits to a live `done` anchor.
+- If a body round reaches a designated body exit (for a simulator: the
+  simulated machine halted), the host exits to a second live `escape`
+  anchor.
+
+Its contract `counterLoopTM_run` is stated over **arbitrary configurations**
+and has three parts:
+
+- **The body's hypotheses.** A body invariant `P`. A round contract: from any
+  `c` with `P c` at `a`, the body reaches, within `0 < t ≤ B`, either the
+  anchor again (with `P`, giving `next c`) or the exit (giving `exitCfg c`),
+  without revisiting `a` earlier. And the body never touches the counter
+  tape, which the host's embedding enforces.
+- **The conclusion.** From the host configuration carrying `c` and a counter
+  word `w` of value `d`, delimited:
+  - if no round exits early, the host reaches `done` after exactly `d`
+    rounds, with body part `next^[d] c` and counter `List.replicate |w| true`;
+  - otherwise it reaches `escape` at the first exiting round `r < d`.
+- **Total time:** at most `d·B + 4d + 2|w| + O(1)` in the first case (the
+  decrement is amortized: `Σ_{r=1}^{d} (2ν₂(r) + 2) + (2|w| + 2)`), and
+  correspondingly in the second, with no earlier exit and with trajectory
+  bounds (counter head within `[pos − 1, pos + |w|]`, body heads as the body's
+  own).
+
+C2 is assembled from the §12 layer: the embedding for the body's tape
+selection, seams for the anchor/decrement alternation, and the C1 contracts.
+No loop-host proof is copied.
+
+**Open decisions (12.7.x, for the user before statements are drafted).**
+
+1. **Counter placement**: a dedicated extra tape (proposed: the simplest
+   contract, and the consumers are multi-tape anyway) or a delimited region
+   of an existing tape (framed, as in the zone scratch).
+2. **Exits**: two **live** anchors, `done` and `escape`, so the host stays
+   seam-composable (proposed, the §12 convention), or a genuine halt.
+3. **Round cost**: a uniform per-round bound `B` (proposed; it suffices for
+   every consumer above, since a simulated step costs a code-dependent
+   constant) or a per-round function `τ r`.
+4. **The decrement proof route**, avoiding a near-copy of increment's trace.
+   Either a small public **symbol-complement transport lemma** for
+   `MultiTapeTM` (generic, and reusable for any machine conjugated by a
+   symbol involution), or parameterizing the §12.6 fill's increment carry
+   trace by the scanned bit. The second needs the §12.6 fill brief amended
+   before that batch starts.
+5. **Home**: a new file `Build/CounterLoop.lean`, importing Catalog, Embed
+   and Seam (proposed). The concurrent §12.6 fill owns `Build/Catalog.lean`,
+   so C1 cannot land there now; 12.2c's per-theme split regroups the rows
+   later.
+6. **Scope of the amortized contract**: state the total-time bound
+   amortized over the whole run (proposed; the linear-overhead NTIME
+   consumer needs it), not only per round.
+
+After the decisions: sorried statements, the executed pre-ship check
+(mandatory practice), and a statement gate; then a fill batch. ZF-B3's
+continuation follows that fill. The existing private clocks join the 12.2c
+tasklist as re-derivation targets.
+
 ## 13. The zone and virtual-input layer (proposed 2026-10-09, post-§12 close)
 
 **Mandate** (user direction 2026-10-09, at the §12 fill-campaign close —
