@@ -1,28 +1,59 @@
-# Chapter-1/2 retrofit — Batch RB5: finish the relocation family (`Simulation.lean` + `Build/Loop.lean` + `Build/Primitives.lean` + `CookLevin/Hardness.lean`)
+# Chapter-1/2 retrofit — Batch RB5 (revision 2): finish the relocation family (`Build/Embed.lean` + `Build/Loop.lean` + `Build/Primitives.lean` + `CookLevin/Hardness.lean`)
 
 ## Repository and branch — read this before anything else
 
 - Clone: `https://github.com/Shilun-Allan-Li/tcslib`
 - Check out branch **`complexity/arora-barak-ch3-4`**, this exact branch,
   NOT `main`.
-- **RB5 builds on RB4.** RB4 was integrated on the side branch
-  `retrofit/rb4` and is merged into the campaign branch by PR #13. Before
-  you start, confirm that `git merge-base --is-ancestor 4b5c2179 HEAD`
-  succeeds. If it fails, **stop**: RB4 is not merged yet.
-- Create your working branch off the campaign branch (suggested name
-  `fill/retrofit-rb5`). Record the base commit hash in `REPORT.md`; the
-  brief was issued at `841122fc6d39657f764e5b46e9756121e98e879e`. Never rebase.
+- Before you start, confirm that
+  `git merge-base --is-ancestor 0aea21088db1f8c44d4c1bb5ba57f28eceb3c354 HEAD`
+  succeeds. That commit integrates the §12.6 fill, so `Build/Catalog.lean` is
+  sorry-free; it already contains RB4 (PR #13). If the check fails, **stop**.
+- Create a **fresh** working branch off the campaign branch (suggested name
+  `fill/retrofit-rb5-v2`). Record the base commit hash in `REPORT.md`. Never
+  rebase.
 - **Delivery is by zip, not PR or push**: `retrofit-rb5.zip` with the
-  standard contents. Integration note, no action for you: the maintainer
-  integrates retrofit deliveries on a side branch and opens a PR for the
-  user's manual merge.
+  standard contents (`REPORT.md`, the full modified sources, a
+  `git format-patch` series against your recorded base, a git bundle, the
+  final sweep log, the axiom log, and `SHA256SUMS`). Integration note, no
+  action for you: the maintainer integrates retrofit deliveries on a side
+  branch and opens a PR for the user's manual merge.
+
+## What changed since the first issue (read this first)
+
+The first dispatch stopped on two conflicts in the brief. Both were brief
+defects, and both are resolved here.
+
+1. **The Task-1 lemma moves to `Build/Embed.lean`.** Its statement needs
+   `Cfg.mapState`/`Action.mapState` (`StateRenaming.lean`), and its proof
+   needs Z5 (`Simulation.lean`). Neither file imports the other, and the
+   first issue forbade new imports. `Build/Embed.lean` already imports both,
+   and every consumer already reaches it, Hardness included. So the lemma
+   lands there, with **no import change anywhere**. `Simulation.lean` is no
+   longer an owned file.
+   - **Pre-ship check (executed by the maintainer).** The contract below,
+     with Loop's proof moved verbatim, elaborates in `Build/Embed.lean`'s
+     import context. Its axioms are `[propext, Classical.choice, Quot.sound]`
+     (`audits/evidence/retrofit/rb5-preship-task1.lean.txt`).
+2. **The old Task 2 (Loop's RB4 leftovers) is withdrawn.** Your counterexample
+   confirms the defect. The anchor-return phase runs in **body control from
+   `t = 0`**, which is exactly where the capturing and forwarding hosts differ
+   by design, so no non-body guard can hold. The structural fix belongs to the
+   maintainer's 12.2c refactor. **Include your kernel-checked counterexample in
+   the delivery** as `evidence/anchor-return-guard-counterexample.lean.txt`,
+   not in any source file. It becomes the 12.2c item's evidence. Leave
+   `emLoopHost_*`, `emCall_bank_*` and `emCall_finish_*` exactly as they are.
+
+If you have work from the first dispatch, re-apply only what conforms to this
+revision onto the fresh branch; cherry-picking is fine. The patch series must
+be against your new recorded base.
 
 ## What this is
 
 A retrofit batch finishing the **human-acknowledged three-file relocation
-family** debt (`audits/duplication-ledger.md`, acknowledgment table; owner RB4,
-user 2026-10-09). **Zero `sorry` and zero `error:` before and after every
-commit.**
+family** debt (`audits/duplication-ledger.md`, acknowledgment table; owner
+RB4, user 2026-10-09). **Zero `sorry` and zero `error:` before and after
+every commit.**
 
 RB4 (`audits/retrofit-r2-agent-reports/rb4-REPORT.md`; read it in full)
 completed the work in Loop:
@@ -60,32 +91,13 @@ transport + Z5 argument. This is allowed provided that:
 You must never *weaken* a surviving generic statement. Either delete it, or
 keep it exactly.
 
-**What RB4 left behind in Loop (maintainer analysis after the merge).** RB4
-met its binding target of 13 fewer privates, but a text-level screen shows
-that part of the copied material was *inlined* into consumers rather than
-eliminated. The text in Loop's forwarding host that reproduces the original
-loop host fell only from 16,858 to 11,476 characters, while that host's total
-proof text grew from 61,642 to 70,002. The inlined or retained copies:
-
-| Consumer | Reproduces |
-|---|---|
-| `emLoopHost_round` | 100% of `loopHost_reject`; 71% of `loopHost_borrow_rewind`; 63% of `loopHost_borrow` |
-| `emLoopHost_prepare` | 99% of `loopHost_prepare`; 100% of `loopHost_input_rewind` |
-| `emLoopHost_anchor_return` | 95% of `loopHost_anchor_return` |
-| `emLoopHost_start` | 92% of `loopHost_start` |
-
-RB4's frame proofs also made the relocation consumers more alike in pairs.
-`emCall_bank_final` now reproduces 94% of `emCall_bank_initial` (83% before),
-and `emCall_finish_final` 79% of `emCall_finish_initial` (33% before).
-**Task 2 below finishes this work.**
-
 ## Tasks
 
-**Task 1 — promote the shared state-transport lemma (`Simulation.lean`).**
-Add the public `Turing.MultiTapeTM.runFrom_mapState_of_agreeOn`. This is the
-one RB4 implemented locally as Loop's private `emCall_state_run`, with its
-proof. The contract below is from RB4's report; the name is negotiable, but
-the contract is not:
+**Task 1 — promote the shared state-transport lemma (`Build/Embed.lean`).**
+Add the public `Turing.MultiTapeTM.runFrom_mapState_of_agreeOn`, inside
+Embed's `namespace Turing`, in a short new section before its closing
+`end Turing`. This is the lemma RB4 implemented as Loop's private
+`emCall_state_run`. The contract (from RB4's report) is not negotiable:
 
 ```lean
 {k : ℕ} {S H : Type} {x : List Bool}
@@ -98,29 +110,19 @@ the contract is not:
 host.runFrom (c.mapState emb) t = (src.runFrom c t).mapState emb
 ```
 
-Move the proof; **delete Loop's local copy**; Loop cites the public lemma.
-The proof uses no `Build/Embed` declaration, so `Simulation.lean` gains no
-import. This is the batch's **one sanctioned public addition**: a docstring
-with a proof sketch, flagged in `REPORT.md`. It rides the next retrofit
-epoch's audit.
+- Move the proof. **Delete Loop's local copy**, and make its four call sites
+  cite the public lemma.
+- Give it a docstring with a proof sketch, and add one bullet for it to
+  Embed's module docstring (*Main results*).
+- This is the batch's **one sanctioned public addition**. Flag it in
+  `REPORT.md`; it rides the next retrofit epoch's audit.
+- **Also in Primitives:** `splitEmbed_run` is the unguarded special case,
+  over all states with no guard. Its two uses map states along the constructor
+  `SplitBodyState.emit`, which is injective. Re-prove both by citing the
+  public lemma with `good := fun _ => True`, then delete `splitEmbed_run`. If
+  this genuinely fails, keep it unchanged and report why.
 
-**Task 2 — finish Loop (RB4's leftovers).** For each consumer in the table
-above, replace the inlined copy with a **citation** of the original
-`loopHost_*` lemma, transferred by Z5 through the existing `emLoopHost_agree`.
-Each transfer needs its strict-prefix guard: that the forwarding host stays
-outside body states along the original phase. **Prove that guard reasoning
-once**, as one private lemma quantified over the phase, rather than
-restating it in each consumer; restating it is what grew RB4's consumers.
-Then:
-
-- factor the shared frame argument of `emCall_bank_initial`/`_final` into one
-  lemma;
-- do the same for `emCall_finish_initial`/`_final`;
-- delete `emLoopHost_prepare`, `emLoopHost_anchor_return` and
-  `emLoopHost_start` if their uses reduce to citations, or keep them as
-  one-line corollaries.
-
-**Task 3 — Primitives.** For each concrete layout that uses the
+**Task 2 — Primitives.** For each concrete layout that uses the
 `emitterP2*` relocation family:
 
 - establish exact selector/range correspondence with an injective R1 tape
@@ -135,51 +137,79 @@ delete `emitterP2_segment`/`emitterP2_call_segment`. RB4 notes these
 explicitly mention the old Action/Cfg interface, including the mandatory
 first action when entry equals exit; your re-proof must cover that case.
 
-**Task 4 — Hardness (last).** The same for the four `clSlot*` declarations
+**Task 3 — Hardness (last).** The same for the four `clSlot*` declarations
 and the arbitrary-map `clMap_run`. There are **13 direct `clSlot_run`
 sites** plus the `clMap_run` consumers. Prove each site's concrete selector
 and state map injective, or route it through a concrete specialization.
 
-**Priority on exhaustion:** Tasks 1, 2, 3 and 4, in that order. A partial
+**Priority on exhaustion:** Tasks 1, 2 and 3, in that order. A partial
 delivery means fewer files finished, never an admission.
 
 ## Ground rules (binding)
 
 1. **Ownership**: exactly the four named files.
-2. **Public-surface freeze**: every public declaration of Loop, Primitives
-   and Hardness byte-identical, including signature, statement, docstring
-   and proof body. `Simulation.lean` gains only the Task-1 lemma.
+2. **Public-surface freeze**: every public declaration of Embed, Loop,
+   Primitives and Hardness byte-identical, including signature, statement,
+   docstring and proof body. Embed gains only the Task-1 lemma and its
+   module-docstring bullet.
 3. **Duplication governance: measured on text, not on declaration
    counts.** RB4 showed that a declaration count can be met by inlining a
    copy into its consumer. The **binding** measure is
-   `python3 -I audits/evidence/retrofit/copy-text-screen.py <repo-root>
-   <the four owned files>`, run before and after. It lists every like-kind
-   pair in which one declaration reproduces at least half of another's
-   extracted body, within a file and across the four files, together with
-   the total reproduced text. Before your change, Loop alone has 110 such
-   pairs (56,666 characters); many are the original loop host's own
-   internal repetition and are out of scope. The rules:
+
+   ```sh
+   python3 -I audits/evidence/retrofit/copy-text-screen.py <repo-root> \
+     TCSlib/Complexity/TuringMachine/Build/Embed.lean \
+     TCSlib/Complexity/TuringMachine/Build/Loop.lean \
+     TCSlib/Complexity/TuringMachine/Build/Primitives.lean \
+     TCSlib/Complexity/CookLevin/Hardness.lean
+   ```
+
+   Run it before and after; it takes about four minutes. It lists every
+   like-kind pair in which one declaration reproduces at least half of
+   another's extracted body, together with the total reproduced text. **At
+   the base: 873 declarations, 739 pairs, 180,218 characters.** Most pairs
+   are pre-existing internal repetition and are out of scope. The rules:
    - **No pair may appear after that was absent before.** Inlining a deleted
      copy into a consumer is such a pair, and it counts as keeping the copy.
-   - **Every RB4 leftover pair in the table above must disappear.**
+     The one sanctioned carry-over: a pair of `emCall_state_run` may
+     reappear under the promoted lemma's name. If `splitEmbed_run` is
+     deleted, its pair disappears instead.
+   - **For each finished file, every pair with one of its relocation
+     declarations on either side must disappear.** At the base, these pairs
+     are:
+
+     | Pair | Share |
+     |---|---|
+     | `emitterP2Cfg` ↔ `clSlotCfg` | 100% both ways |
+     | `emitterP2Action` ↔ `clSlotAction` | 100% both ways |
+     | `emitterP2_relocate_run` ↔ `clSlot_run` | 93% / 90% |
+     | `emitterP2_apply` ↔ `clSlot_apply` | 65% / 61% |
+     | `emitterP2_call_segment` → `emitterP2_segment`, `→ emitterP2_relocate_run` | 60%, 52% |
+     | `emitterP2_relocate_run` and `clSlot_run` → `emLoop_run_prefix`, `clCount_idle_run`, `clBank_run`, `emCall_right_run` | 84%, 78%, 78%, 69% each |
+
+   - **RB4's Loop leftovers are out of scope**: the `emLoopHost_*` pairs and
+     the `emCall_bank_*`/`emCall_finish_*` pairs must stay exactly as they
+     are.
    - **The total reproduced text must decrease.**
 
    Quote both outputs in `REPORT.md`. **Zero new copies**, and no local copy
    of anything, because Task 1 makes the shared lemma public.
-   - **Net private count must not increase in any file.** The targets are
-     Loop −1 or more (`emCall_state_run`, plus any Task-2 leftovers that
-     reduce to citations), Primitives −4 or more, and Hardness −4 or more.
-     The copy-text screen over all four files takes several minutes.
+   - **Net private count must not increase in any file.** At the base:
+     Embed 23 public / 16 private, Loop 8 / 191, Primitives 18 / 254, and
+     Hardness 5 / 544. The targets are:
+     - Embed: +1 public, 0 private;
+     - Loop: −1 private or more (`emCall_state_run`);
+     - Primitives: −4 or more (−5 with `splitEmbed_run`);
+     - Hardness: −4 or more.
    - Run `python3 -I audits/evidence/retrofit/r1-public-proof-screen.py
      <repo-root>` (about three minutes) before and after, and quote pass 4's
-     file totals: Loop 98, Primitives 173 at base. Report Hardness's four
-     relocation members directly, since Hardness is outside the script's
-     files.
+     file totals: Loop 98 and Primitives 173 at the base, and **neither may
+     increase**. Report Hardness's four relocation members directly, since
+     Hardness is outside the script's files.
 4. **Escalation** on any site where the concrete route genuinely cannot
    reproduce a needed fact: restore it, record it, and continue. Never
    weaken a surviving statement.
-5. **Imports**: none, except `Build.Embed` into `Hardness.lean` if it is
-   not already reachable. Flag it.
+5. **Imports: none.** Every owned file already reaches `Build/Embed.lean`.
 
 ## Proved infrastructure to cite (never copy)
 
@@ -189,6 +219,7 @@ delivery means fewer files finished, never an admission.
   `embedEmitTM_frame`, plus the selected-tape exports
   `embedEmitCfg_selected_tape` and `embedEmitCfg_selected_pos`
   (`Build/Embed.lean`).
+- **The Task-1 lemma**, once added.
 - **RB4's Loop sites as the worked template**: `emCallEmbeddedCfg`,
   `emCallPairEmbedding`, `emCallTripleEmbedding`, and the three rewritten
   `emCall_*` consumers.
@@ -196,9 +227,9 @@ delivery means fewer files finished, never an admission.
 ## Environment and verification
 
 The standard setup: the bootstrap order list plus the Build files; **never
-`lake build`**. Iterate per edit. The final checks, in order:
+`lake build`**. Iterate per edit. The final checks, in dependency order:
 
-1. `Simulation`;
+1. `Build/Embed`;
 2. `Build/Loop`;
 3. `Build/Primitives`;
 4. `Build/Catalog`;
@@ -206,28 +237,28 @@ The standard setup: the bootstrap order list plus the Build files; **never
 6. the `TuringMachine` facade;
 7. the `CookLevin` facade.
 
-All seven must have **zero errors**. All must have zero sorry warnings
-except `Build/Catalog`. Catalog's five §12.6 framed statements are being
-filled by a concurrent batch, outside your ownership, so they may appear as
-admissions; report what you observe, and cite none of them.
+All seven must have **zero errors and zero sorry warnings**. The maintainer's
+integration replays Embed's full downstream: 83 modules.
 
-**Axiom prints** for every public declaration of the four files (Loop 8,
-Primitives 18, Hardness 5, plus the new Simulation lemma). The pre-existing
+**Axiom prints** for every public declaration of the four files (Embed 24
+including the new lemma, Loop 8, Primitives 18, Hardness 5). The pre-existing
 ones must be byte-identical to baseline. None may carry `sorryAx`.
 
-Lint `TCSlib/Complexity/TuringMachine`, `TCSlib/Complexity/TuringMachine/Build`
-and `TCSlib/Complexity/CookLevin`: 0 FAIL each.
+Lint `TCSlib/Complexity/TuringMachine/Build` and `TCSlib/Complexity/CookLevin`:
+0 FAIL each.
 
 ## REPORT.md checklist
 
-- [ ] The four tasks' status, per file; the net line and private deltas
-      per file; census before/after; **the copy-text screen before/after**
-      (pair list and total), showing every RB4 leftover pair gone and no
-      new pair.
+- [ ] The base hash and the ancestor check.
+- [ ] The three tasks' status, per file; the net line and private deltas per
+      file; census before/after; **the copy-text screen before/after** (pair
+      list and total), showing every relocation pair of each finished file
+      gone and no new pair.
 - [ ] Every new or deleted declaration listed, including **every private
       whose statement changed**. RB4's report missed three such changes.
 - [ ] Every specialized or deleted generic consumer, with the concrete
-      layout that replaces it.
+      layout that replaces it; `splitEmbed_run`'s disposition.
+- [ ] The anchor-return counterexample, as evidence.
 - [ ] The final sweep tail (seven checks), the axiom prints, and the lint
       lines.
 - [ ] Diff touches only the four owned files.
@@ -240,7 +271,16 @@ and `TCSlib/Complexity/CookLevin`: 0 FAIL each.
 - **Aliased host slots**: R1 preserves the ambient frame at host tapes
   outside the index range. A concrete layout's correspondence must show its
   selector has **no** aliasing, never assume it.
+- **Body-control phases do not transfer by a non-body guard** (the first
+  dispatch's counterexample). The promoted lemma's `good` set is the source's
+  own states. Supply a guard that actually holds along the source run from
+  `t = 0`.
 - `Function.update_of_ne`; `dsimp only` after `cases` on control; deleting a
   declaration takes its docstring with it.
+- `⇑emb` for an embedding built from a constructor is definitionally the
+  constructor, but `rw` matches syntactically. Prefer `exact`/`change`, or
+  state the embedding once as a local definition.
 - Hardness's publics live in namespace `Complexity`, and Loop's and
-  Primitives' in `Turing.FinTM`; print axioms with the names as declared.
+  Primitives' in `Turing.FinTM`. Embed's new lemma is
+  `Turing.MultiTapeTM.runFrom_mapState_of_agreeOn`. Print axioms with the
+  names as declared.

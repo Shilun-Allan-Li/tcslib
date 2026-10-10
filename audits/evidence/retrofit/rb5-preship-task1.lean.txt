@@ -1,0 +1,52 @@
+import TCSlib.Complexity.TuringMachine.Build.Embed
+
+/-! RB5 pre-ship check: the Task-1 contract elaborates in `Build/Embed.lean`'s
+import context, with the proof moved verbatim from Loop's `emCall_state_run`. -/
+
+namespace Turing.MultiTapeTM
+
+theorem runFrom_mapState_of_agreeOn {k : ℕ} {S H : Type} {x : List Bool}
+    (src : MultiTapeTM k Bool S) (host : MultiTapeTM k Bool H)
+    (emb : S ↪ H) (good : S → Prop)
+    (hagree : ∀ q, good q → ∀ inp work,
+      host.tr (emb q) inp work = (src.tr q inp work).mapState emb)
+    (c : Cfg k Bool S x) (t : ℕ)
+    (hguard : ∀ u < t, ∀ q, (src.runFrom c u).state = some q → good q) :
+    host.runFrom (c.mapState emb) t = (src.runFrom c t).mapState emb := by
+  classical
+  letI : Nonempty S := ⟨src.q₀⟩
+  let reference : MultiTapeTM k Bool H :=
+    ⟨emb src.q₀, fun q inp work => (src.tr (Function.invFun emb q) inp work).mapState emb⟩
+  have step (d : Cfg k Bool S x) :
+      reference.step (d.mapState emb) = (src.step d).mapState emb := by
+    cases hs : d.state with
+    | none => simp [MultiTapeTM.step, Cfg.mapState, hs]
+    | some q =>
+      simp only [MultiTapeTM.step, Cfg.mapState, hs, Option.map_some]
+      change (reference.tr (emb q) d.inputSymbol d.workTapeSymbols).apply (d.mapState emb) = _
+      dsimp only [reference]
+      rw [Function.leftInverse_invFun emb.injective q]
+      exact Cfg.mapState_apply emb _ d
+  have transport (u : ℕ) :
+      reference.runFrom (c.mapState emb) u = (src.runFrom c u).mapState emb :=
+    MultiTapeTM.runFrom_comm_of_step (fun d => d.mapState emb) step c u
+  have agreement : reference.AgreeOn host {q | ∃ p, good p ∧ emb p = q} := by
+    intro q hq inp work
+    obtain ⟨p, hp, rfl⟩ := hq
+    dsimp only [reference]
+    rw [Function.leftInverse_invFun emb.injective p]
+    exact (hagree p hp inp work).symm
+  rw [MultiTapeTM.runFrom_eq_of_agreeOn agreement]
+  · exact transport t
+  · intro u hu q hq
+    rw [transport u] at hq
+    change ((src.runFrom c u).state.map emb) = some q at hq
+    obtain ⟨p, hp, he⟩ := Option.map_eq_some_iff.mp hq
+    exact ⟨p, hguard u hu p hp, he⟩
+
+end Turing.MultiTapeTM
+
+#print axioms Turing.MultiTapeTM.runFrom_mapState_of_agreeOn
+
+-- Result (2026-10-10, scripts/lean_check_tree.sh, module placed at Build/RB5PreShip): exit 0, no errors;
+-- axioms: [propext, Classical.choice, Quot.sound]
