@@ -28,6 +28,15 @@ majority-vote error bound instantiating [AB09, Thm 7.10]'s calculation.
 Wrapping these into statements about `BPP`-style verifier classes is Tier B
 work and lives elsewhere.
 
+## Main definitions
+
+* `Randomized.iidBernoulli` — the joint distribution of `k` independent
+  Bernoulli(`p`) trials, as the product measure on `Fin k → Bool`.
+* `Randomized.successCount` — the number of successes among the `k` trials,
+  as a real number.
+* `Randomized.coordIndicator` — the indicator of success in the `i`-th
+  trial, as a real random variable.
+
 ## Main results
 
 * `Randomized.iid_bernoulli_avg_concentration` — [AB09, Cor 7.11], with a
@@ -88,6 +97,8 @@ instance isProbabilityMeasure_iidBernoulli (k : ℕ) (p : ℝ≥0) (hp : p ≤ 1
 def coordIndicator (k : ℕ) (i : Fin k) (ω : Fin k → Bool) : ℝ :=
   if ω i then 1 else 0
 
+/-- Each trial indicator `coordIndicator k i` is measurable (a discrete
+function of the `i`-th coordinate of the product space). -/
 theorem measurable_coordIndicator {k : ℕ} (i : Fin k) :
     Measurable (coordIndicator k i) := by
   unfold coordIndicator
@@ -115,6 +126,8 @@ theorem integral_coordIndicator {p : ℝ≥0} (hp : p ≤ 1) {k : ℕ} (i : Fin 
         simp only [← Bool.cond_eq_ite]
         exact PMF.bernoulli_expectation hp
 
+/-- Each trial indicator is integrable under the i.i.d. Bernoulli measure:
+it is measurable and takes values in `[0, 1]`. -/
 theorem integrable_coordIndicator {p : ℝ≥0} (hp : p ≤ 1) {k : ℕ} (i : Fin k) :
     Integrable (coordIndicator k i) (iidBernoulli k p hp) :=
   Integrable.of_mem_Icc 0 1 (measurable_coordIndicator i).aemeasurable
@@ -131,7 +144,14 @@ theorem iIndepFun_coordIndicator {p : ℝ≥0} (hp : p ≤ 1) (k : ℕ) :
     fun _ => Measurable.of_discrete.aemeasurable
 
 /-- Hoeffding's lemma for a centered trial: `Xᵢ − p` is sub-Gaussian with
-parameter `(1/2)² = 1/4`. -/
+parameter `(1/2)² = 1/4`.
+
+**Proof sketch.** Mathlib's Hoeffding lemma
+`hasSubgaussianMGF_of_mem_Icc_of_integral_eq_zero`, applied with
+`[a, b] = [−p, 1 − p]`: the centered indicator lies in that interval (case
+split on the trial's outcome, `linarith`) and has integral zero by
+`integral_coordIndicator`.  The parameter it produces, `(‖b − a‖₊ / 2)²`,
+equals `(1/2)²` since `b − a = 1`. -/
 theorem hasSubgaussianMGF_coordIndicator_sub {p : ℝ≥0} (hp : p ≤ 1) {k : ℕ}
     (i : Fin k) :
     ProbabilityTheory.HasSubgaussianMGF
@@ -177,7 +197,14 @@ theorem hasSubgaussianMGF_sub_coordIndicator {p : ℝ≥0} (hp : p ≤ 1) {k : �
 /-- **One-sided Hoeffding bound for the trials**: for any family `Y` of
 independent `(1/4)`-sub-Gaussian functions of the trials (in practice the
 centered indicators `±(Xᵢ − p)`),
-`Pr[Σᵢ Yᵢ ≥ tk] ≤ e^{−2t²k}`. -/
+`Pr[Σᵢ Yᵢ ≥ tk] ≤ e^{−2t²k}`.
+
+**Proof sketch.** Mathlib's sub-Gaussian concentration bound
+`HasSubgaussianMGF.measure_sum_ge_le_of_iIndepFun`, with parameter `(1/2)²`
+for each of the `k` summands and threshold `ε = t·k`, gives
+`Pr[Σᵢ Yᵢ ≥ tk] ≤ e^{−(tk)²/(2·Σᵢ 1/4)}`.  Move the `ℝ≥0∞` inequality to
+`ℝ` via `ENNReal.le_ofReal_iff_toReal_le`; since `Σᵢ 1/4 = k/4`, the
+exponent simplifies to `−2t²k` (`field_simp`/`ring`). -/
 theorem iidBernoulli_tail_le {p : ℝ≥0} (hp : p ≤ 1) {k : ℕ} (hk : 0 < k)
     {Y : Fin k → (Fin k → Bool) → ℝ}
     (hYind : ProbabilityTheory.iIndepFun Y (iidBernoulli k p hp))

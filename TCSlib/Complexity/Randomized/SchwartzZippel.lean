@@ -22,6 +22,10 @@ Mathlib already proves the core inequality
 sharp "count the zeros" form); this file only restates it in the book's form,
 so the lemma is *reused*, not re-proved.
 
+## Main definitions
+
+None — this module only proves theorems about existing definitions.
+
 ## Main results
 
 * `Randomized.schwartz_zippel` — [AB09, Lem 7.5].
