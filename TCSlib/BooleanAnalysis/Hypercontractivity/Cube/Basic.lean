@@ -149,6 +149,18 @@ reverse-hypercontractivity mean can reuse it without changing its boundary conve
 noncomputable abbrev cubeLpNorm {n : ℕ} (p : ℝ) (f : BooleanFunc n) : ℝ :=
   (expect (fun x => |f x| ^ p)) ^ (1 / p)
 
+/-- The second power-mean norm on the uniform cube equals its `L²` norm.
+[OD14, §9.1, second norm definition]
+
+**Proof sketch.** The absolute square equals the ordinary square, so the second
+absolute moment equals the inner product of the function with itself. Taking
+the half power equals taking the square root. -/
+lemma cubeLpNorm_two {n : ℕ} (f : BooleanFunc n) :
+    cubeLpNorm 2 f = l2Norm f := (by
+  simp only [cubeLpNorm, Real.rpow_two, pow_two, abs_mul_abs_self,
+    ← Real.sqrt_eq_rpow, l2Norm, innerProduct]
+)
+
 /-- For a positive exponent `q`, raising the cube `q`-moment mean to `q`
 recovers the expected `q`th power of the absolute value.
 [OD14, §9.5, norm definition]

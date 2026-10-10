@@ -7,6 +7,7 @@ Authors: Owen McGinty
 import TCSlib.BooleanAnalysis.Hypercontractivity.Products.Applications
 import TCSlib.BooleanAnalysis.Hypercontractivity.Products.Basic
 import TCSlib.BooleanAnalysis.Hypercontractivity.Products.General
+import TCSlib.BooleanAnalysis.Hypercontractivity.Products.Norms
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -30,6 +31,7 @@ This facade exports the complete development in its folder.
 * `Applications`: Product-space spectral and low-degree applications.
 * `Basic`: Finite-product measures, norms, and coordinate noise.
 * `General`: Product hypercontractivity statements.
+* `Norms`: Finite weighted Hölder inequality and self-adjoint norm duality.
 
 ## References
 
