@@ -181,6 +181,9 @@ formats, with statements unchanged, under the user's standing preference.
 It awaits the user's explicit confirmation; the A-S2 fill gate cannot close
 over it until then.
 
+**Answered (user, 2026-10-10): acknowledged**, and added to the 12.2c
+tasklist (`AroraBarakChapters3-4Plan.md` §4d, item 8) as an explicit task.
+
 ---
 
 ## 2. Campaign work queued or on hold

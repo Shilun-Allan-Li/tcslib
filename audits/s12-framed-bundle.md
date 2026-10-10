@@ -1,3 +1,3635 @@
+# External audit pack — §12.6 framed catalog contracts (statement gate)
+
+**Surface under audit:** five new sorried theorem statements in
+`TCSlib/Complexity/TuringMachine/Build/Catalog.lean`, in the section "Framed
+contracts (design §12.6)" just after the R3 rows:
+`transferTM_run_ofCfg`, `copyTM_run_ofCfg`, `clearTM_run_ofCfg`,
+`incrementTM_run_succ_ofCfg`, `incrementTM_run_overflow_ofCfg`. No machine is
+defined or changed; the five machines (`transferTM`, `copyTM`, `clearTM`,
+`incrementTM`, and their phase types) are the gate-closed §12 R3 definitions.
+Record findings in `audits/s12-framed-findings.md`. **The gate closes on zero
+blockers and zero majors**, which commissions the fill batch.
+
+## Why these exist
+
+The zone shift machines (`Build/Zone.lean`, `exists_zoneShiftInTM` and
+`exists_zoneShiftOutTM`) have exactly two tapes: the zoned data tape and a
+scratch tape that starts and ends as the unary level word. Their staging,
+cleanup and binary navigation counter all run at **displaced heads beside
+unrelated data**. The R3 rows are stated only from `Cfg.ofWords`, with heads at
+the origin and globally buffered tapes, so none of them applies there.
+
+The fill agent for those rows (ZF-A2, `audits/zone-agent-reports/f1-A2-REPORT.md`,
+attached) stopped on this gap rather than copying the catalog's private trace. It
+supplied a kernel-checked boundary regression: a bare transfer from a displaced
+head on a valid carrier erases a cell belonging to the next zone. It also
+supplied the typechecked type of the transfer contract it needed. Both are
+attached. The statement under audit is that type, re-expressed in place, plus
+the four siblings the same consumer needs. The design rationale is
+`machine-library-design.md` §12.6 (attached).
+
+## The common shape (verify for each)
+
+Each contract quantifies over an **arbitrary** configuration `d` in the
+routine's start phase. Its only hypothesis about the tapes is about the touched
+word: for every relative offset `p` with `-1 ≤ p ≤ |w|`, the cell at
+`pos + p` equals `bufferTape w p`. That is, the word sits at the head, with a
+blank on each side. It then asserts three things.
+
+1. **The exact configuration at the exact time** (`2|w| + 2`; for a successful
+   increment, `2p + 2` where `p = (w.takeWhile id).length`). It is `d`
+   with the state moved to the exit anchor and the word intervals rewritten.
+   Every other cell, both head positions, the native input position and the
+   output are unchanged.
+2. **No earlier visit** to the exit anchor.
+3. **Trajectory**: up to the exit, each touched head stays in
+   `[pos − 1, pos + |w|]` (for a successful increment, `[pos − 1, pos + p]`),
+   and every other head is fixed.
+
+## Specific questions
+
+1. **Truth at every boundary.** Check each statement at `w = []`; at an
+   increment with `p = 0` and with `p = |w| − 1`; at overflow with `w = []`
+   and `w` all `true`; and at heads displaced to negative coordinates.
+   Previous gates in this campaign were lost on exactly such side conditions,
+   so attempt at least three adversarial instantiations per statement.
+2. **Hypotheses: necessary and sufficient.** Is the left delimiter at `-1`
+   needed in each case? The return pass reads leftward until a blank. Is the
+   right delimiter at `|w|` needed in each case? For a successful increment it
+   is never read; requiring it is deliberately stronger, and consumers
+   delimit anyway. Say whether this costs any consumer anything. Is anything
+   assumed about the **destination** of transfer and copy? It should not be,
+   since neither machine branches on the destination read. Check this against
+   the transition tables.
+3. **The finish configurations.** Are the rewritten intervals exactly right?
+   For example, the transfer's destination interval holds
+   `bufferTape w (q − pos_dst)` on `[pos_dst, pos_dst + |w|)`, and its
+   delimiter cells are visited but never written. Does `incFixed` preserve
+   width, so that the successful increment's interval `[pos, pos + |w|)`
+   holding `v` is consistent?
+4. **Specialization.** Does each framed contract imply its canonical R3 row
+   (`transferTM_run`, `copyTM_run`, `clearTM_run`, `incrementTM_run_succ`,
+   `incrementTM_run_overflow`) at `d := Cfg.ofWords …`? The fill brief will
+   require the canonical rows to be re-derived from the framed ones, so this
+   must hold.
+5. **Fitness for the consumer.** Read the zone row statements in the attached
+   `Build/Zone.lean`. Can a two-tape controller establish the delimited
+   hypothesis, by saving the boundary cells in finite control, installing
+   blanks, running the routine, and restoring them? And does the
+   carry-sensitive `2p + 2` suffice for the audited geometric navigation
+   ledger, `Σ_{r=1}^{2^i}(1 + v₂(r)) < 2^(i+1)`? Name any missing contract.
+
+## Repository-side attestations (verify or challenge)
+
+- **Elaboration.** `Build/Catalog` elaborates via `scripts/lean_check_tree.sh`,
+  with exactly the five new `sorry` warnings. Everything downstream of
+  Catalog replays with zero errors. Lint reports 0 FAIL.
+- **Executed check.** The attached `audits/evidence/s12-framed/` harness
+  evaluates the actual machines on concrete configurations with displaced
+  heads, a nonblank outer frame and the boundary words. It compares the exact
+  final configuration (both tapes over 30 cells, heads, input position and
+  output), the no-earlier-exit clause and the trajectory bounds against each
+  statement: 63 cases, all pass. A wrong-time negative control fails. This is
+  evidence, not proof.
+
+## Brief for the auditor
+
+Audit the five statements, not tactic scripts. Hunt infidelity, vacuity, and
+missing or excess hypotheses. Blind-restate each statement before reading its
+docstring. Report in the standard findings table (blocker / major / minor /
+note). Justify an empty table with your restatements and adversarial
+instantiations.
+
+# ===== ATTACHMENTS =====
+
+
+## ===== audits/TEMPLATE.md =====
+
+```
+# External audit pack — TEMPLATE
+
+Copy this file to `audits/phaseN-pack.md`, fill every `⟨…⟩`, and hand the result (plus
+the listed attachments) to an external LLM from a different vendor, in a fresh context
+with no access to this repository's development history. Record the findings in
+`audits/phaseN-findings.md`. A phase's findings must be addressed (fixed, or explicitly
+waived with a reason) before the next phase begins.
+
+---
+
+## Brief for the auditor
+
+You are auditing the **trusted surface** of a Lean 4 formalization: definitions, theorem
+statements, and remaining `sorry`s. The proofs that exist are machine-checked — do not
+review tactic scripts for correctness. The failure modes you are hunting are:
+
+1. **Infidelity** — a definition that does not mean what the cited source means.
+2. **Trivialization** — a definition or statement satisfiable for degenerate reasons
+   (vacuous hypotheses, a class that collapses, an encoding that makes a theorem empty).
+3. **Unprovability** — a `sorry`d statement that is false as stated, or whose stated
+   form is subtly weaker/stronger than intended (boundary cases: empty input, `n = 0`,
+   `k = 0` tapes, constant absorption).
+4. **Missing hypotheses** — especially finiteness, positivity, and well-formedness side
+   conditions the informal source leaves implicit.
+5. **Debt** — wholesale duplication of existing proved material (private copies of
+   another file's declarations, re-derivations of registry routines), even when
+   disclosed and mechanically forced by file ownership. Report it at **major** with
+   the proposed fix "human acknowledgment required": it does not block the gate on
+   soundness, but the gate must not close without the human maintainer explicitly
+   accepting the debt and naming its scheduled resolution. Screen for it
+   cumulatively — verify the pack's duplication ledger (per-file copied-material
+   totals) rather than assessing each copy in isolation.
+
+   **Accounting inside an acknowledged family is a minor.** Once the human
+   maintainer has acknowledged a debt family and named its resolution, a later
+   correction to that family's *accounting* is reported at **minor**, not major.
+   Examples are a missed member, a miscounted span, or an imprecise description of
+   the screen. Such a correction does not change what was approved. It is a
+   **major** again only if it changes the approval itself: the correction pushes a
+   further file past the one-fifth threshold, reveals copies outside the
+   acknowledged family's named scope, or shows the named resolution cannot work.
+
+For **every definition** in scope: restate it in your own mathematical English *without
+looking at the docstring first*, then compare your restatement against the cited source
+location, and report any daylight. For **every `sorry`d theorem**: argue in 2-5 sentences
+why it is true as literally stated, or exhibit the problem (ideally a concrete
+counterexample or degenerate instance). Attempt at least ⟨3⟩ *adversarial
+instantiations* — concrete pathological objects plugged into the definitions to check
+they behave as the theory intends. Propose any machine-checkable sanity theorems you
+believe are missing.
+
+Do not give a blanket approval. Your deliverable is the findings table; an empty table
+must be accompanied by the per-definition restatements that justify it.
+
+## Scope
+
+| Item | Where |
+|---|---|
+| Lean files under audit | ⟨list of files, with line ranges if partial⟩ |
+| Source text | ⟨book/paper, edition, page/theorem numbers — auditor must have it at hand⟩ |
+| Plan/context documents | `AroraBarakChapter1Plan.md`, `policy.md` §2-3 ⟨adjust⟩ |
+| Out of scope | tactic proofs; vendored files' upstream design ⟨adjust⟩ |
+
+## Known deviations (declared by the authors — verify they are benign, flag any others)
+
+⟨Bulleted list: every deviation the docstrings declare, one line each.⟩
+
+## Specific questions for this phase
+
+⟨Numbered list of the doubts the authors actually have. Be concrete.⟩
+
+## Findings format (auditor fills)
+
+| # | Severity | File · declaration | Claim | Evidence / counterexample | Proposed fix |
+|---|---|---|---|---|---|
+| 1 | blocker / major / minor / note | | | | |
+
+Severity guide: **blocker** = a downstream phase would build on a wrong statement;
+**major** = statement is fixable but materially misleading as is, **or** accumulated
+debt (failure mode 5) that the gate may not close over without explicit human
+acknowledgment (accounting corrections inside an already-acknowledged family are
+minors; see failure mode 5); **minor** = edge case or naming/attribution defect; **note** =
+observation, no change required.
+```
+
+## ===== machine-library-design.md =====
+
+```
+# Machine-construction library — design document
+
+Status: **FROZEN 2026-10-03** — the open decisions in §9 were resolved by the
+user (resolutions recorded inline there). No code exists yet; every Lean
+snippet below is an interface *shape*, not a final signature — final
+signatures are fixed at spec time and audited.
+
+Evidence base: the epoch-2 checkpoint integration (decision-log row,
+2026-10-03). All five open fill frontiers are concrete-machine construction;
+147 private helpers were delivered in one epoch, dominated by re-built
+copiers, scanners, counters, capture wrappers, and phase glue. The
+capture/silence wrapper alone now has four private incarnations
+(`universalCaptureTM`, `enumCaptureTM`, `acceptTM`, and the private engine
+inside `Composition.lean`'s `exists_cond`).
+
+Prior-art disposition (2026-10-03 discussion): Mathlib's TM2 framework is a
+stack-machine model whose poly-time layer contains one machine (the identity)
+and no composition theorem; its inter-model compilations are semantics-only.
+Decision: build on our own `FinTM` multi-tape model, which owns all the
+quantitative assets; adopt the *design idiom* of Mathlib's TM1 statement
+language (labelled structured control) for how named machines are written,
+import nothing.
+
+## 1. Goals and non-goals
+
+**Goal.** Make "build a finite machine with a proved polynomial time bound"
+a library-call activity rather than a bespoke construction, at the
+granularity the fill briefs actually need: parse, measure, evaluate a
+polynomial, search, split, compare, copy, emit, run a subroutine silently,
+branch, loop.
+
+**Non-goals.**
+- No deep-embedded language, no verified compiler, no cost-sound surface
+  syntax. (Mature end state; not justified by the remaining campaign.)
+- No model change, no Mathlib TM2 dependency, no space bounds (the design
+  must not *obstruct* a later space story, but proves nothing about space).
+- No retroactive migration of audited epoch-1/2 proofs (see §8).
+
+## 2. Architecture
+
+Three layers over the existing run calculus:
+
+```
+Layer 2  CONTROL      timed cond · loop · capture/silence · halt-redirect
+Layer 1  PRIMITIVES   named machines with ComputesFunInTime specs, ABI-compliant
+Layer 0  (exists)     run calculus · bufferedCompTM/computesFunInTime_comp ·
+                      bufferTape/virtualMove relocation · DecidesInTime
+Consumer EXISTENTIAL  PolyTimeComputable / ∈ P corollaries only
+```
+
+**Design rule (the bridge lesson).** Constructive layers export *named*
+`def` machines plus spec theorems; existential packaging (`∃ M c, …`)
+appears only at the consumer layer. Quantifier shape is where audits bite —
+a consumer may never need to bound an existential witness.
+
+**Composition stance.** The default sequencing mechanism is *whole-machine*
+composition via the public `bufferedCompTM` (already proved, `c = 2`
+overhead): chain function machines, don't hand-build phase transitions. The
+epoch-2 agents could not do this only because (i) the component machines
+didn't exist, (ii) branching has no timed combinator, (iii) loops have no
+combinator at all. The library supplies exactly (i)–(iii) and otherwise
+stops people from proving phase compositions by hand.
+
+## 3. The calling convention (ABI)
+
+The model already gives whole machines a clean boundary: read-only input
+tape, `k` work tapes, write-only (append-only) output tape, start at
+`initCfg` with blank work tapes. The ABI therefore governs the only places
+where configurations cross a seam *inside* a construction: round boundaries
+of the loop combinator and entry/exit of wrapped subroutines.
+
+**Canonical configuration** (the single formal notion, defined once):
+
+- designated *state tapes* hold the round data (specified contents, heads at
+  origin);
+- all *scratch tapes* are blank with heads at origin;
+- the output is empty (nothing emitted yet);
+- the control state is a designated live anchor.
+
+Loop bodies and wrappers prove "canonical-in ⟹ canonical-out" lemmas; the
+combinators own everything else (startup from `initCfg`, final emission,
+fuel exhaustion). Proposed discipline for scratch: **the body restores its
+own scratch to blank as part of its contract** (it knows its own footprint,
+so the proof is its own invariant run backwards), supported by a generic
+`clearTM` primitive that sweeps a length-`m` region in `2m + 2` steps.
+Rationale: 2A's killer was a *generic* reset proof; a body-specific restore
+is mechanical. The alternative (combinator-driven clearing bounded by the
+visited-region lemma in `Sweep.lean`) is recorded as the fallback if
+body-restore proves heavier than expected. **[Open decision 9.2]**
+
+**Multi-argument functions.** The ABI for arity > 1 is the existing
+`pairEncode` idiom; the codec machines (§4) make it mechanical. No tuple
+tapes, no new conventions.
+
+**Deciders.** A decider is a function machine emitting the singleton
+indicator (`[true]`/`[false]`), i.e. `DecidesInTime` as it already exists.
+The decision layer (§6) builds AND/OR/NOT/guard over that, so `∈ P` goals
+decompose without touching configurations.
+
+## 4. Layer 1 — the primitive catalog
+
+Rule of admission: a primitive enters the catalog only with **two named
+customers** among the open frontiers (2A controller, 2B `choiceVerifier` +
+reverse direction, 2C two verifier memberships, 2D `D-MEM`/`D-WRAP`/`D-EMIT`)
+and the E3/E4 briefs. Current cut — 12 entries:
+
+| # | Primitive | Spec (shape) | Source | Customers |
+|---|---|---|---|---|
+| P1 | `copyTM` | id in `n + 1` | exists (`Composition.lean`) | everywhere |
+| P2 | `constTM w` | `fun _ => w` in `\|w\| + 1` | exists | 2D D-EMIT, E4 |
+| P3 | `prefixTM w` | `fun x => w ++ x` in `\|w\| + \|x\| + 1` | harvest 2C (promotion already requested) | 2C, 2D D-EMIT |
+| P4 | `lengthTM` | `fun x => bits \|x\|` (binary length) | new (2D's counter composition is the engine) | 2B, 2C, 2D D-MEM |
+| P5 | `polyEvalTM C c` | `fun x => bits (C·(\|x\|+1)^c)` and unary variant | harvest 2D (`polyUnaryTM` + counter) | 2A startup, 2B, 2C |
+| P6 | `pairSplitTM` / `pairJoinTM` | the `pairEncode` codec, both directions | new over existing grammar lemmas (2C/2D parsers are drafts) | 2C, 2D D-MEM/D-WRAP, E4 |
+| P7 | `replicateTM` | `fun x => List.replicate (f \|x\|) true` for emitted-count `f` | harvest 2D emission chains | 2D D-EMIT, E4 ledger |
+| P8 | `compareTM` | equality / `≤` test of two encoded numbers, singleton verdict | new (small) | 2B, 2C bound re-check |
+| P9 | `scanLastTM` | split at last `true` (strip discipline), failure verdict | harvest 2C (`stripCertificate` semantics are proved; machine is new) | 2C, 2B split search |
+| P10 | `searchTM` | least `i ≤ n` with `p i`, for `p` decided by a supplied decider on encoded `i` | new (uses W1 + loop L) | 2B split, 2C split |
+| P11 | `incrementTM` | fixed-width binary increment + overflow flag + rewind | harvest 2A (`enumCarryTM`) | 2A, E3 padding counters, ch3 |
+| P12 | `clearTM` | blank a length-`m` region, `2m + 2` steps | new (trivial) | loop bodies, 2A reset |
+
+Each entry ships as: named `def` + one `ComputesFunInTime`/`DecidesInTime`
+spec + an ABI-compliance lemma (canonical-out where applicable). Internal
+idiom: TM1-style labelled control (a small inductive of labelled phases with
+a `step` match), which is what 2D's `PolyControl` was reaching for.
+
+Harvesting means **reimplementation against the ABI with the original proof
+as the template** — the audited originals stay untouched in place; see §8.
+
+## 5. Layer 2 — control
+
+**W1. `captureTM` (silence/capture wrapper).** Given machine `D`: run `D`
+with every emission suppressed and recorded — core variant records the full
+output on a dedicated capture tape; register corollary extracts the first
+bit for deciders. Spec: configuration-preserving lockstep, emission on the
+halting transition included (the trap every private build re-proved), return
+within `T_D + 1` into a live dispatch state, physical output empty.
+Consolidates all four private incarnations; the obligations are already
+enumerated by the phase-1 and phase-4 audit tables. **[Open decision 9.3 on
+variants]**
+
+**W2. `haltRedirectTM`.** 2C's `acceptTM` pattern as a named transformation:
+halt iff captured bit is `b`, else enter the one-state live loop (with its
+two-line non-halting lemma). Customers: 2A overflow wiring, HALT-style
+control modifications, ch3 diagonalization.
+
+**W3. `condTM` (timed branch).** The timed version of `exists_cond`: given
+decider `D` (time `T_D`) and machines `M₁, M₂` (times `T₁, T₂`), a named
+machine computing `if p x then f₁ x else f₂ x` within
+`c · (T_D + max T₁ T₂ + overhead)`. Engine: W1 + the existing private
+capture machinery of `Composition.lean`, made public and timed. Customers:
+2C/2D reject-on-malformed guards, every parser.
+
+**L. `loopTM` (the centerpiece — bounded loop with tape-resident state).**
+Interface factored from 2A's admitted `enumMachine_contracts`, which is the
+validated draft:
+
+```
+-- SHAPE ONLY. Final quantifiers to be fixed at spec time, audited.
+structure LoopSpec where
+  (round data σ, encoded on the state tapes; canonical config family cfg : σ → Cfg)
+  (body B; fuel R : ℕ → ℕ; per-round budget T : ℕ → ℕ)
+  contract : ∀ s, canonical s →
+    within T n, B either EMITS a final verdict and halts,
+    or reaches canonical (next s)      -- accept-or-advance
+  exhaustion : after R n rounds without emission, halted rejection
+
+theorem loopTM_decides …  :
+  (loop machine) decides/computes … within
+    startup + R n · (T n + c) + c'
+```
+
+The combinator owns: startup from `initCfg` (via an init machine composed
+with `bufferedCompTM`), the fuel countdown (P11 as the engine), the final
+rejection, and the summation. The body owns: accept-or-advance and its own
+scratch restore (§3). 2A's proved `enumLoop_run` is the summation lemma's
+template; `enumMachine_contracts` then becomes a *library instantiation*
+rather than a bespoke admission. Customers: 2A (directly), P10, 2B reverse
+direction, E3 padding, E4 stage loops, ch3 clocked simulation.
+
+**Explicitly deferred from layer 2:** a general tape-embedding transformation
+(run a `k`-tape machine on a tape subset of a larger machine). The wrappers
+and the loop internally preserve "retained tapes" the way 2A/2B already do;
+if a third site needs the general form, it gets designed then — not
+speculatively now.
+
+## 6. Decision layer (consumer-facing)
+
+Over `DecidesInTime`: negation, conjunction/disjunction (W1-composition),
+`guard` (W3 with constant-reject branch), `decideOfFun` (function machine +
+P8-style final test), and the `∈ P` glue through the existing
+`mem_P_of_dtime_le`/`mem_P_iff`. Everything here is existential and cheap;
+its purpose is that goals like `pairedVerifier C c V ∈ P` decompose into
+catalog calls plus the semantic lemmas the agents already proved.
+
+## 7. Placement, naming, policy
+
+- New subdirectory `TCSlib/Complexity/TuringMachine/Build/` (precedent:
+  `Robustness/`): `Convention.lean` (ABI notions + canonical-config lemmas),
+  `Primitives.lean` (P1–P12; split if the 600-line target demands),
+  `Wrappers.lean` (W1–W3), `Loop.lean` (L). Namespace `Turing.FinTM`
+  throughout (no new namespace).
+- Order list: insert after `Simulation`/`Composition`/`Sweep`, before
+  `Encoding` — the library depends only on the run calculus and the public
+  relocation/composition machinery; nothing Chapter-1-headline depends on it
+  (no import cycles, Chapter-1 statements untouched).
+- Attribution: standard constructions, tagged [AB09 §1.2–1.4] where the text
+  has them (claim-by-claim as policy requires); module docstring records the
+  TM1 statement-language idiom as a design reference (Mathlib) alongside the
+  Asperti–Ricciotti and Forster–Kunze precedents.
+- This is frozen Chapter-1 surface growth → it gets its own audit (§9.4 for
+  the vehicle). Spec statements land sorried first (statement-phase
+  discipline), the pack leads with the quantifier shapes (ABI, W1 lockstep,
+  L's contract) since that is where this design can be wrong.
+
+## 8. Harvest and migration policy
+
+- Harvest = reimplement against the ABI using the original proof as
+  template. Originals (2A/2B/2C/2D privates, audited epoch-1 material) stay
+  byte-identical; no re-audit of closed work.
+- Deduplication (retiring privates in favor of library calls) is an **E5
+  closure task**, recorded in the backlog, not done opportunistically.
+- 2C's pending shared-lemma requests (`prefixTM`/`fixedPair`) are subsumed
+  by P3 + P6 and get their disposition in this design's audit round.
+
+## 9. Decisions (resolved by the user, 2026-10-03)
+
+1. **Primitive cut** (§4): P1–P12 confirmed as listed.
+2. **Scratch discipline** (§3): body-restores-scratch, with
+   combinator-driven clearing via the visited-region bound recorded as the
+   fallback if body-restore proves heavier than expected.
+3. **Capture variants** (§5 W1): tape-capture core + register corollary.
+4. **Audit vehicle**: one shared infrastructure round carrying the library
+   spec layer *and* the Chapter-1 bridge export.
+5. **Build sequencing**: campaign structure — maintainer writes the spec
+   layer serially (quantifier-sensitive), shared audit round, then fills
+   dispatched as harvest-adaptation batches, the loop fill flagged for
+   continuation budget.
+6. **Naming**: `Build/` and the P/W/L working names stand; any rename
+   happens before the spec audit (renames after it are drift).
+
+## 9a. Spec-phase refinements (2026-10-03, recorded when the spec layer landed)
+
+The spec layer (`TuringMachine/Build/{Convention,Wrappers,Loop,Primitives}.lean`)
+realizes the catalog with these refinements against §4–§5, none touching the
+frozen §9 decisions:
+
+- **Seam notion**: `Cfg.ofWords` is a *constructor* (anchor state, input head
+  at 1, word-per-tape from the origin via `bufferTape`, heads at origin,
+  empty output) and seam contracts are `runFrom`-equations against it —
+  rewrite-friendly, and `initCfg` is provably the empty-words seam.
+- **Packaging**: contracts are existential in the house idiom of
+  `Composition.lean`; fills implement named private machines and close them.
+  The §2 named-machine rule is realized as quantifier discipline inside each
+  statement (machine fixed after its parameters, before all inputs — the
+  bridge lesson), not as global naming.
+- **P6** is realized as `pairEncodeFixed` (provably an instance of P3 at the
+  doubled-word-plus-separator prefix) plus threaded extractors
+  `pairFst`/`pairSnd`/`pairValid`.
+- **P7** is subsumed by P5's unary clause, whose instances are what the
+  emission customers consume. **P8** is realized in threaded form
+  (`pairLenCheck` on `pairEncode a b`, so the original input travels with
+  the payload and the audited original-bound re-check is against it).
+  **P12** has no standalone contract: clearing is intra-machine, part of the
+  loop fill's toolkit.
+- **W1** is host-parametric (`captureAction`/`captureCfg` transformers + one
+  lockstep equation guarded by source liveness), so consumers embed the
+  source into their own controller state type; the register corollary is
+  derived at fill time. **W2** is the closed `redirectTM` with an
+  `Option Bool` last-emission register (`none` = no emission yet; a source
+  with empty output never halts the redirect).
+- The lint-mandated construction sketches surfaced a real obligation worth
+  recording: append-only output means every parser/extractor must **buffer
+  until validity is known** — the output-silence discipline reappears at
+  the primitive level (extractors, strip, increment's overflow detection).
+
+## 9b. Round-2 repairs (2026-10-03, after `audits/ch1-infra-findings.md`)
+
+The round-1 audit refuted `exists_loopTM` (blocker: a zero-step identity
+"advance" made the hypotheses vacuous while the conclusion violated the
+input-head information bound; major: quantifying rounds over *all* state
+words at budget `T |x|` excluded the intended customers) and rejected
+disposition D5 (missing dynamic assembly and result-bearing search). The
+repairs, all in the spec layer:
+
+**The loop contract, redesigned.** Rounds take positive time (`0 < t`);
+rounds are required only on words satisfying an input-indexed
+admissibility invariant `Inv x s`, established at `s0` and preserved by
+the step; and `stepF`/`acceptF`/payload take the input explicitly (the
+enumerator's acceptance runs the verifier on `x ++ s`). Two forms:
+`exists_loopTM` (Boolean verdict) and the new `exists_loopFindTM` (first
+accepting orbit point's payload; `[]` on exhaustion). The countdown sketch
+debits from the **second** anchor entry, so `R = 0` still checks `s0 x`
+(round-1 finding 4), and the amortized-borrow budget argument was
+validated by the auditor.
+
+**Instantiation tables** (the customer-coverage evidence round 1 asked
+for; `m n := C·(n+1)^c` abbreviates the certificate-width polynomial):
+
+| Parameter | Enumerator (2A's `enumMachine_contracts`) | Split search (P10) |
+|---|---|---|
+| `Inv x s` | `s.length = m x.length` | `s.length ≤ x.length + 1` |
+| `s0 x` | `List.replicate (m x.length) false` | `[]` |
+| `stepF x s` | `(incFixed s).getD s` (stall on overflow keeps the width) | `if s.length ≤ x.length then s ++ [true] else s` (stall keeps `Inv` step-closed) |
+| `acceptF x s` | the captured verifier's verdict on `x ++ s` | `s.length + C·(s.length+1)^e = x.length` |
+| payload | — (decision form) | `pairEncode (x.take s.length) (x.drop s.length)`, never `[]` |
+| `R n` | `2^(m n) − 1` | `n` |
+| fuel bits | `Nat.bits (2^(m n) − 1) = replicate (m n) true` — writable within `T` | `Nat.bits n` — writable within `T` |
+| orbit, `i ≤ R n` | all `2^(m n)` width-`m` words, each once (`incFixed` enumeration; the stall is beyond fuel) | the candidates `0, …, n` in unary; `find?` = `solveSplit`'s least solution |
+| conclusion shape | `[decide (∃ u, u.length = m n ∧ verifier accepts x ++ u)]` | exactly P10's stated function |
+
+Both invariants bound the state-word length by the input, which is
+precisely what dissolves the round-1 finding-2 obstruction (no body is
+asked to transform words longer than its budget can traverse).
+
+**Catalog additions** (finding 3): P13 `pairConcat`
+(`pairEncode x u ↦ x ++ u`, the D-WRAP shape), P14 `pairDup`
+(`x ↦ pairEncode x x`), and the combinator C1 `pairMapSnd` (transform a
+pair's payload, retain its head; the data-retaining assembly sequential
+composition cannot provide). D-EMIT's nested quadruple then factors as
+`pairEncodeFixed α₀ ∘ pairMapSnd (unary-runs generator) ∘ pairDup`, and
+D-MEM's parser chains through the extractors with `pairMapSnd` carrying
+retained components. **P10 narrowing recorded**: the implemented search is
+the fixed length-equation search, not the catalog's supplied-predicate
+search; the general form is `exists_loopFindTM` itself.
+
+## 9c. Round-3 repairs (2026-10-03, after `audits/ch1-infra-r2-findings.md`)
+
+Round 2 passed the redesigned loops, P13/P14/C1, and the §9b tables, and
+discharged both round-1 refutations; its one major (finding 1) showed the
+loop's *final-answer* conclusion cannot discharge the frozen
+`enumMachine_contracts`, which is a *configuration-level* contract — the
+auditor's delay machine answers correctly yet violates every per-round
+bound. Repairs:
+
+**The configuration-level export.** `exists_loopCfgTM` (same hypotheses
+as the decision form) concludes with the host's round-configuration
+family: startup ≤ `c·(T+1)` reaching `cfg 0`, empty output at rounds
+`0…R`, per-round accept-or-advance segments each within `c·(T+1)`, and
+the halted `[false]` terminal at index `R+1`. The decision form becomes a
+fill-time corollary through an already-halted-terminal summation lemma
+plus monotonicity (R3-1: the frozen `loop_run` requires an empty-output
+terminal, so it is not invoked directly on the exported family). **Index/budget
+translation to `enumMachine_contracts`** (under the §9b enumerator
+instantiation, `w := m n`): candidates `2^w = R n + 1`, so the terminal
+index matches; the customer's uniform bound `b·(n + w + 1)^e` dominates
+`c·(T n + 1)` once `T` is chosen as a polynomial in `n + w` and `b, e`
+absorb `c` and its degree; the per-round indicator matches via the fill's
+orbit bridge `(stepF x)^[i] (s0 x) = enumWord w i` (little-endian rank
+enumeration, `incFixed` = `enumInc` per the round-2 vocabulary note).
+
+**Vocabulary coefficient shift (round-2 note 5, adopted).** The proved
+equalities are `splitAtLastTrue = stripCertificate`, `incFixed = enumInc`,
+and `solveSplit (C+1) c = certificateSplit C c` — the split-search
+equality is false without the shift (R3-3 corrected this pointer). Consequently the padded-verifier pipeline uses P10 at
+`(C + 1, c)` while P8 keeps `(C, c)` for the original witness bound.
+
+**General pairing assembly (round-2 item 10's derivation, adopted
+verbatim as the canonical recipe).** For computed `f, g`:
+`H x := pairEncode (f x) []` (P14 + C1 at the constant-empty function);
+`s x := pairEncode x (H x)`; `t x := pairEncode (s x) (g x)` (P14 + C1,
+the second with `g ∘ pairFst`); then
+`pairSnd (pairConcat (t x)) = pairEncode (f x) (g x)` — the
+self-delimiting grammar makes concatenation-into-payload well-formed at
+every stage. A C1 call on `pairEncode a b` computes `g b` only; any
+cross-component operation goes through this retained-whole-request
+pattern, never through C1 directly (round-2 item 10's D-MEM caveat).
+
+**D5 scope (round-2 items 6/10).** The disposition is re-issued for the
+epoch-2 frontiers and P10 only; the E3/E4 rows are component-level
+plausibility and their full coverage check is deferred to those epochs'
+brief audits, where the six-stage/boundary/ledger tables are in scope.
+
+## 10. Cost and sequencing (estimate, campaign points)
+
+| Work | Est. | Note |
+|---|---|---|
+| Spec layer (all signatures + ABI) | 8 | maintainer, serial; the design-sensitive part |
+| Spec audit round | — | rides with bridge export per 9.4 |
+| P1–P12 fills | 14 | mostly harvest-adaptation; parallelizable |
+| W1–W3 fills | 9 | W1 obligations already tabulated by past audits |
+| L fill | 13 | the real risk concentration; continuation budget anticipated |
+| **Total** | **≈ 44** | one mid-size batch equivalent |
+
+Sequencing: freeze this design → spec statements + bridge export → shared
+audit round → fills → **then** E2 continuation briefs, which cite the
+library instead of re-deriving machines. E2 continuations, E3, E4, and the
+ch3 skeleton are the customers that pay this back; the loop combinator is
+the piece to watch for slippage.
+
+## 11. The emitter increment (proposed 2026-10-05, post-E3 integration)
+
+**Evidence.** E3's outcome maps the library boundary exactly: everything
+recognizer-shaped closed in one round through the catalog (3B's memberships
+via `computesFunInTime_splitSolve 1 1` + capture + the audited wrappers; 3D
+via P10 + capture + composition), while both stalls sit on the producer
+side — 3B at a streaming transducer (`satRedTM` states 9–34, defined,
+unproved), 3A at a loop body that must internally run an evaluator and emit
+a payload, over a width family the catalog's split instance doesn't cover.
+The loop contracts deliberately require **empty output through every round**
+(round-2/3 audit repairs), and composition offers only input-pipelining —
+there is no output-append mode anywhere in the library. E4's summit
+(`SAT_NPHard`, 15 pts, continuation certain) is an emitter of exactly this
+shape: a per-index loop appending clause groups under the six-stage
+output-silence contract with an exact serialization-length ledger.
+
+**Rule of admission check** (§4): every item below has at least two named
+customers among 3B-cont, 4A, 4B, and 3A-cont.
+
+### E1. `emitLoop` — the emitting loop (control layer)
+
+The loop engine's output clause generalized: rounds append exact per-round
+emissions instead of staying silent. Shape (final quantifiers at spec time,
+audited):
+
+```
+-- SHAPE ONLY. Sibling of exists_loopCfgTM, sharing its host machinery.
+Inv, s0, stepF as in the decision loop; additionally
+  emitF : input → σ → List Bool        -- the exact chunk of round i
+contract: startup ≤ c(T+1); per-round segments ≤ c(T+1); positive
+  first-return; for every i ≤ R:
+    (cfg i).output = (List.range i).flatMap (fun j => emitF x (stepF^[j] s0))
+  terminal: halted, output = the full concatenation (no verdict bit — the
+  machine COMPUTES the concatenation; a deciding variant is NOT included).
+```
+
+Body obligations unchanged (accept-or-advance becomes advance-and-emit;
+scratch restore per §3/9.2). The summation lemma is `loop_run`'s template
+with the output clause threaded. **Customers:** 4A (the per-snapshot clause
+emitter — the design driver), 3B-cont (`satRedTM`'s streaming core as an
+instantiation), 4B (dual reduction emitter).
+
+### E2. `emitPhase` — the forwarding wrapper (control layer)
+
+The dual of W1: run an embedded transducer `T` (a `ComputesFunInTime`
+contract) inside a host, with `T`'s emissions landing on the **host's**
+output tape, source tapes isolated, halt redirected to a live return state;
+lockstep lemma in `capture_run`'s mold with "physical output = host prefix
+++ T's output so far". This is what lets a catalog transducer serve as one
+emission stage of a larger machine — today's only option is whole-machine
+input-pipelining. **Customers:** E1's per-round chunk calls (4A emits each
+clause group through a sub-transducer), 3B-cont (fresh-literal chain
+emission), 3A-cont marginally (the success payload `pairEncode` emission).
+
+### E3′. Stream primitives (catalog rows P16–P18)
+
+| # | Primitive | Spec (shape) | Source | Customers |
+|---|---|---|---|---|
+| P16 | `tokenStepTM` | consume one self-delimiting token (unary index / marker) from the input head, land head after it, expose the token in control | harvest: 3B's proved `satScanTM`/`satSyntaxStep`, 3D's six-state scan, 2D's parsers (fourth re-derivation otherwise) | 3B-cont, 4A, 4B |
+| P17 | `chunkEmitTM w` / parametric | append a control-determined word to output, `\|w\|` steps, no tape movement | new (trivial); the per-token emission atom | E1 bodies, 4A |
+| P18 | `unaryAccTM` | dedicated-tape unary accumulator: append one, read-length-in-binary via P4 composition, rewind | harvest: 3B's proved counter stages (`satRedCounter_write`, `satRed_maxOnes`, startup to state 9) | 3B-cont, 4A fresh indices |
+
+### E4′. `splitSolveWith` — width-parametric split search (control layer)
+
+Generalize P15's split search from the hardwired polynomial family to a
+hypothesis-supplied width evaluator: given a machine `E` with a captured
+`ComputesFunInTime (fun s => bits (f s.length)) T_E` contract and
+monotonicity of `n ↦ n + f n`, a machine solving `n + f n = m` (first
+success payload `pairEncode (take n) (drop n)`, exhaustion verdict) within
+the loopFind envelope over `T_E`. **Harvest source:** 3A-cont's bespoke
+body, whose contracts are already displayed in its REPORT — build the
+parametric form against that template once it lands (or directly, if this
+increment executes first). **Customers:** 3A-cont's equation (plug the
+proved `e3_exp_bits_timed`), every future padding argument (ch3+ time
+hierarchy pads the same way).
+
+### Placement, cost, open decisions
+
+- **Placement:** E1 extends `Loop.lean` **in-file** to reuse the audited
+  `loopHost` privates (a separate `Build/Emit.lean` cannot see them — the
+  D7 cross-file-privates qualification; re-deriving the host would be a
+  second 2,500-line proof). `Loop.lean`'s size exception grows and the D7
+  split trails as already recorded. E2 joins `Wrappers.lean`; P16–P18 join
+  `Primitives.lean`; E4′ joins `Loop.lean` beside P15's engine.
+- **Non-goals:** no deciding variant of the emitting loop (compose E1 with
+  the existing decision layer instead); no general transducer algebra; no
+  speculative tape-embedding (unchanged from §5's deferral).
+- **Cost estimate:** spec layer 4; one shared-infra audit round (the ch1
+  pattern, expected lighter — one host extension, not a new host); fills:
+  E1 8, E2 4, P16–P18 5, E4′ 6 — **≈ 27 points**, roughly the L batch.
+- **Sequencing:** freeze this section → spec statements → audit round →
+  fills → 3B-cont consumes E1/E2/P16–P18; 4A's brief cites the layer
+  instead of a bespoke emitter. **3A-cont dispatches in parallel, bespoke**
+  (disjoint ownership; its body becomes E4′'s harvest template; later
+  dedup is a recorded E5-style maintainer task, never the fill's).
+- **Open decisions (user):** (11.1) approve the increment and this scope;
+  (11.2) E1 as a sibling contract beside `exists_loopCfgTM` (recommended)
+  vs a generalization replacing it (touches audited statements — not
+  recommended); (11.3) whether 4A's brief waits for this gate to close
+  (recommended) or anticipates it.
+
+## 11a. Spec-phase refinements (2026-10-05, recorded when the emitter spec landed)
+
+Decisions 11.1–11.3 resolved by the user (2026-10-05): increment approved;
+E1 is a **sibling** contract beside `exists_loopCfgTM` (no audited statement
+is generalized or touched); 4A's brief **waits** for this gate.
+
+Refinements against §11 as drafted, all narrowing:
+
+1. **P17 is subsumed** (no new statement): a constant chunk emission is
+   `emitPhase` (E2) applied to the existing P2 `constTM` — recorded here
+   the way D4 recorded the prefix/fixed-pair subsumptions.
+   *[Superseded by §11b item 6 and §11c: the discharging rule is body
+   finite control for fixed words, or `exists_emitCallTM` for computed
+   chunks — never the private `constTM` (round-2 audit, finding 3).]*
+2. **P18 narrowed to `computesFunInTime_appendBit`**: the drafted
+   accumulator row conflated the append atom with cross-phase persistence,
+   and persistence is already the loop engine's state-word mechanism; the
+   catalog takes only the atom.
+3. **E4′ lives in `Primitives.lean`**, not `Loop.lean`: its conclusion
+   speaks `pairEncode`, which `Loop.lean` does not import, and P15's own
+   public contract already lives there — the engine/contract split follows
+   P15 exactly. Its pure vocabulary `solveSplitWith` joins `Convention.lean`
+   beside `solveSplit`, which it definitionally generalizes.
+4. **E1 is function-level only** (`exists_emitLoopTM` concluding a
+   `ComputesFunInTime` of the chunk concatenation): all three named
+   customers deliver `PolyTimeComputable` reductions, i.e. function-level
+   contracts, and in-host composition of an emitter is E2's job, which
+   takes function-level transducers. The round-2 lesson (final-answer vs
+   configuration gap) was checked against each customer before choosing
+   this form; a configuration-level export would follow the round-3
+   precedent if a consumer ever surfaces.
+5. **No emission-size hypothesis on E1**: the round seam equality itself
+   bounds each chunk by the round's duration (output grows by at most one
+   symbol per step), so the statement carries no redundant bound to drift.
+
+Spec surface: **five sorried contracts** (`Turing.emit_run`,
+`Turing.FinTM.exists_emitLoopTM`,
+`Turing.FinTM.computesFunInTime_splitSolveWith`,
+`Turing.FinTM.computesFunInTime_unaryToken`,
+`Turing.FinTM.computesFunInTime_appendBit`), two real transformers
+(`emitAction`, `emitCfg`), two pure vocabulary definitions
+(`solveSplitWith`, `unaryTokenSplit`). Convention's module-docstring
+vocabulary bullets extend at fill time (append-only).
+
+## 11b. Round-2 repairs (2026-10-05, after `audits/emitter-infra-findings.md`)
+
+Round 1: **0 blockers, 2 majors, 3 minors** — no false statement among
+the five contracts; both majors are adequacy obligations, repaired here.
+
+1. **The clean-call bridge (finding 1, major).** A function-level
+   contract cannot deliver the loop seam: a witness may dirty scratch or
+   leave heads displaced on its final transition and still compute `f`
+   within `T`. Two new sorried bridge contracts supply the
+   prepared-input/clean-return interface, both with canonical
+   `Cfg.ofWords`/`stateWord` entry **and** exit seams, first-positive-
+   visit discipline, and envelopes charged to `T + |arg| + |f arg| + 1`:
+   `Turing.FinTM.exists_installCallTM` (result installed as the
+   tape-resident word, nothing emitted) and
+   `Turing.FinTM.exists_emitCallTM` (argument preserved, the computed
+   chunk forwarded to physical output). Both live in `Loop.lean` beside
+   the seams they serve (`stateWord` is defined there). Fill route: the
+   A-continuation's proved log/undo pattern around the capture wrapper,
+   with virtual-input preparation from the tape-resident argument.
+   `emitCfg`'s docstring now states explicitly that it does not
+   normalize terminal configurations — the bridges do.
+2. **The 3B normalization mapping (finding 1, required resolution).**
+   The reported `satRedTM` is **not** the promised instantiation as it
+   stands (its permanent position-−1 marker contradicts the blank
+   `ofWords` seam; its raw head positions cannot cross seams). The
+   committed instantiation plan: loop state word encodes
+   `(cursor, consumed-prefix length, phase tag)` via the audited pairing
+   vocabulary — the raw streaming position is re-derived each round by
+   advancing past the consumed prefix, and **the permanent marker is
+   eliminated** (round-local buffering restores its tape by round end).
+   Per round: decode the state word; `exists_installCallTM` over
+   `computesFunInTime_unaryToken` reads the next token of the remaining
+   serialization; finite control classifies marker/polarity bits; the
+   emitted clause fragment goes out through `exists_emitCallTM` (chunks
+   are of token-bounded length) or directly by finite control for
+   fixed fragments; the fresh-variable counter updates through
+   `computesFunInTime_appendBit` + install. Rounds have positive
+   duration and input-length-only budget; `R` = the serialized input
+   length (each round consumes at least one input position); once the
+   formula terminator is consumed, an **absorbing finished phase emits
+   empty chunks** for all remaining rounds. Token output is decoded by
+   `pairDecode`-side vocabulary (proved); append output becomes the
+   next state word by the install call. The banked `satReduction_*`
+   semantics close the function identity; `satRed_start`'s proved
+   maximum-pass survives as the `s0` computation.
+3. **The 4A stage mapping (finding 2, required resolution — recorded
+   here, certified against the attached phase-4 records in round 2).**
+   All-string validation runs **before any irreversible emission**: the
+   validation stages run as a decision prefix (the audited conditional
+   W3 over the parser/boundary checks); only the valid branch enters
+   the emitting loop, and the invalid branch emits the fixed fallback
+   through finite control. Logical round count: `R` = the
+   snapshot-index bound of the six-stage contract (an input-length-only
+   polynomial), one clause group per round through `exists_emitCallTM`;
+   the exact serialization-length ledger is the sum of the per-round
+   chunk lengths — never constant-per-clause, exactly as the phase-4
+   ledger demands. Serialization terminators: the final terminator is
+   the last round's chunk tail (or a post-loop constant emission by
+   finite control); both options keep the concatenation exact.
+4. **Host routing correction (finding 3, minor).**
+   `exists_emitLoopTM`'s construction sketch now specifies the
+   **forwarding host variant** (body dispatched through `emitAction`;
+   fuel/countdown machinery reused; contracts proved over
+   arbitrary-accumulated-output configurations; a **new**
+   prefix-summation lemma modeled on `loop_run`) — the unchanged
+   find-mode host is refuted by the auditor's one-state witness, since
+   `captureAction` suppresses the body's physical output.
+5. **Token conventions (finding 4, minor).** `unaryTokenSplit`'s
+   docstring now states it consumes unary tokens only, with the
+   auditor's separating example; standalone markers and polarity bits
+   are scanner grammar states.
+6. **P17's actual rule (finding 1's visibility note).** Fixed
+   finite-control chunks are emitted directly by body control (no
+   primitive, no appeal to the private `constTM`); unbounded
+   tape-dependent chunks go through `exists_emitCallTM`. §11a item 1 is
+   corrected accordingly: the subsumption's discharging rule is body
+   finite control, or the emit call, never the private constant
+   machine.
+7. **Documentation (finding 5, minor).** The four definitions now carry
+   customers and construction notes; attestation 4's "every new
+   declaration" claim is restated in the round-2 pack as exactly what
+   each class of declaration carries.
+
+Spec surface after round 2: **seven sorried contracts** (round 1's five
+plus the two bridges), two transformers, two vocabulary definitions.
+
+## 11c. Round-3 repairs (2026-10-05, after `audits/emitter-infra-r2-findings.md`)
+
+Round 2: **0 blockers, 2 majors, 1 minor** — round-1 findings 3–5 closed;
+the bridge construction and the 3B normalization validated (r2 findings
+4–5, including a 5,908-case finite corroboration of the normalized
+schedule); the two cumulative majors repaired here.
+
+1. **Positive tape count on both bridges (r2 finding 1, major).** At
+   `C.k = 0`, `stateWord 0 a = stateWord 0 b` by empty domain, so the
+   install conclusion was satisfiable by a two-state zero-tape machine
+   for an arbitrary — even noncomputable — `f`: vacuous as a data
+   interface. Both conclusions now carry `0 < C.k`, making the seam
+   equality yield the genuine `bufferTape` content at index zero. The
+   auditor's r2 finding 4 confirms the log/undo construction delivers
+   the strengthened interface at the stated envelope.
+2. **The 4A mapping rewritten (r2 finding 2, major) — this supersedes
+   §11b item 3 in full.** §11b item 3 wrongly substituted parser
+   validation for Cook–Levin's silent preparation stages: the 4A source
+   is an arbitrary `NP` language, every binary word is a legitimate
+   instance, and there is no CNF well-formedness condition on `x` (the
+   auditor's empty-language witness: validation-plus-fallback would
+   emit the satisfiable `serialize [] = [false]` for a no-instance).
+   Parse-before-emission belongs to the 3B/4B decode-based transducers
+   only. The corrected stage-to-seam mapping:
+   - **Silent preparation (inherited stages s1–s5).** A silent startup
+     phase computes and packs the preparation records into `s0 x`:
+     exact `Q(n)`, `m = n + Q(n)`, and the horizon `T` (s1, exact
+     arithmetic, certificate length never enlarged); the virtual
+     reference input `false^m` with clamped virtual head, source
+     writes/moves executed on the halting transition, source output
+     suppressed and halt internalized (s2–s3, through the capture and
+     install-call interfaces at positive tape count); the inclusive
+     trajectory records for **all** times `0..T` with administrative
+     transitions outside simulated time and frozen positions after an
+     early halt (s4); greatest-strictly-earlier-visit records with
+     sequential comparison costs (s5). All of s1–s5 end with empty
+     physical output and the packed records as the clean persistent
+     word — the emitting loop's `s0`.
+   - **Ordered emission (s6).** One **family member per round**, the
+     cursor walking the fixed family order of the phase-4 contract.
+     With `T + 1` snapshot times and `k` work tapes, the six families
+     have `n, 1, T, T+1, k(T+1), T` members; the round count is their
+     sum: `R = n + (k+3)·T + k + 1` (an input-length-only polynomial).
+     Rounds with empty template output still take positive time. The
+     single final formula terminator is appended to the last round's
+     chunk. The serialization-length ledger is the exact sum
+     `1 + 2·#clauses + Σ (v+3)` over literal occurrences — total
+     output `O_M(T²)`, never constant-per-clause.
+   - The alternative `R = T` time-major grouping is **not** adopted:
+     it would need a separate proof that its interleaving reserializes
+     to the fixed family order.
+   Certification of this mapping against the phase-4 round-2
+   boundary-check table is round 3's business — that table
+   (`audits/ch2-phase4-reaudit-findings.md`) rides in the r3 bundle,
+   and the 4A brief inherits it verbatim per the standing rule.
+3. **P17 cross-reference (r2 finding 3, minor).** §11a item 1 now
+   carries an explicit supersession marker pointing at §11b item 6;
+   the historical text is preserved as history.
+4. **Provenance upgrades for round 3.** The log/undo fill route now has
+   fresh in-repo provenance beyond the epoch-2 enumerator: the
+   A-continuation checkpoint (integrated 2026-10-05) banked exactly the
+   track/clear/compare phase family the r2 finding-4 construction
+   describes (`e3cTrackTM`/`e3c_track_run`/`e3cClearTM`/`e3c_clear_run`
+   — logged simulation over a visited interval with origin markers,
+   exact single-triple cleanup at `6T+7`, positive first returns), as
+   proved privates in `Nondeterminism.lean`; its REPORT and source ride
+   in the r3 bundle.
+
+Spec surface after round 3: unchanged in count — **seven sorried
+contracts** (the two bridges now carrying `0 < C.k`), two transformers,
+two vocabulary definitions.
+
+## 11d. Gate close (2026-10-05, after `audits/emitter-infra-r3-findings.md`)
+
+Round 3: **0 blockers, 0 majors, 1 minor, 4 notes — GATE CLOSED**
+(`audits/emitter-infra-resolutions.md`). Both cumulative majors
+discharged: the positive-tape bridges export the data interface (the
+auditor's projection-table derivation), and §11c's 4A mapping is
+certified against the inherited boundary table, including the exact
+per-member chunk rule. The minor — swept in the closing commit — was an
+attribution error of §11b item 1/§11c item 4 and the install-call
+sketch: the A-continuation's delivered provenance is
+**visited-interval tracking and clearing** (`e3cTrackTM`/`e3cClearTM`),
+not an overwritten-symbol history/undo implementation; at a clean
+entry seam, clearing is restoring, so the track/clear route fills the
+bridges directly, and history/undo stands only as the independently
+derived alternative (r2 finding 4). Two clarifications from r3
+finding 3 bind the 4A brief: `R = n+(k+3)T+k+1` is the last round
+index (member count `R + 1`), and the chunk rule emits per-member
+flatMaps with the single terminator on the last chunk only. Fill
+batches proceed under the resolutions' binding section, partitioned
+Loop / Primitives / Wrappers.
+
+## 12. The routine layer (proposed 2026-10-08, pre-ch3/4 campaign)
+
+**Mandate** (user decisions 2026-10-06 and 2026-10-08, recorded in `backlog.md` §2
+and `AroraBarakChapters3-4Plan.md` §4a/§8): built after the Chapter-2 closure and
+**before the chapter-3/4 fill epochs**, in parallel with their statement phases;
+scoped to **amply support the chapter-1/2 retrofit**, not merely the new
+consumers; and — superseding §1's "no space bounds" non-goal for this increment —
+**every item below carries a space clause alongside its time cost**, so that the
+chapter-4 campaign and the P4.x statements consume the layer without a second
+pass. The space measure is the house one: `Turing.MultiTapeTM.spaceUsed`
+(work-tape cells visited; input and output tapes excluded).
+
+**Evidence.** The 4A chain is the measurement: roughly half of the A2/A3
+deliveries' 202 native privates are hand-rebuilt bank/relocation/dispatch
+routines; the `emitterBank*`/`emitterP2*` relocation family was privately
+re-harvested three times; and A3's proved costs (`3|w| + 3` copy, `2|w| + 2`
+clear) match the external prior art's `3w + 2`/`2w + 2` to within one step —
+independent convergence on the same catalog, discovered in the 2026-10-06
+survey. The emitter round-1 finding stands: *function-level* contracts cannot
+deliver clean-return seams, so the gap is configuration-level. §5 deferred the
+general tape-embedding transformation "until a third site needs it"; the third,
+fourth, and fifth sites have now arrived (the retrofit families, the
+Hennie-Stearns conversion, the two-work-tape universal machine).
+
+**What already exists and is consumed, not duplicated** (colleague modules,
+Hydroxyi/Jason Dong, on `main` since `f70c57c2`): the *function-level half* —
+`TuringMachine/CounterProg{,Run}.lean` (goto programs over unary registers
+compiled once into `FinTM`, `t` abstract steps within `t(2t+3)` machine steps,
+FP bridge via `ClassNP/CounterProgPolyTime.lean`), `ClassNP/Transducer.lean`,
+`ClassNP/{PolyTimePairing,PClosure}.lean`, `TuringMachine/UnaryTape.lean`; and,
+on the space side, `SpaceComplexity/Machines/` (the `LogProg` register-program
+compiler with `compile_space`/`arm_decides`). §12 supplies the
+configuration-level half those layers sit on.
+
+### R1. Bank embedding (the §5 deferral, promoted)
+
+A verified routine on its own `m`-tape set runs on any injectively selected
+subset of a `k`-tape host's work tapes, cost unchanged, everything else framed.
+Spec shape (final quantifiers fixed at spec time, audited): for an embedding
+`ι : Fin m ↪ Fin k`, transported actions and configurations with
+
+* **lockstep** — transported `runFrom` commutes with the source `runFrom`;
+* **frame** — tapes outside `range ι` are byte-identical before and after, their
+  heads unmoved; input position tracks the source; emission policy is a
+  parameter (suppressed or forwarded — the W1/E2 pair fixes the two modes;
+  whether this is one transformer with a mode or two transformers is open
+  decision 12.4);
+* **time** — step count preserved exactly;
+* **space** — cells visited on host tape `ι i` equal cells visited on source
+  tape `i`; unselected tapes visit nothing new.
+
+Generic form of: `emitterBank*`, the `emitterP2*` relocation family,
+`clBank*`/`clSlot*` (4A chain), and their chapter-1 analogues in
+`Build/Primitives.lean`/`Build/Loop.lean` internals.
+
+### R2. Seam composition
+
+Sequential composition of two controllers at a canonical `Turing.Cfg.ofWords`
+seam (Convention.lean's ABI notion): if `M₁` carries seam `c₀` to seam `c₁`
+within `T₁` under a first-return cut, and `M₂` carries `c₁` to `c₂` within
+`T₂`, the dispatch-glued machine carries `c₀` to `c₂` within `T₁ + T₂ + O(1)`,
+with the glue state-sum and dispatch lemmas owned by the combinator. Space
+clause: visited sets union, so per-tape space is bounded by the sum of the
+parts' per-tape spaces (whether the spec states the sharper per-tape `max` for
+disjointly-owned tapes is open decision 12.1). Generic form of the per-batch
+dispatch gluing re-proved in every A-chain and emitter batch.
+
+### R3. Catalog promotion, with space costs
+
+Promotion of the remaining audited A-chain privates as public machines with
+exact time *and* space costs: transfer (word from tape `i` to tape `j`,
+`3|w| + 3`), copy (`3|w| + 3`), clear (`2m + 2`, = P12's engine), compare, and
+increment — D6-style promotion, not new proof work, seeded from the named
+private families. Additionally, the existing catalog rows (P1-P12, P16-P18)
+and the W/L/E combinators are **retro-annotated with space theorems** — new
+`spaceUsed` lemmas beside the existing specs, no signature changes, so the
+audited statement surface is untouched (additive growth; open decision 12.3 on
+doing this here versus lazily per consumer — the amply-support mandate argues
+for here).
+
+### Consumers (rule-of-admission check, §4: two named customers per item)
+
+| Consumer | Uses |
+|---|---|
+| Chapter-1/2 retrofit (backlog §2) | R1 for the bank/relocation families; R2 for the dispatch families; R3 for `clCopy*`/`clCmp*`/`clRead*`/`clCount*` and the `Build/` harvest families |
+| Hennie-Stearns `k`→2 conversion ([AB09] §1.7; ch3-4 plan §2.1) | zones as banks (R1), shifts as R3 transfers, seam discipline (R2); the amortization is mathematics on top |
+| Two-work-tape universal machine (ch3-4 plan §2.1, §4a) | R1 + R2 throughout; the retrofit pilot; candidate space-bounded variant feeding Thm 4.8 / Ex 4.1 |
+| Chapter-4 ARM extensions (ch3-4 plan §2.5: nondeterministic and polynomial-width variants of `LogProg`) | R1/R2 at their `FinTM` compilation boundary; R3 space rows |
+
+### Placement, sequencing, cost
+
+* New files `Build/Embed.lean` (R1) and `Build/Seam.lean` (R2); R3's new rows in
+  a new `Build/Catalog.lean` (`Primitives.lean` is already over the size policy;
+  final name is open decision 12.2, settled before the spec audit per §9.6).
+  Namespace `Turing.FinTM`; order list after `Build/Loop`.
+* Process per `workflow.md`: maintainer-serial spec layer (quantifier-sensitive,
+  as §10), statement gate, fills as harvest-adaptation batches, fill audit. The
+  gate must close before the first chapter-3/4 fill epoch (plan §4a); statement
+  phases of chapters 3-4 run in parallel.
+* Estimate (campaign points): R1 spec+fill ≈ 10 (the lockstep is the risk
+  concentration, L-style), R2 ≈ 8, R3 promotions + space retro-annotation ≈ 12,
+  serial spec layer ≈ 6. Total ≈ 36, one mid-size batch equivalent.
+
+### Open decisions (human review; audit verifies, never disposes)
+
+* **12.1** R2 space accounting — **answered (user, 2026-10-08): the sharper
+  form.** The spec states per-tape bounds, with the max for disjointly-owned
+  tapes (sharpest available; downstream applications may depend on the
+  sharpness).
+* **12.2** R3's file layout — **answered (user, 2026-10-08): option (a)**, a
+  new `Build/Catalog.lean` holding the new rows and the space lemmas for the
+  old rows, keeping `Primitives.lean` byte-identical; a backlog item records
+  the later refactor toward the symmetrical per-theme layout (option (c)),
+  via the D7 split window.
+* **12.3** Space retro-annotation — **answered (user, 2026-10-08): the refined
+  now-option**: the primitives as realized (P1-P15), wrappers (W1-W3) and the
+  loop (L) get `spaceUsed` theorems in this increment; the emitter combinators
+  (E1-E4′) stay lazy until a space consumer appears, **and the E3′ stream rows
+  P16-P18 ride with that lazy scope** (their only consumers are the emitters —
+  scope clarification recorded at skeleton time, 2026-10-08, flagged to the
+  §12 statement-gate audit and reversible there if the gate reads the
+  original "P1-P18" wording as binding).
+* **12.4** R1 emission policy — **answered (user, 2026-10-08): two named
+  transformers** (suppressing and forwarding) over a shared private core, so
+  each spec stays crisp and downstream applications cite whichever fits.
+
+### Citations (policy.md §2, *Design adaptation*)
+
+The configuration-level design is adapted from — with nothing transcribed —
+**Édouard Bonnet's `classical-complexity`** (Lax Archive lax-434930), module
+`proofs/Lax434930Proofs/InclusionAux/TimeCompiler/`: `StackProgram`'s
+`compile_correct`, `StackRename`'s `rename_executes`/`executes_in_sum` (the
+bank-embedding and seam-composition shapes), and the
+transfer/clear/copy/for/repeat routine catalog; commit
+`0c0840319318215fd7b36a9a822b81ce55cf6941`, Apache-2.0; examined 2026-10-05,
+different toolchain (Lean 4.33 vs our 4.25) and machine model (TM2-style keyed
+stacks vs `FinTM` tapes with heads). Suggested tag: `[Bon26]`. The R-modules'
+docstrings and their blueprint entries must carry this citation, alongside the
+existing `[Balbach22]` (AFP `Cook_Levin`) for the composition architecture and
+the in-repo credits to the colleague modules named above.
+
+### 12.5 Round-1 audit repairs (2026-10-09)
+
+The §12 statement-gate round 1 (`audits/routine-infra-findings.md`: 0
+blockers, 4 majors) drove four repairs, landed with the round-2 pack:
+
+* **R1 → the returning embeddings** `embedSilentRetTM`/`embedEmitRetTM`
+  (states `S ⊕ Unit`): the closed transformers lose a final halting
+  emission to either the halt or a premature seam dispatch — the audit's
+  formal trace. The returning flavors execute every source action through
+  the halting transition and land in the live anchor `Sum.inr ()`.
+* **R2 → general-configuration seam composition**
+  (`seamCompTM_run_ofCfg` + first-return and visited forms): the canonical
+  `Cfg.ofWords` theorems cannot consume arbitrary frames, displaced
+  inactive heads, or accumulated output; the general form starts phase two
+  from phase one's returned configuration with only the control state
+  replaced.
+* **R3 → the fresh-entry/release adapter** `seamReleaseTM`: positive
+  calls returning to their own anchor are now seam-consumable (the entry
+  action executes unconditionally from a fresh start state).
+* **R4 → the threaded-map witness** is re-commissioned as a forwarding
+  controller (validate/buffer, emit prefix, forward payload output);
+  the received captured-payload machine is refuted as a witness for the
+  linear-administration bound.
+
+Scope notes R9 (physical-tape selection is not zone multiplexing) and R10
+(loop sibling contracts not exported) are recorded at their definition
+sites.
+
+### 12.6 Framed catalog contracts (2026-10-10, after ZF-A2's escalation)
+
+**The gap.** The R3 rows (`transferTM`, `copyTM`, `clearTM`, `compareTM`,
+`incrementTM`) are stated only from `Cfg.ofWords`: every head at the origin,
+every tape a globally buffered word. The zone shift machines (`Build/Zone.lean`,
+`exists_zoneShiftInTM`/`OutTM`) have **exactly two tapes**. One is the zoned data
+tape; the other is a scratch tape that starts and ends as the unary level word.
+Their staging, cleanup and binary navigation counter therefore all run at
+**displaced heads beside unrelated data**, where no canonical contract applies.
+
+ZF-A2 (`audits/zone-agent-reports/f1-A2-REPORT.md`) showed the gap concretely,
+with a kernel-checked regression. On a valid three-level carrier, a bare transfer
+from a displaced head reads past the word's end and erases a cell that belongs
+to the next zone. The cure is a delimited word: blanks at relative positions
+`-1` and `|w|`, installed by the consumer, which saves the overwritten cells in
+finite control and restores them afterwards. Correspondingly, the contract must
+quantify over an arbitrary surrounding frame.
+
+**Decision (user, 2026-10-10).** A small §12 extension: maintainer-drafted
+statements, a short statement gate, then a fill batch; ZF-A3 follows. The
+routines are local, since each step reads only the scanned cells of the touched
+tapes, so a framed contract is the faithful generalization. No new machine is
+defined.
+
+**The five statements** (`Build/Catalog.lean`, after the R3 rows, sorried):
+
+| Contract | Exact time | Effect on the touched tapes |
+|---|---|---|
+| `transferTM_run_ofCfg` | `2·|w| + 2` | source interval blank; destination interval `w` (old destination contents arbitrary) |
+| `copyTM_run_ofCfg` | `2·|w| + 2` | destination interval `w`; source intact |
+| `clearTM_run_ofCfg` | `2·|w| + 2` | the word interval blank |
+| `incrementTM_run_succ_ofCfg` | `2·p + 2`, where `p = (w.takeWhile id).length` | the word interval holds `v`, where `incFixed w = some v` |
+| `incrementTM_run_overflow_ofCfg` | `2·|w| + 2` | the word interval all `false` |
+
+In every case the routine reaches its `done` anchor exactly at the stated time
+and not earlier. Every cell outside the word intervals, every head, the native
+input position and the output are unchanged. Up to the exit the touched heads
+stay within `[pos − 1, pos + |w|]` (for a successful increment, `[pos − 1,
+pos + p]`) and all other heads are fixed. Space bounds follow from the
+trajectory clause through `MultiTapeTM.spaceUsedByTape_le_card_Icc`.
+`incrementTM`'s carry-sensitive `2p + 2` is the per-step cost that makes the zone
+machines' anchored binary countdown sum geometrically, the audited `O(2^i)`
+navigation ledger. The canonical `2|w| + 2` public bound is too loose for that,
+as ZF-A2 flagged.
+
+**Specialization and dedup.** With the origin heads and globally buffered words
+of `Cfg.ofWords`, each framed contract specializes to its canonical R3 row. The
+fill batch therefore proves the framed form and **re-derives each canonical row
+from it**, through a sanctioned proof-body swap with the public statement
+unchanged. That generalizes the private trace lemmas rather than duplicating
+them. `compareTM` is not framed here, since no current consumer needs it; it
+follows the same pattern on request.
+
+**Pre-ship execution check (mandatory practice).** Every statement was executed
+on concrete configurations with displaced heads, a nonblank outer frame and the
+edge cases (`w = []`, `p = 0`, all-`true` overflow). The exact final
+configuration, the no-earlier-exit clause and the trajectory were compared:
+63 cases, all pass, and a wrong-time negative control fails
+(`audits/evidence/s12-framed/`).
+
+## 13. The zone and virtual-input layer (proposed 2026-10-09, post-§12 close)
+
+**Mandate** (user direction 2026-10-09, at the §12 fill-campaign close —
+track A of the two parallel tracks, the other being the chapter-1/2
+retrofit): the §12 scope note **R9 promoted**. R9 drew the line at
+physical-tape selection — `ι` relocates whole tapes and "the Hennie-Stearns
+and universal-machine consumers get their zone/virtual-input representation
+layers separately" (`Build/Embed.lean` header). This increment is that
+separate layer. It gates the two stage-1 builds (the Hennie-Stearns `k`→2
+conversion and the two-work-tape universal machine, plan §2.1/§4b) and is
+scoped, like §12, beyond its first consumers: the virtual-input half serves
+the `NP^EXPCOM ⊆ EXP` summit and the 12.2c dedup, and the zone half is
+shaped so the chapter-1 Robustness conversions can gain **space theorems
+additively** (plan §2.7's fallback route to Ex 4.1/Thm 4.8). §12's space
+mandate continues: **every item carries a space clause alongside its time
+cost** (`Turing.MultiTapeTM.spaceUsed`, work tapes only).
+
+**Evidence.** The virtual-input pattern has now been hand-built four times
+over the proved corpus: the A2 forwarding controller's
+`a2_mapVirtual`/`a2_mapVirtual_step`/`a2_mapVirtual_run` lockstep (15 of
+its 45 privates; both boundary clamps, empty-word case, halt absorption —
+all proved), F2A's `f2_splitCountAction`/`f2_splitCount_run`
+(virtual *empty* input over preinstalled banks), the universal
+interpreter's prefix-input discipline, and the oblivious candidate's
+`obliviousVisit` virtual-tape transduction. All four sit on the same public
+primitive — `virtualMove`/`VirtualTag`/`virtualNextTag` and
+`bufferTape_inputSymbol` (`Simulation.lean`) — and each rebuilt the hosting
+and lockstep privately. On the zone side, the in-repo precedents are the
+`SingleTape.lean` multiplexing encoding (`SweepCell`/`tapeRow`) and
+`ObliviousSetup.lean`'s guide-zone layout with its two-directional run
+identities; what does not exist anywhere is a *reusable* zoned carrier with
+shift routines. The F2 epoch audit's three optional regression corollaries
+(zero-time startup, both virtual-input clamps, setup followed by an
+emitting halting step) are adopted here as permanent lemmas of Z1.
+
+**What already exists and is consumed, not duplicated**: the §12 layer
+itself (R1/R2 and the catalog rows are the assembly language of every
+construction below); `virtualMove`/`VirtualTag` (`Simulation.lean`);
+`Turing.actionBits₂` and the `CodeNDTM` two-work-tape serialization
+(`NDCodes.lean`, statement-frozen under the closed P3.3 gate) — Z3 builds
+the deterministic sibling against the same record format, never a second
+serialization; `UnaryTape.lean`; the harvest policy of §8 (reimplement
+against the ABI with the original proof as template; audited originals stay
+in place until the separately-tracked retrofit/12.2c dedup).
+
+### Z1. Virtual-input hosting (the `a2_mapVirtual` pattern, promoted)
+
+A transformer hosting a machine whose input is a **designated buffered
+word** rather than the native input: given a host with an injective tape
+selection (R1's `ι`) plus one buffer tape holding `y`, the hosted machine
+runs with `y` as its virtual input, buffer head at
+`source.inputPos - 1` under a `VirtualTag` boundary discipline. Spec shape:
+
+* **lockstep** — one host step per source step, transported `runFrom`
+  identity (the A2 `a2_mapVirtual_run` shape, generalized from its
+  two-buffer controller to the R1 selection);
+* **clamps** — both boundary clamps hold with **no nonempty-`y` premise**
+  (empty `y`: position `0` is the right boundary, `-1` the left; outward
+  moves stay, inward moves cross) — the binding A2/F2 audit contract;
+* **halt absorption** — the source's halting action executes before the
+  host control dies; later times are fixed;
+* **emission policy** — suppressed or forwarded, mirroring R1's two modes
+  (open decision 12.4 resolves both at once);
+* **time** — exact; **space** — coefficient-one containment: each selected
+  tape's host visited set is contained in the source's visited set on `y`
+  at the same horizon (the R4 ledger shape, proved in `a2_map_space`).
+
+Permanent regression lemmas (audit-adopted): the zero-time startup
+instance, the two empty-`y` clamp instances, and the setup-then-emitting-
+halt seam. Generic form of: `a2_mapVirtual*` (A2), `f2_splitCount*` (F2A,
+the `y = []` specialization), the universal interpreter's input phase, and
+the query simulation every oracle-summit machine will need.
+
+**Z1 rider — the R1 selected-tape exports (decision D-R1, user
+2026-10-09, from the retrofit inventories, plan §4d).** The three retrofit
+inventories independently identified the same R1 API gap: `Embed.lean`
+exports no selected-tape field lemmas (`embedSlot_selected`/`_unselected`
+are private) and no agreeing-host lockstep, so no old-code R1 consumer can
+be proved from the public surface. This statement phase adds, **additively
+in `Embed.lean`** (shared-file mechanism, audited under this gate): public
+selected-tape projections of `embedSilentCfg`/`embedEmitCfg` (contents and
+head of tape `ι i`), and an `ofWords` transport form. Unlocks the blocked
+Hardness families (M/N/AM/U, Z/AB/AG — ≈ 300-350 lines) at the next
+retrofit window.
+
+### Z5. Machine-agreement transfer (decision D-R3, user 2026-10-09)
+
+A general lockstep-transfer lemma, the `hagree` genre of
+`capture_run`/`emit_run` made standalone: two machines over the same tape
+count and state type whose transition tables **agree on a set of states**
+run identically, configuration for configuration, from agreeing starts for
+as long as the run stays inside the agreement set; a guarded variant takes
+the agreement hypothesis per reachable state. Natural home:
+`Simulation.lean` beside the existing lockstep gadgets (placement open
+decision 13.5: Simulation versus a `Build/` module). Customers (rule of
+admission): the Loop forwarding host (H3's 14 verbatim re-proved phase
+lemmas, ≈ 550 lines, collapse to one transfer — `emLoopHost` agrees with
+`loopHost` on every non-body state); the 13 guarded `clSlot_run` agreement
+sites in `CookLevin/Hardness.lean`; every future mode-variant host (the
+§12 loop hosts' decision/find/emit triplet is exactly this pattern).
+Estimate: ≈ 4 points spec + fill; the risk is quantifier placement on the
+agreement set, not proof content.
+
+### Z2. Zoned tape carrier (the Hennie-Stearns representation)
+
+The representation of `m` virtual work tapes on **one** physical tape with
+amortizable locality: a `ZoneLayout` (level count `ℓ`; per-level zones
+`L_i`/`R_i` of capacity `2^i` around a home origin, [AB09] §1.7) and a
+carrier predicate `ZoneCfg` relating one physical word to `m` virtual words
+plus per-zone fullness states (empty / half / full). The layer owns:
+
+* **the carrier** — `ZoneCfg` well-formedness, read/write-at-home
+  contracts (the virtual heads always sit at the physical origin), and the
+  cell-encoding convention (open decision 13.2: how `Option Bool` virtual
+  cells embed into binary physical cells — paired-cell presence/data
+  tracks, with `SingleTape.lean`'s `SweepCell` encoding as the precedent);
+* **the shift routines** — per-level `shiftIn`/`shiftOut` rebalancing
+  rows with **exact** costs `O(2^i)`, assembled from R3
+  transfer/copy/clear via R2 seams, each with its space row (visited cells
+  within the touched zones);
+* **the cardinality lemmas** — visited-set bookkeeping for multiplexed
+  tapes: physical space bounded by the sum of touched zone extents, the
+  piece the Robustness space annotation (Z4) consumes.
+
+Explicitly **on top, not inside**: the `2^i`-fullness invariant across a
+run, the amortized `O(T log T)` charge, and the simulation theorem itself —
+those are the Hennie-Stearns consumer's mathematics (plan §2.1), as the
+§12 precedent kept the loop ledgers out of the loop host. Scope note:
+Z2 is sized for the H-S discipline (one zoned tape + one scratch tape);
+a general `k`→`k'` conversion is not in scope.
+
+### Z3. Two-work-tape codes (the deterministic `actionBits₂` sibling)
+
+The deterministic code layer currently covers only the one-work-tape
+binary normal form (`EffectiveMachineCode`/`UniformMachineCode`,
+`Encoding.lean`), which is why Thm 3.1 arrives at `f²` (plan §2.1). Z3
+extends it: a deterministic two-work-tape code scheme over the
+**same `actionBits₂` record format** as `CodeNDTM` (one branch instead of
+two), with the `CodeParser` extension and the `UniformMachineCode`-style
+uniform-decoding clause (the P3.2 lesson: variable-code consumers need the
+uniformly-timed form). The two-work-tape **universal machine itself** is
+the stage-1 consumer build, not part of this layer; Z3 ships the codes it
+reads. Space rows on the parser rows from the start.
+
+### Z4. Space annotation for the Robustness conversions (consumer-driven)
+
+Additive `spaceUsed` theorems for the chapter-1 conversions
+(`one_work_tape`, the alphabet reduction) via Z2's cardinality lemmas — no
+signature changes, the audited surface untouched (the R3 retro-annotation
+precedent). This is plan §2.7's fallback route to the space-efficient
+universal (Ex 4.1, Thm 4.8). **Design-time obligation, recorded here**: at
+the Z1-Z3 spec phase, assess whether the two-work-tape universal carrying
+Z1/Z2 space rows yields Ex 4.1 directly; the answer (and hence whether Z4
+is needed at all, and at which strength) is recorded before the statement
+gate, so the chapter-4 risk register (§6 summit 1) is settled either way.
+
+### Consumers (rule-of-admission check, §4: two named customers per item)
+
+| Item | Customers |
+|---|---|
+| Z1 virtual-input hosting | the two-work-tape universal (stage 1); the `NP^EXPCOM ⊆ EXP` summit's query simulation; the 12.2c dedup of `a2_mapVirtual*`/`f2_splitCount*`; the P3.3 universal-NDTM fill's code/input discipline |
+| Z2 zoned carrier + shifts | the Hennie-Stearns `k`→2 conversion (plan §2.1); the Robustness space annotation (Z4); the Ex 1.6 oblivious sharpening (recorded stretch goal, `Robustness/Oblivious.lean`) |
+| Z3 two-work-tape codes | the two-work-tape universal; the Thm 3.1 re-derivation at `f log f` (Hydroxyi's diagonal argument over the new codes) |
+| Z4 space annotation | Thm 4.8/Ex 4.1 fallback (plan §2.7); `L ⊊ PSPACE`/space-hierarchy fills (P4.3) if the universal route stalls |
+
+### Placement, sequencing, cost
+
+* New files `Build/VirtualInput.lean` (Z1) and `Build/Zone.lean` (Z2),
+  namespace `Turing.FinTM`, order list after `Build/Catalog`; Z3 as a new
+  `TuringMachine/Codes2.lean` beside `Encoding.lean` (placement open
+  decision 13.3: a new file versus extending `Encoding.lean` — the frozen
+  audited surface of `Encoding.lean` argues for the new file); Z4 lands
+  additively in the `Robustness/` files through the shared-file mechanism,
+  flagged for its own audit.
+* Process per `workflow.md`, the §12 precedent verbatim: maintainer-serial
+  spec layer (quantifier-sensitive), statement gate by external audit,
+  fills as briefed batches with exclusive ownership, epoch-boundary fill
+  audit. The gate must close before the H-S/two-tape-universal builds
+  start; chapter-3/4 fill briefs written while this layer is open simply
+  do not cite it (the EXPCOM brief prefers Z1 only if Z1 is closed).
+* Estimate (campaign points): Z1 ≈ 8 (harvest-grade — the lockstep is
+  proved four times over; the risk is quantifier hygiene, not proof
+  content), Z2 ≈ 14 (genuinely new; the carrier predicate is the risk
+  concentration, L-style), Z3 ≈ 6 (format fixed by `actionBits₂`), Z4 ≈ 6
+  (retro-annotation against Z2's lemmas). Total ≈ 34, between the §12
+  statement layer and one fill epoch.
+* **Citation duty** (binding, the 2026-10-06 guideline and the 2026-10-08
+  citation-audit row): the design adapts [AB09] §1.7 (Hennie-Stearns) and
+  Exercise 1.5/1.6; the §12 duty extends here — Édouard Bonnet's
+  lax-434930 `classical-complexity` (Apache-2.0, commit `0c084031…`) is
+  cited in this addendum, the module docstrings, and the blueprint entries
+  wherever its stack-machine routine catalog informed a row's shape; no
+  external code is imported or transcribed.
+
+### Open decisions (13.x, for the user at spec time)
+
+1. **13.1 Zone discipline**: zones-with-fullness (the [AB09] §1.7 layout,
+   proposed) versus plain interleaving (simpler carrier, no amortized
+   locality — insufficient for H-S alone, but cheaper if Z2's only
+   customer were Z4). Proposed: zones; interleaving is not built.
+2. **13.2 Cell encoding**: how `Option Bool` virtual cells embed in binary
+   physical cells (paired presence/data cells proposed; `SweepCell` as
+   precedent).
+3. **13.3 Z3 placement**: new `Codes2.lean` (proposed) versus extending
+   the frozen `Encoding.lean`.
+4. **13.4 Z1 mode shape**: one transformer with an emission-mode parameter
+   versus two transformers — inherits open decision 12.4's resolution.
+5. **13.5 Z5 placement**: the agreement-transfer lemma in `Simulation.lean`
+   beside the lockstep gadgets (proposed) versus a `Build/` module.
+
+### 13a. Decisions resolved; epoch structure (user, 2026-10-09)
+
+All five open decisions resolved as proposed, with one rename:
+**13.1** zones-with-fullness (interleaving is not built); **13.2** paired
+presence/data cells (`SweepCell` precedent); **13.3** a new file, renamed
+**`TuringMachine/Codes2Tape.lean`** so the "2" reads as *two-tape*;
+**13.4** Z1 inherits 12.4's resolution (a silent/emit transformer pair over
+one shared core); **13.5** Z5 lands in `Simulation.lean`.
+
+**The statement phase runs in two tranches, each with its own gate:**
+
+* **A-S1 — the virtual-input half**: Z5 (the agreement transfer,
+  `Simulation.lean`, additive), Z1 (`Build/VirtualInput.lean`, new), and
+  the Z1 rider (the R1 selected-tape exports, `Embed.lean`, additive via
+  the shared-file mechanism). Rationale: harvest-grade risk (the lockstep
+  is proved four times over; the rider's facts are proved privately), and
+  its consumers are the *near-term* ones — the blocked retrofit R1
+  families, the 12.2c dedup, the Loop H3 collapse, the EXPCOM summit.
+* **A-S2 — the zone half**: Z2 (`Build/Zone.lean`), Z3
+  (`Codes2Tape.lean`), Z4 (the Robustness space annotation). Rationale:
+  Z2's carrier predicate is the genuine design risk and deserves an
+  undiluted gate; its consumers (Hennie-Stearns, the two-tape universal)
+  sit one stage later. The Z4 design-time obligation (does the two-tape
+  universal's space bonus yield Ex 4.1?) is discharged in the A-S2 pack.
+
+The canonical Z1 shape (spec-time refinement, recorded before drafting):
+the transformer is defined on exactly `1 + M.k` work tapes — the buffer
+first, the payload bank after it — and **relocation is not baked in**:
+a consumer needing the buffer or bank elsewhere composes with R1. One
+shared hosting core; `silent`/`emit` flavors per 12.4; the tag lives in
+the transported control state (the `a2_MapState.run q tag` precedent).
+
+### 13b. A-S1 gate close (2026-10-09, after `audits/vhost-infra-findings.md`)
+
+Round-1 **PASS, 0 blockers / 0 majors / 2 minors**; loop summary
+`audits/vhost-infra-resolutions.md`. Minor sweep recorded here per the
+audit's proposed fix (A-S1-2): the Z1 rider's promised **`ofWords`
+transport form is supplied by specialization** of the four delivered
+selected-tape projections (instantiate `c := Cfg.ofWords …`); no
+separately named specialization is exported now — if a consumer wants the
+whole-configuration identity (with its frame, capture, head, and output
+parameters spelled out), it is commissioned on need at the 12.2c window.
+A-S1-1 (the pack under-counted the definitions: eight with
+`MultiTapeTM.AgreeOn`, 23 audited declarations) is acknowledged as a pack
+erratum; shipped packs stay verbatim. The audit's four recommended sanity
+exports (initial-tag validity + `q₀`-independence, fixed-parameter
+transport injectivity, native-head constancy for arbitrary host
+configurations, named boundary/seam specializations) are **adopted as
+optional permanent lemmas of the A-S1 fill brief** — offered, not
+required. The audit's Z5 composition-of-responsibilities reading is
+affirmed and binding on retrofit consumers: Z5 equates runs on one
+carrier; heterogeneous `clSlot_run`-style sites first transport
+(R1 + state renaming), then agree — a public guarded
+configuration-transport theorem is a possible later export, not promised.
+
+### 13c. A-S2 round-1 repairs (2026-10-09, after `audits/zone-infra-findings.md`)
+
+The A-S2 statement gate returned **FAIL: 1 blocker, 1 major, 2 minors**;
+repairs landed with the round-2 pack:
+
+* **A-S2-1 (blocker) → the inward room premise removed and the wrappers
+  split.** The spec had one shared room hypothesis on both shift
+  directions; inward shifts *remove* donor cells, so a full donor — the
+  exact classical case — was illegal, and the audit's full-chain family
+  showed the delivered interface forcing `Ω(T²)` behavior. Repair:
+  `zoneShiftInW` carries no room condition; `zoneShiftOutW`'s receiving
+  room moved **inside its guard**; the contents wrappers are the
+  hypothesis-free `zoneShiftIn`/`zoneShiftOut`; the head steps gain the
+  guarded-total `zoneMove`; and the audit's required gate material landed —
+  the full-donor regression (`zoneShiftInW_full_donor`) and the cascade
+  statements (`zoneCascadeRight` with its represented-word, length, and
+  geometric-cost lemmas), whose proofs adopt the audit's schedule analysis
+  as the binding route. The rows now realize the **total guarded
+  operation, identity branch included**.
+* **A-S2-2 (major) → the Z4 one-tape sketch replaced.** The received
+  `sweepTM` grows its window unconditionally (the audit's stationary-head
+  scanner refutes it as a witness); the statement stands, and the binding
+  route is now a **demand-grown** sweep witness with the audit's
+  union-of-origin-intervals bound, interleaving factor, and the
+  all-`Γ'`-inputs retraction (empty-alphabet and zero-tape cases named).
+* **A-S2-5 (note, adopted) → the Ex 4.1 assessment stands as a
+  *design-level* verdict, not an implementation discharge**: the stage-1
+  universal must specify a space-accounted input interface (native/suffix
+  access or an accounted buffer — a materialized input copy costs
+  `Ω(|x|)` work cells, absent from the sketched ledger) and a parser with
+  its own space ledger; the uniform scheme (Z3), not an arbitrary
+  effective scheme, is what a space-accounted canonizer route would use.
+* Minors: the pack's definition count corrected (22, not 25; inventory in
+  the findings); the module's export list and the guard semantics
+  docstrings corrected in place (A-S2-4).
+```
+
+## ===== audits/zone-agent-reports/f1-A2-REPORT.md =====
+
+```
+# ZF-A2 — partial delivery and shared-interface escalation
+
+**0/2 machine rows completed. The file remains at 18/20 original targets proved. This is not a zero-sorry delivery and does not close the fill gate.** The inward row was investigated first. Both target proofs remain byte-identical admissions; no statement, existing proof, or attribution was weakened or edited.
+
+This delivery adds the three sanctioned imports and seven proved/private staging declarations (one definition and six lemmas). It stops at the continuation brief's explicit shared-lemma escalation: the public catalog transfer contract does not cover a delimited word at displaced heads inside a larger tape. The exact requested shared contract and a kernel-checked regression are supplied below and in the accompanying Lean evidence files. This is an interface/ownership escalation, **not a counterexample to either existential zone-shift theorem**, and not a claim that the new shared lemma alone would finish a row.
+
+- Repository: `https://github.com/Shilun-Allan-Li/tcslib`.
+- Received branch: `complexity/arora-barak-ch3-4`.
+- Working branch: `fill/zone-f1-A2`.
+- Recorded base: `42627f368fef1fbdc5f0c8af777498d26be124bd`.
+- Brief's issued base: `f171767f32e573c345f3fa9b6e9fb87e14b84ddf`.
+- The received `Zone.lean` is byte-identical at these two bases. The intervening changes issue the continuation briefs and their plan/evidence records.
+- No rebase, push, or PR was performed. Final commit: `18c85b42d750b433bf5b00d5408bd8414c211269` (metadata in `commits.log`).
+
+Read: `AGENTS.md`, `policy.md`, `workflow.md`, the complete A2 and A briefs, `audits/zone-agent-reports/f1-A-REPORT.md`, all three zone statement-gate findings files, their resolutions, and the relevant §12 registry and source contracts.
+
+## Changes and freeze
+
+**Sanctioned imports added, explicitly flagged:**
+
+```lean
+import TCSlib.Complexity.TuringMachine.Build.Embed
+import TCSlib.Complexity.TuringMachine.Build.Seam
+import TCSlib.Complexity.TuringMachine.Build.Catalog
+```
+
+No other import changes. There are no public docstring/sketch appendices and no optional public exports.
+
+| New private declaration | Role |
+|---|---|
+| `zoneStageWord` | Encode a zone word in physical order away from home: presence/data on the right, data/presence on the left. |
+| `zoneStageWord_length` | The staging word has exactly twice the virtual word's length. |
+| `zoneStageWord_getElem` | Identify each staging bit by quotient/remainder of its physical offset. |
+| `zoneStageSlot` | Specialize `zoneIndex_eq_iff` to an offset inside a named zone and read its virtual word. |
+| `zoneStage_rightWindow` | Relate the right physical window to the staging word, including its blank suffix inside capacity. |
+| `zoneStage_leftWindow` | The corresponding negative-coordinate window equation, with the correct reversed bit roles. |
+| `zoneStage_window_bounds` | Both oriented windows, including adjacent delimiter cells, fit the target's allowed data interval. |
+
+All seven are complete; no new private admission. The left-window equation is an address/readout fact, not a claimed reflected-machine simulation. An ascending physical transfer on the left would read the reversed staging word and still needs its controller proof.
+
+`freeze.log` establishes a stronger check than signature comparison: remove exactly the three new import lines and the contiguous new private block, and the **entire file equals the recorded base byte-for-byte**. Thus all eighteen proved targets, all nine old private lemmas, both unfinished rows, every public statement, and all old documentation remain unchanged. The only changed tracked path is `TCSlib/Complexity/TuringMachine/Build/Zone.lean`.
+
+## Why canonical transfer is insufficient
+
+The missing premise is not solved by the newly authorized imports:
+
+1. `transferTM_run`, `copyTM_run`, and `clearTM_run` start from `Cfg.ofWords`: heads at zero, native input position 1, and globally canonical `bufferTape` contents on every tape. The transfer/copy rows additionally assume a blank destination word.
+2. `embedEmitCfg` and `embedSilentCfg` transplant an entire selected tape unchanged. Their frame clauses protect **unselected tapes**, not the outer cells of a selected tape. At two tapes, the suppressing embedding also has no third capture tape available when both source tapes are selected.
+3. `seamCompTM_run_ofCfg` correctly composes arbitrary configurations, but its `h₁` and `h₂` hypotheses already require the constituent framed runs. It does not provide those runs from the canonical catalog theorem.
+4. `runFrom_eq_of_agreeOn` compares transition tables on the **same initial configuration**. It supplies neither a change of tape origin nor an initial tape frame.
+
+This is a missing public specialization, not a theorem that no generic simulation argument could ever derive. Building another private catalog trace here would violate the brief's ban on copying/re-deriving that layer. The requested shared theorem should be proved in its shared home by generalizing the existing transfer invariants, once.
+
+The boundary conditions matter even with an enabled inward guard. `BoundaryRegression.lean` constructs a valid three-level carrier with right lengths `(0,4,1)` and a nonempty left level zero. At inward level 1:
+
+- The donor starts at physical cell 6 and occupies eight bits.
+- Physical cell 14 belongs to the next outer zone and contains `some true`; it is not a terminating blank.
+- Starting bare `transferTM 2 0 1` at data head 6 and a blank scratch head 0 consumes **ten** bits, reaches `done` at time **22**, and erases cell 14.
+- The required `zoneShiftIn true 1` preserves cell 14 as `some true`.
+- The original data tape cannot equal any `bufferTape w`, because its cell -2 is occupied.
+
+The regression uses exact kernel reduction, not `native_decide`, and does not claim to refute the zone row. It shows why boundary preparation and a framed run proof are necessary. The proposed route saves the boundary symbols in finite control, installs blank delimiters, calls the shared transfer, and restores the symbols. The new window lemmas establish the physical interior and allowable delimiter locations; no preparation controller is claimed complete.
+
+## Requested shared lemmas
+
+**Exactly one request:** add and prove `Turing.transferTM_run_ofCfg` in `Build/Catalog.lean`.
+
+`RequestedSharedLemma.lean` contains the complete proposed type as `requested_transferTM_run_ofCfg : Prop`. It is a **typechecked specification only**, not a theorem or a proof; it contains no `sorry` and adds no axiom. The public theorem should inhabit that proposition (the proposed helper definition need not itself be exported).
+
+Inputs and obligations:
+
+- Distinct source/destination tapes; arbitrary native input, input position, output prefix, inactive tapes, and displaced heads.
+- Initial control `some SweepPhase.sweep`.
+- A source word agreeing with `bufferTape w` at the source head's relative coordinates from **-1 through `w.length`, inclusive**. Thus both boundary cells really are blank. The destination's old contents are unrestricted because the controller never tests that read component.
+- At exactly `2*w.length+2`, control is `some SweepPhase.done`, both touched heads return to their initial coordinates, native position and output are unchanged, the source word interval is erased, the destination word interval is overwritten by `w`, and every cell outside those intervals is unchanged.
+- No earlier visit to `done`.
+- Through that time each touched head lies in its translated interval `[-1,w.length]`; every other head stays fixed.
+
+The exact final configuration and the two trajectory clauses are included in the supplied type. The translated interval bound yields the per-tape `w.length+2` space bound by the existing interval-cardinality export. The original canonical contract is a specialization with zero heads and globally buffered words; the destination-blank restriction can be reinstated at that specialization.
+
+Mathematical proof route for the shared owner: generalize the existing forward/rewind transfer invariants over the fixed outer frame and starting head coordinates. The forward pass copies the prefix without changing the source; the source's right delimiter turns the heads; the rewind erases only the source interior; the left delimiter supplies the final return step. There are `w.length` forward steps, one turn, `w.length` erase steps, and one entry step. These are proof obligations for the shared owner, not a claimed new Lean proof in this delivery.
+
+## Remaining inward frontier
+
+The requested shared lemma removes the **first staging-interface gap**. It does not supply the rest of the witness:
+
+1. A single finite controller must preserve the unary level while constructing and using the anchored binary navigation counter, with the audited geometric carry/borrow sum. No level may be compiled into control.
+2. Locate the windows, evaluate the inward guard, save/blank/restore boundary symbols, stage and rewrite the prefix/suffix, and prove the identity branch including arbitrary outer contents.
+3. Compose the proved phase runs by `seamCompTM_run_ofCfg`, transport their cuts and visited sets, restore scratch to the exact unary buffer, and return both heads.
+4. End with an explicitly halting phase, derive the first-halt cut, and choose one coefficient for time and scratch space.
+
+Two source-level cautions for that continuation:
+
+- `incrementTM_run_succ` exposes the loose `2*width+2` bound. Its docstring describes the sharper carry-sensitive cost, but the public theorem does not state it. Repeating the loose bound alone would give a width factor and does not prove the audited geometric navigation ledger. No additional shared theorem is requested in this delivery; that cost proof remains an explicit obligation.
+- The continuation table's phrase “release to genuine halt” is not what `seamReleaseTM` does. It executes the original anchor action from a fresh entry state and subsequently runs the original machine. `seamReleaseTM_firstReturn` returns to a **live** anchor. A terminal halt must be supplied explicitly; the table was guidance, so no statement was altered to match it.
+
+The outward row was not started, respecting the inward-first priority.
+
+## Duplication ledger and citations
+
+new copies: none
+
+There is no local catalog controller, trace, transfer proof, embedding proof, seam proof, loop host, or primitive copy. The additions are zone-specific codec/address facts. Public declaration count remains 38; private count rises from 9 to 16. No completed machine phase is claimed to consume §12 contracts.
+
+| Intended phase | Exact shared citations and present status |
+|---|---|
+| Delimited staging | `transferTM_run` / `transferTM_spaceUsedByTape`: inspected, canonical forms insufficient; first request is `transferTM_run_ofCfg`. |
+| Additional copy/cleanup if selected | `copyTM_run`, `copyTM_spaceUsedByTape`, `clearTM_run`, `clearTM_spaceUsedByTape`: inspected; their framed applicability must likewise be established, not presumed. The current request does not claim to resolve all such future choices. |
+| Host tape selection | `embedEmitTM_runFrom`, `embedEmitTM_frame`, `embedEmitTM_visitedByTapeHead`; returning variant `embedEmitRetTM_run` / `embedEmitRetTM_visitedByTapeHead` only for genuinely halting source phases. No spatial-frame conclusion is attributed to them. |
+| General sequencing | `seamCompTM_run_ofCfg`, `seamCompTM_firstReturn_ofCfg`, `seamCompTM_visitedByTapeHead_ofCfg`: applicable after phase contracts exist. |
+| Fresh-entry positive-return control | `seamReleaseTM_firstReturn`, `seamReleaseTM_visitedByTapeHead`: available for their actual live-return purpose, not as an implicit halting adapter. |
+
+## Verification and archive
+
+Verification results are finalized in `verification-summary.txt`. All Lean checks use the unmodified `scripts/lean_check_tree.sh`; no `lake build` was run. `lake exe cache get` succeeded with the manifest-pinned dependencies. A fresh, dependency-ordered sweep covers the standard order list and the five prescribed Build modules; additional actual import prerequisites are included rather than assumed present.
+
+The twenty target axiom prints are in `axioms.log`. The eighteen integrated targets remain within `[propext, Classical.choice, Quot.sound]`; the two unfilled rows deliberately still carry `sorryAx`. All seven new staging declarations and all five boundary regression facts are checked separately and use only the standard triple. No proof of the requested shared specification is included or claimed.
+
+Style: `style_lint: 0 FAIL, 4 WARN over 11 files`. The `Zone.lean` size warning (now 1,191 lines) is covered by the plan decision-log entry “A-S2 fill epoch: ZF-A and ZF-C partials INTEGRATED; ZF-B received and HELD”: this single owned audited surface remains together until the 12.2c split window. The other three size warnings are received files.
+
+The archive contains the full `Zone.lean`, report, patch series against the recorded base, incremental git bundle, final sweep and axiom logs, freeze and integration evidence, the two Lean escalation evidence files, and `SHA256SUMS`. Only `Zone.lean` is changed by the patch; evidence files are not repository contributions. No compatibility shim, toolchain executable, dependency cache, or build output is delivered.
+
+Notation: `w` is the proposed transfer's finite Boolean word; `d` its arbitrary starting configuration; `p` a relative integer cell offset; `T = 2*w.length+2` its proposed exact phase time. Other names are existing source identifiers or listed private additions.
+```
+
+## ===== audits/evidence/zone-f1-A2/RequestedSharedLemma.lean.txt =====
+
+```
+import TCSlib.Complexity.TuringMachine.Build.Catalog
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+namespace Turing
+
+/-- Proposed shared theorem type, deliberately a Prop-valued definition.
+This file checks the interface, not its truth; no proof is claimed.
+The requested home is Build/Catalog.lean, name transferTM_run_ofCfg. -/
+def requested_transferTM_run_ofCfg : Prop :=
+  ∀ {k : ℕ} {x : List Bool} (src dst : Fin k), src ≠ dst →
+  ∀ (w : List Bool) (d : Cfg k Bool SweepPhase x),
+    d.state = some SweepPhase.sweep →
+    (∀ p : ℤ, -1 ≤ p → p ≤ (w.length : ℤ) →
+      d.workTapes src (d.workTapePos src + p) = FinTM.bufferTape w p) →
+    let T := 2 * w.length + 2
+    let finish : Cfg k Bool SweepPhase x :=
+      { d with
+        state := some SweepPhase.done
+        workTapes := fun j p =>
+          if j = src then
+            if d.workTapePos j ≤ p ∧ p < d.workTapePos j + (w.length : ℤ)
+              then none else d.workTapes j p
+          else if j = dst then
+            if d.workTapePos j ≤ p ∧ p < d.workTapePos j + (w.length : ℤ)
+              then FinTM.bufferTape w (p - d.workTapePos j)
+              else d.workTapes j p
+          else d.workTapes j p }
+    (transferTM k src dst).runFrom d T = finish ∧
+    (∀ t < T, ((transferTM k src dst).runFrom d t).state ≠
+      some SweepPhase.done) ∧
+    (∀ (j : Fin k) (t : ℕ), t ≤ T →
+      if j = src ∨ j = dst then
+        ((transferTM k src dst).runFrom d t).workTapePos j ∈
+          Finset.Icc (d.workTapePos j - 1) (d.workTapePos j + (w.length : ℤ))
+      else ((transferTM k src dst).runFrom d t).workTapePos j = d.workTapePos j)
+
+#check requested_transferTM_run_ofCfg
+#print axioms requested_transferTM_run_ofCfg
+
+end Turing
+```
+
+## ===== audits/evidence/zone-f1-A2/BoundaryRegression.lean.txt =====
+
+```
+import TCSlib.Complexity.TuringMachine.Build.Zone
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+namespace ZFA2BoundaryRegression
+open Turing
+
+/-- Valid level-1 inward input: empty lower right zone, full donor,
+occupied outer zone. The nonempty left zone also prevents a canonical
+bufferTape representation of the whole data tape. -/
+def z : ZoneContents 3 where
+  home := none
+  left := fun j => if j.val = 0 then [some true] else []
+  right := fun j => if j.val = 1 then List.replicate 4 none
+    else if j.val = 2 then [some true] else []
+  left_le := of_decide_eq_true rfl
+  right_le := of_decide_eq_true rfl
+
+/-- The legitimate inward operation has an enabled guard. -/
+theorem inward_guard : z.right 0 = [] ∧ (z.right 1).length = zoneCapacity 1 :=
+  of_decide_eq_true rfl
+
+/-- The full donor starts at 6, occupies eight bits, and is followed by
+occupied outer data at 14. A bare transfer has no delimiter there. -/
+theorem donor_boundary :
+    2 * zoneBase 1 + 2 = 6 ∧ zoneTape z 14 = some true :=
+  of_decide_eq_true rfl
+
+/-- A displaced transfer with no boundary preparation. -/
+def start : Cfg 2 Bool SweepPhase ([] : List Bool) :=
+  ⟨some .sweep, 1,
+    (fun j => if j.val = 0 then zoneTape z else FinTM.bufferTape []),
+    (fun j => if j.val = 0 then 6 else 0), []⟩
+
+/-- The unprepared transfer consumes ten bits, including the outer pair;
+it returns at time 22 and has erased the outer presence cell. -/
+theorem unprepared_transfer :
+    ((transferTM 2 0 1).runFrom start 22).state = some .done ∧
+    ((transferTM 2 0 1).runFrom start 22).workTapePos 0 = 6 ∧
+    ((transferTM 2 0 1).runFrom start 22).workTapePos 1 = 0 ∧
+    ((transferTM 2 0 1).runFrom start 22).workTapes 0 14 = none :=
+  of_decide_eq_true rfl
+
+/-- The required inward operation preserves that outer cell. -/
+theorem required_outer_frame :
+    zoneTape (zoneShiftIn true 1 z) 14 = some true :=
+  of_decide_eq_true rfl
+
+/-- No canonical word can equal this whole data tape: cell -2 is occupied. -/
+theorem not_canonical (w : List Bool) : zoneTape z ≠ FinTM.bufferTape w := by
+  intro h
+  have hc := congrFun h (-2)
+  have hz : zoneTape z (-2) = some true := of_decide_eq_true rfl
+  rw [hz] at hc
+  simpa [FinTM.bufferTape] using hc
+
+#print axioms inward_guard
+#print axioms donor_boundary
+#print axioms unprepared_transfer
+#print axioms required_outer_frame
+#print axioms not_canonical
+
+end ZFA2BoundaryRegression
+```
+
+## ===== audits/evidence/s12-framed/FramedSanity.lean.txt =====
+
+```
+import TCSlib.Complexity.TuringMachine.Build.Catalog
+open Turing
+
+def frameCfg {S : Type} (q : S) (w : List Bool) (h0 h1 : ℤ) : Cfg 2 Bool S [true, false] :=
+  { Cfg.ofWords (input := [true, false]) q (fun (_ : Fin 2) => ([] : List Bool)) with
+    workTapes := fun j p =>
+      if j.val = 0 then
+        (if h0 - 1 ≤ p ∧ p ≤ h0 + w.length then FinTM.bufferTape w (p - h0) else some true)
+      else (if p % 3 = 0 then some false else if p % 3 = 1 then some true else none)
+    workTapePos := fun j => if j.val = 0 then h0 else h1 }
+
+def cells {S : Type} (c : Cfg 2 Bool S [true, false]) : List (List (Option Bool)) :=
+  [ (List.range 30).map (fun n => c.workTapes 0 ((n : ℤ) - 10)),
+    (List.range 30).map (fun n => c.workTapes 1 ((n : ℤ) - 10)) ]
+
+def finCopy (d : Cfg 2 Bool SweepPhase [true,false]) (w : List Bool) : Cfg 2 Bool SweepPhase [true,false] :=
+  { d with state := some SweepPhase.done,
+           workTapes := fun j q =>
+            if j = 1 ∧ d.workTapePos j ≤ q ∧ q < d.workTapePos j + (w.length : ℤ)
+              then FinTM.bufferTape w (q - d.workTapePos j) else d.workTapes j q }
+def finClear (d : Cfg 2 Bool SweepPhase [true,false]) (w : List Bool) : Cfg 2 Bool SweepPhase [true,false] :=
+  { d with state := some SweepPhase.done,
+           workTapes := fun j q =>
+            if j = 0 ∧ d.workTapePos j ≤ q ∧ q < d.workTapePos j + (w.length : ℤ)
+              then none else d.workTapes j q }
+def finInc (d : Cfg 2 Bool FlagPhase [true,false]) (flag : Bool) (len : ℕ) (v : List Bool) : Cfg 2 Bool FlagPhase [true,false] :=
+  { d with state := some (FlagPhase.done flag),
+           workTapes := fun j q =>
+            if j = 0 ∧ d.workTapePos j ≤ q ∧ q < d.workTapePos j + (len : ℤ)
+              then FinTM.bufferTape v (q - d.workTapePos j) else d.workTapes j q }
+
+def sweepOK {S : Type} [DecidableEq S] (M : MultiTapeTM 2 Bool S) (d f : Cfg 2 Bool S [true,false])
+    (T : ℕ) (bad : Option S → Bool) (lo0 hi0 lo1 hi1 : ℤ) : Bool :=
+  let r := M.runFrom d T
+  decide (r.state = f.state) && decide (cells r = cells f) && decide (r.workTapePos 0 = f.workTapePos 0)
+    && decide (r.workTapePos 1 = f.workTapePos 1) && decide (r.inputPos = f.inputPos) && decide (r.output = f.output)
+    && (List.range T).all (fun t => !bad (M.runFrom d t).state)
+    && (List.range (T+1)).all (fun t => let c := M.runFrom d t
+          decide (lo0 ≤ c.workTapePos 0 ∧ c.workTapePos 0 ≤ hi0 ∧ lo1 ≤ c.workTapePos 1 ∧ c.workTapePos 1 ≤ hi1))
+
+def checkCopy (w : List Bool) (h0 h1 : ℤ) : Bool :=
+  let d := frameCfg SweepPhase.sweep w h0 h1
+  sweepOK (copyTM 2 0 1) d (finCopy d w) (2 * w.length + 2) (fun s => decide (s = some SweepPhase.done))
+    (h0 - 1) (h0 + w.length) (h1 - 1) (h1 + w.length)
+def checkClear (w : List Bool) (h0 h1 : ℤ) : Bool :=
+  let d := frameCfg SweepPhase.sweep w h0 h1
+  sweepOK (clearTM 2 0) d (finClear d w) (2 * w.length + 2) (fun s => decide (s = some SweepPhase.done))
+    (h0 - 1) (h0 + w.length) h1 h1
+def doneAny (s : Option FlagPhase) : Bool := decide (s = some (FlagPhase.done true)) || decide (s = some (FlagPhase.done false))
+def checkInc (w : List Bool) (h0 h1 : ℤ) : Bool :=
+  let d := frameCfg FlagPhase.run w h0 h1
+  match incFixed w with
+  | some v => let p := (w.takeWhile id).length
+      sweepOK (incrementTM 2 0) d (finInc d true w.length v) (2 * p + 2) doneAny (h0 - 1) (h0 + p) h1 h1
+  | none => sweepOK (incrementTM 2 0) d (finInc d false w.length (List.replicate w.length false))
+      (2 * w.length + 2) doneAny (h0 - 1) (h0 + w.length) h1 h1
+
+
+def finTransfer (d : Cfg 2 Bool SweepPhase [true,false]) (w : List Bool) : Cfg 2 Bool SweepPhase [true,false] :=
+  { d with state := some SweepPhase.done,
+           workTapes := fun j q =>
+            if j = 0 ∧ d.workTapePos j ≤ q ∧ q < d.workTapePos j + (w.length : ℤ) then none
+            else if j = 1 ∧ d.workTapePos j ≤ q ∧ q < d.workTapePos j + (w.length : ℤ)
+              then FinTM.bufferTape w (q - d.workTapePos j)
+            else d.workTapes j q }
+def checkTransfer (w : List Bool) (h0 h1 : ℤ) : Bool :=
+  let d := frameCfg SweepPhase.sweep w h0 h1
+  sweepOK (transferTM 2 0 1) d (finTransfer d w) (2 * w.length + 2) (fun s => decide (s = some SweepPhase.done))
+    (h0 - 1) (h0 + w.length) (h1 - 1) (h1 + w.length)
+
+def words : List (List Bool) := [[], [true], [false], [true,false,true], [true,true,true], [false,true,true,false], [true,true,false,true]]
+#eval (words.map (fun w => checkTransfer w 3 (-2) && checkTransfer w (-4) 5)).all id
+#eval (words.map (fun w => checkCopy w 3 (-2) && checkCopy w 0 0 && checkCopy w (-4) 6)).all id
+#eval (words.map (fun w => checkClear w 3 (-2) && checkClear w (-5) 7)).all id
+#eval (words.map (fun w => checkInc w 3 (-2) && checkInc w (-3) 4)).all id
+-- negative control: the harness must reject a wrong time
+#eval (let w := [true,false,true]; let d := frameCfg SweepPhase.sweep w 3 (-2)
+       sweepOK (copyTM 2 0 1) d (finCopy d w) (2 * w.length + 1) (fun s => decide (s = some SweepPhase.done)) 2 6 (-3) 1)
+```
+
+## ===== audits/evidence/s12-framed/results.txt =====
+
+```
+# Execution check of the five framed contracts (design §12.6): the statements are sorried; the machines are evaluated.
+# Run: LEAN_PATH=<scratch oleans + packages> lean FramedSanity.lean  (file stored with a .txt suffix so it is never built)
+# Output, in order: transfer, copy, clear, increment, negative control
+true
+true
+true
+true
+false
+# transfer 14/14, copy 21/21, clear 14/14, increment 14/14 (success and overflow branches); the negative control (copy at time 2|w|+1) is correctly rejected.
+```
+
+## ===== TCSlib/Complexity/TuringMachine/Configuration.lean =====
+
+```
+/-
+Copyright (c) 2026 Christian Reitwiessner. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Christian Reitwiessner, Aviv Bar Natan
+
+Vendored from cslib (https://github.com/leanprover/cslib), file
+`Cslib/Computability/Machines/Turing/MultiTape/Configuration.lean`,
+at commit a374775894efb9b7196cccf11235c60a97086dc1 (2026-09-14).
+Local modifications (see policy.md §2, vendored code):
+* removed the Lean module-system syntax (`module`, `public import`, `@[expose] public section`)
+  for compatibility with our v4.25.0 toolchain;
+* remapped `Mathlib.Basic.Sign.Defs` to its location at our mathlib pin,
+  `Mathlib.Data.Sign.Defs`; dropped the cslib-internal `Cslib.Init` import;
+* added the repository-standard `set_option` header.
+The mathematical content is unchanged.
+-/
+import Mathlib.Algebra.Order.BigOperators.Group.Finset
+import Mathlib.Algebra.Order.Group.Abs
+import Mathlib.Algebra.Order.Group.Int
+import Mathlib.Data.Finset.Dedup
+import Mathlib.Data.Finset.Max
+import Mathlib.Data.Int.Interval
+import Mathlib.Data.Sign.Defs
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+/-!
+# Configurations of Multi-Tape Turing Machines
+
+Configurations of a multi-tape Turing machine with a read-only input tape, `k` work tapes and one
+write-only output tape, together with what a single transition does to one and the space measure
+read off a list of them.
+
+## Design
+
+Nothing here mentions a machine. A step is described in two parts: an `Action`, recording
+which way the input head moves, what is written and where the work heads move, which symbol is
+emitted and which state follows; and `Action.apply`, which carries it out on a
+configuration.
+
+The output tape is part of the configuration, so the string emitted along a run can be read off
+the configuration the run ends in.
+
+## Main definitions
+
+* `Cfg`: the configuration: the internal state, the tape contents and head positions, and the
+    output tape
+* `Action`: what a machine does in one step
+* `Action.apply`: the effect of one action on a configuration
+* `Cfg.Halted`, `Cfg.init`: halting, and the configuration a machine starts in
+* `spaceUsedOfCfgs`: work tape cells touched along a list of configurations
+
+## References
+
+* [AB09] S. Arora, B. Barak, *Computational Complexity: A Modern Approach*,
+  Cambridge University Press, 2009. (§1.2: the k-tape Turing machine.)
+* [Pap94] C. Papadimitriou, *Computational Complexity*, Addison-Wesley, 1994.
+  (§2.3, §2.5: the machine model and the space measure.)
+-/
+
+namespace Turing
+
+variable {k : ℕ} {State Symbol : Type*} {input : List Symbol}
+
+/-- What a machine does in one step. -/
+structure Action (k : ℕ) (Symbol State : Type*) where
+  /-- The movement (attempt) of the input head. -/
+  inputTape : SignType
+  /-- Actions on the work tapes: optionally a symbol to write and the head movement. -/
+  workTapes : Fin k → (Option (Option Symbol)) × SignType
+  /-- An optional symbol to output. -/
+  output : Option Symbol
+  /-- The successor state or none to halt. -/
+  state : Option State
+
+/--
+The configurations of a Turing machine is relative to the input of the machine and consist of:
+- an `Option`al state (or none for the halting state),
+- the position of the input head (shifted by one),
+- the contents of the work tape,
+- the positions of the work tape heads,
+- the contents of the write-only output tape
+-/
+@[ext]
+structure Cfg (k : ℕ) (Symbol State : Type*) (input : List Symbol) where
+  /-- the state of the TM (or none for the halting state) -/
+  state : Option State
+  /-- the position of the input head, shifted by one -/
+  inputPos : Fin (input.length + 2)
+  /-- the work tapes -/
+  workTapes : Fin k → ℤ → Option Symbol
+  /-- the positions of the heads on the work tapes -/
+  workTapePos : Fin k → ℤ
+  /-- the contents of the write-only output tape -/
+  output : List Symbol
+deriving Inhabited
+
+/-- Two configurations of a machine without work tapes are equal if their states, input head
+positions and outputs are equal. -/
+lemma Cfg.ext_zero_tapes {Symbol State : Type*} {input : List Symbol}
+    {cfg₁ cfg₂ : Cfg 0 Symbol State input} (state : cfg₁.state = cfg₂.state)
+    (inputPos : cfg₁.inputPos = cfg₂.inputPos) (output : cfg₁.output = cfg₂.output) :
+    cfg₁ = cfg₂ :=
+  Cfg.ext state inputPos (funext fun i => i.elim0) (funext fun i => i.elim0) output
+
+/-- Attempt to move the input tape head.
+The machine can only read one empty cell outside of the input,
+any attempted movement beyond that results in no movement.
+
+The addition is performed in `ℤ` before clamping. Performing it in `Fin (n + 2)` would wrap an
+outward boundary move to the opposite end of the input. -/
+@[scoped grind =]
+def moveInputPos {n : ℕ} (pos : Fin (n + 2)) (m : SignType) : Fin (n + 2) :=
+  let p := ((pos.val : ℤ) + (m.cast : ℤ)).toNat
+  if h : p < n + 2 then ⟨p, h⟩ else ⟨n + 1, by omega⟩
+
+@[simp]
+lemma moveInputPos_zero {n : ℕ} (pos : Fin (n + 2)) :
+    moveInputPos pos 0 = pos := by
+  apply Fin.ext
+  simp [moveInputPos, pos.isLt]
+
+@[simp]
+lemma moveInputPos_leftBoundary {n : ℕ} :
+    moveInputPos (0 : Fin (n + 2)) (-1) = 0 := by
+  apply Fin.ext
+  simp [moveInputPos]
+
+@[simp]
+lemma moveInputPos_rightBoundary {n : ℕ} :
+    moveInputPos (⟨n + 1, by omega⟩ : Fin (n + 2)) 1 = ⟨n + 1, by omega⟩ := by
+  -- ported proof: `dite_eq_right` does not exist at our mathlib pin
+  apply Fin.ext
+  simp only [moveInputPos, SignType.coe_one]
+  split <;> simp <;> omega
+
+/-- A left move away from the left input boundary decrements the native input position. -/
+lemma moveInputPos_neg_of_ne_left {n : ℕ} (p : Fin (n + 2)) (h : p ≠ 0) :
+    moveInputPos p .neg = ⟨p.val - 1, by have := p.isLt; omega⟩ := by
+  -- ported proof: `dite_eq_left` does not exist at our mathlib pin
+  have hlt := p.isLt
+  apply Fin.ext
+  simp only [moveInputPos, SignType.neg_eq_neg_one, SignType.coe_neg_one]
+  split <;> simp <;> omega
+
+/-- A right move away from the right input boundary increments the native input position. -/
+lemma moveInputPos_pos_of_ne_right {n : ℕ} (p : Fin (n + 2)) (h : p.val ≠ n + 1) :
+    moveInputPos p .pos = ⟨p.val + 1, by have := p.isLt; omega⟩ := by
+  -- ported proof: `dite_eq_left` does not exist at our mathlib pin
+  have hlt := p.isLt
+  apply Fin.ext
+  simp only [moveInputPos, SignType.pos_eq_one, SignType.coe_one]
+  split <;> simp <;> omega
+
+/-- The symbol currently under the input tape head. -/
+def Cfg.inputSymbol (cfg : Cfg k Symbol State input) : Option Symbol :=
+  if h₁ : cfg.inputPos = 0 then none
+  else if h₂ : cfg.inputPos = input.length + 1 then none
+  else input[cfg.inputPos.val - 1]'(by
+    -- ported proof: `grind` at our pin does not bridge the `Fin` equality with `.val`
+    have h0 : (cfg.inputPos : ℕ) ≠ 0 := fun hv => h₁ (Fin.val_eq_zero_iff.mp hv)
+    have hlt := cfg.inputPos.isLt
+    omega)
+
+@[simp]
+lemma inputSymbolInner {cfg : Cfg k Symbol State input} (p : ℕ)
+    (h₁ : cfg.inputPos.val = 1 + p)
+    (h₂ : p < input.length) :
+    cfg.inputSymbol = some input[p] := by
+  -- ported proof: `grind` at our pin does not bridge the `Fin` equality with `.val`
+  have h0 : ¬cfg.inputPos = 0 := fun hz => by
+    rw [hz] at h₁
+    simp at h₁
+    omega
+  have hL : ¬(cfg.inputPos : ℕ) = input.length + 1 := by omega
+  simp only [Cfg.inputSymbol, dif_neg h0, dif_neg hL]
+  simp only [show (cfg.inputPos : ℕ) - 1 = p from by omega]
+
+/-- The symbol read by work tape `i`. -/
+def Cfg.workTapeSymbols (cfg : Cfg k Symbol State input) (i : Fin k) : Option Symbol :=
+  cfg.workTapes i (cfg.workTapePos i)
+
+/-- A configuration is halted when it has no state to continue from. -/
+abbrev Cfg.Halted (cfg : Cfg k Symbol State input) : Prop := cfg.state = none
+
+/-- The initial configuration for a starting state and an input string. -/
+@[simp]
+def Cfg.init (q₀ : State) (input : List Symbol) : Cfg k Symbol State input :=
+  ⟨some q₀, 1, fun _ _ => none, fun _ => 0, []⟩
+
+/--
+The effect of an action on a configuration: move the input head, write and move on the work tapes,
+append the emitted symbol to the output tape, and go to the successor state. This is the part of a
+step that does not depend on how the action was chosen.
+-/
+@[simp]
+def Action.apply (action : Action k Symbol State) (cfg : Cfg k Symbol State input) :
+    Cfg k Symbol State input where
+  state := action.state
+  inputPos := moveInputPos cfg.inputPos action.inputTape
+  workTapes i := match (action.workTapes i).1 with
+    | none => cfg.workTapes i
+    | some s => Function.update (cfg.workTapes i) (cfg.workTapePos i) s
+  workTapePos i := cfg.workTapePos i + (action.workTapes i).2
+  output := cfg.output ++ action.output.toList
+
+/-- A work tape head moves by at most one cell when an action is applied. -/
+lemma workTapePos_apply_le (action : Action k Symbol State)
+    (cfg : Cfg k Symbol State input) (i : Fin k) :
+    |(action.apply cfg).workTapePos i - cfg.workTapePos i| ≤ 1 := by
+  simp only [Action.apply, add_sub_cancel_left, abs_le, SignType.cast]
+  grind
+
+/-- The work tape cells visited by the head of tape `i` along a list of configurations. -/
+def visitedOfCfgs (cfgs : List (Cfg k Symbol State input)) (i : Fin k) : Finset ℤ :=
+  (cfgs.map (·.workTapePos i)).toFinset
+
+/-- The number of work tape cells touched by the heads along a list of configurations. -/
+def spaceUsedOfCfgs (cfgs : List (Cfg k Symbol State input)) : ℕ :=
+  ∑ i, (visitedOfCfgs cfgs i).card
+
+end Turing
+```
+
+## ===== TCSlib/Complexity/TuringMachine/Deterministic.lean =====
+
+```
+/-
+Copyright (c) 2026 Christian Reitwiessner. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Christian Reitwiessner, Samuel Schlesinger
+
+Vendored from cslib (https://github.com/leanprover/cslib), file
+`Cslib/Computability/Machines/Turing/MultiTape/Deterministic.lean`,
+at commit a374775894efb9b7196cccf11235c60a97086dc1 (2026-09-14).
+Local modifications (see policy.md §2, vendored code):
+* removed the Lean module-system syntax (`module`, `public import`, `@[expose] public section`)
+  for compatibility with our v4.25.0 toolchain;
+* remapped `Mathlib.Basic.Sign.Defs` to `Mathlib.Data.Sign.Defs` (its location at our mathlib
+  pin); dropped the cslib-internal `Cslib.Init` import; added
+  `Mathlib.Logic.Embedding.Basic` explicitly (upstream receives it transitively);
+* dropped the relational semantics (`TransitionRelation`,
+  `relatesInSteps_iff_runFrom_eq`) because it depends on the cslib-internal
+  `Cslib.Foundations.Data.RelatesInSteps`; the iterated-step semantics `runFrom` is
+  self-contained and suffices for the Chapter 1 development. Re-add it (or migrate to
+  upstream cslib) when the step-indexed relational view is needed, e.g. for
+  nondeterministic machines;
+* added the repository-standard `set_option` header;
+* corrected the module docstring's attribution of the non-blank space measure
+  ([AB09, Def 4.1] counts visited cells for `SPACE`, non-blank cells only for
+  `NSPACE`); comments only, no code change (2026-10-08).
+The remaining mathematical content is unchanged.
+-/
+import Mathlib.Algebra.Order.Group.Abs
+import Mathlib.Algebra.Order.Group.Int
+import Mathlib.Algebra.Order.BigOperators.Group.Finset
+import Mathlib.Data.Sign.Defs
+import Mathlib.Logic.Embedding.Basic
+import TCSlib.Complexity.TuringMachine.Configuration
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+/-!
+# Deterministic Multi-Tape Turing Machines
+
+Defines deterministic Turing machines with a read-only input tape, `k` work tapes and one
+write-only output tape.
+The tapes contain symbols from `Option Symbol` for a finite alphabet `Symbol` (where `none` is the
+blank symbol).
+
+## Design
+
+The multi-tape Turing machine uses a read-only input tape, `k` work tapes and a write-only output
+tape.
+The input head can move freely on the input, but any move attempt beyond one cell outside the input
+results in no movement.
+The transition function can optionally output one symbol, which models the write-only output tape.
+Because of these restrictions, we ignore the input and output tapes for space usage of the machine.
+The space usage is defined as the total number of cells the work tape heads visited during
+execution.
+
+Restricting the movement of the input head is not essential, but useful because it allows
+us to easily bound the number of possible configurations of a space-bounded machine. Most textbooks
+have this restriction.
+
+Instead of considering the cells _visited_ by the work tape heads, some textbooks
+only consider the number of cells that contain a non-blank symbol at some point in the
+execution or the number of cells written to. ([AB09] itself splits: Definition 4.1 counts
+_visited_ work-tape locations for `SPACE` — the measure used here — but _nonblank_
+locations for `NSPACE`.) This allows
+work tape heads to freely move at no cost as long as they do not write. It is
+important to note that this causes `DSPACE(1)` to include `DSPACE(log log n)`, a class that
+contains e.g. the non-regular language `{0^n 1^n | n ∈ ℕ}` (it is accepted by a TM that writes a
+single marker on the work tape and then counts the number of symbols by work tape head movement
+without writing).
+Defining space usage via "cells visited" thus yields the more fine-grained "complexity world" in
+which `DSPACE(1)` is exactly the class of regular languages.
+
+This definition is adapted from the one in [Pap94], chapter 2.3 including
+the sub-linear space modifications from chapter 2.5 with the following changes:
+- We allow Turing machines to choose to not write on a tape. This is equivalent to
+  writing the read symbol again but makes it easier to reason about the semantics.
+- Our tapes are infinite in both directions instead of just to the right. This definition is
+  equivalent (see [AB09], Claim 1.8). It saves us from having to add a "start marker" to
+  the alphabet.
+- We only have a single halting state. The different ways to halt (accepting, rejecting, etc) can
+  be distinguished based on the output.
+- The way to prevent the input head to move outside the input is enforced by the interpretation
+  and not by a restriction on the transition function. The two definitions are equivalent, but
+  not restricting the transition function makes it easier to define a universal machine.
+
+## Main definitions
+
+We define a number of structures and concepts related to multi-tape Turing machine computation:
+
+* `MultiTapeTM`: the TM itself
+* `MultiTapeTM.runFrom`: the configuration reached after a given number of execution steps
+* `spaceUsed`: the number of work tape cells touched by the heads until a certain step,
+    our main space measure
+* `ComputesInTimeAndSpace`: a proof that a specific TM computes an output from an input in a certain
+    number of steps and using a certain number of tape cells
+* `ComputesFunInTimeAndSpace`: a machine computes a function between specified encodings,
+    respecting time and space bounds on each actual input.
+* `ComputableInTimeAndSpace`: such a machine exists with binary alphabet and finitely many states.
+* `ComputableInTimeAndSpaceOfLength`: the specialization to bounds on encoded input length.
+* `DecidableInTimeAndSpace`: a proof that a TM decides a language within a certain time
+    and space bound.
+
+## References
+
+* [Pap94] C. Papadimitriou, *Computational Complexity*, Addison-Wesley, 1994.
+* [AB09] S. Arora, B. Barak, *Computational Complexity: A Modern Approach*,
+  Cambridge University Press, 2009.
+* [Sip13] M. Sipser, *Introduction to the Theory of Computation*, 3rd ed., Cengage, 2013.
+-/
+
+namespace Turing
+
+variable {k : ℕ} {State Symbol : Type*}
+
+/--
+A multi-tape Turing machine with `k` work tapes over the alphabet of `Option Symbol` (where `none`
+is the blank tape symbol). Note that it is not required that `Symbol` or `State` are finite
+to keep the definition more general. The restriction will be introduced once we start talking about
+computability by Turing machines in general.
+-/
+structure MultiTapeTM (k : ℕ) (Symbol State : Type*) where
+  /-- initial state -/
+  q₀ : State
+  /-- transition function, mapping a state, the current input symbol and a tuple of work head
+  symbols to a movement for the input head, actions on the work tape, optionally a symbol to output
+  and the successor state -/
+  tr (q : State) (input : Option Symbol) (work : Fin k → Option Symbol) :
+    Action k Symbol State
+
+namespace MultiTapeTM
+
+variable {input : List Symbol} {tm : MultiTapeTM k Symbol State}
+
+section Cfg
+
+/-!
+## Stepping a Turing Machine
+
+This section defines the step function that lets the machine transition from one configuration to
+the next, and the configuration reached after a number of steps. Configurations themselves are
+defined in `TCSlib.Complexity.TuringMachine.Configuration`.
+-/
+
+/-- The step function corresponding to a `MultiTapeTM`. -/
+def step (cfg : Cfg k Symbol State input) : Cfg k Symbol State input :=
+  match cfg.state with
+  -- in the halting state, we stay at the configuration
+  | none => cfg
+  | some q => (tm.tr q cfg.inputSymbol cfg.workTapeSymbols).apply cfg
+
+/-- The symbol (optionally) output when executing one step starting from configuration `cfg`. -/
+def outputSymbol (cfg : Cfg k Symbol State input) : Option Symbol :=
+  match cfg.state with
+  | none => none
+  | some q => (tm.tr q cfg.inputSymbol cfg.workTapeSymbols).output
+
+/-- The initial configuration corresponding to an input string. -/
+@[simp]
+def initCfg (input : List Symbol) : Cfg k Symbol State input := Cfg.init tm.q₀ input
+
+@[simp]
+lemma step_of_halt {cfg : Cfg k Symbol State input} (h : cfg.state = none) :
+    tm.step cfg = cfg := by
+  unfold step
+  rw [h]
+
+/-- The configuration reached by running the Turing machine for `t` steps from `cfg`.
+If the Turing machine halts, it will stay at the halting configuration. -/
+def runFrom (cfg : Cfg k Symbol State input) (t : ℕ) : Cfg k Symbol State input := tm.step^[t] cfg
+
+@[simp]
+lemma runFrom_zero {cfg : Cfg k Symbol State input} :
+    tm.runFrom cfg 0 = cfg := by
+  simp [runFrom]
+
+lemma runFrom_succ_eq_step {cfg : Cfg k Symbol State input} {t : ℕ} :
+    tm.runFrom cfg (t + 1) = tm.runFrom (tm.step cfg) t := by
+  simp [runFrom, Function.iterate_succ_apply]
+
+lemma runFrom_succ_eq_step' {cfg : Cfg k Symbol State input} {t : ℕ} :
+    tm.runFrom cfg (t + 1) = tm.step (tm.runFrom cfg t) := by
+  simp [runFrom, Function.iterate_succ_apply']
+
+/-- Running `a + b` steps equals running `b` steps from the configuration reached after `a`. -/
+lemma runFrom_add (cfg : Cfg k Symbol State input) (a b : ℕ) :
+    tm.runFrom cfg (a + b) = tm.runFrom (tm.runFrom cfg a) b := by
+  unfold runFrom
+  rw [Nat.add_comm, Function.iterate_add_apply]
+
+/-- The physical input head can move right by at most one cell per step.
+**Proof sketch.** Clamping never increases a proposed position. Check the
+three movements, then induct over the run, treating halted steps as stationary. -/
+lemma timed_input_bound (cfg : Cfg k Symbol State input) (t : ℕ) :
+    (tm.runFrom cfg t).inputPos.val ≤ cfg.inputPos.val + t := by
+  have hm (p : Fin (input.length + 2)) (m : SignType) :
+      (moveInputPos p m).val ≤ p.val + 1 := by
+    dsimp only [moveInputPos]
+    split <;> dsimp <;> cases m <;> simp_all [SignType.cast] <;> omega
+  have hstep (d : Cfg k Symbol State input) :
+      (tm.step d).inputPos.val ≤ d.inputPos.val + 1 := by
+    cases hs : d.state with
+    | none => simp only [MultiTapeTM.step, hs]; omega
+    | some q =>
+      simpa only [MultiTapeTM.step, hs, Action.apply] using
+        hm d.inputPos (tm.tr q d.inputSymbol d.workTapeSymbols).inputTape
+  induction t with
+  | zero => simp
+  | succ t ih =>
+    rw [MultiTapeTM.runFrom_succ_eq_step']
+    exact (hstep _).trans (by omega)
+
+/-- If a function `f` that maps the configurations of one TM to those of another one commutes with
+their `step` function, then it also commutes with their `runFrom` function. -/
+lemma runFrom_comm_of_step {k' : ℕ} {State' : Type*} {input input' : List Symbol}
+    {tm : MultiTapeTM k Symbol State} {tm' : MultiTapeTM k' Symbol State'}
+    (f : Cfg k Symbol State input → Cfg k' Symbol State' input')
+    (hstep : ∀ cfg, tm'.step (f cfg) = f (tm.step cfg))
+    (cfg : Cfg k Symbol State input) (n : ℕ) :
+    tm'.runFrom (f cfg) n = f (tm.runFrom cfg n) :=
+  (Function.Semiconj.iterate_right (fun c => (hstep c).symm) n cfg).symm
+
+/-- Running from a halting configuration stays at that configuration. -/
+@[simp]
+lemma runFrom_of_halt (cfg : Cfg k Symbol State input) (h : cfg.state = none) {n : ℕ} :
+    tm.runFrom cfg n = cfg :=
+  Function.iterate_fixed (step_of_halt h) n
+
+@[simp]
+lemma outputSymbol_of_halt {cfg : Cfg k Symbol State input} (h_halt : cfg.state = none) :
+    tm.outputSymbol cfg = none := by
+  simp [outputSymbol, h_halt]
+
+/-- The work-tape head moves by at most one cell in a single step. -/
+lemma workTapePos_step_le (c : Cfg k Symbol State input) (i : Fin k) :
+    |(tm.step c).workTapePos i - c.workTapePos i| ≤ 1 := by
+  unfold step
+  cases hstate : c.state with
+  | none => simp
+  | some q => exact workTapePos_apply_le _ c i
+
+end Cfg
+
+section Space
+/-! Now we define space usage and add some helper lemmas. -/
+
+/-- The set of positions visited by the head of work tape `i` in the computation starting from
+configuration `cfg` up to step `t`. -/
+def visitedByTapeHead (cfg : Cfg k Symbol State input) (t : ℕ) (i : Fin k) : Finset ℤ :=
+  (Finset.range (t + 1)).image fun t' => (tm.runFrom cfg t').workTapePos i
+
+/--
+The number of work tape cells touched by the head of tape `i` in the computation starting from
+configuration `cfg` up to step `t`.
+-/
+def spaceUsedByTape (cfg : Cfg k Symbol State input) (t : ℕ) (i : Fin k) : ℕ :=
+  (tm.visitedByTapeHead cfg t i).card
+
+/--
+The number of work tape cells touched by a computation starting from configuration
+`cfg` up to step `t`.
+-/
+def spaceUsed (cfg : Cfg k Symbol State input) (t : ℕ) : ℕ := ∑ i, tm.spaceUsedByTape cfg t i
+
+/-- A zero-tape Turing machine uses zero space. -/
+@[simp]
+lemma spaceUsed_zero_tapes_eq_zero (cfg : Cfg k Symbol State input) (t : ℕ) (h_zero : k = 0) :
+    tm.spaceUsed cfg t = 0 := by
+  unfold spaceUsed
+  subst h_zero
+  simp
+
+/-- Each tape's space usage is bounded by the total space used. -/
+lemma spaceUsedByTape_le_spaceUsed (cfg : Cfg k Symbol State input) (t : ℕ) (i : Fin k) :
+    tm.spaceUsedByTape cfg t i ≤ tm.spaceUsed cfg t :=
+  Finset.single_le_sum (fun _ _ => Nat.zero_le _) (Finset.mem_univ i)
+
+/-- The space used up to step `t` is the space touched by the configurations up to step `t`. -/
+lemma spaceUsed_eq_spaceUsedOfCfgs (cfg : Cfg k Symbol State input) (t : ℕ) :
+    tm.spaceUsed cfg t = spaceUsedOfCfgs ((List.range (t + 1)).map (tm.runFrom cfg)) := by
+  unfold spaceUsed spaceUsedByTape spaceUsedOfCfgs
+  refine Finset.sum_congr rfl fun i _ => congrArg Finset.card ?_
+  ext z
+  simp [visitedByTapeHead, visitedOfCfgs]
+
+end Space
+
+open Cfg
+
+/-- One step appends the symbol (optionally) emitted by that step to the output tape. -/
+@[simp]
+lemma step_output (cfg : Cfg k Symbol State input) :
+    (tm.step cfg).output = cfg.output ++ (tm.outputSymbol cfg).toList := by
+  unfold step outputSymbol Action.apply
+  cases cfg.state <;> simp
+
+/-- The output does not change after the machine has halted. -/
+lemma runFrom_output_eq_of_halt
+    (tm : MultiTapeTM k Symbol State)
+    (cfg : Cfg k Symbol State input) {τ t : ℕ} (hle : τ ≤ t)
+    (hhalt : (tm.runFrom cfg τ).state = none) :
+    (tm.runFrom cfg t).output = (tm.runFrom cfg τ).output := by
+  conv_lhs => rw [← Nat.sub_add_cancel hle, Nat.add_comm]
+  rw [runFrom_add, runFrom_of_halt _ hhalt]
+
+/-- A proof that the Turing machine `tm` on input `input` outputs `output` in at most `t` steps
+and uses exactly `s` space.
+Note that this does not require the alphabet or state set to be finite. -/
+def ComputesInTimeAndSpace
+    (tm : MultiTapeTM k Symbol State)
+    (input output : List Symbol)
+    (t s : ℕ) : Prop :=
+  (tm.runFrom (tm.initCfg input) t).state = none ∧
+  (tm.runFrom (tm.initCfg input) t).output = output ∧
+  tm.spaceUsed (tm.initCfg input) t = s
+
+/-- A machine computes `f` between the supplied encodings, with bounds depending on the input.
+The machine's alphabet and state type need not be finite. -/
+def ComputesFunInTimeAndSpace {α β : Type*}
+    (tm : MultiTapeTM k Symbol State)
+    (encIn : α ↪ List Symbol) (encOut : β ↪ List Symbol)
+    (f : α → β) (t s : α → ℕ) : Prop :=
+  ∀ a, ∃ t' ≤ t a, ∃ s' ≤ s a,
+    ComputesInTimeAndSpace tm (encIn a) (encOut (f a)) t' s'
+
+/-- A function is computable within the input-indexed bounds by a machine with binary alphabet
+and finitely many states. -/
+def ComputableInTimeAndSpace {α β : Type*}
+    (f : α → β) (encIn : α ↪ List Bool) (encOut : β ↪ List Bool)
+    (t s : α → ℕ) : Prop :=
+  ∃ (k : ℕ) (State : Type) (_ : Finite State) (tm : MultiTapeTM k Bool State),
+    ComputesFunInTimeAndSpace tm encIn encOut f t s
+
+/-- There exists a binary Turing machine with finitely many states that, for every input `a`,
+computes `encOut (f a)` from `encIn a` in at most `t (encIn a).length` steps,
+using at most `s (encIn a).length` work-tape cells. -/
+abbrev ComputableInTimeAndSpaceOfLength {α β : Type*}
+    (f : α → β) (encIn : α ↪ List Bool) (encOut : β ↪ List Bool)
+    (t s : ℕ → ℕ) : Prop :=
+  ComputableInTimeAndSpace f encIn encOut
+    (fun a => t (encIn a).length) (fun a => s (encIn a).length)
+
+/-- Resource bounds can be weakened independently on every input. -/
+theorem ComputesFunInTimeAndSpace.mono {α β : Type*}
+    {tm : MultiTapeTM k Symbol State} {encIn : α ↪ List Symbol} {encOut : β ↪ List Symbol}
+    {f : α → β} {t s t' s' : α → ℕ}
+    (h : ComputesFunInTimeAndSpace tm encIn encOut f t s)
+    (ht : ∀ a, t a ≤ t' a) (hs : ∀ a, s a ≤ s' a) :
+    ComputesFunInTimeAndSpace tm encIn encOut f t' s' := fun a => by
+  obtain ⟨u, hu, v, hv, hc⟩ := h a
+  exact ⟨u, hu.trans (ht a), v, hv.trans (hs a), hc⟩
+
+/-- Computability is monotone in the resource bounds. -/
+theorem ComputableInTimeAndSpace.mono {α β : Type*}
+    {f : α → β} {encIn : α ↪ List Bool} {encOut : β ↪ List Bool} {t s t' s' : α → ℕ}
+    (h : ComputableInTimeAndSpace f encIn encOut t s)
+    (ht : ∀ a, t a ≤ t' a) (hs : ∀ a, s a ≤ s' a) :
+    ComputableInTimeAndSpace f encIn encOut t' s' := by
+  obtain ⟨k, State, hfinite, tm, htm⟩ := h
+  exact ⟨k, State, hfinite, tm, htm.mono ht hs⟩
+
+open Classical in
+/-- The Boolean indicator function of a set. -/
+noncomputable def indicator {α : Type*} (L : Set α) : α → Bool :=
+  fun x => if x ∈ L then true else false
+
+/-- A set is decidable within the given input-indexed bounds when its Boolean indicator is. -/
+def DecidableInTimeAndSpace {α : Type*} (L : Set α) (enc : α ↪ List Bool)
+    (t s : α → ℕ) : Prop :=
+  ComputableInTimeAndSpace (indicator L) enc ⟨fun b => [b], by intro a b h; simpa using h⟩ t s
+
+/-- The Turing machine `tm` halts after exactly `t` steps on input `input`
+if its state is `none` at step `t` and non-none at step `t - 1`.
+Note that every Turing machine hast to perform at least one step to halt. -/
+def haltsAtStep (tm : MultiTapeTM k Symbol State) (input : List Symbol) (t : ℕ) : Bool :=
+  (tm.runFrom (tm.initCfg input) t).state.isNone &&
+  !(tm.runFrom (tm.initCfg input) (t - 1)).state.isNone
+
+/-- If a Turing machine halts, the time step is uniquely determined. -/
+lemma halting_step_unique
+    {tm : MultiTapeTM k Symbol State}
+    {input : List Symbol}
+    {t₁ t₂ : ℕ}
+    (h_halts₁ : tm.haltsAtStep input t₁)
+    (h_halts₂ : tm.haltsAtStep input t₂) :
+    t₁ = t₂ := by
+  wlog h : t₁ ≤ t₂
+  · exact (this h_halts₂ h_halts₁ (Nat.le_of_not_le h)).symm
+  obtain ⟨d, rfl⟩ := Nat.exists_eq_add_of_le h
+  cases d with
+  | zero => rfl
+  | succ d =>
+    have halts₁ : (tm.runFrom (tm.initCfg input) t₁).state = none := by
+      simp [haltsAtStep] at h_halts₁
+      exact h_halts₁.left
+    have halts₂ : (tm.runFrom (tm.initCfg input) (d + t₁)).state ≠ none := by
+      grind [haltsAtStep, runFrom]
+    refine absurd ?_ halts₂
+    rw [Nat.add_comm, runFrom_add, tm.runFrom_of_halt _ halts₁]
+    exact halts₁
+
+/-- If a deterministic machine repeats a non-halting configuration, it never halts,
+because the sequence between the two configurations will loop forever.
+Note that this can be applied to two arbitrary and different time steps `t` and `t + Δ`
+using `tm.runFrom_add`. -/
+lemma not_halts_of_repeat_nonhalt
+    (cfg : Cfg k Symbol State input)
+    (h_not_halt : cfg.state ≠ none)
+    (t : ℕ)
+    (heq : tm.runFrom cfg (t + 1) = cfg) :
+    ∀ t', (tm.runFrom cfg t').state ≠ none := by
+  intro t'
+  -- The configuration will repeat every `t + 1` steps.
+  have hloop : ∀ n, tm.runFrom cfg (n * (t + 1)) = cfg := by
+    intro n
+    unfold runFrom
+    rw [Nat.mul_comm, Function.iterate_mul]
+    exact Function.iterate_fixed heq n
+  by_contra hnh
+  -- Assuming the machine halts at step `t'`, it is also halted at step `t' * (t + 1)`
+  have h₁ : (tm.runFrom cfg (t' * (t + 1))).state = none := by
+    have hle : t' ≤ t' * (t + 1) := by grind
+    obtain ⟨tΔ , htΔ⟩ := Nat.exists_eq_add_of_le hle
+    rw [htΔ, tm.runFrom_add]
+    simp [hnh]
+  simp [hloop t', h_not_halt] at h₁
+
+end MultiTapeTM
+
+end Turing
+```
+
+## ===== TCSlib/Complexity/TuringMachine/Simulation.lean =====
+
+```
+/-
+Copyright (c) 2026 Seyoon Ragavan. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Seyoon Ragavan
+-/
+import Mathlib.Data.Fintype.Sum
+import Mathlib.Data.Fintype.Prod
+import Mathlib.Data.Fintype.Option
+import TCSlib.Complexity.TuringMachine.Finite
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+/-!
+# Simulation gadgets
+
+Generic building blocks for machine constructions, split out of
+`TCSlib.Complexity.TuringMachine.Composition` at the epoch-1/epoch-2 boundary
+(epoch-1 audit, findings 5 and 11, and the policy file-size standard): the
+machines of the composition file, and the heavier constructions of later
+epochs, are assembled from these. Everything here is public — it is shared
+audited surface — and carries no finiteness assumptions beyond what each
+gadget needs.
+
+## Contents
+
+* **Emission chains** (`Turing.FinTM.emitAction`, `emit_run`, `emit_halts`):
+  states that write a fixed word to the output, one symbol per step, ignoring
+  all reads, then halt.
+* **Control actions** (`Turing.FinTM.controlAction`, `controlAction_apply`):
+  transitions that only move the input head and change state.
+* **Input-head positioning** (`Turing.FinTM.inputSymbol_at`,
+  `moveInputPos_neg_val`, `rewind_scan`, `rewind_from_any`): reading at a
+  position, the clamped left move, and the audited rewind-to-start procedure
+  (one unconditional left move, left while reading a symbol, one right move).
+* **Disjoint tape-block embeddings** (`Turing.FinTM.leftAction`/`rightAction`,
+  `leftCfg`/`rightCfg`, their `apply`/`step`/`run` lemmas): run a machine on
+  the left or right block of a `k + l`-tape machine, in lockstep, with the
+  other block's tapes inactive. **Scope note** (epoch-1 audit, finding 11):
+  these embeddings preserve the *native* input tape and pass emissions to the
+  *real* output — they are not, by themselves, a buffered-composition
+  simulator; buffering and virtual-input clamping need their own invariants on
+  top.
+* **Branch union** (`Turing.FinTM.branchTM`, `branchTM_computes`): two
+  machines in disjoint tape and state blocks; the Boolean chooses only the
+  initial state.
+* **Optional-write normalization** (`Turing.Action.apply_workTapes`): the raw
+  action-application identity for work tapes, promoted at the epoch-2/epoch-3
+  boundary.
+* **Buffered sequential simulator** (`Turing.FinTM.bufferedCompTM`): the
+  three-block tape partition, contiguous buffer representation, virtual-input
+  reads and clamping invariant, first- and second-phase run correspondence,
+  and an exact `|y| + 2` rewind-and-dispatch ledger. These extend the scope of
+  the native-input embeddings above without changing their statements.
+
+## References
+
+* [AB09] S. Arora, B. Barak, *Computational Complexity: A Modern Approach*,
+  Cambridge University Press, 2009. (§1.2-§1.3; the "high-level description"
+  convention on p. 14.)
+-/
+
+namespace Turing
+
+/-- **Optional-write normalization** (promoted from the epoch-2 fill per the
+epoch-2 audit, promotion recommendation 1): applying an action rewrites each
+work tape at its head with the proposed write, defaulting to the existing read
+when the action declines to write. An explicit `some none` write remains an
+erase, while an outer `none` writes back the scanned symbol unchanged. Holds
+for every alphabet, state type, action, configuration, and tape index — no
+finiteness, liveness, or computation hypothesis. -/
+lemma Action.apply_workTapes {k : ℕ} {Symbol State : Type*} {input : List Symbol}
+    (a : Action k Symbol State) (c : Cfg k Symbol State input) (i : Fin k) :
+    (a.apply c).workTapes i =
+      Function.update (c.workTapes i) (c.workTapePos i)
+        ((a.workTapes i).1.getD (c.workTapeSymbols i)) := by
+  cases hw : (a.workTapes i).1 with
+  | none => simp [Action.apply, hw, Cfg.workTapeSymbols]
+  | some w => simp [Action.apply, hw]
+
+end Turing
+
+namespace Turing.FinTM
+
+/-- One step of a fixed-word emission chain, with an arbitrary state embedding.
+The input and all work tapes are left untouched. -/
+def emitAction {k : ℕ} {S : Type} (w : List Bool)
+    (e : Fin (w.length + 1) → S) (i : Fin (w.length + 1)) : Action k Bool S :=
+  if h : i.val < w.length then
+    ⟨0, fun _ => (none, 0), some w[i.val], some (e ⟨i.val + 1, by omega⟩)⟩
+  else
+    ⟨0, fun _ => (none, 0), none, none⟩
+
+/-- After `t` emission steps the state is the `t`-th chain state and exactly the
+first `t` symbols have been appended. The induction uses no tape invariant because
+emission transitions ignore all reads. -/
+lemma emit_run {k : ℕ} {S : Type} {x : List Bool}
+    (tm : MultiTapeTM k Bool S) (w : List Bool) (e : Fin (w.length + 1) → S)
+    (htr : ∀ i inp work, tm.tr (e i) inp work = emitAction w e i)
+    (cfg : Cfg k Bool S x) (hs : cfg.state = some (e 0)) :
+    ∀ t (ht : t ≤ w.length),
+      (tm.runFrom cfg t).state = some (e ⟨t, by omega⟩) ∧
+      (tm.runFrom cfg t).output = cfg.output ++ w.take t := by
+  intro t
+  induction t with
+  | zero =>
+    intro ht
+    exact ⟨hs, by simp⟩
+  | succ t ih =>
+    intro ht
+    obtain ⟨hstate, hout⟩ := ih (by omega)
+    have hstep : tm.runFrom cfg (t + 1) =
+        (emitAction w e ⟨t, by omega⟩).apply (tm.runFrom cfg t) := by
+      rw [MultiTapeTM.runFrom_succ_eq_step']
+      unfold MultiTapeTM.step
+      rw [hstate]
+      exact congrArg (fun a => a.apply (tm.runFrom cfg t)) (htr _ _ _)
+    rw [hstep]
+    simp only [emitAction, dif_pos (show t < w.length by omega), Action.apply]
+    refine ⟨True.intro, ?_⟩
+    rw [hout, List.take_succ, List.getElem?_eq_getElem (by omega)]
+    simp [List.append_assoc]
+
+/-- One further, nonemitting step halts the fixed-word emission chain. -/
+lemma emit_halts {k : ℕ} {S : Type} {x : List Bool}
+    (tm : MultiTapeTM k Bool S) (w : List Bool) (e : Fin (w.length + 1) → S)
+    (htr : ∀ i inp work, tm.tr (e i) inp work = emitAction w e i)
+    (cfg : Cfg k Bool S x) (hs : cfg.state = some (e 0)) :
+    (tm.runFrom cfg (w.length + 1)).state = none ∧
+      (tm.runFrom cfg (w.length + 1)).output = cfg.output ++ w := by
+  obtain ⟨hstate, hout⟩ := emit_run tm w e htr cfg hs w.length (le_refl _)
+  rw [MultiTapeTM.runFrom_succ_eq_step']
+  unfold MultiTapeTM.step
+  rw [hstate]
+  dsimp only
+  rw [htr]
+  simp [emitAction, Action.apply, hout]
+
+
+/-- An action that only moves the input head and changes the state. -/
+def controlAction {k : ℕ} {S : Type} (m : SignType) (q : Option S) :
+    Action k Bool S := ⟨m, fun _ => (none, 0), none, q⟩
+
+/-- Read position `i + 1` as the optional `i`-th input symbol, including the
+right boundary. -/
+lemma inputSymbol_at {k : ℕ} {S : Type} {x : List Bool}
+    (cfg : Cfg k Bool S x) (i : ℕ) (hi : i ≤ x.length)
+    (hp : cfg.inputPos.val = i + 1) : cfg.inputSymbol = x[i]? := by
+  by_cases h : i < x.length
+  · rw [inputSymbolInner i (by omega) h, List.getElem?_eq_getElem h]
+  · have he : i = x.length := by omega
+    have hz : cfg.inputPos ≠ 0 := by
+      intro hz
+      rw [hz] at hp
+      simp at hp
+    simp only [Cfg.inputSymbol, dif_neg hz, dif_pos (show cfg.inputPos.val = x.length + 1 by omega)]
+    simp [he]
+
+
+/-- Extend an action to the left block of a disjoint tape sum and rename states. -/
+def leftAction {k : ℕ} {S S' : Type} (l : ℕ) (f : S → S')
+    (a : Action k Bool S) : Action (k + l) Bool S' where
+  inputTape := a.inputTape
+  workTapes := Fin.addCases a.workTapes (fun _ => (none, 0))
+  output := a.output
+  state := a.state.map f
+
+/-- Extend an action to the right block, leaving the left block untouched. -/
+def rightAction {l : ℕ} {S S' : Type} (k : ℕ) (f : S → S')
+    (a : Action l Bool S) : Action (k + l) Bool S' where
+  inputTape := a.inputTape
+  workTapes := Fin.addCases (fun _ => (none, 0)) a.workTapes
+  output := a.output
+  state := a.state.map f
+
+/-- Embed a configuration in the left tape block, retaining arbitrary inactive
+right tapes and head positions. The state renaming preserves halting. -/
+def leftCfg {k l : ℕ} {S S' : Type} {x : List Bool} (f : S → S')
+    (c : Cfg k Bool S x) (tapes : Fin l → ℤ → Option Bool) (heads : Fin l → ℤ) :
+    Cfg (k + l) Bool S' x where
+  state := c.state.map f
+  inputPos := c.inputPos
+  workTapes := Fin.addCases c.workTapes tapes
+  workTapePos := Fin.addCases c.workTapePos heads
+  output := c.output
+
+/-- Embed in the right block, retaining arbitrary inactive left tapes. This is also
+used when the left block contains a completed controller's work. -/
+def rightCfg {k l : ℕ} {S S' : Type} {x : List Bool} (f : S → S')
+    (c : Cfg l Bool S x) (tapes : Fin k → ℤ → Option Bool) (heads : Fin k → ℤ) :
+    Cfg (k + l) Bool S' x where
+  state := c.state.map f
+  inputPos := c.inputPos
+  workTapes := Fin.addCases tapes c.workTapes
+  workTapePos := Fin.addCases heads c.workTapePos
+  output := c.output
+
+/-- Extending an action commutes with the left configuration embedding. -/
+lemma leftCfg_apply {k l : ℕ} {S S' : Type} {x : List Bool} (f : S → S')
+    (a : Action k Bool S) (c : Cfg k Bool S x)
+    (tapes : Fin l → ℤ → Option Bool) (heads : Fin l → ℤ) :
+    (leftAction l f a).apply (leftCfg f c tapes heads) =
+      leftCfg f (a.apply c) tapes heads := by
+  refine Cfg.ext rfl rfl ?_ ?_ rfl
+  · funext i
+    refine Fin.addCases ?_ ?_ i <;> intro j <;>
+      simp [leftAction, leftCfg, Action.apply]
+  · funext i
+    refine Fin.addCases ?_ ?_ i <;> intro j <;>
+      simp [leftAction, leftCfg, Action.apply]
+
+/-- Extending an action commutes with the right configuration embedding. -/
+lemma rightCfg_apply {k l : ℕ} {S S' : Type} {x : List Bool} (f : S → S')
+    (a : Action l Bool S) (c : Cfg l Bool S x)
+    (tapes : Fin k → ℤ → Option Bool) (heads : Fin k → ℤ) :
+    (rightAction k f a).apply (rightCfg f c tapes heads) =
+      rightCfg f (a.apply c) tapes heads := by
+  refine Cfg.ext rfl rfl ?_ ?_ rfl
+  · funext i
+    refine Fin.addCases ?_ ?_ i <;> intro j <;>
+      simp [rightAction, rightCfg, Action.apply]
+  · funext i
+    refine Fin.addCases ?_ ?_ i <;> intro j <;>
+      simp [rightAction, rightCfg, Action.apply]
+
+/-- A machine whose renamed transitions use only the left block simulates one
+step exactly, including the absorbing halting configuration. -/
+lemma leftCfg_step {k l : ℕ} {S S' : Type} {x : List Bool}
+    (tm : MultiTapeTM k Bool S) (tm' : MultiTapeTM (k + l) Bool S') (f : S → S')
+    (htr : ∀ q inp work, tm'.tr (f q) inp work =
+      leftAction l f (tm.tr q inp (fun i => work (Fin.castAdd l i))))
+    (c : Cfg k Bool S x) (tapes : Fin l → ℤ → Option Bool) (heads : Fin l → ℤ) :
+    tm'.step (leftCfg f c tapes heads) = leftCfg f (tm.step c) tapes heads := by
+  unfold MultiTapeTM.step
+  cases hs : c.state with
+  | none => simp [leftCfg, hs]
+  | some q =>
+    have hs' : (leftCfg f c tapes heads).state = some (f q) := by simp [leftCfg, hs]
+    rw [hs']
+    dsimp only
+    rw [htr]
+    have hr : (fun i => (leftCfg f c tapes heads).workTapeSymbols (Fin.castAdd l i)) =
+        c.workTapeSymbols := by
+      funext i
+      simp [Cfg.workTapeSymbols, leftCfg]
+    change (leftAction l f (tm.tr q c.inputSymbol _)).apply _ = _
+    rw [hr]
+    exact leftCfg_apply f _ c tapes heads
+
+/-- The right-block version of the one-step correspondence; inactive tapes may
+contain arbitrary data from an earlier phase. -/
+lemma rightCfg_step {k l : ℕ} {S S' : Type} {x : List Bool}
+    (tm : MultiTapeTM l Bool S) (tm' : MultiTapeTM (k + l) Bool S') (f : S → S')
+    (htr : ∀ q inp work, tm'.tr (f q) inp work =
+      rightAction k f (tm.tr q inp (fun i => work (Fin.natAdd k i))))
+    (c : Cfg l Bool S x) (tapes : Fin k → ℤ → Option Bool) (heads : Fin k → ℤ) :
+    tm'.step (rightCfg f c tapes heads) = rightCfg f (tm.step c) tapes heads := by
+  unfold MultiTapeTM.step
+  cases hs : c.state with
+  | none => simp [rightCfg, hs]
+  | some q =>
+    have hs' : (rightCfg f c tapes heads).state = some (f q) := by simp [rightCfg, hs]
+    rw [hs']
+    dsimp only
+    rw [htr]
+    have hr : (fun i => (rightCfg f c tapes heads).workTapeSymbols (Fin.natAdd k i)) =
+        c.workTapeSymbols := by
+      funext i
+      simp [Cfg.workTapeSymbols, rightCfg]
+    change (rightAction k f (tm.tr q c.inputSymbol _)).apply _ = _
+    rw [hr]
+    exact rightCfg_apply f _ c tapes heads
+
+/-- Lift the left-block one-step correspondence to every finite run. -/
+lemma leftCfg_run {k l : ℕ} {S S' : Type} {x : List Bool}
+    (tm : MultiTapeTM k Bool S) (tm' : MultiTapeTM (k + l) Bool S') (f : S → S')
+    (htr : ∀ q inp work, tm'.tr (f q) inp work =
+      leftAction l f (tm.tr q inp (fun i => work (Fin.castAdd l i))))
+    (c : Cfg k Bool S x) (tapes : Fin l → ℤ → Option Bool) (heads : Fin l → ℤ) (t : ℕ) :
+    tm'.runFrom (leftCfg f c tapes heads) t = leftCfg f (tm.runFrom c t) tapes heads :=
+  MultiTapeTM.runFrom_comm_of_step (fun c => leftCfg f c tapes heads)
+    (fun c => leftCfg_step tm tm' f htr c tapes heads) c t
+
+/-- Lift the right-block correspondence to every run, preserving arbitrary
+inactive left tapes. This is the fresh-branch lockstep gadget. -/
+lemma rightCfg_run {k l : ℕ} {S S' : Type} {x : List Bool}
+    (tm : MultiTapeTM l Bool S) (tm' : MultiTapeTM (k + l) Bool S') (f : S → S')
+    (htr : ∀ q inp work, tm'.tr (f q) inp work =
+      rightAction k f (tm.tr q inp (fun i => work (Fin.natAdd k i))))
+    (c : Cfg l Bool S x) (tapes : Fin k → ℤ → Option Bool) (heads : Fin k → ℤ) (t : ℕ) :
+    tm'.runFrom (rightCfg f c tapes heads) t = rightCfg f (tm.runFrom c t) tapes heads :=
+  MultiTapeTM.runFrom_comm_of_step (fun c => rightCfg f c tapes heads)
+    (fun c => rightCfg_step tm tm' f htr c tapes heads) c t
+
+/-- Put two machines in disjoint tape and state blocks; the Boolean chooses only
+the initial state, while the transition table is independent of that choice. -/
+def branchTM (M₁ M₂ : FinTM Bool) (b : Bool) : FinTM Bool where
+  k := M₁.k + M₂.k
+  State := M₁.State ⊕ M₂.State
+  tm :=
+    { q₀ := cond b (.inl M₁.tm.q₀) (.inr M₂.tm.q₀)
+      tr := fun q inp work => match q with
+        | .inl q => leftAction M₂.k Sum.inl
+            (M₁.tm.tr q inp (fun i => work (Fin.castAdd M₂.k i)))
+        | .inr q => rightAction M₁.k Sum.inr
+            (M₂.tm.tr q inp (fun i => work (Fin.natAdd M₁.k i))) }
+
+/-- Each selected branch has exactly its original time and completed output.
+The proof embeds its initial blank configuration, then uses lockstep. -/
+lemma branchTM_computes (M₁ M₂ : FinTM Bool) (b : Bool) (x w : List Bool) (t : ℕ) :
+    (branchTM M₁ M₂ b).ComputesInTime x w t ↔ (cond b M₁ M₂).ComputesInTime x w t := by
+  cases b with
+  | false =>
+    have hi : (branchTM M₁ M₂ false).tm.initCfg x =
+        rightCfg Sum.inr (M₂.tm.initCfg x) (fun (_ : Fin M₁.k) _ => none) (fun _ => 0) := by
+      refine Cfg.ext rfl rfl ?_ ?_ rfl
+      · funext i
+        refine Fin.addCases ?_ ?_ i <;> intro j <;> simp [rightCfg]
+      · funext i
+        refine Fin.addCases ?_ ?_ i <;> intro j <;> simp [rightCfg]
+    rw [computesInTime_iff, computesInTime_iff, hi,
+      rightCfg_run M₂.tm (branchTM M₁ M₂ false).tm Sum.inr (fun _ _ _ => rfl)]
+    simp only [rightCfg, Option.map_eq_none_iff]
+  | true =>
+    have hi : (branchTM M₁ M₂ true).tm.initCfg x =
+        leftCfg Sum.inl (M₁.tm.initCfg x) (fun (_ : Fin M₂.k) _ => none) (fun _ => 0) := by
+      refine Cfg.ext rfl rfl ?_ ?_ rfl
+      · funext i
+        refine Fin.addCases ?_ ?_ i <;> intro j <;> simp [leftCfg]
+      · funext i
+        refine Fin.addCases ?_ ?_ i <;> intro j <;> simp [leftCfg]
+    rw [computesInTime_iff, computesInTime_iff, hi,
+      leftCfg_run M₁.tm (branchTM M₁ M₂ true).tm Sum.inl (fun _ _ _ => rfl)]
+    simp only [leftCfg, Option.map_eq_none_iff]
+
+/-- A control action leaves all work tapes, work heads, and output unchanged. -/
+lemma controlAction_apply {k : ℕ} {S : Type} {x : List Bool}
+    (cfg : Cfg k Bool S x) (m : SignType) (q : Option S) :
+    (controlAction m q).apply cfg =
+      {cfg with state := q, inputPos := moveInputPos cfg.inputPos m} := by
+  refine Cfg.ext rfl rfl rfl ?_ ?_
+  · funext i
+    simp [controlAction, Action.apply]
+  · simp [controlAction, Action.apply]
+
+/-- The clamped left move always subtracts one from the natural input position. -/
+lemma moveInputPos_neg_val {n : ℕ} (pos : Fin (n + 2)) :
+    (moveInputPos pos .neg).val = pos.val - 1 := by
+  by_cases h : pos = 0
+  · subst pos
+    simp [SignType.neg_eq_neg_one]
+  · rw [moveInputPos_neg_of_ne_left pos h]
+
+/-- Starting at or to the left of the last input symbol, scan left to the left
+blank, then move right and dispatch. All other configuration fields are preserved.
+
+**Proof sketch.** Induct on the input-head position. At zero the scanned symbol is
+blank, so one right move finishes. At a positive position the input symbol exists;
+one left move reduces the position and the induction hypothesis finishes the run. -/
+lemma rewind_scan {k : ℕ} {S : Type} {x : List Bool}
+    (tm : MultiTapeTM k Bool S) (scan : S) (dest : Option S)
+    (htr : ∀ inp work, tm.tr scan inp work =
+      match inp with
+      | some _ => controlAction .neg (some scan)
+      | none => controlAction .pos dest) :
+    ∀ (cfg : Cfg k Bool S x), cfg.state = some scan → cfg.inputPos.val ≤ x.length →
+      tm.runFrom cfg (cfg.inputPos.val + 1) = {cfg with state := dest, inputPos := 1} := by
+  have aux : ∀ (j : ℕ) (cfg : Cfg k Bool S x), cfg.state = some scan →
+      cfg.inputPos.val = j → j ≤ x.length →
+      tm.runFrom cfg (j + 1) = {cfg with state := dest, inputPos := 1} := by
+    intro j
+    induction j with
+    | zero =>
+      intro cfg hs hj _
+      have hz : cfg.inputPos = 0 := Fin.ext hj
+      have hsym : cfg.inputSymbol = none := by
+        unfold Cfg.inputSymbol
+        rw [dif_pos hz]
+      change tm.step cfg = _
+      unfold MultiTapeTM.step
+      rw [hs]
+      dsimp only
+      rw [htr, hsym]
+      dsimp only
+      rw [controlAction_apply]
+      have hm : moveInputPos cfg.inputPos .pos = 1 := by
+        apply Fin.ext
+        rw [hz, moveInputPos_pos_of_ne_right _ (by simp)]
+        simp
+      rw [hm]
+    | succ j ih =>
+      intro cfg hs hj hlen
+      have hsym : cfg.inputSymbol = some (x[j]'(by omega)) :=
+        inputSymbolInner j (by omega) (by omega)
+      have hstep : tm.step cfg =
+          {cfg with state := some scan, inputPos := moveInputPos cfg.inputPos .neg} := by
+        unfold MultiTapeTM.step
+        rw [hs]
+        dsimp only
+        rw [htr, hsym]
+        dsimp only
+        rw [controlAction_apply]
+      have hp : (moveInputPos cfg.inputPos .neg).val = j := by
+        rw [moveInputPos_neg_val]
+        omega
+      rw [MultiTapeTM.runFrom_succ_eq_step, hstep]
+      exact ih _ rfl hp (by omega)
+  intro cfg hs hp
+  exact aux cfg.inputPos.val cfg hs rfl hp
+
+/-- From any valid input position, take the mandatory first left move and then
+scan left. This returns to position `1`, even for an empty input or a start at a
+boundary. No work tape or output is changed. -/
+lemma rewind_from_any {k : ℕ} {S : Type} {x : List Bool}
+    (tm : MultiTapeTM k Bool S) (start scan : S) (dest : Option S)
+    (hstart : ∀ inp work, tm.tr start inp work = controlAction .neg (some scan))
+    (hscan : ∀ inp work, tm.tr scan inp work =
+      match inp with
+      | some _ => controlAction .neg (some scan)
+      | none => controlAction .pos dest)
+    (cfg : Cfg k Bool S x) (hs : cfg.state = some start) :
+    ∃ t, tm.runFrom cfg t = {cfg with state := dest, inputPos := 1} := by
+  have hstep : tm.step cfg =
+      {cfg with state := some scan, inputPos := moveInputPos cfg.inputPos .neg} := by
+    unfold MultiTapeTM.step
+    rw [hs]
+    dsimp only
+    rw [hstart, controlAction_apply]
+  let c := tm.step cfg
+  have hc : c.state = some scan := by simp only [c, hstep]
+  have hp : c.inputPos.val ≤ x.length := by
+    simp only [c, hstep, moveInputPos_neg_val]
+    have := cfg.inputPos.isLt
+    omega
+  refine ⟨1 + (c.inputPos.val + 1), ?_⟩
+  rw [MultiTapeTM.runFrom_add]
+  have hfirst : tm.runFrom cfg 1 = c := rfl
+  rw [hfirst, rewind_scan tm scan dest hscan c hc hp]
+  simp only [c, hstep]
+
+/-- A quantitative refinement of `rewind_from_any`: its construction takes
+at most the current input position plus two steps, preserving all work and output.
+**Proof sketch.** The mandatory first left move puts the head at most at the
+last input symbol. `rewind_scan` then takes exactly the new position plus one. -/
+lemma timed_rewind {k : ℕ} {S : Type} {x : List Bool}
+    (tm : MultiTapeTM k Bool S) (start scan : S) (dest : Option S)
+    (hstart : ∀ inp work, tm.tr start inp work = controlAction .neg (some scan))
+    (hscan : ∀ inp work, tm.tr scan inp work = match inp with
+      | some _ => controlAction .neg (some scan)
+      | none => controlAction .pos dest)
+    (c : Cfg k Bool S x) (hs : c.state = some start) :
+    ∃ r ≤ c.inputPos.val + 2,
+      tm.runFrom c r = {c with state := dest, inputPos := 1} := by
+  have hstep : tm.step c =
+      {c with state := some scan, inputPos := moveInputPos c.inputPos .neg} := by
+    unfold MultiTapeTM.step
+    rw [hs]
+    dsimp only
+    rw [hstart, controlAction_apply]
+  have hp : (moveInputPos c.inputPos .neg).val ≤ x.length := by
+    rw [moveInputPos_neg_val]
+    have := c.inputPos.isLt
+    omega
+  refine ⟨1 + ((moveInputPos c.inputPos .neg).val + 1), ?_, ?_⟩
+  · rw [moveInputPos_neg_val]; omega
+  · rw [MultiTapeTM.runFrom_add]
+    change tm.runFrom (tm.step c) _ = _
+    rw [hstep, rewind_scan tm scan dest hscan _ rfl hp]
+
+/-- Assemble the left work block, one buffer tape, and the right work block.
+All three projections use the same nested `Fin.addCases` partition. -/
+def tapeBlocks {α : Type} {k l : ℕ} (left : Fin k → α) (buffer : α)
+    (right : Fin l → α) : Fin (k + (1 + l)) → α :=
+  Fin.addCases left (Fin.addCases (fun _ => buffer) right)
+
+/-- The left projection of the three-block tape partition. -/
+@[simp] lemma tapeBlocks_left {α : Type} {k l : ℕ} (a : Fin k → α) (b : α)
+    (c : Fin l → α) (i : Fin k) :
+    tapeBlocks a b c (Fin.castAdd (1 + l) i) = a i := by simp [tapeBlocks]
+
+/-- The buffer projection of the three-block tape partition. -/
+@[simp] lemma tapeBlocks_buffer {α : Type} {k l : ℕ} (a : Fin k → α) (b : α)
+    (c : Fin l → α) (i : Fin 1) :
+    tapeBlocks a b c (Fin.natAdd k (Fin.castAdd l i)) = b := by
+  simp [tapeBlocks]
+
+/-- The right projection of the three-block tape partition. -/
+@[simp] lemma tapeBlocks_right {α : Type} {k l : ℕ} (a : Fin k → α) (b : α)
+    (c : Fin l → α) (i : Fin l) :
+    tapeBlocks a b c (Fin.natAdd k (Fin.natAdd 1 i)) = c i := by simp [tapeBlocks]
+
+/-- A word stored contiguously from cell zero, blank at every other integer cell. -/
+def bufferTape (w : List Bool) (z : ℤ) : Option Bool :=
+  if 0 ≤ z then w[z.toNat]? else none
+
+/-- An empty buffer is blank everywhere. -/
+@[simp] lemma bufferTape_nil : bufferTape [] = fun _ => none := by
+  funext z
+  simp [bufferTape]
+
+/-- The buffer cell at any nonnegative natural position reads the corresponding
+optional word entry, so position `w.length` is the right blank. -/
+@[simp] lemma bufferTape_nat (w : List Bool) (i : ℕ) :
+    bufferTape w i = w[i]? := by simp [bufferTape]
+
+/-- Cell minus one is the left blank, including for an empty word. -/
+@[simp] lemma bufferTape_left (w : List Bool) : bufferTape w (-1) = none := by
+  simp [bufferTape]
+
+/-- Appending one emitted bit changes just the old right-blank cell.
+
+**Proof sketch.** At that cell the appended singleton is read. At a smaller
+nonnegative cell, list lookup stays in the old prefix. Larger cells and all
+negative cells remain blank. -/
+lemma bufferTape_append (w : List Bool) (b : Bool) :
+    bufferTape (w ++ [b]) = Function.update (bufferTape w) (w.length : ℤ) (some b) := by
+  funext z
+  by_cases hz : z = (w.length : ℤ)
+  · subst z
+    simp [bufferTape]
+  · rw [Function.update_of_ne hz]
+    by_cases h0 : 0 ≤ z
+    · have hne : z.toNat ≠ w.length := by omega
+      simp only [bufferTape, if_pos h0, List.getElem?_append]
+      split
+      · rfl
+      · have hgt : w.length < z.toNat := by omega
+        rw [List.getElem?_eq_none (by simp; omega), List.getElem?_eq_none (by omega)]
+    · simp [bufferTape, h0]
+
+/-- A boundary tag constrains only boundary positions: false at the left blank,
+true at the right blank. Interior positions admit either direction-of-arrival tag. -/
+def VirtualTag {n : ℕ} (p : Fin (n + 2)) (b : Bool) : Prop :=
+  (p.val = 0 → b = false) ∧ (p.val = n + 1 → b = true)
+
+/-- Suppress an outward move at a blank whose boundary is identified by the tag.
+The real buffer head otherwise takes the simulated input movement. -/
+def virtualMove (b : Bool) (inp : Option Bool) (m : SignType) : SignType :=
+  if inp = none ∧ ((b = false ∧ m = .neg) ∨ (b = true ∧ m = .pos)) then 0 else m
+
+/-- Record the last nonstationary buffer movement. A stationary move preserves
+its boundary tag, so repeated outward attempts remain clamped. -/
+def virtualNextTag (b : Bool) (m : SignType) : Bool :=
+  match m with
+  | .neg => false
+  | .zero => b
+  | .pos => true
+
+/-- Buffer reads at virtual position minus one equal native input reads. -/
+lemma bufferTape_inputSymbol {k : ℕ} {S : Type} {w : List Bool}
+    (c : Cfg k Bool S w) : bufferTape w ((c.inputPos.val : ℤ) - 1) = c.inputSymbol := by
+  by_cases h0 : c.inputPos = 0
+  · simp [Cfg.inputSymbol, h0]
+  · have hp : 0 < c.inputPos.val := by
+      have : c.inputPos.val ≠ 0 := fun h => h0 (Fin.ext h)
+      omega
+    have he : (c.inputPos.val : ℤ) - 1 = ((c.inputPos.val - 1 : ℕ) : ℤ) := by omega
+    rw [he, bufferTape_nat]
+    have h := inputSymbol_at c (c.inputPos.val - 1)
+      (by have := c.inputPos.isLt; omega) (by omega)
+    exact h.symm
+
+/-- The virtual movement and arrival tag exactly implement native clamping.
+
+**Proof sketch.** Split into left boundary, right boundary, and interior. The
+buffer is blank exactly at the two boundaries in this range. The tag specifies
+which outward direction to suppress. The three movement cases then give the
+position equation and preserve the boundary-tag invariant, even on empty input. -/
+lemma virtualMove_correct {k : ℕ} {S : Type} {w : List Bool}
+    (c : Cfg k Bool S w) (b : Bool) (hb : VirtualTag c.inputPos b) (m : SignType) :
+    (c.inputPos.val : ℤ) - 1 + (virtualMove b c.inputSymbol m : ℤ) =
+      ((moveInputPos c.inputPos m).val : ℤ) - 1 ∧
+    VirtualTag (moveInputPos c.inputPos m)
+      (virtualNextTag b (virtualMove b c.inputSymbol m)) := by
+  have hp := c.inputPos.isLt
+  by_cases h0 : c.inputPos.val = 0
+  · have he : c.inputPos = 0 := Fin.ext h0
+    have hbf := hb.1 h0
+    subst b
+    cases m <;>
+      simp [virtualMove, virtualNextTag, Cfg.inputSymbol, he, VirtualTag,
+        moveInputPos, SignType.zero_eq_zero, SignType.neg_eq_neg_one,
+        SignType.pos_eq_one]
+  · have hne : c.inputPos ≠ 0 := fun h => h0 (congrArg Fin.val h)
+    by_cases hr : c.inputPos.val = w.length + 1
+    · have hbt := hb.2 hr
+      subst b
+      have he : c.inputPos = ⟨w.length + 1, by omega⟩ := Fin.ext hr
+      have hs : c.inputSymbol = none := by simp [Cfg.inputSymbol, he]
+      cases m with
+      | zero =>
+        simpa [virtualMove, virtualNextTag, hs, SignType.zero_eq_zero] using
+          (And.intro (show (c.inputPos.val : ℤ) - 1 = (c.inputPos.val : ℤ) - 1 from rfl) hb)
+      | pos =>
+        simp [virtualMove, virtualNextTag, hs, he, VirtualTag, SignType.pos_eq_one]
+      | neg =>
+        rw [moveInputPos_neg_of_ne_left _ hne]
+        simp [virtualMove, virtualNextTag, hs, VirtualTag, hr, SignType.neg_eq_neg_one]
+        omega
+    · have hs : c.inputSymbol = some (w[c.inputPos.val - 1]'(by omega)) :=
+        inputSymbolInner _ (by omega) (by omega)
+      cases m with
+      | zero =>
+        simpa [virtualMove, virtualNextTag, hs, SignType.zero_eq_zero] using
+          (And.intro (show (c.inputPos.val : ℤ) - 1 = (c.inputPos.val : ℤ) - 1 from rfl) hb)
+      | neg =>
+        rw [moveInputPos_neg_of_ne_left _ hne]
+        simp [virtualMove, virtualNextTag, hs, VirtualTag, SignType.neg_eq_neg_one]
+        constructor <;> omega
+      | pos =>
+        rw [moveInputPos_pos_of_ne_right _ hr]
+        simp [virtualMove, virtualNextTag, hs, VirtualTag, SignType.pos_eq_one]
+
+/-- Run the first machine into the middle buffer, rewind it, then run the second
+machine with virtual input. The first component's halting state and the rewind
+state are live administrative states. Phase two alone can halt or emit output. -/
+def bufferedCompTM (M₁ M₂ : FinTM Bool) : FinTM Bool where
+  k := M₁.k + (1 + M₂.k)
+  State := Option M₁.State ⊕ (Unit ⊕ (M₂.State × Bool))
+  tm :=
+    { q₀ := .inl (some M₁.tm.q₀)
+      tr := fun q inp work => match q with
+        | .inl (some q) =>
+          let a := M₁.tm.tr q inp (fun i => work (Fin.castAdd (1 + M₂.k) i))
+          ⟨a.inputTape, tapeBlocks a.workTapes
+            (a.output.map some, if a.output = none then 0 else .pos)
+            (fun _ => (none, 0)), none, some (.inl a.state)⟩
+        | .inl none =>
+          ⟨0, tapeBlocks (fun _ => (none, 0)) (none, .neg) (fun _ => (none, 0)),
+            none, some (.inr (.inl ()))⟩
+        | .inr (.inl ()) =>
+          if work (Fin.natAdd M₁.k (Fin.castAdd M₂.k (0 : Fin 1))) = none then
+            ⟨0, tapeBlocks (fun _ => (none, 0)) (none, .pos) (fun _ => (none, 0)),
+              none, some (.inr (.inr (M₂.tm.q₀, true)))⟩
+          else
+            ⟨0, tapeBlocks (fun _ => (none, 0)) (none, .neg) (fun _ => (none, 0)),
+              none, some (.inr (.inl ()))⟩
+        | .inr (.inr (q, b)) =>
+          let v := work (Fin.natAdd M₁.k (Fin.castAdd M₂.k (0 : Fin 1)))
+          let a := M₂.tm.tr q v (fun i => work (Fin.natAdd M₁.k (Fin.natAdd 1 i)))
+          let m := virtualMove b v a.inputTape
+          ⟨0, tapeBlocks (fun _ => (none, 0)) (none, m) a.workTapes,
+            a.output, a.state.map (fun q => .inr (.inr (q, virtualNextTag b m)))⟩ }
+
+/-- Embed phase one with its exact emitted prefix on the buffer and the buffer
+head on its right blank. The real output and the second work block are empty. -/
+def bufferedFirstCfg (M₁ M₂ : FinTM Bool) {x : List Bool}
+    (c : Cfg M₁.k Bool M₁.State x) :
+    Cfg (bufferedCompTM M₁ M₂).k Bool (bufferedCompTM M₁ M₂).State x where
+  state := some (.inl c.state)
+  inputPos := c.inputPos
+  workTapes := tapeBlocks c.workTapes (bufferTape c.output) (fun _ _ => none)
+  workTapePos := tapeBlocks c.workTapePos c.output.length (fun _ => 0)
+  output := []
+
+/-- The initialized composite is the embedded initialized first machine. -/
+lemma bufferedFirstCfg_init (M₁ M₂ : FinTM Bool) (x : List Bool) :
+    (bufferedCompTM M₁ M₂).tm.initCfg x = bufferedFirstCfg M₁ M₂ (M₁.tm.initCfg x) := by
+  refine Cfg.ext rfl rfl ?_ ?_ rfl
+  · funext i
+    refine Fin.addCases ?_ ?_ i
+    · intro j; simp [bufferedFirstCfg, tapeBlocks]
+    · intro j
+      refine Fin.addCases ?_ ?_ j <;> intro j <;> simp [bufferedFirstCfg, tapeBlocks]
+  · funext i
+    refine Fin.addCases ?_ ?_ i
+    · intro j; simp [bufferedFirstCfg, tapeBlocks]
+    · intro j
+      refine Fin.addCases ?_ ?_ j <;> intro j <;> simp [bufferedFirstCfg, tapeBlocks]
+
+/-- One live first-phase transition preserves the complete buffer invariant,
+including an emission on the simulated halting transition.
+
+**Proof sketch.** The first work block and native input move in lockstep. A
+nonemitting transition leaves the buffer fixed; an emission updates precisely its
+right blank by `bufferTape_append` and moves that head one step. The second block
+and real output stay empty, and a simulated halt remains an administrative state. -/
+lemma bufferedFirstCfg_step (M₁ M₂ : FinTM Bool) {x : List Bool}
+    (c : Cfg M₁.k Bool M₁.State x) (hs : c.state ≠ none) :
+    (bufferedCompTM M₁ M₂).tm.step (bufferedFirstCfg M₁ M₂ c) =
+      bufferedFirstCfg M₁ M₂ (M₁.tm.step c) := by
+  unfold MultiTapeTM.step
+  cases hq : c.state with
+  | none => exact False.elim (hs hq)
+  | some q =>
+    have hs' : (bufferedFirstCfg M₁ M₂ c).state = some (.inl (some q)) := by
+      simp [bufferedFirstCfg, hq]
+    rw [hs']
+    dsimp only [bufferedCompTM]
+    have hr : (fun i => (bufferedFirstCfg M₁ M₂ c).workTapeSymbols
+        (Fin.castAdd (1 + M₂.k) i)) = c.workTapeSymbols := by
+      funext i
+      simp [bufferedFirstCfg, Cfg.workTapeSymbols]
+    have hi : (bufferedFirstCfg M₁ M₂ c).inputSymbol = c.inputSymbol := rfl
+    rw [hr, hi]
+    let a := M₁.tm.tr q c.inputSymbol c.workTapeSymbols
+    change (⟨a.inputTape, tapeBlocks a.workTapes
+      (a.output.map some, if a.output = none then 0 else .pos)
+      (fun _ => (none, 0)), none, some (.inl a.state)⟩ :
+      Action (M₁.k + (1 + M₂.k)) Bool _).apply _ = bufferedFirstCfg M₁ M₂ (a.apply c)
+    refine Cfg.ext rfl rfl ?_ ?_ ?_
+    · funext i
+      refine Fin.addCases ?_ ?_ i
+      · intro j; simp [bufferedFirstCfg, Action.apply]
+      · intro j
+        refine Fin.addCases ?_ ?_ j
+        · intro j
+          cases ho : a.output <;>
+            simp [bufferedFirstCfg, Action.apply, ho, bufferTape_append]
+        · intro j; simp [bufferedFirstCfg, Action.apply]
+    · funext i
+      refine Fin.addCases ?_ ?_ i
+      · intro j; simp [bufferedFirstCfg, Action.apply]
+      · intro j
+        refine Fin.addCases ?_ ?_ j
+        · intro j
+          cases ho : a.output <;> simp [bufferedFirstCfg, Action.apply, ho]
+        · intro j; simp [bufferedFirstCfg, Action.apply]
+    · simp [bufferedFirstCfg, Action.apply]
+
+/-- First-phase lockstep holds up to and including the first halting transition.
+The hypothesis deliberately excludes steps after the simulated halt. -/
+lemma bufferedFirstCfg_run (M₁ M₂ : FinTM Bool) {x : List Bool}
+    (c : Cfg M₁.k Bool M₁.State x) (t : ℕ)
+    (h : ∀ s, s < t → (M₁.tm.runFrom c s).state ≠ none) :
+    (bufferedCompTM M₁ M₂).tm.runFrom (bufferedFirstCfg M₁ M₂ c) t =
+      bufferedFirstCfg M₁ M₂ (M₁.tm.runFrom c t) := by
+  induction t with
+  | zero => rfl
+  | succ t ih =>
+    rw [MultiTapeTM.runFrom_succ_eq_step', ih (fun s hs => h s (by omega)),
+      bufferedFirstCfg_step M₁ M₂ _ (h t (by omega)), MultiTapeTM.runFrom_succ_eq_step']
+
+/-- Embed a configuration on virtual input `y` while the physical input remains
+`x`. The buffer head represents virtual position minus one. The left block and
+native input head retain arbitrary inactive contents from phase one. -/
+def bufferedSecondCfg (M₁ M₂ : FinTM Bool) {x y : List Bool}
+    (c : Cfg M₂.k Bool M₂.State y) (b : Bool) (p : Fin (x.length + 2))
+    (tapes : Fin M₁.k → ℤ → Option Bool) (heads : Fin M₁.k → ℤ) :
+    Cfg (bufferedCompTM M₁ M₂).k Bool (bufferedCompTM M₁ M₂).State x where
+  state := c.state.map (fun q => .inr (.inr (q, b)))
+  inputPos := p
+  workTapes := tapeBlocks tapes (bufferTape y) c.workTapes
+  workTapePos := tapeBlocks heads ((c.inputPos.val : ℤ) - 1) c.workTapePos
+  output := c.output
+
+/-- One second-phase step simulates one native step, with a valid new arrival
+tag. The statement includes the absorbing halting case.
+
+**Proof sketch.** Buffer reads agree with virtual input reads. The clamping lemma
+proves the head equation and preserves the tag. All second-machine work actions
+and emissions are unchanged, while the buffer and first block are read-only. -/
+lemma bufferedSecondCfg_step (M₁ M₂ : FinTM Bool) {x y : List Bool}
+    (c : Cfg M₂.k Bool M₂.State y) (b : Bool) (hb : VirtualTag c.inputPos b)
+    (p : Fin (x.length + 2)) (tapes : Fin M₁.k → ℤ → Option Bool)
+    (heads : Fin M₁.k → ℤ) :
+    ∃ b', VirtualTag (M₂.tm.step c).inputPos b' ∧
+      (bufferedCompTM M₁ M₂).tm.step (bufferedSecondCfg M₁ M₂ c b p tapes heads) =
+        bufferedSecondCfg M₁ M₂ (M₂.tm.step c) b' p tapes heads := by
+  cases hq : c.state with
+  | none =>
+    refine ⟨b, ?_, ?_⟩
+    · simpa only [MultiTapeTM.step_of_halt hq] using hb
+    · rw [MultiTapeTM.step_of_halt hq, MultiTapeTM.step_of_halt]
+      simp [bufferedSecondCfg, hq]
+  | some q =>
+    let a := M₂.tm.tr q c.inputSymbol c.workTapeSymbols
+    let m := virtualMove b c.inputSymbol a.inputTape
+    have hm := virtualMove_correct c b hb a.inputTape
+    have hc : M₂.tm.step c = a.apply c := by
+      simp only [MultiTapeTM.step, hq, a]
+    refine ⟨virtualNextTag b m, ?_, ?_⟩
+    · simpa only [hc, Action.apply] using hm.2
+    · have hs : (bufferedSecondCfg M₁ M₂ c b p tapes heads).state =
+          some (.inr (.inr (q, b))) := by simp [bufferedSecondCfg, hq]
+      have hv : (bufferedSecondCfg M₁ M₂ c b p tapes heads).workTapeSymbols
+          (Fin.natAdd M₁.k (Fin.castAdd M₂.k (0 : Fin 1))) = c.inputSymbol := by
+        simp [bufferedSecondCfg, Cfg.workTapeSymbols, bufferTape_inputSymbol]
+      have hr : (fun i => (bufferedSecondCfg M₁ M₂ c b p tapes heads).workTapeSymbols
+          (Fin.natAdd M₁.k (Fin.natAdd 1 i))) = c.workTapeSymbols := by
+        funext i
+        simp [bufferedSecondCfg, Cfg.workTapeSymbols]
+      unfold MultiTapeTM.step
+      rw [hs]
+      dsimp only [bufferedCompTM]
+      rw [hv, hr, hq]
+      change (Action.apply _ _) = bufferedSecondCfg M₁ M₂ (a.apply c) _ p tapes heads
+      refine Cfg.ext rfl (moveInputPos_zero _) ?_ ?_ rfl
+      · funext i
+        refine Fin.addCases ?_ ?_ i
+        · intro j; simp [bufferedSecondCfg, Action.apply, a]
+        · intro j
+          refine Fin.addCases ?_ ?_ j <;> intro j <;>
+            simp [bufferedSecondCfg, Action.apply, a]
+      · funext i
+        refine Fin.addCases ?_ ?_ i
+        · intro j; simp [bufferedSecondCfg, Action.apply, a]
+        · intro j
+          refine Fin.addCases ?_ ?_ j
+          · intro j
+            simpa only [bufferedSecondCfg, Action.apply, tapeBlocks_buffer] using hm.1
+          · intro j; simp [bufferedSecondCfg, Action.apply, a]
+
+/-- Every second-phase run has a matching virtual run at the same time and a
+valid arrival tag. This preserves completed outputs and absorbing halting. -/
+lemma bufferedSecondCfg_run (M₁ M₂ : FinTM Bool) {x y : List Bool}
+    (c : Cfg M₂.k Bool M₂.State y) (b : Bool) (hb : VirtualTag c.inputPos b)
+    (p : Fin (x.length + 2)) (tapes : Fin M₁.k → ℤ → Option Bool)
+    (heads : Fin M₁.k → ℤ) (t : ℕ) :
+    ∃ b', VirtualTag (M₂.tm.runFrom c t).inputPos b' ∧
+      (bufferedCompTM M₁ M₂).tm.runFrom (bufferedSecondCfg M₁ M₂ c b p tapes heads) t =
+        bufferedSecondCfg M₁ M₂ (M₂.tm.runFrom c t) b' p tapes heads := by
+  induction t with
+  | zero => exact ⟨b, hb, rfl⟩
+  | succ t ih =>
+    obtain ⟨b', hb', he⟩ := ih
+    obtain ⟨b'', hb'', he'⟩ := bufferedSecondCfg_step M₁ M₂ _ b' hb' p tapes heads
+    refine ⟨b'', ?_, ?_⟩
+    · simpa only [MultiTapeTM.runFrom_succ_eq_step'] using hb''
+    · rw [MultiTapeTM.runFrom_succ_eq_step', he, he', MultiTapeTM.runFrom_succ_eq_step']
+
+/-- The rewind scan configuration, with buffer head at `j - 1` and all second
+machine tapes still blank. The scan state is always live, including at `j = 0`. -/
+def bufferedScanCfg (M₁ M₂ : FinTM Bool) {x : List Bool} (y : List Bool)
+    (p : Fin (x.length + 2)) (tapes : Fin M₁.k → ℤ → Option Bool)
+    (heads : Fin M₁.k → ℤ) (j : ℕ) :
+    Cfg (bufferedCompTM M₁ M₂).k Bool (bufferedCompTM M₁ M₂).State x where
+  state := some (.inr (.inl ()))
+  inputPos := p
+  workTapes := tapeBlocks tapes (bufferTape y) (fun _ _ => none)
+  workTapePos := tapeBlocks heads ((j : ℤ) - 1) (fun _ => 0)
+  output := []
+
+/-- Scanning from virtual position `j ≤ |y|` takes exactly `j + 1` transitions
+to reach the second machine's initialized configuration with arrival tag true.
+
+**Proof sketch.** At zero the buffer head is at the left blank, so move right
+and dispatch. At successor `j + 1`, cell `j` contains a symbol; one left move
+reduces to `j`. For an empty word, dispatch reaches its right blank with the
+correct true tag, and its left blank remains one inward move away. -/
+lemma bufferedScanCfg_run (M₁ M₂ : FinTM Bool) {x : List Bool} (y : List Bool)
+    (p : Fin (x.length + 2)) (tapes : Fin M₁.k → ℤ → Option Bool)
+    (heads : Fin M₁.k → ℤ) : ∀ j, j ≤ y.length →
+    (bufferedCompTM M₁ M₂).tm.runFrom (bufferedScanCfg M₁ M₂ y p tapes heads j) (j + 1) =
+      bufferedSecondCfg M₁ M₂ (M₂.tm.initCfg y) true p tapes heads := by
+  intro j
+  induction j with
+  | zero =>
+    intro _
+    rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero]
+    simp only [MultiTapeTM.step, bufferedScanCfg, bufferedCompTM, Cfg.workTapeSymbols,
+      tapeBlocks_buffer, Nat.cast_zero, zero_sub, bufferTape_left]
+    refine Cfg.ext rfl (moveInputPos_zero _) ?_ ?_ rfl
+    · funext i
+      refine Fin.addCases ?_ ?_ i
+      · intro j; simp [bufferedSecondCfg, Action.apply]
+      · intro j
+        refine Fin.addCases ?_ ?_ j <;> intro j <;>
+          simp [bufferedSecondCfg, Action.apply]
+    · funext i
+      refine Fin.addCases ?_ ?_ i
+      · intro j; simp [bufferedSecondCfg, Action.apply]
+      · intro j
+        refine Fin.addCases ?_ ?_ j <;> intro j <;>
+          simp [bufferedSecondCfg, Action.apply]
+  | succ j ih =>
+    intro hj
+    have hread : bufferTape y (((j + 1 : ℕ) : ℤ) - 1) = some y[j] := by
+      rw [show (((j + 1 : ℕ) : ℤ) - 1) = (j : ℤ) by omega,
+        bufferTape_nat, List.getElem?_eq_getElem (by omega)]
+    have hstep : (bufferedCompTM M₁ M₂).tm.step (bufferedScanCfg M₁ M₂ y p tapes heads (j + 1)) =
+        bufferedScanCfg M₁ M₂ y p tapes heads j := by
+      simp only [MultiTapeTM.step, bufferedScanCfg, bufferedCompTM, Cfg.workTapeSymbols,
+        tapeBlocks_buffer, hread, Option.some_ne_none, if_false]
+      refine Cfg.ext rfl (moveInputPos_zero _) ?_ ?_ rfl
+      · funext i
+        refine Fin.addCases ?_ ?_ i
+        · intro j; simp [Action.apply]
+        · intro j
+          refine Fin.addCases ?_ ?_ j <;> intro j <;> simp [Action.apply]
+      · funext i
+        refine Fin.addCases ?_ ?_ i
+        · intro j; simp [Action.apply]
+        · intro z
+          refine Fin.addCases ?_ ?_ z <;> intro z <;> simp [Action.apply, sub_eq_add_neg]
+    rw [MultiTapeTM.runFrom_succ_eq_step, hstep]
+    exact ih (by omega)
+
+/-- From a completed first-phase configuration, rewind and dispatch cost exactly
+`|output| + 2` steps. The first move is unconditional from the right blank.
+
+**Proof sketch.** That first left move reaches scan position `|output|`. Apply
+the scan invariant for the remaining `|output| + 1` transitions. The real output
+stays empty and the native input head and first work block stay fixed. -/
+lemma bufferedFirstCfg_rewind (M₁ M₂ : FinTM Bool) {x : List Bool}
+    (c : Cfg M₁.k Bool M₁.State x) (hs : c.state = none) :
+    (bufferedCompTM M₁ M₂).tm.runFrom (bufferedFirstCfg M₁ M₂ c) (c.output.length + 2) =
+      bufferedSecondCfg M₁ M₂ (M₂.tm.initCfg c.output) true c.inputPos c.workTapes c.workTapePos := by
+  have hstep : (bufferedCompTM M₁ M₂).tm.step (bufferedFirstCfg M₁ M₂ c) =
+      bufferedScanCfg M₁ M₂ c.output c.inputPos c.workTapes c.workTapePos c.output.length := by
+    simp only [MultiTapeTM.step, bufferedFirstCfg, hs, bufferedCompTM]
+    refine Cfg.ext rfl (moveInputPos_zero _) ?_ ?_ rfl
+    · funext i
+      refine Fin.addCases ?_ ?_ i
+      · intro j; simp [bufferedScanCfg, Action.apply]
+      · intro j
+        refine Fin.addCases ?_ ?_ j <;> intro j <;> simp [bufferedScanCfg, Action.apply]
+    · funext i
+      refine Fin.addCases ?_ ?_ i
+      · intro j; simp [bufferedScanCfg, Action.apply]
+      · intro j
+        refine Fin.addCases ?_ ?_ j <;> intro j <;> simp [bufferedScanCfg, Action.apply, sub_eq_add_neg]
+  rw [show c.output.length + 2 = (c.output.length + 1) + 1 by omega,
+    MultiTapeTM.runFrom_succ_eq_step, hstep]
+  exact bufferedScanCfg_run M₁ M₂ c.output c.inputPos c.workTapes c.workTapePos _ (le_refl _)
+
+/-- Any completed first computation reaches the second phase within
+`t₁ + |y| + 2` steps, with a fresh second work block and virtual input `y`.
+
+**Proof sketch.** Choose the first halting time, which is at most `t₁`.
+First-phase lockstep reaches its completed configuration, and determinism
+identifies the output with `y`. The exact rewind lemma supplies `|y| + 2` more
+steps, retaining the first block and parked native input head. -/
+lemma bufferedComp_start (M₁ M₂ : FinTM Bool) (x y : List Bool) (t₁ : ℕ)
+    (h₁ : M₁.ComputesInTime x y t₁) :
+    ∃ (a : ℕ) (p : Fin (x.length + 2)) (tapes : Fin M₁.k → ℤ → Option Bool)
+      (heads : Fin M₁.k → ℤ), a ≤ t₁ + y.length + 2 ∧
+      (bufferedCompTM M₁ M₂).tm.runFrom ((bufferedCompTM M₁ M₂).tm.initCfg x) a =
+        bufferedSecondCfg M₁ M₂ (M₂.tm.initCfg y) true p tapes heads := by
+  classical
+  have hh : ∃ t, (M₁.tm.runFrom (M₁.tm.initCfg x) t).state = none :=
+    ⟨t₁, ((computesInTime_iff M₁ x y t₁).mp h₁).1⟩
+  let t := Nat.find hh
+  let c := M₁.tm.runFrom (M₁.tm.initCfg x) t
+  have hs : c.state = none := Nat.find_spec hh
+  have ht : t ≤ t₁ := Nat.find_min' hh ((computesInTime_iff M₁ x y t₁).mp h₁).1
+  have hc : M₁.ComputesInTime x c.output t :=
+    (computesInTime_iff _ _ _ _).mpr ⟨hs, rfl⟩
+  have ho : c.output = y := hc.output_unique h₁
+  refine ⟨t + (y.length + 2), c.inputPos, c.workTapes, c.workTapePos, by omega, ?_⟩
+  rw [MultiTapeTM.runFrom_add, bufferedFirstCfg_init,
+    bufferedFirstCfg_run M₁ M₂ _ t (fun s hs => Nat.find_min hh hs)]
+  have hf := bufferedFirstCfg_rewind M₁ M₂ c hs
+  cases ho
+  exact hf
+
+end Turing.FinTM
+
+/-! ### Machine-agreement transfer (§13, Z5)
+
+Two machines over the same tape count and state type whose transition
+tables agree on a set of control states run identically for as long as the
+run's control stays inside that set. This is the `hagree` genre of
+`Turing.capture_run`/`Turing.emit_run` made standalone: those lemmas carry
+a per-state agreement hypothesis for one specific wrapper, re-proved ad hoc
+at every host; the standalone form transfers whole runs between any two
+agreeing tables (design `machine-library-design.md` §13, item Z5; decision
+D-R3). First customers: the forwarding loop host of `Build/Loop.lean`
+(whose fourteen phase lemmas are verbatim re-proofs of the capturing
+host's, since the two tables agree on every non-body state) and the
+guarded `clSlot_run` agreement sites of `CookLevin/Hardness.lean`. -/
+
+namespace Turing.MultiTapeTM
+
+/-- The two transition tables agree on every control state in `Q`: from any
+such state, both machines take the identical action on identical reads.
+Nothing is assumed about states outside `Q`, about `q₀`, or about
+halting. -/
+def AgreeOn {k : ℕ} {Symbol State : Type*} (M N : MultiTapeTM k Symbol State)
+    (Q : Set State) : Prop :=
+  ∀ q ∈ Q, ∀ inp work, M.tr q inp work = N.tr q inp work
+
+/-- One step transfers across an agreement: if the configuration's control
+state (when live) lies in the agreement set, both machines step it to the
+same configuration. Halted configurations step to themselves on both sides.
+
+**Proof sketch.** On `c.state = none` both steps are the identity. On
+`c.state = some q` with `q ∈ Q`, unfold `step`: both sides apply the same
+action `M.tr q c.inputSymbol c.workTapeSymbols = N.tr q …` to `c`. -/
+theorem step_eq_of_agreeOn {k : ℕ} {Symbol State : Type*}
+    {M N : MultiTapeTM k Symbol State} {Q : Set State}
+    (h : M.AgreeOn N Q) {input : List Symbol} (c : Cfg k Symbol State input)
+    (hq : ∀ q, c.state = some q → q ∈ Q) :
+    N.step c = M.step c := by
+  cases hs : c.state with
+  | none => simp only [step_of_halt hs]
+  | some q =>
+    simp only [step, hs]
+    rw [h q (hq q hs)]
+
+/-- A whole run transfers across an agreement: if every control state the
+`M`-run visits strictly before time `t` lies in the agreement set, the two
+runs coincide at time `t` (and hence at every earlier time, by
+instantiating `t`). The endpoint itself may leave the set or halt; no
+liveness is assumed, and `t = 0` is the trivial case.
+
+**Proof sketch.** Induct on `t`. The inductive hypothesis transfers the
+run at `t`; the visit hypothesis at `u = t` puts its live control in `Q`,
+so `step_eq_of_agreeOn` transfers the final step. Halted intermediate
+configurations step identically on both sides without the hypothesis. -/
+theorem runFrom_eq_of_agreeOn {k : ℕ} {Symbol State : Type*}
+    {M N : MultiTapeTM k Symbol State} {Q : Set State}
+    (h : M.AgreeOn N Q) {input : List Symbol} (c : Cfg k Symbol State input)
+    (t : ℕ) (hq : ∀ u < t, ∀ q, (M.runFrom c u).state = some q → q ∈ Q) :
+    N.runFrom c t = M.runFrom c t := by
+  induction t with
+  | zero => rfl
+  | succ t ih =>
+    rw [runFrom_succ_eq_step', ih (fun u hu => hq u (by omega)),
+      runFrom_succ_eq_step']
+    exact step_eq_of_agreeOn h _ (hq t (by omega))
+
+end Turing.MultiTapeTM
+```
+
+## ===== TCSlib/Complexity/TuringMachine/Build/Convention.lean =====
+
+```
+/-
+Copyright (c) 2026 Seyoon Ragavan. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Seyoon Ragavan
+-/
+import TCSlib.Complexity.TuringMachine.Simulation
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+/-!
+# Machine-construction library: the calling convention
+
+The vocabulary module of the machine-construction library
+(`machine-library-design.md`, design frozen 2026-10-03): the single seam
+notion that the library's control combinators speak, plus the pure list/
+arithmetic functions that the primitive contracts in
+`TCSlib.Complexity.TuringMachine.Build.Primitives` are stated against.
+
+**Status: proved.** This module is fully proved (definitions and two
+glue lemmas), and the sibling `Build` modules' contracts stated against
+it are now all proved as well (library fill batches and the emitter
+increment; zero sorries). The `Build` surface was new Chapter-1 growth,
+audited in the shared infrastructure and emitter rounds
+(`audits/ch1-infra-*`, `audits/emitter-*`).
+
+## The seam notion
+
+The model already gives *whole* machines a clean boundary: read-only input,
+blank work tapes, append-only output, start at `Turing.MultiTapeTM.initCfg`.
+The library therefore needs a configuration discipline only where a
+construction crosses an *internal* seam — the round boundary of the loop
+combinator and the entry of a wrapped subroutine. `Turing.Cfg.ofWords` is
+that discipline: control at a designated anchor, input head at its initial
+position, every work tape holding one word from the origin
+(`Turing.FinTM.bufferTape`) with its head at the origin, output empty. A
+loop body's contract is "`ofWords` in, `ofWords` out", and — per the frozen
+design decision — the body *restores its own scratch to blank* (its scratch
+words are `[]` on both sides of the contract) rather than relying on a
+generic clearing pass.
+
+## Main definitions
+
+* `Turing.Cfg.ofWords` — the canonical seam configuration: anchor state,
+  input head at 1, work tape `i` holding word `w i` from the origin, heads
+  at the origin, empty output.
+* `Turing.splitAtLastTrue` — strip a marker suffix: the prefix before the
+  last `true`, or `none` if the word is all `false` (the audited marker
+  discipline of the Chapter-2 Exercise-2.1 construction).
+* `Turing.solveSplit` — least solution `i ≤ n` of the padding length
+  equation `i + C·(i+1)^e = n`, or `none` (the split-search discipline of
+  the padding constructions).
+* `Turing.incFixed` — little-endian fixed-width binary increment with
+  explicit overflow (`none`), width preserved (the enumerator's counter
+  discipline; width zero overflows immediately).
+
+## References
+
+* [AB09] S. Arora, B. Barak, *Computational Complexity: A Modern Approach*,
+  Cambridge University Press, 2009. (§1.2: the k-tape machine model the
+  seams are stated over.)
+-/
+
+namespace Turing
+
+variable {k : ℕ} {State : Type*}
+
+/-- The canonical seam configuration of the machine-construction library:
+control at the anchor state `q`, input head at its initial position `1`,
+work tape `i` holding the word `w i` written from the origin
+(`Turing.FinTM.bufferTape`), every work head at the origin, and the output
+empty. Loop-round and wrapper-entry contracts are stated as equations
+between `runFrom` results and `ofWords` configurations; a body that owns
+scratch tapes lists them with word `[]` on both sides of its contract
+(body-restores-scratch, the frozen design decision 9.2). -/
+def Cfg.ofWords {input : List Bool} (q : State) (w : Fin k → List Bool) :
+    Cfg k Bool State input :=
+  ⟨some q, 1, fun i => FinTM.bufferTape (w i), fun _ => 0, []⟩
+
+/-- A machine's genuine initial configuration is the seam configuration at
+its start state with every tape word empty: `Cfg.init` has blank tapes and
+`Turing.FinTM.bufferTape [] = fun _ => none`. This is the lemma that lets a
+combinator's startup phase begin from a seam rather than from a bespoke
+initialization invariant. -/
+lemma initCfg_ofWords (tm : MultiTapeTM k Bool State) (x : List Bool) :
+    tm.initCfg x = Cfg.ofWords tm.q₀ (fun _ => []) := by
+  simp only [MultiTapeTM.initCfg, Cfg.init, Cfg.ofWords, FinTM.bufferTape_nil]
+
+/-- The seam words of a configuration are read back literally: at a seam,
+work tape `i` holds exactly `w i` on cells `0, …, |w i| − 1` and blanks
+elsewhere. Unfolds `Cfg.ofWords` for consumers that reason cell-wise. -/
+lemma Cfg.ofWords_workTapes {input : List Bool} (q : State)
+    (w : Fin k → List Bool) (i : Fin k) :
+    (Cfg.ofWords (input := input) q w).workTapes i = FinTM.bufferTape (w i) :=
+  rfl
+
+/-- Strip a marker suffix: the prefix of `v` before its **last** `true`, or
+`none` when `v` is all `false`. This is the Chapter-2 Exercise-2.1 marker
+discipline (split at the last `true`; an all-`false` certificate region is
+a rejection), stated once as a pure function so that machine contracts and
+the chapter-side semantic lemmas name the same operation. -/
+def splitAtLastTrue (v : List Bool) : Option (List Bool) :=
+  match v.reverse.dropWhile (fun b => !b) with
+  | true :: rest => some rest.reverse
+  | _ => none
+
+/-- Least index `i ≤ n` solving the padding length equation
+`i + C·(i+1)^e = n`, or `none` when no solution exists. Strict monotonicity
+of `i ↦ i + C·(i+1)^e` makes the solution unique; the machine contract
+`Turing.FinTM.computesFunInTime_splitSolve` performs this bounded search. -/
+def solveSplit (C e n : ℕ) : Option ℕ :=
+  (List.range (n + 1)).find? fun i => i + C * (i + 1) ^ e == n
+
+/-- Little-endian fixed-width binary increment with explicit overflow:
+`incFixed w` is the successor word of the same length, or `none` when `w`
+is all `true` (overflow) — in particular width zero overflows immediately,
+matching the enumerator's audited counter discipline. -/
+def incFixed : List Bool → Option (List Bool)
+  | [] => none
+  | false :: rest => some (true :: rest)
+  | true :: rest => (incFixed rest).map (false :: ·)
+
+/-- **Emitter-increment vocabulary** (design §11): least
+solution `i ≤ n` of the width-parametric split equation `i + f i = n`, or
+`none` — the generalization of `Turing.solveSplit` from the hardwired
+polynomial family to an arbitrary width function. At
+`f = fun i => C * (i + 1) ^ e` this definitionally recovers
+`solveSplit C e n`. Customers: the 3A-continuation's exponential padding
+equation (through `computesFunInTime_splitSolveWith`) and later padding
+arguments. No machine content: `List.range` search, first match. -/
+def solveSplitWith (f : ℕ → ℕ) (n : ℕ) : Option ℕ :=
+  (List.range (n + 1)).find? fun i => i + f i == n
+
+/-- **Emitter-increment vocabulary** (design §11): split off
+the leading unary token — the maximal `true`-prefix together with its
+terminating `false` delimiter — returning the token and the remainder. A
+word with no delimiter yields the whole word as an unterminated token with
+empty remainder; the empty word yields two empty words; a leading `false`
+is the length-zero token `[false]`. This operation consumes **unary
+tokens** — the shared atom of the serialization grammars (unary indices
+with terminators). It does not consume standalone single-bit markers or
+polarity bits: `unaryTokenSplit [true, false, true] =
+([true, false], [true])`, a terminated unary-one token, not a lone
+`true` marker — scanners handle markers and polarity by their own
+grammar states (emitter-infra round-1 audit, finding 4). Customers: the
+3B continuation's streaming scanner, the Cook-Levin emitter's index
+reads (4A), 4B's dual scanner. No machine content: structural recursion
+on the word. -/
+def unaryTokenSplit : List Bool → List Bool × List Bool
+  | [] => ([], [])
+  | false :: rest => ([false], rest)
+  | true :: rest =>
+    let (tok, r) := unaryTokenSplit rest
+    (true :: tok, r)
+
+end Turing
+```
+
+## ===== TCSlib/Complexity/TuringMachine/Build/Catalog.lean =====
+
+```
 /-
 Copyright (c) 2026 Seyoon Ragavan. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
@@ -11066,3 +14698,1200 @@ theorem exists_loopTM_spaceUsed (body F : FinTM Bool) (anchor : body.State)
         Nat.mul_le_mul_right _ (Nat.le_add_left _ _)
 
 end Turing.FinTM
+```
+
+## ===== TCSlib/Complexity/TuringMachine/Build/Zone.lean =====
+
+```
+/-
+Copyright (c) 2026 Seyoon Ragavan. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Seyoon Ragavan
+-/
+import TCSlib.Complexity.TuringMachine.Simulation
+import TCSlib.Complexity.TuringMachine.Build.Embed
+import TCSlib.Complexity.TuringMachine.Build.Seam
+import TCSlib.Complexity.TuringMachine.Build.Catalog
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+/-!
+# Machine-construction library: the zoned tape carrier (Z2)
+
+The zone representation of the machine-construction library
+(`machine-library-design.md` §13, Z2; decisions 13.1 and 13.2): the data
+of two stacks of **zones** — level `i` holding up to `2 · 2^i` virtual
+cells per side — realized on one physical binary tape around a two-cell
+home, with each virtual `Option Bool` cell stored as a **paired
+presence/data cell** (decision 13.2; the `SweepAlphabet` product cells of
+`Robustness/SingleTape.lean` are the in-repo precedent this replaces with
+pairing, keeping the binary alphabet). This is the Hennie-Stearns
+representation ([AB09] §1.7): the virtual head always reads at the home,
+and locality is restored by per-level rebalancing shifts whose costs are
+geometric in the level.
+
+## Design (13a; spec-time refinements, amended by the round-1 audit)
+
+* **The carrier is data, the invariant is the consumer's.** `ZoneContents`
+  carries per-zone words bounded by capacity; the Hennie-Stearns
+  `{empty, half, full}` fullness discipline, the `2^i`-credit amortization,
+  and the simulation theorem live with the consumer (plan §2.1).
+* **Shifts are pairwise, order-preserving, and totally guarded** (round-1
+  repair, finding A-S2-1): the level-`i` inward shift moves the inner
+  `2^(i-1)` stored cells of zone `i` into the **empty** zone `i - 1`, and
+  carries **no room premise** — it removes cells from the donor, so a full
+  donor is always a legal source. The outward shift moves the outer half
+  of a **full** zone `i - 1` onto the front of zone `i`, and its room
+  condition on the receiving zone lives **inside its guard**. Outside its
+  guard every operation is the identity, and the machine rows realize the
+  total guarded operation — identity branch included. The classical
+  multi-level rebalance is the descending/move/ascending cascade of these
+  ops (`zoneCascadeRight` below), whose represented-word, length, and
+  geometric-cost statements are part of this gate per the round-1 audit.
+* **One shift machine per direction and side**, taking the level in unary
+  on the scratch tape: the Hennie-Stearns simulator is a single machine,
+  so the level cannot be baked into finite control.
+* **Left/right asymmetry of the cell pairing** is fixed by the layout
+  (below) and documented once: on the right, even offsets carry presence
+  bits; on the left, odd offsets do.
+
+## The physical layout
+
+Home: cells `0` (presence) and `1` (data). Right virtual slot `s`: cells
+`2s + 2` (presence) and `2s + 3` (data). Left virtual slot `s`: cells
+`-2s - 2` (presence) and `-2s - 1` (data). Zone `i` owns the slots
+`[zoneBase i, zoneBase i + zoneCapacity i)` of its side, where
+`zoneCapacity i = 2 · 2^i` and `zoneBase i = 2 · (2^i - 1)` (the exact sum
+of the inner capacities). Every integer cell is owned by exactly one slot
+or the home.
+
+## Status: statement skeleton (§13 statement phase, tranche A-S2, round 3)
+
+Definitions are real; every contract is `sorry`d with a proof sketch.
+Round 1 (`audits/zone-infra-findings.md`) returned the inward-room blocker
+(A-S2-1, repaired: premise removed, wrappers split, cascade added); round
+2 (`audits/zone-infra-r2-findings.md`) accepted that repair and returned
+one blocker on the new cascade contracts (A-S2-R2-1, repaired: the
+top-left room hypotheses added — necessary for the lengths theorem, the
+weaker one-pass form for the word theorem — with the `j = 0` and
+blocked-cascade regressions).
+
+## Main definitions and results
+
+* `Turing.zoneCellBits`/`Turing.zoneCellOf` — the paired-cell codec.
+* `Turing.ZoneContents`, `Turing.zoneTape` — the carrier and its physical
+  realization.
+* `Turing.zoneSide` — the represented virtual half-word (inner zones
+  first).
+* `Turing.zoneShiftInW`/`Turing.zoneShiftOutW` — the pure pairwise
+  rebalancing ops on one side's family, totally guarded, with
+  `Turing.zoneSide_shiftInW`/`Turing.zoneSide_shiftOutW` the honesty
+  lemmas: rebalancing never changes the represented word.
+* `Turing.zoneShiftIn`/`Turing.zoneShiftOut` — the hypothesis-free
+  contents-level wrappers (round-1 repair).
+* `Turing.zoneMoveRight`/`Turing.zoneMoveLeft`, `Turing.zoneMove`,
+  `Turing.zoneHomeWrite` — the pure head-step and write ops.
+* `Turing.zoneShiftInW_full_donor` — the full-donor regression required by
+  the round-1 audit: a full donor above an empty zone shifts inward with
+  no side condition.
+* `Turing.zoneCascadeRight`, `Turing.zoneSide_cascadeRight`,
+  `Turing.zoneCascadeRight_lengths`, `Turing.zoneCascade_cost_le`,
+  `Turing.zoneCascadeRight_zero`, `Turing.zoneCascadeRight_blocked` — the
+  classical rebalance as a cascade of pairwise ops: under the classical
+  pre-state **and the top-left room hypotheses** it realizes one virtual
+  right move and restores every inner level to half-full; its summed row
+  budgets stay geometric; the regressions pin the `j = 0` case and the
+  harmlessly blocked full-receiver case.
+* `Turing.FinTM.exists_zoneShiftInTM`/`exists_zoneShiftOutTM` — the
+  machine rows: one two-tape machine per direction and side, level in
+  unary on the scratch tape, exact `O(2^i)` budgets, visited sets inside
+  the level-`i` physical extent, realizing the total guarded op.
+* `Turing.zoneTape_blank_outside`,
+  `Turing.MultiTapeTM.spaceUsedByTape_le_card_Icc` — the cardinality
+  exports the Z4 space annotation consumes.
+
+## References
+
+* [AB09] S. Arora, B. Barak, *Computational Complexity: A Modern
+  Approach*, Cambridge University Press, 2009. (§1.7, the Hennie-Stearns
+  simulation; Exercise 1.6.)
+* In-repo precedents: `SweepCell`/`SweepAlphabet`
+  (`Robustness/SingleTape.lean`); `ObliviousSetup.lean`'s guide-zone
+  layout.
+-/
+
+namespace Turing
+
+/-! ### The paired-cell codec (decision 13.2) -/
+
+/-- Encode one virtual `Option Bool` cell as its presence and data bits. -/
+def zoneCellBits (v : Option Bool) : Bool × Bool := (v.isSome, v.getD false)
+
+/-- Decode a presence/data bit pair back to the virtual cell. -/
+def zoneCellOf (p d : Bool) : Option Bool := if p then some d else none
+
+/-- The codec round-trips (skeleton-time proof; flagged). -/
+theorem zoneCellOf_bits (v : Option Bool) :
+    zoneCellOf (zoneCellBits v).1 (zoneCellBits v).2 = v := by
+  cases v <;> rfl
+
+/-! ### Layout arithmetic -/
+
+/-- The capacity of zone `i`, in virtual cells per side. -/
+def zoneCapacity (i : ℕ) : ℕ := 2 * 2 ^ i
+
+/-- The first virtual slot of zone `i`: the exact total capacity of the
+zones inside it. -/
+def zoneBase (i : ℕ) : ℕ := 2 * (2 ^ i - 1)
+
+/-- Bases telescope by capacities (skeleton-time proof; flagged). -/
+theorem zoneBase_succ (i : ℕ) : zoneBase (i + 1) = zoneBase i + zoneCapacity i := by
+  have h : 0 < 2 ^ i := Nat.two_pow_pos i
+  simp only [zoneBase, zoneCapacity, pow_succ]
+  omega
+
+/-- The zone owning virtual slot `s`: the unique `i` with
+`zoneBase i ≤ s < zoneBase (i + 1)`. -/
+def zoneIndex (s : ℕ) : ℕ := Nat.log2 (s / 2 + 1)
+
+/-- `zoneIndex` is the inverse of the base arithmetic: a slot lies in the
+zone it indexes.
+
+**Proof sketch.** Write `s = 2r + ε`; both base endpoints are even, so the
+sandwich `zoneBase i ≤ s < zoneBase (i + 1)` is equivalent to
+`2^i ≤ r + 1 < 2^(i+1)`, which characterizes `Nat.log2 (r + 1)` (the
+argument is positive, so there is no logarithm-at-zero case). The round-1
+audit's independent derivation is the route. -/
+theorem zoneIndex_eq_iff (s i : ℕ) :
+    zoneIndex s = i ↔ zoneBase i ≤ s ∧ s < zoneBase (i + 1) := by
+  rw [zoneIndex, Nat.log2_eq_iff (by omega)]
+  have h := Nat.two_pow_pos i
+  have h' := Nat.two_pow_pos (i + 1)
+  unfold zoneBase
+  omega
+
+/-! ### The carrier -/
+
+/-- The zone contents of one tape: the home cell and, per level and side,
+the stored word (inner end first), bounded by capacity. Fullness
+discipline is deliberately **not** carried here (design §13a): the
+Hennie-Stearns `{empty, half, full}` invariant is the consumer's, and the
+round-1 audit's cascade analysis confirms intermediate cascade states
+leave the discipline anyway. -/
+structure ZoneContents (ℓ : ℕ) where
+  /-- the virtual cell under the virtual head -/
+  home : Option Bool
+  /-- the left zone words, inner end first -/
+  left : Fin ℓ → List (Option Bool)
+  /-- the right zone words, inner end first -/
+  right : Fin ℓ → List (Option Bool)
+  /-- left words fit their zones -/
+  left_le : ∀ i, (left i).length ≤ zoneCapacity i.val
+  /-- right words fit their zones -/
+  right_le : ∀ i, (right i).length ≤ zoneCapacity i.val
+
+/-- The stored virtual cell at slot `s` of one side, or `none` when the
+slot is beyond the stored words (an unoccupied slot, physically blank —
+distinct, through the pairing, from an occupied slot storing a blank). -/
+def zoneSlot {ℓ : ℕ} (w : Fin ℓ → List (Option Bool)) (s : ℕ) :
+    Option (Option Bool) :=
+  if h : zoneIndex s < ℓ then (w ⟨zoneIndex s, h⟩)[s - zoneBase (zoneIndex s)]?
+  else none
+
+/-- The physical realization of zone contents: home at cells `0`/`1`,
+right slot `s` at `2s + 2`/`2s + 3`, left slot `s` at `-2s - 2`/`-2s - 1`;
+occupied slots store their presence and data bits, unoccupied slots and
+cells beyond every zone are blank. On the right, even cells (relative to
+the slot base) carry presence; on the left the roles are mirrored, so odd
+negative offsets carry data — the one asymmetry of the layout, fixed
+here. -/
+def zoneTape {ℓ : ℕ} (z : ZoneContents ℓ) : ℤ → Option Bool := fun c =>
+  if c = 0 then some z.home.isSome
+  else if c = 1 then some (z.home.getD false)
+  else if 2 ≤ c then
+    let n := (c - 2).toNat
+    match zoneSlot z.right (n / 2) with
+    | some v => some (if n % 2 = 0 then v.isSome else v.getD false)
+    | none => none
+  else
+    let n := (-c - 1).toNat
+    match zoneSlot z.left (n / 2) with
+    | some v => some (if n % 2 = 1 then v.isSome else v.getD false)
+    | none => none
+
+/-- The empty contents (blank home, every zone empty). -/
+def ZoneContents.empty (ℓ : ℕ) : ZoneContents ℓ where
+  home := none
+  left := fun _ => []
+  right := fun _ => []
+  left_le := fun _ => by simp
+  right_le := fun _ => by simp
+
+/-- The empty contents realize the almost-blank tape: the home pair
+stores the blank cell, and every other physical cell is blank.
+
+**Proof sketch.** `zoneSlot` of the empty family is `none` at every slot
+(`List.getElem?` of `[]`), so both side branches of `zoneTape` return
+`none`; the home cells compute `zoneCellBits none = (false, false)`. -/
+theorem zoneTape_empty (ℓ : ℕ) (c : ℤ) :
+    zoneTape (ZoneContents.empty ℓ) c =
+      if c = 0 then some false else if c = 1 then some false else none := by
+  simp [zoneTape, ZoneContents.empty, zoneSlot]
+
+/-- Cells beyond the physical extent of `ℓ` levels are blank, for every
+contents: the zones' slots stop at `zoneBase ℓ`, so the tape is `none`
+outside `[-(2 * zoneBase ℓ + 1), 2 * zoneBase ℓ + 1]`.
+
+**Proof sketch.** A cell at distance beyond the extent maps to a slot
+`s ≥ zoneBase ℓ`; `zoneIndex_eq_iff` puts `zoneIndex s ≥ ℓ`, so `zoneSlot`
+returns `none` by its guard. (The round-1 audit computed the sharper
+asymmetric extent `[-2·zoneBase ℓ, 2·zoneBase ℓ + 1]`; the stated
+symmetric bound is the safe envelope.) -/
+theorem zoneTape_blank_outside {ℓ : ℕ} (z : ZoneContents ℓ) (c : ℤ)
+    (hc : (2 * zoneBase ℓ + 1 : ℤ) < |c|) : zoneTape z c = none := by
+  have hs (w : Fin ℓ → List (Option Bool)) (s : ℕ)
+      (hb : zoneBase ℓ ≤ s) : zoneSlot w s = none := by
+    unfold zoneSlot
+    split_ifs with hi
+    · have htop := ((zoneIndex_eq_iff s (zoneIndex s)).mp rfl).2
+      have hp := Nat.pow_le_pow_right (by decide : 0 < 2)
+        (Nat.succ_le_of_lt hi)
+      unfold zoneBase at *
+      omega
+    · rfl
+  have h0 : c ≠ 0 := by intro h; rw [h, abs_zero] at hc; omega
+  have h1 : c ≠ 1 := by intro h; rw [h] at hc; change 2 * (zoneBase ℓ : ℤ) + 1 < 1 at hc; omega
+  simp only [zoneTape, if_neg h0, if_neg h1]
+  by_cases hpos : 2 ≤ c
+  · rw [if_pos hpos]
+    rw [abs_of_nonneg (by omega : 0 ≤ c)] at hc
+    have hb : zoneBase ℓ ≤ (c - 2).toNat / 2 := by omega
+    simp only [hs z.right _ hb]
+  · rw [if_neg hpos]
+    rw [abs_of_neg (by omega : c < 0)] at hc
+    have hb : zoneBase ℓ ≤ (-c - 1).toNat / 2 := by omega
+    simp only [hs z.left _ hb]
+
+/-! ### The represented word -/
+
+/-- The virtual half-word one side represents: the zone words
+concatenated inner-first. -/
+def zoneSide {ℓ : ℕ} (w : Fin ℓ → List (Option Bool)) : List (Option Bool) :=
+  (List.finRange ℓ).flatMap fun i => w i
+
+private theorem zoneSide_succ {n : ℕ} (w : Fin (n + 1) → List (Option Bool)) :
+    zoneSide w = w 0 ++ zoneSide (fun k => w k.succ) := by
+  simp [zoneSide, List.finRange_succ, List.flatMap_map]
+
+/-- Replacing two adjacent zone words with the same concatenation preserves
+the represented side. Induct on the number of levels, peeling off the
+unchanged first word until the changed pair is at the front. -/
+private theorem zoneSide_adjacent {n : ℕ} (a : ℕ) (ha : a + 1 < n)
+    (w v : Fin n → List (Option Bool))
+    (hp : v ⟨a, by omega⟩ ++ v ⟨a + 1, ha⟩ =
+      w ⟨a, by omega⟩ ++ w ⟨a + 1, ha⟩)
+    (hf : ∀ k, k.val ≠ a → k.val ≠ a + 1 → v k = w k) :
+    zoneSide v = zoneSide w := by
+  induction n generalizing a with
+  | zero => omega
+  | succ n ih =>
+    cases a with
+    | zero =>
+      cases n with
+      | zero => omega
+      | succ n =>
+        rw [zoneSide_succ, zoneSide_succ]
+        rw [zoneSide_succ, zoneSide_succ, ← List.append_assoc, ← List.append_assoc]
+        rw [show v 0 ++ v (Fin.succ 0) = w 0 ++ w (Fin.succ 0) from hp]
+        congr 1
+        congr 1
+        funext k
+        apply hf <;> simp
+    | succ a =>
+      rw [zoneSide_succ, zoneSide_succ, hf 0 (by simp) (by simp)]
+      congr 1
+      apply ih a (by omega) (fun k => w k.succ) (fun k => v k.succ)
+      · exact hp
+      · intro k h0 h1
+        apply hf <;> simp only [Fin.val_succ] <;> omega
+
+/-! ### Pure rebalancing (pairwise, order-preserving, totally guarded) -/
+
+/-- The level-`i` inward shift on one side's family: when `1 ≤ i < ℓ` and
+zone `i - 1` is **empty**, move the inner `2^(i-1)` stored cells (or all
+of them, if fewer) of zone `i` into it; identity otherwise. **No room
+premise exists** (round-1 repair, A-S2-1): the operation removes cells
+from the donor, so a full donor is always legal — the exact case the
+classical rebalance needs. -/
+def zoneShiftInW {ℓ : ℕ} (i : ℕ) (w : Fin ℓ → List (Option Bool)) :
+    Fin ℓ → List (Option Bool) := fun j =>
+  if hi : 1 ≤ i ∧ i < ℓ then
+    if w ⟨i - 1, by omega⟩ = [] then
+      if j.val = i - 1 then (w ⟨i, hi.2⟩).take (2 ^ (i - 1))
+      else if j.val = i then (w ⟨i, hi.2⟩).drop (2 ^ (i - 1))
+      else w j
+    else w j
+  else w j
+
+/-- The level-`i` outward shift on one side's family: when `1 ≤ i < ℓ`,
+zone `i - 1` is **full**, and the receiving zone `i` has room for the
+moved half, move zone `i - 1`'s outer half onto the front of zone `i`;
+identity otherwise. The room condition lives **inside the guard**
+(round-1 repair): no caller carries a hypothesis, and a cramped receiver
+makes the op the identity rather than ill-defined. -/
+def zoneShiftOutW {ℓ : ℕ} (i : ℕ) (w : Fin ℓ → List (Option Bool)) :
+    Fin ℓ → List (Option Bool) := fun j =>
+  if hi : 1 ≤ i ∧ i < ℓ then
+    if (w ⟨i - 1, by omega⟩).length = zoneCapacity (i - 1) ∧
+        (w ⟨i, hi.2⟩).length + 2 ^ (i - 1) ≤ zoneCapacity i then
+      if j.val = i - 1 then (w ⟨i - 1, by omega⟩).take (2 ^ (i - 1))
+      else if j.val = i then
+        (w ⟨i - 1, by omega⟩).drop (2 ^ (i - 1)) ++ w ⟨i, hi.2⟩
+      else w j
+    else w j
+  else w j
+
+/-- Inward rebalancing never changes the represented half-word.
+
+**Proof sketch.** A disabled guard gives the identity. When enabled, zones
+`i - 1` and `i` are adjacent in the inner-first concatenation, zone
+`i - 1` was empty, and `take ++ drop` restores zone `i`'s word, so the
+concatenation is unchanged. -/
+theorem zoneSide_shiftInW {ℓ : ℕ} (i : ℕ) (w : Fin ℓ → List (Option Bool)) :
+    zoneSide (zoneShiftInW i w) = zoneSide w := by
+  by_cases hi : 1 ≤ i ∧ i < ℓ
+  · by_cases he : w ⟨i - 1, by omega⟩ = []
+    · apply zoneSide_adjacent (i - 1) (by omega)
+      · have hne : i ≠ i - 1 := by omega
+        have hsucc : i - 1 + 1 = i := by omega
+        simp [zoneShiftInW, hi, he, hsucc, hne, List.take_append_drop]
+      · intro k h0 h1
+        have hk : k.val ≠ i := by omega
+        simp [zoneShiftInW, hi, he, h0, hk]
+    · have hsame : zoneShiftInW i w = w := by
+        funext k
+        simp [zoneShiftInW, hi, he]
+      rw [hsame]
+  · have hsame : zoneShiftInW i w = w := by
+      funext k
+      simp [zoneShiftInW, hi]
+    rw [hsame]
+
+/-- Outward rebalancing never changes the represented half-word.
+
+**Proof sketch.** A disabled guard gives the identity. When enabled, the
+adjacent two-zone segment is literally re-associated:
+`take q ++ (drop q ++ wᵢ) = wᵢ₋₁ ++ wᵢ` at the cutoff `q = 2^(i-1)`. -/
+theorem zoneSide_shiftOutW {ℓ : ℕ} (i : ℕ) (w : Fin ℓ → List (Option Bool)) :
+    zoneSide (zoneShiftOutW i w) = zoneSide w := by
+  by_cases hi : 1 ≤ i ∧ i < ℓ
+  · by_cases hg : (w ⟨i - 1, by omega⟩).length = zoneCapacity (i - 1) ∧
+        (w ⟨i, hi.2⟩).length + 2 ^ (i - 1) ≤ zoneCapacity i
+    · apply zoneSide_adjacent (i - 1) (by omega)
+      · have hne : i ≠ i - 1 := by omega
+        have hsucc : i - 1 + 1 = i := by omega
+        simp [zoneShiftOutW, hi, hg, hsucc, hne, ← List.append_assoc]
+      · intro k h0 h1
+        have hk : k.val ≠ i := by omega
+        simp [zoneShiftOutW, hi, hg, h0, hk]
+    · have hsame : zoneShiftOutW i w = w := by
+        funext k
+        simp [zoneShiftOutW, hi, hg]
+      rw [hsame]
+  · have hsame : zoneShiftOutW i w = w := by
+      funext k
+      simp [zoneShiftOutW, hi]
+    rw [hsame]
+
+/-- **The full-donor regression** (required by the round-1 audit,
+A-S2-1): above an empty zone, a donor of any length — a full one included —
+shifts inward with no side condition: the receiving zone gets the inner
+`2^(i-1)` cells (or all, if fewer) and the donor keeps the rest.
+
+**Proof sketch.** Unfold `zoneShiftInW`: both guards fire by the
+hypotheses, and the two branch equations are the stated `take`/`drop`. -/
+theorem zoneShiftInW_full_donor {ℓ : ℕ} (i : ℕ) (hi : 1 ≤ i) (hℓ : i < ℓ)
+    (w : Fin ℓ → List (Option Bool)) (hempty : w ⟨i - 1, by omega⟩ = []) :
+    zoneShiftInW i w ⟨i - 1, by omega⟩ = (w ⟨i, hℓ⟩).take (2 ^ (i - 1)) ∧
+    zoneShiftInW i w ⟨i, hℓ⟩ = (w ⟨i, hℓ⟩).drop (2 ^ (i - 1)) := by
+  have hne : i ≠ i - 1 := by omega
+  simp [zoneShiftInW, hi, hℓ, hempty, hne]
+
+private theorem zoneShiftInW_capacity {ℓ : ℕ} (i : ℕ)
+    (w : Fin ℓ → List (Option Bool))
+    (hw : ∀ j, (w j).length ≤ zoneCapacity j.val) :
+    ∀ j, (zoneShiftInW i w j).length ≤ zoneCapacity j.val := by
+  intro j
+  unfold zoneShiftInW
+  split_ifs with hi he hj hj
+  · simp only [List.length_take, zoneCapacity, hj]
+    omega
+  · have h := hw ⟨i, hi.2⟩
+    dsimp only at h
+    simp only [List.length_drop, hj]
+    exact (Nat.sub_le _ _).trans h
+  · exact hw j
+  · exact hw j
+  · exact hw j
+
+/-- Lift the inward shift to contents: `side = false` acts on the left
+family, `side = true` on the right. Hypothesis-free (round-1 repair).
+
+**Proof sketch** (capacity fields): the receiving zone gets at most
+`2^(i-1) ≤ zoneCapacity (i-1)` cells; the donor's word only shrinks;
+untouched zones keep their bounds. -/
+def zoneShiftIn {ℓ : ℕ} (side : Bool) (i : ℕ) (z : ZoneContents ℓ) :
+    ZoneContents ℓ where
+  home := z.home
+  left := if side then z.left else zoneShiftInW i z.left
+  right := if side then zoneShiftInW i z.right else z.right
+  left_le := by
+    cases side
+    · exact zoneShiftInW_capacity i z.left z.left_le
+    · exact z.left_le
+  right_le := by
+    cases side
+    · exact z.right_le
+    · exact zoneShiftInW_capacity i z.right z.right_le
+
+private theorem zoneShiftOutW_capacity {ℓ : ℕ} (i : ℕ)
+    (w : Fin ℓ → List (Option Bool))
+    (hw : ∀ j, (w j).length ≤ zoneCapacity j.val) :
+    ∀ j, (zoneShiftOutW i w j).length ≤ zoneCapacity j.val := by
+  intro j
+  unfold zoneShiftOutW
+  split_ifs with hi hg hj hj
+  · simp only [List.length_take, zoneCapacity, hj]
+    omega
+  · simp only [List.length_append, List.length_drop, hg.1, hj]
+    have h := hg.2
+    unfold zoneCapacity at *
+    omega
+  · exact hw j
+  · exact hw j
+  · exact hw j
+
+/-- Lift the outward shift to contents. Hypothesis-free: the receiving
+zone's room condition is inside the family op's guard.
+
+**Proof sketch** (capacity fields): when the guard fires, the shrunk
+lower word fits trivially and the enlarged upper word fits by the guard's
+own room conjunct; otherwise everything is unchanged. -/
+def zoneShiftOut {ℓ : ℕ} (side : Bool) (i : ℕ) (z : ZoneContents ℓ) :
+    ZoneContents ℓ where
+  home := z.home
+  left := if side then z.left else zoneShiftOutW i z.left
+  right := if side then zoneShiftOutW i z.right else z.right
+  left_le := by
+    cases side
+    · exact zoneShiftOutW_capacity i z.left z.left_le
+    · exact z.left_le
+  right_le := by
+    cases side
+    · exact z.right_le
+    · exact zoneShiftOutW_capacity i z.right z.right_le
+
+/-! ### Pure head steps and the home write -/
+
+/-- Overwrite the virtual cell under the head. -/
+def zoneHomeWrite {ℓ : ℕ} (z : ZoneContents ℓ) (v : Option Bool) :
+    ZoneContents ℓ := { z with home := v }
+
+/-- Writing the home changes exactly the two home cells of the physical
+tape.
+
+**Proof sketch.** `zoneTape` consults `home` only in its first two
+branches; every slot branch reads the untouched families. -/
+theorem zoneTape_homeWrite {ℓ : ℕ} (z : ZoneContents ℓ) (v : Option Bool)
+    (c : ℤ) (h0 : c ≠ 0) (h1 : c ≠ 1) :
+    zoneTape (zoneHomeWrite z v) c = zoneTape z c := by
+  simp only [zoneTape, zoneHomeWrite, if_neg h0, if_neg h1]
+
+/-- The virtual head steps right: the home is pushed onto the inner end of
+the left stack's zone `0`, and the new home is popped from the right
+stack's zone `0` (blank when that zone is empty — the virtual tape is
+blank past its stored extent; the Hennie-Stearns consumer's invariant
+makes this the genuinely-blank case). Capacity of `L_0` is the consumer's
+rebalancing obligation, carried here as a hypothesis; the hypothesis-free
+guarded form is `Turing.zoneMove`. -/
+def zoneMoveRight {ℓ : ℕ} (hℓ : 0 < ℓ) (z : ZoneContents ℓ)
+    (hroom : (z.left ⟨0, hℓ⟩).length + 1 ≤ zoneCapacity 0) :
+    ZoneContents ℓ where
+  home := ((z.right ⟨0, hℓ⟩).headI : Option Bool)
+  left := fun j => if j.val = 0 then z.home :: z.left j else z.left j
+  right := fun j => if j.val = 0 then (z.right j).tail else z.right j
+  left_le := by
+    intro j
+    split_ifs with hj
+    · have he : j = ⟨0, hℓ⟩ := Fin.ext hj
+      subst j
+      simpa only [List.length_cons] using hroom
+    · exact z.left_le j
+  right_le := by
+    intro j
+    split_ifs
+    · simpa only [List.length_tail] using
+        (Nat.sub_le (z.right j).length 1).trans (z.right_le j)
+    · exact z.right_le j
+
+/-- The mirrored left step. -/
+def zoneMoveLeft {ℓ : ℕ} (hℓ : 0 < ℓ) (z : ZoneContents ℓ)
+    (hroom : (z.right ⟨0, hℓ⟩).length + 1 ≤ zoneCapacity 0) :
+    ZoneContents ℓ where
+  home := ((z.left ⟨0, hℓ⟩).headI : Option Bool)
+  left := fun j => if j.val = 0 then (z.left j).tail else z.left j
+  right := fun j => if j.val = 0 then z.home :: z.right j else z.right j
+  left_le := by
+    intro j
+    split_ifs
+    · simpa only [List.length_tail] using
+        (Nat.sub_le (z.left j).length 1).trans (z.left_le j)
+    · exact z.left_le j
+  right_le := by
+    intro j
+    split_ifs with hj
+    · have he : j = ⟨0, hℓ⟩ := Fin.ext hj
+      subst j
+      simpa only [List.length_cons] using hroom
+    · exact z.right_le j
+
+/-- The totally guarded head step (`dir = true` is right): acts when
+`0 < ℓ` and the pushed side has room, else identity — the foldable form
+the cascade uses. -/
+def zoneMove {ℓ : ℕ} (dir : Bool) (z : ZoneContents ℓ) : ZoneContents ℓ :=
+  if hℓ : 0 < ℓ then
+    match dir with
+    | true =>
+      if h : (z.left ⟨0, hℓ⟩).length + 1 ≤ zoneCapacity 0 then
+        zoneMoveRight hℓ z h
+      else z
+    | false =>
+      if h : (z.right ⟨0, hℓ⟩).length + 1 ≤ zoneCapacity 0 then
+        zoneMoveLeft hℓ z h
+      else z
+  else z
+
+/-- A right step transforms the represented tape as the virtual head move:
+the old home joins the left word's inner end, and the right word loses its
+inner cell (a nonempty `R_0` case; the blank-extension case pads with the
+virtual blank).
+
+**Proof sketch.** Pure list bookkeeping on `zoneSide`: `finRange`'s head
+is zone `0`, and only zone `0` changes on each side. -/
+theorem zoneSide_moveRight {ℓ : ℕ} (hℓ : 0 < ℓ) (z : ZoneContents ℓ)
+    (hroom : (z.left ⟨0, hℓ⟩).length + 1 ≤ zoneCapacity 0)
+    (hne : z.right ⟨0, hℓ⟩ ≠ []) :
+    zoneSide (zoneMoveRight hℓ z hroom).left = z.home :: zoneSide z.left ∧
+    zoneSide (zoneMoveRight hℓ z hroom).right = (zoneSide z.right).tail := by
+  cases ℓ with
+  | zero => omega
+  | succ n =>
+    have hleft : (fun k : Fin n => (zoneMoveRight hℓ z hroom).left k.succ) =
+        (fun k : Fin n => z.left k.succ) := by
+      funext k
+      simp [zoneMoveRight]
+    have hright : (fun k : Fin n => (zoneMoveRight hℓ z hroom).right k.succ) =
+        (fun k : Fin n => z.right k.succ) := by
+      funext k
+      simp [zoneMoveRight]
+    constructor
+    · rw [zoneSide_succ, zoneSide_succ, hleft]
+      simp [zoneMoveRight]
+    · rw [zoneSide_succ, zoneSide_succ, hright]
+      simp only [zoneMoveRight, Fin.val_zero, ite_true]
+      exact (List.tail_append_of_ne_nil hne).symm
+
+/-! ### The classical rebalance as a cascade (round-1 repair, A-S2-1)
+
+The round-1 audit supplied the schedule and its analysis; the statements
+below are the required gate material. One classical right move at index
+`j`: a descending pass of inward-right/outward-left pairs from level `j`
+down to `1`, the head step, and the ascending pass back up. -/
+
+/-- One cascade stage at level `i`: shift inward on the right (feeding the
+head's side) and outward on the left (draining the side the head leaves). -/
+def zoneStepPair {ℓ : ℕ} (i : ℕ) (z : ZoneContents ℓ) : ZoneContents ℓ :=
+  zoneShiftOut false i (zoneShiftIn true i z)
+
+/-- The classical right-move rebalance at index `j`: descend `j → 1`,
+step right, ascend `1 → j`. -/
+def zoneCascadeRight {ℓ : ℕ} (j : ℕ) (z : ZoneContents ℓ) : ZoneContents ℓ :=
+  (List.range j).foldl (fun z i => zoneStepPair (i + 1) z)
+    (zoneMove true
+      ((List.range j).reverse.foldl (fun z i => zoneStepPair (i + 1) z) z))
+
+private theorem zoneStepPair_side {ℓ : ℕ} (i : ℕ) (z : ZoneContents ℓ) :
+    zoneSide (zoneStepPair i z).left = zoneSide z.left ∧
+      zoneSide (zoneStepPair i z).right = zoneSide z.right :=
+  ⟨zoneSide_shiftOutW i z.left, zoneSide_shiftInW i z.right⟩
+
+private theorem zoneStepPair_frame {ℓ : ℕ} (i : ℕ) (z : ZoneContents ℓ)
+    (k : Fin ℓ) (h0 : k.val ≠ i - 1) (h1 : k.val ≠ i) :
+    (zoneStepPair i z).left k = z.left k ∧
+      (zoneStepPair i z).right k = z.right k := by
+  change zoneShiftOutW i z.left k = z.left k ∧ zoneShiftInW i z.right k = z.right k
+  constructor
+  · unfold zoneShiftOutW
+    split_ifs <;> simp_all
+  · unfold zoneShiftInW
+    split_ifs <;> simp_all
+
+private theorem zoneStepPair_active {ℓ : ℕ} (i : ℕ) (hi : i + 1 < ℓ)
+    (z : ZoneContents ℓ) (hr : z.right ⟨i, by omega⟩ = [])
+    (hl : (z.left ⟨i, by omega⟩).length = zoneCapacity i)
+    (hroom : (z.left ⟨i + 1, hi⟩).length + 2 ^ i ≤ zoneCapacity (i + 1)) :
+    (zoneStepPair (i + 1) z).right ⟨i, by omega⟩ =
+        (z.right ⟨i + 1, hi⟩).take (2 ^ i) ∧
+    (zoneStepPair (i + 1) z).left ⟨i, by omega⟩ =
+        (z.left ⟨i, by omega⟩).take (2 ^ i) ∧
+    (zoneStepPair (i + 1) z).right ⟨i + 1, hi⟩ =
+        (z.right ⟨i + 1, hi⟩).drop (2 ^ i) ∧
+    (zoneStepPair (i + 1) z).left ⟨i + 1, hi⟩ =
+        (z.left ⟨i, by omega⟩).drop (2 ^ i) ++ z.left ⟨i + 1, hi⟩ := by
+  simp [zoneStepPair, zoneShiftIn, zoneShiftOut, zoneShiftInW, zoneShiftOutW,
+    hi, hr, hl, hroom]
+
+private theorem zoneCascadeRight_succ {ℓ : ℕ} (j : ℕ) (z : ZoneContents ℓ) :
+    zoneCascadeRight (j + 1) z =
+      zoneStepPair (j + 1) (zoneCascadeRight j (zoneStepPair (j + 1) z)) := by
+  simp [zoneCascadeRight, List.range_succ, List.reverse_append, List.foldl_append]
+
+/-- The recursive descent and ascent only touch levels at or below their
+index. Induction peels off the outer pair; the base move touches zero. -/
+private theorem zoneCascadeRight_frame {ℓ : ℕ} (j : ℕ) (z : ZoneContents ℓ)
+    (k : Fin ℓ) (hk : j < k.val) :
+    (zoneCascadeRight j z).left k = z.left k ∧
+      (zoneCascadeRight j z).right k = z.right k := by
+  induction j generalizing z with
+  | zero =>
+    have hk0 : k.val ≠ 0 := by omega
+    simp only [zoneCascadeRight, List.range_zero, List.reverse_nil, List.foldl_nil]
+    unfold zoneMove
+    split_ifs <;> simp [zoneMoveRight, hk0]
+  | succ j ih =>
+    rw [zoneCascadeRight_succ]
+    rw [(zoneStepPair_frame _ _ k (by omega) (by omega)).1,
+      (zoneStepPair_frame _ _ k (by omega) (by omega)).2]
+    rw [(ih _ (by omega)).1, (ih _ (by omega)).2]
+    exact zoneStepPair_frame _ _ k (by omega) (by omega)
+
+/-- The cascade realizes exactly one virtual right move. Preconditions are
+the classical pre-state at index `j` — on the right, zones below `j` empty
+and the donor `j` nonempty; on the left, zones below `j` full — **plus the
+top-left receiving room for one pass** (round-2 repair, A-S2-R2-1: without
+it, a full left zone `j` blocks the drain, the guarded ops are identities,
+and the conclusion is false already at `ℓ = 1`, `j = 0`). The `+ 2^(j-1)`
+form is the round-2 audit's weaker sufficient condition for the word
+equalities (at `j = 0`, natural subtraction makes it `+ 1`); the boundary
+instance with room for exactly one pass — where these equalities hold but
+half-full restoration fails — is the recorded reason this theorem's
+hypothesis is weaker than `zoneCascadeRight_lengths`'s.
+
+**Proof sketch** (the round-2 audit's schedule analysis, adopted as the
+binding route): each descending prefix of the donor is nonempty, so `R₀`
+is nonempty at the central move, and the left descending pass makes room
+for the push under `hroom`; every surrounding shift preserves the
+concatenations whether its guard fires or not
+(`zoneSide_shiftInW`/`OutW`), so the single legal push/pop
+(`zoneSide_moveRight`) gives exactly the two word equalities. Half-full
+restoration is **not** used. -/
+theorem zoneSide_cascadeRight {ℓ : ℕ} (j : ℕ) (hj : j < ℓ)
+    (z : ZoneContents ℓ)
+    (hr : ∀ k (hk : k < j), z.right ⟨k, by omega⟩ = [])
+    (hl : ∀ k (hk : k < j),
+      (z.left ⟨k, by omega⟩).length = zoneCapacity k)
+    (hdonor : z.right ⟨j, hj⟩ ≠ [])
+    (hroom : (z.left ⟨j, hj⟩).length + 2 ^ (j - 1) ≤ zoneCapacity j) :
+    zoneSide (zoneCascadeRight j z).left = z.home :: zoneSide z.left ∧
+    zoneSide (zoneCascadeRight j z).right = (zoneSide z.right).tail := by
+  induction j generalizing z with
+  | zero =>
+    have hroom0 : (z.left ⟨0, hj⟩).length + 1 ≤ zoneCapacity 0 := by
+      simpa using hroom
+    simpa only [zoneCascadeRight, List.range_zero, List.reverse_nil,
+      List.foldl_nil, zoneMove, dif_pos hj, dif_pos hroom0] using
+      zoneSide_moveRight hj z hroom0 hdonor
+  | succ j ih =>
+    have hjl : j < ℓ := by omega
+    have hroom' : (z.left ⟨j + 1, hj⟩).length + 2 ^ j ≤
+        zoneCapacity (j + 1) := by simpa using hroom
+    have hactive := zoneStepPair_active j hj z (hr j (by omega))
+      (hl j (by omega)) hroom'
+    have hr' : ∀ k (hk : k < j),
+        (zoneStepPair (j + 1) z).right ⟨k, by omega⟩ = [] := by
+      intro k hk
+      rw [(zoneStepPair_frame (j + 1) z ⟨k, by omega⟩ (by dsimp; omega) (by dsimp; omega)).2]
+      exact hr k (by omega)
+    have hl' : ∀ k (hk : k < j),
+        ((zoneStepPair (j + 1) z).left ⟨k, by omega⟩).length = zoneCapacity k := by
+      intro k hk
+      rw [(zoneStepPair_frame (j + 1) z ⟨k, by omega⟩ (by dsimp; omega) (by dsimp; omega)).1]
+      exact hl k (by omega)
+    have hd' : (zoneStepPair (j + 1) z).right ⟨j, hjl⟩ ≠ [] := by
+      rw [hactive.1]
+      apply List.ne_nil_of_length_pos
+      rw [List.length_take]
+      exact lt_min (Nat.two_pow_pos j) (List.length_pos_iff.mpr hdonor)
+    have hlower : ((zoneStepPair (j + 1) z).left ⟨j, hjl⟩).length = 2 ^ j := by
+      rw [hactive.2.1, List.length_take, hl j (by omega)]
+      unfold zoneCapacity
+      omega
+    have hroomlower : ((zoneStepPair (j + 1) z).left ⟨j, hjl⟩).length +
+        2 ^ (j - 1) ≤ zoneCapacity j := by
+      rw [hlower]
+      have hp := Nat.pow_le_pow_right (by decide : 0 < 2) (Nat.sub_le j 1)
+      unfold zoneCapacity
+      omega
+    have hinner := ih hjl (zoneStepPair (j + 1) z) hr' hl' hd' hroomlower
+    rw [zoneCascadeRight_succ, (zoneStepPair_side _ _).1,
+      (zoneStepPair_side _ _).2, hinner.1, hinner.2,
+      (zoneStepPair_side _ _).1, (zoneStepPair_side _ _).2]
+    exact ⟨rfl, rfl⟩
+
+/-- The cascade restores the half-full discipline below its index: after a
+classical right move at index `j` from a donor holding at least `2^j`
+cells, every level below `j` is half-full on both sides, the right donor
+loses exactly `2^j` cells, and the left zone `j` gains exactly `2^j`.
+
+The top-left room hypothesis is **necessary** (round-2 repair,
+A-S2-R2-1): the conclusion's left-top growth together with the result's
+`left_le` field imply exactly `|L_j| + 2^j ≤ zoneCapacity j`, and the
+classical stable invariant (`|L_j| + |R_j| = 2 · zoneCapacity j / 2` with
+`|R_j| ≥ 2^j`) supplies it on every textbook pre-state, so no classical
+instance is excluded.
+
+**Proof sketch** (the round-2 audit's two-pass induction, adopted as the
+binding route): the descending pass ends with the level-zero pair at
+`(1, 1)`, each intermediate level `k` at `(2^(k-1), 3·2^(k-1))`, and the
+top pair shifted by `2^(j-1)` — the top outward push legal by `hroom`,
+the lower receivers legal because they were just drained; the head move
+makes level zero `(0, 2)`; the ascending pass re-fires every guard on
+those occupancies, the second top push legal exactly because
+`|L_j| + 2^(j-1) + 2^(j-1) = |L_j| + 2^j ≤ zoneCapacity j`. -/
+theorem zoneCascadeRight_lengths {ℓ : ℕ} (j : ℕ) (hj : j < ℓ)
+    (z : ZoneContents ℓ)
+    (hr : ∀ k (hk : k < j), z.right ⟨k, by omega⟩ = [])
+    (hl : ∀ k (hk : k < j),
+      (z.left ⟨k, by omega⟩).length = zoneCapacity k)
+    (hdonor : 2 ^ j ≤ (z.right ⟨j, hj⟩).length)
+    (hroom : (z.left ⟨j, hj⟩).length + 2 ^ j ≤ zoneCapacity j) :
+    (∀ k (hk : k < j),
+      ((zoneCascadeRight j z).right ⟨k, by omega⟩).length = 2 ^ k ∧
+      ((zoneCascadeRight j z).left ⟨k, by omega⟩).length = 2 ^ k) ∧
+    ((zoneCascadeRight j z).right ⟨j, hj⟩).length =
+      (z.right ⟨j, hj⟩).length - 2 ^ j ∧
+    ((zoneCascadeRight j z).left ⟨j, hj⟩).length =
+      (z.left ⟨j, hj⟩).length + 2 ^ j := by
+  induction j generalizing z with
+  | zero =>
+    have hroom0 : (z.left ⟨0, hj⟩).length + 1 ≤ zoneCapacity 0 := by
+      simpa using hroom
+    have hm : zoneCascadeRight 0 z = zoneMoveRight hj z hroom0 := by
+      simp [zoneCascadeRight, zoneMove, hj, hroom0]
+    rw [hm]
+    refine ⟨?_, ?_, ?_⟩
+    · intro k hk
+      omega
+    · simp [zoneMoveRight]
+    · simp [zoneMoveRight]
+  | succ j ih =>
+    have hjl : j < ℓ := by omega
+    have hp : 0 < 2 ^ j := Nat.two_pow_pos j
+    have hroom1 : (z.left ⟨j + 1, hj⟩).length + 2 ^ j ≤
+        zoneCapacity (j + 1) := by
+      rw [pow_succ] at hroom
+      omega
+    have hactive := zoneStepPair_active j hj z (hr j (by omega))
+      (hl j (by omega)) hroom1
+    let z1 := zoneStepPair (j + 1) z
+    have hr' : ∀ k (hk : k < j), z1.right ⟨k, by omega⟩ = [] := by
+      intro k hk
+      change (zoneStepPair (j + 1) z).right ⟨k, _⟩ = []
+      rw [(zoneStepPair_frame (j + 1) z ⟨k, by omega⟩
+        (by dsimp; omega) (by dsimp; omega)).2]
+      exact hr k (by omega)
+    have hl' : ∀ k (hk : k < j),
+        (z1.left ⟨k, by omega⟩).length = zoneCapacity k := by
+      intro k hk
+      change ((zoneStepPair (j + 1) z).left ⟨k, _⟩).length = _
+      rw [(zoneStepPair_frame (j + 1) z ⟨k, by omega⟩
+        (by dsimp; omega) (by dsimp; omega)).1]
+      exact hl k (by omega)
+    have hrlower : (z1.right ⟨j, hjl⟩).length = 2 ^ j := by
+      change ((zoneStepPair (j + 1) z).right ⟨j, hjl⟩).length = _
+      rw [hactive.1, List.length_take]
+      rw [pow_succ] at hdonor
+      omega
+    have hllower : (z1.left ⟨j, hjl⟩).length = 2 ^ j := by
+      change ((zoneStepPair (j + 1) z).left ⟨j, hjl⟩).length = _
+      rw [hactive.2.1, List.length_take, hl j (by omega)]
+      unfold zoneCapacity
+      omega
+    have hrtop : (z1.right ⟨j + 1, hj⟩).length =
+        (z.right ⟨j + 1, hj⟩).length - 2 ^ j := by
+      change ((zoneStepPair (j + 1) z).right ⟨j + 1, hj⟩).length = _
+      rw [hactive.2.2.1, List.length_drop]
+    have hltop : (z1.left ⟨j + 1, hj⟩).length =
+        (z.left ⟨j + 1, hj⟩).length + 2 ^ j := by
+      change ((zoneStepPair (j + 1) z).left ⟨j + 1, hj⟩).length = _
+      rw [hactive.2.2.2, List.length_append, List.length_drop, hl j (by omega)]
+      unfold zoneCapacity
+      omega
+    have hinner := ih hjl z1 hr' hl' (by rw [hrlower]) (by
+      rw [hllower]
+      unfold zoneCapacity
+      omega)
+    let z2 := zoneCascadeRight j z1
+    have hrzero : z2.right ⟨j, hjl⟩ = [] := by
+      apply List.length_eq_zero_iff.mp
+      change ((zoneCascadeRight j z1).right ⟨j, hjl⟩).length = 0
+      rw [hinner.2.1, hrlower, Nat.sub_self]
+    have hlfull : (z2.left ⟨j, hjl⟩).length = zoneCapacity j := by
+      change ((zoneCascadeRight j z1).left ⟨j, hjl⟩).length = _
+      rw [hinner.2.2, hllower]
+      unfold zoneCapacity
+      omega
+    have hframe := zoneCascadeRight_frame j z1 ⟨j + 1, hj⟩ (by dsimp; omega)
+    have hrtop2 : (z2.right ⟨j + 1, hj⟩).length =
+        (z.right ⟨j + 1, hj⟩).length - 2 ^ j := by
+      change ((zoneCascadeRight j z1).right ⟨j + 1, hj⟩).length = _
+      rw [hframe.2, hrtop]
+    have hltop2 : (z2.left ⟨j + 1, hj⟩).length =
+        (z.left ⟨j + 1, hj⟩).length + 2 ^ j := by
+      change ((zoneCascadeRight j z1).left ⟨j + 1, hj⟩).length = _
+      rw [hframe.1, hltop]
+    have hroom2 : (z2.left ⟨j + 1, hj⟩).length + 2 ^ j ≤
+        zoneCapacity (j + 1) := by
+      rw [hltop2]
+      rw [pow_succ] at hroom
+      omega
+    have hactive2 := zoneStepPair_active j hj z2 hrzero hlfull hroom2
+    rw [zoneCascadeRight_succ]
+    change (∀ k (hk : k < j + 1),
+      ((zoneStepPair (j + 1) z2).right ⟨k, _⟩).length = 2 ^ k ∧
+      ((zoneStepPair (j + 1) z2).left ⟨k, _⟩).length = 2 ^ k) ∧
+      ((zoneStepPair (j + 1) z2).right ⟨j + 1, hj⟩).length =
+        (z.right ⟨j + 1, hj⟩).length - 2 ^ (j + 1) ∧
+      ((zoneStepPair (j + 1) z2).left ⟨j + 1, hj⟩).length =
+        (z.left ⟨j + 1, hj⟩).length + 2 ^ (j + 1)
+    refine ⟨?_, ?_, ?_⟩
+    · intro k hk
+      by_cases hkj : k = j
+      · subst k
+        rw [hactive2.1, hactive2.2.1, List.length_take, List.length_take,
+          hrtop2, hlfull]
+        rw [pow_succ] at hdonor
+        unfold zoneCapacity
+        constructor <;> omega
+      · have hkj' : k < j := by omega
+        rw [(zoneStepPair_frame (j + 1) z2 ⟨k, by omega⟩
+          (by dsimp; omega) (by dsimp; omega)).2,
+          (zoneStepPair_frame (j + 1) z2 ⟨k, by omega⟩
+          (by dsimp; omega) (by dsimp; omega)).1]
+        exact hinner.1 k hkj'
+    · rw [hactive2.2.2.1, List.length_drop, hrtop2, pow_succ]
+      omega
+    · rw [hactive2.2.2.2, List.length_append, List.length_drop, hlfull, hltop2,
+        pow_succ]
+      unfold zoneCapacity
+      omega
+
+/-- Regression (round-2 audit, A-S2-R2-1): the `j = 0` cascade is exactly
+the guarded head move, and with level-zero room and a nonempty donor it
+realizes the virtual right move.
+
+**Proof sketch.** `List.range 0 = []`, so the folds vanish; `zoneMove`'s
+guard fires by the hypotheses and `zoneSide_moveRight` finishes. -/
+theorem zoneCascadeRight_zero {ℓ : ℕ} (hℓ : 0 < ℓ) (z : ZoneContents ℓ)
+    (hdonor : z.right ⟨0, hℓ⟩ ≠ [])
+    (hroom : (z.left ⟨0, hℓ⟩).length + 1 ≤ zoneCapacity 0) :
+    zoneSide (zoneCascadeRight 0 z).left = z.home :: zoneSide z.left ∧
+    zoneSide (zoneCascadeRight 0 z).right = (zoneSide z.right).tail := by
+  simpa only [zoneCascadeRight, List.range_zero, List.reverse_nil,
+    List.foldl_nil, zoneMove, dif_pos hℓ, dif_pos hroom] using
+    zoneSide_moveRight hℓ z hroom hdonor
+
+/-- Regression (round-2 audit, A-S2-R2-1): a **full top receiver** blocks
+the cascade harmlessly — with the classical lower-left state and
+`L_j` at capacity, every outward-left guard fails, the head move is
+blocked, and the represented words on both sides are unchanged.
+
+**Proof sketch.** Lower left zones are full, so no outward-left guard
+below `j` has room; at `j` the receiver is full; hence `L₀` stays full and
+`zoneMove` takes its identity branch. The inward-right shifts preserve the
+right concatenation by `zoneSide_shiftInW`. -/
+theorem zoneCascadeRight_blocked {ℓ : ℕ} (j : ℕ) (hj : j < ℓ)
+    (z : ZoneContents ℓ)
+    (hl : ∀ k (hk : k < j),
+      (z.left ⟨k, by omega⟩).length = zoneCapacity k)
+    (hfull : (z.left ⟨j, hj⟩).length = zoneCapacity j) :
+    zoneSide (zoneCascadeRight j z).left = zoneSide z.left ∧
+    zoneSide (zoneCascadeRight j z).right = zoneSide z.right := by
+  induction j generalizing z with
+  | zero =>
+    have hno : ¬ (z.left ⟨0, hj⟩).length + 1 ≤ zoneCapacity 0 := by
+      rw [hfull]
+      omega
+    simp [zoneCascadeRight, zoneMove, hj, hno]
+  | succ j ih =>
+    have hno : ¬ (z.left ⟨j + 1, hj⟩).length + 2 ^ j ≤
+        zoneCapacity (j + 1) := by
+      rw [hfull]
+      have hp := Nat.two_pow_pos j
+      omega
+    have hf : (zoneStepPair (j + 1) z).left = z.left := by
+      funext k
+      simp [zoneStepPair, zoneShiftOut, zoneShiftIn, zoneShiftOutW, hj, hno]
+    have hl' : ∀ k (hk : k < j),
+        ((zoneStepPair (j + 1) z).left ⟨k, by omega⟩).length = zoneCapacity k := by
+      intro k hk
+      rw [hf]
+      exact hl k (by omega)
+    have hfull' : ((zoneStepPair (j + 1) z).left ⟨j, by omega⟩).length =
+        zoneCapacity j := by
+      rw [hf]
+      exact hl j (by omega)
+    have hinner := ih (by omega) (zoneStepPair (j + 1) z) hl' hfull'
+    rw [zoneCascadeRight_succ, (zoneStepPair_side _ _).1,
+      (zoneStepPair_side _ _).2, hinner.1, hinner.2,
+      (zoneStepPair_side _ _).1, (zoneStepPair_side _ _).2]
+    exact ⟨rfl, rfl⟩
+
+/-- The cascade's summed row budgets stay geometric: the charge lemma the
+Hennie-Stearns amortization consumes (two shift pairs per level, each
+within the row budget `2^i + i + 1`).
+
+**Proof sketch.** `i + 1 ≤ 2^i` for `i ≥ 1`, so each summand is at most
+`4 · 2 · 2^i = 8 · 2^i`, and the geometric sum over `1 ≤ i ≤ j` is
+`8 · (2^(j+1) - 2) ≤ 16 · 2^j` — the round-1 audit's charge calculation. -/
+theorem zoneCascade_cost_le (j : ℕ) :
+    ∑ i ∈ Finset.range j, 4 * (2 ^ (i + 1) + (i + 1) + 1) ≤ 16 * 2 ^ j := by
+  have hsum : ∀ n : ℕ,
+      (∑ i ∈ Finset.range n, 4 * (2 ^ (i + 1) + (i + 1) + 1)) + 16 ≤
+        16 * 2 ^ n := by
+    intro n
+    induction n with
+    | zero => simp
+    | succ n ih =>
+      rw [Finset.sum_range_succ]
+      have hsmall : n + 2 ≤ 2 ^ (n + 1) := Nat.lt_two_pow_self
+      simp only [pow_succ] at *
+      omega
+  have h := hsum j
+  omega
+
+/-! ### The machine rows -/
+
+/-- The physical bits of a zone word in the order seen moving away from
+home. On the left a pair is read data-first, on the right presence-first.
+This is the finite word to be staged by a delimited catalog transfer. -/
+private def zoneStageWord (side : Bool) (w : List (Option Bool)) : List Bool :=
+  w.flatMap fun v =>
+    if side then [v.isSome, v.getD false] else [v.getD false, v.isSome]
+
+/-- Each occupied virtual cell contributes exactly two nonblank cells. -/
+private theorem zoneStageWord_length (side : Bool) (w : List (Option Bool)) :
+    (zoneStageWord side w).length = 2 * w.length := by
+  induction w with
+  | nil => simp [zoneStageWord]
+  | cons v w ih =>
+    cases side <;> simp_all [zoneStageWord, Nat.mul_add]
+
+/-- Looking up a physical bit first chooses its virtual cell and then
+the appropriate component of that cell's pair.
+**Proof sketch.** Peel off two positions with each list cell; quotient by
+two chooses the remaining cell, and remainder chooses its component. -/
+private theorem zoneStageWord_getElem (side : Bool) (w : List (Option Bool))
+    (p : ℕ) :
+    (zoneStageWord side w)[p]? = (w[p / 2]?).map (fun v =>
+      if p % 2 = 0 then
+        if side then v.isSome else v.getD false
+      else if side then v.getD false else v.isSome) := by
+  induction w generalizing p with
+  | nil => simp [zoneStageWord]
+  | cons v w ih =>
+    cases p with
+    | zero => cases side <;> simp [zoneStageWord]
+    | succ p =>
+      cases p with
+      | zero => cases side <;> simp [zoneStageWord]
+      | succ p =>
+        have hd : (p + 1 + 1) / 2 = p / 2 + 1 := by omega
+        have hr : (p + 1 + 1) % 2 = p % 2 := by omega
+        cases side <;> simpa [zoneStageWord, hd, hr] using ih p
+
+/-- A slot inside a specified zone reads that zone's word at its local
+offset. The existing logarithm theorem supplies the owning level. -/
+private theorem zoneStageSlot {ℓ : ℕ} (w : Fin ℓ → List (Option Bool))
+    (i : Fin ℓ) (p : ℕ) (hp : p < zoneCapacity i.val) :
+    zoneSlot w (zoneBase i.val + p) = (w i)[p]? := by
+  have hi : zoneIndex (zoneBase i.val + p) = i.val :=
+    (zoneIndex_eq_iff _ _).mpr ⟨by omega, by rw [zoneBase_succ]; omega⟩
+  simp [zoneSlot, hi, i.isLt]
+
+/-- The right zone window is exactly the staged word, followed by blanks
+up to the zone's capacity. No claim is made about the two boundary cells.
+**Proof sketch.** Subtract the physical base, divide the bit offset by
+two, and use the owning-slot theorem and paired-word lookup. -/
+private theorem zoneStage_rightWindow {ℓ : ℕ} (z : ZoneContents ℓ)
+    (i : Fin ℓ) (p : ℕ) (hp : p < 2 * zoneCapacity i.val) :
+    zoneTape z (2 * (zoneBase i.val : ℤ) + 2 + p) =
+      FinTM.bufferTape (zoneStageWord true (z.right i)) p := by
+  have h0 : 2 * (zoneBase i.val : ℤ) + 2 + p ≠ 0 := by omega
+  have h1 : 2 * (zoneBase i.val : ℤ) + 2 + p ≠ 1 := by omega
+  have h2 : 2 ≤ 2 * (zoneBase i.val : ℤ) + 2 + p := by omega
+  have hn : (2 * (zoneBase i.val : ℤ) + 2 + p - 2).toNat =
+      2 * zoneBase i.val + p := by omega
+  have hd : (2 * zoneBase i.val + p) / 2 = zoneBase i.val + p / 2 := by omega
+  have hr : (2 * zoneBase i.val + p) % 2 = p % 2 := by omega
+  have hs := zoneStageSlot z.right i (p / 2) (by omega)
+  simp only [zoneTape, if_neg h0, if_neg h1, if_pos h2, hn, hd, hr, hs,
+    FinTM.bufferTape_nat, zoneStageWord_getElem, ite_true]
+  cases (z.right i)[p / 2]? <;> rfl
+
+/-- Reading the left window away from home reverses the two bit roles
+within each pair, without reversing the order of the virtual cells.
+**Proof sketch.** The negative physical coordinate gives the same local
+quotient as on the right, but presence is at odd offsets. -/
+private theorem zoneStage_leftWindow {ℓ : ℕ} (z : ZoneContents ℓ)
+    (i : Fin ℓ) (p : ℕ) (hp : p < 2 * zoneCapacity i.val) :
+    zoneTape z (-(2 * (zoneBase i.val : ℤ)) - 1 - p) =
+      FinTM.bufferTape (zoneStageWord false (z.left i)) p := by
+  have h0 : -(2 * (zoneBase i.val : ℤ)) - 1 - p ≠ 0 := by omega
+  have h1 : -(2 * (zoneBase i.val : ℤ)) - 1 - p ≠ 1 := by omega
+  have h2 : ¬ 2 ≤ -(2 * (zoneBase i.val : ℤ)) - 1 - p := by omega
+  have hn : (-(-(2 * (zoneBase i.val : ℤ)) - 1 - p) - 1).toNat =
+      2 * zoneBase i.val + p := by omega
+  have hd : (2 * zoneBase i.val + p) / 2 = zoneBase i.val + p / 2 := by omega
+  have hr : (2 * zoneBase i.val + p) % 2 = p % 2 := by omega
+  have hs := zoneStageSlot z.left i (p / 2) (by omega)
+  simp only [zoneTape, if_neg h0, if_neg h1, if_neg h2, hn, hd, hr, hs,
+    FinTM.bufferTape_nat, zoneStageWord_getElem, Bool.false_eq_true, ite_false]
+  by_cases he : p % 2 = 0
+  · cases (z.left i)[p / 2]? <;> simp [he]
+  · have ho : p % 2 = 1 := by omega
+    cases (z.left i)[p / 2]? <;> simp [ho]
+
+/-- Both oriented zone windows, including the adjacent delimiter cells,
+fit inside the interval allowed by the shift-machine contract. -/
+private theorem zoneStage_window_bounds (i : ℕ) (p : ℤ)
+    (hp : -1 ≤ p ∧ p ≤ 2 * (zoneCapacity i : ℤ)) :
+    (2 * (zoneBase i : ℤ) + 2 + p) ∈
+        Finset.Icc (-(2 * (zoneBase (i + 1) : ℤ) + 2))
+          (2 * (zoneBase (i + 1) : ℤ) + 2) ∧
+      (-(2 * (zoneBase i : ℤ)) - 1 - p) ∈
+        Finset.Icc (-(2 * (zoneBase (i + 1) : ℤ) + 2))
+          (2 * (zoneBase (i + 1) : ℤ) + 2) := by
+  have hb : (zoneBase (i + 1) : ℤ) = zoneBase i + zoneCapacity i := by
+    exact_mod_cast zoneBase_succ i
+  simp only [Finset.mem_Icc]
+  omega
+
+namespace FinTM
+
+/-- **Z2, the inward shift row.** One two-tape machine per side: tape `0`
+carries a zoned tape, tape `1` the level in unary (`replicate i true` as a
+buffered word). From any configuration holding `zoneTape z` at origin and
+the level word at origin, the machine halts at
+`zoneTape (zoneShiftIn side i z)` — **realizing the total guarded
+operation, identity branch included** (round-1 repair: there is no room
+premise, and a false guard means the machine restores the original tape) —
+with both heads home, the level word intact, within `c * (2^i + i + 1)`
+steps, first return at the halt, the data head inside the level-`i + 1`
+physical extent, and the scratch tape's space in the same budget.
+
+**Proof sketch** (fill plan): scan the level word; test the lower zone's
+emptiness by one pass over its window (a stored virtual blank occupies two
+nonblank cells, so word ends are detectable); on a live guard, stage the
+donor's inner `2^(i-1)` pairs through tape `1` with the R3 transfer
+discipline and write them inward; on a dead guard, rewind and halt with
+the tape untouched. Navigation counters follow the round-1 audit's
+geometric-ledger route (anchored binary countdown, `O(2^i)` total carry
+work; unary-level initialization polynomial in `i`, absorbed). R2 seams
+join the constantly many phases. -/
+theorem exists_zoneShiftInTM (side : Bool) :
+    ∃ (Z : FinTM Bool) (c : ℕ), Z.k = 2 ∧
+      ∀ (ℓ i : ℕ) (hi : 1 ≤ i) (hℓ : i < ℓ) (z : ZoneContents ℓ)
+        {x : List Bool} (d : Cfg Z.k Bool Z.State x)
+        (hstate : d.state = some Z.tm.q₀)
+        (htape : d.workTapes = fun j =>
+          if j.val = 0 then zoneTape z else bufferTape (List.replicate i true))
+        (hheads : d.workTapePos = fun _ => 0) (hout : d.output = []),
+        ∃ T ≤ c * (2 ^ i + i + 1),
+          (Z.tm.runFrom d T).state = none ∧
+          (Z.tm.runFrom d T).workTapes = (fun j =>
+            if j.val = 0 then zoneTape (zoneShiftIn side i z)
+            else bufferTape (List.replicate i true)) ∧
+          (Z.tm.runFrom d T).workTapePos = (fun _ => 0) ∧
+          (Z.tm.runFrom d T).output = [] ∧
+          (Z.tm.runFrom d T).inputPos = d.inputPos ∧
+          (∀ t < T, (Z.tm.runFrom d t).state ≠ none) ∧
+          (∀ j (hj : j.val = 0) (t : ℕ), t ≤ T →
+            (Z.tm.runFrom d t).workTapePos j ∈
+              Finset.Icc (-(2 * (zoneBase (i + 1) : ℤ) + 2))
+                (2 * (zoneBase (i + 1) : ℤ) + 2)) ∧
+          (∀ j : Fin Z.k, j.val = 1 →
+            Z.tm.spaceUsedByTape d T j ≤ c * (2 ^ i + i + 1)) := by
+  sorry
+
+/-- **Z2, the outward shift row**: the mirrored contract realizing the
+total guarded outward operation (the room condition is inside the pure
+op's guard; a cramped receiver yields the identity), with the same budget
+shape, interval clause, and scratch bound.
+
+**Proof sketch** (fill plan): as the inward row with the fullness and
+room tests up front (both by bounded window passes) and the transfer
+direction reversed; the full lower zone's outer half is staged through
+tape `1` and written to zone `i`'s front after its stored word is slid
+outward by `2^(i-1)` slots — one extra pass over the level-`i` window,
+inside the same geometric budget. -/
+theorem exists_zoneShiftOutTM (side : Bool) :
+    ∃ (Z : FinTM Bool) (c : ℕ), Z.k = 2 ∧
+      ∀ (ℓ i : ℕ) (hi : 1 ≤ i) (hℓ : i < ℓ) (z : ZoneContents ℓ)
+        {x : List Bool} (d : Cfg Z.k Bool Z.State x)
+        (hstate : d.state = some Z.tm.q₀)
+        (htape : d.workTapes = fun j =>
+          if j.val = 0 then zoneTape z else bufferTape (List.replicate i true))
+        (hheads : d.workTapePos = fun _ => 0) (hout : d.output = []),
+        ∃ T ≤ c * (2 ^ i + i + 1),
+          (Z.tm.runFrom d T).state = none ∧
+          (Z.tm.runFrom d T).workTapes = (fun j =>
+            if j.val = 0 then zoneTape (zoneShiftOut side i z)
+            else bufferTape (List.replicate i true)) ∧
+          (Z.tm.runFrom d T).workTapePos = (fun _ => 0) ∧
+          (Z.tm.runFrom d T).output = [] ∧
+          (Z.tm.runFrom d T).inputPos = d.inputPos ∧
+          (∀ t < T, (Z.tm.runFrom d t).state ≠ none) ∧
+          (∀ j (hj : j.val = 0) (t : ℕ), t ≤ T →
+            (Z.tm.runFrom d t).workTapePos j ∈
+              Finset.Icc (-(2 * (zoneBase (i + 1) : ℤ) + 2))
+                (2 * (zoneBase (i + 1) : ℤ) + 2)) ∧
+          (∀ j : Fin Z.k, j.val = 1 →
+            Z.tm.spaceUsedByTape d T j ≤ c * (2 ^ i + i + 1)) := by
+  sorry
+
+end FinTM
+
+/-! ### The cardinality export (consumed by Z4) -/
+
+/-- A head confined to an integer interval visits at most its cardinality.
+
+**Proof sketch.** The visited set is a finite image contained in the
+interval by hypothesis; `Finset.card_le_card` and `Int.card_Icc` finish. -/
+theorem MultiTapeTM.spaceUsedByTape_le_card_Icc {k : ℕ} {Symbol State : Type*}
+    {input : List Symbol} (tm : MultiTapeTM k Symbol State)
+    (d : Cfg k Symbol State input) (t : ℕ) (i : Fin k) (lo hi : ℤ)
+    (h : ∀ u ≤ t, (tm.runFrom d u).workTapePos i ∈ Finset.Icc lo hi) :
+    tm.spaceUsedByTape d t i ≤ (hi + 1 - lo).toNat := by
+  unfold MultiTapeTM.spaceUsedByTape
+  calc
+    _ ≤ (Finset.Icc lo hi).card := Finset.card_le_card (by
+      intro p hp
+      obtain ⟨u, hu, rfl⟩ := Finset.mem_image.mp hp
+      exact h u (by simpa only [Finset.mem_range, Nat.lt_succ_iff] using hu))
+    _ = _ := Int.card_Icc lo hi
+
+end Turing
+```

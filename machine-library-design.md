@@ -881,6 +881,66 @@ Scope notes R9 (physical-tape selection is not zone multiplexing) and R10
 (loop sibling contracts not exported) are recorded at their definition
 sites.
 
+### 12.6 Framed catalog contracts (2026-10-10, after ZF-A2's escalation)
+
+**The gap.** The R3 rows (`transferTM`, `copyTM`, `clearTM`, `compareTM`,
+`incrementTM`) are stated only from `Cfg.ofWords`: every head at the origin,
+every tape a globally buffered word. The zone shift machines (`Build/Zone.lean`,
+`exists_zoneShiftInTM`/`OutTM`) have **exactly two tapes**. One is the zoned data
+tape; the other is a scratch tape that starts and ends as the unary level word.
+Their staging, cleanup and binary navigation counter therefore all run at
+**displaced heads beside unrelated data**, where no canonical contract applies.
+
+ZF-A2 (`audits/zone-agent-reports/f1-A2-REPORT.md`) showed the gap concretely,
+with a kernel-checked regression. On a valid three-level carrier, a bare transfer
+from a displaced head reads past the word's end and erases a cell that belongs
+to the next zone. The cure is a delimited word: blanks at relative positions
+`-1` and `|w|`, installed by the consumer, which saves the overwritten cells in
+finite control and restores them afterwards. Correspondingly, the contract must
+quantify over an arbitrary surrounding frame.
+
+**Decision (user, 2026-10-10).** A small §12 extension: maintainer-drafted
+statements, a short statement gate, then a fill batch; ZF-A3 follows. The
+routines are local, since each step reads only the scanned cells of the touched
+tapes, so a framed contract is the faithful generalization. No new machine is
+defined.
+
+**The five statements** (`Build/Catalog.lean`, after the R3 rows, sorried):
+
+| Contract | Exact time | Effect on the touched tapes |
+|---|---|---|
+| `transferTM_run_ofCfg` | `2·|w| + 2` | source interval blank; destination interval `w` (old destination contents arbitrary) |
+| `copyTM_run_ofCfg` | `2·|w| + 2` | destination interval `w`; source intact |
+| `clearTM_run_ofCfg` | `2·|w| + 2` | the word interval blank |
+| `incrementTM_run_succ_ofCfg` | `2·p + 2`, where `p = (w.takeWhile id).length` | the word interval holds `v`, where `incFixed w = some v` |
+| `incrementTM_run_overflow_ofCfg` | `2·|w| + 2` | the word interval all `false` |
+
+In every case the routine reaches its `done` anchor exactly at the stated time
+and not earlier. Every cell outside the word intervals, every head, the native
+input position and the output are unchanged. Up to the exit the touched heads
+stay within `[pos − 1, pos + |w|]` (for a successful increment, `[pos − 1,
+pos + p]`) and all other heads are fixed. Space bounds follow from the
+trajectory clause through `MultiTapeTM.spaceUsedByTape_le_card_Icc`.
+`incrementTM`'s carry-sensitive `2p + 2` is the per-step cost that makes the zone
+machines' anchored binary countdown sum geometrically, the audited `O(2^i)`
+navigation ledger. The canonical `2|w| + 2` public bound is too loose for that,
+as ZF-A2 flagged.
+
+**Specialization and dedup.** With the origin heads and globally buffered words
+of `Cfg.ofWords`, each framed contract specializes to its canonical R3 row. The
+fill batch therefore proves the framed form and **re-derives each canonical row
+from it**, through a sanctioned proof-body swap with the public statement
+unchanged. That generalizes the private trace lemmas rather than duplicating
+them. `compareTM` is not framed here, since no current consumer needs it; it
+follows the same pattern on request.
+
+**Pre-ship execution check (mandatory practice).** Every statement was executed
+on concrete configurations with displaced heads, a nonblank outer frame and the
+edge cases (`w = []`, `p = 0`, all-`true` overflow). The exact final
+configuration, the no-earlier-exit clause and the trajectory were compared:
+63 cases, all pass, and a wrong-time negative control fails
+(`audits/evidence/s12-framed/`).
+
 ## 13. The zone and virtual-input layer (proposed 2026-10-09, post-§12 close)
 
 **Mandate** (user direction 2026-10-09, at the §12 fill-campaign close —
