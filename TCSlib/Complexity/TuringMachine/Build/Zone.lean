@@ -4,6 +4,9 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Seyoon Ragavan
 -/
 import TCSlib.Complexity.TuringMachine.Simulation
+import TCSlib.Complexity.TuringMachine.Build.Embed
+import TCSlib.Complexity.TuringMachine.Build.Seam
+import TCSlib.Complexity.TuringMachine.Build.Catalog
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -975,6 +978,111 @@ theorem zoneCascade_cost_le (j : ℕ) :
   omega
 
 /-! ### The machine rows -/
+
+/-- The physical bits of a zone word in the order seen moving away from
+home. On the left a pair is read data-first, on the right presence-first.
+This is the finite word to be staged by a delimited catalog transfer. -/
+private def zoneStageWord (side : Bool) (w : List (Option Bool)) : List Bool :=
+  w.flatMap fun v =>
+    if side then [v.isSome, v.getD false] else [v.getD false, v.isSome]
+
+/-- Each occupied virtual cell contributes exactly two nonblank cells. -/
+private theorem zoneStageWord_length (side : Bool) (w : List (Option Bool)) :
+    (zoneStageWord side w).length = 2 * w.length := by
+  induction w with
+  | nil => simp [zoneStageWord]
+  | cons v w ih =>
+    cases side <;> simp_all [zoneStageWord, Nat.mul_add]
+
+/-- Looking up a physical bit first chooses its virtual cell and then
+the appropriate component of that cell's pair.
+**Proof sketch.** Peel off two positions with each list cell; quotient by
+two chooses the remaining cell, and remainder chooses its component. -/
+private theorem zoneStageWord_getElem (side : Bool) (w : List (Option Bool))
+    (p : ℕ) :
+    (zoneStageWord side w)[p]? = (w[p / 2]?).map (fun v =>
+      if p % 2 = 0 then
+        if side then v.isSome else v.getD false
+      else if side then v.getD false else v.isSome) := by
+  induction w generalizing p with
+  | nil => simp [zoneStageWord]
+  | cons v w ih =>
+    cases p with
+    | zero => cases side <;> simp [zoneStageWord]
+    | succ p =>
+      cases p with
+      | zero => cases side <;> simp [zoneStageWord]
+      | succ p =>
+        have hd : (p + 1 + 1) / 2 = p / 2 + 1 := by omega
+        have hr : (p + 1 + 1) % 2 = p % 2 := by omega
+        cases side <;> simpa [zoneStageWord, hd, hr] using ih p
+
+/-- A slot inside a specified zone reads that zone's word at its local
+offset. The existing logarithm theorem supplies the owning level. -/
+private theorem zoneStageSlot {ℓ : ℕ} (w : Fin ℓ → List (Option Bool))
+    (i : Fin ℓ) (p : ℕ) (hp : p < zoneCapacity i.val) :
+    zoneSlot w (zoneBase i.val + p) = (w i)[p]? := by
+  have hi : zoneIndex (zoneBase i.val + p) = i.val :=
+    (zoneIndex_eq_iff _ _).mpr ⟨by omega, by rw [zoneBase_succ]; omega⟩
+  simp [zoneSlot, hi, i.isLt]
+
+/-- The right zone window is exactly the staged word, followed by blanks
+up to the zone's capacity. No claim is made about the two boundary cells.
+**Proof sketch.** Subtract the physical base, divide the bit offset by
+two, and use the owning-slot theorem and paired-word lookup. -/
+private theorem zoneStage_rightWindow {ℓ : ℕ} (z : ZoneContents ℓ)
+    (i : Fin ℓ) (p : ℕ) (hp : p < 2 * zoneCapacity i.val) :
+    zoneTape z (2 * (zoneBase i.val : ℤ) + 2 + p) =
+      FinTM.bufferTape (zoneStageWord true (z.right i)) p := by
+  have h0 : 2 * (zoneBase i.val : ℤ) + 2 + p ≠ 0 := by omega
+  have h1 : 2 * (zoneBase i.val : ℤ) + 2 + p ≠ 1 := by omega
+  have h2 : 2 ≤ 2 * (zoneBase i.val : ℤ) + 2 + p := by omega
+  have hn : (2 * (zoneBase i.val : ℤ) + 2 + p - 2).toNat =
+      2 * zoneBase i.val + p := by omega
+  have hd : (2 * zoneBase i.val + p) / 2 = zoneBase i.val + p / 2 := by omega
+  have hr : (2 * zoneBase i.val + p) % 2 = p % 2 := by omega
+  have hs := zoneStageSlot z.right i (p / 2) (by omega)
+  simp only [zoneTape, if_neg h0, if_neg h1, if_pos h2, hn, hd, hr, hs,
+    FinTM.bufferTape_nat, zoneStageWord_getElem, ite_true]
+  cases (z.right i)[p / 2]? <;> rfl
+
+/-- Reading the left window away from home reverses the two bit roles
+within each pair, without reversing the order of the virtual cells.
+**Proof sketch.** The negative physical coordinate gives the same local
+quotient as on the right, but presence is at odd offsets. -/
+private theorem zoneStage_leftWindow {ℓ : ℕ} (z : ZoneContents ℓ)
+    (i : Fin ℓ) (p : ℕ) (hp : p < 2 * zoneCapacity i.val) :
+    zoneTape z (-(2 * (zoneBase i.val : ℤ)) - 1 - p) =
+      FinTM.bufferTape (zoneStageWord false (z.left i)) p := by
+  have h0 : -(2 * (zoneBase i.val : ℤ)) - 1 - p ≠ 0 := by omega
+  have h1 : -(2 * (zoneBase i.val : ℤ)) - 1 - p ≠ 1 := by omega
+  have h2 : ¬ 2 ≤ -(2 * (zoneBase i.val : ℤ)) - 1 - p := by omega
+  have hn : (-(-(2 * (zoneBase i.val : ℤ)) - 1 - p) - 1).toNat =
+      2 * zoneBase i.val + p := by omega
+  have hd : (2 * zoneBase i.val + p) / 2 = zoneBase i.val + p / 2 := by omega
+  have hr : (2 * zoneBase i.val + p) % 2 = p % 2 := by omega
+  have hs := zoneStageSlot z.left i (p / 2) (by omega)
+  simp only [zoneTape, if_neg h0, if_neg h1, if_neg h2, hn, hd, hr, hs,
+    FinTM.bufferTape_nat, zoneStageWord_getElem, Bool.false_eq_true, ite_false]
+  by_cases he : p % 2 = 0
+  · cases (z.left i)[p / 2]? <;> simp [he]
+  · have ho : p % 2 = 1 := by omega
+    cases (z.left i)[p / 2]? <;> simp [ho]
+
+/-- Both oriented zone windows, including the adjacent delimiter cells,
+fit inside the interval allowed by the shift-machine contract. -/
+private theorem zoneStage_window_bounds (i : ℕ) (p : ℤ)
+    (hp : -1 ≤ p ∧ p ≤ 2 * (zoneCapacity i : ℤ)) :
+    (2 * (zoneBase i : ℤ) + 2 + p) ∈
+        Finset.Icc (-(2 * (zoneBase (i + 1) : ℤ) + 2))
+          (2 * (zoneBase (i + 1) : ℤ) + 2) ∧
+      (-(2 * (zoneBase i : ℤ)) - 1 - p) ∈
+        Finset.Icc (-(2 * (zoneBase (i + 1) : ℤ) + 2))
+          (2 * (zoneBase (i + 1) : ℤ) + 2) := by
+  have hb : (zoneBase (i + 1) : ℤ) = zoneBase i + zoneCapacity i := by
+    exact_mod_cast zoneBase_succ i
+  simp only [Finset.mem_Icc]
+  omega
 
 namespace FinTM
 
