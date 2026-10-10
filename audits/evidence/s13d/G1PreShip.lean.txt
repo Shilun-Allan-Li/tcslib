@@ -1,0 +1,65 @@
+import TCSlib.Complexity.TuringMachine.Build.Catalog
+
+/-! G1 pre-ship probe: do Bool consumers elaborate unchanged when a sweep row
+and `bufferTape` take an implicit alphabet? A generic copy (`…G`) of each is
+used in the patterns the existing Bool code uses. -/
+
+namespace Turing
+
+def transferTMG {Symbol : Type*} (k : ℕ) (src dst : Fin k) : MultiTapeTM k Symbol SweepPhase where
+  q₀ := .sweep
+  tr := fun q _ w =>
+    match q with
+    | .sweep =>
+      match w src with
+      | some b =>
+        ⟨0, fun j => if j = dst then (some (some b), SignType.pos)
+            else if j = src then (none, SignType.pos) else (none, 0),
+          none, some .sweep⟩
+      | none =>
+        ⟨0, fun j => if j = src ∨ j = dst then (none, SignType.neg)
+            else (none, 0), none, some .rewind⟩
+    | .rewind =>
+      match w src with
+      | some _ =>
+        ⟨0, fun j => if j = src then (some none, SignType.neg)
+            else if j = dst then (none, SignType.neg) else (none, 0),
+          none, some .rewind⟩
+      | none =>
+        ⟨0, fun j => if j = src ∨ j = dst then (none, SignType.pos)
+            else (none, 0), none, some .done⟩
+    | .done => ⟨0, fun _ => (none, 0), none, some .done⟩
+
+
+
+/-- A generic copy of `FinTM.bufferTape`. -/
+def bufferTapeG {Symbol : Type*} (w : List Symbol) (z : ℤ) : Option Symbol :=
+  if 0 ≤ z then w[z.toNat]? else none
+
+@[simp] lemma bufferTapeG_nil {Symbol : Type*} : bufferTapeG ([] : List Symbol) = fun _ => none := by
+  funext z; simp [bufferTapeG]
+
+-- Pattern 1: a canonical Bool statement over `Cfg.ofWords`, with no annotation:
+-- Symbol must be inferred as Bool from the configuration.
+example (k : ℕ) (src dst : Fin k) (w : Fin k → List Bool) {x : List Bool} (T : ℕ) :
+    ((transferTMG k src dst).runFrom (Cfg.ofWords (input := x) SweepPhase.sweep w) T).state =
+      ((transferTMG k src dst).runFrom (Cfg.ofWords (input := x) SweepPhase.sweep w) T).state := rfl
+
+-- (Pattern 2 removed: two separately defined copies have distinct compiled matchers, so
+-- `rfl` between them fails. In-place generalization has one definition, so it never arises.)
+
+-- Pattern 3: an empty buffer in a Bool context, and simp with the generic lemma.
+example : (bufferTapeG ([] : List Bool) 3 : Option Bool) = none := by simp
+example (f : ℤ → Option Bool) (h : f = bufferTapeG []) : f 0 = none := by simp [h]
+
+-- Pattern 4: a large alphabet.
+example (k : ℕ) (src dst : Fin k) : MultiTapeTM k (Fin 7) SweepPhase := transferTMG k src dst
+
+-- Pattern 5 (expected to need an annotation): no context fixes the alphabet.
+-- #check transferTMG 2 0 1
+
+end Turing
+
+
+-- Result (2026-10-10, scripts/lean_check_tree.sh at 2724d6ec): exit 0, no errors.
+-- Patterns 1, 3, 4 elaborate unchanged; pattern 5 (no context fixing the alphabet) needs an annotation.
