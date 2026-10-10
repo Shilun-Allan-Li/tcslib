@@ -63,3 +63,15 @@ authorship; the agent's report is `audits/s12-counter-agent-reports/fill-REPORT.
 
 The fill rides a §12.7 fill-gate audit.
 
+
+## Fill gate: pack issued (2026-10-10)
+
+Pack `audits/s12-counter-fill-pack.md`, bundle `audits/s12-counter-fill-bundle.md`
+(30 attachments). The maintainer's records are the freeze log, a fresh replay
+at `5ad155ee`, the axiom prints, lint, the reproduced copy-text screen, and a
+supplementary screen against Primitives, Seam, Wrappers and Simulation. The
+supplementary screen shows no CounterLoop pair with Primitives (RB5's
+`emitterP2_call_phase` pattern), and one short pair with Seam (59% of a
+135-character step lemma), which the auditor is asked to rule on. Findings go
+to `audits/s12-counter-fill-findings.md`. The gate closes on zero blockers and
+zero majors.
