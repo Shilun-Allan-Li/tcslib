@@ -776,7 +776,119 @@ theorem zoneCascadeRight_lengths {ℓ : ℕ} (j : ℕ) (hj : j < ℓ)
       (z.right ⟨j, hj⟩).length - 2 ^ j ∧
     ((zoneCascadeRight j z).left ⟨j, hj⟩).length =
       (z.left ⟨j, hj⟩).length + 2 ^ j := by
-  sorry
+  induction j generalizing z with
+  | zero =>
+    have hroom0 : (z.left ⟨0, hj⟩).length + 1 ≤ zoneCapacity 0 := by
+      simpa using hroom
+    have hm : zoneCascadeRight 0 z = zoneMoveRight hj z hroom0 := by
+      simp [zoneCascadeRight, zoneMove, hj, hroom0]
+    rw [hm]
+    refine ⟨?_, ?_, ?_⟩
+    · intro k hk
+      omega
+    · simp [zoneMoveRight]
+    · simp [zoneMoveRight]
+  | succ j ih =>
+    have hjl : j < ℓ := by omega
+    have hp : 0 < 2 ^ j := Nat.two_pow_pos j
+    have hroom1 : (z.left ⟨j + 1, hj⟩).length + 2 ^ j ≤
+        zoneCapacity (j + 1) := by
+      rw [pow_succ] at hroom
+      omega
+    have hactive := zoneStepPair_active j hj z (hr j (by omega))
+      (hl j (by omega)) hroom1
+    let z1 := zoneStepPair (j + 1) z
+    have hr' : ∀ k (hk : k < j), z1.right ⟨k, by omega⟩ = [] := by
+      intro k hk
+      change (zoneStepPair (j + 1) z).right ⟨k, _⟩ = []
+      rw [(zoneStepPair_frame (j + 1) z ⟨k, by omega⟩
+        (by dsimp; omega) (by dsimp; omega)).2]
+      exact hr k (by omega)
+    have hl' : ∀ k (hk : k < j),
+        (z1.left ⟨k, by omega⟩).length = zoneCapacity k := by
+      intro k hk
+      change ((zoneStepPair (j + 1) z).left ⟨k, _⟩).length = _
+      rw [(zoneStepPair_frame (j + 1) z ⟨k, by omega⟩
+        (by dsimp; omega) (by dsimp; omega)).1]
+      exact hl k (by omega)
+    have hrlower : (z1.right ⟨j, hjl⟩).length = 2 ^ j := by
+      change ((zoneStepPair (j + 1) z).right ⟨j, hjl⟩).length = _
+      rw [hactive.1, List.length_take]
+      rw [pow_succ] at hdonor
+      omega
+    have hllower : (z1.left ⟨j, hjl⟩).length = 2 ^ j := by
+      change ((zoneStepPair (j + 1) z).left ⟨j, hjl⟩).length = _
+      rw [hactive.2.1, List.length_take, hl j (by omega)]
+      unfold zoneCapacity
+      omega
+    have hrtop : (z1.right ⟨j + 1, hj⟩).length =
+        (z.right ⟨j + 1, hj⟩).length - 2 ^ j := by
+      change ((zoneStepPair (j + 1) z).right ⟨j + 1, hj⟩).length = _
+      rw [hactive.2.2.1, List.length_drop]
+    have hltop : (z1.left ⟨j + 1, hj⟩).length =
+        (z.left ⟨j + 1, hj⟩).length + 2 ^ j := by
+      change ((zoneStepPair (j + 1) z).left ⟨j + 1, hj⟩).length = _
+      rw [hactive.2.2.2, List.length_append, List.length_drop, hl j (by omega)]
+      unfold zoneCapacity
+      omega
+    have hinner := ih hjl z1 hr' hl' (by rw [hrlower]) (by
+      rw [hllower]
+      unfold zoneCapacity
+      omega)
+    let z2 := zoneCascadeRight j z1
+    have hrzero : z2.right ⟨j, hjl⟩ = [] := by
+      apply List.length_eq_zero_iff.mp
+      change ((zoneCascadeRight j z1).right ⟨j, hjl⟩).length = 0
+      rw [hinner.2.1, hrlower, Nat.sub_self]
+    have hlfull : (z2.left ⟨j, hjl⟩).length = zoneCapacity j := by
+      change ((zoneCascadeRight j z1).left ⟨j, hjl⟩).length = _
+      rw [hinner.2.2, hllower]
+      unfold zoneCapacity
+      omega
+    have hframe := zoneCascadeRight_frame j z1 ⟨j + 1, hj⟩ (by dsimp; omega)
+    have hrtop2 : (z2.right ⟨j + 1, hj⟩).length =
+        (z.right ⟨j + 1, hj⟩).length - 2 ^ j := by
+      change ((zoneCascadeRight j z1).right ⟨j + 1, hj⟩).length = _
+      rw [hframe.2, hrtop]
+    have hltop2 : (z2.left ⟨j + 1, hj⟩).length =
+        (z.left ⟨j + 1, hj⟩).length + 2 ^ j := by
+      change ((zoneCascadeRight j z1).left ⟨j + 1, hj⟩).length = _
+      rw [hframe.1, hltop]
+    have hroom2 : (z2.left ⟨j + 1, hj⟩).length + 2 ^ j ≤
+        zoneCapacity (j + 1) := by
+      rw [hltop2]
+      rw [pow_succ] at hroom
+      omega
+    have hactive2 := zoneStepPair_active j hj z2 hrzero hlfull hroom2
+    rw [zoneCascadeRight_succ]
+    change (∀ k (hk : k < j + 1),
+      ((zoneStepPair (j + 1) z2).right ⟨k, _⟩).length = 2 ^ k ∧
+      ((zoneStepPair (j + 1) z2).left ⟨k, _⟩).length = 2 ^ k) ∧
+      ((zoneStepPair (j + 1) z2).right ⟨j + 1, hj⟩).length =
+        (z.right ⟨j + 1, hj⟩).length - 2 ^ (j + 1) ∧
+      ((zoneStepPair (j + 1) z2).left ⟨j + 1, hj⟩).length =
+        (z.left ⟨j + 1, hj⟩).length + 2 ^ (j + 1)
+    refine ⟨?_, ?_, ?_⟩
+    · intro k hk
+      by_cases hkj : k = j
+      · subst k
+        rw [hactive2.1, hactive2.2.1, List.length_take, List.length_take,
+          hrtop2, hlfull]
+        rw [pow_succ] at hdonor
+        unfold zoneCapacity
+        constructor <;> omega
+      · have hkj' : k < j := by omega
+        rw [(zoneStepPair_frame (j + 1) z2 ⟨k, by omega⟩
+          (by dsimp; omega) (by dsimp; omega)).2,
+          (zoneStepPair_frame (j + 1) z2 ⟨k, by omega⟩
+          (by dsimp; omega) (by dsimp; omega)).1]
+        exact hinner.1 k hkj'
+    · rw [hactive2.2.2.1, List.length_drop, hrtop2, pow_succ]
+      omega
+    · rw [hactive2.2.2.2, List.length_append, List.length_drop, hlfull, hltop2,
+        pow_succ]
+      unfold zoneCapacity
+      omega
 
 /-- Regression (round-2 audit, A-S2-R2-1): the `j = 0` cascade is exactly
 the guarded head move, and with level-zero room and a nonempty donor it
