@@ -49,7 +49,7 @@ has a mechanical oracle counterpart.
 * `Complexity.POracle`, `Complexity.NPOracle` — `Pᴼ` and `NPᴼ`.
   [AB09, Definition 3.5]
 
-## Main results (all sorried; phase-P3.1 statements)
+## Main results (two inclusions proved; four phase-P3.1 statements remain sorried)
 
 * `Complexity.P_subset_POracle` — an oracle can only help: `P ⊆ Pᴼ`.
   [AB09, Example 3.6(2), first half]
@@ -108,7 +108,10 @@ decidable in polynomial time with any oracle, `P ⊆ Pᴼ`.
 `Turing.FinTM.toFinOracleTM_computesInTime` transfers `DecidesInTime` verbatim
 (same `c`, same exponent) under every oracle `O`. -/
 theorem P_subset_POracle (O : Language Bool) : P ⊆ POracle O := by
-  sorry
+  intro L hL
+  obtain ⟨e, c, M, hM⟩ := Set.mem_iUnion.mp hL
+  exact Set.mem_iUnion.mpr ⟨e, c, M.toFinOracleTM,
+    fun x => (FinTM.toFinOracleTM_computesInTime M O _ _ _).mpr (hM x)⟩
 
 /-- **Determinism is a special case of nondeterminism, relative to any oracle**:
 `Pᴼ ⊆ NPᴼ`. [AB09, §3.4]
@@ -121,7 +124,33 @@ from `M`'s halting, and some branch accepts iff `M`'s (unique) run outputs
 `[true]`, i.e. iff `x ∈ L` by the indicator equation — mirroring
 `Complexity.DTIME_subset_NTIME`'s proof over `Turing.MultiTapeTM.toNDTM_runWith`. -/
 theorem POracle_subset_NPOracle (O : Language Bool) : POracle O ⊆ NPOracle O := by
-  sorry
+  classical
+  intro L hL
+  obtain ⟨e, c, M, hM⟩ := Set.mem_iUnion.mp hL
+  refine Set.mem_iUnion.mpr ⟨e, c, M.toFinOracleNDTM, ?_⟩
+  intro x
+  obtain ⟨hhalt, hout⟩ := hM x
+  have branch (w : List Bool) (hw : w.length = c * (x.length ^ e + 1)) :
+      M.toFinOracleNDTM.tm.runWith O w (M.toFinOracleNDTM.tm.initCfg x) =
+        M.tm.runFrom O (M.tm.initCfg x) (c * (x.length ^ e + 1)) := by
+    have same := M.tm.toOracleNDTM_runWith O w (M.tm.initCfg x)
+    rw [hw] at same
+    exact same
+  refine ⟨fun w hw => ?_, ?_⟩
+  · rw [branch w hw]
+    exact hhalt
+  · constructor
+    · intro hx
+      refine ⟨List.replicate (c * (x.length ^ e + 1)) false, List.length_replicate .., ?_, ?_⟩
+      · rw [branch _ (List.length_replicate ..)]
+        exact hhalt
+      · rw [branch _ (List.length_replicate ..), hout]
+        simp only [MultiTapeTM.indicator, if_pos hx]
+    · rintro ⟨w, hw, _, accepts⟩
+      rw [branch w hw, hout] at accepts
+      by_contra hx
+      simp only [MultiTapeTM.indicator, if_neg hx] at accepts
+      cases accepts
 
 /-- **The workhorse of the light oracle results**: if `L` Karp-reduces to the
 oracle in polynomial time, then `L ∈ Pᴼ` — compute the reduction onto the query
