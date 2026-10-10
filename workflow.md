@@ -137,7 +137,9 @@ attestation** (§6), and prepares the epoch's audit pack with elaboration eviden
 and the epoch's **duplication ledger**, which the auditor verifies independently
 (audit template failure mode 5); the epoch's gate follows the same
 zero-blockers/majors rule as phase gates, and a debt major closes only by explicit
-human acknowledgment recorded in the resolutions file.
+human acknowledgment recorded in the resolutions file. Once a family is
+acknowledged, later corrections to its accounting are minors (audit template
+failure mode 5) and do not hold the gate; the ledger is still corrected.
 
 ## 5. Closure
 
