@@ -1,0 +1,180 @@
+/-
+Item 8 move probe (Q3): simulates moving `workPair` and `actionBits₂` verbatim from
+`NDCodes.lean` (l. 98–110) down to the proposed `CodeFormat.lean`. The bridge
+`actionBits₂_eq_actionBitsK` then lives once, in `CodeFormat`, and the post-move remainder
+of `NDCodes` and Codes2Tape's `Code2TM.serialize` elaborate against the moved definitions.
+This file does NOT import `NDCodes`, `MathlibBridge` or `Codes2Tape`. It imports only what
+the post-move `CodeFormat` (`CodeParser`) and `NDCodes` (`Nondeterministic`) would import,
+and re-declares their content verbatim; sections are extracted from HEAD by `sed`.
+-/
+import TCSlib.Complexity.TuringMachine.CodeParser
+import TCSlib.Complexity.TuringMachine.Nondeterministic
+import Mathlib.Tactic.FinCases
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+namespace Turing
+
+/-! ### Would sit in `CodeFormat.lean`: Level R's record serialization -/
+
+/-- The fixed serialization of one record of a `k`-work-tape machine. -/
+def actionBitsK {k n : ℕ} (a : Action k Bool (Fin (n + 1))) : List Bool :=
+  signBits a.inputTape ++
+    (List.finRange k).flatMap
+      (fun i => optOptBoolBits (a.workTapes i).1 ++ signBits (a.workTapes i).2) ++
+    optBoolBits a.output ++ optStateBits a.state
+
+/-! ### Moved verbatim from `NDCodes.lean` l. 98–110 -/
+
+/-- The work-symbol function reading `w₀` on tape `0` and `w₁` on tape `1`,
+for the fixed table enumeration of `Turing.CodeNDTM.serialize`. -/
+def workPair (w₀ w₁ : Option Bool) : Fin 2 → Option Bool :=
+  fun j => if j = 0 then w₀ else w₁
+
+/-- Serialization of one two-work-tape transition record: the input-head move,
+then each work tape's optional write and move in tape order, then the emission
+and the successor state — `Turing.actionBits` with a second work-tape record. -/
+def actionBits₂ {n : ℕ} (a : Action 2 Bool (Fin (n + 1))) : List Bool :=
+  signBits a.inputTape ++
+    optOptBoolBits (a.workTapes 0).1 ++ signBits (a.workTapes 0).2 ++
+    optOptBoolBits (a.workTapes 1).1 ++ signBits (a.workTapes 1).2 ++
+    optBoolBits a.output ++ optStateBits a.state
+
+/-! ### The bridge, once, in `CodeFormat.lean` -/
+
+lemma actionBits₂_eq_actionBitsK {n : ℕ} (a : Action 2 Bool (Fin (n + 1))) :
+    actionBits₂ a = actionBitsK a := by
+  simp [actionBits₂, actionBitsK, List.finRange_succ, List.append_assoc]
+
+/-! ### Post-move `NDCodes.lean` remainder, verbatim (l. 81–96 and 112–163; the sorried
+`exists_effectiveNDMachineCode`, l. 165–188, is omitted only to keep this probe sorry-free;
+its statement mentions none of the moved names) -/
+
+/-- The coded normal form of a nondeterministic machine: a binary-alphabet
+NDTM with **two** work tapes and state space `Fin (numStates + 1)` (never
+empty). Two work tapes, not one, because the guess-then-verify tape reduction
+achieves linear overhead into two tapes (see the module docstring). Mirrors
+`Turing.CodeTM`. [AB09, §1.4, §3.2] -/
+structure CodeNDTM where
+  /-- one less than the number of states (so the state space is never empty) -/
+  numStates : ℕ
+  /-- the underlying two-work-tape nondeterministic machine -/
+  tm : NDTM 2 Bool (Fin (numStates + 1))
+
+/-- The bundled machine of a coded nondeterministic machine. -/
+def CodeNDTM.toFinNDTM (M : CodeNDTM) : FinNDTM Bool where
+  k := 2
+  State := Fin (M.numStates + 1)
+  tm := M.tm
+
+/-- The **fixed, scheme-independent** canonical serialization of a coded
+nondeterministic machine, mirroring `Turing.CodeTM.serialize`: the state count,
+the initial state, then the full two-table transition list in the fixed
+enumeration order — the choice bit (`false` then `true`) outermost, then
+states in `Fin` order, then the input read and the two work reads each over
+`none`, `some false`, `some true`. This is the target format of
+`Turing.EffectiveNDMachineCode.canonizer`. -/
+def CodeNDTM.serialize (M : CodeNDTM) : List Bool :=
+  pairEncode (Nat.bits M.numStates)
+    (unaryFin M.tm.q₀ ++
+      ([false, true] : List Bool).flatMap fun b =>
+        (List.finRange (M.numStates + 1)).flatMap fun q =>
+          ([none, some false, some true] : List (Option Bool)).flatMap fun inp =>
+            ([none, some false, some true] : List (Option Bool)).flatMap fun w₀ =>
+              ([none, some false, some true] : List (Option Bool)).flatMap fun w₁ =>
+                actionBits₂ (M.tm.tr b q inp (workPair w₀ w₁)))
+
+/-- The algebraic laws of a representation scheme for coded nondeterministic
+machines, mirroring `Turing.MachineCode` [AB09, §1.4]: a total decoding
+(property 1), an encoding, and recovery under arbitrary `true`-padding
+(property 2 — every machine has infinitely many representations, which the
+lazy diagonalization of [AB09, Theorem 3.2] uses to pick large indices). -/
+structure NDMachineCode where
+  /-- encode a machine as a binary string, `⌞N⌟` -/
+  encode : CodeNDTM → List Bool
+  /-- decode any binary string to a machine (total by type: property 1) -/
+  decode : List Bool → CodeNDTM
+  /-- a code followed by any amount of `true`-padding decodes to the machine
+  (property 2: infinitely many representations) -/
+  decode_encode_pad : ∀ M m, decode (encode M ++ List.replicate m true) = M
+
+/-- Decoding a code recovers the machine ([AB09, §1.4]; padding by zero
+symbols). Skeleton-time proof, mirroring `Turing.MachineCode.decode_encode`. -/
+theorem NDMachineCode.decode_encode (c : NDMachineCode) (M : CodeNDTM) :
+    c.decode (c.encode M) = M := by
+  simpa using c.decode_encode_pad M 0
+
+/-- An *effective* representation scheme for nondeterministic machines: the
+algebraic laws together with a (deterministic) machine of this development
+computing the fixed serialization of the decoded machine — the mirror of
+`Turing.EffectiveMachineCode`, with the same Argument-A rationale: the target
+`Turing.CodeNDTM.serialize` is scheme-independent, so a scheme whose `decode`
+has noncomputable meaning admits no canonizer. -/
+structure EffectiveNDMachineCode extends NDMachineCode where
+  /-- a machine computing the fixed serialization of the decoded machine -/
+  canonizer : FinTM Bool
+  /-- the canonizer's time bound (arbitrary here; universal-machine constants
+  absorb its value at each fixed code) -/
+  canonizerTime : ℕ → ℕ
+  /-- the canonizer computes `serialize ∘ decode` -/
+  canonizer_computes :
+    canonizer.ComputesFunInTime (fun α => (decode α).serialize) canonizerTime
+
+/-! ### Codes2Tape's `Code2TM` and `Code2TM.serialize`, verbatim (l. 78–113) -/
+
+/-- The coded normal form of a deterministic machine with **two** work
+tapes: a binary-alphabet machine with state space `Fin (numStates + 1)`
+(never empty). Two work tapes, not one, because the Hennie-Stearns
+conversion lands there at `O(T log T)` and the two-tape universal machine
+(its consumer) runs such codes at linear overhead — the whole point of
+strengthening past `Turing.CodeTM`'s square. Mirrors `Turing.CodeTM` and
+`Turing.CodeNDTM`. [AB09, §1.4, §1.7] -/
+structure Code2TM where
+  /-- one less than the number of states (so the state space is never empty) -/
+  numStates : ℕ
+  /-- the underlying two-work-tape deterministic machine -/
+  tm : MultiTapeTM 2 Bool (Fin (numStates + 1))
+
+/-- The bundled machine of a coded two-tape machine. -/
+def Code2TM.toFinTM (M : Code2TM) : FinTM Bool where
+  k := 2
+  State := Fin (M.numStates + 1)
+  tm := M.tm
+
+/-- The **fixed, scheme-independent** canonical serialization, mirroring
+`Turing.CodeTM.serialize` and `Turing.CodeNDTM.serialize` over the same
+`Turing.actionBits₂` record: the state count, the initial state, then the
+full transition table in the fixed enumeration order — states in `Fin`
+order, then the input read and the two work reads each over `none`,
+`some false`, `some true` (27 records per state; the nondeterministic
+table's outermost choice bit is absent). This is the target format of
+`Turing.EffectiveMachineCode2.canonizer` and the input format of the
+two-work-tape universal machine. -/
+def Code2TM.serialize (M : Code2TM) : List Bool :=
+  pairEncode (Nat.bits M.numStates)
+    (unaryFin M.tm.q₀ ++
+      (List.finRange (M.numStates + 1)).flatMap fun q =>
+        ([none, some false, some true] : List (Option Bool)).flatMap fun inp =>
+          ([none, some false, some true] : List (Option Bool)).flatMap fun w₀ =>
+            ([none, some false, some true] : List (Option Bool)).flatMap fun w₁ =>
+              actionBits₂ (M.tm.tr q inp (workPair w₀ w₁)))
+
+/-! ### The 354-bit regression still unfolds the moved `actionBits₂` by name
+(the `zfBFallback_serialize_length` proof, Codes2Tape l. 184–189, on the same literal) -/
+
+def probeFallback2 : Code2TM :=
+  ⟨0, ⟨0, fun _ _ _ => ⟨.zero, fun _ => (none, .zero), none, none⟩⟩⟩
+
+example : probeFallback2.serialize.length = 354 := by
+  unfold Code2TM.serialize
+  dsimp only [probeFallback2]
+  set_option maxRecDepth 10000 in
+    norm_num [length_pairEncode, unaryFin, actionBits₂, signBits, optOptBoolBits,
+      optBoolBits, optStateBits, List.finRange_succ, List.finRange_zero]
+
+end Turing
+
+#print axioms Turing.actionBits₂_eq_actionBitsK
+#print axioms Turing.NDMachineCode.decode_encode

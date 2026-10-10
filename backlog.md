@@ -216,6 +216,17 @@ over it until then.
 **Answered (user, 2026-10-10): acknowledged**, and added to the 12.2c
 tasklist (`AroraBarakChapters3-4Plan.md` §4d, item 8) as an explicit task.
 
+**Brief issued (2026-10-10):** `briefs/ch34-t1-item8.md` (12.2c tranche T1).
+A new `TuringMachine/CodeFormat.lean` holds the generic layer (table grammar
+`Turing.CodeFormat`, a `k`-generic record reader, the shared two-work-tape
+table); the one-tape and two-tape formats become instances, statements
+unchanged. **Sanctioned exception:** `workPair` and `actionBits₂` move verbatim
+from the chapter file `NDCodes.lean` into `CodeFormat.lean` (one added import
+in NDCodes, no NDCodes statement changes), so that their bridge lemma exists
+once instead of as a forced duplicate. The ND instance remains `NDCodes`'
+group-C fill, which this layer unblocks. Pre-ship probes:
+`audits/evidence/ch34-t1/Item8*PreShip.lean.txt`.
+
 ---
 
 ## 2. Campaign work queued or on hold

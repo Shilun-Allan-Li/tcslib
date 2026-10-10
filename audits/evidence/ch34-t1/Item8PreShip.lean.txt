@@ -1,0 +1,757 @@
+/-
+Item 8 (CH34-D2) pre-ship probe, revision 2.  ELABORATED with the maintainer's read-only
+runner (`bash <S>/tools/leanprobe.sh`, no .olean output): 0 errors, 0 warnings, 0 sorries.
+Every `#print axioms` below is within [propext, Classical.choice, Quot.sound]; output in
+`item8-probe.out`.  Revision 1 (`item8-probe.v1.lean`) failed on four syntax/locality slips:
+an extra `⟩` in an `obtain` pattern; a `rw` blocked by an unreduced `(q, r₁).2`, fixed by
+`dsimp only` on the soundness term first, as `zfBParseFull_sound` does; a `show … from`
+line break inside a `by` nested in a term; and one-line structure-instance literals.
+None of them was a design issue.
+
+* Base: HEAD 5ad155ee58b83806b34b2a5c97da21363cda92ec (Lean v4.25.0, Mathlib 029db123ddaa7f8fd0d18cea3b1b33bf84dacd1e).
+  It is equally valid at 44853c6f3177fed8f7f8d2288210593e9c094f7e. That delta leaves
+  CodeParser, Codes2Tape, NDCodes, MathlibBridge and Encoding unchanged; upstream,
+  `Finite.lean` gained one unrelated lemma.
+* A scratch module.  It imports the HEAD tree only and edits nothing.  It defines the
+  proposed layer under its proposed names.  All of them are fresh at HEAD: grep over
+  `TCSlib/` and the pinned Mathlib found none of `CodeFormat`, `actionBitsK`,
+  `codeReadWork`, `codeReadActionK`, `codeSkipWork`, `codeSkipActionK`, `CodeTable2`,
+  `codeTable2Bits`, `oneTapeFormat`, `twoTapeFormat`.
+* `probeDecode` stands in for the one-tape public `codeDecode`, which already exists at
+  HEAD.  `codeScan` and `codeCanonical` are compared with the existing public
+  definitions directly, by `rfl`.
+* Expected: 0 errors, 0 sorries.  Every `#print axioms` should be within
+  [propext, Classical.choice, Quot.sound].
+* Design-critical checks are marked (D1)–(D8).  Proofs that are only mechanical
+  adaptations of existing ones are marked (M).  If an (M) proof fails, it can be patched
+  locally.  If a (D) check fails, the design needs revisiting before the brief.
+-/
+import TCSlib.Complexity.TuringMachine.Codes2Tape
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+namespace Turing
+
+/-! ## Stage A: Level R, the transition record generic in the work-tape count `k` -/
+
+/-- The fixed serialization of one record of a `k`-work-tape machine: the input move,
+each work tape's optional write and move in tape order, the emission, the successor. -/
+def actionBitsK {k n : ℕ} (a : Action k Bool (Fin (n + 1))) : List Bool :=
+  signBits a.inputTape ++
+    (List.finRange k).flatMap
+      (fun i => optOptBoolBits (a.workTapes i).1 ++ signBits (a.workTapes i).2) ++
+    optBoolBits a.output ++ optStateBits a.state
+
+/-- Read one work-tape field pair: the optional write, then the move. -/
+def codeReadWork (xs : List Bool) :
+    Option ((Option (Option Bool) × SignType) × List Bool) := do
+  let (wr, xs) ← codeReadWrite xs
+  let (wm, xs) ← codeReadSign xs
+  pure ((wr, wm), xs)
+
+/-- Read one `k`-work-tape record. The work-tape actions are read as a
+`Fin k`-indexed vector, so the record reconstructs `Action.workTapes` exactly. -/
+def codeReadActionK (k n : ℕ) (xs : List Bool) :
+    Option (Action k Bool (Fin (n + 1)) × List Bool) := do
+  let (im, xs) ← codeReadSign xs
+  let (ws, xs) ← codeReadVec codeReadWork k xs
+  let (out, xs) ← codeReadOutput xs
+  let (q, xs) ← codeReadState (n + 1) xs
+  pure (⟨im, ws, out, q⟩, xs)
+
+/-- The erased work-pair reader. -/
+def codeSkipWork (xs : List Bool) : Option (List Bool) :=
+  (codeSkipPair (fun _ _ => true) xs).bind (codeSkipPair (fun a b => a || !b))
+
+/-- The erased `k`-work-tape record reader. -/
+def codeSkipActionK (k n : ℕ) (xs : List Bool) : Option (List Bool) := do
+  let xs ← codeSkipPair (fun a b => a || !b) xs
+  let xs ← codeSkipRepeat codeSkipWork k xs
+  let xs ← codeSkipPair (fun a b => a || !b) xs
+  codeSkipState (n + 1) xs
+
+-- (M)
+lemma codeReadWork_append (p : Option (Option Bool) × SignType) (xs : List Bool) :
+    codeReadWork ((optOptBoolBits p.1 ++ signBits p.2) ++ xs) = some (p, xs) := by
+  rcases p with ⟨wr, wm⟩
+  simp only [codeReadWork, List.append_assoc, codeReadWrite_append, codeReadSign_append,
+    bind, Option.bind, pure]
+
+-- (D1) the vector read reconstructs `workTapes` with no `Subsingleton`/`fin_cases` step
+lemma codeReadActionK_append {k n : ℕ} (a : Action k Bool (Fin (n + 1))) (xs : List Bool) :
+    codeReadActionK k n (actionBitsK a ++ xs) = some (a, xs) := by
+  rcases a with ⟨im, ws, out, q⟩
+  have hv : ∀ ys, codeReadVec codeReadWork k
+      ((List.finRange k).flatMap (fun i => optOptBoolBits (ws i).1 ++ signBits (ws i).2) ++ ys) =
+        some (ws, ys) :=
+    codeReadVec_append codeReadWork (fun p => optOptBoolBits p.1 ++ signBits p.2)
+      codeReadWork_append k ws
+  simp only [actionBitsK, List.append_assoc, codeReadActionK, codeReadSign_append, hv,
+    codeReadOutput_append, codeReadState_append, bind, Option.bind, pure]
+
+-- (M)
+lemma codeReadWork_sound (xs : List Bool) (p : Option (Option Bool) × SignType)
+    (rest : List Bool) (h : codeReadWork xs = some (p, rest)) :
+    xs = (optOptBoolBits p.1 ++ signBits p.2) ++ rest := by
+  simp only [codeReadWork, bind, Option.bind_eq_some_iff] at h
+  obtain ⟨⟨wr, r₁⟩, h₁, ⟨⟨wm, r₂⟩, h₂, h⟩⟩ := h
+  simp only [pure, Option.some.injEq, Prod.mk.injEq] at h
+  rcases h with ⟨rfl, rfl⟩
+  rw [codeReadWrite_sound xs wr r₁ h₁, codeReadSign_sound r₁ wm r₂ h₂]
+  simp [List.append_assoc]
+
+-- (M)
+lemma codeReadActionK_sound {k n : ℕ} (xs : List Bool) (a : Action k Bool (Fin (n + 1)))
+    (rest : List Bool) (h : codeReadActionK k n xs = some (a, rest)) :
+    xs = actionBitsK a ++ rest := by
+  simp only [codeReadActionK, bind, Option.bind_eq_some_iff] at h
+  obtain ⟨⟨im, r₁⟩, h₁, ⟨⟨ws, r₂⟩, h₂, ⟨⟨out, r₃⟩, h₃, ⟨⟨q, r₄⟩, h₄, h⟩⟩⟩⟩ := h
+  simp only [pure, Option.some.injEq, Prod.mk.injEq] at h
+  rcases h with ⟨rfl, rfl⟩
+  rw [codeReadSign_sound xs im r₁ h₁,
+    codeReadVec_sound codeReadWork (fun p => optOptBoolBits p.1 ++ signBits p.2)
+      codeReadWork_sound k r₁ ws r₂ h₂,
+    codeReadOutput_sound r₂ out r₃ h₃, codeReadState_sound r₃ q r₄ h₄]
+  simp [actionBitsK, List.append_assoc]
+
+-- (M) mirrors the last two steps of `codeEraseAction`
+lemma codeEraseWork (xs : List Bool) : (codeReadWork xs).map Prod.snd = codeSkipWork xs := by
+  simp only [codeReadWork, codeSkipWork, bind, Option.map_bind, Function.comp_def, pure,
+    Option.map_some]
+  rw [← codeEraseWrite xs, ← codeErase_bind]
+  congr 1; funext p
+  simpa only [Option.map_eq_bind, Function.comp_def] using codeEraseSign p.2
+
+-- (M) mirrors `codeEraseAction`, with one vector step
+lemma codeEraseActionK (k n : ℕ) (xs : List Bool) :
+    (codeReadActionK k n xs).map Prod.snd = codeSkipActionK k n xs := by
+  have hv (ys : List Bool) :
+      (codeReadVec codeReadWork k ys).map Prod.snd = codeSkipRepeat codeSkipWork k ys := by
+    rw [codeEraseVec]
+    exact congrArg (fun r => codeSkipRepeat r k ys) (funext codeEraseWork)
+  simp only [codeReadActionK, codeSkipActionK, bind, Option.map_bind, Function.comp_def, pure,
+    Option.map_some]
+  rw [← codeEraseSign xs, ← codeErase_bind]
+  congr 1; funext p
+  rw [← hv p.2, ← codeErase_bind]
+  congr 1; funext p
+  rw [← codeEraseOutput p.2, ← codeErase_bind]
+  congr 1; funext p
+  simpa only [Option.map_eq_bind, Function.comp_def] using codeEraseState (n + 1) p.2
+
+-- (M) generalizes `codeAction_length` (9 = 4·1 + 5) and `zfBAction_length` (13 = 4·2 + 5)
+lemma codeActionK_length {k n : ℕ} (a : Action k Bool (Fin (n + 1))) :
+    4 * k + 5 ≤ (actionBitsK a).length := by
+  have hs (s : SignType) : (signBits s).length = 2 := by cases s <;> rfl
+  have ho (b : Option Bool) : (optBoolBits b).length = 2 := by
+    rcases b with _ | b
+    · rfl
+    · cases b <;> rfl
+  have hw (b : Option (Option Bool)) : (optOptBoolBits b).length = 2 := by
+    rcases b with _ | (_ | b)
+    · rfl
+    · rfl
+    · cases b <;> rfl
+  have hq : 1 ≤ (optStateBits a.state).length := by
+    cases a.state <;> simp [optStateBits, unaryFin]
+  have hv : 4 * k ≤ ((List.finRange k).flatMap fun i =>
+      optOptBoolBits (a.workTapes i).1 ++ signBits (a.workTapes i).2).length := by
+    simpa using codeFlatMap_length (List.finRange k)
+      (fun i => optOptBoolBits (a.workTapes i).1 ++ signBits (a.workTapes i).2) 4
+      (fun i _ => by simp [hs, hw])
+  simp only [actionBitsK, List.length_append, hs, ho]
+  omega
+
+-- (D2) the frozen one-tape record is the `k = 1` record (propositionally)
+lemma actionBits_eq_actionBitsK {n : ℕ} (a : Action 1 Bool (Fin (n + 1))) :
+    actionBits a = actionBitsK a := by
+  simp [actionBits, actionBitsK, List.finRange_succ, List.append_assoc]
+
+-- (D2) the frozen two-tape record is the `k = 2` record (propositionally).  In the real
+-- change it lives in Codes2Tape (private), because `actionBits₂` is NDCodes-owned.
+lemma actionBits₂_eq_actionBitsK {n : ℕ} (a : Action 2 Bool (Fin (n + 1))) :
+    actionBits₂ a = actionBitsK a := by
+  simp [actionBits₂, actionBitsK, List.finRange_succ, List.append_assoc]
+
+-- (D3) the frozen public one-tape skipper agrees with the generic one; this keeps
+-- `codeSkipAction`'s body (and `MathlibBridge`'s `unfold codeSkipAction`) untouched
+lemma codeSkipAction_eq_codeSkipActionK (n : ℕ) (xs : List Bool) :
+    codeSkipAction n xs = codeSkipActionK 1 n xs := by
+  have h1 (ys : List Bool) : codeSkipRepeat codeSkipWork 1 ys = codeSkipWork ys := by
+    cases h : codeSkipWork ys <;> simp [codeSkipRepeat, h]
+  simp only [codeSkipAction, codeSkipActionK, h1, codeSkipWork, bind, Option.bind_assoc]
+
+/-! ## Stage B: Level T, the format-parameterized top layer -/
+
+/-- A machine-code format over the shared header grammar
+`pairEncode (Nat.bits n) (unaryFin q₀ ++ table)`: the coded machines, their tables, the
+table grammar (writer, reader, erased reader, per-state minimum length) and the
+fallback, with the laws that the generic parser proofs consume.
+(The field is `assemble`, not `mk`: a field named `mk` would clash with the
+structure's default constructor `CodeFormat.mk`.) -/
+structure CodeFormat where
+  /-- the coded machines -/
+  Code : Type
+  /-- the transition table of a machine with `n + 1` states -/
+  Table : ℕ → Type
+  /-- one less than the number of states -/
+  numStates : Code → ℕ
+  /-- assemble a machine from its state count, initial state and table -/
+  assemble : (n : ℕ) → Fin (n + 1) → Table n → Code
+  /-- the format's fixed serialization -/
+  serialize : Code → List Bool
+  /-- the fixed serialization of a table -/
+  tableBits : {n : ℕ} → Table n → List Bool
+  /-- the table reader -/
+  readTable : (n : ℕ) → List Bool → Option (Table n × List Bool)
+  /-- the erased table reader -/
+  skipTable : ℕ → List Bool → Option (List Bool)
+  /-- the minimum number of table bits per state (the up-front guard constant) -/
+  guard : ℕ
+  /-- the machine denoted by every malformed string -/
+  fallback : Code
+  numStates_assemble : ∀ n q t, numStates (assemble n q t) = n
+  serialize_assemble : ∀ n q (t : Table n),
+    serialize (assemble n q t) = pairEncode n.bits (unaryFin q ++ tableBits t)
+  assemble_surj : ∀ M, ∃ n q t, assemble n q t = M
+  readTable_append : ∀ n (t : Table n) xs, readTable n (tableBits t ++ xs) = some (t, xs)
+  readTable_sound : ∀ n xs (t : Table n) rest,
+    readTable n xs = some (t, rest) → xs = tableBits t ++ rest
+  readTable_erase : ∀ n xs, (readTable n xs).map Prod.snd = skipTable n xs
+  tableBits_length : ∀ n (t : Table n), guard * (n + 1) ≤ (tableBits t).length
+
+namespace CodeFormat
+
+variable (F : CodeFormat)
+
+/-- Parse the header and the table, keeping the unconsumed padding. The length guard
+precedes table recursion; the suffix must be all `true`. -/
+def parseFull (xs : List Bool) : Option (F.Code × List Bool) := do
+  let (bits, rest) ← pairDecode xs
+  let n := codeBitsNat bits
+  if bits ≠ n.bits then none else do
+    if F.guard * (n + 1) > rest.length then none else do
+      let (q, rest) ← codeReadFin (n + 1) rest
+      let (table, rest) ← F.readTable n rest
+      if rest.all id then pure (F.assemble n q table, rest) else none
+
+/-- Total decoding: every malformed string denotes the fallback. -/
+def decode (xs : List Bool) : F.Code := ((F.parseFull xs).map Prod.fst).getD F.fallback
+
+/-- The erased parser: same guard and padding test, returning only the suffix. -/
+def scan (xs : List Bool) : Option (List Bool) := do
+  let (bits, rest) ← pairDecode xs
+  let n := codeBitsNat bits
+  if bits ≠ n.bits then none else do
+    if F.guard * (n + 1) > rest.length then none else do
+      let rest ← codeSkipFin (n + 1) rest
+      let rest ← F.skipTable n rest
+      if rest.all id then pure rest else none
+
+/-- The consumed prefix on scanner success, the fallback's serialization otherwise. -/
+def canonical (xs : List Bool) : List Bool :=
+  (F.scan xs).casesOn (F.serialize F.fallback) fun tail => xs.take (xs.length - tail.length)
+
+-- (D4) the generic round trip; `omega` must treat `F.guard * (n + 1)` as an atom
+theorem parseFull_serialize_pad (M : F.Code) (m : ℕ) :
+    F.parseFull (F.serialize M ++ List.replicate m true) =
+      some (M, List.replicate m true) := by
+  obtain ⟨n, q, t, rfl⟩ := F.assemble_surj M
+  have hp (a b c : List Bool) : pairEncode a b ++ c = pairEncode a (b ++ c) := by
+    simp [pairEncode, List.append_assoc]
+  rw [F.serialize_assemble, hp]
+  unfold parseFull
+  rw [pairDecode_pairEncode]
+  dsimp only [bind, Option.bind]
+  rw [codeBitsNat_bits]
+  simp only [ne_eq, not_true_eq_false, ↓reduceIte]
+  have hlen := F.tableBits_length n t
+  simp only [List.length_append, List.length_replicate] at *
+  rw [if_neg (by omega)]
+  simp only [List.append_assoc, codeReadFin_append, F.readTable_append,
+    List.all_replicate, id_eq, ite_self, ↓reduceIte, pure]
+
+theorem decode_serialize_pad (M : F.Code) (m : ℕ) :
+    F.decode (F.serialize M ++ List.replicate m true) = M := by
+  simp only [decode, parseFull_serialize_pad, Option.map_some, Option.getD_some]
+
+-- (M) mirrors `zfBParseFull_sound`
+theorem parseFull_sound (xs : List Bool) (M : F.Code) (tail : List Bool)
+    (h : F.parseFull xs = some (M, tail)) : xs = F.serialize M ++ tail := by
+  unfold parseFull at h
+  obtain ⟨⟨bits, rest⟩, hp, h⟩ := Option.bind_eq_some_iff.mp h
+  dsimp only at h
+  split at h
+  · contradiction
+  next hb =>
+    have hb : bits = (codeBitsNat bits).bits := not_not.mp hb
+    split at h
+    · contradiction
+    next _ =>
+      simp only [bind, Option.bind_eq_some_iff] at h
+      obtain ⟨⟨q, r₁⟩, hq, ⟨⟨table, r₂⟩, ht, h⟩⟩ := h
+      split at h
+      next hpad =>
+        simp only [pure, Option.some.injEq, Prod.mk.injEq] at h
+        rcases h with ⟨rfl, rfl⟩
+        have htable := F.readTable_sound _ _ _ _ ht
+        dsimp only at htable
+        rw [F.serialize_assemble, eq_pairEncode_of_pairDecode xs bits rest hp,
+          codeReadFin_sound rest q r₁ hq, htable]
+        simp only [pairEncode, List.append_assoc]
+        congr 1
+        exact congrArg (List.flatMap fun b : Bool => [b, b]) hb
+      · contradiction
+
+-- (M) mirrors `zfBScan_full`
+theorem scan_full (xs : List Bool) : F.scan xs = (F.parseFull xs).map Prod.snd := by
+  simp only [scan, parseFull, bind, Option.map_bind, Function.comp_def]
+  congr 1
+  funext p
+  dsimp only
+  split <;> try simp only [Option.map_none]
+  split <;> try simp only [Option.map_none, Option.map_bind, Function.comp_def]
+  have h (q : Fin (codeBitsNat p.1 + 1) × List Bool) (t : F.Table (codeBitsNat p.1) × List Bool) :
+      (if t.2.all id then some (F.assemble (codeBitsNat p.1) q.1 t.1, t.2) else none).map
+          Prod.snd = (if t.2.all id then some t.2 else none) := by split <;> rfl
+  simp only [pure, h]
+  rw [← codeEraseFin _ _, ← codeErase_bind]
+  congr 1; funext q
+  rw [← F.readTable_erase, ← codeErase_bind]
+
+-- (M) mirrors `zfBCanonical_eq`; `parse_full` disappears because `decode` is defined
+-- from `parseFull` directly
+theorem canonical_eq (xs : List Bool) : F.canonical xs = F.serialize (F.decode xs) := by
+  unfold canonical decode
+  rw [scan_full]
+  cases h : F.parseFull xs with
+  | none => rfl
+  | some p =>
+    rcases p with ⟨M, tail⟩
+    simp only [Option.map_some, Option.getD_some]
+    rw [F.parseFull_sound xs M tail h]
+    simp
+
+-- (B5-facing corollaries; generalize ZF-B3's `zfB3_decode_length`/`_states`/`_guard_failure`)
+theorem serialize_decode_length_le (α : List Bool) :
+    (F.serialize (F.decode α)).length ≤ max α.length (F.serialize F.fallback).length := by
+  rw [← F.canonical_eq]
+  unfold canonical
+  cases F.scan α with
+  | none => exact Nat.le_max_right _ _
+  | some tail => exact (List.length_take_le' _ _).trans (Nat.le_max_left _ _)
+
+theorem numStates_decode_le (α : List Bool) :
+    F.guard * (F.numStates (F.decode α) + 1) ≤
+      max α.length (F.serialize F.fallback).length := by
+  have hsize := F.serialize_decode_length_le α
+  obtain ⟨n, q, t, h⟩ := F.assemble_surj (F.decode α)
+  rw [← h, F.serialize_assemble, length_pairEncode, List.length_append] at hsize
+  rw [← h, F.numStates_assemble]
+  have htable := F.tableBits_length n t
+  omega
+
+theorem decode_of_parseFull_none (α : List Bool) (h : F.parseFull α = none) :
+    F.decode α = F.fallback := by
+  simp [decode, h]
+
+theorem decode_of_guard_lt (α bits rest : List Bool) (hp : pairDecode α = some (bits, rest))
+    (hg : rest.length < F.guard * (codeBitsNat bits + 1)) : F.decode α = F.fallback := by
+  simp [decode, parseFull, hp, hg]
+
+end CodeFormat
+
+/-! ## Stage C: the one-tape instance and the transported public statements -/
+
+lemma codeReadActionK_one_append {n : ℕ} (a : Action 1 Bool (Fin (n + 1))) (xs : List Bool) :
+    codeReadActionK 1 n (actionBits a ++ xs) = some (a, xs) := by
+  rw [actionBits_eq_actionBitsK]; exact codeReadActionK_append a xs
+
+lemma codeReadActionK_one_sound {n : ℕ} (xs : List Bool) (a : Action 1 Bool (Fin (n + 1)))
+    (rest : List Bool) (h : codeReadActionK 1 n xs = some (a, rest)) :
+    xs = actionBits a ++ rest := by
+  rw [actionBits_eq_actionBitsK]; exact codeReadActionK_sound xs a rest h
+
+lemma codeEraseActionK_one (n : ℕ) (xs : List Bool) :
+    (codeReadActionK 1 n xs).map Prod.snd = codeSkipAction n xs := by
+  rw [codeEraseActionK, codeSkipAction_eq_codeSkipActionK]
+
+/-- The one-work-tape format (`CodeTM`): nine records per state, guard `81`. -/
+def oneTapeFormat : CodeFormat where
+  Code := CodeTM
+  Table := fun n => Fin (n + 1) → Option Bool → Option Bool → Action 1 Bool (Fin (n + 1))
+  numStates := CodeTM.numStates
+  assemble := fun n q t => ⟨n, ⟨q, fun s inp w => t s inp (w 0)⟩⟩
+  serialize := CodeTM.serialize
+  tableBits := fun {n} t => (List.finRange (n + 1)).flatMap fun q =>
+    ([none, some false, some true] : List (Option Bool)).flatMap fun inp =>
+      ([none, some false, some true] : List (Option Bool)).flatMap fun w =>
+        actionBits (t q inp w)
+  readTable := fun n =>
+    codeReadVec (codeReadSymbols (codeReadSymbols (codeReadActionK 1 n))) (n + 1)
+  skipTable := fun n =>
+    codeSkipRepeat (codeSkipRepeat (codeSkipRepeat (codeSkipAction n) 3) 3) (n + 1)
+  guard := 81
+  fallback := codeFallback
+  numStates_assemble := fun _ _ _ => rfl
+  -- (D5) `serialize_assemble` is definitional for the one-tape format
+  serialize_assemble := fun _ _ _ => rfl
+  -- (D6) the dependent-structure eta step, as at the end of `codeParse_serialize_pad`
+  assemble_surj := by
+    rintro ⟨n, q, tr⟩
+    refine ⟨n, q, fun s inp w => tr s inp (fun _ => w), ?_⟩
+    show CodeTM.mk n ⟨q, fun s inp w => tr s inp (fun _ => w 0)⟩ = CodeTM.mk n ⟨q, tr⟩
+    congr 1
+    congr 1
+    funext s inp w
+    apply congrArg (tr s inp)
+    funext i
+    exact congrArg w (Subsingleton.elim _ _)
+  readTable_append := fun _ _ _ =>
+    codeReadVec_append _ _ (fun _ _ => codeReadSymbols_append _ _
+      (fun _ _ => codeReadSymbols_append _ _ codeReadActionK_one_append _ _) _ _) _ _ _
+  readTable_sound := fun _ _ _ _ h =>
+    codeReadVec_sound _ _ (fun _ _ _ => codeReadSymbols_sound _ _
+      (fun _ _ _ => codeReadSymbols_sound _ _ codeReadActionK_one_sound _ _ _) _ _ _)
+      _ _ _ _ h
+  readTable_erase := fun n xs => by
+    have ht := codeEraseVec (codeReadSymbols (codeReadSymbols (codeReadActionK 1 n))) (n + 1) xs
+    simp only [codeEraseSymbols, codeEraseActionK_one] at ht
+    exact ht
+  tableBits_length := fun n t => by
+    have hr : ∀ a : Action 1 Bool (Fin (n + 1)), 9 ≤ (actionBits a).length := fun a => by
+      rw [actionBits_eq_actionBitsK]; have := codeActionK_length a; omega
+    have h := codeFlatMap_length (List.finRange (n + 1))
+      (fun q => ([none, some false, some true] : List (Option Bool)).flatMap fun inp =>
+        ([none, some false, some true] : List (Option Bool)).flatMap fun w =>
+          actionBits (t q inp w)) 81 (by
+        intro q _
+        have h := codeFlatMap_length ([none, some false, some true] : List (Option Bool))
+          (fun inp => ([none, some false, some true] : List (Option Bool)).flatMap fun w =>
+            actionBits (t q inp w)) 27 (by
+              intro inp _
+              simpa using codeFlatMap_length
+                ([none, some false, some true] : List (Option Bool))
+                (fun w => actionBits (t q inp w)) 9 (fun _ _ => hr _))
+        simpa using h)
+    simpa using h
+
+/-- Stand-in for the redefined public `codeDecode : List Bool → CodeTM`. -/
+def probeDecode (xs : List Bool) : CodeTM := oneTapeFormat.decode xs
+
+-- (D7a) the verbatim statement of `codeDecode_serialize_pad` (with `probeDecode`),
+-- closed by term-mode instantiation, i.e. a defeq transport
+theorem probe_decode_serialize_pad (M : CodeTM) (m : ℕ) :
+    probeDecode (M.serialize ++ List.replicate m true) = M :=
+  oneTapeFormat.decode_serialize_pad M m
+
+-- (D7b) the new bodies are definitionally the current public bodies
+example : oneTapeFormat.scan = codeScan := rfl
+example : oneTapeFormat.canonical = codeCanonical := rfl
+
+-- (D7c) the verbatim shape of `codeCanonical_eq`, against the existing `codeCanonical`
+theorem probe_canonical_eq (xs : List Bool) : codeCanonical xs = (probeDecode xs).serialize :=
+  oneTapeFormat.canonical_eq xs
+
+-- (D7d) semantic check: the generic decoder is extensionally the current `codeDecode`
+-- (from public facts only: both canonizer equations, and the injectivity of
+-- serialization given by `codeDecode_serialize_pad` at `m = 0`)
+theorem probeDecode_eq_codeDecode : probeDecode = codeDecode := by
+  funext xs
+  have h : (probeDecode xs).serialize = (codeDecode xs).serialize :=
+    (probe_canonical_eq xs).symm.trans (codeCanonical_eq xs)
+  have h1 := codeDecode_serialize_pad (probeDecode xs) 0
+  have h2 := codeDecode_serialize_pad (codeDecode xs) 0
+  simp only [List.replicate_zero, List.append_nil] at h1 h2
+  exact (h1.symm.trans (congrArg codeDecode h)).trans h2
+
+-- (R1, tested separately and resolved) Dot notation on an `F.Code`-typed term DOES
+-- resolve.  `(oneTapeFormat.decode xs).numStates`, `(oneTapeFormat.decode xs).serialize`
+-- and `(twoTapeFormat.decode α).toFinTM.ComputesInTime x [true] t` all elaborate.
+-- Typed aliases are kept only so that the frozen signatures stay byte-identical.
+example (xs : List Bool) : ℕ := (oneTapeFormat.decode xs).numStates
+
+/-! ## Stage D: Level W (the 27-record two-work-tape table) and the two-tape instance -/
+
+/-- Two-work-tape tables: input read by work-0 read by work-1 read, per state. -/
+abbrev CodeTable2 (n : ℕ) : Type :=
+  Fin (n + 1) → Option Bool → Option Bool → Option Bool → Action 2 Bool (Fin (n + 1))
+
+def codeTable2Bits {n : ℕ} (t : CodeTable2 n) : List Bool :=
+  (List.finRange (n + 1)).flatMap fun q =>
+    ([none, some false, some true] : List (Option Bool)).flatMap fun inp =>
+      ([none, some false, some true] : List (Option Bool)).flatMap fun w₀ =>
+        ([none, some false, some true] : List (Option Bool)).flatMap fun w₁ =>
+          actionBitsK (t q inp w₀ w₁)
+
+def codeReadTable2 (n : ℕ) : List Bool → Option (CodeTable2 n × List Bool) :=
+  codeReadVec (codeReadSymbols (codeReadSymbols (codeReadSymbols (codeReadActionK 2 n)))) (n + 1)
+
+def codeSkipTable2 (n : ℕ) : List Bool → Option (List Bool) :=
+  codeSkipRepeat (codeSkipRepeat (codeSkipRepeat (codeSkipRepeat (codeSkipActionK 2 n) 3) 3) 3)
+    (n + 1)
+
+-- (M)
+lemma codeReadTable2_append {n : ℕ} (t : CodeTable2 n) (xs : List Bool) :
+    codeReadTable2 n (codeTable2Bits t ++ xs) = some (t, xs) :=
+  codeReadVec_append _ _ (fun _ _ => codeReadSymbols_append _ _
+    (fun _ _ => codeReadSymbols_append _ _
+      (fun _ _ => codeReadSymbols_append _ _ codeReadActionK_append _ _) _ _) _ _) _ _ _
+
+-- (M)
+lemma codeReadTable2_sound {n : ℕ} (xs : List Bool) (t : CodeTable2 n) (rest : List Bool)
+    (h : codeReadTable2 n xs = some (t, rest)) : xs = codeTable2Bits t ++ rest :=
+  codeReadVec_sound _ _ (fun _ _ _ => codeReadSymbols_sound _ _
+    (fun _ _ _ => codeReadSymbols_sound _ _
+      (fun _ _ _ => codeReadSymbols_sound _ _ codeReadActionK_sound _ _ _) _ _ _) _ _ _)
+    _ _ _ _ h
+
+-- (M)
+lemma codeEraseTable2 (n : ℕ) (xs : List Bool) :
+    (codeReadTable2 n xs).map Prod.snd = codeSkipTable2 n xs := by
+  have ht := codeEraseVec
+    (codeReadSymbols (codeReadSymbols (codeReadSymbols (codeReadActionK 2 n)))) (n + 1) xs
+  simp only [codeEraseSymbols, codeEraseActionK] at ht
+  exact ht
+
+-- (M) the binding ZF-B grammar number: 351 = 27 · 13
+lemma codeTable2Bits_length {n : ℕ} (t : CodeTable2 n) :
+    351 * (n + 1) ≤ (codeTable2Bits t).length := by
+  have hr : ∀ a : Action 2 Bool (Fin (n + 1)), 13 ≤ (actionBitsK a).length :=
+    fun a => by have := codeActionK_length a; omega
+  have h := codeFlatMap_length (List.finRange (n + 1))
+    (fun q => ([none, some false, some true] : List (Option Bool)).flatMap fun inp =>
+      ([none, some false, some true] : List (Option Bool)).flatMap fun w₀ =>
+        ([none, some false, some true] : List (Option Bool)).flatMap fun w₁ =>
+          actionBitsK (t q inp w₀ w₁)) 351 (by
+      intro q _
+      have h := codeFlatMap_length ([none, some false, some true] : List (Option Bool))
+        (fun inp => ([none, some false, some true] : List (Option Bool)).flatMap fun w₀ =>
+          ([none, some false, some true] : List (Option Bool)).flatMap fun w₁ =>
+            actionBitsK (t q inp w₀ w₁)) 117 (by
+          intro inp _
+          have h := codeFlatMap_length ([none, some false, some true] : List (Option Bool))
+            (fun w₀ => ([none, some false, some true] : List (Option Bool)).flatMap fun w₁ =>
+              actionBitsK (t q inp w₀ w₁)) 39 (by
+                intro w₀ _
+                simpa using codeFlatMap_length
+                  ([none, some false, some true] : List (Option Bool))
+                  (fun w₁ => actionBitsK (t q inp w₀ w₁)) 13 (fun _ _ => hr _))
+          simpa using h)
+      simpa using h)
+  simpa [codeTable2Bits] using h
+
+/-- Probe-local stand-in for the private `zfBFallback` (identical literal). -/
+def probeFallback2 : Code2TM :=
+  ⟨0, ⟨0, fun _ _ _ => ⟨.zero, fun _ => (none, .zero), none, none⟩⟩⟩
+
+/-- Stand-in for `zfBFallback_serialize_length` (identical proof). -/
+lemma probeFallback2_serialize_length : probeFallback2.serialize.length = 354 := by
+  unfold Code2TM.serialize
+  dsimp only [probeFallback2]
+  set_option maxRecDepth 10000 in
+    norm_num [length_pairEncode, unaryFin, actionBits₂, signBits, optOptBoolBits,
+      optBoolBits, optStateBits, List.finRange_succ, List.finRange_zero]
+
+/-- The deterministic two-work-tape format (`Code2TM`). The fallback is the probe-local
+`probeFallback2`, because `zfBFallback` is private to `Codes2Tape`. -/
+def twoTapeFormat : CodeFormat where
+  Code := Code2TM
+  Table := CodeTable2
+  numStates := Code2TM.numStates
+  assemble := fun n q t => ⟨n, ⟨q, fun s inp w => t s inp (w 0) (w 1)⟩⟩
+  serialize := Code2TM.serialize
+  tableBits := fun t => codeTable2Bits t
+  readTable := codeReadTable2
+  skipTable := codeSkipTable2
+  guard := 351
+  fallback := probeFallback2
+  numStates_assemble := fun _ _ _ => rfl
+  -- (D5') propositional, via the record bridge plus `workPair` at the literals 0 and 1.
+  -- Fallback if `simp` leaves a goal: `simp only [Code2TM.serialize, codeTable2Bits,
+  -- actionBits₂_eq_actionBitsK]` then `rfl`, using the definitional `workPair w₀ w₁ 0 ≡ w₀`
+  -- reduction that `zfBParseFull_sound` already relies on.
+  serialize_assemble := fun _ _ _ => by
+    simp [Code2TM.serialize, codeTable2Bits, actionBits₂_eq_actionBitsK, workPair]
+  -- (D6') as at the end of `zfBParse_serialize_pad`
+  assemble_surj := by
+    rintro ⟨n, q, tr⟩
+    refine ⟨n, q, fun s inp w₀ w₁ => tr s inp (workPair w₀ w₁), ?_⟩
+    show Code2TM.mk n ⟨q, fun s inp w => tr s inp (workPair (w 0) (w 1))⟩ = Code2TM.mk n ⟨q, tr⟩
+    congr 1
+    congr 1
+    funext s inp w
+    apply congrArg (tr s inp)
+    funext i
+    fin_cases i <;> simp [workPair]
+  readTable_append := fun _ t xs => codeReadTable2_append t xs
+  readTable_sound := fun _ xs t rest h => codeReadTable2_sound xs t rest h
+  readTable_erase := codeEraseTable2
+  tableBits_length := fun _ t => codeTable2Bits_length t
+
+/-- Stand-in for the retained typed alias `zfBDecode`. -/
+def probeDecode2 (xs : List Bool) : Code2TM := twoTapeFormat.decode xs
+
+-- (D9) the ZF-B3 private statements keep their exact text, re-proved by instantiation
+-- (`zfB3_decode_length`, `zfB3_decode_states`, `zfB3_guard_failure`; `zfB3Answer_malformed`'s
+-- `hd` step with the restated hypothesis `twoTapeFormat.parseFull α = none`)
+example (α : List Bool) : (probeDecode2 α).serialize.length ≤ max α.length 354 := by
+  have h := twoTapeFormat.serialize_decode_length_le α
+  change (probeDecode2 α).serialize.length ≤ max α.length probeFallback2.serialize.length at h
+  rwa [probeFallback2_serialize_length] at h
+
+example (α : List Bool) : 351 * ((probeDecode2 α).numStates + 1) ≤ max α.length 354 := by
+  have h := twoTapeFormat.numStates_decode_le α
+  change 351 * ((probeDecode2 α).numStates + 1) ≤
+    max α.length probeFallback2.serialize.length at h
+  rwa [probeFallback2_serialize_length] at h
+
+example (α bits rest : List Bool) (hp : pairDecode α = some (bits, rest))
+    (hg : rest.length < 351 * (codeBitsNat bits + 1)) : probeDecode2 α = probeFallback2 :=
+  twoTapeFormat.decode_of_guard_lt α bits rest hp hg
+
+example (α : List Bool) (hparse : twoTapeFormat.parseFull α = none) :
+    probeDecode2 α = probeFallback2 :=
+  twoTapeFormat.decode_of_parseFull_none α hparse
+
+-- (D7e) the two-tape transport, at the field type of `MachineCode2.decode_encode_pad`
+example (M : Code2TM) (m : ℕ) :
+    twoTapeFormat.decode (M.serialize ++ List.replicate m true) = M :=
+  twoTapeFormat.decode_serialize_pad M m
+
+/-! ## Stage E: the generic primitive-recursion layer and scheme assembly (MathlibBridge level) -/
+
+lemma codePrimSkipWork : Primrec codeSkipWork :=
+  Primrec.option_bind (codePrimSkipPair _) ((codePrimSkipPair _).comp Primrec.snd).to₂
+
+-- (M) mirrors `codePrimSkipAction`, with one counted repetition
+lemma codePrimSkipActionK (k : ℕ) : Primrec₂ (codeSkipActionK k) := by
+  have hrep : Primrec (codeSkipRepeat codeSkipWork k) :=
+    (codePrimRepeat (fun (_ : ℕ) => codeSkipWork) (codePrimSkipWork.comp Primrec.snd).to₂
+      (fun _ => k) (Primrec.const k)).comp (Primrec.const 0) Primrec.id
+  unfold codeSkipActionK
+  apply Primrec.option_bind ((codePrimSkipPair _).comp Primrec.snd)
+  change Primrec _
+  apply Primrec.option_bind (hrep.comp Primrec.snd)
+  change Primrec _
+  apply Primrec.option_bind ((codePrimSkipPair _).comp Primrec.snd)
+  change Primrec _
+  exact codePrimSkipState.comp (Primrec.succ.comp
+    (Primrec.fst.comp (Primrec.fst.comp (Primrec.fst.comp Primrec.fst)))) Primrec.snd
+
+-- (D8) the generic `codePrimScan`: `81`/`351` become `F.guard`, the nested repeat becomes `h`
+theorem CodeFormat.primrec_scan (F : CodeFormat) (h : Primrec₂ F.skipTable) :
+    Primrec F.scan := by
+  unfold CodeFormat.scan
+  apply Primrec.option_bind codePrimPair
+  change Primrec _
+  apply Primrec.ite ((Primrec.eq.comp (Primrec.fst.comp Primrec.snd)
+    (codePrimBits.comp (codePrimBitsNat.comp (Primrec.fst.comp Primrec.snd)))).not)
+    (Primrec.const none)
+  apply Primrec.ite (Primrec.nat_lt.comp
+    (Primrec.list_length.comp (Primrec.snd.comp Primrec.snd))
+    (Primrec.nat_mul.comp (Primrec.const F.guard)
+      (Primrec.succ.comp (codePrimBitsNat.comp (Primrec.fst.comp Primrec.snd)))))
+    (Primrec.const none)
+  apply Primrec.option_bind (codePrimSkipFin.comp
+    (Primrec.succ.comp (codePrimBitsNat.comp (Primrec.fst.comp Primrec.snd)))
+    (Primrec.snd.comp Primrec.snd))
+  change Primrec _
+  apply Primrec.option_bind (h.comp
+    (codePrimBitsNat.comp (Primrec.fst.comp (Primrec.snd.comp Primrec.fst))) Primrec.snd)
+  change Primrec _
+  exact Primrec.ite (Primrec.eq.comp (codePrimAll.comp Primrec.snd) (Primrec.const true))
+    (Primrec.option_some.comp Primrec.snd) (Primrec.const none)
+
+theorem CodeFormat.primrec_canonical (F : CodeFormat) (h : Primrec₂ F.skipTable) :
+    Primrec F.canonical :=
+  Primrec.option_casesOn (F.primrec_scan h) (Primrec.const (F.serialize F.fallback))
+    (codePrimPrefix.comp Primrec.fst (Primrec.list_length.comp Primrec.snd))
+
+theorem CodeFormat.exists_canonizer (F : CodeFormat) (h : Primrec₂ F.skipTable) :
+    ∃ (M : FinTM Bool) (T : ℕ → ℕ),
+      M.ComputesFunInTime (fun xs => F.serialize (F.decode xs)) T := by
+  obtain ⟨M, T, hM⟩ := codePrim_machine F.canonical (F.primrec_canonical h)
+  have he : F.canonical = fun xs => F.serialize (F.decode xs) := funext F.canonical_eq
+  rw [he] at hM
+  exact ⟨M, T, hM⟩
+
+/-- Probe-local: the real `codePrimSkipAction` is private to `MathlibBridge`. -/
+lemma codePrimSkipAction' : Primrec₂ codeSkipAction :=
+  (codePrimSkipActionK 1).of_eq fun n xs => (codeSkipAction_eq_codeSkipActionK n xs).symm
+
+lemma codePrimSkipTable1 : Primrec₂ oneTapeFormat.skipTable := by
+  have h := codePrimRepeat _ (codePrimRepeat _ (codePrimRepeat _ codePrimSkipAction'
+    (fun _ => 3) (Primrec.const 3)) (fun _ => 3) (Primrec.const 3)) (fun n => n + 1) Primrec.succ
+  exact h
+
+lemma codePrimSkipTable2 : Primrec₂ codeSkipTable2 := by
+  have h := codePrimRepeat _ (codePrimRepeat _ (codePrimRepeat _ (codePrimRepeat _
+    (codePrimSkipActionK 2) (fun _ => 3) (Primrec.const 3)) (fun _ => 3) (Primrec.const 3))
+    (fun _ => 3) (Primrec.const 3)) (fun n => n + 1) Primrec.succ
+  exact h
+
+-- the existing private `codePrimScan`'s statement, from the generic layer (defeq to `codeScan`)
+example : Primrec codeScan := oneTapeFormat.primrec_scan codePrimSkipTable1
+
+-- the shape of `exists_effectiveMachineCode`'s literal, from the generic layer
+theorem probe_effective : Nonempty EffectiveMachineCode := by
+  obtain ⟨M, T, h⟩ := oneTapeFormat.exists_canonizer codePrimSkipTable1
+  exact ⟨{
+    encode := CodeTM.serialize
+    decode := probeDecode
+    decode_encode_pad := probe_decode_serialize_pad
+    canonizer := M
+    canonizerTime := T
+    canonizer_computes := h }⟩
+
+-- (D10) `MathlibBridge`'s private `codeCanonical_machine`, statement kept, as a one-line
+-- wrapper (shown with `probeDecode`, which is extensionally `codeDecode`)
+example : ∃ (M : FinTM Bool) (T : ℕ → ℕ),
+    M.ComputesFunInTime (fun xs => (probeDecode xs).serialize) T :=
+  oneTapeFormat.exists_canonizer codePrimSkipTable1
+
+-- (D11) `exists_effectiveMachineCode2`'s intended new proof, with the alias as `decode`
+theorem probe_effective2_alias : Nonempty EffectiveMachineCode2 := by
+  obtain ⟨M, T, h⟩ := twoTapeFormat.exists_canonizer codePrimSkipTable2
+  exact ⟨{
+    encode := Code2TM.serialize
+    decode := probeDecode2
+    decode_encode_pad := twoTapeFormat.decode_serialize_pad
+    canonizer := M
+    canonizerTime := T
+    canonizer_computes := h }⟩
+
+-- the shape of `exists_effectiveMachineCode2`'s literal, from the generic layer
+theorem probe_effective2 : Nonempty EffectiveMachineCode2 := by
+  obtain ⟨M, T, h⟩ := twoTapeFormat.exists_canonizer codePrimSkipTable2
+  exact ⟨{
+    encode := Code2TM.serialize
+    decode := twoTapeFormat.decode
+    decode_encode_pad := twoTapeFormat.decode_serialize_pad
+    canonizer := M
+    canonizerTime := T
+    canonizer_computes := h }⟩
+
+end Turing
+
+#print axioms Turing.probe_decode_serialize_pad
+#print axioms Turing.probe_canonical_eq
+#print axioms Turing.probeDecode_eq_codeDecode
+#print axioms Turing.probe_effective
+#print axioms Turing.probe_effective2
+#print axioms Turing.probe_effective2_alias
+#print axioms Turing.oneTapeFormat
+#print axioms Turing.CodeFormat.serialize_decode_length_le
+#print axioms Turing.CodeFormat.numStates_decode_le
+#print axioms Turing.CodeFormat.decode_of_guard_lt
+#print axioms Turing.CodeFormat.decode_of_parseFull_none
+#print axioms Turing.twoTapeFormat
+#print axioms Turing.CodeFormat.decode_serialize_pad
+#print axioms Turing.CodeFormat.canonical_eq
+#print axioms Turing.CodeFormat.exists_canonizer
+#print axioms Turing.codeSkipAction_eq_codeSkipActionK
+#print axioms Turing.actionBits_eq_actionBitsK
+#print axioms Turing.actionBits₂_eq_actionBitsK
