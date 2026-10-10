@@ -1,4 +1,5 @@
 Copy-text screen over Build/Catalog.lean: base 0658eb8c vs fill 0aea2108
+(regenerated after the fill gate, finding F2: CHANGED now compares numerator AND denominator)
 before: declarations screened: 372; copy pairs (target reproduces >= half of source): 276; reproduced text: 98,775 chars
 after:  declarations screened: 377; copy pairs (target reproduces >= half of source): 272; reproduced text: 98,445 chars
 
@@ -42,7 +43,7 @@ GONE pairs (20, 7,265 matched chars):
   - Catalog.lean::transferTM_spaceUsedByTape reproduces Catalog.lean::incrementTM_spaceUsedByTape: 266/495 = 54%
   - Catalog.lean::transferTM_spaceUsedByTape reproduces Catalog.lean::transferTM_run: 176/294 = 60%
 
-CHANGED shares (21):
+CHANGED shares (23; matched-character change +1,415):
   ~ Catalog.lean::catalogIncF reproduces Catalog.lean::catalogIncR: 61/122 = 50%  =>  152/220 = 69%
   ~ Catalog.lean::catalog_clear_trace reproduces Catalog.lean::catalog_copy_trace: 845/1233 = 69%  =>  793/1250 = 63%
   ~ Catalog.lean::catalog_clear_trace reproduces Catalog.lean::catalog_transfer_trace: 908/1537 = 59%  =>  869/1657 = 52%
@@ -53,6 +54,7 @@ CHANGED shares (21):
   ~ Catalog.lean::catalog_transfer_trace reproduces Catalog.lean::catalog_copy_trace: 1084/1233 = 88%  =>  1160/1250 = 93%
   ~ Catalog.lean::clearTM_run reproduces Catalog.lean::copyTM_run: 151/282 = 54%  =>  336/404 = 83%
   ~ Catalog.lean::compareTM_spaceUsedByTape reproduces Catalog.lean::clearTM_spaceUsedByTape: 225/318 = 71%  =>  223/434 = 51%
+  ~ Catalog.lean::compareTM_spaceUsedByTape reproduces Catalog.lean::copyTM_spaceUsedByTape: 315/473 = 67%  =>  315/581 = 54%
   ~ Catalog.lean::copyTM_run reproduces Catalog.lean::clearTM_run: 151/251 = 60%  =>  336/385 = 87%
   ~ Catalog.lean::copyTM_run reproduces Catalog.lean::transferTM_run: 270/294 = 92%  =>  388/680 = 57%
   ~ Catalog.lean::copyTM_spaceUsedByTape reproduces Catalog.lean::clearTM_spaceUsedByTape: 223/318 = 70%  =>  331/434 = 76%
@@ -60,6 +62,7 @@ CHANGED shares (21):
   ~ Catalog.lean::incrementTM_run_overflow reproduces Catalog.lean::copyTM_run: 145/282 = 51%  =>  280/404 = 69%
   ~ Catalog.lean::incrementTM_run_succ reproduces Catalog.lean::copyTM_run: 145/282 = 51%  =>  269/404 = 67%
   ~ Catalog.lean::incrementTM_run_succ reproduces Catalog.lean::incrementTM_run_overflow: 344/399 = 86%  =>  383/491 = 78%
+  ~ Catalog.lean::incrementTM_spaceUsedByTape reproduces Catalog.lean::clearTM_spaceUsedByTape: 244/318 = 77%  =>  244/434 = 56%
   ~ Catalog.lean::transferTM_run reproduces Catalog.lean::clearTM_run: 150/251 = 60%  =>  314/385 = 82%
   ~ Catalog.lean::transferTM_run reproduces Catalog.lean::copyTM_run: 270/282 = 96%  =>  388/404 = 96%
   ~ Catalog.lean::transferTM_spaceUsedByTape reproduces Catalog.lean::clearTM_spaceUsedByTape: 223/318 = 70%  =>  329/434 = 76%

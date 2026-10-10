@@ -56,3 +56,28 @@ authorship; the agent's report is `audits/s12-framed-agent-reports/fill-REPORT.m
 
 The canonical rows now derive from the framed contracts, as the gate asked.
 This unblocks ZF-A3. The fill rides the next fill-gate audit.
+
+## Fill gate CLOSED (round 1, 2026-10-10): 0 blockers, 0 majors, 2 minors, 5 notes
+
+Findings verbatim in `audits/s12-framed-fill-findings.md`; the pack is
+`audits/s12-framed-fill-{pack,bundle}.md`. **§12.6 is complete end to end:**
+statements, statement gate, fill, fill gate.
+
+The auditor blind-restated all 15 changed or added privates and confirmed one
+generalized trace per routine, with no canonical-only trace left. The binding
+route, the five canonical specializations, the four space rows, and the
+freeze and reordering all hold; reverse/forward patch replay reproduces both
+blob IDs.
+
+| Finding | Disposition |
+|---|---|
+| F1 (minor): "zero new copied declarations or proof bodies" overstates the text-level result | **Resolved in the ledger.** The fill added no additional canonical trace and no new copy family, and the binding census is unchanged. The disclosed sibling repetition is debt under 12.2c item 5, whose scope now explicitly covers the generalized traces, the framed consequence proofs, the canonical specializations and the space wrappers (plan §4d; new ledger acknowledgment row). The agent's report stays verbatim. |
+| F2 (minor): 23, not 21, changed persistent pairs | **Swept.** `copytext-diff.txt` was regenerated, comparing numerator and denominator; it reproduces the auditor's 23 and +1,415 exactly. The pack carries an erratum. |
+| F3–F5 (notes) | No action. |
+| F6 (note): the status-tag staleness is the only kind found | The doc-only refresh stays queued until RB5 lands, since `Embed.lean` is RB5's. |
+| F7 (note): keep attestations distinct | Recorded: at the requested tip `9a492650`, `Build/Catalog.lean` is blob `8d8cb704798f02af6014f8f27fa05075930c5521`. |
+
+The auditor also suggested a single-file factoring the fill could have made:
+one private consequence lemma for the three sweep contracts. It is recorded
+as the first step of 12.2c item 5. The ledger's Catalog denominator is
+updated to 428.

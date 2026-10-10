@@ -1084,8 +1084,31 @@ definitions and 10 sorried theorems. The refinements made while drafting:
   written inline; no new value function is defined.
 
 The executed pre-ship check is `audits/evidence/s12-counter/`, and the gate
-pack is `audits/s12-counter-{pack,bundle}.md`. Next: the statement gate, then
-a fill batch; ZF-B3's continuation follows that fill. The existing private
+pack is `audits/s12-counter-{pack,bundle}.md`.
+
+**Statement gate CLOSED (round 1, 2026-10-10: 0 blockers, 0 majors, 1 minor,
+5 notes; `audits/s12-counter-findings.md`).** No false theorem and no missing
+soundness hypothesis. Three notes correct or extend this design:
+
+- **SC-4: two continuations need a public prefix lemma.** Two `seamCompTM`
+  applications do wire both exits. The escape path through the first
+  composite, however, needs the pre-dispatch prefix correspondence, which
+  `seamCompTM_run_ofCfg`'s `hexit` cannot provide. The existing private
+  `seamComp_left` (`Build/Seam.lean`) proves exactly that. It is to be
+  promoted when the first two-continuation consumer is assembled, not copied.
+  This corrects decision 12.7.2's claim that "no new composition lemma is
+  needed."
+- **SC-3: the NTIME consumer needs a nondeterministic lifting.** The host's
+  contracts are deterministic (`MultiTapeTM`, `runFrom`). Before the NTIME
+  hierarchy fill, a choice-stream lifting contract is needed, with branch
+  alignment through the bookkeeping pauses.
+- **SC-5: an optional visited-set corollary.** A public `spaceUsedByTape` or
+  visited-set corollary of the trajectory clauses would save the space
+  consumers repeated bookkeeping.
+
+Next: the fill batch, after RB5 merges so the host proof can cite the
+promoted `MultiTapeTM.runFrom_mapState_of_agreeOn`. ZF-B3's continuation
+follows that fill. The existing private
 clocks are on the 12.2c tasklist as re-derivation targets (plan §4d,
 item 12).
 

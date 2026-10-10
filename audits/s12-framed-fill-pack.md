@@ -150,7 +150,10 @@ below. The audit object is therefore the **surface**:
   - **20 pairs are gone** (7,265 characters). These are mainly the old
     canonical traces' mutual copies: compare/clear/copy/increment traces,
     and `catalogCopyR` ↔ `catalogTransferR`.
-  - **21 shares changed.**
+  - **23 shares changed.** This was corrected after the fill gate (finding
+    F2): the original diff compared numerators only and missed two
+    denominator-only changes. The diff was regenerated, and the totals are
+    unchanged.
 
 ## Findings format
 
