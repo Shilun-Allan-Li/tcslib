@@ -59,13 +59,16 @@ Home: cells `0` (presence) and `1` (data). Right virtual slot `s`: cells
 of the inner capacities). Every integer cell is owned by exactly one slot
 or the home.
 
-## Status: statement skeleton (§13 statement phase, tranche A-S2, round 2)
+## Status: statement skeleton (§13 statement phase, tranche A-S2, round 3)
 
-Definitions are real; every contract is `sorry`d with a proof sketch. The
-round-1 gate (`audits/zone-infra-findings.md`) returned one blocker
-(A-S2-1, repaired here: the inward room premise removed, the wrappers
-split, the cascade statements added) and docstring corrections (A-S2-4,
-applied).
+Definitions are real; every contract is `sorry`d with a proof sketch.
+Round 1 (`audits/zone-infra-findings.md`) returned the inward-room blocker
+(A-S2-1, repaired: premise removed, wrappers split, cascade added); round
+2 (`audits/zone-infra-r2-findings.md`) accepted that repair and returned
+one blocker on the new cascade contracts (A-S2-R2-1, repaired: the
+top-left room hypotheses added — necessary for the lengths theorem, the
+weaker one-pass form for the word theorem — with the `j = 0` and
+blocked-cascade regressions).
 
 ## Main definitions and results
 
@@ -86,10 +89,13 @@ applied).
   the round-1 audit: a full donor above an empty zone shifts inward with
   no side condition.
 * `Turing.zoneCascadeRight`, `Turing.zoneSide_cascadeRight`,
-  `Turing.zoneCascadeRight_lengths`, `Turing.zoneCascade_cost_le` — the
-  classical rebalance as a cascade of pairwise ops: it realizes one
-  virtual right move, leaves every inner level half-full, and its summed
-  row budgets stay geometric.
+  `Turing.zoneCascadeRight_lengths`, `Turing.zoneCascade_cost_le`,
+  `Turing.zoneCascadeRight_zero`, `Turing.zoneCascadeRight_blocked` — the
+  classical rebalance as a cascade of pairwise ops: under the classical
+  pre-state **and the top-left room hypotheses** it realizes one virtual
+  right move and restores every inner level to half-full; its summed row
+  budgets stay geometric; the regressions pin the `j = 0` case and the
+  harmlessly blocked full-receiver case.
 * `Turing.FinTM.exists_zoneShiftInTM`/`exists_zoneShiftOutTM` — the
   machine rows: one two-tape machine per direction and side, level in
   unary on the scratch tape, exact `O(2^i)` budgets, visited sets inside
@@ -430,22 +436,32 @@ def zoneCascadeRight {ℓ : ℕ} (j : ℕ) (z : ZoneContents ℓ) : ZoneContents
       ((List.range j).reverse.foldl (fun z i => zoneStepPair (i + 1) z) z))
 
 /-- The cascade realizes exactly one virtual right move. Preconditions are
-the classical pre-state at index `j`: on the right, zones below `j` empty
-and the donor `j` nonempty; on the left, zones below `j` full.
+the classical pre-state at index `j` — on the right, zones below `j` empty
+and the donor `j` nonempty; on the left, zones below `j` full — **plus the
+top-left receiving room for one pass** (round-2 repair, A-S2-R2-1: without
+it, a full left zone `j` blocks the drain, the guarded ops are identities,
+and the conclusion is false already at `ℓ = 1`, `j = 0`). The `+ 2^(j-1)`
+form is the round-2 audit's weaker sufficient condition for the word
+equalities (at `j = 0`, natural subtraction makes it `+ 1`); the boundary
+instance with room for exactly one pass — where these equalities hold but
+half-full restoration fails — is the recorded reason this theorem's
+hypothesis is weaker than `zoneCascadeRight_lengths`'s.
 
-**Proof sketch** (the round-1 audit's schedule analysis, adopted as the
-binding route): on the descending pass each inward-right guard fires into
-an empty lower zone and each outward-left guard fires from a full lower
-zone with room above; after the head step, the ascending pass re-fires the
-same guards on the half-full intermediate state. Order preservation of the
-raw ops (`zoneSide_shiftInW`/`OutW`) and the single nonempty level-zero pop
-(`zoneSide_moveRight`) give the stated word transformation. -/
+**Proof sketch** (the round-2 audit's schedule analysis, adopted as the
+binding route): each descending prefix of the donor is nonempty, so `R₀`
+is nonempty at the central move, and the left descending pass makes room
+for the push under `hroom`; every surrounding shift preserves the
+concatenations whether its guard fires or not
+(`zoneSide_shiftInW`/`OutW`), so the single legal push/pop
+(`zoneSide_moveRight`) gives exactly the two word equalities. Half-full
+restoration is **not** used. -/
 theorem zoneSide_cascadeRight {ℓ : ℕ} (j : ℕ) (hj : j < ℓ)
     (z : ZoneContents ℓ)
     (hr : ∀ k (hk : k < j), z.right ⟨k, by omega⟩ = [])
     (hl : ∀ k (hk : k < j),
       (z.left ⟨k, by omega⟩).length = zoneCapacity k)
-    (hdonor : z.right ⟨j, hj⟩ ≠ []) :
+    (hdonor : z.right ⟨j, hj⟩ ≠ [])
+    (hroom : (z.left ⟨j, hj⟩).length + 2 ^ (j - 1) ≤ zoneCapacity j) :
     zoneSide (zoneCascadeRight j z).left = z.home :: zoneSide z.left ∧
     zoneSide (zoneCascadeRight j z).right = (zoneSide z.right).tail := by
   sorry
@@ -455,16 +471,28 @@ classical right move at index `j` from a donor holding at least `2^j`
 cells, every level below `j` is half-full on both sides, the right donor
 loses exactly `2^j` cells, and the left zone `j` gains exactly `2^j`.
 
-**Proof sketch.** Track the two passes level by level (the round-1 audit's
-ledger): the descending pass makes each lower receiving word half-full and
-leaves the remainder upstairs; the ascending pass halves the level-zero
-surplus back upward symmetrically. -/
+The top-left room hypothesis is **necessary** (round-2 repair,
+A-S2-R2-1): the conclusion's left-top growth together with the result's
+`left_le` field imply exactly `|L_j| + 2^j ≤ zoneCapacity j`, and the
+classical stable invariant (`|L_j| + |R_j| = 2 · zoneCapacity j / 2` with
+`|R_j| ≥ 2^j`) supplies it on every textbook pre-state, so no classical
+instance is excluded.
+
+**Proof sketch** (the round-2 audit's two-pass induction, adopted as the
+binding route): the descending pass ends with the level-zero pair at
+`(1, 1)`, each intermediate level `k` at `(2^(k-1), 3·2^(k-1))`, and the
+top pair shifted by `2^(j-1)` — the top outward push legal by `hroom`,
+the lower receivers legal because they were just drained; the head move
+makes level zero `(0, 2)`; the ascending pass re-fires every guard on
+those occupancies, the second top push legal exactly because
+`|L_j| + 2^(j-1) + 2^(j-1) = |L_j| + 2^j ≤ zoneCapacity j`. -/
 theorem zoneCascadeRight_lengths {ℓ : ℕ} (j : ℕ) (hj : j < ℓ)
     (z : ZoneContents ℓ)
     (hr : ∀ k (hk : k < j), z.right ⟨k, by omega⟩ = [])
     (hl : ∀ k (hk : k < j),
       (z.left ⟨k, by omega⟩).length = zoneCapacity k)
-    (hdonor : 2 ^ j ≤ (z.right ⟨j, hj⟩).length) :
+    (hdonor : 2 ^ j ≤ (z.right ⟨j, hj⟩).length)
+    (hroom : (z.left ⟨j, hj⟩).length + 2 ^ j ≤ zoneCapacity j) :
     (∀ k (hk : k < j),
       ((zoneCascadeRight j z).right ⟨k, by omega⟩).length = 2 ^ k ∧
       ((zoneCascadeRight j z).left ⟨k, by omega⟩).length = 2 ^ k) ∧
@@ -472,6 +500,37 @@ theorem zoneCascadeRight_lengths {ℓ : ℕ} (j : ℕ) (hj : j < ℓ)
       (z.right ⟨j, hj⟩).length - 2 ^ j ∧
     ((zoneCascadeRight j z).left ⟨j, hj⟩).length =
       (z.left ⟨j, hj⟩).length + 2 ^ j := by
+  sorry
+
+/-- Regression (round-2 audit, A-S2-R2-1): the `j = 0` cascade is exactly
+the guarded head move, and with level-zero room and a nonempty donor it
+realizes the virtual right move.
+
+**Proof sketch.** `List.range 0 = []`, so the folds vanish; `zoneMove`'s
+guard fires by the hypotheses and `zoneSide_moveRight` finishes. -/
+theorem zoneCascadeRight_zero {ℓ : ℕ} (hℓ : 0 < ℓ) (z : ZoneContents ℓ)
+    (hdonor : z.right ⟨0, hℓ⟩ ≠ [])
+    (hroom : (z.left ⟨0, hℓ⟩).length + 1 ≤ zoneCapacity 0) :
+    zoneSide (zoneCascadeRight 0 z).left = z.home :: zoneSide z.left ∧
+    zoneSide (zoneCascadeRight 0 z).right = (zoneSide z.right).tail := by
+  sorry
+
+/-- Regression (round-2 audit, A-S2-R2-1): a **full top receiver** blocks
+the cascade harmlessly — with the classical lower-left state and
+`L_j` at capacity, every outward-left guard fails, the head move is
+blocked, and the represented words on both sides are unchanged.
+
+**Proof sketch.** Lower left zones are full, so no outward-left guard
+below `j` has room; at `j` the receiver is full; hence `L₀` stays full and
+`zoneMove` takes its identity branch. The inward-right shifts preserve the
+right concatenation by `zoneSide_shiftInW`. -/
+theorem zoneCascadeRight_blocked {ℓ : ℕ} (j : ℕ) (hj : j < ℓ)
+    (z : ZoneContents ℓ)
+    (hl : ∀ k (hk : k < j),
+      (z.left ⟨k, by omega⟩).length = zoneCapacity k)
+    (hfull : (z.left ⟨j, hj⟩).length = zoneCapacity j) :
+    zoneSide (zoneCascadeRight j z).left = zoneSide z.left ∧
+    zoneSide (zoneCascadeRight j z).right = zoneSide z.right := by
   sorry
 
 /-- The cascade's summed row budgets stay geometric: the charge lemma the
