@@ -38,9 +38,23 @@ computed values where available and estimates under the same rule marked
 | `Build/Loop.lean` | 212 | 87 →Catalog (of the historical 95; strict 85) + 4 relocation originals (`emCallAction`/`emCallCfg`/`emCall_apply`/`emCall_relocate_run`, the batch-L source of the three-file family) | 13 H3 exact copies (`emLoopHost_*`; their `loopHost_*` originals are already in the 87 and are not double-counted; the `_init` near-copy noted, uncounted) | **104** | **49.1%** | 2,009 (auditor) + 73 + ≈512 |
 | `Build/Primitives.lean` | 272 | 146 →Catalog (of the historical 150; strict 143) | 4 relocation copies (`emitterP2Action`/`emitterP2Cfg`/`emitterP2_apply`/`emitterP2_relocate_run` — **byte-identical to Loop's after identifier substitution**, round-2 verified) | **150** | **55.1%** | 3,162 (auditor) + 73 |
 | `CookLevin/Hardness.lean` | 549 | 0 | 4 relocation copies (`clSlotAction`/`clSlotCfg`/`clSlot_apply`/`clSlot_run` — likewise byte-identical) | **4** | **0.73%** | 73 |
-| `Build/Catalog.lean` | 423 | 0 | 150 Primitives-sourced + 95 Loop-sourced + 17 Wrappers-sourced (10 `f2_timed*`, 7 `catalog_redirect*`) + 2 in-file `a2_` duplicates of `f2_` sum facts | **264** | **62.4%** (strict: 259, 61.2%) | ≈6,000 |
-| `Build/Wrappers.lean` | 29 (10 pub + 19 priv) | 17 | 0 | **17** | **58.6%** | ≈450 |
+| `Build/Catalog.lean` | 423 | 2 in-file originals (`f2_finSumEquiv`, `f2_sum_add` — their `a2_` copies are normalized-identical, round-3 verified) | 150 Primitives-sourced + 95 Loop-sourced + 17 Wrappers-sourced (10 `f2_timed*`, 7 `catalog_redirect*`) + 2 in-file `a2_` copies + **3 Composition-sourced** (`f2_idTM`, `f2_idTM_run`, `f2_constTM` — maintainer-reconciled normalized-identical to `Composition.lean`'s originals) + **20 counter-block members** (`f2_counterInc` … `f2_counter_computes` — maintainer reconciliation, declaration by declaration: **19 normalized-identical** to `ClassP/TimeConstructible.lean`'s originals, and `f2_counter_computes` a **near-copy adaptation** of the proof body of the public `timeConstructible_id`) | **289** | **68.3%** (strict — excluding the 5 strengthened counterparts and the 1 near-copy: 283, 66.9%) | 5,754 + 30 (the round-3 span measurements) + ≈320 (counter/Composition blocks) |
+| `Build/Wrappers.lean` | 29 (10 pub + 19 priv) | 17 | 0 | **17** | **58.6%** | 297 (round-3 span count: 77 redirect + 220 timed) |
+| `ClassP/TimeConstructible.lean` | 21 | 20 (the 19 identical counter originals + `timeConstructible_id`, the near-copy's source) | 0 | **20** | **95.2%** | ≈330 |
+| `TuringMachine/Composition.lean` | 19 | 3 (`idTM`, `idTM_run`, `constTM`) | 0 | **3** | **15.8%** | ≈95 |
 | `Build/Embed.lean`, `Build/Seam.lean`, `Build/VirtualInput.lean`, `Build/Zone.lean`, `Simulation.lean`, `Codes2Tape.lean` | — | 0 | 0 | 0 | 0% | 0 |
+
+**Reconciliation note (round-3 repair, R3-1/R3-2)**: the F2A report's 306
+inventory entries decompose as 254 in the Primitives/Loop partitions, the
+3 Composition copies, the 20 counter-block members, and **29 entries that
+are genuinely new space-proof material, not copies** (the `f2_polyHeads`/
+`f2_space_of_time`/`f2_segment_heads`-class engines and the space
+strengthenings) — reconciled declaration by declaration by the maintainer
+with normalized source comparison; the per-declaration verdicts are
+reproducible from the attached sources. The A2 report's 45 `a2_`
+declarations contribute the 2 in-file copies, `a2_loop_halted_run`
+(counted in the Loop-sourced 95), and 42 new-construction declarations
+that are not copies.
 
 Copy-side counts deliberately include copies whose originals were deleted
 in R1 (the copies persist; deletion of an original does not shrink the
