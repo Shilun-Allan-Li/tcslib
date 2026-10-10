@@ -1,0 +1,118 @@
+# CodeParser/MathlibBridge promotion — downstream replay — 2026-10-10T04:50:04Z — working tree over 343bef7a
+TCSlib/Complexity/TuringMachine/CodeParser rc=0 errors=0 sorry_decls=0
+TCSlib/Complexity/TuringMachine/MathlibBridge rc=0 errors=0 sorry_decls=0
+TCSlib/Complexity/CircuitComplexity/UHaltMachine rc=0 errors=0 sorry_decls=0
+TCSlib/Complexity/CircuitComplexity/PSubsetPPoly rc=0 errors=0 sorry_decls=0
+TCSlib/Complexity/CircuitComplexity/PAdviceSubsetPPoly rc=1 errors=1 sorry_decls=0
+    | TCSlib/Complexity/CircuitComplexity/PAdviceSubsetPPoly.lean:6:0: error: object file '/Users/seyoonr/phd_experiments/tcslib/.lake/tcslib-check-oleans/TCSlib/Complexity/CircuitComplexity/PSubsetPPolyConfigCircuit.olean' of module TCSlib.Complexity.CircuitComplexity.PSubsetPPolyConfigCircuit does not exist
+    | FAIL(TCSlib/Complexity/CircuitComplexity/PAdviceSubsetPPoly): error diagnostics reported
+TCSlib/Complexity/TimeHierarchy/Diagonal rc=0 errors=0 sorry_decls=0
+TCSlib/Complexity/TimeHierarchy/Separation rc=0 errors=0 sorry_decls=0
+TCSlib/Complexity/CircuitComplexity/Meyer rc=1 errors=1 sorry_decls=0
+    | TCSlib/Complexity/CircuitComplexity/Meyer.lean:6:0: error: object file '/Users/seyoonr/phd_experiments/tcslib/.lake/tcslib-check-oleans/TCSlib/Complexity/CircuitComplexity/MeyerSigma.olean' of module TCSlib.Complexity.CircuitComplexity.MeyerSigma does not exist
+    | FAIL(TCSlib/Complexity/CircuitComplexity/Meyer): error diagnostics reported
+TCSlib/Complexity/CircuitComplexity rc=1 errors=1 sorry_decls=0
+    | TCSlib/Complexity/CircuitComplexity.lean:6:0: error: object file '/Users/seyoonr/phd_experiments/tcslib/.lake/tcslib-check-oleans/TCSlib/Complexity/CircuitComplexity/Formulas.olean' of module TCSlib.Complexity.CircuitComplexity.Formulas does not exist
+    | FAIL(TCSlib/Complexity/CircuitComplexity): error diagnostics reported
+TCSlib/Complexity/Diagonalization/EXPCOM rc=0 errors=0 sorry_decls=6
+TCSlib/Complexity/Diagonalization/Relativization rc=0 errors=0 sorry_decls=4
+TCSlib/Complexity/Diagonalization/NotTimeConstructible rc=0 errors=0 sorry_decls=1
+TCSlib/Complexity/Diagonalization rc=0 errors=0 sorry_decls=0
+TCSlib/Complexity/Randomized/PolyTimeModel rc=0 errors=0 sorry_decls=0
+TCSlib/Complexity/Randomized rc=0 errors=0 sorry_decls=0
+TCSlib/Complexity/SpaceComplexity/Hierarchy rc=0 errors=0 sorry_decls=4
+TCSlib/Complexity/SpaceComplexity rc=0 errors=0 sorry_decls=0
+TCSlib/Complexity/TimeHierarchy rc=0 errors=0 sorry_decls=0
+TCSlib/Complexity/TuringMachine rc=0 errors=0 sorry_decls=0
+TOTAL: failures=3 sorry_decls=15
+
+# The three failures above were missing upstream circuit .oleans (scratch-tree gap); completion run follows (87 modules incl. the three re-checks):
+# promotion replay, circuit closure completion — 2026-10-10T04:51:34Z
+TCSlib/Complexity/CircuitComplexity/PSubsetPPolyConfigStep rc=0 errors=0 sorry_decls=0
+TCSlib/Complexity/CircuitComplexity/PSubsetPPolyProgram rc=0 errors=0 sorry_decls=0
+TCSlib/Complexity/CircuitComplexity/PSubsetPPolyConfig rc=0 errors=0 sorry_decls=0
+TCSlib/Complexity/CircuitComplexity/PSubsetPPolyConfigCircuit rc=0 errors=0 sorry_decls=0
+TCSlib/Complexity/CircuitComplexity/Advice rc=0 errors=0 sorry_decls=0
+TCSlib/Complexity/CircuitComplexity/UnaryCode rc=0 errors=0 sorry_decls=0
+TCSlib/Complexity/CircuitComplexity/Uniform rc=0 errors=0 sorry_decls=0
+TCSlib/Complexity/CircuitComplexity/CircuitEvalSpec rc=0 errors=0 sorry_decls=0
+TCSlib/Complexity/CircuitComplexity/CircuitEvalCorrect rc=0 errors=0 sorry_decls=0
+TCSlib/Complexity/CircuitComplexity/CircuitEvalMachine rc=0 errors=0 sorry_decls=0
+TCSlib/Complexity/CircuitComplexity/CircuitEvalRun rc=0 errors=0 sorry_decls=0
+TCSlib/Complexity/CircuitComplexity/CircuitEval rc=0 errors=0 sorry_decls=0
+TCSlib/Complexity/CircuitComplexity/PPolyAdvice rc=0 errors=0 sorry_decls=0
+TCSlib/Complexity/CircuitComplexity/PAdviceSubsetPPoly rc=0 errors=0 sorry_decls=0
+TCSlib/Complexity/CircuitComplexity/MeyerMachine rc=0 errors=0 sorry_decls=0
+TCSlib/Complexity/CircuitComplexity/MeyerMachineParse rc=0 errors=0 sorry_decls=0
+TCSlib/Complexity/CircuitComplexity/MeyerMachineSetup rc=0 errors=0 sorry_decls=0
+TCSlib/Complexity/CircuitComplexity/MeyerMachineRun rc=0 errors=0 sorry_decls=0
+TCSlib/Complexity/CircuitComplexity/MeyerMachineWalk rc=0 errors=0 sorry_decls=0
+TCSlib/Complexity/CircuitComplexity/MeyerTab rc=0 errors=0 sorry_decls=0
+TCSlib/Complexity/CircuitComplexity/MeyerTableau rc=0 errors=0 sorry_decls=0
+TCSlib/Complexity/CircuitComplexity/DAGCircuitSat rc=0 errors=0 sorry_decls=0
+TCSlib/Complexity/CircuitComplexity/DAGCircuitSatLang rc=0 errors=0 sorry_decls=0
+TCSlib/Complexity/CircuitComplexity/CircuitSatReductionValid rc=0 errors=0 sorry_decls=0
+TCSlib/Complexity/CircuitComplexity/KarpLiptonPrefix rc=0 errors=0 sorry_decls=0
+TCSlib/Complexity/CircuitComplexity/MeyerVerifierGlue rc=0 errors=0 sorry_decls=0
+TCSlib/Complexity/CircuitComplexity/MeyerVerifier rc=0 errors=0 sorry_decls=0
+TCSlib/Complexity/CircuitComplexity/MeyerSound rc=0 errors=0 sorry_decls=0
+TCSlib/Complexity/CircuitComplexity/MeyerSoundInput rc=0 errors=0 sorry_decls=0
+TCSlib/Complexity/CircuitComplexity/MeyerComplete rc=0 errors=0 sorry_decls=0
+TCSlib/Complexity/CircuitComplexity/MeyerSigma rc=0 errors=0 sorry_decls=0
+TCSlib/Complexity/CircuitComplexity/MeyerSigmaEXP rc=0 errors=0 sorry_decls=0
+TCSlib/Complexity/CircuitComplexity/Meyer rc=0 errors=0 sorry_decls=0
+TCSlib/Complexity/CircuitComplexity/Formulas rc=0 errors=0 sorry_decls=0
+TCSlib/Complexity/CircuitComplexity/TreeNCAC rc=0 errors=0 sorry_decls=0
+TCSlib/Complexity/CircuitComplexity/NCAC rc=0 errors=0 sorry_decls=0
+TCSlib/Complexity/NPReductions/SATTo3SAT rc=0 errors=0 sorry_decls=0
+TCSlib/Complexity/CircuitComplexity/CircuitSat rc=0 errors=0 sorry_decls=0
+TCSlib/Complexity/CircuitComplexity/Encoding rc=0 errors=0 sorry_decls=0
+TCSlib/Complexity/CircuitComplexity/HardFunctions rc=0 errors=0 sorry_decls=0
+TCSlib/Complexity/CircuitComplexity/Parity rc=0 errors=0 sorry_decls=0
+TCSlib/Complexity/CircuitComplexity/Hierarchy rc=0 errors=0 sorry_decls=0
+TCSlib/Complexity/CircuitComplexity/UHalt rc=0 errors=0 sorry_decls=0
+TCSlib/Complexity/CircuitComplexity/StraightLine rc=0 errors=0 sorry_decls=0
+TCSlib/Complexity/CircuitComplexity/StraightLineDualRail rc=0 errors=0 sorry_decls=0
+TCSlib/Complexity/CircuitComplexity/Adder rc=0 errors=0 sorry_decls=0
+TCSlib/Complexity/CircuitComplexity/AdderLanguage rc=0 errors=0 sorry_decls=0
+TCSlib/Complexity/CircuitComplexity/DAGHardFunctions rc=0 errors=0 sorry_decls=0
+TCSlib/Complexity/CircuitComplexity/CircuitEvalNP rc=0 errors=0 sorry_decls=0
+TCSlib/Complexity/CircuitComplexity/PUniformP rc=0 errors=0 sorry_decls=0
+TCSlib/Complexity/CircuitComplexity/CircuitSatReductionSpec rc=0 errors=0 sorry_decls=0
+TCSlib/Complexity/CircuitComplexity/CircuitSatReductionMachineTapes rc=0 errors=0 sorry_decls=0
+TCSlib/Complexity/CircuitComplexity/CircuitSatReductionMachine rc=0 errors=0 sorry_decls=0
+TCSlib/Complexity/CircuitComplexity/CircuitSatReduction rc=0 errors=0 sorry_decls=0
+TCSlib/Complexity/CircuitComplexity/BookModelBasics rc=0 errors=0 sorry_decls=0
+TCSlib/Complexity/CircuitComplexity/LupanovGates rc=0 errors=0 sorry_decls=0
+TCSlib/Complexity/CircuitComplexity/Lupanov rc=0 errors=0 sorry_decls=0
+TCSlib/Complexity/CircuitComplexity/FanOut rc=0 errors=0 sorry_decls=0
+TCSlib/Complexity/CircuitComplexity/FormulaFanOut rc=0 errors=0 sorry_decls=0
+TCSlib/Complexity/CircuitComplexity/StrictCircuit rc=0 errors=0 sorry_decls=0
+TCSlib/Complexity/CircuitComplexity/StrictSize rc=0 errors=0 sorry_decls=0
+TCSlib/Complexity/CircuitComplexity/StrictFanOut rc=0 errors=0 sorry_decls=0
+TCSlib/Complexity/CircuitComplexity/SequentialCircuit rc=0 errors=0 sorry_decls=0
+TCSlib/Complexity/CircuitComplexity/ShannonProbabilistic rc=0 errors=0 sorry_decls=0
+TCSlib/Complexity/CircuitComplexity/StraightLineSmall rc=0 errors=0 sorry_decls=0
+TCSlib/Complexity/CircuitComplexity/KarpLiptonSearch rc=0 errors=0 sorry_decls=0
+TCSlib/Complexity/CircuitComplexity/KarpLipton rc=0 errors=0 sorry_decls=0
+TCSlib/Complexity/CircuitComplexity/KarpLiptonSearchFamily rc=0 errors=0 sorry_decls=0
+TCSlib/Complexity/CircuitComplexity/UniformTableauCircuit rc=0 errors=0 sorry_decls=0
+TCSlib/Complexity/CircuitComplexity/UniformTableauSpec rc=0 errors=0 sorry_decls=0
+TCSlib/Complexity/CircuitComplexity/UniformTableauEmitter rc=0 errors=0 sorry_decls=0
+TCSlib/Complexity/CircuitComplexity/UniformTableauEmitterInstr rc=0 errors=0 sorry_decls=0
+TCSlib/Complexity/CircuitComplexity/UniformTableauEmitterLayer rc=0 errors=0 sorry_decls=0
+TCSlib/Complexity/CircuitComplexity/UniformTableauEmitterSteps rc=0 errors=0 sorry_decls=0
+TCSlib/Complexity/CircuitComplexity/UniformTableauEmitterMain rc=0 errors=0 sorry_decls=0
+TCSlib/Complexity/CircuitComplexity/UniformTableau rc=0 errors=0 sorry_decls=0
+TCSlib/Complexity/CircuitComplexity/CircuitSatNPHard rc=0 errors=0 sorry_decls=0
+TCSlib/Complexity/CircuitComplexity/LogspaceUniform rc=0 errors=0 sorry_decls=0
+TCSlib/Complexity/CircuitComplexity/LogspaceUniformAdjBasic rc=0 errors=0 sorry_decls=0
+TCSlib/Complexity/CircuitComplexity/LogspaceUniformScan rc=0 errors=0 sorry_decls=0
+TCSlib/Complexity/CircuitComplexity/LogspaceUniformWalk rc=0 errors=0 sorry_decls=0
+TCSlib/Complexity/CircuitComplexity/LogspaceUniformAdj rc=0 errors=0 sorry_decls=0
+TCSlib/Complexity/CircuitComplexity/LogspaceUniformCanon rc=0 errors=0 sorry_decls=0
+TCSlib/Complexity/CircuitComplexity/LogspaceTableauFront rc=0 errors=0 sorry_decls=0
+TCSlib/Complexity/CircuitComplexity/LogspaceTableau rc=0 errors=0 sorry_decls=0
+TCSlib/Complexity/CircuitComplexity/LogspaceUniformExample rc=0 errors=0 sorry_decls=0
+TCSlib/Complexity/CircuitComplexity rc=0 errors=0 sorry_decls=0
+TOTAL: failures=0

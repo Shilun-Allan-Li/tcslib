@@ -35,6 +35,11 @@ epoch-3→4 merge; its content is the epoch-3 fill, batch A.
   under arbitrary `true`-padding.
 * `Turing.codeCanonical_eq` — the scanner-based canonizer computes exactly
   `fun xs => (codeDecode xs).serialize`.
+* The format-independent field-reader layer — the readers `Turing.codeReadFin`,
+  `codeReadSign`, `codeReadOutput`, `codeReadWrite`, `codeReadState`,
+  `codeReadSymbols`, `codeReadVec`; their exact prefix inverses (`_append`),
+  soundness (`_sound`) and suffix-erasure (`codeErase*`) laws; `codeBitsNat_bits`
+  and `codeFlatMap_length` — for reuse by other machine-code formats.
 
 ## References
 
@@ -51,7 +56,7 @@ def codeReadUnary : List Bool → Option (ℕ × List Bool)
   | [] => none
 
 /-- The unary reader leaves an arbitrary suffix untouched. -/
-private lemma codeReadUnary_append (n : ℕ) (xs : List Bool) :
+lemma codeReadUnary_append (n : ℕ) (xs : List Bool) :
     codeReadUnary (List.replicate n true ++ false :: xs) = some (n, xs) := by
   induction n with
   | zero => rfl
@@ -60,26 +65,26 @@ private lemma codeReadUnary_append (n : ℕ) (xs : List Bool) :
       congrArg (Option.map fun p : ℕ × List Bool => (p.1 + 1, p.2)) ih
 
 /-- A unary index is accepted only when it belongs to the declared state space. -/
-private def codeReadFin (n : ℕ) (xs : List Bool) : Option (Fin n × List Bool) := do
+def codeReadFin (n : ℕ) (xs : List Bool) : Option (Fin n × List Bool) := do
   let (i, rest) ← codeReadUnary xs
   if h : i < n then some (⟨i, h⟩, rest) else none
 
 /-- Decode the fixed dictionary for a head movement. -/
-private def codeReadSign : List Bool → Option (SignType × List Bool)
+def codeReadSign : List Bool → Option (SignType × List Bool)
   | true :: true :: xs => some (.neg, xs)
   | false :: false :: xs => some (.zero, xs)
   | true :: false :: xs => some (.pos, xs)
   | _ => none
 
 /-- Decode the fixed dictionary for an optional output bit. -/
-private def codeReadOutput : List Bool → Option (Option Bool × List Bool)
+def codeReadOutput : List Bool → Option (Option Bool × List Bool)
   | false :: false :: xs => some (none, xs)
   | true :: false :: xs => some (some false, xs)
   | true :: true :: xs => some (some true, xs)
   | _ => none
 
 /-- Decode the fixed dictionary for an optional work-tape write. -/
-private def codeReadWrite : List Bool → Option (Option (Option Bool) × List Bool)
+def codeReadWrite : List Bool → Option (Option (Option Bool) × List Bool)
   | false :: false :: xs => some (none, xs)
   | false :: true :: xs => some (some none, xs)
   | true :: false :: xs => some (some (some false), xs)
@@ -87,7 +92,7 @@ private def codeReadWrite : List Bool → Option (Option (Option Bool) × List B
   | _ => none
 
 /-- Read the halt tag or a range-checked live successor state. -/
-private def codeReadState (n : ℕ) : List Bool → Option (Option (Fin n) × List Bool)
+def codeReadState (n : ℕ) : List Bool → Option (Option (Fin n) × List Bool)
   | false :: xs => some (none, xs)
   | true :: xs => (codeReadFin n xs).map fun p => (some p.1, p.2)
   | [] => none
@@ -103,7 +108,7 @@ private def codeReadAction (n : ℕ) (xs : List Bool) :
   pure (⟨im, fun _ => (wr, wm), out, q⟩, xs)
 
 /-- Read one entry for each tape symbol, in blank/false/true order. -/
-private def codeReadSymbols {A : Type} (read : List Bool → Option (A × List Bool))
+def codeReadSymbols {A : Type} (read : List Bool → Option (A × List Bool))
     (xs : List Bool) : Option ((Option Bool → A) × List Bool) := do
   let (a, xs) ← read xs
   let (b, xs) ← read xs
@@ -112,7 +117,7 @@ private def codeReadSymbols {A : Type} (read : List Bool → Option (A × List B
 
 /-- Read a fixed-size vector. Its caller checks the minimum total input length
 before invoking it; a malformed field also aborts immediately. -/
-private def codeReadVec {A : Type} (read : List Bool → Option (A × List Bool)) :
+def codeReadVec {A : Type} (read : List Bool → Option (A × List Bool)) :
     (n : ℕ) → List Bool → Option ((Fin n → A) × List Bool)
   | 0, xs => some (Fin.elim0, xs)
   | n + 1, xs => do
@@ -147,24 +152,24 @@ private def codeParse (xs : List Bool) : Option CodeTM := do
 def codeDecode (xs : List Bool) : CodeTM := (codeParse xs).getD codeFallback
 
 /-- Reading an encoded bounded index is an exact prefix inverse. -/
-private lemma codeReadFin_append {n : ℕ} (i : Fin n) (xs : List Bool) :
+lemma codeReadFin_append {n : ℕ} (i : Fin n) (xs : List Bool) :
     codeReadFin n (unaryFin i ++ xs) = some (i, xs) := by
   simp [codeReadFin, unaryFin, List.append_assoc, codeReadUnary_append, i.isLt]
 
 /-- Reading an encoded head movement is an exact prefix inverse. -/
-private lemma codeReadSign_append (s : SignType) (xs : List Bool) :
+lemma codeReadSign_append (s : SignType) (xs : List Bool) :
     codeReadSign (signBits s ++ xs) = some (s, xs) := by
   cases s <;> rfl
 
 /-- Reading an encoded optional output is an exact prefix inverse. -/
-private lemma codeReadOutput_append (b : Option Bool) (xs : List Bool) :
+lemma codeReadOutput_append (b : Option Bool) (xs : List Bool) :
     codeReadOutput (optBoolBits b ++ xs) = some (b, xs) := by
   rcases b with _ | b
   · rfl
   · cases b <;> rfl
 
 /-- Reading an encoded optional write is an exact prefix inverse. -/
-private lemma codeReadWrite_append (b : Option (Option Bool)) (xs : List Bool) :
+lemma codeReadWrite_append (b : Option (Option Bool)) (xs : List Bool) :
     codeReadWrite (optOptBoolBits b ++ xs) = some (b, xs) := by
   rcases b with _ | (_ | b)
   · rfl
@@ -172,7 +177,7 @@ private lemma codeReadWrite_append (b : Option (Option Bool)) (xs : List Bool) :
   · cases b <;> rfl
 
 /-- Reading an encoded successor is an exact prefix inverse. -/
-private lemma codeReadState_append {n : ℕ} (s : Option (Fin n)) (xs : List Bool) :
+lemma codeReadState_append {n : ℕ} (s : Option (Fin n)) (xs : List Bool) :
     codeReadState n (optStateBits s ++ xs) = some (s, xs) := by
   cases s with
   | none => rfl
@@ -193,7 +198,7 @@ private lemma codeReadAction_append {n : ℕ} (a : Action 1 Bool (Fin (n + 1)))
   rfl
 
 /-- Three prefix inverses assemble in the required blank/false/true order. -/
-private lemma codeReadSymbols_append {A : Type}
+lemma codeReadSymbols_append {A : Type}
     (read : List Bool → Option (A × List Bool)) (write : A → List Bool)
     (h : ∀ a xs, read (write a ++ xs) = some (a, xs))
     (f : Option Bool → A) (xs : List Bool) :
@@ -214,7 +219,7 @@ supplied inverse, then its tail by induction. Finite-function extensionality
 identifies the reconstructed head/tail function with the original vector.
 
 **Proof sketch.** Induct on the vector length. The first field reader recovers the head and leaves the concatenated tail; the induction hypothesis recovers the remaining vector. Extensionality identifies the reconstructed function on bounded indices. -/
-private lemma codeReadVec_append {A : Type}
+lemma codeReadVec_append {A : Type}
     (read : List Bool → Option (A × List Bool)) (write : A → List Bool)
     (h : ∀ a xs, read (write a ++ xs) = some (a, xs)) :
     ∀ n (f : Fin n → A) xs,
@@ -238,7 +243,7 @@ private lemma codeReadVec_append {A : Type}
 
 /-- Binary reconstruction inverts the canonical little-endian representation,
 including the empty representation of zero. -/
-private lemma codeBitsNat_bits (n : ℕ) : codeBitsNat n.bits = n := by
+lemma codeBitsNat_bits (n : ℕ) : codeBitsNat n.bits = n := by
   induction n using Nat.binaryRec' with
   | zero => simp [codeBitsNat]
   | bit b n hn ih =>
@@ -264,7 +269,7 @@ private lemma codeAction_length {n : ℕ} (a : Action 1 Bool (Fin (n + 1))) :
   omega
 
 /-- Concatenating words with a common length lower bound preserves that bound. -/
-private lemma codeFlatMap_length {A : Type} (xs : List A) (f : A → List Bool)
+lemma codeFlatMap_length {A : Type} (xs : List A) (f : A → List Bool)
     (c : ℕ) (h : ∀ a ∈ xs, c ≤ (f a).length) :
     c * xs.length ≤ (xs.flatMap f).length := by
   induction xs with
@@ -359,7 +364,7 @@ lemma codeDecode_serialize_pad (M : CodeTM) (m : ℕ) :
 /-- Successful unary parsing characterizes the exact consumed prefix.
 
 **Proof sketch.** Induct on the input. A false bit terminates the number immediately; a true bit increments the recursively recovered number. Empty input cannot succeed. -/
-private lemma codeReadUnary_sound (xs : List Bool) (n : ℕ) (rest : List Bool)
+lemma codeReadUnary_sound (xs : List Bool) (n : ℕ) (rest : List Bool)
     (h : codeReadUnary xs = some (n, rest)) :
     xs = List.replicate n true ++ false :: rest := by
   induction xs generalizing n with
@@ -381,7 +386,7 @@ private lemma codeReadUnary_sound (xs : List Bool) (n : ℕ) (rest : List Bool)
         simp [List.replicate_succ, ih k hr]
 
 /-- Successful bounded-index parsing determines its complete unary prefix. -/
-private lemma codeReadFin_sound {n : ℕ} (xs : List Bool) (i : Fin n) (rest : List Bool)
+lemma codeReadFin_sound {n : ℕ} (xs : List Bool) (i : Fin n) (rest : List Bool)
     (h : codeReadFin n xs = some (i, rest)) : xs = unaryFin i ++ rest := by
   obtain ⟨⟨j, tail⟩, hj, h⟩ := Option.bind_eq_some_iff.mp h
   dsimp only at h
@@ -420,7 +425,7 @@ private lemma codePairDecode_sound (xs a rest : List Bool)
   | case4 xs h₁ h₂ h₃ => simp [pairDecode, h₁, h₂, h₃] at h
 
 /-- A successful movement read consumes precisely its two-bit dictionary entry. -/
-private lemma codeReadSign_sound (xs : List Bool) (s : SignType) (rest : List Bool)
+lemma codeReadSign_sound (xs : List Bool) (s : SignType) (rest : List Bool)
     (h : codeReadSign xs = some (s, rest)) : xs = signBits s ++ rest := by
   rcases xs with _ | ⟨b, _ | ⟨c, tail⟩⟩
   · simp [codeReadSign] at h
@@ -430,7 +435,7 @@ private lemma codeReadSign_sound (xs : List Bool) (s : SignType) (rest : List Bo
     all_goals first | contradiction | (rcases h with ⟨rfl, rfl⟩; rfl)
 
 /-- A successful output read consumes precisely its two-bit dictionary entry. -/
-private lemma codeReadOutput_sound (xs : List Bool) (b : Option Bool) (rest : List Bool)
+lemma codeReadOutput_sound (xs : List Bool) (b : Option Bool) (rest : List Bool)
     (h : codeReadOutput xs = some (b, rest)) : xs = optBoolBits b ++ rest := by
   rcases xs with _ | ⟨a, _ | ⟨c, tail⟩⟩
   · simp [codeReadOutput] at h
@@ -440,7 +445,7 @@ private lemma codeReadOutput_sound (xs : List Bool) (b : Option Bool) (rest : Li
     all_goals first | contradiction | (rcases h with ⟨rfl, rfl⟩; rfl)
 
 /-- A successful write read consumes precisely its two-bit dictionary entry. -/
-private lemma codeReadWrite_sound (xs : List Bool) (b : Option (Option Bool)) (rest : List Bool)
+lemma codeReadWrite_sound (xs : List Bool) (b : Option (Option Bool)) (rest : List Bool)
     (h : codeReadWrite xs = some (b, rest)) : xs = optOptBoolBits b ++ rest := by
   rcases xs with _ | ⟨a, _ | ⟨c, tail⟩⟩
   · simp [codeReadWrite] at h
@@ -452,7 +457,7 @@ private lemma codeReadWrite_sound (xs : List Bool) (b : Option (Option Bool)) (r
 /-- A successful successor read consumes exactly its halt/live unary field.
 
 **Proof sketch.** Split the leading tag. A false tag is exactly the halted state encoding; a true tag delegates to the soundness of the bounded unary reader. Empty input is rejected. -/
-private lemma codeReadState_sound {n : ℕ} (xs : List Bool) (s : Option (Fin n))
+lemma codeReadState_sound {n : ℕ} (xs : List Bool) (s : Option (Fin n))
     (rest : List Bool) (h : codeReadState n xs = some (s, rest)) :
     xs = optStateBits s ++ rest := by
   rcases xs with _ | ⟨b, tail⟩
@@ -490,7 +495,7 @@ private lemma codeReadAction_sound {n : ℕ} (xs : List Bool)
   simp [actionBits, List.append_assoc]
 
 /-- Three sound prefix readers reconstruct the symbol-indexed row they consumed. -/
-private lemma codeReadSymbols_sound {A : Type}
+lemma codeReadSymbols_sound {A : Type}
     (read : List Bool → Option (A × List Bool)) (write : A → List Bool)
     (sound : ∀ xs a rest, read xs = some (a, rest) → xs = write a ++ rest)
     (xs : List Bool) (f : Option Bool → A) (rest : List Bool)
@@ -510,7 +515,7 @@ entry determines a prefix and the induction hypothesis determines the tail;
 the finite-vector constructor enumerates them in exactly that order.
 
 **Proof sketch.** Induct on the number of entries. Successful parsing splits into a successful head parse and a successful tail parse. Their soundness equations concatenate in the same order as the bounded-state enumeration. -/
-private lemma codeReadVec_sound {A : Type}
+lemma codeReadVec_sound {A : Type}
     (read : List Bool → Option (A × List Bool)) (write : A → List Bool)
     (sound : ∀ xs a rest, read xs = some (a, rest) → xs = write a ++ rest) :
     ∀ n xs (f : Fin n → A) rest, codeReadVec read n xs = some (f, rest) →
@@ -609,14 +614,18 @@ def codeSkipRepeat (r : List Bool → Option (List Bool)) : ℕ → List Bool �
   | 0, xs => some xs
   | n + 1, xs => (r xs).bind (codeSkipRepeat r n)
 
-private lemma codeEraseFin (n : ℕ) (xs : List Bool) :
+/-- Erasing the decoded value of the bounded unary reader leaves exactly the public
+skipper: `codeReadFin n` erases to `codeSkipFin n`. -/
+lemma codeEraseFin (n : ℕ) (xs : List Bool) :
     (codeReadFin n xs).map Prod.snd = codeSkipFin n xs := by
   simp only [codeReadFin, codeSkipFin, bind, Option.map_bind, Function.comp_def]
   congr 1
   funext p
   split <;> rfl
 
-private lemma codeEraseSign (xs : List Bool) :
+/-- Erasing the decoded value of the movement-dictionary reader leaves the public
+two-bit skipper `codeSkipPair (fun a b => a || !b)`. -/
+lemma codeEraseSign (xs : List Bool) :
     (codeReadSign xs).map Prod.snd = codeSkipPair (fun a b => a || !b) xs := by
   cases xs with
   | nil => rfl
@@ -625,7 +634,9 @@ private lemma codeEraseSign (xs : List Bool) :
     | nil => cases a <;> rfl
     | cons b xs => cases a <;> cases b <;> rfl
 
-private lemma codeEraseOutput (xs : List Bool) :
+/-- Erasing the decoded value of the output-dictionary reader leaves the public
+two-bit skipper `codeSkipPair (fun a b => a || !b)`. -/
+lemma codeEraseOutput (xs : List Bool) :
     (codeReadOutput xs).map Prod.snd = codeSkipPair (fun a b => a || !b) xs := by
   cases xs with
   | nil => rfl
@@ -634,7 +645,9 @@ private lemma codeEraseOutput (xs : List Bool) :
     | nil => cases a <;> rfl
     | cons b xs => cases a <;> cases b <;> rfl
 
-private lemma codeEraseWrite (xs : List Bool) :
+/-- Erasing the decoded value of the optional-write reader leaves the unconditional
+two-bit skipper `codeSkipPair (fun _ _ => true)`. -/
+lemma codeEraseWrite (xs : List Bool) :
     (codeReadWrite xs).map Prod.snd = codeSkipPair (fun _ _ => true) xs := by
   cases xs with
   | nil => rfl
@@ -643,7 +656,9 @@ private lemma codeEraseWrite (xs : List Bool) :
     | nil => cases a <;> rfl
     | cons b xs => cases a <;> cases b <;> rfl
 
-private lemma codeEraseState (n : ℕ) (xs : List Bool) :
+/-- Erasing the decoded value of the successor-state reader leaves the public
+skipper `codeSkipState n`. -/
+lemma codeEraseState (n : ℕ) (xs : List Bool) :
     (codeReadState n xs).map Prod.snd = codeSkipState n xs := by
   cases xs with
   | nil => rfl
@@ -653,7 +668,9 @@ private lemma codeEraseState (n : ℕ) (xs : List Bool) :
     · simpa only [codeReadState, codeSkipState, ↓reduceIte,
         Option.map_map, Function.comp_def] using codeEraseFin n xs
 
-private lemma codeErase_bind {A B : Type} (r : Option (A × List Bool))
+/-- A continuation that reads only the unconsumed suffix commutes with erasing the
+decoded value: `r.bind (fun p => f p.2) = (r.map Prod.snd).bind f`. -/
+lemma codeErase_bind {A B : Type} (r : Option (A × List Bool))
     (f : List Bool → Option B) :
     r.bind (fun p => f p.2) = (r.map Prod.snd).bind f := by
   cases r <;> rfl
@@ -671,12 +688,16 @@ private lemma codeEraseAction (n : ℕ) (xs : List Bool) :
   congr 1; funext p
   simpa only [Option.map_eq_bind, Function.comp_def] using codeEraseState (n + 1) p.2
 
-private lemma codeEraseSymbols {A : Type} (r : List Bool → Option (A × List Bool)) (xs : List Bool) :
+/-- Erasing the decoded values of the three-entry symbol-row reader gives the
+threefold repetition of the erased entry reader. -/
+lemma codeEraseSymbols {A : Type} (r : List Bool → Option (A × List Bool)) (xs : List Bool) :
     (codeReadSymbols r xs).map Prod.snd = codeSkipRepeat (fun s => (r s).map Prod.snd) 3 xs := by
   simp only [codeReadSymbols, bind, Option.map_bind, Function.comp_def, pure, Option.map_some,
     codeSkipRepeat, Option.bind_map]
 
-private lemma codeEraseVec {A : Type} (r : List Bool → Option (A × List Bool)) (n : ℕ) :
+/-- Erasing the decoded values of the `n`-entry table reader gives the `n`-fold
+repetition of the erased entry reader. -/
+lemma codeEraseVec {A : Type} (r : List Bool → Option (A × List Bool)) (n : ℕ) :
     ∀ xs, (codeReadVec r n xs).map Prod.snd = codeSkipRepeat (fun s => (r s).map Prod.snd) n xs := by
   induction n with
   | zero => intro xs; rfl

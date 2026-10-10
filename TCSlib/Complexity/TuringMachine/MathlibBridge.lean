@@ -37,6 +37,11 @@ design question 1**.
   scheme exists.
 * `Turing.codePrim_machine` — every primitive recursive string function is computed
   by some finite binary machine (no time bound claimed).
+* Primitive recursiveness of the public reader and skipping operations
+  (`Turing.codePrimUnary`, `codePrimBitsNat`, `codePrimPair`, `codePrimBits`,
+  `codePrimSkipPair`/`Fin`/`State`, `codePrimRepeat`, `codePrimAll`, `codePrimDrop`,
+  `codePrimPrefix`, with `codePrimBit` and `codeSkipRepeat_iter`), the building
+  blocks for discharging `codePrim_machine` on other formats' canonizers.
 
 ## References
 
@@ -46,7 +51,8 @@ design question 1**.
 
 namespace Turing
 
-private lemma codePrimUnary : Primrec codeReadUnary := by
+/-- The unary reader `codeReadUnary` is primitive recursive. -/
+lemma codePrimUnary : Primrec codeReadUnary := by
   have h := Primrec.list_rec (α := List Bool) (β := Bool) Primrec.id (Primrec.const (none : Option (ℕ × List Bool)))
     (Primrec.to₂ (Primrec.cond (Primrec.fst.comp Primrec.snd)
       (Primrec.option_map (Primrec.snd.comp (Primrec.snd.comp Primrec.snd))
@@ -60,7 +66,8 @@ private lemma codePrimUnary : Primrec codeReadUnary := by
     dsimp only [id, List.recOn] at ih ⊢
     cases b <;> simp [codeReadUnary, ih]
 
-private lemma codePrimBit : Primrec₂ Nat.bit := by
+/-- Binary digit construction `Nat.bit` is primitive recursive in both arguments. -/
+lemma codePrimBit : Primrec₂ Nat.bit := by
   apply (Primrec.cond Primrec.fst
     (Primrec.succ.comp (Primrec.nat_double.comp Primrec.snd))
     (Primrec.nat_double.comp Primrec.snd)).of_eq
@@ -68,12 +75,13 @@ private lemma codePrimBit : Primrec₂ Nat.bit := by
   rcases p with ⟨b, n⟩
   cases b <;> simp [Nat.bit]
 
-private lemma codePrimBitsNat : Primrec codeBitsNat :=
+/-- The binary-word interpretation `codeBitsNat` is primitive recursive. -/
+lemma codePrimBitsNat : Primrec codeBitsNat :=
   Primrec.list_foldr Primrec.id (Primrec.const 0)
     (codePrimBit.comp₂ (Primrec.fst.comp₂ Primrec₂.right) (Primrec.snd.comp₂ Primrec₂.right))
 
 /-- **Proof sketch.** A list recursion stores the aligned-parser results for both the current suffix and its tail. Adding one input bit can therefore inspect the next bit and reuse the result two positions ahead. This realizes the two-bit recursion using primitive recursive list operations. -/
-private lemma codePrimPair : Primrec pairDecode := by
+lemma codePrimPair : Primrec pairDecode := by
   let step : Bool × List Bool × (Option (List Bool × List Bool) × Option (List Bool × List Bool)) →
       Option (List Bool × List Bool) × Option (List Bool × List Bool) := fun p =>
     ((p.2.1.head?).bind fun b =>
@@ -108,7 +116,7 @@ private lemma codePrimPair : Primrec pairDecode := by
   exact (Primrec.fst.comp h).of_eq fun xs => congrArg Prod.fst (he xs)
 
 /-- **Proof sketch.** Use well-founded primitive recursion with the natural number itself as measure and its half as the sole recursive dependency. The zero case emits no bits; otherwise prepend the parity bit to the recursively computed bits of the half. -/
-private lemma codePrimBits : Primrec Nat.bits := by
+lemma codePrimBits : Primrec Nat.bits := by
   let deps : ℕ → List ℕ := fun n => if n = 0 then [] else [n.div2]
   let step : ℕ → List (List Bool) → Option (List Bool) := fun n vals =>
     if n = 0 then some [] else vals.head?.map (fun xs => n.bodd :: xs)
@@ -139,7 +147,8 @@ private lemma codePrimBits : Primrec Nat.bits := by
       congr 1
       exact (Nat.bits_append_bit n.div2 n.bodd hb).symm.trans (congrArg Nat.bits (Nat.bit_bodd_div2 n))
 
-private lemma codePrimSkipPair (valid : Bool → Bool → Bool) : Primrec (codeSkipPair valid) := by
+/-- Every two-bit field skipper `codeSkipPair valid` is primitive recursive. -/
+lemma codePrimSkipPair (valid : Bool → Bool → Bool) : Primrec (codeSkipPair valid) := by
   have hi : Primrec₂ (fun p : Bool × List Bool => fun q : Bool × List Bool =>
       if valid p.1 q.1 then some q.2 else none) :=
     Primrec.ite (Primrec.eq.comp ((Primrec.dom_bool₂ valid).comp
@@ -148,14 +157,17 @@ private lemma codePrimSkipPair (valid : Bool → Bool → Bool) : Primrec (codeS
   have ho := Primrec.list_casesOn Primrec.snd (Primrec.const none) hi
   exact Primrec.list_casesOn Primrec.id (Primrec.const none) (ho.comp Primrec.snd).to₂
 
-private lemma codePrimSkipFin : Primrec₂ codeSkipFin := by
+/-- The bounded unary skipper `codeSkipFin` is primitive recursive in both arguments. -/
+lemma codePrimSkipFin : Primrec₂ codeSkipFin := by
   unfold codeSkipFin
   apply Primrec.option_bind (codePrimUnary.comp Primrec.snd)
   change Primrec _
   exact Primrec.ite (Primrec.nat_lt.comp (Primrec.fst.comp Primrec.snd) (Primrec.fst.comp Primrec.fst))
     (Primrec.option_some.comp (Primrec.snd.comp Primrec.snd)) (Primrec.const none)
 
-private lemma codePrimSkipState : Primrec₂ codeSkipState := by
+/-- The successor-state skipper `codeSkipState` is primitive recursive in both
+arguments. -/
+lemma codePrimSkipState : Primrec₂ codeSkipState := by
   have h : Primrec₂ (fun p : ℕ × List Bool => fun q : Bool × List Bool =>
       if q.1 then codeSkipFin p.1 q.2 else some q.2) :=
     Primrec.ite (Primrec.eq.comp (Primrec.fst.comp Primrec.snd) (Primrec.const true))
@@ -176,7 +188,9 @@ private lemma codePrimSkipAction : Primrec₂ codeSkipAction := by
   exact codePrimSkipState.comp (Primrec.succ.comp
     (Primrec.fst.comp (Primrec.fst.comp (Primrec.fst.comp (Primrec.fst.comp Primrec.fst))))) Primrec.snd
 
-private lemma codeSkipRepeat_iter (r : List Bool → Option (List Bool)) (n : ℕ) (xs : List Bool) :
+/-- `codeSkipRepeat r n` is the `n`-fold iterate of `Option.bind r`, started at
+`some xs`. -/
+lemma codeSkipRepeat_iter (r : List Bool → Option (List Bool)) (n : ℕ) (xs : List Bool) :
     codeSkipRepeat r n xs = (fun o => o.bind r)^[n] (some xs) := by
   induction n generalizing xs with
   | zero => rfl
@@ -191,7 +205,9 @@ private lemma codeSkipRepeat_iter (r : List Bool → Option (List Bool)) (n : �
       | succ n ih => simpa only [Function.iterate_succ_apply, Option.bind_none] using ih
     | some ys => simpa only [Option.bind_some, Option.bind_some, h] using ih ys
 
-private lemma codePrimRepeat {A : Type} [Primcodable A]
+/-- Counted repetition of a primitive recursive suffix reader, with a primitive
+recursive repetition count, is primitive recursive. -/
+lemma codePrimRepeat {A : Type} [Primcodable A]
     (r : A → List Bool → Option (List Bool)) (hr : Primrec₂ r)
     (count : A → ℕ) (hn : Primrec count) :
     Primrec₂ (fun a xs => codeSkipRepeat (r a) (count a) xs) := by
@@ -200,7 +216,8 @@ private lemma codePrimRepeat {A : Type} [Primcodable A]
       (hr.comp (Primrec.fst.comp (Primrec.fst.comp Primrec.fst)) Primrec.snd).to₂).to₂
   exact h.of_eq fun p => (codeSkipRepeat_iter (r p.1) (count p.1) p.2).symm
 
-private lemma codePrimAll : Primrec (fun xs : List Bool => xs.all id) := by
+/-- The all-`true` test on bit lists is primitive recursive. -/
+lemma codePrimAll : Primrec (fun xs : List Bool => xs.all id) := by
   have h := Primrec.list_foldr (α := List Bool) (β := Bool) Primrec.id (Primrec.const true)
     ((Primrec.dom_bool₂ Bool.and).comp (Primrec.fst.comp Primrec.snd) (Primrec.snd.comp Primrec.snd)).to₂
   exact h.of_eq fun xs => by
@@ -231,7 +248,8 @@ private lemma codePrimScan : Primrec codeScan := by
   exact Primrec.ite (Primrec.eq.comp (codePrimAll.comp Primrec.snd) (Primrec.const true))
     (Primrec.option_some.comp Primrec.snd) (Primrec.const none)
 
-private lemma codePrimDrop : Primrec₂ (fun xs : List Bool => fun n => xs.drop n) := by
+/-- Dropping a given number of leading bits is primitive recursive. -/
+lemma codePrimDrop : Primrec₂ (fun xs : List Bool => fun n => xs.drop n) := by
   have h := Primrec.nat_iterate (α := List Bool × ℕ) (β := List Bool) Primrec.snd Primrec.fst (Primrec.list_tail.comp Primrec.snd).to₂
   apply h.of_eq
   intro p
@@ -242,7 +260,9 @@ private lemma codePrimDrop : Primrec₂ (fun xs : List Bool => fun n => xs.drop 
     rw [Function.iterate_succ_apply, ih]
     cases xs <;> simp
 
-private lemma codePrimPrefix : Primrec₂ (fun xs : List Bool => fun n => xs.take (xs.length - n)) := by
+/-- Keeping the prefix of length `xs.length - n` (all but the last `n` bits) is
+primitive recursive. -/
+lemma codePrimPrefix : Primrec₂ (fun xs : List Bool => fun n => xs.take (xs.length - n)) := by
   have h := Primrec.list_reverse.comp (codePrimDrop.comp (Primrec.list_reverse.comp Primrec.fst) Primrec.snd)
   exact h.of_eq fun p => by simp only [List.reverse_drop, List.reverse_reverse, List.length_reverse]
 
