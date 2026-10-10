@@ -1,0 +1,116 @@
+{
+  "TCSlib/Complexity/TuringMachine/Build/Embed.lean": {},
+  "TCSlib/Complexity/TuringMachine/Build/Loop.lean": {},
+  "TCSlib/Complexity/TuringMachine/Build/Primitives.lean": {
+    "emitterP2LeftIndex": {
+      "before": "private def emitterP2LeftIndex (k l : \u2115) (i : Fin k) : Fin (k + l + 1)",
+      "after": "private def emitterP2LeftIndex (k l : \u2115) : Fin k \u21aa Fin (k + l + 1)"
+    },
+    "emitterP2PairIndex": {
+      "before": "private def emitterP2PairIndex (k l : \u2115) (hk : 0 < k) (hl : 0 < l)\n    (i : Fin 2) : Fin (k + l + 1)",
+      "after": "private def emitterP2PairIndex (k l : \u2115) (hk : 0 < k) (hl : 0 < l) :\n    Fin 2 \u21aa Fin (k + l + 1)"
+    },
+    "emitterP2RightIndex": {
+      "before": "private def emitterP2RightIndex (k l : \u2115) (i : Fin l) : Fin (k + l + 1)",
+      "after": "private def emitterP2RightIndex (k l : \u2115) : Fin l \u21aa Fin (k + l + 1)"
+    },
+    "emitterP2SmallIndex": {
+      "before": "private def emitterP2SmallIndex (k l : \u2115) (hk : 0 < k) (hl : 0 < l)\n    (i : Fin 3) : Fin (k + l + 1)",
+      "after": "private def emitterP2SmallIndex (k l : \u2115) (hk : 0 < k) (hl : 0 < l) :\n    Fin 3 \u21aa Fin (k + l + 1)"
+    },
+    "emitterP2_left_frame": {
+      "before": "private lemma emitterP2_left_frame {S H : Type} (k l : \u2115) (emb : S \u2192 H)\n    (w s u v : List Bool) (q : S) :\n    emitterP2Cfg (emitterP2LeftSelect k l) emb\n      (fun i => bufferTape (emitterP2Words k l s [] v i)) (fun _ => 0)\n      (Cfg.ofWords (input := w) q (stateWord k u)) =\n        Cfg.ofWords (emb q) (emitterP2Words k l s u v)",
+      "after": "private lemma emitterP2_left_frame {S H : Type} (k l : \u2115) (emb : S \u2192 H)\n    (w s u v : List Bool) (q : S) :\n    (embedEmitCfg (emitterP2LeftIndex k l)\n      (fun i => bufferTape (emitterP2Words k l s [] v i)) (fun _ => 0) []\n      (Cfg.ofWords (input := w) q (stateWord k u))).mapState emb =\n        Cfg.ofWords (emb q) (emitterP2Words k l s u v)"
+    },
+    "emitterP2_one_frame": {
+      "before": "private lemma emitterP2_one_frame {l : \u2115} {S H : Type} (slot : Fin l) (emb : S \u2192 H)\n    (words : Fin l \u2192 List Bool) (w u : List Bool) (q : S) :\n    emitterP2Cfg (emitterP2OneSelect slot) emb (fun i => bufferTape (words i)) (fun _ => 0)\n      (Cfg.ofWords (input := w) q (fun _ : Fin 1 => u)) =\n        Cfg.ofWords (emb q) (Function.update words slot u)",
+      "after": "private lemma emitterP2_one_frame {l : \u2115} {S H : Type} (slot : Fin l) (emb : S \u2192 H)\n    (words : Fin l \u2192 List Bool) (w u : List Bool) (q : S) :\n    (embedEmitCfg (emitterP2OneIndex slot) (fun i => bufferTape (words i)) (fun _ => 0) []\n      (Cfg.ofWords (input := w) q (fun _ : Fin 1 => u))).mapState emb =\n        Cfg.ofWords (emb q) (Function.update words slot u)"
+    },
+    "emitterP2_pair_frame": {
+      "before": "private lemma emitterP2_pair_frame {H : Type} (k l : \u2115) (emb : Fin 3 \u00d7 Bool \u2192 H)\n    (w s u v : List Bool) (q : Fin 3) (b : Bool) :\n    emitterP2Cfg (emitterP2PairSelect k l) emb\n      (fun i => bufferTape (emitterP2Words k l s [] [] i)) (fun _ => 0)\n      (emitterCompareCfg w u v 1 q b 0) =\n        Cfg.ofWords (emb (q, b)) (emitterP2Words k l s u v)",
+      "after": "private lemma emitterP2_pair_frame {H : Type} (k l : \u2115) (hk : 0 < k) (hl : 0 < l)\n    (emb : Fin 3 \u00d7 Bool \u2192 H) (w s u v : List Bool) (q : Fin 3) (b : Bool) :\n    (embedEmitCfg (emitterP2PairIndex k l hk hl) (fun i => bufferTape (emitterP2Words k l s [] [] i)) (fun _ => 0) []\n      (emitterCompareCfg w u v 1 q b 0)).mapState emb =\n        Cfg.ofWords (emb (q, b)) (emitterP2Words k l s u v)"
+    },
+    "emitterP2_right_frame": {
+      "before": "private lemma emitterP2_right_frame {S H : Type} (k l : \u2115) (emb : S \u2192 H)\n    (w s u v : List Bool) (q : S) :\n    emitterP2Cfg (emitterP2RightSelect k l) emb\n      (fun i => bufferTape (emitterP2Words k l s u [] i)) (fun _ => 0)\n      (Cfg.ofWords (input := w) q (stateWord l v)) =\n        Cfg.ofWords (emb q) (emitterP2Words k l s u v)",
+      "after": "private lemma emitterP2_right_frame {S H : Type} (k l : \u2115) (emb : S \u2192 H)\n    (w s u v : List Bool) (q : S) :\n    (embedEmitCfg (emitterP2RightIndex k l)\n      (fun i => bufferTape (emitterP2Words k l s u [] i)) (fun _ => 0) []\n      (Cfg.ofWords (input := w) q (stateWord l v))).mapState emb =\n        Cfg.ofWords (emb q) (emitterP2Words k l s u v)"
+    },
+    "emitterP2_small_frame": {
+      "before": "private lemma emitterP2_small_frame {H : Type} (k l : \u2115) (emb : Fin 9 \u00d7 Bool \u2192 H)\n    (w s u v : List Bool) (q : Fin 9) (over : Bool) :\n    emitterP2Cfg (emitterP2SmallSelect k l) emb (fun _ _ => none) (fun _ => 0)\n      (emitterP2PrepareCfg w s u v q over 1 0 0) =\n        Cfg.ofWords (emb (q, over)) (emitterP2Words k l s u v)",
+      "after": "private lemma emitterP2_small_frame {H : Type} (k l : \u2115) (hk : 0 < k) (hl : 0 < l)\n    (emb : Fin 9 \u00d7 Bool \u2192 H) (w s u v : List Bool) (q : Fin 9) (over : Bool) :\n    (embedEmitCfg (emitterP2SmallIndex k l hk hl) (fun _ _ => none) (fun _ => 0) []\n      (emitterP2PrepareCfg w s u v q over 1 0 0)).mapState emb =\n        Cfg.ofWords (emb (q, over)) (emitterP2Words k l s u v)"
+    }
+  },
+  "TCSlib/Complexity/CookLevin/Hardness.lean": {
+    "clLoadSelect": {
+      "before": "private def clLoadSelect {l : \u2115} (i : Fin l) : Fin (l + 1) \u2192 Option (Fin 2)",
+      "after": "private def clLoadSelect {l : \u2115} (i : Fin l) : clPlacement 2 (l + 1)"
+    },
+    "clLoad_frame": {
+      "before": "private lemma clLoad_frame {l : \u2115} (x : List Bool) (p : Fin (x.length + 2))\n    (i : Fin l) (q : clFreshTM.State) (old : Fin l \u2192 List Bool)\n    (stream word : List Bool) (s : \u2124) :\n    clSlotCfg (clLoadSelect i) (fun r => (i.castSucc, r))\n      (fun j => (clLoadCfg x p i.castSucc q old stream s).workTapes j) (fun _ => 0)\n      (\u27e8some q, p, clTwo (FinTM.bufferTape stream) (FinTM.bufferTape word), clTwo s 0, []\u27e9 :\n        Cfg 2 Bool clFreshTM.State x) =\n      clLoadCfg x p i.castSucc q (Function.update old i word) stream s",
+      "after": "private lemma clLoad_frame {l : \u2115} (x : List Bool) (p : Fin (x.length + 2))\n    (i : Fin l) (q : clFreshTM.State) (old : Fin l \u2192 List Bool)\n    (stream word : List Bool) (s : \u2124) :\n    clPlacedCfg (clLoadSelect i) (fun r => (i.castSucc, r))\n      (fun j => (clLoadCfg x p i.castSucc q old stream s).workTapes j) (fun _ => 0)\n      (\u27e8some q, p, clTwo (FinTM.bufferTape stream) (FinTM.bufferTape word), clTwo s 0, []\u27e9 :\n        Cfg 2 Bool clFreshTM.State x) =\n      clLoadCfg x p i.castSucc q (Function.update old i word) stream s"
+    },
+    "clMatchCmpSelect": {
+      "before": "private def clMatchCmpSelect {l : \u2115} (pos neg : Fin l) : Fin (l + 5) \u2192 Option (Fin 4)",
+      "after": "private def clMatchCmpSelect {l : \u2115} (pos neg : Fin l) (hne : pos \u2260 neg) : clPlacement 4 (l + 5)"
+    },
+    "clMatchLoadSelect": {
+      "before": "private def clMatchLoadSelect (l : \u2115) : Fin (l + 5) \u2192 Option (Fin (l + 1))",
+      "after": "private def clMatchLoadSelect (l : \u2115) : clPlacement (l + 1) (l + 5)"
+    },
+    "clMatch_cmp_frame": {
+      "before": "private lemma clMatch_cmp_frame {l : \u2115} (pos neg : Fin l) (hne : pos \u2260 neg) (x : List Bool)\n    (q : clCmpTM.State) (row : Fin l \u2192 List Bool) (target : Fin 2 \u2192 List Bool)\n    (stream : List Bool) (cursor : \u2124) (N j : \u2115) (flags : List Bool) :\n    clSlotCfg (clMatchCmpSelect pos neg) (fun r => (Sum.inr (.inr (.inl r)) : clMatchState l))\n      (clMatchCfg pos neg x (.inl ()) row target stream cursor N j flags).workTapes\n      (clMatchCfg pos neg x (.inl ()) row target stream cursor N j flags).workTapePos\n      (clCmpCfg x 1 q (clMatchWords pos neg row target) 0) =\n      clMatchCfg pos neg x (.inr (.inr (.inl q))) row target stream cursor N j flags",
+      "after": "private lemma clMatch_cmp_frame {l : \u2115} (pos neg : Fin l) (hne : pos \u2260 neg) (x : List Bool)\n    (q : clCmpTM.State) (row : Fin l \u2192 List Bool) (target : Fin 2 \u2192 List Bool)\n    (stream : List Bool) (cursor : \u2124) (N j : \u2115) (flags : List Bool) :\n    clPlacedCfg (clMatchCmpSelect pos neg hne) (fun r => (Sum.inr (.inr (.inl r)) : clMatchState l))\n      (clMatchCfg pos neg x (.inl ()) row target stream cursor N j flags).workTapes\n      (clMatchCfg pos neg x (.inl ()) row target stream cursor N j flags).workTapePos\n      (clCmpCfg x 1 q (clMatchWords pos neg row target) 0) =\n      clMatchCfg pos neg x (.inr (.inr (.inl q))) row target stream cursor N j flags"
+    },
+    "clMatch_load_frame": {
+      "before": "private lemma clMatch_load_frame {l : \u2115} (pos neg : Fin l) (x : List Bool)\n    (q : (clLoadTM l).State) (old row : Fin l \u2192 List Bool) (target : Fin 2 \u2192 List Bool)\n    (stream : List Bool) (cursor oldCursor : \u2124) (N j : \u2115) (flags : List Bool) :\n    clSlotCfg (clMatchLoadSelect l) (fun r => (Sum.inr (.inl r) : clMatchState l))\n      (clMatchCfg pos neg x (.inl ()) old target stream oldCursor N j flags).workTapes\n      (clMatchCfg pos neg x (.inl ()) old target stream oldCursor N j flags).workTapePos\n      (clLoadCfg x 1 q.1 q.2 row stream cursor) =\n      clMatchCfg pos neg x (.inr (.inl q)) row target stream cursor N j flags",
+      "after": "private lemma clMatch_load_frame {l : \u2115} (pos neg : Fin l) (x : List Bool)\n    (q : (clLoadTM l).State) (old row : Fin l \u2192 List Bool) (target : Fin 2 \u2192 List Bool)\n    (stream : List Bool) (cursor oldCursor : \u2124) (N j : \u2115) (flags : List Bool) :\n    clPlacedCfg (clMatchLoadSelect l) (fun r => (Sum.inr (.inl r) : clMatchState l))\n      (clMatchCfg pos neg x (.inl ()) old target stream oldCursor N j flags).workTapes\n      (clMatchCfg pos neg x (.inl ()) old target stream oldCursor N j flags).workTapePos\n      (clLoadCfg x 1 q.1 q.2 row stream cursor) =\n      clMatchCfg pos neg x (.inr (.inl q)) row target stream cursor N j flags"
+    },
+    "clOneSelect": {
+      "before": "private def clOneSelect {k : \u2115} (i : Fin k) : Fin k \u2192 Option (Fin 1)",
+      "after": "private def clOneSelect {k : \u2115} (i : Fin k) : clPlacement 1 k"
+    },
+    "clPrepareSelect": {
+      "before": "private def clPrepareSelect (l : \u2115) : Fin (l + 1) \u2192 Option (Fin 1)",
+      "after": "private def clPrepareSelect (l : \u2115) : clPlacement 1 (l + 1)"
+    },
+    "clRecRowSelect": {
+      "before": "private def clRecRowSelect (M : FinTM Bool) :\n    Fin (clRecFields M + (1 + (1 + (1 + M.k)))) \u2192\n      Option (Fin (clRowTM (clRecFields M)).k)",
+      "after": "private def clRecRowSelect (M : FinTM Bool) :\n    clPlacement (clRowTM (clRecFields M)).k (clRecFields M + (1 + (1 + (1 + M.k))))"
+    },
+    "clRecTrackSelect": {
+      "before": "private def clRecTrackSelect (M : FinTM Bool) :\n    Fin (clRecFields M + (1 + (1 + (1 + M.k)))) \u2192 Option (Fin (clTrackTM M).k)",
+      "after": "private def clRecTrackSelect (M : FinTM Bool) :\n    clPlacement (clTrackTM M).k (clRecFields M + (1 + (1 + (1 + M.k))))"
+    },
+    "clRec_row_frame": {
+      "before": "private lemma clRec_row_frame (M : FinTM Bool) {x y : List Bool}\n    (c : Cfg M.k Bool M.State y) (b : Bool) (n : Fin (clRecFields M) \u2192 \u2115)\n    (record : List Bool) (T t : \u2115) (i : Fin (clRecFields M + 1)) (q : Fin 5) :\n    clSlotCfg (clRecRowSelect M) (fun r => (Sum.inl (c.state, b, r) : clRecState M))\n      (clRecCfg M (x := x) (.inl (c.state, b, (i, q))) c n record T t).workTapes\n      (clRecCfg M (x := x) (.inl (c.state, b, (i, q))) c n record T t).workTapePos\n      (clRowCfg x 1 i q (fun j => (n j).bits) record) =\n        clRecCfg M (x := x) (.inl (c.state, b, (i, q))) c n record T t",
+      "after": "private lemma clRec_row_frame (M : FinTM Bool) {x y : List Bool}\n    (c : Cfg M.k Bool M.State y) (b : Bool) (n : Fin (clRecFields M) \u2192 \u2115)\n    (record : List Bool) (T t : \u2115) (i : Fin (clRecFields M + 1)) (q : Fin 5) :\n    clPlacedCfg (clRecRowSelect M) (fun r => (Sum.inl (c.state, b, r) : clRecState M))\n      (clRecCfg M (x := x) (.inl (c.state, b, (i, q))) c n record T t).workTapes\n      (clRecCfg M (x := x) (.inl (c.state, b, (i, q))) c n record T t).workTapePos\n      (clRowCfg x 1 i q (fun j => (n j).bits) record) =\n        clRecCfg M (x := x) (.inl (c.state, b, (i, q))) c n record T t"
+    },
+    "clRec_row_inactive": {
+      "before": "private lemma clRec_row_inactive (M : FinTM Bool) {x y : List Bool}\n    (c : Cfg M.k Bool M.State y) (b : Bool) (n : Fin (clRecFields M) \u2192 \u2115)\n    (record record' : List Bool) (T t : \u2115)\n    (r r' : (clRowTM (clRecFields M)).State)\n    (z : Cfg (clRowTM (clRecFields M)).k Bool (clRowTM (clRecFields M)).State x) :\n    clSlotCfg (clRecRowSelect M) (fun u => (Sum.inl (c.state, b, u) : clRecState M))\n      (clRecCfg M (x := x) (.inl (c.state, b, r)) c n record T t).workTapes\n      (clRecCfg M (x := x) (.inl (c.state, b, r)) c n record T t).workTapePos z =\n    clSlotCfg (clRecRowSelect M) (fun u => (Sum.inl (c.state, b, u) : clRecState M))\n      (clRecCfg M (x := x) (.inl (c.state, b, r')) c n record' T t).workTapes\n      (clRecCfg M (x := x) (.inl (c.state, b, r')) c n record' T t).workTapePos z",
+      "after": "private lemma clRec_row_inactive (M : FinTM Bool) {x y : List Bool}\n    (c : Cfg M.k Bool M.State y) (b : Bool) (n : Fin (clRecFields M) \u2192 \u2115)\n    (record record' : List Bool) (T t : \u2115)\n    (r r' : (clRowTM (clRecFields M)).State)\n    (z : Cfg (clRowTM (clRecFields M)).k Bool (clRowTM (clRecFields M)).State x) :\n    clPlacedCfg (clRecRowSelect M) (fun u => (Sum.inl (c.state, b, u) : clRecState M))\n      (clRecCfg M (x := x) (.inl (c.state, b, r)) c n record T t).workTapes\n      (clRecCfg M (x := x) (.inl (c.state, b, r)) c n record T t).workTapePos z =\n    clPlacedCfg (clRecRowSelect M) (fun u => (Sum.inl (c.state, b, u) : clRecState M))\n      (clRecCfg M (x := x) (.inl (c.state, b, r')) c n record' T t).workTapes\n      (clRecCfg M (x := x) (.inl (c.state, b, r')) c n record' T t).workTapePos z"
+    },
+    "clRec_track_frame": {
+      "before": "private lemma clRec_track_frame (M : FinTM Bool) {x y : List Bool}\n    (c : Cfg M.k Bool M.State y) (b : Bool) (n : Fin (clRecFields M) \u2192 \u2115)\n    (record : List Bool) (T t : \u2115) :\n    clSlotCfg (clRecTrackSelect M)\n      (fun r => (Sum.inr (.inr (.inr (.inl r))) : clRecState M))\n      (clRecCfg M (x := x) (.inr (.inr (.inr (.inl (c.state, b, none))))) c n record T t).workTapes\n      (clRecCfg M (x := x) (.inr (.inr (.inr (.inl (c.state, b, none))))) c n record T t).workTapePos\n      (clTrackCfg M (x := x) c b n) =\n        clRecCfg M (x := x) (.inr (.inr (.inr (.inl (c.state, b, none))))) c n record T t",
+      "after": "private lemma clRec_track_frame (M : FinTM Bool) {x y : List Bool}\n    (c : Cfg M.k Bool M.State y) (b : Bool) (n : Fin (clRecFields M) \u2192 \u2115)\n    (record : List Bool) (T t : \u2115) :\n    clPlacedCfg (clRecTrackSelect M)\n      (fun r => (Sum.inr (.inr (.inr (.inl r))) : clRecState M))\n      (clRecCfg M (x := x) (.inr (.inr (.inr (.inl (c.state, b, none))))) c n record T t).workTapes\n      (clRecCfg M (x := x) (.inr (.inr (.inr (.inl (c.state, b, none))))) c n record T t).workTapePos\n      (clTrackCfg M (x := x) c b n) =\n        clRecCfg M (x := x) (.inr (.inr (.inr (.inl (c.state, b, none))))) c n record T t"
+    },
+    "clRec_track_inactive": {
+      "before": "private lemma clRec_track_inactive (M : FinTM Bool) {x y : List Bool}\n    (c c' : Cfg M.k Bool M.State y) (b b' : Bool)\n    (n n' : Fin (clRecFields M) \u2192 \u2115) (record : List Bool) (T t : \u2115)\n    (z : Cfg (clTrackTM M).k Bool (clTrackTM M).State x) :\n    clSlotCfg (clRecTrackSelect M)\n      (fun r => (Sum.inr (.inr (.inr (.inl r))) : clRecState M))\n      (clRecCfg M (x := x) (.inr (.inr (.inr (.inl (c.state, b, none))))) c n record T t).workTapes\n      (clRecCfg M (x := x) (.inr (.inr (.inr (.inl (c.state, b, none))))) c n record T t).workTapePos z =\n    clSlotCfg (clRecTrackSelect M)\n      (fun r => (Sum.inr (.inr (.inr (.inl r))) : clRecState M))\n      (clRecCfg M (x := x) (.inr (.inr (.inr (.inl (c'.state, b', none))))) c' n' record T t).workTapes\n      (clRecCfg M (x := x) (.inr (.inr (.inr (.inl (c'.state, b', none))))) c' n' record T t).workTapePos z",
+      "after": "private lemma clRec_track_inactive (M : FinTM Bool) {x y : List Bool}\n    (c c' : Cfg M.k Bool M.State y) (b b' : Bool)\n    (n n' : Fin (clRecFields M) \u2192 \u2115) (record : List Bool) (T t : \u2115)\n    (z : Cfg (clTrackTM M).k Bool (clTrackTM M).State x) :\n    clPlacedCfg (clRecTrackSelect M)\n      (fun r => (Sum.inr (.inr (.inr (.inl r))) : clRecState M))\n      (clRecCfg M (x := x) (.inr (.inr (.inr (.inl (c.state, b, none))))) c n record T t).workTapes\n      (clRecCfg M (x := x) (.inr (.inr (.inr (.inl (c.state, b, none))))) c n record T t).workTapePos z =\n    clPlacedCfg (clRecTrackSelect M)\n      (fun r => (Sum.inr (.inr (.inr (.inl r))) : clRecState M))\n      (clRecCfg M (x := x) (.inr (.inr (.inr (.inl (c'.state, b', none))))) c' n' record T t).workTapes\n      (clRecCfg M (x := x) (.inr (.inr (.inr (.inl (c'.state, b', none))))) c' n' record T t).workTapePos z"
+    },
+    "clRecordSelect": {
+      "before": "private def clRecordSelect (M : FinTM Bool) :\n    Fin (((clRecTM M).k + 4) + 1) \u2192 Option (Fin (clRecTM M).k)",
+      "after": "private def clRecordSelect (M : FinTM Bool) : clPlacement (clRecTM M).k (((clRecTM M).k + 4) + 1)"
+    },
+    "clRepeat_frame": {
+      "before": "private lemma clRepeat_frame (C : FinTM Bool) (entry exit : C.State)\n    (x s : List Bool) (N j : \u2115) (q : C.State) :\n    clSlotCfg (Fin.addCases some (fun _ : Fin 1 => none))\n      (Sum.inr : C.State \u2192 (clRepeatTM C entry exit).State)\n      (Fin.addCases (fun _ _ => none)\n        (fun _ : Fin 1 => FinTM.bufferTape (List.replicate N true)))\n      (Fin.addCases (fun _ => 0) (fun _ : Fin 1 => (j : \u2124)))\n      (Cfg.ofWords (input := x) q (stateWord C.k s)) =\n        clRepeatCfg C entry exit x (.inr q) s N j",
+      "after": "private lemma clRepeat_frame (C : FinTM Bool) (entry exit : C.State)\n    (x s : List Bool) (N j : \u2115) (q : C.State) :\n    clPlacedCfg (clKeepLastPlacement _)\n      (Sum.inr : C.State \u2192 (clRepeatTM C entry exit).State)\n      (Fin.addCases (fun _ _ => none)\n        (fun _ : Fin 1 => FinTM.bufferTape (List.replicate N true)))\n      (Fin.addCases (fun _ => 0) (fun _ : Fin 1 => (j : \u2124)))\n      (Cfg.ofWords (input := x) q (stateWord C.k s)) =\n        clRepeatCfg C entry exit x (.inr q) s N j"
+    },
+    "clRowSelect": {
+      "before": "private def clRowSelect {l : \u2115} (i : Fin l) : Fin (l + 1) \u2192 Option (Fin 2)",
+      "after": "private def clRowSelect {l : \u2115} (i : Fin l) : clPlacement 2 (l + 1)"
+    },
+    "clRow_frame": {
+      "before": "private lemma clRow_frame {l : \u2115} (x : List Bool) (p : Fin (x.length + 2))\n    (i : Fin l) (q : Fin 5) (w : Fin l \u2192 List Bool) (record : List Bool) :\n    clSlotCfg (clRowSelect i) (fun s => (i.castSucc, s))\n      (Fin.addCases (fun j => FinTM.bufferTape (w j))\n        (fun _ : Fin 1 => (fun _ : \u2124 => none))) (fun _ => 0)\n      (clCopyCfg x q p 0 (w i) record) = clRowCfg x p i.castSucc q w record",
+      "after": "private lemma clRow_frame {l : \u2115} (x : List Bool) (p : Fin (x.length + 2))\n    (i : Fin l) (q : Fin 5) (w : Fin l \u2192 List Bool) (record : List Bool) :\n    clPlacedCfg (clRowSelect i) (fun s => (i.castSucc, s))\n      (Fin.addCases (fun j => FinTM.bufferTape (w j))\n        (fun _ : Fin 1 => (fun _ : \u2124 => none))) (fun _ => 0)\n      (clCopyCfg x q p 0 (w i) record) = clRowCfg x p i.castSucc q w record"
+    }
+  }
+}

@@ -1,0 +1,1759 @@
+# Retrofit RB5 — revision 2
+
+## Base, scope, and status
+
+Repository: https://github.com/Shilun-Allan-Li/tcslib. The campaign branch `complexity/arora-barak-ch3-4` was pulled before the work. The fresh working branch is `fill/retrofit-rb5-v2`; recorded base is `d140db36b2706f7a3b8ee2df2269851798e650ed`; delivery commit is `1a7554ac089295e825bbb8fa2c89201ee3752560`. The required ancestor `0aea21088db1f8c44d4c1bb5ba57f28eceb3c354` is contained in the base and delivery head. No rebase, push, or PR was performed.
+
+All three tasks are complete. The diff contains exactly the four owned Lean files. The existing 54 public declarations, including statements, docstrings, and proof bodies, are byte-identical. Embed adds exactly the sanctioned public theorem and module-documentation bullet. Imports are unchanged.
+
+| File | Task status | Lines before → after | Net lines | Private before → after | Net private | Public before → after |
+| --- | --- | ---: | ---: | ---: | ---: | ---: |
+| Embed.lean | Task 1 complete | 975 → 1,025 | +50 | 16 → 16 | +0 | 23 → 24 |
+| Loop.lean | Task 1 complete | 5,513 → 5,473 | -40 | 191 → 190 | -1 | 8 → 8 |
+| Primitives.lean | Task 2 complete | 6,374 → 6,309 | -65 | 254 → 241 | -13 | 18 → 18 |
+| Hardness.lean | Task 3 complete | 8,725 → 8,783 | +58 | 544 → 540 | -4 | 5 → 5 |
+
+## Implementation and preserved contracts
+
+Task 1 is complete in Embed and Loop. The one sanctioned public addition is `Turing.MultiTapeTM.runFrom_mapState_of_agreeOn`, at the requested location in `Build/Embed.lean`. Its contract is the brief's contract, its proof was moved from `emCall_state_run`, and Embed's module documentation gains the requested bullet. No import changed. Loop's private theorem is deleted. Three callers use the new public name directly. The fourth, `emCall_bank_step`, retains its entire frozen declaration and docstring byte-for-byte: a file-local notation resolves its old `emCall_state_run` token directly to the public theorem and creates no Lean declaration or proof copy. Thus all four elaborated callers cite the public theorem while the withdrawn families remain untouched.
+
+Primitives' `splitEmbed_run` is deleted. Its consumer uses one explicitly typed local transport fact, instantiated twice, with the injective `SplitBodyState.emit` constructor and the always-true guard.
+
+Task 2 is complete. The four old relocation members and both old generic segment consumers are deleted. `emitterP2_phase` composes R1 with the public guarded state theorem, whose proof applies same-carrier Z5. `emitterP2_call_phase` first executes one actual source action and then transports the remaining prefix; it never assumes entry differs from exit. Its safety argument covers time zero separately and every positive prefix via that first step. `emitterP2_frame` uses the public selected-tape/selected-position exports and the frame theorem at time zero.
+
+The five concrete tape layouts are the left bank, right bank, singleton candidate tape, three-tape preparation layout, and two-tape comparison layout. The two bank embeddings reuse Mathlib's finite-index embeddings; the small layouts carry direct injectivity proofs. The administrative preparation and comparison frame statements now take the positive-bank witnesses `hk` and `hl`; their concrete callers already supply both. The frame equalities identify both selected fields and every unselected tape/head. Eight native phase consumers are re-proved: preparation, width call, length call, comparison, left-bank erase, right-bank erase, candidate restore, and emission. Every concrete state map is an injective constructor map, including the eraser's indexed constructor. Native transition branches use `embedEmitTM` directly, rather than another tape-action implementation.
+
+Task 3 is complete. The four `clSlot*` relocation members and arbitrary-map `clMap_run` are deleted. `clPlacement` certifies exact correspondence `select j = some i ↔ index i = j`, which excludes the extra aliases allowed by the old generic interface. Reusable identity, empty-bank, disjoint-sum, composition, trailing-bank, and source-permutation operations share the layout proofs. `clPlacedAction` and `clPlacedCfg` are wrappers around public R1 operations. `clPlaced_apply` is the time-one R1 theorem plus state-map/application compatibility. `clPlaced_run` composes R1 with the promoted theorem; it does not reimplement run induction. Configuration observations use the public selected and frame exports. The former `clSlot_release` is deleted and replaced by the certified-layout specialization `clPlaced_release`.
+
+The 13 former direct `clSlot_run` sites are discharged as follows:
+
+| Former consumer | Replacement layout / route |
+| --- | --- |
+| `clRow_field` | `clRowSelect`: one counter plus record tape |
+| `clRec_copy` | `clRecRowSelect`: complete counter/row bank |
+| `clRec_advance` | `clRecTrackSelect`: counters and source bank, protected record and clock |
+| `clMap_run` | Deleted bridge; its six consumers use public state transport directly |
+| `clLoad_field` | `clLoadSelect`: source permutation of the row's two-slot layout |
+| `clPrepare_start` | `clPrepareSelect`: final input buffer |
+| `clRecord_complete` | `clRecordSelect`: recorder bank, four retained fields and input protected |
+| `clMatch_load` | `clMatchLoadSelect`: candidate row and stream, query bookkeeping protected |
+| `clMatch_compare` | `clMatchCmpSelect`: four distinct cross-sum slots |
+| `clOutput_compute` | `clOneSelect`: designated replay tape |
+| `clPrepared_run` | `clKeepLastPlacement`: complete computation bank, input protected |
+| `clOutputAt_compute` | `clOneSelect`: designated replay tape |
+| `clRepeat_call` | `clKeepLastPlacement`: complete clean-call bank, unary clock protected |
+
+The six former `clMap_run` consumers are `clPrepare_complete`, `clRecord_complete`, `clOutput_compute`, `clPrepared_run`, `clOutputAt_compute`, and `clA5Compare_compute`. They use the appropriate sum injection, or the identity embedding in the last case. The repeated clean call executes its mandatory first action before using its strict-positive return guard, so entry equal to exit remains covered.
+
+The comparator certificate explicitly requires `pos ≠ neg`, already available at all comparison consumers. The private matcher uses its R1 comparison branch under that condition and a halted control action in the unused coincident-slot branch. No public contract or frozen public proof changes. The prepared machine now cites the existing `seamCompTM` constructor, removing a repeated native control-table pattern. Shared local simplification rules expose certified layout fields without repeating the same normalization argument in every frame proof.
+
+The generic interfaces that allowed aliased slots or noninjective state maps were deleted, not retained with weakened conclusions. Surviving changed private interfaces are enumerated below, with exact before/after statements in `verification/private-statements.json`.
+
+## Withdrawn Loop task
+
+`evidence/anchor-return-guard-counterexample.lean.txt` contains the checked witness against the actual private Loop declarations. At `t = 0`, the three advertised source-run hypotheses hold, but the initial state is body control, so the proposed non-body guard already fails. The witness uses a private-name resolver instead of copying the controller definitions. Its axiom print is `[propext, Classical.choice, Quot.sound]`. All declarations and docstrings beginning `emLoopHost_`, `emCall_bank_`, or `emCall_finish_` remain byte-identical.
+
+## Verification scope and environment
+
+Every Lean verification command is `bash scripts/lean_check_tree.sh <module>`. The checker removes stale outputs, checks Lean's exit status, and requires a fresh nonempty `.olean`; the runner also rejects sorry warnings. The final seven modules are checked in the brief's dependency order. The maintainer's 83-module integration replay is not claimed here.
+
+The final sweep log contains the successful checks of the delivered source bytes. After Hardness-only corrections, the successful checks of unchanged modules 1–4 were retained and modules 5–7 were checked again in order. `verification/final-source-hashes.json` records the exact four source files used for these checks. Both directory lints use `scripts/campaign_style_lint.py`; the census and copy screens use the two unmodified audit scripts named in the brief.
+
+Dependency setup caveat: the standard dependency-cache command `lake exe cache get` invoked its ProofWidgets release build hook (`lake ... build proofwidgets:release`), which failed. That cache route was abandoned in favor of unpacking the existing cache. No project-wide tcslib build was invoked. All source and probe verification used only the required script. The runtime uses the pinned Lean 4.25.0 toolchain and a process-path shim for this sandbox's `/proc` behavior; no checker or repository verification script was modified.
+
+The directory lint has zero FAILs. Existing size warnings remain; Embed additionally crosses 1,000 lines because the brief explicitly requires this public lemma to live there and forbids an import change or a new owned file. This placement requirement is the justification for retaining that warning.
+
+## Declaration inventory
+
+### Embed.lean
+
+- **Added:** `MultiTapeTM.runFrom_mapState_of_agreeOn`.
+- **Deleted:** None.
+- **Surviving private statements changed:** None.
+
+### Loop.lean
+
+- **Added:** None.
+- **Deleted:** `emCall_state_run`.
+- **Surviving private statements changed:** None.
+
+### Primitives.lean
+
+- **Added:** `emitterP2OneIndex`, `emitterP2_call_phase`, `emitterP2_frame`, `emitterP2_phase`.
+- **Deleted:** `emitterP2Action`, `emitterP2Cfg`, `emitterP2LeftSelect`, `emitterP2OneSelect`, `emitterP2PairSelect`, `emitterP2RightSelect`, `emitterP2SmallSelect`, `emitterP2_apply`, `emitterP2_call_segment`, `emitterP2_left_inverse`, `emitterP2_one_inverse`, `emitterP2_pair_inverse`, `emitterP2_relocate_run`, `emitterP2_right_inverse`, `emitterP2_segment`, `emitterP2_small_inverse`, `splitEmbed_run`.
+- **Surviving private statements changed:** `emitterP2LeftIndex`, `emitterP2PairIndex`, `emitterP2RightIndex`, `emitterP2SmallIndex`, `emitterP2_left_frame`, `emitterP2_one_frame`, `emitterP2_pair_frame`, `emitterP2_right_frame`, `emitterP2_small_frame`.
+
+### Hardness.lean
+
+- **Added:** `clKeepLastPlacement`, `clPlacedAction`, `clPlacedAction_eq`, `clPlacedCfg`, `clPlacedCfg_eq`, `clPlaced_apply`, `clPlaced_release`, `clPlaced_run`, `clPlacement`, `clPlacement.comp`, `clPlacement.empty`, `clPlacement.ofInverse`, `clPlacement.permute`, `clPlacement.refl`, `clPlacement.sum`, `clPlacement.trailing`, `clPlacement_lookup`.
+- **Deleted:** `clLoadIndex`, `clLoad_inverse`, `clMap_run`, `clMatchCmpIndex`, `clMatchCmp_inverse`, `clMatchLoadIndex`, `clMatchLoad_inverse`, `clPrepareIndex`, `clRecRowIndex`, `clRecRow_inverse`, `clRecTrackIndex`, `clRecTrack_inverse`, `clRecordIndex`, `clRecord_inverse`, `clRowIndex`, `clRow_inverse`, `clSlotAction`, `clSlotCfg`, `clSlot_apply`, `clSlot_release`, `clSlot_run`.
+- **Surviving private statements changed:** `clLoadSelect`, `clLoad_frame`, `clMatchCmpSelect`, `clMatchLoadSelect`, `clMatch_cmp_frame`, `clMatch_load_frame`, `clOneSelect`, `clPrepareSelect`, `clRecRowSelect`, `clRecTrackSelect`, `clRec_row_frame`, `clRec_row_inactive`, `clRec_track_frame`, `clRec_track_inactive`, `clRecordSelect`, `clRepeat_frame`, `clRowSelect`, `clRow_frame`.
+
+## Binding duplication measurements
+
+Before: **739 ordered pairs, 180,218 reproduced characters**. After: **692 ordered pairs, 173,861 reproduced characters**. There are **zero new pairs**, 47 removed pairs, and 6,357 fewer reproduced characters. All relocation-member pairs for Primitives and Hardness are gone. The protected Loop-family pair sets are unchanged. No promotion carry-over exception is needed.
+
+Hardness is outside the census script: `clSlotAction`, `clSlotCfg`, `clSlot_apply`, and `clSlot_run` are all deleted (4 → 0); `clMap_run` is also deleted. The private-count reductions meet every per-file target.
+
+### Census before — complete pass 4
+
+```text
+== Pass 4 (round-7 repair): source-side census generated by name
+   every like-kind MEMBER pair over ALL Catalog declarations contributes its source; plus the historical rules
+   like-kind MEMBER pairs over all 428 Catalog declarations: 503
+   Composition          6/ 19 =  31.6%   historical 3 + from pairs 3
+      + computesFunInTime_const (public, span 14)
+      + computesFunInTime_id (public, span 32)
+      + controlCfg_run (private, span 12)
+   Primitives         173/272 =  63.6%   historical 150 + from pairs 23
+      + computesFunInTime_pairConcat (public, span 22)
+      + computesFunInTime_pairEncodeFixed (public, span 17)
+      + computesFunInTime_pairFst (public, span 18)
+      + computesFunInTime_pairSnd (public, span 18)
+      + computesFunInTime_prepend (public, span 16)
+      + computesFunInTime_stripLast (public, span 81)
+      + emitterAppend_run (private, span 24)
+      + emitterP2EraseTM (private, span 16)
+      + emitterP2StateDecidableEq (private, span 17)
+      + emitterP2_control (private, span 8)
+      + emitterP2_erase_scan (private, span 16)
+      + emitterP2_prepare_rewind_candidate (private, span 30)
+      + emitterP2_prepare_rewind_suffix (private, span 29)
+      + emitterSplit_find (private, span 12)
+      + emitterSplit_loop_bound (private, span 12)
+      + emitterSplit_of_body (private, span 58)
+      + emitterSplit_result (private, span 18)
+      + emitterTokenTM (private, span 20)
+      + emitterToken_double (private, span 28)
+      + emitterToken_separator (private, span 9)
+      + emitter_first_entry (private, span 23)
+      + mapCfg (private, span 10)
+      + mapStart (private, span 53)
+   TimeConstructible   20/ 21 =  95.2%   historical 20 + from pairs 0
+   Loop: historical members no longer present (deleted since the census): ['emCallAction', 'emCallCfg', 'emCall_apply', 'emCall_relocate_run', 'emLoopHost_borrow', 'emLoopHost_borrow_rewind', 'emLoopHost_borrow_run', 'emLoopHost_borrow_step', 'emLoopHost_fuel_capture', 'emLoopHost_fuel_copy', 'emLoopHost_fuel_return', 'emLoopHost_fuel_rewind', 'emLoopHost_fuel_setup', 'emLoopHost_input_rewind', 'emLoopHost_reject', 'emLoopHost_release']
+   Loop                98/199 =  49.2%   historical 88 + from pairs 10
+      + emCall_erase_last (private, span 8)
+      + emCall_first_entry (private, span 23)
+      + emCall_right_run (private, span 12)
+      + emLoopCall (private, span 9)
+      + emLoop_run_prefix (private, span 12)
+      + exists_emitLoopTM (public, span 128)
+      + exists_loopCfgTM (public, span 76)
+      + exists_loopFindTM (public, span 82)
+      + exists_loopTM (public, span 98)
+      + loop_run (public, span 51)
+   Wrappers            19/ 29 =  65.5%   historical 17 + from pairs 2
+      + captureCfg (public, span 18)
+      + computesFunInTime_cond (public, span 40)
+   Catalog            318/428 =  74.3%
+```
+
+### Census after — complete pass 4
+
+```text
+== Pass 4 (round-7 repair): source-side census generated by name
+   every like-kind MEMBER pair over ALL Catalog declarations contributes its source; plus the historical rules
+   like-kind MEMBER pairs over all 428 Catalog declarations: 501
+   Composition          6/ 19 =  31.6%   historical 3 + from pairs 3
+      + computesFunInTime_const (public, span 14)
+      + computesFunInTime_id (public, span 32)
+      + controlCfg_run (private, span 12)
+   Primitives: historical members no longer present (deleted since the census): ['emitterP2Action', 'emitterP2Cfg', 'emitterP2_apply', 'emitterP2_relocate_run']
+   Primitives         168/259 =  64.9%   historical 145 + from pairs 23
+      + computesFunInTime_pairConcat (public, span 22)
+      + computesFunInTime_pairEncodeFixed (public, span 17)
+      + computesFunInTime_pairFst (public, span 18)
+      + computesFunInTime_pairSnd (public, span 18)
+      + computesFunInTime_prepend (public, span 16)
+      + computesFunInTime_stripLast (public, span 81)
+      + emitterAppend_run (private, span 24)
+      + emitterP2EraseTM (private, span 16)
+      + emitterP2StateDecidableEq (private, span 17)
+      + emitterP2_control (private, span 8)
+      + emitterP2_erase_scan (private, span 16)
+      + emitterP2_prepare_rewind_candidate (private, span 30)
+      + emitterP2_prepare_rewind_suffix (private, span 29)
+      + emitterSplit_find (private, span 12)
+      + emitterSplit_loop_bound (private, span 12)
+      + emitterSplit_of_body (private, span 58)
+      + emitterSplit_result (private, span 18)
+      + emitterTokenTM (private, span 20)
+      + emitterToken_double (private, span 28)
+      + emitterToken_separator (private, span 9)
+      + emitter_first_entry (private, span 23)
+      + mapCfg (private, span 10)
+      + mapStart (private, span 53)
+   TimeConstructible   20/ 21 =  95.2%   historical 20 + from pairs 0
+   Loop: historical members no longer present (deleted since the census): ['emCallAction', 'emCallCfg', 'emCall_apply', 'emCall_relocate_run', 'emLoopHost_borrow', 'emLoopHost_borrow_rewind', 'emLoopHost_borrow_run', 'emLoopHost_borrow_step', 'emLoopHost_fuel_capture', 'emLoopHost_fuel_copy', 'emLoopHost_fuel_return', 'emLoopHost_fuel_rewind', 'emLoopHost_fuel_setup', 'emLoopHost_input_rewind', 'emLoopHost_reject', 'emLoopHost_release']
+   Loop                98/198 =  49.5%   historical 88 + from pairs 10
+      + emCall_erase_last (private, span 8)
+      + emCall_first_entry (private, span 23)
+      + emCall_right_run (private, span 12)
+      + emLoopCall (private, span 9)
+      + emLoop_run_prefix (private, span 12)
+      + exists_emitLoopTM (public, span 128)
+      + exists_loopCfgTM (public, span 76)
+      + exists_loopFindTM (public, span 82)
+      + exists_loopTM (public, span 98)
+      + loop_run (public, span 51)
+   Wrappers            19/ 29 =  65.5%   historical 17 + from pairs 2
+      + captureCfg (public, span 18)
+      + computesFunInTime_cond (public, span 40)
+   Catalog            318/428 =  74.3%
+```
+
+Primitives decreases from 173 to 168; Loop stays at 98. The complete census logs are included in `verification/`.
+
+## Final sweep, axioms, and lint
+
+```text
+PASS 1/7 TCSlib/Complexity/TuringMachine/Build/Embed: exit=0; errors=0; sorry_warnings=0; fresh_olean_bytes=1145928; seconds=2.36
+PASS 2/7 TCSlib/Complexity/TuringMachine/Build/Loop: exit=0; errors=0; sorry_warnings=0; fresh_olean_bytes=16870776; seconds=47.15
+PASS 3/7 TCSlib/Complexity/TuringMachine/Build/Primitives: exit=0; errors=0; sorry_warnings=0; fresh_olean_bytes=15763680; seconds=22.23
+PASS 4/7 TCSlib/Complexity/TuringMachine/Build/Catalog: exit=0; errors=0; sorry_warnings=0; fresh_olean_bytes=26157040; seconds=54.29
+PASS 5/7 TCSlib/Complexity/CookLevin/Hardness: exit=0; errors=0; sorry_warnings=0; fresh_olean_bytes=19122912; seconds=271.44
+PASS 6/7 TCSlib/Complexity/TuringMachine: exit=0; errors=0; sorry_warnings=0; fresh_olean_bytes=45400; seconds=1.15
+PASS 7/7 TCSlib/Complexity/CookLevin: exit=0; errors=0; sorry_warnings=0; fresh_olean_bytes=37456; seconds=1.01
+SWEEP: 7/7 PASS; zero errors; zero sorry warnings
+```
+
+All 54 pre-existing axiom-print lines are byte-identical to baseline; the 55th is the sanctioned addition. No `sorryAx` occurs. Full final axiom output:
+
+```text
+'Turing.embedSilentCfg' does not depend on any axioms
+'Turing.embedEmitCfg' does not depend on any axioms
+'Turing.embedSilentTM' does not depend on any axioms
+'Turing.embedEmitTM' does not depend on any axioms
+'Turing.embedSilentTM_runFrom' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.embedSilentTM_frame' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.embedSilentTM_visitedByTapeHead' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.embedSilentTM_visitedByTapeHead_frame' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.embedSilentTM_spaceUsedByTape_cap' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.embedEmitTM_runFrom' depends on axioms: [propext, Quot.sound]
+'Turing.embedEmitTM_frame' depends on axioms: [propext, Quot.sound]
+'Turing.embedEmitTM_visitedByTapeHead' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.embedEmitTM_visitedByTapeHead_frame' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.embedSilentRetTM' does not depend on any axioms
+'Turing.embedEmitRetTM' does not depend on any axioms
+'Turing.embedSilentRetTM_run' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.embedEmitRetTM_run' depends on axioms: [propext, Quot.sound]
+'Turing.embedSilentRetTM_visitedByTapeHead' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.embedEmitRetTM_visitedByTapeHead' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.embedSilentCfg_selected_tape' depends on axioms: [propext, Quot.sound]
+'Turing.embedSilentCfg_selected_pos' depends on axioms: [propext, Quot.sound]
+'Turing.embedEmitCfg_selected_tape' depends on axioms: [propext, Quot.sound]
+'Turing.embedEmitCfg_selected_pos' depends on axioms: [propext, Quot.sound]
+'Turing.stateWord' does not depend on any axioms
+'Turing.loop_run' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.FinTM.exists_loopCfgTM' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.FinTM.exists_loopTM' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.FinTM.exists_loopFindTM' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.FinTM.exists_emitLoopTM' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.FinTM.exists_installCallTM' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.FinTM.exists_emitCallTM' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.FinTM.computesFunInTime_prepend' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.FinTM.computesFunInTime_lengthBits' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.FinTM.computesFunInTime_polyUnary' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.FinTM.computesFunInTime_polyBits' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.FinTM.computesFunInTime_pairEncodeFixed' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.FinTM.computesFunInTime_pairFst' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.FinTM.computesFunInTime_pairSnd' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.FinTM.computesFunInTime_pairValid' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.FinTM.computesFunInTime_pairConcat' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.FinTM.computesFunInTime_pairDup' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.FinTM.computesFunInTime_pairMapSnd' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.FinTM.computesFunInTime_pairLenCheck' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.FinTM.computesFunInTime_stripLast' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.FinTM.computesFunInTime_splitSolve' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.FinTM.computesFunInTime_incFixed' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.FinTM.computesFunInTime_splitSolveWith' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.FinTM.computesFunInTime_unaryToken' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.FinTM.computesFunInTime_appendBit' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.NPHard.polyTimeReducible' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.SAT_NPHard' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.SAT_NPComplete' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.SAT3_NPHard' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.SAT3_NPComplete' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.MultiTapeTM.runFrom_mapState_of_agreeOn' depends on axioms: [propext, Classical.choice, Quot.sound]
+PASS 1/1 RB5Axioms: exit=0; errors=0; sorry_warnings=0; fresh_olean_bytes=37104; seconds=5.29
+SWEEP: 1/1 PASS; zero errors; zero sorry warnings
+```
+
+```text
+WARN  TCSlib/Complexity/TuringMachine/Build/Catalog.lean        11260 lines > 1000: policy requires a split or a recorded justification (escalation/decision log)
+WARN  TCSlib/Complexity/TuringMachine/Build/Embed.lean          1025 lines > 1000: policy requires a split or a recorded justification (escalation/decision log)
+WARN  TCSlib/Complexity/TuringMachine/Build/Loop.lean           5473 lines > 1000: policy requires a split or a recorded justification (escalation/decision log)
+WARN  TCSlib/Complexity/TuringMachine/Build/Primitives.lean     6309 lines > 1000: policy requires a split or a recorded justification (escalation/decision log)
+WARN  TCSlib/Complexity/TuringMachine/Build/Zone.lean           1191 lines > 1000: policy requires a split or a recorded justification (escalation/decision log)
+INFO  TCSlib/Complexity/TuringMachine/Build/Catalog.lean        11260 lines; 44 public / 384 private declarations
+INFO  TCSlib/Complexity/TuringMachine/Build/Convention.lean     157 lines; 8 public / 0 private declarations
+INFO  TCSlib/Complexity/TuringMachine/Build/Embed.lean          1025 lines; 24 public / 16 private declarations
+INFO  TCSlib/Complexity/TuringMachine/Build/EmitIterBody.lean   909 lines > target 600
+INFO  TCSlib/Complexity/TuringMachine/Build/EmitIterBody.lean   909 lines; 1 public / 18 private declarations
+INFO  TCSlib/Complexity/TuringMachine/Build/EmitIterEmbed.lean  323 lines; 18 public / 0 private declarations
+INFO  TCSlib/Complexity/TuringMachine/Build/Loop.lean           5473 lines; 8 public / 190 private declarations
+INFO  TCSlib/Complexity/TuringMachine/Build/Primitives.lean     6309 lines; 18 public / 241 private declarations
+INFO  TCSlib/Complexity/TuringMachine/Build/Seam.lean           696 lines > target 600
+INFO  TCSlib/Complexity/TuringMachine/Build/Seam.lean           696 lines; 13 public / 13 private declarations
+INFO  TCSlib/Complexity/TuringMachine/Build/VirtualInput.lean   508 lines; 16 public / 1 private declarations
+INFO  TCSlib/Complexity/TuringMachine/Build/Wrappers.lean       739 lines > target 600
+INFO  TCSlib/Complexity/TuringMachine/Build/Wrappers.lean       739 lines; 10 public / 19 private declarations
+INFO  TCSlib/Complexity/TuringMachine/Build/Zone.lean           1191 lines; 38 public / 16 private declarations
+
+style_lint: 0 FAIL, 5 WARN over 11 files
+```
+
+```text
+WARN  TCSlib/Complexity/CookLevin/Hardness.lean  8783 lines > 1000: policy requires a split or a recorded justification (escalation/decision log)
+INFO  TCSlib/Complexity/CookLevin/Hardness.lean  8783 lines; 5 public / 540 private declarations
+INFO  TCSlib/Complexity/CookLevin/Snapshot.lean  368 lines; 14 public / 4 private declarations
+
+style_lint: 0 FAIL, 1 WARN over 2 files
+```
+
+## Delivery contents and replay
+
+The ZIP includes this report, all four full modified sources at their original paths, the format-patch series against the recorded base, `retrofit-rb5.bundle`, `sweep.log`, `axioms.log`, the requested counterexample, verification evidence, and `SHA256SUMS`. The patch series was replayed against the recorded base in an isolated checkout and its tree matched the delivery commit. The bundle was verified. `SHA256SUMS` covers every payload file except itself. No build products or temporary Lean probe sources are included.
+
+## Full copy-text screen before
+
+```text
+declarations screened: 873; copy pairs (target reproduces >= half of source): 739; reproduced text: 180,218 chars
+   Primitives.lean::emitter_first_entry  reproduces  Loop.lean::emCall_first_entry: 403/403 = 100%
+   Loop.lean::emCall_first_entry  reproduces  Primitives.lean::emitter_first_entry: 403/403 = 100%
+   Primitives.lean::emitterP2Cfg  reproduces  Hardness.lean::clSlotCfg: 154/154 = 100%
+   Hardness.lean::clSlotCfg  reproduces  Primitives.lean::emitterP2Cfg: 154/154 = 100%
+   Hardness.lean::clPrepare_idle  reproduces  Hardness.lean::clLoad_idle: 147/147 = 100%
+   Hardness.lean::clWipe_idle  reproduces  Hardness.lean::clInput_idle: 142/142 = 100%
+   Hardness.lean::clInput_idle  reproduces  Hardness.lean::clWipe_idle: 142/142 = 100%
+   Loop.lean::emCall_erase_last  reproduces  Primitives.lean::catalogBuffer_erase: 118/118 = 100%
+   Primitives.lean::emitterP2Action  reproduces  Hardness.lean::clSlotAction: 97/97 = 100%
+   Hardness.lean::clSlotAction  reproduces  Primitives.lean::emitterP2Action: 97/97 = 100%
+   Hardness.lean::clWipeCfg  reproduces  Hardness.lean::clReadCfg: 72/72 = 100%
+   Hardness.lean::clReadCfg  reproduces  Hardness.lean::clWipeCfg: 72/72 = 100%
+   Loop.lean::loopHost_payload_rewind  reproduces  Loop.lean::loopHost_fuel_rewind: 1259/1261 = 100%
+   Loop.lean::emLoopHost_round  reproduces  Loop.lean::loopHost_reject: 2361/2367 = 100%
+   Loop.lean::emLoopHost_prepare  reproduces  Loop.lean::loopHost_input_rewind: 232/233 = 100%
+   Primitives.lean::emitterSplit_find  reproduces  Primitives.lean::splitFind_eq: 227/228 = 100%
+   Loop.lean::emLoopHost_prepare  reproduces  Loop.lean::loopHost_prepare: 1273/1282 = 99%
+   Loop.lean::loopHost_fuel_rewind  reproduces  Loop.lean::loopHost_payload_rewind: 1259/1269 = 99%
+   Primitives.lean::emitterToken_double  reproduces  Primitives.lean::emitterToken_separator: 215/217 = 99%
+   Hardness.lean::clOutputAt_compute  reproduces  Hardness.lean::clOutput_compute: 1785/1812 = 99%
+   Hardness.lean::clOutput_compute  reproduces  Hardness.lean::clOutputAt_compute: 1785/1816 = 98%
+   Embed.lean::embedSilentRetTM  reproduces  Embed.lean::embedEmitRetTM: 215/219 = 98%
+   Hardness.lean::clPrepare_idle  reproduces  Hardness.lean::clRow_idle: 143/146 = 98%
+   Hardness.lean::clLoad_idle  reproduces  Hardness.lean::clRow_idle: 143/146 = 98%
+   Hardness.lean::clCount_size_budget  reproduces  Hardness.lean::clRecord_size_budget: 305/312 = 98%
+   Primitives.lean::emitterP2_right_frame  reproduces  Primitives.lean::emitterP2_left_frame: 244/250 = 98%
+   Hardness.lean::clA5Clean_install  reproduces  Hardness.lean::clA5Clean_emit: 592/607 = 98%
+   Hardness.lean::clRow_idle  reproduces  Hardness.lean::clLoad_idle: 143/147 = 97%
+   Primitives.lean::scanTrues_run  reproduces  Primitives.lean::scanStep_right: 153/158 = 97%
+   Primitives.lean::emitterP2_left_frame  reproduces  Primitives.lean::emitterP2_right_frame: 244/252 = 97%
+   Hardness.lean::clMatch_tick  reproduces  Hardness.lean::clMatch_stop: 288/298 = 97%
+   Primitives.lean::splitFind_eq  reproduces  Primitives.lean::emitterSplit_find: 227/235 = 97%
+   Hardness.lean::clRecord_size_budget  reproduces  Hardness.lean::clCount_size_budget: 305/316 = 97%
+   Hardness.lean::clErase_last  reproduces  Loop.lean::emCall_erase_last: 129/134 = 96%
+   Primitives.lean::computesFunInTime_pairFst  reproduces  Primitives.lean::computesFunInTime_pairConcat: 147/153 = 96%
+   Primitives.lean::extract_replay  reproduces  Primitives.lean::rawStrip_replay: 390/406 = 96%
+   Hardness.lean::clA5_pt_head  reproduces  Hardness.lean::clA5_pt_tail: 384/400 = 96%
+   Embed.lean::embedEmitRetTM  reproduces  Embed.lean::embedSilentRetTM: 215/224 = 96%
+   Primitives.lean::emitterP2_body_erase_right  reproduces  Primitives.lean::emitterP2_body_erase_left: 1044/1090 = 96%
+   Hardness.lean::clWipe_idle  reproduces  Hardness.lean::clCopy_idle: 136/142 = 96%
+   Hardness.lean::clPrepare_idle  reproduces  Hardness.lean::clWipe_idle: 136/142 = 96%
+   Hardness.lean::clPrepare_idle  reproduces  Hardness.lean::clInput_idle: 136/142 = 96%
+   Hardness.lean::clPrepare_idle  reproduces  Hardness.lean::clCopy_idle: 136/142 = 96%
+   Hardness.lean::clInput_idle  reproduces  Hardness.lean::clCopy_idle: 136/142 = 96%
+   Hardness.lean::clFresh_idle  reproduces  Hardness.lean::clWipe_idle: 136/142 = 96%
+   Hardness.lean::clFresh_idle  reproduces  Hardness.lean::clInput_idle: 136/142 = 96%
+   Hardness.lean::clFresh_idle  reproduces  Hardness.lean::clCopy_idle: 136/142 = 96%
+   Hardness.lean::clCopy_idle  reproduces  Hardness.lean::clWipe_idle: 136/142 = 96%
+   Hardness.lean::clCopy_idle  reproduces  Hardness.lean::clInput_idle: 136/142 = 96%
+   Hardness.lean::clCmp_idle  reproduces  Hardness.lean::clWipe_idle: 136/142 = 96%
+   Hardness.lean::clCmp_idle  reproduces  Hardness.lean::clInput_idle: 136/142 = 96%
+   Hardness.lean::clCmp_idle  reproduces  Hardness.lean::clCopy_idle: 136/142 = 96%
+   Hardness.lean::clErase_last  reproduces  Primitives.lean::catalogBuffer_erase: 113/118 = 96%
+   Hardness.lean::clA5_pt_tail  reproduces  Hardness.lean::clA5_pt_head: 384/402 = 96%
+   Primitives.lean::emitterP2_prepare_rewind_suffix  reproduces  Primitives.lean::emitterP2_prepare_rewind_candidate: 827/866 = 95%
+   Primitives.lean::emitterP2_prepare_rewind_candidate  reproduces  Primitives.lean::emitterP2_prepare_rewind_suffix: 827/866 = 95%
+   Primitives.lean::emitterP2_body_erase_left  reproduces  Primitives.lean::emitterP2_body_erase_right: 1044/1096 = 95%
+   Loop.lean::loop_run  reproduces  Loop.lean::loop_halted_run: 627/659 = 95%
+   Loop.lean::loopCall_reframe  reproduces  Loop.lean::loopCall_frame: 464/488 = 95%
+   Hardness.lean::clReplay_run  reproduces  Hardness.lean::clReplay_from: 398/419 = 95%
+   Primitives.lean::computesFunInTime_pairConcat  reproduces  Primitives.lean::computesFunInTime_pairFst: 147/155 = 95%
+   Hardness.lean::clPrepare_idle  reproduces  Hardness.lean::clFresh_idle: 145/153 = 95%
+   Loop.lean::emLoopHost_anchor_return  reproduces  Loop.lean::loopHost_anchor_return: 867/915 = 95%
+   Hardness.lean::clRec_track_inactive  reproduces  Hardness.lean::clRec_row_inactive: 197/208 = 95%
+   Hardness.lean::clA5Clean_emit  reproduces  Hardness.lean::clA5Clean_install: 592/626 = 95%
+   Loop.lean::emCall_bank_final  reproduces  Loop.lean::emCall_bank_initial: 3070/3250 = 94%
+   Hardness.lean::clRec_row_frame  reproduces  Hardness.lean::clRec_row_inactive: 196/208 = 94%
+   Primitives.lean::incFixed_computes  reproduces  Primitives.lean::scanStep_right: 148/158 = 94%
+   Hardness.lean::clPrepare_idle  reproduces  Hardness.lean::clCmp_idle: 137/147 = 93%
+   Hardness.lean::clFresh_idle  reproduces  Hardness.lean::clCmp_idle: 137/147 = 93%
+   Primitives.lean::emitterP2_relocate_run  reproduces  Hardness.lean::clSlot_run: 733/787 = 93%
+   Loop.lean::loop_first_halt  reproduces  Hardness.lean::clA5_call_first_halt: 307/330 = 93%
+   Primitives.lean::emitterToken_run  reproduces  Primitives.lean::emitterToken_separator: 201/217 = 93%
+   Hardness.lean::clWipe_idle  reproduces  Hardness.lean::clCmp_idle: 136/147 = 93%
+   Hardness.lean::clInput_idle  reproduces  Hardness.lean::clCmp_idle: 136/147 = 93%
+   Hardness.lean::clCopy_idle  reproduces  Hardness.lean::clCmp_idle: 136/147 = 93%
+   Primitives.lean::emitterP2SmallIndex  reproduces  Primitives.lean::emitterP2PairIndex: 61/66 = 92%
+   Primitives.lean::pairDup_double  reproduces  Primitives.lean::scanStep_right: 146/158 = 92%
+   Loop.lean::emLoopHost_start  reproduces  Loop.lean::loopHost_start: 257/280 = 92%
+   Hardness.lean::clA5StoredRound_native  reproduces  Hardness.lean::clA5Sizes_native: 196/214 = 92%
+   Loop.lean::loop_live_prefix  reproduces  Hardness.lean::clA5_live_prefix: 139/152 = 91%
+   Hardness.lean::clRowCfg  reproduces  Hardness.lean::clLoadCfg: 116/128 = 91%
+   Primitives.lean::emitterAppend_run  reproduces  Primitives.lean::scanStep_right: 143/158 = 91%
+   Hardness.lean::clSlot_run  reproduces  Primitives.lean::emitterP2_relocate_run: 733/814 = 90%
+   Primitives.lean::mapParse_block  reproduces  Primitives.lean::mapParse_first: 244/271 = 90%
+   Hardness.lean::clA5_call_first_halt  reproduces  Loop.lean::loop_first_halt: 307/341 = 90%
+   Primitives.lean::lenSuffix_run  reproduces  Primitives.lean::lenParse_first: 276/308 = 90%
+   Hardness.lean::clCmp_idle  reproduces  Hardness.lean::clFresh_idle: 137/153 = 90%
+   Loop.lean::loop_halted_run  reproduces  Loop.lean::loop_run: 627/701 = 89%
+   Hardness.lean::clA5_live_prefix  reproduces  Loop.lean::loop_live_prefix: 139/156 = 89%
+   Loop.lean::exists_loopFindTM  reproduces  Loop.lean::exists_loopTM: 686/770 = 89%
+   Hardness.lean::clWipe_idle  reproduces  Hardness.lean::clFresh_idle: 136/153 = 89%
+   Hardness.lean::clInput_idle  reproduces  Hardness.lean::clFresh_idle: 136/153 = 89%
+   Hardness.lean::clCopy_idle  reproduces  Hardness.lean::clFresh_idle: 136/153 = 89%
+   Primitives.lean::splitCount_run  reproduces  Loop.lean::emCall_right_run: 152/172 = 88%
+   Loop.lean::emCall_erase_last  reproduces  Hardness.lean::clErase_last: 129/146 = 88%
+   Hardness.lean::clMatch_stop  reproduces  Hardness.lean::clMatch_tick: 288/326 = 88%
+   Hardness.lean::clReplay_from  reproduces  Hardness.lean::clReplay_run: 398/451 = 88%
+   Primitives.lean::catalogBuffer_erase  reproduces  Loop.lean::emCall_erase_last: 118/134 = 88%
+   Primitives.lean::splitBody_prepare  reproduces  Primitives.lean::emitterP2_control: 73/83 = 88%
+   Primitives.lean::emitter_first_entry  reproduces  Primitives.lean::catalogFirstEntry: 327/375 = 87%
+   Loop.lean::emCall_first_entry  reproduces  Primitives.lean::catalogFirstEntry: 327/375 = 87%
+   Embed.lean::embedSilentCfg  reproduces  Embed.lean::embedEmitCfg: 165/192 = 86%
+   Primitives.lean::emitterP2_small_frame  reproduces  Primitives.lean::emitterP2_pair_frame: 293/341 = 86%
+   Loop.lean::emCall_finish_arg  reproduces  Loop.lean::emCall_finish_rewind: 1025/1195 = 86%
+   Loop.lean::emCall_triple_pair  reproduces  Loop.lean::emCall_pair_triple: 138/161 = 86%
+   Primitives.lean::emitterP2_prepare_run  reproduces  Primitives.lean::emitterP2_control: 71/83 = 86%
+   Loop.lean::emCall_right_run  reproduces  Loop.lean::emLoop_run_prefix: 110/129 = 85%
+   Primitives.lean::extract_rewind  reproduces  Primitives.lean::rawStrip_rewind: 599/704 = 85%
+   Primitives.lean::emitterAppend_run  reproduces  Primitives.lean::scanCopy_run: 408/482 = 85%
+   Primitives.lean::emitterP2_relocate_run  reproduces  Loop.lean::emLoop_run_prefix: 109/129 = 84%
+   Hardness.lean::clSlot_run  reproduces  Loop.lean::emLoop_run_prefix: 109/129 = 84%
+   Primitives.lean::emitterP2_pair_frame  reproduces  Primitives.lean::emitterP2_small_frame: 293/347 = 84%
+   Hardness.lean::clRecord_idle  reproduces  Hardness.lean::clCmp_idle: 124/147 = 84%
+   Loop.lean::emCall_finalize_run  reproduces  Primitives.lean::emitterP2_control: 70/83 = 84%
+   Hardness.lean::clRec_copy  reproduces  Hardness.lean::clTrack_dispatch: 88/105 = 84%
+   Hardness.lean::clRec_advance  reproduces  Hardness.lean::clTrack_dispatch: 88/105 = 84%
+   Primitives.lean::splitCount_run  reproduces  Loop.lean::emLoop_run_prefix: 108/129 = 84%
+   Loop.lean::emCall_bank_initial  reproduces  Loop.lean::emCall_bank_final: 3070/3669 = 84%
+   Primitives.lean::emitterSplit_result  reproduces  Primitives.lean::splitLoop_result: 193/231 = 84%
+   Primitives.lean::splitRestore_rewind  reproduces  Primitives.lean::splitPrepare_rewind: 630/755 = 83%
+   Primitives.lean::emitterP2_update_right  reproduces  Primitives.lean::emitterP2_update_left: 512/614 = 83%
+   Loop.lean::loopHost_fuel_return  reproduces  Loop.lean::loopHost_fuel_rewind: 1047/1261 = 83%
+   Hardness.lean::clLoadCfg  reproduces  Hardness.lean::clRowCfg: 116/140 = 83%
+   Loop.lean::loopHost_fuel_return  reproduces  Loop.lean::loopHost_payload_rewind: 1047/1269 = 83%
+   Loop.lean::exists_emitCallTM  reproduces  Loop.lean::exists_installCallTM: 194/236 = 82%
+   Hardness.lean::clRec_prepared  reproduces  Hardness.lean::clRepeat_initial: 100/122 = 82%
+   Loop.lean::emCall_prepare_run  reproduces  Primitives.lean::emitterP2_control: 68/83 = 82%
+   Loop.lean::emCall_bank_step  reproduces  Primitives.lean::emitterP2_control: 68/83 = 82%
+   Hardness.lean::clCmp_rewind  reproduces  Hardness.lean::clCmp_forward_step: 185/226 = 82%
+   Primitives.lean::computesFunInTime_pairSnd  reproduces  Primitives.lean::computesFunInTime_pairConcat: 125/153 = 82%
+   Loop.lean::emCall_state_run  reproduces  Primitives.lean::splitEmbed_run: 153/188 = 81%
+   Hardness.lean::clRecords_native  reproduces  Hardness.lean::clTrajectory_native: 157/193 = 81%
+   Primitives.lean::catalogFirstEntry  reproduces  Primitives.lean::emitter_first_entry: 327/403 = 81%
+   Primitives.lean::catalogFirstEntry  reproduces  Loop.lean::emCall_first_entry: 327/403 = 81%
+   Hardness.lean::clRecord_idle  reproduces  Hardness.lean::clWipe_idle: 115/142 = 81%
+   Hardness.lean::clRecord_idle  reproduces  Hardness.lean::clInput_idle: 115/142 = 81%
+   Hardness.lean::clRecord_idle  reproduces  Hardness.lean::clCopy_idle: 115/142 = 81%
+   Primitives.lean::splitLoop_result  reproduces  Primitives.lean::emitterSplit_result: 193/239 = 81%
+   Primitives.lean::splitBody_rewind  reproduces  Primitives.lean::emitterP2_control: 67/83 = 81%
+   Primitives.lean::splitBody_restore  reproduces  Primitives.lean::emitterP2_control: 67/83 = 81%
+   Primitives.lean::emitterP2_prepare_first  reproduces  Primitives.lean::emitterP2_control: 67/83 = 81%
+   Primitives.lean::emitterP2_erase_first  reproduces  Primitives.lean::emitterP2_control: 67/83 = 81%
+   Primitives.lean::computesFunInTime_pairConcat  reproduces  Primitives.lean::computesFunInTime_pairSnd: 125/155 = 81%
+   Hardness.lean::clRecTrack_inverse  reproduces  Hardness.lean::clRecRow_inverse: 75/93 = 81%
+   Hardness.lean::clRead_separator  reproduces  Hardness.lean::clRead_pair: 953/1182 = 81%
+   Loop.lean::loopHost_fuel_return  reproduces  Loop.lean::loopHost_borrow_rewind: 1035/1284 = 81%
+   Hardness.lean::clRead_pair  reproduces  Hardness.lean::clRead_separator: 953/1186 = 80%
+   Primitives.lean::rawStrip_rewind  reproduces  Primitives.lean::extract_rewind: 599/746 = 80%
+   Hardness.lean::clPrepared_idle  reproduces  Hardness.lean::clWipe_idle: 114/142 = 80%
+   Hardness.lean::clPrepared_idle  reproduces  Hardness.lean::clInput_idle: 114/142 = 80%
+   Hardness.lean::clPrepared_idle  reproduces  Hardness.lean::clCopy_idle: 114/142 = 80%
+   Hardness.lean::clPrepared_idle  reproduces  Hardness.lean::clCmp_idle: 118/147 = 80%
+   Embed.lean::embedSilent_step  reproduces  Embed.lean::embedEmit_step: 315/393 = 80%
+   Hardness.lean::clRec_tick  reproduces  Hardness.lean::clRec_stop: 248/310 = 80%
+   Primitives.lean::splitPrepare_rewind  reproduces  Primitives.lean::splitRestore_rewind: 630/790 = 80%
+   Hardness.lean::clPrepare_start  reproduces  Hardness.lean::clRepeat_frame: 94/118 = 80%
+   Loop.lean::emCall_right_scan  reproduces  Primitives.lean::emitterP2_control: 66/83 = 80%
+   Hardness.lean::clTrack_dispatch  reproduces  Primitives.lean::emitterP2_control: 66/83 = 80%
+   Hardness.lean::clCount_idle  reproduces  Primitives.lean::emitterP2_control: 66/83 = 80%
+   Primitives.lean::extract_suffix  reproduces  Primitives.lean::extract_first: 226/285 = 79%
+   Loop.lean::loopHost_payload_rewind  reproduces  Loop.lean::loopHost_fuel_return: 1047/1321 = 79%
+   Loop.lean::loopHost_fuel_rewind  reproduces  Loop.lean::loopHost_fuel_return: 1047/1321 = 79%
+   Hardness.lean::clRec_track_frame  reproduces  Hardness.lean::clRec_track_inactive: 248/313 = 79%
+   Hardness.lean::clA5StoredRound_native  reproduces  Hardness.lean::clA5Cursor_native: 103/130 = 79%
+   Embed.lean::embedSilentRet_step  reproduces  Embed.lean::embedSilentRetTM_visitedByTapeHead: 106/134 = 79%
+   Primitives.lean::splitRestore_scan  reproduces  Primitives.lean::splitPrepare_scan: 505/639 = 79%
+   Primitives.lean::emitterP2_update_left  reproduces  Primitives.lean::emitterP2_update_right: 512/648 = 79%
+   Primitives.lean::emitterP2_small_inverse  reproduces  Primitives.lean::emitterP2_pair_inverse: 90/114 = 79%
+   Hardness.lean::clRec_track_frame  reproduces  Hardness.lean::clRec_row_inactive: 164/208 = 79%
+   Loop.lean::emLoop_run_prefix  reproduces  Hardness.lean::clBank_run: 74/94 = 79%
+   Loop.lean::emCall_finish_final  reproduces  Loop.lean::emCall_finish_initial: 1279/1629 = 79%
+   Hardness.lean::clRecTrackIndex  reproduces  Hardness.lean::clRecRowIndex: 76/97 = 78%
+   Loop.lean::loopHost_borrow_rewind  reproduces  Loop.lean::loopHost_fuel_return: 1035/1321 = 78%
+   Loop.lean::exists_installCallTM  reproduces  Loop.lean::exists_emitCallTM: 194/248 = 78%
+   Hardness.lean::clA5Fuel  reproduces  Hardness.lean::clA5Cursor_install: 61/78 = 78%
+   Hardness.lean::clA5DecodeStep_state  reproduces  Hardness.lean::clVisitStep_state: 93/119 = 78%
+   Primitives.lean::emitterP2_relocate_run  reproduces  Hardness.lean::clCount_idle_run: 71/91 = 78%
+   Loop.lean::emLoop_run_prefix  reproduces  Hardness.lean::clCount_idle_run: 71/91 = 78%
+   Loop.lean::emCall_right_run  reproduces  Hardness.lean::clCount_idle_run: 71/91 = 78%
+   Hardness.lean::clSlot_run  reproduces  Hardness.lean::clCount_idle_run: 71/91 = 78%
+   Primitives.lean::emitterP2_relocate_run  reproduces  Hardness.lean::clBank_run: 73/94 = 78%
+   Loop.lean::emCall_right_run  reproduces  Hardness.lean::clBank_run: 73/94 = 78%
+   Hardness.lean::clSlot_run  reproduces  Hardness.lean::clBank_run: 73/94 = 78%
+   Primitives.lean::emitterP2_pair_inverse  reproduces  Primitives.lean::emitterP2_small_inverse: 90/116 = 78%
+   Primitives.lean::catalogBuffer_erase  reproduces  Hardness.lean::clErase_last: 113/146 = 77%
+   Hardness.lean::clRecRow_inverse  reproduces  Hardness.lean::clRecTrack_inverse: 75/97 = 77%
+   Primitives.lean::scanCopy_run  reproduces  Primitives.lean::scanStep_right: 122/158 = 77%
+   Hardness.lean::clRec_copy  reproduces  Primitives.lean::emitterP2_control: 64/83 = 77%
+   Hardness.lean::clRec_advance  reproduces  Primitives.lean::emitterP2_control: 64/83 = 77%
+   Loop.lean::emCall_finish_arg  reproduces  Loop.lean::emCall_finish_erase: 972/1264 = 77%
+   Hardness.lean::clRecRowIndex  reproduces  Hardness.lean::clRecTrackIndex: 76/99 = 77%
+   Primitives.lean::scanCopy_run  reproduces  Primitives.lean::emitterAppend_run: 408/533 = 77%
+   Primitives.lean::emitterP2PairIndex  reproduces  Primitives.lean::emitterP2SmallIndex: 61/80 = 76%
+   Hardness.lean::clCountTape_write  reproduces  Loop.lean::loopBuffer_write: 311/408 = 76%
+   Hardness.lean::clA5Field_native  reproduces  Hardness.lean::clA5Decode_orbit: 70/92 = 76%
+   Primitives.lean::emitterP2StateDecidableEq  reproduces  Primitives.lean::splitBodyStateDecidableEq: 408/537 = 76%
+   Primitives.lean::splitCount_run  reproduces  Hardness.lean::clCount_idle_run: 69/91 = 76%
+   Hardness.lean::clBank_run  reproduces  Hardness.lean::clCount_idle_run: 69/91 = 76%
+   Embed.lean::embedEmitRet_step  reproduces  Embed.lean::embedEmitRetTM_visitedByTapeHead: 87/115 = 76%
+   Hardness.lean::clLoadTM  reproduces  Hardness.lean::clRowTM: 211/279 = 76%
+   Primitives.lean::splitCount_run  reproduces  Hardness.lean::clBank_run: 71/94 = 76%
+   Primitives.lean::computesFunInTime_pairSnd  reproduces  Primitives.lean::computesFunInTime_pairFst: 117/155 = 75%
+   Primitives.lean::computesFunInTime_pairFst  reproduces  Primitives.lean::computesFunInTime_pairSnd: 117/155 = 75%
+   Loop.lean::exists_loopTM  reproduces  Loop.lean::exists_loopFindTM: 686/910 = 75%
+   Primitives.lean::extract_replay  reproduces  Primitives.lean::extract_replay_finish: 224/298 = 75%
+   Hardness.lean::clRecord_idle  reproduces  Hardness.lean::clFresh_idle: 115/153 = 75%
+   Primitives.lean::splitSolve_of_body  reproduces  Primitives.lean::emitterSplit_of_body: 672/896 = 75%
+   Hardness.lean::clRecordOutputTM  reproduces  Hardness.lean::clCountOutputTM: 75/100 = 75%
+   Primitives.lean::splitPrepare_scan  reproduces  Primitives.lean::splitPrepare_extra: 338/451 = 75%
+   Hardness.lean::clPrepared_idle  reproduces  Hardness.lean::clFresh_idle: 114/153 = 75%
+   Hardness.lean::clLeft_until  reproduces  Hardness.lean::clCmp_forward: 105/141 = 74%
+   Hardness.lean::clA5Next_pack  reproduces  Hardness.lean::clVisitStep_state: 88/119 = 74%
+   Loop.lean::emCall_finish_initial  reproduces  Loop.lean::emCall_finish_final: 1279/1731 = 74%
+   Primitives.lean::splitEmbed_cut  reproduces  Hardness.lean::clCmp_forward: 104/141 = 74%
+   Primitives.lean::emitterP2_erase_scan  reproduces  Hardness.lean::clCmp_forward: 104/141 = 74%
+   Primitives.lean::extract_block  reproduces  Primitives.lean::extract_first: 210/285 = 74%
+   Primitives.lean::splitLoop_bound  reproduces  Primitives.lean::emitterSplit_loop_bound: 126/171 = 74%
+   Primitives.lean::emitterP2SmallSelect  reproduces  Primitives.lean::emitterP2PairSelect: 70/95 = 74%
+   Loop.lean::loop_find_run  reproduces  Loop.lean::loop_halted_run: 484/659 = 73%
+   Embed.lean::embedEmit_step  reproduces  Embed.lean::embedSilent_step: 315/429 = 73%
+   Hardness.lean::clCount_idle_run  reproduces  Hardness.lean::clBank_run: 69/94 = 73%
+   Loop.lean::loopFrame  reproduces  Loop.lean::loopControlAction: 110/150 = 73%
+   Hardness.lean::clCount_idle  reproduces  Hardness.lean::clTrack_dispatch: 77/105 = 73%
+   Primitives.lean::incFixedTM  reproduces  Primitives.lean::pairDupTM: 283/386 = 73%
+   Embed.lean::embedSilentTM_visitedByTapeHead_frame  reproduces  Embed.lean::embedEmitTM_visitedByTapeHead_frame: 204/279 = 73%
+   Primitives.lean::splitRestore_scan  reproduces  Hardness.lean::clCmp_forward: 103/141 = 73%
+   Primitives.lean::splitPrepare_scan  reproduces  Hardness.lean::clCmp_forward: 103/141 = 73%
+   Primitives.lean::rawStrip_replay  reproduces  Hardness.lean::clCmp_forward: 103/141 = 73%
+   Hardness.lean::clInput_forward  reproduces  Hardness.lean::clCmp_forward: 103/141 = 73%
+   Hardness.lean::clCountTape_read  reproduces  Loop.lean::loopBuffer_read: 65/89 = 73%
+   Hardness.lean::clCmp_finish_scan  reproduces  Hardness.lean::clCmp_forward_step: 165/226 = 73%
+   Loop.lean::loopBuffer_write  reproduces  Hardness.lean::clCountTape_write: 311/426 = 73%
+   Primitives.lean::mapStart  reproduces  Primitives.lean::lenStart: 1210/1659 = 73%
+   Hardness.lean::clReplay_forward  reproduces  Hardness.lean::clReplay_back: 514/705 = 73%
+   Hardness.lean::clA5Iter_shrinking  reproduces  Hardness.lean::clA5Decode_orbit: 67/92 = 73%
+   Primitives.lean::emitterP2_body_length  reproduces  Primitives.lean::emitterP2_body_width: 512/704 = 73%
+   Embed.lean::embedSilentTM_visitedByTapeHead_frame  reproduces  Embed.lean::embedSilentTM_frame: 82/113 = 73%
+   Primitives.lean::extract_replay  reproduces  Hardness.lean::clCmp_forward: 102/141 = 72%
+   Primitives.lean::catalogPoly_setup  reproduces  Primitives.lean::catalogPoly_emit: 366/506 = 72%
+   Primitives.lean::splitRestore_append  reproduces  Primitives.lean::splitPrepare_extra: 326/451 = 72%
+   Primitives.lean::emitterP2_erase_back  reproduces  Loop.lean::loopBuffer_read: 64/89 = 72%
+   Primitives.lean::splitRestore_rewind  reproduces  Primitives.lean::emitterP2_erase_scan: 227/316 = 72%
+   Primitives.lean::splitPrepare_rewind  reproduces  Primitives.lean::emitterP2_erase_scan: 227/316 = 72%
+   Hardness.lean::clRepeat_complete  reproduces  Loop.lean::emCall_banks_run: 170/237 = 72%
+   Primitives.lean::emitterP2_body_width  reproduces  Primitives.lean::emitterP2_body_length: 512/714 = 72%
+   Primitives.lean::emitter_compare_scan  reproduces  Hardness.lean::clCmp_forward: 101/141 = 72%
+   Primitives.lean::emitterP2_prepare_suffix  reproduces  Hardness.lean::clCmp_forward: 101/141 = 72%
+   Loop.lean::emCall_clear_scan  reproduces  Hardness.lean::clCmp_forward: 101/141 = 72%
+   Primitives.lean::emitterSplit_of_body  reproduces  Primitives.lean::splitSolve_of_body: 672/940 = 71%
+   Primitives.lean::emitterP2PairSelect  reproduces  Primitives.lean::emitterP2SmallSelect: 70/98 = 71%
+   Loop.lean::emLoopHost_round  reproduces  Loop.lean::loopHost_borrow_rewind: 917/1284 = 71%
+   Loop.lean::loop_halted_run  reproduces  Loop.lean::loop_find_run: 484/678 = 71%
+   Loop.lean::emCall_finish_rewind  reproduces  Loop.lean::emCall_finish_arg: 1025/1438 = 71%
+   Primitives.lean::rawStrip_replay  reproduces  Primitives.lean::emitterP2_erase_scan: 225/316 = 71%
+   Primitives.lean::emitterP2_small_frame  reproduces  Primitives.lean::emitterP2_left_frame: 178/250 = 71%
+   Primitives.lean::emitterP2_pair_frame  reproduces  Primitives.lean::emitterP2_left_frame: 178/250 = 71%
+   Hardness.lean::clRepeat_initial  reproduces  Hardness.lean::clRepeat_frame: 84/118 = 71%
+   Hardness.lean::clPrepared_run  reproduces  Hardness.lean::clRepeat_frame: 84/118 = 71%
+   Hardness.lean::clMatchCfg  reproduces  Hardness.lean::clQueryWords: 91/128 = 71%
+   Hardness.lean::clTrajectory_native  reproduces  Hardness.lean::clFinalCount_native: 137/193 = 71%
+   Hardness.lean::clFinalCount_native  reproduces  Hardness.lean::clTrajectory_native: 137/193 = 71%
+   Hardness.lean::clA5Data_exact  reproduces  Hardness.lean::clA5Stored_exact: 159/224 = 71%
+   Primitives.lean::emitterP2_prepare_candidate  reproduces  Hardness.lean::clCmp_forward: 100/141 = 71%
+   Primitives.lean::extract_replay  reproduces  Primitives.lean::emitterP2_erase_scan: 224/316 = 71%
+   Primitives.lean::rawStripTM  reproduces  Loop.lean::loopReplayTM: 92/130 = 71%
+   Embed.lean::embedSilentTM_visitedByTapeHead  reproduces  Embed.lean::embedEmitTM_visitedByTapeHead: 171/242 = 71%
+   Primitives.lean::emitterP2_small_frame  reproduces  Primitives.lean::emitterP2_right_frame: 178/252 = 71%
+   Primitives.lean::emitterP2_pair_frame  reproduces  Primitives.lean::emitterP2_right_frame: 178/252 = 71%
+   Primitives.lean::scanCopy_run  reproduces  Hardness.lean::clCmp_forward: 99/141 = 70%
+   Primitives.lean::rawStrip_copy  reproduces  Hardness.lean::clCmp_forward: 99/141 = 70%
+   Primitives.lean::mapPayload_replay  reproduces  Hardness.lean::clCmp_forward: 99/141 = 70%
+   Primitives.lean::emitterAppend_run  reproduces  Hardness.lean::clCmp_forward: 99/141 = 70%
+   Primitives.lean::splitRestoreTM  reproduces  Primitives.lean::splitPrepareTM: 280/399 = 70%
+   Embed.lean::embedSilentTM_visitedByTapeHead_frame  reproduces  Embed.lean::embedSilentTM_visitedByTapeHead: 188/268 = 70%
+   Primitives.lean::extract_rewind  reproduces  Primitives.lean::extract_replay_finish: 209/298 = 70%
+   Primitives.lean::splitRestoreScan  reproduces  Primitives.lean::splitPrepareScan: 68/97 = 70%
+   Hardness.lean::clHeaderLayout  reproduces  Hardness.lean::clRecWords: 75/107 = 70%
+   Loop.lean::emCall_triple_other  reproduces  Loop.lean::emCall_triple_inverse: 128/183 = 70%
+   Loop.lean::emCall_finish_erase  reproduces  Loop.lean::emCall_finish_rewind: 835/1195 = 70%
+   Hardness.lean::clRec_row_frame  reproduces  Hardness.lean::clRec_track_inactive: 217/313 = 69%
+   Hardness.lean::clReplayTM  reproduces  Loop.lean::loopReplayTM: 90/130 = 69%
+   Primitives.lean::emitterP2_relocate_run  reproduces  Loop.lean::emCall_right_run: 119/172 = 69%
+   Hardness.lean::clSlot_run  reproduces  Loop.lean::emCall_right_run: 119/172 = 69%
+   Primitives.lean::emitterToken_run  reproduces  Primitives.lean::emitterToken_double: 543/785 = 69%
+   Loop.lean::loopBody_step  reproduces  Loop.lean::loopBody_stop: 239/346 = 69%
+   Primitives.lean::emitterP2_prepare_rewind_suffix  reproduces  Primitives.lean::emitterP2_erase_scan: 218/316 = 69%
+   Primitives.lean::emitterP2_prepare_rewind_candidate  reproduces  Primitives.lean::emitterP2_erase_scan: 218/316 = 69%
+   Primitives.lean::scanCopy_suffix  reproduces  Primitives.lean::scanStep_right: 109/158 = 69%
+   Primitives.lean::emitterTokenTM  reproduces  Primitives.lean::pairDupTM: 266/386 = 69%
+   Hardness.lean::clRead_run  reproduces  Hardness.lean::clCopy_run: 195/283 = 69%
+   Hardness.lean::clCountInc_bits  reproduces  Loop.lean::loopValue_bits: 93/135 = 69%
+   Hardness.lean::clRepeat_frame  reproduces  Hardness.lean::clRepeat_initial: 84/122 = 69%
+   Hardness.lean::clCountOutput_quadratic  reproduces  Hardness.lean::clRecordOutput_quadratic: 509/741 = 69%
+   Primitives.lean::emitterP2_erase_run  reproduces  Primitives.lean::emitterP2_erase_scan: 217/316 = 69%
+   Primitives.lean::emitterP2_erase_back  reproduces  Primitives.lean::emitterP2_erase_scan: 217/316 = 69%
+   Hardness.lean::clRecord_idle  reproduces  Hardness.lean::clRow_idle: 100/146 = 68%
+   Hardness.lean::clCountInc_bits  reproduces  Hardness.lean::clNum_bits: 89/130 = 68%
+   Primitives.lean::rawStripTM  reproduces  Primitives.lean::emitterP2EraseTM: 188/275 = 68%
+   Primitives.lean::rawStrip_replay  reproduces  Primitives.lean::extract_replay_finish: 203/298 = 68%
+   Hardness.lean::clPrepared_idle  reproduces  Hardness.lean::clRow_idle: 99/146 = 68%
+   Loop.lean::emCall_finish_erase  reproduces  Loop.lean::emCall_finish_arg: 972/1438 = 68%
+   Primitives.lean::rawStripTM  reproduces  Hardness.lean::clReplayTM: 182/270 = 67%
+   Hardness.lean::clRecord_idle  reproduces  Hardness.lean::clLoad_idle: 99/147 = 67%
+   Hardness.lean::clPrepared_idle  reproduces  Hardness.lean::clLoad_idle: 99/147 = 67%
+   Hardness.lean::clPrepared_run  reproduces  Hardness.lean::clRepeat_initial: 82/122 = 67%
+   Hardness.lean::clPrepare_start  reproduces  Hardness.lean::clRepeat_initial: 82/122 = 67%
+   Hardness.lean::clRowTM  reproduces  Hardness.lean::clLoadTM: 211/314 = 67%
+   Primitives.lean::rawStrip_replay  reproduces  Primitives.lean::extract_replay: 390/581 = 67%
+   Loop.lean::loopValue_bits  reproduces  Hardness.lean::clNum_bits: 87/130 = 67%
+   Embed.lean::embedEmitTM_visitedByTapeHead_frame  reproduces  Embed.lean::embedSilentTM_visitedByTapeHead_frame: 204/305 = 67%
+   Primitives.lean::pairDup_double  reproduces  Primitives.lean::emitterAppend_run: 356/533 = 67%
+   Loop.lean::emCall_triple_pair  reproduces  Loop.lean::emCall_triple_inverse: 122/183 = 67%
+   Primitives.lean::rawStrip_rewind  reproduces  Primitives.lean::rawStrip_replay: 270/406 = 67%
+   Primitives.lean::pairDupTM  reproduces  Primitives.lean::emitterTokenTM: 266/400 = 66%
+   Embed.lean::embedSilent_apply  reproduces  Embed.lean::embedEmit_apply: 168/253 = 66%
+   Hardness.lean::clCopy_pair  reproduces  Hardness.lean::clCopy_separator: 443/668 = 66%
+   Loop.lean::loop_run  reproduces  Loop.lean::loop_find_run: 448/678 = 66%
+   Loop.lean::emCall_finish_rewind  reproduces  Loop.lean::emCall_finish_erase: 835/1264 = 66%
+   Primitives.lean::emitterP2_right_frame  reproduces  Primitives.lean::emitterP2_words_clean: 93/141 = 66%
+   Primitives.lean::emitterP2_left_frame  reproduces  Primitives.lean::emitterP2_words_clean: 93/141 = 66%
+   Primitives.lean::incFixedTM  reproduces  Primitives.lean::splitRewindTM: 122/185 = 66%
+   Primitives.lean::emitterP2_prepare_run  reproduces  Hardness.lean::clTrack_dispatch: 69/105 = 66%
+   Loop.lean::emCall_right_scan  reproduces  Hardness.lean::clTrack_dispatch: 69/105 = 66%
+   Loop.lean::loopHost_fuel_copy  reproduces  Loop.lean::loopHost_fuel_rewind: 827/1261 = 66%
+   Primitives.lean::extract_run  reproduces  Primitives.lean::lenParse_run: 1077/1643 = 66%
+   Primitives.lean::emitterP2_apply  reproduces  Hardness.lean::clSlot_apply: 110/168 = 65%
+   Primitives.lean::splitPrepare_rewind  reproduces  Primitives.lean::rawStrip_rewind: 460/704 = 65%
+   Loop.lean::loopHost_fuel_copy  reproduces  Loop.lean::loopHost_payload_rewind: 829/1269 = 65%
+   Hardness.lean::clCopy_rewind  reproduces  Hardness.lean::clRead_rewind: 524/803 = 65%
+   Loop.lean::emCall_triple_other  reproduces  Loop.lean::emCall_triple_pair: 152/233 = 65%
+   Hardness.lean::clHeaderLayout_native  reproduces  Hardness.lean::clRecordWords_native: 553/849 = 65%
+   Primitives.lean::extract_suffix  reproduces  Primitives.lean::scanCopy_suffix: 553/850 = 65%
+   Primitives.lean::lenStart  reproduces  Primitives.lean::mapStart: 1210/1864 = 65%
+   Loop.lean::emCall_track_action  reproduces  Loop.lean::emCall_right_step: 134/207 = 65%
+   Primitives.lean::emitter_bits_injective  reproduces  Hardness.lean::clNum_bits: 84/130 = 65%
+   Hardness.lean::clLoad_idle  reproduces  Hardness.lean::clPrepare_idle: 147/228 = 64%
+   Loop.lean::emCall_track_action  reproduces  Loop.lean::emCall_track_stamp: 450/698 = 64%
+   Hardness.lean::clCmp_forward_step  reproduces  Hardness.lean::clCmp_finish_scan: 165/256 = 64%
+   Hardness.lean::clNum_bits  reproduces  Loop.lean::loopValue_bits: 87/135 = 64%
+   Primitives.lean::splitEmbed_cut  reproduces  Primitives.lean::splitEmbed_run: 121/188 = 64%
+   Primitives.lean::splitBody_rewind  reproduces  Primitives.lean::splitBody_restore: 321/499 = 64%
+   Primitives.lean::splitPrepareScan  reproduces  Primitives.lean::splitRestoreScan: 68/106 = 64%
+   Primitives.lean::catalogPoly_emit  reproduces  Primitives.lean::catalogPoly_setup: 366/571 = 64%
+   Hardness.lean::clRow_idle  reproduces  Hardness.lean::clWipe_idle: 91/142 = 64%
+   Hardness.lean::clRow_idle  reproduces  Hardness.lean::clInput_idle: 91/142 = 64%
+   Hardness.lean::clRow_idle  reproduces  Hardness.lean::clCopy_idle: 91/142 = 64%
+   Hardness.lean::clLoad_idle  reproduces  Hardness.lean::clWipe_idle: 91/142 = 64%
+   Hardness.lean::clLoad_idle  reproduces  Hardness.lean::clInput_idle: 91/142 = 64%
+   Hardness.lean::clLoad_idle  reproduces  Hardness.lean::clCopy_idle: 91/142 = 64%
+   Loop.lean::emLoop_run_prefix  reproduces  Loop.lean::emCall_right_run: 110/172 = 64%
+   Hardness.lean::clLastCode_native  reproduces  Hardness.lean::clNative_append: 85/133 = 64%
+   Loop.lean::loop_find_run  reproduces  Loop.lean::loop_run: 448/701 = 64%
+   Loop.lean::loopHost_body_capture  reproduces  Loop.lean::loopHost_fuel_capture: 67/105 = 64%
+   Loop.lean::emCall_bank_step  reproduces  Hardness.lean::clTrack_dispatch: 67/105 = 64%
+   Embed.lean::embedEmitTM_visitedByTapeHead  reproduces  Embed.lean::embedSilentTM_visitedByTapeHead: 171/268 = 64%
+   Primitives.lean::lenSuffix_run  reproduces  Primitives.lean::anyTrue_run: 506/795 = 64%
+   Primitives.lean::rawStrip_rewind  reproduces  Primitives.lean::emitterP2_erase_scan: 201/316 = 64%
+   Primitives.lean::extract_rewind  reproduces  Primitives.lean::emitterP2_erase_scan: 201/316 = 64%
+   Hardness.lean::clFresh_idle  reproduces  Hardness.lean::clPrepare_idle: 145/228 = 64%
+   Hardness.lean::clRecTrackSelect  reproduces  Hardness.lean::clRecRowSelect: 69/109 = 63%
+   Primitives.lean::pairDup_double  reproduces  Primitives.lean::scanCopy_run: 305/482 = 63%
+   Hardness.lean::clRecord_idle  reproduces  Hardness.lean::clPrepared_idle: 251/397 = 63%
+   Primitives.lean::emitterP2_prepare_rewind_candidate  reproduces  Primitives.lean::splitPrepare_rewind: 477/755 = 63%
+   Loop.lean::loopReady_call  reproduces  Loop.lean::loopCall_frame: 308/488 = 63%
+   Primitives.lean::rawStrip_rewind  reproduces  Primitives.lean::extract_replay_finish: 188/298 = 63%
+   Primitives.lean::pairExtractTM  reproduces  Loop.lean::loopReplayTM: 82/130 = 63%
+   Primitives.lean::emitterP2_prepare_rewind_suffix  reproduces  Primitives.lean::splitPrepare_rewind: 476/755 = 63%
+   Hardness.lean::clRecordWords_native  reproduces  Hardness.lean::clRepeatArgument_native: 271/430 = 63%
+   Hardness.lean::clRec_row_inactive  reproduces  Hardness.lean::clRec_track_inactive: 197/313 = 63%
+   Loop.lean::emLoopHost_round  reproduces  Loop.lean::loopHost_borrow: 261/415 = 63%
+   Primitives.lean::splitBody_prepare  reproduces  Hardness.lean::clTrack_dispatch: 66/105 = 63%
+   Primitives.lean::emitterP2_control  reproduces  Hardness.lean::clTrack_dispatch: 66/105 = 63%
+   Loop.lean::emCall_finalize_run  reproduces  Hardness.lean::clTrack_dispatch: 66/105 = 63%
+   Loop.lean::loopBody_run  reproduces  Loop.lean::emLoop_run_prefix: 81/129 = 63%
+   Primitives.lean::splitRestore_rewind  reproduces  Primitives.lean::rawStrip_rewind: 442/704 = 63%
+   Hardness.lean::clRow_idle  reproduces  Hardness.lean::clPrepare_idle: 143/228 = 63%
+   Primitives.lean::pairDupTM  reproduces  Primitives.lean::splitRewindTM: 116/185 = 63%
+   Primitives.lean::extract_rewind  reproduces  Primitives.lean::rawStrip_replay: 254/406 = 63%
+   Primitives.lean::emitterP2_body_prepare  reproduces  Primitives.lean::emitterP2_body_compare: 549/878 = 63%
+   Hardness.lean::clWipe_idle  reproduces  Hardness.lean::clRow_idle: 91/146 = 62%
+   Hardness.lean::clInput_idle  reproduces  Hardness.lean::clRow_idle: 91/146 = 62%
+   Hardness.lean::clFresh_idle  reproduces  Hardness.lean::clRow_idle: 91/146 = 62%
+   Hardness.lean::clCopy_idle  reproduces  Hardness.lean::clRow_idle: 91/146 = 62%
+   Hardness.lean::clCmp_idle  reproduces  Hardness.lean::clRow_idle: 91/146 = 62%
+   Primitives.lean::emitter_bits_injective  reproduces  Loop.lean::loopValue_bits: 84/135 = 62%
+   Hardness.lean::clReplay_back  reproduces  Primitives.lean::emitterToken_separator: 135/217 = 62%
+   Hardness.lean::clRead_rewind  reproduces  Primitives.lean::emitterToken_separator: 135/217 = 62%
+   Loop.lean::loopCall_frame  reproduces  Loop.lean::loopCall_reframe: 464/749 = 62%
+   Embed.lean::embedSilentTM_spaceUsedByTape_cap  reproduces  Embed.lean::embedSilentTM_frame: 70/113 = 62%
+   Hardness.lean::clWipe_idle  reproduces  Hardness.lean::clLoad_idle: 91/147 = 62%
+   Hardness.lean::clRow_idle  reproduces  Hardness.lean::clCmp_idle: 91/147 = 62%
+   Hardness.lean::clLoad_idle  reproduces  Hardness.lean::clCmp_idle: 91/147 = 62%
+   Hardness.lean::clInput_idle  reproduces  Hardness.lean::clLoad_idle: 91/147 = 62%
+   Hardness.lean::clFresh_idle  reproduces  Hardness.lean::clLoad_idle: 91/147 = 62%
+   Hardness.lean::clCopy_idle  reproduces  Hardness.lean::clLoad_idle: 91/147 = 62%
+   Hardness.lean::clCmp_idle  reproduces  Hardness.lean::clLoad_idle: 91/147 = 62%
+   Primitives.lean::lenCfg  reproduces  Primitives.lean::mapCfg: 99/160 = 62%
+   Primitives.lean::pairExtractTM  reproduces  Hardness.lean::clReplayTM: 167/270 = 62%
+   Primitives.lean::pairExtractTM  reproduces  Primitives.lean::rawStripTM: 285/461 = 62%
+   Primitives.lean::splitPrepare_rewind  reproduces  Primitives.lean::extract_rewind: 461/746 = 62%
+   Embed.lean::embedSilentTM_visitedByTapeHead  reproduces  Embed.lean::embedSilentTM_visitedByTapeHead_frame: 188/305 = 62%
+   Primitives.lean::lenParse_block  reproduces  Primitives.lean::lenParse_first: 189/308 = 61%
+   Embed.lean::embedEmitCfg  reproduces  Embed.lean::embedSilentCfg: 165/270 = 61%
+   Hardness.lean::clSlot_apply  reproduces  Primitives.lean::emitterP2_apply: 110/180 = 61%
+   Hardness.lean::clRec_track_inactive  reproduces  Hardness.lean::clRec_track_frame: 248/406 = 61%
+   Loop.lean::emCall_clear_scan  reproduces  Primitives.lean::emitterP2_erase_scan: 193/316 = 61%
+   Primitives.lean::extract_rewind  reproduces  Primitives.lean::splitPrepare_rewind: 461/755 = 61%
+   Loop.lean::loopHost_payload_rewind  reproduces  Hardness.lean::clCmp_forward: 86/141 = 61%
+   Loop.lean::loopHost_fuel_rewind  reproduces  Hardness.lean::clCmp_forward: 86/141 = 61%
+   Loop.lean::loopHost_fuel_return  reproduces  Hardness.lean::clCmp_forward: 86/141 = 61%
+   Loop.lean::loopHost_borrow_rewind  reproduces  Hardness.lean::clCmp_forward: 86/141 = 61%
+   Primitives.lean::splitBody_rewind  reproduces  Hardness.lean::clTrack_dispatch: 64/105 = 61%
+   Primitives.lean::splitBody_restore  reproduces  Hardness.lean::clTrack_dispatch: 64/105 = 61%
+   Primitives.lean::emitterP2_prepare_first  reproduces  Hardness.lean::clTrack_dispatch: 64/105 = 61%
+   Primitives.lean::emitterP2_erase_first  reproduces  Hardness.lean::clTrack_dispatch: 64/105 = 61%
+   Loop.lean::emCall_prepare_run  reproduces  Hardness.lean::clTrack_dispatch: 64/105 = 61%
+   Loop.lean::loopHost_anchor_return  reproduces  Loop.lean::loopHost_halt_return: 295/484 = 61%
+   Primitives.lean::rawStrip_rewind  reproduces  Primitives.lean::splitPrepare_rewind: 460/755 = 61%
+   Primitives.lean::splitPrepare_scan  reproduces  Primitives.lean::splitRestore_scan: 505/831 = 61%
+   Loop.lean::emCall_finish_transfer  reproduces  Loop.lean::emCall_finish_erase: 764/1264 = 60%
+   Loop.lean::emCall_finish_transfer  reproduces  Loop.lean::emCall_finish_rewind: 722/1195 = 60%
+   Loop.lean::loopHost_fuel_capture  reproduces  Loop.lean::loopHost_body_capture: 67/111 = 60%
+   Primitives.lean::mapBuffer_rewind  reproduces  Primitives.lean::mapPayload_replay: 372/617 = 60%
+   Hardness.lean::clRec_track_inactive  reproduces  Hardness.lean::clRec_row_frame: 217/360 = 60%
+   Hardness.lean::clRecordCfg  reproduces  Hardness.lean::clPreparedCfg: 91/151 = 60%
+   Primitives.lean::mapParse_first  reproduces  Primitives.lean::mapParse_block: 244/405 = 60%
+   Primitives.lean::emitterP2_erase_back  reproduces  Primitives.lean::rawStrip_erase: 213/354 = 60%
+   Hardness.lean::clMatch_load_frame  reproduces  Hardness.lean::clQuery_initial: 107/178 = 60%
+   Hardness.lean::clCmp_idle  reproduces  Hardness.lean::clPrepare_idle: 137/228 = 60%
+   Primitives.lean::scanCopy_suffix  reproduces  Primitives.lean::scanCopy_finish: 154/257 = 60%
+   Primitives.lean::emitterP2_call_segment  reproduces  Primitives.lean::emitterP2_segment: 136/227 = 60%
+   Primitives.lean::splitRestore_scan  reproduces  Primitives.lean::splitCount_over: 82/137 = 60%
+   Primitives.lean::emitter_compare_scan  reproduces  Primitives.lean::emitterP2_erase_scan: 189/316 = 60%
+   Primitives.lean::splitEmit_double  reproduces  Primitives.lean::splitPrepare_scan: 382/639 = 60%
+   Primitives.lean::pairDupTM  reproduces  Primitives.lean::incFixedTM: 283/474 = 60%
+   Loop.lean::loopCall  reproduces  Loop.lean::emLoopCall: 80/134 = 60%
+   Primitives.lean::splitBody_restore  reproduces  Primitives.lean::splitBody_rewind: 321/538 = 60%
+   Hardness.lean::clWipe_idle  reproduces  Hardness.lean::clPrepare_idle: 136/228 = 60%
+   Hardness.lean::clInput_idle  reproduces  Hardness.lean::clPrepare_idle: 136/228 = 60%
+   Hardness.lean::clCopy_idle  reproduces  Hardness.lean::clPrepare_idle: 136/228 = 60%
+   Hardness.lean::clRow_idle  reproduces  Hardness.lean::clFresh_idle: 91/153 = 59%
+   Hardness.lean::clLoad_idle  reproduces  Hardness.lean::clFresh_idle: 91/153 = 59%
+   Hardness.lean::clCopy_rewind  reproduces  Hardness.lean::clCopy_write: 98/165 = 59%
+   Primitives.lean::splitRestore_rewind  reproduces  Primitives.lean::extract_rewind: 443/746 = 59%
+   Primitives.lean::emitterP2_body_compare  reproduces  Primitives.lean::emitterP2_body_prepare: 549/925 = 59%
+   Loop.lean::exists_emitLoopTM  reproduces  Loop.lean::exists_loopTM: 457/770 = 59%
+   Loop.lean::emCall_pair_triple  reproduces  Loop.lean::emCall_triple_pair: 138/233 = 59%
+   Primitives.lean::emitterP2_prepare_rewind_candidate  reproduces  Primitives.lean::splitRestore_rewind: 467/790 = 59%
+   Hardness.lean::clRecords_native  reproduces  Hardness.lean::clFinalCount_native: 114/193 = 59%
+   Primitives.lean::emitterP2_prepare_rewind_suffix  reproduces  Primitives.lean::splitRestore_rewind: 466/790 = 59%
+   Hardness.lean::clWipe_forward  reproduces  Primitives.lean::emitterToken_separator: 128/217 = 59%
+   Hardness.lean::clReplay_forward  reproduces  Primitives.lean::emitterToken_separator: 128/217 = 59%
+   Hardness.lean::clCount_rewind  reproduces  Primitives.lean::emitterToken_separator: 128/217 = 59%
+   Primitives.lean::splitEmit_double  reproduces  Primitives.lean::emitterP2_erase_scan: 186/316 = 59%
+   Primitives.lean::catalogPoly_setup  reproduces  Primitives.lean::emitterToken_separator: 127/217 = 59%
+   Primitives.lean::catalogPoly_emit  reproduces  Primitives.lean::emitterToken_separator: 127/217 = 59%
+   Hardness.lean::clInput_backward  reproduces  Primitives.lean::emitterToken_separator: 127/217 = 59%
+   Hardness.lean::clA5Sizes_native  reproduces  Hardness.lean::clA5Cursor_native: 76/130 = 58%
+   Primitives.lean::scanTrues_run  reproduces  Hardness.lean::clCmp_forward: 82/141 = 58%
+   Hardness.lean::clCountOutputTM  reproduces  Hardness.lean::clRecordOutputTM: 75/129 = 58%
+   Loop.lean::loopHost_borrow_rewind  reproduces  Loop.lean::loopHost_fuel_rewind: 733/1261 = 58%
+   Hardness.lean::clRepeat_round  reproduces  Hardness.lean::clTrack_dispatch: 61/105 = 58%
+   Hardness.lean::clMatch_load  reproduces  Hardness.lean::clTrack_dispatch: 61/105 = 58%
+   Primitives.lean::lenParse_run  reproduces  Primitives.lean::extract_run: 1077/1854 = 58%
+   Hardness.lean::clA5Pad_run  reproduces  Primitives.lean::splitEmbed_run: 109/188 = 58%
+   Hardness.lean::clPrepared_idle  reproduces  Hardness.lean::clPrepare_idle: 132/228 = 58%
+   Loop.lean::exists_loopFindTM  reproduces  Loop.lean::exists_loopCfgTM: 92/159 = 58%
+   Loop.lean::emCall_clear_left  reproduces  Loop.lean::emCall_clear_scan: 369/638 = 58%
+   Loop.lean::loopHost_borrow_rewind  reproduces  Loop.lean::loopHost_payload_rewind: 733/1269 = 58%
+   Hardness.lean::clA5WorkFragment  reproduces  Hardness.lean::clA5InputFragment: 112/194 = 58%
+   Hardness.lean::clReplay_back  reproduces  Hardness.lean::clReplay_forward: 514/891 = 58%
+   Embed.lean::embedSilentRetTM_run  reproduces  Embed.lean::embedSilentTM_runFrom: 68/118 = 58%
+   Primitives.lean::incFixed_computes  reproduces  Primitives.lean::emitterToken_separator: 125/217 = 58%
+   Hardness.lean::clPrepare_start  reproduces  Hardness.lean::clFresh_idle: 88/153 = 58%
+   Loop.lean::emCallTripleEmbedding  reproduces  Loop.lean::emCallPairEmbedding: 69/120 = 57%
+   Hardness.lean::clA5InputFragment_native  reproduces  Hardness.lean::clA5IfLt_native: 81/141 = 57%
+   Loop.lean::emCall_track_stamp  reproduces  Loop.lean::emCall_track_initial: 398/693 = 57%
+   Primitives.lean::splitEmbed_cut  reproduces  Loop.lean::emLoop_run_prefix: 74/129 = 57%
+   Hardness.lean::clLeft_until  reproduces  Loop.lean::emLoop_run_prefix: 74/129 = 57%
+   Hardness.lean::clBank_run  reproduces  Loop.lean::emLoop_run_prefix: 74/129 = 57%
+   Hardness.lean::clA5Stop_clean  reproduces  Loop.lean::emLoop_run_prefix: 74/129 = 57%
+   Primitives.lean::splitEmit_double  reproduces  Primitives.lean::rawStrip_replay: 232/406 = 57%
+   Loop.lean::emCall_triple_inverse  reproduces  Loop.lean::emCall_pair_triple: 92/161 = 57%
+   Hardness.lean::clA5Fuel  reproduces  Hardness.lean::clNative_append: 76/133 = 57%
+   Loop.lean::loopHost_payload_rewind  reproduces  Loop.lean::loopHost_borrow_rewind: 733/1284 = 57%
+   Loop.lean::loopHost_fuel_rewind  reproduces  Loop.lean::loopHost_borrow_rewind: 733/1284 = 57%
+   Loop.lean::loop_input_run_le  reproduces  Loop.lean::loop_output_length_le: 145/254 = 57%
+   Embed.lean::embedEmitTM_visitedByTapeHead_frame  reproduces  Embed.lean::embedEmitTM_visitedByTapeHead: 138/242 = 57%
+   Loop.lean::emCall_track_initial  reproduces  Loop.lean::emCall_track_stamp: 398/698 = 57%
+   Loop.lean::emCall_finish_transfer  reproduces  Loop.lean::emCall_finish_arg: 819/1438 = 57%
+   Loop.lean::loopHost_payload_rewind  reproduces  Loop.lean::loopHost_fuel_copy: 829/1458 = 57%
+   Loop.lean::loopHost_frame_replay  reproduces  Hardness.lean::clRepeat_frame: 67/118 = 57%
+   Hardness.lean::clRec_prepared  reproduces  Hardness.lean::clRepeat_frame: 67/118 = 57%
+   Hardness.lean::clQuery_initial  reproduces  Hardness.lean::clRepeat_frame: 67/118 = 57%
+   Hardness.lean::clMatch_load_frame  reproduces  Hardness.lean::clRepeat_frame: 67/118 = 57%
+   Hardness.lean::clMatch_cmp_frame  reproduces  Hardness.lean::clRepeat_frame: 67/118 = 57%
+   Hardness.lean::clMatch_cmp_frame  reproduces  Hardness.lean::clQuery_initial: 101/178 = 57%
+   Loop.lean::emLoopCall  reproduces  Loop.lean::loopCall: 80/141 = 57%
+   Loop.lean::loopHost_fuel_rewind  reproduces  Loop.lean::loopHost_fuel_copy: 827/1458 = 57%
+   Hardness.lean::clCopy_rewind  reproduces  Primitives.lean::emitterToken_separator: 123/217 = 57%
+   Embed.lean::embedThroughHalt  reproduces  Loop.lean::emLoop_run_prefix: 73/129 = 57%
+   Primitives.lean::emitter_compare_rewind  reproduces  Primitives.lean::splitPrepare_rewind: 427/755 = 57%
+   Embed.lean::embedSilentRetTM_visitedByTapeHead  reproduces  Embed.lean::embedEmitRetTM_visitedByTapeHead: 65/115 = 57%
+   Loop.lean::emCallPairIndex  reproduces  Loop.lean::emCallPairSelect: 61/108 = 56%
+   Hardness.lean::clPrepare_start  reproduces  Hardness.lean::clWipe_idle: 80/142 = 56%
+   Hardness.lean::clPrepare_start  reproduces  Hardness.lean::clInput_idle: 80/142 = 56%
+   Hardness.lean::clPrepare_start  reproduces  Hardness.lean::clCopy_idle: 80/142 = 56%
+   Primitives.lean::emitterP2_prepare_candidate  reproduces  Primitives.lean::emitterP2_erase_scan: 178/316 = 56%
+   Loop.lean::loop_rewind_bounded  reproduces  Primitives.lean::catalogRewind: 245/435 = 56%
+   Hardness.lean::clCmp_rewind  reproduces  Hardness.lean::clCmp_finish_scan: 144/256 = 56%
+   Primitives.lean::scanCopy_suffix  reproduces  Primitives.lean::emitterToken_separator: 122/217 = 56%
+   Primitives.lean::splitBodyStateDecidableEq  reproduces  Primitives.lean::emitterP2StateDecidableEq: 408/726 = 56%
+   Hardness.lean::clRecordWords_native  reproduces  Hardness.lean::clHeaderLayout_native: 553/985 = 56%
+   Loop.lean::emCall_finish_arg  reproduces  Loop.lean::emCall_finish_transfer: 819/1459 = 56%
+   Primitives.lean::extract_rewind  reproduces  Primitives.lean::splitRestore_rewind: 443/790 = 56%
+   Hardness.lean::clSearchArg_native  reproduces  Hardness.lean::clRepeatArgument_native: 241/430 = 56%
+   Primitives.lean::splitEmit_double  reproduces  Hardness.lean::clCmp_forward: 79/141 = 56%
+   Primitives.lean::pairDup_double  reproduces  Hardness.lean::clCmp_forward: 79/141 = 56%
+   Primitives.lean::rawStrip_rewind  reproduces  Primitives.lean::splitRestore_rewind: 442/790 = 56%
+   Primitives.lean::mapCfg  reproduces  Primitives.lean::lenCfg: 99/177 = 56%
+   Hardness.lean::clCopy_rewind  reproduces  Primitives.lean::catalogPoly_setup: 319/571 = 56%
+   Embed.lean::embedSilentTM_visitedByTapeHead  reproduces  Embed.lean::embedSilentTM_frame: 63/113 = 56%
+   Hardness.lean::clPreparedTM  reproduces  Hardness.lean::clOutputTM: 131/235 = 56%
+   Primitives.lean::emitterToken_double  reproduces  Primitives.lean::scanStep_right: 88/158 = 56%
+   Primitives.lean::splitEmit_double  reproduces  Primitives.lean::pairDup_double: 653/1176 = 56%
+   Loop.lean::emCall_bank_final  reproduces  Loop.lean::emCall_finish_initial: 904/1629 = 55%
+   Hardness.lean::clRead_rewind  reproduces  Hardness.lean::clReplay_back: 391/705 = 55%
+   Primitives.lean::emitterP2_erase_scan  reproduces  Primitives.lean::rawStrip_replay: 225/406 = 55%
+   Hardness.lean::clRow_frame  reproduces  Hardness.lean::clLoad_frame: 133/240 = 55%
+   Primitives.lean::emitter_compare_rewind  reproduces  Primitives.lean::emitterP2_erase_scan: 175/316 = 55%
+   Loop.lean::emLoopHost_round  reproduces  Loop.lean::loopHost_fuel_return: 731/1321 = 55%
+   Primitives.lean::emitter_compare_rewind  reproduces  Primitives.lean::emitterP2_prepare_rewind_suffix: 479/866 = 55%
+   Primitives.lean::emitter_compare_rewind  reproduces  Primitives.lean::emitterP2_prepare_rewind_candidate: 479/866 = 55%
+   Hardness.lean::clMatch_prefix  reproduces  Loop.lean::emCall_banks_run: 131/237 = 55%
+   Hardness.lean::clRecord_idle  reproduces  Hardness.lean::clPrepare_idle: 126/228 = 55%
+   Primitives.lean::scanCopy_run  reproduces  Primitives.lean::scanCopy_finish: 142/257 = 55%
+   Hardness.lean::clRecord_prepare_frame  reproduces  Hardness.lean::clRepeat_frame: 65/118 = 55%
+   Primitives.lean::splitPrepare_rewind  reproduces  Primitives.lean::emitterP2_prepare_rewind_candidate: 477/866 = 55%
+   Loop.lean::emLoopHost_round  reproduces  Loop.lean::emLoop_run_prefix: 71/129 = 55%
+   Loop.lean::emCall_track_run  reproduces  Loop.lean::emLoop_run_prefix: 71/129 = 55%
+   Hardness.lean::clCount_idle_run  reproduces  Loop.lean::emLoop_run_prefix: 71/129 = 55%
+   Hardness.lean::clCopy_rewind  reproduces  Hardness.lean::clReplay_back: 388/705 = 55%
+   Primitives.lean::incFixedTM  reproduces  Primitives.lean::emitterTokenTM: 220/400 = 55%
+   Primitives.lean::splitPrepare_rewind  reproduces  Primitives.lean::emitterP2_prepare_rewind_suffix: 476/866 = 55%
+   Primitives.lean::splitBody_rewind  reproduces  Hardness.lean::clWipe_idle: 78/142 = 55%
+   Primitives.lean::splitBody_rewind  reproduces  Hardness.lean::clInput_idle: 78/142 = 55%
+   Primitives.lean::emitterP2_erase_first  reproduces  Hardness.lean::clWipe_idle: 78/142 = 55%
+   Primitives.lean::emitterP2_erase_first  reproduces  Hardness.lean::clInput_idle: 78/142 = 55%
+   Loop.lean::loopHost_frame_replay  reproduces  Hardness.lean::clRepeat_initial: 67/122 = 55%
+   Hardness.lean::clQuery_initial  reproduces  Hardness.lean::clRepeat_initial: 67/122 = 55%
+   Hardness.lean::clMatch_load_frame  reproduces  Hardness.lean::clRepeat_initial: 67/122 = 55%
+   Hardness.lean::clMatch_cmp_frame  reproduces  Hardness.lean::clRepeat_initial: 67/122 = 55%
+   Primitives.lean::splitEmbed_cut  reproduces  Primitives.lean::emitter_first_entry: 221/403 = 55%
+   Primitives.lean::splitEmbed_cut  reproduces  Loop.lean::emCall_first_entry: 221/403 = 55%
+   Primitives.lean::emitter_compare_run  reproduces  Primitives.lean::emitterP2_erase_scan: 173/316 = 55%
+   Hardness.lean::clRec_track_frame  reproduces  Hardness.lean::clRec_row_frame: 197/360 = 55%
+   Hardness.lean::clA5Field_native  reproduces  Hardness.lean::clA5Drop_native: 123/225 = 55%
+   Hardness.lean::clCopy_separator  reproduces  Hardness.lean::clCopy_pair: 443/811 = 55%
+   Hardness.lean::clA5Stop_clean  reproduces  Hardness.lean::clCmp_forward: 77/141 = 55%
+   Loop.lean::emLoopHost_round  reproduces  Loop.lean::loopHost_borrow_step: 366/671 = 55%
+   Primitives.lean::extract_run  reproduces  Primitives.lean::pairValid_run: 641/1177 = 54%
+   Hardness.lean::clRec_row_inactive  reproduces  Hardness.lean::clRec_row_frame: 196/360 = 54%
+   Hardness.lean::clPrepare_start  reproduces  Hardness.lean::clCmp_idle: 80/147 = 54%
+   Hardness.lean::clRead_separator  reproduces  Primitives.lean::emitterToken_separator: 118/217 = 54%
+   Hardness.lean::clRead_pair  reproduces  Primitives.lean::emitterToken_separator: 118/217 = 54%
+   Primitives.lean::splitEmit_double  reproduces  Loop.lean::emLoop_run_prefix: 70/129 = 54%
+   Primitives.lean::pairDup_double  reproduces  Loop.lean::emLoop_run_prefix: 70/129 = 54%
+   Primitives.lean::pairDup_computes  reproduces  Loop.lean::emLoop_run_prefix: 70/129 = 54%
+   Primitives.lean::incFixed_computes  reproduces  Loop.lean::emLoop_run_prefix: 70/129 = 54%
+   Primitives.lean::emitterP2_prepare_run  reproduces  Loop.lean::emLoop_run_prefix: 70/129 = 54%
+   Hardness.lean::clRec_advance  reproduces  Loop.lean::emLoop_run_prefix: 70/129 = 54%
+   Primitives.lean::splitEmit_suffix  reproduces  Loop.lean::loopReplay_run: 187/345 = 54%
+   Primitives.lean::emitterP2_prepare_run  reproduces  Primitives.lean::emitterP2_prepare_rewind_suffix: 469/866 = 54%
+   Primitives.lean::pairValid_computes  reproduces  Primitives.lean::anyTrue_computes: 137/253 = 54%
+   Primitives.lean::splitBody_prepare  reproduces  Primitives.lean::splitBody_restore: 270/499 = 54%
+   Primitives.lean::catalogPoly_unary_computes  reproduces  Primitives.lean::splitPoly_loop_end: 380/703 = 54%
+   Primitives.lean::emitterP2_prepare_run  reproduces  Primitives.lean::emitterP2_prepare_rewind_candidate: 468/866 = 54%
+   Loop.lean::exists_emitLoopTM  reproduces  Loop.lean::exists_loopFindTM: 491/910 = 54%
+   Primitives.lean::rawStripTM  reproduces  Hardness.lean::clInputTM: 157/291 = 54%
+   Primitives.lean::splitRestore_rewind  reproduces  Primitives.lean::emitterP2_prepare_rewind_candidate: 467/866 = 54%
+   Hardness.lean::clWipe_backward  reproduces  Primitives.lean::emitterToken_separator: 117/217 = 54%
+   Loop.lean::emCallPairEmbedding  reproduces  Loop.lean::emCallTripleEmbedding: 69/128 = 54%
+   Loop.lean::emCall_track_run  reproduces  Loop.lean::emCall_track_extent: 145/269 = 54%
+   Primitives.lean::splitRestore_rewind  reproduces  Primitives.lean::emitterP2_prepare_rewind_suffix: 466/866 = 54%
+   Hardness.lean::clRead_separator  reproduces  Hardness.lean::clRead_rewind: 432/803 = 54%
+   Primitives.lean::splitEmit_double  reproduces  Primitives.lean::splitEmit_separator: 411/765 = 54%
+   Hardness.lean::clTrack_round  reproduces  Loop.lean::emLoop_run_prefix: 69/129 = 53%
+   Hardness.lean::clRec_prefix  reproduces  Loop.lean::emLoop_run_prefix: 69/129 = 53%
+   Primitives.lean::pairDup_computes  reproduces  Primitives.lean::emitterToken_separator: 116/217 = 53%
+   Loop.lean::emCall_track_action  reproduces  Loop.lean::emCall_track_initial: 370/693 = 53%
+   Loop.lean::emCall_bank_initial  reproduces  Loop.lean::emCall_prepare_final: 377/707 = 53%
+   Primitives.lean::emitterP2_prepare_rewind_suffix  reproduces  Primitives.lean::emitter_compare_rewind: 479/899 = 53%
+   Primitives.lean::emitterP2_prepare_rewind_candidate  reproduces  Primitives.lean::emitter_compare_rewind: 479/899 = 53%
+   Hardness.lean::clRecord_prepare_frame  reproduces  Hardness.lean::clRepeat_initial: 65/122 = 53%
+   Hardness.lean::clCmpTM  reproduces  Primitives.lean::emitterCompareTM: 181/340 = 53%
+   Embed.lean::embedThroughHalt  reproduces  Hardness.lean::clCmp_forward: 75/141 = 53%
+   Loop.lean::emCall_clear_left  reproduces  Primitives.lean::emitterP2_erase_scan: 168/316 = 53%
+   Primitives.lean::emitter_compare_rewind  reproduces  Primitives.lean::emitterToken_separator: 115/217 = 53%
+   Primitives.lean::emitterP2_prepare_rewind_suffix  reproduces  Primitives.lean::emitterToken_separator: 115/217 = 53%
+   Primitives.lean::emitterP2_prepare_rewind_candidate  reproduces  Primitives.lean::emitterToken_separator: 115/217 = 53%
+   Primitives.lean::emitterP2_erase_back  reproduces  Primitives.lean::emitterToken_separator: 115/217 = 53%
+   Loop.lean::emCall_triple_pair  reproduces  Loop.lean::emCall_triple_other: 152/287 = 53%
+   Primitives.lean::splitPrepare_extra  reproduces  Primitives.lean::splitPrepare_scan: 338/639 = 53%
+   Hardness.lean::clRead_rewind  reproduces  Hardness.lean::clCopy_rewind: 524/991 = 53%
+   Hardness.lean::clRec_prepared  reproduces  Hardness.lean::clQuery_initial: 94/178 = 53%
+   Primitives.lean::splitEmit_suffix  reproduces  Loop.lean::emLoop_run_prefix: 68/129 = 53%
+   Primitives.lean::scanCopy_suffix  reproduces  Loop.lean::emLoop_run_prefix: 68/129 = 53%
+   Primitives.lean::extract_suffix  reproduces  Loop.lean::emLoop_run_prefix: 68/129 = 53%
+   Primitives.lean::emitterToken_run  reproduces  Loop.lean::emLoop_run_prefix: 68/129 = 53%
+   Primitives.lean::emitterP2_call_segment  reproduces  Loop.lean::emLoop_run_prefix: 68/129 = 53%
+   Primitives.lean::catalogPoly_loop  reproduces  Loop.lean::emLoop_run_prefix: 68/129 = 53%
+   Loop.lean::loopHost_borrow_run  reproduces  Loop.lean::emLoop_run_prefix: 68/129 = 53%
+   Loop.lean::emCall_finish_transfer  reproduces  Loop.lean::emLoop_run_prefix: 68/129 = 53%
+   Loop.lean::emCall_finish_rewind  reproduces  Loop.lean::emLoop_run_prefix: 68/129 = 53%
+   Loop.lean::emCall_finish_erase  reproduces  Loop.lean::emLoop_run_prefix: 68/129 = 53%
+   Loop.lean::emCall_finish_arg  reproduces  Loop.lean::emLoop_run_prefix: 68/129 = 53%
+   Hardness.lean::clWipe_forward  reproduces  Loop.lean::emLoop_run_prefix: 68/129 = 53%
+   Hardness.lean::clReplay_forward  reproduces  Loop.lean::emLoop_run_prefix: 68/129 = 53%
+   Hardness.lean::clReplay_back  reproduces  Loop.lean::emLoop_run_prefix: 68/129 = 53%
+   Hardness.lean::clRead_rewind  reproduces  Loop.lean::emLoop_run_prefix: 68/129 = 53%
+   Hardness.lean::clCount_carry  reproduces  Loop.lean::emLoop_run_prefix: 68/129 = 53%
+   Hardness.lean::clCopy_rewind  reproduces  Loop.lean::emLoop_run_prefix: 68/129 = 53%
+   Hardness.lean::clCmp_rewind  reproduces  Loop.lean::emLoop_run_prefix: 68/129 = 53%
+   Hardness.lean::clA5Round  reproduces  Loop.lean::emLoop_run_prefix: 68/129 = 53%
+   Embed.lean::embedSilentTM_spaceUsedByTape_cap  reproduces  Embed.lean::embedSilentTM_visitedByTapeHead: 141/268 = 53%
+   Primitives.lean::pairDup_computes  reproduces  Primitives.lean::scanStep_right: 83/158 = 53%
+   Primitives.lean::emitterAppend_run  reproduces  Primitives.lean::scanCopy_finish: 135/257 = 53%
+   Hardness.lean::clWipe_forward  reproduces  Hardness.lean::clRead_rewind: 421/803 = 52%
+   Loop.lean::emCall_finish_erase  reproduces  Loop.lean::emCall_finish_transfer: 764/1459 = 52%
+   Loop.lean::emCall_triple_inverse  reproduces  Loop.lean::emCall_triple_pair: 122/233 = 52%
+   Primitives.lean::emitterP2_prepare_rewind_suffix  reproduces  Primitives.lean::rawStrip_rewind: 368/704 = 52%
+   Primitives.lean::emitterP2_prepare_rewind_candidate  reproduces  Primitives.lean::rawStrip_rewind: 368/704 = 52%
+   Hardness.lean::clMatch_cmp_frame  reproduces  Hardness.lean::clMatch_load_frame: 118/226 = 52%
+   Primitives.lean::emitterP2_right_frame  reproduces  Primitives.lean::emitterP2_pair_frame: 178/341 = 52%
+   Primitives.lean::emitterP2_left_frame  reproduces  Primitives.lean::emitterP2_pair_frame: 178/341 = 52%
+   Hardness.lean::clA5InputFragment  reproduces  Hardness.lean::clA5WorkFragment: 112/215 = 52%
+   Loop.lean::loopFuelCaptured_frame  reproduces  Loop.lean::loopControl_payload: 128/246 = 52%
+   Primitives.lean::pairValid_run  reproduces  Primitives.lean::anyTrue_run: 413/795 = 52%
+   Primitives.lean::splitRestore_rewind  reproduces  Loop.lean::emLoop_run_prefix: 67/129 = 52%
+   Primitives.lean::splitPrepare_rewind  reproduces  Loop.lean::emLoop_run_prefix: 67/129 = 52%
+   Primitives.lean::rawStrip_trim  reproduces  Loop.lean::emLoop_run_prefix: 67/129 = 52%
+   Primitives.lean::rawStrip_rewind  reproduces  Loop.lean::emLoop_run_prefix: 67/129 = 52%
+   Primitives.lean::mapBuffer_rewind  reproduces  Loop.lean::emLoop_run_prefix: 67/129 = 52%
+   Primitives.lean::extract_rewind  reproduces  Loop.lean::emLoop_run_prefix: 67/129 = 52%
+   Primitives.lean::emitter_compare_rewind  reproduces  Loop.lean::emLoop_run_prefix: 67/129 = 52%
+   Primitives.lean::emitterToken_separator  reproduces  Loop.lean::emLoop_run_prefix: 67/129 = 52%
+   Primitives.lean::emitterToken_double  reproduces  Loop.lean::emLoop_run_prefix: 67/129 = 52%
+   Primitives.lean::emitterP2_prepare_rewind_suffix  reproduces  Loop.lean::emLoop_run_prefix: 67/129 = 52%
+   Primitives.lean::emitterP2_prepare_rewind_candidate  reproduces  Loop.lean::emLoop_run_prefix: 67/129 = 52%
+   Primitives.lean::emitterP2_erase_back  reproduces  Loop.lean::emLoop_run_prefix: 67/129 = 52%
+   Primitives.lean::catalogPoly_setup  reproduces  Loop.lean::emLoop_run_prefix: 67/129 = 52%
+   Primitives.lean::catalogPoly_rewind  reproduces  Loop.lean::emLoop_run_prefix: 67/129 = 52%
+   Primitives.lean::catalogPoly_emit  reproduces  Loop.lean::emLoop_run_prefix: 67/129 = 52%
+   Primitives.lean::anyTrue_run  reproduces  Loop.lean::emLoop_run_prefix: 67/129 = 52%
+   Loop.lean::loopHost_reject  reproduces  Loop.lean::emLoop_run_prefix: 67/129 = 52%
+   Loop.lean::loopHost_payload_rewind  reproduces  Loop.lean::emLoop_run_prefix: 67/129 = 52%
+   Loop.lean::loopHost_fuel_rewind  reproduces  Loop.lean::emLoop_run_prefix: 67/129 = 52%
+   Loop.lean::loopHost_fuel_return  reproduces  Loop.lean::emLoop_run_prefix: 67/129 = 52%
+   Loop.lean::loopHost_borrow_rewind  reproduces  Loop.lean::emLoop_run_prefix: 67/129 = 52%
+   Loop.lean::emCall_right_scan  reproduces  Loop.lean::emLoop_run_prefix: 67/129 = 52%
+   Hardness.lean::clRepeat_round  reproduces  Loop.lean::emLoop_run_prefix: 67/129 = 52%
+   Hardness.lean::clRead_separator  reproduces  Loop.lean::emLoop_run_prefix: 67/129 = 52%
+   Hardness.lean::clRead_pair  reproduces  Loop.lean::emLoop_run_prefix: 67/129 = 52%
+   Hardness.lean::clInput_backward  reproduces  Loop.lean::emLoop_run_prefix: 67/129 = 52%
+   Hardness.lean::clCopy_separator  reproduces  Loop.lean::emLoop_run_prefix: 67/129 = 52%
+   Hardness.lean::clCopy_pair  reproduces  Loop.lean::emLoop_run_prefix: 67/129 = 52%
+   Hardness.lean::clA5Map_run  reproduces  Loop.lean::emLoop_run_prefix: 67/129 = 52%
+   Primitives.lean::rawStrip_copy  reproduces  Primitives.lean::emitterP2_erase_scan: 164/316 = 52%
+   Hardness.lean::clPrepared_idle  reproduces  Hardness.lean::clRecord_idle: 251/484 = 52%
+   Loop.lean::emCall_finish_initial  reproduces  Loop.lean::emCall_prepare_final: 366/707 = 52%
+   Hardness.lean::clHeaderLayout_native  reproduces  Hardness.lean::clRepeatArgument_native: 222/430 = 52%
+   Primitives.lean::emitterP2_call_segment  reproduces  Primitives.lean::emitterP2_relocate_run: 420/814 = 52%
+   Loop.lean::emLoopHost_round  reproduces  Loop.lean::emLoopHost_start: 497/965 = 52%
+   Primitives.lean::emitterToken_run  reproduces  Primitives.lean::scanCopy_suffix: 437/850 = 51%
+   Hardness.lean::clOutput_compute  reproduces  Hardness.lean::clWipe_idle: 73/142 = 51%
+   Hardness.lean::clOutput_compute  reproduces  Hardness.lean::clInput_idle: 73/142 = 51%
+   Hardness.lean::clOutput_compute  reproduces  Hardness.lean::clCopy_idle: 73/142 = 51%
+   Hardness.lean::clOutputAt_compute  reproduces  Hardness.lean::clWipe_idle: 73/142 = 51%
+   Hardness.lean::clOutputAt_compute  reproduces  Hardness.lean::clInput_idle: 73/142 = 51%
+   Hardness.lean::clOutputAt_compute  reproduces  Hardness.lean::clCopy_idle: 73/142 = 51%
+   Primitives.lean::lenParse_run  reproduces  Primitives.lean::pairValid_run: 605/1177 = 51%
+   Hardness.lean::clOutput_compute  reproduces  Hardness.lean::clRow_idle: 75/146 = 51%
+   Hardness.lean::clOutputAt_compute  reproduces  Hardness.lean::clRow_idle: 75/146 = 51%
+   Primitives.lean::emitterP2_right_frame  reproduces  Primitives.lean::emitterP2_small_frame: 178/347 = 51%
+   Primitives.lean::emitterP2_left_frame  reproduces  Primitives.lean::emitterP2_small_frame: 178/347 = 51%
+   Hardness.lean::clInput_forward  reproduces  Primitives.lean::emitterP2_erase_scan: 162/316 = 51%
+   Primitives.lean::mapPayload_replay  reproduces  Primitives.lean::rawStrip_replay: 208/406 = 51%
+   Primitives.lean::mapValidate  reproduces  Loop.lean::emLoop_run_prefix: 66/129 = 51%
+   Loop.lean::loopReplay_run  reproduces  Loop.lean::emLoop_run_prefix: 66/129 = 51%
+   Hardness.lean::clRepeat_call  reproduces  Loop.lean::emLoop_run_prefix: 66/129 = 51%
+   Hardness.lean::clCount_rewind  reproduces  Loop.lean::emLoop_run_prefix: 66/129 = 51%
+   Primitives.lean::splitEmit_separator  reproduces  Primitives.lean::emitterToken_separator: 111/217 = 51%
+   Primitives.lean::pairDup_double  reproduces  Primitives.lean::emitterToken_separator: 111/217 = 51%
+   Hardness.lean::clPrepHeader_native  reproduces  Hardness.lean::clNative_append: 68/133 = 51%
+   Hardness.lean::clRead_forward  reproduces  Hardness.lean::clCopy_forward: 138/270 = 51%
+   Primitives.lean::emitter_compare_rewind  reproduces  Primitives.lean::emitter_compare_scan: 334/654 = 51%
+   Primitives.lean::emitterP2_update_right  reproduces  Primitives.lean::emitterP2_words_clean: 72/141 = 51%
+   Primitives.lean::emitterP2_update_left  reproduces  Primitives.lean::emitterP2_words_clean: 72/141 = 51%
+   Hardness.lean::clRecWords  reproduces  Hardness.lean::clHeaderLayout: 75/147 = 51%
+   Hardness.lean::clOutput_compute  reproduces  Hardness.lean::clLoad_idle: 75/147 = 51%
+   Hardness.lean::clOutputAt_compute  reproduces  Hardness.lean::clLoad_idle: 75/147 = 51%
+   Hardness.lean::clWipe_backward  reproduces  Hardness.lean::clWipe_forward: 435/855 = 51%
+   Loop.lean::loopHost_frame_replay  reproduces  Loop.lean::loopControl_payload: 125/246 = 51%
+   Hardness.lean::clRepeatCfg  reproduces  Hardness.lean::clLoadCfg: 65/128 = 51%
+   Hardness.lean::clInputTM  reproduces  Hardness.lean::clReplayTM: 137/270 = 51%
+   Primitives.lean::catalogPrefixTM_copy  reproduces  Primitives.lean::catalogPrefixTM_emit: 180/355 = 51%
+   Primitives.lean::emitter_compare_rewind  reproduces  Primitives.lean::splitRestore_rewind: 400/790 = 51%
+   Hardness.lean::clRead_pair  reproduces  Hardness.lean::clRead_rewind: 406/803 = 51%
+   Hardness.lean::clPreparedCfg  reproduces  Hardness.lean::clRecordCfg: 91/180 = 51%
+   Primitives.lean::splitRestore_scan  reproduces  Primitives.lean::splitPrepare_extra: 228/451 = 51%
+   Primitives.lean::scanCopy_run  reproduces  Primitives.lean::rawStrip_replay: 205/406 = 50%
+   Primitives.lean::scanCopy_suffix  reproduces  Primitives.lean::emitterToken_double: 396/785 = 50%
+   Primitives.lean::splitEmit_separator  reproduces  Loop.lean::emLoop_run_prefix: 65/129 = 50%
+   Primitives.lean::lenSuffix_run  reproduces  Loop.lean::emLoop_run_prefix: 65/129 = 50%
+   Loop.lean::loopHost_fuel_copy  reproduces  Loop.lean::emLoop_run_prefix: 65/129 = 50%
+   Hardness.lean::clWipe_backward  reproduces  Loop.lean::emLoop_run_prefix: 65/129 = 50%
+   Primitives.lean::splitRestore_rewind  reproduces  Hardness.lean::clCmp_forward: 71/141 = 50%
+   Primitives.lean::splitPrepare_rewind  reproduces  Hardness.lean::clCmp_forward: 71/141 = 50%
+   Primitives.lean::rawStrip_rewind  reproduces  Hardness.lean::clCmp_forward: 71/141 = 50%
+   Primitives.lean::mapBuffer_rewind  reproduces  Hardness.lean::clCmp_forward: 71/141 = 50%
+   Primitives.lean::extract_rewind  reproduces  Hardness.lean::clCmp_forward: 71/141 = 50%
+   Primitives.lean::catalogPoly_setup  reproduces  Hardness.lean::clCmp_forward: 71/141 = 50%
+   Primitives.lean::catalogPoly_rewind  reproduces  Hardness.lean::clCmp_forward: 71/141 = 50%
+   Hardness.lean::clReplay_back  reproduces  Hardness.lean::clCmp_forward: 71/141 = 50%
+   Hardness.lean::clRepeat_complete  reproduces  Hardness.lean::clCmp_forward: 71/141 = 50%
+   Hardness.lean::clInput_backward  reproduces  Hardness.lean::clCmp_forward: 71/141 = 50%
+   Loop.lean::emCall_clear_run  reproduces  Loop.lean::emCall_clear_origin: 428/850 = 50%
+   Hardness.lean::clPrepare_start  reproduces  Hardness.lean::clRecord_prepare_frame: 151/300 = 50%
+   Loop.lean::emCall_track_computes  reproduces  Loop.lean::emCall_right_computes: 77/153 = 50%
+   Loop.lean::emCall_right_computes  reproduces  Loop.lean::emCall_track_computes: 77/153 = 50%
+   Loop.lean::emCall_pair_triple  reproduces  Loop.lean::emCall_triple_inverse: 92/183 = 50%
+   Primitives.lean::emitterAppend_run  reproduces  Primitives.lean::rawStrip_replay: 204/406 = 50%
+   Primitives.lean::extract_replay_finish  reproduces  Primitives.lean::rawStrip_replay: 203/406 = 50%
+   Hardness.lean::clA5Next_pack  reproduces  Hardness.lean::clA5Stored_exact: 112/224 = 50%
+   Hardness.lean::clA5Count_native  reproduces  Hardness.lean::clA5Address_native: 74/148 = 50%
+   Primitives.lean::splitRestore_first  reproduces  Hardness.lean::clWipe_idle: 71/142 = 50%
+   Primitives.lean::splitRestore_first  reproduces  Hardness.lean::clInput_idle: 71/142 = 50%
+   Primitives.lean::splitRestore_first  reproduces  Hardness.lean::clCopy_idle: 71/142 = 50%
+```
+
+## Full copy-text screen after
+
+```text
+declarations screened: 867; copy pairs (target reproduces >= half of source): 692; reproduced text: 173,861 chars
+   Primitives.lean::emitter_first_entry  reproduces  Loop.lean::emCall_first_entry: 403/403 = 100%
+   Loop.lean::emCall_first_entry  reproduces  Primitives.lean::emitter_first_entry: 403/403 = 100%
+   Hardness.lean::clPrepare_idle  reproduces  Hardness.lean::clLoad_idle: 147/147 = 100%
+   Hardness.lean::clWipe_idle  reproduces  Hardness.lean::clInput_idle: 142/142 = 100%
+   Hardness.lean::clInput_idle  reproduces  Hardness.lean::clWipe_idle: 142/142 = 100%
+   Loop.lean::emCall_erase_last  reproduces  Primitives.lean::catalogBuffer_erase: 118/118 = 100%
+   Hardness.lean::clWipeCfg  reproduces  Hardness.lean::clReadCfg: 72/72 = 100%
+   Hardness.lean::clReadCfg  reproduces  Hardness.lean::clWipeCfg: 72/72 = 100%
+   Loop.lean::loopHost_payload_rewind  reproduces  Loop.lean::loopHost_fuel_rewind: 1259/1261 = 100%
+   Loop.lean::emLoopHost_round  reproduces  Loop.lean::loopHost_reject: 2361/2367 = 100%
+   Loop.lean::emLoopHost_prepare  reproduces  Loop.lean::loopHost_input_rewind: 232/233 = 100%
+   Primitives.lean::emitterSplit_find  reproduces  Primitives.lean::splitFind_eq: 227/228 = 100%
+   Loop.lean::emLoopHost_prepare  reproduces  Loop.lean::loopHost_prepare: 1273/1282 = 99%
+   Loop.lean::loopHost_fuel_rewind  reproduces  Loop.lean::loopHost_payload_rewind: 1259/1269 = 99%
+   Primitives.lean::emitterToken_double  reproduces  Primitives.lean::emitterToken_separator: 215/217 = 99%
+   Hardness.lean::clOutputAt_compute  reproduces  Hardness.lean::clOutput_compute: 1751/1778 = 98%
+   Hardness.lean::clOutput_compute  reproduces  Hardness.lean::clOutputAt_compute: 1751/1782 = 98%
+   Embed.lean::embedSilentRetTM  reproduces  Embed.lean::embedEmitRetTM: 215/219 = 98%
+   Hardness.lean::clPrepare_idle  reproduces  Hardness.lean::clRow_idle: 143/146 = 98%
+   Hardness.lean::clLoad_idle  reproduces  Hardness.lean::clRow_idle: 143/146 = 98%
+   Hardness.lean::clCount_size_budget  reproduces  Hardness.lean::clRecord_size_budget: 305/312 = 98%
+   Primitives.lean::emitterP2SmallIndex  reproduces  Primitives.lean::emitterP2PairIndex: 207/212 = 98%
+   Hardness.lean::clA5Clean_install  reproduces  Hardness.lean::clA5Clean_emit: 592/607 = 98%
+   Hardness.lean::clRow_idle  reproduces  Hardness.lean::clLoad_idle: 143/147 = 97%
+   Primitives.lean::scanTrues_run  reproduces  Primitives.lean::scanStep_right: 153/158 = 97%
+   Primitives.lean::emitterP2_right_frame  reproduces  Primitives.lean::emitterP2_left_frame: 273/282 = 97%
+   Hardness.lean::clMatch_tick  reproduces  Hardness.lean::clMatch_stop: 288/298 = 97%
+   Primitives.lean::splitFind_eq  reproduces  Primitives.lean::emitterSplit_find: 227/235 = 97%
+   Hardness.lean::clRecord_size_budget  reproduces  Hardness.lean::clCount_size_budget: 305/316 = 97%
+   Primitives.lean::emitterP2_left_frame  reproduces  Primitives.lean::emitterP2_right_frame: 273/283 = 96%
+   Hardness.lean::clErase_last  reproduces  Loop.lean::emCall_erase_last: 129/134 = 96%
+   Primitives.lean::computesFunInTime_pairFst  reproduces  Primitives.lean::computesFunInTime_pairConcat: 147/153 = 96%
+   Primitives.lean::extract_replay  reproduces  Primitives.lean::rawStrip_replay: 390/406 = 96%
+   Hardness.lean::clA5_pt_head  reproduces  Hardness.lean::clA5_pt_tail: 384/400 = 96%
+   Embed.lean::embedEmitRetTM  reproduces  Embed.lean::embedSilentRetTM: 215/224 = 96%
+   Hardness.lean::clWipe_idle  reproduces  Hardness.lean::clCopy_idle: 136/142 = 96%
+   Hardness.lean::clPrepare_idle  reproduces  Hardness.lean::clWipe_idle: 136/142 = 96%
+   Hardness.lean::clPrepare_idle  reproduces  Hardness.lean::clInput_idle: 136/142 = 96%
+   Hardness.lean::clPrepare_idle  reproduces  Hardness.lean::clCopy_idle: 136/142 = 96%
+   Hardness.lean::clInput_idle  reproduces  Hardness.lean::clCopy_idle: 136/142 = 96%
+   Hardness.lean::clFresh_idle  reproduces  Hardness.lean::clWipe_idle: 136/142 = 96%
+   Hardness.lean::clFresh_idle  reproduces  Hardness.lean::clInput_idle: 136/142 = 96%
+   Hardness.lean::clFresh_idle  reproduces  Hardness.lean::clCopy_idle: 136/142 = 96%
+   Hardness.lean::clCopy_idle  reproduces  Hardness.lean::clWipe_idle: 136/142 = 96%
+   Hardness.lean::clCopy_idle  reproduces  Hardness.lean::clInput_idle: 136/142 = 96%
+   Hardness.lean::clCmp_idle  reproduces  Hardness.lean::clWipe_idle: 136/142 = 96%
+   Hardness.lean::clCmp_idle  reproduces  Hardness.lean::clInput_idle: 136/142 = 96%
+   Hardness.lean::clCmp_idle  reproduces  Hardness.lean::clCopy_idle: 136/142 = 96%
+   Hardness.lean::clErase_last  reproduces  Primitives.lean::catalogBuffer_erase: 113/118 = 96%
+   Primitives.lean::emitterP2_body_erase_right  reproduces  Primitives.lean::emitterP2_body_erase_left: 1078/1127 = 96%
+   Hardness.lean::clA5_pt_tail  reproduces  Hardness.lean::clA5_pt_head: 384/402 = 96%
+   Primitives.lean::emitterP2_prepare_rewind_suffix  reproduces  Primitives.lean::emitterP2_prepare_rewind_candidate: 827/866 = 95%
+   Primitives.lean::emitterP2_prepare_rewind_candidate  reproduces  Primitives.lean::emitterP2_prepare_rewind_suffix: 827/866 = 95%
+   Loop.lean::loop_run  reproduces  Loop.lean::loop_halted_run: 627/659 = 95%
+   Loop.lean::loopCall_reframe  reproduces  Loop.lean::loopCall_frame: 464/488 = 95%
+   Primitives.lean::emitterP2_body_erase_left  reproduces  Primitives.lean::emitterP2_body_erase_right: 1078/1134 = 95%
+   Hardness.lean::clReplay_run  reproduces  Hardness.lean::clReplay_from: 398/419 = 95%
+   Primitives.lean::computesFunInTime_pairConcat  reproduces  Primitives.lean::computesFunInTime_pairFst: 147/155 = 95%
+   Hardness.lean::clPrepare_idle  reproduces  Hardness.lean::clFresh_idle: 145/153 = 95%
+   Loop.lean::emLoopHost_anchor_return  reproduces  Loop.lean::loopHost_anchor_return: 867/915 = 95%
+   Hardness.lean::clA5Clean_emit  reproduces  Hardness.lean::clA5Clean_install: 592/626 = 95%
+   Loop.lean::emCall_bank_final  reproduces  Loop.lean::emCall_bank_initial: 3070/3250 = 94%
+   Hardness.lean::clRec_track_inactive  reproduces  Hardness.lean::clRec_row_inactive: 177/188 = 94%
+   Primitives.lean::incFixed_computes  reproduces  Primitives.lean::scanStep_right: 148/158 = 94%
+   Hardness.lean::clPrepare_idle  reproduces  Hardness.lean::clCmp_idle: 137/147 = 93%
+   Hardness.lean::clFresh_idle  reproduces  Hardness.lean::clCmp_idle: 137/147 = 93%
+   Loop.lean::loop_first_halt  reproduces  Hardness.lean::clA5_call_first_halt: 307/330 = 93%
+   Primitives.lean::emitterToken_run  reproduces  Primitives.lean::emitterToken_separator: 201/217 = 93%
+   Primitives.lean::emitterP2_pair_frame  reproduces  Primitives.lean::emitterP2_small_frame: 539/582 = 93%
+   Hardness.lean::clWipe_idle  reproduces  Hardness.lean::clCmp_idle: 136/147 = 93%
+   Hardness.lean::clInput_idle  reproduces  Hardness.lean::clCmp_idle: 136/147 = 93%
+   Hardness.lean::clCopy_idle  reproduces  Hardness.lean::clCmp_idle: 136/147 = 93%
+   Primitives.lean::emitterP2_small_frame  reproduces  Primitives.lean::emitterP2_pair_frame: 539/583 = 92%
+   Primitives.lean::pairDup_double  reproduces  Primitives.lean::scanStep_right: 146/158 = 92%
+   Loop.lean::emLoopHost_start  reproduces  Loop.lean::loopHost_start: 257/280 = 92%
+   Primitives.lean::emitterP2PairIndex  reproduces  Primitives.lean::emitterP2SmallIndex: 207/226 = 92%
+   Hardness.lean::clA5StoredRound_native  reproduces  Hardness.lean::clA5Sizes_native: 196/214 = 92%
+   Loop.lean::loop_live_prefix  reproduces  Hardness.lean::clA5_live_prefix: 139/152 = 91%
+   Hardness.lean::clRowCfg  reproduces  Hardness.lean::clLoadCfg: 116/128 = 91%
+   Primitives.lean::emitterAppend_run  reproduces  Primitives.lean::scanStep_right: 143/158 = 91%
+   Primitives.lean::mapParse_block  reproduces  Primitives.lean::mapParse_first: 244/271 = 90%
+   Hardness.lean::clA5_call_first_halt  reproduces  Loop.lean::loop_first_halt: 307/341 = 90%
+   Primitives.lean::lenSuffix_run  reproduces  Primitives.lean::lenParse_first: 276/308 = 90%
+   Hardness.lean::clCmp_idle  reproduces  Hardness.lean::clFresh_idle: 137/153 = 90%
+   Hardness.lean::clA5_live_prefix  reproduces  Loop.lean::loop_live_prefix: 139/156 = 89%
+   Loop.lean::exists_loopFindTM  reproduces  Loop.lean::exists_loopTM: 686/770 = 89%
+   Hardness.lean::clWipe_idle  reproduces  Hardness.lean::clFresh_idle: 136/153 = 89%
+   Hardness.lean::clInput_idle  reproduces  Hardness.lean::clFresh_idle: 136/153 = 89%
+   Hardness.lean::clCopy_idle  reproduces  Hardness.lean::clFresh_idle: 136/153 = 89%
+   Primitives.lean::splitCount_run  reproduces  Loop.lean::emCall_right_run: 152/172 = 88%
+   Loop.lean::emCall_erase_last  reproduces  Hardness.lean::clErase_last: 129/146 = 88%
+   Hardness.lean::clMatch_stop  reproduces  Hardness.lean::clMatch_tick: 288/326 = 88%
+   Hardness.lean::clReplay_from  reproduces  Hardness.lean::clReplay_run: 398/451 = 88%
+   Primitives.lean::catalogBuffer_erase  reproduces  Loop.lean::emCall_erase_last: 118/134 = 88%
+   Primitives.lean::splitBody_prepare  reproduces  Primitives.lean::emitterP2_control: 73/83 = 88%
+   Primitives.lean::emitter_first_entry  reproduces  Primitives.lean::catalogFirstEntry: 327/375 = 87%
+   Loop.lean::emCall_first_entry  reproduces  Primitives.lean::catalogFirstEntry: 327/375 = 87%
+   Embed.lean::embedSilentCfg  reproduces  Embed.lean::embedEmitCfg: 165/192 = 86%
+   Loop.lean::emCall_finish_arg  reproduces  Loop.lean::emCall_finish_rewind: 1025/1195 = 86%
+   Loop.lean::emCall_triple_pair  reproduces  Loop.lean::emCall_pair_triple: 138/161 = 86%
+   Primitives.lean::emitterP2_update_right  reproduces  Primitives.lean::emitterP2_update_left: 542/633 = 86%
+   Primitives.lean::emitterP2_prepare_run  reproduces  Primitives.lean::emitterP2_control: 71/83 = 86%
+   Loop.lean::emCall_right_run  reproduces  Loop.lean::emLoop_run_prefix: 110/129 = 85%
+   Hardness.lean::clPrepared_idle  reproduces  Hardness.lean::clWipe_idle: 121/142 = 85%
+   Hardness.lean::clPrepared_idle  reproduces  Hardness.lean::clInput_idle: 121/142 = 85%
+   Hardness.lean::clPrepared_idle  reproduces  Hardness.lean::clCopy_idle: 121/142 = 85%
+   Primitives.lean::extract_rewind  reproduces  Primitives.lean::rawStrip_rewind: 599/704 = 85%
+   Hardness.lean::clPrepared_idle  reproduces  Hardness.lean::clCmp_idle: 125/147 = 85%
+   Primitives.lean::emitterAppend_run  reproduces  Primitives.lean::scanCopy_run: 408/482 = 85%
+   Hardness.lean::clRecord_idle  reproduces  Hardness.lean::clCmp_idle: 124/147 = 84%
+   Loop.lean::emCall_finalize_run  reproduces  Primitives.lean::emitterP2_control: 70/83 = 84%
+   Hardness.lean::clRec_copy  reproduces  Hardness.lean::clTrack_dispatch: 88/105 = 84%
+   Hardness.lean::clRec_advance  reproduces  Hardness.lean::clTrack_dispatch: 88/105 = 84%
+   Primitives.lean::splitCount_run  reproduces  Loop.lean::emLoop_run_prefix: 108/129 = 84%
+   Loop.lean::emCall_bank_initial  reproduces  Loop.lean::emCall_bank_final: 3070/3669 = 84%
+   Primitives.lean::emitterP2_update_left  reproduces  Primitives.lean::emitterP2_update_right: 542/648 = 84%
+   Primitives.lean::emitterSplit_result  reproduces  Primitives.lean::splitLoop_result: 193/231 = 84%
+   Primitives.lean::splitRestore_rewind  reproduces  Primitives.lean::splitPrepare_rewind: 630/755 = 83%
+   Loop.lean::loopHost_fuel_return  reproduces  Loop.lean::loopHost_fuel_rewind: 1047/1261 = 83%
+   Hardness.lean::clRec_row_frame  reproduces  Hardness.lean::clRec_row_inactive: 156/188 = 83%
+   Hardness.lean::clLoadCfg  reproduces  Hardness.lean::clRowCfg: 116/140 = 83%
+   Loop.lean::loopHost_fuel_return  reproduces  Loop.lean::loopHost_payload_rewind: 1047/1269 = 83%
+   Loop.lean::exists_emitCallTM  reproduces  Loop.lean::exists_installCallTM: 194/236 = 82%
+   Hardness.lean::clRec_prepared  reproduces  Hardness.lean::clRepeat_initial: 100/122 = 82%
+   Loop.lean::emCall_prepare_run  reproduces  Primitives.lean::emitterP2_control: 68/83 = 82%
+   Loop.lean::emCall_bank_step  reproduces  Primitives.lean::emitterP2_control: 68/83 = 82%
+   Hardness.lean::clRec_track_frame  reproduces  Hardness.lean::clRec_row_inactive: 154/188 = 82%
+   Hardness.lean::clCmp_rewind  reproduces  Hardness.lean::clCmp_forward_step: 185/226 = 82%
+   Primitives.lean::computesFunInTime_pairSnd  reproduces  Primitives.lean::computesFunInTime_pairConcat: 125/153 = 82%
+   Hardness.lean::clRecords_native  reproduces  Hardness.lean::clTrajectory_native: 157/193 = 81%
+   Primitives.lean::catalogFirstEntry  reproduces  Primitives.lean::emitter_first_entry: 327/403 = 81%
+   Primitives.lean::catalogFirstEntry  reproduces  Loop.lean::emCall_first_entry: 327/403 = 81%
+   Loop.lean::loop_halted_run  reproduces  Loop.lean::loop_run: 627/773 = 81%
+   Hardness.lean::clRecord_idle  reproduces  Hardness.lean::clWipe_idle: 115/142 = 81%
+   Hardness.lean::clRecord_idle  reproduces  Hardness.lean::clInput_idle: 115/142 = 81%
+   Hardness.lean::clRecord_idle  reproduces  Hardness.lean::clCopy_idle: 115/142 = 81%
+   Primitives.lean::splitLoop_result  reproduces  Primitives.lean::emitterSplit_result: 193/239 = 81%
+   Primitives.lean::splitBody_rewind  reproduces  Primitives.lean::emitterP2_control: 67/83 = 81%
+   Primitives.lean::splitBody_restore  reproduces  Primitives.lean::emitterP2_control: 67/83 = 81%
+   Primitives.lean::emitterP2_prepare_first  reproduces  Primitives.lean::emitterP2_control: 67/83 = 81%
+   Primitives.lean::emitterP2_erase_first  reproduces  Primitives.lean::emitterP2_control: 67/83 = 81%
+   Primitives.lean::computesFunInTime_pairConcat  reproduces  Primitives.lean::computesFunInTime_pairSnd: 125/155 = 81%
+   Hardness.lean::clRead_separator  reproduces  Hardness.lean::clRead_pair: 953/1182 = 81%
+   Loop.lean::loopHost_fuel_return  reproduces  Loop.lean::loopHost_borrow_rewind: 1035/1284 = 81%
+   Hardness.lean::clRead_pair  reproduces  Hardness.lean::clRead_separator: 953/1186 = 80%
+   Primitives.lean::rawStrip_rewind  reproduces  Primitives.lean::extract_rewind: 599/746 = 80%
+   Embed.lean::embedSilent_step  reproduces  Embed.lean::embedEmit_step: 315/393 = 80%
+   Hardness.lean::clRec_tick  reproduces  Hardness.lean::clRec_stop: 248/310 = 80%
+   Primitives.lean::splitPrepare_rewind  reproduces  Primitives.lean::splitRestore_rewind: 630/790 = 80%
+   Loop.lean::emCall_right_scan  reproduces  Primitives.lean::emitterP2_control: 66/83 = 80%
+   Hardness.lean::clTrack_dispatch  reproduces  Primitives.lean::emitterP2_control: 66/83 = 80%
+   Hardness.lean::clCount_idle  reproduces  Primitives.lean::emitterP2_control: 66/83 = 80%
+   Primitives.lean::extract_suffix  reproduces  Primitives.lean::extract_first: 226/285 = 79%
+   Loop.lean::loopHost_payload_rewind  reproduces  Loop.lean::loopHost_fuel_return: 1047/1321 = 79%
+   Loop.lean::loopHost_fuel_rewind  reproduces  Loop.lean::loopHost_fuel_return: 1047/1321 = 79%
+   Hardness.lean::clA5StoredRound_native  reproduces  Hardness.lean::clA5Cursor_native: 103/130 = 79%
+   Embed.lean::embedSilentRet_step  reproduces  Embed.lean::embedSilentRetTM_visitedByTapeHead: 106/134 = 79%
+   Hardness.lean::clPrepared_idle  reproduces  Hardness.lean::clFresh_idle: 121/153 = 79%
+   Primitives.lean::splitRestore_scan  reproduces  Primitives.lean::splitPrepare_scan: 505/639 = 79%
+   Loop.lean::emLoop_run_prefix  reproduces  Hardness.lean::clBank_run: 74/94 = 79%
+   Loop.lean::emCall_finish_final  reproduces  Loop.lean::emCall_finish_initial: 1279/1629 = 79%
+   Loop.lean::loopHost_borrow_rewind  reproduces  Loop.lean::loopHost_fuel_return: 1035/1321 = 78%
+   Loop.lean::exists_installCallTM  reproduces  Loop.lean::exists_emitCallTM: 194/248 = 78%
+   Hardness.lean::clA5Fuel  reproduces  Hardness.lean::clA5Cursor_install: 61/78 = 78%
+   Hardness.lean::clA5DecodeStep_state  reproduces  Hardness.lean::clVisitStep_state: 93/119 = 78%
+   Loop.lean::emLoop_run_prefix  reproduces  Hardness.lean::clCount_idle_run: 71/91 = 78%
+   Loop.lean::emCall_right_run  reproduces  Hardness.lean::clCount_idle_run: 71/91 = 78%
+   Loop.lean::emCall_right_run  reproduces  Hardness.lean::clBank_run: 73/94 = 78%
+   Primitives.lean::catalogBuffer_erase  reproduces  Hardness.lean::clErase_last: 113/146 = 77%
+   Primitives.lean::scanCopy_run  reproduces  Primitives.lean::scanStep_right: 122/158 = 77%
+   Hardness.lean::clRec_copy  reproduces  Primitives.lean::emitterP2_control: 64/83 = 77%
+   Hardness.lean::clRec_advance  reproduces  Primitives.lean::emitterP2_control: 64/83 = 77%
+   Hardness.lean::clRecordOutputTM  reproduces  Hardness.lean::clCountOutputTM: 84/109 = 77%
+   Loop.lean::emCall_finish_arg  reproduces  Loop.lean::emCall_finish_erase: 972/1264 = 77%
+   Primitives.lean::scanCopy_run  reproduces  Primitives.lean::emitterAppend_run: 408/533 = 77%
+   Hardness.lean::clCountTape_write  reproduces  Loop.lean::loopBuffer_write: 311/408 = 76%
+   Hardness.lean::clLoadTM  reproduces  Hardness.lean::clRowTM: 223/293 = 76%
+   Hardness.lean::clA5Field_native  reproduces  Hardness.lean::clA5Decode_orbit: 70/92 = 76%
+   Primitives.lean::emitterP2StateDecidableEq  reproduces  Primitives.lean::splitBodyStateDecidableEq: 408/537 = 76%
+   Primitives.lean::splitCount_run  reproduces  Hardness.lean::clCount_idle_run: 69/91 = 76%
+   Hardness.lean::clBank_run  reproduces  Hardness.lean::clCount_idle_run: 69/91 = 76%
+   Embed.lean::embedEmitRet_step  reproduces  Embed.lean::embedEmitRetTM_visitedByTapeHead: 87/115 = 76%
+   Primitives.lean::splitCount_run  reproduces  Hardness.lean::clBank_run: 71/94 = 76%
+   Primitives.lean::computesFunInTime_pairSnd  reproduces  Primitives.lean::computesFunInTime_pairFst: 117/155 = 75%
+   Primitives.lean::computesFunInTime_pairFst  reproduces  Primitives.lean::computesFunInTime_pairSnd: 117/155 = 75%
+   Loop.lean::exists_loopTM  reproduces  Loop.lean::exists_loopFindTM: 686/910 = 75%
+   Primitives.lean::extract_replay  reproduces  Primitives.lean::extract_replay_finish: 224/298 = 75%
+   Hardness.lean::clRecord_idle  reproduces  Hardness.lean::clFresh_idle: 115/153 = 75%
+   Primitives.lean::splitSolve_of_body  reproduces  Primitives.lean::emitterSplit_of_body: 672/896 = 75%
+   Primitives.lean::splitPrepare_scan  reproduces  Primitives.lean::splitPrepare_extra: 338/451 = 75%
+   Hardness.lean::clLeft_until  reproduces  Hardness.lean::clCmp_forward: 105/141 = 74%
+   Primitives.lean::emitterP2_body_length  reproduces  Primitives.lean::emitterP2_body_width: 493/665 = 74%
+   Hardness.lean::clA5Next_pack  reproduces  Hardness.lean::clVisitStep_state: 88/119 = 74%
+   Loop.lean::emCall_finish_initial  reproduces  Loop.lean::emCall_finish_final: 1279/1731 = 74%
+   Primitives.lean::splitEmbed_cut  reproduces  Hardness.lean::clCmp_forward: 104/141 = 74%
+   Primitives.lean::emitterP2_erase_scan  reproduces  Hardness.lean::clCmp_forward: 104/141 = 74%
+   Primitives.lean::extract_block  reproduces  Primitives.lean::extract_first: 210/285 = 74%
+   Primitives.lean::splitLoop_bound  reproduces  Primitives.lean::emitterSplit_loop_bound: 126/171 = 74%
+   Loop.lean::loop_find_run  reproduces  Loop.lean::loop_halted_run: 484/659 = 73%
+   Embed.lean::embedEmit_step  reproduces  Embed.lean::embedSilent_step: 315/429 = 73%
+   Hardness.lean::clCount_idle_run  reproduces  Hardness.lean::clBank_run: 69/94 = 73%
+   Loop.lean::loopFrame  reproduces  Loop.lean::loopControlAction: 110/150 = 73%
+   Hardness.lean::clCount_idle  reproduces  Hardness.lean::clTrack_dispatch: 77/105 = 73%
+   Primitives.lean::incFixedTM  reproduces  Primitives.lean::pairDupTM: 283/386 = 73%
+   Primitives.lean::emitterP2_body_width  reproduces  Primitives.lean::emitterP2_body_length: 493/674 = 73%
+   Embed.lean::embedSilentTM_visitedByTapeHead_frame  reproduces  Embed.lean::embedEmitTM_visitedByTapeHead_frame: 204/279 = 73%
+   Primitives.lean::splitRestore_scan  reproduces  Hardness.lean::clCmp_forward: 103/141 = 73%
+   Primitives.lean::splitPrepare_scan  reproduces  Hardness.lean::clCmp_forward: 103/141 = 73%
+   Primitives.lean::rawStrip_replay  reproduces  Hardness.lean::clCmp_forward: 103/141 = 73%
+   Hardness.lean::clInput_forward  reproduces  Hardness.lean::clCmp_forward: 103/141 = 73%
+   Hardness.lean::clCountTape_read  reproduces  Loop.lean::loopBuffer_read: 65/89 = 73%
+   Hardness.lean::clCmp_finish_scan  reproduces  Hardness.lean::clCmp_forward_step: 165/226 = 73%
+   Loop.lean::loopBuffer_write  reproduces  Hardness.lean::clCountTape_write: 311/426 = 73%
+   Primitives.lean::mapStart  reproduces  Primitives.lean::lenStart: 1210/1659 = 73%
+   Hardness.lean::clReplay_forward  reproduces  Hardness.lean::clReplay_back: 514/705 = 73%
+   Hardness.lean::clA5Iter_shrinking  reproduces  Hardness.lean::clA5Decode_orbit: 67/92 = 73%
+   Embed.lean::embedSilentTM_visitedByTapeHead_frame  reproduces  Embed.lean::embedSilentTM_frame: 82/113 = 73%
+   Primitives.lean::extract_replay  reproduces  Hardness.lean::clCmp_forward: 102/141 = 72%
+   Primitives.lean::catalogPoly_setup  reproduces  Primitives.lean::catalogPoly_emit: 366/506 = 72%
+   Primitives.lean::splitRestore_append  reproduces  Primitives.lean::splitPrepare_extra: 326/451 = 72%
+   Primitives.lean::emitterP2_erase_back  reproduces  Loop.lean::loopBuffer_read: 64/89 = 72%
+   Primitives.lean::splitRestore_rewind  reproduces  Primitives.lean::emitterP2_erase_scan: 227/316 = 72%
+   Primitives.lean::splitPrepare_rewind  reproduces  Primitives.lean::emitterP2_erase_scan: 227/316 = 72%
+   Hardness.lean::clRepeat_complete  reproduces  Loop.lean::emCall_banks_run: 170/237 = 72%
+   Primitives.lean::emitter_compare_scan  reproduces  Hardness.lean::clCmp_forward: 101/141 = 72%
+   Primitives.lean::emitterP2_prepare_suffix  reproduces  Hardness.lean::clCmp_forward: 101/141 = 72%
+   Loop.lean::emCall_clear_scan  reproduces  Hardness.lean::clCmp_forward: 101/141 = 72%
+   Primitives.lean::emitterSplit_of_body  reproduces  Primitives.lean::splitSolve_of_body: 672/940 = 71%
+   Loop.lean::emLoopHost_round  reproduces  Loop.lean::loopHost_borrow_rewind: 917/1284 = 71%
+   Loop.lean::loop_halted_run  reproduces  Loop.lean::loop_find_run: 484/678 = 71%
+   Loop.lean::emCall_finish_rewind  reproduces  Loop.lean::emCall_finish_arg: 1025/1438 = 71%
+   Primitives.lean::rawStrip_replay  reproduces  Primitives.lean::emitterP2_erase_scan: 225/316 = 71%
+   Hardness.lean::clMatchCfg  reproduces  Hardness.lean::clQueryWords: 91/128 = 71%
+   Hardness.lean::clTrajectory_native  reproduces  Hardness.lean::clFinalCount_native: 137/193 = 71%
+   Hardness.lean::clFinalCount_native  reproduces  Hardness.lean::clTrajectory_native: 137/193 = 71%
+   Hardness.lean::clA5Data_exact  reproduces  Hardness.lean::clA5Stored_exact: 159/224 = 71%
+   Primitives.lean::emitterP2_prepare_candidate  reproduces  Hardness.lean::clCmp_forward: 100/141 = 71%
+   Primitives.lean::extract_replay  reproduces  Primitives.lean::emitterP2_erase_scan: 224/316 = 71%
+   Primitives.lean::rawStripTM  reproduces  Loop.lean::loopReplayTM: 92/130 = 71%
+   Embed.lean::embedSilentTM_visitedByTapeHead  reproduces  Embed.lean::embedEmitTM_visitedByTapeHead: 171/242 = 71%
+   Primitives.lean::scanCopy_run  reproduces  Hardness.lean::clCmp_forward: 99/141 = 70%
+   Primitives.lean::rawStrip_copy  reproduces  Hardness.lean::clCmp_forward: 99/141 = 70%
+   Primitives.lean::mapPayload_replay  reproduces  Hardness.lean::clCmp_forward: 99/141 = 70%
+   Primitives.lean::emitterAppend_run  reproduces  Hardness.lean::clCmp_forward: 99/141 = 70%
+   Primitives.lean::splitRestoreTM  reproduces  Primitives.lean::splitPrepareTM: 280/399 = 70%
+   Embed.lean::embedSilentTM_visitedByTapeHead_frame  reproduces  Embed.lean::embedSilentTM_visitedByTapeHead: 188/268 = 70%
+   Primitives.lean::extract_rewind  reproduces  Primitives.lean::extract_replay_finish: 209/298 = 70%
+   Primitives.lean::splitRestoreScan  reproduces  Primitives.lean::splitPrepareScan: 68/97 = 70%
+   Hardness.lean::clHeaderLayout  reproduces  Hardness.lean::clRecWords: 75/107 = 70%
+   Loop.lean::emCall_triple_other  reproduces  Loop.lean::emCall_triple_inverse: 128/183 = 70%
+   Loop.lean::emCall_finish_erase  reproduces  Loop.lean::emCall_finish_rewind: 835/1195 = 70%
+   Hardness.lean::clReplayTM  reproduces  Loop.lean::loopReplayTM: 90/130 = 69%
+   Primitives.lean::emitterToken_run  reproduces  Primitives.lean::emitterToken_double: 543/785 = 69%
+   Loop.lean::loopBody_step  reproduces  Loop.lean::loopBody_stop: 239/346 = 69%
+   Primitives.lean::emitterP2_prepare_rewind_suffix  reproduces  Primitives.lean::emitterP2_erase_scan: 218/316 = 69%
+   Primitives.lean::emitterP2_prepare_rewind_candidate  reproduces  Primitives.lean::emitterP2_erase_scan: 218/316 = 69%
+   Primitives.lean::scanCopy_suffix  reproduces  Primitives.lean::scanStep_right: 109/158 = 69%
+   Primitives.lean::emitterTokenTM  reproduces  Primitives.lean::pairDupTM: 266/386 = 69%
+   Hardness.lean::clRead_run  reproduces  Hardness.lean::clCopy_run: 195/283 = 69%
+   Hardness.lean::clCountInc_bits  reproduces  Loop.lean::loopValue_bits: 93/135 = 69%
+   Hardness.lean::clRepeat_frame  reproduces  Hardness.lean::clRepeat_initial: 84/122 = 69%
+   Hardness.lean::clCountOutput_quadratic  reproduces  Hardness.lean::clRecordOutput_quadratic: 509/741 = 69%
+   Primitives.lean::emitterP2_erase_run  reproduces  Primitives.lean::emitterP2_erase_scan: 217/316 = 69%
+   Primitives.lean::emitterP2_erase_back  reproduces  Primitives.lean::emitterP2_erase_scan: 217/316 = 69%
+   Hardness.lean::clRec_track_frame  reproduces  Hardness.lean::clRec_track_inactive: 194/283 = 69%
+   Hardness.lean::clRecord_idle  reproduces  Hardness.lean::clRow_idle: 100/146 = 68%
+   Hardness.lean::clCountInc_bits  reproduces  Hardness.lean::clNum_bits: 89/130 = 68%
+   Primitives.lean::rawStripTM  reproduces  Primitives.lean::emitterP2EraseTM: 188/275 = 68%
+   Primitives.lean::rawStrip_replay  reproduces  Primitives.lean::extract_replay_finish: 203/298 = 68%
+   Hardness.lean::clRowTM  reproduces  Hardness.lean::clLoadTM: 223/328 = 68%
+   Primitives.lean::emitterP2_pair_frame  reproduces  Primitives.lean::emitterP2_right_frame: 192/283 = 68%
+   Loop.lean::emCall_finish_erase  reproduces  Loop.lean::emCall_finish_arg: 972/1438 = 68%
+   Primitives.lean::rawStripTM  reproduces  Hardness.lean::clReplayTM: 182/270 = 67%
+   Hardness.lean::clRecord_idle  reproduces  Hardness.lean::clLoad_idle: 99/147 = 67%
+   Hardness.lean::clPrepared_run  reproduces  Hardness.lean::clRepeat_initial: 82/122 = 67%
+   Hardness.lean::clPrepare_start  reproduces  Hardness.lean::clRepeat_initial: 82/122 = 67%
+   Primitives.lean::rawStrip_replay  reproduces  Primitives.lean::extract_replay: 390/581 = 67%
+   Loop.lean::loopValue_bits  reproduces  Hardness.lean::clNum_bits: 87/130 = 67%
+   Embed.lean::embedEmitTM_visitedByTapeHead_frame  reproduces  Embed.lean::embedSilentTM_visitedByTapeHead_frame: 204/305 = 67%
+   Primitives.lean::pairDup_double  reproduces  Primitives.lean::emitterAppend_run: 356/533 = 67%
+   Primitives.lean::emitterP2_small_frame  reproduces  Primitives.lean::emitterP2_right_frame: 189/283 = 67%
+   Primitives.lean::emitterP2_body_prepare  reproduces  Primitives.lean::emitterP2_body_compare: 566/849 = 67%
+   Loop.lean::emCall_triple_pair  reproduces  Loop.lean::emCall_triple_inverse: 122/183 = 67%
+   Primitives.lean::rawStrip_rewind  reproduces  Primitives.lean::rawStrip_replay: 270/406 = 67%
+   Primitives.lean::pairDupTM  reproduces  Primitives.lean::emitterTokenTM: 266/400 = 66%
+   Embed.lean::embedSilent_apply  reproduces  Embed.lean::embedEmit_apply: 168/253 = 66%
+   Hardness.lean::clCopy_pair  reproduces  Hardness.lean::clCopy_separator: 443/668 = 66%
+   Loop.lean::loop_run  reproduces  Loop.lean::loop_find_run: 448/678 = 66%
+   Loop.lean::emCall_finish_rewind  reproduces  Loop.lean::emCall_finish_erase: 835/1264 = 66%
+   Primitives.lean::emitterP2_pair_frame  reproduces  Primitives.lean::emitterP2_left_frame: 186/282 = 66%
+   Primitives.lean::incFixedTM  reproduces  Primitives.lean::splitRewindTM: 122/185 = 66%
+   Primitives.lean::emitterP2_prepare_run  reproduces  Hardness.lean::clTrack_dispatch: 69/105 = 66%
+   Loop.lean::emCall_right_scan  reproduces  Hardness.lean::clTrack_dispatch: 69/105 = 66%
+   Hardness.lean::clRepeat_initial  reproduces  Hardness.lean::clRepeat_frame: 84/128 = 66%
+   Hardness.lean::clPrepared_run  reproduces  Hardness.lean::clRepeat_frame: 84/128 = 66%
+   Hardness.lean::clPrepare_start  reproduces  Hardness.lean::clRepeat_frame: 84/128 = 66%
+   Loop.lean::loopHost_fuel_copy  reproduces  Loop.lean::loopHost_fuel_rewind: 827/1261 = 66%
+   Primitives.lean::extract_run  reproduces  Primitives.lean::lenParse_run: 1077/1643 = 66%
+   Primitives.lean::splitPrepare_rewind  reproduces  Primitives.lean::rawStrip_rewind: 460/704 = 65%
+   Loop.lean::loopHost_fuel_copy  reproduces  Loop.lean::loopHost_payload_rewind: 829/1269 = 65%
+   Hardness.lean::clCopy_rewind  reproduces  Hardness.lean::clRead_rewind: 524/803 = 65%
+   Loop.lean::emCall_triple_other  reproduces  Loop.lean::emCall_triple_pair: 152/233 = 65%
+   Hardness.lean::clHeaderLayout_native  reproduces  Hardness.lean::clRecordWords_native: 553/849 = 65%
+   Primitives.lean::extract_suffix  reproduces  Primitives.lean::scanCopy_suffix: 553/850 = 65%
+   Hardness.lean::clRecordCfg  reproduces  Hardness.lean::clPreparedCfg: 91/140 = 65%
+   Primitives.lean::lenStart  reproduces  Primitives.lean::mapStart: 1210/1864 = 65%
+   Primitives.lean::emitterP2_small_frame  reproduces  Primitives.lean::emitterP2_left_frame: 183/282 = 65%
+   Loop.lean::emCall_track_action  reproduces  Loop.lean::emCall_right_step: 134/207 = 65%
+   Primitives.lean::emitter_bits_injective  reproduces  Hardness.lean::clNum_bits: 84/130 = 65%
+   Hardness.lean::clLoad_idle  reproduces  Hardness.lean::clPrepare_idle: 147/228 = 64%
+   Loop.lean::emCall_track_action  reproduces  Loop.lean::emCall_track_stamp: 450/698 = 64%
+   Hardness.lean::clCmp_forward_step  reproduces  Hardness.lean::clCmp_finish_scan: 165/256 = 64%
+   Hardness.lean::clNum_bits  reproduces  Loop.lean::loopValue_bits: 87/135 = 64%
+   Primitives.lean::splitBody_rewind  reproduces  Primitives.lean::splitBody_restore: 321/499 = 64%
+   Primitives.lean::splitPrepareScan  reproduces  Primitives.lean::splitRestoreScan: 68/106 = 64%
+   Primitives.lean::catalogPoly_emit  reproduces  Primitives.lean::catalogPoly_setup: 366/571 = 64%
+   Hardness.lean::clRow_idle  reproduces  Hardness.lean::clWipe_idle: 91/142 = 64%
+   Hardness.lean::clRow_idle  reproduces  Hardness.lean::clInput_idle: 91/142 = 64%
+   Hardness.lean::clRow_idle  reproduces  Hardness.lean::clCopy_idle: 91/142 = 64%
+   Hardness.lean::clLoad_idle  reproduces  Hardness.lean::clWipe_idle: 91/142 = 64%
+   Hardness.lean::clLoad_idle  reproduces  Hardness.lean::clInput_idle: 91/142 = 64%
+   Hardness.lean::clLoad_idle  reproduces  Hardness.lean::clCopy_idle: 91/142 = 64%
+   Loop.lean::emLoop_run_prefix  reproduces  Loop.lean::emCall_right_run: 110/172 = 64%
+   Hardness.lean::clLastCode_native  reproduces  Hardness.lean::clNative_append: 85/133 = 64%
+   Loop.lean::loopHost_body_capture  reproduces  Loop.lean::loopHost_fuel_capture: 67/105 = 64%
+   Loop.lean::emCall_bank_step  reproduces  Hardness.lean::clTrack_dispatch: 67/105 = 64%
+   Embed.lean::embedEmitTM_visitedByTapeHead  reproduces  Embed.lean::embedSilentTM_visitedByTapeHead: 171/268 = 64%
+   Primitives.lean::lenSuffix_run  reproduces  Primitives.lean::anyTrue_run: 506/795 = 64%
+   Primitives.lean::rawStrip_rewind  reproduces  Primitives.lean::emitterP2_erase_scan: 201/316 = 64%
+   Primitives.lean::extract_rewind  reproduces  Primitives.lean::emitterP2_erase_scan: 201/316 = 64%
+   Hardness.lean::clFresh_idle  reproduces  Hardness.lean::clPrepare_idle: 145/228 = 64%
+   Primitives.lean::emitterP2_body_compare  reproduces  Primitives.lean::emitterP2_body_prepare: 566/894 = 63%
+   Primitives.lean::pairDup_double  reproduces  Primitives.lean::scanCopy_run: 305/482 = 63%
+   Hardness.lean::clRec_row_frame  reproduces  Hardness.lean::clRec_track_inactive: 179/283 = 63%
+   Primitives.lean::emitterP2_prepare_rewind_candidate  reproduces  Primitives.lean::splitPrepare_rewind: 477/755 = 63%
+   Loop.lean::loopReady_call  reproduces  Loop.lean::loopCall_frame: 308/488 = 63%
+   Primitives.lean::rawStrip_rewind  reproduces  Primitives.lean::extract_replay_finish: 188/298 = 63%
+   Primitives.lean::pairExtractTM  reproduces  Loop.lean::loopReplayTM: 82/130 = 63%
+   Primitives.lean::emitterP2_prepare_rewind_suffix  reproduces  Primitives.lean::splitPrepare_rewind: 476/755 = 63%
+   Hardness.lean::clRecordWords_native  reproduces  Hardness.lean::clRepeatArgument_native: 271/430 = 63%
+   Loop.lean::emLoopHost_round  reproduces  Loop.lean::loopHost_borrow: 261/415 = 63%
+   Primitives.lean::splitBody_prepare  reproduces  Hardness.lean::clTrack_dispatch: 66/105 = 63%
+   Primitives.lean::emitterP2_control  reproduces  Hardness.lean::clTrack_dispatch: 66/105 = 63%
+   Loop.lean::emCall_finalize_run  reproduces  Hardness.lean::clTrack_dispatch: 66/105 = 63%
+   Loop.lean::loopBody_run  reproduces  Loop.lean::emLoop_run_prefix: 81/129 = 63%
+   Primitives.lean::splitRestore_rewind  reproduces  Primitives.lean::rawStrip_rewind: 442/704 = 63%
+   Hardness.lean::clRow_idle  reproduces  Hardness.lean::clPrepare_idle: 143/228 = 63%
+   Primitives.lean::pairDupTM  reproduces  Primitives.lean::splitRewindTM: 116/185 = 63%
+   Primitives.lean::extract_rewind  reproduces  Primitives.lean::rawStrip_replay: 254/406 = 63%
+   Hardness.lean::clRec_row_inactive  reproduces  Hardness.lean::clRec_track_inactive: 177/283 = 63%
+   Hardness.lean::clWipe_idle  reproduces  Hardness.lean::clRow_idle: 91/146 = 62%
+   Hardness.lean::clInput_idle  reproduces  Hardness.lean::clRow_idle: 91/146 = 62%
+   Hardness.lean::clFresh_idle  reproduces  Hardness.lean::clRow_idle: 91/146 = 62%
+   Hardness.lean::clCopy_idle  reproduces  Hardness.lean::clRow_idle: 91/146 = 62%
+   Hardness.lean::clCmp_idle  reproduces  Hardness.lean::clRow_idle: 91/146 = 62%
+   Primitives.lean::emitter_bits_injective  reproduces  Loop.lean::loopValue_bits: 84/135 = 62%
+   Hardness.lean::clReplay_back  reproduces  Primitives.lean::emitterToken_separator: 135/217 = 62%
+   Hardness.lean::clRead_rewind  reproduces  Primitives.lean::emitterToken_separator: 135/217 = 62%
+   Loop.lean::loopCall_frame  reproduces  Loop.lean::loopCall_reframe: 464/749 = 62%
+   Embed.lean::embedSilentTM_spaceUsedByTape_cap  reproduces  Embed.lean::embedSilentTM_frame: 70/113 = 62%
+   Hardness.lean::clWipe_idle  reproduces  Hardness.lean::clLoad_idle: 91/147 = 62%
+   Hardness.lean::clRow_idle  reproduces  Hardness.lean::clCmp_idle: 91/147 = 62%
+   Hardness.lean::clLoad_idle  reproduces  Hardness.lean::clCmp_idle: 91/147 = 62%
+   Hardness.lean::clInput_idle  reproduces  Hardness.lean::clLoad_idle: 91/147 = 62%
+   Hardness.lean::clFresh_idle  reproduces  Hardness.lean::clLoad_idle: 91/147 = 62%
+   Hardness.lean::clCopy_idle  reproduces  Hardness.lean::clLoad_idle: 91/147 = 62%
+   Hardness.lean::clCmp_idle  reproduces  Hardness.lean::clLoad_idle: 91/147 = 62%
+   Primitives.lean::lenCfg  reproduces  Primitives.lean::mapCfg: 99/160 = 62%
+   Primitives.lean::pairExtractTM  reproduces  Hardness.lean::clReplayTM: 167/270 = 62%
+   Primitives.lean::pairExtractTM  reproduces  Primitives.lean::rawStripTM: 285/461 = 62%
+   Primitives.lean::splitPrepare_rewind  reproduces  Primitives.lean::extract_rewind: 461/746 = 62%
+   Embed.lean::embedSilentTM_visitedByTapeHead  reproduces  Embed.lean::embedSilentTM_visitedByTapeHead_frame: 188/305 = 62%
+   Primitives.lean::lenParse_block  reproduces  Primitives.lean::lenParse_first: 189/308 = 61%
+   Embed.lean::embedEmitCfg  reproduces  Embed.lean::embedSilentCfg: 165/270 = 61%
+   Loop.lean::emCall_clear_scan  reproduces  Primitives.lean::emitterP2_erase_scan: 193/316 = 61%
+   Primitives.lean::extract_rewind  reproduces  Primitives.lean::splitPrepare_rewind: 461/755 = 61%
+   Loop.lean::loopHost_payload_rewind  reproduces  Hardness.lean::clCmp_forward: 86/141 = 61%
+   Loop.lean::loopHost_fuel_rewind  reproduces  Hardness.lean::clCmp_forward: 86/141 = 61%
+   Loop.lean::loopHost_fuel_return  reproduces  Hardness.lean::clCmp_forward: 86/141 = 61%
+   Loop.lean::loopHost_borrow_rewind  reproduces  Hardness.lean::clCmp_forward: 86/141 = 61%
+   Primitives.lean::splitBody_rewind  reproduces  Hardness.lean::clTrack_dispatch: 64/105 = 61%
+   Primitives.lean::splitBody_restore  reproduces  Hardness.lean::clTrack_dispatch: 64/105 = 61%
+   Primitives.lean::emitterP2_prepare_first  reproduces  Hardness.lean::clTrack_dispatch: 64/105 = 61%
+   Primitives.lean::emitterP2_erase_first  reproduces  Hardness.lean::clTrack_dispatch: 64/105 = 61%
+   Loop.lean::emCall_prepare_run  reproduces  Hardness.lean::clTrack_dispatch: 64/105 = 61%
+   Loop.lean::loopHost_anchor_return  reproduces  Loop.lean::loopHost_halt_return: 295/484 = 61%
+   Primitives.lean::rawStrip_rewind  reproduces  Primitives.lean::splitPrepare_rewind: 460/755 = 61%
+   Hardness.lean::clCountOutputTM  reproduces  Hardness.lean::clRecordOutputTM: 84/138 = 61%
+   Primitives.lean::splitPrepare_scan  reproduces  Primitives.lean::splitRestore_scan: 505/831 = 61%
+   Loop.lean::emCall_finish_transfer  reproduces  Loop.lean::emCall_finish_erase: 764/1264 = 60%
+   Loop.lean::emCall_finish_transfer  reproduces  Loop.lean::emCall_finish_rewind: 722/1195 = 60%
+   Loop.lean::loopHost_fuel_capture  reproduces  Loop.lean::loopHost_body_capture: 67/111 = 60%
+   Primitives.lean::mapBuffer_rewind  reproduces  Primitives.lean::mapPayload_replay: 372/617 = 60%
+   Hardness.lean::clPrepared_idle  reproduces  Hardness.lean::clRow_idle: 88/146 = 60%
+   Primitives.lean::mapParse_first  reproduces  Primitives.lean::mapParse_block: 244/405 = 60%
+   Primitives.lean::emitterP2_erase_back  reproduces  Primitives.lean::rawStrip_erase: 213/354 = 60%
+   Hardness.lean::clCmp_idle  reproduces  Hardness.lean::clPrepare_idle: 137/228 = 60%
+   Primitives.lean::scanCopy_suffix  reproduces  Primitives.lean::scanCopy_finish: 154/257 = 60%
+   Hardness.lean::clPrepared_idle  reproduces  Hardness.lean::clLoad_idle: 88/147 = 60%
+   Primitives.lean::splitRestore_scan  reproduces  Primitives.lean::splitCount_over: 82/137 = 60%
+   Primitives.lean::emitter_compare_scan  reproduces  Primitives.lean::emitterP2_erase_scan: 189/316 = 60%
+   Primitives.lean::splitEmit_double  reproduces  Primitives.lean::splitPrepare_scan: 382/639 = 60%
+   Primitives.lean::pairDupTM  reproduces  Primitives.lean::incFixedTM: 283/474 = 60%
+   Loop.lean::loopCall  reproduces  Loop.lean::emLoopCall: 80/134 = 60%
+   Primitives.lean::splitBody_restore  reproduces  Primitives.lean::splitBody_rewind: 321/538 = 60%
+   Hardness.lean::clWipe_idle  reproduces  Hardness.lean::clPrepare_idle: 136/228 = 60%
+   Hardness.lean::clInput_idle  reproduces  Hardness.lean::clPrepare_idle: 136/228 = 60%
+   Hardness.lean::clCopy_idle  reproduces  Hardness.lean::clPrepare_idle: 136/228 = 60%
+   Hardness.lean::clRow_idle  reproduces  Hardness.lean::clFresh_idle: 91/153 = 59%
+   Hardness.lean::clLoad_idle  reproduces  Hardness.lean::clFresh_idle: 91/153 = 59%
+   Hardness.lean::clCopy_rewind  reproduces  Hardness.lean::clCopy_write: 98/165 = 59%
+   Primitives.lean::splitRestore_rewind  reproduces  Primitives.lean::extract_rewind: 443/746 = 59%
+   Loop.lean::exists_emitLoopTM  reproduces  Loop.lean::exists_loopTM: 457/770 = 59%
+   Loop.lean::emCall_pair_triple  reproduces  Loop.lean::emCall_triple_pair: 138/233 = 59%
+   Primitives.lean::emitterP2_prepare_rewind_candidate  reproduces  Primitives.lean::splitRestore_rewind: 467/790 = 59%
+   Hardness.lean::clRecords_native  reproduces  Hardness.lean::clFinalCount_native: 114/193 = 59%
+   Primitives.lean::emitterP2_prepare_rewind_suffix  reproduces  Primitives.lean::splitRestore_rewind: 466/790 = 59%
+   Hardness.lean::clWipe_forward  reproduces  Primitives.lean::emitterToken_separator: 128/217 = 59%
+   Hardness.lean::clReplay_forward  reproduces  Primitives.lean::emitterToken_separator: 128/217 = 59%
+   Hardness.lean::clCount_rewind  reproduces  Primitives.lean::emitterToken_separator: 128/217 = 59%
+   Primitives.lean::splitEmit_double  reproduces  Primitives.lean::emitterP2_erase_scan: 186/316 = 59%
+   Primitives.lean::catalogPoly_setup  reproduces  Primitives.lean::emitterToken_separator: 127/217 = 59%
+   Primitives.lean::catalogPoly_emit  reproduces  Primitives.lean::emitterToken_separator: 127/217 = 59%
+   Hardness.lean::clInput_backward  reproduces  Primitives.lean::emitterToken_separator: 127/217 = 59%
+   Hardness.lean::clA5Sizes_native  reproduces  Hardness.lean::clA5Cursor_native: 76/130 = 58%
+   Primitives.lean::scanTrues_run  reproduces  Hardness.lean::clCmp_forward: 82/141 = 58%
+   Loop.lean::loopHost_borrow_rewind  reproduces  Loop.lean::loopHost_fuel_rewind: 733/1261 = 58%
+   Hardness.lean::clRepeat_round  reproduces  Hardness.lean::clTrack_dispatch: 61/105 = 58%
+   Hardness.lean::clMatch_load  reproduces  Hardness.lean::clTrack_dispatch: 61/105 = 58%
+   Primitives.lean::lenParse_run  reproduces  Primitives.lean::extract_run: 1077/1854 = 58%
+   Loop.lean::loop_find_run  reproduces  Loop.lean::loop_run: 448/773 = 58%
+   Loop.lean::exists_loopFindTM  reproduces  Loop.lean::exists_loopCfgTM: 92/159 = 58%
+   Loop.lean::emCall_clear_left  reproduces  Loop.lean::emCall_clear_scan: 369/638 = 58%
+   Loop.lean::loopHost_borrow_rewind  reproduces  Loop.lean::loopHost_payload_rewind: 733/1269 = 58%
+   Hardness.lean::clA5WorkFragment  reproduces  Hardness.lean::clA5InputFragment: 112/194 = 58%
+   Hardness.lean::clReplay_back  reproduces  Hardness.lean::clReplay_forward: 514/891 = 58%
+   Embed.lean::embedSilentRetTM_run  reproduces  Embed.lean::embedSilentTM_runFrom: 68/118 = 58%
+   Primitives.lean::incFixed_computes  reproduces  Primitives.lean::emitterToken_separator: 125/217 = 58%
+   Hardness.lean::clPrepare_start  reproduces  Hardness.lean::clFresh_idle: 88/153 = 58%
+   Loop.lean::emCallTripleEmbedding  reproduces  Loop.lean::emCallPairEmbedding: 69/120 = 57%
+   Hardness.lean::clA5InputFragment_native  reproduces  Hardness.lean::clA5IfLt_native: 81/141 = 57%
+   Loop.lean::emCall_track_stamp  reproduces  Loop.lean::emCall_track_initial: 398/693 = 57%
+   Primitives.lean::splitEmbed_cut  reproduces  Loop.lean::emLoop_run_prefix: 74/129 = 57%
+   Hardness.lean::clLeft_until  reproduces  Loop.lean::emLoop_run_prefix: 74/129 = 57%
+   Hardness.lean::clBank_run  reproduces  Loop.lean::emLoop_run_prefix: 74/129 = 57%
+   Hardness.lean::clA5Stop_clean  reproduces  Loop.lean::emLoop_run_prefix: 74/129 = 57%
+   Primitives.lean::splitEmit_double  reproduces  Primitives.lean::rawStrip_replay: 232/406 = 57%
+   Loop.lean::emCall_triple_inverse  reproduces  Loop.lean::emCall_pair_triple: 92/161 = 57%
+   Hardness.lean::clA5Fuel  reproduces  Hardness.lean::clNative_append: 76/133 = 57%
+   Loop.lean::loopHost_payload_rewind  reproduces  Loop.lean::loopHost_borrow_rewind: 733/1284 = 57%
+   Loop.lean::loopHost_fuel_rewind  reproduces  Loop.lean::loopHost_borrow_rewind: 733/1284 = 57%
+   Loop.lean::loop_input_run_le  reproduces  Loop.lean::loop_output_length_le: 145/254 = 57%
+   Embed.lean::embedEmitTM_visitedByTapeHead_frame  reproduces  Embed.lean::embedEmitTM_visitedByTapeHead: 138/242 = 57%
+   Loop.lean::emCall_track_initial  reproduces  Loop.lean::emCall_track_stamp: 398/698 = 57%
+   Loop.lean::emCall_finish_transfer  reproduces  Loop.lean::emCall_finish_arg: 819/1438 = 57%
+   Loop.lean::loopHost_payload_rewind  reproduces  Loop.lean::loopHost_fuel_copy: 829/1458 = 57%
+   Hardness.lean::clMatch_cmp_frame  reproduces  Hardness.lean::clQuery_initial: 101/178 = 57%
+   Loop.lean::emLoopCall  reproduces  Loop.lean::loopCall: 80/141 = 57%
+   Loop.lean::loopHost_fuel_rewind  reproduces  Loop.lean::loopHost_fuel_copy: 827/1458 = 57%
+   Hardness.lean::clCopy_rewind  reproduces  Primitives.lean::emitterToken_separator: 123/217 = 57%
+   Embed.lean::embedThroughHalt  reproduces  Loop.lean::emLoop_run_prefix: 73/129 = 57%
+   Primitives.lean::emitter_compare_rewind  reproduces  Primitives.lean::splitPrepare_rewind: 427/755 = 57%
+   Embed.lean::embedSilentRetTM_visitedByTapeHead  reproduces  Embed.lean::embedEmitRetTM_visitedByTapeHead: 65/115 = 57%
+   Loop.lean::emCallPairIndex  reproduces  Loop.lean::emCallPairSelect: 61/108 = 56%
+   Hardness.lean::clPrepare_start  reproduces  Hardness.lean::clWipe_idle: 80/142 = 56%
+   Hardness.lean::clPrepare_start  reproduces  Hardness.lean::clInput_idle: 80/142 = 56%
+   Hardness.lean::clPrepare_start  reproduces  Hardness.lean::clCopy_idle: 80/142 = 56%
+   Primitives.lean::emitterP2_prepare_candidate  reproduces  Primitives.lean::emitterP2_erase_scan: 178/316 = 56%
+   Loop.lean::loop_rewind_bounded  reproduces  Primitives.lean::catalogRewind: 245/435 = 56%
+   Hardness.lean::clCmp_rewind  reproduces  Hardness.lean::clCmp_finish_scan: 144/256 = 56%
+   Primitives.lean::scanCopy_suffix  reproduces  Primitives.lean::emitterToken_separator: 122/217 = 56%
+   Primitives.lean::splitBodyStateDecidableEq  reproduces  Primitives.lean::emitterP2StateDecidableEq: 408/726 = 56%
+   Hardness.lean::clRecordWords_native  reproduces  Hardness.lean::clHeaderLayout_native: 553/985 = 56%
+   Loop.lean::emCall_finish_arg  reproduces  Loop.lean::emCall_finish_transfer: 819/1459 = 56%
+   Primitives.lean::extract_rewind  reproduces  Primitives.lean::splitRestore_rewind: 443/790 = 56%
+   Hardness.lean::clSearchArg_native  reproduces  Hardness.lean::clRepeatArgument_native: 241/430 = 56%
+   Primitives.lean::splitEmit_double  reproduces  Hardness.lean::clCmp_forward: 79/141 = 56%
+   Primitives.lean::pairDup_double  reproduces  Hardness.lean::clCmp_forward: 79/141 = 56%
+   Primitives.lean::rawStrip_rewind  reproduces  Primitives.lean::splitRestore_rewind: 442/790 = 56%
+   Primitives.lean::mapCfg  reproduces  Primitives.lean::lenCfg: 99/177 = 56%
+   Hardness.lean::clCopy_rewind  reproduces  Primitives.lean::catalogPoly_setup: 319/571 = 56%
+   Embed.lean::embedSilentTM_visitedByTapeHead  reproduces  Embed.lean::embedSilentTM_frame: 63/113 = 56%
+   Primitives.lean::emitterToken_double  reproduces  Primitives.lean::scanStep_right: 88/158 = 56%
+   Primitives.lean::splitEmit_double  reproduces  Primitives.lean::pairDup_double: 653/1176 = 56%
+   Loop.lean::emCall_bank_final  reproduces  Loop.lean::emCall_finish_initial: 904/1629 = 55%
+   Hardness.lean::clRead_rewind  reproduces  Hardness.lean::clReplay_back: 391/705 = 55%
+   Primitives.lean::emitterP2_erase_scan  reproduces  Primitives.lean::rawStrip_replay: 225/406 = 55%
+   Primitives.lean::emitter_compare_rewind  reproduces  Primitives.lean::emitterP2_erase_scan: 175/316 = 55%
+   Loop.lean::emLoopHost_round  reproduces  Loop.lean::loopHost_fuel_return: 731/1321 = 55%
+   Primitives.lean::emitter_compare_rewind  reproduces  Primitives.lean::emitterP2_prepare_rewind_suffix: 479/866 = 55%
+   Primitives.lean::emitter_compare_rewind  reproduces  Primitives.lean::emitterP2_prepare_rewind_candidate: 479/866 = 55%
+   Hardness.lean::clMatch_prefix  reproduces  Loop.lean::emCall_banks_run: 131/237 = 55%
+   Hardness.lean::clRecord_idle  reproduces  Hardness.lean::clPrepare_idle: 126/228 = 55%
+   Primitives.lean::scanCopy_run  reproduces  Primitives.lean::scanCopy_finish: 142/257 = 55%
+   Primitives.lean::splitPrepare_rewind  reproduces  Primitives.lean::emitterP2_prepare_rewind_candidate: 477/866 = 55%
+   Loop.lean::emLoopHost_round  reproduces  Loop.lean::emLoop_run_prefix: 71/129 = 55%
+   Loop.lean::emCall_track_run  reproduces  Loop.lean::emLoop_run_prefix: 71/129 = 55%
+   Hardness.lean::clCount_idle_run  reproduces  Loop.lean::emLoop_run_prefix: 71/129 = 55%
+   Hardness.lean::clCopy_rewind  reproduces  Hardness.lean::clReplay_back: 388/705 = 55%
+   Primitives.lean::incFixedTM  reproduces  Primitives.lean::emitterTokenTM: 220/400 = 55%
+   Primitives.lean::splitPrepare_rewind  reproduces  Primitives.lean::emitterP2_prepare_rewind_suffix: 476/866 = 55%
+   Primitives.lean::splitBody_rewind  reproduces  Hardness.lean::clWipe_idle: 78/142 = 55%
+   Primitives.lean::splitBody_rewind  reproduces  Hardness.lean::clInput_idle: 78/142 = 55%
+   Primitives.lean::emitterP2_erase_first  reproduces  Hardness.lean::clWipe_idle: 78/142 = 55%
+   Primitives.lean::emitterP2_erase_first  reproduces  Hardness.lean::clInput_idle: 78/142 = 55%
+   Loop.lean::loopHost_frame_replay  reproduces  Hardness.lean::clRepeat_initial: 67/122 = 55%
+   Hardness.lean::clQuery_initial  reproduces  Hardness.lean::clRepeat_initial: 67/122 = 55%
+   Hardness.lean::clMatch_cmp_frame  reproduces  Hardness.lean::clRepeat_initial: 67/122 = 55%
+   Primitives.lean::splitEmbed_cut  reproduces  Primitives.lean::emitter_first_entry: 221/403 = 55%
+   Primitives.lean::splitEmbed_cut  reproduces  Loop.lean::emCall_first_entry: 221/403 = 55%
+   Primitives.lean::emitter_compare_run  reproduces  Primitives.lean::emitterP2_erase_scan: 173/316 = 55%
+   Hardness.lean::clA5Field_native  reproduces  Hardness.lean::clA5Drop_native: 123/225 = 55%
+   Hardness.lean::clCopy_separator  reproduces  Hardness.lean::clCopy_pair: 443/811 = 55%
+   Hardness.lean::clA5Stop_clean  reproduces  Hardness.lean::clCmp_forward: 77/141 = 55%
+   Loop.lean::emLoopHost_round  reproduces  Loop.lean::loopHost_borrow_step: 366/671 = 55%
+   Primitives.lean::extract_run  reproduces  Primitives.lean::pairValid_run: 641/1177 = 54%
+   Hardness.lean::clPrepare_start  reproduces  Hardness.lean::clCmp_idle: 80/147 = 54%
+   Hardness.lean::clRead_separator  reproduces  Primitives.lean::emitterToken_separator: 118/217 = 54%
+   Hardness.lean::clRead_pair  reproduces  Primitives.lean::emitterToken_separator: 118/217 = 54%
+   Primitives.lean::splitEmit_double  reproduces  Loop.lean::emLoop_run_prefix: 70/129 = 54%
+   Primitives.lean::pairDup_double  reproduces  Loop.lean::emLoop_run_prefix: 70/129 = 54%
+   Primitives.lean::pairDup_computes  reproduces  Loop.lean::emLoop_run_prefix: 70/129 = 54%
+   Primitives.lean::incFixed_computes  reproduces  Loop.lean::emLoop_run_prefix: 70/129 = 54%
+   Primitives.lean::emitterP2_prepare_run  reproduces  Loop.lean::emLoop_run_prefix: 70/129 = 54%
+   Hardness.lean::clRec_advance  reproduces  Loop.lean::emLoop_run_prefix: 70/129 = 54%
+   Hardness.lean::clRec_track_inactive  reproduces  Hardness.lean::clRec_row_frame: 179/330 = 54%
+   Primitives.lean::splitEmit_suffix  reproduces  Loop.lean::loopReplay_run: 187/345 = 54%
+   Primitives.lean::emitterP2_prepare_run  reproduces  Primitives.lean::emitterP2_prepare_rewind_suffix: 469/866 = 54%
+   Primitives.lean::pairValid_computes  reproduces  Primitives.lean::anyTrue_computes: 137/253 = 54%
+   Primitives.lean::splitBody_prepare  reproduces  Primitives.lean::splitBody_restore: 270/499 = 54%
+   Primitives.lean::catalogPoly_unary_computes  reproduces  Primitives.lean::splitPoly_loop_end: 380/703 = 54%
+   Primitives.lean::emitterP2_prepare_run  reproduces  Primitives.lean::emitterP2_prepare_rewind_candidate: 468/866 = 54%
+   Loop.lean::exists_emitLoopTM  reproduces  Loop.lean::exists_loopFindTM: 491/910 = 54%
+   Primitives.lean::rawStripTM  reproduces  Hardness.lean::clInputTM: 157/291 = 54%
+   Hardness.lean::clPrepare_start  reproduces  Hardness.lean::clRecord_prepare_frame: 151/280 = 54%
+   Primitives.lean::splitRestore_rewind  reproduces  Primitives.lean::emitterP2_prepare_rewind_candidate: 467/866 = 54%
+   Hardness.lean::clWipe_backward  reproduces  Primitives.lean::emitterToken_separator: 117/217 = 54%
+   Loop.lean::emCallPairEmbedding  reproduces  Loop.lean::emCallTripleEmbedding: 69/128 = 54%
+   Loop.lean::emCall_track_run  reproduces  Loop.lean::emCall_track_extent: 145/269 = 54%
+   Primitives.lean::splitRestore_rewind  reproduces  Primitives.lean::emitterP2_prepare_rewind_suffix: 466/866 = 54%
+   Hardness.lean::clRead_separator  reproduces  Hardness.lean::clRead_rewind: 432/803 = 54%
+   Primitives.lean::splitEmit_double  reproduces  Primitives.lean::splitEmit_separator: 411/765 = 54%
+   Hardness.lean::clTrack_round  reproduces  Loop.lean::emLoop_run_prefix: 69/129 = 53%
+   Hardness.lean::clRec_prefix  reproduces  Loop.lean::emLoop_run_prefix: 69/129 = 53%
+   Primitives.lean::pairDup_computes  reproduces  Primitives.lean::emitterToken_separator: 116/217 = 53%
+   Loop.lean::emCall_track_action  reproduces  Loop.lean::emCall_track_initial: 370/693 = 53%
+   Loop.lean::emCall_bank_initial  reproduces  Loop.lean::emCall_prepare_final: 377/707 = 53%
+   Primitives.lean::emitterP2_prepare_rewind_suffix  reproduces  Primitives.lean::emitter_compare_rewind: 479/899 = 53%
+   Primitives.lean::emitterP2_prepare_rewind_candidate  reproduces  Primitives.lean::emitter_compare_rewind: 479/899 = 53%
+   Hardness.lean::clRecord_prepare_frame  reproduces  Hardness.lean::clRepeat_initial: 65/122 = 53%
+   Hardness.lean::clCmpTM  reproduces  Primitives.lean::emitterCompareTM: 181/340 = 53%
+   Embed.lean::embedThroughHalt  reproduces  Hardness.lean::clCmp_forward: 75/141 = 53%
+   Loop.lean::emCall_clear_left  reproduces  Primitives.lean::emitterP2_erase_scan: 168/316 = 53%
+   Hardness.lean::clRec_track_inactive  reproduces  Hardness.lean::clRec_track_frame: 194/366 = 53%
+   Primitives.lean::emitter_compare_rewind  reproduces  Primitives.lean::emitterToken_separator: 115/217 = 53%
+   Primitives.lean::emitterP2_prepare_rewind_suffix  reproduces  Primitives.lean::emitterToken_separator: 115/217 = 53%
+   Primitives.lean::emitterP2_prepare_rewind_candidate  reproduces  Primitives.lean::emitterToken_separator: 115/217 = 53%
+   Primitives.lean::emitterP2_erase_back  reproduces  Primitives.lean::emitterToken_separator: 115/217 = 53%
+   Loop.lean::emCall_triple_pair  reproduces  Loop.lean::emCall_triple_other: 152/287 = 53%
+   Primitives.lean::splitPrepare_extra  reproduces  Primitives.lean::splitPrepare_scan: 338/639 = 53%
+   Hardness.lean::clRead_rewind  reproduces  Hardness.lean::clCopy_rewind: 524/991 = 53%
+   Hardness.lean::clRec_prepared  reproduces  Hardness.lean::clQuery_initial: 94/178 = 53%
+   Primitives.lean::splitEmit_suffix  reproduces  Loop.lean::emLoop_run_prefix: 68/129 = 53%
+   Primitives.lean::scanCopy_suffix  reproduces  Loop.lean::emLoop_run_prefix: 68/129 = 53%
+   Primitives.lean::extract_suffix  reproduces  Loop.lean::emLoop_run_prefix: 68/129 = 53%
+   Primitives.lean::emitterToken_run  reproduces  Loop.lean::emLoop_run_prefix: 68/129 = 53%
+   Primitives.lean::catalogPoly_loop  reproduces  Loop.lean::emLoop_run_prefix: 68/129 = 53%
+   Loop.lean::loopHost_borrow_run  reproduces  Loop.lean::emLoop_run_prefix: 68/129 = 53%
+   Loop.lean::emCall_finish_transfer  reproduces  Loop.lean::emLoop_run_prefix: 68/129 = 53%
+   Loop.lean::emCall_finish_rewind  reproduces  Loop.lean::emLoop_run_prefix: 68/129 = 53%
+   Loop.lean::emCall_finish_erase  reproduces  Loop.lean::emLoop_run_prefix: 68/129 = 53%
+   Loop.lean::emCall_finish_arg  reproduces  Loop.lean::emLoop_run_prefix: 68/129 = 53%
+   Hardness.lean::clWipe_forward  reproduces  Loop.lean::emLoop_run_prefix: 68/129 = 53%
+   Hardness.lean::clReplay_forward  reproduces  Loop.lean::emLoop_run_prefix: 68/129 = 53%
+   Hardness.lean::clReplay_back  reproduces  Loop.lean::emLoop_run_prefix: 68/129 = 53%
+   Hardness.lean::clRead_rewind  reproduces  Loop.lean::emLoop_run_prefix: 68/129 = 53%
+   Hardness.lean::clCount_carry  reproduces  Loop.lean::emLoop_run_prefix: 68/129 = 53%
+   Hardness.lean::clCopy_rewind  reproduces  Loop.lean::emLoop_run_prefix: 68/129 = 53%
+   Hardness.lean::clCmp_rewind  reproduces  Loop.lean::emLoop_run_prefix: 68/129 = 53%
+   Hardness.lean::clA5Round  reproduces  Loop.lean::emLoop_run_prefix: 68/129 = 53%
+   Embed.lean::embedSilentTM_spaceUsedByTape_cap  reproduces  Embed.lean::embedSilentTM_visitedByTapeHead: 141/268 = 53%
+   Primitives.lean::pairDup_computes  reproduces  Primitives.lean::scanStep_right: 83/158 = 53%
+   Primitives.lean::emitterAppend_run  reproduces  Primitives.lean::scanCopy_finish: 135/257 = 53%
+   Hardness.lean::clWipe_forward  reproduces  Hardness.lean::clRead_rewind: 421/803 = 52%
+   Loop.lean::emCall_finish_erase  reproduces  Loop.lean::emCall_finish_transfer: 764/1459 = 52%
+   Loop.lean::emCall_triple_inverse  reproduces  Loop.lean::emCall_triple_pair: 122/233 = 52%
+   Loop.lean::loopHost_frame_replay  reproduces  Hardness.lean::clRepeat_frame: 67/128 = 52%
+   Hardness.lean::clRec_prepared  reproduces  Hardness.lean::clRepeat_frame: 67/128 = 52%
+   Hardness.lean::clQuery_initial  reproduces  Hardness.lean::clRepeat_frame: 67/128 = 52%
+   Hardness.lean::clMatch_cmp_frame  reproduces  Hardness.lean::clRepeat_frame: 67/128 = 52%
+   Primitives.lean::emitterP2_prepare_rewind_suffix  reproduces  Primitives.lean::rawStrip_rewind: 368/704 = 52%
+   Primitives.lean::emitterP2_prepare_rewind_candidate  reproduces  Primitives.lean::rawStrip_rewind: 368/704 = 52%
+   Hardness.lean::clA5InputFragment  reproduces  Hardness.lean::clA5WorkFragment: 112/215 = 52%
+   Loop.lean::loopFuelCaptured_frame  reproduces  Loop.lean::loopControl_payload: 128/246 = 52%
+   Primitives.lean::pairValid_run  reproduces  Primitives.lean::anyTrue_run: 413/795 = 52%
+   Primitives.lean::splitRestore_rewind  reproduces  Loop.lean::emLoop_run_prefix: 67/129 = 52%
+   Primitives.lean::splitPrepare_rewind  reproduces  Loop.lean::emLoop_run_prefix: 67/129 = 52%
+   Primitives.lean::rawStrip_trim  reproduces  Loop.lean::emLoop_run_prefix: 67/129 = 52%
+   Primitives.lean::rawStrip_rewind  reproduces  Loop.lean::emLoop_run_prefix: 67/129 = 52%
+   Primitives.lean::mapBuffer_rewind  reproduces  Loop.lean::emLoop_run_prefix: 67/129 = 52%
+   Primitives.lean::extract_rewind  reproduces  Loop.lean::emLoop_run_prefix: 67/129 = 52%
+   Primitives.lean::emitter_compare_rewind  reproduces  Loop.lean::emLoop_run_prefix: 67/129 = 52%
+   Primitives.lean::emitterToken_separator  reproduces  Loop.lean::emLoop_run_prefix: 67/129 = 52%
+   Primitives.lean::emitterToken_double  reproduces  Loop.lean::emLoop_run_prefix: 67/129 = 52%
+   Primitives.lean::emitterP2_prepare_rewind_suffix  reproduces  Loop.lean::emLoop_run_prefix: 67/129 = 52%
+   Primitives.lean::emitterP2_prepare_rewind_candidate  reproduces  Loop.lean::emLoop_run_prefix: 67/129 = 52%
+   Primitives.lean::emitterP2_erase_back  reproduces  Loop.lean::emLoop_run_prefix: 67/129 = 52%
+   Primitives.lean::catalogPoly_setup  reproduces  Loop.lean::emLoop_run_prefix: 67/129 = 52%
+   Primitives.lean::catalogPoly_rewind  reproduces  Loop.lean::emLoop_run_prefix: 67/129 = 52%
+   Primitives.lean::catalogPoly_emit  reproduces  Loop.lean::emLoop_run_prefix: 67/129 = 52%
+   Primitives.lean::anyTrue_run  reproduces  Loop.lean::emLoop_run_prefix: 67/129 = 52%
+   Loop.lean::loopHost_reject  reproduces  Loop.lean::emLoop_run_prefix: 67/129 = 52%
+   Loop.lean::loopHost_payload_rewind  reproduces  Loop.lean::emLoop_run_prefix: 67/129 = 52%
+   Loop.lean::loopHost_fuel_rewind  reproduces  Loop.lean::emLoop_run_prefix: 67/129 = 52%
+   Loop.lean::loopHost_fuel_return  reproduces  Loop.lean::emLoop_run_prefix: 67/129 = 52%
+   Loop.lean::loopHost_borrow_rewind  reproduces  Loop.lean::emLoop_run_prefix: 67/129 = 52%
+   Loop.lean::emCall_right_scan  reproduces  Loop.lean::emLoop_run_prefix: 67/129 = 52%
+   Hardness.lean::clRepeat_round  reproduces  Loop.lean::emLoop_run_prefix: 67/129 = 52%
+   Hardness.lean::clRead_separator  reproduces  Loop.lean::emLoop_run_prefix: 67/129 = 52%
+   Hardness.lean::clRead_pair  reproduces  Loop.lean::emLoop_run_prefix: 67/129 = 52%
+   Hardness.lean::clInput_backward  reproduces  Loop.lean::emLoop_run_prefix: 67/129 = 52%
+   Hardness.lean::clCopy_separator  reproduces  Loop.lean::emLoop_run_prefix: 67/129 = 52%
+   Hardness.lean::clCopy_pair  reproduces  Loop.lean::emLoop_run_prefix: 67/129 = 52%
+   Hardness.lean::clA5Map_run  reproduces  Loop.lean::emLoop_run_prefix: 67/129 = 52%
+   Primitives.lean::rawStrip_copy  reproduces  Primitives.lean::emitterP2_erase_scan: 164/316 = 52%
+   Loop.lean::emCall_finish_initial  reproduces  Loop.lean::emCall_prepare_final: 366/707 = 52%
+   Hardness.lean::clHeaderLayout_native  reproduces  Hardness.lean::clRepeatArgument_native: 222/430 = 52%
+   Loop.lean::emLoopHost_round  reproduces  Loop.lean::emLoopHost_start: 497/965 = 52%
+   Primitives.lean::emitterToken_run  reproduces  Primitives.lean::scanCopy_suffix: 437/850 = 51%
+   Hardness.lean::clOutput_compute  reproduces  Hardness.lean::clWipe_idle: 73/142 = 51%
+   Hardness.lean::clOutput_compute  reproduces  Hardness.lean::clInput_idle: 73/142 = 51%
+   Hardness.lean::clOutput_compute  reproduces  Hardness.lean::clCopy_idle: 73/142 = 51%
+   Hardness.lean::clOutputAt_compute  reproduces  Hardness.lean::clWipe_idle: 73/142 = 51%
+   Hardness.lean::clOutputAt_compute  reproduces  Hardness.lean::clInput_idle: 73/142 = 51%
+   Hardness.lean::clOutputAt_compute  reproduces  Hardness.lean::clCopy_idle: 73/142 = 51%
+   Primitives.lean::lenParse_run  reproduces  Primitives.lean::pairValid_run: 605/1177 = 51%
+   Hardness.lean::clOutput_compute  reproduces  Hardness.lean::clRow_idle: 75/146 = 51%
+   Hardness.lean::clOutputAt_compute  reproduces  Hardness.lean::clRow_idle: 75/146 = 51%
+   Hardness.lean::clInput_forward  reproduces  Primitives.lean::emitterP2_erase_scan: 162/316 = 51%
+   Primitives.lean::mapPayload_replay  reproduces  Primitives.lean::rawStrip_replay: 208/406 = 51%
+   Primitives.lean::mapValidate  reproduces  Loop.lean::emLoop_run_prefix: 66/129 = 51%
+   Loop.lean::loopReplay_run  reproduces  Loop.lean::emLoop_run_prefix: 66/129 = 51%
+   Hardness.lean::clRepeat_call  reproduces  Loop.lean::emLoop_run_prefix: 66/129 = 51%
+   Hardness.lean::clCount_rewind  reproduces  Loop.lean::emLoop_run_prefix: 66/129 = 51%
+   Primitives.lean::splitEmit_separator  reproduces  Primitives.lean::emitterToken_separator: 111/217 = 51%
+   Primitives.lean::pairDup_double  reproduces  Primitives.lean::emitterToken_separator: 111/217 = 51%
+   Hardness.lean::clPrepHeader_native  reproduces  Hardness.lean::clNative_append: 68/133 = 51%
+   Hardness.lean::clRead_forward  reproduces  Hardness.lean::clCopy_forward: 138/270 = 51%
+   Primitives.lean::emitter_compare_rewind  reproduces  Primitives.lean::emitter_compare_scan: 334/654 = 51%
+   Primitives.lean::emitterP2_update_right  reproduces  Primitives.lean::emitterP2_words_clean: 72/141 = 51%
+   Primitives.lean::emitterP2_update_left  reproduces  Primitives.lean::emitterP2_words_clean: 72/141 = 51%
+   Hardness.lean::clRecWords  reproduces  Hardness.lean::clHeaderLayout: 75/147 = 51%
+   Hardness.lean::clOutput_compute  reproduces  Hardness.lean::clLoad_idle: 75/147 = 51%
+   Hardness.lean::clOutputAt_compute  reproduces  Hardness.lean::clLoad_idle: 75/147 = 51%
+   Hardness.lean::clWipe_backward  reproduces  Hardness.lean::clWipe_forward: 435/855 = 51%
+   Loop.lean::loopHost_frame_replay  reproduces  Loop.lean::loopControl_payload: 125/246 = 51%
+   Hardness.lean::clRepeatCfg  reproduces  Hardness.lean::clLoadCfg: 65/128 = 51%
+   Hardness.lean::clRecord_prepare_frame  reproduces  Hardness.lean::clRepeat_frame: 65/128 = 51%
+   Hardness.lean::clInputTM  reproduces  Hardness.lean::clReplayTM: 137/270 = 51%
+   Primitives.lean::catalogPrefixTM_copy  reproduces  Primitives.lean::catalogPrefixTM_emit: 180/355 = 51%
+   Primitives.lean::emitter_compare_rewind  reproduces  Primitives.lean::splitRestore_rewind: 400/790 = 51%
+   Hardness.lean::clRead_pair  reproduces  Hardness.lean::clRead_rewind: 406/803 = 51%
+   Primitives.lean::splitRestore_scan  reproduces  Primitives.lean::splitPrepare_extra: 228/451 = 51%
+   Primitives.lean::scanCopy_run  reproduces  Primitives.lean::rawStrip_replay: 205/406 = 50%
+   Primitives.lean::scanCopy_suffix  reproduces  Primitives.lean::emitterToken_double: 396/785 = 50%
+   Primitives.lean::splitEmit_separator  reproduces  Loop.lean::emLoop_run_prefix: 65/129 = 50%
+   Primitives.lean::lenSuffix_run  reproduces  Loop.lean::emLoop_run_prefix: 65/129 = 50%
+   Loop.lean::loopHost_fuel_copy  reproduces  Loop.lean::emLoop_run_prefix: 65/129 = 50%
+   Hardness.lean::clWipe_backward  reproduces  Loop.lean::emLoop_run_prefix: 65/129 = 50%
+   Primitives.lean::splitRestore_rewind  reproduces  Hardness.lean::clCmp_forward: 71/141 = 50%
+   Primitives.lean::splitPrepare_rewind  reproduces  Hardness.lean::clCmp_forward: 71/141 = 50%
+   Primitives.lean::rawStrip_rewind  reproduces  Hardness.lean::clCmp_forward: 71/141 = 50%
+   Primitives.lean::mapBuffer_rewind  reproduces  Hardness.lean::clCmp_forward: 71/141 = 50%
+   Primitives.lean::extract_rewind  reproduces  Hardness.lean::clCmp_forward: 71/141 = 50%
+   Primitives.lean::catalogPoly_setup  reproduces  Hardness.lean::clCmp_forward: 71/141 = 50%
+   Primitives.lean::catalogPoly_rewind  reproduces  Hardness.lean::clCmp_forward: 71/141 = 50%
+   Hardness.lean::clReplay_back  reproduces  Hardness.lean::clCmp_forward: 71/141 = 50%
+   Hardness.lean::clRepeat_complete  reproduces  Hardness.lean::clCmp_forward: 71/141 = 50%
+   Hardness.lean::clInput_backward  reproduces  Hardness.lean::clCmp_forward: 71/141 = 50%
+   Loop.lean::emCall_clear_run  reproduces  Loop.lean::emCall_clear_origin: 428/850 = 50%
+   Loop.lean::emCall_track_computes  reproduces  Loop.lean::emCall_right_computes: 77/153 = 50%
+   Loop.lean::emCall_right_computes  reproduces  Loop.lean::emCall_track_computes: 77/153 = 50%
+   Loop.lean::emCall_pair_triple  reproduces  Loop.lean::emCall_triple_inverse: 92/183 = 50%
+   Primitives.lean::emitterAppend_run  reproduces  Primitives.lean::rawStrip_replay: 204/406 = 50%
+   Primitives.lean::extract_replay_finish  reproduces  Primitives.lean::rawStrip_replay: 203/406 = 50%
+   Hardness.lean::clPrepared_idle  reproduces  Hardness.lean::clPrepare_idle: 114/228 = 50%
+   Hardness.lean::clA5Next_pack  reproduces  Hardness.lean::clA5Stored_exact: 112/224 = 50%
+   Hardness.lean::clPreparedCfg  reproduces  Hardness.lean::clRecordCfg: 91/182 = 50%
+   Hardness.lean::clA5Count_native  reproduces  Hardness.lean::clA5Address_native: 74/148 = 50%
+   Primitives.lean::splitRestore_first  reproduces  Hardness.lean::clWipe_idle: 71/142 = 50%
+   Primitives.lean::splitRestore_first  reproduces  Hardness.lean::clInput_idle: 71/142 = 50%
+   Primitives.lean::splitRestore_first  reproduces  Hardness.lean::clCopy_idle: 71/142 = 50%
+```
