@@ -38,6 +38,12 @@ branch-space measure (`Turing.NDTM.spaceUsedWith`).
   every branch's space, so longer words add nothing.
 * Constants are absorbed as `c · s n`, and there is **no** `s(n) ≥ log n` side
   condition, as for `Complexity.SPACE`.
+* **Zero bounds collapse the class, as for `Complexity.SPACE`** (P4.1 statement
+  gate, note 6): every branch visits each work tape's initial head cell, so a zero
+  of the bound at any input length forces the witness to have no work tapes at all.
+  The normalized classes (`n ^ c + 1`, `Complexity.logSpace`) are positive
+  everywhere and are unaffected. The `NSPACE` sanity twins (tape-count bound,
+  collapse, normalization) are a recorded future additive layer.
 
 ## Main definitions
 

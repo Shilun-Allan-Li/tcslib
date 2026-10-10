@@ -59,6 +59,8 @@ sites.
   output lemmas (at most one symbol is emitted per step, and output only grows), stated
   here rather than in the vendored `Deterministic.lean` to keep the vendored files
   unmodified.
+* `Turing.MultiTapeTM.spaceUsed_le_mul_succ` — a run of `t` steps visits at most
+  `k · (t + 1)` cells (shared by the space inclusions of chapter 4; added 2026-10-10).
 
 ## References
 
@@ -69,7 +71,7 @@ sites.
 namespace Turing
 
 /-!
-### Raw-layer output lemmas
+### Raw-layer output and space lemmas
 
 Additions on top of the vendored files (kept here so the vendored `Deterministic.lean`
 stays byte-comparable with upstream).
@@ -114,6 +116,23 @@ theorem output_prefix (tm : MultiTapeTM k Symbol State) (cfg : Cfg k Symbol Stat
   | succ d ih =>
     rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.step_output]
     exact ih.trans (List.prefix_append _ _)
+
+/-- A run of `t` steps visits at most `t + 1` cells on each work tape, hence at most
+`k · (t + 1)` cells in all. [AB09, proof of Theorem 4.2: a machine running in time `T`
+visits at most `T` cells per tape, up to the starting cell]
+
+**Proof sketch.** Each tape's visited set is the image of `Finset.range (t + 1)`
+(`Finset.card_image_le`, `Finset.card_range`); sum over the `k` tapes
+(`Finset.sum_le_sum`, `Finset.sum_const_nat`). -/
+theorem spaceUsed_le_mul_succ (tm : MultiTapeTM k Symbol State)
+    (cfg : Cfg k Symbol State input) (t : ℕ) :
+    tm.spaceUsed cfg t ≤ k * (t + 1) := by
+  calc tm.spaceUsed cfg t = ∑ i, tm.spaceUsedByTape cfg t i := rfl
+    _ ≤ ∑ _i : Fin k, (t + 1) := Finset.sum_le_sum fun i _ => by
+      unfold MultiTapeTM.spaceUsedByTape MultiTapeTM.visitedByTapeHead
+      exact (Finset.card_image_le).trans (Finset.card_range (t + 1)).le
+    _ = k * (t + 1) := by
+      rw [Finset.sum_const_nat fun _ _ => rfl, Finset.card_univ, Fintype.card_fin]
 
 end MultiTapeTM
 
