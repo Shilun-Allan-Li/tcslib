@@ -80,6 +80,9 @@ then consumes as its left exit (`Turing.captureAction`'s and
 
 ## Main results
 
+* `Turing.MultiTapeTM.runFrom_mapState_of_agreeOn` — injective state transport
+  followed by guarded agreement on the host carrier.
+
 All sorried (statement phase):
 
 * `Turing.embedSilentTM_runFrom`, `Turing.embedEmitTM_runFrom` — lockstep:
@@ -971,5 +974,52 @@ theorem embedEmitCfg_selected_pos (ι : Fin m ↪ Fin k)
     (pre : List Bool) (c : Cfg m Bool S x) (i : Fin m) :
     (embedEmitCfg ι tapes heads pre c).workTapePos (ι i) = c.workTapePos i := by
   simp [embedEmitCfg, embedSlot_selected]
+
+/-! ## Guarded state transport -/
+
+/-- An injectively renamed source run agrees with a host run through any
+prefix whose live source controls satisfy `good`, provided both transition
+tables agree on the renamed good states for every input and work-tape read.
+**Proof sketch.** Extend the renamed source table to the entire host carrier.
+Step commutation identifies its run, then same-carrier guarded agreement
+transfers that run to the host on the image of the good source states. -/
+theorem MultiTapeTM.runFrom_mapState_of_agreeOn {k : ℕ} {S H : Type} {x : List Bool}
+    (src : MultiTapeTM k Bool S) (host : MultiTapeTM k Bool H)
+    (emb : S ↪ H) (good : S → Prop)
+    (hagree : ∀ q, good q → ∀ inp work,
+      host.tr (emb q) inp work = (src.tr q inp work).mapState emb)
+    (c : Cfg k Bool S x) (t : ℕ)
+    (hguard : ∀ u < t, ∀ q, (src.runFrom c u).state = some q → good q) :
+    host.runFrom (c.mapState emb) t = (src.runFrom c t).mapState emb := by
+  classical
+  letI : Nonempty S := ⟨src.q₀⟩
+  let reference : MultiTapeTM k Bool H :=
+    ⟨emb src.q₀, fun q inp work => (src.tr (Function.invFun emb q) inp work).mapState emb⟩
+  have step (d : Cfg k Bool S x) :
+      reference.step (d.mapState emb) = (src.step d).mapState emb := by
+    cases hs : d.state with
+    | none => simp [MultiTapeTM.step, Cfg.mapState, hs]
+    | some q =>
+      simp only [MultiTapeTM.step, Cfg.mapState, hs, Option.map_some]
+      change (reference.tr (emb q) d.inputSymbol d.workTapeSymbols).apply (d.mapState emb) = _
+      dsimp only [reference]
+      rw [Function.leftInverse_invFun emb.injective q]
+      exact Cfg.mapState_apply emb _ d
+  have transport (u : ℕ) :
+      reference.runFrom (c.mapState emb) u = (src.runFrom c u).mapState emb :=
+    MultiTapeTM.runFrom_comm_of_step (fun d => d.mapState emb) step c u
+  have agreement : reference.AgreeOn host {q | ∃ p, good p ∧ emb p = q} := by
+    intro q hq inp work
+    obtain ⟨p, hp, rfl⟩ := hq
+    dsimp only [reference]
+    rw [Function.leftInverse_invFun emb.injective p]
+    exact (hagree p hp inp work).symm
+  rw [MultiTapeTM.runFrom_eq_of_agreeOn agreement]
+  · exact transport t
+  · intro u hu q hq
+    rw [transport u] at hq
+    change ((src.runFrom c u).state.map emb) = some q at hq
+    obtain ⟨p, hp, he⟩ := Option.map_eq_some_iff.mp hq
+    exact ⟨p, hguard u hu p hp, he⟩
 
 end Turing

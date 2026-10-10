@@ -179,6 +179,10 @@ end Turing
 
 namespace Turing.FinTM
 
+-- Keep the withdrawn emCall_bank_step proof text fixed while resolving its
+-- transport call directly to the promoted public theorem (no local declaration).
+local notation "emCall_state_run" => MultiTapeTM.runFrom_mapState_of_agreeOn
+
 /-- A live endpoint rules out a halt anywhere in its preceding run. -/
 private lemma loop_live_prefix {k : ℕ} {S : Type*} {x : List Bool}
     (tm : MultiTapeTM k Bool S) (cfg : Cfg k Bool S x) (t : ℕ)
@@ -3518,50 +3522,6 @@ private lemma emCall_prepared_eval_first (M : FinTM Bool) (w s out : List Bool) 
   rw [hr, ← habs, hend]
   rfl
 
-/-- Injective state transport followed by guarded agreement on the host carrier.
-Requested shared export: `MultiTapeTM.runFrom_mapState_of_agreeOn` in `Simulation`.
-**Proof sketch.** Extend the renamed source table to every host state. Unguarded
-state transport identifies its run; Z5 then transfers that run on the image of
-the good source states, with the identical initial host configuration. -/
-private lemma emCall_state_run {k : ℕ} {S H : Type} {x : List Bool}
-    (src : MultiTapeTM k Bool S) (host : MultiTapeTM k Bool H)
-    (emb : S ↪ H) (good : S → Prop)
-    (hagree : ∀ q, good q → ∀ inp work,
-      host.tr (emb q) inp work = (src.tr q inp work).mapState emb)
-    (c : Cfg k Bool S x) (t : ℕ)
-    (hguard : ∀ u < t, ∀ q, (src.runFrom c u).state = some q → good q) :
-    host.runFrom (c.mapState emb) t = (src.runFrom c t).mapState emb := by
-  classical
-  letI : Nonempty S := ⟨src.q₀⟩
-  let reference : MultiTapeTM k Bool H :=
-    ⟨emb src.q₀, fun q inp work => (src.tr (Function.invFun emb q) inp work).mapState emb⟩
-  have step (d : Cfg k Bool S x) :
-      reference.step (d.mapState emb) = (src.step d).mapState emb := by
-    cases hs : d.state with
-    | none => simp [MultiTapeTM.step, Cfg.mapState, hs]
-    | some q =>
-      simp only [MultiTapeTM.step, Cfg.mapState, hs, Option.map_some]
-      change (reference.tr (emb q) d.inputSymbol d.workTapeSymbols).apply (d.mapState emb) = _
-      dsimp only [reference]
-      rw [Function.leftInverse_invFun emb.injective q]
-      exact Cfg.mapState_apply emb _ d
-  have transport (u : ℕ) :
-      reference.runFrom (c.mapState emb) u = (src.runFrom c u).mapState emb :=
-    MultiTapeTM.runFrom_comm_of_step (fun d => d.mapState emb) step c u
-  have agreement : reference.AgreeOn host {q | ∃ p, good p ∧ emb p = q} := by
-    intro q hq inp work
-    obtain ⟨p, hp, rfl⟩ := hq
-    dsimp only [reference]
-    rw [Function.leftInverse_invFun emb.injective p]
-    exact (hagree p hp inp work).symm
-  rw [MultiTapeTM.runFrom_eq_of_agreeOn agreement]
-  · exact transport t
-  · intro u hu q hq
-    rw [transport u] at hq
-    change ((src.runFrom c u).state.map emb) = some q at hq
-    obtain ⟨p, hp, he⟩ := Option.map_eq_some_iff.mp hq
-    exact ⟨p, hguard u hu p hp, he⟩
-
 /-- The public forwarding tape transport followed by a control-state map. -/
 private def emCallEmbeddedCfg {k l : ℕ} {S H : Type} {x : List Bool}
     (index : Fin k ↪ Fin l) (emb : S → H)
@@ -4376,7 +4336,7 @@ private lemma emCall_prepare_run (M : FinTM Bool) (emit : Bool)
   obtain ⟨t, _, ht, hfirst, hr⟩ := emCall_prepared_eval_first M x arg cap T hM
   let R := emCallRightTM (emCallTrackTM M)
   let c := emCallEvalCfg (w := x) R (R.tm.initCfg arg) true 1
-  have he := emCall_state_run (embedEmitTM (Function.Embedding.refl _) (emCallSource M).tm)
+  have he := MultiTapeTM.runFrom_mapState_of_agreeOn (embedEmitTM (Function.Embedding.refl _) (emCallSource M).tm)
     (emCallTM M emit).tm
     ⟨(Sum.inl : (emCallSource M).State → emCallState M), Sum.inl_injective⟩
     (fun q => q ≠ .inr ())
@@ -4525,7 +4485,7 @@ private lemma emCall_finalize_run (M : FinTM Bool) (emit : Bool)
     simp only [MultiTapeTM.step, emCallBankFrame, emCallFrame, emCallTM,
       Fin.val_last, lt_self_iff_false, ↓reduceDIte]
     rw [controlAction_apply, moveInputPos_zero]
-  have he := emCall_state_run (embedEmitTM (emCallPairEmbedding M) (emCallFinishTM emit).tm)
+  have he := MultiTapeTM.runFrom_mapState_of_agreeOn (embedEmitTM (emCallPairEmbedding M) (emCallFinishTM emit).tm)
     (emCallTM M emit).tm
     ⟨fun q => .inr (.inr q), by intro a b h; exact Sum.inr.inj (Sum.inr.inj h)⟩
     (fun _ => True) (by intros; rfl)
@@ -4602,7 +4562,7 @@ private lemma emCall_exit_fixed (M : FinTM Bool) (emit : Bool) (x : List Bool)
   have hs : (emCallFinishTM emit).tm.runFrom c 1 = c := by
     change (controlAction 0 (some (5 : Fin 6))).apply c = c
     rw [controlAction_apply, moveInputPos_zero]
-  have he := emCall_state_run (embedEmitTM (emCallPairEmbedding M) (emCallFinishTM emit).tm)
+  have he := MultiTapeTM.runFrom_mapState_of_agreeOn (embedEmitTM (emCallPairEmbedding M) (emCallFinishTM emit).tm)
     (emCallTM M emit).tm
     ⟨fun q => .inr (.inr q), by intro a b h; exact Sum.inr.inj (Sum.inr.inj h)⟩
     (fun _ => True) (by intros; rfl)
