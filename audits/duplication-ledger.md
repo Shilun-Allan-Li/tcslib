@@ -43,7 +43,7 @@ computed values where available and estimates under the same rule marked
 | `ClassP/TimeConstructible.lean` | 21 | 20 (the 19 identical counter originals + `timeConstructible_id`, the source of both the near-copy `f2_counter_computes` and the adaptation `f2_counter_heads`; the private `counter_count` is likewise the source of R6-1's `f2_counter_count_space`) | 0 | **20** | **95.2%** (strict: 19, 90.5%) | 355 (round-4 measured) |
 | `TuringMachine/Composition.lean` | 19 | 5 (`idTM`, `idTM_run`, `constTM` + the public `computesFunInTime_id`, `computesFunInTime_const` whose proofs the Catalog rows reproduce) | 0 | **6** — generated (pass 4): + `controlCfg_run` (R7-1) | **31.6%** (strict: 3, 15.8%) | **109** (97 + 12) |
 | `Build/Embed.lean`, `Build/Seam.lean`, `Build/VirtualInput.lean`, `Build/Zone.lean`, `Simulation.lean` | — | 0 | 0 | 0 | 0% | 0 |
-| `Codes2Tape.lean` (ZF-B/B2, integrated 2026-10-10) | 33 (9 pub + 24 priv) | 0 | **23 format-specific adaptations** of `CodeParser.lean`'s / `MathlibBridge.lean`'s one-tape top layer (20 retargeted + `zfBParse_full`/`zfBCanonical`/`zfBCanonical_eq`; agent-measured 60–100% body share) — the 46 format-independent copies were deleted after the promotion (f171767f) | **23** | **69.7%** (strict 3, 9.1%) | 290 code lines (agent-measured) — over one fifth: `backlog.md` §1 CH34-D2, **ACKNOWLEDGED (user, 2026-10-10) → 12.2c tasklist item 8** |
+| `Codes2Tape.lean` (ZF-B/B2/B3, integrated 2026-10-10) | 49 (9 pub + 40 priv; B3 added 16 new, non-copy privates) | 0 | **23 format-specific adaptations** of `CodeParser.lean`'s / `MathlibBridge.lean`'s one-tape top layer (20 retargeted + `zfBParse_full`/`zfBCanonical`/`zfBCanonical_eq`; agent-measured 60–100% body share) — the 46 format-independent copies were deleted after the promotion (f171767f) | **23** | **46.9%** (strict 3, 6.1%) | 290 code lines (agent-measured) — over one fifth: `backlog.md` §1 CH34-D2, **ACKNOWLEDGED (user, 2026-10-10) → 12.2c tasklist item 8** |
 | `Robustness/SingleTape.lean` (ZF-C2) | 100 | 0 | 0 — **3 in-file near-duplicates noted, uncounted** per the in-file convention (maintainer screen: `dgPos_move` 93.1% of `sweepPos_move`, `dgStart` 72.9% of `sweepStart`, `dgInput_read` 64.3% of `sweepInput_read`; the agent disclosed the first and third as borderline) | 0 | 0% | 0 |
 
 **Reconciliation notes (rounds 3-4 repairs)**: the F2A report's 306
@@ -120,8 +120,9 @@ test could not see. The method below is the one actually run.
   that scope limit. **Every one of Catalog's 124 non-members** (all of
   Catalog minus the post-R6-1 299-member union, computed by name in the
   script) is screened against **every declaration, public and private, of
-  Composition, Primitives, TimeConstructible, Loop and Wrappers** (530
-  declarations). An exact 25-character prefilter is used; it loses nothing,
+  Composition, Primitives, TimeConstructible, Loop and Wrappers** (553
+  declarations, of which 542 have an extracted body of at least 25
+  characters; the other 11 cannot reach the 60-character floor). An exact 25-character prefilter is used; it loses nothing,
   because every tile is at least 25 characters. Verdicts compare like with
   like, proof with proof and term with term, so a proof that spells out a
   definition's term is reported as a restatement and not counted. **Every**
@@ -166,8 +167,10 @@ test could not see. The method below is the one actually run.
   **exception** is in-file near-duplicates, which are recorded (pass 3b)
   and not counted; in-file exact copies are counted.
 - **Standing in-file convention, stated explicitly.** Pass 3b lists
-  in-file near-duplicates among the non-members: 109 pairs over 62
-  targets. Thirteen exceed 90%, and they are led by the §12 sibling
+  in-file near-duplicates among the non-members: **109 raw printed
+  pairs, of which 107 are like-kind, over 62 targets**. Twelve like-kind
+  pairs reach 90%, and the other 2 are kind-mismatched restatements. They
+  are led by the §12 sibling
   machine rows (`transferTM` against `copyTM` 99.8%, and the
   clear/compare/increment rows), which are public constructions audited at
   the §12 and F1 gates. Per the ledger's standing convention, which counts
@@ -175,6 +178,10 @@ test could not see. The method below is the one actually run.
   `a2_map_sum` pair) and **notes in-file near-duplicates without counting
   them**, they are recorded, not counted. None is an exact copy. Their
   disposition is the 12.2c per-theme split, which factors these families.
+  An in-file near-match alone never adds a member. A declaration can still
+  be a member independently through a cross-file pair: Loop's
+  `emLoopHost_init` and `emLoopHost_anchor_return` count because their
+  Catalog twins reproduce them.
 - **Coverage qualification.** The screen covers the five source files of
   Catalog's copy families, in full, at the stated thresholds. Copies from
   files outside those families, or adaptations restructured below the
@@ -188,8 +195,9 @@ Loop-twin copies in Catalog (`f2_loop_silent_prefix`,
 orphans' dead twins — are **dispositions for 12.2c, not subtractions
 here**; sole-owner/dead labels require Catalog's reference graph and are
 settled at that window. Internal near-duplicates flagged by the
-inventories but outside the rule (`clCountTape ≡ bufferTape`, the H3
-`_init` pair) are noted, uncounted.
+inventories but outside the rule (`clCountTape ≡ bufferTape`) are noted,
+uncounted. The H3 `_init` pair, once in this list, counts since round 7
+through its cross-file Catalog correspondence.
 
 **Epoch R1 delta**: new copies **0**; the historical maps lost **eleven
 dead originals plus one live original eliminated by replacement**
