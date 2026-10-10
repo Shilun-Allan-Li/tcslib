@@ -238,8 +238,8 @@ noncomputable def resMatrix (A : Matrix (Fin n) (Fin n) ℝ) (B : Finset (Fin n)
     Matrix (Fin n) (Fin n) ℝ :=
   Matrix.of fun i j => if i ∈ B then A i j else 0
 
-/-- Entrywise formula for the restriction: `resMatrix A B` keeps the rows indexed by `B`
-and zeroes the rest, definitionally. -/
+/-- Entrywise description of the restricted transition matrix:
+`(B̂A) i j` equals `A i j` when `i ∈ B` and `0` otherwise. -/
 @[simp] theorem resMatrix_apply (A : Matrix (Fin n) (Fin n) ℝ)
     (B : Finset (Fin n)) (i j : Fin n) :
     resMatrix A B i j = if i ∈ B then A i j else 0 := rfl
@@ -291,7 +291,13 @@ theorem sum_le_sqrt_mul_norm (x : EuclideanSpace ℝ (Fin n)) :
         rw [EuclideanSpace.norm_eq, hsq]
 
 /-- The starting vector of the restricted walk has `L²` norm at most
-`√β/√n` when `|B| ≤ βn`. -/
+`√β/√n` when `|B| ≤ βn`.
+
+**Proof sketch.** Each coordinate in `B` contributes `(1/n)²`, so after
+unfolding `EuclideanSpace.norm_eq` the squared norm is `|B|/n²`, which the
+hypothesis `|B| ≤ βn` bounds by `β/n`.  Rewriting `√β/√n` as `√(β·n⁻¹)`
+(`Real.sqrt_mul`, `Real.sqrt_inv`), the claim follows by monotonicity of
+`Real.sqrt`. -/
 theorem norm_resVec_zero_le {A : Matrix (Fin n) (Fin n) ℝ} {B : Finset (Fin n)}
     {β : ℝ} (hβ0 : 0 ≤ β) (hB : (B.card : ℝ) ≤ β * n) :
     ‖resVec A B 0‖ ≤ Real.sqrt β / Real.sqrt n := by
@@ -316,7 +322,16 @@ theorem norm_resVec_zero_le {A : Matrix (Fin n) (Fin n) ℝ} {B : Finset (Fin n)
 
 /-- The key operator estimate behind [AB09, Thm 7.38]: one `B`-restricted
 step shrinks the `L²` norm by a factor `(1−λ)√β + λ`, via the decomposition
-`A = (1−λ)J + λC` of [AB09, Lem 7.40]. -/
+`A = (1−λ)J + λC` of [AB09, Lem 7.40].
+
+**Proof sketch.** Write `A = (1−λ)J + λC` with `‖C‖ ≤ 1`
+(`exists_decomposition`); restriction is entrywise, so
+`B̂A = (1−λ)·B̂J + λ·B̂C`.  Zeroing rows only shrinks coordinates, hence
+`‖B̂C𝐱‖ ≤ ‖C𝐱‖ ≤ ‖𝐱‖`; for the uniform part, each surviving coordinate of
+`B̂J𝐱` equals `(Σⱼ𝐱ⱼ)/n`, and Cauchy–Schwarz against the all-ones vector
+(`Finset.sum_mul_sq_le_sq_mul_sq`) together with `|B| ≤ βn` gives
+`‖B̂J𝐱‖ ≤ √β·‖𝐱‖`.  The triangle inequality (`norm_add_le` with `norm_smul`)
+combines the two parts into the stated bound. -/
 theorem norm_toCLM_resMatrix_le {A : Matrix (Fin n) (Fin n) ℝ}
     (hA : IsSymmStochastic A) {lam β : ℝ} (hlam : lambda A ≤ lam)
     (hlam0 : 0 ≤ lam) (hlam1 : lam ≤ 1) {B : Finset (Fin n)}
@@ -479,7 +494,14 @@ theorem walkPMF_zero_apply {A : Matrix (Fin n) (Fin n) ℝ}
 
 /-- Splitting off the last step of a walk: the probability of the trajectory
 `g ⌢ j` is the probability of `g` times the transition probability from the
-endpoint of `g` to `j`. -/
+endpoint of `g` to `j`.
+
+**Proof sketch.** Unfold `walkPMF (k+1)` as a `bind`/`map` and expand with
+`PMF.bind_apply` and `PMF.map_apply`, giving a double `tsum` over a prefix
+and a last vertex.  A term is nonzero only when its snoc equals `g ⌢ j`,
+which forces the prefix to be `g` (`Fin.init_snoc`) and the last vertex to be
+`j` (`Fin.snoc_last`); collapsing both sums with `tsum_eq_single` leaves
+exactly `walkPMF hA k g * stepPMF hA (g (Fin.last k)) j`. -/
 theorem walkPMF_succ_apply {A : Matrix (Fin n) (Fin n) ℝ}
     (hA : IsSymmStochastic A) (k : ℕ) (g : Fin (k + 1) → Fin n) (j : Fin n) :
     walkPMF hA (k + 1) (Fin.snoc g j) =
@@ -516,7 +538,18 @@ theorem walkPMF_succ_apply {A : Matrix (Fin n) (Fin n) ℝ}
 
 /-- The probability that the walk stays inside `B` and ends at `j` is the
 `j`-th entry of the restricted-walk vector `resVec A B k`:
-in matrix language, of `(B̂A)^k B̂𝟙`.  [AB09, proof of Thm 7.38] -/
+in matrix language, of `(B̂A)^k B̂𝟙`.  [AB09, proof of Thm 7.38]
+
+**Proof sketch.** Induction on `k`.  For `k = 0` the filtered set is the
+single constant trajectory at `j` when `j ∈ B` (probability `1/n` by
+`walkPMF_zero_apply`) and empty otherwise, matching `resVec A B 0 j`.  For
+the successor step with `j ∈ B`, reindex trajectories as (last vertex,
+prefix) pairs via `Fin.snocEquiv`, split off the last step with
+`walkPMF_succ_apply`, group the prefixes by their endpoint `l`
+(`Finset.sum_fiberwise`) and apply the induction hypothesis to each fiber;
+this yields `Σ_l resVec A B k l * A l j`, which is the recursion defining
+`resVec A B (k+1) j` after rewriting `A l j = A j l` by symmetry.  For
+`j ∉ B` both sides vanish. -/
 theorem walk_filter_sum {A : Matrix (Fin n) (Fin n) ℝ}
     (hA : IsSymmStochastic A) (B : Finset (Fin n)) :
     ∀ (k : ℕ) (j : Fin n),

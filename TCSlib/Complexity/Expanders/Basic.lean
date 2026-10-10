@@ -213,9 +213,12 @@ theorem lambda_nonneg (A : Matrix (Fin n) (Fin n) ℝ) (_hn : 2 ≤ n) :
 [AB09, Exercise 10] (`‖A‖ ≤ 1`); the bundled operator-norm form is
 `Expander.opNorm_le_one` in `Expanders.Walks`.
 
-**Proof.** `(A𝐯)ᵢ² = (Σⱼ Aᵢⱼ𝐯ⱼ)² ≤ (Σⱼ Aᵢⱼ)·(Σⱼ Aᵢⱼ𝐯ⱼ²) = Σⱼ Aᵢⱼ𝐯ⱼ²` by
-Cauchy–Schwarz with weights `Aᵢⱼ` (rows sum to one); summing over `i` and
-using that columns sum to one (symmetry) gives `Σᵢ(A𝐯)ᵢ² ≤ Σⱼ𝐯ⱼ²`. -/
+**Proof sketch.** `(A𝐯)ᵢ² = (Σⱼ Aᵢⱼ𝐯ⱼ)² ≤ (Σⱼ Aᵢⱼ)·(Σⱼ Aᵢⱼ𝐯ⱼ²) = Σⱼ Aᵢⱼ𝐯ⱼ²` by
+Cauchy–Schwarz with weights `Aᵢⱼ` (rows sum to one; formally
+`Finset.sum_sq_le_sum_mul_sum_of_sq_eq_mul`); summing over `i`, swapping the
+double sum (`Finset.sum_comm`) and using that columns sum to one (symmetry
+plus `rowSum`) gives `Σᵢ(A𝐯)ᵢ² ≤ Σⱼ𝐯ⱼ²`.  Unfolding both norms with
+`EuclideanSpace.norm_eq`, the claim follows by monotonicity of `Real.sqrt`. -/
 theorem norm_toCLM_apply_le {A : Matrix (Fin n) (Fin n) ℝ}
     (hA : IsSymmStochastic A) (v : EuclideanSpace ℝ (Fin n)) :
     ‖toCLM A v‖ ≤ ‖v‖ := by

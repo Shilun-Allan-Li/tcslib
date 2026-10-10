@@ -101,7 +101,13 @@ theorem zipWith_ofFn {α β γ : Type*} {m : ℕ} (f : α → β → γ)
     simp
 
 /-- XOR-ing the random string with a fixed mask (on the left) preserves
-probabilities: the map `r ↦ c ⊕ r` is an involution of `{0,1}^m`. -/
+probabilities: the map `r ↦ c ⊕ r` is an involution of `{0,1}^m`.
+
+**Proof sketch.** The two counting sets are matched by
+`Finset.card_nbij'` with `r ↦ (i ↦ c i xor r i)` as both the forward and
+the inverse map: XOR by a fixed mask undoes itself, checked bitwise by
+cases on the two bits, and `zipWith_ofFn` rewrites the list-level event
+into the pointwise form the bijection transports. -/
 theorem randProb_xor_right {m : ℕ} (c : Fin m → Bool)
     (P : List Bool → Prop) [DecidablePred P] :
     randProb m (fun l => P (List.zipWith xor (List.ofFn c) l)) =
@@ -158,7 +164,13 @@ theorem randProb_xor_left {m : ℕ} (c : Fin m → Bool)
 /-- The exponential beats the linear shift count:
 `(19A+20)·X < 2^{(A+7)·X}` for `X ≥ 1`.  (The book's choice `k = ⌈m/n⌉+1`
 needs `k < 2^n`, which fails at small `n`; balancing against the error
-exponent instead works at every length.) -/
+exponent instead works at every length.)
+
+**Proof sketch.** Two ingredients: `128·X ≤ 128^X` (induction on `X`) and
+`A + 1 ≤ 2^A` (`Nat.lt_two_pow_self`).  Splitting
+`2^{(A+7)·X} = (2^A)^X · 128^X`, the chain
+`(19A+20)·X < 128(A+1)·X = (A+1)·(128·X) ≤ 2^A·(128·X) ≤ (2^A)^X·128^X`
+closes the bound, using `2^A ≤ (2^A)^X` for `X ≥ 1` in the last step. -/
 theorem shift_count_lt_two_pow (A X : ℕ) (hX : 1 ≤ X) :
     (19 * A + 20) * X < 2 ^ ((A + 7) * X) := by
   have h128 : 128 * X ≤ 128 ^ X := by
@@ -185,7 +197,13 @@ theorem shift_count_lt_two_pow (A X : ℕ) (hX : 1 ≤ X) :
     _ = 2 ^ ((A + 7) * X) := hsplit.symm
 
 /-- The tail crunch for the constant advantage `1/6`: `(18b+18)·(n+1)^e`
-majority repetitions drive the error below `2^{-b(n+1)^e}`. -/
+majority repetitions drive the error below `2^{-b(n+1)^e}`.
+
+**Proof sketch.** With `x = 4·(1/6)² = 1/9` the Bernoulli hypothesis
+`m·x ≥ 1` holds at `m = 9`, and the exponent
+`⌊(18b+18)(n+1)^e/2⌋ = (9b+9)(n+1)^e` dominates `9·(b(n+1)^e + 1)`, so
+`one_sub_pow_le_half_pow` bounds the power by `(1/2)^{b(n+1)^e + 1}`; the
+leading factor `2` absorbs the extra halving. -/
 theorem const_tail_bound (b e n : ℕ) :
     2 * (1 - 4 * (1/6 : ℚ) ^ 2) ^ (polyLen (18 * b + 18) e n / 2) ≤
       (1/2 : ℚ) ^ polyLen b e n := by
@@ -211,7 +229,16 @@ theorem const_tail_bound (b e n : ℕ) :
 /-- Error reduction with an explicit error schedule `2^{-b(n+1)^e}` and an
 explicit randomness schedule — the form [AB09, Thm 7.18]'s proof consumes:
 a `BPP` witness `(M₀, a₀, k₀)` amplified by `(18b+18)·(n+1)^e` majority
-repetitions. -/
+repetitions.
+
+**Proof sketch.** The witness is `majorityVerifier M₀` over
+`K = (18b+18)·(n+1)^e` blocks of `q = a₀·(n+1)^{k₀}` bits.  In each of the
+two symmetric cases the failure event is a vote-count tail: for `x ∈ L`
+the *false* votes reach `K/2` (rephrased through the complementary
+vote-count identity), for `x ∉ L` the *true* votes do.  A single block
+errs with probability `≤ 1/3 = 1/2 − 1/6`, so `randProb_tail_le` bounds
+the tail by `2·(1 − 4·(1/6)²)^{⌊K/2⌋}`, which `const_tail_bound` crunches
+to `(1/2)^{b(n+1)^e}`. -/
 theorem amplify_concrete (hMaj : ClosedUnderMajority E) {L : Language Bool}
     {M₀ : List Bool → List Bool → Bool} {a₀ k₀ : ℕ}
     (hM₀ : E.Eff (boolVerifier M₀))
@@ -340,7 +367,24 @@ theorem exists_notMem_of_card_lt {α : Type*} [Fintype α]
   rw [heq, Finset.card_univ] at h
   exact absurd h (lt_irrefl _)
 
-/-- **`BPP ⊆ Σ₂ᵖ`**, the core of [AB09, Thm 7.18]. -/
+/-- **`BPP ⊆ Σ₂ᵖ`**, the core of [AB09, Thm 7.18].
+
+**Proof sketch.** *Setup*: amplify the `BPP` witness (`amplify_concrete`
+at `b = a₀ + 7`, `e = k₀`) to error `2^{-T}`, `T = (a₀+7)·(n+1)^{k₀}`, on
+`m` random bits; the `Σ₂` predicate is `shiftOrVerifier` with
+`ks = (19a₀+20)·(n+1)^{k₀}` shift blocks, and two counting claims are
+recorded: `ks < 2^T` (`shift_count_lt_two_pow`) and `m < T·ks`.
+*Completeness* (`x ∈ L`, the probabilistic method): for each fixed `v`,
+all `ks` independent shift blocks miss `v`'s translate with probability
+`(1 − s)^{ks} ≤ 2^{-T·ks}` — the binomial distribution
+`randProb_blockCount` at `j = 0` after the XOR-invariance
+`randProb_xor_right` — so a union bound over the `2^m` choices of `v`
+covers less than the `2^{ks·m}` shift tuples by the second claim, and
+some concatenated shift string `u` hits every `v`.  *Soundness*
+(`x ∉ L`, counting): each of the `ks` translates of the accepting set
+has measure `≤ 2^{-T}` (`randProb_xor_left`), so by the first claim they
+cover fewer than `2^m` strings, and `exists_notMem_of_card_lt` exhibits
+an uncovered `v'` falsifying the assumed `∀ v` witness. -/
 theorem bpp_subset_sigma2 (hMaj : ClosedUnderMajority E)
     (hShift : ClosedUnderShiftOr E) {L : Language Bool} (hL : InBPP E L) :
     InSigma2 E L := by

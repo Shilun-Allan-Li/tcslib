@@ -20,6 +20,10 @@ many tests. These facts are used tacitly throughout [AB09] (e.g. ch. 2, ch. 5, c
 they are derived from the function class FP (`TCSlib.Complexity.ClassNP.PolyTimePairing`)
 and the closure under complement (`Complexity.compl_mem_P`, `ClassNP/CoNP.lean`).
 
+## Main definitions
+
+None — this module only proves theorems about existing definitions.
+
 ## Main results
 
 * `Complexity.mem_P_iff_polyTimeComputable` — `V ∈ P` iff its one-bit indicator is in FP;
