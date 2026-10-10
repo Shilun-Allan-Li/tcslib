@@ -13,10 +13,19 @@ Script: `audits/evidence/ch7/ch7-fill-duplication-screen.py`. Every `.lean` file
 **112 declarations** of the six-file surface (`Build/EmitIterEmbed`,
 `Build/EmitIterBody`, `ClassNP/PolyTimeBlockLoop`, `PolyTimeBlockTests`,
 `PolyTimeBlockMajority`, and the three new `PClosure` headliners) is cut into token
-shingles in two modes: **exact** (25-token runs) and **renamed** (50-token runs with
-every identifier abstracted, so a consistently renamed copy still matches). A
-declaration's overlap is the fraction of its shingles found in one other declaration
-anywhere in the tree. Reported threshold: ≥ 50%.
+shingles in two modes: **exact** (25-token runs) and **renamed** (50-token runs in
+which every ASCII-leading identifier is collapsed to a single token). A declaration's
+overlap is the fraction of its shingles found in one other declaration anywhere in the
+tree. Reported threshold: ≥ 50%.
+
+**Corrected description (ch7 fill gate round 2, finding R2-3).** The renamed mode does
+not check that a renaming is consistent: distinct identifiers collapse to the same
+token, Unicode-leading identifiers are not abstracted, and shingles are sets rather
+than occurrence counts. The script prints only the **strongest partner** per
+declaration and mode, and it compares whole declaration text, definitions against
+proofs included. Its hits are therefore candidates to classify, not an exhaustive
+correspondence census. Round 2 found proof adaptations it missed, recorded in
+`audits/ch7-fill-r2-findings.md` (R2-1, R2-2).
 
 **Coverage qualification.** The screen detects contiguous reproduction, exact or under
 consistent renaming. It does not detect re-derivations whose proofs are restructured,
