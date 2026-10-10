@@ -163,7 +163,11 @@ Consumption (already audited statements, proofs now closed): the three
    `PolyTimeBlockMajority` at 4 of 14 declarations (28.6%), over this repository's
    one-fifth threshold. Report each confirmed copy family at **major** with the
    proposed fix "human acknowledgment required"; the gate may not close over them
-   until the human maintainer accepts the debt and names its resolution. Say whether
+   until the human maintainer accepts the debt and names its resolution. The family
+   above is **already acknowledged** (the human maintainer, 2026-10-10: it is resolved
+   in this repository's 12.2c refactor, as one generic lemma set with statements
+   unchanged). Confirm its extent; it then does not hold the gate, though any further
+   family you find does. Say whether
    the screen missed any copy, including re-derivations it cannot detect. Separately,
    compare the public `EmitIterEmbed` embedding layer (`padAction`/`embedCfg`/
    `embed_step`/`embed_run`) with the §12 `Build/Embed.lean` layer (attached). Report

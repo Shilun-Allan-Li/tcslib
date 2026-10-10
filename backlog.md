@@ -153,6 +153,13 @@ set in `PolyTimeBlockLoop.lean` consumed by all three loops, with statements
 unchanged. The alternative is to fold it into 12.2c alongside the EmitIter
 harmonization.
 
+**Answered (user, 2026-10-10): fold into 12.2c.** The debt is acknowledged.
+The owner is the user's own 12.2c per-theme refactor, not the ch7 campaign:
+deduplication is being done there anyway, and colleagues are spared it. The
+resolution is one generic lemma set with statements unchanged, coordinated
+with the ch7 owner because the files are hers, and run after the ch7 fill
+gate closes.
+
 ---
 
 ## 2. Campaign work queued or on hold

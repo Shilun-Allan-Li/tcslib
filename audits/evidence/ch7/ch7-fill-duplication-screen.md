@@ -45,7 +45,8 @@ All six members are `private`. Per-file totals:
 
 - **`PolyTimeBlockMajority`: 4 of 14 declarations (28.6%, 85 lines). This is above the
   one-fifth threshold** (`workflow.md` §4), so a `backlog.md` §1 human-review item is
-  opened.
+  opened. **The human maintainer has acknowledged it** (2026-10-10): it is resolved in
+  the 12.2c refactor, as one generic lemma set with statements unchanged.
 - **`PolyTimeBlockTests`: 2 of 25 declarations (8.0%).**
 
 **Class B: mirror pairs (dual statements; conventional, not counted).** These are
