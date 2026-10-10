@@ -162,6 +162,27 @@ gate closes.
 
 ---
 
+### CH34-D2 — `Codes2Tape.lean`'s format-specific parse layer (duplication threshold crossed)
+
+*Origin: ZF-B/ZF-B2, integrated 2026-10-10
+(`audits/zone-agent-reports/f1-B2-REPORT.md`). Opened under `workflow.md`
+§4, which leaves no discretion past one fifth.*
+
+After the promote-first step (f171767f) and ZF-B2's deletion of all 46
+format-independent copies, **23 of `Codes2Tape.lean`'s 33 declarations
+(69.7%; 3 strict twins)** remain two-tape instances of `CodeParser.lean`'s
+and `MathlibBridge.lean`'s one-tape top layer: the record reader and table,
+parse, decode, scan, canonize, and their laws. They cannot be cited across
+formats. `NDCodes`'s pending `exists_effectiveNDMachineCode` will need the
+same layer a third time. **The question:** acknowledge the debt and name
+its owner and window. The maintainer's provisional assignment is 12.2c
+docket item (iii), a format-parameterized parse layer serving all three
+formats, with statements unchanged, under the user's standing preference.
+It awaits the user's explicit confirmation; the A-S2 fill gate cannot close
+over it until then.
+
+---
+
 ## 2. Campaign work queued or on hold
 
 * **Chapter-2 fill campaign (E1-E5)** — **active** (hold lifted

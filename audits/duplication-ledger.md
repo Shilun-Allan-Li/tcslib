@@ -35,14 +35,16 @@ computed values where available and estimates under the same rule marked
 
 | File | Total decls | Original-side members | Copy-side members | All members | Fraction | Lines in member blocks |
 |---|---:|---:|---:|---:|---:|---:|
-| `Build/Loop.lean` | 212 | 87 →Catalog (of the historical 95; strict 85) + 4 relocation originals (`emCallAction`/`emCallCfg`/`emCall_apply`/`emCall_relocate_run`, the batch-L source of the three-file family) | 13 H3 exact copies (`emLoopHost_*`; their `loopHost_*` originals are already in the 87 and are not double-counted; the `_init` near-copy noted, uncounted) | **108** (+4 round-6 sources: `emLoop_run_prefix`; the public `exists_loopFindTM`, `exists_loopCfgTM`, `exists_loopTM`) | **50.9%** | 2,009 (auditor) + 73 + ≈512 + 268 (round-6 measured: 12 + 82 + 76 + 98) |
-| `Build/Primitives.lean` | 272 | 146 →Catalog (of the historical 150; strict 143) + **6 public originals** reproduced in Catalog (round-5 screen: `computesFunInTime_stripLast` → the adaptation `f2_strip_linear`; `_prepend`, `_pairEncodeFixed`, `_pairFst`, `_pairSnd`, `_pairConcat` → their strengthened `_spaceUsed` counterparts) | 4 relocation copies (`emitterP2Action`/`emitterP2Cfg`/`emitterP2_apply`/`emitterP2_relocate_run` — **byte-identical to Loop's after identifier substitution**, round-2 verified) | **157** (+1 round-6 source: `emitterP2_control`) | **57.7%** | **3,415** (3,162 + 73 relocation + 81 `stripLast` + 91 for the five pair/prepend publics; round-5 measured; + 8 round 6) |
+| `Build/Loop.lean` | 212 | 87 →Catalog (of the historical 95; strict 85) + 4 relocation originals (`emCallAction`/`emCallCfg`/`emCall_apply`/`emCall_relocate_run`, the batch-L source of the three-file family) | 13 H3 exact copies (`emLoopHost_*`; their `loopHost_*` originals are already in the 87 and are not double-counted; the `_init` and `_anchor_return` near-copies are counted as source-side members since round 7 — Catalog twins reproduce them cross-file) | **117** — generated (pass 4): 104 historical + 13 sources of like-kind MEMBER pairs (round 6: `emLoop_run_prefix`, `exists_loopFindTM`, `exists_loopCfgTM`, `exists_loopTM`; R7-1: `emCall_right_run`, `exists_emitLoopTM`; round 7 complete pass: `emCall_erase_last`, `emCall_first_entry`, `emLoopCall`, `emLoopHost_anchor_return`, `emLoopHost_init`, `emLoopHost_start`, `loop_run`) | **55.2%** | **3,153** (2,009 + 73 + 504 exact H3, round-7 measured + 268 + 140 R7-1 + 159 round 7) |
+| `Build/Primitives.lean` | 272 | 146 →Catalog (of the historical 150; strict 143) + **6 public originals** reproduced in Catalog (round-5 screen: `computesFunInTime_stripLast` → the adaptation `f2_strip_linear`; `_prepend`, `_pairEncodeFixed`, `_pairFst`, `_pairSnd`, `_pairConcat` → their strengthened `_spaceUsed` counterparts) | 4 relocation copies (`emitterP2Action`/`emitterP2Cfg`/`emitterP2_apply`/`emitterP2_relocate_run` — **byte-identical to Loop's after identifier substitution**, round-2 verified) | **173** — generated (pass 4): 150 historical + 23 sources of like-kind MEMBER pairs (the 6 round-5 publics, round-6 `emitterP2_control`, and 16 found by the complete round-7 pass: `emitterAppend_run`, `emitterP2EraseTM`, `emitterP2StateDecidableEq`, `emitterP2_erase_scan`, `emitterP2_prepare_rewind_candidate`/`_suffix`, `emitterSplit_find`/`_loop_bound`/`_of_body`/`_result`, `emitterTokenTM`, `emitterToken_double`/`_separator`, `emitter_first_entry`, `mapCfg`, `mapStart`) | **63.6%** | **3,790** (3,415 + 375 round 7) |
 | `CookLevin/Hardness.lean` | 549 | 0 | 4 relocation copies (`clSlotAction`/`clSlotCfg`/`clSlot_apply`/`clSlot_run` — likewise byte-identical) | **4** | **0.73%** | 73 |
 | `Build/Catalog.lean` | 423 | 2 in-file originals (`f2_finSumEquiv`, `f2_sum_add` — their `a2_` copies are normalized-identical, round-3 verified) | 150 Primitives-sourced + 95 Loop-sourced + 17 Wrappers-sourced (10 `f2_timed*`, 7 `catalog_redirect*`) + 2 in-file `a2_` copies + **3 Composition-sourced** (`f2_idTM`, `f2_idTM_run`, `f2_constTM` — maintainer-reconciled normalized-identical to `Composition.lean`'s originals) + **20 counter-block members** (`f2_counterInc` … `f2_counter_computes` — maintainer reconciliation, declaration by declaration: **19 normalized-identical** to `ClassP/TimeConstructible.lean`'s originals, and `f2_counter_computes` a **near-copy adaptation** of the proof body of the public `timeConstructible_id`) + **7 strengthened public counterparts** whose time conjuncts reproduce a public source proof (`computesFunInTime_id_spaceUsed`/`_const_spaceUsed` ← `Composition.lean`, round 4; `_prepend`/`_pairEncodeFixed`/`_pairFst`/`_pairSnd`/`_pairConcat_spaceUsed` ← `Build/Primitives.lean`, round 5 — 89-100% of each source proof reproduced) + **2 F2A adaptations** of public proofs (`f2_strip_linear` ← `computesFunInTime_stripLast`, 86% of the source reproduced — round-5 finding R5-1; `f2_counter_heads` ← `timeConstructible_id`, 64% — round-5 screen) + **20 round-6 members** from the exhaustive screen: R6-1's `f2_counter_count_space` (80.3% of the private `counter_count`) and 19 further cross-file adaptations — 4 F2A (`f2_exists_loopFind_space` 97.8% of `exists_loopFindTM`, `f2_cond_time` 92.0% of Wrappers' `computesFunInTime_cond`, `f2_rewind_heads` 90.8% of `catalogRewind`, `f2_cond_ledger` 70.3% of `timed_start`), 13 A2 (`a2_map_block`/`_suffix`/`_backA`/`_backB`/`_parse`/`_setup`, `a2_mapVirtual_run`, `a2_mapSetup_stationary`/`_run`/`_heads`, `a2_call_run`, `a2_loop_prepare` 86.8% of `loopHost_prepare`, `a2_loop_round`), and 2 public rows (`computesFunInTime_pairLenCheck_spaceUsed` 71.4% of `computesFunInTime_pairFst`; `exists_loopTM_spaceUsed` 85.5% of `exists_loopCfgTM`, 81.0% of `exists_loopTM`) | **318** | **75.2%** (strict — excluding the 34 strengthened counterparts/adaptations and the 1 near-copy: **283, 66.9%**, unchanged) | **7,539** (6,267 round-4 measured + 224 round 5 + 52 R6-1 + 996 for the 19) |
-| `Build/Wrappers.lean` | 29 (10 pub + 19 priv) | 17 + 1 round-6 source (the public `computesFunInTime_cond`) | 0 | **18** | **62.1%** | 337 (round-3 span count: 77 redirect + 220 timed; + 40 round 6) |
+| `Build/Wrappers.lean` | 29 (10 pub + 19 priv) | 17 + 1 round-6 source (the public `computesFunInTime_cond`) | 0 | **19** — generated (pass 4): 17 historical + `computesFunInTime_cond` (round 6) + `captureCfg` (round 7) | **65.5%** | **355** (297 + 40 + 18) |
 | `ClassP/TimeConstructible.lean` | 21 | 20 (the 19 identical counter originals + `timeConstructible_id`, the source of both the near-copy `f2_counter_computes` and the adaptation `f2_counter_heads`; the private `counter_count` is likewise the source of R6-1's `f2_counter_count_space`) | 0 | **20** | **95.2%** (strict: 19, 90.5%) | 355 (round-4 measured) |
-| `TuringMachine/Composition.lean` | 19 | 5 (`idTM`, `idTM_run`, `constTM` + the public `computesFunInTime_id`, `computesFunInTime_const` whose proofs the Catalog rows reproduce) | 0 | **5** | **26.3%** (strict: 3, 15.8%) | 97 (51 private + 46 public, round-4 measured) |
-| `Build/Embed.lean`, `Build/Seam.lean`, `Build/VirtualInput.lean`, `Build/Zone.lean`, `Simulation.lean`, `Codes2Tape.lean` | — | 0 | 0 | 0 | 0% | 0 |
+| `TuringMachine/Composition.lean` | 19 | 5 (`idTM`, `idTM_run`, `constTM` + the public `computesFunInTime_id`, `computesFunInTime_const` whose proofs the Catalog rows reproduce) | 0 | **6** — generated (pass 4): + `controlCfg_run` (R7-1) | **31.6%** (strict: 3, 15.8%) | **109** (97 + 12) |
+| `Build/Embed.lean`, `Build/Seam.lean`, `Build/VirtualInput.lean`, `Build/Zone.lean`, `Simulation.lean` | — | 0 | 0 | 0 | 0% | 0 |
+| `Codes2Tape.lean` (ZF-B/B2, integrated 2026-10-10) | 33 (9 pub + 24 priv) | 0 | **23 format-specific adaptations** of `CodeParser.lean`'s / `MathlibBridge.lean`'s one-tape top layer (20 retargeted + `zfBParse_full`/`zfBCanonical`/`zfBCanonical_eq`; agent-measured 60–100% body share) — the 46 format-independent copies were deleted after the promotion (f171767f) | **23** | **69.7%** (strict 3, 9.1%) | 290 code lines (agent-measured) — **over one fifth: `backlog.md` §1 CH34-D2** |
+| `Robustness/SingleTape.lean` (ZF-C2) | 100 | 0 | 0 — **3 in-file near-duplicates noted, uncounted** per the in-file convention (maintainer screen: `dgPos_move` 93.1% of `sweepPos_move`, `dgStart` 72.9% of `sweepStart`, `dgInput_read` 64.3% of `sweepInput_read`; the agent disclosed the first and third as borderline) | 0 | 0% | 0 |
 
 **Reconciliation notes (rounds 3-4 repairs)**: the F2A report's 306
 inventory entries decompose as **150 Primitives + 94 Loop + 10 Wrappers +
@@ -125,11 +127,44 @@ test could not see. The method below is the one actually run.
   definition's term is reported as a restatement and not counted. **Every**
   qualifying pair is printed, not just each target's best match (R6-5).
   - Result: **19 cross-file members**, all counted in the Catalog row
-    above, with 6 new source-side members (Primitives 1, Loop 4, Wrappers
-    1).
+    above. *Round-7 correction:* the round-6 text derived the source side
+    from each target's best match only, giving "6 new source-side members"
+    (R7-1). Pass 4 below replaces that hand step.
   - Five A2 members reproduce just over half of one 129-character Loop
     proof, `emLoop_run_prefix`. They are counted, as the rule requires,
     and flagged as low-coverage.
+- **Round-7 repair (R7-1, R7-2): pass 4 generates the census.** No
+  per-file member count is assembled by hand any more. **Pass 4** runs the
+  like-kind rule over **all 423 Catalog declarations**, not only the
+  non-members, against all five source files: 537 like-kind MEMBER pairs.
+  **Every** pair's source joins its file's member set, together with the
+  historical rules, stated by name in the script: f2_-twins, the
+  `a2_loop_halted_run` twin, the relocation family, the 13 H3 copies, the
+  counter block and `catalog_` twins. The script prints each file's count
+  and every member beyond the historical rules, with spans. The rows above
+  quote it.
+  - Pass 4 reproduces the auditor's R7-1 additions (`controlCfg_run`,
+    `emCall_right_run`, `exists_emitLoopTM`).
+  - It also finds **24 further source-side members** (Primitives 16, Loop
+    7, Wrappers 1). These are source declarations that a Catalog twin of a
+    *sibling* declaration reproduces by more than half, so their material
+    is duplicated in Catalog. Two of them are Loop's H3 near-copies
+    `emLoopHost_init` and `emLoopHost_anchor_return`, previously
+    "noted, uncounted"; they are now counted through the cross-file path.
+  - Catalog is unchanged at 318.
+  - **R7-2:** the body extractor now handles equation-style definitions and
+    inductives (text from the first depth-0 `|` or `where`). The population
+    labels are exact: 553 source declarations, 542 with an extracted body
+    of at least 25 characters; the other 11 are genuinely shorter. Pass 3b
+    carries the kind guard: **107 like-kind in-file pairs over 62 targets
+    (12 at 90% or more), plus 2 restatements** (`f2_cond_ledger` ~
+    `f2_timedReadyCfg`, `a2_loop_prepare` ~ `f2_loopReady`).
+- **The membership rule in one sentence.** A declaration is a member when
+  it is a historical twin or copy, or when it is either side of a
+  like-kind cross-file pair in which at least half of the source's
+  extracted body, and at least 60 characters, reappears in the target. The
+  **exception** is in-file near-duplicates, which are recorded (pass 3b)
+  and not counted; in-file exact copies are counted.
 - **Standing in-file convention, stated explicitly.** Pass 3b lists
   in-file near-duplicates among the non-members: 109 pairs over 62
   targets. Thirteen exceed 90%, and they are led by the §12 sibling
