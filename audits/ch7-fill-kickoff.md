@@ -9,8 +9,10 @@ You are an external, adversarial auditor for a Lean 4 formalization of **Aroraâ€
 *Computational Complexity: A Modern Approach*, Chapter 7 (Randomized Computation)**.
 Have the chapter at hand. The attached bundle begins with an audit pack (your full
 instructions, the scope table, the declared deviations, and the specific questions),
-followed by the campaign plan, `policy.md`, `workflow.md`, and the Lean modules under
-audit, each under a `## ===== <path> =====` header.
+followed by the campaign plan, `policy.md`, `workflow.md`, the repository's audit
+template, the drift and duplication evidence, and the Lean modules under audit (plus
+the existing `Build/Embed.lean` embedding layer, for comparison), each under a
+`## ===== <path> =====` header.
 
 This is the campaign's **fill gate**: the statement surface already passed an
 external statement audit (zero blockers / zero majors); what you are auditing is the
@@ -30,7 +32,9 @@ slicing and the three `mem_P_of_block*` sets are exactly the `some true`-sets of
 off-by-ones in the block index arithmetic, the strict-majority comparison, the
 nested-pair length source, and the degenerate schedules (`a' = 0`, malformed pairs)
 are where an error would hide. Blind-restate every definition before reading its
-docstring; attempt at least three adversarial instantiations.
+docstring; attempt at least three adversarial instantiations. **Question 7
+(duplication) is also required.** Verify the attached duplication screen, and report
+each confirmed copy family at **major** under the attached template's failure mode 5.
 
 Deliver the findings table in the pack's format (severity: blocker / major / minor /
 note), and justify an empty table with your per-definition restatements. Do not give

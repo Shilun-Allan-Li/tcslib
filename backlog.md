@@ -122,6 +122,39 @@ uncomputability chapter.
 
 ---
 
+### CH7-D1 — the block stack's per-loop lemma family (duplication threshold crossed)
+
+*Origin: the ch7 fill gate, run on the merged ch3-4 tree after PR #11
+(`audits/ch7-fill-pack.md`, question 7); maintainer pre-screen
+`audits/evidence/ch7/ch7-fill-duplication-screen.md`. This item is opened
+under `workflow.md` §4, which leaves no discretion once a file passes one
+fifth copied material.*
+
+The OR, XOR and strict-majority block loops each re-prove the same orbit,
+length and init lemmas under renaming. The proofs are identical up to the
+step function's name, so a single lemma quantified over the step function
+would serve all three. Six `private` members:
+
+- four in `ClassNP/PolyTimeBlockMajority.lean`: **4 of its 14 declarations
+  (28.6%, 85 lines), over the threshold**;
+- two in `ClassNP/PolyTimeBlockTests.lean` (2 of 25).
+
+No pre-existing repository material is copied. **The question:**
+acknowledge the debt and name its owner and resolution window. The fill
+gate's auditor is instructed to report the family at major ("human
+acknowledgment required", `audits/TEMPLATE.md` failure mode 5), and the gate
+cannot close until this is answered.
+
+Maintainer's provisional proposal, pending review: the owner is the
+Chapter-7 campaign (Aparna). The window is the post-gate cleanup her pack
+already proposes for splitting the counting layer out of
+`Randomized/Classes.lean`. The resolution is one generic orbit/length lemma
+set in `PolyTimeBlockLoop.lean` consumed by all three loops, with statements
+unchanged. The alternative is to fold it into 12.2c alongside the EmitIter
+harmonization.
+
+---
+
 ## 2. Campaign work queued or on hold
 
 * **Chapter-2 fill campaign (E1-E5)** — **active** (hold lifted

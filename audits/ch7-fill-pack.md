@@ -1,9 +1,13 @@
 # External audit pack — Chapter 7, fill gate (the block-query loop and the closed machine surface)
 
-Audited Lean surface: the Chapter-7 campaign head on `complexity/arora-barak-ch7`
-carrying the completed fill (the commit recorded in the closure row of
-`AroraBarakChapter7Plan.md`; the summit landed at `d450376`, the closure sweep and
-this pack sit on top of it). This is the **fill-audit gate of the Chapter 7
+Audited Lean surface: the **merged tree** on `complexity/arora-barak-ch3-4` at
+`49658bb6`, where PR #11 and a follow-up merge brought the Chapter-7 campaign. The
+summit landed at `d450376` on `complexity/arora-barak-ch7`; the closure sweep and this
+pack's first draft sit on top of it at `0c22ae33`. Every ch7 module is byte-identical
+on the merged tree to `0c22ae33`, except `ClassNP/PClosure.lean`, which also carries a
+comment-only correction from the ch3-4 branch (attestation 1). This revision of the
+pack (maintainer, 2026-10-10) re-runs attestations 1, 2, 4 and 5 on the merged tree
+and adds question 7 (duplication). This is the **fill-audit gate of the Chapter 7
 campaign**: the statement surface was audited and CLOSED at ch7-phase1
 (`audits/ch7-phase1-{pack,findings,resolutions}.md`, zero blockers / zero majors at
 `76fe2f46`); this gate covers everything the fill campaign **added** to the trusted
@@ -42,11 +46,19 @@ each block"), audited for model fidelity rather than against a numbered theorem.
    only the three `sorry` bodies became proofs. The frozen `ClassNP/PClosure.lean`
    gained exactly the three headline lemmas (additive; baseline sequence is an
    ordered prefix; one import added). No other pre-existing `.lean` file differs.
+   **On the merged tree**, `PClosure.lean` additionally carries the ch3-4 branch's
+   P0-gate correction (finding 5) to the docstrings of `lenEq_mem_P` and
+   `lenLe_mem_P`. It is comment-stripped identical to `0c22ae33`. "No other file
+   differs" holds relative to the ch7 branch. On the merged tree, the rest of
+   `TCSlib/` is the ch3-4 campaign's own audited material and lies outside this gate.
 2. **Elaboration.** Full **19-module** fresh-olean sweep (the 13 phase-1 modules plus
    the six fill modules, `scripts/ab_ch7_module_order.txt` order) via
    `scripts/lean_check_tree.sh` (Lean 4.25.0, Mathlib at the branch pin; **`lake
    build` not used** — banned on the campaign branch): every module exits 0, emits a
    fresh `.olean`, **zero `error:` lines** (`audits/logs/ch7-fill-sweep.log`).
+   **Re-run on the merged tree** with the four touched facades (`Expanders`,
+   `Randomized`, `ClassNP`, `TuringMachine`) appended: 23/23 modules exit 0, zero
+   `error:` lines (`audits/logs/ch7-fill-merged-sweep.log`).
 3. **Admissions inventory.** Exactly **1** `declaration uses 'sorry'` warning
    tree-wide: `Expanders/Chernoff.lean` — `walk_visits_concentration` (Theorem 7.41),
    **intentional and permanent** (book omits the proof; CH7-Q3, confirmed at
@@ -58,14 +70,19 @@ each block"), audited for model fidelity rather than against a numbered theorem.
    block tests, `polyTimeComputable_emitIter`/`_xorD`, the slice lemmas, and
    `FinTM.exists_emitIterTM` — 35 print exactly
    `[propext, Classical.choice, Quot.sound]`; the single exception is the
-   intentional Theorem 7.41 stub, which prints `sorryAx` as expected.
+   intentional Theorem 7.41 stub, which prints `sorryAx` as expected. **Re-run on
+   the merged tree**: the 36 print lines are byte-identical
+   (`audits/logs/ch7-fill-merged-axioms.log`).
 5. **Policy conformance.** `audits/logs/ch7-fill-lint.log` over the 19-module
    surface: the fill modules and the closure's documentation sweep leave **one**
-   standing finding — `Randomized/Classes.lean` is 1,266 lines (> 1,000, policy
+   standing finding — `Randomized/Classes.lean` is 1,328 lines (the documentation
+   sweep grew it from the 1,266 lines first stated here; > 1,000, policy
    "must split"). Splitting a frozen, audited module is deliberately **not** done
    unilaterally at closure; the proposed disposition (split the counting layer out
    of `Classes.lean` post-gate, statements unchanged) is submitted to this round for
-   approval. Flag if you believe the size bears on fidelity.
+   approval. Flag if you believe the size bears on fidelity. **Re-run on the merged
+   tree** (`audits/logs/ch7-fill-merged-lint.log`, five directories): 0 FAIL. This is
+   the only WARN on the ch7 surface.
 
 ## What is under audit (the new trusted surface)
 
@@ -137,6 +154,22 @@ Consumption (already audited statements, proofs now closed): the three
 6. **`PClosure` extension safety.** Do the three additions interact with the
    existing closure calculus only additively (no instance/namespace capture, no
    changed behavior of the pre-existing 13 declarations)?
+7. **Duplication (this repository's `audits/TEMPLATE.md` failure mode 5, attached).**
+   Screen the surface for duplicated proved material and verify the maintainer
+   pre-screen (`audits/evidence/ch7/ch7-fill-duplication-screen.md`, attached). It
+   reports no copies of pre-existing repository material. It does report one family of
+   renamed re-proofs inside the stack: the OR, XOR and majority loops each carry their
+   own copy of the same orbit, length and init lemmas, which puts
+   `PolyTimeBlockMajority` at 4 of 14 declarations (28.6%), over this repository's
+   one-fifth threshold. Report each confirmed copy family at **major** with the
+   proposed fix "human acknowledgment required"; the gate may not close over them
+   until the human maintainer accepts the debt and names its resolution. Say whether
+   the screen missed any copy, including re-derivations it cannot detect. Separately,
+   compare the public `EmitIterEmbed` embedding layer (`padAction`/`embedCfg`/
+   `embed_step`/`embed_run`) with the §12 `Build/Embed.lean` layer (attached). Report
+   the overlap as facts, meaning what one layer states that the other does not, and do
+   not propose a merge of the two; that merge is already scheduled in this
+   repository's per-theme refactor (12.2c).
 
 ## Brief for the auditor
 

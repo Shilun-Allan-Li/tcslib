@@ -2,10 +2,14 @@
 
 # External audit pack — Chapter 7, fill gate (the block-query loop and the closed machine surface)
 
-Audited Lean surface: the Chapter-7 campaign head on `complexity/arora-barak-ch7`
-carrying the completed fill (the commit recorded in the closure row of
-`AroraBarakChapter7Plan.md`; the summit landed at `d450376`, the closure sweep and
-this pack sit on top of it). This is the **fill-audit gate of the Chapter 7
+Audited Lean surface: the **merged tree** on `complexity/arora-barak-ch3-4` at
+`49658bb6`, where PR #11 and a follow-up merge brought the Chapter-7 campaign. The
+summit landed at `d450376` on `complexity/arora-barak-ch7`; the closure sweep and this
+pack's first draft sit on top of it at `0c22ae33`. Every ch7 module is byte-identical
+on the merged tree to `0c22ae33`, except `ClassNP/PClosure.lean`, which also carries a
+comment-only correction from the ch3-4 branch (attestation 1). This revision of the
+pack (maintainer, 2026-10-10) re-runs attestations 1, 2, 4 and 5 on the merged tree
+and adds question 7 (duplication). This is the **fill-audit gate of the Chapter 7
 campaign**: the statement surface was audited and CLOSED at ch7-phase1
 (`audits/ch7-phase1-{pack,findings,resolutions}.md`, zero blockers / zero majors at
 `76fe2f46`); this gate covers everything the fill campaign **added** to the trusted
@@ -44,11 +48,19 @@ each block"), audited for model fidelity rather than against a numbered theorem.
    only the three `sorry` bodies became proofs. The frozen `ClassNP/PClosure.lean`
    gained exactly the three headline lemmas (additive; baseline sequence is an
    ordered prefix; one import added). No other pre-existing `.lean` file differs.
+   **On the merged tree**, `PClosure.lean` additionally carries the ch3-4 branch's
+   P0-gate correction (finding 5) to the docstrings of `lenEq_mem_P` and
+   `lenLe_mem_P`. It is comment-stripped identical to `0c22ae33`. "No other file
+   differs" holds relative to the ch7 branch. On the merged tree, the rest of
+   `TCSlib/` is the ch3-4 campaign's own audited material and lies outside this gate.
 2. **Elaboration.** Full **19-module** fresh-olean sweep (the 13 phase-1 modules plus
    the six fill modules, `scripts/ab_ch7_module_order.txt` order) via
    `scripts/lean_check_tree.sh` (Lean 4.25.0, Mathlib at the branch pin; **`lake
    build` not used** — banned on the campaign branch): every module exits 0, emits a
    fresh `.olean`, **zero `error:` lines** (`audits/logs/ch7-fill-sweep.log`).
+   **Re-run on the merged tree** with the four touched facades (`Expanders`,
+   `Randomized`, `ClassNP`, `TuringMachine`) appended: 23/23 modules exit 0, zero
+   `error:` lines (`audits/logs/ch7-fill-merged-sweep.log`).
 3. **Admissions inventory.** Exactly **1** `declaration uses 'sorry'` warning
    tree-wide: `Expanders/Chernoff.lean` — `walk_visits_concentration` (Theorem 7.41),
    **intentional and permanent** (book omits the proof; CH7-Q3, confirmed at
@@ -60,14 +72,19 @@ each block"), audited for model fidelity rather than against a numbered theorem.
    block tests, `polyTimeComputable_emitIter`/`_xorD`, the slice lemmas, and
    `FinTM.exists_emitIterTM` — 35 print exactly
    `[propext, Classical.choice, Quot.sound]`; the single exception is the
-   intentional Theorem 7.41 stub, which prints `sorryAx` as expected.
+   intentional Theorem 7.41 stub, which prints `sorryAx` as expected. **Re-run on
+   the merged tree**: the 36 print lines are byte-identical
+   (`audits/logs/ch7-fill-merged-axioms.log`).
 5. **Policy conformance.** `audits/logs/ch7-fill-lint.log` over the 19-module
    surface: the fill modules and the closure's documentation sweep leave **one**
-   standing finding — `Randomized/Classes.lean` is 1,266 lines (> 1,000, policy
+   standing finding — `Randomized/Classes.lean` is 1,328 lines (the documentation
+   sweep grew it from the 1,266 lines first stated here; > 1,000, policy
    "must split"). Splitting a frozen, audited module is deliberately **not** done
    unilaterally at closure; the proposed disposition (split the counting layer out
    of `Classes.lean` post-gate, statements unchanged) is submitted to this round for
-   approval. Flag if you believe the size bears on fidelity.
+   approval. Flag if you believe the size bears on fidelity. **Re-run on the merged
+   tree** (`audits/logs/ch7-fill-merged-lint.log`, five directories): 0 FAIL. This is
+   the only WARN on the ch7 surface.
 
 ## What is under audit (the new trusted surface)
 
@@ -139,6 +156,22 @@ Consumption (already audited statements, proofs now closed): the three
 6. **`PClosure` extension safety.** Do the three additions interact with the
    existing closure calculus only additively (no instance/namespace capture, no
    changed behavior of the pre-existing 13 declarations)?
+7. **Duplication (this repository's `audits/TEMPLATE.md` failure mode 5, attached).**
+   Screen the surface for duplicated proved material and verify the maintainer
+   pre-screen (`audits/evidence/ch7/ch7-fill-duplication-screen.md`, attached). It
+   reports no copies of pre-existing repository material. It does report one family of
+   renamed re-proofs inside the stack: the OR, XOR and majority loops each carry their
+   own copy of the same orbit, length and init lemmas, which puts
+   `PolyTimeBlockMajority` at 4 of 14 declarations (28.6%), over this repository's
+   one-fifth threshold. Report each confirmed copy family at **major** with the
+   proposed fix "human acknowledgment required"; the gate may not close over them
+   until the human maintainer accepts the debt and names its resolution. Say whether
+   the screen missed any copy, including re-derivations it cannot detect. Separately,
+   compare the public `EmitIterEmbed` embedding layer (`padAction`/`embedCfg`/
+   `embed_step`/`embed_run`) with the §12 `Build/Embed.lean` layer (attached). Report
+   the overlap as facts, meaning what one layer states that the other does not, and do
+   not propose a merge of the two; that merge is already scheduled in this
+   repository's per-theme refactor (12.2c).
 
 ## Brief for the auditor
 
@@ -461,6 +494,35 @@ internal plumbing.
 **Helpers.** Foundational helper lemmas that serve a whole area belong in that area's
 `Basic.lean`, not in the file that first needed them.
 
+**Construction reuse.** Machines are built from the verified construction layers, not from
+scratch: the combinators and routine catalog of `TCSlib/Complexity/TuringMachine/Build/`
+(conventions, wrappers, loops, primitives, embeddings, seams, and the catalog rows —
+`machine-library-design.md` is the registry), and the program layers (`LogProg.ARM`,
+`CounterProg`) where a register-level description suffices. Before writing a transition
+table by hand, check the registry; a routine that exists is cited, not re-derived. A routine
+that *almost* exists is the interesting case: do not write a third private variant — either
+consume the general form, or commission the missing form into the shared layer (during a
+fill batch: a `private` local copy plus a "requested shared lemma" in the report, promoted
+at the next shared-file window). A hand-built machine is acceptable only when no layer
+covers the need, and its docstring must say so and name what was missing — that sentence is
+what turns the gap into the next catalog row. The chapter-1/2 files that predate this layer
+re-derived the same bank/relocation/dispatch/frame families four times over (`emitterBank*`,
+`clBank*`, `clSlot*`, …); the retrofit paying that debt back is the standing cautionary
+tale. The same discipline applies to circuit construction once `CircuitComplexity`'s gadget
+layer exists: gadgets, wiring combinators, and size/depth ledgers get one shared home and a
+registry, and new circuits are assembled from it.
+
+**Duplication.** Some duplication is mechanically forced by the campaign discipline —
+exclusive file ownership, the statement freeze, and `private` visibility leave a fill batch
+no other legal way to use another file's unexported machinery — and occasionally it is the
+right engineering call. It is never silently acceptable: **every instance of duplicated
+proved material must be human-approved.** A fill batch discloses each copy in its report;
+the maintainer's integration ledger totals copied material per file (`workflow.md` §4); and
+the audit template treats accumulated duplication as a major finding that a gate cannot
+close over without the human maintainer explicitly accepting the debt and naming where and
+when it is paid back (the registry's dedup/refactor queue). Duplication that was never
+disclosed is a freeze violation, not debt.
+
 **File header.** Every math file begins with the Mathlib-style copyright block, its imports,
 the repo-standard options
 
@@ -706,13 +768,21 @@ the full source files, a `git format-patch` series, a git bundle, the batch's sw
 log, the axiom-print log, and `SHA256SUMS`. The maintainer verifies before
 integrating: checksums; the statement freeze (comment-stripped comparison of every
 audited signature); enumeration of any removals; public-declaration drift; a full
-fresh sweep; the headline axiom prints. Integration is `git am -3` from the patch
-series, preserving the agent's authorship. Large fills that exhaust one agent's budget
+fresh sweep; the headline axiom prints; and the **duplication ledger** — every
+private copy of existing proved material in the delivery enumerated, with each
+touched file's cumulative copied-material count and fraction. If a delivery pushes a
+file past **one fifth copied material**, or adds copies to a file that already
+received copies in an earlier epoch, the maintainer opens a `backlog.md` §1
+human-review item before the epoch's audit pack ships — no discretion. Integration
+is `git am -3` from the patch series, preserving the agent's authorship. Large fills that exhaust one agent's budget
 continue via a continuation brief to a fresh agent (the `universal` B2 precedent).
 
 **Epoch boundaries**: the maintainer re-runs the full sweep, produces a **drift
-attestation** (§6), and prepares the epoch's audit pack with elaboration evidence;
-the epoch's gate follows the same zero-blockers/majors rule as phase gates.
+attestation** (§6), and prepares the epoch's audit pack with elaboration evidence
+and the epoch's **duplication ledger**, which the auditor verifies independently
+(audit template failure mode 5); the epoch's gate follows the same
+zero-blockers/majors rule as phase gates, and a debt major closes only by explicit
+human acknowledgment recorded in the resolutions file.
 
 ## 5. Closure
 
@@ -771,6 +841,82 @@ pipeline detail).
   generation and validation.
 * [`.github/copilot-instructions.md`](.github/copilot-instructions.md) — main-branch
   build and CI; campaign branches deviate as recorded in their decision logs.
+
+## ===== audits/TEMPLATE.md =====
+
+# External audit pack — TEMPLATE
+
+Copy this file to `audits/phaseN-pack.md`, fill every `⟨…⟩`, and hand the result (plus
+the listed attachments) to an external LLM from a different vendor, in a fresh context
+with no access to this repository's development history. Record the findings in
+`audits/phaseN-findings.md`. A phase's findings must be addressed (fixed, or explicitly
+waived with a reason) before the next phase begins.
+
+---
+
+## Brief for the auditor
+
+You are auditing the **trusted surface** of a Lean 4 formalization: definitions, theorem
+statements, and remaining `sorry`s. The proofs that exist are machine-checked — do not
+review tactic scripts for correctness. The failure modes you are hunting are:
+
+1. **Infidelity** — a definition that does not mean what the cited source means.
+2. **Trivialization** — a definition or statement satisfiable for degenerate reasons
+   (vacuous hypotheses, a class that collapses, an encoding that makes a theorem empty).
+3. **Unprovability** — a `sorry`d statement that is false as stated, or whose stated
+   form is subtly weaker/stronger than intended (boundary cases: empty input, `n = 0`,
+   `k = 0` tapes, constant absorption).
+4. **Missing hypotheses** — especially finiteness, positivity, and well-formedness side
+   conditions the informal source leaves implicit.
+5. **Debt** — wholesale duplication of existing proved material (private copies of
+   another file's declarations, re-derivations of registry routines), even when
+   disclosed and mechanically forced by file ownership. Report it at **major** with
+   the proposed fix "human acknowledgment required": it does not block the gate on
+   soundness, but the gate must not close without the human maintainer explicitly
+   accepting the debt and naming its scheduled resolution. Screen for it
+   cumulatively — verify the pack's duplication ledger (per-file copied-material
+   totals) rather than assessing each copy in isolation.
+
+For **every definition** in scope: restate it in your own mathematical English *without
+looking at the docstring first*, then compare your restatement against the cited source
+location, and report any daylight. For **every `sorry`d theorem**: argue in 2-5 sentences
+why it is true as literally stated, or exhibit the problem (ideally a concrete
+counterexample or degenerate instance). Attempt at least ⟨3⟩ *adversarial
+instantiations* — concrete pathological objects plugged into the definitions to check
+they behave as the theory intends. Propose any machine-checkable sanity theorems you
+believe are missing.
+
+Do not give a blanket approval. Your deliverable is the findings table; an empty table
+must be accompanied by the per-definition restatements that justify it.
+
+## Scope
+
+| Item | Where |
+|---|---|
+| Lean files under audit | ⟨list of files, with line ranges if partial⟩ |
+| Source text | ⟨book/paper, edition, page/theorem numbers — auditor must have it at hand⟩ |
+| Plan/context documents | `AroraBarakChapter1Plan.md`, `policy.md` §2-3 ⟨adjust⟩ |
+| Out of scope | tactic proofs; vendored files' upstream design ⟨adjust⟩ |
+
+## Known deviations (declared by the authors — verify they are benign, flag any others)
+
+⟨Bulleted list: every deviation the docstrings declare, one line each.⟩
+
+## Specific questions for this phase
+
+⟨Numbered list of the doubts the authors actually have. Be concrete.⟩
+
+## Findings format (auditor fills)
+
+| # | Severity | File · declaration | Claim | Evidence / counterexample | Proposed fix |
+|---|---|---|---|---|---|
+| 1 | blocker / major / minor / note | | | | |
+
+Severity guide: **blocker** = a downstream phase would build on a wrong statement;
+**major** = statement is fixable but materially misleading as is, **or** accumulated
+debt (failure mode 5) that the gate may not close over without explicit human
+acknowledgment; **minor** = edge case or naming/attribution defect; **note** =
+observation, no change required.
 
 ## ===== scripts/ab_ch7_module_order.txt =====
 
@@ -852,6 +998,100 @@ tabled above).
 declaration-for-declaration and signature-for-signature; the campaign's additions
 are the enumerated new modules and the three additive `PClosure` headliners, all
 within the fill-audit pack's scope.
+
+## ===== audits/evidence/ch7/ch7-fill-duplication-screen.md =====
+
+# Chapter-7 fill surface — duplication screen (merged tree)
+
+Maintainer pre-screen for the ch7 fill gate's duplication question (pack question 7),
+run on the merged tree `complexity/arora-barak-ch3-4` at `49658bb6` under this
+repository's duplication governance (`policy.md` **Duplication**, `workflow.md` §4,
+`audits/TEMPLATE.md` failure mode 5). The auditor verifies these facts and judges the
+classification; it is a starting point, not a substitute for the audit.
+
+## Method
+
+Script: `audits/evidence/ch7/ch7-fill-duplication-screen.py`. Every `.lean` file under
+`TCSlib/` (561 files) is comment-stripped and split into declarations. Each of the
+**112 declarations** of the six-file surface (`Build/EmitIterEmbed`,
+`Build/EmitIterBody`, `ClassNP/PolyTimeBlockLoop`, `PolyTimeBlockTests`,
+`PolyTimeBlockMajority`, and the three new `PClosure` headliners) is cut into token
+shingles in two modes: **exact** (25-token runs) and **renamed** (50-token runs with
+every identifier abstracted, so a consistently renamed copy still matches). A
+declaration's overlap is the fraction of its shingles found in one other declaration
+anywhere in the tree. Reported threshold: ≥ 50%.
+
+**Coverage qualification.** The screen detects contiguous reproduction, exact or under
+consistent renaming. It does not detect re-derivations whose proofs are restructured,
+and it says nothing about design-level parallels. Whether `EmitIterEmbed` duplicates
+the §12 `Build/Embed` layer is a non-mechanical question for the auditor.
+
+## Results
+
+**Class A: one per-loop lemma set re-proved under renaming (debt).** The OR, XOR and
+strict-majority loops each carry their own copy of the same orbit, length and init
+lemmas. The proofs are identical up to the step function's name; a single lemma
+quantified over the step function would serve all three. The later instance of each
+pair is counted as the copy (`PolyTimeBlockTests` predates the split that produced
+`PolyTimeBlockMajority`; within `Tests` the OR loop predates the XOR loop).
+
+| Copy | Original | Overlap (renamed / exact) | Lines |
+|---|---|---|---:|
+| `Majority::length_majStep_iterate` | `Tests::length_xorStep_iterate` | 100% / 39% | 15 |
+| `Majority::majStep_orbit_done` | `Tests::anyStep_orbit_done` | 100% / 49% | 16 |
+| `Majority::length_majStep_le` | `Tests::length_xorStep_le` | 72% / 63% | 46 |
+| `Majority::polyTimeComputable_majInit` | `Tests::polyTimeComputable_anyInit` | 53% / 38% (reverse direction 83%) | 8 |
+| `Tests::xorStep_orbit_done` | `Tests::anyStep_orbit_done` | 53% / 27% | 21 |
+| `Tests::xorLoop_output` | `Tests::anyLoop_output` | 51% / 19% (reverse 59%) | 30 |
+
+All six members are `private`. Per-file totals:
+
+- **`PolyTimeBlockMajority`: 4 of 14 declarations (28.6%, 85 lines). This is above the
+  one-fifth threshold** (`workflow.md` §4), so a `backlog.md` §1 human-review item is
+  opened.
+- **`PolyTimeBlockTests`: 2 of 25 declarations (8.0%).**
+
+**Class B: mirror pairs (dual statements; conventional, not counted).** These are
+dual statements whose proofs coincide under the swap, the usual Lean
+`_left`/`_right` pattern:
+
+- `PolyTimeBlockLoop`: `polyTimeComputable_take1`/`_tail` and
+  `polyTimeComputable_sliceTakeAt`/`_sliceDropAt` (100% renamed).
+- `EmitIterBody`: `embed_ofWords_left`/`_right` (100% renamed).
+- `PolyTimeBlockLoop::length_pairSndD_le` against
+  `PolyTimePairing::length_pairFstD_le` (53% renamed, only 19 shingles — the Snd/Fst
+  dual).
+
+**Borderline (auditor to judge).**
+
+- `PolyTimeBlockLoop::length_xorPairStep_le` against `length_sliceDropAt_le` in the
+  same file: 87% renamed, 0% exact. They have the same proof shape over different step
+  functions.
+- `Majority::majStep` against `polyTimeComputable_majStep`: 55–63%. This is a
+  definition overlapping its own poly-time proof, which restates its case structure;
+  it is not believed to be duplication.
+
+**Class C: copies of pre-existing repository material: none.** Matched against
+everything outside the six files, the largest overlap is the 19-shingle Snd/Fst dual
+above (53%). The rest:
+
+| Surface declaration | Closest outside match | Overlap |
+|---|---|---|
+| `polyTimeComputable_or` | `PolyTimePairing::polyTimeComputable_and` (a dual) | 44% exact |
+| `EmitIterEmbed::embedCfg` | `Oracle::Cfg.embedOracle` (a design parallel) | 42% renamed |
+| `mem_P_of_blockMajority` | `PolyTimeModel::polyTimeModel_closedUnderMajority` (its consumer) | 25% |
+
+None of the §12 material (`Build/Embed`, `Build/Seam`, `Build/Catalog`) or the loop
+library (`Build/Loop`, `Build/Primitives`) appears among the matches.
+
+## Design-level parallel (not mechanical; recorded in the ledger watch items)
+
+`EmitIterEmbed.lean` exports a **public** tape-padding, state-injecting embedding layer
+(`padAction`, `embedCfg`, `embed_step`, `embed_run`, `SafeRun`: 18 public
+declarations, no private ones). It was written against `main`, which lacks the §12
+`Build/Embed.lean` (attached to the bundle for comparison). The two layers are
+independently written, and the screen finds no copies between them. Consolidating them
+into one embedding API is on the **12.2c docket** (user decision, 2026-10-10).
 
 ## ===== briefs/ch7-pclosure-blocks.md =====
 
@@ -3991,13 +4231,17 @@ theorem mem_P_of_atoms {ι : Type} [Fintype ι] [DecidableEq ι] (b : ι → Lis
 
 /-! ### Length comparisons -/
 
-/-- The pairs whose two components have equal length form a language in `P`. -/
+/-- The words whose two components under the total default projections
+(`pairFstD`/`pairSndD`, both `[]` on malformed input) have equal length form a language
+in `P`. Malformed words project to `([], [])` and are therefore members — e.g. `[]`
+itself; the well-formed-pair corollaries below are unaffected (P0 round 1, finding 5). -/
 theorem lenEq_mem_P : {z : List Bool | (pairFstD z).length = (pairSndD z).length} ∈ P := by
   have h := mem_P_of_test polyTimeComputable_lenEq
   simpa using h
 
-/-- The pairs whose second component is at most as long as the first form a language
-in `P`. -/
+/-- The words whose second default-projected component is at most as long as the first
+form a language in `P` — with the same totalization as `Complexity.lenEq_mem_P`:
+malformed words project to `([], [])` and are members. -/
 theorem lenLe_mem_P : {z : List Bool | (pairSndD z).length ≤ (pairFstD z).length} ∈ P := by
   have h := mem_P_of_test polyTimeComputable_lenLe
   simpa using h
@@ -6658,4 +6902,984 @@ theorem sipser_gacs (hMaj : ClosedUnderMajority E)
     bpp_subset_sigma2 E hMaj hShift (InBPP.compl E hNot hL)⟩
 
 end Randomized
+```
+
+## ===== TCSlib/Complexity/TuringMachine/Build/Embed.lean =====
+
+```
+/-
+Copyright (c) 2026 Seyoon Ragavan. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Seyoon Ragavan
+-/
+import Mathlib.Data.List.FinRange
+import TCSlib.Complexity.TuringMachine.Simulation
+import TCSlib.Complexity.TuringMachine.StateRenaming
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+/-!
+# Machine-construction library: bank embedding (R1)
+
+The general tape-embedding layer of the machine-construction library
+(`machine-library-design.md` §12, R1): a verified routine on its own
+`m`-tape set runs on any injectively selected subset of a `k`-tape host's
+work tapes, cost unchanged, everything else framed. This is the §5
+deferral promoted — the design deferred the general form "until a third
+site needs it", and the third, fourth, and fifth sites have arrived (the
+chapter-1/2 retrofit families, the Hennie–Stearns conversion, the
+two-work-tape universal machine). **Scope, stated precisely** (round-1
+note R9): `ι` selects whole distinct physical tapes with coordinates
+intact — it does not multiplex several virtual tapes onto zones of one
+physical tape, shrink the tape count, or alter the source input word; the
+Hennie–Stearns and universal-machine consumers get their zone/virtual-input
+representation layers separately, with this module supplying only the
+fixed-physical-bank routine relocation. It is the generic form of the private
+`emitterBank*`/`emitterP2*` relocation families of
+`TCSlib.Complexity.TuringMachine.Build.Primitives`, of the 4A chain's
+`clBank*`/`clSlot*` families, and of the retained-tape disciplines that
+`Build/Loop.lean` and `Build/Wrappers.lean` carry internally.
+
+**Status: statement skeleton (§12 statement phase).** The transformers and
+configuration transports below are real definitions; every contract is
+sorried, each with a proof sketch naming its fill obligations.
+
+## Design
+
+Per frozen decision 12.4 there are **two named transformers over one
+shared private core** (`embedActionCore`), so each spec stays crisp and a
+consumer cites whichever fits:
+
+* `Turing.embedSilentTM` — the W1/capture flavor: the embedded routine's
+  emissions are recorded on a designated host work tape `cap` outside the
+  selected bank, and the host's physical output stays silent.
+* `Turing.embedEmitTM` — the E2/forwarding flavor: emissions pass to the
+  host's physical output verbatim.
+
+The two **closed** transformers preserve the source state type and map
+the source halt to the host halt; their lockstep is unguarded, holding at
+every time with the step count preserved exactly. The round-1 audit
+(finding R1) refuted the earlier claim that live-return dispatch could be
+left to the seam combinator: a source whose final transition emits and
+halts loses that emission either way — the closed embedding is halted
+after it, and a seam exit at the sole live state dispatches *before* it.
+The **returning** flavors below repair this with an explicit halt-to-live
+adapter built into the action core: `Turing.embedSilentRetTM` and
+`Turing.embedEmitRetTM` run the source on states `S ⊕ Unit`, execute every
+source action **through the halting transition** — the final emission
+included — and land in the live return anchor `Sum.inr ()`, which a seam
+then consumes as its left exit (`Turing.captureAction`'s and
+`Turing.emitterRightTM`'s halt-to-live discipline, now exported).
+`Turing.captureAction`/`Turing.capture_run` and
+`Turing.emitAction`/`Turing.emit_run` are the fixed-shape precursors
+(last-tape capture, identity selection); their statements are untouched.
+
+## Main definitions
+
+* `Turing.embedSilentCfg`, `Turing.embedEmitCfg` — a source configuration
+  transported along `ι : Fin m ↪ Fin k`, with the unselected host tapes
+  carried as frame parameters.
+* `Turing.embedSilentTM`, `Turing.embedEmitTM` — the two closed machine
+  transformers.
+* `Turing.embedSilentRetTM`, `Turing.embedEmitRetTM` — the two returning
+  transformers (round-1 repair R1): source halts land in the live return
+  anchor `Sum.inr ()`, with the halting transition executed in full.
+
+## Main results
+
+All sorried (statement phase):
+
+* `Turing.embedSilentTM_runFrom`, `Turing.embedEmitTM_runFrom` — lockstep:
+  the transported run is the transport of the source run, same step count.
+* `Turing.embedSilentTM_frame`, `Turing.embedEmitTM_frame` — tapes outside
+  `Set.range ι` byte-identical with heads unmoved, input position tracking
+  the source, output per flavor.
+* `Turing.embedSilentTM_visitedByTapeHead`,
+  `Turing.embedEmitTM_visitedByTapeHead` (and `_frame` companions),
+  `Turing.embedSilentTM_spaceUsedByTape_cap` — per-tape space: host tape
+  `ι i` visits exactly the source's tape-`i` cells, unselected tapes visit
+  nothing new, and the capture tape is bounded by the recorded output.
+* `Turing.embedSilentRetTM_run`, `Turing.embedEmitRetTM_run` — the
+  through-halt contracts: live lockstep, then the handover at the source's
+  first halt, final emission and source residue preserved, with the return
+  anchor reached first exactly there.
+* `Turing.embedSilentRetTM_visitedByTapeHead`,
+  `Turing.embedEmitRetTM_visitedByTapeHead` — the returning flavors visit
+  exactly what the closed flavors visit, at every time.
+
+## References
+
+* [AB09] S. Arora, B. Barak, *Computational Complexity: A Modern Approach*,
+  Cambridge University Press, 2009. (§1.2; tape-subset simulations are the
+  folklore of the §1.3/§1.7 robustness and simulation arguments.)
+* [Bon26] É. Bonnet, *classical-complexity*, Lax Archive entry lax-434930,
+  module `proofs/Lax434930Proofs/InclusionAux/TimeCompiler/`, commit
+  `0c0840319318215fd7b36a9a822b81ce55cf6941`, Apache-2.0, examined
+  2026-10-05. Design adaptation with nothing transcribed (different
+  toolchain and machine model — TM2-style keyed stacks there, `FinTM`
+  tapes with heads here): the bank-embedding shape is `StackRename`'s
+  `rename_executes`.
+-/
+
+namespace Turing
+
+variable {m k : ℕ} {S : Type*} {x : List Bool}
+
+/-- The partial inverse of the tape selection: the source index that `ι`
+sends to host tape `j`, or `none` when `j` is unselected. Injectivity of
+`ι` makes the first `List.find?` hit the unique preimage. -/
+private def embedSlot (ι : Fin m ↪ Fin k) (j : Fin k) : Option (Fin m) :=
+  (List.finRange m).find? fun i => decide (ι i = j)
+
+/-- Searching at a selected tape returns its unique source index. -/
+private lemma embedSlot_selected (ι : Fin m ↪ Fin k) (i : Fin m) :
+    embedSlot ι (ι i) = some i := by
+  unfold embedSlot
+  cases hs : (List.finRange m).find? (fun j => decide (ι j = ι i)) with
+  | none =>
+    have hn := List.find?_eq_none.mp hs i (by simp)
+    simp at hn
+  | some j =>
+    have hj := List.find?_some hs
+    have hji : j = i := ι.injective (of_decide_eq_true hj)
+    subst j
+    rfl
+
+/-- Searching outside the selected bank returns no source index. -/
+private lemma embedSlot_unselected (ι : Fin m ↪ Fin k) (j : Fin k)
+    (hj : j ∉ Set.range ι) : embedSlot ι j = none := by
+  unfold embedSlot
+  rw [List.find?_eq_none]
+  intro i _
+  simp only [decide_eq_true_eq]
+  exact fun hij => hj ⟨i, hij⟩
+
+/-- The shared private core of the two embedding transformers (frozen
+decision 12.4): transport one source action along `ι`, keeping the input
+move and the successor state, performing the source's tape-`i` action on
+host tape `ι i`, and leaving every unselected tape stationary and
+unwritten — except that an emission is handled per the mode `sink`:
+`sink = some cap` records it on host tape `cap` with a right move (the
+capture discipline of `Turing.captureAction`) and keeps the host output
+silent, while `sink = none` forwards it as the host's physical emission
+(the discipline of `Turing.emitAction`). -/
+private def embedActionCore (ι : Fin m ↪ Fin k) (sink : Option (Fin k))
+    (a : Action m Bool S) : Action k Bool S where
+  inputTape := a.inputTape
+  workTapes := fun j =>
+    match embedSlot ι j with
+    | some i => a.workTapes i
+    | none =>
+      match sink with
+      | some cap =>
+        if j = cap then
+          match a.output with
+          | some b => (some (some b), SignType.pos)
+          | none => (none, 0)
+        else (none, 0)
+      | none => (none, 0)
+  output :=
+    match sink with
+    | some _ => none
+    | none => a.output
+  state := a.state
+
+/-- A source configuration viewed inside a `k`-tape host along the
+selection `ι`, suppressing flavor: same control state and input position,
+source tape `i` sitting on host tape `ι i` (content and head), the
+designated capture tape `cap` holding `pre ++ c.output` — the emissions
+recorded so far after a pre-existing prefix — with its head one past that
+word, every other unselected tape holding the ambient frame `tapes j` with
+its head at `heads j`, and the host's physical output the untouched
+`out₀`. Generic form of the `emitterBank*`/`clBank*` configuration
+correspondences; for a source of `m` tapes in a host of `m + 1` with the
+last tape selected as capture, it degenerates to `Turing.captureCfg` up to
+the state embedding (round-1 restatement note: the specialization enlarges
+the tape count by one — it is not `m = k`). [Bon26] -/
+def embedSilentCfg (ι : Fin m ↪ Fin k) (cap : Fin k)
+    (tapes : Fin k → ℤ → Option Bool) (heads : Fin k → ℤ)
+    (pre out₀ : List Bool) (c : Cfg m Bool S x) : Cfg k Bool S x where
+  state := c.state
+  inputPos := c.inputPos
+  workTapes := fun j =>
+    match embedSlot ι j with
+    | some i => c.workTapes i
+    | none =>
+      if j = cap then FinTM.bufferTape (pre ++ c.output) else tapes j
+  workTapePos := fun j =>
+    match embedSlot ι j with
+    | some i => c.workTapePos i
+    | none =>
+      if j = cap then ((pre ++ c.output).length : ℤ) else heads j
+  output := out₀
+
+/-- A source configuration viewed inside a `k`-tape host along the
+selection `ι`, forwarding flavor: same control state and input position,
+source tape `i` on host tape `ι i`, every unselected tape holding the
+ambient frame, and the host's physical output equal to the host's prior
+output `pre` followed by everything the source has emitted. Generic form
+of the `emitterP2*` relocation correspondences; at `ι = id` it is
+`Turing.emitCfg` up to the state embedding. [Bon26] -/
+def embedEmitCfg (ι : Fin m ↪ Fin k)
+    (tapes : Fin k → ℤ → Option Bool) (heads : Fin k → ℤ)
+    (pre : List Bool) (c : Cfg m Bool S x) : Cfg k Bool S x where
+  state := c.state
+  inputPos := c.inputPos
+  workTapes := fun j =>
+    match embedSlot ι j with
+    | some i => c.workTapes i
+    | none => tapes j
+  workTapePos := fun j =>
+    match embedSlot ι j with
+    | some i => c.workTapePos i
+    | none => heads j
+  output := pre ++ c.output
+
+/-- **R1, the suppressing embedding transformer** (design §12, decision
+12.4; [Bon26]). Run the `m`-tape machine `M` on the host tapes selected by
+`ι`, recording every emission on the designated host work tape `cap`
+(intended outside `Set.range ι`) and emitting nothing physically — the
+W1/capture flavor. States are preserved and the source halt is the host
+halt; live return dispatch is the seam combinator's job. -/
+def embedSilentTM (ι : Fin m ↪ Fin k) (cap : Fin k)
+    (M : MultiTapeTM m Bool S) : MultiTapeTM k Bool S where
+  q₀ := M.q₀
+  tr := fun q inp w =>
+    embedActionCore ι (some cap) (M.tr q inp fun i => w (ι i))
+
+/-- **R1, the forwarding embedding transformer** (design §12, decision
+12.4; [Bon26]). Run the `m`-tape machine `M` on the host tapes selected by
+`ι`, with every emission passed to the host's physical output verbatim —
+the E2 flavor. States are preserved and the source halt is the host
+halt. -/
+def embedEmitTM (ι : Fin m ↪ Fin k) (M : MultiTapeTM m Bool S) :
+    MultiTapeTM k Bool S where
+  q₀ := M.q₀
+  tr := fun q inp w =>
+    embedActionCore ι none (M.tr q inp fun i => w (ι i))
+
+/-- Applying the silent core commutes with configuration transport.
+**Proof sketch.** Selected tapes perform the source action. Off-bank tapes
+are stationary, except that capture appends the emitted bit at the old
+word length. Input movement and successor control are copied verbatim. -/
+private lemma embedSilent_apply (ι : Fin m ↪ Fin k) (cap : Fin k)
+    (tapes : Fin k → ℤ → Option Bool) (heads : Fin k → ℤ)
+    (pre out₀ : List Bool) (c : Cfg m Bool S x) (a : Action m Bool S) :
+    (embedActionCore ι (some cap) a).apply
+        (embedSilentCfg ι cap tapes heads pre out₀ c) =
+      embedSilentCfg ι cap tapes heads pre out₀ (a.apply c) := by
+  refine Cfg.ext rfl rfl ?_ ?_ ?_
+  · funext j
+    cases hs : embedSlot ι j with
+    | some i => simp [embedActionCore, embedSilentCfg, Action.apply, hs]
+    | none =>
+      by_cases hj : j = cap
+      · subst j
+        cases ho : a.output <;>
+          simp [embedActionCore, embedSilentCfg, Action.apply, hs, ho,
+            ← List.append_assoc, FinTM.bufferTape_append]
+      · simp [embedActionCore, embedSilentCfg, Action.apply, hs, hj]
+  · funext j
+    cases hs : embedSlot ι j with
+    | some i => simp [embedActionCore, embedSilentCfg, Action.apply, hs]
+    | none =>
+      by_cases hj : j = cap
+      · subst j
+        cases ho : a.output <;>
+          simp [embedActionCore, embedSilentCfg, Action.apply, hs, ho,
+            Nat.cast_add, add_assoc]
+      · simp [embedActionCore, embedSilentCfg, Action.apply, hs, hj]
+  · simp [embedActionCore, embedSilentCfg, Action.apply]
+
+/-- The silent host reads the source action and executes all its effects
+in one step; halted configurations remain fixed on both sides. -/
+private lemma embedSilent_step (ι : Fin m ↪ Fin k) (cap : Fin k)
+    (M : MultiTapeTM m Bool S)
+    (tapes : Fin k → ℤ → Option Bool) (heads : Fin k → ℤ)
+    (pre out₀ : List Bool) (c : Cfg m Bool S x) :
+    (embedSilentTM ι cap M).step (embedSilentCfg ι cap tapes heads pre out₀ c) =
+      embedSilentCfg ι cap tapes heads pre out₀ (M.step c) := by
+  unfold MultiTapeTM.step
+  cases hs : c.state with
+  | none => simp [embedSilentCfg, hs]
+  | some q =>
+    rw [show (embedSilentCfg ι cap tapes heads pre out₀ c).state = some q from hs]
+    dsimp only
+    have hr : (fun i => (embedSilentCfg ι cap tapes heads pre out₀ c).workTapeSymbols
+        (ι i)) = c.workTapeSymbols := by
+      funext i
+      simp [Cfg.workTapeSymbols, embedSilentCfg, embedSlot_selected]
+    change (embedActionCore ι (some cap) (M.tr q c.inputSymbol _)).apply _ = _
+    rw [hr]
+    exact embedSilent_apply ι cap tapes heads pre out₀ c _
+
+/-- **R1 lockstep, suppressing flavor** (spec, fill pending — design §12;
+[Bon26], `rename_executes`). The transported run *is* the transport of the
+source run, at every time and with the step count preserved exactly: `t`
+host steps simulate `t` source steps. No liveness guard is needed — the
+transformer preserves states, so a halted source transports to a halted
+host and both runs stall together.
+
+**Proof sketch.** One-step commutation plus
+`Turing.MultiTapeTM.runFrom_comm_of_step`. For the step: a halted source
+makes both sides the identity. For a live source state, the host reads the
+source symbols through `ι` (the transport puts source tape `i` at `ι i`),
+so the host applies `embedActionCore` of the very action the source
+applies; componentwise, selected tapes update as the source's
+(`Turing.Action.apply` through the `embedSlot` inverse, whose two
+equations `embedSlot ι (ι i) = some i` and `embedSlot ι j = none` off the
+range are the `List.find?` glue obligations), unselected tapes receive the
+stationary no-write action, the capture tape appends the optional emission
+at head `|pre ++ c.output|` (`Turing.FinTM.bufferTape_append`, exactly as
+in `capture_apply`), silence keeps the output at `out₀`, and the states
+agree. -/
+theorem embedSilentTM_runFrom (ι : Fin m ↪ Fin k) (cap : Fin k)
+    (hcap : cap ∉ Set.range ι) (M : MultiTapeTM m Bool S)
+    (tapes : Fin k → ℤ → Option Bool) (heads : Fin k → ℤ)
+    (pre out₀ : List Bool) (c : Cfg m Bool S x) (t : ℕ) :
+    (embedSilentTM ι cap M).runFrom
+        (embedSilentCfg ι cap tapes heads pre out₀ c) t =
+      embedSilentCfg ι cap tapes heads pre out₀ (M.runFrom c t) := by
+  exact MultiTapeTM.runFrom_comm_of_step
+    (embedSilentCfg ι cap tapes heads pre out₀)
+    (embedSilent_step ι cap M tapes heads pre out₀) c t
+
+/-- **R1 frame, suppressing flavor** (spec, fill pending — design §12).
+Along the whole transported run, every host tape outside the selected bank
+and distinct from the capture tape is byte-identical to its ambient frame
+with its head unmoved; the input position tracks the source's; and the
+host's physical output stays `out₀` (output silence).
+
+**Proof sketch.** Project the lockstep equation
+`embedSilentTM_runFrom` componentwise: the transport's `workTapes`/
+`workTapePos` at an unselected `j ≠ cap` are the frame parameters by the
+`embedSlot` off-range equation, its `inputPos` is the source's, and its
+`output` is `out₀` by definition. -/
+theorem embedSilentTM_frame (ι : Fin m ↪ Fin k) (cap : Fin k)
+    (hcap : cap ∉ Set.range ι) (M : MultiTapeTM m Bool S)
+    (tapes : Fin k → ℤ → Option Bool) (heads : Fin k → ℤ)
+    (pre out₀ : List Bool) (c : Cfg m Bool S x) (t : ℕ) :
+    (∀ j : Fin k, j ∉ Set.range ι → j ≠ cap →
+      ((embedSilentTM ι cap M).runFrom
+          (embedSilentCfg ι cap tapes heads pre out₀ c) t).workTapes j
+        = tapes j ∧
+      ((embedSilentTM ι cap M).runFrom
+          (embedSilentCfg ι cap tapes heads pre out₀ c) t).workTapePos j
+        = heads j) ∧
+    ((embedSilentTM ι cap M).runFrom
+        (embedSilentCfg ι cap tapes heads pre out₀ c) t).inputPos
+      = (M.runFrom c t).inputPos ∧
+    ((embedSilentTM ι cap M).runFrom
+        (embedSilentCfg ι cap tapes heads pre out₀ c) t).output = out₀ := by
+  rw [embedSilentTM_runFrom ι cap hcap]
+  refine ⟨?_, rfl, rfl⟩
+  intro j hj hjc
+  simp [embedSilentCfg, embedSlot_unselected ι j hj, hjc]
+
+/-- **R1 space, suppressing flavor, selected tapes** (spec, fill pending —
+design §12: "cells visited on host tape `ι i` equal cells visited on
+source tape `i`"). The visited set of host tape `ι i` up to time `t` is
+exactly the source's visited set of tape `i`, so the per-tape space
+agrees on the nose.
+
+**Proof sketch.** Both visited sets are images of `Finset.range (t + 1)`
+under the respective head trajectories
+(`Turing.MultiTapeTM.visitedByTapeHead`), and the lockstep equation
+`embedSilentTM_runFrom` makes the trajectories pointwise equal at `ι i`
+via the transport's `workTapePos` clause and `embedSlot ι (ι i) = some i`.
+The cardinality clause is `congrArg Finset.card`. -/
+theorem embedSilentTM_visitedByTapeHead (ι : Fin m ↪ Fin k) (cap : Fin k)
+    (hcap : cap ∉ Set.range ι) (M : MultiTapeTM m Bool S)
+    (tapes : Fin k → ℤ → Option Bool) (heads : Fin k → ℤ)
+    (pre out₀ : List Bool) (c : Cfg m Bool S x) (t : ℕ) (i : Fin m) :
+    (embedSilentTM ι cap M).visitedByTapeHead
+        (embedSilentCfg ι cap tapes heads pre out₀ c) t (ι i)
+      = M.visitedByTapeHead c t i ∧
+    (embedSilentTM ι cap M).spaceUsedByTape
+        (embedSilentCfg ι cap tapes heads pre out₀ c) t (ι i)
+      = M.spaceUsedByTape c t i := by
+  have hv : (embedSilentTM ι cap M).visitedByTapeHead
+      (embedSilentCfg ι cap tapes heads pre out₀ c) t (ι i) =
+      M.visitedByTapeHead c t i := by
+    unfold MultiTapeTM.visitedByTapeHead
+    congr 1
+    funext u
+    rw [embedSilentTM_runFrom ι cap hcap]
+    simp [embedSilentCfg, embedSlot_selected]
+  exact ⟨hv, congrArg Finset.card hv⟩
+
+/-- **R1 space, suppressing flavor, unselected tapes** (spec, fill
+pending — design §12: "unselected tapes visit nothing new"). A host tape
+outside the selected bank and distinct from the capture tape visits
+exactly the singleton of its initial head position, so its space usage is
+one cell.
+
+**Proof sketch.** By `embedSilentTM_frame` the head of such a tape never
+moves, so the trajectory image collapses to `{heads j}`; the cardinality
+clause is `Finset.card_singleton`. -/
+theorem embedSilentTM_visitedByTapeHead_frame (ι : Fin m ↪ Fin k)
+    (cap : Fin k) (hcap : cap ∉ Set.range ι) (M : MultiTapeTM m Bool S)
+    (tapes : Fin k → ℤ → Option Bool) (heads : Fin k → ℤ)
+    (pre out₀ : List Bool) (c : Cfg m Bool S x) (t : ℕ)
+    (j : Fin k) (hj : j ∉ Set.range ι) (hjc : j ≠ cap) :
+    (embedSilentTM ι cap M).visitedByTapeHead
+        (embedSilentCfg ι cap tapes heads pre out₀ c) t j = {heads j} ∧
+    (embedSilentTM ι cap M).spaceUsedByTape
+        (embedSilentCfg ι cap tapes heads pre out₀ c) t j = 1 := by
+  have hv : (embedSilentTM ι cap M).visitedByTapeHead
+      (embedSilentCfg ι cap tapes heads pre out₀ c) t j = {heads j} := by
+    unfold MultiTapeTM.visitedByTapeHead
+    simp_rw [embedSilentTM_runFrom ι cap hcap]
+    simp [embedSilentCfg, embedSlot_unselected ι j hj, hjc]
+    exact Finset.image_const ⟨0, by simp⟩ _
+  refine ⟨hv, ?_⟩
+  simp [MultiTapeTM.spaceUsedByTape, hv]
+
+/-- **R1 space, suppressing flavor, the capture tape** (spec, fill
+pending — design §12; every unselected tape is accounted for, the capture
+tape included). The capture tape's space usage up to time `t` is bounded
+by the number of emissions recorded in that window plus one: the head
+starts one past `pre ++ c.output` and advances right exactly once per
+recorded emission.
+
+**Proof sketch.** By lockstep the capture head position at time `t'` is
+`|pre| + |(M.runFrom c t').output|`, which is nondecreasing in `t'` with
+increments bounded by one emission per step; the visited set is therefore
+the integer interval from the initial head to the final one, of
+cardinality the output growth plus one
+(`Turing.MultiTapeTM.output_prefix` gives the monotone growth).
+
+**Fill appendix.** For the stated upper bound, the formal proof only
+needs containment in this interval, followed by its cardinality. -/
+theorem embedSilentTM_spaceUsedByTape_cap (ι : Fin m ↪ Fin k) (cap : Fin k)
+    (hcap : cap ∉ Set.range ι) (M : MultiTapeTM m Bool S)
+    (tapes : Fin k → ℤ → Option Bool) (heads : Fin k → ℤ)
+    (pre out₀ : List Bool) (c : Cfg m Bool S x) (t : ℕ) :
+    (embedSilentTM ι cap M).spaceUsedByTape
+        (embedSilentCfg ι cap tapes heads pre out₀ c) t cap
+      ≤ (M.runFrom c t).output.length - c.output.length + 1 := by
+  have hgrowth : c.output.length ≤ (M.runFrom c t).output.length := by
+    simpa using (M.output_prefix c (Nat.zero_le t)).length_le
+  have hsub : (embedSilentTM ι cap M).visitedByTapeHead
+      (embedSilentCfg ι cap tapes heads pre out₀ c) t cap ⊆
+      Finset.Icc ((pre ++ c.output).length : ℤ)
+        ((pre ++ (M.runFrom c t).output).length : ℤ) := by
+    intro z hz
+    obtain ⟨u, hu, rfl⟩ := Finset.mem_image.mp hz
+    have hut : u ≤ t := Nat.le_of_lt_succ (Finset.mem_range.mp hu)
+    have hlo : c.output.length ≤ (M.runFrom c u).output.length := by
+      simpa using (M.output_prefix c (Nat.zero_le u)).length_le
+    have hhi := (M.output_prefix c hut).length_le
+    rw [embedSilentTM_runFrom ι cap hcap]
+    simp only [embedSilentCfg, embedSlot_unselected ι cap hcap, ↓reduceIte,
+      Finset.mem_Icc, List.length_append, Nat.cast_add]
+    constructor <;> omega
+  calc
+    _ ≤ (Finset.Icc ((pre ++ c.output).length : ℤ)
+        ((pre ++ (M.runFrom c t).output).length : ℤ)).card :=
+      Finset.card_le_card hsub
+    _ = (M.runFrom c t).output.length - c.output.length + 1 := by
+      rw [Int.card_Icc]
+      simp only [List.length_append, Nat.cast_add]
+      omega
+
+/-- Applying the forwarding core commutes with configuration transport:
+selected tapes update identically, the frame stays fixed, and appending
+the optional emission associates with the existing output prefix. -/
+private lemma embedEmit_apply (ι : Fin m ↪ Fin k)
+    (tapes : Fin k → ℤ → Option Bool) (heads : Fin k → ℤ)
+    (pre : List Bool) (c : Cfg m Bool S x) (a : Action m Bool S) :
+    (embedActionCore ι none a).apply (embedEmitCfg ι tapes heads pre c) =
+      embedEmitCfg ι tapes heads pre (a.apply c) := by
+  refine Cfg.ext rfl rfl ?_ ?_ ?_
+  · funext j
+    cases hs : embedSlot ι j <;>
+      simp [embedActionCore, embedEmitCfg, Action.apply, hs]
+  · funext j
+    cases hs : embedSlot ι j <;>
+      simp [embedActionCore, embedEmitCfg, Action.apply, hs]
+  · simp [embedActionCore, embedEmitCfg, Action.apply, List.append_assoc]
+
+/-- The forwarding host reads the same source action and executes it
+completely in one step, including an emission on a halting transition. -/
+private lemma embedEmit_step (ι : Fin m ↪ Fin k) (M : MultiTapeTM m Bool S)
+    (tapes : Fin k → ℤ → Option Bool) (heads : Fin k → ℤ)
+    (pre : List Bool) (c : Cfg m Bool S x) :
+    (embedEmitTM ι M).step (embedEmitCfg ι tapes heads pre c) =
+      embedEmitCfg ι tapes heads pre (M.step c) := by
+  unfold MultiTapeTM.step
+  cases hs : c.state with
+  | none => simp [embedEmitCfg, hs]
+  | some q =>
+    rw [show (embedEmitCfg ι tapes heads pre c).state = some q from hs]
+    dsimp only
+    have hr : (fun i => (embedEmitCfg ι tapes heads pre c).workTapeSymbols
+        (ι i)) = c.workTapeSymbols := by
+      funext i
+      simp [Cfg.workTapeSymbols, embedEmitCfg, embedSlot_selected]
+    change (embedActionCore ι none (M.tr q c.inputSymbol _)).apply _ = _
+    rw [hr]
+    exact embedEmit_apply ι tapes heads pre c _
+
+/-- **R1 lockstep, forwarding flavor** (spec, fill pending — design §12;
+[Bon26], `rename_executes`). The transported run is the transport of the
+source run, at every time and with the step count preserved exactly;
+emissions are forwarded, so the host's output is `pre` followed by the
+source's output at every instant (through the transport).
+
+**Proof sketch.** As `embedSilentTM_runFrom`, with the capture clause
+replaced by the output clause: the one-step commutation appends the
+optional emission after `pre` (associativity of `++`, exactly as in
+`emit_apply`), and `Turing.MultiTapeTM.runFrom_comm_of_step` iterates. -/
+theorem embedEmitTM_runFrom (ι : Fin m ↪ Fin k) (M : MultiTapeTM m Bool S)
+    (tapes : Fin k → ℤ → Option Bool) (heads : Fin k → ℤ)
+    (pre : List Bool) (c : Cfg m Bool S x) (t : ℕ) :
+    (embedEmitTM ι M).runFrom (embedEmitCfg ι tapes heads pre c) t =
+      embedEmitCfg ι tapes heads pre (M.runFrom c t) := by
+  exact MultiTapeTM.runFrom_comm_of_step (embedEmitCfg ι tapes heads pre)
+    (embedEmit_step ι M tapes heads pre) c t
+
+/-- **R1 frame, forwarding flavor** (spec, fill pending — design §12).
+Along the whole transported run, every host tape outside the selected
+bank is byte-identical to its ambient frame with its head unmoved, the
+input position tracks the source's, and the host's physical output is
+`pre` followed by the source's output so far.
+
+**Proof sketch.** Project `embedEmitTM_runFrom` componentwise, as in the
+suppressing flavor; the output clause is the transport's definition. -/
+theorem embedEmitTM_frame (ι : Fin m ↪ Fin k) (M : MultiTapeTM m Bool S)
+    (tapes : Fin k → ℤ → Option Bool) (heads : Fin k → ℤ)
+    (pre : List Bool) (c : Cfg m Bool S x) (t : ℕ) :
+    (∀ j : Fin k, j ∉ Set.range ι →
+      ((embedEmitTM ι M).runFrom
+          (embedEmitCfg ι tapes heads pre c) t).workTapes j = tapes j ∧
+      ((embedEmitTM ι M).runFrom
+          (embedEmitCfg ι tapes heads pre c) t).workTapePos j = heads j) ∧
+    ((embedEmitTM ι M).runFrom
+        (embedEmitCfg ι tapes heads pre c) t).inputPos
+      = (M.runFrom c t).inputPos ∧
+    ((embedEmitTM ι M).runFrom
+        (embedEmitCfg ι tapes heads pre c) t).output
+      = pre ++ (M.runFrom c t).output := by
+  rw [embedEmitTM_runFrom]
+  refine ⟨?_, rfl, rfl⟩
+  intro j hj
+  simp [embedEmitCfg, embedSlot_unselected ι j hj]
+
+/-- **R1 space, forwarding flavor, selected tapes** (spec, fill pending —
+design §12). The visited set of host tape `ι i` up to time `t` is exactly
+the source's visited set of tape `i`; per-tape space agrees on the nose.
+
+**Proof sketch.** As `embedSilentTM_visitedByTapeHead`: pointwise equal
+head trajectories from `embedEmitTM_runFrom`, then image and
+cardinality. -/
+theorem embedEmitTM_visitedByTapeHead (ι : Fin m ↪ Fin k)
+    (M : MultiTapeTM m Bool S)
+    (tapes : Fin k → ℤ → Option Bool) (heads : Fin k → ℤ)
+    (pre : List Bool) (c : Cfg m Bool S x) (t : ℕ) (i : Fin m) :
+    (embedEmitTM ι M).visitedByTapeHead
+        (embedEmitCfg ι tapes heads pre c) t (ι i)
+      = M.visitedByTapeHead c t i ∧
+    (embedEmitTM ι M).spaceUsedByTape
+        (embedEmitCfg ι tapes heads pre c) t (ι i)
+      = M.spaceUsedByTape c t i := by
+  have hv : (embedEmitTM ι M).visitedByTapeHead
+      (embedEmitCfg ι tapes heads pre c) t (ι i) =
+      M.visitedByTapeHead c t i := by
+    unfold MultiTapeTM.visitedByTapeHead
+    congr 1
+    funext u
+    rw [embedEmitTM_runFrom]
+    simp [embedEmitCfg, embedSlot_selected]
+  exact ⟨hv, congrArg Finset.card hv⟩
+
+/-- **R1 space, forwarding flavor, unselected tapes** (spec, fill
+pending — design §12). A host tape outside the selected bank visits
+exactly the singleton of its initial head position; its space usage is
+one cell.
+
+**Proof sketch.** By `embedEmitTM_frame` the head never moves; collapse
+the trajectory image to `{heads j}` and take cardinalities. -/
+theorem embedEmitTM_visitedByTapeHead_frame (ι : Fin m ↪ Fin k)
+    (M : MultiTapeTM m Bool S)
+    (tapes : Fin k → ℤ → Option Bool) (heads : Fin k → ℤ)
+    (pre : List Bool) (c : Cfg m Bool S x) (t : ℕ)
+    (j : Fin k) (hj : j ∉ Set.range ι) :
+    (embedEmitTM ι M).visitedByTapeHead
+        (embedEmitCfg ι tapes heads pre c) t j = {heads j} ∧
+    (embedEmitTM ι M).spaceUsedByTape
+        (embedEmitCfg ι tapes heads pre c) t j = 1 := by
+  have hv : (embedEmitTM ι M).visitedByTapeHead
+      (embedEmitCfg ι tapes heads pre c) t j = {heads j} := by
+    unfold MultiTapeTM.visitedByTapeHead
+    simp_rw [embedEmitTM_runFrom]
+    simp only [embedEmitCfg, embedSlot_unselected ι j hj]
+    exact Finset.image_const ⟨0, by simp⟩ _
+  refine ⟨hv, ?_⟩
+  simp [MultiTapeTM.spaceUsedByTape, hv]
+
+/-- **R1′, the returning suppressing embedding** (round-1 repair R1). As
+`Turing.embedSilentTM`, on states `S ⊕ Unit`: live source states run the
+capture-flavored core, but a source action whose successor is `none` lands
+in the **live return anchor** `Sum.inr ()` — the halting transition is
+executed in full, its emission recorded on `cap`, before control arrives at
+the anchor (the `Turing.captureAction`/`Turing.emitterRightTM` halt-to-live
+discipline, exported). The anchor itself idles (stationary, silent, live),
+which is exactly what a seam combinator overrides as its left exit. -/
+def embedSilentRetTM (ι : Fin m ↪ Fin k) (cap : Fin k)
+    (M : MultiTapeTM m Bool S) : MultiTapeTM k Bool (S ⊕ Unit) where
+  q₀ := Sum.inl M.q₀
+  tr := fun q inp w =>
+    match q with
+    | Sum.inl s =>
+      let a := M.tr s inp fun i => w (ι i)
+      let h := embedActionCore ι (some cap) a
+      ⟨h.inputTape, h.workTapes, h.output,
+        some (a.state.elim (Sum.inr ()) Sum.inl)⟩
+    | Sum.inr _ => ⟨0, fun _ => (none, 0), none, some (Sum.inr ())⟩
+
+/-- **R1′, the returning forwarding embedding** (round-1 repair R1). As
+`Turing.embedEmitTM`, on states `S ⊕ Unit`, with source halts landing in
+the live return anchor `Sum.inr ()` after the halting transition — its
+forwarded emission included — has executed in full. -/
+def embedEmitRetTM (ι : Fin m ↪ Fin k) (M : MultiTapeTM m Bool S) :
+    MultiTapeTM k Bool (S ⊕ Unit) where
+  q₀ := Sum.inl M.q₀
+  tr := fun q inp w =>
+    match q with
+    | Sum.inl s =>
+      let a := M.tr s inp fun i => w (ι i)
+      let h := embedActionCore ι none a
+      ⟨h.inputTape, h.workTapes, h.output,
+        some (a.state.elim (Sum.inr ()) Sum.inl)⟩
+    | Sum.inr _ => ⟨0, fun _ => (none, 0), none, some (Sum.inr ())⟩
+
+/-- Replace an action's optional successor by the live return encoding,
+without changing any input, work-tape, or output effect. -/
+private def embedReturnAction (a : Action k Bool S) : Action k Bool (S ⊕ Unit) :=
+  ⟨a.inputTape, a.workTapes, a.output, some (a.state.elim (Sum.inr ()) Sum.inl)⟩
+
+/-- Encode a closed host configuration with live left states and a live
+right return anchor, preserving all four non-control fields. -/
+private def embedReturnCfg (c : Cfg k Bool S x) : Cfg k Bool (S ⊕ Unit) x :=
+  { c with state := some (c.state.elim (Sum.inr ()) Sum.inl) }
+
+/-- At a live configuration, the return encoding is ordinary left state
+mapping; at a halt it instead uses the live right anchor. -/
+private lemma embedReturnCfg_live (c : Cfg k Bool S x) (hc : c.state ≠ none) :
+    embedReturnCfg c = c.mapState Sum.inl := by
+  cases hs : c.state with
+  | none => exact (hc hs).elim
+  | some q => simp [embedReturnCfg, Cfg.mapState, hs]
+
+/-- Direct comparison of a closed host step with a returning host step.
+**Proof sketch.** At a live left state, both hosts execute the same action
+and only the successor encoding differs. At a closed halt, the returning
+anchor's idle action preserves every non-control field, just as absorption
+does on the closed side. No property of a source embedding is needed. -/
+private lemma embedReturn_step (N : MultiTapeTM k Bool S)
+    (R : MultiTapeTM k Bool (S ⊕ Unit))
+    (hleft : ∀ q inp work, R.tr (Sum.inl q) inp work =
+      embedReturnAction (N.tr q inp work))
+    (hidle : ∀ inp work, R.tr (Sum.inr ()) inp work =
+      ⟨0, fun _ => (none, 0), none, some (Sum.inr ())⟩)
+    (c : Cfg k Bool S x) :
+    R.step (embedReturnCfg c) = embedReturnCfg (N.step c) := by
+  unfold MultiTapeTM.step
+  cases hs : c.state with
+  | none => simp [embedReturnCfg, hs, hidle, Action.apply]
+  | some q =>
+    rw [show (embedReturnCfg c).state = some (Sum.inl q) by
+      simp [embedReturnCfg, hs]]
+    dsimp only
+    have hin : (embedReturnCfg c).inputSymbol = c.inputSymbol := rfl
+    have hw : (embedReturnCfg c).workTapeSymbols = c.workTapeSymbols := rfl
+    rw [hin, hw, hleft]
+    rfl
+
+/-- The silent returning step executes the entire transported source
+action, then encodes its successor as a live left state or return anchor. -/
+private lemma embedSilentRet_step (ι : Fin m ↪ Fin k) (cap : Fin k)
+    (M : MultiTapeTM m Bool S)
+    (tapes : Fin k → ℤ → Option Bool) (heads : Fin k → ℤ)
+    (pre out₀ : List Bool) (c : Cfg m Bool S x) (hc : c.state ≠ none) :
+    (embedSilentRetTM ι cap M).step
+        ((embedSilentCfg ι cap tapes heads pre out₀ c).mapState Sum.inl) =
+      embedReturnCfg (embedSilentCfg ι cap tapes heads pre out₀ (M.step c)) := by
+  have h := embedReturn_step (embedSilentTM ι cap M) (embedSilentRetTM ι cap M)
+    (fun _ _ _ => rfl) (fun _ _ => rfl)
+    (embedSilentCfg ι cap tapes heads pre out₀ c)
+  rw [embedReturnCfg_live (embedSilentCfg ι cap tapes heads pre out₀ c) hc,
+    embedSilent_step] at h
+  exact h
+
+/-- A live-step transport reaches the return anchor exactly at a positive
+first halt, with all transported data intact.
+**Proof sketch.** The initially live state and terminal halt imply positive
+time. Induct over the strict live prefix, where the successor encoding is
+ordinary left mapping. Execute the step from the last live configuration
+separately; its halted successor encodes the return anchor. Earlier states
+are left constructors, so none is the right anchor. -/
+private lemma embedThroughHalt (M : MultiTapeTM m Bool S)
+    (R : MultiTapeTM k Bool (S ⊕ Unit))
+    (E : Cfg m Bool S x → Cfg k Bool S x)
+    (hstate : ∀ d, (E d).state = d.state)
+    (hstep : ∀ d, d.state ≠ none →
+      R.step ((E d).mapState Sum.inl) = embedReturnCfg (E (M.step d)))
+    (c : Cfg m Bool S x) (T : ℕ) (hc : c.state ≠ none)
+    (hlive : ∀ t < T, (M.runFrom c t).state ≠ none)
+    (hhalt : (M.runFrom c T).state = none) :
+    (∀ t < T, R.runFrom ((E c).mapState Sum.inl) t =
+      (E (M.runFrom c t)).mapState Sum.inl) ∧
+    R.runFrom ((E c).mapState Sum.inl) T =
+      { E (M.runFrom c T) with state := some (Sum.inr ()) } ∧
+    ∀ t < T, (R.runFrom ((E c).mapState Sum.inl) t).state ≠
+      some (Sum.inr ()) := by
+  have hT : 0 < T := by
+    by_contra hn
+    have hz : T = 0 := by omega
+    subst T
+    exact hc (by simpa using hhalt)
+  have hrun : ∀ t < T, R.runFrom ((E c).mapState Sum.inl) t =
+      (E (M.runFrom c t)).mapState Sum.inl := by
+    intro t
+    induction t with
+    | zero => intro _; rfl
+    | succ t ih =>
+      intro ht
+      rw [MultiTapeTM.runFrom_succ_eq_step', ih (by omega),
+        hstep _ (hlive t (by omega)), ← MultiTapeTM.runFrom_succ_eq_step']
+      apply embedReturnCfg_live
+      rw [hstate]
+      exact hlive _ ht
+  refine ⟨hrun, ?_, ?_⟩
+  · have hlast : T - 1 + 1 = T := by omega
+    calc
+      R.runFrom ((E c).mapState Sum.inl) T =
+          R.step (R.runFrom ((E c).mapState Sum.inl) (T - 1)) :=
+        (congrArg (R.runFrom ((E c).mapState Sum.inl)) hlast).symm.trans
+          MultiTapeTM.runFrom_succ_eq_step'
+      _ = embedReturnCfg (E (M.runFrom c T)) := by
+        rw [hrun _ (by omega), hstep _ (hlive _ (by omega)),
+          ← MultiTapeTM.runFrom_succ_eq_step', hlast]
+      _ = _ := by simp [embedReturnCfg, hstate, hhalt]
+  · intro t ht
+    rw [hrun t ht]
+    simp only [Cfg.mapState, hstate]
+    cases (M.runFrom c t).state <;> simp
+
+/-- **R1′ through-halt contract, suppressing flavor** (spec, fill pending —
+round-1 repair R1): if the source first halts at time `T`, the returning
+embedding runs in `Sum.inl`-lockstep through every live time and, at `T`,
+sits at the **live return anchor** over the completed transport — the
+halting transition's emission recorded on `cap`, the source tape residue
+preserved on the selected bank, the frame untouched — having visited the
+anchor first exactly there. The start must be **live** (`hc` — round-2
+blocker: an initially halted `c` at `T = 0` satisfies the other hypotheses
+vacuously while the handover state projection would demand
+`none = some (Sum.inr ())`; under `hlive` **and** `hhalt` together, `hc` is
+equivalent to `0 < T` — the forward direction uses `hhalt`, the reverse
+`hlive 0` (round-3 finding 1 sharpened the earlier `hhalt`-only phrasing).
+The smallest case is the round-1 counterexample cured: a one-state source
+that emits and halts on its first transition lands at time `1` in
+`Sum.inr ()` with `pre ++ [b]` on the capture tape (the audit's S8 check).
+
+**Proof sketch.** Live times: the `Sum.inl` branch applies the very core of
+`Turing.embedSilentTM`, so `embedSilentTM_runFrom`'s one-step commutation
+transports verbatim under `Cfg.mapState Sum.inl` (`Cfg.mapState_apply`).
+At the halting step, the source action's tape and capture effects are those
+of the closed flavor — `Turing.FinTM.bufferTape_append` records the final
+emission — while the successor `Option.elim` lands in `Sum.inr ()` instead
+of `none`; the anchor cannot occur earlier because live source states map
+into `Sum.inl`. Fill obligations, named: the two `Option.elim` successor
+equations; the through-halt step case; the first-visit projection. -/
+theorem embedSilentRetTM_run (ι : Fin m ↪ Fin k) (cap : Fin k)
+    (hcap : cap ∉ Set.range ι) (M : MultiTapeTM m Bool S)
+    (tapes : Fin k → ℤ → Option Bool) (heads : Fin k → ℤ)
+    (pre out₀ : List Bool) (c : Cfg m Bool S x) (T : ℕ)
+    (hc : c.state ≠ none)
+    (hlive : ∀ t < T, (M.runFrom c t).state ≠ none)
+    (hhalt : (M.runFrom c T).state = none) :
+    (∀ t < T,
+      (embedSilentRetTM ι cap M).runFrom
+          ((embedSilentCfg ι cap tapes heads pre out₀ c).mapState Sum.inl) t =
+        (embedSilentCfg ι cap tapes heads pre out₀
+          (M.runFrom c t)).mapState Sum.inl) ∧
+    (embedSilentRetTM ι cap M).runFrom
+        ((embedSilentCfg ι cap tapes heads pre out₀ c).mapState Sum.inl) T =
+      { embedSilentCfg ι cap tapes heads pre out₀ (M.runFrom c T) with
+          state := some (Sum.inr ()) } ∧
+    ∀ t < T,
+      ((embedSilentRetTM ι cap M).runFrom
+          ((embedSilentCfg ι cap tapes heads pre out₀ c).mapState Sum.inl)
+          t).state ≠ some (Sum.inr ()) := by
+  exact embedThroughHalt M (embedSilentRetTM ι cap M)
+    (embedSilentCfg ι cap tapes heads pre out₀) (fun _ => rfl)
+    (embedSilentRet_step ι cap M tapes heads pre out₀) c T hc hlive hhalt
+
+/-- The forwarding returning step preserves the complete source action,
+including its final emission, and changes only the successor encoding. -/
+private lemma embedEmitRet_step (ι : Fin m ↪ Fin k) (M : MultiTapeTM m Bool S)
+    (tapes : Fin k → ℤ → Option Bool) (heads : Fin k → ℤ)
+    (pre : List Bool) (c : Cfg m Bool S x) (hc : c.state ≠ none) :
+    (embedEmitRetTM ι M).step ((embedEmitCfg ι tapes heads pre c).mapState Sum.inl) =
+      embedReturnCfg (embedEmitCfg ι tapes heads pre (M.step c)) := by
+  have h := embedReturn_step (embedEmitTM ι M) (embedEmitRetTM ι M)
+    (fun _ _ _ => rfl) (fun _ _ => rfl) (embedEmitCfg ι tapes heads pre c)
+  rw [embedReturnCfg_live (embedEmitCfg ι tapes heads pre c) hc, embedEmit_step] at h
+  exact h
+
+/-- **R1′ through-halt contract, forwarding flavor** (spec, fill pending —
+round-1 repair R1): as `Turing.embedSilentRetTM_run` with the final
+emission forwarded to the physical output (`pre ++ (M.runFrom c T).output`
+at the anchor).
+
+**Proof sketch.** As `embedSilentRetTM_run`, with the forwarding core: live
+times transport under `Cfg.mapState Sum.inl` by `embedEmitTM_runFrom`'s
+one-step commutation, the halting step applies the closed forwarding core's
+tape and output effects (the final emission appended to the physical
+output) with the successor `Option.elim` landing in `Sum.inr ()`, and the
+first-visit clause projects from the `Sum.inl` lockstep. Fill obligations,
+named: the successor equations; the through-halt step case; the
+first-visit projection. -/
+theorem embedEmitRetTM_run (ι : Fin m ↪ Fin k) (M : MultiTapeTM m Bool S)
+    (tapes : Fin k → ℤ → Option Bool) (heads : Fin k → ℤ)
+    (pre : List Bool) (c : Cfg m Bool S x) (T : ℕ)
+    (hc : c.state ≠ none)
+    (hlive : ∀ t < T, (M.runFrom c t).state ≠ none)
+    (hhalt : (M.runFrom c T).state = none) :
+    (∀ t < T,
+      (embedEmitRetTM ι M).runFrom
+          ((embedEmitCfg ι tapes heads pre c).mapState Sum.inl) t =
+        (embedEmitCfg ι tapes heads pre (M.runFrom c t)).mapState Sum.inl) ∧
+    (embedEmitRetTM ι M).runFrom
+        ((embedEmitCfg ι tapes heads pre c).mapState Sum.inl) T =
+      { embedEmitCfg ι tapes heads pre (M.runFrom c T) with
+          state := some (Sum.inr ()) } ∧
+    ∀ t < T,
+      ((embedEmitRetTM ι M).runFrom
+          ((embedEmitCfg ι tapes heads pre c).mapState Sum.inl) t).state ≠
+        some (Sum.inr ()) := by
+  exact embedThroughHalt M (embedEmitRetTM ι M)
+    (embedEmitCfg ι tapes heads pre) (fun _ => rfl)
+    (embedEmitRet_step ι M tapes heads pre) c T hc hlive hhalt
+
+/-- Direct host comparison preserves every visited-head set, from any
+initial configuration and for every finite horizon.
+**Proof sketch.** Initially halted configurations stay halted on both
+sides. From a live start, iterate the direct step comparison under the
+return encoding, whose head positions are unchanged. Equality of the
+head trajectories gives equality of their finite images. This uses no
+termination hypothesis, source simulation, or capture-tape separation. -/
+private lemma embedReturn_visited (N : MultiTapeTM k Bool S)
+    (R : MultiTapeTM k Bool (S ⊕ Unit))
+    (hleft : ∀ q inp work, R.tr (Sum.inl q) inp work =
+      embedReturnAction (N.tr q inp work))
+    (hidle : ∀ inp work, R.tr (Sum.inr ()) inp work =
+      ⟨0, fun _ => (none, 0), none, some (Sum.inr ())⟩)
+    (c : Cfg k Bool S x) (t : ℕ) (j : Fin k) :
+    R.visitedByTapeHead (c.mapState Sum.inl) t j = N.visitedByTapeHead c t j := by
+  unfold MultiTapeTM.visitedByTapeHead
+  congr 1
+  funext u
+  by_cases hc : c.state = none
+  · rw [R.runFrom_of_halt _ (by simp [Cfg.mapState, hc]), N.runFrom_of_halt _ hc]
+    rfl
+  · have hrun := MultiTapeTM.runFrom_comm_of_step embedReturnCfg
+      (embedReturn_step N R hleft hidle) c u
+    rw [embedReturnCfg_live c hc] at hrun
+    exact congrArg (fun d => d.workTapePos j) hrun
+
+/-- **R1′ space, suppressing flavor** (spec, fill pending — round-1 repair
+R1): at every time and on every tape, the returning embedding's visited set
+from the `Sum.inl`-mapped seam equals the closed embedding's from the plain
+seam — the trajectories coincide through the halt, and afterwards one idles
+at the live anchor while the other sits halted, both stationary.
+
+**Proof sketch.** For `t` up to the first source halt, both machines apply
+identical tape actions (`embedSilentRetTM_run`'s lockstep and the halting
+step's shared core); beyond it, the anchor's idle action and the halted
+absorption are both stationary, freezing both visited sets.
+
+**Fill appendix.** The direct host comparison `embedReturn_visited`
+handles initially halted and live starts separately. It uses neither
+through-halt contract nor a capture-separation hypothesis. -/
+theorem embedSilentRetTM_visitedByTapeHead (ι : Fin m ↪ Fin k) (cap : Fin k)
+    (M : MultiTapeTM m Bool S)
+    (tapes : Fin k → ℤ → Option Bool) (heads : Fin k → ℤ)
+    (pre out₀ : List Bool) (c : Cfg m Bool S x) (t : ℕ) (j : Fin k) :
+    (embedSilentRetTM ι cap M).visitedByTapeHead
+        ((embedSilentCfg ι cap tapes heads pre out₀ c).mapState Sum.inl) t j =
+      (embedSilentTM ι cap M).visitedByTapeHead
+        (embedSilentCfg ι cap tapes heads pre out₀ c) t j := by
+  exact embedReturn_visited (embedSilentTM ι cap M) (embedSilentRetTM ι cap M)
+    (fun _ _ _ => rfl) (fun _ _ => rfl)
+    (embedSilentCfg ι cap tapes heads pre out₀ c) t j
+
+/-- **R1′ space, forwarding flavor** (spec, fill pending — round-1 repair
+R1): the forwarding analogue of
+`Turing.embedSilentRetTM_visitedByTapeHead`.
+
+**Proof sketch.** As the suppressing flavor: identical tape actions through
+the first source halt, then the live idle and the halted absorption are
+both stationary, freezing both visited sets — the trajectories coincide at
+every time. -/
+theorem embedEmitRetTM_visitedByTapeHead (ι : Fin m ↪ Fin k)
+    (M : MultiTapeTM m Bool S)
+    (tapes : Fin k → ℤ → Option Bool) (heads : Fin k → ℤ)
+    (pre : List Bool) (c : Cfg m Bool S x) (t : ℕ) (j : Fin k) :
+    (embedEmitRetTM ι M).visitedByTapeHead
+        ((embedEmitCfg ι tapes heads pre c).mapState Sum.inl) t j =
+      (embedEmitTM ι M).visitedByTapeHead
+        (embedEmitCfg ι tapes heads pre c) t j := by
+  exact embedReturn_visited (embedEmitTM ι M) (embedEmitRetTM ι M)
+    (fun _ _ _ => rfl) (fun _ _ => rfl) (embedEmitCfg ι tapes heads pre c) t j
+
+
+/-! ### Selected-tape exports (§13 Z1 rider, decision D-R1)
+
+The retrofit inventories (`audits/retrofit-inventory/`) found, three times
+independently, that no old-code R1 consumer can be proved from this file's
+public surface: the frame lemmas cover only unselected tapes, and
+`embedSlot_selected` is private. These four projections export the
+selected-tape fields of the two configuration transports. They are
+skeleton-time proofs (statement-phase additions flagged for the A-S1
+audit): each is definitional at `embedSlot_selected`. -/
+
+/-- The silent transport holds the source's tape `i` on host tape `ι i`. -/
+theorem embedSilentCfg_selected_tape (ι : Fin m ↪ Fin k) (cap : Fin k)
+    (tapes : Fin k → ℤ → Option Bool) (heads : Fin k → ℤ)
+    (pre out₀ : List Bool) (c : Cfg m Bool S x) (i : Fin m) :
+    (embedSilentCfg ι cap tapes heads pre out₀ c).workTapes (ι i) =
+      c.workTapes i := by
+  simp [embedSilentCfg, embedSlot_selected]
+
+/-- The silent transport holds the source's tape-`i` head on host tape
+`ι i`. -/
+theorem embedSilentCfg_selected_pos (ι : Fin m ↪ Fin k) (cap : Fin k)
+    (tapes : Fin k → ℤ → Option Bool) (heads : Fin k → ℤ)
+    (pre out₀ : List Bool) (c : Cfg m Bool S x) (i : Fin m) :
+    (embedSilentCfg ι cap tapes heads pre out₀ c).workTapePos (ι i) =
+      c.workTapePos i := by
+  simp [embedSilentCfg, embedSlot_selected]
+
+/-- The forwarding transport holds the source's tape `i` on host tape
+`ι i`. -/
+theorem embedEmitCfg_selected_tape (ι : Fin m ↪ Fin k)
+    (tapes : Fin k → ℤ → Option Bool) (heads : Fin k → ℤ)
+    (pre : List Bool) (c : Cfg m Bool S x) (i : Fin m) :
+    (embedEmitCfg ι tapes heads pre c).workTapes (ι i) = c.workTapes i := by
+  simp [embedEmitCfg, embedSlot_selected]
+
+/-- The forwarding transport holds the source's tape-`i` head on host tape
+`ι i`. -/
+theorem embedEmitCfg_selected_pos (ι : Fin m ↪ Fin k)
+    (tapes : Fin k → ℤ → Option Bool) (heads : Fin k → ℤ)
+    (pre : List Bool) (c : Cfg m Bool S x) (i : Fin m) :
+    (embedEmitCfg ι tapes heads pre c).workTapePos (ι i) = c.workTapePos i := by
+  simp [embedEmitCfg, embedSlot_selected]
+
+end Turing
 ```
