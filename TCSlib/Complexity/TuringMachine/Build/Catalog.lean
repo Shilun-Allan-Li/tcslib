@@ -24,10 +24,11 @@ rows and the space lemmas for the old rows both — keeping
 `Build/Primitives.lean` byte-identical; the later refactor toward a
 per-theme layout is a recorded backlog item.
 
-**Status: statement skeleton (§12 statement phase).** The five routine
-machines and their two phase alphabets are real definitions (TM1-style
-labelled control, the catalog's house idiom); every contract is sorried,
-each with a proof sketch naming its fill obligations.
+**Status: proved.** The five routine machines and their two phase
+alphabets are real definitions (TM1-style labelled control, the catalog's
+house idiom), and every contract is proved: the §12 fill epochs F1/F2
+(gates closed 2026-10-09) and the §12.6 framed contracts (fill gate closed
+2026-10-10).
 
 ## Part 1 — new promotions (seam routines)
 
@@ -76,8 +77,10 @@ P16–P18, `splitSolveWith`) stay lazy until a space consumer appears.
 
 ## Main results
 
-All sorried (statement phase): the five routines' run and per-tape space
-contracts (`*_run`, `*_spaceUsedByTape`); the catalog space rows
+The five routines' run and per-tape space contracts (`*_run`,
+`*_spaceUsedByTape`), and their framed forms from arbitrary configurations
+(`*_run_ofCfg`, design §12.6), from which the canonical run rows are
+derived; the catalog space rows
 `Turing.FinTM.computesFunInTime_*_spaceUsed` (P1–P15 as realized,
 including the threaded-map row with its payload space hypothesis); and
 the control-layer rows `Turing.capture_visitedByTapeHead` (W1),
@@ -944,7 +947,7 @@ Times are exact. For increment the time is carry-sensitive, so a counter's
 total cost can be summed geometrically.
 -/
 
-/-- **Transfer, framed** (design §12.6; spec, fill pending). From any
+/-- **Transfer, framed** (design §12.6). From any
 configuration in the sweep phase whose source tape carries the word `w`
 delimited by blanks at relative positions `-1` and `|w|`, the transfer
 reaches the `done` anchor at exactly `2|w| + 2` and not earlier. At that
@@ -1002,7 +1005,7 @@ theorem transferTM_run_ofCfg {k : ℕ} {x : List Bool} (src dst : Fin k)
       simp only [catalogTrace]
       split_ifs <;> simp_all [catalogCopyF, catalogTransferR, catalogCopyR, Finset.mem_Icc] <;> omega
 
-/-- **Copy, framed** (design §12.6; spec, fill pending). As
+/-- **Copy, framed** (design §12.6). As
 `Turing.transferTM_run_ofCfg`, except that the source is left intact: at
 exactly `2|w| + 2` the destination interval holds `w` and every other cell is
 unchanged. This specializes to `Turing.copyTM_run`.
@@ -1042,7 +1045,7 @@ theorem copyTM_run_ofCfg {k : ℕ} {x : List Bool} (src dst : Fin k)
       simp only [catalogTrace]
       split_ifs <;> simp_all [catalogCopyF, catalogCopyR, Finset.mem_Icc] <;> omega
 
-/-- **Clear, framed** (design §12.6; spec, fill pending). From any
+/-- **Clear, framed** (design §12.6). From any
 configuration in the sweep phase whose tape `i` carries the delimited word
 `w`, the routine reaches `done` at exactly `2|w| + 2` and not earlier, with
 the word interval blank and every other cell, head, the input position and the
@@ -1083,8 +1086,8 @@ theorem clearTM_run_ofCfg {k : ℕ} {x : List Bool} (i : Fin k) (w : List Bool)
       simp only [catalogTrace]
       split_ifs <;> simp_all [catalogClearF, catalogClearR, Finset.mem_Icc] <;> omega
 
-/-- **Increment, framed success with exact carry cost** (design §12.6; spec,
-fill pending). Let the delimited word `w` on tape `i` have a successor at its
+/-- **Increment, framed success with exact carry cost** (design §12.6).
+Let the delimited word `w` on tape `i` have a successor at its
 width, `incFixed w = some v`, and let `p = (w.takeWhile id).length` be its
 number of leading `true` cells. Then the routine reaches the success anchor
 at exactly `2p + 2` and not earlier, with the word interval holding `v` and
@@ -1142,7 +1145,7 @@ theorem incrementTM_run_succ_ofCfg {k : ℕ} {x : List Bool} (i : Fin k)
         simp only [catalogTrace]
         split_ifs <;> simp_all [catalogIncF, catalogIncR, Finset.mem_Icc] <;> omega
 
-/-- **Increment, framed overflow** (design §12.6; spec, fill pending). If the
+/-- **Increment, framed overflow** (design §12.6). If the
 delimited word `w` on tape `i` has no successor at its width
 (`incFixed w = none`, that is, it is all `true`), the routine reaches the
 overflow anchor at exactly `2|w| + 2` and not earlier. The word interval then
@@ -1196,7 +1199,7 @@ theorem incrementTM_run_overflow_ofCfg {k : ℕ} {x : List Bool} (i : Fin k)
         simp only [catalogTrace]
         split_ifs <;> simp_all [catalogIncF, catalogIncR, Finset.mem_Icc] <;> omega
 
-/-- **Transfer, the run contract** (spec, fill pending — design §12 R3;
+/-- **Transfer, the run contract** (design §12 R3;
 [Bon26]). From the seam with word `w src` on the source and a blank
 destination, the routine reaches — within `3|w src| + 3` steps and
 without visiting the exit anchor earlier — the seam whose source is blank
@@ -1246,7 +1249,7 @@ theorem transferTM_run (k : ℕ) (src dst : Fin k) (hne : src ≠ dst)
         · simp [FinTM.bufferTape, h0]
     · simp [hs, hd]
 
-/-- **Transfer, per-tape space** (spec, fill pending — design §12 R3).
+/-- **Transfer, per-tape space** (design §12 R3).
 The two touched tapes visit at most the word interval plus the two
 boundary blanks — `|w src| + 2` cells, from the `-1` overshoot to the
 right blank at `|w src|` — and every other tape never leaves its origin.
@@ -1285,7 +1288,7 @@ theorem transferTM_spaceUsedByTape (k : ℕ) (src dst : Fin k)
   simp only [catalogTrace]
   split_ifs <;> simp [catalogCopyF, catalogTransferR, catalogCopyR, catalogCfg, Cfg.ofWords, hs, hd]
 
-/-- **Copy, the run contract** (spec, fill pending — design §12 R3;
+/-- **Copy, the run contract** (design §12 R3;
 [Bon26]; the A3 `3|w| + 3` row). From the seam with word `w src` on the
 source and a blank destination, the routine reaches — within
 `3|w src| + 3` steps and without visiting the exit anchor earlier — the
@@ -1319,7 +1322,7 @@ theorem copyTM_run (k : ℕ) (src dst : Fin k) (hne : src ≠ dst)
       · simp [FinTM.bufferTape, h0]
   · simp [hj]
 
-/-- **Copy, per-tape space** (spec, fill pending — design §12 R3). As the
+/-- **Copy, per-tape space** (design §12 R3). As the
 transfer routine: the two touched tapes visit at most `|w src| + 2` cells
 (the word interval plus both boundary blanks), every other tape exactly
 its origin singleton.
@@ -1356,7 +1359,7 @@ theorem copyTM_spaceUsedByTape (k : ℕ) (src dst : Fin k) (hne : src ≠ dst)
   simp only [catalogTrace]
   split_ifs <;> simp [catalogCopyF, catalogCopyR, catalogCfg, Cfg.ofWords, hs, hd]
 
-/-- **Clear, the run contract** (spec, fill pending — design §12 R3;
+/-- **Clear, the run contract** (design §12 R3;
 [Bon26]; the A3 `2|w| + 2` row, P12's engine). From the seam with word
 `w i` on tape `i`, the routine reaches — within `2|w i| + 2` steps and
 without visiting the exit anchor earlier — the seam with tape `i` blank,
@@ -1390,7 +1393,7 @@ theorem clearTM_run (k : ℕ) (i : Fin k) (w : Fin k → List Bool) :
       · simp [FinTM.bufferTape, h0]
   · simp [hj]
 
-/-- **Clear, per-tape space** (spec, fill pending — design §12 R3). Tape
+/-- **Clear, per-tape space** (design §12 R3). Tape
 `i` visits at most `|w i| + 2` cells (the word interval plus both
 boundary blanks); every other tape exactly its origin singleton.
 
@@ -1420,7 +1423,7 @@ theorem clearTM_spaceUsedByTape (k : ℕ) (i : Fin k)
     simp only [catalogTrace]
     split_ifs <;> simp [catalogClearF, catalogClearR, catalogCfg, Cfg.ofWords, hj]
 
-/-- **Compare, the run contract** (spec, fill pending — design §12 R3;
+/-- **Compare, the run contract** (design §12 R3;
 [Bon26]). From the seam, the routine reaches — within
 `2·min(|w fst|, |w snd|) + 2` steps and without visiting either exit
 anchor earlier — the seam carrying the equality verdict
@@ -1452,7 +1455,7 @@ theorem compareTM_run (k : ℕ) (fst snd : Fin k) (w : Fin k → List Bool) :
   · rw [catalog_compare_trace fst snd w d hd hp hs he]
     simp [catalogTrace, show ¬2 * d + 2 ≤ d by omega]
 
-/-- **Compare, per-tape space** (spec, fill pending — design §12 R3). The
+/-- **Compare, per-tape space** (design §12 R3). The
 two compared tapes visit at most `min(|w fst|, |w snd|) + 2` cells (the
 scanned interval plus both boundary cells); every other tape exactly its
 origin singleton.
@@ -1493,7 +1496,7 @@ theorem compareTM_spaceUsedByTape (k : ℕ) (fst snd : Fin k)
   simp only [catalogTrace]
   split_ifs <;> simp [catalogCompareF, catalogCompareR, catalogCfg, Cfg.ofWords, hf, hg]
 
-/-- **Increment, the success contract** (spec, fill pending — design §12
+/-- **Increment, the success contract** (design §12
 R3). If the word on tape `i` has a successor at its width
 (`Turing.incFixed (w i) = some v`), the routine reaches — within
 `2|w i| + 2` steps and without visiting either exit anchor earlier — the
@@ -1543,7 +1546,7 @@ theorem incrementTM_run_succ (k : ℕ) (i : Fin k) (w : Fin k → List Bool)
       · simp [FinTM.bufferTape, h0]
   · simp [hj]
 
-/-- **Increment, the overflow contract** (spec, fill pending — design §12
+/-- **Increment, the overflow contract** (design §12
 R3). If the word on tape `i` is all `true` (`Turing.incFixed (w i) =
 none`), the routine reaches — within `2|w i| + 2` steps and without
 visiting either exit anchor earlier — the seam carrying the overflow
@@ -1581,7 +1584,7 @@ theorem incrementTM_run_overflow (k : ℕ) (i : Fin k)
       · simp [FinTM.bufferTape, h0]
   · simp [hj]
 
-/-- **Increment, per-tape space** (spec, fill pending — design §12 R3).
+/-- **Increment, per-tape space** (design §12 R3).
 Tape `i` visits at most `|w i| + 2` cells; every other tape exactly its
 origin singleton.
 
@@ -1616,7 +1619,7 @@ theorem incrementTM_spaceUsedByTape (k : ℕ) (i : Fin k)
     simp only [catalogTrace]
     split_ifs <;> simp [catalogIncF, catalogIncR, catalogCfg, Cfg.ofWords, hj]
 
-/-- **W1 space row** (spec, fill pending — design §12 R3, decision 12.3).
+/-- **W1 space row** (design §12 R3, decision 12.3).
 Under the hypotheses of `Turing.capture_run`, the host's source-bank
 tapes visit exactly the source's cells — per-tape, on the nose — and the
 capture tape's space usage is bounded by the output recorded in the
@@ -4121,7 +4124,7 @@ private lemma f2_space_of_time {M : FinTM Bool} {x y : List Bool} {T : ℕ}
         exact (Finset.card_image_le).trans (by rw [Finset.card_range]))
     _ = _ := by simp
 
-/-- **P1 space row** (spec, fill pending — design §12 R3, decision 12.3;
+/-- **P1 space row** (design §12 R3, decision 12.3;
 annotates `Turing.FinTM.computesFunInTime_id`). The copy machine runs in
 constant work-tape space: one witness does the whole job on its input and
 output heads alone.
@@ -4166,7 +4169,7 @@ theorem computesFunInTime_id_spaceUsed :
     rw [MultiTapeTM.spaceUsed_zero_tapes_eq_zero _ _ rfl]
     omega
 
-/-- **P2 space row** (spec, fill pending — design §12 R3; annotates
+/-- **P2 space row** (design §12 R3; annotates
 `Turing.FinTM.computesFunInTime_const`). The fixed-word emission chain
 runs in constant work-tape space.
 
@@ -4188,7 +4191,7 @@ theorem computesFunInTime_const_spaceUsed (w : List Bool) :
     rw [MultiTapeTM.spaceUsed_zero_tapes_eq_zero _ _ rfl]
     omega
 
-/-- **P3 space row** (spec, fill pending — design §12 R3; annotates
+/-- **P3 space row** (design §12 R3; annotates
 `Turing.FinTM.computesFunInTime_prepend`). Prepending a fixed word runs
 in constant work-tape space: an emission chain followed by the input
 copy scan never moves a work head.
@@ -4211,7 +4214,7 @@ theorem computesFunInTime_prepend_spaceUsed (w : List Bool) :
     rw [MultiTapeTM.spaceUsed_zero_tapes_eq_zero _ _ rfl]
     omega
 
-/-- **P4 space row** (spec, fill pending — design §12 R3; annotates
+/-- **P4 space row** (design §12 R3; annotates
 `Turing.FinTM.computesFunInTime_lengthBits`). The binary length counter
 runs in logarithmic work-tape space: the counter word has `Nat.size n`
 bits and the scan never leaves its interval (the sharp clause the
@@ -4229,7 +4232,7 @@ theorem computesFunInTime_lengthBits_spaceUsed :
         M.tm.spaceUsed (M.tm.initCfg x) t ≤ c * (Nat.size x.length + 1) := by
   exact ⟨f2_counterTM, 5, f2_counter_computes, f2_counter_space⟩
 
-/-- **P5 space row, unary clause** (spec, fill pending — design §12 R3;
+/-- **P5 space row, unary clause** (design §12 R3;
 annotates `Turing.FinTM.computesFunInTime_polyUnary`). The unary
 polynomial generator runs in linear work-tape space: each of its `e`
 nested loop tapes holds a unary counter of side `n + 1`.
@@ -4262,7 +4265,7 @@ theorem computesFunInTime_polyUnary_spaceUsed (C e : ℕ) :
       exact (f2_poly_space d C x t).trans
         (Nat.mul_le_mul_right (x.length + 1) (by omega))
 
-/-- **P5 space row, binary clause** (spec, fill pending — design §12 R3;
+/-- **P5 space row, binary clause** (design §12 R3;
 annotates `Turing.FinTM.computesFunInTime_polyBits`). The binary
 polynomial evaluator runs in linear work-tape space: it is the unary
 generator buffered into the length counter, and the buffer tape holds
@@ -4342,8 +4345,8 @@ theorem computesFunInTime_polyBits_spaceUsed (C e : ℕ) :
           rw [← Nat.mul_assoc]
           exact Nat.mul_le_mul_right _ (Nat.le_add_right _ _)))
 
-/-- **P6 space row, fixed-first-component encoder** (spec, fill pending —
-design §12 R3; annotates `Turing.FinTM.computesFunInTime_pairEncodeFixed`).
+/-- **P6 space row, fixed-first-component encoder**
+(design §12 R3; annotates `Turing.FinTM.computesFunInTime_pairEncodeFixed`).
 Pairing with a fixed first component runs in constant work-tape space: it
 is the prepend row at the doubled fixed word.
 
@@ -4359,7 +4362,7 @@ theorem computesFunInTime_pairEncodeFixed_spaceUsed (α : List Bool) :
   simpa only [pairEncode] using
     computesFunInTime_prepend_spaceUsed ((α.flatMap fun b => [b, b]) ++ [false, true])
 
-/-- **P6 space row, first extraction** (spec, fill pending — design §12
+/-- **P6 space row, first extraction** (design §12
 R3; annotates `Turing.FinTM.computesFunInTime_pairFst`). The
 first-component extractor runs in linear work-tape space: the aligned
 scan buffers the undoubled prefix before any emission.
@@ -4386,7 +4389,7 @@ theorem computesFunInTime_pairFst_spaceUsed :
     change _ ≤ 1 * (5 * (x.length + 1) + 1) at h
     omega
 
-/-- **P6 space row, second extraction** (spec, fill pending — design §12
+/-- **P6 space row, second extraction** (design §12
 R3; annotates `Turing.FinTM.computesFunInTime_pairSnd`). The
 second-component extractor runs in linear work-tape space (it shares the
 buffered parser with the first extractor).
@@ -4411,7 +4414,7 @@ theorem computesFunInTime_pairSnd_spaceUsed :
     change _ ≤ 1 * (5 * (x.length + 1) + 1) at h
     omega
 
-/-- **P6 space row, validity test** (spec, fill pending — design §12 R3;
+/-- **P6 space row, validity test** (design §12 R3;
 annotates `Turing.FinTM.computesFunInTime_pairValid`). The grammar
 validity test runs in constant work-tape space: alignment is finite
 control, nothing is buffered.
@@ -4431,7 +4434,7 @@ theorem computesFunInTime_pairValid_spaceUsed :
     rw [MultiTapeTM.spaceUsed_zero_tapes_eq_zero _ _ rfl]
     omega
 
-/-- **P13 space row, pair to concatenation** (spec, fill pending — design
+/-- **P13 space row, pair to concatenation** (design
 §12 R3; annotates `Turing.FinTM.computesFunInTime_pairConcat`). The
 concatenation extractor runs in linear work-tape space.
 
@@ -4459,7 +4462,7 @@ theorem computesFunInTime_pairConcat_spaceUsed :
     change _ ≤ 1 * (5 * (x.length + 1) + 1) at h
     omega
 
-/-- **P14 space row, pair duplication** (spec, fill pending — design §12
+/-- **P14 space row, pair duplication** (design §12
 R3; annotates `Turing.FinTM.computesFunInTime_pairDup`). The duplication
 encoder runs in constant work-tape space: both passes re-read the input
 tape, nothing is buffered.
@@ -4508,7 +4511,7 @@ private lemma f2_first_length (x : List Bool) :
     rw [f2_catalogPair_inverse x a b hd, length_pairEncode]
     omega
 
-/-- **P8 space row, threaded length check** (spec, fill pending — design
+/-- **P8 space row, threaded length check** (design
 §12 R3; annotates `Turing.FinTM.computesFunInTime_pairLenCheck`). The
 threaded length checker's space is dominated by the unary polynomial
 bank `C·(|a|+1)^e` it counts down against, plus the linear parse
@@ -4939,7 +4942,7 @@ private lemma f2_strip_linear :
     _ ≤ d * ((2 * b * (a + 1) + (4 + c) + 1) * (x.length + 1)) := Nat.mul_le_mul_left d hb
     _ = _ := by ring
 
-/-- **P9 space row, marker stripping** (spec, fill pending — design §12
+/-- **P9 space row, marker stripping** (design §12
 R3; annotates `Turing.FinTM.computesFunInTime_stripLast`). The marker
 stripper runs in linear work-tape space: the raw buffer and the guard
 banks are each linear, and the quadratic **time** contract is deliberate
@@ -4982,7 +4985,7 @@ theorem computesFunInTime_stripLast_spaceUsed :
       rw [← Nat.mul_assoc]
       exact Nat.mul_le_mul_right _ (Nat.le_add_left _ _)))
 
-/-- **P11 space row, fixed-width increment** (spec, fill pending — design
+/-- **P11 space row, fixed-width increment** (design
 §12 R3; annotates `Turing.FinTM.computesFunInTime_incFixed`; the
 string-function counterpart of `Turing.incrementTM`). The incrementer
 runs in constant work-tape space: it validates and emits from two native
@@ -5782,7 +5785,7 @@ private lemma a2_map_space (M : FinTM Bool) (x y : List Bool) (t D S : ℕ)
   simp only [show (default : Fin 1) = 0 from Subsingleton.elim _ _]
   omega
 
-/-- **Threaded-map space row** (spec, fill pending — design §12 R3;
+/-- **Threaded-map space row** (design §12 R3;
 annotates `Turing.FinTM.computesFunInTime_pairMapSnd`, the round-2
 catalog addition). Given a payload machine with its own space bound
 `Sg` (monotone, since the payload runs on the second component, which is
@@ -9884,7 +9887,7 @@ private lemma f2_splitSolve_closed (C e : ℕ) :
     · intro l
       exact Nat.add_le_add_right (f2_catalogPolyCost_le (l + 1) C (by omega) (e + 1)) 1
 
-/-- **P15 space row, split search** (spec, fill pending — design §12 R3;
+/-- **P15 space row, split search** (design §12 R3;
 annotates `Turing.FinTM.computesFunInTime_splitSolve`). The padding
 split search runs in space one polynomial degree below its time: per
 candidate it rebuilds unary banks of size at most `C·(n+1)^e` in place,
@@ -9994,7 +9997,7 @@ private lemma catalog_redirect_run (M : FinTM Bool) (haltOn : Bool) (x : List Bo
     (M.tm.initCfg x) t
 
 
-/-- **W2 space row** (spec, fill pending — design §12 R3, decision 12.3;
+/-- **W2 space row** (design §12 R3, decision 12.3;
 annotates `Turing.FinTM.redirectTM` beside its
 `redirectTM_computes`/`redirectTM_live` contract pair). Redirection costs
 no space, per tape and exactly: the redirected machine's tape actions are
@@ -10576,7 +10579,7 @@ private lemma f2_cond_space (D M₁ M₂ : FinTM Bool) (x : List Bool) (b : Bool
     (Finset.sum_le_sum (fun i _ => hDcard i))
     (Finset.sum_le_sum (fun i _ => hBcard i))) hcap
 
-/-- **W3 space row** (spec, fill pending — design §12 R3, decision 12.3;
+/-- **W3 space row** (design §12 R3, decision 12.3;
 annotates `Turing.FinTM.computesFunInTime_cond`). Given space bounds for
 the decider and both branches, the conditional controller's space is the
 decider's plus the selected branch's **max** — the unselected branch's
@@ -11079,7 +11082,7 @@ private lemma a2_loop_halted_run {k : ℕ} {S : Type*} {x : List Bool}
       · rw [MultiTapeTM.runFrom_add, hc]
         simpa [hany, hb] using hout
 
-/-- **L space row** (spec, fill pending — design §12 R3, decision 12.3;
+/-- **L space row** (design §12 R3, decision 12.3;
 annotates `Turing.FinTM.exists_loopTM`; the `exists_loopCfgTM` and
 `exists_loopFindTM` siblings inherit the same host at fill time). Same
 hypotheses as the decision loop, plus space bounds for the fuel machine

@@ -33,9 +33,10 @@ fixed-physical-bank routine relocation. It is the generic form of the private
 `clBank*`/`clSlot*` families, and of the retained-tape disciplines that
 `Build/Loop.lean` and `Build/Wrappers.lean` carry internally.
 
-**Status: statement skeleton (§12 statement phase).** The transformers and
-configuration transports below are real definitions; every contract is
-sorried, each with a proof sketch naming its fill obligations.
+**Status: proved.** The transformers and configuration transports below
+are real definitions, and every contract is proved: the §12 fill epochs
+(gates closed 2026-10-09) and the later additive exports, the last of them
+the guarded state transport (retrofit RB5, 2026-10-10).
 
 ## Design
 
@@ -82,9 +83,6 @@ then consumes as its left exit (`Turing.captureAction`'s and
 
 * `Turing.MultiTapeTM.runFrom_mapState_of_agreeOn` — injective state transport
   followed by guarded agreement on the host carrier.
-
-All sorried (statement phase):
-
 * `Turing.embedSilentTM_runFrom`, `Turing.embedEmitTM_runFrom` — lockstep:
   the transported run is the transport of the source run, same step count.
 * `Turing.embedSilentTM_frame`, `Turing.embedEmitTM_frame` — tapes outside
@@ -309,7 +307,7 @@ private lemma embedSilent_step (ι : Fin m ↪ Fin k) (cap : Fin k)
     rw [hr]
     exact embedSilent_apply ι cap tapes heads pre out₀ c _
 
-/-- **R1 lockstep, suppressing flavor** (spec, fill pending — design §12;
+/-- **R1 lockstep, suppressing flavor** (design §12;
 [Bon26], `rename_executes`). The transported run *is* the transport of the
 source run, at every time and with the step count preserved exactly: `t`
 host steps simulate `t` source steps. No liveness guard is needed — the
@@ -340,7 +338,7 @@ theorem embedSilentTM_runFrom (ι : Fin m ↪ Fin k) (cap : Fin k)
     (embedSilentCfg ι cap tapes heads pre out₀)
     (embedSilent_step ι cap M tapes heads pre out₀) c t
 
-/-- **R1 frame, suppressing flavor** (spec, fill pending — design §12).
+/-- **R1 frame, suppressing flavor** (design §12).
 Along the whole transported run, every host tape outside the selected bank
 and distinct from the capture tape is byte-identical to its ambient frame
 with its head unmoved; the input position tracks the source's; and the
@@ -372,8 +370,8 @@ theorem embedSilentTM_frame (ι : Fin m ↪ Fin k) (cap : Fin k)
   intro j hj hjc
   simp [embedSilentCfg, embedSlot_unselected ι j hj, hjc]
 
-/-- **R1 space, suppressing flavor, selected tapes** (spec, fill pending —
-design §12: "cells visited on host tape `ι i` equal cells visited on
+/-- **R1 space, suppressing flavor, selected tapes**
+(design §12: "cells visited on host tape `ι i` equal cells visited on
 source tape `i`"). The visited set of host tape `ι i` up to time `t` is
 exactly the source's visited set of tape `i`, so the per-tape space
 agrees on the nose.
@@ -517,7 +515,7 @@ private lemma embedEmit_step (ι : Fin m ↪ Fin k) (M : MultiTapeTM m Bool S)
     rw [hr]
     exact embedEmit_apply ι tapes heads pre c _
 
-/-- **R1 lockstep, forwarding flavor** (spec, fill pending — design §12;
+/-- **R1 lockstep, forwarding flavor** (design §12;
 [Bon26], `rename_executes`). The transported run is the transport of the
 source run, at every time and with the step count preserved exactly;
 emissions are forwarded, so the host's output is `pre` followed by the
@@ -535,7 +533,7 @@ theorem embedEmitTM_runFrom (ι : Fin m ↪ Fin k) (M : MultiTapeTM m Bool S)
   exact MultiTapeTM.runFrom_comm_of_step (embedEmitCfg ι tapes heads pre)
     (embedEmit_step ι M tapes heads pre) c t
 
-/-- **R1 frame, forwarding flavor** (spec, fill pending — design §12).
+/-- **R1 frame, forwarding flavor** (design §12).
 Along the whole transported run, every host tape outside the selected
 bank is byte-identical to its ambient frame with its head unmoved, the
 input position tracks the source's, and the host's physical output is
@@ -562,8 +560,8 @@ theorem embedEmitTM_frame (ι : Fin m ↪ Fin k) (M : MultiTapeTM m Bool S)
   intro j hj
   simp [embedEmitCfg, embedSlot_unselected ι j hj]
 
-/-- **R1 space, forwarding flavor, selected tapes** (spec, fill pending —
-design §12). The visited set of host tape `ι i` up to time `t` is exactly
+/-- **R1 space, forwarding flavor, selected tapes**
+(design §12). The visited set of host tape `ι i` up to time `t` is exactly
 the source's visited set of tape `i`; per-tape space agrees on the nose.
 
 **Proof sketch.** As `embedSilentTM_visitedByTapeHead`: pointwise equal
@@ -764,8 +762,8 @@ private lemma embedThroughHalt (M : MultiTapeTM m Bool S)
     simp only [Cfg.mapState, hstate]
     cases (M.runFrom c t).state <;> simp
 
-/-- **R1′ through-halt contract, suppressing flavor** (spec, fill pending —
-round-1 repair R1): if the source first halts at time `T`, the returning
+/-- **R1′ through-halt contract, suppressing flavor**
+(round-1 repair R1): if the source first halts at time `T`, the returning
 embedding runs in `Sum.inl`-lockstep through every live time and, at `T`,
 sits at the **live return anchor** over the completed transport — the
 halting transition's emission recorded on `cap`, the source tape residue
@@ -825,8 +823,8 @@ private lemma embedEmitRet_step (ι : Fin m ↪ Fin k) (M : MultiTapeTM m Bool S
   rw [embedReturnCfg_live (embedEmitCfg ι tapes heads pre c) hc, embedEmit_step] at h
   exact h
 
-/-- **R1′ through-halt contract, forwarding flavor** (spec, fill pending —
-round-1 repair R1): as `Turing.embedSilentRetTM_run` with the final
+/-- **R1′ through-halt contract, forwarding flavor**
+(round-1 repair R1): as `Turing.embedSilentRetTM_run` with the final
 emission forwarded to the physical output (`pre ++ (M.runFrom c T).output`
 at the anchor).
 
@@ -886,7 +884,7 @@ private lemma embedReturn_visited (N : MultiTapeTM k Bool S)
     rw [embedReturnCfg_live c hc] at hrun
     exact congrArg (fun d => d.workTapePos j) hrun
 
-/-- **R1′ space, suppressing flavor** (spec, fill pending — round-1 repair
+/-- **R1′ space, suppressing flavor** (round-1 repair
 R1): at every time and on every tape, the returning embedding's visited set
 from the `Sum.inl`-mapped seam equals the closed embedding's from the plain
 seam — the trajectories coincide through the halt, and afterwards one idles
@@ -912,7 +910,7 @@ theorem embedSilentRetTM_visitedByTapeHead (ι : Fin m ↪ Fin k) (cap : Fin k)
     (fun _ _ _ => rfl) (fun _ _ => rfl)
     (embedSilentCfg ι cap tapes heads pre out₀ c) t j
 
-/-- **R1′ space, forwarding flavor** (spec, fill pending — round-1 repair
+/-- **R1′ space, forwarding flavor** (round-1 repair
 R1): the forwarding analogue of
 `Turing.embedSilentRetTM_visitedByTapeHead`.
 

@@ -2083,7 +2083,7 @@ private lemma catalogPayload_computes {Mg : FinTM Bool}
   have htime : Tg y.length ≤ Tg x.length := hTg hlen
   exact hbase.mono (by dsimp only; omega)
 
-/-- **P3, prepend a fixed word** (spec, fill pending — harvest: the HALT
+/-- **P3, prepend a fixed word** (harvest: the HALT
 batch's `prefixTM`/`prefixTM_computes`, whose promotion the batch formally
 requested). Emitting the fixed word `w` and then copying the input is
 computable in linear time; the constant may depend on `w`, which is fixed
@@ -2100,7 +2100,7 @@ theorem computesFunInTime_prepend (w : List Bool) :
   simp only [Nat.add_mul, Nat.mul_add, Nat.one_mul, Nat.mul_one]
   omega
 
-/-- **P4, input length in binary** (spec, fill pending — new; the unary
+/-- **P4, input length in binary** (new; the unary
 scan is a one-state sweep and the binary counter discipline is the
 `Turing.incFixed` carry loop). The little-endian binary representation
 `Nat.bits` of the input length is computable in linear time.
@@ -2114,8 +2114,8 @@ theorem computesFunInTime_lengthBits :
   obtain ⟨_, c, _, M, hM⟩ := Complexity.timeConstructible_id
   exact ⟨M, c, hM⟩
 
-/-- **P5, polynomial evaluation, unary clause** (spec, fill pending —
-harvest: the TMSAT batch's `polyUnaryTM`/`poly_unary_computes`, proved with
+/-- **P5, polynomial evaluation, unary clause**
+(harvest: the TMSAT batch's `polyUnaryTM`/`poly_unary_computes`, proved with
 budget `(C + 5(e+1) + 4)·(n+1)^(e+1)`). The exact unary value of
 `C·(n+1)^e` at the input length is computable within a constant multiple of
 `(n+1)^(e+1)`. Its instances are also the exact-emission primitive the
@@ -2143,8 +2143,8 @@ theorem computesFunInTime_polyUnary (C e : ℕ) :
     apply (catalogPoly_unary_computes d C x).mono
     exact Nat.mul_le_mul_left _ (Nat.pow_le_pow_right (Nat.succ_pos x.length) (by omega))
 
-/-- **P5, polynomial evaluation, binary clause** (spec, fill pending —
-harvest: the TMSAT batch's composition of the unary generator with the
+/-- **P5, polynomial evaluation, binary clause**
+(harvest: the TMSAT batch's composition of the unary generator with the
 binary length counter). The little-endian binary representation of
 `C·(n+1)^e` at the input length is computable within a constant multiple
 of `(n+1)^(e+1)`.
@@ -2179,8 +2179,8 @@ theorem computesFunInTime_polyBits (C e : ℕ) :
     _ ≤ d * ((a + 1) * (b + 1) * P) := Nat.mul_le_mul_left d hbound
     _ = _ := by ring
 
-/-- **P6, pairing with a fixed first component** (spec, fill pending —
-harvest: the HALT batch's `fixedPair_computes`, proved with the exact
+/-- **P6, pairing with a fixed first component**
+(harvest: the HALT batch's `fixedPair_computes`, proved with the exact
 budget `2|α| + |x| + 3`; its promotion was formally requested). For a
 fixed word `α`, the self-delimiting pairing `pairEncode α x` is computable
 in linear time. This is the threading stage: downstream threaded contracts
@@ -2197,7 +2197,7 @@ theorem computesFunInTime_pairEncodeFixed (α : List Bool) :
   simpa only [pairEncode] using
     computesFunInTime_prepend ((α.flatMap fun b => [b, b]) ++ [false, true])
 
-/-- **P6, first-component extraction** (spec, fill pending — new; the
+/-- **P6, first-component extraction** (new; the
 aligned two-bit scan of the `Turing.pairDecode` grammar as a machine). On
 a well-formed pair the doubled prefix is undoubled and emitted; on a
 malformed input the output is `[]`.
@@ -2216,7 +2216,7 @@ theorem computesFunInTime_pairFst :
   | none => simpa [hd] using h
   | some p => cases p; simpa [hd] using h
 
-/-- **P6, second-component extraction** (spec, fill pending — new; the
+/-- **P6, second-component extraction** (new; the
 same aligned scan, emitting the suffix after the separator instead). On a
 malformed input the output is `[]`. Iterating this extractor is how the
 nested-quadruple parsers of the TMSAT constructions decompose.
@@ -2235,7 +2235,7 @@ theorem computesFunInTime_pairSnd :
   | none => simpa [hd] using h
   | some p => cases p; simpa [hd] using h
 
-/-- **P6, grammar validity** (spec, fill pending — new). The single-bit
+/-- **P6, grammar validity** (new). The single-bit
 test for membership in the `Turing.pairDecode` grammar, the guard stage
 every parser pipeline rejects malformed inputs with.
 
@@ -2248,7 +2248,7 @@ theorem computesFunInTime_pairValid :
         fun n => c * (n + 1) := by
   exact ⟨pairValidTM, 1, fun x => by simpa using pairValid_computes x⟩
 
-/-- **P13, pair to concatenation** (spec, fill pending; round-2 addition
+/-- **P13, pair to concatenation** (round-2 addition
 per round-1 finding 3 — the D-WRAP obligation's exact shape). On
 `pairEncode x u`, emit `x ++ u`; malformed inputs yield `[]`, the threaded
 rejection the downstream guard reads (the reduction wrapper's own
@@ -2271,7 +2271,7 @@ theorem computesFunInTime_pairConcat :
   | none => simpa [hd] using h
   | some p => cases p; simpa [hd] using h
 
-/-- **P14, duplication into a pair** (spec, fill pending; round-2 addition
+/-- **P14, duplication into a pair** (round-2 addition
 per round-1 finding 3 — the entry stage of data-retaining pipelines:
 the reduction emitter retains `x` while its duplicate feeds the generated
 components). Emit `pairEncode x x`.
@@ -2697,7 +2697,7 @@ private lemma pairMap_computes {M : FinTM Bool} {f : List Bool → List Bool}
       rw [Turing.eq_pairEncode_of_pairDecode x a b hd, Turing.length_pairEncode]
     omega
 
-/-- **C1, the threaded map combinator** (spec, fill pending; round-2
+/-- **C1, the threaded map combinator** (round-2
 addition per round-1 finding 3 — the data-retaining assembly the
 extractors deliberately do not provide: sequential composition yields
 `g (f z)` only, never simultaneous access to a retained component). Given
@@ -2736,7 +2736,7 @@ theorem computesFunInTime_pairMapSnd {Mg : FinTM Bool}
   rw [heq] at hc
   exact hc.mono (by dsimp only; omega)
 
-/-- **P8, threaded length-bound check** (spec, fill pending — new; the
+/-- **P8, threaded length-bound check** (new; the
 original-bound re-check discipline of the Exercise-2.1 reverse verifier,
 in threaded form). On `pairEncode a b`, decide `|b| ≤ C·(|a|+1)^e` — the
 original input `a` travels with the payload precisely so that this bound
@@ -2797,7 +2797,7 @@ theorem computesFunInTime_pairLenCheck (C e : ℕ) :
       Nat.add_le_add (Nat.mul_le_mul_left d hsum) (by omega)
     _ = (d * (a + b * (a + 1) ^ (e + 1) + 1) + 7) * P := by ring
 
-/-- **P9, marker strip** (spec, fill pending — harvest: the semantic layer
+/-- **P9, marker strip** (harvest: the semantic layer
 is the Exercise-2.1 batch's proved `stripCertificate` family; the machine
 is new). On `pairEncode a v`, strip `v` at its **last** `true`
 (`Turing.splitAtLastTrue`) and re-emit the threaded pair with the stripped
@@ -4273,7 +4273,7 @@ private lemma splitSolve_closed (C e : ℕ) :
     · intro l
       exact Nat.add_le_add_right (catalogPolyCost_le (l + 1) C (by omega) (e + 1)) 1
 
-/-- **P10, padding split search** (spec, fill pending — new; the bounded
+/-- **P10, padding split search** (new; the bounded
 search both padding constructions perform, realizable as a
 `Turing.FinTM.exists_loopFindTM` instance over the polynomial-evaluation
 primitive — the decision loop returns only a Boolean and cannot carry the
@@ -4308,7 +4308,7 @@ theorem computesFunInTime_splitSolve (C e : ℕ) :
         fun n => c * (n + 1) ^ (e + 2) := by
   exact splitSolve_closed C e
 
-/-- **P11, fixed-width increment** (spec, fill pending — harvest: the
+/-- **P11, fixed-width increment** (harvest: the
 enumerator batch's `enumCarryTM`/`enumCarry_correct`, proved with cost at
 most twice the width plus two). The little-endian fixed-width successor
 (`Turing.incFixed`), with `[]` on overflow, is computable in linear time.
@@ -6049,7 +6049,7 @@ private lemma emitterP2_closed (f : ℕ → ℕ) (E : FinTM Bool) (TE : ℕ → 
         Nat.add_le_add (Nat.add_le_add hCa' hDb') (Nat.mul_le_mul_left _ hsum)
       _ = A * (TE (w.length + 1) + w.length + 2) := by dsimp [A, H]; ring
 
-/-- **E4′, width-parametric split search** (spec, fill pending — design
+/-- **E4′, width-parametric split search** (design
 §11; customers: 3A-cont's exponential padding equation — whose bespoke
 body is this contract's harvest template — and every later padding
 argument, including the ch3 hierarchy theorems). The generalization of
@@ -6213,7 +6213,7 @@ private lemma emitterToken_length (x : List Bool) :
   | nil => rfl
   | cons b x ih => cases b <;> simp_all [unaryTokenSplit] <;> omega
 
-/-- **P16, the unary token step** (spec, fill pending — design §11;
+/-- **P16, the unary token step** (design §11;
 customers: 3B-cont's streaming scanner, the Cook-Levin emitter's index
 reads (4A), 4B's dual scanner — the fourth re-derivation of this atom
 otherwise, after 2D's parsers, 3B's `satScanTM`, and 3D's six-state
@@ -6283,7 +6283,7 @@ private lemma emitterAppend_run (b : Bool) (x : List Bool) :
     · simp only [emitterAppendTM, Action.apply, scanCfg, Option.toList_some,
         List.take_succ, List.getElem?_eq_getElem (by omega : j < x.length)]
 
-/-- **P18′, append one bit** (spec, fill pending — design §11, narrowed at
+/-- **P18′, append one bit** (design §11, narrowed at
 spec time from the drafted accumulator row: cross-round persistence is the
 loop engine's state-word mechanism, so the catalog atom is just the
 append; customers: fresh-variable counters in 3B-cont and 4A, via the

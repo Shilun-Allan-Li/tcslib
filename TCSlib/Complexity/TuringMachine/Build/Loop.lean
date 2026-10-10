@@ -123,7 +123,7 @@ a loop body's seam configurations. -/
 def stateWord (k : ℕ) (s : List Bool) : Fin k → List Bool :=
   fun i => if (i : ℕ) = 0 then s else []
 
-/-- **The loop summation lemma** (spec, fill pending — the generic form of
+/-- **The loop summation lemma** (the generic form of
 the enumerator's proved `enumLoop_run`, which is the harvest template;
 round-1 audit verdict: Pass, including `N = 0`).
 Given round configurations `cfg 0, …, cfg N` of one machine with empty
@@ -2200,8 +2200,7 @@ private lemma loopHost_contracts (body F : FinTM Bool) (anchor : body.State)
         rw [show cfg (R x.length + 1) = terminal from if_neg (by omega)]
         simp only [terminal, ha, Bool.false_eq_true, ↓reduceIte]
 
-/-- **The configuration-level loop combinator** (spec, fill pending;
-added per round-2 finding 1 — the final-answer conclusion below cannot
+/-- **The configuration-level loop combinator** (added per round-2 finding 1 — the final-answer conclusion below cannot
 discharge a configuration contract: the round-2 audit exhibits a machine
 that answers correctly after a deliberate exponential delay, satisfying
 the final-answer form while violating every per-round bound). Same
@@ -2317,7 +2316,7 @@ private lemma loop_halted_run {k : ℕ} {S : Type*} {x : List Bool}
       · rw [MultiTapeTM.runFrom_add, hc]
         simpa [hany, hb] using hout
 
-/-- **The decision loop combinator** (spec, fill pending; repaired per
+/-- **The decision loop combinator** (repaired per
 round-1 findings 1, 2, and 4 — see the module docstring). Hypotheses:
 
 * `hF`: the fuel machine writes `Nat.bits (R |x|)` within `T |x|`.
@@ -2455,7 +2454,7 @@ private lemma loop_find_run {k : ℕ} {S : Type*} {x : List Bool}
         simp only [List.find?_cons_of_neg hb, List.find?_map, Function.comp_def]
         cases (List.range N).find? (fun j => accept (j + 1)) <;> rfl
 
-/-- **The result-bearing loop combinator** (spec, fill pending; added per
+/-- **The result-bearing loop combinator** (added per
 round-1 finding 3 — the decision form exposes only a Boolean, which cannot
 express the split search's or the reduction emitters' outputs). Identical
 skeleton to `exists_loopTM`, except the accepting round halts with the
@@ -5225,7 +5224,7 @@ private lemma emLoop_sum {k : ℕ} {S : Type} {x : List Bool}
         rw [List.range_succ_eq_map (n := N + 1), List.flatMap_cons, List.flatMap_map]
         simp [List.append_assoc, Function.comp_def]
 
-/-- **E1, the emitting loop** (spec, fill pending — design §11; customers:
+/-- **E1, the emitting loop** (design §11; customers:
 the Cook-Levin clause-group emitter (4A), 3B-cont's streaming reduction
 transducer, 4B's dual-reduction emitter). The emitting sibling of
 `Turing.FinTM.exists_loopCfgTM`: the same anchored round discipline —

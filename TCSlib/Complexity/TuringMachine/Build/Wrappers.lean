@@ -158,7 +158,7 @@ private lemma capture_apply {input : List Bool} (emb : S → H) (ret : H)
           add_assoc]
   · simp [captureAction, captureCfg, Action.apply]
 
-/-- **W1, the capture contract** (spec, fill pending — harvested from the
+/-- **W1, the capture contract** (harvested from the
 four private incarnations). If a host machine's transition table agrees, on
 an embedded copy of the source's states, with the capture-transformed
 source table, then the host run from a capture configuration *is* the
@@ -256,7 +256,7 @@ private lemma emit_apply {input : List Bool} (emb : S → H) (ret : H)
   refine Cfg.ext rfl rfl rfl rfl ?_
   exact List.append_assoc pre c.output a.output.toList
 
-/-- **E2, the forwarding wrapper** (spec, fill pending — design §11;
+/-- **E2, the forwarding wrapper** (design §11;
 customers: the emitting loop's per-round chunk calls, the Cook-Levin
 clause-group emission (4A), 3B-cont's fresh-literal chains). Any host
 machine agreeing with the transformed table on an embedded copy of the
@@ -416,7 +416,7 @@ private lemma redirect_run (M : FinTM Bool) (haltOn : Bool) (x : List Bool) (t :
   exact MultiTapeTM.runFrom_comm_of_step (redirectCfg M haltOn) (redirect_step M haltOn)
     (M.tm.initCfg x) t
 
-/-- **W2, the halting clause** (spec, fill pending — harvested from the
+/-- **W2, the halting clause** (harvested from the
 HALT batch's `acceptTM_halts_iff`). If `M` completes output `w` on `x`
 within `t` steps and the last bit of `w` is the designated bit, the
 redirected machine halts on `x` within the same budget with **empty**
@@ -435,7 +435,7 @@ theorem redirectTM_computes {M : FinTM Bool} {haltOn : Bool}
   rw [redirect_run]
   exact ⟨by simp only [redirectCfg, hs, hout, redirectState, hlast, ite_true], rfl⟩
 
-/-- **W2, the live clause** (spec, fill pending). If `M` completes output
+/-- **W2, the live clause**. If `M` completes output
 `w` on `x` and `w`'s last bit is *not* the designated bit (in particular if
 `w = []`), the redirected machine never halts on `x`: at the source's
 halting transition it enters the stationary live loop, which is fixed under
@@ -695,7 +695,7 @@ private lemma timed_start (D M₁ M₂ : FinTM Bool) (x : List Bool) (b : Bool) 
       timed_read D M₁ M₂ c b hs ho, hr]
     rfl
 
-/-- **W3, the timed branch** (spec, fill pending): the quantitative form of
+/-- **W3, the timed branch**: the quantitative form of
 `Turing.FinTM.exists_cond`. If a decider machine computes the test bit
 within `T₀` and each branch computes its function within `T₁`, `T₂`, the
 conditional function is computable within a constant multiple of

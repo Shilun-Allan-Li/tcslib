@@ -27,10 +27,9 @@ round-1 finding stands: *function-level* contracts cannot deliver
 clean-return seams, so composing `ComputesFunInTime` contracts can never
 replace this combinator.
 
-**Status: statement skeleton (§12 statement phase).** The composite is a
-real definition (state-sum dispatch in `Turing.bufferedCompTM`'s style,
-kept minimal); every contract is sorried, each with a proof sketch naming
-its fill obligations.
+**Status: proved.** The composite is a real definition (state-sum
+dispatch in `Turing.bufferedCompTM`'s style, kept minimal), and every
+contract is proved (§12 fill epoch F1, gate closed 2026-10-09).
 
 ## Design
 
@@ -53,8 +52,6 @@ its fill obligations.
   `Turing.Cfg.ofWords` seams.
 
 ## Main results
-
-All sorried (statement phase):
 
 * `Turing.seamCompTM_run` — seam-to-seam composition within
   `T₁ + 1 + T₂`.
@@ -280,7 +277,7 @@ private lemma seam_ofWords_mapState {S₃ : Type*} (f : S₁ → S₃)
     (q : S₁) (w : Fin k → List Bool) :
     (Cfg.ofWords (input := x) q w).mapState f = Cfg.ofWords (f q) w := rfl
 
-/-- **R2, seam-to-seam composition** (spec, fill pending — design §12;
+/-- **R2, seam-to-seam composition** (design §12;
 [Bon26], `executes_in_sum`). If `M₁` carries the seam
 `Cfg.ofWords start w₀` to the seam `Cfg.ofWords exit w₁` in exactly `T₁`
 steps without visiting the anchor `exit` earlier (the first-return cut),
@@ -323,7 +320,7 @@ theorem seamCompTM_run [DecidableEq S₁] (M₁ : MultiTapeTM k Bool S₁)
   simpa only [seam_ofWords_mapState] using
     seamComp_run_general M₁ exit M₂ entry h₁ rfl hcut h₂'
 
-/-- **R2, the inherited first-return cut** (spec, fill pending — design
+/-- **R2, the inherited first-return cut** (design
 §12). Under the hypotheses of `seamCompTM_run`, if additionally `M₂` does
 not visit its final anchor `q₂` strictly before `T₂`, then the composite
 does not visit `Sum.inr q₂` strictly before `T₁ + 1 + T₂` — so a
@@ -359,7 +356,7 @@ theorem seamCompTM_firstReturn [DecidableEq S₁] (M₁ : MultiTapeTM k Bool S�
   simpa only [seam_ofWords_mapState] using
     seamComp_firstReturn_general M₁ exit M₂ entry q₂ h₁ rfl hcut hcut₂'
 
-/-- **R2 space, the per-tape headline** (spec, fill pending — design §12,
+/-- **R2 space, the per-tape headline** (design §12,
 frozen decision 12.1: the sharp per-tape form). On every work tape `i`,
 the composite's visited set over the whole composed run is contained in
 the union of the two phases' visited sets. This is the statement the sum
@@ -393,7 +390,7 @@ theorem seamCompTM_visitedByTapeHead [DecidableEq S₁]
   simpa only [seam_ofWords_mapState] using
     seamComp_visited_general (T₂ := T₂) M₁ exit M₂ entry h₁ rfl hcut i
 
-/-- **R2 space, the per-tape sum corollary** (spec, fill pending — design
+/-- **R2 space, the per-tape sum corollary** (design
 §12, decision 12.1). On every work tape, the composite's space usage is
 at most the sum of the phases' space usages on that tape.
 
@@ -417,7 +414,7 @@ theorem seamCompTM_spaceUsedByTape_le_add [DecidableEq S₁]
     (seamCompTM_visitedByTapeHead M₁ exit M₂ entry start q₂ w₀ w₁ w₂
       T₁ T₂ h₁ hcut h₂ i)).trans (Finset.card_union_le _ _)
 
-/-- **R2 space, the total sum corollary** (spec, fill pending — design
+/-- **R2 space, the total sum corollary** (design
 §12). The composite's total space usage is at most the sum of the
 phases' total space usages.
 
@@ -525,8 +522,8 @@ theorem seamCompTM_run_ofCfg [DecidableEq S₁] (M₁ : MultiTapeTM k Bool S₁)
       c₃.mapState Sum.inr := by
   exact seamComp_run_general M₁ exit M₂ entry h₁ hexit hcut h₂
 
-/-- **R2′, the general inherited first-return cut** (spec, fill pending —
-round-1 repair R2): under the hypotheses of
+/-- **R2′, the general inherited first-return cut**
+(round-1 repair R2): under the hypotheses of
 `Turing.seamCompTM_run_ofCfg`, if `M₂` first reaches `q₂` at `T₂`, the
 composite first reaches `Sum.inr q₂` at `T₁ + 1 + T₂`.
 
@@ -549,8 +546,8 @@ theorem seamCompTM_firstReturn_ofCfg [DecidableEq S₁]
         some (Sum.inr q₂) := by
   exact seamComp_firstReturn_general M₁ exit M₂ entry q₂ h₁ hexit hcut hcut₂
 
-/-- **R2′ space, the general per-tape headline** (spec, fill pending —
-round-1 repair R2): under the hypotheses of `Turing.seamCompTM_run_ofCfg`,
+/-- **R2′ space, the general per-tape headline**
+(round-1 repair R2): under the hypotheses of `Turing.seamCompTM_run_ofCfg`,
 on every work tape the composite's visited set over the composed run is
 contained in the union of the two phases' visited sets — the
 general-configuration form of `Turing.seamCompTM_visitedByTapeHead`, from
@@ -669,7 +666,7 @@ theorem seamReleaseTM_firstReturn (M : MultiTapeTM k Bool S) (anchor : S)
     · have htzero : t = 0 := by omega
       simp [htzero, Cfg.mapState, hc]
 
-/-- **R3′ space** (spec, fill pending — round-1 repair R3): the adapter's
+/-- **R3′ space** (round-1 repair R3): the adapter's
 visited sets equal `M`'s at every time and on every tape — the trajectories
 coincide step for step.
 
