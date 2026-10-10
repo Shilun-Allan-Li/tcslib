@@ -1,0 +1,339 @@
+import TCSlib.Complexity.TuringMachine.OracleAgreement
+import TCSlib.Complexity.ClassOracle.Classes
+
+/-!
+# C1c pre-ship probe (maintainer-run; archive as `audits/evidence/ch34-c1/C1cPreShip.lean.txt`)
+
+Checks, before the fill, every contract `briefs/ch34-c1-batchC.md` prescribes:
+
+* the exact signatures and call shapes of the cited lemmas;
+* the `unfold` + `cases` step equality of route 1;
+* the per-bit bridge and the per-step facts derived through it;
+* the statements of the new public exports (D2) and of the prescribed privates;
+* the membership and prefix call shapes the inductions use;
+* that the frozen targets elaborate as named.
+
+Sections are grouped by **home file**. Each section uses only names reachable from
+its home's own imports:
+
+| Part | Home | Reachable from |
+|---|---|---|
+| 1 | `OracleNondeterministic.lean` | `OracleFinite`, `Nondeterministic`, Mathlib |
+| 2 | `OracleAgreement.lean` | the same, plus `OracleNondeterministic` |
+| 3 | `Classes.lean` | adds `ClassNP/Reductions` |
+
+The two imports above form a superset context. Keep that discipline when
+editing this file.
+
+**Expected at base:**
+* zero `error:` lines;
+* exactly **7** `declaration uses 'sorry'` warnings, from the statement-only
+  items marked `[S]`;
+* the `#print axioms` of the probe's own proved items (A1, A2, B1, B2) within
+  `[propext, Classical.choice, Quot.sound]`;
+* the ten targets showing `sorryAx` (they are still sorried at base).
+
+Items marked `[T1]` cite the still-sorried target `toOracleNDTM_runWith`. They raise
+no warning, but would print `sorryAx`.
+-/
+
+set_option autoImplicit false
+
+namespace Turing
+
+variable {k : ℕ} {Symbol State : Type*} {input : List Symbol}
+
+/-! ## Part 0: cited lemmas, exact call shapes (base, all proved) -/
+
+-- `step_eq_of_ne_qQuery`: `M` implicit; both oracles explicit; `cfg` implicit.
+example (M : OracleTM k Symbol State) (O O' : Language Symbol)
+    {cfg : Cfg (k + 1) Symbol State input} (h : cfg.state ≠ some M.qQuery) :
+    M.step O cfg = M.step O' cfg :=
+  OracleTM.step_eq_of_ne_qQuery (M := M) O O' h
+
+example (M : OracleTM k Symbol State) (O : Language Symbol)
+    (cfg : Cfg (k + 1) Symbol State input) (i : Fin (k + 1)) :
+    |(M.step O cfg).workTapePos i - cfg.workTapePos i| ≤ 1 :=
+  M.workTapePos_step_le O cfg i
+
+example (M : OracleTM k Symbol State) (O : Language Symbol)
+    {cfg : Cfg (k + 1) Symbol State input} (i : Fin (k + 1)) {z : ℤ}
+    (hz : z ≠ cfg.workTapePos i) :
+    (M.step O cfg).workTapes i z = cfg.workTapes i z :=
+  M.workTapes_step_eq_of_ne O i hz
+
+example (M : OracleTM k Symbol State) (O : Language Symbol) (x : List Symbol) (t : ℕ) :
+    (OracleTM.queryString (M.runFrom O (M.initCfg x) t)).length ≤ t :=
+  M.queryString_length_le O x t
+
+example (M : OracleTM k Symbol State) (O : Language Symbol) (x : List Symbol) (t : ℕ)
+    (i : Fin (k + 1)) (z : ℤ) (hz : (t : ℤ) ≤ |z|) :
+    (M.runFrom O (M.initCfg x) t).workTapes i z = none :=
+  M.runFrom_workTapes_blank O x t i z hz
+
+-- `runWith_cons`, `runWith_append`: `N` implicit, `O` explicit.
+example (N : OracleNDTM k Symbol State) (O : Language Symbol) (b : Bool) (w : List Bool)
+    (cfg : Cfg (k + 1) Symbol State input) :
+    N.runWith O (b :: w) cfg = N.runWith O w (N.stepWith O b cfg) :=
+  OracleNDTM.runWith_cons O
+
+example (N : OracleNDTM k Symbol State) (O : Language Symbol) (w w' : List Bool)
+    (cfg : Cfg (k + 1) Symbol State input) :
+    N.runWith O (w ++ w') cfg = N.runWith O w' (N.runWith O w cfg) :=
+  OracleNDTM.runWith_append O w w' cfg
+
+-- Successor unfolding of the deterministic oracle run is definitional.
+example (M : OracleTM k Symbol State) (O : Language Symbol)
+    (cfg : Cfg (k + 1) Symbol State input) (t : ℕ) :
+    M.runFrom O cfg (t + 1) = M.runFrom O (M.step O cfg) t :=
+  Function.iterate_succ_apply (M.step O) t cfg
+
+-- The embedding's initial configuration: defeq, not syntactic.
+example (M : OracleTM k Symbol State) (x : List Symbol) :
+    M.toOracleNDTM.initCfg x = M.initCfg x := rfl
+
+/-! ## Part 1: home `OracleNondeterministic.lean` -/
+
+/-- A1 (route 1; private in the fill): the one `stepWith`-against-`step` comparison,
+by `unfold` + `cases`. `rfl` alone is not expected to work (G1 probe: distinct
+matchers). -/
+theorem probe_toOracleNDTM_stepWith (M : OracleTM k Symbol State) (O : Language Symbol)
+    (b : Bool) (cfg : Cfg (k + 1) Symbol State input) :
+    M.toOracleNDTM.stepWith O b cfg = M.step O cfg := by
+  unfold OracleNDTM.stepWith OracleTM.step
+  cases hs : cfg.state <;> rfl
+
+/-- A2 (target 1's prescribed proof shape). -/
+theorem probe_toOracleNDTM_runWith (M : OracleTM k Symbol State) (O : Language Symbol)
+    (w : List Bool) (cfg : Cfg (k + 1) Symbol State input) :
+    M.toOracleNDTM.runWith O w cfg = M.runFrom O cfg w.length := by
+  induction w generalizing cfg with
+  | nil => rfl
+  | cons b w ih =>
+    show M.toOracleNDTM.runWith O w (M.toOracleNDTM.stepWith O b cfg) =
+      M.runFrom O (M.step O cfg) w.length
+    rw [probe_toOracleNDTM_stepWith]
+    exact ih (M.step O cfg)
+
+/-- D2 export `OracleNDTM.fixChoice`: `N` with its choice bit fixed to `b`. -/
+def probeFixChoice (N : OracleNDTM k Symbol State) (b : Bool) : OracleTM k Symbol State :=
+  ⟨N.q₀, N.qQuery, N.qYes, N.qNo, N.tr b⟩
+
+/-- B1, D2 export (the bridge): an ND step is a step of the per-bit machine. It comes
+from A1 at `probeFixChoice N b`; both sides are `OracleNDTM.stepWith` at
+definitionally equal fields. (Alternative, by the target at `[b]`:
+`probe_toOracleNDTM_runWith (probeFixChoice N b) O [b] cfg`.) -/
+theorem probe_stepWith_eq_fixChoice_step (N : OracleNDTM k Symbol State)
+    (O : Language Symbol) (b : Bool) (cfg : Cfg (k + 1) Symbol State input) :
+    N.stepWith O b cfg = (probeFixChoice N b).step O cfg :=
+  probe_toOracleNDTM_stepWith (probeFixChoice N b) O b cfg
+
+/-- B2, D2 export (R2): `stepWith` oracle-independence away from `qQuery`, from the
+bridge and the deterministic lemma. -/
+theorem probe_stepWith_eq_of_ne_qQuery {N : OracleNDTM k Symbol State}
+    (O₁ O₂ : Language Symbol) {b : Bool} {cfg : Cfg (k + 1) Symbol State input}
+    (h : cfg.state ≠ some N.qQuery) :
+    N.stepWith O₁ b cfg = N.stepWith O₂ b cfg := by
+  rw [probe_stepWith_eq_fixChoice_step, probe_stepWith_eq_fixChoice_step]
+  exact OracleTM.step_eq_of_ne_qQuery (M := probeFixChoice N b) O₁ O₂ h
+
+-- Route 3(b): per-step facts by citation through the bridge.
+example (N : OracleNDTM k Symbol State) (O : Language Symbol) (b : Bool)
+    (cfg : Cfg (k + 1) Symbol State input) (i : Fin (k + 1)) :
+    |(N.stepWith O b cfg).workTapePos i - cfg.workTapePos i| ≤ 1 := by
+  rw [probe_stepWith_eq_fixChoice_step]
+  exact (probeFixChoice N b).workTapePos_step_le O cfg i
+
+example (N : OracleNDTM k Symbol State) (O : Language Symbol) (b : Bool)
+    (cfg : Cfg (k + 1) Symbol State input) (i : Fin (k + 1)) {z : ℤ}
+    (hz : z ≠ cfg.workTapePos i) :
+    (N.stepWith O b cfg).workTapes i z = cfg.workTapes i z := by
+  rw [probe_stepWith_eq_fixChoice_step]
+  exact (probeFixChoice N b).workTapes_step_eq_of_ne O i hz
+
+/-- [S] Private in the fill: the head/blank invariant from an arbitrary configuration. -/
+theorem probe_runWith_headBlank (N : OracleNDTM k Symbol State) (O : Language Symbol)
+    (w : List Bool) (n : ℕ) (cfg : Cfg (k + 1) Symbol State input)
+    (hpos : ∀ i, |cfg.workTapePos i| ≤ (n : ℤ))
+    (hblank : ∀ i (z : ℤ), (n : ℤ) ≤ |z| → cfg.workTapes i z = none) :
+    (∀ i, |(N.runWith O w cfg).workTapePos i| ≤ ((n + w.length : ℕ) : ℤ)) ∧
+      ∀ i (z : ℤ), ((n + w.length : ℕ) : ℤ) ≤ |z| →
+        (N.runWith O w cfg).workTapes i z = none := by
+  sorry
+
+/-- [S] D2 export (R1): the initialized head/blank invariant, the twin of the private
+deterministic `runFrom_workTapes_invariant`. -/
+theorem probe_runWith_workTapes_invariant (N : OracleNDTM k Symbol State)
+    (O : Language Symbol) (x : List Symbol) (w : List Bool) :
+    (∀ i, |(N.runWith O w (N.initCfg x)).workTapePos i| ≤ (w.length : ℤ)) ∧
+      ∀ i (z : ℤ), (w.length : ℤ) ≤ |z| →
+        (N.runWith O w (N.initCfg x)).workTapes i z = none := by
+  sorry
+
+/-- [S] Private in the fill (R3, home `Oracle.lean`): a blank query cell bounds the
+query. -/
+theorem probe_queryString_length_le_of_blank (cfg : Cfg (k + 1) Symbol State input) (n : ℕ)
+    (h : cfg.workTapes (OracleTM.queryTapeIdx k) (n : ℤ) = none) :
+    (OracleTM.queryString cfg).length ≤ n := by
+  sorry
+
+/-- [S] D2 export (R1): the branchwise query bound, the twin of
+`OracleTM.queryString_length_le`. -/
+theorem probe_queryString_runWith_length_le (N : OracleNDTM k Symbol State)
+    (O : Language Symbol) (x : List Symbol) (w : List Bool) :
+    (OracleTM.queryString (N.runWith O w (N.initCfg x))).length ≤ w.length := by
+  sorry
+
+/-! ## Part 2: home `OracleAgreement.lean` -/
+
+/-- [S] Private: two-case step agreement. -/
+theorem probe_step_eq_of_query_agree (M : OracleTM k Symbol State) (O O' : Language Symbol)
+    (cfg : Cfg (k + 1) Symbol State input)
+    (h : cfg.state = some M.qQuery →
+      (OracleTM.queryString cfg ∈ O ↔ OracleTM.queryString cfg ∈ O')) :
+    M.step O cfg = M.step O' cfg := by
+  sorry
+
+/-- [S] Private: the core induction over choice-word prefixes. -/
+theorem probe_runWith_take_eq_of_agree (N : OracleNDTM k Symbol State)
+    (O O' : Language Symbol) (x : List Symbol) (w : List Bool)
+    (h : ∀ s < w.length,
+      (N.runWith O (w.take s) (N.initCfg x)).state = some N.qQuery →
+        (OracleTM.queryString (N.runWith O (w.take s) (N.initCfg x)) ∈ O ↔
+          OracleTM.queryString (N.runWith O (w.take s) (N.initCfg x)) ∈ O')) :
+    ∀ s ≤ w.length,
+      N.runWith O (w.take s) (N.initCfg x) = N.runWith O' (w.take s) (N.initCfg x) := by
+  sorry
+
+-- The core's successor case: the prefix split and the singleton step.
+example (w : List Bool) (s : ℕ) (hs : s < w.length) :
+    w.take (s + 1) = w.take s ++ [w[s]] := by
+  rw [List.take_succ, List.getElem?_eq_getElem hs, Option.toList_some]
+
+example (N : OracleNDTM k Symbol State) (O : Language Symbol) (u : List Bool) (b : Bool)
+    (cfg : Cfg (k + 1) Symbol State input) :
+    N.runWith O (u ++ [b]) cfg = N.stepWith O b (N.runWith O u cfg) :=
+  (OracleNDTM.runWith_append O u [b] cfg).trans rfl
+
+-- Endpoints of the core: `take 0` and `take length`.
+example (w : List Bool) : w.take 0 = [] := List.take_zero
+example (w : List Bool) : w.take w.length = w := List.take_length
+
+/-- [T1] Private in the fill: constant-word prefixes are the deterministic run. -/
+theorem probe_toOracleNDTM_runWith_take_replicate (M : OracleTM k Symbol State)
+    (O : Language Symbol) (x : List Symbol) {s t : ℕ} (hs : s ≤ t) :
+    M.toOracleNDTM.runWith O ((List.replicate t false).take s) (M.toOracleNDTM.initCfg x) =
+      M.runFrom O (M.initCfg x) s := by
+  have h := OracleTM.toOracleNDTM_runWith M O (List.replicate s false) (M.toOracleNDTM.initCfg x)
+  rw [List.length_replicate] at h
+  rw [List.take_replicate, Nat.min_eq_left hs]
+  exact h
+
+-- Membership introduction (targets 7, 9): the `filterMap` function is a lambda, hence
+-- `simp only [if_pos hq]`, not `rw`.
+example (N : OracleNDTM k Symbol State) (O : Language Symbol) (x : List Symbol)
+    (w : List Bool) (s : ℕ) (hs : s < w.length)
+    (hq : (N.runWith O (w.take s) (N.initCfg x)).state = some N.qQuery) :
+    OracleTM.queryString (N.runWith O (w.take s) (N.initCfg x)) ∈ N.queriesAlong O x w := by
+  unfold OracleNDTM.queriesAlong
+  exact List.mem_filterMap.mpr ⟨s, List.mem_range.mpr hs, by simp only [if_pos hq]⟩
+
+example (M : OracleTM k Symbol State) (O : Language Symbol) (x : List Symbol)
+    (t s : ℕ) (hs : s < t) (hq : (M.runFrom O (M.initCfg x) s).state = some M.qQuery) :
+    OracleTM.queryString (M.runFrom O (M.initCfg x) s) ∈ M.queriesWithin O x t := by
+  unfold OracleTM.queriesWithin
+  exact List.mem_filterMap.mpr ⟨s, List.mem_range.mpr hs, by simp only [if_pos hq]⟩
+
+-- Target 4's one line.
+example (M : OracleTM k Symbol State) (O : Language Symbol) (x : List Symbol) (t : ℕ) :
+    (M.queriesWithin O x t).length ≤ t := by
+  unfold OracleTM.queriesWithin
+  exact (List.length_filterMap_le _ _).trans_eq List.length_range
+
+end Turing
+
+/-! ## Part 3: home `Classes.lean` -/
+
+namespace Complexity
+
+open Turing
+
+-- Target 2's transfer, same constant and exponent.
+example (O L : Language Bool) (c e : ℕ) (M : FinTM Bool)
+    (hM : M.DecidesInTime L fun n => c * (n ^ e + 1)) :
+    M.toFinOracleTM.DecidesInTime O L fun n => c * (n ^ e + 1) :=
+  fun x => (FinTM.toFinOracleTM_computesInTime M O _ _ _).mpr (hM x)
+
+-- Unpacking `P`'s normal form.
+example (L : Language Bool) (hL : L ∈ P) :
+    ∃ (e c : ℕ) (M : FinTM Bool), M.DecidesInTime L fun n => c * (n ^ e + 1) := by
+  obtain ⟨e, c, M, hM⟩ := Set.mem_iUnion.mp hL
+  exact ⟨e, c, M, hM⟩
+
+-- [T1] Target 3: the run identity at the bundled layer.
+example (M : FinOracleTM Bool) (O : Language Bool) (x w : List Bool) :
+    M.toFinOracleNDTM.tm.runWith O w (M.toFinOracleNDTM.tm.initCfg x) =
+      M.tm.runFrom O (M.tm.initCfg x) w.length :=
+  M.tm.toOracleNDTM_runWith O w _
+
+-- `FinOracleTM.ComputesInTime` destructures directly (no `computesInTime_iff` needed).
+example (M : FinOracleTM Bool) (O : Language Bool) (x out : List Bool) (t : ℕ)
+    (h : M.ComputesInTime O x out t) :
+    (M.tm.runFrom O (M.tm.initCfg x) t).state = none ∧
+      (M.tm.runFrom O (M.tm.initCfg x) t).output = out := by
+  obtain ⟨hhalt, hout⟩ := h
+  exact ⟨hhalt, hout⟩
+
+/-- [S] Optional private per-input helper for target 3, the oracle mirror of
+`Turing.FinTM.toFinNDTM_haltsWithin_and_accepts_iff` (`ClassNP/NTIME.lean`). -/
+theorem probe_toFinOracleNDTM_haltsWithin_and_accepts_iff (M : FinOracleTM Bool)
+    {O L : Language Bool} {x : List Bool} {t : ℕ}
+    (h : M.ComputesInTime O x [MultiTapeTM.indicator (L : Set (List Bool)) x] t) :
+    M.toFinOracleNDTM.tm.HaltsWithin O x t ∧
+      (x ∈ L ↔ M.toFinOracleNDTM.AcceptsWithin O x t) := by
+  sorry
+
+end Complexity
+
+/-! ## Part 4: frozen targets and definitions exist as named; axiom baselines -/
+
+#check @Turing.OracleTM.toOracleNDTM_runWith
+#check @Complexity.P_subset_POracle
+#check @Complexity.POracle_subset_NPOracle
+#check @Turing.OracleTM.queriesWithin_length_le
+#check @Turing.OracleNDTM.length_le_of_mem_queriesAlong
+#check @Turing.OracleNDTM.runWith_eq_of_agree_length_lt
+#check @Turing.OracleNDTM.runWith_eq_of_agree_queriesAlong
+#check @Turing.OracleTM.runFrom_eq_of_agree_length_lt
+#check @Turing.OracleTM.runFrom_eq_of_agree_queriesWithin
+#check @Turing.OracleTM.length_le_of_mem_queriesWithin
+#check @Turing.OracleTM.queriesWithin
+#check @Turing.OracleNDTM.queriesAlong
+
+-- Cited infrastructure: expected within the standard triple.
+#print axioms Turing.OracleTM.step_eq_of_ne_qQuery
+#print axioms Turing.OracleTM.workTapePos_step_le
+#print axioms Turing.OracleTM.workTapes_step_eq_of_ne
+#print axioms Turing.OracleTM.queryString_length_le
+#print axioms Turing.OracleTM.runFrom_workTapes_blank
+#print axioms Turing.OracleNDTM.runWith_append
+#print axioms Turing.FinTM.toFinOracleTM_computesInTime
+-- The probe's proved routes: expected within the standard triple.
+#print axioms Turing.probe_toOracleNDTM_stepWith
+#print axioms Turing.probe_toOracleNDTM_runWith
+#print axioms Turing.probe_stepWith_eq_fixChoice_step
+#print axioms Turing.probe_stepWith_eq_of_ne_qQuery
+-- Definitions: expected within the standard triple.
+#print axioms Turing.OracleTM.queriesWithin
+#print axioms Turing.OracleNDTM.queriesAlong
+-- Targets at base: expected to show `sorryAx`.
+#print axioms Turing.OracleTM.toOracleNDTM_runWith
+#print axioms Complexity.P_subset_POracle
+#print axioms Complexity.POracle_subset_NPOracle
+#print axioms Turing.OracleTM.queriesWithin_length_le
+#print axioms Turing.OracleNDTM.length_le_of_mem_queriesAlong
+#print axioms Turing.OracleNDTM.runWith_eq_of_agree_length_lt
+#print axioms Turing.OracleNDTM.runWith_eq_of_agree_queriesAlong
+#print axioms Turing.OracleTM.runFrom_eq_of_agree_length_lt
+#print axioms Turing.OracleTM.runFrom_eq_of_agree_queriesWithin
+#print axioms Turing.OracleTM.length_le_of_mem_queriesWithin

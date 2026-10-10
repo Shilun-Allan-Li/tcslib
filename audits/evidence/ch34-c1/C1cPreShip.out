@@ -1,0 +1,64 @@
+C1cPreShip.lean:155:8: warning: declaration uses 'sorry'
+C1cPreShip.lean:166:8: warning: declaration uses 'sorry'
+C1cPreShip.lean:175:8: warning: declaration uses 'sorry'
+C1cPreShip.lean:182:8: warning: declaration uses 'sorry'
+C1cPreShip.lean:190:8: warning: declaration uses 'sorry'
+C1cPreShip.lean:198:8: warning: declaration uses 'sorry'
+C1cPreShip.lean:289:8: warning: declaration uses 'sorry'
+@Turing.OracleTM.toOracleNDTM_runWith : ∀ {k : ℕ} {Symbol : Type u_1} {State : Type u_2}
+  (M : Turing.OracleTM k Symbol State) (O : Language Symbol) {input : List Symbol} (w : List Bool)
+  (cfg : Turing.Cfg (k + 1) Symbol State input), M.toOracleNDTM.runWith O w cfg = M.runFrom O cfg w.length
+Complexity.P_subset_POracle : ∀ (O : Language Bool), Complexity.P ⊆ Complexity.POracle O
+Complexity.POracle_subset_NPOracle : ∀ (O : Language Bool), Complexity.POracle O ⊆ Complexity.NPOracle O
+@Turing.OracleTM.queriesWithin_length_le : ∀ {k : ℕ} {Symbol : Type u_1} {State : Type u_2}
+  (M : Turing.OracleTM k Symbol State) (O : Language Symbol) (x : List Symbol) (t : ℕ),
+  (M.queriesWithin O x t).length ≤ t
+@Turing.OracleNDTM.length_le_of_mem_queriesAlong : ∀ {k : ℕ} {Symbol : Type u_1} {State : Type u_2}
+  {N : Turing.OracleNDTM k Symbol State} {O : Language Symbol} {x : List Symbol} {w : List Bool} {z : List Symbol},
+  z ∈ N.queriesAlong O x w → z.length ≤ w.length
+@Turing.OracleNDTM.runWith_eq_of_agree_length_lt : ∀ {k : ℕ} {Symbol : Type u_1} {State : Type u_2}
+  (N : Turing.OracleNDTM k Symbol State) (O O' : Language Symbol) (x : List Symbol) (w : List Bool),
+  (∀ (z : List Symbol), z.length < w.length → (z ∈ O ↔ z ∈ O')) →
+    N.runWith O w (N.initCfg x) = N.runWith O' w (N.initCfg x)
+@Turing.OracleNDTM.runWith_eq_of_agree_queriesAlong : ∀ {k : ℕ} {Symbol : Type u_1} {State : Type u_2}
+  (N : Turing.OracleNDTM k Symbol State) (O O' : Language Symbol) (x : List Symbol) (w : List Bool),
+  (∀ z ∈ N.queriesAlong O x w, z ∈ O ↔ z ∈ O') → N.runWith O w (N.initCfg x) = N.runWith O' w (N.initCfg x)
+@Turing.OracleTM.runFrom_eq_of_agree_length_lt : ∀ {k : ℕ} {Symbol : Type u_1} {State : Type u_2}
+  (M : Turing.OracleTM k Symbol State) (O O' : Language Symbol) (x : List Symbol) (t : ℕ),
+  (∀ (z : List Symbol), z.length < t → (z ∈ O ↔ z ∈ O')) → M.runFrom O (M.initCfg x) t = M.runFrom O' (M.initCfg x) t
+@Turing.OracleTM.runFrom_eq_of_agree_queriesWithin : ∀ {k : ℕ} {Symbol : Type u_1} {State : Type u_2}
+  (M : Turing.OracleTM k Symbol State) (O O' : Language Symbol) (x : List Symbol) (t : ℕ),
+  (∀ z ∈ M.queriesWithin O x t, z ∈ O ↔ z ∈ O') → M.runFrom O (M.initCfg x) t = M.runFrom O' (M.initCfg x) t
+@Turing.OracleTM.length_le_of_mem_queriesWithin : ∀ {k : ℕ} {Symbol : Type u_1} {State : Type u_2}
+  {M : Turing.OracleTM k Symbol State} {O : Language Symbol} {x : List Symbol} {t : ℕ} {z : List Symbol},
+  z ∈ M.queriesWithin O x t → z.length ≤ t
+@Turing.OracleTM.queriesWithin : {k : ℕ} →
+  {Symbol : Type u_1} →
+    {State : Type u_2} → Turing.OracleTM k Symbol State → Language Symbol → List Symbol → ℕ → List (List Symbol)
+@Turing.OracleNDTM.queriesAlong : {k : ℕ} →
+  {Symbol : Type u_1} →
+    {State : Type u_2} →
+      Turing.OracleNDTM k Symbol State → Language Symbol → List Symbol → List Bool → List (List Symbol)
+'Turing.OracleTM.step_eq_of_ne_qQuery' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.OracleTM.workTapePos_step_le' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.OracleTM.workTapes_step_eq_of_ne' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.OracleTM.queryString_length_le' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.OracleTM.runFrom_workTapes_blank' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.OracleNDTM.runWith_append' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.FinTM.toFinOracleTM_computesInTime' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.probe_toOracleNDTM_stepWith' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.probe_toOracleNDTM_runWith' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.probe_stepWith_eq_fixChoice_step' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.probe_stepWith_eq_of_ne_qQuery' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.OracleTM.queriesWithin' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.OracleNDTM.queriesAlong' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.OracleTM.toOracleNDTM_runWith' depends on axioms: [propext, sorryAx, Classical.choice, Quot.sound]
+'Complexity.P_subset_POracle' depends on axioms: [propext, sorryAx, Classical.choice, Quot.sound]
+'Complexity.POracle_subset_NPOracle' depends on axioms: [propext, sorryAx, Classical.choice, Quot.sound]
+'Turing.OracleTM.queriesWithin_length_le' depends on axioms: [propext, sorryAx, Classical.choice, Quot.sound]
+'Turing.OracleNDTM.length_le_of_mem_queriesAlong' depends on axioms: [propext, sorryAx, Classical.choice, Quot.sound]
+'Turing.OracleNDTM.runWith_eq_of_agree_length_lt' depends on axioms: [propext, sorryAx, Classical.choice, Quot.sound]
+'Turing.OracleNDTM.runWith_eq_of_agree_queriesAlong' depends on axioms: [propext, sorryAx, Classical.choice, Quot.sound]
+'Turing.OracleTM.runFrom_eq_of_agree_length_lt' depends on axioms: [propext, sorryAx, Classical.choice, Quot.sound]
+'Turing.OracleTM.runFrom_eq_of_agree_queriesWithin' depends on axioms: [propext, sorryAx, Classical.choice, Quot.sound]
+'Turing.OracleTM.length_le_of_mem_queriesWithin' depends on axioms: [propext, sorryAx, Classical.choice, Quot.sound]
