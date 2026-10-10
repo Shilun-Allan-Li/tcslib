@@ -220,7 +220,9 @@ historical = {
     'Composition': twins['Composition'],
 }
 for f in SRCS:
-    assert historical[f] <= set(D[f]), (f, historical[f] - set(D[f]))
+    gone = sorted(historical[f] - set(D[f]))
+    if gone: print(f"   {f}: historical members no longer present (deleted since the census): {gone}")
+    historical[f] &= set(D[f])
     tot = historical[f] | pair_sources[f]
     extra = sorted(pair_sources[f] - historical[f])
     print(f"   {f:17s} {len(tot):4d}/{len(D[f]):3d} = {100*len(tot)/len(D[f]):5.1f}%   historical {len(historical[f])} + from pairs {len(extra)}")
