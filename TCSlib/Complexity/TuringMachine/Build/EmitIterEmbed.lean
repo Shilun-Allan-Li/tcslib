@@ -28,7 +28,10 @@ Generic machine-construction infrastructure shared by loop-body assemblies
   its states injected into the host's state type, step for step
   (`embed_step`/`embed_run`), while the padding tapes stay blank;
 * **control steps** — a transition that only changes control (and possibly
-  moves the input head) replaces just those configuration components.
+  moves the input head) replaces just those configuration components. These
+  two lemmas are private helpers of
+  `TCSlib.Complexity.TuringMachine.Build.EmitIterBody`, not exports of this
+  module.
 
 ## Main definitions
 
@@ -37,7 +40,7 @@ Generic machine-construction infrastructure shared by loop-body assemblies
 ## Main results
 
 * `Turing.runFrom_output_prefix`, `Turing.runFrom_output_extends`,
-  `Turing.embed_run`, `Turing.control_step`, `Turing.control_step'`.
+  `Turing.embed_run`.
 
 ## References
 

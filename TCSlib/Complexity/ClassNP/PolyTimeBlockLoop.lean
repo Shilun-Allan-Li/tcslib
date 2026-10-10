@@ -45,7 +45,7 @@ stated in `TCSlib.Complexity.ClassNP.PClosure`, which imports this file.
   clean-call modules (`Turing.FinTM.exists_installCallTM` /
   `exists_emitCallTM`) as the per-round body.
 * `Complexity.polyTimeComputable_xorD` — truncating bitwise XOR is
-  polynomial-time (a one-pass counter program).
+  polynomial-time, via the emit-iteration loop.
 * The aggregated one-bit block tests live in
   `TCSlib.Complexity.ClassNP.PolyTimeBlockTests`.
 

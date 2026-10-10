@@ -1,0 +1,56 @@
+diff --git a/TCSlib/Complexity/ClassNP/PClosure.lean b/TCSlib/Complexity/ClassNP/PClosure.lean
+index 0370605d..f44d3024 100644
+--- a/TCSlib/Complexity/ClassNP/PClosure.lean
++++ b/TCSlib/Complexity/ClassNP/PClosure.lean
+@@ -203,7 +203,12 @@ the second component of a pair and aggregating the answers.  `blockAt a k z i` i
+ count is `a'·(n+1)^k'`.  These are the folklore "repeat the machine polynomially many
+ times" closures that [AB09] ch. 7 uses tacitly (§7.3, Theorem 7.8; §7.4.1;
+ Theorems 7.17–7.18); the machine-level loop lives in
+-`TCSlib.Complexity.ClassNP.PolyTimeBlockLoop`. -/
++`TCSlib.Complexity.ClassNP.PolyTimeBlockLoop`.
++
++Like the length comparisons above, all three languages are total extensions through
++the default projections: a malformed word is classified by the same test on its
++default-decoded components (for the nested pair, an invalid inner pair leaves only the
++outer mask), and `V` is consulted only on re-encoded queries (ch7 fill audit, note 3). -/
+ 
+ /-- **`P` is closed under a polynomial block-OR**: if `V ∈ P` then so is the set of
+ pairs some of whose `a'·(n+1)^k'` blocks of length `a·(n+1)^k` passes `V`'s test,
+diff --git a/TCSlib/Complexity/ClassNP/PolyTimeBlockLoop.lean b/TCSlib/Complexity/ClassNP/PolyTimeBlockLoop.lean
+index 611d5e11..b665bc25 100644
+--- a/TCSlib/Complexity/ClassNP/PolyTimeBlockLoop.lean
++++ b/TCSlib/Complexity/ClassNP/PolyTimeBlockLoop.lean
+@@ -45,7 +45,7 @@ stated in `TCSlib.Complexity.ClassNP.PClosure`, which imports this file.
+   clean-call modules (`Turing.FinTM.exists_installCallTM` /
+   `exists_emitCallTM`) as the per-round body.
+ * `Complexity.polyTimeComputable_xorD` — truncating bitwise XOR is
+-  polynomial-time (a one-pass counter program).
++  polynomial-time, via the emit-iteration loop.
+ * The aggregated one-bit block tests live in
+   `TCSlib.Complexity.ClassNP.PolyTimeBlockTests`.
+ 
+diff --git a/TCSlib/Complexity/TuringMachine/Build/EmitIterEmbed.lean b/TCSlib/Complexity/TuringMachine/Build/EmitIterEmbed.lean
+index 424ec64c..3ac16284 100644
+--- a/TCSlib/Complexity/TuringMachine/Build/EmitIterEmbed.lean
++++ b/TCSlib/Complexity/TuringMachine/Build/EmitIterEmbed.lean
+@@ -28,7 +28,10 @@ Generic machine-construction infrastructure shared by loop-body assemblies
+   its states injected into the host's state type, step for step
+   (`embed_step`/`embed_run`), while the padding tapes stay blank;
+ * **control steps** — a transition that only changes control (and possibly
+-  moves the input head) replaces just those configuration components.
++  moves the input head) replaces just those configuration components. These
++  two lemmas are private helpers of
++  `TCSlib.Complexity.TuringMachine.Build.EmitIterBody`, not exports of this
++  module.
+ 
+ ## Main definitions
+ 
+@@ -37,7 +40,7 @@ Generic machine-construction infrastructure shared by loop-body assemblies
+ ## Main results
+ 
+ * `Turing.runFrom_output_prefix`, `Turing.runFrom_output_extends`,
+-  `Turing.embed_run`, `Turing.control_step`, `Turing.control_step'`.
++  `Turing.embed_run`.
+ 
+ ## References
+ 

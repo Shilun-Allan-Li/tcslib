@@ -203,7 +203,12 @@ the second component of a pair and aggregating the answers.  `blockAt a k z i` i
 count is `a'·(n+1)^k'`.  These are the folklore "repeat the machine polynomially many
 times" closures that [AB09] ch. 7 uses tacitly (§7.3, Theorem 7.8; §7.4.1;
 Theorems 7.17–7.18); the machine-level loop lives in
-`TCSlib.Complexity.ClassNP.PolyTimeBlockLoop`. -/
+`TCSlib.Complexity.ClassNP.PolyTimeBlockLoop`.
+
+Like the length comparisons above, all three languages are total extensions through
+the default projections: a malformed word is classified by the same test on its
+default-decoded components (for the nested pair, an invalid inner pair leaves only the
+outer mask), and `V` is consulted only on re-encoded queries (ch7 fill audit, note 3). -/
 
 /-- **`P` is closed under a polynomial block-OR**: if `V ∈ P` then so is the set of
 pairs some of whose `a'·(n+1)^k'` blocks of length `a·(n+1)^k` passes `V`'s test,
