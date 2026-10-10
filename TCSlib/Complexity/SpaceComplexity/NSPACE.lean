@@ -53,7 +53,7 @@ branch-space measure (`Turing.NDTM.spaceUsedWith`).
 * `Complexity.NSPACE` — the class, with constant absorption.
   [AB09, Definition 4.1]
 
-## Main results (sorried; phase-P4.1 statements)
+## Main results (proved; phase-P4.1 statements)
 
 * `Complexity.NSPACE.mono` — monotone in the space bound.
 * `Complexity.SPACE_subset_NSPACE` — [AB09, Theorem 4.2, second inclusion].
@@ -101,7 +101,13 @@ def NSPACE (s : ℕ → ℕ) : Set (Language Bool) :=
 larger bound: `c · s₁ n ≤ c · s₂ n` pointwise (`Nat.mul_le_mul_left`), and only
 the space inequality mentions the bound. -/
 theorem NSPACE.mono {s₁ s₂ : ℕ → ℕ} (h : ∀ n, s₁ n ≤ s₂ n) : NSPACE s₁ ⊆ NSPACE s₂ := by
-  sorry
+  intro L hL
+  obtain ⟨c, N, hN⟩ := hL
+  refine ⟨c, N, fun x => ?_⟩
+  obtain ⟨T, hhalt, hsp, hacc⟩ := hN x
+  refine ⟨T, hhalt, ?_, hacc⟩
+  intro w hw
+  exact (hsp w hw).trans (Nat.mul_le_mul_left c (h x.length))
 
 /-- **Deterministic space is nondeterministic space**: `SPACE s ⊆ NSPACE s`.
 [AB09, Theorem 4.2, second inclusion]
@@ -115,6 +121,16 @@ all-branch halting is `M`'s halting, the branch space is `M`'s space by
 `[true]`) iff `x ∈ L` by the indicator equation — mirroring
 `Complexity.DTIME_subset_NTIME`. -/
 theorem SPACE_subset_NSPACE (s : ℕ → ℕ) : SPACE s ⊆ NSPACE s := by
-  sorry
+  classical
+  rintro L ⟨c, M, hM⟩
+  refine ⟨c, M.toFinNDTM, ?_⟩
+  intro x
+  obtain ⟨t, hcomp, hsp⟩ := hM x
+  have hbranch := M.toFinNDTM_haltsWithin_and_accepts_iff hcomp
+  refine ⟨t, hbranch.1, ?_, hbranch.2⟩
+  intro w hw
+  change M.tm.toNDTM.spaceUsedWith w (M.tm.initCfg x) ≤ c * s x.length
+  rw [M.tm.toNDTM_spaceUsedWith, hw]
+  exact hsp
 
 end Complexity

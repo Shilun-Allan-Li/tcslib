@@ -21,7 +21,7 @@ Theorem 4.2 (`NSPACE(S) ⊆ DTIME(2^{O(S)})`) needs the configuration-graph laye
 and is phase P4.2; the parity example of [AB09, Example 4.7] lives in
 `TCSlib.Complexity.SpaceComplexity.Examples`.
 
-## Main results (sorried; phase-P4.1 statements)
+## Main results (first two proved; remaining phase-P4.1 statements sorried)
 
 * `Complexity.DTIME_subset_SPACE` — [AB09, Theorem 4.2, first inclusion].
 * `Complexity.P_subset_PSPACE` — the polynomial corollary.
@@ -53,7 +53,25 @@ witness reuses `M` itself with the absorbed constant `k · c + k`, and the
 halting time `c · T |x|` instantiates `Turing.FinTM.ComputesInSpace`'s
 existential time. -/
 theorem DTIME_subset_SPACE (T : ℕ → ℕ) : DTIME T ⊆ SPACE T := by
-  sorry
+  classical
+  by_cases hzero : ∃ n, T n = 0
+  · rw [DTIME_eq_empty_of_exists_zero hzero]
+    exact Set.empty_subset _
+  have hpos (n : ℕ) : 1 ≤ T n := by
+    by_contra hn
+    exact hzero ⟨n, by omega⟩
+  rintro L ⟨c, M, hM⟩
+  refine ⟨M.k * c + M.k, M, fun x => ?_⟩
+  refine ⟨c * T x.length, hM x, ?_⟩
+  calc
+    M.tm.spaceUsed (M.tm.initCfg x) (c * T x.length)
+        ≤ M.k * (c * T x.length + 1) := M.tm.spaceUsed_le_mul_succ _ _
+    _ = M.k * c * T x.length + M.k := by
+      rw [Nat.mul_add, Nat.mul_one, Nat.mul_assoc]
+    _ ≤ M.k * c * T x.length + M.k * T x.length :=
+      Nat.add_le_add_left
+        (by simpa only [Nat.mul_one] using Nat.mul_le_mul_left M.k (hpos x.length)) _
+    _ = (M.k * c + M.k) * T x.length := (Nat.add_mul _ _ _).symm
 
 /-- `P ⊆ PSPACE` — the polynomial-level corollary, on the p. 92 chain.
 
@@ -61,7 +79,7 @@ theorem DTIME_subset_SPACE (T : ℕ → ℕ) : DTIME T ⊆ SPACE T := by
 `Complexity.DTIME_subset_SPACE`, then `Set.iUnion_mono` across the unions
 defining `Complexity.P` and `Complexity.PSPACE`. -/
 theorem P_subset_PSPACE : P ⊆ PSPACE := by
-  sorry
+  exact Set.iUnion_mono fun c => DTIME_subset_SPACE (fun n => n ^ c + 1)
 
 /-- **Certificates can be cycled through in polynomial space**: `NP ⊆ PSPACE`.
 [AB09, Example 4.6: "a similar idea of cycling through all potential
