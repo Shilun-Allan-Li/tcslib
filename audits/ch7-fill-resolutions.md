@@ -1,4 +1,4 @@
-# Chapter 7 fill gate — resolutions (OPEN: round 2 asks the duplication question)
+# Chapter 7 fill gate — resolutions (CLOSED, round 2)
 
 ## Round 1 (2026-10-10): 0 blockers, 0 majors, 2 minors, 2 notes
 
@@ -37,7 +37,7 @@ files. The seven-module chain from `Build/EmitIterEmbed` to
 (`audits/logs/ch7-fill-r2-docfix-sweep.log`). Lint reports 0 FAIL in
 `ClassNP` and `TuringMachine/Build`.
 
-## Round 2 (2026-10-10): 0 blockers, 2 majors, 2 minors, 2 notes — OPEN pending two acknowledgments
+## Round 2 (2026-10-10): 0 blockers, 2 majors, 2 minors, 2 notes — CLOSED on the user's acknowledgments
 
 Findings verbatim in `audits/ch7-fill-r2-findings.md`, audited at `4502c30f`.
 Questions 1–6 transfer unchanged (R2-6: the transfer attestation and the
@@ -48,8 +48,8 @@ human maintainer explicitly accepts each debt and names its resolution.
 
 | Finding | Disposition |
 |---|---|
-| R2-1 (major): `EmitIterEmbed` re-proves five existing run facts, at least 5/18 = 27.8%: `step_output_prefix` and `runFrom_output_prefix` (Loop's private `emLoop_step_prefix`/`emLoop_run_prefix`), `runFrom_output_extends` (a specialization of `Finite`'s public `MultiTapeTM.output_prefix`), `runFrom_of_halted` (`Deterministic`'s public `runFrom_of_halt`), and `state_isSome_of_runFrom` (Loop's private `loop_live_prefix`) | **Pending the user's acknowledgment.** |
-| R2-2 (major): under the standing source-inclusive census, CH7-D1 reaches at least 12/25 in `PolyTimeBlockTests`, which crosses one fifth in a further file; at least 8/14 in `PolyTimeBlockMajority`; and 1/32 in `PolyTimeBlockLoop`. The auditor found four further cross-file adaptations (`anyStep`/`majStep`, `anyEmit`/`majEmit`, the orbit lemmas, the loop outputs; 81–93%) and two length correspondences | **Pending the user's acknowledgment** of the extended family. The auditor confirms that the named generic-lemma resolution remains feasible. |
+| R2-1 (major): `EmitIterEmbed` re-proves five existing run facts, at least 5/18 = 27.8%: `step_output_prefix` and `runFrom_output_prefix` (Loop's private `emLoop_step_prefix`/`emLoop_run_prefix`), `runFrom_output_extends` (a specialization of `Finite`'s public `MultiTapeTM.output_prefix`), `runFrom_of_halted` (`Deterministic`'s public `runFrom_of_halt`), and `state_isSome_of_runFrom` (Loop's private `loop_live_prefix`) | **ACKNOWLEDGED (user, 2026-10-10)** as `backlog.md` **CH7-D2**: owner 12.2c item 6. One home for the run facts in `Deterministic.lean`/`Finite.lean`; `EmitIterEmbed`'s five become citations or re-exports, statements unchanged; Loop's three private copies deleted. |
+| R2-2 (major): under the standing source-inclusive census, CH7-D1 reaches at least 12/25 in `PolyTimeBlockTests`, which crosses one fifth in a further file; at least 8/14 in `PolyTimeBlockMajority`; and 1/32 in `PolyTimeBlockLoop`. The auditor found four further cross-file adaptations (`anyStep`/`majStep`, `anyEmit`/`majEmit`, the orbit lemmas, the loop outputs; 81–93%) and two length correspondences | **ACKNOWLEDGED (user, 2026-10-10)**: the CH7-D1 extension, with the same owner (12.2c item 7) and resolution, its scope widened to the full family. The ledger now uses the source-inclusive census. The auditor confirms the generic-lemma resolution remains feasible. |
 | R2-3 (minor): the screen description overstated its method, and the `EmitIterBody` count was stale | **Swept.** The screen record's method text is corrected, with a pointer to the round-2 misses, and the ledger watch item now says 20 declarations (1 public, 19 private). |
 | R2-4 (minor): the pack inventory still listed `control_step`/`control_step'` | **Swept.** An erratum is in `audits/ch7-fill-pack.md`'s scope row. |
 | R2-5 (note): contract-level facts comparing EmitIter with `Build/Embed` | **Carried** into 12.2c item 6 as its scoping facts. |

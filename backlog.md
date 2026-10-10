@@ -160,6 +160,38 @@ resolution is one generic lemma set with statements unchanged, coordinated
 with the ch7 owner because the files are hers, and run after the ch7 fill
 gate closes.
 
+**Extended (user, 2026-10-10; ch7 fill gate round 2, R2-2).** Under the
+standing source-inclusive census the family is larger: at least 12/25 in
+`PolyTimeBlockTests`, which crosses the threshold in a further file; at
+least 8/14 in `PolyTimeBlockMajority`; and 1/32 in `PolyTimeBlockLoop`.
+The auditor also found the `anyStep`/`majStep`, `anyEmit`/`majEmit`,
+orbit and loop-output adaptations. The extension is acknowledged, with the
+same owner and resolution, its scope widened to the generic
+guard/countdown/orbit/single-emission reasoning the auditor identified.
+
+---
+
+### CH7-D2 — `EmitIterEmbed`'s re-proved run facts (duplication threshold crossed)
+
+*Origin: the ch7 fill gate, round 2 (`audits/ch7-fill-r2-findings.md`,
+R2-1). Opened under `workflow.md` §4.*
+
+`Build/EmitIterEmbed.lean` re-proves five existing run facts, so at least
+5 of its 18 declarations (27.8%) are copies:
+
+- `step_output_prefix` and `runFrom_output_prefix`: Loop's private
+  `emLoop_step_prefix`/`emLoop_run_prefix`;
+- `runFrom_output_extends`: a specialization of `Finite`'s public
+  `MultiTapeTM.output_prefix`;
+- `runFrom_of_halted`: `Deterministic`'s public `runFrom_of_halt`;
+- `state_isSome_of_runFrom`: Loop's private `loop_live_prefix`.
+
+**Answered (user, 2026-10-10): acknowledged, folded into 12.2c item 6.**
+The run facts get one home in `Deterministic.lean`/`Finite.lean`.
+`EmitIterEmbed`'s versions become citations or re-exports with statements
+unchanged, and Loop's three private copies are deleted. Coordinated with
+the ch7 owner.
+
 ---
 
 ### CH34-D2 — `Codes2Tape.lean`'s format-specific parse layer (duplication threshold crossed)

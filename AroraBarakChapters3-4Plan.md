@@ -520,7 +520,13 @@ layout or dedup change behind unchanged public names.
    lemma discharging the three sweep contracts' common final-state,
    earlier-exit and head-interval conclusions from `catalogTrace`.
 6. **(i) ch7 EmitIter ↔ §12 unification**: one embedding layer and one
-   host family; settle the shared block primitive's naming. Coordinate
+   host family; settle the shared block primitive's naming. **CH7-D2
+   (acknowledged 2026-10-10):** give the run facts that `EmitIterEmbed`
+   re-proves one home in `Deterministic.lean`/`Finite.lean` (output-prefix
+   commutation and extension, halting absorption, live prefix). Its five
+   become citations or re-exports, and Loop's three private copies are
+   deleted. The ch7 round-2 auditor's EmitIter-versus-Embed contract
+   comparison (R2-5) scopes the merge. Coordinate
    with Aparna; after the ch7 fill gate. **Prerequisite (user, 2026-10-10,
    from the RB5 review):** a public action-level R1 export in
    `Build/Embed.lean` that characterizes `embedEmitTM`'s transition: the
@@ -532,7 +538,10 @@ layout or dedup change behind unchanged public names.
    it may land earlier as a rider of the next retrofit audit, and must land
    before this item starts.
 7. **(ii) CH7-D1**: one generic orbit/length/init lemma set in
-   `PolyTimeBlockLoop.lean` for the OR/XOR/majority loops. Coordinate with
+   `PolyTimeBlockLoop.lean` for the OR/XOR/majority loops. The scope is
+   extended at ch7 fill gate round 2 to the full family: Tests at least
+   12/25, Majority at least 8/14, plus the step, emit and output
+   adaptations. Coordinate with
    Aparna; after the ch7 fill gate.
 8. **(iii) CH34-D2, ACKNOWLEDGED (user, 2026-10-10)**: a
    **format-parameterized machine-code parse layer**. `CodeParser.lean`'s
@@ -627,6 +636,7 @@ layout or dedup change behind unchanged public names.
 | **RB5 review: merge approved with two follow-ups recorded** (user, 2026-10-10). The user asked why Hardness grew (+58). The accounting: −119 lines for the old relocation family, −78 for 11 index/inverse pairs, +259 for the new private `clPlacement` certified-layout layer, and −4 across the 56 rewritten consumers. This is an improvement, since Hardness no longer re-proves the simulation (it cites R1 and the promoted lemma), the copies shared with Primitives are gone, and the guarantees are stronger (exact layouts, no aliasing). But it is not yet modular: a generic layout algebra sits privately in a consumer, it is an adapter preserving the legacy selector representation, and it depends on R1's private `embedSlot` through definitional unfolding. Follow-ups: **(a)** the public action-level R1 export, recorded as 12.2c item 6's prerequisite and allowed to land earlier as a retrofit-audit rider; **(b)** 12.2c item 13, dissolving the selector layer into plain embeddings. The Loop notation alias's removal joins item 11. The merge of PR #14 is the user's | Decided |
 | **RB5 MERGED by the user (PR #14, `fe89d903`); post-merge items done** (2026-10-10). (1) Ledger: the three-file relocation family is **DISCHARGED**, with Primitives at 168/259, Hardness at 0 relocation members, and Catalog's surviving `f2_splitEmbed_run` twin noted for 12.2c item 2. (2) Doc-only status refresh across six proved `Build/` files (Embed, Seam, Catalog, Loop, Primitives, Wrappers): 83 stale "(spec, fill pending …)" tags removed with their provenance kept, and three "statement skeleton" headers and "All sorried" lists updated. Comment-only in every file; all six re-check with 0 errors and 0 sorries; lint 0 FAIL (`audits/logs/build-docrefresh-sweep.log`). Zone and Codes2Tape (owned by in-flight batches) and NDCodes (still accurate) are untouched. (3) The §12.7 fill brief is issued (next row) | Recorded |
 | **§12.7 fill brief issued** (`briefs/s12-counter-fill.md`; the base must contain `fe89d903`). Ten targets in `Build/CounterLoop.lean`. Binding routes from the statement gate's derivations: one-step symbol transport; the decrement contracts as **transports** of the §12.6 increment contracts through **one** private transport lemma, with no trace; amortization by the auditor's telescoping `ones` potential (no Legendre/Kummer); **one** private round induction for both host theorems, where the decrement phase transports through the public RB5 lemma along the injective `counterLoopDecExit a`, and the body phase takes one explicit first step and then transports along the injective `counterLoopRedirect a exit`. Pre-ship check executed (`audits/evidence/s12-counter/CounterFillPreShip.lean.txt`): both maps are injective, and the decrement-phase agreement equation holds. Duplication: a copy-text screen over CounterLoop, Catalog, Embed, Loop and StateRenaming, with no new cross-file pair (one justified `relabelState_step` pairing allowed) and every in-file pair justified. Optional SC-5 visited-set corollary, flagged. Delivery `s12-counter-fill.zip` | Recorded |
+| **CH7 FILL GATE CLOSED** (round 2, 2026-10-10: **0 blockers / 2 majors acknowledged / 2 minors swept / 2 notes**; `audits/ch7-fill-r2-findings.md`, resolutions in `audits/ch7-fill-resolutions.md`). Questions 1–6 transferred from round 1 by the verified attestation. The two duplication majors were **accepted by the user with named resolutions**: **CH7-D2** (`EmitIterEmbed` re-proves five run facts, ≥ 5/18) goes to 12.2c item 6, which gives the run facts one home in `Deterministic`/`Finite`; the **CH7-D1 extension** (Tests ≥ 12/25, Majority ≥ 8/14 under the source-inclusive census) goes to 12.2c item 7, with the same resolution and a widened scope. The minors (the screen's method description, the pack inventory) are swept. Ledger, backlog and tasklist are updated. The ch7 surface is audited end to end on the merged tree, and Aparna can pull the doc-only sweep `05f8e095` | Recorded |
 
 **Duplication-governance amendments landed (user-directed, 2026-10-09; from
 the D-R2 post-mortem — the `f2_` accumulation was disclosed and recorded at
