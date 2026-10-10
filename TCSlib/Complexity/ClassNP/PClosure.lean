@@ -5,6 +5,7 @@ Authors: Hydroxyi
 -/
 import TCSlib.Complexity.ClassNP.CoNP
 import TCSlib.Complexity.ClassNP.PolyTimePairing
+import TCSlib.Complexity.ClassNP.PolyTimeBlockMajority
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -30,6 +31,12 @@ and the closure under complement (`Complexity.compl_mem_P`, `ClassNP/CoNP.lean`)
   tests.
 * `Complexity.lenEq_mem_P`, `lenLe_mem_P`, `lenEq_preimage_mem_P`, `lenLe_preimage_mem_P`
   — length comparisons are in `P`.
+* `Complexity.mem_P_of_blockAny`, `Complexity.mem_P_of_blockMajority`,
+  `Complexity.mem_P_of_blockXorAny` — `P` is closed under running a `P`-decider on
+  polynomially many polynomial-length blocks of the input and aggregating the answers
+  (OR / strict majority / XOR-then-OR), the folklore repetition closures used tacitly
+  by [AB09] ch. 7 (Theorems 7.8, 7.10, 7.17, 7.18); the machine engine is
+  `TCSlib.Complexity.ClassNP.PolyTimeBlockLoop`.
 
 ## References
 
@@ -183,5 +190,65 @@ theorem lenLe_preimage_mem_P {f g : List Bool → List Bool} (hf : PolyTimeCompu
     (hg : PolyTimeComputable g) : {z | (g z).length ≤ (f z).length} ∈ P := by
   have h := preimage_mem_P lenLe_mem_P (hf.pairEncode hg)
   simpa using h
+
+/-! ### Block-query closure
+
+`P` is closed under running a `P`-decider on polynomially many fixed-size blocks of
+the second component of a pair and aggregating the answers.  `blockAt a k z i` is the
+`i`-th length-`a·(n+1)^k` block of `pairSndD z`, with `n = |pairFstD z|`; the block
+count is `a'·(n+1)^k'`.  These are the folklore "repeat the machine polynomially many
+times" closures that [AB09] ch. 7 uses tacitly (§7.3, Theorem 7.8; §7.4.1;
+Theorems 7.17–7.18); the machine-level loop lives in
+`TCSlib.Complexity.ClassNP.PolyTimeBlockLoop`. -/
+
+/-- **`P` is closed under a polynomial block-OR**: if `V ∈ P` then so is the set of
+pairs some of whose `a'·(n+1)^k'` blocks of length `a·(n+1)^k` passes `V`'s test,
+paired with the first component. -/
+theorem mem_P_of_blockAny {V : Language Bool} (hV : V ∈ P) (a k a' k' : ℕ) :
+    {z : List Bool | ∃ i < a' * ((pairFstD z).length + 1) ^ k',
+      pairEncode (pairFstD z) (blockAt a k z i) ∈ V} ∈ P := by
+  have h := mem_P_of_test (polyTimeComputable_blockAnyTest (test_of_mem_P hV) a k a' k')
+  convert h using 1
+  ext z
+  simp only [Set.mem_setOf_eq, List.any_eq_true, List.mem_range]
+  constructor
+  · rintro ⟨i, hi, hmem⟩
+    exact ⟨i, hi, by simp [MultiTapeTM.indicator, hmem]⟩
+  · rintro ⟨i, hi, hbit⟩
+    refine ⟨i, hi, ?_⟩
+    by_contra hmem
+    simp [MultiTapeTM.indicator, hmem] at hbit
+
+/-- **`P` is closed under a polynomial block-majority**: if `V ∈ P` then so is the
+set of pairs a strict majority of whose `a'·(n+1)^k'` blocks of length `a·(n+1)^k`
+passes `V`'s test, paired with the first component. -/
+theorem mem_P_of_blockMajority {V : Language Bool} (hV : V ∈ P) (a k a' k' : ℕ) :
+    {z : List Bool | a' * ((pairFstD z).length + 1) ^ k' <
+      2 * (List.range (a' * ((pairFstD z).length + 1) ^ k')).countP
+        (fun i => MultiTapeTM.indicator V (pairEncode (pairFstD z) (blockAt a k z i)))} ∈ P := by
+  have h := mem_P_of_test (polyTimeComputable_blockMajorityTest (test_of_mem_P hV) a k a' k')
+  convert h using 1
+  ext z
+  simp only [Set.mem_setOf_eq, decide_eq_true_eq]
+
+/-- **`P` is closed under a polynomial XOR-shifted block-OR**: on a nested pair
+`⟨⟨x, u⟩, v⟩`, if `V ∈ P` then so is the set of nested pairs some of whose
+`a'·(|x|+1)^k'` blocks of `u` of length `a·(|x|+1)^k`, XORed bitwise with `v`
+(truncating to the shorter word), passes `V`'s test paired with `x`. -/
+theorem mem_P_of_blockXorAny {V : Language Bool} (hV : V ∈ P) (a k a' k' : ℕ) :
+    {w : List Bool | ∃ i < a' * ((pairFstD (pairFstD w)).length + 1) ^ k',
+      pairEncode (pairFstD (pairFstD w))
+        (List.zipWith xor (pairSndD w) (blockAt a k (pairFstD w) i)) ∈ V} ∈ P := by
+  have h := mem_P_of_test (polyTimeComputable_blockXorAnyTest (test_of_mem_P hV) a k a' k')
+  convert h using 1
+  ext w
+  simp only [Set.mem_setOf_eq, List.any_eq_true, List.mem_range]
+  constructor
+  · rintro ⟨i, hi, hmem⟩
+    exact ⟨i, hi, by simp [MultiTapeTM.indicator, hmem]⟩
+  · rintro ⟨i, hi, hbit⟩
+    refine ⟨i, hi, ?_⟩
+    by_contra hmem
+    simp [MultiTapeTM.indicator, hmem] at hbit
 
 end Complexity

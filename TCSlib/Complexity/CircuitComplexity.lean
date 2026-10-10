@@ -30,6 +30,7 @@ import TCSlib.Complexity.CircuitComplexity.Adder
 import TCSlib.Complexity.CircuitComplexity.AdderLanguage
 import TCSlib.Complexity.CircuitComplexity.DAGHardFunctions
 import TCSlib.Complexity.CircuitComplexity.HardWire
+import TCSlib.Complexity.CircuitComplexity.PairEncode
 import TCSlib.Complexity.CircuitComplexity.Advice
 import TCSlib.Complexity.CircuitComplexity.UnaryCode
 import TCSlib.Complexity.CircuitComplexity.Uniform
@@ -106,6 +107,10 @@ import TCSlib.Complexity.CircuitComplexity.UniformTableauEmitterLayer
 import TCSlib.Complexity.CircuitComplexity.UniformTableauEmitterMain
 import TCSlib.Complexity.CircuitComplexity.UniformTableauEmitterSteps
 import TCSlib.Complexity.CircuitComplexity.UniformTableauSpec
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
 
 /-!
 # Circuit Complexity
@@ -203,6 +208,9 @@ both ways, so the two `P/poly`s coincide).
 - `CircuitComplexity.HardWire`: the hard-wiring construction of [AB09, Thm 6.18]'s proof —
   fixing some inputs of a circuit preserves its size — and the `P/poly` corollary for
   hard-wired advice.
+- `CircuitComplexity.PairEncode`: buffered input copies and fixed bits for the
+  self-delimiting pair encoding, giving the fixed-randomness circuits of
+  [AB09, Thm 7.17] with a size bound uniform in the random string.
 - `CircuitComplexity.Advice`: [AB09, Def 6.16] `DTIME(T)/a` (machine reads the
   self-delimiting pair `⟨x, αₙ⟩`), the class `⋃ DTIME(n^c)/n^d` of [AB09, Thm 6.18],
   `DTIME(T)/0 = DTIME(T)` (for `T(n) ≥ n + 1`) and `⋃_c DTIME(n^c + 1)/0 = P`, `P ⊆`

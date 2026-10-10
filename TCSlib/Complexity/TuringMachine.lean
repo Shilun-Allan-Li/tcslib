@@ -15,6 +15,7 @@ import TCSlib.Complexity.TuringMachine.Composition
 import TCSlib.Complexity.TuringMachine.UnaryTape
 import TCSlib.Complexity.TuringMachine.CounterProg
 import TCSlib.Complexity.TuringMachine.CounterProgRun
+import TCSlib.Complexity.TuringMachine.CounterProgInput
 import TCSlib.Complexity.TuringMachine.Build.Convention
 import TCSlib.Complexity.TuringMachine.Build.Wrappers
 import TCSlib.Complexity.TuringMachine.Build.Loop
@@ -38,6 +39,10 @@ import TCSlib.Complexity.TuringMachine.UniversalInterpreter
 import TCSlib.Complexity.TuringMachine.UniversalBlock
 import TCSlib.Complexity.TuringMachine.Universal
 import TCSlib.Complexity.TuringMachine.NDCodes
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
 
 /-!
 # Complexity — Turing machines
@@ -87,6 +92,8 @@ for the local modifications.
   transformers with their returning flavors, seam composition with the
   general-configuration forms and the release adapter, and the space-annotated
   catalog rows.
+* `CounterProgInput` — transport a counter-program run past an input prefix
+  that has already been consumed.
 * `Build/Convention`, `Build/Wrappers`, `Build/Loop`, `Build/Primitives` — the
   machine-construction library (`machine-library-design.md`): the `Cfg.ofWords` seam
   discipline, the capture/silence and halt-redirect wrappers with the timed branch,

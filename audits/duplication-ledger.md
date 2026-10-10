@@ -83,6 +83,12 @@ dead originals plus one live original eliminated by replacement**
 →Catalog originals (R2-3 wording); net −1,639 lines, −83 private
 declarations (76 dead + 7 replaced).
 
+## Watch items (design-parallel, no byte-copies)
+
+| Item | Status |
+|---|---|
+| **ch7 EmitIter layer vs the §12 layer** (merged with PR #11, 2026-10-10): `Build/EmitIterEmbed.lean`/`Build/EmitIterBody.lean` carry private `padAction`/`embedCfg` tape-padding, state-injecting embedding machinery written against main (which lacks `Build/Embed.lean`), structurally parallel to the §12 bank-embedding transformers; the emit-iteration host parallels the §12/Loop host family. The merge-time screen found **zero byte/near-copies** (new-public-name intersection empty; the ch7 modules consume main's public `exists_emitLoopTM`/`exists_emitCallTM`/`exists_installCallTM` rows by citation) — this is design duplication, not ledgered member duplication. | **12.2c docket** (user, 2026-10-10): harmonize to one embedding layer and one host family at the per-theme split; naming of the shared block primitive settled there too. The ch7-side block-stack audit (pinned surface `c4114867..d4503768`) restates these privates blind. |
+
 ## Acknowledgment and disposition state
 
 | Debt family | Acknowledgment | Cleanup owner and window |

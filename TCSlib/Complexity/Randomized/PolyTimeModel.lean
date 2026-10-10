@@ -1,0 +1,561 @@
+/-
+Copyright (c) 2026 The TCSlib Authors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: TCSlib Contributors
+-/
+import TCSlib.Complexity.Randomized.SipserGacs
+import TCSlib.Complexity.Randomized.Adleman
+import TCSlib.Complexity.ClassP.P
+import TCSlib.Complexity.ClassNP.PolyTimePrefix
+import TCSlib.Complexity.CircuitComplexity.PSubsetPPoly
+import TCSlib.Complexity.CircuitComplexity.PairEncode
+import TCSlib.Complexity.TuringMachine.Encoding
+import TCSlib.Complexity.PolyHierarchy.Defs
+import TCSlib.Complexity.PolyHierarchy.Normalize
+import TCSlib.Complexity.PolyHierarchy.Collapse
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+/-!
+# The polynomial-time verifier model
+
+The instantiation of `Randomized.VerifierModel` by genuine polynomial-time
+Turing machines, now that the Chapter 1–2 development (`Complexity.P`,
+`Complexity.PolyTimeComputable`, `Turing.pairEncode`, `Complexity.SigmaP`)
+is on `main`.  This connects the abstract Chapter 7 class theorems to the
+book's machine-based statements: each `ClosedUnder…` hypothesis becomes a
+a result about `P`, and the certificate-style `Σ₂` coincides with
+`Complexity.SigmaP 2`.
+
+## Main definitions
+
+* `Randomized.polyTimeModel` — the `VerifierModel` whose efficient verifiers
+  are those computed by a `P`-language on the `Turing.pairEncode`d input.
+
+## Main results
+
+* `Randomized.polyTimeModel_closedUnderRace` /
+  `…_closedUnderAnswerIs` / `…_closedUnderMajority` / `…_closedUnderAny` /
+  `…_closedUnderNot` / `…_closedUnderShiftOr` — the closure hypotheses of
+  `Randomized.Classes` and `Randomized.SipserGacs` hold for polynomial time.
+* `Randomized.inSigma2_polyTimeModel_iff` — certificate-style `Σ₂` for the
+  poly-time model coincides with `Complexity.SigmaP 2`.
+* `Randomized.zpp_eq_rp_inter_corp_polyTime`,
+  `Randomized.sipser_gacs_polyTime` — [AB09, Thm 7.8] and [AB09, Thm 7.18]
+  for polynomial-time machines, with no abstract hypotheses.
+
+## Deviations from the source
+
+None beyond those of `Randomized.Classes`: these declarations *discharge*
+the deviations by instantiating the abstract model.  With the library's
+`Complexity.P_subset_PPoly` ([AB09, Thm 6.6]) now available, Adleman's
+circuit hypothesis is dischargeable too
+(`Randomized.polyTimeModel_verifierHasCircuits`), so [AB09, Thm 7.17] is
+stated unconditionally as `Randomized.adleman_polyTime`.
+
+## References
+
+* [AB09] S. Arora, B. Barak, *Computational Complexity: A Modern Approach*,
+  Cambridge University Press, 2009.
+-/
+
+namespace Randomized
+
+open Complexity
+
+/-- The polynomial-time verifier model: a verifier is *efficient* when its
+output is computed by `P`-languages on the `Turing.pairEncode`d pair of
+input and random string (`some true`-set and `some false`-set each in `P`),
+and a two-witness predicate is efficient when its truth set, on the nested
+pairing used by `Complexity.SigmaP`, is in `P`.  This is "`M` is a
+polynomial-time TM" of [AB09, Def 7.4], in the library's encoding
+conventions. -/
+noncomputable def polyTimeModel : VerifierModel where
+  Eff M := ∃ V₁ V₀ : Language Bool, V₁ ∈ P ∧ V₀ ∈ P ∧
+    ∀ x r : List Bool,
+      (M x r = some true ↔ Turing.pairEncode x r ∈ V₁) ∧
+      (M x r = some false ↔ Turing.pairEncode x r ∈ V₀)
+  EffTwoWitness N := ∃ V : Language Bool, V ∈ P ∧
+    ∀ x u v : List Bool,
+      (N x u v = true ↔ Turing.pairEncode (Turing.pairEncode x u) v ∈ V)
+
+/-- Keep the input `x` and the first `polyLen a k |x|` bits of the random
+string: the pair-level reindexing behind the race and shifted constructions.
+On `Turing.pairEncode x r` it returns `Turing.pairEncode x (r.take (polyLen a k |x|))`. -/
+def sliceTake (a k : ℕ) (z : List Bool) : List Bool :=
+  Turing.pairEncode (pairFstD z) ((pairSndD z).take (polyLen a k (pairFstD z).length))
+
+/-- Keep the input `x` and drop the first `polyLen a k |x|` bits of the random
+string.  On `Turing.pairEncode x r` it returns
+`Turing.pairEncode x (r.drop (polyLen a k |x|))`. -/
+def sliceDrop (a k : ℕ) (z : List Bool) : List Bool :=
+  Turing.pairEncode (pairFstD z) ((pairSndD z).drop (polyLen a k (pairFstD z).length))
+
+/-- Take, from the second component of a pair, a prefix as long as the first
+component: on `Turing.pairEncode u s` it returns `s.take |u|`.  The
+length-gated prefix primitive underlying `sliceTake` (and the block slicing of
+the shifted construction); the polynomial `polyLen a k` enters only through the
+unary length `u`, so no in-machine exponentiation is needed. -/
+def takePrefixByLen (p : List Bool) : List Bool := (pairSndD p).take (pairFstD p).length
+
+/-- Drop, from the second component of a pair, a prefix as long as the first
+component: on `Turing.pairEncode u s` it returns `s.drop |u|`. -/
+def dropPrefixByLen (p : List Bool) : List Bool := (pairSndD p).drop (pairFstD p).length
+
+/-- `takePrefixByLen` is polynomial-time computable.
+**Proof sketch.** A single left-to-right pass (`Complexity.CounterProg`):
+mirror `Turing.pairDecode` over the doubled first component, counting its
+length `|u|` into a register; at the separator, copy the second component
+while the register counts down, truncating once it reaches zero.  Malformed
+inputs (`pairDecode = none`) halt with empty output, matching
+`pairFstD`/`pairSndD = []`.  The abstract step count is linear in `|p|`, so
+`Complexity.CounterProg.polyTimeComputable` applies. -/
+theorem polyTimeComputable_takePrefixByLen : PolyTimeComputable takePrefixByLen := by
+  simpa only [takePrefixByLen, Complexity.PrefixByLength.take] using
+    Complexity.polyTimeComputable_takePrefixByLength
+
+/-- `dropPrefixByLen` is polynomial-time computable.
+**Proof sketch.** As `takePrefixByLen`, but the copy phase emits only after the
+length register has counted down past the first `|u|` bits of the second
+component. -/
+theorem polyTimeComputable_dropPrefixByLen : PolyTimeComputable dropPrefixByLen := by
+  simpa only [dropPrefixByLen, Complexity.PrefixByLength.drop] using
+    Complexity.polyTimeComputable_dropPrefixByLength
+
+/-- `sliceTake a k` is polynomial-time computable.
+**Proof.** `polyLen a k |x| = a·(|x|+1)^k` is available as a *unary* string via
+`Complexity.polyTimeComputable_polyUnary`; pair it with the random string and
+apply `takePrefixByLen`, which truncates to that length without any in-machine
+exponentiation. -/
+theorem polyTimeComputable_sliceTake (a k : ℕ) :
+    PolyTimeComputable (sliceTake a k) := by
+  have hu : PolyTimeComputable
+      (fun z => List.replicate (polyLen a k (pairFstD z).length) true) :=
+    (polyTimeComputable_polyUnary a k).comp polyTimeComputable_pairFstD
+  have henc : PolyTimeComputable (fun z => Turing.pairEncode
+      (List.replicate (polyLen a k (pairFstD z).length) true) (pairSndD z)) :=
+    PolyTimeComputable.pairEncode hu polyTimeComputable_pairSndD
+  have hg : PolyTimeComputable
+      (fun z => (pairSndD z).take (polyLen a k (pairFstD z).length)) := by
+    have heq : (fun z => (pairSndD z).take (polyLen a k (pairFstD z).length)) =
+        takePrefixByLen ∘ (fun z => Turing.pairEncode
+          (List.replicate (polyLen a k (pairFstD z).length) true) (pairSndD z)) := by
+      funext z
+      simp only [Function.comp, takePrefixByLen, pairFstD_pairEncode, pairSndD_pairEncode,
+        List.length_replicate]
+    rw [heq]
+    exact polyTimeComputable_takePrefixByLen.comp henc
+  exact PolyTimeComputable.pairEncode polyTimeComputable_pairFstD hg
+
+/-- `sliceDrop a k` is polynomial-time computable.
+**Proof.** As `sliceTake`, with `dropPrefixByLen` in place of
+`takePrefixByLen`. -/
+theorem polyTimeComputable_sliceDrop (a k : ℕ) :
+    PolyTimeComputable (sliceDrop a k) := by
+  have hu : PolyTimeComputable
+      (fun z => List.replicate (polyLen a k (pairFstD z).length) true) :=
+    (polyTimeComputable_polyUnary a k).comp polyTimeComputable_pairFstD
+  have henc : PolyTimeComputable (fun z => Turing.pairEncode
+      (List.replicate (polyLen a k (pairFstD z).length) true) (pairSndD z)) :=
+    PolyTimeComputable.pairEncode hu polyTimeComputable_pairSndD
+  have hg : PolyTimeComputable
+      (fun z => (pairSndD z).drop (polyLen a k (pairFstD z).length)) := by
+    have heq : (fun z => (pairSndD z).drop (polyLen a k (pairFstD z).length)) =
+        dropPrefixByLen ∘ (fun z => Turing.pairEncode
+          (List.replicate (polyLen a k (pairFstD z).length) true) (pairSndD z)) := by
+      funext z
+      simp only [Function.comp, dropPrefixByLen, pairFstD_pairEncode, pairSndD_pairEncode,
+        List.length_replicate]
+    rw [heq]
+    exact polyTimeComputable_dropPrefixByLen.comp henc
+  exact PolyTimeComputable.pairEncode polyTimeComputable_pairFstD hg
+
+/-- Polynomial time is closed under the race construction.
+**Proof sketch.** The `some true`-set of the race is the preimage of `M₁`'s
+`some true`-set `V₁` under `sliceTake a k`, and the `some false`-set is the
+intersection of the complement of that preimage with the preimage of `M₂`'s
+`some true`-set `V₂` under `sliceDrop a k`; both are in `P` by
+`Complexity.preimage_mem_P`, `Complexity.compl_mem_P`, and
+`Complexity.inter_mem_P`, once `sliceTake`/`sliceDrop` are polynomial-time
+(`polyTimeComputable_sliceTake`/`_sliceDrop`).  The off-pair freedom in the
+efficiency notion lets us use these preimages verbatim. -/
+theorem polyTimeModel_closedUnderRace : ClosedUnderRace polyTimeModel := by
+  rintro M₁ M₂ a k ⟨V₁, _, hV₁, _, hM₁⟩ ⟨V₂, _, hV₂, _, hM₂⟩
+  refine ⟨sliceTake a k ⁻¹' V₁,
+    {z | z ∈ (sliceTake a k ⁻¹' V₁)ᶜ ∧ z ∈ sliceDrop a k ⁻¹' V₂},
+    preimage_mem_P hV₁ (polyTimeComputable_sliceTake a k),
+    inter_mem_P (compl_mem_P (preimage_mem_P hV₁ (polyTimeComputable_sliceTake a k)))
+      (preimage_mem_P hV₂ (polyTimeComputable_sliceDrop a k)),
+    fun x r => ?_⟩
+  have hv1 : (Turing.pairEncode x r ∈ sliceTake a k ⁻¹' V₁) ↔
+      M₁ x (r.take (polyLen a k x.length)) = true := by
+    simp only [Set.mem_preimage, sliceTake, pairFstD_pairEncode, pairSndD_pairEncode]
+    have h := (hM₁ x (r.take (polyLen a k x.length))).1
+    simp only [boolVerifier, Option.some.injEq] at h
+    exact h.symm
+  have hv2 : (Turing.pairEncode x r ∈ sliceDrop a k ⁻¹' V₂) ↔
+      M₂ x (r.drop (polyLen a k x.length)) = true := by
+    simp only [Set.mem_preimage, sliceDrop, pairFstD_pairEncode, pairSndD_pairEncode]
+    have h := (hM₂ x (r.drop (polyLen a k x.length))).1
+    simp only [boolVerifier, Option.some.injEq] at h
+    exact h.symm
+  refine ⟨?_, ?_⟩
+  · rw [hv1]
+    cases h1 : M₁ x (r.take (polyLen a k x.length)) <;>
+      cases h2 : M₂ x (r.drop (polyLen a k x.length)) <;>
+      simp [raceVerifier, h1, h2]
+  · rw [Set.mem_setOf_eq, Set.mem_compl_iff, hv1, hv2]
+    cases h1 : M₁ x (r.take (polyLen a k x.length)) <;>
+      cases h2 : M₂ x (r.drop (polyLen a k x.length)) <;>
+      simp [raceVerifier, h1, h2]
+
+/-- Polynomial time is closed under the output-postprocessing construction.
+**Proof sketch.** The `some b`-set of `M` is literally one of the two
+`P`-languages witnessing `Eff M`, and the `some (!b)`-set of the resulting
+Boolean verifier is its complement (`Complexity.compl_mem_P`). -/
+theorem polyTimeModel_closedUnderAnswerIs :
+    ClosedUnderAnswerIs polyTimeModel := by
+  rintro M b ⟨V₁, V₀, hV₁, hV₀, hM⟩
+  cases b
+  · refine ⟨V₀, V₀ᶜ, hV₀, compl_mem_P hV₀, fun x r => ?_⟩
+    have h := (hM x r).2
+    constructor
+    · show some (decide (M x r = some false)) = some true ↔ _
+      simp only [Option.some.injEq, decide_eq_true_eq]
+      exact h
+    · show some (decide (M x r = some false)) = some false ↔ _
+      simp only [Option.some.injEq, decide_eq_false_iff_not]
+      rw [h]
+      exact Iff.rfl
+  · refine ⟨V₁, V₁ᶜ, hV₁, compl_mem_P hV₁, fun x r => ?_⟩
+    have h := (hM x r).1
+    constructor
+    · show some (decide (M x r = some true)) = some true ↔ _
+      simp only [Option.some.injEq, decide_eq_true_eq]
+      exact h
+    · show some (decide (M x r = some true)) = some false ↔ _
+      simp only [Option.some.injEq, decide_eq_false_iff_not]
+      rw [h]
+      exact Iff.rfl
+
+/-- Polynomial time is closed under polynomial majority repetition.
+**Proof sketch.** The `some true`-set of the majority verifier is exactly the
+block-majority closure `Complexity.mem_P_of_blockMajority` at `M`'s
+`some true`-language `V₁` (the vote over block `i` is the indicator of
+`sliceTake`-style block `i`, by the efficiency witness), and the `some
+false`-set is its complement (`Complexity.compl_mem_P`).  The off-pair
+freedom in the efficiency notion lets us use these sets verbatim. -/
+theorem polyTimeModel_closedUnderMajority :
+    ClosedUnderMajority polyTimeModel := by
+  classical
+  rintro M a k a' k' ⟨V₁, _, hV₁, _, hM⟩
+  have hblock := mem_P_of_blockMajority hV₁ a k a' k'
+  refine ⟨_, _, hblock, compl_mem_P hblock, fun x r => ?_⟩
+  have hMt : ∀ s : List Bool, M x s = true ↔ Turing.pairEncode x s ∈ V₁ := by
+    intro s
+    have h := (hM x s).1
+    simpa only [boolVerifier, Option.some.injEq] using h
+  have hcount : ∀ l : List ℕ,
+      l.countP (fun i => Turing.MultiTapeTM.indicator V₁
+          (Turing.pairEncode x ((r.drop (i * (a * (x.length + 1) ^ k))).take
+            (a * (x.length + 1) ^ k)))) =
+        l.countP (fun i => M x ((r.drop (i * (a * (x.length + 1) ^ k))).take
+          (a * (x.length + 1) ^ k))) := by
+    intro l
+    apply List.countP_congr
+    intro i _
+    have hi := hMt ((r.drop (i * (a * (x.length + 1) ^ k))).take (a * (x.length + 1) ^ k))
+    by_cases hb : M x ((r.drop (i * (a * (x.length + 1) ^ k))).take
+        (a * (x.length + 1) ^ k)) = true
+    · simp [Turing.MultiTapeTM.indicator, hi.mp hb, hb]
+    · have hnot : Turing.pairEncode x ((r.drop (i * (a * (x.length + 1) ^ k))).take
+          (a * (x.length + 1) ^ k)) ∉ V₁ := fun hc => hb (hi.mpr hc)
+      simp [Turing.MultiTapeTM.indicator, hnot, Bool.eq_false_iff.mpr hb]
+  have hmem : Turing.pairEncode x r ∈
+      {z : List Bool | a' * ((pairFstD z).length + 1) ^ k' <
+        2 * (List.range (a' * ((pairFstD z).length + 1) ^ k')).countP
+          (fun i => Turing.MultiTapeTM.indicator V₁
+            (Turing.pairEncode (pairFstD z) (blockAt a k z i)))} ↔
+      majorityVerifier M (polyLen a k) (polyLen a' k') x r = true := by
+    simp only [Set.mem_setOf_eq, pairFstD_pairEncode, pairSndD_pairEncode,
+      majorityVerifier, polyLen, blockAt, decide_eq_true_eq]
+    rw [hcount]
+  constructor
+  · constructor
+    · intro h
+      exact hmem.mpr (by simpa only [boolVerifier, Option.some.injEq] using h)
+    · intro hw
+      exact congrArg some (hmem.mp hw)
+  · constructor
+    · intro h hw
+      have ht := hmem.mp hw
+      have hf : majorityVerifier M (polyLen a k) (polyLen a' k') x r = false := by
+        simpa only [boolVerifier, Option.some.injEq] using h
+      exact absurd (ht.symm.trans hf) (by decide)
+    · intro hc
+      cases hb : majorityVerifier M (polyLen a k) (polyLen a' k') x r with
+      | false => exact congrArg some hb
+      | true => exact absurd (hmem.mpr hb) (fun hw => hc hw)
+
+/-- Polynomial time is closed under polynomial `OR`-repetition.
+**Proof sketch.** As for the majority closure, via the block-OR closure
+`Complexity.mem_P_of_blockAny`: the `some true`-set of the `OR`-verifier is
+the set of pairs some of whose random blocks puts the re-paired input in
+`M`'s `some true`-language, and the `some false`-set is its complement. -/
+theorem polyTimeModel_closedUnderAny : ClosedUnderAny polyTimeModel := by
+  classical
+  rintro M a k a' k' ⟨V₁, _, hV₁, _, hM⟩
+  have hblock := mem_P_of_blockAny hV₁ a k a' k'
+  refine ⟨_, _, hblock, compl_mem_P hblock, fun x r => ?_⟩
+  have hMt : ∀ s : List Bool, M x s = true ↔ Turing.pairEncode x s ∈ V₁ := by
+    intro s
+    have h := (hM x s).1
+    simpa only [boolVerifier, Option.some.injEq] using h
+  have hmem : Turing.pairEncode x r ∈
+      {z : List Bool | ∃ i < a' * ((pairFstD z).length + 1) ^ k',
+        Turing.pairEncode (pairFstD z) (blockAt a k z i) ∈ V₁} ↔
+      anyVerifier M (polyLen a k) (polyLen a' k') x r = true := by
+    simp only [Set.mem_setOf_eq, pairFstD_pairEncode, pairSndD_pairEncode,
+      anyVerifier, polyLen, blockAt, List.any_eq_true, List.mem_range]
+    constructor
+    · rintro ⟨i, hi, hv⟩
+      exact ⟨i, hi, (hMt _).mpr hv⟩
+    · rintro ⟨i, hi, hv⟩
+      exact ⟨i, hi, (hMt _).mp hv⟩
+  constructor
+  · constructor
+    · intro h
+      exact hmem.mpr (by simpa only [boolVerifier, Option.some.injEq] using h)
+    · intro hw
+      exact congrArg some (hmem.mp hw)
+  · constructor
+    · intro h hw
+      have ht := hmem.mp hw
+      have hf : anyVerifier M (polyLen a k) (polyLen a' k') x r = false := by
+        simpa only [boolVerifier, Option.some.injEq] using h
+      exact absurd (ht.symm.trans hf) (by decide)
+    · intro hc
+      cases hb : anyVerifier M (polyLen a k) (polyLen a' k') x r with
+      | false => exact congrArg some hb
+      | true => exact absurd (hmem.mpr hb) (fun hw => hc hw)
+
+/-- Polynomial time is closed under negating the verifier's answer.
+**Proof.** Swap the two witnessing `P`-languages. -/
+theorem polyTimeModel_closedUnderNot : ClosedUnderNot polyTimeModel := by
+  rintro M ⟨V₁, V₀, hV₁, hV₀, hM⟩
+  refine ⟨V₀, V₁, hV₀, hV₁, fun x r => ?_⟩
+  have h := hM x r
+  simp only [boolVerifier, Option.some.injEq] at h ⊢
+  rw [Bool.not_eq_true', Bool.not_eq_false']
+  exact ⟨h.2, h.1⟩
+
+/-- Polynomial time recognizes the shifted-OR construction.
+**Proof sketch.** Decode the nested pair, slice `u` into its
+`polyLen a' k' |x|` shift blocks, and XOR each with `v`.  Here
+`shiftOrVerifier` uses `List.zipWith xor v block`, which is poly-time on
+lists of *arbitrary* lengths and truncates to the shorter of `|v|` and the
+block length; the exact-length witnesses quantified in `InSigma2` (where
+`|v|` equals the block length) recover the book's equal-length bitwise XOR.
+Run the `P`-verifier on each XORed block and `OR` the results — the
+XOR-shifted block-OR closure `Complexity.mem_P_of_blockXorAny` at `M`'s
+`some true`-language, on the nested pairing used by `Complexity.SigmaP`. -/
+theorem polyTimeModel_closedUnderShiftOr :
+    ClosedUnderShiftOr polyTimeModel := by
+  classical
+  rintro M a k a' k' ⟨V₁, _, hV₁, _, hM⟩
+  have hblock := mem_P_of_blockXorAny hV₁ a k a' k'
+  refine ⟨_, hblock, fun x u v => ?_⟩
+  have hMt : ∀ s : List Bool, M x s = true ↔ Turing.pairEncode x s ∈ V₁ := by
+    intro s
+    have h := (hM x s).1
+    simpa only [boolVerifier, Option.some.injEq] using h
+  have hbridge : Turing.pairEncode (Turing.pairEncode x u) v ∈
+      {w : List Bool | ∃ i < a' * ((pairFstD (pairFstD w)).length + 1) ^ k',
+        Turing.pairEncode (pairFstD (pairFstD w))
+          (List.zipWith xor (pairSndD w) (blockAt a k (pairFstD w) i)) ∈ V₁} ↔
+      ∃ i < a' * (x.length + 1) ^ k',
+        Turing.pairEncode x (List.zipWith xor v
+          ((u.drop (i * (a * (x.length + 1) ^ k))).take (a * (x.length + 1) ^ k))) ∈ V₁ := by
+    simp only [Set.mem_setOf_eq, pairFstD_pairEncode, pairSndD_pairEncode, blockAt]
+  have hleft : shiftOrVerifier M (polyLen a k) (polyLen a' k') x u v = true ↔
+      ∃ i < a' * (x.length + 1) ^ k',
+        Turing.pairEncode x (List.zipWith xor v
+          ((u.drop (i * (a * (x.length + 1) ^ k))).take (a * (x.length + 1) ^ k))) ∈ V₁ := by
+    simp only [shiftOrVerifier, polyLen, List.any_eq_true, List.mem_range]
+    constructor
+    · rintro ⟨i, hi, hv⟩
+      exact ⟨i, hi, (hMt _).mp hv⟩
+    · rintro ⟨i, hi, hv⟩
+      exact ⟨i, hi, (hMt _).mpr hv⟩
+  exact hleft.trans hbridge.symm
+
+/-- Polynomial-time verifiers have polynomial-size circuits when their
+random string is fixed, with one size bound uniform in the random string:
+the form of [AB09, Thm 6.6] that Adleman's counting argument consumes.
+**Proof sketch.** Apply `Complexity.P_subset_PPoly` to the verifier's paired
+acceptance language. For each input length and fixed random string, the
+resulting circuit reads the doubled input bits, the separator, and the
+random bits. A buffer supplies two distinct copies of each input bit and
+constants for the separator and random string. Shifting all old vertex
+numbers preserves distinct gate inputs and fan-in at most two.
+
+The buffer adds exactly the number of free input bits to the old circuit
+size. The paired length is bounded by a polynomial in the input length,
+with coefficients depending only on the original randomness schedule.
+Composing this bound with the circuit family's size polynomial gives one
+bound uniform in the contents of the fixed random string. -/
+theorem polyTimeModel_verifierHasCircuits :
+    ∀ M a k, polyTimeModel.Eff (boolVerifier M) →
+      VerifierHasCircuits M (polyLen a k) := by
+  classical
+  rintro M a k ⟨V₁, V₀, hV₁, hV₀, hM⟩
+  have hPoly : V₁.InPPoly := Complexity.P_subset_PPoly hV₁
+  obtain ⟨b, j, F, hF, hSize, hLanguage⟩ := hPoly
+  refine ⟨b * (a + 3) ^ j + 1, (k + 1) * (j + 1), fun n r hr => ?_⟩
+  let ell := 2 * n + 2 + r.length
+  let C := F.circuit ell
+  let D : BoolCircuit.DAGCircuit n := BoolCircuit.DAGCircuit.pairEncode r C
+  have hD : D.IsFaninTwo :=
+    BoolCircuit.DAGCircuit.pairEncode_isFaninTwo r C (hF ell)
+  refine ⟨D, hD.1, hD, ?_, fun v => ?_⟩
+  · -- The paired length is polynomial in n, uniformly in the chosen random string.
+    have hN : 0 < n + 1 := Nat.succ_pos n
+    have hnPow : n + 1 ≤ (n + 1) ^ (k + 1) :=
+      Nat.le_self_pow (Nat.succ_ne_zero k) (n + 1)
+    have hkPow : (n + 1) ^ k ≤ (n + 1) ^ (k + 1) :=
+      Nat.pow_le_pow_right hN (Nat.le_succ k)
+    have hLen : ell + 1 ≤ (a + 3) * (n + 1) ^ (k + 1) := by
+      dsimp only [ell]
+      rw [hr]
+      unfold polyLen
+      nlinarith [Nat.mul_le_mul_left a hkPow]
+    have hCircuit : C.size ≤
+        b * (a + 3) ^ j * (n + 1) ^ ((k + 1) * j) := by
+      calc
+        C.size ≤ b * (ell + 1) ^ j := hSize ell
+        _ ≤ b * ((a + 3) * (n + 1) ^ (k + 1)) ^ j :=
+          Nat.mul_le_mul_left b (Nat.pow_le_pow_left hLen j)
+        _ = b * (a + 3) ^ j * (n + 1) ^ ((k + 1) * j) := by
+          rw [mul_pow, ← pow_mul]
+          ring
+    have hExponent : (k + 1) * j ≤ (k + 1) * (j + 1) :=
+      Nat.mul_le_mul_left (k + 1) (Nat.le_succ j)
+    have hCircuit' : C.size ≤
+        b * (a + 3) ^ j * (n + 1) ^ ((k + 1) * (j + 1)) :=
+      hCircuit.trans (Nat.mul_le_mul_left (b * (a + 3) ^ j)
+        (Nat.pow_le_pow_right hN hExponent))
+    have hPositive : 0 < (k + 1) * (j + 1) :=
+      Nat.mul_pos (Nat.succ_pos k) (Nat.succ_pos j)
+    have hnSize : n ≤ (n + 1) ^ ((k + 1) * (j + 1)) :=
+      (Nat.le_succ n).trans
+        (Nat.le_self_pow (Nat.ne_of_gt hPositive) (n + 1))
+    calc
+      D.size = n + C.size := BoolCircuit.DAGCircuit.pairEncode_size r C
+      _ ≤ (n + 1) ^ ((k + 1) * (j + 1)) +
+          b * (a + 3) ^ j * (n + 1) ^ ((k + 1) * (j + 1)) :=
+        Nat.add_le_add hnSize hCircuit'
+      _ = (b * (a + 3) ^ j + 1) *
+          (n + 1) ^ ((k + 1) * (j + 1)) := by ring
+  · -- The buffer feeds the old circuit exactly the encoded pair (x,r).
+    rw [BoolCircuit.DAGCircuit.pairEncode_eval r C v]
+    have hAccept : C.eval (BoolCircuit.pairEncodeInput r v) = true ↔
+        Turing.pairEncode (List.ofFn v) r ∈ V₁ := by
+      rw [← hLanguage]
+      exact BoolCircuit.DAGCircuitFamily.pairEncode_eval_eq_true_iff F r v
+    have hVerifier := (hM (List.ofFn v) r).1
+    simp only [boolVerifier, Option.some.injEq] at hVerifier
+    have hCorrect := hAccept.trans hVerifier.symm
+    cases hC : C.eval (BoolCircuit.pairEncodeInput r v) <;>
+      cases hV : M (List.ofFn v) r <;> simp_all
+
+/-- **Adleman's theorem for polynomial-time machines** ([AB09, Thm 7.17],
+unconditionally): `BPP ⊆ P/poly`, with both sides the library's own classes
+(`InBPP polyTimeModel` and `Language.InPPoly`). -/
+theorem adleman_polyTime {L : Language Bool}
+    (hL : InBPP polyTimeModel L) : L.InPPoly :=
+  adleman polyTimeModel polyTimeModel_closedUnderMajority hL
+    polyTimeModel_verifierHasCircuits
+
+/-- Certificate-style `Σ₂` over the polynomial-time model coincides with the
+library's `Complexity.SigmaP 2` ([AB09, Definition 5.3]).
+**Proof sketch.** Both say: a `P`-predicate of the nested pair
+`⟨⟨x, u⟩, v⟩` with `∃ u ∀ v` over blocks of length `C·(|x|+1)^c`.  The two
+length normal forms (`polyLen a k` here, `C·(n+1)^c` in `PolyHierarchy`)
+are identical, so the translation is a re-bracketing of the quantifiers
+plus padding of the two block lengths to a common bound. -/
+theorem inSigma2_polyTimeModel_iff (L : Language Bool) :
+    InSigma2 polyTimeModel L ↔ L ∈ SigmaP 2 := by
+  classical
+  constructor
+  · rintro ⟨N, a₁, k₁, a₂, k₂, ⟨V, hV, hN⟩, hiff⟩
+    have h₁ : PolyHierarchy.UnaryPT
+        (fun y : List Bool => polyLen a₁ k₁ y.length) := by
+      have h := PolyHierarchy.unaryPT_poly a₁ k₁ polyTimeComputable_id
+      simpa [polyLen] using h
+    have h₂ : PolyHierarchy.UnaryPT
+        (fun y : List Bool => polyLen a₂ k₂ y.length) := by
+      have h := PolyHierarchy.unaryPT_poly a₂ k₂ polyTimeComputable_id
+      simpa [polyLen] using h
+    have hmem := PolyHierarchy.mem_altClass_of_normal (b := true) (i := 1)
+      hV polyTimeComputable_id h₁ h₂
+    have hkey : L = {y | qStep true (polyLen a₁ k₁ y.length)
+        fun U => altQuant V (polyLen a₂ k₂ y.length) false 1
+          (id (Turing.pairEncode y U))} := by
+      ext y
+      rw [Set.mem_setOf_eq, hiff y]
+      constructor
+      · rintro ⟨u, hu, hall⟩
+        refine ⟨u, hu, fun v hv => ?_⟩
+        show Turing.pairEncode (Turing.pairEncode y u) v ∈ V
+        exact (hN y u v).mp (hall v hv)
+      · rintro ⟨u, hu, hall⟩
+        refine ⟨u, hu, fun v hv => ?_⟩
+        exact (hN y u v).mpr (hall v hv)
+    rw [hkey]
+    exact hmem
+  · intro hL
+    obtain ⟨C, c, V, hV, hiff⟩ := mem_SigmaP_two_iff_exists_forall.mp hL
+    refine ⟨fun x u v =>
+        decide (Turing.pairEncode (Turing.pairEncode x u) v ∈ V),
+      C, c, C, c,
+      ⟨V, hV, fun x u v => by rw [decide_eq_true_eq]⟩, fun x => ?_⟩
+    rw [hiff x]
+    constructor
+    · rintro ⟨u, hu, hall⟩
+      refine ⟨u, hu, fun v hv => ?_⟩
+      rw [decide_eq_true_eq]
+      exact hall v hv
+    · rintro ⟨u, hu, hall⟩
+      refine ⟨u, hu, fun v hv => ?_⟩
+      have h := hall v hv
+      rw [decide_eq_true_eq] at h
+      exact h
+
+/-- **`ZPP = RP ∩ coRP` for polynomial-time machines** ([AB09, Thm 7.8],
+unconditionally): the abstract theorem at `polyTimeModel`, with every
+closure hypothesis discharged. -/
+theorem zpp_eq_rp_inter_corp_polyTime (L : Language Bool) :
+    InZPP polyTimeModel L ↔ InRP polyTimeModel L ∧ InCoRP polyTimeModel L :=
+  inZPP_iff_inRP_and_inCoRP polyTimeModel polyTimeModel_closedUnderRace
+    polyTimeModel_closedUnderAnswerIs polyTimeModel_closedUnderAny L
+
+/-- **Sipser–Gács for polynomial-time machines** ([AB09, Thm 7.18],
+unconditionally): `BPP ⊆ Σ₂ᵖ ∩ Π₂ᵖ` with the library's own polynomial
+hierarchy (`Complexity.SigmaP`/`Complexity.PiP`).
+
+**Proof sketch.** The abstract `sipser_gacs` at `polyTimeModel` with its
+closure hypotheses discharged, transported along
+`inSigma2_polyTimeModel_iff` (and its complement instance for the `Π₂`
+half). -/
+theorem sipser_gacs_polyTime {L : Language Bool}
+    (hL : InBPP polyTimeModel L) :
+    L ∈ SigmaP 2 ∧ L ∈ PiP 2 := by
+  obtain ⟨h1, h2⟩ := sipser_gacs polyTimeModel
+    polyTimeModel_closedUnderMajority polyTimeModel_closedUnderNot
+    polyTimeModel_closedUnderShiftOr hL
+  exact ⟨(inSigma2_polyTimeModel_iff L).mp h1,
+    (inSigma2_polyTimeModel_iff Lᶜ).mp h2⟩
+
+end Randomized
