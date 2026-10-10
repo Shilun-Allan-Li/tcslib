@@ -35,6 +35,9 @@ polynomial, giving `L ⊆ P` and "logspace computations run in polynomial time" 
 
 * `Turing.MultiTapeTM.abs_pos_lt_card_visited` — the visited cells of a tape form an
   interval around the origin, so every visited position `z` has `|z| < #visited`.
+* `Turing.MultiTapeTM.ConfigCount.abs_lt_card_image_of_unitSteps`,
+  `Turing.MultiTapeTM.ConfigCount.mem_image_workTapePos_of_ne_none` — their run-generic forms,
+  shared with nondeterministic runs (added 2026-10-10).
 * `Turing.FinTM.ComputesInTime.of_spaceUsed_le` — a computation that has halted by time `t`
   having visited at most `s` cells has in fact halted by time `configBound M |x| s`.
   [AB09, §4.1.1, the deterministic case of Thm 4.2]
@@ -159,6 +162,76 @@ lemma exists_eq_of_between (p : ℕ → ℤ) (h0 : p 0 = 0) (hstep : ∀ j, |p (
       exact ⟨j, by omega, hpj⟩
     · exact ⟨t + 1, le_rfl, by omega⟩
 
+/-- An integer sequence starting at `0` and moving by at most one per step: every attained
+value `z` up to time `t` satisfies `|z| < #(values attained up to t)`. The run-generic form
+of `Turing.MultiTapeTM.abs_pos_lt_card_visited`, shared with nondeterministic runs (added
+2026-10-10).
+
+**Proof sketch.** The attained set contains the `|z| + 1` integers between `0` and `z`, by the
+discrete intermediate value theorem `exists_eq_of_between`; compare cardinalities
+(`Int.card_Icc`). -/
+lemma abs_lt_card_image_of_unitSteps (p : ℕ → ℤ) (h0 : p 0 = 0)
+    (hstep : ∀ j, |p (j + 1) - p j| ≤ 1) (t : ℕ) {z : ℤ}
+    (hz : z ∈ (Finset.range (t + 1)).image p) :
+    |z| < ((Finset.range (t + 1)).image p).card := by
+  obtain ⟨t', ht', hzt⟩ : ∃ t' ≤ t, p t' = z := by
+    simp only [Finset.mem_image, Finset.mem_range] at hz
+    obtain ⟨t', ht', h⟩ := hz
+    exact ⟨t', by omega, h⟩
+  have hsub : Finset.Icc (min 0 z) (max 0 z) ⊆ (Finset.range (t + 1)).image p := by
+    intro y hy
+    rw [Finset.mem_Icc] at hy
+    obtain ⟨j, hj, hpj⟩ := exists_eq_of_between p h0 hstep t' y (by
+      rw [hzt]; rcases le_total 0 z with h | h
+      · left; simp only [min_eq_left h, max_eq_right h] at hy; omega
+      · right; simp only [min_eq_right h, max_eq_left h] at hy; omega)
+    simp only [Finset.mem_image, Finset.mem_range]
+    exact ⟨j, by omega, hpj⟩
+  have hc := Finset.card_le_card hsub
+  rw [Int.card_Icc] at hc
+  rcases le_total 0 z with h | h
+  · simp only [min_eq_left h, max_eq_right h] at hc
+    rw [abs_of_nonneg h]; omega
+  · simp only [min_eq_right h, max_eq_left h] at hc
+    rw [abs_of_nonpos h]; omega
+
+/-- Along any sequence of configurations from blank work tapes in which each step is the
+identity or one applied action, a cell that is nonblank at time `t` was under its head at
+some time `≤ t`. The run-generic form of `Turing.MultiTapeTM.mem_visited_of_ne_none`, shared
+with nondeterministic runs (added 2026-10-10).
+
+**Proof sketch.** Induction on `t`. Initially every cell is blank. An applied action writes
+only the cell under the head, which is visited at that step; other cells keep their
+contents. -/
+lemma mem_image_workTapePos_of_ne_none {k : ℕ} {Symbol State : Type*} {input : List Symbol}
+    (cs : ℕ → Cfg k Symbol State input) (h0 : ∀ i z, (cs 0).workTapes i z = none)
+    (hstep : ∀ j, cs (j + 1) = cs j ∨ ∃ a : Action k Symbol State, cs (j + 1) = a.apply (cs j))
+    (t : ℕ) (i : Fin k) (z : ℤ) (hz : (cs t).workTapes i z ≠ none) :
+    z ∈ (Finset.range (t + 1)).image fun j => (cs j).workTapePos i := by
+  induction t with
+  | zero => exact absurd (h0 i z) hz
+  | succ t ih =>
+    simp only [Finset.mem_image, Finset.mem_range] at ih ⊢
+    rcases hstep t with h | ⟨a, h⟩
+    · rw [h] at hz
+      obtain ⟨j, hj, hj'⟩ := ih hz
+      exact ⟨j, by omega, hj'⟩
+    · rw [h] at hz
+      dsimp only [Action.apply] at hz
+      cases hw : (a.workTapes i).1 with
+      | none =>
+        rw [hw] at hz
+        obtain ⟨j, hj, hj'⟩ := ih hz
+        exact ⟨j, by omega, hj'⟩
+      | some s =>
+        rw [hw] at hz
+        dsimp only at hz
+        by_cases hzp : z = (cs t).workTapePos i
+        · exact ⟨t, by omega, hzp.symm⟩
+        · rw [Function.update_of_ne hzp] at hz
+          obtain ⟨j, hj, hj'⟩ := ih hz
+          exact ⟨j, by omega, hj'⟩
+
 end ConfigCount
 
 open ConfigCount
@@ -170,74 +243,34 @@ interval between `0` and `z`.
 **Proof sketch.** The visited set contains `0` (the start) and, by the discrete intermediate
 value theorem (`exists_eq_of_between`, the head moves by at most one cell per step), every
 integer between `0` and any visited `z`. So it contains the `|z| + 1` integers between `0` and
-`z`, and its cardinality exceeds `|z|`. -/
+`z`, and its cardinality exceeds `|z|`. (Since 2026-10-10 this is an instance of the
+run-generic `ConfigCount.abs_lt_card_image_of_unitSteps`.) -/
 lemma abs_pos_lt_card_visited (tm : MultiTapeTM k Bool S) (x : List Bool) (t : ℕ)
     (i : Fin k) {z : ℤ} (hz : z ∈ tm.visitedByTapeHead (tm.initCfg x) t i) :
-    |z| < (tm.visitedByTapeHead (tm.initCfg x) t i).card := by
-  set p : ℕ → ℤ := fun j => (tm.runFrom (tm.initCfg x) j).workTapePos i with hpdef
-  have h0 : p 0 = 0 := by simp [p]
-  have hstep : ∀ j, |p (j + 1) - p j| ≤ 1 := by
-    intro j
-    simp only [p, runFrom_succ_eq_step']
-    exact tm.workTapePos_step_le _ i
-  obtain ⟨t', ht', hzt⟩ : ∃ t' ≤ t, p t' = z := by
-    simp only [visitedByTapeHead, Finset.mem_image, Finset.mem_range] at hz
-    obtain ⟨t', ht', h⟩ := hz
-    exact ⟨t', by omega, h⟩
-  -- the interval between `0` and `z` lies in the visited set
-  have hsub : Finset.Icc (min 0 z) (max 0 z) ⊆ tm.visitedByTapeHead (tm.initCfg x) t i := by
-    intro y hy
-    rw [Finset.mem_Icc] at hy
-    obtain ⟨j, hj, hpj⟩ := exists_eq_of_between p h0 hstep t' y (by
-      rw [hzt]; rcases le_total 0 z with h | h
-      · left; simp only [min_eq_left h, max_eq_right h] at hy; omega
-      · right; simp only [min_eq_right h, max_eq_left h] at hy; omega)
-    simp only [visitedByTapeHead, Finset.mem_image, Finset.mem_range]
-    exact ⟨j, by omega, hpj⟩
-  have hc := Finset.card_le_card hsub
-  rw [Int.card_Icc] at hc
-  rcases le_total 0 z with h | h
-  · simp only [min_eq_left h, max_eq_right h] at hc
-    rw [abs_of_nonneg h]; omega
-  · simp only [min_eq_right h, max_eq_left h] at hc
-    rw [abs_of_nonpos h]; omega
+    |z| < (tm.visitedByTapeHead (tm.initCfg x) t i).card :=
+  abs_lt_card_image_of_unitSteps (fun j => (tm.runFrom (tm.initCfg x) j).workTapePos i)
+    (by simp)
+    (fun j => by
+      simp only [runFrom_succ_eq_step']
+      exact tm.workTapePos_step_le _ i) t hz
 
 /-- A cell holding a nonblank symbol at time `t` was visited by its head before time `t`.
 
 **Proof sketch.** Induction on `t`. Initially every work cell is blank. A step writes only the
 cell under the head, which is visited at that step; other cells keep their contents and stay
-visited by monotonicity of the visited sets. -/
+visited by monotonicity of the visited sets. (Since 2026-10-10 this is an instance of the
+run-generic `ConfigCount.mem_image_workTapePos_of_ne_none`.) -/
 lemma mem_visited_of_ne_none (tm : MultiTapeTM k Bool S) (x : List Bool) (t : ℕ)
     (i : Fin k) (z : ℤ) (hz : (tm.runFrom (tm.initCfg x) t).workTapes i z ≠ none) :
-    z ∈ tm.visitedByTapeHead (tm.initCfg x) t i := by
-  induction t with
-  | zero => simp [initCfg, Cfg.init] at hz
-  | succ t ih =>
-    simp only [visitedByTapeHead, Finset.mem_image, Finset.mem_range] at ih ⊢
-    rw [runFrom_succ_eq_step'] at hz
-    unfold step at hz
-    cases hs : (tm.runFrom (tm.initCfg x) t).state with
-    | none =>
-      rw [hs] at hz
-      obtain ⟨j, hj, h⟩ := ih hz
-      exact ⟨j, by omega, h⟩
-    | some q =>
-      rw [hs] at hz
-      dsimp only [Action.apply] at hz
-      cases hw : ((tm.tr q (tm.runFrom (tm.initCfg x) t).inputSymbol
-          (tm.runFrom (tm.initCfg x) t).workTapeSymbols).workTapes i).1 with
-      | none =>
-        rw [hw] at hz
-        obtain ⟨j, hj, h⟩ := ih hz
-        exact ⟨j, by omega, h⟩
-      | some a =>
-        rw [hw] at hz
-        dsimp only at hz
-        by_cases hzp : z = (tm.runFrom (tm.initCfg x) t).workTapePos i
-        · exact ⟨t, by omega, hzp.symm⟩
-        · rw [Function.update_of_ne hzp] at hz
-          obtain ⟨j, hj, h⟩ := ih hz
-          exact ⟨j, by omega, h⟩
+    z ∈ tm.visitedByTapeHead (tm.initCfg x) t i :=
+  mem_image_workTapePos_of_ne_none (fun j => tm.runFrom (tm.initCfg x) j)
+    (by simp [initCfg, Cfg.init])
+    (fun j => by
+      simp only [runFrom_succ_eq_step']
+      unfold step
+      cases (tm.runFrom (tm.initCfg x) j).state with
+      | none => exact Or.inl rfl
+      | some q => exact Or.inr ⟨_, rfl⟩) t i z hz
 
 /-- Visited sets grow with time. -/
 lemma visitedByTapeHead_mono (tm : MultiTapeTM k Bool S) (c : Cfg k Bool S x) {t t' : ℕ}

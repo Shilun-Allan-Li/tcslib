@@ -64,6 +64,8 @@ up, in `TCSlib.Complexity.ClassNP.NTIME`, because they fix the binary alphabet.
   under a choice word. [AB09, §2.1.2]
 * `Turing.NDTM.HaltsWithin` — every choice word of length `t` halts the machine on the
   given input; the totality condition of [AB09]'s "runs in `T(n)` time".
+* `Turing.NDTM.fixChoice` — the deterministic slice at a fixed choice bit, with
+  `Turing.NDTM.stepWith_eq_fixChoice_step` (added 2026-10-10).
 * `Turing.FinNDTM` — the bundled finite layer, mirroring `Turing.FinTM`.
 * `Turing.MultiTapeTM.toNDTM`, `Turing.FinTM.toFinNDTM` — a deterministic machine as an
   NDTM whose two transition functions coincide.
@@ -146,6 +148,21 @@ lemma runWith_append (w w' : List Bool) (cfg : Cfg k Symbol State input) :
   induction w generalizing cfg with
   | nil => rfl
   | cons b w ih => rw [List.cons_append, runWith_cons, runWith_cons, ih]
+
+/-- The deterministic slice of a nondeterministic machine at a fixed choice bit: the
+multi-tape machine that always uses the transition function `tm.tr b`. [AB09, §2.1.2: an
+NDTM has two transition functions, and a choice bit selects one] (Shared by the
+configuration-graph layer; added 2026-10-10.) -/
+def fixChoice (tm : NDTM k Symbol State) (b : Bool) : MultiTapeTM k Symbol State :=
+  ⟨tm.q₀, tm.tr b⟩
+
+/-- One nondeterministic step under the choice bit `b` is one step of the slice at `b`.
+
+**Proof sketch.** Both steps fix a halted configuration, and otherwise apply the action
+that `tm.tr b` reads from the same configuration (`cases` on the state). -/
+theorem stepWith_eq_fixChoice_step (tm : NDTM k Symbol State) (b : Bool)
+    (cfg : Cfg k Symbol State input) : tm.stepWith b cfg = (tm.fixChoice b).step cfg := by
+  cases h : cfg.state <;> simp only [NDTM.stepWith, MultiTapeTM.step, fixChoice, h]
 
 /-- Stepping a halted configuration is the identity, under either choice. -/
 @[simp]

@@ -1,0 +1,40 @@
+'Turing.NDTM.fixChoice' does not depend on any axioms
+'Turing.NDTM.stepWith_eq_fixChoice_step' depends on axioms: [propext, Quot.sound]
+'Turing.MultiTapeTM.ConfigCount.abs_lt_card_image_of_unitSteps' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'Turing.MultiTapeTM.ConfigCount.mem_image_workTapePos_of_ne_none' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'Turing.MultiTapeTM.abs_pos_lt_card_visited' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.MultiTapeTM.mem_visited_of_ne_none' depends on axioms: [propext, Classical.choice, Quot.sound]
+@NDTM.reflTransGen_cfgStep_iff : ∀ {k : ℕ} {S : Type} {x : List Bool} (tm : NDTM k Bool S) (c c' : Cfg k Bool S x),
+  Relation.ReflTransGen tm.CfgStep c c' ↔ ∃ w, NDTM.runWith w c = c'
+@NDTM.coreSum_stepWith : ∀ {k : ℕ} {S : Type} {x : List Bool} (tm : NDTM k Bool S) (b : Bool) {c d : Cfg k Bool S x},
+  NDTM.coreSum c = NDTM.coreSum d → NDTM.coreSum (NDTM.stepWith b c) = NDTM.coreSum (NDTM.stepWith b d)
+FinNDTM.acceptsWithin_of_spaceUsedWith_le : ∀ (N : FinNDTM Bool) {x : List Bool} {T s : ℕ},
+  N.AcceptsWithin x T →
+    (∀ (w : List Bool), w.length = T → N.tm.spaceUsedWith w (NDTM.initCfg x) ≤ s) →
+      N.AcceptsWithin x (N.configBound x.length s)
+@FinNDTM.DecidesInSpace.mem_iff_acceptsWithin_configBound : ∀ {N : FinNDTM Bool} {L : Language Bool} {s : ℕ → ℕ},
+  N.DecidesInSpace L s → ∀ (x : List Bool), x ∈ L ↔ N.AcceptsWithin x (N.configBound x.length (s x.length))
+Complexity.NSPACE_subset_exp_dtime : ∀ (S : ℕ → ℕ),
+  Complexity.SpaceConstructible S → Complexity.NSPACE S ⊆ ⋃ c, Complexity.DTIME fun n => 2 ^ (c * (S n + 1))
+Complexity.NL_subset_P : Complexity.NL ⊆ Complexity.P
+Complexity.polyTimeReducible_of_mem_NL : ∀ (L : Language Bool),
+  (∃ y, y ∈ L) → (∃ z, z ∉ L) → ∀ {L' : Language Bool}, L' ∈ Complexity.NL → Complexity.PolyTimeReducible L' L
+'Turing.MultiTapeTM.ConfigCount.core_step' depends on axioms: [propext, Quot.sound]
+'Turing.MultiTapeTM.ConfigCount.coreCode_inj' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.MultiTapeTM.ConfigCount.exists_eq_of_between' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.MultiTapeTM.step_output' depends on axioms: [propext, Quot.sound]
+'Turing.workTapePos_apply_le' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.FinNDTM.AcceptsWithin.mono' depends on axioms: [propext, Quot.sound]
+'Turing.NDTM.runWith_append' depends on axioms: [propext, Quot.sound]
+'Turing.NDTM.runWith_of_halt' depends on axioms: [propext, Quot.sound]
+'Turing.NDTM.stepWith_eq_fixChoice_step' depends on axioms: [propext, Quot.sound]
+'Turing.MultiTapeTM.ConfigCount.abs_lt_card_image_of_unitSteps' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'Turing.MultiTapeTM.ConfigCount.mem_image_workTapePos_of_ne_none' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
