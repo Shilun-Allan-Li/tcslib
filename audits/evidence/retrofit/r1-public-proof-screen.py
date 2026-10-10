@@ -15,7 +15,9 @@ root = sys.argv[1]
 F = {'Catalog': 'TCSlib/Complexity/TuringMachine/Build/Catalog.lean',
      'Primitives': 'TCSlib/Complexity/TuringMachine/Build/Primitives.lean',
      'Composition': 'TCSlib/Complexity/TuringMachine/Composition.lean',
-     'TimeConstructible': 'TCSlib/Complexity/ClassP/TimeConstructible.lean'}
+     'TimeConstructible': 'TCSlib/Complexity/ClassP/TimeConstructible.lean',
+     'Loop': 'TCSlib/Complexity/TuringMachine/Build/Loop.lean',
+     'Wrappers': 'TCSlib/Complexity/TuringMachine/Build/Wrappers.lean'}
 NONMEMBERS = """f2_polyHeads f2_polyHeads_bounds f2_poly_step f2_head_steps f2_poly_space
 f2_counter_count_space f2_counter_heads f2_counter_space f2_space_of_time f2_unary_sharp
 f2_first_length f2_strip_linear f2_loopCall_heads f2_segment_heads f2_space_radius
@@ -35,12 +37,14 @@ def strip(src):
     return ''.join(out)
 DECL = re.compile(r"^(?:@\[[^\]]*\]\s*)?((?:(?:noncomputable|private|protected)\s+)*)"
                   r"(def|theorem|lemma|abbrev|instance|structure|inductive)\s+(\S+)", re.M)
+KIND = {}
 def decls(path):
     t = strip(open(f'{root}/{path}', encoding='utf-8').read())
     ms = list(DECL.finditer(t)); out = {}
     for i, m in enumerate(ms):
         end = ms[i + 1].start() if i + 1 < len(ms) else len(t)
         out[m.group(3)] = ('private' in m.group(1), t[m.start():end])
+        KIND[m.group(3)] = 'proof' if m.group(2) in ('theorem', 'lemma') else 'term'
     return out
 def proof(body):
     d = 0
@@ -49,7 +53,12 @@ def proof(body):
         elif ch in ')]}⟩': d -= 1
         elif body.startswith(':=', i) and d == 0: return body[i + 2:]
     return ''
-D = {k: decls(v) for k, v in F.items()}
+D = {}; SKIND = {}; KIND_CAT = {}
+for k, v in F.items():
+    KIND.clear(); D[k] = decls(v)
+    for n_, kd in KIND.items():
+        SKIND[(k, n_)] = kd
+        if k == 'Catalog': KIND_CAT[n_] = kd
 f2 = {n for n in D['Catalog'] if n.startswith('f2_')}
 IDENT = re.compile(r"[A-Za-z_][A-Za-z0-9_']*")  # dotted names split, so `idTM.ComputesInTime` renames its head
 def rename(s):
@@ -85,15 +94,18 @@ def verdict(shared, src_len):
     return 'citation/none' if shared else 'none'
 print("== Pass 1: direct public pairs (source computesFunInTime_X  ->  Catalog X_spaceUsed)")
 pairs = 0
-for src in ('Composition', 'Primitives'):
+for src in ('Composition', 'Primitives', 'TimeConstructible', 'Loop', 'Wrappers'):
     for name, (priv, body) in D[src].items():
-        if priv or not name.startswith('computesFunInTime_'): continue
         tgt = name + '_spaceUsed'
-        if tgt not in D['Catalog']: print(f"   {src:11s} {name[18:]:16s} (no Catalog counterpart)"); continue
+        if priv: continue
+        if tgt not in D['Catalog']:
+            if name.startswith('computesFunInTime_'): print(f"   {src:11s} {name[18:]:16s} (no Catalog counterpart)")
+            continue
         pairs += 1
         a, b = squash(rename(proof(body))), squash(proof(D['Catalog'][tgt][1]))
         n, seg = lcs(a, b); sh = tiled(a, b)
-        print(f"   {src:11s} {name[18:]:16s} LCS {n:4d} {'(>=60)' if n >= 60 else '      '}  shared {sh:4d} = {sh/len(a):5.1%} of source {len(a):5d}  -> {verdict(sh, len(a))}")
+        label = name[18:] if name.startswith('computesFunInTime_') else name
+        print(f"   {src:11s} {label:16s} LCS {n:4d} {'(>=60)' if n >= 60 else '      '}  shared {sh:4d} = {sh/len(a):5.1%} of source {len(a):5d}  -> {verdict(sh, len(a))}")
 print(f"   eligible pairs: {pairs}")
 print("== Pass 2: the 27 F2A nonmembers against every public proof of Composition/Primitives/TimeConstructible")
 pubs = [(s, n, squash(rename(proof(b)))) for s in ('Composition', 'Primitives', 'TimeConstructible')
@@ -104,6 +116,58 @@ for nm in NONMEMBERS:
     sh, best = best[0], best[1:]
     print(f"   {nm:26s} LCS {best[0]:4d} {'(>=60)' if best[0] >= 60 else '      '}  shared {sh:4d} = {sh/len(best[3]):5.1%} of source {len(best[3]):5d}  vs {best[1]}::{best[2]}  -> {verdict(sh, len(best[3]))}")
 
+print("== Pass 3 (round-6 repair): EVERY Catalog non-member against EVERY declaration, public and private,")
+print("   of Composition, Primitives, TimeConstructible, Loop and Wrappers (cross-file); every pair sharing >= 60.")
+print("   Verdicts compare like with like (proof vs proof, term vs term); a proof restating a definition's term is not counted.")
+PUBLIC_COUNTERPARTS = {'computesFunInTime_' + x + '_spaceUsed' for x in
+                       ('id', 'const', 'prepend', 'pairEncodeFixed', 'pairFst', 'pairSnd', 'pairConcat')}
+A2_COUNTED = {'a2_mapSumEquiv', 'a2_map_sum', 'a2_loop_halted_run'}
+F2_NONMEMBERS_R6 = [n for n in NONMEMBERS if n not in ('f2_strip_linear', 'f2_counter_heads', 'f2_counter_count_space')]
+members = ({n for n in D['Catalog'] if n.startswith('f2_')} - set(F2_NONMEMBERS_R6)) | A2_COUNTED | \
+          {n for n in D['Catalog'] if n.startswith('catalog_redirect')} | PUBLIC_COUNTERPARTS
+assert members <= set(D['Catalog'])
+nonmembers = [n for n in D['Catalog'] if n not in members]
+print(f"   Catalog {len(D['Catalog'])} = {len(members)} members (post-R6-1 union) + {len(nonmembers)} non-members screened")
+def grams(x, k=25): return {x[i:i + k] for i in range(len(x) - k + 1)}
+pop = []
+for src in ('Composition', 'Primitives', 'TimeConstructible', 'Loop', 'Wrappers'):
+    for n, (p_, b) in D[src].items():
+        body = squash(rename(proof(b)))
+        if len(body) >= 25: pop.append((src, n, 'private' if p_ else 'public', body, grams(body)))
+print(f"   source population: {len(pop)} declarations")
+cat_pop = [(n, squash(proof(b))) for n, (p_, b) in D['Catalog'].items() if len(squash(proof(b))) >= 25]
+cat_pop = [(n, b, grams(b)) for n, b in cat_pop]
+new_members = []
+for nm in nonmembers:
+    tb = squash(proof(D['Catalog'][nm][1]))
+    if len(tb) < 25: continue
+    tg = grams(tb); rows = []
+    tkind = KIND_CAT[nm]
+    for src, n, vis, pb, pg in pop:
+        if not (pg & tg): continue
+        sh = tiled(pb, tb)
+        if sh >= 60: rows.append((sh / len(pb), sh, len(pb), src, n, vis, SKIND[(src, n)] == tkind))
+    if not rows: continue
+    rows.sort(reverse=True)
+    same = [r for r in rows if r[6]]
+    v = verdict(same[0][1], same[0][2]) if same else 'term restatement only'
+    if v == 'MEMBER': new_members.append((nm, same[0]))
+    print(f"   {nm:30s} [{tkind}] -> {v}")
+    for frac, sh, ln, src, n, vis, ok in rows:
+        tag = verdict(sh, ln) if ok else 'term restatement (kind mismatch: not counted)'
+        print(f"      shared {sh:4d} = {frac:5.1%} of {src}::{n} [{vis} {SKIND[(src, n)]}] ({ln})  {tag}")
+print(f"   cross-file MEMBER verdicts among non-members: {len(new_members)}")
+for nm, r in new_members: print(f"      {nm} <- {r[3]}::{r[4]} [{r[5]}] {r[1]}/{r[2]} = {r[0]:.1%}")
+print("== Pass 3b: in-file near-duplicates among Catalog non-members (>= 50% of a Catalog declaration reproduced)")
+for nm in nonmembers:
+    tb = squash(proof(D['Catalog'][nm][1]))
+    if len(tb) < 25: continue
+    tg = grams(tb)
+    for n, pb, pg in cat_pop:
+        if n == nm or not (pg & tg): continue
+        sh = tiled(pb, tb)
+        if verdict(sh, len(pb)) == 'MEMBER':
+            print(f"   {nm:30s} ~ Catalog::{n} {sh}/{len(pb)} = {sh/len(pb):.1%}")
 # ---- physical spans (docstring-inclusive): from the attached docstring through the last code line
 def span(path, name):
     L = open(f'{root}/{path}', encoding='utf-8').read().split('\n')
