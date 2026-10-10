@@ -4491,238 +4491,18 @@ private def emLoopHost (body F : FinTM Bool) (anchor : body.State) (findMode : B
             ((loopBodySource body F anchor).tr s inp (fun i => work i.castSucc)))
       | _ => (loopHost body F anchor findMode).tm.tr q inp work }
 
-/-- The fuel states capture all fuel emissions directly in the concrete host. -/
-private lemma emLoopHost_fuel_capture (body F : FinTM Bool) (anchor : body.State)
-    (findMode : Bool) {x : List Bool}
-    (c : Cfg (body.k + 1 + (1 + F.k)) Bool F.State x) (t : ℕ)
-    (hlive : ∀ u < t, ¬((loopFuelSource body F).runFrom c u).Halted) :
-    (emLoopHost body F anchor findMode).tm.runFrom
-        (captureCfg Sum.inl (Sum.inr (Sum.inr (0 : Fin 14))) [] [] c) t =
-      captureCfg Sum.inl (Sum.inr (Sum.inr (0 : Fin 14))) [] []
-        ((loopFuelSource body F).runFrom c t) := by
-  exact capture_run (loopFuelSource body F) (emLoopHost body F anchor findMode).tm
-    _ _ (by intro s inp work; rfl) [] [] c t hlive
-
-/-- The fuel capture starts at the host's genuine blank initial configuration. -/
-private lemma emLoopHost_init (body F : FinTM Bool) (anchor : body.State)
-    (findMode : Bool) (x : List Bool) :
-    (emLoopHost body F anchor findMode).tm.initCfg x =
-      captureCfg Sum.inl (Sum.inr (Sum.inr (0 : Fin 14))) [] []
-        ((loopFuelSource body F).initCfg x) := by
-  rw [initCfg_ofWords, initCfg_ofWords]
-  simp [Cfg.ofWords, captureCfg, emLoopHost, loopHost, loopFuelSource]
-
-/-- Host phases 4 and 5 rewind the native input in bounded time, retaining
-all tapes, heads, and output, then dispatch to genuine body startup. -/
-private lemma emLoopHost_input_rewind (body F : FinTM Bool) (anchor : body.State)
-    (findMode : Bool) {x : List Bool}
-    (cfg : Cfg (emLoopHost body F anchor findMode).k Bool (emLoopHost body F anchor findMode).State x)
-    (hs : cfg.state = some (.inr (.inr (4 : Fin 14)))) :
-    ∃ t ≤ cfg.inputPos.val + 2,
-      (emLoopHost body F anchor findMode).tm.runFrom cfg t =
-        {cfg with state := some (.inr (.inl (true, (body.tm.q₀, false)))), inputPos := 1} := by
-  apply loop_rewind_bounded (emLoopHost body F anchor findMode).tm
-    (.inr (.inr 4)) (.inr (.inr 5)) (.some (.inr (.inl (true, (body.tm.q₀, false)))))
-    ?_ ?_ cfg hs
-  · intro inp work
-    exact loopControl_idle body F .neg _
-  · intro inp work
-    cases inp <;> exact loopControl_idle body F _ _
-
-/-- Fuel-rewind phase 1 scans to the left blank and returns at the origin.
-**Proof sketch.** Induct on the number of stored cells to the left. At zero,
-the head is on the left blank; otherwise its cell is nonblank and the left
-move reduces that number. All other tracks and the native input are retained. -/
-private lemma emLoopHost_fuel_rewind (body F : FinTM Bool) (anchor : body.State)
-    (findMode : Bool) {x : List Bool}
-    (base : Cfg (body.k + 1 + (1 + F.k) + 1) Bool (LoopHostState body F) x)
-    (p : Fin (x.length + 2)) (flag counter : ℤ → Option Bool)
-    (ch : ℤ) (word out : List Bool) : ∀ j, j ≤ word.length →
-    (emLoopHost body F anchor findMode).tm.runFrom
-        (loopFrame body F base (some (.inr (.inr 1))) p flag counter
-          (bufferTape word) ch ((j : ℤ) - 1) out) (j + 1) =
-      loopFrame body F base (some (.inr (.inr 2))) p flag counter
-        (bufferTape word) ch 0 out := by
-  intro j
-  induction j with
-  | zero =>
-    intro hj
-    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
-    change (match (loopFrame body F base (some (.inr (.inr 1))) p flag counter
-        (bufferTape word) ch ((0 : ℤ) - 1) out).workTapeSymbols
-          (Fin.last (body.k + 1 + (1 + F.k))) with
-      | some _ => loopControlAction body F 0 none (none, 0) (none, .neg) none
-          (some (.inr (.inr 1)))
-      | none => loopControlAction body F 0 none (none, 0) (none, .pos) none
-          (some (.inr (.inr 2)))).apply _ = _
-    rw [loopFrame_payload]
-    simp only [zero_sub, bufferTape_left]
-    rw [loopControl_apply]
-    simp [loopWrite]
-  | succ j ih =>
-    intro hj
-    rw [MultiTapeTM.runFrom_succ_eq_step]
-    have hs : (emLoopHost body F anchor findMode).tm.step
-        (loopFrame body F base (some (.inr (.inr 1))) p flag counter
-          (bufferTape word) ch (((j + 1 : ℕ) : ℤ) - 1) out) =
-        loopFrame body F base (some (.inr (.inr 1))) p flag counter
-          (bufferTape word) ch ((j : ℤ) - 1) out := by
-      change (match (loopFrame body F base (some (.inr (.inr 1))) p flag counter
-          (bufferTape word) ch (((j + 1 : ℕ) : ℤ) - 1) out).workTapeSymbols
-            (Fin.last (body.k + 1 + (1 + F.k))) with
-        | some _ => loopControlAction body F 0 none (none, 0) (none, .neg) none
-            (some (.inr (.inr 1)))
-        | none => loopControlAction body F 0 none (none, 0) (none, .pos) none
-            (some (.inr (.inr 2)))).apply _ = _
-      rw [loopFrame_payload]
-      rw [show ((j + 1 : ℕ) : ℤ) - 1 = (j : ℤ) by omega,
-        bufferTape_nat, List.getElem?_eq_getElem (by omega : j < word.length)]
-      rw [loopControl_apply]
-      simp [loopWrite, sub_eq_add_neg]
-    rw [hs]
-    exact ih (by omega)
-
-/-- Phase 2 copies the remaining fuel bits to the counter, clearing each
-captured bit, then starts the synchronized rewind.
-**Proof sketch.** Induct on the uncopied suffix. A nonempty suffix writes
-its head at the counter's right blank, clears the corresponding payload
-cell, and advances both heads. The empty suffix detects the right blank
-and moves both heads left once, including when the original word is empty. -/
-private lemma emLoopHost_fuel_copy (body F : FinTM Bool) (anchor : body.State)
-    (findMode : Bool) {x : List Bool}
-    (base : Cfg (body.k + 1 + (1 + F.k) + 1) Bool (LoopHostState body F) x)
-    (p : Fin (x.length + 2)) (flag : ℤ → Option Bool) (out : List Bool)
-    (rest : List Bool) : ∀ pre,
-    (emLoopHost body F anchor findMode).tm.runFrom
-        (loopFrame body F base (some (.inr (.inr 2))) p flag (bufferTape pre)
-          (loopCopyTape pre rest) pre.length pre.length out) (rest.length + 1) =
-      loopFrame body F base (some (.inr (.inr 3))) p flag (bufferTape (pre ++ rest))
-        (bufferTape []) ((pre ++ rest).length - 1) ((pre ++ rest).length - 1) out := by
-  induction rest with
-  | nil =>
-    intro pre
-    rw [List.length_nil, MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
-    change (match (loopFrame body F base (some (.inr (.inr 2))) p flag (bufferTape pre)
-        (loopCopyTape pre []) pre.length pre.length out).workTapeSymbols
-          (Fin.last (body.k + 1 + (1 + F.k))) with
-      | some b => loopControlAction body F 0 none (some (some b), .pos)
-          (some none, .pos) none (some (.inr (.inr 2)))
-      | none => loopControlAction body F 0 none (none, .neg) (none, .neg) none
-          (some (.inr (.inr 3)))).apply _ = _
-    rw [loopFrame_payload, loopCopy_read]
-    dsimp only [List.head?]
-    rw [loopControl_apply]
-    simp [loopWrite, loopCopy_final, sub_eq_add_neg]
-  | cons b rest ih =>
-    intro pre
-    rw [List.length_cons, MultiTapeTM.runFrom_succ_eq_step]
-    have hs : (emLoopHost body F anchor findMode).tm.step
-        (loopFrame body F base (some (.inr (.inr 2))) p flag (bufferTape pre)
-          (loopCopyTape pre (b :: rest)) pre.length pre.length out) =
-        loopFrame body F base (some (.inr (.inr 2))) p flag (bufferTape (pre ++ [b]))
-          (loopCopyTape (pre ++ [b]) rest) (pre ++ [b]).length (pre ++ [b]).length out := by
-      change (match (loopFrame body F base (some (.inr (.inr 2))) p flag (bufferTape pre)
-          (loopCopyTape pre (b :: rest)) pre.length pre.length out).workTapeSymbols
-            (Fin.last (body.k + 1 + (1 + F.k))) with
-        | some bit => loopControlAction body F 0 none (some (some bit), .pos)
-            (some none, .pos) none (some (.inr (.inr 2)))
-        | none => loopControlAction body F 0 none (none, .neg) (none, .neg) none
-            (some (.inr (.inr 3)))).apply _ = _
-      rw [loopFrame_payload, loopCopy_read]
-      dsimp only [List.head?]
-      rw [loopControl_apply]
-      simp [loopWrite, loopCopy_erase, bufferTape_append]
-    rw [hs]
-    simpa [List.append_assoc] using ih (pre ++ [b])
-
-/-- Phase 3 rewinds counter and cleared capture heads together.
-**Proof sketch.** Induct on the number of counter cells to the left. Both
-heads take the same moves; only the counter is read, so the already-cleared
-capture tape stays blank. The final left-blank test moves both heads to zero. -/
-private lemma emLoopHost_fuel_return (body F : FinTM Bool) (anchor : body.State)
-    (findMode : Bool) {x : List Bool}
-    (base : Cfg (body.k + 1 + (1 + F.k) + 1) Bool (LoopHostState body F) x)
-    (p : Fin (x.length + 2)) (flag : ℤ → Option Bool) (word out : List Bool) :
-    ∀ j, j ≤ word.length →
-    (emLoopHost body F anchor findMode).tm.runFrom
-        (loopFrame body F base (some (.inr (.inr 3))) p flag (bufferTape word)
-          (bufferTape []) ((j : ℤ) - 1) ((j : ℤ) - 1) out) (j + 1) =
-      loopFrame body F base (some (.inr (.inr 4))) p flag (bufferTape word)
-        (bufferTape []) 0 0 out := by
-  intro j
-  induction j with
-  | zero =>
-    intro hj
-    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
-    change (match (loopFrame body F base (some (.inr (.inr 3))) p flag (bufferTape word)
-        (bufferTape []) ((0 : ℤ) - 1) ((0 : ℤ) - 1) out).workTapeSymbols
-          ⟨body.k + 1, by omega⟩ with
-      | some _ => loopControlAction body F 0 none (none, .neg) (none, .neg) none
-          (some (.inr (.inr 3)))
-      | none => loopControlAction body F 0 none (none, .pos) (none, .pos) none
-          (some (.inr (.inr 4)))).apply _ = _
-    rw [loopFrame_counter]
-    simp only [zero_sub, bufferTape_left]
-    rw [loopControl_apply]
-    simp [loopWrite]
-  | succ j ih =>
-    intro hj
-    rw [MultiTapeTM.runFrom_succ_eq_step]
-    have hs : (emLoopHost body F anchor findMode).tm.step
-        (loopFrame body F base (some (.inr (.inr 3))) p flag (bufferTape word)
-          (bufferTape []) (((j + 1 : ℕ) : ℤ) - 1) (((j + 1 : ℕ) : ℤ) - 1) out) =
-        loopFrame body F base (some (.inr (.inr 3))) p flag (bufferTape word)
-          (bufferTape []) ((j : ℤ) - 1) ((j : ℤ) - 1) out := by
-      change (match (loopFrame body F base (some (.inr (.inr 3))) p flag (bufferTape word)
-          (bufferTape []) (((j + 1 : ℕ) : ℤ) - 1) (((j + 1 : ℕ) : ℤ) - 1) out).workTapeSymbols
-            ⟨body.k + 1, by omega⟩ with
-        | some _ => loopControlAction body F 0 none (none, .neg) (none, .neg) none
-            (some (.inr (.inr 3)))
-        | none => loopControlAction body F 0 none (none, .pos) (none, .pos) none
-            (some (.inr (.inr 4)))).apply _ = _
-      rw [loopFrame_counter]
-      rw [show ((j + 1 : ℕ) : ℤ) - 1 = (j : ℤ) by omega,
-        bufferTape_nat, List.getElem?_eq_getElem (by omega : j < word.length)]
-      rw [loopControl_apply]
-      simp [loopWrite, sub_eq_add_neg]
-    rw [hs]
-    exact ih (by omega)
-
-/-- Fuel setup phases 0--3 copy the complete fuel word to the counter,
-clear the capture track, and return both heads to zero in exactly `3|word|+4`
-steps. This includes the empty word, with no counter debit.
-**Proof sketch.** Compose the mandatory left move, the fuel rewind, the
-copy/clear scan, and the synchronized rewind. Their costs are respectively
-one and three copies of the word length plus one. -/
-private lemma emLoopHost_fuel_setup (body F : FinTM Bool) (anchor : body.State)
-    (findMode : Bool) {x : List Bool}
-    (base : Cfg (body.k + 1 + (1 + F.k) + 1) Bool (LoopHostState body F) x)
-    (p : Fin (x.length + 2)) (flag : ℤ → Option Bool) (word out : List Bool) :
-    (emLoopHost body F anchor findMode).tm.runFrom
-        (loopFrame body F base (some (.inr (.inr 0))) p flag (bufferTape [])
-          (bufferTape word) 0 word.length out) (3 * word.length + 4) =
-      loopFrame body F base (some (.inr (.inr 4))) p flag (bufferTape word)
-        (bufferTape []) 0 0 out := by
-  have hs : (emLoopHost body F anchor findMode).tm.step
-      (loopFrame body F base (some (.inr (.inr 0))) p flag (bufferTape [])
-        (bufferTape word) 0 word.length out) =
-      loopFrame body F base (some (.inr (.inr 1))) p flag (bufferTape [])
-        (bufferTape word) 0 ((word.length : ℤ) - 1) out := by
-    change (loopControlAction body F 0 none (none, 0) (none, .neg) none
-      (some (.inr (.inr 1)))).apply _ = _
-    rw [loopControl_apply]
-    simp [loopWrite, sub_eq_add_neg]
-  rw [show 3 * word.length + 4 =
-      ((word.length + 1) + (word.length + 1) + (word.length + 1)) + 1 by omega,
-    MultiTapeTM.runFrom_succ_eq_step, hs]
-  rw [MultiTapeTM.runFrom_add,
-    MultiTapeTM.runFrom_add (a := word.length + 1) (b := word.length + 1),
-    emLoopHost_fuel_rewind body F anchor findMode base p flag (bufferTape []) 0 word out
-      word.length (le_refl _)]
-  have hc := emLoopHost_fuel_copy body F anchor findMode base p flag out word []
-  simp only [List.length_nil, Nat.cast_zero, List.nil_append, loopCopy_initial] at hc
-  rw [hc, emLoopHost_fuel_return body F anchor findMode base p flag word out
-    word.length (le_refl _)]
+/-- The capturing and forwarding hosts have identical tables outside body
+control. This single all-reads agreement transfers administrative segments. -/
+private lemma emLoopHost_agree (body F : FinTM Bool) (anchor : body.State)
+    (findMode : Bool) :
+    (loopHost body F anchor findMode).tm.AgreeOn
+      (emLoopHost body F anchor findMode).tm
+      {q | match q with | .inr (.inl _) => False | _ => True} := by
+  intro q hq inp work
+  rcases q with q | (q | q)
+  · rfl
+  · exact False.elim hq
+  · rfl
 
 /-- Fuel execution, setup, and input rewind reach prepared body startup
 within `5*T+7` steps, retaining the actual fuel endpoint.
@@ -4737,6 +4517,102 @@ private lemma emLoopHost_prepare (body F : FinTM Bool) (anchor : body.State)
       c.state = none ∧ c.output = Nat.bits (R x.length) ∧ t ≤ 5 * T x.length + 7 ∧
       (emLoopHost body F anchor findMode).tm.runFrom
         ((emLoopHost body F anchor findMode).tm.initCfg x) t = loopReady body F c := by
+  have emLoopHost_fuel_setup (body F : FinTM Bool) (anchor : body.State)
+      (findMode : Bool) {x : List Bool}
+      (base : Cfg (body.k + 1 + (1 + F.k) + 1) Bool (LoopHostState body F) x)
+      (p : Fin (x.length + 2)) (flag : ℤ → Option Bool) (word out : List Bool) :
+      (emLoopHost body F anchor findMode).tm.runFrom
+          (loopFrame body F base (some (.inr (.inr 0))) p flag (bufferTape [])
+            (bufferTape word) 0 word.length out) (3 * word.length + 4) =
+        loopFrame body F base (some (.inr (.inr 4))) p flag (bufferTape word)
+          (bufferTape []) 0 0 out := by
+    let src := (loopHost body F anchor findMode).tm
+    let early : Option (LoopHostState body F) → Prop := fun s =>
+      match s with
+      | some (.inl _) => True
+      | some (.inr (.inr phase)) => phase.val ≤ 5
+      | _ => False
+    -- A body or late controller state can never re-enter fuel setup.
+    have back (d : Cfg (body.k + 1 + (1 + F.k) + 1) Bool (LoopHostState body F) x) :
+        early (src.step d).state → early d.state := by
+      cases hd : d.state with
+      | none => simp [MultiTapeTM.step, hd, early]
+      | some q =>
+        rcases q with q | (⟨startup, q⟩ | phase)
+        · simp [early, hd]
+        · simp only [src, MultiTapeTM.step, hd, loopHost, captureAction, Action.apply]
+          cases hn : ((loopBodySource body F anchor).tr q d.inputSymbol
+              (fun i => d.workTapeSymbols i.castSucc)).state <;>
+            cases startup <;> simp [early, hn]
+        · fin_cases phase <;>
+            simp [src, MultiTapeTM.step, hd, loopHost, early, loopControlAction,
+              Action.apply] <;>
+            split <;> simp_all [early, loopControlAction, Action.apply]
+          all_goals
+            repeat' (split at *)
+            all_goals simp_all [early, loopControlAction, Action.apply]
+            all_goals omega
+    have backRun (d : Cfg (body.k + 1 + (1 + F.k) + 1) Bool (LoopHostState body F) x)
+        (n : ℕ) : early (src.runFrom d n).state → early d.state := by
+      induction n generalizing d with
+      | zero => exact id
+      | succ n ih =>
+        rw [MultiTapeTM.runFrom_succ_eq_step]
+        exact fun h => back d (ih (src.step d) h)
+    have endpoint := loopHost_fuel_setup body F anchor findMode base p flag word out
+    rw [MultiTapeTM.runFrom_eq_of_agreeOn (emLoopHost_agree body F anchor findMode)]
+    · exact endpoint
+    · intro u hu q hq
+      have he : early (src.runFrom
+          (loopFrame body F base (some (.inr (.inr 0))) p flag (bufferTape [])
+            (bufferTape word) 0 word.length out) u).state := by
+        apply backRun _ (3 * word.length + 4 - u)
+        rw [← MultiTapeTM.runFrom_add, Nat.add_sub_of_le (by omega)]
+        rw [show src.runFrom _ _ = _ from endpoint]
+        change (4 : ℕ) ≤ 5
+        omega
+      rw [hq] at he
+      rcases q with q | (q | q)
+      · trivial
+      · exact False.elim he
+      · trivial
+  have emLoopHost_input_rewind (body F : FinTM Bool) (anchor : body.State)
+      (findMode : Bool) {x : List Bool}
+      (cfg : Cfg (emLoopHost body F anchor findMode).k Bool (emLoopHost body F anchor findMode).State x)
+      (hs : cfg.state = some (.inr (.inr (4 : Fin 14)))) :
+      ∃ t ≤ cfg.inputPos.val + 2,
+        (emLoopHost body F anchor findMode).tm.runFrom cfg t =
+          {cfg with state := some (.inr (.inl (true, (body.tm.q₀, false)))), inputPos := 1} := by
+    apply loop_rewind_bounded (emLoopHost body F anchor findMode).tm
+      (.inr (.inr 4)) (.inr (.inr 5)) (.some (.inr (.inl (true, (body.tm.q₀, false)))))
+      ?_ ?_ cfg hs
+    · intro inp work
+      rw [← emLoopHost_agree body F anchor findMode (.inr (.inr 4)) trivial inp work]
+      exact loopControl_idle body F .neg _
+    · intro inp work
+      rw [← emLoopHost_agree body F anchor findMode (.inr (.inr 5)) trivial inp work]
+      cases inp <;> exact loopControl_idle body F _ _
+  have emLoopHost_init (body F : FinTM Bool) (anchor : body.State)
+      (findMode : Bool) (x : List Bool) :
+      (emLoopHost body F anchor findMode).tm.initCfg x =
+        captureCfg Sum.inl (Sum.inr (Sum.inr (0 : Fin 14))) [] []
+          ((loopFuelSource body F).initCfg x) := by
+    exact loopHost_init body F anchor findMode x
+  have emLoopHost_fuel_capture (body F : FinTM Bool) (anchor : body.State)
+      (findMode : Bool) {x : List Bool}
+      (c : Cfg (body.k + 1 + (1 + F.k)) Bool F.State x) (t : ℕ)
+      (hlive : ∀ u < t, ¬((loopFuelSource body F).runFrom c u).Halted) :
+      (emLoopHost body F anchor findMode).tm.runFrom
+          (captureCfg Sum.inl (Sum.inr (Sum.inr (0 : Fin 14))) [] [] c) t =
+        captureCfg Sum.inl (Sum.inr (Sum.inr (0 : Fin 14))) [] []
+          ((loopFuelSource body F).runFrom c t) := by
+    rw [MultiTapeTM.runFrom_eq_of_agreeOn (emLoopHost_agree body F anchor findMode)]
+    · exact loopHost_fuel_capture body F anchor findMode c t hlive
+    · intro u hu q hq
+      rw [loopHost_fuel_capture body F anchor findMode c u
+        (fun v hv => hlive v (by omega))] at hq
+      cases hs : ((loopFuelSource body F).runFrom c u).state <;>
+        simp [captureCfg, hs] at hq <;> subst q <;> trivial
   obtain ⟨space, hhalt, hout, hspace⟩ := hF x
   obtain ⟨u, hu, hut, hlive, huh, hue⟩ :=
     loop_first_halt F.tm (F.tm.initCfg x) (T x.length) (by simp [MultiTapeTM.initCfg, Cfg.init]) hhalt
@@ -4767,255 +4643,6 @@ private lemma emLoopHost_prepare (body F : FinTM Bool) (anchor : body.State)
   · rw [MultiTapeTM.runFrom_add,
       MultiTapeTM.runFrom_add (a := u) (b := 3 * c.output.length + 4), hcap, hsetup, hrew]
     rfl
-
-/-- Phase 6 clears startup's false flag and releases the first anchor for
-free. It changes no body, counter, or fuel data.
-**Proof sketch.** The captured stopped body is in phase 6. Its sole write
-clears the flag's origin cell. Comparing tape blocks identifies the result
-with the active released call on the same body data. -/
-private lemma emLoopHost_release (body F : FinTM Bool) (anchor : body.State)
-    (findMode : Bool) {x : List Bool} (c : Cfg body.k Bool body.State x)
-    (word : List Bool) (fuel : Cfg F.k Bool F.State x) :
-    (emLoopHost body F anchor findMode).tm.step
-        (loopCall body F anchor true {c with state := none} false (some false) word fuel) =
-      loopCall body F anchor false {c with state := some anchor} true none word fuel := by
-  change (loopControlAction body F 0 (some none) (none, 0) (none, 0) none
-    (some (.inr (.inl (false, (anchor, true)))))).apply _ = _
-  refine Cfg.ext rfl (moveInputPos_zero _) ?_ ?_ ?_
-  · funext i z
-    by_cases hf : (i : ℕ) = body.k
-    · have hi : body.k < body.k + 1 + (1 + F.k) := by omega
-      simp [Action.apply, loopControlAction, loopCall, captureCfg, loopBodyPadded,
-        leftCfg, loopBodyCfg, hf, hi, Fin.addCases, Function.update]
-    · by_cases hb : (i : ℕ) < body.k + 1
-      · have hi : (i : ℕ) < body.k := by omega
-        simp [Action.apply, loopControlAction, loopCall, captureCfg, loopBodyPadded,
-          leftCfg, loopBodyCfg, hf, Fin.addCases, hb, hi]
-      · simp [Action.apply, loopControlAction, loopCall, captureCfg, loopBodyPadded,
-          leftCfg, loopBodyCfg, hf, Fin.addCases, hb]
-  · funext i
-    by_cases hf : (i : ℕ) = body.k <;>
-      simp [Action.apply, loopControlAction, loopCall, captureCfg, loopBodyPadded,
-        leftCfg, loopBodyCfg, hf]
-  · simp [Action.apply, loopControlAction, loopCall, captureCfg]
-
-/-- One actual-host borrow step changes only the counter, recording success
-or underflow in the rewind phase. -/
-private lemma emLoopHost_borrow_step (body F : FinTM Bool) (anchor : body.State)
-    (findMode : Bool) {x : List Bool}
-    (base : Cfg (body.k + 1 + (1 + F.k) + 1) Bool (LoopHostState body F) x)
-    (p : Fin (x.length + 2)) (pre rest : List Bool) :
-    (emLoopHost body F anchor findMode).tm.step
-      (loopFrame body F base (some (.inr (.inr 8))) p (bufferTape [])
-        (bufferTape (pre ++ rest)) (bufferTape []) pre.length 0 []) =
-      match rest with
-      | [] => loopFrame body F base (some (.inr (.inr 10))) p (bufferTape [])
-          (bufferTape pre) (bufferTape []) (pre.length - 1) 0 []
-      | true :: us => loopFrame body F base (some (.inr (.inr 9))) p (bufferTape [])
-          (bufferTape (pre ++ false :: us)) (bufferTape []) (pre.length - 1) 0 []
-      | false :: us => loopFrame body F base (some (.inr (.inr 8))) p (bufferTape [])
-          (bufferTape (pre ++ true :: us)) (bufferTape []) (pre.length + 1) 0 [] := by
-  change (match (loopFrame body F base (some (.inr (.inr 8))) p (bufferTape [])
-      (bufferTape (pre ++ rest)) (bufferTape []) pre.length 0 []).workTapeSymbols
-        ⟨body.k + 1, by omega⟩ with
-    | some false => loopControlAction body F 0 none (some (some true), .pos) (none, 0)
-        none (some (.inr (.inr 8)))
-    | some true => loopControlAction body F 0 none (some (some false), .neg) (none, 0)
-        none (some (.inr (.inr 9)))
-    | none => loopControlAction body F 0 none (none, .neg) (none, 0) none
-        (some (.inr (.inr 10)))).apply _ = _
-  rw [loopFrame_counter, loopBuffer_read]
-  cases rest with
-  | nil =>
-    simp only [List.head?]
-    rw [loopControl_apply]
-    simp [loopWrite, sub_eq_add_neg]
-  | cons b rest =>
-    cases b <;> simp only [List.head?]
-    all_goals rw [loopControl_apply]; simp [loopWrite, loopBuffer_write, sub_eq_add_neg]
-
-/-- The actual host performs the borrow scan in the standalone scan's exact
-time, preserving all non-counter tracks.
-**Proof sketch.** Induct on the remaining word. Each false bit advances the
-processed prefix. A true bit or the right blank starts the appropriate
-rewind phase; no cell outside the original counter width is written. -/
-private lemma emLoopHost_borrow_run (body F : FinTM Bool) (anchor : body.State)
-    (findMode : Bool) {x : List Bool}
-    (base : Cfg (body.k + 1 + (1 + F.k) + 1) Bool (LoopHostState body F) x)
-    (p : Fin (x.length + 2)) (word : List Bool) : ∀ pre,
-    (emLoopHost body F anchor findMode).tm.runFrom
-        (loopFrame body F base (some (.inr (.inr 8))) p (bufferTape [])
-          (bufferTape (pre ++ word)) (bufferTape []) pre.length 0 [])
-        (loopBorrowPos word + 1) =
-      loopFrame body F base (some (.inr (.inr (if (loopDebit word).2 then 9 else 10)))) p
-        (bufferTape []) (bufferTape (pre ++ (loopDebit word).1)) (bufferTape [])
-        ((pre.length : ℤ) + loopBorrowPos word - 1) 0 [] := by
-  induction word with
-  | nil =>
-    intro pre
-    simpa [loopBorrowPos, loopDebit, MultiTapeTM.runFrom_succ_eq_step] using
-      emLoopHost_borrow_step body F anchor findMode base p pre []
-  | cons b word ih =>
-    intro pre
-    cases b with
-    | true =>
-      simpa [loopBorrowPos, loopDebit, MultiTapeTM.runFrom_succ_eq_step] using
-        emLoopHost_borrow_step body F anchor findMode base p pre (true :: word)
-    | false =>
-      simp only [loopBorrowPos]
-      rw [MultiTapeTM.runFrom_succ_eq_step, emLoopHost_borrow_step]
-      simpa [loopDebit, List.append_assoc, Nat.cast_add, Nat.cast_one,
-        add_assoc, add_comm, add_left_comm] using ih (pre ++ [true])
-
-/-- The host's success/underflow rewind returns the counter head to zero.
-Success releases the next anchor; underflow enters phase 11 without yet
-emitting. Both paths retain all inactive residue.
-**Proof sketch.** Induct on the number of counter cells to the left. The
-left-blank test dispatches according to the stored success bit. -/
-private lemma emLoopHost_borrow_rewind (body F : FinTM Bool) (anchor : body.State)
-    (findMode : Bool) {x : List Bool}
-    (base : Cfg (body.k + 1 + (1 + F.k) + 1) Bool (LoopHostState body F) x)
-    (p : Fin (x.length + 2)) (word : List Bool) (success : Bool) :
-    ∀ j, j ≤ word.length →
-    (emLoopHost body F anchor findMode).tm.runFrom
-        (loopFrame body F base (some (.inr (.inr (if success then 9 else 10)))) p
-          (bufferTape []) (bufferTape word) (bufferTape []) ((j : ℤ) - 1) 0 []) (j + 1) =
-      loopFrame body F base
-        (some (if success then .inr (.inl (false, (anchor, true))) else .inr (.inr 11))) p
-        (bufferTape []) (bufferTape word) (bufferTape []) 0 0 [] := by
-  intro j
-  induction j with
-  | zero =>
-    intro hj
-    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
-    cases success <;>
-      (change (match (loopFrame body F base _ p (bufferTape []) (bufferTape word)
-          (bufferTape []) ((0 : ℤ) - 1) 0 []).workTapeSymbols ⟨body.k + 1, by omega⟩ with
-        | some _ => loopControlAction body F 0 none (none, .neg) (none, 0) none _
-        | none => loopControlAction body F 0 none (none, .pos) (none, 0) none _).apply _ = _)
-    all_goals
-      rw [loopFrame_counter]
-      simp only [zero_sub, bufferTape_left]
-      rw [loopControl_apply]
-      simp [loopWrite]
-  | succ j ih =>
-    intro hj
-    rw [MultiTapeTM.runFrom_succ_eq_step]
-    have hs : (emLoopHost body F anchor findMode).tm.step
-        (loopFrame body F base (some (.inr (.inr (if success then 9 else 10)))) p
-          (bufferTape []) (bufferTape word) (bufferTape []) (((j + 1 : ℕ) : ℤ) - 1) 0 []) =
-        loopFrame body F base (some (.inr (.inr (if success then 9 else 10)))) p
-          (bufferTape []) (bufferTape word) (bufferTape []) ((j : ℤ) - 1) 0 [] := by
-      cases success <;>
-        (change (match (loopFrame body F base _ p (bufferTape []) (bufferTape word)
-            (bufferTape []) (((j + 1 : ℕ) : ℤ) - 1) 0 []).workTapeSymbols
-              ⟨body.k + 1, by omega⟩ with
-          | some _ => loopControlAction body F 0 none (none, .neg) (none, 0) none _
-          | none => loopControlAction body F 0 none (none, .pos) (none, 0) none _).apply _ = _)
-      all_goals
-        rw [loopFrame_counter, show ((j + 1 : ℕ) : ℤ) - 1 = (j : ℤ) by omega,
-          bufferTape_nat, List.getElem?_eq_getElem (by omega : j < word.length)]
-        rw [loopControl_apply]
-        simp [loopWrite, sub_eq_add_neg]
-    rw [hs]
-    exact ih (by omega)
-
-/-- The complete actual-host counter operation has the fixed-width
-worst-case bound `2|word|+2`, covering underflow and width zero. -/
-private lemma emLoopHost_borrow (body F : FinTM Bool) (anchor : body.State)
-    (findMode : Bool) {x : List Bool}
-    (base : Cfg (body.k + 1 + (1 + F.k) + 1) Bool (LoopHostState body F) x)
-    (p : Fin (x.length + 2)) (word : List Bool) :
-    2 * loopBorrowPos word + 2 ≤ 2 * word.length + 2 ∧
-    (emLoopHost body F anchor findMode).tm.runFrom
-        (loopFrame body F base (some (.inr (.inr 8))) p (bufferTape [])
-          (bufferTape word) (bufferTape []) 0 0 []) (2 * loopBorrowPos word + 2) =
-      loopFrame body F base
-        (some (if (loopDebit word).2 then .inr (.inl (false, (anchor, true)))
-          else .inr (.inr 11))) p
-        (bufferTape []) (bufferTape (loopDebit word).1) (bufferTape []) 0 0 [] := by
-  refine ⟨by have := loopBorrowPos_le word; omega, ?_⟩
-  have hr := emLoopHost_borrow_run body F anchor findMode base p word []
-  simp only [List.length_nil, Nat.cast_zero, List.nil_append, zero_add] at hr
-  rw [show 2 * loopBorrowPos word + 2 =
-      (loopBorrowPos word + 1) + (loopBorrowPos word + 1) by omega,
-    MultiTapeTM.runFrom_add, hr]
-  exact emLoopHost_borrow_rewind body F anchor findMode base p (loopDebit word).1
-    (loopDebit word).2 _ (by rw [loopDebit_length]; exact loopBorrowPos_le word)
-
-/-- A rejecting stopped call clears its flag, debits in worst-case width
-time, and either releases the next anchor or emits exhaustion and halts.
-Underflow and its emission are included in this same segment.
-**Proof sketch.** Phase 7 clears the false flag in one step. The proved host
-borrow takes `2j+2` steps. Success is the reframed next body seam; underflow
-takes one additional phase-11 step, for at most `2|word|+4` steps in total. -/
-private lemma emLoopHost_reject (body F : FinTM Bool) (anchor : body.State)
-    (findMode : Bool) {x : List Bool} (c : Cfg body.k Bool body.State x)
-    (word : List Bool) (fuel : Cfg F.k Bool F.State x)
-    (hc : c.state = none) (ho : c.output = []) :
-    ∃ t ≤ 2 * word.length + 4,
-      if (loopDebit word).2 then
-        (emLoopHost body F anchor findMode).tm.runFrom
-            (loopCall body F anchor false c false (some false) word fuel) t =
-          loopCall body F anchor false {c with state := some anchor} true none (loopDebit word).1 fuel
-      else
-        ((emLoopHost body F anchor findMode).tm.runFrom
-          (loopCall body F anchor false c false (some false) word fuel) t).state = none ∧
-        ((emLoopHost body F anchor findMode).tm.runFrom
-          (loopCall body F anchor false c false (some false) word fuel) t).output =
-            (if findMode then [] else [false]) := by
-  let base := loopCall body F anchor false c false (some false) word fuel
-  have hs : base.state = some (.inr (.inr (7 : Fin 14))) := by
-    simp [base, loopCall, captureCfg, loopBodyPadded, leftCfg, loopBodyCfg, hc]
-  have hf : base = loopFrame body F base (some (.inr (.inr 7))) c.inputPos
-      (fun z => if z = 0 then some false else none) (bufferTape word) (bufferTape []) 0 0 [] := by
-    have h := loopCall_frame body F anchor false c false (some false) word fuel
-    have hstate : (loopCall body F anchor false c false (some false) word fuel).state =
-        some (.inr (.inr (7 : Fin 14))) := hs
-    simpa only [hstate, ho, List.length_nil, Nat.cast_zero] using h
-  have hstep : (emLoopHost body F anchor findMode).tm.step base =
-      loopFrame body F base (some (.inr (.inr 8))) c.inputPos
-        (bufferTape []) (bufferTape word) (bufferTape []) 0 0 [] := by
-    conv_lhs => arg 1; rw [hf]
-    change (if (loopFrame body F base (some (.inr (.inr 7))) c.inputPos
-        (fun z => if z = 0 then some false else none) (bufferTape word) (bufferTape []) 0 0 []).workTapeSymbols
-          ⟨body.k, by omega⟩ = some true then _
-      else loopControlAction body F 0 (some none) (none, 0) (none, 0) none
-        (some (.inr (.inr 8)))).apply _ = _
-    rw [loopFrame_flag]
-    change (loopControlAction body F 0 (some none) (none, 0) (none, 0) none
-      (some (.inr (.inr 8)))).apply _ = _
-    rw [loopControl_apply, loopFlag_clear]
-    simp [loopWrite]
-  have hrun : (emLoopHost body F anchor findMode).tm.runFrom base (2 * loopBorrowPos word + 3) =
-      loopFrame body F base
-        (some (if (loopDebit word).2 then .inr (.inl (false, (anchor, true)))
-          else .inr (.inr 11))) c.inputPos
-        (bufferTape []) (bufferTape (loopDebit word).1) (bufferTape []) 0 0 [] := by
-    rw [show 2 * loopBorrowPos word + 3 = (2 * loopBorrowPos word + 2) + 1 by omega,
-      MultiTapeTM.runFrom_succ_eq_step, hstep]
-    exact (emLoopHost_borrow body F anchor findMode base c.inputPos word).2
-  have hw := loopBorrowPos_le word
-  by_cases hb : (loopDebit word).2 = true
-  · refine ⟨2 * loopBorrowPos word + 3, by omega, ?_⟩
-    simp only [hb, if_true] at hrun ⊢
-    rw [hrun]
-    have h := loopCall_reframe body F anchor c false false false true (some false) none
-      word (loopDebit word).1 fuel (some anchor)
-    simpa [base, loopCall, captureCfg, loopBodyPadded, leftCfg, loopBodyCfg, ho] using h
-  · refine ⟨2 * loopBorrowPos word + 4, by omega, ?_⟩
-    simp only [hb] at hrun ⊢
-    have hh : (emLoopHost body F anchor findMode).tm.runFrom base (2 * loopBorrowPos word + 4) =
-        loopFrame body F base none c.inputPos (bufferTape []) (bufferTape (loopDebit word).1)
-          (bufferTape []) 0 0 (if findMode then [] else [false]) := by
-      rw [show 2 * loopBorrowPos word + 4 = (2 * loopBorrowPos word + 3) + 1 by omega,
-        MultiTapeTM.runFrom_succ_eq_step', hrun]
-      change (loopControlAction body F 0 none (none, 0) (none, 0)
-        (if findMode then none else some false) none).apply _ = _
-      rw [loopControl_apply]
-      cases findMode <;> simp [loopWrite]
-    rw [hh]
-    exact ⟨rfl, rfl⟩
 
 /-- Forwarded body configuration with a blank, inactive last tape. This
 uses the existing tape layout, but the physical output carries the chunk. -/
@@ -5055,38 +4682,6 @@ private lemma emLoopCall_frame (body F : FinTM Bool) (anchor : body.State) {x : 
       loopBodyPadded, loopBodyCfg, Fin.addCases]
     split_ifs <;> rfl
 
-/-- Forward the complete stopped-body run, including its silent anchor-stop
-transition, into the new host. -/
-private lemma emLoopHost_body_forward (body F : FinTM Bool) (anchor : body.State)
-    (findMode startup : Bool) {x : List Bool}
-    (pre : List Bool) (c : Cfg (body.k + 1 + (1 + F.k)) Bool (body.State × Bool) x) (t : ℕ)
-    (hlive : ∀ u < t, ¬((loopBodySource body F anchor).runFrom c u).Halted) :
-    (emLoopHost body F anchor findMode).tm.runFrom
-      (emLoopForwardCfg (fun s => .inr (.inl (startup, s)))
-        (.inr (.inr (if startup then 6 else 7 : Fin 14))) pre c) t =
-      emLoopForwardCfg (fun s => .inr (.inl (startup, s)))
-        (.inr (.inr (if startup then 6 else 7 : Fin 14))) pre
-        ((loopBodySource body F anchor).runFrom c t) := by
-  -- Pad the stopped body, then use the public forwarding contract in this host.
-  let src := loopBodySource body F anchor
-  let padded : MultiTapeTM (body.k + 1 + (1 + F.k) + 1) Bool (body.State × Bool) :=
-    ⟨src.q₀, fun q inp work => leftAction 1 id (src.tr q inp (fun i => work i.castSucc))⟩
-  have hrun (u : ℕ) := leftCfg_run src padded id (fun _ _ _ => rfl)
-    c (fun _ : Fin 1 => bufferTape []) (fun _ => 0) u
-  have hcfg (emb : body.State × Bool → LoopHostState body F) (ret : LoopHostState body F)
-      (d : Cfg (body.k + 1 + (1 + F.k)) Bool (body.State × Bool) x) :
-      Turing.emitCfg emb ret pre (leftCfg id d (fun _ : Fin 1 => bufferTape []) (fun _ => 0)) =
-        emLoopForwardCfg emb ret pre d := by
-    refine Cfg.ext ?_ rfl rfl rfl rfl
-    simp [Turing.emitCfg, emLoopForwardCfg, leftCfg]
-  rw [← hcfg]
-  rw [Turing.emit_run padded _ _ _ ?_ pre _ t ?_, hrun t, hcfg]
-  · intro q inp work
-    simp [padded, src, emLoopHost, Turing.emitAction, leftAction, Option.map_id]
-  · intro u hu
-    rw [hrun u]
-    simpa [Cfg.Halted, leftCfg] using hlive u hu
-
 /-- A live anchor endpoint is forwarded after one additional stop step.
 The exact endpoint keeps every inactive tape and carries the false stop flag.
 **Proof sketch.** The live endpoint rules out earlier halts. Use the source
@@ -5105,6 +4700,35 @@ private lemma emLoopHost_anchor_return (body F : FinTM Bool) (anchor : body.Stat
         (emLoopCall body F anchor pre startup c release none word fuel) (t + 1) =
       emLoopCall body F anchor pre startup {body.tm.runFrom c t with state := none}
         false (some false) word fuel := by
+  have emLoopHost_body_forward (body F : FinTM Bool) (anchor : body.State)
+      (findMode startup : Bool) {x : List Bool}
+      (pre : List Bool) (c : Cfg (body.k + 1 + (1 + F.k)) Bool (body.State × Bool) x) (t : ℕ)
+      (hlive : ∀ u < t, ¬((loopBodySource body F anchor).runFrom c u).Halted) :
+      (emLoopHost body F anchor findMode).tm.runFrom
+        (emLoopForwardCfg (fun s => .inr (.inl (startup, s)))
+          (.inr (.inr (if startup then 6 else 7 : Fin 14))) pre c) t =
+        emLoopForwardCfg (fun s => .inr (.inl (startup, s)))
+          (.inr (.inr (if startup then 6 else 7 : Fin 14))) pre
+          ((loopBodySource body F anchor).runFrom c t) := by
+    -- Pad the stopped body, then use the public forwarding contract in this host.
+    let src := loopBodySource body F anchor
+    let padded : MultiTapeTM (body.k + 1 + (1 + F.k) + 1) Bool (body.State × Bool) :=
+      ⟨src.q₀, fun q inp work => leftAction 1 id (src.tr q inp (fun i => work i.castSucc))⟩
+    have hrun (u : ℕ) := leftCfg_run src padded id (fun _ _ _ => rfl)
+      c (fun _ : Fin 1 => bufferTape []) (fun _ => 0) u
+    have hcfg (emb : body.State × Bool → LoopHostState body F) (ret : LoopHostState body F)
+        (d : Cfg (body.k + 1 + (1 + F.k)) Bool (body.State × Bool) x) :
+        Turing.emitCfg emb ret pre (leftCfg id d (fun _ : Fin 1 => bufferTape []) (fun _ => 0)) =
+          emLoopForwardCfg emb ret pre d := by
+      refine Cfg.ext ?_ rfl rfl rfl rfl
+      simp [Turing.emitCfg, emLoopForwardCfg, leftCfg]
+    rw [← hcfg]
+    rw [Turing.emit_run padded _ _ _ ?_ pre _ t ?_, hrun t, hcfg]
+    · intro q inp work
+      simp [padded, src, emLoopHost, Turing.emitAction, leftAction, Option.map_id]
+    · intro u hu
+      rw [hrun u]
+      simpa [Cfg.Halted, leftCfg] using hlive u hu
   have hlive : ∀ u ≤ t, (body.tm.runFrom c u).state ≠ none :=
     loop_live_prefix body.tm c t (by rw [hend]; simp)
   have hc : c.state ≠ none := by simpa using hlive 0 (Nat.zero_le _)
@@ -5153,6 +4777,18 @@ private lemma emLoopHost_start (body F : FinTM Bool) (anchor : body.State)
     (emLoopHost body F anchor findMode).tm.runFrom (loopReady body F fuel) (t + 2) =
       loopCall body F anchor false (Cfg.ofWords anchor (stateWord body.k s))
         true none fuel.output fuel := by
+  have emLoopHost_release (body F : FinTM Bool) (anchor : body.State)
+      (findMode : Bool) {x : List Bool} (c : Cfg body.k Bool body.State x)
+      (word : List Bool) (fuel : Cfg F.k Bool F.State x) :
+      (emLoopHost body F anchor findMode).tm.step
+          (loopCall body F anchor true {c with state := none} false (some false) word fuel) =
+        loopCall body F anchor false {c with state := some anchor} true none word fuel := by
+    rw [MultiTapeTM.step_eq_of_agreeOn (emLoopHost_agree body F anchor findMode)]
+    · exact loopHost_release body F anchor findMode c word fuel
+    · intro q hq
+      simp [loopCall, captureCfg, loopBodyPadded, leftCfg, loopBodyCfg] at hq
+      subst q
+      trivial
   have hi := emLoopCall_empty body F anchor true (body.tm.initCfg x) false none fuel.output fuel rfl
   have hr := emLoopHost_anchor_return body F anchor findMode true [] (body.tm.initCfg x)
     false t fuel.output fuel (by rw [hend]; rfl) (fun _ => rfl)
@@ -5187,6 +4823,163 @@ private lemma emLoopHost_round (body F : FinTM Bool) (anchor : body.State)
           (loopCall body F anchor false (Cfg.ofWords anchor (stateWord body.k s)) true none word fuel) v).state = none ∧
         ((emLoopHost body F anchor true).tm.runFrom
           (loopCall body F anchor false (Cfg.ofWords anchor (stateWord body.k s)) true none word fuel) v).output = chunk := by
+  have emLoopHost_reject (body F : FinTM Bool) (anchor : body.State)
+      (findMode : Bool) {x : List Bool} (c : Cfg body.k Bool body.State x)
+      (word : List Bool) (fuel : Cfg F.k Bool F.State x)
+      (hc : c.state = none) (ho : c.output = []) :
+      ∃ t ≤ 2 * word.length + 4,
+        if (loopDebit word).2 then
+          (emLoopHost body F anchor findMode).tm.runFrom
+              (loopCall body F anchor false c false (some false) word fuel) t =
+            loopCall body F anchor false {c with state := some anchor} true none (loopDebit word).1 fuel
+        else
+          ((emLoopHost body F anchor findMode).tm.runFrom
+            (loopCall body F anchor false c false (some false) word fuel) t).state = none ∧
+          ((emLoopHost body F anchor findMode).tm.runFrom
+            (loopCall body F anchor false c false (some false) word fuel) t).output =
+              (if findMode then [] else [false]) := by
+    have emLoopHost_borrow (body F : FinTM Bool) (anchor : body.State)
+        (findMode : Bool) {x : List Bool}
+        (base : Cfg (body.k + 1 + (1 + F.k) + 1) Bool (LoopHostState body F) x)
+        (p : Fin (x.length + 2)) (word : List Bool) :
+        2 * loopBorrowPos word + 2 ≤ 2 * word.length + 2 ∧
+        (emLoopHost body F anchor findMode).tm.runFrom
+            (loopFrame body F base (some (.inr (.inr 8))) p (bufferTape [])
+              (bufferTape word) (bufferTape []) 0 0 []) (2 * loopBorrowPos word + 2) =
+          loopFrame body F base
+            (some (if (loopDebit word).2 then .inr (.inl (false, (anchor, true)))
+              else .inr (.inr 11))) p
+            (bufferTape []) (bufferTape (loopDebit word).1) (bufferTape []) 0 0 [] := by
+      refine ⟨(loopHost_borrow body F anchor findMode base p word).1, ?_⟩
+      let src := (loopHost body F anchor findMode).tm
+      let good : LoopHostState body F → Prop := fun q =>
+        match q with | .inr (.inl _) => False | _ => True
+      have scan (rest : List Bool) : ∀ pre u, u < loopBorrowPos rest + 1 → ∀ q,
+          (src.runFrom (loopFrame body F base (some (.inr (.inr 8))) p (bufferTape [])
+            (bufferTape (pre ++ rest)) (bufferTape []) pre.length 0 []) u).state = some q → good q := by
+        induction rest with
+        | nil =>
+          intro pre u hu q hq
+          have hu0 : u = 0 := by simpa [loopBorrowPos] using hu
+          subst u
+          cases hq
+          trivial
+        | cons b rest ih =>
+          intro pre u hu q hq
+          cases u with
+          | zero => cases hq; trivial
+          | succ u =>
+            cases b with
+            | true => simp [loopBorrowPos] at hu
+            | false =>
+              rw [MultiTapeTM.runFrom_succ_eq_step,
+                show src.step _ = _ from loopHost_borrow_step body F anchor findMode base p pre
+                  (false :: rest)] at hq
+              apply ih (pre ++ [true]) u (by simpa [loopBorrowPos] using hu) q
+              simpa [List.append_assoc, Nat.cast_add, Nat.cast_one] using hq
+      have rewind (rest : List Bool) (success : Bool) : ∀ j, j ≤ rest.length → ∀ u,
+          u < j + 1 → ∀ q,
+          (src.runFrom (loopFrame body F base (some (.inr (.inr (if success then 9 else 10)))) p
+            (bufferTape []) (bufferTape rest) (bufferTape []) ((j : ℤ) - 1) 0 []) u).state = some q →
+            good q := by
+        intro j
+        induction j with
+        | zero =>
+          intro hj u hu q hq
+          have hu0 : u = 0 := by omega
+          subst u
+          cases hq
+          trivial
+        | succ j ih =>
+          intro hj u hu q hq
+          cases u with
+          | zero => cases hq; trivial
+          | succ u =>
+            have hs : src.step
+                (loopFrame body F base (some (.inr (.inr (if success then 9 else 10)))) p
+                  (bufferTape []) (bufferTape rest) (bufferTape []) (((j + 1 : ℕ) : ℤ) - 1) 0 []) =
+                loopFrame body F base (some (.inr (.inr (if success then 9 else 10)))) p
+                  (bufferTape []) (bufferTape rest) (bufferTape []) ((j : ℤ) - 1) 0 [] := by
+              cases success <;>
+                (change (match (loopFrame body F base _ p (bufferTape []) (bufferTape rest)
+                    (bufferTape []) (((j + 1 : ℕ) : ℤ) - 1) 0 []).workTapeSymbols
+                      ⟨body.k + 1, by omega⟩ with
+                  | some _ => loopControlAction body F 0 none (none, .neg) (none, 0) none _
+                  | none => loopControlAction body F 0 none (none, .pos) (none, 0) none _).apply _ = _)
+              all_goals
+                rw [loopFrame_counter, show ((j + 1 : ℕ) : ℤ) - 1 = (j : ℤ) by omega,
+                  bufferTape_nat, List.getElem?_eq_getElem (by omega : j < rest.length), loopControl_apply]
+                simp [loopWrite, sub_eq_add_neg]
+            rw [MultiTapeTM.runFrom_succ_eq_step, hs] at hq
+            exact ih (by omega) u (by omega) q hq
+      rw [MultiTapeTM.runFrom_eq_of_agreeOn (emLoopHost_agree body F anchor findMode)]
+      · exact (loopHost_borrow body F anchor findMode base p word).2
+      · intro u hu q hq
+        have hg : good q := by
+          by_cases hcut : u < loopBorrowPos word + 1
+          · exact scan word [] u hcut q hq
+          · have cut := loopHost_borrow_run body F anchor findMode base p word []
+            simp only [List.length_nil, Nat.cast_zero, List.nil_append, zero_add] at cut
+            rw [show u = (loopBorrowPos word + 1) + (u - (loopBorrowPos word + 1)) by omega,
+              MultiTapeTM.runFrom_add, cut] at hq
+            exact rewind (loopDebit word).1 (loopDebit word).2 (loopBorrowPos word)
+              (by rw [loopDebit_length]; exact loopBorrowPos_le word) _ (by omega) q hq
+        rcases q with q | (q | q)
+        · trivial
+        · exact hg
+        · trivial
+    let base := loopCall body F anchor false c false (some false) word fuel
+    have hs : base.state = some (.inr (.inr (7 : Fin 14))) := by
+      simp [base, loopCall, captureCfg, loopBodyPadded, leftCfg, loopBodyCfg, hc]
+    have hf : base = loopFrame body F base (some (.inr (.inr 7))) c.inputPos
+        (fun z => if z = 0 then some false else none) (bufferTape word) (bufferTape []) 0 0 [] := by
+      have h := loopCall_frame body F anchor false c false (some false) word fuel
+      have hstate : (loopCall body F anchor false c false (some false) word fuel).state =
+          some (.inr (.inr (7 : Fin 14))) := hs
+      simpa only [hstate, ho, List.length_nil, Nat.cast_zero] using h
+    have hstep : (emLoopHost body F anchor findMode).tm.step base =
+        loopFrame body F base (some (.inr (.inr 8))) c.inputPos
+          (bufferTape []) (bufferTape word) (bufferTape []) 0 0 [] := by
+      conv_lhs => arg 1; rw [hf]
+      change (if (loopFrame body F base (some (.inr (.inr 7))) c.inputPos
+          (fun z => if z = 0 then some false else none) (bufferTape word) (bufferTape []) 0 0 []).workTapeSymbols
+            ⟨body.k, by omega⟩ = some true then _
+        else loopControlAction body F 0 (some none) (none, 0) (none, 0) none
+          (some (.inr (.inr 8)))).apply _ = _
+      rw [loopFrame_flag]
+      change (loopControlAction body F 0 (some none) (none, 0) (none, 0) none
+        (some (.inr (.inr 8)))).apply _ = _
+      rw [loopControl_apply, loopFlag_clear]
+      simp [loopWrite]
+    have hrun : (emLoopHost body F anchor findMode).tm.runFrom base (2 * loopBorrowPos word + 3) =
+        loopFrame body F base
+          (some (if (loopDebit word).2 then .inr (.inl (false, (anchor, true)))
+            else .inr (.inr 11))) c.inputPos
+          (bufferTape []) (bufferTape (loopDebit word).1) (bufferTape []) 0 0 [] := by
+      rw [show 2 * loopBorrowPos word + 3 = (2 * loopBorrowPos word + 2) + 1 by omega,
+        MultiTapeTM.runFrom_succ_eq_step, hstep]
+      exact (emLoopHost_borrow body F anchor findMode base c.inputPos word).2
+    have hw := loopBorrowPos_le word
+    by_cases hb : (loopDebit word).2 = true
+    · refine ⟨2 * loopBorrowPos word + 3, by omega, ?_⟩
+      simp only [hb, if_true] at hrun ⊢
+      rw [hrun]
+      have h := loopCall_reframe body F anchor c false false false true (some false) none
+        word (loopDebit word).1 fuel (some anchor)
+      simpa [base, loopCall, captureCfg, loopBodyPadded, leftCfg, loopBodyCfg, ho] using h
+    · refine ⟨2 * loopBorrowPos word + 4, by omega, ?_⟩
+      simp only [hb] at hrun ⊢
+      have hh : (emLoopHost body F anchor findMode).tm.runFrom base (2 * loopBorrowPos word + 4) =
+          loopFrame body F base none c.inputPos (bufferTape []) (bufferTape (loopDebit word).1)
+            (bufferTape []) 0 0 (if findMode then [] else [false]) := by
+        rw [show 2 * loopBorrowPos word + 4 = (2 * loopBorrowPos word + 3) + 1 by omega,
+          MultiTapeTM.runFrom_succ_eq_step', hrun]
+        change (loopControlAction body F 0 none (none, 0) (none, 0)
+          (if findMode then none else some false) none).apply _ = _
+        rw [loopControl_apply]
+        cases findMode <;> simp [loopWrite]
+      rw [hh]
+      exact ⟨rfl, rfl⟩
   let c := Cfg.ofWords (input := x) anchor (stateWord body.k s)
   let d := Cfg.ofWords (input := x) anchor (stateWord body.k next)
   have hguard : ∀ u < t, (u = 0 ∧ true = true) ∨ (body.tm.runFrom c u).state ≠ some anchor := by
