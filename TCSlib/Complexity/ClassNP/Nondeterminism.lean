@@ -80,9 +80,9 @@ the choice-word truncation are shared with the relativized development
 (`Build/OracleSim.lean`) and the plain certificate shell (`Build/CertShell.lean`) through
 `TuringMachine/ChoiceWords.lean`. `certificate_split_strictMono`, `certificate_split_unique`
 and `choice_budget_le` were removed in favour of `Turing.certificateLength_strictMono`,
-`Turing.append_split_unique` and `Turing.choiceBudget_le`, and `e3_split_strictMono` in favour
-of `Turing.expCertificateLength_strictMono`; `e3_split_unique` and
-`acceptsWithin_iff_of_halts` now cite `append_split_unique` and
+`Turing.append_split_unique` and `Turing.choiceBudget_le`, and `e3_split_strictMono` and
+`e3_split_unique` in favour of `Turing.expCertificateLength_strictMono` and
+`append_split_unique`; `acceptsWithin_iff_of_halts` now cites
 `Turing.run_take_of_halted`. Statements and every other proof are unchanged.
 -/
 
@@ -2342,13 +2342,6 @@ theorem NP_eq_iUnion_NTIME : NP = ⋃ c : ℕ, NTIME fun n => n ^ c + 1 := by
 
 /-! ### Exponential split and evaluation infrastructure -/
 
-/-- Exact exponential widths make both parts of a concatenation unique. -/
-private lemma e3_split_unique (C c : ℕ) {x u y v : List Bool}
-    (hu : u.length = C * 2 ^ (x.length + 1) ^ c)
-    (hv : v.length = C * 2 ^ (y.length + 1) ^ c) (h : x ++ u = y ++ v) :
-    x = y ∧ u = v :=
-  append_split_unique (f := fun n => C * 2 ^ (n + 1) ^ c) (expCertificateLength_strictMono C c) hu hv h
-
 /-- The finite exponential-length search, with an explicit failure value. -/
 private def e3Split (C c m : ℕ) : Option ℕ :=
   (List.range (m + 1)).find? (fun n => decide (n + C * 2 ^ (n + 1) ^ c = m))
@@ -2385,7 +2378,8 @@ private lemma e3_choice_append (N : FinNDTM Bool) (C c : ℕ)
       (N.tm.runWith u (N.tm.initCfg x)).output = [true] := by
   constructor
   · rintro ⟨y, v, hv, heq, hhalt, hout⟩
-    obtain ⟨rfl, rfl⟩ := e3_split_unique C c hu hv heq
+    obtain ⟨rfl, rfl⟩ := append_split_unique (f := fun n => C * 2 ^ (n + 1) ^ c)
+      (expCertificateLength_strictMono C c) hu hv heq
     exact ⟨hhalt, hout⟩
   · rintro ⟨hhalt, hout⟩
     exact ⟨x, u, hu, rfl, hhalt, hout⟩
