@@ -716,6 +716,690 @@ private theorem b2b_ledger_bound (C c cV e cI cP K : ℕ) :
       Nat.mul_le_mul_left K (Nat.add_le_add (Nat.mul_le_mul_left 2 hsum) hR)
     _ = _ := by dsimp [R]; ring
 
+/-- A cleaned source's silent embedding has a single captured word and otherwise
+exactly the ambient frame. This pure configuration identity supplies both the
+startup and final configurations of setup and identity capture. -/
+private theorem b2b_capture_shape {k m : ℕ} {S : Type} {x : List Bool}
+    (M : MultiTapeTM m Bool S) (ι : Fin m ↪ Fin k) (cap : Fin k)
+    (hcap : cap ∉ Set.range ι) (tapes : Fin k → ℤ → Option Bool)
+    (hbank : ∀ a, tapes (ι a) = fun _ => none) (s : S)
+    (p : Fin (x.length + 2)) (y : List Bool) :
+    embedSilentCfg ι cap tapes (fun _ => 0) [] []
+        { Cfg.init s x with inputPos := p, output := y } =
+      { Cfg.init (k := k) s x with
+        inputPos := p,
+        workTapes := Function.update tapes cap (FinTM.bufferTape y),
+        workTapePos := Function.update (fun _ => (0 : ℤ)) cap (y.length : ℤ) } := by
+  classical
+  let d : Cfg m Bool S x := { Cfg.init s x with inputPos := p, output := y }
+  have hslot : (List.finRange m).find? (fun j => decide (ι j = cap)) = none := by
+    apply List.find?_eq_none.mpr
+    intro j _
+    simp only [decide_eq_true_eq]
+    exact fun hj => hcap ⟨j, hj⟩
+  apply Cfg.ext <;> try rfl
+  · funext j
+    change (embedSilentCfg ι cap tapes (fun _ => 0) [] [] d).workTapes j =
+      Function.update tapes cap (FinTM.bufferTape y) j
+    by_cases hc : j = cap
+    · subst j
+      change (match (List.finRange m).find? (fun a => decide (ι a = cap)) with
+        | some a => d.workTapes a
+        | none => if cap = cap then FinTM.bufferTape ([] ++ d.output) else tapes cap) = _
+      simp [hslot, d]
+    · by_cases hj : j ∈ Set.range ι
+      · obtain ⟨a, rfl⟩ := hj
+        rw [embedSilentCfg_selected_tape, Function.update_of_ne hc, hbank]
+        rfl
+      · rw [Function.update_of_ne hc]
+        exact (embedSilentTM_frame ι cap hcap M tapes (fun _ => 0) [] [] d 0).1 j hj hc |>.1
+  · funext j
+    change (embedSilentCfg ι cap tapes (fun _ => 0) [] [] d).workTapePos j =
+      Function.update (fun _ => (0 : ℤ)) cap (y.length : ℤ) j
+    by_cases hc : j = cap
+    · subst j
+      change (match (List.finRange m).find? (fun a => decide (ι a = cap)) with
+        | some a => d.workTapePos a
+        | none => if cap = cap then (([] ++ d.output).length : ℤ) else 0) = _
+      simp [hslot, d]
+    · rw [Function.update_of_ne hc]
+      by_cases hj : j ∈ Set.range ι
+      · obtain ⟨a, rfl⟩ := hj
+        exact embedSilentCfg_selected_pos ι cap tapes (fun _ => 0) [] [] d a
+      · exact (embedSilentTM_frame ι cap hcap M tapes (fun _ => 0) [] [] d 0).1 j hj hc |>.2
+
+/-- The two clean captures (unary setup and identity) share one through-halt
+contract, including the fixed capture interval and the clean bank radius.
+
+**Proof sketch.** Apply the existing cleaned-run theorem, take its first halt,
+and use the returning silent embedding. Selected heads inherit the clean
+bound. The capture head is the length of an output prefix of the final word;
+unselected heads are fixed by the public frame theorem. -/
+private theorem b2b_clean_capture {k : ℕ} (M : FinTM Bool)
+    (ι : Fin (M.k + M.k) ↪ Fin k) (cap : Fin k) (hcap : cap ∉ Set.range ι)
+    (tapes : Fin k → ℤ → Option Bool) (heads : Fin k → ℤ)
+    (x y : List Bool) (t s : ℕ) (ht : M.ComputesInTime x y t)
+    (hs : M.tm.spaceUsed (M.tm.initCfg x) t ≤ s) :
+    let N := LogProg.cleanTM M.tm M.tm.q₀
+    let c₀ : Cfg (M.k + M.k) Bool (LogProg.CleanSt M.State M.k) x :=
+    Cfg.init (LogProg.CleanSt.init M.tm.q₀) x
+    let E := embedSilentRetTM ι cap N
+    let d₀ := (embedSilentCfg ι cap tapes heads [] [] c₀).mapState Sum.inl
+    ∃ T : ℕ, ∃ p : Fin (x.length + 2),
+      E.runFrom d₀ T =
+        { embedSilentCfg ι cap tapes heads [] []
+            { c₀ with inputPos := p, output := y } with state := some (Sum.inr ()) } ∧
+      (∀ u < T, (E.runFrom d₀ u).state ≠ some (Sum.inr ())) ∧
+      (∀ u ≤ T, (E.runFrom d₀ u).state ≠ none ∧ (E.runFrom d₀ u).output = []) ∧
+      (∀ u ≤ T, ∀ j,
+        if j = cap then (E.runFrom d₀ u).workTapePos j ∈ Finset.Icc 0 (y.length : ℤ)
+        else if j ∈ Set.range ι then |(E.runFrom d₀ u).workTapePos j| ≤ (s : ℤ)
+        else (E.runFrom d₀ u).workTapePos j = heads j) := by
+  classical
+  dsimp only
+  let N := LogProg.cleanTM M.tm M.tm.q₀
+  let c₀ : Cfg (M.k + M.k) Bool (LogProg.CleanSt M.State M.k) x :=
+    Cfg.init (LogProg.CleanSt.init M.tm.q₀) x
+  obtain ⟨T₀, hhalt, hout, htapes, hheads, hbound⟩ := b2b_clean_run M x y t s ht hs
+  obtain ⟨T, hT, hlive, hfirst⟩ := MultiTapeTM.exists_first_halt N c₀ hhalt
+  have hfinal : N.runFrom c₀ T =
+      { c₀ with state := none, inputPos := (N.runFrom c₀ T₀).inputPos, output := y } := by
+    rw [hfirst]
+    apply Cfg.ext
+    · exact hhalt
+    · rfl
+    · exact htapes
+    · exact hheads
+    · exact hout
+  have he := embedSilentRetTM_run ι cap hcap N tapes heads [] [] c₀ T
+    (by simp [c₀, Cfg.init]) hlive (by rw [hfirst]; exact hhalt)
+  have hpos (d : Cfg (M.k + M.k) Bool (LogProg.CleanSt M.State M.k) x) :
+      (embedSilentCfg ι cap tapes heads [] [] d).workTapePos cap = (d.output.length : ℤ) := by
+    simp only [embedSilentCfg]
+    split
+    · rename_i a ha
+      have hh := List.find?_some (p := fun j : Fin (M.k + M.k) => decide (ι j = cap)) ha
+      exact False.elim (hcap ⟨a, of_decide_eq_true hh⟩)
+    · simp
+  refine ⟨T, (N.runFrom c₀ T₀).inputPos, ?_, he.2.2, ?_, ?_⟩
+  · rw [he.2.1, hfinal]
+    rfl
+  · intro u hu
+    rcases lt_or_eq_of_le hu with hu' | rfl
+    · rw [he.1 u hu']
+      constructor
+      · simpa [Cfg.mapState, embedSilentCfg, Cfg.Halted] using hlive u hu'
+      · rfl
+    · rw [he.2.1]
+      exact ⟨by simp, rfl⟩
+  · intro u hu j
+    have hp : ((embedSilentRetTM ι cap N).runFrom
+        ((embedSilentCfg ι cap tapes heads [] [] c₀).mapState Sum.inl) u).workTapePos =
+        (embedSilentCfg ι cap tapes heads [] [] (N.runFrom c₀ u)).workTapePos := by
+      rcases lt_or_eq_of_le hu with hu' | rfl
+      · rw [he.1 u hu']; rfl
+      · rw [he.2.1]
+    rw [hp]
+    by_cases hj : j = cap
+    · subst j
+      simp only [ite_true, hpos, Finset.mem_Icc]
+      have houtlen := (N.output_prefix c₀ (hu.trans hT)).length_le
+      change (N.runFrom c₀ T₀).output = y at hout
+      rw [hout] at houtlen
+      constructor <;> omega
+    · simp only [hj, ite_false]
+      by_cases hsel : j ∈ Set.range ι
+      · obtain ⟨a, rfl⟩ := hsel
+        rw [if_pos ⟨a, rfl⟩, embedSilentCfg_selected_pos]
+        exact hbound u (hu.trans hT) a
+      · rw [if_neg hsel]
+        exact (embedSilentTM_frame ι cap hcap N tapes heads [] [] (N.runFrom c₀ u) 0).1
+          j hsel hj |>.2
+
+/-- Setup phase S1 captures the unary certificate width, cleans its bank, and
+silently dispatches to the virtual origin finder with the capture head at the
+word's right blank. Its entire trajectory has a fixed, input-dependent radius.
+
+**Proof sketch.** Instantiate the shared clean-capture contract with the setup
+bank, identify the blank startup by the pure capture identity, and apply the
+public phase-host lemma at the first live return. The final dispatch moves no
+head; every earlier head belongs to the shared capture trajectory. -/
+private theorem b2b_setup_capture (MV MI MP : FinTM Bool) (x y : List Bool)
+    (t s : ℕ) (ht : MP.ComputesInTime x y t)
+    (hs : MP.tm.spaceUsed (MP.tm.initCfg x) t ≤ s) :
+    let K := b2b_tapeCount MV.k MI.k MP.k
+    let U := (b2b_wordTape MV.k MI.k MP.k 0).castSucc
+    ∃ T : ℕ, ∃ p : Fin (x.length + 2),
+      (b2b_host MV MI MP).tm.runFrom ((b2b_host MV MI MP).tm.initCfg x) T =
+        { Cfg.init (k := K + 1) (⟨B2bHostPhase.origin, Sum.inl (.start, true)⟩ :
+            Σ j, b2b_hostState MV MI MP j) x with
+          inputPos := p,
+          workTapes := Function.update (fun _ _ => none) U (FinTM.bufferTape y),
+          workTapePos := Function.update (fun _ => (0 : ℤ)) U (y.length : ℤ) } ∧
+      ∀ u ≤ T, ∀ j,
+        |((b2b_host MV MI MP).tm.runFrom ((b2b_host MV MI MP).tm.initCfg x) u).workTapePos j|
+          ≤ (s + y.length : ℕ) := by
+  classical
+  dsimp only
+  let K := b2b_tapeCount MV.k MI.k MP.k
+  let U := (b2b_wordTape MV.k MI.k MP.k 0).castSucc
+  let ι := b2b_bankEmb (3 + (MV.k + MV.k) + (MI.k + MI.k)) (MP.k + MP.k) (K + 1)
+    (by dsimp [K, b2b_tapeCount]; omega)
+  have hcap : U ∉ Set.range ι := by
+    rintro ⟨a, ha⟩
+    have := congrArg Fin.val ha
+    dsimp [ι, U, b2b_bankEmb, b2b_wordTape] at this
+    omega
+  let N := LogProg.cleanTM MP.tm MP.tm.q₀
+  let c₀ : Cfg (MP.k + MP.k) Bool (LogProg.CleanSt MP.State MP.k) x :=
+    Cfg.init (LogProg.CleanSt.init MP.tm.q₀) x
+  obtain ⟨T, p, hrun, hcut, _, hheads⟩ :=
+    b2b_clean_capture MP ι U hcap (fun _ _ => none) (fun _ => 0) x y t s ht hs
+  let d₀ : Cfg (K + 1) Bool (b2b_hostState MV MI MP .setup) x :=
+    Cfg.init (Sum.inl (.init MP.tm.q₀)) x
+  let d₁ : Cfg (K + 1) Bool (b2b_hostState MV MI MP .setup) x :=
+    { Cfg.init (k := K + 1) (Sum.inr ()) x with
+      inputPos := p,
+      workTapes := Function.update (fun _ _ => none) U (FinTM.bufferTape y),
+      workTapePos := Function.update (fun _ => (0 : ℤ)) U (y.length : ℤ) }
+  have hstart : (embedSilentCfg ι U (fun _ _ => none) (fun _ => 0) [] [] c₀).mapState
+      Sum.inl = d₀ := by
+    have h := b2b_capture_shape N ι U hcap (fun _ _ => none) (fun _ => rfl)
+      (LogProg.CleanSt.init MP.tm.q₀) (1 : Fin (x.length + 2)) []
+    change embedSilentCfg ι U (fun _ _ => none) (fun _ => 0) [] [] c₀ = _ at h
+    rw [h]
+    simp [d₀, Cfg.init, Cfg.mapState]
+  have hend : { embedSilentCfg ι U (fun _ _ => none) (fun _ => 0) [] []
+        { c₀ with inputPos := p, output := y } with state := some (Sum.inr ()) } = d₁ := by
+    rw [b2b_capture_shape N ι U hcap (fun _ _ => none) (fun _ => rfl)]
+    rfl
+  rw [hstart, hend] at hrun
+  rw [hstart] at hcut hheads
+  have hp := phaseHostTM_run (b2b_hostPhases MV MI MP)
+    ⟨.setup, Sum.inl (.init MP.tm.q₀)⟩ (b2b_hostRedirect MV MI MP) .setup
+    d₀ d₁ T hrun (Sum.inr ()) rfl ⟨.origin, Sum.inl (.start, true)⟩ rfl (by
+      intro u hu q hq
+      cases q with
+      | inl a => rfl
+      | inr a => exact False.elim (hcut u hu (by simpa using hq)))
+  have hinit : d₀.mapState (Sigma.mk B2bHostPhase.setup) =
+      (b2b_host MV MI MP).tm.initCfg x := rfl
+  refine ⟨T + 1, p, ?_, ?_⟩
+  · simpa only [hinit, b2b_host, b2b_dispatch_retag, d₁, Cfg.mapState, Cfg.init,
+      Option.map_some] using hp.2
+  · intro u hu j
+    change |((phaseHostTM (b2b_hostPhases MV MI MP)
+      ⟨.setup, Sum.inl (.init MP.tm.q₀)⟩ (b2b_hostRedirect MV MI MP)).runFrom
+      (d₀.mapState (Sigma.mk B2bHostPhase.setup)) u).workTapePos j| ≤ _
+    by_cases hu' : u ≤ T
+    · rw [hp.1 u hu']
+      have hh := hheads u hu' j
+      by_cases hj : j = U
+      · subst j
+        simp only [ite_true, Finset.mem_Icc] at hh
+        change |((b2b_hostPhases MV MI MP .setup).runFrom d₀ u).workTapePos U| ≤ _
+        rw [abs_of_nonneg hh.1]
+        exact hh.2.trans (by omega)
+      · simp only [hj, ite_false] at hh
+        split_ifs at hh with hsel
+        · exact hh.trans (by omega)
+        · change |((b2b_hostPhases MV MI MP .setup).runFrom d₀ u).workTapePos j| ≤ _
+          rw [hh]; simp only [abs_zero]; omega
+    · have heq : u = T + 1 := by omega
+      rw [heq, hp.2]
+      change |Function.update (fun _ => (0 : ℤ)) U (y.length : ℤ) j| ≤ _
+      by_cases hj : j = U
+      · subst j
+        rw [Function.update_self, abs_of_nonneg (Nat.cast_nonneg _)]
+        omega
+      · rw [Function.update_of_ne hj]
+        simp only [abs_zero]
+        omega
+
+/-- Relocating the zero-bank virtual rewind selects exactly its buffered word;
+all other tapes and heads are blank. This is a pure configuration identity.
+
+**Proof sketch.** At the selected tape use the public embedding projections;
+at every other tape use the public frame theorem at time zero. -/
+private theorem b2b_origin_shape {k : ℕ} {x y : List Bool} (U : Fin k)
+    (c : Cfg 0 Bool B2bRewindState y) (b : Bool) (p : Fin (x.length + 2)) :
+    embedEmitCfg (b2b_singleEmb U) (fun _ _ => none) (fun _ => 0) [] (vhostCfg c b p []) =
+      { state := c.state.map (fun q => (q, b)), inputPos := p,
+        workTapes := Function.update (fun _ _ => none) U (FinTM.bufferTape y),
+        workTapePos := Function.update (fun _ => (0 : ℤ)) U ((c.inputPos.val : ℤ) - 1),
+        output := c.output } := by
+  classical
+  let d := vhostCfg c b p []
+  have hn (j : Fin k) (h : j ≠ U) : j ∉ Set.range (b2b_singleEmb U) := by
+    rintro ⟨a, ha⟩
+    exact h ha.symm
+  apply Cfg.ext <;> try rfl
+  · funext j
+    change (embedEmitCfg (b2b_singleEmb U) (fun _ _ => none) (fun _ => 0) [] d).workTapes j =
+      Function.update (fun _ _ => none) U (FinTM.bufferTape y) j
+    by_cases hj : j = U
+    · subst j
+      have hp := embedEmitCfg_selected_tape (b2b_singleEmb U) (fun _ _ => none)
+        (fun _ => 0) [] d (vhostBuffer 0)
+      simpa [b2b_singleEmb, d, vhostCfg, vhostBuffer] using hp
+    · rw [Function.update_of_ne hj]
+      exact (embedEmitTM_frame (b2b_singleEmb U) (vhostEmitTM (b2b_rewindTM 0))
+        (fun _ _ => none) (fun _ => 0) [] d 0).1 j (hn j hj) |>.1
+  · funext j
+    change (embedEmitCfg (b2b_singleEmb U) (fun _ _ => none) (fun _ => 0) [] d).workTapePos j =
+      Function.update (fun _ => (0 : ℤ)) U ((c.inputPos.val : ℤ) - 1) j
+    by_cases hj : j = U
+    · subst j
+      have hp := embedEmitCfg_selected_pos (b2b_singleEmb U) (fun _ _ => none)
+        (fun _ => 0) [] d (vhostBuffer 0)
+      simpa [b2b_singleEmb, d, vhostCfg, vhostBuffer] using hp
+    · rw [Function.update_of_ne hj]
+      exact (embedEmitTM_frame (b2b_singleEmb U) (vhostEmitTM (b2b_rewindTM 0))
+        (fun _ _ => none) (fun _ => 0) [] d 0).1 j (hn j hj) |>.2
+
+/-- S2 returns the captured word's work head to zero without changing that
+word or the native input position; all prefixes stay in the word's fixed window.
+
+**Proof sketch.** Apply the already proved virtual rewind and take its first
+halt. The returning forwarding embedding supplies a live exit and no earlier
+exit. Its prefix equality transports the public virtual-buffer window; other
+heads stay fixed by the embedding frame theorem. -/
+private theorem b2b_origin_run {k : ℕ} {x : List Bool} (U : Fin k)
+    (y : List Bool) (p : Fin (x.length + 2)) :
+    let E := embedEmitRetTM (b2b_singleEmb U) (vhostEmitTM (b2b_rewindTM 0))
+    let d₀ : Cfg k Bool ((B2bRewindState × Bool) ⊕ Unit) x :=
+      { Cfg.init (k := k) (Sum.inl (.start, true)) x with
+        inputPos := p,
+        workTapes := Function.update (fun _ _ => none) U (FinTM.bufferTape y),
+        workTapePos := Function.update (fun _ => (0 : ℤ)) U (y.length : ℤ) }
+    let d₁ : Cfg k Bool ((B2bRewindState × Bool) ⊕ Unit) x :=
+      { Cfg.init (k := k) (Sum.inr ()) x with
+        inputPos := p,
+        workTapes := Function.update (fun _ _ => none) U (FinTM.bufferTape y) }
+    ∃ T : ℕ, E.runFrom d₀ T = d₁ ∧
+      (∀ u < T, (E.runFrom d₀ u).state ≠ some (Sum.inr ())) ∧
+      ∀ u ≤ T, ∀ j, if j = U then
+        (E.runFrom d₀ u).workTapePos j ∈ Finset.Icc (-1 : ℤ) (y.length : ℤ)
+        else (E.runFrom d₀ u).workTapePos j = 0 := by
+  classical
+  dsimp only
+  let c : Cfg 0 Bool B2bRewindState y :=
+    { Cfg.init .start y with inputPos := ⟨y.length + 1, by omega⟩ }
+  have htag : FinTM.VirtualTag c.inputPos true := by
+    simp [FinTM.VirtualTag, c]
+  let d := vhostCfg c true p []
+  let N := vhostEmitTM (b2b_rewindTM 0)
+  obtain ⟨r, _, b', hrun, _, _⟩ := b2b_vhost_rewind c rfl true htag p []
+  have hh : (N.runFrom d r).state = none := by rw [hrun]; rfl
+  obtain ⟨T, _, hlive, hfirst⟩ := MultiTapeTM.exists_first_halt N d hh
+  have hstop := hfirst.trans hrun
+  have he := embedEmitRetTM_run (b2b_singleEmb U) N
+    (fun _ _ => none) (fun _ => 0) [] d T (by simp [d, vhostCfg, c, Cfg.init])
+    hlive (by rw [hfirst]; exact hh)
+  have hstart : (embedEmitCfg (b2b_singleEmb U) (fun _ _ => none) (fun _ => 0) [] d).mapState
+      (Sum.inl : _ → (B2bRewindState × Bool) ⊕ Unit) = { Cfg.init (k := k) (Sum.inl (.start, true)) x with
+        inputPos := p,
+        workTapes := Function.update (fun _ _ => none) U (FinTM.bufferTape y),
+        workTapePos := Function.update (fun _ => (0 : ℤ)) U (y.length : ℤ) } := by
+    rw [b2b_origin_shape]
+    simp [c, Cfg.init, Cfg.mapState]
+  refine ⟨T, ?_, ?_, ?_⟩
+  · have h := he.2.1
+    rw [hstart, hstop, b2b_origin_shape] at h
+    simpa [c, Cfg.init] using h
+  · simpa only [hstart] using he.2.2
+  · intro u hu j
+    have hp : ((embedEmitRetTM (b2b_singleEmb U) N).runFrom
+        ((embedEmitCfg (b2b_singleEmb U) (fun _ _ => none) (fun _ => 0) [] d).mapState Sum.inl)
+        u).workTapePos =
+        (embedEmitCfg (b2b_singleEmb U) (fun _ _ => none) (fun _ => 0) [] (N.runFrom d u)).workTapePos := by
+      rcases lt_or_eq_of_le hu with hu' | rfl
+      · rw [he.1 u hu']; rfl
+      · rw [he.2.1]
+    rw [hstart] at hp
+    rw [hp]
+    by_cases hj : j = U
+    · subst j
+      simp only [ite_true]
+      have hpos := embedEmitCfg_selected_pos (b2b_singleEmb U) (fun _ _ => none)
+        (fun _ => 0) [] (N.runFrom d u) (vhostBuffer 0)
+      rw [show b2b_singleEmb U (vhostBuffer 0) = U from rfl] at hpos
+      rw [hpos]
+      exact vhostCfg_buffer_head_mem (b2b_rewindTM 0) c true htag p [] u
+    · simp only [hj, ite_false]
+      have hn : j ∉ Set.range (b2b_singleEmb U) := by
+        rintro ⟨a, ha⟩
+        exact hj ha.symm
+      exact (embedEmitTM_frame (b2b_singleEmb U) N (fun _ _ => none) (fun _ => 0)
+        [] (N.runFrom d u) 0).1 j hn |>.2
+
+/-- The native rewind becomes a live return through the prescribed identity
+embedding, preserving every work head throughout. Both native rewind phases use
+this same instance of the public first-halt and returning-embedding contracts. -/
+private theorem b2b_rewind_return {k : ℕ} {x : List Bool}
+    (c : Cfg k Bool B2bRewindState x) (hs : c.state = some .start) :
+    let E := embedEmitRetTM (Function.Embedding.refl _) (b2b_rewindTM k)
+    ∃ T : ℕ, E.runFrom (c.mapState Sum.inl) T =
+        { c with state := some (Sum.inr ()), inputPos := 1 } ∧
+      (∀ u < T, (E.runFrom (c.mapState Sum.inl) u).state ≠ some (Sum.inr ())) ∧
+      ∀ u ≤ T, (E.runFrom (c.mapState Sum.inl) u).workTapePos = c.workTapePos := by
+  obtain ⟨r, _, hrun, hheads⟩ := b2b_rewind_run c hs
+  obtain ⟨T, hTr, hlive, hfirst⟩ := MultiTapeTM.exists_first_halt (b2b_rewindTM k) c
+    (show ((b2b_rewindTM k).runFrom c r).state = none by rw [hrun])
+  have he := embedEmitRetTM_run (Function.Embedding.refl _) (b2b_rewindTM k)
+    c.workTapes c.workTapePos [] c T (by rw [hs]; simp) hlive (by rw [hfirst, hrun])
+  simp only [b2b_embed_refl] at he
+  refine ⟨T, ?_, he.2.2, ?_⟩
+  · rw [he.2.1, hfirst, hrun]
+  · intro u hu
+    rcases lt_or_eq_of_le hu with hu' | rfl
+    · rw [he.1 u hu']
+      exact hheads u (hu.trans hTr)
+    · rw [he.2.1, hfirst, hrun]
+
+/-- The setup seam has words only on the certificate and final counter tape,
+with every head at its fixed origin and no physical output. -/
+private def b2b_setupCfg {S : Type} {x : List Bool} (MV MI MP : FinTM Bool)
+    (q : S) (p : Fin (x.length + 2)) (u w : List Bool) :
+    Cfg (b2b_tapeCount MV.k MI.k MP.k + 1) Bool S x :=
+  { Cfg.init q x with
+    inputPos := p,
+    workTapes := fun j => if j = (b2b_wordTape MV.k MI.k MP.k 0).castSucc then
+      FinTM.bufferTape u else if j = Fin.last (b2b_tapeCount MV.k MI.k MP.k) then
+      FinTM.bufferTape w else fun _ => none }
+
+/-- S3 and S4 install the all-true round counter and the all-false first
+certificate, then dispatch to S5. They also cover certificate width zero.
+
+**Proof sketch.** The framed copy installs the counter. The all-true certificate
+has no fixed-width successor, so the framed overflow increment replaces it by
+zeros. Use the public phase-host contract for the two silent dispatches. Each
+row's trajectory stays between minus one and the fixed certificate width. -/
+private theorem b2b_seed_run (MV MI MP : FinTM Bool) {x : List Bool}
+    (p : Fin (x.length + 2)) (Q : ℕ) :
+    let H := (b2b_host MV MI MP).tm
+    let d₀ := b2b_setupCfg MV MI MP (⟨B2bHostPhase.counter, SweepPhase.sweep⟩ :
+      Σ j, b2b_hostState MV MI MP j) p (List.replicate Q true) []
+    let d₁ := b2b_setupCfg MV MI MP (⟨B2bHostPhase.rewind, Sum.inl B2bRewindState.start⟩ :
+      Σ j, b2b_hostState MV MI MP j) p (List.replicate Q false) (List.replicate Q true)
+    H.runFrom d₀ ((2 * Q + 3) + (2 * Q + 3)) = d₁ ∧
+      ∀ u ≤ (2 * Q + 3) + (2 * Q + 3), ∀ j,
+        |(H.runFrom d₀ u).workTapePos j| ≤ (Q + 1 : ℕ) := by
+  classical
+  dsimp only
+  let K := b2b_tapeCount MV.k MI.k MP.k
+  let U := (b2b_wordTape MV.k MI.k MP.k 0).castSucc
+  let Ctr := Fin.last K
+  have hne : U ≠ Ctr := by
+    intro h
+    have := congrArg Fin.val h
+    dsimp [U, Ctr, b2b_wordTape, K, b2b_tapeCount] at this
+    omega
+  let w := List.replicate Q true
+  let z := List.replicate Q false
+  let a : Cfg (K + 1) Bool SweepPhase x := b2b_setupCfg MV MI MP .sweep p w []
+  let b : Cfg (K + 1) Bool SweepPhase x := b2b_setupCfg MV MI MP .done p w w
+  let c : Cfg (K + 1) Bool FlagPhase x := b2b_setupCfg MV MI MP .run p w w
+  let d : Cfg (K + 1) Bool FlagPhase x := b2b_setupCfg MV MI MP (.done false) p z w
+  have ha : ∀ r : ℤ, -1 ≤ r → r ≤ (w.length : ℤ) →
+      a.workTapes U (a.workTapePos U + r) = FinTM.bufferTape w r := by
+    intro r _ _
+    simp [a, b2b_setupCfg, Cfg.init, U]
+  have hc : ∀ r : ℤ, -1 ≤ r → r ≤ (w.length : ℤ) →
+      c.workTapes U (c.workTapePos U + r) = FinTM.bufferTape w r := by
+    intro r _ _
+    simp [c, b2b_setupCfg, Cfg.init, U]
+  have hcopy := copyTM_run_ofCfg U Ctr hne w a rfl ha
+  have hcopyend : (b2b_hostPhases MV MI MP .counter).runFrom a (2 * Q + 2) = b := by
+    have hh := hcopy.1
+    simp only [w, List.length_replicate] at hh
+    rw [hh]
+    apply Cfg.ext <;> try rfl
+    funext j r
+    by_cases hj : j = Ctr
+    · subst j
+      have hcat := congrFun (b2b_buffer_concat [] w) r
+      simpa [a, b, b2b_setupCfg, Cfg.init, Ctr, U, Ne.symm hne, w, K] using hcat
+    · have hj' : j ≠ Fin.last (b2b_tapeCount MV.k MI.k MP.k) := hj
+      simp [a, b, b2b_setupCfg, Cfg.init, Ctr, hj, K]
+  have hov : incFixed w = none := by
+    dsimp [w]
+    have hall : ∀ n, incFixed (List.replicate n true) = none := by
+      intro n
+      induction n with
+      | zero => rfl
+      | succ n ih => simp [List.replicate_succ, incFixed, ih]
+    exact hall Q
+  have hinc := incrementTM_run_overflow_ofCfg U w hov c rfl hc
+  have hincend : (b2b_hostPhases MV MI MP .zero).runFrom c (2 * Q + 2) = d := by
+    have hh := hinc.1
+    simp only [w, List.length_replicate] at hh
+    rw [hh]
+    apply Cfg.ext <;> try rfl
+    funext j r
+    by_cases hj : j = U
+    · subst j
+      by_cases hr : 0 ≤ r
+      · by_cases hq : r < (Q : ℤ)
+        · simp [c, d, b2b_setupCfg, Cfg.init, U, hr, hq, z]
+        · have hn : Q ≤ r.toNat := by omega
+          simp [c, d, b2b_setupCfg, Cfg.init, U, hr, hq, z, w, FinTM.bufferTape,
+            show ¬r.toNat < Q by omega]
+      · simp [c, d, b2b_setupCfg, Cfg.init, U, hr, z, w, FinTM.bufferTape]
+    · simp [c, d, b2b_setupCfg, Cfg.init, U, hj]
+  have hp := phaseHostTM_run (b2b_hostPhases MV MI MP)
+    ⟨.setup, Sum.inl (.init MP.tm.q₀)⟩ (b2b_hostRedirect MV MI MP) .counter
+    a b (2 * Q + 2) hcopyend .done rfl ⟨.zero, .run⟩ rfl (by
+      intro u hu q hq
+      have hn := hcopy.2.1 u (by simpa [w] using hu)
+      cases q <;> simp_all [b2b_hostRedirect])
+  have hi := phaseHostTM_run (b2b_hostPhases MV MI MP)
+    ⟨.setup, Sum.inl (.init MP.tm.q₀)⟩ (b2b_hostRedirect MV MI MP) .zero
+    c d (2 * Q + 2) hincend (.done false) rfl ⟨.rewind, Sum.inl .start⟩ rfl (by
+      intro u hu q hq
+      have hn := hinc.2.1 u (by simpa [w] using hu)
+      cases q <;> simp_all [b2b_hostRedirect])
+  have hmid : b.mapState (fun _ => (⟨.zero, .run⟩ : Σ j, b2b_hostState MV MI MP j)) =
+      c.mapState (Sigma.mk B2bHostPhase.zero) := rfl
+  constructor
+  · rw [MultiTapeTM.runFrom_add]
+    change (b2b_host MV MI MP).tm.runFrom
+      ((b2b_host MV MI MP).tm.runFrom (a.mapState (Sigma.mk B2bHostPhase.counter))
+        ((2 * Q + 2) + 1)) ((2 * Q + 2) + 1) = _
+    rw [hp.2, b2b_dispatch_retag]
+    change (b2b_host MV MI MP).tm.runFrom (c.mapState (Sigma.mk B2bHostPhase.zero))
+      ((2 * Q + 2) + 1) = _
+    rw [hi.2, b2b_dispatch_retag]
+    rfl
+  · intro u hu j
+    change |((b2b_host MV MI MP).tm.runFrom
+      (a.mapState (Sigma.mk B2bHostPhase.counter)) u).workTapePos j| ≤ _
+    by_cases hpre : u ≤ 2 * Q + 2
+    · rw [hp.1 u hpre]
+      have hb := hcopy.2.2 j u (by simpa [w] using hpre)
+      simp only [show a.workTapePos j = 0 from rfl, show w.length = Q by simp [w],
+        zero_sub, zero_add, Finset.mem_Icc] at hb
+      split_ifs at hb <;> change |((copyTM _ U Ctr).runFrom a u).workTapePos j| ≤ _
+      · exact abs_le.mpr ⟨by omega, by omega⟩
+      · rw [hb]; simp only [abs_zero]; omega
+    · have hsplit : u = (2 * Q + 2 + 1) + (u - (2 * Q + 3)) := by omega
+      rw [hsplit, MultiTapeTM.runFrom_add, hp.2, b2b_dispatch_retag]
+      change |((b2b_host MV MI MP).tm.runFrom (c.mapState (Sigma.mk B2bHostPhase.zero))
+        (u - (2 * Q + 3))).workTapePos j| ≤ _
+      by_cases hpost : u - (2 * Q + 3) ≤ 2 * Q + 2
+      · rw [hi.1 _ hpost]
+        have hb := hinc.2.2 j (u - (2 * Q + 3)) (by simpa [w] using hpost)
+        simp only [show c.workTapePos j = 0 from rfl, show w.length = Q by simp [w],
+          zero_sub, zero_add, Finset.mem_Icc] at hb
+        split_ifs at hb <;> change |((incrementTM _ U).runFrom c (u - (2 * Q + 3))).workTapePos j| ≤ _
+        · exact abs_le.mpr ⟨by omega, by omega⟩
+        · rw [hb]; simp only [abs_zero]; omega
+      · have hend : u - (2 * Q + 3) = (2 * Q + 2) + 1 := by omega
+        rw [hend, hi.2]
+        change |(0 : ℤ)| ≤ _
+        simp only [abs_zero]
+        omega
+
+/-- All five setup phases reach the counter loop with the zero certificate,
+all-true counter, restored native input, blank scratch, and origin heads. The
+entire setup uses one fixed radius, including at certificate width zero.
+
+**Proof sketch.** Concatenate the proved setup capture, the returning virtual
+rewind, the copy/overflow pair, and the returning native rewind. Each live exit
+uses the public phase host. Split a prefix at the three joins to inherit the
+component head bounds; none depends on the number of certificate trials. -/
+private theorem b2b_setup_run (MV MI MP : FinTM Bool) (x : List Bool) (Q t s : ℕ)
+    (ht : MP.ComputesInTime x (List.replicate Q true) t)
+    (hs : MP.tm.spaceUsed (MP.tm.initCfg x) t ≤ s) :
+    ∃ T : ℕ,
+      (b2b_host MV MI MP).tm.runFrom ((b2b_host MV MI MP).tm.initCfg x) T =
+        b2b_setupCfg MV MI MP (⟨B2bHostPhase.loop, CounterLoopState.dec .run⟩ :
+          Σ j, b2b_hostState MV MI MP j) 1 (List.replicate Q false) (List.replicate Q true) ∧
+      ∀ u ≤ T, ∀ j,
+        |((b2b_host MV MI MP).tm.runFrom ((b2b_host MV MI MP).tm.initCfg x) u).workTapePos j|
+          ≤ (s + Q + 1 : ℕ) := by
+  classical
+  let K := b2b_tapeCount MV.k MI.k MP.k
+  let U := (b2b_wordTape MV.k MI.k MP.k 0).castSucc
+  let H := (b2b_host MV MI MP).tm
+  let w := List.replicate Q true
+  let z := List.replicate Q false
+  obtain ⟨T₁, p, h₁, h₁heads⟩ := b2b_setup_capture MV MI MP x w t s ht hs
+  let a₀ : Cfg (K + 1) Bool (b2b_hostState MV MI MP .origin) x :=
+    { Cfg.init (k := K + 1) (Sum.inl (.start, true)) x with
+      inputPos := p,
+      workTapes := Function.update (fun _ _ => none) U (FinTM.bufferTape w),
+      workTapePos := Function.update (fun _ => (0 : ℤ)) U (w.length : ℤ) }
+  let a₁ : Cfg (K + 1) Bool (b2b_hostState MV MI MP .origin) x :=
+    { Cfg.init (k := K + 1) (Sum.inr ()) x with
+      inputPos := p,
+      workTapes := Function.update (fun _ _ => none) U (FinTM.bufferTape w) }
+  obtain ⟨T₂, h₂, h₂cut, h₂heads⟩ := b2b_origin_run U w p
+  have hp₂ := phaseHostTM_run (b2b_hostPhases MV MI MP)
+    ⟨.setup, Sum.inl (.init MP.tm.q₀)⟩ (b2b_hostRedirect MV MI MP) .origin
+    a₀ a₁ T₂ h₂ (Sum.inr ()) rfl ⟨.counter, .sweep⟩ rfl (by
+      intro u hu q hq
+      cases q with
+      | inl a => rfl
+      | inr a => exact False.elim (h₂cut u hu (by simpa using hq)))
+  let c₀ := b2b_setupCfg MV MI MP (⟨B2bHostPhase.counter, SweepPhase.sweep⟩ :
+    Σ j, b2b_hostState MV MI MP j) p w []
+  let c₁ := b2b_setupCfg MV MI MP (⟨B2bHostPhase.rewind, Sum.inl B2bRewindState.start⟩ :
+    Σ j, b2b_hostState MV MI MP j) p z w
+  change H.runFrom (H.initCfg x) T₁ = a₀.mapState (Sigma.mk B2bHostPhase.origin) at h₁
+  have h₂end : H.runFrom (a₀.mapState (Sigma.mk B2bHostPhase.origin)) (T₂ + 1) = c₀ := by
+    rw [hp₂.2, b2b_dispatch_retag]
+    apply Cfg.ext <;> try rfl
+    funext j
+    simp [a₁, c₀, b2b_setupCfg, Cfg.mapState, Cfg.init, Function.update_apply, U]
+  have h₂bound (u : ℕ) (hu : u ≤ T₂ + 1) (j : Fin (K + 1)) :
+      |(H.runFrom (a₀.mapState (Sigma.mk B2bHostPhase.origin)) u).workTapePos j| ≤ (Q + 1 : ℕ) := by
+    by_cases hpre : u ≤ T₂
+    · rw [hp₂.1 u hpre]
+      have hb := h₂heads u hpre j
+      change (if j = U then
+        ((b2b_hostPhases MV MI MP .origin).runFrom a₀ u).workTapePos j ∈
+          Finset.Icc (-1 : ℤ) (w.length : ℤ)
+        else ((b2b_hostPhases MV MI MP .origin).runFrom a₀ u).workTapePos j = 0) at hb
+      simp only [show w.length = Q by simp [w], Finset.mem_Icc] at hb
+      change |((b2b_hostPhases MV MI MP .origin).runFrom a₀ u).workTapePos j| ≤ _
+      split_ifs at hb
+      · exact abs_le.mpr ⟨by omega, by omega⟩
+      · rw [hb]; simp only [abs_zero]; omega
+    · have heq : u = T₂ + 1 := by omega
+      rw [heq, h₂end]
+      change |(0 : ℤ)| ≤ _
+      simp only [abs_zero]; omega
+  have h₃ := b2b_seed_run MV MI MP p Q
+  change H.runFrom c₀ ((2 * Q + 3) + (2 * Q + 3)) = c₁ ∧ _ at h₃
+  let r₀ : Cfg (K + 1) Bool B2bRewindState x := b2b_setupCfg MV MI MP .start p z w
+  let r₁ : Cfg (K + 1) Bool (b2b_hostState MV MI MP .rewind) x :=
+    b2b_setupCfg MV MI MP (Sum.inr ()) 1 z w
+  obtain ⟨T₄, h₄, h₄cut, h₄heads⟩ := b2b_rewind_return r₀ rfl
+  have hp₄ := phaseHostTM_run (b2b_hostPhases MV MI MP)
+    ⟨.setup, Sum.inl (.init MP.tm.q₀)⟩ (b2b_hostRedirect MV MI MP) .rewind
+    (r₀.mapState Sum.inl) r₁ T₄ h₄ (Sum.inr ()) rfl ⟨.loop, .dec .run⟩ rfl (by
+      intro u hu q hq
+      cases q with
+      | inl a => rfl
+      | inr a => exact False.elim (h₄cut u hu (by simpa using hq)))
+  have h₄end : H.runFrom c₁ (T₄ + 1) = b2b_setupCfg MV MI MP
+      (⟨B2bHostPhase.loop, CounterLoopState.dec .run⟩ : Σ j, b2b_hostState MV MI MP j)
+      1 z w := by
+    change H.runFrom ((r₀.mapState Sum.inl).mapState (Sigma.mk B2bHostPhase.rewind)) (T₄ + 1) = _
+    rw [hp₄.2, b2b_dispatch_retag]
+    rfl
+  have h₄bound (u : ℕ) (hu : u ≤ T₄ + 1) (j : Fin (K + 1)) :
+      (H.runFrom c₁ u).workTapePos j = 0 := by
+    change (H.runFrom ((r₀.mapState Sum.inl).mapState (Sigma.mk B2bHostPhase.rewind)) u).workTapePos j = 0
+    by_cases hpre : u ≤ T₄
+    · rw [hp₄.1 u hpre]
+      exact congrFun (h₄heads u hpre) j
+    · have heq : u = T₄ + 1 := by omega
+      rw [heq, hp₄.2]
+      rfl
+  let A := T₁ + (T₂ + 1)
+  let B := (2 * Q + 3) + (2 * Q + 3)
+  have hA : H.runFrom (H.initCfg x) A = c₀ := by
+    rw [MultiTapeTM.runFrom_add, h₁, h₂end]
+  have hB : H.runFrom (H.initCfg x) (A + B) = c₁ := by
+    rw [MultiTapeTM.runFrom_add, hA]
+    exact h₃.1
+  refine ⟨A + B + (T₄ + 1), ?_, ?_⟩
+  · rw [MultiTapeTM.runFrom_add, hB, h₄end]
+  · intro u hu j
+    change |(H.runFrom (H.initCfg x) u).workTapePos j| ≤ _
+    by_cases hb : u ≤ A + B
+    · by_cases ha : u ≤ A
+      · by_cases hfirst : u ≤ T₁
+        · have hb := h₁heads u hfirst j
+          simp only [w, List.length_replicate] at hb
+          exact hb.trans (by omega)
+        · have heq : u = T₁ + (u - T₁) := by omega
+          rw [heq, MultiTapeTM.runFrom_add, h₁]
+          exact (h₂bound _ (by dsimp [A] at ha; omega) j).trans (by omega)
+      · have heq : u = A + (u - A) := by omega
+        rw [heq, MultiTapeTM.runFrom_add, hA]
+        exact (h₃.2 (u - A) (by dsimp [B] at hb; omega) j).trans (by omega)
+    · have heq : u = (A + B) + (u - (A + B)) := by omega
+      rw [heq, MultiTapeTM.runFrom_add, hB, h₄bound _ (by omega)]
+      simp only [abs_zero]; omega
+
+/-- The remaining certificate search starts at the established setup seam and
+halts with its single decision bit, within fixed windows independent of the
+number of counted trials.
+
+**Proof sketch.** Prove one shared test contract by composing the identity
+capture, native rewind, framed append copy, captured virtual verifier call,
+and verdict reader through the existing phase host. On rejection clear the
+buffer and increment the certificate. Apply the counter loop's escape or done
+contract along the existing certificate orbit, using classically chosen exact
+round durations. On exhaustion reuse the test for the final certificate,
+including the sole empty certificate when the width is zero. Compose with the
+answer emitter. The counter/body trajectory clauses and the shared test's
+fixed windows give the radius below, without any factor counting trials.
+
+Continuation frontier: setup is now proved by `b2b_setup_run`; this helper
+contains only the shared trial, counted loop, final trial, and answer. -/
+private theorem b2b_search_contract (Q e cV cI : ℕ) (V : Language Bool)
+    (MV MI MP : FinTM Bool)
+    (hV : ∀ y : List Bool,
+      LogProg.CleanRun (LogProg.cleanTM MV.tm MV.tm.q₀)
+        (LogProg.CleanSt.init MV.tm.q₀) y
+        (MultiTapeTM.indicator (V : Set (List Bool)) y) (cV * (y.length ^ e + 1)))
+    (hI : MI.ComputesFunInTime id (fun n => cI * (n + 1)))
+    (hIs : ∀ (x : List Bool) (t : ℕ), MI.tm.spaceUsed (MI.tm.initCfg x) t ≤ cI)
+    (x : List Bool) :
+    let H := (b2b_host MV MI MP).tm
+    let d := b2b_setupCfg MV MI MP (⟨B2bHostPhase.loop, CounterLoopState.dec .run⟩ :
+      Σ j, b2b_hostState MV MI MP j) (x := x) 1 (List.replicate Q false) (List.replicate Q true)
+    ∃ t : ℕ, (H.runFrom d t).state = none ∧
+      (H.runFrom d t).output =
+        [MultiTapeTM.indicator {z : List Bool | ∃ u, u.length = Q ∧ z ++ u ∈ V} x] ∧
+      ∀ u ≤ t, ∀ j, |(H.runFrom d u).workTapePos j| ≤
+        (x.length + Q + cV * ((x.length + Q) ^ e + 1) + cI + 1 : ℕ) := by
+  sorry
+
 /-- The assembled host decides the exact certificate predicate within fixed windows.
 
 **Proof sketch.** First apply the five setup rows: capture the unary polynomial,
@@ -759,7 +1443,42 @@ private theorem b2b_host_contract (C c e cV cI cP : ℕ) (V : Language Bool)
           (2 * (x.length + C * (x.length + 1) ^ c +
             cV * ((x.length + C * (x.length + 1) ^ c) ^ e + 1) +
             cI + cP * (x.length + 1) + 1) + 1) := by
-  sorry
+  classical
+  let Q := C * (x.length + 1) ^ c
+  let W := x.length + Q + cV * ((x.length + Q) ^ e + 1) + cI + cP * (x.length + 1) + 1
+  let H := (b2b_host MV MI MP).tm
+  obtain ⟨T, hsetup, hsetupHeads⟩ := b2b_setup_run MV MI MP x Q
+    (cP * (x.length + 1) ^ (c + 1)) (cP * (x.length + 1)) (hP x) (hPs x _)
+  obtain ⟨t, hhalt, hout, hsearchHeads⟩ := b2b_search_contract Q e cV cI V MV MI MP hV hI hIs x
+  have hheads (u : ℕ) (hu : u ≤ T + t) (j : Fin (b2b_host MV MI MP).k) :
+      |(H.runFrom (H.initCfg x) u).workTapePos j| ≤ (W : ℤ) := by
+    by_cases hpre : u ≤ T
+    · exact (hsetupHeads u hpre j).trans (by
+        exact_mod_cast (show cP * (x.length + 1) + Q + 1 ≤ W by dsimp [W]; omega))
+    · have heq : u = T + (u - T) := by omega
+      rw [heq, MultiTapeTM.runFrom_add, hsetup]
+      exact (hsearchHeads (u - T) (by omega) j).trans (by
+        exact_mod_cast (show x.length + Q + cV * ((x.length + Q) ^ e + 1) + cI + 1 ≤ W by
+          dsimp [W]; omega))
+  refine ⟨T + t, (FinTM.computesInTime_iff _ _ _ _).mpr ⟨?_, ?_⟩, ?_⟩
+  · rw [MultiTapeTM.runFrom_add, hsetup]
+    exact hhalt
+  · rw [MultiTapeTM.runFrom_add, hsetup]
+    simpa only [MultiTapeTM.indicator, Set.mem_setOf_eq, Q] using hout
+  · change H.spaceUsed (H.initCfg x) (T + t) ≤ (b2b_host MV MI MP).k * (2 * W + 1)
+    calc
+      _ ≤ ∑ _j : Fin (b2b_host MV MI MP).k, (Finset.Icc (-(W : ℤ)) (W : ℤ)).card := by
+        apply Finset.sum_le_sum
+        intro j _
+        apply Finset.card_le_card
+        intro z hz
+        obtain ⟨u, hu, rfl⟩ := Finset.mem_image.mp hz
+        have hu' : u ≤ T + t := by have := Finset.mem_range.mp hu; omega
+        exact Finset.mem_Icc.mpr (abs_le.mp (hheads u hu' j))
+      _ = (b2b_host MV MI MP).k * (2 * W + 1) := by
+        rw [Finset.sum_const, Finset.card_univ, Fintype.card_fin, nsmul_eq_mul, Int.card_Icc]
+        congr 1
+        omega
 
 /-- **Certificates can be cycled through in polynomial space**: `NP ⊆ PSPACE`.
 [AB09, Example 4.6: "a similar idea of cycling through all potential
