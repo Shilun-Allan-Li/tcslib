@@ -66,6 +66,9 @@ sites.
   `Turing.MultiTapeTM.runFrom_state_ne_none_of_le` — runs commute with a fixed output
   prefix, and a live endpoint has a live past (shared run facts, 12.2c/CH7-D2;
   added 2026-10-10).
+* `Turing.MultiTapeTM.exists_first_halt` — a run halted by time `t` halts first at some
+  `u ≤ t`, live before `u` and already in its time-`t` configuration (the first-halt
+  argument, public for the oracle query capture; added 2026-10-11, B1).
 
 ## References
 
@@ -188,6 +191,26 @@ theorem runFrom_state_ne_none_of_le (tm : MultiTapeTM k Symbol State)
   have he : tm.runFrom cfg t = tm.runFrom cfg u := by
     rw [← Nat.add_sub_of_le hu, MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_of_halt _ hh]
   exact ht (by rw [he]; exact hh)
+
+/-- **First halt**: if a run from `cfg` has halted by time `t`, then it halts first at
+some `u ≤ t` — live at every earlier time, and already in the very configuration it
+occupies at `t`, halting being absorbing [AB09, §1.2]. This is the guard-discharge form
+consumed by the lockstep contracts whose hypothesis is liveness before the halting time
+(`Turing.capture_run`, `Turing.emit_run`).
+
+**Proof sketch.** Take `u` least with a halted configuration (`Nat.find`). Minimality
+gives liveness below `u`; since `u ≤ t`, `runFrom_add` and `runFrom_of_halt` identify the
+configurations at `u` and at `t`. -/
+theorem exists_first_halt (tm : MultiTapeTM k Symbol State) (cfg : Cfg k Symbol State input)
+    {t : ℕ} (h : (tm.runFrom cfg t).state = none) :
+    ∃ u ≤ t, (∀ v < u, ¬(tm.runFrom cfg v).Halted) ∧
+      tm.runFrom cfg u = tm.runFrom cfg t := by
+  classical
+  have hex : ∃ u, (tm.runFrom cfg u).state = none := ⟨t, h⟩
+  have hle : Nat.find hex ≤ t := Nat.find_min' hex h
+  refine ⟨Nat.find hex, hle, fun v hv => Nat.find_min hex hv, ?_⟩
+  rw [← Nat.add_sub_of_le hle, MultiTapeTM.runFrom_add,
+    MultiTapeTM.runFrom_of_halt _ (Nat.find_spec hex)]
 
 end MultiTapeTM
 
