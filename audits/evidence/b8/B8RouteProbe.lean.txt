@@ -1,0 +1,231 @@
+import TCSlib.Complexity.Diagonalization.NotTimeConstructible
+
+/-!
+# F6 (batch B8) pre-ship probe (maintainer-run; not part of the library)
+
+Elaborates, against the campaign tip `9b47f7b9` and **only the owned file's own
+import closure** (it imports `Diagonalization/NotTimeConstructible`, whose three
+imports are unchanged), every name the B8 brief cites and the route's technical
+core. Nothing here is a fill: the `F6Probe` names are throwaway stand-ins for the
+`private` helpers the brief commissions.
+
+* C1  the target and its frozen dependencies.
+* C2  the composition layer (`exists_comp_partial`, `exists_cond`, determinism).
+* C3  the Mathlib bridge compiler and the public primitive-recursive readers.
+* C4  Mathlib's `Nat.bits`/`bodd` and `Primrec` lemmas the route uses.
+* C5  catalog rows considered and **not** used (recorded for the dossier).
+* C6  duplication hazards that are in the closure (public ones only; the private
+      `bridgeNumber_bits` and `UHaltMachine`'s copies are grep-verified).
+* E1  small rank/unrank examples by `decide`.
+* L1–L4 the bit identities in general (the "string-of-index bridge"). The copy-free
+      variant L1′ needs a Mathlib import and lives in `probe-F6-catalog.lean`.
+* P1–P3 primitive recursiveness of the emitter, the parity decider and the two tails.
+* R1  the whole assembly, as a route check: the target's statement is derived from
+      L1–L4, P1–P3 and the cited layers, with no `sorry`.
+-/
+
+open Turing
+
+/-! ### C1 — target and frozen dependencies -/
+#check @Complexity.exists_not_timeConstructible
+#check @Complexity.TimeConstructible
+#check @Complexity.Computable
+#check @Complexity.HALT
+#check @Complexity.HALT_not_computable
+#check @Complexity.UC_computable_of_HALT_computable
+#check @Complexity.TimeHierarchy.code
+#check @Turing.EffectiveMachineCode.toMachineCode
+
+/-! ### C2 — composition layer -/
+#check @Turing.FinTM.Computes
+#check @Turing.FinTM.ComputesInTime
+#check @Turing.FinTM.ComputesFunInTime
+#check @Turing.FinTM.ComputesFunInTime.computes
+#check @Turing.FinTM.Computes.exists_computesInTime_iff
+#check @Turing.FinTM.ComputesInTime.output_unique
+#check @Turing.FinTM.ComputesInTime.mono
+#check @Turing.FinTM.computesInTime_iff
+#check @Turing.FinTM.exists_comp_partial
+#check @Turing.FinTM.exists_cond
+#check @Turing.FinTM.computesFunInTime_ifEq
+#check @Turing.FinTM.computesFunInTime_const
+
+/-! ### C3 — the Mathlib bridge compiler and public readers -/
+#check @Turing.codePrim_machine
+#check @Turing.codeBitsNat
+#check @Turing.codeBitsNat_bits
+#check @Turing.codePrimBitsNat
+#check @Turing.codePrimBits
+#check @Turing.codePrimPair
+#check @Turing.codePrimBit
+
+/-! ### C4 — Mathlib -/
+#check @Nat.bits_append_bit
+#check @Nat.one_bits
+#check @Nat.bodd_eq_bits_head
+#check @Nat.bodd_add
+#check @Nat.bodd_succ
+#check @List.dropLast_concat
+#check @Primrec.list_concat
+#check @Primrec.pred
+#check @Primrec.nat_sub
+#check @Primrec.list_map
+#check @Primrec.list_range
+#check @Primrec.nat_bodd
+#check @Primrec.list_headI
+#check @Primrec.list_cons
+#check @Primrec.const
+#check @Primrec.not
+#check @Primrec.of_eq
+#check @Primrec.comp
+
+/-! ### C5 — catalog rows considered, not used by the recommended route
+
+They are **not in this closure**: `Build/Primitives`, `Build/Loop`, `Build/Wrappers`,
+`Build/Convention` and every `Build/` file are reached only by sibling modules of the
+owned file (`EXPCOM`, `NTimeHierarchy`), never by its three imports. Their existence is
+checked in the companion `probe-F6-catalog.lean`, which imports them explicitly. Only
+`Composition`'s total combinators are in scope: -/
+#check @Turing.FinTM.computesFunInTime_comp
+#check @Turing.FinTM.computesFunInTime_id
+#check @Turing.FinTM.exists_comp_on_image
+
+/-! ### C6 — duplication hazards visible in this closure -/
+#check @Complexity.TimeHierarchy.ctrVal
+#check @Complexity.TimeHierarchy.ctrVal_bits
+#check @Complexity.timeConstructible_id
+
+namespace F6Probe
+
+/-- Stand-in for the brief's private rank: the dyadic rank, `s` read
+little-endian behind a high `1`, minus one. -/
+def rank (s : List Bool) : ℕ := codeBitsNat (s ++ [true]) - 1
+
+/-- Stand-in for the brief's private un-rank: drop the high `1` of `n + 1`. -/
+def str (n : ℕ) : List Bool := (n + 1).bits.dropLast
+
+/-- Stand-in for the witness `T` of the docstring, at the campaign's scheme. -/
+noncomputable def T (n : ℕ) : ℕ :=
+  n + if Complexity.HALT Complexity.TimeHierarchy.code.toMachineCode (str n) = true
+    then 1 else 0
+
+/-! ### E1 — small examples -/
+example : rank [] = 0 := by decide
+example : rank [false] = 1 := by decide
+example : rank [true] = 2 := by decide
+example : rank [false, false] = 3 := by decide
+example : rank [true, false] = 4 := by decide
+example : rank [false, true] = 5 := by decide
+example : rank [true, true] = 6 := by decide
+example : rank [false, false, false] = 7 := by decide
+example : (List.range 7).map (fun n => codeBitsNat ((n + 1).bits)) = [1, 2, 3, 4, 5, 6, 7] := by
+  simp only [codeBitsNat_bits]; decide
+
+/-! ### L1–L4 — the bit identities in general -/
+
+/-- L1: the canonical word `s ++ [true]` is the binary representation of its value. -/
+theorem bits_codeBitsNat_append_true (s : List Bool) :
+    (codeBitsNat (s ++ [true])).bits = s ++ [true] := by
+  induction s with
+  | nil => simp [codeBitsNat, Nat.bit]
+  | cons b s ih =>
+    have hne : codeBitsNat (s ++ [true]) ≠ 0 := by
+      intro h0
+      rw [h0, Nat.zero_bits] at ih
+      simp at ih
+    change (Nat.bit b (codeBitsNat (s ++ [true]))).bits = b :: (s ++ [true])
+    rw [Nat.bits_append_bit _ _ (fun h => absurd h hne), ih]
+
+/-- L2: `(rank s + 1).bits = s ++ [true]`. -/
+theorem bits_rank_succ (s : List Bool) : (rank s + 1).bits = s ++ [true] := by
+  have h := bits_codeBitsNat_append_true s
+  have hpos : 0 < codeBitsNat (s ++ [true]) :=
+    Nat.pos_of_ne_zero fun h0 => by rw [h0, Nat.zero_bits] at h; simp at h
+  unfold rank
+  rw [Nat.sub_add_cancel hpos]
+  exact h
+
+/-- L3: un-rank inverts rank (only this direction is needed). -/
+theorem str_rank (s : List Bool) : str (rank s) = s := by
+  unfold str
+  rw [bits_rank_succ, List.dropLast_concat]
+
+/-- L4: the low bit of `T n` is the low bit of `n` exclusive-or the halting bit. -/
+theorem bodd_T (n : ℕ) :
+    (T n).bodd = (n.bodd ^^ Complexity.HALT Complexity.TimeHierarchy.code.toMachineCode (str n)) := by
+  unfold T
+  cases h : Complexity.HALT Complexity.TimeHierarchy.code.toMachineCode (str n) <;>
+    simp
+
+/-- Growth: `T` dominates the identity. -/
+theorem le_T (n : ℕ) : n ≤ T n := Nat.le_add_right _ _
+
+/-! ### P1–P3 — primitive recursiveness -/
+
+theorem primrec_rank : Primrec rank :=
+  (Primrec.pred.comp (codePrimBitsNat.comp
+    (Primrec.list_concat.comp Primrec.id (Primrec.const true)))).of_eq fun s => by
+      simp [rank, Nat.pred_eq_sub_one]
+
+/-- P1: the unary emitter `s ↦ 1^(rank s)`, as a mapped range (the machine `M` reads
+only the length; this form adds no text pair against `UHaltMachine`'s private
+`primrec_replicate_numOfString`, see the dossier's screen simulation). -/
+theorem primrec_emit : Primrec fun s : List Bool => (List.range (rank s)).map fun _ => true :=
+  Primrec.list_map (Primrec.list_range.comp primrec_rank) (Primrec.const true).to₂
+
+/-- P2: the parity decider `s ↦ [bodd (rank s)]`. -/
+theorem primrec_parity : Primrec fun s : List Bool => [(rank s).bodd] :=
+  Primrec.list_cons.comp (Primrec.nat_bodd.comp primrec_rank) (Primrec.const [])
+
+/-- P3: the two low-bit tails `w ↦ [w.headI]`, `w ↦ [!w.headI]`. -/
+theorem primrec_head : Primrec fun w : List Bool => [w.headI] :=
+  Primrec.list_cons.comp Primrec.list_headI (Primrec.const [])
+
+theorem primrec_nhead : Primrec fun w : List Bool => [!w.headI] :=
+  Primrec.list_cons.comp (Primrec.not.comp Primrec.list_headI) (Primrec.const [])
+
+/-! ### R1 — the assembly, as a route check -/
+
+/-- The route closes: from a constructibility witness for `T`, the composite
+`cond (bodd (rank s)) (E ≫ M ≫ ¬head) (E ≫ M ≫ head)` computes `s ↦ [HALT s]`. -/
+theorem route_check : ¬Complexity.TimeConstructible T := by
+  classical
+  rintro ⟨-, c₀, -, M, hM⟩
+  let h := Complexity.HALT Complexity.TimeHierarchy.code.toMachineCode
+  obtain ⟨E, _, hE⟩ := codePrim_machine _ primrec_emit
+  obtain ⟨D, _, hD⟩ := codePrim_machine _ primrec_parity
+  obtain ⟨H₀, _, hH₀⟩ := codePrim_machine _ primrec_head
+  obtain ⟨H₁, _, hH₁⟩ := codePrim_machine _ primrec_nhead
+  obtain ⟨EM, hEM⟩ := FinTM.exists_comp_partial E M
+  obtain ⟨B₀, hB₀⟩ := FinTM.exists_comp_partial EM H₀
+  obtain ⟨B₁, hB₁⟩ := FinTM.exists_comp_partial EM H₁
+  -- the middle stage: `E ≫ M` halts on `s` exactly with `(T (rank s)).bits`
+  have hmid (s : List Bool) : ∃ t, EM.ComputesInTime s (T (rank s)).bits t :=
+    (hEM s _).2 ⟨_, ⟨_, hE s⟩, _, by simpa using hM ((List.range (rank s)).map fun _ => true)⟩
+  have hlow (s : List Bool) :
+      (T (rank s)).bits.headI = ((rank s).bodd ^^ h s) := by
+    rw [← Nat.bodd_eq_bits_head, bodd_T, str_rank]
+  obtain ⟨R, hR⟩ := FinTM.exists_cond D B₁ B₀ (fun s => (rank s).bodd) hD.computes
+  refine Complexity.HALT_not_computable Complexity.TimeHierarchy.code ⟨R, fun s => ?_⟩
+  refine (hR s _).2 ?_
+  cases hp : (rank s).bodd with
+  | false =>
+    simp only [cond_false]
+    have hc := hH₀ (T (rank s)).bits
+    dsimp only at hc
+    rw [hlow, hp, Bool.false_xor] at hc
+    exact (hB₀ s _).2 ⟨_, hmid s, _, hc⟩
+  | true =>
+    simp only [cond_true]
+    have hc := hH₁ (T (rank s)).bits
+    dsimp only at hc
+    rw [hlow, hp, Bool.true_xor, Bool.not_not] at hc
+    exact (hB₁ s _).2 ⟨_, hmid s, _, hc⟩
+
+/-- The target's shape follows from the route check. -/
+example : ∃ T : ℕ → ℕ, (∀ n, n ≤ T n) ∧ ¬Complexity.TimeConstructible T :=
+  ⟨T, le_T, route_check⟩
+
+end F6Probe
+
+#print axioms F6Probe.route_check
