@@ -84,6 +84,9 @@ one framed contract and one trace serve them all.
 ## Main definitions
 
 * `Turing.SweepPhase`, `Turing.FlagPhase` — the two phase alphabets.
+* `Turing.catalogTrace` — the two-pass sweep trace, with its run lemma
+  `Turing.catalog_trace_run`: the one trace every two-pass row cites
+  (public since the §12.8 fill).
 * `Turing.transferTM`, `Turing.copyTM`, `Turing.clearTM`,
   `Turing.compareTM`, `Turing.incrementTM`.
 * Part 3: `Turing.tapeAction`, `Turing.inputMoveAction` (one-tape
@@ -318,16 +321,26 @@ private def catalogCfg {S : Type*} (q : S) (w : Fin k → List Bool)
     (heads : Fin k → ℤ) : Cfg k Bool S x :=
   { Cfg.ofWords q w with workTapePos := heads }
 
-/-- The chronological trace of a forward scan, left turn, return, and entry.
-The return index is the number of nonblank cells still to erase or cross. -/
-private def catalogTrace {Symbol : Type*} {x : List Symbol} {S : Type*} (F R : ℕ → Cfg k Symbol S x)
+/-- **The two-pass sweep trace** (design §12.6; public since the §12.8 fill, so
+that every sweep row cites one trace). The chronological trace of a forward pass of
+`L` steps, a turn, a return of `L` steps, and an entry: the configuration at time `t`
+is the forward family `F t` up to `L`, the return family `R` counted down from `L` to
+`0` up to `2L + 1`, and the exit configuration `D` afterwards. -/
+def catalogTrace {Symbol : Type*} {x : List Symbol} {S : Type*} (F R : ℕ → Cfg k Symbol S x)
     (D : Cfg k Symbol S x) (L t : ℕ) : Cfg k Symbol S x :=
   if t ≤ L then F t else if t ≤ 2 * L + 1 then R (2 * L + 1 - t) else D
 
-/-- Local transition equations determine the complete trace, including all
-stationary steps after the exit. **Proof sketch.** Induct on elapsed time;
-split at the forward endpoint, return endpoint, and stationary tail. -/
-private lemma catalog_trace_run {Symbol : Type*} {x : List Symbol} {S : Type*} (M : MultiTapeTM k Symbol S)
+/-- **Local transition equations determine the sweep trace** (design §12.6; public
+since the §12.8 fill). If one step takes each forward configuration to the next for
+`L` steps, turns the last into the return family's start, takes each return
+configuration to the previous one, enters `D` from the return's end, and leaves `D`
+fixed, then the run from `F 0` is `Turing.catalogTrace F R D L` at every time,
+including all stationary steps after the exit. Every two-pass row (the R3 sweeps, the
+framed compare, the scan, the writers and the native-input sweeps) is an instance.
+
+**Proof sketch.** Induct on elapsed time; split at the forward endpoint, return
+endpoint, and stationary tail. -/
+theorem catalog_trace_run {Symbol : Type*} {x : List Symbol} {S : Type*} (M : MultiTapeTM k Symbol S)
     (F R : ℕ → Cfg k Symbol S x) (D : Cfg k Symbol S x) (L : ℕ)
     (hF : ∀ r < L, M.step (F r) = F (r + 1))
     (hturn : M.step (F L) = R L)
