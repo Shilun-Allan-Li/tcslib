@@ -27,7 +27,9 @@ simulation, the nondeterministic time hierarchy (a fused countdown at
 linear overhead) and the space hierarchy's configuration-count clock.
 
 **Status update (§12.8 fill, R8.0b/R8.6).** All contracts in this file are proved.
-The expansion proof is modulo `Turing.writeAdvTM_run_ofCfg`, still sorried in `Build/Scan`.
+The expansion proof cites `Turing.writeAdvTM_run_ofCfg` (`Build/Scan`, proved by the §12.8
+stream-B fill), so nothing in this file is proved modulo an admission (R8.0b gate round 1,
+note F14: doc-only refresh after the combined tree was checked).
 **Alphabet update (R8.0b).** The shared loop machinery now admits any tape alphabet,
 with binary digits embedded into its dedicated counter tape.
 
