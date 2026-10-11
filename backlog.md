@@ -301,6 +301,22 @@ change, so it waits for a window that may touch these public statements
 
 ---
 
+### R80B-E1: define `counterLoopTM` as the identity instance of `counterLoopTMVia` (from the R8.0b fill gate, finding F1)
+
+The R8.0b fill (§12.8 stream D) mandated two definition texts: the new rich-body host
+`Turing.counterLoopTMVia` and the frozen `Bool` host `Turing.counterLoopTM`. Their copy-text pair
+is 91% (and 84% the other way). The brief's freeze made factoring impossible within the fill.
+There is one host induction, and the `Bool` contracts are Z5 re-derivations of the generic ones,
+so no proof is duplicated; the pair is definitional.
+
+**Answered (user, 2026-10-11): accepted as a one-off exception** for exactly this definition
+pair. It is recorded in `audits/s12-8-fill-D-resolutions.md` and in the ledger. **Cleanup: the
+12.2c window.** Place the generic host before the `Bool` specialization, and redefine
+`counterLoopTM M a exit := counterLoopTMVia (Function.Embedding.refl Bool) M a exit` (the
+symbol lift at `refl` is the identity table, `counter_refl_agree`). Then re-check every
+consumer under that separately authorized definition change. This is a frozen-definition
+change, so it needs its own gate.
+
 ## 2. Campaign work queued or on hold
 
 * **Chapter-2 fill campaign (E1-E5)** — **active** (hold lifted
