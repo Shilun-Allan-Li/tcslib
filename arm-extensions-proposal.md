@@ -80,3 +80,31 @@ provenance answers. Full detail: `AroraBarakChapters3-4Plan.md` §2.5
 (design), §4b (where this sits in the roadmap), `backlog.md` §2 (the
 tracking entry), `machine-library-design.md` (the construction-layer
 conventions anything new would follow).
+
+## Addendum (2026-10-11): two deterministic gaps found while preparing B7
+
+While preparing the deterministic-logspace cluster (Lemma 4.17, `MULT ∈ L`), we found two gaps
+in the deterministic layer that the list above does not mention. Your P0 notes already flag
+the second: general composition is pending.
+
+1. **Random access to a general input.** The ARM input instructions assume unary-first inputs
+   `⟨1ⁿ, …⟩`. A call's first segment is the whole input or its leading `1`-run, so an ARM
+   cannot read a non-unary input at a register-held position.
+2. **Oracle-served virtual input.** A call cannot serve a decider's input symbols through
+   further calls. This is the Fig. 4.3 shape behind Lemma 4.17.
+
+We are building both as **campaign-owned library fragments under `SpaceComplexity/Logspace/`**,
+on top of your compiler (`compile_space`, the bank, and the increment, decrement, equality,
+clear and rewind fragments). Nothing in `Machines/` changes:
+
+- `InputAccess.lean`: `LogProg.readIn_run` and `implicitlyLogspaceComputable_id`;
+- `PreimageHost.lean`: the oracle-input simulator `LogProg.OIS` and `mem_LOGSPACE_preimage`.
+
+They are in a statement gate now (`audits/ch4-p44-resolutions-addendum.md`). If you would
+rather host them in `Machines/`, we are glad to move them.
+
+**One suggestion for extension 1 (the nondeterministic ARM).** Would you consider giving it an
+oracle-input call mode natively? That is, a read whose input symbol is served by a
+deterministic decider queried on `⟨x, i⟩`. Then a later `NL` downward-closure engine
+(`mem_NL_of_logspaceReducible`, P4.4 audit note 6) would not need to duplicate `OIS`. As
+always, the interface is your call.
