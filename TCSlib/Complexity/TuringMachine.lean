@@ -33,6 +33,7 @@ import TCSlib.Complexity.TuringMachine.Robustness.ObliviousLedger
 import TCSlib.Complexity.TuringMachine.Robustness.Oblivious
 import TCSlib.Complexity.TuringMachine.Encoding
 import TCSlib.Complexity.TuringMachine.CodeParser
+import TCSlib.Complexity.TuringMachine.CodeFormat
 import TCSlib.Complexity.TuringMachine.MathlibBridge
 import TCSlib.Complexity.TuringMachine.UniversalStartup
 import TCSlib.Complexity.TuringMachine.UniversalInterpreter
@@ -58,6 +59,8 @@ The core model files are vendored from cslib
 for the local modifications.
 
 ## Contents
+
+* `CodeFormat` — shared transition-record and table-format parsers, with the one-tape instance.
 
 * `Configuration` — configurations `Cfg`, actions `Action` and their application; the
   space measure. Nothing here mentions a machine (vendored).
