@@ -876,8 +876,9 @@ of strings declared **in** `B` and a bound below which all lengths are
 **decided**. At stage `i`: pick `nᵢ` exceeding every previously decided length
 *and every earlier budget `nⱼ^j + j`* (so no earlier run ever queried a string
 of length `≥ nᵢ`, and no later declaration can disturb an earlier answer), and
-large enough that `2 ^ (nᵢ / 10) > nᵢ ^ i + i` — in particular the run below
-cannot query all `2 ^ nᵢ` strings of length `nᵢ`. Run `N i` on input `1^nᵢ`
+large enough that `nᵢ ^ i + i < 2 ^ nᵢ`, so the run below cannot query all
+`2 ^ nᵢ` strings of length `nᵢ` (the P3.2 route's stronger margin
+`2 ^ (nᵢ / 10) > nᵢ ^ i + i` is not needed). Run `N i` on input `1^nᵢ`
 for exactly `nᵢ ^ i + i` steps with the partial oracle `Oᵢ` (the strings
 declared in so far; every undetermined string answered "no").
 

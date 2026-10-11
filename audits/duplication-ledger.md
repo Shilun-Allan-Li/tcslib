@@ -205,6 +205,45 @@ dead originals plus one live original eliminated by replacement**
 →Catalog originals (R2-3 wording); net −1,639 lines, −83 private
 declarations (76 dead + 7 replaced).
 
+## Epoch 2, B1 (PR #26): the oracle layer and FH-1
+
+Added at the B1 fill-gate close (`audits/b1-fill-findings.md`, finding 2).
+The primary rule applies: each member is counted once per file it
+inhabits, and fractions are over the file's total declarations at
+`integrate/b1-oracle`. None of these files had a ledger row before.
+
+| File | Total decls | Original-side members | Copy-side members | All members | Fraction | Disposition |
+|---|---:|---|---|---:|---:|---|
+| `TuringMachine/Oracle.lean` | 42 | 0 | 2: `OracleTM.runFrom_comm_of_step` (63/63 both ways against Deterministic's) and `OracleTM.ComputesInTime.output_unique` (72/87 = 83% of Finite's) | **2** | **4.8%** | Approved forced mirrors (B1 decision 6; gate note 16) |
+| `TuringMachine/Deterministic.lean` | 34 | 1: `MultiTapeTM.runFrom_comm_of_step` | 0 | **1** | **2.9%** | Mirror source |
+| `TuringMachine/Finite.lean` | 18 | 2: `FinTM.ComputesInTime.output_unique` (mirror source) and `MultiTapeTM.exists_first_halt` (FH-1's public form) | 0 | **2** | **11.1%** | Sources |
+| `ClassNP/EXP.lean` | 153 | 0 | 1 (FH-1): `enumCont_first_halt` | **1** | **0.7%** | FH-1, to retire (`backlog.md`) |
+| `ClassNP/SAT.lean` | 282 | 0 | 2 (FH-1): `sat_first_halt`, `sat_call_first_halt` | **2** | **0.7%** | FH-1 |
+| `CookLevin/Hardness.lean` | 545 | 0 | 1 (FH-1): `clA5_call_first_halt` | **1** (was 0) | **0.2%** | FH-1 |
+| `Build/Catalog.lean`, `Build/Loop.lean` | 428, 194 | — | FH-1: `f2_loop_first_halt`, `f2_splitCount_firstHalt` (Catalog); `loop_first_halt` (Loop) | unchanged | — | `loop_first_halt` and `f2_loop_first_halt` are a 341/341 twin pair, already counted in the Loop→Catalog family. `f2_splitCount_firstHalt` is in the F2A-22 inventory; whether it is one of Catalog's 318 members or one of the 20 F2A nonmembers is settled by the FH-1 retirement census |
+
+The FH-1 copies predate the public form. B1 adds no copies, so no file
+gains a copy in this epoch and none crosses one fifth.
+
+**Exclusions** (screen hits that are not members, with their dispositions
+in `audits/b1-integration.md`, accepted by gate note 17):
+
+- `uw_tail` (Relativization) → E3 `OracleNDTM.stepWith_eq_of_ne_qQuery`
+  (OracleNondeterministic), 57%. Glue: shared citations of the
+  fixed-choice step bridge.
+- `uw_scan_step` → `uw_false_step` (Relativization, in-file), 71%. Glue:
+  the shared `uw_step_scan` call line. It is also uncounted under the
+  in-file convention.
+- `Catalog.f2_loopBody_step` → `queryTM_init` (Classes), 54%. The
+  configuration-equality idiom; no machine argument is shared.
+- `runFrom_ofMultiTapeTM` → `runFrom_plainEmptyOracle` (Oracle, in-file),
+  53%. A screen artifact: both declarations are unchanged (gate note 18).
+
+So Relativization, Classes and OracleNondeterministic have no members.
+`OracleNondeterministic`'s private blank-cell bound moved to `Oracle.lean`
+as the public `queryString_length_le_of_blank` (C1-P1). Both consumers cite
+it, so no copy remains (gate note 8).
+
 ## Watch items (design-parallel, no byte-copies)
 
 | Item | Status |

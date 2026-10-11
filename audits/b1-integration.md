@@ -134,6 +134,17 @@ copies predate it, with lines at `22b6c84a`:
 
 They are recorded as backlog **FH-1**, for the owning files' next windows.
 
+## Route note: the fresh-length margin (fill-gate finding 1)
+
+The P3.2 route asks for a fresh length `nᵢ` with `2 ^ (nᵢ / 10) > nᵢ ^ i + i`.
+The fill (`exists_fresh_len`, `freshLen_spec`) uses the weaker condition
+`nᵢ ^ i + i < 2 ^ nᵢ`, together with `b < nᵢ` and `i + 2 ≤ nᵢ`. The
+counting and the diagonalization need only that condition, so it
+**supersedes** the `/10` margin and the theorem is unaffected. The P3.2
+margin was a sufficient bound, not part of the argument.
+`exists_oracle_ne`'s sketch now states the condition the proof uses
+(swept comment-only at the gate close).
+
 ## Deferred: oracle-call hosting (the B1b extension)
 
 `POracle_eq_P_of_mem_P` needs a plain host simulating an oracle machine that runs a decider on
