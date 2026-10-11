@@ -23,6 +23,7 @@ import TCSlib.Complexity.TuringMachine.Build.Primitives
 import TCSlib.Complexity.TuringMachine.Build.Embed
 import TCSlib.Complexity.TuringMachine.Build.Seam
 import TCSlib.Complexity.TuringMachine.Build.Catalog
+import TCSlib.Complexity.TuringMachine.Build.OracleCall
 import TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction
 import TCSlib.Complexity.TuringMachine.Robustness.SingleTape
 import TCSlib.Complexity.TuringMachine.Robustness.Bidirectional
@@ -95,6 +96,8 @@ for the local modifications.
   transformers with their returning flavors, seam composition with the
   general-configuration forms and the release adapter, and the space-annotated
   catalog rows.
+* `Build/OracleCall` — the oracle-machine rows (`machine-library-design.md` §12.9):
+  W1 capture onto the query tape, landing in `qQuery`, and the two-step answer tail.
 * `CounterProgInput` — transport a counter-program run past an input prefix
   that has already been consumed.
 * `Build/Convention`, `Build/Wrappers`, `Build/Loop`, `Build/Primitives` — the

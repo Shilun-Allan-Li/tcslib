@@ -5,6 +5,7 @@ Authors: Seyoon Ragavan
 -/
 import TCSlib.Complexity.TuringMachine.OracleNondeterministic
 import TCSlib.Complexity.ClassNP.Reductions
+import TCSlib.Complexity.TuringMachine.Build.OracleCall
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -49,7 +50,7 @@ has a mechanical oracle counterpart.
 * `Complexity.POracle`, `Complexity.NPOracle` — `Pᴼ` and `NPᴼ`.
   [AB09, Definition 3.5]
 
-## Main results (two inclusions proved; four phase-P3.1 statements remain sorried)
+## Main results (five proved; `POracle_eq_P_of_mem_P` remains sorried, deferred)
 
 * `Complexity.P_subset_POracle` — an oracle can only help: `P ⊆ Pᴼ`.
   [AB09, Example 3.6(2), first half]
@@ -152,6 +153,56 @@ theorem POracle_subset_NPOracle (O : Language Bool) : POracle O ⊆ NPOracle O :
       simp only [MultiTapeTM.indicator, if_neg hx] at accepts
       cases accepts
 
+/-- The one-query machine for `Complexity.mem_POracle_of_polyTimeReducible`: the
+reduction machine `F` under the W1 capture onto the query tape (`Turing.captureAction`,
+with its halting transition sent to `qQuery`), followed by the answer tail
+(`Turing.OracleTM.answerAction`). The three fresh states `Sum.inr 0/1/2` are `qQuery`,
+`qYes`, `qNo`; the `qQuery` row is dead (the query step overrides it). Built from the
+library rows of `TCSlib.Complexity.TuringMachine.Build.OracleCall`; no hand-built table. -/
+private def queryTM (F : FinTM Bool) : FinOracleTM Bool where
+  k := F.k
+  State := F.State ⊕ Fin 3
+  tm :=
+    { q₀ := .inl F.tm.q₀
+      qQuery := .inr 0
+      qYes := .inr 1
+      qNo := .inr 2
+      tr := fun q inp w => match q with
+        | .inl s => captureAction Sum.inl (Sum.inr 0) (F.tm.tr s inp fun i => w i.castSucc)
+        | .inr j => if j = 1 then OracleTM.answerAction true
+            else if j = 2 then OracleTM.answerAction false
+            else ⟨0, fun _ => (none, 0), none, none⟩ }
+  wf := ⟨by simp, by simp, by simp⟩
+
+/-- `queryTM`'s `qYes` row emits `true` and halts. -/
+private theorem queryTM_yes (F : FinTM Bool) (inp : Option Bool)
+    (w : Fin (F.k + 1) → Option Bool) :
+    (queryTM F).tm.tr (queryTM F).tm.qYes inp w = OracleTM.answerAction true := rfl
+
+/-- `queryTM`'s `qNo` row emits `false` and halts. -/
+private theorem queryTM_no (F : FinTM Bool) (inp : Option Bool)
+    (w : Fin (F.k + 1) → Option Bool) :
+    (queryTM F).tm.tr (queryTM F).tm.qNo inp w = OracleTM.answerAction false := rfl
+
+/-- On the embedded source states `queryTM` is the W1-transformed source table. -/
+private theorem queryTM_agree (F : FinTM Bool) (s : F.State) (inp : Option Bool)
+    (w : Fin (F.k + 1) → Option Bool) :
+    (queryTM F).tm.tr (Sum.inl s) inp w =
+      captureAction Sum.inl (queryTM F).tm.qQuery (F.tm.tr s inp fun i => w i.castSucc) :=
+  rfl
+
+set_option linter.unusedSimpArgs false in
+/-- `queryTM` starts at the capture image of the source's initial configuration, with an
+empty capture prefix and empty physical output. -/
+private theorem queryTM_init (F : FinTM Bool) (x : List Bool) :
+    (queryTM F).tm.initCfg x =
+      captureCfg Sum.inl (queryTM F).tm.qQuery [] [] (F.tm.initCfg x) := by
+  refine Cfg.ext rfl rfl ?_ ?_ rfl
+  · funext i z
+    by_cases hi : (i : ℕ) < F.k <;> simp [captureCfg, hi, queryTM]
+  · funext i
+    by_cases hi : (i : ℕ) < F.k <;> simp [captureCfg, hi, queryTM]
+
 /-- **The workhorse of the light oracle results**: if `L` Karp-reduces to the
 oracle in polynomial time, then `L ∈ Pᴼ` — compute the reduction onto the query
 tape, query once, and emit the answer.
@@ -169,17 +220,119 @@ composition of (i) and (ii) with additive budgets (the `machine-library-design.m
 `Turing.bufferedCompTM`). Total time `O(C·(n+1)^c)`; correctness is
 `x ∈ L ↔ f x ∈ O` against the single query `f x` — the query string read back is
 exactly `f x` by the capture contract and `Turing.OracleTM.queryString`'s
-extraction. -/
+extraction.
+
+**B1 appendix.** Fill obligations (i) and (iii) are one table: W1's capture writes on the
+last work tape, which is the query tape, and its return state is taken to be `qQuery`
+(`Turing.OracleTM.capture_reaches_qQuery`); no seam composition is needed. -/
 theorem mem_POracle_of_polyTimeReducible {L O : Language Bool} (h : L ≤ₚ O) :
     L ∈ POracle O := by
-  sorry
+  classical
+  obtain ⟨f, ⟨F, C, c, hF⟩, hL⟩ := h
+  refine Set.mem_iUnion.mpr ⟨c, (C + 2) * 2 ^ c, queryTM F, fun x => ?_⟩
+  obtain ⟨hh, ho⟩ := (FinTM.computesInTime_iff _ _ _ _).mp (hF x)
+  dsimp only at hh ho
+  -- (i) The captured reduction reaches `qQuery` by its own halting time.
+  obtain ⟨u, hu, hrun⟩ := OracleTM.capture_reaches_qQuery F.tm (queryTM F).tm O Sum.inl
+    (fun s => Sum.inl_ne_inr) (queryTM_agree F) [] [] (F.tm.initCfg x) _ hh
+  set cQ := captureCfg Sum.inl (queryTM F).tm.qQuery [] []
+    (F.tm.runFrom (F.tm.initCfg x) (C * (x.length + 1) ^ c)) with hcQ
+  have hstate : cQ.state = some (queryTM F).tm.qQuery := by
+    simp only [cQ, captureCfg, hh, Option.map_none, Option.getD_none]
+  -- The submitted query is exactly `f x`, the empty word included.
+  have hquery : OracleTM.queryString cQ = f x := by
+    apply OracleTM.queryString_bufferTape
+    simp only [cQ, captureCfg, OracleTM.queryTapeIdx, Fin.val_last, lt_irrefl, dite_false,
+      List.nil_append, ho]
+  have hout0 : cQ.output = [] := rfl
+  -- (ii) The answer tail: two more steps.
+  have htail := OracleTM.runFrom_two_of_qQuery (queryTM F).tm (queryTM F).wf
+    (queryTM_yes F) (queryTM_no F) O hstate
+  have hfin : (queryTM F).tm.runFrom O ((queryTM F).tm.initCfg x) (u + 2) =
+      { cQ with
+        state := none
+        output := cQ.output ++ [if OracleTM.queryString cQ ∈ O then true else false] } := by
+    rw [OracleTM.runFrom_add, queryTM_init, hrun, htail]
+  have hdone : (queryTM F).ComputesInTime O x
+      [MultiTapeTM.indicator (L : Set (List Bool)) x] (u + 2) := by
+    refine ⟨by rw [hfin], ?_⟩
+    rw [hfin]
+    show cQ.output ++ [if OracleTM.queryString cQ ∈ O then true else false] = _
+    rw [hout0, hquery, List.nil_append]
+    by_cases hx : x ∈ L
+    · simp [MultiTapeTM.indicator, hx, (hL x).mp hx]
+    · have : f x ∉ O := fun h' => hx ((hL x).mpr h')
+      simp [MultiTapeTM.indicator, hx, this]
+  -- (iii) The budget: `u + 2 ≤ (C + 2)(n + 1)^c ≤ (C + 2) 2^c (n^c + 1)`.
+  refine hdone.mono ?_
+  have hp : 1 ≤ (x.length + 1) ^ c := Nat.one_le_pow _ _ (Nat.succ_pos _)
+  calc u + 2 ≤ C * (x.length + 1) ^ c + 2 * (x.length + 1) ^ c := by omega
+    _ = (C + 2) * (x.length + 1) ^ c := by ring
+    _ ≤ (C + 2) * (2 ^ c * (x.length ^ c + 1)) := Nat.mul_le_mul_left _ (succ_pow_le _ _)
+    _ = (C + 2) * 2 ^ c * (x.length ^ c + 1) := by ring
 
 /-- The oracle itself is decidable with one query: `O ∈ Pᴼ`.
 
 **Proof sketch.** `Complexity.mem_POracle_of_polyTimeReducible` at the identity
 reduction `Complexity.PolyTimeReducible.refl`. -/
 theorem oracle_mem_POracle (O : Language Bool) : O ∈ POracle O := by
-  sorry
+  exact mem_POracle_of_polyTimeReducible (PolyTimeReducible.refl O)
+
+/-- The emission-negating transformer for `Complexity.compl_mem_POracle` (the P3.1 audit's
+direct construction): every emitted Boolean is negated; states, special states, and all
+tape and head actions are unchanged. A table transformer with a single consumer; the
+library has no oracle output-relabelling row. -/
+private def negOut (M : FinOracleTM Bool) : FinOracleTM Bool where
+  k := M.k
+  State := M.State
+  tm :=
+    { q₀ := M.tm.q₀
+      qQuery := M.tm.qQuery
+      qYes := M.tm.qYes
+      qNo := M.tm.qNo
+      tr := fun q inp w => { M.tm.tr q inp w with output := (M.tm.tr q inp w).output.map not } }
+  wf := ⟨M.wf.qQuery_ne_qYes, M.wf.qQuery_ne_qNo, M.wf.qYes_ne_qNo⟩
+
+/-- A configuration with its output negated. -/
+private def negCfg {k : ℕ} {S : Type} {x : List Bool} (c : Cfg (k + 1) Bool S x) :
+    Cfg (k + 1) Bool S x := { c with output := c.output.map not }
+
+/-- One step of the negating machine is the negation of one step of the original.
+
+**Proof sketch.** Halted configurations are fixed. At `qQuery` both machines read the same
+query (tapes are untouched by the negation) and move to the same answer state. Elsewhere
+both apply the same action up to its emission, and negation commutes with appending. -/
+private theorem negOut_step (M : FinOracleTM Bool) (O : Language Bool) {x : List Bool}
+    (c : Cfg (M.k + 1) Bool M.State x) :
+    (negOut M).tm.step O (negCfg c) = negCfg (M.tm.step O c) := by
+  classical
+  unfold OracleTM.step
+  cases hs : c.state with
+  | none => simp [negCfg, hs]
+  | some q =>
+    have hs' : (negCfg c).state = some q := hs
+    rw [hs']
+    dsimp only
+    by_cases hq : q = M.tm.qQuery
+    · have hq' : q = (negOut M).tm.qQuery := hq
+      rw [if_pos hq', if_pos hq]
+      rfl
+    · have hq' : q ≠ (negOut M).tm.qQuery := hq
+      rw [if_neg hq', if_neg hq]
+      have hin : (negCfg c).inputSymbol = c.inputSymbol := rfl
+      have hw : (negCfg c).workTapeSymbols = c.workTapeSymbols := rfl
+      rw [hin, hw]
+      refine Cfg.ext rfl rfl rfl rfl ?_
+      show List.map not c.output ++
+          ((M.tm.tr q c.inputSymbol c.workTapeSymbols).output.map not).toList =
+        List.map not (c.output ++ (M.tm.tr q c.inputSymbol c.workTapeSymbols).output.toList)
+      cases (M.tm.tr q c.inputSymbol c.workTapeSymbols).output <;> simp
+
+/-- Runs of the negating machine are the negated runs of the original. -/
+private theorem negOut_runFrom (M : FinOracleTM Bool) (O : Language Bool) {x : List Bool}
+    (c : Cfg (M.k + 1) Bool M.State x) (t : ℕ) :
+    (negOut M).tm.runFrom O (negCfg c) t = negCfg (M.tm.runFrom O c t) :=
+  OracleTM.runFrom_comm_of_step negCfg (negOut_step M O) c t
 
 /-- **`Pᴼ` is closed under complement**: flip the final answer.
 
@@ -187,10 +340,29 @@ theorem oracle_mem_POracle (O : Language Bool) : O ∈ POracle O := by
 negation at the output: a wrapper that runs `M` with output captured (W1) and
 emits the flipped indicator bit — the oracle-architecture analogue of the
 negation closure in `Complexity.compl_mem_P`'s proof. Same budget shape,
-constant overhead. -/
+constant overhead.
+
+**B1 appendix.** The fill takes the P3.1 audit's simpler route, recorded in its
+resolutions: negate every emission directly, at the same budget, with no capture wrapper. -/
 theorem compl_mem_POracle {L O : Language Bool} (h : L ∈ POracle O) :
     Lᶜ ∈ POracle O := by
-  sorry
+  classical
+  obtain ⟨e, c, M, hM⟩ := Set.mem_iUnion.mp h
+  refine Set.mem_iUnion.mpr ⟨e, c, negOut M, fun x => ?_⟩
+  obtain ⟨hh, ho⟩ := hM x
+  have hinit : (negOut M).tm.initCfg x = negCfg (M.tm.initCfg x) := rfl
+  refine ⟨?_, ?_⟩
+  · show ((negOut M).tm.runFrom O ((negOut M).tm.initCfg x) _).state = none
+    rw [hinit, negOut_runFrom]; exact hh
+  · show ((negOut M).tm.runFrom O ((negOut M).tm.initCfg x) _).output = _
+    rw [hinit, negOut_runFrom]
+    show (M.tm.runFrom O (M.tm.initCfg x) _).output.map not = _
+    rw [ho]
+    by_cases hx : x ∈ L
+    · have : x ∉ (Lᶜ : Language Bool) := fun h' => h' hx
+      simp [MultiTapeTM.indicator, hx, this]
+    · have : x ∈ (Lᶜ : Language Bool) := hx
+      simp [MultiTapeTM.indicator, hx, this]
 
 /-- **A polynomial-time oracle is redundant**: `O ∈ P → Pᴼ = P`.
 [AB09, Example 3.6(2)]

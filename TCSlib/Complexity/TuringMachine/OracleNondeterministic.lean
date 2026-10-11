@@ -389,29 +389,18 @@ theorem OracleNDTM.runWith_workTapes_invariant (N : OracleNDTM k Symbol State)
     runWith_headBlank N O w 0 (N.initCfg x) (by intro i; simp)
       (by intro i z _; rfl)
 
-/-- A blank at the nonnegative query-tape cell `n` bounds the extracted query
-length by `n`, from any configuration.
-
-**Proof sketch.** The least blank exists with witness `n` and is at most `n`.
-Filtering the preceding range cannot increase its length. This is requested
-for the shared home `Oracle.lean`. -/
-private theorem queryString_length_le_of_blank (cfg : Cfg (k + 1) Symbol State input)
-    (n : ℕ) (h : cfg.workTapes (OracleTM.queryTapeIdx k) (n : ℤ) = none) :
-    (OracleTM.queryString cfg).length ≤ n := by
-  classical
-  rw [OracleTM.queryString, dif_pos ⟨n, h⟩]
-  refine (List.length_filterMap_le _ _).trans ?_
-  simpa using (Nat.find_le (h := ⟨n, h⟩) h)
-
 /-- The query string after an initialized nondeterministic branch run has length
 at most the length of the choice word. [AB09, proof of Theorem 3.7, branchwise]
 
 **Proof sketch.** The initialized invariant keeps the query cell at the branch
-length blank. The blank-cell bound then bounds the extracted query. -/
+length blank. The blank-cell bound then bounds the extracted query.
+
+**C1-P1 appendix.** The blank-cell bound is the public
+`Turing.OracleTM.queryString_length_le_of_blank`, promoted from this file. -/
 theorem OracleNDTM.queryString_runWith_length_le (N : OracleNDTM k Symbol State)
     (O : Language Symbol) (x : List Symbol) (w : List Bool) :
     (OracleTM.queryString (N.runWith O w (N.initCfg x))).length ≤ w.length := by
-  exact queryString_length_le_of_blank _ w.length
+  exact OracleTM.queryString_length_le_of_blank _ w.length
     ((N.runWith_workTapes_invariant O x w).2 _ _ (le_abs_self _))
 
 /-- A bundled deterministic oracle machine as a bundled nondeterministic one, with

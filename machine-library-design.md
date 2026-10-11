@@ -1946,6 +1946,51 @@ needs the advancing writer R8.4′.
   probe proof is complete (one file, about 120 lines), or through a statement gate plus fill
   like the other §12 rows.
 
+### 12.9 Oracle-machine rows (landed 2026-10-11 with epoch B1; `Build/OracleCall.lean`)
+
+**Why.** Every §12 row is plain-machine level, and the oracle model (`TuringMachine/Oracle.lean`)
+had no run algebra. The B1 one-query constructions needed three capabilities: (i) a computation
+captured onto the **query tape** and submitted; (ii) the four-state **answer tail**; (iii) a way for
+plain contracts to drive an oracle machine.
+
+**Rows.**
+
+- In `Oracle.lean`:
+  - the run algebra: `step_of_halt`, `runFrom_succ_eq_step'`, `runFrom_add`, `runFrom_of_halt`,
+    `runFrom_comm_of_step`, `ComputesInTime.mono`/`output_unique`;
+  - the extraction contract: `queryString_length_le_of_blank` (C1-P1) and `queryString_eq_of_cells`;
+  - **the transfer bridge** `runFrom_eq_plainEmptyOracle`, after `runFrom_eq_of_forall_ne_qQuery`.
+    On a run segment that avoids `qQuery`, the oracle run is the run of the plain table
+    `plainEmptyOracle`, so host-parametric plain contracts apply unchanged.
+- In `OracleFinite.lean`: the bundled `mono` and `output_unique`.
+- In `Build/OracleCall.lean`:
+  - `queryString_bufferTape`;
+  - `answerAction`, with `step_of_qQuery`, `step_of_answerAction` and `runFrom_two_of_qQuery`;
+  - **query capture** `capture_reaches_qQuery`: W1 with its return state taken to be `qQuery`.
+    W1 writes on the host's last tape, which is the query tape.
+- In `Finite.lean`, the shared guard discharge: `MultiTapeTM.exists_first_halt`.
+
+**Consumers.**
+
+- `mem_POracle_of_polyTimeReducible`, and through it the `SAT`-oracle corollaries and
+  `EXP_subset_POracle_EXPCOM` (B5);
+- `unaryWitnessLang_mem_NPOracle`, using the tail through `OracleNDTM.fixChoice`;
+- `compl_mem_POracle`, using `runFrom_comm_of_step`.
+
+**Not yet here: oracle-call hosting.** This is a plain host simulating an oracle machine that runs
+a decider on the extracted query word. It is the library gap behind `POracle_eq_P_of_mem_P`
+(deferred) and B5's `NPOracle_EXPCOM_subset_EXP` dispatcher. Its rows need a design note and a
+statement gate:
+
+- the headline simulation;
+- the private clean call of `ClassNP/EXP.lean` promoted, without the native-input rewind;
+- origin tracking for the query tape;
+- query extraction with cell `-1` saved;
+- the dispatch host.
+
+The draft headline statement, `FinOracleTM.exists_plain_simulation`, is recorded in
+`audits/b1-integration.md`.
+
 ## 13. The zone and virtual-input layer (proposed 2026-10-09, post-§12 close)
 
 **Mandate** (user direction 2026-10-09, at the §12 fill-campaign close —
