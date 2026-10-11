@@ -62,6 +62,11 @@ sites.
 * `Turing.MultiTapeTM.spaceUsed_le_mul_succ` — a run of `t` steps visits at most
   `k · (t + 1)` cells (shared by the space inclusions of chapter 4; added 2026-10-10).
 
+* `Turing.MultiTapeTM.step_output_prepend`, `Turing.MultiTapeTM.runFrom_output_prepend`,
+  `Turing.MultiTapeTM.runFrom_state_ne_none_of_le` — runs commute with a fixed output
+  prefix, and a live endpoint has a live past (shared run facts, 12.2c/CH7-D2;
+  added 2026-10-10).
+
 ## References
 
 * [AB09] S. Arora, B. Barak, *Computational Complexity: A Modern Approach*,
@@ -133,6 +138,56 @@ theorem spaceUsed_le_mul_succ (tm : MultiTapeTM k Symbol State)
       exact (Finset.card_image_le).trans (Finset.card_range (t + 1)).le
     _ = k * (t + 1) := by
       rw [Finset.sum_const_nat fun _ _ => rfl, Finset.card_univ, Fintype.card_fin]
+
+/-- Prepending a fixed word to the output commutes with one step of any machine: the
+transition table reads neither the output tape nor its length, and a step only appends
+to it. This is the append-only output tape of the machine model [AB09, §1.2] (the
+write-only output tape is a declared variation; see `Turing.FinTM`).
+
+**Proof sketch.** A halted configuration does not move. Otherwise both sides apply the
+same action, chosen from the unchanged state, input symbol and work-tape symbols; the
+output equality is associativity of append. -/
+theorem step_output_prepend (tm : MultiTapeTM k Symbol State)
+    (cfg : Cfg k Symbol State input) (pre : List Symbol) :
+    tm.step { cfg with output := pre ++ cfg.output } =
+      { tm.step cfg with output := pre ++ (tm.step cfg).output } := by
+  have hi : ({ cfg with output := pre ++ cfg.output } : Cfg k Symbol State input).inputSymbol =
+      cfg.inputSymbol := rfl
+  have hw : ({ cfg with output := pre ++ cfg.output } :
+      Cfg k Symbol State input).workTapeSymbols = cfg.workTapeSymbols := rfl
+  cases hs : cfg.state with
+  | none => simp [MultiTapeTM.step, hs]
+  | some q =>
+    simp only [MultiTapeTM.step, hs, hi, hw]
+    refine Cfg.ext rfl rfl rfl rfl ?_
+    simp only [Action.apply, List.append_assoc]
+    rfl
+
+/-- Prepending a fixed word to the output commutes with every run: running from a
+configuration whose output already starts with `pre` yields the run's result with `pre`
+still in front of its output, halted tails included [AB09, §1.2].
+
+**Proof sketch.** Iterate the one-step commutation `step_output_prepend` along the run
+with `runFrom_comm_of_step`. -/
+theorem runFrom_output_prepend (tm : MultiTapeTM k Symbol State)
+    (cfg : Cfg k Symbol State input) (pre : List Symbol) (t : ℕ) :
+    tm.runFrom { cfg with output := pre ++ cfg.output } t =
+      { tm.runFrom cfg t with output := pre ++ (tm.runFrom cfg t).output } :=
+  MultiTapeTM.runFrom_comm_of_step (tm := tm) (tm' := tm)
+    (fun c => { c with output := pre ++ c.output }) (fun c => step_output_prepend tm c pre) cfg t
+
+/-- A run that is still live at time `t` was live at every time `u ≤ t`: the halting
+configuration of the model is absorbing [AB09, §1.2].
+
+**Proof sketch.** A halt at some `u ≤ t` would, by `runFrom_add` and `runFrom_of_halt`,
+make the configuration at `t` equal to the halted one at `u`. -/
+theorem runFrom_state_ne_none_of_le (tm : MultiTapeTM k Symbol State)
+    (cfg : Cfg k Symbol State input) (t : ℕ) (ht : (tm.runFrom cfg t).state ≠ none) :
+    ∀ u ≤ t, (tm.runFrom cfg u).state ≠ none := by
+  intro u hu hh
+  have he : tm.runFrom cfg t = tm.runFrom cfg u := by
+    rw [← Nat.add_sub_of_le hu, MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_of_halt _ hh]
+  exact ht (by rw [he]; exact hh)
 
 end MultiTapeTM
 
