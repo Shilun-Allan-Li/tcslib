@@ -1,0 +1,41 @@
+# wave-1 statements: freeze. The only existing source file changed is the TuringMachine facade; its diff against the tip c280727c (imports and Contents bullets only, no declarations):
+diff --git a/TCSlib/Complexity/TuringMachine.lean b/TCSlib/Complexity/TuringMachine.lean
+index e96e3255..177503a4 100644
+--- a/TCSlib/Complexity/TuringMachine.lean
++++ b/TCSlib/Complexity/TuringMachine.lean
+@@ -29,6 +29,11 @@ import TCSlib.Complexity.TuringMachine.Build.CounterLoop
+ import TCSlib.Complexity.TuringMachine.Build.Scan
+ import TCSlib.Complexity.TuringMachine.Build.InputCall
+ import TCSlib.Complexity.TuringMachine.Build.CfgRecord
++import TCSlib.Complexity.TuringMachine.Build.InputLength
++import TCSlib.Complexity.TuringMachine.Build.RecordTable
++import TCSlib.Complexity.TuringMachine.Build.CertShell
++import TCSlib.Complexity.TuringMachine.Build.OracleSim
++import TCSlib.Complexity.TuringMachine.CodeSimulator
+ import TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction
+ import TCSlib.Complexity.TuringMachine.Robustness.SingleTape
+ import TCSlib.Complexity.TuringMachine.Robustness.Bidirectional
+@@ -113,6 +118,16 @@ for the local modifications.
+   advancing writers and the native-input copy and fold; the input call and input seek;
+   the rich configuration-record carrier and the record rows. Statement phase: contracts
+   stated with sketches, fills pending.
++* `Build/InputLength`, `Build/RecordTable` — the deferred §12.8 rows (`machine-library-design.md`
++  §12.8b): the input length `Nat.bits |x|` (R8.5c), and the table layer over records (header,
++  sentinels, find, append, template, init, validity, odometer next, the end-to-start adapter).
++  Statement phase.
++* `Build/OracleSim`, `Build/CertShell` — oracle-call simulation (§12.10, the B1b extension): one
++  plain host simulating an oracle machine with queries answered by a plain decider, the
++  choice-word machine of an oracle NDTM, and the plain certificate shell. Statement phase.
++* `CodeSimulator` — the format-parameterized uniform simulator over item 8's code formats
++  (B5a): one bounded-acceptance interpreter and canonizer whose one- and two-tape instances are
++  the EXPCOM and Codes2Tape code schemes. Statement phase.
+ * `CounterProgInput` — transport a counter-program run past an input prefix
+   that has already been consumed.
+ * `Build/Convention`, `Build/Wrappers`, `Build/Loop`, `Build/Primitives` — the
+# changed .lean files vs tip:
+M	TCSlib/Complexity/TuringMachine.lean
+A	TCSlib/Complexity/TuringMachine/Build/CertShell.lean
+A	TCSlib/Complexity/TuringMachine/Build/InputLength.lean
+A	TCSlib/Complexity/TuringMachine/Build/OracleSim.lean
+A	TCSlib/Complexity/TuringMachine/Build/RecordTable.lean
+A	TCSlib/Complexity/TuringMachine/CodeSimulator.lean

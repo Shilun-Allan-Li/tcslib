@@ -1,0 +1,275 @@
+import TCSlib.Complexity.TuringMachine.Build.RecordTable
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+/-! # §12.8b statement-gate probe (maintainer; not part of the library)
+
+Read-only elaboration against the statement PR's replay olean tree (no olean output). It
+imports the landed `Build/RecordTable.lean` (and through it `Build/InputLength.lean`) and
+runs the W1 pre-ship executed checks against the landed definitions: layout facts on
+concrete tables and records, the end-to-start adapter, and the executed witness candidate
+for R8.5c with its negative controls. Expected output: none (0 errors, 0 warnings). -/
+
+/-! ## Executed checks (W1 pre-ship): layout facts on concrete tables and records
+
+Every `example` is decided by evaluation (`decide`), or by `simp` where `Nat.bits`
+(well-founded recursion) must be unfolded first. Tables are over `Fin 3`, at displaced
+origins, with nonblank frames just beyond the sentinels, and at the degenerate sizes
+(the empty table, one-field layouts, `k = 0`, `s = 0`, `n = 0`). -/
+namespace W1Check
+open Turing
+
+/-- A one-tape configuration with tape contents `t` and head `h`. -/
+def c1 {S : Type} (q : S) (t : ℤ → Option (Fin 3)) (h : ℤ) : Cfg 1 (Fin 3) S ([] : List (Fin 3)) :=
+  ⟨some q, 1, fun _ => t, fun _ => h, []⟩
+
+/-- A header and two entries of `m = 2` fields. -/
+def h₀ : List (Fin 3) := [2]
+def es₀ : List (List (List (Fin 3))) := [[[1], [0]], [[2], [1, 1]]]
+
+/-- The table at origin `3`, with nonblank frame cells at `0` and `15`, just beyond the
+two sentinels on each side. -/
+def tab₀ (z : ℤ) : Option (Fin 3) :=
+  if z = 0 ∨ z = 15 then some 2 else fieldsTape (tableFields h₀ es₀) (z - 3)
+
+/-- The empty table (a header alone) at origin `3`, frame at `0` and `7`. -/
+def tabE (z : ℤ) : Option (Fin 3) :=
+  if z = 0 ∨ z = 7 then some 2 else fieldsTape (tableFields h₀ []) (z - 3)
+
+-- layout lengths: `joinFields_length`, `fieldOffset_length` and its empty exception
+example : (joinFields ([[1], [2, 0], [1]] : List (List (Fin 3)))).length =
+      ((([[1], [2, 0], [1]] : List (List (Fin 3))).map List.length).sum + 3 - 1) ∧
+    fieldOffset ([[1], [2, 0], [1]] : List (List (Fin 3))) 3 =
+      (joinFields ([[1], [2, 0], [1]] : List (List (Fin 3)))).length + 1 ∧
+    (joinFields ([[], [1], []] : List (List (Fin 3)))).length = 3 ∧
+    fieldOffset ([] : List (List (Fin 3))) 0 = 0 := by decide
+
+-- the table's fields, entry offsets (closed form) and end offset
+example : tableFields h₀ es₀ = [[2], [1], [0], [2], [1, 1]] ∧
+    tableOffset h₀ es₀ 0 = 2 ∧ tableOffset h₀ es₀ 1 = 6 ∧ tableOffset h₀ es₀ 2 = 11 ∧
+    tableOffset h₀ es₀ 1 =
+      h₀.length + 1 + ((es₀.take 1).map fun e => (joinFields e).length + 1).sum ∧
+    tableOffset h₀ es₀ es₀.length = (joinFields (tableFields h₀ es₀)).length + 1 ∧
+    (joinFields (tableFields h₀ es₀)).length = 10 := by decide
+-- the empty table: its end is two cells after the header
+example : tableOffset h₀ ([] : List (List (List (Fin 3)))) 0 = 2 ∧
+    (joinFields (tableFields h₀ ([] : List (List (List (Fin 3)))))).length + 1 = 2 := by decide
+-- why `exists_tableFindTM` needs `0 < m`: `[]` and `[[]]` lay out identically
+example : tableFields h₀ ([] : List (List (List (Fin 3)))) = tableFields h₀ [[]] := by decide
+-- why `exists_recordValidTM` needs the field count: a layout's prefix is a layout at
+-- the same head (`RecordAt` reads only `[-1, |joinFields fs|]`)
+example : ∀ p : Fin 4, fieldsTape ([[1], [2]] : List (List (Fin 3))) ((p : ℤ) - 1) =
+    fieldsTape ([[1]] : List (List (Fin 3))) ((p : ℤ) - 1) ∨ (p : ℤ) - 1 > 1 := by decide
+
+-- `TableAt` holds for the tape `tab₀` at origin `3` (two blanks each side, frame beyond)
+example : TableAt (c1 SeekPhase.run tab₀ 3) 0 3 h₀ es₀ := by
+  intro p hp1 hp2
+  have hl : (joinFields (tableFields h₀ es₀)).length = 10 := by decide
+  rw [hl] at hp2
+  obtain ⟨n, hn, rfl⟩ : ∃ n : ℕ, n ≤ 13 ∧ p = n - 2 := ⟨(p + 2).toNat, by omega, by omega⟩
+  revert n; decide
+example : TableAt (c1 SeekPhase.run tabE 3) 0 3 h₀ [] := by
+  intro p hp1 hp2
+  have hl : (joinFields (tableFields h₀ ([] : List (List (List (Fin 3)))))).length = 1 := by decide
+  rw [hl] at hp2
+  obtain ⟨n, hn, rfl⟩ : ∃ n : ℕ, n ≤ 4 ∧ p = n - 2 := ⟨(p + 2).toNat, by omega, by omega⟩
+  revert n; decide
+
+-- `TableAt.recordAt_take`: entry `1` at offset `6` from origin `3`, prefix of 1 and 2 fields
+example : RecordAt (c1 SeekPhase.run tab₀ 9) 0 ((es₀[1]'(by decide)).take 1) ∧
+    RecordAt (c1 SeekPhase.run tab₀ 9) 0 ((es₀[1]'(by decide)).take 2) := by
+  constructor
+  · intro p hp1 hp2
+    have hl : (joinFields ((es₀[1]'(by decide)).take 1)).length = 1 := by decide
+    rw [hl] at hp2
+    obtain ⟨n, hn, rfl⟩ : ∃ n : ℕ, n ≤ 2 ∧ p = n - 1 := ⟨(p + 1).toNat, by omega, by omega⟩
+    revert n; decide
+  · intro p hp1 hp2
+    have hl : (joinFields ((es₀[1]'(by decide)).take 2)).length = 4 := by decide
+    rw [hl] at hp2
+    obtain ⟨n, hn, rfl⟩ : ∃ n : ℕ, n ≤ 5 ∧ p = n - 1 := ⟨(p + 1).toNat, by omega, by omega⟩
+    revert n; decide
+
+-- seek end from the origin stops at the second trailing blank, the next entry's offset
+example : ((seekEndTM 1 0).runFrom (c1 SeekPhase.run tab₀ 3) 12).state = some .done ∧
+    ((seekEndTM 1 0).runFrom (c1 SeekPhase.run tab₀ 3) 11).state ≠ some .done ∧
+    ((seekEndTM 1 0).runFrom (c1 SeekPhase.run tab₀ 3) 12).workTapePos 0 =
+      3 + tableOffset h₀ es₀ es₀.length := by decide
+-- the empty table: seek end stops at origin + 2
+example : ((seekEndTM 1 0).runFrom (c1 SeekPhase.run tabE 3) 3).state = some .done ∧
+    ((seekEndTM 1 0).runFrom (c1 SeekPhase.run tabE 3) 3).workTapePos 0 = 5 := by decide
+
+-- `tableRewindTM_run_ofCfg`: from the second trailing blank (origin + D, D = 11) back to
+-- the origin at exactly D + 7 = 18, not at 17; trajectory within [origin - 2, origin + D]
+example :
+    let M := tableRewindTM (Γ := Fin 3) 1 0
+    let d := c1 (Sum.inl SeekPhase.run : SeekPhase ⊕ SeekPhase) tab₀ 14
+    (M.runFrom d 18).state = some (Sum.inr .done) ∧ (M.runFrom d 18).workTapePos 0 = 3 ∧
+    (∀ t : Fin 18, (M.runFrom d t).state ≠ some (Sum.inr .done)) ∧
+    (∀ t : Fin 19, 1 ≤ (M.runFrom d t).workTapePos 0 ∧ (M.runFrom d t).workTapePos 0 ≤ 14) ∧
+    (M.runFrom d 18).workTapes 0 15 = some 2 := by decide
+-- the adapter on the empty table (one field, D = 2): 9 steps
+example :
+    let M := tableRewindTM (Γ := Fin 3) 1 0
+    let d := c1 (Sum.inl SeekPhase.run : SeekPhase ⊕ SeekPhase) tabE 5
+    (M.runFrom d 9).state = some (Sum.inr .done) ∧ (M.runFrom d 9).workTapePos 0 = 3 ∧
+    (M.runFrom d 8).state ≠ some (Sum.inr .done) := by decide
+-- the adapter with a nonblank current cell (the frame cell under the head is arbitrary)
+example :
+    let M := tableRewindTM (Γ := Fin 3) 1 0
+    let d := c1 (Sum.inl SeekPhase.run : SeekPhase ⊕ SeekPhase)
+      (fun z => if z = 5 then some 1 else tabE z) 5
+    (M.runFrom d 9).state = some (Sum.inr .done) ∧ (M.runFrom d 9).workTapePos 0 = 3 := by decide
+
+-- find's verdict semantics: first entry whose layout-fold accepts
+-- (fold: "the first cell is 2"; `none` is a separator)
+def δ₀ : Option Bool → Option (Fin 3) → Option Bool
+  | none, c => some (c = some 2)
+  | some b, _ => some b
+example : es₀.findIdx? (fun e => ((joinFields e).foldl δ₀ none).getD false) = some 1 ∧
+    ([] : List (List (List (Fin 3)))).findIdx? (fun e => ((joinFields e).foldl δ₀ none).getD false)
+      = none ∧
+    [[[1], [0]]].findIdx? (fun e => ((joinFields e).foldl δ₀ none).getD false) = none := by decide
+
+-- append: the new layout extends the old one on the old layout's cells, and the old
+-- first trailing blank becomes the separator before the new entry
+example :
+    let new := tableFields h₀ (es₀ ++ [[[0]] ++ [[1]]])
+    (∀ p : Fin 10, fieldsTape new p = fieldsTape (tableFields h₀ es₀) p) ∧
+    fieldsTape new 10 = none ∧ fieldsTape new 11 = some 0 ∧
+    tableOffset h₀ (es₀ ++ [[[0]] ++ [[1]]]) 2 = tableOffset h₀ es₀ es₀.length := by decide
+
+/-! ### Records -/
+
+-- position widths and the template's bound field (`binDigits_posWidth_succ`) at small `n`
+example : posWidth 0 = 1 ∧ posWidth 1 = 2 ∧ posWidth 2 = 2 ∧ posWidth 3 = 3 := by
+  simp [posWidth, Nat.bits, Nat.binaryRec]
+example : binDigits 1 1 = Nat.bits 1 ∧ binDigits 2 2 = Nat.bits 2 ∧ binDigits 2 3 = Nat.bits 3 ∧
+    binDigits 3 4 = Nat.bits 4 := by
+  simp [binDigits, Nat.bits, Nat.binaryRec]; decide
+
+-- the record length: k = 1, s = 1, |x| = 1 gives 3 + 2 + 1 + 4 = 10
+example : (joinFields (cfgRecord (k := 1) (Q := Unit) (T := Bool) (x := [true]) 1
+    (Cfg.init () [true]) false)).length = recordLength 1 [true].length 1 := by
+  have hw : posWidth 1 = 2 := by simp [posWidth, Nat.bits, Nat.binaryRec]
+  simp only [cfgRecord, recordLength, List.length_cons, List.length_nil, hw]
+  decide
+-- k = 0, s = 0, x = []: three one-cell fields, length 5
+example : (joinFields (cfgRecord (k := 0) (Q := Unit) (T := Bool) (x := []) 0
+    (Cfg.init () []) true)).length = recordLength 0 0 0 ∧ recordLength 0 0 0 = 5 := by
+  have hw : posWidth 0 = 1 := by simp [posWidth, Nat.bits]
+  simp only [cfgRecord, recordLength, List.length_nil, hw]
+  decide
+-- `cfgRecord_init` at k = 2, s = 1, |x| = 1
+example : cfgRecord 1 (Cfg.init () [true] : Cfg 2 Bool Unit [true]) (false : Bool) =
+    [RecSym.st (some ())] :: ((binDigits (posWidth [true].length) 1).map RecSym.digit) ::
+      (List.replicate 2 ((List.range (2 * 1 + 1)).map fun j =>
+          RecSym.cell none (decide (j = 1))) ++ [[RecSym.tag false]]) := by
+  have hw : posWidth 1 = 2 := by simp [posWidth, Nat.bits, Nat.binaryRec]
+  simp only [cfgRecord, List.length_cons, List.length_nil, hw]
+  decide
+-- the initial record's fields are nonempty and its window field is the template's
+example : ∀ u ∈ cfgRecord 0 (Cfg.init () [] : Cfg 1 Bool Unit []) (false : Bool), u ≠ [] := by
+  have hw : posWidth 0 = 1 := by simp [posWidth, Nat.bits]
+  simp only [cfgRecord, List.length_nil, hw]
+  decide
+example : (recordTemplate Unit Bool 0 1)[1]? =
+    (cfgRecord 1 (Cfg.init () [] : Cfg 1 Bool Unit []) (false : Bool))[2]? := by
+  simp only [recordTemplate, cfgRecord]
+  decide
+
+-- the template at the degenerate sizes and its length
+example : recordTemplate Unit Bool 0 0 = [[RecSym.digit true], [RecSym.cell none true]] := by
+  have hw : posWidth 0 = 1 := by simp [posWidth, Nat.bits]
+  simp only [recordTemplate, hw]
+  decide
+example : recordTemplate Unit Bool 2 1 =
+    [[RecSym.digit true, RecSym.digit true],
+      [RecSym.cell none false, RecSym.cell none true, RecSym.cell none false]] ∧
+    (joinFields (recordTemplate Unit Bool 2 1)).length = posWidth 2 + 2 * 1 + 2 := by
+  have hw : posWidth 2 = 2 := by simp [posWidth, Nat.bits, Nat.binaryRec]
+  simp only [recordTemplate, hw]
+  decide
+
+-- an initial record laid out in a table entry with its flag field (S1b's entry shape),
+-- read back as a record at the entry's offset (`TableAt.recordAt_take`, m₀ = k + 3)
+example :
+    let r := cfgRecord 0 (Cfg.init () [] : Cfg 1 Bool Unit []) (false : Bool)
+    let es := [r ++ [[RecSym.digit false]]]
+    tableOffset [RecSym.digit true] es 0 = 2 ∧
+    (List.range 6).all fun p =>
+      fieldsTape (tableFields [RecSym.digit true] es) (2 + (p : ℤ) - 1) =
+        fieldsTape ((r ++ [[RecSym.digit false]]).take 4) ((p : ℤ) - 1) := by
+  have hw : posWidth 0 = 1 := by simp [posWidth, Nat.bits]
+  simp only [cfgRecord, List.length_nil, hw]
+  decide
+
+
+/-! ### An executed witness candidate for R8.5c -/
+
+/-- **A witness candidate for R8.5c** (probe only): a five-state framed counter, the
+counting phase of Catalog's private `f2_counterTM` without its emission, plus an input
+return. States: count `0`, carry `1`, counter rewind `2`, input return `3`, exit `4`.
+On the instances below it meets every clause of `Turing.exists_inputLengthTM` with
+`K = 0`, `C = 5`; its exit time is `5n + 2 - 2·popcount n`. -/
+def lenTM : MultiTapeTM 1 Bool (Fin 5) where
+  q₀ := 0
+  tr := fun q inp w =>
+    if q = 0 then
+      match inp with
+      | none => ⟨-1, fun _ => (none, 0), none, some 3⟩
+      | some _ =>
+        if w 0 = some true then ⟨1, fun _ => (some (some false), 1), none, some 1⟩
+        else ⟨1, fun _ => (some (some true), -1), none, some 2⟩
+    else if q = 1 then
+      if w 0 = some true then ⟨0, fun _ => (some (some false), 1), none, some 1⟩
+      else ⟨0, fun _ => (some (some true), -1), none, some 2⟩
+    else if q = 2 then
+      match w 0 with
+      | some _ => ⟨0, fun _ => (none, -1), none, some 2⟩
+      | none => ⟨0, fun _ => (none, 1), none, some 0⟩
+    else if q = 3 then
+      match inp with
+      | some _ => ⟨-1, fun _ => (none, 0), none, some 3⟩
+      | none => ⟨1, fun _ => (none, 0), none, some 4⟩
+    else ⟨0, fun _ => (none, 0), none, some 4⟩
+
+/-- Start: head at `5`, input head at `1`, nonblank frame at `3` (two left of the head) and at
+`5 + |w| + 1` (one beyond the slot), `w` the expected word. -/
+def st' (x w : List Bool) : Cfg 1 Bool (Fin 5) x :=
+  ⟨some 0, 1, fun _ z => if z = 3 ∨ z = 5 + w.length + 1 then some true else none, fun _ => 5, []⟩
+
+/-- Every clause of `exists_inputLengthTM` at `C = 5`, on cells `[0, 20)`. -/
+def chk (x w : List Bool) (T : ℕ) : Bool :=
+  let d := st' x w
+  let f := lenTM.runFrom d T
+  f.state == some 4 &&
+  (List.range T).all (fun t => (lenTM.runFrom d t).state != some 4) &&
+  decide (T ≤ 5 * (x.length + 1)) &&
+  (List.range 20).all (fun z => f.workTapes 0 z ==
+      (if 5 ≤ (z : ℤ) ∧ (z : ℤ) < 5 + w.length then FinTM.bufferTape w ((z : ℤ) - 5)
+       else d.workTapes 0 z)) &&
+  f.workTapePos 0 == 5 && (f.inputPos : ℕ) == 1 && f.output == [] &&
+  (List.range (T + 1)).all (fun t => decide (4 ≤ (lenTM.runFrom d t).workTapePos 0 ∧
+      (lenTM.runFrom d t).workTapePos 0 ≤ 5 + w.length))
+
+example : chk [] [] 2 = true := by decide
+example : chk [true] [true] 5 = true := by decide
+example : chk [true, false] [false, true] 10 = true := by decide
+example : chk [true, false, true] [true, true] 13 = true := by decide
+example : chk (List.replicate 4 false) [false, false, true] 20 = true := by decide
+example : chk (List.replicate 7 true) [true, true, true] 31 = true := by decide
+example : chk (List.replicate 8 true) [false, false, false, true] 40 = true := by decide
+example : Nat.bits 0 = [] ∧ Nat.bits 1 = [true] ∧ Nat.bits 2 = [false, true] ∧
+    Nat.bits 3 = [true, true] ∧ Nat.bits 4 = [false, false, true] ∧
+    Nat.bits 7 = [true, true, true] ∧ Nat.bits 8 = [false, false, false, true] := by simp [Nat.bits, Nat.binaryRec]
+
+-- negative controls: one step early, the wrong word, a slot one cell too short on the right
+example : chk (List.replicate 8 true) [false, false, false, true] 39 = false := by decide
+example : chk (List.replicate 3 true) [true, false] 13 = false := by decide
+example : chk [true] [true] 5 = true ∧ chk [true] [true] 4 = false := by decide
+example : chk [true] [true] 6 = false := by decide
+
+end W1Check
