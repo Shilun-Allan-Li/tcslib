@@ -141,6 +141,26 @@ example :
     fieldsTape new 10 = none ∧ fieldsTape new 11 = some 0 ∧
     tableOffset h₀ (es₀ ++ [[[0]] ++ [[1]]]) 2 = tableOffset h₀ es₀ es₀.length := by decide
 
+-- Round 1, finding 3 (note 50): the last entry matching. With `m = 1`, header `[1]` and the
+-- single accepted entry `[[2]]`, `findIdx?` is `some 0` and the entry starts at offset 2,
+-- a nonblank cell. Skipping its only field would land at offset 4 = the end-of-table
+-- offset, a blank: so the find must escape before that skip.
+example :
+    let hL : List (Fin 3) := [1]
+    let esL : List (List (List (Fin 3))) := [[[2]]]
+    esL.findIdx? (fun e => ((joinFields e).foldl δ₀ none).getD false) = some 0 ∧
+    tableOffset hL esL 0 = 2 ∧ fieldsTape (tableFields hL esL) 2 = some 2 ∧
+    tableOffset hL esL esL.length = 4 ∧ fieldsTape (tableFields hL esL) 4 = none := by decide
+
+-- Note 25 (note 50): append with an empty new field. The old layout is still extended
+-- cell for cell; the empty field is a lone separator at the new entry's offset, so the
+-- result is laid out but no longer `TableWF`.
+example :
+    let new := tableFields h₀ (es₀ ++ [[[], [1]]])
+    (∀ p : Fin 10, fieldsTape new p = fieldsTape (tableFields h₀ es₀) p) ∧
+    fieldsTape new 10 = none ∧ fieldsTape new 11 = none ∧ fieldsTape new 12 = some 1 ∧
+    tableOffset h₀ (es₀ ++ [[[], [1]]]) 2 = tableOffset h₀ es₀ es₀.length := by decide
+
 /-! ### Records -/
 
 -- position widths and the template's bound field (`binDigits_posWidth_succ`) at small `n`

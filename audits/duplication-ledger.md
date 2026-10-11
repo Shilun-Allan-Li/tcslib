@@ -267,6 +267,43 @@ finding 8 and note 38).
 - **The new files** (`SymbolLift`, `Build/Scan`, `Build/InputCall`,
   `Build/CfgRecord`) have no members.
 
+## Wave-1 statements (PR #43): §12.8b, §12.10, §12.11
+
+Added at the wave-1 statement gate, round 2 (`audits/wave1-statements-findings.md`, finding 2;
+`audits/wave1-statements-resolutions.md`).
+
+**Round 1's copy-side member is gone.** `CertShell.certificateShell_proj` reproduced
+`Nondeterminism`'s private `certificate_split_strictMono` (82/99). By user decision
+(2026-10-11) it and both disclosed re-derivations were factored, not acknowledged:
+
+| Mirror (round 1) | Shared home now | Re-derived from it |
+|---|---|---|
+| certificate split uniqueness and certificate-length monotonicity (`CertShell` against `Nondeterminism`) | `TuringMachine/ChoiceWords.lean`: `append_split_unique`, `certificateLength_strictMono`, `expCertificateLength_strictMono` | `CertShell.certificateShell_proj`, `Nondeterminism`'s split proofs (five privates removed) |
+| W2-0, the query-length invariant (`OracleSim` against `Oracle`/`OracleNondeterministic` privates) | `Oracle.lean`: `OracleTM.step_radius`, `OracleTM.runFrom_radius` | W2-0, `Oracle.lean`'s initialized invariant, `runWith_headBlank` |
+| the choice-word certificate law (`OracleSim.mem_iff_exists_choiceOut` against `Nondeterminism.choice_certificate_iff`) | `ChoiceWords.lean`: `choiceBudget_le`, `run_take_of_halted` | both laws (`acceptsWithin_iff_of_halts`, `mem_iff_exists_choiceOut`) |
+
+**Members after round 2.** The five statement modules and `ChoiceWords` have no members.
+`Nondeterminism`'s count does not grow.
+
+**Exclusions** (screen hits that are not members; for the gate to rule on):
+- `Nondeterminism.a3n_unpad_EXP` → `ChoiceWords.expCertificateLength_strictMono`, 82/130
+  (63%). A pre-existing in-file pair: the base screen shows it against the former
+  `e3_split_strictMono`, also at 63%. It became cross-file when the exponential monotonicity
+  moved beside its polynomial sibling. The shared text is one monotone-power inequality
+  (`Nat.mul_le_mul_left C (Nat.pow_le_pow_right … (Nat.pow_le_pow_left … c))`) inside an
+  unrelated padding proof. No argument is copied.
+- `ChoiceWords.certificateLength_strictMono` ↔ `expCertificateLength_strictMono`, 84% / 64%:
+  an in-file pair, uncounted under the in-file convention. These are two monotonicity facts
+  for two different length functions, NP and NEXP; the pair was in-file in `Nondeterminism`
+  before.
+- `CodeSimulator.tableBitsK` reproduced by the frozen serializers: `CodeFormat.oneTapeFormat`
+  (85%), `CodeFormat.codeTable2Bits` (67%), `Codes2Tape.Code2TM.serialize` (56%),
+  `UniversalInterpreter.universalRecords` (56%). This is the **item-8 residual family** (the
+  generic writer against the frozen writers, which cannot be redefined), with the bridges
+  `tableBitsK_two` and `oneTape_serialize_eq` proving the equalities; gate round 1, note 47.
+  The `universalRecords` hit is the same family, visible once round 2 screened the
+  `Universal*` files.
+
 ## Watch items (design-parallel, no byte-copies)
 
 | Item | Status |
