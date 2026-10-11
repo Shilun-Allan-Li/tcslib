@@ -508,7 +508,7 @@ optional word entry, so position `w.length` is the right blank. -/
 @[simp] lemma bufferTape_left {Symbol : Type*} (w : List Symbol) : bufferTape w (-1) = none := by
   simp [bufferTape]
 
-/-- Appending one emitted bit changes just the old right-blank cell.
+/-- Appending one emitted symbol changes just the old right-blank cell.
 
 **Proof sketch.** At that cell the appended singleton is read. At a smaller
 nonnegative cell, list lookup stays in the old prefix. Larger cells and all

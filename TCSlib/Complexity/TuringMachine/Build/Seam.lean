@@ -15,12 +15,15 @@ set_option autoImplicit false
 
 The configuration-level sequencing layer of the machine-construction
 library (`machine-library-design.md` §12, R2): sequential composition of
-two controllers at the canonical `Turing.Cfg.ofWords` seam of
-`TCSlib.Complexity.TuringMachine.Build.Convention`. If `M₁` carries seam
-`c₀` to seam `c₁` within `T₁` under a first-return cut, and `M₂` carries
-`c₁` to `c₂` within `T₂`, the dispatch-glued composite carries `c₀` to
-`c₂` within `T₁ + 1 + T₂` — the explicit constant is `1`, one silent
-stationary dispatch step at the seam. This is the generic form of the
+two controllers over **any tape alphabet and from arbitrary
+configurations** (the `_ofCfg` theorems; alphabet-generic since §13d G1). If
+`M₁` carries a configuration `c₀` to `c₁` within `T₁` under a first-return
+cut, and `M₂` carries `c₁` to `c₂` within `T₂`, the dispatch-glued
+composite carries `c₀` to `c₂` within `T₁ + 1 + T₂` — the explicit
+constant is `1`, one silent stationary dispatch step at the seam. The
+canonical `Turing.Cfg.ofWords` seams of
+`TCSlib.Complexity.TuringMachine.Build.Convention` are the `Bool`
+specialization (`Turing.seamCompTM_run` and its siblings). This is the generic form of the
 per-batch dispatch gluing re-proved in every A-chain and emitter batch,
 and it exists at the configuration level precisely because the emitter
 round-1 finding stands: *function-level* contracts cannot deliver
@@ -48,8 +51,9 @@ contract is proved (§12 fill epoch F1, gate closed 2026-10-09).
 
 ## Main definitions
 
-* `Turing.seamCompTM` — the dispatch-glued composite of two machines at
-  `Turing.Cfg.ofWords` seams.
+* `Turing.seamCompTM` — the dispatch-glued composite of two machines over
+  any alphabet; at `Bool`, its canonical use is between `Turing.Cfg.ofWords`
+  seams.
 
 ## Main results
 
@@ -98,8 +102,9 @@ namespace Turing
 variable {k : ℕ} {S₁ S₂ : Type*} {x : List Bool}
 
 /-- **R2, the seam composite** (design §12; [Bon26], `executes_in_sum`).
-The dispatch-glued sequential composite of `M₁` and `M₂` at
-`Turing.Cfg.ofWords` seams: states are the sum `S₁ ⊕ S₂`, left states run
+The dispatch-glued sequential composite of `M₁` and `M₂`, over any tape
+alphabet (at `Bool`, typically between `Turing.Cfg.ofWords` seams): states
+are the sum `S₁ ⊕ S₂`, left states run
 `M₁`'s transition table and right states `M₂`'s (each halting where its
 phase halts), except that the designated left anchor `exit` takes one
 stationary, silent, write-free dispatch step to the right anchor `entry`.

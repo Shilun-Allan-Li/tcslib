@@ -488,7 +488,7 @@ private def catalogTransferR {Symbol : Type*} {x : List Symbol} (src dst : Fin k
         if j = src ∧ d.workTapePos j + (r : ℤ) ≤ q ∧ q < d.workTapePos j + (w.length : ℤ)
           then none else (catalogCopyR src dst w d r).workTapes j q }
 
-/-- The common forward transition copies exactly the next original source bit. -/
+/-- The common forward transition copies exactly the next original source symbol. -/
 private lemma catalog_copy_forward {Symbol : Type*} {x : List Symbol} (src dst : Fin k) (hne : src ≠ dst)
     (w : List Symbol) (d : Cfg k Symbol SweepPhase x)
     (hw : ∀ p : ℤ, -1 ≤ p → p ≤ (w.length : ℤ) →
@@ -785,10 +785,10 @@ private lemma catalog_increment_value (p : ℕ) (tail : Option (List Bool)) :
     simp only [List.replicate_succ, List.cons_append, incFixed, ih]
     cases tail <;> rfl
 
-/-- Changing the cell immediately after a framed prefix changes just that bit.
+/-- Changing the cell immediately after a framed prefix changes just that cell.
 **Proof sketch.** At the write coordinate use indexing at the prefix length.
 Elsewhere the frame tests agree; inside the window, prefix and suffix lookups
-agree away from the changed bit. -/
+agree away from the changed cell. -/
 private lemma catalog_write_middle {Symbol : Type*} (f : ℤ → Option Symbol) (z : ℤ)
     (pre rest : List Symbol) (a b : Symbol) :
     Function.update (catalogTape f z (pre ++ a :: rest)) (z + (pre.length : ℤ)) (some b) =

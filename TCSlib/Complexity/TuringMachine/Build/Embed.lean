@@ -254,7 +254,7 @@ def embedEmitTM (ι : Fin m ↪ Fin k) (M : MultiTapeTM m Symbol S) :
 
 /-- Applying the silent core commutes with configuration transport.
 **Proof sketch.** Selected tapes perform the source action. Off-bank tapes
-are stationary, except that capture appends the emitted bit at the old
+are stationary, except that capture appends the emitted symbol at the old
 word length. Input movement and successor control are copied verbatim. -/
 private lemma embedSilent_apply (ι : Fin m ↪ Fin k) (cap : Fin k)
     (tapes : Fin k → ℤ → Option Symbol) (heads : Fin k → ℤ)
