@@ -6,7 +6,7 @@ Authors: Seyoon Ragavan
 import Mathlib.Computability.TMToPartrec
 import Mathlib.Data.Fintype.Vector
 import Mathlib.Data.Nat.Bits
-import TCSlib.Complexity.TuringMachine.CodeParser
+import TCSlib.Complexity.TuringMachine.CodeFormat
 import TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction
 
 set_option maxHeartbeats 0
@@ -47,6 +47,12 @@ design question 1**.
 
 * [AB09] S. Arora, B. Barak, *Computational Complexity: A Modern Approach*,
   Cambridge University Press, 2009. (§1.4, pp. 19-20.)
+
+## Item-8 appendix
+
+The primitive-recursive scanner and canonizer proofs are now parameterized by
+`CodeFormat`; the one-tape scheme consumes that shared layer. The arbitrary-time
+compiler and the public effective-scheme theorem are unchanged.
 -/
 
 namespace Turing
@@ -175,19 +181,6 @@ lemma codePrimSkipState : Primrec₂ codeSkipState := by
       (Primrec.option_some.comp (Primrec.snd.comp Primrec.snd))
   exact Primrec.list_casesOn Primrec.snd (Primrec.const none) h
 
-private lemma codePrimSkipAction : Primrec₂ codeSkipAction := by
-  unfold codeSkipAction
-  apply Primrec.option_bind ((codePrimSkipPair _).comp Primrec.snd)
-  change Primrec _
-  apply Primrec.option_bind ((codePrimSkipPair _).comp Primrec.snd)
-  change Primrec _
-  apply Primrec.option_bind ((codePrimSkipPair _).comp Primrec.snd)
-  change Primrec _
-  apply Primrec.option_bind ((codePrimSkipPair _).comp Primrec.snd)
-  change Primrec _
-  exact codePrimSkipState.comp (Primrec.succ.comp
-    (Primrec.fst.comp (Primrec.fst.comp (Primrec.fst.comp (Primrec.fst.comp Primrec.fst))))) Primrec.snd
-
 /-- `codeSkipRepeat r n` is the `n`-fold iterate of `Option.bind r`, started at
 `some xs`. -/
 lemma codeSkipRepeat_iter (r : List Bool → Option (List Bool)) (n : ℕ) (xs : List Bool) :
@@ -226,28 +219,6 @@ lemma codePrimAll : Primrec (fun xs : List Bool => xs.all id) := by
     | nil => rfl
     | cons b xs ih => simpa only [List.foldr_cons, List.all_cons, id_eq] using congrArg (fun z => b && z) ih
 
-/-- **Proof sketch.** Compose primitive recursive readers, comparisons, and fixed-count iterations in the exact order of the erased parser. The canonical-count check and minimum-length check surround the state and record scans. The final branch accepts precisely an all-true suffix. -/
-private lemma codePrimScan : Primrec codeScan := by
-  unfold codeScan
-  apply Primrec.option_bind codePrimPair
-  change Primrec _
-  apply Primrec.ite ((Primrec.eq.comp (Primrec.fst.comp Primrec.snd)
-    (codePrimBits.comp (codePrimBitsNat.comp (Primrec.fst.comp Primrec.snd)))).not)
-    (Primrec.const none)
-  apply Primrec.ite (Primrec.nat_lt.comp (Primrec.list_length.comp (Primrec.snd.comp Primrec.snd))
-    (Primrec.nat_mul.comp (Primrec.const 81) (Primrec.succ.comp (codePrimBitsNat.comp (Primrec.fst.comp Primrec.snd)))))
-    (Primrec.const none)
-  apply Primrec.option_bind (codePrimSkipFin.comp
-    (Primrec.succ.comp (codePrimBitsNat.comp (Primrec.fst.comp Primrec.snd))) (Primrec.snd.comp Primrec.snd))
-  change Primrec _
-  have hr := codePrimRepeat _ (codePrimRepeat _ (codePrimRepeat _ codePrimSkipAction (fun _ => 3) (Primrec.const 3))
-    (fun _ => 3) (Primrec.const 3)) (fun n => n + 1) Primrec.succ
-  apply Primrec.option_bind (hr.comp
-    (codePrimBitsNat.comp (Primrec.fst.comp (Primrec.snd.comp Primrec.fst))) Primrec.snd)
-  change Primrec _
-  exact Primrec.ite (Primrec.eq.comp (codePrimAll.comp Primrec.snd) (Primrec.const true))
-    (Primrec.option_some.comp Primrec.snd) (Primrec.const none)
-
 /-- Dropping a given number of leading bits is primitive recursive. -/
 lemma codePrimDrop : Primrec₂ (fun xs : List Bool => fun n => xs.drop n) := by
   have h := Primrec.nat_iterate (α := List Bool × ℕ) (β := List Bool) Primrec.snd Primrec.fst (Primrec.list_tail.comp Primrec.snd).to₂
@@ -266,10 +237,74 @@ lemma codePrimPrefix : Primrec₂ (fun xs : List Bool => fun n => xs.take (xs.le
   have h := Primrec.list_reverse.comp (codePrimDrop.comp (Primrec.list_reverse.comp Primrec.fst) Primrec.snd)
   exact h.of_eq fun p => by simp only [List.reverse_drop, List.reverse_reverse, List.length_reverse]
 
-private lemma codePrimCanonical : Primrec codeCanonical :=
-  Primrec.option_casesOn codePrimScan (Primrec.const codeFallback.serialize)
+/-- The work-tape field skipper is primitive recursive. [AB09, §1.4] -/
+lemma codePrimSkipWork : Primrec codeSkipWork :=
+  Primrec.option_bind (codePrimSkipPair _) ((codePrimSkipPair _).comp Primrec.snd).to₂
+
+/-- For each work-tape count, the transition skipper is primitive recursive
+in the state bound and input. [AB09, §1.4] -/
+lemma codePrimSkipActionK (k : ℕ) : Primrec₂ (codeSkipActionK k) := by
+  have hrep : Primrec (codeSkipRepeat codeSkipWork k) :=
+    (codePrimRepeat (fun (_ : ℕ) => codeSkipWork) (codePrimSkipWork.comp Primrec.snd).to₂
+      (fun _ => k) (Primrec.const k)).comp (Primrec.const 0) Primrec.id
+  unfold codeSkipActionK
+  apply Primrec.option_bind ((codePrimSkipPair _).comp Primrec.snd)
+  change Primrec _
+  apply Primrec.option_bind (hrep.comp Primrec.snd)
+  change Primrec _
+  apply Primrec.option_bind ((codePrimSkipPair _).comp Primrec.snd)
+  change Primrec _
+  exact codePrimSkipState.comp (Primrec.succ.comp
+    (Primrec.fst.comp (Primrec.fst.comp (Primrec.fst.comp Primrec.fst)))) Primrec.snd
+
+/-- A format's scanner is primitive recursive whenever its table skipper is. [AB09, §1.4]
+
+**Proof sketch.** Compose the primitive recursive header reader, comparisons and field skipper
+with the supplied table skipper in parser order. The final branch checks that
+the suffix consists entirely of true bits. -/
+theorem CodeFormat.primrec_scan (F : CodeFormat) (h : Primrec₂ F.skipTable) :
+    Primrec F.scan := by
+  unfold CodeFormat.scan
+  apply Primrec.option_bind codePrimPair
+  change Primrec _
+  apply Primrec.ite ((Primrec.eq.comp (Primrec.fst.comp Primrec.snd)
+    (codePrimBits.comp (codePrimBitsNat.comp (Primrec.fst.comp Primrec.snd)))).not)
+    (Primrec.const none)
+  apply Primrec.ite (Primrec.nat_lt.comp
+    (Primrec.list_length.comp (Primrec.snd.comp Primrec.snd))
+    (Primrec.nat_mul.comp (Primrec.const F.guard)
+      (Primrec.succ.comp (codePrimBitsNat.comp (Primrec.fst.comp Primrec.snd)))))
+    (Primrec.const none)
+  apply Primrec.option_bind (codePrimSkipFin.comp
+    (Primrec.succ.comp (codePrimBitsNat.comp (Primrec.fst.comp Primrec.snd)))
+    (Primrec.snd.comp Primrec.snd))
+  change Primrec _
+  apply Primrec.option_bind (h.comp
+    (codePrimBitsNat.comp (Primrec.fst.comp (Primrec.snd.comp Primrec.fst))) Primrec.snd)
+  change Primrec _
+  exact Primrec.ite (Primrec.eq.comp (codePrimAll.comp Primrec.snd) (Primrec.const true))
+    (Primrec.option_some.comp Primrec.snd) (Primrec.const none)
+
+/-- A format's canonical-prefix function is primitive recursive whenever its table skipper is. [AB09, §1.4] -/
+theorem CodeFormat.primrec_canonical (F : CodeFormat) (h : Primrec₂ F.skipTable) :
+    Primrec F.canonical :=
+  Primrec.option_casesOn (F.primrec_scan h) (Primrec.const (F.serialize F.fallback))
     (codePrimPrefix.comp Primrec.fst (Primrec.list_length.comp Primrec.snd))
 
+/-- The one-work-tape table skipper is primitive recursive. -/
+private lemma codePrimSkipTable1 : Primrec₂ oneTapeFormat.skipTable := by
+  have ha : Primrec₂ codeSkipAction :=
+    (codePrimSkipActionK 1).of_eq fun n xs => (codeSkipAction_eq_codeSkipActionK n xs).symm
+  have h := codePrimRepeat _ (codePrimRepeat _ (codePrimRepeat _ ha
+    (fun _ => 3) (Primrec.const 3)) (fun _ => 3) (Primrec.const 3)) (fun n => n + 1) Primrec.succ
+  exact h
+
+/-- The two-work-tape table skipper is primitive recursive in the state bound and input. [AB09, §1.4] -/
+lemma codePrimSkipTable2 : Primrec₂ codeSkipTable2 := by
+  have h := codePrimRepeat _ (codePrimRepeat _ (codePrimRepeat _ (codePrimRepeat _
+    (codePrimSkipActionK 2) (fun _ => 3) (Primrec.const 3)) (fun _ => 3) (Primrec.const 3))
+    (fun _ => 3) (Primrec.const 3)) (fun n => n + 1) Primrec.succ
+  exact h
 
 private abbrev BridgeAlphabet := Bool ⊕ PartrecToTM2.Γ'
 
@@ -1074,13 +1109,21 @@ lemma codePrim_machine (f : List Bool → List Bool) (hf : Primrec f) :
   have hx := hc (List.Vector.ofFn (fun _ : Fin 1 => bridgeNumber x))
   simpa [List.Vector.ofFn, bridgeUnnumber_number] using hx
 
+/-- A format with a primitive recursive table skipper has a finite binary canonizer
+with an arbitrary length-only time bound. [AB09, §1.4] -/
+theorem CodeFormat.exists_canonizer (F : CodeFormat) (h : Primrec₂ F.skipTable) :
+    ∃ (M : FinTM Bool) (T : ℕ → ℕ),
+      M.ComputesFunInTime (fun xs => F.serialize (F.decode xs)) T := by
+  obtain ⟨M, T, hM⟩ := codePrim_machine F.canonical (F.primrec_canonical h)
+  have he : F.canonical = fun xs => F.serialize (F.decode xs) := funext F.canonical_eq
+  rw [he] at hM
+  exact ⟨M, T, hM⟩
+
 /-- The verified suffix scanner computes exactly the fixed serialization of decode. -/
 private lemma codeCanonical_machine :
     ∃ (M : FinTM Bool) (T : ℕ → ℕ),
-      M.ComputesFunInTime (fun xs => (codeDecode xs).serialize) T := by
-  have he : codeCanonical = fun xs => (codeDecode xs).serialize := funext codeCanonical_eq
-  rw [← he]
-  exact codePrim_machine codeCanonical codePrimCanonical
+      M.ComputesFunInTime (fun xs => (codeDecode xs).serialize) T :=
+  oneTapeFormat.exists_canonizer codePrimSkipTable1
 
 /-- A concrete effective representation scheme exists.
 

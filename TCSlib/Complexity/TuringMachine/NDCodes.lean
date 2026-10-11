@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Seyoon Ragavan
 -/
 import TCSlib.Complexity.TuringMachine.Encoding
+import TCSlib.Complexity.TuringMachine.CodeFormat
 import TCSlib.Complexity.TuringMachine.Nondeterministic
 
 set_option maxHeartbeats 0
@@ -74,6 +75,11 @@ skeleton-time proof mirroring the proved `Turing.MachineCode.decode_encode`
 * [BGW70] R. Book, S. Greibach, B. Wegbreit, *Time- and tape-bounded Turing
   acceptors and AFLs*, JCSS 4(6), 1970. (Cited through [AB09]; no external
   text is required for this audit.)
+
+## Item-8 appendix
+
+The fixed `workPair` and `actionBits₂` definitions now live verbatim in
+`CodeFormat`. The nondeterministic format instance remains a later fill obligation.
 -/
 
 namespace Turing
@@ -94,20 +100,6 @@ def CodeNDTM.toFinNDTM (M : CodeNDTM) : FinNDTM Bool where
   k := 2
   State := Fin (M.numStates + 1)
   tm := M.tm
-
-/-- The work-symbol function reading `w₀` on tape `0` and `w₁` on tape `1`,
-for the fixed table enumeration of `Turing.CodeNDTM.serialize`. -/
-def workPair (w₀ w₁ : Option Bool) : Fin 2 → Option Bool :=
-  fun j => if j = 0 then w₀ else w₁
-
-/-- Serialization of one two-work-tape transition record: the input-head move,
-then each work tape's optional write and move in tape order, then the emission
-and the successor state — `Turing.actionBits` with a second work-tape record. -/
-def actionBits₂ {n : ℕ} (a : Action 2 Bool (Fin (n + 1))) : List Bool :=
-  signBits a.inputTape ++
-    optOptBoolBits (a.workTapes 0).1 ++ signBits (a.workTapes 0).2 ++
-    optOptBoolBits (a.workTapes 1).1 ++ signBits (a.workTapes 1).2 ++
-    optBoolBits a.output ++ optStateBits a.state
 
 /-- The **fixed, scheme-independent** canonical serialization of a coded
 nondeterministic machine, mirroring `Turing.CodeTM.serialize`: the state count,

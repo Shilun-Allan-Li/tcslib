@@ -71,6 +71,12 @@ all uses cite the promoted public readers and primitive-recursion lemmas.
 The 24 remaining private declarations implement the two-tape format and
 its 354-bit regression; their one-tape counterparts and retained proof
 material are itemized in this delivery's duplication ledger.
+
+## Item-8 appendix
+
+The two-work-tape parser and canonizer now instantiate the shared `CodeFormat`
+layer. ZF-B3 consumes its decoded-size and guard corollaries, with the existing
+silent fallback and every public scheme statement preserved.
 -/
 
 namespace Turing
@@ -150,30 +156,13 @@ structure EffectiveMachineCode2 extends MachineCode2 where
 
 /-! ### Private parser and canonizer implementation (ZF-B)
 
-This retargets the received `CodeParser` field/vector architecture to the
-seven-field two-tape record. The inaccessible private parser and primitive
-recursion lemmas are locally adapted under the exclusive-file rule; each is
-itemized in the delivery's duplication ledger. Public field encodings, the
-unary reader, suffix-skipping primitives, pairing laws, and `codePrim_machine`
-are cited directly. No ND existence theorem is used.
-
-ZF-B2 now cites all 46 promoted format-independent declarations directly.
-Only the two-tape-specific adaptations and the regression remain local.
+The fixed silent fallback and the two-work-tape instance of `CodeFormat` supply
+this format's parser and canonizer. The common record, table and primitive-recursion
+laws live in `CodeFormat` and `MathlibBridge`; `zfBDecode` remains a typed alias
+for the frozen uniform-simulator statements.
 -/
 
 
-
-/-- Read the seven fields of a transition, failing as soon as any field fails. -/
-private def zfBReadAction (n : ℕ) (xs : List Bool) :
-    Option (Action 2 Bool (Fin (n + 1)) × List Bool) := do
-  let (im, xs) ← codeReadSign xs
-  let (wr, xs) ← codeReadWrite xs
-  let (wm, xs) ← codeReadSign xs
-  let (wr₁, xs) ← codeReadWrite xs
-  let (wm₁, xs) ← codeReadSign xs
-  let (out, xs) ← codeReadOutput xs
-  let (q, xs) ← codeReadState (n + 1) xs
-  pure (⟨im, fun i => if i = 0 then (wr, wm) else (wr₁, wm₁), out, q⟩, xs)
 
 /-- The fallback is the one-state, immediately halting, silent machine. -/
 private def zfBFallback : Code2TM :=
@@ -188,332 +177,39 @@ private lemma zfBFallback_serialize_length : zfBFallback.serialize.length = 354 
     norm_num [length_pairEncode, unaryFin, actionBits₂, signBits, optOptBoolBits,
       optBoolBits, optStateBits, List.finRange_succ, List.finRange_zero]
 
-/-- Parse the exact serialization grammar of the phase-3 re-audit, Argument A.
-The length guard precedes vector recursion: every state requires 27 records,
-each containing at least thirteen bits. The suffix must consist entirely of true bits. -/
-private def zfBParse (xs : List Bool) : Option Code2TM := do
-  let (bits, rest) ← pairDecode xs
-  let n := codeBitsNat bits
-  if bits ≠ n.bits then none else do
-    if 351 * (n + 1) > rest.length then none else do
-      let (q, rest) ← codeReadFin (n + 1) rest
-      let (table, rest) ← codeReadVec
-        (codeReadSymbols (codeReadSymbols (codeReadSymbols (zfBReadAction n)))) (n + 1) rest
-      if rest.all id then
-        pure ⟨n, ⟨q, fun s inp w => table s inp (w 0) (w 1)⟩⟩
-      else none
+/-- The deterministic two-work-tape code format, with 27 records per state
+and the fixed silent fallback. [AB09, §1.4] -/
+private def twoTapeFormat : CodeFormat where
+  Code := Code2TM
+  Table := CodeTable2
+  numStates := Code2TM.numStates
+  assemble := fun n q t => ⟨n, ⟨q, fun s inp w => t s inp (w 0) (w 1)⟩⟩
+  serialize := Code2TM.serialize
+  tableBits := fun t => codeTable2Bits t
+  readTable := codeReadTable2
+  skipTable := codeSkipTable2
+  guard := 351
+  fallback := zfBFallback
+  numStates_assemble := fun _ _ _ => rfl
+  serialize_assemble := fun _ _ _ => by
+    simp [Code2TM.serialize, codeTable2Bits, actionBits₂_eq_actionBitsK, workPair]
+  assemble_surj := by
+    rintro ⟨n, q, tr⟩
+    refine ⟨n, q, fun s inp w₀ w₁ => tr s inp (workPair w₀ w₁), ?_⟩
+    show Code2TM.mk n ⟨q, fun s inp w => tr s inp (workPair (w 0) (w 1))⟩ = Code2TM.mk n ⟨q, tr⟩
+    congr 1
+    congr 1
+    funext s inp w
+    apply congrArg (tr s inp)
+    funext i
+    fin_cases i <;> simp [workPair]
+  readTable_append := fun _ t xs => codeReadTable2_append t xs
+  readTable_sound := fun _ xs t rest h => codeReadTable2_sound xs t rest h
+  readTable_erase := codeEraseTable2
+  tableBits_length := fun _ t => codeTable2Bits_length t
 
 /-- Total decoding: every malformed string denotes the fixed fallback. -/
-private def zfBDecode (xs : List Bool) : Code2TM := (zfBParse xs).getD zfBFallback
-
-/-- All seven fields round-trip, including both work-tape coordinates. -/
-private lemma zfBReadAction_append {n : ℕ} (a : Action 2 Bool (Fin (n + 1)))
-    (xs : List Bool) : zfBReadAction n (actionBits₂ a ++ xs) = some (a, xs) := by
-  simp only [actionBits₂, List.append_assoc, zfBReadAction, codeReadSign_append,
-    codeReadWrite_append, codeReadOutput_append, codeReadState_append,
-    bind, Option.bind, pure]
-  congr 2
-  cases a
-  congr
-  funext i
-  fin_cases i <;> rfl
-
-/-- Every record has twelve fixed bits and a nonempty successor field. -/
-private lemma zfBAction_length {n : ℕ} (a : Action 2 Bool (Fin (n + 1))) :
-    13 ≤ (actionBits₂ a).length := by
-  have hs (s : SignType) : (signBits s).length = 2 := by cases s <;> rfl
-  have ho (b : Option Bool) : (optBoolBits b).length = 2 := by
-    rcases b with _ | b
-    · rfl
-    · cases b <;> rfl
-  have hw (b : Option (Option Bool)) : (optOptBoolBits b).length = 2 := by
-    rcases b with _ | (_ | b)
-    · rfl
-    · rfl
-    · cases b <;> rfl
-  have hq : 1 ≤ (optStateBits a.state).length := by
-    cases a.state <;> simp [optStateBits, unaryFin]
-  simp only [actionBits₂, List.length_append, hs, ho, hw]
-  omega
-
-/-- The complete table contains at least 351 bits per live state.
-
-**Proof sketch.** Every action contains twelve fixed field bits and at least one successor bit. Summing this lower bound over the three symbols for each work tape, three input symbols, and all states gives at least 351 bits per state. -/
-private lemma zfBTable_length (M : Code2TM) :
-    351 * (M.numStates + 1) ≤
-      ((List.finRange (M.numStates + 1)).flatMap fun q =>
-        ([none, some false, some true] : List (Option Bool)).flatMap fun inp =>
-          ([none, some false, some true] : List (Option Bool)).flatMap fun w₀ =>
-            ([none, some false, some true] : List (Option Bool)).flatMap fun w₁ =>
-              actionBits₂ (M.tm.tr q inp (workPair w₀ w₁))).length := by
-  have h := codeFlatMap_length (List.finRange (M.numStates + 1))
-    (fun q => ([none, some false, some true] : List (Option Bool)).flatMap fun inp =>
-      ([none, some false, some true] : List (Option Bool)).flatMap fun w₀ =>
-        ([none, some false, some true] : List (Option Bool)).flatMap fun w₁ =>
-          actionBits₂ (M.tm.tr q inp (workPair w₀ w₁))) 351 (by
-      intro q _
-      have h := codeFlatMap_length ([none, some false, some true] : List (Option Bool))
-        (fun inp => ([none, some false, some true] : List (Option Bool)).flatMap fun w₀ =>
-          ([none, some false, some true] : List (Option Bool)).flatMap fun w₁ =>
-            actionBits₂ (M.tm.tr q inp (workPair w₀ w₁))) 117 (by
-          intro inp _
-          have h := codeFlatMap_length ([none, some false, some true] : List (Option Bool))
-            (fun w₀ => ([none, some false, some true] : List (Option Bool)).flatMap fun w₁ =>
-              actionBits₂ (M.tm.tr q inp (workPair w₀ w₁))) 39 (by
-                intro w₀ _
-                simpa using codeFlatMap_length
-                  ([none, some false, some true] : List (Option Bool))
-                  (fun w₁ => actionBits₂ (M.tm.tr q inp (workPair w₀ w₁))) 13
-                  (fun _ _ => zfBAction_length _))
-          simpa using h)
-      simpa using h)
-  simpa using h
-
-/-- The table reader recovers every transition. Blank/false/true exhaust each
-read alphabet; a two-work-tape read vector is determined by its two coordinates. -/
-private lemma zfBReadTable_append (M : Code2TM) (xs : List Bool) :
-    codeReadVec (codeReadSymbols (codeReadSymbols (codeReadSymbols (zfBReadAction M.numStates))))
-      (M.numStates + 1)
-      (((List.finRange (M.numStates + 1)).flatMap fun q =>
-        ([none, some false, some true] : List (Option Bool)).flatMap fun inp =>
-          ([none, some false, some true] : List (Option Bool)).flatMap fun w₀ =>
-            ([none, some false, some true] : List (Option Bool)).flatMap fun w₁ =>
-              actionBits₂ (M.tm.tr q inp (workPair w₀ w₁))) ++ xs) =
-      some ((fun q inp w₀ w₁ => M.tm.tr q inp (workPair w₀ w₁)), xs) :=
-  codeReadVec_append _ _
-    (fun _ _ => codeReadSymbols_append _ _
-      (fun _ _ => codeReadSymbols_append _ _
-        (fun _ _ => codeReadSymbols_append _ _ zfBReadAction_append _ _) _ _) _ _) _ _ _
-
-/-- The complete parser recovers a serialized machine under arbitrary true padding.
-**Proof sketch.** The doubled-bit parser first recovers the canonical state-count bits. The table length bound discharges the early guard; the field and vector inverse laws then recover the initial state and every transition. The remaining replicated true bits pass the suffix test. -/
-private lemma zfBParse_serialize_pad (M : Code2TM) (m : ℕ) :
-    zfBParse (M.serialize ++ List.replicate m true) = some M := by
-  have hp (a b c : List Bool) : pairEncode a b ++ c = pairEncode a (b ++ c) := by
-    simp [pairEncode, List.append_assoc]
-  unfold Code2TM.serialize
-  rw [hp]
-  unfold zfBParse
-  rw [pairDecode_pairEncode]
-  dsimp only [bind, Option.bind]
-  rw [codeBitsNat_bits]
-  simp only [ne_eq, not_true_eq_false, ↓reduceIte]
-  have hlen := zfBTable_length M
-  simp only [List.length_append, List.length_replicate] at *
-  rw [if_neg (by omega)]
-  simp only [List.append_assoc, codeReadFin_append, zfBReadTable_append,
-    List.all_replicate, id_eq, ite_self, ↓reduceIte, pure]
-  congr 1
-  cases M with
-  | mk n tm =>
-    congr 1
-    cases tm with
-    | mk q tr =>
-      congr 1
-      funext s inp w
-      apply congrArg (tr s inp)
-      funext i
-      fin_cases i <;> simp [workPair]
-
-/-- The total decoder satisfies the required exact padded round-trip law. -/
-private lemma zfBDecode_serialize_pad (M : Code2TM) (m : ℕ) :
-    zfBDecode (M.serialize ++ List.replicate m true) = M := by
-  simp only [zfBDecode, zfBParse_serialize_pad, Option.getD_some]
-
-/-- Successful record parsing characterizes its complete serialized prefix.
-**Proof sketch.** Decompose the seven successful reads, apply the dictionary
-inverse to each, and concatenate their consumed prefixes in order. -/
-private lemma zfBReadAction_sound {n : ℕ} (xs : List Bool)
-    (a : Action 2 Bool (Fin (n + 1))) (rest : List Bool)
-    (h : zfBReadAction n xs = some (a, rest)) : xs = actionBits₂ a ++ rest := by
-  simp only [zfBReadAction, bind, Option.bind_eq_some_iff] at h
-  obtain ⟨⟨im, r₁⟩, h₁, ⟨⟨wr, r₂⟩, h₂, ⟨⟨wm, r₃⟩, h₃,
-    ⟨⟨wr₁, r₄⟩, h₄, ⟨⟨wm₁, r₅⟩, h₅, ⟨⟨out, r₆⟩, h₆,
-      ⟨⟨q, r₇⟩, h₇, h⟩⟩⟩⟩⟩⟩⟩ := h
-  simp only [pure, Option.some.injEq, Prod.mk.injEq] at h
-  rcases h with ⟨rfl, rfl⟩
-  rw [codeReadSign_sound xs im r₁ h₁, codeReadWrite_sound r₁ wr r₂ h₂,
-    codeReadSign_sound r₂ wm r₃ h₃, codeReadWrite_sound r₃ wr₁ r₄ h₄,
-    codeReadSign_sound r₄ wm₁ r₅ h₅, codeReadOutput_sound r₅ out r₆ h₆,
-    codeReadState_sound r₆ q r₇ h₇]
-  simp [actionBits₂, List.append_assoc]
-
-/-- Skip one seven-field transition record, keeping only the unconsumed suffix. -/
-private def zfBSkipAction (n : ℕ) (xs : List Bool) : Option (List Bool) := do
-  let xs ← codeSkipPair (fun a b => a || !b) xs
-  let xs ← codeSkipPair (fun _ _ => true) xs
-  let xs ← codeSkipPair (fun a b => a || !b) xs
-  let xs ← codeSkipPair (fun _ _ => true) xs
-  let xs ← codeSkipPair (fun a b => a || !b) xs
-  let xs ← codeSkipPair (fun a b => a || !b) xs
-  codeSkipState (n + 1) xs
-
-
-private lemma zfBEraseAction (n : ℕ) (xs : List Bool) :
-    (zfBReadAction n xs).map Prod.snd = zfBSkipAction n xs := by
-  simp only [zfBReadAction, zfBSkipAction, bind, Option.map_bind, Function.comp_def, pure, Option.map_some]
-  rw [← codeEraseSign xs, ← codeErase_bind]
-  congr 1; funext p
-  rw [← codeEraseWrite p.2, ← codeErase_bind]
-  congr 1; funext p
-  rw [← codeEraseSign p.2, ← codeErase_bind]
-  congr 1; funext p
-  rw [← codeEraseWrite p.2, ← codeErase_bind]
-  congr 1; funext p
-  rw [← codeEraseSign p.2, ← codeErase_bind]
-  congr 1; funext p
-  rw [← codeEraseOutput p.2, ← codeErase_bind]
-  congr 1; funext p
-  simpa only [Option.map_eq_bind, Function.comp_def] using codeEraseState (n + 1) p.2
-
-private def zfBParseFull (xs : List Bool) : Option (Code2TM × List Bool) := do
-  let (bits, rest) ← pairDecode xs
-  let n := codeBitsNat bits
-  if bits ≠ n.bits then none else do
-    if 351 * (n + 1) > rest.length then none else do
-      let (q, rest) ← codeReadFin (n + 1) rest
-      let (table, rest) ← codeReadVec
-        (codeReadSymbols (codeReadSymbols (codeReadSymbols (zfBReadAction n)))) (n + 1) rest
-      if rest.all id then
-        pure (⟨n, ⟨q, fun s inp w => table s inp (w 0) (w 1)⟩⟩, rest)
-      else none
-
-/-- The erased parser: accept exactly the strings the parser accepts, returning only the unconsumed all-true suffix. -/
-private def zfBScan (xs : List Bool) : Option (List Bool) := do
-  let (bits, rest) ← pairDecode xs
-  let n := codeBitsNat bits
-  if bits ≠ n.bits then none else do
-    if 351 * (n + 1) > rest.length then none else do
-      let rest ← codeSkipFin (n + 1) rest
-      let rest ← codeSkipRepeat (codeSkipRepeat (codeSkipRepeat (codeSkipRepeat (zfBSkipAction n) 3) 3) 3) (n + 1) rest
-      if rest.all id then pure rest else none
-
-private lemma zfBParse_full (xs : List Bool) : zfBParse xs = (zfBParseFull xs).map Prod.fst := by
-  simp only [zfBParse, zfBParseFull, bind, Option.map_bind, Function.comp_def]
-  congr 1
-  funext p
-  dsimp only
-  split <;> try simp only [Option.map_none]
-  split <;> try simp only [Option.map_none, Option.map_bind, Function.comp_def]
-  congr 1; funext q
-  congr 1; funext t
-  dsimp only
-  split <;> rfl
-
-private lemma zfBScan_full (xs : List Bool) : zfBScan xs = (zfBParseFull xs).map Prod.snd := by
-  simp only [zfBScan, zfBParseFull, bind, Option.map_bind, Function.comp_def]
-  congr 1
-  funext p
-  dsimp only
-  split <;> try simp only [Option.map_none]
-  split <;> try simp only [Option.map_none, Option.map_bind, Function.comp_def]
-  have h (q : Fin (codeBitsNat p.1 + 1) × List Bool)
-      (t : (Fin (codeBitsNat p.1 + 1) → Option Bool → Option Bool → Option Bool → Action 2 Bool (Fin (codeBitsNat p.1 + 1))) × List Bool) :
-      (if t.2.all id then some ((⟨codeBitsNat p.1, ⟨q.1, fun s inp w => t.1 s inp (w 0) (w 1)⟩⟩ : Code2TM), t.2) else none).map Prod.snd =
-        (if t.2.all id then some t.2 else none) := by split <;> rfl
-  simp only [pure, h]
-  rw [← codeEraseFin _ _, ← codeErase_bind]
-  congr 1; funext q
-  have ht := codeEraseVec (codeReadSymbols (codeReadSymbols (codeReadSymbols (zfBReadAction (codeBitsNat p.1)))))
-    (codeBitsNat p.1 + 1) q.2
-  simp only [codeEraseSymbols, zfBEraseAction] at ht
-  rw [← ht, ← codeErase_bind]
-
-/-- **Proof sketch.** Use the same decomposition as parser soundness, retaining the exact unconsumed suffix. The field soundness equations and the canonical count check reconstruct the original input as the machine serialization followed by that suffix. -/
-private lemma zfBParseFull_sound (xs : List Bool) (M : Code2TM) (tail : List Bool)
-    (h : zfBParseFull xs = some (M, tail)) : xs = M.serialize ++ tail := by
-  unfold zfBParseFull at h
-  obtain ⟨⟨bits, rest⟩, hp, h⟩ := Option.bind_eq_some_iff.mp h
-  dsimp only at h
-  split at h
-  · contradiction
-  next hb =>
-    have hb : bits = (codeBitsNat bits).bits := not_not.mp hb
-    split at h
-    · contradiction
-    next _ =>
-      simp only [bind, Option.bind_eq_some_iff] at h
-      obtain ⟨⟨q, r₁⟩, hq, ⟨⟨table, r₂⟩, ht, h⟩⟩ := h
-      split at h
-      next hpad =>
-        simp only [pure, Option.some.injEq, Prod.mk.injEq] at h
-        rcases h with ⟨rfl, rfl⟩
-        have htable := codeReadVec_sound _ _
-          (fun _ _ _ => codeReadSymbols_sound _ _
-            (fun _ _ _ => codeReadSymbols_sound _ _
-              (fun _ _ _ => codeReadSymbols_sound _ _ zfBReadAction_sound _ _ _) _ _ _) _ _ _)
-          _ _ _ _ ht
-        dsimp only at htable
-        rw [eq_pairEncode_of_pairDecode xs bits rest hp, codeReadFin_sound rest q r₁ hq, htable]
-        simp only [Code2TM.serialize, pairEncode, List.append_assoc]
-        congr 1
-        exact congrArg (List.flatMap fun b : Bool => [b, b]) hb
-      · contradiction
-
-/-- The canonical serialization of the machine a string denotes: the consumed prefix on scanner success, the fallback machine's serialization otherwise. -/
-private def zfBCanonical (xs : List Bool) : List Bool :=
-  (zfBScan xs).casesOn zfBFallback.serialize fun tail => xs.take (xs.length - tail.length)
-
-/-- The suffix scanner computes exactly the fixed serialization of the decoded machine. -/
-private lemma zfBCanonical_eq (xs : List Bool) : zfBCanonical xs = (zfBDecode xs).serialize := by
-  unfold zfBCanonical zfBDecode
-  rw [zfBScan_full, zfBParse_full]
-  cases h : zfBParseFull xs with
-  | none => rfl
-  | some p =>
-    rcases p with ⟨M, tail⟩
-    simp only [Option.map_some, Option.getD_some]
-    rw [zfBParseFull_sound xs M tail h]
-    simp
-
-
-
-private lemma zfBPrimSkipAction : Primrec₂ zfBSkipAction := by
-  unfold zfBSkipAction
-  apply Primrec.option_bind ((codePrimSkipPair _).comp Primrec.snd)
-  change Primrec _
-  apply Primrec.option_bind ((codePrimSkipPair _).comp Primrec.snd)
-  change Primrec _
-  apply Primrec.option_bind ((codePrimSkipPair _).comp Primrec.snd)
-  change Primrec _
-  apply Primrec.option_bind ((codePrimSkipPair _).comp Primrec.snd)
-  change Primrec _
-  apply Primrec.option_bind ((codePrimSkipPair _).comp Primrec.snd)
-  change Primrec _
-  apply Primrec.option_bind ((codePrimSkipPair _).comp Primrec.snd)
-  change Primrec _
-  exact codePrimSkipState.comp (Primrec.succ.comp
-    (Primrec.fst.comp (Primrec.fst.comp (Primrec.fst.comp (Primrec.fst.comp
-      (Primrec.fst.comp (Primrec.fst.comp Primrec.fst))))))) Primrec.snd
-
-/-- **Proof sketch.** Compose primitive recursive readers, comparisons, and fixed-count iterations in the exact order of the erased parser. The canonical-count check and minimum-length check surround the state and record scans. The final branch accepts precisely an all-true suffix. -/
-private lemma zfBPrimScan : Primrec zfBScan := by
-  unfold zfBScan
-  apply Primrec.option_bind codePrimPair
-  change Primrec _
-  apply Primrec.ite ((Primrec.eq.comp (Primrec.fst.comp Primrec.snd)
-    (codePrimBits.comp (codePrimBitsNat.comp (Primrec.fst.comp Primrec.snd)))).not)
-    (Primrec.const none)
-  apply Primrec.ite (Primrec.nat_lt.comp (Primrec.list_length.comp (Primrec.snd.comp Primrec.snd))
-    (Primrec.nat_mul.comp (Primrec.const 351) (Primrec.succ.comp (codePrimBitsNat.comp (Primrec.fst.comp Primrec.snd)))))
-    (Primrec.const none)
-  apply Primrec.option_bind (codePrimSkipFin.comp
-    (Primrec.succ.comp (codePrimBitsNat.comp (Primrec.fst.comp Primrec.snd))) (Primrec.snd.comp Primrec.snd))
-  change Primrec _
-  have hr := codePrimRepeat _ (codePrimRepeat _ (codePrimRepeat _ (codePrimRepeat _ zfBPrimSkipAction (fun _ => 3) (Primrec.const 3))
-    (fun _ => 3) (Primrec.const 3))
-    (fun _ => 3) (Primrec.const 3)) (fun n => n + 1) Primrec.succ
-  apply Primrec.option_bind (hr.comp
-    (codePrimBitsNat.comp (Primrec.fst.comp (Primrec.snd.comp Primrec.fst))) Primrec.snd)
-  change Primrec _
-  exact Primrec.ite (Primrec.eq.comp (codePrimAll.comp Primrec.snd) (Primrec.const true))
-    (Primrec.option_some.comp Primrec.snd) (Primrec.const none)
-
-private lemma zfBPrimCanonical : Primrec zfBCanonical :=
-  Primrec.option_casesOn zfBPrimScan (Primrec.const zfBFallback.serialize)
-    (codePrimPrefix.comp Primrec.fst (Primrec.list_length.comp Primrec.snd))
-
-
+private def zfBDecode (xs : List Bool) : Code2TM := twoTapeFormat.decode xs
 
 /-- **An effective two-tape code scheme exists** (spec, fill pending —
 tranche A-S2).
@@ -541,18 +237,14 @@ length guard. The scanner-based canonizer is proved primitive recursive,
 then compiled by the public `codePrim_machine` theorem. Its arbitrary
 length-only time bound is supplied by that theorem. The private parser and
 primitive-recursion adaptations are itemized in the delivery's duplication
-ledger; no ND existence theorem is used. -/
+ledger; no ND existence theorem is used. 
+
+**Item-8 appendix.** The two-work-tape instance now consumes the shared
+`CodeFormat` parser, padded round trip and canonizer construction. The 351-per-state
+guard and fixed fallback are unchanged; the private parser copies are removed. -/
 theorem exists_effectiveMachineCode2 : Nonempty EffectiveMachineCode2 := by
-  obtain ⟨M, T, h⟩ := codePrim_machine zfBCanonical zfBPrimCanonical
-  refine ⟨{
-    encode := Code2TM.serialize
-    decode := zfBDecode
-    decode_encode_pad := zfBDecode_serialize_pad
-    canonizer := M
-    canonizerTime := T
-    canonizer_computes := ?_ }⟩
-  simpa only [show zfBCanonical = fun xs => (zfBDecode xs).serialize from
-    funext zfBCanonical_eq] using h
+  obtain ⟨M, T, h⟩ := twoTapeFormat.exists_canonizer codePrimSkipTable2
+  exact ⟨⟨⟨Code2TM.serialize, zfBDecode, twoTapeFormat.decode_serialize_pad⟩, M, T, h⟩⟩
 
 /-- A *uniformly timed* scheme for two-tape codes: the effective scheme
 together with a bounded-acceptance simulator whose budget is one
@@ -593,30 +285,26 @@ time for the primitive-recursive canonizer or implement the table interpreter.
 selects a prefix of the input; an unsuccessful scan selects the fallback. -/
 private lemma zfB3_decode_length (α : List Bool) :
     (zfBDecode α).serialize.length ≤ max α.length 354 := by
-  rw [← zfBCanonical_eq]
-  unfold zfBCanonical
-  cases zfBScan α with
-  | none => exact zfBFallback_serialize_length.le.trans (Nat.le_max_right _ _)
-  | some tail =>
-    exact (List.length_take_le' _ _).trans (Nat.le_max_left _ _)
+  have h := twoTapeFormat.serialize_decode_length_le α
+  change (zfBDecode α).serialize.length ≤ max α.length zfBFallback.serialize.length at h
+  rwa [zfBFallback_serialize_length] at h
 
 /-- The decoded state table has a linear size bound, including malformed
 codes. The table guard is used before its state-indexed reader is evaluated. -/
 private lemma zfB3_decode_states (α : List Bool) :
     351 * ((zfBDecode α).numStates + 1) ≤ max α.length 354 := by
-  have htable := zfBTable_length (zfBDecode α)
-  have hsize := zfB3_decode_length α
-  unfold Code2TM.serialize at hsize
-  rw [length_pairEncode, List.length_append] at hsize
-  omega
+  have h := twoTapeFormat.numStates_decode_le α
+  change 351 * ((zfBDecode α).numStates + 1) ≤
+    max α.length zfBFallback.serialize.length at h
+  rwa [zfBFallback_serialize_length] at h
 
 /-- A failed lower-length guard chooses the fallback without invoking the
 initial-state or transition-table readers, even for an enormous binary count. -/
 private lemma zfB3_guard_failure (α bits rest : List Bool)
     (hp : pairDecode α = some (bits, rest))
     (hg : rest.length < 351 * (codeBitsNat bits + 1)) :
-    zfBDecode α = zfBFallback := by
-  simp [zfBDecode, zfBParse, hp, hg]
+    zfBDecode α = zfBFallback :=
+  twoTapeFormat.decode_of_guard_lt α bits rest hp hg
 
 /-- Output summary: `none` means empty, `some true` means exactly `[true]`,
 and `some false` means any other output. The last class is irreversible. -/
@@ -720,11 +408,12 @@ deadline, including zero. No simulation of a putative huge table is needed.
 positive deadline the fallback halts silently on its first transition;
 the public absorbing-halt equation preserves its empty output thereafter. -/
 private lemma zfB3Answer_malformed (α x : List Bool) (t : ℕ)
-    (hparse : zfBParse α = none) : zfB3Answer α x t = false := by
+    (hparse : twoTapeFormat.parseFull α = none) : zfB3Answer α x t = false := by
   apply Bool.eq_false_iff.mpr
   intro ht
   have h := (zfB3Answer_correct α x t).mp ht
-  have hd : zfBDecode α = zfBFallback := by simp [zfBDecode, hparse]
+  have hd : zfBDecode α = zfBFallback :=
+    twoTapeFormat.decode_of_parseFull_none α hparse
   rw [hd] at h
   cases t with
   | zero => exact FinTM.not_computesInTime_zero _ _ _ h
@@ -813,7 +502,7 @@ private lemma zfB3_uniform_of_simulator (S : FinTM Bool) (C e : ℕ)
       S.ComputesInTime (pairEncode (pairEncode t.bits α) x) [zfB3Answer α x t]
         (C * (α.length + x.length + t + 1) ^ e)) :
     Nonempty UniformMachineCode2 := by
-  obtain ⟨M, T, hM⟩ := codePrim_machine zfBCanonical zfBPrimCanonical
+  obtain ⟨M, T, hM⟩ := twoTapeFormat.exists_canonizer codePrimSkipTable2
   have hbound (α x : List Bool) (t : ℕ) :
       C * (α.length + x.length + t + 1) ^ e ≤
         (C + e + 1) * (α.length + x.length + t + 1) ^ (C + e + 1) :=
@@ -822,7 +511,7 @@ private lemma zfB3_uniform_of_simulator (S : FinTM Bool) (C e : ℕ)
   refine ⟨{
     encode := Code2TM.serialize
     decode := zfBDecode
-    decode_encode_pad := zfBDecode_serialize_pad
+    decode_encode_pad := twoTapeFormat.decode_serialize_pad
     canonizer := M
     canonizerTime := T
     canonizer_computes := ?_
@@ -830,8 +519,7 @@ private lemma zfB3_uniform_of_simulator (S : FinTM Bool) (C e : ℕ)
     simDegree := C + e + 1
     simulator_accepts := ?_
     simulator_rejects := ?_ }⟩
-  · simpa only [show zfBCanonical = fun xs => (zfBDecode xs).serialize from
-      funext zfBCanonical_eq] using hM
+  · exact hM
   · intro α x t h
     have ha := (zfB3Answer_correct α x t).mpr h
     simpa only [ha] using (hS α x t).mono (hbound α x t)

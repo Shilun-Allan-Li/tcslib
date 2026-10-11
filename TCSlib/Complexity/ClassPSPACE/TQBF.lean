@@ -100,7 +100,7 @@ def PSPACEComplete (L' : Language Bool) : Prop :=
   L' ∈ PSPACE ∧ PSPACEHard L'
 
 /-- **A `PSPACE`-complete language in `P` collapses the class**
-([AB09, §4.2, the paragraph after Definition 4.9]; proved modulo `P_subset_PSPACE`):
+([AB09, §4.2, the paragraph after Definition 4.9]; proved, citing `P_subset_PSPACE`):
 if some `PSPACE`-complete `L'` lies in `P`, then `PSPACE = P`.
 
 **Proof sketch.** `⊇` is `Complexity.P_subset_PSPACE` (phase P4.1). `⊆`: a

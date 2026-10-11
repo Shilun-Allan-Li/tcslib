@@ -1,0 +1,251 @@
+import TCSlib.Complexity.TuringMachine.CodeParser
+import TCSlib.Complexity.TuringMachine.CodeFormat
+import TCSlib.Complexity.TuringMachine.MathlibBridge
+import TCSlib.Complexity.TuringMachine.NDCodes
+import TCSlib.Complexity.TuringMachine.Codes2Tape
+-- CodeParser.lean
+#print axioms Turing.codeReadUnary
+-- CodeParser.lean
+#print axioms Turing.codeReadUnary_append
+-- CodeParser.lean
+#print axioms Turing.codeReadFin
+-- CodeParser.lean
+#print axioms Turing.codeReadSign
+-- CodeParser.lean
+#print axioms Turing.codeReadOutput
+-- CodeParser.lean
+#print axioms Turing.codeReadWrite
+-- CodeParser.lean
+#print axioms Turing.codeReadState
+-- CodeParser.lean
+#print axioms Turing.codeReadSymbols
+-- CodeParser.lean
+#print axioms Turing.codeReadVec
+-- CodeParser.lean
+#print axioms Turing.codeBitsNat
+-- CodeParser.lean
+#print axioms Turing.codeFallback
+-- CodeParser.lean
+#print axioms Turing.codeReadFin_append
+-- CodeParser.lean
+#print axioms Turing.codeReadSign_append
+-- CodeParser.lean
+#print axioms Turing.codeReadOutput_append
+-- CodeParser.lean
+#print axioms Turing.codeReadWrite_append
+-- CodeParser.lean
+#print axioms Turing.codeReadState_append
+-- CodeParser.lean
+#print axioms Turing.codeReadSymbols_append
+-- CodeParser.lean
+#print axioms Turing.codeReadVec_append
+-- CodeParser.lean
+#print axioms Turing.codeBitsNat_bits
+-- CodeParser.lean
+#print axioms Turing.codeFlatMap_length
+-- CodeParser.lean
+#print axioms Turing.codeReadUnary_sound
+-- CodeParser.lean
+#print axioms Turing.codeReadFin_sound
+-- CodeParser.lean
+#print axioms Turing.codeReadSign_sound
+-- CodeParser.lean
+#print axioms Turing.codeReadOutput_sound
+-- CodeParser.lean
+#print axioms Turing.codeReadWrite_sound
+-- CodeParser.lean
+#print axioms Turing.codeReadState_sound
+-- CodeParser.lean
+#print axioms Turing.codeReadSymbols_sound
+-- CodeParser.lean
+#print axioms Turing.codeReadVec_sound
+-- CodeParser.lean
+#print axioms Turing.codeSkipPair
+-- CodeParser.lean
+#print axioms Turing.codeSkipFin
+-- CodeParser.lean
+#print axioms Turing.codeSkipState
+-- CodeParser.lean
+#print axioms Turing.codeSkipAction
+-- CodeParser.lean
+#print axioms Turing.codeSkipRepeat
+-- CodeParser.lean
+#print axioms Turing.codeEraseFin
+-- CodeParser.lean
+#print axioms Turing.codeEraseSign
+-- CodeParser.lean
+#print axioms Turing.codeEraseOutput
+-- CodeParser.lean
+#print axioms Turing.codeEraseWrite
+-- CodeParser.lean
+#print axioms Turing.codeEraseState
+-- CodeParser.lean
+#print axioms Turing.codeErase_bind
+-- CodeParser.lean
+#print axioms Turing.codeEraseSymbols
+-- CodeParser.lean
+#print axioms Turing.codeEraseVec
+-- CodeFormat.lean
+#print axioms Turing.actionBitsK
+-- CodeFormat.lean
+#print axioms Turing.codeReadWork
+-- CodeFormat.lean
+#print axioms Turing.codeReadActionK
+-- CodeFormat.lean
+#print axioms Turing.codeSkipWork
+-- CodeFormat.lean
+#print axioms Turing.codeSkipActionK
+-- CodeFormat.lean
+#print axioms Turing.codeReadWork_append
+-- CodeFormat.lean
+#print axioms Turing.codeReadActionK_append
+-- CodeFormat.lean
+#print axioms Turing.codeReadWork_sound
+-- CodeFormat.lean
+#print axioms Turing.codeReadActionK_sound
+-- CodeFormat.lean
+#print axioms Turing.codeEraseWork
+-- CodeFormat.lean
+#print axioms Turing.codeEraseActionK
+-- CodeFormat.lean
+#print axioms Turing.codeActionK_length
+-- CodeFormat.lean
+#print axioms Turing.workPair
+-- CodeFormat.lean
+#print axioms Turing.actionBits₂
+-- CodeFormat.lean
+#print axioms Turing.actionBits_eq_actionBitsK
+-- CodeFormat.lean
+#print axioms Turing.actionBits₂_eq_actionBitsK
+-- CodeFormat.lean
+#print axioms Turing.codeSkipAction_eq_codeSkipActionK
+-- CodeFormat.lean
+#print axioms Turing.CodeFormat
+-- CodeFormat.lean
+#print axioms Turing.CodeFormat.parseFull
+-- CodeFormat.lean
+#print axioms Turing.CodeFormat.decode
+-- CodeFormat.lean
+#print axioms Turing.CodeFormat.scan
+-- CodeFormat.lean
+#print axioms Turing.CodeFormat.canonical
+-- CodeFormat.lean
+#print axioms Turing.CodeFormat.parseFull_serialize_pad
+-- CodeFormat.lean
+#print axioms Turing.CodeFormat.decode_serialize_pad
+-- CodeFormat.lean
+#print axioms Turing.CodeFormat.parseFull_sound
+-- CodeFormat.lean
+#print axioms Turing.CodeFormat.scan_full
+-- CodeFormat.lean
+#print axioms Turing.CodeFormat.canonical_eq
+-- CodeFormat.lean
+#print axioms Turing.CodeFormat.serialize_decode_length_le
+-- CodeFormat.lean
+#print axioms Turing.CodeFormat.numStates_decode_le
+-- CodeFormat.lean
+#print axioms Turing.CodeFormat.decode_of_parseFull_none
+-- CodeFormat.lean
+#print axioms Turing.CodeFormat.decode_of_guard_lt
+-- CodeFormat.lean
+#print axioms Turing.CodeTable2
+-- CodeFormat.lean
+#print axioms Turing.codeTable2Bits
+-- CodeFormat.lean
+#print axioms Turing.codeReadTable2
+-- CodeFormat.lean
+#print axioms Turing.codeSkipTable2
+-- CodeFormat.lean
+#print axioms Turing.codeReadTable2_append
+-- CodeFormat.lean
+#print axioms Turing.codeReadTable2_sound
+-- CodeFormat.lean
+#print axioms Turing.codeEraseTable2
+-- CodeFormat.lean
+#print axioms Turing.codeTable2Bits_length
+-- CodeFormat.lean
+#print axioms Turing.oneTapeFormat
+-- CodeFormat.lean
+#print axioms Turing.codeDecode
+-- CodeFormat.lean
+#print axioms Turing.codeDecode_serialize_pad
+-- CodeFormat.lean
+#print axioms Turing.codeScan
+-- CodeFormat.lean
+#print axioms Turing.codeCanonical
+-- CodeFormat.lean
+#print axioms Turing.codeCanonical_eq
+-- MathlibBridge.lean
+#print axioms Turing.codePrimUnary
+-- MathlibBridge.lean
+#print axioms Turing.codePrimBit
+-- MathlibBridge.lean
+#print axioms Turing.codePrimBitsNat
+-- MathlibBridge.lean
+#print axioms Turing.codePrimPair
+-- MathlibBridge.lean
+#print axioms Turing.codePrimBits
+-- MathlibBridge.lean
+#print axioms Turing.codePrimSkipPair
+-- MathlibBridge.lean
+#print axioms Turing.codePrimSkipFin
+-- MathlibBridge.lean
+#print axioms Turing.codePrimSkipState
+-- MathlibBridge.lean
+#print axioms Turing.codeSkipRepeat_iter
+-- MathlibBridge.lean
+#print axioms Turing.codePrimRepeat
+-- MathlibBridge.lean
+#print axioms Turing.codePrimAll
+-- MathlibBridge.lean
+#print axioms Turing.codePrimDrop
+-- MathlibBridge.lean
+#print axioms Turing.codePrimPrefix
+-- MathlibBridge.lean
+#print axioms Turing.codePrimSkipWork
+-- MathlibBridge.lean
+#print axioms Turing.codePrimSkipActionK
+-- MathlibBridge.lean
+#print axioms Turing.CodeFormat.primrec_scan
+-- MathlibBridge.lean
+#print axioms Turing.CodeFormat.primrec_canonical
+-- MathlibBridge.lean
+#print axioms Turing.codePrimSkipTable2
+-- MathlibBridge.lean
+#print axioms Turing.codePrim_machine
+-- MathlibBridge.lean
+#print axioms Turing.CodeFormat.exists_canonizer
+-- MathlibBridge.lean
+#print axioms Turing.exists_effectiveMachineCode
+-- NDCodes.lean
+#print axioms Turing.CodeNDTM
+-- NDCodes.lean
+#print axioms Turing.CodeNDTM.toFinNDTM
+-- NDCodes.lean
+#print axioms Turing.CodeNDTM.serialize
+-- NDCodes.lean
+#print axioms Turing.NDMachineCode
+-- NDCodes.lean
+#print axioms Turing.NDMachineCode.decode_encode
+-- NDCodes.lean
+#print axioms Turing.EffectiveNDMachineCode
+-- NDCodes.lean
+#print axioms Turing.exists_effectiveNDMachineCode
+-- Codes2Tape.lean
+#print axioms Turing.Code2TM
+-- Codes2Tape.lean
+#print axioms Turing.Code2TM.toFinTM
+-- Codes2Tape.lean
+#print axioms Turing.Code2TM.serialize
+-- Codes2Tape.lean
+#print axioms Turing.MachineCode2
+-- Codes2Tape.lean
+#print axioms Turing.MachineCode2.decode_encode
+-- Codes2Tape.lean
+#print axioms Turing.EffectiveMachineCode2
+-- Codes2Tape.lean
+#print axioms Turing.exists_effectiveMachineCode2
+-- Codes2Tape.lean
+#print axioms Turing.UniformMachineCode2
+-- Codes2Tape.lean
+#print axioms Turing.exists_uniformMachineCode2

@@ -1,0 +1,244 @@
+# 12.2c T1 batch 11A — freeze / surface check (maintainer integration)
+# base = b4be0717 (git show b4be0717:<path>), after = integrated HEAD (git am -3 of the delivery's single patch)
+
+## Integrity
+git diff --name-only b4be0717 HEAD:
+  TCSlib/Complexity/TuringMachine/Build/Loop.lean
+  TCSlib/Complexity/TuringMachine/Finite.lean
+git diff --stat b4be0717 HEAD:
+   TCSlib/Complexity/TuringMachine/Build/Loop.lean | 1178 +++++++----------------
+   TCSlib/Complexity/TuringMachine/Finite.lean     |   55 ++
+   2 files changed, 398 insertions(+), 835 deletions(-)
+  TCSlib/Complexity/TuringMachine/Finite.lean: integrated 344deeeb66da5b59f1e49cbe3aa329342fd8d01a49548aa9276a684e450ea788 / delivered 344deeeb66da5b59f1e49cbe3aa329342fd8d01a49548aa9276a684e450ea788 -> byte-identical
+  TCSlib/Complexity/TuringMachine/Build/Loop.lean: integrated 8a7ac844e3b09eeb7380a588dd2584e8e6ee230e90ccaa286c6e8d179d43cee0 / delivered 8a7ac844e3b09eeb7380a588dd2584e8e6ee230e90ccaa286c6e8d179d43cee0 -> byte-identical
+  owned files identical between the delivery's recorded base baee8819 and b4be0717: yes
+  lines: Loop     5472 ->     4980; Finite      276 ->      331
+
+## declfreeze.py (Loop; allowed body change: exists_emitLoopTM)
+public before/after: 9 9 private before/after: 190 185
+public added: []
+public removed: []
+authorized body change: exists_emitLoopTM
+UNAUTHORIZED BODY CHANGE: modeled
+private removed: ['emLoopHost_agree', 'emLoopHost_anchor_return', 'emLoopHost_prepare', 'emLoopHost_start', 'emLoop_run_prefix', 'emLoop_step_prefix', 'loopHost_body_capture', 'loopHost_fuel_rewind', 'loopHost_payload_rewind', 'loop_input_move_le', 'loop_input_run_le', 'loop_live_prefix']
+private added: ['loopBodyDispatch', 'loopBodyImage', 'loopBodyImage_nil', 'loopHostM', 'loopHost_body_run', 'loopHost_payload_scan', 'loop_scan_left']
+private changed: ['emCall_bank_step', 'emLoopHost', 'emLoopHost_round', 'emLoop_sum', 'loopCall_frame', 'loopHost', 'loopHost_accept', 'loopHost_anchor_return', 'loopHost_borrow', 'loopHost_borrow_rewind', 'loopHost_borrow_run', 'loopHost_borrow_step', 'loopHost_contracts', 'loopHost_fuel_capture', 'loopHost_fuel_copy', 'loopHost_fuel_return', 'loopHost_fuel_setup', 'loopHost_halt_return', 'loopHost_init', 'loopHost_input_rewind', 'loopHost_prepare', 'loopHost_reject', 'loopHost_release', 'loopHost_round', 'loopHost_start']
+  NOTE: 'modeled' is a false positive of the tool's chunker: the docstring line
+  'lemma modeled on `loop_run`; ...' inside exists_emitLoopTM's docstring starts with 'lemma '.
+  That chunk is the tail of exists_emitLoopTM's docstring and carries the sanctioned
+  docstring substitution (see the comment-aware block comparison below).
+
+## declfreeze.py (Finite; no allowed body changes)
+public before/after: 14 17 private before/after: 0 0
+public added: ['runFrom_output_prepend', 'runFrom_state_ne_none_of_le', 'step_output_prepend']
+public removed: []
+private removed: []
+private added: []
+private changed: []
+
+## Comment-aware public block comparison (docstring + declaration + body), Loop
+publics before 8 ['exists_emitCallTM', 'exists_emitLoopTM', 'exists_installCallTM', 'exists_loopCfgTM', 'exists_loopFindTM', 'exists_loopTM', 'loop_run', 'stateWord']
+publics after  8 ['exists_emitCallTM', 'exists_emitLoopTM', 'exists_installCallTM', 'exists_loopCfgTM', 'exists_loopFindTM', 'exists_loopTM', 'loop_run', 'stateWord']
+exists_emitCallTM: statement identical; block identical
+exists_emitLoopTM: statement identical; block differs
+    @@ -35 +35 @@
+    -original behavior. `emLoop_run_prefix` proves arbitrary-prefix commutation;
+    +original behavior. `Turing.MultiTapeTM.runFrom_output_prepend` proves arbitrary-prefix commutation;
+    @@ -71 +71 @@
+    -    emLoopHost_prepare body F anchor true R T hF x
+    +    loopHost_prepare body F anchor true true R T hF x
+    @@ -107 +107 @@
+    -      emLoopHost_start body F anchor true (s0 x) btime fuel hbguard hbend]
+    +      loopHost_start body F anchor true true (s0 x) btime fuel hbguard hbend]
+exists_installCallTM: statement identical; block identical
+exists_loopCfgTM: statement identical; block identical
+exists_loopFindTM: statement identical; block identical
+exists_loopTM: statement identical; block identical
+loop_run: statement identical; block identical
+stateWord: statement identical; block identical
+
+## Comment-aware public block comparison, Finite
+publics before 14 ['Computes', 'Computes.exists_computesInTime_iff', 'ComputesFunInTime', 'ComputesFunInTime.computes', 'ComputesFunInTimeVia', 'ComputesInTime', 'ComputesInTime.mono', 'ComputesInTime.output_unique', 'FinTM', 'computesInTime_iff', 'not_computesInTime_zero', 'output_length_le', 'output_prefix', 'spaceUsed_le_mul_succ']
+publics after  17 ['Computes', 'Computes.exists_computesInTime_iff', 'ComputesFunInTime', 'ComputesFunInTime.computes', 'ComputesFunInTimeVia', 'ComputesInTime', 'ComputesInTime.mono', 'ComputesInTime.output_unique', 'FinTM', 'computesInTime_iff', 'not_computesInTime_zero', 'output_length_le', 'output_prefix', 'runFrom_output_prepend', 'runFrom_state_ne_none_of_le', 'spaceUsed_le_mul_succ', 'step_output_prepend']
+Computes: statement identical; block identical
+Computes.exists_computesInTime_iff: statement identical; block identical
+ComputesFunInTime: statement identical; block identical
+ComputesFunInTime.computes: statement identical; block identical
+ComputesFunInTimeVia: statement identical; block identical
+ComputesInTime: statement identical; block identical
+ComputesInTime.mono: statement identical; block identical
+ComputesInTime.output_unique: statement identical; block identical
+FinTM: statement identical; block identical
+computesInTime_iff: statement identical; block identical
+not_computesInTime_zero: statement identical; block identical
+output_length_le: statement identical; block identical
+output_prefix: statement identical; block identical
+spaceUsed_le_mul_succ: statement identical; block identical
+
+## Task 1 text (brief's code block) vs Finite
+brief block chars 2749 lines 49
+verbatim occurrence in Finite: True count 1
+inserted directly after spaceUsed_le_mul_succ: True
+followed by end MultiTapeTM: True
+
+## Task 3 / Task 4 prescribed text vs Loop
+VERBATIM /-- Body dispatch of the shared loop controller: `forward = false` cap
+[placeholder block skipped] private def loopHostM (body F : FinTM Bool) (anchor : body.State) (for
+VERBATIM private abbrev loopHost (body F : FinTM Bool) (anchor : body.State) (f
+VERBATIM /-- The host image of a padded stopped-body configuration in either mo
+VERBATIM loop_scan_left docstring+statement
+
+## Loop private surface (comment-aware)
+private statement changed (17): ['emLoopHost', 'loopHost', 'loopHost_anchor_return', 'loopHost_borrow', 'loopHost_borrow_rewind', 'loopHost_borrow_run', 'loopHost_borrow_step', 'loopHost_fuel_capture', 'loopHost_fuel_copy', 'loopHost_fuel_return', 'loopHost_fuel_setup', 'loopHost_init', 'loopHost_input_rewind', 'loopHost_prepare', 'loopHost_reject', 'loopHost_release', 'loopHost_start']
+private body-only changed (8): ['emCall_bank_step', 'emLoopHost_round', 'emLoop_sum', 'loopCall_frame', 'loopHost_accept', 'loopHost_contracts', 'loopHost_halt_return', 'loopHost_round']
+private docstring changed (5): ['loopHost', 'loopHost_anchor_return', 'loopHost_borrow_rewind', 'loopHost_fuel_return', 'loopHost_start']
+removed: ['emLoopHost_agree', 'emLoopHost_anchor_return', 'emLoopHost_prepare', 'emLoopHost_start', 'emLoop_run_prefix', 'emLoop_step_prefix', 'loopHost_body_capture', 'loopHost_fuel_rewind', 'loopHost_payload_rewind', 'loop_input_move_le', 'loop_input_run_le', 'loop_live_prefix']
+added: ['loopBodyDispatch', 'loopBodyImage', 'loopBodyImage_nil', 'loopHostM', 'loopHost_body_run', 'loopHost_payload_scan', 'loop_scan_left']
+counts private before/after 190 185
+
+## Moved table: loopHost (base) -> loopHostM (after), and the two abbrevs
+===== loopHost -> loopHostM: differs
+    @@ -12 +12 @@
+    -private def loopHost (body F : FinTM Bool) (anchor : body.State) (findMode : Bool) :
+    +private def loopHostM (body F : FinTM Bool) (anchor : body.State) (forward findMode : Bool) :
+    @@ -29,3 +29 @@
+    -        | .inr (.inl (startup, s)) =>
+    -            captureAction (call startup) (ctrl (if startup then 6 else 7))
+    -              ((loopBodySource body F anchor).tr s inp fun i => work i.castSucc)
+    +        | .inr (.inl (startup, s)) => loopBodyDispatch body F anchor forward startup s inp work
+===== loopHost -> loopHost: differs
+    @@ -1,85 +1,2 @@
+    -/-- Concrete loop controller, with fixed-verdict and payload-replay modes.
+    -Fuel is captured, rewound, copied into the fixed-width counter while the
+    -capture tape is cleared, and both heads are rewound together. Two further
+    -phases rewind the native input before starting the body. Body startup and
+    -active rounds have disjoint return states; only an active rejection debits.
+    -The release bit forces one body action before another anchor is recognized.
+    -
+    -Control phases: 0/1 fuel rewind; 2 counter copy; 3 counter/capture rewind;
+    -4/5 input rewind; 6 startup return; 7 round return; 8 borrow; 9/10 successful
+    -and underflow rewinds; 11 exhaustion; 12/13 payload rewind and replay.
+    -The fuel work tapes are never cleared or reused after the fuel phase. -/
+    -private def loopHost (body F : FinTM Bool) (anchor : body.State) (findMode : Bool) :
+    -    FinTM Bool where
+    -  k := body.k + 1 + (1 + F.k) + 1
+    -  State := LoopHostState body F
+    -  tm :=
+    -    { q₀ := .inl F.tm.q₀
+    -      tr := fun q inp work =>
+    -        let ctrl (j : Fin 14) : LoopHostState body F := .inr (.inr j)
+    -        let call (startup : Bool) (s : body.State × Bool) : LoopHostState body F :=
+    -          .inr (.inl (startup, s))
+    -        let flag : Fin (body.k + 1 + (1 + F.k) + 1) := ⟨body.k, by omega⟩
+    -        let counter : Fin (body.k + 1 + (1 + F.k) + 1) := ⟨body.k + 1, by omega⟩
+    -        let payload := Fin.last (body.k + 1 + (1 + F.k))
+    -        let act := loopControlAction body F
+    -        match q with
+    -        | .inl s => captureAction Sum.inl (ctrl 0)
+    -            ((loopFuelSource body F).tr s inp fun i => work i.castSucc)
+    -        | .inr (.inl (startup, s)) =>
+    -            captureAction (call startup) (ctrl (if startup then 6 else 7))
+    -              ((loopBodySource body F anchor).tr s inp fun i => work i.castSucc)
+    -        | .inr (.inr phase) =>
+    -            if phase = 0 then act 0 none (none, 0) (none, .neg) none (some (ctrl 1))
+    -            else if phase = 1 then
+    -              match work payload with
+    -              | some _ => act 0 none (none, 0) (none, .neg) none (some (ctrl 1))
+    -              | none => act 0 none (none, 0) (none, .pos) none (some (ctrl 2))
+    -            else if phase = 2 then
+    -              match work payload with
+    -              | some b => act 0 none (some (some b), .pos) (some none, .pos) none
+    -                  (some (ctrl 2))
+    -              | none => act 0 none (none, .neg) (none, .neg) none (some (ctrl 3))
+    -            else if phase = 3 then
+    -              match work counter with
+    -              | some _ => act 0 none (none, .neg) (none, .neg) none (some (ctrl 3))
+    -              | none => act 0 none (none, .pos) (none, .pos) none (some (ctrl 4))
+    -            else if phase = 4 then act .neg none (none, 0) (none, 0) none (some (ctrl 5))
+    -            else if phase = 5 then
+    -              match inp with
+    -              | some _ => act .neg none (none, 0) (none, 0) none (some (ctrl 5))
+    -              | none => act .pos none (none, 0) (none, 0) none
+    -                  (some (call true (body.tm.q₀, false)))
+    -            else if phase = 6 then act 0 (some none) (none, 0) (none, 0) none
+    -              (some (call false (anchor, true)))
+    -            else if phase = 7 then
+    -              if work flag = some true then
+    -                if findMode then act 0 none (none, 0) (none, .neg) none (some (ctrl 12))
+    -                else act 0 none (none, 0) (none, 0) (some true) none
+    -              else act 0 (some none) (none, 0) (none, 0) none (some (ctrl 8))
+    -            else if phase = 8 then
+    -              match work counter with
+    -              | some false => act 0 none (some (some true), .pos) (none, 0) none
+    -                  (some (ctrl 8))
+    -              | some true => act 0 none (some (some false), .neg) (none, 0) none
+    -                  (some (ctrl 9))
+    -              | none => act 0 none (none, .neg) (none, 0) none (some (ctrl 10))
+    -            else if phase = 9 then
+    -              match work counter with
+    -              | some _ => act 0 none (none, .neg) (none, 0) none (some (ctrl 9))
+    -              | none => act 0 none (none, .pos) (none, 0) none
+    -                  (some (call false (anchor, true)))
+    -            else if phase = 10 then
+    -              match work counter with
+    -              | some _ => act 0 none (none, .neg) (none, 0) none (some (ctrl 10))
+    -              | none => act 0 none (none, .pos) (none, 0) none (some (ctrl 11))
+    -            else if phase = 11 then
+    -              act 0 none (none, 0) (none, 0) (if findMode then none else some false) none
+    -            else if phase = 12 then
+    -              match work payload with
+    -              | some _ => act 0 none (none, 0) (none, .neg) none (some (ctrl 12))
+    -              | none => act 0 none (none, 0) (none, .pos) none (some (ctrl 13))
+    -            else
+    -              match work payload with
+    -              | some b => act 0 none (none, 0) (none, .pos) (some b) (some (ctrl 13))
+    -              | none => act 0 none (none, 0) (none, 0) none none }
+    +private abbrev loopHost (body F : FinTM Bool) (anchor : body.State) (findMode : Bool) :
+    +    FinTM Bool := loopHostM body F anchor false findMode
+===== emLoopHost -> emLoopHost: differs
+    @@ -4,13 +4,2 @@
+    -private def emLoopHost (body F : FinTM Bool) (anchor : body.State) (findMode : Bool) :
+    -    FinTM Bool where
+    -  k := body.k + 1 + (1 + F.k) + 1
+    -  State := LoopHostState body F
+    -  tm := {
+    -    q₀ := .inl F.tm.q₀
+    -    tr := fun q inp work => match q with
+    -      | .inr (.inl (startup, s)) =>
+    -        leftAction 1 id
+    -          (Turing.emitAction (fun s => .inr (.inl (startup, s)))
+    -            (.inr (.inr (if startup then 6 else 7)))
+    -            ((loopBodySource body F anchor).tr s inp (fun i => work i.castSucc)))
+    -      | _ => (loopHost body F anchor findMode).tm.tr q inp work }
+    +private abbrev emLoopHost (body F : FinTM Bool) (anchor : body.State) (findMode : Bool) :
+    +    FinTM Bool := loopHostM body F anchor true findMode
+
+## Deleted copies, rider and alias: occurrences base -> after (whole-file grep)
+  loop_live_prefix           3 -> 0
+  emLoop_step_prefix         2 -> 0
+  emLoop_run_prefix          4 -> 0
+  loop_input_move_le         2 -> 0
+  loop_input_run_le          3 -> 0
+  emCall_state_run           2 -> 0
+  local notation             1 -> 0
+  emLoopHost_agree           7 -> 0
+  emLoopHost_prepare         2 -> 0
+  emLoopHost_anchor_return   3 -> 0
+  emLoopHost_start           2 -> 0
+  loopHost_body_capture      4 -> 1
+  loopHost_fuel_rewind       2 -> 0
+  loopHost_payload_rewind    2 -> 0
+  (the one remaining 'loopHost_body_capture' is in loopHost_contracts's historical docstring, line 2051, which the brief says to leave)
+  citations of the public facts in Loop:
+    1271:  have hp : c.inputPos.val ≤ 1 + u := MultiTapeTM.timed_input_bound (tm := F.tm) (F.tm.initCfg x) u
+    1449:    MultiTapeTM.runFrom_state_ne_none_of_le body.tm c t (by rw [hend]; simp)
+    4237:  have hrun := MultiTapeTM.runFrom_mapState_of_agreeOn (embedEmitTM (emCallTripleEmbedding M i) emCallClearTM.tm)
+    4348:  have he := MultiTapeTM.runFrom_mapState_of_agreeOn (embedEmitTM (Function.Embedding.refl _) (emCallSource M).tm)
+    4497:  have he := MultiTapeTM.runFrom_mapState_of_agreeOn (embedEmitTM (emCallPairEmbedding M) (emCallFinishTM emit).tm)
+    4574:  have he := MultiTapeTM.runFrom_mapState_of_agreeOn (embedEmitTM (emCallPairEmbedding M) (emCallFinishTM emit).tm)
+    4672:  have hp := MultiTapeTM.runFrom_output_prepend (emLoopHost body F anchor true).tm admin chunk v
+    4711:    have hp := MultiTapeTM.runFrom_output_prepend tm (cfg 0) pre a
+    4769:original behavior. `Turing.MultiTapeTM.runFrom_output_prepend` proves arbitrary-prefix commutation;
+  Task 1 names used elsewhere in TCSlib: 0
+
+## Added-line scan (sorry/admit/axiom/set_option/native_decide/implemented_by/unsafe/import/attribute/macro/elab): 0 hits

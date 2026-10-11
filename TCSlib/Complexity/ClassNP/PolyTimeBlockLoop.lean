@@ -34,6 +34,8 @@ stated in `TCSlib.Complexity.ClassNP.PClosure`, which imports this file.
 * `Complexity.sliceTakeAt` / `Complexity.sliceDropAt` — keep the first
   component and take/drop a polynomial-length prefix of the second.
 * `Complexity.xorD` — truncating bitwise XOR of the two components of a pair.
+* `Complexity.BlockLoop.step` / `Complexity.BlockLoop.emit` — one round and the chunk
+  function of a countdown block loop.
 
 ## Main results
 
@@ -46,6 +48,10 @@ stated in `TCSlib.Complexity.ClassNP.PClosure`, which imports this file.
   `exists_emitCallTM`) as the per-round body.
 * `Complexity.polyTimeComputable_xorD` — truncating bitwise XOR is
   polynomial-time, via the emit-iteration loop.
+* `Complexity.BlockLoop` — the countdown block loop shared by the aggregated block
+  tests: the round `BlockLoop.step` and chunk `BlockLoop.emit`, their polynomial-time,
+  length and orbit facts, and the assembled engines
+  `BlockLoop.polyTimeComputable_countdown` and `BlockLoop.polyTimeComputable_of_loop`.
 * The aggregated one-bit block tests live in
   `TCSlib.Complexity.ClassNP.PolyTimeBlockTests`.
 
@@ -319,6 +325,312 @@ theorem polyTimeComputable_emitIter {g e : List Bool → List Bool}
     FinTM.exists_emitIterTM G E g e CG cG CE cE hG hE a' k' b l horbit
   exact ⟨M, C, c, hM⟩
 
+/-! ### The countdown block loop
+
+The OR, XOR-then-OR and strict-majority block tests (`PolyTimeBlockTests`,
+`PolyTimeBlockMajority`) run one loop shape on the state word
+`pairEncode h (pairEncode cd r)`: a head `h` (flag or live marker), a unary countdown
+`cd`, and a remainder `r` carrying the scanned pair and any accumulated data.  The
+declarations below prove that shape's polynomial-time, length, orbit and emission facts
+once, for arbitrary head and remainder updates; each block test supplies only its own
+update, per-round test and output. -/
+
+namespace BlockLoop
+
+/-- One round of a countdown block loop: on `pairEncode h (pairEncode cd r)` with `h` and
+`cd` nonempty it returns `pairEncode (upd h r) (pairEncode (cd.drop 1) (nxt h r))`; a state
+whose head (done or malformed) or countdown is empty goes to the absorbing `blockDone`. -/
+def step (upd nxt : List Bool → List Bool → List Bool) (s : List Bool) : List Bool :=
+  if isNilB (pairFstD s) then blockDone
+  else if isNilB (pairFstD (pairSndD s)) then blockDone
+  else
+    pairEncode (upd (pairFstD s) (pairSndD (pairSndD s)))
+      (pairEncode ((pairFstD (pairSndD s)).drop 1) (nxt (pairFstD s) (pairSndD (pairSndD s))))
+
+/-- The chunk function of a countdown block loop: `out s` exactly when the head of `s` is
+nonempty and its countdown is empty, and `[]` otherwise. -/
+def emit (out : List Bool → List Bool) (s : List Bool) : List Bool :=
+  if isNilB (pairFstD s) then []
+  else if isNilB (pairFstD (pairSndD s)) then out s
+  else []
+
+/-- The head guard of a countdown block loop is polynomial-time. -/
+private theorem polyTimeComputable_headNil :
+    PolyTimeComputable (fun s => [isNilB (pairFstD s)]) :=
+  polyTimeComputable_isNil.comp polyTimeComputable_pairFstD
+
+/-- The countdown guard of a countdown block loop is polynomial-time. -/
+private theorem polyTimeComputable_countdownNil :
+    PolyTimeComputable (fun s => [isNilB (pairFstD (pairSndD s))]) :=
+  polyTimeComputable_headNil.comp polyTimeComputable_pairSndD
+
+/-- A countdown block loop's round `g = step upd nxt` is polynomial-time whenever its head
+and remainder updates, read off the state, are (one `ite` on the disjunction of the two emptiness guards). -/
+theorem polyTimeComputable_step {g : List Bool → List Bool}
+    {upd nxt : List Bool → List Bool → List Bool} (hg : g = step upd nxt)
+    (hu : PolyTimeComputable (fun s => upd (pairFstD s) (pairSndD (pairSndD s))))
+    (hn : PolyTimeComputable (fun s => nxt (pairFstD s) (pairSndD (pairSndD s)))) :
+    PolyTimeComputable g := by
+  subst hg
+  have hcd : PolyTimeComputable (fun s => pairFstD (pairSndD s)) :=
+    polyTimeComputable_pairFstD.comp polyTimeComputable_pairSndD
+  have hdone := polyTimeComputable_or polyTimeComputable_headNil polyTimeComputable_countdownNil
+  convert polyTimeComputable_ite hdone (polyTimeComputable_const blockDone)
+    (hu.pairEncode ((polyTimeComputable_tail.comp hcd).pairEncode hn)) using 1
+  funext s
+  unfold step isNilB
+  cases decide (pairFstD s = []) <;> cases decide (pairFstD (pairSndD s) = []) <;> rfl
+
+/-- The chunk function `emit out` is polynomial-time whenever `out` is. -/
+theorem polyTimeComputable_emit {out : List Bool → List Bool}
+    (ho : PolyTimeComputable out) : PolyTimeComputable (emit out) := by
+  have hnone : PolyTimeComputable (fun _ : List Bool => ([] : List Bool)) :=
+    polyTimeComputable_const []
+  exact polyTimeComputable_ite polyTimeComputable_headNil hnone
+    (polyTimeComputable_ite polyTimeComputable_countdownNil ho hnone)
+
+/-- The initial state `pairEncode h₀ (pairEncode cd (r z))`, with unary countdown `cd` of
+length `a'·(|x z|+1)^k'`, is polynomial-time whenever `x` and `r` are. -/
+theorem polyTimeComputable_countdownInit (h₀ : List Bool) {x r : List Bool → List Bool}
+    (hx : PolyTimeComputable x) (hr : PolyTimeComputable r) (a' k' : ℕ) :
+    PolyTimeComputable (fun z => pairEncode h₀
+      (pairEncode (List.replicate (a' * ((x z).length + 1) ^ k') true) (r z))) :=
+  (polyTimeComputable_const h₀).pairEncode
+    (((polyTimeComputable_polyUnary a' k').comp hx).pairEncode hr)
+
+/-- `blockDone` is absorbing for every countdown block loop. -/
+theorem step_done {g : List Bool → List Bool}
+    {upd nxt : List Bool → List Bool → List Bool} (hg : g = step upd nxt) :
+    g blockDone = blockDone := by
+  subst hg
+  simp [step, blockDone, isNilB]
+
+/-- One round of a countdown block loop respects the slack measure `|s| + c·|cd s|`
+(`cd s = pairFstD (pairSndD s)`), up to `max _ 2`, provided every live update satisfies
+`2·|upd h r| + |nxt h r| ≤ 2·|h| + |r| + 2 + c`.
+**Proof sketch.** The done branches give `blockDone`; a live round on `⟨h, ⟨cd, r⟩⟩` drops
+one countdown symbol, two symbols of encoding and `c` of slack, paying for the growth. -/
+theorem length_step_le {g : List Bool → List Bool}
+    {upd nxt : List Bool → List Bool → List Bool} (hg : g = step upd nxt) (c : ℕ)
+    (hlive : ∀ h r, h ≠ [] →
+      2 * (upd h r).length + (nxt h r).length ≤ 2 * h.length + r.length + 2 + c)
+    (s : List Bool) :
+    (g s).length + c * (pairFstD (pairSndD (g s))).length ≤
+      max (s.length + c * (pairFstD (pairSndD s)).length) 2 := by
+  subst hg
+  unfold step
+  cases h1 : isNilB (pairFstD s) with
+  | true =>
+    simp only [↓reduceIte]
+    refine le_trans ?_ (le_max_right _ _)
+    simp [blockDone, length_pairEncode, pairFstD_nil]
+  | false =>
+    simp only [Bool.false_eq_true, ↓reduceIte]
+    cases h2 : isNilB (pairFstD (pairSndD s)) with
+    | true =>
+      simp only [↓reduceIte]
+      refine le_trans ?_ (le_max_right _ _)
+      simp [blockDone, length_pairEncode, pairFstD_nil]
+    | false =>
+      simp only [Bool.false_eq_true, ↓reduceIte]
+      have hf : pairFstD s ≠ [] := by simpa [isNilB] using h1
+      have hcd : pairFstD (pairSndD s) ≠ [] := by simpa [isNilB] using h2
+      have hs := eq_pairEncode_of_pairFstD_ne hf
+      have ht := eq_pairEncode_of_pairFstD_ne hcd
+      refine le_trans ?_ (le_max_left _ _)
+      have hlens : s.length =
+          2 * (pairFstD s).length + 2 +
+            (2 * (pairFstD (pairSndD s)).length + 2 + (pairSndD (pairSndD s)).length) := by
+        conv_lhs => rw [hs]
+        rw [length_pairEncode]
+        congr 2
+        conv_lhs => rw [ht]
+        rw [length_pairEncode]
+      have hcd1 : 1 ≤ (pairFstD (pairSndD s)).length :=
+        Nat.one_le_iff_ne_zero.mpr (by simpa [List.length_eq_zero_iff] using hcd)
+      have hc : c * (pairFstD (pairSndD s)).length =
+          c * ((pairFstD (pairSndD s)).length - 1) + c := by
+        obtain ⟨m, hm⟩ : ∃ m, (pairFstD (pairSndD s)).length = m + 1 :=
+          ⟨_, (Nat.sub_add_cancel hcd1).symm⟩
+        rw [hm, Nat.add_sub_cancel]
+        ring
+      have hl := hlive (pairFstD s) (pairSndD (pairSndD s)) hf
+      simp only [pairSndD_pairEncode, pairFstD_pairEncode, length_pairEncode, List.length_drop]
+      omega
+
+/-- An orbit envelope from a slack step bound: if every step of `g` respects
+`|s| + c·|cd s| ≤ max (·) 2`, then every iterate of `g` from `w` has length at most
+`b·(|w|+1)^1` whenever `2 ≤ b` and `c + 1 ≤ b`, the shape
+`Complexity.polyTimeComputable_emitIter` consumes (induction, then `|cd w| ≤ |w|`). -/
+theorem length_iterate_le_of_slack {g : List Bool → List Bool} (c b : ℕ)
+    (hb : 2 ≤ b) (hcb : c + 1 ≤ b)
+    (hg : ∀ s, (g s).length + c * (pairFstD (pairSndD (g s))).length ≤
+      max (s.length + c * (pairFstD (pairSndD s)).length) 2)
+    (w : List Bool) (i : ℕ) :
+    (g^[i] w).length ≤ b * (w.length + 1) ^ 1 := by
+  have hmax : (g^[i] w).length + c * (pairFstD (pairSndD (g^[i] w))).length ≤
+      max (w.length + c * (pairFstD (pairSndD w)).length) 2 := by
+    induction i with
+    | zero => simp
+    | succ i ih =>
+      rw [Function.iterate_succ_apply']
+      exact le_trans (hg _) (max_le ih (le_max_right _ _))
+  have h1 : (pairFstD (pairSndD w)).length ≤ w.length :=
+    le_trans (length_pairFstD_le _) (length_pairSndD_le w)
+  have h2 : c * (pairFstD (pairSndD w)).length ≤ c * w.length := Nat.mul_le_mul_left c h1
+  have h3 : (c + 1) * w.length ≤ b * w.length := Nat.mul_le_mul_right _ hcb
+  have h4 : (c + 1) * w.length = c * w.length + w.length := by ring
+  rw [pow_one, Nat.mul_add, Nat.mul_one]
+  omega
+
+/-- Reading the `i`-th block: on `pairEncode x (u.drop (i·B))`, with `B = a·(|x|+1)^k`,
+`sliceTakeAt a k` keeps `x` and the next `B` symbols. -/
+theorem sliceTakeAt_pairEncode_drop (a k : ℕ) (x u : List Bool) (i : ℕ) :
+    sliceTakeAt a k (pairEncode x (u.drop (i * (a * (x.length + 1) ^ k)))) =
+      pairEncode x ((u.drop (i * (a * (x.length + 1) ^ k))).take (a * (x.length + 1) ^ k)) := by
+  rw [sliceTakeAt, pairFstD_pairEncode, pairSndD_pairEncode]
+
+/-- Advancing one block: on `pairEncode x (u.drop (i·B))`, with `B = a·(|x|+1)^k`,
+`sliceDropAt a k` returns `pairEncode x (u.drop ((i+1)·B))`. -/
+theorem sliceDropAt_pairEncode_drop (a k : ℕ) (x u : List Bool) (i : ℕ) :
+    sliceDropAt a k (pairEncode x (u.drop (i * (a * (x.length + 1) ^ k)))) =
+      pairEncode x (u.drop ((i + 1) * (a * (x.length + 1) ^ k))) := by
+  rw [sliceDropAt, pairFstD_pairEncode, pairSndD_pairEncode, List.drop_drop]
+  congr 2
+  ring
+
+/-- Closed form of a countdown block loop's orbit up to countdown exhaustion: from
+`⟨P 0, ⟨1^K, Q 0⟩⟩`, after `i ≤ K` rounds the state is `⟨P i, ⟨1^(K-i), Q i⟩⟩`, given
+nonempty heads and the one-round recurrences of the head and the remainder (induction
+on `i`: both guards fail and the countdown loses one symbol). -/
+theorem orbit {g : List Bool → List Bool}
+    {upd nxt : List Bool → List Bool → List Bool} (hg : g = step upd nxt)
+    (P Q : ℕ → List Bool) {K : ℕ} {s₀ : List Bool}
+    (h₀ : s₀ = pairEncode (P 0) (pairEncode (List.replicate K true) (Q 0)))
+    (hP : ∀ i ≤ K, P i ≠ [])
+    (hupd : ∀ i < K, upd (P i) (Q i) = P (i + 1))
+    (hnxt : ∀ i < K, nxt (P i) (Q i) = Q (i + 1))
+    {i : ℕ} (hi : i ≤ K) :
+    g^[i] s₀ = pairEncode (P i) (pairEncode (List.replicate (K - i) true) (Q i)) := by
+  subst hg h₀
+  induction i with
+  | zero => simp
+  | succ i ih =>
+    have hii : i < K := hi
+    rw [Function.iterate_succ_apply', ih (Nat.le_of_lt hii)]
+    have hcd : K - i = (K - (i + 1)) + 1 := by omega
+    have hPi : P i ≠ [] := hP i (Nat.le_of_lt hii)
+    rw [hcd, List.replicate_succ]
+    simp [step, isNilB, hPi, hupd i hii, hnxt i hii]
+
+/-- Once a countdown block loop reaches a live state with empty countdown, every later
+iterate is `blockDone`: one more round hits the countdown guard (`step_done`). -/
+theorem iterate_done {g : List Bool → List Bool}
+    {upd nxt : List Bool → List Bool → List Bool} (hg : g = step upd nxt)
+    {s₀ p q : List Bool} {K : ℕ} (hp : p ≠ [])
+    (hK : g^[K] s₀ = pairEncode p (pairEncode [] q)) {i : ℕ} (hi : K < i) :
+    g^[i] s₀ = blockDone := by
+  subst hg
+  obtain ⟨j, rfl⟩ : ∃ j, i = j + (K + 1) := ⟨i - (K + 1), by omega⟩
+  rw [Function.iterate_add_apply]
+  have hend : (step upd nxt)^[K + 1] s₀ = blockDone := by
+    rw [Function.iterate_succ_apply', hK]
+    simp [step, isNilB, hp]
+  rw [hend]
+  clear hi
+  induction j with
+  | zero => simp
+  | succ j ih => rw [Function.iterate_succ_apply', ih, step_done rfl]
+
+/-- Budget domination: `a'·(n+1)^k' < a'·(m+1)^k' + 1` whenever `n ≤ m`. -/
+theorem lt_polyBudget_of_le (a' k' : ℕ) {n m : ℕ} (h : n ≤ m) :
+    a' * (n + 1) ^ k' < a' * (m + 1) ^ k' + 1 := by
+  have := Nat.mul_le_mul_left a' (Nat.pow_le_pow_left (Nat.add_le_add_right h 1) k')
+  omega
+
+/-- Single emission: if the orbit of `g` from `s₀` is `⟨P i, ⟨1^(K-i), Q i⟩⟩` with nonempty
+heads for `i ≤ K` and `blockDone` afterwards, then over any round budget `N > K` the
+concatenated chunks of `emit out` are the one chunk `out ⟨P K, ⟨[], Q K⟩⟩`: only round `K`
+emits (`Complexity.flatMap_range_eq_single`). -/
+theorem flatMap_emit_orbit {g out : List Bool → List Bool} {s₀ : List Bool}
+    (P Q : ℕ → List Bool) {K N : ℕ}
+    (horb : ∀ i ≤ K, g^[i] s₀ =
+      pairEncode (P i) (pairEncode (List.replicate (K - i) true) (Q i)))
+    (hdone : ∀ i, K < i → g^[i] s₀ = blockDone)
+    (hKN : K < N) (hP : ∀ i ≤ K, P i ≠ []) :
+    (List.range N).flatMap (fun i => emit out (g^[i] s₀)) =
+      out (pairEncode (P K) (pairEncode [] (Q K))) := by
+  refine flatMap_range_eq_single hKN (fun i _ => ?_)
+  rcases Nat.lt_trichotomy i K with hiK | hiK | hiK
+  · rw [if_neg (by omega), horb i (le_of_lt hiK)]
+    have hne : K - i ≠ 0 := by omega
+    simp [emit, isNilB, hP i (le_of_lt hiK), hne]
+  · rw [if_pos hiK, hiK, horb K le_rfl, Nat.sub_self, List.replicate_zero]
+    simp [emit, isNilB, hP K le_rfl]
+  · rw [if_neg (by omega), hdone i hiK]
+    simp [emit, blockDone, isNilB]
+
+/-- The output of a countdown block loop from its recurrences: from
+`s₀ = ⟨P 0, ⟨1^K, Q 0⟩⟩`, under the hypotheses of `orbit`, the concatenated chunks of
+`emit out` over any round budget `N > K` are `out ⟨P K, ⟨[], Q K⟩⟩` (`orbit`,
+`iterate_done`, `flatMap_emit_orbit`). -/
+theorem loop_output {g out : List Bool → List Bool}
+    {upd nxt : List Bool → List Bool → List Bool} (hg : g = step upd nxt)
+    (P Q : ℕ → List Bool) {K N : ℕ} {s₀ : List Bool}
+    (h₀ : s₀ = pairEncode (P 0) (pairEncode (List.replicate K true) (Q 0)))
+    (hP : ∀ i ≤ K, P i ≠ [])
+    (hupd : ∀ i < K, upd (P i) (Q i) = P (i + 1))
+    (hnxt : ∀ i < K, nxt (P i) (Q i) = Q (i + 1)) (hKN : K < N) :
+    (List.range N).flatMap (fun i => emit out (g^[i] s₀)) =
+      out (pairEncode (P K) (pairEncode [] (Q K))) := by
+  have horb := fun i (hi : i ≤ K) => orbit hg P Q h₀ hP hupd hnxt hi
+  have hK := horb K le_rfl
+  rw [Nat.sub_self, List.replicate_zero] at hK
+  exact flatMap_emit_orbit P Q horb (fun _ hi => iterate_done hg (hP K le_rfl) hK hi) hKN hP
+
+/-- The headline assembly: if the round `g`, the chunk `e` and the initializer `init` are
+polynomial-time, the orbit of `g` has a linear envelope, and the concatenated chunks of
+`e` along the orbit from `init z`, over `a'·(|init z|+1)^k' + 1` rounds, are `f z`, then
+`f` is polynomial-time (`Complexity.polyTimeComputable_emitIter` after `init`). -/
+theorem polyTimeComputable_of_loop {g e init f : List Bool → List Bool}
+    (hg : PolyTimeComputable g) (he : PolyTimeComputable e) (hinit : PolyTimeComputable init)
+    (a' k' b : ℕ)
+    (horbit : ∀ (w : List Bool) (i : ℕ), (g^[i] w).length ≤ b * (w.length + 1) ^ 1)
+    (hf : ∀ z, (List.range (a' * ((init z).length + 1) ^ k' + 1)).flatMap
+      (fun i => e (g^[i] (init z))) = f z) :
+    PolyTimeComputable f := by
+  have heq : f = (fun w => (List.range (a' * (w.length + 1) ^ k' + 1)).flatMap
+      (fun i => e (g^[i] w))) ∘ init := by
+    funext z
+    exact (hf z).symm
+  rw [heq]
+  exact (polyTimeComputable_emitIter hg he a' k' b 1 horbit).comp hinit
+
+/-- **A countdown block loop is polynomial-time.**  For `g = step upd nxt` and `e = emit out`
+run from `⟨h₀, ⟨1^(a'(|x z|+1)^k'), r z⟩⟩`: if the updates, `out`, `x`, `r` are polynomial-time,
+the live updates obey the slack bound `c`, and the chunks along the orbit are `f z`, then
+`f` is polynomial-time (`polyTimeComputable_of_loop`, `length_iterate_le_of_slack`). -/
+theorem polyTimeComputable_countdown {g e x r f : List Bool → List Bool}
+    {upd nxt : List Bool → List Bool → List Bool} {out : List Bool → List Bool}
+    (hg : g = step upd nxt) (he : e = emit out) (h₀ : List Bool) (a' k' c : ℕ)
+    (hu : PolyTimeComputable (fun s => upd (pairFstD s) (pairSndD (pairSndD s))))
+    (hn : PolyTimeComputable (fun s => nxt (pairFstD s) (pairSndD (pairSndD s))))
+    (ho : PolyTimeComputable out) (hx : PolyTimeComputable x) (hr : PolyTimeComputable r)
+    (hlive : ∀ h q, h ≠ [] →
+      2 * (upd h q).length + (nxt h q).length ≤ 2 * h.length + q.length + 2 + c)
+    (hf : ∀ z, (List.range (a' * ((pairEncode h₀ (pairEncode
+        (List.replicate (a' * ((x z).length + 1) ^ k') true) (r z))).length + 1) ^ k' + 1)).flatMap
+      (fun i => e (g^[i] (pairEncode h₀ (pairEncode
+        (List.replicate (a' * ((x z).length + 1) ^ k') true) (r z))))) = f z) :
+    PolyTimeComputable f := by
+  subst he
+  exact polyTimeComputable_of_loop (polyTimeComputable_step hg hu hn)
+    (polyTimeComputable_emit ho) (polyTimeComputable_countdownInit h₀ hx hr a' k') a' k'
+    (c + 2) (length_iterate_le_of_slack c (c + 2) (by omega) (by omega)
+      (length_step_le hg c hlive)) hf
+
+end BlockLoop
+
 /-! ### Truncating bitwise XOR -/
 
 /-- Bitwise XOR of the two components of a pair, truncating to the shorter
@@ -339,9 +651,10 @@ private def xorPairEmit (s : List Bool) : List Bool :=
   else
     if (pairSndD s).headD false then [true] else [false]
 
-private theorem polyTimeComputable_xorPairStep : PolyTimeComputable xorPairStep :=
-  (polyTimeComputable_tail.comp polyTimeComputable_pairFstD).pairEncode
-    (polyTimeComputable_tail.comp polyTimeComputable_pairSndD)
+private theorem polyTimeComputable_xorPairStep : PolyTimeComputable xorPairStep := by
+  have h₁ := polyTimeComputable_tail.comp polyTimeComputable_pairFstD
+  have h₂ := polyTimeComputable_tail.comp polyTimeComputable_pairSndD
+  exact h₁.pairEncode h₂
 
 private theorem polyTimeComputable_xorPairEmit : PolyTimeComputable xorPairEmit := by
   have hguard : PolyTimeComputable (fun s =>
@@ -376,19 +689,6 @@ private theorem length_xorPairStep_le (s : List Bool) :
     simp only [xorPairStep, pairFstD_pairEncode, pairSndD_pairEncode, length_pairEncode,
       List.length_drop]
     omega
-
-/-- Orbit envelope for the XOR transducer. -/
-private theorem length_xorPairStep_iterate (w : List Bool) (i : ℕ) :
-    (xorPairStep^[i] w).length ≤ 2 * (w.length + 1) ^ 1 := by
-  have hmax : (xorPairStep^[i] w).length ≤ max w.length 2 := by
-    induction i with
-    | zero => simpa using le_max_left _ _
-    | succ i ih =>
-      rw [Function.iterate_succ_apply']
-      exact le_trans (length_xorPairStep_le _) (max_le ih (le_max_right _ _))
-  refine le_trans hmax ?_
-  rw [pow_one]
-  exact max_le (by omega) (by omega)
 
 /-- The XOR transducer's orbit drops both components one symbol per round. -/
 private theorem xorPairStep_orbit (p u : List Bool) (i : ℕ) :
@@ -457,39 +757,29 @@ private theorem xorPair_output : ∀ (N : ℕ) (p u : List Bool),
     rfl
 
 /-- `xorD` is polynomial-time computable.
-**Proof sketch.** An instance of `Complexity.polyTimeComputable_emitIter`:
-the loop state is the pair of not-yet-consumed components; each round emits
+**Proof sketch.** An instance of `Complexity.polyTimeComputable_emitIter`, assembled
+by `Complexity.BlockLoop.polyTimeComputable_of_loop`, with the orbit envelope from
+`Complexity.BlockLoop.length_iterate_le_of_slack`: the loop state is the pair of
+not-yet-consumed components; each round emits
 the XOR of the two head bits (nothing once either component is exhausted) and
 drops both heads, so the concatenated output is exactly the truncating
-`List.zipWith xor`.  The round budget `|z|+1` dominates the shorter
+`List.zipWith xor`.  The round budget is the normalized pair's length plus two,
+`(pairEncode (pairFstD z) (pairSndD z)).length + 2`, which dominates the shorter
 component's length.  (The truncating semantics on unequal lengths is the
 audited ch7-phase1 finding 1 convention.) -/
 theorem polyTimeComputable_xorD : PolyTimeComputable xorD := by
-  have hloop := polyTimeComputable_emitIter polyTimeComputable_xorPairStep
-    polyTimeComputable_xorPairEmit 1 1 2 1 (fun w i => length_xorPairStep_iterate w i)
-  have hinit : PolyTimeComputable (fun z => pairEncode (pairFstD z) (pairSndD z)) :=
-    polyTimeComputable_pairFstD.pairEncode polyTimeComputable_pairSndD
-  have heq : xorD = (fun w => (List.range (1 * (w.length + 1) ^ 1 + 1)).flatMap
-      (fun i => xorPairEmit (xorPairStep^[i] w))) ∘
-      (fun z => pairEncode (pairFstD z) (pairSndD z)) := by
-    funext z
-    rw [Function.comp_apply]
-    have horb : ∀ i, xorPairStep^[i] (pairEncode (pairFstD z) (pairSndD z)) =
-        pairEncode ((pairFstD z).drop i) ((pairSndD z).drop i) :=
-      xorPairStep_orbit (pairFstD z) (pairSndD z)
-    have hbudget : min (pairFstD z).length (pairSndD z).length ≤
-        1 * ((pairEncode (pairFstD z) (pairSndD z)).length + 1) ^ 1 + 1 := by
-      have h1 := length_pairFstD_le z
-      rw [pow_one, length_pairEncode]
-      omega
-    calc xorD z = List.zipWith xor (pairFstD z) (pairSndD z) := rfl
-      _ = (List.range (1 * ((pairEncode (pairFstD z) (pairSndD z)).length + 1) ^ 1 + 1)).flatMap
-          (fun i => xorPairEmit (pairEncode ((pairFstD z).drop i) ((pairSndD z).drop i))) :=
-        (xorPair_output _ (pairFstD z) (pairSndD z) hbudget).symm
-      _ = _ := by
-        simp only [horb]
-  rw [heq]
-  exact hloop.comp hinit
+  refine BlockLoop.polyTimeComputable_of_loop polyTimeComputable_xorPairStep
+    polyTimeComputable_xorPairEmit
+    (polyTimeComputable_pairFstD.pairEncode polyTimeComputable_pairSndD) 1 1 2
+    (BlockLoop.length_iterate_le_of_slack 0 2 (by omega) (by omega)
+      (fun s => by simpa using length_xorPairStep_le s)) (fun z => ?_)
+  have hbudget : min (pairFstD z).length (pairSndD z).length ≤
+      1 * ((pairEncode (pairFstD z) (pairSndD z)).length + 1) ^ 1 + 1 := by
+    have h1 := length_pairFstD_le z
+    rw [pow_one, length_pairEncode]
+    omega
+  simp only [xorPairStep_orbit]
+  exact xorPair_output _ (pairFstD z) (pairSndD z) hbudget
 
 /-- `xorD` computes the truncating bitwise XOR on genuine pairs. -/
 @[simp]
