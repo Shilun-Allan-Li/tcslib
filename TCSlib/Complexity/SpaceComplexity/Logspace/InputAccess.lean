@@ -187,7 +187,10 @@ aligned two-cell scan to the first aligned `[false, true]`, then a canonical tai
 ending in `true`), reading each cell with `readIn_run`; reject otherwise. Then walk a counter
 `k` over the pairs of `dbl z`, comparing `bits k` with the tail in lockstep (the comparison
 pattern of `LogProg.cmpPlain_run`); on a match answer cell `2k` (resp. `true`), at the
-separator answer `false`. Every register stays within `|bits |y||` cells. -/
+separator answer `false`. Each register holds a counter of at most `|bits (|y| + 1)|` bits,
+and `readIn_run` keeps every head within `[-1, |bits (|y| + 1)|]`. So each work tape visits
+`O(logSpace |y|)` cells, its origin and the boundary cells included (an interval `[-1, W]` has
+`W + 2` cells), and `compile_space` gives the space bound from these ranges. -/
 theorem implicitlyLogspaceComputable_id : ImplicitlyLogspaceComputable id := by
   sorry
 

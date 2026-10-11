@@ -109,19 +109,16 @@ theorem LogspaceReducible.trans {B C D : Language Bool} (h₁ : B ≤ₗ C)
 /-- **Logspace reductions preserve `L` downward** ([AB09, Lemma 4.17(2)];
 spec, fill pending): if `B ≤ₗ C` and `C ∈ LOGSPACE` then `B ∈ LOGSPACE`.
 
-**Proof sketch.** [AB09]'s own route: `C`'s characteristic function is
-implicitly logspace computable (its bit language holds at a genuine pair
-`⟨x, i⟩` iff `i = 0 ∧ x ∈ C`; its length language is **exactly**
-`{pairEncode x [] | x}` — a regular language, not a total one: index `1` and
-every malformed string are rejected; round-1 audit, finding 1), so the
-composition `χ_C ∘ f` is implicitly logspace computable by
-`Complexity.ImplicitlyLogspaceComputable.comp`, and deciding `B` is its bit
-query at index `0` — a `LOGSPACE` membership by a fixed-index
-**paired-input** specialization (named fill obligation): the index-`0` query
-string is `pairEncode x [] = dbl x ++ [false, true]`, the *doubled* word with
-its separator, not `x` itself, so the specialization simulates the query
-decider on that doubled virtual input directly — independent of this very
-theorem, avoiding circularity (round-1 audit, finding 2). -/
+**Proof sketch.** Directly by the preimage theorem (route change 1 of
+`audits/ch4-p44-resolutions-addendum.md`). Unpack `h` as an implicitly
+logspace computable `f` with `x ∈ B ↔ f x ∈ C`. Then `B = {x | f x ∈ C}` by
+`Set.ext`, and `Complexity.mem_LOGSPACE_preimage hf hC` concludes. The
+preimage engine, the oracle-input simulator `Complexity.LogProg.OIS` ([AB09,
+Fig. 4.3]'s construction), cites nothing from this file, so there is no
+circularity (round-1 audit, finding 2). The earlier route through `C`'s
+characteristic function and `comp` is superseded: deciding `χ_C`'s bit
+language needs the engine itself. (Sketch prose corrected at the P4.4b
+statement gate; the statement is unchanged.) -/
 theorem mem_LOGSPACE_of_logspaceReducible {B C : Language Bool} (h : B ≤ₗ C)
     (hC : C ∈ LOGSPACE) : B ∈ LOGSPACE := by
   sorry

@@ -177,9 +177,12 @@ pending): if `f` is, so is `compQ f`.
   `⟨⟨w, bits p⟩, bits j⟩`, which two `dropIdx` turn into `⟨x, bits j⟩` (`dropIdx_pairEncode`).
 * **The run** ([AB09, Lemma 4.17's proof]; the P4.4 audit's question-2 ledger):
   * (i) Validate `h`, with the overflow test before storing `p`.
-  * (ii) Validate `w = ⟨x, b⟩` with `b` canonical: last bit `true`, using
-    `LogProg.canon_eq_bits` and `LogProg.canon_bits`.
-  * (iii) Find `F := |f x|` by lifted length queries at `j = 0, 1, …`, below `C (|x| + 1)^e`.
+  * (ii) Validate `w = ⟨x, b⟩` with `b` canonical: empty (the representation of `0`) or
+    ending in `true`, using `LogProg.canon_eq_bits` and `LogProg.canon_bits`.
+  * (iii) Find `F := |f x|` by lifted length queries at `j = 0, 1, …` while `j` is below the
+    cap `C (|x| + 1)^e`. `F` is the first `j` whose query fails, or the cap itself when every
+    query below it succeeds, since `|f x|` is at most the cap. A cap of `0` gives `F = 0`
+    with no query.
   * (iv) Answer:
     * `p < 2F`: the lifted bit at `⌊p/2⌋`;
     * `p ∈ {2F, 2F + 1}`: the separator `[false, true]`;
