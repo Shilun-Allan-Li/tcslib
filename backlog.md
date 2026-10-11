@@ -247,6 +247,14 @@ every commit since, unrelated to any batch. Refresh its expectations to the
 current state, or retire it in favour of the axiom logs. `ch1-infra-BuildSpecAxioms.lean`
 still passes.
 
+### BL-W: optional hypothesis weakenings of the `Complexity.BlockLoop` layer (from the 12.2c T1 item 7 gate, note 13)
+
+`BlockLoop.orbit` needs nonempty heads only below `K`. `iterate_done` does not
+need `hp`. `flatMap_emit_orbit` needs nonemptiness only at `K`. The OR
+engine's `hxr` is dispensable. Each weakening is additive or a statement
+change, so it waits for a window that may touch these public statements
+(coordinate with the ch7 owner). Optional.
+
 ---
 
 ## 2. Campaign work queued or on hold
