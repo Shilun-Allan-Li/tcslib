@@ -1,0 +1,9 @@
+import TCSlib.Complexity.TuringMachine.Build.Catalog
+
+/-! Stream A, visibility check: both `#check`s must succeed, so that the fill may cite the
+one trace. Against `oleans-s128r2` it failed (the names were private there:
+`probe-A-private-s128r2.out`); against `oleans-pre2` (wt-pre2, `5afed90b`) it succeeds
+(`probe-A-private.out`). Re-run it at the issue commit. -/
+
+#check @Turing.catalogTrace
+#check @Turing.catalog_trace_run
