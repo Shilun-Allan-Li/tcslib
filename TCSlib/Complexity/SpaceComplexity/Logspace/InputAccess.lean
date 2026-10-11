@@ -49,6 +49,12 @@ not in `Machines/`, by decision D3; it is built only from received fragments.
 * `Complexity.pairEncode_getD` — a shared bit-address formula for doubled fields,
   separators, and suffixes of paired inputs.
 * `Complexity.LogProg.alignedPair_loop` — a bounded ARM pair scan at any positive stride.
+* `Complexity.LogProg.register_update_le` — the shared register-bound update rule.
+* `Complexity.LogProg.registerCopy_loop` — copy by bounded counting, preserving the source.
+* `Complexity.LogProg.registerScale_loop` — consume a source into a scaled destination.
+* `Complexity.LogProg.canonicalTail_loop` — canonical-tail and width validation before decoding.
+* `Complexity.LogProg.boundedDecode_loop` — reverse binary decoding after the width check.
+* `Complexity.LogProg.indexedSeek_loop` — bounded positioning within a strided segment.
 * `Complexity.LogProg.inputLength_loop` — a bounded ARM loop counting a general input
   through its length-query oracle.
 * `Complexity.LogProg.readIn_run` — the input-read fragment (proved; phase-P4.4b
@@ -806,6 +812,447 @@ theorem alignedPair_loop {m d : ℕ} {Λ : Type} (A : ARM m d Λ)
       · simp only [pairDecode]
         exact ⟨1, by simp, by simpa only [Nat.mul_one] using hi.trans hcall⟩
       · exact False.elim (heq rfl)
+
+/-! ### Shared bounded arithmetic and tail validation (B7 continuation 2 exports) -/
+
+/-- Updating a bounded register by a bounded value preserves the common bound. -/
+theorem register_update_le {m : ℕ} (v : Fin m → ℕ) (r : Fin m) (B n : ℕ)
+    (hv : ∀ s, v s ≤ B) (hn : n ≤ B) : ∀ s, Function.update v r n s ≤ B := by
+  intro s
+  by_cases h : s = r
+  · subst s; simpa using hn
+  · simpa [Function.update_of_ne h] using hv s
+
+/-- Counting a destination up to a distinct source copies its value without changing the
+source. The destination may already contain any smaller value. This bounded ARM fragment
+is shared by query validation, decoding, and nested-layout bookkeeping.
+
+**Proof sketch.** Induct on the difference between source and destination. Equality exits;
+otherwise increment the destination. Its value never exceeds the unchanged source. -/
+theorem registerCopy_loop {m d : ℕ} {Λ : Type} (A : ARM m d Λ)
+    (oracle : Fin d → List Bool → Bool) (x : List Bool) (dst src : Fin m)
+    (hne : dst ≠ src) (test bump done : Λ)
+    (htest : A test = .jeq dst src done bump) (hbump : A bump = .inc dst test)
+    (B : ℕ) (v : Fin m → ℕ) (hv : ∀ r, v r ≤ B) (hle : v dst ≤ v src) :
+    AReach A oracle x (fun a => PreS A x a ∧ ∀ r, a.2.1 r ≤ B)
+      (some test, v, none) (some done, Function.update v dst (v src), none) := by
+  generalize he : v src - v dst = k
+  induction k generalizing v with
+  | zero =>
+    have eq : v dst = v src := by omega
+    have vu : Function.update v dst (v src) = v := by
+      rw [← eq, Function.update_eq_self]
+    rw [vu]
+    simpa [astep, htest, eq] using
+      (AReach.single (A := A) (oracle := oracle) (x := x)
+        (a := (some test, v, none)) ⟨by simp [PreS, htest, hne], hv⟩)
+  | succ k ih =>
+    have lt : v dst < v src := by omega
+    let next := Function.update v dst (v dst + 1)
+    have nv : ∀ r, next r ≤ B := register_update_le v dst B _ hv (by have := hv src; omega)
+    have ns : next src = v src := Function.update_of_ne hne.symm _ _
+    have nd : next dst = v dst + 1 := Function.update_self _ _ _
+    have rest := ih next nv (by rw [ns, nd]; omega) (by rw [ns, nd]; omega)
+    apply AReach.step ⟨by simp [PreS, htest, hne], hv⟩
+    simp only [astep, htest, if_neg (Nat.ne_of_lt lt)]
+    apply AReach.step ⟨by simp [PreS, hbump], hv⟩
+    simpa only [astep, hbump, next, ns, Function.update_idem] using rest
+
+/-- Moving a source into a destination with a fixed natural multiplier uses bounded
+increment chains. The source is cleared. The source and final destination must fit the
+same bound; this is the arithmetic fragment used by the bounded binary decoder.
+
+**Proof sketch.** Decrement the source once and increment the destination by the multiplier,
+citing the shared increment-chain argument. The weighted total is invariant, so each
+intermediate value is bounded. Induct on the source value. -/
+theorem registerScale_loop {m d : ℕ} {Λ : Type} (A : ARM m d Λ)
+    (oracle : Fin d → List Bool → Bool) (x : List Bool) (src dst : Fin m)
+    (hne : src ≠ dst) (test down done : Λ) (inc : ℕ → Λ) (factor : ℕ)
+    (htest : A test = .jz src done down) (hdown : A down = .dec src (inc 0))
+    (hinc : ∀ i < factor, A (inc i) = .inc dst (inc (i + 1))) (hend : inc factor = test)
+    (B : ℕ) (v : Fin m → ℕ) (hv : ∀ r, v r ≤ B)
+    (htotal : v dst + factor * v src ≤ B) :
+    AReach A oracle x (fun a => PreS A x a ∧ ∀ r, a.2.1 r ≤ B)
+      (some test, v, none)
+      (some done, Function.update (Function.update v src 0) dst
+        (v dst + factor * v src), none) := by
+  generalize he : v src = k
+  induction k generalizing v with
+  | zero =>
+    have vs : Function.update v src 0 = v := by rw [← he, Function.update_eq_self]
+    simp only [Nat.mul_zero, Nat.add_zero, vs, Function.update_eq_self]
+    simpa [astep, htest, he] using
+      (AReach.single (A := A) (oracle := oracle) (x := x)
+        (a := (some test, v, none)) ⟨by simp [PreS, htest], hv⟩)
+  | succ k ih =>
+    let downv := Function.update v src k
+    let next := Function.update downv dst (v dst + factor)
+    have dv : ∀ r, downv r ≤ B := register_update_le v src B k hv (by have := hv src; omega)
+    have dd : downv dst = v dst := Function.update_of_ne hne.symm _ _
+    have bound : v dst + factor ≤ B := by rw [he, Nat.mul_succ] at htotal; omega
+    have nv : ∀ r, next r ≤ B := register_update_le downv dst B _ dv bound
+    have ns : next src = k := by simp [next, downv, hne]
+    have nd : next dst = v dst + factor := by simp [next]
+    have total : next dst + factor * next src ≤ B := by
+      rw [ns, nd]; rw [he, Nat.mul_succ] at htotal; omega
+    have hmove := arm_increments A oracle x dst inc factor B hinc downv dv
+      (by rw [dd]; exact bound)
+    have rest := ih next nv total ns
+    apply AReach.step ⟨by simp [PreS, htest], hv⟩
+    simp only [astep, htest, he, Nat.succ_ne_zero, ↓reduceIte]
+    apply AReach.step ⟨by simp [PreS, hdown], hv⟩
+    simp only [astep, hdown, he, Nat.add_sub_cancel]
+    have final : Function.update (Function.update next src 0) dst
+        (next dst + factor * k) =
+        Function.update (Function.update v src 0) dst (v dst + factor * (k + 1)) := by
+      funext r
+      by_cases hd : r = dst
+      · subst r; simp only [Function.update_self, nd, Nat.mul_succ]; omega
+      · by_cases hs : r = src
+        · subst r; simp [hd]
+        · simp [next, downv, Function.update_of_ne, hd, hs]
+    rw [final] at rest
+    simp only [hend, dd] at hmove
+    exact hmove.trans rest
+
+/-- Halving a nonzero cap removes exactly one binary digit. -/
+private lemma access_width_half (n : ℕ) (hn : n ≠ 0) :
+    (Nat.bits (n / 2)).length + 1 = (Nat.bits n).length := by
+  have hp : 0 < (Nat.bits n).length := by
+    rw [Nat.size_eq_bits_len]
+    exact Nat.size_pos.mpr (Nat.pos_of_ne_zero hn)
+  rw [bits_half, List.length_tail]
+  omega
+
+/-- A strided tail scan checks its width against a binary cap before decoding any value.
+The finite-control bit remembers the last letter, with `true` accepting the empty tail.
+Only the pointer and cap change; a failed width check exits without reading that letter.
+Starting with last bit `true`, success says that the tail is canonical and fits the cap's
+binary width. The same fragment serves bounded query tails at different physical strides.
+
+**Proof sketch.** Test the end first. On each remaining letter, reject a zero cap;
+otherwise read that letter, halve the cap, and advance the pointer by the stride.
+Induction on the tail uses the fact that halving a nonzero number removes one binary digit.
+The final remembered bit is the tail's last bit. -/
+theorem canonicalTail_loop {m d : ℕ} {Λ : Type} (A : ARM m d Λ)
+    (oracle : Fin d → List Bool → Bool) (x : List Bool)
+    (ptr limit cap : Fin m) (hpl : ptr ≠ limit) (hpc : ptr ≠ cap) (hcl : cap ≠ limit)
+    (j : Fin d) (test : Bool → Λ) (check read fail done : Λ)
+    (halve : Bool → Λ) (advance : Bool → ℕ → Λ) (stride B : ℕ) (hs : 0 < stride)
+    (htest : ∀ b, A (test b) = .jeq ptr limit (if b then done else fail) check)
+    (hcheck : A check = .jz cap fail read)
+    (hread : A read = .call j .whole [ptr] (halve true) (halve false))
+    (hhalve : ∀ b, A (halve b) = .half cap (advance b 0))
+    (hadvance : ∀ b i, i < stride → A (advance b i) = .inc ptr (advance b (i + 1)))
+    (hend : ∀ b, advance b stride = test b)
+    (w : List Bool) (last : Bool) (v : Fin m → ℕ) (hv : ∀ r, v r ≤ B)
+    (hl : v limit = v ptr + stride * w.length)
+    (ho : ∀ i < w.length,
+      oracle j (pairEncode x (Nat.bits (v ptr + stride * i))) = w.getD i false) :
+    ∃ v', (∀ r, v' r ≤ B) ∧ v' ptr ≤ v limit ∧
+      (∀ r, r ≠ ptr → r ≠ cap → v' r = v r) ∧
+      AReach A oracle x (fun a => PreS A x a ∧ ∀ r, a.2.1 r ≤ B)
+        (some (test last), v, none)
+        (some (if w.length ≤ (Nat.bits (v cap)).length then
+          if w.getLastD last then done else fail else fail), v', none) := by
+  induction w generalizing v last with
+  | nil =>
+    have eq : v ptr = v limit := by simpa using hl.symm
+    refine ⟨v, hv, by omega, fun _ _ _ => rfl, ?_⟩
+    simpa [astep, htest, eq] using
+      (AReach.single (A := A) (oracle := oracle) (x := x)
+        (a := (some (test last), v, none)) ⟨by simp [PreS, htest, hpl], hv⟩)
+  | cons b w ih =>
+    have room : v ptr + stride ≤ v limit := by
+      simp only [List.length_cons, Nat.mul_add, Nat.mul_one] at hl
+      omega
+    have pne : v ptr ≠ v limit := by omega
+    by_cases cz : v cap = 0
+    · refine ⟨v, hv, by omega, fun _ _ _ => rfl, ?_⟩
+      simp only [List.length_cons, cz, Nat.zero_bits, List.length_nil]
+      apply AReach.step ⟨by simp [PreS, htest, hpl], hv⟩
+      simp only [astep, htest, if_neg pne]
+      simpa [astep, hcheck, cz] using
+        (AReach.single (A := A) (oracle := oracle) (x := x)
+          (a := (some check, v, none)) ⟨by simp [PreS, hcheck], hv⟩)
+    · let halfv := Function.update v cap (v cap / 2)
+      let next := Function.update halfv ptr (v ptr + stride)
+      have bh : ∀ r, halfv r ≤ B := register_update_le v cap B _ hv
+        ((Nat.div_le_self _ _).trans (hv cap))
+      have bn : ∀ r, next r ≤ B := register_update_le halfv ptr B _ bh (room.trans (hv limit))
+      have np : next ptr = v ptr + stride := by simp [next]
+      have nc : next cap = v cap / 2 := by simp [next, halfv, hpc.symm]
+      have nl : next limit = v limit := by simp [next, halfv, hpl.symm, hcl.symm]
+      have nh : next limit = next ptr + stride * w.length := by
+        rw [nl, np]; simp only [List.length_cons, Nat.mul_add, Nat.mul_one] at hl; omega
+      have no : ∀ i < w.length,
+          oracle j (pairEncode x (Nat.bits (next ptr + stride * i))) = w.getD i false := by
+        intro i hi
+        have q := ho (i + 1) (by simp; omega)
+        simpa only [np, Nat.mul_add, Nat.mul_one, Nat.add_assoc,
+          Nat.add_comm stride (stride * i), List.getD_cons_succ] using q
+      obtain ⟨v', bv, vp, frame, run⟩ := ih b next bn nh no
+      have width : (b :: w).length ≤ (Nat.bits (v cap)).length ↔
+          w.length ≤ (Nat.bits (next cap)).length := by
+        rw [nc]
+        have wd := access_width_half (v cap) cz
+        simp only [List.length_cons]
+        omega
+      refine ⟨v', bv, by rwa [nl] at vp, ?_, ?_⟩
+      · intro r hr hc
+        rw [frame r hr hc]
+        simp [next, halfv, Function.update_of_ne, hr, hc]
+      · simp only [List.getLastD_cons, width]
+        apply AReach.step ⟨by simp [PreS, htest, hpl], hv⟩
+        simp only [astep, htest, if_neg pne]
+        apply AReach.step ⟨by simp [PreS, hcheck], hv⟩
+        simp only [astep, hcheck, if_neg cz]
+        have bit := ho 0 (by simp)
+        simp only [Nat.mul_zero, Nat.add_zero, List.getD_cons_zero] at bit
+        apply AReach.step ⟨by simp [PreS, hread], hv⟩
+        simp only [astep, hread, vword_whole₁, bit]
+        have hb : (if b = true then halve true else halve false) = halve b := by cases b <;> rfl
+        rw [hb]
+        apply AReach.step ⟨by simp [PreS, hhalve], hv⟩
+        simp only [astep, hhalve]
+        have inc := arm_increments A oracle x ptr (advance b) stride B (hadvance b) halfv bh
+          (by simp only [halfv, Function.update_of_ne hpc]; exact room.trans (hv limit))
+        have ie : AReach A oracle x (fun a => PreS A x a ∧ ∀ r, a.2.1 r ≤ B)
+            (some (advance b 0), halfv, none) (some (test b), next, none) := by
+          simpa only [hend, halfv, Function.update_of_ne hpc] using inc
+        exact ie.trans run
+
+/-- A reverse scan decodes a previously bounded binary field. It reads only positions in
+that field. The pointer, accumulator, and temporary may change; all other registers are
+preserved. The caller supplies bounds for the suffix values, after its width check.
+
+**Proof sketch.** At the boundary with `k` letters still unread, the accumulator is the
+value of the suffix starting at `k`. Decrement the pointer, read letter `k-1`, copy the
+accumulator into the temporary, clear the accumulator, and transfer twice the temporary
+back. Add the letter and recur. The suffix-value equation bounds both the doubled value
+and the final increment. Copying and scaling cite their shared ARM fragments. -/
+theorem boundedDecode_loop {m d : ℕ} {Λ : Type} (A : ARM m d Λ)
+    (oracle : Fin d → List Bool → Bool) (x : List Bool)
+    (ptr base acc tmp : Fin m)
+    (hpb : ptr ≠ base) (hpa : ptr ≠ acc) (hpt : ptr ≠ tmp)
+    (hba : base ≠ acc) (hbt : base ≠ tmp) (hat : acc ≠ tmp)
+    (j : Fin d) (test down read done : Λ)
+    (copy bump clear scale take add : Bool → Λ) (incs : Bool → ℕ → Λ)
+    (htest : A test = .jeq ptr base done down)
+    (hdown : A down = .dec ptr read)
+    (hread : A read = .call j .whole [ptr] (copy true) (copy false))
+    (hcopy : ∀ b, A (copy b) = .jeq tmp acc (clear b) (bump b))
+    (hbump : ∀ b, A (bump b) = .inc tmp (copy b))
+    (hclear : ∀ b, A (clear b) = .clr acc (scale b))
+    (hscale : ∀ b, A (scale b) = .jz tmp (add b) (take b))
+    (htake : ∀ b, A (take b) = .dec tmp (incs b 0))
+    (hincs : ∀ b i, i < 2 → A (incs b i) = .inc acc (incs b (i + 1)))
+    (hend : ∀ b, incs b 2 = scale b)
+    (hadd : ∀ b, A (add b) = if b then .inc acc test else .jz tmp test test)
+    (w : List Bool) (B : ℕ) (values : ∀ i ≤ w.length, bitsVal (w.drop i) ≤ B)
+    (k : ℕ) (hk : k ≤ w.length) (v : Fin m → ℕ) (hv : ∀ r, v r ≤ B)
+    (hp : v ptr = v base + k) (ha : v acc = bitsVal (w.drop k)) (ht : v tmp = 0)
+    (ho : ∀ i < w.length,
+      oracle j (pairEncode x (Nat.bits (v base + i))) = w.getD i false) :
+    ∃ v', (∀ r, v' r ≤ B) ∧ v' ptr = v base ∧ v' acc = bitsVal w ∧ v' tmp = 0 ∧
+      (∀ r, r ≠ ptr → r ≠ acc → r ≠ tmp → v' r = v r) ∧
+      AReach A oracle x (fun a => PreS A x a ∧ ∀ r, a.2.1 r ≤ B)
+        (some test, v, none) (some done, v', none) := by
+  induction k generalizing v with
+  | zero =>
+    have eq : v ptr = v base := by simpa using hp
+    refine ⟨v, hv, eq, by simpa using ha, ht, fun _ _ _ _ => rfl, ?_⟩
+    simpa [astep, htest, eq] using
+      (AReach.single (A := A) (oracle := oracle) (x := x)
+        (a := (some test, v, none)) ⟨by simp [PreS, htest, hpb], hv⟩)
+  | succ k ih =>
+    have kin : k < w.length := by omega
+    let b := w.getD k false
+    have val : bitsVal (w.drop k) = b.toNat + 2 * bitsVal (w.drop (k + 1)) := by
+      rw [List.drop_eq_getElem_cons kin]
+      simp only [bitsVal]
+      congr 1
+      simp [b, List.getD_eq_getElem?_getD, kin]
+    have bound : 2 * v acc + b.toNat ≤ B := by
+      have vb := values k (by omega)
+      rw [val, ← ha] at vb
+      omega
+    let vd := Function.update v ptr (v base + k)
+    let vc := Function.update vd tmp (v acc)
+    let vz := Function.update vc acc 0
+    let vs := Function.update (Function.update vz tmp 0) acc (2 * v acc)
+    let vn := Function.update vs acc (bitsVal (w.drop k))
+    have bd : ∀ r, vd r ≤ B := register_update_le v ptr B _ hv (by have := hv ptr; omega)
+    have bc : ∀ r, vc r ≤ B := register_update_le vd tmp B _ bd (hv acc)
+    have bz : ∀ r, vz r ≤ B := register_update_le vc acc B 0 bc (Nat.zero_le _)
+    have bs : ∀ r, vs r ≤ B := register_update_le _ acc B _
+      (register_update_le vz tmp B 0 bz (Nat.zero_le _)) (by omega)
+    have bn : ∀ r, vn r ≤ B := register_update_le vs acc B _ bs (values k (by omega))
+    have vb : vn base = v base := by simp [vn, vs, vz, vc, vd, hba, hbt, hpb.symm]
+    have vp : vn ptr = v base + k := by simp [vn, vs, vz, vc, vd, hpa, hpt]
+    have va : vn acc = bitsVal (w.drop k) := by simp [vn]
+    have vt : vn tmp = 0 := by simp [vn, vs, hat.symm]
+    have vf : ∀ r, r ≠ ptr → r ≠ acc → r ≠ tmp → vn r = v r := by
+      intro r hr hp ht
+      simp [vn, vs, vz, vc, vd, Function.update_of_ne, hr, hp, ht]
+    obtain ⟨v', bv, ep, ea, et, frame, rest⟩ := ih (by omega) vn bn
+      (by rw [vp, vb]) va vt (by simpa only [vb] using ho)
+    refine ⟨v', bv, by simpa only [vb] using ep, ea, et, ?_, ?_⟩
+    · intro r hr hp ht
+      exact (frame r hr hp ht).trans (vf r hr hp ht)
+    · have ne : v ptr ≠ v base := by omega
+      apply AReach.step ⟨by simp [PreS, htest, hpb], hv⟩
+      simp only [astep, htest, if_neg ne]
+      apply AReach.step ⟨by simp [PreS, hdown], hv⟩
+      have pred : v ptr - 1 = v base + k := by omega
+      simp only [astep, hdown, pred]
+      change AReach A oracle x _ (some read, vd, none) _
+      apply AReach.step ⟨by simp [PreS, hread], bd⟩
+      have bit : oracle j (pairEncode x (Nat.bits (vd ptr))) = b := by
+        simpa only [vd, Function.update_self] using ho k kin
+      simp only [astep, hread, vword_whole₁, bit]
+      have cb : (if b = true then copy true else copy false) = copy b := by cases b <;> rfl
+      rw [cb]
+      have cr := registerCopy_loop A oracle x tmp acc hat.symm (copy b) (bump b) (clear b)
+        (hcopy b) (hbump b) B vd bd (by simp [vd, hpt.symm, hpa.symm, ht])
+      have ca : vd acc = v acc := by simp [vd, hpa.symm]
+      simp only [ca] at cr
+      apply cr.trans
+      change AReach A oracle x _ (some (clear b), vc, none) _
+      apply AReach.step ⟨by simp [PreS, hclear], bc⟩
+      simp only [astep, hclear]
+      change AReach A oracle x _ (some (scale b), vz, none) _
+      have za : vz acc = 0 := by simp [vz]
+      have zt : vz tmp = v acc := by simp [vz, vc, hat.symm]
+      have sr := registerScale_loop A oracle x tmp acc hat.symm (scale b) (take b) (add b)
+        (incs b) 2 (hscale b) (htake b) (hincs b) (hend b) B vz bz
+        (by rw [za, zt]; omega)
+      simp only [za, zt, Nat.zero_add] at sr
+      apply sr.trans
+      change AReach A oracle x _ (some (add b), vs, none) _
+      apply AReach.step ⟨by cases b <;> simp [PreS, hadd], bs⟩
+      have nb : astep A oracle x (some (add b), vs, none) = (some test, vn, none) := by
+        have sv : vs acc = 2 * v acc := by simp [vs]
+        have kv : bitsVal (w.drop k) = b.toNat + 2 * v acc := by rw [val, ← ha]
+        cases hb : b
+        · have same : vn = vs := by
+            simp only [vn, kv, hb, Bool.toNat_false, Nat.zero_add, ← sv, Function.update_eq_self]
+          simp [astep, hadd, same]
+        · simp only [astep, hadd, ↓reduceIte]
+          simp only [vn, kv, hb, Bool.toNat_true, sv, Nat.add_comm]
+      rw [nb]
+      exact rest
+
+/-- A bounded strided lookup walks a segment until its running index equals the query or
+its physical pointer reaches the end. The hit pointer and index are exact; a miss advances
+both to the segment end. This allows one query to pass through several disjoint segments.
+
+**Proof sketch.** Induct on the number of remaining letters. The end test handles zero;
+otherwise equality hits immediately, or an index increment and one strided advance reduce
+the remaining length. Pointer bounds come from the end register, and index bounds from the
+supplied final index. No input bit is read by this positioning fragment. -/
+theorem indexedSeek_loop {m d : ℕ} {Λ : Type} (A : ARM m d Λ)
+    (oracle : Fin d → List Bool → Bool) (x : List Bool)
+    (ptr limit idx query : Fin m)
+    (hpl : ptr ≠ limit) (hpi : ptr ≠ idx) (hpq : ptr ≠ query)
+    (hli : limit ≠ idx) (_hlq : limit ≠ query) (hiq : idx ≠ query)
+    (test probe bump hit miss : Λ) (advance : ℕ → Λ) (stride B : ℕ) (hs : 0 < stride)
+    (htest : A test = .jeq ptr limit miss probe)
+    (hprobe : A probe = .jeq idx query hit bump)
+    (hbump : A bump = .inc idx (advance 0))
+    (hadvance : ∀ i < stride, A (advance i) = .inc ptr (advance (i + 1)))
+    (hend : advance stride = test)
+    (count : ℕ) (v : Fin m → ℕ) (hv : ∀ r, v r ≤ B)
+    (hl : v limit = v ptr + stride * count) (hb : v idx + count ≤ B)
+    (hq : v idx ≤ v query) :
+    if v query < v idx + count then
+      AReach A oracle x (fun a => PreS A x a ∧ ∀ r, a.2.1 r ≤ B)
+        (some test, v, none)
+        (some hit, Function.update (Function.update v ptr
+          (v ptr + stride * (v query - v idx))) idx (v query), none)
+    else
+      AReach A oracle x (fun a => PreS A x a ∧ ∀ r, a.2.1 r ≤ B)
+        (some test, v, none)
+        (some miss, Function.update (Function.update v ptr (v limit)) idx (v idx + count), none) := by
+  induction count generalizing v with
+  | zero =>
+    have eq : v ptr = v limit := by simpa using hl.symm
+    have ge : ¬ v query < v idx + 0 := by omega
+    have up : Function.update v ptr (v limit) = v := by rw [← eq, Function.update_eq_self]
+    simp only [Nat.add_zero]
+    rw [if_neg (Nat.not_lt.mpr hq), up, Function.update_eq_self]
+    simpa [astep, htest, eq] using
+      (AReach.single (A := A) (oracle := oracle) (x := x)
+        (a := (some test, v, none)) ⟨by simp [PreS, htest, hpl], hv⟩)
+  | succ count ih =>
+    have room : v ptr + stride ≤ v limit := by rw [Nat.mul_succ] at hl; omega
+    have ne : v ptr ≠ v limit := by omega
+    by_cases eq : v idx = v query
+    · have lt : v query < v idx + (count + 1) := by omega
+      have endv : Function.update (Function.update v ptr
+          (v ptr + stride * (v query - v idx))) idx (v query) = v := by
+        simp only [← eq, Nat.sub_self, Nat.mul_zero, Nat.add_zero, Function.update_eq_self]
+      simp only [if_pos lt, endv]
+      apply AReach.step ⟨by simp [PreS, htest, hpl], hv⟩
+      simp only [astep, htest, if_neg ne]
+      simpa [astep, hprobe, eq] using
+        (AReach.single (A := A) (oracle := oracle) (x := x)
+          (a := (some probe, v, none)) ⟨by simp [PreS, hprobe, hiq], hv⟩)
+    · let vi := Function.update v idx (v idx + 1)
+      let next := Function.update vi ptr (v ptr + stride)
+      have bi : ∀ r, vi r ≤ B := register_update_le v idx B _ hv (by omega)
+      have bn : ∀ r, next r ≤ B := register_update_le vi ptr B _ bi (room.trans (hv limit))
+      have np : next ptr = v ptr + stride := by simp [next]
+      have ni : next idx = v idx + 1 := by simp [next, vi, hpi.symm]
+      have nq : next query = v query := by simp [next, vi, hpq.symm, hiq.symm]
+      have nl : next limit = v limit := by simp [next, vi, hpl.symm, hli]
+      have lead : AReach A oracle x (fun a => PreS A x a ∧ ∀ r, a.2.1 r ≤ B)
+          (some test, v, none) (some test, next, none) := by
+        apply AReach.step ⟨by simp [PreS, htest, hpl], hv⟩
+        simp only [astep, htest, if_neg ne]
+        apply AReach.step ⟨by simp [PreS, hprobe, hiq], hv⟩
+        simp only [astep, hprobe, if_neg eq]
+        apply AReach.step ⟨by simp [PreS, hbump], hv⟩
+        simp only [astep, hbump]
+        have run := arm_increments A oracle x ptr advance stride B hadvance vi bi
+          (by simp only [vi, Function.update_of_ne hpi]; exact room.trans (hv limit))
+        simpa only [hend, vi, Function.update_of_ne hpi] using run
+      have rest := ih next bn (by rw [np, nl]; rw [Nat.mul_succ] at hl; omega)
+        (by rw [ni]; omega) (by rw [ni, nq]; omega)
+      by_cases lt : v query < v idx + (count + 1)
+      · have lt' : next query < next idx + count := by rw [nq, ni]; omega
+        rw [if_pos lt, if_pos lt'] at *
+        have endpoint : Function.update (Function.update next ptr
+            (next ptr + stride * (next query - next idx))) idx (next query) =
+            Function.update (Function.update v ptr
+              (v ptr + stride * (v query - v idx))) idx (v query) := by
+          have diff : v query - v idx = (v query - (v idx + 1)) + 1 := by omega
+          have addr : next ptr + stride * (next query - next idx) =
+              v ptr + stride * (v query - v idx) := by
+            rw [np, nq, ni, diff, Nat.mul_add, Nat.mul_one]; omega
+          rw [addr, nq]
+          funext r
+          by_cases ri : r = idx
+          · subst r; simp
+          · by_cases rp : r = ptr
+            · subst r; simp [hpi]
+            · simp [next, vi, Function.update_of_ne, ri, rp]
+        rw [endpoint] at rest
+        exact lead.trans rest
+      · have lt' : ¬ next query < next idx + count := by rw [nq, ni]; omega
+        rw [if_neg lt, if_neg lt'] at *
+        have endpoint : Function.update (Function.update next ptr (next limit)) idx
+            (next idx + count) = Function.update (Function.update v ptr (v limit)) idx
+            (v idx + (count + 1)) := by
+          rw [nl, ni, Nat.add_assoc]
+          funext r
+          by_cases ri : r = idx
+          · subst r; simp [Nat.add_comm 1 count]
+          · by_cases rp : r = ptr
+            · subst r; simp [hpi]
+            · simp [next, vi, Function.update_of_ne, ri, rp]
+        rw [endpoint] at rest
+        exact lead.trans rest
 
 /-- Continuations of the input-access decider. The mode is a parameter of the one table:
 `true` asks for length, and `false` asks for the bit. -/
