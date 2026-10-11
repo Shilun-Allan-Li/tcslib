@@ -86,7 +86,13 @@ one framed contract and one trace serve them all.
 * `Turing.SweepPhase`, `Turing.FlagPhase` — the two phase alphabets.
 * `Turing.catalogTrace` — the two-pass sweep trace, with its run lemma
   `Turing.catalog_trace_run`: the one trace every two-pass row cites
-  (public since the §12.8 fill).
+  (public since the §12.8 fill). With it, the write-step lemma
+  `Turing.catalog_write_take` and the one-step lemmas of the two Part 3 actions,
+  `Turing.step_of_tapeAction_move`, `Turing.step_of_tapeAction_write` and
+  `Turing.step_of_inputMoveAction`; the field-layout facts `Turing.joinFields_cons_cons`,
+  `Turing.fieldsTape_cons_shift`, `Turing.fieldOffset_succ`, `Turing.fieldOffset_cons_succ`,
+  `Turing.length_joinFields_add_one` and `Turing.fieldOffset_add_length_le`; and the rewind
+  head bounds `Turing.FinTM.rewind_scan_heads`, `Turing.FinTM.rewind_heads`.
 * `Turing.transferTM`, `Turing.copyTM`, `Turing.clearTM`,
   `Turing.compareTM`, `Turing.incrementTM`.
 * Part 3: `Turing.tapeAction`, `Turing.inputMoveAction` (one-tape
@@ -401,10 +407,15 @@ private def catalogTape {Symbol : Type*} (f : ℤ → Option Symbol) (a : ℤ) (
     Option Symbol :=
   if a ≤ q ∧ q < a + (w.length : ℤ) then FinTM.bufferTape w (q - a) else f q
 
-/-- Extending a framed copied prefix writes exactly its next cell.
-**Proof sketch.** Split off the new endpoint; away from it, the two integer
-interval tests agree. The untouched suffix keeps its original arbitrary values. -/
-private lemma catalog_write_take {Symbol : Type*} (f : ℤ → Option Symbol) (a : ℤ)
+/-- **Extending a written prefix writes exactly its next cell** (design §12.6; public
+since the §12.8 fill, so that every writing sweep cites it). Writing `w[r]` at `a + r` on
+a tape that holds `w`'s first `r` cells from `a` (and arbitrary cells elsewhere) gives the
+tape that holds its first `r + 1` cells. The cells outside the written interval keep their
+original values.
+
+**Proof sketch.** Split off the new endpoint; away from it, the two integer interval
+tests agree. The untouched suffix keeps its original arbitrary values. -/
+theorem catalog_write_take {Symbol : Type*} (f : ℤ → Option Symbol) (a : ℤ)
     (w : List Symbol) (r : ℕ) (hr : r < w.length) :
     Function.update
       (fun q => if a ≤ q ∧ q < a + (r : ℤ) then FinTM.bufferTape w (q - a) else f q)
@@ -10319,9 +10330,11 @@ private lemma f2_cond_time {D M₁ M₂ : FinTM Bool} {p : List Bool → Bool}
   dsimp only [B] at *
   omega
 
-/-- A native input rewind keeps every work head fixed at every prefix,
-including its dispatch step. -/
-private lemma f2_rewind_scan_heads {k : ℕ} {S : Type} {x : List Bool}
+/-- **A native input rewind keeps every work head fixed** (public since the §12.8 fill), at
+every prefix, including its dispatch step.
+
+**Proof sketch.** Induct on the input position; each step is a `controlAction`. -/
+theorem rewind_scan_heads {k : ℕ} {S : Type} {x : List Bool}
     (tm : MultiTapeTM k Bool S) (scan : S) (dest : Option S)
     (htr : ∀ inp work, tm.tr scan inp work = match inp with
       | some _ => controlAction .neg (some scan)
@@ -10354,8 +10367,13 @@ private lemma f2_rewind_scan_heads {k : ℕ} {S : Type} {x : List Bool}
       simp only [moveInputPos_neg_val]
       omega
 
-/-- The bounded rewind with the prefix work-head equality retained. -/
-private lemma f2_rewind_heads {k : ℕ} {S : Type} {x : List Bool}
+/-- **The bounded rewind with its work heads fixed** (public since the §12.8 fill): it
+reaches its destination with the input head at `1` within `pos + 2` steps, and every work head
+stays put throughout.
+
+**Proof sketch.** One start step, then `Turing.FinTM.rewind_scan` for the run and
+`Turing.FinTM.rewind_scan_heads` for the heads. -/
+theorem rewind_heads {k : ℕ} {S : Type} {x : List Bool}
     (tm : MultiTapeTM k Bool S) (start scan : S) (dest : Option S)
     (hstart : ∀ inp work, tm.tr start inp work = controlAction .neg (some scan))
     (hscan : ∀ inp work, tm.tr scan inp work = match inp with
@@ -10382,7 +10400,7 @@ private lemma f2_rewind_heads {k : ℕ} {S : Type} {x : List Bool}
     | zero => rfl
     | succ u =>
       rw [MultiTapeTM.runFrom_succ_eq_step, hstep]
-      exact f2_rewind_scan_heads tm scan dest hscan (moveInputPos c.inputPos .neg).val _ rfl rfl hp u (by omega)
+      exact rewind_scan_heads tm scan dest hscan (moveInputPos c.inputPos .neg).val _ rfl rfl hp u (by omega)
 
 /-- Explicit equivalence between a disjoint pair of banks and their concatenation. -/
 private def f2_finSumEquiv (a b : ℕ) : Fin a ⊕ Fin b ≃ Fin (a + b) where
@@ -10530,7 +10548,7 @@ private lemma f2_cond_ledger (D M₁ M₂ : FinTM Bool) (x : List Bool) (b : Boo
         f2_timedControlCfg D M₁ M₂ (D.tm.runFrom (D.tm.initCfg x) u) := by
     rw [f2_timed_control_init]
     exact f2_timed_capture D M₁ M₂ _ u (fun s hsu => Nat.find_min hh (by omega))
-  obtain ⟨r, hrle, hr, hrheads⟩ := f2_rewind_heads (f2_timedCondTM D M₁ M₂).tm
+  obtain ⟨r, hrle, hr, hrheads⟩ := rewind_heads (f2_timedCondTM D M₁ M₂).tm
     (.inr (.inr (.inl (b, false)))) (.inr (.inr (.inl (b, true))))
     (some (.inr (.inr (.inr (branchTM M₁ M₂ b).tm.q₀))))
     (fun _ _ => rfl) (fun inp _ => by cases inp <;> rfl)
@@ -10896,7 +10914,7 @@ private lemma a2_loop_prepare (body F : FinTM Bool) (anchor : body.State)
       (f2_loopFuelCaptured body F c) (3 * c.output.length + 4) = prepared := by
     conv_lhs => arg 1; rw [f2_loopFuelCaptured_frame body F c hc]
     exact f2_loopHost_fuel_setup body F anchor false _ _ _ _ _
-  obtain ⟨v, hv, hrew, hrewheads⟩ := f2_rewind_heads
+  obtain ⟨v, hv, hrew, hrewheads⟩ := rewind_heads
     (f2_loopHost body F anchor false).tm (.inr (.inr 4)) (.inr (.inr 5))
     (.some (.inr (.inl (true, (body.tm.q₀, false)))))
     (fun _ _ => f2_loopControl_idle body F .neg _)
@@ -11331,6 +11349,74 @@ def inputMoveAction {k : ℕ} {Symbol State : Type*} (inp : SignType) (q : State
     Action k Symbol State :=
   ⟨inp, fun _ => (none, 0), none, some q⟩
 
+/-- **One step of a non-writing one-tape action** (design §12.8a). If the machine's table
+gives `Turing.tapeAction i inp none m q'` at the current state and reads, one step moves
+the input head by `inp` and head `i` by `m`, enters `q'`, and changes nothing else.
+
+**Proof sketch.** Unfold `MultiTapeTM.step` and `Action.apply`; the work-tape fields are
+pointwise updates at `i`. -/
+theorem step_of_tapeAction_move {Symbol State : Type*} {k : ℕ} {x : List Symbol}
+    (M : MultiTapeTM k Symbol State) (c : Cfg k Symbol State x) {q q' : State} (i : Fin k)
+    (inp m : SignType) (hq : c.state = some q)
+    (htr : M.tr q c.inputSymbol c.workTapeSymbols = tapeAction i inp none m q') :
+    M.step c =
+      { c with
+        state := some q'
+        inputPos := moveInputPos c.inputPos inp
+        workTapePos := Function.update c.workTapePos i (c.workTapePos i + m) } := by
+  simp only [MultiTapeTM.step, hq, htr]
+  apply Cfg.ext <;> simp [Action.apply, tapeAction]
+  · funext j
+    by_cases hj : j = i
+    · subst hj; simp
+    · simp [hj]
+  · funext j
+    by_cases hj : j = i
+    · subst hj; simp
+    · simp [hj]
+
+/-- **One step of a writing one-tape action** (design §12.8a). If the machine's table
+gives `Turing.tapeAction i inp (some s) m q'` at the current state and reads, one step
+rewrites the scanned cell of tape `i` to `s`, moves the input head by `inp` and head `i`
+by `m`, enters `q'`, and changes nothing else.
+
+**Proof sketch.** As for `Turing.step_of_tapeAction_move`, with the written cell. -/
+theorem step_of_tapeAction_write {Symbol State : Type*} {k : ℕ} {x : List Symbol}
+    (M : MultiTapeTM k Symbol State) (c : Cfg k Symbol State x) {q q' : State} (i : Fin k)
+    (inp : SignType) (s : Option Symbol) (m : SignType) (hq : c.state = some q)
+    (htr : M.tr q c.inputSymbol c.workTapeSymbols = tapeAction i inp (some s) m q') :
+    M.step c =
+      { c with
+        state := some q'
+        inputPos := moveInputPos c.inputPos inp
+        workTapes := Function.update c.workTapes i
+          (Function.update (c.workTapes i) (c.workTapePos i) s)
+        workTapePos := Function.update c.workTapePos i (c.workTapePos i + m) } := by
+  simp only [MultiTapeTM.step, hq, htr]
+  apply Cfg.ext <;> simp [Action.apply, tapeAction]
+  · funext j
+    by_cases hj : j = i
+    · subst hj; simp
+    · simp [hj]
+  · funext j
+    by_cases hj : j = i
+    · subst hj; simp
+    · simp [hj]
+
+/-- **One step of an input-only action** (design §12.8a). If the machine's table gives
+`Turing.inputMoveAction inp q'` at the current state and reads, one step moves the input
+head by `inp`, enters `q'`, and changes nothing else. At `inp = 0` (with
+`moveInputPos_zero`) this is every live anchor's stationarity.
+
+**Proof sketch.** Unfold `MultiTapeTM.step` and `Action.apply`. -/
+theorem step_of_inputMoveAction {Symbol State : Type*} {k : ℕ} {x : List Symbol}
+    (M : MultiTapeTM k Symbol State) (c : Cfg k Symbol State x) {q q' : State}
+    (inp : SignType) (hq : c.state = some q)
+    (htr : M.tr q c.inputSymbol c.workTapeSymbols = inputMoveAction inp q') :
+    M.step c = { c with state := some q', inputPos := moveInputPos c.inputPos inp } := by
+  simp only [MultiTapeTM.step, hq, htr]
+  apply Cfg.ext <;> simp [Action.apply, inputMoveAction]
+
 /-! ### The field layout -/
 
 /-- **The field layout** (design §12.8a). A list of fields laid out as cells,
@@ -11352,6 +11438,87 @@ one cell, `(joinFields fs).length + 1`, which is where a further field would
 start. The empty layout has offset `0` there, not `1`. -/
 def fieldOffset {Γ : Type*} (fs : List (List Γ)) (j : ℕ) : ℕ :=
   ((fs.take j).map (·.length + 1)).sum
+
+/-- **The field layout, one field at a time** (§12.8 fill): two or more fields are the first
+field, a separator, and the layout of the rest. -/
+theorem joinFields_cons_cons {Γ : Type*} (u v : List Γ) (fs : List (List Γ)) :
+    joinFields (u :: v :: fs) = u.map some ++ none :: joinFields (v :: fs) := by
+  simp [joinFields, List.intercalate, List.intersperse_cons₂]
+
+/-- **The layout tape past the first field** (§12.8 fill): beyond the first field and its
+separator, the tape of `u :: v :: fs` is the tape of `v :: fs`, from relative position `-1`
+(the separator itself) on.
+
+**Proof sketch.** `Turing.joinFields_cons_cons`, then `List.getElem?_append_right` at the
+shifted index. -/
+theorem fieldsTape_cons_shift {Γ : Type*} (u v : List Γ) (fs : List (List Γ)) (z : ℤ)
+    (hz : -1 ≤ z) :
+    fieldsTape (u :: v :: fs) ((u.length : ℤ) + 1 + z) = fieldsTape (v :: fs) z := by
+  unfold fieldsTape
+  rw [joinFields_cons_cons, if_pos (by omega)]
+  by_cases h0 : 0 ≤ z
+  · rw [if_pos h0]
+    have he : ((u.length : ℤ) + 1 + z).toNat = u.length + (z.toNat + 1) := by omega
+    rw [he, List.getElem?_append_right (by simp)]
+    simp
+  · rw [if_neg h0]
+    have he : ((u.length : ℤ) + 1 + z).toNat = u.length + 0 := by omega
+    rw [he, List.getElem?_append_right (by simp)]
+    simp
+
+/-- **The next field's offset** (§12.8 fill): field `j + 1` starts one separator after
+field `j` ends. -/
+theorem fieldOffset_succ {Γ : Type*} (fs : List (List Γ)) (j : ℕ) (hj : j < fs.length) :
+    fieldOffset fs (j + 1) = fieldOffset fs j + (fs[j].length + 1) := by
+  unfold fieldOffset
+  rw [List.take_succ, List.map_append, List.sum_append]
+  simp [List.getElem?_eq_getElem hj]
+
+/-- **Offsets past a first field** (§12.8 fill). -/
+theorem fieldOffset_cons_succ {Γ : Type*} (u : List Γ) (fs : List (List Γ)) (j : ℕ) :
+    fieldOffset (u :: fs) (j + 1) = u.length + 1 + fieldOffset fs j := by
+  simp [fieldOffset, List.take_succ_cons]
+
+/-- **The end offset** (§12.8 fill): for a nonempty layout, the offset past the last field
+is the layout's length plus one, where a further field would start.
+
+**Proof sketch.** Induct on the fields with `Turing.joinFields_cons_cons` and
+`Turing.fieldOffset_cons_succ`. -/
+theorem length_joinFields_add_one {Γ : Type*} (fs : List (List Γ)) (hfs : fs ≠ []) :
+    (joinFields fs).length + 1 = fieldOffset fs fs.length := by
+  induction fs with
+  | nil => exact absurd rfl hfs
+  | cons u fs ih =>
+    cases fs with
+    | nil => simp [joinFields, fieldOffset, List.intercalate]
+    | cons v fs =>
+      have h := ih (List.cons_ne_nil v fs)
+      have e1 : (u :: v :: fs).length = (v :: fs).length + 1 := rfl
+      rw [joinFields_cons_cons, e1, fieldOffset_cons_succ, ← h]
+      simp only [List.length_append, List.length_cons, List.length_map]
+      omega
+
+/-- **Every field lies inside the layout** (§12.8 fill): field `j` ends by the layout's end.
+
+**Proof sketch.** Offsets increase with `j` (`Turing.fieldOffset_succ`), and the offset past
+the last field is the layout's length plus one (`Turing.length_joinFields_add_one`). -/
+theorem fieldOffset_add_length_le {Γ : Type*} (fs : List (List Γ)) (j : ℕ)
+    (hj : j < fs.length) : fieldOffset fs j + fs[j].length ≤ (joinFields fs).length := by
+  have hne : fs ≠ [] := List.ne_nil_of_length_pos (by omega)
+  have hend := length_joinFields_add_one fs hne
+  have hmono : ∀ i, j + 1 ≤ i → i ≤ fs.length → fieldOffset fs (j + 1) ≤ fieldOffset fs i := by
+    intro i h1 h2
+    induction i with
+    | zero => omega
+    | succ i ih =>
+      rcases Nat.lt_or_ge (j + 1) (i + 1) with h | h
+      · have := ih (by omega) (by omega)
+        rw [fieldOffset_succ fs i (by omega)]; omega
+      · have : j + 1 = i + 1 := by omega
+        rw [this]
+  have h1 := hmono fs.length (by omega) le_rfl
+  rw [fieldOffset_succ fs j hj] at h1
+  omega
 
 /-- **Each field is a framed word** (design §12.8a). In the tape of a field
 list, field `j` read from its offset is the delimited word of §12.6: its cells

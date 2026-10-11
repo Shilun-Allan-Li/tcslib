@@ -5,6 +5,7 @@ Authors: Seyoon Ragavan
 -/
 import TCSlib.Complexity.TuringMachine.Build.Convention
 import TCSlib.Complexity.TuringMachine.StateRenaming
+import TCSlib.Complexity.TuringMachine.Build.Embed
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -36,6 +37,9 @@ every §12 contract is proved (§12 fill epoch F1, gate closed 2026-10-09). The
 §12.8 two-exit row `Turing.seamCompTM₂_run_ofCfg` (R8.8) is a statement,
 sorried with a proof sketch, pending the §12.8 fill; its companion, the left
 prefix `Turing.seamCompTM_runFrom_left`, is the promoted proved private lemma.
+The **phase host** `Turing.phaseHostTM`, with `Turing.phaseHostTM_run` (proved), is the
+finite-dispatch generalization: many phases and a redirect table, one dispatch step per
+redirect (landed before the §12.8 fill for the record rows).
 
 ## Design
 
@@ -756,5 +760,56 @@ theorem seamReleaseTM_visitedByTapeHead {Symbol : Type*} {x : List Symbol} (M : 
     rfl
   · rw [seamRelease_run_pos M anchor c hc s (Nat.pos_of_ne_zero hs)]
     rfl
+
+/-! ### The phase host: finite dispatch over many phases (§12.8 fill)
+
+`Turing.seamCompTM` dispatches one exit and `Turing.seamCompTM₂` two. A module that branches
+on finite data, or repeats a row a data-dependent but bounded number of times, needs one host
+over a finite family of phases with a redirect table. -/
+
+/-- **The phase host** (design §12.8a, record rows; §12.8 fill). Phase `i` runs `M i`. A
+state that `red` maps to `some q` takes one stationary, silent dispatch step to `q`; every
+other state follows its phase's table. With two phases and one redirect it is the seam
+discipline of `Turing.seamCompTM`. -/
+def phaseHostTM {k : ℕ} {Γ : Type} {I : Type} {Ph : I → Type}
+    (M : (i : I) → MultiTapeTM k Γ (Ph i)) (q0 : Σ i, Ph i)
+    (red : (i : I) → Ph i → Option (Σ i, Ph i)) : MultiTapeTM k Γ (Σ i, Ph i) where
+  q₀ := q0
+  tr := fun q inp w =>
+    match red q.1 q.2 with
+    | some q' => ⟨0, fun _ => (none, 0), none, some q'⟩
+    | none => ((M q.1).tr q.2 inp w).mapState (Sigma.mk q.1)
+
+/-- **The phase lemma** (§12.8 fill). Run phase `i` from `c` for `T` steps to `c'`, ending in
+a state that `red` redirects to `q'`, with no redirect earlier. Then, up to `T`, the host is
+the phase run with states tagged by `i`; one dispatch step later it is `c'` with only its
+control replaced by `q'`.
+
+**Proof sketch.** Before the exit the host's table agrees with the tagged phase table on every
+reached state, so the agreement transfer `Turing.MultiTapeTM.runFrom_mapState_of_agreeOn`
+gives the prefix; the dispatch is one explicit step. No seam induction is repeated. -/
+theorem phaseHostTM_run {k : ℕ} {Γ : Type} {I : Type} {Ph : I → Type}
+    (M : (i : I) → MultiTapeTM k Γ (Ph i)) (q0 : Σ i, Ph i)
+    (red : (i : I) → Ph i → Option (Σ i, Ph i)) (i : I) {x : List Γ}
+    (c c' : Cfg k Γ (Ph i) x) (T : ℕ) (h : (M i).runFrom c T = c') (s' : Ph i)
+    (hs' : c'.state = some s') (q' : Σ i, Ph i) (hred : red i s' = some q')
+    (hguard : ∀ u < T, ∀ s, ((M i).runFrom c u).state = some s → red i s = none) :
+    (∀ u ≤ T, (phaseHostTM M q0 red).runFrom (c.mapState (Sigma.mk i)) u =
+        ((M i).runFrom c u).mapState (Sigma.mk i)) ∧
+      (phaseHostTM M q0 red).runFrom (c.mapState (Sigma.mk i)) (T + 1) =
+        c'.mapState (fun _ => q') := by
+  have hpre : ∀ u ≤ T, (phaseHostTM M q0 red).runFrom (c.mapState (Sigma.mk i)) u =
+      ((M i).runFrom c u).mapState (Sigma.mk i) := by
+    intro u hu
+    exact MultiTapeTM.runFrom_mapState_of_agreeOn (M i) (phaseHostTM M q0 red)
+      ⟨Sigma.mk i, sigma_mk_injective⟩ (fun s => red i s = none)
+      (fun s hs inp work => by simp only [phaseHostTM, Function.Embedding.coeFn_mk, hs])
+      c u (fun v hv s hs => hguard v (by omega) s hs)
+  refine ⟨hpre, ?_⟩
+  rw [MultiTapeTM.runFrom_succ_eq_step', hpre T le_rfl, h]
+  have hst : (c'.mapState (Sigma.mk i)).state = some ⟨i, s'⟩ := by
+    simp [Cfg.mapState, hs']
+  simp only [MultiTapeTM.step, hst, phaseHostTM, hred]
+  apply Cfg.ext <;> simp [Cfg.mapState, hs']
 
 end Turing

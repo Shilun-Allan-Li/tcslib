@@ -6,6 +6,7 @@ Authors: Seyoon Ragavan
 import Mathlib.Data.Nat.Bits
 import TCSlib.Complexity.TuringMachine.Build.Catalog
 import TCSlib.Complexity.TuringMachine.SymbolLift
+import TCSlib.Complexity.TuringMachine.Build.InputCall
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
