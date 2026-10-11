@@ -45,7 +45,7 @@ ranging over `{0, 1}`, and `φ` a plain Boolean formula. Phase P4.3 of
 * `Complexity.QBF.truth` — the truth value, by recursion on the prefix.
   [AB09, Definition 4.10 and Example 4.11]
 
-## Main results (sorried; phase-P4.3 statement)
+## Main results
 
 * `Complexity.QBF.truth_exPrefix_iff_satisfiable` — an all-`∃` prefix covering
   the matrix's variables renders exactly satisfiability: the `SAT` embedding
@@ -103,8 +103,51 @@ variable is bound, a closed formula's truth is assignment-independent. -/
 def truth (Q : QBF) : Prop :=
   truthAux Q.matrix Q.quants (fun _ => false) 0
 
-/-- **The `SAT` embedding** ([AB09, Example 4.12]; spec, fill pending —
-phase P4.3): under an all-`∃` prefix covering every matrix variable, truth
+/-- Q1: existential-prefix truth supplies a satisfying final assignment,
+without any hypothesis that the prefix covers the matrix. -/
+private theorem satisfiable_of_exPrefix (m : CNF ℕ) (j : ℕ)
+    (σ : ℕ → Bool) (i : ℕ) :
+    truthAux m (List.replicate j .ex) σ i → m.Satisfiable := by
+  induction j generalizing σ i with
+  | zero => exact fun h => ⟨σ, h⟩
+  | succ j ih =>
+      rintro ⟨b, hb⟩
+      exact ih (Function.update σ i b) (i + 1) hb
+
+/-- Q2: updating the next position with the target bit extends prefix
+agreement by one position. -/
+private theorem update_prefix_agreement (σ τ : ℕ → Bool) (i : ℕ)
+    (h : ∀ v < i, σ v = τ v) :
+    ∀ v < i + 1, Function.update σ i (τ i) v = τ v := by
+  intro v hv
+  by_cases he : v = i
+  · subst v
+    exact Function.update_self i (τ i) σ
+  · rw [Function.update_of_ne he]
+    exact h v (by omega)
+
+/-- Q3: a satisfying assignment extends any matching consumed prefix through
+an existential suffix covering all remaining matrix variables.
+
+**Proof sketch.** Induct on the suffix length. Choose the satisfying bit
+at the next position, extending agreement by Q2. At length zero, coverage
+and prefix agreement imply equality of matrix evaluations by
+`eval_congr_of_lt_numVars`. -/
+private theorem exPrefix_of_satisfying (m : CNF ℕ) (τ : ℕ → Bool)
+    (hτ : m.eval τ = true) (j : ℕ) (σ : ℕ → Bool) (i : ℕ)
+    (hag : ∀ v < i, σ v = τ v) (hcover : m.numVars ≤ i + j) :
+    truthAux m (List.replicate j .ex) σ i := by
+  induction j generalizing σ i with
+  | zero =>
+      change m.eval σ = true
+      rw [eval_congr_of_lt_numVars (fun v hv => hag v (by omega))]
+      exact hτ
+  | succ j ih =>
+      refine ⟨τ i, ih (Function.update σ i (τ i)) (i + 1) ?_ ?_⟩
+      · exact update_prefix_agreement σ τ i hag
+      · omega
+
+/-- **The `SAT` embedding** ([AB09, Example 4.12]): under an all-`∃` prefix covering every matrix variable, truth
 is exactly satisfiability of the matrix.
 
 **Proof sketch.** Forward: the recursion's witnesses assemble an assignment
@@ -115,10 +158,18 @@ satisfying `σ`, choose the witness `σ i` at step `i`; after `n` updates the
 built assignment agrees with `σ` below `numVars m ≤ n`, and
 `eval_congr_of_lt_numVars` closes. Fill obligations: the update-prefix
 agreement lemma (`Function.update` accumulation agrees with `σ` on the
-consumed segment) and the two inductions. -/
+consumed segment) and the two inductions.
+
+**C1d proof-sketch appendix.** The forward induction simply returns the
+final total assignment; it needs no coverage hypothesis or evaluation
+transport. Only the backward induction uses the matrix-variable bound. -/
 theorem truth_exPrefix_iff_satisfiable (m : CNF ℕ) (n : ℕ) (hn : m.numVars ≤ n) :
     QBF.truth ⟨List.replicate n .ex, m⟩ ↔ m.Satisfiable := by
-  sorry
+  constructor
+  · exact satisfiable_of_exPrefix m n (fun _ => false) 0
+  · rintro ⟨τ, hτ⟩
+    exact exPrefix_of_satisfying m τ hτ n (fun _ => false) 0
+      (by intro v hv; omega) (by simpa using hn)
 
 end QBF
 

@@ -343,7 +343,22 @@ that each step's register bound comes from the reachability hypothesis at that s
 theorem sim_run_of_regs_le (B : ℕ) (t : ℕ) (s : St R Λ) (hp : s.pos ≤ x.length)
     (hB : ∀ j < t, ∀ r, (run P x s j).regs r ≤ B) :
     ∃ t' ≤ t * (2 * B + 5), (toTM P l₀).tm.runFrom (enc x s) t' = enc x (run P x s t) := by
-  sorry
+  induction t generalizing s with
+  | zero => exact ⟨0, Nat.zero_le _, by rw [run_zero, MultiTapeTM.runFrom_zero]⟩
+  | succ t ih =>
+    obtain ⟨a, ha, hstep⟩ := sim_run P x l₀ (B + 1) 1 s hp (fun r => by
+      have h := hB 0 (Nat.zero_lt_succ t) r
+      rw [run_zero] at h
+      omega)
+    have hp' : (run P x s 1).pos ≤ x.length := by
+      rw [(run_succ P x s 0).trans (run_zero P x _)]
+      exact step_pos_le P x s hp
+    obtain ⟨b, hb, hsuffix⟩ := ih (run P x s 1) hp' (by
+      intro j hj r
+      have h := hB (1 + j) (by omega) r
+      rwa [run_add] at h)
+    refine ⟨a + b, by nlinarith, ?_⟩
+    rw [MultiTapeTM.runFrom_add, hstep, hsuffix, ← run_add, Nat.add_comm 1 t]
 
 /-- **A counter program is a Turing machine**: if the program halts on `x` after `t`
 abstract steps, its machine computes the program's output within `t (2t + 3)` steps.

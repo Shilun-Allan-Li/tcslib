@@ -60,7 +60,13 @@ relativization theorem ([AB09, Theorem 3.7], phase P3.2).
 * `Turing.OracleNDTM.HaltsWithin.mono` — all-branch halting is monotone (proved,
   same unfolding argument as `Turing.NDTM.HaltsWithin.mono`).
 * `Turing.OracleTM.toOracleNDTM_runWith` — the embedded deterministic oracle
-  machine ignores its choices (sorried; the lockstep obligation of phase P3.1).
+  machine ignores its choices (proved; the lockstep obligation of phase P3.1).
+
+* `Turing.OracleNDTM.fixChoice` — the deterministic machine at a fixed choice bit.
+* `Turing.OracleNDTM.stepWith_eq_fixChoice_step` — the fixed-choice step bridge.
+* `Turing.OracleNDTM.stepWith_eq_of_ne_qQuery` — oracle independence off the query state.
+* `Turing.OracleNDTM.runWith_workTapes_invariant` — initialized head and blank-cell bounds.
+* `Turing.OracleNDTM.queryString_runWith_length_le` — the branchwise query-length bound.
 
 ## References
 
@@ -261,6 +267,17 @@ theorem OracleTM.toOracleNDTM_wellFormed {M : OracleTM k Symbol State}
     (h : M.WellFormed) : M.toOracleNDTM.WellFormed :=
   ⟨h.qQuery_ne_qYes, h.qQuery_ne_qNo, h.qYes_ne_qNo⟩
 
+/-- An embedded deterministic oracle step agrees with the original step under
+either choice bit.
+
+**Proof sketch.** Unfold the two step definitions once and split on the state;
+the halted, query and ordinary branches have identical fields. -/
+private theorem toOracleNDTM_stepWith (M : OracleTM k Symbol State)
+    (O : Language Symbol) (b : Bool) (cfg : Cfg (k + 1) Symbol State input) :
+    M.toOracleNDTM.stepWith O b cfg = M.step O cfg := by
+  unfold OracleNDTM.stepWith OracleTM.step
+  cases hs : cfg.state <;> rfl
+
 /-- The embedded deterministic oracle machine ignores its choices: running
 `toOracleNDTM` under any choice word `w` with oracle `O` is running the original
 machine for `|w|` steps with the same oracle — the oracle counterpart of
@@ -279,7 +296,123 @@ theorem OracleTM.toOracleNDTM_runWith (M : OracleTM k Symbol State)
     (O : Language Symbol) {input : List Symbol} (w : List Bool)
     (cfg : Cfg (k + 1) Symbol State input) :
     M.toOracleNDTM.runWith O w cfg = M.runFrom O cfg w.length := by
-  sorry
+  induction w generalizing cfg with
+  | nil => rfl
+  | cons b w ih =>
+    show M.toOracleNDTM.runWith O w (M.toOracleNDTM.stepWith O b cfg) =
+      M.runFrom O (M.step O cfg) w.length
+    rw [toOracleNDTM_stepWith]
+    exact ih (M.step O cfg)
+
+/-- Fixing the choice bit of a nondeterministic oracle machine gives a
+deterministic oracle machine with the same initial and special states.
+[AB09, Definition 3.4]
+
+**Proof sketch.** Keep the four states and select the transition table at `b`. -/
+def OracleNDTM.fixChoice (N : OracleNDTM k Symbol State) (b : Bool) :
+    OracleTM k Symbol State := ⟨N.q₀, N.qQuery, N.qYes, N.qNo, N.tr b⟩
+
+/-- A nondeterministic oracle step under bit `b` is the deterministic step of
+the machine with its choice fixed to `b`.
+
+**Proof sketch.** Apply the deterministic embedding's step identity to the
+fixed-choice machine; the nondeterministic steps are definitionally equal. -/
+theorem OracleNDTM.stepWith_eq_fixChoice_step (N : OracleNDTM k Symbol State)
+    (O : Language Symbol) (b : Bool) (cfg : Cfg (k + 1) Symbol State input) :
+    N.stepWith O b cfg = (N.fixChoice b).step O cfg :=
+  toOracleNDTM_stepWith (N.fixChoice b) O b cfg
+
+/-- Away from the query state, a nondeterministic step under a fixed bit is
+independent of the oracle.
+
+**Proof sketch.** Pass through the fixed-choice machine and cite deterministic
+oracle independence away from the query state. -/
+theorem OracleNDTM.stepWith_eq_of_ne_qQuery {N : OracleNDTM k Symbol State}
+    (O₁ O₂ : Language Symbol) {b : Bool} {cfg : Cfg (k + 1) Symbol State input}
+    (h : cfg.state ≠ some N.qQuery) : N.stepWith O₁ b cfg = N.stepWith O₂ b cfg := by
+  rw [OracleNDTM.stepWith_eq_fixChoice_step, OracleNDTM.stepWith_eq_fixChoice_step]
+  exact OracleTM.step_eq_of_ne_qQuery (M := N.fixChoice b) O₁ O₂ h
+
+/-- Heads bounded by `n` and cells blank at distance at least `n` remain bounded
+and blank beyond the enlarged radius `n + w.length` after a branch run.
+
+**Proof sketch.** Induct on the choice word, generalizing the starting
+configuration and radius. Through the fixed-choice bridge, the deterministic
+one-step bounds increase the head radius by one and preserve cells outside
+that new radius, since they differ from the old head. Apply the induction
+hypothesis to the suffix. -/
+private theorem runWith_headBlank (N : OracleNDTM k Symbol State)
+    (O : Language Symbol) (w : List Bool) (n : ℕ)
+    (cfg : Cfg (k + 1) Symbol State input)
+    (hpos : ∀ i, |cfg.workTapePos i| ≤ (n : ℤ))
+    (hblank : ∀ i (z : ℤ), (n : ℤ) ≤ |z| → cfg.workTapes i z = none) :
+    (∀ i, |(N.runWith O w cfg).workTapePos i| ≤ ((n + w.length : ℕ) : ℤ)) ∧
+      ∀ i (z : ℤ), ((n + w.length : ℕ) : ℤ) ≤ |z| →
+        (N.runWith O w cfg).workTapes i z = none := by
+  induction w generalizing n cfg with
+  | nil => simpa only [OracleNDTM.runWith_nil, List.length_nil, Nat.add_zero] using
+      And.intro hpos hblank
+  | cons b w ih =>
+    have nextPos : ∀ i, |(N.stepWith O b cfg).workTapePos i| ≤ ((n + 1 : ℕ) : ℤ) := by
+      intro i
+      rw [OracleNDTM.stepWith_eq_fixChoice_step]
+      have move := (N.fixChoice b).workTapePos_step_le O cfg i
+      have old := hpos i
+      rw [abs_le] at move old ⊢
+      omega
+    have nextBlank : ∀ i (z : ℤ), ((n + 1 : ℕ) : ℤ) ≤ |z| →
+        (N.stepWith O b cfg).workTapes i z = none := by
+      intro i z hz
+      have different : z ≠ cfg.workTapePos i := by
+        intro heq
+        have old := hpos i
+        rw [← heq] at old
+        omega
+      rw [OracleNDTM.stepWith_eq_fixChoice_step,
+        (N.fixChoice b).workTapes_step_eq_of_ne O i different]
+      exact hblank i z (by omega)
+    have suffix := ih (n + 1) (N.stepWith O b cfg) nextPos nextBlank
+    simpa only [OracleNDTM.runWith_cons, List.length_cons,
+      Nat.add_assoc, Nat.add_comm 1 w.length] using suffix
+
+/-- After an initialized branch run, every work head is within the number of
+steps of the origin, and every cell at least that far from the origin is blank.
+[AB09, proof of Theorem 3.7, applied branchwise]
+
+**Proof sketch.** Specialize the generalized head/blank invariant to radius
+zero: initially every work head is at zero and every work tape is blank. -/
+theorem OracleNDTM.runWith_workTapes_invariant (N : OracleNDTM k Symbol State)
+    (O : Language Symbol) (x : List Symbol) (w : List Bool) :
+    (∀ i, |(N.runWith O w (N.initCfg x)).workTapePos i| ≤ (w.length : ℤ)) ∧
+      ∀ i (z : ℤ), (w.length : ℤ) ≤ |z| → (N.runWith O w (N.initCfg x)).workTapes i z = none := by
+  simpa only [Nat.zero_add] using
+    runWith_headBlank N O w 0 (N.initCfg x) (by intro i; simp)
+      (by intro i z _; rfl)
+
+/-- A blank at the nonnegative query-tape cell `n` bounds the extracted query
+length by `n`, from any configuration.
+
+**Proof sketch.** The least blank exists with witness `n` and is at most `n`.
+Filtering the preceding range cannot increase its length. This is requested
+for the shared home `Oracle.lean`. -/
+private theorem queryString_length_le_of_blank (cfg : Cfg (k + 1) Symbol State input)
+    (n : ℕ) (h : cfg.workTapes (OracleTM.queryTapeIdx k) (n : ℤ) = none) :
+    (OracleTM.queryString cfg).length ≤ n := by
+  classical
+  rw [OracleTM.queryString, dif_pos ⟨n, h⟩]
+  refine (List.length_filterMap_le _ _).trans ?_
+  simpa using (Nat.find_le (h := ⟨n, h⟩) h)
+
+/-- The query string after an initialized nondeterministic branch run has length
+at most the length of the choice word. [AB09, proof of Theorem 3.7, branchwise]
+
+**Proof sketch.** The initialized invariant keeps the query cell at the branch
+length blank. The blank-cell bound then bounds the extracted query. -/
+theorem OracleNDTM.queryString_runWith_length_le (N : OracleNDTM k Symbol State)
+    (O : Language Symbol) (x : List Symbol) (w : List Bool) :
+    (OracleTM.queryString (N.runWith O w (N.initCfg x))).length ≤ w.length := by
+  exact queryString_length_le_of_blank _ w.length
+    ((N.runWith_workTapes_invariant O x w).2 _ _ (le_abs_self _))
 
 /-- A bundled deterministic oracle machine as a bundled nondeterministic one, with
 the same tapes, state type, and special states. -/

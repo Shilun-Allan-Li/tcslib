@@ -29,7 +29,7 @@ claimed here.
 * `Complexity.NL` — nondeterministic logarithmic space. [AB09, Definition 4.5]
 * `Complexity.coNL` — complements of `NL` languages. [AB09, §4.3.2]
 
-## Main results (sorried; phase-P4.1 statements)
+## Main results (proved; phase-P4.1 statements)
 
 * `Complexity.space_poly_subset_PSPACE`, `Complexity.PSPACE_subset_NPSPACE`,
   `Complexity.LOGSPACE_subset_NL` — the definitional inclusions.
@@ -67,20 +67,20 @@ def coNL : Set (Language Bool) := {L | Lᶜ ∈ NL}
 **Proof sketch.** `Set.subset_iUnion` at the given degree, as for
 `Complexity.dtime_poly_subset_P`. -/
 theorem space_poly_subset_PSPACE (c : ℕ) : SPACE (fun n => n ^ c + 1) ⊆ PSPACE := by
-  sorry
+  exact Set.subset_iUnion (fun d : ℕ => SPACE fun n => n ^ d + 1) c
 
 /-- `PSPACE ⊆ NPSPACE`: determinism is a special case, degree by degree.
 
 **Proof sketch.** `Complexity.SPACE_subset_NSPACE` at each degree, then the
 union is monotone (`Set.iUnion_mono`). -/
 theorem PSPACE_subset_NPSPACE : PSPACE ⊆ NPSPACE := by
-  sorry
+  exact Set.iUnion_mono fun c => SPACE_subset_NSPACE (fun n => n ^ c + 1)
 
 /-- `L ⊆ NL` (in the campaign's names, `LOGSPACE ⊆ NL`).
 [AB09, p. 92 chain]
 
 **Proof sketch.** `Complexity.SPACE_subset_NSPACE` at `Complexity.logSpace`. -/
 theorem LOGSPACE_subset_NL : LOGSPACE ⊆ NL := by
-  sorry
+  exact SPACE_subset_NSPACE logSpace
 
 end Complexity

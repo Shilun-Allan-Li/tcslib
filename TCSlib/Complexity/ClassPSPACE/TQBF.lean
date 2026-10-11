@@ -6,6 +6,7 @@ Authors: Seyoon Ragavan
 import TCSlib.Complexity.Formulas.QBFEncoding
 import TCSlib.Complexity.SpaceComplexity.ConfigGraph
 import TCSlib.Complexity.SpaceComplexity.Constructible
+import TCSlib.Complexity.SpaceComplexity.Inclusions
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -62,7 +63,7 @@ adjacency-formula half of Claim 4.4(2), and the Stockmeyer-Meyer theorem that
 * `Complexity.TQBF` — the true quantified Boolean formulas, over
   `Complexity.QBF.decode`. [AB09, §4.2, before Theorem 4.13]
 
-## Main results (all sorried; phase-P4.3 statements)
+## Main results (four phase-P4.3 statements remain sorried)
 
 * `Complexity.PSPACE_eq_P_of_pspaceComplete_mem_P` — a `PSPACE`-complete
   language in `P` collapses `PSPACE` to `P`. [AB09, §4.2, after Definition 4.9]
@@ -112,7 +113,7 @@ def PSPACEComplete (L' : Language Bool) : Prop :=
   L' ∈ PSPACE ∧ PSPACEHard L'
 
 /-- **A `PSPACE`-complete language in `P` collapses the class**
-([AB09, §4.2, the paragraph after Definition 4.9]; spec, fill pending):
+([AB09, §4.2, the paragraph after Definition 4.9]; proved modulo `P_subset_PSPACE`):
 if some `PSPACE`-complete `L'` lies in `P`, then `PSPACE = P`.
 
 **Proof sketch.** `⊇` is `Complexity.P_subset_PSPACE` (phase P4.1). `⊆`: a
@@ -120,7 +121,8 @@ if some `PSPACE`-complete `L'` lies in `P`, then `PSPACE = P`.
 `≤ₚ` (`Complexity.mem_P_of_polyTimeReducible`, chapter 2). -/
 theorem PSPACE_eq_P_of_pspaceComplete_mem_P {L' : Language Bool}
     (h : PSPACEComplete L') (hP : L' ∈ P) : PSPACE = P := by
-  sorry
+  exact Set.Subset.antisymm
+    (fun L hL => mem_P_of_polyTimeReducible (h.2 L hL) hP) P_subset_PSPACE
 
 /-- **Claim 4.4(2), packaged quotient form** (spec, fill pending — phase
 P4.3 round 2; see the module docstring's declared deviations): for every

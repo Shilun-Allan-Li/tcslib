@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Seyoon Ragavan
 -/
 import TCSlib.Complexity.SpaceComplexity.Examples
+import TCSlib.Complexity.SpaceComplexity.Machines.Bin
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -18,13 +19,13 @@ collapses to the zero-work-tape class as soon as `s` has a **single** zero — i
 particular the literal `SPACE (fun n => n)` is not linear space — while additive
 normalization by `+ 1` is harmless for everywhere-positive bounds. These
 statements pin the campaign convention (every asymptotic chapter bound is
-everywhere positive) to elaborated sanity statements — their proofs are fill
-obligations; the round-2 audit certified each statement true as stated — so
+everywhere positive) to proved sanity statements; the round-2 audit certified
+each statement true as stated — so
 the convention cannot be overlooked. The
 zero-space class is nevertheless not trivial: constant languages and the parity
 language have zero-work-tape deciders (input is read in finite control).
 
-## Main results (sorried; P0 round-1 sanity statements)
+## Main results
 
 * `Turing.FinTM.k_le_spaceUsed` — S1: the tape count lower-bounds the space, at
   every input and time.
@@ -66,7 +67,14 @@ number of work tapes, on every input at every time.
 constant-one function). -/
 theorem k_le_spaceUsed (M : FinTM Bool) (x : List Bool) (t : ℕ) :
     M.k ≤ M.tm.spaceUsed (M.tm.initCfg x) t := by
-  sorry
+  classical
+  calc
+    M.k = ∑ _ : Fin M.k, 1 := by simp
+    _ ≤ M.tm.spaceUsed (M.tm.initCfg x) t := by
+      apply Finset.sum_le_sum
+      intro i _
+      exact Finset.card_pos.mpr
+        ((show (Finset.range (t + 1)).Nonempty from ⟨0, by simp⟩).image _)
 
 /-- **S2 — one zero of the bound forces zero work tapes**: a machine computing
 within space `s` where `s n₀ = 0` for even a single length `n₀` has no work
@@ -79,7 +87,11 @@ tapes at all (and hence zero space on **every** input).
 theorem ComputesInSpace.k_eq_zero_of_exists_zero {M : FinTM Bool}
     {f : List Bool → List Bool} {s : ℕ → ℕ} (h : M.ComputesInSpace f s)
     (hz : ∃ n, s n = 0) : M.k = 0 := by
-  sorry
+  obtain ⟨n, hn⟩ := hz
+  obtain ⟨t, _, ht⟩ := h (List.replicate n false)
+  have hk := k_le_spaceUsed M (List.replicate n false) t
+  simp only [List.length_replicate, hn] at ht
+  omega
 
 end Turing.FinTM
 
@@ -100,7 +112,13 @@ pointwise, so the zero-space contract weakens to any bound
 (`Turing.FinTM.ComputesInSpace.mono`). -/
 theorem SPACE_eq_zero_of_exists_zero {s : ℕ → ℕ} (hz : ∃ n, s n = 0) :
     SPACE s = SPACE (fun _ => 0) := by
-  sorry
+  apply Set.Subset.antisymm
+  · rintro L ⟨c, M, hM⟩
+    have hk : M.k = 0 := hM.k_eq_zero_of_exists_zero (hz.imp fun n hn => by simp [hn])
+    refine ⟨0, M, ?_⟩
+    exact (FinTM.computesInSpace_zero_of_k_eq_zero (M := M) hk
+      (fun x => (hM x).imp fun _ h => h.1)).mono (fun _ => Nat.zero_le _)
+  · exact SPACE.mono fun _ => Nat.zero_le _
 
 /-- **S3, instantiated — literal `SPACE (fun n => n)` is the zero-work-tape
 class**, because of the zero at the empty input. This is the statement that
@@ -111,7 +129,7 @@ with everywhere-positive functions (`fun n => n + 1`, `fun n => n ^ c + 1`,
 
 **Proof sketch.** `Complexity.SPACE_eq_zero_of_exists_zero` at `⟨0, rfl⟩`. -/
 theorem SPACE_id_eq_SPACE_zero : SPACE (fun n => n) = SPACE (fun _ => 0) := by
-  sorry
+  exact SPACE_eq_zero_of_exists_zero ⟨0, rfl⟩
 
 /-- **S4, first half — `+ 1` is invisible on everywhere-positive bounds**:
 `SPACE s = SPACE (fun n => s n + 1)` when `0 < s n` for all `n`.
@@ -121,7 +139,9 @@ positivity `s n + 1 ≤ 2 * s n`, so a `c · (s n + 1)` contract is a
 `(2c) · s n` contract — constant absorption inside the class's existential. -/
 theorem SPACE_succ_of_pos {s : ℕ → ℕ} (hpos : ∀ n, 0 < s n) :
     SPACE s = SPACE (fun n => s n + 1) := by
-  sorry
+  exact Set.Subset.antisymm
+    (SPACE.mono fun n => Nat.le_succ (s n))
+    (SPACE.mono_const (a := 2) fun n => by have := hpos n; omega)
 
 /-- **S4, second half — for arbitrary bounds, `+ 1` is the `max 1`
 normalization**: `SPACE (fun n => s n + 1) = SPACE (fun n => max 1 (s n))`.
@@ -131,7 +151,9 @@ normalization**: `SPACE (fun n => s n + 1) = SPACE (fun n => max 1 (s n))`.
 absorption, as in `Complexity.SPACE_succ_of_pos`. -/
 theorem SPACE_succ_eq_max_one (s : ℕ → ℕ) :
     SPACE (fun n => s n + 1) = SPACE (fun n => max 1 (s n)) := by
-  sorry
+  apply Set.Subset.antisymm
+  · exact SPACE.mono_const (a := 2) fun n => show s n + 1 ≤ 2 * max 1 (s n) by omega
+  · exact SPACE.mono fun n => show max 1 (s n) ≤ s n + 1 by omega
 
 end Complexity
 
@@ -150,13 +172,32 @@ components, and `Nat.bits` is injective (its value inverse — the
 Backward: congruence. -/
 theorem pairEncode_bits_inj (x y : List Bool) (i j : ℕ) :
     pairEncode x (Nat.bits i) = pairEncode y (Nat.bits j) ↔ x = y ∧ i = j := by
-  sorry
+  constructor
+  · intro h
+    have hp := pairEncode_injective (a₁ := (x, Nat.bits i)) (a₂ := (y, Nat.bits j)) h
+    exact ⟨congrArg Prod.fst hp, Complexity.LogProg.bits_injective (congrArg Prod.snd hp)⟩
+  · rintro ⟨rfl, rfl⟩
+    rfl
 
 end Turing
 
 namespace Complexity
 
 open Turing
+
+/-- A zero-work-tape machine emits `true` and halts in one transition.
+The missing catalog row is a one-step constant verdict: the existing
+private `constTM` takes two steps, and `transducer_run` halts silently. -/
+private def constTrueTM : FinTM Bool where
+  k := 0
+  State := Unit
+  tm := { q₀ := (), tr := fun _ _ _ => ⟨0, fun i => i.elim0, some true, none⟩ }
+
+/-- The constant-verdict machine halts with `[true]` within one step on
+any input; the single transition both emits and halts. -/
+private theorem constTrueTM_computesInTime (x : List Bool) :
+    constTrueTM.ComputesInTime x [true] 1 :=
+  (FinTM.computesInTime_iff _ _ _ _).mpr ⟨rfl, rfl⟩
 
 /-- **S6a — the zero-space class contains the constant languages**: the full
 language is decided by a zero-work-tape machine (emit `[true]`, halt), with
@@ -166,7 +207,10 @@ space `0` and even constant `c = 0` in the class existential.
 emits `true` and halts; `spaceUsed` is the empty sum. Halting time `1` feeds
 `Turing.FinTM.ComputesInSpace`'s existential. -/
 theorem trueLang_mem_SPACE_zero : ({x | True} : Language Bool) ∈ SPACE fun _ => 0 := by
-  sorry
+  refine ⟨0, constTrueTM,
+    FinTM.computesInSpace_zero_of_k_eq_zero (M := constTrueTM) rfl ?_⟩
+  intro x
+  exact ⟨1, by simpa [MultiTapeTM.indicator] using constTrueTM_computesInTime x⟩
 
 /-- **S6b — the zero-space class is not only constants**: parity
 (`Complexity.evenLang`) has a zero-work-tape decider — the input is read
@@ -183,7 +227,10 @@ parity and halts; the scan invariant is the parity of the consumed prefix, as
 in the direct machine of `Complexity.evenLang_mem_LOGSPACE`'s sketch, minus the
 work tape. -/
 theorem evenLang_mem_SPACE_zero : evenLang ∈ SPACE fun _ => 0 := by
-  sorry
+  refine ⟨0, evenScanTM,
+    FinTM.computesInSpace_zero_of_k_eq_zero (M := evenScanTM) rfl ?_⟩
+  intro x
+  exact ⟨x.length + 1, evenScanTM_decidesInTime x⟩
 
 /-- **S6a with the time contract** (P0 round 2, finding 12): a zero-work-tape
 machine computes `[true]` within **one step** on every input — the explicit
@@ -196,7 +243,7 @@ every input, and the space is the empty sum. -/
 theorem exists_zeroTape_const_oneStep :
     ∃ M : Turing.FinTM Bool, M.k = 0 ∧
       ∀ x : List Bool, M.ComputesInTime x [true] 1 := by
-  sorry
+  exact ⟨constTrueTM, rfl, constTrueTM_computesInTime⟩
 
 /-- **S6b with the time contract** (P0 round 2, finding 12): a zero-work-tape
 machine decides the parity language within `n + 1` steps — the explicit
@@ -212,6 +259,6 @@ emit `[Turing.MultiTapeTM.indicator evenLang x]` and halt, within
 theorem exists_zeroTape_parity_decider :
     ∃ M : Turing.FinTM Bool, M.k = 0 ∧
       M.DecidesInTime evenLang fun n => n + 1 := by
-  sorry
+  exact ⟨evenScanTM, rfl, evenScanTM_decidesInTime⟩
 
 end Complexity

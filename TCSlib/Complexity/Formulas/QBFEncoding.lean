@@ -39,7 +39,7 @@ decoding.
 * `Complexity.QBF.encode`, `Complexity.QBF.decode` — serialization and total
   decoding.
 
-## Main results (sorried; phase-P4.3 statement)
+## Main results
 
 * `Complexity.QBF.decode_encode` — decoding inverts encoding.
 
@@ -79,13 +79,21 @@ def decode (x : List Bool) : QBF :=
   | some (q, m) => ⟨q.map quantOfBit, CNF.decode m⟩
   | none => ⟨[], CNF.fallback⟩
 
-/-- **Decoding inverts encoding** (spec, fill pending — phase P4.3): every
+/-- The one-bit quantifier representation is inverted by `quantOfBit`. -/
+private theorem quantOfBit_quantBit (q : Quant) : quantOfBit (quantBit q) = q := by
+  cases q <;> rfl
+
+/-- **Decoding inverts encoding**: every
 serialized formula decodes to itself.
 
 **Proof sketch.** `Turing.pairDecode_pairEncode` splits the pair;
 `quantOfBit ∘ quantBit = id` by cases (`List.map_map` and `List.map_id`);
 `CNF.decode_serialize` (chapter 2) recovers the matrix. -/
 theorem decode_encode (Q : QBF) : decode (encode Q) = Q := by
-  sorry
+  cases Q with
+  | mk qs m =>
+      simp only [encode, decode, pairDecode_pairEncode, List.map_map, CNF.decode_serialize]
+      congr 1
+      exact List.map_id'' quantOfBit_quantBit qs
 
 end Complexity.QBF
