@@ -46,7 +46,8 @@ contracts are proved; the three class results remain sorried for S1b.
   (`Turing.FinNDTM.configBound`).
 * **The graph is the step relation, not a finite object**: `Turing.NDTM.CfgStep`
   is a relation on configurations, with `Relation.ReflTransGen` as
-  reachability; the finite counting enters only through the (sorried) bounds.
+  reachability; the finite counting enters only through the configuration-count
+  bounds (`acceptsWithin_of_spaceUsedWith_le`, proved).
   Efficient vertex *encoding* reuses `Turing.MultiTapeTM.ConfigCount.coreCode`;
   the adjacency CNF of Claim 4.4(2) is deliberately phase P4.3.
 * **Facade wiring**: root-wired while the P4.1 gate was live; since that
