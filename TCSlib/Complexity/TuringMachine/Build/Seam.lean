@@ -31,12 +31,11 @@ round-1 finding stands: *function-level* contracts cannot deliver
 clean-return seams, so composing `ComputesFunInTime` contracts can never
 replace this combinator.
 
-**Status: proved, except the §12.8 row.** The composite is a real definition
+**Status: proved.** The composite is a real definition
 (state-sum dispatch in `Turing.bufferedCompTM`'s style, kept minimal), and
 every §12 contract is proved (§12 fill epoch F1, gate closed 2026-10-09). The
-§12.8 two-exit row `Turing.seamCompTM₂_run_ofCfg` (R8.8) is a statement,
-sorried with a proof sketch, pending the §12.8 fill; its companion, the left
-prefix `Turing.seamCompTM_runFrom_left`, is the promoted proved private lemma.
+§12.8 two-exit row `Turing.seamCompTM₂_run_ofCfg` (R8.8) is proved from the left
+prefix `Turing.seamCompTM_runFrom_left` and the existing right lockstep.
 The **phase host** `Turing.phaseHostTM`, with `Turing.phaseHostTM_run` (proved), is the
 finite-dispatch generalization: many phases and a redirect table, one dispatch step per
 redirect (landed before the §12.8 fill for the record rows).
@@ -637,7 +636,47 @@ theorem seamCompTM₂_run_ofCfg {Symbol : Type*} {S₀ : Type*} {x : List Symbol
       (seamCompTM₂ M₀ e₁ e₂ M₁ entry₁ M₂ entry₂).runFrom
           ((c₀.mapState Sum.inl).mapState Sum.inl) (T₀ + 1 + t) =
         (M₂.runFrom (c₁.mapState fun _ => entry₂) t).mapState Sum.inr) := by
-  sorry
+  constructor
+  · intro h1 t
+    have hcut₁ : ∀ s < T₀, (M₀.runFrom c₀ s).state ≠ some e₁ := fun s hs => (hcut s hs).1
+    have hinner : ∀ s, (seamCompTM M₀ e₁ M₁ entry₁).runFrom (c₀.mapState Sum.inl)
+        (T₀ + 1 + s) = (M₁.runFrom (c₁.mapState fun _ => entry₁) s).mapState Sum.inr :=
+      fun s => seamCompTM_run_ofCfg M₀ e₁ M₁ entry₁ h₀ h1 hcut₁ rfl
+    have hcutO : ∀ s < T₀ + 1 + t, ((seamCompTM M₀ e₁ M₁ entry₁).runFrom
+        (c₀.mapState Sum.inl) s).state ≠ some (Sum.inl e₂) := by
+      intro s hs h
+      by_cases hle : s ≤ T₀
+      · rw [seamCompTM_runFrom_left M₀ e₁ M₁ entry₁ hcut₁ s hle] at h
+        rcases Nat.lt_or_ge s T₀ with hlt | hge
+        · exact (hcut s hlt).2 (by simpa [Cfg.mapState] using h)
+        · obtain rfl : s = T₀ := by omega
+          rw [h₀] at h
+          exact he (by simpa [Cfg.mapState, h1] using h)
+      · obtain ⟨r, rfl⟩ : ∃ r, s = T₀ + 1 + r := ⟨s - (T₀ + 1), by omega⟩
+        rw [hinner r] at h
+        simp [Cfg.mapState] at h
+    have h := seamCompTM_runFrom_left (seamCompTM M₀ e₁ M₁ entry₁) (Sum.inl e₂) M₂ entry₂
+      hcutO (T₀ + 1 + t) le_rfl
+    rw [hinner t] at h
+    exact h
+  · intro h2 t
+    have hcut₁ : ∀ s < T₀, (M₀.runFrom c₀ s).state ≠ some e₁ := fun s hs => (hcut s hs).1
+    have hin : (seamCompTM M₀ e₁ M₁ entry₁).runFrom (c₀.mapState Sum.inl) T₀ =
+        c₁.mapState Sum.inl := by
+      rw [seamCompTM_runFrom_left M₀ e₁ M₁ entry₁ hcut₁ T₀ le_rfl, h₀]
+    have hcutO : ∀ s < T₀, ((seamCompTM M₀ e₁ M₁ entry₁).runFrom
+        (c₀.mapState Sum.inl) s).state ≠ some (Sum.inl e₂) := by
+      intro s hs h
+      rw [seamCompTM_runFrom_left M₀ e₁ M₁ entry₁ hcut₁ s hs.le] at h
+      exact (hcut s hs).2 (by simpa [Cfg.mapState] using h)
+    have hmap : ((c₁.mapState (Sum.inl : S₀ → S₀ ⊕ S₁)).mapState (fun _ => entry₂) :
+        Cfg k Symbol S₂ x) = c₁.mapState (fun _ => entry₂) := by
+      apply Cfg.ext <;> simp [Cfg.mapState, h2]
+    have h := seamCompTM_run_ofCfg (seamCompTM M₀ e₁ M₁ entry₁) (Sum.inl e₂) M₂ entry₂ hin
+      (by simp [Cfg.mapState, h2]) hcutO
+      (rfl : M₂.runFrom ((c₁.mapState (Sum.inl : S₀ → S₀ ⊕ S₁)).mapState fun _ => entry₂) t = _)
+    rw [hmap] at h
+    exact h
 
 variable {S : Type*}
 
