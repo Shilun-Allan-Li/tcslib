@@ -718,7 +718,11 @@ private theorem b2b_ledger_bound (C c cV e cI cP K : ℕ) :
 
 /-- A cleaned source's silent embedding has a single captured word and otherwise
 exactly the ambient frame. This pure configuration identity supplies both the
-startup and final configurations of setup and identity capture. -/
+startup and final configurations of setup and identity capture.
+
+**Proof sketch.** On the selected banks use the embedding's tape and head
+projections; elsewhere use the frame theorem. At the capture tape unfold the
+captured-output entry and its head at the word's length. -/
 private theorem b2b_capture_shape {k m : ℕ} {S : Type} {x : List Bool}
     (M : MultiTapeTM m Bool S) (ι : Fin m ↪ Fin k) (cap : Fin k)
     (hcap : cap ∉ Set.range ι) (tapes : Fin k → ℤ → Option Bool)
