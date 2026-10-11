@@ -138,6 +138,108 @@ theorem compQ_length_le {f : List Bool → List Bool} {C c : ℕ}
     · simp
   · simp
 
+/-- The kept prefix of `dropIdx` is read at stride four in its paired query host.
+The discarded middle field and the retained suffix are arbitrary words.
+
+**Proof sketch.** The two enclosing first-field encodings each double addresses. Below
+the separator of the innermost pair, changing its second field does not change a bit. -/
+private lemma dropIdx_prefix_address (w b b' tail : List Bool) (j : ℕ)
+    (hj : j < 2 * w.length + 2) :
+    (dropIdx (pairEncode (pairEncode w b) b')).getD j false =
+      (pairEncode (pairEncode (pairEncode w b) b') tail).getD (4 * j) false := by
+  have hu := length_pairEncode w b
+  have hz := length_pairEncode (pairEncode w b) b'
+  have h₁ : (pairEncode (pairEncode (pairEncode w b) b') tail).getD (4 * j) false =
+      (pairEncode (pairEncode w b) b').getD (2 * j) false := by
+    rw [pairEncode_getD, if_pos (by omega)]
+    congr 1
+    omega
+  have h₂ : (pairEncode (pairEncode w b) b').getD (2 * j) false =
+      (pairEncode w b).getD j false := by
+    rw [pairEncode_getD, if_pos (by omega)]
+    congr 1
+    omega
+  rw [h₁, h₂, dropIdx_pairEncode, pairEncode_getD, pairEncode_getD]
+  split_ifs <;> first | rfl | omega
+
+/-- A retained suffix bit is read after the doubled outer separator. This address is
+used only within the suffix; an out-of-range query must be rejected before making it.
+
+**Proof sketch.** Remove the host's outer doubling, then the discarded pair's doubled
+first field and separator. The remaining address is exactly the suffix index. -/
+private lemma dropIdx_suffix_address (w b b' tail : List Bool) (j : ℕ) (hj : j < b'.length) :
+    (dropIdx (pairEncode (pairEncode w b) b')).getD (2 * w.length + 2 + j) false =
+      (pairEncode (pairEncode (pairEncode w b) b') tail).getD
+        (4 * (pairEncode w b).length + 4 + 2 * j) false := by
+  have hz := length_pairEncode (pairEncode w b) b'
+  have h₁ : (pairEncode (pairEncode (pairEncode w b) b') tail).getD
+        (4 * (pairEncode w b).length + 4 + 2 * j) false =
+      (pairEncode (pairEncode w b) b').getD (2 * (pairEncode w b).length + 2 + j) false := by
+    rw [pairEncode_getD, if_pos (by omega)]
+    congr 1
+    omega
+  rw [h₁, dropIdx_pairEncode, pairEncode_getD, pairEncode_getD]
+  rw [if_neg (by omega), if_neg (by omega), if_neg (by omega),
+    if_neg (by omega), if_neg (by omega), if_neg (by omega)]
+  congr 1
+  omega
+
+/-- Passing a binary-width check bounds the decoded value by twice the cap, including a
+zero cap. This also bounds every partial value in a most-significant-bit-first decoder.
+
+**Proof sketch.** The value is below `2 ^ size n`. For positive `n`, its top binary place
+is at most `n`, hence `2 ^ size n ≤ 2*n`; at zero both canonical representations are empty. -/
+private lemma query_index_bound (r n : ℕ)
+    (hwidth : (Nat.bits r).length ≤ (Nat.bits n).length) : r ≤ 2 * n := by
+  rw [Nat.size_eq_bits_len, Nat.size_eq_bits_len] at hwidth
+  have hr := Nat.size_le.mp hwidth
+  by_cases hn : n = 0
+  · subst n
+    simp only [Nat.size_zero, pow_zero] at hr
+    omega
+  · have hs : 0 < n.size := Nat.size_pos.mpr (Nat.pos_of_ne_zero hn)
+    have htop : 2 ^ (n.size - 1) ≤ n := Nat.lt_size.mp (by omega)
+    have hpow : 2 ^ n.size = 2 * 2 ^ (n.size - 1) := by
+      conv_lhs => rw [show n.size = (n.size - 1) + 1 by omega, pow_succ]
+      omega
+    rw [hpow] at hr
+    omega
+
+/-- Discarding low-order digits cannot increase a binary word's value. -/
+private lemma query_suffix_value_le (w : List Bool) (j : ℕ) :
+    LogProg.bitsVal (w.drop j) ≤ LogProg.bitsVal w := by
+  induction j generalizing w with
+  | zero => simp
+  | succ j ih =>
+    cases w with
+    | nil => simp [LogProg.bitsVal]
+    | cons b w =>
+      have h := ih w
+      simp only [List.drop_succ_cons, LogProg.bitsVal]
+      omega
+
+/-- The width test bounds every accumulator of the reverse tail scan before decoding it.
+Canonicality is required only of the query index, never of `dropIdx`'s payload fields. -/
+private lemma query_accumulator_bound (w : List Bool) (n j : ℕ) (hc : LogProg.Canon w)
+    (hwidth : w.length ≤ (Nat.bits n).length) : LogProg.bitsVal (w.drop j) ≤ 2 * n := by
+  apply (query_suffix_value_le w j).trans
+  apply query_index_bound
+  simpa only [← LogProg.canon_eq_bits w hc] using hwidth
+
+/-- The canonical-index length overflow test makes both queries false before its
+numerical value is accumulated. -/
+private lemma dropIdx_query_overflow (z : List Bool) (r : ℕ)
+    (hlarge : (Nat.bits ((pairEncode z (Nat.bits r)).length)).length < (Nat.bits r).length) :
+    (dropIdx z).getD r false = false ∧ ¬ r < (dropIdx z).length := by
+  have hr : (pairEncode z (Nat.bits r)).length < r := by
+    by_contra h
+    have hb := LogProg.length_bits_mono (Nat.le_of_not_gt h)
+    omega
+  have hz := length_pairEncode z (Nat.bits r)
+  have hd := dropIdx_length_le z
+  have hout : (dropIdx z).length ≤ r := by omega
+  exact ⟨by simp [List.getD_eq_getElem?_getD, List.getElem?_eq_none hout], by omega⟩
+
 /-- **Dropping the middle index is implicitly logspace computable** (phase P4.4b; spec, fill
 pending).
 
