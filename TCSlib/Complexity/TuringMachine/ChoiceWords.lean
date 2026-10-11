@@ -19,8 +19,8 @@ relativized developments ([AB09, Definition 2.1 and Theorem 2.6]).
 
 * **Split uniqueness.** When the certificate length is a function `f` of the input
   length and `n ↦ n + f n` is strictly increasing, a concatenation `x ++ u` with
-  `|u| = f |x|` determines `x` and `u`. The exact NP certificate length
-  `C·(n + 1)^c` is such an `f`, including at `C = 0` and `c = 0`.
+  `|u| = f |x|` determines `x` and `u`. The exact NP and NEXP certificate lengths
+  `C·(n + 1)^c` and `C·2^((n + 1)^c)` are such `f`s, including at `C = 0` and `c = 0`.
 * **Branch truncation.** For any run along a choice word whose halted runs absorb
   further choices, if every run along a word of length `t` has halted, then the run
   along a longer word is the run along its length-`t` prefix. With the budget
@@ -38,7 +38,9 @@ private copies.
 
 * `Turing.append_split_unique` — a concatenation with a length-determined suffix splits
   uniquely.
-* `Turing.certificateLength_strictMono` — `n ↦ n + C·(n + 1)^c` is strictly increasing.
+* `Turing.certificateLength_strictMono`, `Turing.expCertificateLength_strictMono` — the
+  exact NP and NEXP certificate lengths, `n + C·(n + 1)^c` and `n + C·2^((n + 1)^c)`, are
+  strictly increasing.
 * `Turing.choiceBudget_le` — `a·(n^c + 1) ≤ 2a·(n + 1)^c`.
 * `Turing.run_take_of_halted` — truncate a choice word to a length at which every run
   has halted.
@@ -73,6 +75,15 @@ theorem certificateLength_strictMono (C c : ℕ) :
   intro n m hnm
   exact Nat.add_lt_add_of_lt_of_le hnm
     (Nat.mul_le_mul_left C (Nat.pow_le_pow_left (by omega) c))
+
+/-- The total length of an input and its exact NEXP certificate, `n + C·2^((n + 1)^c)`, is
+strictly increasing in the input length, including `C = 0` and `c = 0` ([AB09, §2.6.2],
+the exponential-length certificates of `Complexity.NEXP`). -/
+theorem expCertificateLength_strictMono (C c : ℕ) :
+    StrictMono fun n : ℕ => n + C * 2 ^ (n + 1) ^ c := by
+  intro n m hnm
+  exact Nat.add_lt_add_of_lt_of_le hnm (Nat.mul_le_mul_left C
+    (Nat.pow_le_pow_right (by omega) (Nat.pow_le_pow_left (by omega) c)))
 
 /-- **The choice budget.** The exact choice-word length `2a·(n + 1)^c` covers the time
 bound `a·(n^c + 1)`, uniformly at `n = 0` and `c = 0`.

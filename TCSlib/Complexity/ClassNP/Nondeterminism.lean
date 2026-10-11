@@ -80,7 +80,8 @@ the choice-word truncation are shared with the relativized development
 (`Build/OracleSim.lean`) and the plain certificate shell (`Build/CertShell.lean`) through
 `TuringMachine/ChoiceWords.lean`. `certificate_split_strictMono`, `certificate_split_unique`
 and `choice_budget_le` were removed in favour of `Turing.certificateLength_strictMono`,
-`Turing.append_split_unique` and `Turing.choiceBudget_le`; `e3_split_unique` and
+`Turing.append_split_unique` and `Turing.choiceBudget_le`, and `e3_split_strictMono` in favour
+of `Turing.expCertificateLength_strictMono`; `e3_split_unique` and
 `acceptsWithin_iff_of_halts` now cite `append_split_unique` and
 `Turing.run_take_of_halted`. Statements and every other proof are unchanged.
 -/
@@ -2341,21 +2342,12 @@ theorem NP_eq_iUnion_NTIME : NP = ⋃ c : ℕ, NTIME fun n => n ^ c + 1 := by
 
 /-! ### Exponential split and evaluation infrastructure -/
 
-/-- Exponential padding has a unique split, including coefficient zero and
-degree zero: the prefix length increases strictly and the suffix length
-is nondecreasing. -/
-private lemma e3_split_strictMono (C c : ℕ) :
-    StrictMono (fun n : ℕ => n + C * 2 ^ (n + 1) ^ c) := by
-  intro n m hnm
-  exact Nat.add_lt_add_of_lt_of_le hnm (Nat.mul_le_mul_left C
-    (Nat.pow_le_pow_right (by omega) (Nat.pow_le_pow_left (by omega) c)))
-
 /-- Exact exponential widths make both parts of a concatenation unique. -/
 private lemma e3_split_unique (C c : ℕ) {x u y v : List Bool}
     (hu : u.length = C * 2 ^ (x.length + 1) ^ c)
     (hv : v.length = C * 2 ^ (y.length + 1) ^ c) (h : x ++ u = y ++ v) :
     x = y ∧ u = v :=
-  append_split_unique (f := fun n => C * 2 ^ (n + 1) ^ c) (e3_split_strictMono C c) hu hv h
+  append_split_unique (f := fun n => C * 2 ^ (n + 1) ^ c) (expCertificateLength_strictMono C c) hu hv h
 
 /-- The finite exponential-length search, with an explicit failure value. -/
 private def e3Split (C c m : ℕ) : Option ℕ :=
