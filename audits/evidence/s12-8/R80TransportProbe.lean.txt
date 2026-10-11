@@ -1,0 +1,42 @@
+import TCSlib.Complexity.TuringMachine.SymbolLift
+import TCSlib.Complexity.TuringMachine.Build.CounterLoop
+
+set_option autoImplicit false
+
+/-! R8.0 transport probe (maintainer): axioms of the 14 public declarations, and the
+lifted framed-increment corollary as a one-line consequence. -/
+
+namespace Turing
+
+-- A lifted framed row is a one-line consequence (here: increment, success case).
+example {Γ : Type} [DecidableEq Γ] (e : Bool ↪ Γ) {k : ℕ} {x : List Bool} (i : Fin k)
+    (w v : List Bool) (hv : incFixed w = some v) (d : Cfg k Bool FlagPhase x)
+    (hstate : d.state = some FlagPhase.run)
+    (hw : ∀ p : ℤ, -1 ≤ p → p ≤ (w.length : ℤ) →
+      d.workTapes i (d.workTapePos i + p) = FinTM.bufferTape w p) :
+    ((incrementTM k i).liftSymbols e).runFrom (d.liftSymbols e) (2 * (w.takeWhile id).length + 2) =
+      ({ d with
+          state := some (FlagPhase.done true)
+          workTapes := fun j q =>
+            if j = i ∧ d.workTapePos j ≤ q ∧ q < d.workTapePos j + (w.length : ℤ)
+              then FinTM.bufferTape v (q - d.workTapePos j)
+            else d.workTapes j q } : Cfg k Bool FlagPhase x).liftSymbols e := by
+  rw [MultiTapeTM.liftSymbols_runFrom, (incrementTM_run_succ_ofCfg i w v hv d hstate hw).1]
+
+
+end Turing
+
+#print axioms Turing.decodeBool
+#print axioms Turing.decodeBool_apply
+#print axioms Turing.Action.liftSymbols
+#print axioms Turing.Cfg.liftSymbols
+#print axioms Turing.MultiTapeTM.liftSymbols
+#print axioms Turing.Cfg.liftSymbols_inputSymbol
+#print axioms Turing.MultiTapeTM.liftSymbols_step
+#print axioms Turing.MultiTapeTM.liftSymbols_runFrom
+#print axioms Turing.Cfg.liftSymbols_state
+#print axioms Turing.Cfg.liftSymbols_workTapePos
+#print axioms Turing.MultiTapeTM.liftSymbols_initCfg
+#print axioms Turing.MultiTapeTM.liftSymbols_spaceUsed
+#print axioms Turing.FinTM.liftSymbols
+#print axioms Turing.FinTM.liftSymbols_computesFunInTimeVia
