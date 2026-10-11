@@ -54,4 +54,11 @@ The three swept modules are identical with comments stripped, elaborate at
   paired-layout obligations. The multiplication probe *assumes* the
   algorithm's correctness invariant, and the fill must prove it.
 
+**Catch-up after PR #26 (B1).** B1 changed `Finite.lean`, which the Logspace
+modules import, so the branch merged the new campaign tip and re-ran B7's
+downstream closure against B1's olean tree. The user ran it from the
+maintainer's command (`audits/logs/b7-statements-catchup-replay.log`). It
+covers 8 modules at `4c6629c9`: 0 errors, and the same 17 sorry warnings as
+the statement sweep.
+
 **Gate CLOSED. PR #24 is clear to merge.**
