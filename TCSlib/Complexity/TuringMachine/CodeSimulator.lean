@@ -92,10 +92,12 @@ records each. [AB09, §1.4] -/
 def codeSkipTableK (k n : ℕ) : List Bool → Option (List Bool) :=
   codeSkipRepeat ((fun r => codeSkipRepeat r 3)^[k + 1] (codeSkipActionK k n)) (n + 1)
 
+/-- A one-tape read vector built by `Fin.cons` is the constant function. -/
 private lemma fin_cons_one (w : Option Bool) :
     (Fin.cons w Fin.elim0 : Fin 1 → Option Bool) = fun _ => w := by
   funext i; fin_cases i; rfl
 
+/-- A two-tape read vector built by `Fin.cons` is the `Turing.workPair` of its entries. -/
 private lemma fin_cons_two (w₀ w₁ : Option Bool) :
     (Fin.cons w₀ (fun _ : Fin 1 => w₁) : Fin 2 → Option Bool) = workPair w₀ w₁ := by
   funext i; fin_cases i <;> rfl
@@ -144,6 +146,8 @@ def MachineFormat.toFinTM (F : MachineFormat) (M : F.Code) : FinTM Bool where
   State := Fin (F.numStates M + 1)
   tm := F.machine M
 
+/-- The one-tape format's table skipper is the generic skipper at one work tape: the
+framed one-tape action skipper is `Turing.codeSkipActionK 1`. -/
 private lemma oneTape_skipTable_eq (n : ℕ) (xs : List Bool) :
     oneTapeFormat.skipTable n xs = codeSkipTableK 1 n xs := by
   have h : codeSkipAction n = codeSkipActionK 1 n :=
@@ -151,6 +155,8 @@ private lemma oneTape_skipTable_eq (n : ℕ) (xs : List Bool) :
   show codeSkipRepeat (codeSkipRepeat (codeSkipRepeat (codeSkipAction n) 3) 3) (n + 1) xs = _
   rw [h]; rfl
 
+/-- The frozen one-tape serialization is the generic one at one work tape, record for
+record (`Turing.workReadsK_one`, `Turing.actionBits_eq_actionBitsK`). -/
 private lemma oneTape_serialize_eq (M : CodeTM) : M.serialize = serializeK M.tm := by
   unfold CodeTM.serialize serializeK tableBitsK
   rw [workReadsK_one]
@@ -185,6 +191,14 @@ fixed grammar (`F.skipTable_eq`, `Turing.codeSkipTableK`): `n + 1` rounds of
 `3^(k+1)` records, each field by a finite-state check and each successor field
 by a binary range check. After the guard every round consumes at least
 `4k + 5` cells (`Turing.codeActionK_length`), so there are at most `|α|` rounds.
+**The guard may be `0`** (wave-1 statement gate, round 1, finding 5). `F.guard` is
+unconstrained, and a zero guard bounds nothing, so the guard check alone does not bound
+`n`. Add the grammar-derived necessary check: a successful parse consumes at least
+`(4k + 5) · 3^(k+1) · (n + 1)` table bits, a positive multiple of `n + 1`. Run it in binary
+against a decrementing copy of `bits n`, failing fast once the suffix is exhausted. Early
+rejection by this check or by the guard yields exactly the prescribed fallback, because
+`F.scan` fails on the same inputs (`Turing.CodeFormat.canonical_eq`). No stronger
+`MachineFormat` hypothesis is needed.
 Check the all-`true` suffix. On success copy the consumed prefix to the output;
 on failure emit the constant `F.serialize F.fallback`. Every phase is polynomial
 in `|α|`; take `d` at least the coefficient and the exponent. -/

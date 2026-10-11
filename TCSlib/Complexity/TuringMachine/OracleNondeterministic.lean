@@ -340,7 +340,11 @@ and blank beyond the enlarged radius `n + w.length` after a branch run.
 configuration and radius. Through the fixed-choice bridge, the deterministic
 one-step bounds increase the head radius by one and preserve cells outside
 that new radius, since they differ from the old head. Apply the induction
-hypothesis to the suffix. -/
+hypothesis to the suffix.
+
+**Factoring appendix (wave-1 statement gate, round 1, finding 2).** The one-step bound is
+the public `Turing.OracleTM.step_radius`, shared with `Oracle.lean`'s initialized
+invariant and `Build/OracleSim`'s preloaded query bound. -/
 private theorem runWith_headBlank (N : OracleNDTM k Symbol State)
     (O : Language Symbol) (w : List Bool) (n : ℕ)
     (cfg : Cfg (k + 1) Symbol State input)
@@ -353,24 +357,16 @@ private theorem runWith_headBlank (N : OracleNDTM k Symbol State)
   | nil => simpa only [OracleNDTM.runWith_nil, List.length_nil, Nat.add_zero] using
       And.intro hpos hblank
   | cons b w ih =>
+    have next := fun i => (N.fixChoice b).step_radius O cfg i n (hpos i) (hblank i)
     have nextPos : ∀ i, |(N.stepWith O b cfg).workTapePos i| ≤ ((n + 1 : ℕ) : ℤ) := by
       intro i
       rw [OracleNDTM.stepWith_eq_fixChoice_step]
-      have move := (N.fixChoice b).workTapePos_step_le O cfg i
-      have old := hpos i
-      rw [abs_le] at move old ⊢
-      omega
+      exact (next i).1
     have nextBlank : ∀ i (z : ℤ), ((n + 1 : ℕ) : ℤ) ≤ |z| →
         (N.stepWith O b cfg).workTapes i z = none := by
       intro i z hz
-      have different : z ≠ cfg.workTapePos i := by
-        intro heq
-        have old := hpos i
-        rw [← heq] at old
-        omega
-      rw [OracleNDTM.stepWith_eq_fixChoice_step,
-        (N.fixChoice b).workTapes_step_eq_of_ne O i different]
-      exact hblank i z (by omega)
+      rw [OracleNDTM.stepWith_eq_fixChoice_step]
+      exact (next i).2 z hz
     have suffix := ih (n + 1) (N.stepWith O b cfg) nextPos nextBlank
     simpa only [OracleNDTM.runWith_cons, List.length_cons,
       Nat.add_assoc, Nat.add_comm 1 w.length] using suffix

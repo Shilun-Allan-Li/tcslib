@@ -34,6 +34,7 @@ import TCSlib.Complexity.TuringMachine.Build.RecordTable
 import TCSlib.Complexity.TuringMachine.Build.CertShell
 import TCSlib.Complexity.TuringMachine.Build.OracleSim
 import TCSlib.Complexity.TuringMachine.CodeSimulator
+import TCSlib.Complexity.TuringMachine.ChoiceWords
 import TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction
 import TCSlib.Complexity.TuringMachine.Robustness.SingleTape
 import TCSlib.Complexity.TuringMachine.Robustness.Bidirectional
@@ -128,6 +129,10 @@ for the local modifications.
 * `CodeSimulator` — the format-parameterized uniform simulator over item 8's code formats
   (B5a): one bounded-acceptance interpreter and canonizer whose one- and two-tape instances are
   the EXPCOM and Codes2Tape code schemes. Statement phase.
+* `ChoiceWords` — certificate and choice words: split uniqueness for length-determined
+  suffixes, the exact NP certificate length's monotonicity, the choice budget, and the
+  truncation of halted branch runs. Shared by the plain Theorem 2.6, the oracle simulation's
+  choice-word law and the certificate shell (wave-1 statement gate, round 1).
 * `CounterProgInput` — transport a counter-program run past an input prefix
   that has already been consumed.
 * `Build/Convention`, `Build/Wrappers`, `Build/Loop`, `Build/Primitives` — the

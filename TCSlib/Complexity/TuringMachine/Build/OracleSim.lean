@@ -10,6 +10,7 @@ import TCSlib.Complexity.TuringMachine.Build.Seam
 import TCSlib.Complexity.TuringMachine.Build.Primitives
 import TCSlib.Complexity.TuringMachine.Build.Catalog
 import TCSlib.Complexity.TuringMachine.Build.InputCall
+import TCSlib.Complexity.TuringMachine.ChoiceWords
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -88,7 +89,10 @@ The plain certificate shell `Turing.FinTM.exists_certificateShell` and its proje
 Statements for the W2 gate. The three corollaries, the query-length lemma, the two
 choice-word lemmas and the word-placement facts are proved; the two rows
 `exists_plain_simulation` and `exists_choiceTM` are sorried with construction sketches,
-pending the W2 fill (the shell's row is in `Build/CertShell`).
+pending the W2 fill (the shell's row is in `Build/CertShell`). The query-length lemma and
+the choice-word law cite the shared `Turing.OracleTM.runFrom_radius` and
+`TCSlib.Complexity.TuringMachine.ChoiceWords`, with the initialized and plain developments
+(wave-1 statement gate, round 1, finding 2).
 
 ## References
 
@@ -151,10 +155,9 @@ its head at the origin, the query after `s` steps of any oracle run from `c` has
 most `s`, whatever the other tapes hold. The initialized bound
 `Turing.OracleTM.queryString_length_le` is the instance `c = M.initCfg x`. [AB09, §3.4]
 
-**Proof sketch.** Induction on `s` for the query tape alone: its head stays within `s` of
-the origin (`Turing.OracleTM.workTapePos_step_le`) and every query cell at distance at least
-`s` is still blank, since a step writes only under the old head
-(`Turing.OracleTM.workTapes_step_eq_of_ne`). Cell `s` is therefore blank, and
+**Proof sketch.** The radius bound `Turing.OracleTM.runFrom_radius` at radius `0` for the
+query tape: its head stays within `s` of the origin and every query cell at distance at
+least `s` is still blank. Cell `s` is therefore blank, and
 `Turing.OracleTM.queryString_length_le_of_blank` bounds the query. -/
 theorem OracleTM.queryString_runFrom_length_le_of_blank {k : ℕ} {Symbol State : Type*}
     {input : List Symbol} (M : OracleTM k Symbol State) (O : Language Symbol)
@@ -162,34 +165,9 @@ theorem OracleTM.queryString_runFrom_length_le_of_blank {k : ℕ} {Symbol State 
     (hblank : ∀ z, c.workTapes (OracleTM.queryTapeIdx k) z = none)
     (hpos : c.workTapePos (OracleTM.queryTapeIdx k) = 0) (s : ℕ) :
     (OracleTM.queryString (M.runFrom O c s)).length ≤ s := by
-  have inv : ∀ s : ℕ,
-      |(M.runFrom O c s).workTapePos (OracleTM.queryTapeIdx k)| ≤ (s : ℤ) ∧
-        ∀ z : ℤ, (s : ℤ) ≤ |z| →
-          (M.runFrom O c s).workTapes (OracleTM.queryTapeIdx k) z = none := by
-    intro s
-    induction s with
-    | zero =>
-      refine ⟨?_, fun z _ => hblank z⟩
-      show |c.workTapePos (OracleTM.queryTapeIdx k)| ≤ ((0 : ℕ) : ℤ)
-      rw [hpos]
-      simp
-    | succ s ih =>
-      obtain ⟨hp, hb⟩ := ih
-      rw [OracleTM.runFrom_succ_eq_step']
-      refine ⟨?_, fun z hz => ?_⟩
-      · have h1 := M.workTapePos_step_le O (M.runFrom O c s) (OracleTM.queryTapeIdx k)
-        rw [abs_le] at h1 hp ⊢
-        push_cast
-        omega
-      · have hz' : ((s : ℤ) + 1) ≤ |z| := by exact_mod_cast hz
-        have hne : z ≠ (M.runFrom O c s).workTapePos (OracleTM.queryTapeIdx k) := by
-          intro he
-          rw [← he] at hp
-          have := le_trans hz' hp
-          omega
-        rw [M.workTapes_step_eq_of_ne O _ hne]
-        exact hb z (by omega)
-  exact OracleTM.queryString_length_le_of_blank _ s ((inv s).2 _ (le_abs_self _))
+  have h := M.runFrom_radius O c (OracleTM.queryTapeIdx k) 0 (by rw [hpos]; simp)
+    (fun z _ => hblank z) s
+  exact OracleTM.queryString_length_le_of_blank _ s (h.2 _ (by simp))
 
 /-! ### The oracle-call simulation -/
 
@@ -369,20 +347,17 @@ reading of choice words, relativized): if `N` decides `L` with oracle `O` within
 `a·(n^c + 1)`, then `x ∈ L` iff some choice word of length exactly `2a·(|x| + 1)^c` has
 outcome `[true]`.
 
-**Proof sketch.** `a·(n^c + 1) ≤ 2a·(n + 1)^c`. Forward, pad an accepting branch
-(`Turing.FinOracleNDTM.AcceptsWithin.mono`). Backward, the length-`a·(n^c + 1)` prefix of
-an accepting word has halted by all-branch halting, so by absorption
-(`Turing.OracleNDTM.runWith_append`, `Turing.OracleNDTM.runWith_of_halt`) it is the whole
-run, and it accepts. -/
+**Proof sketch.** `a·(n^c + 1) ≤ 2a·(n + 1)^c` (`Turing.choiceBudget_le`). Forward, pad an
+accepting branch (`Turing.FinOracleNDTM.AcceptsWithin.mono`). Backward, the
+length-`a·(n^c + 1)` prefix of an accepting word has halted by all-branch halting, so by
+absorption (`Turing.OracleNDTM.runWith_append`, `Turing.OracleNDTM.runWith_of_halt`) it is
+the whole run (`Turing.run_take_of_halted`, shared with the plain Theorem 2.6), and it
+accepts. -/
 theorem FinOracleNDTM.mem_iff_exists_choiceOut {N : FinOracleNDTM Bool} {O L : Language Bool}
     {a c : ℕ} (hN : N.DecidesInTime O L fun n => a * (n ^ c + 1)) (x : List Bool) :
     x ∈ L ↔ ∃ u : List Bool, u.length = 2 * a * (x.length + 1) ^ c ∧
       N.choiceOut O x u = [true] := by
-  have hle : a * (x.length ^ c + 1) ≤ 2 * a * (x.length + 1) ^ c := by
-    have h1 : x.length ^ c ≤ (x.length + 1) ^ c := Nat.pow_le_pow_left (Nat.le_succ _) c
-    have h2 : 1 ≤ (x.length + 1) ^ c := Nat.one_le_pow _ _ (Nat.succ_pos _)
-    calc a * (x.length ^ c + 1) ≤ a * (2 * (x.length + 1) ^ c) := Nat.mul_le_mul_left _ (by omega)
-      _ = 2 * a * (x.length + 1) ^ c := by ring
+  have hle : a * (x.length ^ c + 1) ≤ 2 * a * (x.length + 1) ^ c := choiceBudget_le a c _
   obtain ⟨hhalt, hacc⟩ := hN x
   constructor
   · intro hx
@@ -390,20 +365,24 @@ theorem FinOracleNDTM.mem_iff_exists_choiceOut {N : FinOracleNDTM Bool} {O L : L
     exact ⟨u, hu, (choiceOut_eq_true_iff N O x u).mpr ⟨h1, h2⟩⟩
   · rintro ⟨u, hu, hout⟩
     obtain ⟨-, h2⟩ := (choiceOut_eq_true_iff N O x u).mp hout
-    refine hacc.mpr ⟨u.take (a * (x.length ^ c + 1)), ?_, ?_⟩
-    · exact List.length_take_of_le (hu ▸ hle)
-    · have hh := hhalt (u.take (a * (x.length ^ c + 1))) (List.length_take_of_le (hu ▸ hle))
-      have hrun := OracleNDTM.runWith_append (N := N.tm) O (u.take (a * (x.length ^ c + 1)))
-        (u.drop (a * (x.length ^ c + 1))) (N.tm.initCfg x)
-      rw [List.take_append_drop, OracleNDTM.runWith_of_halt O _ hh] at hrun
-      exact ⟨hh, hrun ▸ h2⟩
+    obtain ⟨hlen, hh, hrun⟩ := run_take_of_halted
+      (fun w => N.tm.runWith O w (N.tm.initCfg x)) (fun c => c.state = none)
+      (fun w w' h => by
+        simp only [OracleNDTM.runWith_append (N := N.tm) O w w' (N.tm.initCfg x),
+          OracleNDTM.runWith_of_halt O _ h])
+      hhalt (hu ▸ hle)
+    exact hacc.mpr ⟨u.take (a * (x.length ^ c + 1)), hlen, hh, hrun ▸ h2⟩
 
 /-- **The choice-word machine** (row W2-C; [AB09, Theorem 2.6]'s certificate reading,
 relativized): every oracle NDTM `N` has a deterministic oracle machine `M`, with a
 designated ordinary *choice tape* `j`, that, started from `Cfg.ofWords` with the choice
 word `u` on tape `j` and every other tape empty, halts by `2|u| + 2` with output the
 outcome `N.choiceOut O x u` of `N` along `u` — under every oracle `O`. Its queries are
-`N`'s, submitted through its own query state.
+`N`'s, submitted through its own query state, with one exception: when `u` is exhausted at
+`N`'s query state, the host may submit that query and discard its answer before emitting
+`false`. For example, `u = []` with `N.q₀ = N.qQuery`: `N.runWith O []` makes no query. An
+oracle answer changes no tape and no output, so the contract is the I/O statement below,
+not the query trace (wave-1 statement gate, round 1, finding 4).
 
 **Proof sketch.** States `N.State ⊕ Fin 3`; tapes `N`'s ordinary tapes, the choice tape,
 then `N`'s query tape last (the query tape is shared verbatim, so the submitted strings

@@ -9,6 +9,7 @@ import TCSlib.Complexity.TuringMachine.Build.Seam
 import TCSlib.Complexity.TuringMachine.Build.Primitives
 import TCSlib.Complexity.TuringMachine.Build.Catalog
 import TCSlib.Complexity.TuringMachine.Build.InputCall
+import TCSlib.Complexity.TuringMachine.ChoiceWords
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -85,8 +86,9 @@ certificates of the prescribed length recovers the outcome condition, the split 
 `x ++ u` being unique because `n ↦ n + C·(n + 1)^c` is strictly increasing.
 
 **Proof sketch.** Equal concatenations with prescribed certificate lengths have equal
-total lengths, hence equal input lengths by strict monotonicity, hence equal parts
-(`List.append_inj`). -/
+parts: the shared split `Turing.append_split_unique` at
+`Turing.certificateLength_strictMono`, the same lemma the plain Theorem 2.6 uses (wave-1
+statement gate, round 1, finding 2). -/
 theorem FinTM.certificateShell_proj (C c : ℕ) (out : List Bool → List Bool → List Bool) :
     {x : List Bool | ∃ u, u.length = C * (x.length + 1) ^ c ∧
         x ++ u ∈ {y : List Bool | ∃ x u, y = x ++ u ∧ u.length = C * (x.length + 1) ^ c ∧
@@ -96,12 +98,8 @@ theorem FinTM.certificateShell_proj (C c : ℕ) (out : List Bool → List Bool �
   simp only [Set.mem_setOf_eq]
   constructor
   · rintro ⟨u, hu, x', u', he, hu', ho⟩
-    have hmono : StrictMono (fun n : ℕ => n + C * (n + 1) ^ c) := fun n m hnm =>
-      Nat.add_lt_add_of_lt_of_le hnm (Nat.mul_le_mul_left C (Nat.pow_le_pow_left (by omega) c))
-    have hlen := congrArg List.length he
-    simp only [List.length_append, hu, hu'] at hlen
-    have hx : x.length = x'.length := hmono.injective hlen
-    obtain ⟨rfl, rfl⟩ := List.append_inj he hx
+    obtain ⟨rfl, rfl⟩ := append_split_unique (f := fun n => C * (n + 1) ^ c)
+      (certificateLength_strictMono C c) hu hu' he
     exact ⟨u, hu, ho⟩
   · rintro ⟨u, hu, ho⟩
     exact ⟨u, hu, x, u, rfl, hu, ho⟩

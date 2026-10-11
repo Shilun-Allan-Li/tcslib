@@ -433,11 +433,21 @@ table (no field is empty, by `Turing.TableWF.field_ne_nil`). Otherwise it runs
 the fold over the entry's `m` fields, one `Turing.scanTM` fold per field from
 the state the previous field left (`Turing.scanTM_run_ofCfg` with
 `Turing.scanResult_fold` at `δ · (some ·)`), the separator step `δ a none`
-between consecutive fields, and `Turing.skipTM` after each, all by R2 seams
-with the fold state and a field counter in finite control. After the escape a
-stationary read of the cell tells the two exits apart. On acceptance, return
-over the entry's `m` fields by `Turing.skipBackTM_run_ofCfg` and answer `yes`;
-at the end, return by `Turing.tableRewindTM_run_ofCfg` and answer `no`. Clear
+between consecutive fields, and `Turing.skipTM` after each of the first `m - 1`
+fields, all by R2 seams with the fold state and a field counter in finite
+control. After the last field's fold, test `acc`: on acceptance escape **before**
+skipping that field, so the head is still on its nonblank cells; otherwise skip
+it and continue. A stationary read after the escape then tells the two exits
+apart, a nonblank cell meaning acceptance and the trailing blank the end of the
+table. On acceptance, return over the `m - 1` crossed fields and to the start
+of the current one by `Turing.skipBackTM_run_ofCfg`, and answer `yes`; at the
+end, return by `Turing.tableRewindTM_run_ofCfg` and answer `no`. (Round 1 of
+the wave-1 statement gate, finding 3: skipping the accepted final field would
+leave the head on the end-of-table blank. Take `m = 1`, `h = [true]`,
+`es = [[[true]]]` and an accepting fold: the entry starts at offset 2, and the
+skip would leave the head at offset 4, a blank, although `findIdx?` gives
+`some 0`. An explicit verdict bit carried across the escape is an equivalent
+alternative.) Clear
 the scratch counter. The rounds cost a constant times the entries' layouts, and
 the decrements at most `4r + 2|w|` for `r` rounds
 (`Turing.counterOverhead_le_of_le`). The value `m > 0` is necessary: with empty
