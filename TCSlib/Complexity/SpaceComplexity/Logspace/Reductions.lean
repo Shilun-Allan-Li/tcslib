@@ -6,6 +6,7 @@ Authors: Seyoon Ragavan
 import TCSlib.Complexity.SpaceComplexity.SpaceClasses
 import TCSlib.Complexity.SpaceComplexity.ImplicitPoly
 import TCSlib.Complexity.ClassNP.Reductions
+import TCSlib.Complexity.SpaceComplexity.Logspace.QueryReshape
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -78,14 +79,19 @@ implicitly logspace computable, so is `g ∘ f`.
 `f x` — maintain the index of the cell `g`'s head would scan (logarithmic in
 `|f x|`, hence in `|x|` by `f`'s polynomial output bound), and whenever
 `g`'s machine reads, suspend it and answer with `f`'s bit/length queries on
-`⟨x, i⟩`. The received `LogProg` layer is built for exactly this shape: the
-virtual-input discipline is `Machines/Layout`, the suspended-call protocol
-is `Machines/{Program,Sim,Call,CallReturn,Compile}` (`compile_correct`/
-`compile_space`), and the decider assembly is `arm_decides` — the fill
-instantiates them rather than building machines by hand. Obligations, named:
-the polynomial bound of the composite (`f`'s and `g`'s bounds composed); the
-two `indexLang` memberships of `g ∘ f` via the call protocol; the index
-bookkeeping (binary counters within `logSpace`, the `Machines/Bin` layer). -/
+`⟨x, i⟩`. The received `LogProg` call protocol does not host this shape by
+itself: a call's virtual input is read physically (the whole input, or its
+leading run of `1`s, followed by register words), so no call can serve `g`'s
+input from `f`'s queries (P0 reception audit, note 10). Fill route (phase
+P4.4b, `audits/ch4-p44-resolutions-addendum.md`): both query languages of
+`g ∘ f` are preimages of `g`'s along `Complexity.compQ f`
+(`Complexity.mem_indexLang_compQ_iff`), hence in `L` by
+`Complexity.mem_LOGSPACE_preimage` (the Fig. 4.3 engine,
+`Complexity.LogProg.OIS`) and `Complexity.ImplicitlyLogspaceComputable.compQ`.
+Obligations, named: the polynomial bound of the composite (`f`'s and `g`'s
+bounds composed, `D (C + 1)^d (|x| + 1)^{cd}`); the two preimage memberships;
+the index bookkeeping, which lives in `compQ`'s machines. (Sketch prose
+corrected at phase P4.4b; the statement is unchanged.) -/
 theorem ImplicitlyLogspaceComputable.comp {f g : List Bool → List Bool}
     (hf : ImplicitlyLogspaceComputable f) (hg : ImplicitlyLogspaceComputable g) :
     ImplicitlyLogspaceComputable (g ∘ f) := by

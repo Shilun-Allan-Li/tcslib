@@ -1,0 +1,281 @@
+import TCSlib.Complexity.SpaceComplexity.Logspace.Reductions
+import TCSlib.Complexity.SpaceComplexity.Logspace.Mult
+
+/-!
+# B7 statement mini-phase (P4.4b): pre-ship probe (maintainer-run; not part of the library)
+
+Exercises the P4.4b contracts against the branch `integrate/b7-statements`:
+
+* R1–R3  the input-read fragment `LogProg.readIn_run` on a concrete two-register program
+         whose transitions are `LogProg.readTr` by `rfl` (the hypotheses are satisfiable),
+         and its exit on a concrete configuration.
+* O1–O4  the oracle-input simulator `LogProg.OIS` on a concrete decider: the call nodes, the
+         phase table `nextPh`, the lifted step, the compiled machine's type, and the call's
+         virtual input; `OIS.run` and `OIS.compile_decides` applied.
+* N2'    the indicator identity behind `mem_LOGSPACE_preimage` from `OIS.compile_decides`.
+* A1–A2  an ARM call to the access bank reads the input bit; `arm_decides_poly` at
+         `multLang` over the access bank.
+* D1–D4  the frozen targets from N1–N4: T3 from N2, `comp` from N2 and N4, the
+         twice-lifted query languages, the four-oracle bank of N4's machine; T2 and T5.
+
+It has 0 errors and no `sorry` of its own; the axiom prints show `sorryAx` exactly through the
+seven P4.4b statements and the five B7 targets.
+-/
+
+set_option autoImplicit false
+
+open Turing Complexity Complexity.LogProg
+
+namespace B7SProbe
+
+/-! ## R1–R3: the input-read fragment on a concrete program -/
+
+/-- The demo program's states: the fragment's phases, and an exit emitting the symbol read. -/
+inductive DSt where
+  | rd (ph : RdPh)
+  | out (a : Option Bool)
+  deriving DecidableEq
+
+/-- The demo transitions: the read fragment on index register `0`, counter `1`; the exit emits
+the symbol (if any) and halts. -/
+def demoTr : DSt → Option Bool → (Fin 2 → Option Bool) → Action 2 Bool DSt
+  | .rd ph, a, w => readTr 0 1 DSt.rd DSt.out ph a w
+  | .out a, _, _ => ⟨0, fun _ => (none, 0), a, none⟩
+
+/-- The demo program (no calls). -/
+def demo : RProg 2 0 DSt := ⟨⟨.rd .eC, demoTr⟩, fun _ => none⟩
+
+/-- The demo entry configuration: `bits i` on the index register, an empty counter. -/
+def entry (x : List Bool) (i : ℕ) : Cfg 2 Bool DSt x :=
+  ⟨some (.rd .eC), ⟨1, by omega⟩,
+    fun r => if r = 0 then FinTM.bufferTape (Nat.bits i) else FinTM.bufferTape [], fun _ => 0, []⟩
+
+-- R1: the fragment's hypotheses hold by `rfl` for the demo program.
+example : ∀ ph a w, demo.tm.tr (DSt.rd ph) a w = readTr 0 1 DSt.rd DSt.out ph a w :=
+  fun _ _ _ => rfl
+example : ∀ ph, demo.call (DSt.rd ph) = none := fun _ => rfl
+
+-- R2: `readIn_run` applies, and the exit is the symbol `x[i]?`.
+example (x : List Bool) (i : ℕ) :
+    ∃ T, rrun demo (fun j => j.elim0) { entry x i with state := some (DSt.rd .eC) } T =
+      { entry x i with state := some (DSt.out x[i]?) } :=
+  (readIn_run demo (fun j => j.elim0) 0 1 (by decide) DSt.rd DSt.out (fun _ _ _ => rfl)
+    (fun _ => rfl) (entry x i) i (by simp [entry]) (by simp [entry]) rfl rfl rfl).imp
+    fun _ h => h.1
+
+-- R3: the entry configuration is unchanged by the state update (the fragment starts in place).
+example (x : List Bool) (i : ℕ) : { entry x i with state := some (DSt.rd .eC) } = entry x i := rfl
+
+/-! ## O1–O4: the simulator on a concrete decider -/
+
+/-- A concrete decider: one work tape, one state, halting at once with output `true`. -/
+def M₁ : FinTM Bool where
+  k := 1
+  State := Unit
+  tm := ⟨(), fun _ _ _ => ⟨0, fun _ => (none, 0), some true, none⟩⟩
+
+-- O1: the call nodes, and nothing else calls.
+example (s : M₁.State) : (OIS.prog M₁).call (s, .ask) =
+    some ⟨0, .whole, [OIS.q M₁], (s, .bit), (s, .work none false)⟩ := rfl
+example (s : M₁.State) : (OIS.prog M₁).call (s, .bit) =
+    some ⟨1, .whole, [OIS.q M₁], (s, .work (some true) false), (s, .work (some false) false)⟩ :=
+  rfl
+example (s : M₁.State) (a : Option Bool) (lb : Bool) :
+    (OIS.prog M₁).call (s, .work a lb) = none := rfl
+
+-- O2: the phase table on all six move cases.
+example : OIS.nextPh 1 true false = .ask := rfl
+example : OIS.nextPh 0 true false = .work none true := rfl
+example : OIS.nextPh (-1) false false = .zt := rfl
+example : OIS.nextPh 1 false false = .iC := rfl
+example : OIS.nextPh 1 false true = .ask := rfl
+example : OIS.nextPh 0 false true = .ask := rfl
+
+-- O3: the simulated step is `M₁`'s action lifted: it halts with `M₁`'s output.
+example (w : Fin 2 → Option Bool) :
+    (OIS.prog M₁).tm.tr ((), .work none false) none w =
+      ⟨0, Fin.lastCases (motive := fun _ => Option (Option Bool) × SignType) (none, 0)
+        fun _ => (none, 0), some true, none⟩ := rfl
+
+-- O4: the call's virtual input, and the compiled machine against a two-decider bank.
+example (x : List Bool) (i : ℕ) (V : Fin 2 → List Bool) (hV : V (OIS.q M₁) = Nat.bits i) :
+    vword (callSegs (d := 2) ⟨0, .whole, [OIS.q M₁], ((), OIS.Ph.bit),
+      ((), OIS.Ph.work none false)⟩ x V) = pairEncode x (Nat.bits i) := by
+  rw [vword_whole₁, hV]
+example (Ms : Fin 2 → FinTM Bool) : FinTM Bool :=
+  compileFinTM (OIS.prog M₁) (OIS.start M₁) (bankTM Ms) (bankStart Ms)
+
+-- O5: the run and space contracts apply at the concrete decider.
+example (x v : List Bool) (o : Fin 2 → List Bool → Bool)
+    (ho0 : ∀ i ≤ v.length, o 0 (pairEncode x (Nat.bits i)) = decide (i < v.length))
+    (ho1 : ∀ i < v.length, o 1 (pairEncode x (Nat.bits i)) = v.getD i false) :
+    ∃ N, (rrun (OIS.prog M₁) o (Cfg.init (OIS.start M₁) x) N).state = none :=
+  (OIS.run M₁ x v o ho0 ho1 1 rfl).imp fun _ h => h.1
+example (Ms : Fin 2 → FinTM Bool) (As : Fin 2 → Language Bool) (sb : Fin 2 → ℕ → ℕ)
+    (hMs : ∀ j, (Ms j).DecidesInSpace (As j) (sb j)) (x v : List Bool)
+    (hA0 : ∀ i ≤ v.length, pairEncode x (Nat.bits i) ∈ As 0 ↔ i < v.length)
+    (hA1 : ∀ i < v.length, pairEncode x (Nat.bits i) ∈ As 1 ↔ v.getD i false = true)
+    (ht : M₁.ComputesInTime v [true] 1) (B : ℕ)
+    (hB : ∀ j, ∀ i ≤ v.length, max (sb j (pairEncode x (Nat.bits i)).length) 1 ≤ B) :
+    ∃ T, (compileFinTM (OIS.prog M₁) (OIS.start M₁) (bankTM Ms) (bankStart Ms)).ComputesInTime
+      x [true] T :=
+  (OIS.compile_decides M₁ Ms As sb hMs x v [true] hA0 hA1 1 ht B hB).imp fun _ h => h.1
+
+-- N2': the indicator identity that turns `compile_decides` at `v := f x` into N2.
+example (f : List Bool → List Bool) (C : Language Bool) (x : List Bool) :
+    MultiTapeTM.indicator (C : Set (List Bool)) (f x) =
+      MultiTapeTM.indicator (({x | f x ∈ C} : Language Bool) : Set (List Bool)) x := by
+  simp only [MultiTapeTM.indicator]; rfl
+
+/-! ## A1–A2: the access bank -/
+
+/-- The access bank of an abstract register machine. -/
+def acc : Fin 2 → Language Bool := ![inputBitLang, inputLenLang]
+
+theorem acc_mem : ∀ j, acc j ∈ LOGSPACE := Fin.forall_fin_two.mpr ⟨inputBitLang_mem, inputLenLang_mem⟩
+
+-- A1: a `whole` call on `[r]` to the bit language reads the input bit at `v r`.
+example {m : ℕ} {Λ : Type} (A : ARM m 2 Λ) (u : List Bool) (l l₁ l₀ : Λ) (r : Fin m)
+    (v : Fin m → ℕ) (res : Option Bool) (hA : A l = .call 0 .whole [r] l₁ l₀) :
+    astep A (fun j V => MultiTapeTM.indicator (acc j : Set (List Bool)) V) u (some l, v, res) =
+      (some (if u.getD (v r) false then l₁ else l₀), v, res) := by
+  simp only [astep, hA, vword_whole₁]
+  have := indicator_indexLang_pairEncode (fun z r => z.getD r false = true) u (v r)
+  simp only [acc, Matrix.cons_val_zero, inputBitLang] at this ⊢
+  simp only [this, decide_eq_true_eq]
+
+-- A2: `arm_decides_poly` at `multLang` over the access bank (the MULT route).
+example {m : ℕ} {Λ : Type} [Fintype Λ] [DecidableEq Λ] (A : ARM m 2 Λ) (l₀ : Λ) (C₀ c₀ : ℕ)
+    (hcorr : ∀ x, AHalt A (fun j V => MultiTapeTM.indicator (acc j : Set (List Bool)) V) x
+      (fun a => PreS A x a ∧ ∀ r, a.2.1 r ≤ C₀ * (x.length + 1) ^ c₀)
+      (some l₀, fun _ => 0, none) (MultiTapeTM.indicator (multLang : Set (List Bool)) x)) :
+    multLang ∈ LOGSPACE :=
+  arm_decides_poly A l₀ acc acc_mem C₀ c₀ hcorr
+
+/-! ## D1–D4: the frozen targets from the contracts -/
+
+-- D1: T3 (`mem_LOGSPACE_of_logspaceReducible`) from N2.
+example {B C : Language Bool} (h : B ≤ₗ C) (hC : C ∈ LOGSPACE) : B ∈ LOGSPACE := by
+  obtain ⟨f, hf, hB⟩ := h
+  rw [show B = ({x | f x ∈ C} : Language Bool) from Set.ext hB]
+  exact mem_LOGSPACE_preimage hf hC
+
+/-- The composite output bound of [AB09, Lemma 4.17] (P4.4 audit, question 2). -/
+theorem comp_length_le {f g : List Bool → List Bool} {C c D d : ℕ}
+    (hf : ∀ x, (f x).length ≤ C * (x.length + 1) ^ c)
+    (hg : ∀ y, (g y).length ≤ D * (y.length + 1) ^ d) (x : List Bool) :
+    (g (f x)).length ≤ D * (C + 1) ^ d * (x.length + 1) ^ (c * d) := by
+  have h1 : 1 ≤ (x.length + 1) ^ c := Nat.one_le_pow _ _ (by omega)
+  have h2 : (f x).length + 1 ≤ (C + 1) * (x.length + 1) ^ c := by
+    have := hf x
+    have e : (C + 1) * (x.length + 1) ^ c = C * (x.length + 1) ^ c + (x.length + 1) ^ c := by
+      ring
+    omega
+  calc (g (f x)).length ≤ D * ((f x).length + 1) ^ d := hg _
+    _ ≤ D * ((C + 1) * (x.length + 1) ^ c) ^ d :=
+        Nat.mul_le_mul_left _ (Nat.pow_le_pow_left h2 d)
+    _ = D * (C + 1) ^ d * (x.length + 1) ^ (c * d) := by rw [mul_pow, ← pow_mul]; ring
+
+-- D2: `comp` from N2 and N4.
+example {f g : List Bool → List Bool} (hf : ImplicitlyLogspaceComputable f)
+    (hg : ImplicitlyLogspaceComputable g) : ImplicitlyLogspaceComputable (g ∘ f) := by
+  have hQ := hf.compQ
+  obtain ⟨⟨C, c, hC⟩, -, -⟩ := hf
+  obtain ⟨⟨D, d, hD⟩, hgb, hgl⟩ := hg
+  refine ⟨⟨D * (C + 1) ^ d, c * d, comp_length_le (f := f) (g := g) hC hD⟩, ?_, ?_⟩
+  · rw [show indexLang (fun x i => ((g ∘ f) x).getD i false = true) =
+        ({w | compQ f w ∈ indexLang fun y i => (g y).getD i false = true} : Language Bool) from
+      Set.ext (mem_indexLang_compQ_iff f fun y i => (g y).getD i false = true)]
+    exact mem_LOGSPACE_preimage hQ hgb
+  · rw [show indexLang (fun x i => i < ((g ∘ f) x).length) =
+        ({w | compQ f w ∈ indexLang fun y i => i < (g y).length} : Language Bool) from
+      Set.ext (mem_indexLang_compQ_iff f fun y i => i < (g y).length)]
+    exact mem_LOGSPACE_preimage hQ hgl
+
+-- D3: inside N4, the twice-lifted query languages are in `L` (N2 twice along N3), and a call
+-- from the host `⟨⟨⟨x, bits i⟩, bits p⟩, bits j⟩` answers `f`'s query at `⟨x, bits j⟩`.
+example {L : Language Bool} (hL : L ∈ LOGSPACE) :
+    ({z | dropIdx (dropIdx z) ∈ L} : Language Bool) ∈ LOGSPACE :=
+  mem_LOGSPACE_preimage (C := ({z | dropIdx z ∈ L} : Language Bool))
+    implicitlyLogspaceComputable_dropIdx
+    (mem_LOGSPACE_preimage implicitlyLogspaceComputable_dropIdx hL)
+example (f : List Bool → List Bool) (x : List Bool) (i p j : ℕ) :
+    pairEncode (pairEncode (pairEncode x (Nat.bits i)) (Nat.bits p)) (Nat.bits j) ∈
+        ({z | dropIdx (dropIdx z) ∈ indexLang (fun x j => (f x).getD j false = true)} :
+          Language Bool) ↔
+      (f x).getD j false = true := by
+  simp only [Set.mem_setOf_eq, dropIdx_pairEncode]
+  exact pairEncode_mem_indexLang _ x j
+
+-- D4: N4's machine runs over a four-oracle bank (access, then the lifted queries of `f`).
+example {f : List Bool → List Bool} (hf : ImplicitlyLogspaceComputable f) {L : Language Bool}
+    {m : ℕ} {Λ : Type} [Fintype Λ] [DecidableEq Λ] (A : ARM m 4 Λ) (l₀ : Λ) (C₀ c₀ : ℕ)
+    (hcorr : ∀ x, AHalt A (fun j V => MultiTapeTM.indicator
+        ((![inputBitLang, inputLenLang,
+          {z | dropIdx (dropIdx z) ∈ indexLang fun x i => (f x).getD i false = true},
+          {z | dropIdx (dropIdx z) ∈ indexLang fun x i => i < (f x).length}] :
+          Fin 4 → Language Bool) j : Set (List Bool)) V) x
+      (fun a => PreS A x a ∧ ∀ r, a.2.1 r ≤ C₀ * (x.length + 1) ^ c₀)
+      (some l₀, fun _ => 0, none) (MultiTapeTM.indicator (L : Set (List Bool)) x)) :
+    L ∈ LOGSPACE := by
+  have lift : ∀ {L' : Language Bool}, L' ∈ LOGSPACE →
+      ({z | dropIdx (dropIdx z) ∈ L'} : Language Bool) ∈ LOGSPACE := fun hL' =>
+    mem_LOGSPACE_preimage (C := ({z | dropIdx z ∈ _} : Language Bool))
+      implicitlyLogspaceComputable_dropIdx
+      (mem_LOGSPACE_preimage implicitlyLogspaceComputable_dropIdx hL')
+  refine arm_decides_poly A l₀ _ (fun j => ?_) C₀ c₀ hcorr
+  fin_cases j
+  · exact inputBitLang_mem
+  · exact inputLenLang_mem
+  · exact lift hf.2.1
+  · exact lift hf.2.2
+
+-- T2 (`trans`) from `comp`, and T5 from T3 and C1a, against the frozen statements.
+example {B C D : Language Bool} (h₁ : B ≤ₗ C) (h₂ : C ≤ₗ D) : B ≤ₗ D := by
+  obtain ⟨f, hf, hB⟩ := h₁
+  obtain ⟨g, hg, hC⟩ := h₂
+  exact ⟨g ∘ f, hf.comp hg, fun x => (hB x).trans (hC (f x))⟩
+example {C : Language Bool} (h : NLComplete C) (hC : C ∈ LOGSPACE) : NL = LOGSPACE :=
+  Set.Subset.antisymm (fun B hB => mem_LOGSPACE_of_logspaceReducible (h.2 B hB) hC)
+    LOGSPACE_subset_NL
+
+end B7SProbe
+
+-- The seven P4.4b statements (each `sorryAx`).
+#print axioms Complexity.LogProg.readIn_run
+#print axioms Complexity.implicitlyLogspaceComputable_id
+#print axioms Complexity.LogProg.OIS.run
+#print axioms Complexity.LogProg.OIS.compile_decides
+#print axioms Complexity.mem_LOGSPACE_preimage
+#print axioms Complexity.implicitlyLogspaceComputable_dropIdx
+#print axioms Complexity.ImplicitlyLogspaceComputable.compQ
+-- The landed proved helpers (each within `[propext, Classical.choice, Quot.sound]`).
+#print axioms Complexity.pairEncode_ne_nil
+#print axioms Complexity.indicator_indexLang_pairEncode
+#print axioms Complexity.LogProg.vword_whole₁
+#print axioms Complexity.dropIdx_pairEncode
+#print axioms Complexity.dropIdx_length_le
+#print axioms Complexity.compQ_pairEncode
+#print axioms Complexity.mem_indexLang_compQ_iff
+#print axioms Complexity.compQ_length_le
+-- Through N1 only.
+#print axioms Complexity.inputBitLang_mem
+#print axioms Complexity.inputLenLang_mem
+-- The five B7 targets (each `sorryAx` until the fill).
+#print axioms Complexity.ImplicitlyLogspaceComputable.comp
+#print axioms Complexity.LogspaceReducible.trans
+#print axioms Complexity.mem_LOGSPACE_of_logspaceReducible
+#print axioms Complexity.NL_eq_LOGSPACE_of_nlComplete_mem_LOGSPACE
+#print axioms Complexity.multLang_mem_LOGSPACE
+-- Received lemmas the fill routes cite (each within the standard triple).
+#print axioms Complexity.LogProg.compile_space
+#print axioms Complexity.LogProg.bank_cleanRun
+#print axioms Complexity.LogProg.arm_decides_poly
+#print axioms Complexity.LogProg.inc_run
+#print axioms Complexity.LogProg.dec_run
+#print axioms Complexity.LogProg.eq_run
+#print axioms Complexity.LogProg.clr_run
+#print axioms Complexity.LogProg.rewind_x
+#print axioms Complexity.LogProg.canon_eq_bits
+#print axioms Turing.MultiTapeTM.abs_pos_lt_card_visited
+#print axioms Complexity.LOGSPACE_subset_NL
