@@ -1,0 +1,32 @@
+import TCSlib.Complexity.TuringMachine.Build.Catalog
+
+/-! Stream A, linter and syntax experiments behind the brief's pitfalls 1 and 4. The
+EXPECTED output is:
+* two `unused variable` warnings (lines `probeA_unused_hyp`, `probeA_cleared_hyp`);
+* one `declaration uses 'sorry'` and no unused-variable warning (`probeA_sorry_unused`);
+* no warning for `probeA_have_hyp`, `probeA_have_named`, `probeA_underscore`;
+* two parse errors, at `probeA_s2` and `probeA_s3` (a field continued on the next line to
+  the left of the first field's column); `probeA_s1` and `probeA_s4` parse. -/
+
+-- Pitfall 1: once filled, an unused frozen hypothesis warns; `clear` is not a use.
+theorem probeA_unused_hyp (h : (1 : ℕ) = 1) : True := trivial
+theorem probeA_cleared_hyp (h : (1 : ℕ) = 1) : True := by clear h; trivial
+theorem probeA_have_hyp (h : (1 : ℕ) = 1) : True := by have _ := h; trivial
+theorem probeA_have_named (h : (1 : ℕ) = 1) : True := by have _h' : (1 : ℕ) = 1 := h; trivial
+theorem probeA_underscore (_h : (1 : ℕ) = 1) : True := trivial
+-- a sorried body suppresses the linter (why the landed statement layer shows no warning)
+theorem probeA_sorry_unused (h : (1 : ℕ) = 1) : True := by sorry
+
+-- Pitfall 4: structure-update layout.
+structure ProbeAPt where
+  (a : ℕ)
+  (b : ℕ)
+def probeA_s1 (p : ProbeAPt) (q' : ℕ) : ProbeAPt := { p with a := q', b := 0 }
+def probeA_s2 (p : ProbeAPt) (q : ℕ) : ProbeAPt := { p with a := q,
+  b := 0 }
+def probeA_s3 (p : ProbeAPt) (q' : ℕ) : ProbeAPt := { p with a := q',
+  b := 0 }
+def probeA_s4 (p : ProbeAPt) (q' : ℕ) : ProbeAPt :=
+  { p with
+    a := q'
+    b := 0 }
