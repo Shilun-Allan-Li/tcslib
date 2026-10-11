@@ -1487,6 +1487,27 @@ tapes plus a capture tape; tape `Tab` (the record table); `Cur₀` and `Cur₁`
 6. **EmitIterBody dedup** onto `inputCopyTM` in 12.2c T2 (coordinate with
    Aparna).
 
+#### Decisions 12.8.1–12.8.6 (2026-10-10)
+
+1. **Rich-alphabet records** (user): multi-track record cells, mark moves as
+   G2 mapped sweeps, and Bool counter rows on rich tapes through **one new
+   embedding transport**. Finished by `alphabet_reduction` and
+   `alphabet_reduction_spaceUsed`. The maintainer's alternative below is
+   adopted, and the binary plan above is superseded where they differ.
+2. **`Cfg.InWindow` moves** verbatim to `Build/CfgRecord.lean` after C1d
+   (default).
+3. **`recordStepTM` has a first-return contract with a bound** (default).
+4. **`PATH`-hardness stays on the ARM engine**, as audited (default). The
+   record-row route remains an option.
+5. **Fold and seek live in Catalog, after the G1 gate** (user), sharing the
+   R3/G2 trace, one trace per routine family.
+6. **EmitIterBody's private input-copy startup is re-derived** from the new
+   input rows in 12.2c T2, with the ch7 owner (default).
+
+**Next.** A revised statement draft for the rich design. What can start
+now: the embedding transport and the alphabet-generic input and
+constant-write rows. The record rows, fold and seek wait for G1 and G2.
+
 #### Maintainer's alternative for 12.8.1: rich-alphabet records through one embedding transport
 
 Records could follow the §13d pattern instead of being bit-coded. Each record
