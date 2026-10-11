@@ -46,9 +46,14 @@ not in `Machines/`, by decision D3; it is built only from received fragments.
 * `Complexity.indicator_indexLang_pairEncode` — the answer of an `indexLang` decider on a
   genuine pair.
 * `Complexity.pairEncode_ne_nil` — no pair is empty (so `[]` lies in no `indexLang`).
+* `Complexity.pairEncode_getD` — a shared bit-address formula for doubled fields,
+  separators, and suffixes of paired inputs.
+* `Complexity.LogProg.alignedPair_loop` — a bounded ARM pair scan at any positive stride.
+* `Complexity.LogProg.inputLength_loop` — a bounded ARM loop counting a general input
+  through its length-query oracle.
 * `Complexity.LogProg.readIn_run` — the input-read fragment (proved; phase-P4.4b
   statement).
-* `Complexity.implicitlyLogspaceComputable_id` — input random access in `L` (sorried;
+* `Complexity.implicitlyLogspaceComputable_id` — input random access in `L` (proved;
   phase-P4.4b statement), with `Complexity.inputBitLang_mem`, `Complexity.inputLenLang_mem`.
 
 ## References
@@ -512,7 +517,1028 @@ def inputBitLang : Language Bool := indexLang fun u i => u.getD i false = true
 /-- The length language of the identity: `{⟨u, bits i⟩ | i < |u|}`. -/
 def inputLenLang : Language Bool := indexLang fun u i => i < u.length
 
-/-- **Input random access is logspace** (phase P4.4b; spec, fill pending): the identity is
+/-- Reading a paired word by position selects a doubled first-field bit, a separator bit,
+or a suffix bit. The default is `false` beyond the complete word. This common address rule
+serves the nested layouts of index dropping, query reshaping, and multiplication.
+
+**Proof sketch.** Within the first field, write the address as twice its quotient by two
+plus its parity and cite `getElem?_dbl`. Outside that field, the append lookup rule exposes
+the separator or the suffix. -/
+theorem pairEncode_getD (u v : List Bool) (j : ℕ) :
+    (pairEncode u v).getD j false =
+      if j < 2 * u.length then u.getD (j / 2) false
+      else if j = 2 * u.length then false
+      else if j = 2 * u.length + 1 then true
+      else v.getD (j - 2 * u.length - 2) false := by
+  by_cases hj : j < 2 * u.length
+  · rw [if_pos hj, pairEncode_eq_dbl, List.getD_eq_getElem?_getD,
+      List.append_assoc, List.getElem?_append_left (by simpa using hj)]
+    have hc : j / 2 < u.length := by omega
+    have hread : (dbl u)[j]? = some u[j / 2] := by
+      rcases Nat.mod_two_eq_zero_or_one j with h | h
+      · have he : 2 * (j / 2) + (false : Bool).toNat = j := by simp; omega
+        simpa only [he] using getElem?_dbl u (j / 2) hc false
+      · have he : 2 * (j / 2) + (true : Bool).toNat = j := by simp; omega
+        simpa only [he] using getElem?_dbl u (j / 2) hc true
+    rw [hread]
+    simp [List.getD_eq_getElem?_getD, hc]
+  · rw [if_neg hj, pairEncode_eq_dbl, List.getD_eq_getElem?_getD,
+      List.append_assoc, List.getElem?_append_right (by simp; omega)]
+    simp only [length_dbl]
+    by_cases he : j = 2 * u.length
+    · subst j; simp
+    · rw [if_neg he]
+      by_cases he' : j = 2 * u.length + 1
+      · subst j; simp
+      · rw [if_neg he', show j - 2 * u.length = (j - 2 * u.length - 2) + 1 + 1 by omega]
+        rfl
+
+namespace LogProg
+
+open Classical
+
+/-- A length-query/increment loop counts the host input, with all registers bounded by
+the chosen bound. The oracle law is needed only up to the first failing query, at the
+input length. This shared ARM fragment is used by the query validators.
+
+**Proof sketch.** Induct on the input length minus the current counter. Below the end,
+the length call succeeds and increment reduces the remaining count. At the end, the call
+fails and exits. The counter never exceeds the input length; all other registers stay
+unchanged. Both instructions meet the received ARM syntactic preconditions. -/
+theorem inputLength_loop {m d : ℕ} {Λ : Type} (A : ARM m d Λ)
+    (oracle : Fin d → List Bool → Bool) (x : List Bool) (r : Fin m) (j : Fin d)
+    (scan inc done : Λ)
+    (hscan : A scan = .call j .whole [r] inc done)
+    (hinc : A inc = .inc r scan)
+    (hquery : ∀ n ≤ x.length, oracle j (pairEncode x (Nat.bits n)) = decide (n < x.length))
+    (B : ℕ) (hB : x.length ≤ B) (v : Fin m → ℕ)
+    (hv : ∀ s, v s ≤ B) (hr : v r ≤ x.length) :
+    AReach A oracle x (fun a => PreS A x a ∧ ∀ s, a.2.1 s ≤ B)
+      (some scan, v, none) (some done, Function.update v r x.length, none) := by
+  generalize hN : x.length - v r = N
+  induction N using Nat.strong_induction_on generalizing v with
+  | h N ih =>
+    have hs : astep A oracle x (some scan, v, none) =
+        (some (if v r < x.length then inc else done), v, none) := by
+      simp only [astep, hscan, vword_whole₁, hquery (v r) hr, decide_eq_true_eq]
+    have hg : PreS A x (some scan, v, none) ∧ ∀ s, v s ≤ B :=
+      ⟨by simp [PreS, hscan], hv⟩
+    by_cases hlt : v r < x.length
+    · let v' := Function.update v r (v r + 1)
+      have hv' : ∀ s, v' s ≤ B := by
+        intro s
+        by_cases he : s = r
+        · subst s; dsimp [v']; rw [Function.update_self]; omega
+        · simpa [v', Function.update_of_ne he] using hv s
+      have hr' : v' r ≤ x.length := by simp [v']; omega
+      have hremain : x.length - v' r < N := by simp [v']; omega
+      have hc := ih (x.length - v' r) hremain v' hv' hr' rfl
+      have hi : astep A oracle x (some inc, v, none) = (some scan, v', none) := by
+        simp [astep, hinc, v']
+      apply AReach.step hg
+      rw [hs, if_pos hlt]
+      apply AReach.step ⟨by simp [PreS, hinc], hv⟩
+      rw [hi]
+      simpa only [v', Function.update_idem] using hc
+    · have he : v r = x.length := by omega
+      have hp := AReach.single (A := A) (oracle := oracle) (x := x)
+        (G := fun a => PreS A x a ∧ ∀ s, a.2.1 s ≤ B) (a := (some scan, v, none)) hg
+      have hs' : astep A oracle x (some scan, v, none) = (some done, v, none) := by
+        rw [hs, if_neg hlt]
+      have hvdone : Function.update v r x.length = v := by
+        rw [← he, Function.update_eq_self]
+      rw [hvdone]
+      simpa only [hs'] using hp
+
+/-- A bounded straight sequence of register increments. The labels may belong to any
+larger ARM; no new reachability relation is needed. -/
+private lemma arm_increments {m d : ℕ} {Λ : Type} (A : ARM m d Λ)
+    (oracle : Fin d → List Bool → Bool) (x : List Bool) (r : Fin m)
+    (labels : ℕ → Λ) (k B : ℕ)
+    (hcode : ∀ i < k, A (labels i) = .inc r (labels (i + 1)))
+    (v : Fin m → ℕ) (hv : ∀ s, v s ≤ B) (hk : v r + k ≤ B) :
+    AReach A oracle x (fun a => PreS A x a ∧ ∀ s, a.2.1 s ≤ B)
+      (some (labels 0), v, none)
+      (some (labels k), Function.update v r (v r + k), none) := by
+  induction k generalizing labels v with
+  | zero => simpa only [Nat.add_zero, Function.update_eq_self] using
+      (AReach.refl (A := A) (oracle := oracle) (x := x)
+        (G := fun a => PreS A x a ∧ ∀ s, a.2.1 s ≤ B) (some (labels 0), v, none))
+  | succ k ih =>
+    have hc := hcode 0 (by omega)
+    apply AReach.step ⟨by simp [PreS, hc], hv⟩
+    simp only [astep, hc]
+    have hv' : ∀ s, Function.update v r (v r + 1) s ≤ B := by
+      intro s
+      by_cases hs : s = r
+      · subst s; simp; omega
+      · simpa [Function.update_of_ne hs] using hv s
+    have hp := ih (fun i => labels (i + 1))
+      (fun i hi => hcode (i + 1) (by omega)) (Function.update v r (v r + 1)) hv'
+      (by simp; omega)
+    simpa only [Function.update_self, Function.update_idem, Nat.add_assoc,
+      Nat.add_comm 1 k] using hp
+
+/-- An aligned pair scan using the input-bit oracle, at any positive stride. It rejects
+exactly failed pair decodes and otherwise leaves the pointer just beyond the separator.
+The scan imposes no canonicality condition on either field. Four increment chains move
+past a first `false`, a first `true`, an equal pair, or the separator respectively.
+
+**Proof sketch.** Induct by two input letters. An empty word fails the first end test;
+a singleton fails the second. Equal letters advance and recur, `01` exits at the payload,
+and `10` rejects. Each advance is `arm_increments`; all pointer values stay below the
+supplied end address. This is the shared aligned-scan argument for nested query layouts. -/
+theorem alignedPair_loop {m d : ℕ} {Λ : Type} (A : ARM m d Λ)
+    (oracle : Fin d → List Bool → Bool) (x : List Bool)
+    (r limit : Fin m) (j : Fin d) (scan first : Λ) (test read : Bool → Λ)
+    (fail done : Λ) (advance : Fin 4 → ℕ → Λ) (stride B : ℕ)
+    (hstride : 0 < stride) (hrlimit : r ≠ limit)
+    (hscan : A scan = .jeq r limit fail first)
+    (hfirst : A first = .call j .whole [r] (advance 1 0) (advance 0 0))
+    (htest : ∀ b, A (test b) = .jeq r limit fail (read b))
+    (hread : ∀ b, A (read b) = .call j .whole [r]
+      (if b then advance 2 0 else advance 3 0) (if b then fail else advance 2 0))
+    (hadvance : ∀ k i, i < stride → A (advance k i) = .inc r (advance k (i + 1)))
+    (hend : advance 0 stride = test false ∧ advance 1 stride = test true ∧
+      advance 2 stride = scan ∧ advance 3 stride = done)
+    (w : List Bool) (v : Fin m → ℕ) (hv : ∀ s, v s ≤ B)
+    (hlimit : v limit = v r + stride * w.length)
+    (horacle : ∀ i < w.length,
+      oracle j (pairEncode x (Nat.bits (v r + stride * i))) = w.getD i false) :
+    match pairDecode w with
+    | none => ∃ t ≤ w.length,
+        AReach A oracle x (fun a => PreS A x a ∧ ∀ s, a.2.1 s ≤ B)
+          (some scan, v, none) (some fail, Function.update v r (v r + stride * t), none)
+    | some (a, _) =>
+        AReach A oracle x (fun a => PreS A x a ∧ ∀ s, a.2.1 s ≤ B)
+          (some scan, v, none)
+          (some done, Function.update v r (v r + stride * (2 * a.length + 2)), none) := by
+  let G := fun a : AConf m Λ => PreS A x a ∧ ∀ s, a.2.1 s ≤ B
+  have upd : ∀ (v : Fin m → ℕ) (q : ℕ), (∀ s, v s ≤ B) → q ≤ B →
+      ∀ s, Function.update v r q s ≤ B := by
+    intro v q hv hq s
+    by_cases hs : s = r
+    · subst s; simpa using hq
+    · simpa [Function.update_of_ne hs] using hv s
+  have initial : ∀ (b : Bool) (tail : List Bool) (v : Fin m → ℕ),
+      (∀ s, v s ≤ B) → v limit = v r + stride * (b :: tail).length →
+      oracle j (pairEncode x (Nat.bits (v r))) = b →
+      AReach A oracle x G (some scan, v, none)
+        (some (test b), Function.update v r (v r + stride), none) := by
+    intro b tail v hv hl ho
+    have hstep : v r + stride ≤ B := by
+      have := hv limit
+      have := Nat.le_mul_of_pos_right stride (show 0 < (b :: tail).length by simp)
+      omega
+    have hne : v r ≠ v limit := by
+      have := Nat.le_mul_of_pos_right stride (show 0 < (b :: tail).length by simp)
+      omega
+    apply AReach.step ⟨by simp [PreS, hscan, hrlimit], hv⟩
+    simp only [astep, hscan, if_neg hne]
+    apply AReach.step ⟨by simp [PreS, hfirst], hv⟩
+    simp only [astep, hfirst, vword_whole₁, ho]
+    cases b
+    · simpa only [Bool.false_eq_true, ↓reduceIte, hend.1] using
+        arm_increments A oracle x r (advance 0) stride B (hadvance 0) v hv hstep
+    · simpa only [↓reduceIte, hend.2.1] using
+        arm_increments A oracle x r (advance 1) stride B (hadvance 1) v hv hstep
+  induction w using List.twoStepInduction generalizing v with
+  | nil =>
+    simp only [pairDecode]
+    refine ⟨0, by simp, ?_⟩
+    have he : v r = v limit := by simpa using hlimit.symm
+    simpa only [astep, hscan, if_pos he, Nat.mul_zero, Nat.add_zero,
+      Function.update_eq_self] using
+      (AReach.single (A := A) (oracle := oracle) (x := x) (G := G)
+        (a := (some scan, v, none)) ⟨by simp [PreS, hscan, hrlimit], hv⟩)
+  | singleton b =>
+    have ho := horacle 0 (by simp)
+    simp only [Nat.mul_zero, Nat.add_zero, List.getD_cons_zero] at ho
+    have hi := initial b [] v hv hlimit ho
+    let v' := Function.update v r (v r + stride)
+    have hv' : ∀ s, v' s ≤ B := by
+      apply upd v _ hv
+      have := hv limit
+      simp only [List.length_singleton, Nat.mul_one] at hlimit
+      omega
+    have he : v' r = v' limit := by simp [v', hrlimit.symm]; simpa using hlimit.symm
+    have hp : AReach A oracle x G (some (test b), v', none) (some fail, v', none) := by
+      simpa only [astep, htest, if_pos he] using
+        (AReach.single (A := A) (oracle := oracle) (x := x) (G := G)
+          (a := (some (test b), v', none)) ⟨by simp [PreS, htest, hrlimit], hv'⟩)
+    cases b <;> simp only [pairDecode] <;>
+      exact ⟨1, by simp, by simpa [Nat.mul_one] using hi.trans hp⟩
+  | cons_cons b c tail ih _ =>
+    have hb := horacle 0 (by simp)
+    have hc := horacle 1 (by simp)
+    simp only [Nat.mul_zero, Nat.add_zero, List.getD_cons_zero] at hb
+    simp only [Nat.mul_one, List.getD_cons_succ, List.getD_cons_zero] at hc
+    have hi := initial b (c :: tail) v hv hlimit hb
+    let v' := Function.update v r (v r + stride)
+    let v'' := Function.update v r (v r + 2 * stride)
+    have hbound : v r + 2 * stride ≤ B := by
+      have := hv limit
+      simp only [List.length_cons, Nat.mul_add, Nat.mul_one] at hlimit
+      omega
+    have hv' : ∀ s, v' s ≤ B := upd v _ hv (by omega)
+    have hv'' : ∀ s, v'' s ≤ B := upd v _ hv hbound
+    have hne : v' r ≠ v' limit := by
+      simp only [v', Function.update_self, Function.update_of_ne hrlimit.symm]
+      simp only [List.length_cons, Nat.mul_add, Nat.mul_one] at hlimit
+      omega
+    have hcall : AReach A oracle x G (some (test b), v', none)
+        (some (if c then (if b then advance 2 0 else advance 3 0)
+          else (if b then fail else advance 2 0)), v', none) := by
+      apply AReach.step ⟨by simp [PreS, htest, hrlimit], hv'⟩
+      simp only [astep, htest, if_neg hne]
+      have ho : oracle j (pairEncode x (Nat.bits (v' r))) = c := by simpa [v'] using hc
+      simpa only [astep, hread, vword_whole₁, ho] using
+        (AReach.single (A := A) (oracle := oracle) (x := x) (G := G)
+          (a := (some (read b), v', none)) ⟨by simp [PreS, hread], hv'⟩)
+    have hinc : ∀ k : Fin 4, AReach A oracle x G
+        (some (advance k 0), v', none) (some (advance k stride), v'', none) := by
+      intro k
+      have hp := arm_increments A oracle x r (advance k) stride B (hadvance k) v' hv'
+        (by simp [v']; omega)
+      simpa only [v', v'', Function.update_self, Function.update_idem,
+        show v r + stride + stride = v r + 2 * stride by omega] using hp
+    have hnext : v'' limit = v'' r + stride * tail.length := by
+      simp only [v'', Function.update_self, Function.update_of_ne hrlimit.symm]
+      simp only [List.length_cons, Nat.mul_add, Nat.mul_one] at hlimit
+      omega
+    have honext : ∀ i < tail.length,
+        oracle j (pairEncode x (Nat.bits (v'' r + stride * i))) = tail.getD i false := by
+      intro i hi
+      have hp := horacle (i + 2) (by simp; omega)
+      simpa only [v'', Function.update_self, Nat.mul_add,
+        show v r + (stride * i + stride * 2) = v r + 2 * stride + stride * i by omega,
+        List.getD_cons_succ] using hp
+    have hr := ih v'' hv'' hnext honext
+    by_cases heq : b = c
+    · cases heq
+      have he : pairDecode (b :: b :: tail) = (pairDecode tail).map
+          (fun ab => (b :: ab.1, ab.2)) := by cases b <;> rfl
+      have hm : AReach A oracle x G (some (test b), v', none)
+          (some (advance 2 0), v', none) := by cases b <;> simpa only [↓reduceIte] using hcall
+      have hp := hi.trans (hm.trans (by simpa only [hend.2.2.1] using hinc 2))
+      rw [he]
+      cases hd : pairDecode tail with
+      | none =>
+        simp only [hd] at hr
+        obtain ⟨t, ht, hrun⟩ := hr
+        simp only [Option.map_none]
+        refine ⟨t + 2, by simp; omega, ?_⟩
+        simpa only [v'', Function.update_self, Function.update_idem, Nat.mul_add,
+          show v r + 2 * stride + stride * t = v r + (stride * t + stride * 2) by omega]
+          using hp.trans hrun
+      | some ab =>
+        rcases ab with ⟨a, t⟩
+        simp only [hd] at hr
+        simp only [Option.map_some, List.length_cons]
+        have he : v r + 2 * stride + stride * (2 * a.length + 2) =
+            v r + stride * (2 * (a.length + 1) + 2) := by ring
+        simpa only [v'', Function.update_self, Function.update_idem, he] using hp.trans hr
+    · cases b <;> cases c
+      · exact False.elim (heq rfl)
+      · have hp := hi.trans (hcall.trans (by simpa only [hend.2.2.2] using hinc 3))
+        simpa only [pairDecode, List.length_nil, Nat.mul_zero, Nat.zero_add,
+          Nat.mul_comm stride 2] using hp
+      · simp only [pairDecode]
+        exact ⟨1, by simp, by simpa only [Nat.mul_one] using hi.trans hcall⟩
+      · exact False.elim (heq rfl)
+
+/-- Continuations of the input-access decider. The mode is a parameter of the one table:
+`true` asks for length, and `false` asks for the bit. -/
+private inductive AccessLabel where
+  | scan | second (b : Bool) | tail (eq : Bool) (last : Option Bool)
+  | data (eq : Bool) | dataSecond (eq b : Bool)
+  deriving DecidableEq, Fintype
+
+/-- The decider uses register 0 for the scan position, 1 for the received reader's empty
+scratch, 2 for the candidate index, and 3 for twice that index. Only the candidate's head
+moves while comparing the tail; the tail itself is never copied. -/
+private inductive AccessState where
+  | read (l : AccessLabel) (ph : RdPh)
+  | got (l : AccessLabel) (a : Option Bool)
+  | inc (r : Fin 4) (l : AccessLabel) (back : Bool)
+  | restore (eq : Option Bool)
+  | clear (eq : Option Bool) (back : Bool)
+  | bump (back : Bool)
+  | answer (b : Bool)
+  deriving DecidableEq, Fintype
+
+/-- Select the scanning pointer or the data pointer. Neither aliases the reader scratch. -/
+private def accessReg : AccessLabel → Fin 4
+  | .data _ | .dataSecond _ _ => 3
+  | _ => 0
+
+/-- One call-free table for the two identity query languages. All input reads use the
+received reader; increments, clearing and the backward head scan use received actions.
+The ARM has no general-input read instruction, so it cannot express this base decider.
+After the aligned scan, compare the input tail with the candidate in place, recording only
+an equality bit and its final symbol. Return the candidate head, clear the scan pointer,
+then inspect the candidate's doubled input cells. -/
+private def accessExit : Option Bool → AccessState
+  | none => .answer false
+  | some eq => .read (.data eq) .eC
+
+/-- The concrete transition table for the mode-parametrized program. -/
+private def accessTr (mode : Bool) :
+    AccessState → Option Bool → (Fin 4 → Option Bool) → Action 4 Bool AccessState
+  | .read l ph, a, w => readTr (accessReg l) 1 (.read l) (.got l) ph a w
+  | .got .scan a, _, _ => match a with
+    | none => xAct 2 0 (-1) (.restore none)
+    | some b => goAct (.inc 0 (.second b) false)
+  | .got (.second b) a, _, _ => match a with
+    | none => xAct 2 0 (-1) (.restore none)
+    | some b' => if b = b' then goAct (.inc 0 .scan false)
+      else if b = false then goAct (.inc 0 (.tail true none) false)
+      else xAct 2 0 (-1) (.restore none)
+  | .got (.tail eq last) a, _, w => match a with
+    | none => xAct 2 0 (-1) (.restore (if last = some false then none
+      else some (eq && decide (w 2 = none))))
+    | some b => xAct 2 0 (if w 2 = none then 0 else 1)
+        (.inc 0 (.tail (eq && decide (w 2 = some b)) (some b)) false)
+  | .got (.data eq) a, _, _ => match a with
+    | none => goAct (.answer false)
+    | some b => goAct (.inc 3 (.dataSecond eq b) false)
+  | .got (.dataSecond eq b) a, _, _ => match a with
+    | none => goAct (.answer false)
+    | some b' => if b = b' then
+        if eq then goAct (.answer (mode || b)) else goAct (.bump false)
+      else goAct (.answer false)
+  | .inc r l false, _, w => incCAct r (.inc r l false) (.inc r l true) (w r)
+  | .inc r l true, _, w => incBAct r (.inc r l true) (.read l .eC) (w r)
+  | .restore eq, _, w => backAct 2 (.restore eq) (.clear eq false) (w 2)
+  | .clear eq false, _, w => toEndAct 0 (.clear eq false) (.clear eq true) (w 0)
+  | .clear eq true, _, w => clrEAct 0 (.clear eq true) (accessExit eq) (w 0)
+  | .bump false, _, w => incCAct 2 (.bump false) (.bump true) (w 2)
+  | .bump true, _, w => incBAct 2 (.bump true) (.inc 3 .scan false) (w 2)
+  | .answer b, _, _ => retAct b
+
+/-- The input-access table has no calls and starts with the aligned scan. -/
+private def accessProg (mode : Bool) : RProg 4 0 AccessState :=
+  ⟨⟨.read .scan .eC, accessTr mode⟩, fun _ => none⟩
+
+/-- Boundary configurations; `q` is the streamed comparison head on the candidate. -/
+private def accessCfg {y : List Bool} (st : AccessState) (i k p : ℕ) (q : ℤ := 0) :
+    Cfg 4 Bool AccessState y :=
+  ⟨some st, ⟨1, by omega⟩,
+    fun r => FinTM.bufferTape (Nat.bits (![i, 0, k, p] r)),
+    Function.update (fun _ => 0) 2 q, []⟩
+
+/-- The common head interval, including both boundary cells. -/
+private def accessSafe {y : List Bool} (c : Cfg 4 Bool AccessState y) : Prop :=
+  ∀ r, -1 ≤ c.workTapePos r ∧ c.workTapePos r ≤ (Nat.bits (y.length + 1)).length
+
+/-- Bounded paths use the existing reflexive-transitive closure and its composition. -/
+private abbrev AccessPath (mode : Bool) {y : List Bool} :=
+  Relation.ReflTransGen (fun c c' : Cfg 4 Bool AccessState y =>
+    accessSafe c ∧ c' = rstep (accessProg mode) Dbl.o c)
+
+/-- A bounded path has an ordinary run witness. Proof sketch: induction on the closure;
+append its last single step and separate the last time from earlier times. -/
+private lemma accessPath_run {mode : Bool} {y : List Bool}
+    {c c' : Cfg 4 Bool AccessState y} (h : AccessPath mode c c') :
+    ∃ T, rrun (accessProg mode) Dbl.o c T = c' ∧
+      ∀ t < T, accessSafe (rrun (accessProg mode) Dbl.o c t) := by
+  induction h with
+  | refl => exact ⟨0, rfl, by omega⟩
+  | @tail d e _ hstep ih =>
+    obtain ⟨n, hn, hb⟩ := ih
+    refine ⟨n + 1, ?_, ?_⟩
+    · rw [rrun_succ, hn]; exact hstep.2.symm
+    · intro t ht
+      rcases lt_or_eq_of_le (Nat.le_of_lt_succ ht) with h | rfl
+      · exact hb t h
+      · rw [hn]; exact hstep.1
+
+/-- A bounded finite run gives a path, allowing received fragments to use the common
+closure without re-proving its composition law. -/
+private lemma accessPath_of_run {mode : Bool} {y : List Bool}
+    (c : Cfg 4 Bool AccessState y) (T : ℕ)
+    (h : ∀ t < T, accessSafe (rrun (accessProg mode) Dbl.o c t)) :
+    AccessPath mode c (rrun (accessProg mode) Dbl.o c T) := by
+  induction T with
+  | zero => exact .refl
+  | succ T ih =>
+    rw [rrun_succ]
+    exact (ih (fun t ht => h t (by omega))).tail ⟨h T (by omega), rfl⟩
+
+/-- A comparison boundary is bounded exactly when its one moving head is bounded. -/
+private lemma accessCfg_safe {y : List Bool} (st : AccessState) (i k p : ℕ) (q : ℤ)
+    (hlo : -1 ≤ q) (hhi : q ≤ (Nat.bits (y.length + 1)).length) :
+    accessSafe (accessCfg (y := y) st i k p q) := by
+  intro r
+  by_cases h : r = 2
+  · subst r; simpa [accessCfg] using And.intro hlo hhi
+  · simp [accessCfg, Function.update_of_ne h]
+
+/-- The received reader preserves all data, including the streamed candidate head.
+Proof sketch: instantiate `readIn_run` on the selected pointer and register 1. Its frame
+changes only those two heads; the candidate head keeps its previously established bound. -/
+private lemma access_read (mode : Bool) {y : List Bool} (l : AccessLabel)
+    (i k p : ℕ) (q : ℤ) (hlo : -1 ≤ q)
+    (hhi : q ≤ (Nat.bits (y.length + 1)).length) :
+    AccessPath mode (accessCfg (y := y) (.read l .eC) i k p q)
+      (accessCfg (.got l y[![i, 0, k, p] (accessReg l)]?) i k p q) := by
+  have hr : accessReg l ≠ (1 : Fin 4) := by cases l <;> simp [accessReg]
+  have hr2 : accessReg l ≠ (2 : Fin 4) := by cases l <;> simp [accessReg]
+  obtain ⟨T, he, hm⟩ := readIn_run (accessProg mode) Dbl.o (accessReg l) 1 hr
+    (.read l) (.got l) (fun _ _ _ => rfl) (fun _ => rfl)
+    (accessCfg (y := y) (.read l .eC) i k p q)
+    (![i, 0, k, p] (accessReg l)) rfl (by simp [accessCfg])
+    (by simp [accessCfg, Function.update_of_ne hr2]) (by simp [accessCfg]) rfl
+  change rrun (accessProg mode) Dbl.o (accessCfg (.read l .eC) i k p q) T =
+    accessCfg (.got l y[![i, 0, k, p] (accessReg l)]?) i k p q at he
+  rw [← he]
+  apply accessPath_of_run
+  intro t ht
+  obtain ⟨ph, ip, f, a, b, hc, ha, ha', hb, hb'⟩ := hm t ht
+  change rrun (accessProg mode) Dbl.o (accessCfg (.read l .eC) i k p q) t = _ at hc
+  rw [hc]
+  intro r
+  by_cases h1 : r = accessReg l
+  · subst r; simpa using And.intro hb hb'
+  · by_cases h2 : r = 1
+    · subst r; simpa [Function.update_of_ne h1] using And.intro ha ha'
+    · simpa [Function.update_of_ne h1, Function.update_of_ne h2] using
+        accessCfg_safe (.read l .eC) i k p q hlo hhi r
+
+/-- A frame changing one head preserves the common bound. -/
+private lemma access_frame {y : List Bool} (c : Cfg 4 Bool AccessState y)
+    (hc : accessSafe c) (st : AccessState) (r : Fin 4) (f : ℤ → Option Bool) (q : ℤ)
+    (hq : -1 ≤ q ∧ q ≤ (Nat.bits (y.length + 1)).length) :
+    accessSafe (regCfg c st r f q) := by
+  intro j
+  simp only [regCfg, Function.update_apply]
+  split_ifs with h
+  · exact hq
+  · exact hc j
+
+/-- Invoke the received increment, without re-walking its carry or return. -/
+private lemma access_inc (mode : Bool) {y : List Bool} (r : Fin 4) (l : AccessLabel)
+    (c : Cfg 4 Bool AccessState y) (n : ℕ) (hc : accessSafe c) (hn : n + 1 ≤ y.length + 1) :
+    AccessPath mode (regCfg c (.inc r l false) r (FinTM.bufferTape (Nat.bits n)) 0)
+      (regCfg c (.read l .eC) r (FinTM.bufferTape (Nat.bits (n + 1))) 0) := by
+  obtain ⟨T, he, hm⟩ := inc_run (accessProg mode) Dbl.o r (.inc r l false) (.inc r l true)
+    (.read l .eC) (fun _ _ => rfl) (fun _ _ => rfl) rfl rfl c n
+  rw [← he]
+  apply accessPath_of_run
+  intro t ht
+  obtain ⟨st, f, q, heq, _, hlo, hhi⟩ := hm t ht
+  rw [heq]
+  exact access_frame c hc st r f q ⟨hlo, hhi.trans (by exact_mod_cast length_bits_mono hn)⟩
+
+/-- Invoke the received clear after returning the comparison head. -/
+private lemma access_clear (mode : Bool) {y : List Bool} (eq : Option Bool)
+    (c : Cfg 4 Bool AccessState y) (n : ℕ) (hc : accessSafe c) (hn : n ≤ y.length + 1) :
+    AccessPath mode (regCfg c (.clear eq false) 0 (FinTM.bufferTape (Nat.bits n)) 0)
+      (regCfg c (accessExit eq) 0 (FinTM.bufferTape []) 0) := by
+  obtain ⟨T, he, hm⟩ := clr_run (accessProg mode) Dbl.o 0 (.clear eq false) (.clear eq true)
+    (accessExit eq) (fun _ _ => rfl) (fun _ _ => rfl) rfl rfl c n
+  rw [Nat.zero_bits] at he
+  rw [← he]
+  apply accessPath_of_run
+  intro t ht
+  obtain ⟨st, f, q, heq, _, hlo, hhi⟩ := hm t ht
+  rw [heq]
+  exact access_frame c hc st 0 f q ⟨hlo, hhi.trans (by exact_mod_cast length_bits_mono hn)⟩
+
+/-- An ordinary control step, recorded in the shared bounded closure. -/
+private lemma access_step (mode : Bool) {y : List Bool} (c : Cfg 4 Bool AccessState y)
+    (st : AccessState) (hs : c.state = some st) (hc : accessSafe c) :
+    AccessPath mode c ((accessTr mode st c.inputSymbol c.workTapeSymbols).apply c) := by
+  apply Relation.ReflTransGen.single
+  refine ⟨hc, ?_⟩
+  rw [rstep_noncall (accessProg mode) Dbl.o c st hs rfl]
+  simp only [MultiTapeTM.step, hs, accessProg]
+
+/-- Normalize an increment on a scan or data pointer. -/
+private lemma access_inc_pointer (mode : Bool) {y : List Bool} (r : Fin 4)
+    (hr : r = 0 ∨ r = 3) (l : AccessLabel) (i k p : ℕ) (q : ℤ)
+    (hlo : -1 ≤ q) (hhi : q ≤ (Nat.bits (y.length + 1)).length)
+    (hn : ![i, 0, k, p] r + 1 ≤ y.length + 1) :
+    AccessPath mode (accessCfg (y := y) (.inc r l false) i k p q)
+      (accessCfg (.read l .eC) (if r = 0 then i + 1 else i) k
+        (if r = 3 then p + 1 else p) q) := by
+  have h := access_inc mode r l (accessCfg (y := y) (.inc r l false) i k p q)
+    (![i, 0, k, p] r) (accessCfg_safe _ _ _ _ _ hlo hhi) hn
+  rcases hr with rfl | rfl
+  all_goals
+    convert h using 1 <;>
+      apply Cfg.ext <;> try rfl
+    all_goals
+      funext j
+      rcases (show j = 0 ∨ j = 1 ∨ j = 2 ∨ j = 3 by omega) with rfl | rfl | rfl | rfl <;> simp [regCfg, accessCfg]
+
+/-- Return the candidate head and clear the scan pointer. Proof sketch: `regBack_x`
+returns from one cell before the comparison frontier; `clr_run` then clears register 0.
+Neither fragment changes the candidate or data pointer. -/
+private lemma access_return (mode : Bool) {y : List Bool} (eq : Option Bool)
+    (i k p q : ℕ) (hi : i ≤ y.length + 1) (hk : k ≤ y.length + 1)
+    (hq : q ≤ (Nat.bits k).length) :
+    AccessPath mode (accessCfg (y := y) (.restore eq) i k p ((q : ℤ) - 1))
+      (accessCfg (accessExit eq) 0 k p) := by
+  let c := accessCfg (y := y) (.restore eq) i k p
+  have hback := regBack_x (accessProg mode) Dbl.o c 2 (Nat.bits k)
+    (by simp [c, accessCfg]) (.restore eq) (.clear eq false)
+    (fun _ w => by simp only [accessProg, accessTr, backAct]) rfl
+    ⟨1, by omega⟩ q ((q : ℤ) - 1) (by omega) (by omega)
+  have hview (st : AccessState) (a : ℤ) : xCfg c st ⟨1, by omega⟩ 2 a =
+      accessCfg st i k p a := by
+    simp [xCfg, accessCfg, c]
+  simp only [hview] at hback
+  have h₁ : AccessPath mode (accessCfg (y := y) (.restore eq) i k p ((q : ℤ) - 1))
+      (accessCfg (.clear eq false) i k p) := by
+    rw [← hback.1]
+    apply accessPath_of_run
+    intro t ht
+    obtain ⟨q', he, h1, h2⟩ := hback.2 t ht
+    rw [he]
+    apply accessCfg_safe _ _ _ _ _ h1
+    have hb := length_bits_mono hk
+    omega
+  apply h₁.trans
+  have hclear := access_clear mode eq (accessCfg (y := y) (.clear eq false) i k p)
+    i (accessCfg_safe _ _ _ _ 0 (by omega) (by omega)) hi
+  convert hclear using 1 <;> apply Cfg.ext <;> try rfl
+  all_goals
+    funext j
+    rcases (show j = 0 ∨ j = 1 ∨ j = 2 ∨ j = 3 by omega) with rfl | rfl | rfl | rfl <;> simp [regCfg, accessCfg]
+
+/-- Pure streamed tail check. `wr` is the unvisited part of the candidate; it is a
+proof parameter, never stored as another word by the machine. -/
+private def accessTail : List Bool → List Bool → Bool → Option Bool → Option Bool
+  | [], wr, eq, last => if last = some false then none else some (eq && decide (wr = []))
+  | b :: bs, wr, eq, _ =>
+    accessTail bs wr.tail (eq && decide (wr.head? = some b)) (some b)
+
+/-- The tail check enforces its final symbol and exact equality, including empty words. -/
+private lemma accessTail_eq (wi wr : List Bool) (eq : Bool) (last : Option Bool) :
+    accessTail wi wr eq last =
+      if wi.getLast?.or last = some false then none else some (eq && decide (wr = wi)) := by
+  induction wi generalizing wr eq last with
+  | nil => simp [accessTail]
+  | cons b wi ih =>
+    rw [accessTail, ih]
+    cases wi <;> cases wr <;> simp [List.getLast?_cons, Bool.and_assoc]
+
+/-- An entire tail beginning with no previous symbol is canonical exactly when the
+streamed check succeeds. -/
+private lemma accessTail_canonical (wi wr : List Bool) (eq : Bool) :
+    accessTail wi wr eq none = if Canon wi then some (eq && decide (wi = wr)) else none := by
+  classical
+  rw [accessTail_eq]
+  have heq : decide (wr = wi) = decide (wi = wr) := decide_eq_decide.mpr eq_comm
+  rw [heq]
+  have h : wi.getLast? ≠ some false ↔ Canon wi := by
+    by_cases hn : wi = []
+    · subst wi; simp [Canon]
+    · rw [List.getLast?_eq_some_getLast hn]
+      simp only [ne_eq, Option.some.injEq]
+      constructor
+      · intro ha _
+        exact Bool.eq_true_of_not_eq_false ha
+      · intro ha
+        rw [ha hn]
+        decide
+  by_cases hh : wi.getLast? = some false
+  · have hn : ¬ Canon wi := fun hc => (h.mpr hc) hh
+    simp [hh, hn]
+  · simp [hh, h.mp hh]
+
+/-- The aligned scan's mathematical result: failure, or a comparison with the canonical
+index in the second field. It places no canonicality condition on the first field. -/
+private noncomputable def accessCheck (y : List Bool) (k : ℕ) : Option Bool :=
+  (pairDecode y).bind fun zw =>
+    if Canon zw.2 then some (decide (zw.2 = Nat.bits k)) else none
+
+/-- A genuine query passes the aligned and canonical checks, with the expected equality. -/
+private lemma accessCheck_pair (z : List Bool) (r k : ℕ) :
+    accessCheck (pairEncode z (Nat.bits r)) k = some (decide (r = k)) := by
+  simp [accessCheck, pairDecode_pairEncode, canon_bits, bits_injective.eq_iff]
+
+/-- Successful validation supplies the exact paired shape and a canonical tail. -/
+private lemma accessCheck_some {y : List Bool} {k : ℕ} {b : Bool}
+    (h : accessCheck y k = some b) :
+    ∃ z r, y = pairEncode z (Nat.bits r) ∧ b = decide (r = k) := by
+  classical
+  unfold accessCheck at h
+  cases hd : pairDecode y with
+  | none => simp [hd] at h
+  | some zw =>
+    rcases zw with ⟨z, w⟩
+    simp only [hd, Option.bind_some] at h
+    split_ifs at h with hc
+    · refine ⟨z, bitsVal w, ?_, ?_⟩
+      · exact (eq_pairEncode_of_pairDecode _ _ _ hd).trans
+          (congrArg (pairEncode z) (canon_eq_bits w hc))
+      · rw [canon_eq_bits w hc] at h
+        simpa only [bits_injective.eq_iff] using (Option.some.inj h).symm
+
+/-- A control action changes no part of the boundary data. -/
+private lemma access_go {y : List Bool} (st st' : AccessState) (i k p : ℕ) (q : ℤ) :
+    (goAct st').apply (accessCfg (y := y) st i k p q) = accessCfg st' i k p q := by
+  simp [goAct, Action.apply, accessCfg, moveInputPos_zero]
+
+/-- Moving just the comparison head has the expected boundary form. -/
+private lemma access_move {y : List Bool} (st st' : AccessState) (i k p : ℕ)
+    (q : ℤ) (mv : SignType) :
+    (xAct 2 0 mv st').apply (accessCfg (y := y) st i k p q) =
+      accessCfg st' i k p (q + mv) := by
+  have h := apply_xAct (accessCfg (y := y) st i k p) st st' ⟨1, by omega⟩ 2 q 0 mv
+  simpa [xCfg, accessCfg, Function.update_idem, moveInputPos_zero] using h
+
+/-- The candidate symbol is the current letter of its unvisited suffix. -/
+private lemma access_symbol {y : List Bool} (st : AccessState) (i k p q : ℕ) :
+    (accessCfg (y := y) st i k p q).workTapeSymbols 2 = ((Nat.bits k).drop q).head? := by
+  simp [Cfg.workTapeSymbols, accessCfg, FinTM.bufferTape, List.head?_drop]
+
+/-- A streamed tail finishes with its pure result, without copying or decoding its value.
+Proof sketch: induction on the remaining input suffix. Each letter uses `readIn_run`,
+advances the candidate head only if it sees a candidate letter, and increments the bounded
+input pointer. At the right blank, check canonicality, return the head, and clear the
+pointer with the received fragments. -/
+private lemma access_tail_run (mode : Bool) {y : List Bool} (wi : List Bool) :
+    ∀ (i k p q : ℕ) (eq : Bool) (last : Option Bool), y.drop i = wi → i ≤ y.length →
+      k ≤ y.length + 1 → q ≤ (Nat.bits k).length →
+      AccessPath mode (accessCfg (y := y) (.read (.tail eq last) .eC) i k p q)
+        (accessCfg (accessExit (accessTail wi ((Nat.bits k).drop q) eq last)) 0 k p) := by
+  induction wi with
+  | nil =>
+    intro i k p q eq last hy hi hk hq
+    have hW := length_bits_mono hk
+    have hsym : y[i]? = none := by simpa [List.head?_drop] using congrArg List.head? hy
+    have hr := access_read mode (y := y) (.tail eq last) i k p q (by omega) (by omega)
+    simp only [accessReg, Matrix.cons_val_zero, hsym] at hr
+    apply hr.trans
+    have hs := access_step mode (accessCfg (y := y) (.got (.tail eq last) none) i k p q)
+      _ rfl (accessCfg_safe _ _ _ _ _ (by omega) (by omega))
+    rw [accessTr, access_symbol, access_move] at hs
+    simp only [List.head?_eq_none_iff, accessTail] at hs ⊢
+    exact hs.trans (access_return mode _ i k p q (by omega) hk hq)
+  | cons b wi ih =>
+    intro i k p q eq last hy hi hk hq
+    have hlen := congrArg List.length hy
+    simp only [List.length_drop, List.length_cons] at hlen
+    have hi' : i + 1 ≤ y.length := by omega
+    have hW := length_bits_mono hk
+    have hsym : y[i]? = some b := by simpa [List.head?_drop] using congrArg List.head? hy
+    let wr := (Nat.bits k).drop q
+    let q' := min (q + 1) (Nat.bits k).length
+    have hq' : q' ≤ (Nat.bits k).length := Nat.min_le_right _ _
+    have hdrop : (Nat.bits k).drop q' = wr.tail := by
+      dsimp [wr, q']
+      by_cases h : q < (Nat.bits k).length
+      · rw [Nat.min_eq_left (by omega), ← List.tail_drop]
+      · have he : q = (Nat.bits k).length := by omega
+        simp [he]
+    have hmv : (q : ℤ) + ((if wr.head? = none then 0 else 1 : SignType) : ℤ) = q' := by
+      dsimp [wr, q']
+      by_cases h : q < (Nat.bits k).length
+      · have hh : ((Nat.bits k).drop q).head? ≠ none := by simp; omega
+        simp [Nat.not_le_of_lt h, Nat.min_eq_left (show q + 1 ≤ (Nat.bits k).length by omega)]
+      · have he : q = (Nat.bits k).length := by omega
+        simp [he]
+    have hr := access_read mode (y := y) (.tail eq last) i k p q (by omega) (by omega)
+    simp only [accessReg, Matrix.cons_val_zero, hsym] at hr
+    apply hr.trans
+    have hs := access_step mode (accessCfg (y := y) (.got (.tail eq last) (some b)) i k p q)
+      _ rfl (accessCfg_safe _ _ _ _ _ (by omega) (by omega))
+    rw [accessTr, access_symbol, access_move, hmv] at hs
+    apply hs.trans
+    have hn := access_inc_pointer mode (y := y) 0 (Or.inl rfl)
+      (.tail (eq && decide (wr.head? = some b)) (some b)) i k p q' (by omega) (by omega)
+      (by simp; omega)
+    simp only [↓reduceIte, Fin.isValue, show (0 : Fin 4) ≠ 3 by decide] at hn
+    apply hn.trans
+    have hnext : y.drop (i + 1) = wi := by rw [← List.tail_drop, hy]; rfl
+    simpa only [accessTail, hdrop] using ih (i + 1) k p q'
+      (eq && decide (wr.head? = some b)) (some b) hnext hi' hk hq'
+
+/-- A format rejection returns and clears before answering, so every scan has one
+normalized exit shape. -/
+private lemma access_reject (mode : Bool) {y : List Bool} (st : AccessState) (i k p : ℕ)
+    (hi : i ≤ y.length + 1) (hk : k ≤ y.length + 1)
+    (htr : ∀ a w, accessTr mode st a w = xAct 2 0 (-1) (.restore none)) :
+    AccessPath mode (accessCfg (y := y) st i k p)
+      (accessCfg (.answer false) 0 k p) := by
+  have hs := access_step mode (accessCfg (y := y) st i k p) st rfl
+    (accessCfg_safe _ _ _ _ 0 (by omega) (by omega))
+  rw [htr, access_move] at hs
+  exact hs.trans (access_return mode none i k p 0 hi hk (by omega))
+
+/-- A control-only transition between boundary configurations. -/
+private lemma access_jump (mode : Bool) {y : List Bool} (st st' : AccessState)
+    (i k p : ℕ) (htr : ∀ a w, accessTr mode st a w = goAct st') :
+    AccessPath mode (accessCfg (y := y) st i k p) (accessCfg st' i k p) := by
+  have hs := access_step mode (accessCfg (y := y) st i k p) st rfl
+    (accessCfg_safe _ _ _ _ 0 (by omega) (by omega))
+  rwa [htr, access_go] at hs
+
+/-- Duplicated letters do not affect the query tail being checked. -/
+private lemma accessCheck_dup (b : Bool) (wi : List Bool) (k : ℕ) :
+    accessCheck (b :: b :: wi) k = accessCheck wi k := by
+  classical
+  cases b <;> cases h : pairDecode wi <;> simp [accessCheck, pairDecode, h]
+
+/-- The aligned scanner validates arbitrary first fields and canonical tails.
+Proof sketch: induction in steps of two letters. `00` and `11` advance; `01` enters the
+streamed tail check; a short pair or `10` rejects. The position never exceeds the input
+length, and no numerical value of the tail is accumulated. -/
+private lemma access_scan_run (mode : Bool) {y : List Bool} (wi : List Bool) :
+    ∀ (i k p : ℕ), y.drop i = wi → i ≤ y.length → k ≤ y.length + 1 →
+      AccessPath mode (accessCfg (y := y) (.read .scan .eC) i k p)
+        (accessCfg (accessExit (accessCheck wi k)) 0 k p) := by
+  induction wi using List.twoStepInduction with
+  | nil =>
+    intro i k p hy hi hk
+    have hs : y[i]? = none := by simpa using congrArg List.head? hy
+    have hr := access_read mode (y := y) .scan i k p 0 (by omega) (by omega)
+    simp only [accessReg, Matrix.cons_val_zero, hs] at hr
+    simpa [accessCheck, pairDecode, accessExit] using hr.trans
+      (access_reject mode (.got .scan none) i k p (by omega) hk (fun _ _ => rfl))
+  | singleton b =>
+    intro i k p hy hi hk
+    have hl := congrArg List.length hy
+    simp only [List.length_drop, List.length_singleton] at hl
+    have hs : y[i]? = some b := by simpa using congrArg List.head? hy
+    have ht : y[i + 1]? = none := by
+      have hh : y.drop (i + 1) = [] := by rw [← List.tail_drop, hy]; rfl
+      simpa using congrArg List.head? hh
+    have h₀ := access_read mode (y := y) .scan i k p 0 (by omega) (by omega)
+    simp only [accessReg, Matrix.cons_val_zero, hs] at h₀
+    have h₁ := access_jump mode (y := y) (.got .scan (some b)) (.inc 0 (.second b) false)
+      i k p (fun _ _ => rfl)
+    have h₂ := access_inc_pointer mode (y := y) 0 (Or.inl rfl) (.second b) i k p 0
+      (by omega) (by omega) (by simp; omega)
+    simp at h₂
+    have h₃ := access_read mode (y := y) (.second b) (i + 1) k p 0 (by omega) (by omega)
+    simp only [accessReg, Matrix.cons_val_zero, ht] at h₃
+    have h₄ := access_reject mode (y := y) (.got (.second b) none) (i + 1) k p
+      (by omega) hk (fun _ _ => rfl)
+    simpa [accessCheck, pairDecode, accessExit] using (((h₀.trans h₁).trans h₂).trans h₃).trans h₄
+  | cons_cons b b' wi ih _ =>
+    intro i k p hy hi hk
+    have hl := congrArg List.length hy
+    simp only [List.length_drop, List.length_cons] at hl
+    have hdrop₁ : y.drop (i + 1) = b' :: wi := by rw [← List.tail_drop, hy]; rfl
+    have hdrop₂ : y.drop (i + 2) = wi := by
+      rw [show i + 2 = (i + 1) + 1 by omega, ← List.tail_drop, hdrop₁]; rfl
+    have hs : y[i]? = some b := by simpa using congrArg List.head? hy
+    have ht : y[i + 1]? = some b' := by simpa using congrArg List.head? hdrop₁
+    have h₀ := access_read mode (y := y) .scan i k p 0 (by omega) (by omega)
+    simp only [accessReg, Matrix.cons_val_zero, hs] at h₀
+    have h₁ := access_jump mode (y := y) (.got .scan (some b)) (.inc 0 (.second b) false)
+      i k p (fun _ _ => rfl)
+    have h₂ := access_inc_pointer mode (y := y) 0 (Or.inl rfl) (.second b) i k p 0
+      (by omega) (by omega) (by simp; omega)
+    simp at h₂
+    have h₃ := access_read mode (y := y) (.second b) (i + 1) k p 0 (by omega) (by omega)
+    simp only [accessReg, Matrix.cons_val_zero, ht] at h₃
+    apply (((h₀.trans h₁).trans h₂).trans h₃).trans
+    by_cases heq : b = b'
+    · subst b'
+      have h₄ := access_jump mode (y := y) (.got (.second b) (some b)) (.inc 0 .scan false)
+        (i + 1) k p (fun _ _ => by simp [accessTr])
+      have h₅ := access_inc_pointer mode (y := y) 0 (Or.inl rfl) .scan (i + 1) k p 0
+        (by omega) (by omega) (by simp; omega)
+      simp only [↓reduceIte, Fin.isValue, show (0 : Fin 4) ≠ 3 by decide] at h₅
+      rw [accessCheck_dup]
+      exact (h₄.trans h₅).trans (ih (i + 2) k p hdrop₂ (by omega) hk)
+    · cases b <;> cases b'
+      · exact False.elim (heq rfl)
+      · have h₄ := access_jump mode (y := y) (.got (.second false) (some true))
+          (.inc 0 (.tail true none) false) (i + 1) k p (fun _ _ => rfl)
+        have h₅ := access_inc_pointer mode (y := y) 0 (Or.inl rfl) (.tail true none)
+          (i + 1) k p 0 (by omega) (by omega) (by simp; omega)
+        simp at h₅
+        apply (h₄.trans h₅).trans
+        simpa [accessCheck, pairDecode, accessTail_canonical] using
+          access_tail_run mode wi (i + 2) k p 0 true none hdrop₂ (by omega) hk (by omega)
+      · simpa [accessCheck, pairDecode, accessExit] using
+          access_reject mode (y := y) (.got (.second true) (some false)) (i + 1) k p
+            (by omega) hk (fun _ _ => rfl)
+      · exact False.elim (heq rfl)
+
+/-- Advance the bounded candidate and doubled data pointer for the next round. -/
+private lemma access_bump (mode : Bool) {y : List Bool} (k p : ℕ)
+    (hk : k + 1 ≤ y.length + 1) (hp : p + 1 ≤ y.length + 1) :
+    AccessPath mode (accessCfg (y := y) (.bump false) 0 k p)
+      (accessCfg (.read .scan .eC) 0 (k + 1) (p + 1)) := by
+  let c := accessCfg (y := y) (.bump false) 0 k p
+  have hv (st : AccessState) (n : ℕ) :
+      regCfg c st 2 (FinTM.bufferTape (Nat.bits n)) 0 = accessCfg st 0 n p := by
+    apply Cfg.ext <;> try rfl
+    all_goals funext j; rcases (show j = 0 ∨ j = 1 ∨ j = 2 ∨ j = 3 by omega) with rfl | rfl | rfl | rfl <;> simp [regCfg, accessCfg, c]
+  obtain ⟨T, he, hm⟩ := inc_run (accessProg mode) Dbl.o 2 (.bump false) (.bump true)
+    (.inc 3 .scan false) (fun _ _ => rfl) (fun _ _ => rfl) rfl rfl c k
+  rw [hv, hv] at he
+  have h₁ : AccessPath mode c (accessCfg (.inc 3 .scan false) 0 (k + 1) p) := by
+    rw [← he]
+    apply accessPath_of_run
+    intro t ht
+    obtain ⟨st, f, q, hq, _, hlo, hhi⟩ := hm t ht
+    rw [hv] at hq
+    rw [hq]
+    exact access_frame c (accessCfg_safe _ _ _ _ 0 (by omega) (by omega)) _ _ _ _
+      ⟨hlo, hhi.trans (by exact_mod_cast length_bits_mono hk)⟩
+  have h₂ := access_inc_pointer mode (y := y) 3 (Or.inr rfl) .scan 0 (k + 1) p 0
+    (by omega) (by omega) (by simpa using hp)
+  simpa using h₁.trans h₂
+
+/-- The mode's answer on a genuine query. -/
+private def accessValue (mode : Bool) (z : List Bool) (r : ℕ) : Bool :=
+  if mode then decide (r < z.length) else z.getD r false
+
+/-- A completed answer has exactly the one output bit; all heads are at the origin. -/
+private def accessDone {y : List Bool} (b : Bool) (k p : ℕ) : Cfg 4 Bool AccessState y :=
+  { accessCfg (.answer b) 0 k p with state := none, output := [b] }
+
+/-- The final output action is bounded. -/
+private lemma access_answer (mode b : Bool) {y : List Bool} (k p : ℕ) :
+    AccessPath mode (accessCfg (y := y) (.answer b) 0 k p) (accessDone b k p) := by
+  have hs := access_step mode (accessCfg (y := y) (.answer b) 0 k p) _ rfl
+    (accessCfg_safe _ _ _ _ 0 (by omega) (by omega))
+  simpa [accessTr, retAct, Action.apply, accessCfg, accessDone, moveInputPos_zero] using hs
+
+/-- Read the candidate's two doubled cells, stopping at the separator.
+Proof sketch: both cells of a genuine data pair agree by `getElem?_dbl`; the separator
+has the distinct letters `false,true`. Two applications of the reader and one increment
+therefore select the answer or the next-candidate branch exactly. -/
+private lemma access_data_run (mode eq : Bool) (z w : List Bool) (k : ℕ) (hk : k ≤ z.length) :
+    AccessPath mode
+      (accessCfg (y := pairEncode z w) (.read (.data eq) .eC) 0 k (2 * k))
+      (accessCfg (if h : k < z.length then
+        if eq then .answer (mode || z[k]) else .bump false else .answer false)
+        0 k (2 * k + 1)) := by
+  have hlen := length_pairEncode z w
+  have hpair (j : Bool) : (pairEncode z w)[2 * k + j.toNat]? =
+      some (if h : k < z.length then z[k] else j) := by
+    rw [pairEncode_eq_dbl, List.append_assoc]
+    by_cases h : k < z.length
+    · rw [List.getElem?_append_left (by simp only [length_dbl]; cases j <;> simp only [Bool.toNat_false, Bool.toNat_true] <;> omega), getElem?_dbl _ _ h]
+      simp [h]
+    · have he : k = z.length := by omega
+      subst k
+      rw [List.getElem?_append_right (by simp)]
+      cases j <;> simp
+  have h₀ := access_read mode (y := pairEncode z w) (.data eq) 0 k (2 * k) 0
+    (by omega) (by omega)
+  simp only [accessReg, Matrix.cons_val_three, Matrix.head_cons, Matrix.tail_cons] at h₀
+  have hfirst := hpair false
+  simp only [Bool.toNat_false, Nat.add_zero] at hfirst
+  rw [hfirst] at h₀
+  have h₁ := access_jump mode (y := pairEncode z w)
+    (.got (.data eq) (some (if h : k < z.length then z[k] else false)))
+    (.inc 3 (.dataSecond eq (if h : k < z.length then z[k] else false)) false)
+    0 k (2 * k) (fun _ _ => rfl)
+  have h₂ := access_inc_pointer mode (y := pairEncode z w) 3 (Or.inr rfl)
+    (.dataSecond eq (if h : k < z.length then z[k] else false)) 0 k (2 * k) 0
+    (by omega) (by omega) (by simp; omega)
+  simp at h₂
+  have h₃ := access_read mode (y := pairEncode z w)
+    (.dataSecond eq (if h : k < z.length then z[k] else false)) 0 k (2 * k + 1) 0
+    (by omega) (by omega)
+  simp only [accessReg, Matrix.cons_val_three, Matrix.head_cons, Matrix.tail_cons] at h₃
+  have hsecond := hpair true
+  simp only [Bool.toNat_true] at hsecond
+  rw [hsecond] at h₃
+  apply (((h₀.trans h₁).trans h₂).trans h₃).trans
+  apply access_jump
+  intro a ww
+  by_cases h : k < z.length <;> cases eq <;> simp [accessTr, h]
+
+/-- On a genuine query, successive bounded candidates reach exactly its bit or length
+answer. Proof sketch: induction on the number of remaining first-field cells. The aligned
+scanner either matches the queried index or advances to the next candidate. At the
+separator all remaining indices are out of range, so both modes return false. -/
+private lemma access_valid (mode : Bool) (z : List Bool) (r : ℕ) :
+    ∀ k, k ≤ z.length → k ≤ r →
+      ∃ k' p', AccessPath mode
+        (accessCfg (y := pairEncode z (Nat.bits r)) (.read .scan .eC) 0 k (2 * k))
+        (accessDone (accessValue mode z r) k' p') := by
+  intro k
+  generalize hN : z.length - k = N
+  induction N using Nat.strong_induction_on generalizing k with
+  | h N ih =>
+    intro hk hr
+    have hl := length_pairEncode z (Nat.bits r)
+    have hscan := access_scan_run mode (y := pairEncode z (Nat.bits r))
+      (pairEncode z (Nat.bits r)) 0 k (2 * k) (by simp) (by omega) (by omega)
+    rw [accessCheck_pair] at hscan
+    have hdata := access_data_run mode (decide (r = k)) z (Nat.bits r) k hk
+    have hround := hscan.trans hdata
+    by_cases hk' : k < z.length
+    · by_cases he : r = k
+      · subst r
+        simp only [hk', ↓reduceDIte, decide_true, ↓reduceIte] at hround
+        refine ⟨k, 2 * k + 1, ?_⟩
+        have hans : accessValue mode z k = (mode || z[k]) := by
+          cases mode <;> simp [accessValue, hk', List.getD_eq_getElem?_getD]
+        rw [hans]
+        exact hround.trans (access_answer mode _ _ _)
+      · simp only [hk', ↓reduceDIte, he, decide_false, Bool.false_eq_true, ↓reduceIte] at hround
+        have hbump := access_bump mode (y := pairEncode z (Nat.bits r)) k (2 * k + 1)
+          (by omega) (by omega)
+        obtain ⟨k', p', hnext⟩ := ih (z.length - (k + 1)) (by omega) (k + 1) rfl
+          (by omega) (by omega)
+        refine ⟨k', p', (hround.trans hbump).trans ?_⟩
+        convert hnext using 1
+    · simp only [hk', ↓reduceDIte] at hround
+      have hans : accessValue mode z r = false := by
+        have hrr : z.length ≤ r := by omega
+        cases mode <;> simp [accessValue, Nat.not_lt.mpr hrr, List.getD_eq_getElem?_getD]
+      refine ⟨k, 2 * k + 1, ?_⟩
+      rw [hans]
+      exact hround.trans (access_answer mode false _ _)
+
+/-- The single mode-parametrized language decided by the access program. -/
+private def accessLang (mode : Bool) : Language Bool :=
+  indexLang fun z r => accessValue mode z r = true
+
+/-- The call-free program halts correctly on every input, including malformed queries.
+Proof sketch: a canonical pair uses the bounded candidate loop. All other words fail the
+aligned or canonical check at the first round. The indicator identity supplies the common
+answer in both cases. -/
+private lemma access_run (mode : Bool) (y : List Bool) :
+    ∃ k p, AccessPath mode (Cfg.init (.read .scan .eC) y)
+      (accessDone (MultiTapeTM.indicator (accessLang mode : Set (List Bool)) y) k p) := by
+  classical
+  have hinit : Cfg.init (.read .scan .eC) y = accessCfg (y := y) (.read .scan .eC) 0 0 0 := by
+    apply Cfg.ext <;> try rfl
+    · funext j z; rcases (show j = 0 ∨ j = 1 ∨ j = 2 ∨ j = 3 by omega) with rfl | rfl | rfl | rfl <;> simp [Cfg.init, accessCfg, Nat.zero_bits]
+    · funext j; simp [accessCfg]
+  rw [hinit]
+  by_cases hv : ∃ z r, y = pairEncode z (Nat.bits r)
+  · obtain ⟨z, r, rfl⟩ := hv
+    have h := access_valid mode z r 0 (by omega) (by omega)
+    have hind : MultiTapeTM.indicator (accessLang mode : Set (List Bool))
+        (pairEncode z (Nat.bits r)) = accessValue mode z r := by
+      rw [accessLang, indicator_indexLang_pairEncode]
+      simp
+    simpa [hind] using h
+  · have hbad : accessCheck y 0 = none := by
+      cases h : accessCheck y 0 with
+      | none => rfl
+      | some b =>
+        obtain ⟨z, r, hy, _⟩ := accessCheck_some h
+        exact False.elim (hv ⟨z, r, hy⟩)
+    have hscan := access_scan_run mode (y := y) y 0 0 0 (by simp) (by omega) (by omega)
+    rw [hbad] at hscan
+    have hind : MultiTapeTM.indicator (accessLang mode : Set (List Bool)) y = false := by
+      rw [indicator_eq_decide]
+      simp only [decide_eq_false_iff_not]
+      rintro ⟨z, r, hy, _⟩
+      exact hv ⟨z, r, hy⟩
+    refine ⟨0, 0, ?_⟩
+    rw [hind]
+    exact hscan.trans (access_answer mode false 0 0)
+
+/-- Compiling the common access program gives both logarithmic-space query deciders.
+Proof sketch: the bounded path gives the run and all pre-halt head bounds. The final
+answer leaves every head at zero. Compile with the empty bank; its four head intervals
+have `4(W+2)` cells. The received logarithmic polynomial bound absorbs `W = |bits(|y|+1)|`
+and the eight boundary cells, including the empty-input case. -/
+private lemma access_mem (mode : Bool) : accessLang mode ∈ LOGSPACE := by
+  classical
+  obtain ⟨C, hC⟩ := log_poly_bound 1 1 0
+  refine ⟨4 * C + 8, compileFinTM (accessProg mode) (.read .scan .eC) Dbl.nilTM
+    (fun _ => ()), fun y => ?_⟩
+  obtain ⟨k, p, hp⟩ := access_run mode y
+  obtain ⟨N, hN, hb⟩ := accessPath_run hp
+  let W := (Nat.bits (y.length + 1)).length
+  have hbox : ∀ t ≤ N, ∀ r, (-1 : ℤ) ≤
+      (rrun (accessProg mode) Dbl.o (Cfg.init (.read .scan .eC) y) t).workTapePos r ∧
+      (rrun (accessProg mode) Dbl.o (Cfg.init (.read .scan .eC) y) t).workTapePos r ≤ W := by
+    intro t ht
+    rcases lt_or_eq_of_le ht with h | rfl
+    · exact hb t h
+    · rw [hN]
+      intro j
+      simp [accessDone, accessCfg]
+  obtain ⟨T, hT, hsp⟩ := compile_space (accessProg mode) (.read .scan .eC) Dbl.nilTM
+    (fun _ => ()) Dbl.o (fun _ => -1) (fun _ => (W : ℤ)) 0 N
+    [MultiTapeTM.indicator (accessLang mode : Set (List Bool)) y]
+    (by simp only [hN, accessDone]) (by simp only [hN, accessDone]) hbox
+    (fun _ _ _ _ _ hcs => by simp [accessProg] at hcs)
+  refine ⟨T, hT, hsp.trans ?_⟩
+  have hsize : ((W : ℤ) - -1 + 1).toNat = W + 2 := by omega
+  simp only [hsize, Finset.sum_const, Finset.card_univ, Fintype.card_fin, smul_eq_mul,
+    zero_mul, add_zero]
+  have hw := length_bits_le_log (y.length + 1)
+  have hc := hC y.length
+  simp only [one_mul, pow_one, add_zero] at hc
+  unfold logSpace
+  dsimp [W]
+  have hdist : (4 * C + 8) * (Nat.log 2 y.length + 1) =
+      4 * (C * (Nat.log 2 y.length + 1)) + 8 * (Nat.log 2 y.length + 1) := by ring
+  omega
+
+end LogProg
+
+/-- **Input random access is logspace** (phase P4.4b; proved): the identity is
 implicitly logspace computable — its output bound is trivial and its two query languages,
 `Complexity.inputBitLang` and `Complexity.inputLenLang`, are in `L`. [AB09, §4.1: a pointer
 into the input] It is stated, and will be proved, as a corollary of
@@ -530,7 +1556,9 @@ and `readIn_run` keeps every head within `[-1, |bits (|y| + 1)|]`. So each work 
 `O(logSpace |y|)` cells, its origin and the boundary cells included (an interval `[-1, W]` has
 `W + 2` cells), and `compile_space` gives the space bound from these ranges. -/
 theorem implicitlyLogspaceComputable_id : ImplicitlyLogspaceComputable id := by
-  sorry
+  refine ⟨⟨1, 1, fun x => by simp⟩, ?_, ?_⟩
+  · simpa [LogProg.accessLang, LogProg.accessValue] using LogProg.access_mem false
+  · simpa [LogProg.accessLang, LogProg.accessValue] using LogProg.access_mem true
 
 /-- `Complexity.inputBitLang` is in `L` (from `Complexity.implicitlyLogspaceComputable_id`). -/
 theorem inputBitLang_mem : inputBitLang ∈ LOGSPACE := implicitlyLogspaceComputable_id.2.1
