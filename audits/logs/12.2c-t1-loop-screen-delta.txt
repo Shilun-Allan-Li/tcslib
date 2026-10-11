@@ -1,0 +1,85 @@
+# copy-text screen delta, before (b4be0717) -> after (integrated HEAD); target reproduces source
+
+== file-direction aggregates (target reproduces source): pairs / chars, before -> after
+   Catalog.lean         -> Catalog.lean          272 /  98,445  ->   272 /  98,445
+   Catalog.lean         -> EmitIterEmbed.lean      2 /     243  ->     2 /     243
+   Catalog.lean         -> Finite.lean             0 /       0  ->     1 /     156
+   Catalog.lean         -> Loop.lean             161 /  63,588  ->   100 /  48,556
+   Deterministic.lean   -> Catalog.lean            1 /     224  ->     1 /     224
+   Deterministic.lean   -> Deterministic.lean      4 /     280  ->     4 /     280
+   Deterministic.lean   -> Loop.lean               1 /     224  ->     0 /       0
+   EmitIterEmbed.lean   -> Catalog.lean            1 /     150  ->     1 /     150
+   EmitIterEmbed.lean   -> EmitIterEmbed.lean      3 /     242  ->     3 /     242
+   EmitIterEmbed.lean   -> Loop.lean               1 /     150  ->     1 /     150
+   Finite.lean          -> Catalog.lean            0 /       0  ->     1 /     156
+   Loop.lean            -> Catalog.lean          115 /  59,686  ->    87 /  41,451
+   Loop.lean            -> EmitIterEmbed.lean      2 /     243  ->     2 /     243
+   Loop.lean            -> Loop.lean             110 /  56,666  ->    65 /  33,502
+   totals: 673 280141 -> 540 223798
+
+== removed-pair checklist (count before -> after)
+   emLoopHost_* -> loopHost_* (target emLoopHost_*, source loopHost_*): 9 -> 0
+   loopHost_* -> emLoopHost_* (reverse): 0 -> 0
+   emLoopHost_round with loopHost_borrow*/fuel_return (either dir): 4 -> 0
+   emLoopHost_start in any pair: 3 -> 0
+   emLoop_run_prefix in any pair: 64 -> 0
+   emLoop_run_prefix in-file (Loop<->Loop) pairs: 18 -> 0
+   loopHost_payload_rewind <-> loopHost_fuel_rewind: 2 -> 0
+   loopCall_reframe -> loopCall_frame: 1 -> 0
+
+== new pairs (9); gone pairs (142)
+   NEW Catalog.lean::f2_loopHost reproduces Loop.lean::loopHostM: 2368/2417 = 98%
+   NEW Catalog.lean::f2_loop_live_prefix reproduces Finite.lean::runFrom_state_ne_none_of_le: 156/170 = 92%
+   NEW Finite.lean::runFrom_state_ne_none_of_le reproduces Catalog.lean::f2_loop_live_prefix: 156/156 = 100%
+   NEW Loop.lean::loopBodyDispatch reproduces Loop.lean::loopBodyImage: 118/190 = 62%
+   NEW Loop.lean::loopBodyImage reproduces Loop.lean::emLoopCall: 87/134 = 65%
+   NEW Loop.lean::loopHostM reproduces Catalog.lean::f2_loopHost: 2368/2495 = 95%
+   NEW Loop.lean::loopHost_body_run reproduces Catalog.lean::f2_loopHost_body_capture: 64/117 = 55%
+   NEW Loop.lean::loopHost_borrow_rewind reproduces Loop.lean::loopHost_payload_scan: 359/688 = 52%
+   NEW Loop.lean::loopHost_fuel_return reproduces Loop.lean::loopHost_payload_scan: 422/688 = 61%
+
+== carry-over check for new cross-file pairs (baseline counterpart via the absorbed declaration)
+   Catalog.lean::f2_loopHost <- Loop.lean::loopHostM 2368/2417=98.0%  baseline Catalog.lean::f2_loopHost <- Loop.lean::loopHost 2477/2477=100.0%  share no higher
+   Catalog.lean::f2_loop_live_prefix <- Finite.lean::runFrom_state_ne_none_of_le 156/170=91.8%  baseline Catalog.lean::f2_loop_live_prefix <- Loop.lean::loop_live_prefix 156/156=100.0%  share no higher
+   Finite.lean::runFrom_state_ne_none_of_le <- Catalog.lean::f2_loop_live_prefix 156/156=100.0%  baseline Loop.lean::loop_live_prefix <- Catalog.lean::f2_loop_live_prefix 156/156=100.0%  share no higher
+   Loop.lean::loopHostM <- Catalog.lean::f2_loopHost 2368/2495=94.9%  baseline Loop.lean::loopHost <- Catalog.lean::f2_loopHost 2477/2495=99.3%  share no higher
+   Loop.lean::loopHost_body_run <- Catalog.lean::f2_loopHost_body_capture 64/117=54.7%  baseline Loop.lean::loopHost_body_capture <- Catalog.lean::f2_loopHost_body_capture 92/117=78.6%  share no higher
+
+== every after-pair touching the special names (both sides), marked NEW if absent at baseline
+   loop_scan_left: 0 pair(s) after
+   loopBodyDispatch: 1 pair(s) after
+      NEW Loop.lean::loopBodyDispatch reproduces Loop.lean::loopBodyImage: 118/190 = 62%
+   loopHostM: 2 pair(s) after
+      NEW Catalog.lean::f2_loopHost reproduces Loop.lean::loopHostM: 2368/2417 = 98%
+      NEW Loop.lean::loopHostM reproduces Catalog.lean::f2_loopHost: 2368/2495 = 95%
+   loopBodyImage: 2 pair(s) after
+      NEW Loop.lean::loopBodyDispatch reproduces Loop.lean::loopBodyImage: 118/190 = 62%
+      NEW Loop.lean::loopBodyImage reproduces Loop.lean::emLoopCall: 87/134 = 65%
+   loopBodyImage_nil: 0 pair(s) after
+   loopHost_body_run: 1 pair(s) after
+      NEW Loop.lean::loopHost_body_run reproduces Catalog.lean::f2_loopHost_body_capture: 64/117 = 55%
+   loopHost_payload_scan: 2 pair(s) after
+      NEW Loop.lean::loopHost_borrow_rewind reproduces Loop.lean::loopHost_payload_scan: 359/688 = 52%
+      NEW Loop.lean::loopHost_fuel_return reproduces Loop.lean::loopHost_payload_scan: 422/688 = 61%
+
+== loopHost_fuel_copy pairs before / after
+   Catalog.lean::f2_loopHost_fuel_copy reproduces Loop.lean::loopHost_fuel_copy: 1356/1458 = 93% -> 1319/1466 = 90%
+   Loop.lean::loopHost_fuel_copy reproduces Catalog.lean::f2_loopHost_fuel_copy: 1356/1527 = 89% -> 1319/1527 = 86%
+   Loop.lean::loopHost_fuel_copy reproduces Loop.lean::emLoop_run_prefix: 65/129 = 50% -> absent
+   Loop.lean::loopHost_fuel_copy reproduces Loop.lean::loopHost_fuel_rewind: 827/1261 = 66% -> absent
+   Loop.lean::loopHost_fuel_copy reproduces Loop.lean::loopHost_payload_rewind: 829/1269 = 65% -> absent
+   Loop.lean::loopHost_fuel_rewind reproduces Loop.lean::loopHost_fuel_copy: 827/1458 = 57% -> absent
+   Loop.lean::loopHost_payload_rewind reproduces Loop.lean::loopHost_fuel_copy: 829/1458 = 57% -> absent
+
+== pairs touching Task 1 names (after)
+   step_output_prepend: 0
+   runFrom_output_prepend: 0
+   runFrom_state_ne_none_of_le: 2
+      Catalog.lean::f2_loop_live_prefix reproduces Finite.lean::runFrom_state_ne_none_of_le: 156/170 = 92%
+      Finite.lean::runFrom_state_ne_none_of_le reproduces Catalog.lean::f2_loop_live_prefix: 156/156 = 100%
+
+== baseline pairs of loop_live_prefix
+   Catalog.lean::f2_loop_live_prefix reproduces Loop.lean::loop_live_prefix: 156/156 = 100%
+   Loop.lean::loop_live_prefix reproduces Catalog.lean::f2_loop_live_prefix: 156/156 = 100%
+
+== new in-file pairs >= 90% (copies): []

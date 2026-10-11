@@ -229,6 +229,23 @@ group-C fill, which this layer unblocks. Pre-ship probes:
 
 ---
 
+### C1-P1: promote C1c's blank-cell query bound to `Oracle.lean` (from the epoch C1 fill gate, note 15)
+
+C1c proved a private blank-cell bound in `OracleNondeterministic.lean`: a
+blank query cell at position `n` gives `(queryString cfg).length ≤ n`. Its
+natural home is `TuringMachine/Oracle.lean`, where the deterministic
+`queryString_length_le` could then cite it instead of re-deriving the tail.
+The window is the next batch that owns `Oracle.lean` (B1 is the likely
+candidate). Statement unchanged; additive.
+
+### H-1: refresh the stale ch1 audit program `audits/programs/ch1-infra-BridgeExportAxioms.lean` (from the 12.2c item 8 integration)
+
+The program, written 2026-10-03, still expects `Complexity.TMSAT_mem_NP` to
+contain a `sorry`; it was proved on 2026-10-04 (`9f748601`). Its later checks
+on `TMSAT_NPHard`/`TMSAT_NPComplete` are stale too. It fails identically at
+every commit since, unrelated to any batch. Refresh its expectations to the
+current state, or retire it in favour of the axiom logs. `ch1-infra-BuildSpecAxioms.lean`
+still passes.
 ### BL-W: optional hypothesis weakenings of the `Complexity.BlockLoop` layer (from the 12.2c T1 item 7 gate, note 13)
 
 `BlockLoop.orbit` needs nonempty heads only below `K`. `iterate_done` does not
