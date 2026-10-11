@@ -238,6 +238,31 @@ natural home is `TuringMachine/Oracle.lean`, where the deterministic
 The window is the next batch that owns `Oracle.lean` (B1 is the likely
 candidate). Statement unchanged; additive.
 
+**Discharged (2026-10-11, B1).** The bound is public as
+`Turing.OracleTM.queryString_length_le_of_blank` in `Oracle.lean`, and
+`queryString_length_le` now cites it, statement byte-identical. E5
+(`OracleNDTM.queryString_runWith_length_le`) cites it too; the private copy is
+deleted.
+
+### FH-1: one public first-halt lemma; seven private copies to retire (from B1)
+
+`Turing.MultiTapeTM.exists_first_halt` (`Finite.lean`, 2026-10-11, B1) is the
+shared form of the least-halting-time argument. It discharges the
+liveness-before-halt guard of `capture_run`/`emit_run` and the R1 returning
+contracts. Seven private copies predate it and are untouched. They are recorded
+here for the dedup window, and each owning file's batch re-derives its copy
+through the public lemma:
+
+- `ClassNP/EXP.lean:812`: `enumCont_first_halt`
+- `ClassNP/SAT.lean:914`: `sat_first_halt`
+- `ClassNP/SAT.lean:4013`: `sat_call_first_halt`
+- `CookLevin/Hardness.lean:6164`: `clA5_call_first_halt`
+- `Build/Catalog.lean:5981`: `f2_loop_first_halt`
+- `Build/Catalog.lean:8926`: `f2_splitCount_firstHalt`
+- `Build/Loop.lean:187`: `loop_first_halt`
+
+Line numbers are at `22b6c84a`.
+
 ### H-1: refresh the stale ch1 audit program `audits/programs/ch1-infra-BridgeExportAxioms.lean` (from the 12.2c item 8 integration)
 
 The program, written 2026-10-03, still expects `Complexity.TMSAT_mem_NP` to

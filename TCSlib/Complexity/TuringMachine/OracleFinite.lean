@@ -52,6 +52,8 @@ oracle-machine bundle before they are defined" (`AroraBarakChapter1Plan.md` §2)
 * `Turing.FinTM.toFinOracleTM_computesInTime` — the embedded machine's
   input/output behavior and time bounds are oracle-independent and agree with
   the plain machine's.
+* `Turing.FinOracleTM.ComputesInTime.mono`, `Turing.FinOracleTM.ComputesInTime.output_unique`
+  — time monotonicity and output determinism at the bundled layer (added 2026-10-11, B1).
 
 ## References
 
@@ -104,6 +106,22 @@ def DecidesInTime (M : FinOracleTM Bool) (O : Language Bool) (L : Language Bool)
     (T : ℕ → ℕ) : Prop :=
   ∀ x : List Bool,
     M.ComputesInTime O x [MultiTapeTM.indicator (L : Set (List Bool)) x] (T x.length)
+
+/-- **Time monotonicity, bundled**: a computation of `output` from `input` within `t`
+steps, with oracle `O`, is one within every `t' ≥ t` steps (the bundled form of
+`Turing.OracleTM.ComputesInTime.mono`). [AB09, §3.4] -/
+theorem ComputesInTime.mono {M : FinOracleTM Symbol} {O : Language Symbol}
+    {input output : List Symbol} {t t' : ℕ} (h : M.ComputesInTime O input output t)
+    (hle : t ≤ t') : M.ComputesInTime O input output t' :=
+  OracleTM.ComputesInTime.mono h hle
+
+/-- **Output determinism, bundled**: relative to a fixed oracle, two completed outputs of
+`M` on the same input coincide (the bundled form of
+`Turing.OracleTM.ComputesInTime.output_unique`). [AB09, §3.4] -/
+theorem ComputesInTime.output_unique {M : FinOracleTM Symbol} {O : Language Symbol}
+    {input w w' : List Symbol} {t t' : ℕ} (h : M.ComputesInTime O input w t)
+    (h' : M.ComputesInTime O input w' t') : w = w' :=
+  OracleTM.ComputesInTime.output_unique h h'
 
 end FinOracleTM
 

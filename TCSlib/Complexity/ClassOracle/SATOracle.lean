@@ -22,7 +22,7 @@ complementation all of `coNP`, inside `P^SAT`. These are the standing sanity
 checks that the `Complexity.POracle` interface composes with the chapter-2
 surface before the relativization theorem (phase P3.2) builds on it.
 
-## Main results (all sorried; phase-P3.1 statements)
+## Main results (proved)
 
 * `Complexity.compl_SAT_mem_POracle_SAT` — `SATᶜ ∈ P^SAT`.
   [AB09, Example 3.6(1)]
@@ -47,7 +47,7 @@ the oracle on the input formula and answer the opposite.
 **Proof sketch.** `Complexity.oracle_mem_POracle` gives `SAT ∈ P^SAT`;
 `Complexity.compl_mem_POracle` flips the answer. -/
 theorem compl_SAT_mem_POracle_SAT : (SATᶜ : Language Bool) ∈ POracle SAT := by
-  sorry
+  exact compl_mem_POracle (oracle_mem_POracle SAT)
 
 /-- **Everything in `NP` is one `SAT`-query away**: `NP ⊆ P^SAT`.
 
@@ -55,7 +55,7 @@ theorem compl_SAT_mem_POracle_SAT : (SATᶜ : Language Bool) ∈ POracle SAT := 
 `L ≤ₚ SAT`, and `Complexity.mem_POracle_of_polyTimeReducible` turns the
 reduction into a one-query oracle machine. -/
 theorem NP_subset_POracle_SAT : NP ⊆ POracle SAT := by
-  sorry
+  exact fun L hL => mem_POracle_of_polyTimeReducible (SAT_NPHard L hL)
 
 /-- **And so is everything in `coNP`**: `coNP ⊆ P^SAT`.
 
@@ -63,6 +63,7 @@ theorem NP_subset_POracle_SAT : NP ⊆ POracle SAT := by
 puts `Lᶜ` in `P^SAT`, and `Complexity.compl_mem_POracle` closes under the
 complement back to `L`. -/
 theorem coNP_subset_POracle_SAT : coNP ⊆ POracle SAT := by
-  sorry
+  intro L hL
+  simpa using compl_mem_POracle (NP_subset_POracle_SAT hL)
 
 end Complexity
