@@ -75,3 +75,20 @@ supplementary screen shows no CounterLoop pair with Primitives (RB5's
 135-character step lemma), which the auditor is asked to rule on. Findings go
 to `audits/s12-counter-fill-findings.md`. The gate closes on zero blockers and
 zero majors.
+
+## Fill gate: CLOSED (round 1, 2026-10-10): 0 blockers, 0 majors, 2 minors, 9 notes
+
+Findings verbatim in `audits/s12-counter-fill-findings.md`. **§12.7 is complete
+end to end: statements, gate, fill, fill gate.**
+
+| Finding | Disposition |
+|---|---|
+| F1 (minor): the module summary still states `counterOverhead` as the exact physical cost without SC-1's range | **Swept** (doc-only, comment-stripped identical): the *Main definitions* bullet now says it is valid as a physical cost for `r ≤ value + 1`. The same sweep refreshes the statement-phase status labels the pack declared ("Status: proved"; the "All sorried" lead-in removed; the fill appendix no longer refers to them) |
+| F2 (minor): the bundle was not self-contained (no screen script, no comparison sources, no archive checksums) | **Adopted as pack practice** from the next pack on: bundles attach `audits/evidence/retrofit/copy-text-screen.py`, every source a screen compares against, and the delivery's `SHA256SUMS`, and separate independently checkable evidence from maintainer attestations. The `counter_work_step` ↔ Seam pair (79/135, F9) stays recorded as an idiom-level pair; no factoring was asked |
+| F3–F8, F10 (notes) | Routes, the single induction, the injective transports with endpoint-excluding guards, the SC-1 range, framing and the freeze all confirmed. No action |
+| F9 (note) | The four in-file candidates are interface glue; no factoring required |
+| F11 (note) | Replay, axiom and lint results are maintainer attestations, as stated. No action |
+
+Consumers of §12.7 are unblocked: the §12.8 rich loop host (R8.0b, in-place
+generalization, decision O2), B5 (the joint uniform interpreter), and 12.2c
+item 12.

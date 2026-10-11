@@ -24,9 +24,8 @@ are the two-tape uniform machine-code scheme (`Codes2Tape`), the EXPCOM
 simulation, the nondeterministic time hierarchy (a fused countdown at
 linear overhead) and the space hierarchy's configuration-count clock.
 
-**Status: statement skeleton (§12.7 statement phase).** All definitions
-are real; every contract is sorried, each with a proof sketch naming its
-fill obligations.
+**Status: proved.** All definitions are real and every contract is
+proved (§12.7 fill, `2e99bda1`; fill gate closed 2026-10-10).
 
 ## Design (decisions 12.7.1–12.7.6, user 2026-10-10)
 
@@ -62,14 +61,15 @@ fill obligations.
 * `Turing.decFixed`, `Turing.decrementTM` — fixed-width decrement, as a
   word function and as a machine.
 * `Turing.counterWord`, `Turing.counterOverhead` — the counter after `r`
-  decrements, and the exact cost of the first `r` decrements.
+  decrements, and the exact cost of the first `r` decrements, valid as a
+  physical cost for `r ≤ value + 1` (the counter word freezes at zero,
+  while the machine wraps).
 * `Turing.CounterLoopState`, `Turing.counterLoopTM`,
   `Turing.counterLoopCfg`, `Turing.counterLoopOrbit` — the host, its
   configurations, and the body's round-start configurations.
 
 ## Main results
 
-All sorried (statement phase):
 
 * `Turing.MultiTapeTM.mapWorkSymbols_runFrom` — symbol transport.
 * `Turing.decrementTM_run_succ_ofCfg`, `Turing.decrementTM_run_underflow_ofCfg`
@@ -89,9 +89,7 @@ All sorried (statement phase):
   arguments run a universal machine for a bounded number of steps under a
   step counter; this file is that counter as a reusable machine.)
 
-**Fill appendix (§12.7).** All ten contracts are now proved. The historical
-statement-phase status labels above are retained under the docstring freeze.
-Decrement is transported from increment once; `counter_rounds` is the single
+**Fill appendix (§12.7).** All ten contracts are proved. Decrement is transported from increment once; `counter_rounds` is the single
 round induction used by both host contracts. Its final state is unrestricted,
 so it covers returning prefixes and the last escaping round with the same
 trajectory invariant. The amortization proofs use the audit's bit-count
