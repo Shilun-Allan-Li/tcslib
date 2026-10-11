@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Seyoon Ragavan
 -/
 import TCSlib.Complexity.TuringMachine.Finite
+import TCSlib.Complexity.TuringMachine.Simulation
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -42,6 +43,12 @@ rows on dedicated digit tapes, and §13d's zone carrier, whose alphabet embeds `
   configurations and space.
 * `Turing.FinTM.liftSymbols_computesFunInTimeVia` — a lifted computation is a computation via
   `e`, in the same time.
+* `Turing.MultiTapeTM.liftSymbols_runFrom_over`, with `Turing.Cfg.liftOver`,
+  `Turing.Cfg.decodeSymbols` and `Turing.Cfg.liftOver_decodeSymbols` — the overlay transport:
+  a lifted run of an input-oblivious, blank-free table from an arbitrary rich configuration,
+  keeping its rich frame (§12.8 fill, for R8.0b and the record rows).
+* `Turing.FinTM.bufferTape_map`, `Turing.FinTM.bufferTape_map_decode`,
+  `Turing.decodeBool_eq_some` — delimited words and decoding under the lift.
 
 ## References
 
@@ -222,5 +229,154 @@ theorem FinTM.liftSymbols_computesFunInTimeVia {Γ : Type} [DecidableEq Γ] (M :
     ((M.tm.liftSymbols e).runFrom ((M.tm.liftSymbols e).initCfg (x.map e)) _).output = _
   rw [MultiTapeTM.liftSymbols_initCfg, MultiTapeTM.liftSymbols_runFrom]
   exact ⟨hx.1, congrArg (List.map e) hx.2⟩
+
+/-! ### Overlays: a lifted run that keeps the rich frame (§12.8 fill, R8.0b)
+
+`Turing.MultiTapeTM.liftSymbols_runFrom` transports a `Bool` run along `e` only from a
+configuration that is a lift everywhere. A dedicated digit tape inside a rich host has rich
+neighbours and a rich input. The overlay keeps the rich configuration's cells wherever the
+`Bool` run agrees with their decoding, so a lifted run of an input-oblivious, blank-free
+table transports from an arbitrary rich start. -/
+
+section Overlay
+
+/-- **Decoding inverts the embedding** (design §12.8a): a symbol that decodes to `b` is
+`e b`. -/
+theorem decodeBool_eq_some {Γ : Type} [DecidableEq Γ] (e : Bool ↪ Γ) (γ : Γ) (b : Bool)
+    (h : decodeBool e γ = some b) : γ = e b := by
+  unfold decodeBool at h
+  split_ifs at h with h1 h2 <;> simp_all
+
+/-- **A lifted delimited word is the delimited word of the lift** (design §12.8a §1,
+Part B). -/
+theorem FinTM.bufferTape_map {Γ : Type} (e : Bool ↪ Γ) (w : List Bool) (p : ℤ) :
+    FinTM.bufferTape (w.map e) p = (FinTM.bufferTape w p).map e := by
+  unfold FinTM.bufferTape
+  split_ifs <;> simp
+
+/-- **A lifted delimited word decodes to the word** (design §12.8a), delimiters
+included. -/
+theorem FinTM.bufferTape_map_decode {Γ : Type} [DecidableEq Γ] (e : Bool ↪ Γ)
+    (w : List Bool) (p : ℤ) :
+    (FinTM.bufferTape (w.map e) p).bind (decodeBool e) = FinTM.bufferTape w p := by
+  by_cases hp : 0 ≤ p
+  · simp only [FinTM.bufferTape, hp, if_true, List.getElem?_map]
+    cases w[p.toNat]? <;> simp
+  · simp [FinTM.bufferTape, hp]
+
+/-- **The overlay of a `Bool` configuration on a rich one** (design §12.8a, R8.0b). Control,
+input position and heads are the lift's. A cell where `c` agrees with the decoding of `D`
+keeps `D`'s symbol; any other cell is `c`'s, mapped by `e`. The output is `D`'s followed by
+the lift's. -/
+def Cfg.liftOver {k : ℕ} {Γ Q : Type} [DecidableEq Γ] (e : Bool ↪ Γ) {x : List Γ}
+    {x' : List Bool} (hx : x'.length = x.length) (D : Cfg k Γ Q x) (c : Cfg k Bool Q x') :
+    Cfg k Γ Q x :=
+  ⟨(c.liftSymbols e).state, Fin.cast (by simp [hx]) (c.liftSymbols e).inputPos,
+    fun j p => if c.workTapes j p = (D.workTapes j p).bind (decodeBool e) then D.workTapes j p
+      else (c.liftSymbols e).workTapes j p,
+    (c.liftSymbols e).workTapePos, D.output ++ (c.liftSymbols e).output⟩
+
+/-- **One lifted step commutes with the overlay** (design §12.8a, R8.0b), for a table that
+ignores its input and never writes a blank.
+
+**Proof sketch.** The lifted table reads the overlay's cells through `decodeBool e`, which
+returns `c`'s cells; input-obliviousness removes the input read. A written cell is a digit,
+so it agrees with its own decoding exactly where `D`'s decoding already held it. -/
+theorem MultiTapeTM.liftSymbols_step_over {k : ℕ} {Γ Q : Type} [DecidableEq Γ]
+    (e : Bool ↪ Γ) (N : MultiTapeTM k Bool Q)
+    (hin : ∀ q inp inp' work, N.tr q inp work = N.tr q inp' work)
+    (hnb : ∀ q inp work j, ((N.tr q inp work).workTapes j).1 ≠ some none)
+    {x : List Γ} {x' : List Bool} (hx : x'.length = x.length)
+    (D : Cfg k Γ Q x) (c : Cfg k Bool Q x') :
+    (N.liftSymbols e).step (Cfg.liftOver e hx D c) = Cfg.liftOver e hx D (N.step c) := by
+  cases hs : c.state with
+  | none =>
+    have : (Cfg.liftOver e hx D c).state = none := hs
+    rw [MultiTapeTM.step_of_halt this, MultiTapeTM.step_of_halt hs]
+  | some q =>
+    have hL : (Cfg.liftOver e hx D c).state = some q := hs
+    have hw : (fun j => ((Cfg.liftOver e hx D c).workTapeSymbols j).bind (decodeBool e)) =
+        c.workTapeSymbols := by
+      funext j
+      simp only [Cfg.workTapeSymbols, Cfg.liftOver, Cfg.liftSymbols]
+      split_ifs with h
+      · exact h.symm
+      · cases c.workTapes j (c.workTapePos j) <;> simp
+    unfold MultiTapeTM.step
+    rw [hL, hs]
+    dsimp only
+    change ((N.tr q ((Cfg.liftOver e hx D c).inputSymbol.bind (decodeBool e))
+      fun j => ((Cfg.liftOver e hx D c).workTapeSymbols j).bind (decodeBool e)).liftSymbols
+        e).apply (Cfg.liftOver e hx D c) = _
+    rw [hw, hin q _ c.inputSymbol]
+    have hnb' := hnb q c.inputSymbol c.workTapeSymbols
+    generalize N.tr q c.inputSymbol c.workTapeSymbols = a at hnb'
+    apply Cfg.ext
+    · rfl
+    · apply Fin.ext
+      simp only [Action.apply, Cfg.liftOver, Action.liftSymbols, Cfg.liftSymbols, Fin.coe_cast,
+        moveInputPos]
+      split_ifs <;> simp <;> omega
+    · funext j p
+      simp only [Action.apply, Action.liftSymbols, Cfg.liftOver, Cfg.liftSymbols]
+      cases ha : (a.workTapes j).1 with
+      | none => simp
+      | some s =>
+        have hs' : s ≠ none := fun h => hnb' j (by rw [ha, h])
+        obtain ⟨b, rfl⟩ := Option.ne_none_iff_exists'.mp hs'
+        simp only [Option.map_some]
+        by_cases hp : p = c.workTapePos j
+        · subst hp
+          simp only [Function.update_self]
+          split_ifs with h
+          · cases hD : D.workTapes j (c.workTapePos j) with
+            | none => simp [hD] at h
+            | some γ =>
+              simp only [hD, Option.bind_some] at h
+              rw [decodeBool_eq_some e γ b h.symm]
+          · rfl
+        · simp [Function.update_of_ne hp]
+    · rfl
+    · simp only [Action.apply, Action.liftSymbols, Cfg.liftOver, Cfg.liftSymbols,
+        List.map_append, List.append_assoc]
+      cases a.output <;> rfl
+
+/-- **The overlay transport over whole runs** (design §12.8a, R8.0b): the sibling of
+`Turing.MultiTapeTM.liftSymbols_runFrom` that keeps the rich frame.
+
+**Proof sketch.** The one-step lemma, iterated by `Function.Semiconj.iterate_right`. -/
+theorem MultiTapeTM.liftSymbols_runFrom_over {k : ℕ} {Γ Q : Type} [DecidableEq Γ]
+    (e : Bool ↪ Γ) (N : MultiTapeTM k Bool Q)
+    (hin : ∀ q inp inp' work, N.tr q inp work = N.tr q inp' work)
+    (hnb : ∀ q inp work j, ((N.tr q inp work).workTapes j).1 ≠ some none)
+    {x : List Γ} {x' : List Bool} (hx : x'.length = x.length)
+    (D : Cfg k Γ Q x) (c : Cfg k Bool Q x') (t : ℕ) :
+    (N.liftSymbols e).runFrom (Cfg.liftOver e hx D c) t =
+      Cfg.liftOver e hx D (N.runFrom c t) :=
+  (Function.Semiconj.iterate_right (f := Cfg.liftOver e hx D)
+    (fun c => (MultiTapeTM.liftSymbols_step_over e N hin hnb hx D c).symm) t c).symm
+
+/-- **The decoded `Bool` shadow of a rich configuration** (design §12.8a, R8.0b): cells
+decoded (a foreign symbol reads as blank), the input replaced by a `Bool` word of the same
+length, the output empty. -/
+def Cfg.decodeSymbols {k : ℕ} {Γ Q : Type} [DecidableEq Γ] (e : Bool ↪ Γ) {x : List Γ}
+    (D : Cfg k Γ Q x) : Cfg k Bool Q (x.map fun _ => false) :=
+  ⟨D.state, Fin.cast (by simp) D.inputPos, fun j p => (D.workTapes j p).bind (decodeBool e),
+    D.workTapePos, []⟩
+
+/-- **Every rich configuration is the overlay of its shadow on itself** (design §12.8a,
+R8.0b), so the overlay transport applies from an arbitrary rich start.
+
+**Proof sketch.** Field by field; a cell always agrees with its own decoding. -/
+theorem Cfg.liftOver_decodeSymbols {k : ℕ} {Γ Q : Type} [DecidableEq Γ] (e : Bool ↪ Γ)
+    {x : List Γ} (D : Cfg k Γ Q x) : Cfg.liftOver e (by simp) D (Cfg.decodeSymbols e D) = D := by
+  apply Cfg.ext
+  · rfl
+  · apply Fin.ext; rfl
+  · funext j p; simp [Cfg.liftOver, Cfg.decodeSymbols]
+  · rfl
+  · simp [Cfg.liftOver, Cfg.decodeSymbols, Cfg.liftSymbols]
+
+end Overlay
 
 end Turing

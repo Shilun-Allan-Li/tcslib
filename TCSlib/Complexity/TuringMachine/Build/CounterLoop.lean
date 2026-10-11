@@ -618,8 +618,12 @@ private lemma counter_last_unselected (k : ℕ) :
   rintro ⟨i, hi⟩
   exact Fin.castSucc_ne_last i hi
 
-/-- The host layout is the body bank followed by its counter tape. -/
-private lemma counter_cfg_eq {k : ℕ} {S : Type} {x : List Bool}
+/-- **The counter-loop host layout** (design §12.7; public since the §12.8 fill): the
+host configuration is the body bank followed by its counter tape.
+
+**Proof sketch.** The body tapes are R1's selected tapes (`Turing.embedEmitCfg_selected_tape`,
+`_pos`); the counter tape is its frame (`Turing.embedEmitTM_frame` at time `0`). -/
+theorem counter_cfg_eq {k : ℕ} {S : Type} {x : List Bool}
     (q : Option (CounterLoopState S)) (c : Cfg k Bool S x)
     (ct : ℤ → Option Bool) (cp : ℤ) :
     counterLoopCfg q c ct cp =
