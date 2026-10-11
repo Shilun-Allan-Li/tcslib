@@ -2023,6 +2023,9 @@ executable.
       `exists_tableFindTM`. Their statements need S1b's table layout (a
       header, the radius digits, the odometer order) and a template tape
       holding the widths a validity machine compares against.
+11. **`MultiTapeTM.liftSymbols_step` is public** in the landed
+    `SymbolLift.lean` (PR #16), as the transport's one-step form; §1 above
+    made it private. Only `moveInputPos_cast` is private.
 
 **R8.0b target signatures.** These land in a later batch, after this
 statement gate. Home `Build/CounterLoop.lean`, which then imports

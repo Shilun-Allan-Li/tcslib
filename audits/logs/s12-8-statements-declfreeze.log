@@ -1,0 +1,33 @@
+# s12.8 statement layer, statement freeze: declarations of the four changed files at the campaign base 22b6c84a (merge base; the campaign tip 29e2ffd5 has no Lean change since) against this branch (comment-aware chunking; statement = text up to the first ':=', whitespace-normalized)
+## TCSlib/Complexity/TuringMachine/Build/Catalog.lean
+public before/after: 44 75 private before/after: 384 384
+public added: ['ScanPhase', 'SeekPhase', 'compareTM_run_ofCfg', 'fieldOffset', 'fieldsTape', 'fieldsTape_field', 'inputMoveAction', 'joinFields', 'mealyRun', 'scanCarry', 'scanFold', 'scanKeep', 'scanMap', 'scanResult', 'scanResult_carry', 'scanResult_fold', 'scanResult_map', 'scanResult_shiftLeft', 'scanResult_shiftRight', 'scanShift', 'scanTM', 'scanTM_run_ofCfg', 'seekEndTM', 'seekEndTM_run_ofCfg', 'seekStartTM', 'seekStartTM_run_ofCfg', 'skipBackTM', 'skipBackTM_run_ofCfg', 'skipTM', 'skipTM_run_ofCfg', 'tapeAction']
+public removed: []
+private removed: []
+private added: []
+private changed: []
+## TCSlib/Complexity/TuringMachine/Build/Seam.lean
+public before/after: 13 16 private before/after: 13 12
+public added: ['seamCompTM_runFrom_left', 'seamCompTM₂', 'seamCompTM₂_run_ofCfg']
+public removed: []
+private removed: ['seamComp_left']
+private added: []
+private changed: ['seamComp_firstReturn_general', 'seamComp_right', 'seamComp_visited_general']
+## TCSlib/Complexity/TuringMachine/Build/CounterLoop.lean
+public before/after: 24 26 private before/after: 25 25
+public added: ['expandTM', 'expandTM_run_ofCfg']
+public removed: []
+private removed: []
+private added: []
+private changed: []
+## TCSlib/Complexity/ClassPSPACE/TQBF.lean
+public before/after: 9 8 private before/after: 0 0
+public added: []
+public removed: ['Cfg.InWindow']
+private removed: []
+private added: []
+private changed: []
+## notes
+# Seam: the private seamComp_left is promoted verbatim (statement and body) as the public seamCompTM_runFrom_left; the three changed privates differ only in citing the new name (4 occurrences)
+# TQBF: Cfg.InWindow is relocated to Build/CfgRecord.lean with its statement and body byte-identical; its docstring gains two sentences (cfgRecord_inj; the relocation note)
+# new files (no base): TuringMachine/SymbolLift.lean (PR #16), Build/Scan.lean, Build/InputCall.lean, Build/CfgRecord.lean
