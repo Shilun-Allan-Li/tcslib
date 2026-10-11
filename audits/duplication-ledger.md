@@ -244,6 +244,29 @@ So Relativization, Classes and OracleNondeterministic have no members.
 as the public `queryString_length_le_of_blank` (C1-P1). Both consumers cite
 it, so no copy remains (gate note 8).
 
+## §12.8 statement layer (PR #28)
+
+Added at the §12.8 statement gate, round 1 (`audits/s12-8-statements-findings.md`,
+finding 8 and note 38).
+
+- **Catalog's denominator** (2026-10-11). Part 3 adds 31 public declarations,
+  none of them members, bringing Catalog to 459 declarations (75 public,
+  384 private). The members are unchanged, so the fraction is now
+  **318/459 = 69.3%**; strict, 283/459 = 61.7%. The R1-close figure of
+  318/428 is the historical snapshot. The scheduled resolution is still the
+  12.2c per-theme split.
+- **Same-file similarities, not members.** The screen found twelve new pairs,
+  all within a file. They are uncounted under the in-file convention:
+  - the four seek tables among themselves, including `seekEndTM` ←
+    `skipTM` at 100%;
+  - `writeConstTM` ← `writeAdvTM` at 58%.
+
+  These are distinct small transition tables over shared phase types, with
+  different stop and return behaviour; no proof is copied (gate note 38). The
+  fills must use the one shared trace that the sketches promise.
+- **The new files** (`SymbolLift`, `Build/Scan`, `Build/InputCall`,
+  `Build/CfgRecord`) have no members.
+
 ## Watch items (design-parallel, no byte-copies)
 
 | Item | Status |

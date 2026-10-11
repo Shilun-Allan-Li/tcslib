@@ -54,8 +54,11 @@ copier on tape `0` (`Turing.inputCopyTM_run_ofCfg`, `2|x| + 2` steps, which
 from the blank seam yields `Cfg.ofWords` with `x` on tape `0`) with the install
 call of `Turing.FinTM.exists_installCallTM` on the argument `x`, whose
 coefficient absorbs the copy and the dispatch step. The first-return clause is
-`Turing.seamCompTM_firstReturn_ofCfg`, and the positive tape count is the
-install call's. -/
+`Turing.seamCompTM_firstReturn_ofCfg`, which also needs the callee's exit
+excluded at time `0`; the install call's contract excludes it only at positive
+times. So split on whether its entry equals its exit. If it does, first wrap it
+by `Turing.seamReleaseTM`, whose `Turing.seamReleaseTM_firstReturn` supplies a
+fresh entry. The positive tape count is the install call's. -/
 theorem exists_inputCallTM (M : FinTM Bool) (f : List Bool → List Bool)
     (T : ℕ → ℕ) (hM : M.ComputesFunInTime f T) :
     ∃ (C : FinTM Bool) (entry exit : C.State) (c : ℕ), 0 < C.k ∧
@@ -80,16 +83,22 @@ valid input position, at most `|x| + 1`, and let tape `1` be blank. From the
 entry, with the input head anywhere, the module reaches `exit` with the input
 head at `p` within `C·(|w| + pos + p + 1)` steps, where `pos` is the starting
 input position, and not earlier. Every work tape, every work head and the
-output are restored. A rich host runs it lifted on two dedicated digit tapes.
+output are restored. Up to the exit every work head stays within
+`C·(|w| + 1)` cells of its entry position. So the module's work space is
+`O(|w| + 1)`, however far the input head travels, and repeated calls compose.
+A rich host runs it lifted on two dedicated digit tapes.
 
 **Proof sketch.** Copy `w` to the scratch tape (`Turing.copyTM_run_ofCfg`,
-`2|w| + 2`). Rewind the input head to the left end marker (`timed_rewind`, at
-most `pos + 1` steps). Run `Turing.counterLoopTM` with the scratch copy as the
+`2|w| + 2`). Rewind the input head: `timed_rewind` returns it to position `1`
+within `pos + 2` steps, and one further left move reaches the left end marker
+`0`. Run `Turing.counterLoopTM` with the scratch copy as the
 counter and the one-step round "input head right", `p` rounds
 (`Turing.counterLoopTM_run_done`, `p + counterOverhead w (p + 1)`, at most
 `5p + 2|w| + 2` by `Turing.counterOverhead_le`). The counter ends all `true`
 with its head back; `Turing.clearTM_run_ofCfg` blanks it. The phases join by
-R2 seams, whose dispatch steps add a constant. -/
+R2 seams, whose dispatch steps add a constant. The work heads move only in the
+copy, the counter loop and the clear, whose trajectory clauses keep each one
+within `[pos - 1, pos + |w|]` of its tape. -/
 theorem exists_inputSeekTM :
     ∃ (S : Type) (_ : Fintype S) (_ : DecidableEq S) (R : MultiTapeTM 2 Bool S) (entry exit : S)
       (C : ℕ),
@@ -100,6 +109,8 @@ theorem exists_inputSeekTM :
         (∀ q, d.workTapes 1 q = none) →
         ∃ t ≤ C * (w.length + d.inputPos.val + p + 1),
           (∀ u < t, (R.runFrom d u).state ≠ some exit) ∧
+          (∀ u ≤ t, ∀ j : Fin 2,
+            |(R.runFrom d u).workTapePos j - d.workTapePos j| ≤ ((C * (w.length + 1) : ℕ) : ℤ)) ∧
           (R.runFrom d t).state = some exit ∧ ((R.runFrom d t).inputPos : ℕ) = p ∧
           (R.runFrom d t).workTapes = d.workTapes ∧ (R.runFrom d t).workTapePos = d.workTapePos ∧
           (R.runFrom d t).output = d.output := by

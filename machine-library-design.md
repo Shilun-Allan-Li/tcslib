@@ -2091,6 +2091,58 @@ agent.
 7. **G2's agreement** to `scanTM` as its core, and whether the planned
    `copyMapTM`/`transferMapTM` are still wanted. §12.8 does not need them.
 
+#### 9. Statement gate, round 1: decisions and repairs (2026-10-11)
+
+Round 1 failed with 0 blockers, 1 major, 7 minors and 39 notes
+(`audits/s12-8-statements-findings.md`).
+
+**Decisions** (user, the auditor's recommendations, on the open questions
+of §8):
+
+1. Skip back stays the **inverse** of skip, at `|u| + 3`.
+2. Shared tables get a **fixed nonempty header field**, so seek end always
+   has a field to stop after. The table ends are two blank cells before the
+   header and two after the last field. From seek end's stopping blank, a
+   consumer reaches the table start by skipping back over the last field
+   and then seeking start. The deferred table rows are stated with this
+   layout.
+3. `writeAdvTM` stays **cyclic**. One-shot callers use `seamReleaseTM`.
+4. The record rows keep their **fixed local tape layouts**, and hosts embed
+   them by R1.
+5. The deferred record rows (validity, init, next, table append and find)
+   get **their own statement gate** with S1b's concrete layout, before
+   S1b's fill uses them. R8.0b and R8.5c are explicit prerequisites.
+6. The new modules are **wired into the `TuringMachine` facade** at this
+   gate: `SymbolLift`, `Build/CounterLoop`, `Build/Scan`, `Build/InputCall`
+   and `Build/CfgRecord`. Nine older files of the topic are also absent
+   from the facade; they are recorded as `backlog.md` FAC-1.
+7. G2's core is `scanTM`, and `copyMapTM`/`transferMapTM` stay for G3/G4
+   (§13d, G2).
+
+**Repairs** (for round 2):
+
+- **Major 1: work-space clauses.** The record rows and the input seek
+  bounded time but not the cells they visit, so they were too weak for
+  Savitch and logspace consumers. Each now bounds every work head, through
+  its verdict or exit, to `C·(size + 1)` cells of its entry position. The
+  size is the record's layout length for the step and test rows, `fs`'s
+  layout length for the equality row, and `|w|` for the seek. So the space
+  does not depend on how far the native input head travels, and repeated
+  calls compose. The step row's sketch now names the obligations the auditor
+  identified: save and restore the host's input position in binary, and
+  clamp the position field at `0` and `|x| + 1`.
+- **Minor 2.** The input seek's rewind: `timed_rewind` stops at position
+  `1` within `pos + 2` steps, and one left move follows.
+- **Minor 3.** The input call's first-return clause splits on whether the
+  callee's entry equals its exit. If it does, `seamReleaseTM` supplies a
+  fresh entry first.
+- **Minors 4, 5 and 6.** `recordValid_iff`'s validator needs width
+  templates. A record determines the configuration *core* together with the
+  tag. `fieldOffset`'s end formula needs `fs ≠ []`.
+- **Minors 7 and 8.** Corrected in the records: the declfreeze log
+  miscounted the promotion's citations (3, not 4), and Catalog's ledger
+  denominator is now 459.
+
 ### 12.9 Oracle-machine rows (landed 2026-10-11 with epoch B1; `Build/OracleCall.lean`)
 
 **Why.** Every §12 row is plain-machine level, and the oracle model (`TuringMachine/Oracle.lean`)
@@ -2523,7 +2575,11 @@ framed contracts follow the §12.6 shape (exact time `2|w| + 2`, finish
 configuration, no earlier exit, trajectory). At `merge := fun _ s => s` they
 are the plain rows. This is the reusable large-alphabet primitive. Its proofs
 must share the generalized R3 trace, not copy it (one trace per routine
-family, as §12.6 established).
+family, as §12.6 established). **Decision (user, 2026-10-11; the §12.8
+statement gate's Q7).** G2's one-tape core is `scanTM` (§12.8a).
+`copyMapTM`/`transferMapTM` stay, for the cross-tape G3/G4 consumers. Their
+`merge` takes `Option Γ → Δ → Γ`, so that blank destinations are admitted,
+and they share one trace with the scan.
 
 **G3. The multi-track zoned carrier over `Γ`.**
 

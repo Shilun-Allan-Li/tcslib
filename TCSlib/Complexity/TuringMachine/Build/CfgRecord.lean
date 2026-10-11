@@ -92,7 +92,8 @@ sits within `[-s, s]` and every work cell outside `[-s, s]` is blank — the
 side condition under which the packaged codec of
 `Complexity.exists_adjacency_codec_cnf` is faithful. (The input head needs no
 clause: its type bounds it.) It is equally the side condition under which a
-configuration record determines its configuration (`Turing.cfgRecord_inj`);
+configuration record determines its configuration core, together with its
+separately supplied tag (`Turing.cfgRecord_inj`);
 relocated here from `TCSlib.Complexity.ClassPSPACE.TQBF` (decision 12.8.2). -/
 def Cfg.InWindow {k : ℕ} {Symbol State : Type} {x : List Symbol} (s : ℕ)
     (c : Cfg k Symbol State x) : Prop :=
@@ -187,8 +188,12 @@ def RecordValid (k n s : ℕ) (Q T : Type) (fs : List (List (RecSym Q T))) : Pro
 /-- **Validity is a shape condition** (design §12.8a §2). A field list is a
 valid record exactly when it has `k + 3` fields: a state cell; `posWidth n`
 digits of a value at most `n + 1`; for each tape, `2s + 1` work cells of which
-exactly one carries the head mark; and a tag cell. Each conjunct is a fold of
-one field, which is how a validity machine checks it.
+exactly one carries the head mark; and a tag cell. This shape supports a
+validity machine built from finite-state folds over the fields, given the
+widths `2s + 1` and `posWidth n` and the bound `n + 1` as templates or
+counters. A fold of one field alone cannot check a variable width: a single
+marked cell is valid at `s = 0` and not at `s = 1`. The validator itself is
+deferred to S1b's statement phase.
 
 **Proof sketch.** Forward: read the shape off `Turing.cfgRecord`, with the mark
 at index `pos + s` of each tape field, which is in range by the window
@@ -228,20 +233,30 @@ length plus `|x| + 1`, and no verdict earlier. If `M.step c` is windowed, the
 verdict is `yes` and the record interval holds the record of `M.step c`, with
 tag `upd τ (M.outputSymbol c)`; otherwise the verdict is `no` and nothing has
 changed. In both cases every head, the input position, the other tapes and the
-output are restored. A halted `c` steps to itself with its tag unchanged, by
-`hupd`.
+output are restored. Up to the verdict every work head stays within `C` times
+the record length plus one of its entry position. So the module's work space
+is linear in the record length, however far the native input head travels.
+It depends on `|x|` only through the `posWidth |x|` position digits. A halted
+`c` steps to itself with its tag
+unchanged, by `hupd`.
 
 **Proof sketch.** Compose by R2 seams, with no private trace. Read: `scanTM`
 folds collect the state, the tag, and for each tape field the marked cell's
 content and whether the mark is at an edge, moving between fields by `skipTM`.
-Read the input symbol: copy the position field to a scratch digit tape
-(`copyTM`), run the lifted `exists_inputSeekTM` on it, read the symbol, and
-restore. Dispatch on `M.tr` over the finite data. Apply: `scanTM` maps rewrite
+Read the input symbol. The host's input position is arbitrary, so first save
+it in binary on a scratch digit tape: a counter of width `posWidth |x|`, which
+holds every input position since positions are at most `|x| + 1`. Then copy
+the position field to another scratch digit tape (`copyTM`), run the lifted
+`exists_inputSeekTM` on it, read the symbol, and restore the saved position.
+At `|x| = 0`, which the one-digit position width reveals, the input is blank
+and the head need not move. Dispatch on `M.tr` over the finite data. Apply: `scanTM` maps rewrite
 the marked content, the state and the tag; delay steps shift the marks; the
-position field moves by the lifted increment or decrement on the scratch tape
-and is copied back; a mark leaving the window selects `no` before anything is
-written. Rewind by `skipBackTM`. Each phase is linear in the record length or
-in `|x|`. -/
+position field moves by the lifted increment or decrement on the scratch tape,
+clamped at `0` and `|x| + 1` as `moveInputPos` clamps, and is copied back. A
+mark leaving the window selects `no` before anything is written. Rewind by
+`skipBackTM`. Each phase takes time linear in the record length or in `|x|`.
+Its work heads move only over the record and over scratch words of the
+position width, hence within `O(L + 1)` cells. -/
 theorem exists_recordStepTM {k : ℕ} {Q T : Type} [Fintype Q] [DecidableEq Q] [Fintype T]
     [DecidableEq T] (M : MultiTapeTM k Bool Q) (upd : T → Option Bool → T)
     (hupd : ∀ τ, upd τ none = τ) :
@@ -253,6 +268,9 @@ theorem exists_recordStepTM {k : ℕ} {Q T : Type} [Fintype Q] [DecidableEq Q] [
         (∀ j : Fin (K + 1), j ≠ 0 → ∀ p, d.workTapes j p = none) →
         ∃ t ≤ C * ((joinFields (cfgRecord s c τ)).length + x.length + 1),
           (∀ u < t, (R.runFrom d u).state ≠ some yes ∧ (R.runFrom d u).state ≠ some no) ∧
+          (∀ u ≤ t, ∀ j : Fin (K + 1),
+            |(R.runFrom d u).workTapePos j - d.workTapePos j| ≤
+              ((C * ((joinFields (cfgRecord s c τ)).length + 1) : ℕ) : ℤ)) ∧
           ((M.step c).InWindow s →
             R.runFrom d t =
               { d with
@@ -271,8 +289,9 @@ over the record alphabet with an entry and two distinct verdict anchors with
 the following contract. Start it at its entry with field lists `fs` and `gs`,
 of `k + 3` fields each, laid out at the heads of tapes `0` and `1`. It reaches
 `yes` if `fs = gs` and `no` otherwise, within `C` times the length of `fs`'s
-layout plus one, with no verdict earlier and nothing else changed. The input is
-arbitrary and not read.
+layout plus one, with no verdict earlier and nothing else changed. Up to the
+verdict both heads stay within that many cells of their entry positions,
+however long `gs` is. The input is arbitrary and not read.
 
 **Proof sketch.** For each of the `k + 3` fields, run `compareTM` framed
 (`compareTM_run_ofCfg`) on the two current fields; on `false`, return `no`, and
@@ -289,6 +308,9 @@ theorem exists_recordEqTM (k : ℕ) (Q T : Type) [Fintype Q] [DecidableEq Q] [Fi
       ∀ d : Cfg 2 (RecSym Q T) P x, d.state = some entry → RecordAt d 0 fs → RecordAt d 1 gs →
         ∃ t ≤ C * ((joinFields fs).length + 1),
           (∀ u < t, (R.runFrom d u).state ≠ some yes ∧ (R.runFrom d u).state ≠ some no) ∧
+          (∀ u ≤ t, ∀ j : Fin 2,
+            |(R.runFrom d u).workTapePos j - d.workTapePos j| ≤
+              ((C * ((joinFields fs).length + 1) : ℕ) : ℤ)) ∧
           R.runFrom d t = { d with state := some (if fs = gs then yes else no) } := by
   sorry
 
@@ -297,7 +319,8 @@ on states and tags, there is a one-tape module over the record alphabet with an
 entry and two distinct verdict anchors with the following contract. Start it
 at its entry with the record of `c` with tag `τ` at its head. It reaches `yes`
 if `P c.state τ` and `no` otherwise, within `C` times the record length plus
-one, with no verdict earlier and nothing else changed. Consumers host it on a
+one, with no verdict earlier and nothing else changed. Up to the verdict its
+head stays within that many cells of its entry position. Consumers host it on a
 record tape by R1 (`embedEmitTM`); the table search of the reachability
 simulation tests for a halted accepting record this way.
 
@@ -313,6 +336,9 @@ theorem exists_recordTestTM {k : ℕ} {Q T : Type} [Fintype Q] [DecidableEq Q] [
         RecordAt d 0 (cfgRecord s c τ) →
         ∃ t ≤ C * ((joinFields (cfgRecord s c τ)).length + 1),
           (∀ u < t, (R.runFrom d u).state ≠ some yes ∧ (R.runFrom d u).state ≠ some no) ∧
+          (∀ u ≤ t, ∀ j : Fin 1,
+            |(R.runFrom d u).workTapePos j - d.workTapePos j| ≤
+              ((C * ((joinFields (cfgRecord s c τ)).length + 1) : ℕ) : ℤ)) ∧
           R.runFrom d t = { d with state := some (if P c.state τ then yes else no) } := by
   sorry
 

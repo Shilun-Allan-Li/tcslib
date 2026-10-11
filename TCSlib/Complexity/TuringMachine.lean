@@ -24,6 +24,11 @@ import TCSlib.Complexity.TuringMachine.Build.Embed
 import TCSlib.Complexity.TuringMachine.Build.Seam
 import TCSlib.Complexity.TuringMachine.Build.Catalog
 import TCSlib.Complexity.TuringMachine.Build.OracleCall
+import TCSlib.Complexity.TuringMachine.SymbolLift
+import TCSlib.Complexity.TuringMachine.Build.CounterLoop
+import TCSlib.Complexity.TuringMachine.Build.Scan
+import TCSlib.Complexity.TuringMachine.Build.InputCall
+import TCSlib.Complexity.TuringMachine.Build.CfgRecord
 import TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction
 import TCSlib.Complexity.TuringMachine.Robustness.SingleTape
 import TCSlib.Complexity.TuringMachine.Robustness.Bidirectional
@@ -98,6 +103,16 @@ for the local modifications.
   catalog rows.
 * `Build/OracleCall` — the oracle-machine rows (`machine-library-design.md` §12.9):
   W1 capture onto the query tape, landing in `qQuery`, and the two-step answer tail.
+* `SymbolLift` — the embedding transport (`machine-library-design.md` §12.8, R8.0): a
+  `Bool` machine run on a richer alphabet along `e : Bool ↪ Γ`, with time and space
+  unchanged.
+* `Build/CounterLoop` — the counter-driven loop (§12.7) and the pattern expansion
+  `expandTM` (§12.8, R8.6).
+* `Build/Scan`, `Build/InputCall`, `Build/CfgRecord` — the §12.8 rows, with the field
+  layout, compare, seeks and two-pass scan in `Build/Catalog`'s Part 3: the constant and
+  advancing writers and the native-input copy and fold; the input call and input seek;
+  the rich configuration-record carrier and the record rows. Statement phase: contracts
+  stated with sketches, fills pending.
 * `CounterProgInput` — transport a counter-program run past an input prefix
   that has already been consumed.
 * `Build/Convention`, `Build/Wrappers`, `Build/Loop`, `Build/Primitives` — the

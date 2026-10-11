@@ -11334,8 +11334,9 @@ def fieldsTape {Γ : Type*} (fs : List (List Γ)) (z : ℤ) : Option Γ :=
 
 /-- **Field offsets** (design §12.8a): the cell at which field `j` of the
 layout starts, the total length of the earlier fields with one separator each.
-At `j = fs.length` it is the span of the whole layout plus one cell, which is
-where a further field would start. -/
+For a nonempty `fs`, at `j = fs.length` it is the span of the whole layout plus
+one cell, `(joinFields fs).length + 1`, which is where a further field would
+start. The empty layout has offset `0` there, not `1`. -/
 def fieldOffset {Γ : Type*} (fs : List (List Γ)) (j : ℕ) : ℕ :=
   ((fs.take j).map (·.length + 1)).sum
 
