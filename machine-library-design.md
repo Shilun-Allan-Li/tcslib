@@ -1535,6 +1535,417 @@ The cost is the transport lemma, and records that wait for G2's mapped sweeps
 of generic rows instead of bit-group machines, and §12.8 and §13d share one
 multi-track discipline.
 
+
+### 12.8a Statement draft for the rich-alphabet design (2026-10-10)
+
+*Recorded from the S1 agent's draft. Its probe is `audits/evidence/s12-8/S128StatementsProbe.lean.txt`; run by the maintainer against the G1 side-branch tree it gives 0 errors and 12 sorry warnings, one per statement left to the fill. Maintainer decisions O1, O4, O5, O6 and the user's O2, O3, O7 are recorded at the end.*
+
+*Draft for the statement phase, 2026-10-10. Base: campaign `19964447`; G1 side branch `s13d/g1`
+(`10c2c08d`, PR #15, awaiting its gate).*
+
+**Probe.** `drafts/s12-8-probe.lean`, with its output in `s12-8-probe.out`. It contains the
+exact Lean of everything below.
+
+- Against the G1 tree (`tools/leanprobe-g1.sh`): **0 errors, 0 warnings other than 12
+  `declaration uses 'sorry'`**, one per proposed statement whose proof is fill work.
+- Part A, the transport, is fully proved and also elaborates at the campaign HEAD
+  (`tools/leanprobe.sh`, extracted as `s1work/p8/partA-head.lean`): 0 errors, 0 warnings.
+- Every exact time below that the probe could execute was checked by `decide` on concrete
+  configurations (§12.6 practice). That covers seek, the constant writer, the scan with a
+  mark-shift instance, the input copier, and the framed compare at displaced heads.
+
+#### 0. What the rich design needs, and the one gap in the decision as worded
+
+Decision 12.8.1 adopts rich record cells, with the `Bool` counter rows run on rich tapes
+through one embedding transport. The transport (R8.0) does what was asked:
+
+- it lifts **any** `Bool` machine along `e : Bool ↪ Γ`;
+- the lifted increment and decrement rows run on a dedicated digit tape inside a rich host,
+  through G1's generic R1 (Part B of the probe).
+
+**It cannot lift a loop with a rich body.** `counterLoopTM M` requires
+`M : MultiTapeTM k Bool S`, so lifting it only serves `Bool` bodies. S1b's BFS round, Savitch's
+frame step and every record row have rich bodies. After G1, no loop host exists over a
+non-`Bool` alphabet. Decision 13d.7 generalized only Seam, Embed, `bufferTape` and the R3
+sweeps. It deferred the loop hosts "only when a large-alphabet consumer needs them", and
+§12.8's records are that consumer.
+
+The rich design therefore needs **R8.0b, `counterLoopTMVia`**, a counter loop over any
+alphabet:
+
+- the body runs through R1 on the first `k` tapes;
+- the counter is a dedicated last tape of digits `e b`, decremented by the lifted
+  `decrementTM 1 0`, also through R1.
+
+No new trace is needed. The existing round induction is generalized in place, and the
+`Bool` contracts are re-derived from the generic ones: at `e = Function.Embedding.refl Bool`
+the two tables agree, so Z5's `MultiTapeTM.runFrom_eq_of_agreeOn` transfers. This is the one
+substantive addition to the decision; see §5 for its sequencing.
+
+Two smaller findings:
+
+- **The tag type.** `alphabet_reduction` needs `[Fintype Γ]`, and
+  `Γ = RecSym N.State T` is `Fintype` only when `T` is. `Turing.OutSummary`, which is frozen,
+  derives only `DecidableEq`. So S1b uses `T := Fin 3` through a code of the summary, as S1a's
+  private counting already does, or sanctions a `Fintype OutSummary` export. Open decision O4.
+- **Space on foreign inputs.** `alphabet_reduction_spaceUsed` hypothesizes
+  `∀ x : List Γ, ∀ t, spaceUsed ≤ S |x|`, that is, over **all** rich inputs, including
+  non-`Bool` ones. A lifted `Bool` machine reads a foreign symbol as a blank (`decodeBool`), so
+  its space on such inputs is not controlled. Every rich space-bounded simulator (Savitch, the
+  space hierarchy) must therefore start with a native **input validation fold**, R8.5d, and stop
+  on a foreign symbol.
+
+#### 1. R8.0 — the embedding transport
+
+**Home: a new low file `TuringMachine/SymbolLift.lean`, importing `TuringMachine/Finite`.**
+The alternative was CounterLoop's `SymbolTransport` section. The transport uses only
+`Configuration`/`Deterministic`/`Finite`, and it has consumers below `Build/`: the G3 carrier
+(`ZoneSym := Bool ⊕ …` with `e := Sum.inl`) and the Robustness layer. A low home also keeps it
+out of `CounterLoop.lean` while that file's §12.7 fill gate is open.
+
+- **Imports:** `Finite` imports `Deterministic`, which imports `Configuration`. Its up-closure
+  contains no `Build/` module, so no cycle is possible.
+- **Facade:** the `TuringMachine` facade gains one import.
+- `mapWorkSymbols` (CounterLoop) can join it at 12.2c's per-theme split.
+
+**Exact declarations** (verbatim in probe Part A, proved):
+
+```lean
+def decodeBool [DecidableEq Γ] (e : Bool ↪ Γ) (γ : Γ) : Option Bool :=
+  if γ = e true then some true else if γ = e false then some false else none
+@[simp] lemma decodeBool_apply [DecidableEq Γ] (e : Bool ↪ Γ) (b : Bool) : decodeBool e (e b) = some b
+def Action.liftSymbols (e : Bool ↪ Γ) (a : Action k Bool State) : Action k Γ State   -- writes/emission mapped by e
+def Cfg.liftSymbols (e : Bool ↪ Γ) {x : List Bool} (c : Cfg k Bool State x) : Cfg k Γ State (x.map e)
+  -- state, heads unchanged; inputPos := Fin.cast _ c.inputPos; cells and output mapped by e
+def MultiTapeTM.liftSymbols [DecidableEq Γ] (M : MultiTapeTM k Bool State) (e : Bool ↪ Γ) :
+    MultiTapeTM k Γ State   -- reads through decodeBool e, writes through e
+theorem MultiTapeTM.liftSymbols_runFrom [DecidableEq Γ] (M) (e) {x} (c : Cfg k Bool State x) (t : ℕ) :
+    (M.liftSymbols e).runFrom (c.liftSymbols e) t = (M.runFrom c t).liftSymbols e
+lemma MultiTapeTM.liftSymbols_initCfg : (M.liftSymbols e).initCfg (x.map e) = (M.initCfg x).liftSymbols e
+lemma MultiTapeTM.liftSymbols_spaceUsed : (M.liftSymbols e).spaceUsed (c.liftSymbols e) t = M.spaceUsed c t
+@[simp] lemma Cfg.liftSymbols_state, Cfg.liftSymbols_workTapePos   -- rfl
+lemma Cfg.liftSymbols_inputSymbol : (c.liftSymbols e).inputSymbol = c.inputSymbol.map e
+def FinTM.liftSymbols {Γ : Type} [DecidableEq Γ] (M : FinTM Bool) (e : Bool ↪ Γ) : FinTM Γ
+theorem FinTM.liftSymbols_computesFunInTimeVia (h : M.ComputesFunInTime f T) :
+    (M.liftSymbols e).ComputesFunInTimeVia e f T
+```
+
+The one-step lemma `MultiTapeTM.liftSymbols_step`, and `moveInputPos_cast`, are `private` in
+the real file.
+
+**Proof notes.**
+
+- `MultiTapeTM.runFrom_comm_of_step` (vendored `Deterministic.lean`) is single-alphabet, so the
+  run lemma is a direct induction with `runFrom_succ_eq_step`.
+- The one-step lemma decodes the input symbol through
+  `Cfg.liftSymbols_inputSymbol`, which needs `Fin.cast` care on the boundary tests.
+- The work reads decode by `decodeBool_apply`. Writes commute with `Function.update`.
+- The output is `(Option.map e o).toList = o.toList.map e`.
+
+**Corollaries after the G1 merge** (probe Part B, proved). These touch no G1 file:
+
+- `FinTM.bufferTape_map (e) (w) (p) : bufferTape (w.map e) p = (bufferTape w p).map e`. It lives
+  in `SymbolLift.lean`, which then imports `Simulation`.
+- **Framed lifted rows are one-line consequences.** The probe proves the increment success case:
+  `((incrementTM k i).liftSymbols e).runFrom (d.liftSymbols e) (2p+2) = (finish).liftSymbols e`.
+  So no per-row lifted statement is proposed; consumers rewrite with
+  `liftSymbols_runFrom` and cite the `Bool` row.
+- **Dedicated digit tape inside a rich host:**
+  `(embedEmitTM ι ((incrementTM 1 0).liftSymbols e)).runFrom (embedEmitCfg ι tapes heads pre
+  (d.liftSymbols e)) t = embedEmitCfg ι tapes heads pre ((… .runFrom d t).liftSymbols e)`. The
+  host's other tapes (rich records) are R1's frame, so the transport's in-range hypothesis is
+  only about the dedicated tape. This is the "dedicated counter tape" discipline of decision
+  12.8.1, in usable form.
+
+**Finishing.** Two cases:
+
+- **Time.** A rich decider `D : FinTM Γ` with
+  `D.ComputesFunInTimeVia e (fun x => [indicator L x]) T` becomes `FinTM Bool` by
+  `FinTM.alphabet_reduction e D f T`, which gives `∃ c M', M'.ComputesFunInTime f (c·(T+1))`.
+  The constructor and every `Bool` subroutine enter `D` as `FinTM.liftSymbols` /
+  `MultiTapeTM.liftSymbols`, with unchanged time (`liftSymbols_computesFunInTimeVia`) and space
+  (`liftSymbols_spaceUsed`).
+- **Space.** Use `alphabet_reduction_spaceUsed`, subject to the foreign-input caveat of §0.
+
+##### R8.0b — `counterLoopTMVia`, the counter loop over any alphabet
+
+**Home:** `Build/CounterLoop.lean`. **When:** after the G1 gate (it needs generic
+`embedEmitTM`/`embedEmitCfg`) **and** after the §12.7 fill gate. The probe's Part E has the
+exact text.
+
+```lean
+def lastEmb (k : ℕ) : Fin 1 ↪ Fin (k + 1)
+def counterLoopTMVia {k} {Γ S : Type} [DecidableEq S] [DecidableEq Γ] (e : Bool ↪ Γ)
+    (M : MultiTapeTM k Γ S) (a : S) (exit : Option S) : MultiTapeTM (k + 1) Γ (CounterLoopState S)
+  -- .body s : (embedEmitTM Fin.castSuccEmb M) redirected by counterLoopRedirect a exit
+  -- .dec f  : (embedEmitTM (lastEmb k) ((decrementTM 1 0).liftSymbols e)) redirected by counterLoopDecExit a
+  -- .done / .escape stationary
+theorem counterLoopTMVia_run_done   -- counterLoopTM_run_done verbatim with Bool ↦ Γ, plus:
+    (hw : ∀ p, -1 ≤ p → p ≤ |w| → ct (cp + p) = bufferTape (w.map e) p)   -- w : List Bool
+    -- finish counter cells: `some (e true)`; time `Σ τ + counterOverhead w (d+1)` (unchanged)
+theorem counterLoopTMVia_run_escape -- counterLoopTM_run_escape likewise; counter
+    -- `bufferTape ((counterWord w (r₀+1)).map e)`
+```
+
+- **In-place generalizations (types only, bodies verbatim, G1 rule 2):** `counterLoopCfg` and
+  `counterLoopOrbit` become `{Symbol : Type}`. The probe states them as `…Via` copies only to
+  avoid a clash.
+- `counterLoopTM`, its definition and all `Bool` statements stay byte-identical. Their **proof
+  bodies** are swapped to instantiate the generic contracts. The route is
+  `runFrom_eq_of_agreeOn` between `counterLoopTM M a exit` and
+  `counterLoopTMVia (Function.Embedding.refl Bool) M a exit`. Their dec-phase tables agree
+  pointwise (`decodeBool refl γ = some γ`, `Option.map refl = id`, and R1's single-tape action
+  equals `decrementTM (k+1) (Fin.last k)`'s), and the other phases agree definitionally.
+- **One round induction; net private count down.** `counterLoop_time_le` and the counter
+  arithmetic are alphabet-free and reused as they are.
+
+#### 2. The record carrier — `Build/CfgRecord.lean`
+
+**Imports:** `Build/CounterLoop` (for R8.0b) and `TuringMachine/SymbolLift`. **No
+`SpaceComplexity` import:** injectivity is stated componentwise rather than through
+`ConfigCount.core`, and ConfigGraph converts. **When:** after the G1 merge, since `fieldsTape`
+uses generic `bufferTape`. The window predicate lands with the 12.8.2 relocation (after C1d).
+The probe's Part F has the exact text.
+
+```lean
+inductive RecSym (Q T : Type) where
+  | digit (b : Bool)                          -- the `e` of the lift: input, position field, counters
+  | cell (content : Option Bool) (mark : Bool)-- one simulated work cell: content track + head-mark track
+  | st (q : Option Q)                         -- the state cell
+  | tag (τ : T)                               -- the tag cell (emission summary)
+deriving DecidableEq
+instance recSymFintype (Q T : Type) [Fintype Q] [Fintype T] : Fintype (RecSym Q T) := derive_fintype% _
+def RecSym.digitEmb (Q T : Type) : Bool ↪ RecSym Q T
+def binDigits (w v : ℕ) : List Bool := (List.range w).map v.testBit       -- little-endian, fixed width
+def posWidth (n : ℕ) : ℕ := (Nat.bits (n + 1)).length                      -- 2 ^ posWidth n > n + 1
+def cfgRecord {k Q T} {x : List Bool} (s : ℕ) (c : Cfg k Bool Q x) (τ : T) : List (List (RecSym Q T)) :=
+  [RecSym.st c.state] ::                                                     -- F0
+  ((binDigits (posWidth x.length) c.inputPos.val).map RecSym.digit) ::       -- F1, binary over digits
+  (((List.finRange k).map fun i => (List.range (2 * s + 1)).map fun j =>     -- F2 … F(k+1)
+      RecSym.cell (c.workTapes i ((j : ℤ) - s)) (decide (c.workTapePos i = (j : ℤ) - s))) ++
+  [[RecSym.tag τ]])                                                          -- F(k+2)
+def joinFields (fs : List (List Γ)) : List (Option Γ) := List.intercalate [none] (fs.map (List.map some))
+def fieldsTape (fs : List (List Γ)) (z : ℤ) : Option Γ := if 0 ≤ z then ((joinFields fs)[z.toNat]?).join else none
+def fieldOffset (fs : List (List Γ)) (j : ℕ) : ℕ := ((fs.take j).map (·.length + 1)).sum
+theorem fieldsTape_field (fs) (j) (hj : j < fs.length) : ∀ p, -1 ≤ p → p ≤ |fs[j]| →
+    fieldsTape fs (fieldOffset fs j + p) = FinTM.bufferTape fs[j] p   -- each field is a framed word
+theorem cfgRecord_inj (s) (hc : c.InWindow s) (hd : d.InWindow s) :
+    cfgRecord s c τ = cfgRecord s d τ' ↔
+      (c.state = d.state ∧ c.inputPos = d.inputPos ∧ c.workTapes = d.workTapes ∧
+        c.workTapePos = d.workTapePos) ∧ τ = τ'
+theorem cfgRecord_length : (cfgRecord s c τ).length = k + 3   -- proved in the probe
+def RecordValid (k n s : ℕ) (Q T) (fs) : Prop :=
+  ∃ x (c : Cfg k Bool Q x) τ, x.length = n ∧ c.InWindow s ∧ cfgRecord s c τ = fs
+theorem recordValid_iff (n s fs) : RecordValid k n s Q T fs ↔ fs.length = k + 3 ∧ (∃ q, fs[0] = [.st q]) ∧
+    (fs[1] is posWidth n digits of value ≤ n + 1) ∧ (each tape field: 2s+1 `.cell`s, exactly one mark) ∧
+    (∃ τ, fs[k+2] = [.tag τ])            -- the scan-checkable form, for `recordValidTM`
+def RecordAt (d : Cfg K Γ S x) (r : Fin K) (fs) : Prop :=
+  ∀ p, -1 ≤ p → p ≤ |joinFields fs| → d.workTapes r (d.workTapePos r + p) = fieldsTape fs p
+```
+
+- **Layout discipline.** One blank between fields and between records; no field is empty (F0
+  and the tag have one cell, F1 has `posWidth n ≥ 1` cells, each tape field `2s+1` cells). So
+  two consecutive blanks mark the end of a table, and every field is a §12.6-delimited word.
+  This is the G3 separator discipline, so the generic framed rows apply field by field with no
+  save/restore.
+- **Space.** A record has `k(2s+1) + posWidth n + 2` cells plus `k + 2` separators, which is
+  `O(k·s + log n + 1)`. That is `O(S n)` at `s = c₀·S n` with `S ≥ logSpace`. With
+  `alphabet_reduction_spaceUsed`'s `c·(space+1)`, Savitch stays in `SPACE(S²)`.
+- **Window predicate.** The probe uses `WindowedP`, a verbatim copy of TQBF's
+  `Turing.Cfg.InWindow`. The real file uses `Cfg.InWindow`, relocated here (12.8.2). It **must
+  land in the same change** that deletes TQBF's copy: once ConfigGraph imports `CfgRecord` (at
+  S1b), TQBF, which is downstream, would otherwise see two definitions.
+
+#### 3. The rows, restated for the rich design
+
+Template (from the §12.8 note), with one change of form:
+
+- **Machines that are single sweeps are defined** and get the §12.6 framed contract: exact
+  time, finish configuration, no earlier exit, trajectory.
+- **Composite modules are existential**, in the `exists_installCallTM` style
+  (`∃ R entry exit C, …`): a first-return time `t ≤ C·(size)`, no earlier exit, an exact finish
+  configuration, and the scratch tapes and heads restored.
+
+The constants are indicative; the statement phase fixes them by execution. Tags: **[now]**
+can land on the campaign branch before G1 merges. **[G1-merge]** touches no G1 file but uses
+G1's generic statements. **[Catalog/G1]** goes in a G1-owned file, after the G1 gate. **[G2]**
+is proposed as a G2 statement. **[rec]** is a record row, filled after G2 and the
+Catalog/G1 rows.
+
+| Row | Tag | Statement (probe part) | Contract |
+|---|---|---|---|
+| **R8.0** transport | **[now]** | `MultiTapeTM.liftSymbols_runFrom` and the rest of §1 (A) | proved |
+| R8.0 corollaries | [G1-merge] | `FinTM.bufferTape_map`; the R1 composition (B) | proved |
+| **R8.0b** `counterLoopTMVia` | [Catalog/G1]+§12.7 gate (CounterLoop) | `counterLoopTMVia_run_done/_escape` (E) | exact, as §12.7 |
+| **R8.1** framed compare | [Catalog/G1] | `compareTM_run_ofCfg {Symbol} [DecidableEq Symbol]` (D) | `∃ δ ≤ min |u| |v|`, exact time `2δ+2`, finish `{d with state := done (decide (u = v))}`, no earlier verdict, trajectory `[pos−1, pos+δ]`. Canonical `compareTM_run` re-derived (body swap); the trace generalizes `catalog_compare_trace` |
+| **R8.2** `scanTM δf δb a₀` (two-pass transducer) | **[G2]** | `scanTM_run_ofCfg` (D) | exact `2|w|+2`; interval rewritten to `(scanResult δf δb a₀ w).2`, verdict `done (scanResult …).1`; trajectory `[pos−1, pos+|w|]` |
+| **R8.3** `skipTM`, `skipBackTM`, `seekEndTM`, `seekStartTM` | [Catalog/G1] | `skipTM_run_ofCfg` (D) | exact `|w|+1`, head to `pos+|w|+1`, nothing written; `seekEnd/Start` stop at two consecutive blanks (table ends) |
+| **R8.4** `writeConstTM i w₀` | [G1-merge] (Scan) | `writeConstTM_run_ofCfg` (C) | exact `2|w₀|+2` (executed), old contents arbitrary, head returns |
+| R8.4′ `writeAdvTM i w₀` | [G1-merge] (Scan) | — | writes `w₀` and leaves the head at `pos + |w₀|`, exact `|w₀| + 1`; the advancing round of `expandTM` |
+| **R8.5a** `inputCopyTM i` | [G1-merge] (Scan) | `inputCopyTM_run_ofCfg` (C) | from input position 1, exact `2|x|+2` (executed); both heads return in lockstep (no left delimiter needed) |
+| **R8.5b** `exists_inputSeekTM` (`Bool`) | **[now]** | (C) | `∃ R … C`; moves the input head to the binary value on a dedicated tape, `t ≤ C·(|w| + pos + p + 1)`; tapes restored |
+| **R8.5c** `exists_inputLengthTM` (`Bool`) | statement now; fill after R8.3 (it needs `skipTM` for the width extension) | — | writes `Nat.bits |x|` on a dedicated tape: per input symbol, `incrementTM` with width extension on overflow (`seekEnd` + `writeConst`), `t ≤ C·(|x|+1)` amortized (§12.7 potential) |
+| **R8.5d** `inputFoldTM δ a₀` | [G1-merge] (Scan) | — | native scan of the input with a finite fold, verdict `done (x.foldl δ a₀)`, exact `2|x|+2`; the foreign-symbol validator of §0 |
+| **R8.5e** `exists_inputCallTM` | [G1-merge] (`Build/InputCall.lean`; needs R8.5a) | — | `inputCopyTM` (at `Bool`, or lifted) + `exists_installCallTM`: a function-level machine on the native input at a clean seam |
+| **R8.6** `exists_expandTM pat` (`Bool`) | [G1-merge] (CounterLoop; needs R8.4′) | — | `counterLoopTM` round = `writeAdvTM pat`; writes `pat` `d` times contiguously; exact `Σ τ + counterOverhead` |
+| **R8.7** record rows | **[rec]** | `exists_recordStepTM`, `exists_recordEqTM` (G); the rest below | first-return form |
+| **R8.8** `seamCompTM_runFrom_left` (promotion) + `seamCompTM₂_run_ofCfg` | [Catalog/G1] (Seam) | §12.8 note | statement unchanged from the private `seamComp_left` |
+
+**R8.2 replaces fold, map, mark shift and odometer: one row, one trace.** It is proposed **as a
+G2 statement**. Its instances:
+
+- **fold:** `δf a γ := (δ a γ, γ)`, `δb` the identity;
+- **in-place map** `f`: `δf a γ := (a, f γ)`;
+- **head-mark shift right:** `δf prev γ := (mark γ, setMark γ prev)`, the forward delay (the probe
+  checks a concrete shift);
+- **shift left:** the same delay on the backward pass;
+- **record odometer:** a carry transducer;
+- **validity checks:** folds.
+
+G2's planned two-tape `copyMapTM`/`transferMapTM` (§13d) are not needed by §12.8: records move
+by plain generic `copyTM`. If G2 keeps them, one request: let `merge` take `Option Γ`, so that
+blank destinations (scratch) are admitted. **Decision 12.8.5 is honored:** fold, and with it map,
+is a Catalog row sharing the R3/G2 trace (`catalog_trace_run`), since G2 lives in Catalog.
+
+**R8.7, the record rows.**
+
+- All are existential modules over `RecSym Q T`.
+- **Entry conditions:** the record at tape `0` (`RecordAt`), the scratch tapes `j ≠ 0` blank,
+  and the native input `x.map RecSym.digitEmb`.
+- **Exit conditions:** heads, input position, scratch and output restored.
+- They are built from R8.0/R8.0b, R8.1–R8.5 and R2 seams, with **no private re-trace**.
+
+| Module | Verdict / effect | Composition |
+|---|---|---|
+| `exists_recordStepTM M upd (hupd : ∀ τ, upd τ none = τ)` (GAP-4, exact text in G) | `yes` and record of `M.step c` with tag `upd τ (M.outputSymbol c)` if `(M.step c).InWindow s`; else `no`, nothing changed; `t ≤ C·(L + |x| + 1)` | read: `scanTM` folds on F0, the tag and the tape fields (scanned symbols and edge flags) via `skipTM`; copy F1 to a dedicated digit tape (`copyTM`), run the lifted `inputSeekTM`, read the input symbol, restore; finite dispatch on `M.tr`; apply: `scanTM` maps (content at the mark, F0, tag) and delay shifts (marks), F1 `±1` by the lifted increment/decrement on the dedicated tape with copy back, clamp from the edge data |
+| `exists_recordEqTM` (G) | `yes` iff the two field lists are equal | `k+3` framed compares (R8.1) with `skipTM`s |
+| `exists_recordTestTM P` | `P (state, tag)` | two `scanTM` folds |
+| `exists_recordValidTM` | `RecordValid` via `recordValid_iff` | `scanTM` folds per field |
+| `exists_recordInitTM` | writes `cfgRecord s (initCfg x) τ₀` from `bits (S n)`-style radius digits | `exists_inputLengthTM` (lifted), `exists_expandTM` (lifted) for the window halves, `scanTM` maps, `writeConstTM` |
+| `exists_recordNextTM` | next valid record in odometer order, or overflow | `scanTM` carry over all fields + `exists_recordValidTM` filter, under `counterLoopTMVia` |
+| `exists_tableAppendTM`, `exists_tableFindTM P` | append at `seekEndTM`; first record satisfying a fold, with an escape if none | `copyTM`, `seekEndTM`, `scanTM`, `counterLoopTMVia` |
+
+#### 4. S1b's machine plan, recomposed (rich)
+
+**Parameters.** `Γ := RecSym N.State (Fin 3)`, with the tag being the output summary through
+its `Fin 3` code (O4), and `e := RecSym.digitEmb`. The host is a `FinTM Γ`.
+
+**Tapes:**
+
+- `Tab`, the table;
+- `Cur₀` and `Cur₁`, the successor workspaces;
+- scratch for the record modules;
+- dedicated digit tapes: `Rad` (radius), `Len`, `Cnt` (the outer counter, last tape) and
+  `Cnt'` (inner loops);
+- the lifted constructor's bank and capture tape.
+
+1. **Validate** with `inputFoldTM`. On a foreign symbol, emit `e false` and halt. This is needed
+   only for space, but it is cheap.
+2. **Radius.** Run `M_S.liftSymbols e` under generic `embedSilentRetTM` with its output
+   captured on `Rad`, then rewind. Time at most `M_S.configBound n (a·S n)`
+   (`of_spaceUsed_le` plus `liftSymbols_runFrom`).
+3. **Window template.**
+   - Lifted `exists_expandTM` with counter `bits (S n)` and pattern `false^{c₀}` writes the left
+     half.
+   - `writeConstTM [.cell none true]` writes the center.
+   - `expandTM` again writes the right half.
+   - A `scanTM` map turns the digits into `.cell none false`.
+
+   No multiplication by `c₀` is needed: the pattern length carries it.
+4. **Initial record.** `exists_recordInitTM` writes it, plus a one-digit flag field `[digit
+   false]` ("unprocessed").
+5. **Outer counter.** Copy the template fields `c_N` times onto `Cnt` (`copyTM` + `skipTM`),
+   then map every cell to `digit true` (`scanTM`). Its value `2^{c_N·W} − 1` exceeds the record
+   count `V` with `c_N := ⌈log₂(3(|Q|+1))⌉ + 4`. Here `W` is the record's cell count, and the
+   proof uses `2^{posWidth n} ≥ n+2` and `8^{2s+1} ≥ 3^{2s+1}(2s+1)`.
+6. **BFS** with `counterLoopTMVia e Round a (some ex)`. A round:
+   - `exists_tableFindTM` finds the first record with flag `false` (escaping to `ex` if none),
+     and copies it to `Cur₀` and `Cur₁`;
+   - `exists_recordStepTM (N.fixChoice false)` runs on `Cur₀`, and
+     `exists_recordStepTM (N.fixChoice true)` on `Cur₁`. The upd is the summary's append table
+     on the code;
+   - for each `yes`, an inner `counterLoopTMVia` over the table with `exists_recordEqTM`
+     decides membership, and `exists_tableAppendTM` appends a new record with flag `false`;
+   - the processed record's flag is set (`scanTM` map), the workspaces are cleared
+     (`clearTM`), and the table head is rewound (`seekStartTM`).
+
+   Both exits are wired by R8.8.
+7. **Verdict.** `exists_tableFindTM (accept)` scans for a record with state `none` and tag
+   `accept`. Emit `e true` or `e false`, then halt.
+8. **Finish.** `alphabet_reduction` gives a `FinTM Bool` within `c·(T + 1)`.
+9. **Correctness** is §12.8's chain, with `cfgRecord_inj` in place of the bit codec:
+   - `T := Fin 3` identifies records with `coreSum`s;
+   - note-6's bridge applies, the outside-window rejection being `recordStepTM`'s `no`;
+   - S1a's four lemmas finish.
+10. **Time.**
+    - `counterLoop_time_le` gives `V·B + 4V + 2|w| + 2`, with `B = O(V·(L+F) + n)` from the
+      nested table loop.
+    - Add the startup terms: the constructor bound, `O(S n)`-cost expansions, and
+      `O(n log n)` input length.
+    - Then `alphabet_reduction`'s `c(T+1)`. The result is at most `K·2^{c'(S n+1)}`.
+    - Every budget is evaluated at `n`; no monotonicity of `S` is used.
+
+#### 5. Sequencing — what can be issued before the G1 gate closes
+
+| Item | Lands | Blocked on |
+|---|---|---|
+| **R8.0 transport** (`SymbolLift.lean`) | **now**. The probe's Part A *is* the proof; a maintainer pre-issue landing or a tiny batch | nothing |
+| **R8.5b** `exists_inputSeekTM` (`Bool`; composed of `copyTM`, `timed_rewind`, `counterLoopTM`, `clearTM`, all public at HEAD) | **now**, as a statement phase plus a fill batch | nothing; it lifts to rich hosts by R8.0 |
+| R8.5c, R8.5e, R8.6 (`Bool` rows needing Scan or seek) | statements now; fills after the G1 merge (R8.5e, R8.6) or after R8.3 (R8.5c) | G1 merge / R8.3 |
+| Statements of **everything else** | **draft now** (this document, probe green on `s13d/g1`) | — |
+| R8.0 corollaries, R8.4, R8.5a/d, the `CfgRecord` pure layer | after **G1 merges** (no G1 file edited) | G1 gate; CfgRecord's `InWindow` also on C1d |
+| R8.1, R8.3, R8.8 | after the **G1 gate**, in Catalog/Seam | G1 gate; coordinate with G2/G4 (one trace) |
+| R8.2 `scanTM` | with **G2** | G1 gate; G2's statement phase adopts it |
+| **R8.0b** `counterLoopTMVia` | after the **G1 gate and the §12.7 fill gate** | both gates |
+| R8.7 record rows | after the R8.2 fill (G2) and the R8.1/R8.3 fills | G2 fill |
+| S1b | after R8.7 | — |
+
+**The sequencing change versus the note:** R8.0b is new, and it sits on two gates (G1, §12.7).
+It is the long pole for every rich consumer, since no rich loop exists without it. Some things
+can be issued before the G1 gate closes:
+
+- R8.0, which the probe proves;
+- R8.5b;
+- the statement phase of every other row (the probe is green on `s13d/g1`).
+
+The critical path is then the G1 gate, then R8.0b with R8.2 (G2) and R8.1/R8.3, then R8.7,
+then S1b. Two items that the note called "landable now" in fact need the G1 merge, because
+their statements use the generic `bufferTape`: `writeConstTM` and the input rows. `expandTM`
+needs the advancing writer R8.4′.
+
+#### 6. Per-consumer rows (updated)
+
+| Consumer | Rows |
+|---|---|
+| **S1b** | §4: R8.0, R8.0b, R8.1–R8.5, R8.6, R8.7 (step, eq, test, init, table rows), R8.8, `alphabet_reduction` |
+| **Savitch** | Rich records with binary F1 (`O(S)` cells); frame stack on a rich tape; R8.7 `recordStepTM` (both choice bits) + `recordEqTM` for adjacency; `recordNextTM` + `recordValidTM` for midpoints; R8.3 over frames; `copyTM`/`clearTM` at fixed intervals (note 7); R8.0b loops; R8.8; R8.5d validation; `alphabet_reduction_spaceUsed` |
+| `spaceConstructible_*` | `Bool` only: R8.5c, R8.6, `incrementTM` |
+| `PATH_NLComplete` (hardness) | ARM engine (12.8.4); no §12.8 row |
+| `PATH_mem_NL` | R8.5b, once the nondeterministic host exists (SC-3) |
+| Space hierarchy | `Bool` counters lifted by R8.0 on a rich simulator, or unlifted on a `Bool` one; R8.0b (budget loop), R8.8 (success/cap), R8.1 (budget comparison), `clearTM` resets, R8.5d. It simulates a coded machine, so it does not use R8.7 |
+| `TQBF_mem_PSPACE` | R8.2 (validation folds, clause evaluation, the trit odometer), R8.5b (input re-reads), R8.3 |
+| `NP_subset_PSPACE` | `incrementTM`, `vhostEmitTM`, R8.8 |
+| **G3/G4 (§13d)** | R8.3 (zone scanning across separators), R8.2 (per-track maps), R8.0 (Bool counters on `ZoneSym` tapes via `e := Sum.inl`) |
+
+#### 7. Open decisions
+
+- **O1, transport home.** New `TuringMachine/SymbolLift.lean` (recommended), or CounterLoop's
+  `SymbolTransport` section (during its open gate).
+- **O2, R8.0b route.** In-place proof generalization with the `Bool` contracts re-derived by Z5
+  (recommended; one round induction). The alternative is a second host with its own induction,
+  which is a duplicated trace.
+- **O3, `scanTM` as a G2 statement.** It needs G2's agreement. Separately, the optional
+  `merge : Option Γ → Δ → Γ` request for `copyMapTM`.
+- **O4, the S1b tag type.** `Fin 3` code (recommended; no frozen-surface change), or a sanctioned
+  `Fintype OutSummary` export in ConfigGraph.
+- **O5, table seeks.** `seekEndTM` and `seekStartTM` (double-blank stops) in the skip family, or
+  as `counterLoopTMVia` loops over `skipTM` (slower, no new row).
+- **O6, input validation (R8.5d).** Mandatory for rich space-bounded consumers. Confirm, or
+  require every rich row's space bound to be input-independent instead (harder to state).
+- **O7, R8.0 now.** Whether the transport lands as a maintainer pre-issue lemma, since the
+  probe proof is complete (one file, about 120 lines), or through a statement gate plus fill
+  like the other §12 rows.
+
 ## 13. The zone and virtual-input layer (proposed 2026-10-09, post-§12 close)
 
 **Mandate** (user direction 2026-10-09, at the §12 fill-campaign close —
