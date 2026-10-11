@@ -30,7 +30,7 @@ remains the special case.
 * `Complexity.NLComplete` — `NL`-membership plus `NL`-hardness under `≤ₗ`.
   [AB09, Definition 4.16]
 
-## Main results (four phase-P4.4 statements remain sorried)
+## Main results (two phase-P4.4 statements proved; two remain sorried)
 
 * `Complexity.ImplicitlyLogspaceComputable.comp` — the composition engine
   ([AB09, Lemma 4.17's proof], Figure 4.3's virtual input tape).
@@ -107,7 +107,7 @@ theorem LogspaceReducible.trans {B C D : Language Bool} (h₁ : B ≤ₗ C)
   sorry
 
 /-- **Logspace reductions preserve `L` downward** ([AB09, Lemma 4.17(2)];
-spec, fill pending): if `B ≤ₗ C` and `C ∈ LOGSPACE` then `B ∈ LOGSPACE`.
+proved): if `B ≤ₗ C` and `C ∈ LOGSPACE` then `B ∈ LOGSPACE`.
 
 **Proof sketch.** Directly by the preimage theorem (route change 1 of
 `audits/ch4-p44-resolutions-addendum.md`). Unpack `h` as an implicitly
@@ -121,7 +121,9 @@ language needs the engine itself. (Sketch prose corrected at the P4.4b
 statement gate; the statement is unchanged.) -/
 theorem mem_LOGSPACE_of_logspaceReducible {B C : Language Bool} (h : B ≤ₗ C)
     (hC : C ∈ LOGSPACE) : B ∈ LOGSPACE := by
-  sorry
+  obtain ⟨f, hf, hB⟩ := h
+  rw [show B = ({x | f x ∈ C} : Language Bool) from Set.ext hB]
+  exact mem_LOGSPACE_preimage hf hC
 
 /-- **`≤ₗ` refines `≤ₚ`**: a logspace reduction is in
 particular a polynomial-time reduction.
@@ -136,7 +138,7 @@ theorem LogspaceReducible.polyTimeReducible {B C : Language Bool}
   exact ⟨f, hf.polyTimeComputable, hB⟩
 
 /-- **An `NL`-complete language in `L` collapses `NL`** ([AB09, the remark
-after Lemma 4.17]; spec, fill pending): if `C` is `NL`-complete and
+after Lemma 4.17]; proved): if `C` is `NL`-complete and
 `C ∈ LOGSPACE`, then `NL = LOGSPACE`.
 
 **Proof sketch.** `⊇` is `Complexity.LOGSPACE_subset_NL` (phase P4.1). `⊆`:
@@ -145,6 +147,7 @@ a member of `NL` reduces to `C` (completeness) and
 the reduction. -/
 theorem NL_eq_LOGSPACE_of_nlComplete_mem_LOGSPACE {C : Language Bool}
     (h : NLComplete C) (hC : C ∈ LOGSPACE) : NL = LOGSPACE := by
-  sorry
+  exact Set.Subset.antisymm
+    (fun B hB => mem_LOGSPACE_of_logspaceReducible (h.2 B hB) hC) LOGSPACE_subset_NL
 
 end Complexity
