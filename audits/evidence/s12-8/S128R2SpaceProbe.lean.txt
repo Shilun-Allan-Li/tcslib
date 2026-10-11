@@ -49,8 +49,10 @@ example : ∃ (S : Type) (_ : Fintype S) (_ : DecidableEq S) (R : MultiTapeTM 2 
   obtain ⟨t, -, -, hheads, hexit, -⟩ := h p w hp hpx d hd hw h1
   exact ⟨t, hexit, probe_spaceUsed_le_of_heads R d t _ hheads⟩
 
-/-- The repaired record step: up to its verdict, work space linear in the record
-length, however long the native input is. -/
+/-- The repaired record step: it reaches a verdict within its time bound, and up to
+that verdict its work space is linear in the record length, however long the native
+input is. (Round 2, finding 1: the conclusion states the verdict, so a module that
+never reaches one cannot satisfy it at `t = 0`.) -/
 example {k : ℕ} {Q T : Type} [Fintype Q] [DecidableEq Q] [Fintype T] [DecidableEq T]
     (M : MultiTapeTM k Bool Q) (upd : T → Option Bool → T) (hupd : ∀ τ, upd τ none = τ) :
     ∃ (K : ℕ) (P : Type) (_ : Fintype P) (_ : DecidableEq P)
@@ -59,11 +61,16 @@ example {k : ℕ} {Q T : Type} [Fintype Q] [DecidableEq Q] [Fintype T] [Decidabl
       ∀ d : Cfg (K + 1) (RecSym Q T) P (x.map (RecSym.digitEmb Q T)),
         d.state = some entry → RecordAt d 0 (cfgRecord s c τ) →
         (∀ j : Fin (K + 1), j ≠ 0 → ∀ p, d.workTapes j p = none) →
-        ∃ t, R.spaceUsed d t ≤
-          (K + 1) * (2 * (C * ((joinFields (cfgRecord s c τ)).length + 1)) + 1) := by
+        ∃ t ≤ C * ((joinFields (cfgRecord s c τ)).length + x.length + 1),
+          ((R.runFrom d t).state = some yes ∨ (R.runFrom d t).state = some no) ∧
+          R.spaceUsed d t ≤
+            (K + 1) * (2 * (C * ((joinFields (cfgRecord s c τ)).length + 1)) + 1) := by
   obtain ⟨K, P, i1, i2, R, entry, yes, no, C, hyn, h⟩ := exists_recordStepTM M upd hupd
   refine ⟨K, P, i1, i2, R, entry, yes, no, C, hyn, fun s c τ hc d hd hrec hblank => ?_⟩
-  obtain ⟨t, -, -, hheads, -⟩ := h s c τ hc d hd hrec hblank
-  exact ⟨t, probe_spaceUsed_le_of_heads R d t _ hheads⟩
+  obtain ⟨t, ht, -, hheads, hyes, hno⟩ := h s c τ hc d hd hrec hblank
+  refine ⟨t, ht, ?_, probe_spaceUsed_le_of_heads R d t _ hheads⟩
+  by_cases hw : (M.step c).InWindow s
+  · exact Or.inl (by rw [hyes hw])
+  · exact Or.inr (by rw [hno hw])
 
 end Turing

@@ -1,4 +1,4 @@
-# §12.8 statement gate — resolutions (round 1 FAILED; round 2 pending)
+# §12.8 statement gate — resolutions (CLOSED, round 2)
 
 ## Round 1 (2026-10-11): 0 blockers, 1 major, 7 minors, 39 notes
 
@@ -34,3 +34,32 @@ The major blocks the gate.
 
 **Gate FAILED at round 1.** Round 2 re-audits the repaired statements, the
 facade wiring, and the corrections above.
+
+## Round 2 (2026-10-11): 0 blockers, 0 majors, 2 minors, 36 notes
+
+The findings are verbatim in `audits/s12-8-statements-r2-findings.md`; the
+pack is `audits/s12-8-statements-r2-pack.md`. This was a full re-audit. The
+auditor:
+
+- found the four strengthened contracts true (notes 3–6);
+- confirmed that the head-radius clauses give `O(size + 1)` work space per
+  call and compose at restored entry heads (note 7);
+- re-confirmed every unchanged statement and definition (notes 10–32);
+- verified the round-1 dispositions (note 9);
+- confirmed the freeze by reconstruction (note 33);
+- found the facade wiring and the recorded decisions accurate (notes 34–35);
+- reproduced the screen byte for byte (note 38).
+
+| Finding | Disposition |
+|---|---|
+| 1 (minor): the adequacy probe's record-step example concludes only `∃ t, spaceUsed ≤ …`, which `t = 0` satisfies without a verdict | **Fixed** in the evidence probe. The example now concludes `∃ t ≤ C·(L + \|x\| + 1)`, a verdict `yes` or `no` at `t`, and the space bound. It still elaborates cleanly (`audits/logs/s12-8-statements-r2-close.log`). The repaired contract itself was never affected |
+| 2 (minor): `Scan.lean`'s overview says both input sweeps move the work heads in lockstep | **Swept** (comment-only). Only `inputCopyTM` moves its destination head in lockstep; `inputFoldTM` moves only the input head. The code is identical with comments stripped, and the file elaborates at 0 errors with its 4 sorries |
+| 3 (note): keep the saved-position, clamping, cleanup and trajectory obligations in the step row's fill | **Carried** into the §12.8 fill brief |
+| 7 (note): consumers must intercept the verdicts; the bounds say nothing after the verdict time | **Carried** into the §12.8 fill brief and S1b's statement phase |
+| 8 (note): the input call is time-only, so a space-preserving call needs its own interface | **Recorded.** No current consumer needs one; it would be a new row with its own gate |
+| 31, 32 (notes): mixed rich tapes need R1 isolation of the dedicated digit tapes; keep O6 | **Carried** into the fill brief, as for round-1 note 32 |
+| 36 (note): the topic manifest, the full import graph and the consumer sources were not attached | **Pack practice:** attach the import graph or a topic manifest when a pack claims closure completeness |
+| 4–6, 9–30, 33–35, 37, 38 (notes) | Confirmed. No action |
+
+**Gate CLOSED. PR #28 is clear to merge.** It merges the transport of PR #16
+with it.

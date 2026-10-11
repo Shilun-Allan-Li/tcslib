@@ -33,8 +33,10 @@ real definitions. Every contract is sorried with a proof sketch, pending the
   uses `Turing.seamReleaseTM`.
 * **Tables** are written with the catalog's one-tape actions
   `Turing.tapeAction` and `Turing.inputMoveAction`.
-* **The input sweeps** move the native input head in lockstep with the work
-  heads and return it to position `1`. `Turing.inputCopyTM` reuses the sweep
+* **The input sweeps** move the native input head and return it to position
+  `1`. `Turing.inputCopyTM` moves the destination work head in lockstep with
+  it; `Turing.inputFoldTM` moves only the input head, so its work heads stay
+  fixed. `Turing.inputCopyTM` reuses the sweep
   alphabet `Turing.SweepPhase` and `Turing.inputFoldTM` the scan alphabet
   `Turing.ScanPhase`, so no phase type is duplicated.
 * **The input fold is the validator** of design §12.8a §0: a rich
