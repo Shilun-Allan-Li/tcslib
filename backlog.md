@@ -246,6 +246,7 @@ on `TMSAT_NPHard`/`TMSAT_NPComplete` are stale too. It fails identically at
 every commit since, unrelated to any batch. Refresh its expectations to the
 current state, or retire it in favour of the axiom logs. `ch1-infra-BuildSpecAxioms.lean`
 still passes.
+
 ### BL-W: optional hypothesis weakenings of the `Complexity.BlockLoop` layer (from the 12.2c T1 item 7 gate, note 13)
 
 `BlockLoop.orbit` needs nonempty heads only below `K`. `iterate_done` does not
