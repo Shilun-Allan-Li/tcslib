@@ -28,7 +28,9 @@ per-theme layout is a recorded backlog item.
 alphabets are real definitions (TM1-style labelled control, the catalog's
 house idiom), and every contract is proved: the §12 fill epochs F1/F2
 (gates closed 2026-10-09) and the §12.6 framed contracts (fill gate closed
-2026-10-10).
+2026-10-10). Part 3 below is the exception: it is the §12.8 statement layer,
+whose machines are real definitions and whose contracts are sorried with
+proof sketches, pending the §12.8 fill.
 
 ## Part 1 — new promotions (seam routines)
 
@@ -69,11 +71,29 @@ is untouched (additive growth). The emitter combinators (E1/E2/E3′/E4′ —
 `exists_emitLoopTM`, `emit_run`/`exists_emitCallTM`, the stream rows
 P16–P18, `splitSolveWith`) stay lazy until a space consumer appears.
 
+## Part 3 — the §12.8 rows (statement layer)
+
+The alphabet-generic rows of the rich-alphabet design
+(`machine-library-design.md` §12.8a): the framed compare (R8.1), the seek
+family over blank-separated fields (R8.3) with its field-layout vocabulary,
+and the two-pass transducer scan `Turing.scanTM` (R8.2). The scan is the G2
+core of the §13d revision: fold, in-place map, head-mark shifts and carry
+odometers are its instances, as pure identities of `Turing.scanResult`, so
+one framed contract and one trace serve them all.
+
 ## Main definitions
 
 * `Turing.SweepPhase`, `Turing.FlagPhase` — the two phase alphabets.
 * `Turing.transferTM`, `Turing.copyTM`, `Turing.clearTM`,
   `Turing.compareTM`, `Turing.incrementTM`.
+* Part 3: `Turing.tapeAction`, `Turing.inputMoveAction` (one-tape
+  actions); `Turing.joinFields`, `Turing.fieldsTape`, `Turing.fieldOffset`
+  (the field layout); `Turing.SeekPhase`, `Turing.skipTM`,
+  `Turing.skipBackTM`, `Turing.seekEndTM`, `Turing.seekStartTM`;
+  `Turing.mealyRun`, `Turing.scanResult`, `Turing.ScanPhase`,
+  `Turing.scanTM`, and the instance steps `Turing.scanKeep`,
+  `Turing.scanFold`, `Turing.scanMap`, `Turing.scanShift`,
+  `Turing.scanCarry`.
 
 ## Main results
 
@@ -87,6 +107,14 @@ the control-layer rows `Turing.capture_visitedByTapeHead` (W1),
 `Turing.FinTM.redirectTM_spaceUsedByTape` (W2),
 `Turing.FinTM.computesFunInTime_cond_spaceUsed` (W3), and
 `Turing.FinTM.exists_loopTM_spaceUsed` (L).
+
+Part 3 (statements): `Turing.fieldsTape_field`;
+`Turing.compareTM_run_ofCfg`; `Turing.skipTM_run_ofCfg`,
+`Turing.skipBackTM_run_ofCfg`, `Turing.seekEndTM_run_ofCfg`,
+`Turing.seekStartTM_run_ofCfg`; `Turing.scanTM_run_ofCfg`; and the instance
+identities `Turing.scanResult_fold`, `Turing.scanResult_map`,
+`Turing.scanResult_shiftRight`, `Turing.scanResult_shiftLeft`,
+`Turing.scanResult_carry`.
 
 ## References
 
@@ -11261,3 +11289,502 @@ theorem exists_loopTM_spaceUsed (body F : FinTM Bool) (anchor : body.State)
         Nat.mul_le_mul_right _ (Nat.le_add_left _ _)
 
 end Turing.FinTM
+
+/-! ## Part 3 — the §12.8 rows (statement layer)
+
+The alphabet-generic rows of design §12.8a: the one-tape actions their
+tables are written with, the field layout, the framed compare (R8.1), the
+seek family (R8.3) and the two-pass scan (R8.2, the G2 core). The machines are real definitions; every contract below is a
+statement whose proof is sorried with a sketch, pending the §12.8 fill. Each
+follows the §12.6 framed form: exact time, finish configuration, no earlier
+exit, and the trajectory of every head. -/
+
+namespace Turing
+
+/-! ### One-tape actions -/
+
+/-- **An action on one work tape** (design §12.8a): move the input head by
+`inp`, write `wr` on tape `i` and move its head by `m`, leave every other work
+tape untouched, emit nothing, and continue in `q`. The transition tables of the
+§12.8 single-sweep rows are built from it and `Turing.inputMoveAction`. -/
+def tapeAction {k : ℕ} {Symbol State : Type*} (i : Fin k) (inp : SignType)
+    (wr : Option (Option Symbol)) (m : SignType) (q : State) : Action k Symbol State :=
+  ⟨inp, fun j => if j = i then (wr, m) else (none, 0), none, some q⟩
+
+/-- **An action on the input head only** (design §12.8a): move the input head
+by `inp`, touch no work tape, emit nothing, and continue in `q`. At `inp = 0`
+it is the stationary action of a live anchor. -/
+def inputMoveAction {k : ℕ} {Symbol State : Type*} (inp : SignType) (q : State) :
+    Action k Symbol State :=
+  ⟨inp, fun _ => (none, 0), none, some q⟩
+
+/-! ### The field layout -/
+
+/-- **The field layout** (design §12.8a). A list of fields laid out as cells,
+consecutive fields separated by one blank cell. A table of records is the same
+layout over all its fields, so two consecutive blanks mark its end as long as
+no field is empty. -/
+def joinFields {Γ : Type*} (fs : List (List Γ)) : List (Option Γ) :=
+  List.intercalate [none] (fs.map (List.map some))
+
+/-- **The tape of a field list** (design §12.8a): `Turing.joinFields fs` laid
+out from cell `0`, blank at every negative cell and beyond its end. -/
+def fieldsTape {Γ : Type*} (fs : List (List Γ)) (z : ℤ) : Option Γ :=
+  if 0 ≤ z then ((joinFields fs)[z.toNat]?).join else none
+
+/-- **Field offsets** (design §12.8a): the cell at which field `j` of the
+layout starts, the total length of the earlier fields with one separator each.
+For a nonempty `fs`, at `j = fs.length` it is the span of the whole layout plus
+one cell, `(joinFields fs).length + 1`, which is where a further field would
+start. The empty layout has offset `0` there, not `1`. -/
+def fieldOffset {Γ : Type*} (fs : List (List Γ)) (j : ℕ) : ℕ :=
+  ((fs.take j).map (·.length + 1)).sum
+
+/-- **Each field is a framed word** (design §12.8a). In the tape of a field
+list, field `j` read from its offset is the delimited word of §12.6: its cells
+at relative positions `0, …, |fs[j]| - 1`, and blanks at `-1` and `|fs[j]|`.
+So every framed catalog row applies to a field in place.
+
+**Proof sketch.** Induct on `j`. The intercalated list is field `0`, then for
+a nonempty tail one separator and the joined tail, so the cells at offset `0`
+are field `0` followed by a blank. For `j + 1`, shift by the length of field
+`0` plus one and use the induction hypothesis on the tail; the cell before the
+offset is the separator, or the negative cell `-1` when `j = 0`. -/
+theorem fieldsTape_field {Γ : Type*} (fs : List (List Γ)) (j : ℕ) (hj : j < fs.length) :
+    ∀ p : ℤ, -1 ≤ p → p ≤ (fs[j].length : ℤ) →
+      fieldsTape fs (fieldOffset fs j + p) = FinTM.bufferTape fs[j] p := by
+  sorry
+
+/-! ### R8.1 — the framed compare -/
+
+/-- **R8.1, compare, framed** (design §12.8a; the generic form of
+`Turing.compareTM_run`). From any configuration in the working phase whose
+tapes `fst` and `snd` carry delimited words `u` and `v` at their heads, the
+compare reaches the verdict anchor `done (decide (u = v))` at exactly
+`2δ + 2` for some `δ ≤ min |u| |v|`, the length of the common prefix it
+reads, and no verdict anchor earlier. Nothing is written: the finish is the
+start configuration with only the control state replaced. Up to the exit the
+two heads stay within `[pos - 1, pos + δ]`, and every other head is fixed.
+The outer cells, the other tapes, the input position and the output are
+arbitrary. The canonical `Turing.compareTM_run` re-derives from this form.
+
+**Proof sketch.** Generalize `catalog_compare_trace` over the fixed outer
+frame and the two start coordinates. Let `δ` be the first index at which the
+words differ or one of them ends, and `δ = |u| = |v|` when `u = v`. The
+forward pass takes `δ` matching steps and one turning step, which selects the
+verdict. The return pass is guided by `fst`'s intact cells, `δ` of them,
+and the left delimiter of `u` supplies the final entry step, so the total is
+`2δ + 2`. -/
+theorem compareTM_run_ofCfg {Symbol : Type*} [DecidableEq Symbol] {k : ℕ} {x : List Symbol}
+    (fst snd : Fin k) (hne : fst ≠ snd) (u v : List Symbol) (d : Cfg k Symbol FlagPhase x)
+    (hstate : d.state = some FlagPhase.run)
+    (hu : ∀ p : ℤ, -1 ≤ p → p ≤ (u.length : ℤ) →
+      d.workTapes fst (d.workTapePos fst + p) = FinTM.bufferTape u p)
+    (hv : ∀ p : ℤ, -1 ≤ p → p ≤ (v.length : ℤ) →
+      d.workTapes snd (d.workTapePos snd + p) = FinTM.bufferTape v p) :
+    ∃ δ ≤ min u.length v.length,
+      (compareTM k fst snd).runFrom d (2 * δ + 2) =
+          { d with state := some (FlagPhase.done (decide (u = v))) } ∧
+        (∀ t < 2 * δ + 2, ∀ b,
+          ((compareTM k fst snd).runFrom d t).state ≠ some (FlagPhase.done b)) ∧
+        (∀ (j : Fin k) (t : ℕ), t ≤ 2 * δ + 2 →
+          if j = fst ∨ j = snd then
+            ((compareTM k fst snd).runFrom d t).workTapePos j ∈
+              Finset.Icc (d.workTapePos j - 1) (d.workTapePos j + (δ : ℤ))
+          else ((compareTM k fst snd).runFrom d t).workTapePos j = d.workTapePos j) := by
+  sorry
+
+/-! ### R8.3 — the seek family -/
+
+/-- **Phase alphabet of the seek family** (design §12.8a, R8.3):
+`Turing.skipTM`, `Turing.skipBackTM`, `Turing.seekEndTM` and
+`Turing.seekStartTM`. Each machine documents which phases it uses. -/
+inductive SeekPhase where
+  /-- the main pass -/
+  | run
+  /-- a blank has just been crossed -/
+  | gap
+  /-- the backward or returning pass -/
+  | back
+  /-- the live exit anchor -/
+  | done
+deriving DecidableEq, Fintype
+
+/-- **R8.3, skip** (design §12.8a). Move the head of tape `i` right over the
+word under it and one cell past its right delimiter, writing nothing. In the
+field layout this moves from the first cell of a field to the first cell of
+the next. Phases `run` and `done`; the others are stationary and unused. -/
+def skipTM {Symbol : Type*} (k : ℕ) (i : Fin k) : MultiTapeTM k Symbol SeekPhase where
+  q₀ := .run
+  tr := fun q _ w =>
+    match q with
+    | .run =>
+      match w i with
+      | some _ => tapeAction i 0 none .pos .run
+      | none => tapeAction i 0 none .pos .done
+    | q => inputMoveAction 0 q
+
+/-- **R8.3, skip, framed** (design §12.8a). If tape `i` holds the word `w`
+from its head, with a blank right delimiter at relative position `|w|`, the
+skip reaches `done` at exactly `|w| + 1` and not earlier, with the head of
+tape `i` at `pos + |w| + 1` and nothing else changed. No left delimiter is
+needed, and the cells beyond the delimiter are arbitrary. Up to the exit the
+head of tape `i` stays within `[pos, pos + |w| + 1]`, and every other head is
+fixed.
+
+**Proof sketch.** Induct on the cells of `w`: each nonblank cell is one
+right step in `run`. The delimiter is one more right step into `done`. -/
+theorem skipTM_run_ofCfg {Symbol : Type*} {k : ℕ} {x : List Symbol} (i : Fin k)
+    (w : List Symbol) (d : Cfg k Symbol SeekPhase x) (hstate : d.state = some .run)
+    (hw : ∀ p : ℤ, 0 ≤ p → p ≤ (w.length : ℤ) →
+      d.workTapes i (d.workTapePos i + p) = FinTM.bufferTape w p) :
+    (skipTM k i).runFrom d (w.length + 1) =
+        { d with
+          state := some .done
+          workTapePos := Function.update d.workTapePos i
+            (d.workTapePos i + w.length + 1) } ∧
+      (∀ t < w.length + 1, ((skipTM k i).runFrom d t).state ≠ some .done) ∧
+      (∀ (j : Fin k) (t : ℕ), t ≤ w.length + 1 →
+        if j = i then
+          ((skipTM k i).runFrom d t).workTapePos j ∈
+            Finset.Icc (d.workTapePos j) (d.workTapePos j + w.length + 1)
+        else ((skipTM k i).runFrom d t).workTapePos j = d.workTapePos j) := by
+  sorry
+
+/-- **R8.3, skip back** (design §12.8a). The inverse of `Turing.skipTM`: from
+the first cell of a field, move the head of tape `i` to the first cell of the
+previous field. `run` steps off the current cell, `gap` steps over the blank
+separator, `back` walks left over the previous word, and its left delimiter
+turns the head into `done`. Nothing is written. -/
+def skipBackTM {Symbol : Type*} (k : ℕ) (i : Fin k) : MultiTapeTM k Symbol SeekPhase where
+  q₀ := .run
+  tr := fun q _ w =>
+    match q with
+    | .run => tapeAction i 0 none .neg .gap
+    | .gap => tapeAction i 0 none .neg .back
+    | .back =>
+      match w i with
+      | some _ => tapeAction i 0 none .neg .back
+      | none => tapeAction i 0 none .pos .done
+    | .done => inputMoveAction 0 .done
+
+/-- **R8.3, skip back, framed** (design §12.8a). If the delimited word `u` of
+tape `i` ends one blank before the head, that is, `u` starts at
+`pos - |u| - 1`, then skip back reaches `done` at exactly `|u| + 3` and not
+earlier, with the head of tape `i` at `pos - |u| - 1` and nothing else
+changed. The current cell and the cells left of `u`'s delimiter are
+arbitrary. Up to the exit the head of tape `i` stays within
+`[pos - |u| - 2, pos]`, and every other head is fixed. After
+`Turing.skipTM_run_ofCfg` over `u`, this returns the head to where it was.
+
+**Proof sketch.** Two unconditional left steps reach the last cell of `u`, or
+its left delimiter when `u = []`. Then `|u|` left steps in `back` cross `u`,
+and the delimiter at relative position `-1` is one right step into `done`. -/
+theorem skipBackTM_run_ofCfg {Symbol : Type*} {k : ℕ} {x : List Symbol} (i : Fin k)
+    (u : List Symbol) (d : Cfg k Symbol SeekPhase x) (hstate : d.state = some .run)
+    (hu : ∀ p : ℤ, -1 ≤ p → p ≤ (u.length : ℤ) →
+      d.workTapes i (d.workTapePos i - u.length - 1 + p) = FinTM.bufferTape u p) :
+    (skipBackTM k i).runFrom d (u.length + 3) =
+        { d with
+          state := some .done
+          workTapePos := Function.update d.workTapePos i
+            (d.workTapePos i - u.length - 1) } ∧
+      (∀ t < u.length + 3, ((skipBackTM k i).runFrom d t).state ≠ some .done) ∧
+      (∀ (j : Fin k) (t : ℕ), t ≤ u.length + 3 →
+        if j = i then
+          ((skipBackTM k i).runFrom d t).workTapePos j ∈
+            Finset.Icc (d.workTapePos j - u.length - 2) (d.workTapePos j)
+        else ((skipBackTM k i).runFrom d t).workTapePos j = d.workTapePos j) := by
+  sorry
+
+/-- **R8.3, seek to the end of a table** (design §12.8a, decision O5). Move the
+head of tape `i` right across blank-separated fields until two consecutive
+blank cells, and stop on the second, where a further field would start.
+`run` crosses field cells, `gap` follows a single blank, and a second blank
+enters `done` without moving. Nothing is written. -/
+def seekEndTM {Symbol : Type*} (k : ℕ) (i : Fin k) : MultiTapeTM k Symbol SeekPhase where
+  q₀ := .run
+  tr := fun q _ w =>
+    match q with
+    | .run =>
+      match w i with
+      | some _ => tapeAction i 0 none .pos .run
+      | none => tapeAction i 0 none .pos .gap
+    | .gap =>
+      match w i with
+      | some _ => tapeAction i 0 none .pos .run
+      | none => inputMoveAction 0 .done
+    | q => inputMoveAction 0 q
+
+/-- **R8.3, seek to the end, framed** (design §12.8a). Let tape `i` hold, from
+its head, a nonempty list `ws` of nonempty fields in the field layout, followed
+by two blank cells. Write `D = fieldOffset ws |ws|` for the span of the layout
+plus one. Then the seek reaches `done` at exactly `D + 1` and not earlier, with
+the head of tape `i` at `pos + D` and nothing else changed. The cells beyond
+`pos + D` are arbitrary. Up to the exit the head stays within
+`[pos, pos + D]`, and every other head is fixed. The fields must be nonempty,
+since an empty field is a double blank; `ws ≠ []` excludes the empty table,
+whose end is its start.
+
+**Proof sketch.** Induct on `ws`. A field `u` is `|u|` right steps in `run`;
+its terminating blank is one right step into `gap`; the next cell is the first
+cell of the next field, one right step back into `run`, or the second blank,
+one stationary step into `done`. The per-field cost `|u| + 1` sums to `D`. -/
+theorem seekEndTM_run_ofCfg {Symbol : Type*} {k : ℕ} {x : List Symbol} (i : Fin k)
+    (ws : List (List Symbol)) (hne : ws ≠ []) (hws : ∀ u ∈ ws, u ≠ [])
+    (d : Cfg k Symbol SeekPhase x) (hstate : d.state = some .run)
+    (hw : ∀ p : ℤ, 0 ≤ p → p ≤ (fieldOffset ws ws.length : ℤ) →
+      d.workTapes i (d.workTapePos i + p) = fieldsTape ws p) :
+    (seekEndTM k i).runFrom d (fieldOffset ws ws.length + 1) =
+        { d with
+          state := some .done
+          workTapePos := Function.update d.workTapePos i
+            (d.workTapePos i + fieldOffset ws ws.length) } ∧
+      (∀ t < fieldOffset ws ws.length + 1,
+        ((seekEndTM k i).runFrom d t).state ≠ some .done) ∧
+      (∀ (j : Fin k) (t : ℕ), t ≤ fieldOffset ws ws.length + 1 →
+        if j = i then
+          ((seekEndTM k i).runFrom d t).workTapePos j ∈
+            Finset.Icc (d.workTapePos j) (d.workTapePos j + fieldOffset ws ws.length)
+        else ((seekEndTM k i).runFrom d t).workTapePos j = d.workTapePos j) := by
+  sorry
+
+/-- **R8.3, seek to the start of a table** (design §12.8a, decision O5). From
+a nonblank cell, move the head of tape `i` left across blank-separated fields
+until two consecutive blank cells, then return right to the first cell after
+them. `run` crosses field cells, `gap` follows a single blank, a second blank
+turns into `back`, and `back` steps right into `done`. Nothing is written. -/
+def seekStartTM {Symbol : Type*} (k : ℕ) (i : Fin k) : MultiTapeTM k Symbol SeekPhase where
+  q₀ := .run
+  tr := fun q _ w =>
+    match q with
+    | .run =>
+      match w i with
+      | some _ => tapeAction i 0 none .neg .run
+      | none => tapeAction i 0 none .neg .gap
+    | .gap =>
+      match w i with
+      | some _ => tapeAction i 0 none .neg .run
+      | none => tapeAction i 0 none .pos .back
+    | .back => tapeAction i 0 none .pos .done
+    | .done => inputMoveAction 0 .done
+
+/-- **R8.3, seek to the start, framed** (design §12.8a). Let the head of tape
+`i` be on a nonblank cell, preceded by a list `ws` of nonempty fields in the
+field layout, each followed by its blank separator, so that the layout of `ws`
+starts at `pos - D` with `D = fieldOffset ws |ws|`, and preceded in turn by two
+blank cells. Then the seek reaches `done` at exactly `D + 4` and not earlier,
+with the head of tape `i` at `pos - D`, the start of the table, and nothing
+else changed. At `ws = []` the head is already at the start, and the run takes
+`4` steps. The cells from `pos + 1` on and before `pos - D - 2` are arbitrary.
+Up to the exit the head stays within `[pos - D - 2, pos]`, and every other
+head is fixed.
+
+**Proof sketch.** The current cell is one left step in `run`. Then induct on
+`ws` from its last field: its separator is one left step into `gap`, and each
+of its cells one left step in `run`. The two blanks before the table are one
+left step into `gap` and one right step into `back`, and `back` is one right
+step into `done`. The left steps number `D + 2`. -/
+theorem seekStartTM_run_ofCfg {Symbol : Type*} {k : ℕ} {x : List Symbol} (i : Fin k)
+    (ws : List (List Symbol)) (hws : ∀ u ∈ ws, u ≠ [])
+    (d : Cfg k Symbol SeekPhase x) (hstate : d.state = some .run)
+    (hcur : d.workTapes i (d.workTapePos i) ≠ none)
+    (hw : ∀ p : ℤ, -2 ≤ p → p < (fieldOffset ws ws.length : ℤ) →
+      d.workTapes i (d.workTapePos i - fieldOffset ws ws.length + p) = fieldsTape ws p) :
+    (seekStartTM k i).runFrom d (fieldOffset ws ws.length + 4) =
+        { d with
+          state := some .done
+          workTapePos := Function.update d.workTapePos i
+            (d.workTapePos i - fieldOffset ws ws.length) } ∧
+      (∀ t < fieldOffset ws ws.length + 4,
+        ((seekStartTM k i).runFrom d t).state ≠ some .done) ∧
+      (∀ (j : Fin k) (t : ℕ), t ≤ fieldOffset ws ws.length + 4 →
+        if j = i then
+          ((seekStartTM k i).runFrom d t).workTapePos j ∈
+            Finset.Icc (d.workTapePos j - fieldOffset ws ws.length - 2) (d.workTapePos j)
+        else ((seekStartTM k i).runFrom d t).workTapePos j = d.workTapePos j) := by
+  sorry
+
+/-! ### R8.2 — the two-pass scan (G2 core) -/
+
+/-- **Left-to-right Mealy transduction** (design §12.8a, R8.2). Run the
+finite-state transducer `δ` over `w` from state `a`: each cell is rewritten
+by `δ`'s output and the state advances. Returns the final state and the
+rewritten word. -/
+def mealyRun {A Γ : Type*} (δ : A → Γ → A × Γ) : A → List Γ → A × List Γ
+  | a, [] => (a, [])
+  | a, γ :: w =>
+    let r := δ a γ
+    let s := mealyRun δ r.1 w
+    (s.1, r.2 :: s.2)
+
+/-- **The two-pass scan result** (design §12.8a, R8.2): transduce `w` left to
+right by `δf` from `a₀`, then right to left by `δb` from the state the first
+pass ends in. Returns the final state and the rewritten word, in its original
+order. -/
+def scanResult {A Γ : Type*} (δf δb : A → Γ → A × Γ) (a₀ : A) (w : List Γ) : A × List Γ :=
+  let f := mealyRun δf a₀ w
+  let b := mealyRun δb f.1 f.2.reverse
+  (b.1, b.2.reverse)
+
+/-- **Phase alphabet of the scan** (design §12.8a, R8.2), each phase carrying
+the transducer state: the forward pass, the backward pass, and the live exit
+anchors, one per final state. -/
+inductive ScanPhase (A : Type) where
+  /-- the forward pass -/
+  | fwd (a : A)
+  /-- the backward pass -/
+  | bwd (a : A)
+  /-- the live exit anchors, one per final transducer state -/
+  | done (a : A)
+deriving DecidableEq, Fintype
+
+/-- **R8.2, the two-pass transducer scan** (design §12.8a; the G2 core of the
+§13d revision). Rewrite the delimited word under the head of tape `i` cell by
+cell, left to right by `δf` and then back by `δb`, carrying a finite state
+from `a₀`. The right delimiter turns the head, and the left delimiter steps
+right into `done a` with the final state `a` as the verdict. Fold, in-place
+map, head-mark shifts and carry odometers are instances
+(`Turing.scanResult_fold` and its siblings). -/
+def scanTM {Γ : Type*} {A : Type} (k : ℕ) (i : Fin k) (δf δb : A → Γ → A × Γ) (a₀ : A) :
+    MultiTapeTM k Γ (ScanPhase A) where
+  q₀ := .fwd a₀
+  tr := fun q _ w =>
+    match q with
+    | .fwd a =>
+      match w i with
+      | some γ => tapeAction i 0 (some (some (δf a γ).2)) .pos (.fwd (δf a γ).1)
+      | none => tapeAction i 0 none .neg (.bwd a)
+    | .bwd a =>
+      match w i with
+      | some γ => tapeAction i 0 (some (some (δb a γ).2)) .neg (.bwd (δb a γ).1)
+      | none => tapeAction i 0 none .pos (.done a)
+    | .done a => inputMoveAction 0 (.done a)
+
+/-- **R8.2, scan, framed** (design §12.8a). From any configuration in the
+forward phase at `a₀` whose tape `i` carries the delimited word `w`, the scan
+reaches `done` at exactly `2|w| + 2` and no `done` anchor earlier. At that
+point the control state is `done` of the final state of
+`Turing.scanResult δf δb a₀ w`, the word interval `[pos, pos + |w|)` holds its
+rewritten word, and every other cell, the head positions, the input position
+and the output are unchanged. Up to the exit the head of tape `i` stays within
+`[pos - 1, pos + |w|]`, and every other head is fixed.
+
+**Proof sketch.** The `catalog_trace_run` skeleton, with the forward and
+backward cell maps of the two Mealy passes in place of the sweeps'. Induct on
+the cells for each pass: the forward pass takes `|w|` steps, writing
+`mealyRun δf`'s outputs; the right delimiter turns the head in one step; the
+backward pass takes `|w|` steps over the forward output in reverse, writing
+`mealyRun δb`'s outputs; the left delimiter supplies the entry step. -/
+theorem scanTM_run_ofCfg {Γ : Type*} {A : Type} {k : ℕ} {x : List Γ} (i : Fin k)
+    (δf δb : A → Γ → A × Γ) (a₀ : A) (w : List Γ) (d : Cfg k Γ (ScanPhase A) x)
+    (hstate : d.state = some (.fwd a₀))
+    (hw : ∀ p : ℤ, -1 ≤ p → p ≤ (w.length : ℤ) →
+      d.workTapes i (d.workTapePos i + p) = FinTM.bufferTape w p) :
+    (scanTM k i δf δb a₀).runFrom d (2 * w.length + 2) =
+        { d with
+          state := some (.done (scanResult δf δb a₀ w).1)
+          workTapes := fun j q =>
+            if j = i ∧ d.workTapePos j ≤ q ∧ q < d.workTapePos j + (w.length : ℤ)
+              then FinTM.bufferTape (scanResult δf δb a₀ w).2 (q - d.workTapePos j)
+            else d.workTapes j q } ∧
+      (∀ t < 2 * w.length + 2, ∀ a,
+        ((scanTM k i δf δb a₀).runFrom d t).state ≠ some (.done a)) ∧
+      (∀ (j : Fin k) (t : ℕ), t ≤ 2 * w.length + 2 →
+        if j = i then
+          ((scanTM k i δf δb a₀).runFrom d t).workTapePos j ∈
+            Finset.Icc (d.workTapePos j - 1) (d.workTapePos j + (w.length : ℤ))
+        else ((scanTM k i δf δb a₀).runFrom d t).workTapePos j = d.workTapePos j) := by
+  sorry
+
+/-! ### The scan's instances -/
+
+/-- **The identity step** (design §12.8a, R8.2): keep the state and the cell.
+As the backward step, it makes a scan a single forward pass plus a return. -/
+def scanKeep {A Γ : Type*} : A → Γ → A × Γ := fun a γ => (a, γ)
+
+/-- **The fold step** (design §12.8a, R8.2): update the state by `δ` and keep
+the cell. -/
+def scanFold {A Γ : Type*} (δ : A → Γ → A) : A → Γ → A × Γ := fun a γ => (δ a γ, γ)
+
+/-- **The map step** (design §12.8a, R8.2): keep the state and rewrite the cell
+by `f`. -/
+def scanMap {A Γ : Type*} (f : Γ → Γ) : A → Γ → A × Γ := fun a γ => (a, f γ)
+
+/-- **The delay step** (design §12.8a, R8.2): read the mark `get γ` of the
+cell into the state, and write the previous mark into the cell by `set`. As
+the forward step it shifts the marks one cell right; as the backward step,
+one cell left. -/
+def scanShift {B Γ : Type*} (get : Γ → B) (set : Γ → B → Γ) : B → Γ → B × Γ :=
+  fun b γ => (get γ, set γ b)
+
+/-- **The carry step** (design §12.8a, R8.2): with the carry set, advance the
+digit by `next` and keep the carry exactly when the digit was the top one
+(`top`), which wraps; with the carry clear, keep the digit. -/
+def scanCarry {Γ : Type*} (top : Γ → Bool) (next : Γ → Γ) : Bool → Γ → Bool × Γ :=
+  fun c γ => if c then (top γ, next γ) else (false, γ)
+
+/-- **Scan instance, fold** (design §12.8a, R8.2). The scan by the fold step
+and the identity return computes `w.foldl δ a₀` and leaves the word intact.
+With `Turing.scanTM_run_ofCfg`, the fold's verdict is `done (w.foldl δ a₀)` at
+exactly `2|w| + 2`.
+
+**Proof sketch.** Generalize `a₀` and induct on `w`: the forward pass is
+`(w.foldl δ a₀, w)`, and the identity backward pass returns its input. -/
+theorem scanResult_fold {A Γ : Type*} (δ : A → Γ → A) (a₀ : A) (w : List Γ) :
+    scanResult (scanFold δ) scanKeep a₀ w = (w.foldl δ a₀, w) := by
+  sorry
+
+/-- **Scan instance, in-place map** (design §12.8a, R8.2). The scan by the map
+step and the identity return rewrites the word to `w.map f`, with the state
+unchanged.
+
+**Proof sketch.** Generalize nothing and induct on `w`: the forward pass is
+`(a₀, w.map f)`, and the identity backward pass returns its input. -/
+theorem scanResult_map {A Γ : Type*} (f : Γ → Γ) (a₀ : A) (w : List Γ) :
+    scanResult (scanMap f) scanKeep a₀ w = (a₀, w.map f) := by
+  sorry
+
+/-- **Scan instance, head-mark shift right** (design §12.8a, R8.2). The scan by
+the delay step forward and the identity return writes into cell `j` the mark
+of cell `j - 1`, and `b₀` into cell `0`. The final state is the mark of the
+last cell, or `b₀` when `w = []`.
+
+**Proof sketch.** Generalize `b₀` and induct on `w`: the first cell receives
+`b₀`, and the tail is the shift of the tail from the first cell's mark. -/
+theorem scanResult_shiftRight {B Γ : Type*} (get : Γ → B) (set : Γ → B → Γ) (b₀ : B)
+    (w : List Γ) :
+    scanResult (scanShift get set) scanKeep b₀ w =
+      ((w.map get).getLast?.getD b₀, List.zipWith set w (b₀ :: w.map get)) := by
+  sorry
+
+/-- **Scan instance, head-mark shift left** (design §12.8a, R8.2). The scan by
+the identity forward pass and the delay step backward writes into cell `j`
+the mark of cell `j + 1`, and `b₀` into the last cell. The final state is the
+mark of cell `0`, or `b₀` when `w = []`.
+
+**Proof sketch.** The forward pass is `(b₀, w)`. The backward pass is the
+right shift of `w.reverse` from `b₀`, by the induction of
+`Turing.scanResult_shiftRight`; reversing it gives the left shift. -/
+theorem scanResult_shiftLeft {B Γ : Type*} (get : Γ → B) (set : Γ → B → Γ) (b₀ : B)
+    (w : List Γ) :
+    scanResult scanKeep (scanShift get set) b₀ w =
+      ((w.map get).head?.getD b₀, List.zipWith set w (w.tail.map get ++ [b₀])) := by
+  sorry
+
+/-- **Scan instance, carry odometer** (design §12.8a, R8.2). The scan by the
+carry step from a set carry, with the identity return, is the little-endian
+increment of a digit word: every top digit of the maximal top prefix wraps by
+`next`, the first other digit advances by `next`, and the rest is kept. The
+final carry is set exactly when every digit was top, that is, on overflow.
+
+**Proof sketch.** Induct on `w`. A top first digit wraps and passes the carry
+to the tail; any other first digit advances and clears the carry, after which
+the carry step is the identity. -/
+theorem scanResult_carry {Γ : Type*} (top : Γ → Bool) (next : Γ → Γ) (w : List Γ) :
+    scanResult (scanCarry top next) scanKeep true w =
+      (w.all top, (w.takeWhile top).map next ++ ((w.dropWhile top).take 1).map next ++
+        (w.dropWhile top).drop 1) := by
+  sorry
+
+end Turing

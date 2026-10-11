@@ -6,6 +6,7 @@ Authors: Seyoon Ragavan
 import Mathlib.Data.Nat.Digits.Defs
 import Mathlib.Logic.Equiv.Bool
 import TCSlib.Complexity.TuringMachine.Build.Catalog
+import TCSlib.Complexity.TuringMachine.Build.Scan
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -24,8 +25,10 @@ are the two-tape uniform machine-code scheme (`Codes2Tape`), the EXPCOM
 simulation, the nondeterministic time hierarchy (a fused countdown at
 linear overhead) and the space hierarchy's configuration-count clock.
 
-**Status: proved.** All definitions are real and every contract is
-proved (§12.7 fill, `2e99bda1`; fill gate closed 2026-10-10).
+**Status: proved, except the §12.8 row.** All definitions are real and every
+§12.7 contract is proved (§12.7 fill, `2e99bda1`; fill gate closed
+2026-10-10). The §12.8 expansion row `Turing.expandTM_run_ofCfg` (R8.6) is a
+statement, sorried with a proof sketch, pending the §12.8 fill.
 
 ## Design (decisions 12.7.1–12.7.6, user 2026-10-10)
 
@@ -67,6 +70,8 @@ proved (§12.7 fill, `2e99bda1`; fill gate closed 2026-10-10).
 * `Turing.CounterLoopState`, `Turing.counterLoopTM`,
   `Turing.counterLoopCfg`, `Turing.counterLoopOrbit` — the host, its
   configurations, and the body's round-start configurations.
+* `Turing.expandTM` — the expansion (§12.8, R8.6): the counter loop whose
+  round is the advancing writer `Turing.writeAdvTM`.
 
 ## Main results
 
@@ -81,6 +86,8 @@ proved (§12.7 fill, `2e99bda1`; fill gate closed 2026-10-10).
   host's exact whole-run contracts, with no earlier exit, the counter
   head's range, and the body heads' trajectory.
 * `Turing.counterLoop_time_le` — the uniform per-round bound.
+* `Turing.expandTM_run_ofCfg` — the expansion writes its pattern once per
+  counter unit, contiguously, at exact time (statement, §12.8).
 
 ## References
 
@@ -1199,5 +1206,70 @@ theorem counterLoop_time_le {k : ℕ} {S : Type} {x : List Bool}
     _ ≤ d * B + (4 * d + 2 * w.length + 2) :=
       Nat.add_le_add (by simpa using hsum) hc
     _ = _ := by omega
+
+/-! ## R8.6 — the expansion (§12.8) -/
+
+/-- **R8.6, the expansion** (design §12.8a). The counter loop whose round is
+the advancing writer: with a counter of value `d` on the last tape, it writes
+the pattern `pat` on tape `i` `d` times, contiguously from the head, and leaves
+the head after the last copy. Its uses are lengths given in binary: the
+window halves of a record, of length `d·|pat|` for a radius counter `d`. -/
+def expandTM (k : ℕ) (i : Fin k) (pat : List Bool) :
+    MultiTapeTM (k + 1) Bool (CounterLoopState (Fin (pat.length + 1))) :=
+  counterLoopTM (writeAdvTM k i pat) 0 none
+
+/-- **R8.6, the expansion, framed** (design §12.8a). Start the expansion at its
+decrement phase with body configuration `c` at the writer's state `0` and the
+delimited counter word `w`, of value `d`, at `cp`. It reaches `done` at exactly
+`d·(|pat| + 1) + counterOverhead w (d + 1)` and neither exit anchor earlier.
+At that point the interval `[pos, pos + d·|pat|)` of tape `i` holds `d` copies
+of `pat`, whatever it held before, the head of tape `i` is at `pos + d·|pat|`,
+the counter is all `true` with its head back at `cp`, and every other cell,
+every other head, the input position and the output are unchanged. Throughout,
+the counter head stays within `[cp - 1, cp + |w|]`, the head of tape `i`
+within `[pos, pos + d·|pat|]`, and every other body head is fixed.
+
+**Proof sketch.** Apply `Turing.counterLoopTM_run_done` with the constant round
+time `τ := |pat| + 1`. The round hypotheses are `Turing.writeAdvTM_run_ofCfg`
+at the orbit's `r`-th configuration, which by induction on `r` has `r` copies
+of `pat` written from `pos` and its head at `pos + r·|pat|`. The round sum is
+`d·(|pat| + 1)`. The head clauses follow from the loop's trajectory clause and
+the writer's. -/
+theorem expandTM_run_ofCfg {k : ℕ} {x : List Bool} (i : Fin k) (pat : List Bool)
+    (c : Cfg k Bool (Fin (pat.length + 1)) x) (hc : c.state = some 0)
+    (w : List Bool) (ct : ℤ → Option Bool) (cp : ℤ)
+    (hw : ∀ p : ℤ, -1 ≤ p → p ≤ (w.length : ℤ) → ct (cp + p) = FinTM.bufferTape w p)
+    (d : ℕ) (hd : Nat.ofDigits 2 (w.map Bool.toNat) = d) :
+    (expandTM k i pat).runFrom (counterLoopCfg (some (.dec .run)) c ct cp)
+        (d * (pat.length + 1) + counterOverhead w (d + 1)) =
+      counterLoopCfg (some .done)
+        { c with
+          workTapes := fun j q =>
+            if j = i ∧ c.workTapePos j ≤ q ∧
+                q < c.workTapePos j + ((d * pat.length : ℕ) : ℤ)
+              then FinTM.bufferTape (List.replicate d pat).flatten (q - c.workTapePos j)
+            else c.workTapes j q
+          workTapePos := Function.update c.workTapePos i
+            (c.workTapePos i + ((d * pat.length : ℕ) : ℤ)) }
+        (fun q => if cp ≤ q ∧ q < cp + (w.length : ℤ) then some true else ct q) cp ∧
+      (∀ t < d * (pat.length + 1) + counterOverhead w (d + 1),
+        ((expandTM k i pat).runFrom (counterLoopCfg (some (.dec .run)) c ct cp) t).state ≠
+          some .done ∧
+        ((expandTM k i pat).runFrom (counterLoopCfg (some (.dec .run)) c ct cp) t).state ≠
+          some .escape) ∧
+      (∀ t ≤ d * (pat.length + 1) + counterOverhead w (d + 1),
+        ((expandTM k i pat).runFrom
+            (counterLoopCfg (some (.dec .run)) c ct cp) t).workTapePos (Fin.last k) ∈
+          Finset.Icc (cp - 1) (cp + (w.length : ℤ))) ∧
+      (∀ t ≤ d * (pat.length + 1) + counterOverhead w (d + 1), ∀ j : Fin k,
+        if j = i then
+          ((expandTM k i pat).runFrom
+              (counterLoopCfg (some (.dec .run)) c ct cp) t).workTapePos j.castSucc ∈
+            Finset.Icc (c.workTapePos j) (c.workTapePos j + ((d * pat.length : ℕ) : ℤ))
+        else
+          ((expandTM k i pat).runFrom
+              (counterLoopCfg (some (.dec .run)) c ct cp) t).workTapePos j.castSucc =
+            c.workTapePos j) := by
+  sorry
 
 end Turing

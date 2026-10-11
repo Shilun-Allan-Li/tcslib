@@ -1,0 +1,76 @@
+import TCSlib.Complexity.TuringMachine.Build.InputCall
+import TCSlib.Complexity.TuringMachine.Build.CfgRecord
+
+set_option autoImplicit false
+
+/-! §12.8 statement gate, round 2: adequacy probe (maintainer). A head-range clause of
+the repaired form bounds `spaceUsed`, so the repaired record step and input seek
+give their consumers a work-space bound that does not depend on the native input
+head. -/
+
+namespace Turing
+
+/-- A run whose work heads stay within `R` cells of their entry positions visits at
+most `2R + 1` cells per tape. -/
+theorem probe_spaceUsed_le_of_heads {k : ℕ} {Symbol State : Type*} {x : List Symbol}
+    (M : MultiTapeTM k Symbol State) (d : Cfg k Symbol State x) (t R : ℕ)
+    (h : ∀ u ≤ t, ∀ j : Fin k,
+      |(M.runFrom d u).workTapePos j - d.workTapePos j| ≤ (R : ℤ)) :
+    M.spaceUsed d t ≤ k * (2 * R + 1) := by
+  calc M.spaceUsed d t = ∑ i, M.spaceUsedByTape d t i := rfl
+    _ ≤ ∑ _i : Fin k, (2 * R + 1) := Finset.sum_le_sum fun i _ => by
+      unfold MultiTapeTM.spaceUsedByTape MultiTapeTM.visitedByTapeHead
+      have hsub : (Finset.range (t + 1)).image (fun t' => (M.runFrom d t').workTapePos i) ⊆
+          Finset.Icc (d.workTapePos i - R) (d.workTapePos i + R) := by
+        intro z hz
+        obtain ⟨u, hu, rfl⟩ := Finset.mem_image.mp hz
+        have hb := h u (Nat.lt_succ_iff.mp (Finset.mem_range.mp hu)) i
+        rw [abs_le] at hb
+        exact Finset.mem_Icc.mpr ⟨by linarith [hb.1], by linarith [hb.2]⟩
+      calc _ ≤ (Finset.Icc (d.workTapePos i - R) (d.workTapePos i + R)).card :=
+            Finset.card_le_card hsub
+        _ = 2 * R + 1 := by rw [Int.card_Icc]; omega
+    _ = k * (2 * R + 1) := by
+      rw [Finset.sum_const_nat fun _ _ => rfl, Finset.card_univ, Fintype.card_fin]
+
+/-- The repaired input seek: up to its exit, work space `O(|w| + 1)` at every input
+position and input length. -/
+example : ∃ (S : Type) (_ : Fintype S) (_ : DecidableEq S) (R : MultiTapeTM 2 Bool S)
+    (entry exit : S) (C : ℕ),
+    ∀ {x : List Bool} (p : ℕ) (w : List Bool), Nat.ofDigits 2 (w.map Bool.toNat) = p →
+      p ≤ x.length + 1 → ∀ d : Cfg 2 Bool S x, d.state = some entry →
+      (∀ q : ℤ, -1 ≤ q → q ≤ (w.length : ℤ) →
+        d.workTapes 0 (d.workTapePos 0 + q) = FinTM.bufferTape w q) →
+      (∀ q, d.workTapes 1 q = none) →
+      ∃ t, (R.runFrom d t).state = some exit ∧
+        R.spaceUsed d t ≤ 2 * (2 * (C * (w.length + 1)) + 1) := by
+  obtain ⟨S, i1, i2, R, entry, exit, C, h⟩ := exists_inputSeekTM
+  refine ⟨S, i1, i2, R, entry, exit, C, fun p w hp hpx d hd hw h1 => ?_⟩
+  obtain ⟨t, -, -, hheads, hexit, -⟩ := h p w hp hpx d hd hw h1
+  exact ⟨t, hexit, probe_spaceUsed_le_of_heads R d t _ hheads⟩
+
+/-- The repaired record step: it reaches a verdict within its time bound, and up to
+that verdict its work space is linear in the record length, however long the native
+input is. (Round 2, finding 1: the conclusion states the verdict, so a module that
+never reaches one cannot satisfy it at `t = 0`.) -/
+example {k : ℕ} {Q T : Type} [Fintype Q] [DecidableEq Q] [Fintype T] [DecidableEq T]
+    (M : MultiTapeTM k Bool Q) (upd : T → Option Bool → T) (hupd : ∀ τ, upd τ none = τ) :
+    ∃ (K : ℕ) (P : Type) (_ : Fintype P) (_ : DecidableEq P)
+      (R : MultiTapeTM (K + 1) (RecSym Q T) P) (entry yes no : P) (C : ℕ), yes ≠ no ∧
+      ∀ {x : List Bool} (s : ℕ) (c : Cfg k Bool Q x) (τ : T), c.InWindow s →
+      ∀ d : Cfg (K + 1) (RecSym Q T) P (x.map (RecSym.digitEmb Q T)),
+        d.state = some entry → RecordAt d 0 (cfgRecord s c τ) →
+        (∀ j : Fin (K + 1), j ≠ 0 → ∀ p, d.workTapes j p = none) →
+        ∃ t ≤ C * ((joinFields (cfgRecord s c τ)).length + x.length + 1),
+          ((R.runFrom d t).state = some yes ∨ (R.runFrom d t).state = some no) ∧
+          R.spaceUsed d t ≤
+            (K + 1) * (2 * (C * ((joinFields (cfgRecord s c τ)).length + 1)) + 1) := by
+  obtain ⟨K, P, i1, i2, R, entry, yes, no, C, hyn, h⟩ := exists_recordStepTM M upd hupd
+  refine ⟨K, P, i1, i2, R, entry, yes, no, C, hyn, fun s c τ hc d hd hrec hblank => ?_⟩
+  obtain ⟨t, ht, -, hheads, hyes, hno⟩ := h s c τ hc d hd hrec hblank
+  refine ⟨t, ht, ?_, probe_spaceUsed_le_of_heads R d t _ hheads⟩
+  by_cases hw : (M.step c).InWindow s
+  · exact Or.inl (by rw [hyes hw])
+  · exact Or.inr (by rw [hno hw])
+
+end Turing

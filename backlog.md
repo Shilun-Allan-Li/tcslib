@@ -263,6 +263,25 @@ through the public lemma:
 
 Line numbers are at `22b6c84a`.
 
+### FAC-1: nine `TuringMachine` files missing from the topic facade (from the §12.8 gate)
+
+Policy §1 asks a topic facade to import every file of its topic. At the
+§12.8 statement gate (decision 6, user, 2026-10-11) the five §12.8 modules
+were wired in: `SymbolLift`, `Build/CounterLoop`, `Build/Scan`,
+`Build/InputCall` and `Build/CfgRecord`. Nine older files are still absent
+from `TCSlib/Complexity/TuringMachine.lean`:
+
+- `Build/EmitIterBody`, `Build/EmitIterEmbed` (ch7, colleague-owned)
+- `Build/VirtualInput`, `Build/Zone` (§13; Zone is under the §13d revision)
+- `Codes2Tape`
+- `NondeterministicSpace`
+- `OracleAgreement`, `OracleFinite`, `OracleNondeterministic`
+
+Some of these are reachable from the root through other facades. Each needs
+the import and a Contents entry, then a downstream replay of the facade. The
+colleague-owned files need their owners' agreement. Schedule: the 12.2c
+per-theme split, or earlier with each owning file's next batch.
+
 ### H-1: refresh the stale ch1 audit program `audits/programs/ch1-infra-BridgeExportAxioms.lean` (from the 12.2c item 8 integration)
 
 The program, written 2026-10-03, still expects `Complexity.TMSAT_mem_NP` to

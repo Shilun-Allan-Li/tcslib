@@ -1538,7 +1538,9 @@ multi-track discipline.
 
 ### 12.8a Statement draft for the rich-alphabet design (2026-10-10)
 
-*Recorded from the S1 agent's draft. Its probe is `audits/evidence/s12-8/S128StatementsProbe.lean.txt`; run by the maintainer against the G1 side-branch tree it gives 0 errors and 12 sorry warnings, one per statement left to the fill. Maintainer decisions O1, O4, O5, O6 and the user's O2, O3, O7 are recorded at the end.*
+*Recorded from the S1 agent's draft. Its probe is `audits/evidence/s12-8/S128StatementsProbe.lean.txt`; run by the maintainer against the G1 side-branch tree it gives 0 errors and 12 sorry warnings, one per statement left to the fill. Maintainer decisions O1, O4, O5, O6 and the user's O2, O3, O7 are recorded at the end (§8).*
+
+*Landed as statements on 2026-10-11, branch `integrate/s12-8-statements`: §8 lists the landed names, which supersede the draft's below where they differ, the changes from the draft, the R8.0b target signatures, and the open questions for the statement gate.*
 
 *Draft for the statement phase, 2026-10-10. Base: campaign `19964447`; G1 side branch `s13d/g1`
 (`10c2c08d`, PR #15, awaiting its gate).*
@@ -1779,16 +1781,16 @@ Catalog/G1 rows.
 | **R8.0b** `counterLoopTMVia` | [Catalog/G1]+§12.7 gate (CounterLoop) | `counterLoopTMVia_run_done/_escape` (E) | exact, as §12.7 |
 | **R8.1** framed compare | [Catalog/G1] | `compareTM_run_ofCfg {Symbol} [DecidableEq Symbol]` (D) | `∃ δ ≤ min |u| |v|`, exact time `2δ+2`, finish `{d with state := done (decide (u = v))}`, no earlier verdict, trajectory `[pos−1, pos+δ]`. Canonical `compareTM_run` re-derived (body swap); the trace generalizes `catalog_compare_trace` |
 | **R8.2** `scanTM δf δb a₀` (two-pass transducer) | **[G2]** | `scanTM_run_ofCfg` (D) | exact `2|w|+2`; interval rewritten to `(scanResult δf δb a₀ w).2`, verdict `done (scanResult …).1`; trajectory `[pos−1, pos+|w|]` |
-| **R8.3** `skipTM`, `skipBackTM`, `seekEndTM`, `seekStartTM` | [Catalog/G1] | `skipTM_run_ofCfg` (D) | exact `|w|+1`, head to `pos+|w|+1`, nothing written; `seekEnd/Start` stop at two consecutive blanks (table ends) |
+| **R8.3** `skipTM`, `skipBackTM`, `seekEndTM`, `seekStartTM` | [Catalog/G1] | `skipTM_run_ofCfg` (D); landed with `skipBackTM_run_ofCfg`, `seekEndTM_run_ofCfg`, `seekStartTM_run_ofCfg` | skip: exact `|w|+1`, head to `pos+|w|+1`. Landed: skip back is skip's inverse, exact `|u|+3` from the next field's first cell to `u`'s; seek end exact `D+1` to `pos+D`, `D = fieldOffset ws |ws|`, `ws ≠ []`; seek start exact `D+4` back to the table start. Nothing written; the seeks stop at two consecutive blanks (table ends) |
 | **R8.4** `writeConstTM i w₀` | [G1-merge] (Scan) | `writeConstTM_run_ofCfg` (C) | exact `2|w₀|+2` (executed), old contents arbitrary, head returns |
-| R8.4′ `writeAdvTM i w₀` | [G1-merge] (Scan) | — | writes `w₀` and leaves the head at `pos + |w₀|`, exact `|w₀| + 1`; the advancing round of `expandTM` |
+| R8.4′ `writeAdvTM i w₀` | [G1-merge] (Scan) | landed: `writeAdvTM_run_ofCfg` | writes `w₀` and leaves the head at `pos + |w₀|`, exact `|w₀| + 1`; the advancing round of `expandTM`. Landed cyclic, over `Fin (|w₀|+1)`: it returns to its start state `0`, the counter-loop round shape |
 | **R8.5a** `inputCopyTM i` | [G1-merge] (Scan) | `inputCopyTM_run_ofCfg` (C) | from input position 1, exact `2|x|+2` (executed); both heads return in lockstep (no left delimiter needed) |
 | **R8.5b** `exists_inputSeekTM` (`Bool`) | **[now]** | (C) | `∃ R … C`; moves the input head to the binary value on a dedicated tape, `t ≤ C·(|w| + pos + p + 1)`; tapes restored |
 | **R8.5c** `exists_inputLengthTM` (`Bool`) | statement now; fill after R8.3 (it needs `skipTM` for the width extension) | — | writes `Nat.bits |x|` on a dedicated tape: per input symbol, `incrementTM` with width extension on overflow (`seekEnd` + `writeConst`), `t ≤ C·(|x|+1)` amortized (§12.7 potential) |
 | **R8.5d** `inputFoldTM δ a₀` | [G1-merge] (Scan) | — | native scan of the input with a finite fold, verdict `done (x.foldl δ a₀)`, exact `2|x|+2`; the foreign-symbol validator of §0 |
 | **R8.5e** `exists_inputCallTM` | [G1-merge] (`Build/InputCall.lean`; needs R8.5a) | — | `inputCopyTM` (at `Bool`, or lifted) + `exists_installCallTM`: a function-level machine on the native input at a clean seam |
-| **R8.6** `exists_expandTM pat` (`Bool`) | [G1-merge] (CounterLoop; needs R8.4′) | — | `counterLoopTM` round = `writeAdvTM pat`; writes `pat` `d` times contiguously; exact `Σ τ + counterOverhead` |
-| **R8.7** record rows | **[rec]** | `exists_recordStepTM`, `exists_recordEqTM` (G); the rest below | first-return form |
+| **R8.6** `exists_expandTM pat` (`Bool`); landed as the definition `expandTM` | [G1-merge] (CounterLoop; needs R8.4′) | landed: `expandTM_run_ofCfg` | `counterLoopTM` round = `writeAdvTM pat`; writes `pat` `d` times contiguously; exact `d(|pat|+1) + counterOverhead w (d+1)` |
+| **R8.7** record rows | **[rec]** | `exists_recordStepTM`, `exists_recordEqTM` (G); landed with `exists_recordTestTM`; the rest below | first-return form; landed with `yes ≠ no` in each existential |
 | **R8.8** `seamCompTM_runFrom_left` (promotion) + `seamCompTM₂_run_ofCfg` | [Catalog/G1] (Seam) | §12.8 note | statement unchanged from the private `seamComp_left` |
 
 **R8.2 replaces fold, map, mark shift and odometer: one row, one trace.** It is proposed **as a
@@ -1945,6 +1947,201 @@ needs the advancing writer R8.4′.
 - **O7, R8.0 now.** Whether the transport lands as a maintainer pre-issue lemma, since the
   probe proof is complete (one file, about 120 lines), or through a statement gate plus fill
   like the other §12 rows.
+
+#### 8. Decisions and the landed statement layer (2026-10-11)
+
+**Decisions.**
+
+- **User:** O2, generalize `counterLoopTM` in place, with the `Bool` contracts
+  re-derived by Z5 (R8.0b, a later batch; target signatures below); O3, G2 is
+  `scanTM`; O7, the transport lands by PR plus the §12.8 statement gate.
+- **Maintainer:** O1, `TuringMachine/SymbolLift.lean` (landed, PR #16); O4, the
+  `Fin 3` tag code; O5, dedicated `seekEndTM`/`seekStartTM` rows; O6, input
+  validation (R8.5d) is mandatory for rich space-bounded consumers.
+
+**Landed** on `integrate/s12-8-statements` (campaign `5e438f50` with PR #16,
+merged at `b28e22ea`). Every machine and carrier is a real definition. Every
+contract is sorried with a proof sketch, except the two results already
+proved, which keep their proofs: `seamCompTM_runFrom_left`, promoted verbatim,
+and `cfgRecord_length`. There are 25 new sorries. Records:
+`audits/logs/s12-8-statements-*` and
+`audits/evidence/s12-8/S128StatementsPreship.lean.txt`.
+
+| Row | File | Landed declarations | Contract |
+|---|---|---|---|
+| one-tape actions | `Build/Catalog.lean`, Part 3 | `tapeAction`, `inputMoveAction` | the transition-table vocabulary of every §12.8 machine |
+| field layout | Catalog, Part 3 | `joinFields`, `fieldsTape`, `fieldOffset`, `fieldsTape_field` | each field is a §12.6 delimited word in place |
+| R8.1 | Catalog, Part 3 | `compareTM_run_ofCfg` | as drafted |
+| R8.3 | Catalog, Part 3 | `SeekPhase`; `skipTM`, `skipBackTM`, `seekEndTM`, `seekStartTM`, each with `_run_ofCfg` | as in the §3 row, with trajectories |
+| R8.2, the G2 core | Catalog, Part 3 | `mealyRun`, `scanResult`, `ScanPhase`, `scanTM`, `scanTM_run_ofCfg`; the steps `scanKeep`, `scanFold`, `scanMap`, `scanShift`, `scanCarry`; the identities `scanResult_fold`, `scanResult_map`, `scanResult_shiftRight`, `scanResult_shiftLeft`, `scanResult_carry` | the scan contract as drafted. The instances are pure identities of `scanResult`, so the scan keeps one framed contract |
+| R8.4, R8.4′, R8.5a, R8.5d | new `Build/Scan.lean` | `WritePhase`, `writeConstTM`, `writeAdvTM`, `inputCopyTM`, `inputFoldTM`, each with `_run_ofCfg` | constant writer `2|w₀|+2`; advancing writer `|w₀|+1`, cyclic; input copy and input fold `2|x|+2` from input position `1` |
+| R8.5e, R8.5b | new `Build/InputCall.lean` | `FinTM.exists_inputCallTM`, `exists_inputSeekTM` | first-return modules |
+| R8.6 | `Build/CounterLoop.lean` | `expandTM := counterLoopTM (writeAdvTM k i pat) 0 none`, `expandTM_run_ofCfg` | exact `d(|pat|+1) + counterOverhead w (d+1)`, with `d` copies of `pat` from `pos` |
+| R8.7 | new `Build/CfgRecord.lean` | `Cfg.InWindow` (relocated verbatim from `ClassPSPACE/TQBF.lean`, which now imports it); `RecSym`, `recSymFintype`, `RecSym.digitEmb`, `binDigits`, `posWidth`, `cfgRecord`, `cfgRecord_length` (proved), `cfgRecord_inj`, `RecordValid`, `recordValid_iff`, `RecordAt`; `exists_recordStepTM`, `exists_recordEqTM`, `exists_recordTestTM` | first-return modules with distinct verdict anchors |
+| R8.8 | `Build/Seam.lean` | `seamCompTM_runFrom_left` (promoted), `seamCompTM₂`, `seamCompTM₂_run_ofCfg` | one continuation per exit, each run unboundedly after the dispatch step |
+
+**Changes from the draft.** Each was executed in the pre-ship probe where
+executable.
+
+1. **`yes ≠ no`** is part of every record row's existential. Without it, a
+   module with `yes = no` satisfies `exists_recordEqTM` vacuously, and no
+   consumer could branch on the verdict.
+2. **The field layout lives in Catalog**, not in CfgRecord, because the seek
+   rows' contracts are stated over it. CfgRecord imports Catalog and
+   `SymbolLift`, not CounterLoop, since R8.0b is not in this step. TQBF's
+   import closure gains Catalog, `SymbolLift` and CfgRecord; there is no
+   cycle.
+3. **`writeAdvTM` is cyclic** over `Fin (|w₀|+1)`. It returns to its start state
+   `0`, so it is a counter-loop round as it stands. A seam caller that runs it
+   once uses `seamReleaseTM`.
+4. **R8.6 is the concrete `expandTM`** with an exact contract, not an
+   existential.
+5. **The seek family.** Skip back is the inverse of skip (`|u|+3`, from the
+   next field's first cell), not its mirror. The seeks' exact times are `D+1`
+   and `D+4`, with `D = fieldOffset ws |ws|`. Every row carries the §12.6
+   trajectory clause.
+6. **No new copier phase type.** The input copier reuses `SweepPhase`, and the
+   input fold reuses `ScanPhase`.
+7. **The scan instances** are stated as identities of `scanResult` rather than
+   as five machine contracts. `scanTM_run_ofCfg` turns each into the
+   instance's run.
+8. **`Cfg.InWindow`** replaces the probe's `WindowedP`.
+9. **One-tape actions.** The §12.8 machines' tables are written with two
+   named actions, `tapeAction` and `inputMoveAction`, instead of literal
+   `Action` tuples. With literal tuples, the copy-text screen found 17 new
+   cross-file pairs: the input copier and the input fold against the R3
+   sweeps and the scan. With the helpers there are none. Twelve new same-file
+   pairs remain: the four seek tables among themselves, and the two writers.
+   These are distinct small machines sharing their phases, not copied
+   proofs. The proved R3 tables are unchanged.
+10. **Not landed**, being outside this step:
+    - `FinTM.bufferTape_map` and the other R8.0 corollaries;
+    - R8.5c, `exists_inputLengthTM`;
+    - R8.0b;
+    - the record rows `exists_recordValidTM`, `exists_recordInitTM`,
+      `exists_recordNextTM`, `exists_tableAppendTM` and
+      `exists_tableFindTM`. Their statements need S1b's table layout (a
+      header, the radius digits, the odometer order) and a template tape
+      holding the widths a validity machine compares against.
+11. **`MultiTapeTM.liftSymbols_step` is public** in the landed
+    `SymbolLift.lean` (PR #16), as the transport's one-step form; §1 above
+    made it private. Only `moveInputPos_cast` is private.
+
+**R8.0b target signatures.** These land in a later batch, after this
+statement gate. Home `Build/CounterLoop.lean`, which then imports
+`SymbolLift`.
+
+```lean
+def lastEmb (k : ℕ) : Fin 1 ↪ Fin (k + 1) := ⟨fun _ => Fin.last k, fun a b _ => Subsingleton.elim a b⟩
+def counterLoopTMVia {k : ℕ} {Γ S : Type} [DecidableEq S] [DecidableEq Γ] (e : Bool ↪ Γ)
+    (M : MultiTapeTM k Γ S) (a : S) (exit : Option S) : MultiTapeTM (k + 1) Γ (CounterLoopState S)
+  -- .body s : ((embedEmitTM Fin.castSuccEmb M).tr s inp work).mapState (counterLoopRedirect a exit)
+  -- .dec f  : ((embedEmitTM (lastEmb k) ((decrementTM 1 0).liftSymbols e)).tr f inp work).mapState
+  --             (counterLoopDecExit a)
+  -- .done, .escape : stationary
+-- generalized in place (types only, bodies verbatim; existing call sites unchanged):
+def counterLoopCfg {k : ℕ} {Symbol S : Type} {x : List Symbol} (q : Option (CounterLoopState S))
+    (c : Cfg k Symbol S x) (ct : ℤ → Option Symbol) (cp : ℤ) : Cfg (k + 1) Symbol (CounterLoopState S) x
+def counterLoopOrbit {k : ℕ} {Symbol S : Type} {x : List Symbol} (M : MultiTapeTM k Symbol S)
+    (τ : Cfg k Symbol S x → ℕ) (c : Cfg k Symbol S x) (r : ℕ) : Cfg k Symbol S x
+theorem counterLoop_time_le {k : ℕ} {Symbol S : Type} {x : List Symbol} … -- otherwise verbatim
+-- the generic contracts are counterLoopTM_run_done / counterLoopTM_run_escape verbatim, with
+--   M, τ, c over Γ; ct : ℤ → Option Γ; counterLoopTM M a exit ↦ counterLoopTMVia e M a exit;
+--   hw : ∀ p : ℤ, -1 ≤ p → p ≤ (w.length : ℤ) → ct (cp + p) = FinTM.bufferTape (w.map e) p,
+--     for the counter word w : List Bool;
+--   done finish counter: fun q => if cp ≤ q ∧ q < cp + (w.length : ℤ) then some (e true) else ct q;
+--   escape finish counter: fun q => if cp ≤ q ∧ q < cp + (w.length : ℤ)
+--     then FinTM.bufferTape ((counterWord w (r₀ + 1)).map e) (q - cp) else ct q;
+--   all four clauses kept (finish, no earlier exit, counter head range, body heads).
+theorem counterLoopTMVia_run_done …
+theorem counterLoopTMVia_run_escape …
+-- counterLoopTM and its two contracts: statements byte-identical; proofs re-derived at
+-- e := Function.Embedding.refl Bool through MultiTapeTM.runFrom_eq_of_agreeOn (Z5), the
+-- decrement tables agreeing pointwise (decodeBool refl γ = some γ, Option.map refl = id).
+```
+
+**Governance.** Catalog and Seam are G1-owned files, and `scanTM` is the G2
+core of the §13d revision. Under the §13d rule this branch therefore lands by a
+PR the user merges, with its own statement gate. Nothing is pushed by the
+agent.
+
+**Open questions for the statement gate.**
+
+1. **Skip back.** Is the inverse convention right (from the next field's
+   start, `|u|+3`), or should it be the mirror of skip (from a word's last
+   cell, `|u|+1`)?
+2. **The empty table.** `seekEndTM` requires `ws ≠ []`, since an empty table's
+   end is its start. Should tables carry a header field, so that every seek
+   precondition is uniform?
+3. **The cyclic writer.** Is `writeAdvTM`'s anchor-equals-start shape
+   acceptable, or should it have a stationary `done` with the loop adapting
+   it?
+4. **Tape layouts of the record rows.** `exists_recordStepTM` has
+   `K + 1` existential tapes with the record on tape `0`; `exists_recordEqTM`
+   has 2 tapes; `exists_recordTestTM` has 1. Hosts embed them by R1. Is the
+   fixed layout acceptable, or should each row take a tape selection? The
+   step row's fill will also import InputCall, for the input seek, which
+   enlarges TQBF's import closure again.
+5. **The deferred record rows.** Should validity, init, next and the table
+   rows enter this gate, or S1b's statement phase, once the table layout is
+   fixed?
+6. **The facade.** Scan, InputCall and CfgRecord are not wired into the
+   `TuringMachine` facade, following the precedent of `SymbolLift`,
+   CounterLoop and Zone. Is facade wiring wanted at this gate?
+7. **G2's agreement** to `scanTM` as its core, and whether the planned
+   `copyMapTM`/`transferMapTM` are still wanted. §12.8 does not need them.
+
+#### 9. Statement gate, round 1: decisions and repairs (2026-10-11)
+
+Round 1 failed with 0 blockers, 1 major, 7 minors and 39 notes
+(`audits/s12-8-statements-findings.md`).
+
+**Decisions** (user, the auditor's recommendations, on the open questions
+of §8):
+
+1. Skip back stays the **inverse** of skip, at `|u| + 3`.
+2. Shared tables get a **fixed nonempty header field**, so seek end always
+   has a field to stop after. The table ends are two blank cells before the
+   header and two after the last field. From seek end's stopping blank, a
+   consumer reaches the table start by skipping back over the last field
+   and then seeking start. The deferred table rows are stated with this
+   layout.
+3. `writeAdvTM` stays **cyclic**. One-shot callers use `seamReleaseTM`.
+4. The record rows keep their **fixed local tape layouts**, and hosts embed
+   them by R1.
+5. The deferred record rows (validity, init, next, table append and find)
+   get **their own statement gate** with S1b's concrete layout, before
+   S1b's fill uses them. R8.0b and R8.5c are explicit prerequisites.
+6. The new modules are **wired into the `TuringMachine` facade** at this
+   gate: `SymbolLift`, `Build/CounterLoop`, `Build/Scan`, `Build/InputCall`
+   and `Build/CfgRecord`. Nine older files of the topic are also absent
+   from the facade; they are recorded as `backlog.md` FAC-1.
+7. G2's core is `scanTM`, and `copyMapTM`/`transferMapTM` stay for G3/G4
+   (§13d, G2).
+
+**Repairs** (for round 2):
+
+- **Major 1: work-space clauses.** The record rows and the input seek
+  bounded time but not the cells they visit, so they were too weak for
+  Savitch and logspace consumers. Each now bounds every work head, through
+  its verdict or exit, to `C·(size + 1)` cells of its entry position. The
+  size is the record's layout length for the step and test rows, `fs`'s
+  layout length for the equality row, and `|w|` for the seek. So the space
+  does not depend on how far the native input head travels, and repeated
+  calls compose. The step row's sketch now names the obligations the auditor
+  identified: save and restore the host's input position in binary, and
+  clamp the position field at `0` and `|x| + 1`.
+- **Minor 2.** The input seek's rewind: `timed_rewind` stops at position
+  `1` within `pos + 2` steps, and one left move follows.
+- **Minor 3.** The input call's first-return clause splits on whether the
+  callee's entry equals its exit. If it does, `seamReleaseTM` supplies a
+  fresh entry first.
+- **Minors 4, 5 and 6.** `recordValid_iff`'s validator needs width
+  templates. A record determines the configuration *core* together with the
+  tag. `fieldOffset`'s end formula needs `fs ≠ []`.
+- **Minors 7 and 8.** Corrected in the records: the declfreeze log
+  miscounted the promotion's citations (3, not 4), and Catalog's ledger
+  denominator is now 459.
 
 ### 12.9 Oracle-machine rows (landed 2026-10-11 with epoch B1; `Build/OracleCall.lean`)
 
@@ -2378,7 +2575,11 @@ framed contracts follow the §12.6 shape (exact time `2|w| + 2`, finish
 configuration, no earlier exit, trajectory). At `merge := fun _ s => s` they
 are the plain rows. This is the reusable large-alphabet primitive. Its proofs
 must share the generalized R3 trace, not copy it (one trace per routine
-family, as §12.6 established).
+family, as §12.6 established). **Decision (user, 2026-10-11; the §12.8
+statement gate's Q7).** G2's one-tape core is `scanTM` (§12.8a).
+`copyMapTM`/`transferMapTM` stay, for the cross-tape G3/G4 consumers. Their
+`merge` takes `Option Γ → Δ → Γ`, so that blank destinations are admitted,
+and they share one trace with the scan.
 
 **G3. The multi-track zoned carrier over `Γ`.**
 

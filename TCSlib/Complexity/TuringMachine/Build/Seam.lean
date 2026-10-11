@@ -30,9 +30,12 @@ round-1 finding stands: *function-level* contracts cannot deliver
 clean-return seams, so composing `ComputesFunInTime` contracts can never
 replace this combinator.
 
-**Status: proved.** The composite is a real definition (state-sum
-dispatch in `Turing.bufferedCompTM`'s style, kept minimal), and every
-contract is proved (§12 fill epoch F1, gate closed 2026-10-09).
+**Status: proved, except the §12.8 row.** The composite is a real definition
+(state-sum dispatch in `Turing.bufferedCompTM`'s style, kept minimal), and
+every §12 contract is proved (§12 fill epoch F1, gate closed 2026-10-09). The
+§12.8 two-exit row `Turing.seamCompTM₂_run_ofCfg` (R8.8) is a statement,
+sorried with a proof sketch, pending the §12.8 fill; its companion, the left
+prefix `Turing.seamCompTM_runFrom_left`, is the promoted proved private lemma.
 
 ## Design
 
@@ -54,6 +57,8 @@ contract is proved (§12 fill epoch F1, gate closed 2026-10-09).
 * `Turing.seamCompTM` — the dispatch-glued composite of two machines over
   any alphabet; at `Bool`, its canonical use is between `Turing.Cfg.ofWords`
   seams.
+* `Turing.seamCompTM₂` — a continuation on each of two exit anchors (§12.8,
+  R8.8).
 
 ## Main results
 
@@ -76,6 +81,9 @@ contract is proved (§12 fill epoch F1, gate closed 2026-10-09).
   anchor becomes seam-consumable.
 * `Turing.seamCompTM_visitedByTapeHead` — per-tape visited-set
   containment (the headline space clause, decision 12.1).
+* `Turing.seamCompTM_runFrom_left`, `Turing.seamCompTM₂_run_ofCfg` — the left
+  prefix of a seam under a strict exit cut, and the two-exit composition
+  (§12.8, R8.8; the latter a statement).
 * `Turing.seamCompTM_spaceUsedByTape_le_add`,
   `Turing.seamCompTM_spaceUsed_le_add`,
   `Turing.seamCompTM_spaceUsedByTape_le_max` — the sum and
@@ -172,10 +180,18 @@ private lemma seamComp_dispatch {Symbol : Type*} {x : List Symbol} [DecidableEq 
   dsimp only [seamCompTM]
   rw [if_pos rfl, seam_stationary_apply]
 
-/-- The whole left trajectory agrees through the exit time.
+/-- **R8.8, the left prefix of a seam** (design §12.8a; promoted from the
+private `seamComp_left`, finding SC-4 of the §12.7 statement gate). If `M₁`,
+started from an arbitrary configuration `c`, avoids its exit anchor at every
+time strictly below `T`, then for every `t ≤ T` the composite started from the
+left-mapped `c` is at the left-mapped `M₁` configuration at `t`. No endpoint
+equation is required, and the endpoint itself is included. This is the
+trajectory statement a host with two exits needs on the branch it does not
+take.
+
 **Proof sketch.** Induct on the time; the cut licenses the left-step
 identity at every predecessor strictly before the endpoint. -/
-private lemma seamComp_left {Symbol : Type*} {x : List Symbol} [DecidableEq S₁]
+theorem seamCompTM_runFrom_left {Symbol : Type*} {x : List Symbol} [DecidableEq S₁]
     (M₁ : MultiTapeTM k Symbol S₁) (exit : S₁)
     (M₂ : MultiTapeTM k Symbol S₂) (entry : S₂)
     {c : Cfg k Symbol S₁ x} {T : ℕ}
@@ -203,7 +219,7 @@ private lemma seamComp_right {Symbol : Type*} {x : List Symbol} [DecidableEq S�
         (T₁ + 1 + t) =
       (M₂.runFrom (c₁.mapState fun _ => entry) t).mapState Sum.inr := by
   rw [MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_succ_eq_step',
-    seamComp_left M₁ exit M₂ entry hcut T₁ le_rfl, h₁,
+    seamCompTM_runFrom_left M₁ exit M₂ entry hcut T₁ le_rfl, h₁,
     seamComp_dispatch M₁ exit M₂ entry c₁ hexit]
   exact MultiTapeTM.runFrom_comm_of_step (Cfg.mapState Sum.inr)
     (seamComp_step_right M₁ exit M₂ entry) _ t
@@ -238,7 +254,7 @@ private lemma seamComp_firstReturn_general {Symbol : Type*} {x : List Symbol} [D
         some (Sum.inr q₂) := by
   intro t ht
   by_cases hleft : t ≤ T₁
-  · rw [seamComp_left M₁ exit M₂ entry hcut t hleft]
+  · rw [seamCompTM_runFrom_left M₁ exit M₂ entry hcut t hleft]
     cases (M₁.runFrom c₀ t).state <;> simp [Cfg.mapState]
   · have htime : t = T₁ + 1 + (t - (T₁ + 1)) := by omega
     rw [htime, seamComp_right M₁ exit M₂ entry h₁ hexit hcut]
@@ -268,7 +284,7 @@ private lemma seamComp_visited_general {Symbol : Type*} {x : List Symbol} [Decid
   obtain ⟨t, ht, rfl⟩ := Finset.mem_image.mp hz
   have ht' := Finset.mem_range.mp ht
   by_cases hleft : t ≤ T₁
-  · rw [seamComp_left M₁ exit M₂ entry hcut t hleft]
+  · rw [seamCompTM_runFrom_left M₁ exit M₂ entry hcut t hleft]
     apply Finset.mem_union_left
     exact Finset.mem_image.mpr ⟨t, Finset.mem_range.mpr (by omega), rfl⟩
   · have htime : t = T₁ + 1 + (t - (T₁ + 1)) := by omega
@@ -572,6 +588,52 @@ theorem seamCompTM_visitedByTapeHead_ofCfg {Symbol : Type*} {x : List Symbol} [D
       M₁.visitedByTapeHead c₀ T₁ i ∪
         M₂.visitedByTapeHead (c₁.mapState fun _ => entry) T₂ i := by
   exact seamComp_visited_general M₁ exit M₂ entry h₁ hexit hcut i
+
+/-- **R8.8, the two-exit seam** (design §12.8a). Attach a continuation to each
+of two exit anchors of a host: `M₁` after `e₁` and `M₂` after `e₂`, by nesting
+two `Turing.seamCompTM`s. The host `M₀` with two live anchors is typically
+`Turing.counterLoopTM` with its `done` and `escape`. -/
+def seamCompTM₂ {Symbol : Type*} {S₀ : Type*} [DecidableEq S₀] [DecidableEq S₁]
+    (M₀ : MultiTapeTM k Symbol S₀) (e₁ e₂ : S₀) (M₁ : MultiTapeTM k Symbol S₁) (entry₁ : S₁)
+    (M₂ : MultiTapeTM k Symbol S₂) (entry₂ : S₂) :
+    MultiTapeTM k Symbol ((S₀ ⊕ S₁) ⊕ S₂) :=
+  seamCompTM (seamCompTM M₀ e₁ M₁ entry₁) (Sum.inl e₂) M₂ entry₂
+
+/-- **R8.8, the two-exit seam, general configurations** (design §12.8a).
+Suppose the host `M₀`, from an arbitrary configuration `c₀`, reaches `c₁` at
+exactly `T₀` and meets neither of the distinct anchors `e₁`, `e₂` earlier.
+If `c₁` is at `e₁`, then for every `t` the two-exit composite at `T₀ + 1 + t`
+is `M₁`'s run, from `c₁` with only the control state replaced by `entry₁`, at
+`t`, mapped into the composite's states; the `M₂` summand is never entered.
+Symmetrically, if `c₁` is at `e₂`, the composite at `T₀ + 1 + t` is `M₂`'s run
+from `c₁` at `entry₂`. The dispatch costs one stationary step in either branch,
+and the continuation runs unboundedly, halting included, so its own first-return
+and trajectory statements transfer.
+
+**Proof sketch.** Branch `e₁`: the outer seam's left machine is the inner
+composite, whose states stay away from the outer exit `Sum.inl e₂`: before
+`T₀` by the cut, at `T₀` because `e₁ ≠ e₂`, and afterwards because they are
+`Sum.inr` states or halted. So `Turing.seamCompTM_runFrom_left` for the outer
+seam reduces the run to the inner composite's, which `Turing.seamCompTM_run_ofCfg`
+and the right lockstep of the inner seam evaluate. Branch `e₂`: the inner
+composite reaches `Sum.inl e₂` at `T₀` by `Turing.seamCompTM_runFrom_left`,
+never having met `e₁`, and the outer dispatch and right lockstep finish. -/
+theorem seamCompTM₂_run_ofCfg {Symbol : Type*} {S₀ : Type*} {x : List Symbol}
+    [DecidableEq S₀] [DecidableEq S₁]
+    (M₀ : MultiTapeTM k Symbol S₀) (e₁ e₂ : S₀) (he : e₁ ≠ e₂)
+    (M₁ : MultiTapeTM k Symbol S₁) (entry₁ : S₁) (M₂ : MultiTapeTM k Symbol S₂) (entry₂ : S₂)
+    {c₀ c₁ : Cfg k Symbol S₀ x} {T₀ : ℕ}
+    (h₀ : M₀.runFrom c₀ T₀ = c₁)
+    (hcut : ∀ t < T₀, (M₀.runFrom c₀ t).state ≠ some e₁ ∧ (M₀.runFrom c₀ t).state ≠ some e₂) :
+    (c₁.state = some e₁ → ∀ t : ℕ,
+      (seamCompTM₂ M₀ e₁ e₂ M₁ entry₁ M₂ entry₂).runFrom
+          ((c₀.mapState Sum.inl).mapState Sum.inl) (T₀ + 1 + t) =
+        ((M₁.runFrom (c₁.mapState fun _ => entry₁) t).mapState Sum.inr).mapState Sum.inl) ∧
+    (c₁.state = some e₂ → ∀ t : ℕ,
+      (seamCompTM₂ M₀ e₁ e₂ M₁ entry₁ M₂ entry₂).runFrom
+          ((c₀.mapState Sum.inl).mapState Sum.inl) (T₀ + 1 + t) =
+        (M₂.runFrom (c₁.mapState fun _ => entry₂) t).mapState Sum.inr) := by
+  sorry
 
 variable {S : Type*}
 

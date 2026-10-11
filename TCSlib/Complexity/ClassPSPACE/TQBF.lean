@@ -7,6 +7,7 @@ import TCSlib.Complexity.Formulas.QBFEncoding
 import TCSlib.Complexity.SpaceComplexity.ConfigGraph
 import TCSlib.Complexity.SpaceComplexity.Constructible
 import TCSlib.Complexity.SpaceComplexity.Inclusions
+import TCSlib.Complexity.TuringMachine.Build.CfgRecord
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -81,20 +82,6 @@ adjacency-formula half of Claim 4.4(2), and the Stockmeyer-Meyer theorem that
 * [SM73] L. Stockmeyer, A. Meyer, *Word problems requiring exponential time*,
   STOC 1973. (Cited through [AB09]; no external text required.)
 -/
-
-namespace Turing
-
-/-- A configuration lies **in the radius-`s` window** when every work head
-sits within `[-s, s]` and every work cell outside `[-s, s]` is blank — the
-side condition under which the packaged codec of
-`Complexity.exists_adjacency_codec_cnf` is faithful. (The input head needs no
-clause: its type bounds it.) -/
-def Cfg.InWindow {k : ℕ} {Symbol State : Type} {x : List Symbol} (s : ℕ)
-    (c : Cfg k Symbol State x) : Prop :=
-  (∀ i, |c.workTapePos i| ≤ (s : ℤ)) ∧
-  ∀ (i : Fin k) (z : ℤ), (s : ℤ) < |z| → c.workTapes i z = none
-
-end Turing
 
 namespace Complexity
 
