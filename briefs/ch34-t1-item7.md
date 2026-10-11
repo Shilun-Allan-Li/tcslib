@@ -296,7 +296,7 @@ python3 -I audits/evidence/retrofit/copy-text-screen.py <repo-root> TCSlib/Compl
 | Six files | 104 / 125 / 47,734 | 94 / **41** / **10,045** |
 | Three files | 60 / 102 / 41,608 | 50 / **18** / **3,919** |
 
-- **Six files.** Cross-file pairs go from 65 to 2, both pre-existing and outside the family
+- **Six files.** Cross-file pairs go from 64 to 2 (corrected from 65 at the gate), both pre-existing and outside the family
   (`PClosure::union_mem_P ← polyTimeComputable_or`, 68%, and `← _not`, 52%).
 - **Three files.** The 18 are Loop's 17 old in-file pairs plus one recorded in-file
   near-duplicate, `BlockLoop.polyTimeComputable_step ← polyTimeComputable_xorPairStep`

@@ -365,7 +365,7 @@ private theorem polyTimeComputable_countdownNil :
   polyTimeComputable_headNil.comp polyTimeComputable_pairSndD
 
 /-- A countdown block loop's round `g = step upd nxt` is polynomial-time whenever its head
-and remainder updates, read off the state, are (one `ite` on the disjoint guards). -/
+and remainder updates, read off the state, are (one `ite` on the disjunction of the two emptiness guards). -/
 theorem polyTimeComputable_step {g : List Bool → List Bool}
     {upd nxt : List Bool → List Bool → List Bool} (hg : g = step upd nxt)
     (hu : PolyTimeComputable (fun s => upd (pairFstD s) (pairSndD (pairSndD s))))
@@ -763,7 +763,8 @@ by `Complexity.BlockLoop.polyTimeComputable_of_loop`, with the orbit envelope fr
 not-yet-consumed components; each round emits
 the XOR of the two head bits (nothing once either component is exhausted) and
 drops both heads, so the concatenated output is exactly the truncating
-`List.zipWith xor`.  The round budget `|z|+1` dominates the shorter
+`List.zipWith xor`.  The round budget is the normalized pair's length plus two,
+`(pairEncode (pairFstD z) (pairSndD z)).length + 2`, which dominates the shorter
 component's length.  (The truncating semantics on unequal lengths is the
 audited ch7-phase1 finding 1 convention.) -/
 theorem polyTimeComputable_xorD : PolyTimeComputable xorD := by
