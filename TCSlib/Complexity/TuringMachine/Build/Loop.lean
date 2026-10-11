@@ -2048,7 +2048,7 @@ on this one machine-construction obligation; this is not a closed batch.
 **Proof sketch.** Run the relocated fuel source to its first halt using
 `loopHost_fuel_capture`. Phases 0--5 copy and retain its binary fuel, clear
 the capture tape, and rewind the two work heads and the input head. Run
-startup with `loopHost_body_capture`; phase 6 clears the flag and releases
+startup with `loopHost_body_run` (historically `loopHost_body_capture`); phase 6 clears the flag and releases
 the initial seam without a debit. Define each candidate seam using the
 iterated body word and `loopDebit` word, retaining the fuel work residue.
 `loop_orbit_inv` supplies every local body premise. The body simulation and
