@@ -1288,6 +1288,361 @@ private lemma summaryClock_accepts (M : FinTM Bool) (x : List Bool) (t : ℕ) :
 private lemma summaryClock_zero (M : FinTM Bool) (x : List Bool) :
     summaryClock M.tm 0 (M.tm.initCfg x) none = false := rfl
 
+/-- Number of fixed bits before a transition's variable-length successor field. -/
+private abbrev h1RecordWidth (k : ℕ) : ℕ := 4 * k + 4
+
+/-- Finite control for the selected-record component of H1. The pair stores
+the number of bits read and a fixed-size bit buffer; `none` is its live exit.
+This type depends only on the work-tape count, never on the coded state count. -/
+private abbrev h1RecordState (k : ℕ) :=
+  Option (Fin (h1RecordWidth k + 1) × (Fin (h1RecordWidth k) → Bool))
+
+/-- The record tape follows the mirrored work bank. -/
+private def h1TableTape (k : ℕ) : Fin (k + 2) := Fin.natAdd k (0 : Fin 2)
+
+/-- A stationary cell after the record tape stores the three-valued output summary. -/
+private def h1SummaryTape (k : ℕ) : Fin (k + 2) := Fin.natAdd k (1 : Fin 2)
+
+/-- Every mirrored work tape is distinct from the record tape. -/
+private lemma h1Mirror_ne_table (k : ℕ) (i : Fin k) :
+    Fin.castAdd 2 i ≠ h1TableTape k := by
+  intro h
+  have hv := congrArg Fin.val h
+  have hi := i.isLt
+  dsimp [h1TableTape] at hv
+  omega
+
+/-- The summary cell and the record head lie on distinct auxiliary tapes. -/
+private lemma h1Summary_ne_table (k : ℕ) : h1SummaryTape k ≠ h1TableTape k := by
+  intro h
+  have hv := congrArg Fin.val h
+  dsimp [h1SummaryTape, h1TableTape] at hv
+  omega
+
+/-- Interpret the fixed fields with the public record reader. A dummy halt
+field makes the parsed successor irrelevant; the actual successor remains
+on the record tape for the next component. Only canonized records are used. -/
+private def h1Payload (k : ℕ) (bits : Fin (h1RecordWidth k) → Bool) :
+    Action k Bool (Fin 1) :=
+  ((codeReadActionK k 0 (List.ofFn bits ++ [false])).map Prod.fst).getD
+    ⟨0, fun _ => (none, 0), none, none⟩
+
+/-- Apply the fixed fields to the mirrored bank and native input head,
+updating the summary cell instead of physically emitting. The record tape
+and both auxiliary heads remain fixed, and the next control is a live exit. -/
+private def h1ApplyPayload {k : ℕ} (a : Action k Bool (Fin 1)) (s : Option Bool) :
+    Action (k + 2) Bool (h1RecordState k) :=
+  ⟨a.inputTape, Fin.addCases a.workTapes
+    (fun i : Fin 2 => if i = 0 then (none, 0) else (some (summaryEmit s a.output), 0)),
+    none, some none⟩
+
+/-- H1's physical selected-record component: read the fixed fields, then
+execute their work/input actions and summary update. Its exit points at the
+successor field; selecting the record and installing its successor are separate
+remaining parts of the single interpreter block. [AB09, Theorem 1.9]
+
+No catalog row reads a fixed-length, non-delimited prefix into finite control:
+the two-pass scan requires delimiters. This small controller supplies that
+part, using `tapeAction` and the existing `codeReadActionK`, without a new
+grammar validator, host, or clock. -/
+private def h1RecordTM (k : ℕ) : MultiTapeTM (k + 2) Bool (h1RecordState k) where
+  q₀ := some (0, fun _ => false)
+  tr := fun q _ w => match q with
+    | none => inputMoveAction 0 none
+    | some (p, bits) =>
+      if h : p.val < h1RecordWidth k then
+        tapeAction (h1TableTape k) 0 none .pos
+          (some (⟨p.val + 1, by omega⟩,
+            Function.update bits ⟨p.val, h⟩ ((w (h1TableTape k)).getD false)))
+      else h1ApplyPayload (h1Payload k bits) (w (h1SummaryTape k))
+
+/-- Configuration during the fixed-prefix read, with the first `r` bits
+installed in finite control and every tape content unchanged. -/
+private def h1ReadCfg {k : ℕ} {x : List Bool}
+    (d : Cfg (k + 2) Bool (h1RecordState k) x)
+    (bits : Fin (h1RecordWidth k) → Bool) (r : ℕ) (hr : r ≤ h1RecordWidth k) :
+    Cfg (k + 2) Bool (h1RecordState k) x :=
+  { d with
+    state := some (some (⟨r, by omega⟩, fun i => if i.val < r then bits i else false))
+    workTapePos := Function.update d.workTapePos (h1TableTape k)
+      (d.workTapePos (h1TableTape k) + r) }
+
+/-- The public record reader recovers exactly the fixed action fields from
+their finite buffer, regardless of the actual successor's state space.
+
+**Proof sketch.** The movement, work actions and emission occupy exactly
+`4k + 4` bits. Replace only the remaining successor field by the halt tag,
+then invoke `codeReadActionK_append` at the one-state type. -/
+private lemma h1Payload_correct {k n : ℕ} (a : Action k Bool (Fin (n + 1)))
+    (bits : Fin (h1RecordWidth k) → Bool)
+    (hbits : List.ofFn bits = (actionBitsK a).take (h1RecordWidth k)) :
+    h1Payload k bits = ⟨a.inputTape, a.workTapes, a.output, none⟩ := by
+  have moves (s : SignType) : (signBits s).length = 2 := by cases s <;> rfl
+  have writes (b : Option (Option Bool)) : (optOptBoolBits b).length = 2 := by
+    cases b with
+    | none => rfl
+    | some b => cases b with
+      | none => rfl
+      | some b => cases b <;> rfl
+  have emits (b : Option Bool) : (optBoolBits b).length = 2 := by
+    cases b with
+    | none => rfl
+    | some b => cases b <;> rfl
+  let fixed := signBits a.inputTape ++
+    (List.finRange k).flatMap (fun i => optOptBoolBits (a.workTapes i).1 ++
+      signBits (a.workTapes i).2) ++ optBoolBits a.output
+  have plen : fixed.length = h1RecordWidth k := by
+    simp [fixed, h1RecordWidth, List.length_flatMap, moves, writes, emits]
+    omega
+  have he : List.ofFn bits ++ [false] =
+      actionBitsK (⟨a.inputTape, a.workTapes, a.output, none⟩ : Action k Bool (Fin 1)) := by
+    rw [hbits]
+    change (fixed ++ optStateBits a.state).take (h1RecordWidth k) ++ [false] =
+      fixed ++ [false]
+    rw [← plen, List.take_left]
+  have hp := codeReadActionK_append
+    (⟨a.inputTape, a.workTapes, a.output, none⟩ : Action k Bool (Fin 1)) []
+  simp only [List.append_nil] at hp
+  simp only [h1Payload, he, hp, Option.map_some, Option.getD_some]
+
+/-- The physical reader consumes any permitted prefix in exactly its length,
+without changing the native input, any work-tape cell, or the physical output.
+Only the record head advances. This is a framed statement: all unmentioned
+tape cells, mirrored tape positions, and the prior output may be arbitrary.
+
+**Proof sketch.** Induct on the number of consumed bits. The public single-tape
+movement law advances the record head; updating the next finite buffer slot
+extends precisely the prefix already read. There is no delimiter assumption. -/
+private lemma h1Record_read {k : ℕ} {x : List Bool}
+    (d : Cfg (k + 2) Bool (h1RecordState k) x)
+    (bits : Fin (h1RecordWidth k) → Bool)
+    (hq : d.state = some (h1RecordTM k).q₀)
+    (hw : ∀ i : Fin (h1RecordWidth k),
+      d.workTapes (h1TableTape k) (d.workTapePos (h1TableTape k) + i.val) = some (bits i))
+    (r : ℕ) (hr : r ≤ h1RecordWidth k) :
+    (h1RecordTM k).runFrom d r = h1ReadCfg d bits r hr := by
+  induction r with
+  | zero =>
+    apply Cfg.ext <;> simp [h1ReadCfg, hq, h1RecordTM]
+  | succ r ih =>
+    have hlt : r < h1RecordWidth k := by omega
+    rw [MultiTapeTM.runFrom_succ_eq_step', ih (by omega)]
+    have hread : (h1ReadCfg d bits r (by omega)).workTapeSymbols (h1TableTape k) =
+        some (bits ⟨r, hlt⟩) := by
+      simpa [h1ReadCfg, Cfg.workTapeSymbols] using hw ⟨r, hlt⟩
+    have hbuffer : Function.update (fun i : Fin (h1RecordWidth k) =>
+        if i.val < r then bits i else false) ⟨r, hlt⟩ (bits ⟨r, hlt⟩) =
+        fun i => if i.val < r + 1 then bits i else false := by
+      funext i
+      by_cases he : i = ⟨r, hlt⟩
+      · subst i
+        simp
+      · have hv : i.val ≠ r := fun h => he (Fin.ext h)
+        rw [Function.update_of_ne he]
+        by_cases hi : i.val < r <;> simp [hi, show (i.val < r + 1) ↔ (i.val < r) by omega]
+    rw [step_of_tapeAction_move (h1RecordTM k) (h1ReadCfg d bits r (by omega))
+      (q' := some (⟨r + 1, by omega⟩,
+        fun i => if i.val < r + 1 then bits i else false))
+      (h1TableTape k) 0 .pos rfl (by
+        simp only [h1RecordTM, dif_pos hlt, hread, Option.getD_some, hbuffer])]
+    apply Cfg.ext
+    · rfl
+    · simp [h1ReadCfg]
+    · rfl
+    · funext i
+      by_cases he : i = h1TableTape k
+      · subst i
+        simp [h1ReadCfg, Nat.cast_add, SignType.pos_eq_one, add_assoc]
+      · simp [h1ReadCfg, he]
+    · rfl
+
+/-- A selected, canonized record executes its fixed action fields in exactly
+`4k + 5` physical steps. The table head then points at its successor field.
+The equality includes the native-input movement, all mirrored writes/moves,
+the finite summary update, and preservation of the physical output prefix.
+
+**Proof sketch.** Apply the prefix trace at its full width. Its finite buffer
+is the record's fixed prefix, so `h1Payload_correct` identifies the public
+reader's result. The next transition executes that payload silently. -/
+private lemma h1Record_execute {k n : ℕ} {x : List Bool}
+    (d : Cfg (k + 2) Bool (h1RecordState k) x)
+    (a : Action k Bool (Fin (n + 1))) (bits : Fin (h1RecordWidth k) → Bool)
+    (hq : d.state = some (h1RecordTM k).q₀)
+    (hw : ∀ i : Fin (h1RecordWidth k),
+      d.workTapes (h1TableTape k) (d.workTapePos (h1TableTape k) + i.val) = some (bits i))
+    (hbits : List.ofFn bits = (actionBitsK a).take (h1RecordWidth k)) :
+    (h1RecordTM k).runFrom d (h1RecordWidth k + 1) =
+      (h1ApplyPayload (⟨a.inputTape, a.workTapes, a.output, none⟩ : Action k Bool (Fin 1))
+        (d.workTapeSymbols (h1SummaryTape k))).apply
+        (h1ReadCfg d bits (h1RecordWidth k) le_rfl) := by
+  rw [MultiTapeTM.runFrom_succ_eq_step', h1Record_read d bits hq hw _ le_rfl]
+  have hbuf : (fun i : Fin (h1RecordWidth k) =>
+      if i.val < h1RecordWidth k then bits i else false) = bits := by
+    funext i
+    exact if_pos i.isLt
+  have hne := h1Summary_ne_table k
+  have hs : (h1ReadCfg d bits (h1RecordWidth k) le_rfl).workTapeSymbols
+      (h1SummaryTape k) = d.workTapeSymbols (h1SummaryTape k) := by
+    simp [h1ReadCfg, Cfg.workTapeSymbols, hne]
+  simp only [MultiTapeTM.step, h1ReadCfg, h1RecordTM, lt_self_iff_false,
+    hbuf, h1Payload_correct a bits hbits]
+  change (h1ApplyPayload _
+    ((h1ReadCfg d bits (h1RecordWidth k) le_rfl).workTapeSymbols (h1SummaryTape k))).apply _ = _
+  rw [hs]
+
+/-- Addendum 1's head envelope for the selected-record component. Mirrored
+heads and the native input head remain at their starting positions until the
+single payload transition, then move exactly as the source action does. Thus
+they stay between their start and end positions, with displacement at most
+one. The table head advances by the consumed fixed prefix; the summary head
+never moves. The table head is not yet restored to a round home.
+
+**Proof sketch.** Before the payload, project `h1Record_read`; at the payload,
+project `h1Record_execute`. Use the public one-action work-head bound. The
+native input movement is clamped at either boundary. -/
+private lemma h1Record_envelope {k n : ℕ} {x : List Bool}
+    (d : Cfg (k + 2) Bool (h1RecordState k) x)
+    (a : Action k Bool (Fin (n + 1))) (bits : Fin (h1RecordWidth k) → Bool)
+    (hq : d.state = some (h1RecordTM k).q₀)
+    (hw : ∀ i : Fin (h1RecordWidth k),
+      d.workTapes (h1TableTape k) (d.workTapePos (h1TableTape k) + i.val) = some (bits i))
+    (hbits : List.ofFn bits = (actionBitsK a).take (h1RecordWidth k)) :
+    ∀ u ≤ h1RecordWidth k + 1,
+      let e := (h1RecordTM k).runFrom d u
+      (∀ i : Fin k, e.workTapePos (Fin.castAdd 2 i) =
+        d.workTapePos (Fin.castAdd 2 i) +
+          if u = h1RecordWidth k + 1 then ((a.workTapes i).2 : ℤ) else 0) ∧
+      e.inputPos = (if u = h1RecordWidth k + 1 then moveInputPos d.inputPos a.inputTape
+        else d.inputPos) ∧
+      (∀ j : Fin (k + 2), |e.workTapePos j - d.workTapePos j| ≤
+        if j.val < k then 1 else (h1RecordWidth k : ℤ)) ∧
+      |(e.inputPos.val : ℤ) - d.inputPos.val| ≤ 1 ∧
+      e.workTapePos (h1TableTape k) = d.workTapePos (h1TableTape k) + min u (h1RecordWidth k) ∧
+      e.workTapePos (h1SummaryTape k) = d.workTapePos (h1SummaryTape k) := by
+  intro u hu
+  dsimp only
+  by_cases hend : u = h1RecordWidth k + 1
+  · subst u
+    rw [h1Record_execute d a bits hq hw hbits]
+    refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩
+    · intro i
+      simp [h1ApplyPayload, h1ReadCfg, h1Mirror_ne_table k i]
+    · simp [h1ApplyPayload, h1ReadCfg]
+    · intro j
+      refine Fin.addCases (fun i => ?_) (fun i => ?_) j
+      · simpa [h1ReadCfg, h1Mirror_ne_table k i, i.isLt] using
+          workTapePos_apply_le
+            (h1ApplyPayload (⟨a.inputTape, a.workTapes, a.output, none⟩ : Action k Bool (Fin 1))
+              (d.workTapeSymbols (h1SummaryTape k)))
+            (h1ReadCfg d bits (h1RecordWidth k) le_rfl) (Fin.castAdd 2 i)
+      · fin_cases i <;>
+          simp [h1ApplyPayload, h1ReadCfg, h1TableTape, h1RecordWidth, abs_le] <;> omega
+    · change |((moveInputPos d.inputPos a.inputTape).val : ℤ) - d.inputPos.val| ≤ 1
+      have hp := d.inputPos.isLt
+      cases a.inputTape <;> simp only [moveInputPos, SignType.cast] <;>
+        split <;> simp_all [abs_le] <;> omega
+    · simp [h1ApplyPayload, h1ReadCfg, h1TableTape]
+    · simp [h1ApplyPayload, h1ReadCfg, h1SummaryTape, h1TableTape]
+  · have hread : u ≤ h1RecordWidth k := by omega
+    rw [h1Record_read d bits hq hw u hread]
+    refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩
+    · intro i
+      simp [h1ReadCfg, h1Mirror_ne_table k i, hend]
+    · simp [h1ReadCfg, hend]
+    · intro j
+      by_cases hj : j = h1TableTape k
+      · subst j
+        simpa [h1ReadCfg, h1TableTape, abs_of_nonneg (Int.natCast_nonneg u)] using
+          (show (u : ℤ) ≤ h1RecordWidth k by omega)
+      · simp [h1ReadCfg, hj]
+        split <;> omega
+    · simp [h1ReadCfg]
+    · simp [h1ReadCfg, min_eq_left hread]
+    · simp [h1ReadCfg, h1Summary_ne_table k]
+
+/-- The selected-record component has finite, decidable control for every
+fixed tape count; it is a single physical machine for all coded state counts. -/
+private def h1RecordFinTM (k : ℕ) : FinTM Bool where
+  k := k + 2
+  State := h1RecordState k
+  tm := h1RecordTM k
+
+/-- Relation-level effect of the selected record's fixed fields. The first
+`k` work tapes mirror an arbitrary source configuration, and a stationary
+auxiliary cell stores its output summary. After exactly `4k + 5` steps the
+input/work fields mirror the source action, its emission has been included
+in the summary, and the physical output is unchanged. The live exit is
+first reached at that time, whose bound is the selected record's length.
+
+This is the fixed-field part of H1's step block, not yet a full simulated
+transition: the coded successor must still be installed by the caller.
+
+**Promotion candidate (host H2, step block; machine-library-design.md §14).**
+This component's contract includes Addendum 1's head envelope: at every
+intermediate time each mirrored head and the native input head is still at
+its start or has made exactly the source action's move, with displacement at
+most one. Auxiliary work-head displacement is bounded by `4k + 4`; the table
+head advances by `min u (4k + 4)`, and the summary head stays at home. Lookup,
+successor installation and table-head restoration remain outside this partial
+contract; promotion as a complete step block must wait for those parts.
+
+**Proof sketch.** Project the proved execution equality onto the input,
+mirrored bank and summary cell. The summary identity is the inherited
+`outputSummary_append`, including when the source action halts. Before the
+last step the prefix trace has a reading state, never the live exit. -/
+private lemma h1Record_effect {k n : ℕ} {x : List Bool}
+    (d : Cfg (k + 2) Bool (h1RecordState k) x)
+    (c : Cfg k Bool (Fin (n + 1)) x) (a : Action k Bool (Fin (n + 1)))
+    (bits : Fin (h1RecordWidth k) → Bool)
+    (hq : d.state = some (h1RecordTM k).q₀)
+    (hw : ∀ i : Fin (h1RecordWidth k),
+      d.workTapes (h1TableTape k) (d.workTapePos (h1TableTape k) + i.val) = some (bits i))
+    (hbits : List.ofFn bits = (actionBitsK a).take (h1RecordWidth k))
+    (hin : d.inputPos = c.inputPos)
+    (htapes : ∀ i : Fin k, d.workTapes (Fin.castAdd 2 i) = c.workTapes i)
+    (hheads : ∀ i : Fin k, d.workTapePos (Fin.castAdd 2 i) = c.workTapePos i)
+    (hsum : d.workTapeSymbols (h1SummaryTape k) = outputSummary c.output) :
+    let e := (h1RecordTM k).runFrom d (h1RecordWidth k + 1)
+    e.state = some none ∧ e.inputPos = (a.apply c).inputPos ∧
+      (∀ i : Fin k, e.workTapes (Fin.castAdd 2 i) = (a.apply c).workTapes i ∧
+        e.workTapePos (Fin.castAdd 2 i) = (a.apply c).workTapePos i) ∧
+      e.workTapeSymbols (h1SummaryTape k) = outputSummary (a.apply c).output ∧
+      e.output = d.output ∧
+      (∀ u < h1RecordWidth k + 1, ((h1RecordTM k).runFrom d u).state ≠ some none) ∧
+      h1RecordWidth k + 1 ≤ (actionBitsK a).length ∧
+      (∀ u ≤ h1RecordWidth k + 1,
+        let f := (h1RecordTM k).runFrom d u
+        (∀ i : Fin k, f.workTapePos (Fin.castAdd 2 i) =
+          d.workTapePos (Fin.castAdd 2 i) +
+            if u = h1RecordWidth k + 1 then ((a.workTapes i).2 : ℤ) else 0) ∧
+        f.inputPos = (if u = h1RecordWidth k + 1 then moveInputPos d.inputPos a.inputTape
+          else d.inputPos) ∧
+        (∀ j : Fin (k + 2), |f.workTapePos j - d.workTapePos j| ≤
+          if j.val < k then 1 else (h1RecordWidth k : ℤ)) ∧
+        |(f.inputPos.val : ℤ) - d.inputPos.val| ≤ 1 ∧
+        f.workTapePos (h1TableTape k) =
+          d.workTapePos (h1TableTape k) + min u (h1RecordWidth k) ∧
+        f.workTapePos (h1SummaryTape k) = d.workTapePos (h1SummaryTape k)) := by
+  dsimp only
+  have he := h1Record_execute d a bits hq hw hbits
+  refine ⟨?_, ?_, ?_, ?_, ?_, ?_, codeActionK_length a,
+    h1Record_envelope d a bits hq hw hbits⟩
+  · rw [he]
+    rfl
+  · rw [he]
+    exact congrArg (fun p => moveInputPos p a.inputTape) hin
+  · intro i
+    rw [he]
+    simp [h1ApplyPayload, h1ReadCfg, Fin.addCases_left, h1Mirror_ne_table k i, htapes i, hheads i]
+  · rw [he]
+    simp [Cfg.workTapeSymbols, h1ApplyPayload, h1ReadCfg, h1SummaryTape,
+      ← hsum, outputSummary_append]
+  · rw [he]
+    simp [h1ApplyPayload, h1ReadCfg]
+  · intro u hu
+    rw [h1Record_read d bits hq hw u (by omega)]
+    simp [h1ReadCfg]
+
 /-- **The uniform bounded-acceptance simulator** (spec, fill pending — batch
 B5a): one finite binary machine and one degree such that, on
 `⟨⟨bits t, α⟩, x⟩`, the machine answers `[true]` if the machine `α` denotes
@@ -1323,7 +1678,25 @@ have moved from `Codes2Tape` and are generalized to arbitrary tape and state
 counts. `summaryClock_accepts` identifies the inclusive-deadline predicate;
 `summaryClock_zero` handles zero. These are semantic specifications only.
 The one physical step block, its relation-level trace, the counter/virtual-input
-host assembly, and its ledger remain open; this target retains its admission. -/
+host assembly, and its ledger remain open; this target retains its admission. 
+
+**Fill appendix (B5a H1, selected-record partial).** The private
+`h1RecordTM` reads the fixed action fields into finite control and executes
+them on the mirrored bank and native input, recording the emission by
+`summaryEmit`. `h1Record_read`, `h1Record_execute`, and `h1Record_effect`
+prove its framed physical trace, source-action relation, silence, first live
+exit, and exact `4k + 5` time bound. Its control depends only on `k`; the
+public `codeReadActionK_append` supplies the decoding proof. The table head
+is left at the actual successor field. Record lookup, successor installation,
+restoration of the round seam, nested-input setup, canonizer installation,
+and the complete hosted counter loop remain open. This target keeps its
+original admission; these new private components contain no admissions.
+Addendum 1 is proved for this component by `h1Record_envelope` and is included
+in `h1Record_effect`: only the final payload step moves a mirrored or native
+input head, each by at most one; the summary head stays fixed and the table
+head advances by at most `4k + 4`. The full round's auxiliary-home restoration
+and head envelope remain part of the open step-block construction.
+-/
 theorem exists_uniformSimulator :
     ∃ (S : FinTM Bool) (d : ℕ), ∀ (α x : List Bool) (t : ℕ),
       ((F.toFinTM (F.decode α)).ComputesInTime x [true] t →
