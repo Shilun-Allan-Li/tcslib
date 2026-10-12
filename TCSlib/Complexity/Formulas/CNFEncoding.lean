@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Seyoon Ragavan
 -/
 import TCSlib.Complexity.Formulas.CNF
+import Mathlib.Tactic.FinCases
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -73,6 +74,16 @@ formulas rely on.
   trip: serialized formulas are well-formed and decode to themselves.
 * `Std.Sat.CNF.numVars_decode_le` — a decoded formula mentions at most `|x|`
   variables; the bound certificate-length formulas are budgeted against.
+* `Std.Sat.CNF.parse_repr` (with `takeTrues_repr`, `parseLit_repr`,
+  `parseClause_repr`, `parseClauses_repr`) — the converse of the round trip:
+  every successful parse reconstructs its consumed input, so the well-formed
+  strings are exactly the serializations. (Promoted from `ClassNP/SAT.lean`
+  for B4, 2026-10-12.)
+* `Std.Sat.CNF.syntaxOK_spec` (with `syntaxStep`, `SyntaxSuffix`, `syntaxOK`,
+  `syntaxSuffix_cons`, `syntaxSuffix_nil`, `syntaxSuffix_run`) — the six-state
+  LL(1) grammar automaton decides well-formedness:
+  `syntaxOK x = (parse x).isSome`. (Promoted from `ClassNP/SAT.lean` for B4,
+  2026-10-12.)
 
 ## References
 
@@ -471,5 +482,263 @@ theorem numVars_decode_le (x : List Bool) : (decode x).numVars ≤ x.length := b
           simpa only [List.length_nil, Nat.add_zero] using
             (parseClauses_bounds hp).2 C hC ℓ hℓ
       | cons b r => exact Nat.zero_le _
+
+/-! ### Reconstruction and the grammar automaton
+
+Promoted from `ClassNP/SAT.lean` for B4, 2026-10-12: the converse of the round trip
+(every successful parse reconstructs its consumed input) and the six-state LL(1)
+automaton that decides well-formedness, so every consumer of the encoding cites one
+copy. -/
+
+/-- The unary scanner partitions its input: the counted run of `true`s followed by
+the returned suffix is the original string. -/
+theorem takeTrues_repr (x : List Bool) :
+    List.replicate (takeTrues x).1 true ++ (takeTrues x).2 = x := by
+  induction x with
+  | nil => rfl
+  | cons b x ih =>
+    cases b with
+    | false => rfl
+    | true => simpa [takeTrues, List.replicate_succ] using congrArg (true :: ·) ih
+
+/-- A successful literal parse reconstructs exactly the consumed input: if
+`parseLit x = some (ℓ, r)`, then `x` is the serialization of `ℓ` followed by `r`. -/
+theorem parseLit_repr {x r : List Bool} {ℓ : Literal ℕ}
+    (h : parseLit x = some (ℓ, r)) : x = serializeLit ℓ ++ r := by
+  have ht := takeTrues_repr x
+  unfold parseLit at h
+  split at h
+  · cases h
+  · rename_i k b rest he
+    cases h
+    simpa [he, serializeLit, List.append_assoc] using ht.symm
+  · cases h
+
+/-- Clause parsing inverts clause serialization: if `parseClause fuel x = some (C, r)`
+(for any fuel), then `x` is the serialization of `C` followed by `r` — the parse
+reconstructs its terminator as well as every literal.
+
+**Proof sketch.** Induct on fuel. The leading zero case succeeds even at
+zero fuel. Otherwise invert both successful subparses and concatenate their
+reconstruction equalities; no premature end of the input can succeed. -/
+theorem parseClause_repr {fuel : ℕ} {x r : List Bool} {C : Clause ℕ}
+    (h : parseClause fuel x = some (C, r)) : x = serializeClause C ++ r := by
+  induction fuel generalizing x C r with
+  | zero =>
+    cases x with
+    | nil => cases h
+    | cons b s =>
+      cases b with
+      | false => cases h; rfl
+      | true => cases h
+  | succ fuel ih =>
+    cases x with
+    | nil => cases h
+    | cons b s =>
+      cases b with
+      | false => cases h; rfl
+      | true =>
+        cases hl : parseLit (true :: s) with
+        | none => simp [parseClause, hl] at h
+        | some p =>
+          obtain ⟨ℓ, t⟩ := p
+          cases hc : parseClause fuel t with
+          | none => simp [parseClause, hl, hc] at h
+          | some p =>
+            obtain ⟨D, v⟩ := p
+            simp only [parseClause, hl, hc, Option.some.injEq, Prod.mk.injEq] at h
+            rcases h with ⟨rfl, rfl⟩
+            rw [parseLit_repr hl, ih hc]
+            simp [serializeClause, List.append_assoc]
+
+/-- Clause-list parsing inverts formula serialization: if
+`parseClauses fuel x = some (φ, r)` (for any fuel), then `x` is the serialization of
+`φ` followed by `r` — the parse reconstructs every clause marker and the final
+terminator.
+
+**Proof sketch.** Induct on fuel, retaining the unconsumed suffix. A clause
+marker spends one unit of fuel before the clause and formula subparses.
+The leading zero case works independently of the remaining fuel. -/
+theorem parseClauses_repr {fuel : ℕ} {x r : List Bool} {φ : CNF ℕ}
+    (h : parseClauses fuel x = some (φ, r)) : x = serialize φ ++ r := by
+  induction fuel generalizing x φ r with
+  | zero =>
+    cases x with
+    | nil => cases h
+    | cons b s =>
+      cases b with
+      | false => cases h; rfl
+      | true => cases h
+  | succ fuel ih =>
+    cases x with
+    | nil => cases h
+    | cons b s =>
+      cases b with
+      | false => cases h; rfl
+      | true =>
+        cases hc : parseClause fuel s with
+        | none => simp [parseClauses, hc] at h
+        | some p =>
+          obtain ⟨C, t⟩ := p
+          cases ht : parseClauses fuel t with
+          | none => simp [parseClauses, hc, ht] at h
+          | some p =>
+            obtain ⟨ψ, v⟩ := p
+            simp only [parseClauses, hc, ht, Option.some.injEq, Prod.mk.injEq] at h
+            rcases h with ⟨rfl, rfl⟩
+            rw [parseClause_repr hc, ih ht]
+            simp [serialize, serializeClause, List.append_assoc]
+
+/-- **Exact-consumption parsing inverts serialization**: if `parse x = some φ`, then
+`x = serialize φ`. With `Std.Sat.CNF.parse_serialize`, the well-formed strings are
+exactly the serializations. -/
+theorem parse_repr {x : List Bool} {φ : CNF ℕ}
+    (h : parse x = some φ) : x = serialize φ := by
+  unfold parse at h
+  split at h
+  · rename_i ψ hp
+    cases h
+    simpa using parseClauses_repr hp
+  · cases h
+
+/-- The transition function of the six-state LL(1) grammar automaton for the
+serialization. The states are the six grammar positions: formula (`0`), clause (`1`),
+unary index (`2`), polarity (`3`), exact end (`4`), and error (`5`); the exact-end
+state moves to error on any trailing bit. -/
+def syntaxStep (q : Fin 6) (b : Bool) : Fin 6 :=
+  match q.val with
+  | 0 => if b then 1 else 4
+  | 1 => if b then 2 else 0
+  | 2 => if b then 2 else 3
+  | 3 => 1
+  | _ => 5
+
+/-- The residual grammar at each automaton state: `SyntaxSuffix q x` holds when `x`
+is a well-formed continuation from grammar position `q` — a serialized formula
+(state `0`); a serialized clause followed by a serialized formula (`1`); the rest of
+a unary index, its terminator and polarity bit, then a clause and a formula (`2`); a
+polarity bit, then a clause and a formula (`3`); the empty string (`4`); nothing (`5`).
+Unary indices remain unbounded strings; the finite control stores only their grammar
+position. -/
+def SyntaxSuffix (q : Fin 6) (x : List Bool) : Prop :=
+  match q.val with
+  | 0 => ∃ φ : CNF ℕ, x = serialize φ
+  | 1 => ∃ (C : Clause ℕ) (φ : CNF ℕ), x = serializeClause C ++ serialize φ
+  | 2 => ∃ (v : ℕ) (b : Bool) (C : Clause ℕ) (φ : CNF ℕ),
+      x = List.replicate v true ++ [false, b] ++ serializeClause C ++ serialize φ
+  | 3 => ∃ (b : Bool) (C : Clause ℕ) (φ : CNF ℕ),
+      x = b :: (serializeClause C ++ serialize φ)
+  | 4 => x = []
+  | _ => False
+
+/-- Each automaton transition consumes exactly one grammar bit: `b :: x` is a
+well-formed continuation from state `q` iff `x` is one from `syntaxStep q b`.
+
+**Proof sketch.** Invert the first clause, literal, or unary-run constructor
+as appropriate. Formula and clause zero-markers are distinct states; the
+polarity state consumes its bit unconditionally. No bit can follow the
+exact-end state, which is how trailing garbage forces the fallback. -/
+theorem syntaxSuffix_cons (q : Fin 6) (b : Bool) (x : List Bool) :
+    SyntaxSuffix q (b :: x) ↔ SyntaxSuffix (syntaxStep q b) x := by
+  fin_cases q <;> cases b
+  · change (∃ φ, false :: x = serialize φ) ↔ x = []
+    constructor
+    · rintro ⟨φ, h⟩; cases φ <;> simpa [serialize] using h
+    · rintro rfl; exact ⟨[], rfl⟩
+  · change (∃ φ, true :: x = serialize φ) ↔
+      ∃ C φ, x = serializeClause C ++ serialize φ
+    constructor
+    · rintro ⟨φ, h⟩
+      cases φ with
+      | nil => simp [serialize] at h
+      | cons C φ => exact ⟨C, φ, by simpa [serialize, List.append_assoc] using h⟩
+    · rintro ⟨C, φ, rfl⟩
+      exact ⟨C :: φ, by simp [serialize, List.append_assoc]⟩
+  · change (∃ C φ, false :: x = serializeClause C ++ serialize φ) ↔
+      ∃ φ, x = serialize φ
+    constructor
+    · rintro ⟨C, φ, h⟩
+      cases C with
+      | nil => exact ⟨φ, by simpa [serializeClause] using h⟩
+      | cons ℓ C => simp [serializeClause, serializeLit, List.replicate_succ] at h
+    · rintro ⟨φ, rfl⟩; exact ⟨[], φ, rfl⟩
+  · change (∃ C φ, true :: x = serializeClause C ++ serialize φ) ↔
+      ∃ v b C φ, x = List.replicate v true ++ [false, b] ++
+        serializeClause C ++ serialize φ
+    constructor
+    · rintro ⟨C, φ, h⟩
+      cases C with
+      | nil => simp [serializeClause] at h
+      | cons ℓ C =>
+        exact ⟨ℓ.1, ℓ.2, C, φ, by simpa [serializeClause, serializeLit,
+          List.replicate_succ, List.append_assoc] using h⟩
+    · rintro ⟨v, b, C, φ, rfl⟩
+      exact ⟨(v, b) :: C, φ, by simp [serializeClause, serializeLit,
+        List.replicate_succ, List.append_assoc]⟩
+  · change (∃ v b C φ, false :: x = List.replicate v true ++ [false, b] ++
+      serializeClause C ++ serialize φ) ↔
+        ∃ b C φ, x = b :: (serializeClause C ++ serialize φ)
+    constructor
+    · rintro ⟨v, b, C, φ, h⟩
+      cases v with
+      | zero => exact ⟨b, C, φ, by simpa [List.append_assoc] using h⟩
+      | succ v => simp [List.replicate_succ] at h
+    · rintro ⟨b, C, φ, rfl⟩; exact ⟨0, b, C, φ, by simp⟩
+  · change (∃ v b C φ, true :: x = List.replicate v true ++ [false, b] ++
+      serializeClause C ++ serialize φ) ↔
+        ∃ v b C φ, x = List.replicate v true ++ [false, b] ++
+          serializeClause C ++ serialize φ
+    constructor
+    · rintro ⟨v, b, C, φ, h⟩
+      cases v with
+      | zero => simp at h
+      | succ v => exact ⟨v, b, C, φ, by simpa [List.replicate_succ] using h⟩
+    · rintro ⟨v, b, C, φ, rfl⟩
+      exact ⟨v + 1, b, C, φ, by simp [List.replicate_succ]⟩
+  · change (∃ b C φ, false :: x = b :: (serializeClause C ++ serialize φ)) ↔
+      ∃ C φ, x = serializeClause C ++ serialize φ
+    simp
+  · change (∃ b C φ, true :: x = b :: (serializeClause C ++ serialize φ)) ↔
+      ∃ C φ, x = serializeClause C ++ serialize φ
+    simp
+  all_goals simp [SyntaxSuffix, syntaxStep]
+
+/-- At end of input, exactly the exact-end state accepts: the empty string is a
+well-formed continuation from state `q` iff `q = 4`. -/
+theorem syntaxSuffix_nil (q : Fin 6) : SyntaxSuffix q [] ↔ q = 4 := by
+  fin_cases q <;> simp [SyntaxSuffix, serialize, serializeClause,
+    List.append_eq_nil_iff]
+
+/-- The complete finite-state scan recognizes precisely the residual grammar: `x` is
+a well-formed continuation from state `q` iff running the automaton from `q` over
+`x` ends in the exact-end state `4`. -/
+theorem syntaxSuffix_run (q : Fin 6) (x : List Bool) :
+    SyntaxSuffix q x ↔ x.foldl syntaxStep q = 4 := by
+  induction x generalizing q with
+  | nil => exact syntaxSuffix_nil q
+  | cons b x ih => rw [syntaxSuffix_cons, List.foldl_cons, ← ih]
+
+/-- The Boolean verdict of the complete syntax pass: run the automaton from the
+formula state `0` over `x` and accept iff it ends in the exact-end state `4`. -/
+def syntaxOK (x : List Bool) : Bool := decide (x.foldl syntaxStep 0 = 4)
+
+/-- **The grammar automaton decides well-formedness**: `syntaxOK x = (parse x).isSome`
+for every string `x`, including empty input, unfinished literals, and trailing
+garbage.
+
+**Proof sketch.** The residual-language invariant identifies scan acceptance
+with the range of serialization. Successful parsing reconstructs its entire
+input, and the existing parser round trip proves the converse. -/
+theorem syntaxOK_spec (x : List Bool) : syntaxOK x = (parse x).isSome := by
+  apply Bool.eq_iff_iff.mpr
+  simp only [syntaxOK, decide_eq_true_eq]
+  rw [← syntaxSuffix_run]
+  change (∃ φ, x = serialize φ) ↔ (parse x).isSome = true
+  constructor
+  · rintro ⟨φ, rfl⟩; simp [parse_serialize]
+  · intro h
+    cases hp : parse x with
+    | none => simp [hp] at h
+    | some φ => exact ⟨φ, parse_repr hp⟩
 
 end Std.Sat.CNF
