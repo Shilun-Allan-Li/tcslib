@@ -1267,8 +1267,14 @@ the scratch counter. The rounds cost a constant times the entries' layouts, and
 the decrements at most `4r + 2|w|` for `r` rounds
 (`Turing.counterOverhead_le_of_le`). The value `m > 0` is necessary: with empty
 entries, the tables `[]` and `[[]]` lay out identically and the verdict would
-have to differ. -/
-theorem exists_tableFindTM {Γ : Type*} [DecidableEq Γ] (e : Bool ↪ Γ) (m : ℕ) (hm : 0 < m)
+have to differ.
+
+**Universe (maintainer fix, 2026-10-12; flagged).** The alphabet is `Γ : Type`, not `Type*`.
+The mandated loop `Turing.counterLoopTMVia` and the phase host `Turing.phaseHostTM` take their
+alphabet in `Type`, so the route could not be instantiated at an arbitrary universe (the record
+tables continuation's escalation). Every consumer's alphabet, `RecSym Q T`, lies in `Type`.
+Generalizing the two hosts instead is the optional backlog item UNIV-1. -/
+theorem exists_tableFindTM {Γ : Type} [DecidableEq Γ] (e : Bool ↪ Γ) (m : ℕ) (hm : 0 < m)
     {A : Type} [Fintype A] [DecidableEq A] (δ : A → Option Γ → A) (a₀ : A) (acc : A → Bool) :
     ∃ (K : ℕ) (P : Type) (_ : Fintype P) (_ : DecidableEq P) (R : MultiTapeTM (K + 2) Γ P)
       (entry yes no : P) (C : ℕ), yes ≠ no ∧
