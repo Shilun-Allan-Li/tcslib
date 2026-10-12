@@ -422,6 +422,16 @@ without breaking any consumer. A 12.2c item, its own PR and gate.
 
 ## 2. Campaign work queued or on hold
 
+* **PROG-1: the vendored programming layer's follow-ups** (from the [AFM26] port, 2026-10-12;
+  design §15b).
+  - (a) Port the sieve (`Light/Lib/Sieve`), once a Mathlib bump provides `Nat.primesLE`, or with
+    a local definition.
+  - (b) At every Lean or Mathlib bump, remove the names in `TCSlib/Programs/Compat.lean` that the
+    bump provides, and revisit the `with_unfolding_none` to `with_reducible` swap.
+  - (c) The extensions are a statement phase with its gate: reading the input in place, `emit`, and
+    the coin stream for nondeterminism and randomization.
+  - (d) Stage 2, the RAM-to-`FinTM` simulation.
+
 * **Chapter-2 fill campaign (E1-E5)** — **active** (hold lifted
   2026-10-02 after the ch-6 integration and audit closed). All four
   statement-phase gates closed; 59 audited-true admissions.
