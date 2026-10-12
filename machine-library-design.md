@@ -1169,9 +1169,9 @@ Each row `R` states, from any `d` in its start phase:
    `∀ b`.)
 3. **Trajectory:** touched heads stay in a stated interval, typically
    `[pos − 1, pos + |w|]`, and the other heads are fixed. Space follows by
-   `MultiTapeTM.spaceUsedByTape_le_card_Icc`. That lemma lives in
-   `Build/Zone.lean`, so Catalog rows cannot cite it; 12.2c item 9's Zone split
-   is its natural moment to move down.
+   `MultiTapeTM.spaceUsedByTape_le_card_Icc`. That lemma now lives in
+   `Build/Catalog.lean` (moved from `Build/Zone.lean` by the B4 pre-issue promotion,
+   2026-10-12), so Catalog rows and their consumers can cite it.
 
 The time constants below are indicative. The statement phase fixes them by
 the executed pre-ship check, as in §12.6 practice.
