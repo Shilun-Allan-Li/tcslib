@@ -1197,8 +1197,8 @@ private noncomputable def oracleRedirect (M : FinOracleTM Bool) (C : FinTM Bool)
 
 open Classical in
 /-- The finite plain witness, using one existing phase host around the R2
-copy/call seam. Its full query restoration and global simulation remain proof
-obligations until the W2-S target is discharged. -/
+copy/call seam. Its query restoration and global simulation are proved below,
+where they discharge the W2-S target (continuation 2). -/
 private noncomputable def oracleHost (M : FinOracleTM Bool) (C : FinTM Bool)
     (hc : 0 < C.k) (en ex : C.State) : FinTM Bool where
   k := oracleHostTapes M.k C.k

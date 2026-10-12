@@ -69,7 +69,7 @@ of [BGS75, Theorem 1] stays recorded there as the fallback).
 * `Complexity.EXPCOM` — the oracle language, over `expCode`.
   [AB09, Example 3.6(3)]
 
-## Main results (B5a partial: five bodies filled; the B5b summit remains sorried)
+## Main results (the B5b summit is proved modulo the two §12.11 rows of B5a)
 
 * `Turing.exists_uniformMachineCode` — a uniformly-timed scheme exists.
 
@@ -676,7 +676,8 @@ malformed queries select a fixed rejecting zero-deadline input. The transcribed
 `ExpPoly` ledger absorbs the simulator, shell and projection-enumerator budgets.
 The result is proved modulo exactly W2-S (`FinOracleTM.exists_plain_simulation`)
 and the two §12.11 rows (`MachineFormat.exists_polyCanonizer` and
-`MachineFormat.exists_uniformSimulator`). -/
+`MachineFormat.exists_uniformSimulator`). (Maintainer note, 2026-10-12: W2-S
+landed at the same fills-6 integration, so only the two §12.11 rows remain.) -/
 theorem NPOracle_EXPCOM_subset_EXP : NPOracle EXPCOM ⊆ EXP := by
   intro L hL
   obtain ⟨k, a, N, hN⟩ := Set.mem_iUnion.mp hL
