@@ -3470,5 +3470,9 @@ There is also an open question for stage 2: Savitch's `O(S²)` space. Two routes
 4. The asymptotics port (MIG-18).
 5. The RS items, opportunistically.
 
+**12.2c** (plan §4e) is folded into this migration. Its items are subsumed, moved, kept as MIG-20
+and MIG-21, or lapsed, as recorded at the head of the 12.2c tasklist. **MIG-0 and MIG-1 now
+precede §13d G2** (user, 2026-10-12), reversing "G2 comes before the Catalog split".
+
 New and unfinished work is written in the new style from the start. Deliveries now in flight
 in the old style (record tables, W2-S, B5a canonizer and H1, B4, S1b) join step 3.

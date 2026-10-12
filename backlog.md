@@ -282,6 +282,8 @@ deleted.
 
 ### FH-1: one public first-halt lemma; seven private copies to retire (from B1)
 
+*Design it with MIG-0's no-earlier-exit cut field.*
+
 `Turing.MultiTapeTM.exists_first_halt` (`Finite.lean`, 2026-10-11, B1) is the
 shared form of the least-halting-time argument. It discharges the
 liveness-before-halt guard of `capture_run`/`emit_run` and the R1 returning
@@ -339,6 +341,8 @@ change, so it waits for a window that may touch these public statements
 
 ### R80B-E1: define `counterLoopTM` as the identity instance of `counterLoopTMVia` (from the R8.0b fill gate, finding F1)
 
+*This is MIG-4 (scenario B: the duplicated statements are retired).*
+
 The R8.0b fill (§12.8 stream D) mandated two definition texts: the new rich-body host
 `Turing.counterLoopTMVia` and the frozen `Bool` host `Turing.counterLoopTM`. Their copy-text pair
 is 91% (and 84% the other way). The brief's freeze made factoring impossible within the fill.
@@ -354,6 +358,8 @@ consumer under that separately authorized definition change. This is a frozen-de
 change, so it needs its own gate.
 
 ### U-1: re-derive the chapter-1 universal machine from B5a's generic step block (user, 2026-10-11)
+
+*Merged with MIG-2 (user, 2026-10-12): the timed-layer dedup and this re-derivation are one migration item.*
 
 The chapter-1 universal machine (`Turing.universal`, `universal_quadratic`, `timed_universal`) is
 a bespoke interpreter of about 5,300 lines across `Universal.lean`, `UniversalStartup.lean`,
@@ -408,6 +414,8 @@ shell is audited first. The task gets its own PR and gate.
 
 ### UNIV-1 (optional): universe-polymorphic `counterLoopTMVia` and `phaseHostTM` (user, 2026-10-12)
 
+*Folds into MIG-0's universe decision (the contract structure's `Type`/`Type*` choice).*
+
 The record-table continuation found that `exists_tableFindTM`, stated for `Γ : Type*`, could
 not use its mandated loop: `Turing.counterLoopTMVia` (`Build/CounterLoop.lean`) and
 `Turing.phaseHostTM` (`Build/Seam.lean`) take their alphabet in `Type`. The user chose option
@@ -440,7 +448,7 @@ statement families are retired, with full gates and consumer edits. Restyling is
 |---|---|---|---|---|---|---|
 | MIG-0 | new `Build/Contract.lean` | Item 0, with the §16 requirements: the contract structure, tape frames and `.keep`, composition theorems as thin wrappers over the existing public rows, and tactics | +1.5k to +2.5k | — | stmt | first; unlocks MIG-11 to MIG-17 and RS |
 | MIG-1 | `Build/Catalog` (the `f2_` region, about lines 1785–11365), `Primitives`, `Composition`, `Loop`, `Wrappers`, `Encoding`, `Simulation`, `ClassP/TimeConstructible` | Named witnesses (about 30 defs with spec theorems) for the 66 existential rows; then delete the 304 `f2_` copies (6,255 of their lines are verbatim, MEASURED). The 22 space rows become corollaries. Retire the R3 canonical `_run` rows (0 external consumers) | −7.6k to −8.3k, +0.4k | decision 12.2 lifted | stmt + full | highest confidence; half the saving |
-| MIG-2 | `TuringMachine/Universal` (195–1316, 1317–1606, 2367–2644) | Retire the duplicate timed layer (`timedCut*`, `timedPrefix`, `timedCapture`), through a stop-before variant or proofs parametric in the table | about −1k | — | swap | `timed_universal_concrete`'s coefficient must not grow (TMSAT); joins U-1 |
+| MIG-2 | `TuringMachine/Universal` (195–1316, 1317–1606, 2367–2644) | Retire the duplicate timed layer (`timedCut*`, `timedPrefix`, `timedCapture`), through a stop-before variant or proofs parametric in the table | about −1k | — | swap | `timed_universal_concrete`'s coefficient must not grow (TMSAT); **merged with U-1** (one re-derivation, from both directions) |
 | MIG-3 | `Robustness/SingleTape` | `one_work_tape` reuses `dg_all_inputs`; drop the `sweep_*` chain | about −450 | — | swap | |
 | MIG-4 | `Build/CounterLoop` | R80B-E1: `counterLoopTM` becomes the identity instance of `counterLoopTMVia`; retire the duplicated statements | about −450 | — | full | consumer `Inclusions.lean` (14 uses) |
 | MIG-5 | `Build/EmitIterBody`, `Build/EmitIterEmbed` | Cite `inputCopyTM_run_ofCfg` and the rewinds (223 re-proved lines); derive `padAction`/`embedCfg` from Embed and retire them | −300 to −420 | — | full | CH7-D2; 1 external consumer |
@@ -457,6 +465,8 @@ statement families are retired, with full gates and consumer edits. Restyling is
 | MIG-16 | `Build/OracleSim` | Rebase on the R1 contracts | −250 to −400 | MIG-0 | swap | exact lockstep lemmas stay |
 | MIG-17 | `Build/Primitives`, `Build/Loop` | Named loop hosts; `splitSafe`/`SafeRun` become Contracts | −1k to −2k | MIG-0, MIG-1 | swap | 15 external files cite the P-rows (statements kept) |
 | MIG-19 | `SpaceComplexity/ConfigGraph` (S1b's delivery) | Re-derive `NSPACE ⊆ DTIME(2^O(S))`, `NL ⊆ P` and Ex 4.3 as programs (design §16, decision 3); retire S1b's private BFS host | to be estimated once S1b lands | stage 2, machine-configuration routines | swap | user, 2026-10-12: S1b finishes first |
+| MIG-20 | the chapter-2 emitter files (`emitterCompare*`, `emitterP2Erase*`) | 12.2c item 3 (F25a/F27a): onto `compareTM` and `clearTM` | small | MIG-1 (the Catalog→Primitives import) | swap | |
+| MIG-21 | `CookLevin/Hardness` (`clPlacement`, the selectors) | 12.2c item 13: restate the layouts as plain `Fin k ↪ Fin l` embeddings; delete the selector layer (about 120–259 lines) | about −150 to −250 | the T2a gate (item 6's export) | swap | Hardness stays at machine level |
 | MIG-18 | port of [AFM26]'s `Util/Asymptotics` (1,769 lines upstream) | `Dominated`, `Scale.SoftO` and the `growth` tactic, then ledgers without constants | +0.5k to +1.4k; saves part of about 3.5k ledger lines | the PROG-1 port tooling | fidelity, then swap | payoff mostly in ClassNP, ClassP, SpaceComplexity and PolyHierarchy |
 
 **RS: the restyling backlog, opportunistic; chip away at it.**
