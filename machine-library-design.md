@@ -3042,10 +3042,10 @@ and a statement gate before a second consumer is briefed.
 | # | Host | Status | Named consumers |
 |---|---|---|---|
 | 0 | **Framed-contract structure**: machine, entry/exit states, precondition, endpoint as a function of the start configuration, time, no-earlier-exit cut, head envelope; sequencing, phase host, R1 embedding, lift and counter loop as structure-to-structure theorems, space derived | to design | every host below; removes the inline restatements of the delimited-word precondition |
-| H1 | **AND/OR evaluator**: a depth-first odometer over a path word of per-depth records with node kinds (AND/OR), a pluggable leaf-verdict module with its own framed contract, short-circuit semantics as a pure function; space = path + leaf + O(1) | first instance in flight, private, inside B4 membership (addendum 1 makes it generic in the leaf and a promotion candidate) | `TQBF_mem_PSPACE`; Savitch (midpoint records as digits); NP ⊆ PSPACE (re-derivation); `ClassPSPACE/Games.lean`'s game values; backtracking in the §15 layer |
+| H1 | **AND/OR evaluator**: a depth-first odometer over a path word of per-depth records with node kinds (AND/OR), a pluggable leaf-verdict module with its own framed contract, short-circuit semantics as a pure function; space = path + leaf + O(1) | first instance in flight, private, inside B4 membership (addendum 1 makes it generic in the leaf and a promotion candidate). **Language first (user, 2026-10-12):** the general evaluator is written as a recursive program of §15's language, not as a machine host | `TQBF_mem_PSPACE`; Savitch (midpoint records as digits); NP ⊆ PSPACE (re-derivation); `ClassPSPACE/Games.lean`'s game values; backtracking in the §15 layer |
 | H2 | **Step block**: one simulated transition of a `k`-tape coded table, relation-level, with per-round time `B·(\|table\| + 1)` and a head envelope | in flight, private, inside B5a H1 (addendum 1 adds the head envelope) | H1 (`exists_uniformSimulator`); U-1; B6's self-application universal; C1 (with a choice-bit-indexed table); EXPCOM |
 | H3 | **Windowed runner**: run a fixed machine on a windowed record, exiting on window exit, simulated halt, or a configuration-count clock | parts exist privately in S1b's brief (radius phase, records-to-runs bridge, the general-`S` count) | S1b; B6 (the window route); Savitch; NL = coNL |
-| H4 | **Search over a graph presented by rows** (enumerate, equality, adjacency, start, target), visited table, BFS | private inside S1b's fill | `NL ⊆ P`, `NSPACE ⊆ DTIME(2^O(S))`; `PATH ∈ P`; Immerman–Szelepcsényi counting; §15 graph algorithms |
+| H4 | **Search over a graph presented by rows** (enumerate, equality, adjacency, start, target), visited table, BFS | private inside S1b's fill. **Language first:** the general search is a program of §15's language | `NL ⊆ P`, `NSPACE ⊆ DTIME(2^O(S))`; `PATH ∈ P`; Immerman–Szelepcsényi counting; §15 graph algorithms |
 | H5 | **Input devices** behind one interface: native, buffered (Z1, exists), unary marker, binary position (from `exists_inputSeekTM`), computed input | partial | B6 / `space_universal`; U-1 and H2 (backlog); C1 |
 | H6 | **Machine-to-formula kit**: closed-form variable indexing, snapshot-keyed local gates, ordered emission by `exists_emitLoopTM`, Tseitin on `Std.Sat.CNF ℕ` correct for every prefix assignment | pattern private in `CookLevin/Hardness.lean`; B4a's codec is non-uniform (its orderings range over index types depending on `n` and `s`, and its public statement is `∀ n s, ∃ …`) | TQBF hardness; Cook–Levin deduplication; later machine-to-formula reductions |
 
@@ -3188,3 +3188,125 @@ its gate, then fills). 15c: arrays over record tables. 15d: the curriculum
 layer's first increment (cost model, merge sort with `≤ n⌈log₂ n⌉`
 comparisons, BFS with an `O(n + m)` operation count). Every Lean step is a PR
 plus its own gate.
+
+### 15a. Language first; the spike (user decision and maintainer draft, 2026-10-12)
+
+**Decision (user, 2026-10-12): language first.** The remaining results that are
+algorithms are written as programs of the §15 language and compiled. These are
+Savitch's recursion, the AND/OR evaluator (H1), graph search (H4), and the
+intro-algorithms curriculum. The hosts that are *about machines* stay at machine
+level and proceed now: H2 (step block), H3 (windowed runner), H5 (input devices)
+and H6 (machine-to-formula). Work in flight is unaffected. S1b's BFS and B4's
+walker finish as briefed, and may later be re-derived as programs.
+
+**Architecture (proposed): two stages, as in [AFM26].**
+
+```
+program of the language  --stage 1-->  flat word-RAM program  --stage 2-->  FinTM Bool
+                        (compiler; constant          (one simulation; polynomial
+                         overhead, no tapes)          overhead, the only tapes)
+```
+
+- **Stage 1** is pure program reasoning and never mentions tapes. [AFM26]'s
+  compiler from its language to its word RAM is about 2,500 lines. Its theorem
+  says a run of `c` steps becomes at most `startCost + stepsPerStep·c` RAM steps,
+  with constants that depend only on the program text.
+- **Stage 2** is the only place tapes appear: one machine simulates a fixed RAM
+  program, one instruction at a time. The RAM has about a dozen instruction
+  kinds, so the tape-level proof surface is about a dozen instruction contracts
+  (§14 item 0), one dispatcher over the program counter (the phase host), and one
+  simulation induction.
+- **The word RAM is a model in its own right**, registered in
+  `ComputationalModels.lean`. In it the curriculum's statements have faithful,
+  constant-factor costs. Stage 2 then turns them into P, PSPACE and L
+  memberships.
+
+**The language.** It is [AFM26]'s light language:
+- integers and numbered local variables, with a flat memory `ℕ → ℤ`;
+- expressions: constants, `+`, `−`, `×` and loads; tests `<` and `=`;
+- statements: skip, assignment, store, sequence, if, while, and procedure calls,
+  with recursion;
+- unit costs per constant, variable, operation and load;
+- the limits `word`, `space` and `depth` as part of the semantics;
+- the logic `Ends`/`Meets` with its rules, frames and tactics.
+
+It adds three things that our classes need:
+- `inBit e` and `inLen`, which read the input string *in place*, never copied
+  (logspace needs this);
+- `emit e`, which appends a bit to the output, for reductions and function
+  problems;
+- possibly `half e`, cheap on both targets (decision 15a.4).
+
+**The RAM.** It is [AFM26]'s `EndStatement.Instr`:
+- `one`, and `add`/`sub`/`mul` modulo `2^W`;
+- `load` and `store` (indirect);
+- `bltz`, `accept` and `reject`.
+
+It adds `rdIn` (an input bit at a computed position), `len` and `emit`.
+
+**Stage 2's theorem (statement shape, draft).** For a RAM program `P` there are a
+`FinTM Bool` machine `M` and a constant `A` (depending on `P` only) with the
+following property. Whenever `P` halts on input `x` with word size `W` within `t`
+steps, touching `f` distinct cells:
+- `M` halts on `x` with the same verdict and output within
+  `A·(t + 1)·(f·(W + a) + W² + |x|·log|x| + 1)` steps, where `a` is the width of
+  an address;
+- `M`'s space is at most `A·(f·(W + a) + W + log|x| + 1)`.
+
+The per-step cost is dominated by one scan of the memory table, a
+shift-and-add multiplication, and one input seek.
+
+**What consumers get.**
+- **P:** polynomial cost and limits give membership in P.
+- **L:** `O(1)` cells, bounded depth and `W = O(log n)` give space `O(log n)`,
+  because the input is read in place.
+- **Savitch:** depth `O(S)` with `O(1)` locals of `O(S)` bits gives `O(S²)`.
+- **TQBF ∈ PSPACE:** depth `O(n)` with `W = O(log n)` gives `O(n log n)`.
+
+Results that need tight *linear* space may still want direct machines.
+
+**Reuse from `Build/`:**
+- the phase host, for dispatch on the program counter;
+- the framed copy, compare, clear and increment rows;
+- the `scanTM` carry family, for binary addition;
+- `exists_inputSeekTM` and `exists_inputLengthTM`;
+- counter loops, for the rounds of a multiplication;
+- R1 embedding and `alphabet_reduction`.
+
+**New rows needed:**
+- two-tape addition and subtraction modulo `2^W`;
+- multiplication;
+- a sign test;
+- find-by-key in a memory table, where the key is a word on another tape. The
+  record-table find takes a finite-state predicate, so it does not cover this;
+- in-place overwrite of a fixed-width field.
+
+**Rough cost** (maintainer estimate, in lines):
+- item 0's contract structure: 1,500–2,000;
+- stage 2: 6,000–10,000;
+- stage 1 with the language, logic and tactics: 5,000–7,000 if ported from
+  [AFM26], more if re-implemented.
+
+That is about 15,000–20,000 lines in all, or a few fill waves: about the size of
+S1b plus the record tables.
+
+**Open decisions (15a.x, for the user):**
+1. **Two stages** (recommended) or a direct compiler from the language to machines.
+2. **Port or re-implement [AFM26]'s language, logic and compiler.**
+   - *Port:* Apache-2.0, vendored with its header, the upstream commit and a list
+     of local modifications (`policy.md` §2, *Vendored code*).
+   - *Re-implement:* follow the design, with a *Design adaptation* citation.
+
+   A port is not mechanical. [AFM26] uses Lean v4.33's module system (`module`,
+   `public import`, `@[expose] public section`), which our pin v4.25.0 and its
+   Mathlib do not use. Porting means removing that layer and repairing
+   Mathlib API drift. A port trial on the core (syntax, logic, rules, frames,
+   calls, tactics and regions, about 1,900 lines) would settle it.
+3. **The RAM's input convention:** read in place by instruction (recommended;
+   logspace needs it), or loaded into memory as in [AFM26] (kept as a variant
+   for curriculum statements).
+4. **Halving** (`half e`) in the language and the RAM: yes or no.
+
+**Next step after 15a.1–15a.3.** Statement drafts of item 0's contract structure
+and of stage 2's theorem, as sorried Lean in a scratch worktree, with a pre-ship
+elaboration check. Then a statement gate.
