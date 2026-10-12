@@ -1,0 +1,36 @@
+import TCSlib.Complexity.TuringMachine.Build.Embed
+/-! Pre-ship probe for 12.2c item 6's export (maintainer, read-only): `Turing.embedEmitTM_tr`
+alone yields the selector form that `CookLevin/Hardness.lean`'s `clPlacedAction_eq` now
+obtains by unfolding R1's private slot search, for any selector certified against `ι`. -/
+open Turing
+
+#check @embedEmitTM_tr
+#print axioms embedEmitTM_tr
+
+example {m k : ℕ} {Symbol S : Type} (ι : Fin m ↪ Fin k) (M : MultiTapeTM m Symbol S)
+    (sel : Fin k → Option (Fin m)) (hsel : ∀ i j, sel j = some i ↔ ι i = j)
+    (q : S) (inp : Option Symbol) (w : Fin k → Option Symbol) :
+    (embedEmitTM ι M).tr q inp w =
+      ⟨(M.tr q inp fun i => w (ι i)).inputTape,
+        (fun j => match sel j with
+          | some i => (M.tr q inp fun i => w (ι i)).workTapes i
+          | none => (none, 0)),
+        (M.tr q inp fun i => w (ι i)).output, (M.tr q inp fun i => w (ι i)).state⟩ := by
+  obtain ⟨h1, h2, h3, h4, h5⟩ := embedEmitTM_tr ι M q inp w
+  cases hA : (embedEmitTM ι M).tr q inp w with
+  | mk a b c d =>
+    rw [hA] at h1 h2 h3 h4 h5
+    simp only at h1 h4 h5
+    subst h1 h4 h5
+    congr 1
+    funext j
+    cases hj : sel j with
+    | some i =>
+      have : ι i = j := (hsel i j).mp hj
+      subst this
+      simpa using h2 i
+    | none =>
+      have : j ∉ Set.range ι := by
+        rintro ⟨i, rfl⟩
+        exact absurd ((hsel i (ι i)).mpr rfl) (by simp [hj])
+      simpa using h3 j this

@@ -406,6 +406,20 @@ statement, with its own gate, and not worth it for the remaining 90% textual mat
 stay unchanged. **Prerequisite:** W2-V's own fill gate (the wave-1 fill gate), so that the cited
 shell is audited first. The task gets its own PR and gate.
 
+### UNIV-1 (optional): universe-polymorphic `counterLoopTMVia` and `phaseHostTM` (user, 2026-10-12)
+
+The record-table continuation found that `exists_tableFindTM`, stated for `Γ : Type*`, could
+not use its mandated loop: `Turing.counterLoopTMVia` (`Build/CounterLoop.lean`) and
+`Turing.phaseHostTM` (`Build/Seam.lean`) take their alphabet in `Type`. The user chose option
+(b): `exists_tableFindTM` is restated at `Γ : Type`, a maintainer statement fix with its own
+gate (`audits/fills-5-integration.md`). Every consumer's alphabet (`RecSym Q T`, `Bool`) lies in
+`Type`. **Option (a), kept here for later:** generalize the two hosts and their run contracts to
+`Type*`. That means about a dozen public statements in two gated core files, strictly more general,
+with a revision gate and a downstream replay of most of the machine library. The risk is universe
+inference in the sigma-typed phase states. The gain is a universe-polymorphic core. Nothing in
+the campaign needs it now. If done, `exists_tableFindTM` can be re-generalized to `Type*`
+without breaking any consumer. A 12.2c item, its own PR and gate.
+
 ## 2. Campaign work queued or on hold
 
 * **Chapter-2 fill campaign (E1-E5)** — **active** (hold lifted

@@ -1,0 +1,973 @@
+commit 40b38caf7544e4df0826d9ff7e69fbd290e8e36f
+Author: Seyoon Ragavan <complexzetaprime@gmail.com>
+Date:   Mon Oct 12 11:09:29 2026 -0400
+
+    B4 pre-issue promotion: CNF grammar facts public in CNFEncoding; spaceUsedByTape_le_card_Icc moved to Catalog
+    
+    Behaviour-preserving moves; no public statement changes, every existing public name kept.
+    
+    - Formulas/CNFEncoding.lean: new public Std.Sat.CNF.takeTrues_repr, parseLit_repr,
+      parseClause_repr, parseClauses_repr, parse_repr, syntaxStep, SyntaxSuffix,
+      syntaxSuffix_cons/_nil/_run, syntaxOK, syntaxOK_spec (promoted from the private
+      sat_* / satSyntax* block of ClassNP/SAT.lean); two Main-results bullets;
+      adds import Mathlib.Tactic.FinCases (fin_cases).
+    - ClassNP/SAT.lean: private block deleted; uses cite the public names.
+    - ClassNP/Tautology.lean: private taut_{takeTrues,parseLit,parseClause,parseClauses,parse}_shape
+      (verbatim duplicates of the promoted lemmas) deleted; uses cite CNF.parseLit_repr,
+      CNF.parseClause_repr, CNF.parse_repr.
+    - Turing.MultiTapeTM.spaceUsedByTape_le_card_Icc moved from Build/Zone.lean to
+      Build/Catalog.lean (not Deterministic.lean, per coordinator revision: fewer
+      downstream replays); same name, statement and docstring, flagged note added.
+    
+    Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+
+diff --git a/TCSlib/Complexity/ClassNP/SAT.lean b/TCSlib/Complexity/ClassNP/SAT.lean
+index 330166a2..f110ca6d 100644
+--- a/TCSlib/Complexity/ClassNP/SAT.lean
++++ b/TCSlib/Complexity/ClassNP/SAT.lean
+@@ -225,235 +225,6 @@ private lemma sat3_verifier_equiv (x : List Bool) :
+       simpa [satVerdict_append true x u hu] using hv
+     exact ⟨(satWidth_spec _).mp hh.1, u, hu, hh.2⟩
+ 
+-/-- The unary scanner partitions its input into the counted run and its suffix. -/
+-private lemma sat_takeTrues_repr (x : List Bool) :
+-    List.replicate (CNF.takeTrues x).1 true ++ (CNF.takeTrues x).2 = x := by
+-  induction x with
+-  | nil => rfl
+-  | cons b x ih =>
+-    cases b with
+-    | false => rfl
+-    | true => simpa [CNF.takeTrues, List.replicate_succ] using congrArg (true :: ·) ih
+-
+-/-- A successful literal parse reconstructs exactly the consumed input. -/
+-private lemma sat_parseLit_repr {x r : List Bool} {ℓ : Std.Sat.Literal ℕ}
+-    (h : CNF.parseLit x = some (ℓ, r)) : x = CNF.serializeLit ℓ ++ r := by
+-  have ht := sat_takeTrues_repr x
+-  unfold CNF.parseLit at h
+-  split at h
+-  · cases h
+-  · rename_i k b rest he
+-    cases h
+-    simpa [he, CNF.serializeLit, List.append_assoc] using ht.symm
+-  · cases h
+-
+-/-- Clause parsing reconstructs its terminator as well as every literal.
+-
+-**Proof sketch.** Induct on fuel. The leading zero case succeeds even at
+-zero fuel. Otherwise invert both successful subparses and concatenate their
+-reconstruction equalities; no premature end of the input can succeed. -/
+-private lemma sat_parseClause_repr {fuel : ℕ} {x r : List Bool} {C : CNF.Clause ℕ}
+-    (h : CNF.parseClause fuel x = some (C, r)) : x = CNF.serializeClause C ++ r := by
+-  induction fuel generalizing x C r with
+-  | zero =>
+-    cases x with
+-    | nil => cases h
+-    | cons b s =>
+-      cases b with
+-      | false => cases h; rfl
+-      | true => cases h
+-  | succ fuel ih =>
+-    cases x with
+-    | nil => cases h
+-    | cons b s =>
+-      cases b with
+-      | false => cases h; rfl
+-      | true =>
+-        cases hl : CNF.parseLit (true :: s) with
+-        | none => simp [CNF.parseClause, hl] at h
+-        | some p =>
+-          obtain ⟨ℓ, t⟩ := p
+-          cases hc : CNF.parseClause fuel t with
+-          | none => simp [CNF.parseClause, hl, hc] at h
+-          | some p =>
+-            obtain ⟨D, v⟩ := p
+-            simp only [CNF.parseClause, hl, hc, Option.some.injEq, Prod.mk.injEq] at h
+-            rcases h with ⟨rfl, rfl⟩
+-            rw [sat_parseLit_repr hl, ih hc]
+-            simp [CNF.serializeClause, List.append_assoc]
+-
+-/-- Formula parsing reconstructs every clause marker and the final terminator.
+-
+-**Proof sketch.** Induct on fuel, retaining the unconsumed suffix. A clause
+-marker spends one unit of fuel before the clause and formula subparses.
+-The leading zero case works independently of the remaining fuel. -/
+-private lemma sat_parseClauses_repr {fuel : ℕ} {x r : List Bool} {φ : CNF ℕ}
+-    (h : CNF.parseClauses fuel x = some (φ, r)) : x = CNF.serialize φ ++ r := by
+-  induction fuel generalizing x φ r with
+-  | zero =>
+-    cases x with
+-    | nil => cases h
+-    | cons b s =>
+-      cases b with
+-      | false => cases h; rfl
+-      | true => cases h
+-  | succ fuel ih =>
+-    cases x with
+-    | nil => cases h
+-    | cons b s =>
+-      cases b with
+-      | false => cases h; rfl
+-      | true =>
+-        cases hc : CNF.parseClause fuel s with
+-        | none => simp [CNF.parseClauses, hc] at h
+-        | some p =>
+-          obtain ⟨C, t⟩ := p
+-          cases ht : CNF.parseClauses fuel t with
+-          | none => simp [CNF.parseClauses, hc, ht] at h
+-          | some p =>
+-            obtain ⟨ψ, v⟩ := p
+-            simp only [CNF.parseClauses, hc, ht, Option.some.injEq, Prod.mk.injEq] at h
+-            rcases h with ⟨rfl, rfl⟩
+-            rw [sat_parseClause_repr hc, ih ht]
+-            simp [CNF.serialize, CNF.serializeClause, List.append_assoc]
+-
+-/-- Exact-consumption parsing is inverse serialization on every successful input. -/
+-private lemma sat_parse_repr {x : List Bool} {φ : CNF ℕ}
+-    (h : CNF.parse x = some φ) : x = CNF.serialize φ := by
+-  unfold CNF.parse at h
+-  split at h
+-  · rename_i ψ hp
+-    cases h
+-    simpa using sat_parseClauses_repr hp
+-  · cases h
+-
+-/-- The six LL(1) positions: formula, clause, unary index, polarity, exact
+-end, and error. The end position becomes error on any trailing bit. -/
+-private def satSyntaxStep (q : Fin 6) (b : Bool) : Fin 6 :=
+-  match q.val with
+-  | 0 => if b then 1 else 4
+-  | 1 => if b then 2 else 0
+-  | 2 => if b then 2 else 3
+-  | 3 => 1
+-  | _ => 5
+-
+-/-- Residual grammar at each finite-control position. Unary indices remain
+-unbounded strings; the finite control stores only their grammar position. -/
+-private def satSyntaxSuffix (q : Fin 6) (x : List Bool) : Prop :=
+-  match q.val with
+-  | 0 => ∃ φ : CNF ℕ, x = CNF.serialize φ
+-  | 1 => ∃ (C : CNF.Clause ℕ) (φ : CNF ℕ), x = CNF.serializeClause C ++ CNF.serialize φ
+-  | 2 => ∃ (v : ℕ) (b : Bool) (C : CNF.Clause ℕ) (φ : CNF ℕ),
+-      x = List.replicate v true ++ [false, b] ++ CNF.serializeClause C ++ CNF.serialize φ
+-  | 3 => ∃ (b : Bool) (C : CNF.Clause ℕ) (φ : CNF ℕ),
+-      x = b :: (CNF.serializeClause C ++ CNF.serialize φ)
+-  | 4 => x = []
+-  | _ => False
+-
+-/-- Each transition consumes exactly one grammar bit.
+-
+-**Proof sketch.** Invert the first clause, literal, or unary-run constructor
+-as appropriate. Formula and clause zero-markers are distinct states; the
+-polarity state consumes its bit unconditionally. No bit can follow the
+-exact-end state, which is how trailing garbage forces the fallback. -/
+-private lemma satSyntaxSuffix_cons (q : Fin 6) (b : Bool) (x : List Bool) :
+-    satSyntaxSuffix q (b :: x) ↔ satSyntaxSuffix (satSyntaxStep q b) x := by
+-  fin_cases q <;> cases b
+-  · change (∃ φ, false :: x = CNF.serialize φ) ↔ x = []
+-    constructor
+-    · rintro ⟨φ, h⟩; cases φ <;> simpa [CNF.serialize] using h
+-    · rintro rfl; exact ⟨[], rfl⟩
+-  · change (∃ φ, true :: x = CNF.serialize φ) ↔
+-      ∃ C φ, x = CNF.serializeClause C ++ CNF.serialize φ
+-    constructor
+-    · rintro ⟨φ, h⟩
+-      cases φ with
+-      | nil => simp [CNF.serialize] at h
+-      | cons C φ => exact ⟨C, φ, by simpa [CNF.serialize, List.append_assoc] using h⟩
+-    · rintro ⟨C, φ, rfl⟩
+-      exact ⟨C :: φ, by simp [CNF.serialize, List.append_assoc]⟩
+-  · change (∃ C φ, false :: x = CNF.serializeClause C ++ CNF.serialize φ) ↔
+-      ∃ φ, x = CNF.serialize φ
+-    constructor
+-    · rintro ⟨C, φ, h⟩
+-      cases C with
+-      | nil => exact ⟨φ, by simpa [CNF.serializeClause] using h⟩
+-      | cons ℓ C => simp [CNF.serializeClause, CNF.serializeLit, List.replicate_succ] at h
+-    · rintro ⟨φ, rfl⟩; exact ⟨[], φ, rfl⟩
+-  · change (∃ C φ, true :: x = CNF.serializeClause C ++ CNF.serialize φ) ↔
+-      ∃ v b C φ, x = List.replicate v true ++ [false, b] ++
+-        CNF.serializeClause C ++ CNF.serialize φ
+-    constructor
+-    · rintro ⟨C, φ, h⟩
+-      cases C with
+-      | nil => simp [CNF.serializeClause] at h
+-      | cons ℓ C =>
+-        exact ⟨ℓ.1, ℓ.2, C, φ, by simpa [CNF.serializeClause, CNF.serializeLit,
+-          List.replicate_succ, List.append_assoc] using h⟩
+-    · rintro ⟨v, b, C, φ, rfl⟩
+-      exact ⟨(v, b) :: C, φ, by simp [CNF.serializeClause, CNF.serializeLit,
+-        List.replicate_succ, List.append_assoc]⟩
+-  · change (∃ v b C φ, false :: x = List.replicate v true ++ [false, b] ++
+-      CNF.serializeClause C ++ CNF.serialize φ) ↔
+-        ∃ b C φ, x = b :: (CNF.serializeClause C ++ CNF.serialize φ)
+-    constructor
+-    · rintro ⟨v, b, C, φ, h⟩
+-      cases v with
+-      | zero => exact ⟨b, C, φ, by simpa [List.append_assoc] using h⟩
+-      | succ v => simp [List.replicate_succ] at h
+-    · rintro ⟨b, C, φ, rfl⟩; exact ⟨0, b, C, φ, by simp⟩
+-  · change (∃ v b C φ, true :: x = List.replicate v true ++ [false, b] ++
+-      CNF.serializeClause C ++ CNF.serialize φ) ↔
+-        ∃ v b C φ, x = List.replicate v true ++ [false, b] ++
+-          CNF.serializeClause C ++ CNF.serialize φ
+-    constructor
+-    · rintro ⟨v, b, C, φ, h⟩
+-      cases v with
+-      | zero => simp at h
+-      | succ v => exact ⟨v, b, C, φ, by simpa [List.replicate_succ] using h⟩
+-    · rintro ⟨v, b, C, φ, rfl⟩
+-      exact ⟨v + 1, b, C, φ, by simp [List.replicate_succ]⟩
+-  · change (∃ b C φ, false :: x = b :: (CNF.serializeClause C ++ CNF.serialize φ)) ↔
+-      ∃ C φ, x = CNF.serializeClause C ++ CNF.serialize φ
+-    simp
+-  · change (∃ b C φ, true :: x = b :: (CNF.serializeClause C ++ CNF.serialize φ)) ↔
+-      ∃ C φ, x = CNF.serializeClause C ++ CNF.serialize φ
+-    simp
+-  all_goals simp [satSyntaxSuffix, satSyntaxStep]
+-
+-/-- At end of input, exactly the exact-end grammar state accepts. -/
+-private lemma satSyntaxSuffix_nil (q : Fin 6) : satSyntaxSuffix q [] ↔ q = 4 := by
+-  fin_cases q <;> simp [satSyntaxSuffix, CNF.serialize, CNF.serializeClause,
+-    List.append_eq_nil_iff]
+-
+-/-- The complete finite-state scan recognizes precisely the residual grammar. -/
+-private lemma satSyntaxSuffix_run (q : Fin 6) (x : List Bool) :
+-    satSyntaxSuffix q x ↔ x.foldl satSyntaxStep q = 4 := by
+-  induction x generalizing q with
+-  | nil => exact satSyntaxSuffix_nil q
+-  | cons b x ih => rw [satSyntaxSuffix_cons, List.foldl_cons, ← ih]
+-
+-/-- Boolean result of the complete syntax pass. -/
+-private def satSyntax (x : List Bool) : Bool := decide (x.foldl satSyntaxStep 0 = 4)
+-
+-/-- The machine grammar and the audited parser agree on every string, including
+-empty input, unfinished literals, and trailing garbage.
+-
+-**Proof sketch.** The residual-language invariant identifies scan acceptance
+-with the range of serialization. Successful parsing reconstructs its entire
+-input, and the existing parser round trip proves the converse. -/
+-private lemma satSyntax_spec (x : List Bool) : satSyntax x = (CNF.parse x).isSome := by
+-  apply Bool.eq_iff_iff.mpr
+-  simp only [satSyntax, decide_eq_true_eq]
+-  rw [← satSyntaxSuffix_run]
+-  change (∃ φ, x = CNF.serialize φ) ↔ (CNF.parse x).isSome = true
+-  constructor
+-  · rintro ⟨φ, rfl⟩; simp [CNF.parse_serialize]
+-  · intro h
+-    cases hp : CNF.parse x with
+-    | none => simp [hp] at h
+-    | some φ => exact ⟨φ, sat_parse_repr hp⟩
+-
+ /-- One-way finite-state scanners use no work tapes and emit only the final
+ verdict, after inspecting the right boundary. -/
+ private def satScanTM {S : Type} [Fintype S] [DecidableEq S]
+@@ -531,10 +302,10 @@ private lemma satScan_computes {S : Type} [Fintype S] [DecidableEq S]
+ 
+ /-- The complete CNF syntax pass is realized by an actual finite machine.
+ The result concerns every input, not merely serialized formulas. -/
+-private lemma satSyntax_poly : PolyTimeComputable (fun x => [satSyntax x]) := by
+-  refine ⟨satScanTM satSyntaxStep 0 (fun q => decide (q = 4)), 1, 1, ?_⟩
+-  simpa only [Nat.pow_one, Nat.one_mul, satSyntax] using
+-    satScan_computes satSyntaxStep 0 (fun q => decide (q = 4))
++private lemma satSyntax_poly : PolyTimeComputable (fun x => [CNF.syntaxOK x]) := by
++  refine ⟨satScanTM CNF.syntaxStep 0 (fun q => decide (q = 4)), 1, 1, ?_⟩
++  simpa only [Nat.pow_one, Nat.one_mul, CNF.syntaxOK] using
++    satScan_computes CNF.syntaxStep 0 (fun q => decide (q = 4))
+ 
+ /-- Administrative states, or a streaming phase (formula, clause, index,
+ polarity, rewind) with formula/clause truth bits and a doubled-bit skip flag. -/
+@@ -1031,7 +802,7 @@ private def satWitness (z : List Bool) : List Bool :=
+ private def satSplitValid (z : List Bool) : Bool := (pairDecode (satSplit z)).isSome
+ 
+ /-- Full syntax validation runs only after successful split recovery. -/
+-private def satGood (z : List Bool) : Bool := satSplitValid z && satSyntax (satInstance z)
++private def satGood (z : List Bool) : Bool := satSplitValid z && CNF.syntaxOK (satInstance z)
+ 
+ /-- Safe evaluator input: malformed formulas are replaced by the empty formula
+ before the evaluator runs. Thus no semantic rejection can precede validation. -/
+@@ -1067,7 +838,7 @@ private lemma satSafe_spec (z : List Bool) :
+     | some i =>
+       have hsyntax : (CNF.parse (z.take i)).isSome = true := by
+         simpa [satGood, satSplitValid, satInstance, satSplit, hs,
+-          pairDecode_pairEncode, satSyntax_spec] using hg
++          pairDecode_pairEncode, CNF.syntaxOK_spec] using hg
+       cases hp : CNF.parse (z.take i) with
+       | none => simp [hp] at hsyntax
+       | some φ =>
+@@ -1078,7 +849,7 @@ private lemma satSafe_spec (z : List Bool) :
+         have hvars : φ.numVars ≤ (z.take i).length := by
+           rw [← hdecode]; exact CNF.numVars_decode_le _
+         refine ⟨φ, z.drop i, ?_, ?_, ?_⟩
+-        · simp only [satSafe, hg, ↓reduceIte, satSplit, hs, sat_parse_repr hp]
++        · simp only [satSafe, hg, ↓reduceIte, satSplit, hs, CNF.parse_repr hp]
+         · intro C hC ℓ hℓ
+           have hv := sat_literal_lt_numVars φ C ℓ hC hℓ
+           omega
+@@ -1094,7 +865,7 @@ are all realized by the audited catalog and the complete syntax scanner. -/
+ private lemma sat_pipeline_poly :
+     PolyTimeComputable (fun z => [satSplitValid z]) ∧
+     PolyTimeComputable satInstance ∧
+-    PolyTimeComputable (fun z => [satSyntax (satInstance z)]) ∧
++    PolyTimeComputable (fun z => [CNF.syntaxOK (satInstance z)]) ∧
+     PolyTimeComputable satSafe := by
+   obtain ⟨M, A, hM⟩ := FinTM.computesFunInTime_splitSolve 1 1
+   have hs : PolyTimeComputable satSplit := ⟨M, A, 3, hM⟩
+@@ -1102,7 +873,7 @@ private lemma sat_pipeline_poly :
+     (polyTimeComputable_of_linear FinTM.computesFunInTime_pairValid).comp hs
+   have hx : PolyTimeComputable satInstance :=
+     (polyTimeComputable_of_linear FinTM.computesFunInTime_pairFst).comp hs
+-  have hp : PolyTimeComputable (fun z => [satSyntax (satInstance z)]) := satSyntax_poly.comp hx
++  have hp : PolyTimeComputable (fun z => [CNF.syntaxOK (satInstance z)]) := satSyntax_poly.comp hx
+   exact ⟨hv, hx, hp, polyTimeComputable_ite (polyTimeComputable_and hv hp) hs (polyTimeComputable_const _)⟩
+ 
+ /-- The evaluator is polynomial on all safe requests.
+@@ -1143,7 +914,7 @@ private lemma satVerdict_false_poly : PolyTimeComputable (fun z => [satVerdict f
+   | some i =>
+     cases hp : CNF.parse (z.take i) <;>
+       simp [satVerdict, satSplitValid, satSplit, hs, pairDecode_pairEncode,
+-        satSafeValue, satGood, satInstance, satWitness, satSyntax_spec, hp, CNF.decode, CNF.fallback]
++        satSafeValue, satGood, satInstance, satWitness, CNF.syntaxOK_spec, hp, CNF.decode, CNF.fallback]
+ 
+ /-- A computed singleton Boolean verdict decides its verifier language. -/
+ private lemma satVerifier_of_poly (three : Bool)
+@@ -1193,17 +964,17 @@ fourth literal clears the flag; scanning continues without emitting. -/
+ private def satWidthStep (s : Fin 6 × Fin 4 × Bool) (b : Bool) : Fin 6 × Fin 4 × Bool :=
+   let (q, c, good) := s
+   match q.val with
+-  | 0 => (satSyntaxStep q b, 0, good)
++  | 0 => (CNF.syntaxStep q b, 0, good)
+   | 1 => if b then (2, satWidthCap (c.val + 1), good && decide (c.val < 3))
+       else (0, 0, good)
+-  | _ => (satSyntaxStep q b, c, good)
++  | _ => (CNF.syntaxStep q b, c, good)
+ 
+ /-- Unary index bits do not increment the literal counter. -/
+ private lemma satWidth_index (n : ℕ) (c : Fin 4) (good : Bool) :
+     (List.replicate n true).foldl satWidthStep (2, c, good) = (2, c, good) := by
+   induction n with
+   | zero => rfl
+-  | succ n ih => simpa [List.replicate_succ, satWidthStep, satSyntaxStep] using ih
++  | succ n ih => simpa [List.replicate_succ, satWidthStep, CNF.syntaxStep] using ih
+ 
+ /-- A complete literal increments the width counter exactly once, independently
+ of its variable index and polarity. -/
+@@ -1244,7 +1015,7 @@ private lemma satWidth_clause (C : CNF.Clause ℕ) (c : Fin 4) (good : Bool) :
+ private lemma satWidth_formula (φ : CNF ℕ) (good : Bool) :
+     (CNF.serialize φ).foldl satWidthStep (0, 0, good) = (4, 0, good && satWidth φ) := by
+   induction φ generalizing good with
+-  | nil => simp [CNF.serialize, satWidthStep, satSyntaxStep, satWidth]
++  | nil => simp [CNF.serialize, satWidthStep, CNF.syntaxStep, satWidth]
+   | cons C φ ih =>
+     have hs : CNF.serialize (C :: φ) = true :: (CNF.serializeClause C ++ CNF.serialize φ) := by
+       simp [CNF.serialize, List.append_assoc]
+@@ -1286,12 +1057,12 @@ private lemma satVerdict_true_poly : PolyTimeComputable (fun z => [satVerdict tr
+     cases hp : CNF.parse (z.take i) with
+     | none =>
+       simp [satVerdict, satSplitValid, satSplit, hs, pairDecode_pairEncode,
+-        satSafeValue, satGood, satInstance, satWitness, satSyntax_spec, hp,
++        satSafeValue, satGood, satInstance, satWitness, CNF.syntaxOK_spec, hp,
+         CNF.decode, CNF.fallback, satWidth]
+     | some φ =>
+-      have hx := sat_parse_repr hp
++      have hx := CNF.parse_repr hp
+       simp [satVerdict, satSplitValid, satSplit, hs, pairDecode_pairEncode,
+-        satSafeValue, satGood, satInstance, satWitness, satSyntax_spec, hx,
++        satSafeValue, satGood, satInstance, satWitness, CNF.syntaxOK_spec, hx,
+         CNF.parse_serialize, CNF.decode_serialize, satWidthScan_serialize]
+ 
+ /-- **`3SAT ∈ NP`** [AB09, Theorem 2.10, membership].
+@@ -2566,7 +2337,7 @@ private lemma satStreamRound_bound (x : List Bool) (s : SatStreamState)
+           | none => exact ⟨hp, hj⟩
+           | some lr =>
+             rcases lr with ⟨l, rest⟩
+-            have he := congrArg List.length (sat_parseLit_repr hparse)
++            have he := congrArg List.length (CNF.parseLit_repr hparse)
+             have hpos : 0 < (CNF.serializeLit l).length := by simp [CNF.serializeLit]
+             simp only [List.length_cons, List.length_append] at he
+             simp only
+@@ -2586,7 +2357,7 @@ private lemma satStreamBound_size (x : List Bool) (s : SatStreamState)
+ parse starts at the right boundary in formula control; its first round emits
+ only the fallback terminator and then becomes finished, even at input length zero. -/
+ private def satStreamStart (x : List Bool) : SatStreamState :=
+-  if satSyntax x then ⟨(CNF.decode x).numVars, 0, 0⟩ else ⟨0, x.length, 0⟩
++  if CNF.syntaxOK x then ⟨(CNF.decode x).numVars, 0, 0⟩ else ⟨0, x.length, 0⟩
+ 
+ /-- Both the valid and fallback startup states satisfy the loop invariant. -/
+ private lemma satStreamStart_bound (x : List Bool) : satStreamBound x (satStreamStart x) := by
+@@ -2610,13 +2381,13 @@ private lemma satStreamRun_correct (x : List Bool) :
+     (satStreamRun x (x.length + 1) (satStreamStart x)).2 = satReduction x := by
+   cases hp : CNF.parse x with
+   | none =>
+-    have hs : satSyntax x = false := by simp [satSyntax_spec, hp]
++    have hs : CNF.syntaxOK x = false := by simp [CNF.syntaxOK_spec, hp]
+     rw [satStreamStart, hs]
+     simpa [satReduction_fallback x hp] using satStreamRun_fallback x x.length
+   | some φ =>
+-    have hx := sat_parse_repr hp
++    have hx := CNF.parse_repr hp
+     have hd : CNF.decode x = φ := by simp [CNF.decode, hp]
+-    have hs : satSyntax x = true := by simp [satSyntax_spec, hp]
++    have hs : CNF.syntaxOK x = true := by simp [CNF.syntaxOK_spec, hp]
+     simp only [satStreamStart, hs, ↓reduceIte, satReduction, hd]
+     rw [hx]
+     exact satStreamRun_serialize φ
+@@ -3249,15 +3020,16 @@ private lemma satMax_computes (φ : CNF ℕ) :
+ /-- Canonicalization uses the full syntax test; invalid strings become the
+ serialization of the fixed empty-formula fallback. -/
+ private def satStreamCanonical (x : List Bool) : List Bool :=
+-  if satSyntax x then x else [false]
++  if CNF.syntaxOK x then x else [false]
+ 
+ /-- The guard implements `serialize ∘ decode` on every input, including
+ trailing-data failures; it is an actual polynomial-time computation. -/
+ private lemma satStreamCanonical_spec (x : List Bool) :
+     satStreamCanonical x = CNF.serialize (CNF.decode x) := by
+   cases hp : CNF.parse x with
+-  | none => simp [satStreamCanonical, satSyntax_spec, CNF.decode, hp, CNF.fallback, CNF.serialize]
+-  | some φ => simp [satStreamCanonical, satSyntax_spec, CNF.decode, hp, sat_parse_repr hp, CNF.parse_serialize]
++  | none => simp [satStreamCanonical, CNF.syntaxOK_spec, CNF.decode, hp, CNF.fallback,
++      CNF.serialize]
++  | some φ => simp [satStreamCanonical, CNF.syntaxOK_spec, CNF.decode, hp, CNF.parse_repr hp, CNF.parse_serialize]
+ 
+ /-- The canonicalizer is a captured conditional over the proved full scanner. -/
+ private lemma satStreamCanonical_poly : PolyTimeComputable satStreamCanonical :=
+@@ -3301,7 +3073,7 @@ private lemma satStreamStart_poly : PolyTimeComputable (fun x => satStreamWord (
+   have h := sat_pt_cond satSyntax_poly hv hf
+   convert h using 1
+   funext x
+-  cases hs : satSyntax x <;> simp [satStreamStart, satStreamWord, hs]
++  cases hs : CNF.syntaxOK x <;> simp [satStreamStart, satStreamWord, hs]
+ 
+ /-- A nonnegative native offset clamped at the right boundary. -/
+ private def satStreamPos (x : List Bool) (i : ℕ) : Fin (x.length + 2) :=
+@@ -3781,7 +3553,7 @@ private lemma satReq_round (x : List Bool) (s : SatStreamState) :
+               fin_cases q <;> simp_all [satReqStep, satReqEmit, satReqPack, satStreamWord, satStreamRound]
+             | some lr =>
+               rcases lr with ⟨l, rest⟩
+-              have hrepr := sat_parseLit_repr hp
++              have hrepr := CNF.parseLit_repr hp
+               have htok := satToken_literal l rest
+               rw [← hrepr] at htok
+               have hpol : satReqPol (pairEncode (satStreamWord ⟨j, p, q⟩) x) = l.2 :: rest := by
+diff --git a/TCSlib/Complexity/ClassNP/Tautology.lean b/TCSlib/Complexity/ClassNP/Tautology.lean
+index 4aa18987..9afa11c6 100644
+--- a/TCSlib/Complexity/ClassNP/Tautology.lean
++++ b/TCSlib/Complexity/ClassNP/Tautology.lean
+@@ -233,105 +233,6 @@ private lemma taut_syntax_done (x : List Bool) :
+   | nil => rfl
+   | cons b x => exact taut_syntax_bad x
+ 
+-/-- The unary scanner preserves precisely the suffix after the leading run. -/
+-private lemma taut_takeTrues_shape (x : List Bool) :
+-    x = List.replicate (CNF.takeTrues x).1 true ++ (CNF.takeTrues x).2 := by
+-  induction x with
+-  | nil => rfl
+-  | cons b x ih =>
+-    cases b with
+-    | false => rfl
+-    | true => simpa [CNF.takeTrues, List.replicate_succ] using congrArg (true :: ·) ih
+-
+-/-- A successful literal parse consumes exactly the serialized literal. -/
+-private lemma taut_parseLit_shape {x r : List Bool} {ℓ : Std.Sat.Literal ℕ}
+-    (h : CNF.parseLit x = some (ℓ, r)) : x = CNF.serializeLit ℓ ++ r := by
+-  have hs := taut_takeTrues_shape x
+-  unfold CNF.parseLit at h
+-  split at h
+-  · cases h
+-  · rename_i k b rest ht
+-    cases h
+-    simpa only [ht, CNF.serializeLit, List.append_assoc,
+-      List.cons_append, List.nil_append] using hs
+-  · cases h
+-
+-/-- Successful clause parsing accounts for every consumed input bit.
+-
+-**Proof sketch.** Induct on parser fuel. The closing marker is the empty
+-clause. Otherwise a successful literal parse consumes its exact serialization
+-and the induction hypothesis accounts for the remaining clause body. -/
+-private lemma taut_parseClause_shape {fuel : ℕ} {x r : List Bool} {C : CNF.Clause ℕ}
+-    (h : CNF.parseClause fuel x = some (C, r)) : x = CNF.serializeClause C ++ r := by
+-  induction fuel generalizing x C r with
+-  | zero =>
+-    cases x with
+-    | nil => cases h
+-    | cons b x =>
+-      cases b with
+-      | false => cases h; rfl
+-      | true => cases h
+-  | succ fuel ih =>
+-    cases x with
+-    | nil => cases h
+-    | cons b x =>
+-      cases b with
+-      | false => cases h; rfl
+-      | true =>
+-        cases hl : CNF.parseLit (true :: x) with
+-        | none => simp only [CNF.parseClause, hl] at h; cases h
+-        | some p =>
+-          obtain ⟨ℓ, s⟩ := p
+-          cases hc : CNF.parseClause fuel s with
+-          | none => simp only [CNF.parseClause, hl, hc] at h; cases h
+-          | some p =>
+-            obtain ⟨D, t⟩ := p
+-            simp only [CNF.parseClause, hl, hc, Option.some.injEq, Prod.mk.injEq] at h
+-            rcases h with ⟨rfl, rfl⟩
+-            rw [taut_parseLit_shape hl, ih hc]
+-            simp [CNF.serializeClause, List.append_assoc]
+-
+-/-- Successful formula parsing accounts for every consumed input bit. -/
+-private lemma taut_parseClauses_shape {fuel : ℕ} {x r : List Bool} {φ : CNF ℕ}
+-    (h : CNF.parseClauses fuel x = some (φ, r)) : x = CNF.serialize φ ++ r := by
+-  induction fuel generalizing x φ r with
+-  | zero =>
+-    cases x with
+-    | nil => cases h
+-    | cons b x =>
+-      cases b with
+-      | false => cases h; rfl
+-      | true => cases h
+-  | succ fuel ih =>
+-    cases x with
+-    | nil => cases h
+-    | cons b x =>
+-      cases b with
+-      | false => cases h; rfl
+-      | true =>
+-        cases hc : CNF.parseClause fuel x with
+-        | none => simp only [CNF.parseClauses, hc] at h; cases h
+-        | some p =>
+-          obtain ⟨C, s⟩ := p
+-          cases hp : CNF.parseClauses fuel s with
+-          | none => simp only [CNF.parseClauses, hc, hp] at h; cases h
+-          | some p =>
+-            obtain ⟨ψ, t⟩ := p
+-            simp only [CNF.parseClauses, hc, hp, Option.some.injEq, Prod.mk.injEq] at h
+-            rcases h with ⟨rfl, rfl⟩
+-            rw [taut_parseClause_shape hc, ih hp]
+-            simp [CNF.serialize, List.append_assoc]
+-
+-/-- Every accepted string is the serialization of its exact parsed formula. -/
+-private lemma taut_parse_shape {x : List Bool} {φ : CNF ℕ}
+-    (h : CNF.parse x = some φ) : x = CNF.serialize φ := by
+-  unfold CNF.parse at h
+-  split at h
+-  · rename_i ψ hp
+-    cases h
+-    simpa only [List.append_nil] using taut_parseClauses_shape hp
+-  · cases h
+-
+ /-- The syntax-only unary pass is the parser's leading-run scan followed by
+ its terminator and polarity requirements. -/
+ private lemma taut_syntax_unary (x : List Bool) :
+@@ -382,7 +283,7 @@ private lemma taut_syntax_clause (fuel : ℕ) (x : List Bool) (hf : x.length ≤
+         | none => simp [CNF.parseClause, hl]
+         | some p =>
+           obtain ⟨ℓ, r⟩ := p
+-          have hs := congrArg List.length (taut_parseLit_shape hl)
++          have hs := congrArg List.length (CNF.parseLit_repr hl)
+           simp only [List.length_cons, List.length_append, CNF.serializeLit,
+             List.length_replicate, List.length_nil] at hs
+           have hr : r.length ≤ fuel := by simp only [List.length_cons] at hf; omega
+@@ -418,7 +319,7 @@ private lemma taut_syntax_formula (fuel : ℕ) (x : List Bool) (hf : x.length 
+         | none => simp [CNF.parseClauses, hc]
+         | some p =>
+           obtain ⟨C, r⟩ := p
+-          have hs := congrArg List.length (taut_parseClause_shape hc)
++          have hs := congrArg List.length (CNF.parseClause_repr hc)
+           simp only [List.length_append] at hs
+           have hr : r.length ≤ fuel := by omega
+           cases hp : CNF.parseClauses fuel r with
+@@ -1094,7 +995,7 @@ private lemma taut_machine_pair (x u : List Bool) (hu : u.length = x.length+1) :
+       rw [universal_pair_length]; omega)
+     simpa only [DNF.decode, CNF.decode, hp, Option.getD_none] using hm
+   | some φ =>
+-    have hx := taut_parse_shape hp
++    have hx := CNF.parse_repr hp
+     subst x
+     have hvars : ∀ C ∈ φ, ∀ ℓ ∈ C, ℓ.1 < u.length := by
+       intro C hC ℓ hℓ
+@@ -1318,7 +1219,7 @@ private lemma tautDual_output (x : List Bool) :
+       simpa [tautSyntaxAccept, hx] using hp
+     rw [tautDualOutput, if_pos hy]
+     simp only [CNF.decode, hx, Option.getD_some]
+-    rw [taut_parse_shape hx]
++    rw [CNF.parse_repr hx]
+     exact tautDual_serialize φ
+ 
+ /-- The finite controller separates validation, emission, and silent rewinds.
+diff --git a/TCSlib/Complexity/Formulas/CNFEncoding.lean b/TCSlib/Complexity/Formulas/CNFEncoding.lean
+index 4d3b3cc2..bab85876 100644
+--- a/TCSlib/Complexity/Formulas/CNFEncoding.lean
++++ b/TCSlib/Complexity/Formulas/CNFEncoding.lean
+@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
+ Authors: Seyoon Ragavan
+ -/
+ import TCSlib.Complexity.Formulas.CNF
++import Mathlib.Tactic.FinCases
+ 
+ set_option maxHeartbeats 0
+ set_option relaxedAutoImplicit false
+@@ -73,6 +74,16 @@ formulas rely on.
+   trip: serialized formulas are well-formed and decode to themselves.
+ * `Std.Sat.CNF.numVars_decode_le` — a decoded formula mentions at most `|x|`
+   variables; the bound certificate-length formulas are budgeted against.
++* `Std.Sat.CNF.parse_repr` (with `takeTrues_repr`, `parseLit_repr`,
++  `parseClause_repr`, `parseClauses_repr`) — the converse of the round trip:
++  every successful parse reconstructs its consumed input, so the well-formed
++  strings are exactly the serializations. (Promoted from `ClassNP/SAT.lean`
++  for B4, 2026-10-12.)
++* `Std.Sat.CNF.syntaxOK_spec` (with `syntaxStep`, `SyntaxSuffix`, `syntaxOK`,
++  `syntaxSuffix_cons`, `syntaxSuffix_nil`, `syntaxSuffix_run`) — the six-state
++  LL(1) grammar automaton decides well-formedness:
++  `syntaxOK x = (parse x).isSome`. (Promoted from `ClassNP/SAT.lean` for B4,
++  2026-10-12.)
+ 
+ ## References
+ 
+@@ -472,4 +483,262 @@ theorem numVars_decode_le (x : List Bool) : (decode x).numVars ≤ x.length := b
+             (parseClauses_bounds hp).2 C hC ℓ hℓ
+       | cons b r => exact Nat.zero_le _
+ 
++/-! ### Reconstruction and the grammar automaton
++
++Promoted from `ClassNP/SAT.lean` for B4, 2026-10-12: the converse of the round trip
++(every successful parse reconstructs its consumed input) and the six-state LL(1)
++automaton that decides well-formedness, so every consumer of the encoding cites one
++copy. -/
++
++/-- The unary scanner partitions its input: the counted run of `true`s followed by
++the returned suffix is the original string. -/
++theorem takeTrues_repr (x : List Bool) :
++    List.replicate (takeTrues x).1 true ++ (takeTrues x).2 = x := by
++  induction x with
++  | nil => rfl
++  | cons b x ih =>
++    cases b with
++    | false => rfl
++    | true => simpa [takeTrues, List.replicate_succ] using congrArg (true :: ·) ih
++
++/-- A successful literal parse reconstructs exactly the consumed input: if
++`parseLit x = some (ℓ, r)`, then `x` is the serialization of `ℓ` followed by `r`. -/
++theorem parseLit_repr {x r : List Bool} {ℓ : Literal ℕ}
++    (h : parseLit x = some (ℓ, r)) : x = serializeLit ℓ ++ r := by
++  have ht := takeTrues_repr x
++  unfold parseLit at h
++  split at h
++  · cases h
++  · rename_i k b rest he
++    cases h
++    simpa [he, serializeLit, List.append_assoc] using ht.symm
++  · cases h
++
++/-- Clause parsing inverts clause serialization: if `parseClause fuel x = some (C, r)`
++(for any fuel), then `x` is the serialization of `C` followed by `r` — the parse
++reconstructs its terminator as well as every literal.
++
++**Proof sketch.** Induct on fuel. The leading zero case succeeds even at
++zero fuel. Otherwise invert both successful subparses and concatenate their
++reconstruction equalities; no premature end of the input can succeed. -/
++theorem parseClause_repr {fuel : ℕ} {x r : List Bool} {C : Clause ℕ}
++    (h : parseClause fuel x = some (C, r)) : x = serializeClause C ++ r := by
++  induction fuel generalizing x C r with
++  | zero =>
++    cases x with
++    | nil => cases h
++    | cons b s =>
++      cases b with
++      | false => cases h; rfl
++      | true => cases h
++  | succ fuel ih =>
++    cases x with
++    | nil => cases h
++    | cons b s =>
++      cases b with
++      | false => cases h; rfl
++      | true =>
++        cases hl : parseLit (true :: s) with
++        | none => simp [parseClause, hl] at h
++        | some p =>
++          obtain ⟨ℓ, t⟩ := p
++          cases hc : parseClause fuel t with
++          | none => simp [parseClause, hl, hc] at h
++          | some p =>
++            obtain ⟨D, v⟩ := p
++            simp only [parseClause, hl, hc, Option.some.injEq, Prod.mk.injEq] at h
++            rcases h with ⟨rfl, rfl⟩
++            rw [parseLit_repr hl, ih hc]
++            simp [serializeClause, List.append_assoc]
++
++/-- Clause-list parsing inverts formula serialization: if
++`parseClauses fuel x = some (φ, r)` (for any fuel), then `x` is the serialization of
++`φ` followed by `r` — the parse reconstructs every clause marker and the final
++terminator.
++
++**Proof sketch.** Induct on fuel, retaining the unconsumed suffix. A clause
++marker spends one unit of fuel before the clause and formula subparses.
++The leading zero case works independently of the remaining fuel. -/
++theorem parseClauses_repr {fuel : ℕ} {x r : List Bool} {φ : CNF ℕ}
++    (h : parseClauses fuel x = some (φ, r)) : x = serialize φ ++ r := by
++  induction fuel generalizing x φ r with
++  | zero =>
++    cases x with
++    | nil => cases h
++    | cons b s =>
++      cases b with
++      | false => cases h; rfl
++      | true => cases h
++  | succ fuel ih =>
++    cases x with
++    | nil => cases h
++    | cons b s =>
++      cases b with
++      | false => cases h; rfl
++      | true =>
++        cases hc : parseClause fuel s with
++        | none => simp [parseClauses, hc] at h
++        | some p =>
++          obtain ⟨C, t⟩ := p
++          cases ht : parseClauses fuel t with
++          | none => simp [parseClauses, hc, ht] at h
++          | some p =>
++            obtain ⟨ψ, v⟩ := p
++            simp only [parseClauses, hc, ht, Option.some.injEq, Prod.mk.injEq] at h
++            rcases h with ⟨rfl, rfl⟩
++            rw [parseClause_repr hc, ih ht]
++            simp [serialize, serializeClause, List.append_assoc]
++
++/-- **Exact-consumption parsing inverts serialization**: if `parse x = some φ`, then
++`x = serialize φ`. With `Std.Sat.CNF.parse_serialize`, the well-formed strings are
++exactly the serializations. -/
++theorem parse_repr {x : List Bool} {φ : CNF ℕ}
++    (h : parse x = some φ) : x = serialize φ := by
++  unfold parse at h
++  split at h
++  · rename_i ψ hp
++    cases h
++    simpa using parseClauses_repr hp
++  · cases h
++
++/-- The transition function of the six-state LL(1) grammar automaton for the
++serialization. The states are the six grammar positions: formula (`0`), clause (`1`),
++unary index (`2`), polarity (`3`), exact end (`4`), and error (`5`); the exact-end
++state moves to error on any trailing bit. -/
++def syntaxStep (q : Fin 6) (b : Bool) : Fin 6 :=
++  match q.val with
++  | 0 => if b then 1 else 4
++  | 1 => if b then 2 else 0
++  | 2 => if b then 2 else 3
++  | 3 => 1
++  | _ => 5
++
++/-- The residual grammar at each automaton state: `SyntaxSuffix q x` holds when `x`
++is a well-formed continuation from grammar position `q` — a serialized formula
++(state `0`); a serialized clause followed by a serialized formula (`1`); the rest of
++a unary index, its terminator and polarity bit, then a clause and a formula (`2`); a
++polarity bit, then a clause and a formula (`3`); the empty string (`4`); nothing (`5`).
++Unary indices remain unbounded strings; the finite control stores only their grammar
++position. -/
++def SyntaxSuffix (q : Fin 6) (x : List Bool) : Prop :=
++  match q.val with
++  | 0 => ∃ φ : CNF ℕ, x = serialize φ
++  | 1 => ∃ (C : Clause ℕ) (φ : CNF ℕ), x = serializeClause C ++ serialize φ
++  | 2 => ∃ (v : ℕ) (b : Bool) (C : Clause ℕ) (φ : CNF ℕ),
++      x = List.replicate v true ++ [false, b] ++ serializeClause C ++ serialize φ
++  | 3 => ∃ (b : Bool) (C : Clause ℕ) (φ : CNF ℕ),
++      x = b :: (serializeClause C ++ serialize φ)
++  | 4 => x = []
++  | _ => False
++
++/-- Each automaton transition consumes exactly one grammar bit: `b :: x` is a
++well-formed continuation from state `q` iff `x` is one from `syntaxStep q b`.
++
++**Proof sketch.** Invert the first clause, literal, or unary-run constructor
++as appropriate. Formula and clause zero-markers are distinct states; the
++polarity state consumes its bit unconditionally. No bit can follow the
++exact-end state, which is how trailing garbage forces the fallback. -/
++theorem syntaxSuffix_cons (q : Fin 6) (b : Bool) (x : List Bool) :
++    SyntaxSuffix q (b :: x) ↔ SyntaxSuffix (syntaxStep q b) x := by
++  fin_cases q <;> cases b
++  · change (∃ φ, false :: x = serialize φ) ↔ x = []
++    constructor
++    · rintro ⟨φ, h⟩; cases φ <;> simpa [serialize] using h
++    · rintro rfl; exact ⟨[], rfl⟩
++  · change (∃ φ, true :: x = serialize φ) ↔
++      ∃ C φ, x = serializeClause C ++ serialize φ
++    constructor
++    · rintro ⟨φ, h⟩
++      cases φ with
++      | nil => simp [serialize] at h
++      | cons C φ => exact ⟨C, φ, by simpa [serialize, List.append_assoc] using h⟩
++    · rintro ⟨C, φ, rfl⟩
++      exact ⟨C :: φ, by simp [serialize, List.append_assoc]⟩
++  · change (∃ C φ, false :: x = serializeClause C ++ serialize φ) ↔
++      ∃ φ, x = serialize φ
++    constructor
++    · rintro ⟨C, φ, h⟩
++      cases C with
++      | nil => exact ⟨φ, by simpa [serializeClause] using h⟩
++      | cons ℓ C => simp [serializeClause, serializeLit, List.replicate_succ] at h
++    · rintro ⟨φ, rfl⟩; exact ⟨[], φ, rfl⟩
++  · change (∃ C φ, true :: x = serializeClause C ++ serialize φ) ↔
++      ∃ v b C φ, x = List.replicate v true ++ [false, b] ++
++        serializeClause C ++ serialize φ
++    constructor
++    · rintro ⟨C, φ, h⟩
++      cases C with
++      | nil => simp [serializeClause] at h
++      | cons ℓ C =>
++        exact ⟨ℓ.1, ℓ.2, C, φ, by simpa [serializeClause, serializeLit,
++          List.replicate_succ, List.append_assoc] using h⟩
++    · rintro ⟨v, b, C, φ, rfl⟩
++      exact ⟨(v, b) :: C, φ, by simp [serializeClause, serializeLit,
++        List.replicate_succ, List.append_assoc]⟩
++  · change (∃ v b C φ, false :: x = List.replicate v true ++ [false, b] ++
++      serializeClause C ++ serialize φ) ↔
++        ∃ b C φ, x = b :: (serializeClause C ++ serialize φ)
++    constructor
++    · rintro ⟨v, b, C, φ, h⟩
++      cases v with
++      | zero => exact ⟨b, C, φ, by simpa [List.append_assoc] using h⟩
++      | succ v => simp [List.replicate_succ] at h
++    · rintro ⟨b, C, φ, rfl⟩; exact ⟨0, b, C, φ, by simp⟩
++  · change (∃ v b C φ, true :: x = List.replicate v true ++ [false, b] ++
++      serializeClause C ++ serialize φ) ↔
++        ∃ v b C φ, x = List.replicate v true ++ [false, b] ++
++          serializeClause C ++ serialize φ
++    constructor
++    · rintro ⟨v, b, C, φ, h⟩
++      cases v with
++      | zero => simp at h
++      | succ v => exact ⟨v, b, C, φ, by simpa [List.replicate_succ] using h⟩
++    · rintro ⟨v, b, C, φ, rfl⟩
++      exact ⟨v + 1, b, C, φ, by simp [List.replicate_succ]⟩
++  · change (∃ b C φ, false :: x = b :: (serializeClause C ++ serialize φ)) ↔
++      ∃ C φ, x = serializeClause C ++ serialize φ
++    simp
++  · change (∃ b C φ, true :: x = b :: (serializeClause C ++ serialize φ)) ↔
++      ∃ C φ, x = serializeClause C ++ serialize φ
++    simp
++  all_goals simp [SyntaxSuffix, syntaxStep]
++
++/-- At end of input, exactly the exact-end state accepts: the empty string is a
++well-formed continuation from state `q` iff `q = 4`. -/
++theorem syntaxSuffix_nil (q : Fin 6) : SyntaxSuffix q [] ↔ q = 4 := by
++  fin_cases q <;> simp [SyntaxSuffix, serialize, serializeClause,
++    List.append_eq_nil_iff]
++
++/-- The complete finite-state scan recognizes precisely the residual grammar: `x` is
++a well-formed continuation from state `q` iff running the automaton from `q` over
++`x` ends in the exact-end state `4`. -/
++theorem syntaxSuffix_run (q : Fin 6) (x : List Bool) :
++    SyntaxSuffix q x ↔ x.foldl syntaxStep q = 4 := by
++  induction x generalizing q with
++  | nil => exact syntaxSuffix_nil q
++  | cons b x ih => rw [syntaxSuffix_cons, List.foldl_cons, ← ih]
++
++/-- The Boolean verdict of the complete syntax pass: run the automaton from the
++formula state `0` over `x` and accept iff it ends in the exact-end state `4`. -/
++def syntaxOK (x : List Bool) : Bool := decide (x.foldl syntaxStep 0 = 4)
++
++/-- **The grammar automaton decides well-formedness**: `syntaxOK x = (parse x).isSome`
++for every string `x`, including empty input, unfinished literals, and trailing
++garbage.
++
++**Proof sketch.** The residual-language invariant identifies scan acceptance
++with the range of serialization. Successful parsing reconstructs its entire
++input, and the existing parser round trip proves the converse. -/
++theorem syntaxOK_spec (x : List Bool) : syntaxOK x = (parse x).isSome := by
++  apply Bool.eq_iff_iff.mpr
++  simp only [syntaxOK, decide_eq_true_eq]
++  rw [← syntaxSuffix_run]
++  change (∃ φ, x = serialize φ) ↔ (parse x).isSome = true
++  constructor
++  · rintro ⟨φ, rfl⟩; simp [parse_serialize]
++  · intro h
++    cases hp : parse x with
++    | none => simp [hp] at h
++    | some φ => exact ⟨φ, parse_repr hp⟩
++
+ end Std.Sat.CNF
+diff --git a/TCSlib/Complexity/TuringMachine/Build/Catalog.lean b/TCSlib/Complexity/TuringMachine/Build/Catalog.lean
+index 2ae9750d..e05270f5 100644
+--- a/TCSlib/Complexity/TuringMachine/Build/Catalog.lean
++++ b/TCSlib/Complexity/TuringMachine/Build/Catalog.lean
+@@ -124,6 +124,11 @@ identities `Turing.scanResult_fold`, `Turing.scanResult_map`,
+ `Turing.scanResult_shiftRight`, `Turing.scanResult_shiftLeft`,
+ `Turing.scanResult_carry`.
+ 
++* `Turing.MultiTapeTM.spaceUsedByTape_le_card_Icc` — a head confined to an
++  integer interval visits at most its cardinality (the head-interval bound
++  the Z4 space annotation consumes). (Moved from `Build/Zone.lean` for B4,
++  2026-10-12.)
++
+ ## References
+ 
+ * [AB09] S. Arora, B. Barak, *Computational Complexity: A Modern Approach*,
+@@ -378,6 +383,25 @@ theorem catalog_trace_run {Symbol : Type*} {x : List Symbol} {S : Type*} (M : Mu
+               show ¬t + 1 ≤ L by omega, show ¬t ≤ 2 * L + 1 by omega,
+               show ¬t + 1 ≤ 2 * L + 1 by omega] using hD
+ 
++/-- A head confined to an integer interval visits at most its cardinality.
++
++(Moved from `Build/Zone.lean` for B4, 2026-10-12.)
++
++**Proof sketch.** The visited set is a finite image contained in the
++interval by hypothesis; `Finset.card_le_card` and `Int.card_Icc` finish. -/
++theorem MultiTapeTM.spaceUsedByTape_le_card_Icc {k : ℕ} {Symbol State : Type*}
++    {input : List Symbol} (tm : MultiTapeTM k Symbol State)
++    (d : Cfg k Symbol State input) (t : ℕ) (i : Fin k) (lo hi : ℤ)
++    (h : ∀ u ≤ t, (tm.runFrom d u).workTapePos i ∈ Finset.Icc lo hi) :
++    tm.spaceUsedByTape d t i ≤ (hi + 1 - lo).toNat := by
++  unfold MultiTapeTM.spaceUsedByTape
++  calc
++    _ ≤ (Finset.Icc lo hi).card := Finset.card_le_card (by
++      intro p hp
++      obtain ⟨u, hu, rfl⟩ := Finset.mem_image.mp hp
++      exact h u (by simpa only [Finset.mem_range, Nat.lt_succ_iff] using hu))
++    _ = _ := Int.card_Icc lo hi
++
+ /-- A head confined to the inclusive interval from minus one to `L` visits
+ at most `L+2` cells. -/
+ private lemma catalog_space_bound {S : Type*} (M : MultiTapeTM k Bool S)
+diff --git a/TCSlib/Complexity/TuringMachine/Build/Zone.lean b/TCSlib/Complexity/TuringMachine/Build/Zone.lean
+index 831d1160..878ee6bc 100644
+--- a/TCSlib/Complexity/TuringMachine/Build/Zone.lean
++++ b/TCSlib/Complexity/TuringMachine/Build/Zone.lean
+@@ -103,9 +103,10 @@ blocked-cascade regressions).
+   machine rows: one two-tape machine per direction and side, level in
+   unary on the scratch tape, exact `O(2^i)` budgets, visited sets inside
+   the level-`i` physical extent, realizing the total guarded op.
+-* `Turing.zoneTape_blank_outside`,
+-  `Turing.MultiTapeTM.spaceUsedByTape_le_card_Icc` — the cardinality
+-  exports the Z4 space annotation consumes.
++* `Turing.zoneTape_blank_outside` — the cardinality export the Z4 space
++  annotation consumes, together with
++  `Turing.MultiTapeTM.spaceUsedByTape_le_card_Icc` (moved to
++  `Build/Catalog.lean` for B4, 2026-10-12).
+ 
+ ## References
+ 
+@@ -1169,23 +1170,4 @@ theorem exists_zoneShiftOutTM (side : Bool) :
+ 
+ end FinTM
+ 
+-/-! ### The cardinality export (consumed by Z4) -/
+-
+-/-- A head confined to an integer interval visits at most its cardinality.
+-
+-**Proof sketch.** The visited set is a finite image contained in the
+-interval by hypothesis; `Finset.card_le_card` and `Int.card_Icc` finish. -/
+-theorem MultiTapeTM.spaceUsedByTape_le_card_Icc {k : ℕ} {Symbol State : Type*}
+-    {input : List Symbol} (tm : MultiTapeTM k Symbol State)
+-    (d : Cfg k Symbol State input) (t : ℕ) (i : Fin k) (lo hi : ℤ)
+-    (h : ∀ u ≤ t, (tm.runFrom d u).workTapePos i ∈ Finset.Icc lo hi) :
+-    tm.spaceUsedByTape d t i ≤ (hi + 1 - lo).toNat := by
+-  unfold MultiTapeTM.spaceUsedByTape
+-  calc
+-    _ ≤ (Finset.Icc lo hi).card := Finset.card_le_card (by
+-      intro p hp
+-      obtain ⟨u, hu, rfl⟩ := Finset.mem_image.mp hp
+-      exact h u (by simpa only [Finset.mem_range, Nat.lt_succ_iff] using hu))
+-    _ = _ := Int.card_Icc lo hi
+-
+ end Turing

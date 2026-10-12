@@ -103,9 +103,10 @@ blocked-cascade regressions).
   machine rows: one two-tape machine per direction and side, level in
   unary on the scratch tape, exact `O(2^i)` budgets, visited sets inside
   the level-`i` physical extent, realizing the total guarded op.
-* `Turing.zoneTape_blank_outside`,
-  `Turing.MultiTapeTM.spaceUsedByTape_le_card_Icc` — the cardinality
-  exports the Z4 space annotation consumes.
+* `Turing.zoneTape_blank_outside` — the cardinality export the Z4 space
+  annotation consumes, together with
+  `Turing.MultiTapeTM.spaceUsedByTape_le_card_Icc` (moved to
+  `Build/Catalog.lean` for B4, 2026-10-12).
 
 ## References
 
@@ -1168,24 +1169,5 @@ theorem exists_zoneShiftOutTM (side : Bool) :
   sorry
 
 end FinTM
-
-/-! ### The cardinality export (consumed by Z4) -/
-
-/-- A head confined to an integer interval visits at most its cardinality.
-
-**Proof sketch.** The visited set is a finite image contained in the
-interval by hypothesis; `Finset.card_le_card` and `Int.card_Icc` finish. -/
-theorem MultiTapeTM.spaceUsedByTape_le_card_Icc {k : ℕ} {Symbol State : Type*}
-    {input : List Symbol} (tm : MultiTapeTM k Symbol State)
-    (d : Cfg k Symbol State input) (t : ℕ) (i : Fin k) (lo hi : ℤ)
-    (h : ∀ u ≤ t, (tm.runFrom d u).workTapePos i ∈ Finset.Icc lo hi) :
-    tm.spaceUsedByTape d t i ≤ (hi + 1 - lo).toNat := by
-  unfold MultiTapeTM.spaceUsedByTape
-  calc
-    _ ≤ (Finset.Icc lo hi).card := Finset.card_le_card (by
-      intro p hp
-      obtain ⟨u, hu, rfl⟩ := Finset.mem_image.mp hp
-      exact h u (by simpa only [Finset.mem_range, Nat.lt_succ_iff] using hu))
-    _ = _ := Int.card_Icc lo hi
 
 end Turing

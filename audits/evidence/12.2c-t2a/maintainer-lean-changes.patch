@@ -1,0 +1,255 @@
+commit 7c2b240d69b6d2b692ba9f3664b4afd0c122cb05
+Author: Seyoon Ragavan <complexzetaprime@gmail.com>
+Date:   Mon Oct 12 02:47:04 2026 -0400
+
+    12.2c T2a: FAC-1 facade wiring, H-1 program refresh, item 6's Embed export
+    
+    - FAC-1: TCSlib/Complexity/TuringMachine.lean imports the seven campaign files
+      it was missing (Build/VirtualInput, Build/Zone, Codes2Tape,
+      NondeterministicSpace, OracleAgreement, OracleFinite, OracleNondeterministic),
+      each with a Contents entry. Codes2Tape and Build/Zone were unreachable from
+      TCSlib.lean, so CI never built them. The colleague-owned EmitIter files stay
+      out (already reachable). Stale "Statement phase" labels refreshed.
+    - H-1: audits/programs/ch1-infra-BridgeExportAxioms.lean expectations refreshed.
+      All 12 targets are now admission-free, and the program passes.
+    - Item 6's prerequisite export: Turing.embedEmitTM_tr in Build/Embed.lean, the
+      forwarding transformer's transition at the action level. Additive; axioms
+      [propext, Quot.sound]. A probe derives Hardness's selector form from it.
+    - Checks: audits/logs/12.2c-t2a-checks.log, -stylelint.log,
+      12.2c-item6-export-freeze.log.
+    
+    Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+    (cherry picked from commit 13199bdae077276c9441ffb4a7554600d0907f19)
+
+diff --git a/TCSlib/Complexity/TuringMachine.lean b/TCSlib/Complexity/TuringMachine.lean
+index 044fd1af..72ad9d05 100644
+--- a/TCSlib/Complexity/TuringMachine.lean
++++ b/TCSlib/Complexity/TuringMachine.lean
+@@ -8,7 +8,11 @@ import TCSlib.Complexity.TuringMachine.Deterministic
+ import TCSlib.Complexity.TuringMachine.StateRenaming
+ import TCSlib.Complexity.TuringMachine.Finite
+ import TCSlib.Complexity.TuringMachine.Nondeterministic
++import TCSlib.Complexity.TuringMachine.NondeterministicSpace
+ import TCSlib.Complexity.TuringMachine.Oracle
++import TCSlib.Complexity.TuringMachine.OracleFinite
++import TCSlib.Complexity.TuringMachine.OracleNondeterministic
++import TCSlib.Complexity.TuringMachine.OracleAgreement
+ import TCSlib.Complexity.TuringMachine.Simulation
+ import TCSlib.Complexity.TuringMachine.Sweep
+ import TCSlib.Complexity.TuringMachine.Composition
+@@ -22,6 +26,8 @@ import TCSlib.Complexity.TuringMachine.Build.Loop
+ import TCSlib.Complexity.TuringMachine.Build.Primitives
+ import TCSlib.Complexity.TuringMachine.Build.Embed
+ import TCSlib.Complexity.TuringMachine.Build.Seam
++import TCSlib.Complexity.TuringMachine.Build.VirtualInput
++import TCSlib.Complexity.TuringMachine.Build.Zone
+ import TCSlib.Complexity.TuringMachine.Build.Catalog
+ import TCSlib.Complexity.TuringMachine.Build.OracleCall
+ import TCSlib.Complexity.TuringMachine.SymbolLift
+@@ -46,6 +52,7 @@ import TCSlib.Complexity.TuringMachine.Robustness.Oblivious
+ import TCSlib.Complexity.TuringMachine.Encoding
+ import TCSlib.Complexity.TuringMachine.CodeParser
+ import TCSlib.Complexity.TuringMachine.CodeFormat
++import TCSlib.Complexity.TuringMachine.Codes2Tape
+ import TCSlib.Complexity.TuringMachine.MathlibBridge
+ import TCSlib.Complexity.TuringMachine.UniversalStartup
+ import TCSlib.Complexity.TuringMachine.UniversalInterpreter
+@@ -73,6 +80,8 @@ for the local modifications.
+ ## Contents
+ 
+ * `CodeFormat` — shared transition-record and table-format parsers, with the one-tape instance.
++* `Codes2Tape` — the deterministic two-work-tape code scheme (§13, Z3), an instance of
++  `CodeFormat`, with its uniform scheme from `CodeSimulator`.
+ 
+ * `Configuration` — configurations `Cfg`, actions `Action` and their application; the
+   space measure. Nothing here mentions a machine (vendored).
+@@ -85,8 +94,16 @@ for the local modifications.
+ * `Nondeterministic` — binary-choice nondeterministic machines [AB09, §2.1.2]:
+   choice-word run semantics, all-branch halting, the bundled `FinNDTM` layer, and the
+   deterministic embedding (the classes live in `ClassNP/NTIME`).
++* `NondeterministicSpace` — the space measure of binary-choice NDTMs along choice-word
++  runs: visited cells, as for the deterministic `SPACE` [AB09, Definition 4.1].
+ * `Oracle` — oracle machines `OracleTM` [AB09, §3.4]: same configurations, oracle-dependent
+   step; the embedding of plain machines and its oracle-independence sanity theorems.
++* `OracleFinite` — the bundled finite layer `FinOracleTM`, carrying well-formedness as a
++  field, over which the oracle classes are stated [AB09, Definition 3.5].
++* `OracleNondeterministic` — nondeterministic oracle machines [AB09, Definition 3.4], for
++  `NPOracle` and the relativization theorem.
++* `OracleAgreement` — oracle locality: runs under oracles agreeing on every submitted
++  string coincide [AB09, Theorem 3.7].
+ * `NDCodes` — codes for nondeterministic machines [AB09, §1.4, §3.2]: the two-work-tape
+   coded normal form, its fixed serialization, and the scheme laws with the effective
+   (canonizer) form.
+@@ -107,6 +124,10 @@ for the local modifications.
+   transformers with their returning flavors, seam composition with the
+   general-configuration forms and the release adapter, and the space-annotated
+   catalog rows.
++* `Build/VirtualInput` — virtual-input hosting (`machine-library-design.md` §13, Z1): a
++  machine whose input is a buffered work-tape word runs inside a host, one step per step.
++* `Build/Zone` — the zoned tape carrier (§13, Z2), under the §13d revision: its two
++  superseded shift rows are retired through the G3/G4 gate.
+ * `Build/OracleCall` — the oracle-machine rows (`machine-library-design.md` §12.9):
+   W1 capture onto the query tape, landing in `qQuery`, and the two-step answer tail.
+ * `SymbolLift` — the embedding transport (`machine-library-design.md` §12.8, R8.0): a
+@@ -117,18 +138,20 @@ for the local modifications.
+ * `Build/Scan`, `Build/InputCall`, `Build/CfgRecord` — the §12.8 rows, with the field
+   layout, compare, seeks and two-pass scan in `Build/Catalog`'s Part 3: the constant and
+   advancing writers and the native-input copy and fold; the input call and input seek;
+-  the rich configuration-record carrier and the record rows. Statement phase: contracts
+-  stated with sketches, fills pending.
++  the rich configuration-record carrier and the record rows. All proved (§12.8 fill gate
++  closed).
+ * `Build/InputLength`, `Build/RecordTable` — the deferred §12.8 rows (`machine-library-design.md`
+   §12.8b): the input length `Nat.bits |x|` (R8.5c), and the table layer over records (header,
+   sentinels, find, append, template, init, validity, odometer next, the end-to-start adapter).
+-  Statement phase.
++  Fills in progress; each module's header carries its status.
+ * `Build/OracleSim`, `Build/CertShell` — oracle-call simulation (§12.10, the B1b extension): one
+   plain host simulating an oracle machine with queries answered by a plain decider, the
+-  choice-word machine of an oracle NDTM, and the plain certificate shell. Statement phase.
++  choice-word machine of an oracle NDTM, and the plain certificate shell. Fills in progress;
++  each module's header carries its status.
+ * `CodeSimulator` — the format-parameterized uniform simulator over item 8's code formats
+   (B5a): one bounded-acceptance interpreter and canonizer whose one- and two-tape instances are
+-  the EXPCOM and Codes2Tape code schemes. Statement phase.
++  the EXPCOM and Codes2Tape code schemes. Fills in progress; the module header carries its
++  status.
+ * `ChoiceWords` — certificate and choice words: split uniqueness for length-determined
+   suffixes, the exact NP certificate length's monotonicity, the choice budget, and the
+   truncation of halted branch runs. Shared by the plain Theorem 2.6, the oracle simulation's
+diff --git a/TCSlib/Complexity/TuringMachine/Build/Embed.lean b/TCSlib/Complexity/TuringMachine/Build/Embed.lean
+index efbad4ce..99baed4b 100644
+--- a/TCSlib/Complexity/TuringMachine/Build/Embed.lean
++++ b/TCSlib/Complexity/TuringMachine/Build/Embed.lean
+@@ -83,6 +83,9 @@ then consumes as its left exit (`Turing.captureAction`'s and
+ 
+ * `Turing.MultiTapeTM.runFrom_mapState_of_agreeOn` — injective state transport
+   followed by guarded agreement on the host carrier.
++* `Turing.embedEmitTM_tr` — the forwarding transformer's transition at the action level:
++  the source action on each selected tape, `(none, 0)` on every other tape, and the input
++  move, output and successor state unchanged (12.2c item 6's export).
+ * `Turing.embedSilentTM_runFrom`, `Turing.embedEmitTM_runFrom` — lockstep:
+   the transported run is the transport of the source run, same step count.
+ * `Turing.embedSilentTM_frame`, `Turing.embedEmitTM_frame` — tapes outside
+@@ -252,6 +255,29 @@ def embedEmitTM (ι : Fin m ↪ Fin k) (M : MultiTapeTM m Symbol S) :
+   tr := fun q inp w =>
+     embedActionCore ι none (M.tr q inp fun i => w (ι i))
+ 
++/-- **R1, the forwarding transformer's transition** (12.2c item 6's prerequisite export;
++user, 2026-10-10, from the RB5 review). One host transition of `embedEmitTM ι M` is the
++source transition, read through `ι` and transported along it. Each selected host tape
++`ι i` performs the source's tape-`i` action. Every unselected tape is stationary and
++unwritten, `(none, 0)`. The input move, the output and the successor state are the
++source's. Consumers cite this rather than unfolding the private slot search. [Bon26]
++
++**Proof sketch.** `embedEmitTM` is `embedActionCore ι none` of the source action. The
++selected and unselected tapes are the slot inverse's two equations, `embedSlot ι (ι i) =
++some i` and `embedSlot ι j = none` off `Set.range ι`. The other three fields are copied
++verbatim. -/
++theorem embedEmitTM_tr (ι : Fin m ↪ Fin k) (M : MultiTapeTM m Symbol S) (q : S)
++    (inp : Option Symbol) (w : Fin k → Option Symbol) :
++    ((embedEmitTM ι M).tr q inp w).inputTape = (M.tr q inp fun i => w (ι i)).inputTape ∧
++      (∀ i, ((embedEmitTM ι M).tr q inp w).workTapes (ι i) =
++        (M.tr q inp fun i => w (ι i)).workTapes i) ∧
++      (∀ j, j ∉ Set.range ι → ((embedEmitTM ι M).tr q inp w).workTapes j = (none, 0)) ∧
++      ((embedEmitTM ι M).tr q inp w).output = (M.tr q inp fun i => w (ι i)).output ∧
++      ((embedEmitTM ι M).tr q inp w).state = (M.tr q inp fun i => w (ι i)).state := by
++  refine ⟨rfl, fun i => ?_, fun j hj => ?_, rfl, rfl⟩
++  · simp [embedEmitTM, embedActionCore, embedSlot_selected]
++  · simp [embedEmitTM, embedActionCore, embedSlot_unselected ι j hj]
++
+ /-- Applying the silent core commutes with configuration transport.
+ **Proof sketch.** Selected tapes perform the source action. Off-bank tapes
+ are stationary, except that capture appends the emitted symbol at the old
+diff --git a/audits/programs/ch1-infra-BridgeExportAxioms.lean b/audits/programs/ch1-infra-BridgeExportAxioms.lean
+index cce07ec0..ab40fdc8 100644
+--- a/audits/programs/ch1-infra-BridgeExportAxioms.lean
++++ b/audits/programs/ch1-infra-BridgeExportAxioms.lean
+@@ -5,6 +5,10 @@ import Lean
+ set_option maxHeartbeats 0
+ 
+ -- Maintainer axiom attestation: Chapter-1 bridge export + TMSAT bridge discharge.
++-- Refreshed 2026-10-12 (backlog H-1). Written 2026-10-03, when the TMSAT targets and the
++-- epoch-2 cluster still had admission roots; `TMSAT_mem_NP` was proved on 2026-10-04
++-- (`9f748601`), and every target below is now admission-free. The program is a
++-- regression check: each target must keep no admission root and only the standard axioms.
+ -- (1) The export and the discharged bridge must be admission-free.
+ #print axioms Turing.timed_universal_concrete
+ #print axioms Complexity.timed_universal_quantitative
+@@ -14,7 +18,7 @@ set_option maxHeartbeats 0
+ #print axioms Turing.universal_quadratic
+ #print axioms Turing.exists_effectiveMachineCode
+ #print axioms Complexity.HALT_not_computable
+--- (3) The TMSAT targets' remaining roots shrink exactly as expected.
++-- (3) The TMSAT targets, now proved, stay admission-free.
+ #print axioms Complexity.TMSAT_mem_NP
+ #print axioms Complexity.TMSAT_NPHard
+ #print axioms Complexity.TMSAT_NPComplete
+@@ -62,13 +66,16 @@ run_cmd do
+     (``Turing.timed_universal_concrete, []),
+     (``Complexity.timed_universal_quantitative, []),
+     (``Turing.timed_universal, []),
+-    (``Complexity.TMSAT_mem_NP, [``Complexity.TMSAT_mem_NP]),
+-    (``Complexity.TMSAT_NPHard, [``Complexity.TMSAT_NPHard]),
+-    (``Complexity.TMSAT_NPComplete,
+-      [``Complexity.TMSAT_mem_NP, ``Complexity.TMSAT_NPHard]),
+-    -- Regression: the epoch-2 A/C cluster is untouched by this change.
+-    (``Complexity.NP_subset_EXP, [`Complexity.enumMachine_contracts]),
+-    (``Complexity.HALT_NPHard, [`Complexity.enumMachine_contracts])]
++    (``Turing.universal, []),
++    (``Turing.universal_quadratic, []),
++    (``Turing.exists_effectiveMachineCode, []),
++    (``Complexity.HALT_not_computable, []),
++    (``Complexity.TMSAT_mem_NP, []),
++    (``Complexity.TMSAT_NPHard, []),
++    (``Complexity.TMSAT_NPComplete, []),
++    -- Regression: the epoch-2 A/C cluster, now admission-free.
++    (``Complexity.NP_subset_EXP, []),
++    (``Complexity.HALT_NPHard, [])]
+   for (name, expectedRaw) in expectations do
+     let expected := expectedRaw.eraseDups.mergeSort (fun a b => a.toString ≤ b.toString)
+     let found := userRoots env name
+@@ -82,6 +89,6 @@ run_cmd do
+       throwError "Unexpected sorryAx for {name}"
+     unless expected.isEmpty || ax.contains ``sorryAx do
+       throwError "Expected sorryAx for {name} but it is absent"
+-  logInfo "BRIDGE AUDIT PASS: the export and the discharged bridge are admission-free; TMSAT roots shrank exactly to their D-sites; headline and epoch-2 regressions unchanged."
++  logInfo "BRIDGE AUDIT PASS: the export, the discharged bridge, the chapter-1 headline set, the TMSAT targets and the epoch-2 cluster are all admission-free."
+ 
+ end BridgeAudit
+commit 49fccb6b38fcca2d53621ed558754cab6e63a9a1
+Author: Seyoon Ragavan <complexzetaprime@gmail.com>
+Date:   Mon Oct 12 10:42:34 2026 -0400
+
+    exists_tableFindTM at Γ : Type (option (b)); backlog UNIV-1 for option (a)
+    
+    The record-table continuation escalated that exists_tableFindTM, stated for
+    Γ : Type*, cannot use its mandated loop: counterLoopTMVia and phaseHostTM take
+    their alphabet in Type. The user chose to restate the row at Γ : Type, since
+    every consumer's alphabet (RecSym Q T) lies in Type. One statement changes,
+    flagged in its docstring; RecordTable elaborates with 0 errors. The option of
+    generalizing the two hosts is recorded as backlog UNIV-1 (optional, 12.2c).
+    
+    Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+
+diff --git a/TCSlib/Complexity/TuringMachine/Build/RecordTable.lean b/TCSlib/Complexity/TuringMachine/Build/RecordTable.lean
+index 2a3304c6..d22a7049 100644
+--- a/TCSlib/Complexity/TuringMachine/Build/RecordTable.lean
++++ b/TCSlib/Complexity/TuringMachine/Build/RecordTable.lean
+@@ -1267,8 +1267,14 @@ the scratch counter. The rounds cost a constant times the entries' layouts, and
+ the decrements at most `4r + 2|w|` for `r` rounds
+ (`Turing.counterOverhead_le_of_le`). The value `m > 0` is necessary: with empty
+ entries, the tables `[]` and `[[]]` lay out identically and the verdict would
+-have to differ. -/
+-theorem exists_tableFindTM {Γ : Type*} [DecidableEq Γ] (e : Bool ↪ Γ) (m : ℕ) (hm : 0 < m)
++have to differ.
++
++**Universe (maintainer fix, 2026-10-12; flagged).** The alphabet is `Γ : Type`, not `Type*`.
++The mandated loop `Turing.counterLoopTMVia` and the phase host `Turing.phaseHostTM` take their
++alphabet in `Type`, so the route could not be instantiated at an arbitrary universe (the record
++tables continuation's escalation). Every consumer's alphabet, `RecSym Q T`, lies in `Type`.
++Generalizing the two hosts instead is the optional backlog item UNIV-1. -/
++theorem exists_tableFindTM {Γ : Type} [DecidableEq Γ] (e : Bool ↪ Γ) (m : ℕ) (hm : 0 < m)
+     {A : Type} [Fintype A] [DecidableEq A] (δ : A → Option Γ → A) (a₀ : A) (acc : A → Bool) :
+     ∃ (K : ℕ) (P : Type) (_ : Fintype P) (_ : DecidableEq P) (R : MultiTapeTM (K + 2) Γ P)
+       (entry yes no : P) (C : ℕ), yes ≠ no ∧

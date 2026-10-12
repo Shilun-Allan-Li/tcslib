@@ -1,0 +1,38 @@
+# 12.2c T2a pre-replay checks (maintainer, read-only elaboration against the tip-consistent replay tree)
+## FAC-1: the extended facade TCSlib/Complexity/TuringMachine.lean elaborates: exit 0, 0 errors (all 56 imports together; no name clash)
+## FAC-1: all 15 TCSlib.Complexity root imports (NPReductions excepted, no olean in the snapshot) elaborated together with the extended facade: exit 0, 0 errors
+## FAC-1: static public-name check: the 49 public names of Codes2Tape and Build/Zone, the two files newly reachable from TCSlib.lean, against the 8,365 public names of every other TCSlib file: no collision
+## item 6: Build/Embed.lean elaborates with the export: exit 0, 0 errors; the 2 warnings (unused hcap) predate the change (the pre-edit file gives the same 2)
+## item 6: audits/evidence/12.2c-t2a/EmbedExportProbe.lean.txt, appended to a scratch copy of Embed.lean: exit 0, 0 errors; it derives the selector form Hardness's clPlacedAction_eq needs from the export alone. Output:
+@embedEmitTM_tr : ∀ {m k : ℕ} {S : Type u_1} {Symbol : Type u_2} (ι : Fin m ↪ Fin k) (M : MultiTapeTM m Symbol S)
+  (q : S) (inp : Option Symbol) (w : Fin k → Option Symbol),
+  ((embedEmitTM ι M).tr q inp w).inputTape = (M.tr q inp fun i => w (ι i)).inputTape ∧
+    (∀ (i : Fin m), ((embedEmitTM ι M).tr q inp w).workTapes (ι i) = (M.tr q inp fun i => w (ι i)).workTapes i) ∧
+      (∀ j ∉ Set.range ⇑ι, ((embedEmitTM ι M).tr q inp w).workTapes j = (none, 0)) ∧
+        ((embedEmitTM ι M).tr q inp w).output = (M.tr q inp fun i => w (ι i)).output ∧
+          ((embedEmitTM ι M).tr q inp w).state = (M.tr q inp fun i => w (ι i)).state
+'Turing.embedEmitTM_tr' depends on axioms: [propext, Quot.sound]
+## H-1: audits/programs/ch1-infra-BridgeExportAxioms.lean (refreshed), elaborated read-only: exit 0. Output:
+'Turing.timed_universal_concrete' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.timed_universal_quantitative' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.timed_universal' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.universal' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.universal_quadratic' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.exists_effectiveMachineCode' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.HALT_not_computable' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.TMSAT_mem_NP' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.TMSAT_NPHard' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.TMSAT_NPComplete' depends on axioms: [propext, Classical.choice, Quot.sound]
+ROOTS Turing.timed_universal_concrete: []
+ROOTS Complexity.timed_universal_quantitative: []
+ROOTS Turing.timed_universal: []
+ROOTS Turing.universal: []
+ROOTS Turing.universal_quadratic: []
+ROOTS Turing.exists_effectiveMachineCode: []
+ROOTS Complexity.HALT_not_computable: []
+ROOTS Complexity.TMSAT_mem_NP: []
+ROOTS Complexity.TMSAT_NPHard: []
+ROOTS Complexity.TMSAT_NPComplete: []
+ROOTS Complexity.NP_subset_EXP: []
+ROOTS Complexity.HALT_NPHard: []
+BRIDGE AUDIT PASS: the export, the discharged bridge, the chapter-1 headline set, the TMSAT targets and the epoch-2 cluster are all admission-free.

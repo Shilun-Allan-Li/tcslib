@@ -7,6 +7,9 @@ import TCSlib.Complexity.TuringMachine.CodeFormat
 import TCSlib.Complexity.TuringMachine.Build.CounterLoop
 import TCSlib.Complexity.TuringMachine.Build.Seam
 import TCSlib.Complexity.TuringMachine.Build.VirtualInput
+-- B5a continuation: sanctioned imports for the physical binary-header loader.
+import TCSlib.Complexity.TuringMachine.Build.Primitives
+import TCSlib.Complexity.TuringMachine.Build.InputCall
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -37,9 +40,10 @@ the uniform form required by Example 3.6(3), audited at phase P3.2 round 2]
   state-indexed work, so a huge declared count is never expanded in unary.
 * **The clock is §12.7's counter loop** (`Turing.counterLoopTM`) over the
   deadline's binary word; a simulated halt is a live body exit.
-* **Statements only.** The two headline contracts are sorried with sketches
-  (pre-issue statement phase of batch B5a); the definitions and the
-  one-work-tape instance are proved.
+* **Status update (B5a continuation): partial.** The two headline contracts
+  retain their original admissions. The native-input binary-header loader and
+  the physical fail-fast binary length guard are proved; the remaining parser
+  phases, complete canonizer, and generic interpreter are still open.
 
 ## Main definitions
 
@@ -312,6 +316,373 @@ private lemma grammar_guard_states (n s : ℕ)
     simpa using Nat.mul_le_mul_right (n + 1) hc
   exact hs.trans h
 
+/-! ### Physical binary-header loading (B5a continuation) -/
+
+/-- The undoubled header, or the empty word when the pair grammar fails.
+The later validation phase must distinguish failure from a valid zero header. -/
+private def canonHeader (α : List Bool) : List Bool :=
+  ((pairDecode α).map Prod.fst).getD []
+
+/-- Loading a doubled header never produces more bits than the source input. -/
+private lemma canonHeader_length (α : List Bool) : (canonHeader α).length ≤ α.length := by
+  cases hp : pairDecode α with
+  | none => simp [canonHeader, hp]
+  | some p =>
+    rcases p with ⟨bits, rest⟩
+    have he := congrArg List.length (eq_pairEncode_of_pairDecode α bits rest hp)
+    rw [length_pairEncode] at he
+    simp only [canonHeader, hp, Option.map_some, Option.getD_some]
+    omega
+
+/-- A physical linear-time header loader installs the binary header on tape
+zero and restores a clean seam with the original native input available.
+
+**Proof sketch.** Install the public pair-first extractor through the public
+native-input call row. The header length is at most the original input length,
+so the call row's ledger is linear as well. No parsing or host trace is copied. -/
+private lemma exists_canonHeaderCall :
+    ∃ (C : FinTM Bool) (entry exit : C.State) (a : ℕ), 0 < C.k ∧
+      ∀ α : List Bool, ∃ t ≤ a * (α.length + 1), 0 < t ∧
+        (∀ u, 0 < u → u < t →
+          (C.tm.runFrom (Cfg.ofWords (input := α) entry (fun _ => [])) u).state ≠
+            some exit) ∧
+        C.tm.runFrom (Cfg.ofWords (input := α) entry (fun _ => [])) t =
+          Cfg.ofWords exit (stateWord C.k (canonHeader α)) := by
+  obtain ⟨M, a, hM⟩ := FinTM.computesFunInTime_pairFst
+  obtain ⟨C, entry, exit, c, hk, hC⟩ :=
+    FinTM.exists_inputCallTM M canonHeader (fun n => a * (n + 1)) hM
+  refine ⟨C, entry, exit, c * (a + 2), hk, ?_⟩
+  intro α
+  obtain ⟨t, ht, hpos, hcut, hrun⟩ := hC α
+  refine ⟨t, ht.trans ?_, hpos, hcut, hrun⟩
+  have hlen := canonHeader_length α
+  calc
+    c * (a * (α.length + 1) + α.length + (canonHeader α).length + 1) ≤
+        c * (a * (α.length + 1) + 2 * (α.length + 1)) :=
+      Nat.mul_le_mul_left c (by omega)
+    _ = _ := by ring
+
+/-! ### Physical fail-fast length guard (B5a continuation)
+
+The catalog has whole-input scans but no fixed-block input scan with a short-input
+exit. The following body supplies that missing finite controller; the binary
+countdown itself is the public `counterLoopTM`, not a new loop implementation.
+The body has no work tapes and never emits. Its block length is `b + 1`, so
+even the zero-format-guard case can use the positive grammar minimum.
+-/
+
+/-- Progress through a fixed positive block; `none` is the short-input exit. -/
+private def guardPhase (b u : ℕ) : Option (Fin (b + 1)) :=
+  some ⟨u % (b + 1), Nat.mod_lt _ (Nat.succ_pos _)⟩
+
+/-- Read at most `b + 1` actual input symbols, returning to the anchor after
+one whole block and taking a distinct live exit on a boundary blank. -/
+private def guardBlockTM (b : ℕ) : MultiTapeTM 0 Bool (Option (Fin (b + 1))) where
+  q₀ := guardPhase b 0
+  tr := fun q inp _ => match q with
+    | none => inputMoveAction 0 none
+    | some i => if inp.isSome then
+        inputMoveAction 1 (guardPhase b (i.val + 1))
+      else inputMoveAction 0 none
+
+/-- A block-scan configuration after `j` input cells have been consumed. -/
+private def guardCfg (b : ℕ) (x : List Bool) (q : Option (Fin (b + 1)))
+    (j : ℕ) (hj : j ≤ x.length) (out : List Bool) :
+    Cfg 0 Bool (Option (Fin (b + 1))) x :=
+  ⟨some q, ⟨j + 1, by omega⟩, Fin.elim0, Fin.elim0, out⟩
+
+/-- The finite block controller advances one cell without writing or emitting.
+The input-only action law supplies all unchanged configuration fields. -/
+private lemma guardBlock_step (b : ℕ) (x : List Bool) (u j : ℕ)
+    (hu : u < b + 1) (hj : j < x.length) (out : List Bool) :
+    (guardBlockTM b).step (guardCfg b x (guardPhase b u) j (by omega) out) =
+      guardCfg b x (guardPhase b (u + 1)) (j + 1) (by omega) out := by
+  have hr := inputSymbolInner
+    (cfg := guardCfg b x (guardPhase b u) j (by omega) out) j (by dsimp [guardCfg]; omega) hj
+  rw [step_of_inputMoveAction (guardBlockTM b) _ (q' := guardPhase b (u + 1)) 1 rfl (by
+    change (if (guardCfg b x (guardPhase b u) j (by omega) out).inputSymbol.isSome then
+      inputMoveAction 1 (guardPhase b (u % (b + 1) + 1)) else inputMoveAction 0 none) = _
+    rw [hr]
+    simp only [Option.isSome_some, if_true, Nat.mod_eq_of_lt hu])]
+  apply Cfg.ext_zero_tapes
+  · rfl
+  · apply Fin.ext
+    change (moveInputPos (guardCfg b x (guardPhase b u) j (by omega) out).inputPos
+      SignType.pos).val = j + 1 + 1
+    rw [moveInputPos_pos_of_ne_right _ (by dsimp [guardCfg]; omega)]
+    rfl
+  · rfl
+
+/-- Every available prefix of one block is traversed in exactly its length.
+
+**Proof sketch.** Induct on the traversed prefix and apply the input-only
+one-step contract. The upper bound prevents an intermediate anchor return. -/
+private lemma guardBlock_run (b : ℕ) (x : List Bool) (j : ℕ)
+    (hj : j ≤ x.length) (out : List Bool) (u : ℕ)
+    (hu : u ≤ b + 1) (hlen : j + u ≤ x.length) :
+    (guardBlockTM b).runFrom (guardCfg b x (guardPhase b 0) j hj out) u =
+      guardCfg b x (guardPhase b u) (j + u) hlen out := by
+  induction u with
+  | zero => rfl
+  | succ u ih =>
+    rw [MultiTapeTM.runFrom_succ_eq_step', ih (by omega) (by omega)]
+    simpa only [Nat.add_assoc] using
+      guardBlock_step b x u (j + u) (by omega) (by omega) out
+
+/-- At the right input blank, the next transition takes the short-input exit. -/
+private lemma guardBlock_blank (b : ℕ) (x : List Bool) (u : ℕ) (out : List Bool) :
+    (guardBlockTM b).step
+        (guardCfg b x (guardPhase b u) x.length le_rfl out) =
+      guardCfg b x none x.length le_rfl out := by
+  rw [step_of_inputMoveAction (guardBlockTM b) _ (q' := none) 0 rfl (by
+    simp [guardBlockTM, guardPhase, Cfg.inputSymbol, guardCfg])]
+  simp only [moveInputPos_zero]
+  rfl
+
+/-- A short block exits immediately after reading its remaining symbols.
+In particular the running time does not depend on the declared state count. -/
+private lemma guardBlock_short (b : ℕ) (x : List Bool) (j : ℕ)
+    (hj : j ≤ x.length) (hshort : x.length - j < b + 1) (out : List Bool) :
+    (guardBlockTM b).runFrom (guardCfg b x (guardPhase b 0) j hj out)
+        (x.length - j + 1) = guardCfg b x none x.length le_rfl out := by
+  rw [MultiTapeTM.runFrom_succ_eq_step',
+    guardBlock_run b x j hj out (x.length - j) (by omega) (by omega)]
+  have hpos : j + (x.length - j) = x.length := by omega
+  simpa only [hpos] using guardBlock_blank b x (x.length - j) out
+
+/-- Exact duration of a block: its fixed size, or the available suffix plus
+one transition detecting the blank, whichever is smaller. -/
+private def guardTime (b : ℕ) {x : List Bool}
+    (c : Cfg 0 Bool (Option (Fin (b + 1))) x) : ℕ :=
+  min (b + 1) (x.length + 2 - c.inputPos.val)
+
+/-- Before the end of a block, neither live exit has been reached.
+
+**Proof sketch.** Every strict-interior time is smaller than the block size
+and traverses only existing input cells. Its progress index is strictly
+positive and below the modulus, so it is neither the anchor nor the failure. -/
+private lemma guardBlock_interior (b : ℕ) (x : List Bool) (j : ℕ)
+    (hj : j ≤ x.length) (out : List Bool) (u : ℕ) (hu : 0 < u)
+    (ht : u < guardTime b (guardCfg b x (guardPhase b 0) j hj out)) :
+    ∃ s, ((guardBlockTM b).runFrom
+        (guardCfg b x (guardPhase b 0) j hj out) u).state = some s ∧
+      s ≠ guardPhase b 0 ∧ s ≠ none := by
+  have hb : u < b + 1 := lt_of_lt_of_le ht (Nat.min_le_left _ _)
+  have hl : j + u ≤ x.length := by
+    have := lt_of_lt_of_le ht (Nat.min_le_right _ _)
+    dsimp [guardCfg] at this
+    omega
+  rw [guardBlock_run b x j hj out u (by omega) hl]
+  refine ⟨guardPhase b u, rfl, ?_, Option.some_ne_none _⟩
+  intro he
+  have hv := congrArg (fun q => q.map Fin.val) he
+  simp [guardPhase, Nat.mod_eq_of_lt hb] at hv
+  omega
+
+/-- The physical binary guard is the shared counter loop with the block
+controller as body. It has exactly one work tape, holding the binary count. -/
+private def binaryGuardTM (b : ℕ) :
+    MultiTapeTM 1 Bool (CounterLoopState (Option (Fin (b + 1)))) :=
+  counterLoopTM (guardBlockTM b) (guardPhase b 0) (some none)
+
+/-- Guard entry with the binary counter delimited at the origin. The original
+input remains native, so the caller can rewind and parse it after the guard. -/
+private def binaryGuardStart (b : ℕ) (x : List Bool) (j : ℕ)
+    (hj : j ≤ x.length) (out w : List Bool) :
+    Cfg 1 Bool (CounterLoopState (Option (Fin (b + 1)))) x :=
+  counterLoopCfg (some (.dec .run))
+    (guardCfg b x (guardPhase b 0) j hj out) (FinTM.bufferTape w) 0
+
+/-- While whole blocks fit, the body orbit advances by their combined length.
+
+**Proof sketch.** Induct on the number of blocks. The next full block takes
+`b + 1` transitions by `guardBlock_run`, returns its finite progress index to
+zero, and preserves the output. This is a body-orbit calculation; the physical
+counter is handled solely by the public counter-loop contracts. -/
+private lemma guardBlock_orbit (b : ℕ) (x : List Bool) (j : ℕ)
+    (hj : j ≤ x.length) (out : List Bool) (r : ℕ)
+    (hr : j + (b + 1) * r ≤ x.length) :
+    counterLoopOrbit (guardBlockTM b) (guardTime b)
+        (guardCfg b x (guardPhase b 0) j hj out) r =
+      guardCfg b x (guardPhase b 0) (j + (b + 1) * r) hr out := by
+  induction r with
+  | zero => rfl
+  | succ r ih =>
+    have hprev : j + (b + 1) * r ≤ x.length := by
+      rw [Nat.mul_succ] at hr
+      omega
+    change (fun c => (guardBlockTM b).runFrom c (guardTime b c))^[r + 1] _ = _
+    rw [Function.iterate_succ_apply']
+    change (guardBlockTM b).runFrom
+      (counterLoopOrbit (guardBlockTM b) (guardTime b)
+        (guardCfg b x (guardPhase b 0) j hj out) r)
+      (guardTime b (counterLoopOrbit (guardBlockTM b) (guardTime b)
+        (guardCfg b x (guardPhase b 0) j hj out) r)) = _
+    rw [ih hprev]
+    have ht : guardTime b
+        (guardCfg b x (guardPhase b 0) (j + (b + 1) * r) hprev out) = b + 1 := by
+      dsimp [guardTime, guardCfg]
+      rw [Nat.min_eq_left]
+      rw [Nat.mul_succ] at hr
+      omega
+    rw [ht, guardBlock_run b x _ hprev out (b + 1) le_rfl (by
+      rw [Nat.mul_succ] at hr
+      omega)]
+    simp only [guardPhase, Nat.mod_self, Nat.zero_mod, Nat.mul_succ, Nat.add_assoc]
+
+/-- Each block is a positive first-return-or-exit segment, including an empty
+suffix. This is the hypothesis shared by the returning and escaping host rows. -/
+private lemma guardBlock_segment (b : ℕ) (x : List Bool) (j : ℕ)
+    (hj : j ≤ x.length) (out : List Bool) :
+    let c := guardCfg b x (guardPhase b 0) j hj out
+    c.state = some (guardPhase b 0) ∧ 0 < guardTime b c ∧
+      (∀ u, 0 < u → u < guardTime b c →
+        ∃ s, ((guardBlockTM b).runFrom c u).state = some s ∧
+          s ≠ guardPhase b 0 ∧ s ≠ none) := by
+  refine ⟨rfl, ?_, guardBlock_interior b x j hj out⟩
+  dsimp [guardTime, guardCfg]
+  omega
+
+/-- If the requested whole blocks fit, the physical guard reaches `done`,
+silently, in linear time in the input length and the binary counter width.
+
+**Proof sketch.** The body orbit supplies the counter host's first-return
+hypotheses. Its exact run is the existing `counterLoopTM_run_done`; its
+ledger is `counterLoop_time_le`. Both the number of rounds and their total
+input consumption are bounded by the actual input length. -/
+private lemma binaryGuard_done (b : ℕ) (x : List Bool) (j : ℕ)
+    (hj : j ≤ x.length) (out w : List Bool)
+    (hfit : j + (b + 1) * Nat.ofDigits 2 (w.map Bool.toNat) ≤ x.length) :
+    ∃ T ≤ 5 * x.length + 2 * w.length + 2,
+      let c := (binaryGuardTM b).runFrom (binaryGuardStart b x j hj out w) T
+      c.state = some .done ∧ c.output = out ∧
+        c.inputPos.val = j + (b + 1) * Nat.ofDigits 2 (w.map Bool.toNat) + 1 ∧
+        (∀ u < T,
+          ((binaryGuardTM b).runFrom (binaryGuardStart b x j hj out w) u).state ≠
+            some .done ∧
+          ((binaryGuardTM b).runFrom (binaryGuardStart b x j hj out w) u).state ≠
+            some .escape) := by
+  let d := Nat.ofDigits 2 (w.map Bool.toNat)
+  let c := guardCfg b x (guardPhase b 0) j hj out
+  have hpos (r : ℕ) (hr : r ≤ d) : j + (b + 1) * r ≤ x.length :=
+    (Nat.add_le_add_left (Nat.mul_le_mul_left (b + 1) hr) j).trans hfit
+  have horbit (r : ℕ) (hr : r ≤ d) :
+      counterLoopOrbit (guardBlockTM b) (guardTime b) c r =
+        guardCfg b x (guardPhase b 0) (j + (b + 1) * r) (hpos r hr) out :=
+    guardBlock_orbit b x j hj out r (hpos r hr)
+  let T := (∑ r ∈ Finset.range d,
+    guardTime b (counterLoopOrbit (guardBlockTM b) (guardTime b) c r)) +
+      counterOverhead w (d + 1)
+  have hrun := counterLoopTM_run_done (guardBlockTM b) (guardPhase b 0) (some none)
+    (guardTime b) c w (FinTM.bufferTape w) 0 (by intro p _ _; simp) d rfl
+    (by
+      intro r hr
+      rw [horbit r (by omega), horbit (r + 1) (by omega)]
+      obtain ⟨hs, ht, hi⟩ := guardBlock_segment b x _ (hpos r (by omega)) out
+      refine ⟨hs, ht, ?_, rfl⟩
+      intro u hu hut
+      obtain ⟨s, hsu, hsa, hse⟩ := hi u hu hut
+      exact ⟨s, hsu, hsa, fun he => hse (Option.some.inj he).symm⟩) T rfl
+  have ht := counterLoop_time_le (guardBlockTM b) (guardTime b) c w d rfl (b + 1)
+    (fun _ _ => Nat.min_le_left _ _)
+  have hd : d ≤ (b + 1) * d := by
+    simpa using Nat.mul_le_mul_right d (show 1 ≤ b + 1 by omega)
+  refine ⟨T, ?_, ?_⟩
+  · dsimp [T]
+    rw [Nat.mul_comm d (b + 1)] at ht
+    dsimp [d] at ht hd ⊢
+    omega
+  · dsimp only
+    have he : (binaryGuardTM b).runFrom (binaryGuardStart b x j hj out w) T = _ := hrun.1
+    rw [he, horbit d le_rfl]
+    exact ⟨rfl, rfl, rfl, hrun.2.1⟩
+
+/-- If the requested blocks do not fit, the physical guard reaches `escape`
+in time independent of the value represented by the binary counter.
+
+**Proof sketch.** Divide the available input length by the positive block
+size. Exactly that many full body rounds fit, and the next round detects the
+right blank. Apply the public escaping counter-host contract and its prefix
+amortization bound; there are at most `|x| + 1` attempted rounds. -/
+private lemma binaryGuard_escape (b : ℕ) (x : List Bool) (j : ℕ)
+    (hj : j ≤ x.length) (out w : List Bool)
+    (hshort : x.length < j + (b + 1) * Nat.ofDigits 2 (w.map Bool.toNat)) :
+    ∃ T ≤ (b + 5) * (x.length + 1) + 2 * w.length,
+      let c := (binaryGuardTM b).runFrom (binaryGuardStart b x j hj out w) T
+      c.state = some .escape ∧ c.output = out ∧ c.inputPos.val = x.length + 1 ∧
+        (∀ u < T,
+          ((binaryGuardTM b).runFrom (binaryGuardStart b x j hj out w) u).state ≠
+            some .done ∧
+          ((binaryGuardTM b).runFrom (binaryGuardStart b x j hj out w) u).state ≠
+            some .escape) := by
+  let r₀ := (x.length - j) / (b + 1)
+  let c := guardCfg b x (guardPhase b 0) j hj out
+  have hdiv := Nat.mod_add_div (x.length - j) (b + 1)
+  have hmod := Nat.mod_lt (x.length - j) (Nat.succ_pos b)
+  have hstart : j + (b + 1) * r₀ ≤ x.length := by dsimp [r₀]; omega
+  have hlast : x.length - (j + (b + 1) * r₀) < b + 1 := by
+    rw [← Nat.sub_sub]
+    change (x.length - j) - (b + 1) * ((x.length - j) / (b + 1)) < b + 1
+    rw [← Nat.mod_eq_sub_mul_div]
+    exact hmod
+  have hr₀ : r₀ < Nat.ofDigits 2 (w.map Bool.toNat) := by
+    by_contra hn
+    have hm := Nat.mul_le_mul_left (b + 1) (Nat.le_of_not_gt hn)
+    omega
+  have hpos (r : ℕ) (hr : r ≤ r₀) : j + (b + 1) * r ≤ x.length :=
+    (Nat.add_le_add_left (Nat.mul_le_mul_left (b + 1) hr) j).trans hstart
+  have horbit (r : ℕ) (hr : r ≤ r₀) :
+      counterLoopOrbit (guardBlockTM b) (guardTime b) c r =
+        guardCfg b x (guardPhase b 0) (j + (b + 1) * r) (hpos r hr) out :=
+    guardBlock_orbit b x j hj out r (hpos r hr)
+  have hexit : counterLoopOrbit (guardBlockTM b) (guardTime b) c (r₀ + 1) =
+      guardCfg b x none x.length le_rfl out := by
+    change (fun z => (guardBlockTM b).runFrom z (guardTime b z))^[r₀ + 1] c = _
+    rw [Function.iterate_succ_apply']
+    change (guardBlockTM b).runFrom
+      (counterLoopOrbit (guardBlockTM b) (guardTime b) c r₀)
+      (guardTime b (counterLoopOrbit (guardBlockTM b) (guardTime b) c r₀)) = _
+    rw [horbit r₀ le_rfl]
+    have ht : guardTime b
+        (guardCfg b x (guardPhase b 0) (j + (b + 1) * r₀) hstart out) =
+        x.length - (j + (b + 1) * r₀) + 1 := by
+      dsimp [guardTime, guardCfg]
+      omega
+    rw [ht]
+    exact guardBlock_short b x _ hstart hlast out
+  let T := (∑ r ∈ Finset.range (r₀ + 1),
+    guardTime b (counterLoopOrbit (guardBlockTM b) (guardTime b) c r)) +
+      counterOverhead w (r₀ + 1)
+  have hrun := counterLoopTM_run_escape (guardBlockTM b) (guardPhase b 0) none
+    (by simp [guardPhase]) (guardTime b) c w (FinTM.bufferTape w) 0
+    (by intro p _ _; simp) r₀ hr₀ (by
+      intro r hr
+      rw [horbit r hr]
+      exact guardBlock_segment b x _ (hpos r hr) out)
+    (by rw [hexit]; rfl) T rfl
+  have hs : (∑ r ∈ Finset.range (r₀ + 1),
+      guardTime b (counterLoopOrbit (guardBlockTM b) (guardTime b) c r)) ≤
+        (r₀ + 1) * (b + 1) := by
+    calc
+      _ ≤ ∑ _r ∈ Finset.range (r₀ + 1), (b + 1) :=
+        Finset.sum_le_sum (fun _ _ => Nat.min_le_left _ _)
+      _ = _ := by simp
+  have hc := counterOverhead_le_of_le w (r₀ + 1) (by omega)
+  have hn : r₀ + 1 ≤ x.length + 1 := by
+    have := Nat.mul_le_mul_right r₀ (show 1 ≤ b + 1 by omega)
+    simp only [one_mul] at this
+    omega
+  refine ⟨T, ?_, ?_⟩
+  · calc
+      T ≤ (r₀ + 1) * (b + 1) + (4 * (r₀ + 1) + 2 * w.length) :=
+        Nat.add_le_add hs hc
+      _ = (b + 5) * (r₀ + 1) + 2 * w.length := by ring
+      _ ≤ _ := Nat.add_le_add_right (Nat.mul_le_mul_left (b + 5) hn) _
+  · dsimp only
+    have he : (binaryGuardTM b).runFrom (binaryGuardStart b x j hj out w) T = _ := hrun.1
+    rw [he, hexit]
+    exact ⟨rfl, rfl, rfl, hrun.2.1⟩
+
 /-- **A polynomial-time canonizer** (spec, fill pending — batch B5a): one finite
 binary machine computes the fixed serialization of the decoded machine within
 `d · (|α| + 1)^d` steps. [AB09, §1.4; the P3.2 round-2 construction]
@@ -342,7 +713,17 @@ in `|α|`; take `d` at least the coefficient and the exponent.
 **Fill appendix (B5a partial).** The positive grammar bound, `guardedScan_eq`,
 and `decode_of_grammar_guard` are proved below the format layer, without a
 positivity premise on `F.guard`. The finite binary parser and its polynomial
-runtime proof remain open; this target retains its original admission. -/
+runtime proof remain open; this target retains its original admission.
+
+**Fill appendix (B5a continuation, partial).** `exists_canonHeaderCall` loads
+the undoubled header through the two public call/extraction rows in linear
+time. `binaryGuard_done` and `binaryGuard_escape` prove the physical positive
+block-length comparison from a preloaded binary counter, including the first
+exit, silence, native-input position and a linear bound independent of the
+counter's value. The host is the existing `counterLoopTM`. Loading and guard
+are not yet composed: header validity/canonicality, the `n + 1` setup, the
+format guard, record grammar and output/fallback phases remain open. No new
+private admission is introduced. -/
 theorem exists_polyCanonizer :
     ∃ (C : FinTM Bool) (d : ℕ),
       C.ComputesFunInTime (fun α => F.serialize (F.decode α)) fun n => d * (n + 1) ^ d := by
