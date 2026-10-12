@@ -1109,7 +1109,7 @@
  
 --- upstream/ThreeSumApsp/Lang/Tactics.lean
 +++ tcslib/TCSlib/Programs/Light/Tactics.lean
-@@ -4,6 +4,19 @@
+@@ -4,6 +4,21 @@
  SPDX-License-Identifier: Apache-2.0
 +
 +Vendored from [AFM26] anthropics/formal-math (https://github.com/anthropics/formal-math), folder
@@ -1118,6 +1118,8 @@
 +* removed the Lean module-system syntax (`module`, `public import`, `@[expose] public section`)
 +  for compatibility with our v4.25.0 toolchain;
 +* moved to `TCSlib/Programs/Light/Tactics.lean`, with imports remapped;
++* documentation: qualify the opacity promise for the `with_reducible` replacement (fidelity gate, finding 2);
++* documentation: as above, for the module-level discussion;
 +* replaced the tactic combinator `with_unfolding_none`, absent in v4.25, by `with_reducible`;
 +* added a `## References` section citing [AFM26];
 +* added the repository-standard `set_option` header.
@@ -1131,8 +1133,10 @@
 +set_option relaxedAutoImplicit false
 +set_option autoImplicit false
  
-@@ -41,5 +54,9 @@
+@@ -41,5 +56,11 @@
  definition that stands at the head of a sequence stays closed: it is a piece, for `light_piece`.
++(Vendoring note: at our Lean v4.25.0 pin the closing combinator is `with_reducible`, so a
++*reducible* definition, such as an `abbrev`, may still unfold.)
 +
 +## References
 +
@@ -1142,17 +1146,21 @@
 -@[expose] public section
 +section
  
-@@ -60,3 +77,3 @@
+@@ -58,5 +79,6 @@
+ /-- Brackets to the right, and a `skip` before the rest of the program is dropped.  No definition is
+-opened. -/
++opened, except that at our Lean v4.25.0 pin reducible definitions (abbreviations) may unfold: the
++upstream no-unfolding combinator, absent in v4.25, is replaced by `with_reducible` (vendoring note). -/
  macro "light_assoc" : tactic =>
 -  `(tactic| repeat with_unfolding_none first | refine Ends.seqAssoc ?_ | refine Ends.skipThen ?_)
 +  `(tactic| repeat with_reducible first | refine Ends.seqAssoc ?_ | refine Ends.skipThen ?_)
  
-@@ -69,3 +86,3 @@
+@@ -69,3 +91,3 @@
  -/
 -macro "light_skip" : tactic => `(tactic| with_unfolding_none refine Ends.skip ?_)
 +macro "light_skip" : tactic => `(tactic| with_reducible refine Ends.skip ?_)
  
-@@ -174,2 +191,3 @@
+@@ -174,2 +196,3 @@
  end Light
 +end
  

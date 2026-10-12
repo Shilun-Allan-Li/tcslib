@@ -30,5 +30,5 @@ facade(f'{wt}/TCSlib/Programs.lean', 'Programs',
        'RAM, and the compiler between them, vendored from [AFM26]; and the compatibility names for our Mathlib pin. '
        'Every module of the area is imported directly; the topic facades are `TCSlib.Programs.Util`, '
        '`TCSlib.Programs.WordRAM` and `TCSlib.Programs.Light`.',
-       [f'{base}/Compat.lean'] + tree(f'{base}/Util') + tree(f'{base}/WordRAM') + tree(f'{base}/Light'))
+       [f'{base}/Compat.lean', f'{base}/Util.lean', f'{base}/WordRAM.lean', f'{base}/Light.lean'] + tree(f'{base}/Util') + tree(f'{base}/WordRAM') + tree(f'{base}/Light'))
 print('facades written')

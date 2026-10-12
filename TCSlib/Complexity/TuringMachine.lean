@@ -127,7 +127,7 @@ for the local modifications.
 * `Build/VirtualInput` — virtual-input hosting (`machine-library-design.md` §13, Z1): a
   machine whose input is a buffered work-tape word runs inside a host, one step per step.
 * `Build/Zone` — the zoned tape carrier (§13, Z2), under the §13d revision: its two
-  superseded shift rows are retired through the G3/G4 gate.
+  superseded shift rows are scheduled for retirement through the G3/G4 gate.
 * `Build/OracleCall` — the oracle-machine rows (`machine-library-design.md` §12.9):
   W1 capture onto the query tape, landing in `qQuery`, and the two-step answer tail.
 * `SymbolLift` — the embedding transport (`machine-library-design.md` §12.8, R8.0): a
@@ -162,8 +162,7 @@ for the local modifications.
   machine-construction library (`machine-library-design.md`): the `Cfg.ofWords` seam
   discipline, the capture/silence and halt-redirect wrappers with the timed branch,
   the bounded-loop combinator, and the primitive catalog of timed string functions.
-  Spec phase: contracts stated, fills pending, flagged for the shared infrastructure
-  audit round.
+  Proved, and audited at the shared-infrastructure gates.
 * `Robustness/AlphabetReduction` — binary alphabet suffices [AB09, Claim 1.5].
 * `Robustness/SingleTape` — one work tape suffices, quadratically [AB09, Claim 1.6].
 * `Robustness/Bidirectional` — unidirectional tape use suffices [AB09, Claim 1.8].

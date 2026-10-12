@@ -16,7 +16,7 @@ for m, (nm, rel, notes) in zip(ups, rows):
     d = list(difflib.unified_diff(a, b, f'upstream/{upath}', f'tcslib/{rel}', lineterm='', n=1))
     out += d
     sub = [x for x in d if x[:1] in '+-' and not x.startswith(('+++', '---')) and not mech(x)]
-    table.append(f'| `{upath}` | `{rel}` | {len(a)} → {len(b)} | {len(sub)} |')
+    table.append(f'| `{upath}` | `{rel}` | {len(open(f"{up}/{upath}", encoding="utf-8").read().splitlines())} → {len(open(f"{wt}/{rel}", encoding="utf-8").read().splitlines())} | {len(sub)} |')
 open(f'{ev}/upstream-to-vendored.diff', 'w', encoding='utf-8').write('\n'.join(out) + '\n')
 open(f'{ev}/file-map.md', 'w', encoding='utf-8').write(
   '# Vendored files: upstream → tcslib\n\nUpstream: anthropics/formal-math, folder `3sum-apsp`, commit '
