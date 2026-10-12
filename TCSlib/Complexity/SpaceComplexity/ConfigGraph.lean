@@ -665,7 +665,6 @@ private theorem s1b_record_accepts (c : Cfg k Bool S x) :
     (c.state = none ∧ sumCode (outSummary c.output) = sumCode .accept) ↔
       c.Halted ∧ c.output = [true] := by
   rw [sumCode_injective.eq_iff, outSummary_eq_accept_iff]
-  rfl
 
 end FinNDTM
 
