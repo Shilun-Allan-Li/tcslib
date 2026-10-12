@@ -221,7 +221,9 @@ catalog calls plus the semantic lemmas the agents already proved.
 
 - Harvest = reimplement against the ABI using the original proof as
   template. Originals (2A/2B/2C/2D privates, audited epoch-1 material) stay
-  byte-identical; no re-audit of closed work.
+  byte-identical; no re-audit of closed work. **Lifted for the foundation
+  migration (user, 2026-10-12): see §16.** Migrated files are rewritten, with a
+  freeze check, a replay and a gate for each change.
 - Deduplication (retiring privates in favor of library calls) is an **E5
   closure task**, recorded in the backlog, not done opportunistically.
 - 2C's pending shared-lemma requests (`prefixTM`/`fixedPair`) are subsumed
@@ -827,7 +829,8 @@ for here).
   sharpness).
 * **12.2** R3's file layout — **answered (user, 2026-10-08): option (a)**, a
   new `Build/Catalog.lean` holding the new rows and the space lemmas for the
-  old rows, keeping `Primitives.lean` byte-identical; a backlog item records
+  old rows, keeping `Primitives.lean` byte-identical (**the byte-identity is
+  lifted for the §16 migration, user 2026-10-12**); a backlog item records
   the later refactor toward the symmetrical per-theme layout (option (c)),
   via the D7 split window.
 * **12.3** Space retro-annotation — **answered (user, 2026-10-08): the refined
@@ -3041,7 +3044,7 @@ and a statement gate before a second consumer is briefed.
 
 | # | Host | Status | Named consumers |
 |---|---|---|---|
-| 0 | **Framed-contract structure**: machine, entry/exit states, precondition, endpoint as a function of the start configuration, time, no-earlier-exit cut, head envelope; sequencing, phase host, R1 embedding, lift and counter loop as structure-to-structure theorems, space derived | to design | every host below; removes the inline restatements of the delimited-word precondition |
+| 0 | **Framed-contract structure**: machine, entry/exit states, precondition, endpoint as a function of the start configuration, time, no-earlier-exit cut, head envelope; sequencing, phase host, R1 embedding, lift and counter loop as structure-to-structure theorems, space derived | to design; **requirements revised by §16** (exact time and cut first-class) | every host below; removes the inline restatements of the delimited-word precondition |
 | H1 | **AND/OR evaluator**: a depth-first odometer over a path word of per-depth records with node kinds (AND/OR), a pluggable leaf-verdict module with its own framed contract, short-circuit semantics as a pure function; space = path + leaf + O(1) | first instance in flight, private, inside B4 membership (addendum 1 makes it generic in the leaf and a promotion candidate). **Language first (user, 2026-10-12):** the general evaluator is written as a recursive program of §15's language, not as a machine host | `TQBF_mem_PSPACE`; Savitch (midpoint records as digits); NP ⊆ PSPACE (re-derivation); `ClassPSPACE/Games.lean`'s game values; backtracking in the §15 layer |
 | H2 | **Step block**: one simulated transition of a `k`-tape coded table, relation-level, with per-round time `B·(\|table\| + 1)` and a head envelope | in flight, private, inside B5a H1 (addendum 1 adds the head envelope) | H1 (`exists_uniformSimulator`); U-1; B6's self-application universal; C1 (with a choice-bit-indexed table); EXPCOM |
 | H3 | **Windowed runner**: run a fixed machine on a windowed record, exiting on window exit, simulated halt, or a configuration-count clock | parts exist privately in S1b's brief (radius phase, records-to-runs bridge, the general-`S` count) | S1b; B6 (the window route); Savitch; NL = coNL |
@@ -3192,7 +3195,9 @@ plus its own gate.
 ### 15a. Language first; the spike (user decision and maintainer draft, 2026-10-12)
 
 **Decision (user, 2026-10-12): language first.** The remaining results that are
-algorithms are written as programs of the §15 language and compiled. These are
+algorithms are written as programs of the §15 language and compiled. (§16, decision 3,
+confirms this for Savitch and `NSPACE ⊆ DTIME(2^O(S))`, which need machine-configuration routines
+in the language.) These are
 Savitch's recursion, the AND/OR evaluator (H1), graph search (H4), and the
 intro-algorithms curriculum. The hosts that are *about machines* stay at machine
 level and proceed now: H2 (step block), H3 (windowed runner), H5 (input devices)
@@ -3386,3 +3391,82 @@ per-file diff is `audits/evidence/programs-vendor/upstream-to-vendored.diff`, an
    over; nondeterminism and randomization then quantify over the stream);
 2. stage 2, the RAM-to-`FinTM` simulation, with the contract structure (§14 item 0);
 3. the first consumers.
+
+## 16. The foundation migration (user decisions, 2026-10-12)
+
+**Why.** The user: "I really think we should invest effort into building code in the right way,
+especially in this foundational stage." Seven read-only reviews of the tip `9827cc99` costed a
+retroactive migration onto the §14/§15 style:
+- the Build foundation and the machine core;
+- the machine-level files that stay on Turing machines;
+- the algorithm files that could become programs.
+
+Their per-file figures are the restyling backlog (`backlog.md` §2, MIG/RS).
+
+**Decisions (user, 2026-10-12).**
+1. **The no-retroactive-migration rules are lifted for this migration**: §8's byte-identity
+   bullet and decision 12.2's byte-identical `Primitives.lean`.
+2. **Scenario B.** Proof bodies are swapped onto contracts, and in addition the duplicate
+   statement families are retired: the R3 canonical `_run` rows, `counterLoopTM` next to
+   `counterLoopTMVia`, `EmitIterEmbed`'s embedding, and `Codes2Tape`'s mirror. Their consumers are
+   edited. Proof-body swaps under unchanged statements are gated by a freeze check, a replay and
+   a fidelity gate. Each retired or changed statement needs a full statement gate.
+3. **Savitch and `NSPACE ⊆ DTIME(2^O(S))` are algorithms at heart.** They are written as programs
+   of the §15 language and converted by the RAM-to-`FinTM` compiler (stage 2). TM-intrinsic
+   results are *not* recast as programs: Cook–Levin, TMSAT, NP ⊆ PSPACE's machine,
+   Nondeterminism, the oblivious and hierarchy constructions, and the universal machine. The
+   decision record for S1b, which is in flight at machine level and proves
+   `NSPACE ⊆ DTIME(2^O(S))`, is pending with the user.
+4. **Restyling is opportunistic, with a clear backlog** to chip away at: the RS items. Each
+   row has its estimate, prerequisites and gate.
+
+**The estimate** (ranges are the reviewers'; ESTIMATED unless marked):
+
+| Bucket | Today | Net change |
+|---|---|---|
+| Foundation: Build (43,143) and the core (3,887), MEASURED | 47,030 | about −12.5k (−8k to −17.5k). That includes the `f2_` deletion, −7.6k to −8.3k at high confidence, and about 3.6k of new infrastructure |
+| Machine-level files staying on TMs: universal, robustness, Nondeterminism, diagonalization and time hierarchy, oracle model, Mathlib bridge | 26.3k | about −4k to −5k: −3.7k from restyling, −1.7k to −2.1k from duplicates found, and +0.5k to 1.5k of extra infrastructure |
+| Scenario B's statement retirements | | about −1k more |
+| **Total** | **73k** | **about −17k (−12k to −23k)**. About 30k lines of proofs are touched and 4–5k are written new |
+
+**What the contract structure must support** (§14 item 0). The survey revises the "time within
+`T`" default taken from [AFM26]'s program logic:
+- **exact time, with a no-earlier-exit cut, as first-class fields**, and "within `T`" derived
+  from them. About 34 public Build statements carry cuts and about 33 state exact times. Seams,
+  counter loops and the zone layer's `2p + 2` compose exact times;
+- a **positive-duration field**, for the universal machine's block converse;
+- an **endpoint function and a frame predicate**, with tape-indexed `SameOn`-style frames and
+  `.keep` lemmas;
+- **head envelopes**, both radius and interval forms, with space derived from them;
+- the **input tape** (clamped moves, virtual input) and **output appends**;
+- **transports**: state renaming (`Sum`/`Sigma`), R1 embedding, symbol lift, alphabet reduction,
+  and the lockstep combinators of the robustness layer (decoration, parallel coding, folding);
+- **later**, nondeterministic (`runWith`) and oracle-step variants.
+
+From [AFM26] the design takes framing, spec-only calls and default-argument tactics; it does not
+take the treatment of time.
+
+**Programs for Savitch and `NSPACE ⊆ DTIME`** (decision 3) need one more planned component:
+**machine-configuration routines in the language**. A configuration of a given (nondeterministic)
+machine is encoded in memory, and routines enumerate its successors, or test the step relation,
+from the machine's finite table. This is narrower than a general machine interpreter, since the
+programs are built per machine.
+
+There is also an open question for stage 2: Savitch's `O(S²)` space. Two routes give it:
+- configurations held as single words, with word size `Θ(S)`, so that `O(S)` frames times
+  `O(S)`-bit words fits the planned bound of cells times word size;
+- a bit-accounted space bound in the compile theorem.
+
+`NSPACE ⊆ DTIME(2^O(S))` is unaffected, since polynomial overhead on `2^O(S)` stays `2^O(S)`.
+
+**Order of work:**
+1. Item 0's statement phase and gate, with the requirements above.
+2. The certain savings, which need no new infrastructure: named witnesses and the `f2_` deletion
+   (MIG-1), then the known duplicates (MIG-2 to MIG-10).
+3. Contract instances and tactics, grown against the first migrated file; then rebasing the
+   composition-heavy files (MIG-11 to MIG-17).
+4. The asymptotics port (MIG-18).
+5. The RS items, opportunistically.
+
+New and unfinished work is written in the new style from the start. Deliveries now in flight
+in the old style (record tables, W2-S, B5a canonizer and H1, B4, S1b) join step 3.
