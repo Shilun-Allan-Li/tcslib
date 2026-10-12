@@ -1,0 +1,47 @@
+# B5a fill, delivery 1 (partial, 6/8): statement freeze; the bodies of targets 3–8 are authorized, targets 1–2 keep their original sorry (docstring appendices only), D4 deletions and moves in Codes2Tape are sanctioned
+
+## EXPCOM.lean (base c36bfda9 → b13425cb; the file is unchanged since the agent's base 1e9361b5)
+public before/after: 9 9 private before/after: 0 1
+public added: []
+public removed: []
+authorized body change: EXP_subset_POracle_EXPCOM
+authorized body change: NPOracle_EXPCOM_eq_EXP
+authorized body change: POracle_EXPCOM_eq_EXP
+authorized body change: POracle_EXPCOM_eq_NPOracle_EXPCOM
+authorized body change: exists_uniformMachineCode
+private removed: []
+private added: ['expcom_padding_bound']
+private changed: []
+imports added: import TCSlib.Complexity.TuringMachine.CodeSimulator 
+lines: 282 → 382; direct sorry lines 6 → 1; forbidden tokens in added lines: 0
+
+## CodeSimulator.lean (base c36bfda9 → b13425cb; the file is unchanged since the agent's base 1e9361b5)
+public before/after: 13 13 private before/after: 4 21
+public added: []
+public removed: []
+authorized body change: exists_polyCanonizer
+authorized body change: exists_uniformSimulator
+private removed: []
+private added: ['decode_of_grammar_guard', 'grammar_guard_states', 'guardedScan', 'guardedScan_eq', 'outputSummary', 'outputSummary_append', 'outputSummary_true', 'scan_grammar_guard', 'skipRepeat_consumes', 'skipSymbols_consumes', 'skipTable_consumes', 'summaryClock', 'summaryClock_accepts', 'summaryClock_correct', 'summaryClock_zero', 'summaryEmit', 'summaryEmit_other']
+private changed: []
+imports added: 
+lines: 251 → 488; direct sorry lines 2 → 2; forbidden tokens in added lines: 0
+
+## Codes2Tape.lean (base c36bfda9 → b13425cb; the file is unchanged since the agent's base 1e9361b5)
+public before/after: 10 9 private before/after: 20 6
+public added: []
+public removed: ['is']
+authorized body change: exists_uniformMachineCode2
+private removed: ['zfB3Answer', 'zfB3Answer_correct', 'zfB3Answer_malformed', 'zfB3Answer_zero', 'zfB3Clock', 'zfB3Clock_correct', 'zfB3Emit', 'zfB3Emit_other', 'zfB3Output', 'zfB3Output_append', 'zfB3Output_true', 'zfB3_deadline_test', 'zfB3_decode_length', 'zfB3_decode_states', 'zfB3_guard_failure', 'zfB3_uniform_of_simulator']
+private added: ['twoTapeMachineFormat', 'twoTape_serialize_eq']
+private changed: []
+imports added: import TCSlib.Complexity.TuringMachine.CodeSimulator 
+lines: 550 → 330; direct sorry lines 2 → 0; forbidden tokens in added lines: 0
+
+## Notes
+- Codes2Tape 'public removed: [is]' is a false positive: the docstring line 'lemma is conditional' (before, line 498) belongs to the deleted D4 private zfB3_uniform_of_simulator. Public count is 9 → 9.
+- Codes2Tape private removed (16) = the D4 ledger: 7 moved generalized into CodeSimulator (zfB3Output → outputSummary, zfB3Emit → summaryEmit, zfB3Output_append → outputSummary_append, zfB3Output_true → outputSummary_true, zfB3Emit_other → summaryEmit_other, zfB3Clock → summaryClock, zfB3Clock_correct → summaryClock_correct), 9 deleted (zfB3_decode_length, zfB3_decode_states, zfB3_guard_failure, zfB3Answer, zfB3Answer_correct, zfB3Answer_zero, zfB3Answer_malformed, zfB3_deadline_test, zfB3_uniform_of_simulator). zfBFallback_serialize_length is kept.
+- CodeSimulator open targets, comment-stripped code (maintainer check):
+  exists_polyCanonizer IDENTICAL code 151 serialize (F.decode α)) fun n => d * (n + 1) ^ d := by sorry
+  exists_uniformSimulator IDENTICAL code 430 [false] (d * (α.length + x.length + t + 1) ^ d)) := by sorry
+- The two imports added are exactly the sanctioned ones (brief rule 6).

@@ -30,7 +30,7 @@ remains the special case.
 * `Complexity.NLComplete` — `NL`-membership plus `NL`-hardness under `≤ₗ`.
   [AB09, Definition 4.16]
 
-## Main results (two phase-P4.4 statements proved; two remain sorried)
+## Main results (phase-P4.4 statements proved)
 
 * `Complexity.ImplicitlyLogspaceComputable.comp` — the composition engine
   ([AB09, Lemma 4.17's proof], Figure 4.3's virtual input tape).
@@ -69,8 +69,27 @@ Exercise 4.3, phase P4.2.) -/
 def NLComplete (C : Language Bool) : Prop :=
   C ∈ NL ∧ ∀ B ∈ NL, B ≤ₗ C
 
+/-- The composite output bound of [AB09, Lemma 4.17] (P4.4 audit, question 2).
+
+**Proof sketch.** Absorb the added one into `C + 1`, apply the second polynomial
+bound monotonically, and distribute powers. This is the pre-ship D2 bound. -/
+private theorem comp_length_le {f g : List Bool → List Bool} {C c D d : ℕ}
+    (hf : ∀ x, (f x).length ≤ C * (x.length + 1) ^ c)
+    (hg : ∀ y, (g y).length ≤ D * (y.length + 1) ^ d) (x : List Bool) :
+    (g (f x)).length ≤ D * (C + 1) ^ d * (x.length + 1) ^ (c * d) := by
+  have h1 : 1 ≤ (x.length + 1) ^ c := Nat.one_le_pow _ _ (by omega)
+  have h2 : (f x).length + 1 ≤ (C + 1) * (x.length + 1) ^ c := by
+    have := hf x
+    have e : (C + 1) * (x.length + 1) ^ c = C * (x.length + 1) ^ c + (x.length + 1) ^ c := by
+      ring
+    omega
+  calc (g (f x)).length ≤ D * ((f x).length + 1) ^ d := hg _
+    _ ≤ D * ((C + 1) * (x.length + 1) ^ c) ^ d :=
+        Nat.mul_le_mul_left _ (Nat.pow_le_pow_left h2 d)
+    _ = D * (C + 1) ^ d * (x.length + 1) ^ (c * d) := by rw [mul_pow, ← pow_mul]; ring
+
 /-- **Composition of implicitly logspace computable functions** ([AB09,
-Lemma 4.17's proof]; spec, fill pending — phase P4.4, **the general
+Lemma 4.17's proof]; proved — phase P4.4, **the general
 composition the P0 round recorded as undelivered**): if `f` and `g` are
 implicitly logspace computable, so is `g ∘ f`.
 
@@ -95,16 +114,28 @@ corrected at phase P4.4b; the statement is unchanged.) -/
 theorem ImplicitlyLogspaceComputable.comp {f g : List Bool → List Bool}
     (hf : ImplicitlyLogspaceComputable f) (hg : ImplicitlyLogspaceComputable g) :
     ImplicitlyLogspaceComputable (g ∘ f) := by
-  sorry
+  have hQ := hf.compQ
+  obtain ⟨⟨C, c, hC⟩, -, -⟩ := hf
+  obtain ⟨⟨D, d, hD⟩, hgb, hgl⟩ := hg
+  refine ⟨⟨D * (C + 1) ^ d, c * d, comp_length_le (f := f) (g := g) hC hD⟩, ?_, ?_⟩
+  · rw [show indexLang (fun x i => ((g ∘ f) x).getD i false = true) =
+        ({w | Complexity.compQ f w ∈ indexLang fun y i => (g y).getD i false = true} : Language Bool) from
+      Set.ext (mem_indexLang_compQ_iff f fun y i => (g y).getD i false = true)]
+    exact mem_LOGSPACE_preimage hQ hgb
+  · rw [show indexLang (fun x i => i < ((g ∘ f) x).length) =
+        ({w | Complexity.compQ f w ∈ indexLang fun y i => i < (g y).length} : Language Bool) from
+      Set.ext (mem_indexLang_compQ_iff f fun y i => i < (g y).length)]
+    exact mem_LOGSPACE_preimage hQ hgl
 
-/-- **Logspace reducibility is transitive** ([AB09, Lemma 4.17(1)]; spec,
-fill pending).
+/-- **Logspace reducibility is transitive** ([AB09, Lemma 4.17(1)]; proved).
 
 **Proof sketch.** `Complexity.ImplicitlyLogspaceComputable.comp` on the two
 reduction functions; the membership equivalences chain. -/
 theorem LogspaceReducible.trans {B C D : Language Bool} (h₁ : B ≤ₗ C)
     (h₂ : C ≤ₗ D) : B ≤ₗ D := by
-  sorry
+  obtain ⟨f, hf, hB⟩ := h₁
+  obtain ⟨g, hg, hC⟩ := h₂
+  exact ⟨g ∘ f, hf.comp hg, fun x => (hB x).trans (hC (f x))⟩
 
 /-- **Logspace reductions preserve `L` downward** ([AB09, Lemma 4.17(2)];
 proved): if `B ≤ₗ C` and `C ∈ LOGSPACE` then `B ∈ LOGSPACE`.

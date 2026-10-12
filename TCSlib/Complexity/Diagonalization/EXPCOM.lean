@@ -7,6 +7,8 @@ import TCSlib.Complexity.ClassNP.EXP
 import TCSlib.Complexity.ClassNP.PolyTimePairing
 import TCSlib.Complexity.ClassOracle.Classes
 import TCSlib.Complexity.TimeHierarchy.Diagonal
+-- B5a sanctioned import: route Z uses the one-tape machine format.
+import TCSlib.Complexity.TuringMachine.CodeSimulator
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -64,7 +66,7 @@ of [BGS75, Theorem 1] stays recorded there as the fallback).
 * `Complexity.EXPCOM` — the oracle language, over `expCode`.
   [AB09, Example 3.6(3)]
 
-## Main results (all sorried; phase-P3.2 statements)
+## Main results (B5a partial: five bodies filled; the B5b summit remains sorried)
 
 * `Turing.exists_uniformMachineCode` — a uniformly-timed scheme exists.
 
@@ -113,8 +115,7 @@ structure UniformMachineCode extends EffectiveMachineCode where
     simulator.ComputesInTime (pairEncode (pairEncode (Nat.bits t) α) x) [false]
       (simDegree * (α.length + x.length + t + 1) ^ simDegree)
 
-/-- **A uniformly-timed scheme exists** (spec, fill pending — phase P3.2
-round 2): the chapter-1 concrete scheme, with its time analysis made uniform.
+/-- **A uniformly-timed scheme exists** (proved modulo §12.11; B5a partial): the chapter-1 concrete scheme, with its time analysis made uniform.
 
 **Proof sketch.** The concrete grammar of the chapter-1 scheme
 (`encode := CodeTM.serialize`, `decode := codeDecode`, the encoding law from
@@ -141,9 +142,25 @@ same parser emits the serialization prefix or the fallback serialization,
 supplying the inherited canonizer field. Fill obligations, named: the
 binary-guard parser; the simulation invariant with the three-way status;
 the polynomial ledger; the degree arithmetic. **Continuation budget
-certain.** -/
+certain.**
+
+**Fill appendix (B5a, route Z).** Instantiate §12.11 at
+`oneTapeMachineFormat`, as in the statement probe's `uniform_one`. The
+polynomial canonizer and H1 supply the inherited canonizer and the two
+simulator clauses. Both shared contracts remain admitted in this partial. -/
 theorem exists_uniformMachineCode : Nonempty UniformMachineCode := by
-  sorry
+  obtain ⟨C, dC, hC⟩ := oneTapeMachineFormat.exists_polyCanonizer
+  obtain ⟨S, d, hS⟩ := oneTapeMachineFormat.exists_uniformSimulator
+  exact ⟨{
+    toEffectiveMachineCode := {
+      toMachineCode := ⟨CodeTM.serialize, codeDecode, codeDecode_serialize_pad⟩
+      canonizer := C
+      canonizerTime := fun n => dC * (n + 1) ^ dC
+      canonizer_computes := hC }
+    simulator := S
+    simDegree := d
+    simulator_accepts := fun α x t h => (hS α x t).1 h
+    simulator_rejects := fun α x t h => (hS α x t).2 h }⟩
 
 end Turing
 
@@ -173,6 +190,42 @@ def EXPCOM : Language Bool :=
     z = pairEncode α (pairEncode x (List.replicate n true)) ∧
     (expCode.decode α).toFinTM.ComputesInTime x [true] (2 ^ n)}
 
+/-- A polynomial unary padding exponent pays for the quadratic normal-form
+slowdown, uniformly at empty input and at exponent zero.
+
+**Proof sketch.** Bound each constant by a power of two and absorb the added
+one before squaring. The resulting exponent is at most a fixed multiple of
+`(n + 1)^c`, since this quantity is positive and dominates `n^c`. -/
+private lemma expcom_padding_bound (a b c n : ℕ) :
+    b * (a * 2 ^ n ^ c + 1) ^ 2 ≤
+      2 ^ ((b + 2 * (a + 1) + 2) * (n + 1) ^ c) := by
+  have hE : 1 ≤ 2 ^ n ^ c := Nat.one_le_pow _ _ (by omega)
+  have hinner : a * 2 ^ n ^ c + 1 ≤ 2 ^ (a + 1 + n ^ c) := by
+    calc
+      a * 2 ^ n ^ c + 1 ≤ (a + 1) * 2 ^ n ^ c := by
+        rw [Nat.add_mul, Nat.one_mul]
+        omega
+      _ ≤ 2 ^ (a + 1) * 2 ^ n ^ c :=
+        Nat.mul_le_mul_right _ (Nat.le_of_lt (Nat.lt_two_pow_self (n := a + 1)))
+      _ = 2 ^ (a + 1 + n ^ c) := (Nat.pow_add _ _ _).symm
+  have hexponent : b + (a + 1 + n ^ c) * 2 ≤
+      (b + 2 * (a + 1) + 2) * (n + 1) ^ c := by
+    have hone : 1 ≤ (n + 1) ^ c := Nat.one_le_pow _ _ (by omega)
+    have hconst : b + 2 * (a + 1) ≤ (b + 2 * (a + 1)) * (n + 1) ^ c := by
+      simpa using Nat.mul_le_mul_left (b + 2 * (a + 1)) hone
+    have hpower : 2 * n ^ c ≤ 2 * (n + 1) ^ c := by gcongr; omega
+    calc
+      b + (a + 1 + n ^ c) * 2 = (b + 2 * (a + 1)) + 2 * n ^ c := by ring
+      _ ≤ (b + 2 * (a + 1)) * (n + 1) ^ c + 2 * (n + 1) ^ c :=
+        Nat.add_le_add hconst hpower
+      _ = (b + 2 * (a + 1) + 2) * (n + 1) ^ c := by ring
+  calc
+    b * (a * 2 ^ n ^ c + 1) ^ 2 ≤ 2 ^ b * (2 ^ (a + 1 + n ^ c)) ^ 2 :=
+      Nat.mul_le_mul (Nat.le_of_lt (Nat.lt_two_pow_self (n := b)))
+        (Nat.pow_le_pow_left hinner 2)
+    _ = 2 ^ (b + (a + 1 + n ^ c) * 2) := by rw [← Nat.pow_mul, ← Nat.pow_add]
+    _ ≤ _ := Nat.pow_le_pow_right (by omega) hexponent
+
 /-- **One padded query decides any `EXP` language**: `EXP ⊆ P^EXPCOM`.
 [AB09, Example 3.6(3), the first inclusion of the chain
 `EXP ⊆ P^EXPCOM ⊆ NP^EXPCOM ⊆ EXP`]
@@ -197,9 +250,53 @@ witness `(α_L, x, Q |x|)` puts `f x ∈ EXPCOM`; conversely a witness for
 (`Turing.pairEncode_injective` twice, then `List.length` on the replicated
 tails), and output determinism (`Turing.FinTM.ComputesInTime.output_unique`) against `N`'s
 verdict `[χ_L x]` forces `x ∈ L`. Conclude with
-`Complexity.mem_POracle_of_polyTimeReducible`. -/
+`Complexity.mem_POracle_of_polyTimeReducible`.
+
+**Fill appendix (B5a).** Take `C = b + 2 * (a + 1) + 2`, where `b` is
+the one-work-tape slowdown coefficient. `expcom_padding_bound` proves the
+inequality for every input length, including zero, without an asymptotic
+exception. The two pair injections force the full query witness. -/
 theorem EXP_subset_POracle_EXPCOM : EXP ⊆ POracle EXPCOM := by
-  sorry
+  intro L hL
+  classical
+  obtain ⟨c, a, M, hM⟩ := Set.mem_iUnion.mp hL
+  obtain ⟨M', b, hk, hM'⟩ := M.one_work_tape_binary
+    (fun x => [MultiTapeTM.indicator (L : Set (List Bool)) x])
+    (fun n => a * 2 ^ n ^ c) hM
+  obtain ⟨N, hN⟩ := exists_codeTM M' hk
+  let C := b + 2 * (a + 1) + 2
+  have hdec (x : List Bool) :
+      N.toFinTM.ComputesInTime x [MultiTapeTM.indicator (L : Set (List Bool)) x]
+        (2 ^ (C * (x.length + 1) ^ c)) :=
+    ((hN x _ _).mpr (hM' x)).mono (expcom_padding_bound a b c x.length)
+  apply mem_POracle_of_polyTimeReducible
+  refine ⟨fun x => pairEncode (expCode.encode N)
+      (pairEncode x (List.replicate (C * (x.length + 1) ^ c) true)),
+    (polyTimeComputable_const (expCode.encode N)).pairEncode
+      (polyTimeComputable_id.pairEncode (polyTimeComputable_polyUnary C c)), ?_⟩
+  intro x
+  constructor
+  · intro hx
+    refine ⟨expCode.encode N, x, C * (x.length + 1) ^ c, rfl, ?_⟩
+    rw [expCode.toMachineCode.decode_encode]
+    simpa [MultiTapeTM.indicator, hx] using hdec x
+  · rintro ⟨α, y, n, heq, hy⟩
+    have hpair :
+        (expCode.encode N, pairEncode x (List.replicate (C * (x.length + 1) ^ c) true)) =
+          (α, pairEncode y (List.replicate n true)) := pairEncode_injective heq
+    have hcode := congrArg Prod.fst hpair
+    have hinner : (x, List.replicate (C * (x.length + 1) ^ c) true) =
+        (y, List.replicate n true) := pairEncode_injective (congrArg Prod.snd hpair)
+    have hinput := congrArg Prod.fst hinner
+    dsimp only at hcode hinput
+    have hlen := congrArg List.length (congrArg Prod.snd hinner)
+    simp only [List.length_replicate] at hlen
+    rw [← hcode, expCode.toMachineCode.decode_encode, ← hinput, ← hlen] at hy
+    have hout := hy.output_unique (hdec x)
+    have hi : MultiTapeTM.indicator (L : Set (List Bool)) x = true := by
+      simpa using hout.symm
+    by_contra hx
+    simp [MultiTapeTM.indicator, hx] at hi
 
 /-- **The fill summit of the `EXPCOM` cluster**: `NP^EXPCOM ⊆ EXP` — a
 deterministic exponential-time machine can enumerate all branches of a
@@ -260,7 +357,9 @@ theorem NPOracle_EXPCOM_subset_EXP : NPOracle EXPCOM ⊆ EXP := by
 `Complexity.POracle_subset_NPOracle` with
 `Complexity.NPOracle_EXPCOM_subset_EXP`. -/
 theorem POracle_EXPCOM_eq_EXP : POracle EXPCOM = EXP := by
-  sorry
+  exact Set.Subset.antisymm
+    ((POracle_subset_NPOracle EXPCOM).trans NPOracle_EXPCOM_subset_EXP)
+    EXP_subset_POracle_EXPCOM
 
 /-- **`NP^EXPCOM = EXP`** [AB09, Example 3.6(3)].
 
@@ -268,7 +367,8 @@ theorem POracle_EXPCOM_eq_EXP : POracle EXPCOM = EXP := by
 `Complexity.EXP_subset_POracle_EXPCOM` with
 `Complexity.POracle_subset_NPOracle`. -/
 theorem NPOracle_EXPCOM_eq_EXP : NPOracle EXPCOM = EXP := by
-  sorry
+  apply Set.Subset.antisymm NPOracle_EXPCOM_subset_EXP
+  simpa only [POracle_EXPCOM_eq_EXP] using POracle_subset_NPOracle EXPCOM
 
 /-- **Relative to `EXPCOM`, determinism and nondeterminism coincide**:
 `P^EXPCOM = NP^EXPCOM` — the `A` half of the Baker-Gill-Solovay theorem.
@@ -277,6 +377,6 @@ theorem NPOracle_EXPCOM_eq_EXP : NPOracle EXPCOM = EXP := by
 **Proof sketch.** Chain `Complexity.POracle_EXPCOM_eq_EXP` with the inverse of
 `Complexity.NPOracle_EXPCOM_eq_EXP`. -/
 theorem POracle_EXPCOM_eq_NPOracle_EXPCOM : POracle EXPCOM = NPOracle EXPCOM := by
-  sorry
+  exact POracle_EXPCOM_eq_EXP.trans NPOracle_EXPCOM_eq_EXP.symm
 
 end Complexity

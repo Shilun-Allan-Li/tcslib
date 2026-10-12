@@ -1,0 +1,74 @@
+# s128-AC fill gate: cumulative statement freeze over all deliveries, from the brief base 182e6f44 to the integration head b0e922ab; each target's body is authorized. Stream A's two authorized compare swaps (compareTM_run, compareTM_spaceUsedByTape) are allowed, and its four in-place compare replacements (catalog_compare_stop, catalogCompareF, catalogCompareR, catalog_compare_trace) are the only changed privates (audits/s12-8-fill-A-integration.md). CfgRecord's 'public added: adds' is a docstring line beginning 'lemma adds one dispatch', not a declaration; the one token hit is the English word 'admit' in a docstring.
+## TCSlib/Complexity/TuringMachine/Build/Catalog.lean
+public before/after: 89 89 private before/after: 379 391
+public added: []
+public removed: []
+authorized body change: compareTM_run
+authorized body change: compareTM_run_ofCfg
+authorized body change: compareTM_spaceUsedByTape
+authorized body change: fieldsTape_field
+authorized body change: scanResult_carry
+authorized body change: scanResult_fold
+authorized body change: scanResult_map
+authorized body change: scanResult_shiftLeft
+authorized body change: scanResult_shiftRight
+authorized body change: scanTM_run_ofCfg
+authorized body change: seekEndTM_run_ofCfg
+authorized body change: seekStartTM_run_ofCfg
+authorized body change: skipBackTM_run_ofCfg
+authorized body change: skipTM_run_ofCfg
+private removed: []
+private changed: ['catalogCompareF', 'catalogCompareR', 'catalog_compare_stop', 'catalog_compare_trace']
+private added: 12
+imports: unchanged
+lines: 11970 → 12732
+## TCSlib/Complexity/TuringMachine/Build/Seam.lean
+public before/after: 18 18 private before/after: 12 12
+public added: []
+public removed: []
+authorized body change: seamCompTM₂_run_ofCfg
+private removed: []
+private changed: []
+private added: 0
+imports: unchanged
+lines: 815 → 854
+## TCSlib/Complexity/TuringMachine/Build/Scan.lean
+public before/after: 9 9 private before/after: 0 15
+public added: []
+public removed: []
+authorized body change: inputCopyTM_run_ofCfg
+authorized body change: inputFoldTM_run_ofCfg
+authorized body change: writeAdvTM_run_ofCfg
+authorized body change: writeConstTM_run_ofCfg
+private removed: []
+private changed: []
+private added: 15
+imports: unchanged
+lines: 276 → 666
+## TCSlib/Complexity/TuringMachine/Build/CfgRecord.lean
+public before/after: 15 16 private before/after: 0 99
+public added: ['adds']
+public removed: []
+authorized body change: cfgRecord_inj
+authorized body change: exists_recordEqTM
+authorized body change: exists_recordStepTM
+authorized body change: exists_recordTestTM
+authorized body change: recordValid_iff
+private removed: []
+private changed: []
+private added: 99
+imports: unchanged
+lines: 346 → 5255
+## TCSlib/Complexity/TuringMachine/Build/InputCall.lean
+public before/after: 2 2 private before/after: 0 9
+public added: []
+public removed: []
+authorized body change: exists_inputCallTM
+authorized body change: exists_inputSeekTM
+private removed: []
+private changed: []
+private added: 9
+imports: unchanged
+lines: 120 → 534
+forbidden tokens in added lines (whole words): 1
+  hit: +/-- Nonempty fields admit no adjacent blanks strictly before the terminal pair.
