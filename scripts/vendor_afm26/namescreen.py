@@ -3,10 +3,11 @@ import os, re, sys
 # Comment-aware, namespace-qualified public declaration names of TCSlib/Programs/ against those of every
 # other TCSlib file outside TCSlib/Complexity/ (the Complexity library is covered exactly by the joint
 # elaboration of the shipped files with all fifteen Complexity facades). Writes both inventories and the
+# The modifier group captures the whole prefix, so `private noncomputable def` is recognized as private.
 # intersection; standard library only, starts no process.
 root, out = sys.argv[1], sys.argv[2]
 KW = r'(theorem|lemma|def|abbrev|instance|structure|inductive|class|opaque|axiom)'
-DECL = re.compile(r'^(?:@\[[^\]]*\]\s*)*((?:private|protected|noncomputable|nonrec|partial|unsafe)\s+)*' + KW +
+DECL = re.compile(r'^(?:@\[[^\]]*\]\s*)*((?:(?:private|protected|noncomputable|nonrec|partial|unsafe)\s+)*)' + KW +
                   r'\s+([^\s(:{\[]+)')
 
 def strip_comments(src):
