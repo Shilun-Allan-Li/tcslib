@@ -1258,7 +1258,8 @@ private instance {k : ℕ} {Q T S : Type} [DecidableEq Q] [DecidableEq T] [Decid
   cases i <;> dsimp [recordStepPhase] <;> infer_instance
 
 /-- R8's row family on four tapes. Native-reading Bool rows and the arithmetic rows all
-use the same R1 transport on dedicated digit banks. No row selects the record tape. -/
+use the same R1 transport on dedicated digit banks. No lifted Bool row selects the record
+tape; the rich scans and copies do select tape 0. -/
 private def recordStepRows {k : ℕ} {Q T S : Type} [DecidableEq Q] [DecidableEq T]
     (M : MultiTapeTM k Bool Q) (upd : T → Option Bool → T) (seek : MultiTapeTM 2 Bool S)
     (i : RecordStepIndex k Q T) : MultiTapeTM 4 (RecSym Q T) (recordStepPhase (S := S) i) :=
