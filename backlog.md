@@ -249,12 +249,19 @@ packed from the same two §12.11 contracts. The screen measures
 Both are below one fifth. The agent's conservative union metric (33.2% and
 20.4%) also counts the pre-existing frozen structure and writer matches (item
 8's residual family), which are not copied proved material. **The question:**
-acknowledge the pair as forced, or name a factoring. The maintainer's
-provisional view is to acknowledge it, with one factoring candidate for the
-12.2c docket: a generic public assembly lemma over `MachineFormat` in
-`CodeSimulator.lean`, reducing each instance to one line. That needs a new
-public declaration, and so a statement gate. The item awaits the user's
-explicit answer. The B5a fill gate cannot close over it until then.
+acknowledge the pair as forced, or name a factoring. Each body is pure
+packing: two `obtain`s from the §12.11 rows, then a field-by-field structure
+literal. A generic public lemma over `MachineFormat` could absorb the two
+`obtain`s, but not the field mapping, which is specific to each frozen structure
+and is most of the 322 characters. Eliminating the pair would mean redefining
+both frozen chapter-3 structures as instances of one generic structure: a
+statement change to audited definitions, needing its own gate, to remove about
+a dozen lines of boilerplate.
+
+**Answered (user, 2026-10-12): acknowledged as forced.** No factoring is
+scheduled. The pair stays as delivered, and the B5a fill gate may close over
+it. A later delivery that adds to the pair, or copies anything else into
+either file, is new debt under `workflow.md` §4.
 
 ---
 
