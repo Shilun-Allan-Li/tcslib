@@ -27,7 +27,7 @@ Upstream: anthropics/formal-math, folder `3sum-apsp`, commit e1a4e6508154ea59f03
 | `ThreeSumApsp/Lang/Calls.lean` | `TCSlib/Programs/Light/Calls.lean` | 130 → 147 | 3 |
 | `ThreeSumApsp/Lang/Tactics.lean` | `TCSlib/Programs/Light/Tactics.lean` | 175 → 193 | 7 |
 | `ThreeSumApsp/Lang/Regions.lean` | `TCSlib/Programs/Light/Regions.lean` | 211 → 228 | 3 |
-| `ThreeSumApsp/Util/Index.lean` | `TCSlib/Programs/Util/Index.lean` | 117 → 134 | 3 |
+| `ThreeSumApsp/Util/Index.lean` | `TCSlib/Programs/Util/Index.lean` | 117 → 136 | 3 |
 | `ThreeSumApsp/Lang/Lib/Seg.lean` | `TCSlib/Programs/Light/Lib/Seg.lean` | 236 → 254 | 5 |
 | `ThreeSumApsp/Lang/Lib/ArrayAt.lean` | `TCSlib/Programs/Light/Lib/ArrayAt.lean` | 143 → 161 | 5 |
 | `ThreeSumApsp/Lang/Lib/Pass.lean` | `TCSlib/Programs/Light/Lib/Pass.lean` | 72 → 89 | 3 |

@@ -10,10 +10,12 @@ Local modifications (see policy.md §2, vendored code, and the repository NOTICE
   for compatibility with our v4.25.0 toolchain;
 * moved to `TCSlib/Programs/Util/Index.lean`, with imports remapped;
 * added a `## References` section citing [AFM26];
+* added `import Batteries.Data.Nat.Lemmas`, which upstream receives transitively at its Mathlib pin;
 * added the repository-standard `set_option` header.
 The remaining content is unchanged.
 -/
 import Mathlib.Algebra.Order.Ring.Int
+import Batteries.Data.Nat.Lemmas
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false

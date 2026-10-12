@@ -3365,7 +3365,14 @@ per-file diff is `audits/evidence/programs-vendor/upstream-to-vendored.diff`, an
 - The style lint reports 0 FAIL and 0 WARN over the 45 files. The vendored files are registered
   as such.
 - The user-run replay compiles each module separately, in dependency order
-  (`audits/evidence/programs-vendor/replay-order.txt`).
+  (`audits/evidence/programs-vendor/replay-order.txt`). Its first run found one import gap.
+  `Util/Index` uses a Batteries lemma that upstream reaches through its imports at Mathlib v4.33
+  and ours does not; 16 modules failed with it. The fix is an added
+  `import Batteries.Data.Nat.Lemmas`, listed in the file's header.
+- The concatenated check had masked that gap: its union of all files' imports contained the
+  lemma. A per-module closure check now elaborates each of the 46 modules and facades in exactly
+  its own import environment (`scripts/vendor_afm26/closurecheck.py`), and all 46 are clean
+  (`audits/logs/programs-vendor-closure-check.log`).
 
 **Models registered** in `ComputationalModels.lean`: `Light.Program` and `WordRAM.Instr`.
 
