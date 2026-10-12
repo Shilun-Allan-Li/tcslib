@@ -486,6 +486,22 @@ laws). The same layer will be needed a third time by `NDCodes`'s pending
 over the record reader and make all three formats instances. Under the
 user's standing preference this goes to 12.2c, not to the batches.
 
+**12.2c is folded into the foundation migration (user, 2026-10-12;
+`machine-library-design.md` §16; `backlog.md` MIG/RS).** Statements are no longer frozen for this
+work: scenario B retires duplicate statement families, with full gates. The items below map as
+follows:
+- **Subsumed by MIG:** 1 by MIG-1, whose per-theme file layout is now optional and kept only
+  where it fixes layering; 2 is MIG-1's work list; 4 by MIG-1 and MIG-17; 11B by MIG-17.
+- **Split:** 5's sweep half stays with §13d G2, and its rest goes to MIG-11 and MIG-17. 12 is
+  split across MIG-9, MIG-2, RS-7 and MIG-17.
+- **Moved:** 6's EmitIter half is MIG-5, with the Aparna coordination still applying. 8 is done;
+  its Codes2Tape mirror is MIG-6.
+- **Stay as standalone rows:** 3 is MIG-20, and 13 is MIG-21, after the T2a gate.
+- **Done:** 7. BL-W stays optional.
+- **Lapsed:** 9, because file size is not a driver; SingleTape's duplicates go to MIG-3 and
+  RS-3.
+- **Optional:** 10.
+
 **The 12.2c tasklist (consolidated 2026-10-10; the authoritative list —
 new items are added here).** 12.2c is the user's own refactor window. It
 runs with its own audit gate under the duplication governance. It is armed
@@ -704,6 +720,8 @@ own gate. The tranche table is in §4e.
 | **Prior art for §15 examined** (2026-10-12; read-only, nothing taken). Two word-RAM formalizations of Alman–Vassilevska Williams' 3SUM/APSP result. **[AFM26]** is `anthropics/formal-math` `3sum-apsp` at `e1a4e650` (Apache-2.0, © Anthropic, PBC; 102,310 lines). **[Xuanji26]** is user **xuanji on prove2me** (user-directed citation): the file `3sumapsp_example.lean`, the assembly of an improved `O(n^1.999074)` 3SUM bound built on [AFM26]'s library, with 264 of 265 module docstrings verbatim. The design ideas under consideration for item 0 and §15, and the citation duty if they are adapted, are recorded in `machine-library-design.md` §15, *Prior art examined*. |
 | **Language first** (user, 2026-10-12, choosing between building the language first and building machine-level algorithm hosts first). The remaining algorithms are written as programs of the §15 language and compiled: Savitch, the AND/OR evaluator H1, graph search H4, and the curriculum. The machine-level hosts H2, H3, H5 and H6 proceed now. In-flight work is unaffected. Maintainer's spike, `machine-library-design.md` §15a: a two-stage architecture as in [AFM26] (the language compiled to a flat word RAM, then one RAM-to-`FinTM` simulation), a draft of stage 2's theorem shape, the rows it reuses and the new rows it needs, a rough cost of 15–20k lines, and open decisions 15a.1–15a.4. |
 | **Port of [AFM26]'s programming layer** (user, 2026-10-12: "Port it"; side branch `vendor/light-programs`). The user first asked whether the core serves our purposes, and whether the licence allows it. It serves the deterministic language-first list, with nondeterminism and randomization to come as one coin-stream extension. The licence is Apache-2.0, like tcslib's: headers, change lists and the upstream `NOTICE` are kept. The user also flagged randomization as a second gap; it is covered by the same coin stream. A read-only trial port elaborated at our pin with 0 errors. `TCSlib/Programs/` now vendors 41 modules: the language, logic and tactics, 14 verified routines (merge sort, counting sort and others), the compiler to the word RAM, and the word RAM. The sieve is deferred. The modifications: module syntax removed, namespaces renamed, one tactic swap, nine v4.25 proof repairs, and three compatibility names. Checks: 0 errors together with the `Complexity` library; 2,990 constants with no `sorryAx` and no axiom; `compileProgram_correct` and `sort_meets` on the standard three; no name clash; lint 0 FAIL. **Replay:** 47/47 clean, 0 errors and no `sorry` warnings, after one import fix that the first run found (`Util/Index` needs `Batteries.Data.Nat.Lemmas` at our pin). A per-module closure check, 46/46, now covers that class. Record: `machine-library-design.md` §15b; evidence `audits/evidence/programs-vendor/`. |
+| **Foundation migration decided** (user, 2026-10-12, after seven read-only cost reviews of `9827cc99`). (1) The no-retroactive-migration rules (design §8, decision 12.2) are lifted for this migration. (2) Scenario B: proof bodies move onto contracts and duplicate statement families are retired, with full gates and consumer edits. (3) Savitch and `NSPACE ⊆ DTIME(2^O(S))` are "algorithms at heart": they are written as programs and compiled by the RAM-to-`FinTM` compiler. TM-intrinsic results are not recast. (4) Restyling is opportunistic, with an itemized backlog. Estimate: about 73k lines in scope, net about −17k (−12k to −23k); the foundation alone is about −12.5k, half of it the `f2_` deletion. The survey also revises item 0: TM contracts carry exact time and a cut as first-class fields, with "within T" derived. Record: `machine-library-design.md` §16, `backlog.md` MIG-0 to MIG-18 and RS-1 to RS-10. **S1b finishes as briefed** (user: "Let it finish"); it is re-derived as a program later (MIG-19). |
+| **12.2c folded into the migration; MIG-0/MIG-1 before G2** (user, 2026-10-12: "Agreed"). The mapping is recorded at the head of the 12.2c tasklist (§4e). Subsumed by MIG: items 1, 2, 4 and 11B. Split: items 5 and 12. Moved: item 6's EmitIter half (MIG-5) and item 8's mirror (MIG-6). Standalone: item 3 (MIG-20) and item 13 (MIG-21). Lapsed: item 9. Done: item 7. U-1 is merged with MIG-2, R80B-E1 is MIG-4, UNIV-1 folds into MIG-0, and FH-1 is designed with MIG-0's cut. MIG-0 and MIG-1 now precede §13d G2, reversing "G2 comes before the Catalog split". Also added: the root `ROADMAP.md`, a succinct pointer file. |
 
 **Duplication-governance amendments landed (user-directed, 2026-10-09; from
 the D-R2 post-mortem — the `f2_` accumulation was disclosed and recorded at
@@ -886,6 +904,10 @@ owns is queued to that batch.
 | **T1** | Now, alongside G1, C1 and S1; touches none of G1's files | **Item 8** first, because B5 and `NDCodes` wait on it. **Item 11 plus CH7-D2's library half**, as one batch, since both edit Loop: the run facts get public homes in `Deterministic`/`Finite`, and Loop's three private copies are deleted. **Item 7** (CH7-D1), coordinated with Aparna. **Item 12**'s Universal and ClockMachine pieces, after the §12.7 fill gate closes (its Loop and Catalog pieces wait for T3: Loop cannot import CounterLoop). Item 11 is split: **11A** now (CH7-D2's library half, the alias, the parametric host, the rewind-scan and glue clusters), **11B** after the G1 gate (the `emCall` cluster, which depends on Embed) |
 | **T2** | After the G1 gate closes | Item 6's action export in `Embed` (small, additive), then items 13 and 6, with CH7-D2's EmitIter half (coordinated with Aparna). **Item 5's sweep half is folded into G2**: one mapped-sweep trace, from which copy, transfer and clear are derived, under G2's PR and gate |
 | **T3** | After the G2 fill lands | The Catalog core: items 1–4, the rest of item 5, and item 12's Loop and Catalog pieces, alongside the G3/G4 fill (separate files) and the Hennie–Stearns assembly statement phase. After the G3/G4 gate: item 9's Zone split, re-decided; item 10 |
+
+**Superseded (user, 2026-10-12): MIG-0 and MIG-1 now come before G2**, because MIG-1 deletes
+the copies rather than moving them, and G2 is then written against named witnesses and
+contracts. The paragraph below records the earlier reasoning.
 
 **G2 comes before the Catalog split.** The split is large (Catalog's census
 alone is 318 member pairs) and only moves code behind unchanged names, so it

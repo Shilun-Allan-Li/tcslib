@@ -282,6 +282,8 @@ deleted.
 
 ### FH-1: one public first-halt lemma; seven private copies to retire (from B1)
 
+*Design it with MIG-0's no-earlier-exit cut field.*
+
 `Turing.MultiTapeTM.exists_first_halt` (`Finite.lean`, 2026-10-11, B1) is the
 shared form of the least-halting-time argument. It discharges the
 liveness-before-halt guard of `capture_run`/`emit_run` and the R1 returning
@@ -339,6 +341,8 @@ change, so it waits for a window that may touch these public statements
 
 ### R80B-E1: define `counterLoopTM` as the identity instance of `counterLoopTMVia` (from the R8.0b fill gate, finding F1)
 
+*This is MIG-4 (scenario B: the duplicated statements are retired).*
+
 The R8.0b fill (§12.8 stream D) mandated two definition texts: the new rich-body host
 `Turing.counterLoopTMVia` and the frozen `Bool` host `Turing.counterLoopTM`. Their copy-text pair
 is 91% (and 84% the other way). The brief's freeze made factoring impossible within the fill.
@@ -354,6 +358,8 @@ consumer under that separately authorized definition change. This is a frozen-de
 change, so it needs its own gate.
 
 ### U-1: re-derive the chapter-1 universal machine from B5a's generic step block (user, 2026-10-11)
+
+*Merged with MIG-2 (user, 2026-10-12): the timed-layer dedup and this re-derivation are one migration item.*
 
 The chapter-1 universal machine (`Turing.universal`, `universal_quadratic`, `timed_universal`) is
 a bespoke interpreter of about 5,300 lines across `Universal.lean`, `UniversalStartup.lean`,
@@ -408,6 +414,8 @@ shell is audited first. The task gets its own PR and gate.
 
 ### UNIV-1 (optional): universe-polymorphic `counterLoopTMVia` and `phaseHostTM` (user, 2026-10-12)
 
+*Folds into MIG-0's universe decision (the contract structure's `Type`/`Type*` choice).*
+
 The record-table continuation found that `exists_tableFindTM`, stated for `Γ : Type*`, could
 not use its mandated loop: `Turing.counterLoopTMVia` (`Build/CounterLoop.lean`) and
 `Turing.phaseHostTM` (`Build/Seam.lean`) take their alphabet in `Type`. The user chose option
@@ -421,6 +429,66 @@ the campaign needs it now. If done, `exists_tableFindTM` can be re-generalized t
 without breaking any consumer. A 12.2c item, its own PR and gate.
 
 ## 2. Campaign work queued or on hold
+
+### MIG / RS: the foundation migration and the restyling backlog (user, 2026-10-12; design §16)
+
+The user lifted the no-retroactive-migration rules for this work and chose scenario B. Duplicate
+statement families are retired, with full gates and consumer edits. Restyling is opportunistic:
+**pick any row whose prerequisites are met.** The estimates come from seven read-only reviews
+(design §16), in lines, and are ESTIMATED unless marked; negative means saved.
+
+**Gates:**
+- **swap:** statements are unchanged, so a freeze check, a replay and a fidelity gate;
+- **stmt:** new public statements, so a statement gate;
+- **full:** retired or changed statements, so a full gate, with the consumers edited in the same PR.
+
+**MIG: the foundation, in this order.**
+
+| ID | Scope | Action | Estimate | Needs | Gate | Notes |
+|---|---|---|---|---|---|---|
+| MIG-0 | new `Build/Contract.lean` | Item 0, with the §16 requirements: the contract structure, tape frames and `.keep`, composition theorems as thin wrappers over the existing public rows, and tactics | +1.5k to +2.5k | — | stmt | first; unlocks MIG-11 to MIG-17 and RS |
+| MIG-1 | `Build/Catalog` (the `f2_` region, about lines 1785–11365), `Primitives`, `Composition`, `Loop`, `Wrappers`, `Encoding`, `Simulation`, `ClassP/TimeConstructible` | Named witnesses (about 30 defs with spec theorems) for the 66 existential rows; then delete the 304 `f2_` copies (6,255 of their lines are verbatim, MEASURED). The 22 space rows become corollaries. Retire the R3 canonical `_run` rows (0 external consumers) | −7.6k to −8.3k, +0.4k | decision 12.2 lifted | stmt + full | highest confidence; half the saving |
+| MIG-2 | `TuringMachine/Universal` (195–1316, 1317–1606, 2367–2644) | Retire the duplicate timed layer (`timedCut*`, `timedPrefix`, `timedCapture`), through a stop-before variant or proofs parametric in the table | about −1k | — | swap | `timed_universal_concrete`'s coefficient must not grow (TMSAT); **merged with U-1** (one re-derivation, from both directions) |
+| MIG-3 | `Robustness/SingleTape` | `one_work_tape` reuses `dg_all_inputs`; drop the `sweep_*` chain | about −450 | — | swap | |
+| MIG-4 | `Build/CounterLoop` | R80B-E1: `counterLoopTM` becomes the identity instance of `counterLoopTMVia`; retire the duplicated statements | about −450 | — | full | consumer `Inclusions.lean` (14 uses) |
+| MIG-5 | `Build/EmitIterBody`, `Build/EmitIterEmbed` | Cite `inputCopyTM_run_ofCfg` and the rewinds (223 re-proved lines); derive `padAction`/`embedCfg` from Embed and retire them | −300 to −420 | — | full | CH7-D2; 1 external consumer |
+| MIG-6 | `TuringMachine/Encoding`, `Codes2Tape` | Parameterize by tape count; retire the mirror | about −180 | — | full | CH34-D2; 4 external consumers |
+| MIG-7 | `TuringMachine/UniversalStartup` | `universalCaptureTM` onto Embed's `embedSilentTM` | about −130 | — | swap | |
+| MIG-8 | `ClassNP/Nondeterminism` | Retire the unreferenced `e3_split_of_body` chain (2652–2780) and `a3n_prevalidation`; merge the polynomial and exponential duplicates (about 165 lines) | about −300 | **check against SH-1 first** (SH-1 keeps the NEXP `e3Split` route) | swap / full | |
+| MIG-9 | `Build/InputLength`, `ClassP/TimeConstructible` `counterTM`, Loop's `loopDebit` | One canonical bit-length counter | about −200 beyond MIG-1 | MIG-1 | full | |
+| MIG-10 | `Diagonalization/Relativization` (341–406) | Promote the oracle relabel transport to the library, as its docstring suggests | −60 to −110 | — | stmt | |
+| MIG-11 | the framed Build rows | Contract instances of about 25 framed rows | +0.3k to +0.5k | MIG-0 | stmt | grow the tactics against MIG-12 |
+| MIG-12 | `Build/CfgRecord` | Rebase on the Contract; the private `RecordRun` (76 uses) becomes `Contract.seq` | −1.6k to −2.1k | MIG-0, MIG-11 | swap | best ratio of saving to lines touched |
+| MIG-13 | `Build/RecordTable` | Rebase; `rt_copy_seam` retires; write any still-open rows in the new style | −350 to −550 | MIG-0 | swap | |
+| MIG-14 | `Build/CertShell`, `Build/InputCall` | Rebase | about −560 | MIG-0 | swap | |
+| MIG-15 | `Build/CounterLoop` | `counterSpan` becomes a Contract | −440 to −640 | MIG-0, MIG-4 | swap | |
+| MIG-16 | `Build/OracleSim` | Rebase on the R1 contracts | −250 to −400 | MIG-0 | swap | exact lockstep lemmas stay |
+| MIG-17 | `Build/Primitives`, `Build/Loop` | Named loop hosts; `splitSafe`/`SafeRun` become Contracts | −1k to −2k | MIG-0, MIG-1 | swap | 15 external files cite the P-rows (statements kept) |
+| MIG-19 | `SpaceComplexity/ConfigGraph` (S1b's delivery) | Re-derive `NSPACE ⊆ DTIME(2^O(S))`, `NL ⊆ P` and Ex 4.3 as programs (design §16, decision 3); retire S1b's private BFS host | to be estimated once S1b lands | stage 2, machine-configuration routines | swap | user, 2026-10-12: S1b finishes first |
+| MIG-20 | the chapter-2 emitter files (`emitterCompare*`, `emitterP2Erase*`) | 12.2c item 3 (F25a/F27a): onto `compareTM` and `clearTM` | small | MIG-1 (the Catalog→Primitives import) | swap | |
+| MIG-21 | `CookLevin/Hardness` (`clPlacement`, the selectors) | 12.2c item 13: restate the layouts as plain `Fin k ↪ Fin l` embeddings; delete the selector layer (about 120–259 lines) | about −150 to −250 | the T2a gate (item 6's export) | swap | Hardness stays at machine level |
+| MIG-18 | port of [AFM26]'s `Util/Asymptotics` (1,769 lines upstream) | `Dominated`, `Scale.SoftO` and the `growth` tactic, then ledgers without constants | +0.5k to +1.4k; saves part of about 3.5k ledger lines | the PROG-1 port tooling | fidelity, then swap | payoff mostly in ClassNP, ClassP, SpaceComplexity and PolyHierarchy |
+
+**RS: the restyling backlog, opportunistic; chip away at it.**
+
+| ID | Scope | Action | Estimate | Needs | Gate | Notes |
+|---|---|---|---|---|---|---|
+| RS-1 | `Universal`, `UniversalInterpreter`, `UniversalBlock`, `UniversalStartup` | Contracts with exact time, cut and positive duration | −0.8k to −1k after MIG-2 and MIG-7 | MIG-0 | swap | 0 Build combinators used today (MEASURED) |
+| RS-2 | `TuringMachine/CodeSimulator` | The counter-loop rule absorbs the guard ledgers; its open rows go in the new style | −60 to −130 | MIG-0 | swap | |
+| RS-3 | `Robustness/SingleTape` | `DGSpan` becomes a Contract; the sweep framing | −400 to −570 beyond MIG-3 | MIG-0 | swap | the visited-set space ledger stays |
+| RS-4 | `Robustness/Oblivious*` (5 files) | A decoration-lift rule and frames for `prepInvariant_step` | −450 to −650 | MIG-0, lockstep combinators | swap | the schedule must stay one input-insensitive table |
+| RS-5 | `Robustness/AlphabetReduction`, `Bidirectional` | Per-phase head envelopes | −100 to −250 | MIG-0 | swap | |
+| RS-6 | `ClassNP/Nondeterminism` | `b2Host` phases onto contracts | −500 to −900 | the Contract's nondeterministic variant | swap | exact choice-word splits are load-bearing |
+| RS-7 | `TimeHierarchy/*` (ClockLoop, ClockMachine, CodePrefix, Diagonal, Separation) | Re-base the clock and prefix machines on CounterLoop, Scan, Embed and Seam; ledgers through MIG-18 | −200 to −320, more if re-based | MIG-0, MIG-18 | swap | the Meyer files use the counter lemmas: keep them |
+| RS-8 | `Diagonalization/*` | Ledgers through the asymptotics calculus | −50 to −100 | MIG-18 | swap | |
+| RS-9 | `TuringMachine/MathlibBridge` | Frames for the stack store | −90 to −150 | MIG-0 | swap | |
+| RS-10 | `Oracle`, `OracleAgreement`, `OracleFinite`, `OracleNondeterministic`, `Build/OracleCall` | An oracle Contract adapter | −50 to −100 | MIG-0, oracle variant | swap | run-equality transfers stay |
+| — | `CodeParser`, `CodeFormat`, the proved part of `Build/Zone`, `Codes2Tape` beyond MIG-6 | nothing to restyle (MEASURED) | 0 | | | |
+
+Colleague-owned machine files (`SpaceComplexity/Machines/*`, `CounterProg*`, the CircuitComplexity
+machines) are outside MIG/RS. Their deduplication is the maintainer's 12.2c window.
+`Build/Zone.lean`'s module header is stale (it says every contract is sorried, but 38 of 40 are
+proved); fix it in the first MIG PR that touches Build.
 
 * **PROG-1: the vendored programming layer's follow-ups** (from the [AFM26] port, 2026-10-12;
   design §15b).

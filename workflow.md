@@ -201,6 +201,8 @@ pipeline detail).
 
 ## 7. Relationship to the other documents
 
+* [`ROADMAP.md`](ROADMAP.md) — a one-page orientation: the phases ahead and pointers to
+  the documents that hold the detail.
 * [`policy.md`](policy.md) — the standards this workflow enforces (modularity,
   attribution, sketches, review checklist).
 * [`lean-glossary.md`](lean-glossary.md) — the Lean/Mathlib jargon appearing in
