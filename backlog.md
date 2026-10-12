@@ -1208,5 +1208,13 @@ Remaining Chapter-6 items (each documented as a divergence in its file):
   and a platform replay checks the proof network closes. Composes with the
   §2 D7 internal-namespace visibility proposal; revisit no earlier than
   that proposal, if at all. *Origin: prior-art comparison, 2026-10-05.*
+* **Algorithm-adjacent files outside CI and provenance** (from the 2026-10-12 library-reuse
+  assessment; colleague-owned, so this is a note for the owners, not campaign work).
+  `Cryptography/RSA.lean` holds a root-namespace `TimeM` with trusted costs, plus a ticked
+  insertion sort. It has no copyright header, is not imported from `TCSlib.lean`, and its design
+  and notation appear to follow upstream cslib's `TimeM`. The attribution duty of policy §2
+  (*Vendored code* / *Design adaptation*) should be checked before §15's curriculum layer
+  reuses it. `GraphTheory/KargerMinCut*.lean` and `GraphTheory/Core/` are not imported from
+  `TCSlib.lean` either, so CI never builds them (policy §1, *Exports*).
 * **`HANDOFF.md`** — the have→lemma extractor campaign's own tracking
   document; deliberately *not* absorbed here.

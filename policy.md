@@ -55,8 +55,10 @@ internal plumbing.
 **Construction reuse.** Machines are built from the verified construction layers, not from
 scratch: the combinators and routine catalog of `TCSlib/Complexity/TuringMachine/Build/`
 (conventions, wrappers, loops, primitives, embeddings, seams, and the catalog rows —
-`machine-library-design.md` is the registry), and the program layers (`LogProg.ARM`,
-`CounterProg`) where a register-level description suffices. Before writing a transition
+`machine-library-design.md` is the registry), the registered hosts (**Hosts come first**,
+below), and the program layers (`LogProg.ARM`, `CounterProg`, and the general programming
+layer of `machine-library-design.md` §15 once it lands) where a program-level description
+suffices. Before writing a transition
 table by hand, check the registry; a routine that exists is cited, not re-derived. A routine
 that *almost* exists is the interesting case: do not write a third private variant — either
 consume the general form, or commission the missing form into the shared layer (during a
@@ -69,6 +71,24 @@ re-derived the same bank/relocation/dispatch/frame families four times over (`em
 tale. The same discipline applies to circuit construction once `CircuitComplexity`'s gadget
 layer exists: gadgets, wiring combinators, and size/depth ledgers get one shared home and a
 registry, and new circuits are assembled from it.
+
+**Hosts come first.** A *host* is a control structure that drives other routines rather than
+computing one value: a search or traversal (BFS, DFS, backtracking, an odometer over
+assignments), a recursion or evaluation scheme (AND/OR evaluation, Savitch's midpoint
+recursion), an interpreter or simulation step block, a clocked or windowed runner, a dispatcher
+over a data structure (tables, records), or an input device. Any routine whose natural contract
+does not depend on its first consumer counts as a host; leaf rows (copy, compare, seek,
+arithmetic) do not. **A host is never built `private` inside the proof that first needs it.**
+Its public contract is designed, statement-gated and placed in the shared construction layer
+first, generic in the parts its consumers vary (the leaf test, the step relation, the data
+domain), with time and space (head-envelope) clauses. Consumers cite it, under the campaign's
+proved-modulo rule while its own fill is still running. The host registry is
+`machine-library-design.md` §14. A private host already in the tree is harvested into the
+shared layer before a second consumer is briefed against it. The rule exists because private
+hosts were the main way the library overfitted to single proofs: four configuration encodings,
+three reachability notions and a private search host per theorem, each to be re-derived by the
+next consumer (assessment of 2026-10-12, recorded in the design document). (User, binding,
+2026-10-12.)
 
 **Duplication.** Some duplication is mechanically forced by the campaign discipline —
 exclusive file ownership, the statement freeze, and `private` visibility leave a fill batch
@@ -198,3 +218,5 @@ Before merging new Lean content, check:
 6. `zsh scripts/lean_check.sh <file>` reports zero errors for each touched file.
 7. If blueprint content was touched: `python3 scripts/blueprint_validate.py --strict` and
    `python3 scripts/dataset_hygiene.py --strict` pass.
+8. No new private host: every search, recursion, interpreter, runner or input device the
+   change introduces is a registered public host, or cites one (§1, **Hosts come first**).
