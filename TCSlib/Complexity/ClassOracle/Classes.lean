@@ -6,6 +6,8 @@ Authors: Seyoon Ragavan
 import TCSlib.Complexity.TuringMachine.OracleNondeterministic
 import TCSlib.Complexity.ClassNP.Reductions
 import TCSlib.Complexity.TuringMachine.Build.OracleCall
+-- The §12.10 oracle-call simulation, for `POracle_eq_P_of_mem_P` (maintainer fill).
+import TCSlib.Complexity.TuringMachine.Build.OracleSim
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -364,6 +366,51 @@ theorem compl_mem_POracle {L O : Language Bool} (h : L ∈ POracle O) :
     · have : x ∈ (Lᶜ : Language Bool) := hx
       simp [MultiTapeTM.indicator, hx, this]
 
+/-- `c·(n^k + 1) + 1 ≤ (2c + 1)·(n + 1)^k`, the oracle-time budget against a power of
+`n + 1` (from the §12.10 statement probe).
+
+**Proof sketch.** `n^k ≤ (n + 1)^k` and `1 ≤ (n + 1)^k`; collect terms. -/
+private theorem b1_poly_succ_le (c k n : ℕ) :
+    c * (n ^ k + 1) + 1 ≤ (2 * c + 1) * (n + 1) ^ k := by
+  have hX1 : 1 ≤ (n + 1) ^ k := Nat.one_le_pow _ _ (Nat.succ_pos _)
+  have hnX : n ^ k ≤ (n + 1) ^ k := Nat.pow_le_pow_left (Nat.le_succ n) k
+  have : c * (n ^ k + 1) ≤ c * (2 * (n + 1) ^ k) := Nat.mul_le_mul_left _ (by omega)
+  calc c * (n ^ k + 1) + 1 ≤ c * (2 * (n + 1) ^ k) + (n + 1) ^ k := by omega
+    _ = (2 * c + 1) * (n + 1) ^ k := by ring
+
+/-- **The `Pᴼ = P` ledger** (the P3.1 round-1 finding-2 shape; from the §12.10 statement
+probe): with oracle-machine time `t = c·(n^k + 1)` and decider time `C·(m + 1)^d`, the
+simulation bound `a·(t + 1)·(t + 1 + C·(t + 1)^d)` is a polynomial of degree `k·(d + 2)`.
+
+**Proof sketch.** Write `Y = t + 1 ≥ 1`. Then `Y + C·Y^d ≤ (1 + C)·Y^(d+1)`, so the bound
+is at most `a·(1 + C)·Y^(d+2)`; `b1_poly_succ_le` and `Complexity.succ_pow_le` bound
+`Y^(d+2)` by `(2c + 1)^(d+2)·2^(k(d+2))·(n^(k(d+2)) + 1)`. -/
+private theorem b1_budget (a c k C d n : ℕ) :
+    a * (c * (n ^ k + 1) + 1) * (c * (n ^ k + 1) + 1 + C * (c * (n ^ k + 1) + 1) ^ d) ≤
+      a * (1 + C) * (2 * c + 1) ^ (d + 2) * 2 ^ (k * (d + 2)) * (n ^ (k * (d + 2)) + 1) := by
+  have hYX := b1_poly_succ_le c k n
+  generalize hY : c * (n ^ k + 1) + 1 = Y at hYX ⊢
+  have hY1 : 1 ≤ Y := by omega
+  have hYd : Y + C * Y ^ d ≤ (1 + C) * Y ^ (d + 1) := by
+    have h1 : Y ≤ Y ^ (d + 1) := by
+      calc Y = Y ^ 1 := (pow_one Y).symm
+        _ ≤ Y ^ (d + 1) := Nat.pow_le_pow_right hY1 (by omega)
+    have h3 : C * Y ^ d ≤ C * Y ^ (d + 1) :=
+      Nat.mul_le_mul_left _ (Nat.pow_le_pow_right hY1 (Nat.le_succ d))
+    calc Y + C * Y ^ d ≤ Y ^ (d + 1) + C * Y ^ (d + 1) := Nat.add_le_add h1 h3
+      _ = (1 + C) * Y ^ (d + 1) := by ring
+  have hpow : Y ^ (d + 2) ≤ (2 * c + 1) ^ (d + 2) * (n + 1) ^ (k * (d + 2)) := by
+    calc Y ^ (d + 2) ≤ ((2 * c + 1) * (n + 1) ^ k) ^ (d + 2) := Nat.pow_le_pow_left hYX _
+      _ = (2 * c + 1) ^ (d + 2) * (n + 1) ^ (k * (d + 2)) := by rw [mul_pow, ← pow_mul]
+  calc a * Y * (Y + C * Y ^ d) ≤ a * Y * ((1 + C) * Y ^ (d + 1)) := Nat.mul_le_mul_left _ hYd
+    _ = a * (1 + C) * Y ^ (d + 2) := by ring
+    _ ≤ a * (1 + C) * ((2 * c + 1) ^ (d + 2) * (n + 1) ^ (k * (d + 2))) :=
+        Nat.mul_le_mul_left _ hpow
+    _ ≤ a * (1 + C) * ((2 * c + 1) ^ (d + 2) * (2 ^ (k * (d + 2)) * (n ^ (k * (d + 2)) + 1))) :=
+        Nat.mul_le_mul_left _ (Nat.mul_le_mul_left _ (succ_pow_le _ _))
+    _ = a * (1 + C) * (2 * c + 1) ^ (d + 2) * 2 ^ (k * (d + 2)) * (n ^ (k * (d + 2)) + 1) := by
+        ring
+
 /-- **A polynomial-time oracle is redundant**: `O ∈ P → Pᴼ = P`.
 [AB09, Example 3.6(2)]
 
@@ -388,8 +435,29 @@ not `k·e + O(1)`; (iii) non-query steps are lockstep
 (`Turing.OracleTM.step_eq_of_ne_qQuery`), and the preservation/reset
 invariants (suspended tapes untouched, scratch cleared, fixed windows) are
 named fill obligations. The composite bound sits inside `P`'s `⋃ c` by the
-absorption `(n+1)^c ≤ 2^c·(n^c + 1)`. -/
+absorption `(n+1)^c ≤ 2^c·(n^c + 1)`.
+
+**Fill appendix (maintainer; the §12.10 route).** The simulation above is the
+oracle-call library row W2-S (`Turing.FinOracleTM.exists_plain_simulation`,
+`machine-library-design.md` §12.10), which discharges obligations (i)–(iii) once
+for every oracle consumer. Its monotone decider corollary
+`Turing.FinOracleTM.exists_plain_decider` turns the `Pᴼ` machine and the `P`
+decider of `O` into a plain decider within `a·(t + 1)·(t + 1 + C·(t + 1)^d)`,
+`t = c·(n^k + 1)`; `b1_budget` bounds that by a polynomial of degree
+`k·(d + 2)`, and `Complexity.mem_P_of_dtime_le` concludes. This is the
+derivation of `audits/evidence/wave1-statements/S1210StatementsProbe.lean.txt`.
+It is proved modulo W2-S until the §12.10 fill lands. -/
 theorem POracle_eq_P_of_mem_P {O : Language Bool} (h : O ∈ P) : POracle O = P := by
-  sorry
+  refine Set.Subset.antisymm ?_ (P_subset_POracle O)
+  intro L hL
+  obtain ⟨k, c, M, hM⟩ := Set.mem_iUnion.mp hL
+  obtain ⟨C, d, D, hD⟩ := mem_P_iff.mp h
+  have hτ : Monotone fun m => C * (m + 1) ^ d := fun m m' hm =>
+    Nat.mul_le_mul_left _ (Nat.pow_le_pow_left (by omega) _)
+  obtain ⟨Pm, a, hP⟩ := FinOracleTM.exists_plain_decider hτ hM hD
+  have hDT : L ∈ DTIME fun n => a * (c * (n ^ k + 1) + 1) *
+      (c * (n ^ k + 1) + 1 + C * (c * (n ^ k + 1) + 1) ^ d) :=
+    ⟨1, Pm, fun x => (hP x).mono (Nat.le_of_eq (Nat.one_mul _).symm)⟩
+  exact mem_P_of_dtime_le hDT _ _ (b1_budget a c k C d)
 
 end Complexity
