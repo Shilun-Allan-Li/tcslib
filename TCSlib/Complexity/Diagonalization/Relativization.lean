@@ -953,10 +953,18 @@ does not relativize.
 **Proof sketch.** `A := Complexity.EXPCOM` with
 `Complexity.POracle_EXPCOM_eq_NPOracle_EXPCOM`; `B` from
 `Complexity.exists_oracle_ne` — were `P^B = NP^B`, its `U_B ∈ NP^B` and
-`U_B ∉ P^B` would collide. -/
+`U_B ∉ P^B` would collide.
+
+**Fill appendix (maintainer).** Exactly the sketch, as derived in
+`audits/evidence/wave1-statements/S1210StatementsProbe.lean.txt`. It is proved modulo the
+`EXPCOM` identity, which rests on B5's summit and `EXP ⊆ P^EXPCOM`, and modulo
+`exists_uniformMachineCode` (B5a), on which the language `EXPCOM` itself rests through
+`Complexity.expCode`. The `B` half (`Complexity.exists_oracle_ne`) is admission-free. -/
 theorem baker_gill_solovay :
     (∃ A : Language Bool, POracle A = NPOracle A) ∧
     ∃ B : Language Bool, POracle B ≠ NPOracle B := by
-  sorry
+  refine ⟨⟨EXPCOM, POracle_EXPCOM_eq_NPOracle_EXPCOM⟩, ?_⟩
+  obtain ⟨B, h1, h2⟩ := exists_oracle_ne
+  exact ⟨B, fun h => h2 (h ▸ h1)⟩
 
 end Complexity

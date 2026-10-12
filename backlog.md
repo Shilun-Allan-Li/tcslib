@@ -317,6 +317,37 @@ symbol lift at `refl` is the identity table, `counter_refl_agree`). Then re-chec
 consumer under that separately authorized definition change. This is a frozen-definition
 change, so it needs its own gate.
 
+### U-1: re-derive the chapter-1 universal machine from B5a's generic step block (user, 2026-10-11)
+
+The chapter-1 universal machine (`Turing.universal`, `universal_quadratic`, `timed_universal`) is
+a bespoke interpreter of about 5,300 lines across `Universal.lean`, `UniversalStartup.lean`,
+`UniversalInterpreter.lean` and `UniversalBlock.lean`. It is hard-wired to one work tape, and it
+is already copied once: the timed form carries its own private stopped-interpreter layer. B5a
+(`briefs/b5a-fill.md`, design §12.11) builds one format-parameterized interpreter instead. That
+is a single private step block for one simulated transition of a `k`-tape coded table, whose
+per-round cost is independent of `t` and `x`.
+
+**The item:** after B5a lands, re-derive the three chapter-1 statements from that step block, and
+delete the bespoke interpreter layers.
+
+**H1 alone does not suffice.** The frozen statements need what B5a's headline does not give:
+- **full output:** `universal` computes `M_α(x)`, and `timed_universal` emits `true :: output`,
+  whereas H1 answers only `[true]`/`[false]` from a silent output summary;
+- **a per-code linear bound with no `|x|` term:** `universal` is `C(α)·(t + 1)` and
+  `timed_universal` is `C(α)·(t + 1)²`, whereas H1 is a polynomial in `|α| + |x| + t`;
+- **no deadline, and divergence preserved:** `universal` runs until halt, and its converse says
+  every completed output of `U` is one of the simulated machine's.
+
+**Route.** Reuse the step block under new hosts. The natural route is H2 above (the per-code
+linear timed simulator, with its suffix-input host), plus an emitting variant of the block's
+output handling and an unclocked loop host for `universal`. Keep all three statements unchanged;
+`UniversalStartup`'s public input pieces (`universalInput_read`/`_move`) are the suffix-input
+host's components.
+
+**Governance.** A 12.2c item: its own PR and gate. The chapter-1 statements are frozen, and every
+consumer of `universal`/`timed_universal` is re-checked. Prerequisite: the B5a fill (H1's step
+block proved). *Origin: B5a design discussion; user, 2026-10-11.*
+
 ## 2. Campaign work queued or on hold
 
 * **Chapter-2 fill campaign (E1-E5)** — **active** (hold lifted
@@ -962,7 +993,8 @@ change, so it needs its own gate.
   proved (`exists_uniformSimulator_of_timed`, B5a statement probe), so H2
   can later be added beside H1 without disturbing its consumers. The step
   block's per-round cost is independent of `t` and `x`, so the B5a fill's
-  trace is the H2 core. *Origin: B5a dossier D3; design §12.11.*
+  trace is the H2 core. H2 is also the natural route for 12.2c item **U-1** (§1).
+  *Origin: B5a dossier D3; design §12.11.*
 
 ### Chapter 6 (Arora–Barak §§6.1–6.5): what is proved, and what remains
 
