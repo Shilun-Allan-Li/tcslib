@@ -1678,9 +1678,8 @@ have moved from `Codes2Tape` and are generalized to arbitrary tape and state
 counts. `summaryClock_accepts` identifies the inclusive-deadline predicate;
 `summaryClock_zero` handles zero. These are semantic specifications only.
 The one physical step block, its relation-level trace, the counter/virtual-input
-host assembly, and its ledger remain open; this target retains its admission. 
-
-**Fill appendix (B5a H1, selected-record partial).** The private
+host assembly, and its ledger remain open; this target retains its admission. **Fill appendix
+(B5a H1, selected-record partial).** The private
 `h1RecordTM` reads the fixed action fields into finite control and executes
 them on the mirrored bank and native input, recording the emission by
 `summaryEmit`. `h1Record_read`, `h1Record_execute`, and `h1Record_effect`
