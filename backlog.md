@@ -456,6 +456,7 @@ statement families are retired, with full gates and consumer edits. Restyling is
 | MIG-15 | `Build/CounterLoop` | `counterSpan` becomes a Contract | −440 to −640 | MIG-0, MIG-4 | swap | |
 | MIG-16 | `Build/OracleSim` | Rebase on the R1 contracts | −250 to −400 | MIG-0 | swap | exact lockstep lemmas stay |
 | MIG-17 | `Build/Primitives`, `Build/Loop` | Named loop hosts; `splitSafe`/`SafeRun` become Contracts | −1k to −2k | MIG-0, MIG-1 | swap | 15 external files cite the P-rows (statements kept) |
+| MIG-19 | `SpaceComplexity/ConfigGraph` (S1b's delivery) | Re-derive `NSPACE ⊆ DTIME(2^O(S))`, `NL ⊆ P` and Ex 4.3 as programs (design §16, decision 3); retire S1b's private BFS host | to be estimated once S1b lands | stage 2, machine-configuration routines | swap | user, 2026-10-12: S1b finishes first |
 | MIG-18 | port of [AFM26]'s `Util/Asymptotics` (1,769 lines upstream) | `Dominated`, `Scale.SoftO` and the `growth` tactic, then ledgers without constants | +0.5k to +1.4k; saves part of about 3.5k ledger lines | the PROG-1 port tooling | fidelity, then swap | payoff mostly in ClassNP, ClassP, SpaceComplexity and PolyHierarchy |
 
 **RS: the restyling backlog, opportunistic; chip away at it.**

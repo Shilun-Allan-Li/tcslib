@@ -3414,9 +3414,11 @@ Their per-file figures are the restyling backlog (`backlog.md` §2, MIG/RS).
 3. **Savitch and `NSPACE ⊆ DTIME(2^O(S))` are algorithms at heart.** They are written as programs
    of the §15 language and converted by the RAM-to-`FinTM` compiler (stage 2). TM-intrinsic
    results are *not* recast as programs: Cook–Levin, TMSAT, NP ⊆ PSPACE's machine,
-   Nondeterminism, the oblivious and hierarchy constructions, and the universal machine. The
-   decision record for S1b, which is in flight at machine level and proves
-   `NSPACE ⊆ DTIME(2^O(S))`, is pending with the user.
+   Nondeterminism, the oblivious and hierarchy constructions, and the universal machine.
+   **S1b**, in flight at machine level and proving `NSPACE ⊆ DTIME(2^O(S))`, `NL ⊆ P` and Ex 4.3,
+   **finishes as briefed** (user, 2026-10-12: "Let it finish"). Once stage 2 and the
+   configuration routines exist, it is re-derived as a program and its private host retired,
+   with its public statements unchanged (MIG-19).
 4. **Restyling is opportunistic, with a clear backlog** to chip away at: the RS items. Each
    row has its estimate, prerequisites and gate.
 
