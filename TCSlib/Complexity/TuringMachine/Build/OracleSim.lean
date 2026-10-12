@@ -73,7 +73,7 @@ simulation.
 
 * `Turing.OracleTM.queryString_runFrom_length_le_of_blank` — from a blank query tape with
   its head at the origin, the query after `s` steps has length at most `s`.
-* `Turing.FinOracleTM.exists_plain_simulation` — the headline (statement).
+* `Turing.FinOracleTM.exists_plain_simulation` — the headline (proved).
 * `Turing.FinOracleTM.exists_plain_simulation_of_monotone`,
   `Turing.FinOracleTM.exists_plain_simulation_initCfg`,
   `Turing.FinOracleTM.exists_plain_decider` — the uniform corollaries.
@@ -86,16 +86,14 @@ The plain certificate shell `Turing.FinTM.exists_certificateShell` and its proje
 
 ## Status
 
-The choice-word machine `exists_choiceTM` is proved, including the query-at-exhaustion
-case. The deterministic row `exists_plain_simulation` remains sorried: its clean install
-call, frozen-input transport, delimited query window and cost summation are proved privately.
-**Continuation status (partial):** the source/shadow transport, query preparation and
-restoration, and a finite phase-host definition are now present. The R1/R2 service seams,
-global simulation invariant and final time bound remain to be proved. The three corollaries,
-the query-length lemma, the two choice-word lemmas and the word-placement facts are proved
-(the corollaries still depend on the deterministic row). The shell's row is in
-`Build/CertShell`. The query-length lemma and choice-word law continue to cite the shared
-`Turing.OracleTM.runFrom_radius` and `TCSlib.Complexity.TuringMachine.ChoiceWords`.
+**Fill status (continuation 2):** `exists_plain_simulation` is proved, including the
+preloaded initialization, complete R1/R2 query service, stable-boundary simulation and
+quadratic time ledger. Its three corollaries are consequently admission-free. The
+choice-word machine `exists_choiceTM` remains proved, including query-at-exhaustion;
+the query-length lemma, choice-word lemmas and word-placement facts are also proved.
+The shell's row is in `Build/CertShell`. The query-length lemma and choice-word law
+continue to cite the shared `Turing.OracleTM.runFrom_radius` and
+`TCSlib.Complexity.TuringMachine.ChoiceWords`.
 
 ## References
 
@@ -1207,6 +1205,836 @@ private noncomputable def oracleHost (M : FinOracleTM Bool) (C : FinTM Bool)
   State := Σ i, oraclePhaseState M C i
   tm := phaseHostTM (oraclePhases M C hc en) ⟨.dispatch, .boot⟩ (oracleRedirect M C ex)
 
+section oracleHostSeams
+
+attribute [local simp] Fin.cons Fin.cases Fin.induction Fin.induction.go
+
+/-- The source and its origin shadow in an otherwise clean full host bank.
+The native input position and accumulated output are those of the source. -/
+private noncomputable def oracleSourceCfg (M : FinOracleTM Bool) (C : FinTM Bool)
+    {x : List Bool} (c : Cfg (M.k + 1) Bool M.State x) (side : Bool) :
+    Cfg (oracleHostTapes M.k C.k) Bool (M.State × Bool) x :=
+  embedEmitCfg (oracleSourceBank M.k C.k) (fun _ _ => none) (fun _ => 0) []
+    (oracleShadowCfg (OracleTM.queryTapeIdx M.k) c side)
+
+/-- The stable full-host configuration between simulated source steps. -/
+private noncomputable def oracleStableCfg (M : FinOracleTM Bool) (C : FinTM Bool)
+    {x : List Bool} (c : Cfg (M.k + 1) Bool M.State x) (side : Bool) :
+    Cfg (oracleHostTapes M.k C.k) Bool (Σ i, oraclePhaseState M C i) x :=
+  (oracleSourceCfg M C c side).mapState (Sigma.mk (β := oraclePhaseState M C) OraclePhase.source)
+
+/-- Off-query segments of the candidate host are the inherited source/shadow
+transport, with all auxiliary tapes clean at their boundaries.
+
+**Proof sketch.** The source redirect is absent off the query state. Its
+phase table is exactly the R1 shadow placement, so `oracleOffQuery` supplies
+the whole segment and the side witness; no lockstep is repeated. -/
+private theorem oracleHost_offQuery (M : FinOracleTM Bool) (C : FinTM Bool)
+    (hc : 0 < C.k) (en ex : C.State) (O : Language Bool) {x : List Bool}
+    (c : Cfg (M.k + 1) Bool M.State x) (side : Bool)
+    (hb : oracleSide (c.workTapePos (OracleTM.queryTapeIdx M.k)) side) (t : ℕ)
+    (hvisit : ∀ s < t,
+      (M.tm.plainEmptyOracle.runFrom c s).state ≠ some M.tm.qQuery) :
+    ∃ side', oracleSide ((M.tm.runFrom O c t).workTapePos
+        (OracleTM.queryTapeIdx M.k)) side' ∧
+      (oracleHost M C hc en ex).tm.runFrom (oracleStableCfg M C c side) t =
+        oracleStableCfg M C (M.tm.runFrom O c t) side' := by
+  apply oracleOffQuery M O (oracleHost M C hc en ex).tm
+    (oracleSourceBank M.k C.k) ⟨Sigma.mk (β := oraclePhaseState M C) OraclePhase.source, sigma_mk_injective⟩
+    (fun _ _ => none) (fun _ => 0)
+  · intro qb hq inp work
+    simp [oracleHost, phaseHostTM, oracleRedirect, oraclePhases, hq]
+  · exact hb
+  · exact hvisit
+
+/-- A local administration segment and its one redirect step inside the full
+host. Arbitrary ambient tapes, heads and accumulated output cross the seam.
+
+**Proof sketch.** Relocate the already proved local run with R1, and apply
+the public phase-host contract. The local internal-control guard is exactly
+absence of an administration redirect. -/
+private theorem oracleHost_dispatch (M : FinOracleTM Bool) (C : FinTM Bool)
+    (hc : 0 < C.k) (en ex : C.State) {x : List Bool}
+    (tapes : Fin (oracleHostTapes M.k C.k) → ℤ → Option Bool)
+    (heads : Fin (oracleHostTapes M.k C.k) → ℤ)
+    (c c' : Cfg 4 Bool OracleDispatch x) (T : ℕ)
+    (h : oracleDispatchTM.runFrom c T = c') (s' : OracleDispatch)
+    (hs' : c'.state = some s') (q' : Σ i, oraclePhaseState M C i)
+    (hred : oracleRedirect M C ex .dispatch s' = some q')
+    (hguard : ∀ u < T, ∀ s,
+      (oracleDispatchTM.runFrom c u).state = some s → oracleDispatchInternal s) :
+    (oracleHost M C hc en ex).tm.runFrom
+        ((embedEmitCfg ⟨oracleSlots M.k C.k hc, oracleSlots_injective M.k C.k hc⟩
+          tapes heads [] c).mapState (Sigma.mk (β := oraclePhaseState M C) OraclePhase.dispatch)) (T + 1) =
+      (embedEmitCfg ⟨oracleSlots M.k C.k hc, oracleSlots_injective M.k C.k hc⟩
+        tapes heads [] c').mapState (fun _ => q') := by
+  apply (phaseHostTM_run (oraclePhases M C hc en) ⟨.dispatch, .boot⟩
+    (oracleRedirect M C ex) .dispatch _ _ T ?_ s' hs' q' hred ?_).2
+  · exact (embedEmitTM_runFrom _ oracleDispatchTM tapes heads [] c T).trans
+      (congrArg (embedEmitCfg _ tapes heads []) h)
+  · intro u hu s hs
+    have hsLocal : (oracleDispatchTM.runFrom c u).state = some s := by
+      change ((embedEmitTM
+        ⟨oracleSlots M.k C.k hc, oracleSlots_injective M.k C.k hc⟩ oracleDispatchTM).runFrom
+        (embedEmitCfg ⟨oracleSlots M.k C.k hc, oracleSlots_injective M.k C.k hc⟩
+          tapes heads [] c) u).state = some s at hs
+      rw [embedEmitTM_runFrom] at hs
+      exact hs
+    have hi := hguard u hu s hsLocal
+    cases s <;> simp_all [oracleDispatchInternal, oracleRedirect]
+
+/-- Replacing one selected tape commutes with R1 configuration placement.
+This is the configuration seam needed when copying a query or installing a
+singleton verdict; it makes no assertion about a machine trace.
+
+**Proof sketch.** On selected slots use R1's projection and injectivity. On
+the ambient frame use R1's time-zero frame contract. -/
+private theorem oracleEmbed_updateTape {m k : ℕ} {S : Type} {x : List Bool}
+    (A : MultiTapeTM m Bool S) (ι : Fin m ↪ Fin k)
+    (tapes : Fin k → ℤ → Option Bool) (heads : Fin k → ℤ)
+    (c : Cfg m Bool S x) (i : Fin m) (f : ℤ → Option Bool) :
+    embedEmitCfg ι tapes heads [] {c with workTapes := Function.update c.workTapes i f} =
+      {embedEmitCfg ι tapes heads [] c with
+        workTapes := Function.update (embedEmitCfg ι tapes heads [] c).workTapes (ι i) f} := by
+  refine Cfg.ext rfl rfl ?_ rfl rfl
+  funext j
+  dsimp only
+  by_cases hj : j ∈ Set.range ι
+  · obtain ⟨l, rfl⟩ := hj
+    by_cases hl : l = i
+    · subst l
+      simp [embedEmitCfg_selected_tape]
+    · have hli : ι l ≠ ι i := fun he => hl (ι.injective he)
+      simp [Function.update_of_ne hl, Function.update_of_ne hli,
+        embedEmitCfg_selected_tape]
+  · have hji : j ≠ ι i := fun he => hj ⟨i, he.symm⟩
+    rw [Function.update_of_ne hji]
+    exact ((embedEmitTM_frame ι A tapes heads []
+      {c with workTapes := Function.update c.workTapes i f} 0).1 j hj).1.trans
+        (((embedEmitTM_frame ι A tapes heads [] c 0).1 j hj).1.symm)
+
+/-- An empty virtual-input call in a clean selected bank differs from its
+ambient frame only in control and the argument tape.
+
+**Proof sketch.** The inherited `oracleBankCfg_eq` identifies the empty
+virtual call with the clean ambient frame. Replacing its argument buffer
+then commutes with placement by `oracleEmbed_updateTape`. -/
+private theorem oracleCall_view {k : ℕ} (C : FinTM Bool) (hc : 0 < C.k)
+    (ι : Fin (1 + C.k) ↪ Fin k) {x : List Bool}
+    (d : Cfg k Bool (C.State × Bool) x)
+    (hblank : ∀ j, d.workTapes (ι j) = fun _ => none)
+    (hheads : ∀ j, d.workTapePos (ι j) = 0) (q : C.State) (z : List Bool) :
+    embedEmitCfg ι d.workTapes d.workTapePos []
+        (vhostCfg (Cfg.ofWords (input := []) q (stateWord C.k z)) true d.inputPos d.output) =
+      {d with
+        state := some (q, true)
+        workTapes := Function.update d.workTapes (ι (vhostBank ⟨0, hc⟩))
+          (FinTM.bufferTape z)} := by
+  let empty := vhostCfg (Cfg.ofWords (input := []) q (stateWord C.k []))
+    true d.inputPos d.output
+  have blankView : embedEmitCfg ι d.workTapes d.workTapePos [] empty =
+      {d with state := some (q, true)} := by
+    apply oracleBankCfg_eq (vhostEmitTM C.tm) ι empty
+      {d with state := some (q, true)} rfl rfl
+    · simp [empty, vhostCfg, Cfg.ofWords]
+    · intro j
+      change empty.workTapes j = d.workTapes (ι j)
+      rw [hblank]
+      induction j using Fin.addCases <;> simp [empty, vhostCfg, Cfg.ofWords, stateWord]
+    · intro j
+      change empty.workTapePos j = d.workTapePos (ι j)
+      rw [hheads]
+      induction j using Fin.addCases <;> simp [empty, vhostCfg, Cfg.ofWords]
+  have argumentView :
+      vhostCfg (Cfg.ofWords (input := []) q (stateWord C.k z)) true d.inputPos d.output =
+        {empty with
+          workTapes := Function.update empty.workTapes (vhostBank ⟨0, hc⟩) (FinTM.bufferTape z)} := by
+    refine Cfg.ext rfl rfl ?_ rfl rfl
+    funext j
+    dsimp only
+    by_cases hj : j = vhostBank ⟨0, hc⟩
+    · subst j
+      exact (Function.update_self (vhostBank ⟨0, hc⟩)
+        (FinTM.bufferTape z) empty.workTapes).symm
+    · rw [Function.update_of_ne hj]
+      induction j using Fin.addCases with
+      | left j => simp [empty, vhostCfg, Cfg.ofWords]
+      | right j =>
+        have hn : (j : ℕ) ≠ 0 := by
+          intro he
+          apply hj
+          congr 1
+          exact Fin.ext he
+        simp [empty, vhostCfg, Cfg.ofWords, stateWord, hn]
+  rw [argumentView, oracleEmbed_updateTape (vhostEmitTM C.tm), blankView]
+
+/-- The public copy followed by the relocated clean call replaces the blank
+argument tape by the result word and changes no other ambient field. The
+return is the first occurrence of the call's exit in the R2 service phase.
+
+**Proof sketch.** Specialize the inherited blank-destination copy, identify
+its result with the relocated empty-input call using `oracleCall_view`, and
+compose with R2. Both first-return cuts are the inherited contracts. -/
+private theorem oracleService_run {k : ℕ} (C : FinTM Bool) (hc : 0 < C.k)
+    (en ex : C.State) (ι : Fin (1 + C.k) ↪ Fin k) (src : Fin k)
+    (hne : src ≠ ι (vhostBank ⟨0, hc⟩)) {x : List Bool}
+    (d : Cfg k Bool SweepPhase x) (hs : d.state = some .sweep)
+    (hblank : ∀ j, d.workTapes (ι j) = fun _ => none)
+    (hheads : ∀ j, d.workTapePos (ι j) = 0) (arg result : List Bool) (t : ℕ)
+    (hwindow : ∀ p : ℤ, -1 ≤ p → p ≤ (arg.length : ℤ) →
+      d.workTapes src (d.workTapePos src + p) = FinTM.bufferTape arg p)
+    (hend : C.tm.runFrom (Cfg.ofWords (input := []) en (stateWord C.k arg)) t =
+      Cfg.ofWords ex (stateWord C.k result))
+    (hcut : ∀ s < t,
+      (C.tm.runFrom (Cfg.ofWords (input := []) en (stateWord C.k arg)) s).state ≠ some ex) :
+    (seamCompTM (copyTM k src (ι (vhostBank ⟨0, hc⟩))) .done
+        (embedEmitTM ι (vhostEmitTM C.tm)) (en, true)).runFrom (d.mapState Sum.inl)
+        (2 * arg.length + 3 + t) =
+      ({d with
+        workTapes := Function.update d.workTapes (ι (vhostBank ⟨0, hc⟩))
+          (FinTM.bufferTape result)}.mapState (fun _ => Sum.inr (ex, true))) ∧
+    ∀ s < 2 * arg.length + 3 + t,
+      ((seamCompTM (copyTM k src (ι (vhostBank ⟨0, hc⟩))) .done
+        (embedEmitTM ι (vhostEmitTM C.tm)) (en, true)).runFrom
+          (d.mapState Sum.inl) s).state ≠ some (Sum.inr (ex, true)) := by
+  classical
+  let dst := ι (vhostBank ⟨0, hc⟩)
+  let c₁ : Cfg k Bool SweepPhase x :=
+    {d with
+      state := some .done
+      workTapes := Function.update d.workTapes dst (FinTM.bufferTape arg)}
+  let c₃ : Cfg k Bool (C.State × Bool) x :=
+    {d.mapState (fun _ => (ex, true)) with
+      workTapes := Function.update d.workTapes dst (FinTM.bufferTape result)}
+  have view (q : C.State) (z : List Bool) :=
+    oracleCall_view C hc ι (d.mapState (fun _ => (en, true))) hblank hheads q z
+  simp only [Cfg.mapState] at view
+  have entry : c₁.mapState (fun _ => (en, true)) =
+      embedEmitCfg ι d.workTapes d.workTapePos []
+        (vhostCfg (Cfg.ofWords (input := []) en (stateWord C.k arg)) true d.inputPos d.output) := by
+    rw [view]
+    rfl
+  have exitCfg : embedEmitCfg ι d.workTapes d.workTapePos []
+      (vhostCfg (Cfg.ofWords (input := []) ex (stateWord C.k result)) true d.inputPos d.output) =
+        c₃ := by
+    rw [view]
+    simp [c₃, dst, Cfg.mapState, hs]
+  obtain ⟨hcopy, hcopyCut⟩ := oracleCopy_intoBlank src dst hne arg d hs
+    (hheads _) (hblank _) hwindow
+  obtain ⟨hcall, hcallCut⟩ := oracleRelocatedCall C en ex ι d.workTapes d.workTapePos
+    arg result t hend hcut x d.inputPos d.output
+  have callRun : (embedEmitTM ι (vhostEmitTM C.tm)).runFrom
+      (c₁.mapState (fun _ => (en, true))) t = c₃ := by
+    rw [entry, hcall, exitCfg]
+  have callCut : ∀ s < t, ((embedEmitTM ι (vhostEmitTM C.tm)).runFrom
+      (c₁.mapState (fun _ => (en, true))) s).state ≠ some (ex, true) := by
+    simpa only [entry] using hcallCut
+  have ret := seamCompTM_run_ofCfg (copyTM k src dst) .done
+    (embedEmitTM ι (vhostEmitTM C.tm)) (en, true) hcopy rfl hcopyCut callRun
+  have cut := seamCompTM_firstReturn_ofCfg (copyTM k src dst) .done
+    (embedEmitTM ι (vhostEmitTM C.tm)) (en, true) (ex, true)
+    hcopy rfl hcopyCut callRun (by simp [c₃, Cfg.mapState, hs]) callCut
+  simpa [c₃, Cfg.mapState, hs, dst, Nat.add_assoc] using And.intro ret cut
+
+/-- Every auxiliary tape outside the source/shadow prefix is blank with its
+head at zero at a stable boundary. Proof sketch: its numerical index excludes
+the source embedding, so the public R1 frame contract at time zero applies. -/
+private theorem oracleSourceCfg_frame (M : FinOracleTM Bool) (C : FinTM Bool)
+    {x : List Bool} (c : Cfg (M.k + 1) Bool M.State x) (side : Bool)
+    (j : Fin (oracleHostTapes M.k C.k)) (hj : M.k + 1 + 1 ≤ (j : ℕ)) :
+    (oracleSourceCfg M C c side).workTapes j = (fun _ => none) ∧
+      (oracleSourceCfg M C c side).workTapePos j = 0 := by
+  have hout : j ∉ Set.range (oracleSourceBank M.k C.k) := by
+    rintro ⟨i, hi⟩
+    have hv := congrArg Fin.val hi
+    simp only [oracleSourceBank, Function.Embedding.coeFn_mk,
+      Fin.coe_castSucc, Fin.coe_castAdd] at hv
+    omega
+  exact (embedEmitTM_frame (oracleSourceBank M.k C.k)
+    (oracleShadowTM (OracleTM.queryTapeIdx M.k) M.tm.plainEmptyOracle)
+    (fun _ _ => none) (fun _ => 0) []
+    (oracleShadowCfg (OracleTM.queryTapeIdx M.k) c side) 0).1 j hout
+
+/-- At initialization the stable source view is the requested prefix preload
+with just the origin shadow installed. Ordinary preloaded words are never
+scanned or rewritten.
+
+**Proof sketch.** On the source bank use the selected projections and split
+off the last shadow slot. Outside that bank the prefix preload and the R1
+frame are both blank, with all heads at zero. -/
+private theorem oracleSourceCfg_initial (M : FinOracleTM Bool) (C : FinTM Bool)
+    (x : List Bool) (w : Fin (M.k + 1) → List Bool) :
+    let d : Cfg (oracleHostTapes M.k C.k) Bool (M.State × Bool) x :=
+      Cfg.ofWords (M.tm.q₀, true) (FinTM.prefixWords (oracleHostTapes M.k C.k) w)
+    oracleSourceCfg M C (Cfg.ofWords (input := x) M.tm.q₀ w) true =
+      {d with
+        workTapes := Function.update d.workTapes
+          (oracleSourceBank M.k C.k (Fin.last (M.k + 1))) oracleOrigin} := by
+  dsimp only
+  have outside (j : Fin (oracleHostTapes M.k C.k))
+      (hj : j ∉ Set.range (oracleSourceBank M.k C.k)) : M.k + 1 + 1 ≤ (j : ℕ) := by
+    by_contra hn
+    apply hj
+    exact ⟨⟨j, by omega⟩, Fin.ext rfl⟩
+  refine Cfg.ext rfl rfl ?_ ?_ rfl
+  · funext j
+    by_cases hj : j ∈ Set.range (oracleSourceBank M.k C.k)
+    · obtain ⟨i, rfl⟩ := hj
+      change (embedEmitCfg _ _ _ [] _).workTapes _ = _
+      rw [embedEmitCfg_selected_tape]
+      induction i using Fin.lastCases with
+      | last => simp [oracleShadowCfg]
+      | cast i =>
+        simp [oracleShadowCfg, Cfg.ofWords, FinTM.prefixWords, oracleSourceBank, i.isLt]
+    · have hge := outside j hj
+      rw [(oracleSourceCfg_frame M C (Cfg.ofWords (input := x) M.tm.q₀ w) true j hge).1]
+      have hne : j ≠ oracleSourceBank M.k C.k (Fin.last (M.k + 1)) :=
+        fun he => hj ⟨_, he.symm⟩
+      simp [Function.update_of_ne hne, Cfg.ofWords, FinTM.prefixWords,
+        show ¬(j : ℕ) < M.k + 1 from by omega]
+  · funext j
+    by_cases hj : j ∈ Set.range (oracleSourceBank M.k C.k)
+    · obtain ⟨i, rfl⟩ := hj
+      change (embedEmitCfg _ _ _ [] _).workTapePos _ = _
+      rw [embedEmitCfg_selected_pos]
+      induction i using Fin.lastCases <;> simp [oracleShadowCfg, Cfg.ofWords]
+    · exact (oracleSourceCfg_frame M C (Cfg.ofWords (input := x) M.tm.q₀ w)
+        true j (outside j hj)).2
+
+/-- At a live stable boundary, the four-tape dispatch view agrees with the
+source query, origin shadow, blank scratch and blank argument tape.
+
+**Proof sketch.** The first two selected slots are source/shadow projections;
+the other two lie outside that prefix and use its blank-frame lemma. The
+inherited R1 configuration-identification lemma then equates the full views. -/
+private theorem oracleSource_localView (M : FinOracleTM Bool) (C : FinTM Bool)
+    (hc : 0 < C.k) {x : List Bool} (c : Cfg (M.k + 1) Bool M.State x)
+    (side : Bool) (q : OracleDispatch) (hs : c.state ≠ none) :
+    embedEmitCfg ⟨oracleSlots M.k C.k hc, oracleSlots_injective M.k C.k hc⟩
+      (oracleSourceCfg M C c side).workTapes (oracleSourceCfg M C c side).workTapePos []
+      (oracleLocalCfg (c.workTapes (OracleTM.queryTapeIdx M.k))
+        (c.workTapePos (OracleTM.queryTapeIdx M.k)) q c.inputPos c.output) =
+        (oracleSourceCfg M C c side).mapState (fun _ => q) := by
+  let localCfg := oracleLocalCfg (c.workTapes (OracleTM.queryTapeIdx M.k))
+    (c.workTapePos (OracleTM.queryTapeIdx M.k)) q c.inputPos c.output
+  have fields (i : Fin 4) :
+      (localCfg.workTapes i, localCfg.workTapePos i) =
+        ((oracleSourceCfg M C c side).workTapes (oracleSlots M.k C.k hc i),
+         (oracleSourceCfg M C c side).workTapePos (oracleSlots M.k C.k hc i)) := by
+    fin_cases i
+    · simp [localCfg, oracleLocalCfg, oracleSlots, oracleSourceCfg,
+        embedEmitCfg_selected_tape, embedEmitCfg_selected_pos, oracleShadowCfg,
+        OracleTM.queryTapeIdx]
+    · simp [localCfg, oracleLocalCfg, oracleSlots, oracleSourceCfg,
+        embedEmitCfg_selected_tape, embedEmitCfg_selected_pos, oracleShadowCfg]
+    · have hf := oracleSourceCfg_frame M C c side (oracleSlots M.k C.k hc 2)
+        (by simp [oracleSlots])
+      exact Prod.ext hf.1.symm hf.2.symm
+    · have hf := oracleSourceCfg_frame M C c side (oracleSlots M.k C.k hc 3)
+        (by simp [oracleSlots, oracleCallBank, vhostBank])
+      exact Prod.ext hf.1.symm hf.2.symm
+  apply oracleBankCfg_eq oracleDispatchTM _ localCfg
+    ((oracleSourceCfg M C c side).mapState (fun _ => q))
+  · cases h : c.state <;>
+      simp_all [localCfg, oracleLocalCfg, oracleSourceCfg, oracleShadowCfg,
+        embedEmitCfg, Cfg.mapState]
+  · rfl
+  · simp [localCfg, oracleLocalCfg, oracleSourceCfg, embedEmitCfg, oracleShadowCfg,
+      Cfg.mapState]
+  · intro i
+    exact congrArg Prod.fst (fields i)
+  · intro i
+    exact congrArg Prod.snd (fields i)
+
+/-- A local administration configuration placed in the stable source frame.
+Only query, shadow, scratch and argument can differ from that frame. -/
+private noncomputable def oracleDispatchCfg (M : FinOracleTM Bool) (C : FinTM Bool)
+    (hc : 0 < C.k) {x : List Bool} (c : Cfg (M.k + 1) Bool M.State x)
+    (side : Bool) (d : Cfg 4 Bool OracleDispatch x) :
+    Cfg (oracleHostTapes M.k C.k) Bool OracleDispatch x :=
+  embedEmitCfg ⟨oracleSlots M.k C.k hc, oracleSlots_injective M.k C.k hc⟩
+    (oracleSourceCfg M C c side).workTapes (oracleSourceCfg M C c side).workTapePos [] d
+
+/-- Administration leaves a clean call bank whenever its local argument
+tape is blank at zero. The other call slots are outside the four dispatch
+slots and retain the stable blank frame.
+
+**Proof sketch.** Separate the argument slot. It is the selected local slot
+three; every other call slot is arithmetically disjoint from query, shadow,
+scratch and argument, so apply the public R1 frame contract. -/
+private theorem oracleDispatchCfg_callBlank (M : FinOracleTM Bool) (C : FinTM Bool)
+    (hc : 0 < C.k) {x : List Bool} (c : Cfg (M.k + 1) Bool M.State x)
+    (side : Bool) (d : Cfg 4 Bool OracleDispatch x)
+    (harg : d.workTapes 3 = fun _ => none) (hpos : d.workTapePos 3 = 0)
+    (j : Fin (1 + C.k)) :
+    (oracleDispatchCfg M C hc c side d).workTapes (oracleCallBank M.k C.k j) =
+        (fun _ => none) ∧
+      (oracleDispatchCfg M C hc c side d).workTapePos (oracleCallBank M.k C.k j) = 0 := by
+  by_cases hj : j = vhostBank ⟨0, hc⟩
+  · subst j
+    change (embedEmitCfg _ _ _ [] d).workTapes (oracleSlots M.k C.k hc 3) = _ ∧
+      (embedEmitCfg _ _ _ [] d).workTapePos (oracleSlots M.k C.k hc 3) = _
+    exact ⟨(embedEmitCfg_selected_tape
+      ⟨oracleSlots M.k C.k hc, oracleSlots_injective M.k C.k hc⟩ _ _ [] d 3).trans harg,
+      (embedEmitCfg_selected_pos
+        ⟨oracleSlots M.k C.k hc, oracleSlots_injective M.k C.k hc⟩ _ _ [] d 3).trans hpos⟩
+  · have hout : oracleCallBank M.k C.k j ∉
+        Set.range (oracleSlots M.k C.k hc) := by
+      rintro ⟨i, hi⟩
+      have hv := congrArg Fin.val hi
+      fin_cases i <;>
+        simp [oracleSlots, oracleSourceBank, oracleCallBank, vhostBank] at hv
+      · omega
+      · omega
+      · omega
+      · apply hj
+        apply Fin.ext
+        simp [vhostBank]
+        omega
+    have frame := (embedEmitTM_frame
+      ⟨oracleSlots M.k C.k hc, oracleSlots_injective M.k C.k hc⟩ oracleDispatchTM
+      (oracleSourceCfg M C c side).workTapes (oracleSourceCfg M C c side).workTapePos []
+      d 0).1 (oracleCallBank M.k C.k j) hout
+    have clean := oracleSourceCfg_frame M C c side (oracleCallBank M.k C.k j)
+      (by simp [oracleCallBank])
+    exact ⟨frame.1.trans clean.1, frame.2.trans clean.2⟩
+
+/-- Replacing the prepared argument buffer and its live control yields the
+corresponding prepared seam; every other local field is unchanged. -/
+private theorem oracleReadyCfg_replace {x : List Bool} (f : ℤ → Option Bool) (p : ℤ)
+    (side : Bool) (arg result : List Bool) (q q' : OracleDispatch)
+    (ip : Fin (x.length + 2)) (out : List Bool) :
+    {oracleReadyCfg f p side arg q ip out with
+      state := some q'
+      workTapes := Function.update (oracleReadyCfg f p side arg q ip out).workTapes
+        3 (FinTM.bufferTape result)} = oracleReadyCfg f p side result q' ip out := by
+  simp [Cfg.ext_iff, oracleReadyCfg, funext_iff, Fin.forall_fin_succ]
+
+/-- A source query reaches the full-host copy/call entry after its redirect
+and the inherited preparation segment, costing at most displacement plus five.
+
+**Proof sketch.** The source query takes one public phase redirect. Identify
+the resulting administration view by `oracleSource_localView`, then relocate
+`oraclePrepare` and use its guard in `oracleHost_dispatch`, including the
+second redirect into the service phase. -/
+private theorem oracleHost_prepare (M : FinOracleTM Bool) (C : FinTM Bool)
+    (hc : 0 < C.k) (en ex : C.State) {x : List Bool}
+    (c : Cfg (M.k + 1) Bool M.State x) (side : Bool)
+    (hq : c.state = some M.tm.qQuery)
+    (hb : oracleSide (c.workTapePos (OracleTM.queryTapeIdx M.k)) side) :
+    ∃ t ≤ (c.workTapePos (OracleTM.queryTapeIdx M.k)).natAbs + 5,
+      (oracleHost M C hc en ex).tm.runFrom (oracleStableCfg M C c side) t =
+        (oracleDispatchCfg M C hc c side
+          (oracleReadyCfg (c.workTapes (OracleTM.queryTapeIdx M.k))
+            (c.workTapePos (OracleTM.queryTapeIdx M.k)) side [] .copy c.inputPos c.output)).mapState
+          (fun _ => ⟨.service, Sum.inl SweepPhase.sweep⟩) := by
+  let f := c.workTapes (OracleTM.queryTapeIdx M.k)
+  let p := c.workTapePos (OracleTM.queryTapeIdx M.k)
+  obtain ⟨t, ht, hprep, hcut⟩ := oraclePrepare f p side hb c.inputPos c.output
+  have first := (phaseHostTM_run (oraclePhases M C hc en) ⟨.dispatch, .boot⟩
+    (oracleRedirect M C ex) .source (oracleSourceCfg M C c side)
+    (oracleSourceCfg M C c side) 0 rfl (M.tm.qQuery, side)
+    (by simp [oracleSourceCfg, embedEmitCfg, oracleShadowCfg, hq])
+    ⟨.dispatch, .bookmark side⟩ (by simp [oracleRedirect])
+    (by intro u hu; omega)).2
+  have admin := oracleHost_dispatch M C hc en ex
+    (oracleSourceCfg M C c side).workTapes (oracleSourceCfg M C c side).workTapePos
+    (oracleLocalCfg f p (.bookmark side) c.inputPos c.output)
+    (oracleReadyCfg f p side [] .copy c.inputPos c.output) t hprep .copy rfl
+    ⟨.service, Sum.inl SweepPhase.sweep⟩ rfl (by
+      intro u hu s hs
+      rcases hcut u hu with he | he | he <;>
+        have hsame := Option.some.inj (hs.symm.trans he) <;>
+        subst s <;> trivial)
+  have localView := congrArg
+    (Cfg.mapState (Sigma.mk (β := oraclePhaseState M C) OraclePhase.dispatch))
+    (oracleSource_localView M C hc c side (.bookmark side) (by simp [hq]))
+  simp only [Cfg.mapState, Option.map_map, Function.comp_def] at localView
+  refine ⟨1 + (t + 1), by dsimp [p] at ht; omega, ?_⟩
+  rw [MultiTapeTM.runFrom_add]
+  exact (congrArg (fun d => (oracleHost M C hc en ex).tm.runFrom d (t + 1))
+    (first.trans localView.symm)).trans admin
+
+/-- A returned singleton verdict restores the complete stable source frame
+and enters its selected answer state. The cost includes the final redirect.
+
+**Proof sketch.** Relocate the inherited full restoration and its internal
+control cut through `oracleHost_dispatch`. Its returned four-tape view is
+the stable source view by `oracleSource_localView`; only the source control
+changes, and the side may be normalized at zero. -/
+private theorem oracleHost_restore (M : FinOracleTM Bool) (C : FinTM Bool)
+    (hc : 0 < C.k) (en ex : C.State) {x : List Bool}
+    (c : Cfg (M.k + 1) Bool M.State x) (side verdict : Bool)
+    (hs : c.state ≠ none)
+    (hb : oracleSide (c.workTapePos (OracleTM.queryTapeIdx M.k)) side) :
+    ∃ side', oracleSide (c.workTapePos (OracleTM.queryTapeIdx M.k)) side' ∧
+      (oracleHost M C hc en ex).tm.runFrom
+        ((oracleDispatchCfg M C hc c side
+          (oracleReadyCfg (c.workTapes (OracleTM.queryTapeIdx M.k))
+            (c.workTapePos (OracleTM.queryTapeIdx M.k)) side [verdict] .read
+            c.inputPos c.output)).mapState (Sigma.mk (β := oraclePhaseState M C) OraclePhase.dispatch))
+        ((c.workTapePos (OracleTM.queryTapeIdx M.k)).natAbs + 4) =
+          oracleStableCfg M C
+            ({c with state := some (if verdict then M.tm.qYes else M.tm.qNo)}) side' := by
+  let f := c.workTapes (OracleTM.queryTapeIdx M.k)
+  let p := c.workTapePos (OracleTM.queryTapeIdx M.k)
+  obtain ⟨side', hside, hrestore⟩ := oracleRestore f p side verdict hb c.inputPos c.output
+  have admin := oracleHost_dispatch M C hc en ex
+    (oracleSourceCfg M C c side).workTapes (oracleSourceCfg M C c side).workTapePos
+    (oracleReadyCfg f p side [verdict] .read c.inputPos c.output)
+    (oracleLocalCfg f p (.answer verdict side') c.inputPos c.output)
+    (p.natAbs + 3) hrestore (.answer verdict side') rfl
+    ⟨.source, (if verdict then M.tm.qYes else M.tm.qNo, side')⟩ rfl
+    (oracleRestore_cut f p side verdict hb c.inputPos c.output)
+  refine ⟨side', hside, admin.trans ?_⟩
+  change ((embedEmitCfg _ (oracleSourceCfg M C c side').workTapes
+    (oracleSourceCfg M C c side').workTapePos []
+    (oracleLocalCfg f p (.answer verdict side') c.inputPos c.output)).mapState _) = _
+  rw [oracleSource_localView M C hc c side' (.answer verdict side') hs]
+  cases hstate : c.state <;>
+    simp_all [oracleStableCfg, oracleSourceCfg, oracleShadowCfg, embedEmitCfg, Cfg.mapState]
+
+/-- The full-host service copies the prepared query, runs the clean call,
+and redirects to restoration with the singleton verdict installed. Its return
+preserves every other tape and head, the native input position and the output.
+
+**Proof sketch.** The prepared call bank is blank by the dispatch frame
+lemma. `oracleQueryWindow` supplies the public copy's window. Apply the
+R2 service theorem, then its first-return cut in the public phase-host
+contract. R1 tape replacement identifies the returned prepared seam. -/
+private theorem oracleHost_service (M : FinOracleTM Bool) (C : FinTM Bool)
+    (hc : 0 < C.k) (en ex : C.State) {x : List Bool}
+    (c : Cfg (M.k + 1) Bool M.State x) (side verdict : Bool) (r t : ℕ)
+    (hblank : c.workTapes (OracleTM.queryTapeIdx M.k) (r : ℤ) = none)
+    (hend : C.tm.runFrom (Cfg.ofWords (input := []) en
+        (stateWord C.k (OracleTM.queryString c))) t =
+      Cfg.ofWords ex (stateWord C.k [verdict]))
+    (hcut : ∀ s < t, (C.tm.runFrom (Cfg.ofWords (input := []) en
+      (stateWord C.k (OracleTM.queryString c))) s).state ≠ some ex) :
+    (oracleHost M C hc en ex).tm.runFrom
+      ((oracleDispatchCfg M C hc c side
+        (oracleReadyCfg (c.workTapes (OracleTM.queryTapeIdx M.k))
+          (c.workTapePos (OracleTM.queryTapeIdx M.k)) side [] .copy c.inputPos c.output)).mapState
+        (fun _ => ⟨.service, Sum.inl SweepPhase.sweep⟩))
+      (2 * (OracleTM.queryString c).length + 4 + t) =
+        (oracleDispatchCfg M C hc c side
+          (oracleReadyCfg (c.workTapes (OracleTM.queryTapeIdx M.k))
+            (c.workTapePos (OracleTM.queryTapeIdx M.k)) side [verdict] .read
+            c.inputPos c.output)).mapState (Sigma.mk (β := oraclePhaseState M C) OraclePhase.dispatch) := by
+  classical
+  let f := c.workTapes (OracleTM.queryTapeIdx M.k)
+  let p := c.workTapePos (OracleTM.queryTapeIdx M.k)
+  let d₀ := oracleDispatchCfg M C hc c side
+    (oracleReadyCfg f p side [] .copy c.inputPos c.output)
+  let d := d₀.mapState (fun _ => SweepPhase.sweep)
+  let dst := oracleCallBank M.k C.k (vhostBank ⟨0, hc⟩)
+  have clean := oracleDispatchCfg_callBlank M C hc c side
+    (oracleReadyCfg f p side [] .copy c.inputPos c.output)
+    (by simp [oracleReadyCfg]) rfl
+  have hne : oracleSlots M.k C.k hc 0 ≠ dst := by
+    intro he
+    have hi : (0 : Fin 4) = 3 := oracleSlots_injective M.k C.k hc he
+    cases hi
+  have window : ∀ z : ℤ, -1 ≤ z → z ≤ ((OracleTM.queryString c).length : ℤ) →
+      d.workTapes (oracleSlots M.k C.k hc 0)
+        (d.workTapePos (oracleSlots M.k C.k hc 0) + z) =
+          FinTM.bufferTape (OracleTM.queryString c) z := by
+    intro z hz hlen
+    have htape := embedEmitCfg_selected_tape
+      ⟨oracleSlots M.k C.k hc, oracleSlots_injective M.k C.k hc⟩
+      (oracleSourceCfg M C c side).workTapes (oracleSourceCfg M C c side).workTapePos []
+      (oracleReadyCfg f p side [] .copy c.inputPos c.output) 0
+    have hhead := embedEmitCfg_selected_pos
+      ⟨oracleSlots M.k C.k hc, oracleSlots_injective M.k C.k hc⟩
+      (oracleSourceCfg M C c side).workTapes (oracleSourceCfg M C c side).workTapePos []
+      (oracleReadyCfg f p side [] .copy c.inputPos c.output) 0
+    change d.workTapes (oracleSlots M.k C.k hc 0) = Function.update f (-1) none at htape
+    change d.workTapePos (oracleSlots M.k C.k hc 0) = 0 at hhead
+    rw [htape, hhead, zero_add]
+    exact oracleQueryWindow c r hblank z hz hlen
+  obtain ⟨service, firstReturn⟩ := oracleService_run C hc en ex
+    (oracleCallBank M.k C.k) (oracleSlots M.k C.k hc 0) hne d rfl
+    (fun j => (clean j).1) (fun j => (clean j).2)
+    (OracleTM.queryString c) [verdict] t window hend hcut
+  let returned : Cfg (oracleHostTapes M.k C.k) Bool (SweepPhase ⊕ (C.State × Bool)) x :=
+    ({d with
+      workTapes := Function.update d.workTapes dst (FinTM.bufferTape [verdict])}).mapState
+        (fun _ => Sum.inr (ex, true))
+  have hosted := (phaseHostTM_run (oraclePhases M C hc en) ⟨.dispatch, .boot⟩
+    (oracleRedirect M C ex) .service (d.mapState Sum.inl) returned
+    (2 * (OracleTM.queryString c).length + 3 + t) service (.inr (ex, true)) rfl
+    ⟨.dispatch, .read⟩ (by simp [oracleRedirect]) (by
+      intro u hu s hs
+      have hn : s ≠ Sum.inr (ex, true) := fun he =>
+        firstReturn u hu (hs.trans (congrArg some he))
+      simp [oracleRedirect, hn])).2
+  have replaced :
+      {d₀ with workTapes := Function.update d₀.workTapes dst (FinTM.bufferTape [verdict])} =
+        oracleDispatchCfg M C hc c side
+          (oracleReadyCfg f p side [verdict] .copy c.inputPos c.output) := by
+    have update := oracleEmbed_updateTape oracleDispatchTM
+      ⟨oracleSlots M.k C.k hc, oracleSlots_injective M.k C.k hc⟩
+      (oracleSourceCfg M C c side).workTapes (oracleSourceCfg M C c side).workTapePos
+      (oracleReadyCfg f p side [] .copy c.inputPos c.output) 3 (FinTM.bufferTape [verdict])
+    exact update.symm.trans (congrArg
+      (embedEmitCfg ⟨oracleSlots M.k C.k hc, oracleSlots_injective M.k C.k hc⟩
+        (oracleSourceCfg M C c side).workTapes (oracleSourceCfg M C c side).workTapePos [])
+      (oracleReadyCfg_replace f p side [] [verdict] .copy .copy c.inputPos c.output))
+  have entry : (d.mapState Sum.inl).mapState
+      (Sigma.mk (β := oraclePhaseState M C) OraclePhase.service) =
+      d₀.mapState (fun _ => ⟨OraclePhase.service, Sum.inl SweepPhase.sweep⟩) := rfl
+  have exitView : returned.mapState (fun _ =>
+      (⟨OraclePhase.dispatch, OracleDispatch.read⟩ : Σ i, oraclePhaseState M C i)) =
+      (oracleDispatchCfg M C hc c side
+        (oracleReadyCfg f p side [verdict] .read c.inputPos c.output)).mapState
+          (Sigma.mk (β := oraclePhaseState M C) OraclePhase.dispatch) := by
+    change ({d₀ with
+      workTapes := Function.update d₀.workTapes dst (FinTM.bufferTape [verdict])}).mapState
+        (fun _ : OracleDispatch =>
+          (⟨.dispatch, .read⟩ : Σ i, oraclePhaseState M C i)) = _
+    rw [replaced]
+    rfl
+  rw [show 2 * (OracleTM.queryString c).length + 4 + t =
+    (2 * (OracleTM.queryString c).length + 3 + t) + 1 from by omega]
+  rw [entry] at hosted
+  exact hosted.trans exitView
+
+open Classical in
+/-- One complete oracle query, including every phase redirect, returns to
+the exact stable image of the source's oracle-answer step. Its administrative
+cost is at most twice displacement plus twice query length plus thirteen.
+
+**Proof sketch.** Concatenate full-host preparation, copy/call service and
+restoration by the public run algebra. The restored control is the oracle
+answer by `step_of_qQuery`; all other fields are those of the old source. -/
+private theorem oracleHost_query (M : FinOracleTM Bool) (C : FinTM Bool)
+    (hc : 0 < C.k) (en ex : C.State) (O : Language Bool) {x : List Bool}
+    (c : Cfg (M.k + 1) Bool M.State x) (side : Bool) (r t : ℕ)
+    (hq : c.state = some M.tm.qQuery)
+    (hb : oracleSide (c.workTapePos (OracleTM.queryTapeIdx M.k)) side)
+    (hblank : c.workTapes (OracleTM.queryTapeIdx M.k) (r : ℤ) = none)
+    (hend : C.tm.runFrom (Cfg.ofWords (input := []) en
+        (stateWord C.k (OracleTM.queryString c))) t =
+      Cfg.ofWords ex (stateWord C.k [decide (OracleTM.queryString c ∈ O)]))
+    (hcut : ∀ s < t, (C.tm.runFrom (Cfg.ofWords (input := []) en
+      (stateWord C.k (OracleTM.queryString c))) s).state ≠ some ex) :
+    ∃ u ≤ 2 * (c.workTapePos (OracleTM.queryTapeIdx M.k)).natAbs +
+        2 * (OracleTM.queryString c).length + t + 13,
+      ∃ side', oracleSide ((M.tm.step O c).workTapePos (OracleTM.queryTapeIdx M.k)) side' ∧
+        (oracleHost M C hc en ex).tm.runFrom (oracleStableCfg M C c side) u =
+          oracleStableCfg M C (M.tm.step O c) side' := by
+  obtain ⟨prep, hprepTime, hprep⟩ := oracleHost_prepare M C hc en ex c side hq hb
+  have service := oracleHost_service M C hc en ex c side
+    (decide (OracleTM.queryString c ∈ O)) r t hblank hend hcut
+  obtain ⟨side', hside, restore⟩ := oracleHost_restore M C hc en ex c side
+    (decide (OracleTM.queryString c ∈ O)) (by simp [hq]) hb
+  refine ⟨(prep + (2 * (OracleTM.queryString c).length + 4 + t)) +
+    ((c.workTapePos (OracleTM.queryTapeIdx M.k)).natAbs + 4), by omega, side', ?_, ?_⟩
+  · simpa only [M.tm.step_of_qQuery O hq] using hside
+  · rw [MultiTapeTM.runFrom_add,
+      (oracleHost M C hc en ex).tm.runFrom_add _ prep
+        (2 * (OracleTM.queryString c).length + 4 + t), hprep, service, restore,
+      M.tm.step_of_qQuery O hq]
+    by_cases hmem : OracleTM.queryString c ∈ O <;> simp [hmem]
+
+/-- The requested prefix preload reaches the stable source start in exactly
+two host steps: write the origin marker, then redirect to the source start.
+
+**Proof sketch.** The four selected local tapes start blank, including the
+query by hypothesis. Identify that R1 view with `oracleBankCfg_eq`. The one
+boot row installs the shadow marker; `oracleHost_dispatch` adds the redirect.
+R1 tape replacement and `oracleSourceCfg_initial` identify the final frame. -/
+private theorem oracleHost_initial (M : FinOracleTM Bool) (C : FinTM Bool)
+    (hc : 0 < C.k) (en ex : C.State) (x : List Bool)
+    (w : Fin (M.k + 1) → List Bool) (hw : w (Fin.last M.k) = []) :
+    (oracleHost M C hc en ex).tm.runFrom
+      (Cfg.ofWords (input := x) (oracleHost M C hc en ex).tm.q₀
+        (FinTM.prefixWords (oracleHostTapes M.k C.k) w)) 2 =
+      oracleStableCfg M C (Cfg.ofWords (input := x) M.tm.q₀ w) true := by
+  let d : Cfg (oracleHostTapes M.k C.k) Bool OracleDispatch x :=
+    Cfg.ofWords .boot (FinTM.prefixWords (oracleHostTapes M.k C.k) w)
+  let localInit : Cfg 4 Bool OracleDispatch x := Cfg.ofWords .boot (fun _ => [])
+  let localDone : Cfg 4 Bool OracleDispatch x :=
+    {localInit.mapState (fun _ => OracleDispatch.ready) with
+      workTapes := Function.update localInit.workTapes 1 oracleOrigin}
+  have words (i : Fin 4) :
+      FinTM.prefixWords (oracleHostTapes M.k C.k) w (oracleSlots M.k C.k hc i) = [] := by
+    fin_cases i
+    · simpa [FinTM.prefixWords, oracleSlots, oracleSourceBank, Fin.last] using hw
+    all_goals
+      simp [FinTM.prefixWords, oracleSlots, oracleSourceBank, oracleCallBank, vhostBank] <;> omega
+  have placement : embedEmitCfg
+      ⟨oracleSlots M.k C.k hc, oracleSlots_injective M.k C.k hc⟩
+      d.workTapes d.workTapePos [] localInit = d := by
+    apply oracleBankCfg_eq oracleDispatchTM _ localInit d rfl rfl rfl
+    · intro i
+      simp [localInit, d, Cfg.ofWords, words]
+    · intro i
+      rfl
+  have boot : oracleDispatchTM.runFrom localInit 1 = localDone := by
+    change oracleDispatchTM.step localInit = _
+    simp [localInit, localDone, MultiTapeTM.step, oracleDispatchTM, oracleDispatchAction,
+      Cfg.ofWords, Cfg.mapState, oracleOrigin, Cfg.ext_iff, funext_iff, Fin.forall_fin_succ,
+      Function.update_apply]
+  have admin := oracleHost_dispatch M C hc en ex d.workTapes d.workTapePos
+    localInit localDone 1 boot .ready rfl ⟨.source, (M.tm.q₀, true)⟩ rfl (by
+      intro u hu s hs
+      have hu0 : u = 0 := by omega
+      subst u
+      have he : s = .boot := (Option.some.inj hs).symm
+      subst s
+      trivial)
+  have bootView : embedEmitCfg
+      ⟨oracleSlots M.k C.k hc, oracleSlots_injective M.k C.k hc⟩
+      d.workTapes d.workTapePos [] localDone =
+        {d.mapState (fun _ => OracleDispatch.ready) with
+          workTapes := Function.update d.workTapes (oracleSlots M.k C.k hc 1) oracleOrigin} := by
+    have mapped := congrArg (Cfg.mapState (fun _ => OracleDispatch.ready)) placement
+    change embedEmitCfg _ _ _ []
+      {(localInit.mapState (fun _ => OracleDispatch.ready)) with
+        workTapes := Function.update (localInit.mapState (fun _ => OracleDispatch.ready)).workTapes
+          1 oracleOrigin} = _
+    rw [oracleEmbed_updateTape oracleDispatchTM]
+    change (embedEmitCfg _ _ _ [] (localInit.mapState (fun _ => OracleDispatch.ready))) = _
+      at mapped
+    rw [mapped]
+    rfl
+  change (oracleHost M C hc en ex).tm.runFrom (d.mapState (Sigma.mk (β := oraclePhaseState M C) OraclePhase.dispatch)) 2 = _
+  rw [← placement, admin, bootView]
+  unfold oracleStableCfg
+  rw [oracleSourceCfg_initial]
+  rfl
+
+open Classical in
+/-- One simulated source step has a linear administrative charge at radius
+`r`, plus its actual decider charge when the source submits a query.
+
+**Proof sketch.** At a query use the complete query seam and the clean-call
+budget; displacement and query length are at most the supplied radius. Away
+from a query use the inherited off-query segment at length one. Expanding
+the products gives the common coefficient `2*a + 13`, without monotonicity. -/
+private theorem oracleHost_step (M : FinOracleTM Bool) (C : FinTM Bool)
+    (hc : 0 < C.k) (en ex : C.State) (O : Language Bool) (τ : ℕ → ℕ) (a : ℕ)
+    (hcall : ∀ z : List Bool, ∃ t ≤ a * (τ z.length + z.length + 2), 0 < t ∧
+      (∀ s < t, (C.tm.runFrom (Cfg.ofWords (input := []) en (stateWord C.k z)) s).state ≠
+        some ex) ∧
+      C.tm.runFrom (Cfg.ofWords (input := []) en (stateWord C.k z)) t =
+        Cfg.ofWords ex (stateWord C.k [decide (z ∈ O)]))
+    {x : List Bool} (c : Cfg (M.k + 1) Bool M.State x) (side : Bool) (r : ℕ)
+    (hb : oracleSide (c.workTapePos (OracleTM.queryTapeIdx M.k)) side)
+    (hpos : (c.workTapePos (OracleTM.queryTapeIdx M.k)).natAbs ≤ r)
+    (hlen : (OracleTM.queryString c).length ≤ r)
+    (hblank : c.workTapes (OracleTM.queryTapeIdx M.k) (r : ℤ) = none) :
+    ∃ u ≤ (2 * a + 13) * (r + 1) + (2 * a + 13) *
+        (if c.state = some M.tm.qQuery then τ (OracleTM.queryString c).length else 0),
+      ∃ side', oracleSide ((M.tm.step O c).workTapePos (OracleTM.queryTapeIdx M.k)) side' ∧
+        (oracleHost M C hc en ex).tm.runFrom (oracleStableCfg M C c side) u =
+          oracleStableCfg M C (M.tm.step O c) side' := by
+  by_cases hq : c.state = some M.tm.qQuery
+  · obtain ⟨t, ht, _, hcut, hend⟩ := hcall (OracleTM.queryString c)
+    obtain ⟨u, hu, side', hside, hrun⟩ :=
+      oracleHost_query M C hc en ex O c side r t hq hb hblank hend hcut
+    refine ⟨u, ?_, side', hside, hrun⟩
+    have hmul := Nat.mul_le_mul_left a hlen
+    have hcharge : a * τ (OracleTM.queryString c).length ≤
+        (2 * a + 13) * τ (OracleTM.queryString c).length :=
+      Nat.mul_le_mul_right _ (by omega)
+    simp only [if_pos hq]
+    ring_nf at ht hu hmul hcharge ⊢
+    omega
+  · obtain ⟨side', hside, hrun⟩ := oracleHost_offQuery M C hc en ex O c side hb 1 (by
+      intro s hs
+      have hzero : s = 0 := by omega
+      subst s
+      exact hq)
+    refine ⟨1, ?_, side', hside, hrun⟩
+    simp only [if_neg hq, mul_zero, add_zero]
+    have hmul := Nat.mul_le_mul (show 1 ≤ 2 * a + 13 from by omega)
+      (show 1 ≤ r + 1 from by omega)
+    simpa using hmul
+
+open Classical in
+/-- The complete stable-boundary simulation, including initialization.
+
+**Proof sketch.** Induct on the source horizon, extending a finite ledger by the
+actual duration supplied by `oracleHost_step`. The public radius and query-length
+contracts discharge its geometric premises. `oracleCost_sum` then charges exactly
+the queries encountered, and its constant term absorbs the two initial handovers. -/
+private theorem oracleHost_run (M : FinOracleTM Bool) (C : FinTM Bool)
+    (hc : 0 < C.k) (en ex : C.State) (O : Language Bool) (τ : ℕ → ℕ) (a : ℕ)
+    (hcall : ∀ z : List Bool, ∃ t ≤ a * (τ z.length + z.length + 2), 0 < t ∧
+      (∀ s < t, (C.tm.runFrom (Cfg.ofWords (input := []) en (stateWord C.k z)) s).state ≠
+        some ex) ∧
+      C.tm.runFrom (Cfg.ofWords (input := []) en (stateWord C.k z)) t =
+        Cfg.ofWords ex (stateWord C.k [decide (z ∈ O)]))
+    (x : List Bool) (w : Fin (M.k + 1) → List Bool) (hw : w (Fin.last M.k) = [])
+    (t : ℕ) :
+    ∃ s ≤ (2 * a + 13) * (t + 1) ^ 2 + (2 * a + 13) * ∑ r ∈ Finset.range t,
+        (if (M.tm.runFrom O (Cfg.ofWords (input := x) M.tm.q₀ w) r).state =
+            some M.tm.qQuery then
+          τ (OracleTM.queryString (M.tm.runFrom O
+            (Cfg.ofWords (input := x) M.tm.q₀ w) r)).length else 0),
+      ∃ side, (oracleHost M C hc en ex).tm.runFrom
+        (Cfg.ofWords (input := x) (oracleHost M C hc en ex).tm.q₀
+          (FinTM.prefixWords (oracleHost M C hc en ex).k w)) s =
+        oracleStableCfg M C (M.tm.runFrom O (Cfg.ofWords M.tm.q₀ w) t) side := by
+  classical
+  let c₀ : Cfg (M.k + 1) Bool M.State x := Cfg.ofWords M.tm.q₀ w
+  let P := oracleHost M C hc en ex
+  let d₀ : Cfg P.k Bool P.State x := Cfg.ofWords P.tm.q₀ (FinTM.prefixWords P.k w)
+  let charge : ℕ → ℕ := fun r => if (M.tm.runFrom O c₀ r).state = some M.tm.qQuery
+    then τ (OracleTM.queryString (M.tm.runFrom O c₀ r)).length else 0
+  have hblank : ∀ z, c₀.workTapes (OracleTM.queryTapeIdx M.k) z = none := by
+    simp [c₀, Cfg.ofWords, OracleTM.queryTapeIdx, hw, FinTM.bufferTape]
+  have ledger : ∀ n, ∃ cost : ℕ → ℕ, ∃ side,
+      oracleSide ((M.tm.runFrom O c₀ n).workTapePos (OracleTM.queryTapeIdx M.k)) side ∧
+      (∀ r < n, cost r ≤ (2 * a + 13) * (r + 1) + (2 * a + 13) * charge r) ∧
+      P.tm.runFrom d₀ (2 + ∑ r ∈ Finset.range n, cost r) =
+        oracleStableCfg M C (M.tm.runFrom O c₀ n) side := by
+    intro n
+    induction n with
+    | zero =>
+      refine ⟨fun _ => 0, true, ?_, by simp, ?_⟩
+      · simp [c₀, OracleTM.runFrom, Cfg.ofWords, oracleSide]
+      · simpa [P, d₀, c₀] using oracleHost_initial M C hc en ex x w hw
+    | succ n ih =>
+      obtain ⟨cost, side, hside, hcost, hrun⟩ := ih
+      have hradius := M.tm.runFrom_radius O c₀ (OracleTM.queryTapeIdx M.k) 0
+        (by simp [c₀, Cfg.ofWords]) (fun z _ => hblank z) n
+      have hpos : ((M.tm.runFrom O c₀ n).workTapePos
+          (OracleTM.queryTapeIdx M.k)).natAbs ≤ n := by
+        have hcast : (((M.tm.runFrom O c₀ n).workTapePos
+            (OracleTM.queryTapeIdx M.k)).natAbs : ℤ) ≤ (n : ℤ) := by
+          simpa only [Nat.zero_add, Int.natCast_natAbs] using hradius.1
+        exact_mod_cast hcast
+      have hlen := OracleTM.queryString_runFrom_length_le_of_blank M.tm O c₀ hblank rfl n
+      obtain ⟨u, hu, side', hside', hstep⟩ := oracleHost_step M C hc en ex O τ a
+        hcall (M.tm.runFrom O c₀ n) side n hside hpos hlen (hradius.2 n (by simp))
+      refine ⟨Function.update cost n u, side', ?_, ?_, ?_⟩
+      · simpa only [OracleTM.runFrom_succ_eq_step'] using hside'
+      · intro r hr
+        by_cases he : r = n
+        · subst r
+          simpa [charge] using hu
+        · rw [Function.update_of_ne he]
+          exact hcost r (by omega)
+      · have hsum : ∑ r ∈ Finset.range n, Function.update cost n u r =
+            ∑ r ∈ Finset.range n, cost r := by
+          apply Finset.sum_congr rfl
+          intro r hr
+          exact Function.update_of_ne (Nat.ne_of_lt (Finset.mem_range.mp hr)) _ _
+        rw [Finset.sum_range_succ, hsum, Function.update_self, ← Nat.add_assoc,
+          MultiTapeTM.runFrom_add, hrun]
+        simpa only [OracleTM.runFrom_succ_eq_step'] using hstep
+  obtain ⟨cost, side, _, hcost, hrun⟩ := ledger t
+  refine ⟨2 + ∑ r ∈ Finset.range t, cost r, ?_, side, hrun⟩
+  have hbound := oracleCost_sum (2 * a + 13) t cost charge hcost
+  change 2 + ∑ r ∈ Finset.range t, cost r ≤
+    (2 * a + 13) * (t + 1) ^ 2 + (2 * a + 13) * ∑ r ∈ Finset.range t, charge r
+  omega
+
+end oracleHostSeams
+
 /-- **The oracle-call simulation** (W2 headline; [AB09, Example 3.6(2)], the simulation
 behind `Pᴼ = P` for `O ∈ P`, and the per-branch engine of [AB09, Example 3.6(3)]). Let the
 plain machine `D` decide the oracle `O` within `τ`. There are a plain machine `P`, with at
@@ -1262,7 +2090,20 @@ no early answer. The origin and bookmark searches share `oracleWalk_run`. The
 finite `oracleHost` uses the public phase host, with an R2 seam between public copy
 and the relocated Z1 call. Its complete service seam, initial configuration,
 global simulation and time ledger are still unproved. No new private admission is
-introduced; the original W2-S admission below remains the continuation frontier. -/
+introduced; the original W2-S admission below remains the continuation frontier.
+
+**Fill appendix (continuation 2).** The historical partial frontiers above are now
+discharged. `oracleStableCfg` frames the source and origin shadow with clean auxiliary
+banks. `oracleHost_initial` gives the two initialization handovers. The public phase
+host transports preparation and restoration, while `oracleService_run` composes the
+inherited copy and relocated call by R2 and its first-return cut. A complete query
+costs at most `2·|p| + 2·|z| + tCall + 13`, including all redirects. At source time `r`,
+the public radius and length rows bound `|p|` and `|z|` by `r`. If the installed call
+constant is `a`, `oracleHost_step` uses `2a + 13` for both the administrative and actual
+query charges. `oracleHost_run` extends a finite duration ledger along the source run;
+`oracleCost_sum` absorbs its two initialization steps and gives the frozen bound.
+The headline finishes with the public `exists_first_halt`. No monotonicity of `τ`,
+space clause, or second oracle-call trace is introduced. -/
 theorem FinOracleTM.exists_plain_simulation (M : FinOracleTM Bool) (D : FinTM Bool)
     (O : Language Bool) (τ : ℕ → ℕ) (hD : D.DecidesInTime O τ) :
     ∃ (P : FinTM Bool) (a : ℕ), M.k + 1 ≤ P.k ∧
@@ -1278,7 +2119,23 @@ theorem FinOracleTM.exists_plain_simulation (M : FinOracleTM Bool) (D : FinTM Bo
               none ∧
             (P.tm.runFrom (Cfg.ofWords (input := x) P.tm.q₀ (FinTM.prefixWords P.k w)) s).output =
               (M.tm.runFrom O (Cfg.ofWords (input := x) M.tm.q₀ w) t).output := by
-  sorry
+  classical
+  obtain ⟨C, en, ex, a, hc, _, hcall⟩ := oracleInstallCall D O τ hD
+  refine ⟨oracleHost M C hc en ex, 2 * a + 13, ?_, ?_⟩
+  · simp only [oracleHost, oracleHostTapes]
+    omega
+  · intro x w hw t ht
+    obtain ⟨s, hs, side, hrun⟩ := oracleHost_run M C hc en ex O τ a hcall x w hw t
+    have halted : ((oracleHost M C hc en ex).tm.runFrom
+        (Cfg.ofWords (input := x) (oracleHost M C hc en ex).tm.q₀
+          (FinTM.prefixWords (oracleHost M C hc en ex).k w)) s).state = none := by
+      rw [hrun]
+      simp [oracleStableCfg, oracleSourceCfg, embedEmitCfg, oracleShadowCfg, Cfg.mapState, ht]
+    obtain ⟨u, hu, _, hfirst⟩ := (oracleHost M C hc en ex).tm.exists_first_halt _ halted
+    refine ⟨u, hu.trans hs, ?_, ?_⟩
+    · simpa only [hfirst] using halted
+    · rw [hfirst, hrun]
+      simp [oracleStableCfg, oracleSourceCfg, embedEmitCfg, oracleShadowCfg, Cfg.mapState]
 
 /-- **The oracle-call simulation, uniform form**: under a monotone decider budget `τ`, the
 per-query sum of `Turing.FinOracleTM.exists_plain_simulation` is at most `t·τ t`, so the
