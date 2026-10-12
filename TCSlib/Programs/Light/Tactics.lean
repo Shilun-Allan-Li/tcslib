@@ -9,6 +9,8 @@ Local modifications (see policy.md §2, vendored code, and the repository NOTICE
 * removed the Lean module-system syntax (`module`, `public import`, `@[expose] public section`)
   for compatibility with our v4.25.0 toolchain;
 * moved to `TCSlib/Programs/Light/Tactics.lean`, with imports remapped;
+* documentation: qualify the opacity promise for the `with_reducible` replacement (fidelity gate, finding 2);
+* documentation: as above, for the module-level discussion;
 * replaced the tactic combinator `with_unfolding_none`, absent in v4.25, by `with_reducible`;
 * added a `## References` section citing [AFM26];
 * added the repository-standard `set_option` header.
@@ -52,6 +54,8 @@ to be unfolded: `light_set K[j] using hkey`.
 
 A program that is a definition is replaced by its text when a single statement is treated.  A
 definition that stands at the head of a sequence stays closed: it is a piece, for `light_piece`.
+(Vendoring note: at our Lean v4.25.0 pin the closing combinator is `with_reducible`, so a
+*reducible* definition, such as an `abbrev`, may still unfold.)
 
 ## References
 
@@ -73,7 +77,8 @@ macro "light_facts" hs:(ppSpace colGt term:max)+ : tactic =>
 /-! ## One statement -/
 
 /-- Brackets to the right, and a `skip` before the rest of the program is dropped.  No definition is
-opened. -/
+opened, except that at our Lean v4.25.0 pin reducible definitions (abbreviations) may unfold: the
+upstream no-unfolding combinator, absent in v4.25, is replaced by `with_reducible` (vendoring note). -/
 macro "light_assoc" : tactic =>
   `(tactic| repeat with_reducible first | refine Ends.seqAssoc ?_ | refine Ends.skipThen ?_)
 

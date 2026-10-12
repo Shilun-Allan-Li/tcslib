@@ -499,6 +499,9 @@ proved); fix it in the first MIG PR that touches Build.
   - (c) The extensions are a statement phase with its gate: reading the input in place, `emit`, and
     the coin stream for nondeterminism and randomization.
   - (d) Stage 2, the RAM-to-`FinTM` simulation.
+  - (e) Port upstream's `Lang/Renumber.lean` and `Machine/Footprint.lean` when the extensions or
+    stage 2 need them (fidelity gate, finding 3). Both are generic, and outside the vendored
+    closure.
 
 * **Chapter-2 fill campaign (E1-E5)** — **active** (hold lifted
   2026-10-02 after the ch-6 integration and audit closed). All four
@@ -1294,5 +1297,8 @@ Remaining Chapter-6 items (each documented as a divergence in its file):
   (*Vendored code* / *Design adaptation*) should be checked before §15's curriculum layer
   reuses it. `GraphTheory/KargerMinCut*.lean` and `GraphTheory/Core/` are not imported from
   `TCSlib.lean` either, so CI never builds them (policy §1, *Exports*).
+* **SAT/Tautology blueprint pages after the B4 promotion** (from the T2a gate, note 18): the
+  pages still name the twelve promoted CNF-grammar declarations by their old private `SAT.lean`
+  names. Regenerate them at the next blueprint increment.
 * **`HANDOFF.md`** — the have→lemma extractor campaign's own tracking
   document; deliberately *not* absorbed here.

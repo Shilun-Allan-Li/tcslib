@@ -26,4 +26,11 @@ FIXES = {
   ('    rw [show emodRounds a Mo - (i + 1) = c by omega]', '    beta_reduce\n    rw [show emodRounds a Mo - (i + 1) = c by omega]', 'beta: as above')],
  'ThreeSumApsp.Lang.Lib.Sqrt': [
   ('    rw [show (i + 1 + 1) * (i + 1 + 1) = (i + 1) * (i + 1) + 2 * i + 3 by ring]', '    beta_reduce\n    rw [show (i + 1 + 1) * (i + 1 + 1) = (i + 1) * (i + 1) + 2 * i + 3 by ring]', 'beta: loop invariant applied to its round')],
+ 'ThreeSumApsp.Lang.Tactics': [
+  ('/-- Brackets to the right, and a `skip` before the rest of the program is dropped.  No definition is\nopened. -/',
+   '/-- Brackets to the right, and a `skip` before the rest of the program is dropped.  No definition is\nopened, except that at our Lean v4.25.0 pin reducible definitions (abbreviations) may unfold: the\nupstream no-unfolding combinator, absent in v4.25, is replaced by `with_reducible` (vendoring note). -/',
+   'documentation: qualify the opacity promise for the `with_reducible` replacement (fidelity gate, finding 2)'),
+  ('A program that is a definition is replaced by its text when a single statement is treated.  A\ndefinition that stands at the head of a sequence stays closed: it is a piece, for `light_piece`.',
+   'A program that is a definition is replaced by its text when a single statement is treated.  A\ndefinition that stands at the head of a sequence stays closed: it is a piece, for `light_piece`.\n(Vendoring note: at our Lean v4.25.0 pin the closing combinator is `with_reducible`, so a\n*reducible* definition, such as an `abbrev`, may still unfold.)',
+   'documentation: as above, for the module-level discussion')],
 }

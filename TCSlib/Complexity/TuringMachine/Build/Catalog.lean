@@ -409,11 +409,9 @@ private lemma catalog_space_bound {S : Type*} (M : MultiTapeTM k Bool S)
     (h : ∀ u, -1 ≤ (M.runFrom c u).workTapePos i ∧
       (M.runFrom c u).workTapePos i ≤ (L : ℤ)) :
     M.spaceUsedByTape c t i ≤ L + 2 := by
-  have hs : M.visitedByTapeHead c t i ⊆ Finset.Icc (-1 : ℤ) (L : ℤ) := by
-    intro z hz
-    obtain ⟨u, _, rfl⟩ := Finset.mem_image.mp hz
-    exact Finset.mem_Icc.mpr (h u)
-  exact (Finset.card_le_card hs).trans (by rw [Int.card_Icc]; omega)
+  have hb := M.spaceUsedByTape_le_card_Icc c t i (-1) L fun u _ => Finset.mem_Icc.mpr (h u)
+  have he : ((L : ℤ) + 1 - -1).toNat = L + 2 := by omega
+  exact he ▸ hb
 
 /-- A head stationary at zero has exactly its origin singleton as visited set. -/
 private lemma catalog_space_one {S : Type*} (M : MultiTapeTM k Bool S)

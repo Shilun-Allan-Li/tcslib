@@ -12,7 +12,7 @@ for r in rels:
         if mi:
             d = mi.group(1)
             if d in mods: continue
-            assert d.startswith('Mathlib'), (r, d)
+            assert d.startswith(('Mathlib', 'Batteries')), (r, d)
             if d not in imps: imps.append(d)
             continue
         body.append(l)

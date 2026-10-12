@@ -4,6 +4,9 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Seyoon Ragavan
 -/
 import TCSlib.Programs.Compat
+import TCSlib.Programs.Util
+import TCSlib.Programs.WordRAM
+import TCSlib.Programs.Light
 import TCSlib.Programs.Util.Basic
 import TCSlib.Programs.Util.CountingSort
 import TCSlib.Programs.Util.Index
@@ -54,6 +57,9 @@ The programming layer (design `machine-library-design.md` §15): the light langu
 ## Contents
 
 * `TCSlib.Programs.Compat`: Compatibility names for the vendored programming layer
+* `TCSlib.Programs.Util`: Programs: general facts
+* `TCSlib.Programs.WordRAM`: Programs: the word RAM
+* `TCSlib.Programs.Light`: Programs: the light language
 * `TCSlib.Programs.Util.Basic`: What most files use of Mathlib
 * `TCSlib.Programs.Util.CountingSort`: The pure side of counting sort
 * `TCSlib.Programs.Util.Index`: Index arithmetic: a pair of numbers as one number

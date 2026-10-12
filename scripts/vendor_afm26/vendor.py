@@ -44,7 +44,7 @@ for m in mods:
     # 2. v4.25 proof repairs
     for a, b, why in fx.FIXES.get(m, []):
         assert src.count(a) == 1, (m, a[:50]); src = src.replace(a, b)
-        notes.append(f'v4.25 proof repair ({why})')
+        notes.append(why if why.startswith('documentation:') else f'v4.25 proof repair ({why})')
     if 'with_unfolding_none' in src:
         src = src.replace('with_unfolding_none', 'with_reducible')
         notes.append('replaced the tactic combinator `with_unfolding_none`, absent in v4.25, by `with_reducible`')

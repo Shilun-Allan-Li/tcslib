@@ -62,10 +62,12 @@ Home: cells `0` (presence) and `1` (data). Right virtual slot `s`: cells
 of the inner capacities). Every integer cell is owned by exactly one slot
 or the home.
 
-## Status: statement skeleton (§13 statement phase, tranche A-S2, round 3)
+## Status: proved, apart from the two shift rows
 
-Definitions are real; every contract is `sorry`d with a proof sketch.
-Round 1 (`audits/zone-infra-findings.md`) returned the inward-room blocker
+The definitions and every contract are proved, except the two machine shift rows
+`Turing.exists_zoneShiftInTM` and `Turing.exists_zoneShiftOutTM`. Those remain `sorry`d with
+their proof sketches and are scheduled for retirement through the §13d G3/G4 gate
+(`machine-library-design.md` §13d). History of the statement phase (tranche A-S2): round 1 (`audits/zone-infra-findings.md`) returned the inward-room blocker
 (A-S2-1, repaired: premise removed, wrappers split, cascade added); round
 2 (`audits/zone-infra-r2-findings.md`) accepted that repair and returned
 one blocker on the new cascade contracts (A-S2-R2-1, repaired: the
