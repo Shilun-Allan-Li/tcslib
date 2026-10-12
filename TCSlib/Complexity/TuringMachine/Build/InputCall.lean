@@ -20,15 +20,16 @@ position held in binary on a work tape (R8.5b). Both are `Bool` modules; a
 rich host runs them lifted along its digit embedding
 (`Turing.MultiTapeTM.liftSymbols`), with unchanged time and space.
 
-**Status: §12.8 fill C (status update).** The input seek is proved with its
-restoration, first-exit and workspace clauses. The clean input call is proved
-modulo stream B's `Turing.inputCopyTM_run_ofCfg`; its interface remains time-only.
+**Status: §12.8 fill C (status update; refreshed at the A–C fill gate, minor 4).** The
+input seek is proved with its restoration, first-exit and workspace clauses. The clean input
+call is proved; it cites stream B's `Turing.inputCopyTM_run_ofCfg`, now proved, and its
+interface remains time-only.
 
 ## Main results
 
 * `Turing.FinTM.exists_inputCallTM` — compute `f` on the native input from a
-  blank seam and install the result on tape `0` (proved modulo
-  `inputCopyTM_run_ofCfg`; fill-C status update).
+  blank seam and install the result on tape `0` (proved; the copier
+  `inputCopyTM_run_ofCfg` is a proved dependency; status refreshed at the A–C fill gate).
 * `Turing.exists_inputSeekTM` — move the input head to the binary value on a
   counter tape, restoring every work tape (proved; fill-C status update).
 
@@ -43,7 +44,7 @@ modulo stream B's `Turing.inputCopyTM_run_ofCfg`; its interface remains time-onl
 namespace Turing.FinTM
 
 /-- On a blank seam, the public native copier installs exactly the argument seam.
-Its sole admitted dependency is stream B's framed input-copy contract. -/
+It cites stream B's framed input-copy contract, which is proved. -/
 private theorem inputCall_copy (k : ℕ) (hk : 0 < k) (x : List Bool) :
     (inputCopyTM k ⟨0, hk⟩).runFrom (Cfg.ofWords (input := x) SweepPhase.sweep (fun _ => []))
         (2 * x.length + 2) = Cfg.ofWords SweepPhase.done (stateWord k x) := by
