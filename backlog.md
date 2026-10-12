@@ -393,10 +393,18 @@ decision 3, names the deduplication as the shell's second customer, a 12.2c item
 `certSplitWord` matches `Nondeterminism`'s private `contSplitWord` at 100% and `e3SplitWord` at
 90%. This is one four-line `match` term, the output function of the public
 `FinTM.computesFunInTime_splitSolve`, and it was pre-disclosed by W2-V's brief
-(`audits/fills-4-integration.md`). **The task:** re-derive the 2B shell's use from
-`exists_certificateShell` and delete the private shell with both split words. If a named
-split-word definition is still wanted, it becomes one public declaration beside
-`computesFunInTime_splitSolve`. Statements stay unchanged; the task gets its own PR and gate.
+(`audits/fills-4-integration.md`).
+
+**Scope (corrected 2026-10-12, from the 12.2c readiness check).** W2-V's shell serves only
+*polynomial* certificate lengths, so only the polynomial use retires. `Nondeterminism`'s NEXP
+route keeps its own exponential search: `e3Split` solves `n + C·2^((n+1)^c) = m`, and its loader
+reuses `contPairTM`, which embeds `choiceCore`. **The task, as scoped:** re-derive
+`cont_choiceVerifier_mem_P` from `exists_certificateShell` and delete `contSplitWord` with it,
+which retires the 100% pair. `e3SplitWord`, `contPairTM` and `choiceCore` stay for the
+exponential route. Retiring those too would need a width-parametric public shell: a new
+statement, with its own gate, and not worth it for the remaining 90% textual match. Statements
+stay unchanged. **Prerequisite:** W2-V's own fill gate (the wave-1 fill gate), so that the cited
+shell is audited first. The task gets its own PR and gate.
 
 ## 2. Campaign work queued or on hold
 
@@ -915,7 +923,12 @@ split-word definition is still wanted, it becomes one public declaration beside
   one-way input (the `2^O(S)` searches need indexed access or a rewind
   instruction), and the two citation-audit provenance questions, asked as
   questions (their `LogProg` compiler vs lax-434930's `TimeCompiler`;
-  `ConfigCount.core` vs cslib `ConfigBound`'s `Cfg.core`). **Blocks fills
+  `ConfigCount.core` vs cslib `ConfigBound`'s `Cfg.core`). Also a
+  received-code duplication observation, from the B7 fill gate's closure
+  (`audits/b7-fill-resolutions.md`): `Machines/Bin.lean::bits_getLast`
+  reproduces `Machines/FragDec.lean::bits_head_odd` at 90%. These are two
+  `Nat.bits` lemmas proved by the same strong induction, both received in
+  `f70c57c2`; it is offered as a possible shared helper. **Blocks fills
   only, never statements**: the machine-heavy P4.x fills named above plus
   the ARM interface statements deferred out of P4.1; every other fill
   epoch and the retrofit proceed. Returns to the plan on Hydroxyi's
