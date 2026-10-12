@@ -6,6 +6,7 @@ Authors: Seyoon Ragavan
 import TCSlib.Complexity.TuringMachine.Build.CfgRecord
 import TCSlib.Complexity.TuringMachine.Build.Seam
 import TCSlib.Complexity.TuringMachine.Build.InputLength
+import Mathlib.Data.Nat.Bitwise
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -26,10 +27,11 @@ The record rows write the record template and the initial record from binary
 radius digits, decide record validity against the template, and enumerate the
 valid records, which Savitch's midpoint recursion consumes.
 
-**Status: statements.** Every definition is real. Every layout fact and every
-row is sorried with a proof sketch, pending the §12.8b fill, except
-`Turing.RecordValid.joinFields_length`, which is proved from the record
-length.
+**Status: partial fill (13 of 20 targets proved).** Every layout fact and the
+end-to-start adapter are proved. The seven existential machine rows remain
+sorried with their proof sketches. Field-list copy has a defined R2-seamed
+machine and proved zero-field and one-field contracts. The already-landed
+`Turing.RecordValid.joinFields_length` is now admission-free as well.
 
 ## Design
 
@@ -82,12 +84,12 @@ length.
   `Turing.cfgRecord_init`, `Turing.RecordValid.joinFields_length`,
   `Turing.recordValid_iff_exists_cfg`,
   `Turing.joinFields_recordTemplate_length`, `Turing.binDigits_posWidth_succ`
-  — layout and record facts (statements).
+  — layout and record facts (proved).
 * `Turing.TableWF.field_ne_nil`, `Turing.tableOffset_eq`,
   `Turing.tableOffset_length`, `Turing.TableAt.recordAt_take` — table facts
-  (statements).
+  (proved).
 * `Turing.tableRewindTM_run_ofCfg` — the adapter's framed contract
-  (statement).
+  (proved).
 * `Turing.exists_fieldsCopyTM`, `Turing.exists_tableFindTM`,
   `Turing.exists_tableAppendTM` — the table rows (statements).
 * `Turing.exists_recordTemplateTM`, `Turing.exists_recordInitTM`,
@@ -111,10 +113,22 @@ namespace Turing
 lays out as its cells plus one separator between consecutive fields.
 
 **Proof sketch.** Induct on the list: `List.intercalate` of a singleton is its
-field, and each further field adds its length and one separator. -/
+field, and each further field adds its length and one separator.
+
+**Fill appendix.** Reuse the public layout induction in
+`Turing.length_joinFields_add_one`; the remaining induction distributes the
+sum of field lengths plus one. No second layout induction is introduced. -/
 theorem joinFields_length {Γ : Type*} (fs : List (List Γ)) (hfs : fs ≠ []) :
     (joinFields fs).length = (fs.map List.length).sum + fs.length - 1 := by
-  sorry
+  have h := length_joinFields_add_one fs hfs
+  have hs : (fs.map (fun u => u.length + 1)).sum =
+      (fs.map List.length).sum + fs.length := by
+    clear h hfs
+    induction fs with
+    | nil => simp
+    | cons u fs ih => simp only [List.map_cons, List.sum_cons, List.length_cons]; omega
+  simp only [fieldOffset, List.take_length] at h
+  omega
 
 /-- **The end offset of a field layout** (design §12.8b; the formula of
 `Turing.fieldOffset`'s docstring, made a lemma). For a nonempty field list,
@@ -126,7 +140,7 @@ start.
 `Turing.joinFields_length` plus one. -/
 theorem fieldOffset_length {Γ : Type*} (fs : List (List Γ)) (hfs : fs ≠ []) :
     fieldOffset fs fs.length = (joinFields fs).length + 1 := by
-  sorry
+  exact (length_joinFields_add_one fs hfs).symm
 
 /-- **The record length** (design §12.8b): the layout length of every record
 with `k` tapes, input length `n` and radius `s` — `k` tape fields of `2s + 1`
@@ -145,7 +159,13 @@ for each of the `k` tape fields, and `1`, over `k + 3` fields. -/
 theorem joinFields_cfgRecord_length {k : ℕ} {Q T : Type} {x : List Bool} (s : ℕ)
     (c : Cfg k Bool Q x) (τ : T) :
     (joinFields (cfgRecord s c τ)).length = recordLength k x.length s := by
-  sorry
+  rw [joinFields_length _ (by simp [cfgRecord]), cfgRecord_length]
+  simp only [cfgRecord, Bind.bind, Pure.pure, ← List.map_eq_flatMap,
+    binDigits, List.map_cons, List.map_append, List.map_map,
+    Function.comp_def, List.length_map, List.length_range, List.map_const',
+    List.length_finRange, List.sum_cons, List.sum_append, List.sum_replicate_nat,
+    List.length_cons, List.length_nil, List.map_nil, List.sum_nil, recordLength]
+  omega
 
 /-- **Record fields are nonempty** (design §12.8b). No field of a record is
 empty, so a table of records has no double blank inside it and the seek rows
@@ -156,7 +176,24 @@ apply.
 `Nat.bits (|x| + 1)` is nonempty. -/
 theorem cfgRecord_field_ne_nil {k : ℕ} {Q T : Type} {x : List Bool} (s : ℕ)
     (c : Cfg k Bool Q x) (τ : T) : ∀ u ∈ cfgRecord s c τ, u ≠ [] := by
-  sorry
+  have hwidth : 0 < posWidth x.length := by
+    simpa only [posWidth, Nat.size_eq_bits_len] using
+      (Nat.size_pos.mpr (Nat.succ_pos x.length))
+  intro u hu
+  simp only [cfgRecord, List.mem_cons, List.mem_append, List.mem_map,
+    List.not_mem_nil, or_false] at hu
+  rcases hu with rfl | rfl | ⟨i, hi, rfl⟩ | rfl
+  · simp
+  · intro h
+    have := congrArg List.length h
+    simp only [List.length_map, binDigits, List.length_range, List.length_nil] at this
+    omega
+  · intro h
+    have := congrArg List.length h
+    simp only [Bind.bind, Pure.pure, ← List.map_eq_flatMap,
+      List.length_map, List.length_range, List.length_nil] at this
+    omega
+  · simp
 
 /-- **The initial record** (design §12.8b). The record of the start
 configuration `Cfg.init q₀ x` with tag `τ₀`: the state `some q₀`, the input
@@ -173,7 +210,10 @@ theorem cfgRecord_init {k : ℕ} {Q T : Type} (x : List Bool) (s : ℕ) (q₀ : 
         (List.replicate k ((List.range (2 * s + 1)).map fun j =>
             RecSym.cell none (decide (j = s))) ++
           [[RecSym.tag τ₀]]) := by
-  sorry
+  have hmark (j : ℕ) : (0 : ℤ) = (j : ℤ) - s ↔ j = s := by omega
+  simp only [cfgRecord, Cfg.init, Bind.bind, Pure.pure,
+    ← List.map_eq_flatMap, List.map_map, Function.comp_def, hmark, List.map_const',
+    List.length_finRange, Fin.val_one]
 
 /-- **Valid records have the record length** (design §12.8b).
 
@@ -200,7 +240,18 @@ theorem recordValid_iff_exists_cfg {k : ℕ} {Q T : Type} (s : ℕ) (x : List Bo
     (fs : List (List (RecSym Q T))) :
     RecordValid k x.length s Q T fs ↔
       ∃ (c : Cfg k Bool Q x) (τ : T), c.InWindow s ∧ cfgRecord s c τ = fs := by
-  sorry
+  constructor
+  · rintro ⟨y, c, τ, hy, hc, rfl⟩
+    let d : Cfg k Bool Q x :=
+      { state := c.state
+        inputPos := ⟨c.inputPos.val, by simpa only [hy] using c.inputPos.isLt⟩
+        workTapes := c.workTapes
+        workTapePos := c.workTapePos
+        output := c.output }
+    refine ⟨d, τ, hc, ?_⟩
+    simp only [cfgRecord, d, hy]
+  · rintro ⟨c, τ, hc, hrec⟩
+    exact ⟨x, c, τ, rfl, hc, hrec⟩
 
 /-! ### The record template -/
 
@@ -220,7 +271,9 @@ def recordTemplate (Q T : Type) (n s : ℕ) : List (List (RecSym Q T)) :=
 separator. -/
 theorem joinFields_recordTemplate_length (Q T : Type) (n s : ℕ) :
     (joinFields (recordTemplate Q T n s)).length = posWidth n + 2 * s + 2 := by
-  sorry
+  rw [joinFields_length _ (by simp [recordTemplate])]
+  simp [recordTemplate, binDigits]
+  omega
 
 /-- **The template's bound field is `Nat.bits (n + 1)`** (design §12.8b). The
 position width is the bit length of `n + 1`, so the fixed-width digits of
@@ -232,7 +285,11 @@ position width is the bit length of `n + 1`, so the fixed-width digits of
 `posWidth n` at `v = n + 1`. -/
 theorem binDigits_posWidth_succ (n : ℕ) :
     binDigits (posWidth n) (n + 1) = Nat.bits (n + 1) := by
-  sorry
+  apply List.ext_getElem
+  · simp [binDigits, posWidth]
+  · intro j hj₁ hj₂
+    simp only [binDigits, List.getElem_map, List.getElem_range]
+    exact (Nat.testBit_eq_inth (n + 1) j).trans (List.getI_eq_getElem _ hj₂)
 
 /-! ### Tables -/
 
@@ -270,7 +327,11 @@ rows, from well-formedness.
 **Proof sketch.** A field of the table is the header or a field of an entry. -/
 theorem TableWF.field_ne_nil {Γ : Type*} {m : ℕ} {h : List Γ} {es : List (List (List Γ))}
     (hwf : TableWF m h es) : ∀ u ∈ tableFields h es, u ≠ [] := by
-  sorry
+  intro u hu
+  rcases List.mem_cons.mp hu with rfl | hu
+  · exact hwf.1
+  · obtain ⟨en, hen, hu⟩ := List.mem_flatten.mp hu
+    exact (hwf.2 en hen).2 u hu
 
 /-- **Entry offsets in closed form** (design §12.8b). When no entry is empty,
 entry `j` starts after the header and its separator and, for each earlier
@@ -282,7 +343,18 @@ theorem tableOffset_eq {Γ : Type*} (h : List Γ) (es : List (List (List Γ)))
     (hes : ∀ e ∈ es, e ≠ []) (j : ℕ) :
     tableOffset h es j =
       h.length + 1 + ((es.take j).map fun e => (joinFields e).length + 1).sum := by
-  sorry
+  unfold tableOffset tableFields
+  rw [Nat.add_comm 1, fieldOffset_cons_succ]
+  congr 1
+  unfold fieldOffset
+  rw [show (es.take j).map List.length = (es.map List.length).take j from List.map_take,
+    List.take_sum_flatten, List.map_flatten, List.sum_flatten, List.map_map]
+  apply congrArg List.sum
+  apply List.map_congr_left
+  intro en hen
+  exact (by
+    simpa only [fieldOffset, List.take_length] using
+      fieldOffset_length en (hes en (List.mem_of_mem_take hen)))
 
 /-- **The end of a table** (design §12.8b). The offset past the last entry is
 the table's layout length plus one: the second trailing blank, where
@@ -292,7 +364,85 @@ the table's layout length plus one: the second trailing blank, where
 `Turing.fieldOffset_length`, the field list being nonempty. -/
 theorem tableOffset_length {Γ : Type*} (h : List Γ) (es : List (List (List Γ))) :
     tableOffset h es es.length = (joinFields (tableFields h es)).length + 1 := by
-  sorry
+  unfold tableOffset
+  rw [List.take_length, ← List.length_flatten]
+  simpa only [tableFields, List.length_cons, Nat.add_comm] using
+    fieldOffset_length (tableFields h es) (List.cons_ne_nil _ _)
+
+/-- Every cell of a nonempty layout, including its two delimiters, lies in a
+field's framed interval.
+
+**Proof sketch.** Choose the first field whose end is at or beyond the cell. The last
+field supplies existence by the public end-offset formula. Minimality and the public
+successor-offset formula give the lower bound. This uses no second layout induction. -/
+private theorem rt_field_cover {Γ : Type*} (fs : List (List Γ)) (hne : fs ≠ [])
+    (p : ℤ) (hp : -1 ≤ p) (hp' : p ≤ ((joinFields fs).length : ℤ)) :
+    ∃ (j : ℕ) (hj : j < fs.length),
+      -1 ≤ p - fieldOffset fs j ∧ p - fieldOffset fs j ≤ (fs[j].length : ℤ) := by
+  have hlen : 0 < fs.length := List.length_pos_iff.mpr hne
+  have hlast : fs.length - 1 < fs.length := by omega
+  have hend := fieldOffset_succ fs (fs.length - 1) hlast
+  rw [Nat.sub_add_cancel hlen, fieldOffset_length fs hne] at hend
+  have hex : ∃ (j : ℕ) (hj : j < fs.length),
+      p ≤ (fieldOffset fs j : ℤ) + (fs[j].length : ℤ) := by
+    exact ⟨fs.length - 1, hlast, by omega⟩
+  obtain ⟨hj, hu⟩ := Nat.find_spec hex
+  refine ⟨Nat.find hex, hj, ?_, by omega⟩
+  by_cases hz : Nat.find hex = 0
+  · simpa only [hz, fieldOffset, List.take_zero, List.map_nil, List.sum_nil,
+      Nat.cast_zero, sub_zero] using hp
+  · have hprev : Nat.find hex - 1 < fs.length := by omega
+    have hmin := Nat.find_min hex (show Nat.find hex - 1 < Nat.find hex by omega)
+    have hnot : ¬p ≤ (fieldOffset fs (Nat.find hex - 1) : ℤ) +
+        (fs[Nat.find hex - 1].length : ℤ) := fun h => hmin ⟨hprev, h⟩
+    have hstep := fieldOffset_succ fs (Nat.find hex - 1) hprev
+    rw [Nat.sub_add_cancel (show 1 ≤ Nat.find hex by omega)] at hstep
+    omega
+
+/-- A nonempty contiguous block of fields has the same framed cells inside a
+larger layout, and its interval is contained in that layout.
+
+**Proof sketch.** Splitting a list prefix adds field offsets. Locate each requested
+cell in one field using `rt_field_cover`, and apply `fieldsTape_field` twice.
+The last field and `fieldOffset_add_length_le` give containment. -/
+private theorem rt_fields_slice {Γ : Type*} (pre gs post : List (List Γ))
+    (hne : gs ≠ []) :
+    fieldOffset (pre ++ (gs ++ post)) pre.length + (joinFields gs).length ≤
+        (joinFields (pre ++ (gs ++ post))).length ∧
+    ∀ p : ℤ, -1 ≤ p → p ≤ ((joinFields gs).length : ℤ) →
+      fieldsTape (pre ++ (gs ++ post))
+        ((fieldOffset (pre ++ (gs ++ post)) pre.length : ℤ) + p) = fieldsTape gs p := by
+  let fs := pre ++ (gs ++ post)
+  have hidx (j : ℕ) (hj : j < gs.length) : pre.length + j < fs.length := by
+    simp only [fs, List.length_append]
+    omega
+  have hfield (j : ℕ) (hj : j < gs.length) :
+      fs[pre.length + j]'(hidx j hj) = gs[j] := by
+    simp [fs, List.getElem_append_right, List.getElem_append_left, hj]
+  have hoff (j : ℕ) (hj : j ≤ gs.length) :
+      fieldOffset fs (pre.length + j) = fieldOffset fs pre.length + fieldOffset gs j := by
+    simp only [fs, fieldOffset, List.take_length_add_append,
+      List.take_append_of_le_length hj, List.map_append, List.sum_append, List.take_left]
+  have hlen : 0 < gs.length := List.length_pos_iff.mpr hne
+  have hlast : gs.length - 1 < gs.length := by omega
+  have hspan := fieldOffset_add_length_le fs (pre.length + (gs.length - 1))
+    (hidx _ hlast)
+  rw [hfield _ hlast, hoff _ (by omega)] at hspan
+  have hend := fieldOffset_succ gs (gs.length - 1) hlast
+  rw [Nat.sub_add_cancel hlen, fieldOffset_length gs hne] at hend
+  refine ⟨show fieldOffset fs pre.length + (joinFields gs).length ≤
+    (joinFields fs).length from by omega, ?_⟩
+  intro p hp hp'
+  obtain ⟨j, hj, hlo, hhi⟩ := rt_field_cover gs hne p hp hp'
+  have hbig := fieldsTape_field fs (pre.length + j) (hidx j hj)
+    (p - fieldOffset gs j) hlo (by simpa only [hfield j hj] using hhi)
+  have hsmall := fieldsTape_field gs j hj (p - fieldOffset gs j) hlo hhi
+  have ho := hoff j (by omega)
+  have heq : (fieldOffset fs (pre.length + j) : ℤ) + (p - fieldOffset gs j) =
+      (fieldOffset fs pre.length : ℤ) + p := by omega
+  rw [heq, hfield j hj] at hbig
+  rw [show (fieldOffset gs j : ℤ) + (p - fieldOffset gs j) = p by omega] at hsmall
+  exact hbig.trans hsmall.symm
 
 /-- **An entry of a table is a record at its offset** (design §12.8b). If a
 well-formed table sits at `o` on tape `r` and the head is at entry `j`'s offset,
@@ -309,7 +459,36 @@ theorem TableAt.recordAt_take {K : ℕ} {Γ S : Type*} {x : List Γ} {d : Cfg K 
     (ht : TableAt d r o h es) (hwf : TableWF m h es) (j : ℕ) (hj : j < es.length)
     (hpos : d.workTapePos r = o + tableOffset h es j) (m₀ : ℕ) (hm₀ : 0 < m₀)
     (hm₀m : m₀ ≤ m) : RecordAt d r (es[j].take m₀) := by
-  sorry
+  let pre := h :: (es.take j).flatten
+  let gs := es[j].take m₀
+  let post := es[j].drop m₀ ++ (es.drop (j + 1)).flatten
+  have hem : es[j].length = m := (hwf.2 es[j] (List.getElem_mem hj)).1
+  have hgs : gs ≠ [] := by
+    apply List.ne_nil_of_length_pos
+    simp only [gs, List.length_take, hem, Nat.min_eq_left hm₀m]
+    exact hm₀
+  have hes := (List.take_append_drop j es).symm
+  rw [List.drop_eq_getElem_cons hj] at hes
+  have hlayout : tableFields h es = pre ++ (gs ++ post) := by
+    calc
+      tableFields h es = h :: ((es.take j).flatten ++
+          (es[j] ++ (es.drop (j + 1)).flatten)) := by
+        unfold tableFields
+        conv_lhs => rw [hes]
+        simp only [List.flatten_append, List.flatten_cons]
+      _ = pre ++ (gs ++ post) := by
+        simp only [pre, gs, post, List.cons_append, ← List.append_assoc,
+          List.take_append_drop]
+  have hoff : fieldOffset (tableFields h es) pre.length = tableOffset h es j := by
+    simp only [tableOffset, pre, List.length_cons, List.length_flatten, Nat.add_comm]
+  have hslice := rt_fields_slice pre gs post hgs
+  rw [← hlayout, hoff] at hslice
+  intro p hp hp'
+  rw [hpos, add_assoc, ht ((tableOffset h es j : ℤ) + p) (by omega) (by
+    have := hslice.1
+    change p ≤ ((joinFields gs).length : ℤ) at hp'
+    omega)]
+  exact hslice.2 p hp hp'
 
 /-! ### The end-to-start adapter -/
 
@@ -338,7 +517,11 @@ then the dispatch step, then `Turing.seekStartTM_run_ofCfg` from the first cell
 of `u`, which is nonblank, over the remaining fields, in `D' + 4` steps with
 `D = D' + |u| + 1`. The framing of `u` and of the remaining fields is
 `Turing.fieldsTape_field` and the split of `Turing.fieldOffset` at the last
-field. The first-return cut is `Turing.seamCompTM_firstReturn_ofCfg`. -/
+field. The first-return cut is `Turing.seamCompTM_firstReturn_ofCfg`.
+
+**Fill appendix.** The two phase contracts supply the exact run and cut.
+`Turing.seamCompTM_visitedByTapeHead_ofCfg` transports their head bounds;
+`rt_fields_slice` restricts the original frame to the prefix before the last field. -/
 theorem tableRewindTM_run_ofCfg {Γ : Type*} {k : ℕ} {x : List Γ} (i : Fin k)
     (ws : List (List Γ)) (hne : ws ≠ []) (hws : ∀ u ∈ ws, u ≠ [])
     (d : Cfg k Γ (SeekPhase ⊕ SeekPhase) x) (hstate : d.state = some (Sum.inl .run))
@@ -356,9 +539,274 @@ theorem tableRewindTM_run_ofCfg {Γ : Type*} {k : ℕ} {x : List Γ} (i : Fin k)
           ((tableRewindTM k i).runFrom d t).workTapePos j ∈
             Finset.Icc (d.workTapePos j - fieldOffset ws ws.length - 2) (d.workTapePos j)
         else ((tableRewindTM k i).runFrom d t).workTapePos j = d.workTapePos j) := by
-  sorry
+  classical
+  have hlen : 0 < ws.length := List.length_pos_iff.mpr hne
+  let a := ws.length - 1
+  have ha : a < ws.length := by omega
+  let pre := ws.take a
+  let u := ws[a]
+  have hprelen : pre.length = a := by simp [pre, Nat.min_eq_left (Nat.le_of_lt ha)]
+  have hsplit : ws = pre ++ [u] := by
+    simpa only [pre, u, show a + 1 = ws.length by omega, List.take_length] using
+      (List.take_append_getElem ha).symm
+  have ho : fieldOffset ws a = fieldOffset pre pre.length := by
+    rw [hprelen]
+    simp only [fieldOffset, pre, List.take_take, Nat.min_self]
+  have hD : fieldOffset ws ws.length = fieldOffset pre pre.length + u.length + 1 := by
+    have hh := fieldOffset_succ ws a ha
+    rw [show a + 1 = ws.length by omega, ho] at hh
+    simpa only [u, Nat.add_assoc] using hh
+  let c₀ : Cfg k Γ SeekPhase x := d.mapState (fun _ => .run)
+  let c₁ : Cfg k Γ SeekPhase x :=
+    { c₀ with
+      state := some .done
+      workTapePos := Function.update c₀.workTapePos i (c₀.workTapePos i - u.length - 1) }
+  have hc₀ : c₀.state = some .run := by simp [c₀, Cfg.mapState, hstate]
+  have hentry : c₀.mapState Sum.inl = d := by
+    apply Cfg.ext <;> simp [c₀, Cfg.mapState, hstate]
+  have hu (p : ℤ) (hp : -1 ≤ p) (hp' : p ≤ (u.length : ℤ)) :
+      c₀.workTapes i (c₀.workTapePos i - u.length - 1 + p) = FinTM.bufferTape u p := by
+    change d.workTapes i (d.workTapePos i - u.length - 1 + p) = _
+    have heq : d.workTapePos i - u.length - 1 + p =
+        d.workTapePos i - fieldOffset ws ws.length + ((fieldOffset ws a : ℤ) + p) := by
+      rw [ho]
+      omega
+    rw [heq, hw _ (by omega) (by rw [ho]; omega)]
+    exact fieldsTape_field ws a ha p hp hp'
+  obtain ⟨h₁, hcut₁, hrad₁⟩ := skipBackTM_run_ofCfg i u c₀ hc₀ hu
+  change (skipBackTM k i).runFrom c₀ (u.length + 3) = c₁ at h₁
+  let c₂ := c₁.mapState (fun _ => SeekPhase.run)
+  have hnonempty : u ≠ [] := hws u (List.getElem_mem ha)
+  have hcur : c₂.workTapes i (c₂.workTapePos i) ≠ none := by
+    have hh := hu 0 (by omega) (by omega)
+    simp only [add_zero, c₀, Cfg.mapState] at hh
+    change d.workTapes i (Function.update d.workTapePos i
+      (d.workTapePos i - u.length - 1) i) ≠ none
+    rw [Function.update_self, hh]
+    cases he : u with
+    | nil => exact False.elim (hnonempty he)
+    | cons b bs => simp [FinTM.bufferTape]
+  have hframe (p : ℤ) (hp : -2 ≤ p)
+      (hp' : p < (fieldOffset pre pre.length : ℤ)) :
+      c₂.workTapes i (c₂.workTapePos i - fieldOffset pre pre.length + p) =
+        fieldsTape pre p := by
+    change d.workTapes i (Function.update d.workTapePos i
+      (d.workTapePos i - u.length - 1) i - fieldOffset pre pre.length + p) = _
+    rw [Function.update_self]
+    have heq : d.workTapePos i - u.length - 1 - fieldOffset pre pre.length + p =
+        d.workTapePos i - fieldOffset ws ws.length + p := by omega
+    rw [heq, hw p hp (by omega)]
+    by_cases hp0 : 0 ≤ p
+    · have hprene : pre ≠ [] := by
+        intro he
+        simp [he, fieldOffset] at hp'
+        omega
+      have hs := (rt_fields_slice [] pre [u] hprene).2 p (by omega) (by
+        have := fieldOffset_length pre hprene
+        omega)
+      simpa only [List.nil_append, fieldOffset, List.length_nil, List.take_zero, List.map_nil,
+        List.sum_nil, Nat.cast_zero, zero_add, ← hsplit] using hs
+    · simp [fieldsTape, hp0]
+  have hpre : ∀ v ∈ pre, v ≠ [] := fun v hv => hws v (List.mem_of_mem_take hv)
+  obtain ⟨h₂, hcut₂, hrad₂⟩ := seekStartTM_run_ofCfg i pre hpre c₂ rfl hcur hframe
+  let c₃ : Cfg k Γ SeekPhase x :=
+    { c₂ with
+      state := some .done
+      workTapePos := Function.update c₂.workTapePos i
+        (c₂.workTapePos i - fieldOffset pre pre.length) }
+  change (seekStartTM k i).runFrom (c₁.mapState fun _ => SeekPhase.run)
+    (fieldOffset pre pre.length + 4) = c₃ at h₂
+  have htime : u.length + 3 + 1 + (fieldOffset pre pre.length + 4) =
+      fieldOffset ws ws.length + 7 := by omega
+  have hrun := seamCompTM_run_ofCfg (skipBackTM k i) .done (seekStartTM k i) .run
+    h₁ rfl hcut₁ h₂
+  have hcut := seamCompTM_firstReturn_ofCfg (skipBackTM k i) .done
+    (seekStartTM k i) .run .done h₁ rfl hcut₁ h₂ rfl hcut₂
+  rw [hentry, htime] at hrun hcut
+  refine ⟨?_, hcut, ?_⟩
+  · change (tableRewindTM k i).runFrom d (fieldOffset ws ws.length + 7) =
+      c₃.mapState Sum.inr at hrun
+    rw [hrun]
+    apply Cfg.ext <;> simp [c₃, c₂, c₁, c₀, Cfg.mapState, Function.update_idem,
+      show d.workTapePos i - (u.length : ℤ) - 1 - fieldOffset pre pre.length =
+        d.workTapePos i - fieldOffset ws ws.length by omega]
+  · intro j t ht
+    let region := Finset.Icc
+      (if j = i then d.workTapePos j - fieldOffset ws ws.length - 2 else d.workTapePos j)
+      (d.workTapePos j)
+    have cover :
+        (skipBackTM k i).visitedByTapeHead c₀ (u.length + 3) j ∪
+          (seekStartTM k i).visitedByTapeHead c₂ (fieldOffset pre pre.length + 4) j ⊆
+        region := by
+      apply Finset.union_subset
+      · apply Finset.image_subset_iff.mpr
+        intro v hv
+        have bounds := hrad₁ j v (Nat.le_of_lt_succ (Finset.mem_range.mp hv))
+        by_cases hji : j = i
+        · subst j
+          simp only [if_true, Finset.mem_Icc] at bounds
+          change d.workTapePos i - (u.length : ℤ) - 2 ≤ _ ∧ _ ≤ d.workTapePos i at bounds
+          simp only [region, if_true, Finset.mem_Icc]
+          omega
+        · simp only [if_neg hji] at bounds
+          simp only [region, if_neg hji, Finset.mem_Icc]
+          rw [bounds]
+          simp only [c₀, Cfg.mapState, le_refl, and_self]
+      · apply Finset.image_subset_iff.mpr
+        intro v hv
+        have bounds := hrad₂ j v (Nat.le_of_lt_succ (Finset.mem_range.mp hv))
+        by_cases hji : j = i
+        · subst j
+          simp only [if_true, Finset.mem_Icc] at bounds
+          change Function.update d.workTapePos i (d.workTapePos i - u.length - 1) i -
+              fieldOffset pre pre.length - 2 ≤ _ ∧
+            _ ≤ Function.update d.workTapePos i (d.workTapePos i - u.length - 1) i at bounds
+          rw [Function.update_self] at bounds
+          simp only [region, if_true, Finset.mem_Icc]
+          omega
+        · simp only [if_neg hji] at bounds
+          simp only [region, if_neg hji, Finset.mem_Icc]
+          rw [bounds]
+          simp only [c₂, c₁, c₀, Cfg.mapState, Function.update_of_ne hji, le_refl, and_self]
+    have transfer := seamCompTM_visitedByTapeHead_ofCfg (skipBackTM k i) .done
+      (seekStartTM k i) .run (T₂ := fieldOffset pre pre.length + 4) h₁ rfl hcut₁ j
+    rw [hentry, htime] at transfer
+    have membership : ((tableRewindTM k i).runFrom d t).workTapePos j ∈ region := by
+      apply cover
+      apply transfer
+      exact Finset.mem_image_of_mem _ (Finset.mem_range.mpr (Nat.lt_succ_of_le ht))
+    by_cases hji : j = i
+    · simpa only [region, if_pos hji] using membership
+    · simp only [region, if_neg hji, Finset.mem_Icc] at membership
+      simpa only [if_neg hji] using le_antisymm membership.2 membership.1
 
 /-! ### Copying a field list -/
+
+/-- The fixed field count determines a finite sum of the catalog phase types. -/
+private def rt_copyState : ℕ → Type
+  | 0 => Unit
+  | 1 => SweepPhase
+  | m + 2 => SweepPhase ⊕ (SeekPhase ⊕ (SeekPhase ⊕
+      (rt_copyState (m + 1) ⊕ (SeekPhase ⊕ SeekPhase))))
+
+/-- The recursive field-copy controller has finitely many states. -/
+private instance rt_copyState_fintype : (m : ℕ) → Fintype (rt_copyState m)
+  | 0 => inferInstanceAs (Fintype Unit)
+  | 1 => inferInstanceAs (Fintype SweepPhase)
+  | m + 2 => by
+    letI := rt_copyState_fintype (m + 1)
+    change Fintype (SweepPhase ⊕ (SeekPhase ⊕ (SeekPhase ⊕
+      (rt_copyState (m + 1) ⊕ (SeekPhase ⊕ SeekPhase)))))
+    infer_instance
+
+/-- Equality of the finite field-copy control states is decidable. -/
+private instance rt_copyState_decidableEq : (m : ℕ) → DecidableEq (rt_copyState m)
+  | 0 => inferInstanceAs (DecidableEq Unit)
+  | 1 => inferInstanceAs (DecidableEq SweepPhase)
+  | m + 2 => by
+    letI := rt_copyState_decidableEq (m + 1)
+    change DecidableEq (SweepPhase ⊕ (SeekPhase ⊕ (SeekPhase ⊕
+      (rt_copyState (m + 1) ⊕ (SeekPhase ⊕ SeekPhase)))))
+    infer_instance
+
+/-- The field-copy entry is the first copy's sweep state; the empty case is a no-op. -/
+private def rt_copyEntry : (m : ℕ) → rt_copyState m
+  | 0 => ()
+  | 1 => .sweep
+  | _ + 2 => .inl .sweep
+
+/-- The field-copy exit is the last backward skip's anchor. -/
+private def rt_copyExit : (m : ℕ) → rt_copyState m
+  | 0 => ()
+  | 1 => .done
+  | _ + 2 => .inr (.inr (.inr (.inr (.inr .done))))
+
+/-- A fixed field-list copier built exclusively by catalog rows and R2 seams.
+
+**Proof sketch.** Zero fields return immediately; one field uses `copyTM`. For two or
+more, copy the first field, skip it on the source and destination, run the copier for
+the nonempty tail, and skip back once on each tape. Every seam intercepts its catalog
+exit, including the recursive copier's exit. No transition-level host is introduced. -/
+private def rt_copyMachine {Γ : Type*} : (m : ℕ) → MultiTapeTM 2 Γ (rt_copyState m)
+  | 0 => { q₀ := (), tr := fun _ _ _ => ⟨0, fun _ => (none, 0), none, some ()⟩ }
+  | 1 => copyTM 2 0 1
+  | m + 2 =>
+    seamCompTM (copyTM 2 0 1) .done
+      (seamCompTM (skipTM 2 0) .done
+        (seamCompTM (skipTM 2 1) .done
+          (seamCompTM (rt_copyMachine (m + 1)) (rt_copyExit (m + 1))
+            (seamCompTM (skipBackTM 2 0) .done (skipBackTM 2 1) .run) (.inl .run))
+          (.inl (rt_copyEntry (m + 1)))) (.inl .run)) (.inl .run)
+
+/-- The field-copy contract for its zero-field and one-field base cases.
+
+**Proof sketch.** The empty layout changes no cell and returns at time zero. For a
+singleton, apply the public copy contract and `fieldsTape_field`; its two head intervals
+lie within twice the layout length plus one. -/
+private theorem rt_copy_run_base {Γ : Type*} (m : ℕ) (hm : m ≤ 1) :
+    ∃ C : ℕ,
+      ∀ {x : List Γ} (fs : List (List Γ)), fs.length = m →
+      ∀ d : Cfg 2 Γ (rt_copyState m) x, d.state = some (rt_copyEntry m) → RecordAt d 0 fs →
+        (∀ p : ℤ, -1 ≤ p → p ≤ ((joinFields fs).length : ℤ) →
+          d.workTapes 1 (d.workTapePos 1 + p) = none) →
+        ∃ t ≤ C * ((joinFields fs).length + 1),
+          (∀ u < t, ((rt_copyMachine m).runFrom d u).state ≠ some (rt_copyExit m)) ∧
+          (∀ u ≤ t, ∀ j : Fin 2,
+            |((rt_copyMachine m).runFrom d u).workTapePos j - d.workTapePos j| ≤
+              ((C * ((joinFields fs).length + 1) : ℕ) : ℤ)) ∧
+          (rt_copyMachine m).runFrom d t =
+            { d with
+              state := some (rt_copyExit m)
+              workTapes := fun j q =>
+                if j = 1 ∧ d.workTapePos j ≤ q ∧ q < d.workTapePos j + ((joinFields fs).length : ℤ)
+                  then fieldsTape fs (q - d.workTapePos j)
+                else d.workTapes j q } := by
+  rcases m with _ | m
+  · refine ⟨0, ?_⟩
+    intro x fs hfs d hd _ _
+    have hnil : fs = [] := List.eq_nil_of_length_eq_zero hfs
+    subst fs
+    refine ⟨0, by simp, by simp, ?_, ?_⟩
+    · intro v hv j
+      have hv0 : v = 0 := by omega
+      subst v
+      simp
+    · apply Cfg.ext <;> simp [joinFields, List.intercalate, hd, rt_copyEntry, rt_copyExit]
+      funext j q
+      split_ifs with h
+      · omega
+      · rfl
+  · have hm0 : m = 0 := by omega
+    subst m
+    refine ⟨2, ?_⟩
+    intro x fs hfs d hd hsrc _
+    obtain ⟨u, rfl⟩ := List.length_eq_one_iff.mp hfs
+    have hlen : (joinFields [u]).length = u.length := by simp [joinFields, List.intercalate]
+    have hword (p : ℤ) (hp : -1 ≤ p) (hp' : p ≤ (u.length : ℤ)) :
+        d.workTapes 0 (d.workTapePos 0 + p) = FinTM.bufferTape u p := by
+      rw [hsrc p hp (by simpa only [hlen] using hp')]
+      simpa only [fieldOffset, List.take_zero, List.map_nil, List.sum_nil,
+        Nat.cast_zero, zero_add, List.getElem_cons_zero] using
+        fieldsTape_field [u] 0 (by simp) p hp hp'
+    obtain ⟨hcopy, hcut, hrad⟩ := copyTM_run_ofCfg (0 : Fin 2) 1 (by decide) u d hd hword
+    refine ⟨2 * u.length + 2, by omega, hcut, ?_, ?_⟩
+    · intro v hv j
+      have hj : j = 0 ∨ j = 1 := by fin_cases j <;> simp
+      have hr := hrad j v hv
+      simp only [hj, if_true, Finset.mem_Icc] at hr
+      change |((copyTM 2 0 1).runFrom d v).workTapePos j - d.workTapePos j| ≤ _
+      rw [abs_le]
+      constructor <;> omega
+    · change (copyTM 2 0 1).runFrom d (2 * u.length + 2) = _
+      rw [hcopy, hlen]
+      congr 1
+      funext j q
+      split_ifs with h
+      · have hh := fieldsTape_field [u] 0 (by simp) (q - d.workTapePos j)
+          (by omega) (by change q - d.workTapePos j ≤ (u.length : ℤ); omega)
+        simpa only [fieldOffset, List.take_zero, List.map_nil, List.sum_nil,
+          Nat.cast_zero, zero_add, List.getElem_cons_zero] using hh.symm
+      · rfl
 
 /-- **Field-list copy** (design §12.8b). For a fixed field count `m`, there is a
 two-tape module with an entry and an exit state with the following contract.
@@ -379,7 +827,13 @@ next field; the copied field is delimited on tape `1` because the slot was
 blank. Then `m` applications of `Turing.skipBackTM_run_ofCfg` on each tape
 return the heads; the left delimiter of the first field on tape `1` is the
 blank cell left of the slot. The phases join by R2 seams. Every phase is linear
-in the fields crossed. -/
+in the fields crossed.
+
+**Fill appendix (partial).** `rt_copyMachine` realizes this route recursively:
+copy one field, skip it on both tapes, copy the nonempty tail, then skip back
+on both tapes. The zero-field and one-field contracts are proved in
+`rt_copy_run_base`. The contract for two or more fields, including its
+composed frame and radius estimates, remains the continuation frontier. -/
 theorem exists_fieldsCopyTM {Γ : Type*} (m : ℕ) :
     ∃ (P : Type) (_ : Fintype P) (_ : DecidableEq P) (R : MultiTapeTM 2 Γ P) (entry exit : P)
       (C : ℕ),
@@ -503,7 +957,11 @@ old second trailing blank whether or not those fields are empty, and then
 nonempty; the adapter ignores the cell under its head. The phases join by R2
 seams. The new layout extends the old (`Turing.fieldsTape` of the longer list
 agrees with the old one on the old layout), so the finish is the old tape with
-the new layout written over `[o, o + L')`. -/
+the new layout written over `[o, o + L')`.
+
+**Fill appendix.** Empty appended fields need not preserve `Turing.TableWF`.
+A consumer that subsequently seeks must append nonempty fields. This partial
+has not yet filled the append contract. -/
 theorem exists_tableAppendTM {Γ : Type*} (m : ℕ) (suf : List (List Γ)) :
     ∃ (P : Type) (_ : Fintype P) (_ : DecidableEq P) (R : MultiTapeTM 2 Γ P) (entry exit : P)
       (C : ℕ),
