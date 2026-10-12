@@ -23,7 +23,7 @@ set_option autoImplicit false
 /-!
 # The word RAM
 
-The word RAM of [AFM26] (`WordRAM.lean` there): `Instr`, the nine instructions of a program;
+The word RAM of [AFM26] (file `EndStatement.lean` there): `Instr`, the nine instructions of a program;
 `exec`, a run of a program within a step budget; and `loadWords`, the initial memory. Imports
 nothing, proves nothing.
 
