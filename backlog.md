@@ -229,6 +229,35 @@ group-C fill, which this layer unblocks. Pre-ship probes:
 
 ---
 
+### CH34-D3 — the two uniform-scheme assemblies (B5a's pre-disclosed forced mirror, in a file with earlier copies)
+
+*Origin: the B5a fill, delivery 1, integrated 2026-10-12
+(`audits/b5a-fill-agent-reports/REPORT.md`, "Duplication governance";
+`audits/fills-4-integration.md`). Opened under `workflow.md` §4, which leaves
+no discretion when a delivery adds copies to a file that received copies in an
+earlier epoch: `Codes2Tape.lean` did (CH34-D2).*
+
+B5a's brief pre-disclosed the two scheme instances as a forced mirror pair.
+The frozen target structures (`UniformMachineCode` in `EXPCOM.lean`,
+`UniformMachineCode2` in `Codes2Tape.lean`) are distinct, and each must be
+packed from the same two §12.11 contracts. The screen measures
+`Codes2Tape.lean::exists_uniformMachineCode2` ↔
+`EXPCOM.lean::exists_uniformMachineCode` at 322/428 and 322/429 characters
+(75%). That is one declaration in each file: 322 characters, or 11.0% of
+`Codes2Tape`'s 2,934 extracted body characters and 8.9% of `EXPCOM`'s 3,626
+(the agent's denominators, `evidence/copy-coverage.txt` in the delivery).
+Both are below one fifth. The agent's conservative union metric (33.2% and
+20.4%) also counts the pre-existing frozen structure and writer matches (item
+8's residual family), which are not copied proved material. **The question:**
+acknowledge the pair as forced, or name a factoring. The maintainer's
+provisional view is to acknowledge it, with one factoring candidate for the
+12.2c docket: a generic public assembly lemma over `MachineFormat` in
+`CodeSimulator.lean`, reducing each instance to one line. That needs a new
+public declaration, and so a statement gate. The item awaits the user's
+explicit answer. The B5a fill gate cannot close over it until then.
+
+---
+
 ### C1-P1: promote C1c's blank-cell query bound to `Oracle.lean` (from the epoch C1 fill gate, note 15)
 
 C1c proved a private blank-cell bound in `OracleNondeterministic.lean`: a
@@ -347,6 +376,20 @@ host's components.
 **Governance.** A 12.2c item: its own PR and gate. The chapter-1 statements are frozen, and every
 consumer of `universal`/`timed_universal` is re-checked. Prerequisite: the B5a fill (H1's step
 block proved). *Origin: B5a design discussion; user, 2026-10-11.*
+
+### SH-1: retire `Nondeterminism`'s private 2B shell onto W2-V (from the fills-4 integration)
+
+`FinTM.exists_certificateShell` (W2-V, `Build/CertShell.lean`) is proved and admission-free. It
+is the public form of the private certificate shell that `ClassNP/Nondeterminism.lean` uses for
+`ntime_poly_subset_NP` (`cont_choiceVerifier_mem_P`, its loader, `choiceCore`). Design §12.10,
+decision 3, names the deduplication as the shell's second customer, a 12.2c item. W2-V's
+`certSplitWord` matches `Nondeterminism`'s private `contSplitWord` at 100% and `e3SplitWord` at
+90%. This is one four-line `match` term, the output function of the public
+`FinTM.computesFunInTime_splitSolve`, and it was pre-disclosed by W2-V's brief
+(`audits/fills-4-integration.md`). **The task:** re-derive the 2B shell's use from
+`exists_certificateShell` and delete the private shell with both split words. If a named
+split-word definition is still wanted, it becomes one public declaration beside
+`computesFunInTime_splitSolve`. Statements stay unchanged; the task gets its own PR and gate.
 
 ## 2. Campaign work queued or on hold
 

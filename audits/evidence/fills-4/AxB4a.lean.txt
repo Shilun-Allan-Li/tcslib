@@ -1,0 +1,59 @@
+import Lean.Util.FoldConsts
+import TCSlib.Complexity.ClassPSPACE.TQBF
+open Lean Elab Command in
+/-- Every constant in the dependency closure of `root` whose own type or value
+mentions `sorryAx` (maintainer's read-only admission walk). -/
+def sorrySourcesOf (env : Environment) (root : Name) : Array Name := Id.run do
+  let mut visited : NameSet := {}
+  let mut stack : Array Name := #[root]
+  let mut srcs : Array Name := #[]
+  while !stack.isEmpty do
+    let c := stack.back!
+    stack := stack.pop
+    if visited.contains c then continue
+    visited := visited.insert c
+    if let some ci := env.find? c then
+      let used := ci.getUsedConstantsAsSet
+      if used.contains ``sorryAx then srcs := srcs.push c
+      for d in used.toList do
+        unless visited.contains d do stack := stack.push d
+  return srcs
+
+open Lean Elab Command in
+elab "#sorry_sources " id:ident : command => do
+  let n ← liftCoreM <| realizeGlobalConstNoOverload id
+  logInfo m!"{n}: direct sorryAx users in closure: {sorrySourcesOf (← getEnv) n}"
+
+open Lean Elab Command in
+/-- Every constant whose name starts with the given string (a module's private prefix), and
+those among them whose own type or value mentions `sorryAx` (maintainer's read-only census). -/
+elab "#private_sorry_census " pre:str : command => do
+  let env ← getEnv
+  let p := pre.getString
+  let mut n := 0
+  let mut bad : Array Name := #[]
+  for (c, ci) in env.constants.toList do
+    if (toString c).startsWith p then
+      n := n + 1
+      if ci.getUsedConstantsAsSet.contains ``sorryAx then bad := bad.push c
+  logInfo m!"{p}: {n} constants; direct sorryAx users: {bad}"
+
+
+-- ClassPSPACE/TQBF: every public, its axioms and its admission walk
+#print axioms Complexity.PSPACEHard
+#sorry_sources Complexity.PSPACEHard
+#print axioms Complexity.PSPACEComplete
+#sorry_sources Complexity.PSPACEComplete
+#print axioms Complexity.PSPACE_eq_P_of_pspaceComplete_mem_P
+#sorry_sources Complexity.PSPACE_eq_P_of_pspaceComplete_mem_P
+#print axioms Complexity.exists_adjacency_codec_cnf
+#sorry_sources Complexity.exists_adjacency_codec_cnf
+#print axioms Complexity.TQBF
+#sorry_sources Complexity.TQBF
+#print axioms Complexity.TQBF_mem_PSPACE
+#sorry_sources Complexity.TQBF_mem_PSPACE
+#print axioms Complexity.TQBF_PSPACEHard
+#sorry_sources Complexity.TQBF_PSPACEHard
+#print axioms Complexity.TQBF_PSPACEComplete
+#sorry_sources Complexity.TQBF_PSPACEComplete
+#private_sorry_census "_private.TCSlib.Complexity.ClassPSPACE.TQBF.0."
