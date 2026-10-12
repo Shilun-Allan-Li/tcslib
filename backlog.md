@@ -265,6 +265,41 @@ either file, is new debt under `workflow.md` §4.
 
 ---
 
+### CH34-D4 — `EXPCOM.lean` past one fifth copied material (B5b's summit, in a file under CH34-D3)
+
+*Origin: the B5b fill, integrated 2026-10-12 (`audits/ch34-fill-agent-reports/b5b-REPORT.md`,
+"Duplication"; `audits/fills-6-integration.md`). Opened under `workflow.md` §4 on both counts:
+the delivery takes `EXPCOM.lean` past one fifth copied material, and the file already received
+copies in an earlier epoch (CH34-D3).*
+
+B5b's conservative ledger counts 4,930 of `EXPCOM.lean`'s 13,500 extracted body characters as
+copied: **36.52%**. The numerator takes whole bodies, not shared text:
+- the three ledger lemmas and the summit, transcribed from the brief's probe (the prescribed
+  route);
+- three pre-disclosed forced restatements: the powers-of-two `Nat.bits` fact (181 characters
+  shared with Separation's private `bits_two_pow`, 94% / 84%, the delivery's one new screen
+  pair), the all-`true` overflow direction of `incFixed` (public in `MeyerTableau`, which
+  `EXPCOM` cannot import; no shared text), and the padding parse's triple uniqueness (194
+  characters shared with the frozen reduction);
+- CH34-D3's 322-character mirror.
+
+The maintainer's review adds one undisclosed restatement: `expcom_inc_prefix` restates Catalog's
+private `catalog_increment_value`.
+
+**The question:** acknowledge the ledger as delivered, or schedule the factorings. Each one
+promotes a small fact that does not depend on `EXPCOM`, with no statement change:
+- the `Nat.bits` shift law (`(2^j·m).bits = replicate j false ++ m.bits`, and its `m = 1` case)
+  as a public lemma in `Encoding` or `Build/Convention`; it also retires the copies in
+  `Separation` and `ConfigGraph` (F6-1(a));
+- the overflow criterion of `incFixed` in `Build/Convention` (F6-1(e));
+- `catalog_increment_value`, made public and cited in place of `expcom_inc_prefix`;
+- a shared triple-uniqueness lemma for the padding parse.
+
+**Maintainer's recommendation:** acknowledge the probe transcriptions as forced (they are the
+brief's route), and schedule the first three factorings in the dedup window.
+
+---
+
 ### C1-P1: promote C1c's blank-cell query bound to `Oracle.lean` (from the epoch C1 fill gate, note 15)
 
 C1c proved a private blank-cell bound in `OracleNondeterministic.lean`: a
@@ -428,6 +463,40 @@ inference in the sigma-typed phase states. The gain is a universe-polymorphic co
 the campaign needs it now. If done, `exists_tableFindTM` can be re-generalized to `Type*`
 without breaking any consumer. A 12.2c item, its own PR and gate.
 
+### F6-1: promotion and deduplication requests from fills-6 (2026-10-12)
+
+*Origin: the fills-6 deliveries and three read-only reviews (`audits/fills-6-integration.md`).
+None blocks a gate; each is picked up when its owning file is next open, or in the dedup
+window.*
+
+- **(a) `Nat.bits` shift law.** One public lemma for `(2^j·m).bits = replicate j false ++ m.bits`.
+  It retires `s1b_radius_bits` (`ConfigGraph`, an undisclosed restatement),
+  `expcom_bits_two_pow` (`EXPCOM`) and `bits_two_pow` (`TimeHierarchy/Separation`). See CH34-D4.
+- **(b) The Seam space lemma in `Constructible`.** `b3a_seam_space` re-derives the public Seam
+  space lemma in reworded text, which the text screen does not catch; B3a disclosed it as a
+  promotion candidate. Retire it by citing the public lemma, adapting the statement shape at the
+  call site. `b3a_cfg` is close to `Cfg.ofWords`; cite it if the shapes agree.
+- **(c) Canonical bits in `CodeSimulator`.** `canonBits_of_last` and `canonBits_value` overlap
+  semantically with `NotTimeConstructible`'s private `ntc_bits_codeBitsNat_append_true` and
+  `ntc_codeBitsNat_eq_ofDigits`, and with `UHaltMachine`'s `bits_foldr_bit_one`. One public
+  little-endian digit layer (in `Encoding`) would serve all three files.
+- **(d) Scan preservation.** `RecordTable`'s `rt_find_scan` overlaps `CfgRecord`'s private
+  `recordStep_scan_preserves`. Promote the CfgRecord lemma and cite it at MIG-13.
+- **(e) `incFixed` overflow.** Move the all-`true` criterion (`MeyerTableau.incFixed_eq_none_iff`,
+  or its needed direction) to `Build/Convention`, retiring `expcom_all_true`.
+- **(f) `oracleEmbed_updateTape`** (`OracleSim`): a generic embedding fact; promote it at MIG-16
+  (`Build/Embed` is the likely home).
+- **(g) Head displacement.** Catalog's `f2_head_steps` is private and retires with MIG-1. Briefs
+  should name the public `workTapePos_step_le` instead.
+- **(h) A fixed-width prefix reader** (B5a H1's disclosed gap). No row reads a fixed-width,
+  undelimited prefix into finite control. H1's `h1RecordTM` does it for one record; a generic
+  row may follow if a second consumer appears.
+- **(i) Older pairs exposed by the fills-6 combined screen.** OracleSim's `oracleChoiceAction`,
+  `oracleChoiceCfg` and `oracleShadowAction` against `Simulation.lean`'s `leftAction`,
+  `rightAction` and `rightCfg` (53–75%); `oracleBankCfg_eq` against Loop's `emCall_exit_fixed`
+  (56%); `CodeSimulator.guardBlock_orbit` against `Games.playOut_eq_iterate` (74%). No earlier
+  population held both sides. They go to the W2-S and B5a fill gates for a ruling.
+
 ## 2. Campaign work queued or on hold
 
 ### MIG / RS: the foundation migration and the restyling backlog (user, 2026-10-12; design §16)
@@ -464,9 +533,11 @@ statement families are retired, with full gates and consumer edits. Restyling is
 | MIG-15 | `Build/CounterLoop` | `counterSpan` becomes a Contract | −440 to −640 | MIG-0, MIG-4 | swap | |
 | MIG-16 | `Build/OracleSim` | Rebase on the R1 contracts | −250 to −400 | MIG-0 | swap | exact lockstep lemmas stay |
 | MIG-17 | `Build/Primitives`, `Build/Loop` | Named loop hosts; `splitSafe`/`SafeRun` become Contracts | −1k to −2k | MIG-0, MIG-1 | swap | 15 external files cite the P-rows (statements kept) |
-| MIG-19 | `SpaceComplexity/ConfigGraph` (S1b's delivery) | Re-derive `NSPACE ⊆ DTIME(2^O(S))`, `NL ⊆ P` and Ex 4.3 as programs (design §16, decision 3); retire S1b's private BFS host | to be estimated once S1b lands | stage 2, machine-configuration routines | swap | user, 2026-10-12: S1b finishes first |
+| MIG-19 | `SpaceComplexity/ConfigGraph` (S1b's delivery) | Re-derive `NSPACE ⊆ DTIME(2^O(S))`, `NL ⊆ P` and Ex 4.3 as programs (design §16, decision 3); retire S1b's private BFS host | S1b's delivery added 333 lines (612 → 945, MEASURED); the program's own cost is estimated with stage 2 | stage 2, machine-configuration routines | swap | user, 2026-10-12: S1b finished first, then stopped as a partial (fills-6): the two corollaries are proved modulo `NSPACE_subset_exp_dtime` only, so this row needs the simulation alone |
 | MIG-20 | the chapter-2 emitter files (`emitterCompare*`, `emitterP2Erase*`) | 12.2c item 3 (F25a/F27a): onto `compareTM` and `clearTM` | small | MIG-1 (the Catalog→Primitives import) | swap | |
 | MIG-21 | `CookLevin/Hardness` (`clPlacement`, the selectors) | 12.2c item 13: restate the layouts as plain `Fin k ↪ Fin l` embeddings; delete the selector layer (about 120–259 lines) | about −150 to −250 | the T2a gate (item 6's export) | swap | Hardness stays at machine level |
+| MIG-22 | `ClassPSPACE/TQBF` (B4 membership's delivery) | `TQBF_mem_PSPACE` as a program: a recursive QBF evaluator in the §15 language, compiled through stage 2, with the proved pure core (`b4mValue`, `b4mValue_truth`, `b4mWalk_value`) as its specification. Retire the unused leaf-contract definitions, which lack an input/records precondition | to be estimated with stage 2's space accounting | stage 2 with a space bound, the input extensions (§15a) | stmt + swap | user, 2026-10-12: "Stop; do it as a program". Registry H1, the AND/OR evaluator (design §14) |
+| MIG-23 | `Build/RecordTable` rows 15, 16, 19, 20 (find, append, validity, next) | Paused, with no consumer since S1b stopped and Savitch moved to the language. Retire them under scenario B unless stage 2's memory design or another consumer claims them; keep the proved find round (`rt_findRound` and its contracts) | small (statements only) | a consumer decision | full | user, 2026-10-12: "Narrow to rows 17–18"; rows 17–18 continue for B6's window route |
 | MIG-18 | port of [AFM26]'s `Util/Asymptotics` (1,769 lines upstream) | `Dominated`, `Scale.SoftO` and the `growth` tactic, then ledgers without constants | +0.5k to +1.4k; saves part of about 3.5k ledger lines | the PROG-1 port tooling | fidelity, then swap | payoff mostly in ClassNP, ClassP, SpaceComplexity and PolyHierarchy |
 
 **RS: the restyling backlog, opportunistic; chip away at it.**
