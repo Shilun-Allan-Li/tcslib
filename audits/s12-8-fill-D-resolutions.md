@@ -1,4 +1,6 @@
-# R8.0b fill gate (§12.8 stream D): resolutions, round 1
+# R8.0b fill gate (§12.8 stream D): resolutions (CLOSED, round 2)
+
+## Round 1 (2026-10-11): 0 blockers, 1 major, 2 minors, 11 notes
 
 Round 1 (`audits/s12-8-fill-D-findings.md`, verbatim) returned **FAIL: 0 blockers, 1 major,
 2 minors, 11 notes**. The auditor independently confirmed the fill:
@@ -23,3 +25,27 @@ The repairs are on the PR #38 branch at `d2c9e16c` and after. The round-2 pack i
 | F14 | **Done.** The combined tree was checked first. The branch merged the campaign tip `fc999a8b`, where streams A–C have landed, and the user's replay of `CounterLoop`'s downstream closure (8 modules) gave 0 errors, with **`CounterLoop` at 0 sorry warnings**. All 31 `CounterLoop` publics, `expandTM_run_ofCfg` included, print only the standard triple, and the admission walk is empty (`audits/logs/s12-8-fill-D-r2-{replay,axioms}.log`). Then came the doc-only status refresh (`d2c9e16c`): the status line no longer calls `writeAdvTM_run_ofCfg` sorried. Comment-stripped code is identical. |
 
 The other notes record verified properties and need no action.
+
+## Round 2 (2026-10-11): 0 blockers, 0 majors, 0 minors, 8 notes
+
+The findings are verbatim in `audits/s12-8-fill-D-r2-findings.md`; the pack is
+`audits/s12-8-fill-D-r2-pack.md`. The auditor:
+
+- confirmed that the recorded acceptance covers exactly the definition pair and that
+  R80B-E1 is specified as recommended (R2-1);
+- reran the six-file screen from the attached sources, holding the companions fixed: exactly
+  the four expected pairs, no cross-file pair (R2-2);
+- matched the new evidence to the delivery's `SHA256SUMS` (R2-3);
+- confirmed the F3 erratum (R2-4) and that the head differs from the fill only in the status
+  paragraph (R2-5);
+- found the combined-tree replay, axiom and instance records consistent (R2-6 to R2-8).
+
+| Finding | Disposition |
+|---|---|
+| R2-1 (note): keep R80B-E1 until its own gated cleanup is done | **Retained**: `backlog.md` §1 R80B-E1 stays open for the 12.2c window |
+| R2-2 (note): the rerun's absolute totals (421 → 425 pairs) differ from the archived 414 → 418 because the companion sources moved; the delta is identical | **Recorded.** The archived totals are historical; the controlled comparison is the rerun's. Neither changes the delta |
+| R2-3, R2-6 (notes): archive integrity, non-execution of the shim and helpers, merge ancestry, closure coverage and olean provenance remain maintainer attestations | **Recorded** as attestations, as the round-2 pack states |
+| R2-4, R2-5, R2-7, R2-8 (notes) | Confirmed. No action |
+
+**Gate CLOSED. PR #38 is clear to merge.** On merge, `expandTM_run_ofCfg` (R8.6) and the
+whole of `Build/CounterLoop.lean` are admission-free on the campaign branch.
