@@ -22,6 +22,8 @@ import TCSlib.BooleanAnalysis.polylogIndep
 import TCSlib.CommunicationComplexity.DeterministicCC
 import TCSlib.CommunicationComplexity.NewmanTheorem
 
+import TCSlib.Programs
+
 import TCSlib.Complexity.CircuitComplexity
 import TCSlib.Complexity.Expanders
 import TCSlib.Complexity.NPReductions
