@@ -1218,6 +1218,640 @@ theorem exists_fieldsCopyTM {Γ : Type*} (m : ℕ) :
 
 /-! ### The table rows -/
 
+/-- The phases of one fuelled table-search round. -/
+private inductive rt_findPhase (m : ℕ) (A : Type) where
+  | read
+  | scan (j : Fin m)
+  | skip (j : Fin m) (a : A)
+  | exit
+deriving Fintype, DecidableEq
+
+/-- Each search phase uses the existing row's control type. -/
+private def rt_findControl {m : ℕ} {A : Type} : rt_findPhase m A → Type
+  | .read => Option Bool
+  | .scan _ => ScanPhase A
+  | .skip _ _ => SeekPhase
+  | .exit => Unit
+
+private instance rt_findControl_fintype {m : ℕ} {A : Type} [Fintype A]
+    (p : rt_findPhase m A) : Fintype (rt_findControl p) := by
+  cases p <;> dsimp [rt_findControl] <;> infer_instance
+
+private instance rt_findControl_decidableEq {m : ℕ} {A : Type} [DecidableEq A]
+    (p : rt_findPhase m A) : DecidableEq (rt_findControl p) := by
+  cases p <;> dsimp [rt_findControl] <;> infer_instance
+
+/-- Read-only catalog phases for a table-search round. The one-cell read is
+the only non-catalog action: it records whether the entry cell is blank. -/
+private def rt_findParts {Γ A : Type} {m : ℕ}
+    (δ : A → Option Γ → A) (a₀ : A) :
+    (p : rt_findPhase m A) → MultiTapeTM 2 Γ (rt_findControl p)
+  | .read =>
+      { q₀ := none
+        tr := fun q _ w => inputMoveAction 0
+          (match q with | none => some (w 0).isSome | some b => some b) }
+  | .scan _ => scanTM 2 0 (scanFold (fun a b => δ a (some b))) scanKeep a₀
+  | .skip _ _ => skipTM 2 0
+  | .exit => { q₀ := (), tr := fun _ _ _ => inputMoveAction 0 () }
+
+/-- The finite redirect table counts fields and carries the fold accumulator.
+Acceptance redirects before the final skip, preserving the nonblank witness.
+The common escape is distinguished later by reading that same tape cell. -/
+private def rt_findRedirect {Γ A : Type} {m : ℕ} (hm : 0 < m)
+    (δ : A → Option Γ → A) (a₀ : A) (acc : A → Bool) :
+    (p : rt_findPhase m A) → rt_findControl p → Option (Σ p : rt_findPhase m A, rt_findControl p)
+  | .read, none => none
+  | .read, some false => some ⟨.exit, ()⟩
+  | .read, some true => some ⟨.scan ⟨0, hm⟩, .fwd a₀⟩
+  | .scan j, .done a =>
+      if j.val + 1 < m then some ⟨.skip j (δ a none), .run⟩
+      else if acc a then some ⟨.exit, ()⟩ else some ⟨.skip j a, .run⟩
+  | .scan _, _ => none
+  | .skip j a, .done =>
+      if h : j.val + 1 < m then some ⟨.scan ⟨j.val + 1, h⟩, .fwd a⟩
+      else some ⟨.read, none⟩
+  | .skip _ _, _ => none
+  | .exit, _ => none
+
+/-- A round of table find uses the public finite phase host. Its entry is the
+blank test, its escape is the single exit phase, and rejection of the final
+field returns to the entry for the next counter-loop round. -/
+private def rt_findRound {Γ A : Type} {m : ℕ} (hm : 0 < m)
+    (δ : A → Option Γ → A) (a₀ : A) (acc : A → Bool) :
+    MultiTapeTM 2 Γ (Σ p : rt_findPhase m A, rt_findControl p) :=
+  phaseHostTM (rt_findParts (m := m) δ a₀) ⟨.read, none⟩ (rt_findRedirect hm δ a₀ acc)
+
+/-- A fold scan rewrites every cell to itself, so its catalog write mask
+collapses to the original tape.
+
+**Proof sketch.** Specialize the public scan contract to the fold instance.
+The fold-result identity preserves the word; the supplied frame identifies
+each masked cell with the old tape. The cut and head bounds are inherited. -/
+private theorem rt_find_scan {Γ A : Type} {x : List Γ}
+    (δ : A → Option Γ → A) (a : A) (w : List Γ)
+    (d : Cfg 2 Γ (ScanPhase A) x) (hd : d.state = some (.fwd a))
+    (hw : ∀ p : ℤ, -1 ≤ p → p ≤ (w.length : ℤ) →
+      d.workTapes 0 (d.workTapePos 0 + p) = FinTM.bufferTape w p) :
+    (scanTM 2 0 (scanFold (fun b γ => δ b (some γ))) scanKeep a).runFrom d
+        (2 * w.length + 2) =
+      { d with state := some (.done (w.foldl (fun b γ => δ b (some γ)) a)) } ∧
+      (∀ u < 2 * w.length + 2, ∀ b,
+        ((scanTM 2 0 (scanFold (fun c γ => δ c (some γ))) scanKeep a).runFrom d u).state ≠
+          some (.done b)) ∧
+      (∀ j u, u ≤ 2 * w.length + 2 →
+        if j = (0 : Fin 2) then
+          ((scanTM 2 0 (scanFold (fun c γ => δ c (some γ))) scanKeep a).runFrom d u).workTapePos j ∈
+            Finset.Icc (d.workTapePos j - 1) (d.workTapePos j + (w.length : ℤ))
+        else ((scanTM 2 0 (scanFold (fun c γ => δ c (some γ))) scanKeep a).runFrom d u).workTapePos j =
+          d.workTapePos j) := by
+  obtain ⟨hr, hcut, hspace⟩ := scanTM_run_ofCfg (0 : Fin 2)
+    (scanFold (fun b γ => δ b (some γ))) scanKeep a w d hd hw
+  refine ⟨?_, hcut, hspace⟩
+  rw [scanResult_fold] at hr
+  rw [hr]
+  apply Cfg.ext <;> try rfl
+  funext j q
+  dsimp only
+  split_ifs with h
+  · obtain ⟨rfl, hlo, hhi⟩ := h
+    have hf := hw (q - d.workTapePos 0) (by omega) (by omega)
+    convert hf.symm using 1
+    congr 1
+    omega
+  · rfl
+
+/-- The fold over a nonfinal field includes its separator exactly once. -/
+private theorem rt_find_fold_cons {Γ A : Type} (δ : A → Option Γ → A)
+    (a : A) (u v : List Γ) (fs : List (List Γ)) :
+    (joinFields (u :: v :: fs)).foldl δ a =
+      (joinFields (v :: fs)).foldl δ (δ (u.foldl (fun b γ => δ b (some γ)) a) none) := by
+  simp only [joinFields_cons_cons, List.foldl_append, List.foldl_cons, List.foldl_map]
+
+/-- An entry-cell test takes one silent stationary step and one host dispatch.
+The frame is arbitrary, so the lemma applies both at an entry and at the end.
+
+**Proof sketch.** The one-cell test records `isSome` without moving a head.
+The public phase-host contract redirects that observation at its first exit. -/
+private theorem rt_find_read {Γ A : Type} {m : ℕ} (hm : 0 < m)
+    (δ : A → Option Γ → A) (a₀ : A) (acc : A → Bool)
+    {x : List Γ} (d : Cfg 2 Γ (Option Bool) x) (hd : d.state = some none) :
+    (rt_findRound hm δ a₀ acc).runFrom (d.mapState (Sigma.mk (.read : rt_findPhase m A))) 1 =
+      d.mapState (fun _ => ⟨.read, some (d.workTapes 0 (d.workTapePos 0)).isSome⟩) ∧
+    (rt_findRound hm δ a₀ acc).runFrom (d.mapState (Sigma.mk (.read : rt_findPhase m A))) 2 =
+      d.mapState (fun _ => if (d.workTapes 0 (d.workTapePos 0)).isSome then
+        ⟨.scan ⟨0, hm⟩, .fwd a₀⟩ else ⟨.exit, ()⟩) := by
+  let b := (d.workTapes 0 (d.workTapePos 0)).isSome
+  let z : Cfg 2 Γ (Option Bool) x := { d with state := some (some b) }
+  have hz : (rt_findParts (m := m) δ a₀ .read).runFrom d 1 = z := by
+    rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero]
+    rw [step_of_inputMoveAction _ d 0 hd (by rfl)]
+    simp only [z, moveInputPos_zero]
+    rfl
+  have hdispatch : rt_findRedirect hm δ a₀ acc .read (some b) =
+      some (if b then ⟨.scan ⟨0, hm⟩, .fwd a₀⟩ else ⟨.exit, ()⟩) := by
+    cases b <;> rfl
+  have hg : ∀ u < 1, ∀ s, ((rt_findParts (m := m) δ a₀ .read).runFrom d u).state = some s →
+      rt_findRedirect hm δ a₀ acc .read s = none := by
+    intro u hu s hs
+    have hu0 : u = 0 := by omega
+    subst u
+    simp only [MultiTapeTM.runFrom_zero, hd, Option.some.injEq] at hs
+    subst s
+    rfl
+  obtain ⟨hp, h⟩ := phaseHostTM_run (rt_findParts (m := m) δ a₀) ⟨.read, none⟩
+    (rt_findRedirect hm δ a₀ acc) .read d z 1 hz (some b) rfl _ hdispatch hg
+  refine ⟨?_, ?_⟩
+  · rw [show (rt_findRound hm δ a₀ acc).runFrom (d.mapState (Sigma.mk (.read : rt_findPhase m A))) 1 =
+        ((rt_findParts (m := m) δ a₀ .read).runFrom d 1).mapState (Sigma.mk (.read : rt_findPhase m A)) from hp 1 le_rfl, hz]
+    apply Cfg.ext <;> simp [z, b, Cfg.mapState, hd]
+  ·
+    change (rt_findRound hm δ a₀ acc).runFrom (d.mapState (Sigma.mk (.read : rt_findPhase m A))) 2 = _ at h
+    rw [h]
+    apply Cfg.ext <;> simp [z, b, Cfg.mapState, hd]
+
+/-- A field fold in the search host follows the catalog scan through its first
+exit and then dispatches once, carrying the computed accumulator.
+
+**Proof sketch.** The preceding read-only fold lemma supplies the endpoint and
+the no-`done` cut. Instantiate the public phase-host contract at the scan phase;
+all possible redirects of that phase are `done` states. -/
+private theorem rt_find_scan_phase {Γ A : Type} {m : ℕ} (hm : 0 < m)
+    (δ : A → Option Γ → A) (a₀ : A) (acc : A → Bool) (j : Fin m)
+    {x : List Γ} (a : A) (w : List Γ) (d : Cfg 2 Γ (ScanPhase A) x)
+    (hd : d.state = some (.fwd a))
+    (hw : ∀ p : ℤ, -1 ≤ p → p ≤ (w.length : ℤ) →
+      d.workTapes 0 (d.workTapePos 0 + p) = FinTM.bufferTape w p)
+    (q : Σ p : rt_findPhase m A, rt_findControl p)
+    (hq : rt_findRedirect hm δ a₀ acc (.scan j)
+      (.done (w.foldl (fun b γ => δ b (some γ)) a)) = some q) :
+    (∀ u ≤ 2 * w.length + 2,
+      (rt_findRound hm δ a₀ acc).runFrom (d.mapState (Sigma.mk (.scan j : rt_findPhase m A))) u =
+        ((scanTM 2 0 (scanFold (fun b γ => δ b (some γ))) scanKeep a).runFrom d u).mapState
+          (Sigma.mk (.scan j : rt_findPhase m A))) ∧
+    (rt_findRound hm δ a₀ acc).runFrom (d.mapState (Sigma.mk (.scan j : rt_findPhase m A)))
+        (2 * w.length + 3) = d.mapState (fun _ => q) := by
+  obtain ⟨hr, hc, _⟩ := rt_find_scan δ a w d hd hw
+  have hguard : ∀ u < 2 * w.length + 2, ∀ s,
+      ((rt_findParts (m := m) δ a₀ (.scan j)).runFrom d u).state = some s →
+        rt_findRedirect hm δ a₀ acc (.scan j) s = none := by
+    intro u hu s hs
+    cases s with
+    | fwd b => rfl
+    | bwd b => rfl
+    | done b => exact (hc u hu b hs).elim
+  obtain ⟨hp, he⟩ := phaseHostTM_run (rt_findParts (m := m) δ a₀) ⟨.read, none⟩
+    (rt_findRedirect hm δ a₀ acc) (.scan j) d
+    { d with state := some (.done (w.foldl (fun b γ => δ b (some γ)) a)) }
+    (2 * w.length + 2) hr _ rfl q hq hguard
+  refine ⟨hp, ?_⟩
+  change (rt_findRound hm δ a₀ acc).runFrom (d.mapState (Sigma.mk (.scan j : rt_findPhase m A)))
+    (2 * w.length + 3) = _ at he
+  rw [he]
+  apply Cfg.ext <;> simp [Cfg.mapState, hd]
+
+/-- A rejected or nonfinal field's skip in the search host reaches the next
+field start and then dispatches once, without changing any tape.
+
+**Proof sketch.** Apply the public skip contract and its first-return cut to
+the public phase-host contract. The only redirect is its `done` anchor. -/
+private theorem rt_find_skip_phase {Γ A : Type} {m : ℕ} (hm : 0 < m)
+    (δ : A → Option Γ → A) (a₀ : A) (acc : A → Bool) (j : Fin m) (a : A)
+    {x : List Γ} (w : List Γ) (d : Cfg 2 Γ SeekPhase x)
+    (hd : d.state = some .run)
+    (hw : ∀ p : ℤ, 0 ≤ p → p ≤ (w.length : ℤ) →
+      d.workTapes 0 (d.workTapePos 0 + p) = FinTM.bufferTape w p)
+    (q : Σ p : rt_findPhase m A, rt_findControl p)
+    (hq : rt_findRedirect hm δ a₀ acc (.skip j a) .done = some q) :
+    (∀ u ≤ w.length + 1,
+      (rt_findRound hm δ a₀ acc).runFrom (d.mapState (Sigma.mk (.skip j a : rt_findPhase m A))) u =
+        ((skipTM 2 0).runFrom d u).mapState (Sigma.mk (.skip j a : rt_findPhase m A))) ∧
+    (rt_findRound hm δ a₀ acc).runFrom (d.mapState (Sigma.mk (.skip j a : rt_findPhase m A)))
+        (w.length + 2) =
+      ({ d with
+          workTapePos := Function.update d.workTapePos 0
+            (d.workTapePos 0 + w.length + 1) } : Cfg 2 Γ SeekPhase x).mapState (fun _ => q) := by
+  obtain ⟨hr, hc, _⟩ := skipTM_run_ofCfg (0 : Fin 2) w d hd hw
+  have hguard : ∀ u < w.length + 1, ∀ s,
+      ((rt_findParts (m := m) δ a₀ (.skip j a)).runFrom d u).state = some s →
+        rt_findRedirect hm δ a₀ acc (.skip j a) s = none := by
+    intro u hu s hs
+    cases s <;> try rfl
+    exact (hc u hu hs).elim
+  obtain ⟨hp, he⟩ := phaseHostTM_run (rt_findParts (m := m) δ a₀) ⟨.read, none⟩
+    (rt_findRedirect hm δ a₀ acc) (.skip j a) d _ (w.length + 1)
+    hr .done rfl q hq hguard
+  refine ⟨hp, ?_⟩
+  change (rt_findRound hm δ a₀ acc).runFrom (d.mapState (Sigma.mk (.skip j a : rt_findPhase m A)))
+    (w.length + 2) = _ at he
+  rw [he]
+  apply Cfg.ext <;> simp [Cfg.mapState, hd]
+
+/-- An accepted last field exits before its skip, at the field's original
+head. This is the executable correction required by the statement audit.
+
+**Proof sketch.** The field scan computes the fold and restores its head; its
+single dispatch goes directly to the escape phase. Until that dispatch every
+state remains tagged as a scan, and the public scan radius bounds every head. -/
+private theorem rt_find_last_accept {Γ A : Type} {m : ℕ} (hm : 0 < m)
+    (δ : A → Option Γ → A) (a₀ : A) (acc : A → Bool) (j : Fin m)
+    (hj : j.val + 1 = m) {x : List Γ} (a : A) (w : List Γ)
+    (ha : acc (w.foldl (fun b γ => δ b (some γ)) a) = true)
+    (d : Cfg 2 Γ (ScanPhase A) x) (hd : d.state = some (.fwd a))
+    (hw : ∀ p : ℤ, -1 ≤ p → p ≤ (w.length : ℤ) →
+      d.workTapes 0 (d.workTapePos 0 + p) = FinTM.bufferTape w p) :
+    (rt_findRound hm δ a₀ acc).runFrom (d.mapState (Sigma.mk (.scan j : rt_findPhase m A)))
+        (2 * w.length + 3) = d.mapState (fun _ => ⟨.exit, ()⟩) ∧
+    (∀ u < 2 * w.length + 3, ∃ s,
+      ((rt_findRound hm δ a₀ acc).runFrom (d.mapState (Sigma.mk (.scan j : rt_findPhase m A))) u).state = some s ∧
+        s ≠ ⟨.read, none⟩ ∧ s ≠ ⟨.exit, ()⟩) ∧
+    (∀ u ≤ 2 * w.length + 3, ∀ i : Fin 2,
+      if i = 0 then
+        ((rt_findRound hm δ a₀ acc).runFrom (d.mapState (Sigma.mk (.scan j : rt_findPhase m A))) u).workTapePos i ∈
+          Finset.Icc (d.workTapePos i - 1) (d.workTapePos i + (w.length : ℤ))
+      else ((rt_findRound hm δ a₀ acc).runFrom (d.mapState (Sigma.mk (.scan j : rt_findPhase m A))) u).workTapePos i =
+        d.workTapePos i) := by
+  obtain ⟨hp, he⟩ := rt_find_scan_phase hm δ a₀ acc j a w d hd hw ⟨.exit, ()⟩
+    (by simp [rt_findRedirect, hj, ha])
+  obtain ⟨hs, _, hb⟩ := rt_find_scan δ a w d hd hw
+  refine ⟨he, ?_, ?_⟩
+  · intro u hu
+    rw [hp u (by omega)]
+    have hl := MultiTapeTM.runFrom_state_ne_none_of_le
+      (scanTM 2 0 (scanFold (fun b γ => δ b (some γ))) scanKeep a) d
+      (2 * w.length + 2) (by rw [hs]; simp) u (by omega)
+    cases hst : ((scanTM 2 0 (scanFold (fun b γ => δ b (some γ))) scanKeep a).runFrom d u).state with
+    | none => exact (hl hst).elim
+    | some s =>
+      refine ⟨⟨.scan j, s⟩, ?_, ?_, ?_⟩
+      · simp [Cfg.mapState, hst]
+      · intro h
+        have hidx := congrArg Sigma.fst h
+        cases hidx
+      · intro h
+        have hidx := congrArg Sigma.fst h
+        cases hidx
+  · intro u hu i
+    by_cases hle : u ≤ 2 * w.length + 2
+    · rw [hp u hle]
+      exact hb i u hle
+    · have hu' : u = 2 * w.length + 3 := by omega
+      subst u
+      rw [he]
+      simp only [Cfg.mapState]
+      split_ifs
+      simp
+
+/-- A fold followed by its skip crosses exactly one field and one separator.
+Both a nonfinal field and a rejected final field use this same segment.
+
+**Proof sketch.** Compose the scan's first-exit dispatch with the skip's
+first-exit dispatch using addition of run times. Before the final dispatch
+the host's phase tag is either `scan` or `skip`, excluding both round anchors. -/
+private theorem rt_find_advance {Γ A : Type} {m : ℕ} (hm : 0 < m)
+    (δ : A → Option Γ → A) (a₀ : A) (acc : A → Bool) (j : Fin m)
+    {x : List Γ} (a b : A) (w : List Γ) (d : Cfg 2 Γ (ScanPhase A) x)
+    (hd : d.state = some (.fwd a))
+    (hw : ∀ p : ℤ, -1 ≤ p → p ≤ (w.length : ℤ) →
+      d.workTapes 0 (d.workTapePos 0 + p) = FinTM.bufferTape w p)
+    (hscan : rt_findRedirect hm δ a₀ acc (.scan j)
+      (.done (w.foldl (fun c γ => δ c (some γ)) a)) = some ⟨.skip j b, .run⟩)
+    (q : Σ p : rt_findPhase m A, rt_findControl p)
+    (hskip : rt_findRedirect hm δ a₀ acc (.skip j b) .done = some q) :
+    (rt_findRound hm δ a₀ acc).runFrom (d.mapState (Sigma.mk (.scan j : rt_findPhase m A)))
+        (3 * w.length + 5) =
+      ({ d with
+          workTapePos := Function.update d.workTapePos 0
+            (d.workTapePos 0 + w.length + 1) } : Cfg 2 Γ (ScanPhase A) x).mapState (fun _ => q) ∧
+    (∀ u < 3 * w.length + 5,
+      ((rt_findRound hm δ a₀ acc).runFrom (d.mapState (Sigma.mk (.scan j : rt_findPhase m A))) u).state ≠
+          some ⟨.read, none⟩ ∧
+      ((rt_findRound hm δ a₀ acc).runFrom (d.mapState (Sigma.mk (.scan j : rt_findPhase m A))) u).state ≠
+          some ⟨.exit, ()⟩) := by
+  obtain ⟨hpre, hr⟩ := rt_find_scan_phase hm δ a₀ acc j a w d hd hw
+    ⟨.skip j b, .run⟩ hscan
+  let c : Cfg 2 Γ SeekPhase x := d.mapState (fun _ => .run)
+  have hc : c.state = some .run := by simp [c, Cfg.mapState, hd]
+  have hcword : ∀ p : ℤ, 0 ≤ p → p ≤ (w.length : ℤ) →
+      c.workTapes 0 (c.workTapePos 0 + p) = FinTM.bufferTape w p :=
+    fun p hp hp' => hw p (by omega) hp'
+  have hstart : d.mapState (fun _ => (⟨.skip j b, SeekPhase.run⟩ : Σ p : rt_findPhase m A, rt_findControl p)) =
+      c.mapState (Sigma.mk (.skip j b : rt_findPhase m A)) := by
+    apply Cfg.ext <;> simp [c, Cfg.mapState, hd]
+  obtain ⟨hpre', hr'⟩ := rt_find_skip_phase hm δ a₀ acc j b w c hc hcword q hskip
+  refine ⟨?_, ?_⟩
+  · rw [show 3 * w.length + 5 = (2 * w.length + 3) + (w.length + 2) by omega,
+      MultiTapeTM.runFrom_add, hr, hstart, hr']
+    apply Cfg.ext <;> simp [c, Cfg.mapState, hd]
+  · intro u hu
+    by_cases hfront : u < 2 * w.length + 3
+    · rw [hpre u (by omega)]
+      cases hs : ((scanTM 2 0 (scanFold (fun c γ => δ c (some γ))) scanKeep a).runFrom d u).state <;>
+        simp [Cfg.mapState, hs]
+    · have hsplit : u = (2 * w.length + 3) + (u - (2 * w.length + 3)) := by omega
+      rw [hsplit, MultiTapeTM.runFrom_add, hr, hstart, hpre' _ (by omega)]
+      cases hs : ((skipTM 2 0).runFrom c (u - (2 * w.length + 3))).state <;>
+        simp [Cfg.mapState, hs]
+
+/-- Starting in field `j`, the search round folds every remaining field, then
+escapes on acceptance at the start of the final field or returns to its entry
+at the next entry offset on rejection. The run costs at most five times the
+remaining layout length plus one.
+
+**Proof sketch.** Induct on the remaining field list. A nonfinal field uses
+the common scan-and-skip segment, adding its separator to the accumulator;
+the public shifted-layout lemma supplies the tail frame. The final field
+uses the accepted exit or the same scan-and-skip segment. Every segment
+intercepts the public row's first exit. -/
+private theorem rt_find_fields_run {Γ A : Type} {m : ℕ} (hm : 0 < m)
+    (δ : A → Option Γ → A) (a₀ : A) (acc : A → Bool)
+    (fs : List (List Γ)) (j : Fin m) (hn : j.val + fs.length = m)
+    {x : List Γ} (a : A) (d : Cfg 2 Γ (ScanPhase A) x)
+    (hd : d.state = some (.fwd a))
+    (hw : ∀ p : ℤ, -1 ≤ p → p ≤ ((joinFields fs).length : ℤ) →
+      d.workTapes 0 (d.workTapePos 0 + p) = fieldsTape fs p) :
+    ∃ t ≤ 5 * ((joinFields fs).length + 1),
+      (∀ u < t,
+        ((rt_findRound hm δ a₀ acc).runFrom (d.mapState (Sigma.mk (.scan j : rt_findPhase m A))) u).state ≠
+            some ⟨.read, none⟩ ∧
+        ((rt_findRound hm δ a₀ acc).runFrom (d.mapState (Sigma.mk (.scan j : rt_findPhase m A))) u).state ≠
+            some ⟨.exit, ()⟩) ∧
+      (rt_findRound hm δ a₀ acc).runFrom (d.mapState (Sigma.mk (.scan j : rt_findPhase m A))) t =
+        ({ d with
+            workTapePos := Function.update d.workTapePos 0
+              (d.workTapePos 0 + fieldOffset fs
+                (if acc ((joinFields fs).foldl δ a) then fs.length - 1 else fs.length)) } :
+          Cfg 2 Γ (ScanPhase A) x).mapState (fun _ =>
+            if acc ((joinFields fs).foldl δ a) then ⟨.exit, ()⟩ else ⟨.read, none⟩) := by
+  induction fs generalizing j a d with
+  | nil => simp only [List.length_nil, Nat.add_zero] at hn; omega
+  | cons w ws ih =>
+    have hspan : w.length ≤ (joinFields (w :: ws)).length := by
+      simpa [fieldOffset] using fieldOffset_add_length_le (w :: ws) 0 (by simp)
+    have hword (p : ℤ) (hp : -1 ≤ p) (hp' : p ≤ (w.length : ℤ)) :
+        d.workTapes 0 (d.workTapePos 0 + p) = FinTM.bufferTape w p := by
+      rw [hw p hp (by omega)]
+      simpa [fieldOffset] using fieldsTape_field (w :: ws) 0 (by simp) p hp hp'
+    cases ws with
+    | nil =>
+      have hj : j.val + 1 = m := by simpa using hn
+      have hlen : (joinFields [w]).length = w.length := by simp [joinFields, List.intercalate]
+      have hfold : (joinFields [w]).foldl δ a = w.foldl (fun b γ => δ b (some γ)) a := by
+        simp [joinFields, List.intercalate, List.foldl_map]
+      cases ha : acc (w.foldl (fun b γ => δ b (some γ)) a) with
+      | true =>
+        obtain ⟨hr, hc, _⟩ := rt_find_last_accept hm δ a₀ acc j hj a w ha d hd hword
+        refine ⟨2 * w.length + 3, by omega, ?_, ?_⟩
+        · intro u hu
+          obtain ⟨s, hs, hsr, hse⟩ := hc u hu
+          exact ⟨fun h => hsr (Option.some.inj (hs.symm.trans h)),
+            fun h => hse (Option.some.inj (hs.symm.trans h))⟩
+        · simpa [hfold, ha, fieldOffset, Cfg.mapState, hd] using hr
+      | false =>
+        obtain ⟨hr, hc⟩ := rt_find_advance hm δ a₀ acc j a
+          (w.foldl (fun b γ => δ b (some γ)) a) w d hd hword
+          (by simp [rt_findRedirect, hj, ha]) ⟨.read, none⟩
+          (by simp [rt_findRedirect, hj])
+        refine ⟨3 * w.length + 5, by omega, hc, ?_⟩
+        simpa [hfold, ha, fieldOffset, Nat.cast_add, add_assoc] using hr
+    | cons v vs =>
+      have hj : j.val + 1 < m := by simp only [List.length_cons] at hn; omega
+      let j' : Fin m := ⟨j.val + 1, hj⟩
+      let b := δ (w.foldl (fun c γ => δ c (some γ)) a) none
+      let c : Cfg 2 Γ (ScanPhase A) x :=
+        { d with
+          state := some (.fwd b)
+          workTapePos := Function.update d.workTapePos 0 (d.workTapePos 0 + w.length + 1) }
+      have hlen : (joinFields (w :: v :: vs)).length =
+          w.length + 1 + (joinFields (v :: vs)).length := by
+        simp only [joinFields_cons_cons, List.length_append, List.length_map, List.length_cons]
+        omega
+      have htail (p : ℤ) (hp : -1 ≤ p) (hp' : p ≤ ((joinFields (v :: vs)).length : ℤ)) :
+          c.workTapes 0 (c.workTapePos 0 + p) = fieldsTape (v :: vs) p := by
+        change d.workTapes 0 (Function.update d.workTapePos 0
+          (d.workTapePos 0 + w.length + 1) 0 + p) = _
+        rw [Function.update_self]
+        have h := (hw ((w.length : ℤ) + 1 + p) (by omega) (by omega)).trans
+          (fieldsTape_cons_shift w v vs p hp)
+        convert h using 1
+        congr 1
+        omega
+      obtain ⟨hr, hc⟩ := rt_find_advance hm δ a₀ acc j a b w d hd hword
+        (by simp [rt_findRedirect, hj, b]) ⟨.scan j', .fwd b⟩
+        (by simp [rt_findRedirect, hj, j'])
+      have hstart : (rt_findRound hm δ a₀ acc).runFrom (d.mapState (Sigma.mk (.scan j : rt_findPhase m A)))
+          (3 * w.length + 5) = c.mapState (Sigma.mk (.scan j' : rt_findPhase m A)) := by
+        rw [hr]
+        apply Cfg.ext <;> simp [c, Cfg.mapState, hd]
+      obtain ⟨t, ht, hct, hrt⟩ := ih j' (by simp only [j', List.length_cons]; simp only [List.length_cons] at hn; omega)
+        b c rfl htail
+      refine ⟨(3 * w.length + 5) + t, by omega, ?_, ?_⟩
+      · intro u hu
+        by_cases hfront : u < 3 * w.length + 5
+        · exact hc u hfront
+        · rw [show u = (3 * w.length + 5) + (u - (3 * w.length + 5)) by omega,
+            MultiTapeTM.runFrom_add, hstart]
+          exact hct _ (by omega)
+      · rw [MultiTapeTM.runFrom_add, hstart, hrt]
+        have hf : (joinFields (w :: v :: vs)).foldl δ a =
+            (joinFields (v :: vs)).foldl δ b := rt_find_fold_cons δ a w v vs
+        rw [hf]
+        apply Cfg.ext
+        · simp [c, Cfg.mapState, hd]
+        · rfl
+        · rfl
+        · funext i
+          by_cases hi : i = 0
+          · subst i
+            simp only [Cfg.mapState, Function.update_self, c, List.length_cons]
+            split_ifs <;> simp [fieldOffset_cons_succ, Nat.cast_add] <;> omega
+          · simp [c, Cfg.mapState, Function.update_of_ne hi]
+        · rfl
+
+/-- At the trailing blank, a round takes two stationary steps to escape.
+Its only intermediate state is the recorded blank observation. -/
+private theorem rt_find_blank {Γ A : Type} {m : ℕ} (hm : 0 < m)
+    (δ : A → Option Γ → A) (a₀ : A) (acc : A → Bool)
+    {x : List Γ} (d : Cfg 2 Γ (Option Bool) x) (hd : d.state = some none)
+    (hb : d.workTapes 0 (d.workTapePos 0) = none) :
+    (rt_findRound hm δ a₀ acc).runFrom (d.mapState (Sigma.mk (.read : rt_findPhase m A))) 2 =
+        d.mapState (fun _ => ⟨.exit, ()⟩) ∧
+    (∀ u, 0 < u → u < 2 → ∃ s,
+      ((rt_findRound hm δ a₀ acc).runFrom (d.mapState (Sigma.mk (.read : rt_findPhase m A))) u).state = some s ∧
+        s ≠ ⟨.read, none⟩ ∧ s ≠ ⟨.exit, ()⟩) := by
+  obtain ⟨hp, hr⟩ := rt_find_read hm δ a₀ acc d hd
+  simp only [hb, Option.isSome_none, Bool.false_eq_true, ↓reduceIte] at hp hr
+  refine ⟨hr, ?_⟩
+  intro u hu hu'
+  have hu1 : u = 1 := by omega
+  subst u
+  rw [hp]
+  refine ⟨⟨.read, some false⟩, ?_, ?_, ?_⟩
+  · simp [Cfg.mapState, hd]
+  · intro h
+    cases h
+  · intro h
+    have hi := congrArg Sigma.fst h
+    cases hi
+
+/-- One nonempty table entry is folded in a positive number of steps, returning
+to the round anchor on rejection or taking the common escape on acceptance.
+Only the table head and the control can change.
+
+**Proof sketch.** Nonempty fields make the initial cell nonblank. Compose the
+two-step observation with the proved field-list segment. Its no-anchor cut,
+and the observation's distinct intermediate state, give the round cut;
+liveness follows from the public fact that a live endpoint has a live prefix. -/
+private theorem rt_find_entry {Γ A : Type} {m : ℕ} (hm : 0 < m)
+    (δ : A → Option Γ → A) (a₀ : A) (acc : A → Bool)
+    (fs : List (List Γ)) (hfs : fs.length = m) (hne : ∀ w ∈ fs, w ≠ [])
+    {x : List Γ} (d : Cfg 2 Γ (Option Bool) x) (hd : d.state = some none)
+    (hw : ∀ p : ℤ, -1 ≤ p → p ≤ ((joinFields fs).length : ℤ) →
+      d.workTapes 0 (d.workTapePos 0 + p) = fieldsTape fs p) :
+    ∃ t, 0 < t ∧ t ≤ 7 * ((joinFields fs).length + 1) ∧
+      (∀ u, 0 < u → u < t → ∃ s,
+        ((rt_findRound hm δ a₀ acc).runFrom (d.mapState (Sigma.mk (.read : rt_findPhase m A))) u).state = some s ∧
+          s ≠ ⟨.read, none⟩ ∧ s ≠ ⟨.exit, ()⟩) ∧
+      (rt_findRound hm δ a₀ acc).runFrom (d.mapState (Sigma.mk (.read : rt_findPhase m A))) t =
+        ({ d with
+            workTapePos := Function.update d.workTapePos 0
+              (d.workTapePos 0 + fieldOffset fs
+                (if acc ((joinFields fs).foldl δ a₀) then m - 1 else m)) } :
+          Cfg 2 Γ (Option Bool) x).mapState (fun _ =>
+            if acc ((joinFields fs).foldl δ a₀) then ⟨.exit, ()⟩ else ⟨.read, none⟩) := by
+  have hcur : (d.workTapes 0 (d.workTapePos 0)).isSome = true := by
+    cases fs with
+    | nil => simp at hfs; omega
+    | cons w ws =>
+      have hn := hne w (by simp)
+      cases w with
+      | nil => exact (hn rfl).elim
+      | cons γ w =>
+        have hs := hw 0 (by omega) (by omega)
+        rw [add_zero] at hs
+        rw [hs]
+        have hf := fieldsTape_field ((γ :: w) :: ws) 0 (by simp) 0 (by omega) (by omega)
+        simpa [fieldOffset, FinTM.bufferTape] using congrArg Option.isSome hf
+  obtain ⟨hp, hr⟩ := rt_find_read hm δ a₀ acc d hd
+  simp only [hcur, ↓reduceIte] at hp hr
+  let c : Cfg 2 Γ (ScanPhase A) x := d.mapState (fun _ => .fwd a₀)
+  have hc : c.state = some (.fwd a₀) := by simp [c, Cfg.mapState, hd]
+  let j : Fin m := ⟨0, hm⟩
+  have hstart : d.mapState (fun _ => (⟨.scan j, ScanPhase.fwd a₀⟩ : Σ p : rt_findPhase m A, rt_findControl p)) =
+      c.mapState (Sigma.mk (.scan j : rt_findPhase m A)) := by
+    apply Cfg.ext <;> simp [c, Cfg.mapState, hd]
+  obtain ⟨t, ht, hcut, hrun⟩ := rt_find_fields_run hm δ a₀ acc fs j
+    (by simpa [j] using hfs) a₀ c hc hw
+  have hend : (rt_findRound hm δ a₀ acc).runFrom (d.mapState (Sigma.mk (.read : rt_findPhase m A))) (2 + t) =
+      ({ d with
+          workTapePos := Function.update d.workTapePos 0
+            (d.workTapePos 0 + fieldOffset fs
+              (if acc ((joinFields fs).foldl δ a₀) then m - 1 else m)) } :
+        Cfg 2 Γ (Option Bool) x).mapState (fun _ =>
+          if acc ((joinFields fs).foldl δ a₀) then ⟨.exit, ()⟩ else ⟨.read, none⟩) := by
+    rw [MultiTapeTM.runFrom_add, hr, hstart, hrun]
+    apply Cfg.ext <;> simp [c, Cfg.mapState, hd, hfs]
+  refine ⟨2 + t, by omega, by omega, ?_, hend⟩
+  intro u hu hut
+  have hl := MultiTapeTM.runFrom_state_ne_none_of_le (rt_findRound hm δ a₀ acc)
+    (d.mapState (Sigma.mk (.read : rt_findPhase m A))) (2 + t) (by rw [hend]; simp [Cfg.mapState, hd]) u (by omega)
+  have havoid : ((rt_findRound hm δ a₀ acc).runFrom (d.mapState (Sigma.mk (.read : rt_findPhase m A))) u).state ≠
+        some ⟨.read, none⟩ ∧
+      ((rt_findRound hm δ a₀ acc).runFrom (d.mapState (Sigma.mk (.read : rt_findPhase m A))) u).state ≠
+        some ⟨.exit, ()⟩ := by
+    by_cases hu1 : u = 1
+    · rw [hu1, hp]
+      simp [Cfg.mapState, hd]
+    · rw [show u = 2 + (u - 2) by omega, MultiTapeTM.runFrom_add, hr, hstart]
+      exact hcut _ (by omega)
+  cases hs : ((rt_findRound hm δ a₀ acc).runFrom (d.mapState (Sigma.mk (.read : rt_findPhase m A))) u).state with
+  | none => exact (hl hs).elim
+  | some s =>
+    refine ⟨s, rfl, ?_, ?_⟩
+    · intro h; exact havoid.1 (hs.trans (congrArg some h))
+    · intro h; exact havoid.2 (hs.trans (congrArg some h))
+
+/-- A proof-only clock for the public counter-loop orbit: the first positive
+return to the round entry or escape. It is not used by the transition table. -/
+private noncomputable def rt_findClock {Γ A : Type} {m : ℕ} (hm : 0 < m)
+    (δ : A → Option Γ → A) (a₀ : A) (acc : A → Bool)
+    {x : List Γ} (d : Cfg 2 Γ (Σ p : rt_findPhase m A, rt_findControl p) x) : ℕ := by
+  classical
+  exact if h : ∃ t, 0 < t ∧
+      (((rt_findRound hm δ a₀ acc).runFrom d t).state = some ⟨.read, none⟩ ∨
+        ((rt_findRound hm δ a₀ acc).runFrom d t).state = some ⟨.exit, ()⟩)
+  then Nat.find h else 1
+
+/-- A positive round with no earlier anchor has exactly the proof clock's
+duration. The equation follows from the least-witness characterization. -/
+private theorem rt_findClock_eq {Γ A : Type} {m : ℕ} (hm : 0 < m)
+    (δ : A → Option Γ → A) (a₀ : A) (acc : A → Bool)
+    {x : List Γ} (d : Cfg 2 Γ (Σ p : rt_findPhase m A, rt_findControl p) x)
+    (t : ℕ) (ht : 0 < t)
+    (he : ((rt_findRound hm δ a₀ acc).runFrom d t).state = some ⟨.read, none⟩ ∨
+      ((rt_findRound hm δ a₀ acc).runFrom d t).state = some ⟨.exit, ()⟩)
+    (hc : ∀ u, 0 < u → u < t →
+      ((rt_findRound hm δ a₀ acc).runFrom d u).state ≠ some ⟨.read, none⟩ ∧
+        ((rt_findRound hm δ a₀ acc).runFrom d u).state ≠ some ⟨.exit, ()⟩) :
+    rt_findClock hm δ a₀ acc d = t := by
+  classical
+  unfold rt_findClock
+  rw [dif_pos ⟨t, ht, he⟩]
+  apply (Nat.find_eq_iff _).mpr
+  refine ⟨⟨ht, he⟩, ?_⟩
+  intro u hu h
+  exact h.2.elim (hc u h.1 hu).1 (hc u h.1 hu).2
+
+/-- The entry-round contract at its proof clock, on the actual hosted state
+type. This is the form consumed by the public counter-loop orbit.
+
+**Proof sketch.** Forget only the entry's control tag, apply the proved raw
+entry contract, and restore the tag. The no-anchor cut identifies that finite
+time with the first-positive-anchor clock. No transition depends on the clock. -/
+private theorem rt_find_round_entry {Γ A : Type} {m : ℕ} (hm : 0 < m)
+    (δ : A → Option Γ → A) (a₀ : A) (acc : A → Bool)
+    (fs : List (List Γ)) (hfs : fs.length = m) (hne : ∀ w ∈ fs, w ≠ [])
+    {x : List Γ} (c : Cfg 2 Γ (Σ p : rt_findPhase m A, rt_findControl p) x)
+    (hc : c.state = some ⟨.read, none⟩)
+    (hw : ∀ p : ℤ, -1 ≤ p → p ≤ ((joinFields fs).length : ℤ) →
+      c.workTapes 0 (c.workTapePos 0 + p) = fieldsTape fs p) :
+    let t := rt_findClock hm δ a₀ acc c
+    0 < t ∧ t ≤ 7 * ((joinFields fs).length + 1) ∧
+      (∀ u, 0 < u → u < t → ∃ s,
+        ((rt_findRound hm δ a₀ acc).runFrom c u).state = some s ∧
+          s ≠ ⟨.read, none⟩ ∧ s ≠ ⟨.exit, ()⟩) ∧
+      (rt_findRound hm δ a₀ acc).runFrom c t =
+        { c with
+          state := some (if acc ((joinFields fs).foldl δ a₀) then ⟨.exit, ()⟩ else ⟨.read, none⟩)
+          workTapePos := Function.update c.workTapePos 0
+            (c.workTapePos 0 + fieldOffset fs
+              (if acc ((joinFields fs).foldl δ a₀) then m - 1 else m)) } := by
+  let d : Cfg 2 Γ (Option Bool) x := c.mapState (fun _ => none)
+  have hd : d.state = some none := by simp [d, Cfg.mapState, hc]
+  have hstart : d.mapState (Sigma.mk (.read : rt_findPhase m A)) = c := by
+    apply Cfg.ext <;> simp [d, Cfg.mapState, hc]
+  obtain ⟨t, ht, hb, hg, hr⟩ := rt_find_entry hm δ a₀ acc fs hfs hne d hd hw
+  rw [hstart] at hg hr
+  have he : (rt_findRound hm δ a₀ acc).runFrom c t =
+      { c with
+        state := some (if acc ((joinFields fs).foldl δ a₀) then ⟨.exit, ()⟩ else ⟨.read, none⟩)
+        workTapePos := Function.update c.workTapePos 0
+          (c.workTapePos 0 + fieldOffset fs
+            (if acc ((joinFields fs).foldl δ a₀) then m - 1 else m)) } := by
+    rw [hr]
+    apply Cfg.ext <;> simp [d, Cfg.mapState, hc]
+  have hend : ((rt_findRound hm δ a₀ acc).runFrom c t).state = some ⟨.read, none⟩ ∨
+      ((rt_findRound hm δ a₀ acc).runFrom c t).state = some ⟨.exit, ()⟩ := by
+    rw [he]
+    cases acc ((joinFields fs).foldl δ a₀) <;> simp
+  have hclock := rt_findClock_eq hm δ a₀ acc c t ht hend (by
+    intro u hu hut
+    obtain ⟨s, hst, hsa, hse⟩ := hg u hu hut
+    exact ⟨fun h => hsa (Option.some.inj (hst.symm.trans h)),
+      fun h => hse (Option.some.inj (hst.symm.trans h))⟩)
+  dsimp only
+  rw [hclock]
+  exact ⟨ht, hb, hg, he⟩
+
 /-- **Table find** (design §12.8a §3, §12.8b). For a digit embedding `e`, a
 field count `m > 0` and a finite-state fold `δ` from `a₀` with acceptance
 `acc`, there is a module with an entry, two distinct verdict anchors and
@@ -1273,7 +1907,20 @@ have to differ.
 The mandated loop `Turing.counterLoopTMVia` and the phase host `Turing.phaseHostTM` take their
 alphabet in `Type`, so the route could not be instantiated at an arbitrary universe (the record
 tables continuation's escalation). Every consumer's alphabet, `RecSym Q T`, lies in `Type`.
-Generalizing the two hosts instead is the optional backlog item UNIV-1. -/
+Generalizing the two hosts instead is the optional backlog item UNIV-1.
+
+**Fill appendix (continuation 2, partial; flagged).** The finite round is now
+`rt_findRound`, using the public phase host to compose catalog fold scans and
+skips. Its proved entry contract folds exactly `joinFields fs`, costs at most
+`7 * ((joinFields fs).length + 1)`, preserves every tape, and supplies the
+positive first-return/escape cut. Acceptance exits at the start of the final
+field, before its skip; rejection advances to the next entry. A blank entry
+cell escapes in two stationary steps. `rt_findClock` and
+`rt_find_round_entry` put this contract in the proof-clock form required by
+`counterLoopOrbit`; the clock is absent from the executable transition table.
+The full row remains admitted: its table-index orbit proof, application of
+`counterLoopTMVia`, fuel copy/clearing, verdict test, and return phases still
+need to be composed. The six public admissions have not moved into helpers. -/
 theorem exists_tableFindTM {Γ : Type} [DecidableEq Γ] (e : Bool ↪ Γ) (m : ℕ) (hm : 0 < m)
     {A : Type} [Fintype A] [DecidableEq A] (δ : A → Option Γ → A) (a₀ : A) (acc : A → Bool) :
     ∃ (K : ℕ) (P : Type) (_ : Fintype P) (_ : DecidableEq P) (R : MultiTapeTM (K + 2) Γ P)
