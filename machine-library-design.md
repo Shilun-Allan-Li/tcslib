@@ -30,10 +30,14 @@ polynomial, search, split, compare, copy, emit, run a subroutine silently,
 branch, loop.
 
 **Non-goals.**
-- No deep-embedded language, no verified compiler, no cost-sound surface
-  syntax. (Mature end state; not justified by the remaining campaign.)
+- ~~No deep-embedded language, no verified compiler, no cost-sound surface
+  syntax. (Mature end state; not justified by the remaining campaign.)~~
+  **Superseded (user, 2026-10-12): a programming layer is commissioned now
+  that the low-level layers are complete; see §15.**
 - No model change, no Mathlib TM2 dependency, no space bounds (the design
   must not *obstruct* a later space story, but proves nothing about space).
+  *(The space part is superseded in practice: §12's R3 rows and every later
+  framed contract carry space or head-envelope clauses.)*
 - No retroactive migration of audited epoch-1/2 proofs (see §8).
 
 ## 2. Architecture
@@ -3000,3 +3004,187 @@ codes and the two-tape universal machine, Thm 3.1 follows at `f log f`.
 
 The G1 brief is `briefs/s13d-g1-generalize.md`.
 
+## 14. Hosts first: the rule and the host registry (user, 2026-10-12)
+
+**The rule** (`policy.md` §1, **Hosts come first**; `workflow.md` §2 and §4,
+ground rule 4). A *host* is a control structure that drives other routines:
+a search or traversal, a recursion or evaluation scheme, an interpreter step
+block, a clocked or windowed runner, a dispatcher over a data structure, or an
+input device. A host is never built `private` inside the proof that first
+needs it. Its public contract is designed and statement-gated first, generic
+in what its consumers vary, with time and head-envelope clauses; consumers
+cite it, proved modulo while its fill runs. Leaf rows (copy, compare, seek,
+arithmetic) are not hosts and keep the §4 rule of admission.
+
+**Why** (the library-reuse assessment of 2026-10-12, four read-only reviews of
+the tip `3462c1b4`). The configuration-level calculus (§12–§13: framed sweeps,
+`scanTM`, seams, the phase host, R1 embedding, symbol lifts, counter loops,
+configuration records) is general: alphabet-generic, with exact time, framing
+and head envelopes. Overfitting entered one level up, where every theorem got
+its own private host, because the briefs' ground rule 1 made new helpers
+private by default:
+- NP ⊆ PSPACE's evaluation host (`SpaceComplexity/Inclusions.lean`, about 70
+  privates), S1b's BFS and windowed pieces (private by `briefs/ch34-s1b.md`,
+  which lists three promotion candidates), B4 membership's assignment walker
+  (private by `briefs/ch34-b4-mem.md`), and Cook–Levin's machine-to-formula
+  kit (private in `CookLevin/Hardness.lean`);
+- four configuration encodings (`coreCode`, `cfgRecord`, B4a's bit rows,
+  Cook–Levin's snapshot blocks) and three reachability notions (configuration
+  reachability in `ConfigGraph`, `Complexity.GraphReach`, `Kruskal.Reach`),
+  none linked to Mathlib's `Digraph`/`SimpleGraph`;
+- about 300 `f2_` private copies in `Build/Catalog.lean`, there only to attach
+  space bounds to rows exported as existentials (the §2 design rule, *named*
+  machines with spec theorems, was not followed by those rows).
+
+**The registry.** Status as of 2026-10-12. Each entry gets a public contract
+and a statement gate before a second consumer is briefed.
+
+| # | Host | Status | Named consumers |
+|---|---|---|---|
+| 0 | **Framed-contract structure**: machine, entry/exit states, precondition, endpoint as a function of the start configuration, time, no-earlier-exit cut, head envelope; sequencing, phase host, R1 embedding, lift and counter loop as structure-to-structure theorems, space derived | to design | every host below; removes the inline restatements of the delimited-word precondition |
+| H1 | **AND/OR evaluator**: a depth-first odometer over a path word of per-depth records with node kinds (AND/OR), a pluggable leaf-verdict module with its own framed contract, short-circuit semantics as a pure function; space = path + leaf + O(1) | first instance in flight, private, inside B4 membership (addendum 1 makes it generic in the leaf and a promotion candidate) | `TQBF_mem_PSPACE`; Savitch (midpoint records as digits); NP ⊆ PSPACE (re-derivation); `ClassPSPACE/Games.lean`'s game values; backtracking in the §15 layer |
+| H2 | **Step block**: one simulated transition of a `k`-tape coded table, relation-level, with per-round time `B·(\|table\| + 1)` and a head envelope | in flight, private, inside B5a H1 (addendum 1 adds the head envelope) | H1 (`exists_uniformSimulator`); U-1; B6's self-application universal; C1 (with a choice-bit-indexed table); EXPCOM |
+| H3 | **Windowed runner**: run a fixed machine on a windowed record, exiting on window exit, simulated halt, or a configuration-count clock | parts exist privately in S1b's brief (radius phase, records-to-runs bridge, the general-`S` count) | S1b; B6 (the window route); Savitch; NL = coNL |
+| H4 | **Search over a graph presented by rows** (enumerate, equality, adjacency, start, target), visited table, BFS | private inside S1b's fill | `NL ⊆ P`, `NSPACE ⊆ DTIME(2^O(S))`; `PATH ∈ P`; Immerman–Szelepcsényi counting; §15 graph algorithms |
+| H5 | **Input devices** behind one interface: native, buffered (Z1, exists), unary marker, binary position (from `exists_inputSeekTM`), computed input | partial | B6 / `space_universal`; U-1 and H2 (backlog); C1 |
+| H6 | **Machine-to-formula kit**: closed-form variable indexing, snapshot-keyed local gates, ordered emission by `exists_emitLoopTM`, Tseitin on `Std.Sat.CNF ℕ` correct for every prefix assignment | pattern private in `CookLevin/Hardness.lean`; B4a's codec is non-uniform (its orderings range over index types depending on `n` and `s`, and its public statement is `∀ n s, ∃ …`) | TQBF hardness; Cook–Levin deduplication; later machine-to-formula reductions |
+
+Pure-Lean kits that the hosts' semantics share (not machines, so not hosts,
+but designed with them): bounded reachability (`ReachWithin`, the midpoint
+lemma, pigeonhole shortening) with bridges from configuration reachability,
+`GraphReach` and `Kruskal.Reach` to Mathlib's `Digraph`/`SimpleGraph`.
+Consumers: Savitch, TQBF hardness, Immerman–Szelepcsényi, PATH, §15.
+
+**Work in flight when the rule was adopted.** No in-flight brief is withdrawn.
+B4 membership and B5a H1 received addenda (`briefs/ch34-b4-mem-addendum-1.md`,
+`briefs/b5a-fill-h1-addendum-1.md`): their hosts stay private for now, as
+their ownership requires, but are written generic, with self-contained
+statements, and listed as promotion candidates. They and S1b's candidates are
+promoted, by PR and gate, before any second consumer is briefed.
+
+**Proposed sequencing** (maintainer; for the user): item 0, then H1 (two
+consumers ready: TQBF membership and Savitch), then H3/H4 from S1b's delivery,
+then H5 with H2's self-application universal for B6, then H6 for TQBF
+hardness. Each is a statement phase plus its gate, then a fill.
+
+## 15. The programming layer (commissioned by the user, 2026-10-12)
+
+**Decision.** "Support a programming layer now, now that we've got the really
+low level stuff working" (user, 2026-10-12). This supersedes §1's non-goal.
+
+**Why now.** The routine layer (§12), framed contracts (§12.6), counter loops
+(§12.7), configuration records and tables (§12.8, §12.8b) and the zone and
+virtual-input layer (§13) are proved or being filled. What is missing is any
+way to write an algorithm once and get a machine with a proved bound:
+- `CounterProg` has unary registers, `inc`/`dec`/`jz`/`out`/`pr` and a one-way
+  input, compiled with a `t(2t + 3)` overhead (`CounterProgRun.lean`). It
+  serves emitters, but cannot hold a string, an array or a graph;
+- `LogProg.ARM` has `O(log n)`-bit registers and yes/no answers, and compiles
+  for space only;
+- the `PolyTimeComputable` closure algebra is `Bool`-only and existential;
+- none of the three is built on `Build/`, and none is registered in
+  `ComputationalModels.lean`.
+
+So every machine-level algorithm is a hand-built host (§14), and an
+introductory algorithms curriculum (graph search, shortest paths, MST,
+sorting, with running times) cannot be written at all. The only
+cost-annotated code, the `TimeM` in `Cryptography/RSA.lean`, charges trusted,
+unchecked costs.
+
+**Goals.** Write an algorithm once, as a program, and obtain: its semantics;
+a step count that is sound by construction (only primitives charge cost);
+and a compiled `FinTM` with a proved time bound polynomial in the program's
+cost and a space bound linear in its register footprint, feeding `∈ P`,
+`PolyTimeComputable` and `SPACE` memberships. The compile theorem is proved
+once, from the contracts of the rows and hosts, never by tracing runs.
+
+**Proposed architecture** (maintainer draft; decisions 15.x below):
+
+```
+L4  Algorithms     TCSlib/Algorithms/: curriculum algorithms, specs against Mathlib
+L3  Programs       a deep-embedded structured language over word registers (+ arrays),
+                   big-step semantics with cost, compile theorem to FinTM
+L2  Contracts      the framed-contract structure (§14 item 0) and the registered hosts
+L1  Routines       Build/: catalog rows, scans, seams, loops, records, tables
+L0  Model          MultiTapeTM / FinTM, the run calculus
+```
+
+- **L3, programs.** Registers hold words over a finite alphabet, one tape
+  each. Instructions are the catalog's word operations (copy, clear, append,
+  compare, binary increment, add and `≤`, seek within delimited fields), reads
+  of the native input, clean calls of `ComputesFunInTime` machines on
+  registers, structured control (sequence, `if` on a register test, a bounded
+  `for` over a register's value by counter loops, `while` with fuel), and
+  calls of registered hosts. Each instruction is charged by its row's cost in
+  the register lengths. Arrays and maps, in a later increment, are record
+  tables (§12.8b) with charged access.
+- **L4, algorithms.** Written in L3 when machine-faithful costs are the point,
+  or as functional code over a cost model that is sound by construction (a
+  query or operation monad whose primitives are the only cost source), with
+  specifications against Mathlib (`List.Sorted`, `List.Perm`,
+  `SimpleGraph.Reachable`, `Digraph`). The comparison-query form also states
+  the sorting lower bound. `RSA.lean`'s `TimeM` (colleague-owned) is a
+  candidate to relocate or replace here, after a provenance check
+  (`backlog.md` §5).
+- **Existing layers.** `CounterProg` and `LogProg.ARM` stay; each is bridged to
+  L3 or re-based on it (15.4). The new models are registered in
+  `ComputationalModels.lean` (policy §1, model registry).
+
+**Open decisions (15.x, for the user).**
+1. **Embedding.** (a) A deep embedding: syntax, semantics and a verified
+   compiler (cost-sound by construction, the most reusable, the largest); or
+   (b) shallow: programs are compositions of §14's contract structures
+   (cheaper, but no syntax to reason about or teach from). Maintainer lean:
+   (a), compiling into (b).
+2. **Register alphabet.** `Bool` only, or any finite alphabet with
+   `alphabet_reduction` at the end.
+3. **First memory model.** Registers only, or registers plus record-table
+   arrays from the start.
+4. **`CounterProg` and `LogProg.ARM`.** Bridge, re-base, or leave as they are.
+5. **Curriculum cost model.** A comparison-query monad first (sorting), an
+   operation monad (graphs), or curriculum algorithms written in L3 directly.
+6. **Shape of the compile bound.** Per-instruction affine in the register
+   lengths (`C·(cost + n + 1)` overall, with register lengths bounded by the
+   cost), or a polynomial.
+7. **First consumers** (rule of admission, §4: two named customers). Proposed:
+   machine side, the `NL ⊆ P` BFS (or `PATH ∈ P`) and TQBF membership or
+   Savitch; curriculum side, merge sort and BFS.
+
+**Prior art examined (2026-10-12; nothing taken yet).** Two formalizations of the
+same result, Alman and Vassilevska Williams, *Truly Subquadratic 3SUM and Truly
+Subcubic APSP via Triangles in Sparse Lopsided Graphs* (arXiv:2610.06783v1). Both
+are word-RAM developments with a structured language, a program logic and a
+verified compiler:
+- **[AFM26]**: `anthropics/formal-math`, folder `3sum-apsp`, commit
+  `e1a4e6508154ea59f030480661590a9fe3018011` (2026-10-05), Apache-2.0, © Anthropic,
+  PBC, on Lean and Mathlib v4.33.1. It has 434 Lean files and 102,310 lines. Its parts:
+  - the trusted `EndStatement.lean` (139 lines, core Lean only);
+  - the language, logic and compiler in `Lang/` (about 9,000 lines) and `Machine/`
+    (about 840);
+  - the paper's algorithms as verified programs in `Programs/` (about 52,600).
+- **[Xuanji26]**: user **xuanji on prove2me** (citation as directed by the user),
+  file `3sumapsp_example.lean`, examined locally. It is the top-level assembly of a
+  stronger 3SUM bound, `O(n^1.999074)` against [AFM26]'s `O(n^1.9992)`, which comes
+  from an Exact Triangle saving of `9261/5000000`. The file builds on [AFM26]'s
+  library: 264 of its 265 module docstrings and 125 of its 128 theorem blocks are
+  verbatim in [AFM26]. Its 62 project imports, including the module that proves the
+  improved saving, are not in the file.
+
+The designs that §14 and §15 may adapt from them are:
+- the program logic (`Ends`, `Meets`: postcondition predicates, time "within `T`",
+  handed on rather than added up, and spec-only calls);
+- the `SameOn` framing with `.keep` lemmas and default-argument tactics;
+- tasks, solvers and hosts (`IsHost`);
+- run limits built into the semantics;
+- the `DetTimeModel` claim algebra;
+- the asymptotics calculus with its `growth` tactic.
+
+If adapted, they are cited per `policy.md` §2, *Design adaptation*: [AFM26] as the
+origin of the design, and [Xuanji26] for the file the user supplied.
+
+**Sequencing.** 15a: the contract structure (shared with §14). 15b: L3 with
+registers only, its semantics, cost and compile theorem (a statement phase and
+its gate, then fills). 15c: arrays over record tables. 15d: the curriculum
+layer's first increment (cost model, merge sort with `≤ n⌈log₂ n⌉`
+comparisons, BFS with an `O(n + m)` operation count). Every Lean step is a PR
+plus its own gate.
