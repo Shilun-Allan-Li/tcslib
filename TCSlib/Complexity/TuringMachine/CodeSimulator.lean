@@ -176,6 +176,142 @@ namespace MachineFormat
 
 variable (F : MachineFormat)
 
+/-! ### Positive grammar bound (B5a fill preparation)
+
+These lemmas justify the extra fail-fast guard even when `F.guard = 0`.
+They concern the specified parser; the finite binary implementation and its
+polynomial time ledger remain the canonizer's continuation obligation.
+-/
+
+/-- Iterated skipping consumes the sum of the per-record lower bounds.
+
+**Proof sketch.** Split off the first successful skip, apply the induction
+hypothesis to its suffix, and add the two length inequalities. -/
+private lemma skipRepeat_consumes (r : List Bool → Option (List Bool)) (b : ℕ)
+    (hr : ∀ xs ys, r xs = some ys → b + ys.length ≤ xs.length)
+    (m : ℕ) (xs ys : List Bool) (h : codeSkipRepeat r m xs = some ys) :
+    b * m + ys.length ≤ xs.length := by
+  induction m generalizing xs with
+  | zero =>
+    have heq : xs = ys := Option.some.inj h
+    simp [heq]
+  | succ m ih =>
+    obtain ⟨zs, hz, hy⟩ := Option.bind_eq_some_iff.mp h
+    have hfirst := hr xs zs hz
+    have hrest := ih zs hy
+    rw [Nat.mul_succ]
+    omega
+
+/-- Nesting a three-symbol reader multiplies its consumption bound by three. -/
+private lemma skipSymbols_consumes (r : List Bool → Option (List Bool)) (b : ℕ)
+    (hr : ∀ xs ys, r xs = some ys → b + ys.length ≤ xs.length)
+    (j : ℕ) (xs ys : List Bool)
+    (h : ((fun f => codeSkipRepeat f 3)^[j] r) xs = some ys) :
+    b * 3 ^ j + ys.length ≤ xs.length := by
+  induction j generalizing xs ys with
+  | zero => simpa using hr xs ys h
+  | succ j ih =>
+    rw [Function.iterate_succ_apply'] at h
+    have hb := skipRepeat_consumes _ (b * 3 ^ j) (fun u v huv => ih u v huv)
+      3 xs ys h
+    simpa only [Nat.pow_succ, Nat.mul_assoc] using hb
+
+/-- A successful table skip consumes a positive number of bits per state,
+independently of the format's optional guard. -/
+private lemma skipTable_consumes (k n : ℕ) (xs ys : List Bool)
+    (h : codeSkipTableK k n xs = some ys) :
+    (4 * k + 5) * 3 ^ (k + 1) * (n + 1) + ys.length ≤ xs.length := by
+  have ha (u v : List Bool) (hu : codeSkipActionK k n u = some v) :
+      4 * k + 5 + v.length ≤ u.length := by
+    rw [← codeEraseActionK] at hu
+    obtain ⟨⟨a, rest⟩, hread, rfl⟩ := Option.map_eq_some_iff.mp hu
+    rw [codeReadActionK_sound u a rest hread, List.length_append]
+    exact Nat.add_le_add_right (codeActionK_length a) _
+  exact skipRepeat_consumes _ _ (fun u v huv =>
+    skipSymbols_consumes _ _ ha (k + 1) u v huv) (n + 1) xs ys h
+
+/-- A successful scanner satisfies the positive grammar guard already on the
+suffix following the binary header. This holds also for a zero format guard.
+
+**Proof sketch.** Decompose the successful scanner into its header, initial-state
+and table checks. Erasure and initial-state reader soundness show that the table
+input is a suffix of the header remainder. Apply the generic table-skip bound
+and discard the nonnegative final-suffix length. -/
+private lemma scan_grammar_guard (α bits rest tail : List Bool)
+    (hp : pairDecode α = some (bits, rest)) (hs : F.scan α = some tail) :
+    (4 * F.k + 5) * 3 ^ (F.k + 1) * (codeBitsNat bits + 1) ≤ rest.length := by
+  unfold CodeFormat.scan at hs
+  rw [hp] at hs
+  dsimp only [bind, Option.bind] at hs
+  split at hs
+  · contradiction
+  split at hs
+  · contradiction
+  obtain ⟨table, hq, ht⟩ := Option.bind_eq_some_iff.mp hs
+  obtain ⟨suffix, htable, _⟩ := Option.bind_eq_some_iff.mp ht
+  rw [F.skipTable_eq] at htable
+  have hlen := skipTable_consumes F.k (codeBitsNat bits) table suffix htable
+  rw [← codeEraseFin] at hq
+  obtain ⟨⟨q, r⟩, hread, rfl⟩ := Option.map_eq_some_iff.mp hq
+  have hword := codeReadFin_sound rest q r hread
+  have hrest : r.length ≤ rest.length := by
+    rw [hword, List.length_append]
+    omega
+  dsimp only at hlen
+  omega
+
+/-- Reject a binary header whose declared table cannot fit in the remaining
+input, before evaluating the format scanner. This is a specification function,
+not yet a certified finite-machine implementation. -/
+private def guardedScan (α : List Bool) : Option (List Bool) := do
+  let (bits, rest) ← pairDecode α
+  if rest.length < (4 * F.k + 5) * 3 ^ (F.k + 1) * (codeBitsNat bits + 1)
+    then none else F.scan α
+
+/-- The additional positive guard preserves the scanner exactly.
+
+**Proof sketch.** Header failure already fails the scanner. If the new guard
+fails, any hypothetical successful scan contradicts `scan_grammar_guard`;
+otherwise the guarded scanner calls the original scanner. -/
+private lemma guardedScan_eq (α : List Bool) : guardedScan F α = F.scan α := by
+  unfold guardedScan
+  cases hp : pairDecode α with
+  | none => simp [CodeFormat.scan, hp]
+  | some p =>
+    rcases p with ⟨bits, rest⟩
+    dsimp only [bind, Option.bind]
+    split
+    next hg =>
+      cases hs : F.scan α with
+      | none => rfl
+      | some tail =>
+        have := scan_grammar_guard F α bits rest tail hp hs
+        omega
+    · rfl
+
+/-- Early failure of the positive grammar guard selects exactly the prescribed
+fallback, including for a zero guard and a potentially accepting fallback. -/
+private lemma decode_of_grammar_guard (α bits rest : List Bool)
+    (hp : pairDecode α = some (bits, rest))
+    (hg : rest.length < (4 * F.k + 5) * 3 ^ (F.k + 1) * (codeBitsNat bits + 1)) :
+    F.decode α = F.fallback := by
+  have hs : F.scan α = none := by
+    rw [← guardedScan_eq]
+    simp [guardedScan, hp, hg]
+  have hparse : F.parseFull α = none := by
+    rw [F.scan_full] at hs
+    exact Option.map_eq_none_iff.mp hs
+  exact F.decode_of_parseFull_none α hparse
+
+/-- Passing the positive guard bounds state-count work by the available input. -/
+private lemma grammar_guard_states (n s : ℕ)
+    (h : (4 * F.k + 5) * 3 ^ (F.k + 1) * (n + 1) ≤ s) : n + 1 ≤ s := by
+  have hc : 1 ≤ (4 * F.k + 5) * 3 ^ (F.k + 1) :=
+    Nat.mul_pos (by omega) (Nat.pow_pos (by omega))
+  have hs : n + 1 ≤ (4 * F.k + 5) * 3 ^ (F.k + 1) * (n + 1) := by
+    simpa using Nat.mul_le_mul_right (n + 1) hc
+  exact hs.trans h
+
 /-- **A polynomial-time canonizer** (spec, fill pending — batch B5a): one finite
 binary machine computes the fixed serialization of the decoded machine within
 `d · (|α| + 1)^d` steps. [AB09, §1.4; the P3.2 round-2 construction]
@@ -201,11 +337,105 @@ rejection by this check or by the guard yields exactly the prescribed fallback, 
 `MachineFormat` hypothesis is needed.
 Check the all-`true` suffix. On success copy the consumed prefix to the output;
 on failure emit the constant `F.serialize F.fallback`. Every phase is polynomial
-in `|α|`; take `d` at least the coefficient and the exponent. -/
+in `|α|`; take `d` at least the coefficient and the exponent.
+
+**Fill appendix (B5a partial).** The positive grammar bound, `guardedScan_eq`,
+and `decode_of_grammar_guard` are proved below the format layer, without a
+positivity premise on `F.guard`. The finite binary parser and its polynomial
+runtime proof remain open; this target retains its original admission. -/
 theorem exists_polyCanonizer :
     ∃ (C : FinTM Bool) (d : ℕ),
       C.ComputesFunInTime (fun α => F.serialize (F.decode α)) fun n => d * (n + 1) ^ d := by
   sorry
+
+/-! ### Finite output summary (D4 move, generalized from Codes2Tape)
+
+The seven output-summary and clock declarations below replace their specialized
+ZF-B3 counterparts. This is the semantic specification of the future step block,
+not a finite-machine interpreter or a claim about its running time.
+-/
+
+/-- Output summary: `none` means empty, `some true` means exactly `[true]`,
+and `some false` means any other output. The last class is irreversible. -/
+private def outputSummary : List Bool → Option Bool
+  | [] => none
+  | [true] => some true
+  | _ => some false
+
+/-- Update the three-way summary for the emission of one source transition. -/
+private def summaryEmit : Option Bool → Option Bool → Option Bool
+  | s, none => s
+  | none, some true => some true
+  | _, some _ => some false
+
+/-- Summary update accounts for the symbol on a halting transition as well. -/
+private lemma outputSummary_append (w : List Bool) (b : Option Bool) :
+    outputSummary (w ++ b.toList) = summaryEmit (outputSummary w) b := by
+  cases b with
+  | none => simp [summaryEmit]
+  | some b =>
+    cases w with
+    | nil => cases b <;> rfl
+    | cons a w =>
+      cases w with
+      | nil => cases a <;> cases b <;> rfl
+      | cons c w => cases a <;> cases b <;> rfl
+
+/-- The summary's accepting value characterizes the exact singleton output. -/
+private lemma outputSummary_true (w : List Bool) :
+    outputSummary w = some true ↔ w = [true] := by
+  cases w with
+  | nil => simp [outputSummary]
+  | cons b w =>
+    cases w with
+    | nil => cases b <;> simp [outputSummary]
+    | cons c w => cases b <;> simp [outputSummary]
+
+/-- Once the summary is other, no subsequent emission can repair it. -/
+private lemma summaryEmit_other (b : Option Bool) :
+    summaryEmit (some false) b = some false := by
+  cases b with
+  | none => rfl
+  | some b => cases b <;> rfl
+
+/-- Semantic clock for any finite-tape binary machine. It performs exactly the
+permitted number of source steps, maintaining only the finite output summary,
+and then inspects halting and exact output. This is a specification function,
+not a finite-machine construction or a claim about machine time. -/
+private def summaryClock {k : ℕ} {Q : Type} (M : MultiTapeTM k Bool Q)
+    {x : List Bool} : ℕ → Cfg k Bool Q x → Option Bool → Bool
+  | 0, c, s => c.state.isNone && (s == some true)
+  | t + 1, c, s =>
+    summaryClock M t (M.step c) (summaryEmit s (M.outputSymbol c))
+
+/-- The clock's final inspection includes the last permitted transition.
+Halted configurations are allowed, so the equation also covers padding an
+early halt to the deadline.
+
+**Proof sketch.** Induct on the deadline. The output-summary update is
+exactly append by the step's optional emission; cite the public run and
+output-step equations to identify the residual run. -/
+private lemma summaryClock_correct {k : ℕ} {Q : Type} (M : MultiTapeTM k Bool Q)
+    {x : List Bool} (c : Cfg k Bool Q x) (t : ℕ) :
+    summaryClock M t c (outputSummary c.output) =
+      ((M.runFrom c t).state.isNone &&
+        (outputSummary (M.runFrom c t).output == some true)) := by
+  induction t generalizing c <;>
+    simp only [summaryClock, ← outputSummary_append, ← MultiTapeTM.step_output,
+      MultiTapeTM.runFrom_zero, MultiTapeTM.runFrom_succ_eq_step, *]
+
+/-- Inspecting the semantic clock at the deadline is exactly bounded acceptance,
+including a halt on the last permitted transition. -/
+private lemma summaryClock_accepts (M : FinTM Bool) (x : List Bool) (t : ℕ) :
+    summaryClock M.tm t (M.tm.initCfg x) none = true ↔ M.ComputesInTime x [true] t := by
+  change summaryClock M.tm t (M.tm.initCfg x)
+    (outputSummary (M.tm.initCfg x).output) = true ↔ _
+  rw [summaryClock_correct, FinTM.computesInTime_iff]
+  simp only [Bool.and_eq_true, Option.isNone_iff_eq_none, beq_iff_eq, outputSummary_true]
+
+/-- The zero-deadline clock rejects every initialized machine. -/
+private lemma summaryClock_zero (M : FinTM Bool) (x : List Bool) :
+    summaryClock M.tm 0 (M.tm.initCfg x) none = false := rfl
 
 /-- **The uniform bounded-acceptance simulator** (spec, fill pending — batch
 B5a): one finite binary machine and one degree such that, on
@@ -235,7 +465,14 @@ input through its own input head and is hosted on the buffer by
 at `escape` it has halted within `t`, and the answer is the summary's
 `[true]` test. The ledger: polynomial startup, `t` rounds of at most
 `B · (|table| + 1)` (`Turing.counterLoop_time_le`), and the verdict, all at most
-`d · (|α| + |x| + t + 1)^d`. -/
+`d · (|α| + |x| + t + 1)^d`.
+
+**Fill appendix (B5a partial, D4).** The seven output-summary/clock declarations
+have moved from `Codes2Tape` and are generalized to arbitrary tape and state
+counts. `summaryClock_accepts` identifies the inclusive-deadline predicate;
+`summaryClock_zero` handles zero. These are semantic specifications only.
+The one physical step block, its relation-level trace, the counter/virtual-input
+host assembly, and its ledger remain open; this target retains its admission. -/
 theorem exists_uniformSimulator :
     ∃ (S : FinTM Bool) (d : ℕ), ∀ (α x : List Bool) (t : ℕ),
       ((F.toFinTM (F.decode α)).ComputesInTime x [true] t →
