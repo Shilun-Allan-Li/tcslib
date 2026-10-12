@@ -16,6 +16,10 @@ def newmod(m):
         if m.startswith(a): return b + m[len(a):]
     raise SystemExit(f'unmapped module {m}')
 
+# Imports that upstream receives transitively at its Mathlib pin but ours does not provide (found by the replay).
+EXTRA_IMPORTS = {
+    'ThreeSumApsp.Util.Index': ['Batteries.Data.Nat.Lemmas'],
+}
 COMPAT_NAMES = ['List.map_coe_finRange_eq_range', 'List.Pairwise.merge', 'Set.mem_ofPred_eq', '.merge hO']
 own = set(mods)
 written = []
@@ -75,6 +79,10 @@ for m in mods:
                  ('ThreeSumApsp/Machine/', 'TCSlib/Programs/WordRAM/'),
                  ('ThreeSumApsp.WordRam', 'WordRAM'), ('EndStatement', 'WordRAM'), ('ThreeSumApsp', 'Light')):
         if a in body: body = body.replace(a, b); renamed = True
+    if m == 'EndStatement':
+        # the rename above also rewrote the upstream file name in the new docstring; restore it
+        assert body.count('(`WordRAM.lean` there)') == 1, 'EndStatement docstring after rename'
+        body = body.replace('(`WordRAM.lean` there)', '(file `EndStatement.lean` there)')
     if renamed:
         notes.append('namespaces `EndStatement` and `ThreeSumApsp.WordRam` renamed to `WordRAM`, and `ThreeSumApsp` '
                      'to `Light`, with module names and paths in comments updated')
@@ -90,6 +98,9 @@ for m in mods:
             body = (f'/-!\n# {title}\n\nA helper module of the vendored programming layer (see the file header).\n\n'
                     + REF + '-/\n\n' + body)
         notes.append('added a `## References` section citing [AFM26]')
+    for extra in EXTRA_IMPORTS.get(m, []):
+        imports.append(extra)
+        notes.append(f'added `import {extra}`, which upstream receives transitively at its Mathlib pin')
     if any(c in body for c in COMPAT_NAMES):
         imports.append('TCSlib.Programs.Compat')
         notes.append('imports `TCSlib.Programs.Compat` for names that differ at our Mathlib pin')
