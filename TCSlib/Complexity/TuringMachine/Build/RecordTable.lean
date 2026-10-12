@@ -27,11 +27,11 @@ The record rows write the record template and the initial record from binary
 radius digits, decide record validity against the template, and enumerate the
 valid records, which Savitch's midpoint recursion consumes.
 
-**Status: partial fill (13 of 20 targets proved).** Every layout fact and the
-end-to-start adapter are proved. The seven existential machine rows remain
-sorried with their proof sketches. Field-list copy has a defined R2-seamed
-machine and proved zero-field and one-field contracts. The already-landed
-`Turing.RecordValid.joinFields_length` is now admission-free as well.
+**Status: partial fill (14 of 20 targets proved).** The layout facts, the
+end-to-start adapter and field-list copy are proved. Six existential rows remain
+sorried with their proof sketches. Append also has a proved reverse copier and
+seek-and-copy prefix. The already-landed `Turing.RecordValid.joinFields_length`
+is admission-free as well.
 
 ## Design
 
@@ -90,8 +90,9 @@ machine and proved zero-field and one-field contracts. The already-landed
   (proved).
 * `Turing.tableRewindTM_run_ofCfg` — the adapter's framed contract
   (proved).
-* `Turing.exists_fieldsCopyTM`, `Turing.exists_tableFindTM`,
-  `Turing.exists_tableAppendTM` — the table rows (statements).
+* `Turing.exists_fieldsCopyTM` — field-list copy (proved).
+* `Turing.exists_tableFindTM`, `Turing.exists_tableAppendTM` — the remaining
+  table rows (statements).
 * `Turing.exists_recordTemplateTM`, `Turing.exists_recordInitTM`,
   `Turing.exists_recordValidTM`, `Turing.exists_recordNextTM` — the deferred
   record rows of R8.7 (statements).
@@ -808,6 +809,361 @@ private theorem rt_copy_run_base {Γ : Type*} (m : ℕ) (hm : m ≤ 1) :
           Nat.cast_zero, zero_add, List.getElem_cons_zero] using hh.symm
       · rfl
 
+/-- Combine the copier's phase certificates without re-proving the seam trace.
+
+**Proof sketch.** The public seam contracts give the endpoint and cut. Their
+visited-set inclusion places each composite head in one of the two phase runs,
+so a common interval about the original heads remains an interval for the seam. -/
+private theorem rt_copy_seam {Γ S₁ S₂ : Type*} {k : ℕ} {x : List Γ}
+    [DecidableEq S₁] (M₁ : MultiTapeTM k Γ S₁) (q₁ : S₁)
+    (M₂ : MultiTapeTM k Γ S₂) (entry q₂ : S₂)
+    {a b : Cfg k Γ S₁ x} {c : Cfg k Γ S₂ x} {t₁ t₂ : ℕ}
+    (origin : Fin k → ℤ) (B : ℤ)
+    (h₁ : M₁.runFrom a t₁ = b) (hb : b.state = some q₁)
+    (hc₁ : ∀ v < t₁, (M₁.runFrom a v).state ≠ some q₁)
+    (hr₁ : ∀ v ≤ t₁, ∀ j, |(M₁.runFrom a v).workTapePos j - origin j| ≤ B)
+    (h₂ : M₂.runFrom (b.mapState fun _ => entry) t₂ = c) (hc : c.state = some q₂)
+    (hc₂ : ∀ v < t₂, (M₂.runFrom (b.mapState fun _ => entry) v).state ≠ some q₂)
+    (hr₂ : ∀ v ≤ t₂, ∀ j,
+      |(M₂.runFrom (b.mapState fun _ => entry) v).workTapePos j - origin j| ≤ B) :
+    (seamCompTM M₁ q₁ M₂ entry).runFrom (a.mapState Sum.inl) (t₁ + 1 + t₂) =
+        c.mapState Sum.inr ∧
+      (∀ v < t₁ + 1 + t₂,
+        ((seamCompTM M₁ q₁ M₂ entry).runFrom (a.mapState Sum.inl) v).state ≠
+          some (Sum.inr q₂)) ∧
+      (∀ v ≤ t₁ + 1 + t₂, ∀ j,
+        |((seamCompTM M₁ q₁ M₂ entry).runFrom (a.mapState Sum.inl) v).workTapePos j -
+          origin j| ≤ B) := by
+  refine ⟨seamCompTM_run_ofCfg M₁ q₁ M₂ entry h₁ hb hc₁ h₂,
+    seamCompTM_firstReturn_ofCfg M₁ q₁ M₂ entry q₂ h₁ hb hc₁ h₂ hc hc₂, ?_⟩
+  intro v hv j
+  have hmem := seamCompTM_visitedByTapeHead_ofCfg M₁ q₁ M₂ entry
+    (T₂ := t₂) h₁ hb hc₁ j
+    (Finset.mem_image_of_mem _ (Finset.mem_range.mpr (Nat.lt_succ_of_le hv)))
+  rcases Finset.mem_union.mp hmem with hmem | hmem
+  · obtain ⟨r, hr, he⟩ := Finset.mem_image.mp hmem
+    rw [← he]
+    exact hr₁ r (Nat.le_of_lt_succ (Finset.mem_range.mp hr)) j
+  · obtain ⟨r, hr, he⟩ := Finset.mem_image.mp hmem
+    rw [← he]
+    exact hr₂ r (Nat.le_of_lt_succ (Finset.mem_range.mp hr)) j
+
+/-- The frozen recursive copier satisfies its contract for every field count.
+
+**Proof sketch.** Induct on the field count, citing the frozen two base cases.
+Copy the first field, skip it on both tapes, invoke the nonempty-tail contract,
+and skip back on both tapes. The two write regions meet at a blank separator.
+Compose all six phases by the public seam contracts and enlarge the tail constant
+by 20 to cover the first field, five dispatches, and the shift of the tail frame. -/
+private theorem rt_copy_run {Γ : Type*} (m : ℕ) :
+    ∃ C : ℕ,
+      ∀ {x : List Γ} (fs : List (List Γ)), fs.length = m →
+      ∀ d : Cfg 2 Γ (rt_copyState m) x, d.state = some (rt_copyEntry m) → RecordAt d 0 fs →
+        (∀ p : ℤ, -1 ≤ p → p ≤ ((joinFields fs).length : ℤ) →
+          d.workTapes 1 (d.workTapePos 1 + p) = none) →
+        ∃ t ≤ C * ((joinFields fs).length + 1),
+          (∀ u < t, ((rt_copyMachine m).runFrom d u).state ≠ some (rt_copyExit m)) ∧
+          (∀ u ≤ t, ∀ j : Fin 2,
+            |((rt_copyMachine m).runFrom d u).workTapePos j - d.workTapePos j| ≤
+              ((C * ((joinFields fs).length + 1) : ℕ) : ℤ)) ∧
+          (rt_copyMachine m).runFrom d t =
+            { d with
+              state := some (rt_copyExit m)
+              workTapes := fun j q =>
+                if j = 1 ∧ d.workTapePos j ≤ q ∧ q < d.workTapePos j + ((joinFields fs).length : ℤ)
+                  then fieldsTape fs (q - d.workTapePos j)
+                else d.workTapes j q } := by
+  classical
+  induction m using Nat.strong_induction_on with
+  | h m ih =>
+    by_cases hm : m ≤ 1
+    · exact rt_copy_run_base m hm
+    obtain ⟨n, rfl⟩ : ∃ n, m = n + 2 := ⟨m - 2, by omega⟩
+    obtain ⟨C, hC⟩ := ih (n + 1) (by omega)
+    refine ⟨C + 20, ?_⟩
+    intro x fs hfs d hd hsrc hblank
+    cases fs with
+    | nil => simp at hfs
+    | cons u tail =>
+      have htail : tail.length = n + 1 := by simpa using hfs
+      have hne : tail ≠ [] := by intro he; simp [he] at htail
+      have hlen : (joinFields (u :: tail)).length =
+          u.length + 1 + (joinFields tail).length := by
+        cases tail with
+        | nil => exact False.elim (hne rfl)
+        | cons v vs => simp only [joinFields_cons_cons, List.length_append, List.length_map, List.length_cons]; omega
+      have hfirst (p : ℤ) (hp : -1 ≤ p) (hp' : p ≤ (u.length : ℤ)) :
+          d.workTapes 0 (d.workTapePos 0 + p) = FinTM.bufferTape u p := by
+        rw [hsrc p hp (by omega)]
+        simpa only [fieldOffset, List.take_zero, List.map_nil, List.sum_nil,
+          Nat.cast_zero, zero_add, List.getElem_cons_zero] using
+          fieldsTape_field (u :: tail) 0 (by simp) p hp hp'
+      let a₀ : Cfg 2 Γ SweepPhase x := d.mapState (fun _ => .sweep)
+      let a₁ : Cfg 2 Γ SweepPhase x :=
+        { a₀ with state := some .done
+                  workTapes := fun j q =>
+                    if j = 1 ∧ d.workTapePos j ≤ q ∧ q < d.workTapePos j + (u.length : ℤ)
+                    then FinTM.bufferTape u (q - d.workTapePos j)
+                    else d.workTapes j q }
+      have ha₀ : a₀.state = some .sweep := by simp [a₀, Cfg.mapState, hd]
+      obtain ⟨hr₀, hc₀, hb₀⟩ := copyTM_run_ofCfg (0 : Fin 2) 1 (by decide) u a₀ ha₀ hfirst
+      change (copyTM 2 0 1).runFrom a₀ (2 * u.length + 2) = a₁ at hr₀
+      have hword (j : Fin 2) (p : ℤ) (hp : -1 ≤ p) (hp' : p ≤ (u.length : ℤ)) :
+          a₁.workTapes j (d.workTapePos j + p) = FinTM.bufferTape u p := by
+        fin_cases j
+        · simpa [a₁, a₀, Cfg.mapState] using hfirst p hp hp'
+        · change (if (1 : Fin 2) = 1 ∧ d.workTapePos 1 ≤ d.workTapePos 1 + p ∧
+              d.workTapePos 1 + p < d.workTapePos 1 + (u.length : ℤ)
+            then FinTM.bufferTape u (d.workTapePos 1 + p - d.workTapePos 1)
+            else d.workTapes 1 (d.workTapePos 1 + p)) = _
+          split_ifs with hh
+          · congr 1; omega
+          · rw [hblank p hp (by omega)]
+            have he : p = -1 ∨ p = (u.length : ℤ) := by omega
+            rcases he with rfl | rfl <;> simp [FinTM.bufferTape]
+      let a₂ := a₁.mapState (fun _ => SeekPhase.run)
+      let a₃ : Cfg 2 Γ SeekPhase x :=
+        { a₂ with state := some .done
+                  workTapePos := Function.update a₂.workTapePos 0
+                    (a₂.workTapePos 0 + u.length + 1) }
+      obtain ⟨hr₁, hc₁, hb₁⟩ := skipTM_run_ofCfg (0 : Fin 2) u a₂ rfl
+        (fun p hp hp' => hword 0 p (by omega) hp')
+      change (skipTM 2 0).runFrom a₂ (u.length + 1) = a₃ at hr₁
+      let a₄ := a₃.mapState (fun _ => SeekPhase.run)
+      let a₅ : Cfg 2 Γ SeekPhase x :=
+        { a₄ with state := some .done
+                  workTapePos := Function.update a₄.workTapePos 1
+                    (a₄.workTapePos 1 + u.length + 1) }
+      have ha₄ : a₄.workTapePos 1 = d.workTapePos 1 := by
+        simp [a₄, a₃, a₂, a₁, a₀, Cfg.mapState]
+      obtain ⟨hr₂, hc₂, hb₂⟩ := skipTM_run_ofCfg (1 : Fin 2) u a₄ rfl
+        (fun p hp hp' => by
+          change a₁.workTapes 1 (a₄.workTapePos 1 + p) = _
+          rw [ha₄]
+          exact hword 1 p (by omega) hp')
+      change (skipTM 2 1).runFrom a₄ (u.length + 1) = a₅ at hr₂
+      let a₆ := a₅.mapState (fun _ => rt_copyEntry (n + 1))
+      have hpos (j : Fin 2) : a₆.workTapePos j = d.workTapePos j + u.length + 1 := by
+        fin_cases j <;> simp [a₆, a₅, a₄, a₃, a₂, a₁, a₀, Cfg.mapState]
+      have hsrctail : RecordAt a₆ 0 tail := by
+        intro p hp hp'
+        change a₁.workTapes 0 (a₆.workTapePos 0 + p) = _
+        rw [hpos]
+        simp only [a₁, show (0 : Fin 2) ≠ 1 by decide,
+          false_and, if_false]
+        rw [show d.workTapePos 0 + (u.length : ℤ) + 1 + p =
+          d.workTapePos 0 + ((u.length : ℤ) + 1 + p) by omega,
+          hsrc _ (by omega) (by omega)]
+        have hs := (rt_fields_slice [u] tail [] hne).2 p hp hp'
+        simpa [fieldOffset] using hs
+      have hblanktail (p : ℤ) (hp : -1 ≤ p)
+          (hp' : p ≤ ((joinFields tail).length : ℤ)) :
+          a₆.workTapes 1 (a₆.workTapePos 1 + p) = none := by
+        change a₁.workTapes 1 (a₆.workTapePos 1 + p) = _
+        rw [hpos]
+        simp only [a₁]
+        rw [if_neg (by omega)]
+        rw [show d.workTapePos 1 + (u.length : ℤ) + 1 + p =
+          d.workTapePos 1 + ((u.length : ℤ) + 1 + p) by omega]
+        exact hblank _ (by omega) (by omega)
+      obtain ⟨t, ht, hc₃, hb₃, hr₃⟩ := hC tail htail a₆ rfl hsrctail hblanktail
+      let a₇ : Cfg 2 Γ (rt_copyState (n + 1)) x :=
+        { a₆ with state := some (rt_copyExit (n + 1))
+                  workTapes := fun j q =>
+                    if j = 1 ∧ a₆.workTapePos j ≤ q ∧
+                        q < a₆.workTapePos j + ((joinFields tail).length : ℤ)
+                    then fieldsTape tail (q - a₆.workTapePos j)
+                    else a₆.workTapes j q }
+      change (rt_copyMachine (n + 1)).runFrom a₆ t = a₇ at hr₃
+      have hfirst₇ (j : Fin 2) (p : ℤ) (hp : -1 ≤ p) (hp' : p ≤ (u.length : ℤ)) :
+          a₇.workTapes j (d.workTapePos j + p) = FinTM.bufferTape u p := by
+        change (if j = 1 ∧ a₆.workTapePos j ≤ d.workTapePos j + p ∧
+            d.workTapePos j + p < a₆.workTapePos j + ((joinFields tail).length : ℤ)
+          then _ else a₁.workTapes j (d.workTapePos j + p)) = _
+        rw [hpos, if_neg (by omega)]
+        exact hword j p hp hp'
+      let a₈ := a₇.mapState (fun _ => SeekPhase.run)
+      let a₉ : Cfg 2 Γ SeekPhase x :=
+        { a₈ with state := some .done
+                  workTapePos := Function.update a₈.workTapePos 0
+                    (a₈.workTapePos 0 - u.length - 1) }
+      obtain ⟨hr₄, hc₄, hb₄⟩ := skipBackTM_run_ofCfg (0 : Fin 2) u a₈ rfl
+        (fun p hp hp' => by
+          change a₇.workTapes 0 (a₆.workTapePos 0 - u.length - 1 + p) = _
+          rw [hpos]
+          convert hfirst₇ 0 p hp hp' using 1; congr 1; omega)
+      change (skipBackTM 2 0).runFrom a₈ (u.length + 3) = a₉ at hr₄
+      let a₁₀ := a₉.mapState (fun _ => SeekPhase.run)
+      let a₁₁ : Cfg 2 Γ SeekPhase x :=
+        { a₁₀ with state := some .done
+                   workTapePos := Function.update a₁₀.workTapePos 1
+                     (a₁₀.workTapePos 1 - u.length - 1) }
+      have ha₁₀ : a₁₀.workTapePos 1 = a₆.workTapePos 1 := by
+        simp [a₁₀, a₉, a₈, a₇, Cfg.mapState]
+      obtain ⟨hr₅, hc₅, hb₅⟩ := skipBackTM_run_ofCfg (1 : Fin 2) u a₁₀ rfl
+        (fun p hp hp' => by
+          change a₇.workTapes 1 (a₁₀.workTapePos 1 - u.length - 1 + p) = _
+          rw [ha₁₀, hpos]
+          convert hfirst₇ 1 p hp hp' using 1; congr 1; omega)
+      change (skipBackTM 2 1).runFrom a₁₀ (u.length + 3) = a₁₁ at hr₅
+      have hmerged : a₇.workTapes = fun j q =>
+          if j = 1 ∧ d.workTapePos j ≤ q ∧
+              q < d.workTapePos j + ((joinFields (u :: tail)).length : ℤ)
+          then fieldsTape (u :: tail) (q - d.workTapePos j)
+          else d.workTapes j q := by
+        funext j q
+        change (if j = 1 ∧ a₆.workTapePos j ≤ q ∧
+            q < a₆.workTapePos j + ((joinFields tail).length : ℤ)
+          then fieldsTape tail (q - a₆.workTapePos j)
+          else a₁.workTapes j q) = _
+        rw [hpos]
+        by_cases hj : j = 1
+        · subst j
+          simp only [a₁, true_and]
+          by_cases htq : d.workTapePos 1 + u.length + 1 ≤ q ∧
+              q < d.workTapePos 1 + u.length + 1 + ((joinFields tail).length : ℤ)
+          · rw [if_pos htq, if_pos (by omega)]
+            have hs := (rt_fields_slice [u] tail [] hne).2
+              (q - (d.workTapePos 1 + u.length + 1)) (by omega) (by omega)
+            simp only [List.append_nil, List.singleton_append, fieldOffset,
+              List.length_singleton, List.take_succ_cons, List.take_zero,
+              List.map_cons, List.map_nil, List.sum_cons, List.sum_nil,
+              add_zero, Nat.cast_add, Nat.cast_one] at hs
+            convert hs.symm using 1; congr 1; omega
+          · rw [if_neg htq]
+            by_cases hfq : d.workTapePos 1 ≤ q ∧ q < d.workTapePos 1 + (u.length : ℤ)
+            · rw [if_pos hfq, if_pos (by omega)]
+              have hf := fieldsTape_field (u :: tail) 0 (by simp)
+                (q - d.workTapePos 1) (by omega) (by change q - d.workTapePos 1 ≤ (u.length : ℤ); omega)
+              simpa only [fieldOffset, List.take_zero, List.map_nil, List.sum_nil,
+                Nat.cast_zero, zero_add, List.getElem_cons_zero] using hf.symm
+            · rw [if_neg hfq]
+              by_cases hq : d.workTapePos 1 ≤ q ∧
+                  q < d.workTapePos 1 + ((joinFields (u :: tail)).length : ℤ)
+              · rw [if_pos hq]
+                have heq : q = d.workTapePos 1 + u.length := by omega
+                subst q
+                rw [hblank _ (by omega) (by omega)]
+                have hf := fieldsTape_field (u :: tail) 0 (by simp)
+                  (u.length : ℤ) (by omega) (by rfl)
+                simpa [fieldOffset, FinTM.bufferTape] using hf.symm
+              · rw [if_neg hq]
+        · simp [a₁, hj]
+      have hBnat : C * ((joinFields tail).length + 1) + u.length + 2 ≤
+          (C + 20) * ((joinFields (u :: tail)).length + 1) := by
+        have hh := Nat.mul_le_mul_left C
+          (show (joinFields tail).length + 1 ≤ (joinFields (u :: tail)).length + 1 by omega)
+        rw [Nat.add_mul]
+        omega
+      let B : ℤ := ((C + 20) * ((joinFields (u :: tail)).length + 1) : ℕ)
+      have hB : (C * ((joinFields tail).length + 1) : ℕ) + (u.length : ℤ) + 2 ≤ B := by
+        dsimp only [B]
+        exact_mod_cast hBnat
+      have pos₀ : a₀.workTapePos = d.workTapePos := rfl
+      have pos₂ : a₂.workTapePos = d.workTapePos := rfl
+      have pos₄ (j : Fin 2) : a₄.workTapePos j =
+          if j = 0 then d.workTapePos j + u.length + 1 else d.workTapePos j := by
+        simp [a₄, a₃, a₂, a₁, a₀, Cfg.mapState, Function.update_apply]
+        split_ifs with hj
+        · subst j; rfl
+        · rfl
+      have pos₈ (j : Fin 2) : a₈.workTapePos j = d.workTapePos j + u.length + 1 := hpos j
+      have pos₁₀ (j : Fin 2) : a₁₀.workTapePos j =
+          if j = 0 then d.workTapePos j else d.workTapePos j + u.length + 1 := by
+        change Function.update a₆.workTapePos 0 (a₆.workTapePos 0 - u.length - 1) j = _
+        simp only [Function.update_apply, hpos]
+        split_ifs with hj
+        · subst j; omega
+        · rfl
+      have bound₀ : ∀ v ≤ 2 * u.length + 2, ∀ j : Fin 2,
+          |((copyTM 2 0 1).runFrom a₀ v).workTapePos j - d.workTapePos j| ≤ B := by
+        intro v hv j
+        have hj : j = 0 ∨ j = 1 := by fin_cases j <;> simp
+        have hh := hb₀ j v hv
+        simp only [hj, if_true, Finset.mem_Icc, pos₀] at hh
+        rw [abs_le]; constructor <;> omega
+      have bound₁ : ∀ v ≤ u.length + 1, ∀ j : Fin 2,
+          |((skipTM 2 0).runFrom a₂ v).workTapePos j - d.workTapePos j| ≤ B := by
+        intro v hv j
+        have hh := hb₁ j v hv
+        rw [pos₂] at hh
+        split_ifs at hh
+        · simp only [Finset.mem_Icc] at hh
+          rw [abs_le]; constructor <;> omega
+        · rw [hh, sub_self, abs_zero]; omega
+      have bound₂ : ∀ v ≤ u.length + 1, ∀ j : Fin 2,
+          |((skipTM 2 1).runFrom a₄ v).workTapePos j - d.workTapePos j| ≤ B := by
+        intro v hv j
+        have hh := hb₂ j v hv
+        simp only [pos₄] at hh
+        fin_cases j <;> simp at hh ⊢
+        · rw [hh, abs_le]; constructor <;> omega
+        · rw [abs_le]; constructor <;> omega
+      have bound₃ : ∀ v ≤ t, ∀ j : Fin 2,
+          |((rt_copyMachine (n + 1)).runFrom a₆ v).workTapePos j - d.workTapePos j| ≤ B := by
+        intro v hv j
+        have hh := abs_le.mp (hb₃ v hv j)
+        rw [hpos] at hh
+        rw [abs_le]; constructor <;> omega
+      have bound₄ : ∀ v ≤ u.length + 3, ∀ j : Fin 2,
+          |((skipBackTM 2 0).runFrom a₈ v).workTapePos j - d.workTapePos j| ≤ B := by
+        intro v hv j
+        have hh := hb₄ j v hv
+        simp only [pos₈] at hh
+        split_ifs at hh
+        · simp only [Finset.mem_Icc] at hh
+          rw [abs_le]; constructor <;> omega
+        · rw [hh, abs_le]; constructor <;> omega
+      have bound₅ : ∀ v ≤ u.length + 3, ∀ j : Fin 2,
+          |((skipBackTM 2 1).runFrom a₁₀ v).workTapePos j - d.workTapePos j| ≤ B := by
+        intro v hv j
+        have hh := hb₅ j v hv
+        simp only [pos₁₀] at hh
+        fin_cases j <;> simp at hh ⊢
+        · rw [hh, abs_le]; constructor <;> omega
+        · rw [abs_le]; constructor <;> omega
+      let M₄₅ : MultiTapeTM 2 Γ (SeekPhase ⊕ SeekPhase) := seamCompTM (skipBackTM 2 0) SeekPhase.done (skipBackTM 2 1) SeekPhase.run
+      obtain ⟨hr₄₅, hc₄₅, hb₄₅⟩ := rt_copy_seam (skipBackTM 2 0) .done
+        (skipBackTM 2 1) .run .done d.workTapePos B
+        hr₄ rfl hc₄ bound₄ hr₅ rfl hc₅ bound₅
+      let M₃₄₅ := seamCompTM (rt_copyMachine (n + 1)) (rt_copyExit (n + 1)) M₄₅ (.inl .run)
+      obtain ⟨hr₃₄₅, hc₃₄₅, hb₃₄₅⟩ := rt_copy_seam (rt_copyMachine (n + 1))
+        (rt_copyExit (n + 1)) M₄₅ (.inl .run) (.inr .done) d.workTapePos B
+        hr₃ rfl hc₃ bound₃ hr₄₅ rfl hc₄₅ hb₄₅
+      let M₂₃₄₅ := seamCompTM (skipTM 2 1) SeekPhase.done M₃₄₅ (.inl (rt_copyEntry (n + 1)))
+      obtain ⟨hr₂₃₄₅, hc₂₃₄₅, hb₂₃₄₅⟩ := rt_copy_seam (skipTM 2 1) .done
+        M₃₄₅ (.inl (rt_copyEntry (n + 1))) (.inr (.inr .done)) d.workTapePos B
+        hr₂ rfl hc₂ bound₂ hr₃₄₅ rfl hc₃₄₅ hb₃₄₅
+      let M₁₂₃₄₅ := seamCompTM (skipTM 2 0) SeekPhase.done M₂₃₄₅ (.inl .run)
+      obtain ⟨hr₁₂₃₄₅, hc₁₂₃₄₅, hb₁₂₃₄₅⟩ := rt_copy_seam (skipTM 2 0) .done
+        M₂₃₄₅ (.inl .run) (.inr (.inr (.inr .done))) d.workTapePos B
+        hr₁ rfl hc₁ bound₁ hr₂₃₄₅ rfl hc₂₃₄₅ hb₂₃₄₅
+      obtain ⟨hr, hc, hb⟩ := rt_copy_seam (copyTM 2 0 1) .done
+        M₁₂₃₄₅ (.inl .run) (.inr (.inr (.inr (.inr .done)))) d.workTapePos B
+        hr₀ rfl hc₀ bound₀ hr₁₂₃₄₅ rfl hc₁₂₃₄₅ hb₁₂₃₄₅
+      have hentry : a₀.mapState Sum.inl = d := by
+        apply Cfg.ext <;> simp [a₀, Cfg.mapState, hd, rt_copyEntry]
+      have htime : 2 * u.length + 2 + 1 + (u.length + 1 + 1 +
+          (u.length + 1 + 1 + (t + 1 + (u.length + 3 + 1 + (u.length + 3))))) =
+          t + 6 * u.length + 15 := by omega
+      rw [hentry, htime] at hr hc hb
+      refine ⟨t + 6 * u.length + 15, ?_, hc, hb, ?_⟩
+      · have hmul := Nat.mul_le_mul_left C
+          (show (joinFields tail).length + 1 ≤ (joinFields (u :: tail)).length + 1 by omega)
+        rw [Nat.add_mul]
+        omega
+      · change (rt_copyMachine (n + 2)).runFrom d (t + 6 * u.length + 15) = _ at hr
+        rw [hr]
+        apply Cfg.ext
+        · rfl
+        · rfl
+        · exact hmerged
+        · funext j
+          change Function.update a₁₀.workTapePos 1 (a₁₀.workTapePos 1 - u.length - 1) j = _
+          simp only [Function.update_apply, pos₁₀]
+          (fin_cases j <;> simp); omega
+        · rfl
+
 /-- **Field-list copy** (design §12.8b). For a fixed field count `m`, there is a
 two-tape module with an entry and an exit state with the following contract.
 Start it at its entry with a list `fs` of `m` fields laid out at the head of
@@ -829,11 +1185,14 @@ return the heads; the left delimiter of the first field on tape `1` is the
 blank cell left of the slot. The phases join by R2 seams. Every phase is linear
 in the fields crossed.
 
-**Fill appendix (partial).** `rt_copyMachine` realizes this route recursively:
+**Fill appendix.** The frozen `rt_copyMachine` realizes this route recursively:
 copy one field, skip it on both tapes, copy the nonempty tail, then skip back
-on both tapes. The zero-field and one-field contracts are proved in
-`rt_copy_run_base`. The contract for two or more fields, including its
-composed frame and radius estimates, remains the continuation frontier. -/
+on both tapes. `rt_copy_run` cites the frozen base cases and proves the general
+contract. Its six phase runs and five dispatches cost the tail time plus
+`6 * u.length + 15` (the previous frontier overcounted by two). Increasing the
+tail constant by 20 covers both time and shifted head bounds. `rt_copy_seam`
+bundles the public R2 endpoint, cut and visited-set contracts; the two destination
+write regions are combined using the existing field-layout lemmas. -/
 theorem exists_fieldsCopyTM {Γ : Type*} (m : ℕ) :
     ∃ (P : Type) (_ : Fintype P) (_ : DecidableEq P) (R : MultiTapeTM 2 Γ P) (entry exit : P)
       (C : ℕ),
@@ -853,7 +1212,9 @@ theorem exists_fieldsCopyTM {Γ : Type*} (m : ℕ) :
                 if j = 1 ∧ d.workTapePos j ≤ q ∧ q < d.workTapePos j + ((joinFields fs).length : ℤ)
                   then fieldsTape fs (q - d.workTapePos j)
                 else d.workTapes j q } := by
-  sorry
+  obtain ⟨C, hC⟩ := rt_copy_run (Γ := Γ) m
+  exact ⟨rt_copyState m, inferInstance, inferInstance, rt_copyMachine m,
+    rt_copyEntry m, rt_copyExit m, C, hC⟩
 
 /-! ### The table rows -/
 
@@ -932,6 +1293,222 @@ theorem exists_tableFindTM {Γ : Type*} [DecidableEq Γ] (e : Bool ↪ Γ) (m : 
             | none => { d with state := some no } := by
   sorry
 
+/-- Transport field-list copy to the reverse pair of tapes for table append.
+
+**Proof sketch.** Select the source bank by the transposition of tapes zero
+and one. R1 transports the already-proved copier's run at every time; its
+selected-tape laws transfer the frame and head bound. No second copier or
+copy trace is defined. -/
+private theorem rt_fieldsCopy_reverse {Γ : Type*} (m : ℕ) :
+    ∃ (P : Type) (_ : Fintype P) (_ : DecidableEq P) (R : MultiTapeTM 2 Γ P) (entry exit : P)
+      (C : ℕ),
+      ∀ {x : List Γ} (fs : List (List Γ)), fs.length = m →
+      ∀ d : Cfg 2 Γ P x, d.state = some entry → RecordAt d 1 fs →
+        (∀ p : ℤ, -1 ≤ p → p ≤ ((joinFields fs).length : ℤ) →
+          d.workTapes 0 (d.workTapePos 0 + p) = none) →
+        ∃ t ≤ C * ((joinFields fs).length + 1),
+          (∀ u < t, (R.runFrom d u).state ≠ some exit) ∧
+          (∀ u ≤ t, ∀ j : Fin 2,
+            |(R.runFrom d u).workTapePos j - d.workTapePos j| ≤
+              ((C * ((joinFields fs).length + 1) : ℕ) : ℤ)) ∧
+          R.runFrom d t =
+            { d with state := some exit
+                     workTapes := fun j q =>
+                       if j = 0 ∧ d.workTapePos j ≤ q ∧
+                           q < d.workTapePos j + ((joinFields fs).length : ℤ)
+                       then fieldsTape fs (q - d.workTapePos j)
+                       else d.workTapes j q } := by
+  classical
+  obtain ⟨P, hfin, heq, R, entry, exit, C, hR⟩ := exists_fieldsCopyTM (Γ := Γ) m
+  letI := hfin
+  letI := heq
+  let ι := (Equiv.swap (0 : Fin 2) 1).toEmbedding
+  have hswap (j : Fin 2) : ι (ι j) = j := Equiv.swap_apply_self 0 1 j
+  have hz : ι 0 = 1 := Equiv.swap_apply_left 0 1
+  have ho : ι 1 = 0 := Equiv.swap_apply_right 0 1
+  refine ⟨P, hfin, heq, embedEmitTM ι R, entry, exit, C, ?_⟩
+  intro x fs hfs d hd hsrc hblank
+  let c : Cfg 2 Γ P x :=
+    { d with workTapes := fun j => d.workTapes (ι j)
+             workTapePos := fun j => d.workTapePos (ι j) }
+  have hstart : embedEmitCfg ι d.workTapes d.workTapePos [] c = d := by
+    apply Cfg.ext
+    · rfl
+    · rfl
+    · funext j
+      rw [← hswap j, embedEmitCfg_selected_tape]
+    · funext j
+      rw [← hswap j, embedEmitCfg_selected_pos]
+    · exact List.nil_append _
+  have hcsrc : RecordAt c 0 fs := by simpa only [RecordAt, c, hz] using hsrc
+  have hcblank (p : ℤ) (hp : -1 ≤ p) (hp' : p ≤ ((joinFields fs).length : ℤ)) :
+      c.workTapes 1 (c.workTapePos 1 + p) = none := by
+    simpa only [c, ho] using hblank p hp hp'
+  obtain ⟨t, ht, hcut, hrad, hrun⟩ := hR fs hfs c hd hcsrc hcblank
+  have htransfer (v : ℕ) : (embedEmitTM ι R).runFrom d v =
+      embedEmitCfg ι d.workTapes d.workTapePos [] (R.runFrom c v) := by
+    simpa only [hstart] using embedEmitTM_runFrom ι R d.workTapes d.workTapePos [] c v
+  refine ⟨t, ht, ?_, ?_, ?_⟩
+  · intro v hv
+    rw [htransfer]
+    exact hcut v hv
+  · intro v hv j
+    rw [htransfer, ← hswap j, embedEmitCfg_selected_pos]
+    have hh := hrad v hv (ι j)
+    simpa only [c, hswap] using hh
+  · rw [htransfer, hrun]
+    apply Cfg.ext
+    · rfl
+    · rfl
+    · funext j q
+      rw [← hswap j, embedEmitCfg_selected_tape]
+      change (if ι j = 1 ∧ d.workTapePos (ι (ι j)) ≤ q ∧
+          q < d.workTapePos (ι (ι j)) + ((joinFields fs).length : ℤ)
+        then fieldsTape fs (q - d.workTapePos (ι (ι j)))
+        else d.workTapes (ι (ι j)) q) = _
+      simp only [hswap]
+      have hj : ι j = 1 ↔ j = 0 := by
+        rw [← hz]
+        exact ι.injective.eq_iff
+      simp only [hj]
+    · funext j
+      rw [← hswap j, embedEmitCfg_selected_pos]
+    · exact List.nil_append _
+
+/-- The seek-and-copy prefix of append. It leaves the destination head at the old
+second trailing blank, with the source layout written there and all other data
+restored. The suffix writer and the old-table rewind are subsequent phases.
+
+**Proof sketch.** Seek over the old nonempty fields, then invoke the reverse
+copier at the second trailing blank. The old table's blank tail supplies the
+copier's whole frame, including its left delimiter. R2 combines the contracts;
+the new head bound includes the shift by the old table's span. -/
+private theorem rt_append_copy {Γ : Type*} (m : ℕ) :
+    ∃ (P : Type) (_ : Fintype P) (_ : DecidableEq P) (R : MultiTapeTM 2 Γ P) (entry exit : P)
+      (C : ℕ),
+      ∀ {x : List Γ} (o : ℤ) (h : List Γ) (es : List (List (List Γ))) (e : List (List Γ)),
+        (∀ u ∈ tableFields h es, u ≠ []) → e.length = m →
+      ∀ d : Cfg 2 Γ P x, d.state = some entry → d.workTapePos 0 = o → TableAt d 0 o h es →
+        (∀ q : ℤ, o + ((joinFields (tableFields h es)).length : ℤ) ≤ q → d.workTapes 0 q = none) →
+        RecordAt d 1 e →
+        ∃ t ≤ C * ((joinFields (tableFields h es)).length + (joinFields e).length + 1),
+          (∀ v < t, (R.runFrom d v).state ≠ some exit) ∧
+          (∀ v ≤ t, ∀ j : Fin 2,
+            |(R.runFrom d v).workTapePos j - d.workTapePos j| ≤
+              ((C * ((joinFields (tableFields h es)).length + (joinFields e).length + 1) : ℕ) : ℤ)) ∧
+          R.runFrom d t =
+            { d with state := some exit
+                     workTapePos := Function.update d.workTapePos 0 (o + tableOffset h es es.length)
+                     workTapes := fun j q =>
+                       if j = 0 ∧ o + tableOffset h es es.length ≤ q ∧
+                           q < o + tableOffset h es es.length + ((joinFields e).length : ℤ)
+                       then fieldsTape e (q - (o + tableOffset h es es.length))
+                       else d.workTapes j q } := by
+  classical
+  obtain ⟨P, hfin, heq, R, entry, exit, C, hR⟩ := rt_fieldsCopy_reverse (Γ := Γ) m
+  letI := hfin
+  letI := heq
+  refine ⟨SeekPhase ⊕ P, inferInstance, inferInstance,
+    seamCompTM (seekEndTM 2 0) .done R entry, .inl .run, .inr exit, C + 4, ?_⟩
+  intro x o h es e hnonempty hlen d hd hpos htable hblank hsource
+  let D := fieldOffset (tableFields h es) (tableFields h es).length
+  have hD : D = (joinFields (tableFields h es)).length + 1 :=
+    fieldOffset_length _ (by simp [tableFields])
+  have hoffset : tableOffset h es es.length = D := by
+    rw [tableOffset_length, hD]
+  let a : Cfg 2 Γ SeekPhase x := d.mapState (fun _ => .run)
+  let b : Cfg 2 Γ SeekPhase x :=
+    { a with state := some .done
+             workTapePos := Function.update a.workTapePos 0 (a.workTapePos 0 + D) }
+  have ha : a.state = some .run := by simp [a, Cfg.mapState, hd]
+  have hf (p : ℤ) (hp : 0 ≤ p) (hp' : p ≤ (D : ℤ)) :
+      a.workTapes 0 (a.workTapePos 0 + p) = fieldsTape (tableFields h es) p := by
+    change d.workTapes 0 (d.workTapePos 0 + p) = _
+    rw [hpos]
+    exact htable p (by omega) (by omega)
+  obtain ⟨hs, hsc, hsb⟩ := seekEndTM_run_ofCfg (0 : Fin 2) (tableFields h es)
+    (by simp [tableFields]) hnonempty a ha hf
+  change (seekEndTM 2 0).runFrom a (D + 1) = b at hs
+  let c := b.mapState (fun _ => entry)
+  have cp₀ : c.workTapePos 0 = o + D := by
+    simp [c, b, a, Cfg.mapState, hpos]
+  have cp₁ : c.workTapePos 1 = d.workTapePos 1 := by
+    simp [c, b, a, Cfg.mapState]
+  have hcsource : RecordAt c 1 e := by
+    intro p hp hp'
+    change d.workTapes 1 (c.workTapePos 1 + p) = _
+    rw [cp₁]
+    exact hsource p hp hp'
+  have hcblank (p : ℤ) (hp : -1 ≤ p) (_ : p ≤ ((joinFields e).length : ℤ)) :
+      c.workTapes 0 (c.workTapePos 0 + p) = none := by
+    change d.workTapes 0 (c.workTapePos 0 + p) = _
+    rw [cp₀]
+    exact hblank _ (by omega)
+  obtain ⟨t, ht, hcc, hcb, hcr⟩ := hR e hlen c rfl hcsource hcblank
+  let z : Cfg 2 Γ P x :=
+    { c with state := some exit
+             workTapes := fun j q =>
+               if j = 0 ∧ c.workTapePos j ≤ q ∧ q < c.workTapePos j + ((joinFields e).length : ℤ)
+               then fieldsTape e (q - c.workTapePos j) else c.workTapes j q }
+  change R.runFrom c t = z at hcr
+  let B := (C + 4) * ((joinFields (tableFields h es)).length + (joinFields e).length + 1)
+  have hbudget : C * ((joinFields e).length + 1) + D + 2 ≤ B := by
+    have hh := Nat.mul_le_mul_left C
+      (show (joinFields e).length + 1 ≤
+        (joinFields (tableFields h es)).length + (joinFields e).length + 1 by omega)
+    dsimp only [B]
+    rw [Nat.add_mul]
+    omega
+  have hbudget' : (C * ((joinFields e).length + 1) : ℕ) + (D : ℤ) + 2 ≤ (B : ℤ) := by
+    exact_mod_cast hbudget
+  have hsb' : ∀ v ≤ D + 1, ∀ j : Fin 2,
+      |((seekEndTM 2 0).runFrom a v).workTapePos j - d.workTapePos j| ≤ (B : ℤ) := by
+    intro v hv j
+    have hh := hsb j v hv
+    change (if j = 0 then
+      ((seekEndTM 2 0).runFrom a v).workTapePos j ∈ Finset.Icc (d.workTapePos j)
+        (d.workTapePos j + D) else
+      ((seekEndTM 2 0).runFrom a v).workTapePos j = d.workTapePos j) at hh
+    split_ifs at hh
+    · simp only [Finset.mem_Icc] at hh
+      rw [abs_le]; constructor <;> omega
+    · rw [hh, sub_self, abs_zero]; omega
+  have hcb' : ∀ v ≤ t, ∀ j : Fin 2,
+      |(R.runFrom c v).workTapePos j - d.workTapePos j| ≤ (B : ℤ) := by
+    intro v hv j
+    have hh := abs_le.mp (hcb v hv j)
+    fin_cases j
+    · change -((C * ((joinFields e).length + 1) : ℕ) : ℤ) ≤
+          (R.runFrom c v).workTapePos 0 - c.workTapePos 0 ∧
+        (R.runFrom c v).workTapePos 0 - c.workTapePos 0 ≤ _ at hh
+      rw [cp₀] at hh
+      change |(R.runFrom c v).workTapePos 0 - d.workTapePos 0| ≤ _
+      rw [hpos, abs_le]; constructor <;> omega
+    · change -((C * ((joinFields e).length + 1) : ℕ) : ℤ) ≤
+          (R.runFrom c v).workTapePos 1 - c.workTapePos 1 ∧
+        (R.runFrom c v).workTapePos 1 - c.workTapePos 1 ≤ _ at hh
+      rw [cp₁] at hh
+      change |(R.runFrom c v).workTapePos 1 - d.workTapePos 1| ≤ _
+      rw [abs_le]; constructor <;> omega
+  obtain ⟨hr, hcut, hrad⟩ := rt_copy_seam (seekEndTM 2 0) .done R entry exit
+    d.workTapePos (B : ℤ) hs rfl hsc hsb' hcr rfl hcc hcb'
+  have hentry : a.mapState Sum.inl = d := by
+    apply Cfg.ext <;> simp [a, Cfg.mapState, hd]
+  rw [hentry] at hr hcut hrad
+  refine ⟨D + 1 + 1 + t, by omega, hcut, hrad, ?_⟩
+  rw [hr]
+  apply Cfg.ext
+  · rfl
+  · rfl
+  · funext j q
+    change (if j = 0 ∧ c.workTapePos j ≤ q ∧ q < c.workTapePos j + ((joinFields e).length : ℤ)
+      then fieldsTape e (q - c.workTapePos j) else d.workTapes j q) = _
+    by_cases hj : j = 0
+    · subst j; simp only [cp₀, hoffset]
+    · simp [hj]
+  · simp [z, c, b, a, Cfg.mapState, hpos, hoffset]
+  · rfl
+
 /-- **Table append** (design §12.8a §3, §12.8b). For a field count `m` and a
 fixed list `suf` of suffix fields, there is a two-tape module with an entry and
 an exit state with the following contract. Start it at its entry with a table
@@ -961,7 +1538,10 @@ the new layout written over `[o, o + L')`.
 
 **Fill appendix.** Empty appended fields need not preserve `Turing.TableWF`.
 A consumer that subsequently seeks must append nonempty fields. This partial
-has not yet filled the append contract. -/
+has not yet filled the append contract. `rt_fieldsCopy_reverse` transports the
+proved copier through R1; `rt_append_copy` proves the seek-and-copy prefix, with
+its exact tape update and shifted head bound. Writing the fixed suffix and
+restoring the table head remain the continuation frontier. -/
 theorem exists_tableAppendTM {Γ : Type*} (m : ℕ) (suf : List (List Γ)) :
     ∃ (P : Type) (_ : Fintype P) (_ : DecidableEq P) (R : MultiTapeTM 2 Γ P) (entry exit : P)
       (C : ℕ),
