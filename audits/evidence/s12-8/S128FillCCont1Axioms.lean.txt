@@ -1,0 +1,44 @@
+import Lean.Util.FoldConsts
+import TCSlib.Complexity.TuringMachine.Build.CfgRecord
+open Lean Elab Command in
+/-- Every constant in the dependency closure of `root` whose own type or value
+mentions `sorryAx` (maintainer's read-only admission walk). -/
+def sorrySourcesOf (env : Environment) (root : Name) : Array Name := Id.run do
+  let mut visited : NameSet := {}
+  let mut stack : Array Name := #[root]
+  let mut srcs : Array Name := #[]
+  while !stack.isEmpty do
+    let c := stack.back!
+    stack := stack.pop
+    if visited.contains c then continue
+    visited := visited.insert c
+    if let some ci := env.find? c then
+      let used := ci.getUsedConstantsAsSet
+      if used.contains ``sorryAx then srcs := srcs.push c
+      for d in used.toList do
+        unless visited.contains d do stack := stack.push d
+  return srcs
+
+open Lean Elab Command in
+elab "#sorry_sources " id:ident : command => do
+  let n ← liftCoreM <| realizeGlobalConstNoOverload id
+  logInfo m!"{n}: direct sorryAx users in closure: {sorrySourcesOf (← getEnv) n}"
+-- publics of TCSlib/Complexity/TuringMachine/Build/CfgRecord.lean
+#print axioms Turing.Cfg.InWindow
+#print axioms Turing.RecSym
+#print axioms Turing.recSymFintype
+#print axioms Turing.RecSym.digitEmb
+#print axioms Turing.binDigits
+#print axioms Turing.posWidth
+#print axioms Turing.cfgRecord
+#print axioms Turing.cfgRecord_length
+#print axioms Turing.cfgRecord_inj
+#print axioms Turing.RecordValid
+#print axioms Turing.recordValid_iff
+#print axioms Turing.RecordAt
+#print axioms Turing.exists_recordStepTM
+#print axioms Turing.exists_recordEqTM
+#print axioms Turing.exists_recordTestTM
+#sorry_sources Turing.exists_recordStepTM
+#sorry_sources Turing.exists_recordEqTM
+#sorry_sources Turing.exists_recordTestTM
