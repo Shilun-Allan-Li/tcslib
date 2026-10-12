@@ -2462,8 +2462,9 @@ including the sole empty certificate when the width is zero. Compose with the
 answer emitter. The counter/body trajectory clauses and the shared test's
 fixed windows give the radius below, without any factor counting trials.
 
-Continuation frontier: setup is now proved by `b2b_setup_run`; this helper
-contains only the shared trial, counted loop, final trial, and answer. -/
+Status: proved (B2b fill, delivery 3). Setup is `b2b_setup_run`; this helper
+covers the shared trial (`b2b_trial_run`), the counted loop, the final trial and
+the answer. -/
 private theorem b2b_search_contract (Q e cV cI : ℕ) (V : Language Bool)
     (MV MI MP : FinTM Bool)
     (hV : ∀ y : List Bool,
@@ -2764,8 +2765,8 @@ them within the seven fixed windows of route H. Their common enclosing radius is
 the sum below. `Finset.card_le_card` and `Int.card_Icc`, summed over the fixed
 number of tapes, give the ledger. Only the final `b2b_answer_run` emits physically.
 
-Continuation frontier: the concrete host and component lemmas above are present;
-the composed round proof, setup proof and global trajectory proof remain open. -/
+Status: proved. Setup is `b2b_setup_run`; the search, with its counted loop over
+`b2b_round_run` and its global trajectory bound, is `b2b_search_contract`. -/
 private theorem b2b_host_contract (C c e cV cI cP : ℕ) (V : Language Bool)
     (MV MI MP : FinTM Bool)
     (hV : ∀ y : List Bool,
