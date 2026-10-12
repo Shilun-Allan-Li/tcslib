@@ -3150,6 +3150,38 @@ L0  Model          MultiTapeTM / FinTM, the run calculus
    machine side, the `NL ⊆ P` BFS (or `PATH ∈ P`) and TQBF membership or
    Savitch; curriculum side, merge sort and BFS.
 
+**Prior art examined (2026-10-12; nothing taken yet).** Two formalizations of the
+same result, Alman and Vassilevska Williams, *Truly Subquadratic 3SUM and Truly
+Subcubic APSP via Triangles in Sparse Lopsided Graphs* (arXiv:2610.06783v1). Both
+are word-RAM developments with a structured language, a program logic and a
+verified compiler:
+- **[AFM26]**: `anthropics/formal-math`, folder `3sum-apsp`, commit
+  `e1a4e6508154ea59f030480661590a9fe3018011` (2026-10-05), Apache-2.0, © Anthropic,
+  PBC, on Lean and Mathlib v4.33.1. It has 434 Lean files and 102,310 lines. Its parts:
+  - the trusted `EndStatement.lean` (139 lines, core Lean only);
+  - the language, logic and compiler in `Lang/` (about 9,000 lines) and `Machine/`
+    (about 840);
+  - the paper's algorithms as verified programs in `Programs/` (about 52,600).
+- **[Xuanji26]**: user **xuanji on prove2me** (citation as directed by the user),
+  file `3sumapsp_example.lean`, examined locally. It is the top-level assembly of a
+  stronger 3SUM bound, `O(n^1.999074)` against [AFM26]'s `O(n^1.9992)`, which comes
+  from an Exact Triangle saving of `9261/5000000`. The file builds on [AFM26]'s
+  library: 264 of its 265 module docstrings and 125 of its 128 theorem blocks are
+  verbatim in [AFM26]. Its 62 project imports, including the module that proves the
+  improved saving, are not in the file.
+
+The designs that §14 and §15 may adapt from them are:
+- the program logic (`Ends`, `Meets`: postcondition predicates, time "within `T`",
+  handed on rather than added up, and spec-only calls);
+- the `SameOn` framing with `.keep` lemmas and default-argument tactics;
+- tasks, solvers and hosts (`IsHost`);
+- run limits built into the semantics;
+- the `DetTimeModel` claim algebra;
+- the asymptotics calculus with its `growth` tactic.
+
+If adapted, they are cited per `policy.md` §2, *Design adaptation*: [AFM26] as the
+origin of the design, and [Xuanji26] for the file the user supplied.
+
 **Sequencing.** 15a: the contract structure (shared with §14). 15b: L3 with
 registers only, its semantics, cost and compile theorem (a statement phase and
 its gate, then fills). 15c: arrays over record tables. 15d: the curriculum
