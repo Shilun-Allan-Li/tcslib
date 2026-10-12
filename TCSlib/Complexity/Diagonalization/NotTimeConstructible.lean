@@ -28,8 +28,9 @@ exhibited `T` would decide the halting problem.
 * The witness oscillates between `n` and `n + 1` according to the halting
   function `Complexity.HALT` at the campaign's fixed effective scheme
   `Complexity.TimeHierarchy.code` (reused, not re-chosen), evaluated on the
-  `n`-th binary string in the length-lexicographic (dyadic) order. The
-  definition is classical and noncomputable — legitimate, since it lives
+  `n`-th binary string of the little-endian dyadic enumeration: a word is
+  read least-significant bit first, behind a high sentinel `1` appended to
+  the list. The definition is classical and noncomputable — legitimate, since it lives
   inside an existence proof.
 * The refutation uses only the *computability* of a constructibility witness
   (a machine computing `(T |x|).bits` on every input), not its time bound:
@@ -191,10 +192,11 @@ not the vacuous growth-condition one, see the module docstring) that is not
 time-constructible.
 
 **Proof sketch.** Fix the campaign's effective scheme
-`c := Complexity.TimeHierarchy.code` and the length-lexicographic (dyadic)
+`c := Complexity.TimeHierarchy.code` and the little-endian dyadic
 enumeration `str : ℕ → List Bool` of binary strings — the rank of a string
-`s` is the value of `s` with a `1` prepended, read in binary, minus one, so
-rank and un-rank are both bit-rewrites. Define, classically,
+`s` is the value of `s ++ [true]` read least-significant bit first (a high
+sentinel `1` appended to the list), minus one, so rank and un-rank are both
+bit-rewrites. Define, classically,
 
   `T n := n + (if HALT c.toMachineCode (str n) = true then 1 else 0)`.
 
@@ -221,11 +223,14 @@ named for the brief: the rank machine and the unary emitter (i)-(ii); the
 comparison tail (iv); the composition assembly; and the final classical case
 split on `HALT` identifying the composite's output with the halting bit.
 
-**Route as filled** (flagged appendix, B8 fill). Stages (i)–(iii) are realized by the
-primitive-recursive compiler `Turing.codePrim_machine`: the emitter `s ↦ 1^(rank s)`, read
-as a mapped range, with no hand-built counter. Stage (iv) is the same test read on the one
-bit where the two candidates differ: the low bit of `(T (rank s)).bits` exclusive-or the
-rank's parity, branched with `Turing.FinTM.exists_cond`. That bit is the halting bit, so no
+**Route as filled** (flagged appendix, B8 fill). Stages (i)–(ii) are combined in one
+emitter `s ↦ 1^(rank s)`, read as a mapped range and compiled by the primitive-recursive
+compiler `Turing.codePrim_machine`, with no hand-built counter. Stage (iii) runs the
+constructor that `TimeConstructible T` assumes, composed with the emitter by
+`Turing.FinTM.exists_comp_partial`; `T` itself is never compiled. Stage (iv) reads a bit
+guaranteed to differ between the two candidates: the low bit of `(T (rank s)).bits`
+exclusive-or the rank's parity (the parity decider and the two tails are compiled too),
+branched with `Turing.FinTM.exists_cond`. That bit is the halting bit, so no
 two-word comparator is needed. The bit identity `(rank s + 1).bits = s ++ [true]` comes
 from Mathlib's `Nat.digits_ofDigits`, with no induction on bits. -/
 theorem exists_not_timeConstructible :
