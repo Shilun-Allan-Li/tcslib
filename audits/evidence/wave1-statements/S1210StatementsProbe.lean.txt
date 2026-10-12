@@ -11,16 +11,19 @@ set_option autoImplicit false
 
 Read-only elaboration against the statement PR's replay olean tree. It imports the landed
 `Build/OracleSim.lean` and `Build/CertShell.lean` and keeps the W2 pre-ship probe's
-consumer derivations: every consumer statement restated verbatim under a primed name,
-derived from the landed rows, with `example … := rfl` type identities against the campaign
-statements, followed by the axiom and sorry-source census and the reuse census. B5's own
+consumer derivations: each consumer statement restated verbatim under a primed name and
+derived from the landed rows. Six `example … := rfl` type identities compare them with the
+campaign statements (B1, the summit, the three `EXPCOM` identities and Baker–Gill–Solovay).
+The deterministic inclusion `POracle_EXPCOM_subset_EXP'` is probe-local: it has no campaign
+counterpart. Then come the axiom and sorry-source census and the reuse census. B5's own
 `exists_EXPCOM_decider` is sorried here, as in the pre-ship probe. -/
 
 /-! ## Consumer derivations (probe only)
 
 Every consumer statement below is restated **verbatim** under a primed name and derived
-from the sorried W2 rows above; an `example … := rfl` checks that each primed statement
-has exactly the type of its target in the campaign tip. The one consumer-side lemma that
+from the W2 rows; an `example … := rfl` checks that each primed statement with a campaign
+counterpart has exactly the type of its target in the campaign tip. The deterministic
+inclusion `POracle_EXPCOM_subset_EXP'` has none and is probe-local. The one consumer-side lemma that
 is not part of the shared layer, `exists_EXPCOM_decider`, is B5's own obligation (home:
 `Diagonalization/EXPCOM.lean`) and is sorried here. -/
 
@@ -367,15 +370,18 @@ above; `[]` means the row is fully proved in the tip. -/
 #sorry_sources Complexity.exists_proj_decider
 #sorry_sources Complexity.ExpPoly.mem_EXP
 
-/-! The one sorried row the routes do cite: the §12.8 native-input clean call R8.5e, in the
-certificate shell's loader only (its fill is sequenced after the §12.8 fill). -/
+/-! The §12.8 native-input clean call R8.5e, cited by the certificate shell's loader only.
+It was the one sorried row the routes cited when this probe was written; the §12.8 fill has
+since proved it (PRs #41, #42), so it prints `[]`. -/
 
 #sorry_sources Turing.FinTM.exists_inputCallTM
 
-/-! Negative controls (the census is not vacuous): sorried rows of the tip are detected.
-`Turing.compareTM_run_ofCfg` and the input seek `Turing.exists_inputSeekTM` are §12.8
+/-! Negative controls (the census is not vacuous). The original controls,
+`Turing.compareTM_run_ofCfg` and the input seek `Turing.exists_inputSeekTM`, are §12.8
 statements the routes do **not** cite (the Z1 empty-input clean call makes the seek
-unnecessary). -/
+unnecessary). The §12.8 fill has since proved both, so they print `[]`. The live control is
+`Complexity.EXP_subset_POracle_EXPCOM` (B5's padding reduction, still sorried), which is
+detected. Keep a detecting control when it is filled. -/
 
 #sorry_sources Turing.compareTM_run_ofCfg
 #sorry_sources Turing.exists_inputSeekTM

@@ -2375,20 +2375,26 @@ go to the statement gate.
    space mandate.
 6. **Sequencing.** W2-S and W2-C can be filled at once; W2-V's sorried dependency is gone.
 
-**Disclosed mirrors** (12.2c window, maintainer-owned):
-- W2-0 mirrors the per-tape invariant of private `runFrom_workTapes_invariant` (`Oracle.lean`)
-  and `runWith_headBlank` (`OracleNondeterministic.lean`). The dedup is to promote one
-  invariant in `Oracle.lean` and re-derive all three.
-- `certificateShell_proj` mirrors `Nondeterminism.lean`'s private split lemmas. The statement
-  screen pairs it with `certificate_split_strictMono` at 83%.
-- `mem_iff_exists_choiceOut` mirrors private `choice_certificate_iff`, relativized.
+**Mirrors, factored** (disclosed at landing; factored in round 2 of the wave-1 statement gate,
+2026-10-11, user decision; `audits/wave1-statements-resolutions.md`):
+- W2-0 and the private invariants `runFrom_workTapes_invariant` (`Oracle.lean`) and
+  `runWith_headBlank` (`OracleNondeterministic.lean`) now all specialize the promoted
+  `OracleTM.step_radius`/`OracleTM.runFrom_radius` (`Oracle.lean`).
+- `certificateShell_proj` and `Nondeterminism.lean`'s split callers cite
+  `append_split_unique` with `certificateLength_strictMono` or
+  `expCertificateLength_strictMono` (new module `ChoiceWords.lean`). The private split lemmas
+  are deleted.
+- `mem_iff_exists_choiceOut` and `Nondeterminism.lean`'s acceptance argument share
+  `choiceBudget_le` and `run_take_of_halted` (`ChoiceWords.lean`).
 
-**Consumers** (derived in `audits/evidence/wave1-statements/S1210StatementsProbe.lean.txt`, each
-`rfl`-identical to its campaign statement):
+**Consumers** (derived in `audits/evidence/wave1-statements/S1210StatementsProbe.lean.txt`):
 - `POracle_eq_P_of_mem_P`, which rests on W2-S alone;
-- `POracle_EXPCOM_subset_EXP`;
-- `NPOracle_EXPCOM_subset_EXP`;
+- `NPOracle_EXPCOM_subset_EXP`, the summit;
 - `baker_gill_solovay`.
+
+Each is `rfl`-identical to its campaign statement, as are the three `EXPCOM` identities the
+probe also derives. The probe's deterministic inclusion `POracle_EXPCOM_subset_EXP'` is
+probe-local: it is derived from W2-S directly and has no campaign counterpart.
 
 B5's own `exists_EXPCOM_decider` (home `Diagonalization/EXPCOM.lean`) is the summit's
 query dispatcher. It is a B5 obligation, not a §12.10 row.
