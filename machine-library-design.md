@@ -3373,6 +3373,10 @@ per-file diff is `audits/evidence/programs-vendor/upstream-to-vendored.diff`, an
   lemma. A per-module closure check now elaborates each of the 46 modules and facades in exactly
   its own import environment (`scripts/vendor_afm26/closurecheck.py`), and all 46 are clean
   (`audits/logs/programs-vendor-closure-check.log`).
+- **Replay passed** (user-run, at `155255ed`; `audits/logs/programs-vendor-replay.log`). All 47
+  entries are clean, with 0 errors and no `sorry` warnings: the 42 modules, the four facades and
+  `ComputationalModels`. The resumed run rebuilt the 17 modules that had failed and skipped the 30
+  that were already clean.
 
 **Models registered** in `ComputationalModels.lean`: `Light.Program` and `WordRAM.Instr`.
 
