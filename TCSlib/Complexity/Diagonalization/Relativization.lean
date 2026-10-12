@@ -957,8 +957,9 @@ does not relativize.
 
 **Fill appendix (maintainer).** Exactly the sketch, as derived in
 `audits/evidence/wave1-statements/S1210StatementsProbe.lean.txt`. It is proved modulo the
-`EXPCOM` identity, which rests on B5's summit and `EXP ⊆ P^EXPCOM`; the `B` half is
-admission-free. -/
+`EXPCOM` identity, which rests on B5's summit and `EXP ⊆ P^EXPCOM`, and modulo
+`exists_uniformMachineCode` (B5a), on which the language `EXPCOM` itself rests through
+`Complexity.expCode`. The `B` half (`Complexity.exists_oracle_ne`) is admission-free. -/
 theorem baker_gill_solovay :
     (∃ A : Language Bool, POracle A = NPOracle A) ∧
     ∃ B : Language Bool, POracle B ≠ NPOracle B := by
