@@ -325,7 +325,12 @@ private lemma expcom_inc_prefix (n : ℕ) (w : List Bool) :
 
 /-- An empty increment result certifies an all-`true` word.
 This is the needed direction of the circuit module's overflow criterion;
-promotion to `Build/Convention` is requested in the B5b report. -/
+promotion to `Build/Convention` is requested in the B5b report.
+
+**Proof sketch.** Induct on `w`. A leading `false` increments without overflow, giving a
+nonempty result. After a leading `true`, a tail that does not overflow also gives a nonempty
+result, so the tail overflows and is all `true` by induction. (Maintainer, fills-6
+integration.) -/
 private lemma expcom_all_true (w : List Bool) (h : (incFixed w).getD [] = []) :
     w = List.replicate w.length true := by
   revert h
@@ -570,7 +575,13 @@ private theorem expcom_expPoly_mul_two_pow (A K k : ℕ) : ExpPoly fun n => A * 
 /-- **The summit's ledger** ([AB09, Example 3.6(3)]; the P3.2 round-2 uniform ledger in
 this route's shape): the bound returned by `Complexity.exists_proj_decider` around the
 certificate shell, the simulated choice machine and the `EXPCOM` decider is
-exponential-polynomial. -/
+exponential-polynomial.
+
+**Proof sketch.** Bound the shell's word length `g = n + C·(n + 1)^k` by
+`G = (C + 1)·(n + 1)^(k + 1)`, so that `2g + 3 ≤ 3G`. Each factor is then dominated by an
+exponential-polynomial in `n`: powers of `G` are polynomials, and
+`A·2^(B·(2g + 3)) ≤ A·2^(3B(C + 1)(n + 1)^(k + 1))`. `ExpPoly` is closed under products,
+sums and pointwise upper bounds (`of_le`). (Maintainer, fills-6 integration.) -/
 private theorem expcom_summit_budget (a' A B b e b' C k : ℕ) :
     ExpPoly fun n => b' * 2 ^ (C * (n + 1) ^ k) *
       (b * ((n + C * (n + 1) ^ k + 1) ^ e +
