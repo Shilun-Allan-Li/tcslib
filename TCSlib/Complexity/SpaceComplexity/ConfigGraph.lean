@@ -27,11 +27,12 @@ polynomial-time reductions below `P` ([AB09, Exercise 4.3]). This is phase P4.2
 of `AroraBarakChapters3-4Plan.md`; Savitch's theorem, the other consumer of
 this layer, is `TCSlib.Complexity.SpaceComplexity.Savitch`.
 
-**Status (S1b unverified partial fill): graph lemmas proved (phase P4.2, batch S1a).**
-The four graph contracts are proved. The bodies of `NL_subset_P` and
-`polyTimeReducible_of_mem_NL` are filled modulo `NSPACE_subset_exp_dtime`
-and `spaceConstructible_logSpace`; the simulation remains sorried. The new
-proof bodies have not completed module verification in this execution environment.
+**Status (S1b partial fill, integrated 2026-10-12): graph lemmas proved (phase P4.2, batch S1a).**
+The four graph contracts are proved. `NL_subset_P` and `polyTimeReducible_of_mem_NL` are proved
+modulo `NSPACE_subset_exp_dtime`, which remains sorried. By user decision (2026-10-12,
+`machine-library-design.md` §16), that simulation is to be proved as a program of the §15
+language, compiled to machines, rather than by a machine-level search host (backlog MIG-19).
+`spaceConstructible_logSpace` is proved (B3a).
 
 ## Design
 
@@ -67,7 +68,7 @@ proof bodies have not completed module verification in this execution environmen
 * `Turing.FinNDTM.configBound` — the vertex count at window radius `s`:
   three times the deterministic `configBound` formula. [AB09, Claim 4.4(1)]
 
-## Main results (S1b unverified partial fill: graph lemmas proved; two corollary bodies filled modulo the simulation and logspace constructibility)
+## Main results (graph lemmas proved; the two corollaries proved modulo the simulation)
 
 * `Turing.NDTM.reflTransGen_cfgStep_iff` — reachability is the choice-word run.
 * `Turing.NDTM.coreSum_stepWith` — a step's vertex depends only on the vertex.
@@ -827,8 +828,8 @@ time bound, generalized count and its two instances have private proof bodies.
 The pure record bridge addresses equality with `coreSum`, quotient path lifting,
 the converse for windowed runs, and the accepting-summary predicate. These
 facts do not yet establish a machine-level BFS invariant. The count and
-radius-bit bodies passed an isolated check; full module verification of the
-new bodies remains pending after the executor's dependency sweep stalled.
+radius-bit bodies are proved. (Maintainer note: the module elaborates with no errors at integration,
+2026-10-12; see `audits/fills-6-integration.md`.)
 
 The five note-6 obligations for the completed composition remain:
 canonical decoding; outside-window edge rejection, which is
@@ -876,9 +877,9 @@ own ([Bon26] context in `machine-library-design.md` §12 — reachability-table
 construction; design only, nothing ported).
 
 **Fill appendix (S1b).** The cited simulation's required continuation is the
-rich-alphabet record-table route of design §12.8a §4 and §12.8b. This corollary body is filled
-modulo that simulation and `spaceConstructible_logSpace`, with module
-verification pending. The exponent
+rich-alphabet record-table route of design §12.8a §4 and §12.8b. This corollary body is proved
+modulo that simulation. (Maintainer note, 2026-10-12: the simulation is now to be proved as a
+program, design §16; `spaceConstructible_logSpace` is proved.) The exponent
 normalization is P4.2 Question 5, including the empty input; its last
 inequality cites `succ_pow_le` rather than repeating that shared argument.
 The deterministic inclusion shares only the configuration-count arithmetic. -/
@@ -925,8 +926,7 @@ over the decider with two `Complexity.polyTimeComputable_const` branches),
 and `x ∈ L' ↔ f x ∈ L` holds by the choice of witnesses.
 
 **Fill appendix (S1b).** This body follows the frozen sketch and is filled
-modulo `NL_subset_P`, hence the still-admitted simulation and
-`spaceConstructible_logSpace`. Module verification is pending. It makes no
+modulo `NL_subset_P`, hence the still-admitted simulation. It makes no
 decision procedure for `L`. -/
 theorem polyTimeReducible_of_mem_NL (L : Language Bool) (hy : ∃ y, y ∈ L)
     (hz : ∃ z, z ∉ L) {L' : Language Bool} (hL' : L' ∈ NL) : L' ≤ₚ L := by
