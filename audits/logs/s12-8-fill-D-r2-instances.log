@@ -1,0 +1,53 @@
+# R8.0b round 2 (finding F2): the instance file and its false control, both re-run read-only at the combined tree d2c9e16c (stream D on the campaign tip, with stream B proved), against the D2 replay tree.
+## R80bInstances.lean.txt: exit 0, no output (0 errors, 0 warnings)
+## control: R80bInstances.lean.txt + 'example : (1 : ℕ) = 2 := by decide' + '#check @Turing.counterLoopTMVia_run_done' (expected: exactly one error, at the appended example)
+Control.lean:244:28: error: Tactic `decide` proved that the proposition
+  1 = 2
+is false
+@Turing.counterLoopTMVia_run_done : ∀ {k : ℕ} {Γ S : Type} [inst : DecidableEq S] [inst_1 : DecidableEq Γ] {x : List Γ}
+  (e : Bool ↪ Γ) (M : Turing.MultiTapeTM k Γ S) (a : S) (exit : Option S) (τ : Turing.Cfg k Γ S x → ℕ)
+  (c : Turing.Cfg k Γ S x) (w : List Bool) (ct : ℤ → Option Γ) (cp : ℤ),
+  (∀ (p : ℤ), -1 ≤ p → p ≤ ↑w.length → ct (cp + p) = Turing.FinTM.bufferTape (List.map (⇑e) w) p) →
+    ∀ (d : ℕ),
+      Nat.ofDigits 2 (List.map Bool.toNat w) = d →
+        (∀ r < d,
+            (Turing.counterLoopOrbit M τ c r).state = some a ∧
+              0 < τ (Turing.counterLoopOrbit M τ c r) ∧
+                (∀ (u : ℕ),
+                    0 < u →
+                      u < τ (Turing.counterLoopOrbit M τ c r) →
+                        ∃ s,
+                          (Turing.MultiTapeTM.runFrom (Turing.counterLoopOrbit M τ c r) u).state = some s ∧
+                            s ≠ a ∧ exit ≠ some s) ∧
+                  (Turing.counterLoopOrbit M τ c (r + 1)).state = some a) →
+          ∀ (T : ℕ),
+            T = ∑ r ∈ Finset.range d, τ (Turing.counterLoopOrbit M τ c r) + Turing.counterOverhead w (d + 1) →
+              Turing.MultiTapeTM.runFrom
+                    (Turing.counterLoopCfg (some (Turing.CounterLoopState.dec Turing.FlagPhase.run)) c ct cp) T =
+                  Turing.counterLoopCfg (some Turing.CounterLoopState.done) (Turing.counterLoopOrbit M τ c d)
+                    (fun q => if cp ≤ q ∧ q < cp + ↑w.length then some (e true) else ct q) cp ∧
+                (∀ t < T,
+                    (Turing.MultiTapeTM.runFrom
+                            (Turing.counterLoopCfg (some (Turing.CounterLoopState.dec Turing.FlagPhase.run)) c ct cp)
+                            t).state ≠
+                        some Turing.CounterLoopState.done ∧
+                      (Turing.MultiTapeTM.runFrom
+                            (Turing.counterLoopCfg (some (Turing.CounterLoopState.dec Turing.FlagPhase.run)) c ct cp)
+                            t).state ≠
+                        some Turing.CounterLoopState.escape) ∧
+                  (∀ t ≤ T,
+                      (Turing.MultiTapeTM.runFrom
+                              (Turing.counterLoopCfg (some (Turing.CounterLoopState.dec Turing.FlagPhase.run)) c ct cp)
+                              t).workTapePos
+                          (Fin.last k) ∈
+                        Finset.Icc (cp - 1) (cp + ↑w.length)) ∧
+                    ∀ t ≤ T,
+                      ∃ r u,
+                        (r < d ∧ u ≤ τ (Turing.counterLoopOrbit M τ c r) ∨ r = d ∧ u = 0) ∧
+                          ∀ (j : Fin k),
+                            (Turing.MultiTapeTM.runFrom
+                                    (Turing.counterLoopCfg (some (Turing.CounterLoopState.dec Turing.FlagPhase.run)) c
+                                      ct cp)
+                                    t).workTapePos
+                                j.castSucc =
+                              (Turing.MultiTapeTM.runFrom (Turing.counterLoopOrbit M τ c r) u).workTapePos j
