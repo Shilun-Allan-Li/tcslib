@@ -866,6 +866,10 @@ change, so it needs its own gate.
   `PolyBound c.canonizerTime`; a combinator-built effective scheme with a
   *proved* polynomial canonizer would discharge the hypothesis for a
   concrete scheme and reconnect Q1(c). *Origin: ch2 phase-3 audit.*
+  **Now stated** as `Turing.MachineFormat.exists_polyCanonizer`
+  (`CodeSimulator.lean`, design §12.11, filled with B5a). Its one-tape
+  instance discharges the hypothesis for a concrete scheme, an off-batch
+  customer.
 * **Blueprint planner refinement** — writers flagged planner `\uses` edges
   not present in the cited proofs (reproduced verbatim per pipeline rules).
   *Origin: ch1 decision log, blueprint-extraction row.* **Ch2 increment
@@ -945,6 +949,20 @@ change, so it needs its own gate.
   constant overhead provably impossible), and relativization (Baker-Gill-
   Solovay) are future Chapter-3 work. *Origin: ch1 plan §5 phase-2 notes;
   session assessment 2026-09-18.*
+* **B5a headline H2: the per-code-linear timed simulator** (user, 2026-10-11:
+  "H1 for now, but add H2 to backlog"). `CodeSimulator.lean`'s headline is
+  H1, polynomial in `|α| + |x| + t` jointly, which is exactly what the two
+  uniform schemes need. **H2** gives the same verdicts within
+  `d · (|α| + 1)^d · (t + 1)`, with no `|x|` term and linear in `t` per
+  code. It would make the one interpreter the stage-1 timed universal at
+  linear overhead. It needs a **suffix-input host**: the simulated machine
+  reads `x` in place inside the native input, behind a left-boundary
+  marker. The pieces are public (`universalInput_read`/`_move`,
+  `UniversalStartup.lean`), but no host composes them. H2 ⇒ H1 is already
+  proved (`exists_uniformSimulator_of_timed`, B5a statement probe), so H2
+  can later be added beside H1 without disturbing its consumers. The step
+  block's per-round cost is independent of `t` and `x`, so the B5a fill's
+  trace is the H2 core. *Origin: B5a dossier D3; design §12.11.*
 
 ### Chapter 6 (Arora–Barak §§6.1–6.5): what is proved, and what remains
 

@@ -29,6 +29,12 @@ import TCSlib.Complexity.TuringMachine.Build.CounterLoop
 import TCSlib.Complexity.TuringMachine.Build.Scan
 import TCSlib.Complexity.TuringMachine.Build.InputCall
 import TCSlib.Complexity.TuringMachine.Build.CfgRecord
+import TCSlib.Complexity.TuringMachine.Build.InputLength
+import TCSlib.Complexity.TuringMachine.Build.RecordTable
+import TCSlib.Complexity.TuringMachine.Build.CertShell
+import TCSlib.Complexity.TuringMachine.Build.OracleSim
+import TCSlib.Complexity.TuringMachine.CodeSimulator
+import TCSlib.Complexity.TuringMachine.ChoiceWords
 import TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction
 import TCSlib.Complexity.TuringMachine.Robustness.SingleTape
 import TCSlib.Complexity.TuringMachine.Robustness.Bidirectional
@@ -113,6 +119,20 @@ for the local modifications.
   advancing writers and the native-input copy and fold; the input call and input seek;
   the rich configuration-record carrier and the record rows. Statement phase: contracts
   stated with sketches, fills pending.
+* `Build/InputLength`, `Build/RecordTable` — the deferred §12.8 rows (`machine-library-design.md`
+  §12.8b): the input length `Nat.bits |x|` (R8.5c), and the table layer over records (header,
+  sentinels, find, append, template, init, validity, odometer next, the end-to-start adapter).
+  Statement phase.
+* `Build/OracleSim`, `Build/CertShell` — oracle-call simulation (§12.10, the B1b extension): one
+  plain host simulating an oracle machine with queries answered by a plain decider, the
+  choice-word machine of an oracle NDTM, and the plain certificate shell. Statement phase.
+* `CodeSimulator` — the format-parameterized uniform simulator over item 8's code formats
+  (B5a): one bounded-acceptance interpreter and canonizer whose one- and two-tape instances are
+  the EXPCOM and Codes2Tape code schemes. Statement phase.
+* `ChoiceWords` — certificate and choice words: split uniqueness for length-determined
+  suffixes, the exact NP certificate length's monotonicity, the choice budget, and the
+  truncation of halted branch runs. Shared by the plain Theorem 2.6, the oracle simulation's
+  choice-word law and the certificate shell (wave-1 statement gate, round 1).
 * `CounterProgInput` — transport a counter-program run past an input prefix
   that has already been consumed.
 * `Build/Convention`, `Build/Wrappers`, `Build/Loop`, `Build/Primitives` — the

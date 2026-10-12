@@ -83,6 +83,11 @@ Definitional choices worth auditing:
 * `Turing.OracleTM.runFrom_workTapes_blank` — in an initialized run, cells at distance
   `≥ t` are still blank after `t` steps; the certificate that the no-blank fallback in
   `queryString` is unreachable from initialization.
+* `Turing.OracleTM.step_radius`, `Turing.OracleTM.runFrom_radius` — the radius bound:
+  from a head within `n` of the origin with every cell at distance `≥ n` blank, after `s`
+  steps the head is within `n + s` and every cell at distance `≥ n + s` is blank; the one
+  shared argument behind the initialized invariants and the preloaded query bound (added
+  2026-10-11, wave-1 statement gate, round 1, finding 2).
 * `Turing.OracleTM.queryString_length_le_of_blank`, `Turing.OracleTM.queryString_eq_of_cells`
   — the extraction contract: a blank query cell bounds the query, and a query tape holding
   `w` from cell `0` with a blank at `|w|` reads back exactly `w` (the first promoted from
@@ -328,6 +333,51 @@ lemma workTapes_step_eq_of_ne (M : OracleTM k Symbol State) (O : Language Symbol
     · rfl
     · exact apply_workTapes_eq_of_ne _ cfg i hz
 
+/-- **The one-step radius bound** ([AB09, proof of Theorem 3.7]: a machine reaches at most
+one new cell per step). If work head `i` is within distance `n` of the origin and every
+cell of tape `i` at distance at least `n` is blank, then after one oracle step the head is
+within `n + 1`, and every cell at distance at least `n + 1` is still blank. Shared by the
+initialized invariants here and in `OracleNondeterministic`, and by the preloaded query
+bound of `Build/OracleSim` (wave-1 statement gate, round 1, finding 2).
+
+**Proof sketch.** The head moves by at most one cell (`workTapePos_step_le`), and the step
+writes only at the old head (`workTapes_step_eq_of_ne`), which lies strictly inside the
+radius `n + 1`. -/
+theorem step_radius (M : OracleTM k Symbol State) (O : Language Symbol)
+    (cfg : Cfg (k + 1) Symbol State input) (i : Fin (k + 1)) (n : ℕ)
+    (hpos : |cfg.workTapePos i| ≤ (n : ℤ))
+    (hblank : ∀ z : ℤ, (n : ℤ) ≤ |z| → cfg.workTapes i z = none) :
+    |(M.step O cfg).workTapePos i| ≤ ((n + 1 : ℕ) : ℤ) ∧
+      ∀ z : ℤ, ((n + 1 : ℕ) : ℤ) ≤ |z| → (M.step O cfg).workTapes i z = none := by
+  refine ⟨?_, fun z hz => ?_⟩
+  · have h1 := M.workTapePos_step_le O cfg i
+    rw [abs_le] at h1 hpos ⊢
+    push_cast
+    omega
+  · push_cast at hz
+    have hne : z ≠ cfg.workTapePos i := by
+      intro he
+      rw [← he] at hpos
+      omega
+    rw [M.workTapes_step_eq_of_ne O i hne]
+    exact hblank z (by omega)
+
+/-- **The radius bound along a run**: from radius `n`, after `s` steps work head `i` is
+within `n + s` of the origin, and every cell at distance at least `n + s` is blank.
+
+**Proof sketch.** Induction on `s`, with `runFrom_succ_eq_step'` and `step_radius`. -/
+theorem runFrom_radius (M : OracleTM k Symbol State) (O : Language Symbol)
+    (cfg : Cfg (k + 1) Symbol State input) (i : Fin (k + 1)) (n : ℕ)
+    (hpos : |cfg.workTapePos i| ≤ (n : ℤ))
+    (hblank : ∀ z : ℤ, (n : ℤ) ≤ |z| → cfg.workTapes i z = none) (s : ℕ) :
+    |(M.runFrom O cfg s).workTapePos i| ≤ ((n + s : ℕ) : ℤ) ∧
+      ∀ z : ℤ, ((n + s : ℕ) : ℤ) ≤ |z| → (M.runFrom O cfg s).workTapes i z = none := by
+  induction s with
+  | zero => exact ⟨hpos, hblank⟩
+  | succ s ih =>
+    rw [runFrom_succ_eq_step']
+    exact M.step_radius O _ i (n + s) ih.1 ih.2
+
 /-- The two run invariants of an initialized oracle run: after `t` steps every work
 head is within distance `t` of the origin, and every cell at distance at least `t` is
 still blank. -/
@@ -336,37 +386,9 @@ private lemma runFrom_workTapes_invariant (M : OracleTM k Symbol State)
     (∀ i, |(M.runFrom O (M.initCfg x) t).workTapePos i| ≤ (t : ℤ)) ∧
     (∀ i (z : ℤ), (t : ℤ) ≤ |z| → (M.runFrom O (M.initCfg x) t).workTapes i z = none) := by
   intro t
-  induction t with
-  | zero =>
-    constructor
-    · intro i
-      simp [runFrom]
-    · intro i z _
-      simp [runFrom]
-  | succ t ih =>
-    obtain ⟨hpos, hblank⟩ := ih
-    have hstep : M.runFrom O (M.initCfg x) (t + 1) =
-        M.step O (M.runFrom O (M.initCfg x) t) :=
-      Function.iterate_succ_apply' _ _ _
-    constructor
-    · intro i
-      rw [hstep]
-      have h1 := M.workTapePos_step_le O (M.runFrom O (M.initCfg x) t) i
-      have h2 := hpos i
-      rw [abs_le] at h1 h2 ⊢
-      omega
-    · intro i z hz
-      rw [hstep]
-      have hz' : (t : ℤ) ≤ |z| := le_trans (by omega) hz
-      have hne : z ≠ (M.runFrom O (M.initCfg x) t).workTapePos i := by
-        intro hzeq
-        have h2 := hpos i
-        rw [← hzeq] at h2
-        have h3 : ((t : ℤ) + 1) ≤ |z| := by exact_mod_cast hz
-        have h4 := le_trans h3 h2
-        omega
-      rw [M.workTapes_step_eq_of_ne O i hne]
-      exact hblank i z hz'
+  have h := fun i => M.runFrom_radius O (M.initCfg x) i 0 (by simp [initCfg])
+    (fun z _ => by simp [initCfg]) t
+  exact ⟨fun i => by simpa using (h i).1, fun i z hz => (h i).2 z (by simpa using hz)⟩
 
 /-- **A blank query cell bounds the query**: if the query tape of any configuration is
 blank at the nonnegative cell `n`, the extracted query has length at most `n`, extraction

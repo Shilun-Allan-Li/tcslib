@@ -1,0 +1,39 @@
+# wave-1 statements round 2: replay, three user-run parts covering the round-2 head b47992fd, all into one snapshot of a tip-consistent olean tree.
+# Part 1: the downstream closure of every changed module (20 modules), started at ba87f8d6. Part 2: top-up of the downstream closure of ChoiceWords and Nondeterminism (6 modules), changed in 6060d609 after part 1 compiled them. Part 3: top-up of Nondeterminism and the ClassNP facade (2 modules), changed in b47992fd.
+## part 1
+# wave-1 statements round-2 replay at ba87f8d6: downstream closure of every changed module (ChoiceWords, Oracle, OracleNondeterministic, Nondeterminism, the five statement modules, the facade), fresh .oleans on a snapshot of a tip-consistent olean tree
+TCSlib/Complexity/TuringMachine/ChoiceWords exit=0 errors=0 sorry=0
+TCSlib/Complexity/ClassNP/Nondeterminism exit=0 errors=0 sorry=0
+TCSlib/Complexity/ClassNP exit=0 errors=0 sorry=0
+TCSlib/Complexity/TuringMachine/Oracle exit=0 errors=0 sorry=0
+TCSlib/Complexity/TuringMachine/OracleFinite exit=0 errors=0 sorry=0
+TCSlib/Complexity/TuringMachine/OracleNondeterministic exit=0 errors=0 sorry=0
+TCSlib/Complexity/TuringMachine/Build/OracleCall exit=0 errors=0 sorry=0
+TCSlib/Complexity/ClassOracle/Classes exit=0 errors=0 sorry=1
+TCSlib/Complexity/ClassOracle/SATOracle exit=0 errors=0 sorry=0
+TCSlib/Complexity/ClassOracle exit=0 errors=0 sorry=0
+TCSlib/Complexity/TuringMachine/OracleAgreement exit=0 errors=0 sorry=0
+TCSlib/Complexity/Diagonalization/EXPCOM exit=0 errors=0 sorry=6
+TCSlib/Complexity/Diagonalization/Relativization exit=0 errors=0 sorry=1
+TCSlib/Complexity/Diagonalization exit=0 errors=0 sorry=0
+TCSlib/Complexity/TuringMachine/Build/InputLength exit=0 errors=0 sorry=1
+TCSlib/Complexity/TuringMachine/Build/RecordTable exit=0 errors=0 sorry=20
+TCSlib/Complexity/TuringMachine/Build/CertShell exit=0 errors=0 sorry=1
+TCSlib/Complexity/TuringMachine/Build/OracleSim exit=0 errors=0 sorry=2
+TCSlib/Complexity/TuringMachine/CodeSimulator exit=0 errors=0 sorry=2
+TCSlib/Complexity/TuringMachine exit=0 errors=0 sorry=0
+# modules=20 failed=0
+## part 2
+# wave-1 statements round-2 top-up replay at 6060d609: downstream closure of ChoiceWords and Nondeterminism (changed since the 20-module run at ba87f8d6), fresh .oleans into the same snapshot
+TCSlib/Complexity/TuringMachine/ChoiceWords exit=0 errors=0 sorry=0
+TCSlib/Complexity/ClassNP/Nondeterminism exit=0 errors=0 sorry=0
+TCSlib/Complexity/ClassNP exit=0 errors=0 sorry=0
+TCSlib/Complexity/TuringMachine/Build/CertShell exit=0 errors=0 sorry=1
+TCSlib/Complexity/TuringMachine/Build/OracleSim exit=0 errors=0 sorry=2
+TCSlib/Complexity/TuringMachine exit=0 errors=0 sorry=0
+# modules=6 failed=0
+## part 3
+# wave-1 statements round-2 top-up 2 at b47992fd: Nondeterminism and the ClassNP facade (Nondeterminism changed in b47992fd), fresh .oleans into the same snapshot
+TCSlib/Complexity/ClassNP/Nondeterminism exit=0 errors=0 sorry=0
+TCSlib/Complexity/ClassNP exit=0 errors=0 sorry=0
+# modules=2 failed=0

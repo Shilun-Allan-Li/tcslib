@@ -1,4 +1,6 @@
-# Wave-1 statement gate (§12.8b, §12.10, §12.11): resolutions, round 1
+# Wave-1 statement gate (§12.8b, §12.10, §12.11): resolutions (CLOSED, round 2)
+
+## Round 1 (2026-10-11): 0 blockers, 2 majors, 6 minors, 42 notes
 
 Round 1 (`audits/wave1-statements-findings.md`, verbatim) returned **FAIL: 0 blockers, 2 majors,
 6 minors, 42 notes**. All 26 sorried statements were found **true as stated**, with adequate
@@ -80,3 +82,30 @@ the round-2 pack puts it to the auditor.
     headers (canonizer), exact-deadline acceptance (H1) and query-word exhaustion (W2-C).
 
 All other notes record verified truth or adequacy and need no action.
+
+## Round 2 (2026-10-11): 0 blockers, 0 majors, 2 minors, 18 notes
+
+The findings are verbatim in `audits/wave1-statements-r2-findings.md`; the pack is
+`audits/wave1-statements-r2-pack.md`. The auditor:
+
+- found the five `ChoiceWords` statements and the two `Oracle.lean` radius statements true at
+  the required generality (notes 3–6);
+- confirmed that the three factored families are consumed by citation, closing round-1
+  major 2 (notes 7, 8, 13);
+- confirmed the repaired readiness evidence, closing round-1 major 1 (note 9);
+- reproduced the broadened screen's delta and all seven added matches (note 10), and accepted
+  the `a3n_unpad_EXP` exclusion and the writer-residual classification (notes 11, 12);
+- confirmed the round-1 minor repairs (notes 14–16) and the axiom census (note 18).
+
+| Finding | Disposition |
+|---|---|
+| 1 (minor): the 95-name readiness walk omits four names cited with arguments inside code spans | **Fixed.** `ReadinessWalk.lean.txt` now covers 99 names: the auditor's four are added. A token-level re-extraction finds no others. Rerun read-only against the round-2 replay tree (`audits/logs/wave1-statements-r2-close.log`): 92 proved, `expandTM_run_ofCfg` sorried (R8.6, closed by PR #38), 6 not constants in the closure. The four new names are proved |
+| 2 (minor): the design, its extract and the §12.10 probe's comments contradict the repairs | **Fixed.** `machine-library-design.md` §12.10 and `audits/evidence/wave1-statements/design-sections.md` now list the three families as factored, naming the shared lemmas, and state the consumer identities exactly: six `rfl` identities, with the deterministic inclusion `POracle_EXPCOM_subset_EXP'` probe-local. The probe's comments now say the same. They also record that the cited input call and the original controls (`compareTM_run_ofCfg`, `exists_inputSeekTM`) are proved, and that `EXP_subset_POracle_EXPCOM` is the live control. The probe's code is comment-stripped identical, and its rerun output is identical apart from line numbers. **Erratum** to the round-2 probes log: its header names the former controls as `compareTM_run_ofCfg` and `exists_inputCallTM`. They were `compareTM_run_ofCfg` and `exists_inputSeekTM`; `exists_inputCallTM` was the cited row. The shipped log is kept unchanged under the archival rule |
+| 15 (note): consumers that seek after an empty-field append must keep the nonempty-field invariant | **Carried forward**, binding on the §12.8b fill brief when it issues |
+| 16, 20 (notes): keep the recorded fill obligations (exhaustion, zero guard, the four deferred sanity cases, S1b bookkeeping) | **Retained**, as round 1's note 50 and the S1b obligations |
+| 17 (note): keep a detecting control when `EXP_subset_POracle_EXPCOM` is filled | **Carried forward**, binding on B5's fill brief when it issues; the probe comment now says so |
+| 19 (note): historical equality and execution provenance remain maintainer attestations | **Recorded**, as round 1's note 49 |
+| 3–14, 18 (notes) | Confirmed. No action |
+
+**Gate CLOSED. PR #43 is clear to merge.** It has no Lean dependency on PR #38: the
+statement modules cite R8.0b's `counterLoopTMVia` and R8.6 only in docstrings.
