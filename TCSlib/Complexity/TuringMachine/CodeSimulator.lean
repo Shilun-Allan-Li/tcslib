@@ -40,10 +40,15 @@ the uniform form required by Example 3.6(3), audited at phase P3.2 round 2]
   state-indexed work, so a huge declared count is never expanded in unary.
 * **The clock is §12.7's counter loop** (`Turing.counterLoopTM`) over the
   deadline's binary word; a simulated halt is a live body exit.
-* **Status update (B5a continuation): partial.** The two headline contracts
-  retain their original admissions. The native-input binary-header loader and
-  the physical fail-fast binary length guard are proved; the remaining parser
-  phases, complete canonizer, and generic interpreter are still open.
+* **Status update (fills-6, 2026-10-12): partial.** The two headline contracts
+  retain their original admissions. Proved so far: the native-input
+  binary-header loader and the physical fail-fast binary length guard; the
+  canonical-header check, the nonoverflowing successor counter and its
+  specialized guard (B5a canonizer continuation); and the interpreter's
+  selected-record component `h1RecordTM`, with its head envelope (B5a H1).
+  Still open: connecting the guard to the loader, the record parser, and the
+  rest of the step block (record lookup, successor installation, restoring the
+  round seam), with its hosted counter loop and ledger.
 
 ## Main definitions
 
@@ -1678,11 +1683,12 @@ have moved from `Codes2Tape` and are generalized to arbitrary tape and state
 counts. `summaryClock_accepts` identifies the inclusive-deadline predicate;
 `summaryClock_zero` handles zero. These are semantic specifications only.
 The one physical step block, its relation-level trace, the counter/virtual-input
-host assembly, and its ledger remain open; this target retains its admission. **Fill appendix
-(B5a H1, selected-record partial).** The private
-`h1RecordTM` reads the fixed action fields into finite control and executes
-them on the mirrored bank and native input, recording the emission by
-`summaryEmit`. `h1Record_read`, `h1Record_execute`, and `h1Record_effect`
+host assembly, and its ledger remain open; this target retains its admission.
+
+**Fill appendix (B5a H1, selected-record partial).** The private `h1RecordTM`
+reads the fixed action fields into finite control and executes them on the
+mirrored bank and native input, recording the emission by `summaryEmit`.
+`h1Record_read`, `h1Record_execute`, and `h1Record_effect`
 prove its framed physical trace, source-action relation, silence, first live
 exit, and exact `4k + 5` time bound. Its control depends only on `k`; the
 public `codeReadActionK_append` supplies the decoding proof. The table head
