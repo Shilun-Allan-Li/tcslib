@@ -89,7 +89,7 @@ Lines are at the issue commit.
 | 1 | `TuringMachine/CodeSimulator.lean:205` | `Turing.MachineFormat.exists_polyCanonizer` | binary-guard parser, fixed grammar, fallback | — |
 | 2 | `TuringMachine/CodeSimulator.lean:239` | `Turing.MachineFormat.exists_uniformSimulator` | H1: one step block under `counterLoopTM`, hosted by Z1 | 1 |
 | 3 | `TuringMachine/Codes2Tape.lean:547` | `Turing.exists_uniformMachineCode2` | instance of 1–2 at a private two-tape format (probe `uniform_two`) | 1, 2 |
-| 4 | `Diagonalization/EXPCOM.lean:145` | `Complexity.exists_uniformMachineCode` | instance of 1–2 at `oneTapeMachineFormat` (probe `uniform_one`) | 1, 2 |
+| 4 | `Diagonalization/EXPCOM.lean:145` | `Turing.exists_uniformMachineCode` (erratum: the brief first said `Complexity.`) | instance of 1–2 at `oneTapeMachineFormat` (probe `uniform_one`) | 1, 2 |
 | 5 | `Diagonalization/EXPCOM.lean:201` | `Complexity.EXP_subset_POracle_EXPCOM` | one padded query (the docstring) | — |
 | 6 | `Diagonalization/EXPCOM.lean:262` | `Complexity.POracle_EXPCOM_eq_EXP` | S1210 probe; modulo the summit | 5 |
 | 7 | `Diagonalization/EXPCOM.lean:270` | `Complexity.NPOracle_EXPCOM_eq_EXP` | S1210 probe; modulo the summit | 5 |
