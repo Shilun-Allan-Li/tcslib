@@ -27,7 +27,7 @@ Theorem 4.2 (`NSPACE(S) ⊆ DTIME(2^{O(S)})`) needs the configuration-graph laye
 and is phase P4.2; the parity example of [AB09, Example 4.7] lives in
 `TCSlib.Complexity.SpaceComplexity.Examples`.
 
-## Main results (first two proved; remaining phase-P4.1 statements sorried)
+## Main results (proved)
 
 * `Complexity.DTIME_subset_SPACE` — [AB09, Theorem 4.2, first inclusion].
 * `Complexity.P_subset_PSPACE` — the polynomial corollary.
@@ -1369,6 +1369,1085 @@ private theorem b2b_setup_run (MV MI MP : FinTM Bool) (x : List Bool) (Q t s : �
       rw [heq, MultiTapeTM.runFrom_add, hB, h₄bound _ (by omega)]
       simp only [abs_zero]; omega
 
+/-- The shared trial's three word tapes, with blank banks and empty physical
+output. The two displaced heads are the buffer and verdict heads; the
+certificate head and all bank heads are at their origins. -/
+private def b2b_trialCfg {S : Type} {x : List Bool} (MV MI MP : FinTM Bool)
+    (q : S) (p : Fin (x.length + 2)) (u y z : List Bool) (bp cp : ℤ) :
+    Cfg (b2b_tapeCount MV.k MI.k MP.k) Bool S x :=
+  { Cfg.init (k := b2b_tapeCount MV.k MI.k MP.k) q x with
+    inputPos := p,
+    workTapes := fun j => if j = b2b_wordTape MV.k MI.k MP.k 0 then
+      FinTM.bufferTape u else if j = b2b_wordTape MV.k MI.k MP.k 1 then
+      FinTM.bufferTape y else if j = b2b_wordTape MV.k MI.k MP.k 2 then
+      FinTM.bufferTape z else fun _ => none,
+    workTapePos := fun j => if j = b2b_wordTape MV.k MI.k MP.k 1 then bp
+      else if j = b2b_wordTape MV.k MI.k MP.k 2 then cp else 0 }
+
+/-- The identity phase silently installs the native input in the trial buffer,
+leaving the certificate intact and the identity bank clean.
+
+**Proof sketch.** Instantiate the existing clean-capture theorem with the
+identity bank and the buffer tape. The existing capture-shape identity gives
+both seams. Its trajectory bounds the buffer by the input length and the
+selected bank by the identity machine's constant space bound. -/
+private theorem b2b_trial_capture (MV MI MP : FinTM Bool) (x u : List Bool)
+    (t s : ℕ) (ht : MI.ComputesInTime x x t)
+    (hs : MI.tm.spaceUsed (MI.tm.initCfg x) t ≤ s) :
+    let E := b2b_testPhases MV MI MP .identity
+    let d := b2b_trialCfg MV MI MP (Sum.inl (LogProg.CleanSt.init MI.tm.q₀) :
+      b2b_testState MV MI .identity) (x := x) 1 u [] [] 0 0
+    ∃ T : ℕ, ∃ p : Fin (x.length + 2),
+      E.runFrom d T = b2b_trialCfg MV MI MP (Sum.inr ()) p u x [] x.length 0 ∧
+      (∀ r < T, (E.runFrom d r).state ≠ some (Sum.inr ())) ∧
+      ∀ r ≤ T, ∀ j, |(E.runFrom d r).workTapePos j| ≤ (x.length + s : ℕ) := by
+  classical
+  dsimp only
+  let K := b2b_tapeCount MV.k MI.k MP.k
+  let U := b2b_wordTape MV.k MI.k MP.k 0
+  let BUF := b2b_wordTape MV.k MI.k MP.k 1
+  let CAP := b2b_wordTape MV.k MI.k MP.k 2
+  let ι := b2b_bankEmb (3 + (MV.k + MV.k)) (MI.k + MI.k) K
+    (by dsimp [K, b2b_tapeCount]; omega)
+  let tapes : Fin K → ℤ → Option Bool := fun j =>
+    if j = U then FinTM.bufferTape u else fun _ => none
+  have hcap : BUF ∉ Set.range ι := by
+    rintro ⟨a, ha⟩
+    have := congrArg Fin.val ha
+    dsimp [ι, BUF, b2b_bankEmb, b2b_wordTape] at this
+    omega
+  have hbank : ∀ a, tapes (ι a) = fun _ => none := by
+    intro a
+    have hn : ι a ≠ U := by
+      intro ha
+      have := congrArg Fin.val ha
+      dsimp [ι, U, b2b_bankEmb, b2b_wordTape] at this
+      omega
+    simp [tapes, hn]
+  let N := LogProg.cleanTM MI.tm MI.tm.q₀
+  let c₀ : Cfg (MI.k + MI.k) Bool (LogProg.CleanSt MI.State MI.k) x :=
+    Cfg.init (.init MI.tm.q₀) x
+  have hshape (p : Fin (x.length + 2)) (y : List Bool) :
+      embedSilentCfg ι BUF tapes (fun _ => 0) [] []
+        { c₀ with inputPos := p, output := y } =
+      b2b_trialCfg MV MI MP (LogProg.CleanSt.init MI.tm.q₀) p u y [] y.length 0 := by
+    rw [b2b_capture_shape N ι BUF hcap tapes hbank]
+    apply Cfg.ext <;> try rfl
+    · funext j
+      by_cases hbuf : j = BUF
+      · subst j
+        simp [b2b_trialCfg, tapes, BUF, U, b2b_wordTape]
+      · simp only [Function.update_of_ne hbuf]
+        simp [b2b_trialCfg, tapes, BUF, U, hbuf]
+    · funext j
+      by_cases hbuf : j = BUF
+      · subst j
+        simp [b2b_trialCfg, BUF]
+      · simp [b2b_trialCfg, BUF, hbuf]
+  obtain ⟨T, p, he, hcut, _, hb⟩ :=
+    b2b_clean_capture MI ι BUF hcap tapes (fun _ => 0) x x t s ht hs
+  have hstart : (embedSilentCfg ι BUF tapes (fun _ => 0) [] [] c₀).mapState Sum.inl =
+      b2b_trialCfg MV MI MP (Sum.inl (LogProg.CleanSt.init MI.tm.q₀) :
+        b2b_testState MV MI .identity) (x := x) 1 u [] [] 0 0 := by
+    have hh := hshape 1 []
+    change embedSilentCfg ι BUF tapes (fun _ => 0) [] [] c₀ = _ at hh
+    rw [hh]
+    rfl
+  have hend : { embedSilentCfg ι BUF tapes (fun _ => 0) [] []
+      { c₀ with inputPos := p, output := x } with state := some (Sum.inr ()) } =
+      b2b_trialCfg MV MI MP (Sum.inr () : b2b_testState MV MI .identity)
+        p u x [] x.length 0 := by
+    rw [hshape]
+    rfl
+  rw [hstart, hend] at he
+  rw [hstart] at hcut hb
+  refine ⟨T, p, he, hcut, ?_⟩
+  intro r hr j
+  have hh := hb r hr j
+  split_ifs at hh with hj hj'
+  · have hmem := Finset.mem_Icc.mp hh
+    exact abs_le.mpr ⟨by omega, by omega⟩
+  · exact hh.trans (by omega)
+  · rw [hh]
+    positivity
+
+/-- The silent virtual call uses the trial buffer and verifier bank, while the
+certificate stays in the frame. This identifies both call seams, including
+the captured singleton and the buffer head's return to zero.
+
+**Proof sketch.** Split host tapes into the virtual buffer, selected verifier
+bank, capture tape and unselected frame. Use the public selected projections
+and frame theorem; the two special heads are the virtual input position minus
+one and the length of the captured output. -/
+private theorem b2b_call_shape (MV MI MP : FinTM Bool) {x y : List Bool}
+    (u : List Bool) (p : Fin (x.length + 2))
+    (c : Cfg (MV.k + MV.k) Bool
+      ((B2bRewindState ⊕ Unit) ⊕
+        ((LogProg.CleanSt MV.State MV.k ⊕ Unit) ⊕ B2bRewindState)) y)
+    (ht : c.workTapes = fun _ _ => none) (hh : c.workTapePos = fun _ => 0) (b : Bool) :
+    embedSilentCfg (b2b_callEmb MV.k MI.k MP.k) (b2b_wordTape MV.k MI.k MP.k 2)
+      (b2b_trialCfg MV MI MP () p u [] [] 0 0).workTapes (fun _ => 0) [] []
+      (vhostCfg c b p []) =
+    { b2b_trialCfg MV MI MP ((b2b_hostedSource MV).q₀, b) p u y c.output
+        ((c.inputPos.val : ℤ) - 1) c.output.length with
+      state := c.state.map (fun q => (q, b)) } := by
+  classical
+  let ι := b2b_callEmb MV.k MI.k MP.k
+  let CAP := b2b_wordTape MV.k MI.k MP.k 2
+  let BUF := b2b_wordTape MV.k MI.k MP.k 1
+  let tapes := (b2b_trialCfg MV MI MP () p u [] [] 0 0).workTapes
+  let d := vhostCfg c b p []
+  have hcap : CAP ∉ Set.range ι := by
+    rintro ⟨a, ha⟩
+    have he := congrArg Fin.val ha
+    dsimp [ι, CAP, b2b_callEmb, b2b_wordTape] at he
+    split_ifs at he <;> omega
+  have hbuf : ι (vhostBuffer (MV.k + MV.k)) = BUF := by
+    apply Fin.ext
+    rfl
+  have hbank (a : Fin (MV.k + MV.k)) :
+      ι (vhostBank a) ≠ b2b_wordTape MV.k MI.k MP.k 0 ∧
+      ι (vhostBank a) ≠ BUF ∧ ι (vhostBank a) ≠ CAP := by
+    refine ⟨?_, ?_, ?_⟩ <;> intro heq
+    all_goals
+      have he := congrArg Fin.val heq
+      dsimp [ι, BUF, CAP, b2b_callEmb, b2b_wordTape, vhostBank] at he
+      split_ifs at he <;> omega
+  apply Cfg.ext <;> try rfl
+  · funext j
+    change (embedSilentCfg ι CAP tapes (fun _ => 0) [] [] d).workTapes j = _
+    by_cases hsel : j ∈ Set.range ι
+    · obtain ⟨a, rfl⟩ := hsel
+      rw [embedSilentCfg_selected_tape]
+      refine Fin.addCases (fun a => ?_) (fun a => ?_) a
+      · have ha : a = 0 := Subsingleton.elim _ _
+        subst a
+        change FinTM.bufferTape y = _
+        change FinTM.bufferTape y =
+          (b2b_trialCfg MV MI MP ((b2b_hostedSource MV).q₀, b) p u y c.output
+            ((c.inputPos.val : ℤ) - 1) c.output.length).workTapes
+              (ι (vhostBuffer (MV.k + MV.k)))
+        rw [hbuf]
+        simp [b2b_trialCfg, BUF, b2b_wordTape]
+      · have ha := hbank a
+        dsimp only [BUF, CAP, vhostBank] at ha
+        simp only [d, vhostCfg, Fin.addCases_right, ht]
+        simp [b2b_trialCfg, ha.1, ha.2.1, ha.2.2]
+    · by_cases hc : j = CAP
+      · subst j
+        simp only [embedSilentCfg]
+        split
+        · rename_i a ha
+          have hfind := List.find?_some (p := fun a => decide (ι a = CAP)) ha
+          exact False.elim (hcap ⟨a, of_decide_eq_true hfind⟩)
+        · simp [d, vhostCfg, b2b_trialCfg, CAP, b2b_wordTape]
+      · have hjb : j ≠ BUF := by
+          intro hj
+          exact hsel ⟨vhostBuffer _, hbuf.trans hj.symm⟩
+        have hf : (embedSilentCfg ι CAP tapes (fun _ => 0) [] [] d).workTapes j = tapes j := by
+          simpa only [MultiTapeTM.runFrom_zero] using
+            ((embedSilentTM_frame ι CAP hcap (vhostEmitTM (b2b_hostedSource MV))
+              tapes (fun _ => 0) [] [] d 0).1 j hsel hc).1
+        rw [hf]
+        dsimp only [BUF, CAP] at hjb hc
+        simp [tapes, b2b_trialCfg, hjb, hc]
+  · funext j
+    change (embedSilentCfg ι CAP tapes (fun _ => 0) [] [] d).workTapePos j = _
+    by_cases hsel : j ∈ Set.range ι
+    · obtain ⟨a, rfl⟩ := hsel
+      rw [embedSilentCfg_selected_pos]
+      refine Fin.addCases (fun a => ?_) (fun a => ?_) a
+      · have ha : a = 0 := Subsingleton.elim _ _
+        subst a
+        change (c.inputPos.val : ℤ) - 1 = _
+        change (c.inputPos.val : ℤ) - 1 =
+          (b2b_trialCfg MV MI MP ((b2b_hostedSource MV).q₀, b) p u y c.output
+            ((c.inputPos.val : ℤ) - 1) c.output.length).workTapePos
+              (ι (vhostBuffer (MV.k + MV.k)))
+        rw [hbuf]
+        simp [b2b_trialCfg, BUF]
+      · have ha := hbank a
+        dsimp only [BUF, CAP, vhostBank] at ha
+        simp only [d, vhostCfg, Fin.addCases_right, hh]
+        simp [b2b_trialCfg, ha.2.1, ha.2.2]
+    · by_cases hc : j = CAP
+      · subst j
+        simp only [embedSilentCfg]
+        split
+        · rename_i a ha
+          have hfind := List.find?_some (p := fun a => decide (ι a = CAP)) ha
+          exact False.elim (hcap ⟨a, of_decide_eq_true hfind⟩)
+        · simp [d, vhostCfg, b2b_trialCfg, CAP, b2b_wordTape]
+      · have hjb : j ≠ BUF := by
+          intro hj
+          exact hsel ⟨vhostBuffer _, hbuf.trans hj.symm⟩
+        have hf : (embedSilentCfg ι CAP tapes (fun _ => 0) [] [] d).workTapePos j = 0 := by
+          simpa only [MultiTapeTM.runFrom_zero] using
+            ((embedSilentTM_frame ι CAP hcap (vhostEmitTM (b2b_hostedSource MV))
+              tapes (fun _ => 0) [] [] d 0).1 j hsel hc).2
+        rw [hf]
+        dsimp only [BUF, CAP] at hjb hc
+        simp [b2b_trialCfg, hjb, hc]
+
+/-- The shared verifier phase captures its one bit, returns the buffer head to
+zero, and cleans the verifier bank, with a fixed radius throughout.
+
+**Proof sketch.** Use the proved hosted-source run at virtual position
+`|x| + 1`, take its first halt, and transport it through the public virtual
+host and silent returning embedding. The call-shape identity identifies the
+seams. Public buffer and bank trajectories give the selected-head windows;
+output-prefix monotonicity confines the capture head to zero or one. -/
+private theorem b2b_trial_call (MV MI MP : FinTM Bool) (x u : List Bool)
+    (b : Bool) (s : ℕ)
+    (hclean : LogProg.CleanRun (LogProg.cleanTM MV.tm MV.tm.q₀)
+      (LogProg.CleanSt.init MV.tm.q₀) (x ++ u) b s) :
+    let E := b2b_testPhases MV MI MP .call
+    let d := b2b_trialCfg MV MI MP
+      (Sum.inl ((b2b_hostedSource MV).q₀, true) : b2b_testState MV MI .call)
+      (x := x) 1 u (x ++ u) [] x.length 0
+    ∃ T : ℕ, E.runFrom d T =
+        b2b_trialCfg MV MI MP (Sum.inr ()) 1 u (x ++ u) [b] 0 1 ∧
+      (∀ r < T, (E.runFrom d r).state ≠ some (Sum.inr ())) ∧
+      ∀ r ≤ T, ∀ j, |(E.runFrom d r).workTapePos j| ≤ (x.length + u.length + s + 1 : ℕ) := by
+  classical
+  dsimp only
+  let D := b2b_hostedSource MV
+  let y := x ++ u
+  let p : Fin (y.length + 2) := ⟨x.length + 1, by simp [y]; omega⟩
+  let c₀ := { D.initCfg y with inputPos := p }
+  let N := vhostEmitTM D
+  let v₀ := vhostCfg c₀ true (1 : Fin (x.length + 2)) []
+  let ι := b2b_callEmb MV.k MI.k MP.k
+  let CAP := b2b_wordTape MV.k MI.k MP.k 2
+  let tapes := (b2b_trialCfg MV MI MP () (x := x) 1 u [] [] 0 0).workTapes
+  have hcap : CAP ∉ Set.range ι := by
+    rintro ⟨a, ha⟩
+    have he := congrArg Fin.val ha
+    dsimp [ι, CAP, b2b_callEmb, b2b_wordTape] at he
+    split_ifs at he <;> omega
+  have htag : FinTM.VirtualTag c₀.inputPos true := by
+    simp [FinTM.VirtualTag, c₀, p]
+  obtain ⟨t, ht, hbound⟩ := b2b_hostedSource_run MV y b s hclean p
+  obtain ⟨T, hT, hlive, hfirst⟩ := MultiTapeTM.exists_first_halt D c₀
+    (show (D.runFrom c₀ t).state = none from congrArg Cfg.state ht)
+  have hsrc : D.runFrom c₀ T = { D.initCfg y with state := none, output := [b] } :=
+    hfirst.trans ht
+  obtain ⟨tag, _, hv⟩ := vhostEmitTM_runFrom D c₀ true htag
+    (1 : Fin (x.length + 2)) [] T
+  rw [hsrc] at hv
+  have hvLive : ∀ r < T, (N.runFrom v₀ r).state ≠ none := by
+    intro r hr
+    obtain ⟨tag, _, he⟩ := vhostEmitTM_runFrom D c₀ true htag
+      (1 : Fin (x.length + 2)) [] r
+    rw [he]
+    exact fun hn => hlive r hr (Option.map_eq_none_iff.mp hn)
+  have he := embedSilentRetTM_run ι CAP hcap N tapes (fun _ => 0) [] [] v₀ T
+    (by simp [v₀, vhostCfg, c₀, MultiTapeTM.initCfg, Cfg.init]) hvLive
+    (by rw [hv]; rfl)
+  let d₀ := b2b_trialCfg MV MI MP
+    (Sum.inl (D.q₀, true) : b2b_testState MV MI .call) (x := x) 1 u y [] x.length 0
+  have hstart : (embedSilentCfg ι CAP tapes (fun _ => 0) [] [] v₀).mapState Sum.inl = d₀ := by
+    have hh := b2b_call_shape MV MI MP u (1 : Fin (x.length + 2)) c₀ rfl rfl true
+    change embedSilentCfg ι CAP tapes (fun _ => 0) [] [] v₀ = _ at hh
+    rw [hh]
+    simp [d₀, b2b_trialCfg, Cfg.mapState, c₀, MultiTapeTM.initCfg, Cfg.init, p]
+  have hend : { embedSilentCfg ι CAP tapes (fun _ => 0) [] [] (N.runFrom v₀ T) with
+      state := some (Sum.inr ()) } =
+      b2b_trialCfg MV MI MP (Sum.inr () : b2b_testState MV MI .call)
+        (x := x) 1 u y [b] 0 1 := by
+    rw [hv, b2b_call_shape MV MI MP u 1 _ rfl rfl tag]
+    simp [b2b_trialCfg, MultiTapeTM.initCfg, Cfg.init]
+  have hrun := he.2.1
+  rw [hstart, hend] at hrun
+  have hcut := he.2.2
+  rw [hstart] at hcut
+  refine ⟨T, hrun, hcut, ?_⟩
+  intro r hr j
+  have hheads : ((embedSilentRetTM ι CAP N).runFrom d₀ r).workTapePos =
+      (embedSilentCfg ι CAP tapes (fun _ => 0) [] [] (N.runFrom v₀ r)).workTapePos := by
+    rw [← hstart]
+    rcases lt_or_eq_of_le hr with hr' | rfl
+    · rw [he.1 r hr']; rfl
+    · rw [he.2.1]
+  change |((embedSilentRetTM ι CAP N).runFrom d₀ r).workTapePos j| ≤ _
+  rw [hheads]
+  by_cases hsel : j ∈ Set.range ι
+  · obtain ⟨a, rfl⟩ := hsel
+    rw [embedSilentCfg_selected_pos]
+    refine Fin.addCases (fun a => ?_) (fun a => ?_) a
+    · have ha : a = 0 := Subsingleton.elim _ _
+      subst a
+      have hb := vhostCfg_buffer_head_mem D c₀ true htag
+        (1 : Fin (x.length + 2)) [] r
+      have hm := Finset.mem_Icc.mp hb
+      change -1 ≤ (N.runFrom v₀ r).workTapePos (vhostBuffer (MV.k + MV.k)) ∧
+        (N.runFrom v₀ r).workTapePos (vhostBuffer (MV.k + MV.k)) ≤ (y.length : ℤ) at hm
+      change |(N.runFrom v₀ r).workTapePos (vhostBuffer (MV.k + MV.k))| ≤ _
+      simp only [y, List.length_append, Nat.cast_add] at hm
+      exact abs_le.mpr ⟨by omega, by omega⟩
+    · have hm : (N.runFrom v₀ r).workTapePos (vhostBank a) ∈
+          N.visitedByTapeHead v₀ T (vhostBank a) :=
+        Finset.mem_image.mpr ⟨r, Finset.mem_range.mpr (by omega), rfl⟩
+      rw [vhostEmitTM_visitedByTapeHead_bank D c₀ true htag] at hm
+      obtain ⟨v, hv', hpos⟩ := Finset.mem_image.mp hm
+      have hvT : v ≤ T := by have := Finset.mem_range.mp hv'; omega
+      change |(N.runFrom v₀ r).workTapePos (vhostBank a)| ≤ _
+      rw [← hpos]
+      exact (hbound v (hvT.trans hT) a).trans (by omega)
+  · by_cases hj : j = CAP
+    · subst j
+      have hp : (embedSilentCfg ι CAP tapes (fun _ => 0) [] []
+          (N.runFrom v₀ r)).workTapePos CAP = ((N.runFrom v₀ r).output.length : ℤ) := by
+        simp only [embedSilentCfg]
+        split
+        · rename_i a ha
+          have hf := List.find?_some (p := fun a => decide (ι a = CAP)) ha
+          exact False.elim (hcap ⟨a, of_decide_eq_true hf⟩)
+        · simp
+      rw [hp, abs_of_nonneg (Nat.cast_nonneg _)]
+      have hout := (N.output_prefix v₀ hr).length_le
+      rw [hv] at hout
+      simp only [vhostCfg, Cfg.init, MultiTapeTM.initCfg, List.nil_append,
+        List.length_singleton] at hout
+      omega
+    · have hf := ((embedSilentTM_frame ι CAP hcap N tapes (fun _ => 0) [] []
+        (N.runFrom v₀ r) 0).1 j hsel hj).2
+      have hf' : (embedSilentCfg ι CAP tapes (fun _ => 0) [] []
+          (N.runFrom v₀ r)).workTapePos j = 0 := by
+        simpa only [MultiTapeTM.runFrom_zero] using hf
+      rw [hf']
+      positivity
+
+/-- The trial's framed copy appends the certificate to the captured native
+input, preserving its source and both origin conventions.
+
+**Proof sketch.** Apply the public framed copy at destination head `|x|`.
+The inherited concatenation identity identifies the whole destination tape,
+including the blank exterior. The public trajectory bounds both moving heads. -/
+private theorem b2b_trial_copy (MV MI MP : FinTM Bool) (x u : List Bool) :
+    let d := b2b_trialCfg MV MI MP SweepPhase.sweep (x := x) 1 u x [] x.length 0
+    let E := b2b_testPhases MV MI MP .copy
+    E.runFrom d (2 * u.length + 2) =
+        b2b_trialCfg MV MI MP SweepPhase.done 1 u (x ++ u) [] x.length 0 ∧
+      (∀ r < 2 * u.length + 2, (E.runFrom d r).state ≠ some SweepPhase.done) ∧
+      ∀ r ≤ 2 * u.length + 2, ∀ j,
+        |(E.runFrom d r).workTapePos j| ≤ (x.length + u.length + 1 : ℕ) := by
+  classical
+  dsimp only
+  let U := b2b_wordTape MV.k MI.k MP.k 0
+  let BUF := b2b_wordTape MV.k MI.k MP.k 1
+  let d := b2b_trialCfg MV MI MP SweepPhase.sweep (x := x) 1 u x [] x.length 0
+  have hne : U ≠ BUF := by simp [U, BUF, b2b_wordTape, Fin.ext_iff]
+  have hsrc : ∀ z : ℤ, -1 ≤ z → z ≤ (u.length : ℤ) →
+      d.workTapes U (d.workTapePos U + z) = FinTM.bufferTape u z := by
+    intro z _ _
+    simp [d, b2b_trialCfg, U, b2b_wordTape]
+  have hc := copyTM_run_ofCfg U BUF hne u d rfl hsrc
+  refine ⟨?_, hc.2.1, ?_⟩
+  · rw [hc.1]
+    apply Cfg.ext <;> try rfl
+    funext j z
+    by_cases hj : j = BUF
+    · subst j
+      have hcat := congrFun (b2b_buffer_concat x u) z
+      simpa [d, b2b_trialCfg, BUF, b2b_wordTape] using hcat
+    · simp [d, b2b_trialCfg, BUF, hj]
+  · intro r hr j
+    have hh := hc.2.2 j r hr
+    change |((copyTM _ U BUF).runFrom d r).workTapePos j| ≤ _
+    have hpos : 0 ≤ d.workTapePos j ∧ d.workTapePos j ≤ (x.length : ℤ) := by
+      simp only [d, b2b_trialCfg]
+      split_ifs <;> simp
+    split_ifs at hh with hj
+    · have hm := Finset.mem_Icc.mp hh
+      exact abs_le.mpr ⟨by omega, by omega⟩
+    · rw [hh, abs_of_nonneg hpos.1]
+      exact hpos.2.trans (by omega)
+
+/-- Reading the trial's captured bit erases the verdict tape and restores its
+head to zero, without changing the certificate or virtual-input buffer.
+
+**Proof sketch.** Instantiate the inherited two-step verdict trace. The only
+nonblank verdict cell is at zero, so the trace's write clears the whole tape;
+its three prefix configurations have heads zero or one. -/
+private theorem b2b_trial_verdict (MV MI MP : FinTM Bool) (x u y : List Bool) (b : Bool) :
+    let d := b2b_trialCfg MV MI MP B2bVerdictState.left (x := x) 1 u y [b] 0 1
+    let E := b2b_testPhases MV MI MP .verdict
+    E.runFrom d 2 = b2b_trialCfg MV MI MP (B2bVerdictState.done b) 1 u y [] 0 0 ∧
+      (∀ r < 2, ∀ b', (E.runFrom d r).state ≠ some (B2bVerdictState.done b')) ∧
+      ∀ r ≤ 2, ∀ j, |(E.runFrom d r).workTapePos j| ≤ (1 : ℤ) := by
+  classical
+  dsimp only
+  let CAP := b2b_wordTape MV.k MI.k MP.k 2
+  let d := b2b_trialCfg MV MI MP B2bVerdictState.left (x := x) 1 u y [b] 0 1
+  have hb : d.workTapes CAP (d.workTapePos CAP - 1) = some b := by
+    simp [d, b2b_trialCfg, CAP, b2b_wordTape, FinTM.bufferTape]
+  have ht := b2b_verdict_trace CAP d b rfl hb
+  constructor
+  · rw [ht 2 le_rfl]
+    simp only [show ¬(2 : ℕ) = 0 by decide, show ¬(2 : ℕ) = 1 by decide, ite_false]
+    apply Cfg.ext <;> try rfl
+    · funext j z
+      by_cases hj : j = CAP
+      · subst j
+        simp only [Function.update_self]
+        have hp : d.workTapePos CAP - 1 = 0 := by
+          simp [d, b2b_trialCfg, CAP, b2b_wordTape]
+        rw [hp]
+        by_cases hz : z = 0
+        · subst z
+          simp [b2b_trialCfg, CAP, b2b_wordTape]
+        · simp only [Function.update_of_ne hz]
+          simp [d, b2b_trialCfg, CAP, b2b_wordTape, FinTM.bufferTape]
+          by_cases hpos : 0 ≤ z
+          · simp [hpos]
+            omega
+          · simp [hpos]
+      · simp [d, b2b_trialCfg, CAP, hj]
+    · funext j
+      by_cases hj : j = CAP
+      · subst j
+        simp [d, b2b_trialCfg, CAP, b2b_wordTape]
+      · simp [d, b2b_trialCfg, CAP, hj]
+  · constructor
+    · intro r hr b'
+      rw [ht r (by omega)]
+      interval_cases r <;> simp [d, b2b_trialCfg, Cfg.init]
+    · intro r hr j
+      rw [ht r hr]
+      interval_cases r <;> simp [d, b2b_trialCfg, CAP, b2b_wordTape]
+      all_goals try simp only [Function.update_apply]
+      all_goals split_ifs <;> norm_num
+
+/-- One shared trial tests the certificate, without physical output, and
+finishes at its first verdict exit. Every head stays in a fixed window.
+
+**Proof sketch.** Dispatch from the anchor, compose the proved identity
+capture, native returning rewind, append copy and captured verifier call,
+and run the two-step verdict reader. The public phase-host lemma supplies
+each prefix and dispatch. Splitting at these five joins proves the exit
+avoidance and head bounds. The final live, silent configuration implies
+liveness and empty physical output at every earlier time. -/
+private theorem b2b_trial_run (MV MI MP : FinTM Bool) (x u : List Bool)
+    (b : Bool) (ti si sv : ℕ) (hi : MI.ComputesInTime x x ti)
+    (his : MI.tm.spaceUsed (MI.tm.initCfg x) ti ≤ si)
+    (hv : LogProg.CleanRun (LogProg.cleanTM MV.tm MV.tm.q₀)
+      (LogProg.CleanSt.init MV.tm.q₀) (x ++ u) b sv) :
+    let H := b2b_testTM MV MI MP
+    let d := b2b_trialCfg MV MI MP (⟨B2bTestPhase.anchor, ()⟩ :
+      Σ j, b2b_testState MV MI j) (x := x) 1 u [] [] 0 0
+    ∃ T : ℕ, 0 < T ∧
+      H.runFrom d T = b2b_trialCfg MV MI MP
+        (⟨B2bTestPhase.verdict, B2bVerdictState.done b⟩ : Σ j, b2b_testState MV MI j)
+        1 u (x ++ u) [] 0 0 ∧
+      (∀ r < T, (0 < r → (H.runFrom d r).state ≠ some ⟨.anchor, ()⟩) ∧
+        ∀ b', (H.runFrom d r).state ≠ some ⟨.verdict, B2bVerdictState.done b'⟩) ∧
+      (∀ r ≤ T, (H.runFrom d r).state ≠ none ∧ (H.runFrom d r).output = []) ∧
+      ∀ r ≤ T, ∀ j, |(H.runFrom d r).workTapePos j| ≤
+        (x.length + u.length + sv + si + 1 : ℕ) := by
+  classical
+  dsimp only
+  let H := b2b_testTM MV MI MP
+  let a := b2b_trialCfg MV MI MP () (x := x) 1 u [] [] 0 0
+  let d : Cfg (b2b_tapeCount MV.k MI.k MP.k) Bool (Σ j, b2b_testState MV MI j) x :=
+    a.mapState (Sigma.mk B2bTestPhase.anchor)
+  let i := b2b_trialCfg MV MI MP (Sum.inl (LogProg.CleanSt.init MI.tm.q₀) :
+    b2b_testState MV MI .identity) (x := x) 1 u [] [] 0 0
+  obtain ⟨I, p, hiRun, hiCut, hiHeads⟩ := b2b_trial_capture MV MI MP x u ti si hi his
+  let i' := b2b_trialCfg MV MI MP (Sum.inr () : b2b_testState MV MI .identity)
+    p u x [] x.length 0
+  let r := b2b_trialCfg MV MI MP B2bRewindState.start p u x [] x.length 0
+  let r' := b2b_trialCfg MV MI MP (Sum.inr () : b2b_testState MV MI .rewind)
+    (x := x) 1 u x [] x.length 0
+  obtain ⟨R, hrRun, hrCut, hrHeads⟩ := b2b_rewind_return r rfl
+  have hrEnd : (b2b_testPhases MV MI MP .rewind).runFrom (r.mapState Sum.inl) R = r' := by
+    rw [hrRun]
+    rfl
+  let c := b2b_trialCfg MV MI MP SweepPhase.sweep (x := x) 1 u x [] x.length 0
+  let c' := b2b_trialCfg MV MI MP SweepPhase.done (x := x) 1 u (x ++ u) [] x.length 0
+  obtain ⟨hcRun, hcCut, hcHeads⟩ := b2b_trial_copy MV MI MP x u
+  let v := b2b_trialCfg MV MI MP
+    (Sum.inl ((b2b_hostedSource MV).q₀, true) : b2b_testState MV MI .call)
+    (x := x) 1 u (x ++ u) [] x.length 0
+  let v' := b2b_trialCfg MV MI MP (Sum.inr () : b2b_testState MV MI .call)
+    (x := x) 1 u (x ++ u) [b] 0 1
+  obtain ⟨V, hvRun, hvCut, hvHeads⟩ := b2b_trial_call MV MI MP x u b sv hv
+  let z := b2b_trialCfg MV MI MP B2bVerdictState.left (x := x) 1 u (x ++ u) [b] 0 1
+  let z' := b2b_trialCfg MV MI MP (B2bVerdictState.done b) (x := x) 1 u (x ++ u) [] 0 0
+  obtain ⟨hzRun, hzCut, hzHeads⟩ := b2b_trial_verdict MV MI MP x u (x ++ u) b
+  have ha := phaseHostTM_run (b2b_testPhases MV MI MP) ⟨.anchor, ()⟩
+    (b2b_testRedirect MV MI) .anchor a a 0 rfl () rfl
+    ⟨.identity, Sum.inl (.init MI.tm.q₀)⟩ rfl (by intros; omega)
+  have hpi := phaseHostTM_run (b2b_testPhases MV MI MP) ⟨.anchor, ()⟩
+    (b2b_testRedirect MV MI) .identity i i' I hiRun (Sum.inr ()) rfl
+    ⟨.rewind, Sum.inl B2bRewindState.start⟩ rfl (by
+      intro t ht q hq
+      cases q with
+      | inl q => rfl
+      | inr q => exact False.elim (hiCut t ht (by simpa using hq)))
+  have hpr := phaseHostTM_run (b2b_testPhases MV MI MP) ⟨.anchor, ()⟩
+    (b2b_testRedirect MV MI) .rewind (r.mapState Sum.inl) r' R hrEnd (Sum.inr ()) rfl
+    ⟨.copy, SweepPhase.sweep⟩ rfl (by
+      intro t ht q hq
+      cases q with
+      | inl q => rfl
+      | inr q => exact False.elim (hrCut t ht (by simpa using hq)))
+  have hpc := phaseHostTM_run (b2b_testPhases MV MI MP) ⟨.anchor, ()⟩
+    (b2b_testRedirect MV MI) .copy c c' (2 * u.length + 2) hcRun SweepPhase.done rfl
+    ⟨.call, Sum.inl ((b2b_hostedSource MV).q₀, true)⟩ rfl (by
+      intro t ht q hq
+      cases q with
+      | sweep => rfl
+      | rewind => rfl
+      | done => exact False.elim (hcCut t ht hq))
+  have hpv := phaseHostTM_run (b2b_testPhases MV MI MP) ⟨.anchor, ()⟩
+    (b2b_testRedirect MV MI) .call v v' V hvRun (Sum.inr ()) rfl
+    ⟨.verdict, B2bVerdictState.left⟩ rfl (by
+      intro t ht q hq
+      cases q with
+      | inl q => rfl
+      | inr q => exact False.elim (hvCut t ht (by simpa using hq)))
+  have hpz (t : ℕ) : H.runFrom (z.mapState (Sigma.mk B2bTestPhase.verdict)) t =
+      ((b2b_testPhases MV MI MP .verdict).runFrom z t).mapState
+        (Sigma.mk B2bTestPhase.verdict) := by
+    apply MultiTapeTM.runFrom_mapState_of_agreeOn
+      (b2b_testPhases MV MI MP .verdict) H
+      ⟨Sigma.mk B2bTestPhase.verdict, sigma_mk_injective⟩ (fun _ => True)
+    · intro q _ inp work
+      simp [H, b2b_testTM, phaseHostTM, b2b_testRedirect]
+    · intros; trivial
+  let A := 1 + (I + 1)
+  let B := A + (R + 1)
+  let C := B + (2 * u.length + 2 + 1)
+  let F := C + (V + 1)
+  let T := F + 2
+  have h0 : H.runFrom d 1 = i.mapState (Sigma.mk B2bTestPhase.identity) := by
+    exact ha.2
+  have h1 : H.runFrom d A = (r.mapState Sum.inl).mapState (Sigma.mk B2bTestPhase.rewind) := by
+    rw [show A = 1 + (I + 1) from rfl, MultiTapeTM.runFrom_add, h0, hpi.2]
+    rfl
+  have h2 : H.runFrom d B = c.mapState (Sigma.mk B2bTestPhase.copy) := by
+    rw [show B = A + (R + 1) from rfl, MultiTapeTM.runFrom_add, h1, hpr.2]
+    rfl
+  have h3 : H.runFrom d C = v.mapState (Sigma.mk B2bTestPhase.call) := by
+    rw [show C = B + (2 * u.length + 2 + 1) from rfl, MultiTapeTM.runFrom_add, h2, hpc.2]
+    rfl
+  have h4 : H.runFrom d F = z.mapState (Sigma.mk B2bTestPhase.verdict) := by
+    rw [show F = C + (V + 1) from rfl, MultiTapeTM.runFrom_add, h3, hpv.2]
+    rfl
+  have hfinal : H.runFrom d T = z'.mapState (Sigma.mk B2bTestPhase.verdict) := by
+    rw [show T = F + 2 from rfl, MultiTapeTM.runFrom_add, h4, hpz, hzRun]
+  have hcover (t : ℕ) (ht : t ≤ T) :
+      t = 0 ∨
+      (∃ w ≤ I, t = 1 + w ∧ H.runFrom d t =
+        ((b2b_testPhases MV MI MP .identity).runFrom i w).mapState (Sigma.mk B2bTestPhase.identity)) ∨
+      (∃ w ≤ R, t = A + w ∧ H.runFrom d t =
+        ((b2b_testPhases MV MI MP .rewind).runFrom (r.mapState Sum.inl) w).mapState
+          (Sigma.mk B2bTestPhase.rewind)) ∨
+      (∃ w ≤ 2 * u.length + 2, t = B + w ∧ H.runFrom d t =
+        ((b2b_testPhases MV MI MP .copy).runFrom c w).mapState (Sigma.mk B2bTestPhase.copy)) ∨
+      (∃ w ≤ V, t = C + w ∧ H.runFrom d t =
+        ((b2b_testPhases MV MI MP .call).runFrom v w).mapState (Sigma.mk B2bTestPhase.call)) ∨
+      (∃ w ≤ 2, t = F + w ∧ H.runFrom d t =
+        ((b2b_testPhases MV MI MP .verdict).runFrom z w).mapState (Sigma.mk B2bTestPhase.verdict)) := by
+    by_cases ht0 : t = 0
+    · exact Or.inl ht0
+    right
+    by_cases htI : t ≤ 1 + I
+    · left
+      refine ⟨t - 1, by omega, by omega, ?_⟩
+      conv_lhs => rw [show t = 1 + (t - 1) by omega, MultiTapeTM.runFrom_add, h0]
+      exact hpi.1 _ (by omega)
+    right
+    by_cases htR : t ≤ A + R
+    · left
+      refine ⟨t - A, by omega, by dsimp [A]; omega, ?_⟩
+      conv_lhs => rw [show t = A + (t - A) by dsimp [A]; omega, MultiTapeTM.runFrom_add, h1]
+      exact hpr.1 _ (by omega)
+    right
+    by_cases htC : t ≤ B + (2 * u.length + 2)
+    · left
+      refine ⟨t - B, by omega, by dsimp [B]; omega, ?_⟩
+      conv_lhs => rw [show t = B + (t - B) by dsimp [B]; omega, MultiTapeTM.runFrom_add, h2]
+      exact hpc.1 _ (by omega)
+    right
+    by_cases htV : t ≤ C + V
+    · left
+      refine ⟨t - C, by omega, by dsimp [C]; omega, ?_⟩
+      conv_lhs => rw [show t = C + (t - C) by dsimp [C]; omega, MultiTapeTM.runFrom_add, h3]
+      exact hpv.1 _ (by omega)
+    right
+    refine ⟨t - F, by dsimp [T] at ht; omega, by dsimp [F]; omega, ?_⟩
+    conv_lhs => rw [show t = F + (t - F) by dsimp [F]; omega, MultiTapeTM.runFrom_add, h4, hpz]
+  refine ⟨T, by dsimp [T]; omega, hfinal, ?_, ?_, ?_⟩
+  · intro t ht
+    change (0 < t → (H.runFrom d t).state ≠ some ⟨B2bTestPhase.anchor, ()⟩) ∧
+      ∀ b', (H.runFrom d t).state ≠ some ⟨B2bTestPhase.verdict, B2bVerdictState.done b'⟩
+    rcases hcover t (by omega) with h | h | h | h | h | h
+    · subst t
+      simp [d, a, b2b_trialCfg, Cfg.init, Cfg.mapState]
+    · obtain ⟨w, hw, heq, he⟩ := h
+      rw [he]
+      simp [Cfg.mapState, Option.map_eq_some_iff]
+    · obtain ⟨w, hw, heq, he⟩ := h
+      rw [he]
+      simp [Cfg.mapState, Option.map_eq_some_iff]
+    · obtain ⟨w, hw, heq, he⟩ := h
+      rw [he]
+      simp [Cfg.mapState, Option.map_eq_some_iff]
+    · obtain ⟨w, hw, heq, he⟩ := h
+      rw [he]
+      simp [Cfg.mapState, Option.map_eq_some_iff]
+    · obtain ⟨w, hw, heq, he⟩ := h
+      rw [he]
+      constructor
+      · intro _
+        simp [Cfg.mapState, Option.map_eq_some_iff]
+      · intro b'
+        have hw' : w < 2 := by dsimp [T] at ht; omega
+        simpa [Cfg.mapState, Option.map_eq_some_iff] using hzCut w hw' b'
+  · intro t ht
+    change (H.runFrom d t).state ≠ none ∧ (H.runFrom d t).output = []
+    constructor
+    · intro hh
+      have hf := hfinal
+      rw [show T = t + (T - t) by omega, MultiTapeTM.runFrom_add,
+        MultiTapeTM.runFrom_of_halt _ hh] at hf
+      have he := congrArg Cfg.state hf
+      rw [hh] at he
+      simp [z', b2b_trialCfg, Cfg.init, Cfg.mapState] at he
+    · have ho := (H.output_prefix d ht).length_le
+      rw [hfinal] at ho
+      simpa [z', b2b_trialCfg, Cfg.init, Cfg.mapState] using ho
+  · intro t ht j
+    change |(H.runFrom d t).workTapePos j| ≤ _
+    rcases hcover t ht with h | h | h | h | h | h
+    · subst t
+      simp [d, a, b2b_trialCfg, Cfg.init, Cfg.mapState]
+      positivity
+    · obtain ⟨w, hw, _, he⟩ := h
+      rw [he]
+      exact (hiHeads w hw j).trans (by omega)
+    · obtain ⟨w, hw, _, he⟩ := h
+      rw [he]
+      change |((embedEmitRetTM (Function.Embedding.refl _) (b2b_rewindTM _)).runFrom
+        (r.mapState Sum.inl) w).workTapePos j| ≤ _
+      rw [hrHeads w hw]
+      simp only [r, b2b_trialCfg]
+      split_ifs <;> simp <;> omega
+    · obtain ⟨w, hw, _, he⟩ := h
+      rw [he]
+      exact (hcHeads w hw j).trans (by omega)
+    · obtain ⟨w, hw, _, he⟩ := h
+      rw [he]
+      exact (hvHeads w hw j).trans (by omega)
+    · obtain ⟨w, hw, _, he⟩ := h
+      rw [he]
+      exact (hzHeads w hw j).trans (by omega)
+
+/-- Rejection clears the shared buffer and advances the certificate once,
+returning to the body's anchor with blank scratch and origin heads.
+
+**Proof sketch.** Compose the public framed clear and successful increment
+contracts through the existing body phase host. Equal certificate lengths
+identify the increment's whole-tape result. Before the final dispatch every
+state is in the clear or increment phase; their public trajectories stay
+inside the buffer-length window. -/
+private theorem b2b_reject_suffix (MV MI MP : FinTM Bool) (x u v : List Bool)
+    (hsucc : incFixed u = some v) (hlen : v.length = u.length) :
+    let H := b2b_bodyTM MV MI MP
+    let d := b2b_trialCfg MV MI MP (⟨B2bBodyPhase.clear, SweepPhase.sweep⟩ :
+      Σ j, b2b_bodyState MV MI j) (x := x) 1 u (x ++ u) [] 0 0
+    ∃ T : ℕ, 0 < T ∧ H.runFrom d T =
+        b2b_trialCfg MV MI MP (⟨B2bBodyPhase.test, ⟨B2bTestPhase.anchor, ()⟩⟩ :
+          Σ j, b2b_bodyState MV MI j) 1 v [] [] 0 0 ∧
+      (∀ r < T,
+        (H.runFrom d r).state ≠ some ⟨.test, ⟨.anchor, ()⟩⟩ ∧
+        (H.runFrom d r).state ≠ some ⟨.test, ⟨.verdict, B2bVerdictState.done true⟩⟩) ∧
+      ∀ r ≤ T, ∀ j, |(H.runFrom d r).workTapePos j| ≤ (x.length + u.length + 1 : ℕ) := by
+  classical
+  dsimp only
+  let H := b2b_bodyTM MV MI MP
+  let U := b2b_wordTape MV.k MI.k MP.k 0
+  let BUF := b2b_wordTape MV.k MI.k MP.k 1
+  let y := x ++ u
+  let a := b2b_trialCfg MV MI MP SweepPhase.sweep (x := x) 1 u y [] 0 0
+  let a' := b2b_trialCfg MV MI MP SweepPhase.done (x := x) 1 u [] [] 0 0
+  let b := b2b_trialCfg MV MI MP FlagPhase.run (x := x) 1 u [] [] 0 0
+  let b' := b2b_trialCfg MV MI MP (FlagPhase.done true) (x := x) 1 v [] [] 0 0
+  let C := 2 * y.length + 2
+  let I := 2 * (u.takeWhile id).length + 2
+  let T := (C + 1) + (I + 1)
+  let d : Cfg (b2b_tapeCount MV.k MI.k MP.k) Bool (Σ j, b2b_bodyState MV MI j) x :=
+    a.mapState (Sigma.mk B2bBodyPhase.clear)
+  have hc := clearTM_run_ofCfg BUF y a rfl (by
+    intro z _ _
+    simp [a, b2b_trialCfg, BUF, b2b_wordTape])
+  have hcEnd : (b2b_bodyPhases MV MI MP .clear).runFrom a C = a' := by
+    rw [hc.1]
+    apply Cfg.ext <;> try rfl
+    funext j z
+    by_cases hj : j = BUF
+    · subst j
+      by_cases h0 : 0 ≤ z
+      · by_cases hn : z < (y.length : ℤ)
+        · simp [a, a', b2b_trialCfg, BUF, b2b_wordTape, h0, hn]
+        · have hg : y.length ≤ z.toNat := by omega
+          simp [a, a', b2b_trialCfg, BUF, b2b_wordTape, h0, hn,
+            FinTM.bufferTape]
+      · simp [a, a', b2b_trialCfg, BUF, b2b_wordTape, h0, FinTM.bufferTape]
+    · simp [a, a', b2b_trialCfg, BUF, hj]
+  have hi := incrementTM_run_succ_ofCfg U u v hsucc b rfl (by
+    intro z _ _
+    simp [b, b2b_trialCfg, U, b2b_wordTape])
+  have hiEnd : (b2b_bodyPhases MV MI MP .increment).runFrom b I = b' := by
+    rw [hi.1]
+    apply Cfg.ext <;> try rfl
+    funext j z
+    by_cases hj : j = U
+    · subst j
+      by_cases h0 : 0 ≤ z
+      · by_cases hn : z < (u.length : ℤ)
+        · simp [b, b', b2b_trialCfg, U, b2b_wordTape, h0, hn]
+        · have hu : u.length ≤ z.toNat := by omega
+          have hv : v.length ≤ z.toNat := by omega
+          simp [b, b', b2b_trialCfg, U, b2b_wordTape, h0, hn,
+            FinTM.bufferTape, List.getElem?_eq_none hv]
+      · simp [b, b', b2b_trialCfg, U, b2b_wordTape, h0, FinTM.bufferTape]
+    · simp [b, b', b2b_trialCfg, U, hj]
+  have pc := phaseHostTM_run (b2b_bodyPhases MV MI MP)
+    ⟨.test, ⟨.anchor, ()⟩⟩ (b2b_bodyRedirect MV MI) .clear a a' C hcEnd SweepPhase.done rfl
+    ⟨.increment, FlagPhase.run⟩ rfl (by
+      intro r hr q hq
+      cases q with
+      | sweep => rfl
+      | rewind => rfl
+      | done => exact False.elim (hc.2.1 r hr hq))
+  have pi := phaseHostTM_run (b2b_bodyPhases MV MI MP)
+    ⟨.test, ⟨.anchor, ()⟩⟩ (b2b_bodyRedirect MV MI) .increment b b' I hiEnd (FlagPhase.done true) rfl
+    ⟨.test, ⟨.anchor, ()⟩⟩ rfl (by
+      intro r hr q hq
+      cases q with
+      | run => rfl
+      | rewind b => rfl
+      | done b => exact False.elim (hi.2.1 r hr b hq))
+  have hmid : H.runFrom d (C + 1) = b.mapState (Sigma.mk B2bBodyPhase.increment) := pc.2
+  have hfinal : H.runFrom d T =
+      b2b_trialCfg MV MI MP (⟨B2bBodyPhase.test, ⟨B2bTestPhase.anchor, ()⟩⟩ :
+        Σ j, b2b_bodyState MV MI j) (x := x) 1 v [] [] 0 0 := by
+    rw [show T = (C + 1) + (I + 1) from rfl, MultiTapeTM.runFrom_add, hmid, pi.2]
+    rfl
+  have hcover (r : ℕ) (hr : r < T) :
+      (∃ t ≤ C, H.runFrom d r =
+        ((b2b_bodyPhases MV MI MP .clear).runFrom a t).mapState (Sigma.mk B2bBodyPhase.clear)) ∨
+      (∃ t ≤ I, H.runFrom d r =
+        ((b2b_bodyPhases MV MI MP .increment).runFrom b t).mapState (Sigma.mk B2bBodyPhase.increment)) := by
+    by_cases hpre : r ≤ C
+    · exact Or.inl ⟨r, hpre, pc.1 r hpre⟩
+    · right
+      refine ⟨r - (C + 1), by dsimp [T] at hr; omega, ?_⟩
+      conv_lhs => rw [show r = (C + 1) + (r - (C + 1)) by omega,
+        MultiTapeTM.runFrom_add, hmid]
+      exact pi.1 _ (by dsimp [T] at hr; omega)
+  refine ⟨T, by dsimp [T]; omega, hfinal, ?_, ?_⟩
+  · intro r hr
+    change (H.runFrom d r).state ≠ some ⟨B2bBodyPhase.test, ⟨B2bTestPhase.anchor, ()⟩⟩ ∧
+      (H.runFrom d r).state ≠ some ⟨B2bBodyPhase.test, ⟨B2bTestPhase.verdict, B2bVerdictState.done true⟩⟩
+    rcases hcover r hr with ⟨t, _, he⟩ | ⟨t, _, he⟩ <;>
+      rw [he] <;> simp [Cfg.mapState, Option.map_eq_some_iff]
+  · intro r hr j
+    change |(H.runFrom d r).workTapePos j| ≤ _
+    rcases lt_or_eq_of_le hr with hr' | rfl
+    · rcases hcover r hr' with ⟨t, ht, he⟩ | ⟨t, ht, he⟩
+      · rw [he]
+        have hh := hc.2.2 j t ht
+        change |((clearTM _ BUF).runFrom a t).workTapePos j| ≤ _
+        have hz : a.workTapePos j = 0 := by simp [a, b2b_trialCfg]
+        rw [hz] at hh
+        split_ifs at hh
+        · have hm := Finset.mem_Icc.mp hh
+          simp only [y, List.length_append, Nat.cast_add] at hm
+          exact abs_le.mpr ⟨by omega, by omega⟩
+        · rw [hh]; positivity
+      · rw [he]
+        have hh := hi.2.2 j t ht
+        change |((incrementTM _ U).runFrom b t).workTapePos j| ≤ _
+        have hz : b.workTapePos j = 0 := by simp [b, b2b_trialCfg]
+        rw [hz] at hh
+        have hw := (List.takeWhile_sublist (p := id) (l := u)).length_le
+        split_ifs at hh
+        · have hm := Finset.mem_Icc.mp hh
+          exact abs_le.mpr ⟨by omega, by omega⟩
+        · rw [hh]; positivity
+    · rw [hfinal]
+      simp only [b2b_trialCfg, ite_self, abs_zero]
+      positivity
+
+/-- A counted round uses the shared trial once: acceptance reaches the escape
+anchor, while rejection clears the buffer and returns with the successor
+certificate. No interior state is either loop anchor.
+
+**Proof sketch.** Transfer the shared trial into the body's test phase using
+public machine agreement. On rejection use the public phase dispatch and the
+proved clear/increment suffix. A prefix split proves the same fixed radius
+for both outcomes. The final live configuration excludes earlier halting. -/
+private theorem b2b_round_run (MV MI MP : FinTM Bool) (x u v : List Bool)
+    (b : Bool) (ti si sv : ℕ) (hi : MI.ComputesInTime x x ti)
+    (his : MI.tm.spaceUsed (MI.tm.initCfg x) ti ≤ si)
+    (hv : LogProg.CleanRun (LogProg.cleanTM MV.tm MV.tm.q₀)
+      (LogProg.CleanSt.init MV.tm.q₀) (x ++ u) b sv)
+    (hsucc : incFixed u = some v) (hlen : v.length = u.length) :
+    let H := b2b_bodyTM MV MI MP
+    let a : Σ j, b2b_bodyState MV MI j := ⟨.test, ⟨.anchor, ()⟩⟩
+    let e : Σ j, b2b_bodyState MV MI j := ⟨.test, ⟨.verdict, B2bVerdictState.done true⟩⟩
+    let d := b2b_trialCfg MV MI MP a (x := x) 1 u [] [] 0 0
+    ∃ T : ℕ, 0 < T ∧ H.runFrom d T =
+        (if b then b2b_trialCfg MV MI MP e 1 u (x ++ u) [] 0 0
+         else b2b_trialCfg MV MI MP a 1 v [] [] 0 0) ∧
+      (∀ r, 0 < r → r < T → ∃ q, (H.runFrom d r).state = some q ∧ q ≠ a ∧ q ≠ e) ∧
+      ∀ r ≤ T, ∀ j, |(H.runFrom d r).workTapePos j| ≤
+        (x.length + u.length + sv + si + 1 : ℕ) := by
+  classical
+  dsimp only
+  let H := b2b_bodyTM MV MI MP
+  let a : Σ j, b2b_bodyState MV MI j := ⟨.test, ⟨.anchor, ()⟩⟩
+  let e : Σ j, b2b_bodyState MV MI j := ⟨.test, ⟨.verdict, B2bVerdictState.done true⟩⟩
+  let c := b2b_trialCfg MV MI MP (⟨B2bTestPhase.anchor, ()⟩ : Σ j, b2b_testState MV MI j)
+    (x := x) 1 u [] [] 0 0
+  let c' := b2b_trialCfg MV MI MP (⟨B2bTestPhase.verdict, B2bVerdictState.done b⟩ :
+    Σ j, b2b_testState MV MI j) (x := x) 1 u (x ++ u) [] 0 0
+  let d := b2b_trialCfg MV MI MP a (x := x) 1 u [] [] 0 0
+  let final := if b then b2b_trialCfg MV MI MP e (x := x) 1 u (x ++ u) [] 0 0
+    else b2b_trialCfg MV MI MP a 1 v [] [] 0 0
+  suffices h : ∃ T : ℕ, 0 < T ∧ H.runFrom d T = final ∧
+      (∀ r, 0 < r → r < T → (H.runFrom d r).state ≠ some a ∧
+        (H.runFrom d r).state ≠ some e) ∧
+      ∀ r ≤ T, ∀ j, |(H.runFrom d r).workTapePos j| ≤
+        (x.length + u.length + sv + si + 1 : ℕ) by
+    obtain ⟨T, hT, he, hcut, hheads⟩ := h
+    refine ⟨T, hT, he, ?_, hheads⟩
+    intro r hr hrT
+    have hlive : (H.runFrom d r).state ≠ none := by
+      intro hh
+      have hf := he
+      rw [show T = r + (T - r) by omega, MultiTapeTM.runFrom_add,
+        MultiTapeTM.runFrom_of_halt _ hh] at hf
+      have hh' := congrArg Cfg.state hf
+      rw [hh] at hh'
+      cases b <;> simp [final, b2b_trialCfg, Cfg.init] at hh'
+    obtain ⟨q, hq⟩ := Option.ne_none_iff_exists.mp hlive
+    exact ⟨q, hq.symm, fun h => (hcut r hr hrT).1 (hq.symm.trans (congrArg some h)),
+      fun h => (hcut r hr hrT).2 (hq.symm.trans (congrArg some h))⟩
+  obtain ⟨T, hT, htRun, htCut, _, htHeads⟩ := b2b_trial_run MV MI MP x u b ti si sv hi his hv
+  have hguard (t : ℕ) (htt : t < T) (q : Σ j, b2b_testState MV MI j)
+      (hq : ((b2b_testTM MV MI MP).runFrom c t).state = some q) :
+      b2b_bodyRedirect MV MI .test q = none := by
+    rcases q with ⟨j, q⟩
+    cases j <;> try rfl
+    cases q with
+    | left => rfl
+    | read => rfl
+    | done b' =>
+      exact False.elim ((htCut t htt).2 b' hq)
+  have hprefix (t : ℕ) (htt : t ≤ T) : H.runFrom d t =
+      ((b2b_testTM MV MI MP).runFrom c t).mapState (Sigma.mk B2bBodyPhase.test) := by
+    refine MultiTapeTM.runFrom_mapState_of_agreeOn (b2b_testTM MV MI MP) H
+      ⟨(fun q => (⟨B2bBodyPhase.test, q⟩ : Σ j, b2b_bodyState MV MI j)),
+        by intro q q' h; simpa using h⟩
+      (fun q => b2b_bodyRedirect MV MI .test q = none) ?_ c t ?_
+    · intro q hq inp work
+      simp [H, b2b_bodyTM, phaseHostTM, hq, b2b_bodyPhases]
+    · intro r hr q hq
+      exact hguard r (by omega) q hq
+  cases b with
+  | true =>
+    refine ⟨T, hT, ?_, ?_, ?_⟩
+    · rw [hprefix T le_rfl, htRun]
+      rfl
+    · intro t hpos hlt
+      rw [hprefix t (by omega)]
+      have ha := (htCut t hlt).1 hpos
+      have he := (htCut t hlt).2 true
+      simpa [a, e, Cfg.mapState, Option.map_eq_some_iff] using And.intro ha he
+    · intro t ht j
+      rw [hprefix t ht]
+      exact htHeads t ht j
+  | false =>
+    have hp := phaseHostTM_run (b2b_bodyPhases MV MI MP)
+      ⟨.test, ⟨.anchor, ()⟩⟩ (b2b_bodyRedirect MV MI) .test c c' T htRun
+      ⟨.verdict, B2bVerdictState.done false⟩ rfl ⟨.clear, SweepPhase.sweep⟩ rfl hguard
+    let s := b2b_trialCfg MV MI MP (⟨B2bBodyPhase.clear, SweepPhase.sweep⟩ :
+      Σ j, b2b_bodyState MV MI j) (x := x) 1 u (x ++ u) [] 0 0
+    have hmid : H.runFrom d (T + 1) = s := hp.2
+    obtain ⟨S, hS, hsRun, hsCut, hsHeads⟩ := b2b_reject_suffix MV MI MP x u v hsucc hlen
+    refine ⟨(T + 1) + S, by omega, ?_, ?_, ?_⟩
+    · rw [MultiTapeTM.runFrom_add, hmid, hsRun]
+      rfl
+    · intro t hpos hlt
+      by_cases hpre : t < T
+      · rw [hprefix t (by omega)]
+        have ha := (htCut t hpre).1 hpos
+        have he := (htCut t hpre).2 true
+        simpa [a, e, Cfg.mapState, Option.map_eq_some_iff] using And.intro ha he
+      · by_cases htEq : t = T
+        · subst t
+          rw [hprefix T le_rfl, htRun]
+          simp [a, e, b2b_trialCfg, Cfg.mapState, Cfg.init]
+          constructor <;> intro hh <;> cases hh
+        · have heq : H.runFrom d t = H.runFrom s (t - (T + 1)) := by
+            conv_lhs => rw [show t = (T + 1) + (t - (T + 1)) by omega,
+              MultiTapeTM.runFrom_add, hmid]
+          rw [heq]
+          exact hsCut _ (by omega)
+    · intro t ht j
+      by_cases hpre : t ≤ T
+      · rw [hprefix t hpre]
+        exact htHeads t hpre j
+      · have heq : H.runFrom d t = H.runFrom s (t - (T + 1)) := by
+          conv_lhs => rw [show t = (T + 1) + (t - (T + 1)) by omega,
+            MultiTapeTM.runFrom_add, hmid]
+        rw [heq]
+        exact (hsHeads _ (by omega) j).trans (by omega)
+
+/-- The host's answer phase emits its singleton and halts in two steps,
+leaving all work heads fixed throughout.
+
+**Proof sketch.** Transfer the existing answer contract into its unredirected
+host phase. The two emission actions have zero movement on every work tape,
+so their three prefix configurations have the same work heads. -/
+private theorem b2b_finish_answer (MV MI MP : FinTM Bool) {x : List Bool} (b : Bool)
+    (c : Cfg (b2b_tapeCount MV.k MI.k MP.k + 1) Bool (Fin 2) x)
+    (hc : c.state = some 0) :
+    let H := (b2b_host MV MI MP).tm
+    let d := c.mapState (Sigma.mk (B2bHostPhase.answer b))
+    (H.runFrom d 2).state = none ∧ (H.runFrom d 2).output = c.output ++ [b] ∧
+      ∀ r ≤ 2, (H.runFrom d r).workTapePos = c.workTapePos := by
+  classical
+  dsimp only
+  let H := (b2b_host MV MI MP).tm
+  let M := b2b_answerTM (b2b_tapeCount MV.k MI.k MP.k + 1) b
+  have hp (t : ℕ) : H.runFrom (c.mapState (Sigma.mk (B2bHostPhase.answer b))) t =
+      (M.runFrom c t).mapState (Sigma.mk (B2bHostPhase.answer b)) := by
+    refine MultiTapeTM.runFrom_mapState_of_agreeOn M H
+      ⟨(fun q => (⟨B2bHostPhase.answer b, q⟩ : Σ j, b2b_hostState MV MI MP j)),
+        by intro q q' h
+           exact @sigma_mk_injective B2bHostPhase (b2b_hostState MV MI MP)
+             (B2bHostPhase.answer b) q q' h⟩ (fun _ => True) ?_ c t (by intros; trivial)
+    intro q _ inp work
+    rfl
+  obtain ⟨hh, ho⟩ := b2b_answer_run b c hc
+  refine ⟨?_, ?_, ?_⟩
+  · rw [hp]
+    simp only [Cfg.mapState, hh, Option.map_none]
+  · rw [hp]
+    exact ho
+  · intro r hr
+    rw [hp]
+    change (M.runFrom c r).workTapePos = c.workTapePos
+    have h1 : M.runFrom c 1 = { c with state := some 1, output := c.output ++ [b] } := by
+      simp [M, b2b_answerTM, MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.step, hc,
+        FinTM.emitAction, Action.apply]
+    interval_cases r
+    · rfl
+    · rw [h1]
+    · rw [MultiTapeTM.runFrom_succ_eq_step', h1]
+      simp [M, b2b_answerTM, MultiTapeTM.step, FinTM.emitAction, Action.apply]
+
+/-- After counter exhaustion the host reuses the shared trial and emits its
+answer. The counter tape is arbitrary and stays at its fixed origin.
+
+**Proof sketch.** Embed the shared trial along the first-tape bank, apply the
+public phase-host dispatch at its first verdict, and invoke the proved final
+answer phase. Selected heads follow the shared trial and the counter head is
+fixed by the embedding frame. The answer preserves those same heads. -/
+private theorem b2b_finish_last (MV MI MP : FinTM Bool) (x u : List Bool)
+    (ct : ℤ → Option Bool) (b : Bool) (ti si sv : ℕ)
+    (hi : MI.ComputesInTime x x ti) (his : MI.tm.spaceUsed (MI.tm.initCfg x) ti ≤ si)
+    (hv : LogProg.CleanRun (LogProg.cleanTM MV.tm MV.tm.q₀)
+      (LogProg.CleanSt.init MV.tm.q₀) (x ++ u) b sv) :
+    let H := (b2b_host MV MI MP).tm
+    let c := b2b_trialCfg MV MI MP (⟨B2bBodyPhase.test, ⟨B2bTestPhase.anchor, ()⟩⟩ :
+      Σ j, b2b_bodyState MV MI j) (x := x) 1 u [] [] 0 0
+    let d := (counterLoopCfg (some .done) c ct 0).mapState
+      (fun _ => (⟨B2bHostPhase.last, ⟨B2bTestPhase.anchor, ()⟩⟩ : Σ j, b2b_hostState MV MI MP j))
+    ∃ T : ℕ, (H.runFrom d T).state = none ∧ (H.runFrom d T).output = [b] ∧
+      ∀ r ≤ T, ∀ j, |(H.runFrom d r).workTapePos j| ≤
+        (x.length + u.length + sv + si + 1 : ℕ) := by
+  classical
+  dsimp only
+  let K := b2b_tapeCount MV.k MI.k MP.k
+  let H := (b2b_host MV MI MP).tm
+  let M := b2b_testTM MV MI MP
+  let c := b2b_trialCfg MV MI MP (⟨B2bTestPhase.anchor, ()⟩ : Σ j, b2b_testState MV MI j)
+    (x := x) 1 u [] [] 0 0
+  let c' := b2b_trialCfg MV MI MP (⟨B2bTestPhase.verdict, B2bVerdictState.done b⟩ :
+    Σ j, b2b_testState MV MI j) (x := x) 1 u (x ++ u) [] 0 0
+  let E := embedEmitTM Fin.castSuccEmb M
+  let d := embedEmitCfg Fin.castSuccEmb (fun _ => ct) (fun _ => 0) [] c
+  let d' := embedEmitCfg Fin.castSuccEmb (fun _ => ct) (fun _ => 0) [] c'
+  obtain ⟨T, _, hrun, hcut, _, hheads⟩ := b2b_trial_run MV MI MP x u b ti si sv hi his hv
+  have ep (t : ℕ) : E.runFrom d t =
+      embedEmitCfg Fin.castSuccEmb (fun _ => ct) (fun _ => 0) [] (M.runFrom c t) :=
+    embedEmitTM_runFrom Fin.castSuccEmb M (fun _ => ct) (fun _ => 0) [] c t
+  have he : E.runFrom d T = d' := by rw [ep, hrun]
+  have hp := phaseHostTM_run (b2b_hostPhases MV MI MP)
+    ⟨.setup, Sum.inl (.init MP.tm.q₀)⟩ (b2b_hostRedirect MV MI MP) .last d d' T he
+    ⟨.verdict, B2bVerdictState.done b⟩ rfl ⟨.answer b, (0 : Fin 2)⟩ rfl (by
+      intro t ht q hq
+      rw [ep] at hq
+      change (M.runFrom c t).state = some q at hq
+      rcases q with ⟨j, q⟩
+      cases j <;> try rfl
+      cases q with
+      | left => rfl
+      | read => rfl
+      | done b' => exact False.elim ((hcut t ht).2 b' hq))
+  let ans := d'.mapState (fun _ => (0 : Fin 2))
+  have hans := b2b_finish_answer MV MI MP b ans rfl
+  have hfinal : H.runFrom (d.mapState (Sigma.mk B2bHostPhase.last)) ((T + 1) + 2) =
+      H.runFrom (ans.mapState (Sigma.mk (B2bHostPhase.answer b))) 2 := by
+    rw [MultiTapeTM.runFrom_add, hp.2, b2b_dispatch_retag]
+    rfl
+  have hlast : Fin.last K ∉ Set.range (Fin.castSuccEmb : Fin K ↪ Fin (K + 1)) := by
+    rintro ⟨i, hi⟩
+    exact Fin.castSucc_ne_last i hi
+  have hb (t : ℕ) (ht : t ≤ T) (j : Fin (K + 1)) :
+      |(E.runFrom d t).workTapePos j| ≤ (x.length + u.length + sv + si + 1 : ℕ) := by
+    rw [ep]
+    refine Fin.lastCases ?_ (fun i => ?_) j
+    · have hf := ((embedEmitTM_frame Fin.castSuccEmb M (fun _ => ct) (fun _ => 0) []
+        (M.runFrom c t) 0).1 (Fin.last K) hlast).2
+      have hf' : (embedEmitCfg Fin.castSuccEmb (fun _ => ct) (fun _ => 0) []
+          (M.runFrom c t)).workTapePos (Fin.last K) = 0 := by
+        simpa only [MultiTapeTM.runFrom_zero] using hf
+      rw [hf']; positivity
+    · rw [show i.castSucc = Fin.castSuccEmb i from rfl, embedEmitCfg_selected_pos]
+      exact hheads t ht i
+  have hbEnd (j : Fin (K + 1)) : |ans.workTapePos j| ≤
+      (x.length + u.length + sv + si + 1 : ℕ) := by
+    have hh := hb T le_rfl j
+    rw [he] at hh
+    exact hh
+  change ∃ T', (H.runFrom (d.mapState (Sigma.mk B2bHostPhase.last)) T').state = none ∧
+    (H.runFrom (d.mapState (Sigma.mk B2bHostPhase.last)) T').output = [b] ∧
+    ∀ r ≤ T', ∀ j, |(H.runFrom (d.mapState (Sigma.mk B2bHostPhase.last)) r).workTapePos j| ≤ _
+  refine ⟨(T + 1) + 2, ?_, ?_, ?_⟩
+  · rw [hfinal]
+    exact hans.1
+  · rw [hfinal, hans.2.1]
+    rfl
+  · intro r hr j
+    by_cases hpre : r ≤ T
+    · rw [hp.1 r hpre]
+      exact hb r hpre j
+    · have heq : H.runFrom (d.mapState (Sigma.mk B2bHostPhase.last)) r =
+          H.runFrom (ans.mapState (Sigma.mk (B2bHostPhase.answer b))) (r - (T + 1)) := by
+        conv_lhs => rw [show r = (T + 1) + (r - (T + 1)) by omega,
+          MultiTapeTM.runFrom_add, hp.2, b2b_dispatch_retag]
+        rfl
+      rw [heq, hans.2.2 _ (by omega)]
+      exact hbEnd j
+
 /-- The remaining certificate search starts at the established setup seam and
 halts with its single decision bit, within fixed windows independent of the
 number of counted trials.
@@ -1383,8 +2462,9 @@ including the sole empty certificate when the width is zero. Compose with the
 answer emitter. The counter/body trajectory clauses and the shared test's
 fixed windows give the radius below, without any factor counting trials.
 
-Continuation frontier: setup is now proved by `b2b_setup_run`; this helper
-contains only the shared trial, counted loop, final trial, and answer. -/
+Status: proved (B2b fill, delivery 3). Setup is `b2b_setup_run`; this helper
+covers the shared trial (`b2b_trial_run`), the counted loop, the final trial and
+the answer. -/
 private theorem b2b_search_contract (Q e cV cI : ℕ) (V : Language Bool)
     (MV MI MP : FinTM Bool)
     (hV : ∀ y : List Bool,
@@ -1402,7 +2482,269 @@ private theorem b2b_search_contract (Q e cV cI : ℕ) (V : Language Bool)
         [MultiTapeTM.indicator {z : List Bool | ∃ u, u.length = Q ∧ z ++ u ∈ V} x] ∧
       ∀ u ≤ t, ∀ j, |(H.runFrom d u).workTapePos j| ≤
         (x.length + Q + cV * ((x.length + Q) ^ e + 1) + cI + 1 : ℕ) := by
-  sorry
+  classical
+  dsimp only
+  let K := b2b_tapeCount MV.k MI.k MP.k
+  let H := (b2b_host MV MI MP).tm
+  let B := b2b_bodyTM MV MI MP
+  let a : Σ j, b2b_bodyState MV MI j := ⟨.test, ⟨.anchor, ()⟩⟩
+  let e' : Σ j, b2b_bodyState MV MI j := ⟨.test, ⟨.verdict, B2bVerdictState.done true⟩⟩
+  let G (u : List Bool) := b2b_trialCfg MV MI MP a (x := x) 1 u [] [] 0 0
+  let A (u : List Bool) := b2b_trialCfg MV MI MP e' (x := x) 1 u (x ++ u) [] 0 0
+  let word (r : ℕ) := enumWord Q r
+  let yes (r : ℕ) := MultiTapeTM.indicator (V : Set (List Bool)) (x ++ word r)
+  let d := 2 ^ Q - 1
+  let sv := cV * ((x.length + Q) ^ e + 1)
+  let W := x.length + Q + sv + cI + 1
+  let init := G (List.replicate Q false)
+  let w := List.replicate Q true
+  let dc := counterLoopCfg (some (CounterLoopState.dec FlagPhase.run)) init (FinTM.bufferTape w) 0
+  have hpow : 1 ≤ 2 ^ Q := Nat.one_le_two_pow
+  have hclean (r : ℕ) : LogProg.CleanRun (LogProg.cleanTM MV.tm MV.tm.q₀)
+      (LogProg.CleanSt.init MV.tm.q₀) (x ++ word r) (yes r) sv := by
+    simpa only [yes, word, List.length_append, Meyer.length_enumWord] using hV (x ++ enumWord Q r)
+  have hround (r : ℕ) (hr : r < d) : ∃ T : ℕ, 0 < T ∧
+      B.runFrom (G (word r)) T = (if yes r then A (word r) else G (word (r + 1))) ∧
+      (∀ t, 0 < t → t < T → ∃ q,
+        (B.runFrom (G (word r)) t).state = some q ∧ q ≠ a ∧ q ≠ e') ∧
+      ∀ t ≤ T, ∀ j, |(B.runFrom (G (word r)) t).workTapePos j| ≤ (W : ℤ) := by
+    have hinc := Meyer.incFixed_enumWord Q r (by dsimp [d] at hr; omega)
+    have hh := b2b_round_run MV MI MP x (word r) (word (r + 1)) (yes r)
+      (cI * (x.length + 1)) cI sv (hI x) (hIs x _) (hclean r) hinc
+      (by simp [word])
+    simpa only [B, G, A, a, e', W, word, Meyer.length_enumWord] using hh
+  let duration (r : Fin d) : ℕ := Classical.choose (hround r r.isLt)
+  have duration_spec (r : Fin d) := Classical.choose_spec (hround r r.isLt)
+  have index_inj {r s : Fin d} (hc : G (word r) = G (word s)) : r = s := by
+    have hw : word r = word s := by
+      apply List.ext_getElem?
+      intro n
+      have he := congrFun (congrFun (congrArg Cfg.workTapes hc)
+        (b2b_wordTape MV.k MI.k MP.k 0)) (n : ℤ)
+      simpa [G, b2b_trialCfg, b2b_wordTape, FinTM.bufferTape] using he
+    apply Fin.ext
+    have hn := congrArg TimeHierarchy.ctrVal hw
+    rw [Meyer.ctrVal_enumWord Q r (by have := r.isLt; dsimp [d] at this; omega),
+      Meyer.ctrVal_enumWord Q s (by have := s.isLt; dsimp [d] at this; omega)] at hn
+    exact hn
+  let τ (c : Cfg K Bool (Σ j, b2b_bodyState MV MI j) x) : ℕ :=
+    if h : ∃ r : Fin d, c = G (word r) then duration (Classical.choose h) else 0
+  have τ_eq (r : Fin d) : τ (G (word r)) = duration r := by
+    have hx : ∃ s : Fin d, G (word r) = G (word s) := ⟨r, rfl⟩
+    dsimp only [τ]
+    rw [dif_pos hx]
+    exact congrArg duration (index_inj (Classical.choose_spec hx)).symm
+  have round_spec (r : ℕ) (hr : r < d) :
+      0 < τ (G (word r)) ∧
+      B.runFrom (G (word r)) (τ (G (word r))) =
+        (if yes r then A (word r) else G (word (r + 1))) ∧
+      (∀ t, 0 < t → t < τ (G (word r)) → ∃ q,
+        (B.runFrom (G (word r)) t).state = some q ∧ q ≠ a ∧ q ≠ e') ∧
+      ∀ t ≤ τ (G (word r)), ∀ j,
+        |(B.runFrom (G (word r)) t).workTapePos j| ≤ (W : ℤ) := by
+    have hh := duration_spec ⟨r, hr⟩
+    have he := τ_eq ⟨r, hr⟩
+    simpa only [he] using hh
+  have orbit (r : ℕ) (hr : r ≤ d) (hn : ∀ s < r, yes s = false) :
+      counterLoopOrbit B τ init r = G (word r) := by
+    induction r with
+    | zero =>
+      have hz := b2b_certificate_orbit Q 0 (by omega)
+      simpa only [counterLoopOrbit, Function.iterate_zero_apply, init, word] using congrArg G hz
+    | succ r ih =>
+      have hrd : r < d := by omega
+      change (fun c => B.runFrom c (τ c))^[r + 1] init = _
+      rw [Function.iterate_succ_apply']
+      change B.runFrom (counterLoopOrbit B τ init r) (τ (counterLoopOrbit B τ init r)) = _
+      rw [ih (by omega) (fun s hs => hn s (by omega)), (round_spec r hrd).2.1,
+        hn r (by omega)]
+      rfl
+  have hstart : b2b_setupCfg MV MI MP
+      (⟨B2bHostPhase.loop, CounterLoopState.dec FlagPhase.run⟩ : Σ j, b2b_hostState MV MI MP j)
+      (x := x) 1 (List.replicate Q false) w = dc.mapState (Sigma.mk B2bHostPhase.loop) := by
+    dsimp only [dc]
+    rw [counter_cfg_eq]
+    apply Cfg.ext <;> try rfl
+    · funext j z
+      refine Fin.lastCases ?_ (fun i => ?_) j
+      · simp [Cfg.mapState, b2b_setupCfg, G, init, b2b_trialCfg, Ne.symm (Fin.castSucc_ne_last _)]
+      · simp [Cfg.mapState, b2b_setupCfg, G, init, b2b_trialCfg, Fin.castSucc_inj, Fin.castSucc_ne_last]
+    · funext j
+      refine Fin.lastCases ?_ (fun i => ?_) j <;> simp [Cfg.mapState, G, init, b2b_trialCfg, b2b_setupCfg, Cfg.init]
+  rw [hstart]
+  change ∃ t, (H.runFrom (dc.mapState (Sigma.mk B2bHostPhase.loop)) t).state = none ∧
+    (H.runFrom (dc.mapState (Sigma.mk B2bHostPhase.loop)) t).output =
+      [MultiTapeTM.indicator {z : List Bool | ∃ u, u.length = Q ∧ z ++ u ∈ V} x] ∧
+    ∀ u ≤ t, ∀ j, |(H.runFrom (dc.mapState (Sigma.mk B2bHostPhase.loop)) u).workTapePos j| ≤ (W : ℤ)
+  by_cases hex : ∃ r < d, x ++ word r ∈ V
+  · let r₀ := Nat.find hex
+    have hr₀ : r₀ < d := (Nat.find_spec hex).1
+    have hy₀ : yes r₀ = true := by
+      have hm : x ++ word r₀ ∈ V := (Nat.find_spec hex).2
+      simp [yes, MultiTapeTM.indicator, hm]
+    have hbefore (r : ℕ) (hr : r < r₀) : yes r = false := by
+      have hn : x ++ word r ∉ V := by
+        intro hm
+        exact Nat.find_min hex hr ⟨by omega, hm⟩
+      simp [yes, MultiTapeTM.indicator, hn]
+    have horbit (r : ℕ) (hr : r ≤ r₀) : counterLoopOrbit B τ init r = G (word r) :=
+      orbit r (by omega) (fun s hs => hbefore s (by omega))
+    have hend : counterLoopOrbit B τ init (r₀ + 1) = A (word r₀) := by
+      change (fun c => B.runFrom c (τ c))^[r₀ + 1] init = _
+      rw [Function.iterate_succ_apply']
+      change B.runFrom (counterLoopOrbit B τ init r₀) (τ (counterLoopOrbit B τ init r₀)) = _
+      rw [horbit r₀ le_rfl, (round_spec r₀ hr₀).2.1, hy₀]
+      rfl
+    let T := (∑ r ∈ Finset.range (r₀ + 1), τ (counterLoopOrbit B τ init r)) +
+      counterOverhead w (r₀ + 1)
+    have hl := counterLoopTM_run_escape B a e' (by simp [a, e']; intro hh; cases hh) τ init
+      w (FinTM.bufferTape w) 0 (by intros; simp) r₀
+      (by simpa only [w, b2b_counter_value] using hr₀) (by
+        intro r hr
+        rw [horbit r hr]
+        exact ⟨rfl, (round_spec r (by omega)).1, (round_spec r (by omega)).2.2.1⟩)
+      (by rw [hend]; rfl) T rfl
+    let L := counterLoopTM B a (some e')
+    let ct := fun q => if (0 : ℤ) ≤ q ∧ q < 0 + (w.length : ℤ)
+      then FinTM.bufferTape (counterWord w (r₀ + 1)) (q - 0) else FinTM.bufferTape w q
+    let c' := counterLoopCfg (some CounterLoopState.escape) (A (word r₀)) ct 0
+    have he : L.runFrom dc T = c' := by
+      simpa only [hend] using hl.1
+    have hb (t : ℕ) (ht : t ≤ T) (j : Fin (K + 1)) :
+        |(L.runFrom dc t).workTapePos j| ≤ (W : ℤ) := by
+      refine Fin.lastCases ?_ (fun i => ?_) j
+      · have hh : (L.runFrom dc t).workTapePos (Fin.last K) ∈ Finset.Icc (-1) (Q : ℤ) := by
+          simpa only [w, List.length_replicate, zero_sub, zero_add] using hl.2.2.1 t ht
+        obtain ⟨hlo, hhi⟩ := Finset.mem_Icc.mp hh
+        exact abs_le.mpr ⟨by dsimp [W]; omega, by dsimp [W]; omega⟩
+      · obtain ⟨r, u, hr, hpos⟩ := hl.2.2.2 t ht
+        change |((counterLoopTM B a (some e')).runFrom dc t).workTapePos i.castSucc| ≤ _
+        rw [hpos i]
+        rcases hr with ⟨hr, hu⟩ | ⟨rfl, rfl⟩
+        · rw [horbit r hr] at hu ⊢
+          exact (round_spec r (by omega)).2.2.2 u hu i
+        · rw [hend]
+          simp only [MultiTapeTM.runFrom_zero, A, b2b_trialCfg]
+          simp only [ite_self, abs_zero]
+          positivity
+    have hp := phaseHostTM_run (b2b_hostPhases MV MI MP)
+      ⟨.setup, Sum.inl (.init MP.tm.q₀)⟩ (b2b_hostRedirect MV MI MP) .loop dc c' T he
+      CounterLoopState.escape rfl ⟨.answer true, (0 : Fin 2)⟩ rfl (by
+        intro t ht q hq
+        cases q with
+        | dec q => rfl
+        | body q => rfl
+        | done => exact False.elim ((hl.2.1 t ht).1 hq)
+        | escape => exact False.elim ((hl.2.1 t ht).2 hq))
+    let ans := c'.mapState (fun _ => (0 : Fin 2))
+    have hans := b2b_finish_answer MV MI MP true ans rfl
+    have hfinal : H.runFrom (dc.mapState (Sigma.mk B2bHostPhase.loop)) ((T + 1) + 2) =
+        H.runFrom (ans.mapState (Sigma.mk (B2bHostPhase.answer true))) 2 := by
+      rw [MultiTapeTM.runFrom_add, hp.2, b2b_dispatch_retag]
+      rfl
+    have hbEnd (j : Fin (K + 1)) : |ans.workTapePos j| ≤ (W : ℤ) := by
+      have hh := hb T le_rfl j
+      rw [he] at hh
+      exact hh
+    have hm : ∃ u, u.length = Q ∧ x ++ u ∈ V :=
+      ⟨word r₀, Meyer.length_enumWord Q r₀, (Nat.find_spec hex).2⟩
+    refine ⟨(T + 1) + 2, ?_, ?_, ?_⟩
+    · rw [hfinal]
+      exact hans.1
+    · rw [hfinal, hans.2.1]
+      simp [ans, c', counter_cfg_eq, A, b2b_trialCfg, Cfg.mapState,
+        MultiTapeTM.indicator, hm]
+    · intro t ht j
+      by_cases hpre : t ≤ T
+      · rw [hp.1 t hpre]
+        exact hb t hpre j
+      · have htEq : H.runFrom (dc.mapState (Sigma.mk B2bHostPhase.loop)) t =
+            H.runFrom (ans.mapState (Sigma.mk (B2bHostPhase.answer true))) (t - (T + 1)) := by
+          conv_lhs => rw [show t = (T + 1) + (t - (T + 1)) by omega,
+            MultiTapeTM.runFrom_add, hp.2, b2b_dispatch_retag]
+          rfl
+        rw [htEq, hans.2.2 _ (by omega)]
+        exact hbEnd j
+  · have hno (r : ℕ) (hr : r < d) : yes r = false := by
+      have hn : x ++ word r ∉ V := fun hm => hex ⟨r, hr, hm⟩
+      simp [yes, MultiTapeTM.indicator, hn]
+    have horbit (r : ℕ) (hr : r ≤ d) : counterLoopOrbit B τ init r = G (word r) :=
+      orbit r hr (fun s hs => hno s (by omega))
+    let T := (∑ r ∈ Finset.range d, τ (counterLoopOrbit B τ init r)) + counterOverhead w (d + 1)
+    have hl := counterLoopTM_run_done B a (some e') τ init w (FinTM.bufferTape w) 0
+      (by intros; simp) d (b2b_counter_value Q) (by
+        intro r hr
+        rw [horbit r (by omega), horbit (r + 1) (by omega)]
+        refine ⟨rfl, (round_spec r hr).1, ?_, rfl⟩
+        intro u hu hut
+        obtain ⟨s, hs, hsa, hse⟩ := (round_spec r hr).2.2.1 u hu hut
+        exact ⟨s, hs, hsa, fun hh => hse (Option.some.inj hh).symm⟩) T rfl
+    let L := counterLoopTM B a (some e')
+    let ct := fun q => if (0 : ℤ) ≤ q ∧ q < 0 + (w.length : ℤ)
+      then some true else FinTM.bufferTape w q
+    let c' := counterLoopCfg (some CounterLoopState.done) (G (word d)) ct 0
+    have he : L.runFrom dc T = c' := by
+      simpa only [horbit d le_rfl] using hl.1
+    have hb (t : ℕ) (ht : t ≤ T) (j : Fin (K + 1)) :
+        |(L.runFrom dc t).workTapePos j| ≤ (W : ℤ) := by
+      refine Fin.lastCases ?_ (fun i => ?_) j
+      · have hh : (L.runFrom dc t).workTapePos (Fin.last K) ∈ Finset.Icc (-1) (Q : ℤ) := by
+          simpa only [w, List.length_replicate, zero_sub, zero_add] using hl.2.2.1 t ht
+        obtain ⟨hlo, hhi⟩ := Finset.mem_Icc.mp hh
+        exact abs_le.mpr ⟨by dsimp [W]; omega, by dsimp [W]; omega⟩
+      · obtain ⟨r, u, hr, hpos⟩ := hl.2.2.2 t ht
+        change |((counterLoopTM B a (some e')).runFrom dc t).workTapePos i.castSucc| ≤ _
+        rw [hpos i]
+        rcases hr with ⟨hr, hu⟩ | ⟨rfl, rfl⟩
+        · rw [horbit r (by omega)] at hu ⊢
+          exact (round_spec r hr).2.2.2 u hu i
+        · rw [horbit d le_rfl]
+          simp only [MultiTapeTM.runFrom_zero, G, b2b_trialCfg]
+          simp only [ite_self, abs_zero]
+          positivity
+    have hp := phaseHostTM_run (b2b_hostPhases MV MI MP)
+      ⟨.setup, Sum.inl (.init MP.tm.q₀)⟩ (b2b_hostRedirect MV MI MP) .loop dc c' T he
+      CounterLoopState.done rfl ⟨.last, ⟨.anchor, ()⟩⟩ rfl (by
+        intro t ht q hq
+        cases q with
+        | dec q => rfl
+        | body q => rfl
+        | done => exact False.elim ((hl.2.1 t ht).1 hq)
+        | escape => exact False.elim ((hl.2.1 t ht).2 hq))
+    obtain ⟨Tlast, hhalt, hout, hheads⟩ := b2b_finish_last MV MI MP x (word d) ct (yes d)
+      (cI * (x.length + 1)) cI sv (hI x) (hIs x _) (hclean d)
+    let last := c'.mapState (fun _ =>
+      (⟨B2bHostPhase.last, ⟨B2bTestPhase.anchor, ()⟩⟩ : Σ j, b2b_hostState MV MI MP j))
+    have hfinal : H.runFrom (dc.mapState (Sigma.mk B2bHostPhase.loop)) ((T + 1) + Tlast) =
+        H.runFrom last Tlast := by
+      rw [MultiTapeTM.runFrom_add, hp.2]
+      rfl
+    have hiff : (∃ u, u.length = Q ∧ x ++ u ∈ V) ↔ x ++ word d ∈ V := by
+      constructor
+      · intro hm
+        obtain ⟨r, hr, hv⟩ := (b2b_verifies_iff x V Q).mpr hm
+        have heq : r = d := by
+          by_contra hne
+          exact hex ⟨r, by dsimp [d]; omega, hv⟩
+        simpa only [heq] using hv
+      · intro hm
+        exact (b2b_verifies_iff x V Q).mp ⟨d, le_rfl, hm⟩
+    refine ⟨(T + 1) + Tlast, ?_, ?_, ?_⟩
+    · rw [hfinal]
+      exact hhalt
+    · rw [hfinal, hout]
+      simp only [yes, MultiTapeTM.indicator, Set.mem_setOf_eq, hiff]
+    · intro t ht j
+      by_cases hpre : t ≤ T
+      · rw [hp.1 t hpre]
+        exact hb t hpre j
+      · have htEq : H.runFrom (dc.mapState (Sigma.mk B2bHostPhase.loop)) t =
+            H.runFrom last (t - (T + 1)) := by
+          conv_lhs => rw [show t = (T + 1) + (t - (T + 1)) by omega,
+            MultiTapeTM.runFrom_add, hp.2]
+          rfl
+        rw [htEq]
+        simpa only [word, Meyer.length_enumWord, W] using hheads (t - (T + 1)) (by omega) j
 
 /-- The assembled host decides the exact certificate predicate within fixed windows.
 
@@ -1423,8 +2765,8 @@ them within the seven fixed windows of route H. Their common enclosing radius is
 the sum below. `Finset.card_le_card` and `Int.card_Icc`, summed over the fixed
 number of tapes, give the ledger. Only the final `b2b_answer_run` emits physically.
 
-Continuation frontier: the concrete host and component lemmas above are present;
-the composed round proof, setup proof and global trajectory proof remain open. -/
+Status: proved. Setup is `b2b_setup_run`; the search, with its counted loop over
+`b2b_round_run` and its global trajectory bound, is `b2b_search_contract`. -/
 private theorem b2b_host_contract (C c e cV cI cP : ℕ) (V : Language Bool)
     (MV MI MP : FinTM Bool)
     (hV : ∀ y : List Bool,
