@@ -1773,7 +1773,8 @@ private lemma exists_canonGuardFront (F : MachineFormat) :
     s₁.mapState (fun _ => CounterLoopState.dec FlagPhase.run)
   have startG : embedEmitCfg gb s₁.workTapes s₁.workTapePos [] g₀ = d₀ := by
     apply canonEmbedEq (binaryGuardTM (B - 1)) gb g₀ d₀ _ _ rfl
-      (Fin.ext (by simp [g₀, binaryGuardStart, counter_cfg_eq, guardCfg, d₀, s₁, p, Cfg.mapState])) rfl
+      (Fin.ext (by simp [g₀, binaryGuardStart, counter_cfg_eq, guardCfg,
+        d₀, s₁, p, Cfg.mapState])) rfl
     · intro i
       have hi : i = Fin.last 0 := Subsingleton.elim _ _
       subst i
@@ -1873,6 +1874,799 @@ private lemma exists_canonGuardFront (F : MachineFormat) :
     rw [stateU]
     split <;> rfl
 
+/-- Read and erase a singleton Boolean result at the selected work head.
+The two live exits retain the bit. This one-cell leaf is not supplied by
+the catalog's whole-word scans; composition uses the public seam host. -/
+private def canonBoolPopTM (k : ℕ) (i : Fin k) : MultiTapeTM k Bool (Option Bool) where
+  q₀ := none
+  tr := fun q _ w => match q with
+    | none => tapeAction i 0 (some none) 0 (some ((w i).getD false))
+    | some b => inputMoveAction 0 (some b)
+
+/-- The singleton result is consumed in one silent stationary transition.
+Every work tape is blank afterwards, and the native head remains home. -/
+private lemma canonBoolPop_run (k : ℕ) (positive : 0 < k) (b : Bool) (x : List Bool) :
+    (canonBoolPopTM k ⟨0, positive⟩).runFrom
+        (Cfg.ofWords (input := x) none (stateWord k [b])) 1 =
+      Cfg.ofWords (some b) (fun _ => []) := by
+  have singleton : FinTM.bufferTape [b] =
+      Function.update (fun _ : ℤ => (none : Option Bool)) 0 (some b) := by
+    simpa using FinTM.bufferTape_append ([] : List Bool) b
+  rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+  refine Cfg.ext ?_ ?_ ?_ ?_ ?_
+  all_goals
+    simp [MultiTapeTM.step, canonBoolPopTM, Cfg.ofWords, Cfg.workTapeSymbols,
+      stateWord, tapeAction, Action.apply, FinTM.bufferTape]
+  · funext j z
+    by_cases hj : j.val = 0
+    · have he : j = ⟨0, positive⟩ := Fin.ext hj
+      subst j
+      simp [singleton, Function.update_idem]
+    · simp [hj, show j ≠ ⟨0, positive⟩ from fun h => hj (congrArg Fin.val h)]
+  · funext j
+    split <;> rfl
+
+/-- Any linear-time native-input Boolean computation has a silent clean
+branch seam, with distinct exits and cuts at both exits including time zero.
+All work tapes are blank on return, and the native head is at one.
+
+**Promotion candidate.** This is a Boolean-result adapter built from the
+public input copier, the inherited strict install adapter and the one-cell
+result leaf. It is independent of machine formats.
+
+**Proof sketch.** Copy the native input to tape zero and install the singleton
+result using the strict call. The final leaf reads and erases it. Until the
+call finishes, both result exits lie in an unentered seam summand; the sole
+remaining strict-prefix instant is the leaf's entry. All three costs and
+the two dispatches are included in the linear bound. -/
+private lemma exists_canonBoolBranch (M : FinTM Bool) (p : List Bool → Bool)
+    (c : ℕ) (computes : M.ComputesFunInTime (fun x => [p x]) (fun n => c * (n + 1))) :
+    ∃ (C : FinTM Bool) (entry : C.State) (exit : Bool → C.State) (a : ℕ),
+      0 < C.k ∧ Function.Injective exit ∧
+      ∀ x : List Bool, ∃ t ≤ a * (x.length + 1),
+        (∀ u < t, ∀ b, (C.tm.runFrom
+          (Cfg.ofWords (input := x) entry (fun _ => [])) u).state ≠ some (exit b)) ∧
+        C.tm.runFrom (Cfg.ofWords (input := x) entry (fun _ => [])) t =
+          Cfg.ofWords (exit (p x)) (fun _ => []) := by
+  classical
+  obtain ⟨I, enter, leave, a, positive, install⟩ :=
+    canonStrictInstall M (fun x => [p x]) (fun n => c * (n + 1)) computes
+  let i : Fin I.k := ⟨0, positive⟩
+  let P := seamCompTM (inputCopyTM I.k i) .done I.tm enter
+  let V := canonBoolPopTM I.k i
+  let C : FinTM Bool := {
+    k := I.k
+    State := (SweepPhase ⊕ I.State) ⊕ Option Bool
+    tm := { seamCompTM P (Sum.inr leave) V none with
+      q₀ := Sum.inl (Sum.inl .sweep) } }
+  refine ⟨C, Sum.inl (Sum.inl .sweep), fun b => Sum.inr (some b),
+    a * (c + 2) + 5, positive, ?_, ?_⟩
+  · intro b d eq
+    exact Option.some.inj (Sum.inr.inj eq)
+  · intro x
+    let initial : Cfg I.k Bool SweepPhase x :=
+      Cfg.ofWords (input := x) SweepPhase.sweep (fun _ => [])
+    have copy := inputCopyTM_run_ofCfg i initial rfl rfl
+    have copied : (inputCopyTM I.k i).runFrom initial (2 * x.length + 2) =
+        Cfg.ofWords .done (stateWord I.k x) := by
+      rw [copy.1]
+      apply Cfg.ext <;> try rfl
+      funext j z
+      by_cases hj : j = i
+      · subst j
+        simp only [initial, Cfg.ofWords, stateWord, i, ↓reduceIte, zero_add, sub_zero]
+        split_ifs with hz
+        · rfl
+        · by_cases hn : 0 ≤ z
+          · have outside : ¬(0 ≤ z ∧ z < (x.length : ℤ)) := by simpa using hz
+            simp [FinTM.bufferTape, hn,
+              List.getElem?_eq_none (by omega : x.length ≤ z.toNat)]
+          · simp [FinTM.bufferTape, hn]
+      · have nz : j.val ≠ 0 := fun h => hj (Fin.ext h)
+        simp [initial, Cfg.ofWords, stateWord, hj, nz]
+    obtain ⟨t, time, _, cut, run⟩ := install x x
+    have first := seamCompTM_run_ofCfg (inputCopyTM I.k i) .done I.tm enter
+      copied rfl copy.2.1 run
+    have firstCut := seamCompTM_firstReturn_ofCfg (inputCopyTM I.k i) .done I.tm enter leave
+      copied rfl copy.2.1 run rfl cut
+    let duration := 2 * x.length + 2 + 1 + t
+    let middle := (Cfg.ofWords (input := x) leave (stateWord I.k [p x])).mapState
+      (Sum.inr : I.State → SweepPhase ⊕ I.State)
+    have pop : V.runFrom (middle.mapState (fun _ => none)) 1 =
+        Cfg.ofWords (some (p x)) (fun _ => []) := canonBoolPop_run I.k positive (p x) x
+    have whole := seamCompTM_run_ofCfg P (Sum.inr leave) V none
+      first rfl firstCut pop
+    refine ⟨duration + 1 + 1, ?_, ?_, ?_⟩
+    · simp only [List.length_cons, List.length_nil, Nat.zero_add] at time
+      have bound : t ≤ a * (c + 2) * (x.length + 1) := by
+        apply time.trans
+        rw [Nat.mul_assoc]
+        apply Nat.mul_le_mul_left a
+        rw [Nat.add_mul]
+        omega
+      dsimp only [duration]
+      rw [Nat.add_mul]
+      omega
+    · intro u hu b
+      change ((seamCompTM P (Sum.inr leave) V none).runFrom
+        ((initial.mapState Sum.inl).mapState Sum.inl) u).state ≠ some (Sum.inr (some b))
+      by_cases early : u ≤ duration
+      · rw [seamCompTM_runFrom_left P (Sum.inr leave) V none firstCut u early]
+        simp [Cfg.mapState]
+      · have atLeaf : u = duration + 1 := by omega
+        rw [atLeaf]
+        have dispatch := seamCompTM_run_ofCfg P (Sum.inr leave) V none
+          first rfl firstCut (rfl : V.runFrom (middle.mapState (fun _ => none)) 0 = _)
+        simp only [Nat.add_zero] at dispatch
+        rw [dispatch]
+        simp [middle, Cfg.mapState, Cfg.ofWords]
+    · simpa only [C, initial, duration, Cfg.ofWords, Cfg.mapState, Option.map_some] using whole
+
+/-- The total header check returns a clean live verdict, so its successful
+branch may start the existing blank-tape preparation without any cleanup. -/
+private lemma exists_canonHeaderBranch :
+    ∃ (C : FinTM Bool) (entry : C.State) (exit : Bool → C.State) (a : ℕ),
+      0 < C.k ∧ Function.Injective exit ∧
+      ∀ x : List Bool, ∃ t ≤ a * (x.length + 1),
+        (∀ u < t, ∀ b, (C.tm.runFrom
+          (Cfg.ofWords (input := x) entry (fun _ => [])) u).state ≠ some (exit b)) ∧
+        C.tm.runFrom (Cfg.ofWords (input := x) entry (fun _ => [])) t =
+          Cfg.ofWords (exit (canonHeaderOK x)) (fun _ => []) := by
+  obtain ⟨M, c, computes⟩ := exists_canonHeaderOKTM
+  exact exists_canonBoolBranch M canonHeaderOK c computes
+
+/-- A negative total header verdict has exactly the prescribed fallback
+semantics, including malformed pairs whose extracted header is empty. -/
+private lemma decode_of_canonHeader (F : MachineFormat) (x : List Bool)
+    (invalid : canonHeaderOK x = false) : F.decode x = F.fallback := by
+  apply F.decode_of_parseFull_none
+  have scan := scan_eq_none_of_canonHeaderOK F x invalid
+  rw [F.scan_full] at scan
+  exact Option.map_eq_none_iff.mp scan
+
+/-- Prefix avoidance in a public seam composition, for an arbitrary
+composite control state. Both the chosen and the unchosen branch exits can
+therefore be protected, without asserting that either is the final state.
+
+**Promotion candidate.** This is a two-segment consequence of the public
+seam run equations, not a new host or a second machine trace.
+
+**Proof sketch.** Before dispatch use the public left-prefix identity;
+after dispatch use its public run identity at the remaining time. Apply
+the corresponding supplied avoidance predicate in the two intervals. -/
+private lemma canonSeam_avoids {k : ℕ} {S R : Type} [DecidableEq S]
+    {x : List Bool} (A : MultiTapeTM k Bool S) (leave : S)
+    (B : MultiTapeTM k Bool R) (enter : R) (target : S ⊕ R)
+    {d e : Cfg k Bool S x} {t v : ℕ}
+    (run : A.runFrom d t = e) (atExit : e.state = some leave)
+    (first : ∀ u < t, (A.runFrom d u).state ≠ some leave)
+    (before : ∀ u ≤ t, ((A.runFrom d u).mapState (Sum.inl : S → S ⊕ R)).state ≠
+      some target)
+    (after : ∀ u < v,
+      ((B.runFrom (e.mapState (fun _ => enter)) u).mapState (Sum.inr : R → S ⊕ R)).state ≠
+        some target) :
+    ∀ u < t + 1 + v,
+      ((seamCompTM A leave B enter).runFrom (d.mapState Sum.inl) u).state ≠
+        some target := by
+  intro u hu
+  by_cases left : u ≤ t
+  · rw [seamCompTM_runFrom_left A leave B enter first u left]
+    exact before u left
+  · obtain ⟨r, hr⟩ : ∃ r, u = t + 1 + r := ⟨u - (t + 1), by omega⟩
+    rw [hr, seamCompTM_run_ofCfg A leave B enter run atExit first rfl]
+    exact after r (by omega)
+
+/-- Select the guard counter alone; all other live words lie in the frame. -/
+private def canonCounterBank {k : ℕ} (i : Fin k) : Fin 1 ↪ Fin k :=
+  ⟨fun _ => i, fun _ _ _ => Subsingleton.elim _ _⟩
+
+/-- The inherited physical guard on one selected counter tape, with an
+arbitrary ambient bank. No post-guard property of that counter is assumed.
+Both exit cuts and the exact frame survive the public embedding.
+
+**Proof sketch.** Identify the selected tape and native head with the
+inherited guard's preloaded start using the existing configuration assembly
+lemma. Transport its run by the public embedding equation, and project the
+public frame. The predecessor's guard proof supplies all branch semantics,
+positions, cuts and the numerical-value-independent time bound. -/
+private lemma canonGuard_onBank {k : ℕ} (i : Fin k) (F : MachineFormat)
+    (x bits rest : List Bool) (pair : pairDecode x = some (bits, rest))
+    (d : Cfg k Bool (CounterLoopState (Option (Fin (canonGuardBlock F - 1 + 1)))) x)
+    (control : d.state = some (.dec .run))
+    (position : d.inputPos.val = 2 * bits.length + 3)
+    (counter : d.workTapes i = FinTM.bufferTape (canonCount bits))
+    (home : d.workTapePos i = 0) (silent : d.output = []) :
+    let G := embedEmitTM (canonCounterBank i) (binaryGuardTM (canonGuardBlock F - 1))
+    ∃ t ≤ (canonGuardBlock F + 6) * (x.length + 1),
+      let e := G.runFrom d t
+      e.state = some (if canonGuardBlock F * (codeBitsNat bits + 1) ≤ rest.length
+        then .done else .escape) ∧ e.output = [] ∧
+      e.inputPos.val = (if canonGuardBlock F * (codeBitsNat bits + 1) ≤ rest.length
+        then 2 * bits.length + 3 + canonGuardBlock F * (codeBitsNat bits + 1)
+        else x.length + 1) ∧
+      (∀ u < t, (G.runFrom d u).state ≠ some .done ∧
+        (G.runFrom d u).state ≠ some .escape) ∧
+      ∀ j, j ≠ i → e.workTapes j = d.workTapes j ∧ e.workTapePos j = d.workTapePos j := by
+  obtain ⟨hpos, elapsed, budget, finish, output, native, cuts⟩ := canonGuard_run F x bits rest pair
+  let src := binaryGuardStart (canonGuardBlock F - 1) x (2 * bits.length + 2) hpos []
+    (canonCount bits)
+  have identified : embedEmitCfg (canonCounterBank i) d.workTapes d.workTapePos [] src = d := by
+    apply canonEmbedEq (binaryGuardTM (canonGuardBlock F - 1)) (canonCounterBank i)
+      src d _ _ control.symm (Fin.ext (by simpa [src, binaryGuardStart,
+        counter_cfg_eq, guardCfg, Nat.add_assoc] using position.symm)) silent.symm
+    · intro j
+      have last : j = Fin.last 0 := Subsingleton.elim _ _
+      subst j
+      simp only [src, binaryGuardStart, counter_cfg_eq, Fin.lastCases_last]
+      exact ⟨counter.symm, home.symm⟩
+    · exact fun _ _ => ⟨rfl, rfl⟩
+  have transported (u : ℕ) :
+      (embedEmitTM (canonCounterBank i) (binaryGuardTM (canonGuardBlock F - 1))).runFrom d u =
+        embedEmitCfg (canonCounterBank i) d.workTapes d.workTapePos []
+          ((binaryGuardTM (canonGuardBlock F - 1)).runFrom src u) := by
+    conv_lhs => rw [← identified]
+    exact embedEmitTM_runFrom _ _ _ _ _ _ u
+  have length : bits.length ≤ x.length := by
+    have loaded := canonHeader_length x
+    simpa [canonHeader, pair] using loaded
+  refine ⟨elapsed, ?_, ?_, ?_, ?_, ?_, ?_⟩
+  · simp only [Nat.add_mul] at budget ⊢
+    omega
+  · rw [transported]
+    exact finish
+  · rw [transported]
+    exact output
+  · rw [transported]
+    change ((binaryGuardTM (canonGuardBlock F - 1)).runFrom src elapsed).inputPos.val = _
+    change ((binaryGuardTM (canonGuardBlock F - 1)).runFrom src elapsed).inputPos.val = _ at native
+    split_ifs at native ⊢ <;> omega
+  · intro u hu
+    rw [transported]
+    exact cuts u hu
+  · intro j hj
+    have notSelected : j ∉ Set.range (canonCounterBank i) := by
+      rintro ⟨q, eq⟩
+      exact hj eq.symm
+    have frame := (embedEmitTM_frame (canonCounterBank i)
+      (binaryGuardTM (canonGuardBlock F - 1)) d.workTapes d.workTapePos [] src elapsed).1
+        j notSelected
+    rw [identified] at frame
+    exact frame
+
+/-- From the prepared bank, seek to the remainder, run the inherited guard
+on tape one, and seek back on success. Both final ports have strict cuts;
+the header, saved address and every non-counter tape are preserved.
+
+**Proof sketch.** Use the public seek contract twice, with the framed guard
+between them. The success branch dispatches to the second seek; the failure
+branch stops before that dispatch. The arbitrary-target seam cut protects
+both ports in either case. A second public seam attaches the first seek.
+All seeks, guard work and dispatches are charged to a linear bound. -/
+private lemma exists_canonGuardReady (F : MachineFormat) (k : ℕ) (hk : 4 ≤ k) :
+    ∃ (S : Type) (_ : Fintype S) (_ : DecidableEq S)
+      (C : MultiTapeTM k Bool S) (entry : S) (exit : Bool → S) (a : ℕ),
+      Function.Injective exit ∧ ∀ x bits rest : List Bool,
+        pairDecode x = some (bits, rest) → ∃ t ≤ a * (x.length + 1),
+          let start := Cfg.ofWords (input := x) entry (canonReadyWords k bits)
+          let e := C.runFrom start t
+          e.state = some (exit (decide
+            (canonGuardBlock F * (codeBitsNat bits + 1) ≤ rest.length))) ∧
+          e.output = [] ∧ e.inputPos.val =
+            (if canonGuardBlock F * (codeBitsNat bits + 1) ≤ rest.length
+              then 2 * bits.length + 3 else x.length + 1) ∧
+          (∀ u < t, ∀ b, (C.runFrom start u).state ≠ some (exit b)) ∧
+          ∀ j, j.val ≠ 1 →
+            e.workTapes j = FinTM.bufferTape (canonReadyWords k bits j) ∧
+              e.workTapePos j = 0 := by
+  classical
+  let addressBank : Fin 2 ↪ Fin k :=
+    ⟨fun j => ⟨j.val + 2, by have := j.isLt; omega⟩,
+      fun j l eq => Fin.ext (by have := congrArg Fin.val eq; dsimp at this; omega)⟩
+  let counter : Fin k := ⟨1, by omega⟩
+  obtain ⟨S, finite, equal, R, enter, leave, c, seek⟩ := exists_canonSeekOnBank addressBank
+  letI : Fintype S := finite
+  letI : DecidableEq S := equal
+  let G := embedEmitTM (canonCounterBank counter) (binaryGuardTM (canonGuardBlock F - 1))
+  let U := seamCompTM G .done R enter
+  let C := seamCompTM R leave U (Sum.inl (.dec .run))
+  let port (b : Bool) : CounterLoopState (Option (Fin (canonGuardBlock F - 1 + 1))) ⊕ S :=
+    if b then Sum.inr leave else Sum.inl .escape
+  refine ⟨_, inferInstance, inferInstance, C, Sum.inl enter,
+    fun b => Sum.inr (port b), 10 * c + canonGuardBlock F + 8, ?_, ?_⟩
+  · intro b d eq
+    cases b <;> cases d <;> simp_all [port]
+  · intro x bits rest pair
+    let p := 2 * bits.length + 3
+    let words := canonReadyWords k bits
+    let beginning := Cfg.ofWords (input := x) enter words
+    have size : bits.length ≤ x.length := by
+      simpa [canonHeader, pair] using canonHeader_length x
+    have range : p ≤ x.length + 1 := by
+      rw [eq_pairEncode_of_pairDecode x bits rest pair, length_pairEncode]
+      dsimp [p]
+      omega
+    have charge (pos : ℕ) (small : pos ≤ x.length + 1) :
+        c * ((canonOffset bits).length + pos + p + 1) ≤ 5 * c * (x.length + 1) := by
+      calc
+        _ ≤ c * (5 * (x.length + 1)) :=
+          Nat.mul_le_mul_left c (by have := (canonOffset_spec bits).2; omega)
+        _ = _ := by ring
+    obtain ⟨s, costS, firstS, ranS⟩ := seek p (canonOffset bits) (canonOffset_spec bits).1
+      range beginning rfl
+      (by intro z _ _; simp [beginning, Cfg.ofWords, words, canonReadyWords, addressBank])
+      (by intro z; simp [beginning, Cfg.ofWords, words, canonReadyWords, addressBank])
+    let afterSeek : Cfg k Bool S x :=
+      { beginning with state := some leave, inputPos := ⟨p, by omega⟩ }
+    change R.runFrom beginning s = afterSeek at ranS
+    let guardStart : Cfg k Bool
+        (CounterLoopState (Option (Fin (canonGuardBlock F - 1 + 1)))) x :=
+      afterSeek.mapState (fun _ => CounterLoopState.dec FlagPhase.run)
+    obtain ⟨g, costG, guardState, guardOutput, guardPos, guardCut, guardFrame⟩ :=
+      canonGuard_onBank counter F x bits rest pair guardStart rfl rfl rfl rfl rfl
+    let guarded := G.runFrom guardStart g
+    have frame (j : Fin k) (hj : j.val ≠ 1) :
+        guarded.workTapes j = FinTM.bufferTape (words j) ∧ guarded.workTapePos j = 0 :=
+      guardFrame j (fun eq => hj (congrArg Fin.val eq))
+    have cutDone : ∀ u < g, (G.runFrom guardStart u).state ≠ some .done :=
+      fun u hu => (guardCut u hu).1
+    have tail : ∃ v ≤ (5 * c + canonGuardBlock F + 7) * (x.length + 1),
+        let e := U.runFrom (guardStart.mapState Sum.inl) v
+        e.state = some (port (decide
+          (canonGuardBlock F * (codeBitsNat bits + 1) ≤ rest.length))) ∧
+        e.output = [] ∧ e.inputPos.val =
+          (if canonGuardBlock F * (codeBitsNat bits + 1) ≤ rest.length
+            then p else x.length + 1) ∧
+        (∀ u < v, ∀ b, (U.runFrom (guardStart.mapState Sum.inl) u).state ≠ some (port b)) ∧
+        ∀ j, j.val ≠ 1 → e.workTapes j = FinTM.bufferTape (words j) ∧ e.workTapePos j = 0 := by
+      by_cases fits : canonGuardBlock F * (codeBitsNat bits + 1) ≤ rest.length
+      · have done : guarded.state = some .done := by simpa [fits] using guardState
+        let rewind := guarded.mapState (fun _ => enter)
+        obtain ⟨r, costR, firstR, ranR⟩ := seek p (canonOffset bits) (canonOffset_spec bits).1
+          range rewind (by simp [rewind, Cfg.mapState, done])
+          (by
+            intro z _ _
+            change guarded.workTapes (addressBank 0)
+              (guarded.workTapePos (addressBank 0) + z) = _
+            rw [(frame (addressBank 0) (by simp [addressBank])).1,
+              (frame (addressBank 0) (by simp [addressBank])).2]
+            simp [words, canonReadyWords, addressBank])
+          (by
+            intro z
+            change guarded.workTapes (addressBank 1) z = _
+            rw [(frame (addressBank 1) (by simp [addressBank])).1]
+            simp [words, canonReadyWords, addressBank])
+        have whole := seamCompTM_run_ofCfg G .done R enter rfl done cutDone ranR
+        have budgetR := costR.trans (charge rewind.inputPos.val
+          (by have := rewind.inputPos.isLt; omega))
+        refine ⟨g + 1 + r, ?_, ?_, ?_, ?_, ?_, ?_⟩
+        · simp only [Nat.add_mul] at costG ⊢
+          omega
+        · rw [whole]
+          simp [fits, port, Cfg.mapState]
+        · rw [whole]
+          exact guardOutput
+        · rw [whole]
+          simp [fits, Cfg.mapState]
+        · intro u hu b
+          apply canonSeam_avoids G .done R enter (port b) rfl done cutDone
+            (v := r) ?_ ?_ u hu
+          · intro z hz
+            cases b with
+            | true => simp [port, Cfg.mapState]
+            | false =>
+              have avoids : (G.runFrom guardStart z).state ≠ some .escape := by
+                by_cases strict : z < g
+                · exact (guardCut z strict).2
+                · have eq : z = g := by omega
+                  rw [eq]
+                  simp only [show G.runFrom guardStart g = guarded from rfl, done]
+                  simp
+              simpa [port, Cfg.mapState] using avoids
+          · intro z hz
+            cases b with
+            | true => simpa [port, Cfg.mapState] using firstR z hz
+            | false => simp [port, Cfg.mapState]
+        · rw [whole]
+          exact frame
+      · have leftRun (u : ℕ) (hu : u ≤ g) :=
+          seamCompTM_runFrom_left G .done R enter cutDone u hu
+        refine ⟨g, costG.trans (Nat.mul_le_mul_right _ (by omega)), ?_, ?_, ?_, ?_, ?_⟩
+        · rw [leftRun g le_rfl]
+          simpa [fits, port, Cfg.mapState] using guardState
+        · rw [leftRun g le_rfl]
+          exact guardOutput
+        · rw [leftRun g le_rfl]
+          simpa [fits] using guardPos
+        · intro u hu b
+          rw [leftRun u hu.le]
+          cases b with
+          | true => simp [port, Cfg.mapState]
+          | false => simpa [port, Cfg.mapState] using (guardCut u hu).2
+        · rw [leftRun g le_rfl]
+          exact frame
+    obtain ⟨v, costV, stateV, outputV, posV, cutV, frameV⟩ := tail
+    have all := seamCompTM_run_ofCfg R leave U (Sum.inl (.dec .run))
+      ranS rfl firstS (rfl : U.runFrom (guardStart.mapState Sum.inl) v = _)
+    change C.runFrom (Cfg.ofWords (input := x) (Sum.inl enter) words) (s + 1 + v) = _ at all
+    have budgetS := costS.trans (charge 1 (by omega))
+    refine ⟨s + 1 + v, ?_, ?_, ?_, ?_, ?_, ?_⟩
+    · have budget := Nat.add_le_add budgetS costV
+      ring_nf at budget ⊢
+      omega
+    · rw [all]
+      change ((U.runFrom (guardStart.mapState Sum.inl) v).state.map Sum.inr) = _
+      rw [stateV]
+      rfl
+    · rw [all]
+      exact outputV
+    · rw [all]
+      exact posV
+    · intro u hu b
+      apply canonSeam_avoids R leave U (Sum.inl (.dec .run)) (Sum.inr (port b))
+        ranS rfl firstS (v := v) ?_ ?_ u hu
+      · intro z _
+        simp [Cfg.mapState]
+      · intro z hz
+        simpa [Cfg.mapState] using cutV z hz b
+    · rw [all]
+      exact frameV
+
+/-- A separate strengthening of the frozen guard front end: both Boolean
+ports are distinct and have cuts including time zero. Preparation starts
+from blank tapes and the non-counter bank is retained on either verdict.
+
+**Proof sketch.** Compose the inherited preparation seam with the prepared
+bank guard. The public seam supplies the run; arbitrary-target avoidance
+transports both cuts. The two component bounds and the dispatch are linear. -/
+private lemma exists_canonGuardFrontStrict (F : MachineFormat) :
+    ∃ (C : FinTM Bool) (entry : C.State) (exit : Bool → C.State) (a : ℕ),
+      4 ≤ C.k ∧ Function.Injective exit ∧ ∀ x bits rest : List Bool,
+        pairDecode x = some (bits, rest) → ∃ t ≤ a * (x.length + 1),
+          let start := Cfg.ofWords (input := x) entry (fun _ => [])
+          let e := C.tm.runFrom start t
+          e.state = some (exit (decide
+            (canonGuardBlock F * (codeBitsNat bits + 1) ≤ rest.length))) ∧
+          e.output = [] ∧ e.inputPos.val =
+            (if canonGuardBlock F * (codeBitsNat bits + 1) ≤ rest.length
+              then 2 * bits.length + 3 else x.length + 1) ∧
+          (∀ u < t, ∀ b, (C.tm.runFrom start u).state ≠ some (exit b)) ∧
+          ∀ j, j.val ≠ 1 →
+            e.workTapes j = FinTM.bufferTape (canonReadyWords C.k bits j) ∧
+              e.workTapePos j = 0 := by
+  classical
+  obtain ⟨P, pentry, pexit, a, hk, prep⟩ := exists_canonReadySeam
+  obtain ⟨S, finite, equal, G, enter, leave, b, distinct, guard⟩ :=
+    exists_canonGuardReady F P.k hk
+  letI : Fintype S := finite
+  letI : DecidableEq S := equal
+  let C : FinTM Bool := {
+    k := P.k
+    State := P.State ⊕ S
+    tm := { seamCompTM P.tm pexit G enter with q₀ := Sum.inl pentry } }
+  refine ⟨C, Sum.inl pentry, fun d => Sum.inr (leave d), a + b + 1, hk,
+    fun _ _ eq => distinct (Sum.inr.inj eq), ?_⟩
+  intro x bits rest pair
+  obtain ⟨s, budgetS, firstS, ranS⟩ := prep x
+  have header : canonHeader x = bits := by simp [canonHeader, pair]
+  rw [header] at ranS
+  obtain ⟨t, budgetT, stateT, outputT, posT, cutT, frameT⟩ := guard x bits rest pair
+  have whole := seamCompTM_run_ofCfg P.tm pexit G enter ranS rfl firstS
+    (rfl : G.runFrom (Cfg.ofWords (input := x) enter (canonReadyWords P.k bits)) t = _)
+  change C.tm.runFrom (Cfg.ofWords (input := x) (Sum.inl pentry) (fun _ => []))
+    (s + 1 + t) = _ at whole
+  refine ⟨s + 1 + t, ?_, ?_, ?_, ?_, ?_, ?_⟩
+  · rw [Nat.add_mul, Nat.add_mul]
+    omega
+  · rw [whole]
+    simp only [Cfg.mapState, stateT, Option.map_some]
+  · rw [whole]
+    exact outputT
+  · rw [whole]
+    exact posT
+  · intro u hu d
+    apply canonSeam_avoids P.tm pexit G enter (Sum.inr (leave d))
+      ranS rfl firstS (v := t) ?_ ?_ u hu
+    · intro z _
+      simp [Cfg.mapState]
+    · intro z hz
+      simpa [Cfg.mapState] using cutT z hz d
+  · rw [whole]
+    exact frameT
+
+/-- Transport a blank-tape start along any public bank embedding.
+This is only a specialization of the existing word-configuration assembly
+and public run transport, and adds no configuration reconstruction. -/
+private lemma canonBlankLift {m k : ℕ} {S : Type} (M : MultiTapeTM m Bool S)
+    (bank : Fin m ↪ Fin k) (q : S) (x : List Bool) (t : ℕ) :
+    (embedEmitTM bank M).runFrom (Cfg.ofWords (input := x) q (fun _ => [])) t =
+      embedEmitCfg bank (fun _ => FinTM.bufferTape []) (fun _ => 0) []
+        (M.runFrom (Cfg.ofWords (input := x) q (fun _ => [])) t) := by
+  rw [← canonEmbedWords M bank q (fun _ => []) (fun _ => []) (fun _ => [])
+    (fun _ => rfl) (fun _ _ => rfl)]
+  exact embedEmitTM_runFrom bank M _ _ _ _ t
+
+/-- Total header checking followed by the strong guard. Three distinct live
+ports retain the cause of rejection: `none` is a malformed or noncanonical
+header, `some false` is a failed positive guard, and `some true` is ready
+for parsing. Every rejection decodes to the fixed fallback. Both guard
+ports and the header-failure port have strict cuts including time zero.
+
+**Proof sketch.** Embed the clean header branch and the strong guard into
+the larger bank. A public seam dispatches only the valid-header exit.
+Invalid headers stop before dispatch; valid headers use the guard contract.
+The public selected-tape and frame projections retain the ready bank, and
+the inherited scanner rejection laws identify both failures with fallback. -/
+private lemma exists_canonCheckedFront (F : MachineFormat) :
+    ∃ (C : FinTM Bool) (entry : C.State) (exit : Option Bool → C.State) (a : ℕ),
+      4 ≤ C.k ∧ Function.Injective exit ∧ ∀ x : List Bool,
+        ∃ t ≤ a * (x.length + 1), ∃ verdict : Option Bool,
+          let start := Cfg.ofWords (input := x) entry (fun _ => [])
+          let e := C.tm.runFrom start t
+          e.state = some (exit verdict) ∧ e.output = [] ∧
+          (∀ u < t, ∀ q, (C.tm.runFrom start u).state ≠ some (exit q)) ∧
+          (verdict ≠ some true → F.decode x = F.fallback) ∧
+          (verdict = some true → ∃ bits rest,
+            pairDecode x = some (bits, rest) ∧ bits = (codeBitsNat bits).bits ∧
+            canonGuardBlock F * (codeBitsNat bits + 1) ≤ rest.length ∧
+            e.inputPos.val = 2 * bits.length + 3 ∧
+            ∀ j, j.val ≠ 1 →
+              e.workTapes j = FinTM.bufferTape (canonReadyWords C.k bits j) ∧
+                e.workTapePos j = 0) := by
+  classical
+  obtain ⟨H, hentry, hexit, a, _, hdistinct, header⟩ := exists_canonHeaderBranch
+  obtain ⟨G, gentry, gexit, b, gsize, gdistinct, guard⟩ := exists_canonGuardFrontStrict F
+  let K := max H.k G.k
+  let hb : Fin H.k ↪ Fin K := Fin.castLEEmb (Nat.le_max_left _ _)
+  let gb : Fin G.k ↪ Fin K := Fin.castLEEmb (Nat.le_max_right _ _)
+  let A := embedEmitTM hb H.tm
+  let B := embedEmitTM gb G.tm
+  let C : FinTM Bool := {
+    k := K
+    State := H.State ⊕ G.State
+    tm := { seamCompTM A (hexit true) B gentry with q₀ := Sum.inl hentry } }
+  let exit : Option Bool → C.State
+    | none => Sum.inl (hexit false)
+    | some d => Sum.inr (gexit d)
+  refine ⟨C, Sum.inl hentry, exit, a + b + 1,
+    gsize.trans (Nat.le_max_right _ _), ?_, ?_⟩
+  · intro p q eq
+    cases p <;> cases q
+    · rfl
+    · cases eq
+    · cases eq
+    · exact congrArg some (gdistinct (Sum.inr.inj eq))
+  · intro x
+    obtain ⟨s, budgetH, cutH, ranH⟩ := header x
+    let startH := Cfg.ofWords (input := x) hentry (fun _ : Fin K => [])
+    have headerRun : A.runFrom startH s =
+        Cfg.ofWords (hexit (canonHeaderOK x)) (fun _ => []) := by
+      rw [canonBlankLift H.tm hb, ranH]
+      exact canonEmbedWords H.tm hb _ (fun _ => []) (fun _ => []) (fun _ => [])
+        (fun _ => rfl) (fun _ _ => rfl)
+    have headerCut (u : ℕ) (hu : u < s) (d : Bool) :
+        (A.runFrom startH u).state ≠ some (hexit d) := by
+      rw [canonBlankLift H.tm hb]
+      exact cutH u hu d
+    cases valid : canonHeaderOK x with
+    | false =>
+      have leftRun := seamCompTM_runFrom_left A (hexit true) B gentry
+        (fun u hu => headerCut u hu true) s le_rfl
+      rw [headerRun, valid] at leftRun
+      change C.tm.runFrom (Cfg.ofWords (input := x) (Sum.inl hentry) (fun _ => [])) s =
+        Cfg.ofWords (exit none) (fun _ => []) at leftRun
+      refine ⟨s, budgetH.trans (Nat.mul_le_mul_right _ (by omega)), none,
+        ?_, ?_, ?_, ?_, ?_⟩
+      · rw [leftRun]
+        rfl
+      · rw [leftRun]
+        rfl
+      · intro u hu q
+        change ((seamCompTM A (hexit true) B gentry).runFrom (startH.mapState Sum.inl) u).state ≠ _
+        rw [seamCompTM_runFrom_left A (hexit true) B gentry
+          (fun z hz => headerCut z hz true) u hu.le]
+        cases q with
+        | none => simpa [exit, Cfg.mapState] using headerCut u hu false
+        | some q => simp [exit, Cfg.mapState]
+      · exact fun _ => decode_of_canonHeader F x valid
+      · simp
+    | true =>
+      obtain ⟨bits, rest, pair, canonical⟩ := (canonHeaderOK_iff x).mp valid
+      obtain ⟨t, budgetG, stateG, outputG, posG, cutG, frameG⟩ := guard x bits rest pair
+      let result := decide (canonGuardBlock F * (codeBitsNat bits + 1) ≤ rest.length)
+      let startG := Cfg.ofWords (input := x) gentry (fun _ : Fin K => [])
+      let endG := B.runFrom startG t
+      have state : endG.state = some (gexit result) := by
+        dsimp only [endG]
+        rw [canonBlankLift G.tm gb]
+        exact stateG
+      have silent : endG.output = [] := by
+        dsimp only [endG]
+        rw [canonBlankLift G.tm gb]
+        exact outputG
+      have cut (u : ℕ) (hu : u < t) (d : Bool) :
+          (B.runFrom startG u).state ≠ some (gexit d) := by
+        rw [canonBlankLift G.tm gb]
+        exact cutG u hu d
+      rw [valid] at headerRun
+      have whole := seamCompTM_run_ofCfg A (hexit true) B gentry headerRun rfl
+        (fun u hu => headerCut u hu true) (rfl : B.runFrom startG t = endG)
+      change C.tm.runFrom (Cfg.ofWords (input := x) (Sum.inl hentry) (fun _ => []))
+        (s + 1 + t) = endG.mapState Sum.inr at whole
+      refine ⟨s + 1 + t, ?_, some result, ?_, ?_, ?_, ?_, ?_⟩
+      · rw [Nat.add_mul, Nat.add_mul]
+        omega
+      · rw [whole]
+        change endG.state.map Sum.inr = _
+        rw [state]
+        rfl
+      · rw [whole]
+        exact silent
+      · intro u hu q
+        apply canonSeam_avoids A (hexit true) B gentry (exit q) headerRun rfl
+          (fun z hz => headerCut z hz true) (v := t) ?_ ?_ u hu
+        · intro z hz
+          cases q with
+          | some d => simp [exit, Cfg.mapState]
+          | none =>
+            have avoids : (A.runFrom startH z).state ≠ some (hexit false) := by
+              by_cases early : z < s
+              · exact headerCut z early false
+              · have eq : z = s := by omega
+                rw [eq, headerRun]
+                exact fun h => Bool.noConfusion (hdistinct (Option.some.inj h))
+            simpa [exit, Cfg.mapState] using avoids
+        · intro z hz
+          cases q with
+          | none => simp [exit, Cfg.mapState]
+          | some d => simpa [exit, Cfg.mapState] using cut z hz d
+      · intro rejected
+        apply decode_of_canonGuard F x bits rest pair
+        have denied : result ≠ true := fun eq => rejected (congrArg some eq)
+        exact Nat.lt_of_not_ge (of_decide_eq_false (Bool.eq_false_iff.mpr denied))
+      · intro accepted
+        have fits : canonGuardBlock F * (codeBitsNat bits + 1) ≤ rest.length :=
+          of_decide_eq_true (Option.some.inj accepted)
+        refine ⟨bits, rest, pair, canonical, fits, ?_, ?_⟩
+        · rw [whole]
+          change endG.inputPos.val = _
+          dsimp only [endG]
+          rw [canonBlankLift G.tm gb]
+          simpa only [if_pos fits] using posG
+        · intro j hj
+          rw [whole]
+          change endG.workTapes j = _ ∧ endG.workTapePos j = 0
+          by_cases selected : j ∈ Set.range gb
+          · obtain ⟨i, rfl⟩ := selected
+            dsimp only [endG]
+            rw [canonBlankLift G.tm gb, embedEmitCfg_selected_tape, embedEmitCfg_selected_pos]
+            exact frameG i hj
+          · have fixed := (embedEmitTM_frame gb G.tm (fun _ => FinTM.bufferTape [])
+              (fun _ => 0) [] (Cfg.ofWords (input := x) gentry (fun _ => [])) t).1 j selected
+            rw [canonEmbedWords G.tm gb gentry (fun _ => []) (fun _ => []) (fun _ => [])
+              (fun _ => rfl) (fun _ _ => rfl)] at fixed
+            have large : G.k ≤ j.val := by
+              by_contra small
+              exact selected ⟨⟨j.val, by omega⟩, rfl⟩
+            simpa [canonReadyWords, show j.val ≠ 0 by omega,
+              show j.val ≠ 1 by omega, show j.val ≠ 2 by omega] using fixed
+
+/-- Merge the three checked-front ports into two ports with one public
+phase-host dispatch. `some true` succeeds and the other two ports reject.
+The dispatch preserves all data fields and gives strict cuts at both ports.
+
+**Promotion candidate.** This finite verdict adapter is independent of
+machine formats; it uses the public phase host, with no private host trace.
+
+**Proof sketch.** Before the source exit, its three cuts disable every
+redirect. The public phase contract therefore gives the whole prefix and
+one stationary dispatch into the terminal phase. Distinct phase tags prove
+both strict cuts. The terminal phase reuses the existing stationary Boolean
+ports; no terminal transition is executed by this contract. -/
+private lemma canonExitDispatch {k : ℕ} {S : Type} [Fintype S] [DecidableEq S]
+    (positive : 0 < k) (M : MultiTapeTM k Bool S) (start : S)
+    (exit : Option Bool → S) (distinct : Function.Injective exit) :
+    ∃ (R : Type) (_ : Fintype R) (_ : DecidableEq R) (N : MultiTapeTM k Bool R)
+      (entry : R) (leave : Bool → R), Function.Injective leave ∧
+      ∀ (x : List Bool) (t : ℕ) (v : Option Bool),
+        let d := Cfg.ofWords (input := x) start (fun _ => [])
+        (M.runFrom d t).state = some (exit v) →
+        (∀ u < t, ∀ q, (M.runFrom d u).state ≠ some (exit q)) →
+        N.runFrom (Cfg.ofWords entry (fun _ => [])) (t + 1) =
+          (M.runFrom d t).mapState (fun _ => leave (decide (v = some true))) ∧
+        ∀ u < t + 1, ∀ b, (N.runFrom
+          (Cfg.ofWords (input := x) entry (fun _ => [])) u).state ≠ some (leave b) := by
+  classical
+  let Ph : Bool → Type
+    | false => S
+    | true => Option Bool
+  let family (b : Bool) : MultiTapeTM k Bool (Ph b) := match b with
+    | false => M
+    | true => canonBoolPopTM k ⟨0, positive⟩
+  letI : ∀ b, Fintype (Ph b) := fun b => by cases b <;> exact inferInstance
+  letI : ∀ b, DecidableEq (Ph b) := fun b => by cases b <;> exact inferInstance
+  let base : (b : Bool) × Ph b := ⟨false, start⟩
+  let leave (b : Bool) : (p : Bool) × Ph p := ⟨true, some b⟩
+  let red (b : Bool) : Ph b → Option ((p : Bool) × Ph p) := match b with
+    | false => fun q =>
+      if q = exit none then some (leave false)
+      else if q = exit (some false) then some (leave false)
+      else if q = exit (some true) then some (leave true) else none
+    | true => fun _ => none
+  let N := phaseHostTM family base red
+  refine ⟨_, inferInstance, inferInstance, N, base, leave, ?_, ?_⟩
+  · intro b c eq
+    exact Option.some.inj (eq_of_heq (Sigma.mk.inj_iff.mp eq).2)
+  · intro x t v d control cuts
+    have redirect : red false (exit v) = some (leave (decide (v = some true))) := by
+      cases v with
+      | none => simp [red]
+      | some b => cases b <;> simp [red, distinct.eq_iff]
+    have disabled (u : ℕ) (hu : u < t) (s : S) (hs : (M.runFrom d u).state = some s) :
+        red false s = none := by
+      have avoids (q : Option Bool) : s ≠ exit q :=
+        fun eq => cuts u hu q (hs.trans (congrArg some eq))
+      simp only [red, if_neg (avoids none), if_neg (avoids (some false)),
+        if_neg (avoids (some true))]
+    have phase := phaseHostTM_run family base red false d (M.runFrom d t) t rfl
+      (exit v) control (leave (decide (v = some true))) redirect disabled
+    refine ⟨phase.2, ?_⟩
+    intro u hu b
+    change ((phaseHostTM family base red).runFrom (d.mapState (Sigma.mk false)) u).state ≠ _
+    rw [phase.1 u (by omega)]
+    change ((M.runFrom d u).state.map (Sigma.mk false)) ≠ some (leave b)
+    intro eq
+    obtain ⟨q, _, hq⟩ := Option.map_eq_some_iff.mp eq
+    have impossible := congrArg Sigma.fst hq
+    cases impossible
+
+/-- A total composable parser front end. The two strict live ports mean
+rejection or ready-for-grammar; every rejection denotes the fixed fallback.
+Success retains a canonical header and saved address, has passed the positive
+guard, and positions the native head at the remainder. The destroyed guard
+counter is deliberately absent from the preserved-bank contract.
+
+**Proof sketch.** Use the total checked front and merge its three cause ports
+through the public phase-host adapter. The dispatch is stationary and silent,
+so every data invariant transfers unchanged; increase the coefficient by one. -/
+private lemma exists_canonParseFront (F : MachineFormat) :
+    ∃ (C : FinTM Bool) (entry : C.State) (exit : Bool → C.State) (a : ℕ),
+      4 ≤ C.k ∧ Function.Injective exit ∧ ∀ x : List Bool,
+        ∃ t ≤ a * (x.length + 1), ∃ verdict : Bool,
+          let start := Cfg.ofWords (input := x) entry (fun _ => [])
+          let e := C.tm.runFrom start t
+          e.state = some (exit verdict) ∧ e.output = [] ∧
+          (∀ u < t, ∀ q, (C.tm.runFrom start u).state ≠ some (exit q)) ∧
+          (verdict = false → F.decode x = F.fallback) ∧
+          (verdict = true → ∃ bits rest,
+            pairDecode x = some (bits, rest) ∧ bits = (codeBitsNat bits).bits ∧
+            canonGuardBlock F * (codeBitsNat bits + 1) ≤ rest.length ∧
+            e.inputPos.val = 2 * bits.length + 3 ∧
+            ∀ j, j.val ≠ 1 →
+              e.workTapes j = FinTM.bufferTape (canonReadyWords C.k bits j) ∧
+                e.workTapePos j = 0) := by
+  obtain ⟨H, hentry, hexit, a, enough, distinct, front⟩ := exists_canonCheckedFront F
+  obtain ⟨S, finite, equal, N, entry, leave, separate, dispatch⟩ :=
+    canonExitDispatch (by omega) H.tm hentry hexit distinct
+  letI : Fintype S := finite
+  letI : DecidableEq S := equal
+  let C : FinTM Bool := { k := H.k, State := S, tm := N }
+  refine ⟨C, entry, leave, a + 1, enough, separate, ?_⟩
+  intro x
+  obtain ⟨t, budget, v, control, silent, cuts, reject, ready⟩ := front x
+  obtain ⟨ran, strict⟩ := dispatch x t v control cuts
+  refine ⟨t + 1, ?_, decide (v = some true), ?_, ?_, strict, ?_, ?_⟩
+  · rw [Nat.add_mul]
+    omega
+  · rw [ran]
+    simp only [Cfg.mapState, control, Option.map_some]
+  · rw [ran]
+    exact silent
+  · intro no
+    exact reject (of_decide_eq_false no)
+  · intro yes
+    rw [ran]
+    exact ready (of_decide_eq_true yes)
+
 /-- **A polynomial-time canonizer** (spec, fill pending — batch B5a): one finite
 binary machine computes the fixed serialization of the decoded machine within
 `d · (|α| + 1)^d` steps. [AB09, §1.4; the P3.2 round-2 construction]
@@ -1941,6 +2735,22 @@ strict cuts for both composite exits, generic record validation, grammar loop,
 suffix/prefix emission and final polynomial assembly remain pending. No new
 private admission is introduced, and this headline retains its original
 `sorry`; full physical note-50 regressions remain pending.
+
+
+**Fill appendix (canonizer continuation 2, partial).** The total header
+check now has a clean silent Boolean branch contract. A separate stronger
+guard front exposes strict cuts for both ports while preserving the header
+and saved native address. `exists_canonCheckedFront` composes the header
+check with this guard, keeping pair failure distinct from an encoded empty
+header and proving that either rejection decodes to the fixed fallback.
+`exists_canonParseFront` merges the failure causes through the public phase
+host into two strict live ports, preserving the successful ready bank and
+remainder position. All fourteen new private declarations are proved without
+admissions. The guard's destructive counter is not claimed to be restored.
+Recreating the parser bound, the generic physical action validator, the
+record loop, suffix/prefix emission and complete polynomial assembly remain
+open. This headline retains its original admission; the full physical
+note-50 cases remain pending.
  -/
 theorem exists_polyCanonizer :
     ∃ (C : FinTM Bool) (d : ℕ),
