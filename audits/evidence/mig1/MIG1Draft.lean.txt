@@ -1,0 +1,1003 @@
+/-
+Copyright (c) 2026 Seyoon Ragavan. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Seyoon Ragavan
+-/
+import TCSlib.Complexity.TuringMachine.Build.Catalog
+import TCSlib.Complexity.TuringMachine.Build.Primitives
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+/-!
+# MIG-1 statement draft: named witnesses for the existential rows
+
+**Status: a statement draft for the MIG-1 statement gate; not for landing as a file.** Each
+declaration below is the draft of a public declaration that MIG-1 adds to one of the home files
+named in its docstring (`machine-library-design.md` §2, the named-machine rule; §16, MIG-1).
+The draft lives in the namespace `Turing.FinTM.MIG1Draft` so that it can import the snapshot,
+where today's rows are public and today's witnesses are private; on landing, every
+`Turing.FinTM.MIG1Draft.X` becomes the name given in its docstring.
+
+Three kinds of declaration appear.
+
+* **Named witnesses.** Today's private witness machines, made public under the names below.
+  Where the body is short it is reproduced verbatim from its home file, so that facts such as
+  the tape count hold by `rfl`; the long ones (`loopHostTM`, `callTM`, `pairMapSndTM`,
+  `polyUnaryEngineTM`) are `sorry` here and keep their existing bodies on landing.
+* **Spec theorems** (`sorry` here). Each states, about the named witness, exactly what today's
+  proofs establish: a time bound with an explicit constant and, where the witness has its own
+  space argument, a space bound (five witnesses here, seven in the full design). On landing
+  their proofs are the existing private lemmas, or the new proofs that the `f2_` region of
+  `Build/Catalog.lean` holds today, moved next to the witness.
+* **Row corollaries** (proved here). Each `row_*` theorem has as its statement
+  `type_of% @<landed row>`, the landed row's own type, and proves it from the spec theorems.
+  The draft therefore elaborates only if every listed row keeps its statement unchanged while
+  becoming a corollary; this is the mechanical form of "consumers untouched".
+
+The spec theorems are stated in the library's existing style (`ComputesFunInTime`,
+`spaceUsed`, `Cfg.ofWords` seams), not as `Turing.Contract` instances; `MIG1-design.md`
+records why.
+
+## Main definitions
+
+* `idTM`, `constTM` (home `TuringMachine/Composition.lean`).
+* `lengthBitsTM` (home `ClassP/TimeConstructible.lean`, full name `Turing.FinTM.lengthBitsTM`).
+* `pairExtractTM`, `polyUnaryEngineTM`, `polyUnaryTM`, `pairMapSndTM`
+  (home `Build/Primitives.lean`; `pairMapSndTM` is today's Catalog-private `a2_mapTM _ true`).
+* `timedCondTM` (home `Build/Wrappers.lean`).
+* `pairDiagTM` (home `TuringMachine/Encoding.lean`, full name `Turing.pairDiagTM`).
+* `loopHostTM`, `callTM`, `callEntry`, `callExit` (home `Build/Loop.lean`).
+
+## Main results
+
+* `spaceUsed_le_of_computesInTime`: space from time (home `Build/Catalog.lean`), proved.
+* The spec theorems `*_computes`, `*_spaceUsed`, `loopHostTM_contracts`, `callTM_install`,
+  `callTM_emit`.
+* The 26 row corollaries `row_*`: 15 of the 34 existential rows of `Composition`, `Encoding`,
+  `Primitives`, `Wrappers` and `Loop`; 10 of Catalog's 19 existential space rows; and
+  `Complexity.timeConstructible_id`, whose definition hides the same existential.
+
+## References
+
+* [AB09] S. Arora, B. Barak, *Computational Complexity: A Modern Approach*,
+  Cambridge University Press, 2009. (§1.2: the machine model and its basic routines; §1.3:
+  time constructibility; Definition 4.1: the visited-cells space measure.)
+-/
+
+namespace Turing.FinTM.MIG1Draft
+
+/-! ### Catalog: space from time -/
+
+/-- **Space from time** (landing: `Turing.FinTM.ComputesInTime.spaceUsed_le`, public in
+`Build/Catalog.lean`, replacing the private `f2_space_of_time`). If `M` halts on `x` with
+output `y` within `T` steps, then at every time `t` its work tapes have visited at most
+`M.k · (T + 1)` cells in all. [AB09, Definition 4.1 and the remark opening the proof of
+Theorem 4.2: a machine running in time `T` visits at most `T + 1` cells per tape.]
+
+**Proof sketch.** After the halt the configuration no longer changes, so every head position
+at any time `t` already occurs at some time `u ≤ T`. Each tape's visited set is therefore
+contained in the image of `{0, …, T}`, which has at most `T + 1` elements; sum over the `k`
+tapes. -/
+theorem spaceUsed_le_of_computesInTime {M : FinTM Bool} {x y : List Bool} {T : ℕ}
+    (h : M.ComputesInTime x y T) (t : ℕ) :
+    M.tm.spaceUsed (M.tm.initCfg x) t ≤ M.k * (T + 1) := by
+  have hh := ((computesInTime_iff _ _ _ _).mp h).1
+  have hsub (i : Fin M.k) :
+      M.tm.visitedByTapeHead (M.tm.initCfg x) t i ⊆
+        M.tm.visitedByTapeHead (M.tm.initCfg x) T i := by
+    intro z hz
+    obtain ⟨u, _, rfl⟩ := Finset.mem_image.mp hz
+    by_cases hu : u ≤ T
+    · exact Finset.mem_image.mpr ⟨u, Finset.mem_range.mpr (by omega), rfl⟩
+    · have hr : M.tm.runFrom (M.tm.initCfg x) u =
+          M.tm.runFrom (M.tm.initCfg x) T := by
+        rw [show u = T + (u - T) by omega, MultiTapeTM.runFrom_add,
+          MultiTapeTM.runFrom_of_halt _ hh]
+      exact Finset.mem_image.mpr ⟨T, Finset.mem_range.mpr (by omega),
+        congrArg (fun c => c.workTapePos i) hr.symm⟩
+  calc
+    _ ≤ ∑ _i : Fin M.k, (T + 1) := by
+      apply Finset.sum_le_sum
+      intro i _
+      exact (Finset.card_le_card (hsub i)).trans (by
+        unfold MultiTapeTM.visitedByTapeHead
+        exact (Finset.card_image_le).trans (by rw [Finset.card_range]))
+    _ = _ := by simp
+
+/-! ### Composition: the copy and constant machines -/
+
+/-- **The copy machine** (landing: `Turing.FinTM.idTM`, public in
+`TuringMachine/Composition.lean`; today the private witness of
+`Turing.FinTM.computesFunInTime_id`, copied into `Build/Catalog.lean` as `f2_idTM`). A machine
+with no work tapes that writes each input symbol to its output while moving right, and halts
+on the first blank. [AB09, §1.2] -/
+def idTM : FinTM Bool where
+  k := 0
+  State := Unit
+  tm :=
+    { q₀ := ()
+      tr := fun _ inp _ =>
+        match inp with
+        | some b => ⟨SignType.pos, fun i => i.elim0, some b, some ()⟩
+        | none => ⟨SignType.zero, fun i => i.elim0, none, none⟩ }
+
+/-- The copy machine has no work tapes. -/
+theorem idTM_k : idTM.k = 0 := rfl
+
+/-- **The copy machine's time** (landing: `Turing.FinTM.idTM_computes`, in `Composition`). On
+input `x` the copy machine halts after exactly `|x| + 1` steps with output `x`.
+
+**Proof sketch.** By induction on `t ≤ |x|`, after `t` steps the machine is live, its input
+head is at cell `t + 1` and it has written the first `t` input symbols (today's private
+`idTM_run`). At `t = |x|` the head reads the blank after the input, and the next step halts
+without writing. This is the body of today's `computesFunInTime_id`, before its weakening. -/
+theorem idTM_computes (x : List Bool) : idTM.ComputesInTime x x (x.length + 1) := by
+  sorry
+
+/-- **The constant machine** (landing: `Turing.FinTM.constTM`, public in `Composition`; today
+private there and copied as `f2_constTM`). A machine with no work tapes whose states form a
+chain that writes the fixed word `w`, one symbol per step, ignoring its input, then halts.
+[AB09, §1.2] -/
+def constTM (w : List Bool) : FinTM Bool where
+  k := 0
+  State := Fin (w.length + 1)
+  tm := { q₀ := 0, tr := fun i _ _ => emitAction w id i }
+
+/-- The constant machine has no work tapes. -/
+theorem constTM_k (w : List Bool) : (constTM w).k = 0 := rfl
+
+/-- **The constant machine's time** (landing: `Turing.FinTM.constTM_computes`, in
+`Composition`). On every input the constant machine halts after exactly `|w| + 1` steps with
+output `w`.
+
+**Proof sketch.** The emission chain writes `w` in `|w|` steps (`Turing.FinTM.emit_halts`) and
+halts on the next, with the output appended to the initially empty tape. -/
+theorem constTM_computes (w x : List Bool) :
+    (constTM w).ComputesInTime x w (w.length + 1) := by
+  sorry
+
+/-- **Row** `Turing.FinTM.computesFunInTime_id`, statement unchanged: one line from
+`idTM_computes`. -/
+theorem row_computesFunInTime_id : type_of% @Turing.FinTM.computesFunInTime_id :=
+  ⟨idTM, 1, fun x => (idTM_computes x).mono (by simp)⟩
+
+/-- **Row** `Turing.FinTM.computesFunInTime_const`, statement unchanged: one line from
+`constTM_computes`. -/
+theorem row_computesFunInTime_const : type_of% @Turing.FinTM.computesFunInTime_const :=
+  fun w => ⟨constTM w, w.length + 1, fun x =>
+    (constTM_computes w x).mono (Nat.le_mul_of_pos_right _ (Nat.succ_pos _))⟩
+
+/-- **Space row** `Turing.FinTM.computesFunInTime_id_spaceUsed` (Catalog), statement unchanged:
+the time spec plus the empty tape count. Replaces 44 lines and the copies `f2_idTM`,
+`f2_idTM_run`. -/
+theorem row_computesFunInTime_id_spaceUsed :
+    type_of% @Turing.FinTM.computesFunInTime_id_spaceUsed :=
+  ⟨idTM, 1, fun x => (idTM_computes x).mono (by simp), fun x t => by
+    rw [MultiTapeTM.spaceUsed_zero_tapes_eq_zero _ _ idTM_k]; omega⟩
+
+/-- **Space row** `Turing.FinTM.computesFunInTime_const_spaceUsed` (Catalog), statement
+unchanged. -/
+theorem row_computesFunInTime_const_spaceUsed :
+    type_of% @Turing.FinTM.computesFunInTime_const_spaceUsed :=
+  fun w => ⟨constTM w, w.length + 1, fun x =>
+    (constTM_computes w x).mono (Nat.le_mul_of_pos_right _ (Nat.succ_pos _)), fun x t => by
+    rw [MultiTapeTM.spaceUsed_zero_tapes_eq_zero _ _ (constTM_k w)]; omega⟩
+
+/-! ### TimeConstructible: the binary length counter -/
+
+/-- One carry transition of the length counter, the first one also advancing the input
+(verbatim from `ClassP/TimeConstructible.lean`'s private `counterBump`, which stays private). -/
+private def lengthBitsBump (d : SignType) (w : Option Bool) : Action 1 Bool (Fin 4) :=
+  if w = some true then
+    ⟨d, fun _ => (some (some false), .pos), none, some 1⟩
+  else ⟨d, fun _ => (some (some true), .neg), none, some 2⟩
+
+/-- **The binary length counter** (landing: `Turing.FinTM.lengthBitsTM`, public in
+`ClassP/TimeConstructible.lean`; today the private `Complexity.counterTM`, copied into Catalog
+as `f2_counterTM`). A one-work-tape machine that keeps a little-endian binary counter on its
+work tape, increments it once per input symbol, and on the blank after the input emits the
+counter's bits and halts, so that it computes `x ↦ Nat.bits |x|`. States: count `0`, carry
+`1`, rewind `2`, emit `3`. [AB09, §1.3, the examples of time-constructible functions] -/
+def lengthBitsTM : FinTM Bool where
+  k := 1
+  State := Fin 4
+  tm :=
+    { q₀ := 0
+      tr := fun q inp work =>
+        if q = 0 then
+          match inp with
+          | none => ⟨.zero, fun _ => (none, .zero), none, some 3⟩
+          | some _ => lengthBitsBump .pos (work 0)
+        else if q = 1 then lengthBitsBump .zero (work 0)
+        else if q = 2 then
+          match work 0 with
+          | none => ⟨.zero, fun _ => (none, .pos), none, some 0⟩
+          | some _ => ⟨.zero, fun _ => (none, .neg), none, some 2⟩
+        else
+          match work 0 with
+          | none => ⟨.zero, fun _ => (none, .zero), none, none⟩
+          | some b => ⟨.zero, fun _ => (none, .pos), some b, some 3⟩ }
+
+/-- **The length counter's time** (landing: `Turing.FinTM.lengthBitsTM_computes`, in
+`TimeConstructible`). The counter computes `x ↦ Nat.bits |x|` within `5·(|x| + 1)` steps.
+[AB09, §1.3]
+
+**Proof sketch.** Today's proof of `Complexity.timeConstructible_id`: with twice the number of
+`true` counter bits as potential, elapsed time plus potential is at most `4n` after `n`
+increments; entering emission and the final halt add two steps, and the emitted word, of
+length at most `n`, costs one step per bit. -/
+theorem lengthBitsTM_computes :
+    lengthBitsTM.ComputesFunInTime (fun x => Nat.bits x.length) (fun n => 5 * (n + 1)) := by
+  sorry
+
+/-- **The length counter's space** (landing: `Turing.FinTM.lengthBitsTM_spaceUsed`, in
+`TimeConstructible`; today Catalog's `f2_counter_space`). At every time, the counter's work
+tape has visited at most `5·(Nat.size |x| + 1)` cells: logarithmic space.
+
+**Proof sketch.** Every counting round returns the head to the origin, and a carry walks at
+most the counter's binary width, which never exceeds `Nat.size |x|`; emission walks the stored
+word once. So at every time the head is within `2·(Nat.size |x| + 1)` of the origin (today's
+`f2_counter_heads`, from the increment ledger `f2_counter_count_space`, both moved), and the
+tape visits at most `4·(Nat.size |x| + 1) + 1 ≤ 5·(Nat.size |x| + 1)` cells. -/
+theorem lengthBitsTM_spaceUsed (x : List Bool) (t : ℕ) :
+    lengthBitsTM.tm.spaceUsed (lengthBitsTM.tm.initCfg x) t ≤ 5 * (Nat.size x.length + 1) := by
+  sorry
+
+/-- **Row** `Complexity.timeConstructible_id`, statement unchanged. -/
+theorem row_timeConstructible_id : type_of% @Complexity.timeConstructible_id :=
+  ⟨fun n => le_refl n, 5, by decide, lengthBitsTM, lengthBitsTM_computes⟩
+
+/-- **Row** `Turing.FinTM.computesFunInTime_lengthBits` (Primitives), statement unchanged. -/
+theorem row_computesFunInTime_lengthBits :
+    type_of% @Turing.FinTM.computesFunInTime_lengthBits :=
+  ⟨lengthBitsTM, 5, lengthBitsTM_computes⟩
+
+/-- **Space row** `Turing.FinTM.computesFunInTime_lengthBits_spaceUsed` (Catalog), statement
+unchanged. Replaces the 23 copied or new `f2_counter*` declarations. -/
+theorem row_computesFunInTime_lengthBits_spaceUsed :
+    type_of% @Turing.FinTM.computesFunInTime_lengthBits_spaceUsed :=
+  ⟨lengthBitsTM, 5, lengthBitsTM_computes, lengthBitsTM_spaceUsed⟩
+
+/-! ### Primitives: the pair extractor -/
+
+/-- **The pair extractor** (landing: `Turing.FinTM.pairExtractTM`, public in
+`Build/Primitives.lean`; today private there and copied as `f2_pairExtractTM`). On an input
+`pairEncode a b` it validates the doubled prefix while buffering `a` on its one work tape,
+then emits `a` if `first` and the suffix `b` if `second`; on a malformed input it halts with
+empty output. One machine serves the first-component, second-component and concatenation
+rows (P6, P13). -/
+def pairExtractTM (first second : Bool) : FinTM Bool where
+  k := 1
+  State := Option Bool ⊕ Fin 3
+  tm :=
+    { q₀ := .inl none
+      tr := fun q inp work => match q with
+        | .inl none => match inp with
+          | some b => ⟨.pos, fun _ => (none, 0), none, some (.inl (some b))⟩
+          | none => ⟨0, fun _ => (none, 0), none, none⟩
+        | .inl (some b) => match inp with
+          | none => ⟨0, fun _ => (none, 0), none, none⟩
+          | some c =>
+            if b = c then
+              ⟨.pos, fun _ => (some (some b), .pos), none, some (.inl none)⟩
+            else if b then ⟨.pos, fun _ => (none, 0), none, none⟩
+            else ⟨.pos, fun _ => (none, .neg), none, some (.inr 0)⟩
+        | .inr q => match q.val with
+          | 0 => match work 0 with
+            | some _ => ⟨0, fun _ => (none, .neg), none, some (.inr 0)⟩
+            | none => ⟨0, fun _ => (none, .pos), none, some (.inr 1)⟩
+          | 1 => match work 0 with
+            | some b => ⟨0, fun _ => (none, .pos), if first then some b else none, some (.inr 1)⟩
+            | none => ⟨0, fun _ => (none, 0), none, some (.inr 2)⟩
+          | _ => if second then match inp with
+              | some b => ⟨.pos, fun _ => (none, 0), some b, some (.inr 2)⟩
+              | none => ⟨0, fun _ => (none, 0), none, none⟩
+            else ⟨0, fun _ => (none, 0), none, none⟩ }
+
+/-- The pair extractor has one work tape. -/
+theorem pairExtractTM_k (first second : Bool) : (pairExtractTM first second).k = 1 := rfl
+
+/-- **The pair extractor's time** (landing: `Turing.FinTM.pairExtractTM_computes`, in
+`Primitives`; today the private `pairExtract_computes`). On every input the extractor halts
+within `5·(|x| + 1)` steps; its output is the selected components of the decoded pair, and
+empty when the input is not a pair encoding.
+
+**Proof sketch.** Today's `pairExtract_computes`, made public: the aligned scan reads the
+doubled prefix two cells at a time while buffering, the separator turns it into a rewind of the
+buffer, the replay emits `a`, and the suffix copy emits `b`; each phase is linear in `|x|`. -/
+theorem pairExtractTM_computes (first second : Bool) (x : List Bool) :
+    (pairExtractTM first second).ComputesInTime x
+      (match pairDecode x with
+        | some (a, b) => (if first then a else []) ++ (if second then b else [])
+        | none => []) (5 * (x.length + 1)) := by
+  sorry
+
+/-- **First component** (landing: `Turing.FinTM.pairExtractTM_fst`, in `Primitives`). The
+extractor at `(true, false)` computes the first component of a decoded pair, and `[]` on a
+malformed input, within `5·(n + 1)`.
+
+**Proof sketch.** Specialize `pairExtractTM_computes` and split on the decoding. -/
+theorem pairExtractTM_fst :
+    (pairExtractTM true false).ComputesFunInTime
+      (fun x => ((pairDecode x).map Prod.fst).getD []) (fun n => 5 * (n + 1)) := by
+  intro x
+  have h := pairExtractTM_computes true false x
+  cases hd : pairDecode x with
+  | none => simpa [hd] using h
+  | some p => cases p; simpa [hd] using h
+
+/-- **Second component** (landing: `Turing.FinTM.pairExtractTM_snd`, in `Primitives`). The
+extractor at `(false, true)` computes the second component of a decoded pair, and `[]` on a
+malformed input, within `5·(n + 1)`.
+
+**Proof sketch.** Specialize `pairExtractTM_computes` and split on the decoding. -/
+theorem pairExtractTM_snd :
+    (pairExtractTM false true).ComputesFunInTime
+      (fun x => ((pairDecode x).map Prod.snd).getD []) (fun n => 5 * (n + 1)) := by
+  intro x
+  have h := pairExtractTM_computes false true x
+  cases hd : pairDecode x with
+  | none => simpa [hd] using h
+  | some p => cases p; simpa [hd] using h
+
+/-- **Row** `Turing.FinTM.computesFunInTime_pairFst`, statement unchanged. -/
+theorem row_computesFunInTime_pairFst : type_of% @Turing.FinTM.computesFunInTime_pairFst :=
+  ⟨pairExtractTM true false, 5, pairExtractTM_fst⟩
+
+/-- **Row** `Turing.FinTM.computesFunInTime_pairSnd`, statement unchanged. -/
+theorem row_computesFunInTime_pairSnd : type_of% @Turing.FinTM.computesFunInTime_pairSnd :=
+  ⟨pairExtractTM false true, 5, pairExtractTM_snd⟩
+
+/-- **Space row** `Turing.FinTM.computesFunInTime_pairFst_spaceUsed` (Catalog), statement
+unchanged: the time spec, space from time, and the single work tape. -/
+theorem row_computesFunInTime_pairFst_spaceUsed :
+    type_of% @Turing.FinTM.computesFunInTime_pairFst_spaceUsed :=
+  ⟨pairExtractTM true false, 6,
+    fun x => (pairExtractTM_fst x).mono (Nat.mul_le_mul_right _ (by omega)),
+    fun x t => (spaceUsed_le_of_computesInTime (pairExtractTM_fst x) t).trans
+      (by simp only [pairExtractTM_k]; omega)⟩
+
+/-- **Space row** `Turing.FinTM.computesFunInTime_pairSnd_spaceUsed` (Catalog), statement
+unchanged. -/
+theorem row_computesFunInTime_pairSnd_spaceUsed :
+    type_of% @Turing.FinTM.computesFunInTime_pairSnd_spaceUsed :=
+  ⟨pairExtractTM false true, 6,
+    fun x => (pairExtractTM_snd x).mono (Nat.mul_le_mul_right _ (by omega)),
+    fun x t => (spaceUsed_le_of_computesInTime (pairExtractTM_snd x) t).trans
+      (by simp only [pairExtractTM_k]; omega)⟩
+
+/-! ### Primitives: the unary polynomial generator -/
+
+/-- **The unary polynomial engine** (landing: today's private `catalogPolyUnaryTM d C` of
+`Build/Primitives.lean`, which may stay private; copied into Catalog as
+`f2_catalogPolyUnaryTM`). Its `d + 1` nested unary loop tapes, each installed by one input
+scan, run an odometer of side `|x| + 1` and emit `C` ones per tick, writing
+`C·(|x| + 1)^(d + 1)` ones. `sorry` here: the landed body is unchanged. -/
+def polyUnaryEngineTM (d C : ℕ) : FinTM Bool := sorry
+
+/-- **The unary polynomial generator** (landing: `Turing.FinTM.polyUnaryTM`, public in
+`Primitives`). The machine that writes `C·(|x| + 1)^e` ones: the constant machine for
+`e = 0`, and the unary engine for `e = d + 1`. Today the same case split is made inside the
+proofs of `computesFunInTime_polyUnary` and of Catalog's `f2_unary_sharp`. -/
+def polyUnaryTM (C : ℕ) : ℕ → FinTM Bool
+  | 0 => constTM (List.replicate C true)
+  | d + 1 => polyUnaryEngineTM d C
+
+/-- **The unary generator's time** (landing: `Turing.FinTM.polyUnaryTM_computes`, in
+`Primitives`). The generator writes `C·(|x| + 1)^e` ones within
+`(C + 5e + 4)·((|x| + 1)^e + |x| + 1)` steps; the sharp degree `e`, with a linear allowance,
+is what the threaded length check consumes.
+
+**Proof sketch.** For `e = 0`, `constTM_computes` gives `C + 1` steps. For `e = d + 1`,
+today's `catalogPoly_unary_computes` gives `(C + 5(d + 1) + 4)·(|x| + 1)^(d + 1)`; both are
+below the stated bound (today's `f2_unary_sharp`). -/
+theorem polyUnaryTM_computes (C e : ℕ) :
+    (polyUnaryTM C e).ComputesFunInTime
+      (fun x => List.replicate (C * (x.length + 1) ^ e) true)
+      (fun n => (C + 5 * e + 4) * ((n + 1) ^ e + n + 1)) := by
+  sorry
+
+/-- **The unary generator's space** (landing: `Turing.FinTM.polyUnaryTM_spaceUsed`, in
+`Primitives`; today Catalog's `f2_poly_space`). At every time the generator has visited at
+most `5e·(|x| + 1)` work cells: each of its loop tapes holds a unary counter of side
+`|x| + 1`.
+
+**Proof sketch.** For `e = 0` there are no work tapes. For `e = d + 1`, every head starts at
+the origin and moves by unit steps inside `[-1, |x| + 1]` on its loop tape (the install scan
+and the in-place odometer revisits; today's `f2_polyHeads_bounds` and `f2_poly_step`), so each
+of the `d + 1` loop tapes and the administrative tapes contributes a bounded multiple of
+`|x| + 1`. -/
+theorem polyUnaryTM_spaceUsed (C e : ℕ) (x : List Bool) (t : ℕ) :
+    (polyUnaryTM C e).tm.spaceUsed ((polyUnaryTM C e).tm.initCfg x) t ≤
+      5 * e * (x.length + 1) := by
+  sorry
+
+/-- The sharp unary bound is below the row's polynomial bound: for every `n`,
+`a·((n + 1)^e + n + 1) ≤ 2a·(n + 1)^(e + 1)`.
+
+**Proof sketch.** Both `(n + 1)^e` and `n + 1` are at most `(n + 1)^(e + 1)`. -/
+theorem polyUnary_bound_le (a e n : ℕ) :
+    a * ((n + 1) ^ e + n + 1) ≤ 2 * a * (n + 1) ^ (e + 1) := by
+  have h1 : (n + 1) ^ e ≤ (n + 1) ^ (e + 1) :=
+    Nat.pow_le_pow_right (Nat.succ_pos n) (Nat.le_succ e)
+  have h2 : n + 1 ≤ (n + 1) ^ (e + 1) := by
+    calc n + 1 = (n + 1) ^ 1 := (pow_one _).symm
+      _ ≤ (n + 1) ^ (e + 1) := Nat.pow_le_pow_right (Nat.succ_pos n) (by omega)
+  calc a * ((n + 1) ^ e + n + 1) ≤ a * (2 * (n + 1) ^ (e + 1)) :=
+        Nat.mul_le_mul_left _ (by omega)
+    _ = 2 * a * (n + 1) ^ (e + 1) := by ring
+
+/-- **Row** `Turing.FinTM.computesFunInTime_polyUnary`, statement unchanged. -/
+theorem row_computesFunInTime_polyUnary :
+    type_of% @Turing.FinTM.computesFunInTime_polyUnary :=
+  fun C e => ⟨polyUnaryTM C e, 2 * (C + 5 * e + 4), fun x =>
+    (polyUnaryTM_computes C e x).mono (polyUnary_bound_le _ e x.length)⟩
+
+/-- **Space row** `Turing.FinTM.computesFunInTime_polyUnary_spaceUsed` (Catalog), statement
+unchanged: one constant serves both clauses. -/
+theorem row_computesFunInTime_polyUnary_spaceUsed :
+    type_of% @Turing.FinTM.computesFunInTime_polyUnary_spaceUsed :=
+  fun C e => ⟨polyUnaryTM C e, 2 * (C + 5 * e + 4) + 5 * e,
+    fun x => (polyUnaryTM_computes C e x).mono ((polyUnary_bound_le _ e x.length).trans
+      (Nat.mul_le_mul_right _ (Nat.le_add_right _ _))),
+    fun x t => (polyUnaryTM_spaceUsed C e x t).trans
+      (Nat.mul_le_mul_right _ (Nat.le_add_left _ _))⟩
+
+/-! ### Primitives: the threaded map (today's Catalog witness `a2_mapTM`) -/
+
+/-- **The threaded map** (landing: `Turing.FinTM.pairMapSndTM`, public in `Primitives`; today
+Catalog's private forwarding controller `a2_mapTM Mg true`, whose 30 `a2_` declarations move
+with it, and which replaces the captured-payload witness `pairMapTM` of `Primitives`). On
+`pairEncode a b` it validates and buffers the pair, emits the encoding of `a` with an empty
+second component, then runs `Mg` on the buffered `b` through clamped virtual input, forwarding
+`Mg`'s output, so that it outputs `pairEncode a (g b)`; a malformed input gives `[]`.
+`sorry` here: the landed body is `a2_mapTM`'s. -/
+def pairMapSndTM (Mg : FinTM Bool) : FinTM Bool := sorry
+
+/-- **The threaded map's time** (landing: `Turing.FinTM.pairMapSndTM_computes`, in
+`Primitives`). If `Mg` computes `g` within a monotone `Tg`, the threaded map computes
+`pairEncode a b ↦ pairEncode a (g b)` (and `[]` off the encodings) within
+`22·(n + 1 + Tg n)`.
+
+**Proof sketch.** Today's time half of Catalog's `computesFunInTime_pairMapSnd_spaceUsed`:
+rejection and the launch of the payload each take a linear number of steps
+(`a2_map_reject`, `a2_map_launch`); the forwarded payload run takes `Tg |b|` steps, and
+`|b| ≤ |x|` with monotonicity gives `Tg |x|`. -/
+theorem pairMapSndTM_computes {Mg : FinTM Bool} {g : List Bool → List Bool} {Tg : ℕ → ℕ}
+    (hg : Mg.ComputesFunInTime g Tg) (hTg : Monotone Tg) :
+    (pairMapSndTM Mg).ComputesFunInTime
+      (fun z => match pairDecode z with
+        | some (a, b) => pairEncode a (g b)
+        | none => [])
+      (fun n => 22 * (n + 1 + Tg n)) := by
+  sorry
+
+/-- **The threaded map's space** (landing: `Turing.FinTM.pairMapSndTM_spaceUsed`, in
+`Primitives`). If `Mg` uses at most `Sg |y|` work cells on every input `y` at every time, with
+`Sg` monotone, then the threaded map uses at most `Sg |x| + 22·(|x| + 1)` cells: coefficient
+one on the payload's space, plus linear administration.
+
+**Proof sketch.** Today's space half of the same Catalog row (`a2_map_space`): the two buffer
+tapes stay in `[-D, D]` for a linear `D`, and each payload tape follows `Mg`'s own head
+trajectory on `b`, so its visited set is `Mg`'s, bounded by `Sg |b| ≤ Sg |x|`. -/
+theorem pairMapSndTM_spaceUsed {Mg : FinTM Bool} (Sg : ℕ → ℕ)
+    (hgs : ∀ (y : List Bool) (t : ℕ), Mg.tm.spaceUsed (Mg.tm.initCfg y) t ≤ Sg y.length)
+    (hSg : Monotone Sg) (x : List Bool) (t : ℕ) :
+    (pairMapSndTM Mg).tm.spaceUsed ((pairMapSndTM Mg).tm.initCfg x) t ≤
+      Sg x.length + 22 * (x.length + 1) := by
+  sorry
+
+/-- **Row** `Turing.FinTM.computesFunInTime_pairMapSnd` (Primitives), statement unchanged; its
+witness changes from the captured-payload `pairMapTM` to the forwarding controller. -/
+theorem row_computesFunInTime_pairMapSnd :
+    type_of% @Turing.FinTM.computesFunInTime_pairMapSnd := by
+  intro Mg g Tg hg hTg
+  exact ⟨pairMapSndTM Mg, 22, pairMapSndTM_computes hg hTg⟩
+
+/-- **Space row** `Turing.FinTM.computesFunInTime_pairMapSnd_spaceUsed` (Catalog), statement
+unchanged; the same witness as the time row. -/
+theorem row_computesFunInTime_pairMapSnd_spaceUsed :
+    type_of% @Turing.FinTM.computesFunInTime_pairMapSnd_spaceUsed := by
+  intro Mg g Tg Sg hg hTg hgs hSg
+  exact ⟨pairMapSndTM Mg, 22, pairMapSndTM_computes hg hTg, pairMapSndTM_spaceUsed Sg hgs hSg⟩
+
+/-! ### Wrappers: the timed conditional -/
+
+/-- The decider padded with the idle branch tapes (verbatim from `Build/Wrappers.lean`'s
+private `timedPadTM`, which stays private). -/
+private def timedPadTM (D : FinTM Bool) (r : ℕ) : MultiTapeTM (D.k + r) Bool D.State where
+  q₀ := D.tm.q₀
+  tr q inp work := leftAction r id (D.tm.tr q inp (fun i => work (Fin.castAdd r i)))
+
+/-- **The timed conditional** (landing: `Turing.FinTM.timedCondTM`, public in
+`Build/Wrappers.lean`; today private there and copied into Catalog as `f2_timedCondTM`). Run
+the decider `D` with its output captured on the last tape, step back to read the verdict,
+rewind the input, then run `M₁` or `M₂`, as the verdict says, on its own untouched tape bank.
+(W3; [AB09, §1.2] for the model.) -/
+def timedCondTM (D M₁ M₂ : FinTM Bool) : FinTM Bool where
+  k := (D.k + (M₁.k + M₂.k)) + 1
+  State := D.State ⊕ (Bool ⊕ ((Bool × Bool) ⊕ (M₁.State ⊕ M₂.State)))
+  tm :=
+    { q₀ := .inl D.tm.q₀
+      tr := fun q inp work => match q with
+        | .inl q => captureAction Sum.inl (.inr (.inl false))
+            ((timedPadTM D (M₁.k + M₂.k)).tr q inp (fun i => work i.castSucc))
+        | .inr (.inl false) =>
+          ⟨0, (fun i => if (i : ℕ) < D.k + (M₁.k + M₂.k) then (none, 0)
+            else (none, .neg)), none, some (.inr (.inl true))⟩
+        | .inr (.inl true) => controlAction 0
+            (some (.inr (.inr (.inl ((work (Fin.last _)).getD false, false)))))
+        | .inr (.inr (.inl (b, false))) =>
+            controlAction .neg (some (.inr (.inr (.inl (b, true)))))
+        | .inr (.inr (.inl (b, true))) => match inp with
+          | some _ => controlAction .neg (some (.inr (.inr (.inl (b, true)))))
+          | none => controlAction .pos
+              (some (.inr (.inr (.inr (branchTM M₁ M₂ b).tm.q₀))))
+        | .inr (.inr (.inr q)) => leftAction 1 id
+            (rightAction D.k (fun s => .inr (.inr (.inr s)))
+              ((branchTM M₁ M₂ false).tm.tr q inp
+                (fun i => work (Fin.natAdd D.k i).castSucc))) }
+
+/-- **The timed conditional's time** (landing: `Turing.FinTM.timedCondTM_computes`, in
+`Wrappers`). If `D` computes the verdict `[p x]` within `T₀` and `M₁`, `M₂` compute `f₁`, `f₂`
+within `T₁`, `T₂`, the timed conditional computes `if p x then f₁ x else f₂ x` within
+`5·(T₀ n + max (T₁ n) (T₂ n) + 1)`.
+
+**Proof sketch.** Today's body of `computesFunInTime_cond`: the captured decider run, the
+two-step verdict read and the input rewind take at most `2·T₀ + 5` steps (`timed_start`; the
+input head has moved at most once per decider step), and the selected branch then runs from its
+own initial configuration on the same input (`timed_branch_run`, `branchTM_computes`). -/
+theorem timedCondTM_computes {D M₁ M₂ : FinTM Bool} {p : List Bool → Bool}
+    {f₁ f₂ : List Bool → List Bool} {T₀ T₁ T₂ : ℕ → ℕ}
+    (hD : D.ComputesFunInTime (fun x => [p x]) T₀)
+    (h₁ : M₁.ComputesFunInTime f₁ T₁) (h₂ : M₂.ComputesFunInTime f₂ T₂) :
+    (timedCondTM D M₁ M₂).ComputesFunInTime (fun x => if p x then f₁ x else f₂ x)
+      (fun n => 5 * (T₀ n + max (T₁ n) (T₂ n) + 1)) := by
+  sorry
+
+/-- **The branch union's space** (landing: `Turing.FinTM.branchTM_spaceUsed`, in
+`TuringMachine/Simulation.lean` next to `branchTM`; today Catalog's `f2_branch_space`). The
+selected branch's space plus one origin cell per tape of the idle bank.
+
+**Proof sketch.** The branch union runs the selected machine on its own bank (`leftCfg_run`,
+`rightCfg_run`) and never moves the other bank's heads, whose visited sets stay the origin
+singletons; split the sum over the two banks. -/
+theorem branchTM_spaceUsed (M₁ M₂ : FinTM Bool) (b : Bool) (x : List Bool) (t : ℕ) :
+    (branchTM M₁ M₂ b).tm.spaceUsed ((branchTM M₁ M₂ b).tm.initCfg x) t =
+      if b then M₁.tm.spaceUsed (M₁.tm.initCfg x) t + M₂.k
+      else M₂.tm.spaceUsed (M₂.tm.initCfg x) t + M₁.k := by
+  sorry
+
+/-- **The timed conditional's space** (landing: `Turing.FinTM.timedCondTM_spaceUsed`, in
+`Wrappers`; today Catalog's `f2_cond_space`). If `D` outputs `[b]` on `x` within `T` steps,
+then at every time the conditional's space is at most `D`'s space at time `T`, plus the branch
+union's space at the same time, plus two cells for the capture tape.
+
+**Proof sketch.** The three tape groups are disjoint. The decider bank is touched only during
+the captured run, which halts by `T`; the branch bank only after the dispatch, along the branch
+union's own trajectory; and the capture tape's head stays in `{0, 1}` (today's
+`f2_cond_ledger`, which gives the head positions of the three groups at every time). -/
+theorem timedCondTM_spaceUsed (D M₁ M₂ : FinTM Bool) (x : List Bool) (b : Bool) (T t : ℕ)
+    (hD : D.ComputesInTime x [b] T) :
+    (timedCondTM D M₁ M₂).tm.spaceUsed ((timedCondTM D M₁ M₂).tm.initCfg x) t ≤
+      D.tm.spaceUsed (D.tm.initCfg x) T +
+        (branchTM M₁ M₂ b).tm.spaceUsed ((branchTM M₁ M₂ b).tm.initCfg x) t + 2 := by
+  sorry
+
+/-- **Row** `Turing.FinTM.computesFunInTime_cond` (Wrappers), statement unchanged. -/
+theorem row_computesFunInTime_cond : type_of% @Turing.FinTM.computesFunInTime_cond := by
+  intro D M₁ M₂ p f₁ f₂ T₀ T₁ T₂ hD h₁ h₂
+  exact ⟨timedCondTM D M₁ M₂, 5, timedCondTM_computes hD h₁ h₂⟩
+
+/-- **Space row** `Turing.FinTM.computesFunInTime_cond_spaceUsed` (Catalog), statement
+unchanged: the three spec theorems and the constant `7 + k₁ + k₂` of today's proof. -/
+theorem row_computesFunInTime_cond_spaceUsed :
+    type_of% @Turing.FinTM.computesFunInTime_cond_spaceUsed := by
+  intro D M₁ M₂ p f₁ f₂ T₀ T₁ T₂ sD s₁ s₂ hD h₁ h₂ hsD hs₁ hs₂
+  refine ⟨timedCondTM D M₁ M₂, 7 + M₁.k + M₂.k, ?_, ?_⟩
+  · intro x
+    exact (timedCondTM_computes hD h₁ h₂ x).mono (Nat.mul_le_mul_right _ (by omega))
+  · intro x t
+    have h := timedCondTM_spaceUsed D M₁ M₂ x (p x) (T₀ x.length) t (hD x)
+    rw [branchTM_spaceUsed] at h
+    have hd := hsD x (T₀ x.length)
+    have h1 := hs₁ x t
+    have h2 := hs₂ x t
+    have hm1 := Nat.le_max_left (s₁ x.length) (s₂ x.length)
+    have hm2 := Nat.le_max_right (s₁ x.length) (s₂ x.length)
+    split at h <;> omega
+
+/-! ### Encoding: the diagonal pairing machine (one witness for two rows) -/
+
+/-- **The diagonal pairing machine** (landing: `Turing.pairDiagTM`, public in
+`TuringMachine/Encoding.lean`; today private there). A machine with no work tapes that, on
+input `α`, writes each symbol of `α` twice, then the separator `false, true`, then rewinds
+and copies `α` again, so that it outputs `pairEncode α α`. It also replaces `Primitives`'
+private `pairDupTM`, which computes the same function: one witness for both rows. -/
+def pairDiagTM : FinTM Bool where
+  k := 0
+  State := Fin 6
+  tm :=
+    { q₀ := 0
+      tr := fun q inp _ =>
+        match q with
+        | 0 => match inp with
+          | some b => ⟨.zero, fun i => i.elim0, some b, some 1⟩
+          | none => ⟨.zero, fun i => i.elim0, some false, some 2⟩
+        | 1 => ⟨.pos, fun i => i.elim0, inp, some 0⟩
+        | 2 => ⟨.zero, fun i => i.elim0, some true, some 3⟩
+        | 3 => ⟨.neg, fun i => i.elim0, none, some 4⟩
+        | 4 => match inp with
+          | some _ => ⟨.neg, fun i => i.elim0, none, some 4⟩
+          | none => ⟨.pos, fun i => i.elim0, none, some 5⟩
+        | _ => match inp with
+          | some b => ⟨.pos, fun i => i.elim0, some b, some 5⟩
+          | none => ⟨.zero, fun i => i.elim0, none, none⟩ }
+
+/-- The diagonal pairing machine has no work tapes. -/
+theorem pairDiagTM_k : pairDiagTM.k = 0 := rfl
+
+/-- **The diagonal pairing machine's time** (landing: `Turing.pairDiagTM_computes`, in
+`Encoding`). On input `α` it halts within `4|α| + 5` steps with output `pairEncode α α`.
+
+**Proof sketch.** Today's private `pairDiag_run`: the doubling pass takes `2|α|` steps, the
+two separator steps and the first left move `3`, the rewind `|α| + 1`, the copy `|α|`, and the
+halting transition `1`. -/
+theorem pairDiagTM_computes (x : List Bool) :
+    pairDiagTM.ComputesInTime x (pairEncode x x) (4 * x.length + 5) := by
+  sorry
+
+/-- **Row** `Turing.computesFunInTime_pairEncode_diag` (Encoding), statement unchanged. -/
+theorem row_computesFunInTime_pairEncode_diag :
+    type_of% @Turing.computesFunInTime_pairEncode_diag :=
+  ⟨pairDiagTM, 6, fun x => (pairDiagTM_computes x).mono (by simp; omega)⟩
+
+/-- **Row** `Turing.FinTM.computesFunInTime_pairDup` (Primitives), statement unchanged, now on
+the Encoding witness; `pairDupTM` and its four private lemmas retire. -/
+theorem row_computesFunInTime_pairDup : type_of% @Turing.FinTM.computesFunInTime_pairDup :=
+  ⟨pairDiagTM, 6, fun x => (pairDiagTM_computes x).mono (by simp; omega)⟩
+
+/-- **Space row** `Turing.FinTM.computesFunInTime_pairDup_spaceUsed` (Catalog), statement
+unchanged. -/
+theorem row_computesFunInTime_pairDup_spaceUsed :
+    type_of% @Turing.FinTM.computesFunInTime_pairDup_spaceUsed :=
+  ⟨pairDiagTM, 6, fun x => (pairDiagTM_computes x).mono (by simp; omega), fun x t => by
+    rw [MultiTapeTM.spaceUsed_zero_tapes_eq_zero _ _ pairDiagTM_k]; omega⟩
+
+/-! ### Loop: the loop host -/
+
+/-- **The loop host** (landing: `Turing.FinTM.loopHostTM`, public in `Build/Loop.lean`; today the
+private `loopHostM body F anchor false findMode`, abbreviated `loopHost`, and copied, in an
+older version without the forwarding flag, into Catalog as `f2_loopHost`). It runs the fuel
+machine `F` once, captures the fuel word `Nat.bits R` on a counter tape, starts `body`, and then
+alternates captured body rounds from the `anchor` seam with fixed-width debits of the counter:
+an accepting round halts with `[true]`, or with the round's own output in find mode; underflow
+of the counter halts with `[false]`, or `[]` in find mode. `sorry` here: the landed body is
+`loopHostM`'s. -/
+def loopHostTM (body F : FinTM Bool) (anchor : body.State) (findMode : Bool) : FinTM Bool :=
+  sorry
+
+/-- **The loop host's configuration contract** (landing: `Turing.FinTM.loopHostTM_contracts`, in
+`Loop`; today the private `loopHost_contracts`, with its constant `loopHost_bound = 10` made
+explicit). Given a fuel machine for `Nat.bits R` within `T`, an invariant, a body startup
+reaching the `anchor` seam of `s0 x` within `T`, and body rounds that, from the seam of an
+invariant state `s`, either halt with output `out x s` (if `acceptF x s`) or reach the seam of
+`stepF x s`, all within `T` and with a positive first-return cut, the host has for every input
+a family of round configurations: a startup within `10·(T + 1)` reaching `cfg 0`, empty output
+at every round, a halted terminal at index `R + 1` (output `[false]`, or `[]` in find mode),
+and per round a segment within `10·(T + 1)` that halts accepting or reaches the next round.
+
+**Proof sketch.** Today's `loopHost_contracts`: the fuel phase and the body startup give the
+startup; each segment is one captured body round followed by a debit and rewind of the
+counter, whose width never exceeds `T` (`loop_fuel_width`), so every phase costs a constant
+multiple of `T + 1`; the last debit underflows into the terminal. -/
+theorem loopHostTM_contracts (body F : FinTM Bool) (anchor : body.State)
+    (Inv : List Bool → List Bool → Prop)
+    (stepF : List Bool → List Bool → List Bool)
+    (acceptF : List Bool → List Bool → Bool)
+    (out : List Bool → List Bool → List Bool) (findMode : Bool)
+    (s0 : List Bool → List Bool) (R T : ℕ → ℕ)
+    (hF : F.ComputesFunInTime (fun x => Nat.bits (R x.length)) T)
+    (hInv0 : ∀ x : List Bool, Inv x (s0 x))
+    (hInvStep : ∀ (x s : List Bool), Inv x s → Inv x (stepF x s))
+    (hstart : ∀ x : List Bool, ∃ t ≤ T x.length,
+      (∀ t' < t,
+        (body.tm.runFrom (body.tm.initCfg x) t').state ≠ some anchor) ∧
+      body.tm.runFrom (body.tm.initCfg x) t =
+        Cfg.ofWords anchor (stateWord body.k (s0 x)))
+    (hround : ∀ (x s : List Bool), Inv x s →
+      ∃ t, 0 < t ∧ t ≤ T x.length ∧
+        (∀ t', 0 < t' → t' < t →
+          (body.tm.runFrom
+            (Cfg.ofWords (input := x) anchor (stateWord body.k s)) t').state
+              ≠ some anchor) ∧
+        if acceptF x s then
+          (body.tm.runFrom
+            (Cfg.ofWords (input := x) anchor (stateWord body.k s)) t).state
+              = none ∧
+          (body.tm.runFrom
+            (Cfg.ofWords (input := x) anchor (stateWord body.k s)) t).output
+              = out x s
+        else
+          body.tm.runFrom
+            (Cfg.ofWords (input := x) anchor (stateWord body.k s)) t =
+              Cfg.ofWords anchor (stateWord body.k (stepF x s))) :
+    ∀ x : List Bool,
+      ∃ (cfg : ℕ → Cfg (loopHostTM body F anchor findMode).k Bool
+          (loopHostTM body F anchor findMode).State x) (startup : ℕ),
+        startup ≤ 10 * (T x.length + 1) ∧
+        (loopHostTM body F anchor findMode).tm.runFrom
+          ((loopHostTM body F anchor findMode).tm.initCfg x) startup = cfg 0 ∧
+        (∀ i ≤ R x.length, (cfg i).output = []) ∧
+        (cfg (R x.length + 1)).state = none ∧
+        (cfg (R x.length + 1)).output = (if findMode then [] else [false]) ∧
+        (∀ i ≤ R x.length, ∃ t ≤ 10 * (T x.length + 1),
+          if acceptF x ((stepF x)^[i] (s0 x)) then
+            ((loopHostTM body F anchor findMode).tm.runFrom (cfg i) t).state = none ∧
+            ((loopHostTM body F anchor findMode).tm.runFrom (cfg i) t).output =
+              (if findMode then out x ((stepF x)^[i] (s0 x)) else [true])
+          else (loopHostTM body F anchor findMode).tm.runFrom (cfg i) t = cfg (i + 1)) := by
+  sorry
+
+/-- **The decision loop's time** (landing: `Turing.FinTM.loopHostTM_decides`, in `Loop`). Under
+the hypotheses of `loopHostTM_contracts` with `out = [true]`, the host in decision mode outputs
+`[true]` if some orbit point `(stepF x)^[i] (s0 x)` with `i ≤ R |x|` is accepted and `[false]`
+otherwise, within `10·(T n + 1)·(R n + 2)` steps.
+
+**Proof sketch.** Today's body of `exists_loopTM`: sum the startup and at most `R + 1`
+segments of the contract family with the halted-terminal summation lemma
+(`loop_halted_run`). -/
+theorem loopHostTM_decides (body F : FinTM Bool) (anchor : body.State)
+    (Inv : List Bool → List Bool → Prop)
+    (stepF : List Bool → List Bool → List Bool)
+    (acceptF : List Bool → List Bool → Bool)
+    (s0 : List Bool → List Bool) (R T : ℕ → ℕ)
+    (hF : F.ComputesFunInTime (fun x => Nat.bits (R x.length)) T)
+    (hInv0 : ∀ x : List Bool, Inv x (s0 x))
+    (hInvStep : ∀ (x s : List Bool), Inv x s → Inv x (stepF x s))
+    (hstart : ∀ x : List Bool, ∃ t ≤ T x.length,
+      (∀ t' < t,
+        (body.tm.runFrom (body.tm.initCfg x) t').state ≠ some anchor) ∧
+      body.tm.runFrom (body.tm.initCfg x) t =
+        Cfg.ofWords anchor (stateWord body.k (s0 x)))
+    (hround : ∀ (x s : List Bool), Inv x s →
+      ∃ t, 0 < t ∧ t ≤ T x.length ∧
+        (∀ t', 0 < t' → t' < t →
+          (body.tm.runFrom
+            (Cfg.ofWords (input := x) anchor (stateWord body.k s)) t').state
+              ≠ some anchor) ∧
+        if acceptF x s then
+          (body.tm.runFrom
+            (Cfg.ofWords (input := x) anchor (stateWord body.k s)) t).state
+              = none ∧
+          (body.tm.runFrom
+            (Cfg.ofWords (input := x) anchor (stateWord body.k s)) t).output
+              = [true]
+        else
+          body.tm.runFrom
+            (Cfg.ofWords (input := x) anchor (stateWord body.k s)) t =
+              Cfg.ofWords anchor (stateWord body.k (stepF x s))) :
+    (loopHostTM body F anchor false).ComputesFunInTime
+      (fun x => [(List.range (R x.length + 1)).any
+        fun i => acceptF x ((stepF x)^[i] (s0 x))])
+      (fun n => 10 * (T n + 1) * (R n + 2)) := by
+  sorry
+
+/-- **The find loop's time** (landing: `Turing.FinTM.loopHostTM_finds`, in `Loop`). Under the
+hypotheses of `loopHostTM_contracts`, the host in find mode outputs `out x s` for the first
+accepted orbit point `s` with index at most `R |x|`, and `[]` if there is none, within
+`10·(T n + 1)·(R n + 2)` steps.
+
+**Proof sketch.** Today's body of `exists_loopFindTM`: sum the segments with the first-accept
+summation lemma (`loop_find_run`). -/
+theorem loopHostTM_finds (body F : FinTM Bool) (anchor : body.State)
+    (Inv : List Bool → List Bool → Prop)
+    (stepF : List Bool → List Bool → List Bool)
+    (acceptF : List Bool → List Bool → Bool)
+    (out : List Bool → List Bool → List Bool)
+    (s0 : List Bool → List Bool) (R T : ℕ → ℕ)
+    (hF : F.ComputesFunInTime (fun x => Nat.bits (R x.length)) T)
+    (hInv0 : ∀ x : List Bool, Inv x (s0 x))
+    (hInvStep : ∀ (x s : List Bool), Inv x s → Inv x (stepF x s))
+    (hstart : ∀ x : List Bool, ∃ t ≤ T x.length,
+      (∀ t' < t,
+        (body.tm.runFrom (body.tm.initCfg x) t').state ≠ some anchor) ∧
+      body.tm.runFrom (body.tm.initCfg x) t =
+        Cfg.ofWords anchor (stateWord body.k (s0 x)))
+    (hround : ∀ (x s : List Bool), Inv x s →
+      ∃ t, 0 < t ∧ t ≤ T x.length ∧
+        (∀ t', 0 < t' → t' < t →
+          (body.tm.runFrom
+            (Cfg.ofWords (input := x) anchor (stateWord body.k s)) t').state
+              ≠ some anchor) ∧
+        if acceptF x s then
+          (body.tm.runFrom
+            (Cfg.ofWords (input := x) anchor (stateWord body.k s)) t).state
+              = none ∧
+          (body.tm.runFrom
+            (Cfg.ofWords (input := x) anchor (stateWord body.k s)) t).output
+              = out x s
+        else
+          body.tm.runFrom
+            (Cfg.ofWords (input := x) anchor (stateWord body.k s)) t =
+              Cfg.ofWords anchor (stateWord body.k (stepF x s))) :
+    (loopHostTM body F anchor true).ComputesFunInTime
+      (fun x => match (List.range (R x.length + 1)).find?
+          (fun i => acceptF x ((stepF x)^[i] (s0 x))) with
+        | some i => out x ((stepF x)^[i] (s0 x))
+        | none => [])
+      (fun n => 10 * (T n + 1) * (R n + 2)) := by
+  sorry
+
+/-- **The decision loop's space** (landing: `Turing.FinTM.loopHostTM_spaceUsed`, in `Loop`;
+today the space half of Catalog's `exists_loopTM_spaceUsed`, with its 15 `a2_` declarations and
+the `f2_` lemmas that have no counterpart in `Loop` moved there). Under the hypotheses of
+`loopHostTM_decides`, if the fuel machine's space and the body's space from its initial
+configuration and from every invariant seam, within the round budget, are at most `S |x|`,
+then the host's space is at most `19·k·(S |x| + T |x| + 1)`, where `k` is its tape count:
+space does not grow with the number of rounds.
+
+**Proof sketch.** Each round restarts from a seam with every head at the origin, so per tape the
+union of the rounds' visited sets lies in one interval about the origin, of radius at most
+`S + T` up to constants (today's `a2_segments`, `a2_call_heads`, `a2_fuel_heads`); the counter
+tape holds the fuel word, of length at most `T`; and the capture tape stays within a constant.
+Sum over the `k` tapes (`f2_space_radius`). -/
+theorem loopHostTM_spaceUsed (body F : FinTM Bool) (anchor : body.State)
+    (Inv : List Bool → List Bool → Prop)
+    (stepF : List Bool → List Bool → List Bool)
+    (acceptF : List Bool → List Bool → Bool)
+    (s0 : List Bool → List Bool) (R T S : ℕ → ℕ)
+    (hF : F.ComputesFunInTime (fun x => Nat.bits (R x.length)) T)
+    (hInv0 : ∀ x : List Bool, Inv x (s0 x))
+    (hInvStep : ∀ (x s : List Bool), Inv x s → Inv x (stepF x s))
+    (hstart : ∀ x : List Bool, ∃ t ≤ T x.length,
+      (∀ t' < t,
+        (body.tm.runFrom (body.tm.initCfg x) t').state ≠ some anchor) ∧
+      body.tm.runFrom (body.tm.initCfg x) t =
+        Cfg.ofWords anchor (stateWord body.k (s0 x)))
+    (hround : ∀ (x s : List Bool), Inv x s →
+      ∃ t, 0 < t ∧ t ≤ T x.length ∧
+        (∀ t', 0 < t' → t' < t →
+          (body.tm.runFrom
+            (Cfg.ofWords (input := x) anchor (stateWord body.k s)) t').state
+              ≠ some anchor) ∧
+        if acceptF x s then
+          (body.tm.runFrom
+            (Cfg.ofWords (input := x) anchor (stateWord body.k s)) t).state
+              = none ∧
+          (body.tm.runFrom
+            (Cfg.ofWords (input := x) anchor (stateWord body.k s)) t).output
+              = [true]
+        else
+          body.tm.runFrom
+            (Cfg.ofWords (input := x) anchor (stateWord body.k s)) t =
+              Cfg.ofWords anchor (stateWord body.k (stepF x s)))
+    (hFspace : ∀ (x : List Bool) (t : ℕ),
+      F.tm.spaceUsed (F.tm.initCfg x) t ≤ S x.length)
+    (hstartSpace : ∀ (x : List Bool) (t : ℕ), t ≤ T x.length →
+      body.tm.spaceUsed (body.tm.initCfg x) t ≤ S x.length)
+    (hroundSpace : ∀ (x s : List Bool), Inv x s →
+      ∀ t ≤ T x.length,
+        body.tm.spaceUsed
+          (Cfg.ofWords (input := x) anchor (stateWord body.k s)) t
+            ≤ S x.length)
+    (x : List Bool) (t : ℕ) :
+    (loopHostTM body F anchor false).tm.spaceUsed
+        ((loopHostTM body F anchor false).tm.initCfg x) t
+      ≤ 19 * (loopHostTM body F anchor false).k * (S x.length + T x.length + 1) := by
+  sorry
+
+/-- **Row** `Turing.FinTM.exists_loopCfgTM` (Loop), statement unchanged. -/
+theorem row_exists_loopCfgTM : type_of% @Turing.FinTM.exists_loopCfgTM := by
+  intro body F anchor Inv stepF acceptF s0 R T hF hInv0 hInvStep hstart hround
+  exact ⟨loopHostTM body F anchor false, 10, by
+    simpa using loopHostTM_contracts body F anchor Inv stepF acceptF (fun _ _ => [true]) false
+      s0 R T hF hInv0 hInvStep hstart hround⟩
+
+/-- **Row** `Turing.FinTM.exists_loopTM` (Loop), statement unchanged. -/
+theorem row_exists_loopTM : type_of% @Turing.FinTM.exists_loopTM := by
+  intro body F anchor Inv stepF acceptF s0 R T hF hInv0 hInvStep hstart hround
+  exact ⟨loopHostTM body F anchor false, 10, loopHostTM_decides body F anchor Inv stepF acceptF
+    s0 R T hF hInv0 hInvStep hstart hround⟩
+
+/-- **Row** `Turing.FinTM.exists_loopFindTM` (Loop), statement unchanged. -/
+theorem row_exists_loopFindTM : type_of% @Turing.FinTM.exists_loopFindTM := by
+  intro body F anchor Inv stepF acceptF out s0 R T hF hInv0 hInvStep hstart hround
+  exact ⟨loopHostTM body F anchor true, 10, loopHostTM_finds body F anchor Inv stepF acceptF
+    out s0 R T hF hInv0 hInvStep hstart hround⟩
+
+/-- **Space row** `Turing.FinTM.exists_loopTM_spaceUsed` (Catalog), statement unchanged: the
+decision loop's time and space specs with the constant `10 + 19·k`. Replaces 177 lines and,
+with `computesFunInTime_splitSolve_spaceUsed`, the 87 `f2_` declarations of the loop family. -/
+theorem row_exists_loopTM_spaceUsed : type_of% @Turing.FinTM.exists_loopTM_spaceUsed := by
+  intro body F anchor Inv stepF acceptF s0 R T S hF hInv0 hInvStep hstart hround hFspace
+    hstartSpace hroundSpace
+  refine ⟨loopHostTM body F anchor false, 10 + 19 * (loopHostTM body F anchor false).k,
+    fun x => (loopHostTM_decides body F anchor Inv stepF acceptF s0 R T hF hInv0 hInvStep
+      hstart hround x).mono (Nat.mul_le_mul_right _ (Nat.mul_le_mul_right _
+        (Nat.le_add_right _ _))), fun x t => ?_⟩
+  exact (loopHostTM_spaceUsed body F anchor Inv stepF acceptF s0 R T S hF hInv0 hInvStep hstart
+    hround hFspace hstartSpace hroundSpace x t).trans
+      (Nat.mul_le_mul_right _ (Nat.le_add_left _ _))
+
+/-! ### Loop: the clean call -/
+
+/-- **The clean call** (landing: `Turing.FinTM.callTM`, public in `Loop`; today the private
+`emCallTM M emit`). From the seam holding an argument word on its first tape, it runs `M` on
+that argument through tracked banks, clears every bank it used, and then either installs the
+result in place of the argument (`emit = false`) or forwards it to the physical output and
+keeps the argument (`emit = true`). `sorry` here: the landed body is `emCallTM`'s. -/
+def callTM (M : FinTM Bool) (emit : Bool) : FinTM Bool := sorry
+
+/-- **The clean call's entry state** (landing: `Turing.FinTM.callEntry`, in `Loop`; today
+`(emCallTM M emit).tm.q₀`). `sorry` here. -/
+def callEntry (M : FinTM Bool) (emit : Bool) : (callTM M emit).State := sorry
+
+/-- **The clean call's exit state** (landing: `Turing.FinTM.callExit`, in `Loop`; today the
+anchor `.inr (.inr 5)` of `emCallTM`'s finishing phase). `sorry` here. -/
+def callExit (M : FinTM Bool) (emit : Bool) : (callTM M emit).State := sorry
+
+/-- **The clean call has a tape** (landing: `Turing.FinTM.callTM_k_pos`, in `Loop`). The call's
+tape count is positive, so its argument seam is not the degenerate zero-tape one.
+
+**Proof sketch.** The layout reserves an argument tape: the count is a successor (`rfl` with
+the landed body). -/
+theorem callTM_k_pos (M : FinTM Bool) (emit : Bool) : 0 < (callTM M emit).k := by
+  sorry
+
+/-- **The install call's contract** (landing: `Turing.FinTM.callTM_install`, in `Loop`). If `M`
+computes `f` within `T`, then from the entry seam with argument `arg` the install call reaches,
+at its first positive visit to the exit, the exit seam holding `f arg`, within
+`(24 + 13·k_M)·(T |arg| + |arg| + |f arg| + 1)` steps.
+
+**Proof sketch.** Today's `emCall_first` at `emit = false`: the evaluation is captured at its
+actual return, each tracked bank is cleared to its observed extent, and the finishing pass
+installs the capture and erases the administrative storage; the ledger of `emCall_complete`
+gives the coefficient. -/
+theorem callTM_install {M : FinTM Bool} {f : List Bool → List Bool} {T : ℕ → ℕ}
+    (hM : M.ComputesFunInTime f T) (x arg : List Bool) :
+    ∃ t ≤ (24 + 13 * M.k) * (T arg.length + arg.length + (f arg).length + 1),
+      0 < t ∧
+      (∀ t', 0 < t' → t' < t →
+        ((callTM M false).tm.runFrom
+          (Cfg.ofWords (input := x) (callEntry M false) (stateWord (callTM M false).k arg))
+            t').state ≠ some (callExit M false)) ∧
+      (callTM M false).tm.runFrom
+        (Cfg.ofWords (input := x) (callEntry M false) (stateWord (callTM M false).k arg)) t =
+          Cfg.ofWords (callExit M false) (stateWord (callTM M false).k (f arg)) := by
+  sorry
+
+/-- **The emit call's contract** (landing: `Turing.FinTM.callTM_emit`, in `Loop`). If `M`
+computes `f` within `T`, then from the entry seam with argument `arg` the emit call reaches,
+at its first positive visit to the exit, the entry seam's configuration with the exit state and
+output `f arg`, the argument intact, within the install call's bound.
+
+**Proof sketch.** Today's `emCall_first` at `emit = true`: as the install call, except that the
+finishing pass replays the capture onto the physical output and keeps the argument. -/
+theorem callTM_emit {M : FinTM Bool} {f : List Bool → List Bool} {T : ℕ → ℕ}
+    (hM : M.ComputesFunInTime f T) (x arg : List Bool) :
+    ∃ t ≤ (24 + 13 * M.k) * (T arg.length + arg.length + (f arg).length + 1),
+      0 < t ∧
+      (∀ t', 0 < t' → t' < t →
+        ((callTM M true).tm.runFrom
+          (Cfg.ofWords (input := x) (callEntry M true) (stateWord (callTM M true).k arg))
+            t').state ≠ some (callExit M true)) ∧
+      (callTM M true).tm.runFrom
+        (Cfg.ofWords (input := x) (callEntry M true) (stateWord (callTM M true).k arg)) t =
+          { Cfg.ofWords (input := x) (callExit M true) (stateWord (callTM M true).k arg)
+              with output := f arg } := by
+  sorry
+
+/-- **Row** `Turing.FinTM.exists_installCallTM` (Loop), statement unchanged. -/
+theorem row_exists_installCallTM : type_of% @Turing.FinTM.exists_installCallTM :=
+  fun M _ _ hM => ⟨callTM M false, callEntry M false, callExit M false, 24 + 13 * M.k,
+    callTM_k_pos M false, callTM_install hM⟩
+
+/-- **Row** `Turing.FinTM.exists_emitCallTM` (Loop), statement unchanged. -/
+theorem row_exists_emitCallTM : type_of% @Turing.FinTM.exists_emitCallTM :=
+  fun M _ _ hM => ⟨callTM M true, callEntry M true, callExit M true, 24 + 13 * M.k,
+    callTM_k_pos M true, callTM_emit hM⟩
+
+end Turing.FinTM.MIG1Draft
