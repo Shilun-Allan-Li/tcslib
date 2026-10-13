@@ -298,6 +298,22 @@ promotes a small fact that does not depend on `EXPCOM`, with no statement change
 **Maintainer's recommendation:** acknowledge the probe transcriptions as forced (they are the
 brief's route), and schedule the first three factorings in the dedup window.
 
+**Answered (user, 2026-10-12): factor before closing.** The three factorings land in a maintainer
+PR before the B5b gate closes:
+- the `Nat.bits` shift law, `Turing.bits_two_pow_mul` with its case `bits_two_pow_eq_replicate`,
+  in `TuringMachine/Encoding` (`Build/Convention` cannot see `Nat.bits` without a new import);
+- the `incFixed` overflow criterion, `Turing.incFixed_eq_none_iff_replicate`, in
+  `Build/Convention`;
+- the `incFixed` prefix law, `Turing.incFixed_replicate_true_append`, also in `Build/Convention`.
+  This replaces "make `catalog_increment_value` public": the general law sits where
+  `incFixed` is defined, and both Catalog's `catalog_increment_value` and EXPCOM's
+  `expcom_inc_prefix` are derived from it.
+
+The probe transcriptions are acknowledged as forced. Two copies sit in colleague-owned files
+and stay for the user's dedup window: `TimeHierarchy/Separation.lean`'s private `bits_two_pow`,
+and `CircuitComplexity/MeyerTableau.lean`'s public `incFixed_eq_none_iff`. The new public names
+avoid both, so neither file changes.
+
 ---
 
 ### C1-P1: promote C1c's blank-cell query bound to `Oracle.lean` (from the epoch C1 fill gate, note 15)
@@ -515,7 +531,7 @@ statement families are retired, with full gates and consumer edits. Restyling is
 
 | ID | Scope | Action | Estimate | Needs | Gate | Notes |
 |---|---|---|---|---|---|---|
-| MIG-0 | new `Build/Contract.lean` | Item 0, with the §16 requirements: the contract structure, tape frames and `.keep`, composition theorems as thin wrappers over the existing public rows, and tactics | +1.5k to +2.5k | — | stmt | first; unlocks MIG-11 to MIG-17 and RS |
+| MIG-0 | new `Build/Contract.lean` | Item 0, with the §16 requirements: the contract structure, tape frames and `.keep`, composition theorems as thin wrappers over the existing public rows, and tactics | +1.5k to +2.5k | — | stmt | first; unlocks MIG-11 to MIG-17 and RS. **Statement draft fit-tested** (design §16a; user, 2026-10-12: universe `Type`, frames a derived layer). Two increments: MIG-0a (the structure, frames, `trans`, `seq`, `inPhase`, `embed`, `branch`, `release`, and two additive exports in Embed and Seam), then MIG-0b (the lift, the counter loop, renaming, the tactics) |
 | MIG-1 | `Build/Catalog` (the `f2_` region, about lines 1785–11365), `Primitives`, `Composition`, `Loop`, `Wrappers`, `Encoding`, `Simulation`, `ClassP/TimeConstructible` | Named witnesses (about 30 defs with spec theorems) for the 66 existential rows; then delete the 304 `f2_` copies (6,255 of their lines are verbatim, MEASURED). The 22 space rows become corollaries. Retire the R3 canonical `_run` rows (0 external consumers) | −7.6k to −8.3k, +0.4k | decision 12.2 lifted | stmt + full | highest confidence; half the saving |
 | MIG-2 | `TuringMachine/Universal` (195–1316, 1317–1606, 2367–2644) | Retire the duplicate timed layer (`timedCut*`, `timedPrefix`, `timedCapture`), through a stop-before variant or proofs parametric in the table | about −1k | — | swap | `timed_universal_concrete`'s coefficient must not grow (TMSAT); **merged with U-1** (one re-derivation, from both directions) |
 | MIG-3 | `Robustness/SingleTape` | `one_work_tape` reuses `dg_all_inputs`; drop the `sweep_*` chain | about −450 | — | swap | |
@@ -568,11 +584,34 @@ proved); fix it in the first MIG PR that touches Build.
   - (b) At every Lean or Mathlib bump, remove the names in `TCSlib/Programs/Compat.lean` that the
     bump provides, and revisit the `with_unfolding_none` to `with_reducible` swap.
   - (c) The extensions are a statement phase with its gate: reading the input in place, `emit`, and
-    the coin stream for nondeterminism and randomization.
+    the coin stream for nondeterminism and randomization. **Semantics decided** (user,
+    2026-10-12; design §15c): now **PROG-2**.
   - (d) Stage 2, the RAM-to-`FinTM` simulation.
   - (e) Port upstream's `Lang/Renumber.lean` and `Machine/Footprint.lean` when the extensions or
     stage 2 need them (fidelity gate, finding 3). Both are generic, and outside the vendored
     closure.
+
+* **PROG-2: the extension edit set** (user, 2026-10-12; design §15c). All four extensions in one
+  scripted vendored edit set:
+  - `inBit`/`inLen` with a RAM `rdIn` (`len` only if needed);
+  - `emit`, with an append-only output;
+  - read-once coins (`coin x`);
+  - `half`, as a statement and a RAM shift.
+
+  I/O and coins become indices of `Exec`, so `Ends`, `Meets` and the routines are unchanged; a new
+  `EndsIO` sees them. Also part of the set:
+  - the `Exec` determinism lemma, which randomized acceptance needs;
+  - `Fits`'s input-length clause;
+  - an update to `ComputationalModels.lean`'s instruction-count docstring.
+
+  **Estimate:** 600–1,000 vendored lines, by `scripts/vendor_afm26/`, plus 700–1,150 new.
+  **Gate:** a fidelity check of the vendored edits, then a statement gate for the new rules.
+
+* **PROG-3: memory footprint along a run** (from the PROG-2 survey; design §15c, obstacle 1).
+  `compileProgram_correct` describes only the final memory. Stage 2's space bound needs every
+  intermediate memory inside `[-lowCell, lim.space)`. Close it with a stronger `Steps` or by
+  porting `Machine/Footprint.lean` (PROG-1(e)). It is a prerequisite for stage 2's space bound,
+  and so for L, Savitch and PSPACE through programs.
 
 * **Chapter-2 fill campaign (E1-E5)** — **active** (hold lifted
   2026-10-02 after the ch-6 integration and audit closed). All four

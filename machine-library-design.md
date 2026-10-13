@@ -3397,6 +3397,68 @@ per-file diff is `audits/evidence/programs-vendor/upstream-to-vendored.diff`, an
 2. stage 2, the RAM-to-`FinTM` simulation, with the contract structure (§14 item 0);
 3. the first consumers.
 
+### 15c. The language and RAM extensions: semantics decided (user, 2026-10-12)
+
+A read-only survey of the vendored layer (2026-10-12) costed the four extensions and their
+options. **Decision (user): all four go into one scripted vendored edit set**, with the
+survey's recommended semantics:
+
+- **Input read in place.** A statement `x := inBit e` (cost `e.cost + 1`; past the end it reads
+  `0`) and a RAM instruction `rdIn`. `inLen` comes first from an argument cell (`|x|` passed as
+  argument `i`, which needs no change); a `len` instruction follows only if a consumer needs it.
+  Statements rather than expressions, because expression code must be `Straight` and `effect`
+  touches only memory. The input string goes into `Limits` (never constructed in the port,
+  so nothing breaks), and `Fits` gains `|x| ≤ word`. Stage 2 maps `rdIn` to
+  `exists_inputSeekTM`, and `load` stays a table lookup. The rejected options were mapping the
+  input into memory at the RAM level, and keeping [AFM26]'s memory-loaded input, which forces
+  `lim.space ≥ n` and so rules out logspace.
+- **Where the I/O state lives: new indices of `Exec`.** The bits emitted (`o`) and the coins
+  consumed (`r`) become indices of the big-step relation, concatenated by `seq` and `while` and
+  passed through `call`. `Ends` keeps its type, hiding them under `∃`, so `Meets` and the 14
+  routines are untouched; a new `EndsIO` lets a postcondition see them. Six files mention
+  `Exec`, against about 124 state literals in 24 files had the state grown instead.
+- **Coins read once**, as a consumed `List Bool`. `coin x` sets `x` to either bit at cost `1`,
+  consuming it. For a fixed stream `ρ`, `EndsIO ρ` asks for a run whose consumed word is a prefix
+  of `ρ`. Nondeterministic acceptance is "some `ρ` of length `T` accepts". Randomized
+  acceptance uses `randProb` over `Fin m → Bool`, which needs a determinism lemma for `Exec`
+  (not yet stated). **Time bounds are uniform over all streams**, as `NTIME` and `NSPACE`
+  require. Read-once coins are also right for NL and BPL, where two-way access to the coins
+  would give NP's power, and they compile to both kinds of target. Stage 2 makes each `coin` one
+  NDTM choice step; for BPP it produces a deterministic machine that takes the coins as a second
+  input.
+- **`emit e`** appends a bit to an append-only output, mirroring the machines' per-step output.
+  Strictly, only space-bounded output (log-space reductions) needs it; time-bounded functions
+  can use memory output. It is included now because it changes the same signatures.
+- **`half e`**, as a statement and a RAM arithmetic-shift instruction (not an `Op`: `Op` is
+  binary, and its effect lemma needs a range hypothesis). It is `O(W)` in stage 2 and helps
+  configurations packed into words.
+
+**Estimated size:** 600–1,000 lines of vendored edits, made by the generator scripts in
+`scripts/vendor_afm26/` and listed in each file's header, plus 700–1,150 new lines (the `EndsIO`
+rules and tactics, acceptance and probability, the determinism lemma, the new `sim_*` cases).
+Every new construct needs a case in each exhaustive definition and induction over `Stmt`,
+`Exec` and `Instr`. The hardest parts are carrying the output and the coins through the compiler
+simulation, and threading the input through the RAM's run calculus.
+
+**Obstacles the survey found** (backlog PROG-2, PROG-3):
+1. **No footprint along a run.** `compileProgram_correct` and `Finished` describe only the final
+   memory. Stage 2's space bound needs every intermediate memory inside `[-lowCell, lim.space)`.
+   That needs a stronger `Steps`, or the deferred `Footprint.lean` (PROG-1(e)). L and Savitch
+   need it, whatever the extensions.
+2. **`Ends` is existential.** With a nondeterministic coin rule, specifications that mention I/O
+   need `EndsIO` with an explicit stream, and probabilities need the determinism lemma.
+3. **`Fits` has no input-length clause** (above).
+
+**Corrections to §15a and §15b, from the survey:**
+- the RAM has nine instruction kinds, not "about a dozen";
+- the RAM additions are `rdIn` (with `len` later), `emit`, `coin` and `half`;
+- the deterministic logic and compiler do not carry over unchanged for coins: the stream
+  position is state, carried here by `Exec`'s index;
+- [AFM26]'s memory-loaded input is not in force in the port: `SolvedBy` was dropped, `loadWords`
+  is unused, and the compile theorem takes any memory satisfying `Input`;
+- logspace from `O(1)` cells holds only with input read in place, and only once obstacle 1 is
+  closed.
+
 ## 16. The foundation migration (user decisions, 2026-10-12)
 
 **Why.** The user: "I really think we should invest effort into building code in the right way,
@@ -3484,3 +3546,73 @@ precede §13d G2** (user, 2026-10-12), reversing "G2 comes before the Catalog sp
 
 New and unfinished work is written in the new style from the start. Deliveries now in flight
 in the old style (record tables, W2-S, B5a canonizer and H1, B4, S1b) join step 3.
+
+### 16a. MIG-0, the contract structure: statement draft and decisions (2026-10-12)
+
+**A sorried statement draft of `Build/Contract.lean` was written and fit-tested** (maintainer,
+2026-10-12). It was informed by a read-only inventory of every public contract in `Build/`
+(about 150 run statements: 24 exact closed-form times; about 45 cuts that include time `0` and
+4 that do not; 25 interval and 12 radius envelopes; no frame predicate anywhere, and frames
+written in four idioms).
+
+**The structure** `Turing.Contract M entry exits ι x`:
+- a precondition, an **exact time**, an **endpoint function** and per-tape head intervals
+  `[lo, hi]`, all functions of a data index `i : ι` (the word or fields the module reads) and the
+  start configuration;
+- proofs: the run reaches the endpoint at that time; the endpoint is at an exit; **no exit is
+  reached earlier, with the cut including time `0`**; and the heads stay in their intervals.
+  Exits form a set, so single anchors, verdict pairs, loop exits and halting are one structure;
+- derived: "within `B`" (`within`) and the per-tape space bound (`spaceUsedByTape_le`, through
+  `spaceUsedByTape_le_card_Icc`); positivity is a predicate.
+
+**Decisions (user, 2026-10-12):**
+1. **Universe `Type`** for the alphabet, the states and the data index: the universe of
+   `FinTM`, `phaseHostTM` and `counterLoopTMVia`. UNIV-1(a) stays an optional generalization.
+2. **Frames are a derived layer**, not a field. The endpoint already states the frame as
+   `{ d with … }`. The layer adds `Cfg.SameOutside` (a per-tape footprint), its composition,
+   `.keep` lemmas for stored words and blank tapes, and `Contract.Frames`.
+
+**Compositions, as thin wrappers over the existing rows:**
+- `trans`: sequencing on one machine, the private `RecordRun` pattern;
+- `seq`: the R2 seam, time `t₁ + 1 + t₂`;
+- `inPhase`: one phase inside the phase host, whose redirect targets lie in other phases;
+- `embed`: the R1 embedding, with unselected tapes framed and output appended;
+- `branch`: the two-way seam;
+- `ReturnContract` with `release`: for the four rows whose entry is also their exit (the install
+  and emit calls and the advancing writer), whose cut starts at time `1`.
+
+**Fit test.** `trans`, `seq`, `inPhase`, `embed` and `embedEmitCfg_select` are proved with no
+statement change and no extra hypothesis, on the standard three axioms. So is the instance
+`clearTM_contract`, R3 clear repackaged from `clearTM_run_ofCfg`. A second fit test then
+proved the rest: the frames layer (the `SameOutside` lemmas are nearly definitional),
+`clearTM_contract_frames` (the footprint is exactly where the endpoint writes blanks), `release`
+and `branch`. **The whole MIG-0a draft is proved: 837 lines, 0 errors, 0 warnings**
+(`audits/evidence/mig0/Contract-draft.lean.txt`).
+
+Further observations from the fit tests:
+- **Liveness is a lemma.** A contract's run is live strictly before its time, from the cut and
+  `exit_mem`, since a halt would persist to the endpoint. `branch` needs it; promote it as
+  `Contract.live`.
+- **`branch`'s halting exit is untagged.** If both continuations may halt, a halted endpoint
+  does not say which ran. The statement is still correct.
+- **A third export:** a pointwise `seamReleaseTM_runFrom_pos`. The release's envelope went
+  through `seamReleaseTM_visitedByTapeHead`, because the pointwise lemma is private.
+- **Ergonomics:** a `@[simp]` unfolding lemma for `Frames` and `SameOutside`, so that `rw` sees
+  a footprint's `if` without a `show`.
+
+The test found two missing public exports, both additive:
+- `embedEmitCfg_unselected_tape` and `_pos` (`Build/Embed.lean`). The proof of
+  `embedEmitCfg_select` worked around their absence through `embedEmitTM_frame` and a trivial
+  machine;
+- a right-segment seam lemma (`Build/Seam.lean`), to replace the private `seamComp_right`. It is
+  needed for set-valued exits; `seamCompTM_firstReturn_ofCfg` excludes only one target.
+
+**Scope, in two increments:**
+- **MIG-0a:** the structure, the derived lemmas, the frames layer, `trans`, `seq`, `inPhase`,
+  `embed`, `branch`, `ReturnContract` with `release`, `Contract.live`, and the three exports;
+- **MIG-0b:** the symbol lift (through `Cfg.decodeSymbols`), the counter loop (rounds as
+  `ReturnContract`s), state renaming along an embedding (`runFrom_mapState_of_agreeOn`), and
+  the tactics.
+
+The next step is MIG-0a's statement gate. The draft's proofs exist, so the gate can audit
+statements and proofs together.
