@@ -1932,7 +1932,7 @@ needs the advancing writer R8.4′.
 | `spaceConstructible_*` | `Bool` only: R8.5c, R8.6, `incrementTM` |
 | `PATH_NLComplete` (hardness) | ARM engine (12.8.4); no §12.8 row |
 | `PATH_mem_NL` | R8.5b, once the nondeterministic host exists (SC-3) |
-| Space hierarchy | `Bool` counters lifted by R8.0 on a rich simulator, or unlifted on a `Bool` one; R8.0b (budget loop), R8.8 (success/cap), R8.1 (budget comparison), `clearTM` resets, R8.5d. It simulates a coded machine, so it does not use R8.7 |
+| Space hierarchy | **Superseded 2026-10-12 by the window route** (§16b item 3; the RD-3 statement gate, minor 2): R8.7's initial-record, test and step rows under a configuration-count clock (`counterLoopTMVia`), through H2, H3 and H5, with R8.5d for input validation. The earlier route (R8.0b's budget loop, R8.8's success/cap exits, R8.1's budget comparison, `clearTM` resets, and no R8.7) is dropped |
 | `TQBF_mem_PSPACE` | R8.2 (validation folds, clause evaluation, the trit odometer), R8.5b (input re-reads), R8.3 |
 | `NP_subset_PSPACE` | `incrementTM`, `vhostEmitTM`, R8.8 |
 | **G3/G4 (§13d)** | R8.3 (zone scanning across separators), R8.2 (per-track maps), R8.0 (Bool counters on `ZoneSym` tapes via `e := Sum.inl`) |
@@ -3733,7 +3733,18 @@ dependent migration:
    `Loop.emCall_exit_fixed`'s local frame and `CodeSimulator.canonEmbedEq`.
 
 MIG-0a's round 2 audits the corrected records and the documentation repairs; no statement or proof
-of the file changes.
+of the file changes. **Round 2 closed the gate** (2026-10-13, 0 blockers / 0 majors / 1 minor;
+`audits/mig0a-r2-findings.md`). Its acceptance obligations for MIG-0b's statement gate:
+- the segment layer keeps zero-length segments, the inclusive envelope and the actual
+  configuration seam (`RecordRun`'s shape);
+- `counterSpan` is a segment property (no entry or endpoint constraint; it admits time zero, which
+  `counter_rounds` uses), so it migrates to the segment and joint-trajectory layers; positive
+  return-or-escape rounds describe the loop body's interface;
+- `splitSafe`'s avoidance holds at every time through the endpoint, so it uses the segment layer
+  with endpoint-inclusive avoidance, and first-exit `Contract`s apply only where a first exit is
+  proved;
+- the joint-trajectory property holds for general segments, and keeps the counter loop's single
+  shared round and time witness for all body heads, its exact endpoints, bounds and liveness.
 
 ### 16b. Five route decisions (user, 2026-10-12)
 
@@ -3794,8 +3805,10 @@ The user took the five open route questions together, each as the maintainer rec
      the step block H2 and the native input device of H5. The sketch's budget loop, head caps,
      interval counters and probe/replay go.
    - **Why:** the chapter-1 interpreter cannot serve (Finding B). It tracks the input head in
-     unary on its fourth tape, so its space is `Θ(input travel)`, and the present sketch's
-     premise fails whenever `S = o(n)`.
+     unary on its fourth tape, so that tape uses one plus the largest simulated input position
+     reached: `Θ(n + 1)` cells on a full scan. So it cannot guarantee `O(S(n))` space uniformly
+     for sublinear `S`, which the present sketch's premise needed (wording corrected at the RD-3
+     gate, minor 4).
    - **`space_universal` keeps only its forward clause,** as [AB09, Exercise 4.1] states it (p. 93,
      checked 2026-10-12): if `M_α` halts on `x` before using `t` cells of its work tapes, then
      `SU(α, t, x) = M_α(x)`, and `SU` uses at most `C·t` cells. The `[false]` clause goes, and
@@ -3807,8 +3820,14 @@ The user took the five open route questions together, each as the maintainer rec
      the coding step `exists_codeTM`, which is time-only, and a decider's space bound at every
      time (the normal form needs it at every time; `DecidesInSpace` bounds it at the halt).
    - `U₀` and the windowed runner have no statements yet. `U₀` is a public row built from H2 and
-     H5, not a private host of this proof. The runner needs three exits (halt, window exit,
-     clock), while `counterLoopTMVia` has one, so H3's design must supply them.
+     H5, not a private host of this proof. The runner's contract exposes three outcomes (halt,
+     window exit, clock exhaustion). `counterLoopTMVia` has one optional early body exit plus
+     clock exhaustion, so H3 can merge halt and window exit into the early escape and tell them
+     apart afterwards from the retained record (the RD-3 gate, minor 3).
+   - **RD-3's statement gate passed** (2026-10-13, 0 blockers / 0 majors / 4 minors;
+     `audits/b6-restatement-findings.md`). `space_universal` keeps its `+ logSpace |x|` addend for
+     now; the auditor's addend-free `C·s` route (a bounded-prefix input device, a unary ruler of
+     the header's length) is to be decided when H5 is gated.
    - The shortcut through a space ledger for the time hierarchy's `diagSim` is not taken.
    - The restatement and the re-routed sketches go through a statement gate.
 4. **C2 is written as programs with coins.** `PATH ∈ NL`, Immerman–Szelepcsényi and their

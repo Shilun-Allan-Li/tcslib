@@ -58,3 +58,22 @@ Both majors concern the packet. The round-2 materials are `audits/ch34-b5b-fill-
 Notes 6–19 and 21–22 record no findings. **Note 20** is applied: the `expcom_summit_budget`
 sketch now states the strict bound `g + 1 ≤ G`. The change is comment-only, and `EXPCOM.lean`
 elaborates after it with no errors and no warnings.
+
+## Round 2: CLOSED (2026-10-13)
+
+`audits/ch34-b5b-fill-r2-findings.md`, preserved verbatim: **0 blockers, 0 majors, 1 minor, 10
+notes. The gate closes.** Both round-1 majors and all three minors are resolved. The auditor:
+- confirmed both inputs' identities;
+- reran the union screen on the 66 supplied files, reproducing the historical log byte for byte
+  (2,685 declarations, 2,464 pairs, 783,700 characters);
+- reran the delivery screen from the 22 base files with only `EXPCOM` replaced, reproducing both
+  historical logs and both maintainer reruns byte for byte;
+- recomputed the 37.31% ledger and reproduced the corrected freeze census with the v2 tool;
+- confirmed that note 20's patch is comment-only.
+
+**Minor 1, swept:** the SAT pair's description. `expcom_front_poly` and `SAT.sat_pipeline_poly`
+share **closure-lemma applications and routine local-declaration syntax** (for example
+`have hv : PolyTimeComputable (fun z => [`), composed over different functions. That is wider than
+"only the names of the closure rows" in major 2's resolution above. The measured 255/505 stands,
+with no copied-body charge. Note 9's "only that count" refers to the freeze log's result data:
+the heading and closing note were also edited.

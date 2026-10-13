@@ -20,17 +20,17 @@ is authoritative. Update this file when a phase starts or ends, not for progress
 ## Phases
 
 1. **Land the current wave.** Integrate the in-flight deliveries and close their gates. The
-   briefs are in `briefs/`. Open: the B5b fill gate's round 2 (`audits/ch34-b5b-fill-r2-pack.md`).
-   Closed on 2026-10-12: T2a, the port's fidelity gate, B3a and wave 1.
+   briefs are in `briefs/`. Closed: T2a, the port's fidelity gate, B3a and wave 1 (2026-10-12),
+   and B5b (2026-10-13). The next fill gates come when B5a and the record tables complete.
 2. **Foundations**, in parallel:
-   - the contract structure (MIG-0): MIG-0a at its round-2 gate (`audits/mig0a-r2-pack.md`), then
-     MIG-0b, redefined after round 1 (design §16a: segment, round and joint-trajectory layers, the
-     layering split, the R1 reconstruction lemma);
-   - named witnesses and the `f2_` deletion (MIG-1), after MIG-0a's gate;
+   - the contract structure (MIG-0): **MIG-0a closed** (2026-10-13) and landing; then MIG-0b,
+     redefined after round 1 (design §16a: segment, round and joint-trajectory layers, the
+     layering split, the R1 reconstruction lemma), with round 2's acceptance obligations;
+   - named witnesses and the `f2_` deletion (MIG-1): statement draft under way;
    - the language extensions (PROG-2), the footprint along runs (PROG-3) and stage 2's statement
      (PROG-4): drafted and answered (design §15d), statement gate next;
    - B4a's restatement (RD-2): designed and answered, statement gate next; B6's re-route (RD-3):
-     at its statement gate (`audits/b6-restatement-pack.md`, PR #82);
+     **gate passed** (PR #82), with the host statements H3, H5 and `U₀` being drafted;
    - the H2 step block's promotion (backlog F7-1(a)) and C1's design (design §14).
 3. **Build on them:**
    - stage 2, the RAM-to-`FinTM` compiler (design §15a), to the requirements of PROG-4;
@@ -63,8 +63,8 @@ is authoritative. Update this file when a phase starts or ends, not for progress
 
 The open questions are in `backlog.md` §1 and §4, and in the open-decision lists of design §15
 and §16. The next ones are:
-- the rulings the round-2 gates ask for (B5b, MIG-0a) and RD-3's gate;
-- MIG-0b's statements;
+- MIG-0b's statements, and MIG-1's;
+- whether `space_universal` takes the addend-free `C·s` form (with H5's gate);
 - the stage 2 and RD-2 statement gates;
 - the H2 promotion's shape, and C1's route.
 

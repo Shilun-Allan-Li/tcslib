@@ -604,9 +604,9 @@ statement families are retired, with full gates and consumer edits. Restyling is
 | MIG-12 | `Build/CfgRecord` | Rebase on the Contract; the private `RecordRun` (76 uses) becomes MIG-0b's segment layer, with same-machine concatenation. **Corrected (MIG-0a gate, round 1, major):** `Contract.seq` does not replace it, since it changes the machine and adds a dispatch step, and a segment's endpoint need not be a first exit | −1.6k to −2.1k | MIG-0b, MIG-11 | swap | best ratio of saving to lines touched |
 | MIG-13 | `Build/RecordTable` | Rebase; `rt_copy_seam` retires; write any still-open rows in the new style. The find round (`rt_find_round_entry`, return or escape) needs MIG-0b's round layer | −350 to −550 | MIG-0b | swap | |
 | MIG-14 | `Build/CertShell`, `Build/InputCall` | Rebase | about −560 | MIG-0 | swap | |
-| MIG-15 | `Build/CounterLoop` | `counterSpan` becomes MIG-0b's round layer with a joint-trajectory relation. **Corrected (MIG-0a gate, round 1, major):** per-tape intervals cannot carry its head-vector relation, and a `ReturnContract` excludes the escaping round | −440 to −640 | MIG-0b, MIG-4 | swap | |
+| MIG-15 | `Build/CounterLoop` | `counterSpan`, a segment property that admits time zero, becomes MIG-0b's segment layer with a joint-trajectory relation; the loop body's interface uses the round layer. **Corrected (MIG-0a gate, round 1, major; round 2, minor 1):** per-tape intervals cannot carry its head-vector relation, and a `ReturnContract` excludes the escaping round | −440 to −640 | MIG-0b, MIG-4 | swap | |
 | MIG-16 | `Build/OracleSim` | Rebase on the R1 contracts | −250 to −400 | MIG-0 | swap | exact lockstep lemmas stay |
-| MIG-17 | `Build/Primitives`, `Build/Loop` | Named loop hosts; `splitSafe`/`SafeRun` become Contracts. `Loop` must import the core contract module, so MIG-0b's layering split comes first | −1k to −2k | MIG-0b, MIG-1 | swap | 15 external files cite the P-rows (statements kept) |
+| MIG-17 | `Build/Primitives`, `Build/Loop` | Named loop hosts; `splitSafe`/`SafeRun` use MIG-0b's segment layer with endpoint-inclusive avoidance, and become first-exit Contracts only where a first exit is proved (MIG-0a gate, round 2, minor 1). `Loop` must import the core contract module, so MIG-0b's layering split comes first | −1k to −2k | MIG-0b, MIG-1 | swap | 15 external files cite the P-rows (statements kept) |
 | MIG-19 | `SpaceComplexity/ConfigGraph` (S1b's delivery) | Re-derive `NSPACE ⊆ DTIME(2^O(S))`, `NL ⊆ P` and Ex 4.3 as programs (design §16, decision 3); retire S1b's private BFS host | S1b's delivery added 333 lines (612 → 945, MEASURED); the program's own cost is estimated with stage 2 | stage 2, machine-configuration routines | swap | user, 2026-10-12: S1b finished first, then stopped as a partial (fills-6): the two corollaries are proved modulo `NSPACE_subset_exp_dtime` only, so this row needs the simulation alone |
 | MIG-20 | the chapter-2 emitter files (`emitterCompare*`, `emitterP2Erase*`) | 12.2c item 3 (F25a/F27a): onto `compareTM` and `clearTM` | small | MIG-1 (the Catalog→Primitives import) | swap | |
 | MIG-21 | `CookLevin/Hardness` (`clPlacement`, the selectors) | 12.2c item 13: restate the layouts as plain `Fin k ↪ Fin l` embeddings; delete the selector layer (about 120–259 lines) | about −150 to −250 | the T2a gate (item 6's export) | swap | Hardness stays at machine level |
@@ -700,7 +700,10 @@ The route decisions of 2026-10-12 (design §16b) add three work items, numbered 
   `SpaceComplexity/Hierarchy.lean`: `space_universal` keeps only its forward clause ([AB09]
   Exercise 4.1), and `space_hierarchy`'s sketch moves to the window route (a self-simulating
   universal `U₀` under a configuration-count clock), dropping the proved normal-form obligation.
-  A statement gate. The fill needs H2, H3 and H5. **Drafted (2026-10-12):**
+  A statement gate. The fill needs H2, H3 and H5. **Gate passed (2026-10-13, 0/0/4;
+  `audits/b6-restatement-findings.md`, resolutions `audits/b6-restatement-resolutions.md`).** The
+  host statements H3, H5, `U₀` and the two bridges are being drafted against the auditor's
+  requirements. **Drafted (2026-10-12):**
   `audits/b6-restatement-pack.md`, statement gate pending. Two small fill obligations stay
   (`exists_codeTM`'s space clause; a decider's space bound at every time), and H3's three-exit
   runner and `U₀`'s public statement are still to be designed.

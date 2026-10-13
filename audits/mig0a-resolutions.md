@@ -84,3 +84,22 @@ All notes record no finding. The maintainer swept these documentation points:
 The suggested sanity lemmas (the zero-time characterization, positivity of the compositions) are
 MIG-0b item 7, since adding them would change the file's code. Note 16's stronger freeze
 comparison is the code-identity check above.
+
+## Round 2: CLOSED (2026-10-13)
+
+`audits/mig0a-r2-findings.md`, preserved verbatim: **0 blockers, 0 majors, 1 minor, 13 notes.
+The gate closes, and `Contract.lean` lands unchanged in code**, with its status text updated
+and the `TuringMachine` facade import. The auditor:
+- reran the code-identity script, getting 667 and 668 code lines, with only the three import
+  lines differing;
+- checked all 15 sketches against their proofs;
+- confirmed the attribution against the vendored headers (full commit
+  `e1a4e6508154ea59f030480661590a9fe3018011`), and the corrected `ReturnContract` classification;
+- confirmed that MIG-0b's revised scope resolves round 1's major at the design and prerequisite
+  level.
+
+**Minor 1, swept:** backlog MIG-15 now says `counterSpan` is a segment property that admits time
+zero, so it migrates to the segment and joint-trajectory layers, while the loop body's
+interface uses the round layer. MIG-17 says `splitSafe`/`SafeRun` use the segment layer with
+endpoint-inclusive avoidance, and become first-exit Contracts only where a first exit is proved.
+The auditor's acceptance obligations for MIG-0b (notes 3–4) are recorded in design §16a.
