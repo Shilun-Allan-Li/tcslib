@@ -3007,6 +3007,9 @@ codes and the two-tape universal machine, Thm 3.1 follows at `f log f`.
 
 The G1 brief is `briefs/s13d-g1-generalize.md`.
 
+**Scope (user, 2026-10-12; §16b item 5).** G2–G4 and the Hennie–Stearns assembly stay in this
+campaign. They follow MIG-0b, so that their rows are stated as `Contract`s from the start.
+
 ## 14. Hosts first: the rule and the host registry (user, 2026-10-12)
 
 **The rule** (`policy.md` §1, **Hosts come first**; `workflow.md` §2 and §4,
@@ -3047,10 +3050,10 @@ and a statement gate before a second consumer is briefed.
 | 0 | **Framed-contract structure**: machine, entry/exit states, precondition, endpoint as a function of the start configuration, time, no-earlier-exit cut, head envelope; sequencing, phase host, R1 embedding, lift and counter loop as structure-to-structure theorems, space derived | to design; **requirements revised by §16** (exact time and cut first-class) | every host below; removes the inline restatements of the delimited-word precondition |
 | H1 | **AND/OR evaluator**: a depth-first odometer over a path word of per-depth records with node kinds (AND/OR), a pluggable leaf-verdict module with its own framed contract, short-circuit semantics as a pure function; space = path + leaf + O(1) | the pure core is proved, private, in B4 membership's partial (`b4mValue`, `b4mValue_truth`, `b4mWalk_value`; fills-6); no machine walker was built. **Language first (user, 2026-10-12):** the general evaluator is written as a recursive program of §15's language, not as a machine host, and `TQBF_mem_PSPACE` follows as a program over that core (backlog MIG-22) | `TQBF_mem_PSPACE`; Savitch (midpoint records as digits); NP ⊆ PSPACE (re-derivation); `ClassPSPACE/Games.lean`'s game values; backtracking in the §15 layer |
 | H2 | **Step block**: one simulated transition of a `k`-tape coded table, relation-level, with per-round time `B·(\|table\| + 1)` and a head envelope | one component proved, private, in B5a H1's partial (fills-6): `h1RecordTM`, which executes a selected record's fixed fields, with addendum 1's envelope for that component. Lookup, successor installation and the round seam remain | H1 (`exists_uniformSimulator`); U-1; B6's self-application universal; C1 (with a choice-bit-indexed table); EXPCOM |
-| H3 | **Windowed runner**: run a fixed machine on a windowed record, exiting on window exit, simulated halt, or a configuration-count clock | parts exist privately in S1b's partial (radius phase, records-to-runs bridge, the general-`S` count). S1b stopped (fills-6); B6's window route is the next consumer | S1b; B6 (the window route); Savitch; NL = coNL |
+| H3 | **Windowed runner**: run a fixed machine on a windowed record, exiting on window exit, simulated halt, or a configuration-count clock | parts exist privately in S1b's partial (radius phase, records-to-runs bridge, the general-`S` count). S1b stopped (fills-6); B6's window route is the next consumer (adopted, §16b item 3) | S1b; B6 (the window route); Savitch; NL = coNL |
 | H4 | **Search over a graph presented by rows** (enumerate, equality, adjacency, start, target), visited table, BFS | not built: S1b's partial has the record graph (records, edges, path lifting, counts) but no search machine, and it stopped there (user, fills-6). **Language first:** the general search is a program of §15's language, and `NSPACE ⊆ DTIME(2^O(S))` is re-derived through it (backlog MIG-19) | `NL ⊆ P`, `NSPACE ⊆ DTIME(2^O(S))`; `PATH ∈ P`; Immerman–Szelepcsényi counting; §15 graph algorithms |
 | H5 | **Input devices** behind one interface: native, buffered (Z1, exists), unary marker, binary position (from `exists_inputSeekTM`), computed input | partial | B6 / `space_universal`; U-1 and H2 (backlog); C1 |
-| H6 | **Machine-to-formula kit**: closed-form variable indexing, snapshot-keyed local gates, ordered emission by `exists_emitLoopTM`, Tseitin on `Std.Sat.CNF ℕ` correct for every prefix assignment | pattern private in `CookLevin/Hardness.lean`; B4a's codec is non-uniform (its orderings range over index types depending on `n` and `s`, and its public statement is `∀ n s, ∃ …`) | TQBF hardness; Cook–Levin deduplication; later machine-to-formula reductions |
+| H6 | **Machine-to-formula kit**: closed-form variable indexing, snapshot-keyed local gates, ordered emission by `exists_emitLoopTM`, Tseitin on `Std.Sat.CNF ℕ` correct for every prefix assignment | pattern private in `CookLevin/Hardness.lean`; B4a's codec is non-uniform (its orderings range over index types depending on `n` and `s`, and its public statement is `∀ n s, ∃ …`). **B4a is restated in place over this kit's indexing** (user, 2026-10-12; §16b item 2) | TQBF hardness; Cook–Levin deduplication; later machine-to-formula reductions |
 
 Pure-Lean kits that the hosts' semantics share (not machines, so not hosts,
 but designed with them): bounded reachability (`ReachWithin`, the midpoint
@@ -3524,10 +3527,10 @@ machine is encoded in memory, and routines enumerate its successors, or test the
 from the machine's finite table. This is narrower than a general machine interpreter, since the
 programs are built per machine.
 
-There is also an open question for stage 2: Savitch's `O(S²)` space. Two routes give it:
-- configurations held as single words, with word size `Θ(S)`, so that `O(S)` frames times
-  `O(S)`-bit words fits the planned bound of cells times word size;
-- a bit-accounted space bound in the compile theorem.
+Savitch's `O(S²)` space is **decided (user, 2026-10-12; §16b item 1)**: configurations are held
+as single words, with word size `Θ(S)`, so that `O(S)` frames times `O(S)`-bit words fits the
+planned bound of cells times word size. Stage 2 therefore takes a computed word size. A
+bit-accounted space bound in the compile theorem was declined.
 
 `NSPACE ⊆ DTIME(2^O(S))` is unaffected, since polynomial overhead on `2^O(S)` stays `2^O(S)`.
 
@@ -3616,3 +3619,72 @@ The test found two missing public exports, both additive:
 
 The next step is MIG-0a's statement gate. The draft's proofs exist, so the gate can audit
 statements and proofs together.
+
+### 16b. Five route decisions (user, 2026-10-12)
+
+The user took the five open route questions together, each as the maintainer recommended (plan
+§4e, decision log, 2026-10-12).
+
+1. **Savitch's space: words of `Θ(S)` bits.** A configuration of the simulated machine is one
+   word, so a recursion level holds `O(1)` cells, and depth `O(S)` gives `f = O(S)` cells. Stage
+   2's space bound stays cells times word width (§15a), which gives `O(S·(S + log S)) = O(S²)`.
+   The alternative, charging each cell for the bits it holds, was declined: every cell still pays
+   an `O(log S)`-bit address, so it reaches `O(S²)` only with packing as well. Consequences:
+   - **Stage 2 takes a computed word size.** `W` is a function of the input length that the
+     compiled machine computes within its space bound: `c·log n` for P and L (from the
+     input-length counter, R8.5c) and `c·S(n)` for Savitch (from `S`'s constructibility
+     witness).
+   - The machine-configuration routines work on packed words, using `half` (PROG-2).
+   - With `W = Θ(log n)` and packed configurations, the drafted bound already gives `O(S²)` for
+     polynomial `S`. That suffices for `PSPACE = NPSPACE`, but not for `savitch`, which is stated
+     for every space-constructible `S`.
+2. **B4a is restated in place, over H6.** `exists_adjacency_codec_cnf` becomes public
+   definitions of the codec and its three CNFs with closed-form variable indexing, and theorems
+   about them in place of the `∃`. Its present formulas index variables through
+   `Fintype.equivFin` over types that depend on `n` and `s`, so no machine or program can be
+   proved to emit them (Finding A; the `TQBF_PSPACEHard` docstring: "The packaged existential
+   supplies no algorithm"). The indexing is designed with H6 (§14), so that Cook–Levin and TQBF
+   share one scheme.
+   - It changes an audited public statement: a statement gate, then a re-fill. Its only consumer
+     is the open `TQBF_PSPACEHard`.
+   - Hardness also needs Tseitin on `Std.Sat.CNF ℕ`, correct for every prefix assignment.
+   - Whether the `ψᵢ` emitter is a machine (H6) or a program with `emit` is decided with B4
+     hardness's design.
+3. **B6 takes the window route, and `space_universal` is restated forward-only.**
+   - **The window route.** `space_hierarchy`'s diagonalizer runs one fixed self-simulating
+     universal machine `U₀` inside a window of radius `a·g(n)`, on the configuration-record rows,
+     stopped by a configuration-count clock, and flips `U₀`'s verdict. It needs `U₀`'s forward
+     direction with a space ledger, the windowed runner H3 (record-table rows 17–18, in flight),
+     the step block H2 and the native input device of H5. The sketch's budget loop, head caps,
+     interval counters and probe/replay go.
+   - **Why:** the chapter-1 interpreter cannot serve (Finding B). It tracks the input head in
+     unary on its fourth tape, so its space is `Θ(input travel)`, and the present sketch's
+     premise fails whenever `S = o(n)`.
+   - **`space_universal` keeps only its forward clause,** as [AB09, Exercise 4.1] states it (p. 93,
+     checked 2026-10-12): if `M_α` halts on `x` before using `t` cells of its work tapes, then
+     `SU(α, t, x) = M_α(x)`, and `SU` uses at most `C·t` cells. The `[false]` clause goes, and
+     with it the interval counters, the core-count clock and the probe/replay. It still needs a
+     code-first universal that reads its input through a binary-position device (H5).
+   - The sketch drops its stale "space-preserving normal form" obligation, which is proved
+     (`Turing.FinTM.one_work_tape_binary_spaceUsed`, `Robustness/SingleTape.lean`).
+   - The shortcut through a space ledger for the time hierarchy's `diagSim` is not taken.
+   - The restatement and the re-routed sketches go through a statement gate.
+4. **C2 is written as programs with coins.** `PATH ∈ NL`, Immerman–Szelepcsényi and their
+   corollaries are programs of the language using read-once `coin` (PROG-2), compiled by stage 2.
+   This removes C2's dependency on the nondeterministic `LogProg` extension asked of Hydroxyi
+   (plan §2.5; `backlog.md` §2, *ARM extensions*). Stage 2 therefore needs, besides item 1's word
+   size:
+   - **a nondeterministic form:** each `coin` is one choice step of a `FinNDTM`, with time and
+     space bounds uniform over the coin streams (§15c);
+   - **a logspace grade:** `O(1)` cells and `W = O(log n)` give space `O(log n)`. This needs the
+     input read in place (PROG-2) and the footprint along runs (PROG-3).
+
+   `PATH_NLComplete`'s hardness half needs only the deterministic layer.
+5. **§13d G2–G4 stay in the campaign**, after MIG-0b, so that the mapped sweeps, the carrier's
+   rows and the rebalance rows are stated as `Contract`s from the start. They share no file with
+   stage 2 and can run alongside it. The two open zone rows (`exists_zoneShiftInTM`,
+   `exists_zoneShiftOutTM`) retire through the G3/G4 gate, as §13d planned.
+
+**Stage 2's statement** (`backlog.md` PROG-4), drafted together with PROG-2 and PROG-3, therefore
+carries a computed word size, deterministic and nondeterministic forms, and a space bound good
+enough for L.
