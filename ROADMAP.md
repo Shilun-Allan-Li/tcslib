@@ -20,8 +20,8 @@ is authoritative. Update this file when a phase starts or ends, not for progress
 ## Phases
 
 1. **Land the current wave.** Integrate the in-flight deliveries and close their gates. The
-   briefs are in `briefs/`; the open gates are `audits/wave1-fill-pack.md`,
-   `audits/ch34-b3a-fill-pack.md` and `audits/ch34-b5b-fill-pack.md`.
+   briefs are in `briefs/`; the open gates are `audits/wave1-fill-pack.md` and
+   `audits/ch34-b5b-fill-pack.md` (B3a's closed on 2026-10-12).
 2. **Foundations**, in parallel:
    - the contract structure (MIG-0): MIG-0a at its gate (`audits/mig0a-pack.md`), then MIG-0b;
    - named witnesses and the `f2_` deletion (MIG-1), after MIG-0a's gate;
