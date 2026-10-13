@@ -859,15 +859,13 @@ private lemma catalog_increment_split (w : List Bool) :
       exact ⟨p + 1, tail, by simp [List.replicate_succ, hw]⟩
 
 /-- Fixed-width increment flips the leading true prefix and the first false;
-an absent first false gives overflow. -/
+an absent first false gives overflow.
+Now derived from `Turing.incFixed_replicate_true_append` (CH34-D4). -/
 private lemma catalog_increment_value (p : ℕ) (tail : Option (List Bool)) :
     incFixed (List.replicate p true ++ tail.elim [] (false :: ·)) =
       tail.map (fun v => List.replicate p false ++ true :: v) := by
-  induction p with
-  | zero => cases tail <;> rfl
-  | succ p ih =>
-    simp only [List.replicate_succ, List.cons_append, incFixed, ih]
-    cases tail <;> rfl
+  rw [incFixed_replicate_true_append]
+  cases tail <;> rfl
 
 /-- Changing the cell immediately after a framed prefix changes just that cell.
 **Proof sketch.** At the write coordinate use indexing at the prefix length.

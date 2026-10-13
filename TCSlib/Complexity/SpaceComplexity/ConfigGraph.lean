@@ -737,20 +737,6 @@ private theorem s1b_vertex_count (N : FinNDTM Bool) (a n u : ℕ)
       (pow_add _ _ _).symm
     _ ≤ _ := Nat.pow_le_pow_right (by decide) (by nlinarith)
 
-/-- The radius word in decision 3 is the canonical binary expansion.
-This is the arithmetic part of the radius-phase promotion candidate.
-
-**Proof sketch.** A positive integer stays positive after multiplication by
-a power of two. Each multiplication by two prepends one low zero bit, by
-`Nat.bit0_bits`; induction counts the prepended digits. -/
-private theorem s1b_radius_bits (j m : ℕ) (hm : 0 < m) :
-    (2 ^ j * m).bits = List.replicate j false ++ m.bits := by
-  induction j with
-  | zero => simp
-  | succ j ih =>
-    rw [pow_succ', mul_assoc, Nat.bit0_bits _ (Nat.mul_pos (Nat.two_pow_pos j) hm).ne']
-    simp only [ih, List.replicate_succ, List.cons_append]
-
 /-- Normalizing the space constant does not change the deciding machine or
 any branch's halting budget. No monotonicity of the space function is needed.
 
@@ -769,7 +755,7 @@ private theorem s1b_normalize_radius {S : ℕ → ℕ} (hdom : ∀ n, logSpace n
     obtain ⟨T, hhalt, hspace, hacc⟩ := hN x
     exact ⟨T, hhalt, fun w hw => (hspace w hw).trans (Nat.mul_le_mul_right _ hc), hacc⟩
   · intro n
-    apply s1b_radius_bits
+    apply bits_two_pow_mul
     have := hdom n
     unfold logSpace at this
     omega
