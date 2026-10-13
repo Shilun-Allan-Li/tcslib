@@ -629,8 +629,8 @@ proved); fix it in the first MIG PR that touches Build.
   - **a logspace grade:** `O(1)` cells and `W = O(log n)` give space `O(log n)`.
 
   **Gate:** a statement gate, before any fill. **Drafted (2026-10-12; design §15d):** the
-  statement drafts and notes are in `audits/evidence/stage2/`. Four questions are open for the
-  user; the statement gate follows their answers.
+  statement drafts and notes are in `audits/evidence/stage2/`. **Answered (user, 2026-10-12):**
+  all four as recommended (design §15d). Next: the statement-gate pack.
 
 The route decisions of 2026-10-12 (design §16b) add three work items, numbered by §16b's items
 (items 1 and 4 are PROG-4):
@@ -641,8 +641,9 @@ The route decisions of 2026-10-12 (design §16b) add three work items, numbered 
   `∃`. A statement gate, then a re-fill. Also needed for `TQBF_PSPACEHard`: Tseitin on
   `Std.Sat.CNF ℕ`, correct for every prefix assignment. Open with it: whether the `ψᵢ` emitter is
   a machine or a program with `emit`. **Designed (2026-10-12):** `audits/evidence/rd2/` (design
-  note and statement draft; design §16b item 2). Five questions are open for the user (note §9).
-  Then a statement gate, the semantic re-fill (RD-2a) and the uniformity fill (RD-2b).
+  note and statement draft; design §16b item 2). **Answered (user, 2026-10-12):** all five as
+  recommended; in particular, the old existential is retired and the emitter is a machine. Next:
+  a statement gate, then the semantic re-fill (RD-2a) and the uniformity fill (RD-2b).
 * **RD-3: re-route B6 and restate `space_universal` forward-only** (§16b item 3).
   `SpaceComplexity/Hierarchy.lean`: `space_universal` keeps only its forward clause ([AB09]
   Exercise 4.1), and `space_hierarchy`'s sketch moves to the window route (a self-simulating

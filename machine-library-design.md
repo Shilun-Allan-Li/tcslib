@@ -3520,6 +3520,11 @@ nondeterministic contract variant that §16 lists as later.
 4. `emit` appends "nonzero", and the footprint counts touched cells (both recommended as
    drafted).
 
+**Answered (user, 2026-10-12): all four as recommended.** The RAM is extended by a wrapper, the
+`Exec` indices are added in place (option A), the word size is `WordSizeComputable` with its two
+bridges, `emit` appends "nonzero", and the footprint counts touched cells. Next: a statement-gate
+pack for stage 2, PROG-2 and PROG-3.
+
 ## 16. The foundation migration (user decisions, 2026-10-12)
 
 **Why.** The user: "I really think we should invest effort into building code in the right way,
@@ -3718,8 +3723,17 @@ The user took the five open route questions together, each as the maintainer rec
        clause lists ordered by `List.range`, the old statement's clauses as 11 theorems, and new
        uniformity theorems.
 
-     About 820 of the old proof's roughly 1,700 lines survive verbatim. The drafter recommends
-     a machine emitter. Estimate: 2.5k–3.6k lines landed; a statement gate, then two fills.
+     About 820 of the old proof's roughly 1,700 lines survive verbatim. Estimate: 2.5k–3.6k lines
+     landed; a statement gate, then two fills.
+   - **Answered (user, 2026-10-12): all five of the note's recommendations.**
+     - `exists_adjacency_codec_cnf` is retired; no proof uses it.
+     - The uniformity theorems are part of RD-2, as the fill RD-2b.
+     - The ψ matrix is a guarded CNF, so the private Tseitin lemmas of the colleague-owned
+       `DAGCircuitSat.lean` are not needed.
+     - **The ψ emitter is a machine,** on H6 and the polynomial-time closure algebra.
+     - The transition gates are truth-table templates, as in Cook–Levin.
+
+     Next: a statement-gate pack for RD-2.
 3. **B6 takes the window route, and `space_universal` is restated forward-only.**
    - **The window route.** `space_hierarchy`'s diagonalizer runs one fixed self-simulating
      universal machine `U₀` inside a window of radius `a·g(n)`, on the configuration-record rows,
