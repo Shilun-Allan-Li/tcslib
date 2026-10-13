@@ -1,0 +1,76 @@
+"""Fidelity check: every draft declaration against its CodeSimulator original, after renaming.
+Definitions and instances are compared in full (code text, comments removed, whitespace
+normalized); theorems and lemmas by statement (up to `:=`), and in full where the draft copies
+the proof."""
+import re, sys, os
+wt, draft = sys.argv[1], sys.argv[2]
+orig = open(os.path.join(wt, 'TCSlib/Complexity/TuringMachine/CodeSimulator.lean')).read()
+dr = open(draft).read()
+ren = {
+ 'h1RecordWidth':'recordWidth','h1RecordState':'RecordState','h1TableTape':'tableTape',
+ 'h1SummaryTape':'summaryTape','h1Payload':'payload','h1ApplyPayload':'applyPayload',
+ 'h1RecordTM':'recordTM','h1RecordFinTM':'recordFinTM','h1Record_effect':'recordTM_effect',
+ 'h1WorkReads_mem':'mem_workReadsK','h1WorkReads_length':'length_workReadsK',
+ 'h1WorkRank':'workRank','h1InputRank':'inputRank','h1ReadRank':'readRank',
+ 'h1SuccPhase':'SuccPhase','h1SuccTM':'succFieldTM','h1UnaryCfg':'succFieldCfg',
+ 'h1AfterTag':'afterTag','h1Succ_run':'succFieldTM_run','h1Succ_cut':'succFieldTM_cut',
+ 'h1Succ_heads':'succFieldTM_heads','h1SkipPh':'SkipPh','h1SkipPart':'skipPart',
+ 'h1SkipRed':'skipRed','h1SkipTM':'recordSkipTM','h1Skip_run':'recordSkipTM_run',
+ 'h1Skip_spec':'recordSkipTM_spec','h1SkipPh_finite':'instFintypeSkipPh',
+ 'h1SkipPh_decidable':'instDecidableEqSkipPh','h1SeekCtrl':'SeekCtrl',
+ 'h1SeekRouter':'seekRouterTM','h1SeekNext':'seekNext','h1SeekKey':'SeekKey',
+ 'h1SeekPh':'SeekPh','h1SeekPart':'seekPart','h1SeekRed':'seekRed','h1SeekTM':'seekTM',
+ 'h1TwoMoveTM':'twoMoveTM','h1SeekPh_finite':'instFintypeSeekPh',
+ 'h1SeekPh_decidable':'instDecidableEqSeekPh','h1RoundKey':'Key','h1RoundPh':'Ph',
+ 'h1RoundPart':'part','h1RoundExit':'exit','h1RoundRed':'red','h1RoundTM':'roundTM',
+ 'h1RoundPh_finite':'instFintypePh','h1RoundPh_decidable':'instDecidableEqPh',
+ 'h1RoundFinTM':'roundFinTM','h1SummaryState':'summaryCells','h1RoundRep':'Rep',
+ 'h1Round_effect':'roundTM_effect','h1Run_headBound':'abs_workTapePos_runFrom_sub_le',
+}
+same = ['workReadsK','tableBitsK','outputSummary','summaryEmit','outputSummary_append']
+full_thm = {'outputSummary_append','mem_workReadsK','length_workReadsK',
+            'abs_workTapePos_runFrom_sub_le'}
+declre = re.compile(r"^(?:private |protected )?(?:noncomputable )?(def|theorem|lemma|abbrev|inductive|instance)\s+(\S+)", re.M)
+def strip(t):
+    t = re.sub(r'/-.*?-/', ' ', t, flags=re.S)
+    t = re.sub(r'--[^\n]*', ' ', t)
+    return t
+def decls(text):
+    out = {}
+    t = strip(text)
+    ms = list(declre.finditer(t))
+    for i, m in enumerate(ms):
+        end = ms[i+1].start() if i + 1 < len(ms) else len(t)
+        body = t[m.start():end]
+        body = re.split(r'\n(?:end |namespace |section |/-!|set_option|variable)', body)[0]
+        out[m.group(2)] = (m.group(1), body)
+    return out
+def norm(s):
+    s = re.sub(r'^(private |protected )', '', s.strip())
+    return ' '.join(s.split())
+def rename(s):
+    for a in sorted(ren, key=len, reverse=True):
+        s = re.sub(r'(?<![A-Za-z0-9_.])' + re.escape(a) + r'(?![A-Za-z0-9_])', ren[a], s)
+    return s
+O = decls(orig); D = decls(dr)
+inv = {v: k for k, v in ren.items()}
+for s in same: inv[s] = s
+ok = bad = 0
+for name, (kind, body) in D.items():
+    if name not in inv:
+        print(f'ADDITIVE (no original): {name}'); continue
+    on = inv[name]
+    if on not in O:
+        print(f'MISSING ORIGINAL: {on}'); bad += 1; continue
+    okind, obody = O[on]
+    a, b = norm(rename(obody)), norm(body)
+    a = re.sub(r'^lemma ', 'theorem ', a); b = re.sub(r'^lemma ', 'theorem ', b)
+    if kind in ('theorem', 'lemma') and name not in full_thm:
+        a = a.split(':= by')[0]; b = b.split(':= by')[0]
+    if a == b:
+        ok += 1; print(f'MATCH  {on} -> {name} ({kind})')
+    else:
+        bad += 1
+        i = next((j for j in range(min(len(a), len(b))) if a[j] != b[j]), min(len(a), len(b)))
+        print(f'DIFFER {on} -> {name} ({kind}) at char {i}:\n  orig : ...{a[max(0,i-60):i+80]}\n  draft: ...{b[max(0,i-60):i+80]}')
+print(f'SUMMARY: {ok} match, {bad} differ')

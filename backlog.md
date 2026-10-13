@@ -555,6 +555,12 @@ window.*
   `h1SuccTM`, from `CodeSimulator`'s H1 gap to a public Build module, by PR and gate, **before any
   second consumer is briefed**: B6's `U₀` (RD-3), C1, U-1, EXPCOM. `h1Run_headBound`, the run form
   of `workTapePos_step_le`, goes with it. H1's own assembly may continue on the private copy.
+  **Designed (2026-10-13):** promote as is to `Build/StepBlock.lean` (`Turing.StepBlock`), stated
+  in the existing style, with five small additive results (`audits/evidence/h2/H2-design.md`;
+  draft `StepBlockDraft.lean.txt`: 0 errors, the seven contracts sorried, 58 of 58 copies
+  faithful). The statement gate H2-S is `audits/h2-promotion-pack.md`. The move, H2-M (a
+  freeze-checked maintainer PR with an 8-module replay), lands **between** the B5a
+  continuations, since both own regions of `CodeSimulator.lean`.
 - **(b) The R1 configuration-reconstruction family.** The canonizer continuation's
   `canonEmbedEq` reconstructs an embedded configuration from its selected-bank projections and
   the unchanged ambient frame. That is the argument of `OracleSim.oracleBankCfg_eq` and of the
@@ -1354,7 +1360,7 @@ The route decisions of 2026-10-12 (design §16b) add three work items, numbered 
   constant overhead provably impossible), and relativization (Baker-Gill-
   Solovay) are future Chapter-3 work. *Origin: ch1 plan §5 phase-2 notes;
   session assessment 2026-09-18.*
-* **B5a headline H2: the per-code-linear timed simulator** (user, 2026-10-11:
+* **B5a linear headline (formerly "B5a headline H2", renamed 2026-10-13 to avoid confusion with host H2): the per-code-linear timed simulator** (user, 2026-10-11:
   "H1 for now, but add H2 to backlog"). `CodeSimulator.lean`'s headline is
   H1, polynomial in `|α| + |x| + t` jointly, which is exactly what the two
   uniform schemes need. **H2** gives the same verdicts within
