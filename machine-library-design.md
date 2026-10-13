@@ -1110,7 +1110,9 @@ soundness hypothesis. Three notes correct or extend this design:
 - **SC-3: the NTIME consumer needs a nondeterministic lifting.** The host's
   contracts are deterministic (`MultiTapeTM`, `runFrom`). Before the NTIME
   hierarchy fill, a choice-stream lifting contract is needed, with branch
-  alignment through the bookkeeping pauses.
+  alignment through the bookkeeping pauses. **Closed (user, 2026-10-13):** C1 takes the
+  guess-first route (C1 design note §6, decision 1): the choice word is written first and then
+  interpreted deterministically, so no nondeterministic loop host is needed.
 - **SC-5: an optional visited-set corollary.** A public `spaceUsedByTape` or
   visited-set corollary of the trajectory clauses would save the space
   consumers repeated bookkeeping.
@@ -1423,7 +1425,7 @@ fill batches split now/after-G1; a fill gate.
 | **Savitch** `savitch` ("frame stack … catalog copy/compare/increment … one extra bank runs the vertex-adjacency test") | `recordStepTM` + `recordEqTM` for `adj(u, v)` (`u = v ∨ step u = v`, both choice bits); `recordNextTM` + `recordValidTM` for the midpoint enumerator; R8.3 seek over the frame stack; `copyTM`/`clearTM` for frame push/pop at **fixed intervals** (note 7); `incrementTM` for the depth field; R8.8 for the recursion's two returns. Space contracts of every row are load-bearing |
 | `spaceConstructible_poly`/`_logSpace`/`_linear` | R8.5 `inputLengthTM`; R8.6 `expandTM`; `incrementTM` |
 | **`PATH_NLComplete`** hardness (adjacency "by one local transition-table check", logspace) | The sketch's engine is the ARM layer (`arm_decides`). Optionally, a TM route: `recordStepTM`'s space clause with binary F1 gives `O(log n)`-space adjacency deciders for the index languages. Decision 12.8.4 |
-| **`PATH_mem_NL`** (matrix indexing) | R8.5 `inputSeekTM` (once a nondeterministic host exists, SC-3) |
+| **`PATH_mem_NL`** (matrix indexing) | R8.5 `inputSeekTM` (once a nondeterministic host exists, SC-3; superseded 2026-10-13: C2 is written as programs, §16b item 4) |
 | **Space hierarchy** `space_universal`, `space_hierarchy`. **Superseded 2026-10-12 by the window route** (§16b item 3): `space_universal` is forward-only (no interval counters, clock or probe/replay), and `space_hierarchy` runs a self-application universal `U₀` in a window on the record rows | **Now:** R8.7 (`recordInitTM`, `recordStepTM`, `recordTestTM`) under a configuration-count clock (`counterLoopTMVia`), with H2 (step block), H3 (windowed runner, three exits) and H5 (native and binary-position input devices). The earlier route (interval counters, budget loop, R8.8 success/cap exits) is dropped |
 | **`TQBF_mem_PSPACE`** (validate-first, depth-first assignment walker, per-clause CNF evaluation) | R8.2 folds (validation, clause evaluation), R8.5 `inputSeekTM` (re-reading prefix bits and matrix bytes), `incrementTM` / a trit odometer (`recordNextTM`'s carry discipline) for the walker, R8.3 seek on the assignment word |
 | `NP_subset_PSPACE` | existing `incrementTM` (certificate enumerator) and `vhostEmitTM` (virtual input); R8.8 for accept/exhaust |
@@ -1933,7 +1935,7 @@ needs the advancing writer R8.4′.
 | **Savitch** | Rich records with binary F1 (`O(S)` cells); frame stack on a rich tape; R8.7 `recordStepTM` (both choice bits) + `recordEqTM` for adjacency; `recordNextTM` + `recordValidTM` for midpoints; R8.3 over frames; `copyTM`/`clearTM` at fixed intervals (note 7); R8.0b loops; R8.8; R8.5d validation; `alphabet_reduction_spaceUsed` |
 | `spaceConstructible_*` | `Bool` only: R8.5c, R8.6, `incrementTM` |
 | `PATH_NLComplete` (hardness) | ARM engine (12.8.4); no §12.8 row |
-| `PATH_mem_NL` | R8.5b, once the nondeterministic host exists (SC-3) |
+| `PATH_mem_NL` | R8.5b, once the nondeterministic host exists (SC-3; superseded 2026-10-13: C2 is written as programs, §16b item 4) |
 | Space hierarchy | **Superseded 2026-10-12 by the window route** (§16b item 3; the RD-3 statement gate, minor 2): R8.7's initial-record, test and step rows under a configuration-count clock (`counterLoopTMVia`), through H2, H3 and H5, with R8.5d for input validation. The earlier route (R8.0b's budget loop, R8.8's success/cap exits, R8.1's budget comparison, `clearTM` resets, and no R8.7) is dropped |
 | `TQBF_mem_PSPACE` | R8.2 (validation folds, clause evaluation, the trit odometer), R8.5b (input re-reads), R8.3 |
 | `NP_subset_PSPACE` | `incrementTM`, `vhostEmitTM`, R8.8 |
@@ -3769,6 +3771,18 @@ of the file changes. **Round 2 closed the gate** (2026-10-13, 0 blockers / 0 maj
 - the joint-trajectory property holds for general segments, and keeps the counter loop's single
   shared round and time witness for all body heads, its exact endpoints, bounds and liveness.
 
+**MIG-0b gate, round 1** (2026-10-13; `audits/mig0b-findings.md`): **0 blockers / 2 majors /
+4 minors, gate open.** The segment, round and trajectory layers meet round 2's acceptance
+obligations above, and no proved statement is false. Both majors concern the landing plan:
+- the planned split strands private helpers (`mem_hull_left`, `mem_hull_right`,
+  `runFrom_state_none_mono`) and a fit-namespace bridge that kept modules use;
+- the release export `seamReleaseTM_runFrom_pos` fixes universes to `Type`, narrower than the
+  polymorphic `seamRelease_run_pos` it replaces.
+
+Round 2 is in preparation: a real split, cut-checked without the fit namespace; the polymorphic
+release; and the minors (an entry-compatibility lemma for `Contract.lockstep`, the release's
+wording, the alphabet admission's sketch and reference, and records).
+
 ### 16b. Five route decisions (user, 2026-10-12)
 
 The user took the five open route questions together, each as the maintainer recommended (plan
@@ -3869,6 +3883,13 @@ The user took the five open route questions together, each as the maintainer rec
        `ComputesInTime.spaceUsed_le_of_halt`.
 
      Open questions for the user: the note's §10.
+   - **Answered (user, 2026-10-13), all as recommended:** `space_universal` is strengthened to the
+     book's `C·s` in the B6 hosts' statement-gate pack, through H5's ruler device; no
+     binary-position device (its registry row stays); the public `outSummaryCode`/`summaryTag`
+     land in `ConfigGraph.lean`, with S1b's private copies re-pointed in the same PR; the
+     configuration-count runner and its bound go to a new `SpaceComplexity/WindowClock.lean`, so
+     that `Build/WindowRun.lean` imports nothing from `SpaceComplexity`; the contracts are gated
+     as `∃` statements, with named machines at fill time.
    - The shortcut through a space ledger for the time hierarchy's `diagSim` is not taken.
    - The restatement and the re-routed sketches go through a statement gate.
 4. **C2 is written as programs with coins.** `PATH ∈ NL`, Immerman–Szelepcsényi and their
