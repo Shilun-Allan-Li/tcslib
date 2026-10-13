@@ -9,9 +9,9 @@ is authoritative. Update this file when a phase starts or ends, not for progress
 ## Where things stand
 
 - **Chapters 3–4.** The inventory is in `AroraBarakChapters3-4Plan.md` §4e. Current status is in
-  the latest rows of its decision log. Snapshot for 2026-10-12, after fills-6: of 94 statements,
-  63 are proved, 9 are proved modulo open library rows, and 22 are open. Three fill continuations
-  are in flight (`briefs/`).
+  the latest rows of its decision log. Snapshot for 2026-10-12, after fills-7: of 94 statements,
+  63 are proved, 9 are proved modulo open library rows, and 22 are open. Three continuations come
+  next: the record tables, the B5a canonizer and B5a H1 (`briefs/`).
 - **Machine library.** `TCSlib/Complexity/TuringMachine/Build/`, designed in
   `machine-library-design.md` §12–§13.
 - **Programming layer.** `TCSlib/Programs/`, vendored from [AFM26]: design §15–§15c.
@@ -20,14 +20,18 @@ is authoritative. Update this file when a phase starts or ends, not for progress
 ## Phases
 
 1. **Land the current wave.** Integrate the in-flight deliveries and close their gates. The
-   briefs are in `briefs/`; the open gates are `audits/wave1-fill-pack.md` and
-   `audits/ch34-b5b-fill-pack.md` (B3a's closed on 2026-10-12).
+   briefs are in `briefs/`. Open: the B5b fill gate's round 2 (`audits/ch34-b5b-fill-r2-pack.md`).
+   Closed on 2026-10-12: T2a, the port's fidelity gate, B3a and wave 1.
 2. **Foundations**, in parallel:
-   - the contract structure (MIG-0): MIG-0a at its gate (`audits/mig0a-pack.md`), then MIG-0b;
+   - the contract structure (MIG-0): MIG-0a at its round-2 gate (`audits/mig0a-r2-pack.md`), then
+     MIG-0b, redefined after round 1 (design §16a: segment, round and joint-trajectory layers, the
+     layering split, the R1 reconstruction lemma);
    - named witnesses and the `f2_` deletion (MIG-1), after MIG-0a's gate;
-   - the language extensions (PROG-2, design §15c) and the footprint along runs (PROG-3);
-   - designs for B4 hardness, B6 and C1 (design §14, §16b), with B4a's restatement (RD-2) and
-     B6's re-route (RD-3).
+   - the language extensions (PROG-2), the footprint along runs (PROG-3) and stage 2's statement
+     (PROG-4): drafted and answered (design §15d), statement gate next;
+   - B4a's restatement (RD-2): designed and answered, statement gate next; B6's re-route (RD-3):
+     at its statement gate (`audits/b6-restatement-pack.md`, PR #82);
+   - the H2 step block's promotion (backlog F7-1(a)) and C1's design (design §14).
 3. **Build on them:**
    - stage 2, the RAM-to-`FinTM` compiler (design §15a), to the requirements of PROG-4;
    - B4 hardness and B6, through the hosts H2, H3, H5 and H6 (design §14);
@@ -50,7 +54,8 @@ is authoritative. Update this file when a phase starts or ends, not for progress
 
 ## Critical paths
 
-- **Chapter 3:** B5a's two rows (in flight), then Baker–Gill–Solovay; then C1.
+- **Chapter 3:** B5a's two rows (the canonizer and the simulator, continuing), then
+  Baker–Gill–Solovay and the `EXPCOM` cluster; then C1.
 - **Chapter 4:** MIG-0, then the extensions and the footprint (PROG-2, PROG-3), stage 2, the
   configuration routines, Savitch, and PSPACE = NPSPACE. C2 rides the same stage 2.
 
@@ -58,10 +63,10 @@ is authoritative. Update this file when a phase starts or ends, not for progress
 
 The open questions are in `backlog.md` §1 and §4, and in the open-decision lists of design §15
 and §16. The next ones are:
-- the rulings MIG-0a's gate asks for, then MIG-0b's statements;
-- stage 2's statement (PROG-4);
-- B4 hardness's emitter: a machine (H6) or a program with `emit` (RD-2);
-- C1's route.
+- the rulings the round-2 gates ask for (B5b, MIG-0a) and RD-3's gate;
+- MIG-0b's statements;
+- the stage 2 and RD-2 statement gates;
+- the H2 promotion's shape, and C1's route.
 
 ## Where to find what
 

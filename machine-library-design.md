@@ -3726,7 +3726,11 @@ dependent migration:
    (`runFrom_mapState_of_agreeOn`), and the alphabet-reduction and robustness-lockstep adapters
    (round 1, note 20);
 7. the tactics, and the auditor's suggested sanity lemmas: the zero-time characterization
-   (`time = 0 ↔ some entry ∈ exits` on admissible starts) and positivity of the compositions.
+   (`time = 0 ↔ some entry ∈ exits` on admissible starts) and positivity of the compositions;
+8. **the R1 reconstruction lemma** in `Build/Embed`, at the layering split (the wave-1 fill gate's
+   major F1, acknowledged by the user): from the selected-bank projections and the unchanged
+   ambient frame, equality of an embedded configuration, cited by `OracleSim.oracleBankCfg_eq`,
+   `Loop.emCall_exit_fixed`'s local frame and `CodeSimulator.canonEmbedEq`.
 
 MIG-0a's round 2 audits the corrected records and the documentation repairs; no statement or proof
 of the file changes.
