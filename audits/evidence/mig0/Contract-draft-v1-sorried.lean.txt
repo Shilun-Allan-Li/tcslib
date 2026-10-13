@@ -1,0 +1,256 @@
+/-
+Copyright (c) 2026 Seyoon Ragavan. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Seyoon Ragavan
+-/
+import TCSlib.Complexity.TuringMachine.Build.Seam
+import TCSlib.Complexity.TuringMachine.Build.CounterLoop
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+/-!
+# Framed contracts (MIG-0, statement draft)
+
+**Status: statement draft for the user and the statement gate; not for landing.** The
+composition definitions' proof fields are `sorry`; one routine instance (`clearTM_contract`) is
+proved from its existing row, to test the fit.
+
+A *contract* packages what the library's framed rows state one by one (design §14 item 0,
+§16): started at `entry` in a configuration satisfying the precondition, the machine reaches
+the endpoint `post` after **exactly** `time` steps, has **not** reached an exit before, and
+keeps every work head inside an interval. "Within `B`" and the space bound are derived.
+
+## Design
+
+* **Exact time and the cut are fields** (§16). The cut includes time `0`, as in about 45 of the
+  library's rows; a module whose entry is also its exit goes through the release adapter
+  (`Turing.seamReleaseTM`), recorded below as a later row.
+* **Exits form a set**, so one structure covers single anchors, verdict pairs (`yes`/`no`),
+  loop exits (`done`/`escape`) and halting (`none`).
+* **The endpoint is a function** of a data index `i : ι` and the start configuration. Data the
+  module reads (a stored word, a record's fields) is the index; the precondition says where it
+  is stored.
+* **Head envelopes are intervals** `[lo, hi]` per tape, functions of the index and the start
+  configuration. The radius form is a special case (`Turing.Contract.mem_Icc_of_abs_le`); space
+  follows from `MultiTapeTM.spaceUsedByTape_le_card_Icc`.
+* **Frames are part of the endpoint**: rows already state them as `{ d with … }`. A separate
+  tape-indexed frame predicate with `.keep` lemmas is left to the statement gate's decision
+  (open question 4 of the draft note).
+* **Universes:** alphabet, states and index in `Type`, the universe of `FinTM`, `phaseHostTM`
+  and `counterLoopTMVia` (backlog UNIV-1 folds in here).
+
+## Main definitions
+
+* `Turing.Contract`: the structure.
+* `Turing.Contract.trans`: sequencing on one machine (the private `RecordRun` pattern).
+* `Turing.Contract.seq`: sequencing through the R2 seam `Turing.seamCompTM`.
+* `Turing.Contract.inPhase`: a phase run inside the phase host `Turing.phaseHostTM`.
+* `Turing.Contract.embed`: transport along the R1 embedding `Turing.embedEmitTM`.
+* `Turing.clearTM_contract`: R3 clear as a contract (proved; the fit test).
+
+## Main results
+
+* `Turing.Contract.within`: the derived "within `B`" form.
+* `Turing.Contract.spaceUsedByTape_le`: the derived per-tape space bound.
+
+## Later rows (stated in the draft note, not yet here)
+
+The symbol lift (`MultiTapeTM.liftSymbols_runFrom`, needing a decoding map), the two-way
+branch (`seamCompTM₂`), the release adapter (`seamReleaseTM_firstReturn`), the counter loop
+(`counterLoopTM_run_done`/`_escape`, rounds as a positive-duration contract) and state
+renaming along an embedding (`runFrom_mapState_of_agreeOn`).
+
+## References
+
+* [AFM26] anthropics/formal-math, `3sum-apsp`: framing and specification-only calls (design
+  adaptation; the treatment of time differs, §16).
+-/
+
+namespace Turing
+
+variable {k : ℕ} {Γ : Type}
+
+/-- **A framed contract** (design §14 item 0, §16). For every data index `i` and every start
+configuration `d` at `entry` satisfying `pre i d`, the machine reaches `post i d` after exactly
+`time i d` steps; `post i d` is at an exit; no exit is reached earlier (the cut includes time
+`0`); and through the endpoint every work head `j` stays in `[lo i d j, hi i d j]`. -/
+structure Contract {S : Type} (M : MultiTapeTM k Γ S) (entry : S) (exits : Set (Option S))
+    (ι : Type) (x : List Γ) where
+  /-- The precondition on the start configuration, for data `i`. -/
+  pre : ι → Cfg k Γ S x → Prop
+  /-- The exact running time. -/
+  time : ι → Cfg k Γ S x → ℕ
+  /-- The endpoint. -/
+  post : ι → Cfg k Γ S x → Cfg k Γ S x
+  /-- The lower ends of the head envelope. -/
+  lo : ι → Cfg k Γ S x → Fin k → ℤ
+  /-- The upper ends of the head envelope. -/
+  hi : ι → Cfg k Γ S x → Fin k → ℤ
+  run : ∀ i d, d.state = some entry → pre i d → M.runFrom d (time i d) = post i d
+  exit_mem : ∀ i d, d.state = some entry → pre i d → (post i d).state ∈ exits
+  cut : ∀ i d, d.state = some entry → pre i d →
+    ∀ u < time i d, (M.runFrom d u).state ∉ exits
+  env : ∀ i d, d.state = some entry → pre i d → ∀ u ≤ time i d, ∀ j,
+    (M.runFrom d u).workTapePos j ∈ Finset.Icc (lo i d j) (hi i d j)
+
+namespace Contract
+
+section Derived
+
+variable {S : Type} {M : MultiTapeTM k Γ S} {entry : S} {exits : Set (Option S)} {ι : Type}
+  {x : List Γ}
+
+/-- The derived "within `B`" form, the shape of the library's existential rows. -/
+theorem within (C : Contract M entry exits ι x) (i : ι) (d : Cfg k Γ S x)
+    (hd : d.state = some entry) (hp : C.pre i d) {B : ℕ} (hB : C.time i d ≤ B) :
+    ∃ t ≤ B, (∀ u < t, (M.runFrom d u).state ∉ exits) ∧ M.runFrom d t = C.post i d :=
+  ⟨C.time i d, hB, C.cut i d hd hp, C.run i d hd hp⟩
+
+/-- The derived per-tape space bound: the envelope's width. -/
+theorem spaceUsedByTape_le (C : Contract M entry exits ι x) (i : ι) (d : Cfg k Γ S x)
+    (hd : d.state = some entry) (hp : C.pre i d) (j : Fin k) :
+    M.spaceUsedByTape d (C.time i d) j ≤ (C.hi i d j + 1 - C.lo i d j).toNat :=
+  M.spaceUsedByTape_le_card_Icc d (C.time i d) j (C.lo i d j) (C.hi i d j)
+    fun u hu => C.env i d hd hp u hu j
+
+/-- A positive running time on every admissible start: what a loop round needs. -/
+def Positive (C : Contract M entry exits ι x) : Prop :=
+  ∀ i d, d.state = some entry → C.pre i d → 0 < C.time i d
+
+/-- The radius form of an envelope is the interval form about the start position. -/
+theorem mem_Icc_of_abs_le {p q R : ℤ} (h : |p - q| ≤ R) : p ∈ Finset.Icc (q - R) (q + R) := by
+  rw [Finset.mem_Icc]
+  constructor <;> linarith [abs_le.mp h]
+
+end Derived
+
+section Compose
+
+/-- **Sequencing on one machine**: run `C₁` to its single exit `e₂`, then `C₂` from there.
+Times add with no dispatch step; the envelopes take the pointwise hull. `hX` says that `C₁`
+does not pass through an exit of `C₂` before its own exit. -/
+def trans {S : Type} {M : MultiTapeTM k Γ S} {e₁ e₂ : S} {X : Set (Option S)} {ι κ : Type}
+    {x : List Γ} (C₁ : Contract M e₁ {some e₂} ι x) (C₂ : Contract M e₂ X κ x) (link : ι → κ)
+    (hlink : ∀ i d, d.state = some e₁ → C₁.pre i d → C₂.pre (link i) (C₁.post i d))
+    (hX : ∀ i d, d.state = some e₁ → C₁.pre i d →
+      ∀ u < C₁.time i d, (M.runFrom d u).state ∉ X) :
+    Contract M e₁ X ι x where
+  pre := C₁.pre
+  time i d := C₁.time i d + C₂.time (link i) (C₁.post i d)
+  post i d := C₂.post (link i) (C₁.post i d)
+  lo i d j := min (C₁.lo i d j) (C₂.lo (link i) (C₁.post i d) j)
+  hi i d j := max (C₁.hi i d j) (C₂.hi (link i) (C₁.post i d) j)
+  run := sorry
+  exit_mem := sorry
+  cut := sorry
+  env := sorry
+
+/-- **Sequencing through the R2 seam** (`Turing.seamCompTM_run_ofCfg`,
+`Turing.seamCompTM_firstReturn_ofCfg`): one dispatch step between the phases, so the time is
+`t₁ + 1 + t₂`. The second phase starts from the first's endpoint with its state replaced by
+`entry₂`. -/
+def seq {S₁ S₂ : Type} [DecidableEq S₁] {M₁ : MultiTapeTM k Γ S₁} {M₂ : MultiTapeTM k Γ S₂}
+    {entry₁ exit₁ : S₁} {entry₂ : S₂} {X₂ : Set (Option S₂)} {ι κ : Type} {x : List Γ}
+    (C₁ : Contract M₁ entry₁ {some exit₁} ι x) (C₂ : Contract M₂ entry₂ X₂ κ x) (link : ι → κ)
+    (hlink : ∀ i d, d.state = some entry₁ → C₁.pre i d →
+      C₂.pre (link i) ((C₁.post i d).mapState fun _ => entry₂)) :
+    Contract (seamCompTM M₁ exit₁ M₂ entry₂) (Sum.inl entry₁) (Option.map Sum.inr '' X₂) ι x where
+  pre i d := C₁.pre i (d.mapState fun _ => entry₁)
+  time i d := C₁.time i (d.mapState fun _ => entry₁) + 1 +
+    C₂.time (link i) ((C₁.post i (d.mapState fun _ => entry₁)).mapState fun _ => entry₂)
+  post i d :=
+    (C₂.post (link i) ((C₁.post i (d.mapState fun _ => entry₁)).mapState fun _ => entry₂)).mapState
+      Sum.inr
+  lo i d j := min (C₁.lo i (d.mapState fun _ => entry₁) j)
+    (C₂.lo (link i) ((C₁.post i (d.mapState fun _ => entry₁)).mapState fun _ => entry₂) j)
+  hi i d j := max (C₁.hi i (d.mapState fun _ => entry₁) j)
+    (C₂.hi (link i) ((C₁.post i (d.mapState fun _ => entry₁)).mapState fun _ => entry₂) j)
+  run := sorry
+  exit_mem := sorry
+  cut := sorry
+  env := sorry
+
+/-- Re-type a configuration's control state through a partial map: the phase host's redirect. -/
+def _root_.Turing.Cfg.bindState {S S' : Type} {x : List Γ} (d : Cfg k Γ S x) (f : S → Option S') :
+    Cfg k Γ S' x :=
+  ⟨d.state.bind f, d.inputPos, d.workTapes, d.workTapePos, d.output⟩
+
+/-- **A phase inside the phase host** (`Turing.phaseHostTM_run`). Phase `p` runs under its own
+contract; its exits are exactly the states the host redirects, each to another phase, so the
+host's exits are the redirect targets and the time gains one dispatch step. -/
+def inPhase {I : Type} {Ph : I → Type} (Mf : (i : I) → MultiTapeTM k Γ (Ph i)) (q0 : Σ i, Ph i)
+    (red : (i : I) → Ph i → Option (Σ i, Ph i)) (p : I) {s₀ : Ph p} {X : Set (Option (Ph p))}
+    {ι : Type} {x : List Γ} (C : Contract (Mf p) s₀ X ι x) (hnone : none ∉ X)
+    (hred : ∀ s, some s ∉ X → red p s = none)
+    (hsome : ∀ s, some s ∈ X → ∃ q, red p s = some q ∧ q.1 ≠ p) :
+    Contract (phaseHostTM Mf q0 red) ⟨p, s₀⟩ {q | ∃ s, some s ∈ X ∧ q = red p s} ι x where
+  pre i d := C.pre i (d.mapState fun _ => s₀)
+  time i d := C.time i (d.mapState fun _ => s₀) + 1
+  post i d := (C.post i (d.mapState fun _ => s₀)).bindState (red p)
+  lo i d := C.lo i (d.mapState fun _ => s₀)
+  hi i d := C.hi i (d.mapState fun _ => s₀)
+  run := sorry
+  exit_mem := sorry
+  cut := sorry
+  env := sorry
+
+/-- The source configuration seen through an R1 selection: selected tapes and heads, the same
+state and input position, and an empty output. -/
+def _root_.Turing.Cfg.select {m : ℕ} {S : Type} {x : List Γ} (σ : Fin m ↪ Fin k)
+    (d : Cfg k Γ S x) : Cfg m Γ S x :=
+  ⟨d.state, d.inputPos, fun i => d.workTapes (σ i), fun i => d.workTapePos (σ i), []⟩
+
+/-- Every host configuration is the forwarding embedding of its selection, framed by itself. -/
+theorem _root_.Turing.embedEmitCfg_select {m : ℕ} {S : Type} {x : List Γ} (σ : Fin m ↪ Fin k)
+    (d : Cfg k Γ S x) :
+    embedEmitCfg σ d.workTapes d.workTapePos d.output (d.select σ) = d := sorry
+
+/-- **Transport along the R1 embedding** (`Turing.embedEmitTM_runFrom`): the source contract
+holds on the selected tapes; unselected tapes and heads are framed, and output is appended. -/
+noncomputable def embed {m : ℕ} (σ : Fin m ↪ Fin k) {S : Type} {M : MultiTapeTM m Γ S}
+    {entry : S} {X : Set (Option S)} {ι : Type} {x : List Γ} (C : Contract M entry X ι x) :
+    Contract (embedEmitTM σ M) entry X ι x where
+  pre i d := C.pre i (d.select σ)
+  time i d := C.time i (d.select σ)
+  post i d := embedEmitCfg σ d.workTapes d.workTapePos d.output (C.post i (d.select σ))
+  lo i d := Function.extend σ (C.lo i (d.select σ)) d.workTapePos
+  hi i d := Function.extend σ (C.hi i (d.select σ)) d.workTapePos
+  run := sorry
+  exit_mem := sorry
+  cut := sorry
+  env := sorry
+
+end Compose
+
+end Contract
+
+/-- **R3 clear as a contract** (the fit test, from `Turing.clearTM_run_ofCfg`): the index is the
+stored word. -/
+def clearTM_contract (i : Fin k) (x : List Γ) :
+    Contract (clearTM k i) SweepPhase.sweep {some SweepPhase.done} (List Γ) x where
+  pre w d := ∀ p : ℤ, -1 ≤ p → p ≤ (w.length : ℤ) →
+    d.workTapes i (d.workTapePos i + p) = FinTM.bufferTape w p
+  time w _ := 2 * w.length + 2
+  post w d :=
+    { d with
+      state := some SweepPhase.done
+      workTapes := fun j q =>
+        if j = i ∧ d.workTapePos j ≤ q ∧ q < d.workTapePos j + (w.length : ℤ) then none
+        else d.workTapes j q }
+  lo w d j := if j = i then d.workTapePos j - 1 else d.workTapePos j
+  hi w d j := if j = i then d.workTapePos j + w.length else d.workTapePos j
+  run w d hd hp := (clearTM_run_ofCfg i w d hd hp).1
+  exit_mem _ _ _ _ := Set.mem_singleton _
+  cut w d hd hp u hu h := (clearTM_run_ofCfg i w d hd hp).2.1 u hu (Set.mem_singleton_iff.mp h)
+  env w d hd hp u hu j := by
+    have h := (clearTM_run_ofCfg i w d hd hp).2.2 j u hu
+    by_cases hj : j = i
+    · subst hj
+      simpa using h
+    · simp only [hj, if_false] at h ⊢
+      rw [h]
+      exact Finset.mem_Icc.mpr ⟨le_rfl, le_rfl⟩
+
+end Turing
