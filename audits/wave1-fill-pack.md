@@ -164,3 +164,15 @@ be rerun.
 
 Severity guide as in `audits/TEMPLATE.md`. Findings go verbatim into
 `audits/wave1-fill-findings.md`. The gate closes when it has zero blockers and zero majors.
+
+## Erratum (gate round 1, minors F2–F5; `audits/wave1-fill-resolutions.md`)
+
+- **Axioms.** "25 axiom prints" should read **26 axiom prints: 25 within the standard three, one
+  (`FinTM.prefixWords`) with none**. There are also 26 admission walks, all empty.
+- **Design extract.** `audits/evidence/wave1-fill-gate/design-12.8b-12.10.md` is **historical**: it
+  predates the fills. Design §12.10 now gives the rows' proved status, W2-C's exhaustion
+  exception, and W2-S's delivered phase-host refinement.
+- **Earlier screens.** The comparison with the fills-6 combined screens is now checkable:
+  `audits/logs/wave1-fill-gate-earlier-pairs.txt`.
+- **Execution evidence.** The W2-S sanity probe and its log are attached, and the maintainer
+  elaborated the probe (`audits/logs/wave1-fill-gate-sanity-maintainer.log`).

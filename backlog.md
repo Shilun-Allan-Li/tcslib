@@ -515,7 +515,13 @@ window.*
   `oracleChoiceCfg` and `oracleShadowAction` against `Simulation.lean`'s `leftAction`,
   `rightAction` and `rightCfg` (53–75%); `oracleBankCfg_eq` against Loop's `emCall_exit_fixed`
   (56%); `CodeSimulator.guardBlock_orbit` against `Games.playOut_eq_iterate` (74%). No earlier
-  population held both sides. They go to the W2-S and B5a fill gates for a ruling.
+  population held both sides. **Ruled at the wave-1 fill gate (2026-10-12):**
+  - the action and configuration pairs are forced tape-layout specializations, not copies (N11);
+  - `oracleBankCfg_eq` is a copy to factor (major F1). **Acknowledged by the user**, with its
+    resolution scheduled in MIG-0b: one public R1 reconstruction lemma in `Build/Embed`, at the
+    layering split, cited by OracleSim, Loop (`emCall_exit_fixed`'s `hframe`) and CodeSimulator
+    (`canonEmbedEq`, F7-1(b)), with the `Primitives` and `CertShell` analogues reconciled then;
+  - `guardBlock_orbit` waits for the B5a fill gate.
 - **(j) The `incFixed` criterion's two public homes** (from the CH34-D4 factoring,
   `audits/ch34-d4-record.md`). `Build/Convention`'s `incFixed_eq_none_iff_replicate` and
   `CircuitComplexity/MeyerTableau`'s `incFixed_eq_none_iff`, the colleague's original, match at

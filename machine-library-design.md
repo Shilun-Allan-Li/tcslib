@@ -2342,11 +2342,11 @@ targets are blocked:
 | Module | Declaration | Status |
 |---|---|---|
 | `Build/OracleSim.lean` | `FinTM.prefixWords` (+ `_nil`, `_update`), `Cfg.init_eq_ofWords`, `OracleTM.queryString_runFrom_length_le_of_blank` (W2-0) | proved |
-| | **`FinOracleTM.exists_plain_simulation`** (W2-S): from any preloaded start, a plain host reproduces the oracle machine's halting output within `a·(t+1)² + a·Σ_{r<t} [query at r]·τ(\|query_r\|)` | sorried |
+| | **`FinOracleTM.exists_plain_simulation`** (W2-S): from any preloaded start, a plain host reproduces the oracle machine's halting output within `a·(t+1)² + a·Σ_{r<t} [query at r]·τ(\|query_r\|)` | **proved** (fills-4 to fills-6; wave-1 fill gate closed 2026-10-12) |
 | | `…_of_monotone`, `…_initCfg`, `FinOracleTM.exists_plain_decider` | proved from W2-S |
 | | `FinOracleNDTM.choiceOut`, `choiceOut_eq_true_iff`, `mem_iff_exists_choiceOut` | proved |
-| | **`FinOracleNDTM.exists_choiceTM`** (W2-C): the choice-word machine, `≤ 2\|u\| + 2` steps, the same queries | sorried |
-| `Build/CertShell.lean` | **`FinTM.exists_certificateShell`** (W2-V): the plain shell deciding `{x ++ u \| \|u\| = C(\|x\|+1)^c ∧ out x u = [true]}` | sorried |
+| | **`FinOracleNDTM.exists_choiceTM`** (W2-C): the choice-word machine, `≤ 2\|u\| + 2` steps, the same queries, except that at exhaustion in the query state one query may be submitted and its answer discarded (statement gate, minor 4) | **proved** (fills-4) |
+| `Build/CertShell.lean` | **`FinTM.exists_certificateShell`** (W2-V): the plain shell deciding `{x ++ u \| \|u\| = C(\|x\|+1)^c ∧ out x u = [true]}` | **proved** (fills-4) |
 | | `FinTM.certificateShell_proj` | proved |
 
 - The exact sum, "`T_D` of the query lengths", needs no monotonicity.
@@ -2362,6 +2362,12 @@ targets are blocked:
   - off `qQuery`, the bridge `runFrom_eq_plainEmptyOracle` plus Z5;
   - at `qQuery`, nine R2-seamed phases: bookmark, origin walk, save and blank cell `-1`,
     `copyTM`, the Z1 call at `y = []`, read the verdict, restore, walk back, answer.
+  - **As delivered** (fills-6; documented in the target's appendices, and confirmed sound and no
+    weaker by the wave-1 fill gate): the host `oracleHost` is **one public phase host**
+    (`phaseHostTM`), with a single R2 seam between the public copy and the relocated call
+    (`oracleService_run`). Preparation takes at most `natAbs p + 3` steps and restoration
+    exactly `natAbs p + 3`, for both signs of the displacement and for zero. A query costs at most
+    `2·|p| + 2·|z| + tCall + 13`, redirects included.
 - **W2-C:** lockstep by induction on `u`, in the `toOracleNDTM_runWith` shape. An exhausted
   word answers `false`, so an unhalted branch never shows `[true]`.
 - **W2-V:** the native-input call R8.5e (`exists_inputCallTM`) at `splitSolve`, then Z1 inside
