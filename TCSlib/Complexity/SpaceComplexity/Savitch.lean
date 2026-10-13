@@ -5,6 +5,7 @@ Authors: Seyoon Ragavan
 -/
 import TCSlib.Complexity.SpaceComplexity.ConfigGraph
 import TCSlib.Complexity.SpaceComplexity.Constructible
+import TCSlib.Complexity.SpaceComplexity.SavitchARM.Correct
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -20,10 +21,13 @@ configuration graph of `TCSlib.Complexity.SpaceComplexity.ConfigGraph`. The
 corollary `PSPACE = NPSPACE` ([AB09, §4.2.1]) closes the polynomial level.
 Phase P4.2 of `AroraBarakChapters3-4Plan.md`.
 
-**Status: statement skeleton (phase P4.2).** Every contract is sorried with a
-sketch naming its fill obligations. The `SpaceComplexity.lean` facade has
-carried this module since the P4.1 gate closed (root-wired while that gate
-was live).
+**Status: partly filled (phase P4.2).** `Complexity.PSPACE_eq_NPSPACE` is
+proved, directly at the polynomial level, by the Savitch register machine of
+`TCSlib.Complexity.SpaceComplexity.SavitchARM` (`Complexity.NPSPACE_subset_PSPACE`);
+`Complexity.savitch` (general space-constructible `S`) and
+`Complexity.spaceConstructible_poly` remain sorried with sketches naming their fill
+obligations. The `SpaceComplexity.lean` facade has carried this module since the
+P4.1 gate closed (root-wired while that gate was live).
 
 ## Design
 
@@ -38,12 +42,12 @@ was live).
   intended engine, with the depth `O(S)` and frame size `O(S)` giving the
   `O(S²)` ledger.
 
-## Main results (all sorried; phase-P4.2 statements)
+## Main results
 
 * `Complexity.spaceConstructible_poly` — the polynomial bounds of the
-  campaign's normal form are space-constructible (degree at least one).
-* `Complexity.savitch` — [AB09, Theorem 4.14].
-* `Complexity.PSPACE_eq_NPSPACE` — [AB09, §4.2.1].
+  campaign's normal form are space-constructible (degree at least one). (Sorried.)
+* `Complexity.savitch` — [AB09, Theorem 4.14]. (Sorried.)
+* `Complexity.PSPACE_eq_NPSPACE` — [AB09, §4.2.1]. (Proved.)
 
 ## References
 
@@ -111,21 +115,25 @@ theorem savitch (S : ℕ → ℕ) (hS : SpaceConstructible S) :
     NSPACE S ⊆ SPACE fun n => S n * S n := by
   sorry
 
-/-- **`PSPACE = NPSPACE`** ([AB09, §4.2.1]): at the polynomial level,
-Savitch's quadratic overhead is absorbed.
+/-- **`PSPACE = NPSPACE`** ([AB09, §4.2.1]; [AB09, Theorem 4.14] at polynomial
+space bounds): at the polynomial level, Savitch's quadratic overhead is absorbed.
 
-**Proof sketch.** `⊆` is `Complexity.PSPACE_subset_NPSPACE` (phase P4.1).
-`⊇`: a member of `NPSPACE` lives in some `NSPACE (n ^ c + 1)`; route `c = 0`
-into `c = 1` by the class's constant absorption — a decider within
-`c₁ · (n ^ 0 + 1) = 2 · c₁` cells is a decider within `2c₁ · (n ^ 1 + 1)`
-cells (bare `Complexity.NSPACE.mono` does not apply: its pointwise hypothesis
-fails at `n = 0`, where `n ^ 0 + 1 = 2 > n + 1 = 1`); for `1 ≤ c`,
-`Complexity.savitch` with `Complexity.spaceConstructible_poly` gives
-membership in `SPACE ((n^c + 1) · (n^c + 1))`, and
-`(n^c + 1)² ≤ 4 · (n^{2c} + 1)` lets `Complexity.SPACE.mono` plus the class's
-constant absorption land it in `SPACE (n^{2c} + 1) ⊆ PSPACE`
-(`Complexity.space_poly_subset_PSPACE`). -/
-theorem PSPACE_eq_NPSPACE : PSPACE = NPSPACE := by
-  sorry
+**Proof sketch.** `⊆` is `Complexity.PSPACE_subset_NPSPACE` (phase P4.1). `⊇` is
+`Complexity.NPSPACE_subset_PSPACE`, proved directly rather than through
+`Complexity.savitch`: for `N` deciding `L` in space `c (n ^ k + 1)`, take the radius
+`s = (n + 2) ^ E` and the code width `w = (n + 2) ^ (2E)` (`E` a constant of `N`, `k`, `c`),
+so that the configuration codes of `TCSlib.Complexity.SpaceComplexity.Codec` lie below
+`2 ^ w` and the configuration count is at most `2 ^ w`; then `x ∈ L` iff some initial code
+reaches some accepting code by the midpoint predicate `REACH(u, v, w)` (paths of length at
+most `2 ^ w`, every midpoint a code below `2 ^ w`). The Savitch register machine
+(`Complexity.LogProg.SavitchARM.A`) computes `s`, `w`, `2 ^ w` by counting loops and
+evaluates `REACH` by the midpoint recursion, **reusing the space** of the first recursive
+call for the second ([AB09]'s crucial point) through an explicit stack: saved endpoints as
+`w`-bit digits of one register, phase bits as binary digits of another, so every register
+holds at most `w · w` bits. Its deciders (input length and the initial, accepting and step
+code languages) are logspace, and `Complexity.LogProg.arm_decides_pspace_val` turns the
+machine into a polynomial-space decider. -/
+theorem PSPACE_eq_NPSPACE : PSPACE = NPSPACE :=
+  Set.Subset.antisymm PSPACE_subset_NPSPACE NPSPACE_subset_PSPACE
 
 end Complexity
