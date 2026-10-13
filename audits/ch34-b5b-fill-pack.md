@@ -32,10 +32,18 @@ Two maintainer commits follow, both comment-only:
 - `36503704`: proof sketches for `expcom_summit_budget` and `expcom_all_true`, which the review
   found without one.
 
+Then the **CH34-D4 factoring** (`6c7e35bd`, `audits/ch34-d4-record.md`; user ruling: "factor before
+closing"). It promotes the `Nat.bits` shift law to `TuringMachine/Encoding`, and the `incFixed`
+overflow criterion and prefix law to `Build/Convention`. In `EXPCOM` it deletes
+`expcom_bits_two_pow` and `expcom_inc_prefix`, and re-derives `expcom_all_true` (statement
+unchanged) from the public criterion. It also retires ConfigGraph's `s1b_radius_bits` and
+re-derives Catalog's `catalog_increment_value`. **This factoring is part of this gate's audit
+object.**
+
 **Every proof is kernel-checked**; the replay and axiom evidence is below. Fill gates close on
 zero blockers and zero majors (`workflow.md` §4), and the duplication rule (`audits/TEMPLATE.md`,
-failure mode 5) is in force. **This gate cannot close over the human-review item CH34-D4**
-(`backlog.md` §1, below) until the user has ruled on it. The standards are attached.
+failure mode 5) is in force. The human-review item **CH34-D4** (`backlog.md` §1) is ruled: factor
+before closing, done by the factoring above. The standards are attached.
 
 **Bundle:** `audits/ch34-b5b-fill-bundle.md`: this pack, the standards, the statement-gate records, the briefs, the
 reports, the integration records, the owned files with their bases, the patches, the freeze,
@@ -48,10 +56,11 @@ be rerun.
 |---|---|
 | **Target body, `sorry` → proof** | `NPOracle_EXPCOM_subset_EXP` |
 | **Other publics** | unchanged |
-| **Privates added** | 17, listed with their roles in the report, among them the dispatcher `expcom_decider` (the probe's statement, verbatim but private and renamed, so the S1210 probe still declares `exists_EXPCOM_decider` locally) |
+| **Privates added** | 17 by the delivery, 15 after the factoring (two deleted), listed with their roles in the report, among them the dispatcher `expcom_decider` (the probe's statement, verbatim but private and renamed, so the S1210 probe still declares `exists_EXPCOM_decider` locally) |
 | **Imports** | the two sanctioned additions (brief rule 1(a)): `Build/CertShell` and `ClassNP/ExpPoly` |
 | **Docstrings** | the summit's flagged fill appendix (the §12.10 compositional route); the maintainer's header and appendix notes; two maintainer sketches |
-| **Size** | 382 → 772 lines |
+| **Elsewhere (the factoring)** | four new publics in `Encoding` and `Convention`; ConfigGraph's `s1b_radius_bits` deleted; Catalog's `catalog_increment_value` re-derived; no statement or import changed |
+| **Size** | 382 → 744 lines (772 before the factoring) |
 
 ## Brief for the auditor
 
@@ -102,7 +111,18 @@ be rerun.
    `exists_EXPCOM_decider` and the two §12.11 rows (`audits/logs/b5a-fill-cont3-preship.log`).
 6. **Documentation.** Check the summit's appendix, the maintainer's header and appendix notes,
    the two maintainer sketches, and every new private's docstring against the delivered proofs.
-7. Report anything else the fill or its records misstate, in the standard table.
+7. **The CH34-D4 factoring** (`audits/evidence/ch34-d4/ch34-d4.patch`, `audits/ch34-d4-record.md`).
+   - Check the four new public lemmas: statements, proofs, docstrings and homes.
+   - Check that each retired copy is gone, or that its wrapper is now a derivation with an
+     unchanged statement, and that no statement or import changed.
+   - Check that the colleague-owned `Separation` and `CircuitComplexity` files are untouched.
+   - The screen (`audits/logs/ch34-d4-screen-{before,after}.txt`) loses the
+     `expcom_bits_two_pow`/`bits_two_pow` pair. It gains one **disclosed** pair:
+     `Convention.incFixed_eq_none_iff_replicate` against `MeyerTableau`'s public
+     `incFixed_eq_none_iff`, at 100% (93 characters), which is the colleague's original. It is
+     recorded for retirement as backlog F6-1(j). Say whether placing the criterion in
+     `Convention` is right, given that `EXPCOM` cannot import `CircuitComplexity`.
+8. Report anything else the fill or its records misstate, in the standard table.
 
 ## Repository-side attestations (verify or challenge)
 
@@ -113,12 +133,16 @@ be rerun.
 * **Replay** (user-run, fresh `.oleans` into the snapshot; `audits/logs/fills-6-replay.log`, at
   `56258cb5`): 41 modules, **0 errors**; `EXPCOM` has no sorry warning. The later maintainer
   commit `36503704` is comment-only, and `EXPCOM` elaborates after it with no errors.
+  The CH34-D4 replay (`audits/logs/ch34-d4-replay.log`, at `6c7e35bd`) covers the factoring:
+  167 modules, **0 errors**, with `EXPCOM` again free of sorry warnings.
 * **Axioms** (`audits/logs/ch34-b5b-fill-gate-axioms.log`; probe
   `audits/evidence/ch34-b5b-fill-gate/AxB5bGate.lean.txt`, against the replay tree): every public
   of `EXPCOM`, `Relativization` and `Codes2Tape`, 23 in all. Thirteen walks are empty; the other
   ten (the summit, `EXPCOM`, `expCode`, both scheme instances, `EXP ⊆ P^EXPCOM`, the three
   identities and `baker_gill_solovay`) rest on exactly the two §12.11 rows. No non-standard axiom;
   the private censuses (EXPCOM 41, Relativization 140, Codes2Tape 24) find no `sorryAx`.
+  After the factoring (`audits/logs/ch34-d4-axioms.log`), every walk is unchanged, and EXPCOM's
+  39 private constants have no `sorryAx`.
 * **Lint** (`audits/logs/fills-6-stylelint.log`): 0 FAIL over `Diagonalization`.
 
 ## Findings format
@@ -127,5 +151,5 @@ be rerun.
 |---|---|---|---|---|---|
 
 Severity guide as in `audits/TEMPLATE.md`. Findings go verbatim into
-`audits/ch34-b5b-fill-findings.md`. The gate closes when it has zero blockers and zero majors,
-and the user has ruled on CH34-D4.
+`audits/ch34-b5b-fill-findings.md`. The gate closes when it has zero blockers and zero majors;
+CH34-D4 is ruled, and the factoring's one new pair (F6-1(j)) needs the user's acknowledgement.

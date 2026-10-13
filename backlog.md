@@ -496,6 +496,12 @@ window.*
   `rightAction` and `rightCfg` (53–75%); `oracleBankCfg_eq` against Loop's `emCall_exit_fixed`
   (56%); `CodeSimulator.guardBlock_orbit` against `Games.playOut_eq_iterate` (74%). No earlier
   population held both sides. They go to the W2-S and B5a fill gates for a ruling.
+- **(j) The `incFixed` criterion's two public homes** (from the CH34-D4 factoring,
+  `audits/ch34-d4-record.md`). `Build/Convention`'s `incFixed_eq_none_iff_replicate` and
+  `CircuitComplexity/MeyerTableau`'s `incFixed_eq_none_iff`, the colleague's original, match at
+  100% (93 characters). Retire the second by citing the first in the user's dedup window. Also
+  colleague-owned: `TimeHierarchy/Separation`'s private `bits_two_pow` can cite
+  `Turing.bits_two_pow_eq_replicate`, and Catalog's `f2_incFixed_cases` goes with MIG-1.
 
 ## 2. Campaign work queued or on hold
 

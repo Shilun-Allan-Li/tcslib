@@ -1,5 +1,5 @@
 diff --git a/TCSlib/Complexity/Diagonalization/EXPCOM.lean b/TCSlib/Complexity/Diagonalization/EXPCOM.lean
-index 5ee6221f..9e8d8fe2 100644
+index 5ee6221f..6a94805d 100644
 --- a/TCSlib/Complexity/Diagonalization/EXPCOM.lean
 +++ b/TCSlib/Complexity/Diagonalization/EXPCOM.lean
 @@ -9,6 +9,9 @@ import TCSlib.Complexity.ClassOracle.Classes
@@ -21,55 +21,27 @@ index 5ee6221f..9e8d8fe2 100644
  
  * `Turing.exists_uniformMachineCode` — a uniformly-timed scheme exists.
  
-@@ -298,6 +301,328 @@ theorem EXP_subset_POracle_EXPCOM : EXP ⊆ POracle EXPCOM := by
+@@ -298,6 +301,300 @@ theorem EXP_subset_POracle_EXPCOM : EXP ⊆ POracle EXPCOM := by
      by_contra hx
      simp [MultiTapeTM.indicator, hx] at hi
  
-+/-- The binary deadline has one high bit after the unary tail's width.
-+Forced private restatement of `TimeHierarchy/Separation.bits_two_pow`;
-+promotion requested in the B5b report. -/
-+private lemma expcom_bits_two_pow (n : ℕ) :
-+    (2 ^ n).bits = List.replicate n false ++ [true] := by
-+  induction n with
-+  | zero => simp
-+  | succ n ih =>
-+    have h : 2 ^ (n + 1) = Nat.bit false (2 ^ n) := by
-+      simp [Nat.bit_val, Nat.pow_succ]; ring
-+    rw [h, Nat.bits_append_bit _ _ (fun h0 => absurd h0 (Nat.ne_of_gt (Nat.pow_pos (by decide)))), ih]
-+    simp [List.replicate_succ]
-+
-+/-- Carry through a unary prefix, retaining the fixed width. -/
-+private lemma expcom_inc_prefix (n : ℕ) (w : List Bool) :
-+    incFixed (List.replicate n true ++ w) =
-+      (incFixed w).map (List.replicate n false ++ ·) := by
-+  induction n with
-+  | zero => simp
-+  | succ n ih =>
-+    simp [List.replicate_succ, incFixed, ih, Option.map_map, Function.comp_def]
-+
 +/-- An empty increment result certifies an all-`true` word.
-+This is the needed direction of the circuit module's overflow criterion;
-+promotion to `Build/Convention` is requested in the B5b report.
++This is the needed direction of the overflow criterion, now public as
++`Turing.incFixed_eq_none_iff_replicate` in `Build/Convention` (CH34-D4); this
++private form only converts the guard's `getD` form.
 +
-+**Proof sketch.** Induct on `w`. A leading `false` increments without overflow, giving a
-+nonempty result. After a leading `true`, a tail that does not overflow also gives a nonempty
-+result, so the tail overflows and is all `true` by induction. (Maintainer, fills-6
-+integration.) -/
++**Proof sketch.** By the criterion it suffices that the increment overflows.
++The empty word overflows. A leading `false` increments to a nonempty word,
++contradicting the empty result. After a leading `true`, a tail that did not
++overflow would also give a nonempty result, so the tail overflows. (Maintainer,
++CH34-D4.) -/
 +private lemma expcom_all_true (w : List Bool) (h : (incFixed w).getD [] = []) :
 +    w = List.replicate w.length true := by
-+  revert h
-+  induction w with
-+  | nil => intro _; rfl
-+  | cons b w ih =>
-+    intro h
-+    cases b with
-+    | false => simp [incFixed] at h
-+    | true =>
-+      cases he : incFixed w with
-+      | none =>
-+        have hw := ih (by simp [he])
-+        simpa only [List.length_cons, List.replicate_succ] using congrArg (true :: ·) hw
-+      | some v => simp [incFixed, he] at h
++  refine (incFixed_eq_none_iff_replicate w).mp ?_
++  rcases w with _ | ⟨_ | _, w⟩
++  · rfl
++  · simp [incFixed] at h
++  · cases hw : incFixed w <;> simp_all [incFixed]
 +
 +/-- The unary deadline field, projected from a possibly malformed query. -/
 +private def expcom_tail (z : List Bool) : List Bool := pairSndD (pairSndD z)
@@ -115,7 +87,7 @@ index 5ee6221f..9e8d8fe2 100644
 +    exact ⟨α, x, w.length, by rw [← hw]⟩
 +  · rintro ⟨α, x, n, rfl⟩
 +    have hinc : incFixed (List.replicate n true) = none := by
-+      simpa [incFixed] using expcom_inc_prefix n []
++      simpa [incFixed] using incFixed_replicate_true_append n []
 +    simp [expcom_ok, expcom_tail, hinc, pairDecode_pairEncode]
 +
 +/-- The guarded input reconstruction is polynomial-time.
@@ -158,8 +130,8 @@ index 5ee6221f..9e8d8fe2 100644
 +      pairEncode (pairEncode (Nat.bits (2 ^ n)) α) x := by
 +  have hok : expcom_ok (pairEncode α (pairEncode x (List.replicate n true))) = true :=
 +    (expcom_ok_iff _).mpr ⟨α, x, n, rfl⟩
-+  simp [expcom_front, hok, expcom_simIn, expcom_tail, expcom_inc_prefix,
-+    incFixed, expcom_bits_two_pow]
++  simp [expcom_front, hok, expcom_simIn, expcom_tail, incFixed_replicate_true_append,
++    incFixed, bits_two_pow_eq_replicate]
 +
 +/-- The polynomial front end and simulator budget fit a linear exponential.
 +
@@ -350,7 +322,7 @@ index 5ee6221f..9e8d8fe2 100644
  /-- **The fill summit of the `EXPCOM` cluster**: `NP^EXPCOM ⊆ EXP` — a
  deterministic exponential-time machine can enumerate all branches of a
  polynomial-time oracle NDTM and answer its `EXPCOM` queries itself.
-@@ -347,9 +672,74 @@ machine, on input `x` of length `n`:
+@@ -347,9 +644,74 @@ machine, on input `x` of length `n`:
  Fill obligations, named for the brief: the query-dispatcher routine (parse +
  clocked universal call + resume seam) and its capture discipline; the
  simulation invariant tying the host's configuration coding to `runWith`; the
