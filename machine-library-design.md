@@ -3543,7 +3543,11 @@ the landing form (0 errors; the only warnings are `sorry`s). It differs from the
 - **`startMem` is renamed `initMem`**, because the vendored compiler declares
   `Light.Compiler.startMem` and opens `WordRAM`;
 - **footprints of at most `3n` cells**, so that `mem_P_of_decides` drops its cell bound;
-- **the slice lemma and its space companion are stated** (`NDSlice`);
+- **the slice lemma and its space companion are stated** (`NDSlice`). The slice lemma is
+  already proved, with a pointwise form of the same hypothesis, in C1's host draft
+  (`audits/evidence/c1/C1HostsDraft.lean.txt`, `Turing.NDTM.runWith_eq_fixChoice_runFrom`); the
+  stage-2 pack does not say so. One copy lands, in `Nondeterministic.lean`, with C1's proof under
+  the gated statement (maintainer note, 2026-10-13);
 - **PROG-2's edit list is longer:** under the wrapper, the compiler's code type becomes
   `List XInstr` at the sites the pack lists.
 
