@@ -1,0 +1,15 @@
+diff --git a/TCSlib/Complexity/Diagonalization/EXPCOM.lean b/TCSlib/Complexity/Diagonalization/EXPCOM.lean
+index 6a94805d..e7ce7e2a 100644
+--- a/TCSlib/Complexity/Diagonalization/EXPCOM.lean
++++ b/TCSlib/Complexity/Diagonalization/EXPCOM.lean
+@@ -549,8 +549,8 @@ this route's shape): the bound returned by `Complexity.exists_proj_decider` arou
+ certificate shell, the simulated choice machine and the `EXPCOM` decider is
+ exponential-polynomial.
+ 
+-**Proof sketch.** Bound the shell's word length `g = n + C·(n + 1)^k` by
+-`G = (C + 1)·(n + 1)^(k + 1)`, so that `2g + 3 ≤ 3G`. Each factor is then dominated by an
++**Proof sketch.** Bound the shell's word length `g = n + C·(n + 1)^k` strictly, by
++`g + 1 ≤ G = (C + 1)·(n + 1)^(k + 1)`, so that `2g + 3 ≤ 3G`. Each factor is then dominated by an
+ exponential-polynomial in `n`: powers of `G` are polynomials, and
+ `A·2^(B·(2g + 3)) ≤ A·2^(3B(C + 1)(n + 1)^(k + 1))`. `ExpPoly` is closed under products,
+ sums and pointwise upper bounds (`of_le`). (Maintainer, fills-6 integration.) -/

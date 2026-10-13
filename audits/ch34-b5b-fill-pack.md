@@ -154,3 +154,16 @@ be rerun.
 Severity guide as in `audits/TEMPLATE.md`. Findings go verbatim into
 `audits/ch34-b5b-fill-findings.md`. The gate closes when it has zero blockers and zero majors;
 CH34-D4 is ruled, and the user has acknowledged the factoring's one new pair (F6-1(j)).
+
+## Erratum (gate round 1, majors 1–2 and minor 3; `audits/ch34-b5b-fill-resolutions.md`)
+
+- **Bundle identity.** The authoritative bundle is SHA-256
+  `6e4ad39959ca9b0387f045a9f9958aff03a062dc3283be42fed41332dcc578f5`, rebuilt after the user's
+  F6-1(j) acknowledgement was recorded. `f6858d96…`, named by the round-1 kickoff, was the
+  superseded first build.
+- **Completeness.** This bundle carries the CH34-D4 screen's 25-file population, which contains
+  the delivery's 22 files, at the gate head. It does not carry the other files of the 66-file
+  union screen, nor the delivery population's versions at its base, so neither historical screen
+  can be rerun from it. The round-2 bundle supplies them.
+- **Ledger.** Item 4's cumulative count omits `expcom_inc_prefix` (107 characters). The corrected
+  historical count is 5,037 of 13,500, **37.31%**.

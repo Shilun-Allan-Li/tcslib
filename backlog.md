@@ -273,7 +273,10 @@ the delivery takes `EXPCOM.lean` past one fifth copied material, and the file al
 copies in an earlier epoch (CH34-D3).*
 
 B5b's conservative ledger counts 4,930 of `EXPCOM.lean`'s 13,500 extracted body characters as
-copied: **36.52%**. The numerator takes whole bodies, not shared text:
+copied: **36.52%**. **Erratum (B5b gate, round 1, minor 3):** the review-discovered
+`expcom_inc_prefix` (107 normalized body characters) was left out of the numerator; with it the
+historical count is 5,037 of 13,500, **37.31%**. The delivery's own calculation, 36.52%, stays as
+it was reported. The numerator takes whole bodies, not shared text:
 - the three ledger lemmas and the summit, transcribed from the brief's probe (the prescribed
   route);
 - three pre-disclosed forced restatements: the powers-of-two `Nat.bits` fact (181 characters
@@ -313,6 +316,16 @@ The probe transcriptions are acknowledged as forced. Two copies sit in colleague
 and stay for the user's dedup window: `TimeHierarchy/Separation.lean`'s private `bits_two_pow`,
 and `CircuitComplexity/MeyerTableau.lean`'s public `incFixed_eq_none_iff`. The new public names
 avoid both, so neither file changes.
+
+**Done (2026-10-12; `6c7e35bd`, PR #70; `audits/ch34-d4-record.md`; replay 167/167).** The four
+public lemmas landed in `Encoding` and `Build/Convention`. `EXPCOM`'s `expcom_bits_two_pow` and
+`expcom_inc_prefix` and `ConfigGraph`'s `s1b_radius_bits` are deleted. `expcom_all_true` and
+Catalog's `catalog_increment_value` keep their statements and are derived from the public laws.
+**Still open:**
+- the two colleague-owned retirements above (F6-1(j), acknowledged by the user with the
+  factoring's one new pair);
+- the shared triple-uniqueness lemma for the padding parse (194 characters shared with the
+  frozen reduction), which the ruling did not include. It stays a dedup-window request.
 
 ---
 
@@ -485,9 +498,10 @@ without breaking any consumer. A 12.2c item, its own PR and gate.
 None blocks a gate; each is picked up when its owning file is next open, or in the dedup
 window.*
 
-- **(a) `Nat.bits` shift law.** One public lemma for `(2^j·m).bits = replicate j false ++ m.bits`.
-  It retires `s1b_radius_bits` (`ConfigGraph`, an undisclosed restatement),
-  `expcom_bits_two_pow` (`EXPCOM`) and `bits_two_pow` (`TimeHierarchy/Separation`). See CH34-D4.
+- **(a) `Nat.bits` shift law.** **Done** by CH34-D4 (`6c7e35bd`): `Turing.bits_two_pow_mul` and
+  `bits_two_pow_eq_replicate` in `Encoding` retired `s1b_radius_bits` (`ConfigGraph`) and
+  `expcom_bits_two_pow` (`EXPCOM`). Open: the colleague-owned `bits_two_pow`
+  (`TimeHierarchy/Separation`), under (j).
 - **(b) The Seam space lemma in `Constructible`.** `b3a_seam_space` is a general-configuration
   corollary of the public trajectory theorem `seamCompTM_visitedByTapeHead_ofCfg`, and B3a
   disclosed it as a promotion candidate. **Corrected at the B3a gate (minor 3):** the public
@@ -502,8 +516,10 @@ window.*
   little-endian digit layer (in `Encoding`) would serve all three files.
 - **(d) Scan preservation.** `RecordTable`'s `rt_find_scan` overlaps `CfgRecord`'s private
   `recordStep_scan_preserves`. Promote the CfgRecord lemma and cite it at MIG-13.
-- **(e) `incFixed` overflow.** Move the all-`true` criterion (`MeyerTableau.incFixed_eq_none_iff`,
-  or its needed direction) to `Build/Convention`, retiring `expcom_all_true`.
+- **(e) `incFixed` overflow.** **Done** by CH34-D4 (`6c7e35bd`):
+  `Turing.incFixed_eq_none_iff_replicate` in `Build/Convention`, from which `expcom_all_true` is
+  now derived with its statement unchanged. Open: retiring `MeyerTableau.incFixed_eq_none_iff`
+  onto it, under (j).
 - **(f) `oracleEmbed_updateTape`** (`OracleSim`): a generic embedding fact; promote it at MIG-16
   (`Build/Embed` is the likely home).
 - **(g) Head displacement.** Catalog's `f2_head_steps` is private and retires with MIG-1. Briefs
