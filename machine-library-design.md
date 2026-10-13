@@ -3840,18 +3840,31 @@ The user took the five open route questions together, each as the maintainer rec
      code-first universal that reads its input through a binary-position device (H5).
    - The sketch drops its stale "space-preserving normal form" obligation: the normal form is
      proved (`Turing.FinTM.one_work_tape_binary_spaceUsed`, `Robustness/SingleTape.lean`), but
-     two small steps around it are not, and they stay fill obligations: the space clause of
+     two small steps around it were not, and they were fill obligations: the space clause of
      the coding step `exists_codeTM`, which is time-only, and a decider's space bound at every
      time (the normal form needs it at every time; `DecidesInSpace` bounds it at the halt).
-   - `U₀` and the windowed runner have no statements yet. `U₀` is a public row built from H2 and
-     H5, not a private host of this proof. The runner's contract exposes three outcomes (halt,
-     window exit, clock exhaustion). `counterLoopTMVia` has one optional early body exit plus
-     clock exhaustion, so H3 can merge halt and window exit into the early escape and tell them
-     apart afterwards from the retained record (the RD-3 gate, minor 3).
+     Both are proved in the host draft below.
+   - `U₀` and the windowed runner had no statements before the host draft below. `U₀` is a
+     public row built from H2 and H5, not a private host of this proof. The runner's contract
+     exposes three outcomes (halt, window exit, clock exhaustion). `counterLoopTMVia` has one
+     optional early body exit plus clock exhaustion, so H3 can merge halt and window exit into the
+     early escape and tell them apart afterwards from the retained record (the RD-3 gate, minor 3).
    - **RD-3's statement gate passed** (2026-10-13, 0 blockers / 0 majors / 4 minors;
      `audits/b6-restatement-findings.md`). `space_universal` keeps its `+ logSpace |x|` addend for
      now; the auditor's addend-free `C·s` route (a bounded-prefix input device, a unary ruler of
      the header's length) is to be decided when H5 is gated.
+   - **Host statements drafted (2026-10-13):** `audits/evidence/b6hosts/` (design note, and the
+     draft `B6HostsDraft.lean.txt`: 0 errors, 10 sorried machine contracts, 43 declarations
+     proved). It contains:
+     - **H3:** a pure specification `windowRun` with three exits; a step clock shared with C1,
+       `exists_stepClockTMVia`; and a clock-agnostic runner for `space_hierarchy`,
+       `exists_configWindowRunnerTM`;
+     - **H5:** a native device, and a bounded-prefix ruler device with a host transformer;
+     - **`U₀`:** a startup, and a forward ledger `C_α·(s + 1)`;
+     - **the two fill obligations above, both proved:** `exists_codeTM_spaceUsed` and
+       `ComputesInTime.spaceUsed_le_of_halt`.
+
+     Open questions for the user: the note's §10.
    - The shortcut through a space ledger for the time hierarchy's `diagSim` is not taken.
    - The restatement and the re-routed sketches go through a statement gate.
 4. **C2 is written as programs with coins.** `PATH ∈ NL`, Immerman–Szelepcsényi and their

@@ -710,12 +710,11 @@ The route decisions of 2026-10-12 (design §16b) add three work items, numbered 
   Exercise 4.1), and `space_hierarchy`'s sketch moves to the window route (a self-simulating
   universal `U₀` under a configuration-count clock), dropping the proved normal-form obligation.
   A statement gate. The fill needs H2, H3 and H5. **Gate passed (2026-10-13, 0/0/4;
-  `audits/b6-restatement-findings.md`, resolutions `audits/b6-restatement-resolutions.md`).** The
-  host statements H3, H5, `U₀` and the two bridges are being drafted against the auditor's
-  requirements. **Drafted (2026-10-12):**
-  `audits/b6-restatement-pack.md`, statement gate pending. Two small fill obligations stay
-  (`exists_codeTM`'s space clause; a decider's space bound at every time), and H3's three-exit
-  runner and `U₀`'s public statement are still to be designed.
+  `audits/b6-restatement-findings.md`, resolutions `audits/b6-restatement-resolutions.md`).** **Host
+  statements drafted (2026-10-13):** `audits/evidence/b6hosts/`: H3 with its step clock, H5, `U₀`
+  and the bridges. The draft has 0 errors and 10 sorried contracts; everything else is proved,
+  including the two former fill obligations (`exists_codeTM`'s space clause, a decider's space
+  bound at every time). Next: the user's answers to the note's §10, then a statement gate.
 * **C1-D: the NTIME hierarchy's design** (2026-10-13; `audits/evidence/c1/C1-design.md`, statement
   draft `C1HostsDraft.lean.txt`: 0 errors, 5 sorries, 10 theorems proved). The proposed route:
   - **guess first:** the universal NDTM and the diagonalizer write the whole choice word with a
