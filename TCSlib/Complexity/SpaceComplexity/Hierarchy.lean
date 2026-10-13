@@ -49,8 +49,10 @@ moved to the window route (`machine-library-design.md` §16b item 3,
   configuration-count clock, and flips its verdict. The window, not `U₀`'s
   code-dependent constant, bounds the diagonalizer's space. The chapter-1
   interpreter (`Turing.universalInterpreter`) serves neither machine: it
-  tracks the simulated input head in unary on its fourth tape, so its space is
-  `Θ(input travel)` (Finding B, recorded in the sketches).
+  tracks the simulated input head in unary on its fourth tape, which uses one
+  plus the largest simulated input position reached, `Θ(n + 1)` cells on a
+  full scan, so it cannot guarantee `O(S(n))` space uniformly for sublinear
+  `S` (Finding B, recorded in the sketches).
 * **Both bounds space-constructible**, as in the book; `g`'s witness drives
   the window radius and the clock width, and of `f` the proof uses only the
   bundled floor `1 ≤ logSpace n ≤ f n` (round-1 confirmed, recorded in the
@@ -126,8 +128,9 @@ separator's `true`, it supplies a blank read and suppresses outward moves, as
 `moveInputPos` clamps. Its cells are `O(logSpace |x|)`. The chapter-1
 interpreter's device cannot serve: its fourth tape holds a unary boundary
 marker whose head `applyRecord` moves with the input head
-(`Turing.universalInterpreter`), so its space is `Θ(input travel)`, which
-`s = o(|x|)` does not cover (Finding B). (iii) **Step block** (H2). Each round
+(`Turing.universalInterpreter`), so that tape uses one plus the largest
+simulated input position reached, `Θ(|x| + 1)` cells on a full scan, which a
+budget `s = o(|x|)` does not cover (Finding B). (iii) **Step block** (H2). Each round
 looks up the record of the state, the input read and the work read in the
 table, writes and moves on the simulated work tape — held cell for cell on
 one real tape, so its visited cells are exactly the coded machine's, at most
