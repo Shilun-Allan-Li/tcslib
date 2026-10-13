@@ -984,8 +984,10 @@ for re-derivation as consumers of the shared host, not inputs to copy:
   only canonically.
 - `Universal.lean`'s private deadline interpreter `timedUniversalTM`, the
   quadratic one-tape clock behind `timed_universal`.
-- `TimeHierarchy/ClockMachine.lean`'s `clockTM`, the deterministic quadratic
-  re-scan. These are colleagues' files; under the user's standing preference
+- `TimeHierarchy/ClockMachine.lean`'s `clockTM`, the time hierarchy's clock. Its
+  specification `clockTM_spec` (`ClockLoop.lean`) is linear in the counter value; "quadratic"
+  here was wrong (corrected 2026-10-13, C1 design note): the quadratic bound is
+  `timed_universal`'s. These are colleagues' files; under the user's standing preference
   any dedup there is 12.2c work, not theirs.
 
 **Proposed components.**

@@ -713,6 +713,25 @@ The route decisions of 2026-10-12 (design §16b) add three work items, numbered 
   `audits/b6-restatement-pack.md`, statement gate pending. Two small fill obligations stay
   (`exists_codeTM`'s space clause; a decider's space bound at every time), and H3's three-exit
   runner and `U₀`'s public statement are still to be designed.
+* **C1-D: the NTIME hierarchy's design** (2026-10-13; `audits/evidence/c1/C1-design.md`, statement
+  draft `C1HostsDraft.lean.txt`: 0 errors, 5 sorries, 10 theorems proved). The proposed route:
+  - **guess first:** the universal NDTM and the diagonalizer write the whole choice word with a
+    small nondeterministic writer, then interpret deterministically. That removes SC-3 (no
+    nondeterministic counter loop); the shared nondeterministic infrastructure is a transfer and
+    slice lemma and a nondeterministic phase host, which stage 2's nondeterministic form needs
+    too;
+  - **the exponential decider is derived**, as `BF := E(UN)`, with `E` a public exhaustive-replay
+    theorem;
+  - **nondeterministic codes are interpreted through their replay table**, with H2 unchanged
+    (`CodeNDTM.serialize_eq_tableBitsK` is proved);
+  - **a step-clocked runner** is designed with B6's H3;
+  - **the universal machine's input is a bounded window copy** plus an input-locality lemma.
+
+  Machine level confirmed. Estimate: 13k–26k lines. **Five user decisions pending** (note §6).
+  Records corrected: `clockTM` is linear (design §12.7, plan item 12); `exists_effectiveNDMachineCode`
+  is already proved (plan §4e's C1 row). Still to fix: `NTimeHierarchy.lean`'s docstring says
+  "quadratic" (lines 51 and 110), to correct in C1's first Lean PR; and design §12.8 routes
+  `PATH_mem_NL` through SC-3, stale since C2 moved to programs.
 * **RD-5: §13d G2–G4 after MIG-0b** (§16b item 5). The statements of design §13d's G2–G4, stated as
   `Contract`s, then their gate and fills, then the Hennie–Stearns assembly. The open zone rows
   `exists_zoneShiftInTM` and `exists_zoneShiftOutTM` retire through the G3/G4 gate.

@@ -591,8 +591,9 @@ own gate. The tranche table is in §4e.
 12. **Re-derive the private clocks on §12.7's shared host** once it is
     proved: Loop's fuel debit (`loopDebit`/`loopValue`/`loopHost_borrow*`),
     Catalog's `f2_loopDebitTM`/`f2_loopBorrow_correct`, Universal's
-    `timedUniversalTM`, and `TimeHierarchy/ClockMachine.lean`'s quadratic
-    `clockTM` (colleagues' files; the dedup there is the user's).
+    `timedUniversalTM`, and `TimeHierarchy/ClockMachine.lean`'s `clockTM`, linear in its
+    counter by `clockTM_spec` ("quadratic" corrected 2026-10-13) (colleagues' files; the dedup
+    there is the user's).
     **Layering caveat (item 11 dossier, 2026-10-10):** `Build/Loop.lean`
     cannot import `Build/CounterLoop.lean`, which imports Catalog, which
     imports Loop. Loop's fuel debit therefore moves onto §12.7's host only
@@ -848,7 +849,7 @@ modulo-set.
 
 | Cluster | Targets | Blocker |
 |---|---|---|
-| **C1 NTIME hierarchy** | all 6 of `NTimeHierarchy`; `exists_effectiveNDMachineCode` (NDCodes) | a nondeterministic lifting of the §12.7 counter loop (statement note SC-3: a design plus a gate); the ND code scheme waits on the format-parameterized parse layer (12.2c item 8, CH34-D2), or on an explicitly accepted third instance |
+| **C1 NTIME hierarchy** | all 6 of `NTimeHierarchy`; `exists_effectiveNDMachineCode` (NDCodes) | a nondeterministic lifting of the §12.7 counter loop (statement note SC-3: a design plus a gate); the ND code scheme waits on the format-parameterized parse layer (12.2c item 8, CH34-D2), or on an explicitly accepted third instance. **Revised 2026-10-13 (C1 design note, `audits/evidence/c1/C1-design.md`):** `exists_effectiveNDMachineCode` is already proved (fills-4, through the shared `CodeFormat` layer; CH34-D2 discharged), so C1 is the six `NTimeHierarchy` statements; the proposed guess-first route needs no SC-3 (five user decisions pending) |
 | **C2 ND logspace** | `PATH_mem_NL`, `PATH_NLComplete`, `compl_PATH_mem_NL`, `NL_eq_coNL`, `NSPACE_compl_eq` | the §2.5 nondeterministic program layer (Hydroxyi). `PATH_NLComplete`'s hardness half needs only B2 and the deterministic layer, but its statement bundles membership. **Revised 2026-10-12 (user; design §16b item 4):** written as programs with read-once coins, compiled by stage 2 in its nondeterministic, logspace-grade form; no longer waits on §2.5 |
 
 Book-strength Thm 3.1 has no sorried statement yet; it arrives with stage 1
