@@ -51,6 +51,7 @@ maintainer.
     `incFixed_eq_none_iff`, 93/93 characters (100%). The colleague's theorem is the original. The
     new public copy is deliberate, because the criterion's home is where `incFixed` is defined, and
     `EXPCOM` cannot import `CircuitComplexity`. It retires when `MeyerTableau` cites
-    `Convention`'s criterion, in the user's dedup window (backlog F6-1(j)). It needs the user's
-    acknowledgement (`policy.md`, **Duplication**).
+    `Convention`'s criterion, in the user's dedup window (backlog F6-1(j)). **The user
+    acknowledged it (2026-10-12)**, on condition that the retirement stays on the backlog
+    (`policy.md`, **Duplication**).
 - The colleague-owned files `TimeHierarchy/Separation.lean` and `CircuitComplexity/*` are untouched.

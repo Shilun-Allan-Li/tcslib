@@ -502,6 +502,7 @@ window.*
   100% (93 characters). Retire the second by citing the first in the user's dedup window. Also
   colleague-owned: `TimeHierarchy/Separation`'s private `bits_two_pow` can cite
   `Turing.bits_two_pow_eq_replicate`, and Catalog's `f2_incFixed_cases` goes with MIG-1.
+  **Acknowledged (user, 2026-10-12)**, on condition that the retirement stays on this backlog.
 
 ## 2. Campaign work queued or on hold
 
