@@ -1,0 +1,49 @@
+import TCSlib.Complexity.SpaceComplexity.Constructible
+import TCSlib.Complexity.SpaceComplexity.Machines.Bin
+set_option autoImplicit false
+namespace Complexity
+open Turing
+
+-- The actual existential machine witnesses emit [true] on empty inputs.
+example : ∃ M : FinTM Bool, ∃ t, M.ComputesInTime [] [true] t := by
+  obtain ⟨c, _, M, hM⟩ := spaceConstructible_linear.2
+  obtain ⟨t, result, _⟩ := hM []
+  exact ⟨M, t, by simpa [Nat.bits, Nat.binaryRec] using result⟩
+
+example : ∃ M : FinTM Bool, ∃ t, M.ComputesInTime [] [true] t := by
+  obtain ⟨c, _, M, hM⟩ := spaceConstructible_logSpace.2
+  obtain ⟨t, result, _⟩ := hM []
+  exact ⟨M, t, by simpa [logSpace, Nat.bits, Nat.binaryRec] using result⟩
+
+-- Length one: logarithmic answer 1, linear answer 2.
+example : (logSpace 1).bits = [true] ∧ (1 + 1 : ℕ).bits = [false, true] := by
+  simp [logSpace, Nat.bits, Nat.binaryRec]
+
+-- The logarithmic width changes at every positive power of two.
+example (j : ℕ) : logSpace (2 ^ j) = j + 1 := by
+  simp [logSpace, Nat.log_pow (by decide : 1 < (2 : ℕ))]
+
+example (j : ℕ) (hj : 0 < j) : logSpace (2 ^ j - 1) = j := by
+  obtain ⟨r, rfl⟩ := Nat.exists_eq_succ_of_ne_zero (by omega : j ≠ 0)
+  have pos : 0 < 2 ^ r := Nat.two_pow_pos r
+  have step : 2 ^ (r + 1) = 2 ^ r * 2 := by rw [pow_succ]
+  have logValue : Nat.log 2 (2 ^ (r + 1) - 1) = r :=
+    Nat.log_eq_of_pow_le_of_lt_pow (by omega) (by omega)
+  exact congrArg Nat.succ logValue
+
+-- The initialized-at-one counter overflows exactly at lengths 2^j - 1.
+example (j : ℕ) : ((2 ^ j - 1 + 1 : ℕ).bits).length = j + 1 := by
+  have hp := Nat.two_pow_pos j
+  rw [Nat.sub_add_cancel (by omega), Nat.size_eq_bits_len, Nat.size_pow]
+
+example (j : ℕ) (hj : 0 < j) : ((2 ^ j + 1 : ℕ).bits).length = j + 1 := by
+  rw [Nat.size_eq_bits_len]
+  apply Nat.le_antisymm
+  · apply Nat.size_le.mpr
+    have htwo : 2 ≤ 2 ^ j := by
+      calc 2 = 2 ^ 1 := by norm_num
+           _ ≤ 2 ^ j := Nat.pow_le_pow_right (by decide) hj
+    rw [pow_succ]
+    omega
+  · exact Nat.succ_le_of_lt (Nat.lt_size.mpr (by omega))
+end Complexity
