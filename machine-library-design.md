@@ -1318,7 +1318,8 @@ coordinated with Aparna).
   - S1b and Savitch: blank tape fields of `2s+1` cell codes, with `s` given in
     binary by the constructor;
   - `spaceConstructible_logSpace`/`_linear`/`_poly` (binary ↔ unary);
-  - the space hierarchy's budget loop;
+  - the space hierarchy's window radius and clock width (the window route, §16b item 3; the
+    budget loop is gone);
   - the §12.7 clocks.
 - Bool. **Home:** `Build/CounterLoop.lean` (not G1-owned). **Can land now**,
   once R8.4's `writeConstTM` exists.
@@ -1391,8 +1392,8 @@ fills need R8.1–R8.3, so they come after the G1 gate.
   unreachable.
 - Generic after G1. **Home:** `Build/Seam.lean`, **after the G1 gate**.
 - **Consumers:** every `counterLoopTM` user with an early exit. S1b's BFS
-  (queue empty / counter exhausted), the space hierarchy's budget loop
-  (success / cap), and `recordStepTM`'s internal dispatch.
+  (queue empty / counter exhausted), the space hierarchy's windowed runner (halt, window
+  exit, clock; the window route, §16b item 3), and `recordStepTM`'s internal dispatch.
 
 #### Placement and timing
 
@@ -1421,7 +1422,7 @@ fill batches split now/after-G1; a fill gate.
 | `spaceConstructible_poly`/`_logSpace`/`_linear` | R8.5 `inputLengthTM`; R8.6 `expandTM`; `incrementTM` |
 | **`PATH_NLComplete`** hardness (adjacency "by one local transition-table check", logspace) | The sketch's engine is the ARM layer (`arm_decides`). Optionally, a TM route: `recordStepTM`'s space clause with binary F1 gives `O(log n)`-space adjacency deciders for the index languages. Decision 12.8.4 |
 | **`PATH_mem_NL`** (matrix indexing) | R8.5 `inputSeekTM` (once a nondeterministic host exists, SC-3) |
-| **Space hierarchy** `space_universal`, `space_hierarchy` (interval counters, core-count clock, budget loop, probe/replay over fixed banks) | `incrementTM`/`decrementTM` (interval counters), `counterLoopTM` + R8.6 (clock and budget loop), R8.8 (success/cap exits), R8.1 (`max − min + 1 > s` against the budget word), `clearTM` resets. It simulates a *coded* machine, so not R8.7 |
+| **Space hierarchy** `space_universal`, `space_hierarchy`. **Superseded 2026-10-12 by the window route** (§16b item 3): `space_universal` is forward-only (no interval counters, clock or probe/replay), and `space_hierarchy` runs a self-application universal `U₀` in a window on the record rows | **Now:** R8.7 (`recordInitTM`, `recordStepTM`, `recordTestTM`) under a configuration-count clock (`counterLoopTMVia`), with H2 (step block), H3 (windowed runner, three exits) and H5 (native and binary-position input devices). The earlier route (interval counters, budget loop, R8.8 success/cap exits) is dropped |
 | **`TQBF_mem_PSPACE`** (validate-first, depth-first assignment walker, per-clause CNF evaluation) | R8.2 folds (validation, clause evaluation), R8.5 `inputSeekTM` (re-reading prefix bits and matrix bytes), `incrementTM` / a trit odometer (`recordNextTM`'s carry discipline) for the walker, R8.3 seek on the assignment word |
 | `NP_subset_PSPACE` | existing `incrementTM` (certificate enumerator) and `vhostEmitTM` (virtual input); R8.8 for accept/exhaust |
 
@@ -3796,8 +3797,14 @@ The user took the five open route questions together, each as the maintainer rec
      `SU(α, t, x) = M_α(x)`, and `SU` uses at most `C·t` cells. The `[false]` clause goes, and
      with it the interval counters, the core-count clock and the probe/replay. It still needs a
      code-first universal that reads its input through a binary-position device (H5).
-   - The sketch drops its stale "space-preserving normal form" obligation, which is proved
-     (`Turing.FinTM.one_work_tape_binary_spaceUsed`, `Robustness/SingleTape.lean`).
+   - The sketch drops its stale "space-preserving normal form" obligation: the normal form is
+     proved (`Turing.FinTM.one_work_tape_binary_spaceUsed`, `Robustness/SingleTape.lean`), but
+     two small steps around it are not, and they stay fill obligations: the space clause of
+     the coding step `exists_codeTM`, which is time-only, and a decider's space bound at every
+     time (the normal form needs it at every time; `DecidesInSpace` bounds it at the halt).
+   - `U₀` and the windowed runner have no statements yet. `U₀` is a public row built from H2 and
+     H5, not a private host of this proof. The runner needs three exits (halt, window exit,
+     clock), while `counterLoopTMVia` has one, so H3's design must supply them.
    - The shortcut through a space ledger for the time hierarchy's `diagSim` is not taken.
    - The restatement and the re-routed sketches go through a statement gate.
 4. **C2 is written as programs with coins.** `PATH ∈ NL`, Immerman–Szelepcsényi and their

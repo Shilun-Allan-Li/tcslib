@@ -675,7 +675,10 @@ The route decisions of 2026-10-12 (design §16b) add three work items, numbered 
   `SpaceComplexity/Hierarchy.lean`: `space_universal` keeps only its forward clause ([AB09]
   Exercise 4.1), and `space_hierarchy`'s sketch moves to the window route (a self-simulating
   universal `U₀` under a configuration-count clock), dropping the proved normal-form obligation.
-  A statement gate. The fill needs H2, H3 and H5.
+  A statement gate. The fill needs H2, H3 and H5. **Drafted (2026-10-12):**
+  `audits/b6-restatement-pack.md`, statement gate pending. Two small fill obligations stay
+  (`exists_codeTM`'s space clause; a decider's space bound at every time), and H3's three-exit
+  runner and `U₀`'s public statement are still to be designed.
 * **RD-5: §13d G2–G4 after MIG-0b** (§16b item 5). The statements of design §13d's G2–G4, stated as
   `Contract`s, then their gate and fills, then the Hennie–Stearns assembly. The open zone rows
   `exists_zoneShiftInTM` and `exists_zoneShiftOutTM` retire through the G3/G4 gate.
