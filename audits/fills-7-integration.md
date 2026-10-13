@@ -90,12 +90,22 @@ No public row closes, and no new admission is introduced: every new private is p
   wave-1 gate's major F1 (`oracleBankCfg_eq` against `Loop.emCall_exit_fixed`). The report
   discloses it as a promotion candidate and names the `Primitives`, `CertShell` and `OracleSim`
   analogues. Recorded as a member of that family (F7-1(b)).
-- **Replay:** pending (user-run). `scripts/lean_check_tree.sh` over the downstream closure of
-  the two changed modules: 15 modules, listed in the replay log's header, fresh `.oleans` into a
-  copy of the snapshot.
-- **Axioms:** pending the replay. The probe `audits/evidence/fills-7/AxF7.lean.txt` covers every
-  public of RecordTable, CodeSimulator, Codes2Tape, EXPCOM, Relativization and ConfigGraph (80
-  in all), with each file's private census.
+- **Replay** (user-run; `audits/logs/fills-7-replay.log`, at `91c3594a`):
+  `scripts/lean_check_tree.sh` over the downstream closure of the two changed modules, with fresh
+  `.oleans` into a copy of the snapshot. **15 modules, 0 errors.** The sorry warnings are exactly
+  the open rows: RecordTable 6, CodeSimulator 2, ConfigGraph 1, and the unfilled chapter-4 files
+  as before.
+- **Axioms** (`audits/logs/fills-7-axioms.log`; probe `audits/evidence/fills-7/AxF7.lean.txt`,
+  against the replay snapshot): every public of RecordTable, CodeSimulator, Codes2Tape, EXPCOM,
+  Relativization and ConfigGraph, 80 in all.
+  - No axiom outside `[propext, Classical.choice, Quot.sound]`, apart from the open rows'
+    `sorryAx`.
+  - 59 admission walks are empty. The other 21 rest exactly on the open rows: the six
+    record-table rows, the two B5a rows (under which the `EXPCOM` cluster and
+    Baker–Gill–Solovay sit), and `NSPACE_subset_exp_dtime` (S1b's two corollaries).
+  - The private censuses find no `sorryAx`: RecordTable 342 constants, CodeSimulator 786,
+    Codes2Tape 24, EXPCOM 39, Relativization 140, ConfigGraph 56.
+  - All 71 walks shared with the fills-6 probe are unchanged.
 
 ## Maintainer commits (comment-only)
 
@@ -108,4 +118,4 @@ No public row closes, and no new admission is introduced: every new private is p
   gate before any second consumer is briefed. Its named consumers are B6's `U₀` (RD-3), C1,
   U-1 and EXPCOM. H1's own assembly continues on the private copy (F7-1(a)).
 - **Next briefs:** continuations for the three batches, each also clearing its own style debt.
-  They will be issued once the replay passes.
+  The replay has passed, so they can be issued.
