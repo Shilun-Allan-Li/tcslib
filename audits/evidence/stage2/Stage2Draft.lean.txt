@@ -1,0 +1,723 @@
+/-
+Copyright (c) 2026 Seyoon Ragavan. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Seyoon Ragavan
+-/
+import TCSlib.Programs.Light.Compiler.WholeProgram
+import TCSlib.Complexity.SpaceComplexity.SpaceClasses
+import TCSlib.Complexity.SpaceComplexity.Constructible
+import TCSlib.Complexity.ClassP.P
+import Mathlib.Data.Int.Interval
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+/-!
+# Stage 2: the word-RAM-to-`FinTM` simulation (statement draft; PROG-4, with PROG-3)
+
+**Status: a sorried statement draft, not for landing.** It lives in the draft namespace
+`TCSlib.Draft.Stage2` and imports only modules that exist. Everything new about the RAM is
+defined here by *wrapping* the vendored word RAM (`WordRAM.Instr`, `WordRAM.Cfg`,
+`WordRAM.effect`), never by editing it (design §15a, §15c, §16b; backlog PROG-3, PROG-4).
+
+A word-RAM program `P` (`XProgram`: the nine vendored instructions plus `rdIn`, `emit`, `coin`,
+`half`) is run on an input `x`, a coin stream `ρ` and a word size `W`. Stage 2 says that one
+`FinTM Bool` simulates it, instruction by instruction, with a polynomial time overhead and a
+space bound linear in (cells touched) × (word size):
+
+* time `TW n + A·(t + 1)·(f·(W + 1) + W² + n + 1)`, space `SW n + A·(f·(W + 1) + W + log n + 1)`,
+
+where `n = |x|`, `t` bounds the RAM's steps, `f` the number of distinct cells it touches,
+`W = W(n)` is computed by a machine within time `TW` and space `SW`, and `A` depends on `P`
+only. The nondeterministic form is the same with one `FinNDTM` choice step per `coin`, under
+bounds that are uniform over all coin streams.
+
+## Deviations from the §15a draft shape (reasons in `NOTES.md`)
+
+* **No separate address width `a`.** Addresses in this RAM are words (`load`/`store` use
+  `(m j).toInt`), and the immediate addresses are constants of `P`, so a table entry has
+  `W + O_P(1)` bits; `f·(W + a)` becomes `f·(W + 1)` with the constant in `A`.
+* **The input seek costs `O(n + W)`, not `O(n·log n)`.** R8.5b (`Turing.exists_inputSeekTM`)
+  seeks position `p` within `C·(|w| + pos + p + 1)` steps for a position word `w`; here
+  `|w| ≤ W` and `pos, p ≤ n + 1`.
+* **The word size enters additively.** Computing `W(n)` costs the witness's own `TW n` steps
+  and `SW n` cells, once.
+
+## Main definitions
+
+* `XInstr`, `XProgram`, `XCfg`, `xstep`, `XSteps`: the draft extended word RAM.
+* `baseTouches`, `XInstr.touches`, `XStepsIn`, `StepsIn`: cells touched along a run.
+* `startMem`, `XCfg.init`, `HaltsWithin`: the start convention and the halting predicate.
+* `WordSizeComputable`: the word-size hypothesis.
+* `simTime`, `simSpace`, `outputOf`: the bounds and the output convention.
+
+## Main results (all sorried)
+
+* `exists_simulation`: stage 2, deterministic form.
+* `exists_ndSimulation`: stage 2, nondeterministic form.
+* `mem_DTIME_of_decides`, `mem_P_of_decides`, `mem_P_of_decides_logWord`: the P grade.
+* `mem_SPACE_of_decides`, `mem_LOGSPACE_of_decides`, `computesInSpace_of_computes`,
+  `mem_SPACE_mul_of_decides`: the space grades (L, log-space transducers, Savitch's shape).
+* `mem_NSPACE_of_accepts`, `mem_NL_of_accepts`: the nondeterministic space grades.
+* PROG-3: `StepsIn.agreeOutside`, `sim_in`, `compileProgram_footprint`,
+  `haltsWithin_compileProgram`.
+
+## References
+
+* [AB09] S. Arora, B. Barak, *Computational Complexity: A Modern Approach*,
+  Cambridge University Press, 2009.
+* [AFM26] anthropics/formal-math, folder `3sum-apsp`, commit e1a4e650, Apache-2.0: the word RAM
+  and the compiler that this file wraps (vendored in `TCSlib/Programs/`).
+-/
+
+namespace TCSlib.Draft.Stage2
+
+open WordRAM (Instr)
+
+/-! ## The draft extended word RAM
+
+Copied from the vendored layer: nothing is copied verbatim. `xstep` restates the match of
+`WordRAM.step` (`TCSlib/Programs/WordRAM/Steps.lean:116-129`) for the nine vendored
+instructions, but routes the six straight-line ones through the vendored `WordRAM.effect`
+(`Steps.lean:249-257`) instead of copying their arms; `XSteps` restates `WordRAM.Steps`
+(`Steps.lean:134-136`) with the input and the coin stream as parameters. -/
+
+/-- The instructions of the draft extended word RAM: the nine instructions of the vendored
+`WordRAM.Instr`, and four more. `rdIn i j` sets `[i]` to the input bit at position `[j]` (as
+`0` or `1`; `0` off the input); `emit i` appends the bit "`[i]` is nonzero" to the output;
+`coin i` sets `[i]` to the next coin (as `0` or `1`) and consumes it; `half i j` sets `[i]` to
+`[j]` shifted right by one place, the sign kept (`⌊[j] / 2⌋`). [AFM26, `EndStatement.lean`],
+extended per design §15c. -/
+inductive XInstr : Type where
+  | base (i : Instr)
+  | rdIn (i j : ℤ)
+  | emit (i : ℤ)
+  | coin (i : ℤ)
+  | half (i j : ℤ)
+
+/-- A program of the draft extended word RAM: its instructions, at positions `0, 1, 2, …`. -/
+abbrev XProgram : Type := List XInstr
+
+/-- A configuration of the extended RAM: the vendored configuration (position and memory), the
+bits emitted so far, and the number of coins consumed so far. The input and the coin stream are
+not part of it; they are parameters of a run. -/
+structure XCfg (W : ℕ) extends WordRAM.Cfg W where
+  /-- The bits emitted so far, oldest first. -/
+  out : List Bool
+  /-- The number of coins consumed so far. -/
+  rd : ℕ
+
+/-- The word of the input bit at position `p`: `1` if `0 ≤ p` and the bit there is `true`,
+`0` otherwise (in particular off the input). -/
+def inBitWord (W : ℕ) (x : List Bool) (p : ℤ) : BitVec W :=
+  if 0 ≤ p ∧ x.getD p.toNat false = true then 1 else 0
+
+/-- The word of a coin: `1` for `true`, `0` for `false`. -/
+def coinWord (W : ℕ) (b : Bool) : BitVec W := if b then 1 else 0
+
+/-- One step of the extended RAM on input `x` with coin stream `ρ`: the next configuration, or
+the verdict. The nine vendored instructions behave as in `WordRAM.step` and leave the output
+and the coins alone; past its end the program rejects. The coin read is `ρ.getD rd false`, so a
+stream that runs out reads `false`. -/
+def xstep {W : ℕ} (P : XProgram) (x ρ : List Bool) (c : XCfg W) : XCfg W ⊕ Bool :=
+  let m := c.mem
+  match P.getD c.pc (.base .reject) with
+  | .base .accept => .inr true
+  | .base .reject => .inr false
+  | .base (.bltz i l) => .inl { c with pc := if (m i).toInt < 0 then l else c.pc + 1 }
+  | .base ins => .inl { c with pc := c.pc + 1, mem := WordRAM.effect ins m }
+  | .rdIn i j =>
+    .inl { c with pc := c.pc + 1, mem := Function.update m i (inBitWord W x (m j).toInt) }
+  | .emit i => .inl { c with pc := c.pc + 1, out := c.out ++ [decide (m i ≠ 0)] }
+  | .coin i =>
+    .inl { c with pc := c.pc + 1, mem := Function.update m i (coinWord W (ρ.getD c.rd false)),
+                  rd := c.rd + 1 }
+  | .half i j => .inl { c with pc := c.pc + 1, mem := Function.update m i ((m j).sshiftRight 1) }
+
+/-- `XSteps P x ρ n c c'`: exactly `n` steps of `P` on input `x` and coin stream `ρ` lead from
+`c` to `c'`, none of them a verdict. The extended counterpart of `WordRAM.Steps`. -/
+def XSteps {W : ℕ} (P : XProgram) (x ρ : List Bool) : ℕ → XCfg W → XCfg W → Prop
+  | 0, c, c' => c = c'
+  | n + 1, c, c' => ∃ c₁, xstep P x ρ c = .inl c₁ ∧ XSteps P x ρ n c₁ c'
+
+/-- A program has no `coin` instruction. -/
+def CoinFree (P : XProgram) : Prop := ∀ ins ∈ P, ∀ a : ℤ, ins ≠ .coin a
+
+/-- The vendored program of a program of the extended RAM: the new instructions are replaced by
+`reject`. A run of the vendored projection that gives no verdict executes no replaced position,
+so it is also a run of the extended program (`XSteps.of_steps_proj`); this is how the vendored
+run calculus and the compiler's segment lemmas are reused on code that mixes old and new
+instructions. -/
+def XProgram.proj (P : XProgram) : List Instr :=
+  P.map fun
+    | .base i => i
+    | _ => .reject
+
+section RunCalculus
+
+variable {W : ℕ} {P : XProgram} {x ρ : List Bool}
+
+/-- One run after the other, as `WordRAM.Steps.trans`.
+
+**Proof sketch.** Induction on the first count, as for the vendored lemma. -/
+theorem XSteps.trans {n k : ℕ} {c c₁ c₂ : XCfg W} (h₁ : XSteps P x ρ n c c₁)
+    (h₂ : XSteps P x ρ k c₁ c₂) : XSteps P x ρ (n + k) c c₂ := by
+  sorry
+
+/-- **Conservativity, one step.** On a program of vendored instructions, a step of the extended
+RAM is the vendored step, with the output and the consumed coins unchanged.
+
+**Proof sketch.** Both steps read `P.getD pc reject` (`List.getD_map`); case on the instruction.
+The straight-line arms agree by the vendored `step_straight` computation (`1 = wd W 1`), the
+branch and the verdicts literally. -/
+theorem xstep_map_base (P : List Instr) (c : WordRAM.Cfg W) (o : List Bool) (r : ℕ) :
+    xstep (P.map .base) x ρ ⟨c, o, r⟩ =
+      Sum.map (fun c' => (⟨c', o, r⟩ : XCfg W)) id (WordRAM.step P c) := by
+  sorry
+
+/-- **Conservativity, runs.** A run of a vendored program is a run of its extended copy.
+
+**Proof sketch.** Induction on `n` with `xstep_map_base`. -/
+theorem XSteps.of_steps {P : List Instr} {n : ℕ} {c c' : WordRAM.Cfg W} (h : WordRAM.Steps P n c c')
+    (o : List Bool) (r : ℕ) : XSteps (P.map .base) x ρ n ⟨c, o, r⟩ ⟨c', o, r⟩ := by
+  sorry
+
+/-- **Reuse of the vendored run calculus on mixed code.** A verdict-free run of the vendored
+projection `P.proj` is a run of `P` itself, with the output and the coins unchanged.
+
+**Proof sketch.** Induction on `n`. At each executed position the projection does not hold
+`reject` (that would be a verdict), so `P` holds `.base` of the same instruction there, and the
+step is `xstep_map_base`'s. -/
+theorem XSteps.of_steps_proj {n : ℕ} {c c' : WordRAM.Cfg W} (h : WordRAM.Steps P.proj n c c')
+    (o : List Bool) (r : ℕ) : XSteps P x ρ n ⟨c, o, r⟩ ⟨c', o, r⟩ := by
+  sorry
+
+end RunCalculus
+
+/-! ## Cells touched along a run (PROG-3 at the RAM level) -/
+
+/-- The cells that a vendored instruction reads or writes in the memory `m`: its named cells,
+and for `load`/`store` also the cell whose address it reads from memory. -/
+def baseTouches {W : ℕ} (ins : Instr) (m : ℤ → BitVec W) : Finset ℤ :=
+  match ins with
+  | .one i => {i}
+  | .add i j k => {i, j, k}
+  | .sub i j k => {i, j, k}
+  | .mul i j k => {i, j, k}
+  | .load i j => {i, j, (m j).toInt}
+  | .store i j => {i, j, (m i).toInt}
+  | .bltz i _ => {i}
+  | .accept => ∅
+  | .reject => ∅
+
+/-- The cells that an instruction of the extended RAM reads or writes in the memory `m`. -/
+def XInstr.touches {W : ℕ} : XInstr → (ℤ → BitVec W) → Finset ℤ
+  | .base ins, m => baseTouches ins m
+  | .rdIn i j, _ => {i, j}
+  | .emit i, _ => {i}
+  | .coin i, _ => {i}
+  | .half i j, _ => {i, j}
+
+/-- `XStepsIn P x ρ K n c c'`: an `XSteps` run in which every step reads and writes only cells
+of `K`. Every run is an `XStepsIn` run for the set of the cells it touches; `K` is the
+footprint. -/
+def XStepsIn {W : ℕ} (P : XProgram) (x ρ : List Bool) (K : Set ℤ) :
+    ℕ → XCfg W → XCfg W → Prop
+  | 0, c, c' => c = c'
+  | n + 1, c, c' => ∃ c₁, xstep P x ρ c = .inl c₁ ∧
+      ↑((P.getD c.pc (.base .reject)).touches c.mem) ⊆ K ∧ XStepsIn P x ρ K n c₁ c'
+
+/-- `StepsIn P K n c c'`: a `WordRAM.Steps` run of a vendored program in which every step reads
+and writes only cells of `K`. The PROG-3 strengthening of `WordRAM.Steps`, added beside it (the
+vendored definition is not changed). -/
+def StepsIn {W : ℕ} (P : List Instr) (K : Set ℤ) : ℕ → WordRAM.Cfg W → WordRAM.Cfg W → Prop
+  | 0, c, c' => c = c'
+  | n + 1, c, c' => ∃ c₁, WordRAM.step P c = .inl c₁ ∧
+      ↑(baseTouches (P.getD c.pc .reject) c.mem) ⊆ K ∧ StepsIn P K n c₁ c'
+
+section Footprints
+
+variable {W : ℕ} {K K' : Set ℤ}
+
+/-- A run within a footprint is a run of `WordRAM.Steps`, the footprint forgotten. -/
+theorem StepsIn.toSteps {P : List Instr} {n : ℕ} {c c' : WordRAM.Cfg W} (h : StepsIn P K n c c') :
+    WordRAM.Steps P n c c' := by
+  sorry
+
+/-- Every run has a footprint: the cells it touches. (So `StepsIn` loses nothing.)
+
+**Proof sketch.** Induction on `n`; take the union of the first step's touched cells and the
+footprint of the rest. -/
+theorem Steps.exists_stepsIn {P : List Instr} {n : ℕ} {c c' : WordRAM.Cfg W}
+    (h : WordRAM.Steps P n c c') : ∃ K : Finset ℤ, StepsIn P (↑K) n c c' := by
+  sorry
+
+/-- A run within a footprint is a run within every larger set of cells. -/
+theorem StepsIn.mono {P : List Instr} {n : ℕ} {c c' : WordRAM.Cfg W} (h : StepsIn P K n c c')
+    (hK : K ⊆ K') : StepsIn P K' n c c' := by
+  sorry
+
+/-- One run after the other, within the union of the footprints. -/
+theorem StepsIn.trans {P : List Instr} {n k : ℕ} {c c₁ c₂ : WordRAM.Cfg W}
+    (h₁ : StepsIn P K n c c₁) (h₂ : StepsIn P K' k c₁ c₂) : StepsIn P (K ∪ K') (n + k) c c₂ := by
+  sorry
+
+/-- **Every intermediate memory stays inside the footprint.** Along a run within `K`, every
+configuration reached after `k ≤ n` steps has a memory that agrees with the starting memory
+outside `K`, and the rest of the run is again within `K`. (The obstacle 1 of design §15c: the
+vendored `Finished` and `compileProgram_correct` speak of the last memory only.)
+
+**Proof sketch.** Induction on `k`. A step writes only its target cell, which is among the cells
+it touches (`baseTouches` lists the target of each writing instruction, `(m i).toInt` for
+`store`), so the memory after the step agrees with the one before outside `K`
+(`WordRAM.AgreeOutside.update`). -/
+theorem StepsIn.agreeOutside {P : List Instr} {n : ℕ} {c c' : WordRAM.Cfg W}
+    (h : StepsIn P K n c c') {k : ℕ} (hk : k ≤ n) :
+    ∃ d : WordRAM.Cfg W, StepsIn P K k c d ∧ StepsIn P K (n - k) d c' ∧
+      WordRAM.AgreeOutside K c.mem d.mem := by
+  sorry
+
+/-- The straight-line row with its footprint: a list of vendored instructions without `load`
+and `store` touches only the cells it names. (`load` and `store` need the known-number rows
+`steps_load`/`steps_store` with the address added to the footprint.)
+
+**Proof sketch.** As `WordRAM.steps_straight`, collecting `baseTouches` of each instruction. -/
+theorem stepsIn_straight {P : List Instr} (l : List Instr) (pc : ℕ) (m : ℤ → BitVec W)
+    (hcode : WordRAM.CodeAt P pc l) (hl : ∀ i ∈ l, WordRAM.Straight i)
+    (hK : ∀ i ∈ l, ∀ m' : ℤ → BitVec W, ↑(baseTouches i m') ⊆ K) :
+    StepsIn P K l.length ⟨pc, m⟩ ⟨pc + l.length, WordRAM.effects l m⟩ := by
+  sorry
+
+/-- An extended run within a footprint is an `XSteps` run, the footprint forgotten. -/
+theorem XStepsIn.toXSteps {P : XProgram} {x ρ : List Bool} {n : ℕ} {c c' : XCfg W}
+    (h : XStepsIn P x ρ K n c c') : XSteps P x ρ n c c' := by
+  sorry
+
+/-- Every extended run has a footprint: the finite set of the cells it touches. -/
+theorem XSteps.exists_xStepsIn {P : XProgram} {x ρ : List Bool} {n : ℕ} {c c' : XCfg W}
+    (h : XSteps P x ρ n c c') : ∃ K : Finset ℤ, XStepsIn P x ρ (↑K) n c c' := by
+  sorry
+
+/-- The footprint version of `XSteps.of_steps_proj`: a verdict-free run of the projection within
+`K` is a run of the extended program within `K`. -/
+theorem XStepsIn.of_stepsIn_proj {P : XProgram} {x ρ : List Bool} {n : ℕ}
+    {c c' : WordRAM.Cfg W} (h : StepsIn P.proj K n c c') (o : List Bool) (r : ℕ) :
+    XStepsIn P x ρ K n ⟨c, o, r⟩ ⟨c', o, r⟩ := by
+  sorry
+
+end Footprints
+
+/-! ## Starting, halting -/
+
+/-- The memory in which stage 2 starts a RAM program on an input of length `n`: the cell `-1`
+(the compiler's argument cell `Light.Compiler.cARG1`) holds `n`, every other cell `0`. So a
+compiled program receives `|x|` as its first argument (design §15c: `inLen` from an argument
+cell). -/
+def startMem (W n : ℕ) : ℤ → BitVec W :=
+  Function.update (fun _ => 0) Light.Compiler.cARG1 (WordRAM.wd W n)
+
+/-- The start configuration on an input of length `n`: position `0`, `startMem`, nothing
+emitted, no coin consumed. -/
+def XCfg.init (W n : ℕ) : XCfg W := { pc := 0, mem := startMem W n, out := [], rd := 0 }
+
+/-- `HaltsWithin P x ρ W t v o f`: run on the input `x` with the coin stream `ρ` and word size
+`W`, the program `P` gives the verdict `v` within `t` steps (the verdict step counted, as in
+`WordRAM.exec`), has then emitted `o`, and has touched at most `f` distinct cells. -/
+def HaltsWithin (P : XProgram) (x ρ : List Bool) (W t : ℕ) (v : Bool) (o : List Bool) (f : ℕ) :
+    Prop :=
+  ∃ (n : ℕ) (c : XCfg W) (K : Finset ℤ), n < t ∧ K.card ≤ f ∧
+    XStepsIn P x ρ (↑K) n (XCfg.init W x.length) c ∧ xstep P x ρ c = .inr v ∧ c.out = o
+
+section Halting
+
+variable {P : XProgram} {x ρ : List Bool} {W t t' f f' : ℕ} {v v' : Bool} {o o' : List Bool}
+
+/-- A run that halts within `t` steps and `f` cells halts within any larger bounds. -/
+theorem HaltsWithin.mono (h : HaltsWithin P x ρ W t v o f) (ht : t ≤ t') (hf : f ≤ f') :
+    HaltsWithin P x ρ W t' v o f' := by
+  sorry
+
+/-- The run is determined by the input, the coin stream and the word size: two halting runs have
+the same verdict and output.
+
+**Proof sketch.** `xstep` is a function, so the two `XSteps` runs agree up to the shorter
+length, where one of them gives a verdict; a run that gives no verdict cannot continue past a
+verdict, so the lengths agree. -/
+theorem HaltsWithin.unique (h : HaltsWithin P x ρ W t v o f)
+    (h' : HaltsWithin P x ρ W t' v' o' f') :
+    v = v' ∧ o = o' := by
+  sorry
+
+/-- A program without `coin` does not depend on the coin stream.
+
+**Proof sketch.** `xstep` reads `ρ` only at a `coin` instruction; induction on the run. -/
+theorem HaltsWithin.coin_irrel (hP : CoinFree P) (ρ' : List Bool) :
+    HaltsWithin P x ρ W t v o f ↔ HaltsWithin P x ρ' W t v o f := by
+  sorry
+
+end Halting
+
+/-! ## The word size -/
+
+/-- **The word size is computable.** Some machine outputs the binary representation of
+`W (|x|)` (`Nat.bits`, as in `Complexity.SpaceConstructible`) from `x` within `TW |x|` steps,
+visiting at most `SW |x|` work cells. The stage-2 machine runs it once, at the start, with its
+output redirected to a work tape (the R1 embedding), and pays `TW` and `SW` once. (Design §16b
+item 1: `W = c·log n` for P and L, `W = c·S(n)` for Savitch.) -/
+def WordSizeComputable (W TW SW : ℕ → ℕ) : Prop :=
+  ∃ M : Turing.FinTM Bool, ∀ x : List Bool, ∃ t ≤ TW x.length,
+    M.ComputesInTime x (W x.length).bits t ∧ M.tm.spaceUsed (M.tm.initCfg x) t ≤ SW x.length
+
+/-- A word size computable within `TW` and `SW` is computable within any larger bounds. -/
+theorem WordSizeComputable.mono {W TW SW TW' SW' : ℕ → ℕ} (h : WordSizeComputable W TW SW)
+    (hT : ∀ n, TW n ≤ TW' n) (hS : ∀ n, SW n ≤ SW' n) : WordSizeComputable W TW' SW' := by
+  sorry
+
+/-- **Logarithmic word sizes** (P and L): for every `c`, the word size `c·(⌊log₂ n⌋ + 1)` is
+computable in linear time and logarithmic space.
+
+**Proof sketch.** R8.5c (`Turing.exists_inputLengthTM`) writes `Nat.bits |x|` on a work tape
+within `C·(|x| + 1)` steps and `C·(|bits |x|| + 1)` cells. Its length is `logSpace |x|` for
+`|x| ≠ 0` (the private `b3a_bits_length`, `Constructible.lean:66`, to be promoted) and is
+fixed up at `|x| = 0`; a counter
+pass over the word writes that length in binary, and a carry pass multiplies it by `c`. -/
+theorem wordSizeComputable_logSpace (c : ℕ) :
+    ∃ a : ℕ, WordSizeComputable (fun n => c * Complexity.logSpace n) (fun n => a * (n + 1))
+      (fun n => a * Complexity.logSpace n) := by
+  sorry
+
+/-- **Space-constructible word sizes** (Savitch): if `S` is space-constructible, then for
+every `c` the word size `c·S(n)` is computable in space `O(S(n))`, within some time bound (not
+controlled, and not needed by the space grades).
+
+**Proof sketch.** Run the constructibility witness and multiply its binary output by `c` (a
+carry pass). It halts on every input, so the largest halting time over the finitely many inputs
+of each length is a time bound `TW`. -/
+theorem wordSizeComputable_of_spaceConstructible {S : ℕ → ℕ} (hS : Complexity.SpaceConstructible S)
+    (c : ℕ) :
+    ∃ (a : ℕ) (TW : ℕ → ℕ), WordSizeComputable (fun n => c * S n) TW (fun n => a * S n) := by
+  sorry
+
+/-! ## Stage 2 -/
+
+/-- The time bound of stage 2: computing the word size, then `t + 1` simulated steps, each at
+most one scan of a table of `f` entries of `W + O(1)` bits, one shift-and-add multiplication,
+and one input seek. -/
+def simTime (A : ℕ) (TW : ℕ → ℕ) (n W t f : ℕ) : ℕ :=
+  TW n + A * (t + 1) * (f * (W + 1) + W ^ 2 + n + 1)
+
+/-- The space bound of stage 2: computing the word size, then the memory table (`f` entries),
+`O(1)` words of scratch, and the input length. -/
+def simSpace (A : ℕ) (SW : ℕ → ℕ) (n W f : ℕ) : ℕ :=
+  SW n + A * (f * (W + 1) + W + Complexity.logSpace n + 1)
+
+/-- What the stage-2 machine leaves on its output tape: in verdict mode (`fn = false`) the
+one-bit verdict, as `Turing.FinTM.DecidesInTime` reads it; in function mode (`fn = true`) the
+emitted word, as `Turing.FinTM.ComputesInSpace` reads it. -/
+def outputOf (fn v : Bool) (o : List Bool) : List Bool := if fn then o else [v]
+
+/-- **Stage 2, deterministic form** (design §15a, §16b; backlog PROG-4). For every program `P`
+of the extended word RAM, every output mode and every computable word size `W`, there are a
+machine `M` and a constant `A` such that: whenever `P`, run on `x` with word size `W(|x|)` (and
+the empty coin stream: coins read `0`), gives the verdict `v` within `t` steps, having emitted
+`o` and touched at most `f` cells, `M` halts on `x` within
+`TW n + A·(t + 1)·(f·(W + 1) + W² + n + 1)` steps with `outputOf fn v o` on its output tape,
+having visited at most `SW n + A·(f·(W + 1) + W + log n + 1)` work cells (`n = |x|`).
+[AB09, Exercise 1.9: a machine with random access memory is simulated with polynomial overhead]
+
+Deviations: [AB09] has a bit-array RAM and the bound `T(n)²`; this is [AFM26]'s word RAM with
+input, output and coins, and an explicit bound in steps, cells and word size. From the §15a draft:
+no separate address width, an `n` (not `n·log n`) seek term, and the word size's own cost added
+(module docstring).
+
+**Proof sketch.** The machine is a phase host over the positions of `P` (finitely many, since
+`P` is fixed), after a start-up.
+1. *Start-up.* Run the word-size witness with its output on a work tape (R1 embedding), turn it
+   into a unary ruler of `W` cells; count `|x|` (R8.5c) and install the table entry
+   `-1 ↦ |x| mod 2^W`. Cost `TW n + O(n + W²)`, space `SW n + O(W + log n)`.
+2. *One phase per position.* Each instruction kind is a `Turing.Contract` (MIG-0a) whose
+   precondition says that the tapes encode a RAM configuration (a memory table of
+   (address, word) pairs, a program-counter phase, the ruler, the input length) and whose
+   endpoint encodes its `xstep`: find-by-key in the table (the new row of §15a), two-tape
+   addition/subtraction modulo `2^W`, shift-and-add multiplication, the sign test (`bltz`), the
+   arithmetic shift (`half`), table overwrite or append, the input seek R8.5b (`rdIn`, after a
+   range test against `|x|`), an output append (`emit`, function mode only). `coin` writes `0`.
+   Each costs at most `A·(f·(W + 1) + W² + n + 1)` steps on a table of at most `f + 1` entries.
+3. *Simulation.* Induction on the `XStepsIn` run: the encoding invariant holds after every
+   step, and the table holds only cells of the footprint `K` (and `-1`), so it never exceeds
+   `|K| + 1 ≤ f + 1` entries of `W + O_P(1)` bits.
+4. *Verdict.* At `accept`/`reject`, write `[v]` in verdict mode, and halt. -/
+theorem exists_simulation (P : XProgram) (fn : Bool) {W TW SW : ℕ → ℕ}
+    (hW : WordSizeComputable W TW SW) :
+    ∃ (M : Turing.FinTM Bool) (A : ℕ), ∀ (x : List Bool) (t f : ℕ) (v : Bool) (o : List Bool),
+      HaltsWithin P x [] (W x.length) t v o f →
+        M.ComputesInTime x (outputOf fn v o) (simTime A TW x.length (W x.length) t f) ∧
+        M.tm.spaceUsed (M.tm.initCfg x) (simTime A TW x.length (W x.length) t f) ≤
+          simSpace A SW x.length (W x.length) f := by
+  sorry
+
+/-- **Stage 2, nondeterministic form** (design §15c, §16b item 4; backlog PROG-4). For every
+program `P` of the extended word RAM and every computable word size `W` there are a
+nondeterministic machine `N` and a constant `A` such that: if, on the input `x`, **every** coin
+stream lets `P` give a verdict within `t` steps touching at most `f` cells (bounds uniform over
+the streams, as `NTIME` and `NSPACE` require), then every branch of `N` of length
+`T = simTime …` has halted, every such branch has visited at most `simSpace …` work cells, and
+`N` accepts `x` within `T` exactly when some coin stream makes `P` accept.
+[AB09, Exercise 1.9 with §2.1.2 (NDTMs) and Def 4.1 (nondeterministic space)]
+
+**Proof sketch.** As `exists_simulation`, in verdict mode, with one change: the phase for
+`coin i` is a single choice step whose two transitions write `0` or `1` into the table entry of
+`i`; every other step ignores its choice bit (its two transitions coincide). A branch, a choice
+word `w` of length `T`, then simulates the RAM run whose coin stream is the subsequence of `w`
+at the coin steps; conversely every coin stream is realized by a branch that places its bits
+there. All branches are runs of `P` on some stream, so the uniform bounds bound every branch. -/
+theorem exists_ndSimulation (P : XProgram) {W TW SW : ℕ → ℕ} (hW : WordSizeComputable W TW SW) :
+    ∃ (N : Turing.FinNDTM Bool) (A : ℕ), ∀ (x : List Bool) (t f : ℕ),
+      (∀ ρ : List Bool, ∃ (v : Bool) (o : List Bool), HaltsWithin P x ρ (W x.length) t v o f) →
+        N.tm.HaltsWithin x (simTime A TW x.length (W x.length) t f) ∧
+        (∀ w : List Bool, w.length = simTime A TW x.length (W x.length) t f →
+          N.tm.spaceUsedWith w (N.tm.initCfg x) ≤ simSpace A SW x.length (W x.length) f) ∧
+        (N.AcceptsWithin x (simTime A TW x.length (W x.length) t f) ↔
+          ∃ (ρ o : List Bool), HaltsWithin P x ρ (W x.length) t true o f) := by
+  sorry
+
+/-! ## The time grade: P -/
+
+/-- **Deciding in time.** If `P` decides `L` (verdict `[x ∈ L]`) with word size `W`, within `T`
+steps and `F` cells, then `L ∈ DTIME T'` for every `T'` that dominates the stage-2 time bound
+up to a constant. [AB09, Def 1.12]
+
+**Proof sketch.** `exists_simulation` in verdict mode; `ComputesInTime.mono` moves each input's
+time to `a · T' |x|` (`simTime` is monotone in `t` and `f`). -/
+theorem mem_DTIME_of_decides (P : XProgram) (L : Language Bool) {W TW SW T F : ℕ → ℕ}
+    (hW : WordSizeComputable W TW SW)
+    (hdec : ∀ x : List Bool, ∃ o : List Bool,
+      HaltsWithin P x [] (W x.length) (T x.length)
+        (Turing.MultiTapeTM.indicator (L : Set (List Bool)) x) o (F x.length))
+    (T' : ℕ → ℕ) (a : ℕ)
+    (hT : ∀ n, TW n + (T n + 1) * (F n * (W n + 1) + W n ^ 2 + n + 1) ≤ a * T' n) :
+    L ∈ Complexity.DTIME T' := by
+  sorry
+
+/-- **The P grade.** If `P` decides `L` with polynomially many steps and cells and a word size
+of polynomial value that is computable in polynomial time, then `L ∈ P`. [AB09, Def 1.13]
+
+**Proof sketch.** `mem_DTIME_of_decides` with `T' n = (n + 1)^d'` for `d'` large
+(`(t + 1)·(f·(W + 1) + W² + n + 1)` is a polynomial of polynomials), then
+`Complexity.mem_P_iff`. -/
+theorem mem_P_of_decides (P : XProgram) (L : Language Bool) {W TW SW : ℕ → ℕ}
+    (hW : WordSizeComputable W TW SW) (C d : ℕ)
+    (hWpoly : ∀ n, TW n + W n ≤ C * (n + 1) ^ d)
+    (hdec : ∀ x : List Bool, ∃ (t f : ℕ) (o : List Bool),
+      t ≤ C * (x.length + 1) ^ d ∧ f ≤ C * (x.length + 1) ^ d ∧
+      HaltsWithin P x [] (W x.length) t
+        (Turing.MultiTapeTM.indicator (L : Set (List Bool)) x) o f) :
+    L ∈ Complexity.P := by
+  sorry
+
+/-- **The P grade with logarithmic words**, the form the curriculum and `NL ⊆ P` use: word size
+`c·(⌊log₂ n⌋ + 1)`, polynomially many steps and cells.
+
+**Proof sketch.** `mem_P_of_decides` with `wordSizeComputable_logSpace c`; `logSpace n ≤ n + 1`. -/
+theorem mem_P_of_decides_logWord (P : XProgram) (L : Language Bool) (c C d : ℕ)
+    (hdec : ∀ x : List Bool, ∃ (t f : ℕ) (o : List Bool),
+      t ≤ C * (x.length + 1) ^ d ∧ f ≤ C * (x.length + 1) ^ d ∧
+      HaltsWithin P x [] (c * Complexity.logSpace x.length) t
+        (Turing.MultiTapeTM.indicator (L : Set (List Bool)) x) o f) :
+    L ∈ Complexity.P := by
+  sorry
+
+/-! ## The space grades: L, log-space transducers, Savitch's shape -/
+
+/-- **Deciding in space.** If `P` decides `L` with word size `W` touching at most `F` cells (in
+any number of steps), then `L ∈ SPACE s` for every `s` that dominates
+`SW + F·(W + 1) + W + log n + 1` up to a constant. [AB09, Def 4.1]
+
+**Proof sketch.** `exists_simulation` in verdict mode gives, on each input, a halting time and
+the space bound `simSpace A SW n W (F n) ≤ A·(…) ≤ A·a·s n`. -/
+theorem mem_SPACE_of_decides (P : XProgram) (L : Language Bool) {W TW SW F : ℕ → ℕ}
+    (hW : WordSizeComputable W TW SW)
+    (hdec : ∀ x : List Bool, ∃ (t : ℕ) (o : List Bool),
+      HaltsWithin P x [] (W x.length) t (Turing.MultiTapeTM.indicator (L : Set (List Bool)) x) o
+        (F x.length))
+    (s : ℕ → ℕ) (a : ℕ)
+    (hs : ∀ n, SW n + F n * (W n + 1) + W n + Complexity.logSpace n + 1 ≤ a * s n) :
+    L ∈ Complexity.SPACE s := by
+  sorry
+
+/-- **The logspace grade** (design §15a, §16b item 4): a program that decides `L` touching
+`O(1)` cells with word size `c·(⌊log₂ n⌋ + 1)` puts `L` in `L`. The input is read in place
+(`rdIn`), so it costs no cells. [AB09, Def 4.5]
+
+**Proof sketch.** `mem_SPACE_of_decides` with `wordSizeComputable_logSpace c`, `F = F₀` and
+`s = logSpace`: `a·logSpace n + F₀·(c·logSpace n + 1) + c·logSpace n + logSpace n + 1` is at most
+a constant times `logSpace n`, since `logSpace n ≥ 1`. -/
+theorem mem_LOGSPACE_of_decides (P : XProgram) (L : Language Bool) (c F₀ : ℕ)
+    (hdec : ∀ x : List Bool, ∃ (t : ℕ) (o : List Bool),
+      HaltsWithin P x [] (c * Complexity.logSpace x.length) t
+        (Turing.MultiTapeTM.indicator (L : Set (List Bool)) x) o F₀) :
+    L ∈ Complexity.LOGSPACE := by
+  sorry
+
+/-- **Log-space transducers**: a program that, on every `x`, emits `g x` touching `O(1)` cells
+with word size `c·(⌊log₂ n⌋ + 1)` gives a machine computing `g` in logarithmic space (the
+output tape is append-only and not counted). [AB09, §4.3, log-space reductions]
+
+**Proof sketch.** `exists_simulation` in function mode, with the bounds of
+`mem_LOGSPACE_of_decides`. -/
+theorem computesInSpace_of_computes (P : XProgram) (g : List Bool → List Bool) (c F₀ : ℕ)
+    (hcomp : ∀ x : List Bool, ∃ (t : ℕ) (v : Bool),
+      HaltsWithin P x [] (c * Complexity.logSpace x.length) t v (g x) F₀) :
+    ∃ (M : Turing.FinTM Bool) (a : ℕ), M.ComputesInSpace g fun n => a * Complexity.logSpace n := by
+  sorry
+
+/-- **Savitch's shape** (design §16b item 1): with a space-constructible `S`, word size `c·S(n)`
+and at most `c·S(n)` cells (depth `O(S)` frames of `O(1)` words), `L ∈ SPACE(S²)`.
+[AB09, Theorem 4.14's space accounting]
+
+**Proof sketch.** `mem_SPACE_of_decides` with `wordSizeComputable_of_spaceConstructible hS c`:
+`a·S + c·S·(c·S + 1) + c·S + logSpace + 1 ≤ a'·S²`, since `logSpace ≤ S` (a conjunct of
+`SpaceConstructible`) and so `S ≥ 1`. -/
+theorem mem_SPACE_mul_of_decides (P : XProgram) (L : Language Bool) {S : ℕ → ℕ}
+    (hS : Complexity.SpaceConstructible S) (c : ℕ)
+    (hdec : ∀ x : List Bool, ∃ (t : ℕ) (o : List Bool),
+      HaltsWithin P x [] (c * S x.length) t (Turing.MultiTapeTM.indicator (L : Set (List Bool)) x) o
+        (c * S x.length)) :
+    L ∈ Complexity.SPACE fun n => S n * S n := by
+  sorry
+
+/-! ## The nondeterministic space grades: NL -/
+
+/-- **Accepting in nondeterministic space.** If, on every `x`, every coin stream lets `P` halt
+within some uniform `t` touching at most `F |x|` cells with word size `W`, and `x ∈ L` exactly
+when some stream makes `P` accept, then `L ∈ NSPACE s` for every `s` that dominates the
+stage-2 space bound up to a constant. [AB09, Def 4.1, nondeterministic clause]
+
+**Proof sketch.** `exists_ndSimulation`; the budget of `Turing.FinNDTM.DecidesInSpace` is
+`simTime A TW n W t f`, all branches halt and stay within `simSpace …`, and acceptance is the
+stated equivalence. -/
+theorem mem_NSPACE_of_accepts (P : XProgram) (L : Language Bool) {W TW SW F : ℕ → ℕ}
+    (hW : WordSizeComputable W TW SW)
+    (hrun : ∀ x : List Bool, ∃ t : ℕ,
+      (∀ ρ : List Bool, ∃ (v : Bool) (o : List Bool),
+        HaltsWithin P x ρ (W x.length) t v o (F x.length)) ∧
+      (x ∈ L ↔ ∃ (ρ o : List Bool), HaltsWithin P x ρ (W x.length) t true o (F x.length)))
+    (s : ℕ → ℕ) (a : ℕ)
+    (hs : ∀ n, SW n + F n * (W n + 1) + W n + Complexity.logSpace n + 1 ≤ a * s n) :
+    L ∈ Complexity.NSPACE s := by
+  sorry
+
+/-- **The NL grade** (design §16b item 4, C2): a program with read-once coins that, on every
+`x`, halts under every coin stream within a uniform time touching `O(1)` cells with word size
+`c·(⌊log₂ n⌋ + 1)`, and accepts under some stream exactly when `x ∈ L`, puts `L` in `NL`.
+[AB09, Def 4.5 (NL), Def 4.1]
+
+**Proof sketch.** `mem_NSPACE_of_accepts` with `wordSizeComputable_logSpace c`, `F = F₀`,
+`s = logSpace`, as in `mem_LOGSPACE_of_decides`. -/
+theorem mem_NL_of_accepts (P : XProgram) (L : Language Bool) (c F₀ : ℕ)
+    (hrun : ∀ x : List Bool, ∃ t : ℕ,
+      (∀ ρ : List Bool, ∃ (v : Bool) (o : List Bool),
+        HaltsWithin P x ρ (c * Complexity.logSpace x.length) t v o F₀) ∧
+      (x ∈ L ↔ ∃ (ρ o : List Bool),
+        HaltsWithin P x ρ (c * Complexity.logSpace x.length) t true o F₀)) :
+    L ∈ Complexity.NL := by
+  sorry
+
+/-! ## PROG-3 at the compiler level: the footprint of compiled code
+
+The vendored simulation (`Light.Compiler.sim`, `Simulation.lean:284`) produces
+`Finished.run : Steps S.code n ⟨pos, m⟩ ⟨pos + s.size S.F, m'⟩` and the frame
+`Finished.agree : AgreeOutside (Writable S.toSizes q) m m'`, which speaks of the last memory
+only. The strengthening adds the footprint of the run itself. -/
+
+section Compiled
+
+open Light Light.Compiler
+
+variable {W : ℕ}
+
+/-- The cells that the code of a statement running in the frame `q` may read or write: those it
+may write (`Light.Compiler.Writable`: scratch, `FP`, the stack from `q` on, the light memory
+within the limits) and the constants it reads (`1`, `0`, `-1` and the pool). -/
+def Touchable (Z : Sizes W) (q : ℕ) : Set ℤ := Writable Z q ∪ Constants Z.disp
+
+/-- `Light.Compiler.Finished` with the footprint of the run: the same run, within the cells
+that a statement in the frame `q` may touch. -/
+structure FinishedIn (S : Setting W) (s : Stmt) (σ' : State) (c pos q : ℕ) (m m' : ℤ → BitVec W)
+    (n : ℕ) : Prop extends Finished S s σ' c pos q m m' n where
+  /-- The run touches only cells that the statement may touch. -/
+  runIn : StepsIn S.code (Touchable S.toSizes q) n ⟨pos, m⟩ ⟨pos + s.size S.F, m'⟩
+
+/-- **The simulation theorem with footprints** (PROG-3). The code of a statement matches every
+run of the statement, and the matching run of the machine touches only cells that a statement
+in its frame may touch. Strengthens `Light.Compiler.sim`.
+
+**Proof sketch.** The induction of `sim`, case by case (`sim_skip`, …, `sim_call`), carrying
+`StepsIn` through `StepsIn.trans`. The segment lemmas need footprint twins: straight-line code
+(`stepsIn_straight`), the jump, the dispatcher, the test code, the argument and frame code, and
+the loads and stores, whose addresses are known numbers: a local variable's cell
+`cStack (q + x)` with `x < F` (in `Stack q Q`), a light address within `lim.space` (`Safe`),
+or the return position `cStack (q + F)`. A call's body runs in the frame `q + F + 1`, whose
+touchable cells lie in those of `q` (`writable_subset_writable`). -/
+theorem sim_in (S : Setting W) {d : ℕ} {s : Stmt} {σ σ' : State} {c : ℕ}
+    (h : Exec S.lim S.P d s σ σ' c) (pos q : ℕ) (m : ℤ → BitVec W) (B : Start S d s σ pos q m) :
+    ∃ (m' : ℤ → BitVec W) (n : ℕ), FinishedIn S s σ' c pos q m m' n := by
+  sorry
+
+/-- The region of a compiled program: the cells from `-lowCell` up to (not including)
+`lim.space`. `Light.Compiler.Outcome.far` says that the cells outside it are unchanged at the
+end; `compileProgram_footprint` says that no step touches them. -/
+def region (P : Program) (dec : Bool) (lim : Limits) : Finset ℤ :=
+  Finset.Ico (-(lowCell P dec lim : ℤ)) (lim.space : ℤ)
+
+/-- The region has `lowCell + lim.space` cells.
+
+**Proof sketch.** `Int.card_Ico`. -/
+theorem card_region (P : Program) (dec : Bool) (lim : Limits) :
+    (region P dec lim).card = lowCell P dec lim + lim.space := by
+  sorry
+
+/-- **The compiled program stays in its region** (PROG-3, design §15c obstacle 1). Under the
+hypotheses of `Light.compileProgram_correct`, the compiled program gives its verdict within
+`ramSteps P dec c` steps by a run that touches no cell outside `[-lowCell, lim.space)`, and it
+ends as `Outcome` says. Strengthens `compileProgram_correct` from the final memory to every
+intermediate one (with `StepsIn.agreeOutside`).
+
+**Proof sketch.** As `compileProgram_correct`, with `sim_in` in place of `sim`: the start-up
+code (straight-line, cells `Constants ∪ {FP} ∪ MainFrame` and the argument cells `-1`, `-2`), the
+outermost statement (`Touchable` of `mainFrame`), and the verdict code (`cRESULT`, `D`,
+`cStack mainFrame`, `ZERO`) all lie in the region (the cell computations of `not_mem_of_far`,
+now for reads as well as writes). -/
+theorem compileProgram_footprint {lim : Limits} {P : Program} {p0 : ℕ} {dec : Bool} {μ : ℕ → ℤ}
+    {i j : ℤ} {σ' : State} {c : ℕ} {m : ℤ → BitVec W}
+    (h : Exec lim P 0 (mainStmt p0) ⟨frame [0, i, j], μ⟩ σ' c)
+    (hfit : Fits W lim (dispPos P dec) (stackCells P lim)) (hm : Input lim μ i j m) :
+    ∃ (n : ℕ) (cfg : WordRAM.Cfg W), n < ramSteps P dec c ∧
+      StepsIn (compileProgram P p0 dec) ↑(region P dec lim) n ⟨0, m⟩ cfg ∧
+      WordRAM.step (compileProgram P p0 dec) cfg = .inr (verdictOf dec (σ'.loc 0)) ∧
+      Outcome lim P dec m σ' cfg.mem := by
+  sorry
+
+/-- **The interface between stage 1 and stage 2**, for the vendored compiler (no input access,
+so only the length of the input is available, as the first argument). A light run of the
+outermost call on `(|x|, 0)` from the empty memory gives stage 2's hypothesis for the compiled
+program: the same verdict within `ramSteps` steps, touching at most `lowCell + lim.space`
+cells. With the extended compiler (PROG-2) the same statement reads the input through `inBit`.
+
+**Proof sketch.** `startMem W |x|` satisfies `Input lim 0 |x| 0` (`cARG1 = -1`; every other
+cell, `-2` included, holds `0`). `compileProgram_footprint` gives the run within the region;
+`XStepsIn.of_stepsIn_proj` (the projection of `(compileProgram …).map .base` is
+`compileProgram …`) lifts it, `xstep_map_base` lifts the verdict step, and `card_region`
+counts the cells. -/
+theorem haltsWithin_compileProgram {lim : Limits} {P : Program} {p0 : ℕ} {dec : Bool} {σ' : State}
+    {c : ℕ} (x ρ : List Bool)
+    (h : Exec lim P 0 (mainStmt p0) ⟨frame [0, (x.length : ℤ), 0], fun _ => 0⟩ σ' c)
+    (hfit : Fits W lim (dispPos P dec) (stackCells P lim)) (hn : (x.length : ℤ) ≤ lim.word) :
+    HaltsWithin ((compileProgram P p0 dec).map .base) x ρ W (ramSteps P dec c)
+      (verdictOf dec (σ'.loc 0)) [] (lowCell P dec lim + lim.space) := by
+  sorry
+
+end Compiled
+
+end TCSlib.Draft.Stage2

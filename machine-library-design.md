@@ -3462,6 +3462,64 @@ simulation, and threading the input through the RAM's run calculus.
 - logspace from `O(1)` cells holds only with input read in place, and only once obstacle 1 is
   closed.
 
+### 15d. Stage 2, PROG-2 and PROG-3: statement drafts (2026-10-12)
+
+A maintainer sub-agent drafted the statements, and the maintainer re-elaborated them: 0 errors;
+the only warnings are `sorry`s. They are evidence, not landed files:
+`audits/evidence/stage2/Stage2Draft.lean.txt` (723 lines),
+`audits/evidence/stage2/ExtensionsDraft.lean.txt` (415 lines), and the notes
+`audits/evidence/stage2/NOTES.md`.
+
+**Stage 2 (PROG-4).** It is drafted in two forms:
+- `exists_simulation`, deterministic;
+- `exists_ndSimulation`: each `coin` is one `FinNDTM` choice step, with bounds uniform over all
+  coin streams.
+
+Both are stated over a draft RAM that wraps the vendored one: the nine vendored instructions, plus
+`rdIn`, `emit`, `coin` and `half`. With `n = |x|` and `W = W n`, the bounds are
+`T = TW n + A·(t + 1)·(f·(W + 1) + W² + n + 1)` and
+`S = SW n + A·(f·(W + 1) + W + logSpace n + 1)`.
+- **The word size** is a hypothesis `WordSizeComputable W TW SW`: some machine outputs
+  `Nat.bits (W n)` within `TW n` steps and `SW n` cells. Two bridges supply it: `c·logSpace`,
+  from the input-length counter R8.5c, and `c·S`, from `SpaceConstructible`.
+- **The corollaries:** DTIME and P, SPACE and LOGSPACE, log-space transducers, Savitch's
+  `SPACE(S·S)`, NSPACE and NL.
+
+**PROG-3.** `compileProgram_footprint`: a compiled run stays inside `[-lowCell, lim.space)`, its
+reads included. The gap is only at the RAM level, where `Steps` and `Finished` speak of the final
+memory.
+
+**PROG-2.** A self-contained mirror of the four new statements and of `Exec`, with the output word
+and the consumed coins as indices; `EndsIO` with 15 rules; the determinism lemma; acceptance and
+`acceptProb`. `NOTES.md` §5 lists, by file and line, every exhaustive definition and induction
+the real edit must extend.
+
+**Corrections to §15a and §15c, read off the code:**
+- there is no separate address width, because addresses are words (`WordRAM/Basic.lean`);
+- the input seek row is linear (`exists_inputSeekTM`), so the per-step seek term is `n`, not
+  `n·log n`;
+- the word size's own computation is charged once, as `TW` and `SW`;
+- `inBit` needs no input-length clause in `Fits`;
+- `Exec.bounded` needs `1 ≤ lim.word`;
+- about 32 lines of `Logic`, `Rules` and `Assigns` build or take apart `Ends` witnesses, so "the
+  routines are untouched" holds for `Meets` and the library, not for those files.
+
+The nondeterministic form's fill also needs one lemma not present today: a nondeterministic run
+agrees with the deterministic one on states whose two transitions coincide. This is the
+nondeterministic contract variant that §16 lists as later.
+
+**Estimate** (not measured): about 9,500–15,000 lines beyond MIG-0a, made up of PROG-2
+1.4k–2.3k, PROG-3 0.75k–1.35k and stage 2 6.1k–10.5k.
+
+**Open questions for the user**, each with the drafter's recommendation (`NOTES.md` §6):
+1. extend the RAM by a wrapper (recommended) or in place, which breaks about 50 configuration
+   literals;
+2. add `Exec`'s indices in place (option A, recommended, as §15c decided) or as a new relation
+   (B);
+3. `WordSizeComputable` with its two bridges (recommended), or `SpaceConstructible` directly;
+4. `emit` appends "nonzero", and the footprint counts touched cells (both recommended as
+   drafted).
+
 ## 16. The foundation migration (user decisions, 2026-10-12)
 
 **Why.** The user: "I really think we should invest effort into building code in the right way,
@@ -3650,6 +3708,18 @@ The user took the five open route questions together, each as the maintainer rec
    - Hardness also needs Tseitin on `Std.Sat.CNF ℕ`, correct for every prefix assignment.
    - Whether the `ψᵢ` emitter is a machine (H6) or a program with `emit` is decided with B4
      hardness's design.
+   - **Designed (2026-10-12):** `audits/evidence/rd2/RD2-design.md`, with a sorried statement draft,
+     `audits/evidence/rd2/RD2Draft.lean.txt`. The draft elaborates with 0 errors and 36 sorries;
+     11 of its theorems are proved. It proposes:
+     - the H6 kit as `Complexity.FormulaKit`: block variables, a truth-table gate template with
+       closed-form wires, ledgers, and emission over `polyTimeComputable_emitIter`;
+     - a generic Tseitin-after-prefix lemma, with its instance for `DAGCircuit.toCNF`;
+     - `Complexity.ConfigCodec`: a closed-form layout of width `2n + 4 + Q + 3k(2s + 1)`,
+       clause lists ordered by `List.range`, the old statement's clauses as 11 theorems, and new
+       uniformity theorems.
+
+     About 820 of the old proof's roughly 1,700 lines survive verbatim. The drafter recommends
+     a machine emitter. Estimate: 2.5k–3.6k lines landed; a statement gate, then two fills.
 3. **B6 takes the window route, and `space_universal` is restated forward-only.**
    - **The window route.** `space_hierarchy`'s diagonalizer runs one fixed self-simulating
      universal machine `U₀` inside a window of radius `a·g(n)`, on the configuration-record rows,
