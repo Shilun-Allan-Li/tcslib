@@ -3744,7 +3744,9 @@ of the file changes. **Round 2 closed the gate** (2026-10-13, 0 blockers / 0 maj
   return-or-escape rounds describe the loop body's interface;
 - `splitSafe`'s avoidance holds at every time through the endpoint, so it uses the segment layer
   with endpoint-inclusive avoidance, and first-exit `Contract`s apply only where a first exit is
-  proved;
+  proved (`SafeRun`, in `Build/EmitIterEmbed.lean`, avoids only strictly before the endpoint: a
+  plain segment);
+- both round rows also require the round's interior to be live;
 - the joint-trajectory property holds for general segments, and keeps the counter loop's single
   shared round and time witness for all body heads, its exact endpoints, bounds and liveness.
 

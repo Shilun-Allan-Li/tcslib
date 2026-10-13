@@ -103,3 +103,8 @@ zero, so it migrates to the segment and joint-trajectory layers, while the loop 
 interface uses the round layer. MIG-17 says `splitSafe`/`SafeRun` use the segment layer with
 endpoint-inclusive avoidance, and become first-exit Contracts only where a first exit is proved.
 The auditor's acceptance obligations for MIG-0b (notes 3–4) are recorded in design §16a.
+
+**Erratum (2026-10-13, from the MIG-0b draft):** the round-2 file is 1,099 lines through its final
+`end Turing`, plus a terminal blank line, not "1,100 lines" under the convention the other counts
+use. Also, the file's *Later rows* list names the symbol lift through `Cfg.decodeSymbols`; that
+route needs `liftSymbols_runFrom_over`. The wording is corrected when MIG-0b lands.
