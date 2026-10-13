@@ -55,3 +55,11 @@ maintainer.
     acknowledged it (2026-10-12)**, on condition that the retirement stays on the backlog
     (`policy.md`, **Duplication**).
 - The colleague-owned files `TimeHierarchy/Separation.lean` and `CircuitComplexity/*` are untouched.
+
+## Erratum (B5b gate, round 1, minor 5)
+
+The freeze log's `ConfigGraph` public census read 17 → 17. The correct count is **16 → 16**: the
+maintainer's tool `declfreeze.py` counted the docstring line "instance of the generalized count."
+(before `s1b_constructor_time`) as a declaration. The tool now skips lines that start inside a
+comment or docstring. The regenerated log `audits/logs/ch34-d4-freeze-r2.log` differs from the
+original only in that count. No statement or signature was affected.
