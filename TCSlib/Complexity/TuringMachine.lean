@@ -39,6 +39,7 @@ import TCSlib.Complexity.TuringMachine.Build.InputLength
 import TCSlib.Complexity.TuringMachine.Build.RecordTable
 import TCSlib.Complexity.TuringMachine.Build.CertShell
 import TCSlib.Complexity.TuringMachine.Build.OracleSim
+import TCSlib.Complexity.TuringMachine.Build.Contract
 import TCSlib.Complexity.TuringMachine.CodeSimulator
 import TCSlib.Complexity.TuringMachine.ChoiceWords
 import TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction
@@ -158,6 +159,10 @@ for the local modifications.
   choice-word law and the certificate shell (wave-1 statement gate, round 1).
 * `CounterProgInput` — transport a counter-program run past an input prefix
   that has already been consumed.
+* `Build/Contract` — the framed-contract structure (MIG-0a, `machine-library-design.md` §16a):
+  exact time, an endpoint function, an exit set with a no-earlier-exit cut and head envelopes, a
+  derived frames layer, and the compositions `trans`, `seq`, `inPhase`, `embed`, `branch` and
+  `ReturnContract.release` as thin wrappers over the public rows. Proved; MIG-0a gate closed.
 * `Build/Convention`, `Build/Wrappers`, `Build/Loop`, `Build/Primitives` — the
   machine-construction library (`machine-library-design.md`): the `Cfg.ofWords` seam
   discipline, the capture/silence and halt-redirect wrappers with the timed branch,
