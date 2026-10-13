@@ -3313,21 +3313,21 @@ private lemma h1Unary_step {m : ℕ} {x : List Bool} (src dst : Fin m)
   · funext j
     by_cases hj : j = src
     · subst j
-      simp [h1UnaryCfg, hne]
+      simp [hne]
     · by_cases hc : copy = true ∧ j = dst
       · obtain ⟨hc, he⟩ := hc
         subst j
         subst copy
         simpa [h1UnaryCfg, hj, Action.apply, Cfg.workTapeSymbols, hne, hw] using
           catalog_write_take (d.workTapes dst) (d.workTapePos dst) w r hr
-      · simp [h1UnaryCfg, hj, hc, ← and_assoc, Action.apply]
+      · simp [hj, hc, ← and_assoc, Action.apply]
   · funext j
     by_cases hj : j = src
     · subst j
-      simp [h1UnaryCfg, hne, Nat.cast_add, add_assoc]
+      simp [hne, Nat.cast_add, add_assoc]
     · by_cases hc : copy = true ∧ j = dst
-      · simp [h1UnaryCfg, hj, hc, Ne.symm hne, Nat.cast_add, add_assoc]
-      · simp [h1UnaryCfg, hj, hc]
+      · simp [hc, Ne.symm hne, Nat.cast_add, add_assoc]
+      · simp [hj, hc]
   · simp
 
 /-- Every prefix of a trusted unary state field has its literal physical
@@ -3472,7 +3472,7 @@ private lemma h1Succ_heads {m n : ℕ} {x : List Bool} (src dst : Fin m)
     · subst j
       simp [h1UnaryCfg, h1AfterTag, hne]
       omega
-    · simp [h1UnaryCfg, h1AfterTag, hj, Function.update_of_ne hj]
+    · simp [h1UnaryCfg, h1AfterTag, hj]
 
 /-- Phase family for a complete record skip. The fixed reader is stopped
 before its payload step; the successor walker then consumes the variable tail. -/
@@ -3548,7 +3548,8 @@ private lemma h1Action_split {k n : ℕ} (a : Action k Bool (Fin (n + 1))) :
     ∃ bits : Fin (h1RecordWidth k) → Bool,
       actionBitsK a = List.ofFn bits ++ optStateBits a.state := by
   let p := signBits a.inputTape ++ (List.finRange k).flatMap
-    (fun i => optOptBoolBits (a.workTapes i).1 ++ signBits (a.workTapes i).2) ++ optBoolBits a.output
+    (fun i => optOptBoolBits (a.workTapes i).1 ++ signBits (a.workTapes i).2) ++ optBoolBits
+      a.output
   have hl : p.length = h1RecordWidth k := by
     have moveLen : ∀ s : SignType, (signBits s).length = 2 := by decide
     have writeLen : ∀ w : Option (Option Bool), (optOptBoolBits w).length = 2 := by decide
@@ -3636,7 +3637,8 @@ private lemma h1Skip_run {k n : ℕ} {x : List Bool}
   have he : (h1SkipTM k).runFrom (d.mapState (Sigma.mk false)) (h1RecordWidth k + 1) =
       tail.mapState (Sigma.mk true) := by
     exact dispatch
-  rw [show (actionBitsK a).length + 1 = h1RecordWidth k + 1 + (optStateBits a.state).length by omega,
+  rw [show (actionBitsK a).length + 1 = h1RecordWidth k + 1 + (optStateBits a.state).length by
+    omega,
     MultiTapeTM.runFrom_add, he, h1Skip_tail,
     h1Succ_run _ _ (Ne.symm (h1Summary_ne_table k)) false tail a.state (by rfl) htail]
   apply Cfg.ext
@@ -3649,7 +3651,7 @@ private lemma h1Skip_run {k n : ℕ} {x : List Bool}
       rw [hlen]
       cases a.state <;>
         simp [h1UnaryCfg, h1AfterTag, tail, Cfg.mapState, h1ReadCfg, optStateBits,
-          unaryFin, Nat.cast_add, add_assoc] <;> omega
+          unaryFin, Nat.cast_add, add_assoc] ; omega
     · simp [h1UnaryCfg, h1AfterTag, tail, Cfg.mapState, h1ReadCfg, hj]
   · rfl
 
@@ -3715,7 +3717,8 @@ private lemma h1Skip_path {k n : ℕ} {x : List Bool}
       rw [hhead.2.2 j]
       by_cases hj : j = h1TableTape k
       · subst j
-        simp [tail, Cfg.mapState, h1ReadCfg, min_eq_right (by omega : h1RecordWidth k ≤ u), Nat.cast_add, add_assoc]
+        simp [tail, Cfg.mapState, h1ReadCfg, min_eq_right (by omega : h1RecordWidth k ≤ u),
+          Nat.cast_add, add_assoc]
       · simp [tail, Cfg.mapState, h1ReadCfg, hj]
     · intro hlt b
       have hc := h1Succ_cut _ _ (Ne.symm (h1Summary_ne_table k)) false tail s rfl htail
@@ -3893,7 +3896,8 @@ private lemma h1Seek_request {k n : ℕ} {x : List Bool}
       ((actionBitsK a).length + 3) =
       h1SeekCfg ({ d with
           workTapePos := Function.update d.workTapePos (h1TableTape k)
-            (d.workTapePos (h1TableTape k) + (actionBitsK a).length) }) (h1SeekNext rank rest last) := by
+            (d.workTapePos (h1TableTape k) + (actionBitsK a).length) }) (h1SeekNext rank rest
+              last) := by
     rw [show (actionBitsK a).length + 3 = ((actionBitsK a).length + 1 + 1) + 1 by omega,
       advance, hosted.2]
     apply Cfg.ext <;> simp [finish, h1SeekCfg, Cfg.mapState, hq]
@@ -3982,11 +3986,13 @@ private lemma h1Seek_many {k n : ℕ} {x : List Bool}
         ds hq htailReads
       have hnext : h1SeekNext rank ⟨(a :: b :: bs).length - 1, by
           simp only [List.length_cons] at *; omega⟩ last =
-          .request rank ⟨(b :: bs).length - 1, by simp only [List.length_cons] at *; omega⟩ last := by
+          .request rank ⟨(b :: bs).length - 1, by simp only [List.length_cons] at *; omega⟩ last
+            := by
         simp only [h1SeekNext, List.length_cons, Nat.add_sub_cancel, Nat.add_eq_zero_iff,
           Nat.one_ne_zero, and_false, ↓reduceDIte]
       rw [hnext] at one
-      have hcost : h1SeekCost (a :: b :: bs) = (actionBitsK a).length + 3 + h1SeekCost (b :: bs) := by
+      have hcost : h1SeekCost (a :: b :: bs) = (actionBitsK a).length + 3 + h1SeekCost (b :: bs)
+        := by
         simp only [h1SeekCost, List.flatMap_cons, List.length_append, List.length_cons]
         omega
       have hend : (h1SeekTM k).runFrom (h1SeekCfg d (.request rank
@@ -4010,13 +4016,15 @@ private lemma h1Seek_many {k n : ℕ} {x : List Bool}
       · intro u hu
         by_cases hl : u < (actionBitsK a).length + 3
         · exact one.2.1 u hl
-        · have he : u = ((actionBitsK a).length + 3) + (u - ((actionBitsK a).length + 3)) := by omega
+        · have he : u = ((actionBitsK a).length + 3) + (u - ((actionBitsK a).length + 3)) := by
+            omega
           rw [he, MultiTapeTM.runFrom_add, one.1]
           exact recur.2.1 _ (by omega)
       · intro u hu
         by_cases hl : u ≤ (actionBitsK a).length + 3
         · exact one.2.2 u hl
-        · have he : u = ((actionBitsK a).length + 3) + (u - ((actionBitsK a).length + 3)) := by omega
+        · have he : u = ((actionBitsK a).length + 3) + (u - ((actionBitsK a).length + 3)) := by
+            omega
           rw [he, MultiTapeTM.runFrom_add, one.1]
           have hf := recur.2.2 (u - ((actionBitsK a).length + 3)) (by omega)
           refine ⟨hf.1, hf.2.1, hf.2.2.1, ?_⟩
@@ -4042,7 +4050,8 @@ private lemma h1Seek_stateStep {k : ℕ} {x : List Bool}
   cases b <;>
     apply Cfg.ext <;>
     simp [MultiTapeTM.step, h1SeekTM, h1SeekCfg, Cfg.mapState, phaseHostTM,
-      h1SeekRed, h1SeekPart, h1SeekRouter, hq, Cfg.workTapeSymbols, hs, tapeAction, inputMoveAction, Action.mapState]
+      h1SeekRed, h1SeekPart, h1SeekRouter, hq, Cfg.workTapeSymbols, hs, tapeAction,
+        inputMoveAction, Action.mapState]
   all_goals
     funext j
     by_cases hj : j = h1SummaryTape k
@@ -4077,7 +4086,7 @@ private lemma h1Seek_rank {k n : ℕ} {x : List Bool}
     have hz : rank.val = 0 := hlen.symm
     simp only [hz, ↓reduceDIte] at step
     have he : (h1SeekTM k).runFrom (h1SeekCfg d (.state rank)) 1 = h1SeekCfg d .done := step
-    simp only [h1SeekCost, List.flatMap_nil, List.length_nil, Nat.mul_zero, Nat.add_zero,
+    simp only [h1SeekCost, List.flatMap_nil, List.length_nil, Nat.mul_zero,
       Nat.cast_zero, add_zero, Function.update_eq_self]
     refine ⟨he, ?_, ?_⟩
     · intro u hu
@@ -4157,7 +4166,8 @@ private lemma h1Seek_groups {k n : ℕ} {x : List Bool}
       ∀ j, j ≠ h1TableTape k → j ≠ h1SummaryTape k → f.workTapePos j = d.workTapePos j) := by
   induction groups generalizing d with
   | nil =>
-    have hs0 : d.workTapeSymbols (h1SummaryTape k) = some false := by simpa [Cfg.workTapeSymbols] using hs 0 (by simp)
+    have hs0 : d.workTapeSymbols (h1SummaryTape k) = some false := by
+      simpa [Cfg.workTapeSymbols] using hs 0 (by simp)
     have run := h1Seek_rank rest d rank hrank hq hs0 (by simpa using hw)
     dsimp only
     simp only [List.flatten_nil, List.nil_append, List.length_nil, Nat.zero_add]
@@ -4225,7 +4235,8 @@ private lemma h1Seek_groups {k n : ℕ} {x : List Bool}
     dsimp only at recur ⊢
     have cost : (g :: gs).length + 1 + h1SeekCost (((g :: gs).flatten ++ rest)) =
         (1 + h1SeekCost g) + (gs.length + 1 + h1SeekCost (gs.flatten ++ rest)) := by
-      simp only [h1SeekCost, List.length_cons, List.flatten_cons, List.flatMap_append, List.length_append]
+      simp only [h1SeekCost, List.length_cons, List.flatten_cons, List.flatMap_append,
+        List.length_append]
       omega
     refine ⟨?_, ?_, ?_⟩
     · rw [cost, MultiTapeTM.runFrom_add, seam, recur.1]
@@ -4299,11 +4310,11 @@ private lemma h1Seek_observe {k : ℕ} {x : List Bool}
     funext j
     by_cases hj : j = h1SummaryTape k
     · subst j
-      simp [h1SeekCfg, Cfg.mapState, next, h1SeekShift, h1Summary_ne_table k, add_assoc]
+      simp [h1Summary_ne_table k, add_assoc]
     · by_cases ht : j = h1TableTape k
       · subst j
-        simp [h1SeekCfg, Cfg.mapState, next, h1SeekShift, Ne.symm (h1Summary_ne_table k)]
-      · simp [h1SeekCfg, Cfg.mapState, next, h1SeekShift, hj, ht]
+        simp [Ne.symm (h1Summary_ne_table k)]
+      · simp [hj, ht]
   have run : (h1SeekTM k).runFrom (h1SeekCfg d .observe) 2 =
       h1SeekCfg (h1SeekShift d 0 2) (.state rank) := by
     change (h1SeekTM k).step ((h1SeekTM k).step _) = _
@@ -4318,7 +4329,8 @@ private lemma h1Seek_observe {k : ℕ} {x : List Bool}
   · intro u hu
     rcases (show u = 0 ∨ u = 1 ∨ u = 2 by omega) with rfl | rfl | rfl
     · exact ⟨rfl, rfl, rfl, fun _ _ => rfl⟩
-    · rw [show (h1SeekTM k).runFrom (h1SeekCfg d .observe) 1 = h1SeekCfg next (.advance rank) from first]
+    · rw [show (h1SeekTM k).runFrom (h1SeekCfg d .observe) 1 = h1SeekCfg next (.advance rank)
+      from first]
       exact ⟨rfl, rfl, rfl, fun j hj => by simp [h1SeekCfg, Cfg.mapState, next, hj]⟩
     · rw [run]
       refine ⟨rfl, rfl, rfl, ?_⟩
@@ -4355,26 +4367,27 @@ private lemma h1ReadActions_at {k n : ℕ}
     simp only [List.length_map, h1WorkReads_length]
   cases inp with
   | none =>
-    simp only [h1ReadActions, List.flatMap_cons, List.flatMap_nil, List.append_nil,
+    simp only [h1ReadActions,
       h1ReadRank, h1InputRank, h1WorkRank, Fin.val_zero, Nat.zero_mul, Nat.zero_add]
     rw [List.getElem_append_left (by simpa only [List.length_map] using hidx)]
     exact hmap none
   | some b =>
     cases b with
     | false =>
-      simp only [h1ReadActions, List.flatMap_cons, List.flatMap_nil, List.append_nil,
+      simp only [h1ReadActions,
         h1ReadRank, h1InputRank, h1WorkRank, Fin.val_one, Nat.one_mul]
       rw [List.getElem_append_right (by rw [lens]; omega)]
       simp only [lens, Nat.add_sub_cancel_left]
       rw [List.getElem_append_left (by simpa only [List.length_map] using hidx)]
       exact hmap (some false)
     | true =>
-      simp only [h1ReadActions, List.flatMap_cons, List.flatMap_nil, List.append_nil,
+      simp only [h1ReadActions,
         h1ReadRank, h1InputRank, h1WorkRank]
       rw [List.getElem_append_right (by rw [lens]; omega)]
       simp only [lens]
       rw [List.getElem_append_right (by rw [lens]; omega)]
-      have hi : (2 * 3 ^ k + (workReadsK k).idxOf w - 3 ^ k - 3 ^ k) = (workReadsK k).idxOf w := by omega
+      have hi : (2 * 3 ^ k + (workReadsK k).idxOf w - 3 ^ k - 3 ^ k) = (workReadsK k).idxOf w :=
+        by omega
       simpa only [lens, show ((2 : Fin 3) : ℕ) = 2 from rfl, hi] using hmap (some true)
 
 /-- The public table writer is the serialization of these state groups. -/
@@ -4402,7 +4415,7 @@ private lemma h1Table_cut {k n : ℕ}
   let reads := h1ReadActions tr q
   have qs : states = states.take q.val ++ q :: states.drop (q.val + 1) := by
     have h := List.take_append_drop q.val states
-    rw [List.drop_eq_getElem_cons (by simpa [states] using q.isLt)] at h
+    rw [List.drop_eq_getElem_cons (by simp [states])] at h
     simpa only [states, List.getElem_finRange, Fin.eta] using h.symm
   have rlt : r < reads.length := by
     dsimp [r, reads]
@@ -4413,7 +4426,8 @@ private lemma h1Table_cut {k n : ℕ}
     rw [List.drop_eq_getElem_cons rlt] at h
     simpa only [reads, r, h1ReadActions_at] using h.symm
   refine ⟨(states.take q.val).map (h1ReadActions tr), reads.take r,
-    (reads.drop (r + 1) ++ (states.drop (q.val + 1)).flatMap (h1ReadActions tr)).flatMap actionBitsK,
+    (reads.drop (r + 1) ++ (states.drop (q.val + 1)).flatMap (h1ReadActions tr)).flatMap
+      actionBitsK,
     ?_, ?_, ?_, ?_⟩
   · simp only [List.length_map, List.length_take, states, List.length_finRange]
     exact min_eq_left (by omega)
@@ -4530,7 +4544,8 @@ private lemma h1Seek_lookup {k n : ℕ} {x : List Bool}
       simp [h1SeekCfg, Cfg.mapState, h1SeekShift]
     · by_cases hj : j = h1SummaryTape k
       · subst j
-        simp [h1SeekCfg, Cfg.mapState, h1SeekShift, h1Summary_ne_table k, Nat.cast_add, add_assoc, add_comm]
+        simp [h1SeekCfg, Cfg.mapState, h1SeekShift, h1Summary_ne_table k, Nat.cast_add,
+          add_assoc, add_comm]
       · simp [h1SeekCfg, Cfg.mapState, h1SeekShift, ht, hj]
   · intro u hu
     by_cases hi : u < 2
@@ -4562,7 +4577,8 @@ false. This uses the canonical buffer convention directly. -/
 private lemma h1Unary_read (q r : ℕ) (hr : r ≤ q) :
     FinTM.bufferTape (List.replicate q true ++ [false]) r = some (decide (r < q)) := by
   by_cases hlt : r < q
-  · rw [FinTM.bufferTape_nat, List.getElem?_append_left (by simpa only [List.length_replicate] using hlt)]
+  · rw [FinTM.bufferTape_nat, List.getElem?_append_left (by simpa only [List.length_replicate]
+    using hlt)]
     simp [hlt]
   · have he : r = q := by omega
     subst r
@@ -4939,7 +4955,8 @@ private lemma h1Data_stateCell {k n : ℕ} {x : List Bool}
     (tablePos statePos : ℤ) (pre : List Bool) (z : ℤ) (hz : -1 ≤ z) :
     (h1Data c table summary word tablePos statePos pre).workTapes (h1SummaryTape k) (2 + z) =
       FinTM.bufferTape word z := by
-  simpa only [h1Data, h1SummaryTape, Fin.addCases_right, show (1 : Fin 2) ≠ 0 from by decide, ↓reduceIte] using
+  simpa only [h1Data, h1SummaryTape, Fin.addCases_right, show (1 : Fin 2) ≠ 0 from by decide,
+    ↓reduceIte] using
     h1SummaryState_cell summary word z hz
 
 /-- Clearing preparation restores the old unary-state head, erases its word,
@@ -4969,16 +4986,17 @@ private lemma h1Round_prepare {k n : ℕ} {x : List Bool}
     intro z hz hz'
     have cases : z = 0 ∨ z = 1 := by simp only [List.length_cons, List.length_nil] at hz'; omega
     rcases cases with rfl | rfl
-    · simpa [s0, d0, Cfg.mapState, h1Data, h1SummaryTape, h1SummaryState, unaryFin,
-        show (q.val : ℤ) + 2 ≠ 0 by omega, FinTM.bufferTape] using h1Unary_read q.val q.val le_rfl
+    · simp [s0, d0, Cfg.mapState, h1Data, h1SummaryTape, h1SummaryState, unaryFin,
+        show (q.val : ℤ) + 2 ≠ 0 by omega, FinTM.bufferTape]
     · have cell := h1Data_stateCell c table summary (unaryFin q) pos (q.val + 2) pre
         ((q.val + 1 : ℕ) : ℤ) (by omega)
       have blank : FinTM.bufferTape (unaryFin q) ((q.val + 1 : ℕ) : ℤ) = none := by
         rw [FinTM.bufferTape_nat]
         simp [unaryFin]
       rw [blank] at cell
-      convert cell using 1 <;> simp [s0, d0, Cfg.mapState, h1Data, h1SummaryTape, FinTM.bufferTape] <;> congr 1 <;> omega)
-  have skipEnd : (skipTM (k + 2) (h1SummaryTape k)).runFrom s0 2 = d1.mapState (fun _ => SeekPhase.done) := by
+      convert cell using 1; simp [s0, d0, Cfg.mapState, h1Data, h1SummaryTape]; congr 1; omega)
+  have skipEnd : (skipTM (k + 2) (h1SummaryTape k)).runFrom s0 2 = d1.mapState (fun _ =>
+    SeekPhase.done) := by
     have he := skip.1
     simp only [List.length_cons, List.length_nil, Nat.zero_add] at he
     rw [he]
@@ -4991,19 +5009,22 @@ private lemma h1Round_prepare {k n : ℕ} {x : List Bool}
     (d1.mapState (fun _ => SeekPhase.done)) 2 skipEnd .done rfl ⟨.stateHome, .run⟩
     (by simp [h1RoundRed]) (by
       intro u hu r hr
-      have ne : r ≠ .done := fun eq => (skip.2.1 u (by simpa using hu)) (hr.trans (congrArg some eq))
+      have ne : r ≠ .done := fun eq => (skip.2.1 u (by simpa using hu)) (hr.trans (congrArg some
+        eq))
       simp [h1RoundRed, ne]) (by
       intro u hu
-      apply h1Window_frame c a (h1Data_window c a table summary (unaryFin q) pos (q.val + 2) pre false)
+      apply h1Window_frame c a (h1Data_window c a table summary (unaryFin q) pos (q.val + 2) pre
+        false)
       · exact h1Run_input (skipTM (k + 2) (h1SummaryTape k))
           (by intro r inp work; cases r <;> cases h : work (h1SummaryTape k) <;>
-            simp [skipTM, skipBackTM, clearTM, h, tapeAction, inputMoveAction]) s0 u
+            simp [skipTM, h, tapeAction, inputMoveAction]) s0 u
       · intro i
-        simpa only [h1Mirror_ne_summary k i, ↓reduceIte, s0, Cfg.mapState] using skip.2.2 (Fin.castAdd 2 i) u (by simpa using hu))
+        simpa only [h1Mirror_ne_summary k i, ↓reduceIte, s0, Cfg.mapState] using skip.2.2
+          (Fin.castAdd 2 i) u (by simpa using hu))
   have back := skipBackTM_run_ofCfg (h1SummaryTape k) (unaryFin q) s1 rfl (by
     intro z hz hz'
     have cell := h1Data_stateCell c table summary (unaryFin q) pos (q.val + 4) pre z hz
-    convert cell using 1 <;> simp [s1, d1, Cfg.mapState, h1Data, h1SummaryTape, unaryFin] <;> congr 1 <;> omega)
+    convert cell using 1; simp [s1, d1, Cfg.mapState, h1Data, h1SummaryTape, unaryFin])
   have backEnd : (skipBackTM (k + 2) (h1SummaryTape k)).runFrom s1 ((unaryFin q).length + 3) =
       d2.mapState (fun _ => SeekPhase.done) := by
     rw [back.1]
@@ -5011,7 +5032,7 @@ private lemma h1Round_prepare {k n : ℕ} {x : List Bool}
     funext j
     refine Fin.addCases (fun i => ?_) (fun i => ?_) j
     · simp [s1, d1, d2, h1Data, Cfg.mapState, h1Mirror_ne_summary k i]
-    · fin_cases i <;> simp [s1, d1, d2, h1Data, Cfg.mapState, h1SummaryTape, unaryFin] <;> omega
+    · fin_cases i <;> simp [s1, d1, d2, h1Data, Cfg.mapState, h1SummaryTape, unaryFin]
   have p1 := h1Round_phase c a .stateHome (by decide) (by decide) s1
     (d2.mapState (fun _ => SeekPhase.done)) _ backEnd .done rfl ⟨.clearState, .sweep⟩
     (by simp [h1RoundRed]) (by
@@ -5019,12 +5040,14 @@ private lemma h1Round_prepare {k n : ℕ} {x : List Bool}
       have ne : r ≠ .done := fun eq => (back.2.1 u hu) (hr.trans (congrArg some eq))
       simp [h1RoundRed, ne]) (by
       intro u hu
-      apply h1Window_frame c a (h1Data_window c a table summary (unaryFin q) pos (q.val + 4) pre false)
+      apply h1Window_frame c a (h1Data_window c a table summary (unaryFin q) pos (q.val + 4) pre
+        false)
       · exact h1Run_input (skipBackTM (k + 2) (h1SummaryTape k))
           (by intro r inp work; cases r <;> cases h : work (h1SummaryTape k) <;>
-            simp [skipTM, skipBackTM, clearTM, h, tapeAction, inputMoveAction]) s1 u
+            simp [skipBackTM, h, tapeAction, inputMoveAction]) s1 u
       · intro i
-        simpa only [h1Mirror_ne_summary k i, ↓reduceIte, s1, Cfg.mapState] using back.2.2 (Fin.castAdd 2 i) u hu)
+        simpa only [h1Mirror_ne_summary k i, ↓reduceIte, s1, Cfg.mapState] using back.2.2
+          (Fin.castAdd 2 i) u hu)
   have clear := clearTM_run_ofCfg (h1SummaryTape k) (unaryFin q) s2 rfl (by
     intro z hz _
     simpa [s2, d2, Cfg.mapState, h1Data, h1SummaryTape] using
@@ -5038,7 +5061,8 @@ private lemma h1Round_prepare {k n : ℕ} {x : List Bool}
     · simp [s2, d2, d3, h1Data, Cfg.mapState, h1Mirror_ne_summary k i]
     · fin_cases i
       · simp [s2, d2, d3, h1Data, Cfg.mapState, h1SummaryTape]
-      · simpa [s2, d2, d3, h1Data, Cfg.mapState, h1SummaryTape] using congrFun (h1SummaryState_clear summary (unaryFin q)) z
+      · simpa [s2, d2, d3, h1Data, Cfg.mapState, h1SummaryTape] using
+          congrFun (h1SummaryState_clear summary (unaryFin q)) z
   have p2 := h1Round_phase c a .clearState (by decide) (by decide) s2
     (d3.mapState (fun _ => SweepPhase.done)) _ clearEnd .done rfl ⟨.toSummary, (0 : Fin 3)⟩
     (by simp [h1RoundRed]) (by
@@ -5049,10 +5073,12 @@ private lemma h1Round_prepare {k n : ℕ} {x : List Bool}
       apply h1Window_frame c a (h1Data_window c a table summary (unaryFin q) pos 2 pre false)
       · exact h1Run_input (clearTM (k + 2) (h1SummaryTape k))
           (by intro r inp work; cases r <;> cases h : work (h1SummaryTape k) <;>
-            simp [skipTM, skipBackTM, clearTM, h, tapeAction, inputMoveAction]) s2 u
+            simp [clearTM, h]) s2 u
       · intro i
-        simpa only [h1Mirror_ne_summary k i, ↓reduceIte, s2, Cfg.mapState] using clear.2.2 (Fin.castAdd 2 i) u hu)
-  have moveEnd : (h1TwoMoveTM (h1SummaryTape k) .neg).runFrom s3 2 = d4.mapState (fun _ => (2 : Fin 3)) := by
+        simpa only [h1Mirror_ne_summary k i, ↓reduceIte, s2, Cfg.mapState] using clear.2.2
+          (Fin.castAdd 2 i) u hu)
+  have moveEnd : (h1TwoMoveTM (h1SummaryTape k) .neg).runFrom s3 2 = d4.mapState (fun _ => (2 :
+    Fin 3)) := by
     rw [h1TwoMove_run _ _ s3 rfl 2 le_rfl]
     apply Cfg.ext <;> try rfl
     funext j
@@ -5065,14 +5091,15 @@ private lemma h1Round_prepare {k n : ℕ} {x : List Bool}
       intro u hu r hr
       rw [h1TwoMove_run _ _ s3 rfl u (by omega)] at hr
       have vr : r.val = u := congrArg Fin.val (Option.some.inj hr).symm
-      have ne : r ≠ 2 := by intro bad; subst r; simp only [Fin.reduceFinMk] at vr; omega
+      have ne : r ≠ 2 := by intro bad; subst r; omega
       simp [h1RoundRed, ne]) (by
       intro u hu
       rw [h1TwoMove_run _ _ s3 rfl u hu]
       refine ⟨Or.inl rfl, fun i => Or.inl ?_⟩
       simp [s3, d3, h1Data, Cfg.mapState, h1Mirror_ne_summary k i])
   have joined := h1RoundSpan_add c a (h1RoundSpan_add c a (h1RoundSpan_add c a p0 p1) p2) p3
-  have cost : ((2 + 1) + ((unaryFin q).length + 3 + 1) + (2 * (unaryFin q).length + 2 + 1)) + (2 + 1) =
+  have cost : ((2 + 1) + ((unaryFin q).length + 3 + 1) + (2 * (unaryFin q).length + 2 + 1)) + (2
+    + 1) =
       3 * q.val + 16 := by simp [unaryFin]; omega
   simpa only [h1At, s0, d0, d4, Cfg.mapState, h1Data, cost] using joined
 
@@ -5088,7 +5115,8 @@ private lemma h1Buffer_reads (before word after : List Bool) :
     rw [FinTM.bufferTape_nat, List.getElem?_eq_getElem hr]
   have first := h1Reads_append (FinTM.bufferTape (before ++ word ++ after)) 0 before (word ++ after)
     (by simpa only [zero_add, List.append_assoc] using whole)
-  have second := h1Reads_append (FinTM.bufferTape (before ++ word ++ after)) before.length word after
+  have second := h1Reads_append (FinTM.bufferTape (before ++ word ++ after)) before.length word
+    after
     (by simpa only [zero_add] using first.2)
   exact second.1
 
@@ -5119,7 +5147,8 @@ private lemma h1Round_payload {k n : ℕ} {x : List Bool}
   let d3 := h1Data (a.apply c) table (outputSummary (a.apply c).output) word
     (before.length + (actionBitsK a).length) (2 + word.length) pre
   have reads : ∀ (r : ℕ) (hr : r < (actionBitsK a).length),
-      d0.workTapes (h1TableTape k) (d0.workTapePos (h1TableTape k) + r) = some ((actionBitsK a)[r]'hr) := by
+      d0.workTapes (h1TableTape k) (d0.workTapePos (h1TableTape k) + r) = some ((actionBitsK
+        a)[r]'hr) := by
     simpa [d0, h1Data, h1TableTape, ht] using h1Buffer_reads before (actionBitsK a) after
   obtain ⟨bits, split, length, fixedReads, fieldReads⟩ := h1Action_reads d0 a reads
   have hbits : List.ofFn bits = (actionBitsK a).take (h1RecordWidth k) := by
@@ -5129,11 +5158,13 @@ private lemma h1Round_payload {k n : ℕ} {x : List Bool}
     (by intro i; simp [d0, h1Data]) (by intro i; simp [d0, h1Data])
     (by simp [d0, h1Data, Cfg.workTapeSymbols, h1SummaryTape, h1SummaryState])
   dsimp only at effect
-  obtain ⟨recordState, recordInput, recordBank, recordSum, recordOutput, recordCut, _, recordHeads⟩ := effect
+  obtain ⟨recordState, recordInput, recordBank, recordSum, recordOutput, recordCut, _,
+    recordHeads⟩ := effect
   have literal := h1Record_execute d0 a bits rfl fixedReads hbits
   have sumStep : summaryEmit (outputSummary c.output) a.output = outputSummary (a.apply c).output :=
     (outputSummary_append c.output a.output).symm
-  have recordEnd : (h1RecordTM k).runFrom d0 (h1RecordWidth k + 1) = d1.mapState (fun _ => (none : h1RecordState k)) := by
+  have recordEnd : (h1RecordTM k).runFrom d0 (h1RecordWidth k + 1) = d1.mapState (fun _ => (none
+    : h1RecordState k)) := by
     apply Cfg.ext
     · exact recordState
     · exact recordInput
@@ -5170,7 +5201,8 @@ private lemma h1Round_payload {k n : ℕ} {x : List Bool}
         · simpa [last, d0, h1Data] using envelope.2.1
         · simpa [last, d0, h1Data] using envelope.1 i)
   let moving := d1.mapState (fun _ => (0 : Fin 3))
-  have moveEnd : (h1TwoMoveTM (h1SummaryTape k) .pos).runFrom moving 2 = d2.mapState (fun _ => (2 : Fin 3)) := by
+  have moveEnd : (h1TwoMoveTM (h1SummaryTape k) .pos).runFrom moving 2 = d2.mapState (fun _ => (2
+    : Fin 3)) := by
     rw [h1TwoMove_run _ _ moving rfl 2 le_rfl]
     apply Cfg.ext <;> try rfl
     funext j
@@ -5183,7 +5215,7 @@ private lemma h1Round_payload {k n : ℕ} {x : List Bool}
       intro u hu r hr
       rw [h1TwoMove_run _ _ moving rfl u (by omega)] at hr
       have vr : r.val = u := congrArg Fin.val (Option.some.inj hr).symm
-      have ne : r ≠ 2 := by intro bad; subst r; simp only [Fin.reduceFinMk] at vr; omega
+      have ne : r ≠ 2 := by intro bad; subst r; omega
       simp [h1RoundRed, ne]) (by
       intro u hu
       rw [h1TwoMove_run _ _ moving rfl u hu]
@@ -5193,11 +5225,13 @@ private lemma h1Round_payload {k n : ℕ} {x : List Bool}
   have sourceField : ∀ (r : ℕ) (hr : r < (optStateBits a.state).length),
       copying.workTapes (h1TableTape k) (copying.workTapePos (h1TableTape k) + r) =
         some ((optStateBits a.state)[r]'hr) := by
-    simpa only [copying, d2, d0, h1Data, Cfg.mapState, h1TableTape, Fin.addCases_right, ↓reduceIte] using fieldReads
+    simpa only [copying, d2, d0, h1Data, Cfg.mapState, h1TableTape, Fin.addCases_right,
+      ↓reduceIte] using fieldReads
   have tailLength : (optStateBits a.state).length = word.length + 1 := by
     dsimp only [word]
-    cases a.state <;> simp [optStateBits, unaryFin] <;> omega
-  have successorEnd : (h1SuccTM (h1TableTape k) (h1SummaryTape k) true).runFrom copying (optStateBits a.state).length =
+    cases a.state <;> simp [optStateBits, unaryFin]
+  have successorEnd : (h1SuccTM (h1TableTape k) (h1SummaryTape k) true).runFrom copying
+    (optStateBits a.state).length =
       d3.mapState (fun _ => h1SuccPhase.done a.state.isSome) := by
     rw [h1Succ_run _ _ (Ne.symm (h1Summary_ne_table k)) true copying a.state rfl sourceField]
     apply Cfg.ext <;> try rfl
@@ -5225,17 +5259,21 @@ private lemma h1Round_payload {k n : ℕ} {x : List Bool}
         · simp [h1UnaryCfg, h1AfterTag, copying, d2, d3, h1Data, Cfg.mapState,
             h1TableTape, h1SummaryTape, word]
   have p2 := h1Round_phase c a .successor (by decide) (by decide) copying
-    (d3.mapState (fun _ => h1SuccPhase.done a.state.isSome)) _ successorEnd (.done a.state.isSome) rfl
+    (d3.mapState (fun _ => h1SuccPhase.done a.state.isSome)) _ successorEnd (.done
+      a.state.isSome) rfl
     ⟨.tableTail a.state.isSome, .run⟩ rfl (by
       intro u hu r hr
       cases r with
       | tag => rfl
       | unary => rfl
-      | done b => exact False.elim (h1Succ_cut _ _ (Ne.symm (h1Summary_ne_table k)) true copying a.state rfl sourceField u hu b hr)) (by
+      | done b => exact False.elim (h1Succ_cut _ _ (Ne.symm (h1Summary_ne_table k)) true copying
+        a.state rfl sourceField u hu b hr)) (by
       intro u hu
-      have heads := h1Succ_heads _ _ (Ne.symm (h1Summary_ne_table k)) true copying a.state rfl sourceField u hu
+      have heads := h1Succ_heads _ _ (Ne.symm (h1Summary_ne_table k)) true copying a.state rfl
+        sourceField u hu
       refine ⟨Or.inr heads.1, fun i => Or.inr ?_⟩
-      simpa [copying, d2, h1Data, Cfg.mapState, h1Mirror_ne_summary k i, h1Mirror_ne_table k i] using heads.2.2 (Fin.castAdd 2 i))
+      simpa [copying, d2, h1Data, Cfg.mapState, h1Mirror_ne_summary k i, h1Mirror_ne_table k i]
+        using heads.2.2 (Fin.castAdd 2 i))
   have combined := h1RoundSpan_add c a (h1RoundSpan_add c a p0 p1) p2
   have cost : (h1RecordWidth k + 1 + 1) + (2 + 1) + ((optStateBits a.state).length + 1) =
       (actionBitsK a).length + 6 := by omega
@@ -5246,7 +5284,8 @@ beyond it. This is the optional-list lookup law at a nonnegative offset. -/
 private lemma h1Buffer_suffix (before word : List Bool) (z : ℤ) (hz : 0 ≤ z) :
     FinTM.bufferTape (before ++ word) (before.length + z) = FinTM.bufferTape word z := by
   have hp : (before.length : ℤ) + z = ((before.length + z.toNat : ℕ) : ℤ) := by omega
-  rw [hp, FinTM.bufferTape_nat, List.getElem?_append_right (Nat.le_add_right _ _), Nat.add_sub_cancel_left]
+  rw [hp, FinTM.bufferTape_nat, List.getElem?_append_right (Nat.le_add_right _ _),
+    Nat.add_sub_cancel_left]
   simp [FinTM.bufferTape, hz]
 
 /-- Restore the table and successor-state heads after payload execution.
@@ -5267,7 +5306,8 @@ private lemma h1Round_restore {k n : ℕ} {x : List Bool}
       ((h1Data (a.apply c) table (outputSummary (a.apply c).output) word 0 0 pre).mapState
         (fun _ => h1RoundExit k live))
       (tail.length + table.length + word.length + 15) := by
-  let data := fun tp sp => h1Data (a.apply c) table (outputSummary (a.apply c).output) word tp sp pre
+  let data := fun tp sp => h1Data (a.apply c) table (outputSummary (a.apply c).output) word tp sp
+    pre
   let d0 := data before.length (2 + word.length)
   let d1 := data (table.length + 1) (2 + word.length)
   let d2 := data 0 (2 + word.length)
@@ -5282,7 +5322,8 @@ private lemma h1Round_restore {k n : ℕ} {x : List Bool}
   have tableLength : table.length = before.length + tail.length := by rw [ht, List.length_append]
   have tableSkip := skipTM_run_ofCfg (h1TableTape k) tail s0 rfl (by
     intro z hz _
-    simpa [s0, d0, data, h1Data, Cfg.mapState, h1TableTape, ht] using h1Buffer_suffix before tail z hz)
+    simpa [s0, d0, data, h1Data, Cfg.mapState, h1TableTape, ht] using h1Buffer_suffix before tail
+      z hz)
   have tableSkipEnd : (skipTM (k + 2) (h1TableTape k)).runFrom s0 (tail.length + 1) =
       d1.mapState (fun _ => SeekPhase.done) := by
     rw [tableSkip.1]
@@ -5290,7 +5331,8 @@ private lemma h1Round_restore {k n : ℕ} {x : List Bool}
     funext j
     refine Fin.addCases (fun i => ?_) (fun i => ?_) j
     · simp [s0, d0, d1, data, h1Data, Cfg.mapState, h1Mirror_ne_table k i]
-    · fin_cases i <;> simp [s0, d0, d1, data, h1Data, Cfg.mapState, h1TableTape, tableLength, Nat.cast_add, add_assoc]
+    · fin_cases i <;> simp [s0, d0, d1, data, h1Data, Cfg.mapState, h1TableTape, tableLength,
+      Nat.cast_add, add_assoc]
   have p0 := h1Round_phase c a (.tableTail live) (by intro h; cases h) (by intro h; cases h) s0
     (d1.mapState (fun _ => SeekPhase.done)) _ tableSkipEnd .done rfl ⟨.tableHome live, .run⟩
     (by simp [h1RoundRed]) (by
@@ -5298,11 +5340,14 @@ private lemma h1Round_restore {k n : ℕ} {x : List Bool}
       have ne : r ≠ .done := fun eq => (tableSkip.2.1 u hu) (hr.trans (congrArg some eq))
       simp [h1RoundRed, ne]) (by
       intro u hu
-      apply h1Window_frame c a (h1Data_window c a table _ word before.length (2 + word.length) pre true)
+      apply h1Window_frame c a (h1Data_window c a table _ word before.length (2 + word.length)
+        pre true)
       · exact h1Run_input (skipTM (k + 2) (h1TableTape k))
-          (by intro r inp work; cases r <;> cases h : work (h1TableTape k) <;> simp [skipTM, h, tapeAction, inputMoveAction]) s0 u
+          (by intro r inp work; cases r <;> cases h : work (h1TableTape k) <;> simp [skipTM, h,
+            tapeAction, inputMoveAction]) s0 u
       · intro i
-        simpa only [h1Mirror_ne_table k i, ↓reduceIte, s0, Cfg.mapState] using tableSkip.2.2 (Fin.castAdd 2 i) u hu)
+        simpa only [h1Mirror_ne_table k i, ↓reduceIte, s0, Cfg.mapState] using tableSkip.2.2
+          (Fin.castAdd 2 i) u hu)
   have tableBack := skipBackTM_run_ofCfg (h1TableTape k) table s1 rfl (by
     intro z _ _
     simp [s1, d1, data, h1Data, Cfg.mapState, h1TableTape])
@@ -5321,16 +5366,20 @@ private lemma h1Round_restore {k n : ℕ} {x : List Bool}
       have ne : r ≠ .done := fun eq => (tableBack.2.1 u hu) (hr.trans (congrArg some eq))
       simp [h1RoundRed, ne]) (by
       intro u hu
-      apply h1Window_frame c a (h1Data_window c a table _ word (table.length + 1) (2 + word.length) pre true)
+      apply h1Window_frame c a (h1Data_window c a table _ word (table.length + 1) (2 +
+        word.length) pre true)
       · exact h1Run_input (skipBackTM (k + 2) (h1TableTape k))
-          (by intro r inp work; cases r <;> cases h : work (h1TableTape k) <;> simp [skipBackTM, h, tapeAction, inputMoveAction]) s1 u
+          (by intro r inp work; cases r <;> cases h : work (h1TableTape k) <;> simp [skipBackTM,
+            h, tapeAction, inputMoveAction]) s1 u
       · intro i
-        simpa only [h1Mirror_ne_table k i, ↓reduceIte, s1, Cfg.mapState] using tableBack.2.2 (Fin.castAdd 2 i) u hu)
+        simpa only [h1Mirror_ne_table k i, ↓reduceIte, s1, Cfg.mapState] using tableBack.2.2
+          (Fin.castAdd 2 i) u hu)
   have stateGap := skipTM_run_ofCfg (h1SummaryTape k) [] s2 rfl (by
     intro z hz hz'
     have hz0 : z = 0 := by simp only [List.length_nil, Nat.cast_zero] at hz'; omega
     subst z
-    have cell := h1Data_stateCell (a.apply c) table (outputSummary (a.apply c).output) word 0 (2 + word.length) pre
+    have cell := h1Data_stateCell (a.apply c) table (outputSummary (a.apply c).output) word 0 (2
+      + word.length) pre
       word.length (by omega)
     simpa [s2, d2, data, h1Data, Cfg.mapState, h1SummaryTape, FinTM.bufferTape_nat] using cell)
   have stateGapEnd : (skipTM (k + 2) (h1SummaryTape k)).runFrom s2 (([] : List Bool).length + 1) =
@@ -5340,7 +5389,7 @@ private lemma h1Round_restore {k n : ℕ} {x : List Bool}
     funext j
     refine Fin.addCases (fun i => ?_) (fun i => ?_) j
     · simp [s2, d2, d3, data, h1Data, Cfg.mapState, h1Mirror_ne_summary k i]
-    · fin_cases i <;> simp [s2, d2, d3, data, h1Data, Cfg.mapState, h1SummaryTape] <;> omega
+    · fin_cases i <;> simp [s2, d2, d3, data, h1Data, Cfg.mapState, h1SummaryTape]; omega
   have p2 := h1Round_phase c a (.stateGap live) (by intro h; cases h) (by intro h; cases h) s2
     (d3.mapState (fun _ => SeekPhase.done)) _ stateGapEnd .done rfl ⟨.stateRestore live, .run⟩
     (by simp [h1RoundRed]) (by
@@ -5350,13 +5399,16 @@ private lemma h1Round_restore {k n : ℕ} {x : List Bool}
       intro u hu
       apply h1Window_frame c a (h1Data_window c a table _ word 0 (2 + word.length) pre true)
       · exact h1Run_input (skipTM (k + 2) (h1SummaryTape k))
-          (by intro r inp work; cases r <;> cases h : work (h1SummaryTape k) <;> simp [skipTM, h, tapeAction, inputMoveAction]) s2 u
+          (by intro r inp work; cases r <;> cases h : work (h1SummaryTape k) <;> simp [skipTM, h,
+            tapeAction, inputMoveAction]) s2 u
       · intro i
-        simpa only [h1Mirror_ne_summary k i, ↓reduceIte, s2, Cfg.mapState] using stateGap.2.2 (Fin.castAdd 2 i) u hu)
+        simpa only [h1Mirror_ne_summary k i, ↓reduceIte, s2, Cfg.mapState] using stateGap.2.2
+          (Fin.castAdd 2 i) u hu)
   have stateBack := skipBackTM_run_ofCfg (h1SummaryTape k) word s3 rfl (by
     intro z hz _
-    have cell := h1Data_stateCell (a.apply c) table (outputSummary (a.apply c).output) word 0 (word.length + 3) pre z hz
-    convert cell using 1 <;> simp [s3, d3, data, Cfg.mapState, h1Data, h1SummaryTape] <;> congr 1 <;> omega)
+    have cell := h1Data_stateCell (a.apply c) table (outputSummary (a.apply c).output) word 0
+      (word.length + 3) pre z hz
+    convert cell using 1; simp [s3, d3, data, Cfg.mapState, h1Data, h1SummaryTape])
   have stateBackEnd : (skipBackTM (k + 2) (h1SummaryTape k)).runFrom s3 (word.length + 3) =
       d4.mapState (fun _ => SeekPhase.done) := by
     rw [stateBack.1]
@@ -5364,7 +5416,7 @@ private lemma h1Round_restore {k n : ℕ} {x : List Bool}
     funext j
     refine Fin.addCases (fun i => ?_) (fun i => ?_) j
     · simp [s3, d3, d4, data, h1Data, Cfg.mapState, h1Mirror_ne_summary k i]
-    · fin_cases i <;> simp [s3, d3, d4, data, h1Data, Cfg.mapState, h1SummaryTape] <;> omega
+    · fin_cases i <;> simp [s3, d3, d4, data, h1Data, Cfg.mapState, h1SummaryTape]
   have p3 := h1Round_phase c a (.stateRestore live) (by intro h; cases h) (by intro h; cases h) s3
     (d4.mapState (fun _ => SeekPhase.done)) _ stateBackEnd .done rfl ⟨.finish live, (0 : Fin 3)⟩
     (by simp [h1RoundRed]) (by
@@ -5374,10 +5426,13 @@ private lemma h1Round_restore {k n : ℕ} {x : List Bool}
       intro u hu
       apply h1Window_frame c a (h1Data_window c a table _ word 0 (word.length + 3) pre true)
       · exact h1Run_input (skipBackTM (k + 2) (h1SummaryTape k))
-          (by intro r inp work; cases r <;> cases h : work (h1SummaryTape k) <;> simp [skipBackTM, h, tapeAction, inputMoveAction]) s3 u
+          (by intro r inp work; cases r <;> cases h : work (h1SummaryTape k) <;> simp
+            [skipBackTM, h, tapeAction, inputMoveAction]) s3 u
       · intro i
-        simpa only [h1Mirror_ne_summary k i, ↓reduceIte, s3, Cfg.mapState] using stateBack.2.2 (Fin.castAdd 2 i) u hu)
-  have moveEnd : (h1TwoMoveTM (h1SummaryTape k) .neg).runFrom s4 2 = d5.mapState (fun _ => (2 : Fin 3)) := by
+        simpa only [h1Mirror_ne_summary k i, ↓reduceIte, s3, Cfg.mapState] using stateBack.2.2
+          (Fin.castAdd 2 i) u hu)
+  have moveEnd : (h1TwoMoveTM (h1SummaryTape k) .neg).runFrom s4 2 = d5.mapState (fun _ => (2 :
+    Fin 3)) := by
     rw [h1TwoMove_run _ _ s4 rfl 2 le_rfl]
     apply Cfg.ext <;> try rfl
     funext j
@@ -5390,16 +5445,20 @@ private lemma h1Round_restore {k n : ℕ} {x : List Bool}
       intro u hu r hr
       rw [h1TwoMove_run _ _ s4 rfl u (by omega)] at hr
       have vr : r.val = u := congrArg Fin.val (Option.some.inj hr).symm
-      have ne : r ≠ 2 := by intro bad; subst r; simp only [Fin.reduceFinMk] at vr; omega
+      have ne : r ≠ 2 := by intro bad; subst r; omega
       simp [h1RoundRed, ne]) (by
       intro u hu
       rw [h1TwoMove_run _ _ s4 rfl u hu]
       refine ⟨Or.inr rfl, fun i => Or.inr ?_⟩
       simp [s4, d4, data, h1Data, Cfg.mapState, h1Mirror_ne_summary k i])
-  have combined := h1RoundSpan_add c a (h1RoundSpan_add c a (h1RoundSpan_add c a (h1RoundSpan_add c a p0 p1) p2) p3) p4
-  have cost : (((tail.length + 1 + 1) + (table.length + 3 + 1) + (([] : List Bool).length + 1 + 1)) +
-      (word.length + 3 + 1)) + (2 + 1) = tail.length + table.length + word.length + 15 := by simp; omega
-  simpa only [h1At, s0, d0, s1, s2, s3, s4, d1, d2, d3, d4, d5, data, Cfg.mapState, h1Data, cost] using combined
+  have combined := h1RoundSpan_add c a (h1RoundSpan_add c a (h1RoundSpan_add c a (h1RoundSpan_add
+    c a p0 p1) p2) p3) p4
+  have cost : (((tail.length + 1 + 1) + (table.length + 3 + 1) + (([] : List Bool).length + 1 +
+    1)) +
+      (word.length + 3 + 1)) + (2 + 1) = tail.length + table.length + word.length + 15 := by
+        simp; omega
+  simpa only [h1At, s0, d0, s1, s2, s3, s4, d1, d2, d3, d4, d5, data, Cfg.mapState, h1Data, cost]
+    using combined
 
 /-- Lift the proved physical selector into the full round. The result names
 its exact table cut, retaining both the state-size ledger and first-exit cut. -/
@@ -5435,9 +5494,11 @@ private lemma h1Round_lookup {k n : ℕ} {x : List Bool}
           (outputSummary c.output) (unaryFin q) 0 0 pre false) hf.1
           (fun i => hf.2.2.2 _ (h1Mirror_ne_table k i) (h1Mirror_ne_summary k i)))
     have shifted : h1SeekShift d before.length (q.val + 2) =
-        h1Data c (tableBitsK tr) (outputSummary c.output) (unaryFin q) before.length (q.val + 2) pre := by
+        h1Data c (tableBitsK tr) (outputSummary c.output) (unaryFin q) before.length (q.val + 2)
+          pre := by
       simpa only [d, zero_add, Nat.cast_add, Nat.cast_ofNat] using
-        h1Data_shift c (tableBitsK tr) (outputSummary c.output) (unaryFin q) 0 0 pre before.length (q.val + 2)
+        h1Data_shift c (tableBitsK tr) (outputSummary c.output) (unaryFin q) 0 0 pre
+          before.length (q.val + 2)
     rw [shifted] at lifted
     simpa only [h1At, h1SeekCfg, d, Cfg.mapState, h1Data] using lifted
 
@@ -5472,14 +5533,16 @@ private lemma h1Round_canonical {k n : ℕ} {x : List Bool}
   have restore := h1Round_restore c a (tableBitsK tr) (before ++ actionBitsK a) tail word pre
     a.state.isSome (by simpa only [List.append_assoc] using split)
   simp only [List.length_append, Nat.cast_add] at restore
-  have joined := h1RoundSpan_add c a (h1RoundSpan_add c a (h1RoundSpan_add c a lookup prepare) payload) restore
+  have joined := h1RoundSpan_add c a (h1RoundSpan_add c a (h1RoundSpan_add c a lookup prepare)
+    payload) restore
   let U := L + (3 * q.val + 16) + ((actionBitsK a).length + 6) +
     (tail.length + (tableBitsK tr).length + word.length + 15)
   have entry : (h1RoundTM k).step (h1At d .entry ()) = h1At d .lookup (h1SeekTM k).q₀ := by
     have one := step_of_inputMoveAction (h1RoundTM k) (h1At d .entry ())
       (q := ⟨.entry, ()⟩) (q' := ⟨.lookup, (h1SeekTM k).q₀⟩) 0 rfl rfl
     simpa only [moveInputPos_zero, h1At, d, h1Data, Cfg.mapState] using one
-  have advance (u : ℕ) := MultiTapeTM.runFrom_succ_eq_step (tm := h1RoundTM k) (cfg := h1At d .entry ()) (t := u)
+  have advance (u : ℕ) := MultiTapeTM.runFrom_succ_eq_step (tm := h1RoundTM k) (cfg := h1At d
+    .entry ()) (t := u)
   simp only [entry] at advance
   have run : (h1RoundTM k).runFrom (h1At d .entry ()) (U + 1) =
       (h1Data (a.apply c) (tableBitsK tr) (outputSummary (a.apply c).output) word 0 0 pre).mapState
@@ -5505,7 +5568,7 @@ private lemma h1Round_canonical {k n : ℕ} {x : List Bool}
       simp only [List.length_append, List.length_ofFn] at hl
       have tailLen : (optStateBits a.state).length = word.length + 1 := by
         dsimp only [word]
-        cases a.state <;> simp [optStateBits, unaryFin] <;> omega
+        cases a.state <;> simp [optStateBits, unaryFin]
       omega
     dsimp only [U]
     omega
@@ -5632,9 +5695,14 @@ private theorem h1Round_effect {k n : ℕ} {x : List Bool}
     exact hi.eq_of_length_le lo.length_le
   · intro u hu
     have frame := window u hu
-    have finalInput : ((h1RoundTM k).runFrom d T).inputPos = (a.apply c).inputPos := by rw [run]; rfl
+    have finalInput : ((h1RoundTM k).runFrom d T).inputPos = (a.apply c).inputPos := by
+      rw [run]
+      rfl
     have finalHead (i : Fin k) : ((h1RoundTM k).runFrom d T).workTapePos (Fin.castAdd 2 i) =
-        (a.apply c).workTapePos i := by rw [run]; simp only [h1Data, Cfg.mapState, Fin.addCases_left]; rfl
+        (a.apply c).workTapePos i := by
+      rw [run]
+      simp only [h1Data, Cfg.mapState, Fin.addCases_left]
+      rfl
     have inputStep : |((a.apply c).inputPos.val : ℤ) - c.inputPos.val| ≤ 1 := by
       change |((moveInputPos c.inputPos a.inputTape).val : ℤ) - c.inputPos.val| ≤ 1
       apply abs_le.mpr
@@ -5661,7 +5729,8 @@ private theorem h1Round_effect {k n : ℕ} {x : List Bool}
         exact (h1Run_headBound (h1RoundTM k) d u j).trans (by omega)
   · intro j hj
     have home (e : Cfg (k + 2) Bool (Σ key, h1RoundPh k key) x)
-        (ht : e.workTapePos (h1TableTape k) = 0) (hs : e.workTapePos (h1SummaryTape k) = 0) : e.workTapePos j = 0 := by
+        (ht : e.workTapePos (h1TableTape k) = 0) (hs : e.workTapePos (h1SummaryTape k) = 0) :
+          e.workTapePos j = 0 := by
       have casesAux : j = h1TableTape k ∨ j = h1SummaryTape k := by
         have limit := j.isLt
         have indices : j.val = k ∨ j.val = k + 1 := by omega
@@ -5675,6 +5744,388 @@ private theorem h1Round_effect {k n : ℕ} {x : List Bool}
     apply home
     · rw [run]; simp [h1Data, Cfg.mapState, h1TableTape]
     · rw [run]; simp [h1Data, Cfg.mapState, h1SummaryTape]
+
+/-- The sanctioned binary clock around the frozen step block. The virtual
+input host is applied outside this clock, so its changing boundary tag is
+never mistaken for part of the counter loop's fixed return anchor. -/
+private def h1ClockTM (k : ℕ) :=
+  counterLoopTM (h1RoundTM k) (h1RoundExit k true) (some (h1RoundExit k false))
+
+/-- The physical buffered clock uses exactly the public forwarding host.
+Its buffer carries the simulated input; the last payload tape is the clock. -/
+private def h1HostedClockTM (k : ℕ) := vhostEmitTM (h1ClockTM k)
+
+/-- The first positive return to either frozen round exit. This is a proof
+index for the public clock contract, not a machine that computes a time. -/
+private noncomputable def h1RoundTime {k : ℕ} {x : List Bool}
+    (d : Cfg (k + 2) Bool (Σ key, h1RoundPh k key) x) : ℕ := by
+  classical
+  exact if h : ∃ t, 0 < t ∧ ∃ b, ((h1RoundTM k).runFrom d t).state =
+      some (h1RoundExit k b) then Nat.find h else 0
+
+/-- The first-return index inherits the frozen block's endpoint, strict cut,
+silence and linear time bound. No second interpreter trace is proved.
+
+**Proof sketch.** The frozen contract supplies a positive exit time. Its
+strict interior excludes both exits, so that time is the least positive
+exit time used by the public counter loop. -/
+private lemma h1RoundTime_spec {k n : ℕ} {x : List Bool}
+    (M : MultiTapeTM k Bool (Fin (n + 1))) (c : Cfg k Bool (Fin (n + 1)) x)
+    (live : c.state ≠ none) (d : Cfg (k + 2) Bool (Σ key, h1RoundPh k key) x)
+    (entry : d.state = some (h1RoundExit k true)) (rel : h1RoundRep M.tr c d) :
+    0 < h1RoundTime d ∧ h1RoundTime d ≤ 50 * ((tableBitsK M.tr).length + 1) ∧
+      let e := (h1RoundTM k).runFrom d (h1RoundTime d)
+      e.state = some (h1RoundExit k (M.step c).state.isSome) ∧
+      h1RoundRep M.tr (M.step c) e ∧ e.output = d.output ∧
+      (∀ u, 0 < u → u < h1RoundTime d → ∃ s,
+        ((h1RoundTM k).runFrom d u).state = some s ∧
+          s ≠ h1RoundExit k true ∧ s ≠ h1RoundExit k false) := by
+  classical
+  obtain ⟨q, hq⟩ := Option.ne_none_iff_exists'.mp live
+  obtain ⟨T, positive, bound, state, related, _, cut, silent, _⟩ :=
+    h1Round_effect M.tr c q hq d entry rel
+  have step : M.step c = (M.tr q c.inputSymbol c.workTapeSymbols).apply c := by
+    simp only [MultiTapeTM.step, hq]
+  have existsExit : ∃ t, 0 < t ∧ ∃ b,
+      ((h1RoundTM k).runFrom d t).state = some (h1RoundExit k b) :=
+    ⟨T, positive, _, state⟩
+  have least : Nat.find existsExit = T := by
+    apply (Nat.find_eq_iff existsExit).mpr
+    refine ⟨⟨positive, _, state⟩, ?_⟩
+    intro u hu earlier
+    obtain ⟨s, hs, he, hh⟩ := cut u earlier.1 hu
+    obtain ⟨b, hb⟩ := earlier.2
+    have equal : s = h1RoundExit k b := Option.some.inj (hs.symm.trans hb)
+    cases b
+    · exact hh equal
+    · exact he equal
+  have duration : h1RoundTime d = T := by
+    simp only [h1RoundTime, dif_pos existsExit, least]
+  rw [duration]
+  exact ⟨positive, bound, by simpa only [step] using state,
+    by simpa only [step] using related, silent T le_rfl, cut⟩
+
+/-- The public body orbit represents the corresponding source run up to
+and including its first halting transition. This is the representation
+invariant for the existing counter loop, not another physical runner.
+
+**Proof sketch.** Induct on the number of completed source transitions.
+Each live source configuration uses the frozen round contract at its
+first-return index. The source's run-addition law identifies the successor.
+The output prefix is preserved by each cited round. -/
+private lemma h1Clock_orbit {k n : ℕ} {x : List Bool}
+    (M : MultiTapeTM k Bool (Fin (n + 1)))
+    (d : Cfg (k + 2) Bool (Σ key, h1RoundPh k key) x)
+    (entry : d.state = some (h1RoundExit k true))
+    (rel : h1RoundRep M.tr (M.initCfg x) d)
+    (r : ℕ) (live : ∀ u < r, (M.runFrom (M.initCfg x) u).state ≠ none) :
+    let e := counterLoopOrbit (h1RoundTM k) h1RoundTime d r
+    e.state = some (h1RoundExit k (M.runFrom (M.initCfg x) r).state.isSome) ∧
+      h1RoundRep M.tr (M.runFrom (M.initCfg x) r) e ∧ e.output = d.output := by
+  induction r with
+  | zero => exact ⟨entry, rel, rfl⟩
+  | succ r ih =>
+    obtain ⟨state, related, output⟩ := ih (fun u hu => live u (by omega))
+    have alive := live r (by omega)
+    have anchor :
+        (counterLoopOrbit (h1RoundTM k) h1RoundTime d r).state =
+          some (h1RoundExit k true) := by
+      simpa only [Option.isSome_iff_ne_none.mpr alive] using state
+    obtain ⟨_, _, hs, hr, ho, _⟩ := h1RoundTime_spec M (M.runFrom (M.initCfg x) r) alive
+      (counterLoopOrbit (h1RoundTM k) h1RoundTime d r) anchor related
+    change _ ∧ _ ∧ _
+    simp only [counterLoopOrbit, Function.iterate_succ_apply']
+    simpa only [MultiTapeTM.runFrom_succ_eq_step'] using
+      And.intro hs (And.intro hr (ho.trans output))
+
+/-- The clock's round hypotheses and budget follow from the source liveness
+invariant and the already proved step-block contract. -/
+private lemma h1Clock_round {k n : ℕ} {x : List Bool}
+    (M : MultiTapeTM k Bool (Fin (n + 1)))
+    (d : Cfg (k + 2) Bool (Σ key, h1RoundPh k key) x)
+    (entry : d.state = some (h1RoundExit k true))
+    (rel : h1RoundRep M.tr (M.initCfg x) d)
+    (r : ℕ) (live : ∀ u ≤ r, (M.runFrom (M.initCfg x) u).state ≠ none) :
+    let e := counterLoopOrbit (h1RoundTM k) h1RoundTime d r
+    e.state = some (h1RoundExit k true) ∧
+      0 < h1RoundTime e ∧ h1RoundTime e ≤ 50 * ((tableBitsK M.tr).length + 1) ∧
+      (∀ u, 0 < u → u < h1RoundTime e → ∃ s,
+        ((h1RoundTM k).runFrom e u).state = some s ∧
+          s ≠ h1RoundExit k true ∧ s ≠ h1RoundExit k false) := by
+  obtain ⟨state, related, _⟩ := h1Clock_orbit M d entry rel r
+    (fun u hu => live u (Nat.le_of_lt hu))
+  have alive := live r le_rfl
+  have anchor :
+      (counterLoopOrbit (h1RoundTM k) h1RoundTime d r).state =
+        some (h1RoundExit k true) := by
+    simpa only [Option.isSome_iff_ne_none.mpr alive] using state
+  obtain ⟨positive, bound, _, _, _, cut⟩ := h1RoundTime_spec M (M.runFrom (M.initCfg x) r) alive
+    (counterLoopOrbit (h1RoundTM k) h1RoundTime d r) anchor related
+  exact ⟨anchor, positive, bound, cut⟩
+
+/-- The physical binary clock reaches timeout or simulated halt, with the
+source represented at the inclusive deadline and with the exact physical
+output prefix preserved. Both exit cuts and every decrement are included.
+
+**Proof sketch.** If the source is still live at the deadline, all previous
+configurations are live: apply the public returning loop theorem and its
+amortized bound. Otherwise take the public first-halt witness and apply the
+escaping theorem to its last transition. Its index is strictly below the
+deadline, even for a halt exactly at that deadline. Halt absorption identifies
+the represented source endpoint with the deadline configuration. -/
+private lemma h1Clock_effect {k n : ℕ} {x : List Bool}
+    (M : MultiTapeTM k Bool (Fin (n + 1)))
+    (d : Cfg (k + 2) Bool (Σ key, h1RoundPh k key) x)
+    (entry : d.state = some (h1RoundExit k true))
+    (rel : h1RoundRep M.tr (M.initCfg x) d) (t : ℕ) :
+    ∃ T ≤ t * (50 * ((tableBitsK M.tr).length + 1)) + 4 * t + 2 * t.bits.length + 2,
+      ∃ e ct, h1RoundRep M.tr (M.runFrom (M.initCfg x) t) e ∧ e.output = d.output ∧
+        (h1ClockTM k).runFrom
+          (counterLoopCfg (some (.dec .run)) d (FinTM.bufferTape t.bits) 0) T =
+          counterLoopCfg
+            (some (if (M.runFrom (M.initCfg x) t).state.isSome then .done else .escape)) e ct 0 ∧
+        (∀ u < T,
+          ((h1ClockTM k).runFrom
+            (counterLoopCfg (some (.dec .run)) d (FinTM.bufferTape t.bits) 0) u).state ≠
+              some .done ∧
+          ((h1ClockTM k).runFrom
+            (counterLoopCfg (some (.dec .run)) d (FinTM.bufferTape t.bits) 0) u).state ≠
+              some .escape) := by
+  have digits : Nat.ofDigits 2 (t.bits.map Bool.toNat) = t := by
+    rw [← canonBits_value]
+    exact codeBitsNat_bits t
+  by_cases halted : (M.runFrom (M.initCfg x) t).state = none
+  · obtain ⟨u, deadline, before, same⟩ := M.exists_first_halt (M.initCfg x) halted
+    have positive : 0 < u := by
+      by_contra h
+      have zero : u = 0 := by omega
+      have bad := congrArg Cfg.state same
+      rw [zero, halted] at bad
+      cases bad
+    let r := u - 1
+    have count : r + 1 = u := by dsimp [r]; omega
+    have live (j : ℕ) (hj : j ≤ r) : (M.runFrom (M.initCfg x) j).state ≠ none :=
+      before j (by omega)
+    have round (j : ℕ) (hj : j ≤ r) :=
+      h1Clock_round M d entry rel j (fun i hi => live i (hi.trans hj))
+    obtain ⟨lastState, lastRep, lastOutput⟩ := h1Clock_orbit M d entry rel u before
+    rw [same, halted, Option.isSome_none] at lastState
+    rw [same] at lastRep
+    let T := (∑ j ∈ Finset.range u,
+      h1RoundTime (counterLoopOrbit (h1RoundTM k) h1RoundTime d j)) +
+        counterOverhead t.bits u
+    have run := counterLoopTM_run_escape (h1RoundTM k)
+      (h1RoundExit k true) (h1RoundExit k false) (by simp [h1RoundExit])
+      h1RoundTime d t.bits (FinTM.bufferTape t.bits) 0
+      (by intro p _ _; simp) r (by rw [digits]; omega)
+      (fun j hj => ⟨(round j hj).1, (round j hj).2.1, (round j hj).2.2.2⟩)
+      (by simpa only [count] using lastState) T (by simp only [T, count])
+    have sumBound : (∑ j ∈ Finset.range u,
+        h1RoundTime (counterLoopOrbit (h1RoundTM k) h1RoundTime d j)) ≤
+        u * (50 * ((tableBitsK M.tr).length + 1)) := by
+      calc
+        _ ≤ ∑ _j ∈ Finset.range u, (50 * ((tableBitsK M.tr).length + 1)) :=
+          Finset.sum_le_sum (fun j hj => (round j (by
+            have := Finset.mem_range.mp hj; omega)).2.2.1)
+        _ = _ := by simp
+    have overhead := counterOverhead_le_of_le t.bits u (by rw [digits]; omega)
+    refine ⟨T, ?_, counterLoopOrbit (h1RoundTM k) h1RoundTime d u,
+      (fun q => if 0 ≤ q ∧ q < (t.bits.length : ℤ) then
+        FinTM.bufferTape (counterWord t.bits u) q else FinTM.bufferTape t.bits q),
+      lastRep, lastOutput, ?_, run.2.1⟩
+    · have bounded := Nat.mul_le_mul_right (50 * ((tableBitsK M.tr).length + 1)) deadline
+      dsimp [T]
+      omega
+    · simpa only [h1ClockTM, count, halted, Option.isSome_none, Bool.false_eq_true,
+        ↓reduceIte, zero_add, sub_zero] using run.1
+  · have live (j : ℕ) (hj : j ≤ t) : (M.runFrom (M.initCfg x) j).state ≠ none :=
+      M.runFrom_state_ne_none_of_le (M.initCfg x) t halted j hj
+    have round (j : ℕ) (hj : j < t) :=
+      h1Clock_round M d entry rel j (fun i hi => live i (by omega))
+    let T := (∑ j ∈ Finset.range t,
+      h1RoundTime (counterLoopOrbit (h1RoundTM k) h1RoundTime d j)) +
+        counterOverhead t.bits (t + 1)
+    have run := counterLoopTM_run_done (h1RoundTM k) (h1RoundExit k true)
+      (some (h1RoundExit k false)) h1RoundTime d t.bits (FinTM.bufferTape t.bits) 0
+      (by intro p _ _; simp) t digits (by
+        intro j hj
+        obtain ⟨anchor, positive, _, interior⟩ := round j hj
+        obtain ⟨next, _, _⟩ := h1Clock_orbit M d entry rel (j + 1)
+          (fun i hi => live i (by omega))
+        refine ⟨anchor, positive, ?_, ?_⟩
+        · intro v hv ht
+          obtain ⟨s, hs, ha, he⟩ := interior v hv ht
+          exact ⟨s, hs, ha, fun eq => he (Option.some.inj eq).symm⟩
+        · simpa only [Option.isSome_iff_ne_none.mpr (live (j + 1) (by omega))] using next)
+      T rfl
+    obtain ⟨_, finalRep, finalOutput⟩ := h1Clock_orbit M d entry rel t
+      (fun j hj => live j (Nat.le_of_lt hj))
+    refine ⟨T, counterLoop_time_le (h1RoundTM k) h1RoundTime d t.bits t digits
+      (50 * ((tableBitsK M.tr).length + 1)) (fun j hj => (round j hj).2.2.1),
+      counterLoopOrbit (h1RoundTM k) h1RoundTime d t,
+      (fun q => if 0 ≤ q ∧ q < (t.bits.length : ℤ) then some true
+        else FinTM.bufferTape t.bits q), finalRep, finalOutput, ?_,
+      run.2.1⟩
+    simpa only [h1ClockTM, Option.isSome_iff_ne_none.mpr halted, ↓reduceIte, zero_add]
+      using run.1
+
+/-- The completed clock hosted on a buffered input, with a valid boundary
+tag at its final seam and strict cuts at both exits for either tag.
+The native input is arbitrary and its head is fixed by the public host.
+
+**Proof sketch.** Apply the native clock contract, then the public virtual
+input run theorem to its entire execution. Apply that same theorem at each
+strict prefix to transfer the two exit cuts; the arrival tag is existential,
+never assumed to be the initial tag. -/
+private lemma h1HostedClock_effect {k n : ℕ} {x z : List Bool}
+    (M : MultiTapeTM k Bool (Fin (n + 1)))
+    (d : Cfg (k + 2) Bool (Σ key, h1RoundPh k key) x)
+    (entry : d.state = some (h1RoundExit k true))
+    (rel : h1RoundRep M.tr (M.initCfg x) d) (t : ℕ)
+    (p : Fin (z.length + 2)) :
+    ∃ T ≤ t * (50 * ((tableBitsK M.tr).length + 1)) + 4 * t + 2 * t.bits.length + 2,
+      ∃ e ct b, h1RoundRep M.tr (M.runFrom (M.initCfg x) t) e ∧ e.output = d.output ∧
+        FinTM.VirtualTag e.inputPos b ∧
+        (h1HostedClockTM k).runFrom
+          (vhostCfg (counterLoopCfg (some (.dec .run)) d
+            (FinTM.bufferTape t.bits) 0) true p []) T =
+          vhostCfg (counterLoopCfg
+            (some (if (M.runFrom (M.initCfg x) t).state.isSome then .done else .escape))
+            e ct 0) b p [] ∧
+        (∀ u < T, ∀ tag,
+          ((h1HostedClockTM k).runFrom
+            (vhostCfg (counterLoopCfg (some (.dec .run)) d
+              (FinTM.bufferTape t.bits) 0) true p []) u).state ≠ some (.done, tag) ∧
+          ((h1HostedClockTM k).runFrom
+            (vhostCfg (counterLoopCfg (some (.dec .run)) d
+              (FinTM.bufferTape t.bits) 0) true p []) u).state ≠ some (.escape, tag)) := by
+  obtain ⟨T, bound, e, ct, related, output, run, cut⟩ := h1Clock_effect M d entry rel t
+  let start := counterLoopCfg (some (.dec .run)) d (FinTM.bufferTape t.bits) 0
+  have valid : FinTM.VirtualTag start.inputPos true := by
+    change FinTM.VirtualTag d.inputPos true
+    rw [rel.1]
+    simp [FinTM.VirtualTag, MultiTapeTM.initCfg, Cfg.init]
+  obtain ⟨b, tag, hosted⟩ := vhostEmitTM_runFrom (h1ClockTM k) start true valid p [] T
+  rw [run] at tag hosted
+  refine ⟨T, bound, e, ct, b, related, output, tag, hosted, ?_⟩
+  intro u hu tag'
+  obtain ⟨b', _, hostedPrefix⟩ := vhostEmitTM_runFrom (h1ClockTM k) start true valid p [] u
+  change ((vhostEmitTM (h1ClockTM k)).runFrom (vhostCfg start true p []) u).state ≠ _ ∧ _
+  rw [hostedPrefix]
+  constructor
+  all_goals
+    intro bad
+    have projected := congrArg (Option.map Prod.fst) bad
+    simp only [vhostCfg, Option.map_map, Function.comp_def, Option.map_id_fun',
+      Option.map_some] at projected
+    first
+    | exact (cut u hu).1 projected
+    | exact (cut u hu).2 projected
+
+/-- The hosted clock with its two live exits replaced by the one-step
+verdict. Timeout emits false; simulated halt tests the restored summary
+cell. Every other transition is the existing hosted clock transition. -/
+private def h1HostedVerdictTM (k : ℕ) :
+    MultiTapeTM (1 + (k + 2 + 1)) Bool (CounterLoopState (Σ key, h1RoundPh k key) × Bool) :=
+  { h1HostedClockTM k with tr := fun q inp work =>
+      if q.1 = .done ∨ q.1 = .escape then
+        ⟨0, fun _ => (none, 0),
+          some (if q.1 = .escape then
+            work (vhostBank (h1SummaryTape k).castSucc) == some true else false), none⟩
+      else (h1HostedClockTM k).tr q inp work }
+
+/-- The physical hosted clock and its verdict, from the prepared round
+seam. The endpoint is halted and emits precisely the inherited semantic
+clock's answer, after the arbitrary prior physical output prefix.
+
+**Proof sketch.** The public agreement theorem transports the hosted clock
+run because its strict prefixes avoid both verdict exits. At the endpoint,
+the representation places the output summary under its head. One stationary
+halting step reads it. The frozen semantic clock equation identifies this
+bit; neither the physical run nor the acceptance argument is re-proved. -/
+private theorem h1HostedVerdict_effect {k n : ℕ} {x z : List Bool}
+    (M : MultiTapeTM k Bool (Fin (n + 1)))
+    (d : Cfg (k + 2) Bool (Σ key, h1RoundPh k key) x)
+    (entry : d.state = some (h1RoundExit k true))
+    (rel : h1RoundRep M.tr (M.initCfg x) d) (t : ℕ)
+    (p : Fin (z.length + 2)) :
+    ∃ T ≤ t * (50 * ((tableBitsK M.tr).length + 1)) + 4 * t + 2 * t.bits.length + 3,
+      let e := (h1HostedVerdictTM k).runFrom
+        (vhostCfg (counterLoopCfg (some (.dec .run)) d
+          (FinTM.bufferTape t.bits) 0) true p []) T
+      e.state = none ∧ e.inputPos = p ∧
+        e.output = d.output ++ [summaryClock M t (M.initCfg x) none] := by
+  obtain ⟨T, bound, e, ct, b, related, output, _, run, cut⟩ :=
+    h1HostedClock_effect M d entry rel t p
+  let start := vhostCfg (counterLoopCfg (some (.dec .run)) d
+    (FinTM.bufferTape t.bits) 0) true p []
+  have agree : (h1HostedClockTM k).AgreeOn (h1HostedVerdictTM k)
+      {q | q.1 ≠ .done ∧ q.1 ≠ .escape} := by
+    intro q hq inp work
+    simp only [h1HostedVerdictTM, hq.1, hq.2, or_self, ↓reduceIte]
+  have transfer := MultiTapeTM.runFrom_eq_of_agreeOn agree start T (by
+    intro u hu q hq
+    constructor
+    · intro bad
+      exact (cut u hu q.2).1 (hq.trans (congrArg some (Prod.ext bad rfl)))
+    · intro bad
+      exact (cut u hu q.2).2 (hq.trans (congrArg some (Prod.ext bad rfl))))
+  have cell : e.workTapeSymbols (h1SummaryTape k) =
+      outputSummary (M.runFrom (M.initCfg x) t).output := by
+    simp only [Cfg.workTapeSymbols, related.2.2.2.2.2, related.2.2.2.1,
+      h1SummaryState, ↓reduceIte]
+  have semantic : summaryClock M t (M.initCfg x) none =
+      ((M.runFrom (M.initCfg x) t).state.isNone &&
+        (outputSummary (M.runFrom (M.initCfg x) t).output == some true)) :=
+    summaryClock_correct M (M.initCfg x) t
+  refine ⟨T + 1, by omega, ?_⟩
+  change ((h1HostedVerdictTM k).runFrom start (T + 1)).state = none ∧ _
+  rw [MultiTapeTM.runFrom_succ_eq_step', transfer, run]
+  rw [semantic]
+  have projected :
+      (embedEmitCfg Fin.castSuccEmb (fun _ => ct) (fun _ => 0) [] e).workTapeSymbols
+        (h1SummaryTape k).castSucc =
+        outputSummary (M.runFrom (M.initCfg x) t).output := by
+    change (embedEmitCfg Fin.castSuccEmb (fun _ => ct) (fun _ => 0) [] e).workTapes
+      (Fin.castSuccEmb (h1SummaryTape k))
+      ((embedEmitCfg Fin.castSuccEmb (fun _ => ct) (fun _ => 0) [] e).workTapePos
+        (Fin.castSuccEmb (h1SummaryTape k))) = _
+    rw [embedEmitCfg_selected_tape, embedEmitCfg_selected_pos]
+    exact cell
+  have projectedOutput :
+      (embedEmitCfg Fin.castSuccEmb (fun _ => ct) (fun _ => 0) [] e).output =
+        d.output := output
+  cases state : (M.runFrom (M.initCfg x) t).state <;>
+    simp [MultiTapeTM.step, h1HostedVerdictTM, vhostCfg, counterLoopCfg,
+      Cfg.workTapeSymbols, vhostBank, Action.apply, Cfg.mapState,
+      projectedOutput, show
+        (embedEmitCfg Fin.castSuccEmb (fun _ => ct) (fun _ => 0) [] e).workTapes
+            (h1SummaryTape k).castSucc
+            ((embedEmitCfg Fin.castSuccEmb (fun _ => ct) (fun _ => 0) [] e).workTapePos
+              (h1SummaryTape k).castSucc) =
+          outputSummary (M.runFrom (M.initCfg x) t).output from projected]
+
+/-- The hosted verdict's bit is bounded acceptance, by the inherited
+semantic bridge. This specializes only the prepared-seam contract: parsing
+and canonizer installation are separate startup obligations. -/
+private theorem h1HostedVerdict_accepts (F : MachineFormat) (α x z : List Bool)
+    (d : Cfg (F.k + 2) Bool (Σ key, h1RoundPh F.k key) x)
+    (entry : d.state = some (h1RoundExit F.k true))
+    (rel : h1RoundRep (F.machine (F.decode α)).tr
+      ((F.machine (F.decode α)).initCfg x) d) (t : ℕ)
+    (p : Fin (z.length + 2)) :
+    ∃ T ≤ t * (50 * ((tableBitsK (F.machine (F.decode α)).tr).length + 1)) +
+        4 * t + 2 * t.bits.length + 3, ∃ answer : Bool,
+      ((h1HostedVerdictTM F.k).runFrom
+        (vhostCfg (counterLoopCfg (some (.dec .run)) d
+          (FinTM.bufferTape t.bits) 0) true p []) T).state = none ∧
+      ((h1HostedVerdictTM F.k).runFrom
+        (vhostCfg (counterLoopCfg (some (.dec .run)) d
+          (FinTM.bufferTape t.bits) 0) true p []) T).output = d.output ++ [answer] ∧
+      (answer = true ↔ (F.toFinTM (F.decode α)).ComputesInTime x [true] t) := by
+  obtain ⟨T, bound, halted, _, output⟩ :=
+    h1HostedVerdict_effect (F.machine (F.decode α)) d entry rel t p
+  exact ⟨T, bound, _, halted, output, summaryClock_accepts (F.toFinTM (F.decode α)) x t⟩
 
 /-- **The uniform bounded-acceptance simulator** (spec, fill pending — batch
 B5a): one finite binary machine and one degree such that, on
@@ -5744,6 +6195,21 @@ All new helpers are proved without admissions. This partial does not discharge
 the headline: nested-input startup and canonizer installation, Z1 hosting and
 the counter loop, the joint polynomial ledger, and note 50's physical H1
 exact-deadline checks remain. The original statement and pending tag are unchanged.
+**Fill appendix (H1 continuation 2, partial; complete hosted clock and verdict).**
+The frozen `h1Round_effect` now feeds the public binary counter loop through
+`h1RoundTime_spec`, `h1Clock_orbit`, and `h1Clock_effect`. The counter loop is
+inside the public virtual-input host: its round anchor is fixed while the
+host's boundary tag may change. `h1HostedClock_effect` proves the valid arrival
+tag and strict cuts at both exits, including an escape on the last permitted
+round. `h1HostedVerdict_effect` adds one stationary halting emission and gives
+the inherited `summaryClock` answer in at most
+`t * (50 * (|table| + 1)) + 4 * t + 2 * |bits t| + 3` physical steps.
+`h1HostedVerdict_accepts` cites `summaryClock_accepts` for bounded acceptance.
+These contracts start at the prepared round seam and introduce no admissions.
+Nested-input startup, installation of the frozen canonizer, the joint
+polynomial startup ledger, and the end-to-end raw-code note-50 checks remain
+open. The headline retains its original admission and pending tag.
+
 -/
 theorem exists_uniformSimulator :
     ∃ (S : FinTM Bool) (d : ℕ), ∀ (α x : List Bool) (t : ℕ),
