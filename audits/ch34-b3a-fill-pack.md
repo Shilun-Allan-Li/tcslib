@@ -114,3 +114,14 @@ be rerun.
 
 Severity guide as in `audits/TEMPLATE.md`. Findings go verbatim into
 `audits/ch34-b3a-fill-findings.md`. The gate closes when it has zero blockers and zero majors.
+
+## Erratum (gate round 1, minors 1 and 2; `audits/ch34-b3a-fill-resolutions.md`)
+
+- **Screens.** The bundle carries the delivery's 24-file population, from which its screens can be
+  rerun. It does not carry the other 42 files of the fills-6 union screen's 66-file population,
+  among them `Build/Convention.lean`. That screen's result rests on the historical log
+  (`audits/logs/fills-6-ch34-screen-combined.txt`).
+- **Delivery integrity.** The bundle attached five of the delivery manifest's 27 payloads. The
+  delivery's sanity and pre-ship sources and logs, its sweep logs, its bundle check and its axiom
+  log are now in `audits/evidence/ch34-b3a-fill-gate/delivery/`, each matching its manifest
+  hash. The other manifest entries are attested by the maintainer, not attached.

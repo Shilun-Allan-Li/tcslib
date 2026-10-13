@@ -488,10 +488,14 @@ window.*
 - **(a) `Nat.bits` shift law.** One public lemma for `(2^j·m).bits = replicate j false ++ m.bits`.
   It retires `s1b_radius_bits` (`ConfigGraph`, an undisclosed restatement),
   `expcom_bits_two_pow` (`EXPCOM`) and `bits_two_pow` (`TimeHierarchy/Separation`). See CH34-D4.
-- **(b) The Seam space lemma in `Constructible`.** `b3a_seam_space` re-derives the public Seam
-  space lemma in reworded text, which the text screen does not catch; B3a disclosed it as a
-  promotion candidate. Retire it by citing the public lemma, adapting the statement shape at the
-  call site. `b3a_cfg` is close to `Cfg.ofWords`; cite it if the shapes agree.
+- **(b) The Seam space lemma in `Constructible`.** `b3a_seam_space` is a general-configuration
+  corollary of the public trajectory theorem `seamCompTM_visitedByTapeHead_ofCfg`, and B3a
+  disclosed it as a promotion candidate. **Corrected at the B3a gate (minor 3):** the public
+  additive lemmas `seamCompTM_spaceUsedByTape_le_add` and `seamCompTM_spaceUsed_le_add` need a live
+  `Cfg.ofWords` endpoint, while `b3a_seam_space` is used at a genuine halt, so citing them is not
+  a valid retirement. Promote a general-configuration
+  additive corollary, derive the canonical corollaries from it, then replace the private helper.
+  `b3a_cfg` is close to `Cfg.ofWords`; define it through `Cfg.ofWords` if the shapes agree (note 8).
 - **(c) Canonical bits in `CodeSimulator`.** `canonBits_of_last` and `canonBits_value` overlap
   semantically with `NotTimeConstructible`'s private `ntc_bits_codeBitsNat_append_true` and
   `ntc_codeBitsNat_eq_ofDigits`, and with `UHaltMachine`'s `bits_foldr_bit_one`. One public
