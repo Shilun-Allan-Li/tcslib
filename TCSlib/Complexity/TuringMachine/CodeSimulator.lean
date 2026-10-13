@@ -1143,6 +1143,728 @@ private lemma canonGuard_run (F : MachineFormat) (α bits rest : List Bool)
       exact ⟨hs, ho, hi, hcut⟩
 
 
+/-- A clean install call with a cut that includes time zero. The public
+release adapter handles coincident entry and exit anchors; otherwise their
+inequality supplies the only missing case.
+
+**Proof sketch.** Apply the install row, preserving its exact ledger. If
+its anchors coincide, use the public positive-return adapter. Otherwise
+separate zero from the positive times already covered by the row. -/
+private lemma canonStrictInstall (M : FinTM Bool) (f : List Bool → List Bool)
+    (T : ℕ → ℕ) (hM : M.ComputesFunInTime f T) :
+    ∃ (C : FinTM Bool) (entry exit : C.State) (a : ℕ), 0 < C.k ∧
+      ∀ x arg : List Bool,
+        ∃ t ≤ a * (T arg.length + arg.length + (f arg).length + 1),
+          0 < t ∧
+          (∀ u < t, (C.tm.runFrom
+            (Cfg.ofWords (input := x) entry (stateWord C.k arg)) u).state ≠ some exit) ∧
+          C.tm.runFrom (Cfg.ofWords (input := x) entry (stateWord C.k arg)) t =
+            Cfg.ofWords exit (stateWord C.k (f arg)) := by
+  classical
+  obtain ⟨C, entry, exit, a, hk, hC⟩ := FinTM.exists_installCallTM M f T hM
+  by_cases he : entry = exit
+  · subst exit
+    let R : FinTM Bool := {
+      k := C.k
+      State := Unit ⊕ C.State
+      tm := seamReleaseTM C.tm entry }
+    refine ⟨R, Sum.inl (), Sum.inr entry, a, hk, ?_⟩
+    intro x arg
+    obtain ⟨t, bound, pos, cut, run⟩ := hC x arg
+    obtain ⟨released, first⟩ := seamReleaseTM_firstReturn C.tm entry rfl pos run rfl cut
+    exact ⟨t, bound, pos, by
+      simpa only [Cfg.ofWords, Cfg.mapState, Option.map_some] using first, by
+      simpa only [Cfg.ofWords, Cfg.mapState, Option.map_some] using released⟩
+  · refine ⟨C, entry, exit, a, hk, ?_⟩
+    intro x arg
+    obtain ⟨t, bound, pos, cut, run⟩ := hC x arg
+    refine ⟨t, bound, pos, ?_, run⟩
+    intro u hu
+    cases u with
+    | zero => exact fun h => he (Option.some.inj h)
+    | succ u => exact cut (u + 1) (Nat.succ_pos _) hu
+
+/-- Configuration assembly from the public selected-tape and frame laws.
+This is the common extensionality step for word banks and native seeks.
+
+**Proof sketch.** Split each host tape by membership in the embedded bank;
+use the public selected projections there and the public frame at time zero
+elsewhere. The other three fields are supplied by the caller. -/
+private lemma canonEmbedEq {m k : ℕ} {S : Type} {x : List Bool}
+    (M : MultiTapeTM m Bool S) (ι : Fin m ↪ Fin k)
+    (c : Cfg m Bool S x) (d : Cfg k Bool S x)
+    (tapes : Fin k → ℤ → Option Bool) (heads : Fin k → ℤ)
+    (hs : c.state = d.state) (hp : c.inputPos = d.inputPos) (ho : c.output = d.output)
+    (selected : ∀ i, c.workTapes i = d.workTapes (ι i) ∧
+      c.workTapePos i = d.workTapePos (ι i))
+    (outside : ∀ j, j ∉ Set.range ι →
+      tapes j = d.workTapes j ∧ heads j = d.workTapePos j) :
+    embedEmitCfg ι tapes heads [] c = d := by
+  apply Cfg.ext hs hp ?_ ?_ (by simpa only [embedEmitCfg, List.nil_append] using ho)
+  all_goals
+    funext j
+    by_cases located : j ∈ Set.range ι
+    · obtain ⟨i, rfl⟩ := located
+      first
+      | exact (embedEmitCfg_selected_tape ι tapes heads [] c i).trans (selected i).1
+      | exact (embedEmitCfg_selected_pos ι tapes heads [] c i).trans (selected i).2
+    · have fixed := (embedEmitTM_frame ι M tapes heads [] c 0).1 j located
+      first
+      | exact fixed.1.trans (outside j located).1
+      | exact fixed.2.trans (outside j located).2
+
+
+/-- The public selected-tape and frame laws identify an embedded clean bank
+with the requested whole-bank word layout. No private slot inverse is used.
+
+**Proof sketch.** On the image of the tape embedding use its selected-tape
+laws; off that image use its frame law at time zero. Configuration
+extensionality then identifies the words and heads simultaneously. -/
+private lemma canonEmbedWords {m k : ℕ} {S : Type} {x : List Bool}
+    (M : MultiTapeTM m Bool S) (ι : Fin m ↪ Fin k) (q : S)
+    (v : Fin m → List Bool) (ambient wanted : Fin k → List Bool)
+    (selected : ∀ i, wanted (ι i) = v i)
+    (outside : ∀ j, j ∉ Set.range ι → ambient j = wanted j) :
+    embedEmitCfg ι (fun j => FinTM.bufferTape (ambient j)) (fun _ => 0) []
+        (Cfg.ofWords (input := x) q v) = Cfg.ofWords q wanted := by
+  apply canonEmbedEq M ι _ _ _ _ rfl rfl rfl
+  · intro i
+    exact ⟨congrArg FinTM.bufferTape (selected i).symm, rfl⟩
+  · intro j hj
+    exact ⟨congrArg FinTM.bufferTape (outside j hj), rfl⟩
+
+/-- A clean tape-resident argument can be preserved on tape zero while a
+public install call puts its transformed value on tape one. Every other
+tape is blank again on return. This is a composition of the public copy,
+embedding and seam rows, not an additional call host.
+
+**Proof sketch.** Reserve tape zero, copy its word to the first tape of a
+fresh install bank, and run the strict install there by public embedding.
+The bank frame preserves the original word. The copy and dispatch costs
+are absorbed into four times the argument-length part of the call ledger. -/
+private lemma canonPreserveInstall (M : FinTM Bool) (f : List Bool → List Bool)
+    (T : ℕ → ℕ) (hM : M.ComputesFunInTime f T) :
+    ∃ (C : FinTM Bool) (dst : Fin C.k) (entry exit : C.State) (a : ℕ),
+      dst.val = 1 ∧ ∀ x arg : List Bool,
+        ∃ t ≤ a * (T arg.length + arg.length + (f arg).length + 1),
+          (∀ u < t, (C.tm.runFrom
+            (Cfg.ofWords (input := x) entry (stateWord C.k arg)) u).state ≠ some exit) ∧
+          C.tm.runFrom (Cfg.ofWords (input := x) entry (stateWord C.k arg)) t =
+            Cfg.ofWords exit (Function.update (stateWord C.k arg) dst (f arg)) := by
+  classical
+  obtain ⟨I, enter, leave, a, positive, installed⟩ := canonStrictInstall M f T hM
+  let zero : Fin I.k := ⟨0, positive⟩
+  let dst : Fin (I.k + 1) := zero.succ
+  let bank : Fin I.k ↪ Fin (I.k + 1) := Fin.succEmb I.k
+  let P := copyTM (Symbol := Bool) (I.k + 1) 0 dst
+  let E := embedEmitTM bank I.tm
+  let C : FinTM Bool := {
+    k := I.k + 1
+    State := SweepPhase ⊕ I.State
+    tm := { seamCompTM P .done E enter with q₀ := Sum.inl .sweep } }
+  refine ⟨C, dst, Sum.inl .sweep, Sum.inr leave, a + 4, rfl, ?_⟩
+  intro x arg
+  let w := stateWord (I.k + 1) arg
+  let copied := Function.update w dst arg
+  let result := Function.update w dst (f arg)
+  have source : w 0 = arg := by simp [w, stateWord]
+  have fresh : w dst = [] := by simp [w, stateWord, dst]
+  have distinct : (0 : Fin (I.k + 1)) ≠ dst := by
+    intro h
+    have := congrArg Fin.val h
+    simp [dst] at this
+  have onBank (v : List Bool) (i : Fin I.k) :
+      (Function.update w dst v) (bank i) = stateWord I.k v i := by
+    simp [w, stateWord, dst, bank, zero, Function.update_apply, Fin.ext_iff]
+  have offBank (j : Fin (I.k + 1)) (hj : j ∉ Set.range bank) : copied j = result j := by
+    have ne : j ≠ dst := fun eq => hj ⟨zero, eq.symm⟩
+    simp only [copied, result, Function.update_of_ne ne]
+  obtain ⟨t₀, budget₀, cut₀, run₀⟩ :=
+    copyTM_run (x := x) (I.k + 1) 0 dst distinct w fresh
+  rw [source] at budget₀ run₀
+  obtain ⟨t₁, budget₁, _, cut₁, run₁⟩ := installed x arg
+  have lift (u : ℕ) : E.runFrom (Cfg.ofWords (input := x) enter copied) u =
+      embedEmitCfg bank (fun j => FinTM.bufferTape (copied j)) (fun _ => 0) []
+        (I.tm.runFrom (Cfg.ofWords (input := x) enter (stateWord I.k arg)) u) := by
+    rw [← canonEmbedWords I.tm bank enter (stateWord I.k arg) copied copied
+      (onBank arg) (fun _ _ => rfl)]
+    exact embedEmitTM_runFrom bank I.tm _ _ _ _ u
+  have second : E.runFrom (Cfg.ofWords (input := x) enter copied) t₁ =
+      Cfg.ofWords leave result := by
+    rw [lift, run₁]
+    exact canonEmbedWords I.tm bank leave (stateWord I.k (f arg)) copied result
+      (onBank (f arg)) offBank
+  have secondCut (u : ℕ) (hu : u < t₁) :
+      (E.runFrom (Cfg.ofWords (input := x) enter copied) u).state ≠ some leave := by
+    rw [lift]
+    exact cut₁ u hu
+  have second' : E.runFrom
+      ((Cfg.ofWords (input := x) SweepPhase.done copied).mapState fun _ => enter) t₁ =
+      Cfg.ofWords leave result := second
+  have cut' (u : ℕ) (hu : u < t₁) :
+      (E.runFrom ((Cfg.ofWords (input := x) SweepPhase.done copied).mapState
+        fun _ => enter) u).state ≠ some leave := secondCut u hu
+  have whole := seamCompTM_run_ofCfg P .done E enter run₀ rfl cut₀ second'
+  have first := seamCompTM_firstReturn_ofCfg P .done E enter leave
+    run₀ rfl cut₀ second' rfl cut'
+  refine ⟨t₀ + 1 + t₁, ?_, ?_, ?_⟩
+  · calc
+      t₀ + 1 + t₁ ≤ 3 * arg.length + 4 +
+          a * (T arg.length + arg.length + (f arg).length + 1) := by omega
+      _ ≤ (a + 4) * (T arg.length + arg.length + (f arg).length + 1) := by
+        rw [Nat.add_mul]
+        omega
+  · simpa only [C, Cfg.ofWords, Cfg.mapState, Option.map_some] using first
+  · simpa only [C, result, w, Cfg.ofWords, Cfg.mapState, Option.map_some] using whole
+
+
+/-- Load the undoubled header and install its nonoverflowing successor on
+a separate tape. The original header remains on tape zero, tape one holds
+`canonCount`, all other tapes are blank, and the native head is restored.
+The contract retains a strict first-exit cut for subsequent seam composition.
+
+**Proof sketch.** Extract the count-computing machine before applying the
+preserving install construction. Embed that construction and the inherited
+header loader into one bank of the larger tape count, then join them with
+the public seam. The successor width is the header width plus one, so the
+complete loading, copying and installation ledger is linear in the input. -/
+private lemma exists_canonHeaderCountSeam :
+    ∃ (C : FinTM Bool) (dst : Fin C.k) (entry exit : C.State) (a : ℕ),
+      dst.val = 1 ∧ ∀ α : List Bool, ∃ t ≤ a * (α.length + 1),
+        (∀ u < t, (C.tm.runFrom
+          (Cfg.ofWords (input := α) entry (fun _ => [])) u).state ≠ some exit) ∧
+        C.tm.runFrom (Cfg.ofWords (input := α) entry (fun _ => [])) t =
+          Cfg.ofWords exit (Function.update (stateWord C.k (canonHeader α)) dst
+            (canonCount (canonHeader α))) := by
+  classical
+  obtain ⟨L, lentry, lexit, a, hl, load⟩ := exists_canonHeaderSeam
+  obtain ⟨N, b, count⟩ := exists_canonCountTM
+  obtain ⟨P, pdst, pentry, pexit, c, hdst, install⟩ :=
+    canonPreserveInstall N canonCount (fun n => b * (n + 1)) count
+  let K := max L.k P.k
+  let lb : Fin L.k ↪ Fin K := Fin.castLEEmb (Nat.le_max_left _ _)
+  let pb : Fin P.k ↪ Fin K := Fin.castLEEmb (Nat.le_max_right _ _)
+  let A := embedEmitTM lb L.tm
+  let B := embedEmitTM pb P.tm
+  let C : FinTM Bool := {
+    k := K
+    State := L.State ⊕ P.State
+    tm := { seamCompTM A lexit B pentry with q₀ := Sum.inl lentry } }
+  refine ⟨C, pb pdst, Sum.inl lentry, Sum.inr pexit, a + c * (b + 2) + 1, hdst, ?_⟩
+  intro α
+  let header := canonHeader α
+  let w := stateWord K header
+  let result := Function.update w (pb pdst) (canonCount header)
+  obtain ⟨t₀, bound₀, _, cut₀, run₀⟩ := load α
+  obtain ⟨t₁, bound₁, cut₁, run₁⟩ := install α header
+  have loadLift (u : ℕ) :
+      A.runFrom (Cfg.ofWords (input := α) lentry (fun _ => [])) u =
+        embedEmitCfg lb (fun _ => FinTM.bufferTape []) (fun _ => 0) []
+          (L.tm.runFrom (Cfg.ofWords (input := α) lentry (fun _ => [])) u) := by
+    rw [← canonEmbedWords L.tm lb lentry (fun _ => []) (fun _ => []) (fun _ => [])
+      (fun _ => rfl) (fun _ _ => rfl)]
+    exact embedEmitTM_runFrom lb L.tm _ _ _ _ u
+  have loaded : A.runFrom (Cfg.ofWords (input := α) lentry (fun _ => [])) t₀ =
+      Cfg.ofWords lexit w := by
+    rw [loadLift, run₀]
+    apply canonEmbedWords L.tm lb lexit (stateWord L.k header) (fun _ => []) w
+    · intro i
+      rfl
+    · intro j hj
+      have nonzero : j.val ≠ 0 := by
+        intro hz
+        apply hj
+        exact ⟨⟨0, hl⟩, Fin.ext hz.symm⟩
+      simp [w, stateWord, nonzero]
+  have first₀ (u : ℕ) (hu : u < t₀) :
+      (A.runFrom (Cfg.ofWords (input := α) lentry (fun _ => [])) u).state ≠ some lexit := by
+    rw [loadLift]
+    exact cut₀ u hu
+  have installLift (u : ℕ) : B.runFrom (Cfg.ofWords (input := α) pentry w) u =
+      embedEmitCfg pb (fun j => FinTM.bufferTape (w j)) (fun _ => 0) []
+        (P.tm.runFrom (Cfg.ofWords (input := α) pentry (stateWord P.k header)) u) := by
+    rw [← canonEmbedWords P.tm pb pentry (stateWord P.k header) w w
+      (fun _ => rfl) (fun _ _ => rfl)]
+    exact embedEmitTM_runFrom pb P.tm _ _ _ _ u
+  have installed : B.runFrom (Cfg.ofWords (input := α) pentry w) t₁ =
+      Cfg.ofWords pexit result := by
+    rw [installLift, run₁]
+    apply canonEmbedWords P.tm pb pexit
+      (Function.update (stateWord P.k header) pdst (canonCount header)) w result
+    · intro i
+      exact congrFun (Function.update_comp_eq_of_injective w pb.injective pdst
+        (canonCount header)) i
+    · intro j hj
+      have ne : j ≠ pb pdst := fun h => hj ⟨pdst, h.symm⟩
+      exact (Function.update_of_ne ne _ _).symm
+  have first₁ (u : ℕ) (hu : u < t₁) :
+      (B.runFrom (Cfg.ofWords (input := α) pentry w) u).state ≠ some pexit := by
+    rw [installLift]
+    exact cut₁ u hu
+  have installed' : B.runFrom
+      ((Cfg.ofWords (input := α) lexit w).mapState fun _ => pentry) t₁ =
+      Cfg.ofWords pexit result := installed
+  have first₁' (u : ℕ) (hu : u < t₁) :
+      (B.runFrom ((Cfg.ofWords (input := α) lexit w).mapState fun _ => pentry) u).state ≠
+        some pexit := first₁ u hu
+  have run := seamCompTM_run_ofCfg A lexit B pentry loaded rfl first₀ installed'
+  have cut := seamCompTM_firstReturn_ofCfg A lexit B pentry pexit
+    loaded rfl first₀ installed' rfl first₁'
+  have boundCount : t₁ ≤ c * (b + 2) * (α.length + 1) := by
+    have width := (canonCount_spec header).2.1
+    rw [width] at bound₁
+    calc
+      t₁ ≤ c * (b * (header.length + 1) + header.length + (header.length + 1) + 1) := bound₁
+      _ = c * (b + 2) * (header.length + 1) := by ring
+      _ ≤ _ := Nat.mul_le_mul_left _ (Nat.add_le_add_right (canonHeader_length α) 1)
+  refine ⟨t₀ + 1 + t₁, ?_, ?_, ?_⟩
+  · rw [Nat.add_mul, Nat.add_mul, Nat.one_mul]
+    omega
+  · simpa only [C, Cfg.ofWords, Cfg.mapState, Option.map_some] using cut
+  · simpa only [C, result, w, header, Cfg.ofWords, Cfg.mapState, Option.map_some] using run
+
+
+/-- Binary address of the first bit after the doubled header and its separator.
+A low one below the successor of the header's length represents `2|w|+3`.
+The seek contract accepts the harmless spare high zero. -/
+private def canonOffset (w : List Bool) : List Bool :=
+  true :: canonCount w.length.bits
+
+/-- The offset word represents the actual native-input address and has
+length at most the original header length plus two.
+
+**Proof sketch.** The existing successor-word law gives the length plus
+one. Prepending a low one doubles that value and adds one. The public
+binary-size inequality bounds the length of the length counter. -/
+private lemma canonOffset_spec (w : List Bool) :
+    Nat.ofDigits 2 ((canonOffset w).map Bool.toNat) = 2 * w.length + 3 ∧
+      (canonOffset w).length ≤ w.length + 2 := by
+  constructor
+  · rw [← canonBits_value]
+    change Nat.bit true ((canonCount w.length.bits).foldr Nat.bit 0) = _
+    rw [(canonCount_spec w.length.bits).2.2]
+    change Nat.bit true (codeBitsNat w.length.bits + 1) = _
+    rw [codeBitsNat_bits]
+    simp [Nat.bit]
+    omega
+  · have small : w.length.bits.length ≤ w.length := by
+      rw [Nat.size_eq_bits_len]
+      exact Nat.size_le.mpr Nat.lt_two_pow_self
+    simp only [canonOffset, List.length_cons, (canonCount_spec w.length.bits).2.1]
+    omega
+
+/-- The native remainder address is computed in linear time, using only
+public length/prepend primitives and the inherited successor machine.
+
+**Proof sketch.** Compose binary length with the successor, then prepend
+one. Each application of the public composition theorem gives a linear
+ledger; distribute the products to absorb its fixed dispatch cost. -/
+private lemma exists_canonOffsetTM :
+    ∃ (M : FinTM Bool) (a : ℕ),
+      M.ComputesFunInTime canonOffset (fun n => a * (n + 1)) := by
+  obtain ⟨L, a, length⟩ := FinTM.computesFunInTime_lengthBits
+  obtain ⟨N, b, count⟩ := exists_canonCountTM
+  obtain ⟨A, c, comp⟩ := FinTM.computesFunInTime_comp length count
+    (fun _ _ h => Nat.mul_le_mul_left b (Nat.add_le_add_right h 1))
+  have first : A.ComputesFunInTime (fun w => canonCount w.length.bits)
+      (fun n => c * (a + 1) * (b + 1) * (n + 1)) := by
+    intro w
+    apply (comp w).mono
+    have room : 0 ≤ (b + 1) * w.length := Nat.zero_le _
+    calc
+      c * (a * (w.length + 1) + b * (a * (w.length + 1) + 1) + 1) ≤
+          c * (a * (w.length + 1) + b * (a * (w.length + 1) + 1) + 1 +
+            (b + 1) * w.length) := Nat.mul_le_mul_left c (by omega)
+      _ = _ := by ring
+  obtain ⟨P, e, prepend⟩ := FinTM.computesFunInTime_prepend [true]
+  obtain ⟨M, d, combined⟩ := FinTM.computesFunInTime_comp first prepend
+    (fun _ _ h => Nat.mul_le_mul_left e (Nat.add_le_add_right h 1))
+  let z := c * (a + 1) * (b + 1)
+  refine ⟨M, d * (z + 1) * (e + 1), ?_⟩
+  intro w
+  apply (combined w).mono
+  change d * (z * (w.length + 1) + e * (z * (w.length + 1) + 1) + 1) ≤ _
+  calc
+    d * (z * (w.length + 1) + e * (z * (w.length + 1) + 1) + 1) ≤
+        d * (z * (w.length + 1) + e * (z * (w.length + 1) + 1) + 1 +
+          (e + 1) * w.length) := Nat.mul_le_mul_left d (Nat.le_add_right _ _)
+    _ = _ := by ring
+
+
+/-- The canonizer's prepared bank: original header, successor count and
+native remainder address on tapes zero, one and two, with blank scratch. -/
+private def canonReadyWords (k : ℕ) (header : List Bool) : Fin k → List Bool :=
+  fun j => if j.val = 0 then header else if j.val = 1 then canonCount header
+    else if j.val = 2 then canonOffset header else []
+
+/-- A physical front end prepares both binary words without changing the
+original header. At least one additional blank tape is reserved for the
+public native-input seek. The native head and every work head are at home.
+
+**Proof sketch.** Run the proved header/count seam in a larger bank. Copy
+and install the offset through a second preserving call whose embedding
+skips the live count tape. The embedding frame protects that count; the
+call protects the header. Compose their strict seams and add the two
+linear ledgers, charging the offset's width by `canonOffset_spec`. -/
+private lemma exists_canonReadySeam :
+    ∃ (C : FinTM Bool) (entry exit : C.State) (a : ℕ), 4 ≤ C.k ∧
+      ∀ α : List Bool, ∃ t ≤ a * (α.length + 1),
+        (∀ u < t, (C.tm.runFrom
+          (Cfg.ofWords (input := α) entry (fun _ => [])) u).state ≠ some exit) ∧
+        C.tm.runFrom (Cfg.ofWords (input := α) entry (fun _ => [])) t =
+          Cfg.ofWords exit (canonReadyWords C.k (canonHeader α)) := by
+  classical
+  obtain ⟨H, hdst, hentry, hexit, a, hv, headerRun⟩ := exists_canonHeaderCountSeam
+  obtain ⟨O, b, offsetRun⟩ := exists_canonOffsetTM
+  obtain ⟨P, pdst, pentry, pexit, c, pv, prepare⟩ :=
+    canonPreserveInstall O canonOffset (fun n => b * (n + 1)) offsetRun
+  have hp : 2 ≤ P.k := by have := pdst.isLt; omega
+  let K := max H.k (P.k + 1) + 1
+  have hK : 4 ≤ K := by dsimp [K]; omega
+  let hb : Fin H.k ↪ Fin K := Fin.castLEEmb (by dsimp [K]; omega)
+  let pb : Fin P.k ↪ Fin K :=
+    (Fin.succAboveEmb (⟨1, by omega⟩ : Fin (P.k + 1))).trans (Fin.castLEEmb (by dsimp [K]; omega))
+  have pval (i : Fin P.k) : (pb i).val = if i.val = 0 then 0 else i.val + 1 := by
+    change ((⟨1, by omega⟩ : Fin (P.k + 1)).succAbove i).val = _
+    dsimp only [Fin.succAbove]
+    split_ifs <;> simp_all [Fin.lt_def]
+  let A := embedEmitTM hb H.tm
+  let B := embedEmitTM pb P.tm
+  let C : FinTM Bool := {
+    k := K
+    State := H.State ⊕ P.State
+    tm := { seamCompTM A hexit B pentry with q₀ := Sum.inl hentry } }
+  refine ⟨C, Sum.inl hentry, Sum.inr pexit, a + c * (b + 3) + 1, hK, ?_⟩
+  intro α
+  let head := canonHeader α
+  let mid := Function.update (stateWord K head) (hb hdst) (canonCount head)
+  let out := canonReadyWords K head
+  have hv' : (hb hdst).val = 1 := hv
+  have imageCount (j : Fin K) (hj : j ∉ Set.range hb) : j.val ≠ 0 ∧ j ≠ hb hdst := by
+    refine ⟨?_, fun h => hj ⟨hdst, h.symm⟩⟩
+    intro hz
+    apply hj
+    exact ⟨⟨0, by have := hdst.isLt; omega⟩, Fin.ext hz.symm⟩
+  have sourceP (i : Fin P.k) : mid (pb i) = stateWord P.k head i := by
+    have neq : pb i ≠ hb hdst := by
+      intro eq
+      have := congrArg Fin.val eq
+      rw [pval, hv'] at this
+      split at this <;> omega
+    dsimp only [mid]
+    rw [Function.update_of_ne neq]
+    dsimp only [stateWord]
+    rw [pval]
+    split <;> simp_all
+  have finalP (i : Fin P.k) :
+      out (pb i) = Function.update (stateWord P.k head) pdst (canonOffset head) i := by
+    have eqv : i = pdst ↔ i.val = 1 := by
+      constructor
+      · rintro rfl; exact pv
+      · intro hi; exact Fin.ext (hi.trans pv.symm)
+    simp only [out, canonReadyWords, pval, Function.update_apply, eqv, stateWord]
+    by_cases hi : i.val = 0
+    · simp [hi]
+    · simp [hi]
+  have outsideP (j : Fin K) (hj : j ∉ Set.range pb) : mid j = out j := by
+    have notzero : j.val ≠ 0 := by
+      intro hz
+      apply hj
+      refine ⟨⟨0, by omega⟩, Fin.ext ?_⟩
+      rw [pval]
+      simp [hz]
+    have nottwo : j.val ≠ 2 := by
+      intro hz
+      apply hj
+      refine ⟨pdst, Fin.ext ?_⟩
+      rw [pval, pv, hz]
+      rfl
+    by_cases h1 : j = hb hdst
+    · subst j
+      simp [mid, out, canonReadyWords, hv']
+    · have valne : j.val ≠ 1 := fun h => h1 (Fin.ext (h.trans hv'.symm))
+      simp [mid, out, Function.update_of_ne h1, canonReadyWords, stateWord,
+        notzero, valne, nottwo]
+  obtain ⟨t₀, time₀, cut₀, run₀⟩ := headerRun α
+  obtain ⟨t₁, time₁, cut₁, run₁⟩ := prepare α head
+  have hlift (u : ℕ) :
+      A.runFrom (Cfg.ofWords (input := α) hentry (fun _ => [])) u =
+        embedEmitCfg hb (fun _ => FinTM.bufferTape []) (fun _ => 0) []
+          (H.tm.runFrom (Cfg.ofWords (input := α) hentry (fun _ => [])) u) := by
+    rw [← canonEmbedWords H.tm hb hentry (fun _ => []) (fun _ => []) (fun _ => [])
+      (fun _ => rfl) (fun _ _ => rfl)]
+    exact embedEmitTM_runFrom hb H.tm _ _ _ _ u
+  have first : A.runFrom (Cfg.ofWords (input := α) hentry (fun _ => [])) t₀ =
+      Cfg.ofWords hexit mid := by
+    rw [hlift, run₀]
+    apply canonEmbedWords H.tm hb hexit
+      (Function.update (stateWord H.k head) hdst (canonCount head)) (fun _ => []) mid
+    · intro i
+      exact Function.update_apply_of_injective (stateWord K head) hb.injective
+        hdst (canonCount head) i
+    · intro j hj
+      obtain ⟨nz, ne⟩ := imageCount j hj
+      simp [mid, Function.update_of_ne ne, stateWord, nz]
+  have firstCut (u : ℕ) (hu : u < t₀) :
+      (A.runFrom (Cfg.ofWords (input := α) hentry (fun _ => [])) u).state ≠ some hexit := by
+    rw [hlift]; exact cut₀ u hu
+  have plift (u : ℕ) : B.runFrom (Cfg.ofWords (input := α) pentry mid) u =
+      embedEmitCfg pb (fun j => FinTM.bufferTape (mid j)) (fun _ => 0) []
+        (P.tm.runFrom (Cfg.ofWords (input := α) pentry (stateWord P.k head)) u) := by
+    rw [← canonEmbedWords P.tm pb pentry (stateWord P.k head) mid mid
+      sourceP (fun _ _ => rfl)]
+    exact embedEmitTM_runFrom pb P.tm _ _ _ _ u
+  have second : B.runFrom ((Cfg.ofWords (input := α) hexit mid).mapState
+      fun _ => pentry) t₁ = Cfg.ofWords pexit out := by
+    change B.runFrom (Cfg.ofWords pentry mid) t₁ = _
+    rw [plift, run₁]
+    exact canonEmbedWords P.tm pb pexit
+      (Function.update (stateWord P.k head) pdst (canonOffset head)) mid out finalP outsideP
+  have secondCut (u : ℕ) (hu : u < t₁) :
+      (B.runFrom ((Cfg.ofWords (input := α) hexit mid).mapState
+        fun _ => pentry) u).state ≠ some pexit := by
+    change (B.runFrom (Cfg.ofWords pentry mid) u).state ≠ _
+    rw [plift]; exact cut₁ u hu
+  have whole := seamCompTM_run_ofCfg A hexit B pentry first rfl firstCut second
+  have firstExit := seamCompTM_firstReturn_ofCfg A hexit B pentry pexit
+    first rfl firstCut second rfl secondCut
+  have budget : t₁ ≤ c * (b + 3) * (α.length + 1) := by
+    calc
+      t₁ ≤ c * (b * (head.length + 1) + head.length + (canonOffset head).length + 1) := time₁
+      _ ≤ c * (b * (head.length + 1) + head.length + (head.length + 2) + 1) :=
+        Nat.mul_le_mul_left c (by have := (canonOffset_spec head).2; omega)
+      _ ≤ c * (b + 3) * (head.length + 1) := by
+        rw [Nat.mul_assoc]
+        apply Nat.mul_le_mul_left c
+        rw [Nat.add_mul]
+        omega
+      _ ≤ _ := Nat.mul_le_mul_left _ (Nat.add_le_add_right (canonHeader_length α) 1)
+  refine ⟨t₀ + 1 + t₁, ?_, ?_, ?_⟩
+  · simp only [Nat.add_mul, Nat.one_mul]
+    omega
+  · simpa only [C, Cfg.ofWords, Cfg.mapState, Option.map_some] using firstExit
+  · simpa only [C, out, head, Cfg.ofWords, Cfg.mapState, Option.map_some] using whole
+
+
+/-- The public native-input seek, embedded in a caller-selected bank. All
+host tapes, all heads and the output are restored, including the frame.
+This contract can therefore be used again after a destructive guard.
+
+**Proof sketch.** Project the two selected tapes to the public seek row,
+then transport its run and strict cut by forwarding embedding. Assemble
+the returned host configuration by `canonEmbedEq`; the selected projections
+come from the seek and the remaining tapes come from the public frame. -/
+private lemma exists_canonSeekOnBank {k : ℕ} (ι : Fin 2 ↪ Fin k) :
+    ∃ (S : Type) (_ : Fintype S) (_ : DecidableEq S)
+      (R : MultiTapeTM k Bool S) (entry exit : S) (a : ℕ),
+      ∀ {x : List Bool} (p : ℕ) (w : List Bool),
+        Nat.ofDigits 2 (w.map Bool.toNat) = p → ∀ hp : p ≤ x.length + 1,
+        ∀ d : Cfg k Bool S x, d.state = some entry →
+        (∀ q : ℤ, -1 ≤ q → q ≤ (w.length : ℤ) →
+          d.workTapes (ι 0) (d.workTapePos (ι 0) + q) = FinTM.bufferTape w q) →
+        (∀ q, d.workTapes (ι 1) q = none) →
+        ∃ t ≤ a * (w.length + d.inputPos.val + p + 1),
+          (∀ u < t, (R.runFrom d u).state ≠ some exit) ∧
+          R.runFrom d t = { d with state := some exit, inputPos := ⟨p, by omega⟩ } := by
+  classical
+  obtain ⟨S, finite, equal, M, entry, exit, a, seek⟩ := exists_inputSeekTM
+  letI : Fintype S := finite
+  letI : DecidableEq S := equal
+  refine ⟨S, finite, equal, embedEmitTM ι M, entry, exit, a, ?_⟩
+  intro x p w hw hp d hd word blank
+  let src : Cfg 2 Bool S x :=
+    ⟨d.state, d.inputPos, fun i => d.workTapes (ι i), fun i => d.workTapePos (ι i), d.output⟩
+  have start : embedEmitCfg ι d.workTapes d.workTapePos [] src = d := by
+    exact canonEmbedEq M ι src d _ _ rfl rfl rfl (fun _ => ⟨rfl, rfl⟩)
+      (fun _ _ => ⟨rfl, rfl⟩)
+  have lift (u : ℕ) : (embedEmitTM ι M).runFrom d u =
+      embedEmitCfg ι d.workTapes d.workTapePos [] (M.runFrom src u) := by
+    conv_lhs => rw [← start]
+    exact embedEmitTM_runFrom ι M _ _ [] src u
+  obtain ⟨t, time, cut, _, state, pos, tapes, heads, out⟩ := seek p w hw hp src hd word blank
+  refine ⟨t, time, ?_, ?_⟩
+  · intro u hu
+    rw [lift]
+    exact cut u hu
+  · rw [lift]
+    refine canonEmbedEq M ι (M.runFrom src t)
+      ({ d with state := some exit, inputPos := ⟨p, by omega⟩ })
+      d.workTapes d.workTapePos state (Fin.ext pos) out ?_ ?_
+    · intro i
+      exact ⟨congrFun tapes i, congrFun heads i⟩
+    · exact fun _ _ => ⟨rfl, rfl⟩
+
+
+/-- From blank work tapes, prepare the header bank, seek to the native
+remainder, run the positive guard, and seek back on success. All tapes
+except the guard counter are preserved from the prepared bank. Rejection
+is at the right input blank. This is a guard front end, not a grammar verdict.
+
+**Proof sketch.** The preparation seam feeds an embedded public seek. The
+inherited guard runs only on tape one, leaving the saved offset and its
+scratch tape intact. A public seam dispatches its successful exit to the
+same seek again; a failed guard is observed before that dispatch. Two more
+public seams join the first seek and preparation. Every copy, installation,
+seek and dispatch is included in the displayed linear coefficient. -/
+private lemma exists_canonGuardFront (F : MachineFormat) :
+    ∃ (C : FinTM Bool) (entry yes no : C.State) (a : ℕ), 4 ≤ C.k ∧ yes ≠ no ∧
+      ∀ α bits rest : List Bool, pairDecode α = some (bits, rest) →
+        ∃ t ≤ a * (α.length + 1),
+          let d := C.tm.runFrom (Cfg.ofWords (input := α) entry (fun _ => [])) t
+          d.state = some (if canonGuardBlock F * (codeBitsNat bits + 1) ≤ rest.length
+            then yes else no) ∧ d.output = [] ∧
+          d.inputPos.val = (if canonGuardBlock F * (codeBitsNat bits + 1) ≤ rest.length
+            then 2 * bits.length + 3 else α.length + 1) ∧
+          ∀ i : Fin C.k, i.val ≠ 1 →
+            d.workTapes i = FinTM.bufferTape (canonReadyWords C.k bits i) ∧
+              d.workTapePos i = 0 := by
+  classical
+  obtain ⟨P, pentry, pexit, a, hk, prep⟩ := exists_canonReadySeam
+  let sb : Fin 2 ↪ Fin P.k := ⟨fun i => ⟨i.val + 2, by have := i.isLt; omega⟩,
+    fun i j h => Fin.ext (by have := congrArg Fin.val h; dsimp at this; omega)⟩
+  let gb : Fin 1 ↪ Fin P.k := ⟨fun _ => ⟨1, by omega⟩, fun _ _ _ => Subsingleton.elim _ _⟩
+  obtain ⟨S, finite, equal, R, enter, leave, b, seek⟩ := exists_canonSeekOnBank sb
+  letI : Fintype S := finite
+  letI : DecidableEq S := equal
+  let B := canonGuardBlock F
+  let G := embedEmitTM gb (binaryGuardTM (B - 1))
+  let U := seamCompTM G .done R enter
+  let V := seamCompTM R leave U (Sum.inl (.dec .run))
+  let C : FinTM Bool := {
+    k := P.k
+    State := P.State ⊕ (S ⊕ ((CounterLoopState (Option (Fin (B - 1 + 1))))) ⊕ S)
+    tm := { seamCompTM P.tm pexit V (Sum.inl enter) with q₀ := Sum.inl pentry } }
+  -- The parentheses below record the actual three seam summands.
+  let yes : C.State := Sum.inr (Sum.inr (Sum.inr leave))
+  let no : C.State := Sum.inr (Sum.inr (Sum.inl .escape))
+  have distinct : yes ≠ no := by
+    intro h
+    cases Sum.inr.inj (Sum.inr.inj h)
+  refine ⟨C, Sum.inl pentry, yes, no, a + 10 * b + B + 9, hk, distinct, ?_⟩
+  intro α bits rest pair
+  have header : canonHeader α = bits := by simp [canonHeader, pair]
+  have size : bits.length ≤ α.length := header ▸ canonHeader_length α
+  let p := 2 * bits.length + 3
+  have inRange : p ≤ α.length + 1 := by
+    rw [eq_pairEncode_of_pairDecode α bits rest pair, length_pairEncode]
+    dsimp [p]
+    omega
+  let w := canonReadyWords P.k bits
+  have address : w (sb 0) = canonOffset bits := by simp [w, canonReadyWords, sb]
+  have scratch : w (sb 1) = [] := by simp [w, canonReadyWords, sb]
+  let s₀ := Cfg.ofWords (input := α) enter w
+  obtain ⟨ts, timeS, cutS, runS⟩ := seek p (canonOffset bits) (canonOffset_spec bits).1
+    inRange s₀ rfl (by intro q _ _; simp [s₀, Cfg.ofWords, address])
+    (by intro q; simp [s₀, Cfg.ofWords, scratch, FinTM.bufferTape])
+  let s₁ : Cfg P.k Bool S α := { s₀ with state := some leave, inputPos := ⟨p, by omega⟩ }
+  change R.runFrom s₀ ts = s₁ at runS
+  obtain ⟨hj, tg, timeG, stateG, outG, posG, cutG⟩ := canonGuard_run F α bits rest pair
+  let g₀ := binaryGuardStart (B - 1) α (2 * bits.length + 2) hj [] (canonCount bits)
+  let g₁ := (binaryGuardTM (B - 1)).runFrom g₀ tg
+  let d₀ : Cfg P.k Bool (CounterLoopState (Option (Fin (B - 1 + 1)))) α :=
+    s₁.mapState (fun _ => CounterLoopState.dec FlagPhase.run)
+  have startG : embedEmitCfg gb s₁.workTapes s₁.workTapePos [] g₀ = d₀ := by
+    apply canonEmbedEq (binaryGuardTM (B - 1)) gb g₀ d₀ _ _ rfl
+      (Fin.ext (by simp [g₀, binaryGuardStart, counter_cfg_eq, guardCfg, d₀, s₁, p, Cfg.mapState])) rfl
+    · intro i
+      have hi : i = Fin.last 0 := Subsingleton.elim _ _
+      subst i
+      simp only [g₀, binaryGuardStart, counter_cfg_eq, Fin.lastCases_last]
+      exact ⟨rfl, rfl⟩
+    · exact fun _ _ => ⟨rfl, rfl⟩
+  have liftG (u : ℕ) : G.runFrom d₀ u =
+      embedEmitCfg gb s₁.workTapes s₁.workTapePos []
+        ((binaryGuardTM (B - 1)).runFrom g₀ u) := by
+    conv_lhs => rw [← startG]
+    exact embedEmitTM_runFrom gb (binaryGuardTM (B - 1)) _ _ [] g₀ u
+  let d₁ := embedEmitCfg gb s₁.workTapes s₁.workTapePos [] g₁
+  have runG : G.runFrom d₀ tg = d₁ := liftG tg
+  have cutDone (u : ℕ) (hu : u < tg) : (G.runFrom d₀ u).state ≠ some .done := by
+    rw [liftG]
+    exact (cutG u hu).1
+  have framed (i : Fin P.k) (hi : i.val ≠ 1) :
+      d₁.workTapes i = FinTM.bufferTape (w i) ∧ d₁.workTapePos i = 0 := by
+    have outside : i ∉ Set.range gb := by
+      rintro ⟨j, hj⟩
+      exact hi (congrArg Fin.val hj.symm)
+    have frame := (embedEmitTM_frame gb (binaryGuardTM (B - 1))
+      s₁.workTapes s₁.workTapePos [] g₀ tg).1 i outside
+    rw [embedEmitTM_runFrom] at frame
+    exact frame
+  have stateD : d₁.state = some (if B * (codeBitsNat bits + 1) ≤ rest.length
+      then .done else .escape) := stateG
+  have outputD : d₁.output = [] := by simpa only [d₁, embedEmitCfg, List.nil_append] using outG
+  have posD : d₁.inputPos.val = (if B * (codeBitsNat bits + 1) ≤ rest.length
+      then 2 * bits.length + 2 + B * (codeBitsNat bits + 1) + 1 else α.length + 1) := posG
+  have seekBudget (pos : ℕ) (hpos : pos ≤ α.length + 1) :
+      b * ((canonOffset bits).length + pos + p + 1) ≤ 5 * b * (α.length + 1) := by
+    have width := (canonOffset_spec bits).2
+    calc
+      _ ≤ b * (5 * (α.length + 1)) := Nat.mul_le_mul_left b (by omega)
+      _ = _ := by ring
+  have boundS : ts ≤ 5 * b * (α.length + 1) :=
+    timeS.trans (seekBudget 1 (by omega))
+  have boundG : tg ≤ (B + 6) * (α.length + 1) := by
+    calc
+      _ ≤ (B + 4) * (α.length + 1) + 2 * (bits.length + 1) := timeG
+      _ ≤ _ := by simp only [Nat.add_mul]; omega
+  obtain ⟨tp, timeP, cutP, runP⟩ := prep α
+  rw [header] at runP
+  -- Package the conditional return segment before joining its two callers.
+  have tail : ∃ tu ≤ (5 * b + B + 7) * (α.length + 1),
+      let z := U.runFrom (d₀.mapState Sum.inl) tu
+      z.state = some (if B * (codeBitsNat bits + 1) ≤ rest.length
+        then Sum.inr leave else Sum.inl .escape) ∧ z.output = [] ∧
+      z.inputPos.val = (if B * (codeBitsNat bits + 1) ≤ rest.length then p else α.length + 1) ∧
+      ∀ i, i.val ≠ 1 → z.workTapes i = FinTM.bufferTape (w i) ∧ z.workTapePos i = 0 := by
+    by_cases good : B * (codeBitsNat bits + 1) ≤ rest.length
+    · have done : d₁.state = some .done := by simpa [good] using stateD
+      let r₀ := d₁.mapState (fun _ => enter)
+      obtain ⟨tr, timeR, _, runR⟩ := seek p (canonOffset bits) (canonOffset_spec bits).1
+        inRange r₀ (by simp [r₀, Cfg.mapState, done])
+        (by intro q _ _; simp [r₀, Cfg.mapState, (framed (sb 0) (by simp [sb])).1,
+          (framed (sb 0) (by simp [sb])).2, address])
+        (by intro q; simp [r₀, Cfg.mapState, (framed (sb 1) (by simp [sb])).1,
+          scratch, FinTM.bufferTape])
+      have whole := seamCompTM_run_ofCfg G .done R enter runG done cutDone runR
+      have boundR : tr ≤ 5 * b * (α.length + 1) :=
+        timeR.trans (seekBudget r₀.inputPos.val (by have := r₀.inputPos.isLt; omega))
+      refine ⟨tg + 1 + tr, ?_, ?_⟩
+      · rw [show 5 * b + B + 7 = (B + 6) + 5 * b + 1 by omega, Nat.add_mul,
+          Nat.add_mul, Nat.one_mul]
+        omega
+      · dsimp only [U]
+        rw [whole]
+        simp only [good, if_true, Cfg.mapState, Option.map_some]
+        exact ⟨True.intro, outputD, True.intro, framed⟩
+    · have whole := seamCompTM_runFrom_left G .done R enter cutDone tg le_rfl
+      rw [runG] at whole
+      refine ⟨tg, boundG.trans (Nat.mul_le_mul_right _ (by omega)), ?_⟩
+      dsimp only [U]
+      rw [whole]
+      simp only [good, if_false, Cfg.mapState, stateD, Option.map_some]
+      exact ⟨True.intro, outputD, by simpa [good] using posD, framed⟩
+  obtain ⟨tu, timeU, stateU, outU, posU, frameU⟩ := tail
+  have firstSeek := seamCompTM_run_ofCfg R leave U (Sum.inl (.dec .run)) runS rfl cutS
+    (rfl : U.runFrom (d₀.mapState Sum.inl) tu = _)
+  have loaded := seamCompTM_run_ofCfg P.tm pexit V (Sum.inl enter) runP rfl cutP firstSeek
+  have loadedC : C.tm.runFrom (Cfg.ofWords (input := α) (Sum.inl pentry) (fun _ => []))
+      (tp + 1 + (ts + 1 + tu)) =
+      (U.runFrom (d₀.mapState Sum.inl) tu).mapState (fun s => (Sum.inr (Sum.inr s) : C.State)) := by
+    simpa only [C, Cfg.ofWords, Cfg.mapState, Option.map_some, Option.map_map,
+      Function.comp_def] using loaded
+  refine ⟨tp + 1 + (ts + 1 + tu), ?_, ?_⟩
+  · have budget := Nat.add_le_add (Nat.add_le_add timeP boundS) timeU
+    ring_nf at budget ⊢
+    omega
+  · dsimp only
+    rw [loadedC]
+    refine ⟨?_, outU, posU, frameU⟩
+    change (U.runFrom (d₀.mapState Sum.inl) tu).state.map
+      (fun s => (Sum.inr (Sum.inr s) : C.State)) = _
+    rw [stateU]
+    split <;> rfl
+
 /-- **A polynomial-time canonizer** (spec, fill pending — batch B5a): one finite
 binary machine computes the fixed serialization of the decoded machine within
 `d · (|α| + 1)^d` steps. [AB09, §1.4; the P3.2 round-2 construction]
@@ -1198,7 +1920,20 @@ connected to the loader with a preserved header bank and a native-input seek.
 The physical record parser, suffix check, prefix/fallback emission and complete
 polynomial ledger remain open; this target retains its original admission.
 Note 50's full-canonizer regression remains pending. Component regressions are
-reported separately in the delivery evidence. -/
+reported separately in the delivery evidence.
+
+**Fill appendix (canonizer continuation).** The blank-tape preparation now
+preserves the original header and installs its successor count on a separate
+bank through the public install call. `canonOffset` supplies the binary native
+address; `exists_canonGuardFront` composes preparation, the public input seek,
+the inherited positive guard, and a second seek on success, with an explicit
+linear ledger and the non-counter frame preserved. Its contract assumes a
+successful pair decode and is only a guard verdict. The header-validity branch,
+strict cuts for both composite exits, generic record validation, grammar loop,
+suffix/prefix emission and final polynomial assembly remain pending. No new
+private admission is introduced, and this headline retains its original
+`sorry`; full physical note-50 regressions remain pending.
+ -/
 theorem exists_polyCanonizer :
     ∃ (C : FinTM Bool) (d : ℕ),
       C.ComputesFunInTime (fun α => F.serialize (F.decode α)) fun n => d * (n + 1) ^ d := by
