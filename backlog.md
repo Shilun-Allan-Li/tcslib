@@ -611,7 +611,36 @@ proved); fix it in the first MIG PR that touches Build.
   `compileProgram_correct` describes only the final memory. Stage 2's space bound needs every
   intermediate memory inside `[-lowCell, lim.space)`. Close it with a stronger `Steps` or by
   porting `Machine/Footprint.lean` (PROG-1(e)). It is a prerequisite for stage 2's space bound,
-  and so for L, Savitch and PSPACE through programs.
+  and so for L, Savitch and PSPACE through programs, and for C2's log-space programs (design
+  §16b item 4).
+
+* **PROG-4: stage 2's statement requirements** (user, 2026-10-12; design §16b items 1 and 4).
+  Stage 2 (PROG-1(d)) is drafted together with PROG-2 and PROG-3, and its statement carries:
+  - **a computed word size:** `W` is a function of the input length that the compiled machine
+    computes within its space bound (`c·log n` for P and L, `c·S(n)` for Savitch);
+  - **deterministic and nondeterministic forms:** each `coin` one `FinNDTM` choice step, with
+    bounds uniform over the coin streams;
+  - **a logspace grade:** `O(1)` cells and `W = O(log n)` give space `O(log n)`.
+
+  **Gate:** a statement gate, before any fill.
+
+The route decisions of 2026-10-12 (design §16b) add three work items, numbered by §16b's items
+(items 1 and 4 are PROG-4):
+
+* **RD-2: restate B4a in place over H6** (§16b item 2). Public definitions of the codec and its
+  three CNFs (`TQBF.lean`), with closed-form variable indexing designed with the
+  machine-to-formula kit H6 (design §14), and theorems in place of `exists_adjacency_codec_cnf`'s
+  `∃`. A statement gate, then a re-fill. Also needed for `TQBF_PSPACEHard`: Tseitin on
+  `Std.Sat.CNF ℕ`, correct for every prefix assignment. Open with it: whether the `ψᵢ` emitter is
+  a machine or a program with `emit`.
+* **RD-3: re-route B6 and restate `space_universal` forward-only** (§16b item 3).
+  `SpaceComplexity/Hierarchy.lean`: `space_universal` keeps only its forward clause ([AB09]
+  Exercise 4.1), and `space_hierarchy`'s sketch moves to the window route (a self-simulating
+  universal `U₀` under a configuration-count clock), dropping the proved normal-form obligation.
+  A statement gate. The fill needs H2, H3 and H5.
+* **RD-5: §13d G2–G4 after MIG-0b** (§16b item 5). The statements of design §13d's G2–G4, stated as
+  `Contract`s, then their gate and fills, then the Hennie–Stearns assembly. The open zone rows
+  `exists_zoneShiftInTM` and `exists_zoneShiftOutTM` retire through the G3/G4 gate.
 
 * **Chapter-2 fill campaign (E1-E5)** — **active** (hold lifted
   2026-10-02 after the ch-6 integration and audit closed). All four
@@ -1139,6 +1168,14 @@ proved); fix it in the first MIG PR that touches Build.
   epoch and the retrofit proceed. Returns to the plan on Hydroxyi's
   reply. *Origin: plan §2.5, §4a/§4b stage 1, CH34-Q2; the 2026-10-08
   citation-audit row.*
+  **Update (user, 2026-10-12; design §16b item 4):** C2 is written as
+  programs with read-once coins and compiled by stage 2, so the campaign
+  no longer needs extension (1). Extension (2)'s remaining customers,
+  Savitch and TQBF membership, are programs of the language too (design
+  §16, decision 3; MIG-22; `NP ⊆ PSPACE` is proved at machine level), and
+  extension (3) is replaced by the language's machine-configuration
+  routines (design §15c). The rest of the sync agenda stands. Hydroxyi
+  should be told when next in touch (the user's call).
 
 ---
 
