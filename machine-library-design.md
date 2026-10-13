@@ -3510,7 +3510,8 @@ the real edit must extend.
 - the word size's own computation is charged once, as `TW` and `SW`;
 - `inBit` needs no input-length clause in `Fits`;
 - `Exec.bounded` needs `1 ≤ lim.word`;
-- about 32 lines of `Logic`, `Rules` and `Assigns` build or take apart `Ends` witnesses, so "the
+- 38 lines of `Logic`, `Rules` and `Assigns` (28, 8 and 2, read line by line in the stage-2
+  statement pack; the drafts estimated about 32) build or take apart `Ends` witnesses, so "the
   routines are untouched" holds for `Meets` and the library, not for those files.
 
 The nondeterministic form's fill also needs one lemma not present today: a nondeterministic run
@@ -3531,8 +3532,22 @@ nondeterministic contract variant that §16 lists as later.
 
 **Answered (user, 2026-10-12): all four as recommended.** The RAM is extended by a wrapper, the
 `Exec` indices are added in place (option A), the word size is `WordSizeComputable` with its two
-bridges, `emit` appends "nonzero", and the footprint counts touched cells. Next: a statement-gate
-pack for stage 2, PROG-2 and PROG-3.
+bridges, `emit` appends "nonzero", and the footprint counts touched cells.
+
+**Statement gate (2026-10-13):** `audits/stage2-statements-pack.md`. The maintainer re-elaborated
+the landing form (0 errors; the only warnings are `sorry`s). It differs from the drafts in:
+- **homes:** the wrapper in a new `Programs/WordRAM/Extended.lean`, below the compiler, because
+  after PROG-2 the compiler emits `XInstr`; PROG-3's compiler-level statements as local
+  modifications of the vendored `Simulation.lean` and `WholeProgram.lean`, because their proofs
+  need private lemmas; stage 2 and its corollaries in a new topic `Complexity/RAMSimulation/`;
+- **`startMem` is renamed `initMem`**, because the vendored compiler declares
+  `Light.Compiler.startMem` and opens `WordRAM`;
+- **footprints of at most `3n` cells**, so that `mem_P_of_decides` drops its cell bound;
+- **the slice lemma and its space companion are stated** (`NDSlice`);
+- **PROG-2's edit list is longer:** under the wrapper, the compiler's code type becomes
+  `List XInstr` at the sites the pack lists.
+
+Next: the gate audit.
 
 ## 16. The foundation migration (user decisions, 2026-10-12)
 
@@ -3790,8 +3805,9 @@ The user took the five open route questions together, each as the maintainer rec
        clause lists ordered by `List.range`, the old statement's clauses as 11 theorems, and new
        uniformity theorems.
 
-     About 820 of the old proof's roughly 1,700 lines survive verbatim. Estimate: 2.5k–3.6k lines
-     landed; a statement gate, then two fills.
+     About 820 of the old proof's roughly 1,700 lines survive verbatim (measured at 703 by the
+     statement pack's migration list). Estimate: 2.5k–3.6k lines landed; a statement gate, then
+     two fills.
    - **Answered (user, 2026-10-12): all five of the note's recommendations.**
      - `exists_adjacency_codec_cnf` is retired; no proof uses it.
      - The uniformity theorems are part of RD-2, as the fill RD-2b.
@@ -3800,7 +3816,11 @@ The user took the five open route questions together, each as the maintainer rec
      - **The ψ emitter is a machine,** on H6 and the polynomial-time closure algebra.
      - The transition gates are truth-table templates, as in Cook–Levin.
 
-     Next: a statement-gate pack for RD-2.
+     **Statement gate (2026-10-13):** `audits/rd2-statements-pack.md`. The landing form drops the
+     Tseitin instance (decision 4), and adds 17 theorems: the kit's cost ledger, so that the
+     private twins merge; the fragment and gate emission forms; unary index arithmetic, because
+     the codec divides by `2s + 1`; and the port contract. The prefix-truth lemmas are proved.
+     Next: the gate audit, then RD-2a and RD-2b.
 3. **B6 takes the window route, and `space_universal` is restated forward-only.**
    - **The window route.** `space_hierarchy`'s diagonalizer runs one fixed self-simulating
      universal machine `U₀` inside a window of radius `a·g(n)`, on the configuration-record rows,

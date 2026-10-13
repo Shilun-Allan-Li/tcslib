@@ -1,0 +1,203 @@
+# RD-2 statement gate — names probe
+# Every backticked identifier cited in the docstrings of the proposed kit files, the new ConfigCodec blocks, the rewritten TQBF docstrings and the ClassPSPACE facade was checked by `#check @<candidate>` appended to harness/TQBF.harness.lean (candidates: as written, then under Complexity., Complexity.FormulaKit., Complexity.ConfigCodec., Complexity.ConfigCodec.Port., Turing., Std.Sat.CNF.). Identifiers private to other modules cannot be #check-ed from outside and are verified by grep below.
+
+OK      Complexity.FormulaKit.blockVar
+OK      Complexity.exists_cnf_boolFun
+MISSING falsifyingCNF
+OK      Finset.univ
+OK      List.range
+OK      Std.Sat.CNF.serialize
+OK      Complexity.FormulaKit.blockVar
+OK      Complexity.FormulaKit.template
+OK      Complexity.FormulaKit.gate
+OK      Complexity.FormulaKit.exactlyOne
+OK      Complexity.FormulaKit.cost
+OK      Complexity.FormulaKit.template_eval
+OK      Complexity.FormulaKit.gate_eval
+OK      Complexity.FormulaKit.exactlyOne_eval
+OK      Complexity.FormulaKit.serialize_length_le
+OK      Complexity.FormulaKit.gate_cost_le
+OK      Complexity.FormulaKit.exactlyOne_cost_le
+MISSING clPack
+MISSING clTemplate
+OK      Complexity.codecLocalCheck
+OK      Nat.testBit
+OK      List.filterMap
+OK      List.ofFn
+OK      Std.Sat.CNF.numVars
+MISSING foldr_max_le_of_forall
+MISSING numVars_le_of_literal_bounds
+OK      Complexity.codecCnf_numVars
+OK      Std.Sat.CNF.numVars
+OK      List.max_le_of_forall_le
+MISSING clGroup
+OK      Complexity.ConfigCodec.transitionGate
+OK      Complexity.FormulaKit.template_eval
+OK      Std.Sat.CNF.eval_relabel
+OK      Complexity.codecOneHot
+OK      Complexity.codecOneHot_eval
+OK      Complexity.codecCnfCost
+OK      Complexity.FormulaKit.cost_append
+OK      Complexity.codecCnf_serialize
+OK      Complexity.FormulaKit.cost_relabel
+OK      Complexity.FormulaKit.template_length_le
+OK      Complexity.FormulaKit.template_widthAtMost
+MISSING exists_emitLoopTM
+OK      Complexity.PolyTimeComputable
+OK      Complexity.FormulaKit.polyTimeComputable_flatMap_range
+OK      Complexity.polyTimeComputable_emitIter
+OK      Turing.FinTM.exists_emitLoopTM
+MISSING clFragment
+OK      Complexity.FormulaKit.polyTimeComputable_fragment_iff_serialize
+OK      Complexity.FormulaKit.polyTimeComputable_fragment_relabel
+MISSING clA5Template_native
+OK      Complexity.FormulaKit.polyTimeComputable_fragment_gate_select
+OK      Complexity.FormulaKit.polyTimeComputable_unary_add
+OK      Complexity.FormulaKit.polyTimeComputable_serialize_relabel_add
+OK      Complexity.FormulaKit.fragment
+OK      Complexity.FormulaKit.polyTimeComputable_flatMap_range
+OK      Complexity.FormulaKit.polyTimeComputable_serialize_flatMap
+OK      Complexity.FormulaKit.polyTimeComputable_fragment_relabel
+OK      Complexity.FormulaKit.polyTimeComputable_fragment_gate
+OK      Complexity.FormulaKit.polyTimeComputable_fragment_gate_select
+OK      Complexity.FormulaKit.polyTimeComputable_unary_add
+OK      Complexity.FormulaKit.polyTimeComputable_serialize_relabel_add
+OK      Complexity.PolyTimeComputable.append
+OK      Complexity.polyTimeComputable_const
+OK      Complexity.FormulaKit.serialize_eq_fragment
+OK      Complexity.polyTimeComputable_transduce
+OK      Complexity.polyTimeComputable_ite
+OK      Complexity.polyTimeComputable_lenLe
+OK      Complexity.PolyTimeComputable.output_length_le
+OK      Complexity.FormulaKit.fragment_flatMap
+OK      Complexity.FormulaKit.template_numVars_le
+OK      Complexity.ConfigCodec.GateKind
+OK      Complexity.FormulaKit.polyTimeComputable_fragment_gate
+OK      Std.Sat.CNF.serializeLit
+MISSING clA5Add_native
+MISSING clA5Sub_native
+MISSING clA5Times_native
+MISSING clA5Div_native
+MISSING clA5Mod_native
+MISSING clA5Le_native
+OK      List.replicate_add
+OK      Complexity.polyTimeComputable_dropPrefixByLength
+OK      Complexity.pairFstD
+OK      Complexity.FormulaKit.polyTimeComputable_unary_mul
+OK      Complexity.FormulaKit.polyTimeComputable_unary_sub
+OK      Complexity.polyTimeComputable_isNil
+OK      Complexity.FormulaKit.polyTimeComputable_unary_le
+OK      Nat.mod_eq_sub_div_mul
+OK      Complexity.FormulaKit.polyTimeComputable_unary_div
+OK      Std.Sat.CNF.syntaxStep
+MISSING Complexity.ConfigCodec
+MISSING Complexity.FormulaKit
+OK      Complexity.CodecRow
+OK      Complexity.ConfigCodec.stateIndex
+OK      Complexity.ConfigCodec.caseList
+OK      Turing.outSummary
+OK      Complexity.CodecCase
+OK      Complexity.codecAction
+OK      Complexity.CodecPort
+OK      Complexity.ConfigCodec.Port.inputHead
+OK      Complexity.ConfigCodec.Port.inputSymbol
+OK      Complexity.ConfigCodec.portIndex
+OK      Complexity.ConfigCodec.Port.newBit
+OK      Complexity.codecReadSymbol
+OK      Complexity.codecReadSummary
+OK      Complexity.codecSummaryWord
+OK      Turing.moveInputPos
+OK      Complexity.ConfigCodec.portWire
+OK      Complexity.ConfigCodec.code_length
+OK      Complexity.ConfigCodec.code_input_eq
+OK      Complexity.ConfigCodec.code_eq_iff
+OK      Complexity.ConfigCodec.validity_eval_iff
+OK      Complexity.ConfigCodec.adjacency_eval_iff
+OK      Complexity.ConfigCodec.adjacency_eval_of_ne
+OK      Complexity.ConfigCodec.acceptance_eval_iff
+OK      Complexity.ConfigCodec.exists_serialize_length_le
+OK      Complexity.codecCoefficient
+OK      Complexity.ConfigCodec.width_eq
+OK      Complexity.codecPort_card
+OK      Complexity.ConfigCodec.portOf
+OK      List.getD_append
+OK      List.getElem_ofFn
+OK      Complexity.ConfigCodec.code_getD_inputVar
+OK      List.ext_getElem
+OK      Turing.NDTM.coreSum
+OK      Complexity.codecObserve_eq
+OK      Turing.MultiTapeTM.ConfigCount.coreCode
+OK      Complexity.CodecBit
+OK      Complexity.codecRowBits_injective
+OK      Complexity.codecRowOf_eq_iff
+OK      Turing.MultiTapeTM.ConfigCount.coreCode_inj
+OK      Complexity.codecBitsValid
+OK      Complexity.codecBitsValid_iff
+OK      Complexity.codecRow_realize
+OK      Complexity.ConfigCodec.portOf_portIndex
+OK      Complexity.ConfigCodec.kindPred
+OK      Complexity.codecGate
+OK      Complexity.ConfigCodec.expectOf
+OK      Complexity.ConfigCodec.headOf
+OK      Complexity.codecTransitionCNF_eval
+OK      Complexity.codecTransitionCNF_step_iff
+OK      Complexity.ConfigCodec.stateVar_none
+OK      Complexity.ConfigCodec.code_getD_stateVar
+OK      Complexity.ConfigCodec.code_getD_summaryVar
+OK      Complexity.FormulaKit.numVars_le_of_forall_lt
+OK      Complexity.ConfigCodec.portCount
+OK      Complexity.FormulaKit.template_numVars_le
+OK      Complexity.FormulaKit.cost_flatMap_le
+OK      Complexity.codec_absorb
+OK      Complexity.TQBF_PSPACEHard
+OK      Turing.Cfg.init
+OK      Complexity.ConfigCodec.validity_eval_iff
+OK      Complexity.ConfigCodec.adjacency_eval_iff
+OK      Complexity.ConfigCodec.adjacency_eval_of_ne
+OK      Complexity.ConfigCodec.code_eq_iff
+OK      Complexity.ConfigCodec.acceptance_eval_iff
+OK      Turing.NDTM.reflTransGen_cfgStep_iff
+OK      Turing.MultiTapeTM.toNDTM
+OK      Turing.NDTM.coreSum_stepWith
+OK      Turing.MultiTapeTM.abs_pos_lt_card_visited
+OK      Complexity.ConfigCodec.polyTimeComputable_serialize_validity
+OK      Complexity.ConfigCodec.polyTimeComputable_serialize_adjacency
+OK      Complexity.ConfigCodec.polyTimeComputable_serialize_acceptance
+OK      Complexity.FormulaKit.polyTimeComputable_fragment_iff_serialize
+OK      Complexity.ConfigCodec.polyTimeComputable_code_initCfg
+OK      Complexity.QBF.encode
+OK      Complexity.PolyTimeComputable.pairEncode
+OK      Complexity.QBF.decode_encode
+OK      Complexity.TQBF_PSPACEComplete
+MISSING ClassPSPACE.TQBF
+MISSING ClassPSPACE.Games
+
+## grep of private declarations cited (file: count of matching private declarations)
+CookLevin/Hardness.lean clPack: 1
+CookLevin/Hardness.lean clTemplate: 1
+CookLevin/Hardness.lean clGroup: 1
+CookLevin/Hardness.lean clFragment: 1
+CookLevin/Hardness.lean clA5Template_native: 1
+CookLevin/Hardness.lean clA5Add_native: 1
+CookLevin/Hardness.lean clA5Sub_native: 1
+CookLevin/Hardness.lean clA5Times_native: 1
+CookLevin/Hardness.lean clA5Div_native: 1
+CookLevin/Hardness.lean clA5Mod_native: 1
+CookLevin/Hardness.lean clA5Le_native: 1
+Formulas/CNF.lean falsifyingCNF: 1
+Formulas/CNF.lean foldr_max_le_of_forall: 1
+Formulas/CNFEncoding.lean numVars_le_of_literal_bounds: 1
+
+## QBF.lean additions: names checked in evidence/QBFEvidence.lean (#check and #print axioms); see elaboration.log
+
+## The MISSING lines, accounted for
+- falsifyingCNF, foldr_max_le_of_forall, numVars_le_of_literal_bounds, clPack, clTemplate,
+  clGroup, clFragment, clA5Template_native, clA5Add_native, clA5Sub_native, clA5Times_native,
+  clA5Div_native, clA5Mod_native, clA5Le_native: private declarations of other modules,
+  each found exactly once by the grep above.
+- exists_emitLoopTM: a quotation of the H6 registry row ("ordered emission by
+  `exists_emitLoopTM`"); the qualified `Turing.FinTM.exists_emitLoopTM` is cited too and
+  resolves (OK line above).
+- Complexity.ConfigCodec, Complexity.FormulaKit: namespaces, not declarations.
+- ClassPSPACE.TQBF, ClassPSPACE.Games: module names in the facade's `## Contents` (unchanged
+  convention of the tip facade).

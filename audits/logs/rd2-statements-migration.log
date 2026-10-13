@@ -1,0 +1,139 @@
+# RD-2 statement gate — migration of TQBF.lean's B4a block (tip lines 114-1811) at RD-2a, by declaration (tools/migration.py)
+# Line ranges are tip lines, each declaration with its docstring (MEASURED). Category rule: MERGE/MOVE/RETIRE are given; REWRITE is given for the nine numbered
+# objects (codecWord, configurationCodec, codecValidity, configurationValidity, configurationAcceptance, codecPairWire, configurationInputEquality, codecTransitionCNF,
+# configurationAdjacency) and propagated to every declaration whose text names a REWRITE/MOVE/RETIRE declaration; the rest is KEEP, or KEEP-R if it names a MERGE row.
+# Rename map for KEEP-R: CodecCase -> ConfigCodec.Case, codecAction -> ConfigCodec.caseAction, codecSummaryWord -> ConfigCodec.summaryWord,
+# codecReadSymbol -> ConfigCodec.readSymbol, codecReadSummary -> ConfigCodec.readSummary, CodecPort M -> ConfigCodec.Port M.k,
+# codecCnfCost(_relabel/_append/_flatMap_le) -> FormulaKit.cost(_relabel/_append/_flatMap_le).
+
+| Declaration | Tip lines | Lines | Fate | Successor |
+|---|---|---|---|---|
+| `CodecRow` | 132–139 | 8 | KEEP |  |
+| `CodecBit` | 141–148 | 8 | KEEP |  |
+| `codecBit_card` | 150–156 | 7 | KEEP |  |
+| `codecCoefficient` | 158–160 | 3 | KEEP |  |
+| `codecBit_card_le` | 162–170 | 9 | KEEP |  |
+| `codecRowBits` | 172–183 | 12 | KEEP |  |
+| `codec_symbol_ext` | 185–195 | 11 | KEEP |  |
+| `codecRowBits_injective` | 197–237 | 41 | KEEP |  |
+| `codecRowOf` | 239–248 | 10 | KEEP |  |
+| `codec_core_window` | 250–258 | 9 | KEEP |  |
+| `codecRowOf_input_eq` | 260–269 | 10 | KEEP |  |
+| `codecRowOf_eq_iff` | 271–298 | 28 | KEEP |  |
+| `codecWord` | 300–307 | 8 | REWRITE | ConfigCodec.code |
+| `codecWord_length` | 309–311 | 3 | REWRITE | ConfigCodec.code_length |
+| `codecWord_get` | 313–318 | 6 | REWRITE | ConfigCodec.code_getD_* |
+| `codecWord_eq_iff` | 320–330 | 11 | REWRITE | ConfigCodec.code_eq_iff |
+| `configurationCodec` | 332–337 | 6 | REWRITE | ConfigCodec.code |
+| `configurationCodec_length` | 339–344 | 6 | REWRITE | ConfigCodec.code_length |
+| `configurationCodec_input_eq` | 346–354 | 9 | REWRITE | ConfigCodec.code_input_eq |
+| `configurationCodec_eq_iff` | 356–364 | 9 | REWRITE | ConfigCodec.code_eq_iff |
+| `codecCnf_eval_flatMap` | 366–369 | 4 | KEEP |  |
+| `codecCnf_eval_map` | 371–374 | 4 | KEEP |  |
+| `codecOneHot` | 376–381 | 6 | MOVE | FormulaKit.exactlyOne |
+| `codecOneHot_eval` | 383–420 | 38 | MOVE | FormulaKit.exactlyOne_eval |
+| `codecBitsValid` | 422–430 | 9 | KEEP |  |
+| `codecRowBits_valid` | 432–441 | 10 | KEEP |  |
+| `codecBitsValid_iff` | 443–478 | 36 | KEEP |  |
+| `codecValidity` | 480–488 | 9 | REWRITE | ConfigCodec.validity |
+| `codecValidity_eval` | 490–497 | 8 | REWRITE | ConfigCodec.validity_eval_iff |
+| `codec_posCode` | 499–505 | 7 | KEEP |  |
+| `codecRow_realize` | 507–547 | 41 | KEEP |  |
+| `codecWord_padding` | 549–554 | 6 | RETIRE |  |
+| `codecWord_reconstruct` | 556–568 | 13 | RETIRE |  |
+| `codecPadding` | 570–572 | 3 | RETIRE |  |
+| `codecPadding_eval` | 574–584 | 11 | RETIRE |  |
+| `configurationValidity` | 586–589 | 4 | REWRITE | ConfigCodec.validity |
+| `configurationValidity_eval` | 591–616 | 26 | REWRITE | ConfigCodec.validity_eval_iff |
+| `codecAcceptance` | 618–620 | 3 | KEEP |  |
+| `codecAcceptance_eval` | 622–626 | 5 | KEEP |  |
+| `configurationAcceptance` | 628–630 | 3 | REWRITE | ConfigCodec.acceptance |
+| `configurationAcceptance_eval` | 632–640 | 9 | REWRITE | ConfigCodec.acceptance_eval_iff |
+| `codecCnfCost` | 642–644 | 3 | MERGE | FormulaKit.cost |
+| `codecCnfCost_relabel` | 646–649 | 4 | MERGE | FormulaKit.cost_relabel |
+| `codecCnfCost_append` | 651–654 | 4 | MERGE | FormulaKit.cost_append |
+| `codecCnfCost_flatMap_le` | 656–665 | 10 | MERGE | FormulaKit.cost_flatMap_le |
+| `codecOneHot_cost` | 667–693 | 27 | MOVE | FormulaKit.exactlyOne_cost_le |
+| `codecCnf_numVars` | 695–703 | 9 | MOVE | FormulaKit.numVars_le_of_forall_lt |
+| `codecCnf_serialize` | 705–745 | 41 | MOVE | FormulaKit.serialize_length_le |
+| `codecValidityCoefficient` | 747–750 | 4 | KEEP |  |
+| `codecValidity_cost_raw` | 752–785 | 34 | REWRITE | validity cost ledger (same count, over FormulaKit.cost) |
+| `codecValidity_cost` | 787–814 | 28 | REWRITE | validity cost ledger |
+| `codecPadding_cost` | 816–819 | 4 | RETIRE |  |
+| `configurationValidity_literals` | 821–839 | 19 | REWRITE | ConfigCodec.validity_numVars_le |
+| `configurationValidity_numVars` | 841–846 | 6 | REWRITE | ConfigCodec.validity_numVars_le |
+| `configurationValidity_size_raw` | 848–862 | 15 | REWRITE | ConfigCodec.exists_serialize_length_le |
+| `configurationAcceptance_bounds` | 864–877 | 14 | REWRITE | ConfigCodec.acceptance_numVars_le |
+| `codec_size_normalize` | 879–901 | 23 | KEEP |  |
+| `configurationValidity_size` | 903–911 | 9 | REWRITE | ConfigCodec.exists_serialize_length_le |
+| `configurationAcceptance_size` | 913–930 | 18 | REWRITE | ConfigCodec.exists_serialize_length_le |
+| `codecLocalCheck` | 932–951 | 20 | MOVE | FormulaKit.gate, FormulaKit.gate_cost_le |
+| `CodecPositions` | 953–955 | 3 | KEEP |  |
+| `codecPositions_card_le` | 957–969 | 13 | KEEP |  |
+| `codecPairBits` | 971–974 | 4 | KEEP |  |
+| `codecPairWire` | 976–979 | 4 | REWRITE | closed-form pair reads of code ++ code |
+| `codecPairWire_lt` | 981–988 | 8 | REWRITE | closed-form pair reads |
+| `configurationCodec_pair_get` | 990–1011 | 22 | REWRITE | closed-form pair reads |
+| `codecInputEquality` | 1013–1017 | 5 | KEEP |  |
+| `codecInputEquality_eval` | 1019–1029 | 11 | KEEP |  |
+| `codecInputEquality_cost` | 1031–1038 | 8 | KEEP-R |  |
+| `configurationInputEquality` | 1040–1042 | 3 | REWRITE | ConfigCodec.inputEquality |
+| `configurationInputEquality_reject` | 1044–1055 | 12 | REWRITE | ConfigCodec.adjacency_eval_of_ne |
+| `configurationInputEquality_bounds` | 1057–1068 | 12 | REWRITE | adjacency ledger |
+| `configurationCodec_step_congr` | 1070–1078 | 9 | REWRITE | corollary of ConfigCodec.code_eq_iff, if still needed |
+| `codec_square_le_pow` | 1080–1092 | 13 | KEEP |  |
+| `codec_absorb` | 1094–1126 | 33 | KEEP |  |
+| `codec_posCode_eq_iff` | 1129–1141 | 13 | KEEP |  |
+| `codecObserve` | 1143–1151 | 9 | KEEP |  |
+| `codecObserve_eq` | 1153–1166 | 14 | KEEP |  |
+| `codecObserve_congr` | 1168–1180 | 13 | KEEP |  |
+| `codec_step_blank` | 1182–1196 | 15 | KEEP |  |
+| `codecObserve_step_iff` | 1198–1224 | 27 | KEEP |  |
+| `codecSummaryWord` | 1226–1230 | 5 | MERGE | ConfigCodec.summaryWord |
+| `codecSummaryWord_summary` | 1232–1234 | 3 | KEEP-R |  |
+| `codecObserve_step_normalize` | 1236–1244 | 9 | KEEP-R |  |
+| `CodecCase` | 1246–1248 | 3 | MERGE | ConfigCodec.Case |
+| `codecAction` | 1250–1254 | 5 | MERGE | ConfigCodec.caseAction |
+| `codecAction_apply` | 1256–1263 | 8 | KEEP-R |  |
+| `CodecPort` | 1265–1272 | 8 | MERGE | ConfigCodec.Port (at M.k) |
+| `codecPort_card` | 1274–1278 | 5 | MOVE | ConfigCodec.card_port |
+| `codecReadSymbol` | 1280–1282 | 3 | MERGE | ConfigCodec.readSymbol |
+| `codecReadSymbol_flags` | 1284–1289 | 6 | KEEP-R |  |
+| `codecReadSummary` | 1291–1293 | 3 | MERGE | ConfigCodec.readSummary |
+| `codecReadSummary_flags` | 1295–1298 | 4 | KEEP-R |  |
+| `codecInputWire` | 1300–1302 | 3 | KEEP |  |
+| `codecInputRead` | 1304–1306 | 3 | KEEP |  |
+| `codecGateWire` | 1308–1318 | 11 | KEEP-R |  |
+| `codecGuard` | 1320–1325 | 6 | KEEP-R |  |
+| `codecInputRead_wire` | 1327–1355 | 29 | KEEP |  |
+| `codecGuard_rows` | 1357–1365 | 9 | KEEP-R |  |
+| `codecGuard_spec` | 1367–1397 | 31 | KEEP-R |  |
+| `codecExpected` | 1399–1416 | 18 | KEEP-R |  |
+| `codecGate` | 1418–1422 | 5 | KEEP-R |  |
+| `codecExpected_apply` | 1424–1471 | 48 | KEEP-R |  |
+| `codecExpected_step` | 1473–1496 | 24 | KEEP-R |  |
+| `codecGate_cnf` | 1498–1512 | 15 | RETIRE |  |
+| `codecGateCNF` | 1514–1517 | 4 | RETIRE |  |
+| `codecGateCNF_spec` | 1519–1525 | 7 | RETIRE |  |
+| `CodecGateIndex` | 1527–1529 | 3 | RETIRE |  |
+| `codecTransitionCNF` | 1531–1535 | 5 | REWRITE | ConfigCodec.transition |
+| `codecTransitionCNF_eval` | 1537–1544 | 8 | REWRITE | gate bridge and coverage of the closed-form enumeration |
+| `codecTransitionCNF_step_iff` | 1546–1582 | 37 | REWRITE | restated over the gate conjunction; proof body from its second line |
+| `codecTransitionCNF_cost` | 1584–1594 | 11 | REWRITE | adjacency ledger |
+| `configurationAdjacency` | 1596–1598 | 3 | REWRITE | ConfigCodec.adjacency |
+| `configurationAdjacency_eval` | 1600–1610 | 11 | REWRITE | ConfigCodec.adjacency_eval_iff |
+| `configurationAdjacency_reject` | 1612–1622 | 11 | REWRITE | ConfigCodec.adjacency_eval_of_ne |
+| `codecTransitionCoefficient` | 1624–1626 | 3 | KEEP-R |  |
+| `codecTransitionCNF_cost_poly` | 1628–1643 | 16 | REWRITE | adjacency ledger |
+| `codecAdjacency_cost` | 1645–1663 | 19 | REWRITE | adjacency ledger |
+| `configurationAdjacency_bounds` | 1665–1695 | 31 | REWRITE | adjacency ledger |
+| `exists_adjacency_codec_cnf` | 1698–1811 | 114 | RETIRE |  |
+
+KEEP 510 39
+KEEP-R 193 15
+MERGE 48 10
+MOVE 146 7
+REWRITE 482 39
+RETIRE 180 10
+CONFLICT 0 0
+declarations 120 lines 1559
