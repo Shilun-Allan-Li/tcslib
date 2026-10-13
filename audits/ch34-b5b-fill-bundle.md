@@ -122,7 +122,8 @@ be rerun.
      `expcom_bits_two_pow`/`bits_two_pow` pair. It gains one **disclosed** pair:
      `Convention.incFixed_eq_none_iff_replicate` against `MeyerTableau`'s public
      `incFixed_eq_none_iff`, at 100% (93 characters), which is the colleague's original. It is
-     recorded for retirement as backlog F6-1(j). Say whether placing the criterion in
+     recorded for retirement as backlog F6-1(j). **The user acknowledged it (2026-10-12)**, on
+     condition that the retirement stays on the backlog. Say whether placing the criterion in
      `Convention` is right, given that `EXPCOM` cannot import `CircuitComplexity`.
 8. Report anything else the fill or its records misstate, in the standard table.
 
@@ -154,7 +155,7 @@ be rerun.
 
 Severity guide as in `audits/TEMPLATE.md`. Findings go verbatim into
 `audits/ch34-b5b-fill-findings.md`. The gate closes when it has zero blockers and zero majors;
-CH34-D4 is ruled, and the factoring's one new pair (F6-1(j)) needs the user's acknowledgement.
+CH34-D4 is ruled, and the user has acknowledged the factoring's one new pair (F6-1(j)).
 
 ## ===== audits/TEMPLATE.md (at the gate head) =====
 
@@ -2960,8 +2961,9 @@ maintainer.
     `incFixed_eq_none_iff`, 93/93 characters (100%). The colleague's theorem is the original. The
     new public copy is deliberate, because the criterion's home is where `incFixed` is defined, and
     `EXPCOM` cannot import `CircuitComplexity`. It retires when `MeyerTableau` cites
-    `Convention`'s criterion, in the user's dedup window (backlog F6-1(j)). It needs the user's
-    acknowledgement (`policy.md`, **Duplication**).
+    `Convention`'s criterion, in the user's dedup window (backlog F6-1(j)). **The user
+    acknowledged it (2026-10-12)**, on condition that the retirement stays on the backlog
+    (`policy.md`, **Duplication**).
 - The colleague-owned files `TimeHierarchy/Separation.lean` and `CircuitComplexity/*` are untouched.
 
 ## ===== TCSlib/Complexity/Diagonalization/EXPCOM.lean (at the gate head) =====
@@ -13837,6 +13839,7 @@ window.*
   100% (93 characters). Retire the second by citing the first in the user's dedup window. Also
   colleague-owned: `TimeHierarchy/Separation`'s private `bits_two_pow` can cite
   `Turing.bits_two_pow_eq_replicate`, and Catalog's `f2_incFixed_cases` goes with MIG-1.
+  **Acknowledged (user, 2026-10-12)**, on condition that the retirement stays on this backlog.
 
 ## 2. Campaign work queued or on hold
 
