@@ -40,23 +40,27 @@ the uniform form required by Example 3.6(3), audited at phase P3.2 round 2]
   state-indexed work, so a huge declared count is never expanded in unary.
 * **The clock is §12.7's counter loop** (`Turing.counterLoopTM`) over the
   deadline's binary word; a simulated halt is a live body exit.
-* **Status update (fills-7, 2026-10-12): partial.** The two headline contracts
+* **Status update (fills-8, 2026-10-13): partial.** The two headline contracts
   retain their original admissions. Proved so far:
   - for the canonizer: the native-input binary-header loader and the physical
     fail-fast binary length guard; the canonical-header check, the
-    nonoverflowing successor counter and its specialized guard; and the guard
+    nonoverflowing successor counter and its specialized guard; the guard
     front end, which prepares the header, the successor count and the native
     remainder address from blank tapes, seeks there, runs the guard and seeks
-    back on success;
+    back on success; and the total two-port parse front end
+    (`exists_canonParseFront`), which joins header validity to the guard with
+    a fallback rejection port and a ready-for-grammar port, in linear time;
   - for the simulator: the complete generic step block `h1RoundTM`, one finite
     machine per work-tape count `k` whose control is independent of the coded
     state count (record lookup, the selected record's payload, successor
     installation and the round seam), with its exact time bound and head
-    envelope (`h1Round_effect`).
+    envelope (`h1Round_effect`); and the binary deadline clock around it,
+    hosted on the virtual input, with its one-bit verdict
+    (`h1HostedVerdict_accepts`).
 
-  Still open: the canonizer's header-validity branch, the record parser and
-  the emission; the simulator's nested-input setup, canonizer installation,
-  and the hosted, clocked assembly with its ledger.
+  Still open: the canonizer's restored binary bound, the action-record
+  validator, the grammar loop and the emission; the simulator's nested-input
+  startup, canonizer installation and joint ledger.
 
 ## Main definitions
 
