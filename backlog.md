@@ -546,6 +546,31 @@ window.*
   `Turing.bits_two_pow_eq_replicate`, and Catalog's `f2_incFixed_cases` goes with MIG-1.
   **Acknowledged (user, 2026-10-12)**, on condition that the retirement stays on this backlog.
 
+### F7-1: promotion, deduplication and style requests from fills-7 (2026-10-12)
+
+*Origin: the fills-7 continuations (`audits/fills-7-integration.md`).*
+
+- **(a) Promote the step block as host H2** (design §14). `h1RoundTM`, `h1Round_effect` and the
+  representation `h1RoundRep`, with the whole-record skipper `h1SkipTM` and its successor leaf
+  `h1SuccTM`, from `CodeSimulator`'s H1 gap to a public Build module, by PR and gate, **before any
+  second consumer is briefed**: B6's `U₀` (RD-3), C1, U-1, EXPCOM. `h1Run_headBound`, the run form
+  of `workTapePos_step_le`, goes with it. H1's own assembly may continue on the private copy.
+- **(b) The R1 configuration-reconstruction family.** The canonizer continuation's
+  `canonEmbedEq` reconstructs an embedded configuration from its selected-bank projections and
+  the unchanged ambient frame. That is the argument of `OracleSim.oracleBankCfg_eq` and of the
+  local `hframe` in `Loop.emCall_exit_fixed`, the wave-1 gate's major F1. It also has analogues in
+  `Primitives` and `CertShell`, per the report. One public lemma in `Build/Embed` serves them all.
+  Its scheduling is the wave-1 gate's ruling; this records the new member.
+- **(c) The fixed-field record walk.** The two B5a batches both walk a record's fixed fields. The
+  overlap was pre-disclosed, and the text screen does not show it. Factor it in the B5a
+  completion, or with H2's promotion.
+- **(d) Small canonizer promotions:** the strict install-call adapter `canonStrictInstall`, the
+  preserving installation `canonPreserveInstall` and the embedded seek `exists_canonSeekOnBank`,
+  derived uses of public hosts. Reconcile them with MIG-0b's `ReturnContract` case split (the
+  MIG-0a gate's minor 5) rather than promoting them as they are.
+- **(e) Style debt, for each owner's next continuation:** H1's 67 Lean linter warnings and 83
+  lines over 100 characters; the record tables' 8 lines; the canonizer's 1 line.
+
 ## 2. Campaign work queued or on hold
 
 ### MIG / RS: the foundation migration and the restyling backlog (user, 2026-10-12; design §16)
