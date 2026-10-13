@@ -3576,20 +3576,24 @@ written in four idioms).
    `.keep` lemmas for stored words and blank tapes, and `Contract.Frames`.
 
 **Compositions, as thin wrappers over the existing rows:**
-- `trans`: sequencing on one machine, the private `RecordRun` pattern;
+- `trans`: first-exit sequencing on one machine. It is not a general `RecordRun` concatenation
+  (MIG-0a gate, round 1, major; see below);
 - `seq`: the R2 seam, time `t₁ + 1 + t₂`;
-- `inPhase`: one phase inside the phase host, whose redirect targets lie in other phases;
+- `inPhase`: one phase inside the phase host, whose redirect targets lie in other phases (a
+  sufficient condition: the run must avoid every redirect target up to its endpoint);
 - `embed`: the R1 embedding, with unselected tapes framed and output appended;
 - `branch`: the two-way seam;
-- `ReturnContract` with `release`: for the four rows whose entry is also their exit (the install
-  and emit calls and the advancing writer), whose cut starts at time `1`.
+- `ReturnContract` with `release`: for rows that return to their anchor, whose cut starts at
+  time `1`, such as the advancing writer. The install and emit calls quantify separate entry and
+  exit states that may coincide, so with arbitrary witnesses they split on `entry = exit`
+  (corrected at the gate, round 1, minor 5).
 
 **Fit test.** `trans`, `seq`, `inPhase`, `embed` and `embedEmitCfg_select` are proved with no
 statement change and no extra hypothesis, on the standard three axioms. So is the instance
 `clearTM_contract`, R3 clear repackaged from `clearTM_run_ofCfg`. A second fit test then
 proved the rest: the frames layer (the `SameOutside` lemmas are nearly definitional),
 `clearTM_contract_frames` (the footprint is exactly where the endpoint writes blanks), `release`
-and `branch`. **The whole MIG-0a draft is proved: 837 lines, 0 errors, 0 warnings**
+and `branch`. **The whole MIG-0a draft is proved: 843 lines, 0 errors, 0 warnings**
 (`audits/evidence/mig0/Contract-draft.lean.txt`).
 
 Further observations from the fit tests:
@@ -3612,13 +3616,50 @@ The test found two missing public exports, both additive:
 
 **Scope, in two increments:**
 - **MIG-0a:** the structure, the derived lemmas, the frames layer, `trans`, `seq`, `inPhase`,
-  `embed`, `branch`, `ReturnContract` with `release`, `Contract.live`, and the three exports;
-- **MIG-0b:** the symbol lift (through `Cfg.decodeSymbols`), the counter loop (rounds as
-  `ReturnContract`s), state renaming along an embedding (`runFrom_mapState_of_agreeOn`), and
-  the tactics.
+  `embed`, `branch`, `ReturnContract` with `release`, `Contract.live`, and two exports
+  (`embedEmitCfg_unselected`, `seamCompTM_runFrom_right`); the pointwise release export is
+  deferred to MIG-0b;
+- **MIG-0b:** revised after the gate's round 1, below.
 
-The next step is MIG-0a's statement gate. The draft's proofs exist, so the gate can audit
-statements and proofs together.
+**MIG-0a gate, round 1** (2026-10-12: 0 blockers, 1 major, 5 minors; `audits/mig0a-findings.md`,
+resolutions `audits/mig0a-resolutions.md`). No proved statement was found false. The major is
+about the migration interface: a first-exit `Contract` does not directly replace three kinds of
+existing specification, so the direct-replacement claims of MIG-12 and MIG-15 were wrong.
+- **Segments.** `CfgRecord`'s `RecordRun` is a fixed-length run that avoids a forbidden verdict
+  set; its endpoint need not be a first visit, and `recordRun_trans` concatenates on one machine
+  with no dispatch step. The auditor's example: a machine idling at `a` gives a length-2 segment
+  from `a` to `a`, which neither a positive `Contract` nor a `ReturnContract` can package.
+- **Return-or-escape rounds.** `RecordTable`'s `rt_find_round_entry` and the counter loop's rounds
+  end either back at their anchor or at a distinct escape, with positive cuts against both. A
+  `Contract` fails its time-zero cut there, and a `ReturnContract` excludes the escape.
+- **Joint trajectories.** `CounterLoop`'s `counterSpan` constrains the whole head vector along a
+  run. Per-tape intervals cannot express a relation such as "the two heads are equal".
+
+`Contract` stays the first-exit specialization. **MIG-0b** therefore covers, before any
+dependent migration:
+1. a **segment layer**: fixed-length segments avoiding a forbidden set, with same-machine
+   concatenation (the `RecordRun` pattern), and a bridge to `Contract` when the endpoint is a
+   first exit;
+2. a **round layer**: return-or-escape rounds with positive cuts against the anchor and the
+   escape, and the counter loop's composition over them;
+3. a **joint-trajectory layer**: a relation on the head vector along the run, derived like
+   `Frames` and preserved by the compositions;
+4. the **layering split**: a core contract module that `Loop` and `CounterLoop` can import
+   (round 1, minor 2), with the adapters and routine instances above it; the two exports move into
+   `Build/Embed` and `Build/Seam` then. Round 2's import repair found that the file needs `Seam`,
+   `Catalog` and `Mathlib.Tactic.Linarith` (which `CounterLoop` used to supply indirectly), so
+   `CounterLoop` is no longer in its closure, but `Loop` still is, through `Catalog`. The core
+   part needs only the machine core, apart from `MultiTapeTM.spaceUsedByTape_le_card_Icc`, which
+   lives in `Catalog` and moves down first;
+5. the pointwise release export `seamReleaseTM_runFrom_pos`;
+6. the symbol lift (through `Cfg.decodeSymbols`), state renaming along an embedding
+   (`runFrom_mapState_of_agreeOn`), and the alphabet-reduction and robustness-lockstep adapters
+   (round 1, note 20);
+7. the tactics, and the auditor's suggested sanity lemmas: the zero-time characterization
+   (`time = 0 ↔ some entry ∈ exits` on admissible starts) and positivity of the compositions.
+
+MIG-0a's round 2 audits the corrected records and the documentation repairs; no statement or proof
+of the file changes.
 
 ### 16b. Five route decisions (user, 2026-10-12)
 

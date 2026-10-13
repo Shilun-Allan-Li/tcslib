@@ -1,0 +1,531 @@
+--- audits/evidence/mig0/Contract-proposed.lean.txt	2026-10-12 22:47:10
++++ audits/evidence/mig0/Contract-proposed-r2.lean.txt	2026-10-12 23:04:58
+@@ -3,31 +3,41 @@
+ Released under Apache 2.0 license as described in the file LICENSE.
+ Authors: Seyoon Ragavan
+ -/
++import Mathlib.Tactic.Linarith
+ import TCSlib.Complexity.TuringMachine.Build.Seam
+-import TCSlib.Complexity.TuringMachine.Build.CounterLoop
++import TCSlib.Complexity.TuringMachine.Build.Catalog
+ 
+ set_option maxHeartbeats 0
+ set_option relaxedAutoImplicit false
+ set_option autoImplicit false
+ 
+ /-!
+-# Framed contracts (MIG-0, statement draft)
++# Framed contracts (MIG-0a)
+ 
+-**Status: the proposed file for the MIG-0a gate; not yet landed.** Every definition and theorem
+-is proved: the draft by two read-only fit tests (2026-10-12) that changed no statement, and the
+-gate additions (`live`, the two exports, `frames_iff`) by the maintainer. `clearTM_contract` and
+-`clearTM_contract_frames` are the routine instance.
++**Status: the proposed file for the MIG-0a gate, round 2; not yet landed.** Every definition
++and theorem is proved: the draft by two read-only fit tests (2026-10-12) that changed no
++statement, and the gate additions (`live`, the two exports, `frames_iff`) by the maintainer. No
++statement or proof has changed since round 1. Round 2 repairs the documentation, and imports
++`Build/Catalog` and `Mathlib.Tactic.Linarith` in place of `Build/CounterLoop`, none of whose own
++declarations the file uses (round 1, `audits/mig0a-findings.md`: minors 2 to 6, notes 9, 10, 12,
++14 and 20). `clearTM_contract` and `clearTM_contract_frames` are the routine instance.
+ 
+ A *contract* packages what the library's framed rows state one by one (design §14 item 0,
+ §16): started at `entry` in a configuration satisfying the precondition, the machine reaches
+ the endpoint `post` after **exactly** `time` steps, has **not** reached an exit before, and
+-keeps every work head inside an interval. "Within `B`" and the space bound are derived.
++keeps every work head inside an interval. "Within `B`" and the space bound are derived. It is
++the **first-exit** specialization: segments whose endpoint need not be a first exit,
++return-or-escape rounds and joint head trajectories are MIG-0b's layers (below).
+ 
+ ## Design
+ 
+ * **Exact time and the cut are fields** (§16). The cut includes time `0`, as in about 45 of the
+-  library's rows. A module whose entry is also its exit is a `Turing.ReturnContract`, turned into
+-  a contract by the release adapter (`Turing.ReturnContract.release`, over `Turing.seamReleaseTM`).
++  library's rows. A row that returns to its own anchor, so that its cut starts at time `1` (the
++  advancing writer `Turing.writeAdvTM_run_ofCfg`), is a `Turing.ReturnContract`, turned into a
++  contract by the release adapter (`Turing.ReturnContract.release`, over
++  `Turing.seamReleaseTM`). The install and emit calls (`Turing.FinTM.exists_installCallTM`,
++  `Turing.FinTM.exists_emitCallTM`) quantify separate `entry` and `exit` states that may
++  coincide: with arbitrary witnesses, split on `entry = exit` (see `Turing.ReturnContract`).
+ * **Exits form a set**, so one structure covers single anchors, verdict pairs (`yes`/`no`),
+   loop exits (`done`/`escape`) and halting (`none`).
+ * **The endpoint is a function** of a data index `i : ι` and the start configuration. Data the
+@@ -38,23 +48,33 @@
+   follows from `MultiTapeTM.spaceUsedByTape_le_card_Icc`.
+ * **Frames are part of the endpoint** (rows already state them as `{ d with … }`); a derived
+   layer names them for composition proofs (user decision, 2026-10-12): `Turing.Cfg.SameOutside`,
+-  its `.keep` lemmas, and `Turing.Contract.Frames`.
++  its `.keep` lemmas, and `Turing.Contract.Frames`, adapted from [AFM26]'s framing.
++  `Turing.Cfg.SameOutside` is an endpoint relation on work-tape contents only.
+ * **Universes:** alphabet, states and index in `Type`, the universe of `FinTM`, `phaseHostTM`
+   and `counterLoopTMVia` (backlog UNIV-1 folds in here).
+ 
+ ## Main definitions
+ 
+ * `Turing.Contract`: the structure.
+-* `Turing.Contract.trans`: sequencing on one machine (the private `RecordRun` pattern).
+-* `Turing.Contract.seq`: sequencing through the R2 seam `Turing.seamCompTM`.
+-* `Turing.Contract.inPhase`: a phase run inside the phase host `Turing.phaseHostTM`.
+-* `Turing.Contract.embed`: transport along the R1 embedding `Turing.embedEmitTM`.
+-* `Turing.Contract.branch`: the two-way seam `Turing.seamCompTM₂`.
++* `Turing.Contract.trans`: first-exit sequencing on one machine, with no dispatch step. It is
++  not a general `RecordRun` concatenation (MIG-0b's segment layer).
++* `Turing.Contract.seq`: sequencing through the R2 seam `Turing.seamCompTM`, after a first
++  phase with a single live exit.
++* `Turing.Contract.inPhase`: a phase run inside the phase host `Turing.phaseHostTM`, with an
++  arbitrary set of live exits, each redirected.
++* `Turing.Contract.embed`: transport along the R1 embedding `Turing.embedEmitTM`, for
++  output-normalized preconditions.
++* `Turing.Contract.branch`: the two-way seam `Turing.seamCompTM₂`, after a first phase with two
++  live exits.
+ * `Turing.ReturnContract`, `Turing.ReturnContract.release`: returning modules and the release
+   adapter.
+ * `Turing.Cfg.SameOutside`, `Turing.Contract.Frames`: the derived frame layer.
+ * `Turing.clearTM_contract`: R3 clear as a contract (the routine instance).
+ 
++**Routing.** `seq` is the single-live-exit seam, `branch` the binary case, and the phase host
++(`inPhase`) handles an arbitrary set of live exits, several of which may share one continuation.
++A first phase that halts cannot resume through a seam, which dispatches only at a live anchor.
++
+ ## Main results
+ 
+ * `Turing.Contract.within`: the derived "within `B`" form.
+@@ -63,18 +83,44 @@
+ * `Turing.clearTM_contract_frames`: R3 clear frames exactly the cleared cells.
+ * `Turing.Contract.live`: a contract run is live before its endpoint.
+ * `Turing.embedEmitCfg_unselected`, `Turing.seamCompTM_runFrom_right`: two exports the library
+-  lacks, derived here from public rows (they move to `Embed` and `Seam` at those files' rebases).
++  lacks, derived here from public rows. They move to `Build/Embed` and `Build/Seam` with MIG-0b's
++  layering split (backlog MIG-0). The pointwise release export `seamReleaseTM_runFrom_pos` is
++  deferred to MIG-0b.
+ 
+ ## Later rows (MIG-0b; design §16a)
+ 
+-The symbol lift (`MultiTapeTM.liftSymbols_runFrom`, through `Cfg.decodeSymbols`), the counter
+-loop (`counterLoopTM_run_done`/`_escape`, rounds as `Turing.ReturnContract`s), state renaming
+-along an embedding (`runFrom_mapState_of_agreeOn`), and the tactics.
++MIG-0b, as revised after the MIG-0a gate's round 1 (major 1, minors 2 and 6, note 20), covers
++these before any dependent migration; `Turing.Contract` stays the first-exit specialization.
+ 
++* A **segment and round layer.** Segments: fixed-length runs that avoid a forbidden set, whose
++  endpoint need not be a first exit, with same-machine concatenation (`CfgRecord`'s `RecordRun`
++  and `recordRun_trans`), and a bridge to `Turing.Contract` when the endpoint is a first exit.
++  Rounds: return-or-escape runs with positive cuts against both the anchor and the escape
++  (`RecordTable`'s `rt_find_round_entry`, the counter loop's rounds).
++* A **joint-trajectory layer**: a relation on the whole head vector along the run, derived like
++  `Turing.Contract.Frames` and preserved by the compositions (`CounterLoop`'s `counterSpan`).
++* The **layering split**: a core contract module that `Build/Loop` and `Build/CounterLoop` can
++  import, with the seam and embedding adapters and the routine instance elsewhere; the two
++  exports then move to `Build/Embed` and `Build/Seam`.
++* The pointwise release export `seamReleaseTM_runFrom_pos`.
++* The symbol lift (`MultiTapeTM.liftSymbols_runFrom`, through `Cfg.decodeSymbols`), the counter
++  loop (`counterLoopTMVia_run_done`/`_run_escape`, over the round layer), and state renaming
++  along an embedding (`runFrom_mapState_of_agreeOn`).
++* The tactics.
++* The alphabet-reduction and robustness-lockstep adapters (round 1, note 20).
++
+ ## References
+ 
+-* [AFM26] anthropics/formal-math, `3sum-apsp`: framing and specification-only calls (design
+-  adaptation; the treatment of time differs, §16).
++* [AFM26] Anthropic, PBC, `anthropics/formal-math` (https://github.com/anthropics/formal-math),
++  project `3sum-apsp`, commit `e1a4e650` (2026-10-05), Apache-2.0, © Anthropic, PBC; examined
++  2026-10-12 (design §15, *Prior art examined*). Design adaptation (policy §2): the framing of
++  `ThreeSumApsp/Lang/Regions.lean` (`SameOn`, `SameOutside` and the `.keep` lemmas), adapted as
++  `Turing.Cfg.SameOutside`, its `.keep` lemmas and `Turing.Contract.Frames`; and the
++  specification-only calls of `ThreeSumApsp/Lang/Calls.lean` (`Meets`, over the program logic
++  `Ends` of `ThreeSumApsp/Lang/Logic.lean`), adapted as `Turing.Contract`, through which the
++  compositions use their operands. These upstream files are vendored, with the local changes
++  their headers list, as `TCSlib/Programs/Light/Regions.lean`, `Calls.lean` and `Logic.lean`.
++  The treatment of time differs: exact time and a no-earlier-exit cut, not "within `T`" (§16).
+ -/
+ 
+ namespace Turing
+@@ -82,9 +128,16 @@
+ variable {k : ℕ} {Γ : Type}
+ 
+ /-- **A framed contract** (design §14 item 0, §16). For every data index `i` and every start
+-configuration `d` at `entry` satisfying `pre i d`, the machine reaches `post i d` after exactly
+-`time i d` steps; `post i d` is at an exit; no exit is reached earlier (the cut includes time
+-`0`); and through the endpoint every work head `j` stays in `[lo i d j, hi i d j]`. -/
++configuration `d` at `entry` satisfying `pre i d` (an *admissible* start), the machine reaches
++`post i d` after exactly `time i d` steps; `post i d` is at an exit; no exit is reached earlier
++(the cut includes time `0`); and through the endpoint every work head `j` stays in
++`[lo i d j, hi i d j]`. Nothing is asserted for other starts. This is the first-exit
++specialization (see the module docstring for the segment, round and joint-trajectory layers of
++MIG-0b).
++
++[AFM26], design adaptation: a specification that a caller uses instead of the run, as with the
++specification-only calls (`Meets`) of `Lang/Calls.lean`. Unlike there, the time is exact and
++comes with a no-earlier-exit cut, rather than "within `T`" (§16). -/
+ structure Contract {S : Type} (M : MultiTapeTM k Γ S) (entry : S) (exits : Set (Option S))
+     (ι : Type) (x : List Γ) where
+   /-- The precondition on the start configuration, for data `i`. -/
+@@ -155,9 +208,18 @@
+   rw [MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_of_halt _ h]
+   exact h
+ 
+-/-- **Sequencing on one machine**: run `C₁` to its single exit `e₂`, then `C₂` from there.
+-Times add with no dispatch step; the envelopes take the pointwise hull. `hX` says that `C₁`
+-does not pass through an exit of `C₂` before its own exit. -/
++/-- **First-exit sequencing on one machine**: run `C₁` to its single exit `e₂`, then `C₂` from
++there. Times add with no dispatch step; the envelopes take the pointwise hull. `C₂`'s
++precondition is needed only at `C₁`'s actual endpoint (`hlink`), for the linked index. `hX` says
++that `C₁` does not pass through an exit of `C₂` before its own exit; it cannot be dropped, since
++`C₁`'s cut excludes only `e₂`. This is not a general `RecordRun` concatenation: a segment whose
++endpoint need not be a first exit belongs to MIG-0b's segment layer.
++
++**Proof sketch.** Split the time at `C₁`'s time `t₁`. By `C₁`'s run, the run for `t₁ + v` steps
++is `C₂`'s run for `v` steps from `C₁`'s endpoint, which is at `e₂` and satisfies `C₂`'s
++precondition; this gives the run and the exit. Before `t₁` the cut is `hX`; at a time `t₁ + v`
++below the total it is `C₂`'s cut at `v`. Up to `t₁` the heads are in `C₁`'s envelope, and after
++it in `C₂`'s; the hull contains both. -/
+ def trans {S : Type} {M : MultiTapeTM k Γ S} {e₁ e₂ : S} {X : Set (Option S)} {ι κ : Type}
+     {x : List Γ} (C₁ : Contract M e₁ {some e₂} ι x) (C₂ : Contract M e₂ X κ x) (link : ι → κ)
+     (hlink : ∀ i d, d.state = some e₁ → C₁.pre i d → C₂.pre (link i) (C₁.post i d))
+@@ -204,7 +266,14 @@
+   Cfg.ext (by simp [Cfg.mapState, hd]) rfl rfl rfl rfl
+ 
+ /-- The seam trajectory of a contract run: the left segment up to the first exit (live
+-throughout), and the right segment after the dispatch, at every offset. -/
++throughout), and the right segment after the dispatch, at every offset. The composite starts
++at `Sum.inl entry₁`; the first phase runs from that start with its state replaced by `entry₁`.
++
++**Proof sketch.** Re-tagging the replaced start by `Sum.inl` gives back the composite start.
++`C₁`'s cut is the strict exit cut of `Turing.seamCompTM_runFrom_left`, which gives the left
++segment up to `t₁`. It is live: a halt before `t₁` would persist to the endpoint, which is at
++`exit₁`. The right segment is `Turing.seamCompTM_run_ofCfg` with second-phase time `v` and that
++run's endpoint taken to be itself. The replaced endpoint is at `entry₂` by construction. -/
+ private lemma seq_traj {S₁ S₂ : Type} [DecidableEq S₁] {M₁ : MultiTapeTM k Γ S₁}
+     {M₂ : MultiTapeTM k Γ S₂} {entry₁ exit₁ : S₁} (entry₂ : S₂) {ι : Type} {x : List Γ}
+     (C₁ : Contract M₁ entry₁ {some exit₁} ι x) (i : ι) (d : Cfg k Γ (S₁ ⊕ S₂) x)
+@@ -237,9 +306,22 @@
+     rwa [hd'] at hr
+ 
+ /-- **Sequencing through the R2 seam** (`Turing.seamCompTM_run_ofCfg`,
+-`Turing.seamCompTM_firstReturn_ofCfg`): one dispatch step between the phases, so the time is
+-`t₁ + 1 + t₂`. The second phase starts from the first's endpoint with its state replaced by
+-`entry₂`. -/
++`Turing.seamCompTM_firstReturn_ofCfg`): run `C₁` to its single live exit `exit₁`, take one
++stationary dispatch step, and run `C₂`, so the time is `t₁ + 1 + t₂`. The second phase starts
++from the first's endpoint with its state replaced by `entry₂`; the endpoint and the exits are
++right-tagged, and the envelopes take the hull.
++
++This is the **single-live-exit seam**. Two live exits go through `Turing.Contract.branch`, and
++an arbitrary set of live exits through the phase host (`Turing.Contract.inPhase`). A first phase
++that halts cannot resume through a seam, which dispatches only at a live anchor.
++
++**Proof sketch.** By the seam trajectory (`seq_traj`): up to `t₁` the composite is the
++left-tagged first phase, live throughout, and at `t₁ + 1 + v` it is the right-tagged second
++phase at `v`, from its entry. The run is `Turing.seamCompTM_run_ofCfg` with `C₂`'s run, and the
++exit is `C₂`'s, right-tagged. For the cut, a time up to `t₁` carries a live left-tagged state,
++which is no right-tagged exit; a later time is `t₁ + 1 + v` with `v < t₂`, and injectivity of the
++right tag reduces it to `C₂`'s cut at `v`. The envelope is `C₁`'s up to `t₁` and `C₂`'s after
++the dispatch (offset `0` is the dispatch step), inside the hull. -/
+ def seq {S₁ S₂ : Type} [DecidableEq S₁] {M₁ : MultiTapeTM k Γ S₁} {M₂ : MultiTapeTM k Γ S₂}
+     {entry₁ exit₁ : S₁} {entry₂ : S₂} {X₂ : Set (Option S₂)} {ι κ : Type} {x : List Γ}
+     (C₁ : Contract M₁ entry₁ {some exit₁} ι x) (C₂ : Contract M₂ entry₂ X₂ κ x) (link : ι → κ)
+@@ -302,7 +384,8 @@
+ 
+ /-- **The seam's right segment**: after the dispatch step, the composite runs the second
+ machine in lockstep for any number of steps. The public form of `Build/Seam.lean`'s private
+-right-segment lemma, which set-valued exits need (to move there at the first Seam rebase).
++right-segment lemma, which set-valued exits need. It moves to `Build/Seam` with MIG-0b's
++layering split (backlog MIG-0).
+ 
+ **Proof sketch.** `Turing.seamCompTM_run_ofCfg` at second-phase time `v`, with the second run's
+ endpoint taken to be itself. -/
+@@ -314,13 +397,21 @@
+       (M₂.runFrom (c₁.mapState fun _ => entry) v).mapState Sum.inr :=
+   seamCompTM_run_ofCfg M₁ exit M₂ entry h₁ hexit hcut rfl
+ 
+-/-- Re-type a configuration's control state through a partial map: the phase host's redirect. -/
++/-- Re-type a configuration's control state through a partial map: the phase host's redirect.
++A halted configuration stays halted; every other field is kept. -/
+ def _root_.Turing.Cfg.bindState {S S' : Type} {x : List Γ} (d : Cfg k Γ S x) (f : S → Option S') :
+     Cfg k Γ S' x :=
+   ⟨d.state.bind f, d.inputPos, d.workTapes, d.workTapePos, d.output⟩
+ 
+ /-- The phase-host trajectory of a contract run: the tagged prefix through the phase's exit,
+-the redirected endpoint one dispatch step later, and the live exit state. -/
++the redirected endpoint one dispatch step later, and the live exit state.
++
++**Proof sketch.** The endpoint's state lies in `X`, which excludes `none`, so it is a live exit
++`s'`, which `red p` redirects (`hsome`). Before the endpoint the cut keeps every state out of
++`X`, so `hred` says that none of them is redirected. `Turing.phaseHostTM_run` then gives the
++prefix tagged with `p` up to the time and, one dispatch step later, the endpoint with its state
++replaced by the target of `s'`, which is the endpoint's state bound through `red p`. The
++other-phase clause of `hsome` is not used here. -/
+ private lemma inPhase_traj {I : Type} {Ph : I → Type} (Mf : (i : I) → MultiTapeTM k Γ (Ph i))
+     (q0 : Σ i, Ph i) (red : (i : I) → Ph i → Option (Σ i, Ph i)) (p : I) {s₀ : Ph p}
+     {X : Set (Option (Ph p))} {ι : Type} {x : List Γ} (C : Contract (Mf p) s₀ X ι x)
+@@ -356,8 +447,25 @@
+   simp [hq']
+ 
+ /-- **A phase inside the phase host** (`Turing.phaseHostTM_run`). Phase `p` runs under its own
+-contract; its exits are exactly the states the host redirects, each to another phase, so the
+-host's exits are the redirect targets and the time gains one dispatch step. -/
++contract, whose exits are live (`hnone`) and are exactly the states of phase `p` that the host
++redirects (`hred`, `hsome`), each to a state of another phase. The host's exits are the
++redirect targets, the time gains one dispatch step, and the envelopes are the phase's. The
++phase host thus handles an **arbitrary set of live exits**, each sent to its own target, and
++several may share one continuation; `Turing.Contract.seq` and `Turing.Contract.branch` are the
++one- and two-exit seams.
++
++The other-phase condition `q.1 ≠ p` is **sufficient, not necessary**. What the cut needs is that
++the run avoids every redirect target up to its endpoint; up to there the host run is tagged with
++phase `p`, so it never meets a state of another phase. A same-phase target that the run avoids
++up to its endpoint would also do, while a redirect back to the entry fails at time `0`; a
++generalization could ask for that avoidance instead.
++
++**Proof sketch.** By the phase-host trajectory (`inPhase_traj`): up to the phase's time the
++host is the phase run tagged with `p`, and one dispatch step later it is the phase's endpoint
++with its state bound through `red p`. This gives the run, and the exit is the target of the
++phase's live exit. For the cut, a time up to the phase's time carries a state tagged with `p`,
++or `none`; a target equal to it would lie in phase `p`, against `q.1 ≠ p`. The envelope is the
++phase's up to its time; at the dispatch step the heads are those of the phase's endpoint. -/
+ def inPhase {I : Type} {Ph : I → Type} (Mf : (i : I) → MultiTapeTM k Γ (Ph i)) (q0 : Σ i, Ph i)
+     (red : (i : I) → Ph i → Option (Σ i, Ph i)) (p : I) {s₀ : Ph p} {X : Set (Option (Ph p))}
+     {ι : Type} {x : List Γ} (C : Contract (Mf p) s₀ X ι x) (hnone : none ∉ X)
+@@ -399,12 +507,21 @@
+       exact h'
+ 
+ /-- The source configuration seen through an R1 selection: selected tapes and heads, the same
+-state and input position, and an empty output. -/
++state and input position, and an **empty output**. The selection empties the source output, so
++a source precondition is always tested on the output `[]`: `Turing.Contract.embed` transports
++output-normalized preconditions only. -/
+ def _root_.Turing.Cfg.select {m : ℕ} {S : Type} {x : List Γ} (σ : Fin m ↪ Fin k)
+     (d : Cfg k Γ S x) : Cfg m Γ S x :=
+   ⟨d.state, d.inputPos, fun i => d.workTapes (σ i), fun i => d.workTapePos (σ i), []⟩
+ 
+-/-- Every host configuration is the forwarding embedding of its selection, framed by itself. -/
++/-- Every host configuration is the forwarding embedding of its selection, framed by itself:
++embedding the selection of `d` into `d`'s own tapes, heads and output gives back `d`.
++
++**Proof sketch.** Compare field by field. The state and the input position are the
++selection's, which are `d`'s. A selected tape or head is the selection's, which is `d`'s, by the
++public selected-field lemmas. An unselected tape or head is the frame, which is `d`'s, by the
++public frame lemma at time `0` for a trivial machine on `Unit` (the transport's tape fields do not
++depend on the state type). The output is `d`'s followed by the selection's empty output. -/
+ theorem _root_.Turing.embedEmitCfg_select {m : ℕ} {S : Type} {x : List Γ} (σ : Fin m ↪ Fin k)
+     (d : Cfg k Γ S x) :
+     embedEmitCfg σ d.workTapes d.workTapePos d.output (d.select σ) = d := by
+@@ -436,8 +553,8 @@
+   · simp [embedEmitCfg, Cfg.select]
+ 
+ /-- The forwarding embedding keeps an unselected tape and head as its frame: the export missing
+-from `Build/Embed.lean` beside `Turing.embedEmitCfg_selected_tape` and `_pos` (to move there at the
+-first Embed rebase, MIG-14).
++from `Build/Embed.lean` beside `Turing.embedEmitCfg_selected_tape` and `_pos`. It moves to
++`Build/Embed` with MIG-0b's layering split (backlog MIG-0).
+ 
+ **Proof sketch.** At time `0`, `Turing.embedEmitTM_frame` for a one-state machine says exactly
+ this; the transport's tape fields do not depend on the state type. -/
+@@ -453,7 +570,24 @@
+   exact h
+ 
+ /-- **Transport along the R1 embedding** (`Turing.embedEmitTM_runFrom`): the source contract
+-holds on the selected tapes; unselected tapes and heads are framed, and output is appended. -/
++holds on the selected tapes; unselected tapes and heads are framed, and output is appended.
++The precondition and the time are the source contract's at the selection `d.select σ`, and so
++is the envelope of a selected head; an unselected head has the one-point envelope at its start.
++The endpoint embeds the source endpoint into `d`'s tapes, heads and output.
++
++The selection empties the source output, so `embed` transports **output-normalized**
++preconditions only: a source precondition that inspects the output is tested on `[]` and is not
++preserved (one asking for output `[true]` becomes false for every host). The intended
++clean-call and tape-word instances fit; output-sensitive contracts would need a transport with
++an explicit decomposition of the host output.
++
++**Proof sketch.** By `Turing.embedEmitCfg_select`, `d` is the embedding of its own selection, so
++`Turing.embedEmitTM_runFrom` makes the host run, at every time, the embedding of the source run
++from the selection. The run is the embedded source run, and the exit and the cut are the
++source's, since the selection and the embedding keep the state. For the envelope, a selected
++head is the source head (`Turing.embedEmitCfg_selected_pos`), with the source bounds; an
++unselected head stays at its start by the frame lemma `Turing.embedEmitTM_frame`, inside its
++one-point interval. -/
+ noncomputable def embed {m : ℕ} (σ : Fin m ↪ Fin k) {S : Type} {M : MultiTapeTM m Γ S}
+     {entry : S} {X : Set (Option S)} {ι : Type} {x : List Γ} (C : Contract M entry X ι x) :
+     Contract (embedEmitTM σ M) entry X ι x where
+@@ -495,7 +629,13 @@
+ end Contract
+ 
+ /-- **R3 clear as a contract** (the fit test, from `Turing.clearTM_run_ofCfg`): the index is the
+-stored word. -/
++stored word `w`. Started in the sweep phase with `w`, delimited, at the head of tape `i`, the
++routine reaches `done` in exactly `2|w| + 2` steps, and not earlier, with the cells
++`[pos, pos + |w|)` of tape `i` blank and every other field unchanged; through the endpoint the
++head of tape `i` stays in `[pos - 1, pos + |w|]` and every other head is fixed.
++
++**Proof sketch.** Each field is the corresponding clause of `Turing.clearTM_run_ofCfg`; a fixed
++head lies in its one-point interval. -/
+ def clearTM_contract (i : Fin k) (x : List Γ) :
+     Contract (clearTM k i) SweepPhase.sweep {some SweepPhase.done} (List Γ) x where
+   pre w d := ∀ p : ℤ, -1 ≤ p → p ≤ (w.length : ℤ) →
+@@ -531,10 +671,18 @@
+ 
+ A contract's endpoint already states its frame (`{ d with … }`). The predicates below name the
+ frame for composition proofs: a *footprint* per tape, `Turing.Cfg.SameOutside`, its `.keep`
+-lemmas, and `Turing.Contract.Frames`. They are derived properties, not fields. -/
++lemmas, and `Turing.Contract.Frames`. They are derived properties, not fields. The layer is
++[AFM26]'s framing (`SameOn` and the `.keep` lemmas of `Lang/Regions.lean`), adapted from memory
++cells to the cells of each work tape (design adaptation). -/
+ 
+ /-- `d'` agrees with `d` outside the footprint: every work-tape cell off `fp j` is unchanged.
+-Control state, heads, input position and output are not constrained. -/
++This is an **endpoint relation on work-tape contents only**: it constrains neither the control
++state, the heads, the input position nor the output, and says nothing about intermediate
++times. A consumer that needs a cell kept at every time must keep the corresponding trajectory
++fact. The two configurations may have different state types.
++
++[AFM26], design adaptation: `SameOn` of `Lang/Regions.lean` (cells kept off a set, as in its
++`SameOutside`), here per work tape. -/
+ def Cfg.SameOutside {S S' : Type} {x : List Γ} (fp : Fin k → Set ℤ) (d : Cfg k Γ S x)
+     (d' : Cfg k Γ S' x) : Prop :=
+   ∀ j q, q ∉ fp j → d'.workTapes j q = d.workTapes j q
+@@ -552,7 +700,10 @@
+     {d : Cfg k Γ S x} {d' : Cfg k Γ S' x} (h : Cfg.SameOutside fp d d') (f : S' → S'') :
+     Cfg.SameOutside fp d (d'.mapState f) := fun j q hq => h j q hq
+ 
+-/-- **`.keep`, a stored word**: a delimited word lying outside the footprint survives. -/
++/-- **`.keep`, a stored word**: a delimited word lying outside the footprint survives. If `d`
++holds `w` at offset `o` of tape `j`, its two blank delimiters included, and none of those cells
++is in the footprint, then `d'` holds `w` there too. [AFM26], design adaptation: the `.keep`
++lemmas of `Lang/Regions.lean`. -/
+ theorem Cfg.SameOutside.keep_word {S S' : Type} {x : List Γ} {fp : Fin k → Set ℤ}
+     {d : Cfg k Γ S x} {d' : Cfg k Γ S' x} (h : Cfg.SameOutside fp d d') (j : Fin k) (o : ℤ)
+     (w : List Γ) (hout : ∀ p : ℤ, -1 ≤ p → p ≤ (w.length : ℤ) → o + p ∉ fp j)
+@@ -560,7 +711,8 @@
+     ∀ p : ℤ, -1 ≤ p → p ≤ (w.length : ℤ) → d'.workTapes j (o + p) = FinTM.bufferTape w p :=
+   fun p hp₁ hp₂ => (h j (o + p) (hout p hp₁ hp₂)).trans (hw p hp₁ hp₂)
+ 
+-/-- **`.keep`, a blank tape**: a tape with an empty footprint that was blank stays blank. -/
++/-- **`.keep`, a blank tape**: a tape with an empty footprint that was blank stays blank.
++[AFM26], design adaptation: the `.keep` lemmas of `Lang/Regions.lean`. -/
+ theorem Cfg.SameOutside.keep_blank {S S' : Type} {x : List Γ} {fp : Fin k → Set ℤ}
+     {d : Cfg k Γ S x} {d' : Cfg k Γ S' x} (h : Cfg.SameOutside fp d d') (j : Fin k)
+     (hfp : fp j = ∅) (hb : ∀ q, d.workTapes j q = none) : ∀ q, d'.workTapes j q = none :=
+@@ -572,11 +724,16 @@
+   {x : List Γ}
+ 
+ /-- A contract **frames** the footprint `fp` when every endpoint agrees with its start outside
+-it. -/
++it: for every index `i` and every admissible start `d`, `Turing.Cfg.SameOutside (fp i d)` holds
++between `d` and `C.post i d`. [AFM26], design adaptation: a routine's `SameOn` promise for the
++cells it leaves alone (`Lang/Regions.lean`). -/
+ def Frames (C : Contract M entry exits ι x) (fp : ι → Cfg k Γ S x → Fin k → Set ℤ) : Prop :=
+   ∀ i d, d.state = some entry → C.pre i d → Cfg.SameOutside (fp i d) d (C.post i d)
+ 
+-/-- Unfolding `Turing.Contract.Frames`, so that `simp` and `rw` see the footprint. -/
++/-- A contract frames `fp` exactly when, for every index `i` and every admissible start `d`,
++every cell `q` of every work tape `j` outside `fp i d j` holds at the endpoint what it held at
++the start. This is the definition unfolded, as a `@[simp]` lemma, so that `simp` and `rw` see
++the footprint. -/
+ @[simp] theorem frames_iff (C : Contract M entry exits ι x)
+     (fp : ι → Cfg k Γ S x → Fin k → Set ℤ) :
+     C.Frames fp ↔ ∀ i d, d.state = some entry → C.pre i d →
+@@ -585,7 +742,11 @@
+ 
+ end Contract
+ 
+-/-- R3 clear frames the cleared word's cells on its tape, and nothing else. -/
++/-- R3 clear frames the cleared word's cells on its tape, and nothing else: its footprint is
++`[pos, pos + |w|)` on tape `i` and empty on every other tape.
++
++**Proof sketch.** The endpoint blanks a cell only when the cell lies in the footprint; any other
++cell takes the `else` branch of its definition, which is the start's cell. -/
+ theorem clearTM_contract_frames (i : Fin k) (x : List Γ) :
+     (clearTM_contract i x).Frames fun w d j =>
+       if j = i then Set.Ico (d.workTapePos j) (d.workTapePos j + w.length) else ∅ := by
+@@ -601,9 +762,22 @@
+ 
+ /-! ## Returning contracts and the release adapter -/
+ 
+-/-- **A returning contract**: entry and exit are the same `anchor`, so the time is positive and
+-the cut starts at time `1`. This is the shape of the install and emit calls and of the advancing
+-writer. `Turing.ReturnContract.release` turns it into a `Turing.Contract`. -/
++/-- **A returning contract**: from every admissible start at `anchor`, the run first comes back
++to `anchor` at a positive exact time. The endpoint is at the anchor, no strictly positive
++earlier time is at the anchor (the cut starts at time `1`, since time `0` is at the anchor),
++and through the endpoint every head stays in its interval. `Turing.ReturnContract.release`
++turns it into a `Turing.Contract`.
++
++The advancing writer (`Turing.writeAdvTM_run_ofCfg` in `Build/Scan`, anchor `0`, time
++`|w₀| + 1`) genuinely returns to its anchor and has this shape. The install and emit calls
++(`Turing.FinTM.exists_installCallTM`, `Turing.FinTM.exists_emitCallTM`, in `Build/Loop`) also
++have positive cuts, but quantify separate `entry` and `exit` states that may coincide. With
++arbitrary witnesses, split on `entry = exit`: when they are equal, use a `ReturnContract`; when
++they differ, use an ordinary `Turing.Contract` with exits `{some exit}`, whose cut at time `0`
++follows from `entry ≠ exit` and at positive times is the row's positive cut. Either way the
++canonical `Cfg.ofWords` start goes into the precondition, and the time bound is kept. A round
++that may instead end at a distinct escape is not a `ReturnContract`: it belongs to MIG-0b's
++round layer. -/
+ structure ReturnContract {S : Type} (M : MultiTapeTM k Γ S) (anchor : S) (ι : Type)
+     (x : List Γ) where
+   /-- The precondition. -/
+@@ -632,7 +806,19 @@
+ 
+ /-- **The release adapter** (`Turing.seamReleaseTM_firstReturn`): a fresh start state executes the
+ anchor's first step, so the returning run becomes an ordinary contract whose cut includes time
+-`0`, at the same time. -/
++`0`, at the same time and with no dispatch step. Its single exit is the right-tagged anchor, and
++the envelopes are unchanged.
++
++**Proof sketch.** The release start is the anchor-mapped start re-tagged fresh
++(`release_start`). Fed the returning contract's positivity, run, return and positive cut,
++`Turing.seamReleaseTM_firstReturn` gives the run to the right-tagged endpoint at the same time,
++and the cut against the right-tagged anchor at every earlier time, time `0` included since the
++fresh state is left-tagged. The exit is the endpoint's state, the anchor, right-tagged. For the
++envelope, a head position up to the endpoint lies in the release machine's visited set, which
++is the source's (`Turing.seamReleaseTM_visitedByTapeHead`); so it is the source head at some
++time up to the endpoint, inside the source envelope. The visited-set theorem is used because
++the pointwise lemma is private in `Build/Seam`; its export, `seamReleaseTM_runFrom_pos`, is
++deferred to MIG-0b. -/
+ def ReturnContract.release {S : Type} {M : MultiTapeTM k Γ S} {anchor : S} {ι : Type}
+     {x : List Γ} (C : ReturnContract M anchor ι x) :
+     Contract (seamReleaseTM M anchor) (Sum.inl ()) {some (Sum.inr anchor)} ι x where
+@@ -699,7 +885,15 @@
+   Cfg.ext (by simp [Cfg.mapState, hd]) rfl rfl rfl rfl
+ 
+ /-- The two-way seam trajectory of a contract run: the doubly left-mapped first phase up to
+-its exit (live throughout), then, per exit, the matching continuation at every offset. -/
++its exit (live throughout), then, per exit, the matching continuation at every offset.
++
++**Proof sketch.** The two-way seam nests two seams: the inner one dispatches `e₁` to the first
++continuation, and the outer one dispatches the inner machine's `Sum.inl e₂` to the second.
++`C₀`'s cut excludes both exits before its time. By the inner seam's left segment
++(`Turing.seamCompTM_runFrom_left`), the inner machine therefore avoids `Sum.inl e₂` before that
++time, so the outer seam's left segment, rewritten by the inner one, is the doubly tagged first
++phase up to its time. It is live, since a halt would persist to the endpoint, which is at an
++exit. The two continuations are the two halves of `Turing.seamCompTM₂_run_ofCfg`. -/
+ private lemma branch_traj {S₀ S₁ S₂ : Type} [DecidableEq S₀] [DecidableEq S₁]
+     {M₀ : MultiTapeTM k Γ S₀} (M₁ : MultiTapeTM k Γ S₁) (M₂ : MultiTapeTM k Γ S₂)
+     {entry₀ e₁ e₂ : S₀} (entry₁ : S₁) (entry₂ : S₂) {ι : Type} {x : List Γ} (he : e₁ ≠ e₂)
+@@ -751,7 +945,24 @@
+     simp at hx
+ 
+ /-- **The two-way branch** (`Turing.seamCompTM₂_run_ofCfg`): the first phase ends at one of two
+-exits, and the seam dispatches to the matching continuation, with one dispatch step. -/
++distinct live exits, and the seam dispatches, in one step, to the matching continuation, which
++starts from the first phase's endpoint with its state replaced by its entry. Each
++continuation's precondition is needed only when its exit is the one reached. The time, the
++endpoint and the continuation part of the envelope hull are the selected continuation's.
++
++This is the **binary case** of the routing: `Turing.Contract.seq` is the single-live-exit seam,
++and the phase host (`Turing.Contract.inPhase`) handles an arbitrary set of live exits. Halted
++endpoints of the two continuations share the untagged `none`, so a consumer that must recover
++the branch from the final state needs live tagged exits or an explicit verdict.
++
++**Proof sketch.** By the two-way trajectory (`branch_traj`), and by cases on the exit reached
++(`e₁`, or else `e₂` by `exit_mem`). Up to the first phase's time the composite is the doubly
++left-tagged first phase, live throughout, so it meets no exit of either continuation. At time
++`t₀ + 1 + v` it is the selected continuation's run at `v`, tagged, which gives the run, the exit
++and the envelope. For the cut at `v` below the continuation's time, a tagged exit of the
++selected continuation is excluded by that continuation's cut, through injectivity of the tags;
++an exit of the other continuation carries the other tag or is `none`, and the state is live by
++`Turing.Contract.live`. -/
+ def branch {S₀ S₁ S₂ : Type} [DecidableEq S₀] [DecidableEq S₁] {M₀ : MultiTapeTM k Γ S₀}
+     {M₁ : MultiTapeTM k Γ S₁} {M₂ : MultiTapeTM k Γ S₂} {entry₀ e₁ e₂ : S₀} {entry₁ : S₁}
+     {entry₂ : S₂} {X₁ : Set (Option S₁)} {X₂ : Set (Option S₂)} {ι κ₁ κ₂ : Type} {x : List Γ}
