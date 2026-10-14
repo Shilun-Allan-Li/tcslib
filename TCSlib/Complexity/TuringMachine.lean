@@ -43,6 +43,9 @@ import TCSlib.Complexity.TuringMachine.Build.RecordTable
 import TCSlib.Complexity.TuringMachine.Build.CertShell
 import TCSlib.Complexity.TuringMachine.Build.OracleSim
 import TCSlib.Complexity.TuringMachine.Build.Contract
+import TCSlib.Complexity.TuringMachine.Build.StepClock
+import TCSlib.Complexity.TuringMachine.Build.WindowRun
+import TCSlib.Complexity.TuringMachine.Build.InputDevice
 import TCSlib.Complexity.TuringMachine.Build.StepBlock
 import TCSlib.Complexity.TuringMachine.CodeSimulator
 import TCSlib.Complexity.TuringMachine.ChoiceWords
@@ -60,6 +63,7 @@ import TCSlib.Complexity.TuringMachine.CodeFormat
 import TCSlib.Complexity.TuringMachine.Codes2Tape
 import TCSlib.Complexity.TuringMachine.MathlibBridge
 import TCSlib.Complexity.TuringMachine.UniversalStartup
+import TCSlib.Complexity.TuringMachine.SelfUniversal
 import TCSlib.Complexity.TuringMachine.UniversalInterpreter
 import TCSlib.Complexity.TuringMachine.UniversalBlock
 import TCSlib.Complexity.TuringMachine.Universal
@@ -187,6 +191,13 @@ for the local modifications.
   wrappers over the public rows, and the segment, round and joint-trajectory layers with state
   renaming and the macro-step lockstep. The core, `Build/Contract/Basic`, imports only the
   machine core. Proved; the MIG-0a and MIG-0b gates closed.
+* `Build/StepClock`, `Build/WindowRun` — host H3 (`machine-library-design.md` §14): the
+  step-clocked runner, shared with the nondeterministic time hierarchy; the semantic windowed
+  run `windowRun`; the windowed round loop and the step-clocked windowed runner. Statement gate
+  passed 2026-10-14; the specification is proved, the machine contracts are sorried.
+* `Build/InputDevice` — host H5: the input-device interface, the native device, and the
+  bounded-prefix ruler device with its host transformer. Statement gate passed 2026-10-14; the
+  devices' facts are proved, the machine contracts are sorried.
 * `Build/Convention`, `Build/Wrappers`, `Build/Loop`, `Build/Primitives` — the
   machine-construction library (`machine-library-design.md`): the `Cfg.ofWords` seam
   discipline, the capture/silence and halt-redirect wrappers with the timed branch,
@@ -203,4 +214,7 @@ for the local modifications.
 * `Universal` — the universal machine [AB09, Theorem 1.9]: the all-string evaluator
   with linear overhead and divergence preservation, the relaxed quadratic
   total-function form, and the time-bounded variant (code-first input layout).
+* `SelfUniversal` — the self-application universal machine `U₀` and its startup
+  [AB09, Exercise 4.1], the universal machine of the space hierarchy's window route.
+  Statement gate passed 2026-10-14; both contracts are sorried.
 -/
