@@ -24,6 +24,11 @@ restated by RD-2), and Zermelo determinacy for finite perfect-information games
   `TQBF`, and Theorem 4.13
 - `ClassPSPACE.Games`: finite two-person perfect-information games and
   Zermelo determinacy
+- `ClassPSPACE.TQBFARM`: the polynomial-width register machine deciding `TQBF`
+  (`Semantics`, `Machine`, `Leaf`, `Walk`, `Correct`), behind `Complexity.TQBF_mem_PSPACE`
+- `ClassPSPACE.TQBFHard*`: the hardness reduction behind `Complexity.TQBF_PSPACEHard`
+  (`Semantics`: the `ψᵢ` prefix; `Machine`: block paths; `Tseitin`;
+  `Verifier`, `Bridge`: the polynomial-time matrix; `Params`; `TQBFHard`: the reduction)
 
 ## References
 

@@ -10,6 +10,8 @@ import TCSlib.Complexity.SpaceComplexity.Inclusions
 import TCSlib.Complexity.TuringMachine.Build.CfgRecord
 import TCSlib.Complexity.FormulaKit.Gate
 import TCSlib.Complexity.FormulaKit.Emit
+import TCSlib.Complexity.ClassPSPACE.TQBFARM.Correct
+import TCSlib.Complexity.ClassPSPACE.TQBFHard
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -61,8 +63,11 @@ adjacency-formula half of Claim 4.4(2), and the Stockmeyer-Meyer theorem that
   code, are polynomial-time computable (`ConfigCodec.polyTimeComputable_serialize_validity`
   and its siblings). Two choices depend on the machine only — the state numbering
   `ConfigCodec.stateIndex` and the case list `ConfigCodec.caseList` — as Cook-Levin's field
-  codes do. Sole consumer unchanged (`Complexity.TQBF_PSPACEHard`); D6-style promotion
-  recorded for a second consumer (the phase-P4.4 `PATH` encoding remains the candidate).
+  codes do. These RD-2 lemmas currently have **no consumer**: the hardness proof
+  `Complexity.TQBF_PSPACEHard` no longer uses `ConfigCodec` (it goes through the
+  configuration codes of `Complexity.Codec` and a P-uniform tableau,
+  `ClassPSPACE/TQBFHard*.lean`), and the phase-P4.4 `PATH` reduction uses `Complexity.Codec`
+  as well.
 * **The facade discipline**: `ClassPSPACE.lean` is this phase's own new
   facade; nothing frozen is touched.
 
@@ -89,8 +94,8 @@ adjacency-formula half of Claim 4.4(2), and the Stockmeyer-Meyer theorem that
 * `Complexity.exists_adjacency_codec_cnf` — Claim 4.4(2), packaged quotient form; retired at
   the RD-2a re-fill (no proof uses it).
 * `Complexity.TQBF_mem_PSPACE` — [AB09, Theorem 4.13, membership half].
-* `Complexity.TQBF_PSPACEHard` — [AB09, Theorem 4.13, hardness half]; a fill
-  summit (the `ψᵢ` emitter).
+* `Complexity.TQBF_PSPACEHard` — [AB09, Theorem 4.13, hardness half]; proved in
+  `ClassPSPACE/TQBFHard*.lean` (the `ψᵢ` recursion with a tableau-and-Tseitin matrix).
 * `Complexity.TQBF_PSPACEComplete` — [AB09, Theorem 4.13].
 
 ## References
@@ -2391,9 +2396,10 @@ theorem exists_serialize_length_le :
 
 Each CNF is emitted in polynomial time at any input length `n x`, radius `s x` and variable
 offset `o x` given in unary by polynomial-time functions of the reduction's input `x`, and the
-initial vertex's code is computed in polynomial time. These are the fill obligations "the
-three-CNF emitter family" and "the initial-code computation" of `Complexity.TQBF_PSPACEHard`,
-now theorems of the codec (RD-2b). The input length is a parameter, not `x.length`, so that a
+initial vertex's code is computed in polynomial time. These were the fill obligations "the
+three-CNF emitter family" and "the initial-code computation" of the RD-2 route to
+`Complexity.TQBF_PSPACEHard` (RD-2b); the hardness proof no longer takes that route, so these
+lemmas currently have no consumer. The input length is a parameter, not `x.length`, so that a
 per-level emitter can call them on the pair of the instance and a level index. -/
 
 /-- **Validity is emitted in polynomial time** at any polynomial-time input length, radius and
@@ -3178,128 +3184,62 @@ private theorem b4mFuel_sufficient (qs ys : List Bool) :
   have hpos : 0 < 2 ^ qs.length := pow_pos (by decide) _
   omega
 
-/-- **`TQBF ∈ PSPACE`** ([AB09, Theorem 4.13, membership half]; spec, fill
-pending): truth of a quantified formula is decidable in polynomial space.
+/-- **`TQBF ∈ PSPACE`** ([AB09, Theorem 4.13, membership half]): truth of a quantified
+formula is decidable in polynomial space.
 
-**Proof sketch.** Validate the **entire** encoding before any matrix
-verdict: trailing garbage makes the total decoder select the true fallback,
-so a scanned prefix that "looks unsatisfiable" must not short-circuit
-(round-1 answer 5). Then the recursive evaluator `A` of [AB09]: peel the
-first quantifier, evaluate both restrictions, combine by the quantifier —
-realized iteratively with a partial-assignment word of one trit per prefix
-variable (the book's footnote: the linear-space global-array variant) walked
-depth-first by the loop combinator, with no per-level formula copies; the
-base case evaluates the CNF matrix under the assembled assignment by one
-scan per clause, re-reading prefix bits and matrix bytes from the input. Space: the assignment
-word (linear), the matrix cursor (linear), the recursion is depth-first on
-the word in place — `O(n)` cells, inside `SPACE (n + 1) ⊆ PSPACE`. Fill
-obligations, named: the depth-first assignment walker (a §12 loop/catalog
-consumer), the CNF evaluator machine (one-pass per clause over the decoded
-matrix), the parser reuse (`Complexity.QBF.decode` realized by the chapter-2
-parser machinery), and the `DecidesInSpace` packaging.
+**Proof sketch.** `Complexity.LogProg.TQBFARM.truth_mem_PSPACE`: a register machine whose
+register values stay at most `2 ^ (|x| + 1)`, reading its input through the logspace input-bit and
+input-length deciders, concluded by `Complexity.LogProg.arm_decides_pspace_val`. It first
+validates the **entire** encoding with a finite automaton (the aligned-pair stage followed by
+the grammar automaton `Std.Sat.CNF.syntaxStep`): a rejected string decodes to a fallback with
+the empty, true matrix, and is accepted. On a valid encoding `pairEncode qs (serialize φ)` it
+runs the recursive evaluator of [AB09] depth first, the partial assignment kept as a binary
+stack (a leading `1` and one bit per bound variable): a node at depth `K` reads the pair at
+input position `2K` — a doubled quantifier bit or the separator; an inner node evaluates its
+first child (push `0`) and, unless that value decides the quantifier, its second (push `1`);
+a leaf streams the CNF serialization from position `2K + 2`, looking each literal's variable
+up as a bit of the stack. Correctness is by induction on the remaining depth
+(`Complexity.LogProg.TQBFARM.call_spec`) against the stack semantics
+`Complexity.LogProg.TQBFARM.Val`, which follows `Complexity.QBF.truthAux`. -/
+theorem TQBF_mem_PSPACE : TQBF ∈ PSPACE :=
+  LogProg.TQBFARM.truth_mem_PSPACE
 
-**Fill appendix (B4 membership; partial, with Addendum 1).** The private block
-above supplies full-input validation and the pure assignment walker. Refinement
-(i): the validator composes the aligned-pair stage with the promoted public CNF
-grammar facts and `inputFoldTM`, replacing inaccessible private parser machinery.
-Refinement (ii): the remaining machine evaluator must compose the public
-counter-loop/catalog index-lookup idiom, following `exists_inputSeekTM`; that
-lookup and the streaming CNF instance are not yet constructed. Refinement (iii):
-the §12.8 machine route supersedes the old wide-ARM planning references.
+/-- **`TQBF` is `PSPACE`-hard** ([AB09, Theorem 4.13, hardness half]): every `PSPACE`
+language Karp-reduces in polynomial time to `TQBF`.
 
-Records occupy two Boolean cells `(branch, node kind)`, physically root first;
-the kind is `false` for AND/universal and `true` for OR/existential. The backward
-scan sees kind before branch. A neutral first branch sets the branch bit and
-stops; a decisive first branch or completed second branch resets it and carries
-outward. All-first-branch initialization and this invariant yield the generic
-AND/OR value in at most `2^m` rounds, with no formula copies. The leaf-specific
-connection to `QBF.truthAux` is a separate lemma, and the framed leaf-module
-parameter states timing, head-envelope, scratch-restoration and native-input
-return obligations without mentioning CNF.
-
-This partial does not yet realize that generic loop as a machine, instantiate
-the leaf-module contract with the streaming CNF evaluator, initialize its banks,
-or assemble the phases and complete the combined `DecidesInSpace` ledger. The
-target remains admitted; the new private lemmas introduce no admissions. -/
-theorem TQBF_mem_PSPACE : TQBF ∈ PSPACE := by
-  sorry
-
-/-- **`TQBF` is `PSPACE`-hard** ([AB09, Theorem 4.13, hardness half]; spec,
-fill pending — **the phase-P4.3 fill summit**, the `ψᵢ` emitter; route restated by RD-2,
-`machine-library-design.md` §16b item 2).
-
-**Proof sketch.** Let `L ∈ PSPACE`, decided by `M` in space `c₀ · (n^c + 1)`.
-On input `x` (length `n`, window radius `s := c₀·(n^c + 1)`), the reduction
-emits a quantified formula asserting "some accepting vertex is reachable
-from the initial vertex within `2^W` steps" over the closed-form codec
-`Complexity.ConfigCodec` of Claim 4.4(2): vertices are the
-`W := ConfigCodec.width M n s`-bit codes of input-carrying windowed quotient
-configurations, with `Valid := ConfigCodec.validity M n s`,
-`Next := ConfigCodec.adjacency M n s` (a source block followed by a target block) and
-`Accept := ConfigCodec.acceptance M n s`. The midpoint recursion is
-`ψ₀(a, b) := Valid a ∧ Valid b ∧ (a = b ∨ Next (a, b))` — the base includes
-length-zero paths — `Next` self-loops are guaranteed only at halted
-vertices, and a live vertex may or may not be self-adjacent (round-1
-finding 6; round-2 finding 3) — and
-`ψᵢ₊₁(a, b) := ∃ z (Valid z ∧ ∀ u v, ((u,v) = (a,z) ∨ (u,v) = (z,b)) → ψᵢ(u,v))`
-([AB09]'s succinct `∀`-trick keeping one copy of `ψᵢ`, with the midpoint
-**guarded by `Valid`** — unguarded quantification admits paths through junk
-codes, round-1 finding 3), unfolded to depth `W` (at most `2^W` codes, so a
-shortest path fits), against the initial code
-`ConfigCodec.code M n s x (M.tm.initCfg x)` and an existentially quantified `Accept`
-target (no unique accepting configuration is needed).
-
-*Layout and matrix.* The prefix is level-blocked by `Complexity.FormulaKit.blockVar 0 W`:
-block `0` is the target (existential); level `r < W` has its midpoint in block `3r + 1`
-(existential) and the pair `u, v` in the adjacent blocks `3r + 2`, `3r + 3` (universal), so
-that one offset places `Next` on the pair. The matrix is a **guarded CNF** (user decision,
-design §16b item 2): one existential guard variable per level and existential disequality
-witnesses for the selectors, all quantified **after** the whole prefix, with the codec CNFs
-entering as their clauses at block offsets, each with its level's guard literal prepended.
-Its pointwise lemma — for **every** assignment of the prefix variables, some extension to the
-auxiliary variables satisfies the matrix iff the prenex matrix holds there — is the hypothesis
-of `Complexity.QBF.truth_exSuffix_of_pointwise`, which turns the closed formula into the
-prenex semantics `Complexity.QBF.PrefixTruth` (auxiliary values may depend on every universal
-variable: round-1 answer 5).
-
-*Truth.* By induction on `i`, under `Complexity.QBF.PrefixTruth`, `ψᵢ(a, b)` holds at valid
-codes iff `b`'s vertex is reachable from `a`'s within `2^i` steps:
-`ConfigCodec.validity_eval_iff`, `ConfigCodec.adjacency_eval_iff`,
-`ConfigCodec.adjacency_eval_of_ne` (paths never change input), `ConfigCodec.code_eq_iff` and
-`ConfigCodec.acceptance_eval_iff`, with the quotient dictionary
-(`Turing.NDTM.reflTransGen_cfgStep_iff` through `Turing.MultiTapeTM.toNDTM`), path lifting
-via `Turing.NDTM.coreSum_stepWith`, and the space bound keeping every genuine run inside the
-window (`Turing.MultiTapeTM.abs_pos_lt_card_visited`). The midpoint and shortest-path facts
-are the bounded-reachability kit of design §14 (not yet built).
-
-*Emission* (a machine, user decision, design §16b item 2). The emitter is built in the
-`Complexity.PolyTimeComputable` closure algebra over the H6 kit: the level groups by
-`Complexity.FormulaKit.polyTimeComputable_serialize_flatMap` over `r < W`; the codec CNFs at
-their block offsets by `ConfigCodec.polyTimeComputable_serialize_validity`,
-`ConfigCodec.polyTimeComputable_serialize_adjacency` and
-`ConfigCodec.polyTimeComputable_serialize_acceptance`, called at input length
-`(pairFstD z).length` with the level-dependent offset; fragments by
-`Complexity.FormulaKit.polyTimeComputable_fragment_iff_serialize`; the initial code by
-`ConfigCodec.polyTimeComputable_code_initCfg`; the output word is `Complexity.QBF.encode` of
-the formula, assembled by `PolyTimeComputable.pairEncode`. Size is polynomial because the
-emitter is polynomial-time (`PolyTimeComputable.output_length_le`).
-
-Fill obligations, named: the guarded matrix (the guards and the disequality witnesses) and its
-pointwise lemma for every prefix assignment; the guard-literal transducer (a leaf row in the
-style of `Complexity.FormulaKit.polyTimeComputable_serialize_relabel_add`, not a host); the
-truth-preservation induction `ψᵢ ↔ reachability within 2^i`, both directions of the guarded
-recursion, over the bounded-reachability kit; the window lemma for the decider's runs; the
-emitter's assembly and the final identity through `Complexity.QBF.decode_encode`. Host: H6,
-`Complexity.FormulaKit` (registered, design §14). -/
-theorem TQBF_PSPACEHard : PSPACEHard TQBF := by
-  sorry
+**Proof sketch** (`Complexity.TQBFHard.PSPACE_polyTimeReducible_TQBF`, files
+`ClassPSPACE/TQBFHard*.lean`). Let `L ∈ PSPACE`, so some nondeterministic `N` decides it in
+space `d (n^c + 1)` (`Complexity.PSPACE_subset_NPSPACE`). On `x` the reduction outputs the
+encoding of a closed formula over blocks of `w = A (n + 1)^(c + 1)` variables: an existential
+top record (a pad, a source block `A`, a target block `B`) followed by `w` levels
+`∃ Z ∀ U ∀ V` — [AB09]'s recursion `ψᵢ₊₁(A, B) = ∃ Z ∀ U V (((U, V) = (A, Z) ∨ (U, V) =
+(Z, B)) → ψᵢ(U, V))` in prenex form, whose truth is a path of `2^w` steps of the one-step
+relation of blocks (`Complexity.TQBFHard.prefixTruth_top`, `mid_iff_steps`). Blocks carry code
+words of the configuration codec `Complexity.Codec`; one step is "equal blocks, or a step pair
+of codes", and `x ∈ L` iff an initial block reaches an accepting block in `2^w` steps
+(`Complexity.TQBFHard.mem_iff_mid`; the width holds a code word and `2^w` bounds the vertex
+count). The matrix — initial and accepting tests and the flat selection chain — is a
+polynomial-time predicate of `⟨x, σ⟩` (`Complexity.TQBFHard.polyTimeComputable_predB`, the
+code languages being in `L ⊆ P`), written as the P-uniform configuration tableau of a machine
+computing it (`Complexity.cfgTab`, `⟨x, ⟩` hard-wired) and made a CNF by Tseitin's
+transformation with the gate variables quantified existentially after the prefix
+(`Complexity.QBF.truth_exSuffix_of_pointwise`, `Complexity.TQBFHard.toCNF_extension_iff`).
+The map is polynomial-time as a composition of the tableau emitter
+(`Complexity.UTab.polyTimeComputable_tabEmit`, [AB09, Remark 6.7]), the CKT-SAT-to-SAT map
+(`BoolCircuit.polyTimeComputable_dagCktSatToSAT3`, [AB09, Lemma 6.11]) and the prefix bits.
+This proof does not take the RD-2 route recorded in the module docstring: the
+configuration-specific CNFs of `Complexity.ConfigCodec` and their emitters are not used (the
+matrix is one polynomial-time predicate instead), so their sorried theorems are not needed
+here. -/
+theorem TQBF_PSPACEHard : PSPACEHard TQBF :=
+  fun _ hL => TQBFHard.PSPACE_polyTimeReducible_TQBF hL
 
 /-- **The Stockmeyer-Meyer theorem**: `TQBF` is `PSPACE`-complete.
 [AB09, Theorem 4.13]
 
 **Proof sketch.** `Complexity.TQBF_mem_PSPACE` with
 `Complexity.TQBF_PSPACEHard`. -/
-theorem TQBF_PSPACEComplete : PSPACEComplete TQBF := by
-  sorry
+theorem TQBF_PSPACEComplete : PSPACEComplete TQBF :=
+  ⟨TQBF_mem_PSPACE, TQBF_PSPACEHard⟩
 
 end Complexity

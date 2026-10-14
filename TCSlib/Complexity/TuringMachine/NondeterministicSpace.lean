@@ -33,7 +33,7 @@ this measure lives in `TCSlib.Complexity.SpaceComplexity.NSPACE`.
 ## Main results
 
 * `Turing.NDTM.spaceUsedWith_eq_fixChoice_spaceUsed` — such a branch uses exactly the slice's
-  space (statement gated 2026-10-14, proof pending).
+  space (statement gated 2026-10-14; proved from `Turing.NDTM.runWith_eq_fixChoice_runFrom`).
 * `Turing.NDTM.visitedWith_nil` — the empty run visits the starting positions.
 * `Turing.MultiTapeTM.toNDTM_spaceUsedWith` — the embedded deterministic machine's
   space under any choice word is the deterministic space at that time (proved;
@@ -179,6 +179,16 @@ theorem spaceUsedWith_eq_fixChoice_spaceUsed (tm : NDTM k Symbol State) (b : Boo
     (hagree : ∀ j < w.length, ∀ q : State, ((tm.fixChoice b).runFrom cfg j).state = some q →
       tm.tr false q = tm.tr true q) :
     tm.spaceUsedWith w cfg = (tm.fixChoice b).spaceUsed cfg w.length := by
-  sorry
+  unfold spaceUsedWith MultiTapeTM.spaceUsed
+  apply Finset.sum_congr rfl
+  intro i _
+  apply congrArg Finset.card
+  apply Finset.image_congr
+  intro j hj
+  have hjw : j ≤ w.length := Nat.lt_succ_iff.mp (Finset.mem_range.mp hj)
+  change (tm.runWith (w.take j) cfg).workTapePos i = ((tm.fixChoice b).runFrom cfg j).workTapePos i
+  rw [runWith_eq_fixChoice_runFrom tm b (w.take j) cfg (fun j' hj' q hq =>
+      hagree j' (by rw [List.length_take] at hj'; omega) q hq),
+    List.length_take_of_le hjw]
 
 end Turing.NDTM
