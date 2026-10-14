@@ -990,6 +990,9 @@ The route decisions of 2026-10-12 (design §16b) add three work items, numbered 
   Ruling 5 is satisfied and R's loop phase follows. The minors are three checker-strength fixes
   and one stale citation, all fixed for the landing. Next: one maintainer landing PR at the
   merged base (a 9-module replay with `SelfUniversal`); registry row H2-L when it lands.
+  **Landed (2026-10-14, PR #94; replay 76 of 76):** `Build/StepBlockLoop`, CodeSimulator's private
+  assembly deleted, `counterValue_bits` and the moved `foldr_bit_eq_ofDigits` in `Build/CounterLoop`;
+  new snapshot `oleans-lh1`. R's brief cites the public contracts.
 * **RD-5: §13d G2–G4 after MIG-0b** (§16b item 5). The statements of design §13d's G2–G4, stated as
   `Contract`s, then their gate and fills, then the Hennie–Stearns assembly. The open zone rows
   `exists_zoneShiftInTM` and `exists_zoneShiftOutTM` retire through the G3/G4 gate.
