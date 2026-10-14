@@ -1,0 +1,517 @@
+code : EffectiveMachineCode
+univTM : FinTM Bool
+univTM_spec : ∀ (α : List Bool),
+  ∃ C,
+    ∀ (x : List Bool),
+      (∀ (output : List Bool) (t : ℕ),
+          (code.decode α).toFinTM.ComputesInTime x output t →
+            univTM.ComputesInTime (pairEncode α x) output (C * (t + 1))) ∧
+        ∀ (output : List Bool),
+          (∃ t, univTM.ComputesInTime (pairEncode α x) output t) →
+            ∃ t, (code.decode α).toFinTM.ComputesInTime x output t
+diagSim : FinTM Bool
+diagLang : (ℕ → ℕ) → Language Bool
+@diagLang_mem_DTIME : ∀ {g : ℕ → ℕ}, TimeConstructible g → diagLang g ∈ DTIME fun n => g n + 1
+diag_cost_le : ∀ (n T c₀ c₁ C : ℕ),
+  5 * n + 7 + C * (c₁ * (c₀ * T + 1) ^ 2 + 1) ≤ (8 + C * (c₁ * (c₀ + 1) ^ 2 + 1)) * (T + n + 1) ^ 2
+@diagLang_not_mem_DTIME : ∀ {g T : ℕ → ℕ}, (∀ (A N : ℕ), ∃ n ≥ N, A * (T n + n + 1) ^ 2 ≤ g n) → diagLang g ∉ DTIME T
+@time_hierarchy : ∀ {f g : ℕ → ℕ},
+  TimeConstructible g → (∀ (A : ℕ), ∃ N, ∀ n ≥ N, A * (f n + n + 1) ^ 2 ≤ g n) → DTIME f ⊂ DTIME fun n => g n + 1
+@time_hierarchy_of_pos : ∀ {f g : ℕ → ℕ},
+  TimeConstructible g →
+    (∀ (n : ℕ), 0 < g n) → (∀ (A : ℕ), ∃ N, ∀ n ≥ N, A * (f n + n + 1) ^ 2 ≤ g n) → DTIME f ⊂ DTIME g
+dtime_poly_ssubset_dtime_two_pow : ∀ (k : ℕ), (DTIME fun n => n ^ k + 1) ⊂ DTIME fun n => 2 ^ n
+P_ssubset_EXP : P ⊂ EXP
+clockTM : FinTM Bool → FinTM Bool → FinTM Bool
+clockTM_spec : ∀ (K W : FinTM Bool) (x s : List Bool) (tK : ℕ),
+  K.ComputesInTime x s tK →
+    (clockTM K W).ComputesInTime x [!decide (W.ComputesInTime x [true] (ctrVal s))]
+      (tK + 4 * s.length + x.length + 4 * ctrVal s + 6)
+preTM_computes : ∀ (x : List Bool), preTM.ComputesInTime x (scanPre x ++ x) (3 * x.length + 5)
+scanPre_pairEncode_append : ∀ (α w : List Bool),
+  scanPre (pairEncode α w) ++ pairEncode α w = pairEncode α (pairEncode α w)
+bufferedCompTM_computesInTime : ∀ (M₁ M₂ : FinTM Bool) {x y o : List Bool} {t₁ t₂ : ℕ},
+  M₁.ComputesInTime x y t₁ →
+    M₂.ComputesInTime y o t₂ → (M₁.bufferedCompTM M₂).ComputesInTime x o (t₁ + y.length + 2 + t₂)
+DTIME : (ℕ → ℕ) → Set (Language Bool)
+TimeConstructible : (ℕ → ℕ) → Prop
+timeConstructible_poly : ∀ (C c : ℕ), 0 < C → TimeConstructible fun n => C * (n + 1) ^ (c + 1)
+timeConstructible_id : TimeConstructible id
+universal : ∀ (c : EffectiveMachineCode),
+  ∃ U,
+    ∀ (α : List Bool),
+      ∃ C,
+        ∀ (x : List Bool),
+          (∀ (output : List Bool) (t : ℕ),
+              (c.decode α).toFinTM.ComputesInTime x output t → U.ComputesInTime (pairEncode α x) output (C * (t + 1))) ∧
+            ∀ (output : List Bool),
+              (∃ t, U.ComputesInTime (pairEncode α x) output t) → ∃ t, (c.decode α).toFinTM.ComputesInTime x output t
+universal_quadratic : ∀ (c : EffectiveMachineCode),
+  ∃ U,
+    ∀ (M₀ : FinTM Bool) (f : List Bool → List Bool) (T : ℕ → ℕ),
+      M₀.ComputesFunInTime f T →
+        ∃ α C, ∀ (x : List Bool), U.ComputesInTime (pairEncode α x) (f x) (C * (T x.length + 1) ^ 2)
+timed_universal : ∀ (c : EffectiveMachineCode),
+  ∃ U,
+    ∀ (α : List Bool),
+      ∃ C,
+        ∀ (x : List Bool) (t : ℕ),
+          (∀ (output : List Bool),
+              (c.decode α).toFinTM.ComputesInTime x output t →
+                U.ComputesInTime (pairEncode (pairEncode t.bits α) x) (true :: output) (C * (t + 1) ^ 2)) ∧
+            ((∀ (output : List Bool), ¬(c.decode α).toFinTM.ComputesInTime x output t) →
+              U.ComputesInTime (pairEncode (pairEncode t.bits α) x) [false] (C * (t + 1) ^ 2))
+EffectiveMachineCode : Type 1
+exists_effectiveMachineCode : Nonempty EffectiveMachineCode
+exists_codeTM : ∀ (M : FinTM Bool),
+  M.k = 1 → ∃ M', ∀ (x output : List Bool) (t : ℕ), M'.toFinTM.ComputesInTime x output t ↔ M.ComputesInTime x output t
+Code2TM : Type
+Code2TM.serialize : Code2TM → List Bool
+Code2TM.toFinTM : Code2TM → FinTM Bool
+MachineCode2 : Type
+MachineCode2.decode_encode : ∀ (c : MachineCode2) (M : Code2TM), c.decode (c.encode M) = M
+EffectiveMachineCode2 : Type 1
+UniformMachineCode2 : Type 1
+exists_effectiveMachineCode2 : Nonempty EffectiveMachineCode2
+exists_uniformMachineCode2 : Nonempty UniformMachineCode2
+MachineFormat.exists_polyCanonizer : ∀ (F : MachineFormat),
+  ∃ C d, C.ComputesFunInTime (fun α => F.serialize (F.decode α)) fun n => d * (n + 1) ^ d
+MachineFormat.exists_uniformSimulator : ∀ (F : MachineFormat),
+  ∃ S d,
+    ∀ (α x : List Bool) (t : ℕ),
+      ((F.toFinTM (F.decode α)).ComputesInTime x [true] t →
+          S.ComputesInTime (pairEncode (pairEncode t.bits α) x) [true] (d * (α.length + x.length + t + 1) ^ d)) ∧
+        (¬(F.toFinTM (F.decode α)).ComputesInTime x [true] t →
+          S.ComputesInTime (pairEncode (pairEncode t.bits α) x) [false] (d * (α.length + x.length + t + 1) ^ d))
+@serializeK : {k n : ℕ} → MultiTapeTM k Bool (Fin (n + 1)) → List Bool
+MachineFormat : Type 1
+@tableBitsK : {k n : ℕ} → (Fin (n + 1) → Option Bool → (Fin k → Option Bool) → Action k Bool (Fin (n + 1))) → List Bool
+StepBlock.roundTM : (k : ℕ) → MultiTapeTM (k + 2) Bool ((key : StepBlock.Key) × StepBlock.Ph k key)
+StepBlock.roundFinTM : ℕ → FinTM Bool
+@StepBlock.Rep : {k n : ℕ} →
+  {x : List Bool} →
+    (Fin (n + 1) → Option Bool → (Fin k → Option Bool) → Action k Bool (Fin (n + 1))) →
+      Cfg k Bool (Fin (n + 1)) x → Cfg (k + 2) Bool ((key : StepBlock.Key) × StepBlock.Ph k key) x → Prop
+@StepBlock.roundTM_effect : ∀ {k n : ℕ} {x : List Bool}
+  (tr : Fin (n + 1) → Option Bool → (Fin k → Option Bool) → Action k Bool (Fin (n + 1)))
+  (c : Cfg k Bool (Fin (n + 1)) x) (q : Fin (n + 1)),
+  c.state = some q →
+    ∀ (d : Cfg (k + 2) Bool ((key : StepBlock.Key) × StepBlock.Ph k key) x),
+      d.state = some ⟨StepBlock.Key.entry, ()⟩ →
+        StepBlock.Rep tr c d →
+          have a := tr q c.inputSymbol c.workTapeSymbols;
+          ∃ T,
+            0 < T ∧
+              T ≤ 50 * ((tableBitsK tr).length + 1) ∧
+                have e := MultiTapeTM.runFrom d T;
+                e.state = some (StepBlock.exit k a.state.isSome) ∧
+                  StepBlock.Rep tr (a.apply c) e ∧
+                    e.workTapeSymbols (StepBlock.summaryTape k) =
+                        StepBlock.summaryEmit (d.workTapeSymbols (StepBlock.summaryTape k)) a.output ∧
+                      (∀ (u : ℕ),
+                          0 < u →
+                            u < T →
+                              ∃ s,
+                                (MultiTapeTM.runFrom d u).state = some s ∧
+                                  s ≠ ⟨StepBlock.Key.entry, ()⟩ ∧ s ≠ ⟨StepBlock.Key.halt, ()⟩) ∧
+                        (∀ u ≤ T, (MultiTapeTM.runFrom d u).output = d.output) ∧
+                          (∀ u ≤ T,
+                              have f := MultiTapeTM.runFrom d u;
+                              (f.inputPos = d.inputPos ∨ f.inputPos = e.inputPos) ∧
+                                |↑↑f.inputPos - ↑↑d.inputPos| ≤ 1 ∧
+                                  (∀ (i : Fin k),
+                                      f.workTapePos (Fin.castAdd 2 i) = d.workTapePos (Fin.castAdd 2 i) ∨
+                                        f.workTapePos (Fin.castAdd 2 i) = e.workTapePos (Fin.castAdd 2 i)) ∧
+                                    ∀ (j : Fin (k + 2)),
+                                      |f.workTapePos j - d.workTapePos j| ≤
+                                        ↑(if ↑j < k then 1 else 50 * ((tableBitsK tr).length + 1))) ∧
+                            ∀ (j : Fin (k + 2)), k ≤ ↑j → d.workTapePos j = 0 ∧ e.workTapePos j = 0
+@StepBlock.roundTM_iterate : ∀ {k n : ℕ} {x : List Bool} (M : MultiTapeTM k Bool (Fin (n + 1))) (t : ℕ)
+  (c : Cfg k Bool (Fin (n + 1)) x),
+  (∀ u ≤ t, (MultiTapeTM.runFrom c u).state.isSome = true) →
+    ∀ (d : Cfg (k + 2) Bool ((key : StepBlock.Key) × StepBlock.Ph k key) x),
+      d.state = some ⟨StepBlock.Key.entry, ()⟩ →
+        StepBlock.Rep M.tr c d →
+          ∃ T,
+            t ≤ T ∧
+              T ≤ t * (50 * ((tableBitsK M.tr).length + 1)) ∧
+                (MultiTapeTM.runFrom d T).state = some ⟨StepBlock.Key.entry, ()⟩ ∧
+                  StepBlock.Rep M.tr (MultiTapeTM.runFrom c t) (MultiTapeTM.runFrom d T) ∧
+                    (∀ u ≤ T,
+                        (MultiTapeTM.runFrom d u).output = d.output ∧
+                          (MultiTapeTM.runFrom d u).state ≠ some ⟨StepBlock.Key.halt, ()⟩) ∧
+                      (∀ (i : Fin k),
+                          MultiTapeTM.visitedByTapeHead d T (Fin.castAdd 2 i) ⊆ MultiTapeTM.visitedByTapeHead c t i) ∧
+                        ∀ (j : Fin (k + 2)),
+                          k ≤ ↑j →
+                            MultiTapeTM.visitedByTapeHead d T j ⊆
+                              Finset.Icc (-↑(50 * ((tableBitsK M.tr).length + 1)))
+                                ↑(50 * ((tableBitsK M.tr).length + 1))
+@StepBlock.roundTM_visited : ∀ {k n : ℕ} {x : List Bool}
+  (tr : Fin (n + 1) → Option Bool → (Fin k → Option Bool) → Action k Bool (Fin (n + 1)))
+  (c : Cfg k Bool (Fin (n + 1)) x) (q : Fin (n + 1)),
+  c.state = some q →
+    ∀ (d : Cfg (k + 2) Bool ((key : StepBlock.Key) × StepBlock.Ph k key) x),
+      d.state = some ⟨StepBlock.Key.entry, ()⟩ →
+        StepBlock.Rep tr c d →
+          have a := tr q c.inputSymbol c.workTapeSymbols;
+          ∃ T,
+            0 < T ∧
+              T ≤ 50 * ((tableBitsK tr).length + 1) ∧
+                (MultiTapeTM.runFrom d T).state = some (StepBlock.exit k a.state.isSome) ∧
+                  StepBlock.Rep tr (a.apply c) (MultiTapeTM.runFrom d T) ∧
+                    (∀ (u : ℕ),
+                        0 < u →
+                          u < T →
+                            ∃ s,
+                              (MultiTapeTM.runFrom d u).state = some s ∧
+                                s ≠ ⟨StepBlock.Key.entry, ()⟩ ∧ s ≠ ⟨StepBlock.Key.halt, ()⟩) ∧
+                      (∀ u ≤ T, (MultiTapeTM.runFrom d u).output = d.output) ∧
+                        (∀ (i : Fin k),
+                            MultiTapeTM.visitedByTapeHead d T (Fin.castAdd 2 i) ⊆
+                              {c.workTapePos i, (a.apply c).workTapePos i}) ∧
+                          ∀ (j : Fin (k + 2)),
+                            k ≤ ↑j →
+                              MultiTapeTM.visitedByTapeHead d T j ⊆
+                                Finset.Icc (-↑(50 * ((tableBitsK tr).length + 1))) ↑(50 * ((tableBitsK tr).length + 1))
+@StepBlock.roundTM_firstExit_unique : ∀ {k n : ℕ} {x : List Bool}
+  (tr : Fin (n + 1) → Option Bool → (Fin k → Option Bool) → Action k Bool (Fin (n + 1)))
+  (c : Cfg k Bool (Fin (n + 1)) x) (q : Fin (n + 1)),
+  c.state = some q →
+    ∀ (d : Cfg (k + 2) Bool ((key : StepBlock.Key) × StepBlock.Ph k key) x),
+      d.state = some ⟨StepBlock.Key.entry, ()⟩ →
+        StepBlock.Rep tr c d →
+          ∃! T,
+            0 < T ∧
+              ((MultiTapeTM.runFrom d T).state = some ⟨StepBlock.Key.entry, ()⟩ ∨
+                  (MultiTapeTM.runFrom d T).state = some ⟨StepBlock.Key.halt, ()⟩) ∧
+                ∀ (u : ℕ),
+                  0 < u →
+                    u < T →
+                      (MultiTapeTM.runFrom d u).state ≠ some ⟨StepBlock.Key.entry, ()⟩ ∧
+                        (MultiTapeTM.runFrom d u).state ≠ some ⟨StepBlock.Key.halt, ()⟩
+StepBlock.summaryEmit_none : ∀ (b : Option Bool), StepBlock.summaryEmit none b = b
+@Lockstep : {k : ℕ} →
+  {Γ : Type} →
+    {k' : ℕ} →
+      {Γ' S S' : Type} →
+        {x : List Γ} →
+          {x' : List Γ'} →
+            MultiTapeTM k Γ S →
+              MultiTapeTM k' Γ' S' →
+                (Cfg k Γ S x → Cfg k' Γ' S' x') → (Cfg k Γ S x → ℕ) → Set (Option S) → Set (Option S') → Prop
+@Lockstep.runFrom : ∀ {k : ℕ} {Γ : Type} {k' : ℕ} {Γ' S S' : Type} {x : List Γ} {x' : List Γ'} {M : MultiTapeTM k Γ S}
+  {N : MultiTapeTM k' Γ' S'} {enc : Cfg k Γ S x → Cfg k' Γ' S' x'} {cost : Cfg k Γ S x → ℕ} {X : Set (Option S)}
+  {X' : Set (Option S')},
+  Lockstep M N enc cost X X' →
+    ∀ (d : Cfg k Γ S x) (t : ℕ),
+      (∀ u < t, (MultiTapeTM.runFrom d u).state ∉ X) →
+        MultiTapeTM.runFrom (enc d) (∑ u ∈ Finset.range t, cost (MultiTapeTM.runFrom d u)) =
+          enc (MultiTapeTM.runFrom d t)
+@Lockstep.cut : ∀ {k : ℕ} {Γ : Type} {k' : ℕ} {Γ' S S' : Type} {x : List Γ} {x' : List Γ'} {M : MultiTapeTM k Γ S}
+  {N : MultiTapeTM k' Γ' S'} {enc : Cfg k Γ S x → Cfg k' Γ' S' x'} {cost : Cfg k Γ S x → ℕ} {X : Set (Option S)}
+  {X' : Set (Option S')},
+  Lockstep M N enc cost X X' →
+    ∀ (d : Cfg k Γ S x) (t : ℕ),
+      (∀ u < t, (MultiTapeTM.runFrom d u).state ∉ X) →
+        ∀ v < ∑ u ∈ Finset.range t, cost (MultiTapeTM.runFrom d u), (MultiTapeTM.runFrom (enc d) v).state ∉ X'
+one_work_tape_binary : ∀ (M : FinTM Bool) (f : List Bool → List Bool) (T : ℕ → ℕ),
+  M.ComputesFunInTime f T → ∃ M' c, M'.k = 1 ∧ M'.ComputesFunInTime f fun n => c * (T n + 1) ^ 2
+@one_work_tape : ∀ {Γ : Type} [Fintype Γ] [DecidableEq Γ] (M : FinTM Γ) (f : List Γ → List Γ) (T : ℕ → ℕ),
+  M.ComputesFunInTime f T → ∃ Γ' x x e M' c, M'.k = 1 ∧ M'.ComputesFunInTimeVia e f fun n => c * (T n + 1) ^ 2
+@alphabet_reduction : ∀ {Γ : Type} [Fintype Γ] [DecidableEq Γ] (e : Bool ↪ Γ) (M : FinTM Γ) (f : List Bool → List Bool)
+  (T : ℕ → ℕ), M.ComputesFunInTimeVia e f T → ∃ c M', M'.k = M.k ∧ M'.ComputesFunInTime f fun n => c * (T n + 1)
+@alphabet_reduction_spaceUsed : ∀ {Γ : Type} [Fintype Γ] [DecidableEq Γ] (e : Bool ↪ Γ) (M : FinTM Γ)
+  (f : List Bool → List Bool) (T S : ℕ → ℕ),
+  M.ComputesFunInTimeVia e f T →
+    (∀ (x : List Γ) (t : ℕ), MultiTapeTM.spaceUsed (MultiTapeTM.initCfg x) t ≤ S x.length) →
+      ∃ c M',
+        M'.k = M.k ∧
+          (M'.ComputesFunInTime f fun n => c * (T n + 1)) ∧
+            ∀ (x : List Bool) (t : ℕ), MultiTapeTM.spaceUsed (MultiTapeTM.initCfg x) t ≤ c * (S x.length + 1)
+one_work_tape_binary_spaceUsed : ∀ (M : FinTM Bool) (f : List Bool → List Bool) (T S : ℕ → ℕ),
+  M.ComputesFunInTime f T →
+    (∀ (x : List Bool) (t : ℕ), MultiTapeTM.spaceUsed (MultiTapeTM.initCfg x) t ≤ S x.length) →
+      ∃ M' c,
+        M'.k = 1 ∧
+          (M'.ComputesFunInTime f fun n => c * (T n + 1) ^ 2) ∧
+            ∀ (x : List Bool) (t : ℕ), MultiTapeTM.spaceUsed (MultiTapeTM.initCfg x) t ≤ c * (S x.length + 1)
+space_universal : ∃ SU,
+  ∀ (α : List Bool),
+    ∃ C,
+      0 < C ∧
+        ∀ (s : ℕ) (x output : List Bool) (t : ℕ),
+          (code.decode α).toFinTM.ComputesInTime x output t →
+            MultiTapeTM.spaceUsed (MultiTapeTM.initCfg x) t ≤ s →
+              ∃ t',
+                SU.ComputesInTime (pairEncode s.bits (pairEncode α x)) output t' ∧
+                  MultiTapeTM.spaceUsed (MultiTapeTM.initCfg (pairEncode s.bits (pairEncode α x))) t' ≤ C * s
+space_hierarchy : ∀ (f g : ℕ → ℕ),
+  SpaceConstructible f → SpaceConstructible g → (∀ (A : ℕ), ∃ N, ∀ n ≥ N, A * f n ≤ g n) → SPACE f ⊂ SPACE g
+exists_selfStartupTM : ∀ (c : EffectiveMachineCode),
+  ∃ K P x x R exit,
+    ∀ (α : List Bool),
+      ∃ T B,
+        ∀ (w : List Bool),
+          MultiTapeTM.runFrom (MultiTapeTM.initCfg (pairEncode α w)) T =
+              { state := some exit, inputPos := 1,
+                workTapes := fun j =>
+                  if j = 1 then bufferTape (tableBitsK (c.decode α).tm.tr)
+                  else if j = 2 then fun p => bufferTape (unaryFin (c.decode α).tm.q₀) (p - 2) else fun x => none,
+                workTapePos := fun x => 0, output := [] } ∧
+            (∀ u < T, (MultiTapeTM.runFrom (MultiTapeTM.initCfg (pairEncode α w)) u).state ≠ some exit) ∧
+              (∀ u ≤ T, (MultiTapeTM.runFrom (MultiTapeTM.initCfg (pairEncode α w)) u).output = []) ∧
+                MultiTapeTM.spaceUsed (MultiTapeTM.initCfg (pairEncode α w)) T ≤ B
+exists_selfUniversal : ∀ (c : EffectiveMachineCode),
+  ∃ U₀,
+    ∀ (α : List Bool),
+      ∃ C,
+        0 < C ∧
+          ∀ (w output : List Bool) (t s : ℕ),
+            (c.decode α).toFinTM.ComputesInTime (pairEncode α w) output t →
+              MultiTapeTM.spaceUsed (MultiTapeTM.initCfg (pairEncode α w)) t ≤ s →
+                ∃ t',
+                  U₀.ComputesInTime (pairEncode α w) output t' ∧
+                    MultiTapeTM.spaceUsed (MultiTapeTM.initCfg (pairEncode α w)) t' ≤ C * (s + 1)
+@NativeAt : {K : ℕ} → {Γ : Type u_1} → {S : Type u_2} → {y : List Γ} → Cfg K Γ S y → Fin (y.length + 2) → Prop
+@RulerAt : {K : ℕ} → {S : Type u_1} → {y z : List Bool} → ℕ → Fin K → Cfg K Bool S z → Fin (y.length + 2) → Prop
+@exists_rulerHostTM : ∀ {m : ℕ} {S : Type} [Fintype S] [DecidableEq S] (M : MultiTapeTM m Bool S),
+  ∃ Q x x H inj C,
+    0 < C ∧
+      ∀ {y z : List Bool} (ℓ : ℕ) (hz : z.length = ℓ + y.length),
+        0 < ℓ →
+          List.drop ℓ z = y →
+            ∀ (rt : ℤ → Option Bool) (rp : ℤ),
+              (∀ (p : ℤ), -1 ≤ p → p ≤ ↑ℓ → rt (rp + p) = bufferTape (List.replicate ℓ true) p) →
+                ∀ (c : Cfg m Bool S y) (b : Bool),
+                  (b = true ↔ ↑c.inputPos = 0) →
+                    ∀ (t : ℕ),
+                      have d := rulerHostCfg ℓ hz (Option.map (fun q => inj q b) c.state) c rt rp;
+                      ∃ t',
+                        t ≤ t' ∧
+                          t' ≤ C * (ℓ + 1) * t ∧
+                            (∃ b',
+                                (b' = true ↔ ↑(MultiTapeTM.runFrom c t).inputPos = 0) ∧
+                                  MultiTapeTM.runFrom d t' =
+                                    rulerHostCfg ℓ hz (Option.map (fun q => inj q b') (MultiTapeTM.runFrom c t).state)
+                                      (MultiTapeTM.runFrom c t) rt rp) ∧
+                              ((∀ u < t, (MultiTapeTM.runFrom c u).state ≠ none) →
+                                  ∀ u < t', (MultiTapeTM.runFrom d u).state ≠ none) ∧
+                                (∀ u ≤ t',
+                                    ∃ v ≤ t,
+                                      (∀ (i : Fin m),
+                                          (MultiTapeTM.runFrom d u).workTapes i.castSucc =
+                                              (MultiTapeTM.runFrom c v).workTapes i ∧
+                                            (MultiTapeTM.runFrom d u).workTapePos i.castSucc =
+                                              (MultiTapeTM.runFrom c v).workTapePos i) ∧
+                                        (MultiTapeTM.runFrom d u).output = (MultiTapeTM.runFrom c v).output ∧
+                                          (MultiTapeTM.runFrom d u).workTapes (Fin.last m) = rt ∧
+                                            (MultiTapeTM.runFrom d u).workTapePos (Fin.last m) ∈
+                                              Finset.Icc (rp - 1) (rp + ↑ℓ)) ∧
+                                  (∀ (i : Fin m),
+                                      MultiTapeTM.visitedByTapeHead d t' i.castSucc =
+                                        MultiTapeTM.visitedByTapeHead c t i) ∧
+                                    MultiTapeTM.visitedByTapeHead d t' (Fin.last m) ⊆ Finset.Icc (rp - 1) (rp + ↑ℓ)
+@exists_stepClockTMVia : ∀ {k : ℕ} {Γ S : Type} [Fintype S] [DecidableEq S] [DecidableEq Γ] (e : Bool ↪ Γ)
+  (M : MultiTapeTM k Γ S) (stopAt : S → Bool),
+  ∃ Q x x H inj finish timeout,
+    Function.Injective finish ∧
+      Function.Injective timeout ∧
+        (∀ (a b : Option S), finish a ≠ timeout b) ∧
+          (∀ (s : S) (r : Option S), inj s ≠ finish r ∧ inj s ≠ timeout r) ∧
+            ∀ {x : List Γ} (c : Cfg k Γ S x) (q : S),
+              c.state = some q →
+                ∀ (w : List Bool) (ct : ℤ → Option Γ) (cp : ℤ),
+                  (∀ (p : ℤ), -1 ≤ p → p ≤ ↑w.length → ct (cp + p) = bufferTape (List.map (⇑e) w) p) →
+                    (∀ τ ≤ Nat.ofDigits 2 (List.map Bool.toNat w),
+                        Cfg.Stopped stopAt (MultiTapeTM.runFrom c τ) →
+                          (∀ u < τ, ¬Cfg.Stopped stopAt (MultiTapeTM.runFrom c u)) →
+                            ∃ T ≤ 5 * τ + 2 * w.length + 2,
+                              ∃ w',
+                                w'.length = w.length ∧
+                                  MultiTapeTM.runFrom (clockCfg (some (inj q)) c ct cp) T =
+                                      clockCfg (some (finish (MultiTapeTM.runFrom c τ).state)) (MultiTapeTM.runFrom c τ)
+                                        (wordPatch ct cp (List.map (⇑e) w')) cp ∧
+                                    (∀ u < T,
+                                        ∀ (r : Option S),
+                                          (MultiTapeTM.runFrom (clockCfg (some (inj q)) c ct cp) u).state ≠
+                                              some (finish r) ∧
+                                            (MultiTapeTM.runFrom (clockCfg (some (inj q)) c ct cp) u).state ≠
+                                              some (timeout r)) ∧
+                                      ∀ u ≤ T,
+                                        ∃ v ≤ τ,
+                                          (∀ (j : Fin k),
+                                              (MultiTapeTM.runFrom (clockCfg (some (inj q)) c ct cp) u).workTapes
+                                                    j.castSucc =
+                                                  (MultiTapeTM.runFrom c v).workTapes j ∧
+                                                (MultiTapeTM.runFrom (clockCfg (some (inj q)) c ct cp) u).workTapePos
+                                                    j.castSucc =
+                                                  (MultiTapeTM.runFrom c v).workTapePos j) ∧
+                                            (MultiTapeTM.runFrom (clockCfg (some (inj q)) c ct cp) u).inputPos =
+                                                (MultiTapeTM.runFrom c v).inputPos ∧
+                                              (MultiTapeTM.runFrom (clockCfg (some (inj q)) c ct cp) u).output =
+                                                  (MultiTapeTM.runFrom c v).output ∧
+                                                (MultiTapeTM.runFrom (clockCfg (some (inj q)) c ct cp) u).workTapePos
+                                                    (Fin.last k) ∈
+                                                  Finset.Icc (cp - 1) (cp + ↑w.length)) ∧
+                      ((∀ u ≤ Nat.ofDigits 2 (List.map Bool.toNat w), ¬Cfg.Stopped stopAt (MultiTapeTM.runFrom c u)) →
+                        ∃ T ≤ 5 * Nat.ofDigits 2 (List.map Bool.toNat w) + 2 * w.length + 2,
+                          ∃ w',
+                            w'.length = w.length ∧
+                              MultiTapeTM.runFrom (clockCfg (some (inj q)) c ct cp) T =
+                                  clockCfg
+                                    (some
+                                      (timeout (MultiTapeTM.runFrom c (Nat.ofDigits 2 (List.map Bool.toNat w))).state))
+                                    (MultiTapeTM.runFrom c (Nat.ofDigits 2 (List.map Bool.toNat w)))
+                                    (wordPatch ct cp (List.map (⇑e) w')) cp ∧
+                                (∀ u < T,
+                                    ∀ (r : Option S),
+                                      (MultiTapeTM.runFrom (clockCfg (some (inj q)) c ct cp) u).state ≠
+                                          some (finish r) ∧
+                                        (MultiTapeTM.runFrom (clockCfg (some (inj q)) c ct cp) u).state ≠
+                                          some (timeout r)) ∧
+                                  ∀ u ≤ T,
+                                    ∃ v ≤ Nat.ofDigits 2 (List.map Bool.toNat w),
+                                      (∀ (j : Fin k),
+                                          (MultiTapeTM.runFrom (clockCfg (some (inj q)) c ct cp) u).workTapes
+                                                j.castSucc =
+                                              (MultiTapeTM.runFrom c v).workTapes j ∧
+                                            (MultiTapeTM.runFrom (clockCfg (some (inj q)) c ct cp) u).workTapePos
+                                                j.castSucc =
+                                              (MultiTapeTM.runFrom c v).workTapePos j) ∧
+                                        (MultiTapeTM.runFrom (clockCfg (some (inj q)) c ct cp) u).inputPos =
+                                            (MultiTapeTM.runFrom c v).inputPos ∧
+                                          (MultiTapeTM.runFrom (clockCfg (some (inj q)) c ct cp) u).output =
+                                              (MultiTapeTM.runFrom c v).output ∧
+                                            (MultiTapeTM.runFrom (clockCfg (some (inj q)) c ct cp) u).workTapePos
+                                                (Fin.last k) ∈
+                                              Finset.Icc (cp - 1) (cp + ↑w.length))
+StepBlock.loopTM : (k : ℕ) →
+  MultiTapeTM (k + 2 + 1) Bool (CounterLoopState ((key : StepBlock.Key) × StepBlock.Ph k key))
+StepBlock.hostedLoopTM : (k : ℕ) →
+  MultiTapeTM (1 + (k + 2 + 1)) Bool (CounterLoopState ((key : StepBlock.Key) × StepBlock.Ph k key) × Bool)
+@StepBlock.loopTM_run : ∀ {k n : ℕ} {x : List Bool} (M : MultiTapeTM k Bool (Fin (n + 1)))
+  (c : Cfg k Bool (Fin (n + 1)) x),
+  c.state ≠ none →
+    ∀ (d : Cfg (k + 2) Bool ((key : StepBlock.Key) × StepBlock.Ph k key) x),
+      d.state = some (StepBlock.exit k true) →
+        StepBlock.Rep M.tr c d →
+          ∀ (w : List Bool) (ct : ℤ → Option Bool) (cp : ℤ),
+            (∀ (p : ℤ), -1 ≤ p → p ≤ ↑w.length → ct (cp + p) = bufferTape w p) →
+              ∀ (t : ℕ),
+                Nat.ofDigits 2 (List.map Bool.toNat w) = t →
+                  ∃ T e ct',
+                    T ≤ t * (50 * ((tableBitsK M.tr).length + 1)) + 4 * t + 2 * w.length + 2 ∧
+                      (∀ t' ≤ t,
+                          (MultiTapeTM.runFrom c t').state = none →
+                            T ≤ t' * (50 * ((tableBitsK M.tr).length + 1)) + 4 * t' + 2 * w.length) ∧
+                        StepBlock.Rep M.tr (MultiTapeTM.runFrom c t) e ∧
+                          e.output = d.output ∧
+                            (∀ (q : ℤ), ¬(cp ≤ q ∧ q < cp + ↑w.length) → ct' q = ct q) ∧
+                              MultiTapeTM.runFrom (counterLoopCfg (some (CounterLoopState.dec FlagPhase.run)) d ct cp)
+                                    T =
+                                  counterLoopCfg
+                                    (some
+                                      (if (MultiTapeTM.runFrom c t).state.isSome = true then CounterLoopState.done
+                                      else CounterLoopState.escape))
+                                    e ct' cp ∧
+                                ∀ u < T,
+                                  (MultiTapeTM.runFrom
+                                          (counterLoopCfg (some (CounterLoopState.dec FlagPhase.run)) d ct cp)
+                                          u).state ≠
+                                      some CounterLoopState.done ∧
+                                    (MultiTapeTM.runFrom
+                                          (counterLoopCfg (some (CounterLoopState.dec FlagPhase.run)) d ct cp)
+                                          u).state ≠
+                                      some CounterLoopState.escape
+@StepBlock.hostedLoopTM_run : ∀ {k n : ℕ} {x z : List Bool} (M : MultiTapeTM k Bool (Fin (n + 1)))
+  (c : Cfg k Bool (Fin (n + 1)) x),
+  c.state ≠ none →
+    ∀ (d : Cfg (k + 2) Bool ((key : StepBlock.Key) × StepBlock.Ph k key) x),
+      d.state = some (StepBlock.exit k true) →
+        StepBlock.Rep M.tr c d →
+          ∀ (w : List Bool) (ct : ℤ → Option Bool) (cp : ℤ),
+            (∀ (p : ℤ), -1 ≤ p → p ≤ ↑w.length → ct (cp + p) = bufferTape w p) →
+              ∀ (t : ℕ),
+                Nat.ofDigits 2 (List.map Bool.toNat w) = t →
+                  ∀ (b : Bool),
+                    VirtualTag c.inputPos b →
+                      ∀ (p : Fin (z.length + 2)) (pre : List Bool),
+                        ∃ T e ct' b',
+                          T ≤ t * (50 * ((tableBitsK M.tr).length + 1)) + 4 * t + 2 * w.length + 2 ∧
+                            (∀ t' ≤ t,
+                                (MultiTapeTM.runFrom c t').state = none →
+                                  T ≤ t' * (50 * ((tableBitsK M.tr).length + 1)) + 4 * t' + 2 * w.length) ∧
+                              StepBlock.Rep M.tr (MultiTapeTM.runFrom c t) e ∧
+                                e.output = d.output ∧
+                                  (∀ (q : ℤ), ¬(cp ≤ q ∧ q < cp + ↑w.length) → ct' q = ct q) ∧
+                                    VirtualTag e.inputPos b' ∧
+                                      MultiTapeTM.runFrom
+                                            (vhostCfg
+                                              (counterLoopCfg (some (CounterLoopState.dec FlagPhase.run)) d ct cp) b p
+                                              pre)
+                                            T =
+                                          vhostCfg
+                                            (counterLoopCfg
+                                              (some
+                                                (if (MultiTapeTM.runFrom c t).state.isSome = true then
+                                                  CounterLoopState.done
+                                                else CounterLoopState.escape))
+                                              e ct' cp)
+                                            b' p pre ∧
+                                        ∀ u < T,
+                                          ∀ (tag : Bool),
+                                            (MultiTapeTM.runFrom
+                                                    (vhostCfg
+                                                      (counterLoopCfg (some (CounterLoopState.dec FlagPhase.run)) d ct
+                                                        cp)
+                                                      b p pre)
+                                                    u).state ≠
+                                                some (CounterLoopState.done, tag) ∧
+                                              (MultiTapeTM.runFrom
+                                                    (vhostCfg
+                                                      (counterLoopCfg (some (CounterLoopState.dec FlagPhase.run)) d ct
+                                                        cp)
+                                                      b p pre)
+                                                    u).state ≠
+                                                some (CounterLoopState.escape, tag)
+@StepBlock.hostedLoop_read : ∀ {k n : ℕ} {x z : List Bool}
+  (tr : Fin (n + 1) → Option Bool → (Fin k → Option Bool) → Action k Bool (Fin (n + 1)))
+  (c' : Cfg k Bool (Fin (n + 1)) x) (e : Cfg (k + 2) Bool ((key : StepBlock.Key) × StepBlock.Ph k key) x),
+  StepBlock.Rep tr c' e →
+    ∀ (q : CounterLoopState ((key : StepBlock.Key) × StepBlock.Ph k key)) (ct : ℤ → Option Bool) (cp : ℤ) (b : Bool)
+      (p : Fin (z.length + 2)) (pre : List Bool),
+      (vhostCfg (counterLoopCfg (some q) e ct cp) b p pre).state = some (q, b) ∧
+        (vhostCfg (counterLoopCfg (some q) e ct cp) b p pre).inputPos = p ∧
+          (vhostCfg (counterLoopCfg (some q) e ct cp) b p pre).output = pre ++ e.output ∧
+            (vhostCfg (counterLoopCfg (some q) e ct cp) b p pre).workTapeSymbols
+                (vhostBank (StepBlock.summaryTape k).castSucc) =
+              StepBlock.outputSummary c'.output
+StepBlock.outputSummary_true : ∀ (w : List Bool), StepBlock.outputSummary w = some true ↔ w = [true]
+workReadsK_one : workReadsK 1 = List.map (fun w x => w) [none, some false, some true]
+@tableBitsK_two : ∀ {n : ℕ} (tr : Fin (n + 1) → Option Bool → (Fin 2 → Option Bool) → Action 2 Bool (Fin (n + 1))),
+  tableBitsK tr = codeTable2Bits fun q inp w₀ w₁ => tr q inp (workPair w₀ w₁)
+exists_codeTM_spaceUsed : ∀ (M : FinTM Bool),
+  M.k = 1 →
+    ∃ M',
+      (∀ (x output : List Bool) (t : ℕ), M'.toFinTM.ComputesInTime x output t ↔ M.ComputesInTime x output t) ∧
+        ∀ (x : List Bool) (t : ℕ),
+          MultiTapeTM.spaceUsed (MultiTapeTM.initCfg x) t = MultiTapeTM.spaceUsed (MultiTapeTM.initCfg x) t
+@MultiTapeTM.relabelState_runFrom_init : ∀ {k : ℕ} {Symbol : Type u_1} {State : Type u_2} {State' : Type u_3}
+  (tm : MultiTapeTM k Symbol State) (e : State ≃ State') (input : List Symbol) (t : ℕ),
+  MultiTapeTM.runFrom (MultiTapeTM.initCfg input) t =
+    Cfg.mapState (⇑e) (MultiTapeTM.runFrom (MultiTapeTM.initCfg input) t)
+Nat.log : ℕ → ℕ → ℕ
+Nat.log2 : ℕ → ℕ
+@Nat.log2_eq_log_two : ∀ {n : ℕ}, n.log2 = Nat.log 2 n
+'Turing.exists_effectiveMachineCode2' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.exists_uniformMachineCode2' depends on axioms: [propext, sorryAx, Classical.choice, Quot.sound]
+'Complexity.time_hierarchy' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.universal' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.StepBlock.roundTM_effect' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.StepBlock.roundTM_iterate' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.StepBlock.loopTM_run' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.StepBlock.hostedLoopTM_run' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.exists_selfUniversal' depends on axioms: [propext, sorryAx, Classical.choice, Quot.sound]
+'Turing.exists_selfStartupTM' depends on axioms: [propext, sorryAx, Classical.choice, Quot.sound]
+'Turing.exists_rulerHostTM' depends on axioms: [propext, sorryAx, Classical.choice, Quot.sound]
