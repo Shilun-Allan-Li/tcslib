@@ -4,7 +4,7 @@
 
 - Clone: `https://github.com/Shilun-Allan-Li/tcslib`
 - Check out branch **`complexity/arora-barak-ch3-4`**, this exact branch, NOT `main`.
-- Confirm that `git merge-base --is-ancestor @ANCESTOR@ HEAD` succeeds. That commit contains:
+- Confirm that `git merge-base --is-ancestor c8163e9bda3f53a999f4a4ad9164c17aa3c15cc4 HEAD` succeeds. That commit contains:
   - the fills-8 integration (`audits/fills-8-integration.md`), with the canonizer's previous
     report `audits/b5a-fill-agent-reports/canon-3-REPORT.md`;
   - H2-M (PR #88): the step block is the public module `Build/StepBlock.lean`
@@ -19,7 +19,7 @@
 
   If the check fails, **stop**.
 - **Branch from exactly that commit**, not from the moving campaign tip:
-  `git checkout -b fill/b5a-canon-cont3 @ANCESTOR@`. Record the base hash in `REPORT.md`. Never
+  `git checkout -b fill/b5a-canon-cont3 c8163e9bda3f53a999f4a4ad9164c17aa3c15cc4`. Record the base hash in `REPORT.md`. Never
   rebase, merge or cherry-pick anything into your branch.
 - **Delivery is by zip, not PR or push** (`workflow.md` §4): `fill-b5a-canon-cont3.zip`,
   containing `REPORT.md`, the full modified source, a `git format-patch` series against your
@@ -29,7 +29,7 @@
 ## Base, line numbers and what landed before you
 
 - **Lines in this brief are those of campaign commit `9d441a4e`.** Its Lean content equals
-  `1b6b972c`, the merge of PRs #92 and #93, and the inputs commit `@ANCESTOR@` adds no Lean
+  `1b6b972c`, the merge of PRs #92 and #93, and the inputs commit `c8163e9bda3f53a999f4a4ad9164c17aa3c15cc4` adds no Lean
   change. `CodeSimulator.lean` has not changed since `759471be` (byte-identical, checked), so
   no line number in it moved. Every probe and measurement below was run at `9d441a4e`, against
   the olean snapshot of #92's replay.
