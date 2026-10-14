@@ -45,9 +45,70 @@ import TCSlib.Complexity.SpaceComplexity.Logspace.InputAccess
 import TCSlib.Complexity.SpaceComplexity.Logspace.PreimageHost
 import TCSlib.Complexity.SpaceComplexity.Logspace.QueryReshape
 import TCSlib.Complexity.SpaceComplexity.Logspace.Reductions
+import TCSlib.Complexity.SpaceComplexity.Logspace.PathWalk
+import TCSlib.Complexity.SpaceComplexity.Logspace.PathWalkMachine
+import TCSlib.Complexity.SpaceComplexity.Logspace.PathWalkProof
 import TCSlib.Complexity.SpaceComplexity.Logspace.Path
 import TCSlib.Complexity.SpaceComplexity.Logspace.ImmermanSzelepcsenyi
 import TCSlib.Complexity.SpaceComplexity.Logspace.Mult
+import TCSlib.Complexity.SpaceComplexity.Machines.ARMWidth
+import TCSlib.Complexity.SpaceComplexity.Machines.ARMWidthExample
+import TCSlib.Complexity.SpaceComplexity.Machines.ARMReach
+import TCSlib.Complexity.SpaceComplexity.Machines.NARM
+import TCSlib.Complexity.SpaceComplexity.Machines.NARMCompile
+import TCSlib.Complexity.SpaceComplexity.Machines.NARMRun
+import TCSlib.Complexity.SpaceComplexity.Machines.NARMProof
+import TCSlib.Complexity.SpaceComplexity.Machines.NARMExample
+import TCSlib.Complexity.SpaceComplexity.Machines.NARMKit
+import TCSlib.Complexity.SpaceComplexity.Machines.VWord
+import TCSlib.Complexity.SpaceComplexity.Machines.ARMLoops
+import TCSlib.Complexity.SpaceComplexity.Codec.Word
+import TCSlib.Complexity.SpaceComplexity.Codec.Scan
+import TCSlib.Complexity.SpaceComplexity.Codec.Valid
+import TCSlib.Complexity.SpaceComplexity.Codec.Step
+import TCSlib.Complexity.SpaceComplexity.Codec.Langs
+import TCSlib.Complexity.SpaceComplexity.Codec.Checks
+import TCSlib.Complexity.SpaceComplexity.Codec.Engine
+import TCSlib.Complexity.SpaceComplexity.Codec.Regs
+import TCSlib.Complexity.SpaceComplexity.Codec.Machine
+import TCSlib.Complexity.SpaceComplexity.Codec.Run
+import TCSlib.Complexity.SpaceComplexity.Codec.Parse
+import TCSlib.Complexity.SpaceComplexity.Codec.Layout
+import TCSlib.Complexity.SpaceComplexity.Codec.Layout2
+import TCSlib.Complexity.SpaceComplexity.Codec.Deciders
+import TCSlib.Complexity.SpaceComplexity.Codec.StepDecider
+import TCSlib.Complexity.SpaceComplexity.Codec.Bridge
+import TCSlib.Complexity.SpaceComplexity.SavitchARM.Reach
+import TCSlib.Complexity.SpaceComplexity.SavitchARM.Machine
+import TCSlib.Complexity.SpaceComplexity.SavitchARM.Run
+import TCSlib.Complexity.SpaceComplexity.SavitchARM.Recursion
+import TCSlib.Complexity.SpaceComplexity.SavitchARM.Setup
+import TCSlib.Complexity.SpaceComplexity.SavitchARM.Search
+import TCSlib.Complexity.SpaceComplexity.SavitchARM.Correct
+import TCSlib.Complexity.SpaceComplexity.Logspace.ISCountMath
+import TCSlib.Complexity.SpaceComplexity.Logspace.ISCountRegs
+import TCSlib.Complexity.SpaceComplexity.Machines.MARM
+import TCSlib.Complexity.SpaceComplexity.Machines.MARMCompile
+import TCSlib.Complexity.SpaceComplexity.Machines.MARMTime
+import TCSlib.Complexity.SpaceComplexity.ExpBFS.Radius
+import TCSlib.Complexity.SpaceComplexity.ExpBFS.Machine
+import TCSlib.Complexity.SpaceComplexity.ExpBFS.Run
+import TCSlib.Complexity.SpaceComplexity.ExpBFS.Relax
+import TCSlib.Complexity.SpaceComplexity.ExpBFS.Search
+import TCSlib.Complexity.SpaceComplexity.ExpBFS.Main
+import TCSlib.Complexity.SpaceComplexity.ExpTime
+import TCSlib.Complexity.SpaceComplexity.Logspace.PathHard
+import TCSlib.Complexity.SpaceComplexity.Logspace.PathHardRegs
+import TCSlib.Complexity.SpaceComplexity.Logspace.PathHardMachine
+import TCSlib.Complexity.SpaceComplexity.Logspace.PathHardWalk
+import TCSlib.Complexity.SpaceComplexity.Logspace.PathHardRun
+import TCSlib.Complexity.SpaceComplexity.Logspace.PathHardDecide
+import TCSlib.Complexity.SpaceComplexity.Logspace.ISCountGenMachine
+import TCSlib.Complexity.SpaceComplexity.Logspace.ISCountGenWalk
+import TCSlib.Complexity.SpaceComplexity.Logspace.ISCountGenStage
+import TCSlib.Complexity.SpaceComplexity.Logspace.ISCountGenLoop
+import TCSlib.Complexity.SpaceComplexity.Logspace.ISCountGenRadius
+import TCSlib.Complexity.SpaceComplexity.Logspace.ISCountGenCorrect
 
 /-!
 # Space complexity
@@ -94,6 +155,26 @@ running counter program is simulated by an abstract register machine in
 - `SpaceComplexity.Machines.ARMRun`: the run and space theorems of compiled machines
 - `SpaceComplexity.Machines.ARMProof`: proving abstract machines correct; `arm_decides`
 - `SpaceComplexity.Machines.ARMKit`: calls on unary inputs; `arm_decides_poly`
+- `SpaceComplexity.Machines.ARMWidth`: abstract machines with wide registers;
+  `arm_decides_space`, `arm_decides_SPACE`, `arm_decides_pspace`; `L ⊆ PSPACE`
+- `SpaceComplexity.Machines.ARMWidthExample`: exhaustive search over `|x|`-bit witnesses
+  with a polynomially wide register (`PSPACE` is closed under it)
+- `SpaceComplexity.Machines.ARMReach`: compiled runs to live abstract configurations
+  (`arm_step`, `arm_reach`)
+- `SpaceComplexity.Machines.NARM`: nondeterministic abstract register machines (`choose`),
+  their choice-word semantics and correctness combinators
+- `SpaceComplexity.Machines.NARMCompile`: their compilation onto `FinNDTM`
+- `SpaceComplexity.Machines.NARMRun`: the run and space theorems of compiled
+  nondeterministic machines (`narm_space`)
+- `SpaceComplexity.Machines.NARMProof`: `narm_decides_space`, `narm_decides` (`NL`),
+  `narm_decides_npspace` (`NPSPACE`)
+- `SpaceComplexity.Machines.NARMExample`: a guessing machine deciding a language in `NL`
+- `SpaceComplexity.Machines.ARMLoops`: the bounded-run guard `GuardLe` and generic counting
+  loops of abstract register machines
+- `SpaceComplexity.Machines.VWord`: small shared lemmas on reading inputs by index
+- `SpaceComplexity.Machines.NARMKit`: proving nondeterministic register machines correct by
+  continuation (`NTerm`, `NAcc`, `NSem`), their step lemmas and generic nondeterministic
+  loops
 - `SpaceComplexity.Machines.DblLang`: reading the unary length `⟨1ⁿ, bits (2n)⟩` in
   logarithmic space
 - `SpaceComplexity.ImplicitPoly`: implicitly logspace computable functions are
@@ -111,8 +192,8 @@ running counter program is simulated by an abstract register machine in
 - `SpaceComplexity.Examples`: Example 4.7's parity language
 - `SpaceComplexity.ZeroSpace`: the zero-bound collapse of unnormalized `SPACE` and the
   positive-normalization identities (P0 reception audit, round 1)
-- `SpaceComplexity.ConfigGraph`: configuration graphs, the ND Claim 4.4(1), Thm 4.2(iii),
-  `NL ⊆ P`, Ex 4.3 (chapters-3-4 campaign, phase P4.2)
+- `SpaceComplexity.ConfigGraph`: configuration graphs and the ND Claim 4.4(1) (chapters-3-4
+  campaign, phase P4.2; Thm 4.2(iii), `NL ⊆ P` and Ex 4.3 are in `SpaceComplexity.ExpTime`)
 - `SpaceComplexity.Savitch`: Savitch's theorem and `PSPACE = NPSPACE` (phase P4.2)
 - `SpaceComplexity.Hierarchy`: the space-bounded universal machine, Thm 4.8,
   `L ⊊ PSPACE`, Ex 3.2 (phase P4.3)
@@ -122,6 +203,39 @@ running counter program is simulated by an abstract register machine in
   query reshapings of composition (phase P4.4b)
 - `SpaceComplexity.Logspace.{Reductions, Path, ImmermanSzelepcsenyi, Mult}`: `≤ₗ` and
   Lemma 4.17, `PATH` and Thm 4.18, Thm 4.20 and Cor 4.21, `MULT ∈ L` (phase P4.4)
+- `SpaceComplexity.Logspace.{PathWalk, PathWalkMachine, PathWalkProof}`: the
+  nondeterministic walk deciding `PATH` (`PATH ∈ NL`, §4.1.2)
+- `SpaceComplexity.Codec.{Word, Scan, Valid, Step, Langs, Checks}`: an `O(s + log n)`-bit
+  codec for window-bounded configurations of a nondeterministic machine, the four code
+  languages (valid, initial, accepting, step) and their word-level checks
+- `SpaceComplexity.Codec.{Engine, Regs, Machine, Run, Parse, Layout, Layout2, Deciders,
+  StepDecider}`: the four code languages are in `L` (an abstract register machine reading
+  its input by index)
+- `SpaceComplexity.Codec.Bridge`: acceptance of a space-bounded decider as a chain of codes
+- `SpaceComplexity.SavitchARM.{Reach, Machine, Run}`: midpoint reachability over codes; the
+  Savitch register machine and its arithmetic and stack routines
+- `SpaceComplexity.SavitchARM.{Recursion, Setup, Search, Correct}`: the machine evaluates the
+  midpoint recursion with an explicit stack; `NPSPACE ⊆ PSPACE` (Thm 4.14 at polynomial
+  bounds, consumed by `PSPACE = NPSPACE` in `SpaceComplexity.Savitch`)
+- `SpaceComplexity.Machines.{MARM, MARMCompile, MARMTime}`: abstract register machines with
+  a monotone memory tape, their compilation, and their time bound by configuration counting
+  (`marm_dtime`)
+- `SpaceComplexity.ExpBFS.{Radius, Machine, Run, Relax, Search, Main}`: reachable codes at
+  growing radii; the breadth-first search memory machine; `NSPACE S ⊆ ⋃ c, DTIME (2 ^ (c (S n + 1)))`
+  for `S ≥ logSpace`
+- `SpaceComplexity.ExpTime`: Thm 4.2(iii), `NL ⊆ P`, Ex 4.3 (moved from
+  `SpaceComplexity.ConfigGraph`, after the codec)
+- `SpaceComplexity.Logspace.{PathHard, PathHardRegs, PathHardMachine, PathHardWalk,
+  PathHardRun, PathHardDecide}`: the configuration-graph reduction to `PATH`, the register
+  file and deciders of its query register machine, the machine and its runs; every `NL` language logspace-reduces to `PATH` (Thm 4.18, consumed by
+  `PATH_NLComplete` in `SpaceComplexity.Logspace.Path`)
+- `SpaceComplexity.Logspace.{ISCountMath, ISCountRegs}`: the combinatorics of inductive
+  counting (balls, guessed enumerations) and the register file of the counting machine
+- `SpaceComplexity.Logspace.ISCountGen{Machine, Walk, Stage, Loop, Radius, Correct}`: the
+  window-growing inductive-counting machine; `L ∈ NSPACE S → Lᶜ ∈ NSPACE S` for
+  `S ≥ logSpace` (`compl_mem_NSPACE`, consumed by `NSPACE_compl_eq`, Cor 4.21) and its case
+  `L ∈ NL → Lᶜ ∈ NL` (`compl_mem_NL`, consumed by `compl_PATH_mem_NL` and `NL_eq_coNL`,
+  Thm 4.20)
 
 ## References
 

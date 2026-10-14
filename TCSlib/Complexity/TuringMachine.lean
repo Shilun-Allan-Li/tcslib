@@ -43,6 +43,7 @@ import TCSlib.Complexity.TuringMachine.Build.RecordTable
 import TCSlib.Complexity.TuringMachine.Build.CertShell
 import TCSlib.Complexity.TuringMachine.Build.OracleSim
 import TCSlib.Complexity.TuringMachine.Build.Contract
+import TCSlib.Complexity.TuringMachine.Build.StepBlock
 import TCSlib.Complexity.TuringMachine.CodeSimulator
 import TCSlib.Complexity.TuringMachine.ChoiceWords
 import TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction
@@ -164,6 +165,11 @@ for the local modifications.
   plain host simulating an oracle machine with queries answered by a plain decider, the
   choice-word machine of an oracle NDTM, and the plain certificate shell. Fills in progress;
   each module's header carries its status.
+* `Build/StepBlock` — the step block (host H2, `machine-library-design.md` §14): one finite
+  machine per work-tape count `k` that performs one simulated transition of a `k`-tape
+  binary table held as data, with its contract `Turing.StepBlock.roundTM_effect`, the
+  record skipper and fixed-field reader, the per-round space ledger and the cofinal
+  iteration. Proved; promoted from `CodeSimulator` (H2-S gate closed, round 2).
 * `CodeSimulator` — the format-parameterized uniform simulator over item 8's code formats
   (B5a): one bounded-acceptance interpreter and canonizer whose one- and two-tape instances are
   the EXPCOM and Codes2Tape code schemes. Fills in progress; the module header carries its

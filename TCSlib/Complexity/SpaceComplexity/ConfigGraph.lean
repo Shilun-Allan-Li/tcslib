@@ -21,17 +21,19 @@ set_option autoImplicit false
 [AB09, §4.1.1]: the configuration graph `G_{M,x}` of a machine on an input —
 vertices the configurations, edges the one-step transitions (out-degree at most
 two for a binary-choice NDTM) — together with the counting half of Claim 4.4(1)
-for nondeterministic branches, the exponential-time simulation
-([AB09, Theorem 4.2, third inclusion]), `NL ⊆ P`, and the coarseness of
-polynomial-time reductions below `P` ([AB09, Exercise 4.3]). This is phase P4.2
-of `AroraBarakChapters3-4Plan.md`; Savitch's theorem, the other consumer of
-this layer, is `TCSlib.Complexity.SpaceComplexity.Savitch`.
+for nondeterministic branches. This is phase P4.2 of `AroraBarakChapters3-4Plan.md`. The
+exponential-time simulation ([AB09, Theorem 4.2, third inclusion]), `NL ⊆ P`, and the
+coarseness of polynomial-time reductions below `P` ([AB09, Exercise 4.3]) were stated here;
+their proof runs a breadth-first search over the configuration codec
+(`TCSlib.Complexity.SpaceComplexity.Codec`), which imports this module, so they now live in
+`TCSlib.Complexity.SpaceComplexity.ExpTime` with their statements unchanged. Savitch's
+theorem, the other consumer of this layer, is `TCSlib.Complexity.SpaceComplexity.Savitch`.
 
-**Status (S1b partial fill, integrated 2026-10-12): graph lemmas proved (phase P4.2, batch S1a).**
-The four graph contracts are proved. `NL_subset_P` and `polyTimeReducible_of_mem_NL` are proved
-modulo `NSPACE_subset_exp_dtime`, which remains sorried. By user decision (2026-10-12,
-`machine-library-design.md` §16), that simulation is to be proved as a program of the §15
-language, compiled to machines, rather than by a machine-level search host (backlog MIG-19).
+**Status: graph lemmas proved (phase P4.2, batch S1a).** The four graph contracts are proved;
+`Complexity.NSPACE_subset_exp_dtime`, `Complexity.NL_subset_P` and
+`Complexity.polyTimeReducible_of_mem_NL` are proved in
+`TCSlib.Complexity.SpaceComplexity.ExpTime` (2026-10-14). The private `s1b_*` helpers below
+belong to the superseded record-table route of the S1b partial fill and have no consumer.
 `spaceConstructible_logSpace` is proved (B3a).
 
 ## Design
@@ -68,7 +70,7 @@ language, compiled to machines, rather than by a machine-level search host (back
 * `Turing.FinNDTM.configBound` — the vertex count at window radius `s`:
   three times the deterministic `configBound` formula. [AB09, Claim 4.4(1)]
 
-## Main results (graph lemmas proved; the two corollaries proved modulo the simulation)
+## Main results
 
 * `Turing.NDTM.reflTransGen_cfgStep_iff` — reachability is the choice-word run.
 * `Turing.NDTM.coreSum_stepWith` — a step's vertex depends only on the vertex.
@@ -80,10 +82,6 @@ language, compiled to machines, rather than by a machine-level search host (back
 * `Turing.outSummary_append_congr` — a common output suffix preserves summary equality.
 * `Turing.NDTM.coreSum_runWith` — a common choice word preserves vertex equality.
 * `Turing.FinNDTM.not_acceptsWithin_zero` — acceptance requires a transition.
-* `Complexity.NSPACE_subset_exp_dtime` — [AB09, Theorem 4.2, third inclusion].
-* `Complexity.NL_subset_P` — the p. 92 chain's nondeterministic step.
-* `Complexity.polyTimeReducible_of_mem_NL` — [AB09, Exercise 4.3]: every
-  nontrivial language is `NL`-hard under polynomial-time reductions.
 
 ## References
 
@@ -775,156 +773,5 @@ private theorem s1b_constructor_time {S : ℕ → ℕ} (hdom : ∀ n, logSpace n
   intro x
   obtain ⟨t, ht, hs⟩ := hM x
   exact ⟨ht.of_spaceUsed_le hs, s1b_constructor_count M a x.length (S x.length) (hdom _)⟩
-
-/-- **Nondeterministic space sits inside exponential time**
-([AB09, Theorem 4.2, third inclusion]): for space-constructible `S`,
-`NSPACE S ⊆ ⋃ c, DTIME (2 ^ (c · (S n + 1)))`. The union over `c` renders the
-book's `2^{O(S(n))}`; the `+ 1` is a harmless normalization whose job is the
-input-head absorption (`n + 2 ≤ 2 ^ (S n + 1)`, since `SpaceConstructible`
-bundles `logSpace n ≤ S n`) — the displayed time bound is everywhere positive
-regardless, and the `c = 0` component has exponent `0` (round-1 audit,
-finding 5).
-
-**Proof sketch.** Let `N` decide `L` in space `c₀ · s`. The deterministic
-simulator, on input `x`: (i) computes the window radius `c₀ · S |x|` from the
-constructibility witness; (ii) runs a breadth-first search over the
-configuration graph on the coded vertices
-(`Turing.MultiTapeTM.ConfigCount.coreCode` plus the summary): the vertex count
-is `N.configBound |x| (c₀·S |x|) ≤ 2^{O(S |x|)}` (the exponent arithmetic of
-the received `configBound_logSpace_le`, generalized from `logSpace` to `S`),
-each vertex has out-degree two computed by one transition-table application,
-and the search maintains a visited table of coded vertices — the catalog
-copy/compare/increment routines and the loop combinator are the engine
-(`machine-library-design.md` §12 R3, `Build/Catalog.lean`); (iii) accepts iff
-a vertex with halted state and `accept` summary is reached, which is
-membership by
-`Turing.FinNDTM.DecidesInSpace.mem_iff_acceptsWithin_configBound` and
-`Turing.NDTM.reflTransGen_cfgStep_iff`. Total time: vertices × edges × table
-operations, `2^{O(S n)}`, normalized into the stated exponent with the
-`n + 2 ≤ 2^{S n + 1}` absorption. Fill obligations, named: the BFS controller
-(continuation budget anticipated), the vertex codec machine, the
-bound-generalized `configBound` arithmetic.
-
-**Fill appendix (S1b, partial).** The binding continuation route is the
-rich-alphabet recomposition of design §12.8a §4 and §12.8b: use
-`RecSym N.State (Fin 3)` with the existing summary code, capture and rewind
-the constructor, prepend the radius's low zero digits, and initialize a
-flagged record table. The radius normalization, deterministic constructor
-time bound, generalized count and its two instances have private proof bodies.
-The pure record bridge addresses equality with `coreSum`, quotient path lifting,
-the converse for windowed runs, and the accepting-summary predicate. These
-facts do not yet establish a machine-level BFS invariant. The count and
-radius-bit bodies are proved. (Maintainer note: the module elaborates with no errors at integration,
-2026-10-12; see `audits/fills-6-integration.md`.)
-
-The five note-6 obligations for the completed composition remain:
-canonical decoding; outside-window edge rejection, which is
-`recordStepTM`'s `no`; quotient path lifting from the **true initial
-configuration**; enumeration of **all** accepting vertices, with no
-unique-target assumption; and the reflexive base case of bounded reachability.
-The private semantic lemmas address the record side of these obligations;
-the actual table/verdict implementation remains open.
-
-Continuation must mark the selected flag while its location is known, skip
-back and rewind the table before any table-wide operation (note 39); append
-only nonempty fields; and intercept every module at its supplied exit time.
-The planned outer counter comes from the initial record, so no template
-row is needed. The intended admitted table citations are `exists_fieldsCopyTM`,
-`exists_tableFindTM`, `exists_tableAppendTM` and `exists_recordInitTM`; none
-is yet a dependency of this partial proof. The sequential-access ledger
-must include constructor execution, startup, every table operation, the
-nested membership loop and the final alphabet reduction. The unfilled
-simulation below is the only new-work admission; there are no private
-admissions. -/
-theorem NSPACE_subset_exp_dtime (S : ℕ → ℕ) (hS : SpaceConstructible S) :
-    NSPACE S ⊆ ⋃ c : ℕ, DTIME fun n => 2 ^ (c * (S n + 1)) := by
-  rintro L ⟨c₀, N, hN⟩
-  obtain ⟨hdom, a, ha, M, hM⟩ := hS
-  obtain ⟨j, hj, hN, hradius⟩ := s1b_normalize_radius hdom hN
-  have hconstructor := s1b_constructor_time hdom hM
-  have hvertices := fun n => s1b_vertex_count N (2 ^ j) n (S n) (hdom n)
-  sorry
-
-/-- **`NL ⊆ P`** — the nondeterministic step of the p. 92 chain
-([AB09, §4.1.2 with Exercise 4.3's premise]). At `S = logSpace` the vertex
-count is polynomial, so the breadth-first search runs in polynomial time.
-
-**Proof sketch.** Instantiate the simulator of
-`Complexity.NSPACE_subset_exp_dtime` at `logSpace`: the vertex count
-`N.configBound n (c₀ · logSpace n)` is bounded by a fixed polynomial in `n`
-(the received `Turing.FinTM.configBound_logSpace_le` arithmetic, times three),
-so the BFS with its table fits in `DTIME (n^d + 1)` for a fixed `d` —
-with count arithmetic analogous to the received
-`Complexity.LOGSPACE_subset_P` — whose own proof keeps the original machine
-and bounds its halting time through `ComputesInSpace`, constructing no
-search or visited table (round-1 audit, finding 4). Continuation budget
-anticipated: the external prior art's `NL ⊆ P` was a full submission on its
-own ([Bon26] context in `machine-library-design.md` §12 — reachability-table
-construction; design only, nothing ported).
-
-**Fill appendix (S1b).** The cited simulation's required continuation is the
-rich-alphabet record-table route of design §12.8a §4 and §12.8b. This corollary body is proved
-modulo that simulation. (Maintainer note, 2026-10-12: the simulation is now to be proved as a
-program, design §16; `spaceConstructible_logSpace` is proved.) The exponent
-normalization is P4.2 Question 5, including the empty input; its last
-inequality cites `succ_pow_le` rather than repeating that shared argument.
-The deterministic inclusion shares only the configuration-count arithmetic. -/
-theorem NL_subset_P : NL ⊆ P := by
-  intro L hL
-  obtain ⟨c, hc⟩ := Set.mem_iUnion.mp
-    (NSPACE_subset_exp_dtime logSpace spaceConstructible_logSpace hL)
-  refine mem_P_of_dtime_le hc (2 ^ (3 * c)) c fun n => ?_
-  have hlog : 2 ^ Nat.log 2 n ≤ n + 1 := by
-    rcases Nat.eq_zero_or_pos n with rfl | hn
-    · simp
-    · exact (Nat.pow_log_le_self 2 hn.ne').trans (Nat.le_succ n)
-  calc
-    2 ^ (c * (logSpace n + 1)) = 2 ^ (2 * c) * (2 ^ Nat.log 2 n) ^ c := by
-      rw [← pow_mul, ← pow_add]
-      congr 1
-      simp only [logSpace]
-      ring
-    _ ≤ 2 ^ (2 * c) * (n + 1) ^ c :=
-      Nat.mul_le_mul_left _ (Nat.pow_le_pow_left hlog c)
-    _ ≤ 2 ^ (2 * c) * (2 ^ c * (n ^ c + 1)) :=
-      Nat.mul_le_mul_left _ (succ_pow_le n c)
-    _ = 2 ^ (3 * c) * (n ^ c + 1) := by
-      rw [← mul_assoc, ← pow_add]
-      congr 2
-      omega
-
-/-- **Polynomial-time reductions are too coarse below `P`**
-([AB09, Exercise 4.3]): every language that is neither empty nor full is
-`NL`-hard under polynomial-time Karp reductions — so `NL`-completeness is
-only meaningful for the logspace reductions of phase P4.4
-([AB09, Definition 4.16]; the exercise's intended moral, recorded in its
-docstring rather than left implicit). **Corrects the exercise's printed
-wording**: p. 93 says "complete for `NL`" for an arbitrary nontrivial target,
-which is false without target membership in `NL` (an undecidable nontrivial
-target defeats completeness); only hardness is claimed here, and
-completeness additionally requires `L ∈ NL` (round-1 audit, finding 2).
-
-**Proof sketch.** Fix witnesses `y₀ ∈ L` and `z₀ ∉ L` (classical choice). For
-`L' ∈ NL`, `Complexity.NL_subset_P` gives a polynomial-time decider of `L'`;
-the reduction `f x := if x ∈ L' then y₀ else z₀` is polynomial-time
-computable by the conditional catalog (`Complexity.polyTimeComputable_ite`
-over the decider with two `Complexity.polyTimeComputable_const` branches),
-and `x ∈ L' ↔ f x ∈ L` holds by the choice of witnesses.
-
-**Fill appendix (S1b).** This body follows the frozen sketch and is filled
-modulo `NL_subset_P`, hence the still-admitted simulation. It makes no
-decision procedure for `L`. -/
-theorem polyTimeReducible_of_mem_NL (L : Language Bool) (hy : ∃ y, y ∈ L)
-    (hz : ∃ z, z ∉ L) {L' : Language Bool} (hL' : L' ∈ NL) : L' ≤ₚ L := by
-  classical
-  obtain ⟨y, hy⟩ := hy
-  obtain ⟨z, hz⟩ := hz
-  obtain ⟨C, d, M, hM⟩ := mem_P_iff.mp (NL_subset_P hL')
-  have test : PolyTimeComputable (fun x => [MultiTapeTM.indicator L' x]) :=
-    ⟨M, C, d, hM⟩
-  refine ⟨fun x => if MultiTapeTM.indicator L' x then y else z,
-    polyTimeComputable_ite test (polyTimeComputable_const y) (polyTimeComputable_const z), ?_⟩
-  intro x
-  by_cases hx : x ∈ L' <;> simp [MultiTapeTM.indicator, hx, hy, hz]
 
 end Complexity
