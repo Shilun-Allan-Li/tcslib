@@ -687,6 +687,20 @@ incidental (`arm_reach` inlines `DblLang.Rch.trans`; `halvCount_loop` re-proves 
 copies before closure**, by a refactor PR cleared with Hydroxyi (a generic guarded-segment
 composition lemma, the seed of K18; the promoted `access_width_half`), presented in round 3. The
 maintainer installs the registry rows and the record corrections.
+**Clearance with Hydroxyi (user, 2026-10-14).**
+- **No consultation needed, only an FYI, for the mechanical edits in his files:**
+  - the payback PR's copy deletions and re-points;
+  - D1's swap to the equivalent `Cfg.InWindow`;
+  - D7, with his public statements kept;
+  - the documentation leftovers;
+  - round 3's `halvCount_loop`.
+- **D4:** a one-time exception to the `CircuitComplexity/*` rule. It covers making
+  `DAGCircuitSat`'s private `eval_tseitinGates_values` public (visibility only), in the payback
+  PR.
+- **`arm_reach` waits for Hydroxyi.** Its removal needs a generic guarded-run composition lemma,
+  which is ARM-2's reachability-kit design, so R2-1 stays open on that one copy until he decides,
+  or until the user acknowledges it in the meantime.
+- **Hydroxyi is consulted on ARM-2.** He is told about H7–H13's gate-before-reuse rule.
 
 ### ARM-2: the ARM layer's internal duplication, to coordinate with Hydroxyi (user, 2026-10-14)
 
