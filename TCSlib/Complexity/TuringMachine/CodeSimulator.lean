@@ -2889,7 +2889,7 @@ private lemma h1Clock_orbit {k n : ℕ} {x : List Bool}
     obtain ⟨_, _, hs, hr, ho, _⟩ := h1RoundTime_spec M (M.runFrom (M.initCfg x) r) alive
       (counterLoopOrbit (roundTM k) h1RoundTime d r) anchor related
     change _ ∧ _ ∧ _
-    simp only [counterLoopOrbit, Function.iterate_succ_apply']
+    simp only [counterLoopOrbit, roundOrbit, Function.iterate_succ_apply']
     simpa only [MultiTapeTM.runFrom_succ_eq_step'] using
       And.intro hs (And.intro hr (ho.trans output))
 

@@ -165,10 +165,13 @@ for the local modifications.
   choice-word law and the certificate shell (wave-1 statement gate, round 1).
 * `CounterProgInput` — transport a counter-program run past an input prefix
   that has already been consumed.
-* `Build/Contract` — the framed-contract structure (MIG-0a, `machine-library-design.md` §16a):
-  exact time, an endpoint function, an exit set with a no-earlier-exit cut and head envelopes, a
-  derived frames layer, and the compositions `trans`, `seq`, `inPhase`, `embed`, `branch` and
-  `ReturnContract.release` as thin wrappers over the public rows. Proved; MIG-0a gate closed.
+* `Build/Contract` — the framed-contract library (MIG-0a and MIG-0b, `machine-library-design.md`
+  §16a), the facade of `Build/Contract/{Basic,Seam,Embed,Catalog,Lift}`: exact time, an endpoint
+  function, an exit set with a no-earlier-exit cut and head envelopes, a derived frames layer,
+  the compositions `trans`, `seq`, `inPhase`, `embed`, `branch` and the releases as thin
+  wrappers over the public rows, and the segment, round and joint-trajectory layers with state
+  renaming and the macro-step lockstep. The core, `Build/Contract/Basic`, imports only the
+  machine core. Proved; the MIG-0a and MIG-0b gates closed.
 * `Build/Convention`, `Build/Wrappers`, `Build/Loop`, `Build/Primitives` — the
   machine-construction library (`machine-library-design.md`): the `Cfg.ofWords` seam
   discipline, the capture/silence and halt-redirect wrappers with the timed branch,

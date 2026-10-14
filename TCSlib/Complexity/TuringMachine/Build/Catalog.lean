@@ -124,10 +124,9 @@ identities `Turing.scanResult_fold`, `Turing.scanResult_map`,
 `Turing.scanResult_shiftRight`, `Turing.scanResult_shiftLeft`,
 `Turing.scanResult_carry`.
 
-* `Turing.MultiTapeTM.spaceUsedByTape_le_card_Icc` — a head confined to an
-  integer interval visits at most its cardinality (the head-interval bound
-  the Z4 space annotation consumes). (Moved from `Build/Zone.lean` for B4,
-  2026-10-12.)
+* `Turing.MultiTapeTM.spaceUsedByTape_le_card_Icc` — the head-interval bound the
+  Z4 space annotation consumes — moved on to `Finite` at MIG-0b's layering split
+  (2026-10-13; it was here from `Build/Zone.lean` for B4, 2026-10-12).
 
 ## References
 
@@ -382,25 +381,6 @@ theorem catalog_trace_run {Symbol : Type*} {x : List Symbol} {S : Type*} (M : Mu
           · simpa [catalogTrace, show ¬t ≤ L by omega,
               show ¬t + 1 ≤ L by omega, show ¬t ≤ 2 * L + 1 by omega,
               show ¬t + 1 ≤ 2 * L + 1 by omega] using hD
-
-/-- A head confined to an integer interval visits at most its cardinality.
-
-(Moved from `Build/Zone.lean` for B4, 2026-10-12.)
-
-**Proof sketch.** The visited set is a finite image contained in the
-interval by hypothesis; `Finset.card_le_card` and `Int.card_Icc` finish. -/
-theorem MultiTapeTM.spaceUsedByTape_le_card_Icc {k : ℕ} {Symbol State : Type*}
-    {input : List Symbol} (tm : MultiTapeTM k Symbol State)
-    (d : Cfg k Symbol State input) (t : ℕ) (i : Fin k) (lo hi : ℤ)
-    (h : ∀ u ≤ t, (tm.runFrom d u).workTapePos i ∈ Finset.Icc lo hi) :
-    tm.spaceUsedByTape d t i ≤ (hi + 1 - lo).toNat := by
-  unfold MultiTapeTM.spaceUsedByTape
-  calc
-    _ ≤ (Finset.Icc lo hi).card := Finset.card_le_card (by
-      intro p hp
-      obtain ⟨u, hu, rfl⟩ := Finset.mem_image.mp hp
-      exact h u (by simpa only [Finset.mem_range, Nat.lt_succ_iff] using hu))
-    _ = _ := Int.card_Icc lo hi
 
 /-- A head confined to the inclusive interval from minus one to `L` visits
 at most `L+2` cells. -/
