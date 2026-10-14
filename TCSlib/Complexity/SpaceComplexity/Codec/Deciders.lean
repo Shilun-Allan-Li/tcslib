@@ -107,7 +107,8 @@ theorem one_run (hm : mode ≠ .step) (y : List Bool) :
         R.Pos = bitsVal ((w.drop (W N * (2 * s + 1))).take (wP x.length)) ∧
         Reach N mode y (bnd N y) .lenScan ({} : Regs).val (.vDone st) R.val) ∨
     ((∀ x w s, Shape1 y x w s → ¬ PreChk N x.length s w) ∧
-      AHalt (CA N mode) orc y (GuardLe (CA N mode) y (bnd N y)) (some .lenScan, ({} : Regs).val, none)
+      AHalt (CA N mode) orc y (GuardLe (CA N mode) y (bnd N y))
+        (some .lenScan, ({} : Regs).val, none)
         false) := by
   set B := bnd N y
   rcases parse_run (N := N) hm y with ⟨x, w, s, q1, cap, hsh, hq1, hcap, r1⟩ | ⟨hno, hhalt⟩
@@ -273,7 +274,8 @@ theorem init_tail (y x w rest : List Bool) (hy : y = pairEncode x (pairEncode w 
   have hlink2 : 2 * W N * (2 * s + 1) = 2 * (W N * (2 * s + 1)) := by ring
   -- answering from a label whose instruction is `ret`
   have hret : ∀ (l : Lab N) (v : Fin 21 → ℕ) (b : Bool), (∀ r, v r ≤ B) →
-      CA N .init l = .ret b → AHalt (CA N .init) orc y (GuardLe (CA N .init) y B) (some l, v, none) b :=
+      CA N .init l = .ret b →
+        AHalt (CA N .init) orc y (GuardLe (CA N .init) y B) (some l, v, none) b :=
     fun l v b hv h => AHalt.ret h ⟨by simp [PreS, h], hv⟩
   have hv0 := hBd.val_le
   by_cases hscan : InitScan N st.1

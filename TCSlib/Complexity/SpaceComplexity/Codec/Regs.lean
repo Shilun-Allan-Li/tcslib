@@ -321,11 +321,14 @@ def Regs.val (R : Regs) : Fin 21 → ℕ
 
 /-- All registers of a register file are at most `B`. -/
 def Regs.Bd (R : Regs) (B : ℕ) : Prop :=
-  R.L ≤ B ∧ R.P ≤ B ∧ R.A ≤ B ∧ R.B ≤ B ∧ R.S ≤ B ∧ R.N1 ≤ B ∧ R.Wp ≤ B ∧ R.E ≤ B ∧ R.F ≤ B ∧ R.E2 ≤ B ∧ R.F2 ≤ B ∧ R.Pos ≤ B ∧ R.Pos2 ≤ B ∧ R.T ≤ B ∧ R.U ≤ B ∧ R.Q1 ≤ B ∧ R.Q2 ≤ B ∧ R.Q3 ≤ B ∧ R.Q4 ≤ B ∧ R.Cap ≤ B ∧ R.Z ≤ B
+  R.L ≤ B ∧ R.P ≤ B ∧ R.A ≤ B ∧ R.B ≤ B ∧ R.S ≤ B ∧ R.N1 ≤ B ∧ R.Wp ≤ B ∧ R.E ≤ B ∧ R.F ≤ B ∧
+    R.E2 ≤ B ∧ R.F2 ≤ B ∧ R.Pos ≤ B ∧ R.Pos2 ≤ B ∧ R.T ≤ B ∧ R.U ≤ B ∧ R.Q1 ≤ B ∧ R.Q2 ≤ B ∧
+    R.Q3 ≤ B ∧ R.Q4 ≤ B ∧ R.Cap ≤ B ∧ R.Z ≤ B
 
 /-- A bounded register file has a bounded valuation. -/
 lemma Regs.Bd.val_le {R : Regs} {B : ℕ} (h : R.Bd B) : ∀ r, R.val r ≤ B := by
-  obtain ⟨hL, hP, hA, hB, hS, hN1, hWp, hE, hF, hE2, hF2, hPos, hPos2, hT, hU, hQ1, hQ2, hQ3, hQ4, hCap, hZ⟩ := h
+  obtain ⟨hL, hP, hA, hB, hS, hN1, hWp, hE, hF, hE2, hF2, hPos, hPos2, hT, hU, hQ1, hQ2, hQ3,
+    hQ4, hCap, hZ⟩ := h
   intro r; fin_cases r <;> assumption
 
 end Complexity.Codec

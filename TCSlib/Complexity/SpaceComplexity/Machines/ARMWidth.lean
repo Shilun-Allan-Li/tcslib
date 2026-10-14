@@ -23,6 +23,11 @@ and `S`-width forms consumed by polynomial-space and Savitch-type arguments.
 This is infrastructure — the register-machine description of space-bounded algorithms of
 [AB09, §4.1] extended to `S(n) ≥ log n` registers — not itself a result of the book.
 
+## Main definitions
+
+* none (wrapper theorems for `Complexity.LogProg.ARM`, and the inclusions `L ⊆ PSPACE` and
+  `SPACE ((n + 1)^k) ⊆ PSPACE`).
+
 ## Main results
 
 * `Complexity.LogProg.arm_decides_space` — the general wrapper: registers of `W(|x|)` binary

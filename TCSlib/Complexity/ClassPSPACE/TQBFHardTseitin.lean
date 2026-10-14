@@ -31,6 +31,11 @@ from the public `BoolCircuit.eval_tseitinGates` and `BoolCircuit.DAGGate.eval_ts
 since only the existential closure `satisfiable_iff_toCNF_satisfiable` is public there;
 promoting the private lemma would delete this copy.
 
+## Main definitions
+
+* none (theorems about the Tseitin formula `BoolCircuit.DAGCircuit.toCNF` and the
+  serialization `Std.Sat.CNF.serialize`).
+
 ## Main results
 
 * `Complexity.TQBFHard.toCNF_extension_iff` — the pointwise Tseitin lemma. [AB09, §4.2,

@@ -39,6 +39,10 @@ by a chain of `stride` decrements (the codec's fields are doubled in the virtual
 proof is adapted from that one. `incChain` is the public form of the private
 `arm_increments` there. A shared generalization of both is requested.
 
+## Main definitions
+
+* none (run theorems for bounded loops of `Complexity.LogProg.ARM`).
+
 ## Main results
 
 * `Complexity.Codec.incChain`, `Complexity.Codec.decChain`.
@@ -66,7 +70,8 @@ theorem incChain (A : ARM m d Λ) (oracle : Fin d → List Bool → Bool) (y : L
       (some (labels k), Function.update v r (v r + k), none) := by
   induction k generalizing labels v with
   | zero => simpa only [Nat.add_zero, Function.update_eq_self] using
-      (AReach.refl (A := A) (oracle := oracle) (x := y) (G := GuardLe A y B) (some (labels 0), v, none))
+      (AReach.refl (A := A) (oracle := oracle) (x := y) (G := GuardLe A y B)
+        (some (labels 0), v, none))
   | succ k ih =>
     have hc := hcode 0 (by omega)
     apply AReach.step ⟨by simp [PreS, hc], hv⟩
@@ -88,7 +93,8 @@ theorem decChain (A : ARM m d Λ) (oracle : Fin d → List Bool → Bool) (y : L
       (some (labels k), Function.update v r (v r - k), none) := by
   induction k generalizing labels v with
   | zero => simpa only [Nat.sub_zero, Function.update_eq_self] using
-      (AReach.refl (A := A) (oracle := oracle) (x := y) (G := GuardLe A y B) (some (labels 0), v, none))
+      (AReach.refl (A := A) (oracle := oracle) (x := y) (G := GuardLe A y B)
+        (some (labels 0), v, none))
   | succ k ih =>
     have hc := hcode 0 (by omega)
     apply AReach.step ⟨by simp [PreS, hc], hv⟩
@@ -126,7 +132,8 @@ theorem scan_loop {σ : Type} (A : ARM m d Λ) (oracle : Fin d → List Bool →
     (hv : ∀ r, v r ≤ B) (hlim : v lim = v p + stride * u.length)
     (hq : v q + stride * u.length ≤ B)
     (ho1 : ∀ i < u.length, oracle j (pairEncode y (Nat.bits (v p + stride * i))) = u.getD i false)
-    (ho2 : ∀ i < u.length, oracle j (pairEncode y (Nat.bits (v q + stride * i))) = u'.getD i false) :
+    (ho2 : ∀ i < u.length, oracle j (pairEncode y (Nat.bits (v q + stride * i))) =
+      u'.getD i false) :
     AReach A oracle y (GuardLe A y B) (some (test st₀), v, none)
       (some (done ((List.zip u u').foldl δ st₀)),
         Function.update (Function.update v p (v p + stride * u.length)) q

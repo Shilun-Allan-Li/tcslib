@@ -175,7 +175,8 @@ theorem cellOf_apply (s : ℕ) (C : Cfg N.k Bool N.State x) (hC : InWin N s C)
       by_cases hj0 : j = 0
       · simp only [hj0, ↓reduceIte, cellE, decide_eq_false_iff_not]; omega
       · simp only [hj0, ↓reduceIte, cellOf, decide_eq_decide]
-        constructor <;> intro h <;> push_cast [Nat.cast_sub (Nat.one_le_iff_ne_zero.mpr hj0)] at h ⊢ <;>
+        constructor <;> intro h <;>
+          push_cast [Nat.cast_sub (Nat.one_le_iff_ne_zero.mpr hj0)] at h ⊢ <;>
           omega
     | neg =>
       simp only [nbR]
@@ -270,7 +271,8 @@ theorem slide_step_iff (s : ℕ) (C : Cfg N.k Bool N.State x) (hC : InWin N s C)
       fun j => some (cellOf s C j)).getD (j + 2) (some (cellE N)) = some (cellOf s C j) := by
     intro j hj
     simp [List.getD_eq_getElem?_getD, hj]
-  have hUout : ∀ t, 2 * s + 1 ≤ t → (some (cellE N) :: some (cellE N) :: (List.range (2 * s + 1)).map
+  have hUout : ∀ t, 2 * s + 1 ≤ t →
+      (some (cellE N) :: some (cellE N) :: (List.range (2 * s + 1)).map
       fun j => some (cellOf s C j)).getD (t + 2) (some (cellE N)) = some (cellE N) := by
     intro t ht
     simp only [List.getD_eq_getElem?_getD, List.getElem?_cons_succ]

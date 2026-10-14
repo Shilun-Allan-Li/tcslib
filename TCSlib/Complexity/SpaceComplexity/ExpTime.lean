@@ -26,6 +26,11 @@ The simulation is the breadth-first search memory machine of
 `TCSlib.Complexity.SpaceComplexity.ExpBFS`, timed by
 `Complexity.LogProg.marm_dtime` (`TCSlib.Complexity.SpaceComplexity.Machines.MARMTime`).
 
+## Main definitions
+
+* none (the three theorems below, moved from
+  `TCSlib.Complexity.SpaceComplexity.ConfigGraph`).
+
 ## Main results
 
 * `Complexity.NSPACE_subset_exp_dtime` — [AB09, Theorem 4.2, third inclusion].

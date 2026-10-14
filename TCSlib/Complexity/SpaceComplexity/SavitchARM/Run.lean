@@ -21,6 +21,11 @@ together with a phase bit of `SP` (`pushV_run`, `pushU_run`), and popping the la
 
 Infrastructure for [AB09, §4.2.1, proof of Theorem 4.14]; not itself a result of the book.
 
+## Main definitions
+
+* none (run theorems for the machine `Complexity.LogProg.SavitchARM.A` of
+  `TCSlib.Complexity.SpaceComplexity.SavitchARM.Machine`).
+
 ## Main results
 
 * `Complexity.LogProg.SavitchARM.preS_A` — the machine meets the syntactic preconditions.

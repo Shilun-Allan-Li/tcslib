@@ -74,7 +74,8 @@ lemma guessValidA_halts (x : List Bool) (G : AConf 1 (Fin 4) → Prop)
 well formed. -/
 lemma guessValidA_ans (x : List Bool) (oracle : Fin 0 → List Bool → Bool) :
     NAns guessValidA oracle x (some 0, fun _ => 0, none) 3 true ↔ ValidPlain x := by
-  rw [nans_choose (A := guessValidA) (l := 0) (l₁ := 1) (l₀ := 2) rfl, nans_det (i := .valP 0 3) rfl false,
+  rw [nans_choose (A := guessValidA) (l := 0) (l₁ := 1) (l₀ := 2) rfl,
+    nans_det (i := .valP 0 3) rfl false,
     nans_det (i := .ret false) rfl false]
   by_cases hv : ValidPlain x
   · have e : astep (guessValidA.detPart false) oracle x (some 1, fun _ => 0, none) =

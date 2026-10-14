@@ -87,7 +87,8 @@ theorem pm_run (y : List Bool) (I : SInfo N) (b f : Bool) (R : Regs) (hBd : R.Bd
           ({R with Pos := R.Pos + 1} : Regs).val :=
         Reach.single' (gd_of hv (by simp [PreS, CA])) (by simp [astep, CA])
       have r3 : Reach N .step y B (.pm I b f .eq2) ({R with Pos := R.Pos + 1} : Regs).val
-          (.pm I b f (.decR (decide (R.Pos + 1 = R.Pos2)))) ({R with Pos := R.Pos + 1} : Regs).val :=
+          (.pm I b f (.decR (decide (R.Pos + 1 = R.Pos2))))
+          ({R with Pos := R.Pos + 1} : Regs).val :=
         Reach.single' (gd_of hv1.val_le (by simp [PreS, CA]; decide))
           (by simp only [astep, CA, Regs.val_Pos, Regs.val_Pos2]
               by_cases h : R.Pos + 1 = R.Pos2 <;> simp [h])
@@ -115,7 +116,8 @@ theorem pm_run (y : List Bool) (I : SInfo N) (b f : Bool) (R : Regs) (hBd : R.Bd
           ({R with Pos := R.Pos - 1} : Regs).val :=
         Reach.single' (gd_of hv (by simp [PreS, CA])) (by simp [astep, CA])
       have r3 : Reach N .step y B (.pm I b f .eq3) ({R with Pos := R.Pos - 1} : Regs).val
-          (.pm I b f (.incR (decide (R.Pos - 1 = R.Pos2)))) ({R with Pos := R.Pos - 1} : Regs).val :=
+          (.pm I b f (.incR (decide (R.Pos - 1 = R.Pos2))))
+          ({R with Pos := R.Pos - 1} : Regs).val :=
         Reach.single' (gd_of hv1.val_le (by simp [PreS, CA]; decide))
           (by simp only [astep, CA, Regs.val_Pos, Regs.val_Pos2]
               by_cases h : R.Pos - 1 = R.Pos2 <;> simp [h])
@@ -182,7 +184,8 @@ theorem step_tail (y x w w' rest : List Bool)
     (hZ : R.Z = zcode (inpOf x R.Pos)) (hQ3 : R.Q3 = 2 * x.length + 2)
     (hQ4 : R.Q4 = 2 * x.length + 2 * w.length + 4)
     (hE : R.E = 2 * x.length + 2 + 4 * W N * s + 2 * W N)
-    (hw : W N * (2 * s + 1) ≤ w.length) (hw' : W N * (2 * s + 1) ≤ w'.length) (hs : s ≤ 2 * y.length) :
+    (hw : W N * (2 * s + 1) ≤ w.length) (hw' : W N * (2 * s + 1) ≤ w'.length)
+    (hs : s ≤ 2 * y.length) :
     AHalt (CA N .step) orc y (GuardLe (CA N .step) y (bnd N y)) (some (.vDone st), R.val, none)
       (stepAns x st.1 R.Pos R.Pos2 (w.take (W N * (2 * s + 1))) (w'.take (W N * (2 * s + 1)))) := by
   set B := bnd N y
@@ -193,7 +196,8 @@ theorem step_tail (y x w w' rest : List Bool)
     rw [hy, length_pairEncode, length_pairEncode, length_pairEncode]; ring
   have hbig := bnd_ge (N := N) y s hs
   have hret : ∀ (l : Lab N) (v : Fin 21 → ℕ) (b : Bool), (∀ r, v r ≤ B) →
-      CA N .step l = .ret b → AHalt (CA N .step) orc y (GuardLe (CA N .step) y B) (some l, v, none) b :=
+      CA N .step l = .ret b →
+        AHalt (CA N .step) orc y (GuardLe (CA N .step) y B) (some l, v, none) b :=
     fun l v b hv h => AHalt.ret h ⟨by simp [PreS, h], hv⟩
   by_cases hacc : VAcc N st.1
   swap

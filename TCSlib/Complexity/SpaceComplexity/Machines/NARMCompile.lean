@@ -228,7 +228,8 @@ lemma armProg_detPart_call (A : NARM m d Λ) (l₀ : Λ) (β β' : Bool) :
 machine make the step of the compiled deterministic part `A.detPart β`**, for either `β`. -/
 lemma ncompileTM_tr (A : NARM m d Λ) (l₀ : Λ) (D : MultiTapeTM kD Bool SD) (q0 : Fin d → SD)
     {q : CSt (Λ × Ph) SD m} (hq : nchoice A q = none) (b β : Bool) :
-    (ncompileTM A l₀ D q0).tr b q = (compileTM (armProg (A.detPart β) l₀) (l₀, .start) D q0).tr q := by
+    (ncompileTM A l₀ D q0).tr b q =
+      (compileTM (armProg (A.detPart β) l₀) (l₀, .start) D q0).tr q := by
   funext a w
   simp only [ncompileTM, compileTM, hq]
   rw [ctr_congr D q0 q (armProg_detPart_call A l₀ false β) ?_]

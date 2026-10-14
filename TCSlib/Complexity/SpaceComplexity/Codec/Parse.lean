@@ -193,7 +193,8 @@ theorem sw_run (y : List Bool) (R : Regs) (p : ℕ) (hBd : R.Bd (bnd N y))
   · right
     refine ⟨fun h => hok (hc.mpr h), ?_⟩
     rw [show (if (y.drop p).length ≤ (Nat.bits y.length).length then
-        if (y.drop p).getLastD true then Lab.cp CpId.Q2 else Lab.rej else Lab.rej) = (Lab.rej : Lab N)
+        if (y.drop p).getLastD true then Lab.cp CpId.Q2 else Lab.rej else Lab.rej) =
+          (Lab.rej : Lab N)
       by split_ifs with h1 h2 <;> first | rfl | exact absurd ⟨h1, h2⟩ hok] at r3
     exact halt_rej ((r1.trans r2).trans r3) hv'
 
@@ -220,7 +221,8 @@ theorem parse_x (y : List Bool) :
       Reach N mode y (bnd N y) .lenScan ({} : Regs).val (.prScan 1)
         ({ L := y.length, P := 2 * x.length + 2, A := 2 * x.length + 2 } : Regs).val) ∨
     ((∀ x r, y ≠ pairEncode x r) ∧
-      AHalt (CA N mode) orc y (GuardLe (CA N mode) y (bnd N y)) (some .lenScan, ({} : Regs).val, none)
+      AHalt (CA N mode) orc y (GuardLe (CA N mode) y (bnd N y))
+        (some .lenScan, ({} : Regs).val, none)
         false) := by
   set B := bnd N y
   have hLB : y.length ≤ B := length_le_bnd y
@@ -270,7 +272,8 @@ theorem parse_run (hm : mode ≠ .step) (y : List Bool) :
         ({ L := y.length, P := 2 * x.length + 2 * w.length + 4, A := 2 * x.length + 2,
            Q1 := q1, Cap := cap, Q2 := 2 * x.length + 2 * w.length + 4, S := s } : Regs).val) ∨
     ((¬ ∃ x w s, Shape1 y x w s) ∧
-      AHalt (CA N mode) orc y (GuardLe (CA N mode) y (bnd N y)) (some .lenScan, ({} : Regs).val, none)
+      AHalt (CA N mode) orc y (GuardLe (CA N mode) y (bnd N y))
+        (some .lenScan, ({} : Regs).val, none)
         false) := by
   set B := bnd N y
   have hLB : y.length ≤ B := length_le_bnd y

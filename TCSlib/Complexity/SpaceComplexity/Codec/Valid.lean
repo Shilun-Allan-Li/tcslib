@@ -563,7 +563,8 @@ theorem validChk_iff (x : List Bool) (s : ℕ) (w : List Bool) :
       rw [h3, decide_eq_true_eq] at this
       exact this
     set P := (w.drop (W N * m)).take (wP x.length) with hP
-    have hPlen : P.length = wP x.length := by simp only [hP, List.length_take, List.length_drop]; omega
+    have hPlen : P.length = wP x.length := by
+      simp only [hP, List.length_take, List.length_drop]; omega
     let C : Cfg N.k Bool N.State x := mkCfg x s f ⟨bitsVal P, by omega⟩
     obtain ⟨hwin, hcells⟩ := cellOf_mkCfg x s f ⟨bitsVal P, by omega⟩ hok.1 hok.2 hseen
     refine ⟨C, hwin, ?_⟩
