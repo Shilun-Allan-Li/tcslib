@@ -1,0 +1,56 @@
+/-
+Copyright (c) 2026 Seyoon Ragavan. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Seyoon Ragavan
+-/
+import TCSlib.Complexity.TuringMachine.Build.Zone
+import TCSlib.Complexity.TuringMachine.Build.Catalog
+import TCSlib.Complexity.TuringMachine.Build.Contract.Catalog
+import TCSlib.Complexity.TuringMachine.Simulation
+import TCSlib.Complexity.TuringMachine.Build.Contract.Basic
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+/-!
+# §13d G2–G4: statement-gate unit in landing form
+
+**Gate evidence: an elaboration unit, not a landing module.** The file holds seven parts. Each
+is the body of one landing module, or an addition to one existing module, in import order.
+Landing is a cut at the `-- @landing` markers. Each part becomes its module: the copyright block,
+the imports its `-- @imports` lines list, the standard options, and the part verbatim (its own
+module docstring included). An addition to an existing module is appended at its end, except
+where its header says *inserted* (Parts M1 and C1), and the module gains the imports its part
+lists beyond itself. No declaration of a part changes in the cut, with one exception, stated in
+Part Z: `Turing.zoneCascadeRight_frame` is sorried here and lands as the private lemma of the same
+name in `Build/Zone.lean` made public, with its existing proof.
+
+**Restructure against duplication (user decision, 2026-10-14).** At landing `Turing.transferTM`
+and `Turing.copyTM` are *defined* as the mapped rows of Part M1 at the identity map, so the sweep
+table is written once, and `Turing.clearTM_contract` is defined through Part C1's shared
+constructor `Turing.sweepContract`. Both are definitional restatements (types unchanged; probes
+by `rfl`); the landed `Build/Catalog.lean` and `Build/Contract/Catalog.lean` carry them out, with
+three private proofs of `Build/Catalog.lean` repaired by naming the mapped tables in their `simp`
+sets.
+
+| Part | Lands as (under `TuringMachine/Build/`) | Content |
+|---|---|---|
+| Z | appended to `Zone.lean` | G3/G4 pure layer: mirror, index, rebalance, extension, track |
+| M1 | inserted in `Catalog.lean` before `transferTM` | G2: the mapped tables |
+| M2 | appended to `Catalog.lean` | G2: the identity instances, the framed rows |
+| C1 | inserted in `Contract/Catalog.lean` before `clearTM_contract` | the shared constructor |
+| C2 | appended to `Contract/Catalog.lean` | G2 as `Turing.Contract`s |
+| T | new `ZoneTape.lean` | G3: the alphabet, the layout, the zoned tape, its invariants |
+| R | new `ZoneRebalance.lean` | G4: the rebalance and extension rows as contracts |
+
+The deletions of the G3/G4 gate (`machine-library-design.md` §13d, decision 13d.6) are not
+expressible in a unit: the binary realization (`Turing.zoneTape` and its three lemmas), the
+paired-cell codec (`Turing.zoneCellBits`, `Turing.zoneCellOf`, `Turing.zoneCellOf_bits`), the seven
+private staging-window lemmas and the two rows `Turing.FinTM.exists_zoneShiftInTM` and
+`Turing.FinTM.exists_zoneShiftOutTM` leave `Build/Zone.lean` at landing. The pack lists them and
+the landed form of `Build/Zone.lean` carries them out.
+
+[AB09]: S. Arora, B. Barak, *Computational Complexity: A Modern Approach*, Cambridge University
+Press, 2009. §1.7 is the Hennie–Stearns simulation, Claim 1.5 the alphabet reduction.
+-/

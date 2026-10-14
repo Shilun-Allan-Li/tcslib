@@ -1,0 +1,221 @@
+/-! ════════════════════════════════════════════════════════════════════════════════════════════
+# Sanity probes (evidence only; not landing material)
+
+Concrete instances, checked by `decide` or by the unit's lemmas. -/
+
+namespace Turing.G24Sanity
+
+open Turing
+
+/-! ### `k = 1`: the alphabet -/
+
+/-- With one track the alphabet has `2 + 4 = 6` symbols; with two, `2 + 16 = 18`. -/
+example : Fintype.card (ZoneSym 1) = 6 := by decide
+example : Fintype.card (ZoneSym 2) = 18 := by decide
+
+/-- With no track (`k = 0`) a zone cell carries no slot: three symbols, and every zone cell of
+the zoned tape is the same symbol, so the tape records only the layout (the extension row still
+has work to do; the rebalance rows quantify over an empty set of tracks). -/
+example : Fintype.card (ZoneSym 0) = 3 := by decide
+example (z z' : Fin 0 → ZoneContents 2) : zonedTape z = zonedTape z' := by
+  rw [Subsingleton.elim z z']
+
+/-! ### The layout -/
+
+example : zoneStart 0 = 2 ∧ zoneStart 1 = 5 ∧ zoneStart 2 = 10 ∧ zoneStart 3 = 19 := by decide
+example : zoneCapacity 0 = 2 ∧ zoneCapacity 1 = 4 ∧ zoneCapacity 2 = 8 := by decide
+
+/-- One track, one level: home `some true`, left zone `[some false]`, right zone `[some true]`. -/
+def zA : ZoneContents 1 where
+  home := some true
+  left := fun _ => [some false]
+  right := fun _ => [some true]
+  left_le := by decide
+  right_le := by decide
+
+/-- The zoned tape of `zA` on one track: cell `1` is the separator, cells `2`–`3` the right
+zone (inner-packed: the stored cell, then `⊠`), cell `4` the end separator, and the left side
+mirrored. -/
+example : zonedTape (fun _ : Fin 1 => zA) 0 = some (.inr fun _ => some (some true)) := by decide
+example : zonedTape (fun _ : Fin 1 => zA) 1 = none := by decide
+example : zonedTape (fun _ : Fin 1 => zA) 2 = some (.inr fun _ => some (some true)) := by decide
+example : zonedTape (fun _ : Fin 1 => zA) 3 = some (.inr fun _ => none) := by decide
+example : zonedTape (fun _ : Fin 1 => zA) 4 = none := by decide
+example : zonedTape (fun _ : Fin 1 => zA) (-1) = none := by decide
+example : zonedTape (fun _ : Fin 1 => zA) (-2) = some (.inr fun _ => some (some false)) := by
+  decide
+example : zonedTape (fun _ : Fin 1 => zA) (-3) = some (.inr fun _ => none) := by decide
+example : zonedTape (fun _ : Fin 1 => zA) (-4) = none := by decide
+
+/-- The delimited-word invariant at a concrete zone agrees with the lemma's right-hand side. -/
+example : ∀ p ∈ [(-1 : ℤ), 0, 1, 2],
+    zonedTape (fun _ : Fin 1 => zA) ((zoneStart 0 : ℤ) + p) =
+      FinTM.bufferTape (zoneCells true (fun _ : Fin 1 => zA) ⟨0, by decide⟩) p := by decide
+
+/-! ### A zero-shift step: scanned index `0`, the cascade is the single home move -/
+
+/-- `zA` scans to index `0` for a right move (its right zone `0` is nonempty). -/
+example : zoneShiftIndex true zA = 0 := by decide
+
+/-- The right rebalance of `zA` is the head move: the old home joins the left zone `0`, the new
+home is the right zone's cell, and the right zone empties. -/
+example : (zoneRebalance true zA).home = some true ∧
+    (zoneRebalance true zA).left ⟨0, by decide⟩ = [some true, some false] ∧
+    (zoneRebalance true zA).right ⟨0, by decide⟩ = [] := by decide
+
+/-- The represented tape moves by one cell (checked pointwise on `[-3, 3]`). -/
+example : ∀ p ∈ [(-3 : ℤ), -2, -1, 0, 1, 2, 3],
+    zoneTrackTape (zoneRebalance true zA) p = zoneTrackTape zA (p + 1) := by decide
+
+/-- A stay step only writes the home: the represented tape changes at `0` alone. -/
+example (v : Option Bool) (p : ℤ) (hp : p ≠ 0) :
+    zoneTrackTape (zoneHomeWrite zA v) p = zoneTrackTape zA p := by
+  rw [zoneTrackTape_homeWrite, if_neg hp]
+
+/-! ### A track with empty contents -/
+
+/-- Empty contents scan short in both directions, rebalance to themselves, and represent the
+blank tape. -/
+example : zoneShiftIndex true (ZoneContents.empty 3) = 3 ∧
+    zoneShiftIndex false (ZoneContents.empty 3) = 3 := by decide
+
+example : zoneRebalance true (ZoneContents.empty 3) = ZoneContents.empty 3 :=
+  zoneRebalance_of_le true _ (by decide)
+
+example : zoneTrackTape (ZoneContents.empty 3) = fun _ => none := zoneTrackTape_empty 3
+
+/-- On the row level: the empty track's rebalance data is the data (a `short` exit). -/
+example (D : ZoneData 1) (h : D.2 0 = ZoneContents.empty D.1) :
+    zoneRebalanceData true 0 D = D := by
+  apply zoneRebalanceData_of_short
+  simp only [zoneRebalanceIndex, h]
+  have := (zoneShiftIndex_eq_length_iff true (ZoneContents.empty D.1)).mpr
+    (fun i => by cases D; simp [ZoneContents.empty, ZoneContents.words])
+  omega
+
+/-! ### An extension at the boundary: `ℓ = 0` -/
+
+/-- The empty layout (`ℓ = 0`, home only), one blank track. -/
+def D0 : ZoneData 1 := ⟨0, fun _ => ZoneContents.empty 0⟩
+
+/-- At `ℓ = 0` every scan is short; after the extension the retry scans to the new level `0`,
+below `1`, so it exits `done`. -/
+example : zoneRebalanceIndex true 0 D0 = 0 ∧ ¬ zoneRebalanceIndex true 0 D0 < D0.1 ∧
+    zoneRebalanceIndex true 0 (zoneExtendData D0) = 0 ∧
+    zoneRebalanceIndex true 0 (zoneExtendData D0) < (zoneExtendData D0).1 := by decide
+
+/-- The extension writes exactly the two new zones: the inner cell of each holds a stored
+virtual blank on every track, the outer cell `⊠`; the separators stay blank. -/
+example : zonedTape (zoneExtendData D0).2 1 = none := by decide
+example : zonedTape (zoneExtendData D0).2 2 = some (.inr fun _ => some none) := by decide
+example : zonedTape (zoneExtendData D0).2 3 = some (.inr fun _ => none) := by decide
+example : zonedTape (zoneExtendData D0).2 4 = none := by decide
+example : zonedTape (zoneExtendData D0).2 (-2) = some (.inr fun _ => some none) := by decide
+example : zonedTape (zoneExtendData D0).2 (-3) = some (.inr fun _ => none) := by decide
+
+/-- The retried rebalance after the extension is the classical first move: home pushed into
+`L_0`, which is then full, `R_0` empty. -/
+example : ((zoneRebalanceData true 0 (zoneExtendData D0)).2 0).left ⟨0, by decide⟩ =
+      [none, none] ∧
+    ((zoneRebalanceData true 0 (zoneExtendData D0)).2 0).right ⟨0, by decide⟩ = [] := by
+  decide
+
+/-! ### A classical shift of index `1` (`ℓ = 2`) -/
+
+/-- Right zone `1` full, left zone `0` full, the rest empty: the classical pre-state at index
+`1` for a right move. -/
+def zB : ZoneContents 2 where
+  home := some false
+  left := fun i => if i.val = 0 then [some true, none] else []
+  right := fun i => if i.val = 0 then [] else [some true, some true, none, some false]
+  left_le := by decide
+  right_le := by decide
+
+example : zoneShiftIndex true zB = 1 := by decide
+
+/-- After the shift: levels below `1` half full on both sides, `R_1` down by `2`, `L_1` up by
+`2` (`Turing.zoneCascadeRight_lengths`), and the represented tape moved by one. -/
+example : ((zoneRebalance true zB).right ⟨0, by decide⟩).length = 1 ∧
+    ((zoneRebalance true zB).left ⟨0, by decide⟩).length = 1 ∧
+    ((zoneRebalance true zB).right ⟨1, by decide⟩).length = 2 ∧
+    ((zoneRebalance true zB).left ⟨1, by decide⟩).length = 2 := by decide
+
+example : ∀ p ∈ [(-4 : ℤ), -3, -2, -1, 0, 1, 2, 3, 4],
+    zoneTrackTape (zoneRebalance true zB) p = zoneTrackTape zB (p + 1) := by decide
+
+/-- The left mirror at the mirrored contents is the mirrored result. -/
+example : (zoneRebalance false zB.swap).swap.left = (zoneRebalance true zB).left ∧
+    (zoneRebalance false zB.swap).swap.right = (zoneRebalance true zB).right := by decide
+
+/-! ### A non-classical input (the totality of decision 13d.3) -/
+
+/-- `L_0` already full and `R_0` nonempty: the scanned index is `0 < ℓ`, so the row exits
+`done`, but the cascade's head move is blocked by its guard and the contents are unchanged.
+An exit at `done` does not by itself mean that the head moved; the classical invariant does. -/
+def zC : ZoneContents 1 where
+  home := some true
+  left := fun _ => [some false, some false]
+  right := fun _ => [some true]
+  left_le := by decide
+  right_le := by decide
+
+example : zoneShiftIndex true zC = 0 ∧ (zoneRebalance true zC).home = zC.home ∧
+    (zoneRebalance true zC).left = zC.left ∧ (zoneRebalance true zC).right = zC.right := by
+  decide
+
+/-! ### G2 at the identity map and per track -/
+
+/-- The plain copy's framed row is the mapped copy's at the identity map (this example uses
+the sorried `Turing.copyMapTM_run_ofCfg`). -/
+example {k : ℕ} {x : List Bool} (src dst : Fin k) (hne : src ≠ dst) (w : List Bool)
+    (d : Cfg k Bool SweepPhase x) (hstate : d.state = some SweepPhase.sweep)
+    (hw : ∀ p : ℤ, -1 ≤ p → p ≤ (w.length : ℤ) →
+      d.workTapes src (d.workTapePos src + p) = FinTM.bufferTape w p) :
+    (copyTM k src dst).runFrom d (2 * w.length + 2) =
+        { d with
+          state := some SweepPhase.done
+          workTapes := fun j q =>
+            if j = dst ∧ d.workTapePos j ≤ q ∧ q < d.workTapePos j + (w.length : ℤ)
+              then FinTM.bufferTape w (q - d.workTapePos j)
+            else d.workTapes j q } := by
+  have h := (copyMapTM_run_ofCfg src dst hne id (fun _ s => s) w d hstate hw).1
+  rw [copyMapTM_plain] at h
+  rw [h]
+  congr 2
+  funext j q
+  split_ifs <;> simp
+
+/-- The per-track mapped copy writes, into a blank scratch cell, a zone cell holding the
+extracted slot on track `t` and `⊠` on the others. -/
+example (s : Option (Option Bool)) :
+    zoneSlotSet (1 : Fin 2) none s = .inr fun i => if i = 1 then s else none := by
+  simp only [zoneSlotSet, zoneCellOfCell]
+  congr 1
+  funext i
+  fin_cases i <;> rfl
+
+/-- And into a zone cell, it keeps the other track's slot. -/
+example (c : ZoneCell 2) (s : Option (Option Bool)) :
+    zoneSlotOf 0 (zoneSlotSet 1 (some (.inr c)) s) = c 0 ∧
+      zoneSlotOf 1 (zoneSlotSet 1 (some (.inr c)) s) = s :=
+  ⟨zoneSlotOf_slotSet_ne (by decide) c s, zoneSlotOf_slotSet_self 1 _ s⟩
+
+/-! ### The duplication restructure is definitional -/
+
+/-- The plain copy and transfer are the mapped rows at the identity map, by `rfl`: the landed
+definitions of `Turing.copyTM` and `Turing.transferTM` are these right-hand sides. -/
+example {Symbol : Type} (k : ℕ) (src dst : Fin k) :
+    copyTM (Symbol := Symbol) k src dst = copyMapTM k src dst id (fun _ s => s) ∧
+      transferTM (Symbol := Symbol) k src dst =
+        transferMapTM k src dst id (fun _ s => s) (fun _ => none) := ⟨rfl, rfl⟩
+
+/-- **`clearTM_contract_via_sweepContract`**: R3 clear's contract, rebuilt by the shared
+constructor exactly as its landed body, is the snapshot's `Turing.clearTM_contract`, by `rfl`
+(the data fields agree definitionally; the proof fields by proof irrelevance). So re-pointing
+the body changes no statement and no definitional behaviour. -/
+example {k : ℕ} {Γ : Type} (i : Fin k) (x : List Γ) :
+    sweepContract (clearTM k i) SweepPhase.sweep SweepPhase.done i (fun j => j = i) x
+      (sweepPost SweepPhase.done i fun _ _ _ _ => none) (fun _ _ => rfl) (clearTM_run_ofCfg i) =
+      clearTM_contract i x := rfl
+
+end Turing.G24Sanity
