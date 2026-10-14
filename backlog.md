@@ -692,6 +692,9 @@ proved); fix it in the first MIG PR that touches Build.
 
   **Estimate:** 600–1,000 vendored lines, by `scripts/vendor_afm26/`, plus 700–1,150 new.
   **Gate:** a fidelity check of the vendored edits, then a statement gate for the new rules.
+  **Obligation from the stage-2 gate (F3):** the edited compiler must supply `1 ≤ lim.word` at the
+  existing simulation calls (`Compiler/Simulation.lean:277`, `:356`), as an invariant or a
+  premise; it does not follow from `input_le`.
 
 * **PROG-3: memory footprint along a run** (from the PROG-2 survey; design §15c, obstacle 1).
   `compileProgram_correct` describes only the final memory. Stage 2's space bound needs every
@@ -712,7 +715,10 @@ proved); fix it in the first MIG PR that touches Build.
   statement drafts and notes are in `audits/evidence/stage2/`. **Answered (user, 2026-10-12):**
   all four as recommended (design §15d). **Statement gate (2026-10-13):**
   `audits/stage2-statements-pack.md`, covering PROG-2 (as a specification mirror), PROG-3 and
-  PROG-4. Next: the gate audit.
+  PROG-4. **Gate CLOSED** (round 1, 2026-10-14: 0 blockers / 0 majors / 4 minors;
+  `audits/stage2-statements-findings.md`, resolutions `audits/stage2-statements-resolutions.md`).
+  No theorem is false; the homes, the namespace and `initMem` are approved. Next: the landing PR
+  (parts A, C, D, E and the slice lemmas), then PROG-2's scripted edit and its fidelity gate.
 
 The route decisions of 2026-10-12 (design §16b) add three work items, numbered by §16b's items
 (items 1 and 4 are PROG-4):
@@ -725,8 +731,11 @@ The route decisions of 2026-10-12 (design §16b) add three work items, numbered 
   a machine or a program with `emit`. **Designed (2026-10-12):** `audits/evidence/rd2/` (design
   note and statement draft; design §16b item 2). **Answered (user, 2026-10-12):** all five as
   recommended; in particular, the old existential is retired and the emitter is a machine.
-  **Statement gate (2026-10-13):** `audits/rd2-statements-pack.md`. Next: the gate audit, then the
-  semantic re-fill (RD-2a) and the uniformity fill (RD-2b).
+  **Statement gate (2026-10-13):** `audits/rd2-statements-pack.md`. **CLOSED** (round 1,
+  2026-10-14: PASS, 0 blockers / 0 majors / 2 minors; `audits/rd2-statements-findings.md`,
+  resolutions `audits/rd2-statements-resolutions.md`). Next: the landing PR (with minor 1's sketch
+  fix), then the semantic re-fill (RD-2a) and the uniformity fill (RD-2b). `fragment_append`
+  joins the Cook–Levin re-basing family (minor 2).
 * **RD-3: re-route B6 and restate `space_universal` forward-only** (§16b item 3).
   `SpaceComplexity/Hierarchy.lean`: `space_universal` keeps only its forward clause ([AB09]
   Exercise 4.1), and `space_hierarchy`'s sketch moves to the window route (a self-simulating

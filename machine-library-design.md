@@ -3553,7 +3553,11 @@ the landing form (0 errors; the only warnings are `sorry`s). It differs from the
 - **PROG-2's edit list is longer:** under the wrapper, the compiler's code type becomes
   `List XInstr` at the sites the pack lists.
 
-Next: the gate audit.
+**Gate CLOSED** (round 1, 2026-10-14: 0 blockers / 0 majors / 4 minors;
+`audits/stage2-statements-findings.md`, resolutions `audits/stage2-statements-resolutions.md`).
+The homes, the namespace `WordRAM` and `initMem` are approved. PROG-3's compiler-level statements
+(B1, B2) may land now, with their extended forms re-gated at PROG-2, or with PROG-2. The
+auditor prefers `acceptProb` in a Complexity-side module. Next: the landing PR.
 
 ## 16. The foundation migration (user decisions, 2026-10-12)
 
@@ -3852,7 +3856,8 @@ The user took the five open route questions together, each as the maintainer rec
      Tseitin instance (decision 4), and adds 17 theorems: the kit's cost ledger, so that the
      private twins merge; the fragment and gate emission forms; unary index arithmetic, because
      the codec divides by `2s + 1`; and the port contract. The prefix-truth lemmas are proved.
-     Next: the gate audit, then RD-2a and RD-2b.
+     **CLOSED** (round 1, 2026-10-14: PASS, 0 blockers / 0 majors / 2 minors;
+     `audits/rd2-statements-findings.md`). Next: the landing PR, then RD-2a and RD-2b.
 3. **B6 takes the window route, and `space_universal` is restated forward-only.**
    - **The window route.** `space_hierarchy`'s diagonalizer runs one fixed self-simulating
      universal machine `U₀` inside a window of radius `a·g(n)`, on the configuration-record rows,
