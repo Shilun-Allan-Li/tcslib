@@ -93,6 +93,8 @@ then consumes as its left exit (`Turing.captureAction`'s and
 * `Turing.embedEmitTM_tr` — the forwarding transformer's transition at the action level:
   the source action on each selected tape, `(none, 0)` on every other tape, and the input
   move, output and successor state unchanged (12.2c item 6's export).
+* `Turing.embedSilentCfg_cap` — the silent transport's capture tape and head, off the
+  selection (the C1-A assembly gate's export, 2026-10-14).
 * `Turing.embedSilentTM_runFrom`, `Turing.embedEmitTM_runFrom` — lockstep:
   the transported run is the transport of the source run, same step count.
 * `Turing.embedSilentTM_frame`, `Turing.embedEmitTM_frame` — tapes outside
@@ -969,7 +971,8 @@ The retrofit inventories (`audits/retrofit-inventory/`) found, three times
 independently, that no old-code R1 consumer can be proved from this file's
 public surface: the frame lemmas cover only unselected tapes, and
 `embedSlot_selected` is private. These four projections export the
-selected-tape fields of the two configuration transports. They are
+selected-tape fields of the two configuration transports; `Turing.embedSilentCfg_cap`, after
+them, exports the silent transport's capture field (the C1-A assembly gate, finding M1). They are
 skeleton-time proofs (statement-phase additions flagged for the A-S1
 audit): each is definitional at `embedSlot_selected`. -/
 
@@ -1005,6 +1008,26 @@ theorem embedEmitCfg_selected_pos (ι : Fin m ↪ Fin k)
     (pre : List Symbol) (c : Cfg m Symbol S x) (i : Fin m) :
     (embedEmitCfg ι tapes heads pre c).workTapePos (ι i) = c.workTapePos i := by
   simp [embedEmitCfg, embedSlot_selected]
+
+/-- **The silent transport's capture tape.** If the capture tape `cap` lies outside the selection
+`ι`, the transported configuration `Turing.embedSilentCfg ι cap tapes heads pre out₀ c` holds the
+recorded word `pre ++ c.output` on `cap`, and that tape's head sits just after it, at
+`|pre ++ c.output|`, for every frame, prefix, physical output and source configuration. It is the
+capture-field companion of the selected-tape exports, so that consumers need not unfold the
+transport's private slot search (the C1-A assembly gate, finding M1). (Technical glue.)
+
+**Proof sketch.** Off the selection the slot search finds no source tape
+(`embedSlot_unselected`), so both fields are the capture branch of the transport's
+definition. -/
+theorem embedSilentCfg_cap (ι : Fin m ↪ Fin k) (cap : Fin k)
+    (hcap : cap ∉ Set.range ι)
+    (tapes : Fin k → ℤ → Option Symbol) (heads : Fin k → ℤ)
+    (pre out₀ : List Symbol) (c : Cfg m Symbol S x) :
+    (embedSilentCfg ι cap tapes heads pre out₀ c).workTapes cap =
+        FinTM.bufferTape (pre ++ c.output) ∧
+      (embedSilentCfg ι cap tapes heads pre out₀ c).workTapePos cap =
+        ((pre ++ c.output).length : ℤ) := by
+  simp [embedSilentCfg, embedSlot_unselected ι cap hcap]
 
 
 end Turing
