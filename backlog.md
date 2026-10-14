@@ -828,6 +828,13 @@ The route decisions of 2026-10-12 (design §16b) add three work items, numbered 
   is already proved (plan §4e's C1 row). Still to fix: `NTimeHierarchy.lean`'s docstring says
   "quadratic" (lines 51 and 110), to correct in C1's first Lean PR; and design §12.8 routed
   `PATH_mem_NL` through SC-3, stale since C2 moved to programs (marked superseded 2026-10-13).
+  **Landed (2026-10-14, PR #87; replay 147 of 147, with the ARM merge):** `Nondeterministic.lean`'s
+  Part A proves `runWith_eq_fixChoice_runFrom` (#86's `sorry` closed), and
+  `NondeterministicSpace.lean` proves its space companion. The new `ChoiceReplay`,
+  `Build/NDHost`, `Build/InputWindow`, `NDCodeSimulator` and `ClassNP/ExhaustiveReplay` carry the
+  five gated contracts, sorried for the C1 fills. `NTimeHierarchy.lean`'s "quadratic" docstrings
+  are fixed. Next: the guess-then-run assembly gate and the H1 hosted-clock harvest, then the
+  fill briefs.
 * **RD-5: §13d G2–G4 after MIG-0b** (§16b item 5). The statements of design §13d's G2–G4, stated as
   `Contract`s, then their gate and fills, then the Hennie–Stearns assembly. The open zone rows
   `exists_zoneShiftInTM` and `exists_zoneShiftOutTM` retire through the G3/G4 gate.

@@ -1113,6 +1113,8 @@ soundness hypothesis. Three notes correct or extend this design:
   alignment through the bookkeeping pauses. **Closed (user, 2026-10-13):** C1 takes the
   guess-first route (C1 design note §6, decision 1): the choice word is written first and then
   interpreted deterministically, so no nondeterministic loop host is needed.
+  The shared pieces landed with C1 (PR #87, 2026-10-14): the slice lemma in
+  `Nondeterministic.lean` (Part A) and the nondeterministic phase host in `Build/NDHost`.
 - **SC-5: an optional visited-set corollary.** A public `spaceUsedByTape` or
   visited-set corollary of the trajectory clauses would save the space
   consumers repeated bookkeeping.
@@ -3060,11 +3062,18 @@ and a statement gate before a second consumer is briefed.
 |---|---|---|---|
 | 0 | **Framed-contract structure**: machine, entry/exit states, precondition, endpoint as a function of the start configuration, time, no-earlier-exit cut, head envelope; sequencing, phase host, R1 embedding, lift and counter loop as structure-to-structure theorems, space derived | to design; **requirements revised by §16** (exact time and cut first-class) | every host below; removes the inline restatements of the delimited-word precondition |
 | H1 | **AND/OR evaluator**: a depth-first odometer over a path word of per-depth records with node kinds (AND/OR), a pluggable leaf-verdict module with its own framed contract, short-circuit semantics as a pure function; space = path + leaf + O(1) | the pure core is proved, private, in B4 membership's partial (`b4mValue`, `b4mValue_truth`, `b4mWalk_value`; fills-6); no machine walker was built. **Language first (user, 2026-10-12):** the general evaluator is written as a recursive program of §15's language, not as a machine host, and `TQBF_mem_PSPACE` follows as a program over that core (backlog MIG-22) | `TQBF_mem_PSPACE`; Savitch (midpoint records as digits); NP ⊆ PSPACE (re-derivation); `ClassPSPACE/Games.lean`'s game values; backtracking in the §15 layer |
-| H2 | **Step block**: one simulated transition of a `k`-tape coded table, relation-level, with per-round time `B·(\|table\| + 1)` and a head envelope | **the complete step block is proved, private, in B5a H1's continuation (fills-7):** `h1RoundTM k`, one finite machine per `k` whose control does not depend on the state count, with `h1Round_effect` (`0 < T ≤ 50·(\|table\| + 1)`, strict interior, silent, head envelope). **Promoted (2026-10-14, H2-M, PR #88):** public in `Build/StepBlock.lean` as `Turing.StepBlock.roundTM`, with `roundTM_effect`, under the round-2 names (backlog F7-1(a)) | H1 (`exists_uniformSimulator`); U-1; B6's self-application universal; C1 (with a choice-bit-indexed table); EXPCOM |
+| H2 | **Step block**: one simulated transition of a `k`-tape coded table, relation-level, with per-round time `B·(\|table\| + 1)` and a head envelope | **the complete step block is proved, private, in B5a H1's continuation (fills-7):** `h1RoundTM k`, one finite machine per `k` whose control does not depend on the state count, with `h1Round_effect` (`0 < T ≤ 50·(\|table\| + 1)`, strict interior, silent, head envelope). **Promoted (2026-10-14, H2-M, PR #88):** public in `Build/StepBlock.lean` as `Turing.StepBlock.roundTM`, with `roundTM_effect`, under the round-2 names (backlog F7-1(a)) | H1 (`exists_uniformSimulator`); U-1; B6's self-application universal; C1 (unchanged, at `k = 3`, through the replay machine `NDTM.replayTM`); EXPCOM |
 | H3 | **Windowed runner**: run a fixed machine on a windowed record, exiting on window exit, simulated halt, or a configuration-count clock | parts exist privately in S1b's partial (radius phase, records-to-runs bridge, the general-`S` count). S1b stopped (fills-6); B6's window route is the next consumer (adopted, §16b item 3) | S1b; B6 (the window route); Savitch; NL = coNL |
 | H4 | **Search over a graph presented by rows** (enumerate, equality, adjacency, start, target), visited table, BFS | not built: S1b's partial has the record graph (records, edges, path lifting, counts) but no search machine, and it stopped there (user, fills-6). **Language first:** the general search is a program of §15's language, and `NSPACE ⊆ DTIME(2^O(S))` is re-derived through it (backlog MIG-19) | `NL ⊆ P`, `NSPACE ⊆ DTIME(2^O(S))`; `PATH ∈ P`; Immerman–Szelepcsényi counting; §15 graph algorithms |
 | H5 | **Input devices** behind one interface: native, buffered (Z1, exists), unary marker, binary position (from `exists_inputSeekTM`), computed input | partial | B6 / `space_universal`; U-1 and H2 (backlog); C1 |
 | H6 | **Machine-to-formula kit**: closed-form variable indexing, snapshot-keyed local gates, ordered emission by `exists_emitLoopTM`, Tseitin on `Std.Sat.CNF ℕ` correct for every prefix assignment | pattern private in `CookLevin/Hardness.lean`; B4a's codec is non-uniform (its orderings range over index types depending on `n` and `s`, and its public statement is `∀ n s, ∃ …`). **B4a is restated in place over this kit's indexing** (user, 2026-10-12; §16b item 2) | TQBF hardness; Cook–Levin deduplication; later machine-to-formula reductions |
+
+**C1's hosts (landed 2026-10-14, PR #87; gate `audits/c1-hosts-statements-findings.md`).** The
+nondeterministic phase host `NDTM.phaseHostND` (`Build/NDHost`), the choice writer `ndWriterTM`
+(an H5 device), the window copier `exists_inputWindowCopyTM` (`Build/InputWindow`), the
+interpreter core `R` = `exists_ndInterpreterCore` (`NDCodeSimulator`) and the exhaustive decider
+`E` = `FinNDTM.exists_exhaustiveDecider` (`ClassNP/ExhaustiveReplay`); their contracts are
+sorried for the C1 fills.
 
 Pure-Lean kits that the hosts' semantics share (not machines, so not hosts,
 but designed with them): bounded reachability (`ReachWithin`, the midpoint
@@ -3549,7 +3558,8 @@ the landing form (0 errors; the only warnings are `sorry`s). It differs from the
   already proved, with a pointwise form of the same hypothesis, in C1's host draft
   (`audits/evidence/c1/C1HostsDraft.lean.txt`, `Turing.NDTM.runWith_eq_fixChoice_runFrom`); the
   stage-2 pack does not say so. One copy lands, in `Nondeterministic.lean`, with C1's proof under
-  the gated statement (maintainer note, 2026-10-13);
+  the gated statement (maintainer note, 2026-10-13). **Both are proved** since C1's landing
+  (PR #87, 2026-10-14);
 - **PROG-2's edit list is longer:** under the wrapper, the compiler's code type becomes
   `List XInstr` at the sites the pack lists.
 
