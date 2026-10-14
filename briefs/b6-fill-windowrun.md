@@ -4,7 +4,7 @@
 
 - Clone: `https://github.com/Shilun-Allan-Li/tcslib`
 - Check out branch **`complexity/arora-barak-ch3-4`**, this exact branch, NOT `main`.
-- Before you start, confirm that `git merge-base --is-ancestor @ANCESTOR@ HEAD`
+- Before you start, confirm that `git merge-base --is-ancestor 70b503b49760b65817a3bce4b876dc466c32235c HEAD`
   succeeds. That commit contains:
   - the B6 hosts (PR #92: the five host modules with their ten sorried contracts, among them
     your two targets and the step clock you cite), the ARM minor fixes (#93) and the H1 harvest
@@ -19,8 +19,8 @@
 - **Branch at exactly that commit, not at the campaign tip:**
 
   ```sh
-  git checkout -b fill/b6-windowrun @ANCESTOR@
-  git rev-parse HEAD        # must print @ANCESTOR@
+  git checkout -b fill/b6-windowrun 70b503b49760b65817a3bce4b876dc466c32235c
+  git rev-parse HEAD        # must print 70b503b49760b65817a3bce4b876dc466c32235c
   ```
 
   Record that hash as your base in `REPORT.md`. Never rebase, merge or cherry-pick later campaign
@@ -29,15 +29,15 @@
   maintainer re-checks your delivery at integration on the tip of that day. Ground rule 10 says
   what the pinned base means for your citations.
 - **Delivery is by zip, not PR or push** (`workflow.md` §4): `fill-b6-windowrun.zip`, containing
-  `REPORT.md`, the full modified source, a `git format-patch` series against `@ANCESTOR@`, a git
-  bundle whose only prerequisite is `@ANCESTOR@`, the bootstrap and final sweep logs, the axiom
+  `REPORT.md`, the full modified source, a `git format-patch` series against `70b503b49760b65817a3bce4b876dc466c32235c`, a git
+  bundle whose only prerequisite is `70b503b49760b65817a3bce4b876dc466c32235c`, the bootstrap and final sweep logs, the axiom
   log, the sanity evidence file `B6F2Sanity.lean.txt` and its log, both screen outputs, and
   `SHA256SUMS`.
 
 ## Base, line numbers and what lands around you
 
 - **Lines in this brief are those of campaign commit `c52663f1`** (the records commit after #94's
-  merge). The inputs commit `@ANCESTOR@` adds no Lean change to it. `Build/WindowRun.lean` and
+  merge). The inputs commit `70b503b49760b65817a3bce4b876dc466c32235c` adds no Lean change to it. `Build/WindowRun.lean` and
   `Build/StepClock.lean` have not changed since #92 (byte-identical at `1b6b972c` and at
   `c52663f1`, checked). Every probe and measurement below was run at `c52663f1`, against the
   olean snapshot of #94's replay.
@@ -328,7 +328,7 @@ Stop, if you must, at the end of a phase, and say which.
   "pending".
 - **Note 46:** file size is not a driver; report the file's size.
 
-## Cited infrastructure (public and proved at `@ANCESTOR@`, unless marked; all in `B6F2ImportProbe.lean.txt`)
+## Cited infrastructure (public and proved at `70b503b49760b65817a3bce4b876dc466c32235c`, unless marked; all in `B6F2ImportProbe.lean.txt`)
 
 - **WindowRun (yours, frozen):** `WindowExit`, `windowRun`, `windowRun_halted_of_run`,
   `windowRun_spec`, `windowRun_tag`, `windowRun_stop_unique`, `windowRun_exhausted_of_live`,
@@ -384,7 +384,7 @@ Stop, if you must, at the end of a phase, and say which.
    states the phase reached, which `private` helpers remain `sorry` (each with a literal "Proof
    sketch"), and which proved declarations are proved modulo them. A partial is expected and
    fine; an unreported gap is not.
-10. **The pinned base.** Cite only declarations that are public at `@ANCESTOR@`, and your file's
+10. **The pinned base.** Cite only declarations that are public at `70b503b49760b65817a3bce4b876dc466c32235c`, and your file's
     own privates.
     - Do not rely on unfolding the body of any definition in `CfgRecord`, `RecordTable`, `Seam`,
       `Embed` or `StepClock`; use their public contracts (`phaseHostTM`'s two-line table is the
@@ -506,7 +506,7 @@ license.
 ## REPORT.md checklist
 
 - [ ] 2/2, or the phase reached (rule 9); the base hash (`git rev-parse HEAD` at branch
-      creation, equal to `@ANCESTOR@`) and the ancestor check.
+      creation, equal to `70b503b49760b65817a3bce4b876dc466c32235c`) and the ancestor check.
 - [ ] Every new declaration with its role; the prescribed blocks as taken (any deviation, with
       its reason); the machines as suggested or your own. Every flagged appendix and status
       update.
