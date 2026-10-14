@@ -1,0 +1,56 @@
+import TCSlib.Complexity.SpaceComplexity.WindowClock
+
+/-! Pre-ship consumer probe, w1 record tables continuation 5 (row 18,
+`Turing.exists_recordInitTM`). Row 18's frozen endpoint meets the record precondition of its
+consumer, the B6 windowed runner `Turing.exists_configWindowRunnerTM` (PR #92), at the
+diagonalizer's instance: the initial configuration (`Turing.Cfg.inWindow_init`) and the
+empty-output summary tag `outSummaryCode (outSummary []) = 0` (`Turing.outSummaryCode_nil`).
+Evidence only: it changes nothing in row 18's statement or route. -/
+
+open Turing
+
+/-- Row 18's exact endpoint holds the initial record at the head of tape `0` in the sense of
+`Turing.RecordAt`: the slot's blanks at `-1` and at the record length are its delimiters. -/
+example {k K : ℕ} {Q T P : Type} {x : List Bool} (s : ℕ) (q₀ : Q) (τ₀ : T)
+    (d : Cfg (K + 2) (RecSym Q T) P (x.map (RecSym.digitEmb Q T))) (exit : P)
+    (slot : ∀ p : ℤ, -1 ≤ p → p ≤ (recordLength k x.length s : ℤ) →
+      d.workTapes 0 (d.workTapePos 0 + p) = none) :
+    RecordAt
+      ({ d with
+          state := some exit
+          workTapes := fun j q =>
+            if j = 0 ∧ d.workTapePos j ≤ q ∧
+                q < d.workTapePos j + (recordLength k x.length s : ℤ)
+              then fieldsTape (cfgRecord s (Cfg.init q₀ x : Cfg k Bool Q x) τ₀)
+                (q - d.workTapePos j)
+            else d.workTapes j q } : Cfg (K + 2) (RecSym Q T) P _) 0
+      (cfgRecord s (Cfg.init q₀ x : Cfg k Bool Q x) τ₀) ∧
+    (Cfg.init q₀ x : Cfg k Bool Q x).InWindow s := by
+  refine ⟨?_, Cfg.inWindow_init q₀ x s⟩
+  intro p lo hi
+  rw [joinFields_cfgRecord_length] at hi
+  by_cases inside : 0 ≤ p ∧ p < (recordLength k x.length s : ℤ)
+  · simp only [true_and]
+    rw [if_pos ⟨by omega, by omega⟩]
+    congr 1
+    omega
+  · simp only [true_and]
+    rw [if_neg (by omega), slot p lo hi]
+    rcases (show p = -1 ∨ p = (recordLength k x.length s : ℤ) by omega) with rfl | rfl
+    · simp [fieldsTape]
+    · have len := joinFields_cfgRecord_length (Q := Q) s (Cfg.init q₀ x : Cfg k Bool Q x) τ₀
+      simp [fieldsTape, ← len]
+
+/-- Both rows instantiate at the diagonalizer's data: a binary machine `M`, its start state,
+the `Fin 3` summary tag of the empty output, and the runner's tag update `summaryTag`. -/
+example (M : FinTM Bool) : True := by
+  obtain ⟨K, P, _, _, R, en, ex, C, init⟩ :=
+    exists_recordInitTM M.k (Q := M.State) (T := Fin 3) M.tm.q₀ (outSummaryCode (outSummary []))
+  obtain ⟨K', P', _, _, R', en', ex', C', run⟩ :=
+    exists_configWindowRunnerTM M summaryTag summaryTag_none
+  trivial
+
+#check @Turing.Cfg.inWindow_init
+#check @Turing.outSummaryCode_nil
+#check @Turing.summaryTag_none
+#check @Turing.exists_configWindowRunnerTM

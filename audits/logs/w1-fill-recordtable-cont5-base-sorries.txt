@@ -1,0 +1,18 @@
+# base sorry-warning set at the issue tree (1b6b972c: PRs #90 (MIG-0b), #91, #92 (the B6 hosts) and #93 merged; the inputs commit @ANCESTOR@ adds no Lean change) over briefs/orders/w1-fill-recordtable-cont5.txt (271 modules): one entry per declaration whose comment-stripped text contains `sorry` (Lean warns once per such declaration). Cross-checked by elaborating each of the 16 listed modules (lean, no olean output, against the snapshot of PR #92's replay): the 69 warnings name exactly these declarations.
+TuringMachine/Build/RecordTable: 5: exists_tableFindTM, exists_tableAppendTM, exists_recordInitTM, exists_recordValidTM, exists_recordNextTM
+FormulaKit/Gate: 10: template_eval, template_numVars_le, template_length_le, template_widthAtMost, numVars_le_of_forall_lt, exactlyOne_eval, cost_flatMap_le, serialize_length_le, gate_cost_le, exactlyOne_cost_le
+FormulaKit/Emit: 10: polyTimeComputable_fragment_iff_serialize, polyTimeComputable_flatMap_range, polyTimeComputable_fragment_relabel, polyTimeComputable_fragment_gate_select, polyTimeComputable_unary_sub, polyTimeComputable_unary_mul, polyTimeComputable_unary_le, polyTimeComputable_unary_div, polyTimeComputable_unary_mod, polyTimeComputable_serialize_relabel_add
+ClassPSPACE/TQBF: 21: width_le, code_length, code_getD_inputVar, code_getD_headVar, code_getD_stateVar, code_getD_workVar, code_getD_summaryVar, code_input_eq, code_eq_iff, validity_eval_iff, adjacency_eval_iff, adjacency_eval_of_ne, acceptance_eval_iff, validity_numVars_le, acceptance_numVars_le, adjacency_numVars_le, exists_serialize_length_le, polyTimeComputable_serialize_validity, polyTimeComputable_serialize_adjacency, polyTimeComputable_serialize_acceptance, polyTimeComputable_code_initCfg
+TuringMachine/CodeSimulator: 2: exists_polyCanonizer, exists_uniformSimulator
+TuringMachine/Build/StepClock: 1: exists_stepClockTMVia
+TuringMachine/Build/WindowRun: 2: exists_windowLoopTM, exists_windowRunnerTM
+SpaceComplexity/WindowClock: 1: exists_configWindowRunnerTM
+SpaceComplexity/Savitch: 2: spaceConstructible_poly, savitch
+SpaceComplexity/Hierarchy: 4: space_universal, space_hierarchy, LOGSPACE_ssubset_PSPACE, SPACE_linear_ne_NP
+TuringMachine/Build/NDHost: 1: ndWriterTM_run_block
+TuringMachine/Build/Zone: 2: exists_zoneShiftInTM, exists_zoneShiftOutTM
+TuringMachine/Build/InputWindow: 1: exists_inputWindowCopyTM
+TuringMachine/Build/InputDevice: 3: exists_rulerTestTM, exists_rulerDeviceTM, exists_rulerHostTM
+TuringMachine/SelfUniversal: 2: exists_selfStartupTM, exists_selfUniversal
+TuringMachine/NDCodeSimulator: 2: exists_replayCanonizer, exists_ndInterpreterCore
+TOTAL 69
