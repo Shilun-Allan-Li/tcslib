@@ -1,0 +1,136 @@
+# MIG-1 statement gate, round 2: bundle contents, repository paths in bundle order.
+# Paths under audits/evidence/mig1/gate/r2/, audits/logs/mig1-statements-r2-*, the round-2 pack
+# and the round-1 findings (audits/mig1-statements-findings.md, not yet committed) are new;
+# EVIDENCE-MAP.tsv (in r2/) gives each one's local origin and, for every input of
+# r2/scripts/runall.sh, the runner path it is copied to. Every other path exists in the
+# repository at the campaign tip 99ad2f9894121f45c79a27722d9466223be16473
+# (the round-1 evidence is that of commit a33240e52d6853cfdf86152d0a4f4cefcd9a8317).
+# The bundle takes the TCSlib/ library files at that tip (the measurement base) and every
+# other path at the commit that adds this round's evidence.
+#
+# 1. The pack, the round-1 record, the standards
+audits/mig1-statements-r2-pack.md
+audits/mig1-statements-findings.md
+audits/mig1-statements-pack.md
+audits/TEMPLATE.md
+policy.md
+workflow.md
+machine-library-design.md
+backlog.md
+# 2. Round-2 evidence: notes and manifests
+audits/evidence/mig1/gate/r2/NOTES.md
+audits/evidence/mig1/gate/r2/BUNDLE-FILES.txt
+audits/evidence/mig1/gate/r2/BUNDLE-MISSING.txt
+audits/evidence/mig1/gate/r2/EVIDENCE-MAP.tsv
+# 3. Finding 1: the Loop overlay and its records
+audits/evidence/mig1/gate/r2/overlay/LoopOverlay.lean.txt
+audits/evidence/mig1/gate/r2/overlay/part1-vs-tip.diff
+audits/evidence/mig1/gate/r2/overlay/part2-vs-unit.diff
+audits/evidence/mig1/gate/r2/overlay/standin-vs-mig0b.diff
+audits/logs/mig1-statements-r2-overlay.log
+# 4. Finding 1 generalized: the retarget checks and the retarget table
+audits/evidence/mig1/gate/r2/checks/RetargetChecks-r2-tail.lean.txt
+audits/evidence/mig1/gate/r2/checks/RetargetChecks-tip-tail.lean.txt
+audits/evidence/mig1/gate/r2/checks/retarget-checks.tsv
+audits/evidence/mig1/gate/r2/data/retarget-table.tsv
+audits/logs/mig1-statements-r2-retarget.log
+# 5. The round-2 deletion plan and the decision-2 records
+audits/evidence/mig1/gate/r2/data/deletion-plan.tsv
+audits/logs/mig1-statements-r2-deletion-plan.log
+audits/logs/mig1-statements-r2-s-records.log
+# 6. Re-measurement at the tip (one runner pass) and its negative controls
+audits/logs/mig1-statements-r2-elaboration.log
+audits/logs/mig1-statements-r2-cutcheck.log
+audits/logs/mig1-statements-r2-identity.log
+audits/logs/mig1-statements-r2-axioms.log
+audits/logs/mig1-statements-r2-names.log
+audits/logs/mig1-statements-r2-consumers.log
+audits/logs/mig1-statements-r2-replay.log
+audits/logs/mig1-statements-r2-r3.log
+audits/logs/mig1-statements-r2-provenance.log
+audits/logs/mig1-statements-r2-runner-negative-control.log
+audits/evidence/mig1/gate/r2/data/consumers.json
+audits/evidence/mig1/gate/r2/data/consumer-names.json
+# 7. Round-2 scripts (new or changed; the runner and its expected values)
+audits/evidence/mig1/gate/r2/scripts/runall.sh
+audits/evidence/mig1/gate/r2/scripts/expected-r2.json
+audits/evidence/mig1/gate/r2/scripts/build_unit.py
+audits/evidence/mig1/gate/r2/scripts/build_unit.py.diff
+audits/evidence/mig1/gate/r2/scripts/build_overlay.py
+audits/evidence/mig1/gate/r2/scripts/overlaycheck.py
+audits/evidence/mig1/gate/r2/scripts/retarget_checks.py
+audits/evidence/mig1/gate/r2/scripts/retarget.py
+audits/evidence/mig1/gate/r2/scripts/region_r2.py
+audits/evidence/mig1/gate/r2/scripts/fates_r2.json
+audits/evidence/mig1/gate/r2/scripts/fatetable.py
+audits/evidence/mig1/gate/r2/scripts/rowtotals.py
+audits/evidence/mig1/gate/r2/scripts/r3check.py
+audits/evidence/mig1/gate/r2/scripts/srecords.py
+# 8. Round-1 runner inputs, unchanged and re-used (finding 3: now bundled)
+audits/evidence/mig1/gate/scripts/campaign_style_lint.py
+audits/evidence/mig1/gate/scripts/mkshim.py
+audits/evidence/mig1/gate/scripts/decls.py
+audits/evidence/mig1/gate/scripts/renames.json
+audits/evidence/mig1/gate/scripts/wraps.json
+audits/evidence/mig1/gate/scripts/cutcheck.py
+audits/evidence/mig1/gate/scripts/identity.py
+audits/evidence/mig1/gate/scripts/identity-manifest.json
+audits/evidence/mig1/gate/scripts/gatenames.py
+audits/evidence/mig1/gate/scripts/namescreen.py
+audits/evidence/mig1/gate/scripts/namescreen_extra.py
+audits/evidence/mig1/gate/scripts/widths.py
+audits/evidence/mig1/gate/scripts/consumers.py
+audits/evidence/mig1/gate/scripts/importgraph.py
+audits/evidence/mig1/gate/scripts/region.py
+audits/evidence/mig1/gate/scripts/fates.json
+audits/evidence/mig1/gate/scripts/runall.sh
+audits/evidence/mig1/gate/scripts/build_unit.py
+audits/evidence/mig1/gate/parts/00-header.lean.txt
+audits/evidence/mig1/gate/parts/01-Simulation.lean.txt
+audits/evidence/mig1/gate/parts/02-Composition.lean.txt
+audits/evidence/mig1/gate/parts/03-Wrappers.lean.txt
+audits/evidence/mig1/gate/parts/04-Encoding.lean.txt
+audits/evidence/mig1/gate/parts/05-TimeConstructible.lean.txt
+audits/evidence/mig1/gate/parts/06-Loop.lean.txt
+audits/evidence/mig1/gate/parts/07-Primitives.lean.txt
+audits/evidence/mig1/gate/parts/08-Catalog.lean.txt
+audits/evidence/mig1/gate/probe-parts/90-SpecProbe.lean.txt
+audits/evidence/mig1/gate/probe-parts/91-SpecProbe2.lean.txt
+audits/evidence/mig1/gate/bridge-parts/00.lean.txt
+audits/evidence/mig1/gate/data/moved-names.json
+audits/evidence/mig1/gate/data/r3-retirement.tsv
+audits/evidence/mig1/gate/data/deletion-plan.tsv
+audits/evidence/mig1/gate/data/consumers.json
+# 9. The round-1 artifacts the runner rebuilds byte for byte, and the round-1 logs
+audits/evidence/mig1/gate/MIG1Statements.lean.txt
+audits/evidence/mig1/gate/SpecProbe-tail.lean.txt
+audits/evidence/mig1/gate/BridgeProbe.lean.txt
+audits/evidence/mig1/gate/AxiomProbe-tail.lean.txt
+audits/logs/mig1-statements-elaboration.log
+audits/logs/mig1-statements-cutcheck.log
+audits/logs/mig1-statements-identity.log
+audits/logs/mig1-statements-axioms.log
+audits/logs/mig1-statements-names.log
+audits/logs/mig1-statements-consumers.log
+audits/logs/mig1-statements-replay.log
+# 10. Coordination inputs: MIG-0b (the stand-in's source; the style rationale) and H2
+audits/evidence/mig0b/r2/NOTES-r2.md
+audits/evidence/mig0b/r2/landing-diffs/TuringMachine/Finite.diff
+audits/evidence/h2/StepBlockDraft.lean.txt
+audits/evidence/mig1/MIG1-design.md
+# 11. Library files: the ten MIG-1 files, the definitions they use, the new doc-mention sites
+TCSlib/Complexity/TuringMachine/Simulation.lean
+TCSlib/Complexity/TuringMachine/Composition.lean
+TCSlib/Complexity/TuringMachine/Build/Wrappers.lean
+TCSlib/Complexity/TuringMachine/Encoding.lean
+TCSlib/Complexity/ClassP/TimeConstructible.lean
+TCSlib/Complexity/TuringMachine/Build/Loop.lean
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean
+TCSlib/Complexity/TuringMachine/Build/CertShell.lean
+TCSlib/Complexity/TuringMachine/CodeSimulator.lean
+TCSlib/Complexity/TuringMachine/Finite.lean
+TCSlib/Complexity/TuringMachine/Deterministic.lean
+TCSlib/Complexity/TuringMachine/Build/Convention.lean
+TCSlib/Complexity/FormulaKit/Emit.lean
+TCSlib/Complexity/RAMSimulation/WordSize.lean
