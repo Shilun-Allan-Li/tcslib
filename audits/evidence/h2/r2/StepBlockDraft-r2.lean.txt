@@ -1,0 +1,1038 @@
+/-
+Copyright (c) 2026 Seyoon Ragavan. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Seyoon Ragavan
+-/
+import TCSlib.Complexity.TuringMachine.CodeFormat
+import TCSlib.Complexity.TuringMachine.Build.Seam
+import TCSlib.Complexity.TuringMachine.Build.Catalog
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+/-!
+# The step block (host H2): statement draft for the promotion (round 2)
+
+**Draft, not a landing file.** This is the proposed public statement of host H2 of
+`machine-library-design.md` §14, the step block that B5a's H1 continuation proved privately
+in `TuringMachine/CodeSimulator.lean` (fills-7; backlog F7-1(a)). Every definition below is a
+copy of a private (or, for the table layout, public) definition of `CodeSimulator.lean`,
+renamed from its `h1…` name to its proposed public name and placed in the draft namespace
+`Turing.Draft.StepBlock`; the proposed landing namespace is `Turing.StepBlock`. Private
+declarations cannot be referenced from another module, which is why they are copied. The
+seven contracts are stated exactly as delivered, up to the renaming, and sorried; their proofs
+exist, admission-free, in the delivered source and move unchanged in the maintainer's PR. Six
+results are *additive* (`summaryEmit_none`, `visitedByTapeHead_add_subset`,
+`visitedByTapeHead_step_subset`, `roundTM_visited`, `roundTM_iterate`,
+`roundTM_firstExit_unique`): they have no private counterpart, and they are proved here, the
+last three from the sorried main contract, as a fit test of its shape for the unclocked
+consumers and their space ledger.
+
+**Round 2 (H2-S findings 1 and 8).** `roundTM_iterate` now also states the lower bound `t ≤ T`
+(the block's time is cofinal with the source's), proved from the contract's positive round
+duration; `roundTM_firstExit_unique` is new. The copied declarations are unchanged in code;
+three docstrings are corrected (`roundTM_effect`'s bound, `Key`'s count, the additive section's
+count). The emitting reset/forward wrapper is a consumer obligation, not stated here.
+
+The step block is one finite binary machine per work-tape count `k`, independent of the coded
+state count: it performs one simulated transition of any `k`-work-tape binary transition table
+held, in the fixed `Turing.tableBitsK` serialization, as data on a work tape.
+
+## Main definitions
+
+* `Turing.Draft.StepBlock.roundTM`, `roundFinTM` — the step block (`h1RoundTM`,
+  `h1RoundFinTM`).
+* `Turing.Draft.StepBlock.Rep` — the seam relation (`h1RoundRep`), with the layout
+  `tableTape`, `summaryTape`, `summaryCells`, and the output summary `outputSummary`,
+  `summaryEmit`.
+* `Turing.Draft.StepBlock.exit` — the two live exits (`h1RoundExit`).
+* `Turing.Draft.StepBlock.recordSkipTM` — the whole-record skipper (`h1SkipTM`), with its
+  successor-field leaf `succFieldTM` (`h1SuccTM`) and the fixed-field reader `recordTM`
+  (`h1RecordTM`).
+
+## Main results
+
+* `Turing.Draft.StepBlock.roundTM_effect` — the step-block contract (`h1Round_effect`).
+* `Turing.Draft.StepBlock.recordSkipTM_run`, `recordSkipTM_spec` — the skipper's contract
+  (`h1Skip_run`, `h1Skip_spec`).
+* `Turing.Draft.StepBlock.succFieldTM_run`, `succFieldTM_cut`, `succFieldTM_heads` — the
+  leaf's contract (`h1Succ_run`, `h1Succ_cut`, `h1Succ_heads`).
+* `Turing.Draft.StepBlock.recordTM_effect` — the fixed-field reader's contract
+  (`h1Record_effect`).
+* `Turing.Draft.StepBlock.abs_workTapePos_runFrom_sub_le` — the run form of
+  `Turing.MultiTapeTM.workTapePos_step_le` (`h1Run_headBound`), proposed as
+  `Turing.MultiTapeTM.abs_workTapePos_runFrom_sub_le`.
+* Additive: `summaryEmit_none` (a blanked summary cell records one round's emission),
+  `roundTM_visited` (the per-round space ledger, from the head envelope), `roundTM_iterate`
+  (rounds compose into a run of the source table, cofinally, with its visited cells),
+  `roundTM_firstExit_unique` (the round time is the unique first positive exit), and the
+  generic `visitedByTapeHead_add_subset`, `visitedByTapeHead_step_subset`.
+
+## References
+
+* [AB09] S. Arora, B. Barak, *Computational Complexity: A Modern Approach*,
+  Cambridge University Press, 2009. (§1.4, §1.4.1, the proof of Theorem 1.9, Figure 1.6.)
+-/
+
+namespace Turing.Draft.StepBlock
+
+/-! ## The `k`-record table layout
+
+Copies of the public `Turing.workReadsK` and `Turing.tableBitsK`. The proposal moves these two
+definitions, unchanged and under their present names, from `CodeSimulator.lean` into the new
+module, since the step block's statement mentions `tableBitsK` and the new module sits below
+`CodeSimulator`. -/
+
+/-- The fixed enumeration of the work reads of `k` work tapes: tape `0`
+outermost, each read over `none`, `some false`, `some true`. [AB09, §1.4] -/
+def workReadsK : (k : ℕ) → List (Fin k → Option Bool)
+  | 0 => [Fin.elim0]
+  | k + 1 => ([none, some false, some true] : List (Option Bool)).flatMap fun w =>
+      (workReadsK k).map fun r => (Fin.cons w r : Fin (k + 1) → Option Bool)
+
+/-- The fixed serialization of a `k`-work-tape transition table: states in `Fin`
+order, then the input read, then the work reads in `workReadsK` order,
+one `Turing.actionBitsK` record each. [AB09, §1.4] -/
+def tableBitsK {k n : ℕ}
+    (tr : Fin (n + 1) → Option Bool → (Fin k → Option Bool) → Action k Bool (Fin (n + 1))) :
+    List Bool :=
+  (List.finRange (n + 1)).flatMap fun q =>
+    ([none, some false, some true] : List (Option Bool)).flatMap fun inp =>
+      (workReadsK k).flatMap fun w => actionBitsK (tr q inp w)
+
+/-! ## The three-valued output summary -/
+
+/-- **The output summary** of an output word, as the content of one tape cell: `none` for the
+empty word, `some true` for exactly `[true]`, and `some false` for every other word. The
+last class is irreversible. (Copy of `CodeSimulator`'s private `outputSummary`; it is the cell
+code of `Turing.OutSummary` in `SpaceComplexity/ConfigGraph.lean`, see the design note.) -/
+def outputSummary : List Bool → Option Bool
+  | [] => none
+  | [true] => some true
+  | _ => some false
+
+/-- **The summary update**: the summary after one more transition emitting `b`, given the
+summary `s` before it. (Copy of the private `summaryEmit`.) -/
+def summaryEmit : Option Bool → Option Bool → Option Bool
+  | s, none => s
+  | none, some true => some true
+  | _, some _ => some false
+
+/-- Appending one transition's optional emission to an output word updates its summary by
+`summaryEmit`, including on a halting transition. (Copy of the private
+`outputSummary_append`, proof included.)
+
+**Proof sketch.** Case on the emission; for an emitted bit, case on the first two letters of
+the word. -/
+lemma outputSummary_append (w : List Bool) (b : Option Bool) :
+    outputSummary (w ++ b.toList) = summaryEmit (outputSummary w) b := by
+  cases b with
+  | none => simp [summaryEmit]
+  | some b =>
+    cases w with
+    | nil => cases b <;> rfl
+    | cons a w =>
+      cases w with
+      | nil => cases a <;> cases b <;> rfl
+      | cons c w => cases a <;> cases b <;> rfl
+
+/-- **A blank summary cell records one emission** (additive): updating the empty summary by an
+emission gives that emission. Hence a host that blanks the summary cell before a round finds
+the round's emission `a.output` there afterwards (the summary clause of `roundTM_effect`), and
+can forward it verbatim or append it to a buffer, with the step block unchanged.
+
+**Proof sketch.** Case on the emission. -/
+lemma summaryEmit_none (b : Option Bool) : summaryEmit none b = b := by
+  rcases b with _ | _ | _ <;> rfl
+
+/-! ## Layout of the auxiliary tapes and the fixed-field reader -/
+
+/-- The number of fixed bits of a `k`-tape transition record before its variable-length
+successor field: two for the input move, four per work tape, two for the emission.
+(`h1RecordWidth`.) -/
+abbrev recordWidth (k : ℕ) : ℕ := 4 * k + 4
+
+/-- The finite control of the fixed-field reader: the number of bits read so far and a
+fixed-size bit buffer; `none` is its live exit. It depends only on `k`, never on the coded
+state count. (`h1RecordState`.) -/
+abbrev RecordState (k : ℕ) :=
+  Option (Fin (recordWidth k + 1) × (Fin (recordWidth k) → Bool))
+
+/-- The table tape: work tape `k`, after the `k` mirrored work tapes. (`h1TableTape`.) -/
+def tableTape (k : ℕ) : Fin (k + 2) := Fin.natAdd k (0 : Fin 2)
+
+/-- The summary tape: work tape `k + 1`, holding the output summary at cell `0` and the unary
+current state from cell `2`. (`h1SummaryTape`.) -/
+def summaryTape (k : ℕ) : Fin (k + 2) := Fin.natAdd k (1 : Fin 2)
+
+/-- The action that a buffer of fixed record fields denotes, read by the public record reader
+`Turing.codeReadActionK` with a dummy halting successor; only canonized records are used, and
+the actual successor stays on the table tape. (`h1Payload`.) -/
+def payload (k : ℕ) (bits : Fin (recordWidth k) → Bool) : Action k Bool (Fin 1) :=
+  ((codeReadActionK k 0 (List.ofFn bits ++ [false])).map Prod.fst).getD
+    ⟨0, fun _ => (none, 0), none, none⟩
+
+/-- The physical action that executes the fixed fields `a` on the mirrored bank and the native
+input head, writing the updated summary `summaryEmit s a.output` on the summary cell instead of
+emitting; the table tape and both auxiliary heads stay fixed, and the next control is the live
+exit. (`h1ApplyPayload`.) -/
+def applyPayload {k : ℕ} (a : Action k Bool (Fin 1)) (s : Option Bool) :
+    Action (k + 2) Bool (RecordState k) :=
+  ⟨a.inputTape, Fin.addCases a.workTapes
+    (fun i : Fin 2 => if i = 0 then (none, 0) else (some (summaryEmit s a.output), 0)),
+    none, some none⟩
+
+/-- **The fixed-field reader**: read the `4k + 4` fixed bits of the record under the table head
+into finite control, then execute them on the mirrored bank and the native input head and
+update the summary cell, exiting live with the table head at the successor field.
+[AB09, §1.4.1, Theorem 1.9] (`h1RecordTM`.) No catalog row reads a fixed-length,
+non-delimited prefix into finite control: the two-pass scan requires delimiters. -/
+def recordTM (k : ℕ) : MultiTapeTM (k + 2) Bool (RecordState k) where
+  q₀ := some (0, fun _ => false)
+  tr := fun q _ w => match q with
+    | none => inputMoveAction 0 none
+    | some (p, bits) =>
+      if h : p.val < recordWidth k then
+        tapeAction (tableTape k) 0 none .pos
+          (some (⟨p.val + 1, by omega⟩,
+            Function.update bits ⟨p.val, h⟩ ((w (tableTape k)).getD false)))
+      else applyPayload (payload k bits) (w (summaryTape k))
+
+/-- The fixed-field reader as a finite binary machine. (`h1RecordFinTM`.) -/
+def recordFinTM (k : ℕ) : FinTM Bool where
+  k := k + 2
+  State := RecordState k
+  tm := recordTM k
+
+/-- **The fixed-field reader's contract** (`h1Record_effect`, statement copied). Started on a
+configuration whose first `k` work tapes and input head mirror a source configuration `c`,
+whose summary cell holds the summary of `c`'s output, and whose table head is at a record of
+`a` (fixed fields `bits`): after exactly `4k + 5` steps the reader is at its live exit, the
+mirrored bank and input head are those of `a.apply c`, the summary cell is the summary of
+`(a.apply c)`'s output, and the physical output is unchanged; the exit is not reached earlier;
+the record is at least that long; and at every time each mirrored and input head is at its
+start (or, at the last step, its action endpoint), every head moves at most one cell
+(mirrored, input) or `4k + 4` cells (auxiliary), the table head has advanced `min u (4k + 4)`
+cells and the summary head is fixed. [AB09, §1.4.1, Theorem 1.9]
+
+**Proof sketch.** Project the proved execution equality onto the input, mirrored bank and
+summary cell. The summary identity is `outputSummary_append`, including when the source
+action halts. Before the last step the prefix trace has a reading state, never the live
+exit. -/
+theorem recordTM_effect {k n : ℕ} {x : List Bool}
+    (d : Cfg (k + 2) Bool (RecordState k) x)
+    (c : Cfg k Bool (Fin (n + 1)) x) (a : Action k Bool (Fin (n + 1)))
+    (bits : Fin (recordWidth k) → Bool)
+    (hq : d.state = some (recordTM k).q₀)
+    (hw : ∀ i : Fin (recordWidth k),
+      d.workTapes (tableTape k) (d.workTapePos (tableTape k) + i.val) = some (bits i))
+    (hbits : List.ofFn bits = (actionBitsK a).take (recordWidth k))
+    (hin : d.inputPos = c.inputPos)
+    (htapes : ∀ i : Fin k, d.workTapes (Fin.castAdd 2 i) = c.workTapes i)
+    (hheads : ∀ i : Fin k, d.workTapePos (Fin.castAdd 2 i) = c.workTapePos i)
+    (hsum : d.workTapeSymbols (summaryTape k) = outputSummary c.output) :
+    let e := (recordTM k).runFrom d (recordWidth k + 1)
+    e.state = some none ∧ e.inputPos = (a.apply c).inputPos ∧
+      (∀ i : Fin k, e.workTapes (Fin.castAdd 2 i) = (a.apply c).workTapes i ∧
+        e.workTapePos (Fin.castAdd 2 i) = (a.apply c).workTapePos i) ∧
+      e.workTapeSymbols (summaryTape k) = outputSummary (a.apply c).output ∧
+      e.output = d.output ∧
+      (∀ u < recordWidth k + 1, ((recordTM k).runFrom d u).state ≠ some none) ∧
+      recordWidth k + 1 ≤ (actionBitsK a).length ∧
+      (∀ u ≤ recordWidth k + 1,
+        let f := (recordTM k).runFrom d u
+        (∀ i : Fin k, f.workTapePos (Fin.castAdd 2 i) =
+          d.workTapePos (Fin.castAdd 2 i) +
+            if u = recordWidth k + 1 then ((a.workTapes i).2 : ℤ) else 0) ∧
+        f.inputPos = (if u = recordWidth k + 1 then moveInputPos d.inputPos a.inputTape
+          else d.inputPos) ∧
+        (∀ j : Fin (k + 2), |f.workTapePos j - d.workTapePos j| ≤
+          if j.val < k then 1 else (recordWidth k : ℤ)) ∧
+        |(f.inputPos.val : ℤ) - d.inputPos.val| ≤ 1 ∧
+        f.workTapePos (tableTape k) =
+          d.workTapePos (tableTape k) + min u (recordWidth k) ∧
+        f.workTapePos (summaryTape k) = d.workTapePos (summaryTape k)) := by
+  sorry
+
+/-! ## Read ranks -/
+
+/-- Every vector of `k` work reads occurs in the fixed enumeration `workReadsK k`.
+(`h1WorkReads_mem`, proof copied.)
+
+**Proof sketch.** Induct on `k`, following the tape-zero-first recursion: the head read is one
+of the three symbols, and the tail occurs by induction. -/
+lemma mem_workReadsK (k : ℕ) (w : Fin k → Option Bool) :
+    w ∈ workReadsK k := by
+  induction k with
+  | zero =>
+    have hw : w = Fin.elim0 := funext (fun i => Fin.elim0 i)
+    simp [workReadsK, hw]
+  | succ k ih =>
+    apply List.mem_flatMap.mpr
+    refine ⟨w 0, ?_, ?_⟩
+    · cases w 0 with
+      | none => simp
+      | some b => cases b <;> simp
+    · apply List.mem_map.mpr
+      refine ⟨Fin.tail w, ih (Fin.tail w), ?_⟩
+      exact Fin.cons_self_tail w
+
+/-- There are exactly `3 ^ k` work-read vectors. (`h1WorkReads_length`, proof copied.) -/
+lemma length_workReadsK (k : ℕ) : (workReadsK k).length = 3 ^ k := by
+  induction k with
+  | zero => rfl
+  | succ k ih => simp [workReadsK, ih, Nat.pow_succ]; omega
+
+/-- The rank of a work-read vector: its index in the serializer's order. (`h1WorkRank`.) -/
+def workRank {k : ℕ} (w : Fin k → Option Bool) : Fin (3 ^ k) :=
+  ⟨(workReadsK k).idxOf w, by
+    rw [← length_workReadsK]
+    exact List.idxOf_lt_length_iff.mpr (mem_workReadsK k w)⟩
+
+/-- The rank of an input read, in the table writer's blank/false/true order.
+(`h1InputRank`.) -/
+def inputRank : Option Bool → Fin 3
+  | none => 0
+  | some false => 1
+  | some true => 2
+
+/-- The rank of a read vector within a state's group of `3 ^ (k + 1)` records; its bound
+depends only on `k`, so finite control may hold it. (`h1ReadRank`.) -/
+def readRank {k : ℕ} (inp : Option Bool) (w : Fin k → Option Bool) :
+    Fin (3 ^ (k + 1)) :=
+  ⟨(inputRank inp).val * 3 ^ k + (workRank w).val, by
+    have hi := (inputRank inp).isLt
+    have hw := (workRank w).isLt
+    have hpos : 0 < 3 ^ k := Nat.pow_pos (by omega)
+    have hm := Nat.mul_le_mul_right (3 ^ k) (show (inputRank inp).val ≤ 2 by omega)
+    rw [Nat.pow_succ]
+    omega⟩
+
+/-! ## The successor-field leaf -/
+
+/-- The phases of the successor-field walker; the halt tag and the unary terminator lead to
+the two live exits `done false` and `done true`. (`h1SuccPhase`.) -/
+inductive SuccPhase where
+  | tag
+  | unary
+  | done (live : Bool)
+deriving DecidableEq, Fintype
+
+/-- **The successor-field walker**: walk an already canonized successor field (a halt tag
+`false`, or `true` followed by a unary state word `1^q 0`) under the head of tape `src`; when
+`copy` is true, also copy the unary word to tape `dst`. It validates nothing.
+(`h1SuccTM`.) No catalog leaf walks a bit-terminated, non-blank-delimited word. -/
+def succFieldTM {m : ℕ} (src dst : Fin m) (copy : Bool) :
+    MultiTapeTM m Bool SuccPhase where
+  q₀ := .tag
+  tr := fun q _ w => match q with
+    | .tag => tapeAction src 0 none .pos
+        (if w src = some true then .unary else .done false)
+    | .unary =>
+        ⟨0, fun j => if j = src then (none, .pos)
+          else if copy = true ∧ j = dst then (some (w src), .pos) else (none, 0),
+          none, some (if w src = some true then .unary else .done true)⟩
+    | .done b => inputMoveAction 0 (.done b)
+
+/-- A framed prefix of the successor copy: the source head has advanced `r` cells, and an
+enabled destination has received the first `r` cells of `w`. (`h1UnaryCfg`.) -/
+def succFieldCfg {m : ℕ} {x : List Bool} (src dst : Fin m) (copy : Bool)
+    (d : Cfg m Bool SuccPhase x) (w : List Bool) (r : ℕ) (q : SuccPhase) :
+    Cfg m Bool SuccPhase x :=
+  { d with
+    state := some q
+    workTapes := fun j z =>
+      if copy = true ∧ j = dst ∧ d.workTapePos dst ≤ z ∧ z < d.workTapePos dst + r
+      then FinTM.bufferTape w (z - d.workTapePos dst) else d.workTapes j z
+    workTapePos := fun j => d.workTapePos j +
+      if j = src ∨ (copy = true ∧ j = dst) then (r : ℤ) else 0 }
+
+/-- The configuration after the successor tag has been consumed: one source-head move.
+(`h1AfterTag`.) -/
+def afterTag {m : ℕ} {x : List Bool} (src : Fin m)
+    (d : Cfg m Bool SuccPhase x) : Cfg m Bool SuccPhase x :=
+  { d with state := some .unary
+           workTapePos := Function.update d.workTapePos src (d.workTapePos src + 1) }
+
+/-- **The leaf's endpoint** (`h1Succ_run`, statement copied): started at `tag` on the serialized
+successor field `optStateBits s` under the source head, the walker reaches the live exit
+`done s.isSome` after exactly the field's length, the source head past the field, and an
+enabled destination holding the unary word.
+
+**Proof sketch.** The first transition reads the tag; a halt tag finishes at once. A live tag
+enters the shared unary-prefix trace for the successor word, including its terminating
+`false`. -/
+theorem succFieldTM_run {m n : ℕ} {x : List Bool} (src dst : Fin m)
+    (hne : src ≠ dst) (copy : Bool) (d : Cfg m Bool SuccPhase x)
+    (s : Option (Fin n)) (hq : d.state = some .tag)
+    (hw : ∀ (r : ℕ) (hr : r < (optStateBits s).length),
+      d.workTapes src (d.workTapePos src + r) = some ((optStateBits s)[r]'hr)) :
+    let word := (s.map unaryFin).getD []
+    (succFieldTM src dst copy).runFrom d (optStateBits s).length =
+      succFieldCfg src dst copy (afterTag src d) word word.length (.done s.isSome) := by
+  sorry
+
+/-- **The leaf's cut** (`h1Succ_cut`, statement copied): neither exit is visited before the
+whole field has been consumed.
+
+**Proof sketch.** Every strict prefix of the trace is at `tag` or `unary`. -/
+theorem succFieldTM_cut {m n : ℕ} {x : List Bool} (src dst : Fin m)
+    (hne : src ≠ dst) (copy : Bool) (d : Cfg m Bool SuccPhase x)
+    (s : Option (Fin n)) (hq : d.state = some .tag)
+    (hw : ∀ (r : ℕ) (hr : r < (optStateBits s).length),
+      d.workTapes src (d.workTapePos src + r) = some ((optStateBits s)[r]'hr)) :
+    ∀ t < (optStateBits s).length, ∀ b,
+      ((succFieldTM src dst copy).runFrom d t).state ≠ some (.done b) := by
+  sorry
+
+/-- **The leaf's head trace** (`h1Succ_heads`, statement copied): during the walk the input
+position and the physical output are fixed, the source head advances one cell per step, an
+enabled destination head one cell per step after the tag, and no other head moves.
+
+**Proof sketch.** Read the head positions off the trace of `succFieldTM_run`'s proof. -/
+theorem succFieldTM_heads {m n : ℕ} {x : List Bool} (src dst : Fin m)
+    (hne : src ≠ dst) (copy : Bool) (d : Cfg m Bool SuccPhase x)
+    (s : Option (Fin n)) (hq : d.state = some .tag)
+    (hw : ∀ (r : ℕ) (hr : r < (optStateBits s).length),
+      d.workTapes src (d.workTapePos src + r) = some ((optStateBits s)[r]'hr)) :
+    ∀ t ≤ (optStateBits s).length,
+      let e := (succFieldTM src dst copy).runFrom d t
+      e.inputPos = d.inputPos ∧ e.output = d.output ∧
+      ∀ j, e.workTapePos j = d.workTapePos j +
+        if j = src then (t : ℤ) else if copy = true ∧ j = dst then (t - 1 : ℕ) else 0 := by
+  sorry
+
+/-! ## The whole-record skipper -/
+
+/-- The phase family of a whole-record skip: the fixed-field reader, stopped before its
+payload step, then the successor-field leaf. (`h1SkipPh`.) -/
+def SkipPh (k : ℕ) : Bool → Type
+  | false => RecordState k
+  | true => SuccPhase
+
+/-- The skipper's two phase machines. (`h1SkipPart`.) -/
+def skipPart (k : ℕ) : (b : Bool) → MultiTapeTM (k + 2) Bool (SkipPh k b)
+  | false => recordTM k
+  | true => succFieldTM (tableTape k) (summaryTape k) false
+
+/-- The skipper's single dispatch, at the fixed-width boundary, without executing the action.
+(`h1SkipRed`.) -/
+def skipRed (k : ℕ) : (b : Bool) → SkipPh k b → Option (Σ b, SkipPh k b)
+  | false, some (p, _) => if p.val = recordWidth k then some ⟨true, .tag⟩ else none
+  | false, none => none
+  | true, _ => none
+
+/-- **The whole-record skipper** (host H2's record skipper, `h1SkipTM`): advance the table
+head over one complete record, fixed and variable fields, without applying it, on the public
+phase host `Turing.phaseHostTM`. -/
+def recordSkipTM (k : ℕ) : MultiTapeTM (k + 2) Bool (Σ b, SkipPh k b) :=
+  phaseHostTM (skipPart k) ⟨false, (recordTM k).q₀⟩ (skipRed k)
+
+/-- **The skipper's endpoint** (`h1Skip_run`, statement copied): started from the reader's
+initial state on a record of `a`, the skipper reaches the live exit `done a.state.isSome` after
+exactly the record's length plus one dispatch step, with only the table head changed, advanced
+by the record's length.
+
+**Proof sketch.** Use the reader's prefix read and the public phase dispatch, then the
+successor-field endpoint. The two head advances add to the full record length, including its
+variable unary tail. -/
+theorem recordSkipTM_run {k n : ℕ} {x : List Bool}
+    (d : Cfg (k + 2) Bool (RecordState k) x)
+    (a : Action k Bool (Fin (n + 1)))
+    (hq : d.state = some (recordTM k).q₀)
+    (hw : ∀ (r : ℕ) (hr : r < (actionBitsK a).length),
+      d.workTapes (tableTape k) (d.workTapePos (tableTape k) + r) =
+        some ((actionBitsK a)[r]'hr)) :
+    (recordSkipTM k).runFrom (d.mapState (Sigma.mk false)) ((actionBitsK a).length + 1) =
+      { d.mapState (fun _ => (⟨true, SuccPhase.done a.state.isSome⟩ : Σ b, SkipPh k b)) with
+        workTapePos := Function.update d.workTapePos (tableTape k)
+          (d.workTapePos (tableTape k) + (actionBitsK a).length) } := by
+  sorry
+
+/-- **The skipper's composition contract** (`h1Skip_spec`, statement copied): no exit before
+the record's length plus one; and at every time up to then the input position, all tape
+contents and the physical output are unchanged, and only the table head has moved, by
+`min u (4k + 4)` plus the steps after the dispatch.
+
+**Proof sketch.** Split the horizon at the reader's dispatch: the first interval is the
+reader's prefix trace transported by the public phase host, the second the successor-field
+trace transported by public agreement. -/
+theorem recordSkipTM_spec {k n : ℕ} {x : List Bool}
+    (d : Cfg (k + 2) Bool (RecordState k) x)
+    (a : Action k Bool (Fin (n + 1)))
+    (hq : d.state = some (recordTM k).q₀)
+    (hw : ∀ (r : ℕ) (hr : r < (actionBitsK a).length),
+      d.workTapes (tableTape k) (d.workTapePos (tableTape k) + r) =
+        some ((actionBitsK a)[r]'hr)) :
+    (∀ u < (actionBitsK a).length + 1, ∀ b,
+      ((recordSkipTM k).runFrom (d.mapState (Sigma.mk false)) u).state ≠
+        some ⟨true, .done b⟩) ∧
+    (∀ u ≤ (actionBitsK a).length + 1,
+      let f := (recordSkipTM k).runFrom (d.mapState (Sigma.mk false)) u
+      f.inputPos = d.inputPos ∧ f.workTapes = d.workTapes ∧ f.output = d.output ∧
+      (∀ j, f.workTapePos j = d.workTapePos j +
+        if j = tableTape k then
+          ((min u (recordWidth k) + (u - (recordWidth k + 1)) : ℕ) : ℤ)
+        else 0)) := by
+  sorry
+
+/-- Each skipper phase is finite, uniformly in the coded state count. -/
+instance instFintypeSkipPh (k : ℕ) (b : Bool) : Fintype (SkipPh k b) := by
+  cases b <;> dsimp [SkipPh] <;> infer_instance
+
+/-- Equality of the skipper's phase states is decidable. -/
+instance instDecidableEqSkipPh (k : ℕ) (b : Bool) : DecidableEq (SkipPh k b) := by
+  cases b <;> dsimp [SkipPh] <;> infer_instance
+
+/-! ## The record selector -/
+
+/-- The selector's finite router: the captured read rank and a within-group record countdown;
+the coded state itself stays on tape. (`h1SeekCtrl`.) -/
+inductive SeekCtrl (k : ℕ) where
+  | observe
+  | advance (rank : Fin (3 ^ (k + 1)))
+  | state (rank : Fin (3 ^ (k + 1)))
+  | request (rank rest : Fin (3 ^ (k + 1))) (last : Bool)
+  | done
+  deriving DecidableEq, Fintype
+
+/-- The selector's router: capture the read rank, enter the unary state word at cell `2` of
+the summary tape, request one whole state group per `true`, and the rank suffix at the
+terminating `false`. (`h1SeekRouter`.) -/
+def seekRouterTM (k : ℕ) : MultiTapeTM (k + 2) Bool (SeekCtrl k) where
+  q₀ := .observe
+  tr := fun q inp w => match q with
+    | .observe => tapeAction (summaryTape k) 0 none .pos
+        (.advance (readRank inp (fun i => w (Fin.castAdd 2 i))))
+    | .advance rank => tapeAction (summaryTape k) 0 none .pos (.state rank)
+    | .state rank =>
+        if w (summaryTape k) = some true then
+          tapeAction (summaryTape k) 0 none .pos
+            (.request rank ⟨3 ^ (k + 1) - 1, by
+              have hp : 0 < 3 ^ (k + 1) := Nat.pow_pos (by omega); omega⟩ false)
+        else inputMoveAction 0 (if hr : rank.val = 0 then .done
+          else .request rank ⟨rank.val - 1, by have := rank.isLt; omega⟩ true)
+    | .request rank rest last => inputMoveAction 0 (.request rank rest last)
+    | .done => inputMoveAction 0 .done
+
+/-- The router's continuation after one skipped record. (`h1SeekNext`.) -/
+def seekNext {k : ℕ} (rank rest : Fin (3 ^ (k + 1))) (last : Bool) : SeekCtrl k :=
+  if hz : rest.val = 0 then (if last then .done else .state rank)
+  else .request rank ⟨rest.val - 1, by have := rest.isLt; omega⟩ last
+
+/-- The selector's phase keys: `none` is the router, each countdown key a call of the skipper.
+(`h1SeekKey`.) -/
+abbrev SeekKey (k : ℕ) := Option (Fin (3 ^ (k + 1)) × Fin (3 ^ (k + 1)) × Bool)
+
+/-- The selector's phase state carriers. (`h1SeekPh`.) -/
+def SeekPh (k : ℕ) : SeekKey k → Type
+  | none => SeekCtrl k
+  | some _ => Σ b, SkipPh k b
+
+/-- The selector's phase machines: the router and the shared skipper. (`h1SeekPart`.) -/
+def seekPart (k : ℕ) : (key : SeekKey k) → MultiTapeTM (k + 2) Bool (SeekPh k key)
+  | none => seekRouterTM k
+  | some _ => recordSkipTM k
+
+/-- The selector's dispatches: a requested call, and a completed record. (`h1SeekRed`.) -/
+def seekRed (k : ℕ) :
+    (key : SeekKey k) → SeekPh k key → Option (Σ key, SeekPh k key)
+  | none, .request rank rest last => some ⟨some (rank, rest, last), (recordSkipTM k).q₀⟩
+  | some (rank, rest, last), ⟨true, .done _⟩ => some ⟨none, seekNext rank rest last⟩
+  | _, _ => none
+
+/-- **The record selector** (`h1SeekTM`): one finite machine, for every coded state count,
+that moves the table head to the record of the current state and read vector. -/
+def seekTM (k : ℕ) : MultiTapeTM (k + 2) Bool (Σ key, SeekPh k key) :=
+  phaseHostTM (seekPart k) ⟨none, .observe⟩ (seekRed k)
+
+/-- A fixed two-cell move of the head of tape `i`. (`h1TwoMoveTM`.) -/
+def twoMoveTM {m : ℕ} (i : Fin m) (move : SignType) : MultiTapeTM m Bool (Fin 3) where
+  q₀ := 0
+  tr := fun q _ _ => if h : q.val < 2 then
+    tapeAction i 0 none move ⟨q.val + 1, by omega⟩ else inputMoveAction 0 q
+
+/-- The selector's phase carriers are finite. -/
+instance instFintypeSeekPh (k : ℕ) (key : SeekKey k) : Fintype (SeekPh k key) := by
+  cases key <;> dsimp [SeekPh] <;> infer_instance
+
+/-- Equality of the selector's phase states is decidable. -/
+instance instDecidableEqSeekPh (k : ℕ) (key : SeekKey k) : DecidableEq (SeekPh k key) := by
+  cases key <;> dsimp [SeekPh] <;> infer_instance
+
+/-! ## The step block -/
+
+/-- The finite schedule of one simulated transition; the live bit is kept while the heads are
+restored after the successor was read. It has 15 constructors and 20 values: five
+constructors carry the live bit. (`h1RoundKey`.) -/
+inductive Key where
+  | entry | lookup | stateTail | stateHome | clearState | toSummary | record | toState
+  | successor
+  | tableTail (live : Bool) | tableHome (live : Bool)
+  | stateGap (live : Bool) | stateRestore (live : Bool) | finish (live : Bool)
+  | halt
+  deriving DecidableEq, Fintype
+
+/-- The step block's phase carriers, all independent of the coded state count.
+(`h1RoundPh`.) -/
+abbrev Ph (k : ℕ) : Key → Type
+  | .entry | .halt => Unit
+  | .lookup => Σ key, SeekPh k key
+  | .stateTail | .stateHome | .tableTail _ | .tableHome _ | .stateGap _ | .stateRestore _ =>
+      SeekPhase
+  | .clearState => SweepPhase
+  | .toSummary | .toState | .finish _ => Fin 3
+  | .record => RecordState k
+  | .successor => SuccPhase
+
+/-- The step block's phase machines; every variable scan is a landed catalog row
+(`Turing.skipTM`, `Turing.skipBackTM`, `Turing.clearTM`). (`h1RoundPart`.) -/
+def part (k : ℕ) : (key : Key) → MultiTapeTM (k + 2) Bool (Ph k key)
+  | .entry | .halt => ⟨(), fun _ _ _ => inputMoveAction 0 ()⟩
+  | .lookup => seekTM k
+  | .stateTail | .stateGap _ => skipTM (k + 2) (summaryTape k)
+  | .stateHome | .stateRestore _ => skipBackTM (k + 2) (summaryTape k)
+  | .clearState => clearTM (k + 2) (summaryTape k)
+  | .toSummary | .finish _ => twoMoveTM (summaryTape k) .neg
+  | .toState => twoMoveTM (summaryTape k) .pos
+  | .record => recordTM k
+  | .successor => succFieldTM (tableTape k) (summaryTape k) true
+  | .tableTail _ => skipTM (k + 2) (tableTape k)
+  | .tableHome _ => skipBackTM (k + 2) (tableTape k)
+
+/-- **The step block's exits**: a simulated transition with a successor returns to the anchor
+`entry`; a halting one ends at the separate live exit `halt`. (`h1RoundExit`.) -/
+def exit (k : ℕ) (live : Bool) : Σ key, Ph k key :=
+  if live then ⟨.entry, ()⟩ else ⟨.halt, ()⟩
+
+/-- The step block's stationary, silent dispatches. (`h1RoundRed`.) -/
+def red (k : ℕ) : (key : Key) → Ph k key → Option (Σ key, Ph k key)
+  | .entry, _ => some ⟨.lookup, (seekTM k).q₀⟩
+  | .lookup, q => if q = ⟨none, .done⟩ then some ⟨.stateTail, .run⟩ else none
+  | .stateTail, q => if q = .done then some ⟨.stateHome, .run⟩ else none
+  | .stateHome, q => if q = .done then some ⟨.clearState, .sweep⟩ else none
+  | .clearState, q => if q = .done then some ⟨.toSummary, 0⟩ else none
+  | .toSummary, p => if p = 2 then some ⟨.record, (recordTM k).q₀⟩ else none
+  | .record, q => if q = none then some ⟨.toState, 0⟩ else none
+  | .toState, p => if p = 2 then some ⟨.successor, .tag⟩ else none
+  | .successor, .done live => some ⟨.tableTail live, .run⟩
+  | .tableTail live, q => if q = .done then some ⟨.tableHome live, .run⟩ else none
+  | .tableHome live, q => if q = .done then some ⟨.stateGap live, .run⟩ else none
+  | .stateGap live, q => if q = .done then some ⟨.stateRestore live, .run⟩ else none
+  | .stateRestore live, q => if q = .done then some ⟨.finish live, 0⟩ else none
+  | .finish live, p => if p = 2 then some (exit k live) else none
+  | _, _ => none
+
+/-- **The step block** (host H2, `h1RoundTM`): one simulated transition of a coded `k`-tape
+table — look up the record of the current state and reads, clear the old state word, execute
+the record's fixed fields, install its successor, and return both auxiliary heads home — as
+one machine on the public phase host. [AB09, §1.4.1, proof of Theorem 1.9, Figure 1.6] -/
+def roundTM (k : ℕ) : MultiTapeTM (k + 2) Bool (Σ key, Ph k key) :=
+  phaseHostTM (part k) ⟨.entry, ()⟩ (red k)
+
+/-- The step block's control is finite, uniformly in the coded state count. -/
+instance instFintypePh (k : ℕ) (key : Key) : Fintype (Ph k key) := by
+  cases key <;> dsimp [Ph] <;> infer_instance
+
+/-- Equality of the step block's control states is decidable. -/
+instance instDecidableEqPh (k : ℕ) (key : Key) : DecidableEq (Ph k key) := by
+  cases key <;> dsimp [Ph] <;> infer_instance
+
+/-- The step block as a finite binary machine with `k + 2` work tapes. (`h1RoundFinTM`.) -/
+def roundFinTM (k : ℕ) : FinTM Bool where
+  k := k + 2
+  State := Σ key, Ph k key
+  tm := roundTM k
+
+/-! ## The seam and the contract -/
+
+/-- The summary tape's cells: the summary at `0`, a blank at `1`, and the unary state word from
+`2` on. (`h1SummaryState`.) -/
+def summaryCells (summary : Option Bool) (word : List Bool) (z : ℤ) : Option Bool :=
+  if z = 0 then summary else FinTM.bufferTape word (z - 2)
+
+/-- **The seam relation** (`h1RoundRep`): the step block's configuration `d` represents the
+source configuration `c` of the table `tr` when the native input position is `c`'s, the first
+`k` work tapes and their heads are `c`'s, tape `k` holds `tableBitsK tr`, tape `k + 1` holds
+`summaryCells (outputSummary c.output) word` with `word` the unary state of `c` (empty when
+`c` is halted), and both auxiliary heads are at `0`. Control and the physical output are left
+free. -/
+def Rep {k n : ℕ} {x : List Bool}
+    (tr : Fin (n + 1) → Option Bool → (Fin k → Option Bool) → Action k Bool (Fin (n + 1)))
+    (c : Cfg k Bool (Fin (n + 1)) x)
+    (d : Cfg (k + 2) Bool (Σ key, Ph k key) x) : Prop :=
+  d.inputPos = c.inputPos ∧
+  (∀ i : Fin k, d.workTapes (Fin.castAdd 2 i) = c.workTapes i ∧
+    d.workTapePos (Fin.castAdd 2 i) = c.workTapePos i) ∧
+  d.workTapes (tableTape k) = FinTM.bufferTape (tableBitsK tr) ∧
+  d.workTapes (summaryTape k) =
+    summaryCells (outputSummary c.output) ((c.state.map unaryFin).getD []) ∧
+  d.workTapePos (tableTape k) = 0 ∧ d.workTapePos (summaryTape k) = 0
+
+/-- **The step-block contract** (host H2; `h1Round_effect`, statement copied). Let `c` be a
+live configuration (state `q`) of a `k`-work-tape binary machine with transition table `tr` and
+`n + 1` states, on the same input `x`, and let `a` be the action `tr` takes at `c`. If the step
+block is at `entry` in a configuration `d` that represents `c`, then for some time `T` with
+`0 < T ≤ 50·(|tableBitsK tr| + 1)`, writing `e` for the configuration reached at `T`:
+* `e` is at `exit k a.state.isSome` (back at `entry` when `a` has a successor, at `halt`
+  otherwise) and represents `a.apply c`, the source's next configuration; its summary cell is
+  `summaryEmit` of `d`'s and `a`'s emission;
+* strictly between `0` and `T` the block is live and visits neither `entry` nor `halt`;
+* the physical output is `d`'s at every time up to `T` (the block is silent);
+* at every time up to `T`, the input head is at its start or its end position and has moved
+  at most one cell; each mirrored head is at its start or its end position; mirrored heads
+  move at most one cell and auxiliary heads at most `50·(|tableBitsK tr| + 1)` cells;
+* both auxiliary heads are at `0` at the start and at `T`.
+The bound depends on the table only, through its serialized length `|tableBitsK tr|` (and so
+indirectly on `k`, `n` and the table's actions); only the coefficient `50` is uniform. It does
+not depend on the input `x`, the tape contents or the simulated time.
+[AB09, §1.4.1, proof of Theorem 1.9, Figure 1.6: one step of the universal machine]
+
+Not stated: the exact value of `T` (it is the unique first time after `0` at `entry` or
+`halt`, by the cut: `roundTM_firstExit_unique`), though the endpoint itself is determined
+(`Rep` fixes every tape and head, the exit the control, silence the output); a space bound
+(derived from the envelope, `roundTM_visited`); an input device other than the native one
+(the simulated input is the block's own input `x`).
+
+**Proof sketch.** Unpack the representation into the canonical round frame and invoke the
+complete canonical round: the selector skips `q` whole state groups and the read-rank suffix
+(the serializer cut pays for it), the old state word is cleared, the fixed fields execute,
+the successor is installed, and the catalog scans return both auxiliary heads. Output-prefix
+monotonicity gives silence throughout. The phase window and the action head bound give the
+mirrored envelope; summing the unit step bound gives the auxiliary envelope; the input clamp
+handles both boundary blanks. -/
+theorem roundTM_effect {k n : ℕ} {x : List Bool}
+    (tr : Fin (n + 1) → Option Bool → (Fin k → Option Bool) → Action k Bool (Fin (n + 1)))
+    (c : Cfg k Bool (Fin (n + 1)) x) (q : Fin (n + 1)) (hq : c.state = some q)
+    (d : Cfg (k + 2) Bool (Σ key, Ph k key) x)
+    (entry : d.state = some ⟨.entry, ()⟩) (rel : Rep tr c d) :
+    let a := tr q c.inputSymbol c.workTapeSymbols
+    ∃ T, 0 < T ∧ T ≤ 50 * ((tableBitsK tr).length + 1) ∧
+      let e := (roundTM k).runFrom d T
+      e.state = some (exit k a.state.isSome) ∧ Rep tr (a.apply c) e ∧
+      e.workTapeSymbols (summaryTape k) =
+        summaryEmit (d.workTapeSymbols (summaryTape k)) a.output ∧
+      (∀ u, 0 < u → u < T → ∃ s, ((roundTM k).runFrom d u).state = some s ∧
+        s ≠ ⟨.entry, ()⟩ ∧ s ≠ ⟨.halt, ()⟩) ∧
+      (∀ u ≤ T, ((roundTM k).runFrom d u).output = d.output) ∧
+      (∀ u ≤ T,
+        let f := (roundTM k).runFrom d u
+        (f.inputPos = d.inputPos ∨ f.inputPos = e.inputPos) ∧
+        |(f.inputPos.val : ℤ) - d.inputPos.val| ≤ 1 ∧
+        (∀ i : Fin k, f.workTapePos (Fin.castAdd 2 i) = d.workTapePos (Fin.castAdd 2 i) ∨
+          f.workTapePos (Fin.castAdd 2 i) = e.workTapePos (Fin.castAdd 2 i)) ∧
+        ∀ j : Fin (k + 2), |f.workTapePos j - d.workTapePos j| ≤
+          if j.val < k then 1 else (50 * ((tableBitsK tr).length + 1) : ℕ)) ∧
+      ∀ j : Fin (k + 2), k ≤ j.val → d.workTapePos j = 0 ∧ e.workTapePos j = 0 := by
+  sorry
+
+/-! ## The run head bound -/
+
+/-- **Heads move at most one cell per step, over a run** (`h1Run_headBound`, proof copied;
+proposed as `Turing.MultiTapeTM.abs_workTapePos_runFrom_sub_le` in the new module, and for
+`Deterministic.lean` later, design note O9):
+after `t` steps of any machine, every work head is within `t` cells of where it started. The
+run form of `Turing.MultiTapeTM.workTapePos_step_le`.
+
+**Proof sketch.** Telescope the displacement into its `t` one-step differences; the triangle
+inequality and the one-step bound give `t`. -/
+lemma abs_workTapePos_runFrom_sub_le {m : ℕ} {S : Type} {x : List Bool}
+    (M : MultiTapeTM m Bool S) (d : Cfg m Bool S x) (t : ℕ) (j : Fin m) :
+    |(M.runFrom d t).workTapePos j - d.workTapePos j| ≤ (t : ℤ) := by
+  let height (u : ℕ) := (M.runFrom d u).workTapePos j
+  have unit (u : ℕ) : |height (u + 1) - height u| ≤ 1 := by
+    simpa only [height, MultiTapeTM.runFrom_succ_eq_step'] using
+      MultiTapeTM.workTapePos_step_le (tm := M) (M.runFrom d u) j
+  calc
+    |(M.runFrom d t).workTapePos j - d.workTapePos j| =
+        |∑ u ∈ Finset.range t, (height (u + 1) - height u)| := by
+      rw [Finset.sum_range_sub]; rfl
+    _ ≤ ∑ u ∈ Finset.range t, |height (u + 1) - height u| := Finset.abs_sum_le_sum_abs _ _
+    _ ≤ ∑ _u ∈ Finset.range t, (1 : ℤ) := Finset.sum_le_sum (fun u _ => unit u)
+    _ = (t : ℤ) := by simp
+
+/-! ## Additive corollaries (no private counterpart; proved here from the contract)
+
+These five results are not part of the verbatim move (the sixth additive result,
+`summaryEmit_none`, sits with the summary above). They are new, small proofs: two generic
+visited-set lemmas, and three corollaries of `roundTM_effect`, written to test that its shape
+serves the unclocked consumers (B6's `U₀`, backlog U-1) and their space ledger. They concern
+the silent block only. A host that blanks and forwards the summary cell around each round
+needs its own simulation invariant (the design note's consumer obligation CO-RF). -/
+
+/-- **Visited cells split at an intermediate time** (additive; generic, proposed as
+`Turing.MultiTapeTM.visitedByTapeHead_add_subset`, design note O9): the cells visited by
+head `j` in `T₁ + T₂` steps from `d` are those visited in the first `T₁` steps, together with
+those visited in `T₂` steps from where the run is at time `T₁`.
+
+**Proof sketch.** A visiting time `u ≤ T₁ + T₂` is either at most `T₁`, or `T₁ + v` with
+`v ≤ T₂`, and then run additivity identifies the configuration. -/
+lemma visitedByTapeHead_add_subset {m : ℕ} {S : Type} {x : List Bool}
+    (M : MultiTapeTM m Bool S) (d : Cfg m Bool S x) (T₁ T₂ : ℕ) (j : Fin m) :
+    M.visitedByTapeHead d (T₁ + T₂) j ⊆
+      M.visitedByTapeHead d T₁ j ∪ M.visitedByTapeHead (M.runFrom d T₁) T₂ j := by
+  intro p hp
+  simp only [MultiTapeTM.visitedByTapeHead, Finset.mem_union, Finset.mem_image,
+    Finset.mem_range] at hp ⊢
+  obtain ⟨u, hu, rfl⟩ := hp
+  by_cases hle : u ≤ T₁
+  · exact Or.inl ⟨u, by omega, rfl⟩
+  · refine Or.inr ⟨u - T₁, by omega, ?_⟩
+    rw [← MultiTapeTM.runFrom_add]
+    congr 2
+    omega
+
+/-- **Visited cells after the first step** (additive; generic, proposed as
+`Turing.MultiTapeTM.visitedByTapeHead_step_subset`): the cells visited in `t` steps
+from the successor of `c`, and `c`'s own head cell, are among those visited in `t + 1` steps
+from `c`.
+
+**Proof sketch.** Shift every visiting time by one; time `0` gives `c`'s cell. -/
+lemma visitedByTapeHead_step_subset {m : ℕ} {S : Type} {x : List Bool}
+    (M : MultiTapeTM m Bool S) (c : Cfg m Bool S x) (t : ℕ) (j : Fin m) :
+    insert (c.workTapePos j) (M.visitedByTapeHead (M.step c) t j) ⊆
+      M.visitedByTapeHead c (t + 1) j := by
+  intro p hp
+  simp only [MultiTapeTM.visitedByTapeHead, Finset.mem_insert, Finset.mem_image,
+    Finset.mem_range] at hp ⊢
+  rcases hp with rfl | ⟨v, hv, rfl⟩
+  · exact ⟨0, by omega, by rw [MultiTapeTM.runFrom_zero]⟩
+  · exact ⟨v + 1, by omega, by rw [MultiTapeTM.runFrom_succ_eq_step]⟩
+
+/-- **The per-round space ledger** (additive): under the contract's hypotheses, with `a` the
+action of `tr` at `c` and `B = 50·(|tableBitsK tr| + 1)`, some time `T` with `0 < T ≤ B` ends
+the round at `exit k a.state.isSome` in a configuration representing `a.apply c`, with the
+contract's cut and silence, and during the round each mirrored head visits only the source
+head's cells before and after the step, and each auxiliary head only cells in `[-B, B]`. In
+particular a round visits at most `2` cells of a mirrored tape and `2B + 1` of an auxiliary
+one.
+
+**Proof sketch.** Take the contract's `T`. The envelope puts each mirrored head at its start
+or end position, which the two representations identify with the source's head before and
+after the step; each auxiliary head starts at `0` and stays within `B` of it. -/
+theorem roundTM_visited {k n : ℕ} {x : List Bool}
+    (tr : Fin (n + 1) → Option Bool → (Fin k → Option Bool) → Action k Bool (Fin (n + 1)))
+    (c : Cfg k Bool (Fin (n + 1)) x) (q : Fin (n + 1)) (hq : c.state = some q)
+    (d : Cfg (k + 2) Bool (Σ key, Ph k key) x)
+    (entry : d.state = some ⟨.entry, ()⟩) (rel : Rep tr c d) :
+    let a := tr q c.inputSymbol c.workTapeSymbols
+    ∃ T, 0 < T ∧ T ≤ 50 * ((tableBitsK tr).length + 1) ∧
+      ((roundTM k).runFrom d T).state = some (exit k a.state.isSome) ∧
+      Rep tr (a.apply c) ((roundTM k).runFrom d T) ∧
+      (∀ u, 0 < u → u < T → ∃ s, ((roundTM k).runFrom d u).state = some s ∧
+        s ≠ ⟨.entry, ()⟩ ∧ s ≠ ⟨.halt, ()⟩) ∧
+      (∀ u ≤ T, ((roundTM k).runFrom d u).output = d.output) ∧
+      (∀ i : Fin k, (roundTM k).visitedByTapeHead d T (Fin.castAdd 2 i) ⊆
+        {c.workTapePos i, (a.apply c).workTapePos i}) ∧
+      ∀ j : Fin (k + 2), k ≤ j.val → (roundTM k).visitedByTapeHead d T j ⊆
+        Finset.Icc (-((50 * ((tableBitsK tr).length + 1) : ℕ) : ℤ))
+          ((50 * ((tableBitsK tr).length + 1) : ℕ) : ℤ) := by
+  intro a
+  obtain ⟨T, hpos, hT, hexit, hrel, -, hcut, hsil, henv, hhome⟩ :=
+    roundTM_effect tr c q hq d entry rel
+  refine ⟨T, hpos, hT, hexit, hrel, hcut, hsil, ?_, ?_⟩
+  · intro i p hp
+    simp only [MultiTapeTM.visitedByTapeHead, Finset.mem_image, Finset.mem_range] at hp
+    obtain ⟨u, hu, rfl⟩ := hp
+    have h := (henv u (by omega)).2.2.1 i
+    rw [(rel.2.1 i).2, (hrel.2.1 i).2] at h
+    rcases h with h | h <;> rw [h]
+    · exact Finset.mem_insert_self _ _
+    · exact Finset.mem_insert_of_mem (Finset.mem_singleton_self _)
+  · intro j hj p hp
+    simp only [MultiTapeTM.visitedByTapeHead, Finset.mem_image, Finset.mem_range] at hp
+    obtain ⟨u, hu, rfl⟩ := hp
+    have h := (henv u (by omega)).2.2.2 j
+    rw [if_neg (by omega), (hhome j hj).1, sub_zero] at h
+    rw [Finset.mem_Icc]
+    exact abs_le.mp h
+
+/-- **Rounds compose into a run of the source** (additive, for unclocked hosts: B6's `U₀`,
+backlog U-1). Let `M` be a `k`-work-tape binary machine with `n + 1` states and `c` a
+configuration of it on `x` that stays live for `t` steps (the `t`-th configuration
+included), and let `B = 50·(|tableBitsK M.tr| + 1)`. If the step block is at `entry` in a
+configuration `d` representing `c` for `M`'s table, then at some time `T` with
+`t ≤ T ≤ t·B` it is back at `entry`, representing `M`'s configuration after `t` steps; up to
+`T` it has emitted nothing and never visited `halt`; each mirrored head has visited only cells
+that `M`'s head visited in those `t` steps; and each auxiliary head only cells in `[-B, B]`.
+[AB09, §1.4.1, proof of Theorem 1.9]
+
+The lower bound `t ≤ T` makes the block's time cofinal with the source's: if the source never
+halts, then for every physical horizon `u` the theorem at `t = u` gives `T ≥ u` with no visit
+to `halt` up to `T`, so the block never reaches `halt` (round 1 finding 1; the stationary
+silent self-loop no longer admits the witness `T = 0`). This is the silent block: the
+emitting wrapper that forwards the summary cell is the consumer obligation CO-RF of the design
+note, not a consequence of this theorem.
+
+**Proof sketch.** Induct on `t`. At `t + 1`, apply the per-round ledger at the live `c`: the
+source's step at `c` is the record's action, and its successor is live, so the round ends at
+`entry` representing `M.step c`, after a positive time at most `B`. The induction hypothesis at
+`M.step c` continues from there, by run additivity; the positive round time and the inductive
+lower bound give `t + 1 ≤ T`. Silence and the absence of `halt` hold round by round: a round's
+interior avoids `halt` by the cut, its endpoint is `entry`. The visited cells split at the
+round boundary; the first round's are the source's cells at times `0` and `1`, the rest are
+covered by induction and the shift by one step. -/
+theorem roundTM_iterate {k n : ℕ} {x : List Bool} (M : MultiTapeTM k Bool (Fin (n + 1)))
+    (t : ℕ) : ∀ (c : Cfg k Bool (Fin (n + 1)) x),
+    (∀ u ≤ t, (M.runFrom c u).state.isSome) →
+    ∀ (d : Cfg (k + 2) Bool (Σ key, Ph k key) x),
+    d.state = some ⟨.entry, ()⟩ → Rep M.tr c d →
+    ∃ T, t ≤ T ∧ T ≤ t * (50 * ((tableBitsK M.tr).length + 1)) ∧
+      ((roundTM k).runFrom d T).state = some ⟨.entry, ()⟩ ∧
+      Rep M.tr (M.runFrom c t) ((roundTM k).runFrom d T) ∧
+      (∀ u ≤ T, ((roundTM k).runFrom d u).output = d.output ∧
+        ((roundTM k).runFrom d u).state ≠ some ⟨.halt, ()⟩) ∧
+      (∀ i : Fin k, (roundTM k).visitedByTapeHead d T (Fin.castAdd 2 i) ⊆
+        M.visitedByTapeHead c t i) ∧
+      ∀ j : Fin (k + 2), k ≤ j.val → (roundTM k).visitedByTapeHead d T j ⊆
+        Finset.Icc (-((50 * ((tableBitsK M.tr).length + 1) : ℕ) : ℤ))
+          ((50 * ((tableBitsK M.tr).length + 1) : ℕ) : ℤ) := by
+  have entry_ne_halt : (some ⟨.entry, ()⟩ : Option (Σ key, Ph k key)) ≠
+      some ⟨.halt, ()⟩ := by
+    intro h
+    cases (Sigma.mk.inj (Option.some.inj h)).1
+  induction t with
+  | zero =>
+    intro c _ d hd rel
+    refine ⟨0, le_rfl, Nat.zero_le _, hd, rel, ?_, ?_, ?_⟩
+    · intro u hu
+      have hu0 : u = 0 := by omega
+      subst hu0
+      rw [MultiTapeTM.runFrom_zero, hd]
+      exact ⟨rfl, entry_ne_halt⟩
+    · intro i p hp
+      simp only [MultiTapeTM.visitedByTapeHead, Finset.mem_image, Finset.mem_range] at hp ⊢
+      obtain ⟨u, hu, rfl⟩ := hp
+      have hu0 : u = 0 := by omega
+      subst hu0
+      exact ⟨0, by omega, by rw [MultiTapeTM.runFrom_zero, MultiTapeTM.runFrom_zero,
+        (rel.2.1 i).2]⟩
+    · intro j hj p hp
+      simp only [MultiTapeTM.visitedByTapeHead, Finset.mem_image, Finset.mem_range] at hp
+      obtain ⟨u, hu, rfl⟩ := hp
+      have hu0 : u = 0 := by omega
+      subst hu0
+      have h0 : d.workTapePos j = 0 := by
+        have hjv : j.val = k ∨ j.val = k + 1 := by omega
+        rcases hjv with h | h
+        · have : j = tableTape k := Fin.ext (by simpa [tableTape] using h)
+          rw [this]; exact rel.2.2.2.2.1
+        · have : j = summaryTape k := Fin.ext (by simpa [summaryTape] using h)
+          rw [this]; exact rel.2.2.2.2.2
+      rw [MultiTapeTM.runFrom_zero, h0, Finset.mem_Icc]
+      omega
+  | succ t ih =>
+    intro c hlive d hd rel
+    have hc := hlive 0 (Nat.zero_le _)
+    rw [MultiTapeTM.runFrom_zero] at hc
+    obtain ⟨q, hq⟩ := Option.isSome_iff_exists.mp hc
+    have hstep : M.step c = (M.tr q c.inputSymbol c.workTapeSymbols).apply c := by
+      simp only [MultiTapeTM.step, hq]
+    obtain ⟨T₁, hpos, hT₁, hexit, hrel, hcut, hsil, hvis, haux⟩ :=
+      roundTM_visited M.tr c q hq d hd rel
+    have hlive' : ∀ u ≤ t, (M.runFrom (M.step c) u).state.isSome := by
+      intro u hu
+      rw [← MultiTapeTM.runFrom_succ_eq_step]
+      exact hlive (u + 1) (by omega)
+    have hsucc : (M.tr q c.inputSymbol c.workTapeSymbols).state.isSome := by
+      have h1 := hlive' 0 (Nat.zero_le _)
+      rwa [MultiTapeTM.runFrom_zero, hstep] at h1
+    rw [hsucc] at hexit
+    rw [← hstep] at hrel hvis
+    obtain ⟨T₂, hlow, hT₂, hent, hrel₂, hrest, hvis₂, haux₂⟩ :=
+      ih (M.step c) hlive' _ hexit hrel
+    refine ⟨T₁ + T₂, by omega, ?_, ?_, ?_, ?_, ?_, ?_⟩
+    · rw [Nat.succ_mul]; omega
+    · rw [MultiTapeTM.runFrom_add]; exact hent
+    · rw [MultiTapeTM.runFrom_add (tm := roundTM k) d T₁ T₂,
+        MultiTapeTM.runFrom_succ_eq_step (tm := M)]
+      exact hrel₂
+    · intro u hu
+      by_cases hle : u ≤ T₁
+      · refine ⟨hsil u hle, ?_⟩
+        by_cases h0 : u = 0
+        · subst h0
+          rw [MultiTapeTM.runFrom_zero, hd]
+          exact entry_ne_halt
+        · by_cases hT : u = T₁
+          · subst hT
+            rw [hexit]
+            exact entry_ne_halt
+          · obtain ⟨s, hs, -, hh⟩ := hcut u (by omega) (by omega)
+            rw [hs]
+            exact fun h => hh (Option.some.inj h)
+      · obtain ⟨hout, hhalt⟩ := hrest (u - T₁) (by omega)
+        have hu' : u = T₁ + (u - T₁) := by omega
+        rw [hu', MultiTapeTM.runFrom_add]
+        refine ⟨?_, hhalt⟩
+        rw [hout]
+        exact hsil T₁ le_rfl
+    · intro i p hp
+      have hsplit := visitedByTapeHead_add_subset (roundTM k) d T₁ T₂ (Fin.castAdd 2 i) hp
+      have hshift := visitedByTapeHead_step_subset M c t i
+      rcases Finset.mem_union.mp hsplit with h | h
+      · have h' := hvis i h
+        simp only [Finset.mem_insert, Finset.mem_singleton] at h'
+        rcases h' with rfl | rfl
+        · exact hshift (Finset.mem_insert_self _ _)
+        · apply hshift
+          apply Finset.mem_insert_of_mem
+          simp only [MultiTapeTM.visitedByTapeHead, Finset.mem_image, Finset.mem_range]
+          exact ⟨0, by omega, by rw [MultiTapeTM.runFrom_zero]⟩
+      · exact hshift (Finset.mem_insert_of_mem (hvis₂ i h))
+    · intro j hj p hp
+      have hsplit := visitedByTapeHead_add_subset (roundTM k) d T₁ T₂ j hp
+      rcases Finset.mem_union.mp hsplit with h | h
+      · exact haux j hj h
+      · exact haux₂ j hj h
+
+/-- **The round time is the unique first positive exit** (additive). Under the contract's
+hypotheses there is exactly one time `T` such that `0 < T`, the block is at `entry` or at
+`halt` at time `T`, and it is at neither exit at any time strictly between `0` and `T`. Hence
+the existential time of `roundTM_effect` is this `T`, whichever witness is chosen, and a host
+may define its round-time function by choice or by `Nat.find` without ambiguity (design note
+O7; counter-loop round functions; MIG-0b's round time).
+
+**Proof sketch.** Existence: the contract's time is positive, its endpoint is at
+`exit k a.state.isSome`, which is `entry` or `halt`, and its cut keeps every strictly earlier
+positive time off both exits. Uniqueness: of two such times, the smaller would lie strictly
+between `0` and the larger, where the larger one's cut forbids both exits. -/
+theorem roundTM_firstExit_unique {k n : ℕ} {x : List Bool}
+    (tr : Fin (n + 1) → Option Bool → (Fin k → Option Bool) → Action k Bool (Fin (n + 1)))
+    (c : Cfg k Bool (Fin (n + 1)) x) (q : Fin (n + 1)) (hq : c.state = some q)
+    (d : Cfg (k + 2) Bool (Σ key, Ph k key) x)
+    (entry : d.state = some ⟨.entry, ()⟩) (rel : Rep tr c d) :
+    ∃! T, 0 < T ∧
+      (((roundTM k).runFrom d T).state = some ⟨.entry, ()⟩ ∨
+        ((roundTM k).runFrom d T).state = some ⟨.halt, ()⟩) ∧
+      ∀ u, 0 < u → u < T →
+        ((roundTM k).runFrom d u).state ≠ some ⟨.entry, ()⟩ ∧
+          ((roundTM k).runFrom d u).state ≠ some ⟨.halt, ()⟩ := by
+  obtain ⟨T, hpos, -, hexit, -, -, hcut, -⟩ := roundTM_effect tr c q hq d entry rel
+  refine ⟨T, ⟨hpos, ?_, ?_⟩, ?_⟩
+  · rw [hexit]
+    unfold exit
+    split
+    · exact Or.inl rfl
+    · exact Or.inr rfl
+  · intro u hu huT
+    obtain ⟨s, hs, hse, hsh⟩ := hcut u hu huT
+    rw [hs]
+    exact ⟨fun h => hse (Option.some.inj h), fun h => hsh (Option.some.inj h)⟩
+  · rintro T' ⟨hpos', hexit', hcut'⟩
+    rcases Nat.lt_trichotomy T' T with hlt | heq | hgt
+    · obtain ⟨s, hs, hse, hsh⟩ := hcut T' hpos' hlt
+      rw [hs] at hexit'
+      rcases hexit' with h | h
+      · exact absurd (Option.some.inj h) hse
+      · exact absurd (Option.some.inj h) hsh
+    · exact heq
+    · have h := hcut' T hpos hgt
+      rw [hexit] at h
+      unfold exit at h
+      split at h
+      · exact absurd rfl h.1
+      · exact absurd rfl h.2
+
+end Turing.Draft.StepBlock

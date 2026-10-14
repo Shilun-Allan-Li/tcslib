@@ -1,0 +1,79 @@
+# library modules (TCSlib/**.lean + root): 625
+# direct TCSlib import edges: 1624
+# external import roots (not followed): Batteries, Init, Lean, Mathlib, PFR, Std
+# dangling TCSlib imports: 0
+
+## 1. CodeSimulator: direct imports (6)
+  TCSlib.Complexity.TuringMachine.CodeFormat
+  TCSlib.Complexity.TuringMachine.Build.CounterLoop
+  TCSlib.Complexity.TuringMachine.Build.Seam
+  TCSlib.Complexity.TuringMachine.Build.VirtualInput
+  TCSlib.Complexity.TuringMachine.Build.Primitives
+  TCSlib.Complexity.TuringMachine.Build.InputCall
+
+## 2. rdeps(CodeSimulator) in the checkout: 6 modules
+  TCSlib    <- imports: TCSlib.Complexity.Diagonalization, TCSlib.Complexity.TuringMachine
+  TCSlib.Complexity.Diagonalization    <- imports: TCSlib.Complexity.Diagonalization.EXPCOM, TCSlib.Complexity.Diagonalization.Relativization
+  TCSlib.Complexity.Diagonalization.EXPCOM    <- imports: TCSlib.Complexity.TuringMachine.CodeSimulator
+  TCSlib.Complexity.Diagonalization.Relativization    <- imports: TCSlib.Complexity.Diagonalization.EXPCOM
+  TCSlib.Complexity.TuringMachine    <- imports: TCSlib.Complexity.TuringMachine.CodeSimulator, TCSlib.Complexity.TuringMachine.Codes2Tape
+  TCSlib.Complexity.TuringMachine.Codes2Tape    <- imports: TCSlib.Complexity.TuringMachine.CodeSimulator
+
+## 3. Overlay (proposed H2-M edges)
+  TCSlib.Complexity.TuringMachine.Build.StepBlock imports TCSlib.Complexity.TuringMachine.CodeFormat, TCSlib.Complexity.TuringMachine.Build.Seam, TCSlib.Complexity.TuringMachine.Build.Catalog
+  TCSlib.Complexity.TuringMachine.CodeSimulator gains: import TCSlib.Complexity.TuringMachine.Build.StepBlock
+  TCSlib.Complexity.TuringMachine gains: import TCSlib.Complexity.TuringMachine.Build.StepBlock
+
+## 4. rdeps(StepBlock) in the overlay: 7 modules; replay set {StepBlock} + rdeps = 8 modules
+  TCSlib  sha256 c7a44b244f1f2fc236c1ef220043af6c80dd12fc7d3d6b6722fc1cf8c92e5325
+  TCSlib.Complexity.Diagonalization  sha256 7fb5848733cbd8beec425520b75b4be788108d2154a0f6b50d0dd662649669dc
+  TCSlib.Complexity.Diagonalization.EXPCOM  sha256 7b8948bf3643e8c02c1980019782d1de949aeea7d5437818b7ee7b7228748c51
+  TCSlib.Complexity.Diagonalization.Relativization  sha256 f6bb2b2bf99bf5d1ca9a4e91d5fe2396a3091d31ebf676d1267fbe0994966935
+  TCSlib.Complexity.TuringMachine  sha256 b7c70e1166d7e441a77cd5a6c3df419650b1612b1bafa818f94acc860b8f5180
+  TCSlib.Complexity.TuringMachine.Build.StepBlock (new; no file in this checkout)
+  TCSlib.Complexity.TuringMachine.CodeSimulator  sha256 adae43401c9741990b64730f42954221cdf56918a36995a266f0c0c4f7c8283e
+  TCSlib.Complexity.TuringMachine.Codes2Tape  sha256 da255d68220c86b657b551abcf31d915ea672a7a16fbe1fc4efc741aca1bb517
+  check: rdeps(CodeSimulator) is unchanged by the overlay: True
+  rdeps(StepBlock) minus ({CodeSimulator} + rdeps(CodeSimulator)): none
+  PASS: replay set equals the expected 8 modules
+
+## 5. forward closure of StepBlock: 18 library modules (plus external roots)
+  TCSlib.Complexity.TuringMachine.CodeSimulator below StepBlock: False
+  TCSlib.Complexity.TuringMachine.Build.CounterLoop below StepBlock: False
+  TCSlib.Complexity.TuringMachine.Build.VirtualInput below StepBlock: False
+  no cycle reachable from StepBlock
+
+## 6. Alternative homes (design note O3, O9)
+  O3: CodeFormat: rdeps = 23 modules; replay set = 24
+  O9: Deterministic: rdeps = 223 modules; replay set = 224
+  rdeps(CodeFormat):
+    TCSlib
+    TCSlib.Complexity.CircuitComplexity
+    TCSlib.Complexity.CircuitComplexity.Meyer
+    TCSlib.Complexity.CircuitComplexity.PAdviceSubsetPPoly
+    TCSlib.Complexity.CircuitComplexity.PSubsetPPoly
+    TCSlib.Complexity.CircuitComplexity.UHaltMachine
+    TCSlib.Complexity.Diagonalization
+    TCSlib.Complexity.Diagonalization.EXPCOM
+    TCSlib.Complexity.Diagonalization.NTimeHierarchy
+    TCSlib.Complexity.Diagonalization.NotTimeConstructible
+    TCSlib.Complexity.Diagonalization.Relativization
+    TCSlib.Complexity.Randomized
+    TCSlib.Complexity.Randomized.PolyTimeModel
+    TCSlib.Complexity.SpaceComplexity
+    TCSlib.Complexity.SpaceComplexity.Hierarchy
+    TCSlib.Complexity.TimeHierarchy
+    TCSlib.Complexity.TimeHierarchy.Diagonal
+    TCSlib.Complexity.TimeHierarchy.Separation
+    TCSlib.Complexity.TuringMachine
+    TCSlib.Complexity.TuringMachine.CodeSimulator
+    TCSlib.Complexity.TuringMachine.Codes2Tape
+    TCSlib.Complexity.TuringMachine.MathlibBridge
+    TCSlib.Complexity.TuringMachine.NDCodes
+
+## 7. Lean files outside the library importing CodeSimulator (not lake targets; not replayed)
+  none
+
+# full graph written: h2/r2/logs/import-graph.txt (625 modules)
+
+RESULT: PASS

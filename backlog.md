@@ -561,7 +561,16 @@ window.*
   faithful). The statement gate H2-S is `audits/h2-promotion-pack.md`. **Round 1 (2026-10-13):
   0 blockers / 3 majors / 5 minors, gate open** (`audits/h2-promotion-findings.md`): no copied
   contract is false; `roundTM_iterate` needs the lower bound `t ≤ T`, H5 is a block simulation
-  rather than literal lockstep, and the bundle lacked consumer sources. Round 2 in preparation.
+  rather than literal lockstep, and the bundle lacked consumer sources. **Round 2 (2026-10-13):**
+  `audits/h2-promotion-r2-pack.md`, re-run at `1781a230` (after fills-8). It restates and proves
+  `roundTM_iterate` with `t ≤ T`, adds `roundTM_firstExit_unique`, restates H5 as a block
+  simulation, and adds the import and move manifests and a fidelity script that fails closed.
+  Proposed for H2-M:
+  - re-wrap H1's frozen over-long lines and rename the unused binder `hr` to `_hr`
+    (α-equivalent, probed);
+  - a 56-name public surface, with 15 helpers made private;
+  - H1's `h1RoundTime` stays private until MIG-0b's round adapter;
+  - the consumer obligation CO-RF is recorded on `U₀` and U-1.
   The move, H2-M (a
   freeze-checked maintainer PR with an 8-module replay), lands **between** the B5a
   continuations, since both own regions of `CodeSimulator.lean`.

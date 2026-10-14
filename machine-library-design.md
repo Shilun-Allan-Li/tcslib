@@ -1426,7 +1426,7 @@ fill batches split now/after-G1; a fill gate.
 | `spaceConstructible_poly`/`_logSpace`/`_linear` | R8.5 `inputLengthTM`; R8.6 `expandTM`; `incrementTM` |
 | **`PATH_NLComplete`** hardness (adjacency "by one local transition-table check", logspace) | The sketch's engine is the ARM layer (`arm_decides`). Optionally, a TM route: `recordStepTM`'s space clause with binary F1 gives `O(log n)`-space adjacency deciders for the index languages. Decision 12.8.4 |
 | **`PATH_mem_NL`** (matrix indexing) | R8.5 `inputSeekTM` (once a nondeterministic host exists, SC-3; superseded 2026-10-13: C2 is written as programs, §16b item 4) |
-| **Space hierarchy** `space_universal`, `space_hierarchy`. **Superseded 2026-10-12 by the window route** (§16b item 3): `space_universal` is forward-only (no interval counters, clock or probe/replay), and `space_hierarchy` runs a self-application universal `U₀` in a window on the record rows | **Now:** R8.7 (`recordInitTM`, `recordStepTM`, `recordTestTM`) under a configuration-count clock (`counterLoopTMVia`), with H2 (step block), H3 (windowed runner, three exits) and H5 (native and binary-position input devices). The earlier route (interval counters, budget loop, R8.8 success/cap exits) is dropped |
+| **Space hierarchy** `space_universal`, `space_hierarchy`. **Superseded 2026-10-12 by the window route** (§16b item 3): `space_universal` is forward-only (no interval counters, clock or probe/replay), and `space_hierarchy` runs a self-application universal `U₀` in a window on the record rows | **Now:** R8.7 (`recordInitTM`, `recordStepTM`, `recordTestTM`) under a configuration-count clock (`counterLoopTMVia`), with H2 (step block), H3 (windowed runner, three exits) and H5 (native and binary-position input devices; corrected 2026-10-13: native and the bounded-prefix ruler device, user decisions B1–B2). The earlier route (interval counters, budget loop, R8.8 success/cap exits) is dropped |
 | **`TQBF_mem_PSPACE`** (validate-first, depth-first assignment walker, per-clause CNF evaluation) | R8.2 folds (validation, clause evaluation), R8.5 `inputSeekTM` (re-reading prefix bits and matrix bytes), `incrementTM` / a trit odometer (`recordNextTM`'s carry discipline) for the walker, R8.3 seek on the assignment word |
 | `NP_subset_PSPACE` | existing `incrementTM` (certificate enumerator) and `vhostEmitTM` (virtual input); R8.8 for accept/exhaust |
 
@@ -3855,7 +3855,9 @@ The user took the five open route questions together, each as the maintainer rec
      checked 2026-10-12): if `M_α` halts on `x` before using `t` cells of its work tapes, then
      `SU(α, t, x) = M_α(x)`, and `SU` uses at most `C·t` cells. The `[false]` clause goes, and
      with it the interval counters, the core-count clock and the probe/replay. It still needs a
-     code-first universal that reads its input through a binary-position device (H5).
+     code-first universal that reads its input through a binary-position device (H5). (Superseded
+     2026-10-13: the bounded-prefix ruler device, with `space_universal` at `C·s`; decisions
+     B1–B2.)
    - The sketch drops its stale "space-preserving normal form" obligation: the normal form is
      proved (`Turing.FinTM.one_work_tape_binary_spaceUsed`, `Robustness/SingleTape.lean`), but
      two small steps around it were not, and they were fill obligations: the space clause of

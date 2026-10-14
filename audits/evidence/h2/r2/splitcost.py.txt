@@ -1,0 +1,73 @@
+"""Size minor (finding 7): what a Record / Seek / Round split of the step block would force.
+
+Usage: python3 -I splitcost.py CHECKOUT
+Partitions the 114 step-block declarations of CodeSimulator.lean by file order into
+Record (fixed-field reader, ranks, successor leaf: h1RecordWidth .. h1Succ_heads),
+Seek (whole-record skipper, selector, table cuts, layout lemmas, two-cell move:
+h1SkipPh .. h1SeekPh_decidable) and Round (h1RoundKey .. h1Round_effect), and lists every
+reference from a later part to a declaration of an earlier part that round 2 keeps private
+(tiers C and D): those would have to become public, or be duplicated, for the split.
+"""
+import re
+import sys
+
+wt = sys.argv[1]
+src = open(wt + '/TCSlib/Complexity/TuringMachine/CodeSimulator.lean', encoding='utf-8').read()
+L = src.split('\n')
+DECL = re.compile(r'^(?:private )?(?:def|theorem|lemma|abbrev|inductive|instance|structure)\s+'
+                  r'(h1[A-Za-z0-9_]+)')
+PUBLIC_R2 = {  # original names whose new names are tier A/B in round 2
+ 'h1RecordWidth', 'h1RecordState', 'h1TableTape', 'h1SummaryTape', 'h1RecordTM', 'h1RecordFinTM',
+ 'h1Record_effect', 'h1WorkReads_mem', 'h1WorkReads_length', 'h1SuccPhase', 'h1SuccTM',
+ 'h1UnaryCfg', 'h1AfterTag', 'h1Succ_run', 'h1Succ_cut', 'h1Succ_heads', 'h1SkipPh', 'h1SkipTM',
+ 'h1Skip_run', 'h1Skip_spec', 'h1SkipPh_finite', 'h1SkipPh_decidable', 'h1SeekCtrl', 'h1SeekKey',
+ 'h1SeekPh', 'h1SeekPh_finite', 'h1SeekPh_decidable', 'h1Run_headBound', 'h1Run_input',
+ 'h1SummaryState', 'h1SummaryState_cell', 'h1SummaryState_update', 'h1SummaryState_copy',
+ 'h1SummaryState_clear', 'h1RoundKey', 'h1RoundPh', 'h1RoundExit', 'h1RoundTM',
+ 'h1RoundPh_finite', 'h1RoundPh_decidable', 'h1RoundFinTM', 'h1RoundRep', 'h1Round_effect'}
+allstarts = [(i, DECL.match(l).group(1)) for i, l in enumerate(L) if DECL.match(l)]
+alldecl = [i for i, l in enumerate(L) if re.match(
+    r'^(?:private |protected |noncomputable )*(?:def|theorem|lemma|abbrev|inductive|instance|'
+    r'structure)\s', l)]
+# the 114 step-block declarations: from h1RecordWidth through h1Round_effect, in file order
+lo = next(k for k, (_, n) in enumerate(allstarts) if n == 'h1RecordWidth')
+hi = next(k for k, (_, n) in enumerate(allstarts) if n == 'h1Round_effect')
+starts = allstarts[lo:hi + 1]
+assert len(starts) == 114, len(starts)
+names = [n for _, n in starts]
+part = {}
+cur = 'Record'
+for i, n in starts:
+    if n == 'h1SkipPh':
+        cur = 'Seek'
+    if n == 'h1RoundKey':
+        cur = 'Round'
+    part[n] = cur
+code = {}
+for k, (i, n) in enumerate(starts):
+    j = next((x for x in alldecl if x > i), len(L))
+    t = '\n'.join(L[i:j])
+    t = re.sub(r'/-.*?-/', ' ', t, flags=re.S)
+    t = re.sub(r'--[^\n]*', ' ', t)
+    code[n] = t
+order = {'Record': 0, 'Seek': 1, 'Round': 2}
+cross = {}
+for n, t in code.items():
+    for m in set(re.findall(r'\bh1[A-Za-z0-9_]+', t)):
+        if m in part and m != n and order[part[m]] < order[part[n]] and m not in PUBLIC_R2:
+            cross.setdefault(m, set()).add(n)
+sizes = {}
+for k, (i, n) in enumerate(starts):
+    j = next((x for x in alldecl if x > i), len(L))
+    # back over the next declaration's docstring and blank lines
+    while j > i + 1 and (not L[j - 1].strip() or L[j - 1].startswith('/--') or
+                         L[j - 1].rstrip().endswith('-/') and not L[j - 1].startswith(' ')):
+        j -= 1
+    sizes[part[n]] = sizes.get(part[n], 0) + (j - i)
+print('# partition sizes (code lines from each declaration keyword to the end of its body, docstrings excluded; MEASURED):',
+      ', '.join(f'{p} {sizes[p]}' for p in ('Record', 'Seek', 'Round')))
+print('# declarations per part:', ', '.join(f'{p} {sum(1 for v in part.values() if v == p)}'
+                                            for p in ('Record', 'Seek', 'Round')))
+print(f'# private (round-2 tier C/D) declarations a split would have to publish: {len(cross)}')
+for m in sorted(cross, key=lambda x: (order[part[x]], names.index(x))):
+    print(f'  {part[m]:6s} {m}  <- used in {", ".join(sorted(cross[m]))}')
