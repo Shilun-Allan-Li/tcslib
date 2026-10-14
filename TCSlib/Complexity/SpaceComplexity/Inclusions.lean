@@ -721,8 +721,8 @@ exactly the ambient frame. This pure configuration identity supplies both the
 startup and final configurations of setup and identity capture.
 
 **Proof sketch.** On the selected banks use the embedding's tape and head
-projections; elsewhere use the frame theorem. At the capture tape unfold the
-captured-output entry and its head at the word's length. -/
+projections; elsewhere use the frame theorem. At the capture tape the captured-output
+entry and its head at the word's length are `Turing.embedSilentCfg_cap`. -/
 private theorem b2b_capture_shape {k m : ℕ} {S : Type} {x : List Bool}
     (M : MultiTapeTM m Bool S) (ι : Fin m ↪ Fin k) (cap : Fin k)
     (hcap : cap ∉ Set.range ι) (tapes : Fin k → ℤ → Option Bool)
@@ -736,21 +736,14 @@ private theorem b2b_capture_shape {k m : ℕ} {S : Type} {x : List Bool}
         workTapePos := Function.update (fun _ => (0 : ℤ)) cap (y.length : ℤ) } := by
   classical
   let d : Cfg m Bool S x := { Cfg.init s x with inputPos := p, output := y }
-  have hslot : (List.finRange m).find? (fun j => decide (ι j = cap)) = none := by
-    apply List.find?_eq_none.mpr
-    intro j _
-    simp only [decide_eq_true_eq]
-    exact fun hj => hcap ⟨j, hj⟩
   apply Cfg.ext <;> try rfl
   · funext j
     change (embedSilentCfg ι cap tapes (fun _ => 0) [] [] d).workTapes j =
       Function.update tapes cap (FinTM.bufferTape y) j
     by_cases hc : j = cap
     · subst j
-      change (match (List.finRange m).find? (fun a => decide (ι a = cap)) with
-        | some a => d.workTapes a
-        | none => if cap = cap then FinTM.bufferTape ([] ++ d.output) else tapes cap) = _
-      simp [hslot, d]
+      rw [(embedSilentCfg_cap ι cap hcap tapes (fun _ => 0) [] [] d).1, Function.update_self]
+      rfl
     · by_cases hj : j ∈ Set.range ι
       · obtain ⟨a, rfl⟩ := hj
         rw [embedSilentCfg_selected_tape, Function.update_of_ne hc, hbank]
@@ -762,10 +755,8 @@ private theorem b2b_capture_shape {k m : ℕ} {S : Type} {x : List Bool}
       Function.update (fun _ => (0 : ℤ)) cap (y.length : ℤ) j
     by_cases hc : j = cap
     · subst j
-      change (match (List.finRange m).find? (fun a => decide (ι a = cap)) with
-        | some a => d.workTapePos a
-        | none => if cap = cap then (([] ++ d.output).length : ℤ) else 0) = _
-      simp [hslot, d]
+      rw [(embedSilentCfg_cap ι cap hcap tapes (fun _ => 0) [] [] d).2, Function.update_self]
+      rfl
     · rw [Function.update_of_ne hc]
       by_cases hj : j ∈ Set.range ι
       · obtain ⟨a, rfl⟩ := hj
