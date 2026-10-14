@@ -947,6 +947,13 @@ The route decisions of 2026-10-12 (design §16b) add three work items, numbered 
   `Build/Embed`, with `b2b_capture_shape` retired onto it. The minors are one docstring and two
   evidence-tooling fixes. Rulings: the `Catalog` import kept, UN's setup a fill obligation (its
   `hsetup` verbatim in UN's brief), the export added, the leaf inline. Next: round 2 at the tip.
+  **H1 hosted-clock harvest statement gate (2026-10-14):** `audits/h1-harvest-statements-pack.md`
+  (folder 20): the public counter loop over the step block in a new `Build/StepBlockLoop.lean`,
+  with CodeSimulator's eight private declarations deleted. **CLOSED** (round 1: PASS, 0 blockers /
+  0 majors / 4 minors; `audits/h1-harvest-statements-findings.md`, resolutions `…-resolutions.md`).
+  Ruling 5 is satisfied and R's loop phase follows. The minors are three checker-strength fixes
+  and one stale citation, all fixed for the landing. Next: one maintainer landing PR at the
+  merged base (a 9-module replay with `SelfUniversal`); registry row H2-L when it lands.
 * **RD-5: §13d G2–G4 after MIG-0b** (§16b item 5). The statements of design §13d's G2–G4, stated as
   `Contract`s, then their gate and fills, then the Hennie–Stearns assembly. The open zone rows
   `exists_zoneShiftInTM` and `exists_zoneShiftOutTM` retire through the G3/G4 gate.
