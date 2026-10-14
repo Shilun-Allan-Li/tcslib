@@ -1,0 +1,218 @@
+/-- The grammar the physical parser decides once the parse front end is ready: the unary
+initial state below `n + 1` (`Turing.codeSkipFin`), the fixed `k`-record table
+(`Turing.codeSkipTableK`), and the all-`true` suffix. It is the format scanner's residue
+after the header, canonicality and guard checks (`scan_eq_canonGrammar`).
+(Prescribed.) -/
+private def canonGrammar (k n : ℕ) (rest : List Bool) : Option (List Bool) :=
+  ((codeSkipFin (n + 1) rest).bind (codeSkipTableK k n)).bind
+    fun tail => if tail.all id then some tail else none
+
+/-- At the parse front end's ready port the format scanner is exactly the fixed grammar on
+the header's remainder: the canonicality test and the format's own guard both pass, since
+the combined block size dominates `F.guard`. (Prescribed; proved.)
+
+**Proof sketch.** Unfold the scanner at the decoded pair. Canonicality removes the first
+branch; `F.guard ≤ canonGuardBlock F` removes the second; `F.skipTable_eq` turns the
+format's table skipper into the fixed one. -/
+private lemma scan_eq_canonGrammar (F : MachineFormat) (α bits rest : List Bool)
+    (hp : pairDecode α = some (bits, rest)) (hb : bits = (codeBitsNat bits).bits)
+    (hg : canonGuardBlock F * (codeBitsNat bits + 1) ≤ rest.length) :
+    F.scan α = canonGrammar F.k (codeBitsNat bits) rest := by
+  have hguard : F.guard * (codeBitsNat bits + 1) ≤ rest.length :=
+    (Nat.mul_le_mul_right _ (Nat.le_max_left _ _)).trans hg
+  unfold CodeFormat.scan canonGrammar
+  rw [hp]
+  dsimp only [bind, Option.bind]
+  rw [if_neg (not_not.mpr hb), if_neg (not_lt.mpr hguard)]
+  cases codeSkipFin (codeBitsNat bits + 1) rest with
+  | none => rfl
+  | some r =>
+    dsimp only
+    rw [F.skipTable_eq]
+    rfl
+
+/-- The verdict law of the physical validator at the ready port: deciding the fixed grammar
+gives a bit whose rejection decodes to the fallback and whose acceptance is a successful
+format scan. (Prescribed; proved.)
+
+**Proof sketch.** Rewrite the scanner by `scan_eq_canonGrammar`. A failed grammar is a
+failed scan, hence a failed full parse (`Turing.CodeFormat.scan_full`), hence the fallback
+(`Turing.CodeFormat.decode_of_parseFull_none`). -/
+private lemma canonGrammar_verdict (F : MachineFormat) (α bits rest : List Bool)
+    (hp : pairDecode α = some (bits, rest)) (hb : bits = (codeBitsNat bits).bits)
+    (hg : canonGuardBlock F * (codeBitsNat bits + 1) ≤ rest.length) :
+    ((canonGrammar F.k (codeBitsNat bits) rest).isSome = false → F.decode α = F.fallback) ∧
+      ((canonGrammar F.k (codeBitsNat bits) rest).isSome = true →
+        ∃ tail, F.scan α = some tail) := by
+  rw [← scan_eq_canonGrammar F α bits rest hp hb hg]
+  constructor
+  · intro h
+    have hs : F.scan α = none := Option.not_isSome_iff_eq_none.mp (by simp [h])
+    rw [F.scan_full] at hs
+    exact F.decode_of_parseFull_none α (Option.map_eq_none_iff.mp hs)
+  · intro h
+    exact Option.isSome_iff_exists.mp h
+
+/-- The input with its maximal all-`true` suffix removed. On every input the format scanner
+accepts it is the canonical serialization of the decoded machine (`canonStrip_of_scan`).
+Format independent. (Prescribed.) -/
+private def canonStrip (α : List Bool) : List Bool :=
+  (α.reverse.dropWhile id).reverse
+
+/-- A word ending in `false`, followed by an all-`true` suffix, is recovered by
+`canonStrip`. (Prescribed; proved.) -/
+private lemma canonStrip_append (u tail : List Bool) (h : tail.all id = true) :
+    canonStrip (u ++ [false] ++ tail) = u ++ [false] := by
+  have hall : ∀ b ∈ tail.reverse, id b = true := by
+    intro b hb
+    exact List.all_eq_true.mp h b (List.mem_reverse.mp hb)
+  unfold canonStrip
+  rw [List.reverse_append, List.dropWhile_append_of_pos hall]
+  simp
+
+/-- A nonempty concatenation of words that each end in `false` ends in `false`.
+(Prescribed; proved.) -/
+private lemma canonFlatMap_last {A : Type} (L : List A) (f : A → List Bool) (hL : L ≠ [])
+    (hf : ∀ a ∈ L, ∃ u, f a = u ++ [false]) : ∃ u, L.flatMap f = u ++ [false] := by
+  obtain ⟨L', a, rfl⟩ := (List.eq_nil_or_concat L).resolve_left hL
+  obtain ⟨u, hu⟩ := hf a (by simp)
+  exact ⟨L'.flatMap f ++ u, by simp [List.flatMap_append, hu]⟩
+
+/-- Every serialized record ends with its successor field's terminating `false`.
+(Prescribed; proved.) -/
+private lemma actionBitsK_last {k n : ℕ} (a : Action k Bool (Fin (n + 1))) :
+    ∃ u, actionBitsK a = u ++ [false] := by
+  obtain ⟨v, hv⟩ : ∃ v, optStateBits a.state = v ++ [false] := by
+    cases a.state with
+    | none => exact ⟨[], rfl⟩
+    | some s => exact ⟨true :: List.replicate s.val true, by simp [optStateBits, unaryFin]⟩
+  refine ⟨signBits a.inputTape ++
+    (List.finRange k).flatMap
+      (fun i => optOptBoolBits (a.workTapes i).1 ++ signBits (a.workTapes i).2) ++
+    optBoolBits a.output ++ v, ?_⟩
+  simp only [actionBitsK, hv, List.append_assoc]
+
+/-- The fixed `k`-record serialization ends with `false`: its table is nonempty and its last
+record ends with a successor field. (Prescribed; proved.) -/
+private lemma serializeK_last {k n : ℕ} (M : MultiTapeTM k Bool (Fin (n + 1))) :
+    ∃ u, serializeK M = u ++ [false] := by
+  have hw : workReadsK k ≠ [] := by
+    apply List.ne_nil_of_length_pos
+    rw [StepBlock.length_workReadsK]
+    exact Nat.pow_pos (by omega)
+  have hq : List.finRange (n + 1) ≠ [] := List.ne_nil_of_length_pos (by simp)
+  obtain ⟨u, hu⟩ := canonFlatMap_last (List.finRange (n + 1))
+    (fun q => ([none, some false, some true] : List (Option Bool)).flatMap fun inp =>
+      (workReadsK k).flatMap fun w => actionBitsK (M.tr q inp w)) hq fun q _ =>
+    canonFlatMap_last ([none, some false, some true] : List (Option Bool))
+      (fun inp => (workReadsK k).flatMap fun w => actionBitsK (M.tr q inp w)) (by simp)
+      fun inp _ => canonFlatMap_last (workReadsK k) (fun w => actionBitsK (M.tr q inp w)) hw
+        fun w _ => actionBitsK_last (M.tr q inp w)
+  refine ⟨(n.bits.flatMap fun b => [b, b]) ++ [false, true] ++ unaryFin M.q₀ ++ u, ?_⟩
+  have ht : tableBitsK M.tr = u ++ [false] := hu
+  simp only [serializeK, pairEncode, ht, List.append_assoc]
+
+/-- The suffix retained by a successful format scan is all `true`. (Prescribed; proved.) -/
+private lemma canonScan_all (F : MachineFormat) (α tail : List Bool)
+    (hs : F.scan α = some tail) : tail.all id = true := by
+  unfold CodeFormat.scan at hs
+  obtain ⟨⟨bits, rest⟩, _, hs⟩ := Option.bind_eq_some_iff.mp hs
+  dsimp only at hs
+  split at hs
+  · contradiction
+  split at hs
+  · contradiction
+  obtain ⟨r, _, hs⟩ := Option.bind_eq_some_iff.mp hs
+  obtain ⟨r', _, hs⟩ := Option.bind_eq_some_iff.mp hs
+  split at hs
+  next hall =>
+    cases hs
+    exact hall
+  · contradiction
+
+/-- On every input the format scanner accepts, stripping the all-`true` suffix yields the
+canonical serialization of the decoded machine. (Prescribed; proved.)
+
+**Proof sketch.** The scanner is the projected full parse (`Turing.CodeFormat.scan_full`),
+so the input is the decoded machine's serialization followed by the retained suffix
+(`Turing.CodeFormat.parseFull_sound`). That serialization ends in `false`
+(`serializeK_last`) and the suffix is all `true` (`canonScan_all`). -/
+private lemma canonStrip_of_scan (F : MachineFormat) (α tail : List Bool)
+    (hs : F.scan α = some tail) : canonStrip α = F.serialize (F.decode α) := by
+  have hall := canonScan_all F α tail hs
+  rw [F.scan_full] at hs
+  obtain ⟨⟨M, tail'⟩, hp, rfl⟩ := Option.map_eq_some_iff.mp hs
+  have hdec : F.decode α = M := by
+    simp [CodeFormat.decode, hp]
+  have hα := F.parseFull_sound α M tail' hp
+  obtain ⟨u, hu⟩ := serializeK_last (F.machine M)
+  rw [hdec, F.serialize_eq M, hu]
+  rw [hα, F.serialize_eq M, hu]
+  exact canonStrip_append u tail' hall
+
+/-- **The polynomial-time strip machine.** One finite binary machine computes `canonStrip`
+in polynomial time. Format independent; a promotion candidate. (Prescribed; to be proved.)
+
+**Proof sketch.** Copy the native input to a work tape (`Turing.inputCopyTM`). A one-tape
+leaf walks to the word's right end, erases the trailing `true` cells moving left until a
+`false` or the left delimiter, and returns to the origin. Forward the remaining word to the
+output by the public emit call `Turing.FinTM.exists_emitCallTM` with the identity machine,
+and halt. Every phase is linear. -/
+private lemma exists_canonStripTM :
+    ∃ (M : FinTM Bool) (a : ℕ),
+      M.ComputesFunInTime canonStrip (fun n => a * (n + 1) ^ a) := by
+  sorry
+
+/-- **The physical grammar stage.** Started on one bank whose tape `header` holds the
+canonical binary header `bits` (head at the origin), every other tape blank, the native head
+at the remainder's first cell and the output empty, it decides the fixed grammar on the
+remainder with two distinct live exits, silently, within a polynomial bound that does not
+depend on the header's numerical value. (Recommended shape; you may restate it.)
+
+**Proof sketch.** Copy the header to scratch counters as needed (framed copy rows; its value
+`n` serves as the binary bound of every unary range check). Check the unary initial state
+below `n + 1`; run one public counter loop over the `n + 1` states, each of `3^(k+1)`
+records, with the generic record validator as its body; check the all-`true` suffix to the
+right input blank. Every record consumes at least `4k + 5` cells and every round fails fast
+on input exhaustion, so at most `|x| + 1` rounds run, each charged `O(|x| + |bits|)`. -/
+private lemma exists_canonGrammarStage (F : MachineFormat) :
+    ∃ (m : ℕ) (S : Type) (_ : Fintype S) (_ : DecidableEq S) (G : MultiTapeTM m Bool S)
+      (entry : S) (exit : Bool → S) (a : ℕ) (header : Fin m), Function.Injective exit ∧
+      ∀ (x bits rest : List Bool), pairDecode x = some (bits, rest) →
+        bits = (codeBitsNat bits).bits →
+        canonGuardBlock F * (codeBitsNat bits + 1) ≤ rest.length →
+        ∀ d : Cfg m Bool S x, d.state = some entry → d.output = [] →
+          d.inputPos.val = 2 * bits.length + 3 →
+          d.workTapes header = FinTM.bufferTape bits → d.workTapePos header = 0 →
+          (∀ j, j ≠ header → d.workTapes j = FinTM.bufferTape [] ∧ d.workTapePos j = 0) →
+          ∃ t ≤ a * (x.length + 1) ^ a,
+            (G.runFrom d t).state =
+              some (exit (canonGrammar F.k (codeBitsNat bits) rest).isSome) ∧
+            (G.runFrom d t).output = [] ∧
+            ∀ u < t, ∀ v, (G.runFrom d u).state ≠ some (exit v) := by
+  sorry
+
+/-- **The physical validator.** One finite binary machine halts on every input within a
+polynomial bound with a single verdict bit; a rejection decodes to the fallback, and an
+acceptance is a successful format scan. (Prescribed; to be proved.)
+
+**Proof sketch.** Run the total parse front end `exists_canonParseFront`. Its reject port
+emits `false` and halts. At its ready port tape `0` holds the canonical header `bits`, the
+native head is at the remainder, and the positive guard has passed; run the physical grammar
+on a fresh bank around tape `0`, deciding `(canonGrammar F.k n rest).isSome`, then emit the
+bit and halt. `canonGrammar_verdict` is the verdict law; the front end's linear ledger and
+the grammar's quadratic ledger add. -/
+private lemma exists_canonDecider (F : MachineFormat) :
+    ∃ (D : FinTM Bool) (a : ℕ), ∀ α : List Bool, ∃ b : Bool,
+      D.ComputesInTime α [b] (a * (α.length + 1) ^ a) ∧
+        (b = false → F.decode α = F.fallback) ∧
+        (b = true → ∃ tail, F.scan α = some tail) := by
+  -- The composition, as prescribed: the frozen front end and the grammar stage, joined by
+  -- public seams on one bank, each verdict sent to a one-step emitting halt. Semantic laws:
+  -- the front end's reject clause and `canonGrammar_verdict`.
+  obtain ⟨_C, _entry, _exit, _a, _wide, _distinct, _front⟩ := exists_canonParseFront F
+  obtain ⟨_m, _S, _, _, _G, _gentry, _gexit, _b, _header, _gdistinct, _grammar⟩ :=
+    exists_canonGrammarStage F
+  have _law := canonGrammar_verdict F
+  sorry
+
