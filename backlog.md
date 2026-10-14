@@ -983,6 +983,11 @@ The route decisions of 2026-10-12 (design §16b) add three work items, numbered 
   `Build/Embed`, with `b2b_capture_shape` retired onto it. The minors are one docstring and two
   evidence-tooling fixes. Rulings: the `Catalog` import kept, UN's setup a fill obligation (its
   `hsetup` verbatim in UN's brief), the export added, the leaf inline. Next: round 2 at the tip.
+  **Round 2 CLOSED (2026-10-14): 0 blockers / 0 majors / 1 minor**
+  (`audits/c1-assembly-statements-r2-findings.md`). The export is in `Build/Embed`, and
+  `b2b_capture_shape` stays private, rebased on it. The minor is the name screen's allowlist
+  boundary, fixed in the landing. Next: the landing PR for Embed, NDHost and Inclusions, with
+  about 150 downstream modules to replay.
   **H1 hosted-clock harvest statement gate (2026-10-14):** `audits/h1-harvest-statements-pack.md`
   (folder 20): the public counter loop over the step block in a new `Build/StepBlockLoop.lean`,
   with CodeSimulator's eight private declarations deleted. **CLOSED** (round 1: PASS, 0 blockers /
@@ -993,7 +998,10 @@ The route decisions of 2026-10-12 (design §16b) add three work items, numbered 
   **Landed (2026-10-14, PR #94; replay 76 of 76):** `Build/StepBlockLoop`, CodeSimulator's private
   assembly deleted, `counterValue_bits` and the moved `foldr_bit_eq_ofDigits` in `Build/CounterLoop`;
   new snapshot `oleans-lh1`. R's brief cites the public contracts.
-* **RD-5: §13d G2–G4 after MIG-0b** (§16b item 5). The statements of design §13d's G2–G4, stated as
+* **RD-5: §13d G2–G4 after MIG-0b** (§16b item 5). **G2–G4 statement gate CLOSED (2026-10-14: PASS 0/0/5;
+  `audits/s13d-g24-statements-findings.md`, resolutions `…-resolutions.md`):** both duplication
+  families removed; it lands after MIG-1 S, rebased; G4's fill brief identifies or gates its host
+  first. The statements of design §13d's G2–G4, stated as
   `Contract`s, then their gate and fills, then the Hennie–Stearns assembly. The open zone rows
   `exists_zoneShiftInTM` and `exists_zoneShiftOutTM` retire through the G3/G4 gate.
   **Started (user, 2026-10-14):** the G2–G4 statement pack is being drafted as `Contract`s over

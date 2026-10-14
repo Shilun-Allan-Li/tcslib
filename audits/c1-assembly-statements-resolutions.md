@@ -34,3 +34,30 @@ need no relaxation.
 
 Round 2: the export, its use, the m1–m3 repairs and regenerated evidence, rebuilt at the current tip
 (after #92 and #93), as a new dispatch.
+
+## Round 2 (gate CLOSED)
+
+**Round 2** (`audits/c1-assembly-statements-r2-findings.md`, verbatim; bundle SHA-256
+`e2cd68c2f0762a80603c072106f293f2a94795cbfee00b812d5614e3914708c0`, 65 sections, dispatch folder
+23): **CLOSED, 0 blockers, 0 majors, 1 minor.**
+- **M1 closed:** the public `Turing.embedSilentCfg_cap` (`Build/Embed`), with the auditor's
+  signature and proof. `guessRunCfg_clean` and `Inclusions`' `b2b_capture_shape` cite its two
+  projections. Keeping `b2b_capture_shape` private is justified: it is a whole-configuration
+  identity.
+- **m1 and m2 closed.**
+- **m3 still open,** only as R2-m3.
+- **Freeze:** no existing statement changed.
+- **The shim:** adequate for the gate. The landing compiles the real export.
+
+| # | Severity | Finding | Resolution |
+|---|---|---|---|
+| R2-m3 | minor | `names_asm.py`'s allowlist uses a string-prefix test, so a sibling directory such as `…/assembly-other/` is exempted | **Fixed in the landing's checks:** path-component containment, via `os.path.commonpath`. A sibling-directory collision control must exit 1, and the legitimate round-1 evidence still returns 0 |
+
+**Landing obligations** (the auditor's):
+- compile the real export and its whole dependent closure at landing. `Embed` has about 150
+  downstream modules, so the replay is large;
+- carry UN's setup hypothesis verbatim into UN's fill brief;
+- keep H1's prerequisite separate. It has landed, in #94.
+
+**Next:** one landing PR for `Build/Embed`, `Build/NDHost` and `SpaceComplexity/Inclusions`, at the
+tip after #94 (snapshot `oleans-lh1`), with the R2-m3 repair.
