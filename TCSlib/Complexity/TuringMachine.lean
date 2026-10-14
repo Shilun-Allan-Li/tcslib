@@ -9,6 +9,7 @@ import TCSlib.Complexity.TuringMachine.StateRenaming
 import TCSlib.Complexity.TuringMachine.Finite
 import TCSlib.Complexity.TuringMachine.Nondeterministic
 import TCSlib.Complexity.TuringMachine.NondeterministicSpace
+import TCSlib.Complexity.TuringMachine.ChoiceReplay
 import TCSlib.Complexity.TuringMachine.Oracle
 import TCSlib.Complexity.TuringMachine.OracleFinite
 import TCSlib.Complexity.TuringMachine.OracleNondeterministic
@@ -26,12 +27,14 @@ import TCSlib.Complexity.TuringMachine.Build.Loop
 import TCSlib.Complexity.TuringMachine.Build.Primitives
 import TCSlib.Complexity.TuringMachine.Build.Embed
 import TCSlib.Complexity.TuringMachine.Build.Seam
+import TCSlib.Complexity.TuringMachine.Build.NDHost
 import TCSlib.Complexity.TuringMachine.Build.VirtualInput
 import TCSlib.Complexity.TuringMachine.Build.Zone
 import TCSlib.Complexity.TuringMachine.Build.Catalog
 import TCSlib.Complexity.TuringMachine.Build.OracleCall
 import TCSlib.Complexity.TuringMachine.SymbolLift
 import TCSlib.Complexity.TuringMachine.Build.CounterLoop
+import TCSlib.Complexity.TuringMachine.Build.InputWindow
 import TCSlib.Complexity.TuringMachine.Build.Scan
 import TCSlib.Complexity.TuringMachine.Build.InputCall
 import TCSlib.Complexity.TuringMachine.Build.CfgRecord
@@ -61,6 +64,7 @@ import TCSlib.Complexity.TuringMachine.UniversalInterpreter
 import TCSlib.Complexity.TuringMachine.UniversalBlock
 import TCSlib.Complexity.TuringMachine.Universal
 import TCSlib.Complexity.TuringMachine.NDCodes
+import TCSlib.Complexity.TuringMachine.NDCodeSimulator
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -94,10 +98,13 @@ for the local modifications.
 * `Finite` — the bundled `FinTM` layer carrying `Fintype`/`DecidableEq` state instances;
   all headline definitions are stated over it.
 * `Nondeterministic` — binary-choice nondeterministic machines [AB09, §2.1.2]:
-  choice-word run semantics, all-branch halting, the bundled `FinNDTM` layer, and the
-  deterministic embedding (the classes live in `ClassNP/NTIME`).
+  choice-word run semantics, all-branch halting, the bundled `FinNDTM` layer, the
+  deterministic embedding, and the run-level transfer, slice, relabelling and input-locality
+  lemmas (the classes live in `ClassNP/NTIME`).
 * `NondeterministicSpace` — the space measure of binary-choice NDTMs along choice-word
   runs: visited cells, as for the deterministic `SPACE` [AB09, Definition 4.1].
+* `ChoiceReplay` — choice-tape determinization: the replay machine of an NDTM, which reads its
+  choices from an extra work tape, and the replay lemma [AB09, §2.1.2, Theorem 2.6]. Proved.
 * `Oracle` — oracle machines `OracleTM` [AB09, §3.4]: same configurations, oracle-dependent
   step; the embedding of plain machines and its oracle-independence sanity theorems.
 * `OracleFinite` — the bundled finite layer `FinOracleTM`, carrying well-formedness as a
@@ -109,6 +116,9 @@ for the local modifications.
 * `NDCodes` — codes for nondeterministic machines [AB09, §1.4, §3.2]: the two-work-tape
   coded normal form, its fixed serialization, and the scheme laws with the effective
   (canonizer) form.
+* `NDCodeSimulator` — the interpreter core for nondeterministic codes (C1): the serialization
+  bridge, the per-code replay canonizer and the core `R` [AB09, Exercise 2.6]. The canonizer
+  and the core are sorried.
 * `Simulation` — generic machine-construction gadgets: emission chains, control
   actions, disjoint tape-block embeddings with lockstep run lemmas, the input-head
   rewind, and the two-machine branch union.
@@ -126,6 +136,9 @@ for the local modifications.
   transformers with their returning flavors, seam composition with the
   general-configuration forms and the release adapter, and the space-annotated
   catalog rows.
+* `Build/NDHost` — the nondeterministic phase host over NDTM phases and the choice writer, for
+  the guess-first route of the nondeterministic time hierarchy (C1). The writer's bounded
+  contract is sorried.
 * `Build/VirtualInput` — virtual-input hosting (`machine-library-design.md` §13, Z1): a
   machine whose input is a buffered work-tape word runs inside a host, one step per step.
 * `Build/Zone` — the zoned tape carrier (§13, Z2), under the §13d revision: its two
@@ -137,6 +150,8 @@ for the local modifications.
   unchanged.
 * `Build/CounterLoop` — the counter-driven loop (§12.7) and the pattern expansion
   `expandTM` (§12.8, R8.6).
+* `Build/InputWindow` — the counter-driven copy of a bounded window of the native input onto a
+  work tape (C1; user decision 5 of 2026-10-13). Sorried.
 * `Build/Scan`, `Build/InputCall`, `Build/CfgRecord` — the §12.8 rows, with the field
   layout, compare, seeks and two-pass scan in `Build/Catalog`'s Part 3: the constant and
   advancing writers and the native-input copy and fold; the input call and input seek;
