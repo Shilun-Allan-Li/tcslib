@@ -76,7 +76,8 @@ One public row closes, and no new admission is introduced: every new private is 
 
   At the integration head, the B5a population gives 2,043 / 2,222: exactly the canonizer's two
   pairs are new and the H1 pair is gone (`audits/logs/fills-8-screen-b5a-pairdiff.txt`).
-  **Pending (2026-10-13):** the maintainer r**The combined screen at the integration head** (`audits/logs/fills-8-screen-combined.txt`, 36 files: the union of the two briefs' populations, `audits/evidence/fills-8/combined-screen-population.txt`; the same population at the base, `fills-8-screen-combined-base.txt`): 2,082 / 2,312 → 2,132 / 2,314. Exactly the three disclosed in-file pairs are new, the one H1 pair is gone, and **no cross-batch pair** appears (`audits/logs/fills-8-screen-combined-pairdiff.txt`).s-8-replay.log`, at `b2ab49aa`):
+  **The combined screen at the integration head** (`audits/logs/fills-8-screen-combined.txt`, 36 files: the union of the two briefs' populations, `audits/evidence/fills-8/combined-screen-population.txt`; the same population at the base, `fills-8-screen-combined-base.txt`): 2,082 / 2,312 → 2,132 / 2,314. Exactly the three disclosed in-file pairs are new, the one H1 pair is gone, and **no cross-batch pair** appears (`audits/logs/fills-8-screen-combined-pairdiff.txt`).
+- **Replay** (user-run; `audits/logs/fills-8-replay.log`, at `b2ab49aa`):
   `scripts/lean_check_tree.sh` over the downstream closure of the two changed modules, with fresh
   `.oleans` into `oleans-f8`, a copy of the tip snapshot. **15 modules, 0 errors.** The sorry
   warnings are exactly the open rows: RecordTable 5, CodeSimulator 2, ConfigGraph 1, and the
