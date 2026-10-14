@@ -1034,7 +1034,30 @@ The route decisions of 2026-10-12 (design §16b) add three work items, numbered 
 * **RD-5: §13d G2–G4 after MIG-0b** (§16b item 5). **G2–G4 statement gate CLOSED (2026-10-14: PASS 0/0/5;
   `audits/s13d-g24-statements-findings.md`, resolutions `…-resolutions.md`):** both duplication
   families removed; it lands after MIG-1 S, rebased; G4's fill brief identifies or gates its host
-  first. The statements of design §13d's G2–G4, stated as
+  first.
+  **Two-tape universal (U2) designed (2026-10-14; `audits/evidence/u2/U2-design.md`, probes).**
+  - **The design:** one `k`-generic construction on H2's step block. It has a new public host
+    H2-F (the emitting round loop, in `Build/StepBlockLoop`), U2-S (the startup), U2-U
+    (self-application universal, `C_α·(t+1)` time and `C·(s+1)` space) and U2-E (the code-first
+    evaluator, which re-derives `Turing.universal` at `k = 1`).
+  - The hierarchy needs only U2-U at `k = 2`, on the native input. Hydroxyi's `clockTM` clocks;
+    there is no uniform scheme or input copy.
+  - `Diagonal.lean`'s parameterization over `DiagSimulator Φ` and `SelfSimulator Ψ` is fully
+    proved in the probe, with standard axioms. All four public theorems re-derive verbatim.
+  - **User (2026-10-14), all as recommended:**
+    - (a) B6's `U₀` and its startup are generalized to `k` before B6's `U₀` fill is briefed, with
+      B6's statements kept verbatim as the `k = 1` corollaries;
+    - (b) H2-F becomes a public host, gated hosts-first;
+    - (c) no verdict-only variant;
+    - (d) Theorem 1.9 keeps the relaxed quantifier;
+    - the illustration `DTIME(n+1) ⊊ DTIME((n+1)²)` is dropped, so `Separation`'s log lemma is
+      not copied;
+    - the facade `TimeHierarchy.lean`'s one stale docstring sentence is fixed in the Diagonal PR;
+    - **Diagonal Part 1 (the parameterization) lands early,** by PR plus a small statement gate.
+  - Forwarded to G5's statement phase: `two_work_tapes_run` per run, with the converse; its
+    function-level form; `Nat.log 2` in the statements; a per-run export of the alphabet
+    reduction.
+  - Estimate: about 1.8k–3.3k lines on the hierarchy path (ESTIMATE). The statements of design §13d's G2–G4, stated as
   `Contract`s, then their gate and fills, then the Hennie–Stearns assembly. The open zone rows
   `exists_zoneShiftInTM` and `exists_zoneShiftOutTM` retire through the G3/G4 gate.
   **Started (user, 2026-10-14):** the G2–G4 statement pack is being drafted as `Contract`s over
