@@ -3664,6 +3664,8 @@ written in four idioms).
 **Decisions (user, 2026-10-12):**
 1. **Universe `Type`** for the alphabet, the states and the data index: the universe of
    `FinTM`, `phaseHostTM` and `counterLoopTMVia`. UNIV-1(a) stays an optional generalization.
+   Raw-layer exports that move into `Build/Embed` and `Build/Seam` take their host modules'
+   universes (`Type*`; MIG-0b round 1, finding 2); the contract structures keep `Type`.
 2. **Frames are a derived layer**, not a field. The endpoint already states the frame as
    `{ d with … }`. The layer adds `Cfg.SameOutside` (a per-tape footprint), its composition,
    `.keep` lemmas for stored words and blank tapes, and `Contract.Frames`.
@@ -3743,7 +3745,18 @@ dependent migration:
    `Catalog` and `Mathlib.Tactic.Linarith` (which `CounterLoop` used to supply indirectly), so
    `CounterLoop` is no longer in its closure, but `Loop` still is, through `Catalog`. The core
    part needs only the machine core, apart from `MultiTapeTM.spaceUsedByTape_le_card_Icc`, which
-   lives in `Catalog` and moves down first;
+   lives in `Catalog` and moves down first. **Revised by MIG-0b round 2** (2026-10-13;
+   `audits/mig0b-r2-pack.md`, NOTES-r2 §3):
+   - `spaceUsedByTape_le_card_Icc` and `workTapePos_runFrom_mem_Icc` move to `Finite` (not
+     `Deterministic`);
+   - `runFrom_mapState_of_agreeOn` moves to `StateRenaming`, which then imports `Simulation`;
+   - MIG-0a's private helpers are deleted;
+   - `Build/Seam` promotes its polymorphic release and composition lemmas;
+   - `AlphabetReduction` imports the core;
+   - the Embed exports are stated over `Type*`.
+
+   The core's closure is `Configuration`, `Deterministic`, `Finite`, `Simulation` and
+   `StateRenaming`;
 5. the pointwise release export `seamReleaseTM_runFrom_pos`;
 6. the symbol lift (through `Cfg.decodeSymbols`), state renaming along an embedding
    (`runFrom_mapState_of_agreeOn`), and the alphabet-reduction and robustness-lockstep adapters
@@ -3779,9 +3792,10 @@ obligations above, and no proved statement is false. Both majors concern the lan
 - the release export `seamReleaseTM_runFrom_pos` fixes universes to `Type`, narrower than the
   polymorphic `seamRelease_run_pos` it replaces.
 
-Round 2 is in preparation: a real split, cut-checked without the fit namespace; the polymorphic
-release; and the minors (an entry-compatibility lemma for `Contract.lockstep`, the release's
-wording, the alphabet admission's sketch and reference, and records).
+**Round 2** (`audits/mig0b-r2-pack.md`, re-run at `1781a230`): a real split, cut-checked
+without the fit namespace; the polymorphic release; and the minors (an entry-compatibility
+lemma for `Contract.lockstep`, the release's wording, the alphabet admission's sketch and
+reference, and records).
 
 ### 16b. Five route decisions (user, 2026-10-12)
 
