@@ -4,7 +4,7 @@
 
 - Clone: `https://github.com/Shilun-Allan-Li/tcslib`
 - Check out branch **`complexity/arora-barak-ch3-4`**, this exact branch, NOT `main`.
-- Before you start, confirm that `git merge-base --is-ancestor @ANCESTOR@ HEAD`
+- Before you start, confirm that `git merge-base --is-ancestor 8dfbc88195ece4448d2262b34f156268e4572e3c HEAD`
   succeeds. That commit contains:
   - the fills-8 integration (`audits/fills-8-integration.md`), with the fourth continuation's report
     `audits/wave1-fill-agent-reports/recordtable-5-REPORT.md` (row 17 proved);
@@ -19,8 +19,8 @@
 - **Branch at exactly that commit, not at the campaign tip** (maintainer decision; new this round):
 
   ```sh
-  git checkout -b fill/w1-recordtable-cont5 @ANCESTOR@
-  git rev-parse HEAD        # must print @ANCESTOR@
+  git checkout -b fill/w1-recordtable-cont5 8dfbc88195ece4448d2262b34f156268e4572e3c
+  git rev-parse HEAD        # must print 8dfbc88195ece4448d2262b34f156268e4572e3c
   ```
 
   Record that hash as your base in `REPORT.md`. Never rebase, merge or cherry-pick later campaign
@@ -33,7 +33,7 @@
   says what the pinned base means for your citations.
 - **Delivery is by zip, not PR or push** (`workflow.md` §4): `fill-w1-recordtable-cont5.zip`,
   containing `REPORT.md`, the full modified source, a `git format-patch` series against
-  `@ANCESTOR@`, a git bundle whose only prerequisite is `@ANCESTOR@`, the bootstrap and final sweep
+  `8dfbc88195ece4448d2262b34f156268e4572e3c`, a git bundle whose only prerequisite is `8dfbc88195ece4448d2262b34f156268e4572e3c`, the bootstrap and final sweep
   logs, the axiom log, the sanity evidence file and its log, both screen outputs, and `SHA256SUMS`.
 
 ## Parallel batches this round (disjoint files or declarations; never edit another batch's)
@@ -71,7 +71,7 @@ earlier briefs `briefs/w1-fill-recordtable-cont4.md` and `briefs/w1-fill-recordt
 whose gate guidance still binds for this row; design §12.8b and §16b item 3; `Build/RecordTable.lean`;
 the pre-ship overlay `audits/evidence/w1-fill-recordtable-cont5/RecordTableOverlay.lean.txt`.
 
-**Pre-ship check (maintainer, executed at the issue tree `1b6b972c`, which `@ANCESTOR@` extends without
+**Pre-ship check (maintainer, executed at the issue tree `1b6b972c`, which `8dfbc88195ece4448d2262b34f156268e4572e3c` extends without
 a Lean change; `audits/logs/w1-fill-recordtable-cont5-preship.log`):**
 - `audits/evidence/w1-fill-recordtable-cont5/RT5ImportProbe.lean.txt` (86 `#check`s): every public
   declaration this brief cites, and every one its pitfalls and prohibitions name, resolves in your
@@ -272,7 +272,7 @@ tags) enters row 18's statement, and your proof needs none of them. Do not cite 
   in an evidence file `RT5Sanity.lean.txt`, as your `W1Cont4Sanity.lean` did, and include it and its
   log in the zip.
 
-## Cited infrastructure (public and proved at `@ANCESTOR@`; all in `RT5ImportProbe.lean.txt`)
+## Cited infrastructure (public and proved at `8dfbc88195ece4448d2262b34f156268e4572e3c`; all in `RT5ImportProbe.lean.txt`)
 
 - **RecordTable:** `exists_recordTemplateTM` (row 17), `recordTemplate`, `recordLength`,
   `cfgRecord_init`, `binDigits_posWidth_succ`, `joinFields_length`, `fieldOffset_length`,
@@ -333,7 +333,7 @@ tags) enters row 18's statement, and your proof needs none of them. Do not cite 
 9. **Continuation budget.** If your budget runs out, deliver a partial zip whose `REPORT.md` states
    whether the target is proved, which `private` helpers remain `sorry` (each with a literal "Proof
    sketch"), and what is proved modulo them. A partial is expected and fine; an unreported gap is not.
-10. **The pinned base** (new, binding). Cite only declarations that are public at `@ANCESTOR@`, and
+10. **The pinned base** (new, binding). Cite only declarations that are public at `8dfbc88195ece4448d2262b34f156268e4572e3c`, and
     your file's own privates.
     - Since MIG-0b, Seam's release lemmas are public (`seamReleaseTM_runFrom_pos` and the rest), and
       `counterLoopOrbit` is an `abbrev` of `roundOrbit`. Row 18 needs neither a release nor a counter
@@ -456,7 +456,7 @@ If a proof seems to *need* one of these beyond a named citation, that is an esca
 ## REPORT.md checklist
 
 - [ ] 1/1, or the partial frontier (rule 9); the base hash (`git rev-parse HEAD` at branch creation,
-      equal to `@ANCESTOR@`) and the ancestor check.
+      equal to `8dfbc88195ece4448d2262b34f156268e4572e3c`) and the ancestor check.
 - [ ] Every new declaration with its role. Whether the three prescribed privates were taken verbatim;
       the tail writer as suggested or your own, with any change to `rt_tail_run`'s statement and its
       reason; the position-field variant used. Every flagged appendix, status update and import.
