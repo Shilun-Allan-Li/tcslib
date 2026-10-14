@@ -32,7 +32,7 @@ None — the loop's round, chunk and initial state are private to this file.
 
 * [AB09] S. Arora, B. Barak, *Computational Complexity: A Modern Approach*,
   Cambridge University Press, 2009. (§7.4.1, repeated trials with a majority
-  vote; Theorem 7.17.)
+  vote; Theorem 7.14.)
 -/
 
 namespace Complexity

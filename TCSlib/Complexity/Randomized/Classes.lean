@@ -25,7 +25,7 @@ set_option autoImplicit false
 # The randomized complexity classes BPP, RP, coRP, ZPP
 
 Verifier-style definitions of Arora–Barak's randomized complexity classes,
-following the certificate view of [AB09, Def 7.4]: a language is in a
+following the certificate view of [AB09, Def 7.3]: a language is in a
 randomized class when some efficient two-input predicate `M(x, r)`, run on the
 input `x` and a uniformly random string `r` of polynomially-bounded length,
 decides membership with the class's acceptance-probability profile.
@@ -38,7 +38,7 @@ decides membership with the class's acceptance-probability profile.
   `n ↦ a·(n+1)^k` for random strings.
 * `Randomized.VerifierModel` — an abstract *efficiency notion* standing in for
   "polynomial-time Turing machine" (see **Deviations** below).
-* `Randomized.InBPP` — [AB09, Def 7.4] (equivalently Def 7.1 via the
+* `Randomized.InBPP` — [AB09, Def 7.3] (equivalently Def 7.2 via the
   certificate view).
 * `Randomized.InRP`, `Randomized.InCoRP` — [AB09, Def 7.6] and the remark
   following it.
@@ -50,7 +50,7 @@ decides membership with the class's acceptance-probability profile.
 ## Main results
 
 * `Randomized.inZPP_iff_inRP_and_inCoRP` — `ZPP = RP ∩ coRP` [AB09, Thm 7.8].
-* `Randomized.InBPP.compl` — `BPP = coBPP` (used by [AB09, Thm 7.18]).
+* `Randomized.InBPP.compl` — `BPP = coBPP` (used by [AB09, Thm 7.15]).
 * `Randomized.bpp_error_reduction` — error reduction [AB09, Thm 7.10].
 * `Randomized.inBPPWeak_iff_inBPP` — `BPP_{n^{-c}} = BPP` [AB09, Lem 7.9].
 
@@ -58,7 +58,7 @@ decides membership with the class's acceptance-probability profile.
 
 * **Machine model.** [AB09] defines these classes with polynomial-time Turing
   machines.  Per the repository's agreed scope, we use the certificate view of
-  [AB09, Def 7.4] — predicates over inputs and random strings — and replace
+  [AB09, Def 7.3] — predicates over inputs and random strings — and replace
   "`M` is a polynomial-time TM" by membership in an abstract
   `VerifierModel` `E`, a predicate on verifiers.  Every class and theorem is
   parametrized by `E`.  The closure properties that [AB09]'s proofs use
@@ -68,7 +68,7 @@ decides membership with the class's acceptance-probability profile.
   Intended instantiation targets, once a uniform-computability layer is
   available: the `P`/`PolyTime` development of the `complexity/arora-barak-ch1`
   branch, or Mathlib's `Turing.TM2ComputableInPolyTime`.
-* **Length schedules.** [AB09, Def 7.4] draws `r ∈ {0,1}^{p(|x|)}` for a
+* **Length schedules.** [AB09, Def 7.3] draws `r ∈ {0,1}^{p(|x|)}` for a
   polynomial `p`.  We fix the canonical schedule `polyLen a k : n ↦ a·(n+1)^k`
   (existentially quantified over `a, k : ℕ`) rather than an arbitrary
   `p : ℕ → ℕ` with a polynomial bound: an arbitrary bounded `p` need not be
@@ -90,7 +90,7 @@ decides membership with the class's acceptance-probability profile.
   `BPP_{n^{-c}}` empty; we require advantage `min (1/6) ((|x|+1)^{-c})`
   instead, which for `c ≥ 1` agrees with the book's (up to the `n+1` shift) for
   `|x| ≥ 5` and makes `BPP ⊆ BPP_{n^{-c}}` hold as the book intends.
-* The constant `2/3` follows [AB09, Defs 7.1/7.6]; `1/2` in `InZPP` is the
+* The constant `2/3` follows [AB09, Defs 7.2/7.6]; `1/2` in `InZPP` is the
   conventional choice (any constant in `(0,1)` gives the same class, by the
   same repetition argument as [AB09, §7.4.1]).
 
@@ -106,7 +106,7 @@ open Finset
 
 /-- The probability, over a uniformly random string `r ∈ {0,1}^m`, that the
 event `A` holds of `r` (as a list): the counting ratio `#{r : A r}/2^m`.
-[AB09, Def 7.4: "`Pr_{r ∈_R {0,1}^{p(|x|)}}`"] -/
+[AB09, Def 7.3: "`Pr_{r ∈_R {0,1}^{p(|x|)}}`"] -/
 def randProb (m : ℕ) (A : List Bool → Prop) [DecidablePred A] : ℚ :=
   ((univ.filter fun r : Fin m → Bool => A (List.ofFn r)).card : ℚ) / 2 ^ m
 
@@ -241,19 +241,19 @@ theorem randProb_take {m₁ m : ℕ} (h : m₁ ≤ m) (A : List Bool → Prop)
     _ = randProb m₁ A := by rw [randProb_true, mul_one]
 
 /-- The canonical polynomial length schedule `n ↦ a·(n+1)^k` for random
-strings — a concrete, computable stand-in for [AB09, Def 7.4]'s "polynomial
+strings — a concrete, computable stand-in for [AB09, Def 7.3]'s "polynomial
 `p`" (see the module docstring's **Deviations**: an arbitrary polynomially
 *bounded* `ℕ → ℕ` need not be computable and would let the schedule itself
 decide undecidable languages). -/
 def polyLen (a k : ℕ) : ℕ → ℕ := fun n => a * (n + 1) ^ k
 
 /-- An abstract *efficiency notion* for verifiers, standing in for
-"polynomial-time Turing machine" in [AB09, Def 7.4] (see the module
+"polynomial-time TM" in [AB09, Def 7.3] (see the module
 docstring's **Deviations**).  `Eff M` reads "`M` is an efficient verifier";
 verifiers are `Option Bool`-valued so that zero-error ("don't know") verifiers
 and ordinary Boolean verifiers share one notion.  `EffTwoWitness N` is the
 corresponding notion for predicates of an input and two witness strings, the
-verifier format of `Σ₂`-statements (used by [AB09, Thm 7.18]).  Intended
+verifier format of `Σ₂`-statements (used by [AB09, Thm 7.15]).  Intended
 instantiations: a polynomial-time TM layer (the `complexity/arora-barak-ch1`
 branch's `PolyTime`, or Mathlib's `Turing.TM2ComputableInPolyTime`). -/
 structure VerifierModel where
@@ -272,7 +272,7 @@ variable (E : VerifierModel)
 /-- `L ∈ BPP`: some efficient verifier `M` with polynomially-long randomness
 decides `L` with two-sided error at most `1/3` — for every input `x`,
 `Pr_{r ∈ {0,1}^{p(|x|)}}[M(x,r) = L(x)] ≥ 2/3`, where `p = polyLen a k`.
-[AB09, Def 7.4] (the certificate form of [AB09, Def 7.1]). -/
+[AB09, Def 7.3] (the certificate form of [AB09, Def 7.2]). -/
 def InBPP (L : Language Bool) : Prop :=
   ∃ (M : List Bool → List Bool → Bool) (a k : ℕ),
     E.Eff (boolVerifier M) ∧
@@ -713,7 +713,7 @@ end Counting
 
 /-- `BPP` is closed under complementation (`BPP = coBPP`): swap the two
 acceptance clauses and negate the verifier's answer.  Used by
-[AB09, Thm 7.18]'s proof ("it is enough to prove `BPP ⊆ Σ₂ᵖ` because `BPP`
+[AB09, Thm 7.15]'s proof ("it is enough to prove that `BPP ⊆ Σ₂ᵖ` because `BPP`
 is closed under complementation").
 
 **Proof sketch.** If `M` decides `L` with two-sided error `1/3`, then

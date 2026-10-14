@@ -11,22 +11,22 @@ import TCSlib.Complexity.Expanders.Chernoff
 /-!
 # Expander Graphs
 
-The spectral theory of expander graphs from Arora–Barak's appendices 7.A and
-7.B, developed model-free over symmetric stochastic matrices (the normalized
+The spectral theory of expander graphs from Arora–Barak's §§21.1 and
+21.2, developed model-free over symmetric stochastic matrices (the normalized
 adjacency matrices of regular multigraphs).
 
 ## Contents
 
 - `Expanders.Basic`: symmetric stochastic matrices, the uniform distribution,
-  and the parameter `λ(A)` ([AB09, Def 7.25]), with its basic bounds
-  `0 ≤ λ ≤ 1` ([AB09, Rmk 7.26]).
-- `Expanders.Mixing`: the Expander Mixing Lemma ([AB09, Lem 7.37]), in the
+  and the parameter `λ(A)` ([AB09, Def 21.2]), with its basic bounds
+  `0 ≤ λ ≤ 1` ([AB09, after Def 21.2]).
+- `Expanders.Mixing`: the Expander Mixing Lemma ([AB09, Lem 21.11]), in the
   normalized form `|⟨𝐬, A𝐭⟩ − |S||T|/n| ≤ λ√(|S||T|)`.
 - `Expanders.Walks`: the operator-norm decomposition `A = (1−λ)J + λC`
-  ([AB09, Lem 7.40]), the random-walk distribution `walkPMF`, and the
-  expander-walk escape bound ([AB09, Thm 7.38]).
-- `Expanders.Chernoff`: the Expander Chernoff Bound ([AB09, Thm 7.41], with
-  the draft's sign erratum corrected).
+  ([AB09, Lem 21.14]), the random-walk distribution `walkPMF`, and the
+  expander-walk escape bound ([AB09, Thm 21.12]).
+- `Expanders.Chernoff`: the Expander Chernoff Bound ([AB09, Thm 21.15], with
+  the constant `60` in place of the book's `4`).
 
 ## References
 

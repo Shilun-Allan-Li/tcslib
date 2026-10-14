@@ -23,7 +23,7 @@ is correct with probability `p ≥ 1/2 + ε` and take the majority; the
 probability that the majority is wrong is exponentially small in `k`.
 
 This file states the machine-independent core over i.i.d. Bernoulli random
-variables: the Chernoff-type concentration bound [AB09, Cor 7.11] and the
+variables: the Chernoff-type concentration bound [AB09, Cor A.15] and the
 majority-vote error bound instantiating [AB09, Thm 7.10]'s calculation.
 Wrapping these into statements about `BPP`-style verifier classes is Tier B
 work and lives elsewhere.
@@ -39,7 +39,7 @@ work and lives elsewhere.
 
 ## Main results
 
-* `Randomized.iid_bernoulli_avg_concentration` — [AB09, Cor 7.11], with a
+* `Randomized.iid_bernoulli_avg_concentration` — [AB09, proof of Thm 7.10], with a
   corrected constant (see **Deviations**).
 * `Randomized.majority_error_le` — the calculation proving [AB09, Thm 7.10].
 * `Randomized.iidBernoulli_tail_le` — the shared one-sided Hoeffding bound,
@@ -48,23 +48,22 @@ work and lives elsewhere.
 
 ## Deviations from the source
 
-* [AB09, Cor 7.11] is stated for abstract i.i.d. Boolean random variables
-  `X₁,…,X_k` with `Pr[Xᵢ = 1] = p`; we realize them concretely as the product
+* [AB09, proof of Thm 7.10] uses independent Boolean random variables
+  `X₁,…,X_k` with `Pr[Xᵢ = 1] ≥ p`; we take `Pr[Xᵢ = 1] = p` and realize them as the product
   measure of `k` Bernoulli(`p`) distributions on `Fin k → Bool`, which is the
   same joint distribution.
-* **Erratum.** [AB09, Cor 7.11] prints the bound
-  `Pr[|(1/k)ΣXᵢ − p| > δ] < e^{−(δ²/4)pk}`, which is false: for a single
-  trial (`k = 1`) with `p = 1/2` and `δ = 1/4`, the deviation event has
-  probability `1` while the claimed bound is `e^{−1/128} < 1`.  We state the
+* **Erratum.** [AB09, proof of Thm 7.10] prints the bound
+  `Pr[|ΣXᵢ − pk| > δpk] < e^{−(δ²/4)pk}` "for δ sufficiently small" (citing its
+  Cor A.15), which is false even so: for a single trial (`k = 1`) with `p = 1/2`,
+  the deviation event has probability `1` for every `δ < 1`, while the bound
+  `e^{−δ²/8}` is below `1`.  We state the
   standard two-sided Hoeffding bound `≤ 2·e^{−2δ²k}` instead, which is what
   the error-reduction argument needs.
 * [AB09, Thm 7.10] is stated for polynomial-time PTMs, with
   `p = 1/2 + |x|^{−c}` and final bound `2^{−|x|^d}`; `majority_error_le` is
   its probabilistic content with `ε` in place of `|x|^{−c}`: the one-sided
   Hoeffding bound gives majority error at most `e^{−2ε²k}`, which for
-  `k = Θ((n+1)^{2c+d})` is at most `2^{−(n+1)^d}`.  The book's displayed
-  intermediate step normalizes the sum by `1/n` where `1/k` is meant; we
-  state it with `1/k`.
+  `k = Θ((n+1)^{2c+d})` is at most `2^{−(n+1)^d}`.
 
 ## References
 
@@ -78,8 +77,8 @@ open MeasureTheory
 open scoped NNReal ENNReal
 
 /-- The joint distribution of `k` independent Bernoulli(`p`) trials, as a
-measure on `Fin k → Bool`.  [AB09, Cor 7.11: "independent identically
-distributed Boolean random variables"] -/
+measure on `Fin k → Bool`.  [AB09, proof of Thm 7.10: "independent Boolean
+random variables"] -/
 noncomputable def iidBernoulli (k : ℕ) (p : ℝ≥0) (hp : p ≤ 1) :
     Measure (Fin k → Bool) :=
   Measure.pi fun _ => (PMF.bernoulli p hp).toMeasure
@@ -231,7 +230,7 @@ theorem iidBernoulli_tail_le {p : ℝ≥0} (hp : p ≤ 1) {k : ℕ} (hk : 0 < k)
   ring
 
 /-- **Concentration for i.i.d. Boolean trials** (the role of
-[AB09, Cor 7.11], stated as the two-sided Hoeffding bound).  Let `X₁,…,X_k`
+[AB09, proof of Thm 7.10], stated as the two-sided Hoeffding bound).  Let `X₁,…,X_k`
 be i.i.d. Boolean random variables with `Pr[Xᵢ = 1] = p`, and `δ > 0`.  Then
 `Pr[|(1/k)Σᵢ Xᵢ − p| > δ] ≤ 2·e^{−2δ²k}`.
 
