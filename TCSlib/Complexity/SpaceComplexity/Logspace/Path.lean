@@ -7,6 +7,7 @@ import Mathlib.Logic.Relation
 import TCSlib.Complexity.SpaceComplexity.Logspace.Reductions
 import TCSlib.Complexity.SpaceComplexity.ConfigGraph
 import TCSlib.Complexity.SpaceComplexity.Logspace.PathWalkProof
+import TCSlib.Complexity.SpaceComplexity.Logspace.PathHardDecide
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -48,7 +49,8 @@ encoding.
 * `Complexity.PATH_mem_NL` — the nondeterministic walk (proved, by the
   nondeterministic register machine of `Logspace.PathWalk`). [AB09, Example 4.7,
   the `PATH ∈ NL` paragraph]
-* `Complexity.PATH_NLComplete` — [AB09, Theorem 4.18] (sorried).
+* `Complexity.PATH_NLComplete` — [AB09, Theorem 4.18] (proved: hardness by the
+  configuration-graph reduction of `Logspace.PathHard`).
 
 ## References
 
@@ -177,33 +179,32 @@ theorem PATH_mem_NL : PATH ∈ NL := by
   rw [PATH_eq_pathRawLang]
   exact pathRawLang_mem_NL
 
-/-- **`PATH` is `NL`-complete** ([AB09, Theorem 4.18]; spec, fill pending —
-phase P4.4): membership is `Complexity.PATH_mem_NL`; hardness maps a
-language's machine-and-input to its configuration graph.
+/-- **`PATH` is `NL`-complete** ([AB09, Theorem 4.18]): membership is
+`Complexity.PATH_mem_NL`; hardness maps a language's machine-and-input to its configuration
+graph.
 
-**Proof sketch.** For `B ∈ NL` decided by `N` in space `c₀ · logSpace`, the
-reduction sends `x` to `⟨G_{N,x}, C_start, C_accept⟩`: vertices are the
-coded configuration-graph vertices of
-`Turing.NDTM.coreSum`/`Turing.FinNDTM.configBound` at window
-`c₀ · logSpace |x|` — polynomially many, each code logarithmically
-indexable — with the accepting side normalized to a single target vertex
-(the erase-and-park normalization — **assigned for discharge here**, not
-already closed: the received `Machines/Clean` cleanTM is the model only, and
-the P0 record notes it does not reset the input head, so the normalization
-must also park the input head and re-prove acceptance, all-branch halting,
-and the space constant for the normalized machine; round-1 audit, note 4). `x ∈ B` iff the target is reachable
-(`Turing.FinNDTM.DecidesInSpace.mem_iff_acceptsWithin_configBound` with
-`Turing.NDTM.reflTransGen_cfgStep_iff`, phase P4.2). The reduction is
-**implicitly logspace computable**: a bit query `⟨x, i⟩` locates `i` inside
-the layered encoding by binary arithmetic (unary count, matrix block,
-endpoint blocks) and, for a matrix bit, decides adjacency of the two decoded
-vertex codes by one local transition-table check — a fixed family of
-`LOGSPACE` deciders assembled by the received `arm_decides`; the length
-query is pure arithmetic in `i`. Fill obligations, named: the vertex
-numbering and its index arithmetic; the adjacency decider; the accepting
-normalization; the two `indexLang` memberships; and the final
-`Complexity.NLComplete` packaging over `≤ₗ`. -/
+**Proof sketch.** Membership is `PATH_mem_NL`. For hardness, `PATH` is the raw language
+`pathRawLang` (`PATH_eq_pathRawLang`), and every `B ∈ NL` reduces to it
+(`Complexity.pathRawLang_NLHard`): if `N` decides `B` in space `c₀ · logSpace`, the
+reduction `Complexity.PathHard.red N c₀` sends `x` to the graph on `n = 2 ^ E` vertices
+(`E = K (c₀ + 1) ℓ + K + 2`, `ℓ = |bits (|x| + 1)|`, `K = codeK N`, so `n` is polynomial in
+`|x|`) whose vertex `c + 2` is the configuration code `c` at radius `s = c₀ ℓ`, with a
+source `0` joined to the initial codes, a target `1` joined from the accepting codes, and the
+step pairs of the codec as the remaining edges. Then `x ∈ B` iff `1` is reachable from `0`
+(`PathHard.red_mem_iff`, from the bridge lemma `Complexity.Codec.mem_iff_codeChain` and
+`Complexity.Codec.mem_of_codePath`); no accepting normalization of `N` is needed, since the
+target collects all accepting codes. The reduction is implicitly logspace computable
+(`PathHard.implicitlyLogspaceComputable_red`): its length `2n² + 2n + 7` is polynomial, and
+a register machine (`PathHard.A`) answers a bit or length query `⟨x, bits i⟩` by parsing the
+query, computing `E` and the block lengths by counting loops, decoding `i`, locating it in
+the layout (unary block, separator, doubled adjacency word, tail) by comparisons and
+subtractions, splitting a matrix offset into a vertex pair by halving and shifting, and
+asking the logspace initial-, accepting- or step-code decider of the codec (read through
+`Complexity.dropIdx`); `Complexity.LogProg.arm_decides_poly` turns it into a logspace
+decider. -/
 theorem PATH_NLComplete : NLComplete PATH := by
-  sorry
+  refine ⟨PATH_mem_NL, fun B hB => ?_⟩
+  rw [PATH_eq_pathRawLang]
+  exact pathRawLang_NLHard hB
 
 end Complexity

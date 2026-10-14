@@ -83,6 +83,9 @@ then consumes as its left exit (`Turing.captureAction`'s and
 
 * `Turing.MultiTapeTM.runFrom_mapState_of_agreeOn` — injective state transport
   followed by guarded agreement on the host carrier.
+* `Turing.embedEmitTM_tr` — the forwarding transformer's transition at the action level:
+  the source action on each selected tape, `(none, 0)` on every other tape, and the input
+  move, output and successor state unchanged (12.2c item 6's export).
 * `Turing.embedSilentTM_runFrom`, `Turing.embedEmitTM_runFrom` — lockstep:
   the transported run is the transport of the source run, same step count.
 * `Turing.embedSilentTM_frame`, `Turing.embedEmitTM_frame` — tapes outside
@@ -251,6 +254,29 @@ def embedEmitTM (ι : Fin m ↪ Fin k) (M : MultiTapeTM m Symbol S) :
   q₀ := M.q₀
   tr := fun q inp w =>
     embedActionCore ι none (M.tr q inp fun i => w (ι i))
+
+/-- **R1, the forwarding transformer's transition** (12.2c item 6's prerequisite export;
+user, 2026-10-10, from the RB5 review). One host transition of `embedEmitTM ι M` is the
+source transition, read through `ι` and transported along it. Each selected host tape
+`ι i` performs the source's tape-`i` action. Every unselected tape is stationary and
+unwritten, `(none, 0)`. The input move, the output and the successor state are the
+source's. Consumers cite this rather than unfolding the private slot search. [Bon26]
+
+**Proof sketch.** `embedEmitTM` is `embedActionCore ι none` of the source action. The
+selected and unselected tapes are the slot inverse's two equations, `embedSlot ι (ι i) =
+some i` and `embedSlot ι j = none` off `Set.range ι`. The other three fields are copied
+verbatim. -/
+theorem embedEmitTM_tr (ι : Fin m ↪ Fin k) (M : MultiTapeTM m Symbol S) (q : S)
+    (inp : Option Symbol) (w : Fin k → Option Symbol) :
+    ((embedEmitTM ι M).tr q inp w).inputTape = (M.tr q inp fun i => w (ι i)).inputTape ∧
+      (∀ i, ((embedEmitTM ι M).tr q inp w).workTapes (ι i) =
+        (M.tr q inp fun i => w (ι i)).workTapes i) ∧
+      (∀ j, j ∉ Set.range ι → ((embedEmitTM ι M).tr q inp w).workTapes j = (none, 0)) ∧
+      ((embedEmitTM ι M).tr q inp w).output = (M.tr q inp fun i => w (ι i)).output ∧
+      ((embedEmitTM ι M).tr q inp w).state = (M.tr q inp fun i => w (ι i)).state := by
+  refine ⟨rfl, fun i => ?_, fun j hj => ?_, rfl, rfl⟩
+  · simp [embedEmitTM, embedActionCore, embedSlot_selected]
+  · simp [embedEmitTM, embedActionCore, embedSlot_unselected ι j hj]
 
 /-- Applying the silent core commutes with configuration transport.
 **Proof sketch.** Selected tapes perform the source action. Off-bank tapes

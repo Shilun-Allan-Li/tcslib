@@ -18,8 +18,9 @@ notion that the library's control combinators speak, plus the pure list/
 arithmetic functions that the primitive contracts in
 `TCSlib.Complexity.TuringMachine.Build.Primitives` are stated against.
 
-**Status: proved.** This module is fully proved (definitions and two
-glue lemmas), and the sibling `Build` modules' contracts stated against
+**Status: proved.** This module is fully proved (definitions, two glue
+lemmas, and the two `incFixed` laws promoted at CH34-D4), and the sibling
+`Build` modules' contracts stated against
 it are now all proved as well (library fill batches and the emitter
 increment; zero sorries). The `Build` surface was new Chapter-1 growth,
 audited in the shared infrastructure and emitter rounds
@@ -51,6 +52,8 @@ generic clearing pass.
 * `Turing.solveSplit` — least solution `i ≤ n` of the padding length
   equation `i + C·(i+1)^e = n`, or `none` (the split-search discipline of
   the padding constructions).
+* `Turing.incFixed_replicate_true_append`, `Turing.incFixed_eq_none_iff_replicate` — the
+  increment's carry through a `true` prefix and its overflow criterion (CH34-D4).
 * `Turing.incFixed` — little-endian fixed-width binary increment with
   explicit overflow (`none`), width preserved (the enumerator's counter
   discipline; width zero overflows immediately).
@@ -120,6 +123,36 @@ def incFixed : List Bool → Option (List Bool)
   | [] => none
   | false :: rest => some (true :: rest)
   | true :: rest => (incFixed rest).map (false :: ·)
+
+/-- `Turing.incFixed` carries through a prefix of `true` bits: the prefix
+`1ⁿ` becomes `0ⁿ` and the remainder `w` is incremented, the width is kept,
+and the whole word overflows exactly when `w` does. Shared by the catalog's
+increment routine and the `EXPCOM` deadline guard (CH34-D4).
+
+**Proof sketch.** Induct on `n`. Each leading `true` is one step of the carry
+clause of `incFixed`, which prepends one `false` to the incremented tail. -/
+theorem incFixed_replicate_true_append (n : ℕ) (w : List Bool) :
+    incFixed (List.replicate n true ++ w) =
+      (incFixed w).map (List.replicate n false ++ ·) := by
+  induction n with
+  | zero => simp
+  | succ n ih =>
+    simp [List.replicate_succ, incFixed, ih, Option.map_map, Function.comp_def]
+
+/-- **The overflow criterion of `Turing.incFixed`**: the increment overflows
+exactly on the all-`true` word (the empty word included). The public home of
+the criterion, promoted per the fills-6 request F6-1(e) (CH34-D4).
+
+**Proof sketch.** Induct on `u`. The empty word overflows. A leading `false`
+never overflows, and the word is then not all `true`. After a leading `true`,
+the word overflows exactly when its tail does, and is all `true` exactly when
+its tail is. -/
+theorem incFixed_eq_none_iff_replicate (u : List Bool) :
+    incFixed u = none ↔ u = List.replicate u.length true := by
+  induction u with
+  | nil => simp [incFixed]
+  | cons b u ih =>
+    cases b <;> simp [incFixed, ih, List.replicate_succ]
 
 /-- **Emitter-increment vocabulary** (design §11): least
 solution `i ≤ n` of the width-parametric split equation `i + f i = n`, or

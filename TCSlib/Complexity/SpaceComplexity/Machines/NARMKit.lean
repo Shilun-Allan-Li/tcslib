@@ -5,6 +5,7 @@ Authors: Hydroxyi
 -/
 import TCSlib.Complexity.SpaceComplexity.Machines.NARM
 import TCSlib.Complexity.SpaceComplexity.Logspace.InputAccess
+import TCSlib.Complexity.SpaceComplexity.Machines.VWord
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -45,7 +46,9 @@ result of the book; it is written for `Complexity.PATH_mem_NL`.
 * `Complexity.LogProg.NTerm.nhalts`, `Complexity.LogProg.NSem.decides`.
 * the step lemmas `NSem.det`, `NSem.choose`, `NSem.inc`, `NSem.clr`, `NSem.half`,
   `NSem.jeq_pos`, `NSem.jeq_neg`, `NSem.jz_pos`, `NSem.jz_neg`, `NSem.jodd_pos`,
-  `NSem.jodd_neg`, `NSem.call_pos`, `NSem.call_neg`, `NSem.ret`.
+  `NSem.jodd_neg`, `NSem.call_pos`, `NSem.call_neg`, `NSem.ret`, and `nsem_dec`,
+  `nsem_call₂_pos`, `nsem_call₂_neg`, `nsem_call₃_pos`, `nsem_call₃_neg` (decrements and
+  `whole`-mode calls on two and three registers).
 * the loops `Complexity.LogProg.nsem_guess`, `Complexity.LogProg.nsem_copy`,
   `Complexity.LogProg.nsem_addTwice`.
 
@@ -260,6 +263,47 @@ lemma NSem.call_neg {l l₁ l₀ : Λ} {j : Fin d} {r : Fin m}
     (hG : G (some l, v, none)) (he : oracle j (pairEncode x (Nat.bits (v r))) = false)
     (h : NSem A oracle x G (some l₀, v, none) P) : NSem A oracle x G (some l, v, none) P :=
   NSem.det hA hG (by simpa only [astep, vword_whole₁, he, Bool.false_eq_true, if_false] using h)
+
+/-- A decrement. -/
+lemma nsem_dec {l l' : Λ} {r : Fin m} (hA : A l = .det (.dec r l')) {v : Fin m → ℕ}
+    {P : Prop} (hG : G (some l, v, none))
+    (h : NSem A oracle x G (some l', Function.update v r (v r - 1), none) P) :
+    NSem A oracle x G (some l, v, none) P :=
+  NSem.det hA hG (by simpa only [astep] using h)
+
+/-- A `whole`-mode call on two registers that answers `true`. -/
+lemma nsem_call₂_pos {l l₁ l₀ : Λ} {j : Fin d} {r s : Fin m}
+    (hA : A l = .det (.call j .whole [r, s] l₁ l₀)) {v : Fin m → ℕ} {P : Prop}
+    (hG : G (some l, v, none))
+    (he : oracle j (pairEncode x (pairEncode (Nat.bits (v r)) (Nat.bits (v s)))) = true)
+    (h : NSem A oracle x G (some l₁, v, none) P) : NSem A oracle x G (some l, v, none) P :=
+  NSem.det hA hG (by simpa only [astep, vword_whole₂, he, if_true] using h)
+
+/-- A `whole`-mode call on two registers that answers `false`. -/
+lemma nsem_call₂_neg {l l₁ l₀ : Λ} {j : Fin d} {r s : Fin m}
+    (hA : A l = .det (.call j .whole [r, s] l₁ l₀)) {v : Fin m → ℕ} {P : Prop}
+    (hG : G (some l, v, none))
+    (he : oracle j (pairEncode x (pairEncode (Nat.bits (v r)) (Nat.bits (v s)))) = false)
+    (h : NSem A oracle x G (some l₀, v, none) P) : NSem A oracle x G (some l, v, none) P :=
+  NSem.det hA hG (by simpa only [astep, vword_whole₂, he, Bool.false_eq_true, if_false] using h)
+
+/-- A `whole`-mode call on three registers that answers `true`. -/
+lemma nsem_call₃_pos {l l₁ l₀ : Λ} {j : Fin d} {r s t : Fin m}
+    (hA : A l = .det (.call j .whole [r, s, t] l₁ l₀)) {v : Fin m → ℕ} {P : Prop}
+    (hG : G (some l, v, none))
+    (he : oracle j (pairEncode x (pairEncode (Nat.bits (v r))
+      (pairEncode (Nat.bits (v s)) (Nat.bits (v t))))) = true)
+    (h : NSem A oracle x G (some l₁, v, none) P) : NSem A oracle x G (some l, v, none) P :=
+  NSem.det hA hG (by simpa only [astep, vword_whole₃, he, if_true] using h)
+
+/-- A `whole`-mode call on three registers that answers `false`. -/
+lemma nsem_call₃_neg {l l₁ l₀ : Λ} {j : Fin d} {r s t : Fin m}
+    (hA : A l = .det (.call j .whole [r, s, t] l₁ l₀)) {v : Fin m → ℕ} {P : Prop}
+    (hG : G (some l, v, none))
+    (he : oracle j (pairEncode x (pairEncode (Nat.bits (v r))
+      (pairEncode (Nat.bits (v s)) (Nat.bits (v t))))) = false)
+    (h : NSem A oracle x G (some l₀, v, none) P) : NSem A oracle x G (some l, v, none) P :=
+  NSem.det hA hG (by simpa only [astep, vword_whole₃, he, Bool.false_eq_true, if_false] using h)
 
 /-- An answer: some branch accepts iff the answer is `true`. -/
 lemma NSem.ret {l : Λ} {b : Bool} (hA : A l = .det (.ret b)) {v : Fin m → ℕ}

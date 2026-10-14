@@ -5,6 +5,7 @@ Authors: Seyoon Ragavan
 -/
 import TCSlib.Complexity.SpaceComplexity.Logspace.Path
 import TCSlib.Complexity.SpaceComplexity.Constructible
+import TCSlib.Complexity.SpaceComplexity.Logspace.ISCountGenCorrect
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -28,15 +29,26 @@ space-constructible `S` the same inductive counting gives
   exactly choice words and the inductive-counting verifier runs directly on
   `Turing.FinNDTM` — the deviation is a simplification, recorded here for
   the audit.
-* The counting runs over the configuration-graph layer of phase P4.2
-  (`Turing.NDTM.coreSum`, `Turing.FinNDTM.configBound`) for Corollary 4.21,
-  and over the decoded adjacency relation for the `PATH` form.
+* The counting runs directly over the **configuration graph** of an arbitrary
+  `NSPACE S` decider (`S ≥ logSpace`), whose vertices are the codes of
+  `TCSlib.Complexity.SpaceComplexity.Codec`: the generic
+  `Complexity.compl_mem_NSPACE` (`L ∈ NSPACE S → Lᶜ ∈ NSPACE S`,
+  `TCSlib.Complexity.SpaceComplexity.Logspace.ISCountGenCorrect`) is proved by the
+  window-growing inductive-counting nondeterministic register machine
+  `Complexity.LogProg.ISGen.igA`, and `Complexity.compl_mem_NL` is its case
+  `S = logSpace` (`NL = NSPACE logSpace`). The `PATH` form is then a corollary of
+  `Complexity.PATH_mem_NL`, and no `NL`-completeness of `PATH` or closure of
+  `NL` under logspace reductions is needed.
 
-## Main results (all sorried; phase-P4.4 statements)
+## Main results
 
 * `Complexity.compl_PATH_mem_NL` — [AB09, Theorem 4.20] as stated there.
 * `Complexity.NL_eq_coNL` — the headline equality. [AB09, §4.3.2]
-* `Complexity.NSPACE_compl_eq` — [AB09, Corollary 4.21].
+* `Complexity.NSPACE_compl_eq` — [AB09, Corollary 4.21], from the generic
+  `Complexity.compl_mem_NSPACE` (`L ∈ NSPACE S → Lᶜ ∈ NSPACE S` for `S ≥ log`,
+  `TCSlib.Complexity.SpaceComplexity.Logspace.ISCountGenCorrect`), proved by a
+  window-growing variant of the counting machine that finds the window radius
+  itself; of `SpaceConstructible S` only the conjunct `S ≥ logSpace` is used.
 
 ## References
 
@@ -53,64 +65,56 @@ namespace Complexity
 
 open Turing
 
-/-- **`PATH`-complement is in `NL`** ([AB09, Theorem 4.20]; spec, fill
-pending — phase P4.4): nonreachability has nondeterministically verifiable
-certificates, by inductive counting.
+/-- **`PATH`-complement is in `NL`** ([AB09, Theorem 4.20]): nonreachability has
+nondeterministically verifiable certificates, by inductive counting.
 
-**Proof sketch.** The verifier of [AB09]'s proof, with choice words as the
-certificates (native read-once — see the module docstring). For the decoded
-instance `⟨G, s, t⟩` with `n` vertices, guess and check, for
-`i = 0, …, n`, the sizes `cᵢ = |Cᵢ|` of the balls `Cᵢ` (vertices reachable
-from `s` within `i` steps): membership certificates are guessed paths
-(replayable within `O(logSpace n)` registers, as in
-`Complexity.PATH_mem_NL`'s walk); non-membership of `v` in `Cᵢ` is certified
-by enumerating, in **ascending vertex order**, `cᵢ₋₁` members of `Cᵢ₋₁` with
-their paths and checking none equals or neighbors `v` (the ascending-order
-discipline and the exact count `cᵢ₋₁` are what make cheating impossible);
-`c₀ = 1`, and the final stage certifies `t ∉ Cₙ`. Registers: the stage, two
-counters, the current and enumerated vertices, a path cursor — all
-`O(logSpace n)` cells; all-branch halting at a uniform polynomial budget.
-Membership of non-encodings: strings outside the instance format are in
-`PATHᶜ` by definition, so the verifier accepts exactly the malformed shapes
-too (the shape validator of `Complexity.PATH_mem_NL`, answer flipped).
-Fill obligations, named: the counting verifier's register machine (the
-nondeterministic ARM extension's second named customer, after the `PATH`
-walk), the ascending-order and exact-count checks, the two-level certificate
-layout along one choice word, and the `DecidesInSpace` packaging. -/
+**Proof sketch.** `PATH ∈ NL` (`Complexity.PATH_mem_NL`), and `NL` is closed under
+complement (`Complexity.compl_mem_NL`, the case `S = logSpace` of
+`Complexity.compl_mem_NSPACE`): the window-growing inductive-counting register machine runs
+on the configuration graph of the `PATH` walk machine, at radii `s = 0, 1, …`, computing for
+`i = 0, …, K - 1` the size of the ball `C_{i+1}` of codes reachable from the initial code
+within `i + 1` steps from the size `cp` of `C_i`. Every code `v` is guessed in or out of
+`C_{i+1}` in ascending order; a member is certified by a guessed walk (and must not be
+accepting); a non-member by enumerating, again in ascending order, exactly `cp` guessed
+members of `C_i` with their walks, none equal to `v` or stepping to `v`. It stops at the
+first radius whose count of reachable codes equals the previous one. Choice words serve as
+the certificates (native read-once). All registers have `O(log |x|)` digits and every branch
+halts. -/
 theorem compl_PATH_mem_NL : (PATHᶜ : Language Bool) ∈ NL := by
-  sorry
+  exact compl_mem_NL PATH_mem_NL
 
-/-- **`NL = coNL`** ([AB09, §4.3.2]; spec, fill pending).
+/-- **`NL = coNL`** ([AB09, §4.3.2]).
 
-**Proof sketch.** `⊆`: for `B ∈ NL`, `B ≤ₗ PATH`
-(`Complexity.PATH_NLComplete`); the same reduction also reduces `Bᶜ` to
-`PATHᶜ` (complement both sides of the equivalence), and `NL` is closed
-downward under `≤ₗ` (a named fill obligation — the logspace analogue of
-`Complexity.mem_LOGSPACE_of_logspaceReducible`, proved by the same
-virtual-input composition against the `NL` verifier, so `Bᶜ ∈ NL` by
-`Complexity.compl_PATH_mem_NL`), i.e. `B ∈ coNL`. `⊇` is the same argument
-read backwards (complements are involutive). -/
+**Proof sketch.** Both inclusions are `Complexity.compl_mem_NL`, i.e.
+`Complexity.compl_mem_NSPACE` at `S = logSpace` (inductive counting on the configuration
+graph of an `NL` decider): `L ∈ NL` gives `Lᶜ ∈ NL`, i.e. `L ∈ coNL`; and `Lᶜ ∈ NL` gives
+`Lᶜᶜ = L ∈ NL` (complements are involutive). -/
 theorem NL_eq_coNL : NL = coNL := by
-  sorry
+  ext L
+  exact ⟨fun h => compl_mem_NL h, fun h => compl_compl L ▸ compl_mem_NL h⟩
 
 /-- **Nondeterministic space is closed under complement**
-([AB09, Corollary 4.21]; spec, fill pending): for space-constructible `S`,
-the complements of `NSPACE S` languages are exactly `NSPACE S`.
+([AB09, Corollary 4.21]): for space-constructible `S`, the complements of
+`NSPACE S` languages are exactly `NSPACE S`.
 
-**Proof sketch.** [AB09, Exercise 4.11]'s route: run the inductive counting
-of `Complexity.compl_PATH_mem_NL` on the **configuration graph** instead of
-a decoded instance — balls of the start vertex among the
-`Turing.FinNDTM.configBound`-many coded vertices (phase P4.2's layer),
-membership certificates being guessed choice-word paths replayed through
-the step relation, with the window radius computed from the
-constructibility witness. Space: the counters and vertex registers are
-`O(S n)` bits, within `NSPACE S`'s constant absorption; the `logSpace`
-floor bundled in `Complexity.SpaceConstructible` powers the index
-arithmetic. Fill obligations, named: the vertex-coded counting verifier
-(the graph-level twin of the `PATH` one), the accepting normalization
-reuse, and the two-sided packaging `{L | Lᶜ ∈ NSPACE S} = NSPACE S`. -/
+**Proof sketch.** Both inclusions are `Complexity.compl_mem_NSPACE` (with
+`S ≥ logSpace`, the first conjunct of `Complexity.SpaceConstructible`) and the
+involution `Lᶜᶜ = L`. `compl_mem_NSPACE` runs the inductive counting of
+`Complexity.compl_PATH_mem_NL` on the configuration graph of a decider `N` of
+`L` in space `c · S` (codes of window-bounded configurations, membership
+certificates guessed walks of step pairs), but does **not** compute the window
+radius from the constructibility witness as [AB09, Exercise 4.11] suggests:
+the window-growing machine `Complexity.LogProg.ISGen.igA` counts the reachable
+codes at radii `s = 0, 1, …` and stops at the first radius whose count equals
+the previous one — the window is then closed under steps, so acceptance is
+decided by the reachable codes (`Complexity.ExpBFS.mem_iff_of_card_eq`); the
+counts agree above `c · S |x|` (`Complexity.ExpBFS.card_rset_succ_of_le`), so
+the radius stays at most `c · S |x| + 1` and all registers have `O(S |x|)`
+digits, within `Complexity.LogProg.narm_decides_space` with logspace code
+deciders. -/
 theorem NSPACE_compl_eq (S : ℕ → ℕ) (hS : SpaceConstructible S) :
     {L : Language Bool | Lᶜ ∈ NSPACE S} = NSPACE S := by
-  sorry
+  ext L
+  exact ⟨fun h => compl_compl L ▸ compl_mem_NSPACE hS.1 h, fun h => compl_mem_NSPACE hS.1 h⟩
 
 end Complexity

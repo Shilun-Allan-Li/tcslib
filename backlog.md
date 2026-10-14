@@ -265,6 +265,70 @@ either file, is new debt under `workflow.md` §4.
 
 ---
 
+### CH34-D4 — `EXPCOM.lean` past one fifth copied material (B5b's summit, in a file under CH34-D3)
+
+*Origin: the B5b fill, integrated 2026-10-12 (`audits/ch34-fill-agent-reports/b5b-REPORT.md`,
+"Duplication"; `audits/fills-6-integration.md`). Opened under `workflow.md` §4 on both counts:
+the delivery takes `EXPCOM.lean` past one fifth copied material, and the file already received
+copies in an earlier epoch (CH34-D3).*
+
+B5b's conservative ledger counts 4,930 of `EXPCOM.lean`'s 13,500 extracted body characters as
+copied: **36.52%**. **Erratum (B5b gate, round 1, minor 3):** the review-discovered
+`expcom_inc_prefix` (107 normalized body characters) was left out of the numerator; with it the
+historical count is 5,037 of 13,500, **37.31%**. The delivery's own calculation, 36.52%, stays as
+it was reported. The numerator takes whole bodies, not shared text:
+- the three ledger lemmas and the summit, transcribed from the brief's probe (the prescribed
+  route);
+- three pre-disclosed forced restatements: the powers-of-two `Nat.bits` fact (181 characters
+  shared with Separation's private `bits_two_pow`, 94% / 84%, the delivery's one new screen
+  pair), the all-`true` overflow direction of `incFixed` (public in `MeyerTableau`, which
+  `EXPCOM` cannot import; no shared text), and the padding parse's triple uniqueness (194
+  characters shared with the frozen reduction);
+- CH34-D3's 322-character mirror.
+
+The maintainer's review adds one undisclosed restatement: `expcom_inc_prefix` restates Catalog's
+private `catalog_increment_value`.
+
+**The question:** acknowledge the ledger as delivered, or schedule the factorings. Each one
+promotes a small fact that does not depend on `EXPCOM`, with no statement change:
+- the `Nat.bits` shift law (`(2^j·m).bits = replicate j false ++ m.bits`, and its `m = 1` case)
+  as a public lemma in `Encoding` or `Build/Convention`; it also retires the copies in
+  `Separation` and `ConfigGraph` (F6-1(a));
+- the overflow criterion of `incFixed` in `Build/Convention` (F6-1(e));
+- `catalog_increment_value`, made public and cited in place of `expcom_inc_prefix`;
+- a shared triple-uniqueness lemma for the padding parse.
+
+**Maintainer's recommendation:** acknowledge the probe transcriptions as forced (they are the
+brief's route), and schedule the first three factorings in the dedup window.
+
+**Answered (user, 2026-10-12): factor before closing.** The three factorings land in a maintainer
+PR before the B5b gate closes:
+- the `Nat.bits` shift law, `Turing.bits_two_pow_mul` with its case `bits_two_pow_eq_replicate`,
+  in `TuringMachine/Encoding` (`Build/Convention` cannot see `Nat.bits` without a new import);
+- the `incFixed` overflow criterion, `Turing.incFixed_eq_none_iff_replicate`, in
+  `Build/Convention`;
+- the `incFixed` prefix law, `Turing.incFixed_replicate_true_append`, also in `Build/Convention`.
+  This replaces "make `catalog_increment_value` public": the general law sits where
+  `incFixed` is defined, and both Catalog's `catalog_increment_value` and EXPCOM's
+  `expcom_inc_prefix` are derived from it.
+
+The probe transcriptions are acknowledged as forced. Two copies sit in colleague-owned files
+and stay for the user's dedup window: `TimeHierarchy/Separation.lean`'s private `bits_two_pow`,
+and `CircuitComplexity/MeyerTableau.lean`'s public `incFixed_eq_none_iff`. The new public names
+avoid both, so neither file changes.
+
+**Done (2026-10-12; `6c7e35bd`, PR #70; `audits/ch34-d4-record.md`; replay 167/167).** The four
+public lemmas landed in `Encoding` and `Build/Convention`. `EXPCOM`'s `expcom_bits_two_pow` and
+`expcom_inc_prefix` and `ConfigGraph`'s `s1b_radius_bits` are deleted. `expcom_all_true` and
+Catalog's `catalog_increment_value` keep their statements and are derived from the public laws.
+**Still open:**
+- the two colleague-owned retirements above (F6-1(j), acknowledged by the user with the
+  factoring's one new pair);
+- the shared triple-uniqueness lemma for the padding parse (194 characters shared with the
+  frozen reduction), which the ruling did not include. It stays a dedup-window request.
+
+---
+
 ### C1-P1: promote C1c's blank-cell query bound to `Oracle.lean` (from the epoch C1 fill gate, note 15)
 
 C1c proved a private blank-cell bound in `OracleNondeterministic.lean`: a
@@ -281,6 +345,8 @@ candidate). Statement unchanged; additive.
 deleted.
 
 ### FH-1: one public first-halt lemma; seven private copies to retire (from B1)
+
+*Design it with MIG-0's no-earlier-exit cut field.*
 
 `Turing.MultiTapeTM.exists_first_halt` (`Finite.lean`, 2026-10-11, B1) is the
 shared form of the least-halting-time argument. It discharges the
@@ -339,6 +405,8 @@ change, so it waits for a window that may touch these public statements
 
 ### R80B-E1: define `counterLoopTM` as the identity instance of `counterLoopTMVia` (from the R8.0b fill gate, finding F1)
 
+*This is MIG-4 (scenario B: the duplicated statements are retired).*
+
 The R8.0b fill (§12.8 stream D) mandated two definition texts: the new rich-body host
 `Turing.counterLoopTMVia` and the frozen `Bool` host `Turing.counterLoopTM`. Their copy-text pair
 is 91% (and 84% the other way). The brief's freeze made factoring impossible within the fill.
@@ -354,6 +422,8 @@ consumer under that separately authorized definition change. This is a frozen-de
 change, so it needs its own gate.
 
 ### U-1: re-derive the chapter-1 universal machine from B5a's generic step block (user, 2026-10-11)
+
+*Merged with MIG-2 (user, 2026-10-12): the timed-layer dedup and this re-derivation are one migration item.*
 
 The chapter-1 universal machine (`Turing.universal`, `universal_quadratic`, `timed_universal`) is
 a bespoke interpreter of about 5,300 lines across `Universal.lean`, `UniversalStartup.lean`,
@@ -393,12 +463,339 @@ decision 3, names the deduplication as the shell's second customer, a 12.2c item
 `certSplitWord` matches `Nondeterminism`'s private `contSplitWord` at 100% and `e3SplitWord` at
 90%. This is one four-line `match` term, the output function of the public
 `FinTM.computesFunInTime_splitSolve`, and it was pre-disclosed by W2-V's brief
-(`audits/fills-4-integration.md`). **The task:** re-derive the 2B shell's use from
-`exists_certificateShell` and delete the private shell with both split words. If a named
-split-word definition is still wanted, it becomes one public declaration beside
-`computesFunInTime_splitSolve`. Statements stay unchanged; the task gets its own PR and gate.
+(`audits/fills-4-integration.md`).
+
+**Scope (corrected 2026-10-12, from the 12.2c readiness check).** W2-V's shell serves only
+*polynomial* certificate lengths, so only the polynomial use retires. `Nondeterminism`'s NEXP
+route keeps its own exponential search: `e3Split` solves `n + C·2^((n+1)^c) = m`, and its loader
+reuses `contPairTM`, which embeds `choiceCore`. **The task, as scoped:** re-derive
+`cont_choiceVerifier_mem_P` from `exists_certificateShell` and delete `contSplitWord` with it,
+which retires the 100% pair. `e3SplitWord`, `contPairTM` and `choiceCore` stay for the
+exponential route. Retiring those too would need a width-parametric public shell: a new
+statement, with its own gate, and not worth it for the remaining 90% textual match. Statements
+stay unchanged. **Prerequisite:** W2-V's own fill gate (the wave-1 fill gate), so that the cited
+shell is audited first. The task gets its own PR and gate.
+
+### UNIV-1 (optional): universe-polymorphic `counterLoopTMVia` and `phaseHostTM` (user, 2026-10-12)
+
+*Folds into MIG-0's universe decision (the contract structure's `Type`/`Type*` choice).*
+
+The record-table continuation found that `exists_tableFindTM`, stated for `Γ : Type*`, could
+not use its mandated loop: `Turing.counterLoopTMVia` (`Build/CounterLoop.lean`) and
+`Turing.phaseHostTM` (`Build/Seam.lean`) take their alphabet in `Type`. The user chose option
+(b): `exists_tableFindTM` is restated at `Γ : Type`, a maintainer statement fix with its own
+gate (`audits/fills-5-integration.md`). Every consumer's alphabet (`RecSym Q T`, `Bool`) lies in
+`Type`. **Option (a), kept here for later:** generalize the two hosts and their run contracts to
+`Type*`. That means about a dozen public statements in two gated core files, strictly more general,
+with a revision gate and a downstream replay of most of the machine library. The risk is universe
+inference in the sigma-typed phase states. The gain is a universe-polymorphic core. Nothing in
+the campaign needs it now. If done, `exists_tableFindTM` can be re-generalized to `Type*`
+without breaking any consumer. A 12.2c item, its own PR and gate.
+
+### F6-1: promotion and deduplication requests from fills-6 (2026-10-12)
+
+*Origin: the fills-6 deliveries and three read-only reviews (`audits/fills-6-integration.md`).
+None blocks a gate; each is picked up when its owning file is next open, or in the dedup
+window.*
+
+- **(a) `Nat.bits` shift law.** **Done** by CH34-D4 (`6c7e35bd`): `Turing.bits_two_pow_mul` and
+  `bits_two_pow_eq_replicate` in `Encoding` retired `s1b_radius_bits` (`ConfigGraph`) and
+  `expcom_bits_two_pow` (`EXPCOM`). Open: the colleague-owned `bits_two_pow`
+  (`TimeHierarchy/Separation`), under (j).
+- **(b) The Seam space lemma in `Constructible`.** `b3a_seam_space` is a general-configuration
+  corollary of the public trajectory theorem `seamCompTM_visitedByTapeHead_ofCfg`, and B3a
+  disclosed it as a promotion candidate. **Corrected at the B3a gate (minor 3):** the public
+  additive lemmas `seamCompTM_spaceUsedByTape_le_add` and `seamCompTM_spaceUsed_le_add` need a live
+  `Cfg.ofWords` endpoint, while `b3a_seam_space` is used at a genuine halt, so citing them is not
+  a valid retirement. Promote a general-configuration
+  additive corollary, derive the canonical corollaries from it, then replace the private helper.
+  `b3a_cfg` is close to `Cfg.ofWords`; define it through `Cfg.ofWords` if the shapes agree (note 8).
+- **(c) Canonical bits in `CodeSimulator`.** `canonBits_of_last` and `canonBits_value` overlap
+  semantically with `NotTimeConstructible`'s private `ntc_bits_codeBitsNat_append_true` and
+  `ntc_codeBitsNat_eq_ofDigits`, and with `UHaltMachine`'s `bits_foldr_bit_one`. One public
+  little-endian digit layer (in `Encoding`) would serve all three files.
+- **(d) Scan preservation.** `RecordTable`'s `rt_find_scan` overlaps `CfgRecord`'s private
+  `recordStep_scan_preserves`. Promote the CfgRecord lemma and cite it at MIG-13.
+- **(e) `incFixed` overflow.** **Done** by CH34-D4 (`6c7e35bd`):
+  `Turing.incFixed_eq_none_iff_replicate` in `Build/Convention`, from which `expcom_all_true` is
+  now derived with its statement unchanged. Open: retiring `MeyerTableau.incFixed_eq_none_iff`
+  onto it, under (j).
+- **(f) `oracleEmbed_updateTape`** (`OracleSim`): a generic embedding fact; promote it at MIG-16
+  (`Build/Embed` is the likely home).
+- **(g) Head displacement.** Catalog's `f2_head_steps` is private and retires with MIG-1. Briefs
+  should name the public `workTapePos_step_le` instead.
+- **(h) A fixed-width prefix reader** (B5a H1's disclosed gap). No row reads a fixed-width,
+  undelimited prefix into finite control. H1's `h1RecordTM` does it for one record; a generic
+  row may follow if a second consumer appears.
+- **(i) Older pairs exposed by the fills-6 combined screen.** OracleSim's `oracleChoiceAction`,
+  `oracleChoiceCfg` and `oracleShadowAction` against `Simulation.lean`'s `leftAction`,
+  `rightAction` and `rightCfg` (53–75%); `oracleBankCfg_eq` against Loop's `emCall_exit_fixed`
+  (56%); `CodeSimulator.guardBlock_orbit` against `Games.playOut_eq_iterate` (74%). No earlier
+  population held both sides. **Ruled at the wave-1 fill gate (2026-10-12):**
+  - the action and configuration pairs are forced tape-layout specializations, not copies (N11);
+  - `oracleBankCfg_eq` is a copy to factor (major F1). **Acknowledged by the user**, with its
+    resolution scheduled in MIG-0b: one public R1 reconstruction lemma in `Build/Embed`, at the
+    layering split, cited by OracleSim, Loop (`emCall_exit_fixed`'s `hframe`) and CodeSimulator
+    (`canonEmbedEq`, F7-1(b)), with the `Primitives` and `CertShell` analogues reconciled then;
+  - `guardBlock_orbit` waits for the B5a fill gate.
+- **(j) The `incFixed` criterion's two public homes** (from the CH34-D4 factoring,
+  `audits/ch34-d4-record.md`). `Build/Convention`'s `incFixed_eq_none_iff_replicate` and
+  `CircuitComplexity/MeyerTableau`'s `incFixed_eq_none_iff`, the colleague's original, match at
+  100% (93 characters). Retire the second by citing the first in the user's dedup window. Also
+  colleague-owned: `TimeHierarchy/Separation`'s private `bits_two_pow` can cite
+  `Turing.bits_two_pow_eq_replicate`, and Catalog's `f2_incFixed_cases` goes with MIG-1.
+  **Acknowledged (user, 2026-10-12)**, on condition that the retirement stays on this backlog.
+
+### F7-1: promotion, deduplication and style requests from fills-7 (2026-10-12)
+
+*Origin: the fills-7 continuations (`audits/fills-7-integration.md`).*
+
+- **(a) Promote the step block as host H2** (design §14). `h1RoundTM`, `h1Round_effect` and the
+  representation `h1RoundRep`, with the whole-record skipper `h1SkipTM` and its successor leaf
+  `h1SuccTM`, from `CodeSimulator`'s H1 gap to a public Build module, by PR and gate, **before any
+  second consumer is briefed**: B6's `U₀` (RD-3), C1, U-1, EXPCOM. `h1Run_headBound`, the run form
+  of `workTapePos_step_le`, goes with it. H1's own assembly may continue on the private copy.
+  When both H2 and MIG-0b have landed, the absolute-value head bound becomes a corollary of
+  MIG-0b's interval form `workTapePos_runFrom_mem_Icc` in `Finite`, not a second proof (MIG-0b
+  round 2, NOTES-r2 §10 item 5).
+  **Designed (2026-10-13):** promote as is to `Build/StepBlock.lean` (`Turing.StepBlock`), stated
+  in the existing style, with five small additive results (`audits/evidence/h2/H2-design.md`;
+  draft `StepBlockDraft.lean.txt`: 0 errors, the seven contracts sorried, 58 of 58 copies
+  faithful). The statement gate H2-S is `audits/h2-promotion-pack.md`. **Round 1 (2026-10-13):
+  0 blockers / 3 majors / 5 minors, gate open** (`audits/h2-promotion-findings.md`): no copied
+  contract is false; `roundTM_iterate` needs the lower bound `t ≤ T`, H5 is a block simulation
+  rather than literal lockstep, and the bundle lacked consumer sources. **Round 2 (2026-10-13):**
+  `audits/h2-promotion-r2-pack.md`, re-run at `1781a230` (after fills-8). It restates and proves
+  `roundTM_iterate` with `t ≤ T`, adds `roundTM_firstExit_unique`, restates H5 as a block
+  simulation, and adds the import and move manifests and a fidelity script that fails closed.
+  Proposed for H2-M:
+  - re-wrap H1's frozen over-long lines and rename the unused binder `hr` to `_hr`
+    (α-equivalent, probed);
+  - a 56-name public surface, with 15 helpers made private;
+  - H1's `h1RoundTime` stays private until MIG-0b's round adapter;
+  - the consumer obligation CO-RF is recorded on `U₀` and U-1.
+
+  **Round 2 CLOSED the gate** (2026-10-14: 0 blockers / 0 majors / 8 minors;
+  `audits/h2-promotion-r2-findings.md`, resolutions `audits/h2-promotion-r2-resolutions.md`).
+  Next: H2-M, the move PR, before any B5a brief.
+  The move, H2-M (a
+  freeze-checked maintainer PR with an 8-module replay), lands **between** the B5a
+  continuations, since both own regions of `CodeSimulator.lean`.
+- **(b) The R1 configuration-reconstruction family.** The canonizer continuation's
+  `canonEmbedEq` reconstructs an embedded configuration from its selected-bank projections and
+  the unchanged ambient frame. That is the argument of `OracleSim.oracleBankCfg_eq` and of the
+  local `hframe` in `Loop.emCall_exit_fixed`, the wave-1 gate's major F1. It also has analogues in
+  `Primitives` and `CertShell`, per the report. One public lemma in `Build/Embed` serves them all.
+  Its scheduling is the wave-1 gate's ruling; this records the new member. **MIG-0b round 2
+  (2026-10-13):** `embedEmitCfg_eq`, over `Type*`, also serves `CounterLoop.counter_layout`,
+  `CodeSimulator.canonEmbedWords`, `CertShell.cert_embed_words` and MIG-0a's
+  `embedEmitCfg_select`. fills-8 added a member, `RecordTable.rt_embed_matches` (4 uses), which
+  retires at MIG-13. The silent flavour `CertShell.cert_silent_words` is a **named remaining
+  part**, resolved at MIG-14 by a capture-field export and a silent corollary; `embedEmitCfg_eq`
+  does not discharge it.
+- **(c) The fixed-field record walk.** The two B5a batches both walk a record's fixed fields. The
+  overlap was pre-disclosed, and the text screen does not show it. Factor it in the B5a
+  completion, or with H2's promotion.
+- **(d) Small canonizer promotions:** the strict install-call adapter `canonStrictInstall`, the
+  preserving installation `canonPreserveInstall` and the embedded seek `exists_canonSeekOnBank`,
+  derived uses of public hosts. Reconcile them with MIG-0b's `ReturnContract` case split (the
+  MIG-0a gate's minor 5) rather than promoting them as they are.
+- **(e) Style debt, for each owner's next continuation:** H1's 67 Lean linter warnings and 83
+  lines over 100 characters; the record tables' 8 lines; the canonizer's 1 line.
 
 ## 2. Campaign work queued or on hold
+
+### MIG / RS: the foundation migration and the restyling backlog (user, 2026-10-12; design §16)
+
+The user lifted the no-retroactive-migration rules for this work and chose scenario B. Duplicate
+statement families are retired, with full gates and consumer edits. Restyling is opportunistic:
+**pick any row whose prerequisites are met.** The estimates come from seven read-only reviews
+(design §16), in lines, and are ESTIMATED unless marked; negative means saved.
+
+**Gates:**
+- **swap:** statements are unchanged, so a freeze check, a replay and a fidelity gate;
+- **stmt:** new public statements, so a statement gate;
+- **full:** retired or changed statements, so a full gate, with the consumers edited in the same PR.
+
+**MIG: the foundation, in this order.**
+
+| ID | Scope | Action | Estimate | Needs | Gate | Notes |
+|---|---|---|---|---|---|---|
+| MIG-0 | new `Build/Contract.lean` | Item 0, with the §16 requirements: the contract structure, tape frames and `.keep`, composition theorems as thin wrappers over the existing public rows, and tactics | +1.5k to +2.5k (MEASURED after MIG-0b round 2: about +3.2k, MIG-0a 1,101 lines and MIG-0b net +2,084 over 17 files; round-2 minor 1) | — | stmt | first; unlocks MIG-11 to MIG-17 and RS. **Statement draft fit-tested** (design §16a; user, 2026-10-12: universe `Type`, frames a derived layer). Two increments: MIG-0a (the structure, frames, `trans`, `seq`, `inPhase`, `embed`, `branch`, `release`, and two additive exports in Embed and Seam; gate round 1: 0/1/5, round 2 closed 0/0/1, landed by PR #83), then MIG-0b (gate round 1, 2026-10-13: 0/2/4; round 2 CLOSED 2026-10-14, 0/0/3, `audits/mig0b-r2-findings.md`; next its landing PR, without part 7, the alphabet pair, which lands with RS-5), revised after that round (design §16a): the segment, round and joint-trajectory layers, the layering split, the release export, the lift, the counter loop, renaming, the alphabet-reduction and robustness adapters, the tactics |
+| MIG-1 | `Build/Catalog` (the `f2_` region, about lines 1785–11365), `Primitives`, `Composition`, `Loop`, `Wrappers`, `Encoding`, `Simulation`, `ClassP/TimeConstructible` | Named witnesses (about 30 defs with spec theorems) for the 66 existential rows; then delete the 304 `f2_` copies (6,255 of their lines are verbatim, MEASURED). The 22 space rows become corollaries. Retire the R3 canonical `_run` rows (0 external consumers) | −7.6k to −8.3k, +0.4k | decision 12.2 lifted | stmt + full | highest confidence; half the saving. **Drafted (2026-10-13):** `audits/evidence/mig1/` (design, measured inventory, statement draft: 0 errors, 26 sorries). Measured at `6aa9f67b`: 53 existential rows, not 66 (plus `timeConstructible_id`, hidden in a definition); 304 copies, of which 232 are code-identical to a home declaration (4,351 lines; the 6,255 is not reproduced); 20 of the 22 region publics are space rows, the other two head lemmas; the R3 `_run` rows have 5 citations in 2 files (`CertShell`, `CodeSimulator`), not 0. Net about −7.4k (ESTIMATE). Spec theorems in the existing style, not `Contract` instances (layering: the landed `Contract.lean` imports `Catalog`; MIG-0b's split removes that obstacle, and the decision rests on the rows' shape and the order of work). **Answered (user, 2026-10-13): all four as recommended**: the R3 retirement in MIG-1's last PR, after the B5a continuation integrates (else five rows, leaving `copyTM_run`); both consolidations; the space rows stay in Catalog as corollaries; MIG-17's named loop hosts are done by MIG-1. **Statement gate (2026-10-14):** `audits/mig1-statements-pack.md`. It covers the 26 witnesses with their real bodies, 45 new public statements (14 proved), the 55 rows as `type_of%` corollaries (all proved), and the deletion plan for 378 declarations. Net about −7.0k lines (ESTIMATE). **Round 1 (2026-10-14): 0 blockers, 1 major, 3 minors; open** (`audits/mig1-statements-findings.md`). No public statement is false and no witness body differs from its source. The major is in the deletion plan: it retargets the extended loop contract's preparation step at Loop's private `loopHost_prepare`, which lacks the fuel-head clause (`∀ i, -T ≤ c.workTapePos i ≤ T`) that the contract passes to its head lemma. The repair strengthens `loopHost_prepare` in F-C, and is shown by elaborating the moved contract against the surviving home lemmas. The minors: the evidence runner masks failures, the bundle lacks inputs its reproduction names, three pack sentences overstate. **Open questions answered (user, 2026-10-14): all five as recommended**: the decision-loop S-form family is dropped (its 14 `a2_` lemmas deleted); the eight citation specs are proved at S (the three split specs stay dependent on F-C's loop specs); the run head bound has one proof, MIG-0b's `workTapePos_runFrom_mem_Icc` in `Finite`, with H2's absolute form a corollary beside it; Simulation imports `Mathlib.Algebra.BigOperators.Fin` and homes `ComputesInTime.spaceUsed_le`. Next: round 2, re-measured at the tip (PRs #85 and #86 add consumers in `FormulaKit/Emit` and `RAMSimulation/WordSize`) |
+| MIG-2 | `TuringMachine/Universal` (195–1316, 1317–1606, 2367–2644) | Retire the duplicate timed layer (`timedCut*`, `timedPrefix`, `timedCapture`), through a stop-before variant or proofs parametric in the table | about −1k | — | swap | `timed_universal_concrete`'s coefficient must not grow (TMSAT); **merged with U-1** (one re-derivation, from both directions) |
+| MIG-3 | `Robustness/SingleTape` | `one_work_tape` reuses `dg_all_inputs`; drop the `sweep_*` chain | about −450 | — | swap | |
+| MIG-4 | `Build/CounterLoop` | R80B-E1: `counterLoopTM` becomes the identity instance of `counterLoopTMVia`; retire the duplicated statements | about −450 | — | full | consumer `Inclusions.lean` (14 uses) |
+| MIG-5 | `Build/EmitIterBody`, `Build/EmitIterEmbed` | Cite `inputCopyTM_run_ofCfg` and the rewinds (223 re-proved lines); derive `padAction`/`embedCfg` from Embed and retire them | −300 to −420 | — | full | CH7-D2; 1 external consumer |
+| MIG-6 | `TuringMachine/Encoding`, `Codes2Tape` | Parameterize by tape count; retire the mirror | about −180 | — | full | CH34-D2; 4 external consumers |
+| MIG-7 | `TuringMachine/UniversalStartup` | `universalCaptureTM` onto Embed's `embedSilentTM` | about −130 | — | swap | |
+| MIG-8 | `ClassNP/Nondeterminism` | Retire the unreferenced `e3_split_of_body` chain (2652–2780) and `a3n_prevalidation`; merge the polynomial and exponential duplicates (about 165 lines) | about −300 | **check against SH-1 first** (SH-1 keeps the NEXP `e3Split` route) | swap / full | |
+| MIG-9 | `Build/InputLength`, `ClassP/TimeConstructible` `counterTM`, Loop's `loopDebit` | One canonical bit-length counter | about −200 beyond MIG-1 | MIG-1 | full | |
+| MIG-10 | `Diagonalization/Relativization` (341–406) | Promote the oracle relabel transport to the library, as its docstring suggests | −60 to −110 | — | stmt | |
+| MIG-11 | the framed Build rows | Contract instances of about 25 framed rows | +0.3k to +0.5k | MIG-0 | stmt | grow the tactics against MIG-12 |
+| MIG-12 | `Build/CfgRecord` | Rebase on the Contract; the private `RecordRun` (76 uses) becomes MIG-0b's segment layer, with same-machine concatenation. **Corrected (MIG-0a gate, round 1, major):** `Contract.seq` does not replace it, since it changes the machine and adds a dispatch step, and a segment's endpoint need not be a first exit | −1.6k to −2.1k | MIG-0b, MIG-11 | swap | best ratio of saving to lines touched |
+| MIG-13 | `Build/RecordTable` | Rebase; `rt_copy_seam` retires; write any still-open rows in the new style. The find round (`rt_find_round_entry`, return or escape) needs MIG-0b's round layer | −350 to −550 | MIG-0b | swap | |
+| MIG-14 | `Build/CertShell`, `Build/InputCall` | Rebase | about −560 | MIG-0 | swap | |
+| MIG-15 | `Build/CounterLoop` | `counterSpan`, a segment property that admits time zero, becomes MIG-0b's segment layer with a joint-trajectory relation; the loop body's interface uses the round layer. **Corrected (MIG-0a gate, round 1, major; round 2, minor 1):** per-tape intervals cannot carry its head-vector relation, and a `ReturnContract` excludes the escaping round. **MIG-0b round 2:** `counterLoopOrbit` becomes an abbreviation of `roundOrbit` at MIG-0b; the compatibility name stays, and its four consumer edits land with MIG-0b | −440 to −640 | MIG-0b, MIG-4 | swap | |
+| MIG-16 | `Build/OracleSim` | Rebase on the R1 contracts | −250 to −400 | MIG-0 | swap | exact lockstep lemmas stay |
+| MIG-17 | `Build/Primitives`, `Build/Loop` | Named loop hosts (done by MIG-1; user, 2026-10-13); `splitSafe` (private in `Build/Primitives`, avoidance through the endpoint) becomes MIG-0b's `SafeSegment`, and `SafeRun` (`Build/EmitIterEmbed.lean`, avoidance strictly before the endpoint) a `Segment`; first-exit Contracts only where a first exit is proved (MIG-0a gate, round 2, minor 1; locations from the MIG-0b draft). `Loop` must import the core contract module, so MIG-0b's layering split comes first | −1k to −2k | MIG-0b, MIG-1 | swap | 15 external files cite the P-rows (statements kept) |
+| MIG-19 | `SpaceComplexity/ConfigGraph` (S1b's delivery) | Re-derive `NSPACE ⊆ DTIME(2^O(S))`, `NL ⊆ P` and Ex 4.3 as programs (design §16, decision 3); retire S1b's private BFS host | S1b's delivery added 333 lines (612 → 945, MEASURED); the program's own cost is estimated with stage 2 | stage 2, machine-configuration routines | swap | user, 2026-10-12: S1b finished first, then stopped as a partial (fills-6): the two corollaries are proved modulo `NSPACE_subset_exp_dtime` only, so this row needs the simulation alone |
+| MIG-20 | the chapter-2 emitter files (`emitterCompare*`, `emitterP2Erase*`) | 12.2c item 3 (F25a/F27a): onto `compareTM` and `clearTM` | small | MIG-1 (the Catalog→Primitives import) | swap | |
+| MIG-21 | `CookLevin/Hardness` (`clPlacement`, the selectors) | 12.2c item 13: restate the layouts as plain `Fin k ↪ Fin l` embeddings; delete the selector layer (about 120–259 lines) | about −150 to −250 | the T2a gate (item 6's export) | swap | Hardness stays at machine level |
+| MIG-22 | `ClassPSPACE/TQBF` (B4 membership's delivery) | `TQBF_mem_PSPACE` as a program: a recursive QBF evaluator in the §15 language, compiled through stage 2, with the proved pure core (`b4mValue`, `b4mValue_truth`, `b4mWalk_value`) as its specification. Retire the unused leaf-contract definitions, which lack an input/records precondition | to be estimated with stage 2's space accounting | stage 2 with a space bound, the input extensions (§15a) | stmt + swap | user, 2026-10-12: "Stop; do it as a program". Registry H1, the AND/OR evaluator (design §14) |
+| MIG-23 | `Build/RecordTable` rows 15, 16, 19, 20 (find, append, validity, next) | Paused, with no consumer since S1b stopped and Savitch moved to the language. Retire them under scenario B unless stage 2's memory design or another consumer claims them; keep the proved find round (`rt_findRound` and its contracts) | small (statements only) | a consumer decision | full | user, 2026-10-12: "Narrow to rows 17–18"; rows 17–18 continue for B6's window route |
+| MIG-18 | port of [AFM26]'s `Util/Asymptotics` (1,769 lines upstream) | `Dominated`, `Scale.SoftO` and the `growth` tactic, then ledgers without constants | +0.5k to +1.4k; saves part of about 3.5k ledger lines | the PROG-1 port tooling | fidelity, then swap | payoff mostly in ClassNP, ClassP, SpaceComplexity and PolyHierarchy |
+
+**RS: the restyling backlog, opportunistic; chip away at it.**
+
+| ID | Scope | Action | Estimate | Needs | Gate | Notes |
+|---|---|---|---|---|---|---|
+| RS-1 | `Universal`, `UniversalInterpreter`, `UniversalBlock`, `UniversalStartup` | Contracts with exact time, cut and positive duration | −0.8k to −1k after MIG-2 and MIG-7 | MIG-0 | swap | 0 Build combinators used today (MEASURED) |
+| RS-2 | `TuringMachine/CodeSimulator` | The counter-loop rule absorbs the guard ledgers; its open rows go in the new style | −60 to −130 | MIG-0 | swap | |
+| RS-3 | `Robustness/SingleTape` | `DGSpan` becomes a MIG-0b `Segment` (a segment property, not a first-exit contract; MIG-0b draft); the sweep framing | −400 to −570 beyond MIG-3 | MIG-0 | swap | the visited-set space ledger stays |
+| RS-4 | `Robustness/Oblivious*` (5 files) | A decoration-lift rule and frames for `prepInvariant_step` | −450 to −650 | MIG-0, lockstep combinators | swap | the schedule must stay one input-insensitive table |
+| RS-5 | `Robustness/AlphabetReduction`, `Bidirectional` | Per-phase head envelopes; and prove `FinTM.exists_alphabetReduction_lockstep` (admitted in MIG-0b) in `AlphabetReduction`, against `arTM`, `arCfg` and `arCfg_cycle`, with the intermediate-control lemma (80–150 lines, ESTIMATE) | −100 to −250 | MIG-0 | swap | |
+| RS-6 | `ClassNP/Nondeterminism` | `b2Host` phases onto contracts | −500 to −900 | the Contract's nondeterministic variant | swap | exact choice-word splits are load-bearing |
+| RS-7 | `TimeHierarchy/*` (ClockLoop, ClockMachine, CodePrefix, Diagonal, Separation) | Re-base the clock and prefix machines on CounterLoop, Scan, Embed and Seam; ledgers through MIG-18 | −200 to −320, more if re-based | MIG-0, MIG-18 | swap | the Meyer files use the counter lemmas: keep them |
+| RS-8 | `Diagonalization/*` | Ledgers through the asymptotics calculus | −50 to −100 | MIG-18 | swap | |
+| RS-9 | `TuringMachine/MathlibBridge` | Frames for the stack store | −90 to −150 | MIG-0 | swap | |
+| RS-10 | `Oracle`, `OracleAgreement`, `OracleFinite`, `OracleNondeterministic`, `Build/OracleCall` | An oracle Contract adapter | −50 to −100 | MIG-0, oracle variant | swap | run-equality transfers stay |
+| — | `CodeParser`, `CodeFormat`, the proved part of `Build/Zone`, `Codes2Tape` beyond MIG-6 | nothing to restyle (MEASURED) | 0 | | | |
+
+Colleague-owned machine files (`SpaceComplexity/Machines/*`, `CounterProg*`, the CircuitComplexity
+machines) are outside MIG/RS. Their deduplication is the maintainer's 12.2c window.
+`Build/Zone.lean`'s module header is stale (it says every contract is sorried, but 38 of 40 are
+proved); fix it in the first MIG PR that touches Build.
+
+* **PROG-1: the vendored programming layer's follow-ups** (from the [AFM26] port, 2026-10-12;
+  design §15b).
+  - (a) Port the sieve (`Light/Lib/Sieve`), once a Mathlib bump provides `Nat.primesLE`, or with
+    a local definition.
+  - (b) At every Lean or Mathlib bump, remove the names in `TCSlib/Programs/Compat.lean` that the
+    bump provides, and revisit the `with_unfolding_none` to `with_reducible` swap.
+  - (c) The extensions are a statement phase with its gate: reading the input in place, `emit`, and
+    the coin stream for nondeterminism and randomization. **Semantics decided** (user,
+    2026-10-12; design §15c): now **PROG-2**.
+  - (d) Stage 2, the RAM-to-`FinTM` simulation.
+  - (e) Port upstream's `Lang/Renumber.lean` and `Machine/Footprint.lean` when the extensions or
+    stage 2 need them (fidelity gate, finding 3). Both are generic, and outside the vendored
+    closure.
+
+* **PROG-2: the extension edit set** (user, 2026-10-12; design §15c). All four extensions in one
+  scripted vendored edit set:
+  - `inBit`/`inLen` with a RAM `rdIn` (`len` only if needed);
+  - `emit`, with an append-only output;
+  - read-once coins (`coin x`);
+  - `half`, as a statement and a RAM shift.
+
+  I/O and coins become indices of `Exec`, so `Ends`, `Meets` and the routines are unchanged; a new
+  `EndsIO` sees them. Also part of the set:
+  - the `Exec` determinism lemma, which randomized acceptance needs;
+  - `Fits`'s input-length clause;
+  - an update to `ComputationalModels.lean`'s instruction-count docstring.
+
+  **Estimate:** 600–1,000 vendored lines, by `scripts/vendor_afm26/`, plus 700–1,150 new.
+  **Gate:** a fidelity check of the vendored edits, then a statement gate for the new rules.
+  **Obligation from the stage-2 gate (F3):** the edited compiler must supply `1 ≤ lim.word` at the
+  existing simulation calls (`Compiler/Simulation.lean:277`, `:356`), as an invariant or a
+  premise; it does not follow from `input_le`.
+
+* **PROG-3: memory footprint along a run** (from the PROG-2 survey; design §15c, obstacle 1).
+  `compileProgram_correct` describes only the final memory. Stage 2's space bound needs every
+  intermediate memory inside `[-lowCell, lim.space)`. Close it with a stronger `Steps` or by
+  porting `Machine/Footprint.lean` (PROG-1(e)). It is a prerequisite for stage 2's space bound,
+  and so for L, Savitch and PSPACE through programs, and for C2's log-space programs (design
+  §16b item 4).
+
+* **PROG-4: stage 2's statement requirements** (user, 2026-10-12; design §16b items 1 and 4).
+  Stage 2 (PROG-1(d)) is drafted together with PROG-2 and PROG-3, and its statement carries:
+  - **a computed word size:** `W` is a function of the input length that the compiled machine
+    computes within its space bound (`c·log n` for P and L, `c·S(n)` for Savitch);
+  - **deterministic and nondeterministic forms:** each `coin` one `FinNDTM` choice step, with
+    bounds uniform over the coin streams;
+  - **a logspace grade:** `O(1)` cells and `W = O(log n)` give space `O(log n)`.
+
+  **Gate:** a statement gate, before any fill. **Drafted (2026-10-12; design §15d):** the
+  statement drafts and notes are in `audits/evidence/stage2/`. **Answered (user, 2026-10-12):**
+  all four as recommended (design §15d). **Statement gate (2026-10-13):**
+  `audits/stage2-statements-pack.md`, covering PROG-2 (as a specification mirror), PROG-3 and
+  PROG-4. **Gate CLOSED** (round 1, 2026-10-14: 0 blockers / 0 majors / 4 minors;
+  `audits/stage2-statements-findings.md`, resolutions `audits/stage2-statements-resolutions.md`).
+  No theorem is false; the homes, the namespace and `initMem` are approved. Next: the landing PR
+  (parts A, C, D, E and the slice lemmas), then PROG-2's scripted edit and its fidelity gate.
+
+The route decisions of 2026-10-12 (design §16b) add three work items, numbered by §16b's items
+(items 1 and 4 are PROG-4):
+
+* **RD-2: restate B4a in place over H6** (§16b item 2). Public definitions of the codec and its
+  three CNFs (`TQBF.lean`), with closed-form variable indexing designed with the
+  machine-to-formula kit H6 (design §14), and theorems in place of `exists_adjacency_codec_cnf`'s
+  `∃`. A statement gate, then a re-fill. Also needed for `TQBF_PSPACEHard`: Tseitin on
+  `Std.Sat.CNF ℕ`, correct for every prefix assignment. Open with it: whether the `ψᵢ` emitter is
+  a machine or a program with `emit`. **Designed (2026-10-12):** `audits/evidence/rd2/` (design
+  note and statement draft; design §16b item 2). **Answered (user, 2026-10-12):** all five as
+  recommended; in particular, the old existential is retired and the emitter is a machine.
+  **Statement gate (2026-10-13):** `audits/rd2-statements-pack.md`. **CLOSED** (round 1,
+  2026-10-14: PASS, 0 blockers / 0 majors / 2 minors; `audits/rd2-statements-findings.md`,
+  resolutions `audits/rd2-statements-resolutions.md`). Next: the landing PR (with minor 1's sketch
+  fix), then the semantic re-fill (RD-2a) and the uniformity fill (RD-2b). `fragment_append`
+  joins the Cook–Levin re-basing family (minor 2).
+* **RD-3: re-route B6 and restate `space_universal` forward-only** (§16b item 3).
+  `SpaceComplexity/Hierarchy.lean`: `space_universal` keeps only its forward clause ([AB09]
+  Exercise 4.1), and `space_hierarchy`'s sketch moves to the window route (a self-simulating
+  universal `U₀` under a configuration-count clock), dropping the proved normal-form obligation.
+  A statement gate. The fill needs H2, H3 and H5. **Gate passed (2026-10-13, 0/0/4;
+  `audits/b6-restatement-findings.md`, resolutions `audits/b6-restatement-resolutions.md`).** **Host
+  statements drafted (2026-10-13):** `audits/evidence/b6hosts/`: H3 with its step clock, H5, `U₀`
+  and the bridges. The draft has 0 errors and 10 sorried contracts; everything else is proved,
+  including the two former fill obligations (`exists_codeTM`'s space clause, a decider's space
+  bound at every time). **Answered (user, 2026-10-13), all five as recommended:** `space_universal`
+  is strengthened to `C·s` in the B6 hosts' pack, through H5's ruler device; no binary-position
+  device; the public summary tag lands in `ConfigGraph`, with S1b's private copies re-pointed in
+  the same PR; the configuration-count runner goes to a new `SpaceComplexity/WindowClock.lean`, so
+  that `Build` never imports `SpaceComplexity` (the maintainer's recommendation, not the
+  drafter's); `∃` statements now, named machines at fill. **Statement gate (2026-10-13):**
+  `audits/b6-hosts-statements-pack.md`. **CLOSED** (round 1, 2026-10-14: PASS, 0 blockers / 0 majors
+  / 5 minors; `audits/b6-hosts-statements-findings.md`, resolutions
+  `audits/b6-hosts-statements-resolutions.md`). It covers eleven parts: five new modules and
+  additions to six existing files. The unit has 0 errors, its 10 contracts are sorried, and
+  `space_universal` is strengthened to `C·s`. The step clock's trajectory clause is strengthened to
+  carry the tapes, the input position and the output; C1's form `exists_stepClockTM` is unchanged.
+  Next: the landing PR, carrying the five fixes.
+* **C1-D: the NTIME hierarchy's design** (2026-10-13; `audits/evidence/c1/C1-design.md`, statement
+  draft `C1HostsDraft.lean.txt`: 0 errors, 5 sorries, 10 theorems proved). The proposed route:
+  - **guess first:** the universal NDTM and the diagonalizer write the whole choice word with a
+    small nondeterministic writer, then interpret deterministically. That removes SC-3 (no
+    nondeterministic counter loop); the shared nondeterministic infrastructure is a transfer and
+    slice lemma and a nondeterministic phase host, which stage 2's nondeterministic form needs
+    too;
+  - **the exponential decider is derived**, as `BF := E(UN)`, with `E` a public exhaustive-replay
+    theorem;
+  - **nondeterministic codes are interpreted through their replay table**, with H2 unchanged
+    (`CodeNDTM.serialize_eq_tableBitsK` is proved);
+  - **a step-clocked runner** is designed with B6's H3;
+  - **the universal machine's input is a bounded window copy** plus an input-locality lemma.
+
+  Machine level confirmed. Estimate: 13k–26k lines. **Answered (user, 2026-10-13): all five as
+  recommended** (note §6): guess first, which closes SC-3; `BF := E(UN)`; the replay table; one
+  step clock shared with B6 (`exists_stepClockTMVia`, gated with the B6 hosts); the bounded window
+  copy. **Statement gate (2026-10-13):** `audits/c1-hosts-statements-pack.md` (six landing modules;
+  0 errors, 5 sorries, 11 public theorems proved). It adds an input-locality lemma and a window
+  copier for decision 5, and it strengthens the interpreter core `R`. **CLOSED** (round 1,
+  2026-10-14: PASS, 0 blockers / 0 majors / 11 minors; `audits/c1-hosts-statements-findings.md`,
+  resolutions `audits/c1-hosts-statements-resolutions.md`). Next: the landing PR, after #86, since
+  the slice lemma's proof replaces #86's `sorry`, carrying the six text fixes. Then, before UN's
+  brief, the guess-then-run assembly lemma's gate in `Build/NDHost`, and before `R`'s brief, the
+  H1 hosted-clock harvest (rulings 2 and 5). (The
+  B6 hosts' pack strengthens `exists_stepClockTMVia`; C1 cites it only in sketches and its
+  dependency note, which re-point to `Build/StepClock.lean` at landing.)
+  Records corrected: `clockTM` is linear (design §12.7, plan item 12); `exists_effectiveNDMachineCode`
+  is already proved (plan §4e's C1 row). Still to fix: `NTimeHierarchy.lean`'s docstring says
+  "quadratic" (lines 51 and 110), to correct in C1's first Lean PR; and design §12.8 routed
+  `PATH_mem_NL` through SC-3, stale since C2 moved to programs (marked superseded 2026-10-13).
+* **RD-5: §13d G2–G4 after MIG-0b** (§16b item 5). The statements of design §13d's G2–G4, stated as
+  `Contract`s, then their gate and fills, then the Hennie–Stearns assembly. The open zone rows
+  `exists_zoneShiftInTM` and `exists_zoneShiftOutTM` retire through the G3/G4 gate.
 
 * **Chapter-2 fill campaign (E1-E5)** — **active** (hold lifted
   2026-10-02 after the ch-6 integration and audit closed). All four
@@ -915,12 +1312,25 @@ split-word definition is still wanted, it becomes one public declaration beside
   one-way input (the `2^O(S)` searches need indexed access or a rewind
   instruction), and the two citation-audit provenance questions, asked as
   questions (their `LogProg` compiler vs lax-434930's `TimeCompiler`;
-  `ConfigCount.core` vs cslib `ConfigBound`'s `Cfg.core`). **Blocks fills
+  `ConfigCount.core` vs cslib `ConfigBound`'s `Cfg.core`). Also a
+  received-code duplication observation, from the B7 fill gate's closure
+  (`audits/b7-fill-resolutions.md`): `Machines/Bin.lean::bits_getLast`
+  reproduces `Machines/FragDec.lean::bits_head_odd` at 90%. These are two
+  `Nat.bits` lemmas proved by the same strong induction, both received in
+  `f70c57c2`; it is offered as a possible shared helper. **Blocks fills
   only, never statements**: the machine-heavy P4.x fills named above plus
   the ARM interface statements deferred out of P4.1; every other fill
   epoch and the retrofit proceed. Returns to the plan on Hydroxyi's
   reply. *Origin: plan §2.5, §4a/§4b stage 1, CH34-Q2; the 2026-10-08
   citation-audit row.*
+  **Update (user, 2026-10-12; design §16b item 4):** C2 is written as
+  programs with read-once coins and compiled by stage 2, so the campaign
+  no longer needs extension (1). Extension (2)'s remaining customers,
+  Savitch and TQBF membership, are programs of the language too (design
+  §16, decision 3; MIG-22; `NP ⊆ PSPACE` is proved at machine level), and
+  extension (3) is replaced by the language's machine-configuration
+  routines (design §15c). The rest of the sync agenda stands. Hydroxyi
+  should be told when next in touch (the user's call).
 
 ---
 
@@ -1030,7 +1440,7 @@ split-word definition is still wanted, it becomes one public declaration beside
   constant overhead provably impossible), and relativization (Baker-Gill-
   Solovay) are future Chapter-3 work. *Origin: ch1 plan §5 phase-2 notes;
   session assessment 2026-09-18.*
-* **B5a headline H2: the per-code-linear timed simulator** (user, 2026-10-11:
+* **B5a linear headline (formerly "B5a headline H2", renamed 2026-10-13 to avoid confusion with host H2): the per-code-linear timed simulator** (user, 2026-10-11:
   "H1 for now, but add H2 to backlog"). `CodeSimulator.lean`'s headline is
   H1, polynomial in `|α| + |x| + t` jointly, which is exactly what the two
   uniform schemes need. **H2** gives the same verdicts within
@@ -1181,5 +1591,16 @@ Remaining Chapter-6 items (each documented as a divergence in its file):
   and a platform replay checks the proof network closes. Composes with the
   §2 D7 internal-namespace visibility proposal; revisit no earlier than
   that proposal, if at all. *Origin: prior-art comparison, 2026-10-05.*
+* **Algorithm-adjacent files outside CI and provenance** (from the 2026-10-12 library-reuse
+  assessment; colleague-owned, so this is a note for the owners, not campaign work).
+  `Cryptography/RSA.lean` holds a root-namespace `TimeM` with trusted costs, plus a ticked
+  insertion sort. It has no copyright header, is not imported from `TCSlib.lean`, and its design
+  and notation appear to follow upstream cslib's `TimeM`. The attribution duty of policy §2
+  (*Vendored code* / *Design adaptation*) should be checked before §15's curriculum layer
+  reuses it. `GraphTheory/KargerMinCut*.lean` and `GraphTheory/Core/` are not imported from
+  `TCSlib.lean` either, so CI never builds them (policy §1, *Exports*).
+* **SAT/Tautology blueprint pages after the B4 promotion** (from the T2a gate, note 18): the
+  pages still name the twelve promoted CNF-grammar declarations by their old private `SAT.lean`
+  names. Regenerate them at the next blueprint increment.
 * **`HANDOFF.md`** — the have→lemma extractor campaign's own tracking
   document; deliberately *not* absorbed here.

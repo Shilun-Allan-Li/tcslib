@@ -30,10 +30,14 @@ polynomial, search, split, compare, copy, emit, run a subroutine silently,
 branch, loop.
 
 **Non-goals.**
-- No deep-embedded language, no verified compiler, no cost-sound surface
-  syntax. (Mature end state; not justified by the remaining campaign.)
+- ~~No deep-embedded language, no verified compiler, no cost-sound surface
+  syntax. (Mature end state; not justified by the remaining campaign.)~~
+  **Superseded (user, 2026-10-12): a programming layer is commissioned now
+  that the low-level layers are complete; see §15.**
 - No model change, no Mathlib TM2 dependency, no space bounds (the design
   must not *obstruct* a later space story, but proves nothing about space).
+  *(The space part is superseded in practice: §12's R3 rows and every later
+  framed contract carry space or head-envelope clauses.)*
 - No retroactive migration of audited epoch-1/2 proofs (see §8).
 
 ## 2. Architecture
@@ -217,7 +221,9 @@ catalog calls plus the semantic lemmas the agents already proved.
 
 - Harvest = reimplement against the ABI using the original proof as
   template. Originals (2A/2B/2C/2D privates, audited epoch-1 material) stay
-  byte-identical; no re-audit of closed work.
+  byte-identical; no re-audit of closed work. **Lifted for the foundation
+  migration (user, 2026-10-12): see §16.** Migrated files are rewritten, with a
+  freeze check, a replay and a gate for each change.
 - Deduplication (retiring privates in favor of library calls) is an **E5
   closure task**, recorded in the backlog, not done opportunistically.
 - 2C's pending shared-lemma requests (`prefixTM`/`fixedPair`) are subsumed
@@ -823,7 +829,8 @@ for here).
   sharpness).
 * **12.2** R3's file layout — **answered (user, 2026-10-08): option (a)**, a
   new `Build/Catalog.lean` holding the new rows and the space lemmas for the
-  old rows, keeping `Primitives.lean` byte-identical; a backlog item records
+  old rows, keeping `Primitives.lean` byte-identical (**the byte-identity is
+  lifted for the §16 migration, user 2026-10-12**); a backlog item records
   the later refactor toward the symmetrical per-theme layout (option (c)),
   via the D7 split window.
 * **12.3** Space retro-annotation — **answered (user, 2026-10-08): the refined
@@ -977,8 +984,10 @@ for re-derivation as consumers of the shared host, not inputs to copy:
   only canonically.
 - `Universal.lean`'s private deadline interpreter `timedUniversalTM`, the
   quadratic one-tape clock behind `timed_universal`.
-- `TimeHierarchy/ClockMachine.lean`'s `clockTM`, the deterministic quadratic
-  re-scan. These are colleagues' files; under the user's standing preference
+- `TimeHierarchy/ClockMachine.lean`'s `clockTM`, the time hierarchy's clock. Its
+  specification `clockTM_spec` (`ClockLoop.lean`) is linear in the counter value; "quadratic"
+  here was wrong (corrected 2026-10-13, C1 design note): the quadratic bound is
+  `timed_universal`'s. These are colleagues' files; under the user's standing preference
   any dedup there is 12.2c work, not theirs.
 
 **Proposed components.**
@@ -1101,7 +1110,9 @@ soundness hypothesis. Three notes correct or extend this design:
 - **SC-3: the NTIME consumer needs a nondeterministic lifting.** The host's
   contracts are deterministic (`MultiTapeTM`, `runFrom`). Before the NTIME
   hierarchy fill, a choice-stream lifting contract is needed, with branch
-  alignment through the bookkeeping pauses.
+  alignment through the bookkeeping pauses. **Closed (user, 2026-10-13):** C1 takes the
+  guess-first route (C1 design note §6, decision 1): the choice word is written first and then
+  interpreted deterministically, so no nondeterministic loop host is needed.
 - **SC-5: an optional visited-set corollary.** A public `spaceUsedByTape` or
   visited-set corollary of the trajectory clauses would save the space
   consumers repeated bookkeeping.
@@ -1169,9 +1180,9 @@ Each row `R` states, from any `d` in its start phase:
    `∀ b`.)
 3. **Trajectory:** touched heads stay in a stated interval, typically
    `[pos − 1, pos + |w|]`, and the other heads are fixed. Space follows by
-   `MultiTapeTM.spaceUsedByTape_le_card_Icc`. That lemma lives in
-   `Build/Zone.lean`, so Catalog rows cannot cite it; 12.2c item 9's Zone split
-   is its natural moment to move down.
+   `MultiTapeTM.spaceUsedByTape_le_card_Icc`. That lemma now lives in
+   `Build/Catalog.lean` (moved from `Build/Zone.lean` by the B4 pre-issue promotion,
+   2026-10-12), so Catalog rows and their consumers can cite it.
 
 The time constants below are indicative. The statement phase fixes them by
 the executed pre-ship check, as in §12.6 practice.
@@ -1311,7 +1322,8 @@ coordinated with Aparna).
   - S1b and Savitch: blank tape fields of `2s+1` cell codes, with `s` given in
     binary by the constructor;
   - `spaceConstructible_logSpace`/`_linear`/`_poly` (binary ↔ unary);
-  - the space hierarchy's budget loop;
+  - the space hierarchy's window radius and clock width (the window route, §16b item 3; the
+    budget loop is gone);
   - the §12.7 clocks.
 - Bool. **Home:** `Build/CounterLoop.lean` (not G1-owned). **Can land now**,
   once R8.4's `writeConstTM` exists.
@@ -1384,8 +1396,8 @@ fills need R8.1–R8.3, so they come after the G1 gate.
   unreachable.
 - Generic after G1. **Home:** `Build/Seam.lean`, **after the G1 gate**.
 - **Consumers:** every `counterLoopTM` user with an early exit. S1b's BFS
-  (queue empty / counter exhausted), the space hierarchy's budget loop
-  (success / cap), and `recordStepTM`'s internal dispatch.
+  (queue empty / counter exhausted), the space hierarchy's windowed runner (halt, window
+  exit, clock; the window route, §16b item 3), and `recordStepTM`'s internal dispatch.
 
 #### Placement and timing
 
@@ -1413,8 +1425,8 @@ fill batches split now/after-G1; a fill gate.
 | **Savitch** `savitch` ("frame stack … catalog copy/compare/increment … one extra bank runs the vertex-adjacency test") | `recordStepTM` + `recordEqTM` for `adj(u, v)` (`u = v ∨ step u = v`, both choice bits); `recordNextTM` + `recordValidTM` for the midpoint enumerator; R8.3 seek over the frame stack; `copyTM`/`clearTM` for frame push/pop at **fixed intervals** (note 7); `incrementTM` for the depth field; R8.8 for the recursion's two returns. Space contracts of every row are load-bearing |
 | `spaceConstructible_poly`/`_logSpace`/`_linear` | R8.5 `inputLengthTM`; R8.6 `expandTM`; `incrementTM` |
 | **`PATH_NLComplete`** hardness (adjacency "by one local transition-table check", logspace) | The sketch's engine is the ARM layer (`arm_decides`). Optionally, a TM route: `recordStepTM`'s space clause with binary F1 gives `O(log n)`-space adjacency deciders for the index languages. Decision 12.8.4 |
-| **`PATH_mem_NL`** (matrix indexing) | R8.5 `inputSeekTM` (once a nondeterministic host exists, SC-3) |
-| **Space hierarchy** `space_universal`, `space_hierarchy` (interval counters, core-count clock, budget loop, probe/replay over fixed banks) | `incrementTM`/`decrementTM` (interval counters), `counterLoopTM` + R8.6 (clock and budget loop), R8.8 (success/cap exits), R8.1 (`max − min + 1 > s` against the budget word), `clearTM` resets. It simulates a *coded* machine, so not R8.7 |
+| **`PATH_mem_NL`** (matrix indexing) | R8.5 `inputSeekTM` (once a nondeterministic host exists, SC-3; superseded 2026-10-13: C2 is written as programs, §16b item 4) |
+| **Space hierarchy** `space_universal`, `space_hierarchy`. **Superseded 2026-10-12 by the window route** (§16b item 3): `space_universal` is forward-only (no interval counters, clock or probe/replay), and `space_hierarchy` runs a self-application universal `U₀` in a window on the record rows | **Now:** R8.7 (`recordInitTM`, `recordStepTM`, `recordTestTM`) under a configuration-count clock (`counterLoopTMVia`), with H2 (step block), H3 (windowed runner, three exits) and H5 (native and binary-position input devices; corrected 2026-10-13: native and the bounded-prefix ruler device, user decisions B1–B2). The earlier route (interval counters, budget loop, R8.8 success/cap exits) is dropped |
 | **`TQBF_mem_PSPACE`** (validate-first, depth-first assignment walker, per-clause CNF evaluation) | R8.2 folds (validation, clause evaluation), R8.5 `inputSeekTM` (re-reading prefix bits and matrix bytes), `incrementTM` / a trit odometer (`recordNextTM`'s carry discipline) for the walker, R8.3 seek on the assignment word |
 | `NP_subset_PSPACE` | existing `incrementTM` (certificate enumerator) and `vhostEmitTM` (virtual input); R8.8 for accept/exhaust |
 
@@ -1923,8 +1935,8 @@ needs the advancing writer R8.4′.
 | **Savitch** | Rich records with binary F1 (`O(S)` cells); frame stack on a rich tape; R8.7 `recordStepTM` (both choice bits) + `recordEqTM` for adjacency; `recordNextTM` + `recordValidTM` for midpoints; R8.3 over frames; `copyTM`/`clearTM` at fixed intervals (note 7); R8.0b loops; R8.8; R8.5d validation; `alphabet_reduction_spaceUsed` |
 | `spaceConstructible_*` | `Bool` only: R8.5c, R8.6, `incrementTM` |
 | `PATH_NLComplete` (hardness) | ARM engine (12.8.4); no §12.8 row |
-| `PATH_mem_NL` | R8.5b, once the nondeterministic host exists (SC-3) |
-| Space hierarchy | `Bool` counters lifted by R8.0 on a rich simulator, or unlifted on a `Bool` one; R8.0b (budget loop), R8.8 (success/cap), R8.1 (budget comparison), `clearTM` resets, R8.5d. It simulates a coded machine, so it does not use R8.7 |
+| `PATH_mem_NL` | R8.5b, once the nondeterministic host exists (SC-3; superseded 2026-10-13: C2 is written as programs, §16b item 4) |
+| Space hierarchy | **Superseded 2026-10-12 by the window route** (§16b item 3; the RD-3 statement gate, minor 2): R8.7's initial-record, test and step rows under a configuration-count clock (`counterLoopTMVia`), through H2, H3 and H5, with R8.5d for input validation. The earlier route (R8.0b's budget loop, R8.8's success/cap exits, R8.1's budget comparison, `clearTM` resets, and no R8.7) is dropped |
 | `TQBF_mem_PSPACE` | R8.2 (validation folds, clause evaluation, the trit odometer), R8.5b (input re-reads), R8.3 |
 | `NP_subset_PSPACE` | `incrementTM`, `vhostEmitTM`, R8.8 |
 | **G3/G4 (§13d)** | R8.3 (zone scanning across separators), R8.2 (per-track maps), R8.0 (Bool counters on `ZoneSym` tapes via `e := Sum.inl`) |
@@ -2335,11 +2347,11 @@ targets are blocked:
 | Module | Declaration | Status |
 |---|---|---|
 | `Build/OracleSim.lean` | `FinTM.prefixWords` (+ `_nil`, `_update`), `Cfg.init_eq_ofWords`, `OracleTM.queryString_runFrom_length_le_of_blank` (W2-0) | proved |
-| | **`FinOracleTM.exists_plain_simulation`** (W2-S): from any preloaded start, a plain host reproduces the oracle machine's halting output within `a·(t+1)² + a·Σ_{r<t} [query at r]·τ(\|query_r\|)` | sorried |
+| | **`FinOracleTM.exists_plain_simulation`** (W2-S): from any preloaded start, a plain host reproduces the oracle machine's halting output within `a·(t+1)² + a·Σ_{r<t} [query at r]·τ(\|query_r\|)` | **proved** (fills-4 to fills-6; wave-1 fill gate closed 2026-10-12) |
 | | `…_of_monotone`, `…_initCfg`, `FinOracleTM.exists_plain_decider` | proved from W2-S |
 | | `FinOracleNDTM.choiceOut`, `choiceOut_eq_true_iff`, `mem_iff_exists_choiceOut` | proved |
-| | **`FinOracleNDTM.exists_choiceTM`** (W2-C): the choice-word machine, `≤ 2\|u\| + 2` steps, the same queries | sorried |
-| `Build/CertShell.lean` | **`FinTM.exists_certificateShell`** (W2-V): the plain shell deciding `{x ++ u \| \|u\| = C(\|x\|+1)^c ∧ out x u = [true]}` | sorried |
+| | **`FinOracleNDTM.exists_choiceTM`** (W2-C): the choice-word machine, `≤ 2\|u\| + 2` steps, the same queries, except that at exhaustion in the query state one query may be submitted and its answer discarded (statement gate, minor 4) | **proved** (fills-4) |
+| `Build/CertShell.lean` | **`FinTM.exists_certificateShell`** (W2-V): the plain shell deciding `{x ++ u \| \|u\| = C(\|x\|+1)^c ∧ out x u = [true]}` | **proved** (fills-4) |
 | | `FinTM.certificateShell_proj` | proved |
 
 - The exact sum, "`T_D` of the query lengths", needs no monotonicity.
@@ -2355,6 +2367,12 @@ targets are blocked:
   - off `qQuery`, the bridge `runFrom_eq_plainEmptyOracle` plus Z5;
   - at `qQuery`, nine R2-seamed phases: bookmark, origin walk, save and blank cell `-1`,
     `copyTM`, the Z1 call at `y = []`, read the verdict, restore, walk back, answer.
+  - **As delivered** (fills-6; documented in the target's appendices, and confirmed sound and no
+    weaker by the wave-1 fill gate): the host `oracleHost` is **one public phase host**
+    (`phaseHostTM`), with a single R2 seam between the public copy and the relocated call
+    (`oracleService_run`). Preparation takes at most `natAbs p + 3` steps and restoration
+    exactly `natAbs p + 3`, for both signs of the displacement and for zero. A query costs at most
+    `2·|p| + 2·|z| + tCall + 13`, redirects included.
 - **W2-C:** lockstep by induction on `u`, in the `toOracleNDTM_runWith` shape. An exhausted
   word answers `false`, so an unhalted branch never shows `[true]`.
 - **W2-V:** the native-input call R8.5e (`exists_inputCallTM`) at `splitSolve`, then Z1 inside
@@ -3000,3 +3018,929 @@ codes and the two-tape universal machine, Thm 3.1 follows at `f log f`.
 
 The G1 brief is `briefs/s13d-g1-generalize.md`.
 
+**Scope (user, 2026-10-12; §16b item 5).** G2–G4 and the Hennie–Stearns assembly stay in this
+campaign. They follow MIG-0b, so that their rows are stated as `Contract`s from the start.
+
+## 14. Hosts first: the rule and the host registry (user, 2026-10-12)
+
+**The rule** (`policy.md` §1, **Hosts come first**; `workflow.md` §2 and §4,
+ground rule 4). A *host* is a control structure that drives other routines:
+a search or traversal, a recursion or evaluation scheme, an interpreter step
+block, a clocked or windowed runner, a dispatcher over a data structure, or an
+input device. A host is never built `private` inside the proof that first
+needs it. Its public contract is designed and statement-gated first, generic
+in what its consumers vary, with time and head-envelope clauses; consumers
+cite it, proved modulo while its fill runs. Leaf rows (copy, compare, seek,
+arithmetic) are not hosts and keep the §4 rule of admission.
+
+**Why** (the library-reuse assessment of 2026-10-12, four read-only reviews of
+the tip `3462c1b4`). The configuration-level calculus (§12–§13: framed sweeps,
+`scanTM`, seams, the phase host, R1 embedding, symbol lifts, counter loops,
+configuration records) is general: alphabet-generic, with exact time, framing
+and head envelopes. Overfitting entered one level up, where every theorem got
+its own private host, because the briefs' ground rule 1 made new helpers
+private by default:
+- NP ⊆ PSPACE's evaluation host (`SpaceComplexity/Inclusions.lean`, about 70
+  privates), S1b's BFS and windowed pieces (private by `briefs/ch34-s1b.md`,
+  which lists three promotion candidates), B4 membership's assignment walker
+  (private by `briefs/ch34-b4-mem.md`), and Cook–Levin's machine-to-formula
+  kit (private in `CookLevin/Hardness.lean`);
+- four configuration encodings (`coreCode`, `cfgRecord`, B4a's bit rows,
+  Cook–Levin's snapshot blocks) and three reachability notions (configuration
+  reachability in `ConfigGraph`, `Complexity.GraphReach`, `Kruskal.Reach`),
+  none linked to Mathlib's `Digraph`/`SimpleGraph`;
+- about 300 `f2_` private copies in `Build/Catalog.lean`, there only to attach
+  space bounds to rows exported as existentials (the §2 design rule, *named*
+  machines with spec theorems, was not followed by those rows).
+
+**The registry.** Status as of 2026-10-12. Each entry gets a public contract
+and a statement gate before a second consumer is briefed.
+
+| # | Host | Status | Named consumers |
+|---|---|---|---|
+| 0 | **Framed-contract structure**: machine, entry/exit states, precondition, endpoint as a function of the start configuration, time, no-earlier-exit cut, head envelope; sequencing, phase host, R1 embedding, lift and counter loop as structure-to-structure theorems, space derived | to design; **requirements revised by §16** (exact time and cut first-class) | every host below; removes the inline restatements of the delimited-word precondition |
+| H1 | **AND/OR evaluator**: a depth-first odometer over a path word of per-depth records with node kinds (AND/OR), a pluggable leaf-verdict module with its own framed contract, short-circuit semantics as a pure function; space = path + leaf + O(1) | the pure core is proved, private, in B4 membership's partial (`b4mValue`, `b4mValue_truth`, `b4mWalk_value`; fills-6); no machine walker was built. **Language first (user, 2026-10-12):** the general evaluator is written as a recursive program of §15's language, not as a machine host, and `TQBF_mem_PSPACE` follows as a program over that core (backlog MIG-22) | `TQBF_mem_PSPACE`; Savitch (midpoint records as digits); NP ⊆ PSPACE (re-derivation); `ClassPSPACE/Games.lean`'s game values; backtracking in the §15 layer |
+| H2 | **Step block**: one simulated transition of a `k`-tape coded table, relation-level, with per-round time `B·(\|table\| + 1)` and a head envelope | **the complete step block is proved, private, in B5a H1's continuation (fills-7):** `h1RoundTM k`, one finite machine per `k` whose control does not depend on the state count, with `h1Round_effect` (`0 < T ≤ 50·(\|table\| + 1)`, strict interior, silent, head envelope). Promotion by PR and gate before a second consumer is briefed (backlog F7-1(a)) | H1 (`exists_uniformSimulator`); U-1; B6's self-application universal; C1 (with a choice-bit-indexed table); EXPCOM |
+| H3 | **Windowed runner**: run a fixed machine on a windowed record, exiting on window exit, simulated halt, or a configuration-count clock | parts exist privately in S1b's partial (radius phase, records-to-runs bridge, the general-`S` count). S1b stopped (fills-6); B6's window route is the next consumer (adopted, §16b item 3) | S1b; B6 (the window route); Savitch; NL = coNL |
+| H4 | **Search over a graph presented by rows** (enumerate, equality, adjacency, start, target), visited table, BFS | not built: S1b's partial has the record graph (records, edges, path lifting, counts) but no search machine, and it stopped there (user, fills-6). **Language first:** the general search is a program of §15's language, and `NSPACE ⊆ DTIME(2^O(S))` is re-derived through it (backlog MIG-19) | `NL ⊆ P`, `NSPACE ⊆ DTIME(2^O(S))`; `PATH ∈ P`; Immerman–Szelepcsényi counting; §15 graph algorithms |
+| H5 | **Input devices** behind one interface: native, buffered (Z1, exists), unary marker, binary position (from `exists_inputSeekTM`), computed input | partial | B6 / `space_universal`; U-1 and H2 (backlog); C1 |
+| H6 | **Machine-to-formula kit**: closed-form variable indexing, snapshot-keyed local gates, ordered emission by `exists_emitLoopTM`, Tseitin on `Std.Sat.CNF ℕ` correct for every prefix assignment | pattern private in `CookLevin/Hardness.lean`; B4a's codec is non-uniform (its orderings range over index types depending on `n` and `s`, and its public statement is `∀ n s, ∃ …`). **B4a is restated in place over this kit's indexing** (user, 2026-10-12; §16b item 2) | TQBF hardness; Cook–Levin deduplication; later machine-to-formula reductions |
+
+Pure-Lean kits that the hosts' semantics share (not machines, so not hosts,
+but designed with them): bounded reachability (`ReachWithin`, the midpoint
+lemma, pigeonhole shortening) with bridges from configuration reachability,
+`GraphReach` and `Kruskal.Reach` to Mathlib's `Digraph`/`SimpleGraph`.
+Consumers: Savitch, TQBF hardness, Immerman–Szelepcsényi, PATH, §15.
+
+**Work in flight when the rule was adopted.** No in-flight brief is withdrawn.
+B4 membership and B5a H1 received addenda (`briefs/ch34-b4-mem-addendum-1.md`,
+`briefs/b5a-fill-h1-addendum-1.md`): their hosts stay private for now, as
+their ownership requires, but are written generic, with self-contained
+statements, and listed as promotion candidates. They and S1b's candidates are
+promoted, by PR and gate, before any second consumer is briefed.
+
+**Proposed sequencing** (maintainer; for the user): item 0, then H1 (two
+consumers ready: TQBF membership and Savitch), then H3/H4 from S1b's delivery,
+then H5 with H2's self-application universal for B6, then H6 for TQBF
+hardness. Each is a statement phase plus its gate, then a fill.
+
+## 15. The programming layer (commissioned by the user, 2026-10-12)
+
+**Decision.** "Support a programming layer now, now that we've got the really
+low level stuff working" (user, 2026-10-12). This supersedes §1's non-goal.
+
+**Why now.** The routine layer (§12), framed contracts (§12.6), counter loops
+(§12.7), configuration records and tables (§12.8, §12.8b) and the zone and
+virtual-input layer (§13) are proved or being filled. What is missing is any
+way to write an algorithm once and get a machine with a proved bound:
+- `CounterProg` has unary registers, `inc`/`dec`/`jz`/`out`/`pr` and a one-way
+  input, compiled with a `t(2t + 3)` overhead (`CounterProgRun.lean`). It
+  serves emitters, but cannot hold a string, an array or a graph;
+- `LogProg.ARM` has `O(log n)`-bit registers and yes/no answers, and compiles
+  for space only;
+- the `PolyTimeComputable` closure algebra is `Bool`-only and existential;
+- none of the three is built on `Build/`, and none is registered in
+  `ComputationalModels.lean`.
+
+So every machine-level algorithm is a hand-built host (§14), and an
+introductory algorithms curriculum (graph search, shortest paths, MST,
+sorting, with running times) cannot be written at all. The only
+cost-annotated code, the `TimeM` in `Cryptography/RSA.lean`, charges trusted,
+unchecked costs.
+
+**Goals.** Write an algorithm once, as a program, and obtain: its semantics;
+a step count that is sound by construction (only primitives charge cost);
+and a compiled `FinTM` with a proved time bound polynomial in the program's
+cost and a space bound linear in its register footprint, feeding `∈ P`,
+`PolyTimeComputable` and `SPACE` memberships. The compile theorem is proved
+once, from the contracts of the rows and hosts, never by tracing runs.
+
+**Proposed architecture** (maintainer draft; decisions 15.x below):
+
+```
+L4  Algorithms     TCSlib/Algorithms/: curriculum algorithms, specs against Mathlib
+L3  Programs       a deep-embedded structured language over word registers (+ arrays),
+                   big-step semantics with cost, compile theorem to FinTM
+L2  Contracts      the framed-contract structure (§14 item 0) and the registered hosts
+L1  Routines       Build/: catalog rows, scans, seams, loops, records, tables
+L0  Model          MultiTapeTM / FinTM, the run calculus
+```
+
+- **L3, programs.** Registers hold words over a finite alphabet, one tape
+  each. Instructions are the catalog's word operations (copy, clear, append,
+  compare, binary increment, add and `≤`, seek within delimited fields), reads
+  of the native input, clean calls of `ComputesFunInTime` machines on
+  registers, structured control (sequence, `if` on a register test, a bounded
+  `for` over a register's value by counter loops, `while` with fuel), and
+  calls of registered hosts. Each instruction is charged by its row's cost in
+  the register lengths. Arrays and maps, in a later increment, are record
+  tables (§12.8b) with charged access.
+- **L4, algorithms.** Written in L3 when machine-faithful costs are the point,
+  or as functional code over a cost model that is sound by construction (a
+  query or operation monad whose primitives are the only cost source), with
+  specifications against Mathlib (`List.Sorted`, `List.Perm`,
+  `SimpleGraph.Reachable`, `Digraph`). The comparison-query form also states
+  the sorting lower bound. `RSA.lean`'s `TimeM` (colleague-owned) is a
+  candidate to relocate or replace here, after a provenance check
+  (`backlog.md` §5).
+- **Existing layers.** `CounterProg` and `LogProg.ARM` stay; each is bridged to
+  L3 or re-based on it (15.4). The new models are registered in
+  `ComputationalModels.lean` (policy §1, model registry).
+
+**Open decisions (15.x, for the user).**
+1. **Embedding.** (a) A deep embedding: syntax, semantics and a verified
+   compiler (cost-sound by construction, the most reusable, the largest); or
+   (b) shallow: programs are compositions of §14's contract structures
+   (cheaper, but no syntax to reason about or teach from). Maintainer lean:
+   (a), compiling into (b).
+2. **Register alphabet.** `Bool` only, or any finite alphabet with
+   `alphabet_reduction` at the end.
+3. **First memory model.** Registers only, or registers plus record-table
+   arrays from the start.
+4. **`CounterProg` and `LogProg.ARM`.** Bridge, re-base, or leave as they are.
+5. **Curriculum cost model.** A comparison-query monad first (sorting), an
+   operation monad (graphs), or curriculum algorithms written in L3 directly.
+6. **Shape of the compile bound.** Per-instruction affine in the register
+   lengths (`C·(cost + n + 1)` overall, with register lengths bounded by the
+   cost), or a polynomial.
+7. **First consumers** (rule of admission, §4: two named customers). Proposed:
+   machine side, the `NL ⊆ P` BFS (or `PATH ∈ P`) and TQBF membership or
+   Savitch; curriculum side, merge sort and BFS.
+
+**Prior art examined (2026-10-12; nothing taken yet).** Two formalizations of the
+same result, Alman and Vassilevska Williams, *Truly Subquadratic 3SUM and Truly
+Subcubic APSP via Triangles in Sparse Lopsided Graphs* (arXiv:2610.06783v1). Both
+are word-RAM developments with a structured language, a program logic and a
+verified compiler:
+- **[AFM26]**: `anthropics/formal-math`, folder `3sum-apsp`, commit
+  `e1a4e6508154ea59f030480661590a9fe3018011` (2026-10-05), Apache-2.0, © Anthropic,
+  PBC, on Lean and Mathlib v4.33.1. It has 434 Lean files and 102,310 lines. Its parts:
+  - the trusted `EndStatement.lean` (139 lines, core Lean only);
+  - the language, logic and compiler in `Lang/` (about 9,000 lines) and `Machine/`
+    (about 840);
+  - the paper's algorithms as verified programs in `Programs/` (about 52,600).
+- **[Xuanji26]**: user **xuanji on prove2me** (citation as directed by the user),
+  file `3sumapsp_example.lean`, examined locally. It is the top-level assembly of a
+  stronger 3SUM bound, `O(n^1.999074)` against [AFM26]'s `O(n^1.9992)`, which comes
+  from an Exact Triangle saving of `9261/5000000`. The file builds on [AFM26]'s
+  library: 264 of its 265 module docstrings and 125 of its 128 theorem blocks are
+  verbatim in [AFM26]. Its 62 project imports, including the module that proves the
+  improved saving, are not in the file.
+
+The designs that §14 and §15 may adapt from them are:
+- the program logic (`Ends`, `Meets`: postcondition predicates, time "within `T`",
+  handed on rather than added up, and spec-only calls);
+- the `SameOn` framing with `.keep` lemmas and default-argument tactics;
+- tasks, solvers and hosts (`IsHost`);
+- run limits built into the semantics;
+- the `DetTimeModel` claim algebra;
+- the asymptotics calculus with its `growth` tactic.
+
+If adapted, they are cited per `policy.md` §2, *Design adaptation*: [AFM26] as the
+origin of the design, and [Xuanji26] for the file the user supplied.
+
+**Sequencing.** 15a: the contract structure (shared with §14). 15b: L3 with
+registers only, its semantics, cost and compile theorem (a statement phase and
+its gate, then fills). 15c: arrays over record tables. 15d: the curriculum
+layer's first increment (cost model, merge sort with `≤ n⌈log₂ n⌉`
+comparisons, BFS with an `O(n + m)` operation count). Every Lean step is a PR
+plus its own gate.
+
+### 15a. Language first; the spike (user decision and maintainer draft, 2026-10-12)
+
+**Decision (user, 2026-10-12): language first.** The remaining results that are
+algorithms are written as programs of the §15 language and compiled. (§16, decision 3,
+confirms this for Savitch and `NSPACE ⊆ DTIME(2^O(S))`, which need machine-configuration routines
+in the language.) These are
+Savitch's recursion, the AND/OR evaluator (H1), graph search (H4), and the
+intro-algorithms curriculum. The hosts that are *about machines* stay at machine
+level and proceed now: H2 (step block), H3 (windowed runner), H5 (input devices)
+and H6 (machine-to-formula). Work in flight is unaffected. S1b's BFS and B4's
+walker finish as briefed, and may later be re-derived as programs.
+
+**Architecture (proposed): two stages, as in [AFM26].**
+
+```
+program of the language  --stage 1-->  flat word-RAM program  --stage 2-->  FinTM Bool
+                        (compiler; constant          (one simulation; polynomial
+                         overhead, no tapes)          overhead, the only tapes)
+```
+
+- **Stage 1** is pure program reasoning and never mentions tapes. [AFM26]'s
+  compiler from its language to its word RAM is about 2,500 lines. Its theorem
+  says a run of `c` steps becomes at most `startCost + stepsPerStep·c` RAM steps,
+  with constants that depend only on the program text.
+- **Stage 2** is the only place tapes appear: one machine simulates a fixed RAM
+  program, one instruction at a time. The RAM has about a dozen instruction
+  kinds, so the tape-level proof surface is about a dozen instruction contracts
+  (§14 item 0), one dispatcher over the program counter (the phase host), and one
+  simulation induction.
+- **The word RAM is a model in its own right**, registered in
+  `ComputationalModels.lean`. In it the curriculum's statements have faithful,
+  constant-factor costs. Stage 2 then turns them into P, PSPACE and L
+  memberships.
+
+**The language.** It is [AFM26]'s light language:
+- integers and numbered local variables, with a flat memory `ℕ → ℤ`;
+- expressions: constants, `+`, `−`, `×` and loads; tests `<` and `=`;
+- statements: skip, assignment, store, sequence, if, while, and procedure calls,
+  with recursion;
+- unit costs per constant, variable, operation and load;
+- the limits `word`, `space` and `depth` as part of the semantics;
+- the logic `Ends`/`Meets` with its rules, frames and tactics.
+
+It adds three things that our classes need:
+- `inBit e` and `inLen`, which read the input string *in place*, never copied
+  (logspace needs this);
+- `emit e`, which appends a bit to the output, for reductions and function
+  problems;
+- possibly `half e`, cheap on both targets (decision 15a.4).
+
+**The RAM.** It is [AFM26]'s `EndStatement.Instr`:
+- `one`, and `add`/`sub`/`mul` modulo `2^W`;
+- `load` and `store` (indirect);
+- `bltz`, `accept` and `reject`.
+
+It adds `rdIn` (an input bit at a computed position), `len` and `emit`.
+
+**Stage 2's theorem (statement shape, draft).** For a RAM program `P` there are a
+`FinTM Bool` machine `M` and a constant `A` (depending on `P` only) with the
+following property. Whenever `P` halts on input `x` with word size `W` within `t`
+steps, touching `f` distinct cells:
+- `M` halts on `x` with the same verdict and output within
+  `A·(t + 1)·(f·(W + a) + W² + |x|·log|x| + 1)` steps, where `a` is the width of
+  an address;
+- `M`'s space is at most `A·(f·(W + a) + W + log|x| + 1)`.
+
+The per-step cost is dominated by one scan of the memory table, a
+shift-and-add multiplication, and one input seek.
+
+**What consumers get.**
+- **P:** polynomial cost and limits give membership in P.
+- **L:** `O(1)` cells, bounded depth and `W = O(log n)` give space `O(log n)`,
+  because the input is read in place.
+- **Savitch:** depth `O(S)` with `O(1)` locals of `O(S)` bits gives `O(S²)`.
+- **TQBF ∈ PSPACE:** depth `O(n)` with `W = O(log n)` gives `O(n log n)`.
+
+Results that need tight *linear* space may still want direct machines.
+
+**Reuse from `Build/`:**
+- the phase host, for dispatch on the program counter;
+- the framed copy, compare, clear and increment rows;
+- the `scanTM` carry family, for binary addition;
+- `exists_inputSeekTM` and `exists_inputLengthTM`;
+- counter loops, for the rounds of a multiplication;
+- R1 embedding and `alphabet_reduction`.
+
+**New rows needed:**
+- two-tape addition and subtraction modulo `2^W`;
+- multiplication;
+- a sign test;
+- find-by-key in a memory table, where the key is a word on another tape. The
+  record-table find takes a finite-state predicate, so it does not cover this;
+- in-place overwrite of a fixed-width field.
+
+**Rough cost** (maintainer estimate, in lines):
+- item 0's contract structure: 1,500–2,000;
+- stage 2: 6,000–10,000;
+- stage 1 with the language, logic and tactics: 5,000–7,000 if ported from
+  [AFM26], more if re-implemented.
+
+That is about 15,000–20,000 lines in all, or a few fill waves: about the size of
+S1b plus the record tables.
+
+**Open decisions (15a.x, for the user):**
+1. **Two stages** (recommended) or a direct compiler from the language to machines.
+2. **Port or re-implement [AFM26]'s language, logic and compiler.**
+   - *Port:* Apache-2.0, vendored with its header, the upstream commit and a list
+     of local modifications (`policy.md` §2, *Vendored code*).
+   - *Re-implement:* follow the design, with a *Design adaptation* citation.
+
+   A port is not mechanical. [AFM26] uses Lean v4.33's module system (`module`,
+   `public import`, `@[expose] public section`), which our pin v4.25.0 and its
+   Mathlib do not use. Porting means removing that layer and repairing
+   Mathlib API drift. A port trial on the core (syntax, logic, rules, frames,
+   calls, tactics and regions, about 1,900 lines) would settle it.
+3. **The RAM's input convention:** read in place by instruction (recommended;
+   logspace needs it), or loaded into memory as in [AFM26] (kept as a variant
+   for curriculum statements).
+4. **Halving** (`half e`) in the language and the RAM: yes or no.
+
+**Next step after 15a.1–15a.3.** Statement drafts of item 0's contract structure
+and of stage 2's theorem, as sorried Lean in a scratch worktree, with a pre-ship
+elaboration check. Then a statement gate.
+
+### 15b. The port of [AFM26]'s language, logic, routines and compiler (user decision, 2026-10-12)
+
+**Decision (user, 2026-10-12): port it.** The user asked two things first:
+- *Does their core serve our purposes?* It serves all of the language-first list, which is
+  deterministic. Nondeterminism and randomization are not covered and become one planned
+  extension, the coin stream (below).
+- *Does their licence allow it?* Yes: Apache-2.0, as tcslib is. Vendored files keep their headers,
+  list their changes, and carry the upstream `NOTICE` (repository `NOTICE`).
+
+**The trial port**, read-only, with no build products:
+- **Core and routines.** The language core with the merge-sort and power-table closures (18
+  modules, 3,681 lines) elaborated at our v4.25.0 pin with 0 errors.
+- **Compiler.** The compiler's correctness closure (23 modules, 5,565 lines) also elaborated with
+  0 errors.
+- **Axioms.** `sort_meets`, `merge_meets`, `powTable_meets`, `time_split`,
+  `compileProgram_correct` and `sim` depend only on `[propext, Classical.choice, Quot.sound]`.
+
+**What is vendored.** `TCSlib/Programs/` holds 41 modules (8,548 lines of the trial set) plus
+`Compat.lean` and the facades `Programs`, `Programs/Util`, `Programs/WordRAM` and
+`Programs/Light`:
+- the language, its logic and tactics (`Light/`);
+- 14 verified routines (`Light/Lib/`): copy, fill, merge, merge sort, counting sort, radix
+  pass, logarithms, powers, modular reduction, square root, odometer and others;
+- the compiler to the word RAM (`Light/Compiler/`, with `compileProgram_correct`);
+- the word RAM and its run facts (`WordRAM/`);
+- general list and index facts (`Util/`).
+
+Their sieve is deferred: it needs `Nat.primesLE`, which our Mathlib pin lacks. The port is the
+41-module import closure of the roots named in `scripts/vendor_afm26/README.md`. Two generic
+upstream modules outside that closure are **deferred**, not excluded on principle (fidelity
+gate, finding 3):
+- `Lang/Renumber.lean` (procedure relocation), a candidate for the compiler extensions;
+- `Machine/Footprint.lean` (read/write footprints), a candidate input to stage 2's space bound. The files are
+generated by `scripts/vendor_afm26/` from upstream plus a recorded list of changes. The
+per-file diff is `audits/evidence/programs-vendor/upstream-to-vendored.diff`, and the file map is
+`.../file-map.md`.
+
+**Local modifications** (listed in each file's header):
+- the Lean module-system syntax removed, as in the cslib precedent;
+- namespaces `EndStatement` and `ThreeSumApsp.WordRam` renamed to `WordRAM`, and `ThreeSumApsp`
+  to `Light`;
+- `EndStatement.lean` trimmed to the word RAM;
+- `## References` sections and the standard options added;
+- `with_unfolding_none`, absent in v4.25, replaced by `with_reducible`. This is an approximation:
+  it keeps reducible definitions unfoldable, and every vendored proof passes with it;
+- nine v4.25 proof repairs (`scripts/vendor_afm26/fixes.py`). Seven insert a beta reduction,
+  because v4.25 leaves an instantiated motive or invariant unreduced. One rewrites a cast step,
+  and one completes a `split_ifs`;
+- three renamed lemmas provided in `Compat.lean`, each to be removed at the Mathlib bump that
+  provides it.
+
+**Checks.**
+- The shipped files, concatenated, elaborate with 0 errors together with all fifteen
+  `Complexity` facades and `ComputationalModels`. They declare 2,990 constants, none of which uses
+  `sorryAx`, and no axiom.
+- A textual screen of the 713 new public names against the other areas finds no clash.
+- The style lint reports 0 FAIL and 0 WARN over the 45 files. The vendored files are registered
+  as such.
+- The user-run replay compiles each module separately, in dependency order
+  (`audits/evidence/programs-vendor/replay-order.txt`). Its first run found one import gap.
+  `Util/Index` uses a Batteries lemma that upstream reaches through its imports at Mathlib v4.33
+  and ours does not; 16 modules failed with it. The fix is an added
+  `import Batteries.Data.Nat.Lemmas`, listed in the file's header.
+- The concatenated check had masked that gap: its union of all files' imports contained the
+  lemma. A per-module closure check now elaborates each of the 46 modules and facades in exactly
+  its own import environment (`scripts/vendor_afm26/closurecheck.py`), and all 46 are clean
+  (`audits/logs/programs-vendor-closure-check.log`).
+- **Replay passed** (user-run, at `155255ed`; `audits/logs/programs-vendor-replay.log`). All 47
+  entries are clean, with 0 errors and no `sorry` warnings: the 42 modules, the four facades and
+  `ComputationalModels`. The resumed run rebuilt the 17 modules that had failed and skipped the 30
+  that were already clean.
+
+**Models registered** in `ComputationalModels.lean`: `Light.Program` and `WordRAM.Instr`.
+
+**Next, each a statement phase with its gate:**
+1. the extensions: reading the input in place (`inBit`, `inLen`), `emit`, and the coin stream
+   (`coin x`, read for each fixed stream, so that the deterministic logic and compiler carry
+   over; nondeterminism and randomization then quantify over the stream);
+2. stage 2, the RAM-to-`FinTM` simulation, with the contract structure (§14 item 0);
+3. the first consumers.
+
+### 15c. The language and RAM extensions: semantics decided (user, 2026-10-12)
+
+A read-only survey of the vendored layer (2026-10-12) costed the four extensions and their
+options. **Decision (user): all four go into one scripted vendored edit set**, with the
+survey's recommended semantics:
+
+- **Input read in place.** A statement `x := inBit e` (cost `e.cost + 1`; past the end it reads
+  `0`) and a RAM instruction `rdIn`. `inLen` comes first from an argument cell (`|x|` passed as
+  argument `i`, which needs no change); a `len` instruction follows only if a consumer needs it.
+  Statements rather than expressions, because expression code must be `Straight` and `effect`
+  touches only memory. The input string goes into `Limits` (never constructed in the port,
+  so nothing breaks), and `Fits` gains `|x| ≤ word`. Stage 2 maps `rdIn` to
+  `exists_inputSeekTM`, and `load` stays a table lookup. The rejected options were mapping the
+  input into memory at the RAM level, and keeping [AFM26]'s memory-loaded input, which forces
+  `lim.space ≥ n` and so rules out logspace.
+- **Where the I/O state lives: new indices of `Exec`.** The bits emitted (`o`) and the coins
+  consumed (`r`) become indices of the big-step relation, concatenated by `seq` and `while` and
+  passed through `call`. `Ends` keeps its type, hiding them under `∃`, so `Meets` and the 14
+  routines are untouched; a new `EndsIO` lets a postcondition see them. Six files mention
+  `Exec`, against about 124 state literals in 24 files had the state grown instead.
+- **Coins read once**, as a consumed `List Bool`. `coin x` sets `x` to either bit at cost `1`,
+  consuming it. For a fixed stream `ρ`, `EndsIO ρ` asks for a run whose consumed word is a prefix
+  of `ρ`. Nondeterministic acceptance is "some `ρ` of length `T` accepts". Randomized
+  acceptance uses `randProb` over `Fin m → Bool`, which needs a determinism lemma for `Exec`
+  (not yet stated). **Time bounds are uniform over all streams**, as `NTIME` and `NSPACE`
+  require. Read-once coins are also right for NL and BPL, where two-way access to the coins
+  would give NP's power, and they compile to both kinds of target. Stage 2 makes each `coin` one
+  NDTM choice step; for BPP it produces a deterministic machine that takes the coins as a second
+  input.
+- **`emit e`** appends a bit to an append-only output, mirroring the machines' per-step output.
+  Strictly, only space-bounded output (log-space reductions) needs it; time-bounded functions
+  can use memory output. It is included now because it changes the same signatures.
+- **`half e`**, as a statement and a RAM arithmetic-shift instruction (not an `Op`: `Op` is
+  binary, and its effect lemma needs a range hypothesis). It is `O(W)` in stage 2 and helps
+  configurations packed into words.
+
+**Estimated size:** 600–1,000 lines of vendored edits, made by the generator scripts in
+`scripts/vendor_afm26/` and listed in each file's header, plus 700–1,150 new lines (the `EndsIO`
+rules and tactics, acceptance and probability, the determinism lemma, the new `sim_*` cases).
+Every new construct needs a case in each exhaustive definition and induction over `Stmt`,
+`Exec` and `Instr`. The hardest parts are carrying the output and the coins through the compiler
+simulation, and threading the input through the RAM's run calculus.
+
+**Obstacles the survey found** (backlog PROG-2, PROG-3):
+1. **No footprint along a run.** `compileProgram_correct` and `Finished` describe only the final
+   memory. Stage 2's space bound needs every intermediate memory inside `[-lowCell, lim.space)`.
+   That needs a stronger `Steps`, or the deferred `Footprint.lean` (PROG-1(e)). L and Savitch
+   need it, whatever the extensions.
+2. **`Ends` is existential.** With a nondeterministic coin rule, specifications that mention I/O
+   need `EndsIO` with an explicit stream, and probabilities need the determinism lemma.
+3. **`Fits` has no input-length clause** (above).
+
+**Corrections to §15a and §15b, from the survey:**
+- the RAM has nine instruction kinds, not "about a dozen";
+- the RAM additions are `rdIn` (with `len` later), `emit`, `coin` and `half`;
+- the deterministic logic and compiler do not carry over unchanged for coins: the stream
+  position is state, carried here by `Exec`'s index;
+- [AFM26]'s memory-loaded input is not in force in the port: `SolvedBy` was dropped, `loadWords`
+  is unused, and the compile theorem takes any memory satisfying `Input`;
+- logspace from `O(1)` cells holds only with input read in place, and only once obstacle 1 is
+  closed.
+
+### 15d. Stage 2, PROG-2 and PROG-3: statement drafts (2026-10-12)
+
+A maintainer sub-agent drafted the statements, and the maintainer re-elaborated them: 0 errors;
+the only warnings are `sorry`s. They are evidence, not landed files:
+`audits/evidence/stage2/Stage2Draft.lean.txt` (723 lines),
+`audits/evidence/stage2/ExtensionsDraft.lean.txt` (415 lines), and the notes
+`audits/evidence/stage2/NOTES.md`.
+
+**Stage 2 (PROG-4).** It is drafted in two forms:
+- `exists_simulation`, deterministic;
+- `exists_ndSimulation`: each `coin` is one `FinNDTM` choice step, with bounds uniform over all
+  coin streams.
+
+Both are stated over a draft RAM that wraps the vendored one: the nine vendored instructions, plus
+`rdIn`, `emit`, `coin` and `half`. With `n = |x|` and `W = W n`, the bounds are
+`T = TW n + A·(t + 1)·(f·(W + 1) + W² + n + 1)` and
+`S = SW n + A·(f·(W + 1) + W + logSpace n + 1)`.
+- **The word size** is a hypothesis `WordSizeComputable W TW SW`: some machine outputs
+  `Nat.bits (W n)` within `TW n` steps and `SW n` cells. Two bridges supply it: `c·logSpace`,
+  from the input-length counter R8.5c, and `c·S`, from `SpaceConstructible`.
+- **The corollaries:** DTIME and P, SPACE and LOGSPACE, log-space transducers, Savitch's
+  `SPACE(S·S)`, NSPACE and NL.
+
+**PROG-3.** `compileProgram_footprint`: a compiled run stays inside `[-lowCell, lim.space)`, its
+reads included. The gap is only at the RAM level, where `Steps` and `Finished` speak of the final
+memory.
+
+**PROG-2.** A self-contained mirror of the four new statements and of `Exec`, with the output word
+and the consumed coins as indices; `EndsIO` with 15 rules; the determinism lemma; acceptance and
+`acceptProb`. `NOTES.md` §5 lists, by file and line, every exhaustive definition and induction
+the real edit must extend.
+
+**Corrections to §15a and §15c, read off the code:**
+- there is no separate address width, because addresses are words (`WordRAM/Basic.lean`);
+- the input seek row is linear (`exists_inputSeekTM`), so the per-step seek term is `n`, not
+  `n·log n`;
+- the word size's own computation is charged once, as `TW` and `SW`;
+- `inBit` needs no input-length clause in `Fits`;
+- `Exec.bounded` needs `1 ≤ lim.word`;
+- 38 lines of `Logic`, `Rules` and `Assigns` (28, 8 and 2, read line by line in the stage-2
+  statement pack; the drafts estimated about 32) build or take apart `Ends` witnesses, so "the
+  routines are untouched" holds for `Meets` and the library, not for those files.
+
+The nondeterministic form's fill also needs one lemma not present today: a nondeterministic run
+agrees with the deterministic one on states whose two transitions coincide. This is the
+nondeterministic contract variant that §16 lists as later.
+
+**Estimate** (not measured): about 9,500–15,000 lines beyond MIG-0a, made up of PROG-2
+1.4k–2.3k, PROG-3 0.75k–1.35k and stage 2 6.1k–10.5k.
+
+**Open questions for the user**, each with the drafter's recommendation (`NOTES.md` §6):
+1. extend the RAM by a wrapper (recommended) or in place, which breaks about 50 configuration
+   literals;
+2. add `Exec`'s indices in place (option A, recommended, as §15c decided) or as a new relation
+   (B);
+3. `WordSizeComputable` with its two bridges (recommended), or `SpaceConstructible` directly;
+4. `emit` appends "nonzero", and the footprint counts touched cells (both recommended as
+   drafted).
+
+**Answered (user, 2026-10-12): all four as recommended.** The RAM is extended by a wrapper, the
+`Exec` indices are added in place (option A), the word size is `WordSizeComputable` with its two
+bridges, `emit` appends "nonzero", and the footprint counts touched cells.
+
+**Statement gate (2026-10-13):** `audits/stage2-statements-pack.md`. The maintainer re-elaborated
+the landing form (0 errors; the only warnings are `sorry`s). It differs from the drafts in:
+- **homes:** the wrapper in a new `Programs/WordRAM/Extended.lean`, below the compiler, because
+  after PROG-2 the compiler emits `XInstr`; PROG-3's compiler-level statements as local
+  modifications of the vendored `Simulation.lean` and `WholeProgram.lean`, because their proofs
+  need private lemmas; stage 2 and its corollaries in a new topic `Complexity/RAMSimulation/`;
+- **`startMem` is renamed `initMem`**, because the vendored compiler declares
+  `Light.Compiler.startMem` and opens `WordRAM`;
+- **footprints of at most `3n` cells**, so that `mem_P_of_decides` drops its cell bound;
+- **the slice lemma and its space companion are stated** (`NDSlice`). The slice lemma is
+  already proved, with a pointwise form of the same hypothesis, in C1's host draft
+  (`audits/evidence/c1/C1HostsDraft.lean.txt`, `Turing.NDTM.runWith_eq_fixChoice_runFrom`); the
+  stage-2 pack does not say so. One copy lands, in `Nondeterministic.lean`, with C1's proof under
+  the gated statement (maintainer note, 2026-10-13);
+- **PROG-2's edit list is longer:** under the wrapper, the compiler's code type becomes
+  `List XInstr` at the sites the pack lists.
+
+**Gate CLOSED** (round 1, 2026-10-14: 0 blockers / 0 majors / 4 minors;
+`audits/stage2-statements-findings.md`, resolutions `audits/stage2-statements-resolutions.md`).
+The homes, the namespace `WordRAM` and `initMem` are approved. PROG-3's compiler-level statements
+(B1, B2) may land now, with their extended forms re-gated at PROG-2, or with PROG-2. The
+auditor prefers `acceptProb` in a Complexity-side module. Next: the landing PR.
+
+## 16. The foundation migration (user decisions, 2026-10-12)
+
+**Why.** The user: "I really think we should invest effort into building code in the right way,
+especially in this foundational stage." Seven read-only reviews of the tip `9827cc99` costed a
+retroactive migration onto the §14/§15 style:
+- the Build foundation and the machine core;
+- the machine-level files that stay on Turing machines;
+- the algorithm files that could become programs.
+
+Their per-file figures are the restyling backlog (`backlog.md` §2, MIG/RS).
+
+**Decisions (user, 2026-10-12).**
+1. **The no-retroactive-migration rules are lifted for this migration**: §8's byte-identity
+   bullet and decision 12.2's byte-identical `Primitives.lean`.
+2. **Scenario B.** Proof bodies are swapped onto contracts, and in addition the duplicate
+   statement families are retired: the R3 canonical `_run` rows, `counterLoopTM` next to
+   `counterLoopTMVia`, `EmitIterEmbed`'s embedding, and `Codes2Tape`'s mirror. Their consumers are
+   edited. Proof-body swaps under unchanged statements are gated by a freeze check, a replay and
+   a fidelity gate. Each retired or changed statement needs a full statement gate.
+3. **Savitch and `NSPACE ⊆ DTIME(2^O(S))` are algorithms at heart.** They are written as programs
+   of the §15 language and converted by the RAM-to-`FinTM` compiler (stage 2). TM-intrinsic
+   results are *not* recast as programs: Cook–Levin, TMSAT, NP ⊆ PSPACE's machine,
+   Nondeterminism, the oblivious and hierarchy constructions, and the universal machine.
+   **S1b**, in flight at machine level and proving `NSPACE ⊆ DTIME(2^O(S))`, `NL ⊆ P` and Ex 4.3,
+   **finishes as briefed** (user, 2026-10-12: "Let it finish"). Once stage 2 and the
+   configuration routines exist, it is re-derived as a program and its private host retired,
+   with its public statements unchanged (MIG-19).
+   *Outcome (fills-6, user: "Stop at this partial"):* S1b landed `NL ⊆ P` and Ex 4.3 proved
+   modulo `NSPACE ⊆ DTIME(2^O(S))`, without a search host. MIG-19 is now the route for the
+   simulation itself.
+4. **Restyling is opportunistic, with a clear backlog** to chip away at: the RS items. Each
+   row has its estimate, prerequisites and gate.
+
+**The estimate** (ranges are the reviewers'; ESTIMATED unless marked):
+
+| Bucket | Today | Net change |
+|---|---|---|
+| Foundation: Build (43,143) and the core (3,887), MEASURED | 47,030 | about −12.5k (−8k to −17.5k). That includes the `f2_` deletion, −7.6k to −8.3k at high confidence, and about 3.6k of new infrastructure |
+| Machine-level files staying on TMs: universal, robustness, Nondeterminism, diagonalization and time hierarchy, oracle model, Mathlib bridge | 26.3k | about −4k to −5k: −3.7k from restyling, −1.7k to −2.1k from duplicates found, and +0.5k to 1.5k of extra infrastructure |
+| Scenario B's statement retirements | | about −1k more |
+| **Total** | **73k** | **about −17k (−12k to −23k)**. About 30k lines of proofs are touched and 4–5k are written new |
+
+**What the contract structure must support** (§14 item 0). The survey revises the "time within
+`T`" default taken from [AFM26]'s program logic:
+- **exact time, with a no-earlier-exit cut, as first-class fields**, and "within `T`" derived
+  from them. About 34 public Build statements carry cuts and about 33 state exact times. Seams,
+  counter loops and the zone layer's `2p + 2` compose exact times;
+- a **positive-duration field**, for the universal machine's block converse;
+- an **endpoint function and a frame predicate**, with tape-indexed `SameOn`-style frames and
+  `.keep` lemmas;
+- **head envelopes**, both radius and interval forms, with space derived from them;
+- the **input tape** (clamped moves, virtual input) and **output appends**;
+- **transports**: state renaming (`Sum`/`Sigma`), R1 embedding, symbol lift, alphabet reduction,
+  and the lockstep combinators of the robustness layer (decoration, parallel coding, folding);
+- **later**, nondeterministic (`runWith`) and oracle-step variants.
+
+From [AFM26] the design takes framing, spec-only calls and default-argument tactics; it does not
+take the treatment of time.
+
+**Programs for Savitch and `NSPACE ⊆ DTIME`** (decision 3) need one more planned component:
+**machine-configuration routines in the language**. A configuration of a given (nondeterministic)
+machine is encoded in memory, and routines enumerate its successors, or test the step relation,
+from the machine's finite table. This is narrower than a general machine interpreter, since the
+programs are built per machine.
+
+Savitch's `O(S²)` space is **decided (user, 2026-10-12; §16b item 1)**: configurations are held
+as single words, with word size `Θ(S)`, so that `O(S)` frames times `O(S)`-bit words fits the
+planned bound of cells times word size. Stage 2 therefore takes a computed word size. A
+bit-accounted space bound in the compile theorem was declined.
+
+`NSPACE ⊆ DTIME(2^O(S))` is unaffected, since polynomial overhead on `2^O(S)` stays `2^O(S)`.
+
+**Order of work:**
+1. Item 0's statement phase and gate, with the requirements above.
+2. The certain savings, which need no new infrastructure: named witnesses and the `f2_` deletion
+   (MIG-1), then the known duplicates (MIG-2 to MIG-10).
+3. Contract instances and tactics, grown against the first migrated file; then rebasing the
+   composition-heavy files (MIG-11 to MIG-17).
+4. The asymptotics port (MIG-18).
+5. The RS items, opportunistically.
+
+**12.2c** (plan §4e) is folded into this migration. Its items are subsumed, moved, kept as MIG-20
+and MIG-21, or lapsed, as recorded at the head of the 12.2c tasklist. **MIG-0 and MIG-1 now
+precede §13d G2** (user, 2026-10-12), reversing "G2 comes before the Catalog split".
+
+New and unfinished work is written in the new style from the start. Deliveries now in flight
+in the old style (record tables, W2-S, B5a canonizer and H1, B4, S1b) join step 3.
+
+### 16a. MIG-0, the contract structure: statement draft and decisions (2026-10-12)
+
+**A sorried statement draft of `Build/Contract.lean` was written and fit-tested** (maintainer,
+2026-10-12). It was informed by a read-only inventory of every public contract in `Build/`
+(about 150 run statements: 24 exact closed-form times; about 45 cuts that include time `0` and
+4 that do not; 25 interval and 12 radius envelopes; no frame predicate anywhere, and frames
+written in four idioms).
+
+**The structure** `Turing.Contract M entry exits ι x`:
+- a precondition, an **exact time**, an **endpoint function** and per-tape head intervals
+  `[lo, hi]`, all functions of a data index `i : ι` (the word or fields the module reads) and the
+  start configuration;
+- proofs: the run reaches the endpoint at that time; the endpoint is at an exit; **no exit is
+  reached earlier, with the cut including time `0`**; and the heads stay in their intervals.
+  Exits form a set, so single anchors, verdict pairs, loop exits and halting are one structure;
+- derived: "within `B`" (`within`) and the per-tape space bound (`spaceUsedByTape_le`, through
+  `spaceUsedByTape_le_card_Icc`); positivity is a predicate.
+
+**Decisions (user, 2026-10-12):**
+1. **Universe `Type`** for the alphabet, the states and the data index: the universe of
+   `FinTM`, `phaseHostTM` and `counterLoopTMVia`. UNIV-1(a) stays an optional generalization.
+   Raw-layer exports that move into `Build/Embed` and `Build/Seam` take their host modules'
+   universes (`Type*`; MIG-0b round 1, finding 2); the contract structures keep `Type`.
+2. **Frames are a derived layer**, not a field. The endpoint already states the frame as
+   `{ d with … }`. The layer adds `Cfg.SameOutside` (a per-tape footprint), its composition,
+   `.keep` lemmas for stored words and blank tapes, and `Contract.Frames`.
+
+**Compositions, as thin wrappers over the existing rows:**
+- `trans`: first-exit sequencing on one machine. It is not a general `RecordRun` concatenation
+  (MIG-0a gate, round 1, major; see below);
+- `seq`: the R2 seam, time `t₁ + 1 + t₂`;
+- `inPhase`: one phase inside the phase host, whose redirect targets lie in other phases (a
+  sufficient condition: the run must avoid every redirect target up to its endpoint);
+- `embed`: the R1 embedding, with unselected tapes framed and output appended;
+- `branch`: the two-way seam;
+- `ReturnContract` with `release`: for rows that return to their anchor, whose cut starts at
+  time `1`, such as the advancing writer. The install and emit calls quantify separate entry and
+  exit states that may coincide, so with arbitrary witnesses they split on `entry = exit`
+  (corrected at the gate, round 1, minor 5).
+
+**Fit test.** `trans`, `seq`, `inPhase`, `embed` and `embedEmitCfg_select` are proved with no
+statement change and no extra hypothesis, on the standard three axioms. So is the instance
+`clearTM_contract`, R3 clear repackaged from `clearTM_run_ofCfg`. A second fit test then
+proved the rest: the frames layer (the `SameOutside` lemmas are nearly definitional),
+`clearTM_contract_frames` (the footprint is exactly where the endpoint writes blanks), `release`
+and `branch`. **The whole MIG-0a draft is proved: 843 lines, 0 errors, 0 warnings**
+(`audits/evidence/mig0/Contract-draft.lean.txt`).
+
+Further observations from the fit tests:
+- **Liveness is a lemma.** A contract's run is live strictly before its time, from the cut and
+  `exit_mem`, since a halt would persist to the endpoint. `branch` needs it; promote it as
+  `Contract.live`.
+- **`branch`'s halting exit is untagged.** If both continuations may halt, a halted endpoint
+  does not say which ran. The statement is still correct.
+- **A third export:** a pointwise `seamReleaseTM_runFrom_pos`. The release's envelope went
+  through `seamReleaseTM_visitedByTapeHead`, because the pointwise lemma is private.
+- **Ergonomics:** a `@[simp]` unfolding lemma for `Frames` and `SameOutside`, so that `rw` sees
+  a footprint's `if` without a `show`.
+
+The test found two missing public exports, both additive:
+- `embedEmitCfg_unselected_tape` and `_pos` (`Build/Embed.lean`). The proof of
+  `embedEmitCfg_select` worked around their absence through `embedEmitTM_frame` and a trivial
+  machine;
+- a right-segment seam lemma (`Build/Seam.lean`), to replace the private `seamComp_right`. It is
+  needed for set-valued exits; `seamCompTM_firstReturn_ofCfg` excludes only one target.
+
+**Scope, in two increments:**
+- **MIG-0a:** the structure, the derived lemmas, the frames layer, `trans`, `seq`, `inPhase`,
+  `embed`, `branch`, `ReturnContract` with `release`, `Contract.live`, and two exports
+  (`embedEmitCfg_unselected`, `seamCompTM_runFrom_right`); the pointwise release export is
+  deferred to MIG-0b;
+- **MIG-0b:** revised after the gate's round 1, below.
+
+**MIG-0a gate, round 1** (2026-10-12: 0 blockers, 1 major, 5 minors; `audits/mig0a-findings.md`,
+resolutions `audits/mig0a-resolutions.md`). No proved statement was found false. The major is
+about the migration interface: a first-exit `Contract` does not directly replace three kinds of
+existing specification, so the direct-replacement claims of MIG-12 and MIG-15 were wrong.
+- **Segments.** `CfgRecord`'s `RecordRun` is a fixed-length run that avoids a forbidden verdict
+  set; its endpoint need not be a first visit, and `recordRun_trans` concatenates on one machine
+  with no dispatch step. The auditor's example: a machine idling at `a` gives a length-2 segment
+  from `a` to `a`, which neither a positive `Contract` nor a `ReturnContract` can package.
+- **Return-or-escape rounds.** `RecordTable`'s `rt_find_round_entry` and the counter loop's rounds
+  end either back at their anchor or at a distinct escape, with positive cuts against both. A
+  `Contract` fails its time-zero cut there, and a `ReturnContract` excludes the escape.
+- **Joint trajectories.** `CounterLoop`'s `counterSpan` constrains the whole head vector along a
+  run. Per-tape intervals cannot express a relation such as "the two heads are equal".
+
+`Contract` stays the first-exit specialization. **MIG-0b** therefore covers, before any
+dependent migration:
+1. a **segment layer**: fixed-length segments avoiding a forbidden set, with same-machine
+   concatenation (the `RecordRun` pattern), and a bridge to `Contract` when the endpoint is a
+   first exit;
+2. a **round layer**: return-or-escape rounds with positive cuts against the anchor and the
+   escape, and the counter loop's composition over them;
+3. a **joint-trajectory layer**: a relation on the head vector along the run, derived like
+   `Frames` and preserved by the compositions;
+4. the **layering split**: a core contract module that `Loop` and `CounterLoop` can import
+   (round 1, minor 2), with the adapters and routine instances above it; the two exports move into
+   `Build/Embed` and `Build/Seam` then. Round 2's import repair found that the file needs `Seam`,
+   `Catalog` and `Mathlib.Tactic.Linarith` (which `CounterLoop` used to supply indirectly), so
+   `CounterLoop` is no longer in its closure, but `Loop` still is, through `Catalog`. The core
+   part needs only the machine core, apart from `MultiTapeTM.spaceUsedByTape_le_card_Icc`, which
+   lives in `Catalog` and moves down first. **Revised by MIG-0b round 2** (2026-10-13;
+   `audits/mig0b-r2-pack.md`, NOTES-r2 §3):
+   - `spaceUsedByTape_le_card_Icc` and `workTapePos_runFrom_mem_Icc` move to `Finite` (not
+     `Deterministic`);
+   - `runFrom_mapState_of_agreeOn` moves to `StateRenaming`, which then imports `Simulation`;
+   - MIG-0a's private helpers are deleted;
+   - `Build/Seam` promotes its polymorphic release and composition lemmas;
+   - `AlphabetReduction` imports the core;
+   - the Embed exports are stated over `Type*`.
+
+   The core's closure is `Configuration`, `Deterministic`, `Finite`, `Simulation` and
+   `StateRenaming`;
+5. the pointwise release export `seamReleaseTM_runFrom_pos`;
+6. the symbol lift (through `Cfg.decodeSymbols`), state renaming along an embedding
+   (`runFrom_mapState_of_agreeOn`), and the alphabet-reduction and robustness-lockstep adapters
+   (round 1, note 20);
+7. the tactics, and the auditor's suggested sanity lemmas: the zero-time characterization
+   (`time = 0 ↔ some entry ∈ exits` on admissible starts) and positivity of the compositions;
+8. **the R1 reconstruction lemma** in `Build/Embed`, at the layering split (the wave-1 fill gate's
+   major F1, acknowledged by the user): from the selected-bank projections and the unchanged
+   ambient frame, equality of an embedded configuration, cited by `OracleSim.oracleBankCfg_eq`,
+   `Loop.emCall_exit_fixed`'s local frame and `CodeSimulator.canonEmbedEq`.
+
+MIG-0a's round 2 audits the corrected records and the documentation repairs; no statement or proof
+of the file changes. **Round 2 closed the gate** (2026-10-13, 0 blockers / 0 majors / 1 minor;
+`audits/mig0a-r2-findings.md`). Its acceptance obligations for MIG-0b's statement gate:
+- the segment layer keeps zero-length segments, the inclusive envelope and the actual
+  configuration seam (`RecordRun`'s shape);
+- `counterSpan` is a segment property (no entry or endpoint constraint; it admits time zero, which
+  `counter_rounds` uses), so it migrates to the segment and joint-trajectory layers; positive
+  return-or-escape rounds describe the loop body's interface;
+- `splitSafe`'s avoidance holds at every time through the endpoint, so it uses the segment layer
+  with endpoint-inclusive avoidance, and first-exit `Contract`s apply only where a first exit is
+  proved (`SafeRun`, in `Build/EmitIterEmbed.lean`, avoids only strictly before the endpoint: a
+  plain segment);
+- both round rows also require the round's interior to be live;
+- the joint-trajectory property holds for general segments, and keeps the counter loop's single
+  shared round and time witness for all body heads, its exact endpoints, bounds and liveness.
+
+**MIG-0b gate, round 1** (2026-10-13; `audits/mig0b-findings.md`): **0 blockers / 2 majors /
+4 minors, gate open.** The segment, round and trajectory layers meet round 2's acceptance
+obligations above, and no proved statement is false. Both majors concern the landing plan:
+- the planned split strands private helpers (`mem_hull_left`, `mem_hull_right`,
+  `runFrom_state_none_mono`) and a fit-namespace bridge that kept modules use;
+- the release export `seamReleaseTM_runFrom_pos` fixes universes to `Type`, narrower than the
+  polymorphic `seamRelease_run_pos` it replaces.
+
+**Round 2 CLOSED the gate** (2026-10-14: 0 blockers / 0 majors / 3 minors;
+`audits/mig0b-r2-findings.md`). Round 2 (`audits/mig0b-r2-pack.md`, re-run at `1781a230`): a real
+split, cut-checked without the fit namespace; the polymorphic release; and the minors (an
+entry-compatibility lemma for `Contract.lockstep`, the release's wording, the alphabet admission's
+sketch and reference, and records).
+
+### 16b. Five route decisions (user, 2026-10-12)
+
+The user took the five open route questions together, each as the maintainer recommended (plan
+§4e, decision log, 2026-10-12).
+
+1. **Savitch's space: words of `Θ(S)` bits.** A configuration of the simulated machine is one
+   word, so a recursion level holds `O(1)` cells, and depth `O(S)` gives `f = O(S)` cells. Stage
+   2's space bound stays cells times word width (§15a), which gives `O(S·(S + log S)) = O(S²)`.
+   The alternative, charging each cell for the bits it holds, was declined: every cell still pays
+   an `O(log S)`-bit address, so it reaches `O(S²)` only with packing as well. Consequences:
+   - **Stage 2 takes a computed word size.** `W` is a function of the input length that the
+     compiled machine computes within its space bound: `c·log n` for P and L (from the
+     input-length counter, R8.5c) and `c·S(n)` for Savitch (from `S`'s constructibility
+     witness).
+   - The machine-configuration routines work on packed words, using `half` (PROG-2).
+   - With `W = Θ(log n)` and packed configurations, the drafted bound already gives `O(S²)` for
+     polynomial `S`. That suffices for `PSPACE = NPSPACE`, but not for `savitch`, which is stated
+     for every space-constructible `S`.
+2. **B4a is restated in place, over H6.** `exists_adjacency_codec_cnf` becomes public
+   definitions of the codec and its three CNFs with closed-form variable indexing, and theorems
+   about them in place of the `∃`. Its present formulas index variables through
+   `Fintype.equivFin` over types that depend on `n` and `s`, so no machine or program can be
+   proved to emit them (Finding A; the `TQBF_PSPACEHard` docstring: "The packaged existential
+   supplies no algorithm"). The indexing is designed with H6 (§14), so that Cook–Levin and TQBF
+   share one scheme.
+   - It changes an audited public statement: a statement gate, then a re-fill. Its only consumer
+     is the open `TQBF_PSPACEHard`.
+   - Hardness also needs Tseitin on `Std.Sat.CNF ℕ`, correct for every prefix assignment.
+   - Whether the `ψᵢ` emitter is a machine (H6) or a program with `emit` is decided with B4
+     hardness's design.
+   - **Designed (2026-10-12):** `audits/evidence/rd2/RD2-design.md`, with a sorried statement draft,
+     `audits/evidence/rd2/RD2Draft.lean.txt`. The draft elaborates with 0 errors and 36 sorries;
+     11 of its theorems are proved. It proposes:
+     - the H6 kit as `Complexity.FormulaKit`: block variables, a truth-table gate template with
+       closed-form wires, ledgers, and emission over `polyTimeComputable_emitIter`;
+     - a generic Tseitin-after-prefix lemma, with its instance for `DAGCircuit.toCNF`;
+     - `Complexity.ConfigCodec`: a closed-form layout of width `2n + 4 + Q + 3k(2s + 1)`,
+       clause lists ordered by `List.range`, the old statement's clauses as 11 theorems, and new
+       uniformity theorems.
+
+     About 820 of the old proof's roughly 1,700 lines survive verbatim (measured at 703 by the
+     statement pack's migration list). Estimate: 2.5k–3.6k lines landed; a statement gate, then
+     two fills.
+   - **Answered (user, 2026-10-12): all five of the note's recommendations.**
+     - `exists_adjacency_codec_cnf` is retired; no proof uses it.
+     - The uniformity theorems are part of RD-2, as the fill RD-2b.
+     - The ψ matrix is a guarded CNF, so the private Tseitin lemmas of the colleague-owned
+       `DAGCircuitSat.lean` are not needed.
+     - **The ψ emitter is a machine,** on H6 and the polynomial-time closure algebra.
+     - The transition gates are truth-table templates, as in Cook–Levin.
+
+     **Statement gate (2026-10-13):** `audits/rd2-statements-pack.md`. The landing form drops the
+     Tseitin instance (decision 4), and adds 17 theorems: the kit's cost ledger, so that the
+     private twins merge; the fragment and gate emission forms; unary index arithmetic, because
+     the codec divides by `2s + 1`; and the port contract. The prefix-truth lemmas are proved.
+     **CLOSED** (round 1, 2026-10-14: PASS, 0 blockers / 0 majors / 2 minors;
+     `audits/rd2-statements-findings.md`). Next: the landing PR, then RD-2a and RD-2b.
+3. **B6 takes the window route, and `space_universal` is restated forward-only.**
+   - **The window route.** `space_hierarchy`'s diagonalizer runs one fixed self-simulating
+     universal machine `U₀` inside a window of radius `a·g(n)`, on the configuration-record rows,
+     stopped by a configuration-count clock, and flips `U₀`'s verdict. It needs `U₀`'s forward
+     direction with a space ledger, the windowed runner H3 (record-table rows 17–18, in flight),
+     the step block H2 and the native input device of H5. The sketch's budget loop, head caps,
+     interval counters and probe/replay go.
+   - **Why:** the chapter-1 interpreter cannot serve (Finding B). It tracks the input head in
+     unary on its fourth tape, so that tape uses one plus the largest simulated input position
+     reached: `Θ(n + 1)` cells on a full scan. So it cannot guarantee `O(S(n))` space uniformly
+     for sublinear `S`, which the present sketch's premise needed (wording corrected at the RD-3
+     gate, minor 4).
+   - **`space_universal` keeps only its forward clause,** as [AB09, Exercise 4.1] states it (p. 93,
+     checked 2026-10-12): if `M_α` halts on `x` before using `t` cells of its work tapes, then
+     `SU(α, t, x) = M_α(x)`, and `SU` uses at most `C·t` cells. The `[false]` clause goes, and
+     with it the interval counters, the core-count clock and the probe/replay. It still needs a
+     code-first universal that reads its input through a binary-position device (H5). (Superseded
+     2026-10-13: the bounded-prefix ruler device, with `space_universal` at `C·s`; decisions
+     B1–B2.)
+   - The sketch drops its stale "space-preserving normal form" obligation: the normal form is
+     proved (`Turing.FinTM.one_work_tape_binary_spaceUsed`, `Robustness/SingleTape.lean`), but
+     two small steps around it were not, and they were fill obligations: the space clause of
+     the coding step `exists_codeTM`, which is time-only, and a decider's space bound at every
+     time (the normal form needs it at every time; `DecidesInSpace` bounds it at the halt).
+     Both are proved in the host draft below.
+   - `U₀` and the windowed runner had no statements before the host draft below. `U₀` is a
+     public row built from H2 and H5, not a private host of this proof. The runner's contract
+     exposes three outcomes (halt, window exit, clock exhaustion). `counterLoopTMVia` has one
+     optional early body exit plus clock exhaustion, so H3 can merge halt and window exit into the
+     early escape and tell them apart afterwards from the retained record (the RD-3 gate, minor 3).
+   - **RD-3's statement gate passed** (2026-10-13, 0 blockers / 0 majors / 4 minors;
+     `audits/b6-restatement-findings.md`). `space_universal` keeps its `+ logSpace |x|` addend for
+     now; the auditor's addend-free `C·s` route (a bounded-prefix input device, a unary ruler of
+     the header's length) is to be decided when H5 is gated.
+   - **Host statements drafted (2026-10-13):** `audits/evidence/b6hosts/` (design note, and the
+     draft `B6HostsDraft.lean.txt`: 0 errors, 10 sorried machine contracts, 43 declarations
+     proved). It contains:
+     - **H3:** a pure specification `windowRun` with three exits; a step clock shared with C1,
+       `exists_stepClockTMVia`; and a clock-agnostic runner for `space_hierarchy`,
+       `exists_configWindowRunnerTM`;
+     - **H5:** a native device, and a bounded-prefix ruler device with a host transformer;
+     - **`U₀`:** a startup, and a forward ledger `C_α·(s + 1)`;
+     - **the two fill obligations above, both proved:** `exists_codeTM_spaceUsed` and
+       `ComputesInTime.spaceUsed_le_of_halt`.
+
+     Open questions for the user: the note's §10.
+   - **Answered (user, 2026-10-13), all as recommended:** `space_universal` is strengthened to the
+     book's `C·s` in the B6 hosts' statement-gate pack, through H5's ruler device; no
+     binary-position device (its registry row stays); the public `outSummaryCode`/`summaryTag`
+     land in `ConfigGraph.lean`, with S1b's private copies re-pointed in the same PR; the
+     configuration-count runner and its bound go to a new `SpaceComplexity/WindowClock.lean`, so
+     that `Build/WindowRun.lean` imports nothing from `SpaceComplexity`; the contracts are gated
+     as `∃` statements, with named machines at fill time.
+   - **Statement gate (2026-10-13):** `audits/b6-hosts-statements-pack.md`. Changes from the
+     draft:
+     - the ruler host is a block simulation (H2-S round 1, finding 2);
+     - `U₀`'s sketch uses the reset-output invariant (finding 4);
+     - `exists_stepClockTMVia`'s trajectory clause also carries the body tapes, input position and
+       output, which the runner's silence and restoration need; C1's form `exists_stepClockTM` is
+       unchanged, so C1's pack only re-points its citation at landing;
+     - window containment and the B6 summary instance move to `WindowClock`.
+   - **CLOSED** (2026-10-14: PASS, 0 blockers / 0 majors / 5 minors;
+     `audits/b6-hosts-statements-findings.md`). The step clock keeps `+2`; the runner stays
+     clock-agnostic. Next: the landing PR.
+   - The shortcut through a space ledger for the time hierarchy's `diagSim` is not taken.
+   - The restatement and the re-routed sketches go through a statement gate.
+4. **C2 is written as programs with coins.** `PATH ∈ NL`, Immerman–Szelepcsényi and their
+   corollaries are programs of the language using read-once `coin` (PROG-2), compiled by stage 2.
+   This removes C2's dependency on the nondeterministic `LogProg` extension asked of Hydroxyi
+   (plan §2.5; `backlog.md` §2, *ARM extensions*). Stage 2 therefore needs, besides item 1's word
+   size:
+   - **a nondeterministic form:** each `coin` is one choice step of a `FinNDTM`, with time and
+     space bounds uniform over the coin streams (§15c);
+   - **a logspace grade:** `O(1)` cells and `W = O(log n)` give space `O(log n)`. This needs the
+     input read in place (PROG-2) and the footprint along runs (PROG-3).
+
+   `PATH_NLComplete`'s hardness half needs only the deterministic layer.
+5. **§13d G2–G4 stay in the campaign**, after MIG-0b, so that the mapped sweeps, the carrier's
+   rows and the rebalance rows are stated as `Contract`s from the start. They share no file with
+   stage 2 and can run alongside it. The two open zone rows (`exists_zoneShiftInTM`,
+   `exists_zoneShiftOutTM`) retire through the G3/G4 gate, as §13d planned.
+
+**Stage 2's statement** (`backlog.md` PROG-4), drafted together with PROG-2 and PROG-3, therefore
+carries a computed word size, deterministic and nondeterministic forms, and a space bound good
+enough for L.

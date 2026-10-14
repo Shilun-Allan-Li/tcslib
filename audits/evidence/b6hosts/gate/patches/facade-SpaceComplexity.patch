@@ -1,0 +1,20 @@
+--- a/TCSlib/Complexity/SpaceComplexity.lean
++++ b/TCSlib/Complexity/SpaceComplexity.lean
+@@ -39,6 +39,7 @@
+ import TCSlib.Complexity.SpaceComplexity.Examples
+ import TCSlib.Complexity.SpaceComplexity.ZeroSpace
+ import TCSlib.Complexity.SpaceComplexity.ConfigGraph
++import TCSlib.Complexity.SpaceComplexity.WindowClock
+ import TCSlib.Complexity.SpaceComplexity.Savitch
+ import TCSlib.Complexity.SpaceComplexity.Hierarchy
+ import TCSlib.Complexity.SpaceComplexity.Logspace.InputAccess
+@@ -113,6 +114,9 @@
+   positive-normalization identities (P0 reception audit, round 1)
+ - `SpaceComplexity.ConfigGraph`: configuration graphs, the ND Claim 4.4(1), Thm 4.2(iii),
+   `NL ⊆ P`, Ex 4.3 (chapters-3-4 campaign, phase P4.2)
++- `SpaceComplexity.WindowClock`: the windowed runner (host H3) under a configuration-count
++  clock, window containment, and the windowed run of a halting space-bounded computation
++  (the space hierarchy's window route; statement gate pending)
+ - `SpaceComplexity.Savitch`: Savitch's theorem and `PSPACE = NPSPACE` (phase P4.2)
+ - `SpaceComplexity.Hierarchy`: the space-bounded universal machine, Thm 4.8,
+   `L ⊊ PSPACE`, Ex 3.2 (phase P4.3)

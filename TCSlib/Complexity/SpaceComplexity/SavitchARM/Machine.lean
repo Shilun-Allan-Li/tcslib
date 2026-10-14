@@ -270,9 +270,9 @@ lemma Bd.toV {B : ℕ} {st : St} (h : st.Bd B) : ∀ r, st.toV r ≤ B := by
 end St
 
 /-- Normalize register reads and writes of named register files. -/
-syntax "regs" (" [" (Lean.Parser.Tactic.simpLemma),* "]")? (Lean.Parser.Tactic.location)? :
+scoped syntax "regs" (" [" (Lean.Parser.Tactic.simpLemma),* "]")? (Lean.Parser.Tactic.location)? :
   tactic
-macro_rules
+scoped macro_rules
   | `(tactic| regs $[$loc:location]?) =>
     `(tactic| simp only [St.toV_n, St.toV_a, St.toV_X, St.toV_P, St.toV_T, St.toV_Z, St.toV_C,
       St.toV_s, St.toV_w, St.toV_K, St.toV_U, St.toV_V, St.toV_M, St.toV_I, St.toV_SE, St.toV_SP,

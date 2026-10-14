@@ -1,0 +1,96 @@
+# MIG-1 statement gate, elaboration log
+worktree HEAD: 1781a230d2410ae2a09fbb961fe644512a6ba3c0 (read from the git metadata file; no git command)
+olean snapshot: /private/tmp/claude-501/-Users-seyoonr-phd-experiments-tcslib/8f0076bc-454a-4666-b8cf-f4c7ed13c549/scratchpad/oleans-f8; toolchain file: leanprover/lean4:v4.25.0
+
+## 1. Build of the unit and the probes from their templates (scripts/build_unit.py)
+built MIG1Statements.lean
+built probes/SpecProbe.lean (the unit followed by the spec-probe tail)
+built probes/BridgeProbe.lean
+
+## 2. Elaboration
+unit: MIG1Statements.lean -- exit 0; errors 0; 'declaration uses sorry' warnings 31; other warnings 6; lines 2950
+spec probe: probes/SpecProbe.lean -- exit 0; errors 0; 'declaration uses sorry' warnings 70; other warnings 6; lines 4112
+bridge probe: probes/BridgeProbe.lean -- exit 0; errors 0; 'declaration uses sorry' warnings 0; other warnings 0; lines 321
+
+## 3. Cut checks (scripts/cutcheck.py, from audits/evidence/stage2-gate/scripts/)
+unit imports: 8; union of part imports: 8; missing from unit: []; extra in unit: []
+TCSlib.Complexity.TuringMachine.Simulation: closure [Simulation@90]; imports ['TCSlib.Complexity.TuringMachine.Simulation']
+TCSlib.Complexity.TuringMachine.Composition: closure [Simulation@90, Composition@263]; imports ['TCSlib.Complexity.TuringMachine.Simulation', 'TCSlib.Complexity.TuringMachine.Composition']
+TCSlib.Complexity.TuringMachine.Build.Wrappers: closure [Simulation@90, Composition@263, Wrappers@506]; imports ['TCSlib.Complexity.TuringMachine.Simulation', 'TCSlib.Complexity.TuringMachine.Composition', 'TCSlib.Complexity.TuringMachine.Build.Wrappers']
+TCSlib.Complexity.TuringMachine.Encoding: closure [Simulation@90, Encoding@622]; imports ['TCSlib.Complexity.TuringMachine.Simulation', 'TCSlib.Complexity.TuringMachine.Encoding']
+TCSlib.Complexity.ClassP.TimeConstructible: closure [Simulation@90, Encoding@622, TimeConstructible@718]; imports ['TCSlib.Complexity.TuringMachine.Simulation', 'TCSlib.Complexity.TuringMachine.Encoding', 'TCSlib.Complexity.ClassP.TimeConstructible']
+TCSlib.Complexity.TuringMachine.Build.Loop: closure [Simulation@90, Composition@263, Wrappers@506, Loop@799]; imports ['TCSlib.Complexity.TuringMachine.Simulation', 'TCSlib.Complexity.TuringMachine.Composition', 'TCSlib.Complexity.TuringMachine.Build.Wrappers', 'TCSlib.Complexity.TuringMachine.Build.Loop']
+TCSlib.Complexity.TuringMachine.Build.Primitives: closure [Simulation@90, Composition@263, Wrappers@506, Encoding@622, TimeConstructible@718, Loop@799, Primitives@1490]; imports ['TCSlib.Complexity.TuringMachine.Simulation', 'TCSlib.Complexity.TuringMachine.Composition', 'TCSlib.Complexity.TuringMachine.Build.Wrappers', 'TCSlib.Complexity.TuringMachine.Encoding', 'TCSlib.Complexity.ClassP.TimeConstructible', 'TCSlib.Complexity.TuringMachine.Build.Loop', 'TCSlib.Complexity.TuringMachine.Build.Primitives']
+TCSlib.Complexity.TuringMachine.Build.Catalog: closure [Simulation@90, Composition@263, Wrappers@506, Encoding@622, TimeConstructible@718, Loop@799, Primitives@1490, Catalog@2601]; imports ['TCSlib.Complexity.TuringMachine.Simulation', 'TCSlib.Complexity.TuringMachine.Composition', 'TCSlib.Complexity.TuringMachine.Build.Wrappers', 'TCSlib.Complexity.TuringMachine.Encoding', 'TCSlib.Complexity.ClassP.TimeConstructible', 'TCSlib.Complexity.TuringMachine.Build.Loop', 'TCSlib.Complexity.TuringMachine.Build.Primitives', 'TCSlib.Complexity.TuringMachine.Build.Catalog']
+cut: cuts/TCSlib.Complexity.ClassP.TimeConstructible.check.lean -- exit 0; errors 0; 'declaration uses sorry' warnings 4; other warnings 0; lines 348
+cut: cuts/TCSlib.Complexity.TuringMachine.Build.Catalog.check.lean -- exit 0; errors 0; 'declaration uses sorry' warnings 31; other warnings 6; lines 2824
+cut: cuts/TCSlib.Complexity.TuringMachine.Build.Loop.check.lean -- exit 0; errors 0; 'declaration uses sorry' warnings 13; other warnings 2; lines 1215
+cut: cuts/TCSlib.Complexity.TuringMachine.Build.Primitives.check.lean -- exit 0; errors 0; 'declaration uses sorry' warnings 31; other warnings 3; lines 2485
+cut: cuts/TCSlib.Complexity.TuringMachine.Build.Wrappers.check.lean -- exit 0; errors 0; 'declaration uses sorry' warnings 7; other warnings 0; lines 530
+cut: cuts/TCSlib.Complexity.TuringMachine.Composition.check.lean -- exit 0; errors 0; 'declaration uses sorry' warnings 4; other warnings 0; lines 419
+cut: cuts/TCSlib.Complexity.TuringMachine.Encoding.check.lean -- exit 0; errors 0; 'declaration uses sorry' warnings 2; other warnings 0; lines 272
+cut: cuts/TCSlib.Complexity.TuringMachine.Simulation.check.lean -- exit 0; errors 0; 'declaration uses sorry' warnings 1; other warnings 0; lines 180
+
+## 4. Identity (scripts/identity.py) and its negative controls
+identity: exit 0 (entries: 158; by kind: {'verbatim': 97, 'statement': 47, 'substrings': 7, 'transform': 3, 'binders': 4}; failures: 0)
+negative controls (three single-token mutations: a timedCondTM transition, the prependTM_computes bound, a loopHostM transition): 3 failures, expected 3
+
+## 5. Axioms (probes/AxiomProbe.lean: the unit followed by #print axioms of its public declarations)
+axiom probe: exit 0
+declarations reported: 130
+non-standard axioms (other than propext, Classical.choice, Quot.sound, sorryAx): []
+with sorryAx: 84; sorry-free: 46
+
+## 6. Names (scripts/namescreen.py)
+clashes 0, exposure occurrences 0, moved clashes 1, package hits 0
+landing files: 15; declarations: 1211
+exact full-name matches with the 71 public and 45 moved proposed names: 0
+shared last components (other namespaces): 0
+
+## 7. Widths and style
+lines over 100 characters: 0
+WARN  lintdir/SpecProbe.lean       4112 lines > 1000: policy requires a split or a recorded justification (escalation/decision log)
+INFO  lintdir/BridgeProbe.lean     321 lines; 0 public / 13 private declarations
+INFO  lintdir/MIG1Statements.lean  2950 lines; 130 public / 61 private declarations
+INFO  lintdir/SpecProbe.lean       4112 lines; 150 public / 114 private declarations
+
+style_lint: 0 FAIL, 2 WARN over 3 files
+
+## 8. Consumers of the rows (scripts/consumers.py) and replay closure (scripts/importgraph.py)
+total external citations: 231 in 36 files
+== whole MIG-1 (ten files)	modules: 624; replay closure: 206
+== PR S (statements)	modules: 624; replay closure: 206
+== F-A	modules: 624; replay closure: 206
+== F-B	modules: 624; replay closure: 80
+== F-C	modules: 624; replay closure: 91
+== F-D	modules: 624; replay closure: 30
+== F-D without CodeSimulator	modules: 624; replay closure: 30
+
+## 9. Deletion plan (scripts/region.py)
+region: lines 1779-11361 (9583 lines); declarations 378
+families: {'f2': 304, 'public': 22, 'a2': 45, 'catalog_redirect': 7}
+f2 with same-named source: 257 ; code-identical: 232 (lines with docstrings 4351 ) ; statement-identical only: 5 ; differing: 20 ; no source: 47
+catalog_redirect code-identical: 7 of 7
+  a2                delete: dead (reached from no public declaration): 1 decls, 12 lines with docstrings
+  a2                delete: duplicates an existing public declaration: 2 decls, 30 lines with docstrings
+  a2                delete: reached only from the decision-loop S-form proof (dropped): 14 decls, 433 lines with docstrings
+  a2                move: Build/Primitives.lean (forwarding map): 28 decls, 721 lines with docstrings
+  catalog_redirect  delete: copy, original used: 7 decls, 77 lines with docstrings
+  f2                absorbed into a gated public statement: 13 decls, 512 lines with docstrings
+  f2                delete: copy, original used: 232 decls, 4351 lines with docstrings
+  f2                delete: dead (reached from no public declaration): 11 decls, 201 lines with docstrings
+  f2                delete: duplicates an existing public declaration: 5 decls, 81 lines with docstrings
+  f2                delete: modified copy, citations re-targeted at the original: 16 decls, 614 lines with docstrings
+  f2                delete: statement-identical copy (proof differs), original used: 5 decls, 314 lines with docstrings
+  f2                delete: used only by deleted declarations: 5 decls, 142 lines with docstrings
+  f2                move: Build/Loop.lean (loop budget): 4 decls, 101 lines with docstrings
+  f2                move: Build/Primitives.lean (pair length): 1 decls, 11 lines with docstrings
+  f2                move: Build/Primitives.lean (polynomial space): 4 decls, 196 lines with docstrings
+  f2                move: Build/Wrappers.lean (conditional ledger): 5 decls, 109 lines with docstrings
+  f2                move: ClassP/TimeConstructible.lean (counter space): 2 decls, 97 lines with docstrings
+  f2                move: replaces the original (extended statement): 1 decls, 178 lines with docstrings
+  public            corollary in place (statement and name unchanged; proof from the gated specs): 20 decls, 922 lines with docstrings
+  public            move (statement, name and proof unchanged): 2 decls, 70 lines with docstrings
+UNASSIGNED: []
+
+done

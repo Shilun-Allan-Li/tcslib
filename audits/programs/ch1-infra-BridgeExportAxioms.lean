@@ -5,6 +5,10 @@ import Lean
 set_option maxHeartbeats 0
 
 -- Maintainer axiom attestation: Chapter-1 bridge export + TMSAT bridge discharge.
+-- Refreshed 2026-10-12 (backlog H-1). Written 2026-10-03, when the TMSAT targets and the
+-- epoch-2 cluster still had admission roots; `TMSAT_mem_NP` was proved on 2026-10-04
+-- (`9f748601`), and every target below is now admission-free. The program is a
+-- regression check: each target must keep no admission root and only the standard axioms.
 -- (1) The export and the discharged bridge must be admission-free.
 #print axioms Turing.timed_universal_concrete
 #print axioms Complexity.timed_universal_quantitative
@@ -14,7 +18,7 @@ set_option maxHeartbeats 0
 #print axioms Turing.universal_quadratic
 #print axioms Turing.exists_effectiveMachineCode
 #print axioms Complexity.HALT_not_computable
--- (3) The TMSAT targets' remaining roots shrink exactly as expected.
+-- (3) The TMSAT targets, now proved, stay admission-free.
 #print axioms Complexity.TMSAT_mem_NP
 #print axioms Complexity.TMSAT_NPHard
 #print axioms Complexity.TMSAT_NPComplete
@@ -62,13 +66,16 @@ run_cmd do
     (``Turing.timed_universal_concrete, []),
     (``Complexity.timed_universal_quantitative, []),
     (``Turing.timed_universal, []),
-    (``Complexity.TMSAT_mem_NP, [``Complexity.TMSAT_mem_NP]),
-    (``Complexity.TMSAT_NPHard, [``Complexity.TMSAT_NPHard]),
-    (``Complexity.TMSAT_NPComplete,
-      [``Complexity.TMSAT_mem_NP, ``Complexity.TMSAT_NPHard]),
-    -- Regression: the epoch-2 A/C cluster is untouched by this change.
-    (``Complexity.NP_subset_EXP, [`Complexity.enumMachine_contracts]),
-    (``Complexity.HALT_NPHard, [`Complexity.enumMachine_contracts])]
+    (``Turing.universal, []),
+    (``Turing.universal_quadratic, []),
+    (``Turing.exists_effectiveMachineCode, []),
+    (``Complexity.HALT_not_computable, []),
+    (``Complexity.TMSAT_mem_NP, []),
+    (``Complexity.TMSAT_NPHard, []),
+    (``Complexity.TMSAT_NPComplete, []),
+    -- Regression: the epoch-2 A/C cluster, now admission-free.
+    (``Complexity.NP_subset_EXP, []),
+    (``Complexity.HALT_NPHard, [])]
   for (name, expectedRaw) in expectations do
     let expected := expectedRaw.eraseDups.mergeSort (fun a b => a.toString ≤ b.toString)
     let found := userRoots env name
@@ -82,6 +89,6 @@ run_cmd do
       throwError "Unexpected sorryAx for {name}"
     unless expected.isEmpty || ax.contains ``sorryAx do
       throwError "Expected sorryAx for {name} but it is absent"
-  logInfo "BRIDGE AUDIT PASS: the export and the discharged bridge are admission-free; TMSAT roots shrank exactly to their D-sites; headline and epoch-2 regressions unchanged."
+  logInfo "BRIDGE AUDIT PASS: the export, the discharged bridge, the chapter-1 headline set, the TMSAT targets and the epoch-2 cluster are all admission-free."
 
 end BridgeAudit

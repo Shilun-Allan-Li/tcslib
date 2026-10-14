@@ -1,0 +1,93 @@
+# Elaboration of b6hosts/B6Hosts.lean (read-only; no olean written)
+# command: bash tools/leanelab.sh wt-b6h oleans-f7 b6hosts/B6Hosts.lean
+# lean: leanprover/lean4:v4.25.0
+# date: 2026-10-13T04:58:24Z
+# sha256 of the elaborated file: eaadf4934db656dc46b7648050df98d568dcfd8c5b3b7bf075cf69816c8e9874
+# lines: 1406, declarations: 55
+# --- output begins ---
+/private/tmp/claude-501/-Users-seyoonr-phd-experiments-tcslib/8f0076bc-454a-4666-b8cf-f4c7ed13c549/scratchpad/b6hosts/B6Hosts.lean:732:8: warning: declaration uses 'sorry'
+/private/tmp/claude-501/-Users-seyoonr-phd-experiments-tcslib/8f0076bc-454a-4666-b8cf-f4c7ed13c549/scratchpad/b6hosts/B6Hosts.lean:848:8: warning: declaration uses 'sorry'
+/private/tmp/claude-501/-Users-seyoonr-phd-experiments-tcslib/8f0076bc-454a-4666-b8cf-f4c7ed13c549/scratchpad/b6hosts/B6Hosts.lean:904:8: warning: declaration uses 'sorry'
+/private/tmp/claude-501/-Users-seyoonr-phd-experiments-tcslib/8f0076bc-454a-4666-b8cf-f4c7ed13c549/scratchpad/b6hosts/B6Hosts.lean:988:8: warning: declaration uses 'sorry'
+/private/tmp/claude-501/-Users-seyoonr-phd-experiments-tcslib/8f0076bc-454a-4666-b8cf-f4c7ed13c549/scratchpad/b6hosts/B6Hosts.lean:1159:8: warning: declaration uses 'sorry'
+/private/tmp/claude-501/-Users-seyoonr-phd-experiments-tcslib/8f0076bc-454a-4666-b8cf-f4c7ed13c549/scratchpad/b6hosts/B6Hosts.lean:1191:8: warning: declaration uses 'sorry'
+/private/tmp/claude-501/-Users-seyoonr-phd-experiments-tcslib/8f0076bc-454a-4666-b8cf-f4c7ed13c549/scratchpad/b6hosts/B6Hosts.lean:1244:8: warning: declaration uses 'sorry'
+/private/tmp/claude-501/-Users-seyoonr-phd-experiments-tcslib/8f0076bc-454a-4666-b8cf-f4c7ed13c549/scratchpad/b6hosts/B6Hosts.lean:1291:8: warning: declaration uses 'sorry'
+/private/tmp/claude-501/-Users-seyoonr-phd-experiments-tcslib/8f0076bc-454a-4666-b8cf-f4c7ed13c549/scratchpad/b6hosts/B6Hosts.lean:1333:8: warning: declaration uses 'sorry'
+/private/tmp/claude-501/-Users-seyoonr-phd-experiments-tcslib/8f0076bc-454a-4666-b8cf-f4c7ed13c549/scratchpad/b6hosts/B6Hosts.lean:1370:8: warning: declaration uses 'sorry'
+# --- output ends; lean exit status 0 ---
+
+# Summary: 0 errors; 10 warnings, all 'declaration uses sorry' (the 10 machine contracts:
+# exists_stepClockTMVia, exists_windowLoopTM, exists_windowRunnerTM, exists_configWindowRunnerTM,
+# exists_rulerTestTM, exists_rulerDeviceTM, exists_rulerHostTM, exists_selfStartupTM,
+# exists_selfUniversal, B6Draft.space_universal); no other warning.
+
+# Axiom probe: a scratch copy (b6hosts/work/AxProbe.lean) with '#print axioms' appended for all 55
+# declarations (not part of the draft). Expected: the standard triple or less everywhere, except
+# sorryAx in the 10 contracts and in the two declarations derived from them
+# (exists_stepClockTM from exists_stepClockTMVia; space_universal_gated_form from space_universal).
+# --- probe output (sorry warnings omitted) ---
+'Turing.MultiTapeTM.relabelState_visitedByTapeHead' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.MultiTapeTM.relabelState_spaceUsed' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.exists_codeTM_spaceUsed' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.CodeTM.one_le_spaceUsed' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.FinTM.ComputesInTime.spaceUsed_le_of_halt' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.FinTM.ComputesInSpace.computesFunInTime_and_forall_spaceUsed_le' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'Turing.FinTM.inWindow_of_spaceUsed_le' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.Cfg.inWindow_init' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.FinTM.decidesInSpace_of_alphabetReduction' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.WindowExit' does not depend on any axioms
+'Turing.windowRun' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.windowRun_halted_of_run' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.windowRun_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.windowRun_tag' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.windowRun_stop_unique' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.windowRun_exhausted_of_live' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.windowRun_halts_on_last_transition' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.outSummaryCode' depends on axioms: [propext]
+'Turing.outSummaryCode_injective' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.summaryWord' depends on axioms: [propext]
+'Turing.outSummaryCode_summaryWord' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.summaryTag' depends on axioms: [propext]
+'Turing.summaryTag_none' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.summaryTag_append' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.outSummaryCode_eq_one_iff' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.outSummaryCode_nil' depends on axioms: [propext]
+'Turing.windowRun_summary_of_halts' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.FinTM.configBound_le_two_pow' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.clockCfg' depends on axioms: [propext, Quot.sound]
+'Turing.wordPatch' does not depend on any axioms
+'Turing.Cfg.Stopped' does not depend on any axioms
+'Turing.exists_stepClockTMVia' depends on axioms: [propext, sorryAx, Classical.choice, Quot.sound]
+'Turing.exists_stepClockTM' depends on axioms: [propext, sorryAx, Classical.choice, Quot.sound]
+'Turing.exists_windowLoopTM' depends on axioms: [propext, sorryAx, Classical.choice, Quot.sound]
+'Turing.exists_windowRunnerTM' depends on axioms: [propext, sorryAx, Classical.choice, Quot.sound]
+'Turing.exists_configWindowRunnerTM' depends on axioms: [propext, sorryAx, Classical.choice, Quot.sound]
+'Turing.inputCell' does not depend on any axioms
+'Turing.Cfg.inputSymbol_eq_inputCell' depends on axioms: [propext, Quot.sound]
+'Turing.NativeAt' does not depend on any axioms
+'Turing.NativeAt.inputSymbol_eq' depends on axioms: [propext, Quot.sound]
+'Turing.NativeAt.move' depends on axioms: [propext, Quot.sound]
+'Turing.nativeAt_init' depends on axioms: [propext]
+'Turing.inputCell_sub_eq_none_iff' depends on axioms: [propext, Quot.sound]
+'Turing.inputCell_of_drop' depends on axioms: [propext, Quot.sound]
+'Turing.RulerAt' does not depend on any axioms
+'Turing.pairEncode_pairEncode_length' depends on axioms: [propext, Quot.sound]
+'Turing.pairEncode_pairEncode_drop' depends on axioms: [propext, Quot.sound]
+'Turing.exists_rulerTestTM' depends on axioms: [propext, sorryAx, Classical.choice, Quot.sound]
+'Turing.exists_rulerDeviceTM' depends on axioms: [propext, sorryAx, Classical.choice, Quot.sound]
+'Turing.rulerHostCfg' depends on axioms: [propext, Quot.sound]
+'Turing.exists_rulerHostTM' depends on axioms: [propext, sorryAx, Classical.choice, Quot.sound]
+'Turing.exists_selfStartupTM' depends on axioms: [propext, sorryAx, Classical.choice, Quot.sound]
+'Turing.exists_selfUniversal' depends on axioms: [propext, sorryAx, Classical.choice, Quot.sound]
+'Complexity.B6Draft.space_universal' depends on axioms: [propext, sorryAx, Classical.choice, Quot.sound]
+'Complexity.B6Draft.space_universal_gated_form' depends on axioms: [propext, sorryAx, Classical.choice, Quot.sound]
+# --- probe ends ---
+
+# Maintainer re-check (2026-10-13): the draft and the axiom probe re-elaborated independently with
+# the same tool, checkout and snapshot: 0 errors, 10 'sorry' warnings each. The probe is the draft
+# followed by 55 '#print axioms' lines and nothing else (checked by script). Of the 55 declarations,
+# sorryAx appears in exactly the 12 listed above; every other one uses at most propext,
+# Classical.choice and Quot.sound.

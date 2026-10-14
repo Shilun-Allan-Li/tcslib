@@ -1,0 +1,73 @@
+# original: TCSlib/Complexity/TuringMachine/CodeSimulator.lean sha256 adae43401c9741990b64730f42954221cdf56918a36995a266f0c0c4f7c8283e
+# draft   : StepBlockDraft-r2.lean sha256 ff7c028a217c77c26253aa46c3fd7323028aee3d3155e537e512fe62341e6e8d
+MATCH  workReadsK -> workReadsK (def, full)
+MATCH  tableBitsK -> tableBitsK (def, full)
+MATCH  outputSummary -> outputSummary (def, full)
+MATCH  summaryEmit -> summaryEmit (def, full)
+MATCH  outputSummary_append -> outputSummary_append (lemma, full)
+MATCH  h1RecordWidth -> recordWidth (abbrev, full)
+MATCH  h1RecordState -> RecordState (abbrev, full)
+MATCH  h1TableTape -> tableTape (def, full)
+MATCH  h1SummaryTape -> summaryTape (def, full)
+MATCH  h1Payload -> payload (def, full)
+MATCH  h1ApplyPayload -> applyPayload (def, full)
+MATCH  h1RecordTM -> recordTM (def, full)
+MATCH  h1RecordFinTM -> recordFinTM (def, full)
+MATCH  h1Record_effect -> recordTM_effect (theorem, statement)
+MATCH  h1WorkReads_mem -> mem_workReadsK (lemma, full)
+MATCH  h1WorkReads_length -> length_workReadsK (lemma, full)
+MATCH  h1WorkRank -> workRank (def, full)
+MATCH  h1InputRank -> inputRank (def, full)
+MATCH  h1ReadRank -> readRank (def, full)
+MATCH  h1SuccPhase -> SuccPhase (inductive, full)
+MATCH  h1SuccTM -> succFieldTM (def, full)
+MATCH  h1UnaryCfg -> succFieldCfg (def, full)
+MATCH  h1AfterTag -> afterTag (def, full)
+MATCH  h1Succ_run -> succFieldTM_run (theorem, statement)
+MATCH  h1Succ_cut -> succFieldTM_cut (theorem, statement)
+MATCH  h1Succ_heads -> succFieldTM_heads (theorem, statement)
+MATCH  h1SkipPh -> SkipPh (def, full)
+MATCH  h1SkipPart -> skipPart (def, full)
+MATCH  h1SkipRed -> skipRed (def, full)
+MATCH  h1SkipTM -> recordSkipTM (def, full)
+MATCH  h1Skip_run -> recordSkipTM_run (theorem, statement)
+MATCH  h1Skip_spec -> recordSkipTM_spec (theorem, statement)
+MATCH  h1SkipPh_finite -> instFintypeSkipPh (instance, full)
+MATCH  h1SkipPh_decidable -> instDecidableEqSkipPh (instance, full)
+MATCH  h1SeekCtrl -> SeekCtrl (inductive, full)
+MATCH  h1SeekRouter -> seekRouterTM (def, full)
+MATCH  h1SeekNext -> seekNext (def, full)
+MATCH  h1SeekKey -> SeekKey (abbrev, full)
+MATCH  h1SeekPh -> SeekPh (def, full)
+MATCH  h1SeekPart -> seekPart (def, full)
+MATCH  h1SeekRed -> seekRed (def, full)
+MATCH  h1SeekTM -> seekTM (def, full)
+MATCH  h1TwoMoveTM -> twoMoveTM (def, full)
+MATCH  h1SeekPh_finite -> instFintypeSeekPh (instance, full)
+MATCH  h1SeekPh_decidable -> instDecidableEqSeekPh (instance, full)
+MATCH  h1RoundKey -> Key (inductive, full)
+MATCH  h1RoundPh -> Ph (abbrev, full)
+MATCH  h1RoundPart -> part (def, full)
+MATCH  h1RoundExit -> exit (def, full)
+MATCH  h1RoundRed -> red (def, full)
+MATCH  h1RoundTM -> roundTM (def, full)
+MATCH  h1RoundPh_finite -> instFintypePh (instance, full)
+MATCH  h1RoundPh_decidable -> instDecidableEqPh (instance, full)
+MATCH  h1RoundFinTM -> roundFinTM (def, full)
+MATCH  h1SummaryState -> summaryCells (def, full)
+MATCH  h1RoundRep -> Rep (def, full)
+MATCH  h1Round_effect -> roundTM_effect (theorem, statement)
+MATCH  h1Run_headBound -> abs_workTapePos_runFrom_sub_le (lemma, full)
+ADDITIVE (whitelisted, proved in the draft): summaryEmit_none
+ADDITIVE (whitelisted, proved in the draft): visitedByTapeHead_add_subset
+ADDITIVE (whitelisted, proved in the draft): visitedByTapeHead_step_subset
+ADDITIVE (whitelisted, proved in the draft): roundTM_visited
+ADDITIVE (whitelisted, proved in the draft): roundTM_iterate
+ADDITIVE (whitelisted, proved in the draft): roundTM_firstExit_unique
+R1->R2 docstring changed: outputSummary
+R1->R2 docstring changed: Key
+R1->R2 docstring changed: roundTM_effect
+R1->R2: copied declarations with byte-identical code: 58 of 58
+R1->R2 additive restated or reproved in r2: roundTM_iterate
+R1->R2 additive new in r2: roundTM_firstExit_unique
+SUMMARY: 58 match, 0 failing checks; inventory 58 copied + 6 additive expected, 64 declared

@@ -124,6 +124,11 @@ identities `Turing.scanResult_fold`, `Turing.scanResult_map`,
 `Turing.scanResult_shiftRight`, `Turing.scanResult_shiftLeft`,
 `Turing.scanResult_carry`.
 
+* `Turing.MultiTapeTM.spaceUsedByTape_le_card_Icc` — a head confined to an
+  integer interval visits at most its cardinality (the head-interval bound
+  the Z4 space annotation consumes). (Moved from `Build/Zone.lean` for B4,
+  2026-10-12.)
+
 ## References
 
 * [AB09] S. Arora, B. Barak, *Computational Complexity: A Modern Approach*,
@@ -378,6 +383,25 @@ theorem catalog_trace_run {Symbol : Type*} {x : List Symbol} {S : Type*} (M : Mu
               show ¬t + 1 ≤ L by omega, show ¬t ≤ 2 * L + 1 by omega,
               show ¬t + 1 ≤ 2 * L + 1 by omega] using hD
 
+/-- A head confined to an integer interval visits at most its cardinality.
+
+(Moved from `Build/Zone.lean` for B4, 2026-10-12.)
+
+**Proof sketch.** The visited set is a finite image contained in the
+interval by hypothesis; `Finset.card_le_card` and `Int.card_Icc` finish. -/
+theorem MultiTapeTM.spaceUsedByTape_le_card_Icc {k : ℕ} {Symbol State : Type*}
+    {input : List Symbol} (tm : MultiTapeTM k Symbol State)
+    (d : Cfg k Symbol State input) (t : ℕ) (i : Fin k) (lo hi : ℤ)
+    (h : ∀ u ≤ t, (tm.runFrom d u).workTapePos i ∈ Finset.Icc lo hi) :
+    tm.spaceUsedByTape d t i ≤ (hi + 1 - lo).toNat := by
+  unfold MultiTapeTM.spaceUsedByTape
+  calc
+    _ ≤ (Finset.Icc lo hi).card := Finset.card_le_card (by
+      intro p hp
+      obtain ⟨u, hu, rfl⟩ := Finset.mem_image.mp hp
+      exact h u (by simpa only [Finset.mem_range, Nat.lt_succ_iff] using hu))
+    _ = _ := Int.card_Icc lo hi
+
 /-- A head confined to the inclusive interval from minus one to `L` visits
 at most `L+2` cells. -/
 private lemma catalog_space_bound {S : Type*} (M : MultiTapeTM k Bool S)
@@ -385,11 +409,9 @@ private lemma catalog_space_bound {S : Type*} (M : MultiTapeTM k Bool S)
     (h : ∀ u, -1 ≤ (M.runFrom c u).workTapePos i ∧
       (M.runFrom c u).workTapePos i ≤ (L : ℤ)) :
     M.spaceUsedByTape c t i ≤ L + 2 := by
-  have hs : M.visitedByTapeHead c t i ⊆ Finset.Icc (-1 : ℤ) (L : ℤ) := by
-    intro z hz
-    obtain ⟨u, _, rfl⟩ := Finset.mem_image.mp hz
-    exact Finset.mem_Icc.mpr (h u)
-  exact (Finset.card_le_card hs).trans (by rw [Int.card_Icc]; omega)
+  have hb := M.spaceUsedByTape_le_card_Icc c t i (-1) L fun u _ => Finset.mem_Icc.mpr (h u)
+  have he : ((L : ℤ) + 1 - -1).toNat = L + 2 := by omega
+  exact he ▸ hb
 
 /-- A head stationary at zero has exactly its origin singleton as visited set. -/
 private lemma catalog_space_one {S : Type*} (M : MultiTapeTM k Bool S)
@@ -837,15 +859,13 @@ private lemma catalog_increment_split (w : List Bool) :
       exact ⟨p + 1, tail, by simp [List.replicate_succ, hw]⟩
 
 /-- Fixed-width increment flips the leading true prefix and the first false;
-an absent first false gives overflow. -/
+an absent first false gives overflow.
+Now derived from `Turing.incFixed_replicate_true_append` (CH34-D4). -/
 private lemma catalog_increment_value (p : ℕ) (tail : Option (List Bool)) :
     incFixed (List.replicate p true ++ tail.elim [] (false :: ·)) =
       tail.map (fun v => List.replicate p false ++ true :: v) := by
-  induction p with
-  | zero => cases tail <;> rfl
-  | succ p ih =>
-    simp only [List.replicate_succ, List.cons_append, incFixed, ih]
-    cases tail <;> rfl
+  rw [incFixed_replicate_true_append]
+  cases tail <;> rfl
 
 /-- Changing the cell immediately after a framed prefix changes just that cell.
 **Proof sketch.** At the write coordinate use indexing at the prefix length.

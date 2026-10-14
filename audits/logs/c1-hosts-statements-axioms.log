@@ -1,0 +1,34 @@
+# C1 host contracts statement gate: axiom prints
+
+Tool: `bash <S>/tools/leanelab.sh <S>/wt-g5c1 <S>/oleans-f8 <file>` (direct `lean`, no `-o`,
+no olean written). Checkout: `wt-g5c1`, campaign commit 1781a230 (PR #84, fills-8), read-only.
+Snapshot: `oleans-f8` (all of TCSlib at that commit). Toolchain: `leanprover/lean4:v4.25.0`.
+<OUT> is the gate's output directory; <S> the scratchpad. Run: 2026-10-14 03:09 UTC.
+
+`<OUT>/work/AxProbe.lean` is a copy of the unit followed by `#print axioms` for every public
+declaration (`<OUT>/scripts/mkaxprobe.py`). The probe is evidence only.
+  exit 0 | errors 0 | warnings 5 | of which `declaration uses 'sorry'` 5 | other warnings 0
+```
+'Turing.NDTM.stepWith_mapState_of_agreeOn' depends on axioms: [propext, Quot.sound]
+'Turing.NDTM.runWith_mapState_of_agreeOn' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.NDTM.runWith_mapState_of_agreeOn_det' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.NDTM.runWith_eq_fixChoice_runFrom' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.NDTM.relabelState' depends on axioms: [Quot.sound]
+'Turing.NDTM.relabelState_runWith' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.NDTM.runWith_initCfg_take' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.NDTM.replayTM' depends on axioms: [propext, Quot.sound]
+'Turing.NDTM.withChoiceTape' depends on axioms: [propext, Quot.sound]
+'Turing.NDTM.replayTM_runFrom' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.NDTM.phaseHostND' does not depend on any axioms
+'Turing.NDTM.phaseHostND_fixChoice' does not depend on any axioms
+'Turing.NDTM.phaseHostND_run' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.NDWriterState' does not depend on any axioms
+'Turing.ndWriterTM' does not depend on any axioms
+'Turing.ndWriterTM_run_block' depends on axioms: [propext, sorryAx, Quot.sound]
+'Turing.exists_inputWindowCopyTM' depends on axioms: [propext, sorryAx, Quot.sound]
+'Turing.CodeNDTM.serialize_eq_tableBitsK' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.exists_replayCanonizer' depends on axioms: [propext, sorryAx, Classical.choice, Quot.sound]
+'Turing.exists_ndInterpreterCore' depends on axioms: [propext, sorryAx, Classical.choice, Quot.sound]
+'Turing.FinNDTM.exists_exhaustiveDecider' depends on axioms: [propext, sorryAx, Classical.choice, Quot.sound]
+'Turing.ndAcceptsWithin_decider_of_universal' depends on axioms: [propext, sorryAx, Classical.choice, Quot.sound]
+```

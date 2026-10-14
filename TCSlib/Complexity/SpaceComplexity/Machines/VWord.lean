@@ -18,10 +18,15 @@ Small facts used by several register machines that read their input by index:
   of `y` shifted by `a` (with default `false`); used by the codec parsers
   (`TCSlib.Complexity.SpaceComplexity.Codec.Run`) and the `PATH` walk
   (`TCSlib.Complexity.SpaceComplexity.Logspace.PathWalk`).
+* `Complexity.getD_of_drop`, `Complexity.drop_succ_of_drop`, `Complexity.lt_of_drop`,
+  `Complexity.drop_add_of_drop`, `Complexity.le_of_drop` — reading a word through a known
+  suffix `x.drop p = b :: r` or `u ++ r`; used by the `TQBF` evaluator
+  (`TCSlib.Complexity.ClassPSPACE.TQBFARM`).
 * `Complexity.LogProg.vword_whole₂`, `Complexity.LogProg.vword_whole₃` — the virtual input
   of a `whole`-mode call with two or three arguments, extending `vword_whole₁` of
   `TCSlib.Complexity.SpaceComplexity.Logspace.InputAccess`; used by the Savitch machine
-  (`TCSlib.Complexity.SpaceComplexity.SavitchARM`).
+  (`TCSlib.Complexity.SpaceComplexity.SavitchARM`) and by the step lemmas of
+  `TCSlib.Complexity.SpaceComplexity.Machines.NARMKit`.
 
 Infrastructure for the register-machine description of logspace algorithms of
 [AB09, §4.1]; not itself a result of the book.
@@ -29,6 +34,8 @@ Infrastructure for the register-machine description of logspace algorithms of
 ## Main results
 
 * `Complexity.getD_drop`.
+* `Complexity.getD_of_drop`, `Complexity.drop_succ_of_drop`, `Complexity.lt_of_drop`,
+  `Complexity.drop_add_of_drop`, `Complexity.le_of_drop`.
 * `Complexity.LogProg.vword_whole₂`, `Complexity.LogProg.vword_whole₃`.
 
 ## References
@@ -43,6 +50,34 @@ namespace Complexity
 with default `false`). -/
 lemma getD_drop (y : List Bool) (a i : ℕ) : (y.drop a).getD i false = y.getD (a + i) false := by
   simp [List.getD_eq_getElem?_getD]
+
+/-- The head of a suffix is the letter at its offset. -/
+lemma getD_of_drop {x r : List Bool} {p : ℕ} {b : Bool} (h : x.drop p = b :: r) :
+    x.getD p false = b := by
+  have := getD_drop x p 0; rw [h] at this; simpa using this.symm
+
+/-- The tail of a suffix is the next suffix. -/
+lemma drop_succ_of_drop {x r : List Bool} {p : ℕ} {b : Bool} (h : x.drop p = b :: r) :
+    x.drop (p + 1) = r := by
+  rw [← List.tail_drop, h]; rfl
+
+/-- A nonempty suffix starts inside the word. -/
+lemma lt_of_drop {x r : List Bool} {p : ℕ} {b : Bool} (h : x.drop p = b :: r) :
+    p < x.length := by
+  by_contra hc; rw [List.drop_eq_nil_of_le (by omega)] at h; cases h
+
+/-- A suffix of a suffix. -/
+lemma drop_add_of_drop {x u r : List Bool} {p : ℕ} (h : x.drop p = u ++ r) :
+    x.drop (p + u.length) = r := by
+  rw [← List.drop_drop, h, List.drop_left]
+
+/-- A suffix is no longer than the word: `p + |u| ≤ |x|`. -/
+lemma le_of_drop {x u r : List Bool} {p : ℕ} (h : x.drop p = u ++ r) (hu : u ≠ []) :
+    p + u.length ≤ x.length := by
+  have := congrArg List.length h
+  simp only [List.length_drop, List.length_append] at this
+  have : u.length ≠ 0 := by simpa using hu
+  omega
 
 namespace LogProg
 

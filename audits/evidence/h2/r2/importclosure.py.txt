@@ -1,0 +1,256 @@
+"""H2-S round 2: the import/dependency manifest of the step-block promotion.
+
+Usage:  python3 -I importclosure.py CHECKOUT [GRAPH_OUT]
+
+Reads only the `import` lines of the checkout's Lean headers (nothing is elaborated or built)
+and computes:
+  1. the direct import graph of the lake library `TCSlib` (every module under `TCSlib/` and
+     the root `TCSlib.lean`), written in full to GRAPH_OUT when given;
+  2. the exact reverse-dependency closure of `TuringMachine.CodeSimulator` in that graph;
+  3. the same graph with the proposed H2-M edges overlaid (the new module
+     `TuringMachine.Build.StepBlock` importing `CodeFormat`, `Build.Seam`, `Build.Catalog`;
+     `CodeSimulator` and the `TuringMachine` facade importing it), the exact reverse closure of
+     `StepBlock` there, and so the replay set `{StepBlock} + rdeps(StepBlock)`;
+  4. the forward closure of `StepBlock` (it must not contain CodeSimulator, CounterLoop or
+     VirtualInput: the layering claim of design note §4.1);
+  5. the closures behind O3 (home `CodeFormat`) and O9 (home `Deterministic`);
+  6. every Lean file outside the library (audit programs, webpage) that imports CodeSimulator.
+Exit status 0 iff the graph is well formed (every `TCSlib.*` import resolves to a file, no
+cycle reachable from the targets) and the computed replay set equals EXPECTED_REPLAY below.
+"""
+import hashlib
+import os
+import re
+import sys
+
+LIB = 'TCSlib'
+CS = 'TCSlib.Complexity.TuringMachine.CodeSimulator'
+SB = 'TCSlib.Complexity.TuringMachine.Build.StepBlock'
+FACADE = 'TCSlib.Complexity.TuringMachine'
+SB_IMPORTS = ['TCSlib.Complexity.TuringMachine.CodeFormat',
+              'TCSlib.Complexity.TuringMachine.Build.Seam',
+              'TCSlib.Complexity.TuringMachine.Build.Catalog']
+EXPECTED_REPLAY = sorted([
+    SB, CS,
+    'TCSlib.Complexity.TuringMachine.Codes2Tape',
+    'TCSlib.Complexity.Diagonalization.EXPCOM',
+    'TCSlib.Complexity.Diagonalization.Relativization',
+    'TCSlib.Complexity.TuringMachine',
+    'TCSlib.Complexity.Diagonalization',
+    'TCSlib',
+])
+MUST_NOT_BE_BELOW_SB = [CS, 'TCSlib.Complexity.TuringMachine.Build.CounterLoop',
+                        'TCSlib.Complexity.TuringMachine.Build.VirtualInput']
+SKIP_DIRS = {'.lake', '.git', '.claude'}
+
+
+def header_imports(path):
+    """The modules named by `import` commands in the file header (comments skipped)."""
+    text = open(path, encoding='utf-8').read()
+    text = re.sub(r'/-.*?-/', ' ', text, flags=re.S)   # block comments (non-nested suffices)
+    text = re.sub(r'--[^\n]*', ' ', text)
+    out = []
+    for tok_line in text.split('\n'):
+        s = tok_line.strip()
+        if not s:
+            continue
+        if s == 'prelude':
+            continue
+        m = re.match(r'import\s+(.*)$', s)
+        if not m:
+            break                                       # end of header
+        out.extend(m.group(1).split())
+    return out
+
+
+def module_of(root, path):
+    return os.path.relpath(path, root)[:-len('.lean')].replace(os.sep, '.')
+
+
+def load_graph(root):
+    g = {}
+    files = {}
+    for d, dirs, fs in os.walk(os.path.join(root, LIB)):
+        dirs[:] = [x for x in dirs if x not in SKIP_DIRS]
+        for f in fs:
+            if f.endswith('.lean'):
+                p = os.path.join(d, f)
+                m = module_of(root, p)
+                g[m] = header_imports(p)
+                files[m] = p
+    rootfile = os.path.join(root, LIB + '.lean')
+    g[LIB] = header_imports(rootfile)
+    files[LIB] = rootfile
+    return g, files
+
+
+def outside_importers(root, target):
+    hits = []
+    for d, dirs, fs in os.walk(root):
+        dirs[:] = [x for x in dirs if x not in SKIP_DIRS]
+        rel = os.path.relpath(d, root)
+        if rel == LIB or rel.startswith(LIB + os.sep):
+            continue
+        for f in fs:
+            if f.endswith('.lean') and f != 'lakefile.lean':
+                p = os.path.join(d, f)
+                if os.path.relpath(p, root) == LIB + '.lean':
+                    continue
+                if target in header_imports(p):
+                    hits.append(os.path.relpath(p, root))
+    return sorted(hits)
+
+
+def reverse(g):
+    r = {m: set() for m in g}
+    for m, ims in g.items():
+        for i in ims:
+            if i in r:
+                r[i].add(m)
+    return r
+
+
+def closure(adj, start):
+    seen, stack = set(), [start]
+    while stack:
+        m = stack.pop()
+        for n in adj.get(m, ()):
+            if n not in seen:
+                seen.add(n)
+                stack.append(n)
+    return seen
+
+
+def has_cycle_from(g, start):
+    colour = {}
+    def visit(m):
+        colour[m] = 1
+        for n in g.get(m, ()):
+            if n not in g:
+                continue
+            c = colour.get(n, 0)
+            if c == 1 or (c == 0 and visit(n)):
+                return True
+        colour[m] = 2
+        return False
+    return visit(start)
+
+
+def main():
+    root = sys.argv[1]
+    graph_out = sys.argv[2] if len(sys.argv) > 2 else None
+    g, files = load_graph(root)
+    ok = True
+    dangling = sorted((m, i) for m, ims in g.items() for i in ims
+                      if (i == LIB or i.startswith(LIB + '.')) and i not in g)
+    external = sorted({i.split('.')[0] for ims in g.values() for i in ims
+                       if not (i == LIB or i.startswith(LIB + '.'))})
+    print(f'# library modules (TCSlib/**.lean + root): {len(g)}')
+    print(f'# direct TCSlib import edges: '
+          f'{sum(1 for ims in g.values() for i in ims if i in g)}')
+    print(f'# external import roots (not followed): {", ".join(external)}')
+    print(f'# dangling TCSlib imports: {len(dangling)}')
+    for m, i in dangling:
+        print(f'  DANGLING {m} -> {i}')
+        ok = False
+    if CS not in g:
+        print(f'FAIL: {CS} not found'); sys.exit(2)
+    if SB in g:
+        print(f'NOTE: {SB} already exists in this checkout; the overlay is not applied')
+
+    rev = reverse(g)
+    rd_cs = closure(rev, CS)
+    print(f'\n## 1. CodeSimulator: direct imports ({len(g[CS])})')
+    for i in g[CS]:
+        print(f'  {i}')
+    print(f'\n## 2. rdeps(CodeSimulator) in the checkout: {len(rd_cs)} modules')
+    for m in sorted(rd_cs):
+        print(f'  {m}    <- imports: '
+              f'{", ".join(sorted(i for i in g[m] if i == CS or i in rd_cs))}')
+
+    # overlay
+    h = {m: list(ims) for m, ims in g.items()}
+    if SB not in h:
+        h[SB] = list(SB_IMPORTS)
+        h[CS] = h[CS] + [SB]
+        h[FACADE] = h[FACADE] + [SB]
+    for i in SB_IMPORTS:
+        if i not in g:
+            print(f'FAIL: proposed StepBlock import {i} does not exist'); ok = False
+    hrev = reverse(h)
+    rd_sb = closure(hrev, SB)
+    replay = sorted(rd_sb | {SB})
+    print('\n## 3. Overlay (proposed H2-M edges)')
+    print(f'  {SB} imports {", ".join(SB_IMPORTS)}')
+    print(f'  {CS} gains: import {SB}')
+    print(f'  {FACADE} gains: import {SB}')
+    print(f'\n## 4. rdeps(StepBlock) in the overlay: {len(rd_sb)} modules; replay set '
+          f'{{StepBlock}} + rdeps = {len(replay)} modules')
+    for m in replay:
+        if m == SB:
+            print(f'  {m} (new; no file in this checkout)')
+        else:
+            dig = hashlib.sha256(open(files[m], 'rb').read()).hexdigest()
+            print(f'  {m}  sha256 {dig}')
+    rd_cs_h = closure(hrev, CS)
+    print(f'  check: rdeps(CodeSimulator) is unchanged by the overlay: {rd_cs_h == rd_cs}')
+    ok &= rd_cs_h == rd_cs
+    extra = sorted(set(rd_sb) - set(rd_cs) - {CS})
+    print(f'  rdeps(StepBlock) minus ({{CodeSimulator}} + rdeps(CodeSimulator)): '
+          f'{extra if extra else "none"}')
+    if replay != EXPECTED_REPLAY:
+        print('FAIL: replay set differs from EXPECTED_REPLAY')
+        print('  missing:', sorted(set(EXPECTED_REPLAY) - set(replay)))
+        print('  extra  :', sorted(set(replay) - set(EXPECTED_REPLAY)))
+        ok = False
+    else:
+        print('  PASS: replay set equals the expected 8 modules')
+
+    fw = closure(h, SB)
+    fw_lib = sorted(m for m in fw if m in h)
+    print(f'\n## 5. forward closure of StepBlock: {len(fw_lib)} library modules '
+          f'(plus external roots)')
+    for m in MUST_NOT_BE_BELOW_SB:
+        below = m in fw
+        print(f'  {m} below StepBlock: {below}')
+        ok &= not below
+    if has_cycle_from(h, SB):
+        print('FAIL: a cycle is reachable from StepBlock'); ok = False
+    else:
+        print('  no cycle reachable from StepBlock')
+
+    print('\n## 6. Alternative homes (design note O3, O9)')
+    for name, mod in [('O3: CodeFormat', 'TCSlib.Complexity.TuringMachine.CodeFormat'),
+                      ('O9: Deterministic', 'TCSlib.Complexity.TuringMachine.Deterministic')]:
+        rd = closure(rev, mod)
+        print(f'  {name}: rdeps = {len(rd)} modules; replay set = {len(rd) + 1}')
+    rd_cf = sorted(closure(rev, 'TCSlib.Complexity.TuringMachine.CodeFormat'))
+    print('  rdeps(CodeFormat):')
+    for m in rd_cf:
+        print(f'    {m}')
+
+    print('\n## 7. Lean files outside the library importing CodeSimulator '
+          '(not lake targets; not replayed)')
+    outs = outside_importers(root, CS)
+    for p in outs:
+        print(f'  {p}')
+    if not outs:
+        print('  none')
+
+    if graph_out:
+        with open(graph_out, 'w', encoding='utf-8') as f:
+            f.write('# Direct import graph of the lake library TCSlib, from header `import` '
+                    'lines only.\n# Format: module: import, import, ... '
+                    '(external roots kept verbatim)\n')
+            f.write(f'# checkout: {os.path.basename(os.path.abspath(root))}; '
+                    f'modules: {len(g)}\n')
+            for m in sorted(g):
+                f.write(f'{m}: {", ".join(g[m])}\n')
+        print(f'\n# full graph written: {graph_out} ({len(g)} modules)')
+
+    print('\nRESULT:', 'PASS' if ok else 'FAIL')
+    sys.exit(0 if ok else 1)
+
+
+if __name__ == '__main__':
+    main()

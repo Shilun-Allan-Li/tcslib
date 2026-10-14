@@ -2,7 +2,8 @@
 
 *Reply to `arm-extensions-proposal.md` (Seyoon, chapters 3–4 campaign).
 Branch `complexity/arm-extensions`, cut from `complexity/arora-barak-ch3-4` at `50678912`.
-Status: built and independently verified, not yet committed.*
+Status: built and independently verified; merged into `complexity/arora-barak-ch3-4`
+(at `069cde82`) on 2026-10-14.*
 
 ## Summary
 
@@ -15,11 +16,26 @@ filling a sorry from your campaign:
 | 2. Poly-width ARM | done | `searchLang_mem_PSPACE` (example); Savitch below |
 | 3. Configuration codec | done | `PSPACE_eq_NPSPACE` (Savitch.lean), now proved |
 
+After the first round, the remaining customers the proposal names were proved too (section
+"The remaining customers" below):
+
+| Theorem | [AB09] | Engine |
+|---|---|---|
+| `PATH_NLComplete` | Thm 4.18 | codec + deterministic ARM (implicitly logspace reduction) |
+| `compl_PATH_mem_NL`, `NL_eq_coNL` | Thm 4.20 | nondeterministic ARM, inductive counting over codes |
+| `NSPACE_compl_eq` | Cor 4.21 | same machine, window growing (needs only `logSpace ≤ S`) |
+| `TQBF_mem_PSPACE` | Thm 4.13 | poly-width ARM, depth-first AND/OR walk |
+| `TQBF_PSPACEHard`, `TQBF_PSPACEComplete` | Thm 4.13 | codec + Cook–Levin tableau + Tseitin |
+| `NSPACE_subset_exp_dtime` (hence `NL_subset_P`, `polyTimeReducible_of_mem_NL`) | Thm 4.2(iii) | new memory-tape ARM with a time bridge, BFS over codes |
+
 Two ground rules held throughout:
 
-- **No statement of yours changed.** Only the bodies of `PATH_mem_NL` and
-  `PSPACE_eq_NPSPACE` were filled, and their docstring sketches rewritten to match the proofs
-  (with the `[AB09 …]` tags kept).
+- **No statement of yours changed.** Only bodies of your sorried theorems were filled, and
+  their docstring sketches rewritten to match the proofs (with the `[AB09 …]` tags kept).
+  One relocation: `NSPACE_subset_exp_dtime`, `NL_subset_P` and `polyTimeReducible_of_mem_NL`
+  moved, byte-identical, from `ConfigGraph.lean` to the new `SpaceComplexity/ExpTime.lean`
+  (the proof needs the codec, and `Codec/Word.lean` imports `ConfigGraph` — an import cycle
+  otherwise). Nothing referenced their old module path.
 - **One pre-existing file of mine changed.** In `Machines/Compile.lean` I added
   `compile_correct_from`. `compile_correct` is byte-identical and is now a corollary of it.
 
@@ -62,8 +78,7 @@ The design avoids re-proving the simulation:
   checking the matrix bit.
 - Correctness uses walk shortening: `walkLe_short` and `reach_iff_walkLe` in `PathWalk.lean`.
 - Registers stay below `4(|x|+1)`, so `narm_decides_poly` applies.
-- `PATH_NLComplete` is untouched and still sorried. The codec (extension 3) is the intended
-  tool for its hardness half.
+- `PATH_NLComplete` is now proved as well; see "The remaining customers".
 
 ## 2. Polynomial-width ARM — accepted, as a generalization
 
@@ -83,8 +98,7 @@ The design avoids re-proving the simulation:
 - `searchLang_mem_PSPACE (hP : P ∈ PSPACE)`: an exponential counter in a polynomial-width
   register, with one call per value.
 - This is the skeleton of `NP ⊆ PSPACE` and of the outer search in Savitch.
-- `TQBF ∈ PSPACE` is not done here. It is a natural next customer: a recursion over
-  quantifier depth in the same stack style as Savitch below.
+- `TQBF ∈ PSPACE` is the second customer; see "The remaining customers".
 
 ## 3. Configuration codec — accepted
 
@@ -130,6 +144,54 @@ adapted.
   `spaceConstructible_poly` remain sorried, and no sorry lies in
   `PSPACE_eq_NPSPACE`'s dependency chain.
 
+## The remaining customers
+
+All sorry-free, `#print axioms` ⊆ `[propext, Classical.choice, Quot.sound]`, each through an
+independent adversarial verification.
+
+- **`PATH_NLComplete`** (`Logspace/PathHard*.lean`). For `L ∈ NL` decided by `N`, the reduction
+  outputs the configuration graph on `2^E` vertices (polynomially many): vertex `c+2` is code
+  `c`, a source `0` joined to every initial code, a target `1` reached from every accepting
+  code, and `StepRel` edges. No accepting normalization is needed. Each output bit is decided
+  by a deterministic ARM calling the codec deciders, so the map is implicitly logspace
+  computable; correctness is `mem_iff_codeChain` / `mem_of_codePath`.
+- **Immerman–Szelepcsényi** (`Logspace/ISCount*.lean`). One nondeterministic ARM proves
+  `compl_mem_NSPACE : (∀ n, logSpace n ≤ S n) → L ∈ NSPACE S → Lᶜ ∈ NSPACE S`. It runs the
+  inductive counting over codes at radius `s = 0, 1, …` and stops when the reachable count
+  stops growing (`ExpBFS/Radius.lean`: equal counts at consecutive radii mean no branch leaves
+  the window). It never computes `S`, so it is stronger than Corollary 4.21 as stated.
+  `NSPACE_compl_eq` uses only `hS.1`; `compl_mem_NL` is its `S = logSpace` case, giving
+  `compl_PATH_mem_NL` and `NL_eq_coNL`. Your sketch's route through `PATH_NLComplete` and an
+  `NL` reduction-closure lemma is not needed.
+- **`TQBF_mem_PSPACE`** (`ClassPSPACE/TQBFARM/`). Validate the whole input first (non-encodings
+  decode to a true fallback, so they are accepted), then walk the `2^m` assignments depth
+  first with the assignment as a binary stack register; leaves stream the CNF from the input.
+  `arm_decides_pspace_val` with registers `≤ 2^(|x|+1)`. Your private `b4m*` block is left in
+  place; `TQBFARM/Semantics.lean` has public twins of three of its lemmas.
+- **`TQBF_PSPACEHard`, `TQBF_PSPACEComplete`** (`ClassPSPACE/TQBFHard*.lean`). [AB09]'s
+  ∀-folded `ψᵢ` over code blocks of width `w` with `configBound ≤ 2^w`; the matrix is one
+  polynomial-time predicate (initial / accepting / step via the codec and `LOGSPACE_subset_P`),
+  turned into a circuit by the existing Cook–Levin tableau and into a CNF by Tseitin, with the
+  gate variables quantified existentially after the prefix. **This does not use the RD-2
+  `ConfigCodec` lemmas or `FormulaKit`**; they are untouched, still sorried, and currently
+  have no consumer. Whether to keep RD-2 is your call.
+- **`NSPACE_subset_exp_dtime`** (`Machines/MARM*.lean`, `ExpBFS/`, `ExpTime.lean`). The plain
+  ARM has no useful time bound (its instructions are unary in register values), so this adds
+  a fourth extension: **MARM**, the ARM plus a monotone bit tape (`mread`, `mset`, `mleft`,
+  `mright`), compiled with the same `detPart` trick, and `marm_dtime`, a general bridge into
+  `DTIME`: because the memory only gains ones, time ≤ `2^{O(W + log n)}·(P+1)²` by counting
+  configurations. A BFS over codes at growing radii then gives the theorem, again needing only
+  `logSpace ≤ S`. `NL_subset_P` and `polyTimeReducible_of_mem_NL` are now sorry-free.
+
+What remains sorried on the chapter-4 side: `savitch` (general `S`) and
+`spaceConstructible_poly`, the hierarchy theorems, the RD-2 `ConfigCodec` lemmas, and the
+`FormulaKit` items.
+
+**Your design §16b.** Item 4 (C2 as Light programs with coins, removing the dependency on the
+ND ARM) and the Savitch part of item 1 are now covered by the ARM proofs above; you may want to
+drop or re-scope those stage-2 obligations. Item 2's RD-2 route is likewise no longer on the
+critical path for `TQBF_PSPACEHard`.
+
 ## The `CounterProg` question
 
 **Use indexed access.** It is what the ARM already does, through your
@@ -141,9 +203,14 @@ the ARM.
 
 ## Provenance
 
-> **TO CONFIRM BEFORE SENDING (only the author can answer these):**
-> - Bonnet's `TimeCompiler`: ☐ no / ☐ yes (cite).
-> - cslib's `Cfg.core`: ☐ no / ☐ yes (cite).
+Both answers are **no**.
+
+- **Bonnet's `TimeCompiler` (lax-434930):** the `LogProg` compiler (`Machines/`) was written
+  from scratch in the chapter-6 campaign (`f70c57c2`). Neither the code nor the campaign's
+  working notes reference Bonnet's archive; it also targets Lean 4.33 against our 4.25.
+- **cslib's `Cfg.core`:** `ConfigCount.core` was written in the same campaign, likewise without
+  reference to cslib's `MultiTape/ConfigBound.lean`. Any similarity is convergent (both
+  forget the parts of a configuration that do not affect its future).
 
 ## Addendum items
 
@@ -166,6 +233,16 @@ these public:
   by `Codec.mem_of_codePath`, which both `Codec.mem_iff_codeChain` and the Savitch machine
   use).
 
+Also:
+
+- the private `values_getD_eq_of_eval_tseitinGates` in `DAGCircuitSat.lean` (copied in
+  `TQBFHardTseitin.lean`), and `inWindow_of_coreSum_eq` in `ConfigGraph.lean` (re-proved as
+  `ExpBFS.inWin_of_coreSum_eq`).
+- Dead code you may delete: the private `s1b_*` block in `ConfigGraph.lean` (the record-table
+  route, now unused) and, if nothing else needs it, its `Build.RecordTable` import.
+- Stale planning text: `AroraBarakChapters3-4Plan.md` rows B2 and fills-6, `backlog.md` MIG-19,
+  `machine-library-design.md` S1b row (§12) and §16b items 1, 2 and 4.
+
 Once they are public, the copies are deleted. The smaller in-house clean-ups are done:
 `PathKit` moved to `Machines/NARMKit.lean`; `getD_drop` and `vword_whole₂/₃` live in
 `Machines/VWord.lean`; the bounded-run guard (`GuardLe`) and the generic counting loops live
@@ -173,7 +250,9 @@ in `Machines/ARMLoops.lean`.
 
 ## Merge coordination
 
-The branch is based on `complexity/arora-barak-ch3-4` and touches your files `Path.lean`
-and `Savitch.lean` (bodies only) and the `SpaceComplexity` facade. I propose merging it
-into your ch3-4 branch before your chapter-4 PR, so it carries the sweep and axiom evidence
-as you planned.
+This work was merged directly into `complexity/arora-barak-ch3-4` on top of `069cde82` (your
+branch head at the time), with the whole library building (`lake build`, 4248 jobs, exit 0).
+Files of yours whose bodies or docstrings changed: `Path.lean`, `Savitch.lean`,
+`ImmermanSzelepcsenyi.lean`, `TQBF.lean`, `ConfigGraph.lean` (the move above), and the
+`SpaceComplexity` / `ClassPSPACE` facades. In `Machines/Compile.lean` (mine) `compile_correct`
+became a corollary of the new `compile_correct_from`.

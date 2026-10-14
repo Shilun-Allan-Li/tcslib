@@ -8,7 +8,11 @@ import TCSlib.Complexity.TuringMachine.Deterministic
 import TCSlib.Complexity.TuringMachine.StateRenaming
 import TCSlib.Complexity.TuringMachine.Finite
 import TCSlib.Complexity.TuringMachine.Nondeterministic
+import TCSlib.Complexity.TuringMachine.NondeterministicSpace
 import TCSlib.Complexity.TuringMachine.Oracle
+import TCSlib.Complexity.TuringMachine.OracleFinite
+import TCSlib.Complexity.TuringMachine.OracleNondeterministic
+import TCSlib.Complexity.TuringMachine.OracleAgreement
 import TCSlib.Complexity.TuringMachine.Simulation
 import TCSlib.Complexity.TuringMachine.Sweep
 import TCSlib.Complexity.TuringMachine.Composition
@@ -22,6 +26,8 @@ import TCSlib.Complexity.TuringMachine.Build.Loop
 import TCSlib.Complexity.TuringMachine.Build.Primitives
 import TCSlib.Complexity.TuringMachine.Build.Embed
 import TCSlib.Complexity.TuringMachine.Build.Seam
+import TCSlib.Complexity.TuringMachine.Build.VirtualInput
+import TCSlib.Complexity.TuringMachine.Build.Zone
 import TCSlib.Complexity.TuringMachine.Build.Catalog
 import TCSlib.Complexity.TuringMachine.Build.OracleCall
 import TCSlib.Complexity.TuringMachine.SymbolLift
@@ -33,6 +39,7 @@ import TCSlib.Complexity.TuringMachine.Build.InputLength
 import TCSlib.Complexity.TuringMachine.Build.RecordTable
 import TCSlib.Complexity.TuringMachine.Build.CertShell
 import TCSlib.Complexity.TuringMachine.Build.OracleSim
+import TCSlib.Complexity.TuringMachine.Build.Contract
 import TCSlib.Complexity.TuringMachine.CodeSimulator
 import TCSlib.Complexity.TuringMachine.ChoiceWords
 import TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction
@@ -46,6 +53,7 @@ import TCSlib.Complexity.TuringMachine.Robustness.Oblivious
 import TCSlib.Complexity.TuringMachine.Encoding
 import TCSlib.Complexity.TuringMachine.CodeParser
 import TCSlib.Complexity.TuringMachine.CodeFormat
+import TCSlib.Complexity.TuringMachine.Codes2Tape
 import TCSlib.Complexity.TuringMachine.MathlibBridge
 import TCSlib.Complexity.TuringMachine.UniversalStartup
 import TCSlib.Complexity.TuringMachine.UniversalInterpreter
@@ -73,6 +81,8 @@ for the local modifications.
 ## Contents
 
 * `CodeFormat` — shared transition-record and table-format parsers, with the one-tape instance.
+* `Codes2Tape` — the deterministic two-work-tape code scheme (§13, Z3), an instance of
+  `CodeFormat`, with its uniform scheme from `CodeSimulator`.
 
 * `Configuration` — configurations `Cfg`, actions `Action` and their application; the
   space measure. Nothing here mentions a machine (vendored).
@@ -85,8 +95,16 @@ for the local modifications.
 * `Nondeterministic` — binary-choice nondeterministic machines [AB09, §2.1.2]:
   choice-word run semantics, all-branch halting, the bundled `FinNDTM` layer, and the
   deterministic embedding (the classes live in `ClassNP/NTIME`).
+* `NondeterministicSpace` — the space measure of binary-choice NDTMs along choice-word
+  runs: visited cells, as for the deterministic `SPACE` [AB09, Definition 4.1].
 * `Oracle` — oracle machines `OracleTM` [AB09, §3.4]: same configurations, oracle-dependent
   step; the embedding of plain machines and its oracle-independence sanity theorems.
+* `OracleFinite` — the bundled finite layer `FinOracleTM`, carrying well-formedness as a
+  field, over which the oracle classes are stated [AB09, Definition 3.5].
+* `OracleNondeterministic` — nondeterministic oracle machines [AB09, Definition 3.4], for
+  `NPOracle` and the relativization theorem.
+* `OracleAgreement` — oracle locality: runs under oracles agreeing on every submitted
+  string coincide [AB09, Theorem 3.7].
 * `NDCodes` — codes for nondeterministic machines [AB09, §1.4, §3.2]: the two-work-tape
   coded normal form, its fixed serialization, and the scheme laws with the effective
   (canonizer) form.
@@ -107,6 +125,10 @@ for the local modifications.
   transformers with their returning flavors, seam composition with the
   general-configuration forms and the release adapter, and the space-annotated
   catalog rows.
+* `Build/VirtualInput` — virtual-input hosting (`machine-library-design.md` §13, Z1): a
+  machine whose input is a buffered work-tape word runs inside a host, one step per step.
+* `Build/Zone` — the zoned tape carrier (§13, Z2), under the §13d revision: its two
+  superseded shift rows are scheduled for retirement through the G3/G4 gate.
 * `Build/OracleCall` — the oracle-machine rows (`machine-library-design.md` §12.9):
   W1 capture onto the query tape, landing in `qQuery`, and the two-step answer tail.
 * `SymbolLift` — the embedding transport (`machine-library-design.md` §12.8, R8.0): a
@@ -117,30 +139,35 @@ for the local modifications.
 * `Build/Scan`, `Build/InputCall`, `Build/CfgRecord` — the §12.8 rows, with the field
   layout, compare, seeks and two-pass scan in `Build/Catalog`'s Part 3: the constant and
   advancing writers and the native-input copy and fold; the input call and input seek;
-  the rich configuration-record carrier and the record rows. Statement phase: contracts
-  stated with sketches, fills pending.
+  the rich configuration-record carrier and the record rows. All proved (§12.8 fill gate
+  closed).
 * `Build/InputLength`, `Build/RecordTable` — the deferred §12.8 rows (`machine-library-design.md`
   §12.8b): the input length `Nat.bits |x|` (R8.5c), and the table layer over records (header,
   sentinels, find, append, template, init, validity, odometer next, the end-to-start adapter).
-  Statement phase.
+  Fills in progress; each module's header carries its status.
 * `Build/OracleSim`, `Build/CertShell` — oracle-call simulation (§12.10, the B1b extension): one
   plain host simulating an oracle machine with queries answered by a plain decider, the
-  choice-word machine of an oracle NDTM, and the plain certificate shell. Statement phase.
+  choice-word machine of an oracle NDTM, and the plain certificate shell. Fills in progress;
+  each module's header carries its status.
 * `CodeSimulator` — the format-parameterized uniform simulator over item 8's code formats
   (B5a): one bounded-acceptance interpreter and canonizer whose one- and two-tape instances are
-  the EXPCOM and Codes2Tape code schemes. Statement phase.
+  the EXPCOM and Codes2Tape code schemes. Fills in progress; the module header carries its
+  status.
 * `ChoiceWords` — certificate and choice words: split uniqueness for length-determined
   suffixes, the exact NP certificate length's monotonicity, the choice budget, and the
   truncation of halted branch runs. Shared by the plain Theorem 2.6, the oracle simulation's
   choice-word law and the certificate shell (wave-1 statement gate, round 1).
 * `CounterProgInput` — transport a counter-program run past an input prefix
   that has already been consumed.
+* `Build/Contract` — the framed-contract structure (MIG-0a, `machine-library-design.md` §16a):
+  exact time, an endpoint function, an exit set with a no-earlier-exit cut and head envelopes, a
+  derived frames layer, and the compositions `trans`, `seq`, `inPhase`, `embed`, `branch` and
+  `ReturnContract.release` as thin wrappers over the public rows. Proved; MIG-0a gate closed.
 * `Build/Convention`, `Build/Wrappers`, `Build/Loop`, `Build/Primitives` — the
   machine-construction library (`machine-library-design.md`): the `Cfg.ofWords` seam
   discipline, the capture/silence and halt-redirect wrappers with the timed branch,
   the bounded-loop combinator, and the primitive catalog of timed string functions.
-  Spec phase: contracts stated, fills pending, flagged for the shared infrastructure
-  audit round.
+  Proved, and audited at the shared-infrastructure gates.
 * `Robustness/AlphabetReduction` — binary alphabet suffices [AB09, Claim 1.5].
 * `Robustness/SingleTape` — one work tape suffices, quadratically [AB09, Claim 1.6].
 * `Robustness/Bidirectional` — unidirectional tape use suffices [AB09, Claim 1.8].

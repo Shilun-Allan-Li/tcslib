@@ -48,7 +48,7 @@ variable {E : ℕ} {orc : Fin 4 → List Bool → Bool} {x : List Bool} {B : ℕ
 /-! ## The setup -/
 
 /-- Close a bound on a named register file, reducing its projections first. -/
-macro "sbd" : tactic =>
+scoped macro "sbd" : tactic =>
   `(tactic| ((try simp only [St.Bd, St.zero]) <;> (try dsimp only) <;>
     (try simp only [one_mul, zero_add, if_true, ↓reduceIte]) <;> omega))
 

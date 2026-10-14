@@ -1,0 +1,556 @@
+import Lean.Util.FoldConsts
+import TCSlib.Complexity.TuringMachine.Build.OracleSim
+import TCSlib.Complexity.TuringMachine.Build.RecordTable
+import TCSlib.Complexity.TuringMachine.CodeSimulator
+import TCSlib.Complexity.Diagonalization.EXPCOM
+import TCSlib.Complexity.SpaceComplexity.ConfigGraph
+import TCSlib.Complexity.SpaceComplexity.Constructible
+import TCSlib.Complexity.ClassPSPACE.TQBF
+import TCSlib.Complexity.TuringMachine.Build.Catalog
+import TCSlib.Complexity.TuringMachine.Build.Zone
+import TCSlib.Complexity.ClassOracle.Classes
+import TCSlib.Complexity.Diagonalization.Relativization
+import TCSlib.Complexity.SpaceComplexity.Hierarchy
+import TCSlib.Complexity.SpaceComplexity.Savitch
+open Lean Elab Command in
+/-- Every constant in the dependency closure of `root` whose own type or value
+mentions `sorryAx` (maintainer's read-only admission walk). -/
+def sorrySourcesOf (env : Environment) (root : Name) : Array Name := Id.run do
+  let mut visited : NameSet := {}
+  let mut stack : Array Name := #[root]
+  let mut srcs : Array Name := #[]
+  while !stack.isEmpty do
+    let c := stack.back!
+    stack := stack.pop
+    if visited.contains c then continue
+    visited := visited.insert c
+    if let some ci := env.find? c then
+      let used := ci.getUsedConstantsAsSet
+      if used.contains ``sorryAx then srcs := srcs.push c
+      for d in used.toList do
+        unless visited.contains d do stack := stack.push d
+  return srcs
+
+open Lean Elab Command in
+elab "#sorry_sources " id:ident : command => do
+  let n ← liftCoreM <| realizeGlobalConstNoOverload id
+  logInfo m!"{n}: direct sorryAx users in closure: {sorrySourcesOf (← getEnv) n}"
+
+open Lean Elab Command in
+/-- Every constant whose name starts with the given string (a module's private prefix), and
+those among them whose own type or value mentions `sorryAx` (maintainer's read-only census). -/
+elab "#private_sorry_census " pre:str : command => do
+  let env ← getEnv
+  let p := pre.getString
+  let mut n := 0
+  let mut bad : Array Name := #[]
+  for (c, ci) in env.constants.toList do
+    if (toString c).startsWith p then
+      n := n + 1
+      if ci.getUsedConstantsAsSet.contains ``sorryAx then bad := bad.push c
+  logInfo m!"{p}: {n} constants; direct sorryAx users: {bad}"
+
+-- TCSlib/Complexity/TuringMachine/Build/OracleSim.lean: every public (13), its axioms and its admission walk
+#print axioms Turing.FinTM.prefixWords
+#sorry_sources Turing.FinTM.prefixWords
+#print axioms Turing.FinTM.prefixWords_nil
+#sorry_sources Turing.FinTM.prefixWords_nil
+#print axioms Turing.FinTM.prefixWords_update
+#sorry_sources Turing.FinTM.prefixWords_update
+#print axioms Turing.Cfg.init_eq_ofWords
+#sorry_sources Turing.Cfg.init_eq_ofWords
+#print axioms Turing.OracleTM.queryString_runFrom_length_le_of_blank
+#sorry_sources Turing.OracleTM.queryString_runFrom_length_le_of_blank
+#print axioms Turing.FinOracleTM.exists_plain_simulation
+#sorry_sources Turing.FinOracleTM.exists_plain_simulation
+#print axioms Turing.FinOracleTM.exists_plain_simulation_of_monotone
+#sorry_sources Turing.FinOracleTM.exists_plain_simulation_of_monotone
+#print axioms Turing.FinOracleTM.exists_plain_simulation_initCfg
+#sorry_sources Turing.FinOracleTM.exists_plain_simulation_initCfg
+#print axioms Turing.FinOracleTM.exists_plain_decider
+#sorry_sources Turing.FinOracleTM.exists_plain_decider
+#print axioms Turing.FinOracleNDTM.choiceOut
+#sorry_sources Turing.FinOracleNDTM.choiceOut
+#print axioms Turing.FinOracleNDTM.choiceOut_eq_true_iff
+#sorry_sources Turing.FinOracleNDTM.choiceOut_eq_true_iff
+#print axioms Turing.FinOracleNDTM.mem_iff_exists_choiceOut
+#sorry_sources Turing.FinOracleNDTM.mem_iff_exists_choiceOut
+#print axioms Turing.FinOracleNDTM.exists_choiceTM
+#sorry_sources Turing.FinOracleNDTM.exists_choiceTM
+#private_sorry_census "_private.TCSlib.Complexity.TuringMachine.Build.OracleSim.0."
+-- TCSlib/Complexity/TuringMachine/Build/RecordTable.lean: every public (28), its axioms and its admission walk
+#print axioms Turing.joinFields_length
+#sorry_sources Turing.joinFields_length
+#print axioms Turing.fieldOffset_length
+#sorry_sources Turing.fieldOffset_length
+#print axioms Turing.recordLength
+#sorry_sources Turing.recordLength
+#print axioms Turing.joinFields_cfgRecord_length
+#sorry_sources Turing.joinFields_cfgRecord_length
+#print axioms Turing.cfgRecord_field_ne_nil
+#sorry_sources Turing.cfgRecord_field_ne_nil
+#print axioms Turing.cfgRecord_init
+#sorry_sources Turing.cfgRecord_init
+#print axioms Turing.RecordValid.joinFields_length
+#sorry_sources Turing.RecordValid.joinFields_length
+#print axioms Turing.recordValid_iff_exists_cfg
+#sorry_sources Turing.recordValid_iff_exists_cfg
+#print axioms Turing.recordTemplate
+#sorry_sources Turing.recordTemplate
+#print axioms Turing.joinFields_recordTemplate_length
+#sorry_sources Turing.joinFields_recordTemplate_length
+#print axioms Turing.binDigits_posWidth_succ
+#sorry_sources Turing.binDigits_posWidth_succ
+#print axioms Turing.tableFields
+#sorry_sources Turing.tableFields
+#print axioms Turing.tableOffset
+#sorry_sources Turing.tableOffset
+#print axioms Turing.TableWF
+#sorry_sources Turing.TableWF
+#print axioms Turing.TableAt
+#sorry_sources Turing.TableAt
+#print axioms Turing.TableWF.field_ne_nil
+#sorry_sources Turing.TableWF.field_ne_nil
+#print axioms Turing.tableOffset_eq
+#sorry_sources Turing.tableOffset_eq
+#print axioms Turing.tableOffset_length
+#sorry_sources Turing.tableOffset_length
+#print axioms Turing.TableAt.recordAt_take
+#sorry_sources Turing.TableAt.recordAt_take
+#print axioms Turing.tableRewindTM
+#sorry_sources Turing.tableRewindTM
+#print axioms Turing.tableRewindTM_run_ofCfg
+#sorry_sources Turing.tableRewindTM_run_ofCfg
+#print axioms Turing.exists_fieldsCopyTM
+#sorry_sources Turing.exists_fieldsCopyTM
+#print axioms Turing.exists_tableFindTM
+#sorry_sources Turing.exists_tableFindTM
+#print axioms Turing.exists_tableAppendTM
+#sorry_sources Turing.exists_tableAppendTM
+#print axioms Turing.exists_recordTemplateTM
+#sorry_sources Turing.exists_recordTemplateTM
+#print axioms Turing.exists_recordInitTM
+#sorry_sources Turing.exists_recordInitTM
+#print axioms Turing.exists_recordValidTM
+#sorry_sources Turing.exists_recordValidTM
+#print axioms Turing.exists_recordNextTM
+#sorry_sources Turing.exists_recordNextTM
+#private_sorry_census "_private.TCSlib.Complexity.TuringMachine.Build.RecordTable.0."
+-- TCSlib/Complexity/TuringMachine/CodeSimulator.lean: every public (13), its axioms and its admission walk
+#print axioms Turing.workReadsK
+#sorry_sources Turing.workReadsK
+#print axioms Turing.tableBitsK
+#sorry_sources Turing.tableBitsK
+#print axioms Turing.serializeK
+#sorry_sources Turing.serializeK
+#print axioms Turing.codeSkipTableK
+#sorry_sources Turing.codeSkipTableK
+#print axioms Turing.workReadsK_one
+#sorry_sources Turing.workReadsK_one
+#print axioms Turing.workReadsK_two
+#sorry_sources Turing.workReadsK_two
+#print axioms Turing.tableBitsK_two
+#sorry_sources Turing.tableBitsK_two
+#print axioms Turing.codeSkipTable2_eq_codeSkipTableK
+#sorry_sources Turing.codeSkipTable2_eq_codeSkipTableK
+#print axioms Turing.MachineFormat
+#sorry_sources Turing.MachineFormat
+#print axioms Turing.MachineFormat.toFinTM
+#sorry_sources Turing.MachineFormat.toFinTM
+#print axioms Turing.oneTapeMachineFormat
+#sorry_sources Turing.oneTapeMachineFormat
+#print axioms Turing.MachineFormat.exists_polyCanonizer
+#sorry_sources Turing.MachineFormat.exists_polyCanonizer
+#print axioms Turing.MachineFormat.exists_uniformSimulator
+#sorry_sources Turing.MachineFormat.exists_uniformSimulator
+#private_sorry_census "_private.TCSlib.Complexity.TuringMachine.CodeSimulator.0."
+-- TCSlib/Complexity/Diagonalization/EXPCOM.lean: every public (9), its axioms and its admission walk
+#print axioms Turing.UniformMachineCode
+#sorry_sources Turing.UniformMachineCode
+#print axioms Turing.exists_uniformMachineCode
+#sorry_sources Turing.exists_uniformMachineCode
+#print axioms Complexity.expCode
+#sorry_sources Complexity.expCode
+#print axioms Complexity.EXPCOM
+#sorry_sources Complexity.EXPCOM
+#print axioms Complexity.EXP_subset_POracle_EXPCOM
+#sorry_sources Complexity.EXP_subset_POracle_EXPCOM
+#print axioms Complexity.NPOracle_EXPCOM_subset_EXP
+#sorry_sources Complexity.NPOracle_EXPCOM_subset_EXP
+#print axioms Complexity.POracle_EXPCOM_eq_EXP
+#sorry_sources Complexity.POracle_EXPCOM_eq_EXP
+#print axioms Complexity.NPOracle_EXPCOM_eq_EXP
+#sorry_sources Complexity.NPOracle_EXPCOM_eq_EXP
+#print axioms Complexity.POracle_EXPCOM_eq_NPOracle_EXPCOM
+#sorry_sources Complexity.POracle_EXPCOM_eq_NPOracle_EXPCOM
+#private_sorry_census "_private.TCSlib.Complexity.Diagonalization.EXPCOM.0."
+-- TCSlib/Complexity/SpaceComplexity/ConfigGraph.lean: every public (16), its axioms and its admission walk
+#print axioms Turing.OutSummary
+#sorry_sources Turing.OutSummary
+#print axioms Turing.outSummary
+#sorry_sources Turing.outSummary
+#print axioms Turing.outSummary_eq_accept_iff
+#sorry_sources Turing.outSummary_eq_accept_iff
+#print axioms Turing.outSummary_append_congr
+#sorry_sources Turing.outSummary_append_congr
+#print axioms Turing.NDTM.coreSum
+#sorry_sources Turing.NDTM.coreSum
+#print axioms Turing.NDTM.CfgStep
+#sorry_sources Turing.NDTM.CfgStep
+#print axioms Turing.NDTM.reflTransGen_cfgStep_iff
+#sorry_sources Turing.NDTM.reflTransGen_cfgStep_iff
+#print axioms Turing.NDTM.coreSum_stepWith
+#sorry_sources Turing.NDTM.coreSum_stepWith
+#print axioms Turing.NDTM.coreSum_runWith
+#sorry_sources Turing.NDTM.coreSum_runWith
+#print axioms Turing.FinNDTM.configBound
+#sorry_sources Turing.FinNDTM.configBound
+#print axioms Turing.FinNDTM.not_acceptsWithin_zero
+#sorry_sources Turing.FinNDTM.not_acceptsWithin_zero
+#print axioms Turing.FinNDTM.acceptsWithin_of_spaceUsedWith_le
+#sorry_sources Turing.FinNDTM.acceptsWithin_of_spaceUsedWith_le
+#print axioms Turing.FinNDTM.DecidesInSpace.mem_iff_acceptsWithin_configBound
+#sorry_sources Turing.FinNDTM.DecidesInSpace.mem_iff_acceptsWithin_configBound
+#print axioms Complexity.NSPACE_subset_exp_dtime
+#sorry_sources Complexity.NSPACE_subset_exp_dtime
+#print axioms Complexity.NL_subset_P
+#sorry_sources Complexity.NL_subset_P
+#print axioms Complexity.polyTimeReducible_of_mem_NL
+#sorry_sources Complexity.polyTimeReducible_of_mem_NL
+#private_sorry_census "_private.TCSlib.Complexity.SpaceComplexity.ConfigGraph.0."
+-- TCSlib/Complexity/SpaceComplexity/Constructible.lean: every public (3), its axioms and its admission walk
+#print axioms Complexity.SpaceConstructible
+#sorry_sources Complexity.SpaceConstructible
+#print axioms Complexity.spaceConstructible_logSpace
+#sorry_sources Complexity.spaceConstructible_logSpace
+#print axioms Complexity.spaceConstructible_linear
+#sorry_sources Complexity.spaceConstructible_linear
+#private_sorry_census "_private.TCSlib.Complexity.SpaceComplexity.Constructible.0."
+-- TCSlib/Complexity/ClassPSPACE/TQBF.lean: every public (8), its axioms and its admission walk
+#print axioms Complexity.PSPACEHard
+#sorry_sources Complexity.PSPACEHard
+#print axioms Complexity.PSPACEComplete
+#sorry_sources Complexity.PSPACEComplete
+#print axioms Complexity.PSPACE_eq_P_of_pspaceComplete_mem_P
+#sorry_sources Complexity.PSPACE_eq_P_of_pspaceComplete_mem_P
+#print axioms Complexity.exists_adjacency_codec_cnf
+#sorry_sources Complexity.exists_adjacency_codec_cnf
+#print axioms Complexity.TQBF
+#sorry_sources Complexity.TQBF
+#print axioms Complexity.TQBF_mem_PSPACE
+#sorry_sources Complexity.TQBF_mem_PSPACE
+#print axioms Complexity.TQBF_PSPACEHard
+#sorry_sources Complexity.TQBF_PSPACEHard
+#print axioms Complexity.TQBF_PSPACEComplete
+#sorry_sources Complexity.TQBF_PSPACEComplete
+#private_sorry_census "_private.TCSlib.Complexity.ClassPSPACE.TQBF.0."
+-- TCSlib/Complexity/TuringMachine/Build/Catalog.lean: every public (90), its axioms and its admission walk
+#print axioms Turing.SweepPhase
+#sorry_sources Turing.SweepPhase
+#print axioms Turing.FlagPhase
+#sorry_sources Turing.FlagPhase
+#print axioms Turing.transferTM
+#sorry_sources Turing.transferTM
+#print axioms Turing.copyTM
+#sorry_sources Turing.copyTM
+#print axioms Turing.clearTM
+#sorry_sources Turing.clearTM
+#print axioms Turing.compareTM
+#sorry_sources Turing.compareTM
+#print axioms Turing.incrementTM
+#sorry_sources Turing.incrementTM
+#print axioms Turing.catalogTrace
+#sorry_sources Turing.catalogTrace
+#print axioms Turing.catalog_trace_run
+#sorry_sources Turing.catalog_trace_run
+#print axioms Turing.MultiTapeTM.spaceUsedByTape_le_card_Icc
+#sorry_sources Turing.MultiTapeTM.spaceUsedByTape_le_card_Icc
+#print axioms Turing.catalog_write_take
+#sorry_sources Turing.catalog_write_take
+#print axioms Turing.transferTM_run_ofCfg
+#sorry_sources Turing.transferTM_run_ofCfg
+#print axioms Turing.copyTM_run_ofCfg
+#sorry_sources Turing.copyTM_run_ofCfg
+#print axioms Turing.clearTM_run_ofCfg
+#sorry_sources Turing.clearTM_run_ofCfg
+#print axioms Turing.incrementTM_run_succ_ofCfg
+#sorry_sources Turing.incrementTM_run_succ_ofCfg
+#print axioms Turing.incrementTM_run_overflow_ofCfg
+#sorry_sources Turing.incrementTM_run_overflow_ofCfg
+#print axioms Turing.transferTM_run
+#sorry_sources Turing.transferTM_run
+#print axioms Turing.transferTM_spaceUsedByTape
+#sorry_sources Turing.transferTM_spaceUsedByTape
+#print axioms Turing.copyTM_run
+#sorry_sources Turing.copyTM_run
+#print axioms Turing.copyTM_spaceUsedByTape
+#sorry_sources Turing.copyTM_spaceUsedByTape
+#print axioms Turing.clearTM_run
+#sorry_sources Turing.clearTM_run
+#print axioms Turing.clearTM_spaceUsedByTape
+#sorry_sources Turing.clearTM_spaceUsedByTape
+#print axioms Turing.compareTM_run
+#sorry_sources Turing.compareTM_run
+#print axioms Turing.compareTM_spaceUsedByTape
+#sorry_sources Turing.compareTM_spaceUsedByTape
+#print axioms Turing.incrementTM_run_succ
+#sorry_sources Turing.incrementTM_run_succ
+#print axioms Turing.incrementTM_run_overflow
+#sorry_sources Turing.incrementTM_run_overflow
+#print axioms Turing.incrementTM_spaceUsedByTape
+#sorry_sources Turing.incrementTM_spaceUsedByTape
+#print axioms Turing.capture_visitedByTapeHead
+#sorry_sources Turing.capture_visitedByTapeHead
+#print axioms Turing.FinTM.computesFunInTime_id_spaceUsed
+#sorry_sources Turing.FinTM.computesFunInTime_id_spaceUsed
+#print axioms Turing.FinTM.computesFunInTime_const_spaceUsed
+#sorry_sources Turing.FinTM.computesFunInTime_const_spaceUsed
+#print axioms Turing.FinTM.computesFunInTime_prepend_spaceUsed
+#sorry_sources Turing.FinTM.computesFunInTime_prepend_spaceUsed
+#print axioms Turing.FinTM.computesFunInTime_lengthBits_spaceUsed
+#sorry_sources Turing.FinTM.computesFunInTime_lengthBits_spaceUsed
+#print axioms Turing.FinTM.computesFunInTime_polyUnary_spaceUsed
+#sorry_sources Turing.FinTM.computesFunInTime_polyUnary_spaceUsed
+#print axioms Turing.FinTM.computesFunInTime_polyBits_spaceUsed
+#sorry_sources Turing.FinTM.computesFunInTime_polyBits_spaceUsed
+#print axioms Turing.FinTM.computesFunInTime_pairEncodeFixed_spaceUsed
+#sorry_sources Turing.FinTM.computesFunInTime_pairEncodeFixed_spaceUsed
+#print axioms Turing.FinTM.computesFunInTime_pairFst_spaceUsed
+#sorry_sources Turing.FinTM.computesFunInTime_pairFst_spaceUsed
+#print axioms Turing.FinTM.computesFunInTime_pairSnd_spaceUsed
+#sorry_sources Turing.FinTM.computesFunInTime_pairSnd_spaceUsed
+#print axioms Turing.FinTM.computesFunInTime_pairValid_spaceUsed
+#sorry_sources Turing.FinTM.computesFunInTime_pairValid_spaceUsed
+#print axioms Turing.FinTM.computesFunInTime_pairConcat_spaceUsed
+#sorry_sources Turing.FinTM.computesFunInTime_pairConcat_spaceUsed
+#print axioms Turing.FinTM.computesFunInTime_pairDup_spaceUsed
+#sorry_sources Turing.FinTM.computesFunInTime_pairDup_spaceUsed
+#print axioms Turing.FinTM.computesFunInTime_pairLenCheck_spaceUsed
+#sorry_sources Turing.FinTM.computesFunInTime_pairLenCheck_spaceUsed
+#print axioms Turing.FinTM.computesFunInTime_stripLast_spaceUsed
+#sorry_sources Turing.FinTM.computesFunInTime_stripLast_spaceUsed
+#print axioms Turing.FinTM.computesFunInTime_incFixed_spaceUsed
+#sorry_sources Turing.FinTM.computesFunInTime_incFixed_spaceUsed
+#print axioms Turing.FinTM.computesFunInTime_pairMapSnd_spaceUsed
+#sorry_sources Turing.FinTM.computesFunInTime_pairMapSnd_spaceUsed
+#print axioms Turing.FinTM.computesFunInTime_splitSolve_spaceUsed
+#sorry_sources Turing.FinTM.computesFunInTime_splitSolve_spaceUsed
+#print axioms Turing.FinTM.redirectTM_spaceUsedByTape
+#sorry_sources Turing.FinTM.redirectTM_spaceUsedByTape
+#print axioms Turing.FinTM.rewind_scan_heads
+#sorry_sources Turing.FinTM.rewind_scan_heads
+#print axioms Turing.FinTM.rewind_heads
+#sorry_sources Turing.FinTM.rewind_heads
+#print axioms Turing.FinTM.computesFunInTime_cond_spaceUsed
+#sorry_sources Turing.FinTM.computesFunInTime_cond_spaceUsed
+#print axioms Turing.FinTM.exists_loopTM_spaceUsed
+#sorry_sources Turing.FinTM.exists_loopTM_spaceUsed
+#print axioms Turing.tapeAction
+#sorry_sources Turing.tapeAction
+#print axioms Turing.inputMoveAction
+#sorry_sources Turing.inputMoveAction
+#print axioms Turing.step_of_tapeAction_move
+#sorry_sources Turing.step_of_tapeAction_move
+#print axioms Turing.step_of_tapeAction_write
+#sorry_sources Turing.step_of_tapeAction_write
+#print axioms Turing.step_of_inputMoveAction
+#sorry_sources Turing.step_of_inputMoveAction
+#print axioms Turing.joinFields
+#sorry_sources Turing.joinFields
+#print axioms Turing.fieldsTape
+#sorry_sources Turing.fieldsTape
+#print axioms Turing.fieldOffset
+#sorry_sources Turing.fieldOffset
+#print axioms Turing.joinFields_cons_cons
+#sorry_sources Turing.joinFields_cons_cons
+#print axioms Turing.fieldsTape_cons_shift
+#sorry_sources Turing.fieldsTape_cons_shift
+#print axioms Turing.fieldOffset_succ
+#sorry_sources Turing.fieldOffset_succ
+#print axioms Turing.fieldOffset_cons_succ
+#sorry_sources Turing.fieldOffset_cons_succ
+#print axioms Turing.length_joinFields_add_one
+#sorry_sources Turing.length_joinFields_add_one
+#print axioms Turing.fieldOffset_add_length_le
+#sorry_sources Turing.fieldOffset_add_length_le
+#print axioms Turing.fieldsTape_field
+#sorry_sources Turing.fieldsTape_field
+#print axioms Turing.compareTM_run_ofCfg
+#sorry_sources Turing.compareTM_run_ofCfg
+#print axioms Turing.SeekPhase
+#sorry_sources Turing.SeekPhase
+#print axioms Turing.skipTM
+#sorry_sources Turing.skipTM
+#print axioms Turing.skipTM_run_ofCfg
+#sorry_sources Turing.skipTM_run_ofCfg
+#print axioms Turing.skipBackTM
+#sorry_sources Turing.skipBackTM
+#print axioms Turing.skipBackTM_run_ofCfg
+#sorry_sources Turing.skipBackTM_run_ofCfg
+#print axioms Turing.seekEndTM
+#sorry_sources Turing.seekEndTM
+#print axioms Turing.seekEndTM_run_ofCfg
+#sorry_sources Turing.seekEndTM_run_ofCfg
+#print axioms Turing.seekStartTM
+#sorry_sources Turing.seekStartTM
+#print axioms Turing.seekStartTM_run_ofCfg
+#sorry_sources Turing.seekStartTM_run_ofCfg
+#print axioms Turing.mealyRun
+#sorry_sources Turing.mealyRun
+#print axioms Turing.scanResult
+#sorry_sources Turing.scanResult
+#print axioms Turing.ScanPhase
+#sorry_sources Turing.ScanPhase
+#print axioms Turing.scanTM
+#sorry_sources Turing.scanTM
+#print axioms Turing.scanTM_run_ofCfg
+#sorry_sources Turing.scanTM_run_ofCfg
+#print axioms Turing.scanKeep
+#sorry_sources Turing.scanKeep
+#print axioms Turing.scanFold
+#sorry_sources Turing.scanFold
+#print axioms Turing.scanMap
+#sorry_sources Turing.scanMap
+#print axioms Turing.scanShift
+#sorry_sources Turing.scanShift
+#print axioms Turing.scanCarry
+#sorry_sources Turing.scanCarry
+#print axioms Turing.scanResult_fold
+#sorry_sources Turing.scanResult_fold
+#print axioms Turing.scanResult_map
+#sorry_sources Turing.scanResult_map
+#print axioms Turing.scanResult_shiftRight
+#sorry_sources Turing.scanResult_shiftRight
+#print axioms Turing.scanResult_shiftLeft
+#sorry_sources Turing.scanResult_shiftLeft
+#print axioms Turing.scanResult_carry
+#sorry_sources Turing.scanResult_carry
+#private_sorry_census "_private.TCSlib.Complexity.TuringMachine.Build.Catalog.0."
+-- TCSlib/Complexity/TuringMachine/Build/Zone.lean: every public (37), its axioms and its admission walk
+#print axioms Turing.zoneCellBits
+#sorry_sources Turing.zoneCellBits
+#print axioms Turing.zoneCellOf
+#sorry_sources Turing.zoneCellOf
+#print axioms Turing.zoneCellOf_bits
+#sorry_sources Turing.zoneCellOf_bits
+#print axioms Turing.zoneCapacity
+#sorry_sources Turing.zoneCapacity
+#print axioms Turing.zoneBase
+#sorry_sources Turing.zoneBase
+#print axioms Turing.zoneBase_succ
+#sorry_sources Turing.zoneBase_succ
+#print axioms Turing.zoneIndex
+#sorry_sources Turing.zoneIndex
+#print axioms Turing.zoneIndex_eq_iff
+#sorry_sources Turing.zoneIndex_eq_iff
+#print axioms Turing.ZoneContents
+#sorry_sources Turing.ZoneContents
+#print axioms Turing.zoneSlot
+#sorry_sources Turing.zoneSlot
+#print axioms Turing.zoneTape
+#sorry_sources Turing.zoneTape
+#print axioms Turing.ZoneContents.empty
+#sorry_sources Turing.ZoneContents.empty
+#print axioms Turing.zoneTape_empty
+#sorry_sources Turing.zoneTape_empty
+#print axioms Turing.zoneTape_blank_outside
+#sorry_sources Turing.zoneTape_blank_outside
+#print axioms Turing.zoneSide
+#sorry_sources Turing.zoneSide
+#print axioms Turing.zoneShiftInW
+#sorry_sources Turing.zoneShiftInW
+#print axioms Turing.zoneShiftOutW
+#sorry_sources Turing.zoneShiftOutW
+#print axioms Turing.zoneSide_shiftInW
+#sorry_sources Turing.zoneSide_shiftInW
+#print axioms Turing.zoneSide_shiftOutW
+#sorry_sources Turing.zoneSide_shiftOutW
+#print axioms Turing.zoneShiftInW_full_donor
+#sorry_sources Turing.zoneShiftInW_full_donor
+#print axioms Turing.zoneShiftIn
+#sorry_sources Turing.zoneShiftIn
+#print axioms Turing.zoneShiftOut
+#sorry_sources Turing.zoneShiftOut
+#print axioms Turing.zoneHomeWrite
+#sorry_sources Turing.zoneHomeWrite
+#print axioms Turing.zoneTape_homeWrite
+#sorry_sources Turing.zoneTape_homeWrite
+#print axioms Turing.zoneMoveRight
+#sorry_sources Turing.zoneMoveRight
+#print axioms Turing.zoneMoveLeft
+#sorry_sources Turing.zoneMoveLeft
+#print axioms Turing.zoneMove
+#sorry_sources Turing.zoneMove
+#print axioms Turing.zoneSide_moveRight
+#sorry_sources Turing.zoneSide_moveRight
+#print axioms Turing.zoneStepPair
+#sorry_sources Turing.zoneStepPair
+#print axioms Turing.zoneCascadeRight
+#sorry_sources Turing.zoneCascadeRight
+#print axioms Turing.zoneSide_cascadeRight
+#sorry_sources Turing.zoneSide_cascadeRight
+#print axioms Turing.zoneCascadeRight_lengths
+#sorry_sources Turing.zoneCascadeRight_lengths
+#print axioms Turing.zoneCascadeRight_zero
+#sorry_sources Turing.zoneCascadeRight_zero
+#print axioms Turing.zoneCascadeRight_blocked
+#sorry_sources Turing.zoneCascadeRight_blocked
+#print axioms Turing.zoneCascade_cost_le
+#sorry_sources Turing.zoneCascade_cost_le
+#print axioms Turing.FinTM.exists_zoneShiftInTM
+#sorry_sources Turing.FinTM.exists_zoneShiftInTM
+#print axioms Turing.FinTM.exists_zoneShiftOutTM
+#sorry_sources Turing.FinTM.exists_zoneShiftOutTM
+#private_sorry_census "_private.TCSlib.Complexity.TuringMachine.Build.Zone.0."
+-- TCSlib/Complexity/ClassOracle/Classes.lean: every public (10), its axioms and its admission walk
+#print axioms Complexity.DTIMEOracle
+#sorry_sources Complexity.DTIMEOracle
+#print axioms Complexity.NTIMEOracle
+#sorry_sources Complexity.NTIMEOracle
+#print axioms Complexity.POracle
+#sorry_sources Complexity.POracle
+#print axioms Complexity.NPOracle
+#sorry_sources Complexity.NPOracle
+#print axioms Complexity.P_subset_POracle
+#sorry_sources Complexity.P_subset_POracle
+#print axioms Complexity.POracle_subset_NPOracle
+#sorry_sources Complexity.POracle_subset_NPOracle
+#print axioms Complexity.mem_POracle_of_polyTimeReducible
+#sorry_sources Complexity.mem_POracle_of_polyTimeReducible
+#print axioms Complexity.oracle_mem_POracle
+#sorry_sources Complexity.oracle_mem_POracle
+#print axioms Complexity.compl_mem_POracle
+#sorry_sources Complexity.compl_mem_POracle
+#print axioms Complexity.POracle_eq_P_of_mem_P
+#sorry_sources Complexity.POracle_eq_P_of_mem_P
+#private_sorry_census "_private.TCSlib.Complexity.ClassOracle.Classes.0."
+-- TCSlib/Complexity/Diagonalization/Relativization.lean: every public (5), its axioms and its admission walk
+#print axioms Complexity.unaryWitnessLang
+#sorry_sources Complexity.unaryWitnessLang
+#print axioms Complexity.unaryWitnessLang_mem_NPOracle
+#sorry_sources Complexity.unaryWitnessLang_mem_NPOracle
+#print axioms Complexity.exists_finOracleTM_enumeration
+#sorry_sources Complexity.exists_finOracleTM_enumeration
+#print axioms Complexity.exists_oracle_ne
+#sorry_sources Complexity.exists_oracle_ne
+#print axioms Complexity.baker_gill_solovay
+#sorry_sources Complexity.baker_gill_solovay
+#private_sorry_census "_private.TCSlib.Complexity.Diagonalization.Relativization.0."
+-- TCSlib/Complexity/SpaceComplexity/Hierarchy.lean: every public (4), its axioms and its admission walk
+#print axioms Complexity.space_universal
+#sorry_sources Complexity.space_universal
+#print axioms Complexity.space_hierarchy
+#sorry_sources Complexity.space_hierarchy
+#print axioms Complexity.LOGSPACE_ssubset_PSPACE
+#sorry_sources Complexity.LOGSPACE_ssubset_PSPACE
+#print axioms Complexity.SPACE_linear_ne_NP
+#sorry_sources Complexity.SPACE_linear_ne_NP
+#private_sorry_census "_private.TCSlib.Complexity.SpaceComplexity.Hierarchy.0."
+-- TCSlib/Complexity/SpaceComplexity/Savitch.lean: every public (3), its axioms and its admission walk
+#print axioms Complexity.spaceConstructible_poly
+#sorry_sources Complexity.spaceConstructible_poly
+#print axioms Complexity.savitch
+#sorry_sources Complexity.savitch
+#print axioms Complexity.PSPACE_eq_NPSPACE
+#sorry_sources Complexity.PSPACE_eq_NPSPACE
+#private_sorry_census "_private.TCSlib.Complexity.SpaceComplexity.Savitch.0."

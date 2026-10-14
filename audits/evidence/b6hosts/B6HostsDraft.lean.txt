@@ -1,0 +1,1406 @@
+/-
+Copyright (c) 2026 Seyoon Ragavan. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Seyoon Ragavan
+-/
+import TCSlib.Complexity.SpaceComplexity.ConfigGraph
+import TCSlib.Complexity.TimeHierarchy.Diagonal
+import TCSlib.Complexity.TuringMachine.CodeSimulator
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+/-!
+# B6 hosts: the windowed runner, its step clock, the input devices and `U₀`
+
+**Status: statement draft for a statement gate; not for landing as one file.** These are the
+public contracts that the window route of `Complexity.space_hierarchy` needs
+(`machine-library-design.md` §16b item 3, backlog RD-3). They are written read-only against
+the campaign tip and meet the requirements of the RD-3 statement gate's findings
+(`audits/b6-restatement-findings.md`: notes 7–8, rows 1 and 3, the numbered checks and the
+suggested sanity obligations). **Every pure lemma below is proved. Every machine contract is
+`sorry`** with its proof sketch. The proposed homes, the consumers and the open questions are
+in `B6-hosts-design.md`.
+
+## Design
+
+* **Hosts first** (`policy.md` §1, design §14). The window route needs three hosts and a
+  machine row: the windowed runner (H3), its clock, the input devices (H5), and the
+  self-application universal machine `U₀` as a public row consuming the step block (H2).
+* **H3 is split into a pure semantics, a clock and a loop.** `Turing.windowRun` is the
+  semantic windowed run: round by round, test for a halted state, else step, else leave the
+  window. `Turing.exists_windowLoopTM` realizes it without a clock. The clock is the
+  **step-clocked runner** `Turing.exists_stepClockTMVia`, one countdown tick per physical body
+  step, which the nondeterministic time hierarchy (C1) also needs (joint design, C1 note §3.3;
+  C1's draft statement is its `Bool` instance `Turing.exists_stepClockTM`, proved from it).
+  `Turing.exists_windowRunnerTM` is the loop under that clock, and
+  `Turing.exists_configWindowRunnerTM` builds a configuration-count clock itself: it is what
+  the diagonalizer cites.
+* **The tag is generic**, with the output summary's `Fin 3` code (design §12.8a decision O4)
+  as the instance `Turing.summaryTag`.
+* **H5 presents a virtual input `y` inside a physical input `z`.** The native device is the
+  identity (`Turing.NativeAt`). The bounded-prefix ruler device (`Turing.RulerAt`, the gate's
+  row 1) keeps the physical head at `ℓ + i` and a unary ruler of the header length `ℓ`; it
+  tests the virtual left boundary by a restoring sweep of `ℓ` cells. Its rows are call-level
+  (`Turing.exists_rulerDeviceTM`), and `Turing.exists_rulerHostTM` turns any native-input
+  machine into a ruler-hosted one, so that H2's block runs unchanged.
+* **`U₀`** (`Turing.exists_selfUniversal`) is stated for any effective scheme. It is stated
+  against H2's contract as delivered (`h1Round_effect`, private in
+  `TuringMachine/CodeSimulator.lean`), whose assumptions are listed in its sketch.
+
+## Main definitions
+
+* `Turing.WindowExit`, `Turing.windowRun` — the three exits and the semantic windowed run.
+* `Turing.outSummaryCode`, `Turing.summaryTag` — the output summary's `Fin 3` tag.
+* `Turing.clockCfg`, `Turing.wordPatch`, `Turing.Cfg.Stopped` — the step clock's layout.
+* `Turing.inputCell`, `Turing.NativeAt`, `Turing.RulerAt`, `Turing.rulerHostCfg` — the input
+  device layer.
+
+## Main results
+
+* Bridges (proved): `Turing.MultiTapeTM.relabelState_spaceUsed`,
+  `Turing.exists_codeTM_spaceUsed`, `Turing.CodeTM.one_le_spaceUsed`,
+  `Turing.FinTM.ComputesInTime.spaceUsed_le_of_halt`,
+  `Turing.FinTM.ComputesInSpace.computesFunInTime_and_forall_spaceUsed_le`,
+  `Turing.FinTM.inWindow_of_spaceUsed_le`, `Turing.Cfg.inWindow_init`,
+  `Turing.FinTM.decidesInSpace_of_alphabetReduction`.
+* H3 semantics (proved): `Turing.windowRun_halted_of_run`, `Turing.windowRun_spec`,
+  `Turing.windowRun_tag`, `Turing.windowRun_stop_unique`,
+  `Turing.windowRun_exhausted_of_live`, `Turing.windowRun_halts_on_last_transition`,
+  `Turing.summaryTag_append`, `Turing.windowRun_summary_of_halts`,
+  `Turing.FinTM.configBound_le_two_pow`.
+* H5 semantics (proved): `Turing.Cfg.inputSymbol_eq_inputCell`, `Turing.NativeAt.inputSymbol_eq`,
+  `Turing.inputCell_sub_eq_none_iff`, `Turing.inputCell_of_drop`,
+  `Turing.pairEncode_pairEncode_drop`.
+* Host contracts (sorried): `Turing.exists_stepClockTMVia` (with C1's `Bool` form
+  `Turing.exists_stepClockTM` proved from it), `Turing.exists_windowLoopTM`,
+  `Turing.exists_windowRunnerTM`, `Turing.exists_configWindowRunnerTM`,
+  `Turing.exists_rulerTestTM`, `Turing.exists_rulerDeviceTM`, `Turing.exists_rulerHostTM`,
+  `Turing.exists_selfStartupTM`, `Turing.exists_selfUniversal`.
+* The proposed addend-free `Complexity.B6Draft.space_universal` (sorried), and the proved
+  `Complexity.B6Draft.space_universal_gated_form`: it implies the gated statement.
+
+## References
+
+* [AB09] S. Arora, B. Barak, *Computational Complexity: A Modern Approach*,
+  Cambridge University Press, 2009. (§1.2: the read-only input tape; §1.4.1, Theorem 1.9: the
+  universal machine and its step; §3.2: the clocked simulations of the hierarchy proofs;
+  §4.1.1, Claim 4.4: configurations and their count; §4.1.3, Theorem 4.8 and Exercise 4.1:
+  the space hierarchy and the space-bounded universal machine.)
+-/
+
+namespace Turing
+
+/-! ## §1 Bridges -/
+
+/-- **State relabelling preserves every head trajectory.** For any machine `tm` and any state
+equivalence `e`, head `i` of the relabelled machine visits, in its first `t` steps from its
+initial configuration, exactly the cells that head `i` of `tm` visits. This is the space
+clause that the coding step `Turing.exists_codeTM` does not state. [AB09, §1.4: the coding
+step of the normal form]
+
+**Proof sketch.** The relabelled run is the original run with its states renamed
+(`Turing.MultiTapeTM.relabelState_runFrom_init`), and renaming changes no head position. -/
+theorem MultiTapeTM.relabelState_visitedByTapeHead {k : ℕ} {Symbol : Type*}
+    {State State' : Type*} (tm : MultiTapeTM k Symbol State) (e : State ≃ State')
+    (input : List Symbol) (t : ℕ) (i : Fin k) :
+    (tm.relabelState e).visitedByTapeHead ((tm.relabelState e).initCfg input) t i =
+      tm.visitedByTapeHead (tm.initCfg input) t i := by
+  simp only [MultiTapeTM.visitedByTapeHead, MultiTapeTM.relabelState_runFrom_init,
+    Cfg.mapState]
+
+/-- **State relabelling preserves space at every time.** The relabelled machine uses exactly
+the space of the original up to every time `t`. [AB09, §1.4]
+
+**Proof sketch.** Sum `Turing.MultiTapeTM.relabelState_visitedByTapeHead` over the tapes. -/
+theorem MultiTapeTM.relabelState_spaceUsed {k : ℕ} {Symbol : Type*} {State State' : Type*}
+    (tm : MultiTapeTM k Symbol State) (e : State ≃ State') (input : List Symbol) (t : ℕ) :
+    (tm.relabelState e).spaceUsed ((tm.relabelState e).initCfg input) t =
+      tm.spaceUsed (tm.initCfg input) t := by
+  simp only [MultiTapeTM.spaceUsed, MultiTapeTM.spaceUsedByTape,
+    MultiTapeTM.relabelState_visitedByTapeHead]
+
+/-- **The space-faithful coding step.** Every one-work-tape binary machine `M` is equivalent
+to a coded machine `M'` that halts with the same outputs at the same times
+(`Turing.exists_codeTM`'s clause) **and uses the same space at every time**. This is the space
+clause of the coding step named by `space_hierarchy`'s sketch. [AB09, §1.4]
+
+**Proof sketch.** The witness of `Turing.exists_codeTM`: relabel the states along an
+equivalence with `Fin (|Q| - 1 + 1)`. Its timed clause is that theorem's proof; the space
+clause is `Turing.MultiTapeTM.relabelState_spaceUsed`. -/
+theorem exists_codeTM_spaceUsed (M : FinTM Bool) (hk : M.k = 1) :
+    ∃ M' : CodeTM,
+      (∀ (x output : List Bool) (t : ℕ),
+        M'.toFinTM.ComputesInTime x output t ↔ M.ComputesInTime x output t) ∧
+      ∀ (x : List Bool) (t : ℕ),
+        M'.toFinTM.tm.spaceUsed (M'.toFinTM.tm.initCfg x) t =
+          M.tm.spaceUsed (M.tm.initCfg x) t := by
+  classical
+  rcases M with @⟨k, Q, hQ, dQ, tm⟩
+  dsimp only at hk
+  subst k
+  letI : Fintype Q := hQ
+  letI : DecidableEq Q := dQ
+  have hcard : Fintype.card Q = (Fintype.card Q - 1) + 1 := by
+    have : 0 < Fintype.card Q := Fintype.card_pos_iff.mpr ⟨tm.q₀⟩
+    omega
+  let e := Fintype.equivFinOfCardEq hcard
+  refine ⟨⟨Fintype.card Q - 1, tm.relabelState e⟩, ?_, ?_⟩
+  · intro x output t
+    simp only [CodeTM.toFinTM, FinTM.ComputesInTime, MultiTapeTM.ComputesInTimeAndSpace,
+      MultiTapeTM.relabelState_runFrom_init, Cfg.mapState, Option.map_eq_none_iff]
+    constructor
+    · rintro ⟨s, hhalt, hout, -⟩
+      exact ⟨_, hhalt, hout, rfl⟩
+    · rintro ⟨s, hhalt, hout, -⟩
+      exact ⟨_, hhalt, hout, rfl⟩
+  · intro x t
+    exact MultiTapeTM.relabelState_spaceUsed tm e x t
+
+/-- **A coded run visits at least one cell.** Every run of a coded machine, at every time,
+has visited at least one work cell: its one work head starts somewhere. So every qualifying
+budget `s` of `space_universal` is positive (the gate's row-1 calculation).
+
+**Proof sketch.** The visited set of tape `0` contains the head's initial position, and it
+is one summand of the space. -/
+theorem CodeTM.one_le_spaceUsed (M : CodeTM) (x : List Bool) (t : ℕ) :
+    1 ≤ M.toFinTM.tm.spaceUsed (M.toFinTM.tm.initCfg x) t := by
+  let i₀ : Fin M.toFinTM.k := ⟨0, by simp⟩
+  have hne : (M.toFinTM.tm.visitedByTapeHead (M.toFinTM.tm.initCfg x) t i₀).Nonempty :=
+    ⟨_, Finset.mem_image.mpr ⟨0, Finset.mem_range.mpr (Nat.succ_pos t), rfl⟩⟩
+  exact (Finset.card_pos.mpr hne).trans_le
+    (M.toFinTM.tm.spaceUsedByTape_le_spaceUsed _ t i₀)
+
+namespace FinTM
+
+/-- **The halt-time space bound holds at every time.** If `M` has halted on `x` with output
+`w` by time `t`, having visited at most `s` cells by then, it has visited at most `s` cells
+by **every** time `t'`: before `t` by monotonicity, after `t` because the halted
+configuration is frozen. This is the all-times bridge named by `space_hierarchy`'s sketch
+(`DecidesInSpace` bounds the space at the halt; the normal form needs every time).
+
+**Proof sketch.** Every head position visited by time `t'` was visited by time `t`: a time
+`u ≤ t` is in range, and at a time `u > t` the configuration is the one at `t`
+(`Turing.MultiTapeTM.runFrom_of_halt`). So each visited set at `t'` is contained in the one at
+`t`. -/
+theorem ComputesInTime.spaceUsed_le_of_halt {Symbol : Type} {M : FinTM Symbol}
+    {x w : List Symbol} {t s : ℕ} (h : M.ComputesInTime x w t)
+    (hs : M.tm.spaceUsed (M.tm.initCfg x) t ≤ s) :
+    ∀ t', M.tm.spaceUsed (M.tm.initCfg x) t' ≤ s := by
+  have hhalt := ((computesInTime_iff M x w t).mp h).1
+  have key : ∀ t' i, M.tm.visitedByTapeHead (M.tm.initCfg x) t' i ⊆
+      M.tm.visitedByTapeHead (M.tm.initCfg x) t i := by
+    intro t' i z hz
+    simp only [MultiTapeTM.visitedByTapeHead, Finset.mem_image, Finset.mem_range] at hz ⊢
+    obtain ⟨u, hu, rfl⟩ := hz
+    by_cases hut : u ≤ t
+    · exact ⟨u, by omega, rfl⟩
+    · refine ⟨t, by omega, ?_⟩
+      rw [show u = t + (u - t) by omega, MultiTapeTM.runFrom_add,
+        MultiTapeTM.runFrom_of_halt _ hhalt]
+  intro t'
+  refine le_trans ?_ hs
+  exact Finset.sum_le_sum fun i _ => Finset.card_le_card (key t' i)
+
+/-- **A space-bounded computation in the normal form's hypotheses.** If `M` computes `f`
+within space `s`, then it computes `f` within the length-dependent time
+`n ↦ configBound M n (s n)`, and its space is at most `s |x|` at every time on every `x`.
+These are exactly the hypotheses `hM` and `hS` of
+`Turing.FinTM.one_work_tape_binary_spaceUsed`. [AB09, §4.1.1]
+
+**Proof sketch.** Time: `Turing.FinTM.ComputesInTime.of_spaceUsed_le`. Space at every time:
+`Turing.FinTM.ComputesInTime.spaceUsed_le_of_halt`. -/
+theorem ComputesInSpace.computesFunInTime_and_forall_spaceUsed_le {M : FinTM Bool}
+    {f : List Bool → List Bool} {s : ℕ → ℕ} (h : M.ComputesInSpace f s) :
+    M.ComputesFunInTime f (fun n => M.configBound n (s n)) ∧
+      ∀ (x : List Bool) (t : ℕ), M.tm.spaceUsed (M.tm.initCfg x) t ≤ s x.length := by
+  refine ⟨fun x => ?_, fun x t => ?_⟩
+  · obtain ⟨t, ht, hsp⟩ := h x
+    exact ht.of_spaceUsed_le hsp
+  · obtain ⟨t₀, ht, hsp⟩ := h x
+    exact ht.spaceUsed_le_of_halt hsp t
+
+/-- **Window containment.** If `M` has visited at most `s` work cells by time `t` on `x`,
+then every configuration of its run up to time `t` lies in the radius-`s` window: every head
+is within `[-s, s]` and every cell outside it is blank. This is the containment step of
+`space_hierarchy`'s contradiction, and the hypothesis under which the windowed runner follows
+the run. [AB09, §4.1.1, Claim 4.4]
+
+**Proof sketch.** Each tape's visited set has at most `s` cells and is an interval around `0`
+(`Turing.MultiTapeTM.abs_pos_lt_card_visited`), so each visited cell has absolute value below
+`s`. The head at time `u` is visited, and a nonblank cell at time `u` was visited by then
+(`Turing.MultiTapeTM.mem_visited_of_ne_none`), hence by time `t`. -/
+theorem inWindow_of_spaceUsed_le (M : FinTM Bool) (x : List Bool) {t s : ℕ}
+    (hs : M.tm.spaceUsed (M.tm.initCfg x) t ≤ s) :
+    ∀ u ≤ t, (M.tm.runFrom (M.tm.initCfg x) u).InWindow s := by
+  intro u hu
+  have hmem : ∀ i, ∀ z ∈ M.tm.visitedByTapeHead (M.tm.initCfg x) t i, |z| < (s : ℤ) := by
+    intro i z hz
+    have hcard : (M.tm.visitedByTapeHead (M.tm.initCfg x) t i).card ≤ s :=
+      (M.tm.spaceUsedByTape_le_spaceUsed _ t i).trans hs
+    exact (M.tm.abs_pos_lt_card_visited x t i hz).trans_le (by exact_mod_cast hcard)
+  refine ⟨fun i => (hmem i _ ?_).le, fun i z hz => ?_⟩
+  · simp only [MultiTapeTM.visitedByTapeHead, Finset.mem_image, Finset.mem_range]
+    exact ⟨u, by omega, rfl⟩
+  · by_contra hne
+    have hv := M.tm.visitedByTapeHead_mono _ hu i (M.tm.mem_visited_of_ne_none x u i z hne)
+    have := hmem i z hv
+    omega
+
+/-- **The initial configuration is in every window**: its heads are at `0` and its work
+tapes are blank. The windowed runner's precondition at the start of `space_hierarchy`'s
+simulation.
+
+**Proof sketch.** Unfold `Cfg.init`. -/
+theorem _root_.Turing.Cfg.inWindow_init {k : ℕ} {Symbol State : Type} (q₀ : State)
+    (x : List Symbol) (s : ℕ) : (Cfg.init q₀ x : Cfg k Symbol State x).InWindow s :=
+  ⟨fun _ => by simp, fun _ _ _ => rfl⟩
+
+/-- **Deciding through the alphabet reduction.** Let `D` be a machine over a finite alphabet
+`Γ` with an embedding `e` of `Bool`. Suppose that on every `Bool` input `x` it halts with the
+one-symbol output `[x ∈ L]` (embedded), and that on **every** input over `Γ` (foreign symbols
+included) and at every time it has visited at most `S |x|` cells. Then some binary machine
+decides `L` within space `c · (S n + 1)`. No time bound on `D` is assumed: the reduction's
+time function is the maximum of the first halting times over the finitely many inputs of each
+length, which need not be computable (the gate's check 7). [AB09, §1.3.1, Claim 1.5, with the
+space clause of `Turing.FinTM.alphabet_reduction_spaceUsed`]
+
+**Proof sketch.** Choose a halting time `g x` for each `Bool` input, and let `T n` be the
+maximum of `g` over the inputs of length `n` (a supremum over `Fin n → Bool`). Then `D`
+computes the indicator via `e` within `T`, by monotonicity of halted runs. Apply
+`Turing.FinTM.alphabet_reduction_spaceUsed`; its machine decides `L` at the halting time
+`c · (T n + 1)`, within `c · (S n + 1)` cells. -/
+theorem decidesInSpace_of_alphabetReduction {Γ : Type} [Fintype Γ] [DecidableEq Γ]
+    (e : Bool ↪ Γ) (D : FinTM Γ) (L : Language Bool) (S : ℕ → ℕ)
+    (hD : ∀ x : List Bool, ∃ t, D.ComputesInTime (x.map e)
+      ([MultiTapeTM.indicator (L : Set (List Bool)) x].map e) t)
+    (hS : ∀ (x : List Γ) (t : ℕ), D.tm.spaceUsed (D.tm.initCfg x) t ≤ S x.length) :
+    ∃ (c : ℕ) (M : FinTM Bool), M.DecidesInSpace L fun n => c * (S n + 1) := by
+  classical
+  choose g hg using hD
+  let T : ℕ → ℕ := fun n => (Finset.univ : Finset (Fin n → Bool)).sup fun v => g (List.ofFn v)
+  have hM : D.ComputesFunInTimeVia e
+      (fun x => [MultiTapeTM.indicator (L : Set (List Bool)) x]) T := by
+    intro x
+    have hle := Finset.le_sup (f := fun v : Fin x.length → Bool => g (List.ofFn v))
+      (Finset.mem_univ x.get)
+    dsimp only at hle
+    rw [List.ofFn_get] at hle
+    exact (hg x).mono hle
+  obtain ⟨c, M', -, hM', hS'⟩ := alphabet_reduction_spaceUsed e D _ T S hM hS
+  exact ⟨c, M', fun x => ⟨c * (T x.length + 1), hM' x, hS' x _⟩⟩
+
+end FinTM
+
+/-! ## §2 H3 semantics: the windowed run, its tag, and the clock arithmetic -/
+
+/-- **The three exits of a windowed run**: the simulated machine halted inside the window;
+its next step leaves the window; or the clock ran out. -/
+inductive WindowExit where
+  /-- the simulated machine has halted -/
+  | halted
+  /-- the next simulated step leaves the window -/
+  | left
+  /-- the clock is exhausted -/
+  | exhausted
+deriving DecidableEq
+
+open Classical in
+/-- **The semantic windowed run** (host H3's specification). `windowRun M s upd N c τ` runs
+at most `N` rounds of the fixed machine `M` from `c` with tag `τ`. Each round first tests
+the configuration: if it is halted, the run stops with exit `halted`; otherwise, if the next
+configuration lies in the radius-`s` window, it steps and updates the tag by `upd` with the
+step's emission; otherwise it stops with exit `left`, unchanged. After `N` rounds without a
+stop it reports `exhausted` with the configuration reached. A halt on the `N`-th transition is
+therefore recognized only with an `N + 1`-st round: the strict surplus of the gate's check 4.
+[AB09, §4.1.3, proof of Theorem 4.8: the diagonalizer simulates within the space bound and
+stops by a configuration count] -/
+noncomputable def windowRun {k : ℕ} {Q T : Type} {x : List Bool} (M : MultiTapeTM k Bool Q)
+    (s : ℕ) (upd : T → Option Bool → T) :
+    ℕ → Cfg k Bool Q x → T → WindowExit × Cfg k Bool Q x × T
+  | 0, c, τ => (.exhausted, c, τ)
+  | N + 1, c, τ =>
+    if c.state = none then (.halted, c, τ)
+    else if (M.step c).InWindow s then
+      windowRun M s upd N (M.step c) (upd τ (M.outputSymbol c))
+    else (.left, c, τ)
+
+/-- **A run inside the window halts in the windowed run.** Let the tag `σ` of output words be
+compatible with `upd` (`σ (u ++ b) = upd (σ u) b`). If `M` from `c` has halted by time `t`,
+every configuration up to `t` lies in the window, and `t < N`, then `N` rounds from `c` with
+tag `σ c.output` stop with exit `halted`, at the configuration of time `t`, with its output's
+tag. This is the direction `space_hierarchy`'s contradiction uses. [AB09, Theorem 4.8, proof]
+
+**Proof sketch.** Induct on `N`. A halted `c` stops at once, and the run from it is frozen. A
+live `c` has `t ≥ 1`, its successor is in the window (time `1`), and the induction hypothesis
+applies to the successor at `t - 1`; the tag update is `σ` of the appended output
+(`Turing.MultiTapeTM.step_output`). -/
+theorem windowRun_halted_of_run {k : ℕ} {Q T : Type} {x : List Bool}
+    (M : MultiTapeTM k Bool Q) (s : ℕ) (upd : T → Option Bool → T) (σ : List Bool → T)
+    (hσ : ∀ u b, σ (u ++ b.toList) = upd (σ u) b) :
+    ∀ (N t : ℕ) (c : Cfg k Bool Q x), t < N → (M.runFrom c t).state = none →
+      (∀ u ≤ t, (M.runFrom c u).InWindow s) →
+      windowRun M s upd N c (σ c.output) =
+        (.halted, M.runFrom c t, σ (M.runFrom c t).output) := by
+  intro N
+  induction N with
+  | zero => intro t c ht; omega
+  | succ N ih =>
+    intro t c ht hhalt hwin
+    by_cases hc : c.state = none
+    · rw [MultiTapeTM.runFrom_of_halt c hc]
+      simp only [windowRun, if_pos hc]
+    · cases t with
+      | zero => exact absurd (by simpa using hhalt) hc
+      | succ t =>
+        have hrun : M.runFrom c (t + 1) = M.runFrom (M.step c) t :=
+          MultiTapeTM.runFrom_succ_eq_step
+        have hstep : (M.step c).InWindow s := by
+          simpa [MultiTapeTM.runFrom_succ_eq_step] using hwin 1 (by omega)
+        have key := ih t (M.step c) (by omega) (by rw [← hrun]; exact hhalt)
+          (fun u hu => by
+            have h := hwin (u + 1) (by omega)
+            rwa [MultiTapeTM.runFrom_succ_eq_step] at h)
+        rw [hrun]
+        simp only [windowRun, if_neg hc, if_pos hstep]
+        rw [← hσ, ← MultiTapeTM.step_output]
+        exact key
+
+/-- **What a windowed run reports** (the full characterization of the three exits). From a
+windowed `c`, `N` rounds stop at the configuration of some time `r ≤ N` of `M`'s run, with
+every configuration up to `r` in the window and every one before `r` live, and:
+* exit `halted` means `r < N` and the configuration at `r` is halted;
+* exit `left` means `r < N`, the configuration at `r` is live, and the one at `r + 1` is
+  outside the window;
+* exit `exhausted` means `r = N`.
+
+**Proof sketch.** Induct on `N`, following the three branches of a round; a step shifts every
+time index by one (`Turing.MultiTapeTM.runFrom_succ_eq_step`). -/
+theorem windowRun_spec {k : ℕ} {Q T : Type} {x : List Bool}
+    (M : MultiTapeTM k Bool Q) (s : ℕ) (upd : T → Option Bool → T) :
+    ∀ (N : ℕ) (c : Cfg k Bool Q x) (τ : T), c.InWindow s →
+      ∃ r ≤ N, (windowRun M s upd N c τ).2.1 = M.runFrom c r ∧
+        (∀ u ≤ r, (M.runFrom c u).InWindow s) ∧
+        (∀ u < r, (M.runFrom c u).state ≠ none) ∧
+        ((windowRun M s upd N c τ).1 = .halted → r < N ∧ (M.runFrom c r).state = none) ∧
+        ((windowRun M s upd N c τ).1 = .left → r < N ∧ (M.runFrom c r).state ≠ none ∧
+          ¬(M.runFrom c (r + 1)).InWindow s) ∧
+        ((windowRun M s upd N c τ).1 = .exhausted → r = N) := by
+  intro N
+  induction N with
+  | zero =>
+    intro c τ hc
+    refine ⟨0, le_rfl, by simp [windowRun], ?_, ?_, ?_, ?_, ?_⟩
+    · intro u hu
+      rw [show u = 0 by omega, MultiTapeTM.runFrom_zero]
+      exact hc
+    · intro u hu
+      omega
+    · simp [windowRun]
+    · simp [windowRun]
+    · intro _
+      rfl
+  | succ N ih =>
+    intro c τ hc
+    by_cases hst : c.state = none
+    · refine ⟨0, by omega, by simp [windowRun, hst], ?_, ?_, ?_, ?_, ?_⟩
+      · intro u hu
+        rw [show u = 0 by omega, MultiTapeTM.runFrom_zero]
+        exact hc
+      · intro u hu
+        omega
+      · intro _
+        exact ⟨by omega, by simpa using hst⟩
+      · simp [windowRun, hst]
+      · simp [windowRun, hst]
+    · by_cases hw : (M.step c).InWindow s
+      · have heq : windowRun M s upd (N + 1) c τ =
+            windowRun M s upd N (M.step c) (upd τ (M.outputSymbol c)) := by
+          simp only [windowRun, if_neg hst, if_pos hw]
+        obtain ⟨r, hr, h1, h2, h3, h4, h5, h6⟩ := ih (M.step c) (upd τ (M.outputSymbol c)) hw
+        rw [heq]
+        refine ⟨r + 1, by omega, ?_, ?_, ?_, ?_, ?_, ?_⟩
+        · rw [h1, MultiTapeTM.runFrom_succ_eq_step]
+        · intro u hu
+          cases u with
+          | zero => simpa using hc
+          | succ u =>
+            rw [MultiTapeTM.runFrom_succ_eq_step]
+            exact h2 u (by omega)
+        · intro u hu
+          cases u with
+          | zero => simpa using hst
+          | succ u =>
+            rw [MultiTapeTM.runFrom_succ_eq_step]
+            exact h3 u (by omega)
+        · intro h
+          obtain ⟨a, b⟩ := h4 h
+          exact ⟨by omega, by rw [MultiTapeTM.runFrom_succ_eq_step]; exact b⟩
+        · intro h
+          obtain ⟨a, b, e⟩ := h5 h
+          refine ⟨by omega, by rw [MultiTapeTM.runFrom_succ_eq_step]; exact b, ?_⟩
+          rw [MultiTapeTM.runFrom_succ_eq_step]
+          exact e
+        · intro h
+          have := h6 h
+          omega
+      · refine ⟨0, by omega, by simp [windowRun, hst, hw], ?_, ?_, ?_, ?_, ?_⟩
+        · intro u hu
+          rw [show u = 0 by omega, MultiTapeTM.runFrom_zero]
+          exact hc
+        · intro u hu
+          omega
+        · simp [windowRun, hst, hw]
+        · intro _
+          refine ⟨by omega, by simpa using hst, ?_⟩
+          simpa [MultiTapeTM.runFrom_succ_eq_step] using hw
+        · simp [windowRun, hst, hw]
+
+/-- **The tag tracks the output.** If the tag `σ` of output words is compatible with `upd`
+and the run starts with the tag of `c`'s output, the reported tag is the tag of the reported
+configuration's output, at every exit. No output word is buffered (W1).
+
+**Proof sketch.** Induct on `N`; at a step the new tag is `σ` of the appended output. -/
+theorem windowRun_tag {k : ℕ} {Q T : Type} {x : List Bool}
+    (M : MultiTapeTM k Bool Q) (s : ℕ) (upd : T → Option Bool → T) (σ : List Bool → T)
+    (hσ : ∀ u b, σ (u ++ b.toList) = upd (σ u) b) :
+    ∀ (N : ℕ) (c : Cfg k Bool Q x),
+      (windowRun M s upd N c (σ c.output)).2.2 =
+        σ (windowRun M s upd N c (σ c.output)).2.1.output := by
+  intro N
+  induction N with
+  | zero => intro c; simp [windowRun]
+  | succ N ih =>
+    intro c
+    by_cases hst : c.state = none
+    · simp [windowRun, hst]
+    · by_cases hw : (M.step c).InWindow s
+      · have heq : windowRun M s upd (N + 1) c (σ c.output) =
+            windowRun M s upd N (M.step c) (σ (M.step c).output) := by
+          simp only [windowRun, if_neg hst, if_pos hw]
+          rw [← hσ, ← MultiTapeTM.step_output]
+        rw [heq]
+        exact ih (M.step c)
+      · simp [windowRun, hst, hw]
+
+/-- **A stop does not depend on the clock.** If two windowed runs from the same start stop
+(exit `halted` or `left`), they report the same result, whatever their round budgets.
+
+**Proof sketch.** Induct on the first budget; both runs take the same branch of every round
+until one stops. -/
+theorem windowRun_stop_unique {k : ℕ} {Q T : Type} {x : List Bool}
+    (M : MultiTapeTM k Bool Q) (s : ℕ) (upd : T → Option Bool → T) :
+    ∀ (N N' : ℕ) (c : Cfg k Bool Q x) (τ : T),
+      (windowRun M s upd N c τ).1 ≠ .exhausted → (windowRun M s upd N' c τ).1 ≠ .exhausted →
+      windowRun M s upd N c τ = windowRun M s upd N' c τ := by
+  intro N
+  induction N with
+  | zero => intro N' c τ h; simp [windowRun] at h
+  | succ N ih =>
+    intro N' c τ h h'
+    cases N' with
+    | zero => simp [windowRun] at h'
+    | succ N' =>
+      by_cases hst : c.state = none
+      · simp only [windowRun, if_pos hst]
+      · by_cases hw : (M.step c).InWindow s
+        · simp only [windowRun, if_neg hst, if_pos hw] at h h' ⊢
+          exact ih N' _ _ h h'
+        · simp only [windowRun, if_neg hst, if_neg hw]
+
+/-- **Sanity: without the surplus round the clock runs out.** If the first `N`
+configurations are live and the first `N + 1` lie in the window, then `N` rounds report
+`exhausted` with the configuration of time `N`, **even when that configuration is halted**.
+So a halt on the last permitted transition needs one more round: the reason the clock value
+must strictly exceed the configuration count (the gate's check 4, "the extra halt-test round").
+
+**Proof sketch.** Induct on `N`; every round steps. -/
+theorem windowRun_exhausted_of_live {k : ℕ} {Q T : Type} {x : List Bool}
+    (M : MultiTapeTM k Bool Q) (s : ℕ) (upd : T → Option Bool → T) :
+    ∀ (N : ℕ) (c : Cfg k Bool Q x) (τ : T), (∀ u < N, (M.runFrom c u).state ≠ none) →
+      (∀ u ≤ N, (M.runFrom c u).InWindow s) →
+      (windowRun M s upd N c τ).1 = .exhausted ∧
+        (windowRun M s upd N c τ).2.1 = M.runFrom c N := by
+  intro N
+  induction N with
+  | zero => intro c τ _ _; simp [windowRun]
+  | succ N ih =>
+    intro c τ hlive hwin
+    have hst : c.state ≠ none := by simpa using hlive 0 (by omega)
+    have hw : (M.step c).InWindow s := by
+      simpa [MultiTapeTM.runFrom_succ_eq_step] using hwin 1 (by omega)
+    have heq : windowRun M s upd (N + 1) c τ =
+        windowRun M s upd N (M.step c) (upd τ (M.outputSymbol c)) := by
+      simp only [windowRun, if_neg hst, if_pos hw]
+    rw [heq, MultiTapeTM.runFrom_succ_eq_step]
+    refine ih (M.step c) _ (fun u hu => ?_) (fun u hu => ?_)
+    · rw [← MultiTapeTM.runFrom_succ_eq_step]
+      exact hlive (u + 1) (by omega)
+    · rw [← MultiTapeTM.runFrom_succ_eq_step]
+      exact hwin (u + 1) (by omega)
+
+/-- **Sanity: a halt on the final transition that emits the deciding bit** (the gate's
+suggested obligation for H3). If `M` from `c` halts at time `t + 1` by a transition that
+emits `b`, and the run stays in the window, then `t + 2` rounds (the minimal surplus) report
+exit `halted` at the halted configuration with the tag of the output **including `b`**.
+
+**Proof sketch.** `Turing.windowRun_halted_of_run` at time `t + 1`, and the last step appends
+`b` to the output (`Turing.MultiTapeTM.step_output`). -/
+theorem windowRun_halts_on_last_transition {k : ℕ} {Q T : Type} {x : List Bool}
+    (M : MultiTapeTM k Bool Q) (s : ℕ) (upd : T → Option Bool → T) (σ : List Bool → T)
+    (hσ : ∀ u b, σ (u ++ b.toList) = upd (σ u) b) (t : ℕ) (c : Cfg k Bool Q x) (b : Bool)
+    (hhalt : (M.runFrom c (t + 1)).state = none)
+    (hemit : M.outputSymbol (M.runFrom c t) = some b)
+    (hwin : ∀ u ≤ t + 1, (M.runFrom c u).InWindow s) :
+    windowRun M s upd (t + 2) c (σ c.output) =
+      (.halted, M.runFrom c (t + 1), σ ((M.runFrom c t).output ++ [b])) := by
+  rw [windowRun_halted_of_run M s upd σ hσ (t + 2) (t + 1) c (by omega) hhalt hwin,
+    MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.step_output, hemit]
+  rfl
+
+/-- **The output summary's `Fin 3` code** (design §12.8a decision O4): `empty ↦ 0`,
+`accept ↦ 1`, `dead ↦ 2`. It is the record tag of the windowed runner's B6 instance. It
+duplicates the private `sumCode` of `SpaceComplexity/ConfigGraph.lean` value for value, and
+the two are to be merged at promotion (`B6-hosts-design.md`, open question Q4). -/
+def outSummaryCode : OutSummary → Fin 3
+  | .empty => 0
+  | .accept => 1
+  | .dead => 2
+
+/-- The `Fin 3` code is injective.
+
+**Proof sketch.** Compare the three cases. -/
+theorem outSummaryCode_injective : Function.Injective outSummaryCode := by
+  intro a b h
+  cases a <;> cases b <;> simp_all [outSummaryCode]
+
+/-- **A representative output word for each tag**: `[]`, `[true]` and `[false]`. -/
+def summaryWord (τ : Fin 3) : List Bool :=
+  if τ = 0 then [] else if τ = 1 then [true] else [false]
+
+/-- Each representative word has the tag it represents.
+
+**Proof sketch.** Evaluate the three cases. -/
+theorem outSummaryCode_summaryWord (τ : Fin 3) :
+    outSummaryCode (outSummary (summaryWord τ)) = τ := by
+  fin_cases τ <;> rfl
+
+/-- **The summary tag update**: the tag after emitting `b` from an output with tag `τ`,
+computed on the representative word. -/
+def summaryTag (τ : Fin 3) (b : Option Bool) : Fin 3 :=
+  outSummaryCode (outSummary (summaryWord τ ++ b.toList))
+
+/-- A silent step leaves the tag unchanged (the record step's `hupd` hypothesis).
+
+**Proof sketch.** Appending nothing keeps the representative word. -/
+theorem summaryTag_none (τ : Fin 3) : summaryTag τ none = τ := by
+  simpa [summaryTag] using outSummaryCode_summaryWord τ
+
+/-- **The tag of an appended output is the tag update** of the tag of the output: the
+compatibility hypothesis `hσ` of the windowed run for `σ = outSummaryCode ∘ outSummary`.
+
+**Proof sketch.** The representative and the actual word have equal summaries, and summaries
+are append-compatible (`Turing.outSummary_append_congr`). -/
+theorem summaryTag_append (u : List Bool) (b : Option Bool) :
+    outSummaryCode (outSummary (u ++ b.toList)) =
+      summaryTag (outSummaryCode (outSummary u)) b :=
+  (congrArg outSummaryCode (outSummary_append_congr
+    (outSummaryCode_injective (outSummaryCode_summaryWord _)) b.toList)).symm
+
+/-- The tag `1` (`accept`) recognizes exactly the output `[true]`, not merely an output that
+begins with `true` (the gate's check 5).
+
+**Proof sketch.** Injectivity of the code and `Turing.outSummary_eq_accept_iff`. -/
+theorem outSummaryCode_eq_one_iff (u : List Bool) :
+    outSummaryCode (outSummary u) = 1 ↔ u = [true] := by
+  rw [← outSummary_eq_accept_iff]
+  constructor
+  · intro h
+    exact outSummaryCode_injective (h.trans rfl)
+  · intro h
+    rw [h]
+    rfl
+
+/-- The empty output has tag `0`. -/
+theorem outSummaryCode_nil : outSummaryCode (outSummary []) = 0 := rfl
+
+/-- **The windowed run of a space-bounded halting computation** (the B6 instance). If `M`
+halts on `x` with output `w` by time `t`, having visited at most `s` cells, and `t < N`, then
+`N` rounds from `M`'s initial configuration with the empty-output tag `0` report exit
+`halted`, the halted configuration of time `t`, and the tag of `w`. With the tag `1` exactly
+when `w = [true]`, this is the verdict the diagonalizer flips. [AB09, Theorem 4.8, proof]
+
+**Proof sketch.** Window containment (`Turing.FinTM.inWindow_of_spaceUsed_le`), then
+`Turing.windowRun_halted_of_run` with `σ = outSummaryCode ∘ outSummary`, whose compatibility
+is `Turing.summaryTag_append`. -/
+theorem windowRun_summary_of_halts (M : FinTM Bool) (x : List Bool) {w : List Bool}
+    {t s N : ℕ} (h : M.ComputesInTime x w t) (hs : M.tm.spaceUsed (M.tm.initCfg x) t ≤ s)
+    (hN : t < N) :
+    windowRun M.tm s summaryTag N (M.tm.initCfg x) 0 =
+      (.halted, M.tm.runFrom (M.tm.initCfg x) t, outSummaryCode (outSummary w)) := by
+  obtain ⟨hhalt, hout⟩ := (FinTM.computesInTime_iff M x w t).mp h
+  have key := windowRun_halted_of_run M.tm s summaryTag (fun u => outSummaryCode (outSummary u))
+    summaryTag_append N t (M.tm.initCfg x) hN hhalt (FinTM.inWindow_of_spaceUsed_le M x hs)
+  rw [hout] at key
+  exact key
+
+/-- **The configuration count is at most a power of two** (the gate's check 4):
+`configBound M n s ≤ 2 ^ (|Q| + posWidth n + 3 k (2s + 1))`. Its four factors satisfy
+`|Q| + 1 ≤ 2^|Q|`, `n + 2 ≤ 2^(posWidth n)`, `3^(k(2s+1)) ≤ 2^(2k(2s+1))` and
+`(2s + 1)^k ≤ 2^(k(2s+1))`. A clock word of all `true` digits one longer than the exponent has
+value `2^(W) - 1 > configBound M n s`. [AB09, §4.1.1, Claim 4.4]
+
+**Proof sketch.** Multiply the four factor bounds and collect the powers of two. -/
+theorem FinTM.configBound_le_two_pow (M : FinTM Bool) (n s : ℕ) :
+    M.configBound n s ≤
+      2 ^ (Fintype.card M.State + posWidth n + 3 * M.k * (2 * s + 1)) := by
+  have hQ : Fintype.card M.State + 1 ≤ 2 ^ Fintype.card M.State :=
+    Nat.lt_two_pow_self
+  have hn : n + 2 ≤ 2 ^ posWidth n := by
+    have h := Nat.lt_size_self (n + 1)
+    rw [← Nat.size_eq_bits_len] at h
+    exact h
+  have h3 : 3 ^ (M.k * (2 * s + 1)) ≤ 2 ^ (2 * (M.k * (2 * s + 1))) :=
+    calc 3 ^ (M.k * (2 * s + 1)) ≤ 4 ^ (M.k * (2 * s + 1)) :=
+          Nat.pow_le_pow_left (by norm_num) _
+      _ = 2 ^ (2 * (M.k * (2 * s + 1))) := by
+          rw [pow_mul 2 2 (M.k * (2 * s + 1))]
+          norm_num
+  have hw : (2 * s + 1) ^ M.k ≤ 2 ^ (M.k * (2 * s + 1)) := by
+    rw [mul_comm M.k, pow_mul]
+    exact Nat.pow_le_pow_left (Nat.lt_two_pow_self).le _
+  have hsplit : 2 ^ (Fintype.card M.State + posWidth n + 3 * M.k * (2 * s + 1)) =
+      2 ^ Fintype.card M.State * 2 ^ posWidth n * 2 ^ (2 * (M.k * (2 * s + 1))) *
+        2 ^ (M.k * (2 * s + 1)) := by
+    rw [← pow_add, ← pow_add, ← pow_add]
+    congr 1
+    ring
+  rw [hsplit]
+  unfold FinTM.configBound
+  exact Nat.mul_le_mul (Nat.mul_le_mul (Nat.mul_le_mul hQ hn) h3) hw
+
+/-! ## §3 H3's clock: the step-clocked runner (joint with C1) -/
+
+/-- **The step clock's layout** (C1's `clockCfg`, generalized from `Bool` to any alphabet):
+the body configuration `c` on the first `k` tapes, the counter tape `ct` with its head at
+`cp` as the last tape, the host control `q`, and the body's input head and output. -/
+def clockCfg {k : ℕ} {Γ S Q : Type} {x : List Γ} (q : Option Q) (c : Cfg k Γ S x)
+    (ct : ℤ → Option Γ) (cp : ℤ) : Cfg (k + 1) Γ Q x :=
+  ⟨q, c.inputPos, Fin.lastCases ct c.workTapes, Fin.lastCases cp c.workTapePos, c.output⟩
+
+/-- **A tape with a word patched in**: the cells `cp, …, cp + |u| - 1` hold `u`, every other
+cell is `ct`'s. -/
+def wordPatch {Γ : Type*} (ct : ℤ → Option Γ) (cp : ℤ) (u : List Γ) : ℤ → Option Γ :=
+  fun q => if cp ≤ q ∧ q < cp + (u.length : ℤ) then FinTM.bufferTape u (q - cp) else ct q
+
+/-- **A stopped body configuration**: halted, or live in a designated stop state. -/
+def Cfg.Stopped {k : ℕ} {Γ S : Type*} {x : List Γ} (stopAt : S → Bool) (c : Cfg k Γ S x) :
+    Prop :=
+  c.state = none ∨ ∃ s, c.state = some s ∧ stopAt s = true
+
+/-- **H3's clock, the step-clocked runner** (joint statement with C1, whose draft
+`exists_stepClockTM` is the instance `Γ = Bool`, `e = refl`; generalized to any alphabet with
+a digit embedding, as the windowed runner runs over the record alphabet). For a body `M` with
+designated stop states, there is a host on one more tape, with an injection `inj` of the body
+states and two exit families `finish` and `timeout` carrying the body state, as follows.
+Start it at `inj q` with the body configuration `c` (live, at `q`) and a delimited counter word
+`w` of value `d` (digits embedded by `e`) on the last tape.
+* If the body first stops (halts, or reaches a stop state) at time `τ ≤ d`, the host reaches
+  `finish` with the body's configuration at `τ`, within `5τ + 2|w| + 2` steps.
+* If the body has not stopped by time `d`, the host reaches `timeout` with the body's
+  configuration at time `d`, within `5d + 2|w| + 2` steps.
+
+In both cases no exit occurs earlier, the counter tape differs from its start only on the
+counter word's own cells, which hold some word of the same width, the counter head stays in
+`[cp - 1, cp + |w|]`, and the body heads are the body's own heads at some earlier body time
+(so the host's work space is the body's plus `|w| + 2`). Emissions are forwarded. This clock
+counts **physical body steps**, unlike the round counter `Turing.counterLoopTMVia`, so a body's
+state survives from step to step. [AB09, §3.2, proof of Theorem 3.2: the diagonalizer runs
+the simulation for a bounded number of steps; §4.1.3, Theorem 4.8]
+
+**Proof sketch.** Fuse one decrement with every body transition: from `inj s`, if `s` is a stop
+state go to `finish`; otherwise run the lifted decrement on the counter tape
+(`Turing.decrementTM_run_succ_ofCfg` under `Turing.MultiTapeTM.liftSymbols`), whose success
+anchor performs one body transition (the body tapes embedded by R1 along `Fin.castSucc`, as in
+`Turing.counterLoopTMVia`) and returns to `inj` of the successor, or to `finish none` when the
+transition halts the body; the decrement's underflow anchor is `timeout`. The decrement costs
+sum to at most `4τ + 2|w|` (`Turing.counterOverhead_le_of_le`), plus the final underflow sweep
+`2|w| + 2` in the timeout case (`Turing.counterOverhead_le`). The round induction is that of
+`Turing.counterLoopTMVia_run_done` with one body step per round and an unrestricted body
+state. -/
+theorem exists_stepClockTMVia {k : ℕ} {Γ S : Type} [Fintype S] [DecidableEq S]
+    [DecidableEq Γ] (e : Bool ↪ Γ) (M : MultiTapeTM k Γ S) (stopAt : S → Bool) :
+    ∃ (Q : Type) (_ : Fintype Q) (_ : DecidableEq Q) (H : MultiTapeTM (k + 1) Γ Q)
+      (inj : S → Q) (finish timeout : Option S → Q),
+      Function.Injective finish ∧ Function.Injective timeout ∧
+      (∀ a b, finish a ≠ timeout b) ∧ (∀ s r, inj s ≠ finish r ∧ inj s ≠ timeout r) ∧
+      ∀ {x : List Γ} (c : Cfg k Γ S x) (q : S), c.state = some q →
+      ∀ (w : List Bool) (ct : ℤ → Option Γ) (cp : ℤ),
+        (∀ p : ℤ, -1 ≤ p → p ≤ (w.length : ℤ) → ct (cp + p) = FinTM.bufferTape (w.map e) p) →
+        (∀ τ ≤ Nat.ofDigits 2 (w.map Bool.toNat), (M.runFrom c τ).Stopped stopAt →
+          (∀ u < τ, ¬(M.runFrom c u).Stopped stopAt) →
+          ∃ T ≤ 5 * τ + 2 * w.length + 2, ∃ w' : List Bool, w'.length = w.length ∧
+            H.runFrom (clockCfg (some (inj q)) c ct cp) T =
+              clockCfg (some (finish (M.runFrom c τ).state)) (M.runFrom c τ)
+                (wordPatch ct cp (w'.map e)) cp ∧
+            (∀ u < T, ∀ r,
+              (H.runFrom (clockCfg (some (inj q)) c ct cp) u).state ≠ some (finish r) ∧
+              (H.runFrom (clockCfg (some (inj q)) c ct cp) u).state ≠ some (timeout r)) ∧
+            ∀ u ≤ T, ∃ v ≤ τ,
+              (∀ j : Fin k, (H.runFrom (clockCfg (some (inj q)) c ct cp) u).workTapePos
+                j.castSucc = (M.runFrom c v).workTapePos j) ∧
+              (H.runFrom (clockCfg (some (inj q)) c ct cp) u).workTapePos (Fin.last k) ∈
+                Finset.Icc (cp - 1) (cp + (w.length : ℤ))) ∧
+        ((∀ u ≤ Nat.ofDigits 2 (w.map Bool.toNat), ¬(M.runFrom c u).Stopped stopAt) →
+          ∃ T ≤ 5 * Nat.ofDigits 2 (w.map Bool.toNat) + 2 * w.length + 2,
+            ∃ w' : List Bool, w'.length = w.length ∧
+            H.runFrom (clockCfg (some (inj q)) c ct cp) T =
+              clockCfg (some (timeout (M.runFrom c (Nat.ofDigits 2 (w.map Bool.toNat))).state))
+                (M.runFrom c (Nat.ofDigits 2 (w.map Bool.toNat)))
+                (wordPatch ct cp (w'.map e)) cp ∧
+            (∀ u < T, ∀ r,
+              (H.runFrom (clockCfg (some (inj q)) c ct cp) u).state ≠ some (finish r) ∧
+              (H.runFrom (clockCfg (some (inj q)) c ct cp) u).state ≠ some (timeout r)) ∧
+            ∀ u ≤ T, ∃ v ≤ Nat.ofDigits 2 (w.map Bool.toNat),
+              (∀ j : Fin k, (H.runFrom (clockCfg (some (inj q)) c ct cp) u).workTapePos
+                j.castSucc = (M.runFrom c v).workTapePos j) ∧
+              (H.runFrom (clockCfg (some (inj q)) c ct cp) u).workTapePos (Fin.last k) ∈
+                Finset.Icc (cp - 1) (cp + (w.length : ℤ))) := by
+  sorry
+
+/-- **C1's step clock, verbatim** (the `Bool` instance of `Turing.exists_stepClockTMVia`).
+This is the statement of C1's draft `exists_stepClockTM` (`c1/C1HostsDraft.lean`, §4) word for
+word: over `Bool`, with the counter tape's final contents left existential and without the
+trajectory clause. It is proved here from the joint statement, so C1 may cite either.
+[AB09, §3.2, proof of Theorem 3.2]
+
+**Proof sketch.** Instantiate the joint statement at `e := Function.Embedding.refl Bool`
+(`w.map e = w`) and forget the extra clauses. -/
+theorem exists_stepClockTM {k : ℕ} {S : Type} [Fintype S] [DecidableEq S]
+    (M : MultiTapeTM k Bool S) (stopAt : S → Bool) :
+    ∃ (Q : Type) (_ : Fintype Q) (_ : DecidableEq Q) (H : MultiTapeTM (k + 1) Bool Q)
+      (inj : S → Q) (finish timeout : Option S → Q),
+      ∀ {x : List Bool} (c : Cfg k Bool S x) (q : S), c.state = some q →
+      ∀ (w : List Bool) (ct : ℤ → Option Bool) (cp : ℤ),
+        (∀ p : ℤ, -1 ≤ p → p ≤ (w.length : ℤ) → ct (cp + p) = FinTM.bufferTape w p) →
+        let d := Nat.ofDigits 2 (w.map Bool.toNat)
+        let stopped : Cfg k Bool S x → Prop := fun e =>
+          e.state = none ∨ ∃ s, e.state = some s ∧ stopAt s = true
+        (∀ τ ≤ d, stopped (M.runFrom c τ) → (∀ u < τ, ¬stopped (M.runFrom c u)) →
+          ∃ T ≤ 5 * τ + 2 * w.length + 2, ∃ ct' : ℤ → Option Bool,
+            H.runFrom (clockCfg (some (inj q)) c ct cp) T =
+              clockCfg (some (finish (M.runFrom c τ).state)) (M.runFrom c τ) ct' cp ∧
+            ∀ u < T, ∀ r, (H.runFrom (clockCfg (some (inj q)) c ct cp) u).state ≠
+              some (finish r) ∧
+              (H.runFrom (clockCfg (some (inj q)) c ct cp) u).state ≠ some (timeout r)) ∧
+        ((∀ u ≤ d, ¬stopped (M.runFrom c u)) →
+          ∃ T ≤ 5 * d + 2 * w.length + 2, ∃ ct' : ℤ → Option Bool,
+            H.runFrom (clockCfg (some (inj q)) c ct cp) T =
+              clockCfg (some (timeout (M.runFrom c d).state)) (M.runFrom c d) ct' cp ∧
+            ∀ u < T, ∀ r, (H.runFrom (clockCfg (some (inj q)) c ct cp) u).state ≠
+              some (finish r) ∧
+              (H.runFrom (clockCfg (some (inj q)) c ct cp) u).state ≠ some (timeout r)) := by
+  obtain ⟨Q, hQ, dQ, H, inj, finish, timeout, -, -, -, -, h⟩ :=
+    exists_stepClockTMVia (Function.Embedding.refl Bool) M stopAt
+  refine ⟨Q, hQ, dQ, H, inj, finish, timeout, ?_⟩
+  intro x c q hq w ct cp hw
+  have hw' : ∀ p : ℤ, -1 ≤ p → p ≤ (w.length : ℤ) →
+      ct (cp + p) = FinTM.bufferTape (w.map (Function.Embedding.refl Bool)) p := by
+    have hid : w.map (Function.Embedding.refl Bool) = w := by
+      rw [Function.Embedding.coe_refl, List.map_id]
+    rw [hid]
+    exact hw
+  obtain ⟨hfin, hto⟩ := h c q hq w ct cp hw'
+  refine ⟨fun τ hτ hs hmin => ?_, fun hns => ?_⟩
+  · obtain ⟨T, hT, w', -, hrun, hcut, -⟩ := hfin τ hτ hs hmin
+    exact ⟨T, hT, _, hrun, hcut⟩
+  · obtain ⟨T, hT, w', -, hrun, hcut, -⟩ := hto hns
+    exact ⟨T, hT, _, hrun, hcut⟩
+
+/-! ## §4 H3: the windowed runner -/
+
+/-- **H3's loop: the unclocked windowed round loop.** For a fixed binary machine `M` and a tag
+update `upd` that ignores silent steps, there is a module over the record alphabet with an
+entry (the round anchor) and three distinct live stop states `stop e` with the following
+contract. Start it at its entry with the record of a windowed configuration `c` with tag `τ`
+at the head of tape `0`, its other tapes blank, and the native input `x` as digits.
+* At every time, every work head stays within `C` times the record length plus one of its
+  entry position, and the output is unchanged.
+* For every `N`, at some time `t ≤ C · N · (record length + |x| + 1)`, with no stop state
+  before `t`, the module is exactly as `N` rounds of `Turing.windowRun` say: if those rounds
+  stop (exit `halted` or `left`) it is in `stop e` with the stopping record, and if they do
+  not it is back at its entry with the record of the configuration after `N` steps, at a time
+  `t ≥ N`. Every other tape, every head, the input position and the output are restored.
+
+So the loop stops exactly when the semantic run does, and a run that never stops keeps the
+loop live forever, inside its envelope. [AB09, Theorem 4.8, proof]
+
+**Proof sketch.** One phase host (`Turing.phaseHostTM`) with three phases. The test phase is
+`Turing.exists_recordTestTM` at the predicate "halted", embedded by R1 on tape `0`: `yes` goes
+to `stop halted`, `no` to the step phase. The step phase is `Turing.exists_recordStepTM` at
+`(M, upd)` on the bank `0, …, K`: `yes` returns to the entry, `no` goes to `stop left`. The stop
+states are stationary. Each round costs at most `C · (L + |x| + 1)` and at least one step
+(both rows have positive first-exit times), and both rows restore every head and scratch tape,
+so the envelope holds at all times and does not grow with the number of rounds. The `N`-round
+statement is an induction on `N` along `Turing.windowRun`, concatenating rounds by
+`Turing.MultiTapeTM.runFrom_add`. -/
+theorem exists_windowLoopTM (M : FinTM Bool) {T : Type} [Fintype T] [DecidableEq T]
+    (upd : T → Option Bool → T) (hupd : ∀ τ, upd τ none = τ) :
+    ∃ (K : ℕ) (P : Type) (_ : Fintype P) (_ : DecidableEq P)
+      (L : MultiTapeTM (K + 1) (RecSym M.State T) P) (entry : P) (stop : WindowExit → P)
+      (C : ℕ),
+      (∀ e, stop e ≠ entry) ∧ Function.Injective stop ∧
+      ∀ {x : List Bool} (s : ℕ) (c : Cfg M.k Bool M.State x) (τ : T), c.InWindow s →
+      ∀ d : Cfg (K + 1) (RecSym M.State T) P (x.map (RecSym.digitEmb M.State T)),
+        d.state = some entry → RecordAt d 0 (cfgRecord s c τ) →
+        (∀ j : Fin (K + 1), j ≠ 0 → ∀ p, d.workTapes j p = none) →
+        (∀ u (j : Fin (K + 1)), |(L.runFrom d u).workTapePos j - d.workTapePos j| ≤
+          ((C * (recordLength M.k x.length s + 1) : ℕ) : ℤ)) ∧
+        (∀ u, (L.runFrom d u).output = d.output) ∧
+        ∀ N : ℕ, ∃ t, t ≤ C * N * (recordLength M.k x.length s + x.length + 1) ∧
+          ((windowRun M.tm s upd N c τ).1 = .exhausted → N ≤ t) ∧
+          (∀ u < t, ∀ e, (L.runFrom d u).state ≠ some (stop e)) ∧
+          L.runFrom d t =
+            { d with
+              state := some (if (windowRun M.tm s upd N c τ).1 = .exhausted then entry
+                else stop (windowRun M.tm s upd N c τ).1)
+              workTapes := fun j q =>
+                if j = 0 ∧ d.workTapePos 0 ≤ q ∧
+                    q < d.workTapePos 0 + (recordLength M.k x.length s : ℤ)
+                  then fieldsTape (cfgRecord s (windowRun M.tm s upd N c τ).2.1
+                    (windowRun M.tm s upd N c τ).2.2) (q - d.workTapePos 0)
+                else d.workTapes j q } := by
+  sorry
+
+/-- **H3, the windowed runner** (the loop under the step clock, with the clock word supplied
+by the consumer). For a fixed binary machine `M` and a tag update `upd` that ignores silent
+steps, there is a module over the record alphabet with an entry and three distinct exits
+`exit e`, as follows. Start it at its entry with the record of a windowed configuration `c`
+with tag `τ` at the head of tape `0`, a delimited digit word `w` of value `d` at the head of
+the last tape, the other tapes blank, and the native input `x` as digits. Then it reaches an
+exit `exit out` at a time `t ≤ 5d + 2|w| + 3`, and no exit earlier; up to `t` every head stays
+within `C` times the record length plus `|w| + 1` of its entry position, the output is
+unchanged, and the space used is at most the number of tapes times twice that radius plus
+one. Moreover:
+* **halt and window exit are certified**: if `N` rounds of `Turing.windowRun` stop, and
+  `C · N · (record length + |x| + 1) ≤ d`, then `out` is their exit;
+* **and determined**: if `out` is `halted` or `left`, it is the exit of a stopping
+  `Turing.windowRun`, whose record is on tape `0`; the clock interval holds some digit word of
+  width `|w|`; every other cell, every head and the input position are restored;
+* `out = exhausted` is the clock's timeout, with no further claim on the tapes.
+
+[AB09, Theorem 4.8, proof]
+
+**Proof sketch.** `Turing.exists_stepClockTMVia` at `e := RecSym.digitEmb`, body the loop of
+`Turing.exists_windowLoopTM`, and stop states the loop's two stop states `stop halted` and
+`stop left`; the clock's `inj` of the loop's entry is the runner's entry, and its `finish` at
+the two stop states are the exits `halted` and `left` (all other `finish` values are
+unreachable). Every `timeout r` dispatches in one step to the exit `exhausted`, hence the `+ 3`.
+The loop's stop time after `N` stopping rounds is at most
+`C · N · (L + |x| + 1)`; if it is at most `d` the clock finishes there, and otherwise it times
+out. The heads follow the loop's heads (the clock's trajectory clause), which the loop's
+all-times envelope bounds, and the counter head stays in `[cp - 1, cp + |w|]`. -/
+theorem exists_windowRunnerTM (M : FinTM Bool) {T : Type} [Fintype T] [DecidableEq T]
+    (upd : T → Option Bool → T) (hupd : ∀ τ, upd τ none = τ) :
+    ∃ (K : ℕ) (P : Type) (_ : Fintype P) (_ : DecidableEq P)
+      (R : MultiTapeTM (K + 2) (RecSym M.State T) P) (entry : P) (exit : WindowExit → P)
+      (C : ℕ),
+      (∀ e, exit e ≠ entry) ∧ Function.Injective exit ∧
+      ∀ {x : List Bool} (s : ℕ) (c : Cfg M.k Bool M.State x) (τ : T), c.InWindow s →
+      ∀ (w : List Bool)
+        (d : Cfg (K + 2) (RecSym M.State T) P (x.map (RecSym.digitEmb M.State T))),
+        d.state = some entry → RecordAt d 0 (cfgRecord s c τ) →
+        (∀ p : ℤ, -1 ≤ p → p ≤ (w.length : ℤ) →
+          d.workTapes (Fin.last (K + 1)) (d.workTapePos (Fin.last (K + 1)) + p) =
+            FinTM.bufferTape (w.map (RecSym.digitEmb M.State T)) p) →
+        (∀ j : Fin (K + 2), j ≠ 0 → j ≠ Fin.last (K + 1) → ∀ p, d.workTapes j p = none) →
+        ∃ (t : ℕ) (out : WindowExit),
+          t ≤ 5 * Nat.ofDigits 2 (w.map Bool.toNat) + 2 * w.length + 3 ∧
+          (R.runFrom d t).state = some (exit out) ∧
+          (∀ u < t, ∀ e, (R.runFrom d u).state ≠ some (exit e)) ∧
+          (∀ u ≤ t, ∀ j : Fin (K + 2), |(R.runFrom d u).workTapePos j - d.workTapePos j| ≤
+            ((C * (recordLength M.k x.length s + w.length + 1) : ℕ) : ℤ)) ∧
+          (∀ u ≤ t, (R.runFrom d u).output = d.output) ∧
+          R.spaceUsed d t ≤ (K + 2) * (2 * C * (recordLength M.k x.length s + w.length + 1) + 1) ∧
+          (∀ N, (windowRun M.tm s upd N c τ).1 ≠ .exhausted →
+            C * N * (recordLength M.k x.length s + x.length + 1) ≤
+              Nat.ofDigits 2 (w.map Bool.toNat) →
+            out = (windowRun M.tm s upd N c τ).1) ∧
+          (out ≠ .exhausted → ∃ N, (windowRun M.tm s upd N c τ).1 = out ∧
+            ∃ w' : List Bool, w'.length = w.length ∧
+            R.runFrom d t =
+              { d with
+                state := some (exit out)
+                workTapes := fun j q =>
+                  if j = 0 ∧ d.workTapePos 0 ≤ q ∧
+                      q < d.workTapePos 0 + (recordLength M.k x.length s : ℤ)
+                    then fieldsTape (cfgRecord s (windowRun M.tm s upd N c τ).2.1
+                      (windowRun M.tm s upd N c τ).2.2) (q - d.workTapePos 0)
+                  else if j = Fin.last (K + 1) then
+                    wordPatch (d.workTapes j) (d.workTapePos j)
+                      (w'.map (RecSym.digitEmb M.State T)) q
+                  else d.workTapes j q }) := by
+  sorry
+
+/-- **H3 with the configuration-count clock** (what `space_hierarchy`'s diagonalizer cites).
+The windowed runner that builds its own clock. For a fixed binary machine `M` and a tag update
+`upd` that ignores silent steps, there is a module over the record alphabet with an entry and
+three distinct exits `exit e`, as follows. Start it at its entry with the record of a
+windowed configuration `c` with tag `τ` at the head of tape `0`, every other tape blank, and
+the native input `x` as digits. Then it reaches an exit `exit out` within `C · 2^(C·(L + 1))`
+steps, where `L` is the record length, and no exit earlier. Up to then every head stays within
+`C · (L + 1)` cells of its entry position, so the space used is `O(L)` with constants
+depending only on `M` and `upd`, and the output is unchanged. Moreover:
+* **the configuration count suffices**: if `N ≤ configBound M |x| s + 1` rounds of
+  `Turing.windowRun` stop, then `out` is their exit, and the stopping record is on tape `0`;
+* if `out` is `halted` or `left`, it is the exit of a stopping `Turing.windowRun`, whose record
+  is on tape `0`, with every other tape blank again and every head and the input position
+  restored.
+
+With `Turing.windowRun_summary_of_halts`, a halting run of `M` within `s` cells and
+`configBound M |x| s` steps is reported as `halted` with its output's tag. The bound
+`N ≤ configBound + 1` contains the extra halt-test round (the gate's check 4). [AB09, §4.1.3,
+proof of Theorem 4.8; §4.1.1, Claim 4.4]
+
+**Proof sketch.** The statement does not fix the clock, and two routes meet it.
+
+*Route A (one shared clock).* Build the clock word, then run `Turing.exists_windowRunnerTM` on
+it, then clear it. The clock word is all `true` of width `W := c_M · L`: by
+`Turing.FinTM.configBound_le_two_pow`, the configuration count is at most
+`2 ^ (|Q| + posWidth |x| + 3k(2s + 1))`, the per-round cost is
+`C · (L + |x| + 1) ≤ C · 2^(L + 1)` (since `|x| + 2 ≤ 2^(posWidth |x|)` and
+`posWidth |x| ≤ L`), and `L ≥ k(2s + 1) + posWidth |x|`; so `2^W - 1` exceeds
+`C · (configBound + 1) · (L + |x| + 1)` for a constant `c_M` depending only on `|Q|` and `C`
+(`L ≥ 4`). The word is written by copying the record's layout `c_M` times onto a scratch tape
+and mapping every cell to `digit true` (`Turing.copyTM`, `Turing.skipTM`, `Turing.scanTM`, as
+S1b's plan does, design §12.8a §4 step 5); it costs `O(L)` cells and time. After a `halted` or
+`left` exit, clear the clock (`Turing.clearTM_run_ofCfg`) and rewind its head.
+
+*Route B (the round clock, proved today; the gate's row 3).* Run the window round (the test
+row, then the step row) as the body of `Turing.counterLoopTMVia` with the anchor at the round's
+start and the halt and window exits merged into its one optional early exit
+(`Turing.counterLoopTMVia_run_escape`), clock exhaustion being `done`
+(`Turing.counterLoopTMVia_run_done`); after an escape, one more test row tells `halted` from
+`left` on the unchanged record. The clock word has width `|Q| + posWidth |x| + 3k(2s + 1) + 1`
+or more, so its value exceeds `configBound M |x| s`: rounds, not steps, are counted, and the
+time is at most the clock value times `C · (L + |x| + 1)` (`Turing.counterLoop_time_le`). -/
+theorem exists_configWindowRunnerTM (M : FinTM Bool) {T : Type} [Fintype T] [DecidableEq T]
+    (upd : T → Option Bool → T) (hupd : ∀ τ, upd τ none = τ) :
+    ∃ (K : ℕ) (P : Type) (_ : Fintype P) (_ : DecidableEq P)
+      (R : MultiTapeTM (K + 1) (RecSym M.State T) P) (entry : P) (exit : WindowExit → P)
+      (C : ℕ),
+      (∀ e, exit e ≠ entry) ∧ Function.Injective exit ∧
+      ∀ {x : List Bool} (s : ℕ) (c : Cfg M.k Bool M.State x) (τ : T), c.InWindow s →
+      ∀ d : Cfg (K + 1) (RecSym M.State T) P (x.map (RecSym.digitEmb M.State T)),
+        d.state = some entry → RecordAt d 0 (cfgRecord s c τ) →
+        (∀ j : Fin (K + 1), j ≠ 0 → ∀ p, d.workTapes j p = none) →
+        ∃ (t : ℕ) (out : WindowExit),
+          t ≤ C * 2 ^ (C * (recordLength M.k x.length s + 1)) ∧
+          (R.runFrom d t).state = some (exit out) ∧
+          (∀ u < t, ∀ e, (R.runFrom d u).state ≠ some (exit e)) ∧
+          (∀ u ≤ t, ∀ j : Fin (K + 1), |(R.runFrom d u).workTapePos j - d.workTapePos j| ≤
+            ((C * (recordLength M.k x.length s + 1) : ℕ) : ℤ)) ∧
+          (∀ u ≤ t, (R.runFrom d u).output = d.output) ∧
+          R.spaceUsed d t ≤ (K + 1) * (2 * C * (recordLength M.k x.length s + 1) + 1) ∧
+          (∀ N ≤ M.configBound x.length s + 1, (windowRun M.tm s upd N c τ).1 ≠ .exhausted →
+            out = (windowRun M.tm s upd N c τ).1) ∧
+          (out ≠ .exhausted → ∃ N, (windowRun M.tm s upd N c τ).1 = out ∧
+            R.runFrom d t =
+              { d with
+                state := some (exit out)
+                workTapes := fun j q =>
+                  if j = 0 ∧ d.workTapePos 0 ≤ q ∧
+                      q < d.workTapePos 0 + (recordLength M.k x.length s : ℤ)
+                    then fieldsTape (cfgRecord s (windowRun M.tm s upd N c τ).2.1
+                      (windowRun M.tm s upd N c τ).2.2) (q - d.workTapePos 0)
+                  else d.workTapes j q }) := by
+  sorry
+
+/-! ## §5 H5: input devices -/
+
+/-- **The cell of a virtual input at position `i`** (the input-tape convention of
+`Turing.Cfg.inputSymbol`): blank at `0` and beyond the word, the `i`-th symbol otherwise.
+[AB09, §1.2: the input tape, with blanks at both ends] -/
+def inputCell {Γ : Type*} (y : List Γ) (i : ℕ) : Option Γ :=
+  if i = 0 then none else y[i - 1]?
+
+/-- The native input symbol is the input cell at the head.
+
+**Proof sketch.** Compare the three cases of `Turing.Cfg.inputSymbol`: position `0`, the right
+blank `|y| + 1` (where the lookup is out of range), and the interior
+(`Turing.inputSymbolInner`). -/
+theorem Cfg.inputSymbol_eq_inputCell {k : ℕ} {Γ S : Type*} {y : List Γ}
+    (c : Cfg k Γ S y) : c.inputSymbol = inputCell y c.inputPos.val := by
+  have hlt := c.inputPos.isLt
+  by_cases h0 : c.inputPos.val = 0
+  · have hz : c.inputPos = 0 := Fin.ext h0
+    simp [Cfg.inputSymbol, inputCell, hz]
+  · by_cases hr : c.inputPos.val = y.length + 1
+    · have hz : c.inputPos ≠ 0 := fun h => h0 (by rw [h]; rfl)
+      simp only [Cfg.inputSymbol, inputCell, dif_neg hz, dif_pos hr, if_neg h0]
+      rw [List.getElem?_eq_none (by omega)]
+    · have hin := inputSymbolInner (cfg := c) (c.inputPos.val - 1) (by omega) (by omega)
+      rw [hin]
+      simp only [inputCell, if_neg h0]
+      rw [List.getElem?_eq_getElem (by omega)]
+
+/-- **H5, the native device**: a host configuration presents its own input `y` at virtual
+position `i` when its physical input head is at `i`. Reading is the native read, and moving is
+the native clamped move; there is nothing to store. This is the device of H2's step block
+(its seam relation's input clause) and of `U₀`, whose virtual input is all of its input.
+[AB09, §1.2] -/
+def NativeAt {K : ℕ} {Γ S : Type*} {y : List Γ} (d : Cfg K Γ S y) (i : Fin (y.length + 2)) :
+    Prop :=
+  d.inputPos = i
+
+/-- The native device reads the virtual input cell.
+
+**Proof sketch.** `Turing.Cfg.inputSymbol_eq_inputCell` at the head. -/
+theorem NativeAt.inputSymbol_eq {K : ℕ} {Γ S : Type*} {y : List Γ} {d : Cfg K Γ S y}
+    {i : Fin (y.length + 2)} (h : NativeAt d i) : d.inputSymbol = inputCell y i.val := by
+  rw [Cfg.inputSymbol_eq_inputCell, h]
+
+/-- The native device moves the virtual head by the clamped move. -/
+theorem NativeAt.move {K : ℕ} {Γ S : Type*} {y : List Γ} {d : Cfg K Γ S y}
+    {i : Fin (y.length + 2)} (h : NativeAt d i) (m : SignType) :
+    NativeAt { d with inputPos := moveInputPos d.inputPos m } (moveInputPos i m) := by
+  unfold NativeAt at h ⊢
+  rw [h]
+
+/-- The initial configuration presents its input natively at position `1`, the position at
+which `U₀`'s startup must leave its input head (the gate's check 2). -/
+theorem nativeAt_init {K : ℕ} {Γ S : Type*} (q₀ : S) (y : List Γ) :
+    NativeAt (Cfg.init q₀ y : Cfg K Γ S y) 1 := rfl
+
+/-- **The boundary test reads a blank exactly at the virtual left boundary.** If the header
+length `ℓ` is positive and the physical head is at `p` with `ℓ ≤ p ≤ |z| + 1`, then the
+physical input cell `p - ℓ` is blank exactly when `p = ℓ`. This holds for every `z`, so for an
+empty payload as well (the gate's suggested sanity obligation for the bounded-prefix device).
+
+**Proof sketch.** At `p = ℓ` the cell is position `0`. Otherwise `1 ≤ p - ℓ ≤ |z|`, since
+`ℓ ≥ 1`, and the cell holds an input symbol. -/
+theorem inputCell_sub_eq_none_iff {z : List Bool} {ℓ p : ℕ} (hℓ : 0 < ℓ) (hp : ℓ ≤ p)
+    (hpz : p ≤ z.length + 1) : inputCell z (p - ℓ) = none ↔ p = ℓ := by
+  unfold inputCell
+  by_cases h : p - ℓ = 0
+  · simp only [if_pos h, true_iff]
+    omega
+  · rw [if_neg h, List.getElem?_eq_getElem (by omega)]
+    simp only [reduceCtorEq, false_iff]
+    omega
+
+/-- **Away from the boundary the virtual cell is the physical one.** If `y` is `z` without
+its first `ℓ` symbols, the virtual cell `i ≠ 0` of `y` is the physical cell `ℓ + i` of `z`,
+the right blank included.
+
+**Proof sketch.** Both are the lookup of `z` at `ℓ + i - 1` (`List.getElem?_drop`). -/
+theorem inputCell_of_drop {z y : List Bool} {ℓ : ℕ} (h : z.drop ℓ = y) {i : ℕ}
+    (hi : i ≠ 0) : inputCell y i = inputCell z (ℓ + i) := by
+  subst h
+  unfold inputCell
+  rw [if_neg hi, if_neg (by omega), List.getElem?_drop]
+  congr 1
+  omega
+
+/-- **H5, the bounded-prefix ruler device** (the gate's row 1): a host configuration `d` over
+the physical input `z` presents the virtual input `y` at virtual position `i` with header
+length `ℓ` and ruler tape `r` when `z` is a header of length `ℓ > 0` followed by `y`, the
+physical head is at `ℓ + i`, and tape `r` holds, from its head, the delimited unary ruler
+`true^ℓ`. Since `ℓ > 0`, the physical cell `i` is blank exactly when `i = 0`, so a sweep of
+`ℓ` cells left, a read and a sweep back test the virtual left boundary without clamping. The
+ruler's cells are the device's whole storage: `ℓ + 2` visited cells, however far the virtual
+head travels. [AB09, §1.2; Exercise 4.1] -/
+def RulerAt {K : ℕ} {S : Type*} {y z : List Bool} (ℓ : ℕ) (r : Fin K) (d : Cfg K Bool S z)
+    (i : Fin (y.length + 2)) : Prop :=
+  0 < ℓ ∧ ℓ ≤ z.length ∧ z.drop ℓ = y ∧ d.inputPos.val = ℓ + i.val ∧
+    ∀ p : ℤ, -1 ≤ p → p ≤ (ℓ : ℤ) →
+      d.workTapes r (d.workTapePos r + p) = FinTM.bufferTape (List.replicate ℓ true) p
+
+/-- **The header length of `space_universal`'s input.** The input
+`⟨bits s, ⟨α, x⟩⟩ = pairEncode (bits s) (pairEncode α x)` is a header of length
+`2|bits s| + 2|α| + 4` followed by `x`.
+
+**Proof sketch.** Each pairing doubles its first word and adds two separator cells
+(`Turing.universal_pair_length`). -/
+theorem pairEncode_pairEncode_length (u α x : List Bool) :
+    (pairEncode u (pairEncode α x)).length = (2 * u.length + 2 * α.length + 4) + x.length := by
+  rw [universal_pair_length, universal_pair_length]
+  omega
+
+/-- **The payload after the header.** Dropping the header of length `2|u| + 2|α| + 4` from
+`pairEncode u (pairEncode α x)` leaves `x`: the ruler device's `z.drop ℓ = y`.
+
+**Proof sketch.** Drop the two pairings' prefixes one after the other. -/
+theorem pairEncode_pairEncode_drop (u α x : List Bool) :
+    (pairEncode u (pairEncode α x)).drop (2 * u.length + 2 * α.length + 4) = x := by
+  have hd (v z : List Bool) : (pairEncode v z).drop (2 * v.length + 2) = z := by
+    have hl : ((v.flatMap fun b => [b, b]) ++ [false, true]).length = 2 * v.length + 2 := by
+      have h := universal_pair_length v []
+      simpa [pairEncode] using h
+    rw [show pairEncode v z = ((v.flatMap fun b => [b, b]) ++ [false, true]) ++ z from rfl]
+    exact List.drop_left' hl
+  rw [show 2 * u.length + 2 * α.length + 4 = (2 * u.length + 2) + (2 * α.length + 2) by ring,
+    ← List.drop_drop, hd, hd]
+
+/-- **The restoring suffix-boundary test** (the ruler device's core; the gate's suggested
+sanity obligation). There is a one-tape binary module with an entry and two distinct verdicts
+as follows. Start it at its entry with the delimited ruler `true^ℓ`, `ℓ > 0`, at its head and
+the physical input head at a position `p ≥ ℓ`. It reaches `yes` if `p = ℓ` and `no`
+otherwise, within `C · (ℓ + 1)` steps and no verdict earlier, with nothing else changed: the
+input head is back at `p` and the ruler head at its start, having stayed within `ℓ + 1` cells.
+The input itself is arbitrary, so an empty payload is included. [AB09, §1.2]
+
+**Proof sketch.** Move the input head left and the ruler head right in lockstep until the ruler
+head reads the blank after the ruler: `ℓ` moves, none clamped since `p ≥ ℓ`. Read the input cell
+at `p - ℓ`: it is blank exactly when `p - ℓ = 0`, since `p - ℓ ≤ |z| + 1 - ℓ ≤ |z|`. Move both
+heads back `ℓ` cells (the ruler head stops at the blank before the ruler, then steps right).
+A finite control carries the verdict. -/
+theorem exists_rulerTestTM :
+    ∃ (P : Type) (_ : Fintype P) (_ : DecidableEq P) (R : MultiTapeTM 1 Bool P)
+      (entry yes no : P) (C : ℕ), yes ≠ no ∧
+      ∀ {z : List Bool} (ℓ : ℕ) (d : Cfg 1 Bool P z), d.state = some entry → 0 < ℓ →
+        ℓ ≤ d.inputPos.val →
+        (∀ p : ℤ, -1 ≤ p → p ≤ (ℓ : ℤ) →
+          d.workTapes 0 (d.workTapePos 0 + p) = FinTM.bufferTape (List.replicate ℓ true) p) →
+        ∃ t ≤ C * (ℓ + 1),
+          (∀ u < t, (R.runFrom d u).state ≠ some yes ∧ (R.runFrom d u).state ≠ some no) ∧
+          (∀ u ≤ t, |(R.runFrom d u).workTapePos 0 - d.workTapePos 0| ≤ ((ℓ + 1 : ℕ) : ℤ)) ∧
+          R.runFrom d t = { d with state := some (if d.inputPos.val = ℓ then yes else no) } := by
+  sorry
+
+/-- **H5, the ruler device's call rows** ("read the virtual input cell", "move the virtual input
+head"). There is a one-tape binary module with a read entry, three read verdicts
+`readExit v`, a move entry per direction and a move exit, as follows, for every presentation
+`Turing.RulerAt ℓ 0 d i` of a virtual input `y` at `i`.
+* **Read**: from the read entry it reaches `readExit (inputCell y i)` within `C · (ℓ + 1)`
+  steps, no read verdict earlier, with nothing else changed.
+* **Move** by `m`: from `moveEntry m` it reaches the move exit within `C · (ℓ + 1)` steps, not
+  earlier, with the physical head at `ℓ + (moveInputPos i m)` and every tape, every head and
+  the output unchanged; so the result presents `y` at the clamped position `moveInputPos i m`.
+
+In both, the ruler head stays within `ℓ + 1` cells of its start, so the device's work space is
+`ℓ + 2` cells. [AB09, §1.2]
+
+**Proof sketch.** Both rows begin with the boundary test of `Turing.exists_rulerTestTM`. Read:
+on `yes` answer blank; on `no` answer the native symbol under the head, which is
+`y[i - 1]` or the right blank. Move: a right move is the native clamped move (at `i = |y| + 1`
+the physical head is at `|z| + 1` and clamps exactly as `moveInputPos` does); a stationary move
+does nothing; a left move is suppressed on `yes` and is the native left move on `no`. Rows are
+joined by R2 seams; the dispatch steps add a constant. -/
+theorem exists_rulerDeviceTM :
+    ∃ (P : Type) (_ : Fintype P) (_ : DecidableEq P) (R : MultiTapeTM 1 Bool P)
+      (readEntry : P) (readExit : Option Bool → P) (moveEntry : SignType → P) (moveExit : P)
+      (C : ℕ),
+      Function.Injective readExit ∧ (∀ v, readExit v ≠ moveExit) ∧
+      ∀ {y z : List Bool} (ℓ : ℕ) (d : Cfg 1 Bool P z) (i : Fin (y.length + 2)),
+        RulerAt ℓ 0 d i →
+        (d.state = some readEntry →
+          ∃ t ≤ C * (ℓ + 1),
+            (∀ u < t, ∀ v, (R.runFrom d u).state ≠ some (readExit v)) ∧
+            (∀ u ≤ t, |(R.runFrom d u).workTapePos 0 - d.workTapePos 0| ≤ ((ℓ + 1 : ℕ) : ℤ)) ∧
+            R.runFrom d t = { d with state := some (readExit (inputCell y i.val)) }) ∧
+        (∀ m : SignType, d.state = some (moveEntry m) →
+          ∃ t ≤ C * (ℓ + 1),
+            (∀ u < t, (R.runFrom d u).state ≠ some moveExit) ∧
+            (∀ u ≤ t, |(R.runFrom d u).workTapePos 0 - d.workTapePos 0| ≤ ((ℓ + 1 : ℕ) : ℤ)) ∧
+            (R.runFrom d t).state = some moveExit ∧
+            (R.runFrom d t).inputPos.val = ℓ + (moveInputPos i m).val ∧
+            (R.runFrom d t).workTapes = d.workTapes ∧
+            (R.runFrom d t).workTapePos = d.workTapePos ∧
+            (R.runFrom d t).output = d.output) := by
+  sorry
+
+/-- **The ruler host layout**: a configuration `c` of an `m`-tape machine on the virtual input
+`y`, viewed over the physical input `z` with a header of length `ℓ`: the control `q`, the
+physical input head at `ℓ + c`'s position, `c`'s work tapes and heads first, the ruler tape
+`rt` with its head at `rp` last, and `c`'s output. -/
+def rulerHostCfg {m : ℕ} {S Q : Type} {y z : List Bool} (ℓ : ℕ)
+    (hz : z.length = ℓ + y.length) (q : Option Q) (c : Cfg m Bool S y) (rt : ℤ → Option Bool)
+    (rp : ℤ) : Cfg (m + 1) Bool Q z :=
+  ⟨q, ⟨ℓ + c.inputPos.val, by have := c.inputPos.isLt; omega⟩, Fin.lastCases rt c.workTapes,
+    Fin.lastCases rp c.workTapePos, c.output⟩
+
+/-- **H5, the ruler host** (a lockstep transformer with pauses, the Z1 pattern of
+`Turing.vhostEmitTM` with the ruler device in place of the buffer). For any native-input
+binary machine `M`, there is a host on one more tape (the ruler, last), with an injection of
+the source states paired with a boundary tag, as follows. Present a source configuration `c`
+on the virtual input `y` inside `z = header ++ y` (header length `ℓ > 0`) through
+`Turing.rulerHostCfg`, with the ruler `true^ℓ` at the ruler head and the tag `b` true exactly
+at the virtual left boundary. Then for every `t`, within `C · (ℓ + 1) · t` host steps the host
+presents the source's configuration after `t` steps, with a correct tag; its bank tapes visit
+exactly the source's cells, and the ruler head stays on the ruler and its two delimiters. So
+the host halts exactly when the source does, with the source's output, using the source's
+space plus `ℓ + 2` cells. This is how H2's step block, whose input is native, runs on a suffix
+input unchanged (the H2 design note's O11). [AB09, §1.2; Exercise 4.1]
+
+**Proof sketch.** Each host step performs the source transition, reading the native symbol, or
+blank when the tag is set, and suppressing a left move when the tag is set. A right move
+clears the tag; after a left move from a cleared tag the host pauses for the boundary test of
+`Turing.exists_rulerTestTM` (on the ruler tape, by R1) and sets the tag from its verdict. The
+pause costs `C · (ℓ + 1)` steps and moves no bank head. Induct on `t` as
+`Turing.vhostEmitTM_runFrom` does; the visited-set clauses follow
+`Turing.vhostEmitTM_visitedByTapeHead_bank` and `_buffer`. -/
+theorem exists_rulerHostTM {m : ℕ} {S : Type} [Fintype S] [DecidableEq S]
+    (M : MultiTapeTM m Bool S) :
+    ∃ (Q : Type) (_ : Fintype Q) (_ : DecidableEq Q) (H : MultiTapeTM (m + 1) Bool Q)
+      (inj : S → Bool → Q) (C : ℕ),
+      ∀ {y z : List Bool} (ℓ : ℕ) (hz : z.length = ℓ + y.length), 0 < ℓ → z.drop ℓ = y →
+      ∀ (rt : ℤ → Option Bool) (rp : ℤ),
+        (∀ p : ℤ, -1 ≤ p → p ≤ (ℓ : ℤ) →
+          rt (rp + p) = FinTM.bufferTape (List.replicate ℓ true) p) →
+      ∀ (c : Cfg m Bool S y) (b : Bool), (b = true ↔ c.inputPos.val = 0) → ∀ t : ℕ,
+        ∃ t' ≤ C * (ℓ + 1) * t, ∃ b' : Bool, (b' = true ↔ (M.runFrom c t).inputPos.val = 0) ∧
+          H.runFrom (rulerHostCfg ℓ hz (c.state.map fun q => inj q b) c rt rp) t' =
+            rulerHostCfg ℓ hz ((M.runFrom c t).state.map fun q => inj q b') (M.runFrom c t)
+              rt rp ∧
+          (∀ i : Fin m,
+            H.visitedByTapeHead (rulerHostCfg ℓ hz (c.state.map fun q => inj q b) c rt rp) t'
+              i.castSucc = M.visitedByTapeHead c t i) ∧
+          H.visitedByTapeHead (rulerHostCfg ℓ hz (c.state.map fun q => inj q b) c rt rp) t'
+            (Fin.last m) ⊆ Finset.Icc (rp - 1) (rp + ℓ) := by
+  sorry
+
+/-! ## §6 `U₀`, the self-application universal machine -/
+
+/-- **`U₀`'s startup** (the gate's check 2). For an effective scheme `c` there is a binary
+machine with `K + 3` work tapes and an exit state such that for every code `α` there are a
+time `T` and a space bound `B`, **depending on `α` only**, with the following property on every
+input `pairEncode α w`. At time `T`, and not earlier, it is at its exit with:
+* the input head at position `1`, `Cfg.init`'s position, and the output empty, having emitted
+  nothing before (administrative output suppressed);
+* tape `0`, the simulated work tape, blank, and tape `1` holding the canonical table
+  `tableBitsK` of the decoded machine;
+* tape `2` holding the decoded machine's initial state in unary from cell `2` (cells `0` and
+  `1` blank), which is H2's summary tape for an empty output;
+* every other tape blank and every head at `0`.
+
+Up to `T` it has visited at most `B` cells. This configuration is the step block's seam for
+the decoded machine's initial configuration on the same input. [AB09, §1.4.1, Theorem 1.9]
+
+**Proof sketch.** Extract and canonize: `Turing.universalCanonTM c` (buffered composition of the
+prefix parser and the canonizer), with its emissions captured on a scratch tape as in
+`Turing.universalCaptureTM`; it ends after `3|α| + 4 + canonizerTime |α|` steps
+(`Turing.universalCanon_complete`) with `serialize (decode α)` captured and the input head at
+`2|α| + 3`. The serialization is `serializeK` (`Turing.oneTapeMachineFormat.serialize_eq`):
+skip its doubled state count and separator, copy the unary initial state to tape `2` at offset
+`2` and the remaining table to tape `1`; clear the scratch and the buffer. Rewind the input head
+to position `1` (`Turing.FinTM.timed_rewind`, `2|α| + 5` steps). Every phase depends on `α`
+only, so `T` and `B` do (`Turing.MultiTapeTM.spaceUsed_le_mul_succ` at the canonizer's halting
+time bounds its cells). -/
+theorem exists_selfStartupTM (c : EffectiveMachineCode) :
+    ∃ (K : ℕ) (P : Type) (_ : Fintype P) (_ : DecidableEq P)
+      (R : MultiTapeTM (K + 3) Bool P) (exit : P),
+      ∀ α : List Bool, ∃ T B : ℕ, ∀ w : List Bool,
+        R.runFrom (R.initCfg (pairEncode α w)) T =
+          ⟨some exit, 1,
+            fun j => if j = 1 then FinTM.bufferTape (tableBitsK (c.decode α).tm.tr)
+              else if j = 2 then fun p => FinTM.bufferTape (unaryFin (c.decode α).tm.q₀) (p - 2)
+              else fun _ => none,
+            fun _ => 0, []⟩ ∧
+        (∀ u < T, (R.runFrom (R.initCfg (pairEncode α w)) u).state ≠ some exit) ∧
+        (∀ u ≤ T, (R.runFrom (R.initCfg (pairEncode α w)) u).output = []) ∧
+        R.spaceUsed (R.initCfg (pairEncode α w)) T ≤ B := by
+  sorry
+
+/-- **`U₀`, the self-application universal machine** (`space_hierarchy`'s sketch; the
+sibling of `Complexity.space_universal`, with the native device in place of the
+bounded-prefix one). For an effective scheme `c` there is a binary machine `U₀` such that
+for every code `α` there is a constant `C > 0` with: whenever the machine coded by `α` halts
+on `pairEncode α w` with some output, having visited at most `s` cells, `U₀` halts on the same
+input with the same output, having visited at most `C · (s + 1)` cells. Only this forward
+direction is claimed; `space_hierarchy` instantiates `c := Complexity.TimeHierarchy.code`.
+[AB09, Exercise 4.1, forward clause, at self-application; §4.1.3, proof of Theorem 4.8]
+
+Deviation: `C` depends on the code `α` (as in `Turing.universal`), and the input is the coded
+machine's own input (self-application), so no copy and no position counter is needed.
+
+**Proof sketch.** Startup, then rounds. (i) `Turing.exists_selfStartupTM` reaches the step
+block's seam for the coded machine's initial configuration, on the same input with the input
+head at `1`, within `B_α` cells. (ii) Then the step block of H2 on tapes `0..2`, embedded by
+R1: **assumed as delivered**, `h1Round_effect` (private in `TuringMachine/CodeSimulator.lean`;
+the promotion's `Turing.StepBlock.roundTM_effect`, being gated separately) at `k = 1`, with the
+additive `roundTM_iterate` and `roundTM_visited` of the H2 draft, which are proved from it.
+Each round represents one source step (`a.apply c`), is silent, keeps the mirrored head at the
+source head's start or end position, and keeps the auxiliary heads within
+`B := 50·(|tableBitsK| + 1)` of `0`. (iii) Emission: the host blanks the summary cell before
+each round, applies the round to the source configuration with its output erased (the round's
+effect does not depend on the source's output), finds the round's exact emission in the cell
+(`summaryEmit none b = b`), emits it and blanks the cell again: an `O(1)` leaf on tape `2`. (iv)
+At the halt exit the host halts. The mirrored tape visits exactly the cells the coded machine
+visits, at most `s`; the auxiliary tapes stay in `[-B, B]`; the startup's cells are `B_α`. So
+the space is at most `B_α + s + 2(2B + 1) ≤ C_α · (s + 1)`. -/
+theorem exists_selfUniversal (c : EffectiveMachineCode) :
+    ∃ U₀ : FinTM Bool, ∀ α : List Bool, ∃ C : ℕ, 0 < C ∧
+      ∀ (w output : List Bool) (t s : ℕ),
+        (c.decode α).toFinTM.ComputesInTime (pairEncode α w) output t →
+        (c.decode α).toFinTM.tm.spaceUsed
+            ((c.decode α).toFinTM.tm.initCfg (pairEncode α w)) t ≤ s →
+          ∃ t' : ℕ, U₀.ComputesInTime (pairEncode α w) output t' ∧
+            U₀.tm.spaceUsed (U₀.tm.initCfg (pairEncode α w)) t' ≤ C * (s + 1) := by
+  sorry
+
+end Turing
+
+/-! ## §7 The addend-free `space_universal` (a proposal) -/
+
+namespace Complexity.B6Draft
+
+open Turing
+
+/-- **The space-bounded universal machine, addend-free** (proposed restatement of
+`Complexity.space_universal`; [AB09, Exercise 4.1], p. 93, forward clause). For the fixed
+scheme there is a machine `SU` such that for every code `α` there is a constant `C > 0` with:
+whenever the coded machine halts on `x` with `output`, having visited at most `s` work cells
+by then, `SU` on input `⟨bits s, ⟨α, x⟩⟩` halts with the same `output`, having visited at most
+`C · s` cells: the book's `C · t`. This drops the gated statement's `+ logSpace |x| + 1`
+addend, following the gate's row 1. The other deviations of the gated docstring stand (`C`
+depends on `α`; "before using `t` cells" read as "at most `s` visited cells").
+
+**Proof sketch.** (i) Startup: parse the header `bits s`, `α` and the two separators by a
+finite-state pair scan, writing one ruler cell per header cell, so that the ruler is
+`true^ℓ` with `ℓ = 2|bits s| + 2|α| + 4` (`Turing.pairEncode_pairEncode_length`,
+`Turing.pairEncode_pairEncode_drop`), the physical head at `ℓ + 1`; canonize `α` into a buffer
+as `U₀`'s startup does (`Turing.exists_selfStartupTM`'s phases, with the input read from the
+extracted code). (ii) Run `U₀`'s round loop through the ruler host (`Turing.exists_rulerHostTM`)
+on the virtual input `x`. (iii) Space: the startup's `B_α`, the ruler's `ℓ + 2`, the round
+loop's `s + O_α(1)` (as in `Turing.exists_selfUniversal`). Every qualifying run has
+`s ≥ 1` (`Turing.CodeTM.one_le_spaceUsed`), so `|bits s| ≤ s` gives
+`ℓ ≤ 2s + 2|α| + 4 ≤ (2|α| + 6) · s`, and the total is at most `C_α · s`. -/
+theorem space_universal :
+    ∃ SU : FinTM Bool, ∀ α : List Bool, ∃ C : ℕ, 0 < C ∧
+      ∀ (s : ℕ) (x output : List Bool) (t : ℕ),
+        ((TimeHierarchy.code).decode α).toFinTM.ComputesInTime x output t →
+        ((TimeHierarchy.code).decode α).toFinTM.tm.spaceUsed
+            (((TimeHierarchy.code).decode α).toFinTM.tm.initCfg x) t ≤ s →
+          ∃ t' : ℕ,
+            SU.ComputesInTime (pairEncode (Nat.bits s) (pairEncode α x)) output t' ∧
+            SU.tm.spaceUsed
+                (SU.tm.initCfg (pairEncode (Nat.bits s) (pairEncode α x))) t' ≤ C * s := by
+  sorry
+
+/-- **The proposal only strengthens the gated statement**: the gated `space_universal`
+(`C · (s + logSpace |x| + 1)`, byte-for-byte the statement of the restated
+`SpaceComplexity/Hierarchy.lean`) follows from the addend-free one with the same machine and
+constant.
+
+**Proof sketch.** `C · s ≤ C · (s + logSpace |x| + 1)`. -/
+theorem space_universal_gated_form :
+    ∃ SU : FinTM Bool, ∀ α : List Bool, ∃ C : ℕ, 0 < C ∧
+      ∀ (s : ℕ) (x output : List Bool) (t : ℕ),
+        ((TimeHierarchy.code).decode α).toFinTM.ComputesInTime x output t →
+        ((TimeHierarchy.code).decode α).toFinTM.tm.spaceUsed
+            (((TimeHierarchy.code).decode α).toFinTM.tm.initCfg x) t ≤ s →
+          ∃ t' : ℕ,
+            SU.ComputesInTime (pairEncode (Nat.bits s) (pairEncode α x)) output t' ∧
+            SU.tm.spaceUsed
+                (SU.tm.initCfg (pairEncode (Nat.bits s) (pairEncode α x))) t'
+              ≤ C * (s + logSpace x.length + 1) := by
+  obtain ⟨SU, hSU⟩ := space_universal
+  refine ⟨SU, fun α => ?_⟩
+  obtain ⟨C, hC, h⟩ := hSU α
+  refine ⟨C, hC, fun s x output t h₁ h₂ => ?_⟩
+  obtain ⟨t', h₃, h₄⟩ := h s x output t h₁ h₂
+  exact ⟨t', h₃, h₄.trans (Nat.mul_le_mul_left C (by omega))⟩
+
+end Complexity.B6Draft

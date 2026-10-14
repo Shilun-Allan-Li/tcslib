@@ -1,0 +1,1162 @@
+
+/-! ════ Spec probe (not landed). Each `MIG1Probe.spec_X` is stated as `type_of% @X` for a spec
+`X` that the unit leaves `sorry`, and is proved from the gated specs and from statement shims:
+verbatim statements of private lemmas that are proved in the tree (body `sorry` here). The probe
+checks that each composite constant, and the budget theorem's `23`, follows from today's
+proved lemmas. -/
+
+namespace Turing.FinTM
+
+-- @shim begin (verbatim definitions of `Build/Primitives.lean` used by the statements below)
+private def catalogPolyTape (q : ℕ) (z : ℤ) : Option Bool :=
+  if 0 ≤ z ∧ z < q then some true else none
+
+private def catalogPolyCost (q C : ℕ) : ℕ → ℕ
+  | 0 => C + 1
+  | r + 1 => q * (catalogPolyCost q C r + 2) + q + 2
+
+private def splitStep (w s : List Bool) : List Bool :=
+  if s.length ≤ w.length then s ++ [true] else s
+
+private def splitAccept (C e : ℕ) (w s : List Bool) : Bool :=
+  decide (s.length + C * (s.length + 1) ^ e = w.length)
+
+private def splitBank (M : FinTM Bool) (s : List Bool)
+    (q : Option M.State) (out : List Bool) : Cfg M.k Bool M.State [] :=
+  ⟨q, 1, fun _ => catalogPolyTape (s.length + 1), fun _ => 0, out⟩
+
+private def emitterSplitAccept (f : ℕ → ℕ) (w s : List Bool) : Bool :=
+  decide (s.length + f s.length = w.length)
+-- @shim end
+
+-- @shim begin (statement shims: verbatim statements of proved private lemmas)
+/-- Statement shim of `catalogPolyCost_le` (`Primitives.lean:1254`), proved in the tree.
+**Proof sketch.** See the source. -/
+private lemma catalogPolyCost_le (q C : ℕ) (hq : 0 < q) : ∀ r,
+    catalogPolyCost q C r ≤ (C + 1 + 5 * r) * q ^ r := by
+  sorry
+
+/-- Statement shim of `catalogPoly_unary_computes` (`Primitives.lean:1371`), proved in the tree.
+**Proof sketch.** See the source. -/
+private lemma catalogPoly_unary_computes (c C : ℕ) :
+    (catalogPolyUnaryTM c C).ComputesFunInTime
+      (fun x => List.replicate (C * (x.length + 1) ^ (c + 1)) true)
+      (fun n => (C + 5 * (c + 1) + 4) * (n + 1) ^ (c + 1)) := by
+  sorry
+
+/-- Statement shim of `pairCount_computes` (`Primitives.lean:1738`), proved in the tree.
+**Proof sketch.** See the source. -/
+private lemma pairCount_computes {M : FinTM Bool} {g : List Bool → List Bool}
+    {T : ℕ → ℕ} (hM : M.ComputesFunInTime g T) :
+    (pairCountTM M).ComputesFunInTime
+      (fun x => [match pairDecode x with
+        | some (_, b) => decide (b.length ≤ (g x).length)
+        | none => false]) (fun n => T n + 2 * n + 5) := by
+  sorry
+
+/-- Statement shim of `rawStrip_computes` (`Primitives.lean:1933`), proved in the tree.
+**Proof sketch.** See the source. -/
+private lemma rawStrip_computes : rawStripTM.ComputesFunInTime
+    (fun x => (splitAtLastTrue x).getD []) (fun n => 4 * (n + 1)) := by
+  sorry
+
+/-- Statement shim of `anyTrue_computes` (`Primitives.lean:1999`), proved in the tree.
+**Proof sketch.** See the source. -/
+private lemma anyTrue_computes : anyTrueTM.ComputesFunInTime
+    (fun x => [x.any id]) (fun n => n + 1) := by
+  sorry
+
+/-- Statement shim of `catalogMarker_cases` (`Primitives.lean:2015`), proved in the tree.
+**Proof sketch.** See the source. -/
+private lemma catalogMarker_cases (v : List Bool) :
+    (v.any id = false ∧ splitAtLastTrue v = none) ∨
+      ∃ u, v.any id = true ∧ splitAtLastTrue v = some u ∧
+        ∀ pre, splitAtLastTrue (pre ++ v) = some (pre ++ u) := by
+  sorry
+
+/-- Statement shim of `splitStep_inv` (`Primitives.lean:2892`), proved in the tree.
+**Proof sketch.** See the source. -/
+private lemma splitStep_inv (w s : List Bool) (hs : s.length ≤ w.length + 1) :
+    (splitStep w s).length ≤ w.length + 1 := by
+  sorry
+
+/-- Statement shim of `splitLoop_result` (`Primitives.lean:2935`), proved in the tree.
+**Proof sketch.** See the source. -/
+private lemma splitLoop_result (C e : ℕ) (w : List Bool) :
+    (match (List.range (w.length + 1)).find?
+        (fun i => splitAccept C e w ((splitStep w)^[i] [])) with
+      | some i => pairEncode (w.take ((splitStep w)^[i] []).length)
+          (w.drop ((splitStep w)^[i] []).length)
+      | none => []) =
+    (match solveSplit C e w.length with
+      | some i => pairEncode (w.take i) (w.drop i)
+      | none => []) := by
+  sorry
+
+/-- Statement shim of `splitLoop_bound` (`Primitives.lean:2955`), proved in the tree.
+**Proof sketch.** See the source. -/
+private lemma splitLoop_bound (c A e n : ℕ) :
+    c * (A * (n + 1) ^ (e + 1) + 1) * (n + 2) ≤
+      (2 * c * (A + 1)) * (n + 1) ^ (e + 2) := by
+  sorry
+
+/-- Statement shim of `splitBody_start` (`Primitives.lean:3665`), proved in the tree.
+**Proof sketch.** See the source. -/
+private lemma splitBody_start (M : FinTM Bool) (start : M.State) (w : List Bool) :
+    (splitBodyTM M start).tm.initCfg w =
+      Cfg.ofWords .anchor (stateWord (M.k + 1) []) := by
+  sorry
+
+/-- Statement shim of `splitBody_round` (`Primitives.lean:3981`), proved in the tree.
+**Proof sketch.** See the source. -/
+private lemma splitBody_round (M : FinTM Bool) (start : M.State) (w s out : List Bool)
+    (T : ℕ) (hT : M.tm.runFrom (splitBank M s (some start) []) T = splitBank M s none out) :
+    ∃ t, 0 < t ∧ t ≤ T + 5 * s.length + 3 * w.length + 20 ∧
+      (∀ j, 0 < j → j < t →
+        ((splitBodyTM M start).tm.runFrom
+          (Cfg.ofWords (input := w) .anchor (stateWord (M.k + 1) s)) j).state ≠ some .anchor) ∧
+      if decide (s.length + out.length = w.length) then
+        ((splitBodyTM M start).tm.runFrom
+          (Cfg.ofWords (input := w) .anchor (stateWord (M.k + 1) s)) t).state = none ∧
+        ((splitBodyTM M start).tm.runFrom
+          (Cfg.ofWords (input := w) .anchor (stateWord (M.k + 1) s)) t).output =
+            pairEncode (w.take s.length) (w.drop s.length)
+      else (splitBodyTM M start).tm.runFrom
+        (Cfg.ofWords (input := w) .anchor (stateWord (M.k + 1) s)) t =
+          Cfg.ofWords .anchor (stateWord (M.k + 1) (splitStep w s)) := by
+  sorry
+
+/-- Statement shim of `splitSource_poly` (`Primitives.lean:4171`), proved in the tree.
+**Proof sketch.** See the source. -/
+private lemma splitSource_poly (c C : ℕ) (s : List Bool) :
+    (catalogPolyUnaryTM c C).tm.runFrom
+      (splitBank (catalogPolyUnaryTM c C) s (some (.loop (Fin.last c))) [])
+      (catalogPolyCost (s.length + 1) C (c + 1) + 1) =
+      splitBank (catalogPolyUnaryTM c C) s none
+        (List.replicate (C * (s.length + 1) ^ (c + 1)) true) := by
+  sorry
+
+/-- Statement shim of `splitSource_constant` (`Primitives.lean:4181`), proved in the tree.
+**Proof sketch.** See the source. -/
+private lemma splitSource_constant (C : ℕ) (s : List Bool) :
+    (prependTM (List.replicate C true)).tm.runFrom
+      (splitBank (prependTM (List.replicate C true)) s
+        (some (0 : Fin ((List.replicate C true).length + 1))) []) (C + 1) =
+      splitBank (prependTM (List.replicate C true)) s none (List.replicate C true) := by
+  sorry
+
+/-- Statement shim of `splitBody_envelope` (`Primitives.lean:4202`), proved in the tree.
+**Proof sketch.** See the source. -/
+private lemma splitBody_envelope (C e l n T : ℕ) (hl : l ≤ n + 1)
+    (hT : T ≤ (C + 1 + 5 * e) * (l + 1) ^ e + 1) :
+    T + 5 * l + 3 * n + 20 ≤
+      ((C + 1 + 5 * e) * 2 ^ e + 40) * (n + 1) ^ (e + 1) := by
+  sorry
+
+/-- Statement shim of `emitterSplit_result` (`Primitives.lean:4361`), proved in the tree.
+**Proof sketch.** See the source. -/
+private lemma emitterSplit_result (f : ℕ → ℕ) (w : List Bool) :
+    (match (List.range (w.length + 1)).find?
+        (fun i => emitterSplitAccept f w ((splitStep w)^[i] [])) with
+      | some i => pairEncode (w.take ((splitStep w)^[i] []).length)
+          (w.drop ((splitStep w)^[i] []).length)
+      | none => []) =
+    (match solveSplitWith f w.length with
+      | some i => pairEncode (w.take i) (w.drop i)
+      | none => []) := by
+  sorry
+
+/-- Statement shim of `emitterSplit_loop_bound` (`Primitives.lean:4380`), proved in the tree.
+**Proof sketch.** See the source. -/
+private lemma emitterSplit_loop_bound (c A n t : ℕ) :
+    c * (A * (t + n + 2) + 1) * (n + 2) ≤
+      (2 * c * (A + 1)) * (n + 1) * (t + n + 2) := by
+  sorry
+
+/-- Statement shim of `emitter_width_budget` (`Primitives.lean:4672`), proved in the tree.
+**Proof sketch.** See the source. -/
+private lemma emitter_width_budget (f : ℕ → ℕ) (E : FinTM Bool)
+    (TE : ℕ → ℕ) (hTE : Monotone TE)
+    (hE : E.ComputesFunInTime (fun s => Nat.bits (f s.length)) TE)
+    (w s : List Bool) (hs : s.length ≤ w.length + 1) :
+    E.ComputesInTime s (Nat.bits (f s.length)) (TE s.length) ∧
+      (Nat.bits (f s.length)).length ≤ TE s.length ∧ TE s.length ≤ TE (w.length + 1) := by
+  sorry
+
+/-- Statement shim of `emitterP2_body_start` (`Primitives.lean:5493`), proved in the tree.
+**Proof sketch.** See the source. -/
+private lemma emitterP2_body_start (C D : FinTM Bool) (hk : 0 < C.k) (hl : 0 < D.k)
+    (ce cx : C.State) (de dx : D.State) (w : List Bool) :
+    (emitterP2BodyTM C D hk hl ce cx de dx).tm.initCfg w =
+      Cfg.ofWords .anchor (stateWord (C.k + D.k + 1) []) := by
+  sorry
+
+/-- Statement shim of `emitterP2_body_round` (`Primitives.lean:5891`), proved in the tree.
+**Proof sketch.** See the source. -/
+private lemma emitterP2_body_round (f : ℕ → ℕ) (C D : FinTM Bool)
+    (hk : 0 < C.k) (hl : 0 < D.k) (ce cx : C.State) (de dx : D.State)
+    (w s : List Bool) (a b : ℕ) (ha : 0 < a) (hb : 0 < b)
+    (hfC : ∀ j, 0 < j → j < a → (C.tm.runFrom
+      (Cfg.ofWords (input := w) ce (stateWord C.k s)) j).state ≠ some cx)
+    (hrC : C.tm.runFrom (Cfg.ofWords (input := w) ce (stateWord C.k s)) a =
+      Cfg.ofWords cx (stateWord C.k (Nat.bits (f s.length))))
+    (hfD : ∀ j, 0 < j → j < b → (D.tm.runFrom
+      (Cfg.ofWords (input := w) de (stateWord D.k (w.drop s.length))) j).state ≠ some dx)
+    (hrD : D.tm.runFrom (Cfg.ofWords (input := w) de (stateWord D.k (w.drop s.length))) b =
+      Cfg.ofWords dx (stateWord D.k (Nat.bits (w.drop s.length).length))) :
+    let B := emitterP2BodyTM C D hk hl ce cx de dx
+    let z := Cfg.ofWords (input := w) .anchor (stateWord B.k s)
+    ∃ t, 0 < t ∧
+      t ≤ a + b + 10 * (s.length + w.length + (Nat.bits (f s.length)).length +
+        (Nat.bits (w.drop s.length).length).length + 10) ∧
+      (∀ j, 0 < j → j < t → (B.tm.runFrom z j).state ≠ some .anchor) ∧
+      if emitterSplitAccept f w s then
+        (B.tm.runFrom z t).state = none ∧
+          (B.tm.runFrom z t).output = pairEncode (w.take s.length) (w.drop s.length)
+      else B.tm.runFrom z t = Cfg.ofWords .anchor (stateWord B.k (splitStep w s)) := by
+  sorry
+/-- Statement shim of `f2_seamed_space` (`Catalog.lean:8390`), proved in the tree.
+**Proof sketch.** See the source. -/
+private lemma f2_seamed_space (M : FinTM Bool) (x : List Bool)
+    (cfg : ℕ → Cfg M.k Bool M.State x) (N B H startup : ℕ)
+    (hstart : startup ≤ B) (hinit : M.tm.runFrom (M.tm.initCfg x) startup = cfg 0)
+    (hseam : ∀ j < N, ∀ i, -(H : ℤ) ≤ (cfg j).workTapePos i ∧
+      (cfg j).workTapePos i ≤ H)
+    (hend : (cfg N).state = none)
+    (hterminal : ∀ i, -((H + B : ℕ) : ℤ) ≤ (cfg N).workTapePos i ∧
+      (cfg N).workTapePos i ≤ (H + B : ℕ))
+    (hsegment : ∀ j < N, ∃ u ≤ B,
+      (M.tm.runFrom (cfg j) u).state = none ∨ M.tm.runFrom (cfg j) u = cfg (j + 1))
+    (t : ℕ) : M.tm.spaceUsed (M.tm.initCfg x) t ≤ M.k * (2 * (H + B) + 1) := by
+  sorry
+-- @shim end
+
+-- @shim begin (statement shim: Catalog's private `f2_loopHost_contracts`, re-targeted by the
+-- rename `f2_loopHost → loopHostTM`, with its witness `c = f2_loopHost_bound = 10` made explicit:
+-- its proof opens with `refine ⟨f2_loopHost_bound, ?_⟩`, `Build/Catalog.lean:8167`)
+private lemma loopHost_contracts_heads (body F : FinTM Bool) (anchor : body.State)
+    (Inv : List Bool → List Bool → Prop)
+    (stepF : List Bool → List Bool → List Bool)
+    (acceptF : List Bool → List Bool → Bool)
+    (out : List Bool → List Bool → List Bool) (findMode : Bool)
+    (s0 : List Bool → List Bool) (R T : ℕ → ℕ)
+    (hF : F.ComputesFunInTime (fun x => Nat.bits (R x.length)) T)
+    (hInv0 : ∀ x : List Bool, Inv x (s0 x))
+    (hInvStep : ∀ (x s : List Bool), Inv x s → Inv x (stepF x s))
+    (hstart : ∀ x : List Bool, ∃ t ≤ T x.length,
+      (∀ t' < t,
+        (body.tm.runFrom (body.tm.initCfg x) t').state ≠ some anchor) ∧
+      body.tm.runFrom (body.tm.initCfg x) t =
+        Cfg.ofWords anchor (stateWord body.k (s0 x)))
+    (hround : ∀ (x s : List Bool), Inv x s →
+      ∃ t, 0 < t ∧ t ≤ T x.length ∧
+        (∀ t', 0 < t' → t' < t →
+          (body.tm.runFrom
+            (Cfg.ofWords (input := x) anchor (stateWord body.k s)) t').state
+              ≠ some anchor) ∧
+        if acceptF x s then
+          (body.tm.runFrom
+            (Cfg.ofWords (input := x) anchor (stateWord body.k s)) t).state
+              = none ∧
+          (body.tm.runFrom
+            (Cfg.ofWords (input := x) anchor (stateWord body.k s)) t).output
+              = out x s
+        else
+          body.tm.runFrom
+            (Cfg.ofWords (input := x) anchor (stateWord body.k s)) t =
+              Cfg.ofWords anchor (stateWord body.k (stepF x s))) :
+    ∀ x : List Bool,
+      ∃ (cfg : ℕ → Cfg (loopHostTM body F anchor findMode).k Bool
+          (loopHostTM body F anchor findMode).State x) (startup : ℕ),
+        startup ≤ 10 * (T x.length + 1) ∧
+        (loopHostTM body F anchor findMode).tm.runFrom
+          ((loopHostTM body F anchor findMode).tm.initCfg x) startup = cfg 0 ∧
+        (∀ i ≤ R x.length, (cfg i).output = []) ∧
+        (cfg (R x.length + 1)).state = none ∧
+        (cfg (R x.length + 1)).output = (if findMode then [] else [false]) ∧
+        (∀ i ≤ R x.length, ∃ t ≤ 10 * (T x.length + 1),
+          if acceptF x ((stepF x)^[i] (s0 x)) then
+            ((loopHostTM body F anchor findMode).tm.runFrom (cfg i) t).state = none ∧
+            ((loopHostTM body F anchor findMode).tm.runFrom (cfg i) t).output =
+              (if findMode then out x ((stepF x)^[i] (s0 x)) else [true])
+          else (loopHostTM body F anchor findMode).tm.runFrom (cfg i) t = cfg (i + 1)) ∧
+        (∀ i ≤ R x.length, ∀ j,
+          -(T x.length : ℤ) ≤ (cfg i).workTapePos j ∧
+          (cfg i).workTapePos j ≤ T x.length) ∧
+        (∀ j, -((T x.length + 10 * (T x.length + 1) : ℕ) : ℤ) ≤
+          (cfg (R x.length + 1)).workTapePos j ∧
+          (cfg (R x.length + 1)).workTapePos j ≤
+            (T x.length + 10 * (T x.length + 1) : ℕ)) := by
+  sorry
+-- @shim end
+
+/-- Probe of `polyUnaryTM_computes`. -/
+theorem MIG1Probe.spec_polyUnaryTM_computes : type_of% @polyUnaryTM_computes := by
+  intro C e x
+  cases e with
+  | zero =>
+    simp only [polyUnaryTM, pow_zero, Nat.mul_one]
+    exact (constTM_computes (List.replicate C true) x).mono (by simp)
+  | succ d => exact catalogPoly_unary_computes d C x
+
+/-- Probe of `pairLenCheckTM_computes`. -/
+theorem MIG1Probe.spec_pairLenCheckTM_computes : type_of% @pairLenCheckTM_computes := by
+  intro C e
+  have hlen (x : List Bool) : (((pairDecode x).map Prod.fst).getD []).length ≤ x.length := by
+    cases hd : pairDecode x with
+    | none => simp
+    | some ab =>
+      rcases ab with ⟨a, b⟩
+      simp only [Option.map_some, Option.getD_some]
+      rw [Turing.eq_pairEncode_of_pairDecode x a b hd, length_pairEncode]
+      omega
+  have hG : (bufferedCompTM (pairExtractTM true false) (polyUnaryTM C e)).ComputesFunInTime
+      (fun x => List.replicate
+        (C * ((((pairDecode x).map Prod.fst).getD []).length + 1) ^ e) true)
+      (fun n => (C + 5 * e + 12) * ((n + 1) ^ e + n + 1)) := by
+    intro x
+    have hpow := Nat.pow_le_pow_left (Nat.add_le_add_right (hlen x) 1) e
+    have h := bufferedCompTM_computesInTime _ _ (pairExtractTM_fst x)
+      (polyUnaryTM_computes C e (((pairDecode x).map Prod.fst).getD []))
+    refine h.mono ?_
+    dsimp only
+    have := hlen x
+    have h3 := Nat.mul_le_mul_left (C + 5 * e + 4) hpow
+    generalize (x.length + 1) ^ e = P at h3 ⊢
+    generalize ((((pairDecode x).map Prod.fst).getD []).length + 1) ^ e = P' at h3 ⊢
+    have h4 : (C + 5 * e + 12) * (P + x.length + 1) =
+        (C + 5 * e + 4) * P + 8 * P + (C + 5 * e + 12) * (x.length + 1) := by ring
+    have h5 : 8 * (x.length + 1) ≤ (C + 5 * e + 12) * (x.length + 1) :=
+      Nat.mul_le_mul_right _ (by omega)
+    omega
+  intro x
+  have h := pairCount_computes hG x
+  have hh : (pairLenCheckTM C e).ComputesInTime x
+      [match pairDecode x with
+        | some (a, b) => decide (b.length ≤ C * (a.length + 1) ^ e)
+        | none => false]
+      ((C + 5 * e + 12) * ((x.length + 1) ^ e + x.length + 1) + 2 * x.length + 5) := by
+    cases hd : pairDecode x with
+    | none => simpa [pairLenCheckTM, hd] using h
+    | some uv => cases uv; simpa [pairLenCheckTM, hd] using h
+  refine hh.mono ?_
+  dsimp only
+  generalize (x.length + 1) ^ e = P
+  have h6 : (C + 5 * e + 17) * (P + x.length + 1) =
+      (C + 5 * e + 12) * (P + x.length + 1) + 5 * (P + x.length + 1) := by ring
+  omega
+
+/-- Probe of `stripLastTM_computes`. -/
+theorem MIG1Probe.spec_stripLastTM_computes : type_of% @stripLastTM_computes := by
+  have hD := bufferedCompTM_computesFunInTime pairExtractTM_snd anyTrue_computes
+    (by intro m n h; exact Nat.add_le_add_right h 1)
+  have hE : (constTM []).ComputesFunInTime (fun _ => []) (fun _ => 1) :=
+    fun x => constTM_computes [] x
+  have hM := timedCondTM_computes (p := fun x => ((pairDecode x).map Prod.snd |>.getD []).any id)
+    hD rawStrip_computes hE
+  intro x
+  have hm := hM x
+  have hh : stripLastTM.ComputesInTime x
+      (match pairDecode x with
+        | some (u, v) => match splitAtLastTrue v with
+          | some w => pairEncode u w
+          | none => []
+        | none => [])
+      (5 * (2 * (5 * (x.length + 1) + (5 * (x.length + 1) + 1) + 1) +
+        max (4 * (x.length + 1)) 1 + 1)) := by
+    cases hd : pairDecode x with
+    | none => simpa [stripLastTM, hd] using hm
+    | some uv =>
+      rcases uv with ⟨u, v⟩
+      rcases catalogMarker_cases v with ⟨ha, hs⟩ | ⟨w, ha, hs, hp⟩
+      · simpa [stripLastTM, hd, ha, hs] using hm
+      · have hx : splitAtLastTrue x = some (pairEncode u w) := by
+          rw [Turing.eq_pairEncode_of_pairDecode x u v hd]
+          exact hp _
+        simpa [stripLastTM, hd, ha, hs, hx] using hm
+  refine hh.mono ?_
+  dsimp only
+  have : max (4 * (x.length + 1)) 1 = 4 * (x.length + 1) := max_eq_left (by omega)
+  omega
+
+/-- The split-search round contracts in the loop's hypothesis form, for any exact unary source
+(today's `splitSolve_source`, with the round budget `(A + 5)·(n + 1)^(e + 1)`). -/
+private theorem MIG1Probe.split_hyps (C e : ℕ) (M : FinTM Bool) (start : M.State) (B : ℕ → ℕ)
+    (hsource : ∀ s : List Bool, M.tm.runFrom (splitBank M s (some start) []) (B s.length) =
+      splitBank M s none (List.replicate (C * (s.length + 1) ^ e) true))
+    (hbound : ∀ l, B l ≤ (C + 1 + 5 * e) * (l + 1) ^ e + 1) :
+    (∀ w : List Bool, ∃ t ≤ ((C + 1 + 5 * e) * 2 ^ e + 40 + 5) * (w.length + 1) ^ (e + 1),
+      (∀ t' < t, ((splitBodyTM M start).tm.runFrom ((splitBodyTM M start).tm.initCfg w)
+        t').state ≠ some .anchor) ∧
+      (splitBodyTM M start).tm.runFrom ((splitBodyTM M start).tm.initCfg w) t =
+        Cfg.ofWords .anchor (stateWord (splitBodyTM M start).k [])) ∧
+    (∀ (w s : List Bool), s.length ≤ w.length + 1 →
+      ∃ t, 0 < t ∧ t ≤ ((C + 1 + 5 * e) * 2 ^ e + 40 + 5) * (w.length + 1) ^ (e + 1) ∧
+        (∀ t', 0 < t' → t' < t →
+          ((splitBodyTM M start).tm.runFrom (Cfg.ofWords (input := w) .anchor
+            (stateWord (splitBodyTM M start).k s)) t').state ≠ some .anchor) ∧
+        if splitAccept C e w s then
+          ((splitBodyTM M start).tm.runFrom (Cfg.ofWords (input := w) .anchor
+            (stateWord (splitBodyTM M start).k s)) t).state = none ∧
+          ((splitBodyTM M start).tm.runFrom (Cfg.ofWords (input := w) .anchor
+            (stateWord (splitBodyTM M start).k s)) t).output =
+              pairEncode (w.take s.length) (w.drop s.length)
+        else
+          (splitBodyTM M start).tm.runFrom (Cfg.ofWords (input := w) .anchor
+            (stateWord (splitBodyTM M start).k s)) t =
+              Cfg.ofWords .anchor (stateWord (splitBodyTM M start).k (splitStep w s))) := by
+  refine ⟨fun w => ⟨0, Nat.zero_le _, fun j hj => absurd hj (Nat.not_lt_zero _),
+    splitBody_start M start w⟩, fun w s hs => ?_⟩
+  obtain ⟨t, htpos, ht, hsafe, hend⟩ := splitBody_round M start w s
+    (List.replicate (C * (s.length + 1) ^ e) true) (B s.length) (hsource s)
+  refine ⟨t, htpos, (ht.trans (splitBody_envelope C e s.length w.length (B s.length) hs
+    (hbound s.length))).trans (Nat.mul_le_mul_right _ (Nat.le_add_right _ _)), hsafe, ?_⟩
+  simpa only [splitAccept, List.length_replicate] using hend
+
+/-- The two exact unary sources of `splitSolveTM` (today's `splitSolve_closed`). -/
+private theorem MIG1Probe.split_sources (C e : ℕ) :
+    ∃ (M : FinTM Bool) (start : M.State) (B : ℕ → ℕ),
+      splitSolveTM C e = loopHostTM (splitBodyTM M start) lengthBitsTM .anchor true ∧
+      (∀ s : List Bool, M.tm.runFrom (splitBank M s (some start) []) (B s.length) =
+        splitBank M s none (List.replicate (C * (s.length + 1) ^ e) true)) ∧
+      (∀ l, B l ≤ (C + 1 + 5 * e) * (l + 1) ^ e + 1) := by
+  cases e with
+  | zero =>
+    exact ⟨prependTM (List.replicate C true), (0 : Fin ((List.replicate C true).length + 1)),
+      fun _ => C + 1, rfl, fun s => by simpa using splitSource_constant C s, fun l => by simp⟩
+  | succ e =>
+    exact ⟨catalogPolyUnaryTM e C, .loop (Fin.last e),
+      fun l => catalogPolyCost (l + 1) C (e + 1) + 1, rfl, splitSource_poly e C,
+      fun l => Nat.add_le_add_right (catalogPolyCost_le (l + 1) C (by omega) (e + 1)) 1⟩
+
+/-- The length counter at the split search's round budget. -/
+private theorem MIG1Probe.split_fuel (C e : ℕ) :
+    lengthBitsTM.ComputesFunInTime (fun w => Nat.bits (id w.length))
+      (fun n => ((C + 1 + 5 * e) * 2 ^ e + 40 + 5) * (n + 1) ^ (e + 1)) := by
+  intro w
+  refine (lengthBitsTM_computes w).mono ?_
+  have hn : w.length + 1 ≤ (w.length + 1) ^ (e + 1) := Nat.le_self_pow (Nat.succ_ne_zero e) _
+  exact (Nat.mul_le_mul_left 5 hn).trans (Nat.mul_le_mul_right _ (Nat.le_add_left _ _))
+
+/-- Probe of `splitSolveTM_computes`. -/
+theorem MIG1Probe.spec_splitSolveTM_computes : type_of% @splitSolveTM_computes := by
+  intro C e
+  obtain ⟨M, start, B, heq, hsource, hbound⟩ := MIG1Probe.split_sources C e
+  obtain ⟨hstart, hround⟩ := MIG1Probe.split_hyps C e M start B hsource hbound
+  rw [heq]
+  have hM := loopHostTM_finds (splitBodyTM M start) lengthBitsTM .anchor
+    (fun w s => s.length ≤ w.length + 1) splitStep (splitAccept C e)
+    (fun w s => pairEncode (w.take s.length) (w.drop s.length)) (fun _ => [])
+    id (fun n => ((C + 1 + 5 * e) * 2 ^ e + 40 + 5) * (n + 1) ^ (e + 1))
+    (MIG1Probe.split_fuel C e) (by intro w; simp) splitStep_inv hstart hround
+  intro w
+  have hm := hM w
+  dsimp only [id_eq] at hm
+  have hb : 10 * (((C + 1 + 5 * e) * 2 ^ e + 40 + 5) * (w.length + 1) ^ (e + 1) + 1) *
+      (w.length + 2) ≤ 20 * ((C + 1 + 5 * e) * 2 ^ e + 46) * (w.length + 1) ^ (e + 2) :=
+    (splitLoop_bound 10 ((C + 1 + 5 * e) * 2 ^ e + 40 + 5) e w.length).trans
+      (le_of_eq (by ring))
+  convert hm.mono hb using 1
+  exact (splitLoop_result C e w).symm
+
+/-- Probe of `loopHostTM_spaceUsed_le_budget`: the space half of `f2_exists_loopFind_space`,
+which uses nothing about the mode. -/
+theorem MIG1Probe.spec_loopHostTM_spaceUsed_le_budget :
+    type_of% @loopHostTM_spaceUsed_le_budget := by
+  intro body F anchor Inv stepF acceptF out findMode s0 R T hF hInv0 hInvStep hstart hround x t
+  let E := loopHostTM body F anchor findMode
+  obtain ⟨cfg, startup, hs, hinit, _, hend, _, hsegments, hheads, hterminal⟩ :=
+    loopHost_contracts_heads body F anchor Inv stepF acceptF out findMode s0 R T hF hInv0
+      hInvStep hstart hround x
+  have h := f2_seamed_space E x cfg (R x.length + 1) (10 * (T x.length + 1))
+    (T x.length) startup hs hinit (fun j hj => hheads j (by omega)) hend hterminal
+    (by
+      intro j hj
+      obtain ⟨u, hu, he⟩ := hsegments j (by omega)
+      refine ⟨u, hu, ?_⟩
+      split at he
+      · exact Or.inl he.1
+      · exact Or.inr he) t
+  have hb : 2 * (T x.length + 10 * (T x.length + 1)) + 1 ≤ 23 * (T x.length + 1) := by omega
+  calc
+    _ ≤ E.k * (23 * (T x.length + 1)) := h.trans (Nat.mul_le_mul_left _ hb)
+    _ = 23 * E.k * (T x.length + 1) := by ring
+
+/-- Probe of `splitSolveTM_spaceUsed`, from the budget theorem. -/
+theorem MIG1Probe.spec_splitSolveTM_spaceUsed : type_of% @splitSolveTM_spaceUsed := by
+  intro C e x t
+  obtain ⟨M, start, B, heq, hsource, hbound⟩ := MIG1Probe.split_sources C e
+  obtain ⟨hstart, hround⟩ := MIG1Probe.split_hyps C e M start B hsource hbound
+  rw [heq]
+  refine (loopHostTM_spaceUsed_le_budget (splitBodyTM M start) lengthBitsTM .anchor
+    (fun w s => s.length ≤ w.length + 1) splitStep (splitAccept C e)
+    (fun w s => pairEncode (w.take s.length) (w.drop s.length)) true (fun _ => [])
+    id (fun n => ((C + 1 + 5 * e) * 2 ^ e + 40 + 5) * (n + 1) ^ (e + 1))
+    (MIG1Probe.split_fuel C e) (by intro w; simp) splitStep_inv hstart hround x t).trans ?_
+  have hp : 1 ≤ (x.length + 1) ^ (e + 1) := Nat.one_le_pow _ _ (Nat.succ_pos _)
+  generalize (x.length + 1) ^ (e + 1) = P at hp ⊢
+  generalize (C + 1 + 5 * e) * 2 ^ e = A
+  calc 23 * (loopHostTM (splitBodyTM M start) lengthBitsTM .anchor true).k *
+        ((A + 40 + 5) * P + 1)
+      ≤ 23 * (loopHostTM (splitBodyTM M start) lengthBitsTM .anchor true).k *
+        ((A + 46) * P) := Nat.mul_le_mul_left _ (by
+          have : (A + 46) * P = (A + 40 + 5) * P + P := by ring
+          omega)
+    _ = _ := by ring
+
+/-- Probe of `splitSolveWithTM_computes` (today's `emitterP2_closed` and
+`emitterSplit_of_body`, with every existential named). -/
+theorem MIG1Probe.spec_splitSolveWithTM_computes : type_of% @splitSolveWithTM_computes := by
+  intro f E TE hTE hE
+  let C := callTM E false
+  let D := callTM lengthBitsTM false
+  let B := emitterP2BodyTM C D (callTM_k_pos E false) (callTM_k_pos lengthBitsTM false)
+    (callEntry E false) (callExit E false) (callEntry lengthBitsTM false)
+    (callExit lengthBitsTM false)
+  let A := 2 * (24 + 13 * E.k) + (24 + 13 * lengthBitsTM.k) * (2 * 5 + 1) + 10 * (5 + 8)
+  -- the install-call contracts of the two named calls, from `callTM_run`
+  have hCall (M : FinTM Bool) (g : List Bool → List Bool) (Tg : ℕ → ℕ)
+      (hg : M.ComputesFunInTime g Tg) (x arg : List Bool) :
+      ∃ t ≤ (24 + 13 * M.k) * (Tg arg.length + arg.length + (g arg).length + 1), 0 < t ∧
+        (∀ t', 0 < t' → t' < t → ((callTM M false).tm.runFrom
+          (Cfg.ofWords (input := x) (callEntry M false) (stateWord (callTM M false).k arg))
+            t').state ≠ some (callExit M false)) ∧
+        (callTM M false).tm.runFrom
+          (Cfg.ofWords (input := x) (callEntry M false) (stateWord (callTM M false).k arg)) t =
+            Cfg.ofWords (callExit M false) (stateWord (callTM M false).k (g arg)) := by
+    obtain ⟨t, ht, hpos, hfirst, hr⟩ := callTM_run M false x arg (g arg) (Tg arg.length) (hg arg)
+    exact ⟨t, ht, hpos, fun j _ hj => hfirst j hj, by simpa using hr⟩
+  have hstart : ∀ w : List Bool, ∃ t ≤ (A + 5) * (TE (w.length + 1) + w.length + 2),
+      (∀ t' < t, (B.tm.runFrom (B.tm.initCfg w) t').state ≠ some .anchor) ∧
+      B.tm.runFrom (B.tm.initCfg w) t = Cfg.ofWords .anchor (stateWord B.k []) := fun w =>
+    ⟨0, Nat.zero_le _, fun j hj => absurd hj (Nat.not_lt_zero _),
+      emitterP2_body_start C D _ _ _ _ _ _ w⟩
+  have hround : ∀ (w s : List Bool), s.length ≤ w.length + 1 →
+      ∃ t, 0 < t ∧ t ≤ (A + 5) * (TE (w.length + 1) + w.length + 2) ∧
+        (∀ t', 0 < t' → t' < t →
+          (B.tm.runFrom (Cfg.ofWords (input := w) .anchor (stateWord B.k s)) t').state
+            ≠ some .anchor) ∧
+        if emitterSplitAccept f w s then
+          (B.tm.runFrom (Cfg.ofWords (input := w) .anchor (stateWord B.k s)) t).state = none ∧
+          (B.tm.runFrom (Cfg.ofWords (input := w) .anchor (stateWord B.k s)) t).output =
+            pairEncode (w.take s.length) (w.drop s.length)
+        else
+          B.tm.runFrom (Cfg.ofWords (input := w) .anchor (stateWord B.k s)) t =
+            Cfg.ofWords .anchor (stateWord B.k (splitStep w s)) := by
+    intro w s hs
+    have hL := lengthBitsTM_computes
+    let H := TE (w.length + 1) + w.length + 2
+    let u := Nat.bits (f s.length)
+    let v := Nat.bits (w.drop s.length).length
+    obtain ⟨_, hu, hmono⟩ := emitter_width_budget f E TE hTE hE w s hs
+    have hdrop : (w.drop s.length).length ≤ w.length := by
+      simp only [List.length_drop]; omega
+    have hv : v.length ≤ 5 * ((w.drop s.length).length + 1) := by
+      have hout := ((computesInTime_iff _ _ _ _).mp (hL (w.drop s.length))).2
+      simpa only [hout, v] using lengthBitsTM.tm.output_length_le (w.drop s.length)
+        (5 * ((w.drop s.length).length + 1))
+    obtain ⟨a, ha, hap, haf, har⟩ := hCall E (fun s => Nat.bits (f s.length)) TE hE w s
+    obtain ⟨b, hb, hbp, hbf, hbr⟩ :=
+      hCall lengthBitsTM (fun s => Nat.bits s.length) (fun n => 5 * (n + 1)) hL w
+        (w.drop s.length)
+    obtain ⟨t, htpos, ht, hfirst, hr⟩ := emitterP2_body_round f C D _ _ _ _ _ _
+      w s a b hap hbp haf har hbf hbr
+    refine ⟨t, htpos, ?_, hfirst, hr⟩
+    have hHs : s.length ≤ H := by dsimp [H]; omega
+    have hHn : w.length ≤ H := by dsimp [H]; omega
+    have hHu : u.length ≤ H := by dsimp [u, H]; omega
+    have hLd : 5 * ((w.drop s.length).length + 1) ≤ 5 * H :=
+      Nat.mul_le_mul_left 5 (by dsimp [H]; omega)
+    have hHv : v.length ≤ 5 * H := hv.trans hLd
+    have hCa : TE s.length + s.length + u.length + 1 ≤ 2 * H := by
+      dsimp [u, H]; omega
+    have hCa' : a ≤ (2 * (24 + 13 * E.k)) * H := by
+      calc
+        a ≤ (24 + 13 * E.k) * (TE s.length + s.length + u.length + 1) := ha
+        _ ≤ (24 + 13 * E.k) * (2 * H) := Nat.mul_le_mul_left _ hCa
+        _ = (2 * (24 + 13 * E.k)) * H := by ring
+    have hDb : 5 * ((w.drop s.length).length + 1) + (w.drop s.length).length + v.length + 1 ≤
+        (2 * 5 + 1) * H := by
+      dsimp [H] at *; omega
+    have hDb' : b ≤ ((24 + 13 * lengthBitsTM.k) * (2 * 5 + 1)) * H := by
+      calc
+        b ≤ (24 + 13 * lengthBitsTM.k) *
+            (5 * ((w.drop s.length).length + 1) + (w.drop s.length).length + v.length + 1) :=
+          hb
+        _ ≤ (24 + 13 * lengthBitsTM.k) * ((2 * 5 + 1) * H) := Nat.mul_le_mul_left _ hDb
+        _ = ((24 + 13 * lengthBitsTM.k) * (2 * 5 + 1)) * H := by ring
+    have hsum : s.length + w.length + u.length + v.length + 10 ≤ (5 + 8) * H := by
+      rw [Nat.add_mul]
+      omega
+    calc
+      t ≤ a + b + 10 * (s.length + w.length + u.length + v.length + 10) := ht
+      _ ≤ (2 * (24 + 13 * E.k)) * H + ((24 + 13 * lengthBitsTM.k) * (2 * 5 + 1)) * H +
+          10 * ((5 + 8) * H) :=
+        Nat.add_le_add (Nat.add_le_add hCa' hDb') (Nat.mul_le_mul_left _ hsum)
+      _ = A * H := by dsimp [A]; ring
+      _ ≤ (A + 5) * H := Nat.mul_le_mul_right _ (Nat.le_add_right _ _)
+  have hF : lengthBitsTM.ComputesFunInTime (fun w => Nat.bits (id w.length))
+      (fun n => (A + 5) * (TE (n + 1) + n + 2)) := by
+    intro w
+    refine (lengthBitsTM_computes w).mono ?_
+    exact (Nat.mul_le_mul_left 5 (by omega : w.length + 1 ≤
+      TE (w.length + 1) + w.length + 2)).trans (Nat.mul_le_mul_right _ (by omega))
+  have hM := loopHostTM_finds B lengthBitsTM .anchor
+    (fun w s => s.length ≤ w.length + 1) splitStep (emitterSplitAccept f)
+    (fun w s => pairEncode (w.take s.length) (w.drop s.length)) (fun _ => [])
+    id (fun n => (A + 5) * (TE (n + 1) + n + 2)) hF (by intro w; simp) splitStep_inv
+    hstart hround
+  intro w
+  have hm := hM w
+  dsimp only [id_eq] at hm
+  have hb : 10 * ((A + 5) * (TE (w.length + 1) + w.length + 2) + 1) * (w.length + 2) ≤
+      20 * (591 + 26 * E.k) * (w.length + 1) * (TE (w.length + 1) + w.length + 2) :=
+    (emitterSplit_loop_bound 10 (A + 5) w.length (TE (w.length + 1))).trans
+      (le_of_eq (by simp only [A, show lengthBitsTM.k = 1 from rfl]; ring))
+  convert hm.mono hb using 1
+  exact (emitterSplit_result f w).symm
+
+end Turing.FinTM
+
+
+/-! ════ Spec probe, part 2 (not landed): the specs whose proofs are row bodies, each proved
+from statement shims of the private lemmas that the row body cites, by the row body itself
+(with its final weakening dropped and, for the threaded map, `f2_head_steps` replaced by the
+gated `abs_workTapePos_runFrom_sub_le`). -/
+
+namespace Turing.FinTM
+
+-- @shim begin (statement shims and definitions, verbatim)
+/-- Statement shim of `idTM_run` (`Composition.lean:100`), proved in the tree.
+**Proof sketch.** See the source. -/
+private lemma idTM_run (x : List Bool) : ∀ t, t ≤ x.length →
+    (idTM.tm.runFrom (idTM.tm.initCfg x) t).state = some () ∧
+    (((idTM.tm.runFrom (idTM.tm.initCfg x) t).inputPos : ℕ) = t + 1) ∧
+    (idTM.tm.runFrom (idTM.tm.initCfg x) t).output = x.take t := by
+  sorry
+
+/-- Statement shim of `ifEq_run` (`Composition.lean:226`), proved in the tree.
+**Proof sketch.** See the source. -/
+private lemma ifEq_run (w₀ u v x : List Bool) :
+    ∀ (r i : ℕ) (hlen : w₀.length = i + r), i ≤ x.length → x.take i = w₀.take i →
+    ∀ (cfg : Cfg 0 Bool (ifEqTM w₀ u v).State x),
+      cfg.state = some (.inl ⟨i, by omega⟩) → cfg.inputPos.val = i + 1 → cfg.output = [] →
+      ∃ t, t ≤ r + max u.length v.length + 2 ∧
+        ((ifEqTM w₀ u v).tm.runFrom cfg t).state = none ∧
+        ((ifEqTM w₀ u v).tm.runFrom cfg t).output = if x = w₀ then u else v := by
+  sorry
+
+/-- Statement shim of `condTM_start` (`Composition.lean:594`), proved in the tree.
+**Proof sketch.** See the source. -/
+private lemma condTM_start (D M₁ M₂ : FinTM Bool) (x : List Bool) (b : Bool)
+    (hD : ∃ t, D.ComputesInTime x [b] t) :
+    ∃ (t : ℕ) (tapes : Fin D.k → ℤ → Option Bool) (heads : Fin D.k → ℤ),
+      (condTM D M₁ M₂).tm.runFrom ((condTM D M₁ M₂).tm.initCfg x) t =
+        rightCfg (fun q => .inr (.inr q)) ((branchTM M₁ M₂ b).tm.initCfg x) tapes heads := by
+  sorry
+private def redirectState {S : Type} (haltOn : Bool) (q : Option S)
+    (r : Option Bool) : Option ((S × Option Bool) ⊕ Unit) :=
+  match q with
+  | some s => some (.inl (s, r))
+  | none => if r = some haltOn then none else some (.inr ())
+
+private def redirectCfg (M : FinTM Bool) (haltOn : Bool) {x : List Bool}
+    (c : Cfg M.k Bool M.State x) : Cfg (redirectTM M haltOn).k Bool
+      (redirectTM M haltOn).State x :=
+  ⟨redirectState haltOn c.state c.output.getLast?, c.inputPos,
+    c.workTapes, c.workTapePos, []⟩
+/-- Statement shim of `redirect_run` (`Wrappers.lean:411`), proved in the tree.
+**Proof sketch.** See the source. -/
+private lemma redirect_run (M : FinTM Bool) (haltOn : Bool) (x : List Bool) (t : ℕ) :
+    (redirectTM M haltOn).tm.runFrom ((redirectTM M haltOn).tm.initCfg x) t =
+      redirectCfg M haltOn (M.tm.runFrom (M.tm.initCfg x) t) := by
+  sorry
+private def scanCfg {S : Type} (x : List Bool) (q : Option S)
+    (i : ℕ) (hi : i ≤ x.length) (out : List Bool) : Cfg 0 Bool S x :=
+  ⟨q, ⟨i + 1, by omega⟩, fun j => j.elim0, fun j => j.elim0, out⟩
+/-- Statement shim of `scanCfg_read` (`Primitives.lean:216`), proved in the tree.
+**Proof sketch.** See the source. -/
+private lemma scanCfg_read {S : Type} (x : List Bool) (q : Option S)
+    (i : ℕ) (hi : i ≤ x.length) (out : List Bool) :
+    (scanCfg x q i hi out).inputSymbol = x[i]? := by
+  sorry
+
+/-- Statement shim of `emitterToken_run` (`Primitives.lean:6150`), proved in the tree.
+**Proof sketch.** See the source. -/
+private lemma emitterToken_run (x rest : List Bool) :
+    ∀ pre out (hx : x = pre ++ rest),
+      unaryTokenTM.tm.runFrom
+        (scanCfg x (some (0 : Fin 6)) pre.length (by simp [hx]) out)
+        (2 * (unaryTokenSplit rest).1.length + (unaryTokenSplit rest).2.length + 3) =
+        scanCfg x none x.length (by omega)
+          (out ++ pairEncode (unaryTokenSplit rest).1 (unaryTokenSplit rest).2) := by
+  sorry
+
+/-- Statement shim of `emitterToken_length` (`Primitives.lean:6210`), proved in the tree.
+**Proof sketch.** See the source. -/
+private lemma emitterToken_length (x : List Bool) :
+    (unaryTokenSplit x).1.length + (unaryTokenSplit x).2.length = x.length := by
+  sorry
+
+/-- Statement shim of `emitterAppend_run` (`Primitives.lean:6264`), proved in the tree.
+**Proof sketch.** See the source. -/
+private lemma emitterAppend_run (b : Bool) (x : List Bool) :
+    ∀ j (hj : j ≤ x.length),
+      (appendBitTM b).tm.runFrom ((appendBitTM b).tm.initCfg x) j =
+        scanCfg x (some ()) j hj (x.take j) := by
+  sorry
+/-- Statement shim of `loop_halted_run` (`Loop.lean:2296`), proved in the tree.
+**Proof sketch.** See the source. -/
+private lemma loop_halted_run {k : ℕ} {S : Type*} {x : List Bool}
+    (tm : MultiTapeTM k Bool S) (cfg : ℕ → Cfg k Bool S x)
+    (accept : ℕ → Bool) (B N : ℕ)
+    (hend : (cfg N).state = none ∧ (cfg N).output = [false])
+    (hround : ∀ j < N, ∃ t ≤ B,
+      if accept j then
+        (tm.runFrom (cfg j) t).state = none ∧
+          (tm.runFrom (cfg j) t).output = [true]
+      else tm.runFrom (cfg j) t = cfg (j + 1)) :
+    ∃ t ≤ N * B, (tm.runFrom (cfg 0) t).state = none ∧
+      (tm.runFrom (cfg 0) t).output = [(List.range N).any accept] := by
+  sorry
+
+/-- Statement shim of `loop_find_run` (`Loop.lean:2435`), proved in the tree.
+**Proof sketch.** See the source. -/
+private lemma loop_find_run {k : ℕ} {S : Type*} {x : List Bool}
+    (tm : MultiTapeTM k Bool S) (cfg : ℕ → Cfg k Bool S x)
+    (accept : ℕ → Bool) (payload : ℕ → List Bool) (B N : ℕ)
+    (hend : (cfg N).state = none ∧ (cfg N).output = [])
+    (hround : ∀ j < N, ∃ t ≤ B,
+      if accept j then
+        (tm.runFrom (cfg j) t).state = none ∧
+          (tm.runFrom (cfg j) t).output = payload j
+      else tm.runFrom (cfg j) t = cfg (j + 1)) :
+    ∃ t ≤ N * B, (tm.runFrom (cfg 0) t).state = none ∧
+      (tm.runFrom (cfg 0) t).output =
+        (match (List.range N).find? accept with | some i => payload i | none => []) := by
+  sorry
+/-- Statement shim of `emCall_first` (`Loop.lean:4592`), proved in the tree.
+**Proof sketch.** See the source. -/
+private lemma emCall_first (M : FinTM Bool) (emit : Bool)
+    (x arg cap : List Bool) (T : ℕ) (hM : M.ComputesInTime arg cap T) :
+    ∃ t ≤ (24 + 13 * M.k) * (T + arg.length + cap.length + 1),
+      0 < t ∧
+      (∀ j < t, ((callTM M emit).tm.runFrom
+        (Cfg.ofWords (input := x) (callTM M emit).tm.q₀ (stateWord (callTM M emit).k arg)) j).state
+          ≠ some (.inr (.inr (5 : Fin 6)))) ∧
+      (callTM M emit).tm.runFrom
+        (Cfg.ofWords (input := x) (callTM M emit).tm.q₀ (stateWord (callTM M emit).k arg)) t =
+        { Cfg.ofWords (input := x) (.inr (.inr (5 : Fin 6)) : emCallState M)
+            (stateWord (callTM M emit).k (if emit then arg else cap))
+          with output := if emit then cap else [] } := by
+  sorry
+private def fwdMapVirtual (M : FinTM Bool) {x y : List Bool}
+    (c : Cfg M.k Bool M.State y) (tag : Bool) (p : Fin (x.length + 2))
+    (a pre : List Bool) : Cfg (1 + (1 + M.k)) Bool (FwdMapState M.State) x where
+  state := c.state.map (fun q => .run q tag)
+  inputPos := p
+  workTapes := tapeBlocks (fun _ => bufferTape a) (bufferTape y) c.workTapes
+  workTapePos := tapeBlocks (fun _ => (a.length : ℤ)) ((c.inputPos.val : ℤ) - 1) c.workTapePos
+  output := pre ++ c.output
+/-- Statement shim of `fwdMapVirtual_run` (`Catalog.lean:5628`), proved in the tree.
+**Proof sketch.** See the source. -/
+private lemma fwdMapVirtual_run (M : FinTM Bool) {x y : List Bool}
+    (c : Cfg M.k Bool M.State y) (tag : Bool) (hb : VirtualTag c.inputPos tag)
+    (p : Fin (x.length + 2)) (a pre : List Bool) (t : ℕ) :
+    ∃ tag', VirtualTag (M.tm.runFrom c t).inputPos tag' ∧
+      (fwdMapTM M true).tm.runFrom (fwdMapVirtual M c tag p a pre) t =
+        fwdMapVirtual M (M.tm.runFrom c t) tag' p a pre := by
+  sorry
+
+/-- Statement shim of `fwdMapSetup_heads` (`Catalog.lean:5729`), proved in the tree.
+**Proof sketch.** See the source. -/
+private lemma fwdMapSetup_heads (M : FinTM Bool) (x : List Bool) (t : ℕ) (i : Fin M.k) :
+    ((fwdMapTM M false).tm.runFrom ((fwdMapTM M false).tm.initCfg x) t).workTapePos
+      (Fin.natAdd 1 (Fin.natAdd 1 i)) = 0 := by
+  sorry
+
+/-- Statement shim of `fwdMap_launch` (`Catalog.lean:5740`), proved in the tree.
+**Proof sketch.** See the source. -/
+private lemma fwdMap_launch (M : FinTM Bool) (x a b : List Bool)
+    (hd : pairDecode x = some (a, b)) :
+    ∃ u ≤ 5 * (x.length + 1),
+      (fwdMapTM M true).tm.runFrom ((fwdMapTM M true).tm.initCfg x) u =
+        fwdMapVirtual M (M.tm.initCfg b) true ⟨x.length + 1, by omega⟩ a (pairEncode a []) ∧
+      ∀ v ≤ u, (fwdMapTM M true).tm.runFrom ((fwdMapTM M true).tm.initCfg x) v =
+        (fwdMapTM M false).tm.runFrom ((fwdMapTM M false).tm.initCfg x) v := by
+  sorry
+
+/-- Statement shim of `fwdMap_reject` (`Catalog.lean:5774`), proved in the tree.
+**Proof sketch.** See the source. -/
+private lemma fwdMap_reject (M : FinTM Bool) (x : List Bool)
+    (hd : pairDecode x = none) :
+    ∃ u ≤ 5 * (x.length + 1),
+      ((fwdMapTM M true).tm.runFrom ((fwdMapTM M true).tm.initCfg x) u).state = none ∧
+      ((fwdMapTM M true).tm.runFrom ((fwdMapTM M true).tm.initCfg x) u).output = [] ∧
+      ∀ v, (fwdMapTM M true).tm.runFrom ((fwdMapTM M true).tm.initCfg x) v =
+        (fwdMapTM M false).tm.runFrom ((fwdMapTM M false).tm.initCfg x) v := by
+  sorry
+
+/-- Statement shim of `fwdMap_space` (`Catalog.lean:5841`), proved in the tree.
+**Proof sketch.** See the source. -/
+private lemma fwdMap_space (M : FinTM Bool) (x y : List Bool) (t D S : ℕ)
+    (hfirst : ∀ u ≤ t, -(D : ℤ) ≤
+        ((fwdMapTM M true).tm.runFrom ((fwdMapTM M true).tm.initCfg x) u).workTapePos
+          (Fin.castAdd (1 + M.k) (0 : Fin 1)) ∧
+      ((fwdMapTM M true).tm.runFrom ((fwdMapTM M true).tm.initCfg x) u).workTapePos
+          (Fin.castAdd (1 + M.k) (0 : Fin 1)) ≤ D)
+    (hsecond : ∀ u ≤ t, -(D : ℤ) ≤
+        ((fwdMapTM M true).tm.runFrom ((fwdMapTM M true).tm.initCfg x) u).workTapePos
+          (Fin.natAdd 1 (Fin.castAdd M.k (0 : Fin 1))) ∧
+      ((fwdMapTM M true).tm.runFrom ((fwdMapTM M true).tm.initCfg x) u).workTapePos
+          (Fin.natAdd 1 (Fin.castAdd M.k (0 : Fin 1))) ≤ D)
+    (hsource : ∀ i, (fwdMapTM M true).tm.visitedByTapeHead ((fwdMapTM M true).tm.initCfg x) t
+        (Fin.natAdd 1 (Fin.natAdd 1 i)) ⊆ M.tm.visitedByTapeHead (M.tm.initCfg y) t i)
+    (hs : M.tm.spaceUsed (M.tm.initCfg y) t ≤ S) :
+    (fwdMapTM M true).tm.spaceUsed ((fwdMapTM M true).tm.initCfg x) t ≤ S + 2 * (2 * D + 1) := by
+  sorry
+/-- Statement shim of `catalogPoly_space` (`Catalog.lean:3288`), proved in the tree.
+**Proof sketch.** See the source. -/
+private lemma catalogPoly_space (d C : ℕ) (x : List Bool) (t : ℕ) :
+    (catalogPolyUnaryTM d C).tm.spaceUsed
+      ((catalogPolyUnaryTM d C).tm.initCfg x) t ≤
+        (5 * (d + 1)) * (x.length + 1) := by
+  sorry
+-- @shim end
+
+/-- Probe of `callTM_run`: today's `emCall_first` itself, the named states unfolding. -/
+theorem MIG1Probe.spec_callTM_run : type_of% @callTM_run :=
+  fun M emit x arg cap T hM => emCall_first M emit x arg cap T hM
+
+/-- Probe of `idTM_computes` (the body of `computesFunInTime_id`). -/
+theorem MIG1Probe.spec_idTM_computes : type_of% @idTM_computes := by
+  intro x
+  obtain ⟨hstate, hpos, hout⟩ := idTM_run x x.length (le_refl _)
+  have h0 : (idTM.tm.runFrom (idTM.tm.initCfg x) x.length).inputPos ≠ 0 := by
+    intro h
+    rw [h] at hpos
+    simp at hpos
+  have hsym : (idTM.tm.runFrom (idTM.tm.initCfg x) x.length).inputSymbol = none := by
+    unfold Cfg.inputSymbol
+    rw [dif_neg h0, dif_pos (by omega)]
+  have hrun1 : idTM.tm.runFrom (idTM.tm.initCfg x) (x.length + 1) =
+      (idTM.tm.tr () none
+        ((idTM.tm.runFrom (idTM.tm.initCfg x) x.length).workTapeSymbols)).apply
+        (idTM.tm.runFrom (idTM.tm.initCfg x) x.length) := by
+    rw [MultiTapeTM.runFrom_succ_eq_step']
+    unfold MultiTapeTM.step
+    rw [hstate]
+    dsimp only
+    rw [hsym]
+  refine ⟨_, ?_, ?_, rfl⟩
+  · rw [hrun1]
+    simp [idTM, Action.apply]
+  · rw [hrun1]
+    simp only [idTM, Action.apply]
+    rw [hout]
+    simp
+
+/-- Probe of `ifEqTM_computes` (the body of `computesFunInTime_ifEq`). -/
+theorem MIG1Probe.spec_ifEqTM_computes : type_of% @ifEqTM_computes := by
+  intro w₀ u v x
+  obtain ⟨t, ht, hs, ho⟩ := ifEq_run w₀ u v x w₀.length 0 (by omega) (by omega) rfl
+    ((ifEqTM w₀ u v).tm.initCfg x) rfl (by simp) rfl
+  have hbase : (ifEqTM w₀ u v).ComputesInTime x (if x = w₀ then u else v) t :=
+    ⟨_, hs, ho, rfl⟩
+  exact hbase.mono (Nat.le_trans (by omega) (Nat.le_mul_of_pos_right _ (by omega)))
+
+/-- Probe of `condTM_computes_iff` (the body of `exists_cond`). -/
+theorem MIG1Probe.spec_condTM_computes_iff : type_of% @condTM_computes_iff := by
+  intro D M₁ M₂ p hD x w
+  obtain ⟨a, tapes, heads, ha⟩ := condTM_start D M₁ M₂ x (p x) (hD x)
+  have hr (t : ℕ) :
+      (condTM D M₁ M₂).tm.runFrom ((condTM D M₁ M₂).tm.initCfg x) (a + t) =
+        rightCfg (fun q => .inr (.inr q))
+          ((branchTM M₁ M₂ (p x)).tm.runFrom ((branchTM M₁ M₂ (p x)).tm.initCfg x) t)
+          tapes heads := by
+    rw [MultiTapeTM.runFrom_add, ha]
+    exact rightCfg_run (branchTM M₁ M₂ (p x)).tm (condTM D M₁ M₂).tm
+      (fun q => .inr (.inr q)) (fun _ _ _ => rfl) _ tapes heads t
+  constructor
+  · rintro ⟨t, ht⟩
+    have hc := (computesInTime_iff (condTM D M₁ M₂) x w (a + t)).mp
+      (ht.mono (by omega))
+    rw [hr t] at hc
+    have hb : (branchTM M₁ M₂ (p x)).ComputesInTime x w t :=
+      (computesInTime_iff _ x w t).mpr
+        ⟨by simpa only [rightCfg, Option.map_eq_none_iff] using hc.1, hc.2⟩
+    exact ⟨t, (branchTM_computes M₁ M₂ (p x) x w t).mp hb⟩
+  · rintro ⟨t, ht⟩
+    have hb := (computesInTime_iff (branchTM M₁ M₂ (p x)) x w t).mp
+      ((branchTM_computes M₁ M₂ (p x) x w t).mpr ht)
+    refine ⟨a + t, (computesInTime_iff _ x w (a + t)).mpr ?_⟩
+    rw [hr t]
+    exact ⟨by simpa only [rightCfg, Option.map_eq_none_iff] using hb.1, hb.2⟩
+
+/-- Probe of `redirectTM_runFrom` (the fields of `redirect_run`). -/
+theorem MIG1Probe.spec_redirectTM_runFrom : type_of% @redirectTM_runFrom := by
+  intro M haltOn x t
+  rw [redirect_run]
+  refine ⟨?_, rfl, rfl, rfl, rfl⟩
+  generalize M.tm.runFrom (M.tm.initCfg x) t = c
+  rcases c with ⟨q, p, tapes, heads, out⟩
+  cases q <;> rfl
+
+/-- Probe of `unaryTokenTM_computes` (the body of `computesFunInTime_unaryToken`). -/
+theorem MIG1Probe.spec_unaryTokenTM_computes : type_of% @unaryTokenTM_computes := by
+  intro x
+  have hr := emitterToken_run x x [] [] rfl
+  have hc : unaryTokenTM.ComputesInTime x
+      (pairEncode (unaryTokenSplit x).1 (unaryTokenSplit x).2)
+      (2 * (unaryTokenSplit x).1.length + (unaryTokenSplit x).2.length + 3) := by
+    apply (FinTM.computesInTime_iff _ _ _ _).mpr
+    have hinit : unaryTokenTM.tm.initCfg x =
+        scanCfg x (some (0 : Fin 6)) 0 (by omega) [] := by
+      apply Cfg.ext_zero_tapes <;> simp [unaryTokenTM, scanCfg]
+    rw [hinit]
+    constructor
+    · simpa only [List.length_nil, scanCfg] using congrArg Cfg.state hr
+    · simpa only [List.length_nil, List.nil_append, scanCfg] using congrArg Cfg.output hr
+  apply hc.mono
+  change 2 * (unaryTokenSplit x).1.length + (unaryTokenSplit x).2.length + 3 ≤
+    3 * (x.length + 1)
+  have hl := emitterToken_length x
+  omega
+
+/-- Probe of `appendBitTM_computes` (the body of `computesFunInTime_appendBit`). -/
+theorem MIG1Probe.spec_appendBitTM_computes : type_of% @appendBitTM_computes := by
+  intro b x
+  apply (FinTM.computesInTime_iff _ _ _ _).mpr
+  rw [MultiTapeTM.runFrom_succ_eq_step', emitterAppend_run b x x.length (by omega)]
+  unfold MultiTapeTM.step
+  change let d := ((appendBitTM b).tm.tr ()
+    (scanCfg x (some ()) x.length (by omega) (x.take x.length)).inputSymbol _).apply _
+    d.Halted ∧ d.output = x ++ [b]
+  rw [scanCfg_read]
+  simp [appendBitTM, scanCfg, Action.apply, Cfg.Halted]
+
+/-- Probe of `loopHostTM_decides` (the body of `exists_loopTM`, from the gated contract). -/
+theorem MIG1Probe.spec_loopHostTM_decides : type_of% @loopHostTM_decides := by
+  intro body F anchor Inv stepF acceptF s0 R T hF hInv0 hInvStep hstart hround x
+  have hc := loopHostTM_contracts body F anchor Inv stepF acceptF (fun _ _ => [true]) false
+    s0 R T hF hInv0 hInvStep hstart hround
+  let E := loopHostTM body F anchor false
+  obtain ⟨cfg, startup, hs, hinit, _, hend, hout, hsegments⟩ := hc x
+  obtain ⟨t, ht, hhalt, houtput⟩ := loop_halted_run E.tm cfg
+    (fun i => acceptF x ((stepF x)^[i] (s0 x))) (10 * (T x.length + 1))
+    (R x.length + 1) ⟨hend, by simpa using hout⟩
+    (fun j hj => by simpa using hsegments j (by omega))
+  have hrun := E.tm.runFrom_add (E.tm.initCfg x) startup t
+  rw [hinit] at hrun
+  have hcompute : E.ComputesInTime x
+      [(List.range (R x.length + 1)).any
+        (fun i => acceptF x ((stepF x)^[i] (s0 x)))] (startup + t) := by
+    refine ⟨_, ?_, ?_, rfl⟩
+    · rw [hrun]; exact hhalt
+    · rw [hrun]; exact houtput
+  apply hcompute.mono
+  calc startup + t ≤ 10 * (T x.length + 1) +
+        (R x.length + 1) * (10 * (T x.length + 1)) := Nat.add_le_add hs ht
+    _ = 10 * (T x.length + 1) * (R x.length + 2) := by ring
+
+/-- Probe of `loopHostTM_finds` (the body of `exists_loopFindTM`, from the gated contract). -/
+theorem MIG1Probe.spec_loopHostTM_finds : type_of% @loopHostTM_finds := by
+  intro body F anchor Inv stepF acceptF out s0 R T hF hInv0 hInvStep hstart hround x
+  have hc := loopHostTM_contracts body F anchor Inv stepF acceptF out true s0 R T
+    hF hInv0 hInvStep hstart hround
+  let E := loopHostTM body F anchor true
+  obtain ⟨cfg, startup, hs, hinit, _, hend, hout, hsegments⟩ := hc x
+  obtain ⟨t, ht, hhalt, houtput⟩ := loop_find_run E.tm cfg
+    (fun i => acceptF x ((stepF x)^[i] (s0 x)))
+    (fun i => out x ((stepF x)^[i] (s0 x))) (10 * (T x.length + 1)) (R x.length + 1)
+    ⟨hend, by simpa using hout⟩
+    (fun j hj => by simpa using hsegments j (by omega))
+  have hrun := E.tm.runFrom_add (E.tm.initCfg x) startup t
+  rw [hinit] at hrun
+  have hcompute : E.ComputesInTime x
+      (match (List.range (R x.length + 1)).find?
+          (fun i => acceptF x ((stepF x)^[i] (s0 x))) with
+        | some i => out x ((stepF x)^[i] (s0 x))
+        | none => []) (startup + t) := by
+    refine ⟨_, ?_, ?_, rfl⟩
+    · rw [hrun]; exact hhalt
+    · rw [hrun]; exact houtput
+  apply hcompute.mono
+  calc startup + t ≤ 10 * (T x.length + 1) +
+        (R x.length + 1) * (10 * (T x.length + 1)) := Nat.add_le_add hs ht
+    _ = 10 * (T x.length + 1) * (R x.length + 2) := by ring
+
+/-- Probe of `polyUnaryTM_spaceUsed` (no work tapes at `e = 0`; Catalog's `f2_poly_space`,
+renamed to the engine, at `e = d + 1`). -/
+theorem MIG1Probe.spec_polyUnaryTM_spaceUsed : type_of% @polyUnaryTM_spaceUsed := by
+  intro C e x t
+  cases e with
+  | zero =>
+    rw [MultiTapeTM.spaceUsed_zero_tapes_eq_zero _ _ rfl]
+    exact Nat.zero_le _
+  | succ d => exact catalogPoly_space d C x t
+
+/-- Probe of `pairMapSndTM_computes` (the time half of `computesFunInTime_pairMapSnd_spaceUsed`,
+over the moved forwarding family). -/
+theorem MIG1Probe.spec_pairMapSndTM_computes : type_of% @pairMapSndTM_computes := by
+  intro Mg g Tg hg hTg x
+  unfold pairMapSndTM
+  let M := fwdMapTM Mg true
+  cases hd : pairDecode x with
+  | none =>
+    obtain ⟨u, hu, hh, ho, _⟩ := fwdMap_reject Mg x hd
+    have ht : M.ComputesInTime x [] u := ⟨_, hh, ho, rfl⟩
+    simpa only [hd] using ht.mono (show u ≤ 22 * (x.length + 1 + Tg x.length) by omega)
+  | some ab =>
+    rcases ab with ⟨a, b⟩
+    obtain ⟨u, hu, hinit, _⟩ := fwdMap_launch Mg x a b hd
+    have hlen : b.length ≤ x.length := by
+      have h := congrArg List.length (eq_pairEncode_of_pairDecode x a b hd)
+      rw [length_pairEncode] at h
+      omega
+    obtain ⟨tag, _, hr⟩ := fwdMapVirtual_run Mg (x := x) (Mg.tm.initCfg b) true
+      (by simp [VirtualTag, MultiTapeTM.initCfg, Cfg.init])
+      (⟨x.length + 1, by omega⟩) a (pairEncode a []) (Tg b.length)
+    obtain ⟨space, hh, ho, _⟩ := hg b
+    have hrun : M.tm.runFrom (M.tm.initCfg x) (u + Tg b.length) =
+        fwdMapVirtual Mg (Mg.tm.runFrom (Mg.tm.initCfg b) (Tg b.length)) tag
+          ⟨x.length + 1, by omega⟩ a (pairEncode a []) := by
+      rw [MultiTapeTM.runFrom_add, hinit]
+      exact hr
+    have ht : M.ComputesInTime x (pairEncode a (g b)) (u + Tg b.length) := by
+      refine ⟨_, ?_, ?_, rfl⟩
+      · rw [hrun]
+        change Option.map (fun q => FwdMapState.run q tag)
+          (Mg.tm.runFrom (Mg.tm.initCfg b) (Tg b.length)).state = none
+        rw [hh]
+        rfl
+      · rw [hrun]
+        change pairEncode a [] ++
+          (Mg.tm.runFrom (Mg.tm.initCfg b) (Tg b.length)).output = pairEncode a (g b)
+        rw [ho]
+        simp [pairEncode, List.append_assoc]
+    have hT := hTg hlen
+    simpa only [hd] using ht.mono
+      (show u + Tg b.length ≤ 22 * (x.length + 1 + Tg x.length) by omega)
+
+/-- Probe of `pairMapSndTM_spaceUsed` (the space half of the same row; the head bound now comes
+from the gated `abs_workTapePos_runFrom_sub_le` instead of the copied `f2_head_steps`). -/
+theorem MIG1Probe.spec_pairMapSndTM_spaceUsed : type_of% @pairMapSndTM_spaceUsed := by
+  intro Mg Sg hgs hSg x t
+  unfold pairMapSndTM
+  let M := fwdMapTM Mg true
+  let D := 5 * (x.length + 1)
+  have hshort (v : ℕ) (hv : v ≤ D) (i : Fin M.k) :
+      -(D : ℤ) ≤ (M.tm.runFrom (M.tm.initCfg x) v).workTapePos i ∧
+      (M.tm.runFrom (M.tm.initCfg x) v).workTapePos i ≤ D := by
+    have h := abs_le.mp (MultiTapeTM.abs_workTapePos_runFrom_sub_le M.tm (M.tm.initCfg x) v i)
+    rw [show (M.tm.initCfg x).workTapePos i = 0 from rfl, sub_zero] at h
+    constructor <;> omega
+  cases hd : pairDecode x with
+  | none =>
+    obtain ⟨u, hu, hh, _, heq⟩ := fwdMap_reject Mg x hd
+    have hheads (v : ℕ) (i : Fin M.k) :
+        -(D : ℤ) ≤ (M.tm.runFrom (M.tm.initCfg x) v).workTapePos i ∧
+        (M.tm.runFrom (M.tm.initCfg x) v).workTapePos i ≤ D := by
+      by_cases hv : v ≤ u
+      · exact hshort v (hv.trans hu) i
+      · rw [show v = u + (v - u) by omega, MultiTapeTM.runFrom_add,
+          MultiTapeTM.runFrom_of_halt _ hh]
+        exact hshort u hu i
+    have hp (i : Fin Mg.k) : M.tm.visitedByTapeHead (M.tm.initCfg x) t
+        (Fin.natAdd 1 (Fin.natAdd 1 i)) ⊆ Mg.tm.visitedByTapeHead (Mg.tm.initCfg x) t i := by
+      intro z hz
+      obtain ⟨v, hv, rfl⟩ := Finset.mem_image.mp hz
+      change ((fwdMapTM Mg true).tm.runFrom _ v).workTapePos _ ∈ _
+      rw [heq v, fwdMapSetup_heads]
+      exact Finset.mem_image.mpr ⟨0, by simp, rfl⟩
+    have hs := fwdMap_space Mg x x t D (Sg x.length)
+      (fun v _ => hheads v _) (fun v _ => hheads v _) hp (hgs x t)
+    change M.tm.spaceUsed (M.tm.initCfg x) t ≤ _ at hs
+    dsimp only [D] at hs
+    omega
+  | some ab =>
+    rcases ab with ⟨a, b⟩
+    obtain ⟨u, hu, hinit, hprefix⟩ := fwdMap_launch Mg x a b hd
+    have hlen : a.length ≤ x.length ∧ b.length ≤ x.length := by
+      have h := congrArg List.length (eq_pairEncode_of_pairDecode x a b hd)
+      rw [length_pairEncode] at h
+      omega
+    have hrun (v : ℕ) : ∃ tag,
+        M.tm.runFrom (M.tm.initCfg x) (u + v) =
+          fwdMapVirtual Mg (Mg.tm.runFrom (Mg.tm.initCfg b) v) tag
+            ⟨x.length + 1, by omega⟩ a (pairEncode a []) := by
+      obtain ⟨tag, _, he⟩ := fwdMapVirtual_run Mg (x := x) (Mg.tm.initCfg b) true
+        (by simp [VirtualTag, MultiTapeTM.initCfg, Cfg.init])
+        (⟨x.length + 1, by omega⟩) a (pairEncode a []) v
+      refine ⟨tag, ?_⟩
+      rw [MultiTapeTM.runFrom_add, hinit]
+      exact he
+    have ha (v : ℕ) : -(D : ℤ) ≤
+        (M.tm.runFrom (M.tm.initCfg x) v).workTapePos (Fin.castAdd (1 + Mg.k) (0 : Fin 1)) ∧
+        (M.tm.runFrom (M.tm.initCfg x) v).workTapePos
+          (Fin.castAdd (1 + Mg.k) (0 : Fin 1)) ≤ D := by
+      by_cases hv : v ≤ u
+      · exact hshort v (hv.trans hu) _
+      · obtain ⟨tag, he⟩ := hrun (v - u)
+        rw [show v = u + (v - u) by omega, he]
+        simp only [fwdMapVirtual, tapeBlocks_left]
+        dsimp only [D]
+        constructor <;> omega
+    have hb (v : ℕ) : -(D : ℤ) ≤
+        (M.tm.runFrom (M.tm.initCfg x) v).workTapePos
+          (Fin.natAdd 1 (Fin.castAdd Mg.k (0 : Fin 1))) ∧
+        (M.tm.runFrom (M.tm.initCfg x) v).workTapePos
+          (Fin.natAdd 1 (Fin.castAdd Mg.k (0 : Fin 1))) ≤ D := by
+      by_cases hv : v ≤ u
+      · exact hshort v (hv.trans hu) _
+      · obtain ⟨tag, he⟩ := hrun (v - u)
+        rw [show v = u + (v - u) by omega, he]
+        simp only [fwdMapVirtual, tapeBlocks_buffer]
+        have hp := (Mg.tm.runFrom (Mg.tm.initCfg b) (v - u)).inputPos.isLt
+        dsimp only [D]
+        constructor <;> omega
+    have hp (i : Fin Mg.k) : M.tm.visitedByTapeHead (M.tm.initCfg x) t
+        (Fin.natAdd 1 (Fin.natAdd 1 i)) ⊆ Mg.tm.visitedByTapeHead (Mg.tm.initCfg b) t i := by
+      intro z hz
+      obtain ⟨v, hv, rfl⟩ := Finset.mem_image.mp hz
+      have hvt : v ≤ t := by have := Finset.mem_range.mp hv; omega
+      by_cases hvu : v ≤ u
+      · change ((fwdMapTM Mg true).tm.runFrom _ v).workTapePos _ ∈ _
+        rw [hprefix v hvu, fwdMapSetup_heads]
+        exact Finset.mem_image.mpr ⟨0, by simp, rfl⟩
+      · obtain ⟨tag, he⟩ := hrun (v - u)
+        change (M.tm.runFrom (M.tm.initCfg x) v).workTapePos _ ∈ _
+        rw [show v = u + (v - u) by omega, he]
+        simp only [fwdMapVirtual, tapeBlocks_right]
+        exact Finset.mem_image.mpr ⟨v - u, Finset.mem_range.mpr (by omega), rfl⟩
+    have hs := fwdMap_space Mg x b t D (Sg x.length)
+      (fun v _ => ha v) (fun v _ => hb v) hp ((hgs b t).trans (hSg hlen.2))
+    change M.tm.spaceUsed (M.tm.initCfg x) t ≤ _ at hs
+    dsimp only [D] at hs
+    omega
+
+end Turing.FinTM
+
+namespace Turing
+
+-- @shim begin (verbatim from `TuringMachine/Encoding.lean`)
+private def pairDiagCfg (x : List Bool) (q : Option (Fin 6))
+    (p : Fin (x.length + 2)) (out : List Bool) : Cfg 0 Bool (Fin 6) x :=
+  ⟨q, p, fun i => i.elim0, fun i => i.elim0, out⟩
+/-- Statement shim of `pairDiag_run` (`Encoding.lean:455`), proved in the tree.
+**Proof sketch.** See the source. -/
+private lemma pairDiag_run (x : List Bool) :
+    pairDiagTM.tm.runFrom (pairDiagTM.tm.initCfg x) (4 * x.length + 5) =
+      pairDiagCfg x none ⟨x.length + 1, by omega⟩ (pairEncode x x) := by
+  sorry
+-- @shim end
+
+/-- Probe of `pairDiagTM_computes` (the `have h` of `computesFunInTime_pairEncode_diag`). -/
+theorem MIG1Probe.spec_pairDiagTM_computes : type_of% @pairDiagTM_computes := by
+  intro x
+  refine ⟨_, ?_, ?_, rfl⟩
+  · rw [pairDiag_run]; rfl
+  · rw [pairDiag_run]; rfl
+
+end Turing

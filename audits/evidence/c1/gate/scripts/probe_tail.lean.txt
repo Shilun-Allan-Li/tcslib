@@ -1,0 +1,109 @@
+
+/-! ════════════════════════════════════════════════════════════════════════════════════════════
+Sanity probes (evidence only; not landing material). Each `example` checks a definition or a
+boundary case of a contract, by `decide`, `rfl` or a short proof. -/
+
+namespace Turing.C1Probe
+
+open Turing
+
+/-- The counter word `bits t` that the interpreter core counts down has value `t`. -/
+example (t : ℕ) : Nat.ofDigits 2 ((Nat.bits t).map Bool.toNat) = t := by
+  have h : (Nat.bits t).map Bool.toNat = (Nat.bits t).map fun b => cond b 1 0 := by
+    apply List.map_congr_left
+    intro b _
+    cases b <;> rfl
+  rw [h, ← Nat.digits_two_eq_bits, Nat.ofDigits_digits]
+
+/-- The replay machine's table has `3 · 27 = 81` records per state (three input reads, three
+reads on each of three work tapes), against `2 · 27 = 54` for the two ND tables. -/
+example : 3 * (workReadsK 3).length = 81 ∧ 2 * (3 * (workReadsK 2).length) = 54 := by decide
+
+/-- A two-choice machine with no work tapes whose `true` choice halts at once (a halting
+choice step) and whose `false` choice moves right and stays live. -/
+def haltOnTrue : NDTM 0 Bool Unit where
+  q₀ := ()
+  tr := fun b _ _ _ => ⟨1, fun i => i.elim0, none, if b then none else some ()⟩
+
+/-- Its replay along `[false, true, false]` halts at time `2`, and the choice head stops at `2`
+although three steps are run: the clause `p = t` of `Turing.NDTM.replayTM_runFrom` holds only
+while the branch is live. -/
+example :
+    let c := (haltOnTrue.replayTM).runFrom
+      (NDTM.withChoiceTape (haltOnTrue.initCfg ([] : List Bool))
+        (FinTM.bufferTape [false, true, false]) 0) 3
+    c.state = none ∧ c.workTapePos (Fin.last 0) = 2 := by
+  decide
+
+/-- The branch itself, along the same word: halted, and so it is along every extension. -/
+example : (haltOnTrue.runWith [false, true, false] (haltOnTrue.initCfg ([] : List Bool))).state
+    = none := by
+  decide
+
+/-- The bounded writer on a block of two nonblank cells. -/
+def writerStart : Cfg 1 Bool (NDWriterState Unit) ([] : List Bool) :=
+  ⟨some (.run ()), 1, fun _ p => if 0 ≤ p ∧ p < 2 then some false else none, fun _ => 0, []⟩
+
+/-- Every word of length `m + 1 = 3` reaches `done`, having written its first two bits and left
+the head after the block. -/
+example : ∀ w : List Bool, w.length = 3 →
+    let c := (ndWriterTM 1 0 () (fun _ _ => ()) (fun _ => false) true).runWith w writerStart
+    c.state = some .done ∧ c.workTapePos 0 = 2 ∧
+      c.workTapes 0 0 = w[0]? ∧ c.workTapes 0 1 = w[1]? ∧ c.workTapes 0 2 = none := by
+  intro w hw
+  match w, hw with
+  | [a, b, d], _ => cases a <;> cases b <;> cases d <;> decide
+
+/-- No word of length `m = 2` reaches `done`. -/
+example : ∀ w : List Bool, w.length = 2 →
+    ((ndWriterTM 1 0 () (fun _ _ => ()) (fun _ => false) true).runWith w writerStart).state =
+      some (.run ()) := by
+  intro w hw
+  match w, hw with
+  | [a, b], _ => cases a <;> cases b <;> decide
+
+/-- The writer over an empty block (`m = 0`): one step reaches `done`, writing nothing. -/
+example : ((ndWriterTM 1 0 () (fun _ _ => ()) (fun _ => false) true).runWith [true]
+    (⟨some (.run ()), 1, fun _ _ => none, fun _ => 0, []⟩ :
+      Cfg 1 Bool (NDWriterState Unit) ([] : List Bool))).state = some .done := by
+  decide
+
+/-- A machine that moves right on `true` and halts on anything else. -/
+def walkTrue : NDTM 0 Bool Unit where
+  q₀ := ()
+  tr := fun _ _ inp _ =>
+    if inp = some true then ⟨1, fun i => i.elim0, none, some ()⟩
+    else ⟨0, fun i => i.elim0, none, none⟩
+
+/-- Input locality is tight: with `m = 1`, a branch of `2 > m` steps on `[true, true]` and on
+its window `[true]` already differ in state (live against halted). -/
+example : (walkTrue.runWith [false, false] (walkTrue.initCfg [true, true])).state = some () ∧
+    (walkTrue.runWith [false, false] (walkTrue.initCfg ([true, true].take 1))).state = none := by
+  decide
+
+/-- At `|w| = m = 1` they agree, as `Turing.NDTM.runWith_initCfg_take` says. -/
+example : (walkTrue.runWith [false] (walkTrue.initCfg ([true, true].take 1))).state =
+    (walkTrue.runWith [false] (walkTrue.initCfg [true, true])).state :=
+  (NDTM.runWith_initCfg_take walkTrue [true, true] 1 [false] le_rfl).1
+
+/-- The exhaustive replay's hypothesis is never met at `T = 0`: the empty word leaves every
+machine live at its initial state. -/
+example (N : FinNDTM Bool) (z : List Bool) : ¬N.tm.HaltsWithin z 0 := by
+  intro h
+  have := h [] rfl
+  simp at this
+
+/-- Nor does any machine accept within `0` steps. -/
+example (N : FinNDTM Bool) (z : List Bool) : ¬N.AcceptsWithin z 0 := by
+  rintro ⟨w, hw, hhalt, -⟩
+  rw [List.length_eq_zero_iff.mp hw] at hhalt
+  simp at hhalt
+
+/-- The bridge at a one-state machine (`numStates = 0`), whatever its tables. -/
+example (tm : NDTM 2 Bool (Fin 1)) :
+    (⟨0, tm⟩ : CodeNDTM).serialize = pairEncode (Nat.bits 0)
+      (unaryFin tm.q₀ ++ (tableBitsK (tm.fixChoice false).tr ++
+        tableBitsK (tm.fixChoice true).tr)) :=
+  CodeNDTM.serialize_eq_tableBitsK ⟨0, tm⟩
+
+end Turing.C1Probe

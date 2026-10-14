@@ -70,6 +70,8 @@ self-delimiting pairing used by the universal machine.
   `Turing.eq_pairEncode_of_pairDecode`, `Turing.pairEncode_replicate_inj` — the shape of
   the pairing, shared by the machine-side developments.
 * `Turing.length_bits_le_self` — `|bits m| ≤ m`.
+* `Turing.bits_two_pow_mul`, `Turing.bits_two_pow_eq_replicate` — the `Nat.bits` shift law
+  `(2^j·m).bits = 0^j ++ m.bits` and its case `m = 1` (CH34-D4).
 * `Turing.computesFunInTime_pairEncode_diag` — the diagonal pairing `α ↦ ⟨α, α⟩` is
   computable in linear time (the only code computation the `HALT` reduction needs).
 * `Turing.exists_codeTM` — every one-work-tape binary machine is equivalent to a
@@ -267,6 +269,30 @@ lemma pairEncode_replicate_inj {n n' : ℕ} {u u' : List Bool}
 lemma length_bits_le_self (m : ℕ) : m.bits.length ≤ m := by
   rw [Nat.size_eq_bits_len]
   exact Nat.size_le.mpr Nat.lt_two_pow_self
+
+/-- **The `Nat.bits` shift law**: multiplying a positive `m` by `2 ^ j`
+prepends `j` low zero bits to its little-endian binary expansion,
+`(2^j·m).bits = 0^j ++ m.bits`. (Positivity is needed: `Nat.bits 0 = []`.)
+The public home of the law, promoted per the fills-6 request F6-1(a)
+(CH34-D4).
+
+**Proof sketch.** Induct on `j`. A positive number stays positive after
+multiplication by a power of two, and doubling a nonzero number prepends one
+low zero bit to its expansion; induction counts the prepended zeros. -/
+theorem bits_two_pow_mul (j m : ℕ) (hm : 0 < m) :
+    (2 ^ j * m).bits = List.replicate j false ++ m.bits := by
+  induction j with
+  | zero => simp
+  | succ j ih =>
+    rw [pow_succ', mul_assoc, Nat.bit0_bits _ (Nat.mul_pos (Nat.two_pow_pos j) hm).ne']
+    simp only [ih, List.replicate_succ, List.cons_append]
+
+/-- The little-endian binary expansion of `2 ^ n` is `n` zero bits followed by
+one high bit: `(2^n).bits = 0^n 1`. The case `m = 1` of
+`Turing.bits_two_pow_mul`, since the expansion of `1` is the single bit `1`. -/
+theorem bits_two_pow_eq_replicate (n : ℕ) :
+    (2 ^ n).bits = List.replicate n false ++ [true] := by
+  simpa using bits_two_pow_mul n 1 Nat.one_pos
 
 /-- Six-state pairing controller: double-stay, double-move, emit-true,
 first-left, rewind, and copy. The double-stay state's blank branch emits `false`. -/

@@ -9,6 +9,7 @@ import TCSlib.Complexity.SpaceComplexity.SpaceClasses
 import TCSlib.Complexity.SpaceComplexity.ConfigCount
 import TCSlib.Complexity.SpaceComplexity.Constructible
 import TCSlib.Complexity.ClassNP.Reductions
+import TCSlib.Complexity.TuringMachine.Build.RecordTable
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -20,14 +21,20 @@ set_option autoImplicit false
 [AB09, §4.1.1]: the configuration graph `G_{M,x}` of a machine on an input —
 vertices the configurations, edges the one-step transitions (out-degree at most
 two for a binary-choice NDTM) — together with the counting half of Claim 4.4(1)
-for nondeterministic branches, the exponential-time simulation
-([AB09, Theorem 4.2, third inclusion]), `NL ⊆ P`, and the coarseness of
-polynomial-time reductions below `P` ([AB09, Exercise 4.3]). This is phase P4.2
-of `AroraBarakChapters3-4Plan.md`; Savitch's theorem, the other consumer of
-this layer, is `TCSlib.Complexity.SpaceComplexity.Savitch`.
+for nondeterministic branches. This is phase P4.2 of `AroraBarakChapters3-4Plan.md`. The
+exponential-time simulation ([AB09, Theorem 4.2, third inclusion]), `NL ⊆ P`, and the
+coarseness of polynomial-time reductions below `P` ([AB09, Exercise 4.3]) were stated here;
+their proof runs a breadth-first search over the configuration codec
+(`TCSlib.Complexity.SpaceComplexity.Codec`), which imports this module, so they now live in
+`TCSlib.Complexity.SpaceComplexity.ExpTime` with their statements unchanged. Savitch's
+theorem, the other consumer of this layer, is `TCSlib.Complexity.SpaceComplexity.Savitch`.
 
-**Status: graph lemmas proved (phase P4.2, batch S1a).** The four graph
-contracts are proved; the three class results remain sorried for S1b.
+**Status: graph lemmas proved (phase P4.2, batch S1a).** The four graph contracts are proved;
+`Complexity.NSPACE_subset_exp_dtime`, `Complexity.NL_subset_P` and
+`Complexity.polyTimeReducible_of_mem_NL` are proved in
+`TCSlib.Complexity.SpaceComplexity.ExpTime` (2026-10-14). The private `s1b_*` helpers below
+belong to the superseded record-table route of the S1b partial fill and have no consumer.
+`spaceConstructible_logSpace` is proved (B3a).
 
 ## Design
 
@@ -63,7 +70,7 @@ contracts are proved; the three class results remain sorried for S1b.
 * `Turing.FinNDTM.configBound` — the vertex count at window radius `s`:
   three times the deterministic `configBound` formula. [AB09, Claim 4.4(1)]
 
-## Main results (graph lemmas proved; three class results sorried)
+## Main results
 
 * `Turing.NDTM.reflTransGen_cfgStep_iff` — reachability is the choice-word run.
 * `Turing.NDTM.coreSum_stepWith` — a step's vertex depends only on the vertex.
@@ -75,10 +82,6 @@ contracts are proved; the three class results remain sorried for S1b.
 * `Turing.outSummary_append_congr` — a common output suffix preserves summary equality.
 * `Turing.NDTM.coreSum_runWith` — a common choice word preserves vertex equality.
 * `Turing.FinNDTM.not_acceptsWithin_zero` — acceptance requires a transition.
-* `Complexity.NSPACE_subset_exp_dtime` — [AB09, Theorem 4.2, third inclusion].
-* `Complexity.NL_subset_P` — the p. 92 chain's nondeterministic step.
-* `Complexity.polyTimeReducible_of_mem_NL` — [AB09, Exercise 4.3]: every
-  nontrivial language is `NL`-hard under polynomial-time reductions.
 
 ## References
 
@@ -142,6 +145,24 @@ theorem outSummary_append_congr {u v : List Bool} (h : outSummary u = outSummary
 /-- Heads and all nonblank work cells lie in the finite coding window. -/
 private def InWindow (s : ℕ) (c : Cfg k Bool S x) : Prop :=
   ∀ i, |c.workTapePos i| ≤ s ∧ ∀ z, c.workTapes i z ≠ none → |z| ≤ s
+
+/-- The graph window and the public record window agree. This is the single
+bridge allowed by S1b ground rule 10; S1a's declarations remain unchanged.
+
+**Proof sketch.** Separate the head bounds and contrapose the cell bounds. -/
+private theorem inWindow_iff_cfgInWindow (s : ℕ) (c : Cfg k Bool S x) :
+    InWindow s c ↔ c.InWindow s := by
+  constructor
+  · intro h
+    refine ⟨fun i => (h i).1, ?_⟩
+    intro i z hz
+    by_contra nonblank
+    exact (not_le_of_gt hz) ((h i).2 z nonblank)
+  · rintro ⟨heads, cells⟩ i
+    refine ⟨heads i, ?_⟩
+    intro z nonblank
+    by_contra outside
+    exact nonblank (cells i z (lt_of_not_ge outside))
 
 namespace NDTM
 
@@ -529,6 +550,121 @@ theorem DecidesInSpace.mem_iff_acceptsWithin_configBound {N : FinNDTM Bool}
         rw [NDTM.runWith_append, NDTM.runWith_of_halt _ prefix_halt]
       exact ⟨w.take T, prefix_length, prefix_halt, by rw [← frozen]; exact output⟩
 
+/-- The canonical rich record of a graph vertex, using S1a's summary code.
+It records precisely the core and output summary, not the output history. -/
+private def s1b_record (s : ℕ) (c : Cfg k Bool S x) : List (List (RecSym S (Fin 3))) :=
+  cfgRecord s c (sumCode (outSummary c.output))
+
+/-- Canonical records identify exactly S1a's vertices on the coding window.
+This is the decoding part of the note-6 bridge, a Savitch promotion candidate.
+
+**Proof sketch.** The received `cfgRecord_inj` recovers all four core fields
+and the tag. S1a's injective `sumCode` recovers the output summary. -/
+private theorem s1b_record_eq_iff {s : ℕ} {c d : Cfg k Bool S x}
+    (hc : c.InWindow s) (hd : d.InWindow s) :
+    s1b_record s c = s1b_record s d ↔ NDTM.coreSum c = NDTM.coreSum d := by
+  rw [s1b_record, s1b_record, cfgRecord_inj s hc hd]
+  simp only [NDTM.coreSum, MultiTapeTM.ConfigCount.core, Prod.mk.injEq,
+    sumCode_injective.eq_iff]
+
+/-- The quotient edge implemented by the two record-step calls. Requiring
+the successor window is the semantic rejection of an outside-window step;
+the received `exists_recordStepTM` supplies the machine's `no` branch. -/
+private def s1b_recordEdge (tm : NDTM k Bool S) (s : ℕ)
+    (fs gs : List (List (RecSym S (Fin 3)))) : Prop :=
+  ∃ (c : Cfg k Bool S x) (b : Bool), c.InWindow s ∧ (tm.stepWith b c).InWindow s ∧
+    fs = s1b_record s c ∧ gs = s1b_record s (tm.stepWith b c)
+
+/-- Every path of canonical records lifts to a choice-word run from the
+supplied actual configuration, in particular the true initial configuration.
+The reflexive case uses the empty word. This is part of the note-6 promotion
+candidate; it does not assert a table-machine invariant.
+
+**Proof sketch.** At each quotient edge decode equality with its source,
+apply S1a's `coreSum_stepWith`, and transfer window validity from the edge's
+representative. Append that edge's bit to the actual run. -/
+private theorem s1b_recordPath_lift (tm : NDTM k Bool S) {s : ℕ}
+    {c : Cfg k Bool S x} (hc : c.InWindow s) {fs : List (List (RecSym S (Fin 3)))}
+    (path : Relation.ReflTransGen (s1b_recordEdge (x := x) tm s) (s1b_record s c) fs) :
+    ∃ w : List Bool, (tm.runWith w c).InWindow s ∧ s1b_record s (tm.runWith w c) = fs := by
+  induction path with
+  | refl => exact ⟨[], hc, rfl⟩
+  | @tail fs gs _ edge ih =>
+    obtain ⟨w, hw, hrecord⟩ := ih
+    obtain ⟨d, b, hd, hnext, hfs, hgs⟩ := edge
+    have same := (s1b_record_eq_iff hw hd).mp (hrecord.trans hfs)
+    have next := NDTM.coreSum_stepWith tm b same
+    have window : (tm.stepWith b (tm.runWith w c)).InWindow s :=
+      (inWindow_iff_cfgInWindow _ _).mp
+        (NDTM.inWindow_of_coreSum_eq next ((inWindow_iff_cfgInWindow _ _).mpr hnext))
+    refine ⟨w ++ [b], ?_, ?_⟩
+    · simpa only [NDTM.runWith_append, NDTM.runWith_cons, NDTM.runWith_nil] using window
+    · simpa only [NDTM.runWith_append, NDTM.runWith_cons, NDTM.runWith_nil] using
+        ((s1b_record_eq_iff window hnext).mpr next).trans hgs.symm
+
+/-- A run whose prefixes stay in the window gives a path of canonical
+records, including the zero-step path. This is the reverse direction of the
+note-6 bridge, independent of a table representation.
+
+**Proof sketch.** Each first bit gives one quotient edge; the remaining
+prefixes are exactly the positive-length prefixes of the original word. -/
+private theorem s1b_recordPath_of_run (tm : NDTM k Bool S) (s : ℕ) (w : List Bool)
+    (c : Cfg k Bool S x) (hwindow : ∀ j, (tm.runWith (w.take j) c).InWindow s) :
+    Relation.ReflTransGen (s1b_recordEdge (x := x) tm s)
+      (s1b_record s c) (s1b_record s (tm.runWith w c)) := by
+  induction w generalizing c with
+  | nil => exact Relation.ReflTransGen.refl
+  | cons b w ih =>
+    have hc : c.InWindow s := by simpa using hwindow 0
+    have hb : (tm.stepWith b c).InWindow s := by simpa using hwindow 1
+    apply Relation.ReflTransGen.head ⟨c, b, hc, hb, rfl, rfl⟩
+    apply ih
+    intro j
+    simpa only [List.take_succ_cons, NDTM.runWith_cons] using hwindow (j + 1)
+
+/-- Representatives of the three summary codes, used only to compute tag
+updates. The encoding itself is the received `sumCode`. -/
+private def s1b_summaryWord (τ : Fin 3) : List Bool :=
+  if τ = sumCode .empty then [] else if τ = sumCode .accept then [true] else [false]
+
+/-- Each chosen representative has the requested summary code.
+
+**Proof sketch.** Check the three elements of `Fin 3`; the existing encoding
+computes on the empty, accepting and dead representative words. -/
+private theorem s1b_summaryWord_code (τ : Fin 3) :
+    sumCode (outSummary (s1b_summaryWord τ)) = τ := by
+  fin_cases τ <;> rfl
+
+/-- The record-step tag update is summary append on a representative word. -/
+private def s1b_tagUpdate (τ : Fin 3) (b : Option Bool) : Fin 3 :=
+  sumCode (outSummary (s1b_summaryWord τ ++ b.toList))
+
+/-- An absent emission preserves the tag, as required by `recordStepTM`.
+
+**Proof sketch.** Appending no symbol preserves the representative word. -/
+private theorem s1b_tagUpdate_none (τ : Fin 3) : s1b_tagUpdate τ none = τ := by
+  simpa [s1b_tagUpdate] using s1b_summaryWord_code τ
+
+/-- The finite tag update agrees with every actual output history.
+
+**Proof sketch.** The representative and actual word have equal summaries
+by injectivity of S1a's code. Apply its append-congruence theorem. -/
+private theorem s1b_tagUpdate_output (u : List Bool) (b : Option Bool) :
+    s1b_tagUpdate (sumCode (outSummary u)) b = sumCode (outSummary (u ++ b.toList)) := by
+  exact congrArg sumCode (outSummary_append_congr
+    (sumCode_injective (s1b_summaryWord_code (sumCode (outSummary u)))) b.toList)
+
+/-- The verdict is a predicate on every decoded record, with no distinguished
+accepting vertex. Equality of records preserves it even when output histories
+differ. [AB09, §4.1.1]
+
+**Proof sketch.** A record's tag accepts precisely when the summary is
+`accept`, by S1a's injective code; its summary accepts precisely `[true]`. -/
+private theorem s1b_record_accepts (c : Cfg k Bool S x) :
+    (c.state = none ∧ sumCode (outSummary c.output) = sumCode .accept) ↔
+      c.Halted ∧ c.output = [true] := by
+  rw [sumCode_injective.eq_iff, outSummary_eq_accept_iff]
+
 end FinNDTM
 
 end Turing
@@ -537,76 +673,105 @@ namespace Complexity
 
 open Turing
 
-/-- **Nondeterministic space sits inside exponential time**
-([AB09, Theorem 4.2, third inclusion]): for space-constructible `S`,
-`NSPACE S ⊆ ⋃ c, DTIME (2 ^ (c · (S n + 1)))`. The union over `c` renders the
-book's `2^{O(S(n))}`; the `+ 1` is a harmless normalization whose job is the
-input-head absorption (`n + 2 ≤ 2 ^ (S n + 1)`, since `SpaceConstructible`
-bundles `logSpace n ≤ S n`) — the displayed time bound is everywhere positive
-regardless, and the `c = 0` component has exponent `0` (round-1 audit,
-finding 5).
+/-- The configuration-count formula is exponential in any bound dominating
+`logSpace`, with no monotonicity assumption. [AB09, Claim 4.4(1)]
+This formula-level helper is a promotion candidate for Savitch.
 
-**Proof sketch.** Let `N` decide `L` in space `c₀ · s`. The deterministic
-simulator, on input `x`: (i) computes the window radius `c₀ · S |x|` from the
-constructibility witness; (ii) runs a breadth-first search over the
-configuration graph on the coded vertices
-(`Turing.MultiTapeTM.ConfigCount.coreCode` plus the summary): the vertex count
-is `N.configBound |x| (c₀·S |x|) ≤ 2^{O(S |x|)}` (the exponent arithmetic of
-the received `configBound_logSpace_le`, generalized from `logSpace` to `S`),
-each vertex has out-degree two computed by one transition-table application,
-and the search maintains a visited table of coded vertices — the catalog
-copy/compare/increment routines and the loop combinator are the engine
-(`machine-library-design.md` §12 R3, `Build/Catalog.lean`); (iii) accepts iff
-a vertex with halted state and `accept` summary is reached, which is
-membership by
-`Turing.FinNDTM.DecidesInSpace.mem_iff_acceptsWithin_configBound` and
-`Turing.NDTM.reflTransGen_cfgStep_iff`. Total time: vertices × edges × table
-operations, `2^{O(S n)}`, normalized into the stated exponent with the
-`n + 2 ≤ 2^{S n + 1}` absorption. Fill obligations, named: the BFS controller
-(continuation budget anticipated), the vertex codec machine, the
-bound-generalized `configBound` arithmetic. -/
-theorem NSPACE_subset_exp_dtime (S : ℕ → ℕ) (hS : SpaceConstructible S) :
-    NSPACE S ⊆ ⋃ c : ℕ, DTIME fun n => 2 ^ (c * (S n + 1)) := by
-  sorry
+**Proof sketch.** P4.2 Question 5 bounds the input factor by `2^(u+1)`,
+the cell alphabet by `2^2`, and the head range by `2^(a*u+1)`.
+Multiplication adds the exponents; the displayed coefficient absorbs their
+constant terms and the finite state factor. -/
+private theorem s1b_count_le_exp (q k a n u : ℕ) (hu : logSpace n ≤ u) :
+    (q + 1) * (n + 2) * 3 ^ (k * (2 * (a * u) + 1)) * (2 * (a * u) + 1) ^ k ≤
+      2 ^ ((q + 2 + k * (5 * a + 3)) * (u + 1)) := by
+  have input : n + 2 ≤ 2 ^ (u + 1) := by
+    have hn : n + 1 ≤ 2 ^ u :=
+      (Nat.lt_pow_succ_log_self (by decide : 1 < 2) n).trans_le
+        (Nat.pow_le_pow_right (by decide) hu)
+    have hp : 0 < 2 ^ u := Nat.two_pow_pos u
+    rw [pow_succ]
+    omega
+  have head : 2 * (a * u) + 1 ≤ 2 ^ (a * u + 1) := by
+    have hp := Nat.lt_two_pow_self (n := a * u)
+    rw [pow_succ]
+    omega
+  calc
+    _ ≤ 2 ^ (q + 1) * 2 ^ (u + 1) *
+        (2 ^ 2) ^ (k * (2 * (a * u) + 1)) * (2 ^ (a * u + 1)) ^ k :=
+      Nat.mul_le_mul
+        (Nat.mul_le_mul
+          (Nat.mul_le_mul (Nat.le_of_lt (Nat.lt_two_pow_self (n := q + 1))) input)
+          (Nat.pow_le_pow_left (by decide : 3 ≤ 2 ^ 2) _))
+        (Nat.pow_le_pow_left head k)
+    _ = 2 ^ ((q + 1) + (u + 1) + 2 * (k * (2 * (a * u) + 1)) + (a * u + 1) * k) := by
+      simp only [← pow_mul, ← pow_add]
+    _ ≤ _ := Nat.pow_le_pow_right (by decide) (by nlinarith)
 
-/-- **`NL ⊆ P`** — the nondeterministic step of the p. 92 chain
-([AB09, §4.1.2 with Exercise 4.3's premise]). At `S = logSpace` the vertex
-count is polynomial, so the breadth-first search runs in polynomial time.
+/-- The formula-level bound instantiated for the deterministic constructor.
 
-**Proof sketch.** Instantiate the simulator of
-`Complexity.NSPACE_subset_exp_dtime` at `logSpace`: the vertex count
-`N.configBound n (c₀ · logSpace n)` is bounded by a fixed polynomial in `n`
-(the received `Turing.FinTM.configBound_logSpace_le` arithmetic, times three),
-so the BFS with its table fits in `DTIME (n^d + 1)` for a fixed `d` —
-with count arithmetic analogous to the received
-`Complexity.LOGSPACE_subset_P` — whose own proof keeps the original machine
-and bounds its halting time through `ComputesInSpace`, constructing no
-search or visited table (round-1 audit, finding 4). Continuation budget
-anticipated: the external prior art's `NL ⊆ P` was a full submission on its
-own ([Bon26] context in `machine-library-design.md` §12 — reachability-table
-construction; design only, nothing ported). -/
-theorem NL_subset_P : NL ⊆ P := by
-  sorry
+**Proof sketch.** Unfold only the received count definition and apply the
+single generalized counting argument. -/
+private theorem s1b_constructor_count (M : FinTM Bool) (a n u : ℕ)
+    (hu : logSpace n ≤ u) :
+    M.configBound n (a * u) ≤
+      2 ^ ((Fintype.card M.State + 2 + M.k * (5 * a + 3)) * (u + 1)) :=
+  s1b_count_le_exp (Fintype.card M.State) M.k a n u hu
 
-/-- **Polynomial-time reductions are too coarse below `P`**
-([AB09, Exercise 4.3]): every language that is neither empty nor full is
-`NL`-hard under polynomial-time Karp reductions — so `NL`-completeness is
-only meaningful for the logspace reductions of phase P4.4
-([AB09, Definition 4.16]; the exercise's intended moral, recorded in its
-docstring rather than left implicit). **Corrects the exercise's printed
-wording**: p. 93 says "complete for `NL`" for an arbitrary nontrivial target,
-which is false without target membership in `NL` (an undecidable nontrivial
-target defeats completeness); only hardness is claimed here, and
-completeness additionally requires `L ∈ NL` (round-1 audit, finding 2).
+/-- The same formula-level bound, including the three output summaries, for
+the nondeterministic graph. [AB09, Claim 4.4(1)]
 
-**Proof sketch.** Fix witnesses `y₀ ∈ L` and `z₀ ∉ L` (classical choice). For
-`L' ∈ NL`, `Complexity.NL_subset_P` gives a polynomial-time decider of `L'`;
-the reduction `f x := if x ∈ L' then y₀ else z₀` is polynomial-time
-computable by the conditional catalog (`Complexity.polyTimeComputable_ite`
-over the decider with two `Complexity.polyTimeComputable_const` branches),
-and `x ∈ L' ↔ f x ∈ L` holds by the choice of witnesses. -/
-theorem polyTimeReducible_of_mem_NL (L : Language Bool) (hy : ∃ y, y ∈ L)
-    (hz : ∃ z, z ∉ L) {L' : Language Bool} (hL' : L' ∈ NL) : L' ≤ₚ L := by
-  sorry
+**Proof sketch.** The received vertex count is three times the core count.
+Bound three by four and absorb the two extra exponent units into the fixed
+coefficient. -/
+private theorem s1b_vertex_count (N : FinNDTM Bool) (a n u : ℕ)
+    (hu : logSpace n ≤ u) :
+    N.configBound n (a * u) ≤
+      2 ^ ((Fintype.card N.State + 4 + N.k * (5 * a + 3)) * (u + 1)) := by
+  unfold FinNDTM.configBound
+  calc
+    _ ≤ 2 ^ 2 * 2 ^ ((Fintype.card N.State + 2 + N.k * (5 * a + 3)) * (u + 1)) :=
+      Nat.mul_le_mul (by decide) (s1b_count_le_exp _ _ _ _ _ hu)
+    _ = 2 ^ (2 + (Fintype.card N.State + 2 + N.k * (5 * a + 3)) * (u + 1)) :=
+      (pow_add _ _ _).symm
+    _ ≤ _ := Nat.pow_le_pow_right (by decide) (by nlinarith)
+
+/-- Normalizing the space constant does not change the deciding machine or
+any branch's halting budget. No monotonicity of the space function is needed.
+
+**Proof sketch.** Choose the original constant itself as the exponent, since
+`c ≤ 2^c`. Enlarge only the space inequality in each received witness. The
+constructibility lower bound makes the binary radius word canonical. -/
+private theorem s1b_normalize_radius {S : ℕ → ℕ} (hdom : ∀ n, logSpace n ≤ S n)
+    {L : Language Bool} {N : FinNDTM Bool} {c : ℕ}
+    (hN : N.DecidesInSpace L fun n => c * S n) :
+    ∃ j : ℕ, c ≤ 2 ^ j ∧
+      N.DecidesInSpace L (fun n => 2 ^ j * S n) ∧
+      ∀ n, (2 ^ j * S n).bits = List.replicate j false ++ (S n).bits := by
+  have hc : c ≤ 2 ^ c := Nat.le_of_lt (Nat.lt_two_pow_self (n := c))
+  refine ⟨c, hc, ?_, ?_⟩
+  · intro x
+    obtain ⟨T, hhalt, hspace, hacc⟩ := hN x
+    exact ⟨T, hhalt, fun w hw => (hspace w hw).trans (Nat.mul_le_mul_right _ hc), hacc⟩
+  · intro n
+    apply bits_two_pow_mul
+    have := hdom n
+    unfold logSpace at this
+    omega
+
+/-- The received deterministic count supplies the constructor's time bound.
+This isolates the noncircular time ledger of the radius phase.
+
+**Proof sketch.** Each space-constructor witness already halts. Apply
+`ComputesInTime.of_spaceUsed_le` to its finite run, then the deterministic
+instance of the generalized count. -/
+private theorem s1b_constructor_time {S : ℕ → ℕ} (hdom : ∀ n, logSpace n ≤ S n)
+    {M : FinTM Bool} {a : ℕ}
+    (hM : M.ComputesInSpace (fun x => (S x.length).bits) fun n => a * S n) :
+    ∀ x, M.ComputesInTime x (S x.length).bits (M.configBound x.length (a * S x.length)) ∧
+      M.configBound x.length (a * S x.length) ≤
+        2 ^ ((Fintype.card M.State + 2 + M.k * (5 * a + 3)) * (S x.length + 1)) := by
+  intro x
+  obtain ⟨t, ht, hs⟩ := hM x
+  exact ⟨ht.of_spaceUsed_le hs, s1b_constructor_count M a x.length (S x.length) (hdom _)⟩
 
 end Complexity

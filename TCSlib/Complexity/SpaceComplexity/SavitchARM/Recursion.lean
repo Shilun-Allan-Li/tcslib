@@ -164,7 +164,7 @@ theorem base_spec (hsw : s ≤ w) (st : St) (h : Inv s w 0 st) :
       exact AReach.refl _
 
 /-- Close a register-file bound from the unfolded bounds in context. -/
-macro "bdt" : tactic => `(tactic| (simp only [St.Bd]; omega))
+scoped macro "bdt" : tactic => `(tactic| (simp only [St.Bd]; omega))
 
 variable (E orc x s w) in
 open Classical in

@@ -8,6 +8,10 @@ import TCSlib.Complexity.SpaceComplexity.ConfigGraph
 import TCSlib.Complexity.SpaceComplexity.Constructible
 import TCSlib.Complexity.SpaceComplexity.Inclusions
 import TCSlib.Complexity.TuringMachine.Build.CfgRecord
+import TCSlib.Complexity.FormulaKit.Gate
+import TCSlib.Complexity.FormulaKit.Emit
+import TCSlib.Complexity.ClassPSPACE.TQBFARM.Correct
+import TCSlib.Complexity.ClassPSPACE.TQBFHard
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -26,16 +30,20 @@ adjacency-formula half of Claim 4.4(2), and the Stockmeyer-Meyer theorem that
 * **Def 4.9 verbatim over the campaign's `≤ₚ`** (`Complexity.PolyTimeReducible`,
   chapter 2); the logspace-reduction variant ([AB09, Exercise 4.9]) waits for
   phase P4.4's `≤ₗ`.
-* **Claim 4.4(2) at polynomial size, over a packaged quotient codec.** The
-  statement supplies, for each machine and each `(n, s)`: a configuration
-  bit-codec of fixed length linear in `s + n`, **factoring through the input
+* **Claim 4.4(2) at polynomial size, over the closed-form codec `Complexity.ConfigCodec`**
+  (restated by RD-2, user decision of 2026-10-12, `machine-library-design.md` §16b item 2;
+  the packaged existential `Complexity.exists_adjacency_codec_cnf` is retired at the RD-2a
+  re-fill). For each machine and each `(n, s)`: a configuration bit-codec
+  `ConfigCodec.code` of width `ConfigCodec.width M n s = 2n + 4 + Q + 3k(2s + 1)`, linear
+  in `s + n`, every field at a closed-form index, **factoring through the input
   and the P4.2 vertex quotient** `Turing.NDTM.coreSum` — full configurations
   are *not* injectively codable at fixed length, the output tape being
   unbounded (round-1 blocker, finding 1) — together with **three** CNFs over
-  the code bits: a validity predicate characterizing exactly the codec image
-  (unguarded midpoint quantification admits paths through junk codes —
-  round-1 finding 3), the adjacency test (true on same-input windowed pairs
-  iff the step descends to the vertex quotient; false across distinct
+  the code bits, each an explicit clause list ordered by `List.range` and built from the
+  truth-table gates of `Complexity.FormulaKit` (design §14 row H6): a validity predicate
+  characterizing exactly the codec image (unguarded midpoint quantification admits paths
+  through junk codes — round-1 finding 3), the adjacency test (true on same-input windowed
+  pairs iff the step descends to the vertex quotient; false across distinct
   inputs), and the acceptance test (halted state with `accept` summary).
   Declared deviations from the book's Claim 4.4(2), each argued harmless to
   Theorem 4.13: (i) the codec length is `O(s + n)` rather than `O(s)` — the
@@ -49,36 +57,52 @@ adjacency-formula half of Claim 4.4(2), and the Stockmeyer-Meyer theorem that
   (iii) adjacency compares `coreSum (step c)` with `coreSum d`, so halted
   vertices are self-adjacent while live ones **need not** be (a stationary
   silent live loop is — round-2 finding 3); the ψ-recursion's base case
-  supplies `a = b` separately (round-1 finding 6). **The package is
-  existence, not an algorithm** (round-1 major 2): the uniform
-  polynomial-time emitter of the three formulas is a private, named fill
-  obligation of `TQBF`'s hardness proof, never a claim of this statement.
-  Sole consumer unchanged; D6-style promotion recorded for a second consumer
-  (the phase-P4.4 `PATH` encoding remains the candidate).
+  supplies `a = b` separately (round-1 finding 6). **Uniformity** (new with RD-2; round-1
+  major 2 recorded that the packaged existential supplied no algorithm): the three CNFs at
+  any polynomial-time input length, radius and variable offset, and the initial vertex's
+  code, are polynomial-time computable (`ConfigCodec.polyTimeComputable_serialize_validity`
+  and its siblings). Two choices depend on the machine only — the state numbering
+  `ConfigCodec.stateIndex` and the case list `ConfigCodec.caseList` — as Cook-Levin's field
+  codes do. These RD-2 lemmas currently have **no consumer**: the hardness proof
+  `Complexity.TQBF_PSPACEHard` no longer uses `ConfigCodec` (it goes through the
+  configuration codes of `Complexity.Codec` and a P-uniform tableau,
+  `ClassPSPACE/TQBFHard*.lean`), and the phase-P4.4 `PATH` reduction uses `Complexity.Codec`
+  as well.
 * **The facade discipline**: `ClassPSPACE.lean` is this phase's own new
   facade; nothing frozen is touched.
 
 ## Main definitions
 
 * `Complexity.PSPACEHard`, `Complexity.PSPACEComplete` — [AB09, Definition 4.9].
+* `Complexity.ConfigCodec.code`, `Complexity.ConfigCodec.width` and the field indices
+  `inputVar`, `headVar`, `stateVar`, `workVar`, `summaryVar` — the configuration codec of
+  [AB09, Claim 4.4], in closed form.
+* `Complexity.ConfigCodec.validity`, `Complexity.ConfigCodec.adjacency`,
+  `Complexity.ConfigCodec.acceptance` — its three CNFs. [AB09, Claim 4.4(2)]
 * `Complexity.TQBF` — the true quantified Boolean formulas, over
   `Complexity.QBF.decode`. [AB09, §4.2, before Theorem 4.13]
 
-## Main results (three phase-P4.3 statements remain sorried)
+## Main results
 
 * `Complexity.PSPACE_eq_P_of_pspaceComplete_mem_P` — a `PSPACE`-complete
   language in `P` collapses `PSPACE` to `P`. [AB09, §4.2, after Definition 4.9]
-* `Complexity.exists_adjacency_codec_cnf` — Claim 4.4(2), packaged quotient form.
+* `Complexity.ConfigCodec.code_eq_iff`, `Complexity.ConfigCodec.validity_eval_iff`,
+  `Complexity.ConfigCodec.adjacency_eval_iff`, `Complexity.ConfigCodec.acceptance_eval_iff`
+  and their siblings — Claim 4.4(2), clause by clause (sorried until the RD-2a re-fill).
+* `Complexity.ConfigCodec.polyTimeComputable_serialize_validity` and its adjacency,
+  acceptance and initial-code siblings — the uniform emitters (sorried until RD-2b).
+* `Complexity.exists_adjacency_codec_cnf` — Claim 4.4(2), packaged quotient form; retired at
+  the RD-2a re-fill (no proof uses it).
 * `Complexity.TQBF_mem_PSPACE` — [AB09, Theorem 4.13, membership half].
-* `Complexity.TQBF_PSPACEHard` — [AB09, Theorem 4.13, hardness half]; a fill
-  summit (the `ψᵢ` emitter).
+* `Complexity.TQBF_PSPACEHard` — [AB09, Theorem 4.13, hardness half]; proved in
+  `ClassPSPACE/TQBFHard*.lean` (the `ψᵢ` recursion with a tableau-and-Tseitin matrix).
 * `Complexity.TQBF_PSPACEComplete` — [AB09, Theorem 4.13].
 
 ## References
 
 * [AB09] S. Arora, B. Barak, *Computational Complexity: A Modern Approach*,
   Cambridge University Press, 2009. (§4.2, Definition 4.9, Claim 4.4,
-  Theorem 4.13.)
+  Theorem 4.13; Claim 2.13, p. 46, for the gate templates.)
 * [SM73] L. Stockmeyer, A. Meyer, *Word problems requiring exponential time*,
   STOC 1973. (Cited through [AB09]; no external text required.)
 -/
@@ -110,6 +134,314 @@ theorem PSPACE_eq_P_of_pspaceComplete_mem_P {L' : Language Bool}
     (h : PSPACEComplete L') (hP : L' ∈ P) : PSPACE = P := by
   exact Set.Subset.antisymm
     (fun L hL => mem_P_of_polyTimeReducible (h.2 L hL) hP) P_subset_PSPACE
+
+/-! ### Claim 4.4(2): the closed-form configuration codec (definitions)
+
+Restated by RD-2 (design §16b item 2): the codec and its three CNFs are public definitions
+with closed-form variable indexing, built from the gates of `Complexity.FormulaKit`; the
+theorems about them follow the fill appendix below. Layout of a code word of `width M n s`
+bits, for input length `n` and window radius `s` (`k = M.k`, `Q = card M.State + 1`, window
+cell `j < 2s + 1` stands for work position `j - s`):
+
+| field | variables | meaning |
+|---|---|---|
+| input content | `i` for `i < n` | input bit `i` |
+| input head | `n + j` for `j < n + 2` | the input head is at `j` (`0`, `n + 1`: end markers) |
+| state | `2n + 2 + r` for `r < Q` | the state has index `r` (`0` is the halting state) |
+| work cells | `2n + 2 + Q + 3((2s+1)i + j) + b` | tape `i`, cell `j`, flag `b < 3` (below) |
+| summary | `2n + 2 + Q + 3k(2s+1) + d` | `d = 0`: output `[true]`; `d = 1`: output dead |
+
+The flags of a work cell are `b = 0` "holds `false`", `b = 1` "holds `true`" and `b = 2` "the
+head is here". This is the field order of the finite row `CodecRow` of the fill appendix;
+only the numbering is new. Adjacency reads two blocks: the source code at `[0, width)` and
+the target code at `[width, 2 · width)`. Two choices depend on the machine only and are fixed
+once for it, as in Cook-Levin's field codes: the state numbering `stateIndex` and the case
+list `caseList`. -/
+
+namespace ConfigCodec
+
+variable (M : FinTM Bool)
+
+/-- The number of state markers: one per state of `M` and one for the halting state. -/
+def stateCount : ℕ := Fintype.card M.State + 1
+
+/-- **The machine-constant state numbering**: the halting state is `0`, and state `q` is one
+more than its position in a fixed enumeration of the finite state type
+(`Fintype.equivFin M.State`). The choice depends on the machine only, not on `n` or `s`, so an
+emitter for the fixed machine stores it as a finite table. -/
+noncomputable def stateIndex : Option M.State → ℕ
+  | none => 0
+  | some q => (Fintype.equivFin M.State q).val + 1
+
+/-- The first state-marker variable, after the `n` input bits and the `n + 2` input-head
+markers. -/
+def stateOffset (n : ℕ) : ℕ := 2 * n + 2
+
+/-- The first work-track variable, after the state markers. -/
+def workOffset (n : ℕ) : ℕ := stateOffset n + stateCount M
+
+/-- The first summary variable, after the `3 · k · (2s + 1)` work-track variables. -/
+def summaryOffset (n s : ℕ) : ℕ := workOffset M n + 3 * (M.k * (2 * s + 1))
+
+/-- **The code width** `2n + 4 + Q + 3k(2s + 1)`, linear in `s + n` for the fixed machine
+([AB09, Claim 4.4(2)]; deviation (i) of the module docstring: the code carries the input, so
+the width is `O(s + n)` rather than `O(s)`). Unlike the retired packaged statement, there is
+no padding to `C · (s + n + 1)`. -/
+def width (n s : ℕ) : ℕ := summaryOffset M n s + 2
+
+/-- The variable of input bit `i`, namely `i`. -/
+def inputVar (i : ℕ) : ℕ := i
+
+/-- The variable of the input-head marker at position `j`, namely `n + j` (`j = 0` and
+`j = n + 1` are the end markers). -/
+def headVar (n j : ℕ) : ℕ := n + j
+
+/-- The variable of the marker of state `q` (`none` is the halting state):
+`stateOffset n + stateIndex M q`. -/
+noncomputable def stateVar (n : ℕ) (q : Option M.State) : ℕ := stateOffset n + stateIndex M q
+
+/-- The variable of flag `b` of window cell `j` of work tape `i`:
+`workOffset M n + 3 · ((2s + 1) · i + j) + b`. -/
+def workVar (n s i j b : ℕ) : ℕ := workOffset M n + 3 * ((2 * s + 1) * i + j) + b
+
+/-- The variable of an output-summary flag: `summaryOffset M n s` for "the output is
+`[true]`" (`dead = false`) and the next variable for "the output is dead" (`dead = true`). -/
+def summaryVar (n s : ℕ) (dead : Bool) : ℕ := summaryOffset M n s + if dead then 1 else 0
+
+/-- The three flags of window cell `j` (work position `j - s`) of work tape `i` of `c`:
+the cell holds `false`; the cell holds `true`; the head of tape `i` is at the cell. Positions
+are exact integers, so a head outside the window marks no cell. -/
+def workFlags (s : ℕ) {x : List Bool} (c : Cfg M.k Bool M.State x) (i : Fin M.k) (j : ℕ) :
+    List Bool :=
+  [decide (c.workTapes i ((j : ℤ) - s) = some false),
+    decide (c.workTapes i ((j : ℤ) - s) = some true),
+    decide (c.workTapePos i = (j : ℤ) - s)]
+
+/-- **The configuration codec** ([AB09, Claim 4.4(2)], with the marker discipline of the
+Cook-Levin tableau row): the code of `c` at input length `n` and radius `s` is the
+concatenation, in the order of the layout table, of the first `n` input bits, the one-hot
+input-head track, the one-hot state track, the three flags of every window cell of every work
+tape, and the two output-summary flags. The output tape enters only through
+`Turing.outSummary` (a full-output code of fixed length cannot be injective; P4.3 round-1
+finding 1). Total on all inputs and configurations; its theorems concern inputs of length `n`
+and, where stated, configurations in the radius-`s` window. -/
+noncomputable def code (n s : ℕ) (x : List Bool) (c : Cfg M.k Bool M.State x) : List Bool :=
+  List.ofFn (fun i : Fin n => x.getD i false) ++
+    List.ofFn (fun j : Fin (n + 2) => decide (c.inputPos.val = j.val)) ++
+    List.ofFn (fun r : Fin (stateCount M) => decide (stateIndex M c.state = r.val)) ++
+    (List.finRange M.k).flatMap (fun i => (List.range (2 * s + 1)).flatMap (workFlags M s c i)) ++
+    [decide (outSummary c.output = .accept), decide (outSummary c.output = .dead)]
+
+/-- **The validity CNF** ([AB09, Claim 4.4(2)]; P4.3 round-1 finding 3: the `ψ` recursion
+guards its midpoints with it): exactly one input-head marker, exactly one state marker,
+exactly one head marker on each work tape, never both symbol flags of a cell, and never both
+summary flags. The input bits are unconstrained. Every clause list is ordered by
+`List.range`, so the formula is a closed-form function of `(M, n, s)`. -/
+def validity (n s : ℕ) : CNF ℕ :=
+  FormulaKit.exactlyOne ((List.range (n + 2)).map (headVar n)) ++
+    FormulaKit.exactlyOne ((List.range (stateCount M)).map (stateOffset n + ·)) ++
+    (List.range M.k).flatMap (fun i =>
+      FormulaKit.exactlyOne ((List.range (2 * s + 1)).map fun j => workVar M n s i j 2)) ++
+    (List.range M.k).flatMap (fun i => (List.range (2 * s + 1)).map fun j =>
+      [(workVar M n s i j 0, false), (workVar M n s i j 1, false)]) ++
+    [[(summaryVar M n s false, false), (summaryVar M n s true, false)]]
+
+/-- **The acceptance CNF** ([AB09, Claim 4.4(2)]): two unit clauses, the halting-state marker
+(variable `stateOffset n`, which is `stateVar M n none`) and the accepting-summary flag. -/
+def acceptance (n s : ℕ) : CNF ℕ :=
+  [[(stateOffset n, true)], [(summaryVar M n s false, true)]]
+
+/-- **Carried-input equality** between the source block and the target block: for each
+input position `i < n`, two clauses stating that variables `i` and `width + i` are equal. -/
+def inputEquality (n s : ℕ) : CNF ℕ :=
+  (List.range n).flatMap fun i =>
+    [[(i, false), (width M n s + i, true)], [(i, true), (width M n s + i, false)]]
+
+/-- The finite transition **cases** of `M`: a state (the halting state included), a scanned
+input symbol, and a scanned symbol on each work tape. A type depending on the machine only.
+(The private `CodecCase` of the fill appendix, made public.) -/
+abbrev Case := Option M.State × Option Bool × (Fin M.k → Option Bool)
+
+/-- The action of a case: the machine's transition at that state and those scanned symbols,
+or, at the halting state, the silent identity action. (The private `codecAction`, made
+public.) -/
+def caseAction (q : Case M) : Action M.k Bool M.State :=
+  match q.1 with
+  | none => ⟨0, fun _ => (none, 0), none, none⟩
+  | some st => M.tm.tr st q.2.1 q.2.2
+
+/-- **The machine-constant case list**: a fixed enumeration of the finite case type
+(`Finset.univ.toList`). Its order depends on the machine only, so an emitter for the fixed
+machine stores it as a finite table. -/
+noncomputable def caseList : List (Case M) := (Finset.univ : Finset (Case M)).toList
+
+/-- The `3k + 7` Boolean **ports** of one transition gate on a machine with `k` work tapes:
+the state, input-head and work-head markers of the guard, the scanned input bit, the two
+symbol flags of each scanned work cell, the two old summary flags, and the old and the new
+value of the updated bit. (The private `CodecPort`, indexed by `k` and made public.) -/
+inductive Port (k : ℕ)
+  | state
+  | inputHead
+  | inputSymbol
+  | workHead : Fin k → Port k
+  | workSymbol : Fin k → Bool → Port k
+  | summary : Bool → Port k
+  | oldBit
+  | newBit
+  deriving Fintype, DecidableEq
+
+/-- The number of ports of a gate on a machine with `k` work tapes, `3k + 7`. -/
+def portCount (k : ℕ) : ℕ := 3 * k + 7
+
+/-- **Closed-form port numbering**: `state`, `inputHead`, `inputSymbol` are `0, 1, 2`; the `k`
+work heads follow; then two symbol flags per tape (`false` before `true`); then the two summary
+flags; then the old and the new bit, `3k + 5` and `3k + 6`. -/
+def portIndex {k : ℕ} : Port k → ℕ
+  | .state => 0
+  | .inputHead => 1
+  | .inputSymbol => 2
+  | .workHead i => 3 + i.val
+  | .workSymbol i t => 3 + k + 2 * i.val + if t then 1 else 0
+  | .summary t => 3 + 3 * k + if t then 1 else 0
+  | .oldBit => 5 + 3 * k
+  | .newBit => 6 + 3 * k
+
+/-- The port with number `j` (inverse to `portIndex` below `portCount k`; numbers at or above
+`portCount k` give `newBit`). -/
+def portOf (k j : ℕ) : Port k :=
+  if h₀ : j < 3 then (if j = 0 then .state else if j = 1 then .inputHead else .inputSymbol)
+  else if h : j < 3 + k then .workHead ⟨j - 3, by omega⟩
+  else if h' : j < 3 + 3 * k then .workSymbol ⟨(j - 3 - k) / 2, by omega⟩ ((j - 3 - k) % 2 = 1)
+  else if j = 3 + 3 * k then .summary false
+  else if j = 4 + 3 * k then .summary true
+  else if j = 5 + 3 * k then .oldBit
+  else .newBit
+
+/-- What a gate asserts about its new bit: that it copies the old bit, that it is a constant,
+or that it is one of the two summary flags recomputed from the old flags and the case's
+output. -/
+inductive Expect
+  | copy
+  | const (b : Bool)
+  | summary (dead : Bool)
+  deriving Fintype, DecidableEq
+
+/-- A **gate kind**: a case, whether the guarded input position is interior, and an
+expectation. A finite type depending on the machine only, so there is one gate template per
+kind for the fixed machine. -/
+abbrev GateKind := Case M × Bool × Expect
+
+/-- Two symbol flags decode to blank, `false` or `true` (the excluded pattern `11` reads
+`true`). (The private `codecReadSymbol`, made public.) -/
+def readSymbol (f t : Bool) : Option Bool := if t then some true else if f then some false else none
+
+/-- Two summary flags decode to an output summary (the excluded pattern `11` reads dead). (The
+private `codecReadSummary`, made public.) -/
+def readSummary (acc dead : Bool) : OutSummary :=
+  if dead then .dead else if acc then .accept else .empty
+
+/-- A canonical output word with each summary: `[]`, `[true]`, `[false]`. (The private
+`codecSummaryWord`, made public.) -/
+def summaryWord : OutSummary → List Bool
+  | .empty => []
+  | .accept => [true]
+  | .dead => [false]
+
+/-- **The guard of a gate** of case `q`: the selected state, input-head and work-head markers
+are all set, the scanned input symbol is that of the case (an end-marker position, not
+`interior`, scans blank), and each scanned work cell's flags decode to the case's symbol. -/
+def guard (q : Case M) (interior : Bool) (a : Port M.k → Bool) : Bool :=
+  a .state && a .inputHead && (List.finRange M.k).all (fun i => a (.workHead i)) &&
+    decide ((if interior then some (a .inputSymbol) else none) = q.2.1) &&
+    (List.finRange M.k).all fun i =>
+      decide (readSymbol (a (.workSymbol i false)) (a (.workSymbol i true)) = q.2.2 i)
+
+/-- The bit a gate expects as the new bit, under an action: the old bit (`copy`), a constant,
+or a summary flag of the old summary followed by the action's output. -/
+def expectBit (act : Action M.k Bool M.State) : Expect → (Port M.k → Bool) → Bool
+  | .copy, a => a .oldBit
+  | .const b, _ => b
+  | .summary dead, a =>
+    decide (outSummary (summaryWord (readSummary (a (.summary false)) (a (.summary true))) ++
+      act.output.toList) = if dead then .dead else .accept)
+
+/-- **The predicate of a gate kind** `(q, interior, e)`: if the guard holds, then the new bit
+is the bit expected under the case's action. -/
+def kindPred (κ : GateKind M) (a : Port M.k → Bool) : Bool :=
+  !guard M κ.1 κ.2.1 a || (a .newBit == expectBit M (caseAction M κ.1) κ.2.2 a)
+
+/-- The window cell of the head of work tape `i` in the head tuple coded by `h < (2s+1)^k`
+(mixed radix `2s + 1`, tape `0` least significant). -/
+def headOf (s h i : ℕ) : ℕ := h / (2 * s + 1) ^ i % (2 * s + 1)
+
+/-- The input-head move of `Turing.moveInputPos`, on natural-number positions: add the move
+in `ℤ`, truncate at `0`, and clamp at the right end marker `n + 1`. -/
+def moveInput (n p : ℕ) (m : SignType) : ℕ :=
+  let p' := ((p : ℤ) + (m.cast : ℤ)).toNat
+  if p' < n + 2 then p' else n + 1
+
+/-- **The expectation of target bit `v`** under input-head position `p`, head tuple `h` and
+case `q`: input bits are copied; the input-head, state and work-head markers are recomputed
+constants; a symbol flag at a written head cell is the written value, and is copied at every
+other cell; the summary flags are recomputed. Closed form in `(n, s, p, h, v)` for the fixed
+case. -/
+noncomputable def expectOf (n s p h : ℕ) (q : Case M) (v : ℕ) : Expect :=
+  let act := caseAction M q
+  if v < n then .copy
+  else if v < stateOffset n then .const (decide (moveInput n p act.inputTape = v - n))
+  else if v < workOffset M n then .const (decide (stateIndex M act.state = v - stateOffset n))
+  else if v < summaryOffset M n s then
+    let u := v - workOffset M n
+    let i := u / 3 / (2 * s + 1)
+    let j := u / 3 % (2 * s + 1)
+    if hi : i < M.k then
+      if u % 3 < 2 then
+        if headOf s h i = j then
+          match (act.workTapes ⟨i, hi⟩).1 with
+          | none => .copy
+          | some w => .const (decide (w = some (decide (u % 3 = 1))))
+        else .copy
+      else .const (decide ((headOf s h i : ℤ) + ((act.workTapes ⟨i, hi⟩).2.cast : ℤ) = j))
+    else .copy
+  else .summary (decide (v = summaryOffset M n s + 1))
+
+/-- **The wiring of a gate**, in closed form: the guard ports read the source block at the
+markers selected by `(p, h, q)`; the old bit is source variable `v`; the new bit is target
+variable `width + v`. The input-symbol port of an end-marker position reads a variable that
+the guard ignores. -/
+noncomputable def portWire (n s p h : ℕ) (q : Case M) (v : ℕ) : Port M.k → ℕ
+  | .state => stateVar M n q.1
+  | .inputHead => headVar n p
+  | .inputSymbol => if 0 < p ∧ p ≤ n then inputVar (p - 1) else summaryVar M n s false
+  | .workHead i => workVar M n s i (headOf s h i) 2
+  | .workSymbol i t => workVar M n s i (headOf s h i) (if t then 1 else 0)
+  | .summary t => summaryVar M n s t
+  | .oldBit => v
+  | .newBit => width M n s + v
+
+/-- **One transition gate**: the fixed template (`Complexity.FormulaKit.gate`) of the kind
+`(q, interior p, expectOf …)`, wired by `portWire`. -/
+noncomputable def transitionGate (n s p h : ℕ) (q : Case M) (v : ℕ) : CNF ℕ :=
+  FormulaKit.gate (portCount M.k)
+    (fun a => kindPred M (q, decide (0 < p ∧ p ≤ n), expectOf M n s p h q v)
+      (fun port => FormulaKit.readBit a (portIndex port)))
+    (fun j => portWire M n s p h q v (portOf M.k j))
+
+/-- **The transition conjunction**, enumerated in closed form: input-head positions
+`p < n + 2`, head tuples `h < (2s + 1)^k`, the fixed case list, and target bits `v < width`,
+in that nesting (P4.3 round-2 finding 4: `(n + 2)(2s + 1)^k` guarded positions, polynomial for
+the fixed machine; Boolean universality is used per gate, never per row). -/
+noncomputable def transition (n s : ℕ) : CNF ℕ :=
+  (List.range (n + 2)).flatMap fun p =>
+    (List.range ((2 * s + 1) ^ M.k)).flatMap fun h =>
+      (caseList M).flatMap fun q =>
+        (List.range (width M n s)).flatMap fun v => transitionGate M n s p h q v
+
+/-- **The adjacency CNF** ([AB09, Claim 4.4(2)]): carried-input equality and the transition
+conjunction, over the source block `[0, width)` and the target block `[width, 2 · width)`. -/
+noncomputable def adjacency (n s : ℕ) : CNF ℕ := inputEquality M n s ++ transition M n s
+
+end ConfigCodec
 
 /-! ### Fill appendix: finite marker tracks for the quotient codec
 
@@ -1696,7 +2028,9 @@ private theorem configurationAdjacency_bounds (M : FinTM Bool) (C n s : ℕ)
 
 
 /-- **Claim 4.4(2), packaged quotient form** (proved — phase
-P4.3 round 2; see the module docstring's declared deviations): for every
+P4.3 round 2; **retired at the RD-2a re-fill**, design §16b item 2: superseded by the
+`Complexity.ConfigCodec` theorems below, and used by no proof; see the module docstring's
+declared deviations): for every
 machine there is a constant `C` such that for all `(n, s)` there are a
 configuration bit-codec — fixed length `C · (s + n + 1)`, **factoring through the input and the
 vertex quotient** `Turing.NDTM.coreSum` on windowed configurations (an iff:
@@ -1810,6 +2144,326 @@ theorem exists_adjacency_codec_cnf (M : Turing.FinTM Bool) :
   · exact (configurationAcceptance_size M C n s hwidth).trans
       (hledger 13 3 (by dsimp [B]; omega) hp)
 
+/-! ### Claim 4.4(2), restated: the theorems of the closed-form codec
+
+The eleven clauses of the retired packaged statement, one theorem each (`code_length`,
+`code_input_eq`, `code_eq_iff`, `validity_eval_iff`, `adjacency_eval_iff`,
+`adjacency_eval_of_ne`, `acceptance_eval_iff`, the three `numVars` bounds and
+`exists_serialize_length_le`); the closed-form indexing contract (`code_getD_*`); and the
+uniformity theorems, which the packaged existential could not supply. The semantic theorems are
+re-filled at RD-2a from the fill appendix above, the uniformity theorems at RD-2b over
+`TCSlib.Complexity.FormulaKit.Emit`. -/
+
+namespace ConfigCodec
+
+variable (M : FinTM Bool)
+
+/-! #### Layout -/
+
+/-- The width in closed form, `2n + 4 + Q + 3k(2s + 1)` with `Q = stateCount M`. (Proved by
+unfolding.) -/
+theorem width_eq (n s : ℕ) :
+    width M n s = 2 * n + 4 + stateCount M + 3 * (M.k * (2 * s + 1)) := by
+  simp only [width, summaryOffset, workOffset, stateOffset]
+  omega
+
+/-- The width is linear in `s + n + 1`, with the machine coefficient `card + 6k + 5` of the
+retired padded codec (`codecCoefficient`).
+
+**Proof sketch.** `width_eq`, then compare coefficients: `2n + 5 + card + 6ks + 3k` is at most
+`(card + 6k + 5)(s + n + 1)` term by term. -/
+theorem width_le (n s : ℕ) :
+    width M n s ≤ (Fintype.card M.State + 6 * M.k + 5) * (s + n + 1) := by
+  sorry
+
+/-- The halting-state marker is the first state variable, `stateOffset n`. (Proved by
+unfolding.) -/
+theorem stateVar_none (n : ℕ) : stateVar M n none = stateOffset n := by
+  simp [stateVar, stateIndex]
+
+/-- There are `portCount k = 3k + 7` ports. (Proved by counting the constructors through the
+derived `Fintype` instance, as the private `codecPort_card` does.) -/
+theorem card_port (k : ℕ) : Fintype.card (Port k) = portCount k := by
+  rw [← Fintype.card_congr (Port.proxyTypeEquiv k)]
+  simp [portCount]
+  ring
+
+/-- Every port number is below `portCount k`. (Proved by cases.) -/
+theorem portIndex_lt {k : ℕ} (p : Port k) : portIndex p < portCount k := by
+  cases p with
+  | workHead i => have := i.isLt; simp only [portIndex, portCount]; omega
+  | workSymbol i t => have := i.isLt; cases t <;> simp [portIndex, portCount] <;> omega
+  | summary t => cases t <;> simp [portIndex, portCount] <;> omega
+  | _ => simp [portIndex, portCount] <;> omega
+
+/-- `portOf` inverts `portIndex`: the port with the number of `p` is `p`. (Proved by cases:
+the `if` chain of `portOf` selects the branch of `p`'s number range, and `omega` recovers the
+tape index and the flag.) -/
+theorem portOf_portIndex {k : ℕ} (p : Port k) : portOf k (portIndex p) = p := by
+  cases p with
+  | workHead i =>
+    have hi := i.isLt
+    simp only [portIndex, portOf]
+    split_ifs <;> first | (exfalso; omega) | (congr 1; ext; simp)
+  | workSymbol i t =>
+    have hi := i.isLt
+    cases t <;> simp only [portIndex, portOf, Bool.false_eq_true, ↓reduceIte] <;> split_ifs <;>
+      first | (exfalso; omega) | (congr 1 <;> first | (ext; simp; omega) | (simp; omega))
+  | summary t =>
+    cases t <;> simp only [portIndex, portOf, Bool.false_eq_true, ↓reduceIte] <;> split_ifs <;>
+      first | rfl | (exfalso; omega)
+  | _ => simp only [portIndex, portOf]; split_ifs <;> first | rfl | (exfalso; omega)
+
+/-- **Every code word has exactly the width**, for every input and configuration.
+
+**Proof sketch.** The five segments have lengths `n`, `n + 2`, `stateCount M`,
+`k · (2s + 1) · 3` (three flags per cell) and `2`; `width_eq`. -/
+theorem code_length (n s : ℕ) (x : List Bool) (c : Cfg M.k Bool M.State x) :
+    (code M n s x c).length = width M n s := by
+  sorry
+
+/-- The input variable `i < n` of a code word reads input bit `i` (`false` past the end of
+`x`).
+
+**Proof sketch.** Index into the first segment (`List.getD_append`, `List.getElem_ofFn`). -/
+theorem code_getD_inputVar (n s : ℕ) (x : List Bool) (c : Cfg M.k Bool M.State x) (i : ℕ)
+    (hi : i < n) : (code M n s x c).getD (inputVar i) false = x.getD i false := by
+  sorry
+
+/-- The head variable `j < n + 2` reads "the input head is at `j`".
+
+**Proof sketch.** Index into the second segment after the first `n` bits. -/
+theorem code_getD_headVar (n s : ℕ) (x : List Bool) (c : Cfg M.k Bool M.State x) (j : ℕ)
+    (hj : j < n + 2) :
+    (code M n s x c).getD (headVar n j) false = decide (c.inputPos.val = j) := by
+  sorry
+
+/-- The state variable of `q` reads "the state is `q`".
+
+**Proof sketch.** Index into the third segment; `stateIndex` is injective (it is `0` at the
+halting state and one more than an equivalence elsewhere) and below `stateCount M`. -/
+theorem code_getD_stateVar (n s : ℕ) (x : List Bool) (c : Cfg M.k Bool M.State x)
+    (q : Option M.State) :
+    (code M n s x c).getD (stateVar M n q) false = decide (c.state = q) := by
+  sorry
+
+/-- The work variable `(i, j, b)` with `j < 2s + 1` and `b < 3` reads flag `b` of window cell
+`j` of tape `i`.
+
+**Proof sketch.** Index into the fourth segment: the flattening over tapes, then cells, then
+the three flags, puts that flag at offset `3((2s + 1)i + j) + b`. -/
+theorem code_getD_workVar (n s : ℕ) (x : List Bool) (c : Cfg M.k Bool M.State x)
+    (i : Fin M.k) (j b : ℕ) (hj : j < 2 * s + 1) (hb : b < 3) :
+    (code M n s x c).getD (workVar M n s i j b) false = (workFlags M s c i j).getD b false := by
+  sorry
+
+/-- The summary variables read "the output is `[true]`" (`dead = false`) and "the output is
+dead" (`dead = true`).
+
+**Proof sketch.** Index into the last segment. -/
+theorem code_getD_summaryVar (n s : ℕ) (x : List Bool) (c : Cfg M.k Bool M.State x)
+    (dead : Bool) :
+    (code M n s x c).getD (summaryVar M n s dead) false =
+      decide (outSummary c.output = if dead then .dead else .accept) := by
+  sorry
+
+/-! #### Claim 4.4(2), clause by clause -/
+
+/-- **The codec separates inputs** of length `n` (clause 2 of the retired statement; its
+window hypotheses are not needed, since the input track is read directly): if two inputs of
+length `n` have configurations with equal codes, the inputs are equal.
+
+**Proof sketch.** `code_getD_inputVar` at every `i < n`, and `List.ext_getElem`. -/
+theorem code_input_eq (n s : ℕ) (x x' : List Bool) (hx : x.length = n) (hx' : x'.length = n)
+    (c : Cfg M.k Bool M.State x) (c' : Cfg M.k Bool M.State x')
+    (h : code M n s x c = code M n s x' c') : x = x' := by
+  sorry
+
+/-- **The codec is the vertex quotient on windowed configurations** ([AB09, Claim 4.4(2)];
+clause 3 of the retired statement): at one input of length `n`, two configurations in the
+radius-`s` window have equal codes iff they are the same configuration-graph vertex
+`Turing.NDTM.coreSum`.
+
+**Proof sketch.** The private `codecObserve_eq` identifies the exact-integer head flags with
+the window code `Turing.MultiTapeTM.ConfigCount.coreCode` on windowed configurations, and the
+code at the closed-form index of each coordinate `b` of the private `CodecBit` is the private
+`codecRowBits (codecRowOf …) b` (one new private bridge, from the `code_getD_*` reads). The
+surviving private `codecRowBits_injective` and `codecRowOf_eq_iff` (through the public
+`Turing.MultiTapeTM.ConfigCount.coreCode_inj`) close both directions. -/
+theorem code_eq_iff (n s : ℕ) (x : List Bool) (hx : x.length = n)
+    (c d : Cfg M.k Bool M.State x) (hc : c.InWindow s) (hd : d.InWindow s) :
+    code M n s x c = code M n s x d ↔ NDTM.coreSum c = NDTM.coreSum d := by
+  sorry
+
+/-- **Validity characterizes the codec image** ([AB09, Claim 4.4(2)]; clause 4 of the retired
+statement, at the closed-form width): a word of the code width satisfies the validity CNF iff
+it is the code of a configuration in the radius-`s` window on some input of length `n`.
+
+**Proof sketch.** Through the bridge of `code_eq_iff`, the exactly-one gadgets
+(`Complexity.FormulaKit.exactlyOne_eval`) and the pair exclusions state the private
+`codecBitsValid`; the surviving `codecBitsValid_iff` decodes a finite row and
+`codecRow_realize` realizes it by a windowed configuration whose code is the word (both have
+the width, and they agree at every closed-form index). There is no padding clause. -/
+theorem validity_eval_iff (n s : ℕ) (w : List Bool) (hw : w.length = width M n s) :
+    (validity M n s).eval (fun v => w.getD v false) = true ↔
+      ∃ x : List Bool, x.length = n ∧ ∃ c : Cfg M.k Bool M.State x,
+        c.InWindow s ∧ w = code M n s x c := by
+  sorry
+
+/-- **Adjacency is the step on the vertex quotient** ([AB09, Claim 4.4(2)]; clause 5 of the
+retired statement): for configurations `c, d` in the radius-`s` window on one input of length
+`n`, the adjacency CNF holds on the concatenated codes iff the successor of `c` and `d` are
+the same vertex. Halted vertices are self-adjacent; a live vertex need not be (P4.3 round-2
+finding 3).
+
+**Proof sketch.** Bridge each gate to the private semantics: `Complexity.FormulaKit.gate_eval`
+and `portOf_portIndex` give `kindPred` of the wired ports, which is the private `codecGate` at
+`(p, h, q, v)` (a case split on the coordinate field computed by `expectOf`). The closed-form
+enumeration covers every input position, head tuple (`headOf`, mixed radix), case
+(`caseList` is complete) and coordinate, so `transition` holds iff every private gate holds
+(the re-proved `codecTransitionCNF_eval`), and the surviving step lemma
+(`codecTransitionCNF_step_iff`, restated over the gate conjunction) concludes; the input
+equality conjunct holds on same-input pairs. -/
+theorem adjacency_eval_iff (n s : ℕ) (x : List Bool) (hx : x.length = n)
+    (c d : Cfg M.k Bool M.State x) (hc : c.InWindow s) (hd : d.InWindow s) :
+    (adjacency M n s).eval (fun v => (code M n s x c ++ code M n s x d).getD v false) = true ↔
+      NDTM.coreSum (M.tm.step c) = NDTM.coreSum d := by
+  sorry
+
+/-- **Adjacency rejects pairs across distinct inputs** (clause 6 of the retired statement;
+its window hypotheses are not needed): for distinct inputs of length `n`, the adjacency CNF
+is false on the concatenated codes of any of their configurations.
+
+**Proof sketch.** Some `i < n` has `x[i] ≠ x'[i]`; by `code_length` and `code_getD_inputVar`
+variables `i` and `width + i` read the two bits, and one of the two equality clauses of `i`
+fails. -/
+theorem adjacency_eval_of_ne (n s : ℕ) (x x' : List Bool) (hx : x.length = n)
+    (hx' : x'.length = n) (hne : x ≠ x') (c : Cfg M.k Bool M.State x)
+    (c' : Cfg M.k Bool M.State x') :
+    (adjacency M n s).eval (fun v => (code M n s x c ++ code M n s x' c').getD v false) =
+      false := by
+  sorry
+
+/-- **Acceptance reads halting with accepting summary** ([AB09, Claim 4.4(2)]; clause 7 of the
+retired statement; its length and window hypotheses are not needed): the acceptance CNF holds
+on the code of `c` iff `c` is halted with output summary `accept`.
+
+**Proof sketch.** `stateVar_none`, `code_getD_stateVar` and `code_getD_summaryVar`. -/
+theorem acceptance_eval_iff (n s : ℕ) (x : List Bool) (c : Cfg M.k Bool M.State x) :
+    (acceptance M n s).eval (fun v => (code M n s x c).getD v false) = true ↔
+      c.state = none ∧ outSummary c.output = .accept := by
+  sorry
+
+/-- Validity mentions only code variables (a `numVars` clause of the retired statement).
+
+**Proof sketch.** `Complexity.FormulaKit.numVars_le_of_forall_lt`: every listed variable is a
+head, state, work or summary variable below `width`. -/
+theorem validity_numVars_le (n s : ℕ) : (validity M n s).numVars ≤ width M n s := by
+  sorry
+
+/-- Acceptance mentions only code variables (a `numVars` clause of the retired statement).
+
+**Proof sketch.** Its two variables are below `width`. -/
+theorem acceptance_numVars_le (n s : ℕ) : (acceptance M n s).numVars ≤ width M n s := by
+  sorry
+
+/-- Adjacency mentions only the variables of the two blocks (a `numVars` clause of the retired
+statement).
+
+**Proof sketch.** Input equality uses `i` and `width + i`; every gate's template mentions only
+ports below `portCount` (`Complexity.FormulaKit.template_numVars_le`), and every port wire is
+below `2 · width`. -/
+theorem adjacency_numVars_le (n s : ℕ) : (adjacency M n s).numVars ≤ 2 * width M n s := by
+  sorry
+
+/-- **Polynomial serialized size** (the size clauses of the retired statement; P4.3 round-1
+finding 8 and round-2 finding 1: serialized lengths, at base `s + n + 2`): one machine constant
+`K` bounds the serializations of all three CNFs by `K · (s + n + 2)^K`.
+
+**Proof sketch.** `Complexity.FormulaKit.serialize_length_le` with the index bound `width`
+(or `2 · width`), and the cost ledgers `Complexity.FormulaKit.exactlyOne_cost_le`,
+`Complexity.FormulaKit.gate_cost_le` and `Complexity.FormulaKit.cost_flatMap_le`: validity
+and acceptance have degree `3`, adjacency `k + 3` (`(n + 2)(2s + 1)^k · |caseList| · width`
+gates); the surviving private `codec_absorb` makes one constant. -/
+theorem exists_serialize_length_le :
+    ∃ K : ℕ, ∀ n s : ℕ,
+      (CNF.serialize (validity M n s)).length ≤ K * (s + n + 2) ^ K ∧
+      (CNF.serialize (adjacency M n s)).length ≤ K * (s + n + 2) ^ K ∧
+      (CNF.serialize (acceptance M n s)).length ≤ K * (s + n + 2) ^ K := by
+  sorry
+
+/-! #### Uniformity: what the packaged existential could not supply
+
+Each CNF is emitted in polynomial time at any input length `n x`, radius `s x` and variable
+offset `o x` given in unary by polynomial-time functions of the reduction's input `x`, and the
+initial vertex's code is computed in polynomial time. These were the fill obligations "the
+three-CNF emitter family" and "the initial-code computation" of the RD-2 route to
+`Complexity.TQBF_PSPACEHard` (RD-2b); the hardness proof no longer takes that route, so these
+lemmas currently have no consumer. The input length is a parameter, not `x.length`, so that a
+per-level emitter can call them on the pair of the instance and a level index. -/
+
+/-- **Validity is emitted in polynomial time** at any polynomial-time input length, radius and
+offset: the serialization of `validity M (n x) (s x)` with every variable `v` renamed
+`o x + v` is polynomial-time computable.
+
+**Proof sketch.** Present validity as ordered groups (the exactly-one gadgets, the cell
+exclusions, the summary exclusion), each with a polynomial-time fragment from `(x, i)` by
+unary index arithmetic; `Complexity.FormulaKit.polyTimeComputable_serialize_flatMap` emits it
+and `Complexity.FormulaKit.polyTimeComputable_serialize_relabel_add` shifts it. -/
+theorem polyTimeComputable_serialize_validity (n s o : List Bool → ℕ)
+    (hn : PolyTimeComputable fun x => List.replicate (n x) true)
+    (hs : PolyTimeComputable fun x => List.replicate (s x) true)
+    (ho : PolyTimeComputable fun x => List.replicate (o x) true) :
+    PolyTimeComputable fun x =>
+      CNF.serialize ((validity M (n x) (s x)).relabel (o x + ·)) := by
+  sorry
+
+/-- **Adjacency is emitted in polynomial time** at any polynomial-time input length, radius and
+offset (both blocks shift together: the source at `o x`, the target at `o x + width`).
+
+**Proof sketch.** Input equality is `n x` groups of two clauses. The transition groups are
+indexed by `(p, h, q, v)` in mixed radix; a group is the fixed template of the kind
+`(q, interior p, expectOf …)`, selected among the machine's finitely many kinds
+(`Complexity.FormulaKit.polyTimeComputable_fragment_gate_select`), with wires `portWire …`
+computed by unary arithmetic; `Complexity.FormulaKit.polyTimeComputable_serialize_flatMap`
+emits them and `Complexity.FormulaKit.polyTimeComputable_serialize_relabel_add` shifts them. -/
+theorem polyTimeComputable_serialize_adjacency (n s o : List Bool → ℕ)
+    (hn : PolyTimeComputable fun x => List.replicate (n x) true)
+    (hs : PolyTimeComputable fun x => List.replicate (s x) true)
+    (ho : PolyTimeComputable fun x => List.replicate (o x) true) :
+    PolyTimeComputable fun x =>
+      CNF.serialize ((adjacency M (n x) (s x)).relabel (o x + ·)) := by
+  sorry
+
+/-- **Acceptance is emitted in polynomial time** at any polynomial-time input length, radius
+and offset.
+
+**Proof sketch.** Two unit clauses whose unary indices `o x + stateOffset (n x)` and
+`o x + summaryOffset M (n x) (s x)` are polynomial-time; finite concatenation. -/
+theorem polyTimeComputable_serialize_acceptance (n s o : List Bool → ℕ)
+    (hn : PolyTimeComputable fun x => List.replicate (n x) true)
+    (hs : PolyTimeComputable fun x => List.replicate (s x) true)
+    (ho : PolyTimeComputable fun x => List.replicate (o x) true) :
+    PolyTimeComputable fun x =>
+      CNF.serialize ((acceptance M (n x) (s x)).relabel (o x + ·)) := by
+  sorry
+
+/-- **The initial vertex's code is computed in polynomial time** at any polynomial-time radius:
+the code of `M`'s initial configuration on `x`, at input length `|x|` and radius `s x`.
+
+**Proof sketch.** `Turing.Cfg.init` has input head `1`, the start state, blank work tapes with
+every head at position `0` and the empty output, so the code is five concatenated segments
+(`PolyTimeComputable.append`): a copy of `x`; the head track `0 1 0^n`; the constant state
+track of the start state; per tape the pattern of `2s + 1` blank cells with the head flag at
+cell `s`; and the summary `00`. Each is a copy of the input or a unary pattern of polynomial
+length in `|x|` and `s x`. -/
+theorem polyTimeComputable_code_initCfg (s : List Bool → ℕ)
+    (hs : PolyTimeComputable fun x => List.replicate (s x) true) :
+    PolyTimeComputable fun x => code M x.length (s x) x (M.tm.initCfg x) := by
+  sorry
+
+end ConfigCodec
+
 /-- **The language `TQBF`** [AB09, §4.2]: binary strings whose decoded
 quantified formula is true. The decoding fallback is the true closed formula,
 so non-well-formed strings are members — the `SAT`-polarity convention of
@@ -1817,86 +2471,775 @@ so non-well-formed strings are members — the `SAT`-polarity convention of
 def TQBF : Language Bool :=
   {x | (QBF.decode x).truth}
 
-/-- **`TQBF ∈ PSPACE`** ([AB09, Theorem 4.13, membership half]; spec, fill
-pending): truth of a quantified formula is decidable in polynomial space.
+/-! ### Fill appendix: membership validation and the assignment walk -/
 
-**Proof sketch.** Validate the **entire** encoding before any matrix
-verdict: trailing garbage makes the total decoder select the true fallback,
-so a scanned prefix that "looks unsatisfiable" must not short-circuit
-(round-1 answer 5). Then the recursive evaluator `A` of [AB09]: peel the
-first quantifier, evaluate both restrictions, combine by the quantifier —
-realized iteratively with a partial-assignment word of one trit per prefix
-variable (the book's footnote: the linear-space global-array variant) walked
-depth-first by the loop combinator, with no per-level formula copies; the
-base case evaluates the CNF matrix under the assembled assignment by one
-scan per clause, re-reading prefix bits and matrix bytes from the input. Space: the assignment
-word (linear), the matrix cursor (linear), the recursion is depth-first on
-the word in place — `O(n)` cells, inside `SPACE (n + 1) ⊆ PSPACE`. Fill
-obligations, named: the depth-first assignment walker (a §12 loop/catalog
-consumer), the CNF evaluator machine (one-pass per clause over the decoded
-matrix), the parser reuse (`Complexity.QBF.decode` realized by the chapter-2
-parser machinery), and the `DecidesInSpace` packaging. -/
-theorem TQBF_mem_PSPACE : TQBF ∈ PSPACE := by
-  sorry
+/-- The aligned-pair stage remembers either no bit or the first bit of a pair;
+after the separator, control is the public six-state CNF grammar automaton. -/
+private abbrev b4mSyntaxState := Option Bool ⊕ Fin 6
 
-/-- **`TQBF` is `PSPACE`-hard** ([AB09, Theorem 4.13, hardness half]; spec,
-fill pending — **the phase-P4.3 fill summit**, the `ψᵢ` emitter).
+/-- Consume one native input bit. A mismatched `10` pair enters the grammar's
+permanent error state; only an aligned `01` starts the matrix grammar. -/
+private def b4mSyntaxStep : b4mSyntaxState → Bool → b4mSyntaxState
+  | .inl none, b => .inl (some b)
+  | .inl (some false), false => .inl none
+  | .inl (some false), true => .inr 0
+  | .inl (some true), true => .inl none
+  | .inl (some true), false => .inr 5
+  | .inr q, b => .inr (CNF.syntaxStep q b)
 
-**Proof sketch.** Let `L ∈ PSPACE`, decided by `M` in space `c₀ · (n^c + 1)`.
-On input `x` (length `n`, window radius `s := c₀·(n^c + 1)`), the reduction
-emits a quantified formula asserting "some accepting vertex is reachable
-from the initial vertex within `2^ℓ` steps" over the packaged carrier of
-`Complexity.exists_adjacency_codec_cnf`: vertices are the
-`ℓ := C·(s + n + 1)`-bit codes of input-carrying windowed quotient
-configurations, with `Valid := φv`, `Next := φa`, `Accept := φacc`. The
-midpoint recursion is
-`ψ₀(a, b) := Valid a ∧ Valid b ∧ (a = b ∨ Next (a, b))` — the base includes
-length-zero paths — `Next` self-loops are guaranteed only at halted
-vertices, and a live vertex may or may not be self-adjacent (round-1
-finding 6; round-2 finding 3) — and
-`ψᵢ₊₁(a, b) := ∃ z (Valid z ∧ ∀ u v, ((u,v) = (a,z) ∨ (u,v) = (z,b)) → ψᵢ(u,v))`
-([AB09]'s succinct `∀`-trick keeping one copy of `ψᵢ`, with the midpoint
-**guarded by `Valid`** — unguarded quantification admits paths through junk
-codes, round-1 finding 3), unfolded to depth `ℓ` (at most `2^ℓ` codes, so a
-shortest path fits), against the emitted initial-vertex code and an
-existentially quantified `Accept` target (no unique accepting configuration
-is needed). Prenex first, then Tseitin: the gate variables of the CNF
-conversion are existentially quantified **after** the original prefix — gate
-values must not be fixed before universal variables they depend on (round-1
-answer 5) — with constant-arity gate constraints via the chapter-2
-universality (`Complexity.exists_cnf_boolFun` per gate, never per level).
-Size: `O(ℓ)` scaffolding per level over `ℓ` levels, with a `Valid` copy at
-every level plus the two base guards — the packaged CNFs appear `O(ℓ)`
-times, and index shifts change their unary serializations; all counted in
-the ledger (round-2 finding 6) — polynomial by the serialized-length
-clauses. Truth iff reachability
-iff `M` accepts `x`: the quotient dictionary
-(`Turing.NDTM.reflTransGen_cfgStep_iff` through `Turing.MultiTapeTM.toNDTM`)
-with path lifting via `Turing.NDTM.coreSum_stepWith`, the space bound
-keeping every genuine run inside the window. **The packaged existential
-supplies no algorithm** (round-1 major 2): the uniform emitter — the
-polynomial-time construction and serialization of `φv`/`φa`/`φacc`, the
-initial-vertex code, the per-level scaffolding with its level-blocked
-variable indexing, and the final assembly through
-`Complexity.QBF.decode_encode` — is a set of **private, named fill
-obligations of this proof**, in the chapter-2 streaming-emitter discipline
-(`CookLevin/Hardness.lean`, the six-stage output-silence contract; §12
-catalog routines); **continuation budget certain**. Fill obligations, named:
-the three-CNF emitter family and its serialization-length ledger; the
-initial-code computation; the level-blocked indexing scheme (unary-serialized
-per the CNF grammar); the truth-preservation induction
-`ψᵢ ↔ reachability within 2^i`, both directions of the guarded recursion;
-the Tseitin-after-prefix equivalence; the final assembly through
-`Complexity.QBF.decode_encode`. -/
-theorem TQBF_PSPACEHard : PSPACEHard TQBF := by
-  sorry
+/-- Syntax acceptance is read only after the fold has consumed the entire input. -/
+private def b4mValid (x : List Bool) : Bool :=
+  decide (x.foldl b4mSyntaxStep (.inl none) = .inr 4)
+
+/-- Once the separator has been read, the product automaton is exactly the
+promoted matrix automaton. -/
+private theorem b4mSyntax_matrix (x : List Bool) (q : Fin 6) :
+    x.foldl b4mSyntaxStep (.inr q) = .inr (x.foldl CNF.syntaxStep q) := by
+  induction x generalizing q with
+  | nil => rfl
+  | cons b x ih => exact ih (CNF.syntaxStep q b)
+
+/-- The native syntax fold accepts exactly successful pair decoding followed
+by successful matrix parsing.
+
+**Proof sketch.** Follow the pair decoder's aligned two-bit recursion. Equal
+pairs reset the pair stage; `01` enters the public matrix grammar. An incomplete
+pair never accepts, and `10` enters the grammar's rejecting residual. The matrix
+case cites the promoted grammar theorem, including its exact-consumption check. -/
+private theorem b4mValid_spec (x : List Bool) :
+    b4mValid x = match pairDecode x with
+      | none => false
+      | some (_, m) => (CNF.parse m).isSome := by
+  induction x using pairDecode.induct with
+  | case1 xs ih =>
+      change b4mValid xs = _
+      rw [ih]
+      cases hp : pairDecode xs <;> simp [pairDecode, hp]
+  | case2 xs ih =>
+      change b4mValid xs = _
+      rw [ih]
+      cases hp : pairDecode xs <;> simp [pairDecode, hp]
+  | case3 xs =>
+      simp only [b4mValid, List.foldl_cons, b4mSyntaxStep, b4mSyntax_matrix,
+        Sum.inr.injEq, pairDecode]
+      exact CNF.syntaxOK_spec xs
+  | case4 xs h00 h11 h01 =>
+      rcases xs with _ | ⟨b, _ | ⟨c, r⟩⟩
+      · rfl
+      · cases b <;> rfl
+      · cases b <;> cases c
+        · exact False.elim (h00 r rfl)
+        · exact False.elim (h01 r rfl)
+        · have herr : r.foldl CNF.syntaxStep 5 ≠ 4 := by
+            intro hc
+            exact (CNF.syntaxSuffix_run 5 r).mpr hc
+          simpa [b4mValid, b4mSyntaxStep, b4mSyntax_matrix, pairDecode] using herr
+        · exact False.elim (h11 r rfl)
+
+/-- The empty matrix is true under every prefix, including unused quantifiers.
+Proof sketch: existential quantifiers choose `false`, and universal quantifiers
+apply the induction hypothesis to each update of the current assignment. -/
+private theorem b4mTruth_empty (qs : List QBF.Quant) (σ : ℕ → Bool) (i : ℕ) :
+    QBF.truthAux [] qs σ i := by
+  induction qs generalizing σ i with
+  | nil => rfl
+  | cons q qs ih =>
+      cases q with
+      | ex => exact ⟨false, ih _ _⟩
+      | all => exact fun b => ih (Function.update σ i b) (i + 1)
+
+/-- A failed full syntax pass takes precisely one of the two true fallbacks.
+This conclusion is available only after validation has consumed the whole input. -/
+private theorem b4mReject_mem {x : List Bool} (h : b4mValid x = false) : x ∈ TQBF := by
+  change (QBF.decode x).truth
+  cases hp : pairDecode x with
+  | none =>
+      simpa [QBF.decode, hp, QBF.truth, CNF.fallback] using
+        b4mTruth_empty [] (fun _ => false) 0
+  | some p =>
+      obtain ⟨qs, m⟩ := p
+      have hm : CNF.parse m = none := by
+        cases he : CNF.parse m with
+        | none => rfl
+        | some φ => simp [b4mValid_spec, hp, he] at h
+      simpa [QBF.decode, hp, QBF.truth, CNF.decode, hm, CNF.fallback] using
+        b4mTruth_empty (qs.map QBF.quantOfBit) (fun _ => false) 0
+
+/-- Accepted strings reconstruct the exact prefix and matrix that the evaluator
+will reread. No private parser machinery is used. -/
+private theorem b4mValid_repr {x : List Bool} (h : b4mValid x = true) :
+    ∃ (qs : List Bool) (m : CNF ℕ), x = pairEncode qs (CNF.serialize m) := by
+  rw [b4mValid_spec] at h
+  cases hp : pairDecode x with
+  | none => simp [hp] at h
+  | some p =>
+      obtain ⟨qs, y⟩ := p
+      cases hm : CNF.parse y with
+      | none => simp [hp, hm] at h
+      | some m =>
+          exact ⟨qs, m, (eq_pairEncode_of_pairDecode x qs y hp).trans
+            (congrArg (pairEncode qs) (CNF.parse_repr hm))⟩
+
+/-- The completed input-fold machine's rejection has the decoder's true
+semantics. The only machine fact used is the public full-input fold contract. -/
+private theorem b4mValidation_reject {k : ℕ} {x : List Bool}
+    (d : Cfg k Bool (ScanPhase b4mSyntaxState) x)
+    (hs : d.state = some (.fwd (.inl none))) (hi : d.inputPos = 1)
+    (hr : ((inputFoldTM k b4mSyntaxStep (.inl none)).runFrom d
+      (2 * x.length + 2)).state ≠ some (.done (.inr 4))) : x ∈ TQBF := by
+  apply b4mReject_mem
+  rw [(inputFoldTM_run_ofCfg b4mSyntaxStep (.inl none) d hs hi).1] at hr
+  simpa [b4mValid] using hr
+
+/-- Validation visits only the existing origin of each work head, independently
+of input length and of whether syntax succeeds. -/
+private theorem b4mValidation_space {k : ℕ} {x : List Bool}
+    (d : Cfg k Bool (ScanPhase b4mSyntaxState) x)
+    (hs : d.state = some (.fwd (.inl none))) (hi : d.inputPos = 1) :
+    (inputFoldTM k b4mSyntaxStep (.inl none)).spaceUsed d (2 * x.length + 2) ≤ k := by
+  have hheads := (inputFoldTM_run_ofCfg b4mSyntaxStep (.inl none) d hs hi).2.2
+  calc
+    _ ≤ ∑ j : Fin k, 1 := Finset.sum_le_sum (fun j _ => by
+      have h := MultiTapeTM.spaceUsedByTape_le_card_Icc
+        (inputFoldTM k b4mSyntaxStep (.inl none)) d (2 * x.length + 2) j
+        (d.workTapePos j) (d.workTapePos j)
+        (fun u hu => by simp [hheads j u hu])
+      simpa using h)
+    _ = k := by simp
+
+/-- The carry is stopped (`inl none`), is carrying a subtree verdict
+(`inl (some v)`), or has read the quantifier and awaits its branch bit
+(`inr (v, q)`). This is finite control over binary work tapes. -/
+private abbrev b4mCarryState := Option Bool ⊕ (Bool × Bool)
+
+/-- Backward odometer transition for the two-cell record `(branch, quantifier)`.
+A neutral first branch requests the second branch; a decisive or second branch
+resets the record and propagates the verdict toward the root. -/
+private def b4mBack : b4mCarryState → Bool → b4mCarryState × Bool
+  | .inl none, b => (.inl none, b)
+  | .inl (some v), q => (.inr (v, q), q)
+  | .inr (v, q), b =>
+      if b = false ∧ v ≠ q then (.inl none, true) else (.inl (some v), false)
+
+/-- Pure specification of a backward pass. The logical record list runs from
+the innermost variable toward the root. `none` means that another leaf is
+needed; `some v` at the end means root overflow with verdict `v`. -/
+private def b4mCarryRecords : Option Bool → List (Bool × Bool) →
+    Option Bool × List (Bool × Bool)
+  | none, rs => (none, rs)
+  | some v, [] => (some v, [])
+  | some v, (b, q) :: rs =>
+      if b = false ∧ v ≠ q then (none, (true, q) :: rs)
+      else
+        let r := b4mCarryRecords (some v) rs
+        (r.1, (false, q) :: r.2)
+
+/-- The physical record word, root first. Each record occupies exactly two
+Boolean cells: branch bit, then quantifier bit (`true` for existential). -/
+private def b4mRecordWord (rs : List (Bool × Bool)) : List Bool :=
+  (rs.flatMap (fun r => [r.2, r.1])).reverse
+
+/-- The backward transducer implements the record carry exactly.
+
+**Proof sketch.** Induct on the innermost-first record list. The first two reads
+are the quantifier and branch bits. In the stopped case neither cell changes.
+Otherwise the eight Boolean cases are precisely the neutral-first-branch rule;
+the induction hypothesis handles the remaining, more outward records. -/
+private theorem b4mBack_run (rs : List (Bool × Bool)) (v : Option Bool) :
+    mealyRun b4mBack (.inl v) (rs.flatMap (fun r => [r.2, r.1])) =
+      (.inl (b4mCarryRecords v rs).1,
+        (b4mCarryRecords v rs).2.flatMap (fun r => [r.2, r.1])) := by
+  induction rs generalizing v with
+  | nil => cases v <;> rfl
+  | cons r rs ih =>
+      obtain ⟨b, q⟩ := r
+      cases v with
+      | none => simp [mealyRun, b4mBack, b4mCarryRecords, ih]
+      | some v =>
+          cases b <;> cases q <;> cases v <;>
+            simp [mealyRun, b4mBack, b4mCarryRecords, ih]
+
+/-- The odometer leaves every quantifier in its original position. Thus the
+record count and the space occupied by the assignment bank are invariant. -/
+private theorem b4mCarryRecords_quants (rs : List (Bool × Bool)) (v : Option Bool) :
+    (b4mCarryRecords v rs).2.map Prod.snd = rs.map Prod.snd := by
+  induction rs generalizing v with
+  | nil => cases v <;> rfl
+  | cons r rs ih =>
+      obtain ⟨b, q⟩ := r
+      cases v with
+      | none => rfl
+      | some v =>
+          simp only [b4mCarryRecords]
+          split_ifs
+          · rfl
+          · exact congrArg (q :: ·) (ih (some v))
+
+/-- The physical assignment word uses exactly two cells per quantified variable. -/
+private theorem b4mRecordWord_length (rs : List (Bool × Bool)) :
+    (b4mRecordWord rs).length = 2 * rs.length := by
+  simp only [b4mRecordWord, List.length_reverse]
+  induction rs with
+  | nil => rfl
+  | cons r rs ih => simp [ih]; omega
+
+/-- A full catalog scan performs the short-circuit odometer pass and restores
+the word's original orientation.
+
+**Proof sketch.** Induct from the root end of the record list to check the
+read-only forward pass, two cells at a time. The backward pass is the preceding
+record-transducer theorem; reversing its output gives the physical word again.
+No generic scan-trace or Mealy append/length lemma is re-proved. -/
+private theorem b4mScan_result (rs : List (Bool × Bool)) (v : Option Bool) :
+    scanResult scanKeep b4mBack (.inl v) (b4mRecordWord rs) =
+      (.inl (b4mCarryRecords v rs).1, b4mRecordWord (b4mCarryRecords v rs).2) := by
+  have hf : mealyRun scanKeep (.inl v : b4mCarryState) (b4mRecordWord rs) =
+      (.inl v, b4mRecordWord rs) := by
+    induction rs using List.reverseRecOn with
+    | nil => rfl
+    | append_singleton rs r ih =>
+        simpa [b4mRecordWord, List.flatMap_append, List.reverse_append,
+          mealyRun, scanKeep] using
+          congrArg (fun p : b4mCarryState × List Bool => (p.1, r.1 :: r.2 :: p.2)) ih
+  unfold scanResult
+  rw [hf]
+  simp only [b4mRecordWord, List.reverse_reverse, b4mBack_run]
+
+/-- The machine odometer has an envelope of `2m + 1` on its record tape and
+zero on every other tape. Its public scan contract takes exactly `4m + 2`
+steps, restores all heads and leaves the input position and output unchanged.
+
+**Proof sketch.** Instantiate the public scan contract on the two-cell record
+word. Its record-head interval is from one cell before the word to its right
+delimiter. Convert this interval to an absolute displacement; the other heads
+are fixed by that same contract. No scan trace is reproved. -/
+private theorem b4mOdometer_envelope {k : ℕ} {x : List Bool} (i : Fin k)
+    (rs : List (Bool × Bool)) (v : Option Bool)
+    (d : Cfg k Bool (ScanPhase b4mCarryState) x)
+    (hs : d.state = some (.fwd (.inl v)))
+    (hw : ∀ p : ℤ, -1 ≤ p → p ≤ ((b4mRecordWord rs).length : ℤ) →
+      d.workTapes i (d.workTapePos i + p) = FinTM.bufferTape (b4mRecordWord rs) p) :
+    ∀ u ≤ 4 * rs.length + 2, ∀ j,
+      |((scanTM k i scanKeep b4mBack (.inl v)).runFrom d u).workTapePos j -
+        d.workTapePos j| ≤ if j = i then ((2 * rs.length + 1 : ℕ) : ℤ) else 0 := by
+  intro u hu j
+  have hu' : u ≤ 2 * (b4mRecordWord rs).length + 2 := by
+    rw [b4mRecordWord_length]
+    omega
+  have h := (scanTM_run_ofCfg i scanKeep b4mBack (.inl v)
+    (b4mRecordWord rs) d hs hw).2.2 j u hu'
+  by_cases hj : j = i
+  · rw [if_pos hj] at h ⊢
+    have hb := Finset.mem_Icc.mp h
+    rw [b4mRecordWord_length] at hb
+    exact abs_le.mpr ⟨by omega, by omega⟩
+  · rw [if_neg hj] at h ⊢
+    simp [h]
+
+/-- The carry preserves the number of records, by its stronger quantifier-word
+invariant. -/
+private theorem b4mCarryRecords_length (rs : List (Bool × Bool)) (v : Option Bool) :
+    (b4mCarryRecords v rs).2.length = rs.length := by
+  have h := congrArg List.length (b4mCarryRecords_quants rs v)
+  simpa using h
+
+/-- The branch bits, innermost first, as a little-endian counter. This is a
+termination measure in the proof; the machine does not store a second copy. -/
+private def b4mRank (rs : List (Bool × Bool)) : ℕ :=
+  Nat.ofDigits 2 (rs.map (fun r => r.1.toNat))
+
+/-- Every branch word has rank strictly below the number of complete assignments. -/
+private theorem b4mRank_lt (rs : List (Bool × Bool)) : b4mRank rs < 2 ^ rs.length := by
+  apply (Nat.ofDigits_lt_base_pow_length (by decide : 1 < 2) ?_).trans_le
+  · simp
+  · intro n hn
+    obtain ⟨r, _, rfl⟩ := List.mem_map.mp hn
+    cases r.1 <;> decide
+
+/-- Every nonterminal carry strictly advances the assignment rank.
+
+**Proof sketch.** At a neutral first branch, the lowest remaining zero changes
+to one. Otherwise the current bit resets to zero and the outward suffix must
+advance. Its increase is multiplied by two, which exceeds the possible loss
+of the current bit. Short-circuiting can skip assignments but cannot revisit one. -/
+private theorem b4mRank_progress (rs : List (Bool × Bool)) (v : Bool)
+    (h : (b4mCarryRecords (some v) rs).1 = none) :
+    b4mRank rs < b4mRank (b4mCarryRecords (some v) rs).2 := by
+  induction rs with
+  | nil => simp [b4mCarryRecords] at h
+  | cons r rs ih =>
+      obtain ⟨b, q⟩ := r
+      by_cases hn : b = false ∧ v ≠ q
+      · rcases hn with ⟨rfl, hn⟩
+        simp [b4mCarryRecords, hn, b4mRank, Nat.ofDigits_cons]
+      · have ht : (b4mCarryRecords (some v) rs).1 = none := by
+          simpa only [b4mCarryRecords, if_neg hn] using h
+        have hg := ih ht
+        have hb : b.toNat ≤ 1 := by cases b <;> decide
+        rw [b4mCarryRecords, if_neg hn]
+        change b.toNat + 2 * b4mRank rs <
+          0 + 2 * b4mRank (b4mCarryRecords (some v) rs).2
+        omega
+
+/-- The pure leaf-and-carry loop. `leaf` is the matrix verdict for the current
+assignment; a successful result is root overflow, and exhaustion returns `none`.
+This function describes rounds, not their Turing-machine implementation. -/
+private def b4mWalk (leaf : List (Bool × Bool) → Bool) :
+    ℕ → List (Bool × Bool) → Option Bool
+  | 0, _ => none
+  | fuel + 1, rs =>
+      let r := b4mCarryRecords (some (leaf rs)) rs
+      match r.1 with
+      | some v => some v
+      | none => b4mWalk leaf fuel r.2
+
+/-- No more than the remaining number of assignments is needed, for any leaf
+verdict function. The empty prefix still takes one leaf evaluation.
+
+**Proof sketch.** Induct on the available round budget. A terminal carry returns
+immediately. A nonterminal carry preserves length and strictly increases rank,
+so it decreases the number of remaining assignments by at least one. Rank is
+strictly below `2^m`, ruling out exhaustion at zero. -/
+private theorem b4mWalk_terminates (leaf : List (Bool × Bool) → Bool)
+    (fuel : ℕ) (rs : List (Bool × Bool)) (hf : 2 ^ rs.length - b4mRank rs ≤ fuel) :
+    (b4mWalk leaf fuel rs).isSome = true := by
+  induction fuel generalizing rs with
+  | zero =>
+      have h := b4mRank_lt rs
+      omega
+  | succ fuel ih =>
+      cases he : (b4mCarryRecords (some (leaf rs)) rs).1 with
+      | some v => simp [b4mWalk, he]
+      | none =>
+          simp only [b4mWalk, he]
+          apply ih
+          have hp := b4mRank_progress rs (leaf rs) he
+          have hl := b4mCarryRecords_length rs (some (leaf rs))
+          rw [hl]
+          omega
+
+/-- The short-circuit AND/OR value of a Boolean tree. `false` node kinds are
+AND; `true` node kinds are OR. The first child returns immediately when its
+value equals the node kind; otherwise the second child's value is returned.
+The leaf is arbitrary and the base assignment supplies unmentioned coordinates. -/
+private def b4mValue (leaf : (ℕ → Bool) → Bool) :
+    List Bool → (ℕ → Bool) → ℕ → Bool
+  | [], σ, _ => leaf σ
+  | q :: qs, σ, i =>
+      let v := b4mValue leaf qs (Function.update σ i false) (i + 1)
+      if v = q then v else b4mValue leaf qs (Function.update σ i true) (i + 1)
+
+/-- The carry rule closes exactly the node whose branch has just
+returned. For a second branch, the first branch's neutral verdict is the
+invariant that makes an accumulator unnecessary.
+
+**Proof sketch.** Split the quantifier, branch, and verdict bits. Existential
+quantification is disjunction of its two Boolean instances; universal
+quantification is conjunction. A decisive first instance fixes the result,
+and a neutral first instance leaves the second instance's value unchanged. -/
+private theorem b4mValue_close (leaf : (ℕ → Bool) → Bool) (qs : List Bool)
+    (σ : ℕ → Bool) (i : ℕ) (q b v : Bool)
+    (hv : b4mValue leaf qs (Function.update σ i b) (i + 1) = v)
+    (hfirst : b = true →
+      b4mValue leaf qs (Function.update σ i false) (i + 1) = !q)
+    (hclose : ¬(b = false ∧ v ≠ q)) :
+    b4mValue leaf (q :: qs) σ i = v := by
+  cases q <;> cases b <;> cases v <;>
+    simp_all [b4mValue]
+
+/-- A carry that reaches the root keeps its input verdict and resets every
+branch below that root. Those reset branches are ready for the next outer branch. -/
+private theorem b4mCarryRecords_done (rs : List (Bool × Bool)) (v u : Bool)
+    (h : (b4mCarryRecords (some v) rs).1 = some u) :
+    u = v ∧ ∀ r ∈ (b4mCarryRecords (some v) rs).2, r.1 = false := by
+  induction rs with
+  | nil => simp [b4mCarryRecords] at h ⊢; exact h.symm
+  | cons r rs ih =>
+      obtain ⟨b, q⟩ := r
+      by_cases hn : b = false ∧ v ≠ q
+      · simp [b4mCarryRecords, hn] at h
+      · have ht : (b4mCarryRecords (some v) rs).1 = some u := by
+          simpa only [b4mCarryRecords, if_neg hn] using h
+        obtain ⟨hu, hr⟩ := ih ht
+        refine ⟨hu, ?_⟩
+        simpa [b4mCarryRecords, hn] using hr
+
+/-- Appending one outer record first carries through the inner records, then
+through that outer record; the rewritten records concatenate in the same order. -/
+private theorem b4mCarryRecords_outer (rs : List (Bool × Bool)) (r : Bool × Bool)
+    (v : Option Bool) :
+    b4mCarryRecords v (rs ++ [r]) =
+      let s := b4mCarryRecords v rs
+      let t := b4mCarryRecords s.1 [r]
+      (t.1, s.2 ++ t.2) := by
+  induction rs generalizing v with
+  | nil => cases v <;> simp [b4mCarryRecords]
+  | cons p rs ih =>
+      obtain ⟨b, q⟩ := p
+      cases v with
+      | none => rfl
+      | some v =>
+          by_cases hn : b = false ∧ v ≠ q
+          · simp [b4mCarryRecords, hn]
+          · simp only [List.cons_append, b4mCarryRecords, if_neg hn]
+            rw [ih]
+
+/-- The assignment read from a root-first record list by successive coordinate
+updates. Unmentioned coordinates retain the base assignment. -/
+private def b4mAssigned : List (Bool × Bool) → (ℕ → Bool) → ℕ → (ℕ → Bool)
+  | [], σ, _ => σ
+  | (b, _) :: rs, σ, i => b4mAssigned rs (Function.update σ i b) (i + 1)
+
+/-- Assignment lookup beyond the quantifier prefix reads the base value; with
+the all-false base, this is the required free-variable convention. -/
+private theorem b4mAssigned_free (rs : List (Bool × Bool)) (σ : ℕ → Bool)
+    (i j : ℕ) (hj : i + rs.length ≤ j) : b4mAssigned rs σ i j = σ j := by
+  induction rs generalizing σ i with
+  | nil => rfl
+  | cons r rs ih =>
+      obtain ⟨b, q⟩ := r
+      change b4mAssigned rs (Function.update σ i b) (i + 1) j = σ j
+      rw [ih _ _ (by simp only [List.length_cons] at hj; omega)]
+      exact Function.update_of_ne (by simp only [List.length_cons] at hj; omega) _ _
+
+/-- The depth-first invariant on a root-first record list. A `true` branch bit
+certifies that the first subtree was neutral for its quantifier; the invariant
+continues down the branch currently selected at each variable. -/
+private def b4mLegal (leaf : (ℕ → Bool) → Bool) :
+    List (Bool × Bool) → (ℕ → Bool) → ℕ → Prop
+  | [], _, _ => True
+  | (b, q) :: rs, σ, i =>
+      (b = true →
+        b4mValue leaf (rs.map Prod.snd) (Function.update σ i false) (i + 1) = !q) ∧
+      b4mLegal leaf rs (Function.update σ i b) (i + 1)
+
+/-- All-first-branch records satisfy the invariant under every outer assignment.
+This applies both to initialization and to a reset suffix after a carry. -/
+private theorem b4mLegal_reset (leaf : (ℕ → Bool) → Bool) (rs : List (Bool × Bool))
+    (σ : ℕ → Bool) (i : ℕ) (hb : ∀ r ∈ rs, r.1 = false) :
+    b4mLegal leaf rs σ i := by
+  induction rs generalizing σ i with
+  | nil => trivial
+  | cons r rs ih =>
+      obtain ⟨b, q⟩ := r
+      have h0 : b = false := hb (b, q) List.mem_cons_self
+      subst b
+      exact ⟨by simp, ih _ _ (fun r hr => hb r (List.mem_cons_of_mem _ hr))⟩
+
+/-- The same carry viewed on a root-first list, for the AND/OR induction;
+tape execution continues to use `b4mCarryRecords`. -/
+private def b4mAdvance (v : Option Bool) (rs : List (Bool × Bool)) :
+    Option Bool × List (Bool × Bool) :=
+  let r := b4mCarryRecords v rs.reverse
+  (r.1, r.2.reverse)
+
+/-- Changing the proof-side orientation does not change the quantifier word. -/
+private theorem b4mAdvance_quants (rs : List (Bool × Bool)) (v : Option Bool) :
+    (b4mAdvance v rs).2.map Prod.snd = rs.map Prod.snd := by
+  have h := congrArg List.reverse (b4mCarryRecords_quants rs.reverse v)
+  simpa [b4mAdvance, List.map_reverse] using h
+
+/-- In root-first orientation the inner suffix runs first; only its overflow
+can change the outer record. This is the recursive form used by the semantic proof. -/
+private theorem b4mAdvance_cons (rs : List (Bool × Bool)) (b q : Bool)
+    (v : Option Bool) :
+    b4mAdvance v ((b, q) :: rs) =
+      let s := b4mAdvance v rs
+      match s.1 with
+      | none => (none, (b, q) :: s.2)
+      | some w => if b = false ∧ w ≠ q then (none, (true, q) :: s.2)
+          else (some w, (false, q) :: s.2) := by
+  unfold b4mAdvance
+  rw [List.reverse_cons, b4mCarryRecords_outer]
+  cases he : (b4mCarryRecords v rs.reverse).1 with
+  | none => simp [he, b4mCarryRecords]
+  | some w =>
+      by_cases hc : b = false ∧ w ≠ q <;> simp [he, b4mCarryRecords, hc]
+
+/-- One leaf evaluation and carry either preserves the depth-first invariant
+or returns the full AND/OR value.
+
+**Proof sketch.** Induct on the root-first record list, against the short-circuit value. A nonterminal inner suffix preserves the outer record and its neutral
+first-branch fact. A terminal suffix supplies its exact value. If the
+outer record requests its second branch, that value establishes the new neutral
+fact and the reset inner records satisfy the invariant under the changed outer
+assignment. Otherwise the node-closing lemma returns the outer value. -/
+private theorem b4mAdvance_correct (leaf : (ℕ → Bool) → Bool) (rs : List (Bool × Bool))
+    (σ : ℕ → Bool) (i : ℕ) (hlegal : b4mLegal leaf rs σ i) :
+    let r := b4mAdvance (some (leaf (b4mAssigned rs σ i))) rs
+    match r.1 with
+    | none => b4mLegal leaf r.2 σ i
+    | some u => b4mValue leaf (rs.map Prod.snd) σ i = u := by
+  induction rs generalizing σ i with
+  | nil => rfl
+  | cons r rs ih =>
+      obtain ⟨b, q⟩ := r
+      let v := leaf (b4mAssigned rs (Function.update σ i b) (i + 1))
+      have hs := ih (Function.update σ i b) (i + 1) hlegal.2
+      change (match (b4mAdvance (some v) rs).1 with
+        | none => b4mLegal leaf (b4mAdvance (some v) rs).2
+            (Function.update σ i b) (i + 1)
+        | some u => b4mValue leaf (rs.map Prod.snd)
+            (Function.update σ i b) (i + 1) = u) at hs
+      have hqs := b4mAdvance_quants rs (some v)
+      change (match (b4mAdvance (some v) ((b, q) :: rs)).1 with
+        | none => b4mLegal leaf (b4mAdvance (some v) ((b, q) :: rs)).2 σ i
+        | some u => b4mValue leaf (q ::
+            rs.map Prod.snd) σ i = u)
+      simp only [b4mAdvance_cons]
+      cases he : (b4mAdvance (some v) rs).1 with
+      | none =>
+          simp only [he] at hs ⊢
+          refine ⟨?_, hs⟩
+          intro hb
+          rw [hqs]
+          exact hlegal.1 hb
+      | some w =>
+          simp only [he] at hs ⊢
+          have hd := b4mCarryRecords_done rs.reverse v w he
+          have hreset : ∀ p ∈ (b4mAdvance (some v) rs).2, p.1 = false := by
+            simpa [b4mAdvance] using hd.2
+          by_cases hc : b = false ∧ w ≠ q
+          · simp only [if_pos hc]
+            obtain ⟨hb, hw⟩ := hc
+            subst b
+            refine ⟨?_, b4mLegal_reset leaf _ _ _ hreset⟩
+            intro _
+            rw [hqs]
+            exact hs.trans (by cases q <;> cases w <;> simp_all)
+          · simp only [if_neg hc]
+            exact b4mValue_close leaf _ σ i q b w hs hlegal.1 hc
+
+/-- Apply the arbitrary leaf to the complete current assignment. Unmentioned
+coordinates read from the all-false base. -/
+private def b4mLeaf (leaf : (ℕ → Bool) → Bool) (rs : List (Bool × Bool)) : Bool :=
+  leaf (b4mAssigned rs.reverse (fun _ => false) 0)
+
+/-- Every returned verdict of the leaf-and-carry walk equals the AND/OR value, provided
+the current records satisfy the neutral-first-branch invariant.
+
+**Proof sketch.** Induct on the round budget. The one-round theorem either
+returns the AND/OR value immediately or supplies the next invariant.
+In the latter case the quantifier word is unchanged, so the induction hypothesis
+proves the same tree value at the next assignment. -/
+private theorem b4mWalk_correct (leaf : (ℕ → Bool) → Bool) (fuel : ℕ) (rs : List (Bool × Bool))
+    (v : Bool) (hlegal : b4mLegal leaf rs.reverse (fun _ => false) 0)
+    (h : b4mWalk (b4mLeaf leaf) fuel rs = some v) :
+    b4mValue leaf (rs.reverse.map Prod.snd)
+      (fun _ => false) 0 = v := by
+  induction fuel generalizing rs with
+  | zero => simp [b4mWalk] at h
+  | succ fuel ih =>
+      have hc := b4mAdvance_correct leaf rs.reverse (fun _ => false) 0 hlegal
+      simp only [b4mAdvance, List.reverse_reverse] at hc
+      change (match (b4mCarryRecords (some (b4mLeaf leaf rs)) rs).1 with
+        | none => b4mLegal leaf (b4mCarryRecords (some (b4mLeaf leaf rs)) rs).2.reverse
+            (fun _ => false) 0
+        | some u => b4mValue leaf (rs.reverse.map Prod.snd)
+            (fun _ => false) 0 = u) at hc
+      cases he : (b4mCarryRecords (some (b4mLeaf leaf rs)) rs).1 with
+      | some w =>
+          simp only [b4mWalk, he, Option.some.injEq] at h
+          subst w
+          simpa only [he] using hc
+      | none =>
+          simp only [he] at hc
+          simp only [b4mWalk, he] at h
+          have hh := ih _ hc h
+          have hqs : (b4mCarryRecords (some (b4mLeaf leaf rs)) rs).2.reverse.map
+              Prod.snd = rs.reverse.map Prod.snd := by
+            simpa only [List.map_reverse] using
+              congrArg List.reverse (b4mCarryRecords_quants rs (some (b4mLeaf leaf rs)))
+          simpa only [hqs] using hh
+
+/-- **Promotion candidate (host H1, AND/OR evaluator;
+`machine-library-design.md` §14).** For any Boolean leaf function and root-first
+list of AND/OR node kinds, the initialized depth-first walk returns the tree
+value within `2^m` leaf rounds, including one round for an empty tree. This is
+the pure semantic contract; its machine realization is a separate obligation.
+
+**Proof sketch.** Every initial branch bit is false, so the invariant holds
+without any previously evaluated subtree. The rank bound supplies a returned
+verdict within the full assignment budget, and the loop correctness theorem
+identifies it with the AND/OR value at the all-false base. -/
+private theorem b4mWalk_value (leaf : (ℕ → Bool) → Bool) (qs : List Bool) :
+    ∃ v, b4mWalk (b4mLeaf leaf) (2 ^ qs.length)
+        (qs.map (fun q => (false, q))).reverse = some v ∧
+      (b4mValue leaf qs (fun _ => false) 0 = v) := by
+  let rs := (qs.map (fun q => (false, q))).reverse
+  have hn := b4mWalk_terminates (b4mLeaf leaf) (2 ^ qs.length) rs (by
+    simp only [rs, List.length_reverse, List.length_map]
+    exact Nat.sub_le _ _)
+  have hl : b4mLegal leaf rs.reverse (fun _ => false) 0 := by
+    apply b4mLegal_reset
+    intro r hr
+    simp only [rs, List.reverse_reverse, List.mem_map] at hr
+    obtain ⟨q, _, rfl⟩ := hr
+    rfl
+  cases hw : b4mWalk (b4mLeaf leaf) (2 ^ qs.length) rs with
+  | none => simp [hw] at hn
+  | some v =>
+      refine ⟨v, rfl, ?_⟩
+      simpa [rs, List.map_map] using b4mWalk_correct leaf (2 ^ qs.length) rs v hl hw
+
+/-- **Promotion candidate (host H1, AND/OR evaluator;
+`machine-library-design.md` §14).** A framed leaf module for the Boolean
+assignment walker. Tape zero contains the root-first two-cell record word;
+the other `k` tapes are scratch and enter blank. From `entry` at `home x`,
+the module reaches the exit carrying the leaf's verdict within `time x m`
+steps. Before that exit it is silent and every work head stays within
+`radius x m` of its entry position. At exit all work tapes and work heads
+are restored and the native input head is again at `home x`.
+
+This is a hypothesis on a machine, not an asserted construction of one.
+The bounds may depend on the input and number of records, but not on the
+assignment. Restoring all tapes preserves the record word and blanks every
+scratch tape, so successive calls can reuse the same banks. -/
+private def b4mLeafFramed {k : ℕ} {S : Type} (M : MultiTapeTM (k + 1) Bool S)
+    (entry : S) (exit : Bool → S) (leaf : List Bool → (ℕ → Bool) → Bool)
+    (home : List Bool → ℕ) (time radius : List Bool → ℕ → ℕ) : Prop :=
+  ∀ (x : List Bool) (rs : List (Bool × Bool)) (d : Cfg (k + 1) Bool S x),
+    d.state = some entry → d.inputPos.val = home x →
+    (∀ p : ℤ, -1 ≤ p → p ≤ ((b4mRecordWord rs).length : ℤ) →
+      d.workTapes 0 (d.workTapePos 0 + p) = FinTM.bufferTape (b4mRecordWord rs) p) →
+    (∀ j : Fin k, ∀ p, d.workTapes j.succ p = none) →
+    ∃ t ≤ time x rs.length,
+      (∀ u < t, ∀ v, (M.runFrom d u).state ≠ some (exit v)) ∧
+      (∀ u ≤ t, ∀ j, |(M.runFrom d u).workTapePos j - d.workTapePos j| ≤
+        (radius x rs.length : ℤ)) ∧
+      (∀ u ≤ t, (M.runFrom d u).output = d.output) ∧
+      (M.runFrom d t).state = some (exit (b4mLeaf (leaf x) rs)) ∧
+      (M.runFrom d t).inputPos.val = home x ∧
+      (M.runFrom d t).workTapes = d.workTapes ∧
+      (M.runFrom d t).workTapePos = d.workTapePos
+
+/-- The hypothesis-carrying leaf parameter. Its finite state space and
+decidable equality are supplied by the caller; no CNF-specific data appears. -/
+private structure b4mLeafModule (k : ℕ) (S : Type) [Fintype S] [DecidableEq S]
+    (leaf : List Bool → (ℕ → Bool) → Bool) where
+  machine : MultiTapeTM (k + 1) Bool S
+  entry : S
+  exit : Bool → S
+  exit_injective : Function.Injective exit
+  home : List Bool → ℕ
+  home_bound : ∀ x, home x ≤ x.length + 1
+  time : List Bool → ℕ → ℕ
+  radius : List Bool → ℕ → ℕ
+  framed : b4mLeafFramed machine entry exit leaf home time radius
+
+/-- The CNF instance of the generic AND/OR value is the QBF interpretation.
+The all-false base is supplied by the caller, so free-variable behavior is
+unchanged.
+
+**Proof sketch.** Induct on the node kinds. For an AND node, a false first
+child decides the conjunction; for an OR node, a true first child decides the
+disjunction. In the neutral cases both definitions return the second child.
+The empty node list is the supplied matrix evaluation. -/
+private theorem b4mValue_truth (m : CNF ℕ) (qs : List Bool) (σ : ℕ → Bool) (i : ℕ) :
+    b4mValue m.eval qs σ i = true ↔ QBF.truthAux m (qs.map QBF.quantOfBit) σ i := by
+  induction qs generalizing σ i with
+  | nil => rfl
+  | cons q qs ih =>
+      have h0 := ih (Function.update σ i false) (i + 1)
+      have h1 := ih (Function.update σ i true) (i + 1)
+      cases q <;>
+        cases hv : b4mValue m.eval qs (Function.update σ i false) (i + 1) <;>
+        simp_all [b4mValue, QBF.quantOfBit, QBF.truthAux, Bool.forall_bool, Bool.exists_bool]
+
+/-- The CNF leaf instance of the generic walker computes `truthAux`; its
+algorithm and termination proof are inherited from the leaf-parametric host. -/
+private theorem b4mWalk_truth (m : CNF ℕ) (qs : List Bool) :
+    ∃ v, b4mWalk (b4mLeaf m.eval) (2 ^ qs.length)
+        (qs.map (fun q => (false, q))).reverse = some v ∧
+      (QBF.truthAux m (qs.map QBF.quantOfBit) (fun _ => false) 0 ↔ v = true) := by
+  obtain ⟨v, hv, hvalue⟩ := b4mWalk_value m.eval qs
+  refine ⟨v, hv, ?_⟩
+  rw [← b4mValue_truth, hvalue]
+
+/-- An all-true fuel word as long as a paired input has value strictly greater
+than the walk's full assignment budget. Thus its final leaf fits the counter
+loop's strict early-exit condition.
+
+**Proof sketch.** Split the fuel after the first `m` bits and the next two bits.
+The middle `11` alone contributes `3 * 2^m`; all other contributions are
+nonnegative. The pair length is `2m + 2 + |matrix|`, so this split always fits.
+This uses the public digit-append identity, without copying the private exact
+all-true-value calculation in `Inclusions`. -/
+private theorem b4mFuel_sufficient (qs ys : List Bool) :
+    2 ^ qs.length < Nat.ofDigits 2
+      ((List.replicate (pairEncode qs ys).length true).map Bool.toNat) := by
+  have hr : List.replicate (pairEncode qs ys).length true =
+      (List.replicate qs.length true ++ [true, true]) ++
+        List.replicate (qs.length + ys.length) true := by
+    change List.replicate (pairEncode qs ys).length true =
+      (List.replicate qs.length true ++ List.replicate 2 true) ++
+        List.replicate (qs.length + ys.length) true
+    rw [← List.replicate_add, ← List.replicate_add, length_pairEncode]
+    congr 1
+    omega
+  rw [hr, List.map_append, List.map_append, Nat.ofDigits_append, Nat.ofDigits_append]
+  simp only [List.map_replicate, List.length_replicate, List.length_append,
+    List.length_cons, List.length_nil, List.map_cons, List.map_nil,
+    Bool.toNat_true, Nat.ofDigits_cons, Nat.ofDigits_nil]
+  have hpos : 0 < 2 ^ qs.length := pow_pos (by decide) _
+  omega
+
+/-- **`TQBF ∈ PSPACE`** ([AB09, Theorem 4.13, membership half]): truth of a quantified
+formula is decidable in polynomial space.
+
+**Proof sketch.** `Complexity.LogProg.TQBFARM.truth_mem_PSPACE`: a register machine whose
+register values stay at most `2 ^ (|x| + 1)`, reading its input through the logspace input-bit and
+input-length deciders, concluded by `Complexity.LogProg.arm_decides_pspace_val`. It first
+validates the **entire** encoding with a finite automaton (the aligned-pair stage followed by
+the grammar automaton `Std.Sat.CNF.syntaxStep`): a rejected string decodes to a fallback with
+the empty, true matrix, and is accepted. On a valid encoding `pairEncode qs (serialize φ)` it
+runs the recursive evaluator of [AB09] depth first, the partial assignment kept as a binary
+stack (a leading `1` and one bit per bound variable): a node at depth `K` reads the pair at
+input position `2K` — a doubled quantifier bit or the separator; an inner node evaluates its
+first child (push `0`) and, unless that value decides the quantifier, its second (push `1`);
+a leaf streams the CNF serialization from position `2K + 2`, looking each literal's variable
+up as a bit of the stack. Correctness is by induction on the remaining depth
+(`Complexity.LogProg.TQBFARM.call_spec`) against the stack semantics
+`Complexity.LogProg.TQBFARM.Val`, which follows `Complexity.QBF.truthAux`. -/
+theorem TQBF_mem_PSPACE : TQBF ∈ PSPACE :=
+  LogProg.TQBFARM.truth_mem_PSPACE
+
+/-- **`TQBF` is `PSPACE`-hard** ([AB09, Theorem 4.13, hardness half]): every `PSPACE`
+language Karp-reduces in polynomial time to `TQBF`.
+
+**Proof sketch** (`Complexity.TQBFHard.PSPACE_polyTimeReducible_TQBF`, files
+`ClassPSPACE/TQBFHard*.lean`). Let `L ∈ PSPACE`, so some nondeterministic `N` decides it in
+space `d (n^c + 1)` (`Complexity.PSPACE_subset_NPSPACE`). On `x` the reduction outputs the
+encoding of a closed formula over blocks of `w = A (n + 1)^(c + 1)` variables: an existential
+top record (a pad, a source block `A`, a target block `B`) followed by `w` levels
+`∃ Z ∀ U ∀ V` — [AB09]'s recursion `ψᵢ₊₁(A, B) = ∃ Z ∀ U V (((U, V) = (A, Z) ∨ (U, V) =
+(Z, B)) → ψᵢ(U, V))` in prenex form, whose truth is a path of `2^w` steps of the one-step
+relation of blocks (`Complexity.TQBFHard.prefixTruth_top`, `mid_iff_steps`). Blocks carry code
+words of the configuration codec `Complexity.Codec`; one step is "equal blocks, or a step pair
+of codes", and `x ∈ L` iff an initial block reaches an accepting block in `2^w` steps
+(`Complexity.TQBFHard.mem_iff_mid`; the width holds a code word and `2^w` bounds the vertex
+count). The matrix — initial and accepting tests and the flat selection chain — is a
+polynomial-time predicate of `⟨x, σ⟩` (`Complexity.TQBFHard.polyTimeComputable_predB`, the
+code languages being in `L ⊆ P`), written as the P-uniform configuration tableau of a machine
+computing it (`Complexity.cfgTab`, `⟨x, ⟩` hard-wired) and made a CNF by Tseitin's
+transformation with the gate variables quantified existentially after the prefix
+(`Complexity.QBF.truth_exSuffix_of_pointwise`, `Complexity.TQBFHard.toCNF_extension_iff`).
+The map is polynomial-time as a composition of the tableau emitter
+(`Complexity.UTab.polyTimeComputable_tabEmit`, [AB09, Remark 6.7]), the CKT-SAT-to-SAT map
+(`BoolCircuit.polyTimeComputable_dagCktSatToSAT3`, [AB09, Lemma 6.11]) and the prefix bits.
+This proof does not take the RD-2 route recorded in the module docstring: the
+configuration-specific CNFs of `Complexity.ConfigCodec` and their emitters are not used (the
+matrix is one polynomial-time predicate instead), so their sorried theorems are not needed
+here. -/
+theorem TQBF_PSPACEHard : PSPACEHard TQBF :=
+  fun _ hL => TQBFHard.PSPACE_polyTimeReducible_TQBF hL
 
 /-- **The Stockmeyer-Meyer theorem**: `TQBF` is `PSPACE`-complete.
 [AB09, Theorem 4.13]
 
 **Proof sketch.** `Complexity.TQBF_mem_PSPACE` with
 `Complexity.TQBF_PSPACEHard`. -/
-theorem TQBF_PSPACEComplete : PSPACEComplete TQBF := by
-  sorry
+theorem TQBF_PSPACEComplete : PSPACEComplete TQBF :=
+  ⟨TQBF_mem_PSPACE, TQBF_PSPACEHard⟩
 
 end Complexity

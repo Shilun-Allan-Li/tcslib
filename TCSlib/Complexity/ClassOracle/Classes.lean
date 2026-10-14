@@ -446,7 +446,8 @@ decider of `O` into a plain decider within `a·(t + 1)·(t + 1 + C·(t + 1)^d)`,
 `t = c·(n^k + 1)`; `b1_budget` bounds that by a polynomial of degree
 `k·(d + 2)`, and `Complexity.mem_P_of_dtime_le` concludes. This is the
 derivation of `audits/evidence/wave1-statements/S1210StatementsProbe.lean.txt`.
-It is proved modulo W2-S until the §12.10 fill lands. -/
+(Maintainer note, 2026-10-12: W2-S landed at the fills-6 integration; the axiom
+check is recorded in `audits/fills-6-integration.md`.) -/
 theorem POracle_eq_P_of_mem_P {O : Language Bool} (h : O ∈ P) : POracle O = P := by
   refine Set.Subset.antisymm ?_ (P_subset_POracle O)
   intro L hL

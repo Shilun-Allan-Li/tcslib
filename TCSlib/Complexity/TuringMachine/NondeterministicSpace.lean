@@ -32,6 +32,8 @@ this measure lives in `TCSlib.Complexity.SpaceComplexity.NSPACE`.
 
 ## Main results
 
+* `Turing.NDTM.spaceUsedWith_eq_fixChoice_spaceUsed` — such a branch uses exactly the slice's
+  space (statement gated 2026-10-14, proof pending).
 * `Turing.NDTM.visitedWith_nil` — the empty run visits the starting positions.
 * `Turing.MultiTapeTM.toNDTM_spaceUsedWith` — the embedded deterministic machine's
   space under any choice word is the deterministic space at that time (proved;
@@ -158,3 +160,25 @@ theorem MultiTapeTM.toNDTM_spaceUsedWith (tm : MultiTapeTM k Symbol State)
     List.length_take_of_le (Nat.lt_succ_iff.mp (Finset.mem_range.mp hj))]
 
 end Turing
+
+namespace Turing.NDTM
+
+variable {k : ℕ} {Symbol State : Type*} {input : List Symbol}
+
+/-- **The space of such a branch is the deterministic space.** Under the hypothesis of
+`runWith_eq_fixChoice_runFrom`, the branch of `tm` under `w` visits exactly the cells that the
+slice `tm.fixChoice b` visits in `|w|` steps: `spaceUsedWith w cfg` is
+`(tm.fixChoice b).spaceUsed cfg |w|`. [AB09, Definition 4.1, nondeterministic clause]
+
+**Proof sketch.** `visitedWith w cfg i` is the image of the runs under the prefixes `w.take j`,
+`j ≤ |w|`; each prefix satisfies the hypothesis, so by `runWith_eq_fixChoice_runFrom` its run is
+`(tm.fixChoice b).runFrom cfg j` (`List.length_take`). That is the image defining
+`MultiTapeTM.visitedByTapeHead cfg |w| i`; sum over the tapes (`spaceUsed`). -/
+theorem spaceUsedWith_eq_fixChoice_spaceUsed (tm : NDTM k Symbol State) (b : Bool)
+    (w : List Bool) (cfg : Cfg k Symbol State input)
+    (hagree : ∀ j < w.length, ∀ q : State, ((tm.fixChoice b).runFrom cfg j).state = some q →
+      tm.tr false q = tm.tr true q) :
+    tm.spaceUsedWith w cfg = (tm.fixChoice b).spaceUsed cfg w.length := by
+  sorry
+
+end Turing.NDTM

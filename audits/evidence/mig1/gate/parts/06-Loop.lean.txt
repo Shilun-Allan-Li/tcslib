@@ -1,0 +1,382 @@
+/-! ════ Part 6. `Build/Loop.lean`: the loop host, the emitting loop and the clean call, their
+specs, and the six rows. -/
+-- @landing TCSlib.Complexity.TuringMachine.Build.Loop
+-- @imports TCSlib.Complexity.TuringMachine.Build.Loop
+-- @imports TCSlib.Complexity.TuringMachine.Build.Wrappers
+-- @imports TCSlib.Complexity.TuringMachine.Composition
+-- @imports TCSlib.Complexity.TuringMachine.Simulation
+
+namespace Turing.FinTM
+
+-- @shim begin (verbatim from `Build/Loop.lean`; dropped on landing)
+-- @@verbatim Loop - --nodoc loopBodyTM LoopHostState loopFuelSource loopBodySource loopControlAction loopBodyDispatch loopHostM
+-- @shim end
+
+/-- **The loop host** (landing: `Turing.FinTM.loopHostTM`, made public in place at
+`Build/Loop.lean:649`, today the private abbreviation `loopHost`, body unchanged; Catalog holds
+an older copy, `f2_loopHost`, from before the forwarding flag). The decision and find host of
+the bounded loop: it runs the fuel machine `F` with its output captured, copies the fuel word
+`Nat.bits R` into a fixed-width counter, rewinds, starts `body`, and then alternates captured
+body rounds from the `anchor` seam with fixed-width debits of the counter (the first anchor
+entry is free). An accepting round halts with `[true]`, or in find mode replays the round's own
+output; underflow of the counter halts with `[false]`, or with nothing in find mode. It is the
+non-forwarding instance `loopHostM body F anchor false findMode` of the shared controller. -/
+-- @@verbatim Loop Loop --public --nodoc loopHost
+
+/-- **The loop host's configuration contract** (landing: `Turing.FinTM.loopHostTM_contracts`,
+new in `Loop` after `loopHost_contracts`). Given a fuel machine for `Nat.bits (R |x|)` within
+`T`, an invariant `Inv` that holds at `s0 x` and is preserved by `stepF`, a body startup that
+reaches the `anchor` seam of `s0 x` within `T |x|` without visiting the anchor earlier, and body
+rounds that, from the seam of an invariant word `s`, take positive time at most `T |x|`, do not
+revisit the anchor in between, and either halt with output `out x s` (when `acceptF x s`) or
+reach the seam of `stepF x s`: then for every input `x` the host has a family `cfg` of round
+configurations with a startup of at most `10·(T |x| + 1)` steps reaching `cfg 0`, empty output
+at rounds `0, …, R |x|`, a halted terminal `cfg (R |x| + 1)` with output `[false]` (`[]` in
+find mode), and, for each round `i ≤ R |x|`, a segment of at most `10·(T |x| + 1)` steps that
+halts with output `[true]` (the round's output in find mode) if orbit point `i` is accepted,
+and otherwise reaches `cfg (i + 1)`. The coefficient `10` is today's `loopHost_bound`.
+
+**Proof sketch.** Today's private `loopHost_contracts` (`Build/Loop.lean:2066`), whose proof
+opens with `refine ⟨loopHost_bound, ?_⟩`, `loopHost_bound = max 1 (max 9 (3 + 2 + 5)) = 10`:
+the fuel phase and the body startup give the startup (`loopHost_prepare`, `loopHost_start`);
+each segment is one captured body round followed by a debit and rewind of the counter, whose
+width never exceeds `T |x|` (`loop_fuel_width`), so every phase costs a constant multiple of
+`T |x| + 1` (`loopHost_round`); the last debit underflows into the terminal. -/
+theorem loopHostTM_contracts (body F : FinTM Bool) (anchor : body.State)
+    (Inv : List Bool → List Bool → Prop)
+    (stepF : List Bool → List Bool → List Bool)
+    (acceptF : List Bool → List Bool → Bool)
+    (out : List Bool → List Bool → List Bool) (findMode : Bool)
+    (s0 : List Bool → List Bool) (R T : ℕ → ℕ)
+    (hF : F.ComputesFunInTime (fun x => Nat.bits (R x.length)) T)
+    (hInv0 : ∀ x : List Bool, Inv x (s0 x))
+    (hInvStep : ∀ (x s : List Bool), Inv x s → Inv x (stepF x s))
+    (hstart : ∀ x : List Bool, ∃ t ≤ T x.length,
+      (∀ t' < t,
+        (body.tm.runFrom (body.tm.initCfg x) t').state ≠ some anchor) ∧
+      body.tm.runFrom (body.tm.initCfg x) t =
+        Cfg.ofWords anchor (stateWord body.k (s0 x)))
+    (hround : ∀ (x s : List Bool), Inv x s →
+      ∃ t, 0 < t ∧ t ≤ T x.length ∧
+        (∀ t', 0 < t' → t' < t →
+          (body.tm.runFrom
+            (Cfg.ofWords (input := x) anchor (stateWord body.k s)) t').state
+              ≠ some anchor) ∧
+        if acceptF x s then
+          (body.tm.runFrom
+            (Cfg.ofWords (input := x) anchor (stateWord body.k s)) t).state
+              = none ∧
+          (body.tm.runFrom
+            (Cfg.ofWords (input := x) anchor (stateWord body.k s)) t).output
+              = out x s
+        else
+          body.tm.runFrom
+            (Cfg.ofWords (input := x) anchor (stateWord body.k s)) t =
+              Cfg.ofWords anchor (stateWord body.k (stepF x s))) :
+    ∀ x : List Bool,
+      ∃ (cfg : ℕ → Cfg (loopHostTM body F anchor findMode).k Bool
+          (loopHostTM body F anchor findMode).State x) (startup : ℕ),
+        startup ≤ 10 * (T x.length + 1) ∧
+        (loopHostTM body F anchor findMode).tm.runFrom
+          ((loopHostTM body F anchor findMode).tm.initCfg x) startup = cfg 0 ∧
+        (∀ i ≤ R x.length, (cfg i).output = []) ∧
+        (cfg (R x.length + 1)).state = none ∧
+        (cfg (R x.length + 1)).output = (if findMode then [] else [false]) ∧
+        (∀ i ≤ R x.length, ∃ t ≤ 10 * (T x.length + 1),
+          if acceptF x ((stepF x)^[i] (s0 x)) then
+            ((loopHostTM body F anchor findMode).tm.runFrom (cfg i) t).state = none ∧
+            ((loopHostTM body F anchor findMode).tm.runFrom (cfg i) t).output =
+              (if findMode then out x ((stepF x)^[i] (s0 x)) else [true])
+          else (loopHostTM body F anchor findMode).tm.runFrom (cfg i) t = cfg (i + 1)) := by
+  sorry
+
+/-- **The decision loop's time** (landing: `Turing.FinTM.loopHostTM_decides`, new in `Loop`
+before `exists_loopTM`). Under the hypotheses of `loopHostTM_contracts` with accepting output
+`[true]`, the host in decision mode outputs `[true]` if some orbit point `(stepF x)^[i] (s0 x)`
+with `i ≤ R |x|` is accepted, and `[false]` otherwise, within `10·(T n + 1)·(R n + 2)` steps.
+
+**Proof sketch.** The body of today's `exists_loopTM` (`Build/Loop.lean:2370`) with `c = 10`:
+the contract family's startup and at most `R |x| + 1` segments sum, by the private
+already-halted-terminal summation lemma `loop_halted_run`, to at most
+`10·(T |x| + 1) + (R |x| + 1)·10·(T |x| + 1)` steps. -/
+theorem loopHostTM_decides (body F : FinTM Bool) (anchor : body.State)
+    (Inv : List Bool → List Bool → Prop)
+    (stepF : List Bool → List Bool → List Bool)
+    (acceptF : List Bool → List Bool → Bool)
+    (s0 : List Bool → List Bool) (R T : ℕ → ℕ)
+    (hF : F.ComputesFunInTime (fun x => Nat.bits (R x.length)) T)
+    (hInv0 : ∀ x : List Bool, Inv x (s0 x))
+    (hInvStep : ∀ (x s : List Bool), Inv x s → Inv x (stepF x s))
+    (hstart : ∀ x : List Bool, ∃ t ≤ T x.length,
+      (∀ t' < t,
+        (body.tm.runFrom (body.tm.initCfg x) t').state ≠ some anchor) ∧
+      body.tm.runFrom (body.tm.initCfg x) t =
+        Cfg.ofWords anchor (stateWord body.k (s0 x)))
+    (hround : ∀ (x s : List Bool), Inv x s →
+      ∃ t, 0 < t ∧ t ≤ T x.length ∧
+        (∀ t', 0 < t' → t' < t →
+          (body.tm.runFrom
+            (Cfg.ofWords (input := x) anchor (stateWord body.k s)) t').state
+              ≠ some anchor) ∧
+        if acceptF x s then
+          (body.tm.runFrom
+            (Cfg.ofWords (input := x) anchor (stateWord body.k s)) t).state
+              = none ∧
+          (body.tm.runFrom
+            (Cfg.ofWords (input := x) anchor (stateWord body.k s)) t).output
+              = [true]
+        else
+          body.tm.runFrom
+            (Cfg.ofWords (input := x) anchor (stateWord body.k s)) t =
+              Cfg.ofWords anchor (stateWord body.k (stepF x s))) :
+    (loopHostTM body F anchor false).ComputesFunInTime
+      (fun x => [(List.range (R x.length + 1)).any
+        fun i => acceptF x ((stepF x)^[i] (s0 x))])
+      (fun n => 10 * (T n + 1) * (R n + 2)) := by
+  sorry
+
+/-- **The find loop's time** (landing: `Turing.FinTM.loopHostTM_finds`, new in `Loop` before
+`exists_loopFindTM`). Under the hypotheses of `loopHostTM_contracts`, the host in find mode
+outputs `out x s` for the first accepted orbit point `s = (stepF x)^[i] (s0 x)` with
+`i ≤ R |x|`, and `[]` if there is none, within `10·(T n + 1)·(R n + 2)` steps.
+
+**Proof sketch.** The body of today's `exists_loopFindTM` (`Build/Loop.lean:2484`) with
+`c = 10`: sum the contract family's segments with the private first-accept summation lemma
+`loop_find_run`. -/
+theorem loopHostTM_finds (body F : FinTM Bool) (anchor : body.State)
+    (Inv : List Bool → List Bool → Prop)
+    (stepF : List Bool → List Bool → List Bool)
+    (acceptF : List Bool → List Bool → Bool)
+    (out : List Bool → List Bool → List Bool)
+    (s0 : List Bool → List Bool) (R T : ℕ → ℕ)
+    (hF : F.ComputesFunInTime (fun x => Nat.bits (R x.length)) T)
+    (hInv0 : ∀ x : List Bool, Inv x (s0 x))
+    (hInvStep : ∀ (x s : List Bool), Inv x s → Inv x (stepF x s))
+    (hstart : ∀ x : List Bool, ∃ t ≤ T x.length,
+      (∀ t' < t,
+        (body.tm.runFrom (body.tm.initCfg x) t').state ≠ some anchor) ∧
+      body.tm.runFrom (body.tm.initCfg x) t =
+        Cfg.ofWords anchor (stateWord body.k (s0 x)))
+    (hround : ∀ (x s : List Bool), Inv x s →
+      ∃ t, 0 < t ∧ t ≤ T x.length ∧
+        (∀ t', 0 < t' → t' < t →
+          (body.tm.runFrom
+            (Cfg.ofWords (input := x) anchor (stateWord body.k s)) t').state
+              ≠ some anchor) ∧
+        if acceptF x s then
+          (body.tm.runFrom
+            (Cfg.ofWords (input := x) anchor (stateWord body.k s)) t).state
+              = none ∧
+          (body.tm.runFrom
+            (Cfg.ofWords (input := x) anchor (stateWord body.k s)) t).output
+              = out x s
+        else
+          body.tm.runFrom
+            (Cfg.ofWords (input := x) anchor (stateWord body.k s)) t =
+              Cfg.ofWords anchor (stateWord body.k (stepF x s))) :
+    (loopHostTM body F anchor true).ComputesFunInTime
+      (fun x => match (List.range (R x.length + 1)).find?
+          (fun i => acceptF x ((stepF x)^[i] (s0 x))) with
+        | some i => out x ((stepF x)^[i] (s0 x))
+        | none => [])
+      (fun n => 10 * (T n + 1) * (R n + 2)) := by
+  sorry
+
+/-- **The loop host's space budget** (landing: `Turing.FinTM.loopHostTM_spaceUsed_le_budget`, new
+in `Loop` after `loopHostTM_finds`). Under the hypotheses of `loopHostTM_contracts`, in either
+mode, at every time the host has visited at most `23·k·(T |x| + 1)` work cells, where `k` is its
+tape count: space is bounded by the per-round time budget and does not grow with the number of
+rounds `R |x|`.
+
+**Proof sketch.** The space half of Catalog's private `f2_exists_loopFind_space`
+(`Build/Catalog.lean:8411`), which uses no find-mode fact: the extended contract
+`f2_loopHost_contracts` (it replaces `loopHost_contracts`, moved and re-targeted) also bounds
+every seam's heads by `T |x|` and the terminal's by `T |x| + 10·(T |x| + 1)`; each segment
+lasts at most `10·(T |x| + 1)` steps, so by `f2_seamed_space` (moved, with `f2_segment_heads`
+and `f2_space_radius`) every head stays within `T |x| + 10·(T |x| + 1)` of the origin at every
+time, and each tape visits at most `2·(11·T |x| + 10) + 1 ≤ 23·(T |x| + 1)` cells. -/
+theorem loopHostTM_spaceUsed_le_budget (body F : FinTM Bool) (anchor : body.State)
+    (Inv : List Bool → List Bool → Prop)
+    (stepF : List Bool → List Bool → List Bool)
+    (acceptF : List Bool → List Bool → Bool)
+    (out : List Bool → List Bool → List Bool) (findMode : Bool)
+    (s0 : List Bool → List Bool) (R T : ℕ → ℕ)
+    (hF : F.ComputesFunInTime (fun x => Nat.bits (R x.length)) T)
+    (hInv0 : ∀ x : List Bool, Inv x (s0 x))
+    (hInvStep : ∀ (x s : List Bool), Inv x s → Inv x (stepF x s))
+    (hstart : ∀ x : List Bool, ∃ t ≤ T x.length,
+      (∀ t' < t,
+        (body.tm.runFrom (body.tm.initCfg x) t').state ≠ some anchor) ∧
+      body.tm.runFrom (body.tm.initCfg x) t =
+        Cfg.ofWords anchor (stateWord body.k (s0 x)))
+    (hround : ∀ (x s : List Bool), Inv x s →
+      ∃ t, 0 < t ∧ t ≤ T x.length ∧
+        (∀ t', 0 < t' → t' < t →
+          (body.tm.runFrom
+            (Cfg.ofWords (input := x) anchor (stateWord body.k s)) t').state
+              ≠ some anchor) ∧
+        if acceptF x s then
+          (body.tm.runFrom
+            (Cfg.ofWords (input := x) anchor (stateWord body.k s)) t).state
+              = none ∧
+          (body.tm.runFrom
+            (Cfg.ofWords (input := x) anchor (stateWord body.k s)) t).output
+              = out x s
+        else
+          body.tm.runFrom
+            (Cfg.ofWords (input := x) anchor (stateWord body.k s)) t =
+              Cfg.ofWords anchor (stateWord body.k (stepF x s)))
+    (x : List Bool) (t : ℕ) :
+    (loopHostTM body F anchor findMode).tm.spaceUsed
+        ((loopHostTM body F anchor findMode).tm.initCfg x) t
+      ≤ 23 * (loopHostTM body F anchor findMode).k * (T x.length + 1) := by
+  sorry
+
+-- @shim begin (verbatim from `Build/Loop.lean`; dropped on landing)
+-- @@verbatim Loop - --nodoc emLoopHost
+-- @shim end
+
+/-- **The emitting loop** (landing: `Turing.FinTM.emitLoopTM`, new in `Loop` after the private
+`emLoopHost`; the body is the witness term of today's `exists_emitLoopTM`, `Loop.lean:4822`).
+The forwarding instance of the shared loop controller in find mode: the same fuel capture,
+counter and seam discipline as `loopHostTM`, with each body round's emissions forwarded to the
+physical output instead of captured, and no exhaustion verdict, so that the machine outputs the
+concatenation of the rounds' chunks. -/
+abbrev emitLoopTM (body F : FinTM Bool) (anchor : body.State) : FinTM Bool :=
+  emLoopHost body F anchor true
+
+/-- **The emitting loop's time** (landing: `Turing.FinTM.emitLoopTM_computes`, new in `Loop`
+before `exists_emitLoopTM`). Under the hypotheses of `exists_emitLoopTM` (fuel, invariant,
+startup, and rounds that advance to the stepped seam in positive time at most `T |x|` while
+emitting exactly `emitF x s`), the emitting loop outputs the concatenation of
+`emitF x ((stepF x)^[i] (s0 x))` over `i = 0, …, R |x|` within `10·(T n + 1)·(R n + 2)` steps.
+
+**Proof sketch.** The body of today's `exists_emitLoopTM` (`Build/Loop.lean:4775`), which fixes
+`c = 10`: the fuel preparation and the body startup take at most `10·(T |x| + 1)` steps
+(`loopHost_prepare`, `loopHost_start`); each round, its anchor stop and its debit take at most
+`10·(T |x| + 1)` (`emLoopHost_round`); the prefix-summation lemma `emLoop_sum` concatenates the
+`R |x| + 1` chunks. -/
+theorem emitLoopTM_computes (body F : FinTM Bool) (anchor : body.State)
+    (Inv : List Bool → List Bool → Prop)
+    (stepF emitF : List Bool → List Bool → List Bool)
+    (s0 : List Bool → List Bool) (R T : ℕ → ℕ)
+    (hF : F.ComputesFunInTime (fun x => Nat.bits (R x.length)) T)
+    (hInv0 : ∀ x : List Bool, Inv x (s0 x))
+    (hInvStep : ∀ (x s : List Bool), Inv x s → Inv x (stepF x s))
+    (hstart : ∀ x : List Bool, ∃ t ≤ T x.length,
+      (∀ t' < t,
+        (body.tm.runFrom (body.tm.initCfg x) t').state ≠ some anchor) ∧
+      body.tm.runFrom (body.tm.initCfg x) t =
+        Cfg.ofWords anchor (stateWord body.k (s0 x)))
+    (hround : ∀ (x s : List Bool), Inv x s →
+      ∃ t, 0 < t ∧ t ≤ T x.length ∧
+        (∀ t', 0 < t' → t' < t →
+          (body.tm.runFrom
+            (Cfg.ofWords (input := x) anchor (stateWord body.k s)) t').state
+              ≠ some anchor) ∧
+        body.tm.runFrom
+          (Cfg.ofWords (input := x) anchor (stateWord body.k s)) t =
+            { Cfg.ofWords (input := x) anchor (stateWord body.k (stepF x s))
+                with output := emitF x s }) :
+    (emitLoopTM body F anchor).ComputesFunInTime
+      (fun x => (List.range (R x.length + 1)).flatMap
+        (fun i => emitF x ((stepF x)^[i] (s0 x))))
+      (fun n => 10 * (T n + 1) * (R n + 2)) := by
+  sorry
+
+-- @shim begin (verbatim from `Build/Loop.lean`; dropped on landing)
+-- @@verbatim Loop - --nodoc emCallIdleTM emCallEvalTM emCallClearTM emCallSlots emCallTrackTM emCallRightTM emCallFinishTM emCallSource emCallState emCallTripleIndex emCallTripleSelect emCall_triple_inverse emCallPairIndex emCallPairSelect emCall_pair_inverse emCallTripleEmbedding emCallPairEmbedding
+-- @shim end
+
+/-- **The clean call** (landing: `Turing.FinTM.callTM`, made public in place at
+`Build/Loop.lean:3897`, today the private `emCallTM`, body unchanged). From the entry seam holding
+an argument word on tape `0`, it runs `M` on that argument through tracked banks with `M`'s
+output captured, clears every bank to its observed extent, and then either installs the result
+in place of the argument (`emit = false`) or forwards it to the physical output and keeps the
+argument (`emit = true`), erases its administrative storage, and enters its exit state. -/
+-- @@verbatim Loop Loop --public --nodoc emCallTM
+
+/-- **The clean call's entry state** (landing: `Turing.FinTM.callEntry`, new in `Loop` after
+`callTM`; today the anonymous `(emCallTM M emit).tm.q₀` of `exists_installCallTM`). The start
+state of the clean call. -/
+def callEntry (M : FinTM Bool) (emit : Bool) : (callTM M emit).State := (callTM M emit).tm.q₀
+
+/-- **The clean call's exit state** (landing: `Turing.FinTM.callExit`, new in `Loop` after
+`callEntry`; today the anonymous `.inr (.inr 5)` of `exists_installCallTM`). The absorbing
+exit anchor of the finishing phase; it is a different summand of the state type from
+`callEntry`. -/
+def callExit (M : FinTM Bool) (emit : Bool) : (callTM M emit).State := .inr (.inr 5)
+
+/-- **The clean call has a tape** (landing: `Turing.FinTM.callTM_k_pos`, new in `Loop`). The
+clean call's tape count is positive, so its argument seam lives on a genuine tape.
+
+**Proof sketch.** The layout's tape count is a successor; `Nat.zero_lt_succ`. -/
+theorem callTM_k_pos (M : FinTM Bool) (emit : Bool) : 0 < (callTM M emit).k :=
+  Nat.zero_lt_succ _
+
+/-- **The clean call's run** (landing: `Turing.FinTM.callTM_run`, new in `Loop` before
+`exists_installCallTM`; today's private `emCall_first`, `Build/Loop.lean:4592`, with the two
+anchor states named). If `M` halts on `arg` with output `cap` within `T` steps, then from the
+entry seam holding `arg`, over any native input `x`, the clean call first enters its exit state
+at a positive time `t ≤ (24 + 13·k_M)·(T + |arg| + |cap| + 1)`, and does not visit it at any
+earlier time, including time `0`; at `t` it is at the exit seam holding `cap` with empty output
+(install mode), or holding `arg` with output `cap` (emit mode).
+
+**Proof sketch.** `emCall_first` itself: `callEntry` and `callExit` unfold to the states that it
+names. Its proof is the completion lemma `emCall_complete` (evaluation through tracked banks,
+bank clearing, install or replay, capture erasure and rewinds, within the ledger's coefficient
+`6 + 13·k_M + 3·6`) followed by the first-visit cut at the fresh absorbing exit. -/
+theorem callTM_run (M : FinTM Bool) (emit : Bool)
+    (x arg cap : List Bool) (T : ℕ) (hM : M.ComputesInTime arg cap T) :
+    ∃ t ≤ (24 + 13 * M.k) * (T + arg.length + cap.length + 1),
+      0 < t ∧
+      (∀ j < t, ((callTM M emit).tm.runFrom
+        (Cfg.ofWords (input := x) (callEntry M emit) (stateWord (callTM M emit).k arg)) j).state
+          ≠ some (callExit M emit)) ∧
+      (callTM M emit).tm.runFrom
+        (Cfg.ofWords (input := x) (callEntry M emit) (stateWord (callTM M emit).k arg)) t =
+        { Cfg.ofWords (input := x) (callExit M emit)
+            (stateWord (callTM M emit).k (if emit then arg else cap))
+          with output := if emit then cap else [] } := by
+  sorry
+
+/-- **Row** `Turing.FinTM.exists_loopCfgTM`, statement unchanged. -/
+theorem MIG1Gate.row_exists_loopCfgTM : type_of% @Turing.FinTM.exists_loopCfgTM := by
+  intro body F anchor Inv stepF acceptF s0 R T hF hInv0 hInvStep hstart hround
+  exact ⟨loopHostTM body F anchor false, 10, by
+    simpa using loopHostTM_contracts body F anchor Inv stepF acceptF (fun _ _ => [true]) false
+      s0 R T hF hInv0 hInvStep hstart hround⟩
+
+/-- **Row** `Turing.FinTM.exists_loopTM`, statement unchanged. -/
+theorem MIG1Gate.row_exists_loopTM : type_of% @Turing.FinTM.exists_loopTM := by
+  intro body F anchor Inv stepF acceptF s0 R T hF hInv0 hInvStep hstart hround
+  exact ⟨loopHostTM body F anchor false, 10, loopHostTM_decides body F anchor Inv stepF acceptF
+    s0 R T hF hInv0 hInvStep hstart hround⟩
+
+/-- **Row** `Turing.FinTM.exists_loopFindTM`, statement unchanged. -/
+theorem MIG1Gate.row_exists_loopFindTM : type_of% @Turing.FinTM.exists_loopFindTM := by
+  intro body F anchor Inv stepF acceptF out s0 R T hF hInv0 hInvStep hstart hround
+  exact ⟨loopHostTM body F anchor true, 10, loopHostTM_finds body F anchor Inv stepF acceptF
+    out s0 R T hF hInv0 hInvStep hstart hround⟩
+
+/-- **Row** `Turing.FinTM.exists_emitLoopTM`, statement unchanged. -/
+theorem MIG1Gate.row_exists_emitLoopTM : type_of% @Turing.FinTM.exists_emitLoopTM := by
+  intro body F anchor Inv stepF emitF s0 R T hF hInv0 hInvStep hstart hround
+  exact ⟨emitLoopTM body F anchor, 10, emitLoopTM_computes body F anchor Inv stepF emitF s0 R T
+    hF hInv0 hInvStep hstart hround⟩
+
+/-- **Row** `Turing.FinTM.exists_installCallTM`, statement unchanged. -/
+theorem MIG1Gate.row_exists_installCallTM : type_of% @Turing.FinTM.exists_installCallTM :=
+  fun M f T hM => ⟨callTM M false, callEntry M false, callExit M false, 24 + 13 * M.k,
+    callTM_k_pos M false, fun x arg => by
+      obtain ⟨t, ht, hpos, hfirst, hr⟩ := callTM_run M false x arg (f arg) (T arg.length) (hM arg)
+      exact ⟨t, ht, hpos, fun j _ hj => hfirst j hj, by simpa using hr⟩⟩
+
+/-- **Row** `Turing.FinTM.exists_emitCallTM`, statement unchanged. -/
+theorem MIG1Gate.row_exists_emitCallTM : type_of% @Turing.FinTM.exists_emitCallTM :=
+  fun M f T hM => ⟨callTM M true, callEntry M true, callExit M true, 24 + 13 * M.k,
+    callTM_k_pos M true, fun x arg => by
+      obtain ⟨t, ht, hpos, hfirst, hr⟩ := callTM_run M true x arg (f arg) (T arg.length) (hM arg)
+      exact ⟨t, ht, hpos, fun j _ hj => hfirst j hj, by simpa using hr⟩⟩
+
+end Turing.FinTM

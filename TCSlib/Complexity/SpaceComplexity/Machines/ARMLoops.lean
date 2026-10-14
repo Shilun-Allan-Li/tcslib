@@ -125,7 +125,7 @@ theorem move_run {l lx l1 l2 : Λ} {r t : Fin m} (hrt : r ≠ t)
         · simp [hs, hs']
 
 /-- Close a goal about updated register files by cases on the register. -/
-macro "upd_tac" : tactic =>
+local macro "upd_tac" : tactic =>
   `(tactic| (funext s; simp only [Function.update_apply]; split_ifs <;> subst_vars <;>
     (try simp_all) <;> omega))
 
