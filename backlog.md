@@ -755,13 +755,13 @@ The route decisions of 2026-10-12 (design §16b) add three work items, numbered 
   the same PR; the configuration-count runner goes to a new `SpaceComplexity/WindowClock.lean`, so
   that `Build` never imports `SpaceComplexity` (the maintainer's recommendation, not the
   drafter's); `∃` statements now, named machines at fill. **Statement gate (2026-10-13):**
-  `audits/b6-hosts-statements-pack.md`. **CLOSED** (round 1, 2026-10-14: PASS, 0 blockers /
-  0 majors / 5 minors; `audits/b6-hosts-statements-findings.md`, resolutions
+  `audits/b6-hosts-statements-pack.md`. **CLOSED** (round 1, 2026-10-14: PASS, 0 blockers / 0 majors
+  / 5 minors; `audits/b6-hosts-statements-findings.md`, resolutions
   `audits/b6-hosts-statements-resolutions.md`). It covers eleven parts: five new modules and
-  additions to six existing files. The unit has 0 errors, its 10 contracts are sorried, and `space_universal` is
-  strengthened to `C·s`. The step clock's trajectory clause is strengthened to carry the tapes, the
-  input position and the output; C1's form `exists_stepClockTM` is unchanged. Next: the landing
-  PR, carrying the five fixes.
+  additions to six existing files. The unit has 0 errors, its 10 contracts are sorried, and
+  `space_universal` is strengthened to `C·s`. The step clock's trajectory clause is strengthened to
+  carry the tapes, the input position and the output; C1's form `exists_stepClockTM` is unchanged.
+  Next: the landing PR, carrying the five fixes.
 * **C1-D: the NTIME hierarchy's design** (2026-10-13; `audits/evidence/c1/C1-design.md`, statement
   draft `C1HostsDraft.lean.txt`: 0 errors, 5 sorries, 10 theorems proved). The proposed route:
   - **guess first:** the universal NDTM and the diagonalizer write the whole choice word with a
