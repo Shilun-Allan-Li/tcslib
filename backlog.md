@@ -936,6 +936,20 @@ The route decisions of 2026-10-12 (design §16b) add three work items, numbered 
   `Build.StepBlock` and re-point `exists_selfStartupTM`'s citation of
   `Turing.oneTapeMachineFormat.serialize_eq`. Next: the B6 fill briefs for the ten contracts,
   with record-table row 18.
+  **B6 fill plan (2026-10-14; `audits/evidence/b6-fill/B6-fill-plan.md`).**
+  - **Six batches:**
+    - F1: StepClock, `exists_stepClockTMVia`, which also serves C1;
+    - F2: WindowRun, the two window rows;
+    - F3: WindowClock, briefed by Route A after F1 integrates;
+    - F4: SelfUniversal;
+    - F5: InputDevice, the three ruler rows;
+    - F6: `space_universal`.
+  - **Later, H,** the headline region of `Hierarchy`.
+  - **Critical path to `space_hierarchy`:** F1 → F2 → F3 → H, with F4 alongside.
+  - **Briefs `b6-fill-stepclock.md` (F1) and `b6-fill-windowrun.md` (F2) are issued.**
+  - **Dedup, for the dedup window:** the public `wordPatch` has the same definition as
+    `CounterLoop`'s private `counterPatch`, which the screen misses. `counter_debit` retires onto
+    F1's `sc_debit` once that is promoted.
   **Record-table row 18's fill brief issued (2026-10-14):** `briefs/w1-fill-recordtable-cont5.md`
   (inputs `8dfbc881`, at `1b6b972c`):
   - The route is a 14-phase chain over row 17 through R1. Three prescribed privates are proved;
