@@ -723,7 +723,12 @@ The route decisions of 2026-10-12 (design §16b) add three work items, numbered 
   device; the public summary tag lands in `ConfigGraph`, with S1b's private copies re-pointed in
   the same PR; the configuration-count runner goes to a new `SpaceComplexity/WindowClock.lean`, so
   that `Build` never imports `SpaceComplexity` (the maintainer's recommendation, not the
-  drafter's); `∃` statements now, named machines at fill. Next: the B6 hosts' statement gate.
+  drafter's); `∃` statements now, named machines at fill. **Statement gate (2026-10-13):**
+  `audits/b6-hosts-statements-pack.md`. It covers eleven parts: five new modules and additions to
+  six existing files. The unit has 0 errors, its 10 contracts are sorried, and `space_universal` is
+  strengthened to `C·s`. The step clock's trajectory clause is strengthened to carry the tapes, the
+  input position and the output; C1's form `exists_stepClockTM` is unchanged. Next: the gate
+  audit.
 * **C1-D: the NTIME hierarchy's design** (2026-10-13; `audits/evidence/c1/C1-design.md`, statement
   draft `C1HostsDraft.lean.txt`: 0 errors, 5 sorries, 10 theorems proved). The proposed route:
   - **guess first:** the universal NDTM and the diagonalizer write the whole choice word with a
@@ -743,7 +748,9 @@ The route decisions of 2026-10-12 (design §16b) add three work items, numbered 
   step clock shared with B6 (`exists_stepClockTMVia`, gated with the B6 hosts); the bounded window
   copy. **Statement gate (2026-10-13):** `audits/c1-hosts-statements-pack.md` (six landing modules;
   0 errors, 5 sorries, 11 public theorems proved). It adds an input-locality lemma and a window
-  copier for decision 5, and it strengthens the interpreter core `R`. Next: the gate audit.
+  copier for decision 5, and it strengthens the interpreter core `R`. Next: the gate audit. (The
+  B6 hosts' pack strengthens `exists_stepClockTMVia`; C1 cites it only in sketches and its
+  dependency note, which re-point to `Build/StepClock.lean` at landing.)
   Records corrected: `clockTM` is linear (design §12.7, plan item 12); `exists_effectiveNDMachineCode`
   is already proved (plan §4e's C1 row). Still to fix: `NTimeHierarchy.lean`'s docstring says
   "quadratic" (lines 51 and 110), to correct in C1's first Lean PR; and design §12.8 routed

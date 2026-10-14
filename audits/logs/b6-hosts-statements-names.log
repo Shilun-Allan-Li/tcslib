@@ -1,0 +1,55 @@
+# B6 hosts statement gate: name screen and cited names
+
+Tool: `bash <S>/tools/leanelab.sh <S>/wt-g5b6 <S>/oleans-f8 <file>` (a direct `lean` call
+inside the worktree, no `-o`, no olean written). Worktree: the read-only checkout `wt-g5b6`
+at campaign commit `1781a230d2410ae2a09fbb961fe644512a6ba3c0` (the worktree's HEAD file); olean snapshot `oleans-f8`
+(all of TCSlib at that commit, and Mathlib). Toolchain `leanprover/lean4:v4.25.0`.
+<OUT> is this pack's scratch directory, <S> the scratchpad. Run: 2026-10-14 03:25 UTC.
+
+## 1. Name screen: the unit's declarations against every declaration of the worktree's TCSlib
+```
+54 declarations in the units; 13984 distinct declaration names in the worktree's TCSlib
+  replaced in place, as intended (not a clash): Complexity.space_universal ['TCSlib/Complexity/SpaceComplexity/Hierarchy.lean']
+full-name clashes with TCSlib: 0
+duplicates within the units: []
+same last component, in `Turing` or `Complexity` directly (possible ambiguity under `open Turing` inside `namespace Complexity`):
+  (0)
+same last component elsewhere (information; distinct namespaces):
+  Turing.NativeAt.inputSymbol_eq: Complexity.LogProg.inputSymbol_eq
+```
+Positive control (`scripts/screen_ctrl.lean`: `Turing.FinTM.configBound`, `Turing.outSummary`,
+`Turing.logSpace`):
+```
+3 declarations in the units; 13984 distinct declaration names in the worktree's TCSlib
+full-name clashes with TCSlib: 2
+  CLASH Turing.FinTM.configBound screen_ctrl.lean ['TCSlib/Complexity/SpaceComplexity/ConfigCount.lean']
+  CLASH Turing.outSummary screen_ctrl.lean ['TCSlib/Complexity/SpaceComplexity/ConfigGraph.lean']
+duplicates within the units: []
+same last component, in `Turing` or `Complexity` directly (possible ambiguity under `open Turing` inside `namespace Complexity`):
+  Turing.logSpace ~ Complexity.logSpace
+  (1)
+same last component elsewhere (information; distinct namespaces):
+  Turing.FinTM.configBound: Turing.FinNDTM.configBound
+  Turing.logSpace: Complexity.logSpace
+```
+
+## 2. Cited names: every backticked identifier of the unit's comments and of the patches'
+added lines, as `#check @…` after the unit (`open Turing Turing.FinTM Turing.MultiTapeTM
+Complexity`)
+
+156 tokens; those that do not resolve:
+```
+`B` `C` `Complexity.space_hierarchy` `D` `Encoding.patch` `Hierarchy.patch` `L` `M'` `M` `N` `SU` 
+`SelfUniversal` `SpaceComplexity.WindowClock` `SpaceComplexity` 
+`TCSlib.Complexity.SpaceComplexity.ConfigCount` `TCSlib.Complexity.SpaceComplexity.ConfigGraph` 
+`TCSlib.Complexity.SpaceComplexity.Hierarchy` `TCSlib.Complexity.SpaceComplexity.WindowClock` 
+`TCSlib.Complexity.SpaceComplexity` `TCSlib.Complexity.TuringMachine.Build.CfgRecord` 
+`TCSlib.Complexity.TuringMachine.Build.InputDevice` 
+`TCSlib.Complexity.TuringMachine.Build.StepClock` 
+`TCSlib.Complexity.TuringMachine.Build.WindowRun` `TCSlib.Complexity.TuringMachine.Encoding` 
+`TCSlib.Complexity.TuringMachine.SelfUniversal` `TCSlib.Complexity.TuringMachine.StateRenaming` 
+`TCSlib.Complexity.TuringMachine` `T` `Turing.StepBlock.roundTM_effect` `U₀` `backlog.md` 
+`c.output` `c_M` `h1Round_effect` `policy.md` `roundTM_iterate` `roundTM_visited` 
+`s1b_summaryWord_code` `s1b_summaryWord` `s1b_tagUpdate_none` `s1b_tagUpdate_output` 
+`s1b_tagUpdate` `sumCode_injective` 
+```

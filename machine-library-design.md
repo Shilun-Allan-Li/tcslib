@@ -3890,6 +3890,14 @@ The user took the five open route questions together, each as the maintainer rec
      configuration-count runner and its bound go to a new `SpaceComplexity/WindowClock.lean`, so
      that `Build/WindowRun.lean` imports nothing from `SpaceComplexity`; the contracts are gated
      as `∃` statements, with named machines at fill time.
+   - **Statement gate (2026-10-13):** `audits/b6-hosts-statements-pack.md`. Changes from the
+     draft:
+     - the ruler host is a block simulation (H2-S round 1, finding 2);
+     - `U₀`'s sketch uses the reset-output invariant (finding 4);
+     - `exists_stepClockTMVia`'s trajectory clause also carries the body tapes, input position and
+       output, which the runner's silence and restoration need; C1's form `exists_stepClockTM` is
+       unchanged, so C1's pack only re-points its citation at landing;
+     - window containment and the B6 summary instance move to `WindowClock`.
    - The shortcut through a space ledger for the time hierarchy's `diagSim` is not taken.
    - The restatement and the re-routed sketches go through a statement gate.
 4. **C2 is written as programs with coins.** `PATH ∈ NL`, Immerman–Szelepcsényi and their
