@@ -617,6 +617,22 @@ window.*
   `Build/CounterLoop`. If #94 lands before the cont3 delivery integrates, every citation of
   `canonBits_value` in that delivery is renamed at integration. This is mechanical and done by the
   maintainer. The brief lists it among the frozen privates it may cite.
+- **(h) Canonizer cont3 delivered, phase 1 (2026-10-14; `fill-b5a-canon-cont3.zip`, Codex
+  `80d32a96`, report `audits/b5a-fill-agent-reports/canon-4-REPORT.md`).**
+  - The strip machine `exists_canonStripTM` and the prescribed `computesFunInTime_cond` glue are
+    proved. So the headline `exists_polyCanonizer` is proved modulo exactly two private stubs,
+    `exists_canonDecider` and `exists_canonGrammarStage`. This is the user's partial rule, checked
+    by an axiom walk.
+  - A continuation-budget partial with no mathematical obstruction. 18 new privates; no public
+    or statement change.
+  - It cherry-picks cleanly onto the post-#94 tip, and cites no `canonBits_value`, so (g)'s
+    rename is not needed. At the tip it gives 0 errors and three sorry warnings: the two stubs
+    and `exists_uniformSimulator`.
+  - Duplication: only the pre-disclosed in-file pair (`scan_grammar_guard`/`canonScan_all`, 55%).
+  - Integration PR on branch `lean/b5a-canon-cont3`; replay of 8 modules.
+  - **Next: a cont4 brief**, phases 2–5 of the report's frontier: the bounded unary reader, the
+    record validator, the grammar stage with its fail-fast length bound, the decider on one
+    bank, then note 50.
 
 ### ARM-1: duplication in the received ARM-extensions code (from the ARM fill gate, 2026-10-14)
 
