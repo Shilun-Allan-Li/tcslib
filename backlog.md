@@ -637,6 +637,63 @@ then acknowledged once, in round 2; the deduplication is the user's own window, 
 Hydroxyi; the received machinery is registered in §14, its first uses an accepted exception, with
 a contract gate before any further consumer; the maintainer makes the minor fixes in the new files
 in one PR, which the user clears with Hydroxyi.
+**Dedup decisions, copies of campaign code (user, 2026-10-14).** These go in the payback PR after
+the B6 hosts. It changes public statements (D1), so it gets a full gate.
+- **D1:** standardize on the existing public `Turing.Cfg.InWindow` (`Build/CfgRecord.lean`).
+  Delete ConfigGraph's private `InWindow`, its bridge `inWindow_iff_cfgInWindow`, and Codec's
+  `InWin` (`Codec/Word.lean`). The user's fallback for an import cycle is not needed: `CfgRecord`
+  is already in `Codec/Word`'s closure (`Word` → `ConfigGraph` → `RecordTable` → `CfgRecord`,
+  checked at `6fbdefac`). The two predicates are equivalent but are not the same term (the head
+  and cell bounds are grouped differently). So `InWin`'s 48 uses in seven files change
+  (`Codec/{Bridge,Checks,Langs,Step,Valid,Word}`, `ExpBFS/Radius`), public statements among them.
+  `Radius`'s general window lemmas (`inWin_mono`, `inWin_stepWith`, `inWin_init`) are candidates to
+  move next to `Cfg.InWindow`.
+- **D2, D2h, D3, D5:** promote ConfigGraph's originals, stated with `Cfg.InWindow`, and delete the
+  copies in `Codec/Bridge` and `ExpBFS/Radius`. Delete ConfigGraph's dead private `s1b_*` block in
+  the same PR.
+- **D4:** promote `CircuitComplexity/DAGCircuitSat`'s Tseitin lemma and delete
+  `TQBFHardTseitin`'s copy. Both are Hydroxyi's files, so D4 is cleared with him, as with the ARM
+  minor-fix PR.
+- **D6:** delete our private `b4m*` appendix of `ClassPSPACE/TQBF.lean` (lines 2474–3185 at
+  `6fbdefac`: 44 declarations, 712 lines). It is dead because `TQBF_mem_PSPACE` is now
+  `LogProg.TQBFARM.truth_mem_PSPACE`. `TQBFARM/Semantics`' public twins stay.
+- **D7 and `decChain`:** one parameterized stride decoder in `Logspace/InputAccess`, with
+  `Codec/Engine`'s `decodeStride_loop`, `incChain` and `decChain` as its instances.
+- **`length_lbStep`** (private, `TQBFHardParams`): share a helper with
+  `PolyTimeBlockLoop.length_xorPairStep_le`.
+The ARM gate's round-2 ledger may add rows to this list. The user acknowledges the complete scope
+there.
+
+### ARM-2: the ARM layer's internal duplication, to coordinate with Hydroxyi (user, 2026-10-14)
+
+*Origin: the ARM fill gate (ARM-1), groups B and C of the maintainer's duplication summary.*
+
+The user judges a correct fix nontrivial: it needs shared interfaces designed, not mechanical
+promotions. So it is to be coordinated with Hydroxyi before any brief, then landed under the zone
+rules (a PR plus its gate). Its input is the round-2 classified ledger of the ARM gate.
+- **(a) Re-derivations of Hydroxyi's earlier `Machines/` library:**
+  - `narm_decides` from `arm_decides` (54%);
+  - `narm_decides_poly` from `arm_decides_poly` (90%);
+  - `spaceUsedWith_le_of_ranges` from `Compile.spaceUsed_le_of_ranges`;
+  - `runFrom_count_eq` from `ConfigCount.coreCode_inj`;
+  - `MReach.trans` and `MReach.halt` from `ReachesB.trans` and `AReach.halt` (99%).
+
+  Direction: state the reachability facts once over an arbitrary step relation, and give the ARM
+  variants (ARM, NARM, the wide-register forms, MARM) one step-semantics interface. Then a single
+  bridge theorem has the nondeterministic and memory-tape bridges as instances, for example
+  deriving the nondeterministic bridge from the deterministic one through `detPart`.
+- **(b) Duplication inside the new files:**
+  - the bank-setup and precondition plumbing: `arm_decides_space`, `marm_dtime` and
+    `narm_decides_space` are 76–88% shared with `npre_of_npreS`;
+  - the codec layout runs `layout_run` and `layout2_run` (4,139 shared characters);
+  - the register-loop blocks of the Savitch, inductive-counting, PATH and TQBF machines (103
+    cross-file pairs in 45 families);
+  - 130 same-file pairs, for example `ps_tcmp`/`ps_scmp`, `move2_run`/`dmove_run` and
+    `parse_run`/`parse_run₂`.
+
+  Direction: a small shared kit, with one bank-setup and precondition lemma, a generic layout run,
+  parameterized comparison and transfer loops, and generic endpoint-field comparisons.
+- **Later:** the run-composition kit is a candidate to unify with `Build/Contract` (MIG-0).
 
 ## 2. Campaign work queued or on hold
 
@@ -1402,7 +1459,8 @@ The route decisions of 2026-10-12 (design §16b) add three work items, numbered 
   `FinTM`/`FinNDTM`. Their answers: `CounterProg` keeps its one-way input (ARM's indexed access
   serves the searches), and both provenance questions are answered no. **User (2026-10-14):** a
   fill-style external gate of the received code; the payback promotions in a separate PR after
-  the B6 hosts; RD-2's fills held; stage 2 paused. §1 ARM-1 records the duplication.
+  the B6 hosts; RD-2's fills held; stage 2 paused. §1 ARM-1 records the duplication and the payback decisions; §1 ARM-2 the
+  refactor to coordinate with Hydroxyi.
 
 ---
 
