@@ -661,14 +661,19 @@ the B6 hosts. It changes public statements (D1), so it gets a full gate.
   `TQBFHardTseitin`'s copy. Both are Hydroxyi's files, so D4 is cleared with him, as with the ARM
   minor-fix PR.
 - **D6:** delete our private `b4m*` appendix of `ClassPSPACE/TQBF.lean` (lines 2474–3185 at
-  `6fbdefac`: 44 declarations, 712 lines). It is dead because `TQBF_mem_PSPACE` is now
+  `6fbdefac`: 45 declarations, 712 lines; corrected from 44 by the round-2 count). It is dead because `TQBF_mem_PSPACE` is now
   `LogProg.TQBFARM.truth_mem_PSPACE`. `TQBFARM/Semantics`' public twins stay.
 - **D7 and `decChain`:** one parameterized stride decoder in `Logspace/InputAccess`, with
   `Codec/Engine`'s `decodeStride_loop`, `incChain` and `decChain` as its instances.
 - **`length_lbStep`** (private, `TQBFHardParams`): share a helper with
   `PolyTimeBlockLoop.length_xorPairStep_le`.
-The ARM gate's round-2 ledger may add rows to this list. The user acknowledges the complete scope
-there.
+**Round 2 (2026-10-14).** The complete classified ledger is **acknowledged by the user**
+(`audits/evidence/arm-fill/r2/ledger-r2-tables.md`; A4+: 163 declarations, 15.3% of the received
+code by shared text). Added to this list by the user: the 15 proposed pairs (13 small copies of
+campaign helpers private in `QueryReshape`, `Mult`, CookLevin, `InputAccess`, `QBF` and beside
+ConfigGraph's `outSummary_eq_accept_iff`, with `toCNF_extension_iff` riding with D4; the ledger's
+§3) and `VWord.getD_drop`, a Bool copy of the public `Programs/Util/List.getD_drop`. The round-2
+pack is dispatch folder 21. Its auditor rules whether the scope is complete.
 
 ### ARM-2: the ARM layer's internal duplication, to coordinate with Hydroxyi (user, 2026-10-14)
 
@@ -699,6 +704,12 @@ rules (a PR plus its gate). Its input is the round-2 classified ledger of the AR
 
   Direction: a small shared kit, with one bank-setup and precondition lemma, a generic layout run,
   parameterized comparison and transfer loops, and generic endpoint-field comparisons.
+- **(c) Finding 12's helper moves** (user, 2026-10-14): `Path.getD_flatMap_rows`,
+  `NARMProof.NSPACE.mono_const`, `ARMWidth`'s `LOGSPACE_subset_PSPACE` and
+  `SPACE_succ_pow_subset_PSPACE`, and the `Complexity.ExpBFS` / `Complexity.LogProg.ExpBFS`
+  namespace split.
+- **Scope** (acknowledged, round 2): the ledger's groups A2a (10 declarations) and A2b (119),
+  with their families K1–K20.
 - **Later:** the run-composition kit is a candidate to unify with `Build/Contract` (MIG-0).
 
 ## 2. Campaign work queued or on hold

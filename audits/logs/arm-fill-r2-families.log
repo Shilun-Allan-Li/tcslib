@@ -1,0 +1,138 @@
+# arm-fill-r2-families: round 1's 45 internal components, the same-file components, the logical families (scripts/families.py)
+## Internal components (cross-file pairs among the 73 added files): 45 components, 103 pairs
+id | members | pairs (S/G/N) | family class | representative pair (max shared) | logical families
+IC01 | TQBFARM/Machine::orc_bit, TQBFARM/Machine::orc_len, Codec/Run::orc_bit, Codec/Run::orc_len, ExpBFS/Main::orcN_len, Logspace/ISCountGenCorrect::gen_start, Logspace/PathHardRegs::orc_bit, Logspace/PathHardRegs::orc_len, Machines/ARMWidthExample::searchLang_mem_PSPACE, SavitchARM/Correct::NSPACE_poly_subset_PSPACE | 22 (0/18/4) | small genuine | I008 TQBFARM/Machine::orc_len ~ Codec/Run::orc_len, 137 shared | K2
+IC02 | Codec/Checks::getD_cfgWord_chunk, Codec/Valid::cfgWord_take, Codec/Word::cellOf_congr, Codec/Word::cfgWord_congr, Codec/Word::coreSum_eq_of_cfgWord_eq, ExpBFS/Radius::inWin_of_coreSum_eq | 5 (0/0/5) | incidental | I047 Codec/Word::cellOf_congr ~ ExpBFS/Radius::inWin_of_coreSum_eq, 78 shared | -
+IC03 | Codec/Bridge::configBound_mono, ExpBFS/Main::kb_mono, SavitchARM/Recursion::Inv.bd, SavitchARM/Recursion::desc1, SavitchARM/Recursion::desc2 | 4 (0/0/4) | incidental | I030 Codec/Bridge::configBound_mono ~ ExpBFS/Main::kb_mono, 63 shared | -
+IC04 | ExpBFS/Main::fscan_run, ExpBFS/Relax::ini_run, ExpBFS/Relax::inner_run, ExpBFS/Relax::outer_run, ExpBFS/Search::count_run | 4 (4/0/0) | substantive | I066 ExpBFS/Relax::inner_run ~ ExpBFS/Search::count_run, 865 shared | K10
+IC05 | TQBFARM/Leaf::read_f, TQBFARM/Leaf::read_t, TQBFARM/Walk::len_f, TQBFARM/Walk::len_t | 4 (0/0/4) | incidental | I001 TQBFARM/Leaf::read_t ~ TQBFARM/Walk::len_t, 67 shared | -
+IC06 | TQBFARM/Machine::hv_run, TQBFARM/Machine::sb_run, SavitchARM/Run::hv_run, SavitchARM/Run::sb_run | 3 (0/0/3) | incidental | I026 TQBFARM/Machine::hv_run ~ SavitchARM/Run::hv_run, 128 shared | -
+IC07 | Codec/Checks::getD_flatten_block, Codec/Layout::layout_run, Codec/Layout2::layout2_run, Codec/StepDecider::step_tail | 4 (1/0/3) | substantive | I041 Codec/Layout::layout_run ~ Codec/Layout2::layout2_run, 4139 shared | K7
+IC08 | Logspace/ISCountGenLoop::cmp_run, Logspace/ISCountGenStage::gstage, Logspace/ISCountGenStage::guloop, Logspace/ISCountGenWalk::gwalk_loop | 3 (0/0/3) | incidental | I074 Logspace/ISCountGenLoop::cmp_run ~ Logspace/ISCountGenWalk::gwalk_loop, 217 shared | -
+IC09 | Machines/ARMWidth::arm_decides_space, Machines/MARMTime::marm_dtime, Machines/NARMProof::narm_decides_space, Machines/NARMProof::npre_of_npreS | 4 (4/0/0) | substantive | I087 Machines/ARMWidth::arm_decides_space ~ Machines/MARMTime::marm_dtime, 1122 shared | K3
+IC10 | TQBFARM/Machine::Bd.toV, ExpBFS/Machine::Bd.toV, SavitchARM/Machine::Bd.toV | 3 (3/0/0) | substantive | I050 ExpBFS/Machine::Bd.toV ~ SavitchARM/Machine::Bd.toV, 497 shared | K1
+IC11 | TQBFARM/Machine::cpI, ExpBFS/Machine::cpI, SavitchARM/Machine::cpI | 3 (0/3/0) | small genuine | I018 TQBFARM/Machine::cpI ~ ExpBFS/Machine::cpI, 128 shared | K1
+IC12 | TQBFARM/Machine::cp_run, ExpBFS/Run::cp_run, SavitchARM/Run::cp_run | 3 (0/3/0) | small genuine | I021 TQBFARM/Machine::cp_run ~ ExpBFS/Run::cp_run, 182 shared | K1
+IC13 | TQBFARM/Machine::preS_A, Logspace/PathHardMachine::preS_A, SavitchARM/Run::preS_A | 2 (0/0/2) | incidental | I020 TQBFARM/Machine::preS_A ~ SavitchARM/Run::preS_A, 218 shared | -
+IC14 | TQBFARM/Semantics::truthAux_nil, TQBFHardSemantics::prefixTruth_and_const, TQBFHardSemantics::prefixTruth_imp_const | 2 (0/0/2) | incidental | I027 TQBFARM/Semantics::truthAux_nil ~ TQBFHardSemantics::prefixTruth_imp_const, 67 shared | -
+IC15 | ExpBFS/Machine::shI, Logspace/PathHardMachine::shI, SavitchARM/Machine::shI | 3 (0/3/0) | small genuine | I052 ExpBFS/Machine::shI ~ Logspace/PathHardMachine::shI, 155 shared | K1
+IC16 | Logspace/ISCountGenCorrect::loop_run, Logspace/ISCountGenMachine::St.greg, Logspace/PathWalkMachine::PReg.reg | 2 (0/0/2) | incidental | I069 Logspace/ISCountGenCorrect::loop_run ~ Logspace/ISCountGenMachine::St.greg, 68 shared | -
+IC17 | Machines/MARM::MHalt, Machines/NARM::NPre, Machines/NARMKit::RegLe | 3 (0/0/3) | incidental | I099 Machines/NARM::NPre ~ Machines/NARMKit::RegLe, 62 shared | -
+IC18 | Machines/NARM::NHalts.choose, Machines/NARM::NHalts.det, Machines/NARMKit::NTerm.nhalts | 2 (2/0/0) | substantive | I101 Machines/NARM::NHalts.choose ~ Machines/NARMKit::NTerm.nhalts, 282 shared | K5
+IC19 | TQBFARM/Machine::dmI, SavitchARM/Machine::dmI | 1 (0/1/0) | small genuine | I017 TQBFARM/Machine::dmI ~ SavitchARM/Machine::dmI, 79 shared | K1
+IC20 | TQBFARM/Machine::dm_run, SavitchARM/Run::dm_run | 1 (0/1/0) | small genuine | I023 TQBFARM/Machine::dm_run ~ SavitchARM/Run::dm_run, 147 shared | K1
+IC21 | TQBFARM/Machine::mvI, SavitchARM/Machine::mvI | 1 (0/1/0) | small genuine | I016 TQBFARM/Machine::mvI ~ SavitchARM/Machine::mvI, 63 shared | K1
+IC22 | TQBFHardParams::map_quantBit_levelQuants, TQBFHardSemantics::length_levelQuants | 1 (0/0/1) | incidental | I029 TQBFHardParams::map_quantBit_levelQuants ~ TQBFHardSemantics::length_levelQuants, 62 shared | -
+IC23 | Codec/Bridge::mem_iff_codeChain, ExpBFS/Radius::inWin_runWith_of_decides | 1 (1/0/0) | substantive | I032 Codec/Bridge::mem_iff_codeChain ~ ExpBFS/Radius::inWin_runWith_of_decides, 336 shared | K9
+IC24 | Codec/Bridge::mem_of_codePath, ExpBFS/Radius::coreSum_eq_of_code_eq | 1 (0/0/1) | incidental | I031 Codec/Bridge::mem_of_codePath ~ ExpBFS/Radius::coreSum_eq_of_code_eq, 60 shared | -
+IC25 | Codec/Checks::word_split, Codec/Valid::validChk_iff | 1 (1/0/0) | substantive | I037 Codec/Checks::word_split ~ Codec/Valid::validChk_iff, 341 shared | K9
+IC26 | Codec/Deciders::PreChk, Codec/Valid::ValidChk | 1 (0/1/0) | small genuine | I038 Codec/Deciders::PreChk ~ Codec/Valid::ValidChk, 102 shared | K6
+IC27 | Codec/Deciders::one_run, Codec/StepDecider::stepLang_mem | 1 (1/0/0) | substantive | I039 Codec/Deciders::one_run ~ Codec/StepDecider::stepLang_mem, 1308 shared | K6
+IC28 | Codec/Layout::two_pow_bits_le, Codec/Parse::bitsVal_le_of_width | 1 (0/1/0) | small genuine | I040 Codec/Layout::two_pow_bits_le ~ Codec/Parse::bitsVal_le_of_width, 196 shared | K20
+IC29 | Codec/Scan::slide_ok_iff, Logspace/PathWalk::ext_getD' | 1 (0/0/1) | incidental | I044 Codec/Scan::slide_ok_iff ~ Logspace/PathWalk::ext_getD', 105 shared | -
+IC30 | Codec/Valid::cfgWord_pos, Codec/Word::length_cfgWord | 1 (0/0/1) | incidental | I046 Codec/Valid::cfgWord_pos ~ Codec/Word::length_cfgWord, 90 shared | -
+IC31 | ExpBFS/Radius::mem_iff_of_card_eq, Logspace/ISCountGenRadius::mem_iff_exists_acc_of_card_eq | 1 (0/0/1) | incidental | I063 ExpBFS/Radius::mem_iff_of_card_eq ~ Logspace/ISCountGenRadius::mem_iff_exists_acc_of_card_eq, 152 shared | -
+IC32 | ExpBFS/Relax::stp, SavitchARM/Recursion::Rel | 1 (0/1/0) | small genuine | I064 ExpBFS/Relax::stp ~ SavitchARM/Recursion::Rel, 65 shared | K20
+IC33 | Logspace/ISCountGenMachine::igA_npreS, Logspace/PathWalkMachine::pathA_npreS | 1 (0/0/1) | incidental | I075 Logspace/ISCountGenMachine::igA_npreS ~ Logspace/PathWalkMachine::pathA_npreS, 68 shared | -
+IC34 | Logspace/ISCountMath::walkLe_lt, Logspace/PathWalk::walkLe_reach | 1 (0/0/1) | incidental | I077 Logspace/ISCountMath::walkLe_lt ~ Logspace/PathWalk::walkLe_reach, 79 shared | -
+IC35 | Logspace/ISCountMath::walkLe_succ_iff, Logspace/PathWalk::walkLe_succ | 1 (0/0/1) | incidental | I078 Logspace/ISCountMath::walkLe_succ_iff ~ Logspace/PathWalk::walkLe_succ, 70 shared | -
+IC36 | Logspace/PathHardMachine::sh_run, SavitchARM/Run::sh_run | 1 (0/1/0) | small genuine | I081 Logspace/PathHardMachine::sh_run ~ SavitchARM/Run::sh_run, 195 shared | K1
+IC37 | Machines/ARMReach::arm_reach, Machines/MARM::MReach.trans | 1 (0/0/1) | incidental | I086 Machines/ARMReach::arm_reach ~ Machines/MARM::MReach.trans, 128 shared | -
+IC38 | Machines/MARMCompile::MBox, Machines/NARMCompile::NBox | 1 (0/1/0) | small genuine | I095 Machines/MARMCompile::MBox ~ Machines/NARMCompile::NBox, 112 shared | K4
+IC39 | Machines/MARMCompile::detM_step_mem, Machines/NARMCompile::detPart_step_choose | 1 (1/0/0) | substantive | I094 Machines/MARMCompile::detM_step_mem ~ Machines/NARMCompile::detPart_step_choose, 370 shared | K4
+IC40 | Machines/MARMCompile::detM_tr, Machines/NARMCompile::ncompileTM_tr | 1 (1/0/0) | substantive | I092 Machines/MARMCompile::detM_tr ~ Machines/NARMCompile::ncompileTM_tr, 208 shared | K4
+IC41 | Machines/MARMCompile::mdet_halt, Machines/NARMCompile::ndet_halt | 1 (1/0/0) | substantive | I097 Machines/MARMCompile::mdet_halt ~ Machines/NARMCompile::ndet_halt, 595 shared | K4
+IC42 | Machines/MARMCompile::mdet_live, Machines/NARMCompile::ndet_live | 1 (1/0/0) | substantive | I096 Machines/MARMCompile::mdet_live ~ Machines/NARMCompile::ndet_live, 391 shared | K4
+IC43 | Machines/MARMCompile::mrunFrom_eq, Machines/MARMTime::last_tape_run | 1 (0/0/1) | incidental | I093 Machines/MARMCompile::mrunFrom_eq ~ Machines/MARMTime::last_tape_run, 96 shared | -
+IC44 | Machines/NARM::nans_mono_len, Machines/NARMKit::NSem.decides | 1 (0/0/1) | incidental | I102 Machines/NARM::nans_mono_len ~ Machines/NARMKit::NSem.decides, 192 shared | -
+IC45 | SavitchARM/Recursion::pushP_lt, SavitchARM/Search::outerSt_inv | 1 (0/0/1) | incidental | I103 SavitchARM/Recursion::pushP_lt ~ SavitchARM/Search::outerSt_inv, 70 shared | -
+
+## Same-file components (pairs inside one added file): 61 components, 130 pairs
+id | members | pairs (S/G/N) | family class | representative pair (max shared) | logical families
+SC01 | ExpBFS/Run::mleft_of, ExpBFS/Run::mread_of, ExpBFS/Run::mright_of, ExpBFS/Run::mset_of, ExpBFS/Run::stepH_of, ExpBFS/Run::step_of | 10 (0/6/4) | small genuine | S053 ExpBFS/Run::stepH_of ~ ExpBFS/Run::step_of, 128 shared | K10
+SC02 | Machines/ARMLoops::dmove_run, Machines/ARMLoops::halve_run, Machines/ARMLoops::move2_run, Machines/ARMLoops::move_run, Machines/ARMLoops::shl_run, Machines/ARMLoops::sub_run | 11 (11/0/0) | substantive | S081 Machines/ARMLoops::dmove_run ~ Machines/ARMLoops::move2_run, 774 shared | K11
+SC03 | SavitchARM/Recursion::Inv.setM, SavitchARM/Recursion::desc1, SavitchARM/Recursion::desc2, SavitchARM/Recursion::tail0F, SavitchARM/Recursion::tail1F, SavitchARM/Recursion::tail1T | 9 (5/0/4) | substantive | S121 SavitchARM/Recursion::tail0F ~ SavitchARM/Recursion::tail1F, 352 shared | K14
+SC04 | Machines/ARMWidthExample::rf_upd0, Machines/ARMWidthExample::rf_upd1, Machines/ARMWidthExample::rf_upd2, Machines/ARMWidthExample::rf_upd3, Machines/ARMWidthExample::searchLang_mem_PSPACE | 10 (0/0/10) | incidental | S089 Machines/ARMWidthExample::rf_upd0 ~ Machines/ARMWidthExample::rf_upd1, 63 shared | -
+SC05 | TQBFHardVerifier::pt_bits_vrad, TQBFHardVerifier::pt_vlen, TQBFHardVerifier::pt_vwid, TQBFHardVerifier::pt_vwid_lin | 5 (0/0/5) | incidental | S017 TQBFHardVerifier::pt_vlen ~ TQBFHardVerifier::pt_vwid_lin, 209 shared | -
+SC06 | Codec/Checks::acceptLang_iff, Codec/Checks::initLang_iff, Codec/Checks::stepLang_iff, Codec/Checks::validLang_iff | 4 (1/0/3) | substantive | S024 Codec/Checks::acceptLang_iff ~ Codec/Checks::validLang_iff, 223 shared | K6
+SC07 | Codec/Langs::acceptLang, Codec/Langs::initLang, Codec/Langs::stepLang, Codec/Langs::validLang | 5 (0/1/4) | small genuine | S032 Codec/Langs::acceptLang ~ Codec/Langs::validLang, 113 shared | K6
+SC08 | Codec/Langs::mem_acceptLang, Codec/Langs::mem_initLang, Codec/Langs::mem_stepLang, Codec/Langs::mem_validLang | 6 (0/6/0) | small genuine | S036 Codec/Langs::mem_initLang ~ Codec/Langs::mem_validLang, 167 shared | K6
+SC09 | TQBFHardVerifier::accB, TQBFHardVerifier::baseB, TQBFHardVerifier::initB | 3 (0/0/3) | incidental | S010 TQBFHardVerifier::accB ~ TQBFHardVerifier::initB, 114 shared | -
+SC10 | TQBFHardVerifier::pt_accB, TQBFHardVerifier::pt_baseB, TQBFHardVerifier::pt_initB | 2 (0/0/2) | incidental | S018 TQBFHardVerifier::pt_accB ~ TQBFHardVerifier::pt_initB, 94 shared | -
+SC11 | Codec/Checks::AcceptChk, Codec/Checks::InitChk, Codec/Checks::StepChk | 2 (0/0/2) | incidental | S020 Codec/Checks::InitChk ~ Codec/Checks::StepChk, 125 shared | -
+SC12 | Codec/Deciders::acceptLang_mem, Codec/Deciders::initLang_mem, Codec/Deciders::validLang_mem | 3 (3/0/0) | substantive | S027 Codec/Deciders::acceptLang_mem ~ Codec/Deciders::validLang_mem, 714 shared | K6
+SC13 | Codec/Parse::canon_of_getLastD, Codec/Parse::getLastD_bits, Codec/Parse::getLastD_of_canon | 2 (0/0/2) | incidental | S042 Codec/Parse::canon_of_getLastD ~ Codec/Parse::getLastD_of_canon, 71 shared | -
+SC14 | ExpBFS/Relax::ini_run, ExpBFS/Relax::inner_run, ExpBFS/Relax::outer_run | 2 (2/0/0) | substantive | S052 ExpBFS/Relax::inner_run ~ ExpBFS/Relax::outer_run, 1804 shared | K10
+SC15 | ExpBFS/Run::d1_run, ExpBFS/Run::fz_run, ExpBFS/Run::nz_run | 3 (3/0/0) | substantive | S064 ExpBFS/Run::d1_run ~ ExpBFS/Run::fz_run, 401 shared | K10
+SC16 | Logspace/PathHardRegs::orc_acc, Logspace/PathHardRegs::orc_init, Logspace/PathHardRegs::orc_step | 3 (0/0/3) | incidental | S073 Logspace/PathHardRegs::orc_acc ~ Logspace/PathHardRegs::orc_init, 91 shared | -
+SC17 | Machines/MARMCompile::liftAct_apply, Machines/MARMCompile::mbox_mseam, Machines/MARMCompile::mcompileTM_init | 2 (0/0/2) | incidental | S101 Machines/MARMCompile::liftAct_apply ~ Machines/MARMCompile::mcompileTM_init, 173 shared | -
+SC18 | Machines/NARMKit::NSem.call_neg, Machines/NARMKit::nsem_call₂_neg, Machines/NARMKit::nsem_call₃_neg | 3 (0/0/3) | incidental | S111 Machines/NARMKit::NSem.call_neg ~ Machines/NARMKit::nsem_call₂_neg, 81 shared | -
+SC19 | SavitchARM/Run::pop_run, SavitchARM/Run::pushU_run, SavitchARM/Run::pushV_run | 3 (3/0/0) | substantive | S126 SavitchARM/Run::pushU_run ~ SavitchARM/Run::pushV_run, 724 shared | K14
+SC20 | TQBFARM/Leaf::read_f, TQBFARM/Leaf::read_t | 1 (0/0/1) | incidental | S001 TQBFARM/Leaf::read_f ~ TQBFARM/Leaf::read_t, 77 shared | -
+SC21 | TQBFARM/Machine::hv_run, TQBFARM/Machine::sb_run | 1 (0/0/1) | incidental | S003 TQBFARM/Machine::hv_run ~ TQBFARM/Machine::sb_run, 87 shared | -
+SC22 | TQBFARM/Machine::orc_bit, TQBFARM/Machine::orc_len | 1 (0/0/1) | incidental | S002 TQBFARM/Machine::orc_bit ~ TQBFARM/Machine::orc_len, 99 shared | -
+SC23 | TQBFARM/Walk::len_f, TQBFARM/Walk::len_t | 1 (0/0/1) | incidental | S004 TQBFARM/Walk::len_f ~ TQBFARM/Walk::len_t, 81 shared | -
+SC24 | TQBFARM/Walk::node_run, TQBFARM/Walk::qlook_run | 1 (1/0/0) | substantive | S005 TQBFARM/Walk::node_run ~ TQBFARM/Walk::qlook_run, 297 shared | K16
+SC25 | TQBFHardParams::configBound_le_two_pow, TQBFHardParams::vlen_le_vwid | 1 (1/0/0) | substantive | S006 TQBFHardParams::configBound_le_two_pow ~ TQBFHardParams::vlen_le_vwid, 373 shared | K17
+SC26 | TQBFHardSemantics::prefixTruth_and_const, TQBFHardSemantics::prefixTruth_imp_const | 1 (0/0/1) | incidental | S008 TQBFHardSemantics::prefixTruth_and_const ~ TQBFHardSemantics::prefixTruth_imp_const, 187 shared | -
+SC27 | TQBFHardSemantics::prefixTruth_replicate_all, TQBFHardSemantics::prefixTruth_replicate_ex | 1 (1/0/0) | substantive | S007 TQBFHardSemantics::prefixTruth_replicate_all ~ TQBFHardSemantics::prefixTruth_replicate_ex, 422 shared | K17
+SC28 | TQBFHardVerifier::pt_drop, TQBFHardVerifier::pt_take | 1 (0/1/0) | small genuine | S009 TQBFHardVerifier::pt_drop ~ TQBFHardVerifier::pt_take, 121 shared | K17
+SC29 | Codec/Checks::acceptChk_iff, Codec/Checks::initChk_iff | 1 (0/0/1) | incidental | S022 Codec/Checks::acceptChk_iff ~ Codec/Checks::initChk_iff, 180 shared | -
+SC30 | Codec/Engine::decChain, Codec/Engine::incChain | 1 (1/0/0) | substantive | S030 Codec/Engine::decChain ~ Codec/Engine::incChain, 478 shared | K21
+SC31 | Codec/Parse::Shape1, Codec/Parse::Shape2 | 1 (0/0/1) | incidental | S044 Codec/Parse::Shape1 ~ Codec/Parse::Shape2, 73 shared | -
+SC32 | Codec/Parse::parse_run, Codec/Parse::parse_run₂ | 1 (1/0/0) | substantive | S045 Codec/Parse::parse_run ~ Codec/Parse::parse_run₂, 1615 shared | K8
+SC33 | Codec/Run::orc_bit, Codec/Run::orc_len | 1 (0/0/1) | incidental | S046 Codec/Run::orc_bit ~ Codec/Run::orc_len, 99 shared | -
+SC34 | Codec/Run::s_run, Codec/Run::v_run | 1 (0/0/1) | incidental | S047 Codec/Run::s_run ~ Codec/Run::v_run, 289 shared | -
+SC35 | Codec/Valid::cfgWord_pos, Codec/Valid::cfgWord_take | 1 (0/0/1) | incidental | S048 Codec/Valid::cfgWord_pos ~ Codec/Valid::cfgWord_take, 76 shared | -
+SC36 | Codec/Word::bitsVal_lt_two_pow, Codec/Word::eq_bits_append_replicate | 1 (0/0/1) | incidental | S050 Codec/Word::bitsVal_lt_two_pow ~ Codec/Word::eq_bits_append_replicate, 67 shared | -
+SC37 | Codec/Word::cellOf_congr, Codec/Word::cfgWord_congr | 1 (0/0/1) | incidental | S049 Codec/Word::cellOf_congr ~ Codec/Word::cfgWord_congr, 70 shared | -
+SC38 | ExpBFS/Run::wb_run, ExpBFS/Run::wo_run | 1 (1/0/0) | substantive | S063 ExpBFS/Run::wb_run ~ ExpBFS/Run::wo_run, 401 shared | K10
+SC39 | Logspace/ISCountGenStage::guloop, Logspace/ISCountGenStage::gvloop | 1 (1/0/0) | substantive | S067 Logspace/ISCountGenStage::guloop ~ Logspace/ISCountGenStage::gvloop, 1274 shared | K12
+SC40 | Logspace/ISCountGenWalk::gwalk_loop, Logspace/ISCountGenWalk::gwalk_spec | 1 (1/0/0) | substantive | S068 Logspace/ISCountGenWalk::gwalk_loop ~ Logspace/ISCountGenWalk::gwalk_spec, 831 shared | K12
+SC41 | Logspace/ISCountMath::gs_and, Logspace/ISCountMath::gs_iff | 1 (0/0/1) | incidental | S069 Logspace/ISCountMath::gs_and ~ Logspace/ISCountMath::gs_iff, 62 shared | -
+SC42 | Logspace/PathHardRegs::eq_qk, Logspace/PathHardRegs::eq_yid | 1 (1/0/0) | substantive | S070 Logspace/PathHardRegs::eq_qk ~ Logspace/PathHardRegs::eq_yid, 687 shared | K15
+SC43 | Logspace/PathHardRegs::orc_bit, Logspace/PathHardRegs::orc_len | 1 (0/0/1) | incidental | S071 Logspace/PathHardRegs::orc_bit ~ Logspace/PathHardRegs::orc_len, 70 shared | -
+SC44 | Logspace/PathWalkMachine::pathOr_bit, Logspace/PathWalkMachine::pathOr_len | 1 (0/0/1) | incidental | S075 Logspace/PathWalkMachine::pathOr_bit ~ Logspace/PathWalkMachine::pathOr_len, 62 shared | -
+SC45 | Logspace/PathWalkProof::ps_scmp, Logspace/PathWalkProof::ps_tcmp | 1 (1/0/0) | substantive | S076 Logspace/PathWalkProof::ps_scmp ~ Logspace/PathWalkProof::ps_tcmp, 1953 shared | K13
+SC46 | Logspace/PathWalkProof::ps_sphase, Logspace/PathWalkProof::ps_tphase | 1 (1/0/0) | substantive | S077 Logspace/PathWalkProof::ps_sphase ~ Logspace/PathWalkProof::ps_tphase, 432 shared | K13
+SC47 | Machines/ARMWidthExample::d1_loop, Machines/ARMWidthExample::d2_loop | 1 (1/0/0) | substantive | S099 Machines/ARMWidthExample::d1_loop ~ Machines/ARMWidthExample::d2_loop, 392 shared | K11
+SC48 | Machines/MARM::MReach.halt, Machines/MARM::MReach.trans | 1 (0/1/0) | small genuine | S100 Machines/MARM::MReach.halt ~ Machines/MARM::MReach.trans, 197 shared | K18
+SC49 | Machines/MARMCompile::armProg_mdetPart_call, Machines/MARMCompile::detM_tr | 1 (0/0/1) | incidental | S102 Machines/MARMCompile::armProg_mdetPart_call ~ Machines/MARMCompile::detM_tr, 149 shared | -
+SC50 | Machines/MARMCompile::mdet_halt, Machines/MARMCompile::mdet_live | 1 (1/0/0) | substantive | S104 Machines/MARMCompile::mdet_halt ~ Machines/MARMCompile::mdet_live, 431 shared | K4
+SC51 | Machines/NARM::NHalts.choose, Machines/NARM::NHalts.det | 1 (1/0/0) | substantive | S105 Machines/NARM::NHalts.choose ~ Machines/NARM::NHalts.det, 308 shared | K5
+SC52 | Machines/NARM::NHalts.of_choose, Machines/NARM::NHalts.of_det | 1 (0/0/1) | incidental | S106 Machines/NARM::NHalts.of_choose ~ Machines/NARM::NHalts.of_det, 162 shared | -
+SC53 | Machines/NARM::nans_choose, Machines/NARM::nans_det | 1 (0/0/1) | incidental | S107 Machines/NARM::nans_choose ~ Machines/NARM::nans_det, 141 shared | -
+SC54 | Machines/NARMCompile::armProg_detPart_call, Machines/NARMCompile::ncompileTM_tr | 1 (0/0/1) | incidental | S109 Machines/NARMCompile::armProg_detPart_call ~ Machines/NARMCompile::ncompileTM_tr, 123 shared | -
+SC55 | Machines/NARMCompile::avoid_of_halt, Machines/NARMCompile::avoid_of_live | 1 (0/0/1) | incidental | S108 Machines/NARMCompile::avoid_of_halt ~ Machines/NARMCompile::avoid_of_live, 121 shared | -
+SC56 | Machines/NARMCompile::ndet_halt, Machines/NARMCompile::ndet_live | 1 (1/0/0) | substantive | S110 Machines/NARMCompile::ndet_halt ~ Machines/NARMCompile::ndet_live, 478 shared | K4
+SC57 | Machines/NARMRun::NGood.mono, Machines/NARMRun::NGood.seg | 1 (1/0/0) | substantive | S114 Machines/NARMRun::NGood.mono ~ Machines/NARMRun::NGood.seg, 214 shared | K19
+SC58 | Machines/VWord::vword_whole₂, Machines/VWord::vword_whole₃ | 1 (0/0/1) | incidental | S115 Machines/VWord::vword_whole₂ ~ Machines/VWord::vword_whole₃, 65 shared | -
+SC59 | SavitchARM/Run::hv_run, SavitchARM/Run::sb_run | 1 (0/0/1) | incidental | S125 SavitchARM/Run::hv_run ~ SavitchARM/Run::sb_run, 90 shared | -
+SC60 | SavitchARM/Search::outerSt_bd, SavitchARM/Search::outerV_run | 1 (0/0/1) | incidental | S129 SavitchARM/Search::outerSt_bd ~ SavitchARM/Search::outerV_run, 63 shared | -
+SC61 | SavitchARM/Setup::ld_run, SavitchARM/Setup::pw_run | 1 (0/0/1) | incidental | S130 SavitchARM/Setup::ld_run ~ SavitchARM/Setup::pw_run, 190 shared | -
+
+## Logical families (K): pairs by category and class
+K1: 16 pairs; internal G 13, internal S 3
+K2: 22 pairs; internal G 18, lib G 4
+K3: 10 pairs; internal S 4, lib U 6
+K4: 7 pairs; internal G 1, internal S 4, same S 2
+K5: 3 pairs; internal S 2, same S 1
+K6: 13 pairs; internal G 1, internal S 1, same G 7, same S 4
+K7: 1 pairs; internal S 1
+K8: 1 pairs; same S 1
+K9: 2 pairs; internal S 2
+K10: 16 pairs; internal S 4, same G 6, same S 6
+K11: 12 pairs; same S 12
+K12: 2 pairs; same S 2
+K13: 2 pairs; same S 2
+K14: 8 pairs; same S 8
+K15: 1 pairs; same S 1
+K16: 1 pairs; same S 1
+K17: 3 pairs; same G 1, same S 2
+K18: 16 pairs; lib G 1, lib U 14, same G 1
+K19: 1 pairs; same S 1
+K20: 2 pairs; internal G 2
+K21: 4 pairs; lib D 2, lib U 1, same S 1
+
+S/G internal or same-file pairs without a logical family: none
+pairs mapped to a family but classified N: none

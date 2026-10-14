@@ -1,0 +1,186 @@
+# BUNDLE-FILES — ARM-extensions fill gate, round 2 (audits/arm-extensions-fill-r2-bundle.md)
+# Repository paths in bundle order, TAB, size in bytes. Repository files at the tip e831b5b0d887dac3bbf1aa2c19af28983b15b982
+# (its Lean tree equals 39bfdca4's and, for the 81 received files, 8c23f3bc's). This round's files under their landing paths.
+# Total: 169 files, 5213460 bytes.
+# Not included (named for completeness): round 1's screen logs (arm-fill-screen.log, arm-fill-screen-supplement.log; r2/inputs/screen-combined.out, which round 1's ledger read, is the full-population output verbatim followed by the supplement's 215 pairs that involve its four extra files (provenance log)), Build/Catalog, Build/Embed and the other library files that only incidental pairs touch (lines in r2/pairs.tsv), PRs #92 and #93 (open; the maintainer adds their diffs when ready).
+
+## A. This pack, round 1's findings and pack, the standards, the response, the records (whole)
+audits/arm-extensions-fill-r2-pack.md	34716
+audits/arm-extensions-fill-findings.md	53319
+audits/arm-extensions-fill-pack.md	45107
+audits/TEMPLATE.md	4693
+policy.md	13573
+workflow.md	13456
+arm-extensions-response.md	15108
+backlog.md	126223
+machine-library-design.md	252857
+AroraBarakChapters3-4Plan.md	261456
+
+## B. Round-2 evidence (audits/evidence/arm-fill/r2/)
+audits/evidence/arm-fill/r2/NOTES.md	8386
+audits/evidence/arm-fill/r2/ledger-r2-tables.md	84422
+audits/evidence/arm-fill/r2/registry-rows.md	20006
+audits/evidence/arm-fill/r2/corrections.md	15054
+audits/evidence/arm-fill/r2/pairs.tsv	69815
+audits/evidence/arm-fill/r2/classify.tsv	20736
+audits/evidence/arm-fill/r2/kfam.tsv	857
+audits/evidence/arm-fill/r2/manual-spec.tsv	2577
+audits/evidence/arm-fill/r2/manual.tsv	3604
+audits/evidence/arm-fill/r2/ledger2-decls.tsv	15530
+audits/evidence/arm-fill/r2/families.txt	21762
+audits/evidence/arm-fill/r2/pr87-diff-names.txt	511
+audits/evidence/arm-fill/r2/pr87.diff	86315
+audits/evidence/arm-fill/r2/inputs/MANIFEST.txt	415
+audits/evidence/arm-fill/r2/inputs/added.txt	4046
+audits/evidence/arm-fill/r2/inputs/root-up.txt	31934
+audits/evidence/arm-fill/r2/inputs/screen-combined.out	591722
+audits/evidence/arm-fill/r2/inputs/up-all81.txt	11469
+audits/evidence/arm-fill/r2/scripts/b4m.py	1751
+audits/evidence/arm-fill/r2/scripts/classify.py	9026
+audits/evidence/arm-fill/r2/scripts/codeonly_commit.py	872
+audits/evidence/arm-fill/r2/scripts/coderefs_at.py	958
+audits/evidence/arm-fill/r2/scripts/combcheck.py	1110
+audits/evidence/arm-fill/r2/scripts/consumers.py	1564
+audits/evidence/arm-fill/r2/scripts/dupnames.py	2403
+audits/evidence/arm-fill/r2/scripts/families.py	3527
+audits/evidence/arm-fill/r2/scripts/finddecl.py	1379
+audits/evidence/arm-fill/r2/scripts/leancore.py	1350
+audits/evidence/arm-fill/r2/scripts/ledger2.py	11120
+audits/evidence/arm-fill/r2/scripts/manualtile.py	2570
+audits/evidence/arm-fill/r2/scripts/mkbundle.zsh	4106
+audits/evidence/arm-fill/r2/scripts/pairs.py	3662
+audits/evidence/arm-fill/r2/scripts/popdrift.py	1549
+audits/evidence/arm-fill/r2/scripts/refs.py	878
+audits/evidence/arm-fill/r2/scripts/run_r2.zsh	16893
+audits/evidence/arm-fill/r2/scripts/showpair.py	2498
+audits/evidence/arm-fill/r2/scripts/tables.py	17117
+audits/evidence/arm-fill/r2/scripts/tipspans.py	1480
+
+## C. Logs: round 2, and round 1's ledger log
+audits/logs/arm-fill-r2-c1delta.log	5150
+audits/logs/arm-fill-r2-classify.log	468
+audits/logs/arm-fill-r2-commentonly.log	357
+audits/logs/arm-fill-r2-drift.log	1321
+audits/logs/arm-fill-r2-families.log	21889
+audits/logs/arm-fill-r2-hashcheck.log	4193
+audits/logs/arm-fill-r2-ledger.log	20476
+audits/logs/arm-fill-r2-pairs.log	515
+audits/logs/arm-fill-r2-provenance.log	2388
+audits/logs/arm-fill-r2-records.log	1630
+audits/logs/arm-fill-r2-registry.log	14496
+audits/logs/arm-fill-r2-screen-added-only.log	45307
+audits/logs/arm-fill-ledger.log	162924
+
+## D. Round 1's evidence that round 2's scripts read
+audits/evidence/arm-fill/screen-population-labels.txt	33379
+audits/evidence/arm-fill/disclosed-copies.tsv	3828
+audits/evidence/arm-fill/design-14-extract.md	7028
+audits/evidence/arm-fill/scripts/ledger.py	12901
+audits/evidence/arm-fill/scripts/leanlib.py	1862
+audits/evidence/arm-fill/tools/imports.py	712
+audits/evidence/retrofit/copy-text-screen.py	3425
+audits/evidence/arm-fill/AxARM.lean.txt	4703
+
+## E. The 73 added Lean files (identical at 8c23f3bc and at the tip)
+TCSlib/Complexity/ClassPSPACE/TQBFARM/Correct.lean	10620
+TCSlib/Complexity/ClassPSPACE/TQBFARM/Leaf.lean	14554
+TCSlib/Complexity/ClassPSPACE/TQBFARM/Machine.lean	20828
+TCSlib/Complexity/ClassPSPACE/TQBFARM/Semantics.lean	10599
+TCSlib/Complexity/ClassPSPACE/TQBFARM/Walk.lean	11741
+TCSlib/Complexity/ClassPSPACE/TQBFHard.lean	17065
+TCSlib/Complexity/ClassPSPACE/TQBFHardBridge.lean	6999
+TCSlib/Complexity/ClassPSPACE/TQBFHardMachine.lean	9172
+TCSlib/Complexity/ClassPSPACE/TQBFHardParams.lean	11548
+TCSlib/Complexity/ClassPSPACE/TQBFHardSemantics.lean	24242
+TCSlib/Complexity/ClassPSPACE/TQBFHardTseitin.lean	7277
+TCSlib/Complexity/ClassPSPACE/TQBFHardVerifier.lean	17703
+TCSlib/Complexity/SpaceComplexity/Codec/Bridge.lean	15903
+TCSlib/Complexity/SpaceComplexity/Codec/Checks.lean	21297
+TCSlib/Complexity/SpaceComplexity/Codec/Deciders.lean	21782
+TCSlib/Complexity/SpaceComplexity/Codec/Engine.lean	24546
+TCSlib/Complexity/SpaceComplexity/Codec/Langs.lean	6505
+TCSlib/Complexity/SpaceComplexity/Codec/Layout.lean	18873
+TCSlib/Complexity/SpaceComplexity/Codec/Layout2.lean	17435
+TCSlib/Complexity/SpaceComplexity/Codec/Machine.lean	17823
+TCSlib/Complexity/SpaceComplexity/Codec/Parse.lean	23040
+TCSlib/Complexity/SpaceComplexity/Codec/Regs.lean	10371
+TCSlib/Complexity/SpaceComplexity/Codec/Run.lean	15067
+TCSlib/Complexity/SpaceComplexity/Codec/Scan.lean	15940
+TCSlib/Complexity/SpaceComplexity/Codec/Step.lean	23682
+TCSlib/Complexity/SpaceComplexity/Codec/StepDecider.lean	22696
+TCSlib/Complexity/SpaceComplexity/Codec/Valid.lean	27607
+TCSlib/Complexity/SpaceComplexity/Codec/Word.lean	22832
+TCSlib/Complexity/SpaceComplexity/ExpBFS/Machine.lean	21790
+TCSlib/Complexity/SpaceComplexity/ExpBFS/Main.lean	31431
+TCSlib/Complexity/SpaceComplexity/ExpBFS/Radius.lean	17158
+TCSlib/Complexity/SpaceComplexity/ExpBFS/Relax.lean	23947
+TCSlib/Complexity/SpaceComplexity/ExpBFS/Run.lean	31765
+TCSlib/Complexity/SpaceComplexity/ExpBFS/Search.lean	13665
+TCSlib/Complexity/SpaceComplexity/ExpTime.lean	7123
+TCSlib/Complexity/SpaceComplexity/Logspace/ISCountGenCorrect.lean	14988
+TCSlib/Complexity/SpaceComplexity/Logspace/ISCountGenLoop.lean	14808
+TCSlib/Complexity/SpaceComplexity/Logspace/ISCountGenMachine.lean	13163
+TCSlib/Complexity/SpaceComplexity/Logspace/ISCountGenRadius.lean	7624
+TCSlib/Complexity/SpaceComplexity/Logspace/ISCountGenStage.lean	19389
+TCSlib/Complexity/SpaceComplexity/Logspace/ISCountGenWalk.lean	9290
+TCSlib/Complexity/SpaceComplexity/Logspace/ISCountMath.lean	14829
+TCSlib/Complexity/SpaceComplexity/Logspace/ISCountRegs.lean	11180
+TCSlib/Complexity/SpaceComplexity/Logspace/PathHard.lean	17088
+TCSlib/Complexity/SpaceComplexity/Logspace/PathHardDecide.lean	11540
+TCSlib/Complexity/SpaceComplexity/Logspace/PathHardMachine.lean	21033
+TCSlib/Complexity/SpaceComplexity/Logspace/PathHardRegs.lean	16624
+TCSlib/Complexity/SpaceComplexity/Logspace/PathHardRun.lean	15473
+TCSlib/Complexity/SpaceComplexity/Logspace/PathHardWalk.lean	18732
+TCSlib/Complexity/SpaceComplexity/Logspace/PathWalk.lean	22248
+TCSlib/Complexity/SpaceComplexity/Logspace/PathWalkMachine.lean	21160
+TCSlib/Complexity/SpaceComplexity/Logspace/PathWalkProof.lean	30706
+TCSlib/Complexity/SpaceComplexity/Machines/ARMLoops.lean	17935
+TCSlib/Complexity/SpaceComplexity/Machines/ARMReach.lean	11723
+TCSlib/Complexity/SpaceComplexity/Machines/ARMWidth.lean	18894
+TCSlib/Complexity/SpaceComplexity/Machines/ARMWidthExample.lean	14480
+TCSlib/Complexity/SpaceComplexity/Machines/MARM.lean	13174
+TCSlib/Complexity/SpaceComplexity/Machines/MARMCompile.lean	24468
+TCSlib/Complexity/SpaceComplexity/Machines/MARMTime.lean	28907
+TCSlib/Complexity/SpaceComplexity/Machines/NARM.lean	22227
+TCSlib/Complexity/SpaceComplexity/Machines/NARMCompile.lean	20802
+TCSlib/Complexity/SpaceComplexity/Machines/NARMExample.lean	4935
+TCSlib/Complexity/SpaceComplexity/Machines/NARMKit.lean	24047
+TCSlib/Complexity/SpaceComplexity/Machines/NARMProof.lean	19498
+TCSlib/Complexity/SpaceComplexity/Machines/NARMRun.lean	13537
+TCSlib/Complexity/SpaceComplexity/Machines/VWord.lean	4616
+TCSlib/Complexity/SpaceComplexity/SavitchARM/Correct.lean	6148
+TCSlib/Complexity/SpaceComplexity/SavitchARM/Machine.lean	23446
+TCSlib/Complexity/SpaceComplexity/SavitchARM/Reach.lean	11361
+TCSlib/Complexity/SpaceComplexity/SavitchARM/Recursion.lean	23090
+TCSlib/Complexity/SpaceComplexity/SavitchARM/Run.lean	16434
+TCSlib/Complexity/SpaceComplexity/SavitchARM/Search.lean	13910
+TCSlib/Complexity/SpaceComplexity/SavitchARM/Setup.lean	8128
+
+## F. Library files the ledger rows and the registry cite (at the tip)
+TCSlib/Complexity/SpaceComplexity/Machines/ARMProof.lean	15847
+TCSlib/Complexity/SpaceComplexity/Machines/ARMKit.lean	4352
+TCSlib/Complexity/SpaceComplexity/Machines/Compile.lean	15301
+TCSlib/Complexity/SpaceComplexity/Machines/ARMRun.lean	15911
+TCSlib/Complexity/SpaceComplexity/Machines/Call.lean	17296
+TCSlib/Complexity/SpaceComplexity/Machines/Parse.lean	18448
+TCSlib/Complexity/SpaceComplexity/Machines/Parse2.lean	32185
+TCSlib/Complexity/SpaceComplexity/Machines/ParseCmp.lean	24234
+TCSlib/Complexity/SpaceComplexity/Machines/DblLang.lean	16885
+TCSlib/Complexity/SpaceComplexity/ConfigCount.lean	23529
+TCSlib/Complexity/SpaceComplexity/ConfigGraph.lean	38982
+TCSlib/Complexity/SpaceComplexity/Logspace/InputAccess.lean	107833
+TCSlib/Complexity/SpaceComplexity/Logspace/QueryReshape.lean	145085
+TCSlib/Complexity/SpaceComplexity/Logspace/Mult.lean	78087
+TCSlib/Complexity/SpaceComplexity/Logspace/PreimageHost.lean	42467
+TCSlib/Complexity/SpaceComplexity/Logspace/Path.lean	10636
+TCSlib/Complexity/ClassNP/PolyTimeBlockLoop.lean	38898
+TCSlib/Complexity/CircuitComplexity/DAGCircuitSat.lean	17975
+TCSlib/Complexity/CircuitComplexity/TreeDAG.lean	34294
+TCSlib/Complexity/CircuitComplexity/DAGTransform.lean	14798
+TCSlib/Complexity/CircuitComplexity/DAGFanin.lean	32894
+TCSlib/Complexity/CircuitComplexity/PSubsetPPolyConfigCircuit.lean	28902
+TCSlib/Complexity/Formulas/QBF.lean	14174
+TCSlib/Complexity/ClassPSPACE/TQBF.lean	168400
+TCSlib/Programs/Util/List.lean	23949
+TCSlib/Complexity/TuringMachine/Build/CfgRecord.lean	281825
+TCSlib/Complexity/CookLevin/Hardness.lean	469578

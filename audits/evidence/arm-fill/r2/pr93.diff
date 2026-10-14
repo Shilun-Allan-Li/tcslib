@@ -1,0 +1,840 @@
+diff --git a/TCSlib/Complexity/ClassPSPACE.lean b/TCSlib/Complexity/ClassPSPACE.lean
+index 195d7f11..27c31f83 100644
+--- a/TCSlib/Complexity/ClassPSPACE.lean
++++ b/TCSlib/Complexity/ClassPSPACE.lean
+@@ -5,6 +5,18 @@ Authors: Seyoon Ragavan
+ -/
+ import TCSlib.Complexity.ClassPSPACE.TQBF
+ import TCSlib.Complexity.ClassPSPACE.Games
++import TCSlib.Complexity.ClassPSPACE.TQBFARM.Semantics
++import TCSlib.Complexity.ClassPSPACE.TQBFARM.Machine
++import TCSlib.Complexity.ClassPSPACE.TQBFARM.Leaf
++import TCSlib.Complexity.ClassPSPACE.TQBFARM.Walk
++import TCSlib.Complexity.ClassPSPACE.TQBFARM.Correct
++import TCSlib.Complexity.ClassPSPACE.TQBFHardSemantics
++import TCSlib.Complexity.ClassPSPACE.TQBFHardMachine
++import TCSlib.Complexity.ClassPSPACE.TQBFHardTseitin
++import TCSlib.Complexity.ClassPSPACE.TQBFHardVerifier
++import TCSlib.Complexity.ClassPSPACE.TQBFHardBridge
++import TCSlib.Complexity.ClassPSPACE.TQBFHardParams
++import TCSlib.Complexity.ClassPSPACE.TQBFHard
+ 
+ /-!
+ # `PSPACE`-completeness
+@@ -24,11 +36,24 @@ restated by RD-2), and Zermelo determinacy for finite perfect-information games
+   `TQBF`, and Theorem 4.13
+ - `ClassPSPACE.Games`: finite two-person perfect-information games and
+   Zermelo determinacy
+-- `ClassPSPACE.TQBFARM`: the polynomial-width register machine deciding `TQBF`
+-  (`Semantics`, `Machine`, `Leaf`, `Walk`, `Correct`), behind `Complexity.TQBF_mem_PSPACE`
+-- `ClassPSPACE.TQBFHard*`: the hardness reduction behind `Complexity.TQBF_PSPACEHard`
+-  (`Semantics`: the `ψᵢ` prefix; `Machine`: block paths; `Tseitin`;
+-  `Verifier`, `Bridge`: the polynomial-time matrix; `Params`; `TQBFHard`: the reduction)
++- `ClassPSPACE.TQBFARM.Semantics`: the pure side of the polynomial-width register machine
++  deciding `TQBF`: the syntax automaton of the encodings and the stack semantics `Val`
++- `ClassPSPACE.TQBFARM.Machine`: the register machine itself, its register file and its
++  loop sites
++- `ClassPSPACE.TQBFARM.Leaf`: the machine's evaluation of the CNF matrix at a leaf
++- `ClassPSPACE.TQBFARM.Walk`: the syntax check and the depth-first assignment walk; the walk
++  is correct at a leaf
++- `ClassPSPACE.TQBFARM.Correct`: the walk is correct at every depth; the true quantified
++  formulas are in `PSPACE`, behind `Complexity.TQBF_mem_PSPACE`
++- `ClassPSPACE.TQBFHardSemantics`: the `ψᵢ` prefix of the hardness reduction: blocks of
++  quantifiers and the midpoint recursion `Mid`
++- `ClassPSPACE.TQBFHardMachine`: acceptance as a path of blocks carrying code words
++- `ClassPSPACE.TQBFHardTseitin`: Tseitin's transformation after the prefix, for circuits
++- `ClassPSPACE.TQBFHardVerifier`: the polynomial-time verifier `predB` of the matrix
++- `ClassPSPACE.TQBFHardBridge`: the verifier on an assignment is the flat matrix
++- `ClassPSPACE.TQBFHardParams`: the block width and the bits of the quantifier prefix
++- `ClassPSPACE.TQBFHard`: the reduction of every `PSPACE` language to the true quantified
++  formulas, behind `Complexity.TQBF_PSPACEHard`
+ 
+ ## References
+ 
+diff --git a/TCSlib/Complexity/ClassPSPACE/TQBFARM/Correct.lean b/TCSlib/Complexity/ClassPSPACE/TQBFARM/Correct.lean
+index b2daa416..54b2a94e 100644
+--- a/TCSlib/Complexity/ClassPSPACE/TQBFARM/Correct.lean
++++ b/TCSlib/Complexity/ClassPSPACE/TQBFARM/Correct.lean
+@@ -19,6 +19,12 @@ The correctness of the assignment walk of the `TQBF` register machine
+ [AB09, Theorem 4.13], by the recursive evaluation of its proof run with an explicit stack
+ of assignment bits.
+ 
++## Main definitions
++
++* none (correctness theorems for the machine `Complexity.LogProg.TQBFARM.A`; the walk's
++  correctness predicate `Complexity.LogProg.TQBFARM.CallOK` is in
++  `TCSlib.Complexity.ClassPSPACE.TQBFARM.Walk`).
++
+ ## Main results
+ 
+ * `Complexity.LogProg.TQBFARM.inner_spec`, `Complexity.LogProg.TQBFARM.call_spec` — the
+@@ -166,8 +172,12 @@ the syntax automaton over `x` (`syn_run`). A rejected string decodes to a true f
+ (`truth_of_not_synOK`), and the machine answers `1`. An accepted string is
+ `pairEncode qs (serialize φ)` (`repr_of_synOK`); the walk from the root returns
+ `Val qs φ 0 1` (`call_spec`), the truth of the decoded formula (`val_root`). Every register
+-stays at most `2 ^ (|qs| + 1) ≤ 2 ^ (|x| + 1)`: the stack has at most `|qs| + 1` binary
+-digits and the pointer, depth and counters are at most `|x|`. -/
++stays at most the value bound `2 ^ (|x| + 1)`. In the syntax scan the stack is `1`, the
++pointer is at most `|x|` and the other registers are `0`. On the walk the stack and its
++scratch copy `T` stay below `2 ^ (|qs| + 1)`, which is at most `2 ^ (|x| + 1)` because an
++encoding has `2|qs| + 2 ≤ |x|`; the pointer, the depth, the halving counter and the
++literal's variable stay at most `|x|`; and the copy loops' scratch register `Z` stays at most
++the register being copied. -/
+ theorem truth_mem_PSPACE : {x : List Bool | (QBF.decode x).truth} ∈ PSPACE := by
+   refine arm_decides_pspace_val A .init decs (fun j => LOGSPACE_subset_PSPACE (decs_mem j)) 1 1
+     fun x => ?_
+diff --git a/TCSlib/Complexity/ClassPSPACE/TQBFARM/Leaf.lean b/TCSlib/Complexity/ClassPSPACE/TQBFARM/Leaf.lean
+index b8e52f8b..e05346b2 100644
+--- a/TCSlib/Complexity/ClassPSPACE/TQBFARM/Leaf.lean
++++ b/TCSlib/Complexity/ClassPSPACE/TQBFARM/Leaf.lean
+@@ -23,6 +23,12 @@ arithmetic of `lv_run`. Every run is through register files bounded by `B`.
+ Infrastructure for [AB09, §4.2, Theorem 4.13, membership half]; not itself a result of the
+ book.
+ 
++## Main definitions
++
++* none (run theorems of the input reads and the matrix evaluation; the file also adds the
++  scoped tactics `bdt` and `sext`, which close register-file bounds and register-file
++  equations).
++
+ ## Main results
+ 
+ * `Complexity.LogProg.TQBFARM.read_t`, `read_f` — a read of the input.
+diff --git a/TCSlib/Complexity/ClassPSPACE/TQBFHardBridge.lean b/TCSlib/Complexity/ClassPSPACE/TQBFHardBridge.lean
+index d086550e..168e765b 100644
+--- a/TCSlib/Complexity/ClassPSPACE/TQBFHardBridge.lean
++++ b/TCSlib/Complexity/ClassPSPACE/TQBFHardBridge.lean
+@@ -22,6 +22,10 @@ the initial-code test on the block at `w`, the accepting-code test on the block
+ 
+ Infrastructure for `Complexity.TQBF_PSPACEHard`; not itself a book result.
+ 
++## Main definitions
++
++* none (theorems about the verifier `Complexity.TQBFHard.predB` of `TQBFHardVerifier`).
++
+ ## Main results
+ 
+ * `Complexity.TQBFHard.predB_iff` — the verifier on an assignment.
+diff --git a/TCSlib/Complexity/ClassPSPACE/TQBFHardSemantics.lean b/TCSlib/Complexity/ClassPSPACE/TQBFHardSemantics.lean
+index 54bfb740..52774604 100644
+--- a/TCSlib/Complexity/ClassPSPACE/TQBFHardSemantics.lean
++++ b/TCSlib/Complexity/ClassPSPACE/TQBFHardSemantics.lean
+@@ -156,7 +156,17 @@ theorem prefixTruth_congr_agree {P P' : (ℕ → Bool) → Prop} (qs : List Quan
+ 
+ /-- **A block of existential quantifiers is an existential over blocks**: `w` existential
+ quantifiers from position `i` hold iff some block of `w` values written at `i` makes the
+-rest hold. (Proved, by induction on `w`.) -/
++rest hold.
++
++**Proof sketch.** Induction on `w`, for every assignment and start position. For `w = 0`
++the only block is the empty one, and writing it changes nothing. For `w + 1`, the first
++quantifier chooses a value `b` at position `i`, and the induction hypothesis, applied to the
++assignment updated at `i` and the position `i + 1`, turns the remaining `w` quantifiers into
++a block `β` of length `w` written from `i + 1`. Writing `β` from `i + 1` after updating
++position `i` to `b` is writing the block `b :: β` from `i` (`writeBlock_update_cons`), and
++`(i + 1) + w = i + (w + 1)`. Conversely, a block of length `w + 1` is `b :: β` with `β` of
++length `w`, and the same two identities read backwards give the choice `b` and the
++induction hypothesis's block `β`. -/
+ theorem prefixTruth_replicate_ex (P : (ℕ → Bool) → Prop) (w : ℕ) (rest : List Quant)
+     (σ : ℕ → Bool) (i : ℕ) :
+     PrefixTruth P (List.replicate w .ex ++ rest) σ i ↔
+@@ -189,7 +199,16 @@ theorem prefixTruth_replicate_ex (P : (ℕ → Bool) → Prop) (w : ℕ) (rest :
+ 
+ /-- **A block of universal quantifiers is a universal over blocks**: `w` universal
+ quantifiers from position `i` hold iff every block of `w` values written at `i` makes the
+-rest hold. (Proved, by induction on `w`.) -/
++rest hold.
++
++**Proof sketch.** Induction on `w`, for every assignment and start position, as for
++`prefixTruth_replicate_ex`. For `w = 0` the only block of length `0` is the empty one, and
++writing it changes nothing. For `w + 1`, the first quantifier ranges over the value `b` at
++position `i`, and the induction hypothesis, applied to the assignment updated at `i` and the
++position `i + 1`, ranges over the blocks `β` of length `w` written from `i + 1`. The blocks of
++length `w + 1` are exactly the `b :: β`, and writing `β` from `i + 1` after updating position
++`i` to `b` is writing `b :: β` from `i` (`writeBlock_update_cons`), with
++`(i + 1) + w = i + (w + 1)`; both directions are this rewriting. -/
+ theorem prefixTruth_replicate_all (P : (ℕ → Bool) → Prop) (w : ℕ) (rest : List Quant)
+     (σ : ℕ → Bool) (i : ℕ) :
+     PrefixTruth P (List.replicate w .all ++ rest) σ i ↔
+diff --git a/TCSlib/Complexity/ClassPSPACE/TQBFHardTseitin.lean b/TCSlib/Complexity/ClassPSPACE/TQBFHardTseitin.lean
+index a01a6973..0604f069 100644
+--- a/TCSlib/Complexity/ClassPSPACE/TQBFHardTseitin.lean
++++ b/TCSlib/Complexity/ClassPSPACE/TQBFHardTseitin.lean
+@@ -31,6 +31,11 @@ from the public `BoolCircuit.eval_tseitinGates` and `BoolCircuit.DAGGate.eval_ts
+ since only the existential closure `satisfiable_iff_toCNF_satisfiable` is public there;
+ promoting the private lemma would delete this copy.
+ 
++## Main definitions
++
++* none (theorems about the Tseitin formula `BoolCircuit.DAGCircuit.toCNF` and the
++  serialization `Std.Sat.CNF.serialize`).
++
+ ## Main results
+ 
+ * `Complexity.TQBFHard.toCNF_extension_iff` — the pointwise Tseitin lemma. [AB09, §4.2,
+diff --git a/TCSlib/Complexity/SpaceComplexity/Codec/Bridge.lean b/TCSlib/Complexity/SpaceComplexity/Codec/Bridge.lean
+index 00f85f0c..f2073c05 100644
+--- a/TCSlib/Complexity/SpaceComplexity/Codec/Bridge.lean
++++ b/TCSlib/Complexity/SpaceComplexity/Codec/Bridge.lean
+@@ -258,7 +258,8 @@ theorem mem_iff_codeChain {L : Language Bool} {sp : ℕ → ℕ} (h : N.DecidesI
+           rw [← e]; exact inWin_runWith_take w' hsp j
+         · have e1 : w.take j = w := List.take_of_length_le (by omega)
+           have e2 : w'.take tb = w := by
+-            simp only [w']; rw [List.take_append_of_le_length (by omega), List.take_of_length_le (by omega)]
++            simp only [w']; rw [List.take_append_of_le_length (by omega),
++              List.take_of_length_le (by omega)]
+           rw [e1, ← e2]; exact inWin_runWith_take w' hsp tb
+       · intro j
+         have hlen : (w.take T).length = T := List.length_take_of_le (by omega)
+diff --git a/TCSlib/Complexity/SpaceComplexity/Codec/Deciders.lean b/TCSlib/Complexity/SpaceComplexity/Codec/Deciders.lean
+index 67d7ce47..f46782aa 100644
+--- a/TCSlib/Complexity/SpaceComplexity/Codec/Deciders.lean
++++ b/TCSlib/Complexity/SpaceComplexity/Codec/Deciders.lean
+@@ -107,7 +107,8 @@ theorem one_run (hm : mode ≠ .step) (y : List Bool) :
+         R.Pos = bitsVal ((w.drop (W N * (2 * s + 1))).take (wP x.length)) ∧
+         Reach N mode y (bnd N y) .lenScan ({} : Regs).val (.vDone st) R.val) ∨
+     ((∀ x w s, Shape1 y x w s → ¬ PreChk N x.length s w) ∧
+-      AHalt (CA N mode) orc y (GuardLe (CA N mode) y (bnd N y)) (some .lenScan, ({} : Regs).val, none)
++      AHalt (CA N mode) orc y (GuardLe (CA N mode) y (bnd N y))
++        (some .lenScan, ({} : Regs).val, none)
+         false) := by
+   set B := bnd N y
+   rcases parse_run (N := N) hm y with ⟨x, w, s, q1, cap, hsh, hq1, hcap, r1⟩ | ⟨hno, hhalt⟩
+@@ -273,7 +274,8 @@ theorem init_tail (y x w rest : List Bool) (hy : y = pairEncode x (pairEncode w
+   have hlink2 : 2 * W N * (2 * s + 1) = 2 * (W N * (2 * s + 1)) := by ring
+   -- answering from a label whose instruction is `ret`
+   have hret : ∀ (l : Lab N) (v : Fin 21 → ℕ) (b : Bool), (∀ r, v r ≤ B) →
+-      CA N .init l = .ret b → AHalt (CA N .init) orc y (GuardLe (CA N .init) y B) (some l, v, none) b :=
++      CA N .init l = .ret b →
++        AHalt (CA N .init) orc y (GuardLe (CA N .init) y B) (some l, v, none) b :=
+     fun l v b hv h => AHalt.ret h ⟨by simp [PreS, h], hv⟩
+   have hv0 := hBd.val_le
+   by_cases hscan : InitScan N st.1
+diff --git a/TCSlib/Complexity/SpaceComplexity/Codec/Engine.lean b/TCSlib/Complexity/SpaceComplexity/Codec/Engine.lean
+index 773e4e1d..2c9d897c 100644
+--- a/TCSlib/Complexity/SpaceComplexity/Codec/Engine.lean
++++ b/TCSlib/Complexity/SpaceComplexity/Codec/Engine.lean
+@@ -39,6 +39,10 @@ by a chain of `stride` decrements (the codec's fields are doubled in the virtual
+ proof is adapted from that one. `incChain` is the public form of the private
+ `arm_increments` there. A shared generalization of both is requested.
+ 
++## Main definitions
++
++* none (run theorems for bounded loops of `Complexity.LogProg.ARM`).
++
+ ## Main results
+ 
+ * `Complexity.Codec.incChain`, `Complexity.Codec.decChain`.
+@@ -66,7 +70,8 @@ theorem incChain (A : ARM m d Λ) (oracle : Fin d → List Bool → Bool) (y : L
+       (some (labels k), Function.update v r (v r + k), none) := by
+   induction k generalizing labels v with
+   | zero => simpa only [Nat.add_zero, Function.update_eq_self] using
+-      (AReach.refl (A := A) (oracle := oracle) (x := y) (G := GuardLe A y B) (some (labels 0), v, none))
++      (AReach.refl (A := A) (oracle := oracle) (x := y) (G := GuardLe A y B)
++        (some (labels 0), v, none))
+   | succ k ih =>
+     have hc := hcode 0 (by omega)
+     apply AReach.step ⟨by simp [PreS, hc], hv⟩
+@@ -88,7 +93,8 @@ theorem decChain (A : ARM m d Λ) (oracle : Fin d → List Bool → Bool) (y : L
+       (some (labels k), Function.update v r (v r - k), none) := by
+   induction k generalizing labels v with
+   | zero => simpa only [Nat.sub_zero, Function.update_eq_self] using
+-      (AReach.refl (A := A) (oracle := oracle) (x := y) (G := GuardLe A y B) (some (labels 0), v, none))
++      (AReach.refl (A := A) (oracle := oracle) (x := y) (G := GuardLe A y B)
++        (some (labels 0), v, none))
+   | succ k ih =>
+     have hc := hcode 0 (by omega)
+     apply AReach.step ⟨by simp [PreS, hc], hv⟩
+@@ -126,7 +132,8 @@ theorem scan_loop {σ : Type} (A : ARM m d Λ) (oracle : Fin d → List Bool →
+     (hv : ∀ r, v r ≤ B) (hlim : v lim = v p + stride * u.length)
+     (hq : v q + stride * u.length ≤ B)
+     (ho1 : ∀ i < u.length, oracle j (pairEncode y (Nat.bits (v p + stride * i))) = u.getD i false)
+-    (ho2 : ∀ i < u.length, oracle j (pairEncode y (Nat.bits (v q + stride * i))) = u'.getD i false) :
++    (ho2 : ∀ i < u.length, oracle j (pairEncode y (Nat.bits (v q + stride * i))) =
++      u'.getD i false) :
+     AReach A oracle y (GuardLe A y B) (some (test st₀), v, none)
+       (some (done ((List.zip u u').foldl δ st₀)),
+         Function.update (Function.update v p (v p + stride * u.length)) q
+diff --git a/TCSlib/Complexity/SpaceComplexity/Codec/Layout.lean b/TCSlib/Complexity/SpaceComplexity/Codec/Layout.lean
+index 8e8d5035..ba4eea2b 100644
+--- a/TCSlib/Complexity/SpaceComplexity/Codec/Layout.lean
++++ b/TCSlib/Complexity/SpaceComplexity/Codec/Layout.lean
+@@ -112,7 +112,8 @@ theorem layout_run (y x w rest : List Bool) (hy : y = pairEncode x (pairEncode w
+         (layR N R x.length s (bitsVal ((w.drop (W N * (2 * s + 1))).take (wP x.length)))).val) ∨
+     (¬ (w.length = W N * (2 * s + 1) + wP x.length + 1 ∧
+       w.getD (W N * (2 * s + 1) + wP x.length) false = true) ∧
+-      AHalt (CA N mode) orc y (GuardLe (CA N mode) y (bnd N y)) (some (.cp .N1), R.val, none) false) := by
++      AHalt (CA N mode) orc y (GuardLe (CA N mode) y (bnd N y)) (some (.cp .N1), R.val, none)
++        false) := by
+   set B := bnd N y
+   set n := x.length
+   set a := 2 * n + 2
+@@ -277,7 +278,8 @@ theorem le_phase (y : List Bool) (R : Regs) (hBd : R.Bd (bnd N y)) (hT : R.T = 0
+     (R.Pos ≤ R.N1 → Reach N mode y (bnd N y) .leT1 R.val
+       (if mode = .step then .cp .E2 else .clrQ1v) R.val) ∧
+     (¬ R.Pos ≤ R.N1 →
+-      AHalt (CA N mode) orc y (GuardLe (CA N mode) y (bnd N y)) (some .leT1, R.val, none) false) := by
++      AHalt (CA N mode) orc y (GuardLe (CA N mode) y (bnd N y)) (some .leT1, R.val, none)
++        false) := by
+   have hB0 := hBd
+   simp only [Regs.Bd] at hB0
+   have h := le_run (N := N) (mode := mode) y (bnd N y) R.val hBd.val_le (by simpa using hT)
+@@ -308,7 +310,8 @@ theorem vscan_run (y x w rest : List Bool) (hy : y = pairEncode x (pairEncode w
+     (hE : R.E = 2 * x.length + 2 + 4 * W N * s + 2 * W N)
+     (hw : W N * (2 * s + 1) ≤ w.length) :
+     ∃ st : VAd N, st.1 = vScan N (w.take (W N * (2 * s + 1))) ∧
+-      Reach N mode y (bnd N y) .clrQ1v R.val (.vDone st) ({R with Q1 := R.E, Q2 := R.E} : Regs).val := by
++      Reach N mode y (bnd N y) .clrQ1v R.val (.vDone st)
++        ({R with Q1 := R.E, Q2 := R.E} : Regs).val := by
+   set B := bnd N y
+   have hB0 := hBd
+   simp only [Regs.Bd] at hB0
+diff --git a/TCSlib/Complexity/SpaceComplexity/Codec/Layout2.lean b/TCSlib/Complexity/SpaceComplexity/Codec/Layout2.lean
+index bb10c132..33a5d604 100644
+--- a/TCSlib/Complexity/SpaceComplexity/Codec/Layout2.lean
++++ b/TCSlib/Complexity/SpaceComplexity/Codec/Layout2.lean
+@@ -138,7 +138,8 @@ theorem layout2_run (y x w w' rest : List Bool)
+   · have heq : f + 4 = 2 * n + 2 * w.length + 2 * w'.length + 6 := by
+       rw [hlen]; simp only [f, e, b]; ring
+     have r15 : Reach N .step y B .lenChk2 R14.val .term2 R14.val :=
+-      Reach.single' (gd_of hR14.val_le (by simp [PreS, CA]; decide)) (by simp [astep, CA, R14, heq, hP])
++      Reach.single' (gd_of hR14.val_le (by simp [PreS, CA]; decide))
++        (by simp [astep, CA, R14, heq, hP])
+     have hterm : y.getD f false = w'.getD (W N * (2 * s + 1) + wP n) false := by
+       rw [show f = 2 * x.length + 2 * w.length + 4 + 2 * (W N * (2 * s + 1) + wP n) by
+           simp only [f, e, b, n]; ring, hy, getD_w2 _ _ _ _ _ (by omega)]
+@@ -174,7 +175,8 @@ theorem layout2_run (y x w w' rest : List Bool)
+           (fun i hi => by
+             rw [hpf] at hi
+             simp only [dcBase, dcStride, R14, Regs.val_E2]
+-            rw [hy, show e + 2 * i = 2 * x.length + 2 * w.length + 4 + 2 * (W N * (2 * s + 1) + i) by
++            rw [hy,
++              show e + 2 * i = 2 * x.length + 2 * w.length + 4 + 2 * (W N * (2 * s + 1) + i) by
+                 rw [he2]; simp only [b, n]; ring,
+               getD_w2 _ _ _ _ _ (by omega)]
+             simp only [pf, List.getD_eq_getElem?_getD, List.getElem?_take, if_pos hi,
+@@ -197,7 +199,8 @@ theorem layout2_run (y x w w' rest : List Bool)
+       have : 4 * W N * s + 2 * W N = 2 * (W N * (2 * s + 1)) := by ring
+       omega
+     have r15 : Reach N .step y B .lenChk2 R14.val .rej R14.val :=
+-      Reach.single' (gd_of hR14.val_le (by simp [PreS, CA]; decide)) (by simp [astep, CA, R14, hP, hne])
++      Reach.single' (gd_of hR14.val_le (by simp [PreS, CA]; decide))
++        (by simp [astep, CA, R14, hP, hne])
+     exact halt_rej (r5_14.trans r15) hR14.val_le
+ 
+ /-- The register code of an optional input symbol: `0` blank, `1` for `0`, `2` for `1`. -/
+diff --git a/TCSlib/Complexity/SpaceComplexity/Codec/Parse.lean b/TCSlib/Complexity/SpaceComplexity/Codec/Parse.lean
+index 8895ad7a..66e00c0d 100644
+--- a/TCSlib/Complexity/SpaceComplexity/Codec/Parse.lean
++++ b/TCSlib/Complexity/SpaceComplexity/Codec/Parse.lean
+@@ -193,7 +193,8 @@ theorem sw_run (y : List Bool) (R : Regs) (p : ℕ) (hBd : R.Bd (bnd N y))
+   · right
+     refine ⟨fun h => hok (hc.mpr h), ?_⟩
+     rw [show (if (y.drop p).length ≤ (Nat.bits y.length).length then
+-        if (y.drop p).getLastD true then Lab.cp CpId.Q2 else Lab.rej else Lab.rej) = (Lab.rej : Lab N)
++        if (y.drop p).getLastD true then Lab.cp CpId.Q2 else Lab.rej else Lab.rej) =
++          (Lab.rej : Lab N)
+       by split_ifs with h1 h2 <;> first | rfl | exact absurd ⟨h1, h2⟩ hok] at r3
+     exact halt_rej ((r1.trans r2).trans r3) hv'
+ 
+@@ -220,7 +221,8 @@ theorem parse_x (y : List Bool) :
+       Reach N mode y (bnd N y) .lenScan ({} : Regs).val (.prScan 1)
+         ({ L := y.length, P := 2 * x.length + 2, A := 2 * x.length + 2 } : Regs).val) ∨
+     ((∀ x r, y ≠ pairEncode x r) ∧
+-      AHalt (CA N mode) orc y (GuardLe (CA N mode) y (bnd N y)) (some .lenScan, ({} : Regs).val, none)
++      AHalt (CA N mode) orc y (GuardLe (CA N mode) y (bnd N y))
++        (some .lenScan, ({} : Regs).val, none)
+         false) := by
+   set B := bnd N y
+   have hLB : y.length ≤ B := length_le_bnd y
+@@ -270,7 +272,8 @@ theorem parse_run (hm : mode ≠ .step) (y : List Bool) :
+         ({ L := y.length, P := 2 * x.length + 2 * w.length + 4, A := 2 * x.length + 2,
+            Q1 := q1, Cap := cap, Q2 := 2 * x.length + 2 * w.length + 4, S := s } : Regs).val) ∨
+     ((¬ ∃ x w s, Shape1 y x w s) ∧
+-      AHalt (CA N mode) orc y (GuardLe (CA N mode) y (bnd N y)) (some .lenScan, ({} : Regs).val, none)
++      AHalt (CA N mode) orc y (GuardLe (CA N mode) y (bnd N y))
++        (some .lenScan, ({} : Regs).val, none)
+         false) := by
+   set B := bnd N y
+   have hLB : y.length ≤ B := length_le_bnd y
+diff --git a/TCSlib/Complexity/SpaceComplexity/Codec/Regs.lean b/TCSlib/Complexity/SpaceComplexity/Codec/Regs.lean
+index 8901b913..ab0a2691 100644
+--- a/TCSlib/Complexity/SpaceComplexity/Codec/Regs.lean
++++ b/TCSlib/Complexity/SpaceComplexity/Codec/Regs.lean
+@@ -321,11 +321,14 @@ def Regs.val (R : Regs) : Fin 21 → ℕ
+ 
+ /-- All registers of a register file are at most `B`. -/
+ def Regs.Bd (R : Regs) (B : ℕ) : Prop :=
+-  R.L ≤ B ∧ R.P ≤ B ∧ R.A ≤ B ∧ R.B ≤ B ∧ R.S ≤ B ∧ R.N1 ≤ B ∧ R.Wp ≤ B ∧ R.E ≤ B ∧ R.F ≤ B ∧ R.E2 ≤ B ∧ R.F2 ≤ B ∧ R.Pos ≤ B ∧ R.Pos2 ≤ B ∧ R.T ≤ B ∧ R.U ≤ B ∧ R.Q1 ≤ B ∧ R.Q2 ≤ B ∧ R.Q3 ≤ B ∧ R.Q4 ≤ B ∧ R.Cap ≤ B ∧ R.Z ≤ B
++  R.L ≤ B ∧ R.P ≤ B ∧ R.A ≤ B ∧ R.B ≤ B ∧ R.S ≤ B ∧ R.N1 ≤ B ∧ R.Wp ≤ B ∧ R.E ≤ B ∧ R.F ≤ B ∧
++    R.E2 ≤ B ∧ R.F2 ≤ B ∧ R.Pos ≤ B ∧ R.Pos2 ≤ B ∧ R.T ≤ B ∧ R.U ≤ B ∧ R.Q1 ≤ B ∧ R.Q2 ≤ B ∧
++    R.Q3 ≤ B ∧ R.Q4 ≤ B ∧ R.Cap ≤ B ∧ R.Z ≤ B
+ 
+ /-- A bounded register file has a bounded valuation. -/
+ lemma Regs.Bd.val_le {R : Regs} {B : ℕ} (h : R.Bd B) : ∀ r, R.val r ≤ B := by
+-  obtain ⟨hL, hP, hA, hB, hS, hN1, hWp, hE, hF, hE2, hF2, hPos, hPos2, hT, hU, hQ1, hQ2, hQ3, hQ4, hCap, hZ⟩ := h
++  obtain ⟨hL, hP, hA, hB, hS, hN1, hWp, hE, hF, hE2, hF2, hPos, hPos2, hT, hU, hQ1, hQ2, hQ3,
++    hQ4, hCap, hZ⟩ := h
+   intro r; fin_cases r <;> assumption
+ 
+ end Complexity.Codec
+diff --git a/TCSlib/Complexity/SpaceComplexity/Codec/Run.lean b/TCSlib/Complexity/SpaceComplexity/Codec/Run.lean
+index 7182e781..ac749d7e 100644
+--- a/TCSlib/Complexity/SpaceComplexity/Codec/Run.lean
++++ b/TCSlib/Complexity/SpaceComplexity/Codec/Run.lean
+@@ -95,7 +95,8 @@ lemma Reach.single' {y : List Bool} {B : ℕ} {l l' : Lab N} {v v' : Fin 21 →
+ 
+ /-- The guard at a label that is not a register comparison or a call. -/
+ lemma gd_of {y : List Bool} {B : ℕ} {l : Lab N} {v : Fin 21 → ℕ} (hv : ∀ r, v r ≤ B)
+-    (h : PreS (CA N mode) y (some l, v, none)) : GuardLe (CA N mode) y B (some l, v, none) := ⟨h, hv⟩
++    (h : PreS (CA N mode) y (some l, v, none)) : GuardLe (CA N mode) y B (some l, v, none) :=
++  ⟨h, hv⟩
+ 
+ /-! ## Copies, scales, increment chains -/
+ 
+diff --git a/TCSlib/Complexity/SpaceComplexity/Codec/Step.lean b/TCSlib/Complexity/SpaceComplexity/Codec/Step.lean
+index a7cd943a..b732fa2a 100644
+--- a/TCSlib/Complexity/SpaceComplexity/Codec/Step.lean
++++ b/TCSlib/Complexity/SpaceComplexity/Codec/Step.lean
+@@ -175,7 +175,8 @@ theorem cellOf_apply (s : ℕ) (C : Cfg N.k Bool N.State x) (hC : InWin N s C)
+       by_cases hj0 : j = 0
+       · simp only [hj0, ↓reduceIte, cellE, decide_eq_false_iff_not]; omega
+       · simp only [hj0, ↓reduceIte, cellOf, decide_eq_decide]
+-        constructor <;> intro h <;> push_cast [Nat.cast_sub (Nat.one_le_iff_ne_zero.mpr hj0)] at h ⊢ <;>
++        constructor <;> intro h <;>
++          push_cast [Nat.cast_sub (Nat.one_le_iff_ne_zero.mpr hj0)] at h ⊢ <;>
+           omega
+     | neg =>
+       simp only [nbR]
+@@ -270,7 +271,8 @@ theorem slide_step_iff (s : ℕ) (C : Cfg N.k Bool N.State x) (hC : InWin N s C)
+       fun j => some (cellOf s C j)).getD (j + 2) (some (cellE N)) = some (cellOf s C j) := by
+     intro j hj
+     simp [List.getD_eq_getElem?_getD, hj]
+-  have hUout : ∀ t, 2 * s + 1 ≤ t → (some (cellE N) :: some (cellE N) :: (List.range (2 * s + 1)).map
++  have hUout : ∀ t, 2 * s + 1 ≤ t →
++      (some (cellE N) :: some (cellE N) :: (List.range (2 * s + 1)).map
+       fun j => some (cellOf s C j)).getD (t + 2) (some (cellE N)) = some (cellE N) := by
+     intro t ht
+     simp only [List.getD_eq_getElem?_getD, List.getElem?_cons_succ]
+diff --git a/TCSlib/Complexity/SpaceComplexity/Codec/StepDecider.lean b/TCSlib/Complexity/SpaceComplexity/Codec/StepDecider.lean
+index 30457635..a391d057 100644
+--- a/TCSlib/Complexity/SpaceComplexity/Codec/StepDecider.lean
++++ b/TCSlib/Complexity/SpaceComplexity/Codec/StepDecider.lean
+@@ -87,7 +87,8 @@ theorem pm_run (y : List Bool) (I : SInfo N) (b f : Bool) (R : Regs) (hBd : R.Bd
+           ({R with Pos := R.Pos + 1} : Regs).val :=
+         Reach.single' (gd_of hv (by simp [PreS, CA])) (by simp [astep, CA])
+       have r3 : Reach N .step y B (.pm I b f .eq2) ({R with Pos := R.Pos + 1} : Regs).val
+-          (.pm I b f (.decR (decide (R.Pos + 1 = R.Pos2)))) ({R with Pos := R.Pos + 1} : Regs).val :=
++          (.pm I b f (.decR (decide (R.Pos + 1 = R.Pos2))))
++          ({R with Pos := R.Pos + 1} : Regs).val :=
+         Reach.single' (gd_of hv1.val_le (by simp [PreS, CA]; decide))
+           (by simp only [astep, CA, Regs.val_Pos, Regs.val_Pos2]
+               by_cases h : R.Pos + 1 = R.Pos2 <;> simp [h])
+@@ -115,7 +116,8 @@ theorem pm_run (y : List Bool) (I : SInfo N) (b f : Bool) (R : Regs) (hBd : R.Bd
+           ({R with Pos := R.Pos - 1} : Regs).val :=
+         Reach.single' (gd_of hv (by simp [PreS, CA])) (by simp [astep, CA])
+       have r3 : Reach N .step y B (.pm I b f .eq3) ({R with Pos := R.Pos - 1} : Regs).val
+-          (.pm I b f (.incR (decide (R.Pos - 1 = R.Pos2)))) ({R with Pos := R.Pos - 1} : Regs).val :=
++          (.pm I b f (.incR (decide (R.Pos - 1 = R.Pos2))))
++          ({R with Pos := R.Pos - 1} : Regs).val :=
+         Reach.single' (gd_of hv1.val_le (by simp [PreS, CA]; decide))
+           (by simp only [astep, CA, Regs.val_Pos, Regs.val_Pos2]
+               by_cases h : R.Pos - 1 = R.Pos2 <;> simp [h])
+@@ -182,7 +184,8 @@ theorem step_tail (y x w w' rest : List Bool)
+     (hZ : R.Z = zcode (inpOf x R.Pos)) (hQ3 : R.Q3 = 2 * x.length + 2)
+     (hQ4 : R.Q4 = 2 * x.length + 2 * w.length + 4)
+     (hE : R.E = 2 * x.length + 2 + 4 * W N * s + 2 * W N)
+-    (hw : W N * (2 * s + 1) ≤ w.length) (hw' : W N * (2 * s + 1) ≤ w'.length) (hs : s ≤ 2 * y.length) :
++    (hw : W N * (2 * s + 1) ≤ w.length) (hw' : W N * (2 * s + 1) ≤ w'.length)
++    (hs : s ≤ 2 * y.length) :
+     AHalt (CA N .step) orc y (GuardLe (CA N .step) y (bnd N y)) (some (.vDone st), R.val, none)
+       (stepAns x st.1 R.Pos R.Pos2 (w.take (W N * (2 * s + 1))) (w'.take (W N * (2 * s + 1)))) := by
+   set B := bnd N y
+@@ -193,7 +196,8 @@ theorem step_tail (y x w w' rest : List Bool)
+     rw [hy, length_pairEncode, length_pairEncode, length_pairEncode]; ring
+   have hbig := bnd_ge (N := N) y s hs
+   have hret : ∀ (l : Lab N) (v : Fin 21 → ℕ) (b : Bool), (∀ r, v r ≤ B) →
+-      CA N .step l = .ret b → AHalt (CA N .step) orc y (GuardLe (CA N .step) y B) (some l, v, none) b :=
++      CA N .step l = .ret b →
++        AHalt (CA N .step) orc y (GuardLe (CA N .step) y B) (some l, v, none) b :=
+     fun l v b hv h => AHalt.ret h ⟨by simp [PreS, h], hv⟩
+   by_cases hacc : VAcc N st.1
+   swap
+diff --git a/TCSlib/Complexity/SpaceComplexity/Codec/Valid.lean b/TCSlib/Complexity/SpaceComplexity/Codec/Valid.lean
+index 3db40b3e..e0b50f74 100644
+--- a/TCSlib/Complexity/SpaceComplexity/Codec/Valid.lean
++++ b/TCSlib/Complexity/SpaceComplexity/Codec/Valid.lean
+@@ -563,7 +563,8 @@ theorem validChk_iff (x : List Bool) (s : ℕ) (w : List Bool) :
+       rw [h3, decide_eq_true_eq] at this
+       exact this
+     set P := (w.drop (W N * m)).take (wP x.length) with hP
+-    have hPlen : P.length = wP x.length := by simp only [hP, List.length_take, List.length_drop]; omega
++    have hPlen : P.length = wP x.length := by
++      simp only [hP, List.length_take, List.length_drop]; omega
+     let C : Cfg N.k Bool N.State x := mkCfg x s f ⟨bitsVal P, by omega⟩
+     obtain ⟨hwin, hcells⟩ := cellOf_mkCfg x s f ⟨bitsVal P, by omega⟩ hok.1 hok.2 hseen
+     refine ⟨C, hwin, ?_⟩
+diff --git a/TCSlib/Complexity/SpaceComplexity/Codec/Word.lean b/TCSlib/Complexity/SpaceComplexity/Codec/Word.lean
+index 736bb079..9f43c5d9 100644
+--- a/TCSlib/Complexity/SpaceComplexity/Codec/Word.lean
++++ b/TCSlib/Complexity/SpaceComplexity/Codec/Word.lean
+@@ -303,7 +303,8 @@ lemma bitsVal_append_replicate (w : List Bool) (z : ℕ) :
+ binary word of that value is `b` followed by that of `v`, unless both vanish, when the word
+ is all `0`s. -/
+ lemma eq_bits_append_replicate (w : List Bool) :
+-    w = Nat.bits (bitsVal w) ++ List.replicate (w.length - (Nat.bits (bitsVal w)).length) false := by
++    w = Nat.bits (bitsVal w) ++
++      List.replicate (w.length - (Nat.bits (bitsVal w)).length) false := by
+   induction w with
+   | nil => simp [bitsVal, Nat.zero_bits]
+   | cons b w ih =>
+@@ -495,7 +496,8 @@ theorem decodeCfg_cfgCode (s : ℕ) (C : Cfg N.k Bool N.State x) (hC : InWin N s
+ 
+ /-- The decoder fails exactly on numbers that are not codes. -/
+ theorem decodeCfg_eq_none (s c : ℕ) :
+-    decodeCfg (N := N) x s c = none ↔ ¬ ∃ C : Cfg N.k Bool N.State x, InWin N s C ∧ cfgCode s C = c := by
++    decodeCfg (N := N) x s c = none ↔
++      ¬ ∃ C : Cfg N.k Bool N.State x, InWin N s C ∧ cfgCode s C = c := by
+   classical
+   unfold decodeCfg
+   split_ifs with h <;> simp [h]
+diff --git a/TCSlib/Complexity/SpaceComplexity/ExpBFS/Machine.lean b/TCSlib/Complexity/SpaceComplexity/ExpBFS/Machine.lean
+index 97d59213..a021600a 100644
+--- a/TCSlib/Complexity/SpaceComplexity/ExpBFS/Machine.lean
++++ b/TCSlib/Complexity/SpaceComplexity/ExpBFS/Machine.lean
+@@ -48,6 +48,15 @@ Infrastructure for [AB09, §4.1.1, Theorem 4.2]; not itself a result of the book
+ * `Complexity.LogProg.ExpBFS.Lb` — the labels.
+ * `Complexity.LogProg.ExpBFS.A` — the machine.
+ 
++## Main results
++
++* `Complexity.LogProg.ExpBFS.St.toV_zero` — the all-zero register file is the zero
++  valuation.
++* the simp lemmas `St.toV_N`, …, `St.toV_c1` (reads) and `St.upd_N`, …, `St.upd_c1`
++  (writes) of the register file.
++* `Complexity.LogProg.ExpBFS.St.Bd.toV` — a bounded register file has bounded register
++  values.
++
+ ## References
+ 
+ * [AB09] S. Arora, B. Barak, *Computational Complexity: A Modern Approach*,
+diff --git a/TCSlib/Complexity/SpaceComplexity/ExpTime.lean b/TCSlib/Complexity/SpaceComplexity/ExpTime.lean
+index 7fd4aa21..ca7ed6fb 100644
+--- a/TCSlib/Complexity/SpaceComplexity/ExpTime.lean
++++ b/TCSlib/Complexity/SpaceComplexity/ExpTime.lean
+@@ -26,6 +26,11 @@ The simulation is the breadth-first search memory machine of
+ `TCSlib.Complexity.SpaceComplexity.ExpBFS`, timed by
+ `Complexity.LogProg.marm_dtime` (`TCSlib.Complexity.SpaceComplexity.Machines.MARMTime`).
+ 
++## Main definitions
++
++* none (the three theorems below, moved from
++  `TCSlib.Complexity.SpaceComplexity.ConfigGraph`).
++
+ ## Main results
+ 
+ * `Complexity.NSPACE_subset_exp_dtime` — [AB09, Theorem 4.2, third inclusion].
+diff --git a/TCSlib/Complexity/SpaceComplexity/Logspace/ISCountGenCorrect.lean b/TCSlib/Complexity/SpaceComplexity/Logspace/ISCountGenCorrect.lean
+index a5fb7836..bcf7c391 100644
+--- a/TCSlib/Complexity/SpaceComplexity/Logspace/ISCountGenCorrect.lean
++++ b/TCSlib/Complexity/SpaceComplexity/Logspace/ISCountGenCorrect.lean
+@@ -28,6 +28,12 @@ not computed from a space-constructibility witness: the machine grows it until t
+ reachable codes stops growing (`TCSlib.Complexity.SpaceComplexity.ExpBFS.Radius`), so only the
+ book's standing convention `S ≥ log` is used.
+ 
++## Main definitions
++
++* none (the correctness of the machine `Complexity.LogProg.ISGen.igA` of
++  `TCSlib.Complexity.SpaceComplexity.Logspace.ISCountGenMachine`, and the complement
++  closures it gives).
++
+ ## Main results
+ 
+ * `Complexity.LogProg.ISGen.loop_run` — the radius loop decides non-membership.
+diff --git a/TCSlib/Complexity/SpaceComplexity/Logspace/ISCountGenStage.lean b/TCSlib/Complexity/SpaceComplexity/Logspace/ISCountGenStage.lean
+index 84038399..94662288 100644
+--- a/TCSlib/Complexity/SpaceComplexity/Logspace/ISCountGenStage.lean
++++ b/TCSlib/Complexity/SpaceComplexity/Logspace/ISCountGenStage.lean
+@@ -28,6 +28,10 @@ of the reachable codes only, so it never has to terminate from a phantom count.
+ 
+ Infrastructure for [AB09, §4.3.2]; not itself a result of the book.
+ 
++## Main definitions
++
++* none (run theorems for the stages of `Complexity.LogProg.ISGen.igA`).
++
+ ## Main results
+ 
+ * `Complexity.LogProg.ISGen.guloop`, `Complexity.LogProg.ISGen.gvloop`,
+diff --git a/TCSlib/Complexity/SpaceComplexity/Logspace/ISCountGenWalk.lean b/TCSlib/Complexity/SpaceComplexity/Logspace/ISCountGenWalk.lean
+index 8505c7fc..abe397e6 100644
+--- a/TCSlib/Complexity/SpaceComplexity/Logspace/ISCountGenWalk.lean
++++ b/TCSlib/Complexity/SpaceComplexity/Logspace/ISCountGenWalk.lean
+@@ -25,6 +25,10 @@ with an impossible register file need no semantics, which is what lets the radiu
+ 
+ Infrastructure for [AB09, §4.3.2]; not itself a result of the book.
+ 
++## Main definitions
++
++* none (run theorems for the walk subroutine of `Complexity.LogProg.ISGen.igA`).
++
+ ## Main results
+ 
+ * `Complexity.LogProg.ISGen.gwalk_loop` — the walk loop.
+diff --git a/TCSlib/Complexity/SpaceComplexity/Logspace/ISCountRegs.lean b/TCSlib/Complexity/SpaceComplexity/Logspace/ISCountRegs.lean
+index eb91ff37..065041a4 100644
+--- a/TCSlib/Complexity/SpaceComplexity/Logspace/ISCountRegs.lean
++++ b/TCSlib/Complexity/SpaceComplexity/Logspace/ISCountRegs.lean
+@@ -35,6 +35,15 @@ Infrastructure for [AB09, §4.3.2]; not itself a result of the book.
+   `Complexity.LogProg.ISCount.AccO` — the tests read from the deciders.
+ * `Complexity.LogProg.ISCount.lgv` — the halving count `size |x| + 1`.
+ 
++## Main results
++
++* `Complexity.LogProg.ISCount.St.toV_zero` — the all-zero register file is the zero
++  valuation.
++* the simp lemmas `St.toV_n`, …, `St.toV_stp` (reads) and `St.upd_n`, …, `St.upd_stp`
++  (writes) of the register file.
++* `Complexity.LogProg.ISCount.toV_wT`, `toV_wB`, `toV_rY` — reading the site-indexed
++  registers.
++
+ ## References
+ 
+ * [AB09] S. Arora, B. Barak, *Computational Complexity: A Modern Approach*,
+diff --git a/TCSlib/Complexity/SpaceComplexity/Logspace/PathHardDecide.lean b/TCSlib/Complexity/SpaceComplexity/Logspace/PathHardDecide.lean
+index 2ca17f05..ae7cb38e 100644
+--- a/TCSlib/Complexity/SpaceComplexity/Logspace/PathHardDecide.lean
++++ b/TCSlib/Complexity/SpaceComplexity/Logspace/PathHardDecide.lean
+@@ -22,6 +22,12 @@ and length mode) with polynomially bounded registers (`Complexity.LogProg.arm_de
+ Together with the correctness of the reduction (`Complexity.PathHard.red_mem_iff`), every
+ language in `NL` reduces to the raw `PATH` language.
+ 
++## Main definitions
++
++* `Complexity.PathHard.qLang` — the query languages of the reduction: bits
++  (`mode = false`) and length (`mode = true`).
++* `Complexity.PathHard.qBnd` — the register bound of the query machine.
++
+ ## Main results
+ 
+ * `Complexity.PathHard.query_halts` — the query machine answers the bit (length) queries.
+diff --git a/TCSlib/Complexity/SpaceComplexity/Logspace/PathWalk.lean b/TCSlib/Complexity/SpaceComplexity/Logspace/PathWalk.lean
+index 1aa9eaa0..31531dc7 100644
+--- a/TCSlib/Complexity/SpaceComplexity/Logspace/PathWalk.lean
++++ b/TCSlib/Complexity/SpaceComplexity/Logspace/PathWalk.lean
+@@ -468,7 +468,8 @@ lemma plainAt_cons (x : List Bool) (r : ℕ) (b : Bool) (u : List Bool) :
+     refine ⟨fun i hi => ?_, by omega⟩
+     cases i with
+     | zero => simpa using h0
+-    | succ i => rw [show r + (i + 1) = r + 1 + i by omega, List.getD_cons_succ]; exact h1 i (by omega)
++    | succ i =>
++      rw [show r + (i + 1) = r + 1 + i by omega, List.getD_cons_succ]; exact h1 i (by omega)
+ 
+ /-- Advancing a row-major counter: the column wraps at `n` into the next row. -/
+ lemma divmod_succ {n i : ℕ} (hn : 0 < n) :
+diff --git a/TCSlib/Complexity/SpaceComplexity/Logspace/PathWalkProof.lean b/TCSlib/Complexity/SpaceComplexity/Logspace/PathWalkProof.lean
+index 76a4004d..2574c0c3 100644
+--- a/TCSlib/Complexity/SpaceComplexity/Logspace/PathWalkProof.lean
++++ b/TCSlib/Complexity/SpaceComplexity/Logspace/PathWalkProof.lean
+@@ -192,7 +192,8 @@ lemma ps_scmp (K : Prop) (σ : PReg) (hσ : σ.Le B)
+       refine NSem.inc rfl (PReg.reg (by pw_le) _ _) ?_
+       pw_regs
+       cases hb1 : x.getD (σ.p + 1) false
+-      · refine (NSem.call_neg rfl (PReg.reg (by pw_le) _ _) (by simp only [PReg.v_0, pathOr_bit, hb1])
++      · refine (NSem.call_neg rfl (PReg.reg (by pw_le) _ _)
++          (by simp only [PReg.v_0, pathOr_bit, hb1])
+           (NSem.ret rfl (PReg.reg (by pw_le) _ _))).congr ?_
+         rw [hD _ _ hb0 hb1]; simp
+       · refine NSem.call_pos rfl (PReg.reg (by pw_le) _ _)
+@@ -244,7 +245,8 @@ lemma ps_scmp (K : Prop) (σ : PReg) (hσ : σ.Le B)
+         pw_regs
+         cases hb1 : x.getD (σ.p + 1) false
+         · refine (NSem.call_neg rfl (PReg.reg (by pw_le) _ _)
+-            (by simp only [PReg.v_0, pathOr_bit, hb1]) (NSem.ret rfl (PReg.reg (by pw_le) _ _))).congr ?_
++            (by simp only [PReg.v_0, pathOr_bit, hb1])
++            (NSem.ret rfl (PReg.reg (by pw_le) _ _))).congr ?_
+           simp only [Bool.false_eq_true, false_iff, not_and, dblAt_cons, hb1, hodd]
+           simp
+         · refine NSem.call_pos rfl (PReg.reg (by pw_le) _ _)
+@@ -260,7 +262,8 @@ lemma ps_scmp (K : Prop) (σ : PReg) (hσ : σ.Le B)
+             (by simp only [PReg.v_0, pathOr_bit, hb1]) ?_
+           exact hnext false (by simp [hodd]) hb0 hb1
+         · refine (NSem.call_pos rfl (PReg.reg (by pw_le) _ _)
+-            (by simp only [PReg.v_0, pathOr_bit, hb1]) (NSem.ret rfl (PReg.reg (by pw_le) _ _))).congr ?_
++            (by simp only [PReg.v_0, pathOr_bit, hb1])
++            (NSem.ret rfl (PReg.reg (by pw_le) _ _))).congr ?_
+           simp only [Bool.false_eq_true, false_iff, not_and, dblAt_cons, hb1, hodd]
+           simp
+       · refine (NSem.call_pos rfl (PReg.reg hσ _ _) (by simp only [PReg.v_0, pathOr_bit, hb0])
+@@ -338,7 +341,8 @@ lemma ps_mat (hB : 2 * x.length + 2 ≤ B) (K : Prop) (i : ℕ) (σ : PReg) (hσ
+         rcases Nat.lt_or_ge (i / σ.n) σ.n with h | h
+         · exact h
+         · exfalso; have := (hlastiff.mp (by omega)); omega
+-      refine NSem.jeq_neg rfl (PReg.reg (by pw_le) _ _) (by simp only [PReg.v_1, PReg.v_2]; omega) ?_
++      refine NSem.jeq_neg rfl (PReg.reg (by pw_le) _ _)
++        (by simp only [PReg.v_1, PReg.v_2]; omega) ?_
+       refine NSem.inc rfl (PReg.reg (by pw_le) _ _) ?_
+       pw_regs
+       refine NSem.inc rfl (PReg.reg (by pw_le) _ _) ?_
+@@ -349,7 +353,8 @@ lemma ps_mat (hB : 2 * x.length + 2 ≤ B) (K : Prop) (i : ℕ) (σ : PReg) (hσ
+         have ha2 : a' ≤ σ.n := by
+           rw [e3]; exact Nat.div_le_of_le_mul (by omega)
+         have hb2 : b' < σ.n := by rw [e4]; exact Nat.mod_lt _ hpos
+-        have := ih (σ.n * σ.n - (i + 1)) (by omega) (i + 1) { σ with p := σ.p + 2, a := a', b := b' }
++        have := ih (σ.n * σ.n - (i + 1)) (by omega) (i + 1)
++          { σ with p := σ.p + 2, a := a', b := b' }
+           rfl (by pw_le) hn (by dsimp only; omega) e3 e4 (by dsimp only; omega) hK
+         refine this.congr ⟨fun ⟨hM, hk⟩ => ⟨⟨fun j hj1 hj2 => ?_, hM.2⟩, hk⟩,
+           fun ⟨hM, hk⟩ => ⟨⟨fun j hj1 hj2 => hM.1 j (by omega) hj2, hM.2⟩, hk⟩⟩
+@@ -392,7 +397,8 @@ lemma ps_mat (hB : 2 * x.length + 2 ≤ B) (K : Prop) (i : ℕ) (σ : PReg) (hσ
+           refine PS.of_eq (by ext <;> simp <;> omega) ((hK hx1).congr ⟨fun hk => ⟨⟨fun j hj1 hj2 =>
+             absurd hj2 (by omega), by rw [← hlast, ← hp]; exact hb0, hx1⟩, hk⟩, fun h => h.2⟩)
+         · refine (NSem.jeq_neg rfl (PReg.reg (by pw_le) _ _)
+-            (by simp; exact fun h => hlast (hlastiff.mp h)) (NSem.ret rfl (PReg.reg (by pw_le) _ _))).congr ?_
++            (by simp; exact fun h => hlast (hlastiff.mp h))
++            (NSem.ret rfl (PReg.reg (by pw_le) _ _))).congr ?_
+           simp only [Bool.false_eq_true, false_iff, not_and]
+           intro hM _
+           have := hM.1 i le_rfl (by omega)
+@@ -402,7 +408,8 @@ lemma ps_mat (hB : 2 * x.length + 2 ≤ B) (K : Prop) (i : ℕ) (σ : PReg) (hσ
+       pw_regs
+       cases hb1 : x.getD (σ.p + 1) false
+       · refine (NSem.call_neg rfl (PReg.reg (by pw_le) _ _)
+-          (by simp only [PReg.v_0, pathOr_bit, hb1]) (NSem.ret rfl (PReg.reg (by pw_le) _ _))).congr ?_
++          (by simp only [PReg.v_0, pathOr_bit, hb1])
++          (NSem.ret rfl (PReg.reg (by pw_le) _ _))).congr ?_
+         simp only [Bool.false_eq_true, false_iff, not_and]
+         intro hM _
+         by_cases hlast : i = σ.n * σ.n
+@@ -457,7 +464,8 @@ lemma ps_unary (hB : 2 * x.length + 2 ≤ B) (K : ℕ → Prop) (σ : PReg) (hσ
+       · subst h; have := hU.2.2; rw [hb1' false hb1] at this; exact absurd this (by simp)
+       · have := (hU.1 σ.n le_rfl h).1; rw [hb0' false hb0] at this; exact absurd this (by simp)
+     · have hlt : σ.p + 1 < x.length := lt_of_getD_true hb1
+-      refine NSem.call_pos rfl (PReg.reg (by pw_le) _ _) (by simp only [PReg.v_0, pathOr_bit, hb1]) ?_
++      refine NSem.call_pos rfl (PReg.reg (by pw_le) _ _)
++        (by simp only [PReg.v_0, pathOr_bit, hb1]) ?_
+       refine NSem.inc rfl (PReg.reg (by pw_le) _ _) ?_
+       pw_regs
+       have hU : UnaryRest x σ.n σ.n :=
+@@ -481,14 +489,16 @@ lemma ps_unary (hB : 2 * x.length + 2 ≤ B) (K : ℕ → Prop) (σ : PReg) (hσ
+       · subst h; have := hU.2.1; rw [hb0' true hb0] at this; exact absurd this (by simp)
+       · have := (hU.1 σ.n le_rfl h).2; rw [hb1' false hb1] at this; exact absurd this (by simp)
+     · have hlt : σ.p + 1 < x.length := lt_of_getD_true hb1
+-      refine NSem.call_pos rfl (PReg.reg (by pw_le) _ _) (by simp only [PReg.v_0, pathOr_bit, hb1]) ?_
++      refine NSem.call_pos rfl (PReg.reg (by pw_le) _ _)
++        (by simp only [PReg.v_0, pathOr_bit, hb1]) ?_
+       refine NSem.inc rfl (PReg.reg (by pw_le) _ _) ?_
+       pw_regs
+       refine NSem.inc rfl (PReg.reg (by pw_le) _ _) ?_
+       pw_regs
+       let σ₁ : PReg := { σ with p := σ.p + 2, n := σ.n + 1 }
+       refine PS.of_eq (σ' := σ₁) (by pw_ext) ?_
+-      have hrec := ih (x.length - σ₁.p) (by dsimp only [σ₁]; omega) σ₁ rfl (by simp only [PReg.Le, σ₁] at hσ ⊢; omega)
++      have hrec := ih (x.length - σ₁.p) (by dsimp only [σ₁]; omega) σ₁ rfl
++        (by simp only [PReg.Le, σ₁] at hσ ⊢; omega)
+         (by dsimp only [σ₁]; omega) (by dsimp only [σ₁]; omega) (fun n' h1 h2 => by
+           refine hK n' (by dsimp only [σ₁] at h1; omega) ⟨fun i hi1 hi2 => ?_, h2.2⟩
+           rcases Nat.eq_or_lt_of_le hi1 with h | h
+diff --git a/TCSlib/Complexity/SpaceComplexity/Machines/ARMWidth.lean b/TCSlib/Complexity/SpaceComplexity/Machines/ARMWidth.lean
+index 5f4db6bc..4c369627 100644
+--- a/TCSlib/Complexity/SpaceComplexity/Machines/ARMWidth.lean
++++ b/TCSlib/Complexity/SpaceComplexity/Machines/ARMWidth.lean
+@@ -23,6 +23,11 @@ and `S`-width forms consumed by polynomial-space and Savitch-type arguments.
+ This is infrastructure — the register-machine description of space-bounded algorithms of
+ [AB09, §4.1] extended to `S(n) ≥ log n` registers — not itself a result of the book.
+ 
++## Main definitions
++
++* none (wrapper theorems for `Complexity.LogProg.ARM`, and the inclusions `L ⊆ PSPACE` and
++  `SPACE ((n + 1)^k) ⊆ PSPACE`).
++
+ ## Main results
+ 
+ * `Complexity.LogProg.arm_decides_space` — the general wrapper: registers of `W(|x|)` binary
+diff --git a/TCSlib/Complexity/SpaceComplexity/Machines/NARM.lean b/TCSlib/Complexity/SpaceComplexity/Machines/NARM.lean
+index 3fd1e27c..55a329d9 100644
+--- a/TCSlib/Complexity/SpaceComplexity/Machines/NARM.lean
++++ b/TCSlib/Complexity/SpaceComplexity/Machines/NARM.lean
+@@ -20,8 +20,8 @@ step, consumed left to right, ignored by the deterministic instructions — exac
+ of the binary-choice machines `Turing.NDTM` [AB09, §2.1.2]. This is how nondeterministic
+ logspace algorithms are described in [AB09, §4.3] ("guess the next vertex"); the compilation
+ onto `Turing.FinNDTM` is in `TCSlib.Complexity.SpaceComplexity.Machines.NARMCompile` and the
+-space theorem in `TCSlib.Complexity.SpaceComplexity.Machines.NARMRun`, the bridges to `NL` and `NPSPACE` in
+-`TCSlib.Complexity.SpaceComplexity.Machines.NARMProof`.
++space theorem in `TCSlib.Complexity.SpaceComplexity.Machines.NARMRun`, the bridges to `NL` and
++`NPSPACE` in `TCSlib.Complexity.SpaceComplexity.Machines.NARMProof`.
+ 
+ The machine model is infrastructure for [AB09, §4.1–4.3], not itself a result of the book.
+ 
+@@ -41,8 +41,9 @@ The machine model is infrastructure for [AB09, §4.1–4.3], not itself a result
+ 
+ * `Complexity.LogProg.narun_append`, `Complexity.LogProg.narun_halted` — the run algebra.
+ * the combinators `Complexity.LogProg.NHalts.det`, `NHalts.choose`, `NHalts.run`,
+-  `NHalts.mono_len` (and their converses `NHalts.of_det`, `NHalts.of_choose`), and `Complexity.LogProg.nans_det`, `nans_choose`, `nans_run`,
+-  `nans_mono_len`, for proving machines correct by induction over their loops.
++  `NHalts.mono_len` (and their converses `NHalts.of_det`, `NHalts.of_choose`), and
++  `Complexity.LogProg.nans_det`, `nans_choose`, `nans_run`, `nans_mono_len`, for proving
++  machines correct by induction over their loops.
+ 
+ ## References
+ 
+diff --git a/TCSlib/Complexity/SpaceComplexity/Machines/NARMCompile.lean b/TCSlib/Complexity/SpaceComplexity/Machines/NARMCompile.lean
+index 09cd24d0..78141aaa 100644
+--- a/TCSlib/Complexity/SpaceComplexity/Machines/NARMCompile.lean
++++ b/TCSlib/Complexity/SpaceComplexity/Machines/NARMCompile.lean
+@@ -228,7 +228,8 @@ lemma armProg_detPart_call (A : NARM m d Λ) (l₀ : Λ) (β β' : Bool) :
+ machine make the step of the compiled deterministic part `A.detPart β`**, for either `β`. -/
+ lemma ncompileTM_tr (A : NARM m d Λ) (l₀ : Λ) (D : MultiTapeTM kD Bool SD) (q0 : Fin d → SD)
+     {q : CSt (Λ × Ph) SD m} (hq : nchoice A q = none) (b β : Bool) :
+-    (ncompileTM A l₀ D q0).tr b q = (compileTM (armProg (A.detPart β) l₀) (l₀, .start) D q0).tr q := by
++    (ncompileTM A l₀ D q0).tr b q =
++      (compileTM (armProg (A.detPart β) l₀) (l₀, .start) D q0).tr q := by
+   funext a w
+   simp only [ncompileTM, compileTM, hq]
+   rw [ctr_congr D q0 q (armProg_detPart_call A l₀ false β) ?_]
+diff --git a/TCSlib/Complexity/SpaceComplexity/Machines/NARMExample.lean b/TCSlib/Complexity/SpaceComplexity/Machines/NARMExample.lean
+index 0cb8a9b6..550e1acf 100644
+--- a/TCSlib/Complexity/SpaceComplexity/Machines/NARMExample.lean
++++ b/TCSlib/Complexity/SpaceComplexity/Machines/NARMExample.lean
+@@ -74,7 +74,8 @@ lemma guessValidA_halts (x : List Bool) (G : AConf 1 (Fin 4) → Prop)
+ well formed. -/
+ lemma guessValidA_ans (x : List Bool) (oracle : Fin 0 → List Bool → Bool) :
+     NAns guessValidA oracle x (some 0, fun _ => 0, none) 3 true ↔ ValidPlain x := by
+-  rw [nans_choose (A := guessValidA) (l := 0) (l₁ := 1) (l₀ := 2) rfl, nans_det (i := .valP 0 3) rfl false,
++  rw [nans_choose (A := guessValidA) (l := 0) (l₁ := 1) (l₀ := 2) rfl,
++    nans_det (i := .valP 0 3) rfl false,
+     nans_det (i := .ret false) rfl false]
+   by_cases hv : ValidPlain x
+   · have e : astep (guessValidA.detPart false) oracle x (some 1, fun _ => 0, none) =
+diff --git a/TCSlib/Complexity/SpaceComplexity/Machines/VWord.lean b/TCSlib/Complexity/SpaceComplexity/Machines/VWord.lean
+index 0692228f..3e14e2cd 100644
+--- a/TCSlib/Complexity/SpaceComplexity/Machines/VWord.lean
++++ b/TCSlib/Complexity/SpaceComplexity/Machines/VWord.lean
+@@ -31,6 +31,11 @@ Small facts used by several register machines that read their input by index:
+ Infrastructure for the register-machine description of logspace algorithms of
+ [AB09, §4.1]; not itself a result of the book.
+ 
++## Main definitions
++
++* none (lemmas about suffixes and letters of words, and about the virtual inputs of
++  `whole`-mode calls).
++
+ ## Main results
+ 
+ * `Complexity.getD_drop`.
+diff --git a/TCSlib/Complexity/SpaceComplexity/SavitchARM/Run.lean b/TCSlib/Complexity/SpaceComplexity/SavitchARM/Run.lean
+index a9168367..7e8d1309 100644
+--- a/TCSlib/Complexity/SpaceComplexity/SavitchARM/Run.lean
++++ b/TCSlib/Complexity/SpaceComplexity/SavitchARM/Run.lean
+@@ -21,6 +21,11 @@ together with a phase bit of `SP` (`pushV_run`, `pushU_run`), and popping the la
+ 
+ Infrastructure for [AB09, §4.2.1, proof of Theorem 4.14]; not itself a result of the book.
+ 
++## Main definitions
++
++* none (run theorems for the machine `Complexity.LogProg.SavitchARM.A` of
++  `TCSlib.Complexity.SpaceComplexity.SavitchARM.Machine`).
++
+ ## Main results
+ 
+ * `Complexity.LogProg.SavitchARM.preS_A` — the machine meets the syntactic preconditions.
