@@ -940,6 +940,13 @@ The route decisions of 2026-10-12 (design §16b) add three work items, numbered 
   UN's frozen statement and D's `NTIME` shape. Four open questions (the rewind's `Catalog` import,
   UN's setup as a fill obligation, an `embedSilentCfg_cap` export, the verdict leaf inline).
   Independent of #92 and #93; if #92 lands first, the landing re-runs the cut check.
+  **Round 1 (2026-10-14): OPEN, 0 blockers / 1 major / 3 minors**
+  (`audits/c1-assembly-statements-findings.md`; resolutions `…-resolutions.md`). No theorem is
+  false and no hypothesis is spurious. The major is policy only: `guessRunCfg_clean` repeats
+  `Inclusions`' private `b2b_capture_shape`. It is repaired by the public `embedSilentCfg_cap` in
+  `Build/Embed`, with `b2b_capture_shape` retired onto it. The minors are one docstring and two
+  evidence-tooling fixes. Rulings: the `Catalog` import kept, UN's setup a fill obligation (its
+  `hsetup` verbatim in UN's brief), the export added, the leaf inline. Next: round 2 at the tip.
 * **RD-5: §13d G2–G4 after MIG-0b** (§16b item 5). The statements of design §13d's G2–G4, stated as
   `Contract`s, then their gate and fills, then the Hennie–Stearns assembly. The open zone rows
   `exists_zoneShiftInTM` and `exists_zoneShiftOutTM` retire through the G3/G4 gate.
