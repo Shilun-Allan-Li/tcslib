@@ -741,7 +741,9 @@ The route decisions of 2026-10-12 (design §16b) add three work items, numbered 
   Machine level confirmed. Estimate: 13k–26k lines. **Answered (user, 2026-10-13): all five as
   recommended** (note §6): guess first, which closes SC-3; `BF := E(UN)`; the replay table; one
   step clock shared with B6 (`exists_stepClockTMVia`, gated with the B6 hosts); the bounded window
-  copy. Next: the C1 host contracts' statement gate.
+  copy. **Statement gate (2026-10-13):** `audits/c1-hosts-statements-pack.md` (six landing modules;
+  0 errors, 5 sorries, 11 public theorems proved). It adds an input-locality lemma and a window
+  copier for decision 5, and it strengthens the interpreter core `R`. Next: the gate audit.
   Records corrected: `clockTM` is linear (design §12.7, plan item 12); `exists_effectiveNDMachineCode`
   is already proved (plan §4e's C1 row). Still to fix: `NTimeHierarchy.lean`'s docstring says
   "quadratic" (lines 51 and 110), to correct in C1's first Lean PR; and design §12.8 routed
