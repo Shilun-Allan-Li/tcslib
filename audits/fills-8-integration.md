@@ -72,12 +72,11 @@ One public row closes, and no new admission is introduced: every new private is 
   |---|---|---|---|
   | B5a canonizer | 2,020 / 2,221 | 2,033 / 2,223 | two new in-file, as disclosed: `exists_canonReadySeam` and `exists_canonHeaderCountSeam` against the new `canonBlankLift` (68%) |
   | B5a H1 | 2,020 / 2,221 | 2,030 / 2,220 | none new; `h1ReadActions_at` → `h1Table_groups` (55%) disappears with the cleanup |
-  | Record tables | 1,952 / 2,249 (agent) | 1,979 / 2,250 (agent; maintainer rerun pending) | one new in-file, as disclosed: `rt_richWindow_run` against `rt_moveWord_run` (56%) |
+  | Record tables | 1,952 / 2,249 | 1,979 / 2,250 | one new in-file, as disclosed: `rt_richWindow_run` against `rt_moveWord_run` (56%) |
 
   At the integration head, the B5a population gives 2,043 / 2,222: exactly the canonizer's two
   pairs are new and the H1 pair is gone (`audits/logs/fills-8-screen-b5a-pairdiff.txt`).
-  **Pending (2026-10-13):** the maintainer reruns of the record-table population and the combined screen over the union of the two populations, at the base and at the head, were still running when this record was written; they check for a cross-batch pair between the two owned files. They are recorded here when they finish.
-- **Replay** (user-run; `audits/logs/fills-8-replay.log`, at `b2ab49aa`):
+  **Pending (2026-10-13):** the maintainer r**The combined screen at the integration head** (`audits/logs/fills-8-screen-combined.txt`, 36 files: the union of the two briefs' populations, `audits/evidence/fills-8/combined-screen-population.txt`; the same population at the base, `fills-8-screen-combined-base.txt`): 2,082 / 2,312 → 2,132 / 2,314. Exactly the three disclosed in-file pairs are new, the one H1 pair is gone, and **no cross-batch pair** appears (`audits/logs/fills-8-screen-combined-pairdiff.txt`).s-8-replay.log`, at `b2ab49aa`):
   `scripts/lean_check_tree.sh` over the downstream closure of the two changed modules, with fresh
   `.oleans` into `oleans-f8`, a copy of the tip snapshot. **15 modules, 0 errors.** The sorry
   warnings are exactly the open rows: RecordTable 5, CodeSimulator 2, ConfigGraph 1, and the
