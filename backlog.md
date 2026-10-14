@@ -775,7 +775,12 @@ The route decisions of 2026-10-12 (design §16b) add three work items, numbered 
   step clock shared with B6 (`exists_stepClockTMVia`, gated with the B6 hosts); the bounded window
   copy. **Statement gate (2026-10-13):** `audits/c1-hosts-statements-pack.md` (six landing modules;
   0 errors, 5 sorries, 11 public theorems proved). It adds an input-locality lemma and a window
-  copier for decision 5, and it strengthens the interpreter core `R`. Next: the gate audit. (The
+  copier for decision 5, and it strengthens the interpreter core `R`. **CLOSED** (round 1,
+  2026-10-14: PASS, 0 blockers / 0 majors / 11 minors; `audits/c1-hosts-statements-findings.md`,
+  resolutions `audits/c1-hosts-statements-resolutions.md`). Next: the landing PR, after #86, since
+  the slice lemma's proof replaces #86's `sorry`, carrying the six text fixes. Then, before UN's
+  brief, the guess-then-run assembly lemma's gate in `Build/NDHost`, and before `R`'s brief, the
+  H1 hosted-clock harvest (rulings 2 and 5). (The
   B6 hosts' pack strengthens `exists_stepClockTMVia`; C1 cites it only in sketches and its
   dependency note, which re-point to `Build/StepClock.lean` at landing.)
   Records corrected: `clockTM` is linear (design §12.7, plan item 12); `exists_effectiveNDMachineCode`
