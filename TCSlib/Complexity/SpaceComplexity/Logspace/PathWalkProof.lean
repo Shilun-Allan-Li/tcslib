@@ -192,7 +192,8 @@ lemma ps_scmp (K : Prop) (σ : PReg) (hσ : σ.Le B)
       refine NSem.inc rfl (PReg.reg (by pw_le) _ _) ?_
       pw_regs
       cases hb1 : x.getD (σ.p + 1) false
-      · refine (NSem.call_neg rfl (PReg.reg (by pw_le) _ _) (by simp only [PReg.v_0, pathOr_bit, hb1])
+      · refine (NSem.call_neg rfl (PReg.reg (by pw_le) _ _)
+          (by simp only [PReg.v_0, pathOr_bit, hb1])
           (NSem.ret rfl (PReg.reg (by pw_le) _ _))).congr ?_
         rw [hD _ _ hb0 hb1]; simp
       · refine NSem.call_pos rfl (PReg.reg (by pw_le) _ _)
@@ -244,7 +245,8 @@ lemma ps_scmp (K : Prop) (σ : PReg) (hσ : σ.Le B)
         pw_regs
         cases hb1 : x.getD (σ.p + 1) false
         · refine (NSem.call_neg rfl (PReg.reg (by pw_le) _ _)
-            (by simp only [PReg.v_0, pathOr_bit, hb1]) (NSem.ret rfl (PReg.reg (by pw_le) _ _))).congr ?_
+            (by simp only [PReg.v_0, pathOr_bit, hb1])
+            (NSem.ret rfl (PReg.reg (by pw_le) _ _))).congr ?_
           simp only [Bool.false_eq_true, false_iff, not_and, dblAt_cons, hb1, hodd]
           simp
         · refine NSem.call_pos rfl (PReg.reg (by pw_le) _ _)
@@ -260,7 +262,8 @@ lemma ps_scmp (K : Prop) (σ : PReg) (hσ : σ.Le B)
             (by simp only [PReg.v_0, pathOr_bit, hb1]) ?_
           exact hnext false (by simp [hodd]) hb0 hb1
         · refine (NSem.call_pos rfl (PReg.reg (by pw_le) _ _)
-            (by simp only [PReg.v_0, pathOr_bit, hb1]) (NSem.ret rfl (PReg.reg (by pw_le) _ _))).congr ?_
+            (by simp only [PReg.v_0, pathOr_bit, hb1])
+            (NSem.ret rfl (PReg.reg (by pw_le) _ _))).congr ?_
           simp only [Bool.false_eq_true, false_iff, not_and, dblAt_cons, hb1, hodd]
           simp
       · refine (NSem.call_pos rfl (PReg.reg hσ _ _) (by simp only [PReg.v_0, pathOr_bit, hb0])
@@ -338,7 +341,8 @@ lemma ps_mat (hB : 2 * x.length + 2 ≤ B) (K : Prop) (i : ℕ) (σ : PReg) (hσ
         rcases Nat.lt_or_ge (i / σ.n) σ.n with h | h
         · exact h
         · exfalso; have := (hlastiff.mp (by omega)); omega
-      refine NSem.jeq_neg rfl (PReg.reg (by pw_le) _ _) (by simp only [PReg.v_1, PReg.v_2]; omega) ?_
+      refine NSem.jeq_neg rfl (PReg.reg (by pw_le) _ _)
+        (by simp only [PReg.v_1, PReg.v_2]; omega) ?_
       refine NSem.inc rfl (PReg.reg (by pw_le) _ _) ?_
       pw_regs
       refine NSem.inc rfl (PReg.reg (by pw_le) _ _) ?_
@@ -349,7 +353,8 @@ lemma ps_mat (hB : 2 * x.length + 2 ≤ B) (K : Prop) (i : ℕ) (σ : PReg) (hσ
         have ha2 : a' ≤ σ.n := by
           rw [e3]; exact Nat.div_le_of_le_mul (by omega)
         have hb2 : b' < σ.n := by rw [e4]; exact Nat.mod_lt _ hpos
-        have := ih (σ.n * σ.n - (i + 1)) (by omega) (i + 1) { σ with p := σ.p + 2, a := a', b := b' }
+        have := ih (σ.n * σ.n - (i + 1)) (by omega) (i + 1)
+          { σ with p := σ.p + 2, a := a', b := b' }
           rfl (by pw_le) hn (by dsimp only; omega) e3 e4 (by dsimp only; omega) hK
         refine this.congr ⟨fun ⟨hM, hk⟩ => ⟨⟨fun j hj1 hj2 => ?_, hM.2⟩, hk⟩,
           fun ⟨hM, hk⟩ => ⟨⟨fun j hj1 hj2 => hM.1 j (by omega) hj2, hM.2⟩, hk⟩⟩
@@ -392,7 +397,8 @@ lemma ps_mat (hB : 2 * x.length + 2 ≤ B) (K : Prop) (i : ℕ) (σ : PReg) (hσ
           refine PS.of_eq (by ext <;> simp <;> omega) ((hK hx1).congr ⟨fun hk => ⟨⟨fun j hj1 hj2 =>
             absurd hj2 (by omega), by rw [← hlast, ← hp]; exact hb0, hx1⟩, hk⟩, fun h => h.2⟩)
         · refine (NSem.jeq_neg rfl (PReg.reg (by pw_le) _ _)
-            (by simp; exact fun h => hlast (hlastiff.mp h)) (NSem.ret rfl (PReg.reg (by pw_le) _ _))).congr ?_
+            (by simp; exact fun h => hlast (hlastiff.mp h))
+            (NSem.ret rfl (PReg.reg (by pw_le) _ _))).congr ?_
           simp only [Bool.false_eq_true, false_iff, not_and]
           intro hM _
           have := hM.1 i le_rfl (by omega)
@@ -402,7 +408,8 @@ lemma ps_mat (hB : 2 * x.length + 2 ≤ B) (K : Prop) (i : ℕ) (σ : PReg) (hσ
       pw_regs
       cases hb1 : x.getD (σ.p + 1) false
       · refine (NSem.call_neg rfl (PReg.reg (by pw_le) _ _)
-          (by simp only [PReg.v_0, pathOr_bit, hb1]) (NSem.ret rfl (PReg.reg (by pw_le) _ _))).congr ?_
+          (by simp only [PReg.v_0, pathOr_bit, hb1])
+          (NSem.ret rfl (PReg.reg (by pw_le) _ _))).congr ?_
         simp only [Bool.false_eq_true, false_iff, not_and]
         intro hM _
         by_cases hlast : i = σ.n * σ.n
@@ -457,7 +464,8 @@ lemma ps_unary (hB : 2 * x.length + 2 ≤ B) (K : ℕ → Prop) (σ : PReg) (hσ
       · subst h; have := hU.2.2; rw [hb1' false hb1] at this; exact absurd this (by simp)
       · have := (hU.1 σ.n le_rfl h).1; rw [hb0' false hb0] at this; exact absurd this (by simp)
     · have hlt : σ.p + 1 < x.length := lt_of_getD_true hb1
-      refine NSem.call_pos rfl (PReg.reg (by pw_le) _ _) (by simp only [PReg.v_0, pathOr_bit, hb1]) ?_
+      refine NSem.call_pos rfl (PReg.reg (by pw_le) _ _)
+        (by simp only [PReg.v_0, pathOr_bit, hb1]) ?_
       refine NSem.inc rfl (PReg.reg (by pw_le) _ _) ?_
       pw_regs
       have hU : UnaryRest x σ.n σ.n :=
@@ -481,14 +489,16 @@ lemma ps_unary (hB : 2 * x.length + 2 ≤ B) (K : ℕ → Prop) (σ : PReg) (hσ
       · subst h; have := hU.2.1; rw [hb0' true hb0] at this; exact absurd this (by simp)
       · have := (hU.1 σ.n le_rfl h).2; rw [hb1' false hb1] at this; exact absurd this (by simp)
     · have hlt : σ.p + 1 < x.length := lt_of_getD_true hb1
-      refine NSem.call_pos rfl (PReg.reg (by pw_le) _ _) (by simp only [PReg.v_0, pathOr_bit, hb1]) ?_
+      refine NSem.call_pos rfl (PReg.reg (by pw_le) _ _)
+        (by simp only [PReg.v_0, pathOr_bit, hb1]) ?_
       refine NSem.inc rfl (PReg.reg (by pw_le) _ _) ?_
       pw_regs
       refine NSem.inc rfl (PReg.reg (by pw_le) _ _) ?_
       pw_regs
       let σ₁ : PReg := { σ with p := σ.p + 2, n := σ.n + 1 }
       refine PS.of_eq (σ' := σ₁) (by pw_ext) ?_
-      have hrec := ih (x.length - σ₁.p) (by dsimp only [σ₁]; omega) σ₁ rfl (by simp only [PReg.Le, σ₁] at hσ ⊢; omega)
+      have hrec := ih (x.length - σ₁.p) (by dsimp only [σ₁]; omega) σ₁ rfl
+        (by simp only [PReg.Le, σ₁] at hσ ⊢; omega)
         (by dsimp only [σ₁]; omega) (by dsimp only [σ₁]; omega) (fun n' h1 h2 => by
           refine hK n' (by dsimp only [σ₁] at h1; omega) ⟨fun i hi1 hi2 => ?_, h2.2⟩
           rcases Nat.eq_or_lt_of_le hi1 with h | h

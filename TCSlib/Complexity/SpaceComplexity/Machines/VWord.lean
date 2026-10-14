@@ -31,6 +31,11 @@ Small facts used by several register machines that read their input by index:
 Infrastructure for the register-machine description of logspace algorithms of
 [AB09, §4.1]; not itself a result of the book.
 
+## Main definitions
+
+* none (lemmas about suffixes and letters of words, and about the virtual inputs of
+  `whole`-mode calls).
+
 ## Main results
 
 * `Complexity.getD_drop`.

@@ -303,7 +303,8 @@ lemma bitsVal_append_replicate (w : List Bool) (z : ℕ) :
 binary word of that value is `b` followed by that of `v`, unless both vanish, when the word
 is all `0`s. -/
 lemma eq_bits_append_replicate (w : List Bool) :
-    w = Nat.bits (bitsVal w) ++ List.replicate (w.length - (Nat.bits (bitsVal w)).length) false := by
+    w = Nat.bits (bitsVal w) ++
+      List.replicate (w.length - (Nat.bits (bitsVal w)).length) false := by
   induction w with
   | nil => simp [bitsVal, Nat.zero_bits]
   | cons b w ih =>
@@ -495,7 +496,8 @@ theorem decodeCfg_cfgCode (s : ℕ) (C : Cfg N.k Bool N.State x) (hC : InWin N s
 
 /-- The decoder fails exactly on numbers that are not codes. -/
 theorem decodeCfg_eq_none (s c : ℕ) :
-    decodeCfg (N := N) x s c = none ↔ ¬ ∃ C : Cfg N.k Bool N.State x, InWin N s C ∧ cfgCode s C = c := by
+    decodeCfg (N := N) x s c = none ↔
+      ¬ ∃ C : Cfg N.k Bool N.State x, InWin N s C ∧ cfgCode s C = c := by
   classical
   unfold decodeCfg
   split_ifs with h <;> simp [h]

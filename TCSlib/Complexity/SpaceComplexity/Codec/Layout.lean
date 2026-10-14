@@ -112,7 +112,8 @@ theorem layout_run (y x w rest : List Bool) (hy : y = pairEncode x (pairEncode w
         (layR N R x.length s (bitsVal ((w.drop (W N * (2 * s + 1))).take (wP x.length)))).val) ∨
     (¬ (w.length = W N * (2 * s + 1) + wP x.length + 1 ∧
       w.getD (W N * (2 * s + 1) + wP x.length) false = true) ∧
-      AHalt (CA N mode) orc y (GuardLe (CA N mode) y (bnd N y)) (some (.cp .N1), R.val, none) false) := by
+      AHalt (CA N mode) orc y (GuardLe (CA N mode) y (bnd N y)) (some (.cp .N1), R.val, none)
+        false) := by
   set B := bnd N y
   set n := x.length
   set a := 2 * n + 2
@@ -277,7 +278,8 @@ theorem le_phase (y : List Bool) (R : Regs) (hBd : R.Bd (bnd N y)) (hT : R.T = 0
     (R.Pos ≤ R.N1 → Reach N mode y (bnd N y) .leT1 R.val
       (if mode = .step then .cp .E2 else .clrQ1v) R.val) ∧
     (¬ R.Pos ≤ R.N1 →
-      AHalt (CA N mode) orc y (GuardLe (CA N mode) y (bnd N y)) (some .leT1, R.val, none) false) := by
+      AHalt (CA N mode) orc y (GuardLe (CA N mode) y (bnd N y)) (some .leT1, R.val, none)
+        false) := by
   have hB0 := hBd
   simp only [Regs.Bd] at hB0
   have h := le_run (N := N) (mode := mode) y (bnd N y) R.val hBd.val_le (by simpa using hT)
@@ -308,7 +310,8 @@ theorem vscan_run (y x w rest : List Bool) (hy : y = pairEncode x (pairEncode w 
     (hE : R.E = 2 * x.length + 2 + 4 * W N * s + 2 * W N)
     (hw : W N * (2 * s + 1) ≤ w.length) :
     ∃ st : VAd N, st.1 = vScan N (w.take (W N * (2 * s + 1))) ∧
-      Reach N mode y (bnd N y) .clrQ1v R.val (.vDone st) ({R with Q1 := R.E, Q2 := R.E} : Regs).val := by
+      Reach N mode y (bnd N y) .clrQ1v R.val (.vDone st)
+        ({R with Q1 := R.E, Q2 := R.E} : Regs).val := by
   set B := bnd N y
   have hB0 := hBd
   simp only [Regs.Bd] at hB0

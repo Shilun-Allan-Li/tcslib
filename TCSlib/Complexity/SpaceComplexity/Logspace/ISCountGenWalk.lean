@@ -25,6 +25,10 @@ with an impossible register file need no semantics, which is what lets the radiu
 
 Infrastructure for [AB09, §4.3.2]; not itself a result of the book.
 
+## Main definitions
+
+* none (run theorems for the walk subroutine of `Complexity.LogProg.ISGen.igA`).
+
 ## Main results
 
 * `Complexity.LogProg.ISGen.gwalk_loop` — the walk loop.

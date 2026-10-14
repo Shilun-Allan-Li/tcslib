@@ -468,7 +468,8 @@ lemma plainAt_cons (x : List Bool) (r : ℕ) (b : Bool) (u : List Bool) :
     refine ⟨fun i hi => ?_, by omega⟩
     cases i with
     | zero => simpa using h0
-    | succ i => rw [show r + (i + 1) = r + 1 + i by omega, List.getD_cons_succ]; exact h1 i (by omega)
+    | succ i =>
+      rw [show r + (i + 1) = r + 1 + i by omega, List.getD_cons_succ]; exact h1 i (by omega)
 
 /-- Advancing a row-major counter: the column wraps at `n` into the next row. -/
 lemma divmod_succ {n i : ℕ} (hn : 0 < n) :

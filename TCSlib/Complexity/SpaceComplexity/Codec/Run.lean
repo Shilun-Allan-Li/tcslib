@@ -95,7 +95,8 @@ lemma Reach.single' {y : List Bool} {B : ℕ} {l l' : Lab N} {v v' : Fin 21 → 
 
 /-- The guard at a label that is not a register comparison or a call. -/
 lemma gd_of {y : List Bool} {B : ℕ} {l : Lab N} {v : Fin 21 → ℕ} (hv : ∀ r, v r ≤ B)
-    (h : PreS (CA N mode) y (some l, v, none)) : GuardLe (CA N mode) y B (some l, v, none) := ⟨h, hv⟩
+    (h : PreS (CA N mode) y (some l, v, none)) : GuardLe (CA N mode) y B (some l, v, none) :=
+  ⟨h, hv⟩
 
 /-! ## Copies, scales, increment chains -/
 

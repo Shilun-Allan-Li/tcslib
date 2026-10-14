@@ -258,7 +258,8 @@ theorem mem_iff_codeChain {L : Language Bool} {sp : ℕ → ℕ} (h : N.DecidesI
           rw [← e]; exact inWin_runWith_take w' hsp j
         · have e1 : w.take j = w := List.take_of_length_le (by omega)
           have e2 : w'.take tb = w := by
-            simp only [w']; rw [List.take_append_of_le_length (by omega), List.take_of_length_le (by omega)]
+            simp only [w']; rw [List.take_append_of_le_length (by omega),
+              List.take_of_length_le (by omega)]
           rw [e1, ← e2]; exact inWin_runWith_take w' hsp tb
       · intro j
         have hlen : (w.take T).length = T := List.length_take_of_le (by omega)
