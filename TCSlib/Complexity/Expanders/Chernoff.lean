@@ -12,7 +12,7 @@ set_option autoImplicit false
 /-!
 # The Expander Chernoff Bound
 
-Arora–Barak's Theorem 7.41: the fraction of time a random walk on an expander
+Arora–Barak's Theorem 21.15: the fraction of time a random walk on an expander
 spends inside a set `B` of density `β` concentrates around `β`, with the same
 exponential decay (up to the spectral gap factor `1−λ`) as for independent
 samples.  This is the tool behind randomness-efficient error reduction for
@@ -25,16 +25,16 @@ None — this module only states theorems about existing definitions.
 
 ## Main results (intentionally statement-only)
 
-* `Expander.walk_visits_concentration` — [AB09, Thm 7.41].
+* `Expander.walk_visits_concentration` — [AB09, Thm 21.15].
 
 ## Deviations from the source
 
 * As in `Expanders.Walks`, our walk `walkPMF hA k` visits `k+1` vertices
   (the book's `X₁,…,X_k` has `k` vertices), so `k+1` replaces the book's `k`.
-* **Erratum.** The draft prints the bound as `2e^{(1−λ)δ²k/60}`, with a
-  positive exponent, which is vacuous; the intended bound (cf. Gillman,
+* **Constant.** [AB09, Thm 21.15] prints the bound as `2e^{−(1−λ)δ²k/4}`; we
+  state the weaker `2e^{−(1−λ)δ²k/60}` (cf. Gillman,
   *A Chernoff bound for random walks on expander graphs*, SIAM J. Comput.
-  1998) is `2e^{−(1−λ)δ²k/60}`.  We state it with the negative exponent.
+  1998), the form the eventual proof will follow.
 * The book's proof is omitted ("whose proof we omit"), so the eventual proof
   here will follow an external source rather than [AB09].
 
@@ -52,7 +52,7 @@ open Matrix
 
 variable {n : ℕ} [NeZero n]
 
-/-- **Expander Chernoff Bound** ([AB09, Thm 7.41]).  Let `A` be symmetric
+/-- **Expander Chernoff Bound** ([AB09, Thm 21.15]).  Let `A` be symmetric
 stochastic with `λ(A) ≤ λ` (for a graph: an `(N,d,λ)`-graph) and `B` a set of
 exactly `βN` vertices.  For a uniformly-started `k`-step random walk visiting
 `X₀, …, X_k`, let `Bᵢ` be the indicator that `Xᵢ ∈ B`.  Then for every
@@ -60,7 +60,7 @@ exactly `βN` vertices.  For a uniformly-started `k`-step random walk visiting
 
 `Pr[ |(Σᵢ Bᵢ)/(k+1) − β| > δ ] < 2·exp(−(1−λ)δ²(k+1)/60)`.
 
-The draft's positive exponent is a typo; see the module docstring.
+[AB09, Thm 21.15] has the constant `4`; see the module docstring.
 
 **Proof sketch** (omitted in [AB09]; after [Gil98]): bound the moment
 generating function `E[exp(t·Σᵢ Bᵢ)]` by the largest eigenvalue of the

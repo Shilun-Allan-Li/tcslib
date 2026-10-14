@@ -39,7 +39,7 @@ None — this module only proves theorems about existing definitions.
   `Complexity.mem_P_of_blockXorAny` — `P` is closed under running a `P`-decider on
   polynomially many polynomial-length blocks of the input and aggregating the answers
   (OR / strict majority / XOR-then-OR), the folklore repetition closures used tacitly
-  by [AB09] ch. 7 (Theorems 7.8, 7.10, 7.17, 7.18); the machine engine is
+  by [AB09] ch. 7 (Theorems 7.8, 7.10, 7.14, 7.15); the machine engine is
   `TCSlib.Complexity.ClassNP.PolyTimeBlockLoop`.
 
 ## References
@@ -202,7 +202,7 @@ the second component of a pair and aggregating the answers.  `blockAt a k z i` i
 `i`-th length-`a·(n+1)^k` block of `pairSndD z`, with `n = |pairFstD z|`; the block
 count is `a'·(n+1)^k'`.  These are the folklore "repeat the machine polynomially many
 times" closures that [AB09] ch. 7 uses tacitly (§7.3, Theorem 7.8; §7.4.1;
-Theorems 7.17–7.18); the machine-level loop lives in
+Theorems 7.14–7.15); the machine-level loop lives in
 `TCSlib.Complexity.ClassNP.PolyTimeBlockLoop`.
 
 Like the length comparisons above, all three languages are total extensions through

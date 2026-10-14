@@ -13,25 +13,25 @@ set_option autoImplicit false
 /-!
 # Symmetric stochastic matrices and the parameter λ
 
-The linear-algebraic foundations of Arora–Barak's appendix 7.A: probability
+The linear-algebraic foundations of Arora–Barak's §21.1: probability
 distributions on vertices as vectors, the normalized adjacency matrix of a
 regular graph as a symmetric stochastic matrix, and the parameter `λ(A)` —
 the maximum stretch of `A` on the space orthogonal to the uniform
-distribution ([AB09, Def 7.25]).
+distribution ([AB09, Def 21.2]).
 
 ## Main definitions
 
 * `Expander.IsSymmStochastic` — a real square matrix that is symmetric, entrywise
-  nonnegative, with every row summing to `1` ([AB09, §7.A.1]).
+  nonnegative, with every row summing to `1` ([AB09, §21.1.1]).
 * `Expander.uniform` — the uniform distribution `(1/n, …, 1/n)` as a vector.
-* `Expander.lambda` — the parameter `λ(A)` [AB09, Def 7.25].
+* `Expander.lambda` — the parameter `λ(A)` [AB09, Def 21.2].
 
 ## Main results
 
 * `Expander.lambda_nonneg`, `Expander.lambda_le_one` — `0 ≤ λ(A) ≤ 1`
-  ([AB09, Rmk 7.26], via Exercise 10).
+  ([AB09, after Def 21.2], via Exercise 21.5).
 * `Expander.norm_toCLM_apply_le` — a symmetric stochastic matrix is an `L²`
-  contraction ([AB09, Exercise 10]), the helper behind `lambda_le_one` and
+  contraction ([AB09, Exercise 21.5]), the helper behind `lambda_le_one` and
   `Expander.opNorm_le_one` in `Expanders.Walks`.
 * `Expander.norm_mulVec_le_lambda` — the defining inequality
   `‖A𝐯‖₂ ≤ λ(A)‖𝐯‖₂` for `𝐯 ⊥ 1`.
@@ -39,7 +39,7 @@ distribution ([AB09, Def 7.25]).
 
 ## Deviation from the source
 
-[AB09, §7.A] states these notions for the normalized adjacency matrix of a
+[AB09, §21.1] states these notions for the normalized adjacency matrix of a
 `d`-regular `n`-vertex multigraph, remarking that any such matrix is symmetric
 stochastic and that the definitions only use that structure.  We take the
 symmetric stochastic matrix itself as the primitive object, so every result
@@ -63,7 +63,7 @@ variable {n : ℕ}
 /-- A real square matrix is *symmetric stochastic* when it is symmetric,
 entrywise nonnegative, and every row sums to `1` (hence, by symmetry, every
 column does too).  The normalized adjacency matrix `A(G)` of any `d`-regular
-multigraph is of this form.  [AB09, §7.A.1] -/
+multigraph is of this form.  [AB09, §21.1.1] -/
 structure IsSymmStochastic (A : Matrix (Fin n) (Fin n) ℝ) : Prop where
   /-- The matrix is symmetric: `Aᵢⱼ = Aⱼᵢ`. -/
   symm : A.IsSymm
@@ -73,7 +73,7 @@ structure IsSymmStochastic (A : Matrix (Fin n) (Fin n) ℝ) : Prop where
   rowSum : ∀ i, ∑ j, A i j = 1
 
 /-- The uniform distribution `𝟙 = (1/n, …, 1/n)` on `n` vertices, as a vector
-in Euclidean space.  [AB09, Def 7.25] -/
+in Euclidean space.  [AB09, Def 21.2] -/
 noncomputable def uniform (n : ℕ) : EuclideanSpace ℝ (Fin n) :=
   (WithLp.equiv 2 (Fin n → ℝ)).symm fun _ => (n : ℝ)⁻¹
 
@@ -148,13 +148,13 @@ theorem toCLM_sub (A B : Matrix (Fin n) (Fin n) ℝ) :
 matrix of a graph `G`: the maximum of `‖A𝐯‖₂` over all unit vectors `𝐯`
 orthogonal to the uniform distribution.  For a symmetric stochastic matrix
 this equals the second largest absolute value of an eigenvalue, and `1 - λ(A)`
-is the *spectral gap*.  [AB09, Def 7.25] -/
+is the *spectral gap*.  [AB09, Def 21.2] -/
 noncomputable def lambda (A : Matrix (Fin n) (Fin n) ℝ) : ℝ :=
   sSup ((fun v => ‖toCLM A v‖) ''
     {v : EuclideanSpace ℝ (Fin n) | inner ℝ v (uniform n) = 0 ∧ ‖v‖ = 1})
 
 /-- A symmetric stochastic matrix fixes the uniform distribution: `A𝟙 = 𝟙`.
-[AB09, Rmk 7.26: "`A`**1** `=` **1**"]
+[AB09, after Def 21.2: "`A`**1** `=` **1**"]
 
 **Proof sketch.** The `i`-th coordinate of `A𝟙` is `(1/n)·Σⱼ Aᵢⱼ`, and row `i`
 sums to one. -/
@@ -165,8 +165,8 @@ theorem mulVec_uniform {A : Matrix (Fin n) (Fin n) ℝ} (hA : IsSymmStochastic A
   rw [← Finset.sum_mul, hA.rowSum i, one_mul]
 
 /-- The defining property of `λ`: `A` shrinks any vector orthogonal to the
-uniform distribution by a factor of at least `λ(A)`.  [AB09, Def 7.25],
-unfolded as used in the proof of [AB09, Lem 7.27].
+uniform distribution by a factor of at least `λ(A)`.  [AB09, Def 21.2],
+unfolded as used in the proof of [AB09, Lem 21.3].
 
 **Proof sketch.** For `𝐯 = 0` both sides vanish.  Otherwise `𝐯/‖𝐯‖₂` lies in
 the unit sphere of `𝟙^⊥`, so `‖A(𝐯/‖𝐯‖₂)‖₂` is one of the values whose
@@ -197,7 +197,7 @@ theorem norm_mulVec_le_lambda {A : Matrix (Fin n) (Fin n) ℝ}
       _ = lambda A * ‖v‖ := mul_comm _ _
 
 /-- `λ(A) ≥ 0` (for `n ≥ 2`; for `n ≤ 1` the defining set is empty and
-`λ(A) = 0` by convention).  [AB09, Rmk 7.26]
+`λ(A) = 0` by convention).  [AB09, after Def 21.2]
 
 **Proof sketch.** `λ` is a supremum of norms, which are nonnegative; for
 `n ≥ 2` the unit sphere of `𝟙^⊥` is nonempty, so the supremum dominates one
@@ -210,7 +210,7 @@ theorem lambda_nonneg (A : Matrix (Fin n) (Fin n) ℝ) (_hn : 2 ≤ n) :
 
 /-- A symmetric stochastic matrix is an `L²` contraction:
 `‖A𝐯‖₂ ≤ ‖𝐯‖₂` for every `𝐯`.  This is the pointwise content of
-[AB09, Exercise 10] (`‖A‖ ≤ 1`); the bundled operator-norm form is
+[AB09, Exercise 21.5] (`‖A‖ ≤ 1`); the bundled operator-norm form is
 `Expander.opNorm_le_one` in `Expanders.Walks`.
 
 **Proof sketch.** `(A𝐯)ᵢ² = (Σⱼ Aᵢⱼ𝐯ⱼ)² ≤ (Σⱼ Aᵢⱼ)·(Σⱼ Aᵢⱼ𝐯ⱼ²) = Σⱼ Aᵢⱼ𝐯ⱼ²` by
@@ -253,8 +253,8 @@ theorem norm_toCLM_apply_le {A : Matrix (Fin n) (Fin n) ℝ}
         Finset.sum_congr rfl fun j _ => by rw [Real.norm_eq_abs, sq_abs]
 
 /-- Every eigenvalue of a symmetric stochastic matrix has absolute value at
-most one; consequently `λ(A) ≤ 1`.  [AB09, Rmk 7.26], proved as
-[AB09, Exercise 10].
+most one; consequently `λ(A) ≤ 1`.  [AB09, after Def 21.2], proved as
+[AB09, Exercise 21.5].
 
 **Proof sketch.** A symmetric stochastic matrix has `L²` operator norm at most
 `1`: for any `𝐯`, `(A𝐯)ᵢ² = (Σⱼ Aᵢⱼ𝐯ⱼ)² ≤ Σⱼ Aᵢⱼ𝐯ⱼ²` by Cauchy–Schwarz with

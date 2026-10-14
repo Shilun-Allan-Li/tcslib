@@ -23,7 +23,7 @@ The chapter-neutral composition primitive behind "run a `P`-decider on
 polynomially many fixed-size blocks of the input and aggregate the answers":
 the folklore closure of polynomial time under polynomial repetition, used
 tacitly throughout [AB09] (§7.3, proof of Theorem 7.8; §7.4.1, repeated
-trials; proofs of Theorems 7.17 and 7.18).
+trials; proofs of Theorems 7.14 and 7.15).
 
 Everything here lives at the level of `Complexity.PolyTimeComputable`; the
 `P`-closure corollaries (`Complexity.mem_P_of_blockAny` and friends) are
@@ -59,7 +59,7 @@ stated in `TCSlib.Complexity.ClassNP.PClosure`, which imports this file.
 
 * [AB09] S. Arora, B. Barak, *Computational Complexity: A Modern Approach*,
   Cambridge University Press, 2009. (§7.3, Theorem 7.8; §7.4.1; Theorems
-  7.17–7.18: the implicit "simulate the machine on each block" closures.)
+  7.14–7.15: the implicit "simulate the machine on each block" closures.)
 -/
 
 namespace Complexity
