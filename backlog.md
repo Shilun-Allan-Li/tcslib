@@ -578,6 +578,11 @@ window.*
   **Round 2 CLOSED the gate** (2026-10-14: 0 blockers / 0 majors / 8 minors;
   `audits/h2-promotion-r2-findings.md`, resolutions `audits/h2-promotion-r2-resolutions.md`).
   Next: H2-M, the move PR, before any B5a brief.
+  **H2-M landed (2026-10-14, PR #88; replay 7 of 7 modules):** `Build/StepBlock.lean` holds the
+  121 moved declarations under their round-2 names and the six additives, all proved;
+  `CodeSimulator.lean` keeps its 105 staying declarations and its two headline sorries. Eleven
+  moved private lemmas with long proofs lack a proof sketch, as they did in `CodeSimulator`: a
+  docs-only follow-up.
   The move, H2-M (a
   freeze-checked maintainer PR with an 8-module replay), lands **between** the B5a
   continuations, since both own regions of `CodeSimulator.lean`.
@@ -602,6 +607,25 @@ window.*
   MIG-0a gate's minor 5) rather than promoting them as they are.
 - **(e) Style debt, for each owner's next continuation:** H1's 67 Lean linter warnings and 83
   lines over 100 characters; the record tables' 8 lines; the canonizer's 1 line.
+
+### ARM-1: duplication in the received ARM-extensions code (from the ARM fill gate, 2026-10-14)
+
+*Origin: Hydroxyi's merge `8c23f3bc`, pushed directly to the campaign branch (backlog §2, ARM
+extensions); the gate pack `audits/arm-extensions-fill-pack.md`.*
+
+The pack's copy-text screen (MEASURED before the audit) puts the received code past the
+one-fifth escalation threshold of `workflow.md` §4: 33 of its 73 files by whole-body share, 14 by
+shared text, 8 of them on copies of existing library material alone. Copies of existing
+material: 18 declarations disclosed by Hydroxyi and 47 not, 12 of them substantive (mostly
+re-derivations of `arm_decides` in `Machines/`); among the new files, 103 internal pairs in 45
+families. Disclosure gaps: seven `b4m*` twins (the reply says three); Bridge's four helpers and
+Engine's `InputAccess` adaptations, disclosed only in the files; `decChain`, a copy of the
+private `arm_increments`, disclosed nowhere. **Needs the user's acknowledgement** before the
+ARM fill gate closes. Payback (user, 2026-10-14): a separate PR after the B6 hosts land
+promotes the five families Hydroxyi named; the rest is dedup debt for the user's dedup window.
+Also found: the copy-text screen labels files by basename and drops cross-file pairs between
+same-named files (17 among the new files alone). Whether earlier screens with colliding
+basenames in their populations lost pairs is to be checked.
 
 ## 2. Campaign work queued or on hold
 
@@ -723,6 +747,10 @@ proved); fix it in the first MIG PR that touches Build.
   `audits/stage2-statements-findings.md`, resolutions `audits/stage2-statements-resolutions.md`).
   No theorem is false; the homes, the namespace and `initMem` are approved. Next: the landing PR
   (parts A, C, D, E and the slice lemmas), then PROG-2's scripted edit and its fidelity gate.
+  **Landed** (PR #86). **Paused (user, 2026-10-14):** the ARM merge proves PSPACE = NPSPACE,
+  `PATH ∈ NL` and NL = coNL, the customers of the coin programs and of Savitch at polynomial
+  space; general `savitch` stays sorried. No stage-2 brief (PROG-2's edit and fidelity gate,
+  PROG-4's fills) is written until the user resumes it.
 
 The route decisions of 2026-10-12 (design §16b) add three work items, numbered by §16b's items
 (items 1 and 4 are PROG-4):
@@ -740,6 +768,13 @@ The route decisions of 2026-10-12 (design §16b) add three work items, numbered 
   resolutions `audits/rd2-statements-resolutions.md`). Next: the landing PR (with minor 1's sketch
   fix), then the semantic re-fill (RD-2a) and the uniformity fill (RD-2b). `fragment_append`
   joins the Cook–Levin re-basing family (minor 2).
+  **Landed** (PR #85). **Fills held (user, 2026-10-14):** the ARM merge proves `TQBF_PSPACEHard`
+  without `ConfigCodec` or `FormulaKit`, which now have no consumer. The RD-2a/b briefs are
+  drafted (the maintainer re-ran their six pre-ship probes: 0 errors) but not committed or
+  dispatched; their base data predates the ARM merge's `TQBF.lean` changes, so it is
+  regenerated if they go ahead. The user's four answers on them (2026-10-14, all as
+  recommended): integrate partials; delete the two unusable KEEP rows as a disclosed deviation;
+  `Mathlib.Data.List.MinMax` in `Gate.lean`; `CfgRecord`'s docstring is the maintainer's.
 * **RD-3: re-route B6 and restate `space_universal` forward-only** (§16b item 3).
   `SpaceComplexity/Hierarchy.lean`: `space_universal` keeps only its forward clause ([AB09]
   Exercise 4.1), and `space_hierarchy`'s sketch moves to the window route (a self-simulating
@@ -1331,6 +1366,19 @@ The route decisions of 2026-10-12 (design §16b) add three work items, numbered 
   extension (3) is replaced by the language's machine-configuration
   routines (design §15c). The rest of the sync agenda stands. Hydroxyi
   should be told when next in touch (the user's call).
+  **Reply received and merged (2026-10-14).** Hydroxyi accepted all three extensions, added a
+  fourth (MARM, a monotone memory tape with a time bridge) and proved the customers:
+  `PATH_NLComplete`, `compl_PATH_mem_NL`, `NL_eq_coNL`, `NSPACE_compl_eq`, `TQBF_mem_PSPACE`,
+  `TQBF_PSPACEHard`, `TQBF_PSPACEComplete`, `PSPACE_eq_NPSPACE` and `NSPACE_subset_exp_dtime`
+  (which moved, with `NL_subset_P` and `polyTimeReducible_of_mem_NL`, to
+  `SpaceComplexity/ExpTime.lean`). The merge `8c23f3bc` (74 files added, 8 changed) was pushed
+  directly to the campaign branch, not by PR; the reply is `arm-extensions-response.md`. No
+  statement of ours changed (maintainer freeze). The classes stay defined at Turing-machine
+  level: ARM programs enter only through bridge theorems whose conclusions are statements about
+  `FinTM`/`FinNDTM`. Their answers: `CounterProg` keeps its one-way input (ARM's indexed access
+  serves the searches), and both provenance questions are answered no. **User (2026-10-14):** a
+  fill-style external gate of the received code; the payback promotions in a separate PR after
+  the B6 hosts; RD-2's fills held; stage 2 paused. §1 ARM-1 records the duplication.
 
 ---
 
