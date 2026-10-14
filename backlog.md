@@ -607,6 +607,11 @@ window.*
   MIG-0a gate's minor 5) rather than promoting them as they are.
 - **(e) Style debt, for each owner's next continuation:** H1's 67 Lean linter warnings and 83
   lines over 100 characters; the record tables' 8 lines; the canonizer's 1 line.
+- **(f) A frozen canonizer copy (from the B5a canonizer cont3 brief, 2026-10-14):**
+  `CodeSimulator`'s private `canonOffset_spec` reproduces `Encoding`'s `length_bits_le_self` in full
+  (100% shared text). It became visible once `Encoding` joined the brief's screen population. It
+  is in the frozen canonizer region, so it is not touched by cont3: retire it, by citing the
+  public lemma, at the canonizer's completion or in MIG-1 F-D's CodeSimulator edit.
 
 ### ARM-1: duplication in the received ARM-extensions code (from the ARM fill gate, 2026-10-14)
 
