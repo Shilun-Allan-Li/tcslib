@@ -901,6 +901,15 @@ The route decisions of 2026-10-12 (design §16b) add three work items, numbered 
   `Build.StepBlock` and re-point `exists_selfStartupTM`'s citation of
   `Turing.oneTapeMachineFormat.serialize_eq`. Next: the B6 fill briefs for the ten contracts,
   with record-table row 18.
+  **Record-table row 18's fill brief issued (2026-10-14):** `briefs/w1-fill-recordtable-cont5.md`
+  (inputs `8dfbc881`, at `1b6b972c`):
+  - The route is a 14-phase chain over row 17 through R1. Three prescribed privates are proved;
+    one obligation remains.
+  - The tail writer's recursion on `k` is not a host (the user's ruling).
+  - Its consumer probe shows the endpoint meets `exists_configWindowRunnerTM`'s precondition. The
+    consumer must clear the radius tape.
+  - Dedup, for the dedup window: `rt_embed_matches` is now a private twin of the public
+    `embedEmitCfg_eq`. Its consumers are `rt_exists_cleanDigitBoundTM` and `rt_cellWindow_ready_run`.
 * **C1-D: the NTIME hierarchy's design** (2026-10-13; `audits/evidence/c1/C1-design.md`, statement
   draft `C1HostsDraft.lean.txt`: 0 errors, 5 sorries, 10 theorems proved). The proposed route:
   - **guess first:** the universal NDTM and the diagonalizer write the whole choice word with a
