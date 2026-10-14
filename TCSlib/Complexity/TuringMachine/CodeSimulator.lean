@@ -2651,6 +2651,525 @@ private lemma exists_canonParseFront (F : MachineFormat) :
     rw [ran]
     exact ready (of_decide_eq_true yes)
 
+/-- The grammar the physical parser decides once the parse front end is ready: the unary
+initial state below `n + 1` (`Turing.codeSkipFin`), the fixed `k`-record table
+(`Turing.codeSkipTableK`), and the all-`true` suffix. It is the format scanner's residue
+after the header, canonicality and guard checks (`scan_eq_canonGrammar`).
+-/
+private def canonGrammar (k n : ℕ) (rest : List Bool) : Option (List Bool) :=
+  ((codeSkipFin (n + 1) rest).bind (codeSkipTableK k n)).bind
+    fun tail => if tail.all id then some tail else none
+
+/-- At the parse front end's ready port the format scanner is exactly the fixed grammar on
+the header's remainder: the canonicality test and the format's own guard both pass, since
+the combined block size dominates `F.guard`.
+
+**Proof sketch.** Unfold the scanner at the decoded pair. Canonicality removes the first
+branch; `F.guard ≤ canonGuardBlock F` removes the second; `F.skipTable_eq` turns the
+format's table skipper into the fixed one. -/
+private lemma scan_eq_canonGrammar (F : MachineFormat) (α bits rest : List Bool)
+    (hp : pairDecode α = some (bits, rest)) (hb : bits = (codeBitsNat bits).bits)
+    (hg : canonGuardBlock F * (codeBitsNat bits + 1) ≤ rest.length) :
+    F.scan α = canonGrammar F.k (codeBitsNat bits) rest := by
+  have hguard : F.guard * (codeBitsNat bits + 1) ≤ rest.length :=
+    (Nat.mul_le_mul_right _ (Nat.le_max_left _ _)).trans hg
+  unfold CodeFormat.scan canonGrammar
+  rw [hp]
+  dsimp only [bind, Option.bind]
+  rw [if_neg (not_not.mpr hb), if_neg (not_lt.mpr hguard)]
+  cases codeSkipFin (codeBitsNat bits + 1) rest with
+  | none => rfl
+  | some r =>
+    dsimp only
+    rw [F.skipTable_eq]
+    rfl
+
+/-- The verdict law of the physical validator at the ready port: deciding the fixed grammar
+gives a bit whose rejection decodes to the fallback and whose acceptance is a successful
+format scan.
+
+**Proof sketch.** Rewrite the scanner by `scan_eq_canonGrammar`. A failed grammar is a
+failed scan, hence a failed full parse (`Turing.CodeFormat.scan_full`), hence the fallback
+(`Turing.CodeFormat.decode_of_parseFull_none`). -/
+private lemma canonGrammar_verdict (F : MachineFormat) (α bits rest : List Bool)
+    (hp : pairDecode α = some (bits, rest)) (hb : bits = (codeBitsNat bits).bits)
+    (hg : canonGuardBlock F * (codeBitsNat bits + 1) ≤ rest.length) :
+    ((canonGrammar F.k (codeBitsNat bits) rest).isSome = false → F.decode α = F.fallback) ∧
+      ((canonGrammar F.k (codeBitsNat bits) rest).isSome = true →
+        ∃ tail, F.scan α = some tail) := by
+  rw [← scan_eq_canonGrammar F α bits rest hp hb hg]
+  constructor
+  · intro h
+    have hs : F.scan α = none := Option.not_isSome_iff_eq_none.mp (by simp [h])
+    rw [F.scan_full] at hs
+    exact F.decode_of_parseFull_none α (Option.map_eq_none_iff.mp hs)
+  · intro h
+    exact Option.isSome_iff_exists.mp h
+
+/-- The input with its maximal all-`true` suffix removed. On every input the format scanner
+accepts it is the canonical serialization of the decoded machine (`canonStrip_of_scan`).
+Format independent. -/
+private def canonStrip (α : List Bool) : List Bool :=
+  (α.reverse.dropWhile id).reverse
+
+/-- A word ending in `false`, followed by an all-`true` suffix, is recovered by
+`canonStrip`. -/
+private lemma canonStrip_append (u tail : List Bool) (h : tail.all id = true) :
+    canonStrip (u ++ [false] ++ tail) = u ++ [false] := by
+  have hall : ∀ b ∈ tail.reverse, id b = true := by
+    intro b hb
+    exact List.all_eq_true.mp h b (List.mem_reverse.mp hb)
+  unfold canonStrip
+  rw [List.reverse_append, List.dropWhile_append_of_pos hall]
+  simp
+
+/-- A nonempty concatenation of words that each end in `false` ends in `false`.
+-/
+private lemma canonFlatMap_last {A : Type} (L : List A) (f : A → List Bool) (hL : L ≠ [])
+    (hf : ∀ a ∈ L, ∃ u, f a = u ++ [false]) : ∃ u, L.flatMap f = u ++ [false] := by
+  obtain ⟨L', a, rfl⟩ := (List.eq_nil_or_concat L).resolve_left hL
+  obtain ⟨u, hu⟩ := hf a (by simp)
+  exact ⟨L'.flatMap f ++ u, by simp [List.flatMap_append, hu]⟩
+
+/-- Every serialized record ends with its successor field's terminating `false`.
+-/
+private lemma actionBitsK_last {k n : ℕ} (a : Action k Bool (Fin (n + 1))) :
+    ∃ u, actionBitsK a = u ++ [false] := by
+  obtain ⟨v, hv⟩ : ∃ v, optStateBits a.state = v ++ [false] := by
+    cases a.state with
+    | none => exact ⟨[], rfl⟩
+    | some s => exact ⟨true :: List.replicate s.val true, by simp [optStateBits, unaryFin]⟩
+  refine ⟨signBits a.inputTape ++
+    (List.finRange k).flatMap
+      (fun i => optOptBoolBits (a.workTapes i).1 ++ signBits (a.workTapes i).2) ++
+    optBoolBits a.output ++ v, ?_⟩
+  simp only [actionBitsK, hv, List.append_assoc]
+
+/-- The fixed `k`-record serialization ends with `false`: its table is nonempty and its last
+record ends with a successor field. -/
+private lemma serializeK_last {k n : ℕ} (M : MultiTapeTM k Bool (Fin (n + 1))) :
+    ∃ u, serializeK M = u ++ [false] := by
+  have hw : workReadsK k ≠ [] := by
+    apply List.ne_nil_of_length_pos
+    rw [StepBlock.length_workReadsK]
+    exact Nat.pow_pos (by omega)
+  have hq : List.finRange (n + 1) ≠ [] := List.ne_nil_of_length_pos (by simp)
+  obtain ⟨u, hu⟩ := canonFlatMap_last (List.finRange (n + 1))
+    (fun q => ([none, some false, some true] : List (Option Bool)).flatMap fun inp =>
+      (workReadsK k).flatMap fun w => actionBitsK (M.tr q inp w)) hq fun q _ =>
+    canonFlatMap_last ([none, some false, some true] : List (Option Bool))
+      (fun inp => (workReadsK k).flatMap fun w => actionBitsK (M.tr q inp w)) (by simp)
+      fun inp _ => canonFlatMap_last (workReadsK k) (fun w => actionBitsK (M.tr q inp w)) hw
+        fun w _ => actionBitsK_last (M.tr q inp w)
+  refine ⟨(n.bits.flatMap fun b => [b, b]) ++ [false, true] ++ unaryFin M.q₀ ++ u, ?_⟩
+  have ht : tableBitsK M.tr = u ++ [false] := hu
+  simp only [serializeK, pairEncode, ht, List.append_assoc]
+
+/-- The suffix retained by a successful format scan is all `true`. -/
+private lemma canonScan_all (F : MachineFormat) (α tail : List Bool)
+    (hs : F.scan α = some tail) : tail.all id = true := by
+  unfold CodeFormat.scan at hs
+  obtain ⟨⟨bits, rest⟩, _, hs⟩ := Option.bind_eq_some_iff.mp hs
+  dsimp only at hs
+  split at hs
+  · contradiction
+  split at hs
+  · contradiction
+  obtain ⟨r, _, hs⟩ := Option.bind_eq_some_iff.mp hs
+  obtain ⟨r', _, hs⟩ := Option.bind_eq_some_iff.mp hs
+  split at hs
+  next hall =>
+    cases hs
+    exact hall
+  · contradiction
+
+/-- On every input the format scanner accepts, stripping the all-`true` suffix yields the
+canonical serialization of the decoded machine.
+
+**Proof sketch.** The scanner is the projected full parse (`Turing.CodeFormat.scan_full`),
+so the input is the decoded machine's serialization followed by the retained suffix
+(`Turing.CodeFormat.parseFull_sound`). That serialization ends in `false`
+(`serializeK_last`) and the suffix is all `true` (`canonScan_all`). -/
+private lemma canonStrip_of_scan (F : MachineFormat) (α tail : List Bool)
+    (hs : F.scan α = some tail) : canonStrip α = F.serialize (F.decode α) := by
+  have hall := canonScan_all F α tail hs
+  rw [F.scan_full] at hs
+  obtain ⟨⟨M, tail'⟩, hp, rfl⟩ := Option.map_eq_some_iff.mp hs
+  have hdec : F.decode α = M := by
+    simp [CodeFormat.decode, hp]
+  have hα := F.parseFull_sound α M tail' hp
+  obtain ⟨u, hu⟩ := serializeK_last (F.machine M)
+  rw [hdec, F.serialize_eq M, hu]
+  rw [hα, F.serialize_eq M, hu]
+  exact canonStrip_append u tail' hall
+
+/-- Removing the trailing `true` bits leaves an empty word or a word ending in `false`.
+
+**Proof sketch.** Append the last bit. A `true` extends the removed suffix; a `false`
+ends that suffix and keeps the whole word. -/
+private lemma canonStrip_split (w : List Bool) :
+    ∃ r, w = canonStrip w ++ List.replicate r true ∧
+      (canonStrip w = [] ∨ ∃ u, canonStrip w = u ++ [false]) := by
+  induction w using List.reverseRecOn with
+  | nil => exact ⟨0, rfl, Or.inl rfl⟩
+  | append_singleton w b ih =>
+    obtain ⟨r, hr, last⟩ := ih
+    cases b with
+    | false =>
+      have strip : canonStrip (w ++ [false]) = w ++ [false] := by
+        simp [canonStrip]
+      exact ⟨0, by simp [strip], Or.inr ⟨w, strip⟩⟩
+    | true =>
+      have strip : canonStrip (w ++ [true]) = canonStrip w := by
+        simp [canonStrip]
+      refine ⟨r + 1, ?_, by simpa only [strip] using last⟩
+      rw [strip, List.replicate_succ', ← List.append_assoc]
+      exact congrArg (fun v => v ++ [true]) hr
+
+/-- The strip boundary is a prefix boundary, followed only by `true` cells; its final
+retained cell, if present, is `false`.
+
+**Proof sketch.** Decompose the word at its stripped prefix, then read either side of the
+append boundary. The last retained cell is the terminating `false` of that prefix. -/
+private lemma canonStrip_boundary (w : List Bool) :
+    (canonStrip w).length ≤ w.length ∧
+      w.take (canonStrip w).length = canonStrip w ∧
+      (∀ (r : ℕ) (hr : r < w.length), (canonStrip w).length ≤ r → w[r] = true) ∧
+      (∀ (r : ℕ) (hr : r < w.length), (canonStrip w).length = r + 1 → w[r] = false) := by
+  obtain ⟨t, word, last⟩ := canonStrip_split w
+  generalize hu : canonStrip w = u at *
+  subst w
+  refine ⟨by simp, List.take_left, ?_, ?_⟩
+  · intro r hr past
+    rw [List.getElem_append_right past]
+    simp
+  · intro r hr boundary
+    rcases last with rfl | ⟨v, rfl⟩
+    · simp at boundary
+    · have index : r = v.length := by simp at boundary; omega
+      subst r
+      simp
+
+/-- A trailing-`true` eraser on one selected work tape. No catalog row erases only a suffix:
+the two-pass scan rewrites each symbol to a symbol, so it cannot replace a bit by blank.
+The forward pass finds the right blank. The return pass erases until the first `false`,
+then preserves the remaining prefix, reaching the origin at its live exit. -/
+private def canonTrimTM (k : ℕ) (i : Fin k) : MultiTapeTM k Bool (ScanPhase Bool) where
+  q₀ := .fwd false
+  tr := fun q _ w =>
+    let (write, move, next) : Option (Option Bool) × SignType × ScanPhase Bool :=
+      match q, w i with
+      | .fwd _, some _ => (none, .pos, .fwd false)
+      | .fwd _, none => (none, .neg, .bwd true)
+      | .bwd clean, some b =>
+        (if clean && b then some none else none, .neg, .bwd (clean && b))
+      | .bwd _, none => (none, .pos, .done false)
+      | .done _, _ => (none, 0, .done false)
+    tapeAction i 0 write move next
+
+/-- Erasing the last cell of a finite buffer removes precisely its final symbol.
+
+**Proof sketch.** The append law installs the last cell with a point update. A second
+update to blank restores the original buffer, which is blank at its own length. -/
+private lemma canonEraseLast (w : List Bool) (b : Bool) :
+    Function.update (FinTM.bufferTape (w ++ [b])) (w.length : ℤ) none =
+      FinTM.bufferTape w := by
+  rw [FinTM.bufferTape_append, Function.update_idem]
+  apply Function.update_eq_self_iff.mpr
+  simp
+
+/-- The eraser returns at the origin with exactly the stripped word and has no earlier
+visit to its exit. All other tape words, the native head and the output are unchanged.
+
+**Proof sketch.** Apply the public two-pass trace theorem. On the backward pass at position
+`r - 1`, the retained buffer is the original prefix of length `max r |canonStrip w|`.
+The finite flag records whether the strip boundary has been crossed. The boundary facts
+identify the cell that switches the flag, and the one-cell erase law shortens only the suffix.
+This also covers an empty input and a word consisting entirely of `true` bits. -/
+private lemma canonTrim_run (k : ℕ) (i : Fin k) (x : List Bool)
+    (words : Fin k → List Bool) :
+    (canonTrimTM k i).runFrom (Cfg.ofWords (input := x) (.fwd false) words)
+        (2 * (words i).length + 2) =
+      Cfg.ofWords (.done false) (Function.update words i (canonStrip (words i))) ∧
+      ∀ t < 2 * (words i).length + 2,
+        ((canonTrimTM k i).runFrom (Cfg.ofWords (input := x) (.fwd false) words) t).state ≠
+          some (.done false) := by
+  let w := words i
+  let m := (canonStrip w).length
+  obtain ⟨small, pref, past, boundary⟩ := canonStrip_boundary w
+  let base := Cfg.ofWords (input := x) (ScanPhase.fwd false) words
+  let fwd (r : ℕ) : Cfg k Bool (ScanPhase Bool) x :=
+    { base with workTapePos := Function.update base.workTapePos i r }
+  let back (r : ℕ) : Cfg k Bool (ScanPhase Bool) x :=
+    { base with state := some (.bwd (decide (m ≤ r)))
+                workTapes := Function.update base.workTapes i
+                  (FinTM.bufferTape (w.take (max r m)))
+                workTapePos := Function.update base.workTapePos i ((r : ℤ) - 1) }
+  let done : Cfg k Bool (ScanPhase Bool) x :=
+    Cfg.ofWords (.done false) (Function.update words i (canonStrip w))
+  have start : fwd 0 = base := by simp [fwd, base, Cfg.ofWords]
+  have forward (r : ℕ) (hr : r < w.length) :
+      (canonTrimTM k i).step (fwd r) = fwd (r + 1) := by
+    have read : (fwd r).workTapeSymbols i = some w[r] := by
+      simp [fwd, base, Cfg.ofWords, Cfg.workTapeSymbols, w, hr]
+    rw [step_of_tapeAction_move _ _ i 0 .pos rfl
+      (q' := ScanPhase.fwd false) (by simp [canonTrimTM, read])]
+    apply Cfg.ext <;> try rfl
+    · simp [fwd, moveInputPos_zero]
+    · simp [fwd, Function.update_idem, Nat.cast_add]
+  have turn : (canonTrimTM k i).step (fwd w.length) = back w.length := by
+    have read : (fwd w.length).workTapeSymbols i = none := by
+      simp [fwd, base, Cfg.ofWords, Cfg.workTapeSymbols, w]
+    rw [step_of_tapeAction_move _ _ i 0 .neg rfl
+      (q' := ScanPhase.bwd true) (by simp [canonTrimTM, read])]
+    apply Cfg.ext <;>
+      simp [fwd, back, m, small, Function.update_idem, base, Cfg.ofWords, w,
+        sub_eq_add_neg]
+  have backward (r : ℕ) (hr : r < w.length) :
+      (canonTrimTM k i).step (back (r + 1)) = back r := by
+    have read : (back (r + 1)).workTapeSymbols i = some w[r] := by
+      simp only [back, Cfg.workTapeSymbols, Function.update_self, Nat.cast_add,
+        Nat.cast_one, add_sub_cancel_right, FinTM.bufferTape_nat]
+      rw [List.getElem?_take_of_lt (by omega), List.getElem?_eq_getElem hr]
+    by_cases erase : m ≤ r
+    · have bit : w[r] = true := past r hr erase
+      have flag : decide (m ≤ r + 1) = true := by simp; omega
+      have cells : Function.update (FinTM.bufferTape (w.take (max (r + 1) m)))
+          (r : ℤ) none = FinTM.bufferTape (w.take (max r m)) := by
+        rw [max_eq_left (by omega), max_eq_left erase,
+          List.take_succ_eq_append_getElem hr]
+        have len : (w.take r).length = r := List.length_take_of_le (by omega)
+        simpa only [len] using canonEraseLast (w.take r) w[r]
+      rw [step_of_tapeAction_write _ _ i 0 none .neg rfl
+        (q' := ScanPhase.bwd true) (by simp only [canonTrimTM, read, flag, bit]; rfl)]
+      apply Cfg.ext <;>
+        simp only [back, Function.update_self, Nat.cast_add, Nat.cast_one,
+          add_sub_cancel_right, cells, Function.update_idem, moveInputPos_zero,
+          decide_eq_true erase]
+      simp [sub_eq_add_neg]
+    · have notzero : r + 1 ≤ m := by omega
+      have value : (decide (m ≤ r + 1) && w[r]) = false := by
+        by_cases edge : m = r + 1
+        · simp [edge, boundary r hr edge]
+        · rw [decide_eq_false (by omega : ¬m ≤ r + 1)]
+          rfl
+      have same : max (r + 1) m = max r m := by omega
+      rw [step_of_tapeAction_move _ _ i 0 .neg rfl
+        (q' := ScanPhase.bwd false) (by simp only [canonTrimTM, read, value]; rfl)]
+      apply Cfg.ext <;>
+        simp [back, same, erase, Function.update_idem, Nat.cast_add, sub_eq_add_neg]
+  have enter : (canonTrimTM k i).step (back 0) = done := by
+    have read : (back 0).workTapeSymbols i = none := by
+      simp [back, Cfg.workTapeSymbols]
+    rw [step_of_tapeAction_move _ _ i 0 .pos rfl
+      (q' := ScanPhase.done false) (by simp [canonTrimTM, read])]
+    apply Cfg.ext
+    all_goals simp [back, done, base, Cfg.ofWords, m, pref, Function.update_idem]
+    funext j
+    by_cases eq : j = i
+    · subst j; simp
+    · simp only [Function.update_of_ne eq]
+  have stationary : (canonTrimTM k i).step done = done := by
+    rw [step_of_tapeAction_move _ _ i 0 0 rfl (q' := ScanPhase.done false) rfl]
+    simp [done, Cfg.ofWords]
+  have trace (t : ℕ) :=
+    catalog_trace_run (canonTrimTM k i) fwd back done w.length forward turn backward
+      enter stationary t
+  rw [start] at trace
+  refine ⟨?_, ?_⟩
+  · rw [trace]
+    rw [catalogTrace, if_neg (by dsimp [w]; omega), if_neg (by dsimp [w]; omega)]
+  · intro t ht
+    rw [trace]
+    simp only [catalogTrace]
+    split_ifs with front rear
+    · simp [fwd, base, Cfg.ofWords]
+    · simp [back]
+    · change t < 2 * w.length + 2 at ht
+      omega
+
+/-- **The polynomial-time strip machine.** One finite binary machine computes `canonStrip`
+in polynomial time. Format independent; a promotion candidate.
+
+**Proof sketch.** Copy the native input to a work tape (`Turing.inputCopyTM`). A one-tape
+leaf walks to the word's right end, erases the trailing `true` cells moving left until a
+`false` or the left delimiter, and returns to the origin. Forward the remaining word to the
+output by the public emit call `Turing.FinTM.exists_emitCallTM` with the identity machine,
+and halt. Every phase is linear. -/
+private lemma exists_canonStripTM :
+    ∃ (M : FinTM Bool) (a : ℕ),
+      M.ComputesFunInTime canonStrip (fun n => a * (n + 1) ^ a) := by
+  classical
+  obtain ⟨I, a, identity⟩ := FinTM.computesFunInTime_id
+  obtain ⟨E, entry, exit, c, positive, emit⟩ :=
+    FinTM.exists_emitCallTM I id (fun n => a * (n + 1)) identity
+  let i : Fin E.k := ⟨0, positive⟩
+  let trim := canonTrimTM E.k i
+  let prepare := seamCompTM (inputCopyTM E.k i) .done trim (.fwd false)
+  let release := seamReleaseTM E.tm entry
+  let halt : MultiTapeTM E.k Bool Unit :=
+    ⟨(), fun _ _ _ => ⟨0, fun _ => (none, 0), none, none⟩⟩
+  let finish := seamCompTM release (Sum.inr exit) halt ()
+  let machine : FinTM Bool := {
+    k := E.k
+    State := (SweepPhase ⊕ ScanPhase Bool) ⊕ ((Unit ⊕ E.State) ⊕ Unit)
+    tm := { seamCompTM prepare (Sum.inr (.done false)) finish (Sum.inl (Sum.inl ())) with
+      q₀ := Sum.inl (Sum.inl .sweep) } }
+  let d := c * (a + 2) + 8
+  refine ⟨machine, d, ?_⟩
+  intro x
+  let source := Cfg.ofWords (input := x) SweepPhase.sweep (fun _ : Fin E.k => [])
+  have copied := inputCopyTM_run_ofCfg i source rfl rfl
+  have copy : (inputCopyTM E.k i).runFrom source (2 * x.length + 2) =
+      Cfg.ofWords .done (stateWord E.k x) := by
+    rw [copied.1]
+    apply Cfg.ext <;> try rfl
+    funext j z
+    have index : j = i ↔ j.val = 0 := Fin.ext_iff
+    simp only [source, Cfg.ofWords, stateWord, index, zero_add, sub_zero,
+      FinTM.bufferTape_nil]
+    by_cases zero : j.val = 0
+    · simp only [zero, if_true, true_and]
+      by_cases nonneg : 0 ≤ z
+      · by_cases inside : z < (x.length : ℤ)
+        · simp [nonneg, inside]
+        · simp [nonneg, inside, FinTM.bufferTape]
+      · simp [nonneg, FinTM.bufferTape]
+    · simp [zero]
+  have word : stateWord E.k x i = x := by simp [stateWord, i]
+  have restored : Function.update (stateWord E.k x) i (canonStrip x) =
+      stateWord E.k (canonStrip x) := by
+    funext j
+    by_cases selected : j = i
+    · subst j; simp [stateWord, i]
+    · have other : j.val ≠ 0 := fun h => selected (Fin.ext h)
+      simp [Function.update_of_ne selected, stateWord, other]
+  obtain ⟨trimmed, trimCut⟩ := canonTrim_run E.k i x (stateWord E.k x)
+  rw [word, restored] at trimmed
+  rw [word] at trimCut
+  have prepared := seamCompTM_run_ofCfg (inputCopyTM E.k i) .done trim (.fwd false)
+    copy rfl copied.2.1 trimmed
+  have prepareCut := seamCompTM_firstReturn_ofCfg (inputCopyTM E.k i) .done trim
+    (.fwd false) (.done false) copy rfl copied.2.1 trimmed rfl trimCut
+  let argument := canonStrip x
+  let callStart := Cfg.ofWords (input := x) entry (stateWord E.k argument)
+  obtain ⟨t, budget, nonzero, first, ran⟩ := emit x argument
+  have released : release.runFrom (callStart.mapState (fun _ => Sum.inl ())) t =
+      ({ Cfg.ofWords (input := x) exit (stateWord E.k argument)
+          with output := argument } : Cfg E.k Bool E.State x).mapState Sum.inr := by
+    rw [seamReleaseTM_runFrom_pos E.tm entry callStart rfl t nonzero]
+    exact congrArg (Cfg.mapState Sum.inr) ran
+  have releaseCut : ∀ u < t,
+      (release.runFrom (callStart.mapState (fun _ => Sum.inl ())) u).state ≠
+        some (Sum.inr exit) := by
+    intro u hu
+    cases u with
+    | zero => simp [callStart, Cfg.ofWords, Cfg.mapState]
+    | succ u =>
+      rw [seamReleaseTM_runFrom_pos E.tm entry callStart rfl _ (Nat.succ_pos _)]
+      intro h
+      obtain ⟨q, hq, eq⟩ := Option.map_eq_some_iff.mp h
+      exact first (u + 1) (Nat.succ_pos _) hu
+        (hq.trans (congrArg some (Sum.inr.inj eq)))
+  let emitted : Cfg E.k Bool (Unit ⊕ E.State) x :=
+    ({ Cfg.ofWords (input := x) exit (stateWord E.k argument)
+        with output := argument } : Cfg E.k Bool E.State x).mapState Sum.inr
+  let stopped := halt.runFrom (emitted.mapState (fun _ => ())) 1
+  have stopped_eq : stopped =
+      { emitted.mapState (fun _ => ()) with state := none } := by
+    simp [stopped, halt, MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.step,
+      emitted, Cfg.mapState, Cfg.ofWords, Action.apply]
+  have finished := seamCompTM_run_ofCfg release (Sum.inr exit) halt ()
+    released rfl releaseCut (rfl : halt.runFrom (emitted.mapState (fun _ => ())) 1 = stopped)
+  have complete := seamCompTM_run_ofCfg prepare (Sum.inr (.done false)) finish
+    (Sum.inl (Sum.inl ())) prepared rfl prepareCut finished
+  let duration := (2 * x.length + 2 + 1 + (2 * x.length + 2)) + 1 + (t + 1 + 1)
+  have computation : machine.ComputesInTime x argument duration := by
+    apply (FinTM.computesInTime_iff machine _ _ _).mpr
+    rw [initCfg_ofWords]
+    change ((seamCompTM prepare (Sum.inr (.done false)) finish _).runFrom
+      ((source.mapState Sum.inl).mapState Sum.inl) duration).state = none ∧
+      ((seamCompTM prepare (Sum.inr (.done false)) finish _).runFrom
+        ((source.mapState Sum.inl).mapState Sum.inl) duration).output = argument
+    rw [complete]
+    change (stopped.mapState Sum.inr |>.mapState Sum.inr).state = none ∧
+      (stopped.mapState Sum.inr |>.mapState Sum.inr).output = argument
+    rw [stopped_eq]
+    exact ⟨rfl, rfl⟩
+  apply computation.mono
+  have length : argument.length ≤ x.length := (canonStrip_boundary x).1
+  have cost : t ≤ c * (a + 2) * (x.length + 1) := by
+    apply budget.trans
+    dsimp only [id_eq]
+    calc
+      c * (a * (argument.length + 1) + argument.length + argument.length + 1)
+          ≤ c * ((a + 2) * (argument.length + 1)) := by
+        apply Nat.mul_le_mul_left c
+        ring_nf
+        omega
+      _ ≤ c * ((a + 2) * (x.length + 1)) :=
+        Nat.mul_le_mul_left c (Nat.mul_le_mul_left _ (by omega))
+      _ = _ := by ring
+  have linear : duration ≤ d * (x.length + 1) := by
+    dsimp [duration, d]
+    nlinarith
+  exact linear.trans (Nat.mul_le_mul_left d (by
+    simpa using Nat.pow_le_pow_right (show 1 ≤ x.length + 1 by omega)
+      (show 1 ≤ d by dsimp [d]; omega)))
+
+/-- **The physical grammar stage.** Started on one bank whose tape `header` holds the
+canonical binary header `bits` (head at the origin), every other tape blank, the native head
+at the remainder's first cell and the output empty, it decides the fixed grammar on the
+remainder with two distinct live exits, silently, within a polynomial bound that does not
+depend on the header's numerical value.
+
+**Proof sketch.** Copy the header to scratch counters as needed (framed copy rows; its value
+`n` serves as the binary bound of every unary range check). Check the unary initial state
+below `n + 1`; run one public counter loop over the `n + 1` states, each of `3^(k+1)`
+records, with the generic record validator as its body; check the all-`true` suffix to the
+right input blank. Every record consumes at least `4k + 5` cells and every round fails fast
+on input exhaustion, so at most `|x| + 1` rounds run, each charged `O(|x| + |bits|)`. -/
+private lemma exists_canonGrammarStage (F : MachineFormat) :
+    ∃ (m : ℕ) (S : Type) (_ : Fintype S) (_ : DecidableEq S) (G : MultiTapeTM m Bool S)
+      (entry : S) (exit : Bool → S) (a : ℕ) (header : Fin m), Function.Injective exit ∧
+      ∀ (x bits rest : List Bool), pairDecode x = some (bits, rest) →
+        bits = (codeBitsNat bits).bits →
+        canonGuardBlock F * (codeBitsNat bits + 1) ≤ rest.length →
+        ∀ d : Cfg m Bool S x, d.state = some entry → d.output = [] →
+          d.inputPos.val = 2 * bits.length + 3 →
+          d.workTapes header = FinTM.bufferTape bits → d.workTapePos header = 0 →
+          (∀ j, j ≠ header → d.workTapes j = FinTM.bufferTape [] ∧ d.workTapePos j = 0) →
+          ∃ t ≤ a * (x.length + 1) ^ a,
+            (G.runFrom d t).state =
+              some (exit (canonGrammar F.k (codeBitsNat bits) rest).isSome) ∧
+            (G.runFrom d t).output = [] ∧
+            ∀ u < t, ∀ v, (G.runFrom d u).state ≠ some (exit v) := by
+  sorry
+
+/-- **The physical validator.** One finite binary machine halts on every input within a
+polynomial bound with a single verdict bit; a rejection decodes to the fallback, and an
+acceptance is a successful format scan.
+
+**Proof sketch.** Run the total parse front end `exists_canonParseFront`. Its reject port
+emits `false` and halts. At its ready port tape `0` holds the canonical header `bits`, the
+native head is at the remainder, and the positive guard has passed; run the physical grammar
+on a fresh bank around tape `0`, deciding `(canonGrammar F.k n rest).isSome`, then emit the
+bit and halt. `canonGrammar_verdict` is the verdict law; the front end's linear ledger and
+the grammar's quadratic ledger add. -/
+private lemma exists_canonDecider (F : MachineFormat) :
+    ∃ (D : FinTM Bool) (a : ℕ), ∀ α : List Bool, ∃ b : Bool,
+      D.ComputesInTime α [b] (a * (α.length + 1) ^ a) ∧
+        (b = false → F.decode α = F.fallback) ∧
+        (b = true → ∃ tail, F.scan α = some tail) := by
+  -- The composition, as prescribed: the frozen front end and the grammar stage, joined by
+  -- public seams on one bank, each verdict sent to a one-step emitting halt. Semantic laws:
+  -- the front end's reject clause and `canonGrammar_verdict`.
+  obtain ⟨_C, _entry, _exit, _a, _wide, _distinct, _front⟩ := exists_canonParseFront F
+  obtain ⟨_m, _S, _, _, _G, _gentry, _gexit, _b, _header, _gdistinct, _grammar⟩ :=
+    exists_canonGrammarStage F
+  have _law := canonGrammar_verdict F
+  sorry
+
 /-- **A polynomial-time canonizer** (spec, fill pending — batch B5a): one finite
 binary machine computes the fixed serialization of the decoded machine within
 `d · (|α| + 1)^d` steps. [AB09, §1.4; the P3.2 round-2 construction]
@@ -2735,11 +3254,63 @@ Recreating the parser bound, the generic physical action validator, the
 record loop, suffix/prefix emission and complete polynomial assembly remain
 open. This headline retains its original admission; the full physical
 note-50 cases remain pending.
- -/
+
+
+**Fill appendix (canonizer continuation 3).** Phase 1 is complete: the format-independent
+strip machine copies the native input, erases its maximal trailing `true` suffix, returns
+its work head to the origin, and emits the retained word through the public identity emit
+call. Its two-pass leaf uses the public catalog trace, and public seams compose the phases;
+the release adapter handles coincident emit-call anchors. The prescribed timed-conditional
+glue now proves this headline modulo `exists_canonDecider` and `exists_canonGrammarStage`,
+which remain the named admissions. This refines the earlier prefix-copy emission route to
+validation followed by stripping or the constant fallback. The grammar and validator, and
+therefore the complete physical canonizer's note-50 checks, remain pending. -/
 theorem exists_polyCanonizer :
     ∃ (C : FinTM Bool) (d : ℕ),
       C.ComputesFunInTime (fun α => F.serialize (F.decode α)) fun n => d * (n + 1) ^ d := by
-  sorry
+  obtain ⟨D, a, decider⟩ := exists_canonDecider F
+  choose verdict spec using decider
+  obtain ⟨M, b, strip⟩ := exists_canonStripTM
+  obtain ⟨E, e, fallback⟩ := FinTM.computesFunInTime_const (F.serialize F.fallback)
+  have decides : D.ComputesFunInTime (fun α => [verdict α]) fun n => a * (n + 1) ^ a :=
+    fun α => (spec α).1
+  obtain ⟨C, c, branch⟩ := FinTM.computesFunInTime_cond decides strip fallback
+  refine ⟨C, c * (a + b + e + 1) + a + b + 1, ?_⟩
+  intro α
+  have output : (if verdict α then canonStrip α else F.serialize F.fallback) =
+      F.serialize (F.decode α) := by
+    cases hv : verdict α with
+    | false =>
+      rw [(spec α).2.1 hv]
+      rfl
+    | true =>
+      obtain ⟨tail, hs⟩ := (spec α).2.2 hv
+      exact canonStrip_of_scan F α tail hs
+  have run := branch α
+  dsimp only at run ⊢
+  rw [output] at run
+  apply run.mono
+  set d := c * (a + b + e + 1) + a + b + 1
+  set P := (α.length + 1) ^ d
+  have base : 1 ≤ α.length + 1 := by omega
+  have pa : (α.length + 1) ^ a ≤ P := Nat.pow_le_pow_right base (by omega)
+  have pb : (α.length + 1) ^ b ≤ P := Nat.pow_le_pow_right base (by omega)
+  have p1 : α.length + 1 ≤ P := by
+    simpa using Nat.pow_le_pow_right base (show 1 ≤ d by omega)
+  have p0 : 1 ≤ P := Nat.one_le_pow _ _ (by omega)
+  have inner : a * (α.length + 1) ^ a +
+      max (b * (α.length + 1) ^ b) (e * (α.length + 1)) + 1 ≤ (a + b + e + 1) * P := by
+    have ha := Nat.mul_le_mul_left a pa
+    have hb := Nat.mul_le_mul_left b pb
+    have he := Nat.mul_le_mul_left e p1
+    have hm : max (b * (α.length + 1) ^ b) (e * (α.length + 1)) ≤ b * P + e * P :=
+      max_le (by omega) (by omega)
+    nlinarith
+  calc
+    c * (a * (α.length + 1) ^ a + max (b * (α.length + 1) ^ b) (e * (α.length + 1)) + 1)
+        ≤ c * ((a + b + e + 1) * P) := Nat.mul_le_mul_left c inner
+    _ = (c * (a + b + e + 1)) * P := by ring
+    _ ≤ d * P := Nat.mul_le_mul_right P (by omega)
 
 /-! ### Finite output summary (D4 move, generalized from Codes2Tape)
 
