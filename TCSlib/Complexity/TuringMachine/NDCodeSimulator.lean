@@ -114,15 +114,15 @@ tape; install the replay serialization of `Turing.exists_replayCanonizer` by
 `Turing.FinTM.exists_installCallTM` with the unary initial state; copy the input window
 `x.take t` onto a buffer by `Turing.exists_inputWindowCopyTM` (cost `O(min(t, |x|) + |bits t|)`)
 and rewind it. Then the deterministic clocked interpreter loop at three work tapes, the stream
-as the mirrored choice tape: H1's hosted clock, `Turing.counterLoopTM` over rounds of H2's step
-block hosted by Z1 (`Turing.vhostEmitTM_runFrom`) on the window (private in
-`TCSlib.Complexity.TuringMachine.CodeSimulator` since fills-8; harvested with H2's promotion,
-from an arbitrary represented start and with its escape-time bound). Each round is one step of
-the replay machine and costs at most a per-code constant (H2's `50·(|table| + 1)`), and the
-counter costs at most `4r + 2|bits t|` over `r` rounds (`Turing.counterOverhead_le_of_le`); the
-loop escapes when the simulated machine halts, at that round's exact time
-(`Turing.counterLoopTM_run_escape`), which gives the prefix clause. The verdict reads H2's
-output summary into the live exits. The replay lemma `Turing.NDTM.replayTM_runFrom` identifies
+as the mirrored choice tape: the counter loop over H2's step block hosted by Z1 on the window,
+from the replay machine's represented start with the stream installed, over the counter
+`bits t` (`Turing.StepBlock.hostedLoopTM_run`, host H2-L in `Build/StepBlockLoop`; the
+counter's value is `Turing.counterValue_bits`). Each round is one step of the replay machine and
+costs at most a per-code constant (H2's `50·(|table| + 1)`), and the counter costs at most
+`4r + 2|bits t|` over `r` rounds; when the simulated machine halts by `t'`, the loop escapes
+within `t'·50·(|table| + 1) + 4t' + 2|bits t|` (the contract's early-escape bound), which gives
+the prefix clause. The verdict reads H2's output summary at the live exits
+(`Turing.StepBlock.hostedLoop_read`). The replay lemma `Turing.NDTM.replayTM_runFrom` identifies
 the simulated run with the branch along `s.take t` on the window, and input locality
 (`Turing.NDTM.runWith_initCfg_take`) with the branch on `x`. -/
 theorem exists_ndInterpreterCore (c : EffectiveNDMachineCode) :
