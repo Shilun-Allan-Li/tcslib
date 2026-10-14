@@ -87,10 +87,18 @@ under `Complexity/`.
 * `WordRAM.Instr` (programs `List WordRAM.Instr`) — the word RAM of [AFM26]: W-bit words, nine
   instructions (constant 1, add, subtract, multiply, indirect load and store, branch on negative,
   accept, reject), runs by `WordRAM.exec` (`Programs/WordRAM/`, vendored; design §15).
+* `WordRAM.XInstr` (programs `WordRAM.XProgram`) — the word RAM extended by a wrapper: the nine
+  instructions as `XInstr.base`, plus input read in place, output, read-once coins and halving;
+  runs by `WordRAM.xstep`, with footprints (`Programs/WordRAM/Extended.lean`, not vendored;
+  design §15d).
 
 ## Conversions
 
 Model-to-model maps (pointers only — their files are not imported here):
+
+* `WordRAM.exists_simulation` / `WordRAM.exists_ndSimulation` — extended word-RAM programs →
+  `Turing.FinTM` / `Turing.FinNDTM`, with explicit time and space bounds (stage 2;
+  `Complexity/RAMSimulation/Simulation.lean`; statements gated, proofs pending).
 
 * `BoolCircuit.TreeCircuit.toDAG` / `BoolCircuit.DAGCircuit.toTree` — formulas → DAGs
   (linear) and DAGs → formulas (exponential in depth)

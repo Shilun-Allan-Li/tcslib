@@ -72,6 +72,8 @@ up, in `TCSlib.Complexity.ClassNP.NTIME`, because they fix the binary alphabet.
 
 ## Main results
 
+* `Turing.NDTM.runWith_eq_fixChoice_runFrom` — a branch that meets no real choice is the run of
+  the deterministic slice (stage 2's slice lemma; statement gated 2026-10-14, proof pending).
 * `Turing.NDTM.runWith_append`, `Turing.NDTM.runWith_of_halt` — the choice-word run
   algebra (proved; pure unfoldings, the nondeterministic counterparts of the vendored
   `runFrom` lemmas).
@@ -263,3 +265,28 @@ def FinTM.toFinNDTM {Symbol : Type} (M : FinTM Symbol) : FinNDTM Symbol :=
   ⟨M.k, M.State, M.tm.toNDTM⟩
 
 end Turing
+
+namespace Turing.NDTM
+
+variable {k : ℕ} {Symbol State : Type*} {input : List Symbol}
+
+/-- **A branch that meets no real choice is a deterministic run.** If, at each of the first
+`|w|` configurations of the run of the slice `tm.fixChoice b` from `cfg`, the machine is halted
+or in a state at which its two transition functions agree, then the run of `tm` under the choice
+word `w` is that deterministic run: `tm.runWith w cfg = (tm.fixChoice b).runFrom cfg |w|`.
+[AB09, §2.1.2]
+
+**Proof sketch.** Induction on `w`, generalizing `cfg`. For `w = b' :: w'`: if `cfg` is halted,
+both sides fix it (`stepWith_of_halt`, `MultiTapeTM.step_of_halt`); otherwise its state `q`
+satisfies `tm.tr false q = tm.tr true q` (the hypothesis at `j = 0`), so `tm.tr b' q = tm.tr b q`
+and `stepWith b' cfg = (tm.fixChoice b).step cfg` (`stepWith_eq_fixChoice_step`). The hypothesis
+shifts to the next configuration (`MultiTapeTM.runFrom_succ_eq_step`), and the induction
+hypothesis finishes with `runWith_cons`. -/
+theorem runWith_eq_fixChoice_runFrom (tm : NDTM k Symbol State) (b : Bool) (w : List Bool)
+    (cfg : Cfg k Symbol State input)
+    (hagree : ∀ j < w.length, ∀ q : State, ((tm.fixChoice b).runFrom cfg j).state = some q →
+      tm.tr false q = tm.tr true q) :
+    tm.runWith w cfg = (tm.fixChoice b).runFrom cfg w.length := by
+  sorry
+
+end Turing.NDTM
