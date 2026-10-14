@@ -832,7 +832,14 @@ def recordSkipTM (k : ℕ) : MultiTapeTM (k + 2) Bool (Σ b, SkipPh k b) :=
   phaseHostTM (skipPart k) ⟨false, (recordTM k).q₀⟩ (skipRed k)
 
 /-- The public phase-host theorem transfers the inherited prefix trace and
-then takes its sole dispatch. The payload transition is never executed. -/
+then takes its sole dispatch. The payload transition is never executed.
+
+**Proof sketch.** Apply `phaseHostTM_run` to the reader phase for `4k + 4` steps, with the
+run supplied by `recordTM_read` at full width: the read count is then `4k + 4`, which
+`skipRed` redirects to the successor leaf's `tag`. The guard holds because, by
+`recordTM_read`, at every earlier time `u` the read count is `u < 4k + 4`, which `skipRed`
+leaves alone. The prefix claim is the host theorem's tagged reader run, rewritten by
+`recordTM_read` at each `u ≤ 4k + 4`; the endpoint is its dispatch step. -/
 private lemma recordSkipTM_fixed {k : ℕ} {x : List Bool}
     (d : Cfg (k + 2) Bool (RecordState k) x)
     (bits : Fin (recordWidth k) → Bool)
@@ -915,7 +922,12 @@ private lemma reads_append (cells : ℤ → Option Bool) (p : ℤ) (a b : List B
     simpa only [Nat.add_sub_cancel_left, Nat.cast_add, add_assoc] using right
 
 /-- Expose the fixed and variable reads of one trusted record at an arbitrary
-physical table position. The tape outside the record is unrestricted. -/
+physical table position. The tape outside the record is unrestricted.
+
+**Proof sketch.** Take the fixed bits from `actionBitsK_split`; the length identity is
+`List.length_append` with `List.length_ofFn`. Split the cell hypothesis with
+`reads_append` at the fixed prefix: its left part, reindexed by `List.getElem_ofFn`, gives
+the fixed bits, and its right part, at offset `4k + 4`, gives the successor field. -/
 private lemma actionBitsK_reads {k n : ℕ} {S : Type} {x : List Bool}
     (d : Cfg (k + 2) Bool S x) (a : Action k Bool (Fin (n + 1)))
     (hw : ∀ (r : ℕ) (hr : r < (actionBitsK a).length),
@@ -1378,7 +1390,15 @@ private lemma seekTM_many {k n : ℕ} {x : List Bool}
           simpa only [ds, Function.update_of_ne hj] using hf.2.2.2 j hj
 
 /-- A unary-state router step either requests one complete state group and
-advances the state head, or requests the finite read-rank suffix. -/
+advances the state head, or requests the finite read-rank suffix.
+
+**Proof sketch.** Unfold one step of the phase host at the router control `state rank`:
+`seekRed` does not redirect it, so the step applies `seekRouterTM`'s action, which reads the
+summary cell `b`. Case on `b`. On a true the action moves the summary head one cell right
+and requests a whole state group (countdown `3 ^ (k + 1) - 1`, `last` false); on a false
+it is stationary and enters `done` at rank zero, or else requests the rank suffix
+(countdown `rank - 1`, `last` true). The head positions are then compared pointwise, on
+the summary tape and off it. -/
 private lemma seekTM_stateStep {k : ℕ} {x : List Bool}
     (d : Cfg (k + 2) Bool (RecordState k) x) (rank : Fin (3 ^ (k + 1))) (b : Bool)
     (hq : d.state = some (recordTM k).q₀)
@@ -1405,7 +1425,15 @@ private lemma seekTM_stateStep {k : ℕ} {x : List Bool}
     · simp [hj]
 
 /-- At the unary terminator, the selector skips exactly the read rank.
-This includes rank zero: the router's single silent step exits immediately. -/
+This includes rank zero: the router's single silent step exits immediately.
+
+**Proof sketch.** The first step is `seekTM_stateStep` at a false bit. With no records the
+rank is zero, that step lands on `done` with nothing skipped, and the cut and frame are
+checked at times `0` and `1` directly. Otherwise the rank is positive and the step enters
+the request with countdown `rank - 1 = records.length - 1` and `last` true, which is
+`seekTM_many`'s entry for the whole list. Shifting its endpoint, cut and frame by that one
+step (`MultiTapeTM.runFrom_succ_eq_step`) gives the claim; time `0` is the router control
+`state`, checked directly. -/
 private lemma seekTM_rank {k n : ℕ} {x : List Bool}
     (records : List (Action k Bool (Fin (n + 1))))
     (d : Cfg (k + 2) Bool (RecordState k) x) (rank : Fin (3 ^ (k + 1)))
@@ -1625,7 +1653,14 @@ private lemma seekTM_groups {k n : ℕ} {x : List Bool}
         simpa only [later, seekShift, if_neg ht, if_neg hs, add_zero] using frame.2.2.2 j ht hs
 
 /-- Capture the finite read rank and enter the unary state word in two
-silent moves of the auxiliary head. All mirrored heads stay fixed. -/
+silent moves of the auxiliary head. All mirrored heads stay fixed.
+
+**Proof sketch.** Two explicit steps by `step_of_tapeAction_move`. At `observe` the router
+stores the read rank of the scanned input and mirrored work symbols in its control and
+moves the summary head right, entering `advance`; at `advance` it moves that head right
+again, entering `state`. The two moves give `seekShift d 0 2`, compared pointwise on the
+summary tape, the table tape and the rest. The cut and frame are checked at each of the
+times `0`, `1`, `2`. -/
 private lemma seekTM_observe {k : ℕ} {x : List Bool}
     (d : Cfg (k + 2) Bool (RecordState k) x)
     (hq : d.state = some (recordTM k).q₀) :
@@ -1698,7 +1733,14 @@ private lemma readActions_length {k n : ℕ}
   omega
 
 /-- The finite rank used by the physical router selects the serializer's
-actual input/work-read record, including the tape-zero-first work ordering. -/
+actual input/work-read record, including the tape-zero-first work ordering.
+
+**Proof sketch.** The index `idxOf w` of the work reads is in range by `mem_workReadsK`, and
+in each of the three blocks `(workReadsK k).map (tr q inp')` it selects `tr q inp' w`
+(`List.getElem_map`, `List.getElem_idxOf`); each block has `3 ^ k` entries
+(`length_workReadsK`). Case on the input symbol: its rank `0`, `1` or `2` times `3 ^ k`
+plus that index skips as many whole blocks by `List.getElem_append_right`, and the index
+then falls in the next block (`List.getElem_append_left`, except in the last block). -/
 private lemma readActions_at {k n : ℕ}
     (tr : Fin (n + 1) → Option Bool → (Fin k → Option Bool) → Action k Bool (Fin (n + 1)))
     (q : Fin (n + 1)) (inp : Option Bool) (w : Fin k → Option Bool) :
@@ -1746,7 +1788,16 @@ private lemma tableBitsK_groups {k n : ℕ}
 /-- Exact decomposition of the public table around a source transition.
 The selector skips `q` complete state groups followed by the captured read
 rank. This identifies the next record without any assumption about constant
-successor widths. -/
+successor widths.
+
+**Proof sketch.** Rewrite the table as the serialization of the state groups
+(`tableBitsK_groups`). Split the state list around `q` (`List.take_append_drop`,
+`List.drop_eq_getElem_cons`), and split `q`'s group around position `readRank inp w`,
+whose entry is `tr q inp w` by `readActions_at`. Take the groups of the first `q` states,
+the first `readRank inp w` records of `q`'s group, and the serialization of everything
+after the selected record. The counts follow from `List.length_take` and
+`readActions_length`, and the table identity from distributing `flatMap` over both
+splits. -/
 private lemma tableBitsK_cut {k n : ℕ}
     (tr : Fin (n + 1) → Option Bool → (Fin k → Option Bool) → Action k Bool (Fin (n + 1)))
     (q : Fin (n + 1)) (inp : Option Bool) (w : Fin k → Option Bool) :
@@ -1853,7 +1904,15 @@ private lemma groups_length {k n : ℕ}
 
 /-- Whole physical lookup, including finite observation and the unary-state
 loop. Its exit is first reached at the selected record boundary. The native
-input, all tape cells, physical output, and mirrored heads are unchanged. -/
+input, all tape cells, physical output, and mirrored heads are unchanged.
+
+**Proof sketch.** Run `seekTM_observe` for two steps, then `seekTM_groups` from the shifted
+frame `seekShift d 0 2`, whose state-word reads are `hs` and whose table reads are
+unchanged; join them by run addition, the summary-head shifts adding to
+`groups.length + 2`. The cut and frame split at time `2` into the two contracts. For the
+bound, `records_length` gives at most one record per bit and `groups_length` at least one
+record per group, so the time `groups.length + 3 + L + 3 · records.length`, with `L` the
+records' bit length, is at most `5 L + 3`. -/
 private lemma seekTM_lookup {k n : ℕ} {x : List Bool}
     (groups : List (List (Action k Bool (Fin (n + 1)))))
     (rest : List (Action k Bool (Fin (n + 1))))
@@ -2259,7 +2318,13 @@ private lemma RoundSpan.add {k n : ℕ} {x : List Bool}
 /-- Lift one callee contract through the landed phase-host theorem. The
 endpoint is one silent dispatch after the callee's first selected exit.
 Liveness of every earlier callee state follows from halt absorption and its
-proved live endpoint. No machine trace is re-established here. -/
+proved live endpoint. No machine trace is re-established here.
+
+**Proof sketch.** `phaseHostTM_run` gives the endpoint, one dispatch after `T`, and the
+tagged callee run at every `u ≤ T`. There the callee is live: were it halted at `u`,
+`MultiTapeTM.runFrom_of_halt` would freeze it until `T`, contradicting the live endpoint
+`e`. Its host state is then `⟨key, q⟩`, which differs from both round anchors because `key`
+does, and the window is the hypothesis `window`. -/
 private lemma roundTM_phase {k n : ℕ} {x : List Bool}
     (c : Cfg k Bool (Fin (n + 1)) x) (a : Action k Bool (Fin (n + 1)))
     (key : Key) (hentry : key ≠ .entry) (hhalt : key ≠ .halt)
@@ -2824,7 +2889,16 @@ private lemma roundTM_restore {k n : ℕ} {x : List Bool}
     using combined
 
 /-- Lift the proved physical selector into the full round. The result names
-its exact table cut, retaining both the state-size ledger and first-exit cut. -/
+its exact table cut, retaining both the state-size ledger and first-exit cut.
+
+**Proof sketch.** Apply `seekTM_select` to the canonical frame with both auxiliary heads at
+`0`. Its table decomposition, with the frame's input and mirrored reads rewritten to `c`'s,
+is the claimed cut, and its bound plus the one dispatch gives `5·|tableBitsK tr| + 4`. Lift
+the selector run by `roundTM_phase` at the `lookup` key: the guard is the selector's
+first-exit cut, since `red` redirects only its `done` control, and the window follows
+from its frame (input and mirrored heads fixed) by `roundWindow_frame`. Finally
+`roundData_shift` rewrites the shifted endpoint as the canonical frame at `before.length`
+and `q + 2`. -/
 private lemma roundTM_lookup {k n : ℕ} {x : List Bool}
     (tr : Fin (n + 1) → Option Bool → (Fin k → Option Bool) → Action k Bool (Fin (n + 1)))
     (c : Cfg k Bool (Fin (n + 1)) x) (q : Fin (n + 1)) (pre : List Bool) :
@@ -2974,7 +3048,13 @@ def Rep {k n : ℕ} {x : List Bool}
 
 /-- A related entry configuration is exactly the canonical round frame,
 with its arbitrary physical output prefix retained. This only unpacks the
-seam relation; it makes no assumption about the mirrored source tapes. -/
+seam relation; it makes no assumption about the mirrored source tapes.
+
+**Proof sketch.** Destructure `Rep` into its six fields, and use `c.state = some q` to make
+the state word `unaryFin q`. Compare the configurations field by field: the control is the
+`entry` hypothesis and the input head is `Rep`'s; on the work tapes, split by
+`Fin.addCases` into the mirrored bank and the two auxiliary tapes, each content and head
+is the corresponding field of `Rep`; the output is `d.output` on both sides. -/
 private lemma rep_entry {k n : ℕ} {x : List Bool}
     (tr : Fin (n + 1) → Option Bool → (Fin k → Option Bool) → Action k Bool (Fin (n + 1)))
     (c : Cfg k Bool (Fin (n + 1)) x) (q : Fin (n + 1)) (hq : c.state = some q)
