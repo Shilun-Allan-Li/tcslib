@@ -929,6 +929,23 @@ The route decisions of 2026-10-12 (design §16b) add three work items, numbered 
     consumer must clear the radius tape.
   - Dedup, for the dedup window: `rt_embed_matches` is now a private twin of the public
     `embedEmitCfg_eq`. Its consumers are `rt_exists_cleanDigitBoundTM` and `rt_cellWindow_ready_run`.
+  **Row 18 delivered (2026-10-14, `fill-w1-recordtable-cont5.zip`; Codex `6aef1d2a`, report
+  `audits/wave1-fill-agent-reports/recordtable-6-REPORT.md`): `exists_recordInitTM` is proved**,
+  with its statement unchanged, 18 new privates, and only the standard axioms.
+  - **Maintainer integration checks:** checksums; the patch reproduces the file; one file only;
+    freeze 28/28 public, no statement changed, only row 18's body changed, no existing private
+    changed; no forbidden construct, `sorry` or `axiom` in added lines. It elaborates at the
+    post-#94 tip against `oleans-lh1` with 0 errors and the four paused rows' sorries.
+  - **Duplication ledger:** 5 new in-file pairs, no cross-file pair.
+    - Two are the pre-disclosed `rt_tailState` instance pair.
+    - One is a 113-character composition pair.
+    - **Two are larger:** `rt_position_run` and `rt_tail_run` reproduce 954 and 836 of
+      `rt_moveWord_run`'s 1,606 characters. The worker classifies them as shared framed-contract
+      and R2 bookkeeping, not re-proved moves. They are carried to the epoch's duplication ledger
+      for classification. RecordTable already holds earlier debt (`rt_embed_matches`).
+  - **Integration PR:** branch `lean/rt5-row18`; replay of 51 modules from `oleans-lh1`.
+  - **Promotion candidates** (the worker's): the scratch-template transport, the finite-tail
+    writer, the position component, the two-field cleanup, and `binDigits_one`.
 * **C1-D: the NTIME hierarchy's design** (2026-10-13; `audits/evidence/c1/C1-design.md`, statement
   draft `C1HostsDraft.lean.txt`: 0 errors, 5 sorries, 10 theorems proved). The proposed route:
   - **guess first:** the universal NDTM and the diagonalizer write the whole choice word with a
