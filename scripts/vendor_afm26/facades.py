@@ -17,7 +17,8 @@ def facade(path, heading, intro, children):
         '\n\n## Contents\n\n' + contents + '\n\n' + REF + '-/\n')
 def kids(d): return sorted(f'{d}/{f}' for f in os.listdir(d) if f.endswith('.lean'))
 facade(f'{base}/Util.lean', 'Programs: general facts', 'Lists, sums, digits, indices and counting facts that the language and its routines use.', kids(f'{base}/Util'))
-facade(f'{base}/WordRAM.lean', 'Programs: the word RAM', 'The word RAM of [AFM26]: its nine instructions, runs, and the facts about runs that compiled code needs.', kids(f'{base}/WordRAM'))
+facade(f'{base}/WordRAM.lean', 'Programs: the word RAM', 'The word RAM of [AFM26]: its nine instructions, runs, and the facts about runs that compiled code needs; '
+       'and its extension by input, output, coins and halving, with footprints (`Extended`, not vendored).', kids(f'{base}/WordRAM'))
 def tree(d): return sorted(os.path.join(r, f) for r, _, fs in os.walk(d) for f in fs if f.endswith('.lean'))
 facade(f'{base}/Light.lean', 'Programs: the light language',
        'A small imperative language with procedures and recursion; its program logic (`Ends`, `Meets`) and '

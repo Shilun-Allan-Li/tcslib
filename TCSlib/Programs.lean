@@ -14,6 +14,7 @@ import TCSlib.Programs.Util.List
 import TCSlib.Programs.Util.Odometer
 import TCSlib.Programs.Util.StablePass
 import TCSlib.Programs.WordRAM.Basic
+import TCSlib.Programs.WordRAM.Extended
 import TCSlib.Programs.WordRAM.Steps
 import TCSlib.Programs.Light.Assigns
 import TCSlib.Programs.Light.Calls
@@ -67,6 +68,7 @@ The programming layer (design `machine-library-design.md` §15): the light langu
 * `TCSlib.Programs.Util.Odometer`: Counting in base `b` without division: an odometer
 * `TCSlib.Programs.Util.StablePass`: One stable pass of a radix sort, on lists
 * `TCSlib.Programs.WordRAM.Basic`: The word RAM
+* `TCSlib.Programs.WordRAM.Extended`: The extended word RAM: input, output, coins and halving; footprints and halting
 * `TCSlib.Programs.WordRAM.Steps`: Running the word RAM: words, steps, pieces of code, straight-line code, branches
 * `TCSlib.Programs.Light.Assigns`: A statement changes only the local variables that it assigns
 * `TCSlib.Programs.Light.Calls`: Calls

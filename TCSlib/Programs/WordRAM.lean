@@ -4,16 +4,18 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Seyoon Ragavan
 -/
 import TCSlib.Programs.WordRAM.Basic
+import TCSlib.Programs.WordRAM.Extended
 import TCSlib.Programs.WordRAM.Steps
 
 /-!
 # Programs: the word RAM
 
-The word RAM of [AFM26]: its nine instructions, runs, and the facts about runs that compiled code needs.
+The word RAM of [AFM26]: its nine instructions, runs, and the facts about runs that compiled code needs; and its extension by input, output, coins and halving, with footprints (`Extended`, not vendored).
 
 ## Contents
 
 * `TCSlib.Programs.WordRAM.Basic`: The word RAM
+* `TCSlib.Programs.WordRAM.Extended`: The extended word RAM: input, output, coins and halving; footprints and halting
 * `TCSlib.Programs.WordRAM.Steps`: Running the word RAM: words, steps, pieces of code, straight-line code, branches
 
 ## References

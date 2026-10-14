@@ -34,6 +34,7 @@ import TCSlib.Complexity.ClassP
 import TCSlib.Complexity.Formulas
 import TCSlib.Complexity.FormulaKit
 import TCSlib.Complexity.CookLevin
+import TCSlib.Complexity.RAMSimulation
 import TCSlib.Complexity.ClassNP
 import TCSlib.Complexity.ClassOracle
 import TCSlib.Complexity.Diagonalization
