@@ -47,7 +47,27 @@ extension, PRGs from one-way permutations, GGM pseudorandom functions).
   sub-hybrids then agree on that event. The formal proof splits the cases.
 * The margin box "Lemma 2.2" in §2.3 is a garbled copy of Lemma 2.1's proof.
 
-## Phase A: concrete layer (in progress)
+Found during formalization (each recorded in the relevant docstring):
+
+* §2.2.1: the example `g(x₁‖x₂) = x₁‖x₂` when `x₁ = 0^{n/2}` is *not* one-way for every
+  one-way `f` (counterexample: the `f` of §2.2.2, `invProb_zeroPatch_eq_one`). The general
+  robustness bound needs an extra term or a correction map (`invProb_patch_le`,
+  `invProb_patch_le_of_correction`).
+* §2.2.2: `f∘f` is the constant `0ⁿ‖g(0ⁿ)`, not `0^{2n}`; `B` must output `x₁`. Claim 2.1
+  writes `g(y)` for `h(y)` and `g⁻¹` for `g'⁻¹`; Claim 2.2's middle step is unjustified
+  (its final bound holds). Lemma 2.3 writes `μ_{B,g}` for `μ_{B,f}`.
+* Theorem 2.1: the step `q·θ = μ/2` fails for `q = ⌈2n/α⌉`; repaired with `θ = μ₀/(2q)`.
+* Claim 2.3 applies the `n`-bit `f` to `n − 1` bits. Figure 2.5 includes `L = ∅`, whose
+  XOR is the constant `0`; only nonempty `L` are used, giving `ε³/(16n)` instead of
+  `ε³/(8n)`.
+* Lemma 3.3: the reduction `A(X…, Z, Y…)` contradicts the hybrids, which put the `Y`s
+  first.
+* Theorem 3.3 (GGM): besides the repeated-prefix gap, the outer adversary answers only the
+  `(j*+1)`-th query with the challenge, so later queries with the same prefix are
+  inconsistent with it; the formal `B` answers every query with that prefix from the
+  challenge, after which no case split is needed.
+
+## Phase A: concrete layer (complete)
 
 | Workstream | Files | Content |
 | --- | --- | --- |
@@ -56,6 +76,25 @@ extension, PRGs from one-way permutations, GGM pseudorandom functions).
 | goldreich-levin | `Cryptography/HardcoreBit/` | pairwise independence and Chebyshev (Theorem 2.4); Claim 2.3; Theorem 2.3 in the three cases |
 | prg | `Cryptography/Pseudorandom/{Indistinguishability,Generators}.lean` | sunglass and multicopy (Lemmas 3.2, 3.3); PRG extension (Theorem 3.1); PRG from a one-way permutation (Theorem 3.2) |
 | ggm | `Cryptography/Pseudorandom/Functions/` | oracle query trees, random functions, Definitions 3.6–3.9, GGM (Theorem 3.3) |
+
+### Completion record
+
+Completed 2026-10-14 by five parallel workstreams (`garg/{foundations,oneway,gl,prg,ggm}`),
+merged into `cryptography/garg-ch1-3`. Verified with shell `lake build` (user-approved
+deviation from `AGENTS.md`, as for the earlier cryptography work): the full `TCSlib`
+builds with no errors; no `sorry` in `Cryptography/{Foundations,OneWayFunctions,
+HardcoreBit,Pseudorandom}`; `style_lint.py --area` reports 0 findings in all 23 files and
+the four facades. `audits/garg-ch1-3/Checks.lean`: all 41 headline theorems depend only on
+`propext`, `Classical.choice` and `Quot.sound`. One merge fix: the PRG and GGM workstreams
+both defined `acceptProb_comp_equiv`; it now lives once in `Foundations/Experiments.lean`.
+
+Headlines: `yao_amplification(_exp)` (Thm 2.1); `invProb_perfectInverter`,
+`invProb_majorityInverter`, `invProb_guessInverter(_cubic)` (Thm 2.3, cases i–iii);
+`chebyshev_pairwise_ident` (Thm 2.4); `distAdv_le_statDist` (Lemma 3.1);
+`distAdv_sunglassRed`, `exists_multicopyRed_ge` (Lemmas 3.2–3.3); `exists_prgExtRed_ge`
+(Thm 3.1); `exists_owpPredictor` (Thm 3.2); `QueryTree.uprob_evalLazy` (lazy sampling);
+`ggm_prfAdv_le`, `exists_ggm_dist` (Thm 3.3). Each reduction's docstring records what the
+asymptotic layer must charge. The external audit gate has not been conducted.
 
 ## Phase B: asymptotic layer (blocked on complexity work)
 

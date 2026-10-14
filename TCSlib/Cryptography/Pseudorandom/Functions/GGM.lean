@@ -118,7 +118,8 @@ Theorem 3.3, "`H_0` … identical to a pseudorandom function"]. -/
 theorem hybridProb_zero [Fintype S] [Fintype ρ] (G : S → S × S)
     (A : OracleAdversary ρ (Fin n → Bool) S) :
     hybridProb G A 0 = acceptProb (ggm G) (oracleDist A) := by
-  have h : hybridOracle G 0 ∘ (Equiv.funUnique (Fin 0 → Bool) S).symm = ggm (n := n) G := rfl
+  have h : (fun s => hybridOracle G 0 ((Equiv.funUnique (Fin 0 → Bool) S).symm s)) =
+      ggm (n := n) G := rfl
   rw [hybridProb, ← h, acceptProb_comp_equiv]
 
 /-- The hybrid `H_n` is a uniform random function. [Gar26, proof of Theorem 3.3,

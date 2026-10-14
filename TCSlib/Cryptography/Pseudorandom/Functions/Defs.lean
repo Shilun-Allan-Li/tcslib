@@ -40,8 +40,6 @@ belong to the asymptotic layer; here the only resource tracked is the query boun
 ## Main results
 
 * `prfAdv_eq`: the advantage written out as a difference of two probabilities.
-* `acceptProb_comp_equiv`: reparametrizing a sampler's seed by a bijection does not change
-  acceptance probabilities.
 * `prfAdv_nonneg`.
 
 ## References
@@ -82,13 +80,6 @@ theorem prfAdv_eq [Fintype K] [Fintype I] [DecidableEq I] [Fintype O] [Fintype �
 theorem prfAdv_nonneg [Fintype K] [Fintype I] [DecidableEq I] [Fintype O] [Fintype ρ]
     (F : K → I → O) (A : OracleAdversary ρ I O) : 0 ≤ prfAdv F A :=
   abs_nonneg _
-
-/-- Reparametrizing the seed of a sampler by a bijection does not change the probability
-that a distinguisher accepts: if `e : σ' ≃ σ` then `X ∘ e` and `X` define the same
-distribution. -/
-theorem acceptProb_comp_equiv [Fintype σ] [Fintype σ'] [Fintype ρ] (e : σ' ≃ σ)
-    (X : σ → γ) (D : γ → ρ → Bool) : acceptProb (X ∘ e) D = acceptProb X D :=
-  uprob_comp_equiv (e.prodCongr (Equiv.refl ρ)) (fun z : σ × ρ => D (X z.1) z.2 = true)
 
 /-- Two samplers producing the same sample from every seed have the same acceptance
 probability. -/

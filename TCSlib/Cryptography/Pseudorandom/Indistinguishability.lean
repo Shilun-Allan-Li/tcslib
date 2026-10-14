@@ -38,7 +38,7 @@ uniformly at random, which turns the hybrid argument into a uniform reduction.
 
 ## Main results
 
-* `uprob_eq_of_equiv`, `acceptProb_comp_equiv`, `acceptProb_fst`, `acceptProb_snd`,
+* `uprob_eq_of_equiv`, `acceptProb_fst`, `acceptProb_snd`,
   `acceptProb_bind`, `acceptProb_update`: reseeding.
 * `distAdv_mixDist_eq`: the averaged hybrid argument.
 * `distAdv_sunglassRed`: [Gar26, Lemma 3.2], with equal advantage.
@@ -67,12 +67,6 @@ theorem uprob_eq_of_equiv {α β : Type*} [Fintype α] [Fintype β] (e : α ≃ 
   congr 1
   funext a
   exact propext (h a)
-
-/-- Relabelling the seed space of a sampler by a bijection does not change the probability
-that a distinguisher accepts: a bijective image of a uniform seed is uniform. -/
-theorem acceptProb_comp_equiv (e : σ ≃ τ) (X : τ → γ) (D : γ → ρ → Bool) :
-    acceptProb (fun s => X (e s)) D = acceptProb X D :=
-  uprob_eq_of_equiv (e.prodCongr (Equiv.refl ρ)) fun _ => Iff.rfl
 
 /-- A seed coordinate that the sampler ignores does not change acceptance probabilities:
 sampling `X` from the first coordinate of a uniform pair is sampling `X`. -/

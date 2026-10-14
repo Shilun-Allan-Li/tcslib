@@ -39,7 +39,10 @@ import TCSlib.ComputationalModels
 import TCSlib.Cryptography.SchnorrProtocol
 import TCSlib.Cryptography.SecretSharing
 import TCSlib.Cryptography.MPC
-import TCSlib.Cryptography.Pseudorandom.Functions
+import TCSlib.Cryptography.Foundations
+import TCSlib.Cryptography.OneWayFunctions
+import TCSlib.Cryptography.HardcoreBit
+import TCSlib.Cryptography.Pseudorandom
 
 import TCSlib.InformationTheory
 

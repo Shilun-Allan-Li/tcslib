@@ -35,6 +35,7 @@ ensemble at a fixed parameter.
 
 ## Main results
 
+* `acceptProb_comp_equiv`: relabelling the seeds by a bijection preserves acceptance.
 * `abs_sum_sub_le_statDist`: a test set distinguishes two distributions by at most
   their statistical distance.
 * `distAdv_le_statDist`: the distinguishing advantage of any distinguisher is at most
@@ -76,6 +77,12 @@ noncomputable def acceptProb (X : σ → γ) (D : γ → ρ → Bool) : ℝ :=
 `Δ_A(n)`. -/
 noncomputable def distAdv (X : σ → γ) (Y : τ → γ) (D : γ → ρ → Bool) : ℝ :=
   |acceptProb X D - acceptProb Y D|
+
+/-- Relabelling the seed space of a sampler by a bijection does not change the probability
+that a distinguisher accepts: a bijective image of a uniform seed is uniform. -/
+theorem acceptProb_comp_equiv (e : σ ≃ τ) (X : τ → γ) (D : γ → ρ → Bool) :
+    acceptProb (fun s => X (e s)) D = acceptProb X D :=
+  uprob_comp_equiv (e.prodCongr (Equiv.refl ρ)) (fun z : τ × ρ => D (X z.1) z.2 = true)
 
 /-- The probability that a uniform seed `s` has `X s` in an event `q` is the mass of `q` under
 the pushforward of the uniform distribution along `X`. Technical glue between `uprob` and
