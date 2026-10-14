@@ -626,6 +626,17 @@ promotes the five families Hydroxyi named; the rest is dedup debt for the user's
 Also found: the copy-text screen labels files by basename and drops cross-file pairs between
 same-named files (17 among the new files alone). Whether earlier screens with colliding
 basenames in their populations lost pairs is to be checked.
+**Gate round 1 (2026-10-14): 0 blockers, 5 majors, 9 minors; open**
+(`audits/arm-extensions-fill-findings.md`). No frozen statement changed and no interface is false.
+The majors: the disclosed debt awaits acknowledgement, and D6 (seven `b4m*` twins) and D7 (the
+`InputAccess` adaptations) are outside the payback PR; twelve substantive library adaptations
+were undisclosed; the internal families (103 pairs) and the same-file overlaps (130 pairs, dropped
+by the ledger script) need classifying; and the received machinery is not in the §14 registry
+(hosts come first). **User (2026-10-14):** the complete ledger is recounted and classified first,
+then acknowledged once, in round 2; the deduplication is the user's own window, coordinated with
+Hydroxyi; the received machinery is registered in §14, its first uses an accepted exception, with
+a contract gate before any further consumer; the maintainer makes the minor fixes in the new files
+in one PR, which the user clears with Hydroxyi.
 
 ## 2. Campaign work queued or on hold
 
