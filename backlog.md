@@ -903,6 +903,15 @@ The route decisions of 2026-10-12 (design §16b) add three work items, numbered 
   five gated contracts, sorried for the C1 fills. `NTimeHierarchy.lean`'s "quadratic" docstrings
   are fixed. Next: the guess-then-run assembly gate and the H1 hosted-clock harvest, then the
   fill briefs.
+  **C1-A assembly statement gate (2026-10-14):** `audits/c1-assembly-statements-pack.md`
+  (dispatch folder 19, built at `e831b5b0`). It covers the host `Turing.guessRunTM` (six phases
+  over `phaseHostND`) and eight theorems, appended to `Build/NDHost.lean`: the handoff, liveness,
+  the whole branch, the halting setup, all-branch halting, exact-budget acceptance, the core's
+  clean precondition and the silent composite. The unit (896 lines) has 0 errors and no new
+  `sorry`; six theorems are proved modulo the gated `ndWriterTM_run_block`. Consumer probes derive
+  UN's frozen statement and D's `NTIME` shape. Four open questions (the rewind's `Catalog` import,
+  UN's setup as a fill obligation, an `embedSilentCfg_cap` export, the verdict leaf inline).
+  Independent of #92 and #93; if #92 lands first, the landing re-runs the cut check.
 * **RD-5: §13d G2–G4 after MIG-0b** (§16b item 5). The statements of design §13d's G2–G4, stated as
   `Contract`s, then their gate and fills, then the Hennie–Stearns assembly. The open zone rows
   `exists_zoneShiftInTM` and `exists_zoneShiftOutTM` retire through the G3/G4 gate.
