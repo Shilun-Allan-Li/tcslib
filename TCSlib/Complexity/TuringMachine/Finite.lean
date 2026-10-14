@@ -69,6 +69,11 @@ sites.
 * `Turing.MultiTapeTM.exists_first_halt` — a run halted by time `t` halts first at some
   `u ≤ t`, live before `u` and already in its time-`t` configuration (the first-halt
   argument, public for the oracle query capture; added 2026-10-11, B1).
+* `Turing.MultiTapeTM.spaceUsedByTape_le_card_Icc` — a head confined to an integer interval
+  visits at most its cardinality (moved from `Build/Catalog` at MIG-0b's layering split, for
+  the contract core, 2026-10-13).
+* `Turing.MultiTapeTM.workTapePos_runFrom_mem_Icc` — after `u` steps every work head lies
+  within `u` cells of its start (MIG-0b, 2026-10-13).
 
 ## References
 
@@ -350,5 +355,56 @@ theorem Computes.exists_computesInTime_iff {M : FinTM Symbol}
     exact ⟨t, ht⟩
 
 end FinTM
+
+end Turing
+
+namespace Turing
+
+/-- A head confined to an integer interval visits at most its cardinality.
+
+(Moved from `Build/Zone.lean` for B4, 2026-10-12.)
+
+**Proof sketch.** The visited set is a finite image contained in the
+interval by hypothesis; `Finset.card_le_card` and `Int.card_Icc` finish. -/
+theorem MultiTapeTM.spaceUsedByTape_le_card_Icc {k : ℕ} {Symbol State : Type*}
+    {input : List Symbol} (tm : MultiTapeTM k Symbol State)
+    (d : Cfg k Symbol State input) (t : ℕ) (i : Fin k) (lo hi : ℤ)
+    (h : ∀ u ≤ t, (tm.runFrom d u).workTapePos i ∈ Finset.Icc lo hi) :
+    tm.spaceUsedByTape d t i ≤ (hi + 1 - lo).toNat := by
+  unfold MultiTapeTM.spaceUsedByTape
+  calc
+    _ ≤ (Finset.Icc lo hi).card := Finset.card_le_card (by
+      intro p hp
+      obtain ⟨u, hu, rfl⟩ := Finset.mem_image.mp hp
+      exact h u (by simpa only [Finset.mem_range, Nat.lt_succ_iff] using hu))
+    _ = _ := Int.card_Icc lo hi
+
+end Turing
+
+namespace Turing
+
+/-- **The time-derived head envelope** (MIG-0b): after `u` steps from `cfg`, every work head
+lies within `u` cells of its start. Every row with a time bound therefore has an interval
+envelope, even when it states none (the install and emit calls; the find round). It is the
+interval form of `Build/Catalog`'s private `f2_head_steps`, which retires with MIG-1 (backlog
+F6-1(g)), and of the run head bound that the H2 promotion exports
+(`CodeSimulator.h1Run_headBound`, backlog F7-1(a)); stated here over any alphabet and state
+type, like the raw layer it extends.
+
+**Proof sketch.** Induction on `u`: each step moves a head by at most one cell
+(`Turing.MultiTapeTM.workTapePos_step_le`). -/
+theorem MultiTapeTM.workTapePos_runFrom_mem_Icc {k : ℕ} {Symbol State : Type*}
+    {input : List Symbol} (tm : MultiTapeTM k Symbol State) (cfg : Cfg k Symbol State input)
+    (u : ℕ) (j : Fin k) :
+    (tm.runFrom cfg u).workTapePos j ∈
+      Finset.Icc (cfg.workTapePos j - u) (cfg.workTapePos j + u) := by
+  induction u with
+  | zero => simp
+  | succ u ih =>
+    have hs := abs_le.mp (tm.workTapePos_step_le (tm.runFrom cfg u) j)
+    rw [Finset.mem_Icc] at ih ⊢
+    rw [MultiTapeTM.runFrom_succ_eq_step']
+    push_cast
+    constructor <;> omega
 
 end Turing
