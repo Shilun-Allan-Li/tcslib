@@ -1,0 +1,104 @@
+/-! ════════════════════════════════════════════════════════════════════════════════════════════
+Replay probe (evidence; not landing material). The harvested Part A verbatim, in its own import
+closure plus `TuringMachine/ChoiceReplay` (which `R`'s module imports), followed by the loop step
+of the interpreter core `Turing.exists_ndInterpreterCore` at the replay machine of a two-tape
+NDTM: the verdict and both time clauses in the form of `R`'s statement, on the branch along
+`s.take t` of the NDTM on the full input `x`, although the loop runs on the window `x.take t`.
+The setup (header parse, table installation, window copy, the seam frame) is taken as given, as
+the hypotheses on `d`. -/
+
+namespace Turing
+
+namespace StepBlock
+
+/-- The counter's value for the binary word of `t` (the content of `CodeSimulator`'s private
+`canonBits_value`, which `R`'s module cannot see; re-proved here for the probe only). -/
+private lemma probe_bits_value (t : ℕ) : Nat.ofDigits 2 (t.bits.map Bool.toNat) = t := by
+  have value (w : List Bool) : w.foldr Nat.bit 0 = Nat.ofDigits 2 (w.map Bool.toNat) := by
+    rw [Nat.ofDigits_eq_foldr, List.foldr_map]
+    have step : (fun (bit : Bool) (tail : ℕ) => (bit.toNat : ℕ) + 2 * tail) = Nat.bit := by
+      funext bit tail
+      cases bit <;> simp [Nat.bit, Nat.add_comm]
+    simpa only [Nat.cast_id] using
+      congrArg (fun f : Bool → ℕ → ℕ => w.foldr f 0) step.symm
+  rw [← value]
+  exact codeBitsNat_bits t
+
+/-- **The loop step of `R` at the replay machine** (consumer probe). For a two-work-tape NDTM `N`
+with `n + 1` states there is one constant `C` such that for every input `x`, deadline `t` and
+stream `s` with `t ≤ |s|`, and every step-block configuration `d` at the entry representing the
+replay machine's initial configuration on the window `x.take t` with `s` on its choice tape
+from cell `0`, the hosted loop over `bits t` (native input `z`, head at `p`) reaches a live
+state `(q, b')` at some time `T`, at no exit earlier, and, writing `e` for `N`'s branch on `x`
+along `s.take t`:
+* (the verdict) `q = escape` with the summary cell reading `some true` exactly when `e` has
+  halted with output exactly `[true]`, `R`'s acceptance condition;
+* `T ≤ C·(t + 1)`;
+* (`R`'s prefix clause) `T ≤ C·(t' + |x| + |bits t| + 1)` whenever the branch on `x` along
+  `s.take t'` has halted, for `t' ≤ t`. -/
+example {n : ℕ} (N : NDTM 2 Bool (Fin (n + 1))) :
+    ∃ C : ℕ, ∀ {z : List Bool} (x : List Bool) (t : ℕ) (s : List Bool), t ≤ s.length →
+      ∀ d : Cfg (2 + 1 + 2) Bool (Σ key, Ph (2 + 1) key) (x.take t),
+      d.state = some (exit (2 + 1) true) →
+      Rep N.replayTM.tr (NDTM.withChoiceTape (N.initCfg (x.take t)) (FinTM.bufferTape s) 0) d →
+      ∀ p : Fin (z.length + 2),
+      ∃ T q b',
+        ((hostedLoopTM (2 + 1)).runFrom (vhostCfg (counterLoopCfg (some (.dec .run)) d
+          (FinTM.bufferTape t.bits) 0) true p []) T).state = some (q, b') ∧
+        (∀ u < T, ∀ tag,
+          ((hostedLoopTM (2 + 1)).runFrom (vhostCfg (counterLoopCfg (some (.dec .run)) d
+            (FinTM.bufferTape t.bits) 0) true p []) u).state ≠ some (.done, tag) ∧
+          ((hostedLoopTM (2 + 1)).runFrom (vhostCfg (counterLoopCfg (some (.dec .run)) d
+            (FinTM.bufferTape t.bits) 0) true p []) u).state ≠ some (.escape, tag)) ∧
+        ((q = .escape ∧
+            ((hostedLoopTM (2 + 1)).runFrom (vhostCfg (counterLoopCfg (some (.dec .run)) d
+              (FinTM.bufferTape t.bits) 0) true p []) T).workTapeSymbols
+                (vhostBank (summaryTape (2 + 1)).castSucc) = some true) ↔
+          ((N.runWith (s.take t) (N.initCfg x)).state = none ∧
+            (N.runWith (s.take t) (N.initCfg x)).output = [true])) ∧
+        T ≤ C * (t + 1) ∧
+        ∀ t' ≤ t, (N.runWith (s.take t') (N.initCfg x)).state = none →
+          T ≤ C * (t' + x.length + t.bits.length + 1) := by
+  refine ⟨50 * ((tableBitsK N.replayTM.tr).length + 1) + 6, ?_⟩
+  intro z x t s hts d entry rel p
+  let c := NDTM.withChoiceTape (N.initCfg (x.take t)) (FinTM.bufferTape s) 0
+  have live : c.state ≠ none := by simp [c, NDTM.withChoiceTape, NDTM.initCfg, Cfg.init]
+  have hb : FinTM.VirtualTag c.inputPos true := by
+    simp [c, NDTM.withChoiceTape, NDTM.initCfg, Cfg.init, FinTM.VirtualTag]
+  -- The replay lemma and input locality identify the simulated run with `N`'s branch on `x`.
+  have branch (t' : ℕ) (ht' : t' ≤ t) :
+      (N.replayTM.runFrom c t').state = (N.runWith (s.take t') (N.initCfg x)).state ∧
+        (N.replayTM.runFrom c t').output = (N.runWith (s.take t') (N.initCfg x)).output := by
+    obtain ⟨_, -, -, replay⟩ := NDTM.replayTM_runFrom N (N.initCfg (x.take t)) s t' (by omega)
+    obtain ⟨state, -, -, -, output⟩ := NDTM.runWith_initCfg_take N x t (s.take t')
+      (by simp; omega)
+    rw [replay]
+    exact ⟨state, output⟩
+  obtain ⟨T, e, ct', b', bound, early, related, -, -, -, run, cut⟩ :=
+    hostedLoopTM_run N.replayTM c live d entry rel t.bits (FinTM.bufferTape t.bits) 0
+      (by intro p _ _; simp) t (probe_bits_value t) true hb p []
+  obtain ⟨state, -, -, cell⟩ := hostedLoop_read N.replayTM.tr (N.replayTM.runFrom c t) e related
+    (if (N.replayTM.runFrom c t).state.isSome then .done else .escape) ct' 0 b' p []
+  have width := length_bits_le_self t
+  refine ⟨T, _, b', by rw [run]; exact state, cut, ?_, ?_, ?_⟩
+  · rw [run, cell, outputSummary_true, ← (branch t le_rfl).1, ← (branch t le_rfl).2]
+    cases h : (N.replayTM.runFrom c t).state <;> simp
+  · generalize 50 * ((tableBitsK N.replayTM.tr).length + 1) = B at bound ⊢
+    have expand : (B + 6) * (t + 1) = t * B + 6 * t + B + 6 := by
+      rw [Nat.mul_succ, Nat.add_mul, Nat.mul_comm B t]
+      omega
+    omega
+  · intro t' ht' halt'
+    have clause := early t' ht' (by rw [(branch t' ht').1]; exact halt')
+    generalize 50 * ((tableBitsK N.replayTM.tr).length + 1) = B at clause ⊢
+    have expand : (B + 6) * (t' + x.length + t.bits.length + 1) =
+        t' * B + B * x.length + B * t.bits.length + 6 * t' + 6 * x.length +
+          6 * t.bits.length + B + 6 := by
+      rw [Nat.mul_succ, Nat.add_mul, Nat.mul_add, Nat.mul_add, Nat.mul_add,
+        Nat.mul_comm B t']
+      omega
+    omega
+
+end StepBlock
+
+end Turing

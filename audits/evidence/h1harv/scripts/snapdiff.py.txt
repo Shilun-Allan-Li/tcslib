@@ -1,0 +1,56 @@
+"""Which oleans differ between two snapshots, against the modules a commit range changed.
+
+Usage: python3 -I snapdiff.py <old oleans> <new oleans> <import graph json> <changed .lean list>
+
+Lists the TCSlib oleans that differ (or exist only in the new snapshot). Exit 0 iff every changed
+module's olean differs (or is new), every differing olean lies in the changed modules' reverse
+import closure in the graph, and no olean of the old snapshot is missing. Oleans of the closure
+that are byte-identical are counted: a deterministic rebuild reproduces a module's olean whenever
+its own elaborated content does not change.
+"""
+import filecmp
+import json
+import os
+import sys
+
+old, new, graph, changed = sys.argv[1:5]
+g = json.load(open(graph))
+
+
+def oleans(root):
+    res = {}
+    for d, _, fs in os.walk(os.path.join(root, "TCSlib")):
+        for f in fs:
+            if f.endswith(".olean"):
+                p = os.path.join(d, f)
+                res[os.path.relpath(p, root)[:-6]] = p
+    return res
+
+
+a, b = oleans(old), oleans(new)
+differ = sorted(m for m in b if m not in a or not filecmp.cmp(a[m], b[m], shallow=False))
+gone = sorted(m for m in a if m not in b)
+ch = {l.strip()[:-5] for l in open(changed, encoding="utf-8") if l.strip().endswith(".lean")}
+rev = {m: set() for m in g}
+for m, ds in g.items():
+    for d in ds:
+        if d in rev:
+            rev[d].add(m)
+need, todo = set(), [m for m in ch if m in g]
+while todo:
+    m = todo.pop()
+    if m in need:
+        continue
+    need.add(m)
+    todo += rev.get(m, [])
+print(f"oleans: old {len(a)}, new {len(b)}; differing or new in the new snapshot: {len(differ)}; "
+      f"only in the old: {len(gone)}")
+print(f"changed modules: {len(ch)}; their reverse closure in the graph: {len(need)}")
+stray = sorted(set(differ) - need)
+unchanged = sorted(ch - set(differ))
+down = sorted(set(differ) - ch)
+print("changed modules whose olean does not differ:", unchanged)
+print("differing oleans outside the closure:", stray)
+print(f"differing downstream oleans ({len(down)}):", down)
+print(f"closure oleans byte-identical to the old snapshot: {len(need - set(differ))}")
+sys.exit(0 if not unchanged and not stray and not gone else 1)

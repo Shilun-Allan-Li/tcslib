@@ -1,0 +1,385 @@
+#!/usr/bin/env bash
+# Re-run every check of the H1 hosted-clock harvest statement gate and write its logs.
+# Base: the campaign tip REF (default e831b5b0), exported read-only into <OUT>/base/tip by
+# `git archive`; olean snapshot oleans-lm0b (post-MIG-0b, content-checked in section 0); the
+# packages (Mathlib, ...) of wt-h1harv, whose lake-manifest and toolchain equal REF's (checked).
+# Read-only on every checkout: `lean` only through tools/leanelab.sh (no -o, no olean written);
+# Python only as `python3 -I`; git only archive, show, rev-parse, hash-object (no -w), diff,
+# merge-base. Fails closed: every check states its expected outcome; the last line counts the
+# failures, and the exit status is nonzero if any check failed.
+# Usage: bash runall.sh <S> [REF]
+set -u
+S="$1"; REF_IN="${2:-e831b5b0}"
+R=/Users/seyoonr/phd_experiments/tcslib          # the repository, read only
+WT="$S/wt-h1harv"; OL="$S/oleans-lm0b"; O="$S/gate-h1harv"; SC="$O/scripts"; LG="$O/logs"
+REF=$(git -C "$R" rev-parse "$REF_IN"); B6=$(git -C "$R" rev-parse lean/b6-hosts)
+ARM=$(git -C "$R" rev-parse lean/arm-minor-fixes)
+SRC="$O/base/tip"; TIP="$SRC/TCSlib/Complexity/TuringMachine/CodeSimulator.lean"
+LCS="$O/landed/TCSlib/Complexity/TuringMachine/CodeSimulator.lean"
+LNEW="$O/landed/TCSlib/Complexity/TuringMachine/Build/StepBlockLoop.lean"
+CHECKS=0; FAILS=0
+el() { bash "$S/tools/leanelab.sh" "$WT" "$OL" "$1" 2>&1; }
+elold() { bash "$S/tools/leanelab.sh" "$WT" "$S/oleans-lc1" "$1" 2>&1; }
+san() { sed "s|$O/|<OUT>/|g; s|$S/|<S>/|g; s|$R/|<REPO>/|g"; }
+counts() { local e w s
+  e=$(grep -c ': error' <<<"$1"); w=$(grep -c ': warning' <<<"$1")
+  s=$(grep -c "declaration uses 'sorry'" <<<"$1"); echo "$e $w $s"; }
+# expect <label> <output> <exit> <errors> <sorry warnings> <other warnings>
+expect() {
+  local label="$1" out="$2" ex="$3" we="$4" ws="$5" wo="$6" e w s v=PASS
+  read -r e w s <<<"$(counts "$out")"
+  CHECKS=$((CHECKS + 1))
+  if [ "$e" != "$we" ] || [ "$s" != "$ws" ] || [ "$((w - s))" != "$wo" ]; then v=FAIL; fi
+  if [ "$we" = 0 ] && [ "$ex" != 0 ]; then v=FAIL; fi
+  if [ "$we" != 0 ] && [ "$ex" = 0 ]; then v=FAIL; fi
+  [ $v = FAIL ] && FAILS=$((FAILS + 1))
+  echo "  [$v] $label: exit $ex | errors $e (expected $we) | \`declaration uses 'sorry'\`" \
+       "$s (expected $ws) | other warnings $((w - s)) (expected $wo)"
+}
+check() { local label="$1"; shift; CHECKS=$((CHECKS + 1))
+  if "$@"; then echo "  [PASS] $label"; else echo "  [FAIL] $label"; FAILS=$((FAILS + 1)); fi; }
+
+# ---------------------------------------------------------------- bases and generation
+rm -rf "$O/base/tip" "$O/base/b6hosts" "$O/cut" "$O/landed" "$O/overlay" "$O/probes" \
+  "$O/work/lintroot"
+mkdir -p "$LG" "$O/work" "$O/probes" "$O/overlay" "$O/base/tip" "$O/base/b6hosts" \
+  "$O/landed/TCSlib/Complexity/TuringMachine/Build"
+git -C "$R" archive --format=tar "$REF" TCSlib lake-manifest.json lean-toolchain | tar -x -C "$O/base/tip"
+git -C "$R" archive --format=tar "$B6" TCSlib | tar -x -C "$O/base/b6hosts"
+git -C "$R" show "$REF:audits/evidence/mig1/gate/MIG1Statements.lean.txt" > "$O/base/MIG1Statements.lean.txt"
+python3 -I "$SC/mkoverlay.py" "$TIP" "$O/H1Harvest.lean" "$SC/overlay_tail.lean" \
+  "$O/overlay/H1HarvestOverlay.lean" "$SC/consumer_tail.lean" "$O/probes/ConsumerProbe.lean" \
+  > "$O/work/gen-overlay.txt"
+python3 -I "$SC/mkstandalone.py" "$O/H1Harvest.lean" "$O/probes/ReplayProbe.lean" \
+  --extra-import TCSlib.Complexity.TuringMachine.ChoiceReplay --tail "$SC/replay_tail.lean" \
+  > "$O/work/gen-replay.txt"
+python3 -I "$SC/mkstandalone.py" "$O/H1Harvest.lean" "$LNEW" > "$O/work/gen-landed.txt"
+python3 -I "$SC/mkposth.py" "$TIP" "$O/H1Harvest.lean" "$LCS" \
+  "$O/probes/PostHarvest-CodeSimulator.lean" > "$O/work/gen-posth.txt"
+for n in neg1 neg2 neg3; do
+  python3 -I "$SC/mkstandalone.py" "$O/H1Harvest.lean" "$O/work/$n.lean" \
+    --tail "$SC/neg/${n}_tail.lean" > /dev/null
+done
+diff -u "$TIP" "$LCS" | sed "s|$SRC/|a/|; s|$O/landed/|b/|" > "$O/work/PostHarvest-CodeSimulator.diff"
+mkdir -p "$O/work/snap"
+cp "$TIP" "$O/work/snap/CodeSimulator_tip.lean"
+cp "$SRC/TCSlib/Complexity/TuringMachine/Build/StepBlock.lean" "$O/work/snap/StepBlock_tip.lean"
+git -C "$R" show 2c3c975a:TCSlib/Complexity/TuringMachine/CodeSimulator.lean \
+  > "$O/work/snap/CodeSimulator_2c3c975a.lean"
+python3 -I "$S/tools/imports.py" "$SRC" "$O/work/importgraph.json" > /dev/null
+python3 -I "$S/tools/imports.py" "$O/base/b6hosts" "$O/work/importgraph-b6.json" > /dev/null
+
+HDR="Tool: \`bash <S>/tools/leanelab.sh <S>/wt-h1harv <S>/oleans-lm0b <file>\`, which runs, verbatim:
+\`\`\`
+$(cat "$S/tools/leanelab.sh")
+\`\`\`
+(direct \`lean\`, no \`-o\`, no olean written; \`wt-h1harv\` supplies only the packages and the
+working directory, \`lean\` reads no TCSlib source but the file it is given). Base: the campaign
+tip $REF, exported read-only to <OUT>/base/tip by \`git archive\`. Snapshot: \`oleans-lm0b\`
+(post-MIG-0b; §0). Toolchain: \`$(cat "$SRC/lean-toolchain")\`. Pending PRs read as text only:
+#92 \`lean/b6-hosts\` $B6, #93 \`lean/arm-minor-fixes\` $ARM. <OUT> is the gate's output
+directory, <S> the scratchpad, <REPO> the repository. Run: $(date -u '+%Y-%m-%d %H:%M UTC')."
+
+# ---------------------------------------------------------------- cut check
+{
+echo "# H1 harvest statement gate: cut check and the landed module"; echo; echo "$HDR"; echo
+echo "\`python3 -I <OUT>/scripts/cutcheck.py <OUT>/H1Harvest.lean <OUT>/base/tip <OUT>/cut\` (the C1"
+echo "gate's script, verbatim) writes the part's import closure and body; it is elaborated on its"
+echo "own. The landed module (\`<OUT>/scripts/mkstandalone.py\`, no extras) is the same text up to"
+echo "blank lines and is elaborated standalone (its imports exist in the snapshot)."
+echo '```'
+python3 -I "$SC/cutcheck.py" "$O/H1Harvest.lean" "$SRC" "$O/cut" | san
+echo '```'
+for f in "$O"/cut/*.check.lean "$LNEW"; do out=$(el "$f"); ex=$?
+  expect "$(basename "$f") ($(wc -l < "$f" | tr -d ' ') lines)" "$out" "$ex" 0 0 0
+done
+check "cut file == landed module up to blank lines" python3 -I - "$O"/cut/*.check.lean "$LNEW" <<'PY'
+import sys
+a, b = (["".join(l.split()) for l in open(p, encoding="utf-8") if l.strip()] for p in sys.argv[1:])
+sys.exit(0 if a == b else 1)
+PY
+} > "$LG/h1-harvest-statements-cutcheck.log"
+
+# ---------------------------------------------------------------- freeze, move map, references
+{
+echo "# H1 harvest statement gate: freeze, move map and references"; echo; echo "$HDR"; echo
+echo "## 1. Freeze of \`CodeSimulator.lean\` (the tip -> its landing form, \`decls.py freeze\`)"; echo
+echo "Expected: exactly the eight harvested private declarations removed, nothing added, no"
+echo "statement or visibility changed, code changed only in \`h1HostedVerdictTM\` (the rename) and"
+echo "\`h1HostedVerdict_effect\` (its proof), docstrings changed only in \`h1HostedVerdictTM\` and"
+echo "\`exists_uniformSimulator\`, and outside declarations only the import and the status bullet."
+echo '```'
+python3 -I "$SC/decls.py" freeze "$TIP" "$LCS" | san; r=${PIPESTATUS[0]}
+echo '```'
+check "freeze (decls.py exit 0)" test "$r" = 0
+echo; echo "## 2. Move map (the tip's private H1 declarations -> the unit, \`decls.py movemap\`)"; echo
+echo '```'
+python3 -I "$SC/decls.py" movemap "$TIP" "$O/H1Harvest.lean" | san; r=${PIPESTATUS[0]}
+echo '```'
+check "move map (defs' bodies identical after renaming; instance checks)" test "$r" = 0
+echo; echo "## 3. References (\`decls.py refs\`, other files: the tip's TCSlib tree)"; echo
+echo '```'
+python3 -I "$SC/decls.py" refs "$LCS" "$O/H1Harvest.lean" "$SRC" | san; r=${PIPESTATUS[0]}
+echo '```'
+check "references" test "$r" = 0
+D="$O/work/PostHarvest-CodeSimulator.diff"
+echo; echo "## 4. The landing diff of \`CodeSimulator.lean\` (\`<OUT>/work/PostHarvest-CodeSimulator.diff\`)"
+echo; echo "$(grep -c '^-[^-]' "$D") lines removed, $(grep -c '^+[^+]' "$D") added; SHA-256 $(shasum -a 256 "$D" | cut -d' ' -f1)."
+echo "The deleted \`h1Clock_orbit\` carries MIG-0b's \`roundOrbit\` token (tip line 2892):"
+echo '```'; grep -n 'roundOrbit' "$D" | san; echo '```'
+} > "$LG/h1-harvest-statements-freeze.log"
+
+# ---------------------------------------------------------------- names
+{
+echo "# H1 harvest statement gate: name screen"; echo; echo "$HDR"; echo
+echo "Full names of the unit's ten declarations against every declaration (privates included) of"
+echo "the tip's TCSlib tree and of PR #92's (\`lean/b6-hosts\`, the open B6 hosts landing), against"
+echo "MIG-1's statement unit (closed at round 2, not landed), and short names of the public ones"
+echo "against the tip's tree (\`decls.py names\`). PR #93 (\`lean/arm-minor-fixes\`) changes comments"
+echo "and imports only and adds no declaration (its diff is in §8 of the elaboration log)."
+echo '```'
+python3 -I "$SC/decls.py" names "$O/H1Harvest.lean" "$SRC" --tree "$O/base/b6hosts" \
+  "$O/base/MIG1Statements.lean.txt" | san; r=${PIPESTATUS[0]}
+echo '```'
+check "no clash" test "$r" = 0
+printf 'namespace Turing\nnamespace StepBlock\ndef roundTM := 0\ndef loopTM := 0\nend StepBlock\ndef roundOrbit := 0\ntheorem exists_stepClockTMVia : True := trivial\nnamespace MachineFormat\nprivate def h1ClockTM := 0\nend MachineFormat\nend Turing\n' > "$O/work/names_ctrl.lean"
+echo "Positive control (\`<OUT>/work/names_ctrl.lean\` declares two existing public names, a name that"
+echo "exists only in PR #92, an existing private name, and one fresh name):"
+echo '```'
+ctrl=$(python3 -I "$SC/decls.py" names "$O/work/names_ctrl.lean" "$SRC" --tree "$O/base/b6hosts")
+san <<<"$ctrl"
+echo '```'
+check "positive control: 3 clashes caught on the tip, 4 on PR #92's tree" \
+  test "$(grep -c '   CLASH' <<<"$ctrl")" = 7
+} > "$LG/h1-harvest-statements-names.log"
+
+# ---------------------------------------------------------------- axioms
+OVOUT=$(el "$O/overlay/H1HarvestOverlay.lean"); OVEX=$?
+{
+echo "# H1 harvest statement gate: axiom prints"; echo; echo "$HDR"; echo
+echo "Section §X of the overlay (\`<OUT>/overlay/H1HarvestOverlay.lean\`) prints the axioms of the ten"
+echo "harvested declarations, public and private (the private ones under their in-file names)."
+echo '```'; grep "depends on axioms" <<<"$OVOUT" | san; echo '```'
+check "ten prints, each exactly the standard three" test \
+  "$(grep -c "depends on axioms: \[propext, Classical.choice, Quot.sound\]" <<<"$OVOUT")" = 10
+check "no print mentions sorryAx" test "$(grep -c 'sorryAx' <<<"$OVOUT")" = 0
+} > "$LG/h1-harvest-statements-axioms.log"
+
+# ---------------------------------------------------------------- main log
+{
+echo "# H1 harvest statement gate: elaboration log"; echo; echo "$HDR"; echo
+echo "Repository paths: <OUT>/H1Harvest.lean -> audits/evidence/h1harv/H1Harvest.lean.txt;"
+echo "<OUT>/overlay/H1HarvestOverlay.lean -> audits/evidence/h1harv/H1HarvestOverlay.lean.txt;"
+echo "<OUT>/probes/ReplayProbe.lean -> audits/evidence/h1harv/probes/ReplayProbe.lean.txt;"
+echo "ConsumerProbe = the overlay + \`scripts/consumer_tail.lean\`; the rehearsal as"
+echo "audits/evidence/h1harv/PostHarvest-CodeSimulator.diff; <OUT>/scripts/* ->"
+echo "audits/evidence/h1harv/scripts/*; <OUT>/logs/h1-harvest-statements-<x>.log ->"
+echo "audits/logs/h1-harvest-statements-<x>.log."
+echo
+echo "## 0. Base, packages and snapshot"
+for p in TCSlib/Complexity/TuringMachine/CodeSimulator.lean TCSlib/Complexity/TuringMachine/Build/StepBlock.lean \
+         TCSlib/Complexity/TuringMachine/Build/CounterLoop.lean TCSlib/Complexity/TuringMachine/Build/VirtualInput.lean \
+         TCSlib/Complexity/TuringMachine/NDCodeSimulator.lean TCSlib/Complexity/TuringMachine/ChoiceReplay.lean \
+         TCSlib/Complexity/TuringMachine/Nondeterministic.lean; do
+  a=$(git -C "$R" rev-parse "$REF:$p"); b=$(git -C "$R" hash-object "$SRC/$p")
+  check "exported $p is the tip's blob ($a)" test "$a" = "$b"
+done
+for p in lake-manifest.json lean-toolchain; do
+  check "$p: the tip's equals wt-h1harv's (2c3c975a), so its packages serve" \
+    test "$(git -C "$R" rev-parse "$REF:$p")" = "$(git -C "$WT" hash-object "$p")"
+done
+echo "* Lean files changed between the gate's first base 2c3c975a and the tip (MIG-0b #90, #91):"
+echo '```'; git -C "$R" diff --stat 2c3c975a "$REF" -- '*.lean' | tail -18; echo '```'
+echo "* The snapshot: the tip's sources elaborate against it; the pre-MIG-0b source does not; it"
+echo "  holds the round layer (\`counterLoopOrbit\` an abbreviation of \`roundOrbit\`)."
+out=$(el "$O/work/snap/CodeSimulator_tip.lean"); ex=$?
+expect "the tip's CodeSimulator.lean against oleans-lm0b" "$out" "$ex" 0 2 0
+out=$(el "$O/work/snap/StepBlock_tip.lean"); ex=$?
+expect "the tip's Build/StepBlock.lean (with #91's sketches) against oleans-lm0b" "$out" "$ex" 0 0 0
+out=$(elold "$O/work/snap/CodeSimulator_tip.lean"); ex=$?
+expect "control: the tip's CodeSimulator.lean against the pre-MIG-0b oleans-lc1 (no roundOrbit)" "$out" "$ex" 1 2 0
+out=$(el "$O/work/snap/CodeSimulator_2c3c975a.lean"); ex=$?
+expect "control: 2c3c975a's CodeSimulator.lean against oleans-lm0b (MIG-0b's known negative: the unedited h1Clock_orbit fails at line 2893, and its simp argument is then unused, line 2892)" "$out" "$ex" 1 2 1
+check "  ... the error is at h1Clock_orbit's step (line 2893) and the extra warning the unused simp argument (line 2892)" \
+  test "$(grep -E ': (error|warning)' <<<"$out" | grep -v "declaration uses 'sorry'" | sed -E 's/.*\.lean:([0-9]+):.*/\1/' | sort | tr '\n' ' ')" = "2892 2893 "
+out=$(el "$SC/snapshot_probe.lean"); ex=$?
+expect "snapshot_probe.lean" "$out" "$ex" 0 0 0
+echo '```'; san <<<"$out" | head -9; echo '```'
+check "the snapshot's counterLoopOrbit is the reducible abbreviation of roundOrbit" \
+  grep -q "@\[reducible\] def Turing.counterLoopOrbit" <<<"$out"
+git -C "$R" diff --name-only 2c3c975a "$(git -C "$R" rev-parse 79c30a89)" -- '*.lean' > "$O/work/mig0b-changed.txt"
+echo "* oleans-lm0b against oleans-lc1 (the 2c3c975a snapshot), against #90's changed modules"
+echo "  (\`scripts/snapdiff.py\`; the graph is the tip's):"
+echo '```'
+python3 -I "$SC/snapdiff.py" "$S/oleans-lc1" "$OL" "$O/work/importgraph.json" "$O/work/mig0b-changed.txt" | san; r=${PIPESTATUS[0]}
+echo '```'
+check "every module #90 changed has a new olean, and no olean differs outside their reverse closure" test "$r" = 0
+echo
+echo "## 1. The unit"
+out=$(el "$O/H1Harvest.lean"); ex=$?
+echo; echo "\`H1Harvest.lean\`: $(wc -l < "$O/H1Harvest.lean" | tr -d ' ') lines, SHA-256 $(shasum -a 256 "$O/H1Harvest.lean" | cut -d' ' -f1)"
+expect "the unit, in exactly its own three imports" "$out" "$ex" 0 0 0
+echo '```'; san <<<"$out"; echo '(end of output)'; echo '```'
+echo "Cut check and landed module (\`h1-harvest-statements-cutcheck.log\`):"
+grep -E '^\s+\[(PASS|FAIL)\]' "$LG/h1-harvest-statements-cutcheck.log"
+echo
+echo "## 2. The overlay"
+L=$(wc -c < "$TIP" | tr -d ' '); N=$(wc -l < "$TIP" | tr -d ' ')
+echo; echo "\`H1HarvestOverlay.lean\` = the tip's \`CodeSimulator.lean\` ($L bytes, $N lines) + a newline + the unit's Part A + §C/§S/§X (\`scripts/overlay_tail.lean\`)."
+san < "$O/work/gen-overlay.txt" | sed 's/^/    /'
+check "the overlay's first $L bytes are the tip file's (cmp of head -c)" \
+  cmp <(head -c "$L" "$O/overlay/H1HarvestOverlay.lean") "$TIP"
+check "byte $((L + 1)) of the overlay is a newline" \
+  test "$(head -c "$((L + 1))" "$O/overlay/H1HarvestOverlay.lean" | tail -c 1 | od -An -c | tr -d ' ')" = '\n'
+check "SHA-256 of the copied prefix = SHA-256 of the tip file" test \
+  "$(head -c "$L" "$O/overlay/H1HarvestOverlay.lean" | shasum -a 256 | cut -d' ' -f1)" = \
+  "$(shasum -a 256 < "$TIP" | cut -d' ' -f1)"
+check "diff of the overlay's first $N lines against the tip file is empty" \
+  diff <(head -n "$N" "$O/overlay/H1HarvestOverlay.lean") "$TIP"
+check "each §C example statement is its private declaration's text (header -> example)" \
+  python3 -I - "$TIP" "$O/overlay/H1HarvestOverlay.lean" <<'PY'
+import re, sys
+tip = open(sys.argv[1], encoding="utf-8").read().split("\n")
+ov = open(sys.argv[2], encoding="utf-8").read()
+for n in ["h1RoundTime_spec", "h1Clock_orbit", "h1Clock_round", "h1Clock_effect",
+          "h1HostedClock_effect"]:
+    h = [i for i, l in enumerate(tip) if re.match(rf"^private (lemma|theorem) {n}\b", l)]
+    assert len(h) == 1
+    e = next(i for i in range(h[0], len(tip)) if tip[i].endswith(" := by"))
+    block = "\n".join(["example" + tip[h[0]].split(n, 1)[1]] + tip[h[0] + 1:e + 1])
+    assert ov.count(block) == 1, n
+PY
+expect "the overlay ($(wc -l < "$O/overlay/H1HarvestOverlay.lean" | tr -d ' ') lines)" "$OVOUT" "$OVEX" 0 2 0
+check "its two warnings are the tip's headline sorries (lines 2746 and 3278)" test \
+  "$(grep ': warning' <<<"$OVOUT" | sed -E 's/.*\.lean:([0-9]+):.*/\1/' | tr '\n' ' ')" = "2746 3278 "
+echo "Every warning and error of the overlay (axiom prints in \`h1-harvest-statements-axioms.log\`):"
+echo '```'; grep -v "depends on axioms" <<<"$OVOUT" | san; echo '(end of output)'; echo '```'
+echo
+echo "## 3. Probes"
+out=$(el "$O/probes/ConsumerProbe.lean"); ex=$?
+expect "ConsumerProbe.lean (the overlay + \`scripts/consumer_tail.lean\`): R's loop step, any table" "$out" "$ex" 0 2 0
+out=$(el "$O/probes/ReplayProbe.lean"); ex=$?
+expect "ReplayProbe.lean (Part A + ChoiceReplay + \`scripts/replay_tail.lean\`): at the replay machine" "$out" "$ex" 0 0 0
+echo "  The landing rehearsal, generated by \`scripts/mkposth.py\`:"
+san < "$O/work/gen-posth.txt" | sed 's/^/    /'
+out=$(el "$O/probes/PostHarvest-CodeSimulator.lean"); ex=$?
+expect "PostHarvest-CodeSimulator.lean (header, Part A, then the landed CodeSimulator body)" "$out" "$ex" 0 2 0
+echo '```'; san <<<"$out"; echo '(end of output)'; echo '```'
+echo
+echo "## 4. Negative controls (each must fail with exactly one error)"
+for n in neg1 neg2 neg3; do out=$(el "$O/work/$n.lean"); ex=$?
+  CHECKS=$((CHECKS + 1)); e=$(grep -c ': error' <<<"$out")
+  if [ "$ex" != 0 ] && [ "$e" = 1 ]; then v=PASS; else v=FAIL; FAILS=$((FAILS + 1)); fi
+  echo "  [$v] $n: exit $ex, errors $e: $(grep ': error' <<<"$out" | san | head -1 | cut -c1-110)"
+done
+echo "  (neg1: a zero-round run claimed to escape; neg2: the early-escape bound without its 2|w|;"
+echo "  neg3: \`hostedLoop_read\`'s cell read at the table tape.)"
+echo
+echo "## 5. Style, widths, admissions, banned constructs"
+mkdir -p "$O/work/lintroot"; cp -R "$O/landed/TCSlib" "$O/work/lintroot/"
+echo '```'; (cd "$O/work/lintroot" && python3 -I "$SC/lint.py" TCSlib "$O/work/lintroot") | san; r=${PIPESTATUS[0]}; echo '```'
+check "style lint over the two landing files: 0 FAIL (the one WARN is CodeSimulator's size)" test "$r" = 0
+echo '```'
+w=$(python3 -I "$SC/widths.py" "$O/H1Harvest.lean" "$LNEW" "$SC"/*.lean "$SC"/neg/*.lean \
+  "$O/probes/ReplayProbe.lean" "$LCS" "$TIP")
+san <<<"$w"; echo '```'
+check "the only line over 100 characters is the tip's CodeSimulator.lean:1134 (and its copy)" \
+  test "$(grep -c 'chars' <<<"$w")" = 2
+echo '```'
+python3 -I "$SC/admissions.py" "$O/H1Harvest.lean=0" "$LNEW=0" "$LCS=2" \
+  "$O/overlay/H1HarvestOverlay.lean=2" "$O/probes/ReplayProbe.lean=0" | san; r=${PIPESTATUS[0]}
+echo '```'
+check "admissions as expected (no sorry in the harvest, no axiom anywhere)" test "$r" = 0
+echo '```'
+python3 -I "$SC/banned.py" "$O/H1Harvest.lean" "$O/overlay/H1HarvestOverlay.lean" "$O"/probes/*.lean \
+  "$SC"/*.lean "$SC"/neg/*.lean "$LNEW" "$LCS" | san; r=${PIPESTATUS[0]}
+echo '```'
+check "no banned construct" test "$r" = 0
+echo
+echo "## 6. Cited names (every backticked identifier of the unit's comments, \`#check @…\`)"
+python3 -I "$SC/cited.py" "$O/H1Harvest.lean" > "$O/work/cited_unit.txt"
+{ cat "$O/overlay/H1HarvestOverlay.lean"; echo
+  echo "open Turing Turing.StepBlock Turing.MachineFormat Turing.FinTM Turing.MultiTapeTM"
+  while read -r t; do echo "#check @$t"; done < "$O/work/cited_unit.txt"; } > "$O/work/cite_overlay.lean"
+{ cat "$O/probes/ReplayProbe.lean"; echo
+  echo "open Turing Turing.StepBlock Turing.FinTM Turing.MultiTapeTM Turing.NDTM"
+  while read -r t; do echo "#check @$t"; done < "$O/work/cited_unit.txt"; } > "$O/work/cite_replay.lean"
+el "$O/work/cite_overlay.lean" > "$O/work/cite_overlay.out"
+el "$O/work/cite_replay.lean" > "$O/work/cite_replay.out"
+printf 'import TCSlib.Complexity.TuringMachine.NDCodeSimulator\n#check @Turing.exists_ndInterpreterCore\n' > "$O/work/cite_nd.lean"
+nd=$(el "$O/work/cite_nd.lean")
+echo '```'
+python3 -I - "$O/work/cited_unit.txt" "$O/work/cite_overlay.lean" "$O/work/cite_overlay.out" \
+  "$O/work/cite_replay.lean" "$O/work/cite_replay.out" <<'PY'
+import re, sys
+toks = [l.strip() for l in open(sys.argv[1], encoding="utf-8") if l.strip()]
+def failing(lean, out):
+    lines = open(lean, encoding="utf-8").read().split("\n")
+    bad = set()
+    for m in re.finditer(r":(\d+):\d+: error", open(out, encoding="utf-8").read()):
+        l = lines[int(m.group(1)) - 1]
+        if l.startswith("#check @"):
+            bad.add(l[len("#check @"):].strip())
+    return bad
+a = failing(sys.argv[2], sys.argv[3]); b = failing(sys.argv[4], sys.argv[5])
+print(f"{len(toks)} tokens; unresolved in the overlay context: {len(a)}; in the replay probe's: "
+      f"{len(b)}; resolved in neither: {len(a & b)}")
+print("resolved in neither context:", " ".join(sorted(a & b)))
+PY
+echo "Turing.exists_ndInterpreterCore, checked in a file importing NDCodeSimulator: $(grep -c ': error' <<<"$nd") errors"
+echo '```'
+echo "(The others resolved in neither context are bound variables or prose names: B, M, R, T,"
+echo "CodeSimulator, TCSlib.Complexity.TuringMachine.)"
+echo
+echo "## 7. Import closure and the landing's replay set (\`scripts/closure.py\`)"
+echo; echo "### at the tip"
+echo '```'; python3 -I "$SC/closure.py" "$O/work/importgraph.json" | san; r=${PIPESTATUS[0]}; echo '```'
+check "acyclic with the landing edges (tip)" test "$r" = 0
+echo; echo "### on PR #92's tree (if #92 lands first)"
+echo '```'; python3 -I "$SC/closure.py" "$O/work/importgraph-b6.json" | san; r=${PIPESTATUS[0]}; echo '```'
+check "acyclic with the landing edges (PR #92's tree)" test "$r" = 0
+echo
+echo "## 8. Overlap with the open PRs #92 and #93 (files changed against their merge base with the tip)"
+for b in "$B6" "$ARM"; do mb=$(git -C "$R" merge-base "$REF" "$b")
+  echo; echo "### $b (merge base $mb)"
+  echo '```'; git -C "$R" diff --stat "$mb" "$b" | tail -40; echo '```'
+  ch=$(git -C "$R" diff --name-only "$mb" "$b")
+  echo "Files the harvest edits (\`Build/StepBlockLoop.lean\` new, \`CodeSimulator.lean\`, the"
+  echo "\`TuringMachine\` facade) that this PR also changes:"
+  echo '```'; grep -E '^TCSlib/Complexity/TuringMachine(\.lean|/CodeSimulator\.lean|/Build/StepBlockLoop\.lean)$' <<<"$ch" || echo "(none)"; echo '```'
+  echo "Modules of the new module's forward closure that this PR changes:"
+  printf '%s\n' "$ch" > "$O/work/pr-changed.txt"
+  echo '```'; python3 -I - "$O/work/importgraph.json" "$O/work/pr-changed.txt" <<'PY' || true
+import json, sys
+g = json.load(open(sys.argv[1]))
+P = "TCSlib/Complexity/TuringMachine/"
+seen, todo = set(), [P + "Build/StepBlock", P + "Build/CounterLoop", P + "Build/VirtualInput"]
+while todo:
+    m = todo.pop()
+    if m in seen or m not in g:
+        continue
+    seen.add(m); todo += g[m]
+changed = {l.strip()[:-5] for l in open(sys.argv[2], encoding="utf-8") if l.strip().endswith(".lean")}
+hits = sorted(seen & changed)
+print("\n".join(hits) if hits else "(none)")
+PY
+  echo '```'
+done
+echo
+echo "## 9. Nothing in a checkout was changed"
+for p in TCSlib/Complexity/TuringMachine/CodeSimulator.lean TCSlib/Complexity/TuringMachine/Build/StepBlock.lean; do
+  check "wt-h1harv: $p still its commit's blob" test "$(git -C "$WT" rev-parse "HEAD:$p")" = "$(git -C "$WT" hash-object "$p")"
+done
+echo "All outputs are under <OUT>. git only read (archive, show, rev-parse, hash-object without -w,"
+echo "diff, merge-base); no lake or elan; \`lean\` only through \`tools/leanelab.sh\`, which writes no"
+echo "olean; Python only as \`python3 -I\`."
+echo
+echo "## 10. The other logs of this run (their checks are included in the count below)"
+for x in cutcheck freeze names axioms; do
+  echo "* \`h1-harvest-statements-$x.log\`:"; grep -E '^\s+\[(PASS|FAIL)\]' "$LG/h1-harvest-statements-$x.log"
+done
+echo
+echo "runall: $CHECKS checks, $FAILS failed"
+} > "$LG/h1-harvest-statements-elaboration.log"
+tail -1 "$LG/h1-harvest-statements-elaboration.log"
+[ "$FAILS" = 0 ]

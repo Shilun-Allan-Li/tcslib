@@ -1,0 +1,371 @@
+"""Declaration-level checks for the H1 harvest gate (read-only; standard library only).
+
+Usage:
+  python3 -I decls.py freeze  <tip CodeSimulator.lean> <landed CodeSimulator.lean>
+  python3 -I decls.py movemap <tip CodeSimulator.lean> <unit.lean>
+  python3 -I decls.py names   <unit.lean> <tree root> [--tree <other root>] [<pending unit> ...]
+  python3 -I decls.py refs    <landed CodeSimulator.lean> <unit.lean> <tree root>
+  python3 -I decls.py inventory <file.lean>
+
+The parser is comment-aware (nested block comments and docstrings; `--` line comments). A
+declaration starts at a column-0 line that, outside comments, begins with optional attributes and
+modifiers and one of `theorem lemma def abbrev structure inductive instance class`; it begins at
+its docstring when one immediately precedes it, and ends before the next column-0 docstring,
+declaration or scope command. Full names follow `namespace`/`end`; sections do not qualify.
+A statement is the comment-stripped code up to its first top-level `:=` (after any `let`'s own
+`:=`) or `where`, whitespace collapsed. Each subcommand prints its findings and exits 1 if an
+expectation it asserts fails.
+"""
+import difflib
+import os
+import re
+import sys
+
+KW = r"(theorem|lemma|def|abbrev|structure|inductive|instance|class)"
+DECL = re.compile(r"^(?:@\[[^\]]*\]\s*)*((?:(?:private|protected|noncomputable|nonrec)\s+)*)"
+                  + KW + r"\b\s*([^\s(:{\[]*)")
+SCOPE = re.compile(r"^(/-!|end\b|section\b|namespace\b|open\b|variable\b|set_option\b|#|"
+                   r"attribute\b|universe\b|import\b|noncomputable section\b)")
+
+
+def mask(src):
+    """Return `src` with every comment character replaced by a space (newlines kept), and the
+    nesting depth at the start of each line."""
+    out, depth, i, starts = [], 0, 0, [0]
+    while i < len(src):
+        if src.startswith("/-", i):
+            depth += 1; out.append("  "); i += 2; continue
+        if src.startswith("-/", i) and depth > 0:
+            depth -= 1; out.append("  "); i += 2; continue
+        ch = src[i]
+        if depth == 0 and src.startswith("--", i):
+            j = src.find("\n", i)
+            j = len(src) if j < 0 else j
+            out.append(" " * (j - i)); i = j; continue
+        if ch == "\n":
+            out.append("\n"); starts.append(depth); i += 1; continue
+        out.append(ch if depth == 0 else " ")
+        i += 1
+    return "".join(out), starts
+
+
+def statement(code):
+    depth = lets = 0
+    i = 0
+    while i < len(code):
+        ch = code[i]
+        if ch in "([{⟨":
+            depth += 1
+        elif ch in ")]}⟩":
+            depth -= 1
+        elif depth == 0 and re.match(r"let\b", code[i:]) and (i == 0 or not (
+                code[i - 1].isalnum() or code[i - 1] in "_.'")):
+            lets += 1
+        elif depth == 0 and code.startswith(":=", i):
+            if lets > 0:
+                lets -= 1
+            else:
+                return " ".join(code[:i].split())
+        elif depth == 0 and re.match(r"\swhere\b", code[i:]):
+            return " ".join(code[:i].split())
+        i += 1
+    return " ".join(code.split())
+
+
+def parse(path):
+    src = open(path, encoding="utf-8").read()
+    masked, depths = mask(src)
+    lines, mlines = src.split("\n"), masked.split("\n")
+    scopes, decls, pend, cur = [], [], None, None
+
+    def close(end):
+        nonlocal cur
+        if cur is not None:
+            s, h, name, priv, kind = cur
+            e = end
+            while e > h + 1 and lines[e - 1].strip() == "":
+                e -= 1
+            doc = "\n".join(lines[s:h]).rstrip() if s < h else ""
+            code = "\n".join(lines[h:e])
+            mcode = "\n".join(mlines[h:e])
+            decls.append({"name": name, "private": priv, "kind": kind, "start": s + 1,
+                          "head": h + 1, "end": e, "doc": doc, "code": code,
+                          "stripped": " ".join(mcode.split()), "stmt": statement(mcode)})
+        cur = None
+
+    for i, (l, ml) in enumerate(zip(lines, mlines)):
+        if depths[i] > 0:
+            continue
+        if l.startswith("/--"):
+            close(i); pend = i; continue
+        m = DECL.match(ml)
+        if m and not ml.startswith(" "):
+            close(i)
+            raw = m.group(3) or "<anonymous>"
+            if raw.startswith("_root_."):
+                full = raw[len("_root_."):]
+            else:
+                full = ".".join([n for k, n in scopes if k == "ns"] + [raw])
+            cur = (pend if pend is not None else i, i, full, "private" in m.group(1), m.group(2))
+            pend = None
+            continue
+        if SCOPE.match(ml):
+            close(i); pend = None
+            s = ml.strip()
+            if s.startswith("namespace "):
+                for part in s.split()[1].split("."):
+                    scopes.append(("ns", part))
+            elif s.startswith("section") or s.startswith("noncomputable section"):
+                scopes.append(("sec", s.split()[-1] if len(s.split()) > 1 and
+                               s.split()[-1] != "section" else ""))
+            elif s.startswith("end"):
+                nm = s.split()[1] if len(s.split()) > 1 else ""
+                parts = nm.split(".") if nm else [""]
+                for part in reversed(parts):
+                    if scopes and scopes[-1][1] == part:
+                        scopes.pop()
+    close(len(lines))
+    return decls, lines
+
+
+def by_name(decls):
+    res = {}
+    for d in decls:
+        assert d["name"] not in res or d["kind"] == "instance", ("duplicate", d["name"])
+        res[d["name"]] = d
+    return res
+
+
+def outside(decls, lines):
+    """The lines that belong to no declaration chunk (module docstrings, imports, scopes)."""
+    inside = set()
+    for d in decls:
+        inside.update(range(d["start"] - 1, d["end"]))
+    return [(i + 1, l) for i, l in enumerate(lines) if i not in inside]
+
+
+DELETED = ["h1ClockTM", "h1HostedClockTM", "h1RoundTime", "h1RoundTime_spec", "h1Clock_orbit",
+           "h1Clock_round", "h1Clock_effect", "h1HostedClock_effect"]
+RENAME = {"h1ClockTM": "loopTM", "h1HostedClockTM": "hostedLoopTM",
+          "h1RoundTime": "loopRoundTime", "h1RoundTime_spec": "loopRoundTime_spec",
+          "h1Clock_orbit": "loopOrbit_rep", "h1Clock_round": "loopOrbit_round",
+          "h1Clock_effect": "loopTM_run", "h1HostedClock_effect": "hostedLoopTM_run"}
+UNIT_PRIVATE = ["loopRoundTime", "loopOrbit_succ", "loopRoundTime_spec", "loopOrbit_rep",
+                "loopOrbit_round"]
+NS = "Turing.MachineFormat."
+
+
+def rename(text):
+    for a in sorted(RENAME, key=len, reverse=True):
+        text = re.sub(rf"(?<![\w.']){re.escape(a)}(?![\w'])", RENAME[a], text)
+    return text
+
+
+def cmd_freeze(tip, landed):
+    A, la = parse(tip)
+    B, lb = parse(landed)
+    a, b = by_name(A), by_name(B)
+    ok = True
+    removed = sorted(set(a) - set(b))
+    added = sorted(set(b) - set(a))
+    print(f"declarations: tip {len(a)} ({sum(not d['private'] for d in A)} public), "
+          f"landed {len(b)} ({sum(not d['private'] for d in B)} public)")
+    print("removed:", removed)
+    print("added:", added)
+    want = sorted(NS + n for n in DELETED)
+    if removed != want or added:
+        print("FAIL: the removed set must be exactly the eight harvested declarations, nothing added")
+        ok = False
+    for n in removed:
+        if not a[n]["private"]:
+            print("FAIL: a removed declaration is public:", n); ok = False
+    stmt = [n for n in sorted(set(a) & set(b)) if a[n]["stmt"] != b[n]["stmt"]]
+    code = [n for n in sorted(set(a) & set(b)) if a[n]["stripped"] != b[n]["stripped"]]
+    doc = [n for n in sorted(set(a) & set(b)) if a[n]["doc"] != b[n]["doc"]]
+    vis = [n for n in sorted(set(a) & set(b)) if a[n]["private"] != b[n]["private"]]
+    print("statement changed:", stmt)
+    print("code changed (comment-stripped):", code)
+    print("docstring changed:", doc)
+    print("visibility changed:", vis)
+    if stmt or vis:
+        print("FAIL: no staying declaration may change its statement or visibility"); ok = False
+    if code != [NS + "h1HostedVerdictTM", NS + "h1HostedVerdict_effect"]:
+        print("FAIL: unexpected code changes"); ok = False
+    if doc != [NS + "exists_uniformSimulator", NS + "h1HostedVerdictTM"]:
+        print("FAIL: unexpected docstring changes"); ok = False
+    v = NS + "h1HostedVerdictTM"
+    back = b[v]["stripped"].replace("hostedLoopTM", "h1HostedClockTM")
+    same = back == a[v]["stripped"]
+    print(f"{v}: code identical to the tip's after renaming hostedLoopTM -> h1HostedClockTM: "
+          f"{same}")
+    ok &= same
+    e = NS + "h1HostedVerdict_effect"
+    print(f"{e}: declaration lines (statement and proof) {a[e]['end'] - a[e]['head'] + 1} -> "
+          f"{b[e]['end'] - b[e]['head'] + 1}")
+    oa = [l for _, l in outside(A, la) if l.strip()]
+    ob = [l for _, l in outside(B, lb) if l.strip()]
+    delta = [l for l in difflib.ndiff(oa, ob) if l[:2] in ("- ", "+ ")]
+    print(f"nonblank lines outside declarations: tip {len(oa)}, landed {len(ob)}; "
+          f"difference (ndiff):")
+    for l in delta:
+        print("   " + l)
+    print("FREEZE OK" if ok else "FREEZE FAILED")
+    return 0 if ok else 1
+
+
+def cmd_movemap(tip, unit):
+    a = by_name(parse(tip)[0])
+    u = by_name(parse(unit)[0])
+    ok = True
+    for old, new in RENAME.items():
+        da, du = a[NS + old], u["Turing.StepBlock." + new]
+        sa = rename(da["stmt"]).replace("private ", "", 1)
+        su = du["stmt"].replace("private ", "", 1)
+        body_a = rename(da["stripped"])
+        body_a = body_a[body_a.index(":=") + 2:] if da["kind"] == "def" else None
+        body_u = du["stripped"][du["stripped"].index(":=") + 2:] if du["kind"] == "def" else None
+        vis = f"{'private' if da['private'] else 'public'} -> " \
+              f"{'private' if du['private'] else 'public'}"
+        if sa == su:
+            verdict = "statement identical after renaming"
+        elif da["kind"] == "def" and su.startswith(sa + " :"):
+            verdict = ("type ascription added (the private type was inferred; the overlay's "
+                       "`rfl` examples check the two agree)")
+        else:
+            verdict = "statement GENERALIZED (texts below)"
+        if da["kind"] == "def":
+            verdict += "; body " + ("identical after renaming" if body_a.split() ==
+                                    body_u.split() else "DIFFERS")
+            ok &= body_a.split() == body_u.split()
+        print(f"{old} -> StepBlock.{new} ({da['kind']}, {vis}): {verdict}")
+        if sa != su and "GENERALIZED" in verdict:
+            print("   old (renamed): " + sa)
+            print("   new:           " + su)
+        if new in ("loopOrbit_rep", "loopOrbit_round"):
+            inst = su
+            for binder in ["(c : Cfg k Bool (Fin (n + 1)) x) ", "(start : c.state ≠ none) "]:
+                inst = inst.replace(binder, "", 1)
+            inst = re.sub(r"(?<![\w.'])c(?![\w'])", "(M.initCfg x)", inst)
+            same = inst == sa
+            print(f"   instance check: the new statement at c := M.initCfg x, its binders c and "
+                  f"start dropped, is the old one: {same}")
+            ok &= same
+    print("MOVEMAP OK" if ok else "MOVEMAP FAILED")
+    return 0 if ok else 1
+
+
+def tree_decls(root):
+    res = {}
+    for d, _, fs in os.walk(os.path.join(root, "TCSlib")):
+        for f in fs:
+            if f.endswith(".lean"):
+                p = os.path.join(d, f)
+                for x in parse(p)[0]:
+                    res.setdefault(x["name"], []).append(
+                        (os.path.relpath(p, root), x["private"]))
+    return res
+
+
+def cmd_names(unit, root, rest):
+    trees, pending = [], []
+    while rest:
+        if rest[0] == "--tree":
+            trees.append(rest[1]); rest = rest[2:]
+        else:
+            pending.append(rest[0]); rest = rest[1:]
+    mine = parse(unit)[0]
+    pub = [d["name"] for d in mine if not d["private"]]
+    print(f"{len(mine)} declarations in the unit ({len(pub)} public, {len(mine) - len(pub)} private):")
+    for d in mine:
+        print(f"   {'private ' if d['private'] else ''}{d['kind']} {d['name']}")
+    ok = True
+    for r in [root] + trees:
+        theirs = tree_decls(r)
+        hits = [(d["name"], theirs[d["name"]]) for d in mine if d["name"] in theirs]
+        print(f"full-name clashes with {r.rstrip('/').split('/')[-1]}/TCSlib "
+              f"({len(theirs)} names, privates included): {len(hits)}")
+        for n, w in hits:
+            print("   CLASH", n, w)
+        ok &= not hits
+    for p in pending:
+        names = {d["name"] for d in parse(p)[0]}
+        hits = sorted(d["name"] for d in mine if d["name"] in names)
+        print(f"shared with {os.path.relpath(p, root)}: {len(hits)}" +
+              (": " + ", ".join(hits) if hits else ""))
+        ok &= not hits
+    theirs = tree_decls(root)
+    short = {}
+    for n in theirs:
+        short.setdefault(n.split(".")[-1], set()).add(n)
+    amb = [(n, sorted(m for m in short.get(n.split(".")[-1], ()) if m != n)) for n in pub]
+    amb = [(n, o) for n, o in amb if o]
+    print(f"unit public names whose last component also names another declaration: {len(amb)}")
+    for n, o in amb:
+        print("   SHORT", n, "~", ", ".join(o[:4]) + (" ..." if len(o) > 4 else ""))
+    dup = sorted({d["name"] for d in mine if [x["name"] for x in mine].count(d["name"]) > 1})
+    print("duplicates within the unit:", dup)
+    ok &= not dup
+    print("NAMES OK" if ok else "NAMES: CLASHES FOUND")
+    return 0 if ok else 1
+
+
+def cmd_refs(landed, unit, root):
+    src = open(landed, encoding="utf-8").read()
+    masked, _ = mask(src)
+    ok = True
+    for n in DELETED + UNIT_PRIVATE:
+        k = len(re.findall(rf"(?<![\w.']){re.escape(n)}(?![\w'])", masked))
+        if k:
+            print(f"FAIL: landed CodeSimulator code names {n} ({k} times)"); ok = False
+    para = src.index("**H1 harvest.**")
+    pend = src.index("-/", para)
+    comments = src[:para] + src[pend:]
+    for n in DELETED:
+        k = len(re.findall(rf"(?<![\w.']){re.escape(n)}(?![\w'])", comments))
+        if k:
+            print(f"FAIL: landed CodeSimulator comments name {n} outside the harvest paragraph "
+                  f"({k} times)"); ok = False
+    print("landed CodeSimulator: no code reference to the eight deleted names or to the unit's "
+          "privates; comments name them only in the harvest paragraph:", ok)
+    other = []
+    for d, _, fs in os.walk(os.path.join(root, "TCSlib")):
+        for f in fs:
+            p = os.path.join(d, f)
+            if f.endswith(".lean") and not p.endswith("TuringMachine/CodeSimulator.lean"):
+                t = open(p, encoding="utf-8").read()
+                for n in DELETED:
+                    if re.search(rf"(?<![\w.']){re.escape(n)}(?![\w'])", t):
+                        other.append((os.path.relpath(p, root), n))
+    print(f"other TCSlib files naming a deleted declaration (code or comments): {len(other)}")
+    for x in other:
+        print("   ", x)
+    ok &= not other
+    um, _ = mask(open(unit, encoding="utf-8").read())
+    hits = [n for n in DELETED if re.search(rf"(?<![\w.']){re.escape(n)}(?![\w'])", um)]
+    print("unit code naming a deleted declaration:", hits)
+    ok &= not hits
+    print("REFS OK" if ok else "REFS FAILED")
+    return 0 if ok else 1
+
+
+def cmd_inventory(path):
+    for d in parse(path)[0]:
+        print(f"{d['head']:5d}-{d['end']:<5d} {'private ' if d['private'] else ''}{d['kind']} "
+              f"{d['name']}  (docstring: {'yes' if d['doc'] else 'no'}; sketch: "
+              f"{'yes' if '**Proof sketch.**' in d['doc'] else 'no'})")
+    return 0
+
+
+if __name__ == "__main__":
+    cmd, args = sys.argv[1], sys.argv[2:]
+    if cmd == "freeze":
+        sys.exit(cmd_freeze(*args))
+    if cmd == "movemap":
+        sys.exit(cmd_movemap(*args))
+    if cmd == "names":
+        sys.exit(cmd_names(args[0], args[1], args[2:]))
+    if cmd == "refs":
+        sys.exit(cmd_refs(*args))
+    if cmd == "inventory":
+        sys.exit(cmd_inventory(*args))
+    raise SystemExit("unknown subcommand " + cmd)
