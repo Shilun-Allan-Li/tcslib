@@ -47,6 +47,7 @@ import TCSlib.Complexity.TuringMachine.Build.StepClock
 import TCSlib.Complexity.TuringMachine.Build.WindowRun
 import TCSlib.Complexity.TuringMachine.Build.InputDevice
 import TCSlib.Complexity.TuringMachine.Build.StepBlock
+import TCSlib.Complexity.TuringMachine.Build.StepBlockLoop
 import TCSlib.Complexity.TuringMachine.CodeSimulator
 import TCSlib.Complexity.TuringMachine.ChoiceWords
 import TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction
@@ -174,6 +175,10 @@ for the local modifications.
   binary table held as data, with its contract `Turing.StepBlock.roundTM_effect`, the
   record skipper and fixed-field reader, the per-round space ledger and the cofinal
   iteration. Proved; promoted from `CodeSimulator` (H2-S gate closed, round 2).
+* `Build/StepBlockLoop` — the step block's counter loop (host H2's loop form, H2-L,
+  `machine-library-design.md` §14): the binary deadline clock over the step block, native and on
+  a buffered input, from any represented live start, with its early-escape bound and live
+  exits. Proved; harvested from `CodeSimulator` (H1 harvest gate passed, 2026-10-14).
 * `CodeSimulator` — the format-parameterized uniform simulator over item 8's code formats
   (B5a): one bounded-acceptance interpreter and canonizer whose one- and two-tape instances are
   the EXPCOM and Codes2Tape code schemes. Fills in progress; the module header carries its

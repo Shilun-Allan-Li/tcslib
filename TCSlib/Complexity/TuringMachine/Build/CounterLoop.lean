@@ -9,6 +9,7 @@ import TCSlib.Complexity.TuringMachine.Build.Catalog
 import TCSlib.Complexity.TuringMachine.Build.Scan
 import TCSlib.Complexity.TuringMachine.SymbolLift
 import TCSlib.Complexity.TuringMachine.Build.Contract.Basic
+import TCSlib.Complexity.TuringMachine.CodeParser
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -105,6 +106,8 @@ with binary digits embedded into its dedicated counter tape.
   `Turing.counterLoopCfg_body` (the host layout as an R1 reconstruction); and the
   contract-level compositions `Turing.RoundContract.counterLoopDone` and
   `Turing.RoundContract.counterLoopEscape`, with their `_traj` joint trajectories.
+* `Turing.foldr_bit_eq_ofDigits`, `Turing.counterValue_bits` — the counter value of a word is its
+  binary value, and the counter word `t.bits` has value `t` (H1 harvest landing).
 
 ## References
 
@@ -1938,6 +1941,34 @@ theorem counterLoopCfg_body {S : Type} {x : List Γ} (a : S)
 /-- The value of a counter word. -/
 def counterValue (w : List Bool) : ℕ :=
   Nat.ofDigits 2 (w.map Bool.toNat)
+
+/-- **The counter value is the parser's binary value**: the `foldr` of `Nat.bit` over a word, its
+value as a little-endian binary numeral (`Turing.codeBitsNat`), is `Nat.ofDigits 2` of its bits,
+the value `Turing.counterValue` that the counter loop counts down. (Moved unchanged, as a public
+lemma, from the private `canonBits_value` of `TuringMachine/CodeSimulator.lean`, whose canonizer
+still uses it.)
+
+**Proof sketch.** `Nat.ofDigits 2` is a `foldr` of `b + 2·n` over the mapped digits; fuse the
+map into the fold, and `b.toNat + 2·n` is `Nat.bit b n`. -/
+theorem foldr_bit_eq_ofDigits (w : List Bool) :
+    w.foldr Nat.bit 0 = Nat.ofDigits 2 (w.map Bool.toNat) := by
+  rw [Nat.ofDigits_eq_foldr, List.foldr_map]
+  have step : (fun (bit : Bool) (tail : ℕ) => (bit.toNat : ℕ) + 2 * tail) = Nat.bit := by
+    funext bit tail
+    cases bit <;> simp [Nat.bit, Nat.add_comm]
+  simpa only [Nat.cast_id] using
+    congrArg (fun f : Bool → ℕ → ℕ => w.foldr f 0) step.symm
+
+/-- **The counter word of `t` has value `t`**: the canonical little-endian binary word `t.bits`,
+used as a counter word, has `Turing.counterValue` exactly `t` (`0` for the empty word). It is the
+value hypothesis of the counter loop's contracts (`Turing.counterLoopTM_run_done`, and
+`Turing.StepBlock.loopTM_run`'s `ht`) for the deadline counter `bits t`.
+
+**Proof sketch.** The counter value is the parser's binary value (`foldr_bit_eq_ofDigits`), and
+binary reconstruction inverts `Nat.bits` (`Turing.codeBitsNat_bits`). -/
+theorem counterValue_bits (t : ℕ) : counterValue t.bits = t := by
+  rw [counterValue, ← foldr_bit_eq_ofDigits]
+  exact codeBitsNat_bits t
 
 /-- **The counter loop over a round contract, every round returning** (design §16a item 2; the
 contract-level composition over the round layer). The index is the body data `i` and the counter
