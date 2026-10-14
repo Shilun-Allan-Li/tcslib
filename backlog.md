@@ -679,6 +679,14 @@ campaign helpers private in `QueryReshape`, `Mult`, CookLevin, `InputAccess`, `Q
 ConfigGraph's `outSummary_eq_accept_iff`, with `toCNF_extension_iff` riding with D4; the ledger's
 §3) and `VWord.getD_drop`, a Bool copy of the public `Programs/Util/List.getD_drop`. The round-2
 pack is dispatch folder 21. Its auditor rules whether the scope is complete.
+**Round 2 returned (2026-10-14): OPEN, 0 blockers / 2 majors / 6 minors**
+(`audits/arm-extensions-fill-r2-findings.md`; resolutions `…-r2-resolutions.md`). The arithmetic
+reproduces; findings 6, 7, 10, 12, 13 and 14 close. Majors: two genuine copies were classified
+incidental (`arm_reach` inlines `DblLang.Rch.trans`; `halvCount_loop` re-proves `InputAccess`'s
+`access_width_half`), and H7–H13 are not yet installed in design §14. **User: remove the two
+copies before closure**, by a refactor PR cleared with Hydroxyi (a generic guarded-segment
+composition lemma, the seed of K18; the promoted `access_width_half`), presented in round 3. The
+maintainer installs the registry rows and the record corrections.
 
 ### ARM-2: the ARM layer's internal duplication, to coordinate with Hydroxyi (user, 2026-10-14)
 
