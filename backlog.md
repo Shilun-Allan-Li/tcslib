@@ -574,6 +574,10 @@ window.*
   - a 56-name public surface, with 15 helpers made private;
   - H1's `h1RoundTime` stays private until MIG-0b's round adapter;
   - the consumer obligation CO-RF is recorded on `U₀` and U-1.
+
+  **Round 2 CLOSED the gate** (2026-10-14: 0 blockers / 0 majors / 8 minors;
+  `audits/h2-promotion-r2-findings.md`, resolutions `audits/h2-promotion-r2-resolutions.md`).
+  Next: H2-M, the move PR, before any B5a brief.
   The move, H2-M (a
   freeze-checked maintainer PR with an 8-module replay), lands **between** the B5a
   continuations, since both own regions of `CodeSimulator.lean`.
@@ -617,7 +621,7 @@ statement families are retired, with full gates and consumer edits. Restyling is
 
 | ID | Scope | Action | Estimate | Needs | Gate | Notes |
 |---|---|---|---|---|---|---|
-| MIG-0 | new `Build/Contract.lean` | Item 0, with the §16 requirements: the contract structure, tape frames and `.keep`, composition theorems as thin wrappers over the existing public rows, and tactics | +1.5k to +2.5k (MEASURED after MIG-0b round 2: about +3.2k, MIG-0a 1,101 lines and MIG-0b net +2,081) | — | stmt | first; unlocks MIG-11 to MIG-17 and RS. **Statement draft fit-tested** (design §16a; user, 2026-10-12: universe `Type`, frames a derived layer). Two increments: MIG-0a (the structure, frames, `trans`, `seq`, `inPhase`, `embed`, `branch`, `release`, and two additive exports in Embed and Seam; gate round 1: 0/1/5, round 2 closed 0/0/1, landed by PR #83), then MIG-0b (gate round 1, 2026-10-13: 0/2/4, open; round 2 issued, `audits/mig0b-r2-pack.md`), revised after that round (design §16a): the segment, round and joint-trajectory layers, the layering split, the release export, the lift, the counter loop, renaming, the alphabet-reduction and robustness adapters, the tactics |
+| MIG-0 | new `Build/Contract.lean` | Item 0, with the §16 requirements: the contract structure, tape frames and `.keep`, composition theorems as thin wrappers over the existing public rows, and tactics | +1.5k to +2.5k (MEASURED after MIG-0b round 2: about +3.2k, MIG-0a 1,101 lines and MIG-0b net +2,084 over 17 files; round-2 minor 1) | — | stmt | first; unlocks MIG-11 to MIG-17 and RS. **Statement draft fit-tested** (design §16a; user, 2026-10-12: universe `Type`, frames a derived layer). Two increments: MIG-0a (the structure, frames, `trans`, `seq`, `inPhase`, `embed`, `branch`, `release`, and two additive exports in Embed and Seam; gate round 1: 0/1/5, round 2 closed 0/0/1, landed by PR #83), then MIG-0b (gate round 1, 2026-10-13: 0/2/4; round 2 CLOSED 2026-10-14, 0/0/3, `audits/mig0b-r2-findings.md`; next its landing PR, without part 7, the alphabet pair, which lands with RS-5), revised after that round (design §16a): the segment, round and joint-trajectory layers, the layering split, the release export, the lift, the counter loop, renaming, the alphabet-reduction and robustness adapters, the tactics |
 | MIG-1 | `Build/Catalog` (the `f2_` region, about lines 1785–11365), `Primitives`, `Composition`, `Loop`, `Wrappers`, `Encoding`, `Simulation`, `ClassP/TimeConstructible` | Named witnesses (about 30 defs with spec theorems) for the 66 existential rows; then delete the 304 `f2_` copies (6,255 of their lines are verbatim, MEASURED). The 22 space rows become corollaries. Retire the R3 canonical `_run` rows (0 external consumers) | −7.6k to −8.3k, +0.4k | decision 12.2 lifted | stmt + full | highest confidence; half the saving. **Drafted (2026-10-13):** `audits/evidence/mig1/` (design, measured inventory, statement draft: 0 errors, 26 sorries). Measured at `6aa9f67b`: 53 existential rows, not 66 (plus `timeConstructible_id`, hidden in a definition); 304 copies, of which 232 are code-identical to a home declaration (4,351 lines; the 6,255 is not reproduced); 20 of the 22 region publics are space rows, the other two head lemmas; the R3 `_run` rows have 5 citations in 2 files (`CertShell`, `CodeSimulator`), not 0. Net about −7.4k (ESTIMATE). Spec theorems in the existing style, not `Contract` instances (layering: the landed `Contract.lean` imports `Catalog`; MIG-0b's split removes that obstacle, and the decision rests on the rows' shape and the order of work). **Answered (user, 2026-10-13): all four as recommended**: the R3 retirement in MIG-1's last PR, after the B5a continuation integrates (else five rows, leaving `copyTM_run`); both consolidations; the space rows stay in Catalog as corollaries; MIG-17's named loop hosts are done by MIG-1. **Statement gate (2026-10-14):** `audits/mig1-statements-pack.md`. It covers the 26 witnesses with their real bodies, 45 new public statements (14 proved), the 55 rows as `type_of%` corollaries (all proved), and the deletion plan for 378 declarations. Net about −7.0k lines (ESTIMATE). Next: the gate audit |
 | MIG-2 | `TuringMachine/Universal` (195–1316, 1317–1606, 2367–2644) | Retire the duplicate timed layer (`timedCut*`, `timedPrefix`, `timedCapture`), through a stop-before variant or proofs parametric in the table | about −1k | — | swap | `timed_universal_concrete`'s coefficient must not grow (TMSAT); **merged with U-1** (one re-derivation, from both directions) |
 | MIG-3 | `Robustness/SingleTape` | `one_work_tape` reuses `dg_all_inputs`; drop the `sweep_*` chain | about −450 | — | swap | |
@@ -751,11 +755,13 @@ The route decisions of 2026-10-12 (design §16b) add three work items, numbered 
   the same PR; the configuration-count runner goes to a new `SpaceComplexity/WindowClock.lean`, so
   that `Build` never imports `SpaceComplexity` (the maintainer's recommendation, not the
   drafter's); `∃` statements now, named machines at fill. **Statement gate (2026-10-13):**
-  `audits/b6-hosts-statements-pack.md`. It covers eleven parts: five new modules and additions to
-  six existing files. The unit has 0 errors, its 10 contracts are sorried, and `space_universal` is
+  `audits/b6-hosts-statements-pack.md`. **CLOSED** (round 1, 2026-10-14: PASS, 0 blockers /
+  0 majors / 5 minors; `audits/b6-hosts-statements-findings.md`, resolutions
+  `audits/b6-hosts-statements-resolutions.md`). It covers eleven parts: five new modules and
+  additions to six existing files. The unit has 0 errors, its 10 contracts are sorried, and `space_universal` is
   strengthened to `C·s`. The step clock's trajectory clause is strengthened to carry the tapes, the
-  input position and the output; C1's form `exists_stepClockTM` is unchanged. Next: the gate
-  audit.
+  input position and the output; C1's form `exists_stepClockTM` is unchanged. Next: the landing
+  PR, carrying the five fixes.
 * **C1-D: the NTIME hierarchy's design** (2026-10-13; `audits/evidence/c1/C1-design.md`, statement
   draft `C1HostsDraft.lean.txt`: 0 errors, 5 sorries, 10 theorems proved). The proposed route:
   - **guess first:** the universal NDTM and the diagonalizer write the whole choice word with a

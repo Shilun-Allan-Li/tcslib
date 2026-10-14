@@ -3796,10 +3796,11 @@ obligations above, and no proved statement is false. Both majors concern the lan
 - the release export `seamReleaseTM_runFrom_pos` fixes universes to `Type`, narrower than the
   polymorphic `seamRelease_run_pos` it replaces.
 
-**Round 2** (`audits/mig0b-r2-pack.md`, re-run at `1781a230`): a real split, cut-checked
-without the fit namespace; the polymorphic release; and the minors (an entry-compatibility
-lemma for `Contract.lockstep`, the release's wording, the alphabet admission's sketch and
-reference, and records).
+**Round 2 CLOSED the gate** (2026-10-14: 0 blockers / 0 majors / 3 minors;
+`audits/mig0b-r2-findings.md`). Round 2 (`audits/mig0b-r2-pack.md`, re-run at `1781a230`): a real
+split, cut-checked without the fit namespace; the polymorphic release; and the minors (an
+entry-compatibility lemma for `Contract.lockstep`, the release's wording, the alphabet admission's
+sketch and reference, and records).
 
 ### 16b. Five route decisions (user, 2026-10-12)
 
@@ -3919,6 +3920,9 @@ The user took the five open route questions together, each as the maintainer rec
        output, which the runner's silence and restoration need; C1's form `exists_stepClockTM` is
        unchanged, so C1's pack only re-points its citation at landing;
      - window containment and the B6 summary instance move to `WindowClock`.
+   - **CLOSED** (2026-10-14: PASS, 0 blockers / 0 majors / 5 minors;
+     `audits/b6-hosts-statements-findings.md`). The step clock keeps `+2`; the runner stays
+     clock-agnostic. Next: the landing PR.
    - The shortcut through a space ledger for the time hierarchy's `diagSim` is not taken.
    - The restatement and the re-routed sketches go through a statement gate.
 4. **C2 is written as programs with coins.** `PATH ∈ NL`, Immerman–Szelepcsényi and their
