@@ -51,6 +51,9 @@ state type. This is the generic component shared by the oracle embedding
   including the absorbing halted case.
 * `Turing.MultiTapeTM.relabelState_runFrom_init` — initialized runs correspond
   at every time.
+* `Turing.MultiTapeTM.relabelState_visitedByTapeHead`,
+  `Turing.MultiTapeTM.relabelState_spaceUsed` — so do head trajectories and space at
+  every time (the space clause of the coding step).
 * `Turing.MultiTapeTM.runFrom_mapState_of_agreeOn` — injective state transport
   followed by guarded agreement on the host carrier (moved from `Build/Embed` at
   MIG-0b's layering split, 2026-10-13, so that the contract core can rename states;
@@ -178,5 +181,38 @@ theorem MultiTapeTM.runFrom_mapState_of_agreeOn {k : ℕ} {S H : Type} {x : List
     change ((src.runFrom c u).state.map emb) = some q at hq
     obtain ⟨p, hp, he⟩ := Option.map_eq_some_iff.mp hq
     exact ⟨p, hguard u hu p hp, he⟩
+
+end Turing
+
+namespace Turing
+
+/-! ### Relabelling preserves space -/
+
+/-- **State relabelling preserves every head trajectory.** For any machine `tm` and any state
+equivalence `e`, head `i` of the relabelled machine visits, in its first `t` steps from its
+initial configuration, exactly the cells that head `i` of `tm` visits. This is the space
+clause that the coding step `Turing.exists_codeTM` does not state. [AB09, §1.4: the coding
+step of the normal form]
+
+**Proof sketch.** The relabelled run is the original run with its states renamed
+(`Turing.MultiTapeTM.relabelState_runFrom_init`), and renaming changes no head position. -/
+theorem MultiTapeTM.relabelState_visitedByTapeHead {k : ℕ} {Symbol : Type*}
+    {State State' : Type*} (tm : MultiTapeTM k Symbol State) (e : State ≃ State')
+    (input : List Symbol) (t : ℕ) (i : Fin k) :
+    (tm.relabelState e).visitedByTapeHead ((tm.relabelState e).initCfg input) t i =
+      tm.visitedByTapeHead (tm.initCfg input) t i := by
+  simp only [MultiTapeTM.visitedByTapeHead, MultiTapeTM.relabelState_runFrom_init,
+    Cfg.mapState]
+
+/-- **State relabelling preserves space at every time.** The relabelled machine uses exactly
+the space of the original up to every time `t`. [AB09, §1.4]
+
+**Proof sketch.** Sum `Turing.MultiTapeTM.relabelState_visitedByTapeHead` over the tapes. -/
+theorem MultiTapeTM.relabelState_spaceUsed {k : ℕ} {Symbol : Type*} {State State' : Type*}
+    (tm : MultiTapeTM k Symbol State) (e : State ≃ State') (input : List Symbol) (t : ℕ) :
+    (tm.relabelState e).spaceUsed ((tm.relabelState e).initCfg input) t =
+      tm.spaceUsed (tm.initCfg input) t := by
+  simp only [MultiTapeTM.spaceUsed, MultiTapeTM.spaceUsedByTape,
+    MultiTapeTM.relabelState_visitedByTapeHead]
 
 end Turing

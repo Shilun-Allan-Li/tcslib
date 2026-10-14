@@ -66,6 +66,7 @@ this module is admitted.
 ## Main results
 
 * `Turing.cfgRecord_length` — a record has `k + 3` fields.
+* `Turing.Cfg.inWindow_init` — the initial configuration is in every window.
 * `Turing.cfgRecord_inj` — on windowed configurations, records agree exactly
   when configuration cores and tags do (proved; fill-C status update).
 * `Turing.recordValid_iff` — validity as a field-by-field shape condition
@@ -5252,5 +5253,20 @@ theorem exists_recordTestTM {k : ℕ} {Q T : Type} [Fintype Q] [DecidableEq Q] [
     · rfl
     · funext i; simp [cfg, fieldOffset]
     · rfl
+
+end Turing
+
+namespace Turing
+
+/-! ### The initial configuration is windowed -/
+
+/-- **The initial configuration is in every window**: its heads are at `0` and its work
+tapes are blank. It is the windowed runner's precondition at the start of a simulation from
+an initial configuration (H3; `Complexity.space_hierarchy`'s diagonalizer). [AB09, §4.1.1]
+
+**Proof sketch.** Unfold `Turing.Cfg.init`. -/
+theorem Cfg.inWindow_init {k : ℕ} {Symbol State : Type} (q₀ : State)
+    (x : List Symbol) (s : ℕ) : (Cfg.init q₀ x : Cfg k Symbol State x).InWindow s :=
+  ⟨fun _ => by simp, fun _ _ _ => rfl⟩
 
 end Turing

@@ -41,6 +41,11 @@ polynomial, giving `L ⊆ P` and "logspace computations run in polynomial time" 
 * `Turing.FinTM.ComputesInTime.of_spaceUsed_le` — a computation that has halted by time `t`
   having visited at most `s` cells has in fact halted by time `configBound M |x| s`.
   [AB09, §4.1.1, the deterministic case of Thm 4.2]
+* `Turing.FinTM.ComputesInTime.spaceUsed_le_of_halt`,
+  `Turing.FinTM.ComputesInSpace.computesFunInTime_and_forall_spaceUsed_le` — the halt-time
+  space bound holds at every time, in the form the space-preserving normal form needs.
+* `Turing.FinTM.decidesInSpace_of_alphabetReduction` — a rich-alphabet machine deciding on the
+  `Bool` inputs within an all-input space bound gives a `SPACE` decider. [AB09, Claim 1.5]
 * `Complexity.LOGSPACE_subset_P` — `L ⊆ P`. [AB09, Thm 4.2 for `S = log n`]
 * `Complexity.polyTimeComputable_of_computesInSpace` — a function computed in logarithmic
   space is polynomial-time computable. [AB09, p. 112: "logspace computations run in
@@ -491,3 +496,95 @@ theorem polyTimeComputable_of_computesInSpace {f : List Bool → List Bool} {M :
   ⟨M, _, _, FinTM.ComputesInSpace.computesFunInTime h⟩
 
 end Complexity
+
+namespace Turing
+
+namespace FinTM
+
+/-! ### Space at every time, and deciding through the alphabet reduction -/
+
+/-- **The halt-time space bound holds at every time.** If `M` has halted on `x` with output
+`w` by time `t`, having visited at most `s` cells by then, it has visited at most `s` cells
+by **every** time `t'`: before `t` by monotonicity, after `t` because the halted
+configuration is frozen. This is the all-times bridge named by `Complexity.space_hierarchy`'s
+sketch (`Turing.FinTM.DecidesInSpace` bounds the space at the halt; the normal form needs every
+time). [AB09, §4.1, Definition 4.1]
+
+**Proof sketch.** Every head position visited by time `t'` was visited by time `t`: a time
+`u ≤ t` is in range, and at a time `u > t` the configuration is the one at `t`
+(`Turing.MultiTapeTM.runFrom_of_halt`). So each visited set at `t'` is contained in the one at
+`t`. -/
+theorem ComputesInTime.spaceUsed_le_of_halt {Symbol : Type} {M : FinTM Symbol}
+    {x w : List Symbol} {t s : ℕ} (h : M.ComputesInTime x w t)
+    (hs : M.tm.spaceUsed (M.tm.initCfg x) t ≤ s) :
+    ∀ t', M.tm.spaceUsed (M.tm.initCfg x) t' ≤ s := by
+  have hhalt := ((computesInTime_iff M x w t).mp h).1
+  have key : ∀ t' i, M.tm.visitedByTapeHead (M.tm.initCfg x) t' i ⊆
+      M.tm.visitedByTapeHead (M.tm.initCfg x) t i := by
+    intro t' i z hz
+    simp only [MultiTapeTM.visitedByTapeHead, Finset.mem_image, Finset.mem_range] at hz ⊢
+    obtain ⟨u, hu, rfl⟩ := hz
+    by_cases hut : u ≤ t
+    · exact ⟨u, by omega, rfl⟩
+    · refine ⟨t, by omega, ?_⟩
+      rw [show u = t + (u - t) by omega, MultiTapeTM.runFrom_add,
+        MultiTapeTM.runFrom_of_halt _ hhalt]
+  intro t'
+  refine le_trans ?_ hs
+  exact Finset.sum_le_sum fun i _ => Finset.card_le_card (key t' i)
+
+/-- **A space-bounded computation in the normal form's hypotheses.** If `M` computes `f`
+within space `s`, then it computes `f` within the length-dependent time
+`n ↦ configBound M n (s n)`, and its space is at most `s |x|` at every time on every `x`.
+These are exactly the hypotheses `hM` and `hS` of
+`Turing.FinTM.one_work_tape_binary_spaceUsed`. [AB09, §4.1.1]
+
+**Proof sketch.** Time: `Turing.FinTM.ComputesInTime.of_spaceUsed_le`. Space at every time:
+`Turing.FinTM.ComputesInTime.spaceUsed_le_of_halt`. -/
+theorem ComputesInSpace.computesFunInTime_and_forall_spaceUsed_le {M : FinTM Bool}
+    {f : List Bool → List Bool} {s : ℕ → ℕ} (h : M.ComputesInSpace f s) :
+    M.ComputesFunInTime f (fun n => M.configBound n (s n)) ∧
+      ∀ (x : List Bool) (t : ℕ), M.tm.spaceUsed (M.tm.initCfg x) t ≤ s x.length := by
+  refine ⟨fun x => ?_, fun x t => ?_⟩
+  · obtain ⟨t, ht, hsp⟩ := h x
+    exact ht.of_spaceUsed_le hsp
+  · obtain ⟨t₀, ht, hsp⟩ := h x
+    exact ht.spaceUsed_le_of_halt hsp t
+
+/-- **Deciding through the alphabet reduction.** Let `D` be a machine over a finite alphabet
+`Γ` with an embedding `e` of `Bool`. Suppose that on every `Bool` input `x` it halts with the
+one-symbol output `[x ∈ L]` (embedded), and that on **every** input over `Γ` (foreign symbols
+included) and at every time it has visited at most `S |x|` cells. Then some binary machine
+decides `L` within space `c · (S n + 1)`. No time bound on `D` is assumed: the reduction's
+time function is the maximum of the first halting times over the finitely many inputs of each
+length, which need not be computable (the RD-3 gate's check 7). [AB09, §1.3.1, Claim 1.5, with
+the space clause of `Turing.FinTM.alphabet_reduction_spaceUsed`]
+
+**Proof sketch.** Choose a halting time `g x` for each `Bool` input, and let `T n` be the
+maximum of `g` over the inputs of length `n` (a supremum over `Fin n → Bool`). Then `D`
+computes the indicator via `e` within `T`, by monotonicity of halted runs. Apply
+`Turing.FinTM.alphabet_reduction_spaceUsed`; its machine decides `L` at the halting time
+`c · (T n + 1)`, within `c · (S n + 1)` cells. -/
+theorem decidesInSpace_of_alphabetReduction {Γ : Type} [Fintype Γ] [DecidableEq Γ]
+    (e : Bool ↪ Γ) (D : FinTM Γ) (L : Language Bool) (S : ℕ → ℕ)
+    (hD : ∀ x : List Bool, ∃ t, D.ComputesInTime (x.map e)
+      ([MultiTapeTM.indicator (L : Set (List Bool)) x].map e) t)
+    (hS : ∀ (x : List Γ) (t : ℕ), D.tm.spaceUsed (D.tm.initCfg x) t ≤ S x.length) :
+    ∃ (c : ℕ) (M : FinTM Bool), M.DecidesInSpace L fun n => c * (S n + 1) := by
+  classical
+  choose g hg using hD
+  let T : ℕ → ℕ := fun n => (Finset.univ : Finset (Fin n → Bool)).sup fun v => g (List.ofFn v)
+  have hM : D.ComputesFunInTimeVia e
+      (fun x => [MultiTapeTM.indicator (L : Set (List Bool)) x]) T := by
+    intro x
+    have hle := Finset.le_sup (f := fun v : Fin x.length → Bool => g (List.ofFn v))
+      (Finset.mem_univ x.get)
+    dsimp only at hle
+    rw [List.ofFn_get] at hle
+    exact (hg x).mono hle
+  obtain ⟨c, M', -, hM', hS'⟩ := alphabet_reduction_spaceUsed e D _ T S hM hS
+  exact ⟨c, M', fun x => ⟨c * (T x.length + 1), hM' x, hS' x _⟩⟩
+
+end FinTM
+
+end Turing
