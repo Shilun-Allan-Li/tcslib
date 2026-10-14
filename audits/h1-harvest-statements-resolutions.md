@@ -40,3 +40,12 @@ merged-base compile and replay are landing obligations.
    small, separately reviewable proof that reuses or moves the word-value bridge.
 7. R's sketch (`NDCodeSimulator.lean:117–120`) re-pointed at landing to `hostedLoopTM_run` and
    `hostedLoop_read`, without the stale "private" and "harvested with H2's promotion" wording.
+
+## The user's decisions (2026-10-14)
+
+- **Questions 1–5 and 7: all as proposed.** The home is `Build/StepBlockLoop.lean`; the registry
+  row is H2-L; the five names stand. One maintainer landing PR on the merged base, no fill brief,
+  and R's sketch re-pointed in the same PR.
+- **Question 6:** `Turing.counterValue_bits` is added in the landing PR, beside `counterValue`. It
+  reuses or moves the existing word-value bridge, with no private copy, and the user reviews it in
+  the PR.
