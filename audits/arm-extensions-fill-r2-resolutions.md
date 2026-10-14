@@ -38,3 +38,21 @@
    - the refactor's diff;
    - excerpts of the 25 absent N-pair counterparts, so the exclusions are source-backed;
    - the corrected texts.
+
+## Records applied by the maintainer (R2-2, R2-6; 2026-10-14)
+
+- **R2-2:** H7–H13 are installed in `machine-library-design.md` §14, with the accepted-exception
+  and gate-before-reuse paragraph and the auditor's precision repairs. H1, H3, H4 and H6 are
+  reconciled, and so is the pure-kit paragraph.
+- **R2-6, active records:**
+  - plan row B2, and the ARM-merge plan row;
+  - backlog MIG-19 and MIG-22, closed as moot;
+  - design §12.8's S1b consumer row and its two machine plans, annotated as historical;
+  - §16b's update paragraph, now on #92's merged status;
+  - the `[Bon26]` provenance note in design §12's Citations.
+- **R2-6, historical evidence** (annotated here, not rewritten): the axiom probes
+  `audits/evidence/fills-6/AxF6.lean.txt`, `fills-7/AxF7.lean.txt` and `fills-8/AxF8.lean.txt`
+  import `ConfigGraph` for the three theorems. They ran before `8c23f3bc` moved them to
+  `SpaceComplexity/ExpTime.lean`; re-run at the tip they would not resolve the names. Round 1's
+  `audits/evidence/arm-fill/AxARM.lean.txt` already imports `ExpTime`. Future fill probes that
+  print the three must import `ExpTime`.

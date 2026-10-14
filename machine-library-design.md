@@ -860,6 +860,11 @@ docstrings and their blueprint entries must carry this citation, alongside the
 existing `[Balbach22]` (AFP `Cook_Levin`) for the composition architecture and
 the in-repo credits to the colleague modules named above.
 
+*Historical (2026-10-14).* `NL_subset_P`'s former sketch cited [Bon26] as design context for
+S1b's planned BFS (reachability-table construction; nothing ported). The ARM proof in
+`SpaceComplexity/ExpTime.lean` (received `8c23f3bc`) neither uses nor adapts it, and its
+docstring drops the tag.
+
 ### 12.5 Round-1 audit repairs (2026-10-09)
 
 The §12 statement-gate round 1 (`audits/routine-infra-findings.md`: 0
@@ -1423,7 +1428,7 @@ fill batches split now/after-G1; a fill gate.
 
 | Consumer (audited sketch) | Rows |
 |---|---|
-| **S1b** `NSPACE_subset_exp_dtime` (BFS; then `NL_subset_P` and Ex 4.3 by the binding route) | R8.7 `recordInitTM`, `recordStepTM` (×2 choice bits), `recordEqTM`, `recordTestTM`; R8.3 table navigation; R8.4/G2 append and counter initialization; R8.6 window fields; R8.8; existing `counterLoopTM`, `embedSilentRetTM_run` (constructor capture), `seamCompTM_run_ofCfg`, `copyTM_run_ofCfg` |
+| **S1b** *(historical: S1b stopped, fills-6; the target is proved at ARM level, §14 H12, 2026-10-14)* `NSPACE_subset_exp_dtime` (BFS; then `NL_subset_P` and Ex 4.3 by the binding route) | R8.7 `recordInitTM`, `recordStepTM` (×2 choice bits), `recordEqTM`, `recordTestTM`; R8.3 table navigation; R8.4/G2 append and counter initialization; R8.6 window fields; R8.8; existing `counterLoopTM`, `embedSilentRetTM_run` (constructor capture), `seamCompTM_run_ofCfg`, `copyTM_run_ofCfg` |
 | **Savitch** `savitch` ("frame stack … catalog copy/compare/increment … one extra bank runs the vertex-adjacency test") | `recordStepTM` + `recordEqTM` for `adj(u, v)` (`u = v ∨ step u = v`, both choice bits); `recordNextTM` + `recordValidTM` for the midpoint enumerator; R8.3 seek over the frame stack; `copyTM`/`clearTM` for frame push/pop at **fixed intervals** (note 7); `incrementTM` for the depth field; R8.8 for the recursion's two returns. Space contracts of every row are load-bearing |
 | `spaceConstructible_poly`/`_logSpace`/`_linear` | R8.5 `inputLengthTM`; R8.6 `expandTM`; `incrementTM` |
 | **`PATH_NLComplete`** hardness (adjacency "by one local transition-table check", logspace) | The sketch's engine is the ARM layer (`arm_decides`). Optionally, a TM route: `recordStepTM`'s space clause with binary F1 gives `O(log n)`-space adjacency deciders for the index languages. Decision 12.8.4 |
@@ -1433,6 +1438,9 @@ fill batches split now/after-G1; a fill gate.
 | `NP_subset_PSPACE` | existing `incrementTM` (certificate enumerator) and `vhostEmitTM` (virtual input); R8.8 for accept/exhaust |
 
 #### S1b's machine plan as a composition of these rows
+
+*Historical (2026-10-14): S1b stopped (fills-6), and its target is proved at ARM level (§14 H12).
+The rows this plan uses keep one remaining consumer, B6's window route (rows 17–18).*
 
 **Host.** A `FinTM Bool`. It has the native input; the constructor's embedded
 tapes plus a capture tape; tape `Tab` (the record table); `Cur₀` and `Cur₁`
@@ -1842,6 +1850,9 @@ is a Catalog row sharing the R3/G2 trace (`catalog_trace_run`), since G2 lives i
 | `exists_tableAppendTM`, `exists_tableFindTM P` | append at `seekEndTM`; first record satisfying a fold, with an escape if none | `copyTM`, `seekEndTM`, `scanTM`, `counterLoopTMVia` |
 
 #### 4. S1b's machine plan, recomposed (rich)
+
+*Historical (2026-10-14): S1b stopped (fills-6), and its target is proved at ARM level (§14 H12).
+The rows this plan uses keep one remaining consumer, B6's window route (rows 17–18).*
 
 **Parameters.** `Γ := RecSym N.State (Fin 3)`, with the tag being the output summary through
 its `Fin 3` code (O4), and `e := RecSym.digitEmb`. The host is a `FinTM Γ`.
@@ -3055,18 +3066,38 @@ private by default:
   space bounds to rows exported as existentials (the §2 design rule, *named*
   machines with spec theorems, was not followed by those rows).
 
-**The registry.** Status as of 2026-10-12. Each entry gets a public contract
+**The registry.** Status as of 2026-10-12. Rows H7–H13, and the reconciliations of H1, H3, H4
+and H6, were added 2026-10-14 (the ARM fill gate, finding 5). Each entry gets a public contract
 and a statement gate before a second consumer is briefed.
 
 | # | Host | Status | Named consumers |
 |---|---|---|---|
 | 0 | **Framed-contract structure**: machine, entry/exit states, precondition, endpoint as a function of the start configuration, time, no-earlier-exit cut, head envelope; sequencing, phase host, R1 embedding, lift and counter loop as structure-to-structure theorems, space derived | to design; **requirements revised by §16** (exact time and cut first-class) | every host below; removes the inline restatements of the delimited-word precondition |
-| H1 | **AND/OR evaluator**: a depth-first odometer over a path word of per-depth records with node kinds (AND/OR), a pluggable leaf-verdict module with its own framed contract, short-circuit semantics as a pure function; space = path + leaf + O(1) | the pure core is proved, private, in B4 membership's partial (`b4mValue`, `b4mValue_truth`, `b4mWalk_value`; fills-6); no machine walker was built. **Language first (user, 2026-10-12):** the general evaluator is written as a recursive program of §15's language, not as a machine host, and `TQBF_mem_PSPACE` follows as a program over that core (backlog MIG-22) | `TQBF_mem_PSPACE`; Savitch (midpoint records as digits); NP ⊆ PSPACE (re-derivation); `ClassPSPACE/Games.lean`'s game values; backtracking in the §15 layer |
+| H1 | **AND/OR evaluator**: a depth-first odometer over a path word of per-depth records with node kinds (AND/OR), a pluggable leaf-verdict module with its own framed contract, short-circuit semantics as a pure function; space = path + leaf + O(1) | **reconciled 2026-10-14:** the machine form exists, received: `LogProg.TQBFARM` (H13e) proves `TQBF_mem_PSPACE` by a depth-first walk with the assignment as a stack register (accepted exception). The private pure core in `TQBF.lean`'s `b4m*` appendix is dead and is deleted by the payback PR (D6); MIG-22 is moot. The general AND/OR evaluator remains to be designed; its contract gate decides between this machine and §15's language. *(Was: the pure core private in B4 membership's partial; language first, user 2026-10-12.)* | `TQBF_mem_PSPACE` (served by H13e); Savitch (served by H13a for polynomial `S`; midpoint records as digits); NP ⊆ PSPACE (re-derivation); `ClassPSPACE/Games.lean`'s game values; backtracking in the §15 layer |
 | H2 | **Step block**: one simulated transition of a `k`-tape coded table, relation-level, with per-round time `B·(\|table\| + 1)` and a head envelope | **the complete step block is proved, private, in B5a H1's continuation (fills-7):** `h1RoundTM k`, one finite machine per `k` whose control does not depend on the state count, with `h1Round_effect` (`0 < T ≤ 50·(\|table\| + 1)`, strict interior, silent, head envelope). **Promoted (2026-10-14, H2-M, PR #88):** public in `Build/StepBlock.lean` as `Turing.StepBlock.roundTM`, with `roundTM_effect`, under the round-2 names (backlog F7-1(a)) | H1 (`exists_uniformSimulator`); U-1; B6's self-application universal; C1 (unchanged, at `k = 3`, through the replay machine `NDTM.replayTM`); EXPCOM |
-| H3 | **Windowed runner**: run a fixed machine on a windowed record, exiting on window exit, simulated halt, or a configuration-count clock | parts exist privately in S1b's partial (radius phase, records-to-runs bridge, the general-`S` count). S1b stopped (fills-6); B6's window route is the next consumer (adopted, §16b item 3) | S1b; B6 (the window route); Savitch; NL = coNL |
-| H4 | **Search over a graph presented by rows** (enumerate, equality, adjacency, start, target), visited table, BFS | not built: S1b's partial has the record graph (records, edges, path lifting, counts) but no search machine, and it stopped there (user, fills-6). **Language first:** the general search is a program of §15's language, and `NSPACE ⊆ DTIME(2^O(S))` is re-derived through it (backlog MIG-19) | `NL ⊆ P`, `NSPACE ⊆ DTIME(2^O(S))`; `PATH ∈ P`; Immerman–Szelepcsényi counting; §15 graph algorithms |
+| H3 | **Windowed runner**: run a fixed machine on a windowed record, exiting on window exit, simulated halt, or a configuration-count clock | parts exist privately in S1b's partial (radius phase, records-to-runs bridge, the general-`S` count). S1b stopped (fills-6); B6's window route is the next consumer (adopted, §16b item 3). **B6's hosts landed (PR #92, 2026-10-14):** `Build/WindowRun` and `SpaceComplexity/WindowClock` state its public contracts, sorried for B6's fills. S1b's remaining private block is dead, and the payback PR deletes it. See H9 for the received configuration count | B6 (the window route; gated, `audits/b6-hosts-statements-findings.md`); Savitch and NL = coNL (served by H13a and H13b); S1b (stopped) |
+| H4 | **Search over a graph presented by rows** (enumerate, equality, adjacency, start, target), visited table, BFS | **reconciled 2026-10-14:** built at ARM level for `NSPACE ⊆ DTIME(2^O(S))` (H12, received, accepted exception); MIG-19 is moot. The general search over row-presented graphs remains to be designed (H10's code languages are a row presentation). *(Was: not built; language first, MIG-19.)* | `NL ⊆ P` and `NSPACE ⊆ DTIME(2^O(S))` (served by H12); Immerman–Szelepcsényi counting (served by H13b); `PATH ∈ P`; §15 graph algorithms |
 | H5 | **Input devices** behind one interface: native, buffered (Z1, exists), unary marker, binary position (from `exists_inputSeekTM`), computed input | partial | B6 / `space_universal`; U-1 and H2 (backlog); C1 |
-| H6 | **Machine-to-formula kit**: closed-form variable indexing, snapshot-keyed local gates, ordered emission by `exists_emitLoopTM`, Tseitin on `Std.Sat.CNF ℕ` correct for every prefix assignment | pattern private in `CookLevin/Hardness.lean`; B4a's codec is non-uniform (its orderings range over index types depending on `n` and `s`, and its public statement is `∀ n s, ∃ …`). **B4a is restated in place over this kit's indexing** (user, 2026-10-12; §16b item 2) | TQBF hardness; Cook–Levin deduplication; later machine-to-formula reductions |
+| H6 | **Machine-to-formula kit**: closed-form variable indexing, snapshot-keyed local gates, ordered emission by `exists_emitLoopTM`, Tseitin on `Std.Sat.CNF ℕ` correct for every prefix assignment | pattern private in `CookLevin/Hardness.lean`; B4a's codec is non-uniform (its orderings range over index types depending on `n` and `s`, and its public statement is `∀ n s, ∃ …`). **B4a is restated in place over this kit's indexing** (user, 2026-10-12; §16b item 2) | TQBF hardness (served instead by H13f's route: the uniform tableau, Tseitin after the prefix); Cook–Levin deduplication; later machine-to-formula reductions. B4a's restatement (§16b item 2) has no consumer while RD-2's fills are held |
+| H7 | **ARM compiler and its decision bridges** (Hydroxyi's `LogProg` tree, `SpaceComplexity/Machines/`): the register-tape compiler from an arbitrary seam (`compile_correct_from`), the space bridge `arm_space`, and the decision bridges at logarithmic width (`arm_decides`, `arm_decides_poly`) and at general width (`arm_decides_space`, `arm_decides_SPACE`, `arm_decides_pspace`, `_of_logspace`, `_val`); the loop and reachability kit (`GuardLe`, `ARMLoops`, `arm_reach`, `VWord`) | **received 2026-10-14 (`8c23f3bc`); public, ungated; first uses an accepted exception (decision 3).** `compile_correct_from` and the wide bridges are new; `arm_decides`, `arm_space` predate (chapter-6 campaign, `f70c57c2`). No time clause: ARM instructions are unary in register values, so time goes through H9 | `TQBF_mem_PSPACE` (H13e), `PSPACE_eq_NPSPACE` (H13a), the codec's deciders (H10), the PATH-hardness bit deciders (H13d), `searchLang_mem_PSPACE` (example); through H8/H9 every ND and time customer |
+| H8 | **Nondeterministic ARM (NARM)**: `choose` instructions driven by a choice word, compiled to a `FinNDTM` by the `detPart` override; the space bridge `narm_space` and the class bridges `narm_decides_space`, `narm_decides`, `narm_decides_poly`, `narm_decides_npspace`; the termination layer `NTerm`/`NAcc`/`NSem` | **received 2026-10-14; public, ungated; accepted exception.** Supersedes for now §16b item 4's route (C2 as programs with coins; stage 2 paused). Its all-branch budget is per input: uniform over one input's branches, not over input lengths | `PATH_mem_NL` (H13c), `compl_mem_NSPACE` and through it `compl_PATH_mem_NL`, `NL_eq_coNL`, `NSPACE_compl_eq` (H13b) |
+| H9 | **Memory ARM (MARM) and its time bridge**: a monotone Boolean memory tape (`mread`, `mset`, `mleft`, `mright`), compiled by the same `detPart` override; the configuration count `runFrom_count_eq` and the bridge `marm_dtime` into `DTIME` | **received 2026-10-14; public, ungated; accepted exception.** The count needs the monotone-write hypothesis `hwrite` and is valid along one run only | `NSPACE_subset_exp_dtime` (H12), hence `NL_subset_P`, `polyTimeReducible_of_mem_NL` |
+| H10 | **Configuration codec and code deciders** (the fifth configuration encoding): `InWin`, `cfgWord`/`cfgCode`, the bound `cfgCode_lt`, injectivity up to `NDTM.coreSum`, the decoder; the four code languages and their `LOGSPACE` deciders; the chain bridge `mem_iff_codeChain` / `mem_of_codePath` | **received 2026-10-14; public, ungated; accepted exception.** `InWin` retires into `Turing.Cfg.InWindow` in the payback PR (D1, decided). RD-2's `ConfigCodec` has no consumer (fills held) | H13a (Savitch), H13b (inductive counting, through H13a's decider bank), H13d (PATH hardness), H12 (`ExpBFS`), H13f (TQBF hardness's verifier and machine) |
+| H11 | **Indexed input access** (ours, `SpaceComplexity/Logspace/`): the input bit and length languages `inputBitLang`/`inputLenLang` read by an oracle call on a register-held index, the bounded decoder `boundedDecode_loop`, and the preimage host (`PreimageHost.compile_decides`, `mem_LOGSPACE_preimage`) | **existing (2026-10-11), public; now a host with received consumers.** The response proposes it stay under `Logspace/` (addendum 1). D7 and `decChain` (decided): one parameterized stride decoder here, with `Codec/Engine`'s as instances | every received ARM customer through its decider bank; `Codec/Engine` (D7 copy); `PathHardRegs` (`mem_LOGSPACE_preimage` for `dropIdx`); `ARMLoops`, `NARMKit`, `VWord`, `ARMWidthExample` (direct importers) |
+| H12 | **Code reachability with a growing window (`ExpBFS`)**: the reachable-code sets `RCode`/`rset` per radius, the stop rule (`mem_iff_of_card_eq`, `card_rset_succ_of_le`), the window lemma `inWin_runWith_of_decides`, and the breadth-first MARM search giving `NSPACE_subset_exp_dtime_of_le` | **received 2026-10-14; public, ungated; accepted exception.** Built at ARM level, so H4's language-first route and MIG-19 are moot for this theorem | `NSPACE_subset_exp_dtime` (`ExpTime.lean`) and its two corollaries; inductive counting (H13b) uses the stop rule (`ISCountGenRadius` directly, `ISCountGenCorrect` transitively) |
+| H13 | **The customer machines**, each with its named consumers and its own reachability notion: (a) Savitch's midpoint recursion `SavitchARM` with its code-decider bank; (b) inductive counting `ISCount*`; (c) the PATH walk `PathWalk*` with `WalkLe`; (d) PATH hardness `PathHard*` (the code graph `red`); (e) the TQBF walk `TQBFARM`; (f) TQBF hardness `TQBFHard*` (the ∀-folded midpoint formula and Tseitin after the prefix) | **received 2026-10-14; public, ungated; accepted exception.** (a)–(e) are machines over H7–H10; (f) is a reduction over H10 and the polynomial-time closure algebra | (a) `PSPACE_eq_NPSPACE`; (b) `compl_PATH_mem_NL`, `NL_eq_coNL`, `NSPACE_compl_eq`; (c) `PATH_mem_NL`; (d) `PATH_NLComplete`; (e) `TQBF_mem_PSPACE`; (f) `TQBF_PSPACEHard`, `TQBF_PSPACEComplete`. Second uses inside the delivery: (b) uses (a)'s decider bank and H12's stop rule; (b) and (d) use (c)'s `WalkLe` and `rawEdge` |
+
+**The received ARM machinery, H7–H13** (registered 2026-10-14: the ARM fill gate's round 2,
+finding 5; user decision 3). The rows' public contracts, with file and line, are in
+`audits/evidence/arm-fill/r2/registry-rows.md`. Its lines are at `e831b5b0`, with one correction:
+`vword_whole₁` is at `Logspace/InputAccess.lean:93`, not 90.
+- **Accepted exception.** Their first uses, the consumers named above, all inside the delivery
+  `8c23f3bc`, are an accepted exception to *hosts come first*: they were not statement-gated
+  before their consumers were written.
+- **Gate before reuse.** No further consumer of H7–H13 is briefed until that row's public contract
+  has passed a contract gate, of the contract as listed or of its generic form.
+- **Named consumers** are direct importers and named transitive users, marked as such.
+- **Generic forms** are ARM-2's direction (backlog §1 ARM-2), designed with Hydroxyi.
 
 **C1's hosts (landed 2026-10-14, PR #87; gate `audits/c1-hosts-statements-findings.md`).** The
 nondeterministic phase host `NDTM.phaseHostND` (`Build/NDHost`), the choice writer `ndWriterTM`
@@ -3079,7 +3110,10 @@ Pure-Lean kits that the hosts' semantics share (not machines, so not hosts,
 but designed with them): bounded reachability (`ReachWithin`, the midpoint
 lemma, pigeonhole shortening) with bridges from configuration reachability,
 `GraphReach` and `Kruskal.Reach` to Mathlib's `Digraph`/`SimpleGraph`.
-Consumers: Savitch, TQBF hardness, Immerman–Szelepcsényi, PATH, §15.
+Consumers: Savitch, TQBF hardness, Immerman–Szelepcsényi, PATH, §15. The received code added
+four more reachability notions, each with its own consumer: `WalkLe`, `SavitchARM.Reach`,
+`ExpBFS.RCode` and `TQBFHard.Mid`/`mid_iff_steps`. The bounded-reachability kit, when designed,
+bridges them (2026-10-14).
 
 **Work in flight when the rule was adopted.** No in-flight brief is withdrawn.
 B4 membership and B5a H1 received addenda (`briefs/ch34-b4-mem-addendum-1.md`,
@@ -3820,7 +3854,10 @@ The user took the five open route questions together, each as the maintainer rec
 **Update (2026-10-14).** Hydroxyi's ARM merge (`8c23f3bc`) proves the customers of items 1
 (Savitch at polynomial space), 2 (`TQBF_PSPACEHard`, without RD-2's codec) and 4 (`PATH ∈ NL`,
 NL = coNL). The user held RD-2's fills and paused stage 2 (backlog RD-2, PROG-4); general
-`savitch` stays open.
+`savitch` stays open. Item 3's "S1b's private copies re-pointed in the same PR" was carried
+out by the B6 hosts' landing (PR #92, merged 2026-10-14): seven private copies removed, five
+re-pointed. ConfigGraph's remaining 11 private `s1b_*` declarations have no consumer, and the
+payback PR deletes them (backlog §1 ARM-1).
 
 1. **Savitch's space: words of `Θ(S)` bits.** A configuration of the simulated machine is one
    word, so a recursion level holds `O(1)` cells, and depth `O(S)` gives `f = O(S)` cells. Stage
