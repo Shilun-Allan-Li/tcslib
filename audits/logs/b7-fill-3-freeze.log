@@ -1,0 +1,39 @@
+# B7 fill continuation 2: statement freeze, maintainer's own check against the campaign tip 635afc66 (the owned files are unchanged since the agent's base 4aafe9e4); only implicitlyLogspaceComputable_dropIdx's body (and its status tag) may change, plus flagged shared exports in InputAccess
+## InputAccess.lean (base 635afc66 → 55166461)
+public before/after: 14 20 private before/after: 57 58
+public added: ['boundedDecode_loop', 'canonicalTail_loop', 'indexedSeek_loop', 'registerCopy_loop', 'registerScale_loop', 'register_update_le']
+public removed: []
+private removed: []
+private added: ['access_width_half']
+private changed: []
+imports identical: yes; lines: 1569 → 2016
+## QueryReshape.lean (base 635afc66 → 55166461)
+public before/after: 9 9 private before/after: 6 57
+public added: []
+public removed: []
+authorized body change: implicitlyLogspaceComputable_dropIdx
+private removed: []
+private added: ['DropGood', 'DropHalt', 'DropReach', 'DropState', 'compBank', 'compBank_mem', 'compLift', 'compLift_mem', 'compLift_query', 'compQ_host_cap', 'compQ_query_overflow', 'dropARM', 'dropAdvance', 'dropBank', 'dropCopy', 'dropDecodeAdvance', 'dropLang', 'dropLimit', 'dropOracle', 'dropScanDone', 'dropStride', 'dropTailAdvance', 'dropValues', 'dropValues_apply', 'dropValues_bound', 'dropValues_update', 'dropWalk', 'drop_bad_shape', 'drop_bad_tail', 'drop_bit', 'drop_canon', 'drop_copy_run', 'drop_decrement_run', 'drop_first_read', 'drop_hit', 'drop_inner_run', 'drop_lang_pair', 'drop_len', 'drop_lookup', 'drop_lookup_prepare', 'drop_mem', 'drop_nested_run', 'drop_pair_run', 'drop_preS', 'drop_rejected_tail', 'drop_ret', 'drop_run', 'drop_seek_run', 'drop_tail_decode', 'drop_u_prepare', 'drop_z_prepare']
+private changed: []
+imports identical: yes; lines: 297 → 1208
+## Reductions.lean (base 635afc66 → 55166461)
+public before/after: 7 7 private before/after: 0 0
+public added: []
+public removed: []
+private removed: []
+private added: []
+private changed: []
+imports identical: yes; lines: 153 → 153
+## Mult.lean (base 635afc66 → 55166461)
+public before/after: 2 2 private before/after: 0 0
+public added: []
+public removed: []
+private removed: []
+private added: []
+private changed: []
+imports identical: yes; lines: 74 → 74
+removed lines (all):
+-/-- **Dropping the middle index is implicitly logspace computable** (phase P4.4b; spec, fill
+-pending).
+-  sorry
+forbidden tokens in added lines (sorry, admit, axiom, native_decide, unsafe, implemented_by, @[extern], #eval, run_cmd; whole words): 0

@@ -59,6 +59,21 @@ sites.
   output lemmas (at most one symbol is emitted per step, and output only grows), stated
   here rather than in the vendored `Deterministic.lean` to keep the vendored files
   unmodified.
+* `Turing.MultiTapeTM.spaceUsed_le_mul_succ` — a run of `t` steps visits at most
+  `k · (t + 1)` cells (shared by the space inclusions of chapter 4; added 2026-10-10).
+
+* `Turing.MultiTapeTM.step_output_prepend`, `Turing.MultiTapeTM.runFrom_output_prepend`,
+  `Turing.MultiTapeTM.runFrom_state_ne_none_of_le` — runs commute with a fixed output
+  prefix, and a live endpoint has a live past (shared run facts, 12.2c/CH7-D2;
+  added 2026-10-10).
+* `Turing.MultiTapeTM.exists_first_halt` — a run halted by time `t` halts first at some
+  `u ≤ t`, live before `u` and already in its time-`t` configuration (the first-halt
+  argument, public for the oracle query capture; added 2026-10-11, B1).
+* `Turing.MultiTapeTM.spaceUsedByTape_le_card_Icc` — a head confined to an integer interval
+  visits at most its cardinality (moved from `Build/Catalog` at MIG-0b's layering split, for
+  the contract core, 2026-10-13).
+* `Turing.MultiTapeTM.workTapePos_runFrom_mem_Icc` — after `u` steps every work head lies
+  within `u` cells of its start (MIG-0b, 2026-10-13).
 
 ## References
 
@@ -69,7 +84,7 @@ sites.
 namespace Turing
 
 /-!
-### Raw-layer output lemmas
+### Raw-layer output and space lemmas
 
 Additions on top of the vendored files (kept here so the vendored `Deterministic.lean`
 stays byte-comparable with upstream).
@@ -114,6 +129,93 @@ theorem output_prefix (tm : MultiTapeTM k Symbol State) (cfg : Cfg k Symbol Stat
   | succ d ih =>
     rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.step_output]
     exact ih.trans (List.prefix_append _ _)
+
+/-- A run of `t` steps visits at most `t + 1` cells on each work tape, hence at most
+`k · (t + 1)` cells in all. [AB09, proof of Theorem 4.2: a machine running in time `T`
+visits at most `T` cells per tape, up to the starting cell]
+
+**Proof sketch.** Each tape's visited set is the image of `Finset.range (t + 1)`
+(`Finset.card_image_le`, `Finset.card_range`); sum over the `k` tapes
+(`Finset.sum_le_sum`, `Finset.sum_const_nat`). -/
+theorem spaceUsed_le_mul_succ (tm : MultiTapeTM k Symbol State)
+    (cfg : Cfg k Symbol State input) (t : ℕ) :
+    tm.spaceUsed cfg t ≤ k * (t + 1) := by
+  calc tm.spaceUsed cfg t = ∑ i, tm.spaceUsedByTape cfg t i := rfl
+    _ ≤ ∑ _i : Fin k, (t + 1) := Finset.sum_le_sum fun i _ => by
+      unfold MultiTapeTM.spaceUsedByTape MultiTapeTM.visitedByTapeHead
+      exact (Finset.card_image_le).trans (Finset.card_range (t + 1)).le
+    _ = k * (t + 1) := by
+      rw [Finset.sum_const_nat fun _ _ => rfl, Finset.card_univ, Fintype.card_fin]
+
+/-- Prepending a fixed word to the output commutes with one step of any machine: the
+transition table reads neither the output tape nor its length, and a step only appends
+to it. This is the append-only output tape of the machine model [AB09, §1.2] (the
+write-only output tape is a declared variation; see `Turing.FinTM`).
+
+**Proof sketch.** A halted configuration does not move. Otherwise both sides apply the
+same action, chosen from the unchanged state, input symbol and work-tape symbols; the
+output equality is associativity of append. -/
+theorem step_output_prepend (tm : MultiTapeTM k Symbol State)
+    (cfg : Cfg k Symbol State input) (pre : List Symbol) :
+    tm.step { cfg with output := pre ++ cfg.output } =
+      { tm.step cfg with output := pre ++ (tm.step cfg).output } := by
+  have hi : ({ cfg with output := pre ++ cfg.output } : Cfg k Symbol State input).inputSymbol =
+      cfg.inputSymbol := rfl
+  have hw : ({ cfg with output := pre ++ cfg.output } :
+      Cfg k Symbol State input).workTapeSymbols = cfg.workTapeSymbols := rfl
+  cases hs : cfg.state with
+  | none => simp [MultiTapeTM.step, hs]
+  | some q =>
+    simp only [MultiTapeTM.step, hs, hi, hw]
+    refine Cfg.ext rfl rfl rfl rfl ?_
+    simp only [Action.apply, List.append_assoc]
+    rfl
+
+/-- Prepending a fixed word to the output commutes with every run: running from a
+configuration whose output already starts with `pre` yields the run's result with `pre`
+still in front of its output, halted tails included [AB09, §1.2].
+
+**Proof sketch.** Iterate the one-step commutation `step_output_prepend` along the run
+with `runFrom_comm_of_step`. -/
+theorem runFrom_output_prepend (tm : MultiTapeTM k Symbol State)
+    (cfg : Cfg k Symbol State input) (pre : List Symbol) (t : ℕ) :
+    tm.runFrom { cfg with output := pre ++ cfg.output } t =
+      { tm.runFrom cfg t with output := pre ++ (tm.runFrom cfg t).output } :=
+  MultiTapeTM.runFrom_comm_of_step (tm := tm) (tm' := tm)
+    (fun c => { c with output := pre ++ c.output }) (fun c => step_output_prepend tm c pre) cfg t
+
+/-- A run that is still live at time `t` was live at every time `u ≤ t`: the halting
+configuration of the model is absorbing [AB09, §1.2].
+
+**Proof sketch.** A halt at some `u ≤ t` would, by `runFrom_add` and `runFrom_of_halt`,
+make the configuration at `t` equal to the halted one at `u`. -/
+theorem runFrom_state_ne_none_of_le (tm : MultiTapeTM k Symbol State)
+    (cfg : Cfg k Symbol State input) (t : ℕ) (ht : (tm.runFrom cfg t).state ≠ none) :
+    ∀ u ≤ t, (tm.runFrom cfg u).state ≠ none := by
+  intro u hu hh
+  have he : tm.runFrom cfg t = tm.runFrom cfg u := by
+    rw [← Nat.add_sub_of_le hu, MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_of_halt _ hh]
+  exact ht (by rw [he]; exact hh)
+
+/-- **First halt**: if a run from `cfg` has halted by time `t`, then it halts first at
+some `u ≤ t` — live at every earlier time, and already in the very configuration it
+occupies at `t`, halting being absorbing [AB09, §1.2]. This is the guard-discharge form
+consumed by the lockstep contracts whose hypothesis is liveness before the halting time
+(`Turing.capture_run`, `Turing.emit_run`).
+
+**Proof sketch.** Take `u` least with a halted configuration (`Nat.find`). Minimality
+gives liveness below `u`; since `u ≤ t`, `runFrom_add` and `runFrom_of_halt` identify the
+configurations at `u` and at `t`. -/
+theorem exists_first_halt (tm : MultiTapeTM k Symbol State) (cfg : Cfg k Symbol State input)
+    {t : ℕ} (h : (tm.runFrom cfg t).state = none) :
+    ∃ u ≤ t, (∀ v < u, ¬(tm.runFrom cfg v).Halted) ∧
+      tm.runFrom cfg u = tm.runFrom cfg t := by
+  classical
+  have hex : ∃ u, (tm.runFrom cfg u).state = none := ⟨t, h⟩
+  have hle : Nat.find hex ≤ t := Nat.find_min' hex h
+  refine ⟨Nat.find hex, hle, fun v hv => Nat.find_min hex hv, ?_⟩
+  rw [← Nat.add_sub_of_le hle, MultiTapeTM.runFrom_add,
+    MultiTapeTM.runFrom_of_halt _ (Nat.find_spec hex)]
 
 end MultiTapeTM
 
@@ -253,5 +355,56 @@ theorem Computes.exists_computesInTime_iff {M : FinTM Symbol}
     exact ⟨t, ht⟩
 
 end FinTM
+
+end Turing
+
+namespace Turing
+
+/-- A head confined to an integer interval visits at most its cardinality.
+
+(Moved from `Build/Zone.lean` for B4, 2026-10-12.)
+
+**Proof sketch.** The visited set is a finite image contained in the
+interval by hypothesis; `Finset.card_le_card` and `Int.card_Icc` finish. -/
+theorem MultiTapeTM.spaceUsedByTape_le_card_Icc {k : ℕ} {Symbol State : Type*}
+    {input : List Symbol} (tm : MultiTapeTM k Symbol State)
+    (d : Cfg k Symbol State input) (t : ℕ) (i : Fin k) (lo hi : ℤ)
+    (h : ∀ u ≤ t, (tm.runFrom d u).workTapePos i ∈ Finset.Icc lo hi) :
+    tm.spaceUsedByTape d t i ≤ (hi + 1 - lo).toNat := by
+  unfold MultiTapeTM.spaceUsedByTape
+  calc
+    _ ≤ (Finset.Icc lo hi).card := Finset.card_le_card (by
+      intro p hp
+      obtain ⟨u, hu, rfl⟩ := Finset.mem_image.mp hp
+      exact h u (by simpa only [Finset.mem_range, Nat.lt_succ_iff] using hu))
+    _ = _ := Int.card_Icc lo hi
+
+end Turing
+
+namespace Turing
+
+/-- **The time-derived head envelope** (MIG-0b): after `u` steps from `cfg`, every work head
+lies within `u` cells of its start. Every row with a time bound therefore has an interval
+envelope, even when it states none (the install and emit calls; the find round). It is the
+interval form of `Build/Catalog`'s private `f2_head_steps`, which retires with MIG-1 (backlog
+F6-1(g)), and of the run head bound that the H2 promotion exports
+(`CodeSimulator.h1Run_headBound`, backlog F7-1(a)); stated here over any alphabet and state
+type, like the raw layer it extends.
+
+**Proof sketch.** Induction on `u`: each step moves a head by at most one cell
+(`Turing.MultiTapeTM.workTapePos_step_le`). -/
+theorem MultiTapeTM.workTapePos_runFrom_mem_Icc {k : ℕ} {Symbol State : Type*}
+    {input : List Symbol} (tm : MultiTapeTM k Symbol State) (cfg : Cfg k Symbol State input)
+    (u : ℕ) (j : Fin k) :
+    (tm.runFrom cfg u).workTapePos j ∈
+      Finset.Icc (cfg.workTapePos j - u) (cfg.workTapePos j + u) := by
+  induction u with
+  | zero => simp
+  | succ u ih =>
+    have hs := abs_le.mp (tm.workTapePos_step_le (tm.runFrom cfg u) j)
+    rw [Finset.mem_Icc] at ih ⊢
+    rw [MultiTapeTM.runFrom_succ_eq_step']
+    push_cast
+    constructor <;> omega
 
 end Turing

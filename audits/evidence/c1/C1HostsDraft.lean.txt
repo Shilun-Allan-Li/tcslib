@@ -1,0 +1,521 @@
+/-
+Copyright (c) 2026 Seyoon Ragavan. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Seyoon Ragavan
+-/
+import TCSlib.Complexity.TuringMachine.NDCodes
+import TCSlib.Complexity.TuringMachine.CodeSimulator
+import TCSlib.Complexity.ClassNP.NTIME
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+/-!
+# C1 host contracts (design draft; not for landing)
+
+**Status: design evidence for `C1-design.md`.** Read-only statement draft of the new
+contracts the nondeterministic time hierarchy cluster (C1) would consume. Proved here, to
+show that their size is small: the ND agreement transfer
+(`Turing.NDTM.stepWith_mapState_of_agreeOn`, `Turing.NDTM.runWith_mapState_of_agreeOn`),
+its deterministic-source form and the coinciding-transitions slice lemma, the ND phase
+host's slice identity and phase lemma, ND state relabelling, the replay lemma
+(`Turing.NDTM.replayTM_runFrom`), the ND-serialization bridge
+(`Turing.CodeNDTM.serialize_eq_tableBitsK`), and the derivation of the exponential
+decider's statement from the universal's statement plus the exhaustive replay
+(`Turing.ndAcceptsWithin_decider_of_universal`). Five contracts remain `sorry`: the
+ND writer's bounded contract, the step-clocked runner, the exhaustive replay, the
+per-code replay canonizer, and the ND interpreter core.
+
+## Contents
+
+* §1 **The nondeterministic contract variant**: `Turing.NDTM.runWith_mapState_of_agreeOn`
+  (slice-wise agreement transfer between NDTMs along a state embedding), its
+  deterministic-source form, the coinciding-transitions slice lemma that stage 2's
+  nondeterministic form needs, and the ND phase host `Turing.NDTM.phaseHostND`.
+* §2 **Choice-tape determinization** `Turing.NDTM.replayTM` (an NDTM as a deterministic
+  machine reading its choice word from an extra work tape) and its run lemma.
+* §3 **The choice device, guessed flavor** `Turing.ndWriterTM`: an ND writer that
+  overwrites a nonblank block with its own choice bits (the bounded flavor used by the
+  universal and by the diagonalizer).
+* §4 **The step-clocked runner** (H3's clock): `Turing.exists_stepClockTM`.
+* §5 **The exhaustive replay of a fixed NDTM** `Turing.FinNDTM.exists_exhaustiveDecider`,
+  and the derivation of `exists_ndAcceptsWithin_decider`'s statement from it and the
+  universal's statement (`Turing.ndAcceptsWithin_decider_of_universal`, proved).
+* §6 **The code layer for the ND interpreter**: the bridge from the ND serialization to
+  two `tableBitsK` slices (proved), and the per-code replay canonizer.
+* §7 **The ND interpreter core** (deterministic, stream on a tape), the contract that the
+  universal NDTM and the diagonalizer share.
+-/
+
+namespace Turing
+
+/-! ## §1 The nondeterministic contract variant -/
+
+namespace NDTM
+
+variable {k : ℕ} {Γ S H : Type}
+
+/-- One nondeterministic step commutes with an injective state renaming at a good
+source state (or a halted one), when the host's two tables agree slice-wise with the
+renamed source tables there. -/
+theorem stepWith_mapState_of_agreeOn {x : List Γ}
+    (src : NDTM k Γ S) (host : NDTM k Γ H) (emb : S ↪ H) (good : S → Prop)
+    (hagree : ∀ (b : Bool) (q : S), good q → ∀ inp work,
+      host.tr b (emb q) inp work = (src.tr b q inp work).mapState emb)
+    (c : Cfg k Γ S x) (hc : ∀ q, c.state = some q → good q) (b : Bool) :
+    host.stepWith b (c.mapState emb) = (src.stepWith b c).mapState emb := by
+  cases hs : c.state with
+  | none =>
+    have h1 : (c.mapState emb).state = none := by simp [Cfg.mapState, hs]
+    rw [stepWith_of_halt h1, stepWith_of_halt hs]
+  | some q =>
+    have h1 : (c.mapState emb).state = some (emb q) := by simp [Cfg.mapState, hs]
+    unfold stepWith
+    rw [h1, hs]
+    simp only
+    rw [hagree b q (hc q hs)]
+    exact Cfg.mapState_apply emb _ c
+
+/-- **The nondeterministic agreement transfer** (the "nondeterministic contract variant"
+of design §15d/§16; proposed home: the core contract module of MIG-0b, or
+`Nondeterministic.lean`). If both slices of `host` agree, along `emb`, with the
+corresponding slices of `src` on every good state, and `src`'s run under the choice word
+`w` visits only good live states before its end, then `host` runs exactly as the
+renamed `src` under the same word. Endpoint unrestricted; `w = []` is the trivial case.
+
+**Proof sketch.** Induct on `w`; the guard at time `0` licenses the one-step identity,
+and the shifted guard feeds the inductive hypothesis. -/
+theorem runWith_mapState_of_agreeOn {x : List Γ}
+    (src : NDTM k Γ S) (host : NDTM k Γ H) (emb : S ↪ H) (good : S → Prop)
+    (hagree : ∀ (b : Bool) (q : S), good q → ∀ inp work,
+      host.tr b (emb q) inp work = (src.tr b q inp work).mapState emb)
+    (c : Cfg k Γ S x) (w : List Bool)
+    (hguard : ∀ u < w.length, ∀ q, (src.runWith (w.take u) c).state = some q → good q) :
+    host.runWith w (c.mapState emb) = (src.runWith w c).mapState emb := by
+  induction w generalizing c with
+  | nil => rfl
+  | cons b w ih =>
+    have h0 : ∀ q, c.state = some q → good q := fun q hq =>
+      hguard 0 (by simp) q (by simpa using hq)
+    rw [runWith_cons, runWith_cons,
+      stepWith_mapState_of_agreeOn src host emb good hagree c h0 b]
+    apply ih
+    intro u hu q hq
+    exact hguard (u + 1) (by simp; omega) q (by simpa [List.take_succ_cons, runWith_cons] using hq)
+
+/-- **Deterministic source.** A deterministic phase `src` whose table both slices of
+`host` reproduce (renamed) on its good states transfers to every branch of `host`:
+the contract of `src` (`Turing.Contract`, MIG-0a) then holds for `host` under every
+choice word of its length. -/
+theorem runWith_mapState_of_agreeOn_det {x : List Γ}
+    (src : MultiTapeTM k Γ S) (host : NDTM k Γ H) (emb : S ↪ H) (good : S → Prop)
+    (hagree : ∀ (b : Bool) (q : S), good q → ∀ inp work,
+      host.tr b (emb q) inp work = (src.tr q inp work).mapState emb)
+    (c : Cfg k Γ S x) (w : List Bool)
+    (hguard : ∀ u < w.length, ∀ q, (src.runFrom c u).state = some q → good q) :
+    host.runWith w (c.mapState emb) = (src.runFrom c w.length).mapState emb := by
+  have h := runWith_mapState_of_agreeOn src.toNDTM host emb good
+    (fun b q hq inp work => hagree b q hq inp work) c w (by
+      intro u hu q hq
+      rw [MultiTapeTM.toNDTM_runWith, List.length_take, Nat.min_eq_left hu.le] at hq
+      exact hguard u hu q hq)
+  rw [h, MultiTapeTM.toNDTM_runWith]
+
+/-- **The slice lemma** (the form stage 2's nondeterministic simulation asks for,
+`audits/evidence/stage2/NOTES.md` §3.9): on a segment whose live states all have
+coinciding transitions, every choice word drives the deterministic slice's run. -/
+theorem runWith_eq_fixChoice_runFrom {x : List Γ} (tm : NDTM k Γ S) (b₀ : Bool)
+    (c : Cfg k Γ S x) (w : List Bool)
+    (hco : ∀ u < w.length, ∀ q, ((tm.fixChoice b₀).runFrom c u).state = some q →
+      ∀ inp work, tm.tr false q inp work = tm.tr true q inp work) :
+    tm.runWith w c = (tm.fixChoice b₀).runFrom c w.length := by
+  have h := runWith_mapState_of_agreeOn_det (tm.fixChoice b₀) tm (Function.Embedding.refl S)
+    (fun q => ∀ inp work, tm.tr false q inp work = tm.tr true q inp work)
+    (fun b q hq inp work => by
+      have e : ∀ a : Action k Γ S, a.mapState (Function.Embedding.refl S) = a := by
+        intro a
+        cases a with
+        | mk i wt o st => cases st <;> rfl
+      rw [e]
+      cases b <;> cases b₀ <;> simp [fixChoice, hq inp work]) c w hco
+  have e : ∀ d : Cfg k Γ S x, d.mapState (Function.Embedding.refl S) = d := by
+    intro d
+    cases d with
+    | mk st ip wt wp o => cases st <;> rfl
+  simpa only [e] using h
+
+/-- **The ND phase host**: `Turing.phaseHostTM` over nondeterministic phases. A state
+that `red` maps to `some q` takes one stationary, silent dispatch step under either
+choice; every other state follows its phase's two tables. Deterministic phases enter as
+`Turing.MultiTapeTM.toNDTM`. -/
+def phaseHostND {I : Type} {Ph : I → Type} (M : (i : I) → NDTM k Γ (Ph i))
+    (q0 : Σ i, Ph i) (red : (i : I) → Ph i → Option (Σ i, Ph i)) :
+    NDTM k Γ (Σ i, Ph i) where
+  q₀ := q0
+  tr := fun b q inp w =>
+    match red q.1 q.2 with
+    | some q' => ⟨0, fun _ => (none, 0), none, some q'⟩
+    | none => ((M q.1).tr b q.2 inp w).mapState (Sigma.mk q.1)
+
+/-- Each slice of the ND phase host is the deterministic phase host of the slices. -/
+theorem phaseHostND_fixChoice {I : Type} {Ph : I → Type} (M : (i : I) → NDTM k Γ (Ph i))
+    (q0 : Σ i, Ph i) (red : (i : I) → Ph i → Option (Σ i, Ph i)) (b : Bool) :
+    (phaseHostND M q0 red).fixChoice b = phaseHostTM (fun i => (M i).fixChoice b) q0 red :=
+  rfl
+
+/-- **The ND phase lemma** (the ND counterpart of `Turing.phaseHostTM_run`): run phase
+`i` under the word `w` from `c` to `c'`, ending at a redirected state with no redirect
+earlier; then every prefix of `w` drives the tagged phase run, and one further choice
+(either bit) performs the dispatch.
+
+**Proof sketch.** `runWith_mapState_of_agreeOn` along `Sigma.mk i` with
+`good s := red i s = none`; the final dispatch is one explicit step. -/
+theorem phaseHostND_run {I : Type} {Ph : I → Type} (M : (i : I) → NDTM k Γ (Ph i))
+    (q0 : Σ i, Ph i) (red : (i : I) → Ph i → Option (Σ i, Ph i)) (i : I) {x : List Γ}
+    (c c' : Cfg k Γ (Ph i) x) (w : List Bool) (h : (M i).runWith w c = c') (s' : Ph i)
+    (hs' : c'.state = some s') (q' : Σ i, Ph i) (hred : red i s' = some q')
+    (hguard : ∀ u < w.length, ∀ s, ((M i).runWith (w.take u) c).state = some s →
+      red i s = none) (b : Bool) :
+    (∀ u ≤ w.length, (phaseHostND M q0 red).runWith (w.take u) (c.mapState (Sigma.mk i)) =
+        ((M i).runWith (w.take u) c).mapState (Sigma.mk i)) ∧
+      (phaseHostND M q0 red).runWith (w ++ [b]) (c.mapState (Sigma.mk i)) =
+        c'.mapState (fun _ => q') := by
+  let emb : Ph i ↪ (Σ i, Ph i) := ⟨Sigma.mk i, sigma_mk_injective⟩
+  have hagree : ∀ (b : Bool) (s : Ph i), red i s = none → ∀ inp work,
+      (phaseHostND M q0 red).tr b (emb s) inp work = ((M i).tr b s inp work).mapState emb := by
+    intro b s hs inp work
+    simp only [phaseHostND, emb, Function.Embedding.coeFn_mk, hs]
+  have hpre : ∀ u ≤ w.length,
+      (phaseHostND M q0 red).runWith (w.take u) (c.mapState (Sigma.mk i)) =
+        ((M i).runWith (w.take u) c).mapState (Sigma.mk i) := by
+    intro u hu
+    exact runWith_mapState_of_agreeOn (M i) (phaseHostND M q0 red) emb
+      (fun s => red i s = none) hagree c (w.take u) (by
+        intro v hv s hs
+        rw [List.length_take] at hv
+        rw [List.take_take, Nat.min_eq_left (by omega)] at hs
+        exact hguard v (by omega) s hs)
+  refine ⟨hpre, ?_⟩
+  rw [runWith_append]
+  have hw := hpre w.length le_rfl
+  rw [List.take_length, h] at hw
+  rw [hw, runWith_cons, runWith_nil]
+  have hst : (c'.mapState (Sigma.mk i)).state = some ⟨i, s'⟩ := by
+    simp [Cfg.mapState, hs']
+  unfold stepWith
+  rw [hst]
+  simp only [phaseHostND, hred]
+  apply Cfg.ext <;> simp [Cfg.mapState, hs']
+
+/-- State relabelling of an NDTM along an equivalence (the ND mirror of
+`Turing.MultiTapeTM.relabelState`), for packaging the linear normal form into the
+`Fin`-state `Turing.CodeNDTM`. -/
+def relabelState {S' : Type} (tm : NDTM k Γ S) (e : S ≃ S') : NDTM k Γ S' where
+  q₀ := e tm.q₀
+  tr := fun b q inp w => (tm.tr b (e.symm q) inp w).mapState e
+
+/-- Relabelled runs are the renamed runs, under every choice word. -/
+theorem relabelState_runWith {S' : Type} {x : List Γ} (tm : NDTM k Γ S) (e : S ≃ S')
+    (c : Cfg k Γ S x) (w : List Bool) :
+    (tm.relabelState e).runWith w (c.mapState e) = (tm.runWith w c).mapState e := by
+  exact runWith_mapState_of_agreeOn tm (tm.relabelState e) e.toEmbedding (fun _ => True)
+    (fun b q _ inp work => by simp [relabelState]) c w (fun _ _ _ _ => trivial)
+
+end NDTM
+
+/-! ## §2 Choice-tape determinization -/
+
+namespace NDTM
+
+variable {k : ℕ} {S : Type}
+
+/-- **The replay machine** of an NDTM: a deterministic machine with one extra work tape,
+the *choice tape*, which it reads at every step (blank read as `false`), applying the
+corresponding table and moving the choice head right; it never writes the choice tape.
+[AB09, §2.1.2: a branch of an NDTM is its run along a choice word] -/
+def replayTM (N : NDTM k Bool S) : MultiTapeTM (k + 1) Bool S where
+  q₀ := N.q₀
+  tr := fun q inp w =>
+    let a := N.tr ((w (Fin.last k)).getD false) q inp (fun i => w i.castSucc)
+    ⟨a.inputTape, Fin.lastCases (none, 1) a.workTapes, a.output, a.state⟩
+
+/-- An `N`-configuration extended by a choice tape `ct` with head `cp`. -/
+def withChoiceTape {x : List Bool} (c : Cfg k Bool S x) (ct : ℤ → Option Bool) (cp : ℤ) :
+    Cfg (k + 1) Bool S x :=
+  ⟨c.state, c.inputPos, Fin.lastCases ct c.workTapes, Fin.lastCases cp c.workTapePos, c.output⟩
+
+/-- **The replay lemma.** With the word `s` on the choice tape, the replay machine's run to
+time `t ≤ |s|` is the NDTM's run along `s.take t`, with the choice head at `t` while the
+branch is live (it stops when the branch halts). [AB09, §2.1.2]
+
+**Proof sketch.** Induct on `t`. A live step reads `s[t]` under the head at `t`, so the
+replay applies the table `N.tr s[t]` on the first `k` tapes and moves the choice head; a
+halted step is the identity on both sides (`runWith_of_halt`). -/
+theorem replayTM_runFrom {x : List Bool} (N : NDTM k Bool S) (c : Cfg k Bool S x)
+    (s : List Bool) (t : ℕ) (ht : t ≤ s.length) :
+    ∃ p ≤ t, ((N.runWith (s.take t) c).state ≠ none → p = t) ∧
+      N.replayTM.runFrom (withChoiceTape c (FinTM.bufferTape s) 0) t =
+        withChoiceTape (N.runWith (s.take t) c) (FinTM.bufferTape s) p := by
+  induction t with
+  | zero => exact ⟨0, le_rfl, fun _ => rfl, rfl⟩
+  | succ t ih =>
+    obtain ⟨p, hp, hlive, hrun⟩ := ih (by omega)
+    have htake : s.take (t + 1) = s.take t ++ [s[t]'(by omega)] :=
+      List.take_succ_eq_append_getElem (by omega)
+    rw [MultiTapeTM.runFrom_succ_eq_step', hrun, htake, runWith_append]
+    cases hs : (N.runWith (s.take t) c).state with
+    | none =>
+      refine ⟨p, by omega, ?_, ?_⟩
+      · intro h
+        exact absurd (by rw [runWith_of_halt _ hs]; exact hs) h
+      · rw [runWith_of_halt _ hs]
+        exact MultiTapeTM.step_of_halt (by simp [withChoiceTape, hs])
+    | some q =>
+      have hpt : p = t := hlive (by simp [hs])
+      subst hpt
+      refine ⟨p + 1, le_rfl, fun _ => rfl, ?_⟩
+      set e := N.runWith (s.take p) c with he
+      have hread : (withChoiceTape e (FinTM.bufferTape s) (p : ℤ)).workTapeSymbols
+          (Fin.last k) = some (s[p]'(by omega)) := by
+        simp [withChoiceTape, Cfg.workTapeSymbols, FinTM.bufferTape]
+      have hwork : (fun i : Fin k => (withChoiceTape e (FinTM.bufferTape s) (p : ℤ)).workTapeSymbols
+          i.castSucc) = e.workTapeSymbols := by
+        funext i
+        simp [withChoiceTape, Cfg.workTapeSymbols]
+      have hinp : (withChoiceTape e (FinTM.bufferTape s) (p : ℤ)).inputSymbol = e.inputSymbol := rfl
+      unfold MultiTapeTM.step
+      have hst : (withChoiceTape e (FinTM.bufferTape s) (p : ℤ)).state = some q := by
+        simp [withChoiceTape, hs]
+      rw [hst]
+      simp only [runWith_cons, runWith_nil]
+      unfold stepWith
+      rw [hs]
+      simp only [replayTM]
+      rw [hread, hwork, hinp]
+      simp only [Option.getD_some]
+      apply Cfg.ext
+      · rfl
+      · rfl
+      · funext j
+        refine Fin.lastCases ?_ (fun i => ?_) j
+        · simp [withChoiceTape, Action.apply]
+        · simp [withChoiceTape, Action.apply]
+      · funext j
+        refine Fin.lastCases ?_ (fun i => ?_) j
+        · simp [withChoiceTape, Action.apply]
+        · simp [withChoiceTape, Action.apply]
+      · rfl
+
+end NDTM
+
+/-! ## §3 The choice device, guessed flavor -/
+
+/-- Control of the ND writer: running with a finite controller state, or done. -/
+inductive NDWriterState (Q : Type) where
+  | run (q : Q)
+  | done
+
+/-- **The ND writer** (H5's choice device, guessed flavor). On tape `j`, while the
+controller does not ask to stop (and, in the bounded flavor, while the cell under the head
+is nonblank), write the choice bit, move right, and update the controller by `δ`. Both
+choices take the same transition except for the written symbol, so the timing is
+branch-independent in the bounded flavor. The bounded flavor with the trivial controller
+serves the universal and the diagonalizer; the controller flavor (a finite automaton that
+stops after a well-formed final record) serves the linear normal form's display guess. -/
+def ndWriterTM (k : ℕ) (j : Fin k) {Q : Type} (q₀ : Q) (δ : Q → Bool → Q)
+    (stop : Q → Bool) (bounded : Bool) : NDTM k Bool (NDWriterState Q) where
+  q₀ := .run q₀
+  tr := fun b q _ w =>
+    match q with
+    | .done => ⟨0, fun _ => (none, 0), none, some .done⟩
+    | .run q =>
+      if stop q || (bounded && (w j).isNone) then ⟨0, fun _ => (none, 0), none, some .done⟩
+      else ⟨0, fun i => if i = j then (some (some b), 1) else (none, 0), none,
+        some (.run (δ q b))⟩
+
+/-- **The bounded flavor's contract.** Over a nonblank block of length `m` followed by a
+blank, every choice word of length `m + 1` overwrites the block with its first `m` bits,
+leaves the head after the block, and reaches `done` exactly then; no shorter word reaches
+`done`. Coverage is immediate: every `s` of length `m` is written by `s ++ [b]`. -/
+theorem ndWriterTM_run_block {k : ℕ} (j : Fin k) {x : List Bool}
+    (c : Cfg k Bool (NDWriterState Unit) x) (hc : c.state = some (.run ()))
+    (m : ℕ) (hblock : ∀ p : ℕ, p < m → c.workTapes j (c.workTapePos j + p) ≠ none)
+    (hend : c.workTapes j (c.workTapePos j + m) = none)
+    (w : List Bool) (hw : w.length = m + 1) :
+    (ndWriterTM k j () (fun _ _ => ()) (fun _ => false) true).runWith w c =
+      { c with
+        state := some .done
+        workTapes := Function.update c.workTapes j (fun p =>
+          if c.workTapePos j ≤ p ∧ p < c.workTapePos j + m then
+            FinTM.bufferTape (w.take m) (p - c.workTapePos j)
+          else c.workTapes j p)
+        workTapePos := Function.update c.workTapePos j (c.workTapePos j + m) } ∧
+    ∀ w' : List Bool, w'.length < m + 1 →
+      ((ndWriterTM k j () (fun _ _ => ()) (fun _ => false) true).runWith w' c).state ≠
+        some .done := by
+  sorry
+
+/-! ## §4 The step-clocked runner (H3's clock) -/
+
+/-- Host layout of the step-clocked runner: the body configuration on the first `k`
+tapes, the binary counter on the last tape, the host control `q`. -/
+def clockCfg {k : ℕ} {S Q : Type} {x : List Bool} (q : Option Q) (c : Cfg k Bool S x)
+    (ct : ℤ → Option Bool) (cp : ℤ) : Cfg (k + 1) Bool Q x :=
+  ⟨q, c.inputPos, Fin.lastCases ct c.workTapes, Fin.lastCases cp c.workTapePos, c.output⟩
+
+/-- **The step-clocked runner** (H3's clock, shared by C1's diagonalizer and the
+exhaustive replay, B6's windowed runner, and a later re-derivation of
+`Complexity.TimeHierarchy.clockTM`). One counter decrement is fused with every body
+transition. If the body reaches a stop configuration (halted, or a live state with
+`stopAt`) first at `τ ≤ d`, the host reaches `finish` carrying the body's endpoint
+within `5τ + 2|w| + 2` physical steps (the amortized `counterOverhead_le_of_le`
+borrow ledger); if it does not within `d` steps, the host reaches `timeout` with the
+body's configuration at `d`, within `5d + 2|w| + 2`. No earlier exit in either case.
+The statement here is existential only for the draft; the landed row names the machine. -/
+theorem exists_stepClockTM {k : ℕ} {S : Type} [Fintype S] [DecidableEq S]
+    (M : MultiTapeTM k Bool S) (stopAt : S → Bool) :
+    ∃ (Q : Type) (_ : Fintype Q) (_ : DecidableEq Q) (H : MultiTapeTM (k + 1) Bool Q)
+      (inj : S → Q) (finish timeout : Option S → Q),
+      ∀ {x : List Bool} (c : Cfg k Bool S x) (q : S), c.state = some q →
+      ∀ (w : List Bool) (ct : ℤ → Option Bool) (cp : ℤ),
+        (∀ p : ℤ, -1 ≤ p → p ≤ (w.length : ℤ) → ct (cp + p) = FinTM.bufferTape w p) →
+        let d := Nat.ofDigits 2 (w.map Bool.toNat)
+        let stopped : Cfg k Bool S x → Prop := fun e =>
+          e.state = none ∨ ∃ s, e.state = some s ∧ stopAt s = true
+        (∀ τ ≤ d, stopped (M.runFrom c τ) → (∀ u < τ, ¬stopped (M.runFrom c u)) →
+          ∃ T ≤ 5 * τ + 2 * w.length + 2, ∃ ct' : ℤ → Option Bool,
+            H.runFrom (clockCfg (some (inj q)) c ct cp) T =
+              clockCfg (some (finish (M.runFrom c τ).state)) (M.runFrom c τ) ct' cp ∧
+            ∀ u < T, ∀ r, (H.runFrom (clockCfg (some (inj q)) c ct cp) u).state ≠
+              some (finish r) ∧
+              (H.runFrom (clockCfg (some (inj q)) c ct cp) u).state ≠ some (timeout r)) ∧
+        ((∀ u ≤ d, ¬stopped (M.runFrom c u)) →
+          ∃ T ≤ 5 * d + 2 * w.length + 2, ∃ ct' : ℤ → Option Bool,
+            H.runFrom (clockCfg (some (inj q)) c ct cp) T =
+              clockCfg (some (timeout (M.runFrom c d).state)) (M.runFrom c d) ct' cp ∧
+            ∀ u < T, ∀ r, (H.runFrom (clockCfg (some (inj q)) c ct cp) u).state ≠
+              some (finish r) ∧
+              (H.runFrom (clockCfg (some (inj q)) c ct cp) u).state ≠ some (timeout r)) := by
+  sorry
+
+/-! ## §5 The exhaustive replay of a fixed NDTM, and the exponential decider -/
+
+/-- **The exhaustive replay** ([AB09, §3.2]: "this trivial exponential simulation"). For
+a fixed NDTM `N` there is a deterministic machine that, on every input on which all
+branches of `N` halt within `T` (any `T`, not computed by anyone), decides bounded
+acceptance within `C · 2^{C·(T + 1)}`.
+
+**Proof sketch.** Iterative deepening: for `L = 0, 1, …`, enumerate the `2^L` words of
+length `L` on a counter tape (`incrementTM`), replay `N.replayTM` for `L` steps under the
+step-clocked runner, record "some branch accepted" and "some branch still live", reset the
+work tapes in the radius-`L` window and rewind the native input head. Stop at the first
+`L` at which every branch has halted (at most `T`), answering whether one accepted
+(truncation, `Turing.NDTM.runWith_of_halt`). Ledger `Σ_{L ≤ T} 2^L·O_N(L + 1)`. -/
+theorem FinNDTM.exists_exhaustiveDecider (N : FinNDTM Bool) :
+    ∃ (E : FinTM Bool) (C : ℕ), ∀ (z : List Bool) (T : ℕ), N.tm.HaltsWithin z T →
+      (N.AcceptsWithin z T → E.ComputesInTime z [true] (C * 2 ^ (C * (T + 1)))) ∧
+      (¬N.AcceptsWithin z T → E.ComputesInTime z [false] (C * 2 ^ (C * (T + 1)))) := by
+  sorry
+
+/-- **The exponential decider from the universal NDTM** (proved here): the statement of
+`Turing.exists_ndAcceptsWithin_decider` follows from the statement of
+`Turing.exists_timed_universal_NDTM` and the exhaustive replay, with `BF := E(UN)`. This
+replaces the sketch's dedicated "counter-driven replay loop" of the interpreter core. -/
+theorem ndAcceptsWithin_decider_of_universal (c : EffectiveNDMachineCode)
+    (hUN : ∃ UN : FinNDTM Bool, ∀ α : List Bool, ∃ C : ℕ, ∀ (x : List Bool) (t : ℕ),
+      UN.tm.HaltsWithin (pairEncode (pairEncode (Nat.bits t) α) x) (C * (t + 1)) ∧
+      (UN.AcceptsWithin (pairEncode (pairEncode (Nat.bits t) α) x) (C * (t + 1)) ↔
+        (c.decode α).toFinNDTM.AcceptsWithin x t)) :
+    ∃ BF : FinTM Bool, ∀ α : List Bool, ∃ C : ℕ, ∀ (x : List Bool) (t : ℕ),
+      ((c.decode α).toFinNDTM.AcceptsWithin x t →
+        BF.ComputesInTime (pairEncode (pairEncode (Nat.bits t) α) x) [true]
+          (C * 2 ^ (C * (t + 1)))) ∧
+      (¬(c.decode α).toFinNDTM.AcceptsWithin x t →
+        BF.ComputesInTime (pairEncode (pairEncode (Nat.bits t) α) x) [false]
+          (C * 2 ^ (C * (t + 1)))) := by
+  obtain ⟨UN, hU⟩ := hUN
+  obtain ⟨E, CE, hE⟩ := FinNDTM.exists_exhaustiveDecider UN
+  refine ⟨E, fun α => ?_⟩
+  obtain ⟨C, hC⟩ := hU α
+  refine ⟨CE * (C + 1), fun x t => ?_⟩
+  obtain ⟨hhalt, hiff⟩ := hC x t
+  obtain ⟨hacc, hrej⟩ := hE (pairEncode (pairEncode (Nat.bits t) α) x) (C * (t + 1)) hhalt
+  have hexp : CE * (C * (t + 1) + 1) ≤ CE * (C + 1) * (t + 1) := by
+    have : C * (t + 1) + 1 ≤ (C + 1) * (t + 1) := by nlinarith
+    calc CE * (C * (t + 1) + 1) ≤ CE * ((C + 1) * (t + 1)) := Nat.mul_le_mul_left CE this
+      _ = CE * (C + 1) * (t + 1) := by ring
+  have hbound : CE * 2 ^ (CE * (C * (t + 1) + 1)) ≤
+      CE * (C + 1) * 2 ^ (CE * (C + 1) * (t + 1)) := by
+    apply Nat.mul_le_mul
+    · exact Nat.le_mul_of_pos_right CE (Nat.succ_pos C)
+    · exact Nat.pow_le_pow_right (by norm_num) hexp
+  exact ⟨fun h => (hacc (hiff.mpr h)).mono hbound,
+    fun h => (hrej (fun h' => h (hiff.mp h'))).mono hbound⟩
+
+/-! ## §6 The code layer for the ND interpreter -/
+
+/-- **The ND serialization as two deterministic tables** (proved): the fixed ND
+serialization is the state count, the unary initial state, then the `false`-slice and
+`true`-slice tables in the generic `tableBitsK` layout. This is the only bridge C1 needs
+between `NDCodes` and `CodeSimulator`; no third parse layer and no ND `MachineFormat`. -/
+theorem CodeNDTM.serialize_eq_tableBitsK (M : CodeNDTM) :
+    M.serialize = pairEncode (Nat.bits M.numStates)
+      (unaryFin M.tm.q₀ ++ (tableBitsK (M.tm.fixChoice false).tr ++
+        tableBitsK (M.tm.fixChoice true).tr)) := by
+  rw [tableBitsK_two, tableBitsK_two]
+  simp [CodeNDTM.serialize, codeTable2Bits, NDTM.fixChoice, actionBits₂_eq_actionBitsK]
+
+/-- **The per-code replay canonizer.** For every effective ND scheme there is a finite
+binary machine computing, from a code `α`, the fixed three-work-tape deterministic
+serialization of the decoded machine's replay machine (choice tape last), with an
+arbitrary length-only time bound (absorbed into each code's universal constant).
+
+**Proof sketch.** Compose `c.canonizer` with a primitive recursive re-serialization
+`g` satisfying `g M.serialize = serializeK M.tm.replayTM` (records split by
+`codeSkipActionK`, re-emitted in the `workReadsK 3` order with the choice-tape field
+`(none, +1)` appended), compiled by `Turing.codePrim_machine`. -/
+theorem exists_replayCanonizer (c : EffectiveNDMachineCode) :
+    ∃ (M : FinTM Bool) (T : ℕ → ℕ),
+      M.ComputesFunInTime (fun α => serializeK (c.decode α).tm.replayTM) T := by
+  sorry
+
+/-! ## §7 The ND interpreter core -/
+
+/-- **The ND interpreter core** (deterministic; shared by the universal NDTM and the
+diagonalizer's mid-rung). One finite machine `R`, uniform over codes, with a designated
+choice tape `j`: started at `entry` on the native input `⟨⟨bits t, α⟩, x⟩` with the
+stream `s` (`t ≤ |s|`) on tape `j` and every other tape blank, it reaches the verdict exit
+`accept` or `reject` according to whether the coded machine's branch along `s.take t`
+halts with output `[true]`, and never an exit earlier. Its time is the **prefix form**:
+at most `C·(t' + 1) + 2·|bits t|` when that branch first halts at `t' ≤ t`, and at most
+`C·(t + 1)` otherwise, with `C` depending on `α` only (canonizer and per-round table
+cost). No `|x|` term.
+
+**Proof sketch.** Startup (per code): parse the header, install the replay serialization
+by `exists_replayCanonizer` through `Turing.FinTM.exists_installCallTM`, the unary
+initial state and the counter `bits t`; copy the bounded input window `x.take (t + 1)`
+(input locality) onto a buffer. Then the deterministic clocked interpreter loop (H2's
+loop form: `counterLoopTMVia` over `h1RoundTM 3` rounds, hosted by Z1), whose escape
+contract gives the prefix form; the replay lemma identifies the simulated three-tape run
+with the NDTM's branch. -/
+theorem exists_ndInterpreterCore (c : EffectiveNDMachineCode) :
+    ∃ (K : ℕ) (Q : Type) (_ : Fintype Q) (_ : DecidableEq Q) (R : MultiTapeTM K Bool Q)
+      (j : Fin K) (entry accept reject : Q),
+      ∀ α : List Bool, ∃ C : ℕ, ∀ (x : List Bool) (t : ℕ) (s : List Bool), t ≤ s.length →
+        let z := pairEncode (pairEncode (Nat.bits t) α) x
+        let N := (c.decode α).toFinNDTM
+        let start : Cfg K Bool Q z :=
+          ⟨some entry, 1, fun i => if i = j then FinTM.bufferTape s else fun _ => none,
+            fun _ => 0, []⟩
+        let e := N.tm.runWith (s.take t) (N.tm.initCfg x)
+        ∃ T, (∀ t' ≤ t, (N.tm.runWith (s.take t') (N.tm.initCfg x)).state = none →
+                T ≤ C * (t' + 1) + 2 * (Nat.bits t).length) ∧
+          T ≤ C * (t + 1) ∧
+          (R.runFrom start T).state =
+            some (if e.state = none ∧ e.output = [true] then accept else reject) ∧
+          ∀ u < T, (R.runFrom start u).state ≠ some accept ∧
+            (R.runFrom start u).state ≠ some reject := by
+  sorry
+
+end Turing

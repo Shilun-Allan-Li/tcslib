@@ -1,0 +1,60 @@
+import Lean.Util.FoldConsts
+import TCSlib.Complexity.TuringMachine.Build.CounterLoop
+open Lean Elab Command in
+/-- Every constant in the dependency closure of `root` whose own type or value
+mentions `sorryAx` (maintainer's read-only admission walk). -/
+def sorrySourcesOf (env : Environment) (root : Name) : Array Name := Id.run do
+  let mut visited : NameSet := {}
+  let mut stack : Array Name := #[root]
+  let mut srcs : Array Name := #[]
+  while !stack.isEmpty do
+    let c := stack.back!
+    stack := stack.pop
+    if visited.contains c then continue
+    visited := visited.insert c
+    if let some ci := env.find? c then
+      let used := ci.getUsedConstantsAsSet
+      if used.contains ``sorryAx then srcs := srcs.push c
+      for d in used.toList do
+        unless visited.contains d do stack := stack.push d
+  return srcs
+
+open Lean Elab Command in
+elab "#sorry_sources " id:ident : command => do
+  let n ← liftCoreM <| realizeGlobalConstNoOverload id
+  logInfo m!"{n}: direct sorryAx users in closure: {sorrySourcesOf (← getEnv) n}"
+-- publics of TCSlib/Complexity/TuringMachine/Build/CounterLoop.lean
+#print axioms Turing.Action.mapWorkSymbols
+#print axioms Turing.Cfg.mapWorkSymbols
+#print axioms Turing.MultiTapeTM.mapWorkSymbols
+#print axioms Turing.MultiTapeTM.mapWorkSymbols_runFrom
+#print axioms Turing.decFixed
+#print axioms Turing.decrementTM
+#print axioms Turing.decrementTM_run_succ_ofCfg
+#print axioms Turing.decrementTM_run_underflow_ofCfg
+#print axioms Turing.counterWord
+#print axioms Turing.counterOverhead
+#print axioms Turing.counterWord_length
+#print axioms Turing.counterWord_value
+#print axioms Turing.counterOverhead_le_of_le
+#print axioms Turing.counterOverhead_le
+#print axioms Turing.CounterLoopState
+#print axioms Turing.counterLoopStateFintype
+#print axioms Turing.counterLoopRedirect
+#print axioms Turing.counterLoopDecExit
+#print axioms Turing.counterLoopTM
+#print axioms Turing.lastEmb
+#print axioms Turing.counterLoopTMVia
+#print axioms Turing.counterLoopCfg
+#print axioms Turing.counterLoopOrbit
+#print axioms Turing.counter_cfg_eq
+#print axioms Turing.counterLoopTMVia_run_done
+#print axioms Turing.counterLoopTMVia_run_escape
+#print axioms Turing.counterLoopTM_run_done
+#print axioms Turing.counterLoopTM_run_escape
+#print axioms Turing.counterLoop_time_le
+#print axioms Turing.expandTM
+#print axioms Turing.expandTM_run_ofCfg
+#sorry_sources Turing.expandTM_run_ofCfg
+#sorry_sources Turing.counterLoopTMVia_run_done
+#sorry_sources Turing.counterLoopTMVia_run_escape

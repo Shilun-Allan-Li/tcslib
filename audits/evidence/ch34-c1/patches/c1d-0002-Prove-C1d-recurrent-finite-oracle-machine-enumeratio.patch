@@ -1,0 +1,229 @@
+From 5f492937c7f901b55a4c8888a7985d09415e3641 Mon Sep 17 00:00:00 2001
+From: Codex <codex@openai.com>
+Date: Sun, 11 Oct 2026 01:58:50 +0200
+Subject: [PATCH 2/2] Prove C1d recurrent finite oracle-machine enumeration
+
+---
+ .../Diagonalization/Relativization.lean       | 186 +++++++++++++++++-
+ 1 file changed, 183 insertions(+), 3 deletions(-)
+
+diff --git a/TCSlib/Complexity/Diagonalization/Relativization.lean b/TCSlib/Complexity/Diagonalization/Relativization.lean
+index 4634f55b..ea93dbc1 100644
+--- a/TCSlib/Complexity/Diagonalization/Relativization.lean
++++ b/TCSlib/Complexity/Diagonalization/Relativization.lean
+@@ -51,7 +51,7 @@ enumeration of deterministic polynomial-time oracle machines so that
+ 
+ * `Complexity.unaryWitnessLang` — the book's `U_B`. [AB09, Theorem 3.7]
+ 
+-## Main results (all sorried; phase-P3.2 statements)
++## Main results (three phase-P3.2 statements remain sorried)
+ 
+ * `Complexity.unaryWitnessLang_mem_NPOracle` — `U_B ∈ NP^B`, for every `B`.
+ * `Complexity.exists_finOracleTM_enumeration` — an enumeration of the
+@@ -111,6 +111,161 @@ theorem unaryWitnessLang_mem_NPOracle (B : Language Bool) :
+     unaryWitnessLang B ∈ NPOracle B := by
+   sorry
+ 
++/-- R1: transport an oracle table along a state equivalence. The ordinary
++transition uses `Action.mapState`; all distinguished states are transported.
++The received relabelling API covers only plain machines, so this oracle
++version is requested for `TuringMachine/Oracle.lean` when a second consumer
++appears. -/
++private def oracleRelabel {k : ℕ} {Symbol S S' : Type*}
++    (tm : OracleTM k Symbol S) (e : S ≃ S') : OracleTM k Symbol S' where
++  q₀ := e tm.q₀
++  qQuery := e tm.qQuery
++  qYes := e tm.qYes
++  qNo := e tm.qNo
++  tr q inp work := (tm.tr (e.symm q) inp work).mapState e
++
++/-- R1: injectivity preserves the three required state inequalities. -/
++private theorem oracleRelabel_wellFormed {k : ℕ} {Symbol S S' : Type*}
++    (tm : OracleTM k Symbol S) (e : S ≃ S') (wf : tm.WellFormed) :
++    (oracleRelabel tm e).WellFormed := by
++  exact ⟨e.injective.ne wf.qQuery_ne_qYes,
++    e.injective.ne wf.qQuery_ne_qNo, e.injective.ne wf.qYes_ne_qNo⟩
++
++/-- R1: one oracle step commutes with state relabelling, including the
++query-answer branch and absorbing halted configurations.
++
++**Proof sketch.** Split the optional state. A halted configuration is fixed.
++At the query state, injectivity identifies the same query branch; the query
++string ignores the state, and mapping the answer commutes with its conditional.
++Elsewhere the inverse equivalence recovers the original table row, and
++`Cfg.mapState_apply` transports its action. This is the single step argument
++used by all later run and behavior transfers. -/
++private theorem oracleRelabel_step {k : ℕ} {Symbol S S' : Type*}
++    {x : List Symbol} (tm : OracleTM k Symbol S) (e : S ≃ S')
++    (O : Language Symbol) (cfg : Cfg (k + 1) Symbol S x) :
++    (oracleRelabel tm e).step O (cfg.mapState e) = (tm.step O cfg).mapState e := by
++  classical
++  unfold OracleTM.step
++  cases hs : cfg.state with
++  | none => simp only [Cfg.mapState, hs, Option.map_none]
++  | some q =>
++      simp only [Cfg.mapState, hs, Option.map_some, oracleRelabel, e.injective.eq_iff]
++      by_cases hq : q = tm.qQuery
++      · rw [if_pos hq, if_pos hq]
++        refine Cfg.ext ?_ rfl rfl rfl rfl
++        change some (if OracleTM.queryString cfg ∈ O then e tm.qYes else e tm.qNo) =
++          some (e (if OracleTM.queryString cfg ∈ O then tm.qYes else tm.qNo))
++        rw [apply_ite e]
++      · rw [if_neg hq, if_neg hq]
++        simpa only [Equiv.symm_apply_apply] using
++          Cfg.mapState_apply e (tm.tr q cfg.inputSymbol cfg.workTapeSymbols) cfg
++
++/-- R1: arbitrary-start oracle runs commute with state relabelling, by the
++standard iteration theorem applied to the single step commutation. -/
++private theorem oracleRelabel_runFrom {k : ℕ} {Symbol S S' : Type*}
++    {x : List Symbol} (tm : OracleTM k Symbol S) (e : S ≃ S')
++    (O : Language Symbol) (cfg : Cfg (k + 1) Symbol S x) (t : ℕ) :
++    (oracleRelabel tm e).runFrom O (cfg.mapState e) t =
++      (tm.runFrom O cfg t).mapState e := by
++  have h : Function.Semiconj (Cfg.mapState (input := x) e)
++      (tm.step O) ((oracleRelabel tm e).step O) :=
++    fun c => (oracleRelabel_step tm e O c).symm
++  exact (h.iterate_right t cfg).symm
++
++/-- R1: relabelling preserves every oracle-relative time-bounded output
++verdict. Initialization transports definitionally; run transport preserves
++output, and `Option.map_eq_none_iff` preserves haltedness. -/
++private theorem oracleRelabel_computesInTime {k : ℕ} {Symbol S S' : Type*}
++    (tm : OracleTM k Symbol S) (e : S ≃ S') (O : Language Symbol)
++    (x out : List Symbol) (t : ℕ) :
++    (oracleRelabel tm e).ComputesInTime O x out t ↔ tm.ComputesInTime O x out t := by
++  have hinit : (oracleRelabel tm e).initCfg x = (tm.initCfg x).mapState e := rfl
++  simp only [OracleTM.ComputesInTime, hinit, oracleRelabel_runFrom]
++  simp only [Cfg.mapState, Option.map_eq_none_iff]
++
++/-- R2: well-formed binary oracle tables over the canonical state type. -/
++private abbrev CanonTab (k n : ℕ) :=
++  {tm : OracleTM k Bool (Fin n) // tm.WellFormed}
++
++set_option synthInstance.maxSize 1024 in
++/-- R2: one named finiteness structure for canonical tables. All later ranks
++and cardinalities use this structure explicitly to avoid instance diamonds.
++
++**Proof sketch.** Inject the well-formed subtype into the tuple of its four
++state fields and the transition table's four action fields. Each coordinate
++is finite. Tuple injectivity, function extensionality and the two structure
++constructor injectivity lemmas recover the original table. The oracle and
++action layers do not yet supply this finiteness API; its requested shared
++home is `TuringMachine/Oracle.lean` at a second consumer. -/
++private noncomputable def canonTabFintype (k n : ℕ) : Fintype (CanonTab k n) := by
++  let fields : OracleTM k Bool (Fin n) →
++      Fin n × Fin n × Fin n × Fin n ×
++        (Fin n → Option Bool → (Fin (k + 1) → Option Bool) →
++          SignType × (Fin (k + 1) → Option (Option Bool) × SignType) ×
++            Option Bool × Option (Fin n)) :=
++    fun tm => ⟨tm.q₀, tm.qQuery, tm.qYes, tm.qNo, fun q inp work =>
++      ⟨(tm.tr q inp work).inputTape, (tm.tr q inp work).workTapes,
++        (tm.tr q inp work).output, (tm.tr q inp work).state⟩⟩
++  refine Fintype.ofInjective (fun x : CanonTab k n => fields x.val) ?_
++  intro a b hab
++  apply Subtype.ext
++  rcases a with ⟨⟨a₀, aQ, aY, aN, ta⟩, wa⟩
++  rcases b with ⟨⟨b₀, bQ, bY, bN, tb⟩, wb⟩
++  simp only [fields, Prod.mk.injEq] at hab
++  rcases hab with ⟨h₀, hQ, hY, hN, ht⟩
++  simp only [OracleTM.mk.injEq]
++  refine ⟨h₀, hQ, hY, hN, ?_⟩
++  funext q inp work
++  have hrow := congrFun (congrFun (congrFun ht q) inp) work
++  cases ha : ta q inp work
++  cases hb : tb q inp work
++  simpa only [ha, hb, Prod.mk.injEq, Action.mk.injEq] using hrow
++
++/-- R3: the well-formed three-state fallback starts in the yes state and
++halts on its first ordinary transition. No oracle-table default is supplied
++by the construction layer; this explicit table totalizes invalid ranks. -/
++private def oracleDefault : FinOracleTM Bool :=
++  ⟨0, Fin 3, ⟨1, 0, 1, 2, fun _ _ _ => ⟨0, fun _ => (none, 0), none, none⟩⟩,
++    ⟨by decide, by decide, by decide⟩⟩
++
++/-- R4: select a canonical table at an explicit rank, with the fixed
++fallback for rank overflow. Keeping the three coordinates as arguments lets
++the decoder simplify its pairing before opening the dependent rank branch. -/
++private noncomputable def oracleTableAt (k n r : ℕ) : FinOracleTM Bool :=
++  if h : r < @Fintype.card (CanonTab k n) (canonTabFintype k n) then
++    let table := (@Fintype.equivFin (CanonTab k n) (canonTabFintype k n)).symm ⟨r, h⟩
++    ⟨k, Fin n, table.val, table.property⟩
++  else oracleDefault
++
++/-- R4: decode the tape count, state count and rank using two pairings. -/
++private noncomputable def decodeOracleTable (j : ℕ) : FinOracleTM Bool :=
++  oracleTableAt (Nat.unpair j).1 (Nat.unpair (Nat.unpair j).2).1
++    (Nat.unpair (Nat.unpair j).2).2
++
++/-- R4: the code made from a canonical table's rank decodes to that table.
++
++**Proof sketch.** Unpair the two coordinates. The rank's `Fin.isLt` proof
++selects the valid branch without computing the cardinality. The inverse
++law of the same explicitly instantiated equivalence recovers the table. -/
++private theorem decodeOracleTable_rank (k n : ℕ) (table : CanonTab k n) :
++    decodeOracleTable (Nat.pair k (Nat.pair n
++      ((@Fintype.equivFin (CanonTab k n) (canonTabFintype k n)) table).val)) =
++      (⟨k, Fin n, table.val, table.property⟩ : FinOracleTM Bool) := by
++  simp only [decodeOracleTable, Nat.unpair_pair]
++  rw [oracleTableAt, dif_pos ((@Fintype.equivFin (CanonTab k n) (canonTabFintype k n)) table).isLt]
++  exact congrArg
++    (fun a : CanonTab k n => (⟨k, Fin n, a.val, a.property⟩ : FinOracleTM Bool))
++    ((@Fintype.equivFin (CanonTab k n) (canonTabFintype k n)).symm_apply_apply table)
++
++/-- R5: forget the second coordinate, so every decoded table is repeated. -/
++private noncomputable def oracleEnumeration (i : ℕ) : FinOracleTM Bool :=
++  decodeOracleTable (Nat.unpair i).1
++
++/-- R5: every repetition coordinate yields the same decoded table. -/
++private theorem oracleEnumeration_pair (j r : ℕ) :
++    oracleEnumeration (Nat.pair j r) = decodeOracleTable j := by
++  simp only [oracleEnumeration, Nat.unpair_pair]
++
+ /-- **Enumeration of the deterministic finite oracle machines with infinite
+ recurrence** [BGS75, p. 432]: there is a family `N : ℕ → Turing.FinOracleTM
+ Bool` such that every finite oracle machine `M` recurs at arbitrarily late
+@@ -149,14 +304,39 @@ state. Fill obligations, named for the brief: the `OracleTM` relabelling lemma
+ this phase's files — flagged for promotion); transfer of `ComputesInTime`
+ across the configuration bijection (`Turing.Cfg.mapState` preserves
+ haltedness and output, as in `Turing.exists_codeTM`); the arithmetic of the
+-four-coordinate pairing (round-2 finding 2). -/
++four-coordinate pairing (round-2 finding 2).
++
++**C1d proof-sketch appendix.** Canonical tables are indexed by every state
++count `n`, including the empty table types at small counts; invalid ranks
++use the three-state fallback. `oracleTableAt` exposes the three coordinates
++before the dependent rank branch is opened. Every table rank and cardinality
++uses the one named finiteness structure. Runs follow from the single step
++transport by `Function.Semiconj.iterate_right`; `Nat.right_le_pair` gives
++the recurrence bound directly. -/
+ theorem exists_finOracleTM_enumeration :
+     ∃ N : ℕ → FinOracleTM Bool,
+       ∀ (M : FinOracleTM Bool) (i₀ : ℕ),
+         ∃ i, i₀ ≤ i ∧
+           ∀ (O : Language Bool) (x output : List Bool) (t : ℕ),
+             ((N i).ComputesInTime O x output t ↔ M.ComputesInTime O x output t) := by
+-  sorry
++  refine ⟨oracleEnumeration, ?_⟩
++  intro M i₀
++  rcases M with @⟨k, Q, hQ, dQ, tm, wf⟩
++  letI : Fintype Q := hQ
++  letI : DecidableEq Q := dQ
++  let e := Fintype.equivFin Q
++  let table : CanonTab k (Fintype.card Q) :=
++    ⟨oracleRelabel tm e, oracleRelabel_wellFormed tm e wf⟩
++  let j := Nat.pair k (Nat.pair (Fintype.card Q)
++    ((@Fintype.equivFin (CanonTab k (Fintype.card Q))
++      (canonTabFintype k (Fintype.card Q))) table).val)
++  refine ⟨Nat.pair j i₀, Nat.right_le_pair j i₀, ?_⟩
++  intro O x output t
++  have htable : decodeOracleTable j =
++      (⟨k, Fin (Fintype.card Q), table.val, table.property⟩ : FinOracleTM Bool) :=
++    decodeOracleTable_rank k (Fintype.card Q) table
++  rw [oracleEnumeration_pair, htable]
++  exact oracleRelabel_computesInTime tm e O x output t
+ 
+ /-- **The stage construction** [AB09, Theorem 3.7; BGS75, §3]: there is an
+ oracle `B` whose unary witness language lies in `NP^B` but not in `P^B`.
+-- 
+2.51.1
+

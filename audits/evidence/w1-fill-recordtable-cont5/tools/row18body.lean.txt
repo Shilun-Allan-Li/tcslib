@@ -1,0 +1,123 @@
+  -- Pre-ship skeleton (evidence only, not landing text): the suggested machine and its
+  -- instances; the scratch template applied at the host start from row 18's own
+  -- hypotheses; its cut, envelope and time absorbed into row 18's bounds; the top-level
+  -- R2 join; the endpoint matched to row 18's statement. The rest's contract is sorried.
+  obtain ⟨K, P, fin, eq, R, en, ex, C, template⟩ := rt_exists_scratchTemplateTM Q T
+  letI := fin
+  letI := eq
+  -- the template bank: `ι 0 = 2` (scratch), `ι 1 = 1` (the radius), `ι j = j + 1` otherwise
+  let ι : Fin (K + 2) ↪ Fin (K + 3) :=
+    ⟨fun i => ⟨if i.val = 0 then 2 else if i.val = 1 then 1 else i.val + 1, by
+        split_ifs <;> omega⟩, by
+      intro i j h
+      apply Fin.ext
+      have h' := congrArg Fin.val h
+      simp only at h'
+      split_ifs at h' <;> omega⟩
+  have ι0 : ι 0 = ⟨2, by omega⟩ := by apply Fin.ext; simp [ι]
+  have ι1 : ι 1 = ⟨1, by omega⟩ := by apply Fin.ext; simp [ι]
+  have ιj (j : Fin (K + 2)) (hj : 2 ≤ j.val) : (ι j).val = j.val + 1 := by
+    simp only [ι, Function.Embedding.coeFn_mk]
+    split_ifs <;> omega
+  -- the suggested chain, innermost first
+  let cleanup : MultiTapeTM (K + 3) (RecSym Q T) _ :=
+    seamCompTM (clearTM (K + 3) ⟨2, by omega⟩) .done
+      (seamCompTM (skipBackTM (K + 3) ⟨2, by omega⟩) .done
+        (clearTM (K + 3) ⟨2, by omega⟩) .sweep) (.inl .run)
+  let back : MultiTapeTM (K + 3) (RecSym Q T) _ :=
+    seamCompTM (skipBackTM (K + 3) 0) .done
+      (seamCompTM (skipBackTM (K + 3) 0) .done cleanup (.inl .sweep)) (.inl .run)
+  let tail : MultiTapeTM (K + 3) (RecSym Q T) _ :=
+    seamCompTM (rt_tailTM (K + 3) ⟨2, by omega⟩ 0 (RecSym.tag τ₀) k)
+      (rt_tailExit k) back (.inl .run)
+  let cross : MultiTapeTM (K + 3) (RecSym Q T) _ :=
+    seamCompTM (skipTM (K + 3) 0) .done
+      (seamCompTM (skipTM (K + 3) ⟨2, by omega⟩) .done tail (.inl (rt_tailEntry k)))
+      (.inl .run)
+  let position : MultiTapeTM (K + 3) (RecSym Q T) _ :=
+    seamCompTM (copyTM (K + 3) ⟨2, by omega⟩ 0) .done
+      (seamCompTM (scanTM (K + 3) 0 (scanMap fun _ => RecSym.digit false) scanKeep ())
+        (.done ())
+        (seamCompTM (writeConstTM (K + 3) 0 [RecSym.digit true]) .done cross (.inl .run))
+        (.inl (.wr 0)))
+      (.inl (.fwd ()))
+  let stateField : MultiTapeTM (K + 3) (RecSym Q T) _ :=
+    seamCompTM (writeConstTM (K + 3) 0 [RecSym.st (some q₀)]) .done
+      (seamCompTM (skipTM (K + 3) 0) .done position (.inl .sweep)) (.inl .run)
+  let M : MultiTapeTM (K + 3) (RecSym Q T) _ :=
+    seamCompTM (embedEmitTM ι R) ex stateField (.inl (.wr 0))
+  -- the exit of `stateField`: cleanup's last `done`, twelve `inr`s deep
+  let stExit : WritePhase [(RecSym.st (some q₀) : RecSym Q T)].length ⊕ (SeekPhase ⊕ (SweepPhase ⊕
+      (ScanPhase Unit ⊕ (WritePhase [(RecSym.digit true : RecSym Q T)].length ⊕
+        (SeekPhase ⊕ (SeekPhase ⊕ (rt_tailState k ⊕ (SeekPhase ⊕ (SeekPhase ⊕
+          (SweepPhase ⊕ (SeekPhase ⊕ SweepPhase))))))))))) :=
+    .inr (.inr (.inr (.inr (.inr (.inr (.inr (.inr (.inr (.inr (.inr (.inr .done)))))))))))
+  refine ⟨K + 1, _, (by set_option synthInstance.maxSize 1024 in infer_instance),
+    Classical.typeDecidableEq _, M, .inl en, .inr stExit, 2 * C + 64, ?_⟩
+  intro x s ws value d entry input radius slot blank
+  -- phase one: the scratch template, from row 18's own hypotheses
+  let a := d.mapState (fun _ => en)
+  have ae : a.state = some en := by simp [a, Cfg.mapState, entry]
+  obtain ⟨t, cost, cutA, headsA, runA⟩ := template ι s ws value a ae input
+    (by rw [ι1]; exact radius)
+    (by intro p _ _; rw [ι0]; exact blank ⟨2, by omega⟩ (by simp) _)
+    (fun j hj p => blank (ι j) (by rw [ιj j hj]; omega) p)
+  -- the template's two words (row 17's own identity) and the record in the route's words
+  have words := rt_template_fields Q T x.length s
+  have fields := rt_initRecord_fields (k := k) x s q₀ τ₀
+  -- the radius term absorbs the template, also at `k = 0`
+  let L := recordLength k x.length s
+  have absorb : (joinFields (recordTemplate Q T x.length s)).length ≤ L + 2 * s := by
+    rw [joinFields_recordTemplate_length]
+    simp only [L, recordLength]
+    omega
+  let B : ℤ := ((2 * C + 64) * (L + ws.length + s + 1) : ℕ)
+  have radA : ∀ v ≤ t, ∀ j,
+      |((embedEmitTM ι R).runFrom a v).workTapePos j - d.workTapePos j| ≤ B := by
+    intro v hv j
+    exact (headsA v hv j).trans (by
+      dsimp only [B]
+      exact_mod_cast (show C * ((joinFields (recordTemplate Q T x.length s)).length +
+          ws.length + 1) ≤ (2 * C + 64) * (L + ws.length + s + 1) by nlinarith))
+  -- the rest (the fill): its exact endpoint is the record on tape `0`, all else restored
+  let a' : Cfg (K + 3) (RecSym Q T) P (x.map (RecSym.digitEmb Q T)) :=
+    { a with
+      state := some ex
+      workTapes := fun j q =>
+        if j = ι 0 ∧ a.workTapePos j ≤ q ∧
+            q < a.workTapePos j + ((joinFields (recordTemplate Q T x.length s)).length : ℤ)
+          then fieldsTape (recordTemplate Q T x.length s) (q - a.workTapePos j)
+        else a.workTapes j q }
+  let c : Cfg (K + 3) (RecSym Q T) _ (x.map (RecSym.digitEmb Q T)) :=
+    { state := some stExit
+      inputPos := d.inputPos
+      workTapes := fun j q =>
+        if j = 0 ∧ d.workTapePos j ≤ q ∧ q < d.workTapePos j + (L : ℤ)
+          then fieldsTape (cfgRecord s (Cfg.init q₀ x : Cfg k Bool Q x) τ₀) (q - d.workTapePos j)
+        else d.workTapes j q
+      workTapePos := d.workTapePos
+      output := d.output }
+  obtain ⟨u, ucost, cutR, radR, runR⟩ : ∃ u, u + 1 ≤ 64 * (L + ws.length + s + x.length + 1) ∧
+      (∀ v < u, (stateField.runFrom (a'.mapState fun _ => .inl (.wr 0)) v).state ≠
+        some stExit) ∧
+      (∀ v ≤ u, ∀ j,
+        |(stateField.runFrom (a'.mapState fun _ => .inl (.wr 0)) v).workTapePos j -
+          d.workTapePos j| ≤ B) ∧
+      stateField.runFrom (a'.mapState fun _ => .inl (.wr 0)) u = c := by
+    -- Proof sketch: the state field, the position field, the tail (`rt_tail_run`), the
+    -- two returns and the cleanup, joined by `rt_copy_seam` (the fill's work).
+    sorry
+  -- the top-level join, by the inherited R2 certificate
+  obtain ⟨run, cut, heads⟩ := rt_copy_seam (embedEmitTM ι R) ex stateField (.inl (.wr 0))
+    stExit d.workTapePos B runA rfl cutA radA runR rfl cutR radR
+  have start : a.mapState Sum.inl = d := by
+    apply Cfg.ext <;> simp [a, Cfg.mapState, entry]
+  rw [start] at run cut heads
+  refine ⟨t + 1 + u, ?_, cut, heads, ?_⟩
+  · change t + 1 + u ≤ (2 * C + 64) * (L + ws.length + s + x.length + 1)
+    have : C * ((joinFields (recordTemplate Q T x.length s)).length + ws.length +
+        x.length + 1) ≤ 2 * C * (L + ws.length + s + x.length + 1) := by nlinarith
+    nlinarith
+  · change M.runFrom d _ = _ at run
+    rw [run]
+    rfl

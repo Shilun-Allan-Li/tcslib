@@ -1,0 +1,28 @@
+# H1 harvest statement gate: cut check and the landed module
+
+Tool: `bash <S>/tools/leanelab.sh <S>/wt-h1harv <S>/oleans-lm0b <file>`, which runs, verbatim:
+```
+#!/usr/bin/env bash
+# Elaborate one module file of worktree $1 against olean tree $2 (no olean output, nothing removed).
+WT="$1"; OL="$2"; F="$3"; LP="$OL"
+for d in "$WT"/.lake/packages/*/.lake/build/lib/lean; do [ -d "$d" ] && LP="$LP:$d"; done
+export LEAN_PATH="$LP"; cd "$WT"; lean "$F"
+```
+(direct `lean`, no `-o`, no olean written; `wt-h1harv` supplies only the packages and the
+working directory, `lean` reads no TCSlib source but the file it is given). Base: the campaign
+tip e831b5b0d887dac3bbf1aa2c19af28983b15b982, exported read-only to <OUT>/base/tip by `git archive`. Snapshot: `oleans-lm0b`
+(post-MIG-0b; §0). Toolchain: `leanprover/lean4:v4.25.0`. Pending PRs read as text only:
+#92 `lean/b6-hosts` 6158e48fe0fb0a82b91e01f4019e0a3ed63f88ed, #93 `lean/arm-minor-fixes` 3fe6a2deacbf2bd88c92a80def0bfb2fbae0237e. <OUT> is the gate's output
+directory, <S> the scratchpad, <REPO> the repository. Run: 2026-10-14 16:55 UTC.
+
+`python3 -I <OUT>/scripts/cutcheck.py <OUT>/H1Harvest.lean <OUT>/base/tip <OUT>/cut` (the C1
+gate's script, verbatim) writes the part's import closure and body; it is elaborated on its
+own. The landed module (`<OUT>/scripts/mkstandalone.py`, no extras) is the same text up to
+blank lines and is elaborated standalone (its imports exist in the snapshot).
+```
+unit imports: 3; union of part imports: 3; missing from unit: []; extra in unit: []
+TCSlib.Complexity.TuringMachine.Build.StepBlockLoop: closure [StepBlockLoop@39]; imports ['TCSlib.Complexity.TuringMachine.Build.StepBlock', 'TCSlib.Complexity.TuringMachine.Build.CounterLoop', 'TCSlib.Complexity.TuringMachine.Build.VirtualInput']
+```
+  [PASS] TCSlib.Complexity.TuringMachine.Build.StepBlockLoop.check.lean (506 lines): exit 0 | errors 0 (expected 0) | `declaration uses 'sorry'` 0 (expected 0) | other warnings 0 (expected 0)
+  [PASS] StepBlockLoop.lean (504 lines): exit 0 | errors 0 (expected 0) | `declaration uses 'sorry'` 0 (expected 0) | other warnings 0 (expected 0)
+  [PASS] cut file == landed module up to blank lines

@@ -1,0 +1,201 @@
+--- a/TCSlib/Complexity/TuringMachine/Build/Embed.lean
++++ b/TCSlib/Complexity/TuringMachine/Build/Embed.lean
+@@ -6,6 +6,7 @@
+ import Mathlib.Data.List.FinRange
+ import TCSlib.Complexity.TuringMachine.Simulation
+ import TCSlib.Complexity.TuringMachine.StateRenaming
++import TCSlib.Complexity.TuringMachine.Build.Convention
+ 
+ set_option maxHeartbeats 0
+ set_option relaxedAutoImplicit false
+@@ -75,14 +76,20 @@
+   carried as frame parameters.
+ * `Turing.embedSilentTM`, `Turing.embedEmitTM` — the two closed machine
+   transformers.
++* `Turing.Cfg.select` — the selected bank of a host configuration, with empty output
++  (moved from `Build/Contract.lean` at MIG-0b's layering split).
+ * `Turing.embedSilentRetTM`, `Turing.embedEmitRetTM` — the two returning
+   transformers (round-1 repair R1): source halts land in the live return
+   anchor `Sum.inr ()`, with the halting transition executed in full.
+ 
+ ## Main results
+ 
+-* `Turing.MultiTapeTM.runFrom_mapState_of_agreeOn` — injective state transport
+-  followed by guarded agreement on the host carrier.
++* `Turing.embedEmitCfg_unselected`, `Turing.embedEmitCfg_select` — the frame export and
++  the selection identity (moved from `Build/Contract.lean` at MIG-0b's layering split).
++* `Turing.embedEmitCfg_eq`, `Turing.embedEmitCfg_mapState_eq`,
++  `Turing.embedEmitCfg_ofWords_eq` — the R1 reconstruction lemma and its corollaries
++  (MIG-0b; the wave-1 fill gate's major F1). `Turing.MultiTapeTM.runFrom_mapState_of_agreeOn`
++  moved to `StateRenaming` at MIG-0b.
+ * `Turing.embedEmitTM_tr` — the forwarding transformer's transition at the action level:
+   the source action on each selected tape, `(none, 0)` on every other tape, and the input
+   move, output and successor state unchanged (12.2c item 6's export).
+@@ -999,51 +1006,121 @@
+     (embedEmitCfg ι tapes heads pre c).workTapePos (ι i) = c.workTapePos i := by
+   simp [embedEmitCfg, embedSlot_selected]
+ 
+-/-! ## Guarded state transport -/
+-
+-/-- An injectively renamed source run agrees with a host run through any
+-prefix whose live source controls satisfy `good`, provided both transition
+-tables agree on the renamed good states for every input and work-tape read.
+-**Proof sketch.** Extend the renamed source table to the entire host carrier.
+-Step commutation identifies its run, then same-carrier guarded agreement
+-transfers that run to the host on the image of the good source states. -/
+-theorem MultiTapeTM.runFrom_mapState_of_agreeOn {k : ℕ} {S H : Type} {x : List Symbol}
+-    (src : MultiTapeTM k Symbol S) (host : MultiTapeTM k Symbol H)
+-    (emb : S ↪ H) (good : S → Prop)
+-    (hagree : ∀ q, good q → ∀ inp work,
+-      host.tr (emb q) inp work = (src.tr q inp work).mapState emb)
+-    (c : Cfg k Symbol S x) (t : ℕ)
+-    (hguard : ∀ u < t, ∀ q, (src.runFrom c u).state = some q → good q) :
+-    host.runFrom (c.mapState emb) t = (src.runFrom c t).mapState emb := by
+-  classical
+-  letI : Nonempty S := ⟨src.q₀⟩
+-  let reference : MultiTapeTM k Symbol H :=
+-    ⟨emb src.q₀, fun q inp work => (src.tr (Function.invFun emb q) inp work).mapState emb⟩
+-  have step (d : Cfg k Symbol S x) :
+-      reference.step (d.mapState emb) = (src.step d).mapState emb := by
+-    cases hs : d.state with
+-    | none => simp [MultiTapeTM.step, Cfg.mapState, hs]
+-    | some q =>
+-      simp only [MultiTapeTM.step, Cfg.mapState, hs, Option.map_some]
+-      change (reference.tr (emb q) d.inputSymbol d.workTapeSymbols).apply (d.mapState emb) = _
+-      dsimp only [reference]
+-      rw [Function.leftInverse_invFun emb.injective q]
+-      exact Cfg.mapState_apply emb _ d
+-  have transport (u : ℕ) :
+-      reference.runFrom (c.mapState emb) u = (src.runFrom c u).mapState emb :=
+-    MultiTapeTM.runFrom_comm_of_step (fun d => d.mapState emb) step c u
+-  have agreement : reference.AgreeOn host {q | ∃ p, good p ∧ emb p = q} := by
+-    intro q hq inp work
+-    obtain ⟨p, hp, rfl⟩ := hq
+-    dsimp only [reference]
+-    rw [Function.leftInverse_invFun emb.injective p]
+-    exact (hagree p hp inp work).symm
+-  rw [MultiTapeTM.runFrom_eq_of_agreeOn agreement]
+-  · exact transport t
+-  · intro u hu q hq
+-    rw [transport u] at hq
+-    change ((src.runFrom c u).state.map emb) = some q at hq
+-    obtain ⟨p, hp, he⟩ := Option.map_eq_some_iff.mp hq
+-    exact ⟨p, hguard u hu p hp, he⟩
+ 
+ end Turing
++
++namespace Turing
++
++variable {k : ℕ} {Γ : Type*}
++
++/-! ## Reconstruction of embedded configurations (MIG-0b)
++
++The frame export missing beside `Turing.embedEmitCfg_selected_tape` and `_pos`, the selection of
++a host configuration, and the **R1 reconstruction lemma** (the wave-1 fill gate's major F1,
++acknowledged by the user; backlog F6-1(i), F7-1(b)), with its relabelling and word-layout
++corollaries. The first three moved here from `Build/Contract.lean` at MIG-0b's layering split.
++All are stated over any universes, like the rest of `Build/Embed`: MIG-0a stated its three over
++`Type`, which are instances (the generalization changes nothing else in their statements), so
++that the lemma can replace every member of the family at its own signature (`RecordTable`'s
++`rt_embed_matches` is stated over `Type*`). -/
++
++/-- The forwarding embedding keeps an unselected tape and head as its frame: the export missing
++from `Build/Embed.lean` beside `Turing.embedEmitCfg_selected_tape` and `_pos`. It moved to
++`Build/Embed` from `Build/Contract.lean` at MIG-0b's layering split.
++
++**Proof sketch.** At time `0`, `Turing.embedEmitTM_frame` for a one-state machine says exactly
++this; the transport's tape fields do not depend on the state type. -/
++theorem embedEmitCfg_unselected {m : ℕ} {S : Type*} {x : List Γ} (σ : Fin m ↪ Fin k)
++    (tapes : Fin k → ℤ → Option Γ) (heads : Fin k → ℤ) (pre : List Γ) (c : Cfg m Γ S x)
++    (j : Fin k) (hj : j ∉ Set.range σ) :
++    (embedEmitCfg σ tapes heads pre c).workTapes j = tapes j ∧
++      (embedEmitCfg σ tapes heads pre c).workTapePos j = heads j := by
++  let M0 : MultiTapeTM m Γ Unit := ⟨(), fun _ _ _ => ⟨0, fun _ => (none, 0), none, none⟩⟩
++  let c0 : Cfg m Γ Unit x := ⟨none, c.inputPos, c.workTapes, c.workTapePos, c.output⟩
++  have h := (embedEmitTM_frame σ M0 tapes heads pre c0 0).1 j hj
++  simp only [MultiTapeTM.runFrom_zero] at h
++  exact h
++
++/-- The source configuration seen through an R1 selection: selected tapes and heads, the same
++state and input position, and an **empty output**. The selection empties the source output, so
++a source precondition is always tested on the output `[]`: `Turing.Contract.embed` transports
++output-normalized preconditions only. -/
++def Cfg.select {m : ℕ} {S : Type*} {x : List Γ} (σ : Fin m ↪ Fin k)
++    (d : Cfg k Γ S x) : Cfg m Γ S x :=
++  ⟨d.state, d.inputPos, fun i => d.workTapes (σ i), fun i => d.workTapePos (σ i), []⟩
++
++/-- **The R1 reconstruction lemma** (MIG-0b; backlog F6-1(i), F7-1(b)): an embedded
++configuration is determined by its selected bank and its ambient frame. If `d` has the state,
++input position and selected tapes and heads of `c`, its output is `pre` followed by `c`'s, and
++off the selection it holds the frame `tapes`, `heads`, then `d` is the forwarding embedding of `c`
++into that frame. At their migrations it replaces `OracleSim.oracleBankCfg_eq`,
++`CodeSimulator.canonEmbedEq`, `Primitives.emitterP2_frame` and the local `hframe` of
++`Loop.emCall_exit_fixed` (the MIG-0b fit tests derive each in one term).
++
++**Proof sketch.** Compare field by field. A selected tape or head is the source's
++(`Turing.embedEmitCfg_selected_tape`, `_pos`), which is `d`'s by hypothesis; an unselected one is
++the frame (`Turing.embedEmitCfg_unselected`), which is `d`'s by hypothesis. The state, the input
++position and the output are the hypotheses. -/
++theorem embedEmitCfg_eq {m : ℕ} {S : Type*} {x : List Γ} (σ : Fin m ↪ Fin k)
++    (tapes : Fin k → ℤ → Option Γ) (heads : Fin k → ℤ) (pre : List Γ) (c : Cfg m Γ S x)
++    (d : Cfg k Γ S x) (hs : c.state = d.state) (hin : c.inputPos = d.inputPos)
++    (hout : pre ++ c.output = d.output)
++    (selected : ∀ i, c.workTapes i = d.workTapes (σ i) ∧ c.workTapePos i = d.workTapePos (σ i))
++    (outside : ∀ j, j ∉ Set.range σ → tapes j = d.workTapes j ∧ heads j = d.workTapePos j) :
++    embedEmitCfg σ tapes heads pre c = d := by
++  have fields (j : Fin k) :
++      (embedEmitCfg σ tapes heads pre c).workTapes j = d.workTapes j ∧
++        (embedEmitCfg σ tapes heads pre c).workTapePos j = d.workTapePos j := by
++    by_cases hj : j ∈ Set.range σ
++    · obtain ⟨i, rfl⟩ := hj
++      rw [embedEmitCfg_selected_tape, embedEmitCfg_selected_pos]
++      exact selected i
++    · obtain ⟨ht, hp⟩ := embedEmitCfg_unselected σ tapes heads pre c j hj
++      exact ⟨ht.trans (outside j hj).1, hp.trans (outside j hj).2⟩
++  exact Cfg.ext hs hin (funext fun j => (fields j).1) (funext fun j => (fields j).2) hout
++
++/-- **R1 reconstruction with state relabelling**: as `Turing.embedEmitCfg_eq`, for a host whose
++control is the source's relabelled by `f` (the phase-host and call-controller tags). This is the
++shape of `Primitives.emitterP2_frame` and of `Loop.emCall_exit_fixed`'s `hframe`.
++
++**Proof sketch.** Relabelling the embedded configuration is embedding the relabelled source, by
++definition; apply `Turing.embedEmitCfg_eq` to it. -/
++theorem embedEmitCfg_mapState_eq {m : ℕ} {S H : Type*} {x : List Γ} (σ : Fin m ↪ Fin k)
++    (f : S → H) (tapes : Fin k → ℤ → Option Γ) (heads : Fin k → ℤ) (pre : List Γ)
++    (c : Cfg m Γ S x) (d : Cfg k Γ H x) (hs : c.state.map f = d.state)
++    (hin : c.inputPos = d.inputPos) (hout : pre ++ c.output = d.output)
++    (selected : ∀ i, c.workTapes i = d.workTapes (σ i) ∧ c.workTapePos i = d.workTapePos (σ i))
++    (outside : ∀ j, j ∉ Set.range σ → tapes j = d.workTapes j ∧ heads j = d.workTapePos j) :
++    (embedEmitCfg σ tapes heads pre c).mapState f = d :=
++  embedEmitCfg_eq σ tapes heads pre (c.mapState f) d hs hin hout selected outside
++
++/-- **R1 reconstruction, word layout**: embedding a word seam into a word frame gives the word
++seam of the combined layout, when the target's selected words are the source's and its other words
++the frame's. This is the shape of `CodeSimulator.canonEmbedWords` and `CertShell.cert_embed_words`
++(`Build/Embed` imports `Build/Convention`, where `Turing.Cfg.ofWords` lives, for it).
++
++**Proof sketch.** `Turing.embedEmitCfg_eq`: the selected tapes are the source buffers, the other
++tapes the frame buffers, and every head is at the origin. -/
++theorem embedEmitCfg_ofWords_eq {m : ℕ} {S : Type*} {x : List Bool} (σ : Fin m ↪ Fin k) (q : S)
++    (v : Fin m → List Bool) (frame target : Fin k → List Bool)
++    (selected : ∀ i, target (σ i) = v i)
++    (outside : ∀ j, j ∉ Set.range σ → frame j = target j) :
++    embedEmitCfg σ (fun j => FinTM.bufferTape (frame j)) (fun _ => 0) []
++        (Cfg.ofWords (input := x) q v) = Cfg.ofWords q target :=
++  embedEmitCfg_eq σ _ _ [] _ _ rfl rfl rfl
++    (fun i => ⟨congrArg FinTM.bufferTape (selected i).symm, rfl⟩)
++    (fun j hj => ⟨congrArg FinTM.bufferTape (outside j hj), rfl⟩)
++
++/-- Every host configuration is the forwarding embedding of its selection, framed by itself:
++embedding the selection of `d` into `d`'s own tapes, heads and output gives back `d`.
++
++**Proof sketch.** The R1 reconstruction lemma (`Turing.embedEmitCfg_eq`) at `d`'s own tapes,
++heads and output: the selection keeps the state, the input position and the selected tapes and
++heads, its empty output follows `d`'s, and off the selection the frame is `d`'s own. -/
++theorem embedEmitCfg_select {m : ℕ} {S : Type*} {x : List Γ} (σ : Fin m ↪ Fin k)
++    (d : Cfg k Γ S x) :
++    embedEmitCfg σ d.workTapes d.workTapePos d.output (d.select σ) = d :=
++  embedEmitCfg_eq σ _ _ _ _ d rfl rfl (List.append_nil _) (fun _ => ⟨rfl, rfl⟩)
++    (fun _ _ => ⟨rfl, rfl⟩)
++
++end Turing

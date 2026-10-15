@@ -1,0 +1,563 @@
+/-
+Copyright (c) 2026 Seyoon Ragavan. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Seyoon Ragavan
+-/
+import TCSlib.Programs.Light.Assigns
+import TCSlib.Programs.Light.Calls
+import TCSlib.Programs.Light.RunsStayInLimits
+import TCSlib.Programs.Light.Compiler.Cells
+import TCSlib.Complexity.Randomized.Classes
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+/-!
+# The language extensions, as a specification (statement gate; backlog PROG-2)
+
+**Gate evidence: a specification mirror, not a landing module.** The extensions of the light
+language (design §15c) are one scripted edit set of the vendored files, made by
+`scripts/vendor_afm26/` and listed in each file's header: `x := inBit e`, `emit e`, `x := coin`
+and `x := half e`, with the bits emitted and the coins consumed as new indices of `Light.Exec`,
+added in place (option A, user decision, 2026-10-12). A file elaborated against the snapshot
+cannot change compiled modules, so this one states the edited declarations over mirrors, in
+their final namespaces, under the names of the vendored ones with the prefix `X`. **The landing
+name of each mirror drops the `X`** (and `lim.toLimits` becomes `lim`). The file has three parts:
+
+1. **The edited vendored declarations** (`XStmt`, `XLimits`, `XExec`, `XStmt.assigns`, the four
+   restated inductions, `XEnds`, `xmainStmt`, `Compiler.XFits`), and `inBitVal`, which the
+   edit adds to `Syntax.lean`.
+2. **New declarations**, which land in the new non-vendored module
+   `TCSlib.Programs.Light.InputOutput` (`TCSlib/Programs/Light/InputOutput.lean`): the coin and
+   output counts, the determinism lemma, I/O-freeness, `EndsIO` and its rules, `MeetsIO`,
+   nondeterministic acceptance and acceptance probability.
+3. **Mirror-only bridges** (`XStmt.ofStmt`, `XExec.ofExec`, `EndsIO.ofEnds`): they relate the
+   mirror to the vendored layer and have no landing counterpart. After the in-place edit their
+   role is taken by Part 2's `Exec.io_eq_nil_of_ioFree` and `EndsIO.of_ends_ioFree`.
+
+| Mirror (namespace `Light`) | Lands as | Where |
+|---|---|---|
+| `XStmt` (11 constructors) | `Stmt` | edit, `Light/Syntax.lean:80` |
+| `XProgram` | `Program` | unchanged text, `Light/Syntax.lean:91` |
+| `XLimits` (field `input`) | `Limits` | edit, `Light/Syntax.lean:100` |
+| `inBitVal` | `inBitVal` | added to `Light/Syntax.lean` |
+| `XExec` (indices `o`, `r`; 13 rules) | `Exec` | edit, `Light/Syntax.lean:155` |
+| `XStmt.assigns` | `Stmt.assigns` | edit, `Light/Assigns.lean:44` |
+| `XExec.append` | `Exec.append` | edit, `Light/Logic.lean:78` |
+| `XExec.loc_eq_of_notMem_assigns` | the same | edit, `Light/Assigns.lean:54` |
+| `XExec.bounded` (new hypothesis) | `Exec.bounded` | edit, `Light/RunsStayInLimits.lean:83` |
+| `XExec.mem_outside` | `Exec.mem_outside` | edit, `Light/RunsStayInLimits.lean:99` |
+| `XEnds` (type unchanged) | `Ends` | edit, `Light/Logic.lean:94` |
+| `xmainStmt` | `mainStmt` | unchanged text, `Light/Compiler/ProgramCode.lean:77` |
+| `Compiler.XFits` (field `input_le`) | `Compiler.Fits` | edit, `Light/Compiler/Cells.lean:79` |
+| Part 2 (`XExec.det`, `EndsIO`, …) | `Exec.det`, `EndsIO`, … | new, `Light/InputOutput.lean` |
+
+## The semantics (design §15c)
+
+* `x := inBit e`: the input bit at the position `e`, as `0` or `1`, and `0` off the input;
+  cost `e.cost + 1`. The input is a field of the limits. There is no `inLen`: `|x|` comes as an
+  argument.
+* `emit e`: appends the bit "`e` is nonzero" (user decision, 2026-10-12); cost `e.cost + 1`.
+* `x := coin`: either bit, consumed; cost `1`. A fixed stream `ρ` selects the run whose consumed
+  word is a prefix of `ρ` (`EndsIO`); that run is unique (`XExec.det`).
+* `x := half e`: `⌊e / 2⌋` (`Int./` rounds down for the divisor `2`); cost `e.cost + 1`.
+
+## References
+
+* [AB09] S. Arora, B. Barak, *Computational Complexity: A Modern Approach*,
+  Cambridge University Press, 2009. (§2.1.2: nondeterministic acceptance; §4.3.1, Definition
+  4.19: read-once certificates; §7.1: probabilistic computation.)
+* [AFM26] Anthropic, PBC, `anthropics/formal-math` (https://github.com/anthropics/formal-math),
+  project `3sum-apsp`, commit `e1a4e6508154ea59f030480661590a9fe3018011` (2026-10-05),
+  Apache-2.0, © Anthropic, PBC. Part 1 mirrors, with the edits applied, the declarations of
+  `ThreeSumApsp/Lang/Syntax.lean`, `Lang/Logic.lean`, `Lang/Assigns.lean`,
+  `Lang/RunsStayInLimits.lean`, `Lang/Compiler/Cells.lean` and `Lang/Compiler/ProgramCode.lean`
+  (vendored under `TCSlib/Programs/Light/`). Design adaptation (policy §2) for Part 2: `EndsIO`,
+  its rules and `MeetsIO` follow the program logic `Ends`, its rules (`Lang/Logic.lean`) and the
+  specification-only calls `Meets`, `Ends.callLast` (`Lang/Calls.lean`), with the output and the
+  consumed coins made visible.
+-/
+
+namespace Light
+
+/-! ═════════════════════════════════════════════════════════════════════════════════════════════
+Part 1 · the edited vendored declarations (mirrors; the landing names drop the `X`). -/
+
+/-- **Statements of the extended light language**: the seven of `Light.Stmt`, and four more.
+`x := inBit e` sets `x` to the input bit at the position `e`; `emit e` appends the bit
+"`e ≠ 0`" to the output; `x := coin` sets `x` to the next coin; `x := half e` sets `x` to
+`⌊e / 2⌋`. The new constructs are statements, not expressions, because the code of an
+expression must be straight-line and `WordRAM.effect` changes only the memory (design §15c).
+[AFM26, `Lang/Syntax.lean`], extended per design §15c. -/
+inductive XStmt : Type
+  | skip
+  | set (x : ℕ) (e : Expr)
+  | store (a e : Expr)
+  | seq (s₁ s₂ : XStmt)
+  | ite (c : Cond) (s₁ s₂ : XStmt)
+  | while (c : Cond) (s : XStmt)
+  | call (p : ℕ) (args : List Expr) (x : ℕ)
+  | inBit (x : ℕ) (e : Expr)
+  | emit (e : Expr)
+  | coin (x : ℕ)
+  | half (x : ℕ) (e : Expr)
+  deriving Repr
+
+/-- A program of the extended language: the bodies of its procedures, numbered from 0. -/
+abbrev XProgram : Type := List XStmt
+
+/-- **The limits of a run, and the input**: those of `Light.Limits`, and the input string, which
+`inBit` reads in place. The edit adds the field `input` to `Light.Limits` itself; no vendored
+file constructs a `Limits` (design §15c), so nothing else changes. -/
+structure XLimits : Type extends Limits where
+  /-- The input string, read in place by `inBit`. -/
+  input : List Bool
+
+/-- The value that `inBit` reads at the position `p` of the input `x`: `1` if `0 ≤ p` and the bit
+of `x` at `p` is `true`, and `0` otherwise, in particular off the input. The language twin of
+`WordRAM.inBitWord`. -/
+def inBitVal (x : List Bool) (p : ℤ) : ℤ := if 0 ≤ p ∧ x.getD p.toNat false = true then 1 else 0
+
+/-- **The semantics of the extended language.** `XExec lim P d s σ σ' o r c`: within the limits
+`lim`, at nesting depth `d` of calls, the statement `s` of the program `P`, started in the state
+`σ`, ends in the state `σ'` after exactly `c` steps, having emitted the bits `o` and consumed the
+coins `r`. The nine rules of `Light.Exec` with the two indices (concatenated by `seq` and
+`whileTrue`, passed through `call`), and one rule for each new statement; `coin` has a rule for
+each bit, so the relation is nondeterministic, and a coin stream selects a run (`XExec.det`).
+[AFM26, `Lang/Syntax.lean`], extended per design §15c. -/
+inductive XExec (lim : XLimits) (P : XProgram) :
+    ℕ → XStmt → State → State → List Bool → List Bool → ℕ → Prop
+  | skip {d σ} : XExec lim P d .skip σ σ [] [] 0
+  | set {d σ x e} : e.Safe lim.toLimits σ →
+      XExec lim P d (.set x e) σ { σ with loc := Function.update σ.loc x (e.val σ) } [] []
+        (e.cost + 1)
+  | store {d σ a e} : a.Safe lim.toLimits σ → e.Safe lim.toLimits σ →
+      lim.toLimits.Addr (a.val σ) →
+      XExec lim P d (.store a e) σ
+        { σ with mem := Function.update σ.mem (a.val σ).toNat (e.val σ) } [] []
+        (a.cost + e.cost + 1)
+  | seq {d σ σ' σ'' s₁ s₂ o₁ o₂ r₁ r₂ c₁ c₂} : XExec lim P d s₁ σ σ' o₁ r₁ c₁ →
+      XExec lim P d s₂ σ' σ'' o₂ r₂ c₂ →
+      XExec lim P d (.seq s₁ s₂) σ σ'' (o₁ ++ o₂) (r₁ ++ r₂) (c₁ + c₂)
+  | iteTrue {d σ σ' c s₁ s₂ o r k} : c.Safe lim.toLimits σ → c.Holds σ →
+      XExec lim P d s₁ σ σ' o r k → XExec lim P d (.ite c s₁ s₂) σ σ' o r (c.cost + 1 + k)
+  | iteFalse {d σ σ' c s₁ s₂ o r k} : c.Safe lim.toLimits σ → ¬ c.Holds σ →
+      XExec lim P d s₂ σ σ' o r k → XExec lim P d (.ite c s₁ s₂) σ σ' o r (c.cost + 1 + k)
+  | whileFalse {d σ c s} : c.Safe lim.toLimits σ → ¬ c.Holds σ →
+      XExec lim P d (.while c s) σ σ [] [] (c.cost + 1)
+  | whileTrue {d σ σ' σ'' c s o₁ o₂ r₁ r₂ k₁ k₂} : c.Safe lim.toLimits σ → c.Holds σ →
+      XExec lim P d s σ σ' o₁ r₁ k₁ → XExec lim P d (.while c s) σ' σ'' o₂ r₂ k₂ →
+      XExec lim P d (.while c s) σ σ'' (o₁ ++ o₂) (r₁ ++ r₂) (c.cost + 1 + k₁ + k₂)
+  | call {d σ σ' p args x body o r k} : (∀ e ∈ args, e.Safe lim.toLimits σ) →
+      P[p]? = some body → d < lim.depth →
+      XExec lim P (d + 1) body ⟨frame (args.map (·.val σ)), σ.mem⟩ σ' o r k →
+      XExec lim P d (.call p args x) σ ⟨Function.update σ.loc x (σ'.loc 0), σ'.mem⟩ o r
+        ((args.map Expr.cost).sum + 2 + k)
+  | inBit {d σ x e} : e.Safe lim.toLimits σ →
+      XExec lim P d (.inBit x e) σ
+        { σ with loc := Function.update σ.loc x (inBitVal lim.input (e.val σ)) } [] [] (e.cost + 1)
+  | emit {d σ e} : e.Safe lim.toLimits σ →
+      XExec lim P d (.emit e) σ σ [decide (e.val σ ≠ 0)] [] (e.cost + 1)
+  | coin {d σ x} (b : Bool) :
+      XExec lim P d (.coin x) σ { σ with loc := Function.update σ.loc x (if b then 1 else 0) } []
+        [b] 1
+  | half {d σ x e} : e.Safe lim.toLimits σ →
+      XExec lim P d (.half x e) σ { σ with loc := Function.update σ.loc x (e.val σ / 2) } [] []
+        (e.cost + 1)
+
+/-- The locals that a statement assigns: those of `Light.Stmt.assigns` (the targets of its
+assignments and the result variables of its calls), and the targets of `inBit`, `coin` and
+`half`. -/
+@[simp] def XStmt.assigns : XStmt → List ℕ
+  | .skip => []
+  | .set x _ => [x]
+  | .store _ _ => []
+  | .seq s t => s.assigns ++ t.assigns
+  | .ite _ s t => s.assigns ++ t.assigns
+  | .while _ s => s.assigns
+  | .call _ _ x => [x]
+  | .inBit x _ => [x]
+  | .emit _ => []
+  | .coin x => [x]
+  | .half x _ => [x]
+
+section Inductions
+
+variable {lim : XLimits} {P : XProgram} {d : ℕ} {s : XStmt} {σ σ' : State} {o r : List Bool}
+  {c : ℕ}
+
+/-- A run stays a run when procedures are appended to the program. The edit of
+`Light.Exec.append` (`Logic.lean:78`).
+
+**Proof sketch.** Induction on the run; the `call` case moves the body's index with
+`getElem?_append_of_eq_some`, and the four new rules carry over unchanged. -/
+theorem XExec.append (h : XExec lim P d s σ σ' o r c) (R : XProgram) :
+    XExec lim (P ++ R) d s σ σ' o r c := by
+  sorry
+
+/-- A run leaves every local that the statement does not assign as it was. The edit of
+`Light.Exec.loc_eq_of_notMem_assigns` (`Assigns.lean:54`).
+
+**Proof sketch.** Induction on the run, as for the vendored lemma; `inBit`, `coin` and `half`
+update only their target, which `XStmt.assigns` lists, and `emit` changes no local. -/
+theorem XExec.loc_eq_of_notMem_assigns {y : ℕ} (h : XExec lim P d s σ σ' o r c)
+    (hy : y ∉ s.assigns) : σ'.loc y = σ.loc y := by
+  sorry
+
+/-- A run that starts with words in all variables and cells ends with words in all of them. The
+edit of `Light.Exec.bounded` (`RunsStayInLimits.lean:83`), with a **new hypothesis**
+`1 ≤ lim.word`: `inBit` and `coin` write `0` or `1` without a `Safe` premise, which no vendored
+rule does; `Light.Std` gives it (`100 ≤ word`). `half` needs nothing, since `|⌊v / 2⌋| ≤ |v|`.
+
+**Proof sketch.** Induction on the run, as for the vendored lemma; `inBit` and `coin` write a
+value of absolute value at most `1 ≤ lim.word`; `half` writes `e.val σ / 2`, of absolute value at
+most `|e.val σ| ≤ lim.word` (`Expr.abs_val_le`). -/
+theorem XExec.bounded (h : XExec lim P d s σ σ' o r c) (hw : (1 : ℤ) ≤ lim.word)
+    (hσ : σ.Bounded lim.toLimits) : σ'.Bounded lim.toLimits := by
+  sorry
+
+/-- A run does not change the cells from `lim.space` on. The edit of `Light.Exec.mem_outside`
+(`RunsStayInLimits.lean:99`); the new statements change no cell.
+
+**Proof sketch.** Induction on the run, as for the vendored lemma; the four new rules leave the
+memory as it is. -/
+theorem XExec.mem_outside (h : XExec lim P d s σ σ' o r c) (a : ℕ) (ha : lim.space ≤ a) :
+    σ'.mem a = σ.mem a := by
+  sorry
+
+end Inductions
+
+/-- **The program logic, type unchanged**: the statement `s`, started in `σ`, ends within `T` steps
+in a state that satisfies `Q`, for some output and some consumed coins, both hidden. The edit
+redefines `Light.Ends` (`Logic.lean:94`) so, keeping its type, so that `Light.Meets` and the
+vendored routines keep their statements; the vendored lines that build or take apart `Ends`
+witnesses change. For a statement with coins this is an existential, "some coin outcome", so a
+specification that is to hold for every stream uses `EndsIO`. [AFM26, `Lang/Logic.lean`] -/
+def XEnds (lim : XLimits) (P : XProgram) (d : ℕ) (s : XStmt) (σ : State) (T : ℕ)
+    (Q : State → Prop) : Prop :=
+  ∃ σ' o r c, XExec lim P d s σ σ' o r c ∧ c ≤ T ∧ Q σ'
+
+/-- The outermost statement of a whole program: procedure `p0` on the locals `1` and `2`, the
+result into local `0`. The text of `Light.mainStmt` (`Compiler/ProgramCode.lean:77`), unchanged
+by the edit, over the extended syntax. With `inLen` from an argument, local `1` holds `|x|`. -/
+def xmainStmt (p0 : ℕ) : XStmt := .call p0 [.var 1, .var 2] 0
+
+/-- **The compiler's word-size condition with the input-length clause** of design §15c: the word
+size fits the limits, the pool and the stack (`Light.Compiler.Fits`, `Cells.lean:79`), and the
+input length fits the limit on words. It is a condition on the limits; with `Fits.word` it gives
+`InRange W |x|`, which the argument cell holding `|x|` needs. `inBit` itself needs no such clause,
+since a position off the input reads `0`, and the argument cell is already covered by
+`Light.Compiler.Input.arg1_le` (`WholeProgram.lean:216`) once the compile theorem takes
+`i = |lim.input|`; so the clause may be redundant (design §15d). -/
+structure Compiler.XFits (W : ℕ) (lim : XLimits) (N Q : ℕ) : Prop
+    extends Compiler.Fits W lim.toLimits N Q where
+  /-- The input length fits the limit on words. -/
+  input_le : (lim.input.length : ℤ) ≤ lim.word
+
+/-! ═════════════════════════════════════════════════════════════════════════════════════════════
+Part 2 · new declarations: land in the new module `TCSlib.Programs.Light.InputOutput`
+(the landing names drop the `X`). -/
+
+section Counts
+
+variable {lim : XLimits} {P : XProgram} {d : ℕ} {s : XStmt} {σ σ' : State} {o r : List Bool}
+  {c : ℕ}
+
+/-- **Each coin costs a step**, so a run of `c` steps consumes at most `c` coins, and streams of
+length `c` suffice.
+
+**Proof sketch.** Induction on the run: every rule's cost is at least the sum of its parts', and
+the `coin` rule costs `1` for its one coin. -/
+theorem XExec.coins_length_le (h : XExec lim P d s σ σ' o r c) : r.length ≤ c := by
+  sorry
+
+/-- **Each emitted bit costs a step**: a run of `c` steps emits at most `c` bits.
+
+**Proof sketch.** Induction on the run; the `emit` rule costs `e.cost + 1 ≥ 1` for its one bit. -/
+theorem XExec.output_length_le (h : XExec lim P d s σ σ' o r c) : o.length ≤ c := by
+  sorry
+
+/-- **Determinism.** Two runs of the same statement from the same state whose consumed words are
+both prefixes of one stream `ρ` are the same run: the same final state, output, consumed word
+and cost. Acceptance probabilities need it (design §15c, obstacle 2).
+
+**Proof sketch.** Induction on the first run, inversion on the second, generalizing `ρ`. A
+test's outcome is a function of the state, so both runs take the same rule. For `seq` and
+`whileTrue` the consumed words of the first parts are prefixes of `ρ`, so the induction
+hypothesis makes them equal; the second parts then consume prefixes of `ρ.drop |r₁|`. For `coin`
+both bits are the first bit of `ρ`. -/
+theorem XExec.det {σ₁ σ₂ : State} {o₁ o₂ r₁ r₂ : List Bool} {c₁ c₂ : ℕ} {ρ : List Bool}
+    (h₁ : XExec lim P d s σ σ₁ o₁ r₁ c₁) (h₂ : XExec lim P d s σ σ₂ o₂ r₂ c₂)
+    (hr₁ : r₁ <+: ρ) (hr₂ : r₂ <+: ρ) : σ₁ = σ₂ ∧ o₁ = o₂ ∧ r₁ = r₂ ∧ c₁ = c₂ := by
+  sorry
+
+/-- A statement is **free of input-output effects** when it contains no `emit` and no `coin`
+(`inBit` and `half` are allowed: they read the input and compute, but emit and consume nothing).
+The 14 vendored routines are statements of the vendored syntax, so they are I/O-free. -/
+def XStmt.IOFree : XStmt → Prop
+  | .seq s₁ s₂ => s₁.IOFree ∧ s₂.IOFree
+  | .ite _ s₁ s₂ => s₁.IOFree ∧ s₂.IOFree
+  | .while _ s => s.IOFree
+  | .emit _ => False
+  | .coin _ => False
+  | _ => True
+
+/-- **I/O-free runs emit and consume nothing**: a run of an I/O-free statement of a program whose
+procedures are all I/O-free emits nothing and consumes no coin. The landing counterpart of the
+mirror's `XExec.ofExec` (Part 3).
+
+**Proof sketch.** Induction on the run; the `emit` and `coin` cases contradict I/O-freeness, a
+call's body is a procedure of `P` (`List.mem_of_getElem?`), and `[] ++ []` is `[]`. -/
+theorem XExec.io_eq_nil_of_ioFree (h : XExec lim P d s σ σ' o r c) (hs : s.IOFree)
+    (hP : ∀ b ∈ P, b.IOFree) : o = [] ∧ r = [] := by
+  sorry
+
+end Counts
+
+/-- **The program logic with input and output.** `EndsIO lim P d s σ ρ T Q`: with the coin stream
+`ρ`, the statement `s`, started in `σ`, ends within `T` steps in a state `σ'`, having emitted `o`
+and consumed a prefix `r` of `ρ`, with `Q σ' o r`. By `XExec.det` there is at most one such run.
+A stream too short for the run's coins admits no run. [AFM26, `Lang/Logic.lean`], design
+adaptation: `Ends` with the output and the consumed coins made visible. -/
+def EndsIO (lim : XLimits) (P : XProgram) (d : ℕ) (s : XStmt) (σ : State) (ρ : List Bool)
+    (T : ℕ) (Q : State → List Bool → List Bool → Prop) : Prop :=
+  ∃ σ' o r c, XExec lim P d s σ σ' o r c ∧ r <+: ρ ∧ c ≤ T ∧ Q σ' o r
+
+section Rules
+
+variable {lim : XLimits} {P : XProgram} {d : ℕ} {σ : State} {ρ : List Bool} {T : ℕ}
+  {Q : State → List Bool → List Bool → Prop}
+
+/-- An `EndsIO` fact is an `Ends` fact, for any conclusion that the state alone implies.
+
+**Proof sketch.** The same witnesses, the prefix forgotten. -/
+theorem EndsIO.toXEnds {s : XStmt} {Q' : State → Prop} (h : EndsIO lim P d s σ ρ T Q)
+    (hQ : ∀ σ' o r, Q σ' o r → Q' σ') : XEnds lim P d s σ T Q' := by
+  sorry
+
+/-- An `EndsIO` fact holds with more time and any weaker conclusion.
+
+**Proof sketch.** The same witnesses: `c ≤ T ≤ T'`, and `hQ`. -/
+theorem EndsIO.mono {s : XStmt} {T' : ℕ} {Q' : State → List Bool → List Bool → Prop}
+    (h : EndsIO lim P d s σ ρ T Q) (hT : T ≤ T') (hQ : ∀ σ' o r, Q σ' o r → Q' σ' o r) :
+    EndsIO lim P d s σ ρ T' Q' := by
+  sorry
+
+/-- **`Ends` facts of I/O-free code are `EndsIO` facts**, for every stream, with nothing emitted
+and nothing consumed. This keeps the 14 vendored routines, specified with `Ends`, usable under
+`EndsIO` after the in-place edit.
+
+**Proof sketch.** The run of the `Ends` fact emits and consumes nothing
+(`XExec.io_eq_nil_of_ioFree`), and `[]` is a prefix of every stream. -/
+theorem EndsIO.of_xEnds_ioFree {s : XStmt} {Q₀ : State → Prop} (h : XEnds lim P d s σ T Q₀)
+    (hs : s.IOFree) (hP : ∀ b ∈ P, b.IOFree) :
+    EndsIO lim P d s σ ρ T fun σ' o r => Q₀ σ' ∧ o = [] ∧ r = [] := by
+  sorry
+
+/-- `skip` ends at once, in its start state, emitting and consuming nothing.
+
+**Proof sketch.** The rule `XExec.skip`; `[]` is a prefix of `ρ`. -/
+theorem EndsIO.skip (h : Q σ [] []) : EndsIO lim P d .skip σ ρ T Q := by
+  sorry
+
+/-- An assignment of a safe expression ends within its cost, emitting and consuming nothing.
+
+**Proof sketch.** The rule `XExec.set`. -/
+theorem EndsIO.set {x : ℕ} {e : Expr} (hs : e.Safe lim.toLimits σ) (hT : e.cost + 1 ≤ T)
+    (h : Q { σ with loc := Function.update σ.loc x (e.val σ) } [] []) :
+    EndsIO lim P d (.set x e) σ ρ T Q := by
+  sorry
+
+/-- A store of a safe expression at an address within the limits ends within its cost, emitting
+and consuming nothing.
+
+**Proof sketch.** The rule `XExec.store`. -/
+theorem EndsIO.store {a e : Expr} (ha : a.Safe lim.toLimits σ) (he : e.Safe lim.toLimits σ)
+    (hA : lim.toLimits.Addr (a.val σ)) (hT : a.cost + e.cost + 1 ≤ T)
+    (h : Q { σ with mem := Function.update σ.mem (a.val σ).toNat (e.val σ) } [] []) :
+    EndsIO lim P d (.store a e) σ ρ T Q := by
+  sorry
+
+/-- **Sequencing**: the second statement runs on the rest of the stream, and the outputs and the
+consumed words are concatenated.
+
+**Proof sketch.** The rule `XExec.seq`; if `r₁ <+: ρ` and `r₂ <+: ρ.drop |r₁|` then
+`r₁ ++ r₂ <+: ρ`. -/
+theorem EndsIO.seq {s₁ s₂ : XStmt} (T₁ T₂ : ℕ)
+    (h : EndsIO lim P d s₁ σ ρ T₁ fun σ' o₁ r₁ =>
+      EndsIO lim P d s₂ σ' (ρ.drop r₁.length) T₂ fun σ'' o₂ r₂ => Q σ'' (o₁ ++ o₂) (r₁ ++ r₂))
+    (hT : T₁ + T₂ ≤ T) : EndsIO lim P d (.seq s₁ s₂) σ ρ T Q := by
+  sorry
+
+/-- **A branch**: the side that the test selects, on the same stream, after the test's cost.
+
+**Proof sketch.** Case on `c.Holds σ`; the rules `XExec.iteTrue` and `XExec.iteFalse`. -/
+theorem EndsIO.ite {c : Cond} {s₁ s₂ : XStmt} (T' : ℕ) (hs : c.Safe lim.toLimits σ)
+    (h₁ : c.Holds σ → EndsIO lim P d s₁ σ ρ T' Q) (h₂ : ¬ c.Holds σ → EndsIO lim P d s₂ σ ρ T' Q)
+    (hT : c.cost + 1 + T' ≤ T) : EndsIO lim P d (.ite c s₁ s₂) σ ρ T Q := by
+  sorry
+
+/-- **A loop whose test holds**: one round on the stream, then the loop on the rest.
+
+**Proof sketch.** The rule `XExec.whileTrue`, with the prefix argument of `EndsIO.seq`. -/
+theorem EndsIO.whileStep {c : Cond} {s : XStmt} (T₁ T₂ : ℕ) (hs : c.Safe lim.toLimits σ)
+    (hc : c.Holds σ)
+    (h : EndsIO lim P d s σ ρ T₁ fun σ' o₁ r₁ =>
+      EndsIO lim P d (.while c s) σ' (ρ.drop r₁.length) T₂ fun σ'' o₂ r₂ =>
+        Q σ'' (o₁ ++ o₂) (r₁ ++ r₂))
+    (hT : c.cost + 1 + T₁ + T₂ ≤ T) : EndsIO lim P d (.while c s) σ ρ T Q := by
+  sorry
+
+/-- **A loop whose test fails** ends after the test, emitting and consuming nothing.
+
+**Proof sketch.** The rule `XExec.whileFalse`. -/
+theorem EndsIO.whileDone {c : Cond} {s : XStmt} (hs : c.Safe lim.toLimits σ) (hc : ¬ c.Holds σ)
+    (hQ : Q σ [] []) (hT : c.cost + 1 ≤ T) : EndsIO lim P d (.while c s) σ ρ T Q := by
+  sorry
+
+/-- **Calls**: the body runs on the same stream; its output and consumed coins pass through.
+
+**Proof sketch.** The rule `XExec.call`. -/
+theorem EndsIO.call {p x : ℕ} {args : List Expr} {body : XStmt} (T' : ℕ)
+    (ha : ∀ e ∈ args, e.Safe lim.toLimits σ) (hp : P[p]? = some body) (hd : d < lim.depth)
+    (h : EndsIO lim P (d + 1) body ⟨frame (args.map (·.val σ)), σ.mem⟩ ρ T' fun σ' o r =>
+      Q ⟨Function.update σ.loc x (σ'.loc 0), σ'.mem⟩ o r)
+    (hT : (args.map Expr.cost).sum + 2 + T' ≤ T) : EndsIO lim P d (.call p args x) σ ρ T Q := by
+  sorry
+
+/-- `x := inBit e` sets `x` to the input bit at the position `e` (`0` off the input) within
+`e.cost + 1` steps, emitting and consuming nothing.
+
+**Proof sketch.** The rule `XExec.inBit`. -/
+theorem EndsIO.inBit {x : ℕ} {e : Expr} (hs : e.Safe lim.toLimits σ) (hT : e.cost + 1 ≤ T)
+    (h : Q { σ with loc := Function.update σ.loc x (inBitVal lim.input (e.val σ)) } [] []) :
+    EndsIO lim P d (.inBit x e) σ ρ T Q := by
+  sorry
+
+/-- `emit e` emits the one bit "`e ≠ 0`" within `e.cost + 1` steps and changes no variable or
+cell.
+
+**Proof sketch.** The rule `XExec.emit`. -/
+theorem EndsIO.emit {e : Expr} (hs : e.Safe lim.toLimits σ) (hT : e.cost + 1 ≤ T)
+    (h : Q σ [decide (e.val σ ≠ 0)] []) : EndsIO lim P d (.emit e) σ ρ T Q := by
+  sorry
+
+/-- **A coin reads the first bit of the stream** and consumes it, within one step.
+
+**Proof sketch.** The rule `XExec.coin b`; `[b]` is a prefix of `b :: ρ'`. -/
+theorem EndsIO.coin {x : ℕ} {b : Bool} {ρ' : List Bool} (hρ : ρ = b :: ρ') (hT : 1 ≤ T)
+    (h : Q { σ with loc := Function.update σ.loc x (if b then 1 else 0) } [] [b]) :
+    EndsIO lim P d (.coin x) σ ρ T Q := by
+  sorry
+
+/-- `x := half e` sets `x` to `⌊e / 2⌋` within `e.cost + 1` steps, emitting and consuming
+nothing.
+
+**Proof sketch.** The rule `XExec.half`. -/
+theorem EndsIO.half {x : ℕ} {e : Expr} (hs : e.Safe lim.toLimits σ) (hT : e.cost + 1 ≤ T)
+    (h : Q { σ with loc := Function.update σ.loc x (e.val σ / 2) } [] []) :
+    EndsIO lim P d (.half x e) σ ρ T Q := by
+  sorry
+
+/-- **The `Ends` rule for a coin**: some bit leads to the conclusion (the existential reading of
+`Ends`).
+
+**Proof sketch.** The rule `XExec.coin b`, with its output and consumed word hidden. -/
+theorem XEnds.coin {x : ℕ} {Q' : State → Prop} (b : Bool) (hT : 1 ≤ T)
+    (h : Q' { σ with loc := Function.update σ.loc x (if b then 1 else 0) }) :
+    XEnds lim P d (.coin x) σ T Q' := by
+  sorry
+
+end Rules
+
+/-- **Specifications of procedures with input and output.** `MeetsIO lim P p d vals μ ρ T R`:
+procedure `p`, run at depth `d` on the arguments `vals` in the memory `μ` with the stream `ρ`,
+ends within `T` steps with a result, a memory, an output and a consumed word that satisfy `R`.
+The I/O counterpart of `Light.Meets` (`Calls.lean:57`), which stays as it is. [AFM26,
+`Lang/Calls.lean`], design adaptation. -/
+def MeetsIO (lim : XLimits) (P : XProgram) (p d : ℕ) (vals : List ℤ) (μ : ℕ → ℤ)
+    (ρ : List Bool) (T : ℕ) (R : ℤ → (ℕ → ℤ) → List Bool → List Bool → Prop) : Prop :=
+  ∃ body, P[p]? = some body ∧
+    EndsIO lim P d body ⟨frame vals, μ⟩ ρ T fun σ' o r => R (σ'.loc 0) σ'.mem o r
+
+/-- **`x := p(args)` with a specification that sees the output and the coins**: the I/O
+counterpart of `Light.Ends.callLast` (`Calls.lean:102`). The procedure runs at depth `d + 1`, on
+the same stream.
+
+**Proof sketch.** Unfold `MeetsIO`, then `EndsIO.call` with the body's `EndsIO` fact weakened by
+`h` (`EndsIO.mono`), as in the vendored `Ends.callLast`. -/
+theorem EndsIO.callLast {lim : XLimits} {P : XProgram} {d p x T T' : ℕ} {loc μ : ℕ → ℤ}
+    {args : List Expr} {vals : List ℤ} {ρ : List Bool}
+    {R : ℤ → (ℕ → ℤ) → List Bool → List Bool → Prop} {Q : State → List Bool → List Bool → Prop}
+    (hp : MeetsIO lim P p (d + 1) vals μ ρ T' R)
+    (h : ∀ v μ' o r, R v μ' o r → Q ⟨Function.update loc x v, μ'⟩ o r)
+    (ha : (∀ e ∈ args, e.Safe lim.toLimits ⟨loc, μ⟩) ∧ args.map (·.val ⟨loc, μ⟩) = vals)
+    (hd : d < lim.depth) (hT : (args.map Expr.cost).sum + 2 + T' ≤ T) :
+    EndsIO lim P d (.call p args x) ⟨loc, μ⟩ ρ T Q := by
+  sorry
+
+/-- **Nondeterministic acceptance** (design §15c): some coin stream of length `T` makes the
+outermost call, on `|x| = |lim.input|` and `j`, end within `T` steps with a positive result, the
+verdict of `Light.verdictOf true`. Time bounds are stated separately, uniformly over all streams,
+as `NTIME` and `NSPACE` require. [AB09, §2.1.2; §4.3.1, Definition 4.19: the coins are read
+once] -/
+def AcceptsND (lim : XLimits) (P : XProgram) (p0 : ℕ) (j : ℤ) (μ : ℕ → ℤ) (T : ℕ) : Prop :=
+  ∃ ρ : List Bool, ρ.length = T ∧
+    EndsIO lim P 0 (xmainStmt p0) ⟨frame [0, lim.input.length, j], μ⟩ ρ T fun σ' _ _ => 0 < σ'.loc 0
+
+open Classical in
+/-- **Acceptance probability** (design §15c): the probability, over a uniform stream of `m`
+coins (`Randomized.randProb`), that the outermost call ends within `T` steps with a positive
+result. It is a probability of runs because the run of each stream is unique (`XExec.det`). A
+run needing more than `m` coins counts as not accepting; `m ≥ T` coins suffice for runs of `T`
+steps (`XExec.coins_length_le`). [AB09, §7.1] -/
+noncomputable def acceptProb (lim : XLimits) (P : XProgram) (p0 : ℕ) (j : ℤ) (μ : ℕ → ℤ)
+    (m T : ℕ) : ℚ :=
+  Randomized.randProb m fun ρ =>
+    EndsIO lim P 0 (xmainStmt p0) ⟨frame [0, lim.input.length, j], μ⟩ ρ T fun σ' _ _ => 0 < σ'.loc 0
+
+/-! ═════════════════════════════════════════════════════════════════════════════════════════════
+Part 3 · mirror-only bridges (no landing counterpart). -/
+
+/-- The vendored statements, as extended statements: the identity on the seven shared
+constructors. Mirror only: after the in-place edit the two types are one. -/
+def XStmt.ofStmt : Stmt → XStmt
+  | .skip => .skip
+  | .set x e => .set x e
+  | .store a e => .store a e
+  | .seq s₁ s₂ => .seq (ofStmt s₁) (ofStmt s₂)
+  | .ite c s₁ s₂ => .ite c (ofStmt s₁) (ofStmt s₂)
+  | .while c s => .while c (ofStmt s)
+  | .call p args x => .call p args x
+
+section Bridges
+
+variable {lim : XLimits} {d : ℕ} {σ σ' : State} {c : ℕ}
+
+/-- **Conservativity.** A run of the vendored language is a run of the extended language that
+emits nothing and consumes no coin. Mirror only; its landing counterpart is
+`Exec.io_eq_nil_of_ioFree` (Part 2).
+
+**Proof sketch.** Induction on the vendored run, rule by rule; `[] ++ []` is `[]`, and a call's
+body is found in `P₀.map XStmt.ofStmt` by `List.getElem?_map`. -/
+theorem XExec.ofExec {P₀ : Program} {s₀ : Stmt} (h : Exec lim.toLimits P₀ d s₀ σ σ' c) :
+    XExec lim (P₀.map XStmt.ofStmt) d (XStmt.ofStmt s₀) σ σ' [] [] c := by
+  sorry
+
+end Bridges
+
+/-- **`EndsIO` facts of vendored code, through the mirror.** A statement of the vendored
+language: its `Ends` fact holds under `EndsIO` for every stream, with nothing emitted and nothing
+consumed. Mirror only (it is stated over `XStmt.ofStmt`); its landing counterpart is
+`EndsIO.of_ends_ioFree`.
+
+**Proof sketch.** `XExec.ofExec` turns the vendored run into an extended run with `o = r = []`;
+`[]` is a prefix of `ρ`. -/
+theorem EndsIO.ofEnds {lim : XLimits} {d : ℕ} {σ : State} {ρ : List Bool} {T : ℕ}
+    {P₀ : Program} {s₀ : Stmt} {Q₀ : State → Prop} (h : Ends lim.toLimits P₀ d s₀ σ T Q₀) :
+    EndsIO lim (P₀.map XStmt.ofStmt) d (XStmt.ofStmt s₀) σ ρ T fun σ' o r =>
+      Q₀ σ' ∧ o = [] ∧ r = [] := by
+  sorry
+
+end Light

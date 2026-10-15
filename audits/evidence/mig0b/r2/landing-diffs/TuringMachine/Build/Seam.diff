@@ -1,0 +1,142 @@
+--- a/TCSlib/Complexity/TuringMachine/Build/Seam.lean
++++ b/TCSlib/Complexity/TuringMachine/Build/Seam.lean
+@@ -87,6 +87,12 @@
+ * `Turing.seamCompTM_runFrom_left`, `Turing.seamCompTM₂_run_ofCfg` — the left
+   prefix of a seam under a strict exit cut, and the two-exit composition
+   (§12.8, R8.8; the latter a statement).
++* `Turing.seamCompTM_runFrom_right` — the right segment after the dispatch, at any
++  offset (promoted from the private `seamComp_right` at MIG-0b; set-valued exits need it).
++* `Turing.seamReleaseTM_step_fresh`, `Turing.seamReleaseTM_step_inr`,
++  `Turing.seamReleaseTM_runFrom_pos` — the release adapter's steps and its pointwise
++  lockstep at every positive time (promoted from the private `seamRelease_*` lemmas at
++  MIG-0b, design §16a item 5).
+ * `Turing.seamCompTM_spaceUsedByTape_le_add`,
+   `Turing.seamCompTM_spaceUsed_le_add`,
+   `Turing.seamCompTM_spaceUsedByTape_le_max` — the sum and
+@@ -209,10 +215,15 @@
+       seamComp_step_left M₁ exit M₂ entry _ (hcut t (by omega)),
+       MultiTapeTM.runFrom_succ_eq_step']
+ 
+-/-- After the one-step dispatch, the entire right trajectory agrees.
++/-- **The seam's right segment** (promoted from the private `seamComp_right` at MIG-0b, with its
++universes and its proof; MIG-0a's export of the same name, over `Type`, is this statement's
++instance): after the dispatch step, the composite runs the second machine in lockstep, for any
++number of steps, from the first machine's endpoint with its state replaced by the second entry.
++Set-valued exits need it.
++
+ **Proof sketch.** Split the run at the dispatch, use left lockstep and
+ the exit equation, then iterate the unconditional right-step identity. -/
+-private lemma seamComp_right {Symbol : Type*} {x : List Symbol} [DecidableEq S₁]
++theorem seamCompTM_runFrom_right {Symbol : Type*} {x : List Symbol} [DecidableEq S₁]
+     (M₁ : MultiTapeTM k Symbol S₁) (exit : S₁)
+     (M₂ : MultiTapeTM k Symbol S₂) (entry : S₂)
+     {c₀ c₁ : Cfg k Symbol S₁ x} {T₁ : ℕ}
+@@ -237,7 +248,7 @@
+     (h₂ : M₂.runFrom (c₁.mapState fun _ => entry) T₂ = c₃) :
+     (seamCompTM M₁ exit M₂ entry).runFrom (c₀.mapState Sum.inl)
+         (T₁ + 1 + T₂) = c₃.mapState Sum.inr :=
+-  (seamComp_right M₁ exit M₂ entry h₁ hexit hcut T₂).trans
++  (seamCompTM_runFrom_right M₁ exit M₂ entry h₁ hexit hcut T₂).trans
+     (congrArg (Cfg.mapState Sum.inr) h₂)
+ 
+ /-- The right final anchor is absent before the total time.
+@@ -260,7 +271,7 @@
+   · rw [seamCompTM_runFrom_left M₁ exit M₂ entry hcut t hleft]
+     cases (M₁.runFrom c₀ t).state <;> simp [Cfg.mapState]
+   · have htime : t = T₁ + 1 + (t - (T₁ + 1)) := by omega
+-    rw [htime, seamComp_right M₁ exit M₂ entry h₁ hexit hcut]
++    rw [htime, seamCompTM_runFrom_right M₁ exit M₂ entry h₁ hexit hcut]
+     intro heq
+     apply hcut₂ (t - (T₁ + 1)) (by omega)
+     change Option.map Sum.inr
+@@ -291,7 +302,7 @@
+     apply Finset.mem_union_left
+     exact Finset.mem_image.mpr ⟨t, Finset.mem_range.mpr (by omega), rfl⟩
+   · have htime : t = T₁ + 1 + (t - (T₁ + 1)) := by omega
+-    rw [htime, seamComp_right M₁ exit M₂ entry h₁ hexit hcut]
++    rw [htime, seamCompTM_runFrom_right M₁ exit M₂ entry h₁ hexit hcut]
+     apply Finset.mem_union_right
+     exact Finset.mem_image.mpr
+       ⟨t - (T₁ + 1), Finset.mem_range.mpr (by omega), rfl⟩
+@@ -703,17 +714,21 @@
+       let a := M.tr s inp w
+       ⟨a.inputTape, a.workTapes, a.output, a.state.map Sum.inr⟩
+ 
+-/-- The fresh state executes the anchor action without a dispatch step. -/
+-private lemma seamRelease_fresh_step {Symbol : Type*} {x : List Symbol} (M : MultiTapeTM k Symbol S) (anchor : S)
+-    (c : Cfg k Symbol S x) (hc : c.state = some anchor) :
++/-- **The release's fresh step** (promoted from the private `seamRelease_fresh_step` at MIG-0b):
++from a configuration at the anchor, the release adapter's fresh state applies the anchor's action,
++and the resulting state is right-tagged. There is no dispatch step. -/
++theorem seamReleaseTM_step_fresh {Symbol : Type*} {x : List Symbol} (M : MultiTapeTM k Symbol S)
++    (anchor : S) (c : Cfg k Symbol S x) (hc : c.state = some anchor) :
+     (seamReleaseTM M anchor).step (c.mapState fun _ => Sum.inl ()) =
+       (M.step c).mapState Sum.inr := by
+   simp only [MultiTapeTM.step, Cfg.mapState, hc, Option.map_some]
+   rfl
+ 
+-/-- In the right copy, release steps commute with state mapping. -/
+-private lemma seamRelease_step_right {Symbol : Type*} {x : List Symbol} (M : MultiTapeTM k Symbol S) (anchor : S)
+-    (c : Cfg k Symbol S x) :
++/-- **The release's right-tagged steps** (promoted from the private `seamRelease_step_right` at
++MIG-0b): on a right-tagged configuration, a step of the release adapter is the source step,
++right-tagged; a halted configuration stays halted. -/
++theorem seamReleaseTM_step_inr {Symbol : Type*} {x : List Symbol} (M : MultiTapeTM k Symbol S)
++    (anchor : S) (c : Cfg k Symbol S x) :
+     (seamReleaseTM M anchor).step (c.mapState Sum.inr) =
+       (M.step c).mapState Sum.inr := by
+   cases hs : c.state with
+@@ -722,20 +737,24 @@
+     simp only [MultiTapeTM.step, Cfg.mapState, hs, Option.map_some]
+     rfl
+ 
+-/-- At every positive time, release runs are the right-mapped source runs.
+-**Proof sketch.** Execute the fresh step once, then iterate the right-step
+-identity. This also covers a source that halts or never returns. -/
+-private lemma seamRelease_run_pos {Symbol : Type*} {x : List Symbol} (M : MultiTapeTM k Symbol S) (anchor : S)
+-    (c : Cfg k Symbol S x) (hc : c.state = some anchor) (t : ℕ) (ht : 0 < t) :
++/-- **The pointwise release lockstep** (design §16a item 5; promoted from the private
++`seamRelease_run_pos` at MIG-0b, with its universes and its proof): started at its fresh state
++over a configuration at the anchor, the release adapter is, at every positive time, the source
++run with its states right-tagged. This also covers a source that halts or never returns.
++
++**Proof sketch.** Execute the fresh step once (`Turing.seamReleaseTM_step_fresh`), then iterate
++the right-step identity (`Turing.seamReleaseTM_step_inr`). -/
++theorem seamReleaseTM_runFrom_pos {Symbol : Type*} {x : List Symbol} (M : MultiTapeTM k Symbol S)
++    (anchor : S) (c : Cfg k Symbol S x) (hc : c.state = some anchor) (t : ℕ) (ht : 0 < t) :
+     (seamReleaseTM M anchor).runFrom (c.mapState fun _ => Sum.inl ()) t =
+       (M.runFrom c t).mapState Sum.inr := by
+   cases t with
+   | zero => omega
+   | succ t =>
+-    rw [MultiTapeTM.runFrom_succ_eq_step, seamRelease_fresh_step M anchor c hc,
++    rw [MultiTapeTM.runFrom_succ_eq_step, seamReleaseTM_step_fresh M anchor c hc,
+       MultiTapeTM.runFrom_succ_eq_step]
+     exact MultiTapeTM.runFrom_comm_of_step (Cfg.mapState Sum.inr)
+-      (seamRelease_step_right M anchor) _ t
++      (seamReleaseTM_step_inr M anchor) _ t
+ 
+ /-- **R3′, the positive first return through the adapter** (spec, fill
+ pending — round-1 repair R3): if `M`, started at its anchor, first
+@@ -763,10 +782,10 @@
+             (c.mapState fun _ => Sum.inl ()) t).state ≠
+           some (Sum.inr anchor) := by
+   constructor
+-  · rw [seamRelease_run_pos M anchor c hc T hT, h]
++  · rw [seamReleaseTM_runFrom_pos M anchor c hc T hT, h]
+   · intro t ht
+     by_cases htpos : 0 < t
+-    · rw [seamRelease_run_pos M anchor c hc t htpos]
++    · rw [seamReleaseTM_runFrom_pos M anchor c hc t htpos]
+       intro heq
+       apply hcut t htpos ht
+       change Option.map Sum.inr (M.runFrom c t).state =
+@@ -797,7 +816,7 @@
+   by_cases hs : s = 0
+   · subst s
+     rfl
+-  · rw [seamRelease_run_pos M anchor c hc s (Nat.pos_of_ne_zero hs)]
++  · rw [seamReleaseTM_runFrom_pos M anchor c hc s (Nat.pos_of_ne_zero hs)]
+     rfl
+ 
+ /-! ### The phase host: finite dispatch over many phases (§12.8 fill)

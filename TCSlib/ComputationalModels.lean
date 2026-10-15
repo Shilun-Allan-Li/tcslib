@@ -18,6 +18,8 @@ import TCSlib.Complexity.TuringMachine.Deterministic
 import TCSlib.Complexity.TuringMachine.Finite
 import TCSlib.Complexity.TuringMachine.Nondeterministic
 import TCSlib.Complexity.TuringMachine.Oracle
+import TCSlib.Programs.Light.Syntax
+import TCSlib.Programs.WordRAM.Basic
 
 /-!
 # Computational models: the catalog
@@ -62,6 +64,10 @@ under `Complexity/`.
   of `NTIME`, `NP`, `NEXP` (`Complexity/TuringMachine/Nondeterministic.lean`).
 * `FinTM` — bundled deterministic machines; the carrier of `DTIME`, `P`,
   `EXP` (`Complexity/TuringMachine/Finite.lean`).
+* `Light.Program` — programs of the light language [AFM26]: a list of procedure bodies over
+  integer locals and a flat integer memory, with recursion, unit step costs and run limits;
+  its program logic is `Light.Ends`/`Light.Meets`, and `Light.compileProgram` compiles it to the
+  word RAM (`Programs/Light/`, vendored; design §15).
 * `MultiTapeTM k Symbol State` — k-tape deterministic Turing machines with
   append-only output, the raw layer under `FinTM`
   (`Complexity/TuringMachine/Deterministic.lean`).
@@ -78,10 +84,21 @@ under `Complexity/`.
   with serialization in `Complexity/Formulas/CNFEncoding.lean`.
 * `Std.Sat.DNF` — the same list-of-literal-lists shape read as an OR of ANDs,
   in its own type; the TAUTOLOGY carrier (`Complexity/Formulas/DNF.lean`).
+* `WordRAM.Instr` (programs `List WordRAM.Instr`) — the word RAM of [AFM26]: W-bit words, nine
+  instructions (constant 1, add, subtract, multiply, indirect load and store, branch on negative,
+  accept, reject), runs by `WordRAM.exec` (`Programs/WordRAM/`, vendored; design §15).
+* `WordRAM.XInstr` (programs `WordRAM.XProgram`) — the word RAM extended by a wrapper: the nine
+  instructions as `XInstr.base`, plus input read in place, output, read-once coins and halving;
+  runs by `WordRAM.xstep`, with footprints (`Programs/WordRAM/Extended.lean`, not vendored;
+  design §15d).
 
 ## Conversions
 
 Model-to-model maps (pointers only — their files are not imported here):
+
+* `WordRAM.exists_simulation` / `WordRAM.exists_ndSimulation` — extended word-RAM programs →
+  `Turing.FinTM` / `Turing.FinNDTM`, with explicit time and space bounds (stage 2;
+  `Complexity/RAMSimulation/Simulation.lean`; statements gated, proofs pending).
 
 * `BoolCircuit.TreeCircuit.toDAG` / `BoolCircuit.DAGCircuit.toTree` — formulas → DAGs
   (linear) and DAGs → formulas (exponential in depth)
@@ -116,4 +133,5 @@ Model-to-model maps (pointers only — their files are not imported here):
   Cambridge University Press, 2009.
 * [OD14] R. O'Donnell, *Analysis of Boolean Functions*, Cambridge University
   Press, 2014.
+* [AFM26] anthropics/formal-math, folder `3sum-apsp`, commit e1a4e650, Apache-2.0 (the light language and the word RAM, vendored under `Programs/`).
 -/

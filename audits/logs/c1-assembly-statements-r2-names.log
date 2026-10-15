@@ -1,0 +1,59 @@
+# C1-A assembly gate, round 2: name screen
+
+Tool: `bash <S>/tools/leanelab.sh <S>/wt-c1asm <S>/oleans-lb6 <file>` (direct `lean`, throttled, no
+`-o`, no olean written). Campaign tip: 71849323fd50059d92d599194aa44476418e6f37 (`git rev-parse origin/complexity/arora-barak-ch3-4`). Sources: <OUT>/base, the
+tip's tree (`git archive`, read-only). Snapshot: `oleans-lb6` (`base.log`). `wt-c1asm` (at
+2c3c975a, read-only) supplies only the Mathlib packages. Toolchain: `leanprover/lean4:v4.25.0`.
+<OUT> is this round's directory; <S> the scratchpad. Run: 2026-10-14 18:38 UTC.
+
+Pending files: every `*.lean.txt` under the tip's `audits/evidence/` (264) and the scratchpad
+gate units of MIG-1 round 2, the ARM fill gate and the B6 hosts (18). #92 and #93 are merged,
+so their trees are in the TCSlib population. Reviewed allowlist: `audits/evidence/c1/assembly/` at the
+tip, round 1 of this gate (the same declarations by construction).
+```
+30 names in the population (28 public, 2 private; 8 generated)
+   screened against 16975 names from 721 TCSlib files
+1. full-name clashes with the TCSlib tree: 0
+2. ALLOWED shared with audits/evidence/c1/assembly/AssemblyConsumerProbe.lean.txt: 26: Turing.GuessRunPhase, Turing.GuessRunPhase.State, Turing.GuessRunPhase.back, Turing.GuessRunPhase.guess, Turing.GuessRunPhase.instDecidableEqState, Turing.GuessRunPhase.instFintypeState …
+2. ALLOWED shared with audits/evidence/c1/assembly/C1Assembly.lean.txt: 26: Turing.GuessRunPhase, Turing.GuessRunPhase.State, Turing.GuessRunPhase.back, Turing.GuessRunPhase.guess, Turing.GuessRunPhase.instDecidableEqState, Turing.GuessRunPhase.instFintypeState …
+2. ALLOWED shared with audits/evidence/c1/assembly/cut/NDHost.check.lean.txt: 26: Turing.GuessRunPhase, Turing.GuessRunPhase.State, Turing.GuessRunPhase.back, Turing.GuessRunPhase.guess, Turing.GuessRunPhase.instDecidableEqState, Turing.GuessRunPhase.instFintypeState …
+2. ALLOWED shared with audits/evidence/c1/assembly/landed/NDHost.lean.txt: 26: Turing.GuessRunPhase, Turing.GuessRunPhase.State, Turing.GuessRunPhase.back, Turing.GuessRunPhase.guess, Turing.GuessRunPhase.instDecidableEqState, Turing.GuessRunPhase.instFintypeState …
+2. ALLOWED shared with audits/evidence/c1/assembly/probes/C1AssemblyAxioms.lean.txt: 26: Turing.GuessRunPhase, Turing.GuessRunPhase.State, Turing.GuessRunPhase.back, Turing.GuessRunPhase.guess, Turing.GuessRunPhase.instDecidableEqState, Turing.GuessRunPhase.instFintypeState …
+2. ALLOWED shared with audits/evidence/c1/assembly/probes/C1AssemblySanity.lean.txt: 26: Turing.GuessRunPhase, Turing.GuessRunPhase.State, Turing.GuessRunPhase.back, Turing.GuessRunPhase.guess, Turing.GuessRunPhase.instDecidableEqState, Turing.GuessRunPhase.instFintypeState …
+2. pending units/drafts screened: 282; shared names counted: 0; allowed (under 1 reviewed prefixes): 156
+3. unit public names whose last component also names another TCSlib declaration: 7
+   SHORT Turing.NDWriterState.instFintype ~ Complexity.Codec.SInfo.instFintype, Complexity.Codec.SSt.instFintype, Complexity.Codec.VSt.instFintype
+   SHORT Turing.GuessRunPhase.State ~ KargerTrace.State, Light.State
+   SHORT Turing.GuessRunPhase.pre ~ BoolCircuit.AdjWalk.Em.pre, Complexity.UTab.Tpl.pre
+   SHORT Turing.GuessRunPhase.skip ~ Light.Ends.skip, Light.Exec.skip, Light.Stmt.skip, Turing.rt_findPhase.skip
+   SHORT Turing.GuessRunPhase.back ~ Complexity.LogProg.CPh.back, Networks.Network.IncPath..back, Turing.FinTM.SweepState.back, Turing.OracleDispatch.back … (5)
+   SHORT Turing.GuessRunPhase.run ~ BoolCircuit.SeqCircuit.run, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.run, CommunicationComplexity.Deterministic.OneWay.Protocol.run, CommunicationComplexity.Deterministic.Protocol.run … (12)
+   SHORT Turing.GuessRunPhase.out ~ BoolCircuit.CktSatReduction.Emitter.Instr.out, Complexity.CounterProg.Instr.out, Complexity.CounterProg.MOp.out
+4. duplicates within the unit: []
+names_asm.py exit 0
+```
+Control 1 (`<OUT>/work/screen_ctrl.lean` declares two existing full names):
+```
+2 names in the population (2 public, 0 private; 0 generated)
+   screened against 16975 names from 721 TCSlib files
+1. full-name clashes with the TCSlib tree: 2
+   CLASH Turing.NDTM.phaseHostND ['TCSlib/Complexity/TuringMachine/Build/NDHost.lean']
+exit 1
+```
+Control 2 (a pending file `<OUT>/work/ctrl_pending.lean` declaring `Turing.guessRunTM`; the round-1
+failure path):
+```
+2. CLASH shared with ../work/ctrl_pending.lean: 1: Turing.guessRunTM
+2. pending units/drafts screened: 1; shared names counted: 1; allowed (under 0 reviewed prefixes): 0
+exit 1
+```
+
+Closure (the tip's import graph):
+```
+721 modules. Importing Build.NDHost (closure): ['TCSlib.Complexity.TuringMachine']
+of these without Build.Catalog: []
+Build.NDHost in Build.Catalog's closure (a cycle): False
+downstream of Build.Embed: 150 modules (a replay at landing; the export is an addition)
+downstream of SpaceComplexity.Inclusions: ['TCSlib.Complexity.ClassPSPACE', 'TCSlib.Complexity.ClassPSPACE.TQBF', 'TCSlib.Complexity.SpaceComplexity']
+StateRenaming and Encoding (changed by #92) in the landed NDHost's closure: True True
+```

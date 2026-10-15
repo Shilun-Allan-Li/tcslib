@@ -18,8 +18,10 @@ When a logspace machine calls a decider on an input it cannot afford to write do
 presents a *virtual input* assembled from pieces it does have: a part of its own input and
 short words held on work tapes [AB09, proof of Lemma 4.17, Fig. 4.3]. This file fixes the
 shape of such virtual inputs and the bookkeeping of a head walking over them, as pure list
-and arithmetic facts; the machine that realizes the walk is in
-`TCSlib.Complexity.SpaceComplexity.Machines.Gadget`.
+and arithmetic facts; the machines that realize the walk are in
+`TCSlib.Complexity.SpaceComplexity.Machines.Sim` (a call's decider run on the virtual
+input) with `TCSlib.Complexity.SpaceComplexity.Machines.CallReturn` and
+`TCSlib.Complexity.SpaceComplexity.Machines.Call` (entry and return).
 
 A virtual input is a list of *segments* `(w, d)`, a word `w` rendered doubled (`d = true`,
 each bit written twice) or plain, joined by the separator `[false, true]`. With two

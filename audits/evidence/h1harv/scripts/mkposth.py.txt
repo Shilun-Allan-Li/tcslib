@@ -1,0 +1,176 @@
+"""The landing form of `CodeSimulator.lean` after the harvest, and its one-file rehearsal.
+
+Usage: python3 -I mkposth.py <tip CodeSimulator.lean> <unit.lean> <out landed> <out rehearsal>
+
+<out landed> is the checkout's `CodeSimulator.lean` with the harvest's edits:
+  1. the import of `TCSlib.Complexity.TuringMachine.Build.StepBlockLoop` after the import of
+     `Build.StepBlock`;
+  2. the deletion, by name, of the eight harvested private declarations with their docstrings;
+  3. the re-pointing of the three staying H1 declarations: `h1HostedVerdictTM` over
+     `StepBlock.hostedLoopTM`; `h1HostedVerdict_effect` citing `StepBlock.hostedLoopTM_run`
+     and, instead of its own reading steps, `StepBlock.hostedLoop_read`;
+  4. status text: the module's status bullet, `h1HostedVerdictTM`'s docstring, and the headline's
+     H1 continuation-2 appendix and a new harvest paragraph (comments only).
+<out rehearsal> is one elaboration unit: the checkout's header (copyright, imports, options), the
+unit's Part A verbatim, then <out landed> after its options. It cannot test cross-module
+privacy; the freeze and reference checks do (`freeze.py`, `refs.py`).
+Every textual operation is asserted to match exactly once.
+"""
+import re
+import sys
+
+DELETE = ["h1ClockTM", "h1HostedClockTM", "h1RoundTime", "h1RoundTime_spec", "h1Clock_orbit",
+          "h1Clock_round", "h1Clock_effect", "h1HostedClock_effect"]
+HEAD = re.compile(r"^(private\s+)?(noncomputable\s+)?(def|lemma|theorem|abbrev)\s+(\S+)")
+NEXT = re.compile(r"^(/--|/-!|private\s|noncomputable\s|def\s|lemma\s|theorem\s|abbrev\s|end\s|"
+                  r"section\s|namespace\s|open\s|variable\s)")
+
+
+def once(text, old, new):
+    assert text.count(old) == 1, ("expected exactly one match", old[:80], text.count(old))
+    return text.replace(old, new)
+
+
+def find_decl(lines, name):
+    heads = [i for i, l in enumerate(lines) if (m := HEAD.match(l)) and m.group(4) == name]
+    assert len(heads) == 1, (name, heads)
+    h = heads[0]
+    s = h - 1
+    while not lines[s].startswith("/--"):
+        assert not HEAD.match(lines[s]), (name, "no docstring")
+        s -= 1
+    e = h + 1
+    while e < len(lines) and not NEXT.match(lines[e]):
+        e += 1
+    while e > h + 1 and lines[e - 1].strip() == "":
+        e -= 1
+    block = lines[s:e]
+    assert sum(1 for l in block if HEAD.match(l)) == 1, (name, "one declaration per chunk")
+    after = e + 1 if e < len(lines) and lines[e].strip() == "" else e
+    assert lines[e].strip() == "", (name, "blank line after the chunk")
+    return s, e, after
+
+
+OBTAIN_OLD = """  obtain ⟨T, bound, e, ct, b, related, output, _, run, cut⟩ :=
+    h1HostedClock_effect M d entry rel t p
+"""
+OBTAIN_NEW = """  have digits : Nat.ofDigits 2 (t.bits.map Bool.toNat) = t := by
+    rw [← canonBits_value]
+    exact codeBitsNat_bits t
+  obtain ⟨T, e, ct, b, bound, -, related, output, -, _, run, cut⟩ :=
+    hostedLoopTM_run M (M.initCfg x) (by simp [MultiTapeTM.initCfg, Cfg.init]) d entry rel
+      t.bits (FinTM.bufferTape t.bits) 0 (by intro p _ _; simp) t digits true
+      (by simp [FinTM.VirtualTag, MultiTapeTM.initCfg, Cfg.init]) p []
+"""
+READ_START = """  have cell : e.workTapeSymbols (summaryTape k) =
+      outputSummary (M.runFrom (M.initCfg x) t).output := by
+"""
+READ_END = """          outputSummary (M.runFrom (M.initCfg x) t).output from projected]
+"""
+READ_NEW = """  have semantic : summaryClock M t (M.initCfg x) none =
+      ((M.runFrom (M.initCfg x) t).state.isNone &&
+        (outputSummary (M.runFrom (M.initCfg x) t).output == some true)) :=
+    summaryClock_correct M (M.initCfg x) t
+  obtain ⟨hs, -, -, cell⟩ := hostedLoop_read M.tr (M.runFrom (M.initCfg x) t) e related
+    (if (M.runFrom (M.initCfg x) t).state.isSome then .done else .escape) ct 0 b p []
+  refine ⟨T + 1, by omega, ?_⟩
+  change ((h1HostedVerdictTM k).runFrom start (T + 1)).state = none ∧ _
+  rw [MultiTapeTM.runFrom_succ_eq_step', transfer, run, semantic]
+  unfold MultiTapeTM.step
+  rw [hs]
+  simp only [h1HostedVerdictTM, cell]
+  cases state : (M.runFrom (M.initCfg x) t).state <;>
+    simp [Action.apply, vhostCfg, counter_cfg_eq, output, moveInputPos_zero]
+"""
+STATUS = [
+    ("""    `audits/h2-promotion-r2-findings.md`); and the binary deadline clock around
+    it, hosted on the virtual input, with its one-bit verdict
+    (`h1HostedVerdict_accepts`).
+""",
+     """    `audits/h2-promotion-r2-findings.md`); and the binary deadline clock around
+    it, hosted on the virtual input, with its one-bit verdict
+    (`h1HostedVerdict_accepts`). The clock itself is the public loop of
+    `Build/StepBlockLoop` (`Turing.StepBlock.hostedLoopTM_run`; H1 harvest, gate
+    `audits/h1-harvest-statements-findings.md`).
+"""),
+    ("""/-- The hosted clock with its two live exits replaced by the one-step
+verdict.""",
+     """/-- The hosted clock `StepBlock.hostedLoopTM` with its two live exits replaced by the
+one-step verdict."""),
+    ("""through `h1RoundTime_spec`, `h1Clock_orbit`, and `h1Clock_effect`. The counter
+loop is inside the public virtual-input host: its round anchor is fixed while
+the host's boundary tag may change. `h1HostedClock_effect` proves the valid arrival
+""",
+     """through the round index, the orbit invariant and `StepBlock.loopTM_run`. The counter
+loop is inside the public virtual-input host: its round anchor is fixed while
+the host's boundary tag may change. `StepBlock.hostedLoopTM_run` proves the valid arrival
+"""),
+    ("""`audits/evidence/h2/r2/H2-design-r2.md`, Appendix A); the appendices above use the
+new names. This headline's statement and admission are unchanged.
+""",
+     """`audits/evidence/h2/r2/H2-design-r2.md`, Appendix A); the appendices above use the
+new names. This headline's statement and admission are unchanged.
+
+**H1 harvest.** The hosted clock moved, generalized to any represented live start and
+renamed, to the public module `Build/StepBlockLoop` (gate
+`audits/h1-harvest-statements-findings.md`): `h1ClockTM` and `h1HostedClockTM` are
+`StepBlock.loopTM` and `StepBlock.hostedLoopTM`; `h1Clock_effect` and
+`h1HostedClock_effect` are the cases of `StepBlock.loopTM_run` and
+`StepBlock.hostedLoopTM_run` at the initial configuration; the round index and the orbit
+lemmas moved as private helpers. The appendices above use the new names; this
+headline's statement and admission are unchanged.
+"""),
+]
+
+
+def main():
+    tip_path, unit_path, out_landed, out_rehearsal = sys.argv[1:5]
+    tip = open(tip_path, encoding="utf-8").read()
+    unit = open(unit_path, encoding="utf-8").read()
+    lines = tip.split("\n")
+    spans = sorted((find_decl(lines, name) + (name,) for name in DELETE), reverse=True)
+    total = 0
+    for s, e, after, name in spans:
+        print(f"delete {name}: tip lines {s + 1}-{e} ({e - s} lines, docstring included)")
+        lines = lines[:s] + lines[after:]
+        total += e - s
+    print(f"deleted {len(DELETE)} declarations, {total} lines")
+    text = "\n".join(lines)
+    text = once(text, "import TCSlib.Complexity.TuringMachine.Build.StepBlock\n",
+                "import TCSlib.Complexity.TuringMachine.Build.StepBlock\n"
+                "import TCSlib.Complexity.TuringMachine.Build.StepBlockLoop\n")
+    text = once(text, "  { h1HostedClockTM k with tr := fun q inp work =>",
+                "  { hostedLoopTM k with tr := fun q inp work =>")
+    text = once(text, "      else (h1HostedClockTM k).tr q inp work }",
+                "      else (hostedLoopTM k).tr q inp work }")
+    text = once(text, OBTAIN_OLD, OBTAIN_NEW)
+    text = once(text, "  have agree : (h1HostedClockTM k).AgreeOn (h1HostedVerdictTM k)",
+                "  have agree : (hostedLoopTM k).AgreeOn (h1HostedVerdictTM k)")
+    a = text.index(READ_START)
+    b = text.index(READ_END, a) + len(READ_END)
+    assert text.count(READ_START) == 1 and text.count(READ_END) == 1
+    old_semantic = "  have semantic : summaryClock M t (M.initCfg x) none ="
+    assert text[a:b].count(old_semantic) == 1
+    print(f"h1HostedVerdict_effect: {text[a:b].count(chr(10))} proof lines from `have cell` on "
+          f"replaced by {READ_NEW.count(chr(10))}")
+    text = text[:a] + READ_NEW + text[b:]
+    for old, new in STATUS:
+        text = once(text, old, new)
+    for name in DELETE:
+        assert not re.search(rf"\b{name}\b", text.split("**H1 harvest.**")[0]), (name, "remains")
+    open(out_landed, "w", encoding="utf-8").write(text)
+    # The rehearsal: header, Part A, then the landed file after its options.
+    opts = "set_option autoImplicit false\n"
+    i = text.index(opts) + len(opts)
+    header = once(text[:i], "import TCSlib.Complexity.TuringMachine.Build.StepBlockLoop\n", "")
+    ulines = unit.split("\n")
+    last = max(k for k, l in enumerate(ulines) if l.startswith("-- @imports "))
+    body = "\n".join(ulines[last + 1:]).strip("\n") + "\n"
+    rehearsal = header + "\n" + body + text[i:]
+    open(out_rehearsal, "w", encoding="utf-8").write(rehearsal)
+    print(f"{out_landed}: {text.count(chr(10))} lines; {out_rehearsal}: "
+          f"{rehearsal.count(chr(10))} lines")
+
+
+if __name__ == "__main__":
+    main()

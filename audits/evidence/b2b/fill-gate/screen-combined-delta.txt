@@ -1,0 +1,9 @@
+# B2b population screen on the combined tree (integrate/fills-3) against the delivery-3 after-screen: the only additions are R8.0b's four accepted CounterLoop pairs (PR #38; E1 and the Z5 idiom)
+  before 635 pairs, after 639; new 4 (cross-file 0); gone 0
+   in-file CounterLoop.lean::counterLoopTM <- CounterLoop.lean::counterLoopTMVia 261/311 84%
+   in-file CounterLoop.lean::counterLoopTMVia <- CounterLoop.lean::counterLoopTM 261/287 91%
+   in-file CounterLoop.lean::counterLoopTM_run_done <- CounterLoop.lean::counterLoopTM_run_escape 393/549 72%
+   in-file CounterLoop.lean::counterLoopTM_run_escape <- CounterLoop.lean::counterLoopTM_run_done 393/471 83%
+# pairs involving Inclusions in the final screen:
+   Inclusions.lean::b2b_callEmb  reproduces  Inclusions.lean::b2b_bankEmb: 67/102 = 66%
+   Inclusions.lean::b2b_trialCfg  reproduces  Inclusions.lean::b2b_setupCfg: 119/184 = 65%

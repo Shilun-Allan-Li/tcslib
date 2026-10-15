@@ -1,0 +1,70 @@
+import TCSlib.Complexity.ClassPSPACE.TQBF
+import TCSlib.Complexity.ClassPSPACE.Games
+import TCSlib.Complexity.SpaceComplexity.Inclusions
+import TCSlib.Complexity.SpaceComplexity.Logspace.Reductions
+import TCSlib.Complexity.Diagonalization.Relativization
+
+/-!
+# C1d pre-ship probe (maintainer-run; not part of the library)
+
+Checks the contracts the C1d brief prescribes, against the issue commit:
+
+* P1: route 4 elaborates through the new `Inclusions` import, with the frozen
+  names (its axiom print shows `sorryAx` through `P_subset_PSPACE` only).
+* P2: R2's field-tuple type has a `Fintype` instance, found by instance search.
+* P3: R3's three-state default is well formed.
+* P4: the query string ignores the state (R1, answer branch).
+* P5: initial configurations transport definitionally (R1, transfer).
+
+followed by axiom prints for the cited lemmas and base references for the
+six targets.
+-/
+
+set_option autoImplicit false
+
+open Turing
+
+-- P1: route 4 against the frozen statements.
+example {L' : Language Bool} (h : Complexity.PSPACEComplete L') (hP : L' ∈ Complexity.P) :
+    Complexity.PSPACE = Complexity.P :=
+  Set.Subset.antisymm (fun L hL => Complexity.mem_P_of_polyTimeReducible (h.2 L hL) hP)
+    Complexity.P_subset_PSPACE
+
+-- P2: R2's tuple type is a `Fintype`. At default limits instance synthesis fails
+-- (maintainer run): `synthInstance.maxSize 1024` is needed; heartbeats alone do not help.
+set_option synthInstance.maxSize 1024 in
+example (k n : ℕ) : Fintype (Fin n × Fin n × Fin n × Fin n ×
+    (Fin n → Option Bool → (Fin (k + 1) → Option Bool) →
+      SignType × (Fin (k + 1) → Option (Option Bool) × SignType) × Option Bool ×
+        Option (Fin n))) := inferInstance
+
+-- P3: R3's default is well formed.
+example : (⟨1, 0, 1, 2, fun _ _ _ => ⟨0, fun _ => (none, 0), none, none⟩⟩ :
+    OracleTM 0 Bool (Fin 3)).WellFormed := ⟨by decide, by decide, by decide⟩
+
+-- P4: the query string ignores the state.
+example {k : ℕ} {S S' : Type} {x : List Bool} (e : S ≃ S') (c : Cfg (k + 1) Bool S x) :
+    OracleTM.queryString (c.mapState e) = OracleTM.queryString c := rfl
+
+-- P5: initial configurations transport definitionally.
+example {k : ℕ} {S S' : Type} (q : S) (e : S ≃ S') (x : List Bool) :
+    (Cfg.init (e q) x : Cfg (k + 1) Bool S' x) =
+      (Cfg.init q x : Cfg (k + 1) Bool S x).mapState e := rfl
+
+-- Cited lemmas. Expected: `P_subset_PSPACE` shows `sorryAx` (C1a's target);
+-- every other print is within `[propext, Classical.choice, Quot.sound]`.
+#print axioms Complexity.P_subset_PSPACE
+#print axioms Complexity.mem_P_of_polyTimeReducible
+#print axioms Complexity.ImplicitlyLogspaceComputable.polyTimeComputable
+#print axioms Turing.pairDecode_pairEncode
+#print axioms Std.Sat.CNF.decode_serialize
+#print axioms Complexity.eval_congr_of_lt_numVars
+#print axioms Turing.Cfg.mapState_apply
+
+-- Base references for the six targets (each shows `sorryAx` at the issue commit).
+#print axioms Complexity.QBF.decode_encode
+#print axioms Complexity.QBF.truth_exPrefix_iff_satisfiable
+#print axioms Complexity.Game.determined
+#print axioms Complexity.PSPACE_eq_P_of_pspaceComplete_mem_P
+#print axioms Complexity.LogspaceReducible.polyTimeReducible
+#print axioms Complexity.exists_finOracleTM_enumeration

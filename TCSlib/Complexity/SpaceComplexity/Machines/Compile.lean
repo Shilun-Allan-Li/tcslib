@@ -25,13 +25,15 @@ ranges plus the deciders' space (`Complexity.LogProg.compile_space`).
 
 * `Complexity.LogProg.tapeWord` — the word stored on a register tape.
 * `Complexity.LogProg.rstep` — one step of a program, calls being atomic oracle questions.
-* `Complexity.LogProg.CallsOK` — the preconditions of every call along a run.
+* `Complexity.LogProg.CallOK` — the precondition of one call, required at every step
+  along the run by the compilation theorems' `hcalls` hypotheses.
 * `Complexity.LogProg.compileFinTM` — the compiled machine as a bundled finite machine.
 
 ## Main results
 
 * `Complexity.LogProg.compile_correct` — the compiled machine halts with the program's
-  output, all heads in the given ranges at all times.
+  output, all heads in the given ranges at all times; `compile_correct_from` is its form
+  from an arbitrary program configuration.
 * `Complexity.LogProg.compile_space` — its space usage is at most the sum of the register
   ranges plus `kD (2B + 1)`.
 
@@ -107,39 +109,41 @@ def CallOK (P : RProg m d Λ) (D : MultiTapeTM kD Bool SD) (q0 : Fin d → SD)
     CleanRun D (q0 cs.dec) (vword (callSegs cs x (regWords c)))
       (oracle cs.dec (vword (callSegs cs x (regWords c)))) B
 
-/-- **Correctness of the compiled machine.** If the program halts after `N` steps with
-output `w`, its register heads stay in `[lo r, hi r]`, and every call along the way meets
-its preconditions, then the compiled machine halts with output `w`, and at every time its
-register heads are in `[lo r, hi r]` and its decider heads in `[-B, B]`.
+/-- **Correctness of the compiled machine, from any program configuration.** If the program
+runs `N` steps from `c`, its register heads stay in `[lo r, hi r]`, and every call along the
+way meets its preconditions, then the compiled machine, started on the seam of `c`, reaches
+the seam of the program configuration after `N` steps, and at every time its register heads
+are in `[lo r, hi r]` and its decider heads in `[-B, B]`. (`compile_correct` is the case of
+the initial configuration; the general form is used to splice compiled runs between
+nondeterministic choices.)
 
 **Proof sketch.** Induction on the program run, keeping the compiled machine on the seam
 (`Complexity.LogProg.seam`) of the program configuration: ordinary steps are simulated in
 lockstep (`step_seam_prog`), calls by `call_run`. -/
-theorem compile_correct (P : RProg m d Λ) (l₀ : Λ) (D : MultiTapeTM kD Bool SD)
+theorem compile_correct_from (P : RProg m d Λ) (l₀ : Λ) (D : MultiTapeTM kD Bool SD)
     (q0 : Fin d → SD) (oracle : Fin d → List Bool → Bool) (lo hi : Fin m → ℤ) (B : ℕ)
-    (N : ℕ)
-    (hbox : ∀ t ≤ N, ∀ r, lo r ≤ (rrun P oracle (Cfg.init l₀ x) t).workTapePos r ∧
-      (rrun P oracle (Cfg.init l₀ x) t).workTapePos r ≤ hi r)
-    (hcalls : ∀ t < N, CallOK P D q0 oracle lo hi B (rrun P oracle (Cfg.init l₀ x) t)) :
-    ∃ T, (compileTM P l₀ D q0).runFrom ((compileTM P l₀ D q0).initCfg x) T =
-        seam (rrun P oracle (Cfg.init l₀ x) N) ∧
-      ∀ t ≤ T, (∀ r, lo r ≤ ((compileTM P l₀ D q0).runFrom ((compileTM P l₀ D q0).initCfg x)
+    (c₀ : Cfg m Bool Λ x) (N : ℕ)
+    (hbox : ∀ t ≤ N, ∀ r, lo r ≤ (rrun P oracle c₀ t).workTapePos r ∧
+      (rrun P oracle c₀ t).workTapePos r ≤ hi r)
+    (hcalls : ∀ t < N, CallOK P D q0 oracle lo hi B (rrun P oracle c₀ t)) :
+    ∃ T, (compileTM P l₀ D q0).runFrom (seam c₀) T = seam (rrun P oracle c₀ N) ∧
+      ∀ t ≤ T, (∀ r, lo r ≤ ((compileTM P l₀ D q0).runFrom (seam c₀)
           t).workTapePos (Fin.castAdd kD r) ∧
-          ((compileTM P l₀ D q0).runFrom ((compileTM P l₀ D q0).initCfg x) t).workTapePos
+          ((compileTM P l₀ D q0).runFrom (seam c₀) t).workTapePos
             (Fin.castAdd kD r) ≤ hi r) ∧
-        ∀ i, |((compileTM P l₀ D q0).runFrom ((compileTM P l₀ D q0).initCfg x) t).workTapePos
+        ∀ i, |((compileTM P l₀ D q0).runFrom (seam c₀) t).workTapePos
           (Fin.natAdd m i)| ≤ B := by
   induction N with
   | zero =>
-    refine ⟨0, by rw [MultiTapeTM.runFrom_zero, seam_init]; rfl, fun t ht => ?_⟩
+    refine ⟨0, by rw [MultiTapeTM.runFrom_zero]; rfl, fun t ht => ?_⟩
     obtain rfl : t = 0 := by omega
     refine ⟨fun r => ?_, fun i => ?_⟩
     · have := hbox 0 le_rfl r
-      simpa [seam_init, seam, rrun] using this
-    · simp
+      simpa [seam, rrun] using this
+    · simp [seam]
   | succ N ih =>
     obtain ⟨T, hT, hTb⟩ := ih (fun t ht => hbox t (by omega)) (fun t ht => hcalls t (by omega))
-    set c := rrun P oracle (Cfg.init l₀ x) N with hc
+    set c := rrun P oracle c₀ N with hc
     have hbN := hbox N (by omega)
     have hbN1 := hbox (N + 1) le_rfl
     rw [rrun_succ, ← hc] at hbN1 ⊢
@@ -189,6 +193,33 @@ theorem compile_correct (P : RProg m d Λ) (l₀ : Λ) (D : MultiTapeTM kD Bool 
         ∀ i, |g.workTapePos (Fin.natAdd m i)| ≤ B) hTb
     rw [hT]
     exact hTb'
+
+
+/-- **Correctness of the compiled machine.** If the program halts after `N` steps with
+output `w`, its register heads stay in `[lo r, hi r]`, and every call along the way meets
+its preconditions, then the compiled machine halts with output `w`, and at every time its
+register heads are in `[lo r, hi r]` and its decider heads in `[-B, B]`.
+
+**Proof sketch.** Induction on the program run, keeping the compiled machine on the seam
+(`Complexity.LogProg.seam`) of the program configuration: ordinary steps are simulated in
+lockstep (`step_seam_prog`), calls by `call_run`. -/
+theorem compile_correct (P : RProg m d Λ) (l₀ : Λ) (D : MultiTapeTM kD Bool SD)
+    (q0 : Fin d → SD) (oracle : Fin d → List Bool → Bool) (lo hi : Fin m → ℤ) (B : ℕ)
+    (N : ℕ)
+    (hbox : ∀ t ≤ N, ∀ r, lo r ≤ (rrun P oracle (Cfg.init l₀ x) t).workTapePos r ∧
+      (rrun P oracle (Cfg.init l₀ x) t).workTapePos r ≤ hi r)
+    (hcalls : ∀ t < N, CallOK P D q0 oracle lo hi B (rrun P oracle (Cfg.init l₀ x) t)) :
+    ∃ T, (compileTM P l₀ D q0).runFrom ((compileTM P l₀ D q0).initCfg x) T =
+        seam (rrun P oracle (Cfg.init l₀ x) N) ∧
+      ∀ t ≤ T, (∀ r, lo r ≤ ((compileTM P l₀ D q0).runFrom ((compileTM P l₀ D q0).initCfg x)
+          t).workTapePos (Fin.castAdd kD r) ∧
+          ((compileTM P l₀ D q0).runFrom ((compileTM P l₀ D q0).initCfg x) t).workTapePos
+            (Fin.castAdd kD r) ≤ hi r) ∧
+        ∀ i, |((compileTM P l₀ D q0).runFrom ((compileTM P l₀ D q0).initCfg x) t).workTapePos
+          (Fin.natAdd m i)| ≤ B := by
+  have h := compile_correct_from P l₀ D q0 oracle lo hi B (Cfg.init l₀ x) N hbox hcalls
+  rw [seam_init]
+  exact h
 
 /-- The space used up to time `T` is bounded by the sizes of ranges containing every head
 at every time up to `T`. -/

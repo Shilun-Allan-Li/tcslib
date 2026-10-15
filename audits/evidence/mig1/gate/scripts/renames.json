@@ -1,0 +1,78 @@
+{
+ "Prim": {
+  "catalogPrefixTM": "prependTM",
+  "emitterTokenTM": "unaryTokenTM",
+  "emitterAppendTM": "appendBitTM",
+  "catalogPrefixTM_computes": "prependTM_computes",
+  "pairExtract_computes": "pairExtractTM_computes",
+  "pairValid_computes": "pairValidTM_computes",
+  "incFixed_computes": "incFixedTM_computes"
+ },
+ "Loop": {
+  "loopHost": "loopHostTM",
+  "emCallTM": "callTM"
+ },
+ "Fwd": {
+  "a2_MapState": "FwdMapState",
+  "a2_mapStateFintype": "fwdMapStateFintype",
+  "a2_mapAct": "fwdMapAct",
+  "a2_mapTM": "fwdMapTM"
+ },
+ "Cond": {
+  "f2_timedCondTM": "timedCondTM",
+  "f2_cond_time": "timedCondTM_computes",
+  "f2_cond_space": "timedCondTM_spaceUsed"
+ },
+ "Counter": {
+  "f2_counterTM": "lengthBitsTM",
+  "f2_counter_computes": "lengthBitsTM_computes",
+  "f2_counter_space": "lengthBitsTM_spaceUsed"
+ },
+ "Branch": {
+  "f2_branch_space": "branchTM_spaceUsed"
+ },
+ "Space": {
+  "f2_space_of_time": "ComputesInTime.spaceUsed_le"
+ },
+ "Head": {
+  "f2_head_steps": "workTapePos_runFrom_le"
+ },
+ "Rewind": {
+  "rewind_scan_heads": "MIG1Gate.rewind_scan_heads",
+  "rewind_heads": "MIG1Gate.rewind_heads"
+ },
+ "TC": {
+  "counterTM": "_root_.Turing.FinTM.lengthBitsTM"
+ },
+ "CounterTC": {
+  "f2_counterTM": "FinTM.lengthBitsTM",
+  "f2_counter_computes": "_root_.Turing.FinTM.lengthBitsTM_computes",
+  "f2_counter_space": "_root_.Turing.FinTM.lengthBitsTM_spaceUsed"
+ },
+ "LoopSpec": {
+  "loopHost": "loopHostTM",
+  "emCallTM": "callTM",
+  "loopHost_contracts": "loopHostTM_contracts",
+  "emCall_first": "callTM_run"
+ },
+ "ExtHeads": {
+  "f2_loopHost": "loopHostTM",
+  "f2_loopHost_contracts": "loopHost_contracts_heads"
+ },
+ "FwdAll": {
+  "a2_MapState": "FwdMapState",
+  "a2_mapStateFintype": "fwdMapStateFintype",
+  "a2_mapAct": "fwdMapAct",
+  "a2_mapTM": "fwdMapTM",
+  "a2_mapVirtual": "fwdMapVirtual",
+  "a2_map_reject": "fwdMap_reject",
+  "a2_map_launch": "fwdMap_launch",
+  "a2_mapVirtual_run": "fwdMapVirtual_run",
+  "a2_mapSetup_heads": "fwdMapSetup_heads",
+  "a2_map_space": "fwdMap_space"
+ },
+ "PolySpace": {
+  "f2_catalogPolyUnaryTM": "catalogPolyUnaryTM",
+  "f2_poly_space": "catalogPoly_space"
+ }
+}

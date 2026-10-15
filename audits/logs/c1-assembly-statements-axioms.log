@@ -1,0 +1,89 @@
+# C1 guess-then-run assembly statement gate: axiom prints
+
+Tool: `bash <S>/tools/leanelab.sh <S>/wt-c1asm <S>/oleans-lm0b <file>` (direct `lean`, no `-o`,
+no olean written). Campaign tip: e831b5b0d887dac3bbf1aa2c19af28983b15b982. Sources: <OUT>/base, the tip's tree
+(`git archive`, read-only). Snapshot: `oleans-lm0b` (MIG-0b's replay output; the tip's Lean content up
+to docstrings, `base.log`). `wt-c1asm` (at 2c3c975a, read-only) supplies only the
+Mathlib packages (manifest unchanged at the tip). Toolchain: `leanprover/lean4:v4.25.0`.
+<OUT> is the gate's output directory; <S> the scratchpad. Run: 2026-10-14 16:48 UTC.
+
+## 1. Every new public declaration, the derived instances, and the cited lemmas
+
+`<OUT>/probes/C1AssemblyAxioms.lean` is the unit followed by `scripts/axioms_tail.lean.txt`.
+  exit 0 | errors 0 | warnings 0 | of which `declaration uses 'sorry'` 0 | other warnings 0
+```
+'Turing.NDWriterState.instFintype' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.GuessRunPhase' does not depend on any axioms
+'Turing.instDecidableEqGuessRunPhase' does not depend on any axioms
+'Turing.instFintypeGuessRunPhase' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.GuessRunPhase.State' does not depend on any axioms
+'Turing.GuessRunPhase.instFintypeState' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.GuessRunPhase.instDecidableEqState' does not depend on any axioms
+'Turing.guessRunPhases' does not depend on any axioms
+'Turing.guessRunRed' does not depend on any axioms
+'Turing.guessRunTM' does not depend on any axioms
+'Turing.guessRunCfg' does not depend on any axioms
+'Turing.streamStartCfg' depends on axioms: [propext]
+'Turing.guessRunTM_runWith_handoff' depends on axioms: [propext, sorryAx, Classical.choice, Quot.sound]
+'Turing.guessRunTM_runWith_live' depends on axioms: [propext, sorryAx, Classical.choice, Quot.sound]
+'Turing.guessRunTM_runWith_setup_halt' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.guessRunTM_runWith' depends on axioms: [propext, sorryAx, Classical.choice, Quot.sound]
+'Turing.guessRunTM_haltsWithin' depends on axioms: [propext, sorryAx, Classical.choice, Quot.sound]
+'Turing.guessRunTM_accepts_iff' depends on axioms: [propext, sorryAx, Classical.choice, Quot.sound]
+'Turing.guessRunCfg_clean' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.guessRunTM_silent_spec' depends on axioms: [propext, sorryAx, Classical.choice, Quot.sound]
+'Turing.ndWriterTM_run_block' depends on axioms: [propext, sorryAx, Quot.sound]
+'Turing.NDTM.phaseHostND_run' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.NDTM.runWith_mapState_of_agreeOn_det' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.MultiTapeTM.toNDTM_runWith' depends on axioms: [propext, Quot.sound]
+'Turing.NDTM.runWith_append' depends on axioms: [propext, Quot.sound]
+'Turing.NDTM.runWith_of_halt' depends on axioms: [propext, Quot.sound]
+'Turing.skipTM_run_ofCfg' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.skipBackTM_run_ofCfg' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.embedSilentTM_runFrom' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.embedSilentTM_frame' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.embedSilentCfg_selected_tape' depends on axioms: [propext, Quot.sound]
+'Turing.embedSilentCfg_selected_pos' depends on axioms: [propext, Quot.sound]
+```
+Declarations with `sorryAx`: Turing.guessRunTM_accepts_iff Turing.guessRunTM_haltsWithin Turing.guessRunTM_runWith Turing.guessRunTM_runWith_handoff Turing.guessRunTM_runWith_live Turing.guessRunTM_silent_spec Turing.ndWriterTM_run_block 
+
+## 2. Isolation of the sorry sources
+
+`<OUT>/scripts/isolate.py` copies a file and replaces each use of the two sorried contracts by an
+axiom whose statement is the tip's statement, verbatim (`isoWriterBlock` for
+`Turing.ndWriterTM_run_block`, `isoInterpreterCore` for `Turing.exists_ndInterpreterCore`).
+The prints then name the contracts each theorem rests on, in place of `sorryAx`.
+uses: ndWriterTM_run_block 1, exists_ndInterpreterCore 0
+theorems printed: 8
+* `<OUT>/work/IsoC1Assembly.lean`:
+  exit 0 | errors 0 | warnings 0 | of which `declaration uses 'sorry'` 0 | other warnings 0
+```
+
+'Turing.guessRunTM_runWith_handoff' depends on axioms: [propext, Classical.choice, Quot.sound, Turing.isoWriterBlock]
+'Turing.guessRunTM_runWith_live' depends on axioms: [propext, Classical.choice, Quot.sound, Turing.isoWriterBlock]
+'Turing.guessRunTM_runWith' depends on axioms: [propext, Classical.choice, Quot.sound, Turing.isoWriterBlock]
+'Turing.guessRunTM_runWith_setup_halt' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.guessRunTM_haltsWithin' depends on axioms: [propext, Classical.choice, Quot.sound, Turing.isoWriterBlock]
+'Turing.guessRunTM_accepts_iff' depends on axioms: [propext, Classical.choice, Quot.sound, Turing.isoWriterBlock]
+'Turing.guessRunCfg_clean' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.guessRunTM_silent_spec' depends on axioms: [propext, Classical.choice, Quot.sound, Turing.isoWriterBlock]
+```
+uses: ndWriterTM_run_block 1, exists_ndInterpreterCore 1
+theorems printed: 10
+* `<OUT>/work/IsoAssemblyConsumerProbe.lean`:
+  exit 0 | errors 0 | warnings 0 | of which `declaration uses 'sorry'` 0 | other warnings 0
+```
+
+'Turing.probe_universal_of_setup' depends on axioms: [propext, Classical.choice, Quot.sound, Turing.isoInterpreterCore, Turing.isoWriterBlock]
+'Turing.probe_ntime_of_guessRun' depends on axioms: [propext, Classical.choice, Quot.sound, Turing.isoWriterBlock]
+'Turing.guessRunTM_runWith_handoff' depends on axioms: [propext, Classical.choice, Quot.sound, Turing.isoWriterBlock]
+'Turing.guessRunTM_runWith_live' depends on axioms: [propext, Classical.choice, Quot.sound, Turing.isoWriterBlock]
+'Turing.guessRunTM_runWith' depends on axioms: [propext, Classical.choice, Quot.sound, Turing.isoWriterBlock]
+'Turing.guessRunTM_runWith_setup_halt' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.guessRunTM_haltsWithin' depends on axioms: [propext, Classical.choice, Quot.sound, Turing.isoWriterBlock]
+'Turing.guessRunTM_accepts_iff' depends on axioms: [propext, Classical.choice, Quot.sound, Turing.isoWriterBlock]
+'Turing.guessRunCfg_clean' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.guessRunTM_silent_spec' depends on axioms: [propext, Classical.choice, Quot.sound, Turing.isoWriterBlock]
+'Turing.probe_universal_of_setup' depends on axioms: [propext, Classical.choice, Quot.sound, Turing.isoInterpreterCore, Turing.isoWriterBlock]
+'Turing.probe_ntime_of_guessRun' depends on axioms: [propext, Classical.choice, Quot.sound, Turing.isoWriterBlock]
+```

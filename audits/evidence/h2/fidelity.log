@@ -1,0 +1,71 @@
+# Fidelity check: h2/StepBlockDraft.lean against wt-h2/TCSlib/Complexity/TuringMachine/CodeSimulator.lean
+# script: h2/work/fidelity.py (python3 -I); rename map inside the script
+# definitions, abbrevs, inductives, instances: full code text compared (comments removed,
+#   whitespace normalized, 'private' dropped, lemma/theorem keyword identified);
+# theorems/lemmas: statement up to ':= by' (full text for the four whose proofs are copied).
+# negative control (mutating recordWidth to 4k+5 and the round bound to 51) gives 2 DIFFER.
+# date: 2026-10-13T04:22:44Z
+MATCH  workReadsK -> workReadsK (def)
+MATCH  tableBitsK -> tableBitsK (def)
+MATCH  outputSummary -> outputSummary (def)
+MATCH  summaryEmit -> summaryEmit (def)
+MATCH  outputSummary_append -> outputSummary_append (lemma)
+ADDITIVE (no original): summaryEmit_none
+MATCH  h1RecordWidth -> recordWidth (abbrev)
+MATCH  h1RecordState -> RecordState (abbrev)
+MATCH  h1TableTape -> tableTape (def)
+MATCH  h1SummaryTape -> summaryTape (def)
+MATCH  h1Payload -> payload (def)
+MATCH  h1ApplyPayload -> applyPayload (def)
+MATCH  h1RecordTM -> recordTM (def)
+MATCH  h1RecordFinTM -> recordFinTM (def)
+MATCH  h1Record_effect -> recordTM_effect (theorem)
+MATCH  h1WorkReads_mem -> mem_workReadsK (lemma)
+MATCH  h1WorkReads_length -> length_workReadsK (lemma)
+MATCH  h1WorkRank -> workRank (def)
+MATCH  h1InputRank -> inputRank (def)
+MATCH  h1ReadRank -> readRank (def)
+MATCH  h1SuccPhase -> SuccPhase (inductive)
+MATCH  h1SuccTM -> succFieldTM (def)
+MATCH  h1UnaryCfg -> succFieldCfg (def)
+MATCH  h1AfterTag -> afterTag (def)
+MATCH  h1Succ_run -> succFieldTM_run (theorem)
+MATCH  h1Succ_cut -> succFieldTM_cut (theorem)
+MATCH  h1Succ_heads -> succFieldTM_heads (theorem)
+MATCH  h1SkipPh -> SkipPh (def)
+MATCH  h1SkipPart -> skipPart (def)
+MATCH  h1SkipRed -> skipRed (def)
+MATCH  h1SkipTM -> recordSkipTM (def)
+MATCH  h1Skip_run -> recordSkipTM_run (theorem)
+MATCH  h1Skip_spec -> recordSkipTM_spec (theorem)
+MATCH  h1SkipPh_finite -> instFintypeSkipPh (instance)
+MATCH  h1SkipPh_decidable -> instDecidableEqSkipPh (instance)
+MATCH  h1SeekCtrl -> SeekCtrl (inductive)
+MATCH  h1SeekRouter -> seekRouterTM (def)
+MATCH  h1SeekNext -> seekNext (def)
+MATCH  h1SeekKey -> SeekKey (abbrev)
+MATCH  h1SeekPh -> SeekPh (def)
+MATCH  h1SeekPart -> seekPart (def)
+MATCH  h1SeekRed -> seekRed (def)
+MATCH  h1SeekTM -> seekTM (def)
+MATCH  h1TwoMoveTM -> twoMoveTM (def)
+MATCH  h1SeekPh_finite -> instFintypeSeekPh (instance)
+MATCH  h1SeekPh_decidable -> instDecidableEqSeekPh (instance)
+MATCH  h1RoundKey -> Key (inductive)
+MATCH  h1RoundPh -> Ph (abbrev)
+MATCH  h1RoundPart -> part (def)
+MATCH  h1RoundExit -> exit (def)
+MATCH  h1RoundRed -> red (def)
+MATCH  h1RoundTM -> roundTM (def)
+MATCH  h1RoundPh_finite -> instFintypePh (instance)
+MATCH  h1RoundPh_decidable -> instDecidableEqPh (instance)
+MATCH  h1RoundFinTM -> roundFinTM (def)
+MATCH  h1SummaryState -> summaryCells (def)
+MATCH  h1RoundRep -> Rep (def)
+MATCH  h1Round_effect -> roundTM_effect (theorem)
+MATCH  h1Run_headBound -> abs_workTapePos_runFrom_sub_le (lemma)
+ADDITIVE (no original): visitedByTapeHead_add_subset
+ADDITIVE (no original): visitedByTapeHead_step_subset
+ADDITIVE (no original): roundTM_visited
+ADDITIVE (no original): roundTM_iterate
+SUMMARY: 58 match, 0 differ

@@ -1,0 +1,32 @@
+# I032 (K9): Bridge.mem_iff_codeChain repeats ExpBFS/Radius.inWin_runWith_of_decides
+OK   ExpBFS/Radius imports Codec/Bridge (so Bridge cannot cite Radius)
+OK   Codec/Bridge imports ConfigGraph (the named home)
+OK   ExpBFS/Radius imports ConfigGraph
+OK   `runWith_take_inWindow` (cited by the window lemma) is defined at or below ConfigGraph: ['TCSlib/Complexity/SpaceComplexity/ConfigGraph']
+OK   `runWith_append` (cited by the window lemma) is defined at or below ConfigGraph: ['TCSlib/Complexity/TuringMachine/Nondeterministic']
+OK   `runWith_of_halt` (cited by the window lemma) is defined at or below ConfigGraph: ['TCSlib/Complexity/TuringMachine/Nondeterministic']
+# I040 (K20): Parse.bitsVal_le_of_width contains Codec/Layout.two_pow_bits_le
+OK   Codec/Layout imports Codec/Parse (so Parse cannot cite Layout)
+  the named home is Codec/Parse itself: the bound moves there and Layout keeps it through its import
+# I064 (K20): ExpBFS/Relax.stp and SavitchARM/Recursion.Rel build the same encoded step query
+OK   no Codec module is imported by ExpBFS/Relax (so a Codec home is not below it)
+OK   Logspace/InputAccess (the named home) is imported by all three query builders (Relax, Recursion, PathHardRegs)
+OK   a `pairEncode` definition is at or below InputAccess (module, line): [('TCSlib/Complexity/TuringMachine/Encoding', 122)]
+  the slot (2 or 3; 4 in PathHardRegs) and the result view (Bool, or `= true`) stay at the use sites
+all checks pass
+tip: # I032 (K9): Bridge.mem_iff_codeChain repeats ExpBFS/Radius.inWin_runWith_of_decides
+tip: OK   ExpBFS/Radius imports Codec/Bridge (so Bridge cannot cite Radius)
+tip: OK   Codec/Bridge imports ConfigGraph (the named home)
+tip: OK   ExpBFS/Radius imports ConfigGraph
+tip: OK   `runWith_take_inWindow` (cited by the window lemma) is defined at or below ConfigGraph: ['TCSlib/Complexity/SpaceComplexity/ConfigGraph']
+tip: OK   `runWith_append` (cited by the window lemma) is defined at or below ConfigGraph: ['TCSlib/Complexity/TuringMachine/Nondeterministic']
+tip: OK   `runWith_of_halt` (cited by the window lemma) is defined at or below ConfigGraph: ['TCSlib/Complexity/TuringMachine/Nondeterministic']
+tip: # I040 (K20): Parse.bitsVal_le_of_width contains Codec/Layout.two_pow_bits_le
+tip: OK   Codec/Layout imports Codec/Parse (so Parse cannot cite Layout)
+tip:   the named home is Codec/Parse itself: the bound moves there and Layout keeps it through its import
+tip: # I064 (K20): ExpBFS/Relax.stp and SavitchARM/Recursion.Rel build the same encoded step query
+tip: OK   no Codec module is imported by ExpBFS/Relax (so a Codec home is not below it)
+tip: OK   Logspace/InputAccess (the named home) is imported by all three query builders (Relax, Recursion, PathHardRegs)
+tip: OK   a `pairEncode` definition is at or below InputAccess (module, line): [('TCSlib/Complexity/TuringMachine/Encoding', 129)]
+tip:   the slot (2 or 3; 4 in PathHardRegs) and the result view (Bool, or `= true`) stay at the use sites
+tip: all checks pass

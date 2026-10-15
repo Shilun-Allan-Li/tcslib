@@ -1,0 +1,32 @@
+# wave-1 fill gate: cumulative freeze of InputLength, CertShell and OracleSim from the statement gate's head (7d1e3947) to the gate head (1691e4d2); maintainer tool declfreeze.py, statements compared after the docstring up to ':='
+## InputLength (authorized bodies: exists_inputLengthTM)
+lines: 108 -> 571
+public before/after: 1 1 private before/after: 0 11
+public added: []
+public removed: []
+authorized body change: exists_inputLengthTM
+private removed: []
+private added: ['InputLengthPhase', 'inputLengthCfg', 'inputLengthCfg_merge', 'inputLengthCfg_read', 'inputLengthCfg_zero', 'inputLengthMachine', 'inputLength_charge', 'inputLength_count', 'inputLength_digits', 'inputLength_round', 'inputLength_write']
+private changed: []
+imports changed: 
+## CertShell (authorized bodies: FinTM.exists_certificateShell)
+lines: 107 -> 904
+public before/after: 2 2 private before/after: 0 20
+public added: []
+public removed: []
+authorized body change: FinTM.exists_certificateShell
+private removed: []
+private added: ['certCoreTM', 'certCore_run', 'certGuardTM', 'certGuard_cut', 'certGuard_run', 'certSplitWord', 'certSplitWord_length', 'certSplit_language', 'certSplit_valid', 'certVerdictTM', 'certVerdict_run', 'cert_bank_word', 'cert_call_cut', 'cert_capture_fields', 'cert_embed_call', 'cert_embed_words', 'cert_prepare_exists', 'cert_seq', 'cert_silent_words', 'cert_tail_test']
+private changed: []
+imports changed: 
+## OracleSim (authorized bodies: FinOracleNDTM.exists_choiceTM,FinOracleTM.exists_plain_simulation)
+lines: 407 -> 2604
+public before/after: 13 13 private before/after: 0 87
+public added: []
+public removed: []
+authorized body change: FinOracleNDTM.exists_choiceTM
+authorized body change: FinOracleTM.exists_plain_simulation
+private removed: []
+private added: ['OracleDispatch', 'OraclePhase', 'oracleBackCfg', 'oracleBack_run', 'oracleBankCfg_eq', 'oracleBookmark_ne_origin', 'oracleCallBank', 'oracleCall_view', 'oracleChoiceAction', 'oracleChoiceAction_apply', 'oracleChoiceCfg', 'oracleChoiceCfg_query', 'oracleChoiceMachine', 'oracleChoiceSlot', 'oracleChoice_blank', 'oracleChoice_exhaust', 'oracleChoice_initial', 'oracleChoice_pause', 'oracleChoice_queryStep', 'oracleChoice_run', 'oracleChoice_step', 'oracleCopy_intoBlank', 'oracleCost_sum', 'oracleDepart_step', 'oracleDispatchAction', 'oracleDispatchCfg', 'oracleDispatchCfg_callBlank', 'oracleDispatchInternal', 'oracleDispatchTM', 'oracleEmbed_updateTape', 'oracleErase_step', 'oracleFrozenCall', 'oracleHost', 'oracleHostTapes', 'oracleHost_dispatch', 'oracleHost_initial', 'oracleHost_offQuery', 'oracleHost_prepare', 'oracleHost_query', 'oracleHost_restore', 'oracleHost_run', 'oracleHost_service', 'oracleHost_step', 'oracleInstallCall', 'oracleLocalCfg', 'oracleMark_step', 'oracleMarkedCfg', 'oracleMarker_step', 'oracleOffQuery', 'oracleOrigin', 'oracleOrigin_run', 'oraclePhaseFintype', 'oraclePhaseState', 'oraclePhases', 'oraclePrepare', 'oraclePrepare_tail', 'oraclePrepare_zero', 'oracleQueryWindow', 'oracleReadyCfg', 'oracleReadyCfg_replace', 'oracleRedirect', 'oracleRelocatedCall', 'oracleRestore', 'oracleRestore_cell', 'oracleRestore_cut', 'oracleRestore_three', 'oracleRestore_zero', 'oracleService_run', 'oracleShadowAction', 'oracleShadowAction_apply', 'oracleShadowCfg', 'oracleShadowTM', 'oracleShadow_run', 'oracleShadow_step', 'oracleSide', 'oracleSide_distance', 'oracleSide_move', 'oracleSlots', 'oracleSlots_injective', 'oracleSourceBank', 'oracleSourceCfg', 'oracleSourceCfg_frame', 'oracleSourceCfg_initial', 'oracleSource_localView', 'oracleStableCfg', 'oracleWalkCfg', 'oracleWalk_run']
+private changed: []
+imports changed: 

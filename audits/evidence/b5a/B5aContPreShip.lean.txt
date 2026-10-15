@@ -1,0 +1,27 @@
+import TCSlib.Complexity.TuringMachine.CodeSimulator
+import TCSlib.Complexity.TuringMachine.Build.Primitives
+import TCSlib.Complexity.TuringMachine.Build.InputCall
+/-! Pre-ship probe for `briefs/b5a-fill-cont.md` (maintainer, read-only): with the two imports the
+continuation brief sanctions in `CodeSimulator.lean`, every row its routes cite resolves, and the
+two open targets keep their audited statements. -/
+open Turing
+
+-- the two open targets (statements frozen)
+#check @MachineFormat.exists_polyCanonizer
+#check @MachineFormat.exists_uniformSimulator
+-- H1's host, clock and call rows (already upstream of CodeSimulator)
+#check @FinTM.exists_installCallTM
+#check @vhostEmitTM_runFrom
+#check @counterLoopTM_run_done
+#check @counterLoopTM_run_escape
+#check @counterLoop_time_le
+-- the generic record reader (CodeFormat)
+#check @codeReadActionK_sound
+#check @codeReadActionK_append
+#check @codeActionK_length
+#check @codeEraseActionK
+-- newly sanctioned: the pair-decoding rows (Build/Primitives) and the native-input call (Build/InputCall)
+#check @FinTM.computesFunInTime_pairFst
+#check @FinTM.computesFunInTime_pairSnd
+#check @FinTM.exists_inputCallTM
+#check @exists_inputSeekTM

@@ -18,7 +18,10 @@ Local modifications (see policy.md §2, vendored code):
   self-contained and suffices for the Chapter 1 development. Re-add it (or migrate to
   upstream cslib) when the step-indexed relational view is needed, e.g. for
   nondeterministic machines;
-* added the repository-standard `set_option` header.
+* added the repository-standard `set_option` header;
+* corrected the module docstring's attribution of the non-blank space measure
+  ([AB09, Def 4.1] counts visited cells for `SPACE`, non-blank cells only for
+  `NSPACE`); comments only, no code change (2026-10-08).
 The remaining mathematical content is unchanged.
 -/
 import Mathlib.Algebra.Order.Group.Abs
@@ -56,8 +59,10 @@ us to easily bound the number of possible configurations of a space-bounded mach
 have this restriction.
 
 Instead of considering the cells _visited_ by the work tape heads, some textbooks
-(including [AB09]) only consider the number of cells that contain
-a non-blank symbol at some point in the execution or the number of cells written to. This allows
+only consider the number of cells that contain a non-blank symbol at some point in the
+execution or the number of cells written to. ([AB09] itself splits: Definition 4.1 counts
+_visited_ work-tape locations for `SPACE` — the measure used here — but _nonblank_
+locations for `NSPACE`.) This allows
 work tape heads to freely move at no cost as long as they do not write. It is
 important to note that this causes `DSPACE(1)` to include `DSPACE(log log n)`, a class that
 contains e.g. the non-regular language `{0^n 1^n | n ∈ ℕ}` (it is accepted by a TM that writes a

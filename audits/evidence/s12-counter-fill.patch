@@ -1,0 +1,867 @@
+From 2e99bda1fccfee7cb814e8a3c380981069fa3a11 Mon Sep 17 00:00:00 2001
+From: Codex <codex@openai.com>
+Date: Sat, 10 Oct 2026 23:16:35 +0200
+Subject: [PATCH] Prove the ten audited counter-loop contracts
+
+---
+ .../TuringMachine/Build/CounterLoop.lean      | 735 +++++++++++++++++-
+ 1 file changed, 723 insertions(+), 12 deletions(-)
+
+diff --git a/TCSlib/Complexity/TuringMachine/Build/CounterLoop.lean b/TCSlib/Complexity/TuringMachine/Build/CounterLoop.lean
+index 3c0d10f6..c60fdefe 100644
+--- a/TCSlib/Complexity/TuringMachine/Build/CounterLoop.lean
++++ b/TCSlib/Complexity/TuringMachine/Build/CounterLoop.lean
+@@ -88,6 +88,14 @@ All sorried (statement phase):
+   Cambridge University Press, 2009. (§3.1–§3.2 and §4.1: the hierarchy
+   arguments run a universal machine for a bounded number of steps under a
+   step counter; this file is that counter as a reusable machine.)
++
++**Fill appendix (§12.7).** All ten contracts are now proved. The historical
++statement-phase status labels above are retained under the docstring freeze.
++Decrement is transported from increment once; `counter_rounds` is the single
++round induction used by both host contracts. Its final state is unrestricted,
++so it covers returning prefixes and the last escaping round with the same
++trajectory invariant. The amortization proofs use the audit's bit-count
++potential, as recorded in their fill appendices.
+ -/
+ 
+ namespace Turing
+@@ -119,6 +127,36 @@ def MultiTapeTM.mapWorkSymbols (M : MultiTapeTM k Symbol State)
+   q₀ := M.q₀
+   tr := fun q inp work => (M.tr q inp fun j => (work j).map e.symm).mapWorkSymbols e
+ 
++/-- One step commutes with work-symbol conjugation, including writes into the frame.
++**Proof sketch.** Inverse decoding cancels the equivalence at each read.
++On the written cell the renamed update stores the renamed symbol; off that
++cell the original tape is retained. The remaining configuration fields agree. -/
++private lemma counter_work_step (M : MultiTapeTM k Symbol State) (e : Symbol ≃ Symbol)
++    {input : List Symbol} (d : Cfg k Symbol State input) :
++    (M.mapWorkSymbols e).step (d.mapWorkSymbols e) = (M.step d).mapWorkSymbols e := by
++  cases hs : d.state with
++  | none => simp [MultiTapeTM.step, Cfg.mapWorkSymbols, hs]
++  | some s =>
++    have reads : (fun j => ((d.workTapeSymbols j).map e).map e.symm) =
++        d.workTapeSymbols := by
++      funext j
++      cases d.workTapeSymbols j <;> simp
++    simp only [MultiTapeTM.step, Cfg.mapWorkSymbols, hs]
++    change ((M.tr s d.inputSymbol (fun j =>
++        ((d.workTapeSymbols j).map e).map e.symm)).mapWorkSymbols e).apply
++        (d.mapWorkSymbols e) = _
++    rw [reads]
++    apply Cfg.ext <;> try rfl
++    funext j p
++    simp only [Action.apply, Action.mapWorkSymbols, Cfg.mapWorkSymbols]
++    cases hw : (M.tr s d.inputSymbol d.workTapeSymbols).workTapes j |>.1 with
++    | none => rfl
++    | some v =>
++      simp only [Option.map_some]
++      by_cases hp : p = d.workTapePos j
++      · subst p; simp
++      · simp [Function.update_of_ne hp]
++
+ /-- **Symbol transport** (design §12.7, decision 12.7.4). From every
+ configuration and at every time, the conjugated machine runs as the original
+ with every work-tape cell renamed.
+@@ -132,7 +170,8 @@ theorem MultiTapeTM.mapWorkSymbols_runFrom (M : MultiTapeTM k Symbol State)
+     (t : ℕ) :
+     (M.mapWorkSymbols e).runFrom (c.mapWorkSymbols e) t =
+       (M.runFrom c t).mapWorkSymbols e := by
+-  sorry
++  exact MultiTapeTM.runFrom_comm_of_step (fun d => d.mapWorkSymbols e)
++    (counter_work_step M e) c t
+ 
+ end SymbolTransport
+ 
+@@ -147,6 +186,27 @@ def decFixed : List Bool → Option (List Bool)
+   | true :: rest => some (false :: rest)
+   | false :: rest => (decFixed rest).map (true :: ·)
+ 
++/-- Complement exchanges the word-level carry and borrow recursions. -/
++private lemma counter_dec_complement (w : List Bool) :
++    decFixed w = (incFixed (w.map not)).map (List.map not) := by
++  induction w with
++  | nil => rfl
++  | cons b w ih =>
++    cases b <;> simp [decFixed, incFixed, ih, List.map_map, Function.comp_def]
++
++/-- Complementing work cells twice restores an arbitrary configuration. -/
++private lemma counter_complement_twice {k : ℕ} {S : Type} {x : List Bool}
++    (d : Cfg k Bool S x) :
++    (d.mapWorkSymbols Equiv.boolNot).mapWorkSymbols Equiv.boolNot = d := by
++  apply Cfg.ext <;> try rfl
++  funext j p
++  simp [Cfg.mapWorkSymbols, Option.map_map, Function.comp_def]
++
++/-- Complementation of a buffered word preserves its blank delimiters. -/
++private lemma counter_buffer_complement (w : List Bool) (p : ℤ) :
++    FinTM.bufferTape (w.map not) p = (FinTM.bufferTape w p).map not := by
++  by_cases hp : 0 ≤ p <;> simp [FinTM.bufferTape, hp]
++
+ /-- **R3, decrement** (design §12.7, C1). In-place little-endian fixed-width
+ binary decrement on tape `i`. The borrow pass flips `false` cells to `true`
+ moving right. The first `true` flips to `false` and selects the success
+@@ -160,6 +220,16 @@ contracts are the increment's, transported by
+ def decrementTM (k : ℕ) (i : Fin k) : MultiTapeTM k Bool FlagPhase :=
+   (incrementTM k i).mapWorkSymbols Equiv.boolNot
+ 
++/-- Every decrement run is one complemented increment run, including its frame. -/
++private lemma counter_decrement_run {k : ℕ} {x : List Bool} (i : Fin k)
++    (d : Cfg k Bool FlagPhase x) (t : ℕ) :
++    (decrementTM k i).runFrom d t =
++      ((incrementTM k i).runFrom (d.mapWorkSymbols Equiv.boolNot) t).mapWorkSymbols
++        Equiv.boolNot := by
++  simpa only [decrementTM, counter_complement_twice] using
++    (incrementTM k i).mapWorkSymbols_runFrom Equiv.boolNot
++      (d.mapWorkSymbols Equiv.boolNot) t
++
+ /-- **Decrement, framed success with exact borrow cost** (design §12.7, C1;
+ the mirror of `Turing.incrementTM_run_succ_ofCfg`). Let the delimited word `w`
+ on tape `i` have a predecessor at its width, `decFixed w = some v`, and let
+@@ -194,7 +264,29 @@ theorem decrementTM_run_succ_ofCfg {k : ℕ} {x : List Bool} (i : Fin k)
+             Finset.Icc (d.workTapePos j - 1)
+               (d.workTapePos j + ((w.takeWhile not).length : ℤ))
+         else ((decrementTM k i).runFrom d t).workTapePos j = d.workTapePos j) := by
+-  sorry
++  have hv' : incFixed (w.map not) = some (v.map not) := by
++    have h := congrArg (Option.map (List.map not)) hv
++    simpa [counter_dec_complement, Option.map_map, List.map_map, Function.comp_def] using h
++  have hf : ∀ p : ℤ, -1 ≤ p → p ≤ ((w.map not).length : ℤ) →
++      (d.mapWorkSymbols Equiv.boolNot).workTapes i
++        ((d.mapWorkSymbols Equiv.boolNot).workTapePos i + p) =
++          FinTM.bufferTape (w.map not) p := by
++    intro p hl hr
++    simpa [Cfg.mapWorkSymbols, counter_buffer_complement] using
++      congrArg (Option.map not) (hw p hl (by simpa using hr))
++  have hp : ((w.map not).takeWhile id).length = (w.takeWhile not).length := by
++    simp [List.takeWhile_map, Function.comp_def]
++  obtain ⟨he, hc, hh⟩ := incrementTM_run_succ_ofCfg i (w.map not) (v.map not)
++    hv' (d.mapWorkSymbols Equiv.boolNot) hstate hf
++  rw [hp] at he hc hh
++  refine ⟨?_, ?_, ?_⟩
++  · rw [counter_decrement_run, he]
++    apply Cfg.ext <;> try rfl
++    funext j p
++    simp only [Cfg.mapWorkSymbols, List.length_map]
++    split_ifs <;> simp [counter_buffer_complement, Option.map_map, Function.comp_def]
++  · simpa only [counter_decrement_run, Cfg.mapWorkSymbols] using hc
++  · simpa only [counter_decrement_run, Cfg.mapWorkSymbols] using hh
+ 
+ /-- **Decrement, framed underflow** (design §12.7, C1; the mirror of
+ `Turing.incrementTM_run_overflow_ofCfg`). If the delimited word `w` on tape
+@@ -227,7 +319,28 @@ theorem decrementTM_run_underflow_ofCfg {k : ℕ} {x : List Bool} (i : Fin k)
+           ((decrementTM k i).runFrom d t).workTapePos j ∈
+             Finset.Icc (d.workTapePos j - 1) (d.workTapePos j + (w.length : ℤ))
+         else ((decrementTM k i).runFrom d t).workTapePos j = d.workTapePos j) := by
+-  sorry
++  have hv' : incFixed (w.map not) = none := by
++    simpa only [counter_dec_complement, Option.map_eq_none_iff] using hv
++  obtain ⟨he, hc, hh⟩ := incrementTM_run_overflow_ofCfg i (w.map not) hv'
++    (d.mapWorkSymbols Equiv.boolNot) hstate (by
++      intro p hl hr
++      change (d.workTapes i (d.workTapePos i + p)).map Equiv.boolNot = _
++      rw [hw p hl (by simpa using hr), counter_buffer_complement]
++      rfl)
++  simp only [List.length_map] at he hc hh
++  refine ⟨?_, ?_, ?_⟩
++  · rw [counter_decrement_run, he]
++    apply Cfg.ext <;> try rfl
++    funext j p
++    have hb := counter_buffer_complement (List.replicate w.length false)
++      (p - d.workTapePos j)
++    simp only [Cfg.mapWorkSymbols]
++    split_ifs
++    · simpa using hb.symm
++    · simp [Option.map_map, Function.comp_def]
++  · intro t ht b
++    exact (hc t ht b) ∘ (by simp only [counter_decrement_run, Cfg.mapWorkSymbols]; exact id)
++  · simpa only [counter_decrement_run, Cfg.mapWorkSymbols] using hh
+ 
+ /-! ## Counter arithmetic -/
+ 
+@@ -248,13 +361,68 @@ gate, SC-1). -/
+ def counterOverhead (w : List Bool) (r : ℕ) : ℕ :=
+   ∑ j ∈ Finset.range r, (2 * ((counterWord w j).takeWhile not).length + 2)
+ 
++/-- A borrow either detects an all-false word or preserves width, subtracts one,
++and changes the true-bit potential by its false-prefix length.
++**Proof sketch.** Induct on the word. A true low bit stops the borrow; a false
++low bit propagates it and gains one true bit. -/
++private lemma counter_dec_spec (w : List Bool) :
++    match decFixed w with
++    | none => w = List.replicate w.length false
++    | some v => v.length = w.length ∧
++        Nat.ofDigits 2 (w.map Bool.toNat) = Nat.ofDigits 2 (v.map Bool.toNat) + 1 ∧
++        v.count true + 1 = w.count true + (w.takeWhile not).length := by
++  induction w with
++  | nil => rfl
++  | cons b w ih =>
++    cases b with
++    | true => simp [decFixed, Nat.ofDigits_cons, Nat.add_comm]
++    | false =>
++      cases hd : decFixed w with
++      | none =>
++        simp only [hd] at ih
++        simpa [decFixed, hd, List.replicate_succ] using congrArg (false :: ·) ih
++      | some v =>
++        simp only [hd] at ih
++        rcases ih with ⟨hl, hv, hc⟩
++        simp [decFixed, hd, Nat.ofDigits_cons, hl]
++        omega
++
++/-- The next frozen counter word is obtained by one optional decrement. -/
++private lemma counter_word_succ (w : List Bool) (r : ℕ) :
++    counterWord w (r + 1) = (decFixed (counterWord w r)).getD (counterWord w r) :=
++  Function.iterate_succ_apply' _ _ _
++
++/-- Underflow occurs exactly at binary value zero, including padded words. -/
++private lemma counter_dec_zero (w : List Bool) :
++    decFixed w = none ↔ Nat.ofDigits 2 (w.map Bool.toNat) = 0 := by
++  have hs := counter_dec_spec w
++  cases hd : decFixed w with
++  | none =>
++    simp only [hd] at hs
++    simp only [true_iff]
++    conv_lhs => rw [hs]
++    simp
++  | some v =>
++    simp only [hd] at hs
++    simp only [reduceCtorEq, false_iff]
++    omega
++
+ /-- Decrements preserve the counter's width.
+ 
+ **Proof sketch.** `decFixed` preserves length, by induction on the word, and
+ `Option.getD` keeps the word otherwise; induct on `r`. -/
+ theorem counterWord_length (w : List Bool) (r : ℕ) :
+     (counterWord w r).length = w.length := by
+-  sorry
++  induction r with
++  | zero => rfl
++  | succ r ih =>
++    rw [counter_word_succ]
++    have hs := counter_dec_spec (counterWord w r)
++    cases hd : decFixed (counterWord w r) with
++    | none => simpa [hd] using ih
++    | some v =>
++      rw [hd] at hs
++      simpa [hd] using hs.1.trans ih
+ 
+ /-- Each of the first `value w` decrements lowers the little-endian value by
+ one.
+@@ -267,7 +435,49 @@ theorem counterWord_value (w : List Bool) (r : ℕ)
+     (hr : r ≤ Nat.ofDigits 2 (w.map Bool.toNat)) :
+     Nat.ofDigits 2 ((counterWord w r).map Bool.toNat) =
+       Nat.ofDigits 2 (w.map Bool.toNat) - r := by
+-  sorry
++  induction r with
++  | zero => simp [counterWord]
++  | succ r ih =>
++    have hi := ih (by omega)
++    have hs := counter_dec_spec (counterWord w r)
++    rw [counter_word_succ]
++    cases hb : decFixed (counterWord w r) with
++    | none =>
++      have hz := (counter_dec_zero _).mp hb
++      omega
++    | some v =>
++      simp only [hb] at hs
++      simp only [Option.getD_some]
++      omega
++
++/-- Before exhaustion, the physical predecessor is the next frozen word. -/
++private lemma counter_word_decrement (w : List Bool) (r : ℕ)
++    (hr : r < Nat.ofDigits 2 (w.map Bool.toNat)) :
++    decFixed (counterWord w r) = some (counterWord w (r + 1)) := by
++  have hv := counterWord_value w r (by omega)
++  rw [counter_word_succ]
++  cases hd : decFixed (counterWord w r) with
++  | none => have hz := (counter_dec_zero _).mp hd; omega
++  | some v => rfl
++
++/-- Successful borrow costs telescope against twice the number of true bits.
++**Proof sketch.** At each step the borrow specification equates the new
++potential plus four with the old potential plus the exact decrement cost.
++Add this equality to the induction hypothesis. -/
++private lemma counter_potential (w : List Bool) (r : ℕ)
++    (hr : r ≤ Nat.ofDigits 2 (w.map Bool.toNat)) :
++    counterOverhead w r + 2 * w.count true =
++      4 * r + 2 * (counterWord w r).count true := by
++  induction r with
++  | zero => simp [counterOverhead, counterWord]
++  | succ r ih =>
++    have hi := ih (by omega)
++    have hs := counter_dec_spec (counterWord w r)
++    rw [counter_word_decrement w r (by omega)] at hs
++    simp only [counterOverhead, Finset.sum_range_succ]
++    change (counterOverhead w r + (2 * (List.takeWhile not (counterWord w r)).length + 2)) +
++      2 * w.count true = 4 * (r + 1) + 2 * (counterWord w (r + 1)).count true
++    omega
+ 
+ /-- **Prefix amortization.** The first `r` decrements, for `r` at most the
+ counter's value, cost at most `4r + 2|w|`.
+@@ -277,11 +487,29 @@ counter's value, cost at most `4r + 2|w|`.
+ `false` prefix is the number of trailing zero bits of that value. Summed over
+ `r` consecutive values below `2^|w|`, the trailing zeros total
+ `ν₂(r!) + ν₂(binom) ≤ (r - 1) + (|w| - 1)` by Legendre and Kummer, so the
+-cost is at most `4r + 2|w| - 4` once `r ≥ 1`. -/
++cost is at most `4r + 2|w| - 4` once `r ≥ 1`.
++
++**Fill proof appendix.** The binding statement-gate route replaces the
++number-theoretic sketch above by the exact telescoping identity proved in
++`counter_potential`. Twice the count of true bits is the potential; its
++terminal value is bounded by twice the preserved word length. -/
+ theorem counterOverhead_le_of_le (w : List Bool) (r : ℕ)
+     (hr : r ≤ Nat.ofDigits 2 (w.map Bool.toNat)) :
+     counterOverhead w r ≤ 4 * r + 2 * w.length := by
+-  sorry
++  have hp := counter_potential w r hr
++  have hc : (counterWord w r).count true ≤ w.length :=
++    (List.count_le_length).trans_eq (counterWord_length w r)
++  omega
++
++/-- At exhaustion the fixed-width word is all false, retaining any padding. -/
++private lemma counter_word_exhausted (w : List Bool) :
++    counterWord w (Nat.ofDigits 2 (w.map Bool.toNat)) =
++      List.replicate w.length false := by
++  have hz := counterWord_value w (Nat.ofDigits 2 (w.map Bool.toNat)) le_rfl
++  simp only [Nat.sub_self] at hz
++  have hs := counter_dec_spec (counterWord w (Nat.ofDigits 2 (w.map Bool.toNat)))
++  rw [(counter_dec_zero _).mpr hz] at hs
++  simpa only [counterWord_length] using hs
+ 
+ /-- **Whole-run amortization** (design §12.7, decision 12.7.6). Counting a
+ counter of value `n` down to zero and through the final underflow costs at
+@@ -290,11 +518,21 @@ most `4n + 2|w| + 2`.
+ **Proof sketch.** The successful decrements act on the values `n, …, 1`,
+ whose trailing zeros sum to `n - s₂(n) ≤ n` (Legendre), so they cost at most
+ `4n`. The final word is all `false` (`Turing.counterWord_value`), so the
+-underflow sweep costs `2|w| + 2` (`Turing.counterWord_length`). -/
++underflow sweep costs `2|w| + 2` (`Turing.counterWord_length`).
++
++**Fill proof appendix.** Use `counter_potential` at exhaustion, where the
++remaining true-bit count is zero, then add the full underflow sweep.
++No Legendre or Kummer theorem is used. -/
+ theorem counterOverhead_le (w : List Bool) :
+     counterOverhead w (Nat.ofDigits 2 (w.map Bool.toNat) + 1) ≤
+       4 * Nat.ofDigits 2 (w.map Bool.toNat) + 2 * w.length + 2 := by
+-  sorry
++  have hp := counter_potential w (Nat.ofDigits 2 (w.map Bool.toNat)) le_rfl
++  rw [counter_word_exhausted] at hp
++  simp [List.count_replicate] at hp
++  have hs : counterOverhead w (Nat.ofDigits 2 (w.map Bool.toNat) + 1) =
++      counterOverhead w (Nat.ofDigits 2 (w.map Bool.toNat)) + (2 * w.length + 2) := by
++    simp [counterOverhead, Finset.sum_range_succ, counter_word_exhausted]
++  omega
+ 
+ /-! ## C2 — the counter-driven host -/
+ 
+@@ -367,6 +605,413 @@ def counterLoopOrbit {k : ℕ} {S : Type} {x : List Bool} (M : MultiTapeTM k Boo
+     (τ : Cfg k Bool S x → ℕ) (c : Cfg k Bool S x) (r : ℕ) : Cfg k Bool S x :=
+   (fun c => M.runFrom c (τ c))^[r] c
+ 
++/-! ### Shared phase and prefix invariants -/
++
++/-- The last tape is outside the forwarding embedding's selected bank. -/
++private lemma counter_last_unselected (k : ℕ) :
++    Fin.last k ∉ Set.range (Fin.castSuccEmb : Fin k ↪ Fin (k + 1)) := by
++  rintro ⟨i, hi⟩
++  exact Fin.castSucc_ne_last i hi
++
++/-- The host layout is the body bank followed by its counter tape. -/
++private lemma counter_cfg_eq {k : ℕ} {S : Type} {x : List Bool}
++    (q : Option (CounterLoopState S)) (c : Cfg k Bool S x)
++    (ct : ℤ → Option Bool) (cp : ℤ) :
++    counterLoopCfg q c ct cp =
++      ⟨q, c.inputPos, Fin.lastCases ct c.workTapes,
++        Fin.lastCases cp c.workTapePos, c.output⟩ := by
++  have hf := (embedEmitTM_frame Fin.castSuccEmb
++    (⟨(), fun _ _ _ => ⟨0, fun _ => (none, 0), none, none⟩⟩ : MultiTapeTM k Bool Unit)
++    (fun _ => ct) (fun _ => cp) [] (c.mapState (fun _ => ())) 0).1
++    (Fin.last k) (counter_last_unselected k)
++  apply Cfg.ext <;> try rfl
++  · funext j
++    refine Fin.lastCases ?_ (fun i => ?_) j
++    · simpa only [counterLoopCfg, Cfg.mapState, MultiTapeTM.runFrom_zero,
++        Fin.lastCases_last] using hf.1
++    · simpa only [counterLoopCfg, Cfg.mapState, Fin.lastCases_castSucc] using
++        embedEmitCfg_selected_tape Fin.castSuccEmb (fun _ => ct) (fun _ => cp) [] c i
++  · funext j
++    refine Fin.lastCases ?_ (fun i => ?_) j
++    · simpa only [counterLoopCfg, Cfg.mapState, MultiTapeTM.runFrom_zero,
++        Fin.lastCases_last] using hf.2
++    · simpa only [counterLoopCfg, Cfg.mapState, Fin.lastCases_castSucc] using
++        embedEmitCfg_selected_pos Fin.castSuccEmb (fun _ => ct) (fun _ => cp) [] c i
++
++/-- Injective successor redirection for the decrement's five controls. -/
++private lemma counter_dec_injective {S : Type} (a : S) :
++    Function.Injective (counterLoopDecExit a) := by
++  intro f g h
++  cases f <;> cases g <;> (try casesm* Bool) <;> simp_all [counterLoopDecExit]
++
++/-- Anchor priority still gives an injective body-state redirection. -/
++private lemma counter_redirect_injective {S : Type} [DecidableEq S]
++    (a : S) (exit : Option S) : Function.Injective (counterLoopRedirect a exit) := by
++  intro s t h
++  by_cases hs : s = a
++  · subst s
++    by_cases ht : t = a
++    · exact ht.symm
++    · simp only [counterLoopRedirect, ht, if_false] at h
++      split_ifs at h
++  · by_cases ht : t = a
++    · subst t; simp only [counterLoopRedirect, hs, if_false] at h
++      split_ifs at h
++    · simp only [counterLoopRedirect, hs, ht, if_false] at h
++      split_ifs at h <;> simp_all
++
++/-- Common trajectory data for a finite host segment, with a chosen set of
++permitted body-head vectors. -/
++private def counterSpan {k : ℕ} {S : Type} {x : List Bool}
++    (H : MultiTapeTM (k + 1) Bool (CounterLoopState S))
++    (z : Cfg (k + 1) Bool (CounterLoopState S) x) (t : ℕ) (cp : ℤ) (width : ℕ)
++    (R : (Fin k → ℤ) → Prop) : Prop :=
++  (∀ u < t, (H.runFrom z u).state ≠ some .done ∧
++    (H.runFrom z u).state ≠ some .escape) ∧
++  (∀ u ≤ t, (H.runFrom z u).workTapePos (Fin.last k) ∈
++    Finset.Icc (cp - 1) (cp + (width : ℤ))) ∧
++  (∀ u ≤ t, R (fun j => (H.runFrom z u).workTapePos j.castSucc))
++
++/-- Adjacent segments concatenate their cuts and trajectory bounds.
++**Proof sketch.** Split a queried time at the first segment's length and
++use run addition on the suffix. The two head-vector relations imply the
++requested relation separately. -/
++private lemma counter_span_append {k : ℕ} {S : Type} {x : List Bool}
++    (H : MultiTapeTM (k + 1) Bool (CounterLoopState S))
++    (z : Cfg (k + 1) Bool (CounterLoopState S) x) (s t : ℕ) (cp : ℤ) (width : ℕ)
++    (R₁ R₂ R : (Fin k → ℤ) → Prop)
++    (h₁ : counterSpan H z s cp width R₁)
++    (h₂ : counterSpan H (H.runFrom z s) t cp width R₂)
++    (hr₁ : ∀ p, R₁ p → R p) (hr₂ : ∀ p, R₂ p → R p) :
++    counterSpan H z (s + t) cp width R := by
++  have suffix (u : ℕ) (hu : s ≤ u) :
++      H.runFrom z u = H.runFrom (H.runFrom z s) (u - s) := by
++    rw [← H.runFrom_add, Nat.add_sub_of_le hu]
++  refine ⟨?_, ?_, ?_⟩
++  · intro u hu
++    by_cases hs : u < s
++    · exact h₁.1 u hs
++    · rw [suffix u (by omega)]; exact h₂.1 (u - s) (by omega)
++  · intro u hu
++    by_cases hs : u ≤ s
++    · exact h₁.2.1 u hs
++    · rw [suffix u (by omega)]; exact h₂.2.1 (u - s) (by omega)
++  · intro u hu
++    by_cases hs : u ≤ s
++    · exact hr₁ _ (h₁.2.2 u hs)
++    · rw [suffix u (by omega)]; exact hr₂ _ (h₂.2.2 (u - s) (by omega))
++
++/-- A width-preserving overwrite of just the counter word interval. -/
++private def counterPatch (ct : ℤ → Option Bool) (cp : ℤ) (w : List Bool) : ℤ → Option Bool :=
++  fun q => if cp ≤ q ∧ q < cp + (w.length : ℤ)
++    then FinTM.bufferTape w (q - cp) else ct q
++
++/-- Patching the word that is already present changes no cell. -/
++private lemma counter_patch_initial (w : List Bool) (ct : ℤ → Option Bool) (cp : ℤ)
++    (hw : ∀ p : ℤ, -1 ≤ p → p ≤ (w.length : ℤ) →
++      ct (cp + p) = FinTM.bufferTape w p) : counterPatch ct cp w = ct := by
++  funext q
++  apply ite_eq_right_iff.mpr
++  intro h
++  have hf := hw (q - cp) (by omega) (by omega)
++  simpa using hf.symm
++
++/-- Equal-width patches overwrite the same interval, preserving the original frame. -/
++private lemma counter_patch_twice (ct : ℤ → Option Bool) (cp : ℤ) (u v : List Bool)
++    (hv : v.length = u.length) :
++    counterPatch (counterPatch ct cp u) cp v = counterPatch ct cp v := by
++  funext q
++  simp only [counterPatch, hv]
++  split_ifs <;> rfl
++
++/-- Replacing a framed word by an equal-width word keeps both blank delimiters. -/
++private lemma counter_patch_frame (w v : List Bool) (ct : ℤ → Option Bool) (cp : ℤ)
++    (hv : v.length = w.length)
++    (hw : ∀ p : ℤ, -1 ≤ p → p ≤ (w.length : ℤ) →
++      ct (cp + p) = FinTM.bufferTape w p) :
++    ∀ p : ℤ, -1 ≤ p → p ≤ (v.length : ℤ) →
++      counterPatch ct cp v (cp + p) = FinTM.bufferTape v p := by
++  intro p hl hr
++  by_cases h : 0 ≤ p ∧ p < (v.length : ℤ)
++  · simp [counterPatch, show cp ≤ cp + p ∧ cp + p < cp + (v.length : ℤ) by omega]
++  · have hp : p = -1 ∨ p = (v.length : ℤ) := by omega
++    rcases hp with rfl | rfl
++    · simp [counterPatch, hw (-1) (by omega) (by omega), FinTM.bufferTape_left]
++    · simp [counterPatch, hv, hw w.length (by omega) le_rfl, FinTM.bufferTape_nat]
++
++/-- A decrement phase uses the proved framed contract and guarded state transport.
++**Proof sketch.** Select success or underflow from the word function. The
++host agrees with the decrement on every pre-verdict control, so the single
++injective transport carries its endpoint, first-verdict cut, and head bounds. -/
++private lemma counter_debit {k : ℕ} {S : Type} [DecidableEq S] {x : List Bool}
++    (M : MultiTapeTM k Bool S) (a : S) (exit : Option S)
++    (c : Cfg k Bool S x) (w : List Bool) (ct : ℤ → Option Bool) (cp : ℤ)
++    (hw : ∀ p : ℤ, -1 ≤ p → p ≤ (w.length : ℤ) →
++      ct (cp + p) = FinTM.bufferTape w p) :
++    let cost := 2 * (w.takeWhile not).length + 2
++    let v := (decFixed w).getD (List.replicate w.length true)
++    let q : CounterLoopState S := if (decFixed w).isSome then .body a else .done
++    (counterLoopTM M a exit).runFrom (counterLoopCfg (some (.dec .run)) c ct cp) cost =
++      counterLoopCfg (some q) c (counterPatch ct cp v) cp ∧
++    counterSpan (counterLoopTM M a exit) (counterLoopCfg (some (.dec .run)) c ct cp)
++      cost cp w.length (fun p => ∀ j, p j = c.workTapePos j) := by
++  let z : Cfg (k + 1) Bool FlagPhase x :=
++    (counterLoopCfg (some (.dec .run)) c ct cp).mapState (fun _ => FlagPhase.run)
++  let v := (decFixed w).getD (List.replicate w.length true)
++  let cost := 2 * (w.takeWhile not).length + 2
++  have hz : ∀ p : ℤ, -1 ≤ p → p ≤ (w.length : ℤ) →
++      z.workTapes (Fin.last k) (z.workTapePos (Fin.last k) + p) = FinTM.bufferTape w p := by
++    simpa [z, Cfg.mapState, counter_cfg_eq] using hw
++  have spec :
++      (decrementTM (k + 1) (Fin.last k)).runFrom z cost =
++        {z with state := some (.done (decFixed w).isSome), workTapes := fun j p =>
++          if j = Fin.last k ∧ z.workTapePos j ≤ p ∧ p < z.workTapePos j + (w.length : ℤ)
++          then FinTM.bufferTape v (p - z.workTapePos j) else z.workTapes j p} ∧
++      (∀ t < cost, ∀ b, ((decrementTM (k + 1) (Fin.last k)).runFrom z t).state ≠
++        some (.done b)) ∧
++      (∀ j t, t ≤ cost → if j = Fin.last k then
++        ((decrementTM (k + 1) (Fin.last k)).runFrom z t).workTapePos j ∈
++          Finset.Icc (z.workTapePos j - 1) (z.workTapePos j + (w.length : ℤ))
++        else ((decrementTM (k + 1) (Fin.last k)).runFrom z t).workTapePos j = z.workTapePos j) := by
++    cases hd : decFixed w with
++    | none =>
++      have hs := counter_dec_spec w
++      rw [hd] at hs
++      have hp : (w.takeWhile not).length = w.length := by
++        conv_lhs => rw [hs]
++        simp
++      simpa [cost, v, hd, hp] using decrementTM_run_underflow_ofCfg (Fin.last k) w hd z rfl hz
++    | some u =>
++      obtain ⟨he, hc, hh⟩ := decrementTM_run_succ_ofCfg (Fin.last k) w u hd z rfl hz
++      refine ⟨by simpa [v, hd] using he, hc, ?_⟩
++      intro j t ht
++      have h := hh j t ht
++      split_ifs at h ⊢ with hj
++      · simp only [Finset.mem_Icc] at h ⊢
++        have hlen := (List.takeWhile_sublist (p := not) (l := w)).length_le
++        exact ⟨h.1, by omega⟩
++      · exact h
++  let emb : FlagPhase ↪ CounterLoopState S := ⟨counterLoopDecExit a, counter_dec_injective a⟩
++  have run (t : ℕ) (ht : t ≤ cost) :
++      (counterLoopTM M a exit).runFrom (counterLoopCfg (some (.dec .run)) c ct cp) t =
++        ((decrementTM (k + 1) (Fin.last k)).runFrom z t).mapState emb := by
++    refine MultiTapeTM.runFrom_mapState_of_agreeOn
++      (decrementTM (k + 1) (Fin.last k)) (counterLoopTM M a exit) emb
++      (fun f => ∀ b, f ≠ .done b) ?_ z t ?_
++    · intro f hf inp work
++      cases f with
++      | run => rfl
++      | rewind b => rfl
++      | done b => exact False.elim (hf b rfl)
++    · intro u hu f hf b he
++      exact spec.2.1 u (by omega) b (hf.trans (congrArg some he))
++  have vl : v.length = w.length := by
++    have hs := counter_dec_spec w
++    cases hd : decFixed w <;> simp [v, hd] at *
++    exact hs.1
++  refine ⟨?_, ?_, ?_, ?_⟩
++  · rw [run cost le_rfl, spec.1]
++    apply Cfg.ext <;> try rfl
++    · cases hd : decFixed w <;> simp [Cfg.mapState, emb, counterLoopDecExit, counterLoopCfg]
++    · funext j p
++      refine Fin.lastCases ?_ (fun i => ?_) j
++      · simp only [z, Cfg.mapState, counter_cfg_eq, Fin.lastCases_last,
++          true_and, counterPatch]
++        change _ = if cp ≤ p ∧ p < cp + (v.length : ℤ) then FinTM.bufferTape v (p - cp) else ct p
++        rw [vl]
++      · simp [z, Cfg.mapState, counter_cfg_eq, Fin.castSucc_ne_last]
++  · intro t ht
++    rw [run t (by omega)]
++    have hc := spec.2.1 t ht
++    cases hs : ((decrementTM (k + 1) (Fin.last k)).runFrom z t).state with
++    | none => simp [Cfg.mapState, hs]
++    | some f =>
++      cases f with
++      | run => simp [Cfg.mapState, hs, emb, counterLoopDecExit]
++      | rewind b => simp [Cfg.mapState, hs, emb, counterLoopDecExit]
++      | done b => exact False.elim (hc b hs)
++  · intro t ht
++    rw [run t ht]
++    simpa [Cfg.mapState, z, counter_cfg_eq] using spec.2.2 (Fin.last k) t ht
++  · intro t ht j
++    rw [run t ht]
++    simpa [Cfg.mapState, z, counter_cfg_eq, Fin.castSucc_ne_last] using
++      spec.2.2 j.castSucc t ht
++
++/-- The body phase executes its entry action once, then uses guarded transport.
++**Proof sketch.** The entry action reads the forwarding embedding. After that
++step, all strict intermediate states avoid both redirections, and the RB5
++transport lemma applies. R1 identifies every transported configuration and
++therefore preserves the counter frame and all body-head trajectories. -/
++private lemma counter_body {k : ℕ} {S : Type} [DecidableEq S] {x : List Bool}
++    (M : MultiTapeTM k Bool S) (a : S) (exit : Option S)
++    (c : Cfg k Bool S x) (ct : ℤ → Option Bool) (cp : ℤ) (width t : ℕ)
++    (hc : c.state = some a) (ht : 0 < t)
++    (hmid : ∀ u, 0 < u → u < t → ∃ s, (M.runFrom c u).state = some s ∧
++      s ≠ a ∧ exit ≠ some s) :
++    (counterLoopTM M a exit).runFrom (counterLoopCfg (some (.body a)) c ct cp) t =
++      counterLoopCfg ((M.runFrom c t).state.map (counterLoopRedirect a exit))
++        (M.runFrom c t) ct cp ∧
++    counterSpan (counterLoopTM M a exit) (counterLoopCfg (some (.body a)) c ct cp)
++      t cp width (fun p => ∃ u ≤ t, ∀ j, p j = (M.runFrom c u).workTapePos j) := by
++  let E := embedEmitTM Fin.castSuccEmb M
++  let ec := embedEmitCfg Fin.castSuccEmb (fun _ => ct) (fun _ => cp) [] c
++  let emb : S ↪ CounterLoopState S :=
++    ⟨counterLoopRedirect a exit, counter_redirect_injective a exit⟩
++  have first : (counterLoopTM M a exit).runFrom (counterLoopCfg (some (.body a)) c ct cp) 1 =
++      (E.runFrom ec 1).mapState emb := by
++    change (counterLoopTM M a exit).step (counterLoopCfg (some (.body a)) c ct cp) =
++      (E.step ec).mapState emb
++    have hec : ec.state = some a := hc
++    simp only [MultiTapeTM.step, hec, counterLoopCfg, Cfg.mapState]
++    rfl
++  have run (u : ℕ) (hu : 0 < u) (hut : u ≤ t) :
++      (counterLoopTM M a exit).runFrom (counterLoopCfg (some (.body a)) c ct cp) u =
++        counterLoopCfg ((M.runFrom c u).state.map (counterLoopRedirect a exit))
++          (M.runFrom c u) ct cp := by
++    obtain ⟨n, rfl⟩ := Nat.exists_eq_succ_of_ne_zero (by omega : u ≠ 0)
++    rw [Nat.succ_eq_add_one, Nat.add_comm n 1, MultiTapeTM.runFrom_add, first]
++    have tr := MultiTapeTM.runFrom_mapState_of_agreeOn E (counterLoopTM M a exit) emb
++      (fun s => s ≠ a ∧ exit ≠ some s)
++      (by intro s hs inp work; simp [emb, counterLoopRedirect, hs.1, hs.2, counterLoopTM, E])
++      (E.runFrom ec 1) n (by
++        intro v hv s hs
++        have he := embedEmitTM_runFrom Fin.castSuccEmb M (fun _ => ct) (fun _ => cp) [] c (1 + v)
++        change E.runFrom ec (1 + v) = _ at he
++        rw [MultiTapeTM.runFrom_add] at he
++        have hstate := congrArg Cfg.state he
++        change (E.runFrom (E.runFrom ec 1) v).state = (M.runFrom c (1 + v)).state at hstate
++        obtain ⟨s', hs', ha, hx⟩ := hmid (1 + v) (by omega) (by omega)
++        have eqs : s = s' := Option.some.inj (hs.symm.trans (hstate.trans hs'))
++        simpa [eqs] using And.intro ha hx)
++    rw [tr, ← MultiTapeTM.runFrom_add]
++    change (E.runFrom ec (1 + n)).mapState emb = _
++    rw [show E.runFrom ec (1 + n) =
++      embedEmitCfg Fin.castSuccEmb (fun _ => ct) (fun _ => cp) [] (M.runFrom c (1 + n)) from
++      embedEmitTM_runFrom Fin.castSuccEmb M _ _ [] c (1 + n)]
++    rfl
++  refine ⟨run t ht le_rfl, ?_, ?_, ?_⟩
++  · intro u hu
++    by_cases hz : u = 0
++    · subst u; simp [counterLoopCfg]
++    · rw [run u (by omega) (by omega)]
++      obtain ⟨s, hs, ha, hx⟩ := hmid u (by omega) hu
++      simp [counterLoopCfg, hs, counterLoopRedirect, ha, hx]
++  · intro u hu
++    by_cases hz : u = 0
++    · subst u; simp [counter_cfg_eq, Finset.mem_Icc]
++    · rw [run u (by omega) hu]
++      simp [counter_cfg_eq, Finset.mem_Icc]
++  · intro u hu
++    refine ⟨u, hu, ?_⟩
++    by_cases hz : u = 0
++    · subst u; simp [counter_cfg_eq]
++    · rw [run u (by omega) hu]
++      simp [counter_cfg_eq]
++
++/-- An orbit successor is the completed current body round. -/
++private lemma counter_orbit_succ {k : ℕ} {S : Type} {x : List Bool}
++    (M : MultiTapeTM k Bool S) (τ : Cfg k Bool S x → ℕ) (c : Cfg k Bool S x) (r : ℕ) :
++    counterLoopOrbit M τ c (r + 1) =
++      M.runFrom (counterLoopOrbit M τ c r) (τ (counterLoopOrbit M τ c r)) :=
++  Function.iterate_succ_apply' _ _ _
++
++/-- The shared round invariant, with the final body state left unrestricted.
++Returning prefixes are exactly the configurations before the next decrement.
++**Proof sketch.** Induct once on the number of rounds. The current word has
++positive value, so the framed decrement succeeds. Append its transported
++segment and the forwarding body segment. Equal-width overwrites keep the
++original counter frame, and the two cost recurrences give the exact elapsed
++time. Earlier starts at the anchor supply all returns needed by the induction. -/
++private lemma counter_rounds {k : ℕ} {S : Type} [DecidableEq S] {x : List Bool}
++    (M : MultiTapeTM k Bool S) (a : S) (exit : Option S)
++    (τ : Cfg k Bool S x → ℕ) (c : Cfg k Bool S x)
++    (w : List Bool) (ct : ℤ → Option Bool) (cp : ℤ)
++    (hw : ∀ p : ℤ, -1 ≤ p → p ≤ (w.length : ℤ) → ct (cp + p) = FinTM.bufferTape w p)
++    (n : ℕ) (hn : n ≤ Nat.ofDigits 2 (w.map Bool.toNat))
++    (hround : ∀ r < n, (counterLoopOrbit M τ c r).state = some a ∧
++      0 < τ (counterLoopOrbit M τ c r) ∧
++      (∀ u, 0 < u → u < τ (counterLoopOrbit M τ c r) →
++        ∃ s, (M.runFrom (counterLoopOrbit M τ c r) u).state = some s ∧
++          s ≠ a ∧ exit ≠ some s)) :
++    let elapsed := ∑ r ∈ Finset.range n, τ (counterLoopOrbit M τ c r) + counterOverhead w n
++    (counterLoopTM M a exit).runFrom (counterLoopCfg (some (.dec .run)) c ct cp) elapsed =
++      counterLoopCfg (if n = 0 then some (.dec .run) else
++        (counterLoopOrbit M τ c n).state.map (counterLoopRedirect a exit))
++        (counterLoopOrbit M τ c n) (counterPatch ct cp (counterWord w n)) cp ∧
++    counterSpan (counterLoopTM M a exit) (counterLoopCfg (some (.dec .run)) c ct cp)
++      elapsed cp w.length (fun p => ∃ r u,
++        ((r < n ∧ u ≤ τ (counterLoopOrbit M τ c r)) ∨ (r = n ∧ u = 0)) ∧
++        ∀ j, p j = (M.runFrom (counterLoopOrbit M τ c r) u).workTapePos j) := by
++  induction n with
++  | zero =>
++    simp only [Finset.range_zero, Finset.sum_empty, counterOverhead, Finset.sum_empty,
++      Nat.zero_add, MultiTapeTM.runFrom_zero, ite_true]
++    have hpatch : counterPatch ct cp (counterWord w 0) = ct := counter_patch_initial w ct cp hw
++    rw [hpatch]
++    refine ⟨rfl, ?_, ?_, ?_⟩
++    · intro u hu; omega
++    · intro u hu; have hz : u = 0 := by omega
++      subst u; simp [counter_cfg_eq, Finset.mem_Icc]
++    · intro u hu; have hz : u = 0 := by omega
++      subst u
++      exact ⟨0, 0, Or.inr ⟨rfl, rfl⟩, by simp [counter_cfg_eq, counterLoopOrbit]⟩
++  | succ n ih =>
++    obtain ⟨before, span⟩ := ih (by omega) (fun r hr => hround r (by omega))
++    obtain ⟨ha, ht, hg⟩ := hround n (by omega)
++    have control : (if n = 0 then some (.dec .run) else
++        (counterLoopOrbit M τ c n).state.map (counterLoopRedirect a exit)) =
++        some (CounterLoopState.dec FlagPhase.run) := by
++      split_ifs <;> simp [ha, counterLoopRedirect]
++    rw [control] at before
++    let cn := counterLoopOrbit M τ c n
++    let wn := counterWord w n
++    let pn := counterPatch ct cp wn
++    let nextTape := counterPatch ct cp (counterWord w (n + 1))
++    let cost := 2 * (wn.takeWhile not).length + 2
++    have hd := counter_word_decrement w n (by omega)
++    have hf := counter_patch_frame w wn ct cp (counterWord_length w n) hw
++    obtain ⟨debit, ds⟩ := counter_debit M a exit cn wn pn cp hf
++    change decFixed wn = some (counterWord w (n + 1)) at hd
++    simp only [hd, Option.getD_some, Option.isSome_some, ite_true] at debit
++    rw [counter_patch_twice ct cp wn (counterWord w (n + 1))
++      (by simp only [wn, counterWord_length])] at debit
++    obtain ⟨body, bs⟩ := counter_body M a exit cn nextTape cp w.length (τ cn) ha ht hg
++    have round : (counterLoopTM M a exit).runFrom
++        (counterLoopCfg (some (.dec .run)) cn pn cp) (cost + τ cn) =
++        counterLoopCfg ((counterLoopOrbit M τ c (n + 1)).state.map (counterLoopRedirect a exit))
++          (counterLoopOrbit M τ c (n + 1)) nextTape cp := by
++      rw [MultiTapeTM.runFrom_add, debit, body, counter_orbit_succ]
++    have rs : counterSpan (counterLoopTM M a exit)
++        (counterLoopCfg (some (.dec .run)) cn pn cp) (cost + τ cn) cp w.length
++        (fun p => ∃ u ≤ τ cn, ∀ j, p j = (M.runFrom cn u).workTapePos j) := by
++      apply counter_span_append _ _ cost (τ cn) cp w.length _ _ _
++        (by simpa only [wn, counterWord_length] using ds) (by rw [debit]; exact bs)
++      · intro p hp; exact ⟨0, Nat.zero_le _, by simpa using hp⟩
++      · exact fun _ h => h
++    have time : (∑ r ∈ Finset.range (n + 1), τ (counterLoopOrbit M τ c r)) +
++        counterOverhead w (n + 1) =
++        ((∑ r ∈ Finset.range n, τ (counterLoopOrbit M τ c r)) + counterOverhead w n) +
++          (cost + τ cn) := by
++      simp [counterOverhead, Finset.sum_range_succ, cost, wn, cn,
++        Nat.add_assoc, Nat.add_comm, Nat.add_left_comm]
++    dsimp only
++    rw [time]
++    refine ⟨?_, ?_⟩
++    · rw [MultiTapeTM.runFrom_add, before, round]
++      rfl
++    · apply counter_span_append _ _ _ (cost + τ cn) cp w.length _ _ _ span
++        (by rw [before]; exact rs)
++      · intro p hp
++        obtain ⟨r, u, hr, heads⟩ := hp
++        refine ⟨r, u, Or.inl ?_, heads⟩
++        rcases hr with ⟨hr, hu⟩ | ⟨rfl, rfl⟩
++        · exact ⟨by omega, hu⟩
++        · exact ⟨by omega, Nat.zero_le _⟩
++      · intro p hp
++        obtain ⟨u, hu, heads⟩ := hp
++        exact ⟨n, u, Or.inl ⟨by omega, hu⟩, heads⟩
++
+ /-- **The counter-driven loop, every round returns** (design §12.7, C2).
+ Start the host at its decrement phase, with body configuration `c` and the
+ delimited counter word `w`, of value `d`, at `cp`. Suppose each of the `d`
+@@ -425,7 +1070,51 @@ theorem counterLoopTM_run_done {k : ℕ} {S : Type} [DecidableEq S] {x : List Bo
+           ((counterLoopTM M a exit).runFrom
+               (counterLoopCfg (some (.dec .run)) c ct cp) t).workTapePos j.castSucc =
+             (M.runFrom (counterLoopOrbit M τ c r) u).workTapePos j) := by
+-  sorry
++  subst T
++  obtain ⟨before, span⟩ := counter_rounds M a exit τ c w ct cp hw d (by omega)
++    (fun r hr => ⟨(hround r hr).1, (hround r hr).2.1, (hround r hr).2.2.1⟩)
++  have control : (if d = 0 then some (.dec .run) else
++      (counterLoopOrbit M τ c d).state.map (counterLoopRedirect a exit)) =
++      some (CounterLoopState.dec FlagPhase.run) := by
++    by_cases hz : d = 0
++    · simp [hz]
++    · have ret := (hround (d - 1) (by omega)).2.2.2
++      rw [show d - 1 + 1 = d by omega] at ret
++      simp [hz, ret, counterLoopRedirect]
++  rw [control] at before
++  let wd := counterWord w d
++  have width : wd.length = w.length := counterWord_length w d
++  have empty : wd = List.replicate w.length false := by
++    simpa only [hd] using counter_word_exhausted w
++  have under : decFixed wd = none := (counter_dec_zero wd).mpr (by simp [empty])
++  have framed := counter_patch_frame w wd ct cp width hw
++  obtain ⟨debit, ds⟩ := counter_debit M a exit (counterLoopOrbit M τ c d) wd
++    (counterPatch ct cp wd) cp framed
++  simp only [under, Option.getD_none, Option.isSome_none, Bool.false_eq_true, ite_false,
++    width] at debit
++  rw [counter_patch_twice ct cp wd (List.replicate w.length true)
++    (by simp [width])] at debit
++  have fill : counterPatch ct cp (List.replicate w.length true) =
++      (fun q => if cp ≤ q ∧ q < cp + (w.length : ℤ) then some true else ct q) := by
++    funext q
++    simp only [counterPatch, List.length_replicate]
++    split_ifs with h
++    · have hp : 0 ≤ q - cp := by omega
++      have hn : (q - cp).toNat < w.length := by omega
++      simp [FinTM.bufferTape, h.1, hn]
++    · rfl
++  rw [fill] at debit
++  have time : (∑ r ∈ Finset.range d, τ (counterLoopOrbit M τ c r)) +
++      counterOverhead w (d + 1) =
++      ((∑ r ∈ Finset.range d, τ (counterLoopOrbit M τ c r)) + counterOverhead w d) +
++        (2 * (wd.takeWhile not).length + 2) := by
++    simp [counterOverhead, Finset.sum_range_succ, wd, Nat.add_assoc]
++  rw [time]
++  refine ⟨?_, ?_⟩
++  · rw [MultiTapeTM.runFrom_add, before, debit]
++  · exact counter_span_append _ _ _ _ cp w.length _ _ _ span
++      (by rw [before]; simpa only [width] using ds) (fun _ h => h)
++      (fun p hp => ⟨d, 0, Or.inr ⟨rfl, rfl⟩, by simpa using hp⟩)
+ 
+ /-- **The counter-driven loop, early exit** (design §12.7, C2). As
+ `Turing.counterLoopTM_run_done`, except that round `r₀`, below the counter's
+@@ -474,7 +1163,20 @@ theorem counterLoopTM_run_escape {k : ℕ} {S : Type} [DecidableEq S] {x : List
+           ((counterLoopTM M a (some e)).runFrom
+               (counterLoopCfg (some (.dec .run)) c ct cp) t).workTapePos j.castSucc =
+             (M.runFrom (counterLoopOrbit M τ c r) u).workTapePos j) := by
+-  sorry
++  subst T
++  obtain ⟨he, hs⟩ := counter_rounds M a (some e) τ c w ct cp hw (r₀ + 1)
++    (by omega) (by
++      intro r hr
++      obtain ⟨ha, ht, hg⟩ := hround r (by omega)
++      refine ⟨ha, ht, ?_⟩
++      intro u hu hut
++      obtain ⟨s, hst, hsa, hse⟩ := hg u hu hut
++      exact ⟨s, hst, hsa, fun h => hse (Option.some.inj h).symm⟩)
++  refine ⟨?_, hs.1, hs.2.1, ?_⟩
++  · unfold counterPatch at he
++    simp only [counterWord_length] at he
++    simpa [hexit, hea, counterLoopRedirect] using he
++  · simpa only [Nat.lt_succ_iff] using hs.2.2
+ 
+ /-- **Uniform per-round bound** (design §12.7, decision 12.7.3). If each of
+ the `d` rounds costs at most `B`, the returning run's exact time is at most
+@@ -489,6 +1191,15 @@ theorem counterLoop_time_le {k : ℕ} {S : Type} {x : List Bool}
+     (hB : ∀ r < d, τ (counterLoopOrbit M τ c r) ≤ B) :
+     ∑ r ∈ Finset.range d, τ (counterLoopOrbit M τ c r) + counterOverhead w (d + 1) ≤
+       d * B + 4 * d + 2 * w.length + 2 := by
+-  sorry
++  have hsum := Finset.sum_le_card_nsmul (Finset.range d)
++    (fun r => τ (counterLoopOrbit M τ c r)) B
++    (fun r hr => hB r (Finset.mem_range.mp hr))
++  simp only [Finset.card_range, nsmul_eq_mul] at hsum
++  have hc := counterOverhead_le w
++  rw [hd] at hc
++  calc
++    _ ≤ d * B + (4 * d + 2 * w.length + 2) :=
++      Nat.add_le_add (by simpa using hsum) hc
++    _ = _ := by omega
+ 
+ end Turing
+-- 
+2.50.1 (Apple Git-155)
+

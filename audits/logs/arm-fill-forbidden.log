@@ -1,0 +1,112 @@
+# arm-fill-forbidden: comment-stripped forbidden-construct screen (scripts/forbidden.py) at the tip dc891632
+## A. the 73 added + 8 modified files (after state)
+files screened: 81
+token hits (sorry, admit, axiom, IO, unsafe, implemented_by, extern, native_decide, ofReduceBool, opaque, run_cmd, run_tac, csimp): 23
+  TCSlib/Complexity/ClassPSPACE/TQBF.lean:2177  [sorry]  sorry
+  TCSlib/Complexity/ClassPSPACE/TQBF.lean:2223  [sorry]  sorry
+  TCSlib/Complexity/ClassPSPACE/TQBF.lean:2231  [sorry]  sorry
+  TCSlib/Complexity/ClassPSPACE/TQBF.lean:2239  [sorry]  sorry
+  TCSlib/Complexity/ClassPSPACE/TQBF.lean:2248  [sorry]  sorry
+  TCSlib/Complexity/ClassPSPACE/TQBF.lean:2258  [sorry]  sorry
+  TCSlib/Complexity/ClassPSPACE/TQBF.lean:2268  [sorry]  sorry
+  TCSlib/Complexity/ClassPSPACE/TQBF.lean:2280  [sorry]  sorry
+  TCSlib/Complexity/ClassPSPACE/TQBF.lean:2296  [sorry]  sorry
+  TCSlib/Complexity/ClassPSPACE/TQBF.lean:2311  [sorry]  sorry
+  TCSlib/Complexity/ClassPSPACE/TQBF.lean:2331  [sorry]  sorry
+  TCSlib/Complexity/ClassPSPACE/TQBF.lean:2345  [sorry]  sorry
+  TCSlib/Complexity/ClassPSPACE/TQBF.lean:2355  [sorry]  sorry
+  TCSlib/Complexity/ClassPSPACE/TQBF.lean:2362  [sorry]  sorry
+  TCSlib/Complexity/ClassPSPACE/TQBF.lean:2368  [sorry]  sorry
+  TCSlib/Complexity/ClassPSPACE/TQBF.lean:2377  [sorry]  sorry
+  TCSlib/Complexity/ClassPSPACE/TQBF.lean:2393  [sorry]  sorry
+  TCSlib/Complexity/ClassPSPACE/TQBF.lean:2419  [sorry]  sorry
+  TCSlib/Complexity/ClassPSPACE/TQBF.lean:2436  [sorry]  sorry
+  TCSlib/Complexity/ClassPSPACE/TQBF.lean:2449  [sorry]  sorry
+  TCSlib/Complexity/ClassPSPACE/TQBF.lean:2463  [sorry]  sorry
+  TCSlib/Complexity/SpaceComplexity/Savitch.lean:83  [sorry]  sorry
+  TCSlib/Complexity/SpaceComplexity/Savitch.lean:116  [sorry]  sorry
+command hits (macro/syntax/elab/notation/... and # commands): 23
+  TCSlib/Complexity/ClassPSPACE/TQBFARM/Leaf.lean:80  [macro]  scoped macro "bdt" : tactic => `(tactic| (simp only [St.Bd] at *; omega))
+  TCSlib/Complexity/ClassPSPACE/TQBFARM/Leaf.lean:83  [syntax]  scoped syntax "sext" (" [" (Lean.Parser.Tactic.simpLemma),* "]")? : tactic
+  TCSlib/Complexity/ClassPSPACE/TQBFARM/Leaf.lean:84  [macro_rules]  scoped macro_rules
+  TCSlib/Complexity/ClassPSPACE/TQBFARM/Machine.lean:199  [syntax]  scoped syntax "regs" (" [" (Lean.Parser.Tactic.simpLemma),* "]")? (Lean.Parser.Tactic.location)? :
+  TCSlib/Complexity/ClassPSPACE/TQBFARM/Machine.lean:201  [macro_rules]  scoped macro_rules
+  TCSlib/Complexity/SpaceComplexity/ExpBFS/Machine.lean:267  [syntax]  scoped syntax "regs" (" [" (Lean.Parser.Tactic.simpLemma),* "]")? (Lean.Parser.Tactic.location)? :
+  TCSlib/Complexity/SpaceComplexity/ExpBFS/Machine.lean:269  [macro_rules]  scoped macro_rules
+  TCSlib/Complexity/SpaceComplexity/Logspace/ISCountRegs.lean:289  [macro]  scoped macro "isr" : tactic => `(tactic| simp only [St.toV_n, St.toV_lg, St.toV_k, St.toV_s,
+  TCSlib/Complexity/SpaceComplexity/Logspace/ISCountRegs.lean:296  [macro]  scoped macro "isb" : tactic => `(tactic| (simp only [St.Bd] at *; omega))
+  TCSlib/Complexity/SpaceComplexity/Logspace/PathHardRegs.lean:269  [syntax]  scoped syntax "regs" (" [" (Lean.Parser.Tactic.simpLemma),* "]")? (Lean.Parser.Tactic.location)? :
+  TCSlib/Complexity/SpaceComplexity/Logspace/PathHardRegs.lean:271  [macro_rules]  scoped macro_rules
+  TCSlib/Complexity/SpaceComplexity/Logspace/PathHardRegs.lean:285  [macro]  scoped macro "sbd" : tactic => `(tactic| (simp only [St.Bd] at hbd ⊢ <;> omega))
+  TCSlib/Complexity/SpaceComplexity/Logspace/PathHardRegs.lean:289  [macro]  scoped macro "stp" : tactic =>
+  TCSlib/Complexity/SpaceComplexity/Logspace/PathHardRun.lean:52  [macro]  local macro "sbd2" : tactic =>
+  TCSlib/Complexity/SpaceComplexity/Logspace/PathWalkMachine.lean:307  [macro]  scoped macro "pw_regs" : tactic => `(tactic| simp only [PReg.v_0, PReg.v_1, PReg.v_2, PReg.v_3,
+  TCSlib/Complexity/SpaceComplexity/Logspace/PathWalkMachine.lean:312  [macro]  scoped macro "pw_le" : tactic => `(tactic| (simp only [PReg.Le] at *; omega))
+  TCSlib/Complexity/SpaceComplexity/Logspace/PathWalkMachine.lean:315  [macro]  scoped macro "pw_ext" : tactic => `(tactic| (ext <;> dsimp only <;> omega))
+  TCSlib/Complexity/SpaceComplexity/Logspace/PathWalkMachine.lean:318  [macro]  scoped macro "pw_ext'" : tactic => `(tactic| (ext <;> (try simp) <;> (try omega)))
+  TCSlib/Complexity/SpaceComplexity/Machines/ARMLoops.lean:128  [macro]  local macro "upd_tac" : tactic =>
+  TCSlib/Complexity/SpaceComplexity/SavitchARM/Machine.lean:273  [syntax]  scoped syntax "regs" (" [" (Lean.Parser.Tactic.simpLemma),* "]")? (Lean.Parser.Tactic.location)? :
+  TCSlib/Complexity/SpaceComplexity/SavitchARM/Machine.lean:275  [macro_rules]  scoped macro_rules
+  TCSlib/Complexity/SpaceComplexity/SavitchARM/Recursion.lean:167  [macro]  scoped macro "bdt" : tactic => `(tactic| (simp only [St.Bd]; omega))
+  TCSlib/Complexity/SpaceComplexity/SavitchARM/Setup.lean:51  [macro]  scoped macro "sbd" : tactic =>
+set_option: 237 standard header lines; 17 other occurrences
+  TCSlib/Complexity/SpaceComplexity/Codec/Checks.lean:246  set_option synthInstance.maxSize 1000 in
+  TCSlib/Complexity/SpaceComplexity/Codec/Checks.lean:250  set_option synthInstance.maxSize 1000 in
+  TCSlib/Complexity/SpaceComplexity/Codec/Machine.lean:118  set_option synthInstance.maxHeartbeats 1000000 in
+  TCSlib/Complexity/SpaceComplexity/Codec/Machine.lean:119  set_option synthInstance.maxSize 2000 in
+  TCSlib/Complexity/SpaceComplexity/Codec/Step.lean:344  set_option synthInstance.maxSize 1000 in
+  TCSlib/Complexity/SpaceComplexity/Codec/Step.lean:348  set_option synthInstance.maxSize 1000 in
+  TCSlib/Complexity/SpaceComplexity/Codec/Valid.lean:82  set_option synthInstance.maxSize 1000 in
+  TCSlib/Complexity/SpaceComplexity/Codec/Valid.lean:86  set_option synthInstance.maxSize 1000 in
+  TCSlib/Complexity/SpaceComplexity/Codec/Word.lean:98  set_option synthInstance.maxSize 1000 in
+  TCSlib/Complexity/SpaceComplexity/Logspace/ISCountGenMachine.lean:73  set_option synthInstance.maxSize 4096 in
+  TCSlib/Complexity/SpaceComplexity/Logspace/ISCountGenMachine.lean:74  set_option synthInstance.maxHeartbeats 400000 in
+  TCSlib/Complexity/SpaceComplexity/Logspace/PathHardMachine.lean:124  set_option synthInstance.maxSize 4000 in
+  TCSlib/Complexity/SpaceComplexity/Logspace/PathHardRegs.lean:283  set_option hygiene false in
+  TCSlib/Complexity/SpaceComplexity/Logspace/PathHardRegs.lean:287  set_option hygiene false in
+  TCSlib/Complexity/SpaceComplexity/Logspace/PathHardRun.lean:49  set_option hygiene false in
+  TCSlib/Complexity/SpaceComplexity/Logspace/PathWalkMachine.lean:50  set_option synthInstance.maxSize 4096 in
+  TCSlib/Complexity/SpaceComplexity/Logspace/PathWalkMachine.lean:51  set_option synthInstance.maxHeartbeats 400000 in
+rc=0
+
+## B. the 8 modified files, before state (069cde82), for comparison
+files screened: 8
+token hits (sorry, admit, axiom, IO, unsafe, implemented_by, extern, native_decide, ofReduceBool, opaque, run_cmd, run_tac, csimp): 33
+  TCSlib/Complexity/ClassPSPACE/TQBF.lean.txt:2172  [sorry]  sorry
+  TCSlib/Complexity/ClassPSPACE/TQBF.lean.txt:2218  [sorry]  sorry
+  TCSlib/Complexity/ClassPSPACE/TQBF.lean.txt:2226  [sorry]  sorry
+  TCSlib/Complexity/ClassPSPACE/TQBF.lean.txt:2234  [sorry]  sorry
+  TCSlib/Complexity/ClassPSPACE/TQBF.lean.txt:2243  [sorry]  sorry
+  TCSlib/Complexity/ClassPSPACE/TQBF.lean.txt:2253  [sorry]  sorry
+  TCSlib/Complexity/ClassPSPACE/TQBF.lean.txt:2263  [sorry]  sorry
+  TCSlib/Complexity/ClassPSPACE/TQBF.lean.txt:2275  [sorry]  sorry
+  TCSlib/Complexity/ClassPSPACE/TQBF.lean.txt:2291  [sorry]  sorry
+  TCSlib/Complexity/ClassPSPACE/TQBF.lean.txt:2306  [sorry]  sorry
+  TCSlib/Complexity/ClassPSPACE/TQBF.lean.txt:2326  [sorry]  sorry
+  TCSlib/Complexity/ClassPSPACE/TQBF.lean.txt:2340  [sorry]  sorry
+  TCSlib/Complexity/ClassPSPACE/TQBF.lean.txt:2350  [sorry]  sorry
+  TCSlib/Complexity/ClassPSPACE/TQBF.lean.txt:2357  [sorry]  sorry
+  TCSlib/Complexity/ClassPSPACE/TQBF.lean.txt:2363  [sorry]  sorry
+  TCSlib/Complexity/ClassPSPACE/TQBF.lean.txt:2372  [sorry]  sorry
+  TCSlib/Complexity/ClassPSPACE/TQBF.lean.txt:2388  [sorry]  sorry
+  TCSlib/Complexity/ClassPSPACE/TQBF.lean.txt:2413  [sorry]  sorry
+  TCSlib/Complexity/ClassPSPACE/TQBF.lean.txt:2430  [sorry]  sorry
+  TCSlib/Complexity/ClassPSPACE/TQBF.lean.txt:2443  [sorry]  sorry
+  TCSlib/Complexity/ClassPSPACE/TQBF.lean.txt:2457  [sorry]  sorry
+  TCSlib/Complexity/ClassPSPACE/TQBF.lean.txt:3225  [sorry]  sorry
+  TCSlib/Complexity/ClassPSPACE/TQBF.lean.txt:3295  [sorry]  sorry
+  TCSlib/Complexity/ClassPSPACE/TQBF.lean.txt:3303  [sorry]  sorry
+  TCSlib/Complexity/SpaceComplexity/ConfigGraph.lean.txt:846  [sorry]  sorry
+  TCSlib/Complexity/SpaceComplexity/Logspace/ImmermanSzelepcsenyi.lean.txt:81  [sorry]  sorry
+  TCSlib/Complexity/SpaceComplexity/Logspace/ImmermanSzelepcsenyi.lean.txt:94  [sorry]  sorry
+  TCSlib/Complexity/SpaceComplexity/Logspace/ImmermanSzelepcsenyi.lean.txt:114  [sorry]  sorry
+  TCSlib/Complexity/SpaceComplexity/Logspace/Path.lean.txt:105  [sorry]  sorry
+  TCSlib/Complexity/SpaceComplexity/Logspace/Path.lean.txt:134  [sorry]  sorry
+  TCSlib/Complexity/SpaceComplexity/Savitch.lean.txt:79  [sorry]  sorry
+  TCSlib/Complexity/SpaceComplexity/Savitch.lean.txt:112  [sorry]  sorry
+  TCSlib/Complexity/SpaceComplexity/Savitch.lean.txt:129  [sorry]  sorry
+command hits (macro/syntax/elab/notation/... and # commands): 0
+set_option: 18 standard header lines; 0 other occurrences
+rc=0
+
+## C. raw (not comment-stripped) occurrences of the word 'sorry' in the 73 added files: none (/usr/bin/grep -n -w sorry over the 73 files, rc=1)

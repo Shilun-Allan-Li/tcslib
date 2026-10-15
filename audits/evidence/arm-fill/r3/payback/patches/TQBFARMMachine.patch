@@ -1,0 +1,20 @@
+--- a/TCSlib/Complexity/ClassPSPACE/TQBFARM/Machine.lean
++++ b/TCSlib/Complexity/ClassPSPACE/TQBFARM/Machine.lean
+@@ -84,15 +84,13 @@
+ /-- The bit decider reads the input. -/
+ lemma orc_bit (y : List Bool) (a : ℕ) : orc 0 (pairEncode y (Nat.bits a)) = y.getD a false := by
+   show MultiTapeTM.indicator (inputBitLang : Set (List Bool)) _ = _
+-  rw [inputBitLang, indicator_indexLang_pairEncode]
+-  cases y.getD a false <;> simp
++  exact indicator_inputBitLang y a
+ 
+ /-- The length decider compares with the input length. -/
+ lemma orc_len (y : List Bool) (a : ℕ) :
+     orc 1 (pairEncode y (Nat.bits a)) = decide (a < y.length) := by
+   show MultiTapeTM.indicator (inputLenLang : Set (List Bool)) _ = _
+-  rw [inputLenLang, indicator_indexLang_pairEncode]
+-  exact decide_eq_decide.mpr Iff.rfl
++  exact indicator_inputLenLang y a
+ 
+ /-! ## Registers -/
+ 

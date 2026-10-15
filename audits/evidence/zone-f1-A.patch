@@ -1,0 +1,653 @@
+From 7b1bbca9647eb5261fbec890bc7f6916a3bd066a Mon Sep 17 00:00:00 2001
+From: Codex <codex@openai.com>
+Date: Sat, 10 Oct 2026 00:42:06 -0300
+Subject: [PATCH 1/2] Prove zone capacities, layout, word invariance, and
+ cascade regressions
+
+---
+ .../Complexity/TuringMachine/Build/Zone.lean  | 366 +++++++++++++++++-
+ 1 file changed, 345 insertions(+), 21 deletions(-)
+
+diff --git a/TCSlib/Complexity/TuringMachine/Build/Zone.lean b/TCSlib/Complexity/TuringMachine/Build/Zone.lean
+index 57dbd048..c910d551 100644
+--- a/TCSlib/Complexity/TuringMachine/Build/Zone.lean
++++ b/TCSlib/Complexity/TuringMachine/Build/Zone.lean
+@@ -158,7 +158,11 @@ argument is positive, so there is no logarithm-at-zero case). The round-1
+ audit's independent derivation is the route. -/
+ theorem zoneIndex_eq_iff (s i : ℕ) :
+     zoneIndex s = i ↔ zoneBase i ≤ s ∧ s < zoneBase (i + 1) := by
+-  sorry
++  rw [zoneIndex, Nat.log2_eq_iff (by omega)]
++  have h := Nat.two_pow_pos i
++  have h' := Nat.two_pow_pos (i + 1)
++  unfold zoneBase
++  omega
+ 
+ /-! ### The carrier -/
+ 
+@@ -226,7 +230,7 @@ stores the blank cell, and every other physical cell is blank.
+ theorem zoneTape_empty (ℓ : ℕ) (c : ℤ) :
+     zoneTape (ZoneContents.empty ℓ) c =
+       if c = 0 then some false else if c = 1 then some false else none := by
+-  sorry
++  simp [zoneTape, ZoneContents.empty, zoneSlot]
+ 
+ /-- Cells beyond the physical extent of `ℓ` levels are blank, for every
+ contents: the zones' slots stop at `zoneBase ℓ`, so the tape is `none`
+@@ -239,7 +243,28 @@ asymmetric extent `[-2·zoneBase ℓ, 2·zoneBase ℓ + 1]`; the stated
+ symmetric bound is the safe envelope.) -/
+ theorem zoneTape_blank_outside {ℓ : ℕ} (z : ZoneContents ℓ) (c : ℤ)
+     (hc : (2 * zoneBase ℓ + 1 : ℤ) < |c|) : zoneTape z c = none := by
+-  sorry
++  have hs (w : Fin ℓ → List (Option Bool)) (s : ℕ)
++      (hb : zoneBase ℓ ≤ s) : zoneSlot w s = none := by
++    unfold zoneSlot
++    split_ifs with hi
++    · have htop := ((zoneIndex_eq_iff s (zoneIndex s)).mp rfl).2
++      have hp := Nat.pow_le_pow_right (by decide : 0 < 2)
++        (Nat.succ_le_of_lt hi)
++      unfold zoneBase at *
++      omega
++    · rfl
++  have h0 : c ≠ 0 := by intro h; rw [h, abs_zero] at hc; omega
++  have h1 : c ≠ 1 := by intro h; rw [h] at hc; change 2 * (zoneBase ℓ : ℤ) + 1 < 1 at hc; omega
++  simp only [zoneTape, if_neg h0, if_neg h1]
++  by_cases hpos : 2 ≤ c
++  · rw [if_pos hpos]
++    rw [abs_of_nonneg (by omega : 0 ≤ c)] at hc
++    have hb : zoneBase ℓ ≤ (c - 2).toNat / 2 := by omega
++    simp only [hs z.right _ hb]
++  · rw [if_neg hpos]
++    rw [abs_of_neg (by omega : c < 0)] at hc
++    have hb : zoneBase ℓ ≤ (-c - 1).toNat / 2 := by omega
++    simp only [hs z.left _ hb]
+ 
+ /-! ### The represented word -/
+ 
+@@ -248,6 +273,42 @@ concatenated inner-first. -/
+ def zoneSide {ℓ : ℕ} (w : Fin ℓ → List (Option Bool)) : List (Option Bool) :=
+   (List.finRange ℓ).flatMap fun i => w i
+ 
++private theorem zoneSide_succ {n : ℕ} (w : Fin (n + 1) → List (Option Bool)) :
++    zoneSide w = w 0 ++ zoneSide (fun k => w k.succ) := by
++  simp [zoneSide, List.finRange_succ, List.flatMap_map]
++
++/-- Replacing two adjacent zone words with the same concatenation preserves
++the represented side. Induct on the number of levels, peeling off the
++unchanged first word until the changed pair is at the front. -/
++private theorem zoneSide_adjacent {n : ℕ} (a : ℕ) (ha : a + 1 < n)
++    (w v : Fin n → List (Option Bool))
++    (hp : v ⟨a, by omega⟩ ++ v ⟨a + 1, ha⟩ =
++      w ⟨a, by omega⟩ ++ w ⟨a + 1, ha⟩)
++    (hf : ∀ k, k.val ≠ a → k.val ≠ a + 1 → v k = w k) :
++    zoneSide v = zoneSide w := by
++  induction n generalizing a with
++  | zero => omega
++  | succ n ih =>
++    cases a with
++    | zero =>
++      cases n with
++      | zero => omega
++      | succ n =>
++        rw [zoneSide_succ, zoneSide_succ]
++        rw [zoneSide_succ, zoneSide_succ, ← List.append_assoc, ← List.append_assoc]
++        rw [show v 0 ++ v (Fin.succ 0) = w 0 ++ w (Fin.succ 0) from hp]
++        congr 1
++        congr 1
++        funext k
++        apply hf <;> simp
++    | succ a =>
++      rw [zoneSide_succ, zoneSide_succ, hf 0 (by simp) (by simp)]
++      congr 1
++      apply ih a (by omega) (fun k => w k.succ) (fun k => v k.succ)
++      · exact hp
++      · intro k h0 h1
++        apply hf <;> simp only [Fin.val_succ] <;> omega
++
+ /-! ### Pure rebalancing (pairwise, order-preserving, totally guarded) -/
+ 
+ /-- The level-`i` inward shift on one side's family: when `1 ≤ i < ℓ` and
+@@ -292,7 +353,23 @@ def zoneShiftOutW {ℓ : ℕ} (i : ℕ) (w : Fin ℓ → List (Option Bool)) :
+ concatenation is unchanged. -/
+ theorem zoneSide_shiftInW {ℓ : ℕ} (i : ℕ) (w : Fin ℓ → List (Option Bool)) :
+     zoneSide (zoneShiftInW i w) = zoneSide w := by
+-  sorry
++  by_cases hi : 1 ≤ i ∧ i < ℓ
++  · by_cases he : w ⟨i - 1, by omega⟩ = []
++    · apply zoneSide_adjacent (i - 1) (by omega)
++      · have hne : i ≠ i - 1 := by omega
++        have hsucc : i - 1 + 1 = i := by omega
++        simp [zoneShiftInW, hi, he, hsucc, hne, List.take_append_drop]
++      · intro k h0 h1
++        have hk : k.val ≠ i := by omega
++        simp [zoneShiftInW, hi, he, h0, hk]
++    · have hsame : zoneShiftInW i w = w := by
++        funext k
++        simp [zoneShiftInW, hi, he]
++      rw [hsame]
++  · have hsame : zoneShiftInW i w = w := by
++      funext k
++      simp [zoneShiftInW, hi]
++    rw [hsame]
+ 
+ /-- Outward rebalancing never changes the represented half-word.
+ 
+@@ -301,7 +378,24 @@ adjacent two-zone segment is literally re-associated:
+ `take q ++ (drop q ++ wᵢ) = wᵢ₋₁ ++ wᵢ` at the cutoff `q = 2^(i-1)`. -/
+ theorem zoneSide_shiftOutW {ℓ : ℕ} (i : ℕ) (w : Fin ℓ → List (Option Bool)) :
+     zoneSide (zoneShiftOutW i w) = zoneSide w := by
+-  sorry
++  by_cases hi : 1 ≤ i ∧ i < ℓ
++  · by_cases hg : (w ⟨i - 1, by omega⟩).length = zoneCapacity (i - 1) ∧
++        (w ⟨i, hi.2⟩).length + 2 ^ (i - 1) ≤ zoneCapacity i
++    · apply zoneSide_adjacent (i - 1) (by omega)
++      · have hne : i ≠ i - 1 := by omega
++        have hsucc : i - 1 + 1 = i := by omega
++        simp [zoneShiftOutW, hi, hg, hsucc, hne, ← List.append_assoc]
++      · intro k h0 h1
++        have hk : k.val ≠ i := by omega
++        simp [zoneShiftOutW, hi, hg, h0, hk]
++    · have hsame : zoneShiftOutW i w = w := by
++        funext k
++        simp [zoneShiftOutW, hi, hg]
++      rw [hsame]
++  · have hsame : zoneShiftOutW i w = w := by
++      funext k
++      simp [zoneShiftOutW, hi]
++    rw [hsame]
+ 
+ /-- **The full-donor regression** (required by the round-1 audit,
+ A-S2-1): above an empty zone, a donor of any length — a full one included —
+@@ -314,7 +408,25 @@ theorem zoneShiftInW_full_donor {ℓ : ℕ} (i : ℕ) (hi : 1 ≤ i) (hℓ : i <
+     (w : Fin ℓ → List (Option Bool)) (hempty : w ⟨i - 1, by omega⟩ = []) :
+     zoneShiftInW i w ⟨i - 1, by omega⟩ = (w ⟨i, hℓ⟩).take (2 ^ (i - 1)) ∧
+     zoneShiftInW i w ⟨i, hℓ⟩ = (w ⟨i, hℓ⟩).drop (2 ^ (i - 1)) := by
+-  sorry
++  have hne : i ≠ i - 1 := by omega
++  simp [zoneShiftInW, hi, hℓ, hempty, hne]
++
++private theorem zoneShiftInW_capacity {ℓ : ℕ} (i : ℕ)
++    (w : Fin ℓ → List (Option Bool))
++    (hw : ∀ j, (w j).length ≤ zoneCapacity j.val) :
++    ∀ j, (zoneShiftInW i w j).length ≤ zoneCapacity j.val := by
++  intro j
++  unfold zoneShiftInW
++  split_ifs with hi he hj hj
++  · simp only [List.length_take, zoneCapacity, hj]
++    omega
++  · have h := hw ⟨i, hi.2⟩
++    dsimp only at h
++    simp only [List.length_drop, hj]
++    exact (Nat.sub_le _ _).trans h
++  · exact hw j
++  · exact hw j
++  · exact hw j
+ 
+ /-- Lift the inward shift to contents: `side = false` acts on the left
+ family, `side = true` on the right. Hypothesis-free (round-1 repair).
+@@ -327,8 +439,31 @@ def zoneShiftIn {ℓ : ℕ} (side : Bool) (i : ℕ) (z : ZoneContents ℓ) :
+   home := z.home
+   left := if side then z.left else zoneShiftInW i z.left
+   right := if side then zoneShiftInW i z.right else z.right
+-  left_le := by sorry
+-  right_le := by sorry
++  left_le := by
++    cases side
++    · exact zoneShiftInW_capacity i z.left z.left_le
++    · exact z.left_le
++  right_le := by
++    cases side
++    · exact z.right_le
++    · exact zoneShiftInW_capacity i z.right z.right_le
++
++private theorem zoneShiftOutW_capacity {ℓ : ℕ} (i : ℕ)
++    (w : Fin ℓ → List (Option Bool))
++    (hw : ∀ j, (w j).length ≤ zoneCapacity j.val) :
++    ∀ j, (zoneShiftOutW i w j).length ≤ zoneCapacity j.val := by
++  intro j
++  unfold zoneShiftOutW
++  split_ifs with hi hg hj hj
++  · simp only [List.length_take, zoneCapacity, hj]
++    omega
++  · simp only [List.length_append, List.length_drop, hg.1, hj]
++    have h := hg.2
++    unfold zoneCapacity at *
++    omega
++  · exact hw j
++  · exact hw j
++  · exact hw j
+ 
+ /-- Lift the outward shift to contents. Hypothesis-free: the receiving
+ zone's room condition is inside the family op's guard.
+@@ -341,8 +476,14 @@ def zoneShiftOut {ℓ : ℕ} (side : Bool) (i : ℕ) (z : ZoneContents ℓ) :
+   home := z.home
+   left := if side then z.left else zoneShiftOutW i z.left
+   right := if side then zoneShiftOutW i z.right else z.right
+-  left_le := by sorry
+-  right_le := by sorry
++  left_le := by
++    cases side
++    · exact zoneShiftOutW_capacity i z.left z.left_le
++    · exact z.left_le
++  right_le := by
++    cases side
++    · exact z.right_le
++    · exact zoneShiftOutW_capacity i z.right z.right_le
+ 
+ /-! ### Pure head steps and the home write -/
+ 
+@@ -358,7 +499,7 @@ branches; every slot branch reads the untouched families. -/
+ theorem zoneTape_homeWrite {ℓ : ℕ} (z : ZoneContents ℓ) (v : Option Bool)
+     (c : ℤ) (h0 : c ≠ 0) (h1 : c ≠ 1) :
+     zoneTape (zoneHomeWrite z v) c = zoneTape z c := by
+-  sorry
++  simp only [zoneTape, zoneHomeWrite, if_neg h0, if_neg h1]
+ 
+ /-- The virtual head steps right: the home is pushed onto the inner end of
+ the left stack's zone `0`, and the new home is popped from the right
+@@ -373,8 +514,19 @@ def zoneMoveRight {ℓ : ℕ} (hℓ : 0 < ℓ) (z : ZoneContents ℓ)
+   home := ((z.right ⟨0, hℓ⟩).headI : Option Bool)
+   left := fun j => if j.val = 0 then z.home :: z.left j else z.left j
+   right := fun j => if j.val = 0 then (z.right j).tail else z.right j
+-  left_le := by sorry
+-  right_le := by sorry
++  left_le := by
++    intro j
++    split_ifs with hj
++    · have he : j = ⟨0, hℓ⟩ := Fin.ext hj
++      subst j
++      simpa only [List.length_cons] using hroom
++    · exact z.left_le j
++  right_le := by
++    intro j
++    split_ifs
++    · simpa only [List.length_tail] using
++        (Nat.sub_le (z.right j).length 1).trans (z.right_le j)
++    · exact z.right_le j
+ 
+ /-- The mirrored left step. -/
+ def zoneMoveLeft {ℓ : ℕ} (hℓ : 0 < ℓ) (z : ZoneContents ℓ)
+@@ -383,8 +535,19 @@ def zoneMoveLeft {ℓ : ℕ} (hℓ : 0 < ℓ) (z : ZoneContents ℓ)
+   home := ((z.left ⟨0, hℓ⟩).headI : Option Bool)
+   left := fun j => if j.val = 0 then (z.left j).tail else z.left j
+   right := fun j => if j.val = 0 then z.home :: z.right j else z.right j
+-  left_le := by sorry
+-  right_le := by sorry
++  left_le := by
++    intro j
++    split_ifs
++    · simpa only [List.length_tail] using
++        (Nat.sub_le (z.left j).length 1).trans (z.left_le j)
++    · exact z.left_le j
++  right_le := by
++    intro j
++    split_ifs with hj
++    · have he : j = ⟨0, hℓ⟩ := Fin.ext hj
++      subst j
++      simpa only [List.length_cons] using hroom
++    · exact z.right_le j
+ 
+ /-- The totally guarded head step (`dir = true` is right): acts when
+ `0 < ℓ` and the pushed side has room, else identity — the foldable form
+@@ -414,7 +577,23 @@ theorem zoneSide_moveRight {ℓ : ℕ} (hℓ : 0 < ℓ) (z : ZoneContents ℓ)
+     (hne : z.right ⟨0, hℓ⟩ ≠ []) :
+     zoneSide (zoneMoveRight hℓ z hroom).left = z.home :: zoneSide z.left ∧
+     zoneSide (zoneMoveRight hℓ z hroom).right = (zoneSide z.right).tail := by
+-  sorry
++  cases ℓ with
++  | zero => omega
++  | succ n =>
++    have hleft : (fun k : Fin n => (zoneMoveRight hℓ z hroom).left k.succ) =
++        (fun k : Fin n => z.left k.succ) := by
++      funext k
++      simp [zoneMoveRight]
++    have hright : (fun k : Fin n => (zoneMoveRight hℓ z hroom).right k.succ) =
++        (fun k : Fin n => z.right k.succ) := by
++      funext k
++      simp [zoneMoveRight]
++    constructor
++    · rw [zoneSide_succ, zoneSide_succ, hleft]
++      simp [zoneMoveRight]
++    · rw [zoneSide_succ, zoneSide_succ, hright]
++      simp only [zoneMoveRight, Fin.val_zero, ite_true]
++      exact (List.tail_append_of_ne_nil hne).symm
+ 
+ /-! ### The classical rebalance as a cascade (round-1 repair, A-S2-1)
+ 
+@@ -435,6 +614,61 @@ def zoneCascadeRight {ℓ : ℕ} (j : ℕ) (z : ZoneContents ℓ) : ZoneContents
+     (zoneMove true
+       ((List.range j).reverse.foldl (fun z i => zoneStepPair (i + 1) z) z))
+ 
++private theorem zoneStepPair_side {ℓ : ℕ} (i : ℕ) (z : ZoneContents ℓ) :
++    zoneSide (zoneStepPair i z).left = zoneSide z.left ∧
++      zoneSide (zoneStepPair i z).right = zoneSide z.right :=
++  ⟨zoneSide_shiftOutW i z.left, zoneSide_shiftInW i z.right⟩
++
++private theorem zoneStepPair_frame {ℓ : ℕ} (i : ℕ) (z : ZoneContents ℓ)
++    (k : Fin ℓ) (h0 : k.val ≠ i - 1) (h1 : k.val ≠ i) :
++    (zoneStepPair i z).left k = z.left k ∧
++      (zoneStepPair i z).right k = z.right k := by
++  change zoneShiftOutW i z.left k = z.left k ∧ zoneShiftInW i z.right k = z.right k
++  constructor
++  · unfold zoneShiftOutW
++    split_ifs <;> simp_all
++  · unfold zoneShiftInW
++    split_ifs <;> simp_all
++
++private theorem zoneStepPair_active {ℓ : ℕ} (i : ℕ) (hi : i + 1 < ℓ)
++    (z : ZoneContents ℓ) (hr : z.right ⟨i, by omega⟩ = [])
++    (hl : (z.left ⟨i, by omega⟩).length = zoneCapacity i)
++    (hroom : (z.left ⟨i + 1, hi⟩).length + 2 ^ i ≤ zoneCapacity (i + 1)) :
++    (zoneStepPair (i + 1) z).right ⟨i, by omega⟩ =
++        (z.right ⟨i + 1, hi⟩).take (2 ^ i) ∧
++    (zoneStepPair (i + 1) z).left ⟨i, by omega⟩ =
++        (z.left ⟨i, by omega⟩).take (2 ^ i) ∧
++    (zoneStepPair (i + 1) z).right ⟨i + 1, hi⟩ =
++        (z.right ⟨i + 1, hi⟩).drop (2 ^ i) ∧
++    (zoneStepPair (i + 1) z).left ⟨i + 1, hi⟩ =
++        (z.left ⟨i, by omega⟩).drop (2 ^ i) ++ z.left ⟨i + 1, hi⟩ := by
++  simp [zoneStepPair, zoneShiftIn, zoneShiftOut, zoneShiftInW, zoneShiftOutW,
++    hi, hr, hl, hroom]
++
++private theorem zoneCascadeRight_succ {ℓ : ℕ} (j : ℕ) (z : ZoneContents ℓ) :
++    zoneCascadeRight (j + 1) z =
++      zoneStepPair (j + 1) (zoneCascadeRight j (zoneStepPair (j + 1) z)) := by
++  simp [zoneCascadeRight, List.range_succ, List.reverse_append, List.foldl_append]
++
++/-- The recursive descent and ascent only touch levels at or below their
++index. Induction peels off the outer pair; the base move touches zero. -/
++private theorem zoneCascadeRight_frame {ℓ : ℕ} (j : ℕ) (z : ZoneContents ℓ)
++    (k : Fin ℓ) (hk : j < k.val) :
++    (zoneCascadeRight j z).left k = z.left k ∧
++      (zoneCascadeRight j z).right k = z.right k := by
++  induction j generalizing z with
++  | zero =>
++    have hk0 : k.val ≠ 0 := by omega
++    simp only [zoneCascadeRight, List.range_zero, List.reverse_nil, List.foldl_nil]
++    unfold zoneMove
++    split_ifs <;> simp [zoneMoveRight, hk0]
++  | succ j ih =>
++    rw [zoneCascadeRight_succ]
++    rw [(zoneStepPair_frame _ _ k (by omega) (by omega)).1,
++      (zoneStepPair_frame _ _ k (by omega) (by omega)).2]
++    rw [(ih _ (by omega)).1, (ih _ (by omega)).2]
++    exact zoneStepPair_frame _ _ k (by omega) (by omega)
++
+ /-- The cascade realizes exactly one virtual right move. Preconditions are
+ the classical pre-state at index `j` — on the right, zones below `j` empty
+ and the donor `j` nonempty; on the left, zones below `j` full — **plus the
+@@ -464,7 +698,49 @@ theorem zoneSide_cascadeRight {ℓ : ℕ} (j : ℕ) (hj : j < ℓ)
+     (hroom : (z.left ⟨j, hj⟩).length + 2 ^ (j - 1) ≤ zoneCapacity j) :
+     zoneSide (zoneCascadeRight j z).left = z.home :: zoneSide z.left ∧
+     zoneSide (zoneCascadeRight j z).right = (zoneSide z.right).tail := by
+-  sorry
++  induction j generalizing z with
++  | zero =>
++    have hroom0 : (z.left ⟨0, hj⟩).length + 1 ≤ zoneCapacity 0 := by
++      simpa using hroom
++    simpa only [zoneCascadeRight, List.range_zero, List.reverse_nil,
++      List.foldl_nil, zoneMove, dif_pos hj, dif_pos hroom0] using
++      zoneSide_moveRight hj z hroom0 hdonor
++  | succ j ih =>
++    have hjl : j < ℓ := by omega
++    have hroom' : (z.left ⟨j + 1, hj⟩).length + 2 ^ j ≤
++        zoneCapacity (j + 1) := by simpa using hroom
++    have hactive := zoneStepPair_active j hj z (hr j (by omega))
++      (hl j (by omega)) hroom'
++    have hr' : ∀ k (hk : k < j),
++        (zoneStepPair (j + 1) z).right ⟨k, by omega⟩ = [] := by
++      intro k hk
++      rw [(zoneStepPair_frame (j + 1) z ⟨k, by omega⟩ (by dsimp; omega) (by dsimp; omega)).2]
++      exact hr k (by omega)
++    have hl' : ∀ k (hk : k < j),
++        ((zoneStepPair (j + 1) z).left ⟨k, by omega⟩).length = zoneCapacity k := by
++      intro k hk
++      rw [(zoneStepPair_frame (j + 1) z ⟨k, by omega⟩ (by dsimp; omega) (by dsimp; omega)).1]
++      exact hl k (by omega)
++    have hd' : (zoneStepPair (j + 1) z).right ⟨j, hjl⟩ ≠ [] := by
++      rw [hactive.1]
++      apply List.ne_nil_of_length_pos
++      rw [List.length_take]
++      exact lt_min (Nat.two_pow_pos j) (List.length_pos_iff.mpr hdonor)
++    have hlower : ((zoneStepPair (j + 1) z).left ⟨j, hjl⟩).length = 2 ^ j := by
++      rw [hactive.2.1, List.length_take, hl j (by omega)]
++      unfold zoneCapacity
++      omega
++    have hroomlower : ((zoneStepPair (j + 1) z).left ⟨j, hjl⟩).length +
++        2 ^ (j - 1) ≤ zoneCapacity j := by
++      rw [hlower]
++      have hp := Nat.pow_le_pow_right (by decide : 0 < 2) (Nat.sub_le j 1)
++      unfold zoneCapacity
++      omega
++    have hinner := ih hjl (zoneStepPair (j + 1) z) hr' hl' hd' hroomlower
++    rw [zoneCascadeRight_succ, (zoneStepPair_side _ _).1,
++      (zoneStepPair_side _ _).2, hinner.1, hinner.2,
++      (zoneStepPair_side _ _).1, (zoneStepPair_side _ _).2]
++    exact ⟨rfl, rfl⟩
+ 
+ /-- The cascade restores the half-full discipline below its index: after a
+ classical right move at index `j` from a donor holding at least `2^j`
+@@ -513,7 +789,9 @@ theorem zoneCascadeRight_zero {ℓ : ℕ} (hℓ : 0 < ℓ) (z : ZoneContents ℓ
+     (hroom : (z.left ⟨0, hℓ⟩).length + 1 ≤ zoneCapacity 0) :
+     zoneSide (zoneCascadeRight 0 z).left = z.home :: zoneSide z.left ∧
+     zoneSide (zoneCascadeRight 0 z).right = (zoneSide z.right).tail := by
+-  sorry
++  simpa only [zoneCascadeRight, List.range_zero, List.reverse_nil,
++    List.foldl_nil, zoneMove, dif_pos hℓ, dif_pos hroom] using
++    zoneSide_moveRight hℓ z hroom hdonor
+ 
+ /-- Regression (round-2 audit, A-S2-R2-1): a **full top receiver** blocks
+ the cascade harmlessly — with the classical lower-left state and
+@@ -531,7 +809,35 @@ theorem zoneCascadeRight_blocked {ℓ : ℕ} (j : ℕ) (hj : j < ℓ)
+     (hfull : (z.left ⟨j, hj⟩).length = zoneCapacity j) :
+     zoneSide (zoneCascadeRight j z).left = zoneSide z.left ∧
+     zoneSide (zoneCascadeRight j z).right = zoneSide z.right := by
+-  sorry
++  induction j generalizing z with
++  | zero =>
++    have hno : ¬ (z.left ⟨0, hj⟩).length + 1 ≤ zoneCapacity 0 := by
++      rw [hfull]
++      omega
++    simp [zoneCascadeRight, zoneMove, hj, hno]
++  | succ j ih =>
++    have hno : ¬ (z.left ⟨j + 1, hj⟩).length + 2 ^ j ≤
++        zoneCapacity (j + 1) := by
++      rw [hfull]
++      have hp := Nat.two_pow_pos j
++      omega
++    have hf : (zoneStepPair (j + 1) z).left = z.left := by
++      funext k
++      simp [zoneStepPair, zoneShiftOut, zoneShiftIn, zoneShiftOutW, hj, hno]
++    have hl' : ∀ k (hk : k < j),
++        ((zoneStepPair (j + 1) z).left ⟨k, by omega⟩).length = zoneCapacity k := by
++      intro k hk
++      rw [hf]
++      exact hl k (by omega)
++    have hfull' : ((zoneStepPair (j + 1) z).left ⟨j, by omega⟩).length =
++        zoneCapacity j := by
++      rw [hf]
++      exact hl j (by omega)
++    have hinner := ih (by omega) (zoneStepPair (j + 1) z) hl' hfull'
++    rw [zoneCascadeRight_succ, (zoneStepPair_side _ _).1,
++      (zoneStepPair_side _ _).2, hinner.1, hinner.2,
++      (zoneStepPair_side _ _).1, (zoneStepPair_side _ _).2]
++    exact ⟨rfl, rfl⟩
+ 
+ /-- The cascade's summed row budgets stay geometric: the charge lemma the
+ Hennie-Stearns amortization consumes (two shift pairs per level, each
+@@ -542,7 +848,19 @@ within the row budget `2^i + i + 1`).
+ `8 · (2^(j+1) - 2) ≤ 16 · 2^j` — the round-1 audit's charge calculation. -/
+ theorem zoneCascade_cost_le (j : ℕ) :
+     ∑ i ∈ Finset.range j, 4 * (2 ^ (i + 1) + (i + 1) + 1) ≤ 16 * 2 ^ j := by
+-  sorry
++  have hsum : ∀ n : ℕ,
++      (∑ i ∈ Finset.range n, 4 * (2 ^ (i + 1) + (i + 1) + 1)) + 16 ≤
++        16 * 2 ^ n := by
++    intro n
++    induction n with
++    | zero => simp
++    | succ n ih =>
++      rw [Finset.sum_range_succ]
++      have hsmall : n + 2 ≤ 2 ^ (n + 1) := Nat.lt_two_pow_self
++      simp only [pow_succ] at *
++      omega
++  have h := hsum j
++  omega
+ 
+ /-! ### The machine rows -/
+ 
+@@ -642,6 +960,12 @@ theorem MultiTapeTM.spaceUsedByTape_le_card_Icc {k : ℕ} {Symbol State : Type*}
+     (d : Cfg k Symbol State input) (t : ℕ) (i : Fin k) (lo hi : ℤ)
+     (h : ∀ u ≤ t, (tm.runFrom d u).workTapePos i ∈ Finset.Icc lo hi) :
+     tm.spaceUsedByTape d t i ≤ (hi + 1 - lo).toNat := by
+-  sorry
++  unfold MultiTapeTM.spaceUsedByTape
++  calc
++    _ ≤ (Finset.Icc lo hi).card := Finset.card_le_card (by
++      intro p hp
++      obtain ⟨u, hu, rfl⟩ := Finset.mem_image.mp hp
++      exact h u (by simpa only [Finset.mem_range, Nat.lt_succ_iff] using hu))
++    _ = _ := Int.card_Icc lo hi
+ 
+ end Turing
+-- 
+2.51.1
+
+From 1f2c014729f7087b4fcf9245b12b65fde1610774 Mon Sep 17 00:00:00 2001
+From: Codex <codex@openai.com>
+Date: Sat, 10 Oct 2026 00:43:56 -0300
+Subject: [PATCH 2/2] Prove zone cascade length restoration by the audited
+ two-pass induction
+
+---
+ .../Complexity/TuringMachine/Build/Zone.lean  | 114 +++++++++++++++++-
+ 1 file changed, 113 insertions(+), 1 deletion(-)
+
+diff --git a/TCSlib/Complexity/TuringMachine/Build/Zone.lean b/TCSlib/Complexity/TuringMachine/Build/Zone.lean
+index c910d551..3905b2a6 100644
+--- a/TCSlib/Complexity/TuringMachine/Build/Zone.lean
++++ b/TCSlib/Complexity/TuringMachine/Build/Zone.lean
+@@ -776,7 +776,119 @@ theorem zoneCascadeRight_lengths {ℓ : ℕ} (j : ℕ) (hj : j < ℓ)
+       (z.right ⟨j, hj⟩).length - 2 ^ j ∧
+     ((zoneCascadeRight j z).left ⟨j, hj⟩).length =
+       (z.left ⟨j, hj⟩).length + 2 ^ j := by
+-  sorry
++  induction j generalizing z with
++  | zero =>
++    have hroom0 : (z.left ⟨0, hj⟩).length + 1 ≤ zoneCapacity 0 := by
++      simpa using hroom
++    have hm : zoneCascadeRight 0 z = zoneMoveRight hj z hroom0 := by
++      simp [zoneCascadeRight, zoneMove, hj, hroom0]
++    rw [hm]
++    refine ⟨?_, ?_, ?_⟩
++    · intro k hk
++      omega
++    · simp [zoneMoveRight]
++    · simp [zoneMoveRight]
++  | succ j ih =>
++    have hjl : j < ℓ := by omega
++    have hp : 0 < 2 ^ j := Nat.two_pow_pos j
++    have hroom1 : (z.left ⟨j + 1, hj⟩).length + 2 ^ j ≤
++        zoneCapacity (j + 1) := by
++      rw [pow_succ] at hroom
++      omega
++    have hactive := zoneStepPair_active j hj z (hr j (by omega))
++      (hl j (by omega)) hroom1
++    let z1 := zoneStepPair (j + 1) z
++    have hr' : ∀ k (hk : k < j), z1.right ⟨k, by omega⟩ = [] := by
++      intro k hk
++      change (zoneStepPair (j + 1) z).right ⟨k, _⟩ = []
++      rw [(zoneStepPair_frame (j + 1) z ⟨k, by omega⟩
++        (by dsimp; omega) (by dsimp; omega)).2]
++      exact hr k (by omega)
++    have hl' : ∀ k (hk : k < j),
++        (z1.left ⟨k, by omega⟩).length = zoneCapacity k := by
++      intro k hk
++      change ((zoneStepPair (j + 1) z).left ⟨k, _⟩).length = _
++      rw [(zoneStepPair_frame (j + 1) z ⟨k, by omega⟩
++        (by dsimp; omega) (by dsimp; omega)).1]
++      exact hl k (by omega)
++    have hrlower : (z1.right ⟨j, hjl⟩).length = 2 ^ j := by
++      change ((zoneStepPair (j + 1) z).right ⟨j, hjl⟩).length = _
++      rw [hactive.1, List.length_take]
++      rw [pow_succ] at hdonor
++      omega
++    have hllower : (z1.left ⟨j, hjl⟩).length = 2 ^ j := by
++      change ((zoneStepPair (j + 1) z).left ⟨j, hjl⟩).length = _
++      rw [hactive.2.1, List.length_take, hl j (by omega)]
++      unfold zoneCapacity
++      omega
++    have hrtop : (z1.right ⟨j + 1, hj⟩).length =
++        (z.right ⟨j + 1, hj⟩).length - 2 ^ j := by
++      change ((zoneStepPair (j + 1) z).right ⟨j + 1, hj⟩).length = _
++      rw [hactive.2.2.1, List.length_drop]
++    have hltop : (z1.left ⟨j + 1, hj⟩).length =
++        (z.left ⟨j + 1, hj⟩).length + 2 ^ j := by
++      change ((zoneStepPair (j + 1) z).left ⟨j + 1, hj⟩).length = _
++      rw [hactive.2.2.2, List.length_append, List.length_drop, hl j (by omega)]
++      unfold zoneCapacity
++      omega
++    have hinner := ih hjl z1 hr' hl' (by rw [hrlower]) (by
++      rw [hllower]
++      unfold zoneCapacity
++      omega)
++    let z2 := zoneCascadeRight j z1
++    have hrzero : z2.right ⟨j, hjl⟩ = [] := by
++      apply List.length_eq_zero_iff.mp
++      change ((zoneCascadeRight j z1).right ⟨j, hjl⟩).length = 0
++      rw [hinner.2.1, hrlower, Nat.sub_self]
++    have hlfull : (z2.left ⟨j, hjl⟩).length = zoneCapacity j := by
++      change ((zoneCascadeRight j z1).left ⟨j, hjl⟩).length = _
++      rw [hinner.2.2, hllower]
++      unfold zoneCapacity
++      omega
++    have hframe := zoneCascadeRight_frame j z1 ⟨j + 1, hj⟩ (by dsimp; omega)
++    have hrtop2 : (z2.right ⟨j + 1, hj⟩).length =
++        (z.right ⟨j + 1, hj⟩).length - 2 ^ j := by
++      change ((zoneCascadeRight j z1).right ⟨j + 1, hj⟩).length = _
++      rw [hframe.2, hrtop]
++    have hltop2 : (z2.left ⟨j + 1, hj⟩).length =
++        (z.left ⟨j + 1, hj⟩).length + 2 ^ j := by
++      change ((zoneCascadeRight j z1).left ⟨j + 1, hj⟩).length = _
++      rw [hframe.1, hltop]
++    have hroom2 : (z2.left ⟨j + 1, hj⟩).length + 2 ^ j ≤
++        zoneCapacity (j + 1) := by
++      rw [hltop2]
++      rw [pow_succ] at hroom
++      omega
++    have hactive2 := zoneStepPair_active j hj z2 hrzero hlfull hroom2
++    rw [zoneCascadeRight_succ]
++    change (∀ k (hk : k < j + 1),
++      ((zoneStepPair (j + 1) z2).right ⟨k, _⟩).length = 2 ^ k ∧
++      ((zoneStepPair (j + 1) z2).left ⟨k, _⟩).length = 2 ^ k) ∧
++      ((zoneStepPair (j + 1) z2).right ⟨j + 1, hj⟩).length =
++        (z.right ⟨j + 1, hj⟩).length - 2 ^ (j + 1) ∧
++      ((zoneStepPair (j + 1) z2).left ⟨j + 1, hj⟩).length =
++        (z.left ⟨j + 1, hj⟩).length + 2 ^ (j + 1)
++    refine ⟨?_, ?_, ?_⟩
++    · intro k hk
++      by_cases hkj : k = j
++      · subst k
++        rw [hactive2.1, hactive2.2.1, List.length_take, List.length_take,
++          hrtop2, hlfull]
++        rw [pow_succ] at hdonor
++        unfold zoneCapacity
++        constructor <;> omega
++      · have hkj' : k < j := by omega
++        rw [(zoneStepPair_frame (j + 1) z2 ⟨k, by omega⟩
++          (by dsimp; omega) (by dsimp; omega)).2,
++          (zoneStepPair_frame (j + 1) z2 ⟨k, by omega⟩
++          (by dsimp; omega) (by dsimp; omega)).1]
++        exact hinner.1 k hkj'
++    · rw [hactive2.2.2.1, List.length_drop, hrtop2, pow_succ]
++      omega
++    · rw [hactive2.2.2.2, List.length_append, List.length_drop, hlfull, hltop2,
++        pow_succ]
++      unfold zoneCapacity
++      omega
+ 
+ /-- Regression (round-2 audit, A-S2-R2-1): the `j = 0` cascade is exactly
+ the guarded head move, and with level-zero room and a nonempty donor it
+-- 
+2.51.1
+

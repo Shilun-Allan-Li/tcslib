@@ -1,0 +1,78 @@
+import TCSlib.Complexity.TuringMachine.Build.Catalog
+open Turing
+
+def frameCfg {S : Type} (q : S) (w : List Bool) (h0 h1 : ℤ) : Cfg 2 Bool S [true, false] :=
+  { Cfg.ofWords (input := [true, false]) q (fun (_ : Fin 2) => ([] : List Bool)) with
+    workTapes := fun j p =>
+      if j.val = 0 then
+        (if h0 - 1 ≤ p ∧ p ≤ h0 + w.length then FinTM.bufferTape w (p - h0) else some true)
+      else (if p % 3 = 0 then some false else if p % 3 = 1 then some true else none)
+    workTapePos := fun j => if j.val = 0 then h0 else h1 }
+
+def cells {S : Type} (c : Cfg 2 Bool S [true, false]) : List (List (Option Bool)) :=
+  [ (List.range 30).map (fun n => c.workTapes 0 ((n : ℤ) - 10)),
+    (List.range 30).map (fun n => c.workTapes 1 ((n : ℤ) - 10)) ]
+
+def finCopy (d : Cfg 2 Bool SweepPhase [true,false]) (w : List Bool) : Cfg 2 Bool SweepPhase [true,false] :=
+  { d with state := some SweepPhase.done,
+           workTapes := fun j q =>
+            if j = 1 ∧ d.workTapePos j ≤ q ∧ q < d.workTapePos j + (w.length : ℤ)
+              then FinTM.bufferTape w (q - d.workTapePos j) else d.workTapes j q }
+def finClear (d : Cfg 2 Bool SweepPhase [true,false]) (w : List Bool) : Cfg 2 Bool SweepPhase [true,false] :=
+  { d with state := some SweepPhase.done,
+           workTapes := fun j q =>
+            if j = 0 ∧ d.workTapePos j ≤ q ∧ q < d.workTapePos j + (w.length : ℤ)
+              then none else d.workTapes j q }
+def finInc (d : Cfg 2 Bool FlagPhase [true,false]) (flag : Bool) (len : ℕ) (v : List Bool) : Cfg 2 Bool FlagPhase [true,false] :=
+  { d with state := some (FlagPhase.done flag),
+           workTapes := fun j q =>
+            if j = 0 ∧ d.workTapePos j ≤ q ∧ q < d.workTapePos j + (len : ℤ)
+              then FinTM.bufferTape v (q - d.workTapePos j) else d.workTapes j q }
+
+def sweepOK {S : Type} [DecidableEq S] (M : MultiTapeTM 2 Bool S) (d f : Cfg 2 Bool S [true,false])
+    (T : ℕ) (bad : Option S → Bool) (lo0 hi0 lo1 hi1 : ℤ) : Bool :=
+  let r := M.runFrom d T
+  decide (r.state = f.state) && decide (cells r = cells f) && decide (r.workTapePos 0 = f.workTapePos 0)
+    && decide (r.workTapePos 1 = f.workTapePos 1) && decide (r.inputPos = f.inputPos) && decide (r.output = f.output)
+    && (List.range T).all (fun t => !bad (M.runFrom d t).state)
+    && (List.range (T+1)).all (fun t => let c := M.runFrom d t
+          decide (lo0 ≤ c.workTapePos 0 ∧ c.workTapePos 0 ≤ hi0 ∧ lo1 ≤ c.workTapePos 1 ∧ c.workTapePos 1 ≤ hi1))
+
+def checkCopy (w : List Bool) (h0 h1 : ℤ) : Bool :=
+  let d := frameCfg SweepPhase.sweep w h0 h1
+  sweepOK (copyTM 2 0 1) d (finCopy d w) (2 * w.length + 2) (fun s => decide (s = some SweepPhase.done))
+    (h0 - 1) (h0 + w.length) (h1 - 1) (h1 + w.length)
+def checkClear (w : List Bool) (h0 h1 : ℤ) : Bool :=
+  let d := frameCfg SweepPhase.sweep w h0 h1
+  sweepOK (clearTM 2 0) d (finClear d w) (2 * w.length + 2) (fun s => decide (s = some SweepPhase.done))
+    (h0 - 1) (h0 + w.length) h1 h1
+def doneAny (s : Option FlagPhase) : Bool := decide (s = some (FlagPhase.done true)) || decide (s = some (FlagPhase.done false))
+def checkInc (w : List Bool) (h0 h1 : ℤ) : Bool :=
+  let d := frameCfg FlagPhase.run w h0 h1
+  match incFixed w with
+  | some v => let p := (w.takeWhile id).length
+      sweepOK (incrementTM 2 0) d (finInc d true w.length v) (2 * p + 2) doneAny (h0 - 1) (h0 + p) h1 h1
+  | none => sweepOK (incrementTM 2 0) d (finInc d false w.length (List.replicate w.length false))
+      (2 * w.length + 2) doneAny (h0 - 1) (h0 + w.length) h1 h1
+
+
+def finTransfer (d : Cfg 2 Bool SweepPhase [true,false]) (w : List Bool) : Cfg 2 Bool SweepPhase [true,false] :=
+  { d with state := some SweepPhase.done,
+           workTapes := fun j q =>
+            if j = 0 ∧ d.workTapePos j ≤ q ∧ q < d.workTapePos j + (w.length : ℤ) then none
+            else if j = 1 ∧ d.workTapePos j ≤ q ∧ q < d.workTapePos j + (w.length : ℤ)
+              then FinTM.bufferTape w (q - d.workTapePos j)
+            else d.workTapes j q }
+def checkTransfer (w : List Bool) (h0 h1 : ℤ) : Bool :=
+  let d := frameCfg SweepPhase.sweep w h0 h1
+  sweepOK (transferTM 2 0 1) d (finTransfer d w) (2 * w.length + 2) (fun s => decide (s = some SweepPhase.done))
+    (h0 - 1) (h0 + w.length) (h1 - 1) (h1 + w.length)
+
+def words : List (List Bool) := [[], [true], [false], [true,false,true], [true,true,true], [false,true,true,false], [true,true,false,true]]
+#eval (words.map (fun w => checkTransfer w 3 (-2) && checkTransfer w (-4) 5)).all id
+#eval (words.map (fun w => checkCopy w 3 (-2) && checkCopy w 0 0 && checkCopy w (-4) 6)).all id
+#eval (words.map (fun w => checkClear w 3 (-2) && checkClear w (-5) 7)).all id
+#eval (words.map (fun w => checkInc w 3 (-2) && checkInc w (-3) 4)).all id
+-- negative control: the harness must reject a wrong time
+#eval (let w := [true,false,true]; let d := frameCfg SweepPhase.sweep w 3 (-2)
+       sweepOK (copyTM 2 0 1) d (finCopy d w) (2 * w.length + 1) (fun s => decide (s = some SweepPhase.done)) 2 6 (-3) 1)

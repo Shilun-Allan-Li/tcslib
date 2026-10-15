@@ -1,0 +1,29 @@
+new public names: 20 (11 added, 9 promoted in place)
+screened against 16673 declaration names: TCSlib at the base and 14 package source files that mention Turing or Complexity
+
+## 1. Full-name clashes
+clashes: 0
+
+## 2. Stale uses of deleted declarations
+deleted declarations screened: 71; stale uses: 0
+deleted names whose last component survives (uses resolve to the survivor):
+  Complexity.Codec.abs_lt_card_visitedWith: 2 code token(s) in 1 file(s); survivors ['Turing.NDTM.abs_lt_card_visitedWith']
+  Complexity.Codec.mem_of_acceptsWithin: 3 code token(s) in 2 file(s); survivors ['Turing.FinNDTM.DecidesInSpace.mem_of_acceptsWithin']
+  Complexity.Codec.mem_visitedWith_of_ne_none: 2 code token(s) in 1 file(s); survivors ['Turing.NDTM.mem_visitedWith_of_ne_none']
+  Complexity.Codec.outSummary_eq_empty_iff: 2 code token(s) in 2 file(s); survivors ['Turing.outSummary_eq_empty_iff']
+  Complexity.Codec.take_succ_action: 3 code token(s) in 1 file(s); survivors ['Turing.NDTM.take_succ_action']
+  Complexity.Codec.visitedWith_take_subset: 2 code token(s) in 1 file(s); survivors ['Turing.NDTM.visitedWith_take_subset']
+  Complexity.TQBFHard.prefixTruth_congr_agree: 4 code token(s) in 2 file(s); survivors ['Complexity.QBF.prefixTruth_congr_agree']
+  Complexity.TQBFHard.values_getD_eq_of_eval_tseitinGates: 3 code token(s) in 2 file(s); survivors ['BoolCircuit.DAGCircuit.values_getD_eq_of_eval_tseitinGates']
+  Complexity.drop_canon: 8 code token(s) in 3 file(s); survivors ['Complexity.LogProg.drop_canon']
+  Turing.InWindow: 123 code token(s) in 13 file(s); survivors ['Turing.Cfg.InWindow']
+
+## 3. The new import of Machines/VWord
+closure of TCSlib.Programs.Util.List: ['TCSlib.Programs.Compat', 'TCSlib.Programs.Util.List']; modules downstream of VWord: 52; full-name clashes []; downstream files opening List: []
+
+## 4. Added lines referring to other files' private declarations
+references: []
+
+## 5. Same last component elsewhere under Turing / Complexity (information)
+
+RESULT: PASS

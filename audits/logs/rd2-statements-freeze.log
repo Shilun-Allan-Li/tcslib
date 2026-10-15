@@ -1,0 +1,98 @@
+# RD-2 statement gate — declaration-level freeze check (tools/freeze.py)
+# comment-stripped text of every tip declaration must reappear verbatim, in order
+
+## TCSlib/Complexity/ClassPSPACE/TQBF.lean (tip) vs proposed TQBF.lean
+base declarations: 172; proposed: 236
+base declarations missing in proposed: 0 []
+base declarations whose comment-stripped text changed: 0 []
+base order preserved: True
+added declarations (64):
+  stateCount
+  stateIndex
+  stateOffset
+  workOffset
+  summaryOffset
+  width
+  inputVar
+  headVar
+  stateVar
+  workVar
+  summaryVar
+  workFlags
+  code
+  validity
+  acceptance
+  inputEquality
+  Case
+  caseAction
+  caseList
+  Port
+  portCount
+  portIndex
+  portOf
+  Expect
+  GateKind
+  readSymbol
+  readSummary
+  summaryWord
+  guard
+  expectBit
+  kindPred
+  headOf
+  moveInput
+  expectOf
+  portWire
+  transitionGate
+  transition
+  adjacency
+  width_eq
+  width_le
+  stateVar_none
+  card_port
+  portIndex_lt
+  portOf_portIndex
+  code_length
+  code_getD_inputVar
+  code_getD_headVar
+  code_getD_stateVar
+  code_getD_workVar
+  code_getD_summaryVar
+  code_input_eq
+  code_eq_iff
+  validity_eval_iff
+  adjacency_eval_iff
+  adjacency_eval_of_ne
+  acceptance_eval_iff
+  validity_numVars_le
+  acceptance_numVars_le
+  adjacency_numVars_le
+  exists_serialize_length_le
+  polyTimeComputable_serialize_validity
+  polyTimeComputable_serialize_adjacency
+  polyTimeComputable_serialize_acceptance
+  polyTimeComputable_code_initCfg
+
+## TCSlib/Complexity/Formulas/QBF.lean (tip) vs proposed QBF.lean
+base declarations: 8; proposed: 14
+base declarations missing in proposed: 0 []
+base declarations whose comment-stripped text changed: 0 []
+base order preserved: True
+added declarations (6):
+  PrefixTruth
+  truthAux_iff_prefixTruth
+  prefixTruth_congr
+  prefixTruth_append
+  truthAux_exSuffix_iff
+  truth_exSuffix_of_pointwise
+
+## TCSlib/Complexity/ClassPSPACE.lean (tip) vs proposed ClassPSPACE.lean (facade: docstring only)
+base declarations: 0; proposed: 0
+base declarations missing in proposed: 0 []
+base declarations whose comment-stripped text changed: 0 []
+base order preserved: True
+added declarations (0):
+
+## line-level: comment-stripped tip lines form a subsequence of the proposed file (so every removed line of a patch is comment text)
+TQBF.lean: True (1826 tip code lines, 2095 proposed code lines)
+QBF.lean: True (62 tip code lines, 127 proposed code lines)
+ClassPSPACE.lean: True (2 tip code lines, 2 proposed code lines)

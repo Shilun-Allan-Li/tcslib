@@ -47,6 +47,9 @@ shape of [AB09, Fig. 4.1]:
 ## Main results
 
 * `Complexity.SPACE.mono` — `SPACE` is monotone in the space bound.
+* `Complexity.SPACE.mono_const` — `SPACE` absorbs constant factors (added 2026-10-10).
+* `Turing.FinTM.computesInSpace_zero_of_k_eq_zero` — no work tapes, zero space (added
+  2026-10-10).
 
 ## Divergences from [AB09]
 
@@ -64,6 +67,23 @@ shape of [AB09, Fig. 4.1]:
 * **Halting.** Deciding (resp. computing) includes halting on every input, as in [AB09]
   ("a TM M deciding L"); the space bound is checked at the halting time, and since space is
   monotone in time and frozen after halting this is the space of the whole computation.
+* **One measure for both classes.** [AB09, Def 4.1]'s own wording splits: *visited*
+  work-tape locations for `SPACE` (the clause quoted above) but *nonblank* locations for
+  `NSPACE`. The campaign convention is the visited-cells measure for both; the planned
+  `NSPACE` (`AroraBarakChapters3-4Plan.md`, phase P4.1) counts visited cells along every
+  choice word, with all branches halting.
+* **Zero bounds collapse the class** (P0 reception audit, round 1, finding 1): every
+  work tape's visited set contains its origin, so every machine satisfies
+  `M.k ≤ spaceUsed` on every input at every time. A single length with `s n = 0`
+  therefore forces a deciding machine to have **no work tapes at all** — and then it
+  has zero space on *every* input — so `SPACE s = SPACE (fun _ => 0)` (semantically
+  the two-way-finite-automaton class) whenever `s` has a zero; multiplicative
+  absorption cannot repair this, since `c * 0 = 0`. In particular the literal
+  `SPACE (fun n => n)` is **not** linear space: `n = 0` collapses it. **Campaign
+  convention:** every asymptotic chapter statement uses an everywhere-positive bound —
+  `fun n => n + 1`, `fun n => n ^ c + 1`, `Complexity.logSpace` — never a bound with a
+  zero. The characterization and the harmless-normalization identities are the sanity
+  layer `TCSlib.Complexity.SpaceComplexity.ZeroSpace`.
 
 ## References
 
@@ -93,6 +113,19 @@ theorem ComputesInSpace.mono {M : FinTM Bool} {f : List Bool → List Bool} {s s
   obtain ⟨t, ht, hsp⟩ := h x
   exact ⟨t, ht, hsp.trans (hs _)⟩
 
+/-- A machine with no work tapes computes in zero space whatever it computes at all: the
+space measure counts only work-tape cells. (Shared by the zero-space layer; added
+2026-10-10.)
+
+**Proof sketch.** With `M.k = 0` the space measure is an empty sum
+(`Turing.MultiTapeTM.spaceUsed_zero_tapes_eq_zero`), at every halting time. -/
+theorem computesInSpace_zero_of_k_eq_zero {M : FinTM Bool} {f : List Bool → List Bool}
+    (hk : M.k = 0) (h : ∀ x, ∃ t, M.ComputesInTime x (f x) t) :
+    M.ComputesInSpace f fun _ => 0 := by
+  intro x
+  obtain ⟨t, ht⟩ := h x
+  exact ⟨t, ht, (MultiTapeTM.spaceUsed_zero_tapes_eq_zero (tm := M.tm) _ t hk).le⟩
+
 end Turing.FinTM
 
 namespace Complexity
@@ -109,6 +142,20 @@ def SPACE (s : ℕ → ℕ) : Set (Language Bool) :=
 theorem SPACE.mono {s₁ s₂ : ℕ → ℕ} (h : ∀ n, s₁ n ≤ s₂ n) : SPACE s₁ ⊆ SPACE s₂ := by
   rintro L ⟨c, M, hM⟩
   exact ⟨c, M, hM.mono fun n => Nat.mul_le_mul_left c (h n)⟩
+
+/-- `SPACE` absorbs constant factors: if `s₁ ≤ a · s₂` pointwise, then
+`SPACE s₁ ⊆ SPACE s₂`. [AB09, Def 4.1: the constant `c` absorbs `a`] (Shared by the
+zero-space layer and the hierarchy arguments; added 2026-10-10.)
+
+**Proof sketch.** A witness at constant `c` for `s₁` is a witness at constant `c · a`
+for `s₂`, since `c · s₁ n ≤ c · (a · s₂ n) = (c · a) · s₂ n`
+(`Turing.FinTM.ComputesInSpace.mono`). -/
+theorem SPACE.mono_const {s₁ s₂ : ℕ → ℕ} {a : ℕ} (h : ∀ n, s₁ n ≤ a * s₂ n) :
+    SPACE s₁ ⊆ SPACE s₂ := by
+  rintro L ⟨c, M, hM⟩
+  refine ⟨c * a, M, hM.mono fun n => ?_⟩
+  calc c * s₁ n ≤ c * (a * s₂ n) := Nat.mul_le_mul_left c (h n)
+    _ = c * a * s₂ n := (Nat.mul_assoc c a (s₂ n)).symm
 
 /-- The logarithmic space bound `⌊log₂ n⌋ + 1`: `Θ(log n)`, and at least `1`, following the
 convention `s(n) ≥ log n` of [AB09, p. 79]. -/

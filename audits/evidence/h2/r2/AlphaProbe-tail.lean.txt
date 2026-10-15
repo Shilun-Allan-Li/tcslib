@@ -1,0 +1,146 @@
+/-! ## Probe, not a landing file: the H2-M text edits are alpha-equivalent
+
+Each `X_orig` is the unedited text of an edited declaration `X`. -/
+
+private def seekRouterTM_orig (k : ℕ) : MultiTapeTM (k + 2) Bool (SeekCtrl k) where
+  q₀ := .observe
+  tr := fun q inp w => match q with
+    | .observe => tapeAction (summaryTape k) 0 none .pos
+        (.advance (readRank inp (fun i => w (Fin.castAdd 2 i))))
+    | .advance rank => tapeAction (summaryTape k) 0 none .pos (.state rank)
+    | .state rank =>
+        if w (summaryTape k) = some true then
+          tapeAction (summaryTape k) 0 none .pos
+            (.request rank ⟨3 ^ (k + 1) - 1, by have hp : 0 < 3 ^ (k + 1) := Nat.pow_pos (by omega); omega⟩ false)
+        else inputMoveAction 0 (if hr : rank.val = 0 then .done
+          else .request rank ⟨rank.val - 1, by have := rank.isLt; omega⟩ true)
+    | .request rank rest last => inputMoveAction 0 (.request rank rest last)
+    | .done => inputMoveAction 0 .done
+
+example : type_of% @seekRouterTM_orig = type_of% @seekRouterTM := by with_reducible rfl
+example : @seekRouterTM_orig = @seekRouterTM := by rfl
+
+private lemma seekTM_stateStep_orig {k : ℕ} {x : List Bool}
+    (d : Cfg (k + 2) Bool (RecordState k) x) (rank : Fin (3 ^ (k + 1))) (b : Bool)
+    (hq : d.state = some (recordTM k).q₀)
+    (hs : d.workTapeSymbols (summaryTape k) = some b) :
+    (seekTM k).step (seekCfg d (.state rank)) =
+      if b then
+        seekCfg ({d with
+          workTapePos := Function.update d.workTapePos (summaryTape k)
+            (d.workTapePos (summaryTape k) + 1)})
+          (.request rank ⟨3 ^ (k + 1) - 1, by
+            have hp : 0 < 3 ^ (k + 1) := Nat.pow_pos (by omega); omega⟩ false)
+      else seekCfg d (if hr : rank.val = 0 then .done
+        else .request rank ⟨rank.val - 1, by have := rank.isLt; omega⟩ true) := by
+  sorry
+
+example : type_of% @seekTM_stateStep_orig = type_of% @seekTM_stateStep := by with_reducible rfl
+
+private lemma tableBitsK_cut_orig {k n : ℕ}
+    (tr : Fin (n + 1) → Option Bool → (Fin k → Option Bool) → Action k Bool (Fin (n + 1)))
+    (q : Fin (n + 1)) (inp : Option Bool) (w : Fin k → Option Bool) :
+    ∃ (groups : List (List (Action k Bool (Fin (n + 1)))))
+        (rest : List (Action k Bool (Fin (n + 1)))) (tail : List Bool),
+      groups.length = q.val ∧
+      (∀ g ∈ groups, g.length = 3 ^ (k + 1)) ∧
+      rest.length = (readRank inp w).val ∧
+      tableBitsK tr = ((groups.flatten ++ rest).flatMap actionBitsK) ++ actionBitsK (tr q inp w) ++ tail := by
+  sorry
+
+example : type_of% @tableBitsK_cut_orig = type_of% @tableBitsK_cut := by with_reducible rfl
+
+lemma _root_.Turing.MultiTapeTM.inputPos_runFrom_of_inputTape_eq_zero_orig {m : ℕ} {S : Type} {x : List Bool}
+    (M : MultiTapeTM m Bool S) (h : ∀ q inp work, (M.tr q inp work).inputTape = 0)
+    (d : Cfg m Bool S x) (t : ℕ) : (M.runFrom d t).inputPos = d.inputPos := by
+  sorry
+
+example : type_of% @MultiTapeTM.inputPos_runFrom_of_inputTape_eq_zero_orig = type_of% @MultiTapeTM.inputPos_runFrom_of_inputTape_eq_zero := by with_reducible rfl
+
+abbrev Ph_orig (k : ℕ) : Key → Type
+  | .entry | .halt => Unit
+  | .lookup => Σ key, SeekPh k key
+  | .stateTail | .stateHome | .tableTail _ | .tableHome _ | .stateGap _ | .stateRestore _ => SeekPhase
+  | .clearState => SweepPhase
+  | .toSummary | .toState | .finish _ => Fin 3
+  | .record => RecordState k
+  | .successor => SuccPhase
+
+example : type_of% @Ph_orig = type_of% @Ph := by with_reducible rfl
+example : @Ph_orig = @Ph := by rfl
+
+private lemma roundData_window_orig {k n : ℕ} {x : List Bool}
+    (c : Cfg k Bool (Fin (n + 1)) x) (a : Action k Bool (Fin (n + 1)))
+    (table : List Bool) (summary : Option Bool) (word : List Bool)
+    (tablePos statePos : ℤ) (pre : List Bool) (after : Bool) :
+    RoundWindow c a (roundData (if after then a.apply c else c) table summary word tablePos statePos pre) := by
+  sorry
+
+example : type_of% @roundData_window_orig = type_of% @roundData_window := by with_reducible rfl
+
+private lemma roundTM_prepare_orig {k n : ℕ} {x : List Bool}
+    (c : Cfg k Bool (Fin (n + 1)) x) (a : Action k Bool (Fin (n + 1)))
+    (q : Fin (n + 1)) (table : List Bool) (summary : Option Bool) (pos : ℤ) (pre : List Bool) :
+    RoundSpan c a
+      (atKey (roundData c table summary (unaryFin q) pos (q.val + 2) pre) .stateTail .run)
+      (atKey (roundData c table summary [] pos 0 pre) .record (recordTM k).q₀)
+      (3 * q.val + 16) := by
+  sorry
+
+example : type_of% @roundTM_prepare_orig = type_of% @roundTM_prepare := by with_reducible rfl
+
+private lemma roundTM_payload_orig {k n : ℕ} {x : List Bool}
+    (c : Cfg k Bool (Fin (n + 1)) x) (a : Action k Bool (Fin (n + 1)))
+    (table before after pre : List Bool) (ht : table = before ++ actionBitsK a ++ after) :
+    let word := (a.state.map unaryFin).getD []
+    RoundSpan c a
+      (atKey (roundData c table (outputSummary c.output) [] before.length 0 pre) .record (recordTM k).q₀)
+      (atKey (roundData (a.apply c) table (outputSummary (a.apply c).output) word
+        (before.length + (actionBitsK a).length) (2 + word.length) pre) (.tableTail a.state.isSome) .run)
+      ((actionBitsK a).length + 6) := by
+  sorry
+
+example : type_of% @roundTM_payload_orig = type_of% @roundTM_payload := by with_reducible rfl
+
+private lemma roundTM_restore_orig {k n : ℕ} {x : List Bool}
+    (c : Cfg k Bool (Fin (n + 1)) x) (a : Action k Bool (Fin (n + 1)))
+    (table before tail word pre : List Bool) (live : Bool) (ht : table = before ++ tail) :
+    RoundSpan c a
+      (atKey (roundData (a.apply c) table (outputSummary (a.apply c).output) word
+        before.length (2 + word.length) pre) (.tableTail live) .run)
+      ((roundData (a.apply c) table (outputSummary (a.apply c).output) word 0 0 pre).mapState
+        (fun _ => exit k live))
+      (tail.length + table.length + word.length + 15) := by
+  sorry
+
+example : type_of% @roundTM_restore_orig = type_of% @roundTM_restore := by with_reducible rfl
+
+private lemma roundTM_canonical_orig {k n : ℕ} {x : List Bool}
+    (tr : Fin (n + 1) → Option Bool → (Fin k → Option Bool) → Action k Bool (Fin (n + 1)))
+    (c : Cfg k Bool (Fin (n + 1)) x) (q : Fin (n + 1)) (pre : List Bool) :
+    let a := tr q c.inputSymbol c.workTapeSymbols
+    let start := atKey (roundData c (tableBitsK tr) (outputSummary c.output) (unaryFin q) 0 0 pre) .entry ()
+    let finish := (roundData (a.apply c) (tableBitsK tr) (outputSummary (a.apply c).output)
+      ((a.state.map unaryFin).getD []) 0 0 pre).mapState (fun _ => exit k a.state.isSome)
+    ∃ T, 0 < T ∧ T ≤ 50 * ((tableBitsK tr).length + 1) ∧
+      (roundTM k).runFrom start T = finish ∧
+      (∀ u, 0 < u → u < T → ∃ s, ((roundTM k).runFrom start u).state = some s ∧
+        s ≠ ⟨.entry, ()⟩ ∧ s ≠ ⟨.halt, ()⟩) ∧
+      ∀ u ≤ T, RoundWindow c a ((roundTM k).runFrom start u) := by
+  sorry
+
+example : type_of% @roundTM_canonical_orig = type_of% @roundTM_canonical := by with_reducible rfl
+
+private lemma rep_entry_orig {k n : ℕ} {x : List Bool}
+    (tr : Fin (n + 1) → Option Bool → (Fin k → Option Bool) → Action k Bool (Fin (n + 1)))
+    (c : Cfg k Bool (Fin (n + 1)) x) (q : Fin (n + 1)) (hq : c.state = some q)
+    (d : Cfg (k + 2) Bool (Σ key, Ph k key) x)
+    (entry : d.state = some ⟨.entry, ()⟩) (rel : Rep tr c d) :
+    d = atKey (roundData c (tableBitsK tr) (outputSummary c.output) (unaryFin q) 0 0 d.output) .entry () := by
+  sorry
+
+example : type_of% @rep_entry_orig = type_of% @rep_entry := by with_reducible rfl
+
+end StepBlock
+
+end Turing

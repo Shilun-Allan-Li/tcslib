@@ -1,0 +1,238 @@
+From aa469cd378151ad1ef10258a8969dbcebf8c27af Mon Sep 17 00:00:00 2001
+From: Codex <codex@openai.com>
+Date: Sun, 11 Oct 2026 01:52:06 +0200
+Subject: [PATCH] Fill nine chapter 4 space-class targets (C1a)
+
+---
+ .../SpaceComplexity/Inclusions.lean           | 24 +++++++-
+ TCSlib/Complexity/SpaceComplexity/NSPACE.lean | 22 ++++++-
+ .../SpaceComplexity/SpaceClasses.lean         |  8 +--
+ .../TuringMachine/NondeterministicSpace.lean  | 58 +++++++++++++++++--
+ 4 files changed, 97 insertions(+), 15 deletions(-)
+
+diff --git a/TCSlib/Complexity/SpaceComplexity/Inclusions.lean b/TCSlib/Complexity/SpaceComplexity/Inclusions.lean
+index ff6432c08fab3bcbad96bfd0b7f7b878d88aeda0..a6ddd65c5ad952bebd0d1ad4292752b91d80706d 100644
+--- a/TCSlib/Complexity/SpaceComplexity/Inclusions.lean
++++ b/TCSlib/Complexity/SpaceComplexity/Inclusions.lean
+@@ -21,7 +21,7 @@ Theorem 4.2 (`NSPACE(S) ⊆ DTIME(2^{O(S)})`) needs the configuration-graph laye
+ and is phase P4.2; the parity example of [AB09, Example 4.7] lives in
+ `TCSlib.Complexity.SpaceComplexity.Examples`.
+ 
+-## Main results (sorried; phase-P4.1 statements)
++## Main results (first two proved; remaining phase-P4.1 statements sorried)
+ 
+ * `Complexity.DTIME_subset_SPACE` — [AB09, Theorem 4.2, first inclusion].
+ * `Complexity.P_subset_PSPACE` — the polynomial corollary.
+@@ -53,7 +53,25 @@ witness reuses `M` itself with the absorbed constant `k · c + k`, and the
+ halting time `c · T |x|` instantiates `Turing.FinTM.ComputesInSpace`'s
+ existential time. -/
+ theorem DTIME_subset_SPACE (T : ℕ → ℕ) : DTIME T ⊆ SPACE T := by
+-  sorry
++  classical
++  by_cases hzero : ∃ n, T n = 0
++  · rw [DTIME_eq_empty_of_exists_zero hzero]
++    exact Set.empty_subset _
++  have hpos (n : ℕ) : 1 ≤ T n := by
++    by_contra hn
++    exact hzero ⟨n, by omega⟩
++  rintro L ⟨c, M, hM⟩
++  refine ⟨M.k * c + M.k, M, fun x => ?_⟩
++  refine ⟨c * T x.length, hM x, ?_⟩
++  calc
++    M.tm.spaceUsed (M.tm.initCfg x) (c * T x.length)
++        ≤ M.k * (c * T x.length + 1) := M.tm.spaceUsed_le_mul_succ _ _
++    _ = M.k * c * T x.length + M.k := by
++      rw [Nat.mul_add, Nat.mul_one, Nat.mul_assoc]
++    _ ≤ M.k * c * T x.length + M.k * T x.length :=
++      Nat.add_le_add_left
++        (by simpa only [Nat.mul_one] using Nat.mul_le_mul_left M.k (hpos x.length)) _
++    _ = (M.k * c + M.k) * T x.length := (Nat.add_mul _ _ _).symm
+ 
+ /-- `P ⊆ PSPACE` — the polynomial-level corollary, on the p. 92 chain.
+ 
+@@ -61,7 +79,7 @@ theorem DTIME_subset_SPACE (T : ℕ → ℕ) : DTIME T ⊆ SPACE T := by
+ `Complexity.DTIME_subset_SPACE`, then `Set.iUnion_mono` across the unions
+ defining `Complexity.P` and `Complexity.PSPACE`. -/
+ theorem P_subset_PSPACE : P ⊆ PSPACE := by
+-  sorry
++  exact Set.iUnion_mono fun c => DTIME_subset_SPACE (fun n => n ^ c + 1)
+ 
+ /-- **Certificates can be cycled through in polynomial space**: `NP ⊆ PSPACE`.
+ [AB09, Example 4.6: "a similar idea of cycling through all potential
+diff --git a/TCSlib/Complexity/SpaceComplexity/NSPACE.lean b/TCSlib/Complexity/SpaceComplexity/NSPACE.lean
+index ca41531c0f3abe597de7fcd6dabb9e37c00bd3ac..41e53971aeedb3c4dd8581da2b777cee97f1254a 100644
+--- a/TCSlib/Complexity/SpaceComplexity/NSPACE.lean
++++ b/TCSlib/Complexity/SpaceComplexity/NSPACE.lean
+@@ -53,7 +53,7 @@ branch-space measure (`Turing.NDTM.spaceUsedWith`).
+ * `Complexity.NSPACE` — the class, with constant absorption.
+   [AB09, Definition 4.1]
+ 
+-## Main results (sorried; phase-P4.1 statements)
++## Main results (proved; phase-P4.1 statements)
+ 
+ * `Complexity.NSPACE.mono` — monotone in the space bound.
+ * `Complexity.SPACE_subset_NSPACE` — [AB09, Theorem 4.2, second inclusion].
+@@ -101,7 +101,13 @@ def NSPACE (s : ℕ → ℕ) : Set (Language Bool) :=
+ larger bound: `c · s₁ n ≤ c · s₂ n` pointwise (`Nat.mul_le_mul_left`), and only
+ the space inequality mentions the bound. -/
+ theorem NSPACE.mono {s₁ s₂ : ℕ → ℕ} (h : ∀ n, s₁ n ≤ s₂ n) : NSPACE s₁ ⊆ NSPACE s₂ := by
+-  sorry
++  intro L hL
++  obtain ⟨c, N, hN⟩ := hL
++  refine ⟨c, N, fun x => ?_⟩
++  obtain ⟨T, hhalt, hsp, hacc⟩ := hN x
++  refine ⟨T, hhalt, ?_, hacc⟩
++  intro w hw
++  exact (hsp w hw).trans (Nat.mul_le_mul_left c (h x.length))
+ 
+ /-- **Deterministic space is nondeterministic space**: `SPACE s ⊆ NSPACE s`.
+ [AB09, Theorem 4.2, second inclusion]
+@@ -115,6 +121,16 @@ all-branch halting is `M`'s halting, the branch space is `M`'s space by
+ `[true]`) iff `x ∈ L` by the indicator equation — mirroring
+ `Complexity.DTIME_subset_NTIME`. -/
+ theorem SPACE_subset_NSPACE (s : ℕ → ℕ) : SPACE s ⊆ NSPACE s := by
+-  sorry
++  classical
++  rintro L ⟨c, M, hM⟩
++  refine ⟨c, M.toFinNDTM, ?_⟩
++  intro x
++  obtain ⟨t, hcomp, hsp⟩ := hM x
++  have hbranch := M.toFinNDTM_haltsWithin_and_accepts_iff hcomp
++  refine ⟨t, hbranch.1, ?_, hbranch.2⟩
++  intro w hw
++  change M.tm.toNDTM.spaceUsedWith w (M.tm.initCfg x) ≤ c * s x.length
++  rw [M.tm.toNDTM_spaceUsedWith, hw]
++  exact hsp
+ 
+ end Complexity
+diff --git a/TCSlib/Complexity/SpaceComplexity/SpaceClasses.lean b/TCSlib/Complexity/SpaceComplexity/SpaceClasses.lean
+index a835546940ba3fcafa17a891d74f172d491815ee..94da191cec136af42f074c6c75d79bca41b299a3 100644
+--- a/TCSlib/Complexity/SpaceComplexity/SpaceClasses.lean
++++ b/TCSlib/Complexity/SpaceComplexity/SpaceClasses.lean
+@@ -29,7 +29,7 @@ claimed here.
+ * `Complexity.NL` — nondeterministic logarithmic space. [AB09, Definition 4.5]
+ * `Complexity.coNL` — complements of `NL` languages. [AB09, §4.3.2]
+ 
+-## Main results (sorried; phase-P4.1 statements)
++## Main results (proved; phase-P4.1 statements)
+ 
+ * `Complexity.space_poly_subset_PSPACE`, `Complexity.PSPACE_subset_NPSPACE`,
+   `Complexity.LOGSPACE_subset_NL` — the definitional inclusions.
+@@ -67,20 +67,20 @@ def coNL : Set (Language Bool) := {L | Lᶜ ∈ NL}
+ **Proof sketch.** `Set.subset_iUnion` at the given degree, as for
+ `Complexity.dtime_poly_subset_P`. -/
+ theorem space_poly_subset_PSPACE (c : ℕ) : SPACE (fun n => n ^ c + 1) ⊆ PSPACE := by
+-  sorry
++  exact Set.subset_iUnion (fun d : ℕ => SPACE fun n => n ^ d + 1) c
+ 
+ /-- `PSPACE ⊆ NPSPACE`: determinism is a special case, degree by degree.
+ 
+ **Proof sketch.** `Complexity.SPACE_subset_NSPACE` at each degree, then the
+ union is monotone (`Set.iUnion_mono`). -/
+ theorem PSPACE_subset_NPSPACE : PSPACE ⊆ NPSPACE := by
+-  sorry
++  exact Set.iUnion_mono fun c => SPACE_subset_NSPACE (fun n => n ^ c + 1)
+ 
+ /-- `L ⊆ NL` (in the campaign's names, `LOGSPACE ⊆ NL`).
+ [AB09, p. 92 chain]
+ 
+ **Proof sketch.** `Complexity.SPACE_subset_NSPACE` at `Complexity.logSpace`. -/
+ theorem LOGSPACE_subset_NL : LOGSPACE ⊆ NL := by
+-  sorry
++  exact SPACE_subset_NSPACE logSpace
+ 
+ end Complexity
+diff --git a/TCSlib/Complexity/TuringMachine/NondeterministicSpace.lean b/TCSlib/Complexity/TuringMachine/NondeterministicSpace.lean
+index 1dd13f519fa2d0a9cfe1d88b96a7cd44a235ae41..43e61ae6fd98468afbb23d02e8314ed30c329f4a 100644
+--- a/TCSlib/Complexity/TuringMachine/NondeterministicSpace.lean
++++ b/TCSlib/Complexity/TuringMachine/NondeterministicSpace.lean
+@@ -34,10 +34,10 @@ this measure lives in `TCSlib.Complexity.SpaceComplexity.NSPACE`.
+ 
+ * `Turing.NDTM.visitedWith_nil` — the empty run visits the starting positions.
+ * `Turing.MultiTapeTM.toNDTM_spaceUsedWith` — the embedded deterministic machine's
+-  space under any choice word is the deterministic space at that time (sorried;
++  space under any choice word is the deterministic space at that time (proved;
+   the measure-transfer obligation behind `SPACE ⊆ NSPACE`).
+ * `Turing.NDTM.spaceUsedWith_append_of_halt` — once a branch has halted, extending
+-  the choice word does not change the space (sorried; the invariance that makes
++  the choice word does not change the space (proved; the invariance that makes
+   the exact-length quantifier in `Complexity.NSPACE` sufficient).
+ 
+ ## References
+@@ -75,6 +75,23 @@ lemma visitedWith_nil (tm : NDTM k Symbol State) (cfg : Cfg k Symbol State input
+     (i : Fin k) : tm.visitedWith [] cfg i = {cfg.workTapePos i} := by
+   simp [visitedWith]
+ 
++/-- Extending a choice word preserves every position visited by its prefixes,
++without any halting hypothesis.
++
++**Proof sketch.** An old prefix index is still in the larger range, and taking
++that many bits of the extended word gives the same prefix. -/
++private lemma visitedWith_subset_append (tm : NDTM k Symbol State) (w w' : List Bool)
++    (cfg : Cfg k Symbol State input) (i : Fin k) :
++    tm.visitedWith w cfg i ⊆ tm.visitedWith (w ++ w') cfg i := by
++  intro p hp
++  obtain ⟨j, hj, rfl⟩ := Finset.mem_image.mp hp
++  have hjle : j ≤ w.length := Nat.lt_succ_iff.mp (Finset.mem_range.mp hj)
++  refine Finset.mem_image.mpr ⟨j, ?_, ?_⟩
++  · apply Finset.mem_range.mpr
++    simp only [List.length_append]
++    omega
++  · rw [List.take_append_of_le_length hjle]
++
+ /-- **Space stabilizes at halting**: if the branch under `w` has halted, running
+ under any extension `w ++ w'` visits no further cells, so the space is unchanged.
+ This is why `Complexity.NSPACE` may quantify over choice words of one exact
+@@ -85,11 +102,33 @@ length: all-branch halting at that length freezes every branch's space.
+ `Turing.NDTM.runWith_append` factors the run through the halted configuration,
+ and `Turing.NDTM.runWith_of_halt` freezes it, so the head position equals the one
+ at prefix `w`. The two images therefore coincide (`Finset.image_congr` after
+-splitting `Finset.range`), tape by tape. -/
++splitting `Finset.range`), tape by tape.
++
++**Fill appendix (C1a; short-prefix argument).** The private lemma
++`visitedWith_subset_append` proves the old visited set is included in the new
++one without a halting hypothesis: every old index remains in the longer range,
++and the corresponding prefixes agree. In particular, a shorter choice word
++can be padded to any prescribed larger length without losing visited cells.
++The reverse inclusion uses the halted final position for every longer prefix.
++The implementation uses `Finset.Subset.antisymm` and `Finset.mem_image` for
++these inclusions, since the two image domains differ. -/
+ theorem spaceUsedWith_append_of_halt (tm : NDTM k Symbol State) {w : List Bool}
+     {cfg : Cfg k Symbol State input} (h : (tm.runWith w cfg).state = none)
+     (w' : List Bool) : tm.spaceUsedWith (w ++ w') cfg = tm.spaceUsedWith w cfg := by
+-  sorry
++  unfold spaceUsedWith
++  apply Finset.sum_congr rfl
++  intro i _
++  apply congrArg Finset.card
++  apply Finset.Subset.antisymm
++  · intro p hp
++    obtain ⟨j, hj, rfl⟩ := Finset.mem_image.mp hp
++    by_cases hjle : j ≤ w.length
++    · refine Finset.mem_image.mpr ⟨j, Finset.mem_range.mpr (by omega), ?_⟩
++      rw [List.take_append_of_le_length hjle]
++    · refine Finset.mem_image.mpr ⟨w.length, Finset.mem_range.mpr (by omega), ?_⟩
++      rw [List.take_length, List.take_append, List.take_of_length_le (by omega),
++        runWith_append, runWith_of_halt _ h]
++  · exact visitedWith_subset_append tm w w' cfg i
+ 
+ end NDTM
+ 
+@@ -107,6 +146,15 @@ sums agree. -/
+ theorem MultiTapeTM.toNDTM_spaceUsedWith (tm : MultiTapeTM k Symbol State)
+     (w : List Bool) (cfg : Cfg k Symbol State input) :
+     tm.toNDTM.spaceUsedWith w cfg = tm.spaceUsed cfg w.length := by
+-  sorry
++  unfold NDTM.spaceUsedWith MultiTapeTM.spaceUsed
++  apply Finset.sum_congr rfl
++  intro i _
++  apply congrArg Finset.card
++  apply Finset.image_congr
++  intro j hj
++  change (tm.toNDTM.runWith (w.take j) cfg).workTapePos i =
++    (tm.runFrom cfg j).workTapePos i
++  rw [MultiTapeTM.toNDTM_runWith,
++    List.length_take_of_le (Nat.lt_succ_iff.mp (Finset.mem_range.mp hj))]
+ 
+ end Turing

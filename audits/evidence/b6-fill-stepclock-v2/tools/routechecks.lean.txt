@@ -1,0 +1,223 @@
+/-! ### Route probe (B6-F1, brief v2): each route step's interface obligation
+
+Every statement below is an obligation that a step of the brief's route meets at its seam with
+the library, proved from **public** declarations (the brief's promotions included) and from the
+StepClock home block, with no unfolding of a definition of `Build/CounterLoop`, `SymbolLift`,
+`Build/Embed` or `Build/Contract/Basic`. The probe proves bridge facts only; it is not the fill
+(`sc_debit`, `sc_finish` and `sc_timeout` stay sorried). -/
+
+namespace Turing
+
+/-! #### Step 0: the start of the round induction -/
+
+/-- R0. Round `0` starts from the caller's word, at cost `0`, on the caller's tape. -/
+theorem rp_start {Γ : Type} (e : Bool ↪ Γ) (w : List Bool) (ct : ℤ → Option Γ) (cp : ℤ)
+    (hw : ∀ p : ℤ, -1 ≤ p → p ≤ (w.length : ℤ) → ct (cp + p) = FinTM.bufferTape (w.map e) p) :
+    counterWord w 0 = w ∧ counterOverhead w 0 = 0 ∧
+      wordPatch ct cp ((counterWord w 0).map e) = ct := by
+  refine ⟨counterWord_zero w, counterOverhead_zero w, ?_⟩
+  rw [counterWord_zero]
+  exact sc_wordPatch_self ct cp (w.map e) (by simpa using hw)
+
+/-! #### Step 1: the generic debit -/
+
+/-- R1a (success). A predecessor keeps the width. -/
+theorem rp_dec_success_width (w v : List Bool) (h : decFixed w = some v) :
+    v.length = w.length := by
+  have hs := counter_dec_spec w
+  rw [h] at hs
+  exact hs.1
+
+/-- The `false` prefix of an all-`false` word is the whole word. -/
+theorem rp_takeWhile_replicate (n : ℕ) :
+    ((List.replicate n false).takeWhile not).length = n := by
+  induction n with
+  | zero => rfl
+  | succ n ih => simp [List.replicate_succ]
+
+/-- R1b (underflow). The debit's cost `2·|takeWhile not w| + 2` is the underflow contract's
+`2|w| + 2`. -/
+theorem rp_dec_underflow_cost (w : List Bool) (h : decFixed w = none) :
+    (w.takeWhile not).length = w.length := by
+  have hs := counter_dec_spec w
+  rw [h] at hs
+  have := rp_takeWhile_replicate w.length
+  rw [← hs] at this
+  exact this
+
+/-- R1c. The debit's patched word has the counter's width, in both cases. -/
+theorem rp_dec_patch_width (w : List Bool) :
+    ((decFixed w).getD (List.replicate w.length true)).length = w.length := by
+  cases h : decFixed w with
+  | none => simp
+  | some v => simpa using rp_dec_success_width w v h
+
+/-- R1d. The decoded shadow of the debit's one-tape start meets both decrement contracts'
+preconditions (state and delimited word). -/
+theorem rp_shadow_pre {Γ : Type} [DecidableEq Γ] (e : Bool ↪ Γ) {x : List Γ}
+    (ip : Fin (x.length + 2)) (out : List Γ) (w : List Bool) (ct : ℤ → Option Γ) (cp : ℤ)
+    (hw : ∀ p : ℤ, -1 ≤ p → p ≤ (w.length : ℤ) → ct (cp + p) = FinTM.bufferTape (w.map e) p) :
+    let D : Cfg 1 Γ FlagPhase x := ⟨some .run, ip, fun _ => ct, fun _ => cp, out⟩
+    (Cfg.decodeSymbols e D).state = some .run ∧
+      ∀ p : ℤ, -1 ≤ p → p ≤ (w.length : ℤ) →
+        (Cfg.decodeSymbols e D).workTapes 0 ((Cfg.decodeSymbols e D).workTapePos 0 + p) =
+          FinTM.bufferTape w p := by
+  intro D
+  refine ⟨Cfg.decodeSymbols_state e D, fun p lo hi => ?_⟩
+  rw [Cfg.decodeSymbols_workTapes, Cfg.decodeSymbols_workTapePos]
+  change (ct (cp + p)).bind (decodeBool e) = _
+  rw [hw p lo hi, FinTM.bufferTape_map_decode]
+
+/-- R1d, fit: the success contract applies to the shadow. -/
+example {Γ : Type} [DecidableEq Γ] (e : Bool ↪ Γ) {x : List Γ} (ip : Fin (x.length + 2))
+    (out : List Γ) (w v : List Bool) (hv : decFixed w = some v) (ct : ℤ → Option Γ) (cp : ℤ)
+    (hw : ∀ p : ℤ, -1 ≤ p → p ≤ (w.length : ℤ) → ct (cp + p) = FinTM.bufferTape (w.map e) p) :
+    let D : Cfg 1 Γ FlagPhase x := ⟨some .run, ip, fun _ => ct, fun _ => cp, out⟩
+    (decrementTM 1 0).runFrom (Cfg.decodeSymbols e D) (2 * (w.takeWhile not).length + 2) =
+      { Cfg.decodeSymbols e D with
+        state := some (FlagPhase.done true)
+        workTapes := fun j q =>
+          if j = 0 ∧ (Cfg.decodeSymbols e D).workTapePos j ≤ q ∧
+              q < (Cfg.decodeSymbols e D).workTapePos j + (w.length : ℤ)
+            then FinTM.bufferTape v (q - (Cfg.decodeSymbols e D).workTapePos j)
+          else (Cfg.decodeSymbols e D).workTapes j q } := by
+  intro D
+  obtain ⟨hs, hz⟩ := rp_shadow_pre e ip out w ct cp hw
+  exact (decrementTM_run_succ_ofCfg 0 w v hv _ hs hz).1
+
+/-- R1d, fit: the underflow contract applies to the shadow, at the debit's cost. -/
+example {Γ : Type} [DecidableEq Γ] (e : Bool ↪ Γ) {x : List Γ} (ip : Fin (x.length + 2))
+    (out : List Γ) (w : List Bool) (hv : decFixed w = none) (ct : ℤ → Option Γ) (cp : ℤ)
+    (hw : ∀ p : ℤ, -1 ≤ p → p ≤ (w.length : ℤ) → ct (cp + p) = FinTM.bufferTape (w.map e) p) :
+    let D : Cfg 1 Γ FlagPhase x := ⟨some .run, ip, fun _ => ct, fun _ => cp, out⟩
+    ((decrementTM 1 0).runFrom (Cfg.decodeSymbols e D)
+        (2 * (w.takeWhile not).length + 2)).state = some (FlagPhase.done false) := by
+  intro D
+  obtain ⟨hs, hz⟩ := rp_shadow_pre e ip out w ct cp hw
+  rw [rp_dec_underflow_cost w hv, (decrementTM_run_underflow_ofCfg 0 w hv _ hs hz).1]
+
+/-- R1e. The lifted decrement runs as the overlay of the decrement's run on the shadow, from the
+rich start itself (the side conditions are the promoted table lemmas). -/
+theorem rp_lift_run {Γ : Type} [DecidableEq Γ] (e : Bool ↪ Γ) {x : List Γ}
+    (D : Cfg 1 Γ FlagPhase x) (t : ℕ) :
+    ((decrementTM 1 0).liftSymbols e).runFrom D t =
+      Cfg.liftOver e (by simp) D ((decrementTM 1 0).runFrom (Cfg.decodeSymbols e D) t) := by
+  conv_lhs => rw [← Cfg.liftOver_decodeSymbols e D]
+  exact MultiTapeTM.liftSymbols_runFrom_over e (decrementTM 1 0) (decrementTM_tr_input 0)
+    (fun q inp work j => (decrementTM_tr_action 0 q inp work).2 j) _ D (Cfg.decodeSymbols e D) t
+
+/-- R1f. At every time up to the decrement's exit, the overlay keeps the start's input position
+and output (what `sc_lastLayout` and the frame clause need), and its head is the decrement's. -/
+theorem rp_lift_frame {Γ : Type} [DecidableEq Γ] (e : Bool ↪ Γ) {x : List Γ}
+    (D : Cfg 1 Γ FlagPhase x) (T : ℕ)
+    (hT : ((decrementTM 1 0).runFrom (Cfg.decodeSymbols e D) T).output = []) :
+    ∀ u ≤ T,
+      (((decrementTM 1 0).liftSymbols e).runFrom D u).inputPos = D.inputPos ∧
+      (((decrementTM 1 0).liftSymbols e).runFrom D u).output = D.output ∧
+      (((decrementTM 1 0).liftSymbols e).runFrom D u).workTapePos =
+        ((decrementTM 1 0).runFrom (Cfg.decodeSymbols e D) u).workTapePos := by
+  intro u hu
+  rw [rp_lift_run]
+  refine ⟨Fin.ext ?_, ?_, Cfg.liftOver_workTapePos e _ D _⟩
+  · rw [Cfg.liftOver_inputPos, sc_dec_inputPos, Cfg.decodeSymbols_inputPos]
+  · have hp := MultiTapeTM.output_prefix (decrementTM 1 0) (Cfg.decodeSymbols e D) hu
+    rw [hT, List.prefix_nil] at hp
+    rw [Cfg.liftOver_output, hp, List.map_nil, List.append_nil]
+
+/-- R1f, fit: the overlay at any such time meets `sc_lastLayout`'s hypotheses, so the host
+configuration is the clock layout with the body unchanged. -/
+example {k : ℕ} {Γ S : Type} [DecidableEq Γ] (e : Bool ↪ Γ) {x : List Γ} (c : Cfg k Γ S x)
+    (ct : ℤ → Option Γ) (cp : ℤ) (T u : ℕ) (hu : u ≤ T)
+    (hT : ((decrementTM 1 0).runFrom (Cfg.decodeSymbols e
+      (⟨some .run, c.inputPos, fun _ => ct, fun _ => cp, c.output⟩ : Cfg 1 Γ FlagPhase x))
+      T).output = []) :
+    let D : Cfg 1 Γ FlagPhase x := ⟨some .run, c.inputPos, fun _ => ct, fun _ => cp, c.output⟩
+    let E := ((decrementTM 1 0).liftSymbols e).runFrom D u
+    embedEmitCfg (lastEmb k) (Fin.lastCases ct c.workTapes) (Fin.lastCases cp c.workTapePos) []
+        E = clockCfg E.state c (E.workTapes 0) (E.workTapePos 0) := by
+  intro D E
+  obtain ⟨hin, hout, -⟩ := rp_lift_frame e D T hT u hu
+  exact sc_lastLayout c E ct cp hin hout
+
+/-! #### Step 2: one round, and the counter bookkeeping between rounds -/
+
+/-- R2a. Before exhaustion the decrement of the `r`-th frozen word succeeds, with the next
+frozen word (so `sc_debit` lands at `ρ (.done true)`). -/
+theorem rp_round_word (w : List Bool) (r : ℕ) (hr : r < Nat.ofDigits 2 (w.map Bool.toNat)) :
+    decFixed (counterWord w r) = some (counterWord w (r + 1)) ∧
+      (decFixed (counterWord w r)).isSome = true ∧
+      (decFixed (counterWord w r)).getD (List.replicate (counterWord w r).length true) =
+        counterWord w (r + 1) := by
+  have h := counter_word_decrement w r hr
+  exact ⟨h, by rw [h]; rfl, by rw [h]; rfl⟩
+
+/-- R2b. The counter tape after round `r + 1`'s debit is the caller's tape patched once, with
+the next word delimited at the counter head (the next round's precondition). -/
+theorem rp_round_tape {Γ : Type} (e : Bool ↪ Γ) (w : List Bool) (r : ℕ) (ct : ℤ → Option Γ)
+    (cp : ℤ)
+    (hw : ∀ p : ℤ, -1 ≤ p → p ≤ (w.length : ℤ) → ct (cp + p) = FinTM.bufferTape (w.map e) p) :
+    wordPatch (wordPatch ct cp ((counterWord w r).map e)) cp ((counterWord w (r + 1)).map e) =
+        wordPatch ct cp ((counterWord w (r + 1)).map e) ∧
+      ∀ p : ℤ, -1 ≤ p → p ≤ ((counterWord w (r + 1)).length : ℤ) →
+        wordPatch ct cp ((counterWord w (r + 1)).map e) (cp + p) =
+          FinTM.bufferTape ((counterWord w (r + 1)).map e) p := by
+  refine ⟨sc_wordPatch_twice ct cp _ _ (by simp [counterWord_length]), fun p lo hi => ?_⟩
+  exact sc_wordPatch_frame ct cp (w.map e) _ (by simp [counterWord_length])
+    (by simpa using hw) p lo (by simpa using hi)
+
+/-- R2c. The round's cost adds up: after round `r` at host time `counterOverhead w r + r`, a
+debit of the `r`-th word and one body step end at `counterOverhead w (r + 1) + (r + 1)`. -/
+theorem rp_round_time (w : List Bool) (r : ℕ) :
+    counterOverhead w r + r + (2 * ((counterWord w r).takeWhile not).length + 2) + 1 =
+      counterOverhead w (r + 1) + (r + 1) := by
+  rw [counterOverhead_succ]
+  omega
+
+/-! #### Step 3: the timeout -/
+
+/-- R3. At the deadline the frozen word has value `0`, so the last debit underflows, at the
+whole-width cost, leaving a word of the counter's width. -/
+theorem rp_timeout_word (w : List Bool) :
+    decFixed (counterWord w (Nat.ofDigits 2 (w.map Bool.toNat))) = none ∧
+      ((counterWord w (Nat.ofDigits 2 (w.map Bool.toNat))).takeWhile not).length = w.length ∧
+      (List.replicate (counterWord w (Nat.ofDigits 2 (w.map Bool.toNat))).length true).length =
+        w.length := by
+  have hv := counterWord_value w (Nat.ofDigits 2 (w.map Bool.toNat)) le_rfl
+  rw [Nat.sub_self] at hv
+  have hz := (counter_dec_zero _).mpr hv
+  refine ⟨hz, ?_, by simp [counterWord_length]⟩
+  rw [rp_dec_underflow_cost _ hz, counterWord_length]
+
+/-! #### Step 4: the accumulated time -/
+
+/-- R4a (finish). `τ ≤ d` rounds and one stop dispatch fit the finish bound. -/
+theorem rp_finish_time (w : List Bool) (τ : ℕ) (hτ : τ ≤ Nat.ofDigits 2 (w.map Bool.toNat)) :
+    counterOverhead w τ + τ + 1 ≤ 5 * τ + 2 * w.length + 2 := by
+  have := counterOverhead_le_of_le w τ hτ
+  omega
+
+/-- R4b (timeout). `d` rounds and the final underflow fit the timeout bound. -/
+theorem rp_timeout_time (w : List Bool) :
+    counterOverhead w (Nat.ofDigits 2 (w.map Bool.toNat)) +
+        (2 * ((counterWord w (Nat.ofDigits 2 (w.map Bool.toNat))).takeWhile not).length + 2) +
+        Nat.ofDigits 2 (w.map Bool.toNat) ≤
+      5 * Nat.ofDigits 2 (w.map Bool.toNat) + 2 * w.length + 2 := by
+  have h := counterOverhead_le w
+  rw [counterOverhead_succ] at h
+  omega
+
+/-! #### The machine's fit (carried from the v1 checks) -/
+
+/-- The generic debit applies to the fused clock at a non-stop state. -/
+example {k : ℕ} {Γ S : Type} [DecidableEq Γ] (e : Bool ↪ Γ) (M : MultiTapeTM k Γ S)
+    (stopAt : S → Bool) (s : S) (hs : stopAt s = false) {x : List Γ} (c : Cfg k Γ S x)
+    (w : List Bool) (ct : ℤ → Option Γ) (cp : ℤ)
+    (hw : ∀ p : ℤ, -1 ≤ p → p ≤ (w.length : ℤ) → ct (cp + p) = FinTM.bufferTape (w.map e) p) :
+    (sc_clockTM e M stopAt).runFrom (clockCfg (some (.dec s .run)) c ct cp)
+        (2 * (w.takeWhile not).length + 2) =
+      clockCfg (some (sc_decExit s (.done (decFixed w).isSome))) c
+        (wordPatch ct cp (((decFixed w).getD (List.replicate w.length true)).map e)) cp :=
+  (sc_debit e (sc_clockTM e M stopAt) ⟨sc_decExit s, sc_decExit_injective s⟩
+    (fun f hf inp work => sc_agree e M stopAt s hs f hf inp work) c w ct cp hw).1
+
+end Turing

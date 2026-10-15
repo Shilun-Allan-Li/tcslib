@@ -1,0 +1,119 @@
+# B6 hosts statement gate: freeze check of the eight existing files touched
+
+Tool: `bash <S>/tools/leanelab.sh <S>/wt-g5b6 <S>/oleans-f8 <file>` (a direct `lean` call
+inside the worktree, no `-o`, no olean written). Worktree: the read-only checkout `wt-g5b6`
+at campaign commit `1781a230d2410ae2a09fbb961fe644512a6ba3c0` (the worktree's HEAD file); olean snapshot `oleans-f8`
+(all of TCSlib at that commit, and Mathlib). Toolchain `leanprover/lean4:v4.25.0`.
+<OUT> is this pack's scratch directory, <S> the scratchpad. Run: 2026-10-14 03:24 UTC.
+
+`python3 -I <OUT>/scripts/freeze.py <worktree file> <patched file> <allowed statement changes>
+<allowed body changes>`: every declaration's statement (comment-stripped, up to the top-level
+`:=`), body and docstring compared; a statement or body change outside the allowances fails.
+The allowances are exactly the user's decisions B1 (`space_universal`) and B3 (the S1b
+re-pointing), and the one proof re-derivation (`exists_codeTM`, to build the relabelling once).
+
+## TuringMachine/StateRenaming.lean
+allowances: statements [], bodies []
+```
+declarations before/after: 6/8 (public 6/8, private 0/0)
+public added: ['Turing.MultiTapeTM.relabelState_spaceUsed', 'Turing.MultiTapeTM.relabelState_visitedByTapeHead']
+public removed: []
+private added: []
+private removed: []
+kept declarations byte-identical (comment-stripped statement, body, docstring): 6 of 6
+other comments (module docstring, section headers): changed
+RESULT: PASS
+```
+
+## TuringMachine/Encoding.lean
+allowances: statements [], bodies [Turing.exists_codeTM]
+```
+declarations before/after: 42/44 (public 32/34, private 10/10)
+public added: ['Turing.CodeTM.one_le_spaceUsed', 'Turing.exists_codeTM_spaceUsed']
+public removed: []
+private added: []
+private removed: []
+  Turing.exists_codeTM: body changed (authorized); docstring changed
+kept declarations byte-identical (comment-stripped statement, body, docstring): 41 of 42
+other comments (module docstring, section headers): changed
+RESULT: PASS
+```
+
+## SpaceComplexity/ConfigCount.lean
+allowances: statements [], bodies []
+```
+declarations before/after: 21/24 (public 21/24, private 0/0)
+public added: ['Turing.FinTM.ComputesInSpace.computesFunInTime_and_forall_spaceUsed_le', 'Turing.FinTM.ComputesInTime.spaceUsed_le_of_halt', 'Turing.FinTM.decidesInSpace_of_alphabetReduction']
+public removed: []
+private added: []
+private removed: []
+kept declarations byte-identical (comment-stripped statement, body, docstring): 21 of 21
+other comments (module docstring, section headers): changed
+RESULT: PASS
+```
+
+## TuringMachine/Build/CfgRecord.lean
+allowances: statements [], bodies []
+```
+declarations before/after: 121/122 (public 15/16, private 106/106)
+public added: ['Turing.Cfg.inWindow_init']
+public removed: []
+private added: []
+private removed: []
+kept declarations byte-identical (comment-stripped statement, body, docstring): 121 of 121
+other comments (module docstring, section headers): changed
+RESULT: PASS
+```
+
+## SpaceComplexity/ConfigGraph.lean
+allowances: statements [Turing.FinNDTM.s1b_record_accepts], bodies [Turing.FinNDTM.count_windowed_vertices,Turing.FinNDTM.s1b_record,Turing.FinNDTM.s1b_record_eq_iff,Turing.FinNDTM.s1b_record_accepts]
+```
+declarations before/after: 45/47 (public 16/25, private 29/22)
+public added: ['Turing.outSummaryCode', 'Turing.outSummaryCode_eq_one_iff', 'Turing.outSummaryCode_injective', 'Turing.outSummaryCode_nil', 'Turing.outSummaryCode_summaryWord', 'Turing.summaryTag', 'Turing.summaryTag_append', 'Turing.summaryTag_none', 'Turing.summaryWord']
+public removed: []
+private added: []
+private removed: ['Turing.FinNDTM.s1b_summaryWord', 'Turing.FinNDTM.s1b_summaryWord_code', 'Turing.FinNDTM.s1b_tagUpdate', 'Turing.FinNDTM.s1b_tagUpdate_none', 'Turing.FinNDTM.s1b_tagUpdate_output', 'Turing.FinNDTM.sumCode', 'Turing.FinNDTM.sumCode_injective']
+  Turing.FinNDTM.count_windowed_vertices (private): body changed (authorized)
+  Turing.FinNDTM.s1b_record (private): body changed (authorized); docstring changed
+  Turing.FinNDTM.s1b_record_accepts (private): statement changed (authorized); body changed (authorized); docstring changed
+  Turing.FinNDTM.s1b_record_eq_iff (private): body changed (authorized); docstring changed
+kept declarations byte-identical (comment-stripped statement, body, docstring): 34 of 38
+other comments (module docstring, section headers): changed
+RESULT: PASS
+```
+
+## SpaceComplexity/Hierarchy.lean
+allowances: statements [Complexity.space_universal], bodies []
+```
+declarations before/after: 4/4 (public 4/4, private 0/0)
+public added: []
+public removed: []
+private added: []
+private removed: []
+  Complexity.space_hierarchy: docstring changed
+  Complexity.space_universal: statement changed (authorized); docstring changed
+kept declarations byte-identical (comment-stripped statement, body, docstring): 2 of 4
+other comments (module docstring, section headers): changed
+RESULT: PASS
+```
+
+## Positive control: `Hierarchy.lean` without its allowance (must fail)
+```
+  Complexity.space_universal: statement changed UNAUTHORIZED; docstring changed
+RESULT: FAIL (1)
+exit status 1
+```
+
+## facade TuringMachine.lean (no declarations)
+```
+imports added: 4
+imports removed: 0
+other changed lines: 9  (the Contents list)
+```
+
+## facade SpaceComplexity.lean (no declarations)
+```
+imports added: 1
+imports removed: 0
+other changed lines: 3  (the Contents list)
+```

@@ -1,0 +1,154 @@
+diff --git a/TCSlib/Complexity/ClassPSPACE/TQBF.lean b/TCSlib/Complexity/ClassPSPACE/TQBF.lean
+index 61c2d946..f576d8f1 100644
+--- a/TCSlib/Complexity/ClassPSPACE/TQBF.lean
++++ b/TCSlib/Complexity/ClassPSPACE/TQBF.lean
+@@ -41,10 +41,13 @@ adjacency-formula half of Claim 4.4(2), and the Stockmeyer-Meyer theorem that
+   every check is *local* and the formulas are input-independent (Cook-Levin's
+   marker discipline; round-1 finding 7); (ii) the CNF sizes are bounded
+   through their **serialized lengths** — polynomial, not linear; a
+-  literal-occurrence count alone misses empty clauses (round-1 finding 8);
++  literal-occurrence count alone misses empty clauses (round-1 finding 8) —
++  at base `s + n + 2`, which gives the description room the code width does
++  not (round-2 finding 1);
+   (iii) adjacency compares `coreSum (step c)` with `coreSum d`, so halted
+-  vertices are self-adjacent and live ones are not — the ψ-recursion's base
+-  case supplies `a = b` separately (round-1 finding 6). **The package is
++  vertices are self-adjacent while live ones **need not** be (a stationary
++  silent live loop is — round-2 finding 3); the ψ-recursion's base case
++  supplies `a = b` separately (round-1 finding 6). **The package is
+   existence, not an algorithm** (round-1 major 2): the uniform
+   polynomial-time emitter of the three formulas is a private, named fill
+   obligation of `TQBF`'s hardness proof, never a claim of this statement.
+@@ -122,14 +125,16 @@ theorem PSPACE_eq_P_of_pspaceComplete_mem_P {L' : Language Bool}
+ /-- **Claim 4.4(2), packaged quotient form** (spec, fill pending — phase
+ P4.3 round 2; see the module docstring's declared deviations): for every
+ machine there is a constant `C` such that for all `(n, s)` there are a
+-configuration bit-codec — fixed length `C · (s + n + 1)`, injective **down to
+-the input and the vertex quotient** `Turing.NDTM.coreSum` on windowed
+-configurations — and three CNFs: `φv` characterizing exactly the codec image
++configuration bit-codec — fixed length `C · (s + n + 1)`, **factoring through the input and the
++vertex quotient** `Turing.NDTM.coreSum` on windowed configurations (an iff:
++equal codes exactly when equal vertices, at one input) — and three CNFs: `φv` characterizing exactly the codec image
+ among the length-matching strings, `φa` deciding adjacency (the step, read on
+ the vertex quotient) on same-input windowed pairs and rejecting cross-input
+ pairs, and `φacc` deciding acceptance (halted state, `accept` summary); all
+ three with `numVars` inside the code width and serialized lengths bounded by
+-`C · (s + n + 1) ^ C`.
++`C · (s + n + 2) ^ C` — base `s + n + 2`, not the code width's `s + n + 1`:
++at `n = s = 0` the code width equals `C` while one literal reading the
++second block already serializes to `C + 6` (round-2 blocker, finding 1).
+ 
+ **Proof sketch.** The codec is the marker discipline of the Cook-Levin
+ tableau row (`TCSlib.Complexity.CookLevin` precedents), now carrying the
+@@ -147,12 +152,17 @@ summary block; `φa` conjoins content-track equality, locality of unmarked
+ window cells, the marked-cell and neighbor updates by the transition table —
+ the scanned input bit read from the content track under the position
+ marker — the one-hot shifts by at most one, the state rewrite, and the
+-summary update (`Turing.outSummary`'s append table): each check spans a
+-constant number of bits per machine, a constant-size CNF per position by the
+-chapter-2 universality (`Complexity.exists_cnf_boolFun`, applied per
+-**gate**, never per row — a whole-row truth table is exponential); summing
+-over `O(s + n)` positions bounds clause count, `numVars`, and the serialized
+-lengths polynomially (the chapter-2 grammar's serialization-length equation —
++summary update (`Turing.outSummary`'s append table): the one-hot blocks' uniqueness
++constraints are pairwise-exclusion clauses — quadratic in the block length,
++polynomial overall — and the transition checks are enumerated over the
++input-position and work-head tuples jointly with the finitely many
++state/scanned-symbol cases (the head markers couple the tracks:
++`(n + 2) · (2s + 1)^k` guarded cases for the fixed machine), each case a
++constant-size CNF by the chapter-2 universality
++(`Complexity.exists_cnf_boolFun`, applied per **gate**, never per row — a
++whole-row truth table is exponential); the honest count is polynomial, not
++linear (round-2 finding 4), bounding clause count, `numVars`, and the
++serialized lengths (the chapter-2 grammar's serialization-length equation —
+ clause count enters it explicitly, round-1 finding 8). Fill obligations,
+ named: the codec definition with exact-length padding; the two injectivity
+ lemmas; the validity characterization in both directions; the per-position
+@@ -169,7 +179,7 @@ theorem exists_adjacency_codec_cnf (M : Turing.FinTM Bool) :
+             c.InWindow s → c'.InWindow s → code x c = code x' c' → x = x') ∧
+         (∀ (x : List Bool), x.length = n →
+           ∀ c d : Cfg M.k Bool M.State x, c.InWindow s → d.InWindow s →
+-            code x c = code x d → NDTM.coreSum c = NDTM.coreSum d) ∧
++            (code x c = code x d ↔ NDTM.coreSum c = NDTM.coreSum d)) ∧
+         (∀ w : List Bool, w.length = C * (s + n + 1) →
+           (φv.eval (fun v => w.getD v false) = true ↔
+             ∃ (x : List Bool), x.length = n ∧
+@@ -189,9 +199,9 @@ theorem exists_adjacency_codec_cnf (M : Turing.FinTM Bool) :
+         φv.numVars ≤ C * (s + n + 1) ∧
+         φacc.numVars ≤ C * (s + n + 1) ∧
+         φa.numVars ≤ 2 * (C * (s + n + 1)) ∧
+-        (CNF.serialize φv).length ≤ C * (s + n + 1) ^ C ∧
+-        (CNF.serialize φa).length ≤ C * (s + n + 1) ^ C ∧
+-        (CNF.serialize φacc).length ≤ C * (s + n + 1) ^ C := by
++        (CNF.serialize φv).length ≤ C * (s + n + 2) ^ C ∧
++        (CNF.serialize φa).length ≤ C * (s + n + 2) ^ C ∧
++        (CNF.serialize φacc).length ≤ C * (s + n + 2) ^ C := by
+   sorry
+ 
+ /-- **The language `TQBF`** [AB09, §4.2]: binary strings whose decoded
+@@ -235,8 +245,9 @@ from the initial vertex within `2^ℓ` steps" over the packaged carrier of
+ configurations, with `Valid := φv`, `Next := φa`, `Accept := φacc`. The
+ midpoint recursion is
+ `ψ₀(a, b) := Valid a ∧ Valid b ∧ (a = b ∨ Next (a, b))` — the base includes
+-length-zero paths, since live vertices are not `Next`-reflexive (round-1
+-finding 6) — and
++length-zero paths — `Next` self-loops are guaranteed only at halted
++vertices, and a live vertex may or may not be self-adjacent (round-1
++finding 6; round-2 finding 3) — and
+ `ψᵢ₊₁(a, b) := ∃ z (Valid z ∧ ∀ u v, ((u,v) = (a,z) ∨ (u,v) = (z,b)) → ψᵢ(u,v))`
+ ([AB09]'s succinct `∀`-trick keeping one copy of `ψᵢ`, with the midpoint
+ **guarded by `Valid`** — unguarded quantification admits paths through junk
+@@ -248,8 +259,11 @@ conversion are existentially quantified **after** the original prefix — gate
+ values must not be fixed before universal variables they depend on (round-1
+ answer 5) — with constant-arity gate constraints via the chapter-2
+ universality (`Complexity.exists_cnf_boolFun` per gate, never per level).
+-Size: `O(ℓ)` scaffolding per level over `ℓ` levels plus the three packaged
+-CNFs — polynomial by their serialized-length clauses. Truth iff reachability
++Size: `O(ℓ)` scaffolding per level over `ℓ` levels, with a `Valid` copy at
++every level plus the two base guards — the packaged CNFs appear `O(ℓ)`
++times, and index shifts change their unary serializations; all counted in
++the ledger (round-2 finding 6) — polynomial by the serialized-length
++clauses. Truth iff reachability
+ iff `M` accepts `x`: the quotient dictionary
+ (`Turing.NDTM.reflTransGen_cfgStep_iff` through `Turing.MultiTapeTM.toNDTM`)
+ with path lifting via `Turing.NDTM.coreSum_stepWith`, the space bound
+diff --git a/TCSlib/Complexity/SpaceComplexity/Hierarchy.lean b/TCSlib/Complexity/SpaceComplexity/Hierarchy.lean
+index 0d778a03..1b963f8b 100644
+--- a/TCSlib/Complexity/SpaceComplexity/Hierarchy.lean
++++ b/TCSlib/Complexity/SpaceComplexity/Hierarchy.lean
+@@ -93,8 +93,11 @@ output tape (the `Turing.MultiTapeTM.ConfigCount` arithmetic as in
+ `ComputesInTime.of_spaceUsed_le`). (iii) **Probe silently, then replay**:
+ streamed output cannot be retracted when a later overflow or clock
+ exhaustion must yield exactly `[false]`, so the first pass runs with output
+-captured (W1); on success the machine resets the simulated banks, emits
+-`true`, and replays the run forwarding output — fixed banks reused between
++captured (W1 — *captured* meaning discarded up to a finite summary: a
++bounded-workspace run can emit far more than its workspace, so the wrapper
++must never buffer the emitted word; round-2 finding 7); on success the
++machine resets the simulated banks, emits `true`, and replays the run
++forwarding output — fixed banks reused between
+ the passes. (iv) The canonizer cost is a **finite code-dependent constant**
+ absorbed into `C` (the effective scheme supplies no bound linear in the code
+ length, and none is claimed). The `+ logSpace n` addend pays for the clock's
+@@ -157,7 +160,8 @@ inside `[-g n, g n]` — a cap depending only on that machine's fixed tape
+ count, hence uniform in `α`; capped or failed attempts advance the budget;
+ (iii) answers the **opposite** of the first successful attempt's verdict,
+ retaining only a three-valued attempt summary (failure, success with
+-`[true]`, success otherwise; output suppressed, W1), and a fixed answer if
++`[true]`, success otherwise; output suppressed — discarded to that finite
++summary, never buffered; W1), and a fixed answer if
+ every attempt caps out. `D ∈ SPACE g`: the universal's fixed tapes confined
+ to the cap, the budget and address counters, and the bank resets are
+ `O(g n)` cells, uniformly in the input's code part. If `D ∈ SPACE f` via
+@@ -207,8 +211,9 @@ under `≤ₚ` (the chapter-2 bounded-certificate transport — a derived
+ obligation from `Complexity.mem_NP_iff_exists_length_le`, Exercise 2.1's
+ bounded form, named for the brief). Padding transfers space bounds down:
+ for `L ∈ SPACE (n² + 1)`, the padded language
+-`L' := {pairEncode x (List.replicate (|x|²) true)}` — padded length exactly
+-`m = n² + 2n + 2`, syntax validated — lies in `SPACE (m + 1)` in the padded
++`L' := {y | ∃ x ∈ L, y = pairEncode x (List.replicate (|x|²) true)}` —
++membership restricted to padded members of `L` (round-2 finding 5); padded
++length exactly `m = n² + 2n + 2`, syntax validated — lies in `SPACE (m + 1)` in the padded
+ length (validate, then run the `L`-decider on the first component; the pad
+ supplies the room — the chapter-2 padding-cluster discipline,
+ `EXP_subset_NEXP`'s precedent), so `L' ∈ NP` by the assumption, and

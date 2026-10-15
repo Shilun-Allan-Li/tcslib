@@ -1,0 +1,239 @@
+import TCSlib.Complexity.SpaceComplexity.ConfigGraph
+
+set_option autoImplicit false
+open Turing
+
+/-! S1a pre-ship probe (maintainer, before issue; base `29aa75be`).
+
+Part P declares the four pre-issue promotion candidates with their proofs, at
+the names and homes the brief cites:
+* `Turing.NDTM.fixChoice`, `Turing.NDTM.stepWith_eq_fixChoice_step`
+  → `TuringMachine/Nondeterministic.lean`;
+* `Turing.MultiTapeTM.ConfigCount.abs_lt_card_image_of_unitSteps`,
+  `Turing.MultiTapeTM.ConfigCount.mem_image_workTapePos_of_ne_none`
+  → `SpaceComplexity/ConfigCount.lean`, beside `exists_eq_of_between`.
+
+Part P also shows that the two deterministic lemmas re-derive verbatim as
+instances. Their bodies become one-line citations, so no text is duplicated.
+Once Part P has landed, delete it: Part S must still elaborate unchanged
+against the promoted names.
+
+Part S holds the call shapes of the four S1a routes. Its helpers are shapes,
+not the fill: the batch writes its own `private` versions in `ConfigGraph.lean`. -/
+
+/-! ## Part P (landed): the four promoted declarations, and the two re-derived originals -/
+
+#print axioms Turing.NDTM.fixChoice
+#print axioms Turing.NDTM.stepWith_eq_fixChoice_step
+#print axioms Turing.MultiTapeTM.ConfigCount.abs_lt_card_image_of_unitSteps
+#print axioms Turing.MultiTapeTM.ConfigCount.mem_image_workTapePos_of_ne_none
+#print axioms Turing.MultiTapeTM.abs_pos_lt_card_visited
+#print axioms Turing.MultiTapeTM.mem_visited_of_ne_none
+
+/-! ## Part S — the S1a call shapes -/
+
+namespace Turing.NDTM
+variable {k : ℕ} {S : Type} {x : List Bool}
+
+-- Shared prefix-step shape (routes 1 and 3): a prefix grows by `w[j]?`.
+theorem probe_runWith_take_succ (tm : NDTM k Bool S) (w : List Bool) (c : Cfg k Bool S x)
+    (j : ℕ) : tm.runWith (w.take (j + 1)) c = tm.runWith (w[j]?).toList (tm.runWith (w.take j) c) := by
+  rw [List.take_succ, NDTM.runWith_append]
+
+theorem probe_take_succ_step (tm : NDTM k Bool S) (w : List Bool) (c : Cfg k Bool S x) (j : ℕ) :
+    tm.runWith (w.take (j + 1)) c = tm.runWith (w.take j) c ∨
+      ∃ a : Action k Bool S, tm.runWith (w.take (j + 1)) c = a.apply (tm.runWith (w.take j) c) := by
+  rw [probe_runWith_take_succ]
+  cases w[j]? with
+  | none => exact Or.inl rfl
+  | some b =>
+    simp only [Option.toList_some, NDTM.runWith_cons, NDTM.runWith_nil, NDTM.stepWith]
+    cases (tm.runWith (w.take j) c).state with
+    | none => exact Or.inl rfl
+    | some q => exact Or.inr ⟨_, rfl⟩
+
+-- Route 3, window: both ND facts are instances of the promoted generic lemmas.
+theorem probe_abs_lt_card_visitedWith (tm : NDTM k Bool S) (w : List Bool) (i : Fin k)
+    {z : ℤ} (hz : z ∈ tm.visitedWith w (tm.initCfg x) i) :
+    |z| < (tm.visitedWith w (tm.initCfg x) i).card :=
+  MultiTapeTM.ConfigCount.abs_lt_card_image_of_unitSteps
+    (fun j => (tm.runWith (w.take j) (tm.initCfg x)).workTapePos i) (by simp)
+    (fun j => by
+      rcases probe_take_succ_step tm w (tm.initCfg x) j with h | ⟨a, h⟩
+      · simp only [h, sub_self, abs_zero, zero_le_one]
+      · simp only [h]; exact workTapePos_apply_le a _ i) w.length hz
+
+theorem probe_mem_visitedWith_of_ne_none (tm : NDTM k Bool S) (w : List Bool) (i : Fin k)
+    (z : ℤ) (hz : (tm.runWith w (tm.initCfg x)).workTapes i z ≠ none) :
+    z ∈ tm.visitedWith w (tm.initCfg x) i :=
+  MultiTapeTM.ConfigCount.mem_image_workTapePos_of_ne_none
+    (fun j => tm.runWith (w.take j) (tm.initCfg x)) (by simp)
+    (fun j => probe_take_succ_step tm w (tm.initCfg x) j) w.length i z
+    (by simpa only [List.take_length] using hz)
+
+-- Route 3: a single prefix's space is within the whole word's (the window's source).
+example (tm : NDTM k Bool S) (w : List Bool) (c : Cfg k Bool S x) (i : Fin k) :
+    (tm.visitedWith w c i).card ≤ tm.spaceUsedWith w c :=
+  Finset.single_le_sum (f := fun i => (tm.visitedWith w c i).card)
+    (fun _ _ => Nat.zero_le _) (Finset.mem_univ i)
+
+-- Route 2: the core half cites `core_step` through the slice.
+theorem probe_outputSymbol_congr (M : MultiTapeTM k Bool S) {c d : Cfg k Bool S x}
+    (h : MultiTapeTM.ConfigCount.core c = MultiTapeTM.ConfigCount.core d) :
+    M.outputSymbol c = M.outputSymbol d := by
+  simp only [MultiTapeTM.ConfigCount.core, Prod.mk.injEq] at h
+  obtain ⟨hs, hi, hw, hp⟩ := h
+  have hsym : c.inputSymbol = d.inputSymbol := by unfold Cfg.inputSymbol; simp only [hi]
+  have hws : c.workTapeSymbols = d.workTapeSymbols := by
+    funext i; simp only [Cfg.workTapeSymbols, hw, hp]
+  unfold MultiTapeTM.outputSymbol
+  rw [hs, hsym, hws]
+
+example (c : Cfg k Bool S x) :
+    coreSum c = (MultiTapeTM.ConfigCount.core c, outSummary c.output) := rfl
+
+end Turing.NDTM
+
+namespace Turing
+
+-- Route 2 / audit Q1: the summary is an append congruence (audit §7 sanity items).
+theorem probe_outSummary_eq_accept_iff (u : List Bool) : outSummary u = .accept ↔ u = [true] := by
+  match u with
+  | [] => simp [outSummary]
+  | [true] => simp [outSummary]
+  | [false] => simp [outSummary]
+  | _ :: _ :: _ => simp [outSummary]
+
+theorem probe_outSummary_append_congr {u v : List Bool} (h : outSummary u = outSummary v)
+    (e : List Bool) : outSummary (u ++ e) = outSummary (v ++ e) := by
+  have key : ∀ u : List Bool, (outSummary u = .empty ↔ u = []) ∧
+      (outSummary u = .accept ↔ u = [true]) := by
+    intro u
+    match u with
+    | [] => simp [outSummary]
+    | [true] => simp [outSummary]
+    | [false] => simp [outSummary]
+    | _ :: _ :: _ => simp [outSummary]
+  have dead : ∀ u e : List Bool, outSummary u = .dead → outSummary (u ++ e) = .dead := by
+    intro u e hu
+    cases hs : outSummary (u ++ e) with
+    | dead => rfl
+    | empty =>
+      have := ((key _).1.mp hs); simp only [List.append_eq_nil_iff] at this
+      rw [this.1] at hu; simp [outSummary] at hu
+    | accept =>
+      have h1 := (key _).2.mp hs
+      rcases u with _ | ⟨a, u⟩
+      · simp [outSummary] at hu
+      · rcases u with _ | ⟨b, u⟩
+        · simp only [List.cons_append, List.nil_append, List.cons.injEq] at h1
+          rw [h1.1] at hu; simp [outSummary] at hu
+        · simp at h1
+  cases hu : outSummary u with
+  | empty =>
+    rw [hu] at h; rw [(key _).1.mp hu, (key _).1.mp h.symm]
+  | accept =>
+    rw [hu] at h; rw [(key _).2.mp hu, (key _).2.mp h.symm]
+  | dead =>
+    rw [hu] at h; rw [dead u e hu, dead v e h.symm]
+
+-- Route 2 composes: slice + `core_step` + `step_output` + the congruence.
+example {k : ℕ} {S : Type} {x : List Bool} (tm : NDTM k Bool S) (b : Bool)
+    {c d : Cfg k Bool S x} (h : NDTM.coreSum c = NDTM.coreSum d) :
+    NDTM.coreSum (tm.stepWith b c) = NDTM.coreSum (tm.stepWith b d) := by
+  simp only [NDTM.coreSum, Prod.mk.injEq] at h ⊢
+  obtain ⟨hc, hs⟩ := h
+  rw [NDTM.stepWith_eq_fixChoice_step, NDTM.stepWith_eq_fixChoice_step]
+  refine ⟨MultiTapeTM.ConfigCount.core_step _ hc, ?_⟩
+  rw [MultiTapeTM.step_output, MultiTapeTM.step_output, NDTM.probe_outputSymbol_congr _ hc]
+  exact probe_outSummary_append_congr hs _
+
+end Turing
+
+-- Route 3: `coreCode_inj` under the window hypotheses.
+example {k : ℕ} {S : Type} {x : List Bool} (B : ℕ) {c d : Cfg k Bool S x}
+    (hc : ∀ i, |c.workTapePos i| ≤ B ∧ ∀ z, c.workTapes i z ≠ none → |z| ≤ B)
+    (hd : ∀ i, |d.workTapePos i| ≤ B ∧ ∀ z, d.workTapes i z ≠ none → |z| ≤ B)
+    (h : MultiTapeTM.ConfigCount.coreCode B c = MultiTapeTM.ConfigCount.coreCode B d) :
+    MultiTapeTM.ConfigCount.core c = MultiTapeTM.ConfigCount.core d :=
+  MultiTapeTM.ConfigCount.coreCode_inj B hc hd h
+
+-- Route 3: the code universe, with the summary coded in `Fin 3`, has exactly `configBound`
+-- elements (`OutSummary` has no `Fintype` instance).
+example (N : FinNDTM Bool) (n s : ℕ) :
+    Fintype.card ((Option N.State × Fin (n + 2) × (Fin N.k → Fin (2 * s + 1) → Option Bool) ×
+      (Fin N.k → Fin (2 * s + 1))) × Fin 3) = N.configBound n s := by
+  simp only [Fintype.card_prod, Fintype.card_option, Fintype.card_fin, Fintype.card_pi,
+    Finset.prod_const, Finset.card_univ, Fintype.card_bool, FinNDTM.configBound]
+  rw [← pow_mul, Nat.mul_comm (2 * s + 1) N.k]
+  ring
+
+-- Route 3: the injection-to-count shape (as in `of_spaceUsed_le`).
+example {α : Type} [Fintype α] (f : ℕ → α) (T : ℕ)
+    (hinj : Set.InjOn f (Finset.range T : Set ℕ)) : T ≤ Fintype.card α := by
+  have := Finset.card_le_card_of_injOn f (fun a _ => Finset.mem_univ (f a)) hinj
+  simpa using this
+
+-- Routes 3 and 4: padding.
+example (N : FinNDTM Bool) {x : List Bool} {t t' : ℕ} (h : N.AcceptsWithin x t)
+    (hle : t ≤ t') : N.AcceptsWithin x t' := h.mono hle
+
+-- Route 4: truncation to the deciding budget.
+example {k : ℕ} {S : Type} (tm : NDTM k Bool S) (x w : List Bool) (T : ℕ)
+    (hH : tm.HaltsWithin x T) (hT : T ≤ w.length) :
+    tm.runWith w (tm.initCfg x) = tm.runWith (w.take T) (tm.initCfg x) := by
+  have hp := hH (w.take T) (List.length_take_of_le hT)
+  conv_lhs => rw [← List.take_append_drop T w]
+  rw [NDTM.runWith_append, NDTM.runWith_of_halt _ hp]
+
+-- Route 4: `DecidesInSpace` unpacks to the three conjuncts.
+example (N : FinNDTM Bool) (L : Language Bool) (s : ℕ → ℕ) (h : N.DecidesInSpace L s)
+    (x : List Bool) : ∃ T, N.tm.HaltsWithin x T ∧
+      (∀ w : List Bool, w.length = T → N.tm.spaceUsedWith w (N.tm.initCfg x) ≤ s x.length) ∧
+      (x ∈ L ↔ N.AcceptsWithin x T) := h x
+
+-- Route 1: the two directions' step shapes.
+example {k : ℕ} {S : Type} {x : List Bool} (tm : NDTM k Bool S) (w : List Bool) (b : Bool)
+    (c : Cfg k Bool S x) : tm.runWith (w ++ [b]) c = tm.stepWith b (tm.runWith w c) := by
+  rw [NDTM.runWith_append, NDTM.runWith_cons, NDTM.runWith_nil]
+example {k : ℕ} {S : Type} {x : List Bool} (tm : NDTM k Bool S) (b : Bool)
+    {c c' : Cfg k Bool S x} (h : Relation.ReflTransGen tm.CfgStep (tm.stepWith b c) c') :
+    Relation.ReflTransGen tm.CfgStep c c' := Relation.ReflTransGen.head ⟨b, rfl⟩ h
+
+-- Optional exports E1–E4 (audit §7): the exact statements the brief sanctions.
+namespace Turing
+theorem probe_E3_coreSum_runWith {k : ℕ} {S : Type} {x : List Bool} (tm : NDTM k Bool S)
+    (w : List Bool) {c d : Cfg k Bool S x} (h : NDTM.coreSum c = NDTM.coreSum d) :
+    NDTM.coreSum (tm.runWith w c) = NDTM.coreSum (tm.runWith w d) := by
+  induction w generalizing c d with
+  | nil => exact h
+  | cons b w ih => exact ih (NDTM.coreSum_stepWith tm b h)
+
+theorem probe_E4_not_acceptsWithin_zero (N : FinNDTM Bool) (x : List Bool) :
+    ¬ N.AcceptsWithin x 0 := by
+  rintro ⟨w, hw, hs, -⟩
+  rw [List.length_eq_zero_iff.mp hw] at hs
+  simp at hs
+end Turing
+
+-- The four frozen S1a targets, and the three summit statements, elaborate (sorried at issue).
+#check @NDTM.reflTransGen_cfgStep_iff
+#check @NDTM.coreSum_stepWith
+#check @FinNDTM.acceptsWithin_of_spaceUsedWith_le
+#check @FinNDTM.DecidesInSpace.mem_iff_acceptsWithin_configBound
+#check @Complexity.NSPACE_subset_exp_dtime
+#check @Complexity.NL_subset_P
+#check @Complexity.polyTimeReducible_of_mem_NL
+
+-- Cited infrastructure and the promotion candidates: within the standard triple.
+#print axioms MultiTapeTM.ConfigCount.core_step
+#print axioms MultiTapeTM.ConfigCount.coreCode_inj
+#print axioms MultiTapeTM.ConfigCount.exists_eq_of_between
+#print axioms MultiTapeTM.step_output
+#print axioms Turing.workTapePos_apply_le
+#print axioms FinNDTM.AcceptsWithin.mono
+#print axioms NDTM.runWith_append
+#print axioms NDTM.runWith_of_halt
+#print axioms NDTM.stepWith_eq_fixChoice_step
+#print axioms MultiTapeTM.ConfigCount.abs_lt_card_image_of_unitSteps
+#print axioms MultiTapeTM.ConfigCount.mem_image_workTapePos_of_ne_none

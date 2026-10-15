@@ -1,0 +1,45 @@
+import TCSlib.Complexity.SpaceComplexity.Inclusions
+import TCSlib.Complexity.SpaceComplexity.SpaceClasses
+
+set_option autoImplicit false
+open Turing Complexity
+
+/-! C1a pre-ship probe (maintainer, executed before issue). Each `example` is a
+call shape the brief prescribes. -/
+
+-- Route 4: the shared per-input lemma consumes `DecidesInSpace`'s computation as is.
+example (M : FinTM Bool) (L : Language Bool) (s : ℕ → ℕ) (c : ℕ)
+    (hM : M.DecidesInSpace L fun n => c * s n) (x : List Bool) :
+    ∃ t, M.toFinNDTM.tm.HaltsWithin x t ∧ (x ∈ L ↔ M.toFinNDTM.AcceptsWithin x t) := by
+  obtain ⟨t, ht, -⟩ := hM x
+  exact ⟨t, M.toFinNDTM_haltsWithin_and_accepts_iff ht⟩
+
+-- Route 2's per-prefix equation.
+example {k : ℕ} {S : Type} (tm : MultiTapeTM k Bool S) {x : List Bool}
+    (cfg : Cfg k Bool S x) (w : List Bool) (j : ℕ) (hj : j ≤ w.length) :
+    tm.toNDTM.runWith (w.take j) cfg = tm.runFrom cfg j := by
+  rw [MultiTapeTM.toNDTM_runWith, List.length_take_of_le hj]
+
+-- Route 8: the shared space bound at the DTIME budget, and the vacuous case.
+example (M : FinTM Bool) (x : List Bool) (t : ℕ) :
+    M.tm.spaceUsed (M.tm.initCfg x) t ≤ M.k * (t + 1) :=
+  M.tm.spaceUsed_le_mul_succ _ t
+example (T : ℕ → ℕ) (h : ∃ n, T n = 0) : DTIME T = ∅ := DTIME_eq_empty_of_exists_zero h
+
+-- Route 1's two run facts.
+#check @NDTM.runWith_append
+#check @NDTM.runWith_of_halt
+
+-- The frozen targets elaborate (sorried at issue).
+#check @NDTM.spaceUsedWith_append_of_halt
+#check @MultiTapeTM.toNDTM_spaceUsedWith
+#check @NSPACE.mono
+#check @SPACE_subset_NSPACE
+#check @space_poly_subset_PSPACE
+#check @PSPACE_subset_NPSPACE
+#check @LOGSPACE_subset_NL
+#check @DTIME_subset_SPACE
+#check @P_subset_PSPACE
+
+#print axioms FinTM.toFinNDTM_haltsWithin_and_accepts_iff
+#print axioms MultiTapeTM.spaceUsed_le_mul_succ

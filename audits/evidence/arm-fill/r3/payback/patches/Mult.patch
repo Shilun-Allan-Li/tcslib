@@ -1,0 +1,24 @@
+--- a/TCSlib/Complexity/SpaceComplexity/Logspace/Mult.lean
++++ b/TCSlib/Complexity/SpaceComplexity/Logspace/Mult.lean
+@@ -498,18 +498,12 @@
+     congr 1
+     omega
+   · intro i hi
+-    rw [pairEncode_getD, if_neg (by omega), if_neg (by omega), if_neg (by omega)]
+-    rw [show 2 * a.length + 2 + 2 * i - 2 * a.length - 2 = 2 * i by omega]
+-    rw [pairEncode_getD, if_pos (by omega)]
++    rw [pairEncode_getD_snd, pairEncode_getD, if_pos (by omega)]
+     congr 1
+     omega
+   · intro i
+-    rw [pairEncode_getD, if_neg (by omega), if_neg (by omega), if_neg (by omega)]
+-    rw [show 2 * a.length + 2 + 2 * b.length + 2 + i - 2 * a.length - 2 =
+-      2 * b.length + 2 + i by omega]
+-    rw [pairEncode_getD, if_neg (by omega), if_neg (by omega), if_neg (by omega)]
+-    congr 1
+-    omega
++    rw [show 2 * a.length + 2 + 2 * b.length + 2 + i = 2 * a.length + 2 + (2 * b.length + 2 + i)
++      by omega, pairEncode_getD_snd, pairEncode_getD_snd]
+ 
+ /-- Conditions not yet checked at the start of column `j`. -/
+ private def MultRemaining (a b c : List Bool) (j : ℕ) : Prop :=

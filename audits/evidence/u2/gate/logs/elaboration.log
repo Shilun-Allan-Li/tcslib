@@ -1,0 +1,72 @@
+## StepBlockLoop.check
+## Codes2Tape.check
+## UniversalK.cut
+## SelfUniversal.cut
+## SelfUniversal.base
+## TuringMachine.cut
+## U2Consumer.cut
+## CodeSimulator.base
+## CodeSimulator.cut
+sorry warnings at: ['exists_forwardLoopTM']; expected: ['exists_forwardLoopTM']
+other diagnostics: 0
+  Turing.StepBlock.loopTM: std ok
+  Turing.StepBlock.hostedLoopTM: std ok
+  Turing.StepBlock.loopTM_run: std ok
+  Turing.StepBlock.hostedLoopTM_run: std ok
+  Turing.StepBlock.hostedLoop_read: std ok
+  Turing.StepBlock.forwardLoopCfg: std ok
+  Turing.StepBlock.exists_forwardLoopTM: sorryAx ok
+CHECK: PASS
+sorry warnings at: []; expected: []
+other diagnostics: 0
+  Turing.Code2TM.toFinTM: std ok
+  Turing.Code2TM.serialize: std ok
+  Turing.MachineCode2.decode_encode: std ok
+  Turing.EffectiveMachineCode2: std ok
+  Turing.exists_effectiveMachineCode2: std ok
+  Turing.UniformMachineCode2: std ok
+  Turing.Code2TM.serialize_eq_serializeK: std ok
+  Turing.exists_uniformMachineCode2: sorryAx ok
+  Turing.Code2TM: std ok
+  Turing.MachineCode2: std ok
+CHECK: PASS
+sorry warnings at: ['exists_selfStartupTMK', 'exists_selfUniversalK', 'universalK']; expected: ['exists_selfStartupTMK', 'exists_selfUniversalK', 'universalK']
+other diagnostics: 0
+  Turing.EffectiveCodeK: std ok
+  Turing.EffectiveCodeK.toFinTM: std ok
+  Turing.EffectiveCodeK.ofSerialize: std ok
+  Turing.EffectiveMachineCode.toK: std ok
+  Turing.EffectiveMachineCode2.toK: std ok
+  Turing.EffectiveMachineCode.toK_toFinTM: std ok
+  Turing.EffectiveMachineCode2.toK_toFinTM: std ok
+  Turing.EffectiveMachineCode.toK_machine: std ok
+  Turing.EffectiveMachineCode2.toK_machine: std ok
+  Turing.exists_selfStartupTMK: sorryAx ok
+  Turing.exists_selfUniversalK: sorryAx ok
+  Turing.universalK: sorryAx ok
+CHECK: PASS
+sorry warnings at: ['exists_selfStartupTMK', 'exists_selfUniversalK', 'universalK']; expected: ['exists_selfStartupTMK', 'exists_selfUniversalK', 'universalK']
+other diagnostics: 0
+  Turing.exists_selfStartupTM: sorryAx ok
+  Turing.exists_selfUniversal: sorryAx ok
+CHECK: PASS
+sorry warnings at: ['exists_selfStartupTM', 'exists_selfUniversal']; expected: ['exists_selfStartupTM', 'exists_selfUniversal']
+other diagnostics: 0
+  Turing.exists_selfStartupTM: sorryAx ok
+  Turing.exists_selfUniversal: sorryAx ok
+CHECK: PASS
+sorry warnings at: ['exists_selfStartupTMK', 'exists_selfUniversalK', 'universalK']; expected: ['exists_selfStartupTMK', 'exists_selfUniversalK', 'universalK']
+other diagnostics: 0
+CHECK: PASS
+sorry warnings at: ['exists_selfStartupTMK', 'exists_selfUniversalK', 'universalK']; expected: ['exists_selfStartupTMK', 'exists_selfUniversalK', 'universalK']
+other diagnostics: 0
+  Turing.U2ConsumerProbe.exists_code2TM: std ok
+  Turing.U2ConsumerProbe.logOverhead_mul_le: std ok
+  Turing.U2ConsumerProbe.twoTapeSelfSimulator: sorryAx ok
+  Turing.U2ConsumerProbe.time_hierarchy_log: sorryAx ok
+  Turing.U2ConsumerProbe.time_hierarchy_book: sorryAx ok
+CHECK: PASS
+baseline: 3 sorry warnings ['exists_canonDecider', 'exists_canonGrammarStage', 'exists_uniformSimulator'], 11 axiom prints, other 0
+cut:      4 sorry warnings ['exists_canonDecider', 'exists_canonGrammarStage', 'exists_forwardLoopTM', 'exists_uniformSimulator'], 11 axiom prints, other 0
+expected extra sorry warnings: ['exists_forwardLoopTM']; axiom prints identical: True
+CHECK: PASS

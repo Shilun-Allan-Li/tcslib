@@ -1,0 +1,1122 @@
+/-
+Copyright (c) 2026 Seyoon Ragavan. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Seyoon Ragavan
+-/
+import TCSlib.Complexity.TuringMachine.Nondeterministic
+import TCSlib.Complexity.TuringMachine.StateRenaming
+import TCSlib.Complexity.TuringMachine.Simulation
+import TCSlib.Complexity.TuringMachine.Build.Seam
+import TCSlib.Complexity.TuringMachine.Build.CounterLoop
+import TCSlib.Complexity.TuringMachine.NDCodes
+import TCSlib.Complexity.TuringMachine.CodeSimulator
+import TCSlib.Complexity.ClassNP.NTIME
+import Mathlib.Data.Nat.Digits.Lemmas
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+/-!
+# C1 host contracts: statement-gate unit in landing form
+
+**Gate evidence: an elaboration unit, not a landing module.** The file holds six parts. Each is
+the body of one landing module, or an addition to one existing module, in import order. Landing
+is a cut at the `-- @landing` markers. Each part becomes its module: the copyright block, the
+imports its `-- @imports` lines list, the standard options, and the part verbatim (its own
+module docstring included). No declaration changes in the cut. An addition to an existing
+module is appended at its end, and the module gains the imports its part lists beyond itself.
+
+The parts share one file because a file elaborated against the snapshot can import only modules
+that exist there, and later parts use declarations of earlier ones. Each landing module's import
+list is checked separately, by elaborating exactly its import closure (the cut check).
+
+| Part | Lands as | Content |
+|---|---|---|
+| A | appended to `TuringMachine/Nondeterministic.lean` | transfer, slice, relabelling, locality |
+| B | new `TuringMachine/ChoiceReplay.lean` | the replay machine and the replay lemma |
+| C | new `TuringMachine/Build/NDHost.lean` | the ND phase host and the choice writer |
+| D | new `TuringMachine/Build/InputWindow.lean` | the bounded input window copier |
+| E | new `TuringMachine/NDCodeSimulator.lean` | bridge, replay canonizer, interpreter core |
+| F | new `ClassNP/ExhaustiveReplay.lean` | the exhaustive replay and `BF := E(UN)` |
+
+These are the host contracts of the nondeterministic time hierarchy cluster (C1) under the
+user's decisions of 2026-10-13 (design note `audits/evidence/c1/C1-design.md` §6): guess first,
+then interpret deterministically; `BF := E(UN)`; nondeterministic codes interpreted through
+their replay machine; one step clock shared with the B6 hosts (gated in their pack, cited here
+as `Turing.exists_stepClockTMVia`); the universal machine's input read through a bounded window
+copy and an input-locality lemma.
+-/
+
+/-! ════════════════════════════════════════════════════════════════════════════════════════════
+Part A · appended to `TCSlib/Complexity/TuringMachine/Nondeterministic.lean`, after
+`Turing.FinTM.toFinNDTM` (the end of the file). The file gains the import of
+`TCSlib.Complexity.TuringMachine.StateRenaming`, for `Turing.Cfg.mapState`; that module imports
+only `TCSlib.Complexity.TuringMachine.Deterministic`, so no cycle arises. Its `## Main results`
+list gains the names below. -/
+-- @landing TCSlib.Complexity.TuringMachine.Nondeterministic
+-- @imports TCSlib.Complexity.TuringMachine.Nondeterministic
+-- @imports TCSlib.Complexity.TuringMachine.StateRenaming
+
+/-! ## Branches along state embeddings, deterministic slices, relabelling, input locality
+
+The run-level layer of the nondeterministic contract variant (design §15d and §16; the C1 design
+note §3.1). A deterministic host whose correctness is a per-step lockstep lifts to NDTMs slice by
+slice: `Turing.NDTM.runWith_mapState_of_agreeOn` transfers a run along a state embedding when the
+host's two transition functions agree with the source's on the states visited, and its
+deterministic-source form `Turing.NDTM.runWith_mapState_of_agreeOn_det` carries every
+deterministic phase contract to every branch. `Turing.NDTM.runWith_eq_fixChoice_runFrom` is the
+slice lemma that stage 2's nondeterministic form needs (statement gated by the stage-2 pack,
+`audits/stage2-statements-pack.md`; proof here). `Turing.NDTM.relabelState` mirrors
+`Turing.MultiTapeTM.relabelState`. `Turing.NDTM.runWith_initCfg_take` is input locality: a
+branch of at most `m` steps reads only the first `m` input symbols. -/
+
+namespace Turing.NDTM
+
+section Transfer
+
+variable {k : ℕ} {Γ S H : Type*}
+
+/-- **One step transfers along a state embedding.** Suppose that at every good state both
+transition functions of `host` are the transition functions of `src` with successors renamed
+along `emb`. Then from a configuration that is halted or at a good state, one step of `host`
+under either choice bit is the renamed step of `src` under that bit. (Technical glue, no
+textbook counterpart: the one-step identity behind `Turing.NDTM.runWith_mapState_of_agreeOn`.)
+
+**Proof sketch.** A halted configuration is fixed by both steps. At a good state both steps read
+the same symbols, the agreement selects the renamed action, and renaming commutes with applying
+an action (`Turing.Cfg.mapState_apply`). -/
+theorem stepWith_mapState_of_agreeOn {x : List Γ}
+    (src : NDTM k Γ S) (host : NDTM k Γ H) (emb : S ↪ H) (good : S → Prop)
+    (hagree : ∀ (b : Bool) (q : S), good q → ∀ inp work,
+      host.tr b (emb q) inp work = (src.tr b q inp work).mapState emb)
+    (c : Cfg k Γ S x) (hc : ∀ q, c.state = some q → good q) (b : Bool) :
+    host.stepWith b (c.mapState emb) = (src.stepWith b c).mapState emb := by
+  cases hs : c.state with
+  | none =>
+    have h1 : (c.mapState emb).state = none := by simp [Cfg.mapState, hs]
+    rw [stepWith_of_halt h1, stepWith_of_halt hs]
+  | some q =>
+    have h1 : (c.mapState emb).state = some (emb q) := by simp [Cfg.mapState, hs]
+    unfold stepWith
+    rw [h1, hs]
+    simp only
+    rw [hagree b q (hc q hs)]
+    exact Cfg.mapState_apply emb _ c
+
+/-- **The nondeterministic agreement transfer** (the run-level nondeterministic contract
+variant of design §15d and §16). Suppose that both transition functions of `host` agree, along
+the state embedding `emb`, with the corresponding transition functions of `src` at every good
+state, and that the run of `src` under the choice word `w` is at a good state whenever it is
+live before its end. Then `host` under `w` runs exactly as `src` under `w`, renamed. The
+endpoint is unrestricted, and `w = []` is the trivial case. [AB09, §2.1.2: a branch is the run
+along one choice word]
+
+**Proof sketch.** Induct on `w`. The guard at time `0` licenses the one-step identity
+(`Turing.NDTM.stepWith_mapState_of_agreeOn`), and the shifted guard feeds the induction
+hypothesis. -/
+theorem runWith_mapState_of_agreeOn {x : List Γ}
+    (src : NDTM k Γ S) (host : NDTM k Γ H) (emb : S ↪ H) (good : S → Prop)
+    (hagree : ∀ (b : Bool) (q : S), good q → ∀ inp work,
+      host.tr b (emb q) inp work = (src.tr b q inp work).mapState emb)
+    (c : Cfg k Γ S x) (w : List Bool)
+    (hguard : ∀ u < w.length, ∀ q, (src.runWith (w.take u) c).state = some q → good q) :
+    host.runWith w (c.mapState emb) = (src.runWith w c).mapState emb := by
+  induction w generalizing c with
+  | nil => rfl
+  | cons b w ih =>
+    have h0 : ∀ q, c.state = some q → good q := fun q hq =>
+      hguard 0 (by simp) q (by simpa using hq)
+    rw [runWith_cons, runWith_cons,
+      stepWith_mapState_of_agreeOn src host emb good hagree c h0 b]
+    apply ih
+    intro u hu q hq
+    exact hguard (u + 1) (by simp; omega) q
+      (by simpa [List.take_succ_cons, runWith_cons] using hq)
+
+/-- **The transfer from a deterministic source.** Suppose that both transition functions of
+`host` reproduce, renamed along `emb`, the transition function of the deterministic machine
+`src` at every good state, and that the run of `src` from `c` is at a good state whenever it
+is live before time `|w|`. Then every branch of `host` of length `|w|` from the renamed `c` is
+the renamed run of `src` for `|w|` steps. So a deterministic phase contract of `src` (a MIG-0a
+`Turing.Contract`, say) holds for `host` under every choice word of its length. It is the
+nondeterministic mirror of `Turing.MultiTapeTM.runFrom_mapState_of_agreeOn`. [AB09, §2.1.2]
+
+**Proof sketch.** Apply `Turing.NDTM.runWith_mapState_of_agreeOn` to `src.toNDTM`, whose
+branches are `src`'s run (`Turing.MultiTapeTM.toNDTM_runWith`), on both sides. -/
+theorem runWith_mapState_of_agreeOn_det {x : List Γ}
+    (src : MultiTapeTM k Γ S) (host : NDTM k Γ H) (emb : S ↪ H) (good : S → Prop)
+    (hagree : ∀ (b : Bool) (q : S), good q → ∀ inp work,
+      host.tr b (emb q) inp work = (src.tr q inp work).mapState emb)
+    (c : Cfg k Γ S x) (w : List Bool)
+    (hguard : ∀ u < w.length, ∀ q, (src.runFrom c u).state = some q → good q) :
+    host.runWith w (c.mapState emb) = (src.runFrom c w.length).mapState emb := by
+  have h := runWith_mapState_of_agreeOn src.toNDTM host emb good
+    (fun b q hq inp work => hagree b q hq inp work) c w (by
+      intro u hu q hq
+      rw [MultiTapeTM.toNDTM_runWith, List.length_take, Nat.min_eq_left hu.le] at hq
+      exact hguard u hu q hq)
+  rw [h, MultiTapeTM.toNDTM_runWith]
+
+end Transfer
+
+section Slice
+
+variable {k : ℕ} {Symbol State : Type*} {input : List Symbol}
+
+/-- **A branch that meets no real choice is a deterministic run.** If, at each of the first
+`|w|` configurations of the run of the slice `tm.fixChoice b` from `cfg`, the machine is halted
+or in a state at which its two transition functions agree, then the run of `tm` under the choice
+word `w` is that deterministic run: `tm.runWith w cfg = (tm.fixChoice b).runFrom cfg |w|`.
+[AB09, §2.1.2]
+
+**Statement gated by the stage-2 pack** (`audits/stage2-statements-pack.md`, `NDSlice` Part A,
+verbatim); **proof here**, by C1's argument (design §15d: one copy lands, in this file).
+
+**Proof sketch.** This is `Turing.NDTM.runWith_mapState_of_agreeOn_det` with the slice as the
+deterministic source, `tm` as the host, the identity embedding, and "the two transition
+functions coincide" as the good states: at such a state either transition function of `tm` is
+the slice's. Renaming along the identity is the identity. -/
+theorem runWith_eq_fixChoice_runFrom (tm : NDTM k Symbol State) (b : Bool) (w : List Bool)
+    (cfg : Cfg k Symbol State input)
+    (hagree : ∀ j < w.length, ∀ q : State, ((tm.fixChoice b).runFrom cfg j).state = some q →
+      tm.tr false q = tm.tr true q) :
+    tm.runWith w cfg = (tm.fixChoice b).runFrom cfg w.length := by
+  have e₁ : ∀ a : Action k Symbol State, a.mapState (Function.Embedding.refl State) = a := by
+    intro a
+    cases a with
+    | mk i wt o st => cases st <;> rfl
+  have e₂ : ∀ d : Cfg k Symbol State input,
+      d.mapState (Function.Embedding.refl State) = d := by
+    intro d
+    cases d with
+    | mk st ip wt wp o => cases st <;> rfl
+  have h := runWith_mapState_of_agreeOn_det (tm.fixChoice b) tm (Function.Embedding.refl State)
+    (fun q => tm.tr false q = tm.tr true q)
+    (fun b' q hq inp work => by
+      rw [e₁]
+      cases b' <;> cases b <;> simp [fixChoice, hq]) cfg w hagree
+  simpa only [e₂] using h
+
+end Slice
+
+section Relabel
+
+variable {k : ℕ} {Γ S S' : Type*}
+
+/-- **State relabelling of an NDTM** along an equivalence `e`: the initial state is mapped
+forward, and both transition functions read the table through `e.symm` and rename successors
+by `e`. It mirrors `Turing.MultiTapeTM.relabelState` and packages the linear normal form into
+the `Fin`-state `Turing.CodeNDTM`. (Technical glue; [AB09, §1.4]'s finite state sets.) -/
+def relabelState (tm : NDTM k Γ S) (e : S ≃ S') : NDTM k Γ S' where
+  q₀ := e tm.q₀
+  tr := fun b q inp w => (tm.tr b (e.symm q) inp w).mapState e
+
+/-- **Relabelled branches are the renamed branches**, under every choice word and from every
+configuration: `(tm.relabelState e).runWith w (c.mapState e) = (tm.runWith w c).mapState e`.
+
+**Proof sketch.** `Turing.NDTM.runWith_mapState_of_agreeOn` with every state good: the relabelled
+table at `e q` is the original table at `q`, renamed. -/
+theorem relabelState_runWith {x : List Γ} (tm : NDTM k Γ S) (e : S ≃ S')
+    (c : Cfg k Γ S x) (w : List Bool) :
+    (tm.relabelState e).runWith w (c.mapState e) = (tm.runWith w c).mapState e := by
+  exact runWith_mapState_of_agreeOn tm (tm.relabelState e) e.toEmbedding (fun _ => True)
+    (fun b q _ inp work => by simp [relabelState]) c w (fun _ _ _ _ => trivial)
+
+end Relabel
+
+section Locality
+
+variable {k : ℕ} {Γ S : Type*}
+
+/-- At an input position at most `m`, the input reads of `x` and of `x.take m` coincide.
+
+**Proof sketch.** Three cases of the position `v`: at `0` both read the left blank; at
+`|x| + 1` the input is shorter than `m`, so `x.take m` has the same length and both read the
+right blank; otherwise both read the symbol at index `v - 1 < min m |x|`. -/
+private lemma inputSymbol_take_eq {x : List Γ} {m : ℕ} (c : Cfg k Γ S x)
+    (c' : Cfg k Γ S (x.take m)) (hp : c'.inputPos.val = c.inputPos.val)
+    (hm : c.inputPos.val ≤ m) : c'.inputSymbol = c.inputSymbol := by
+  have hlen : (x.take m).length = min m x.length := List.length_take
+  have hlt := c.inputPos.isLt
+  by_cases h0 : c.inputPos.val = 0
+  · have hz : c.inputPos = 0 := Fin.ext (by simp [h0])
+    have hz' : c'.inputPos = 0 := Fin.ext (by simp [hp, h0])
+    simp [Cfg.inputSymbol, hz, hz']
+  · by_cases hr : c.inputPos.val = x.length + 1
+    · have hz : c.inputPos ≠ 0 := fun h => h0 (by simp [h])
+      have hz' : c'.inputPos ≠ 0 := fun h => h0 (by rw [← hp, h]; simp)
+      have hr' : c'.inputPos.val = (x.take m).length + 1 := by omega
+      simp only [Cfg.inputSymbol, dif_neg hz, dif_neg hz', dif_pos hr, dif_pos hr']
+    · have hin := inputSymbolInner (cfg := c) (c.inputPos.val - 1) (by omega) (by omega)
+      have hin' := inputSymbolInner (cfg := c') (c.inputPos.val - 1) (by omega)
+        (by omega)
+      rw [hin, hin', List.getElem_take]
+
+/-- An input move lands at the proposed position, clamped to the right end. -/
+private lemma moveInputPos_val {N : ℕ} (q : Fin (N + 2)) (s : SignType) :
+    (moveInputPos q s).val = min (((q.val : ℤ) + (s.cast : ℤ)).toNat) (N + 1) := by
+  unfold moveInputPos
+  dsimp only
+  split_ifs with h
+  · exact (Nat.min_eq_left (by omega)).symm
+  · exact (Nat.min_eq_right (by omega)).symm
+
+/-- An input move from the same position, below the shorter input's right end or on inputs of
+the same length, lands at the same position, at most one cell further right.
+
+**Proof sketch.** Both moves clamp the same proposed position to their right ends, which agree
+or are not reached; the proposed position is at most one cell right of the start. -/
+private lemma moveInputPos_val_take {n n' : ℕ} (pos : Fin (n + 2)) (pos' : Fin (n' + 2))
+    (hp : pos'.val = pos.val) (hn : n' ≤ n) (hle : pos.val ≤ n' ∨ n' = n) (s : SignType) :
+    (moveInputPos pos' s).val = (moveInputPos pos s).val ∧
+      (moveInputPos pos s).val ≤ pos.val + 1 := by
+  have hs1 : (s.cast : ℤ) ≤ 1 := by cases s <;> simp
+  have hs2 : -1 ≤ (s.cast : ℤ) := by cases s <;> simp
+  rw [moveInputPos_val, moveInputPos_val, hp]
+  have hpv : ((pos.val : ℤ) + (s.cast : ℤ)).toNat ≤ pos.val + 1 := by omega
+  have hlt := pos.isLt
+  generalize ((pos.val : ℤ) + (s.cast : ℤ)).toNat = p at hpv ⊢
+  omega
+
+/-- One step from agreeing configurations on `x` and on `x.take m`, with the input head at most
+at `m`, gives agreeing configurations, and moves the input head at most one cell right.
+
+**Proof sketch.** Halted configurations are fixed. At a live state both configurations read
+the same input symbol (by the read lemma) and the same work symbols, so the same action applies;
+its fields agree, the input move by the move lemma. -/
+private lemma stepWith_take_agree (tm : NDTM k Γ S) {x : List Γ} {m : ℕ} (b : Bool)
+    (c : Cfg k Γ S x) (c' : Cfg k Γ S (x.take m))
+    (hs : c'.state = c.state) (hp : c'.inputPos.val = c.inputPos.val)
+    (hw : c'.workTapes = c.workTapes) (hq : c'.workTapePos = c.workTapePos)
+    (ho : c'.output = c.output) (hm : c.inputPos.val ≤ m) :
+    (tm.stepWith b c').state = (tm.stepWith b c).state ∧
+      (tm.stepWith b c').inputPos.val = (tm.stepWith b c).inputPos.val ∧
+      (tm.stepWith b c').workTapes = (tm.stepWith b c).workTapes ∧
+      (tm.stepWith b c').workTapePos = (tm.stepWith b c).workTapePos ∧
+      (tm.stepWith b c').output = (tm.stepWith b c).output ∧
+      (tm.stepWith b c).inputPos.val ≤ c.inputPos.val + 1 := by
+  have hsym := inputSymbol_take_eq c c' hp hm
+  have hws : c'.workTapeSymbols = c.workTapeSymbols := by
+    funext i
+    simp only [Cfg.workTapeSymbols, hw, hq]
+  have hmv := moveInputPos_val_take c.inputPos c'.inputPos hp (by simp)
+    (by rw [List.length_take]; omega)
+  cases hst : c.state with
+  | none =>
+    have hst' : c'.state = none := by rw [hs, hst]
+    rw [stepWith_of_halt hst, stepWith_of_halt hst']
+    exact ⟨hs, hp, hw, hq, ho, by omega⟩
+  | some q =>
+    have hst' : c'.state = some q := by rw [hs, hst]
+    have e₁ : tm.stepWith b c = (tm.tr b q c.inputSymbol c.workTapeSymbols).apply c := by
+      unfold stepWith
+      rw [hst]
+    have e₂ : tm.stepWith b c' = (tm.tr b q c.inputSymbol c.workTapeSymbols).apply c' := by
+      unfold stepWith
+      rw [hst', hsym, hws]
+    rw [e₁, e₂]
+    refine ⟨rfl, (hmv _).1, ?_, ?_, ?_, (hmv _).2⟩
+    · funext i
+      simp only [Action.apply, hw, hq]
+    · funext i
+      simp only [Action.apply, hq]
+    · simp only [Action.apply, ho]
+
+/-- Agreement of branches on `x` and on `x.take m` propagates along a choice word while the
+input head cannot pass position `m`.
+
+**Proof sketch.** Induct on the word with the one-step lemma; the head budget
+`position + remaining length ≤ m + 1` is preserved because each step moves the head at most one
+cell. -/
+private lemma runWith_take_agree (tm : NDTM k Γ S) {x : List Γ} {m : ℕ} :
+    ∀ (w : List Bool) (c : Cfg k Γ S x) (c' : Cfg k Γ S (x.take m)),
+      c'.state = c.state → c'.inputPos.val = c.inputPos.val → c'.workTapes = c.workTapes →
+      c'.workTapePos = c.workTapePos → c'.output = c.output →
+      c.inputPos.val + w.length ≤ m + 1 →
+      (tm.runWith w c').state = (tm.runWith w c).state ∧
+        (tm.runWith w c').inputPos.val = (tm.runWith w c).inputPos.val ∧
+        (tm.runWith w c').workTapes = (tm.runWith w c).workTapes ∧
+        (tm.runWith w c').workTapePos = (tm.runWith w c).workTapePos ∧
+        (tm.runWith w c').output = (tm.runWith w c).output
+  | [], _, _, hs, hp, hw, hq, ho, _ => ⟨hs, hp, hw, hq, ho⟩
+  | b :: w, c, c', hs, hp, hw, hq, ho, hlen => by
+    simp only [List.length_cons] at hlen
+    obtain ⟨hs₁, hp₁, hw₁, hq₁, ho₁, hb⟩ :=
+      stepWith_take_agree tm b c c' hs hp hw hq ho (by omega)
+    simp only [runWith_cons]
+    exact runWith_take_agree tm w _ _ hs₁ hp₁ hw₁ hq₁ ho₁ (by omega)
+
+/-- **Input locality.** A branch of at most `m` steps from the initial configuration reads only
+the first `m` input symbols: run on the truncated input `x.take m` under the same choice word,
+it has the same state, work tapes, work-head positions and output, and its input head is at the
+same position. The universal NDTM therefore needs only the window `x.take t` of its input to
+simulate `t` steps, which keeps `|x|` out of its time bound (user decision 5 of 2026-10-13).
+[AB09, §1.2: the input head moves at most one cell per step]
+
+**Proof sketch.** The input head starts at position `1` and moves at most one cell per step, so
+before each of the first `m` steps it is at a position at most `m`. There both inputs read the
+same symbol: a blank at `0`, and otherwise the symbol at that index, or the right blank when `x`
+is shorter than `m`. Equal reads select the same action, and the input move lands at the same
+position, because the shorter input's right end is not reached. Induct on the word. -/
+theorem runWith_initCfg_take (tm : NDTM k Γ S) (x : List Γ) (m : ℕ) (w : List Bool)
+    (hw : w.length ≤ m) :
+    let c := tm.runWith w (tm.initCfg x)
+    let c' := tm.runWith w (tm.initCfg (x.take m))
+    c'.state = c.state ∧ c'.inputPos.val = c.inputPos.val ∧ c'.workTapes = c.workTapes ∧
+      c'.workTapePos = c.workTapePos ∧ c'.output = c.output := by
+  have h := runWith_take_agree tm (x := x) (m := m) w (tm.initCfg x) (tm.initCfg (x.take m))
+    rfl (by simp) rfl rfl rfl (by simp; omega)
+  exact h
+
+end Locality
+
+end Turing.NDTM
+
+/-! ════════════════════════════════════════════════════════════════════════════════════════════
+Part B · lands as the new module `TCSlib.Complexity.TuringMachine.ChoiceReplay`
+(`TCSlib/Complexity/TuringMachine/ChoiceReplay.lean`), imported by the
+`TCSlib.Complexity.TuringMachine` facade. -/
+-- @landing TCSlib.Complexity.TuringMachine.ChoiceReplay
+-- @imports TCSlib.Complexity.TuringMachine.Nondeterministic
+-- @imports TCSlib.Complexity.TuringMachine.Simulation
+
+/-!
+# Choice-tape determinization: the replay machine
+
+An NDTM run along a choice word is a deterministic run that reads the word from a tape: the
+**replay machine** `Turing.NDTM.replayTM N` has one extra work tape, the *choice tape*, which it
+reads at every step (a blank reads as `false`) to select the transition function, moving the
+choice head right and never writing it. The replay lemma `Turing.NDTM.replayTM_runFrom`
+identifies its runs with `N`'s branches. This is the certificate view of nondeterminism
+([AB09, §2.1.2, Theorem 2.6]: the choices of an accepting branch are a certificate that a
+deterministic verifier checks by simulation).
+
+## Design
+
+* **No new machinery is needed to interpret nondeterministic codes.** A coded NDTM's replay
+  machine is a deterministic three-work-tape machine, so its fixed `k`-record serialization
+  (`Turing.serializeK`) is interpreted by the deterministic step block (host H2) at `k = 3`,
+  unchanged (user decision 3 of 2026-10-13; the C1 design note §3.2, option (c)).
+* **Consumers:** the per-code replay canonizer and the interpreter core
+  (`TCSlib.Complexity.TuringMachine.NDCodeSimulator`) and the exhaustive replay
+  (`TCSlib.Complexity.ClassNP.ExhaustiveReplay`). It can also replace the private choice-word
+  replay of `TCSlib.Complexity.ClassNP.Nondeterminism` (the C1 design note §3.5, inferred).
+
+## Main definitions
+
+* `Turing.NDTM.replayTM` — the replay machine. [AB09, §2.1.2]
+* `Turing.NDTM.withChoiceTape` — an NDTM configuration extended by a choice tape.
+
+## Main results
+
+* `Turing.NDTM.replayTM_runFrom` — the replay lemma (proved).
+
+## References
+
+* [AB09] S. Arora, B. Barak, *Computational Complexity: A Modern Approach*,
+  Cambridge University Press, 2009. (§2.1.2, Theorem 2.6 and its proof.)
+-/
+
+namespace Turing.NDTM
+
+variable {k : ℕ} {S : Type*}
+
+/-- **The replay machine** of an NDTM `N` with `k` work tapes: the deterministic machine with
+`k + 1` work tapes that, at every step, reads the choice tape (the last one; a blank reads as
+`false`), applies the corresponding transition function of `N` to the first `k` tapes, and
+moves the choice head one cell right without writing it. Its states, initial state, input moves
+and output are `N`'s. [AB09, §2.1.2: a branch of an NDTM is its run along a choice word; the
+verifier of Theorem 2.6 reads that word] -/
+def replayTM (N : NDTM k Bool S) : MultiTapeTM (k + 1) Bool S where
+  q₀ := N.q₀
+  tr := fun q inp w =>
+    let a := N.tr ((w (Fin.last k)).getD false) q inp (fun i => w i.castSucc)
+    ⟨a.inputTape, Fin.lastCases (none, 1) a.workTapes, a.output, a.state⟩
+
+/-- The configuration `c` of an NDTM extended by a choice tape `ct` with its head at `cp` as the
+last work tape; every other field is `c`'s. -/
+def withChoiceTape {x : List Bool} (c : Cfg k Bool S x) (ct : ℤ → Option Bool) (cp : ℤ) :
+    Cfg (k + 1) Bool S x :=
+  ⟨c.state, c.inputPos, Fin.lastCases ct c.workTapes, Fin.lastCases cp c.workTapePos, c.output⟩
+
+/-- **The replay lemma.** With the word `s` on the choice tape from cell `0`, the replay
+machine's run for `t ≤ |s|` steps is the NDTM's branch along `s.take t`, extended by the
+unchanged choice tape, with the choice head at some `p ≤ t`, and at exactly `t` while that
+branch is live (the head stops when the branch halts). [AB09, §2.1.2]
+
+**Proof sketch.** Induct on `t`. A live step reads `s[t]` under the choice head at `t`, so the
+replay machine applies `N.tr s[t]` to the first `k` tapes and moves the choice head; a halted
+step is the identity on both sides (`Turing.NDTM.runWith_of_halt`). -/
+theorem replayTM_runFrom {x : List Bool} (N : NDTM k Bool S) (c : Cfg k Bool S x)
+    (s : List Bool) (t : ℕ) (ht : t ≤ s.length) :
+    ∃ p ≤ t, ((N.runWith (s.take t) c).state ≠ none → p = t) ∧
+      N.replayTM.runFrom (withChoiceTape c (FinTM.bufferTape s) 0) t =
+        withChoiceTape (N.runWith (s.take t) c) (FinTM.bufferTape s) p := by
+  induction t with
+  | zero => exact ⟨0, le_rfl, fun _ => rfl, rfl⟩
+  | succ t ih =>
+    obtain ⟨p, hp, hlive, hrun⟩ := ih (by omega)
+    have htake : s.take (t + 1) = s.take t ++ [s[t]'(by omega)] :=
+      List.take_succ_eq_append_getElem (by omega)
+    rw [MultiTapeTM.runFrom_succ_eq_step', hrun, htake, runWith_append]
+    cases hs : (N.runWith (s.take t) c).state with
+    | none =>
+      refine ⟨p, by omega, ?_, ?_⟩
+      · intro h
+        exact absurd (by rw [runWith_of_halt _ hs]; exact hs) h
+      · rw [runWith_of_halt _ hs]
+        exact MultiTapeTM.step_of_halt (by simp [withChoiceTape, hs])
+    | some q =>
+      have hpt : p = t := hlive (by simp [hs])
+      subst hpt
+      refine ⟨p + 1, le_rfl, fun _ => rfl, ?_⟩
+      set e := N.runWith (s.take p) c with he
+      have hread : (withChoiceTape e (FinTM.bufferTape s) (p : ℤ)).workTapeSymbols
+          (Fin.last k) = some (s[p]'(by omega)) := by
+        simp [withChoiceTape, Cfg.workTapeSymbols, FinTM.bufferTape]
+      have hwork : (fun i : Fin k =>
+          (withChoiceTape e (FinTM.bufferTape s) (p : ℤ)).workTapeSymbols i.castSucc) =
+          e.workTapeSymbols := by
+        funext i
+        simp [withChoiceTape, Cfg.workTapeSymbols]
+      have hinp : (withChoiceTape e (FinTM.bufferTape s) (p : ℤ)).inputSymbol =
+          e.inputSymbol := rfl
+      unfold MultiTapeTM.step
+      have hst : (withChoiceTape e (FinTM.bufferTape s) (p : ℤ)).state = some q := by
+        simp [withChoiceTape, hs]
+      rw [hst]
+      simp only [runWith_cons, runWith_nil]
+      unfold stepWith
+      rw [hs]
+      simp only [replayTM]
+      rw [hread, hwork, hinp]
+      simp only [Option.getD_some]
+      apply Cfg.ext
+      · rfl
+      · rfl
+      · funext j
+        refine Fin.lastCases ?_ (fun i => ?_) j
+        · simp [withChoiceTape, Action.apply]
+        · simp [withChoiceTape, Action.apply]
+      · funext j
+        refine Fin.lastCases ?_ (fun i => ?_) j
+        · simp [withChoiceTape, Action.apply]
+        · simp [withChoiceTape, Action.apply]
+      · rfl
+
+end Turing.NDTM
+
+/-! ════════════════════════════════════════════════════════════════════════════════════════════
+Part C · lands as the new module `TCSlib.Complexity.TuringMachine.Build.NDHost`
+(`TCSlib/Complexity/TuringMachine/Build/NDHost.lean`), next to `Build/Seam.lean`, imported by
+the `TCSlib.Complexity.TuringMachine` facade. -/
+-- @landing TCSlib.Complexity.TuringMachine.Build.NDHost
+-- @imports TCSlib.Complexity.TuringMachine.Build.Seam
+-- @imports TCSlib.Complexity.TuringMachine.Nondeterministic
+
+/-!
+# The nondeterministic phase host and the choice writer
+
+The nondeterministic part of the construction layer that the guess-first route needs (user
+decision 1 of 2026-10-13; the C1 design note §3.1, §3.4). The universal NDTM and the
+diagonalizer of `TCSlib.Complexity.Diagonalization.NTimeHierarchy` guess their whole choice word
+up front, with one small nondeterministic leaf, and then run deterministically.
+
+## Design
+
+* **The ND phase host** `Turing.NDTM.phaseHostND` is `Turing.phaseHostTM` over nondeterministic
+  phases, deterministic phases entering as `Turing.MultiTapeTM.toNDTM`. Each of its two slices
+  is the deterministic phase host of the phases' slices (`Turing.NDTM.phaseHostND_fixChoice`,
+  by `rfl`), and a phase runs inside it along every word
+  (`Turing.NDTM.phaseHostND_run`, from the transfer `Turing.NDTM.runWith_mapState_of_agreeOn`).
+* **Never put a choice inside a round body.** A host whose correctness is a per-step lockstep
+  (the phase host, Z1, the R1 embedding, renaming) lifts to NDTMs slice by slice. A host that
+  composes multi-step rounds (`Turing.counterLoopTMVia`, the step clock) does not: a branch
+  mixes slices across rounds. So no nondeterministic counter loop is built (statement note
+  SC-3 of design §12.7 is closed by this route); choices are guessed by the writer below, before
+  any round host runs.
+* **The choice writer** `Turing.ndWriterTM` is the guessed flavor of a choice source (H5's
+  device family): on one tape, while its finite controller does not stop it (and, in the bounded
+  flavor, while the cell under the head is nonblank), it writes its choice bit and moves right.
+  Both choices take the same transition up to the written symbol, so the bounded flavor's timing
+  is branch-independent (`Turing.ndWriterTM_run_block`). The bounded flavor serves the universal
+  NDTM and the diagonalizer; the controller flavor, the linear normal form's display guess.
+
+## Main definitions
+
+* `Turing.NDTM.phaseHostND` — the nondeterministic phase host.
+* `Turing.NDWriterState`, `Turing.ndWriterTM` — the choice writer. [AB09, §2.1.2]
+
+## Main results
+
+* `Turing.NDTM.phaseHostND_fixChoice`, `Turing.NDTM.phaseHostND_run` (proved).
+* `Turing.ndWriterTM_run_block` — the bounded flavor's contract (sorried).
+
+## References
+
+* [AB09] S. Arora, B. Barak, *Computational Complexity: A Modern Approach*,
+  Cambridge University Press, 2009. (§2.1.2: an NDTM chooses one of its two transition
+  functions at every step.)
+-/
+
+namespace Turing.NDTM
+
+variable {k : ℕ} {Γ : Type}
+
+/-- **The nondeterministic phase host**: `Turing.phaseHostTM` over nondeterministic phases.
+Its states are the tagged phase states. A state that `red` maps to `some q` takes one
+stationary, silent dispatch step to `q` under either choice; every other state of phase `i`
+follows phase `i`'s two transition functions, with successors tagged by `i`. Deterministic
+phases enter as `Turing.MultiTapeTM.toNDTM`. (A host of the construction layer; [AB09,
+§2.1.2].) -/
+def phaseHostND {I : Type} {Ph : I → Type} (M : (i : I) → NDTM k Γ (Ph i))
+    (q0 : Σ i, Ph i) (red : (i : I) → Ph i → Option (Σ i, Ph i)) :
+    NDTM k Γ (Σ i, Ph i) where
+  q₀ := q0
+  tr := fun b q inp w =>
+    match red q.1 q.2 with
+    | some q' => ⟨0, fun _ => (none, 0), none, some q'⟩
+    | none => ((M q.1).tr b q.2 inp w).mapState (Sigma.mk q.1)
+
+/-- **Each slice of the ND phase host is a deterministic phase host**: fixing the choice `b`
+in `Turing.NDTM.phaseHostND` gives `Turing.phaseHostTM` over the phases' slices at `b`. -/
+theorem phaseHostND_fixChoice {I : Type} {Ph : I → Type} (M : (i : I) → NDTM k Γ (Ph i))
+    (q0 : Σ i, Ph i) (red : (i : I) → Ph i → Option (Σ i, Ph i)) (b : Bool) :
+    (phaseHostND M q0 red).fixChoice b = phaseHostTM (fun i => (M i).fixChoice b) q0 red :=
+  rfl
+
+/-- **The ND phase lemma** (the nondeterministic counterpart of `Turing.phaseHostTM_run`). Let
+phase `i` run under the word `w` from `c` to `c'`, ending at a state `s'` that `red` redirects
+to `q'`, and reaching no redirected state before. Then inside the host, every prefix of `w`
+drives the tagged phase run from the tagged `c`, and one further choice, either bit, performs
+the dispatch to `q'` with every other field of `c'` unchanged.
+
+**Proof sketch.** `Turing.NDTM.runWith_mapState_of_agreeOn` along `Sigma.mk i`, with the good
+states those that `red` does not redirect; the final dispatch is one explicit step. -/
+theorem phaseHostND_run {I : Type} {Ph : I → Type} (M : (i : I) → NDTM k Γ (Ph i))
+    (q0 : Σ i, Ph i) (red : (i : I) → Ph i → Option (Σ i, Ph i)) (i : I) {x : List Γ}
+    (c c' : Cfg k Γ (Ph i) x) (w : List Bool) (h : (M i).runWith w c = c') (s' : Ph i)
+    (hs' : c'.state = some s') (q' : Σ i, Ph i) (hred : red i s' = some q')
+    (hguard : ∀ u < w.length, ∀ s, ((M i).runWith (w.take u) c).state = some s →
+      red i s = none) (b : Bool) :
+    (∀ u ≤ w.length, (phaseHostND M q0 red).runWith (w.take u) (c.mapState (Sigma.mk i)) =
+        ((M i).runWith (w.take u) c).mapState (Sigma.mk i)) ∧
+      (phaseHostND M q0 red).runWith (w ++ [b]) (c.mapState (Sigma.mk i)) =
+        c'.mapState (fun _ => q') := by
+  let emb : Ph i ↪ (Σ i, Ph i) := ⟨Sigma.mk i, sigma_mk_injective⟩
+  have hagree : ∀ (b : Bool) (s : Ph i), red i s = none → ∀ inp work,
+      (phaseHostND M q0 red).tr b (emb s) inp work =
+        ((M i).tr b s inp work).mapState emb := by
+    intro b s hs inp work
+    simp only [phaseHostND, emb, Function.Embedding.coeFn_mk, hs]
+  have hpre : ∀ u ≤ w.length,
+      (phaseHostND M q0 red).runWith (w.take u) (c.mapState (Sigma.mk i)) =
+        ((M i).runWith (w.take u) c).mapState (Sigma.mk i) := by
+    intro u hu
+    exact runWith_mapState_of_agreeOn (M i) (phaseHostND M q0 red) emb
+      (fun s => red i s = none) hagree c (w.take u) (by
+        intro v hv s hs
+        rw [List.length_take] at hv
+        rw [List.take_take, Nat.min_eq_left (by omega)] at hs
+        exact hguard v (by omega) s hs)
+  refine ⟨hpre, ?_⟩
+  rw [runWith_append]
+  have hw := hpre w.length le_rfl
+  rw [List.take_length, h] at hw
+  rw [hw, runWith_cons, runWith_nil]
+  have hst : (c'.mapState (Sigma.mk i)).state = some ⟨i, s'⟩ := by
+    simp [Cfg.mapState, hs']
+  unfold stepWith
+  rw [hst]
+  simp only [phaseHostND, hred]
+  apply Cfg.ext <;> simp [Cfg.mapState, hs']
+
+end Turing.NDTM
+
+namespace Turing
+
+/-- Control of the choice writer: running with a finite controller state `q`, or `done` (the
+live exit anchor). -/
+inductive NDWriterState (Q : Type) where
+  /-- writing, with controller state `q` -/
+  | run (q : Q)
+  /-- the live exit anchor -/
+  | done
+  deriving DecidableEq
+
+/-- **The choice writer** (H5's choice device, guessed flavor). An NDTM with `k` work tapes and
+writer tape `j`. In state `run q`: if the controller asks to stop (`stop q`), or, in the
+`bounded` flavor, the cell under the head of tape `j` is blank, it moves to `done` without
+moving or writing; otherwise it writes its choice bit `b` on tape `j`, moves that head right,
+and updates the controller to `δ q b`. `done` is a silent, stationary, live self-loop. Both
+choices take the same transition up to the written symbol. No input move, no output.
+[AB09, §2.1.2: the choice at each step] -/
+def ndWriterTM (k : ℕ) (j : Fin k) {Q : Type} (q₀ : Q) (δ : Q → Bool → Q)
+    (stop : Q → Bool) (bounded : Bool) : NDTM k Bool (NDWriterState Q) where
+  q₀ := .run q₀
+  tr := fun b q _ w =>
+    match q with
+    | .done => ⟨0, fun _ => (none, 0), none, some .done⟩
+    | .run q =>
+      if stop q || (bounded && (w j).isNone) then ⟨0, fun _ => (none, 0), none, some .done⟩
+      else ⟨0, fun i => if i = j then (some (some b), 1) else (none, 0), none,
+        some (.run (δ q b))⟩
+
+/-- **The bounded choice writer's contract.** Start the bounded writer with the trivial
+controller at `run ()` over a nonblank block of `m` cells of tape `j` from its head, followed by
+a blank. Then every choice word `w` of length `m + 1` overwrites the block with its first `m`
+bits, leaves the head of tape `j` just after the block, and reaches `done`; every other field is
+unchanged. No shorter word reaches `done`. So the guessed stream is exactly `w.take m`, on every
+branch at the same time `m + 1`, and every stream of length `m` is guessed (by `s ++ [b]`).
+[AB09, §2.1.2]
+
+**Proof sketch.** Induct on the first `m` steps: at step `u < m` the head of tape `j` is at cell
+`u` of the block, which still holds its original nonblank symbol, so the writer writes `w[u]`
+and moves right, keeping state `run ()`. At step `m` the head reads the blank after the block,
+and the writer moves to `done` without moving. Before step `m + 1` the state is `run ()`. -/
+theorem ndWriterTM_run_block {k : ℕ} (j : Fin k) {x : List Bool}
+    (c : Cfg k Bool (NDWriterState Unit) x) (hc : c.state = some (.run ()))
+    (m : ℕ) (hblock : ∀ p : ℕ, p < m → c.workTapes j (c.workTapePos j + p) ≠ none)
+    (hend : c.workTapes j (c.workTapePos j + m) = none)
+    (w : List Bool) (hw : w.length = m + 1) :
+    (ndWriterTM k j () (fun _ _ => ()) (fun _ => false) true).runWith w c =
+      { c with
+        state := some .done
+        workTapes := Function.update c.workTapes j (fun p =>
+          if c.workTapePos j ≤ p ∧ p < c.workTapePos j + m then
+            FinTM.bufferTape (w.take m) (p - c.workTapePos j)
+          else c.workTapes j p)
+        workTapePos := Function.update c.workTapePos j (c.workTapePos j + m) } ∧
+    ∀ w' : List Bool, w'.length < m + 1 →
+      ((ndWriterTM k j () (fun _ _ => ()) (fun _ => false) true).runWith w' c).state ≠
+        some .done := by
+  sorry
+
+end Turing
+
+/-! ════════════════════════════════════════════════════════════════════════════════════════════
+Part D · lands as the new module `TCSlib.Complexity.TuringMachine.Build.InputWindow`
+(`TCSlib/Complexity/TuringMachine/Build/InputWindow.lean`), imported by the
+`TCSlib.Complexity.TuringMachine` facade. It is a counter-driven row; `Build/CounterLoop.lean`
+imports `Build/Scan.lean`, so it cannot sit beside the input copier there. -/
+-- @landing TCSlib.Complexity.TuringMachine.Build.InputWindow
+-- @imports TCSlib.Complexity.TuringMachine.Build.CounterLoop
+
+/-!
+# The bounded input window copier
+
+A counter-driven copy of a bounded window of the native input onto a work tape (user decision 5
+of 2026-10-13; the C1 design note §2.2 step U7 and §3.4 device (i)). The universal NDTM cannot
+copy its whole input `x`, since its time bound has no `|x|` term; it copies the window
+`x.take t` instead, and the input-locality lemma `Turing.NDTM.runWith_initCfg_take` shows that
+the window is enough for `t` simulated steps. The in-place suffix device stays with the
+universal machine U-1, whose `universal` has no deadline to truncate by.
+
+## Main results
+
+* `Turing.exists_inputWindowCopyTM` — the window copier's contract (sorried).
+
+## References
+
+* [AB09] S. Arora, B. Barak, *Computational Complexity: A Modern Approach*,
+  Cambridge University Press, 2009. (§1.2: the read-only input tape.)
+-/
+
+namespace Turing
+
+/-- **The bounded input window copier.** For work tapes `j ≠ dst` there is a machine with an
+entry state `entry`, a live exit `done` and a constant `C` such that: started at `entry` with its
+input head at native position `p + 1` (on the `p`-th input symbol) and a delimited binary counter
+word `w` of value `d` on tape `j` from its head (little-endian, blanks at both ends, the
+convention of `Turing.counterLoopTM`), it copies the window `y = (z.drop p).take d` (the next
+`d` input symbols, fewer if the input ends) onto tape `dst` from that tape's head. It reaches
+`done` within `C·(|y| + 1) + 2|w|` steps, and not before, with the input head just after the
+window, the head of `dst` just after the copy, the counter head back at its start, the counter
+word replaced by some word of the same width, and every other tape, head and the output
+unchanged. No `|z|` term. (A leaf row of the construction layer; [AB09, §1.2].)
+
+**Proof sketch.** `Turing.counterLoopTM` over a one-step body on the native input and tape
+`dst`: at an input symbol, write it on `dst` and move both heads right, returning to the body's
+anchor; at the input's right end, escape. Each round costs a fixed number of steps; the counter
+decrements cost at most `4r + 2|w|` over `r ≤ d` rounds (`Turing.counterOverhead_le_of_le`),
+plus the final underflow sweep `2|w| + 2` on exhaustion (`Turing.counterOverhead_le`). The round
+count is `|y|`, or `|y| + 1` when the input ends first. The exit-time and endpoint clauses are
+those of `Turing.counterLoopTM_run_done` and `Turing.counterLoopTM_run_escape`. -/
+theorem exists_inputWindowCopyTM (k : ℕ) (j dst : Fin k) (hjd : j ≠ dst) :
+    ∃ (Q : Type) (_ : Fintype Q) (_ : DecidableEq Q) (W : MultiTapeTM k Bool Q)
+      (entry done : Q) (C : ℕ),
+      ∀ {z : List Bool} (d : Cfg k Bool Q z) (p : ℕ) (w : List Bool),
+        d.state = some entry → d.inputPos.val = p + 1 →
+        (∀ q : ℤ, -1 ≤ q → q ≤ (w.length : ℤ) →
+          d.workTapes j (d.workTapePos j + q) = FinTM.bufferTape w q) →
+        let y := (z.drop p).take (Nat.ofDigits 2 (w.map Bool.toNat))
+        ∃ T ≤ C * (y.length + 1) + 2 * w.length, ∃ w' : List Bool, w'.length = w.length ∧
+          (W.runFrom d T).state = some done ∧
+          (W.runFrom d T).inputPos.val = p + 1 + y.length ∧
+          (W.runFrom d T).workTapes =
+            Function.update (Function.update d.workTapes dst (fun q =>
+              if d.workTapePos dst ≤ q ∧ q < d.workTapePos dst + (y.length : ℤ) then
+                FinTM.bufferTape y (q - d.workTapePos dst)
+              else d.workTapes dst q)) j (fun q =>
+              if d.workTapePos j ≤ q ∧ q < d.workTapePos j + (w.length : ℤ) then
+                FinTM.bufferTape w' (q - d.workTapePos j)
+              else d.workTapes j q) ∧
+          (W.runFrom d T).workTapePos =
+            Function.update d.workTapePos dst (d.workTapePos dst + (y.length : ℤ)) ∧
+          (W.runFrom d T).output = d.output ∧
+          ∀ u < T, (W.runFrom d u).state ≠ some done := by
+  sorry
+
+end Turing
+
+/-! ════════════════════════════════════════════════════════════════════════════════════════════
+Part E · lands as the new module `TCSlib.Complexity.TuringMachine.NDCodeSimulator`
+(`TCSlib/Complexity/TuringMachine/NDCodeSimulator.lean`), next to `CodeSimulator.lean`,
+imported by the `TCSlib.Complexity.TuringMachine` facade. -/
+-- @landing TCSlib.Complexity.TuringMachine.NDCodeSimulator
+-- @imports TCSlib.Complexity.TuringMachine.NDCodes
+-- @imports TCSlib.Complexity.TuringMachine.CodeSimulator
+-- @imports TCSlib.Complexity.TuringMachine.ChoiceReplay
+
+/-!
+# The interpreter core for nondeterministic codes
+
+The code layer and the interpreter core that the universal NDTM and the diagonalizer of
+`TCSlib.Complexity.Diagonalization.NTimeHierarchy` share ([AB09, Exercise 2.6]: a universal
+NDTM; at linear overhead, decision CH34-Q8). Nondeterministic codes are interpreted through
+their **replay machine** (user decision 3 of 2026-10-13): per code, the deterministic
+three-work-tape serialization of the decoded machine's replay machine is computed, and the
+deterministic step block (host H2) runs it at `k = 3`, unchanged, with the choice word on the
+mirrored choice tape. No nondeterministic `Turing.MachineFormat`, no third parse layer, and no
+change to `TCSlib.Complexity.TuringMachine.NDCodes`.
+
+## Design
+
+* **The bridge** `Turing.CodeNDTM.serialize_eq_tableBitsK` (proved) states the fixed ND
+  serialization as its own header (the binary state count, the unary initial state) followed by
+  the `false`-slice and `true`-slice tables in the generic `Turing.tableBitsK` layout. It is an
+  identity of `Turing.CodeNDTM.serialize`, not of the serialization of any deterministic machine:
+  no deterministic `k`-record serialization has two tables after one header.
+* **The replay canonizer** `Turing.exists_replayCanonizer` keeps that header (the replay machine
+  has the same states and initial state) and re-serializes the two tables into the replay
+  machine's one table, at `3^4 = 81` records per state rather than `2·27 = 54`.
+* **The interpreter core** `Turing.exists_ndInterpreterCore` is deterministic: the stream of
+  choices is on a tape before it starts (guess first, user decision 1). Its time is stated as a
+  function of the simulated branch's halting time (the prefix clause), which the diagonalizer's
+  mid-rung needs.
+
+## Main results
+
+* `Turing.CodeNDTM.serialize_eq_tableBitsK` — the bridge (proved).
+* `Turing.exists_replayCanonizer` — the per-code replay canonizer (sorried).
+* `Turing.exists_ndInterpreterCore` — the interpreter core `R` (sorried).
+
+## References
+
+* [AB09] S. Arora, B. Barak, *Computational Complexity: A Modern Approach*,
+  Cambridge University Press, 2009. (§1.4, §1.4.1: machine codes and the universal machine;
+  §2.1.2; Exercise 2.6: the universal NDTM.)
+-/
+
+namespace Turing
+
+/-- **The ND serialization as two deterministic tables.** The fixed serialization of a coded
+NDTM is the binary state count paired with the unary initial state followed by the `false`-slice
+table and then the `true`-slice table, each in the generic `k`-record layout `Turing.tableBitsK`
+at `k = 2`. This identity concerns `Turing.CodeNDTM.serialize` with its own header; it is not an
+identity with `Turing.serializeK` of any deterministic machine. [AB09, §1.4]
+
+**Proof sketch.** At two work tapes the generic table writer is `Turing.codeTable2Bits`
+(`Turing.tableBitsK_two`); unfold the serialization over the choice bit. -/
+theorem CodeNDTM.serialize_eq_tableBitsK (M : CodeNDTM) :
+    M.serialize = pairEncode (Nat.bits M.numStates)
+      (unaryFin M.tm.q₀ ++ (tableBitsK (M.tm.fixChoice false).tr ++
+        tableBitsK (M.tm.fixChoice true).tr)) := by
+  rw [tableBitsK_two, tableBitsK_two]
+  simp [CodeNDTM.serialize, codeTable2Bits, NDTM.fixChoice, actionBits₂_eq_actionBitsK]
+
+/-- **The per-code replay canonizer.** For every effective nondeterministic scheme `c` there is
+a finite binary machine computing, from a code `α`, the fixed three-work-tape serialization
+`Turing.serializeK` of the decoded machine's replay machine `Turing.NDTM.replayTM` (choice tape
+last), within some time bound `T` of `|α|` alone. The bound is arbitrary: each code's universal
+constant absorbs it. [AB09, §1.4: a code is mapped to its canonical description]
+
+**Proof sketch.** The scheme's canonizer computes `α ↦ (c.decode α).serialize`
+(`Turing.EffectiveNDMachineCode.canonizer_computes`). A primitive recursive list function `g`
+maps it to `serializeK (c.decode α).tm.replayTM`: it copies the header, splits the two tables
+into records by `Turing.codeSkipActionK`, and re-emits them in the order of
+`Turing.workReadsK 3`, the choice read innermost, with the choice tape's field `(none, +1)`
+appended to each record (the blank and `false` reads both select the `false` record). Compile
+`g` by `Turing.codePrim_machine` and compose (`Turing.FinTM.computesFunInTime_comp`; the
+canonizer's output length is at most its time). -/
+theorem exists_replayCanonizer (c : EffectiveNDMachineCode) :
+    ∃ (M : FinTM Bool) (T : ℕ → ℕ),
+      M.ComputesFunInTime (fun α => serializeK (c.decode α).tm.replayTM) T := by
+  sorry
+
+/-- **The interpreter core for nondeterministic codes** `R` (deterministic; shared by the
+universal NDTM and the diagonalizer's mid-rung). For every effective nondeterministic scheme
+`c` there is one finite machine `R`, uniform over codes, with `K` work tapes, a designated stream
+tape `j`, an entry state and two distinct verdict states `accept ≠ reject`, such that for every
+code `α` there is a constant `C` with the following property. Start `R` at `entry` on the
+native input `z = ⟨⟨bits t, α⟩, x⟩` (input head on its first symbol), with a stream `s` of
+length at least `t` on tape `j` from cell `0`, every other tape blank, every head at `0`, and
+empty output. Let `e` be the coded machine's branch on `x` along `s.take t`. Then `R` reaches
+`accept` if `e` has halted with output exactly `[true]`, and `reject` otherwise, at a time `T`
+with no verdict earlier, where:
+* `T ≤ C·(t + 1)` in every case, with no `|x|` term;
+* `T ≤ C·(t' + |x| + |bits t| + 1)` whenever the branch along `s.take t'` has already halted,
+  for `t' ≤ t` (**the prefix clause**: the cost of a branch that halts early is linear in its
+  own length, plus the window copy and the counter width).
+[AB09, Exercise 2.6, §1.4.1: the universal machine, here for one fixed choice word]
+
+**Proof sketch.** Per-code startup: parse the nested header, leaving `bits t` on a counter
+tape; install the replay serialization of `Turing.exists_replayCanonizer` by
+`Turing.FinTM.exists_installCallTM` with the unary initial state; copy the input window
+`x.take t` onto a buffer by `Turing.exists_inputWindowCopyTM` (cost `O(min(t, |x|) + |bits t|)`)
+and rewind it. Then the deterministic clocked interpreter loop at three work tapes, the stream
+as the mirrored choice tape: H1's hosted clock, `Turing.counterLoopTM` over rounds of H2's step
+block hosted by Z1 (`Turing.vhostEmitTM_runFrom`) on the window (private in
+`TCSlib.Complexity.TuringMachine.CodeSimulator` since fills-8; harvested with H2's promotion,
+from an arbitrary represented start and with its escape-time bound). Each round is one step of
+the replay machine and costs at most a per-code constant (H2's `50·(|table| + 1)`), and the
+counter costs at most `4r + 2|bits t|` over `r` rounds (`Turing.counterOverhead_le_of_le`); the
+loop escapes when the simulated machine halts, at that round's exact time
+(`Turing.counterLoopTM_run_escape`), which gives the prefix clause. The verdict reads H2's
+output summary into the live exits. The replay lemma `Turing.NDTM.replayTM_runFrom` identifies
+the simulated run with the branch along `s.take t` on the window, and input locality
+(`Turing.NDTM.runWith_initCfg_take`) with the branch on `x`. -/
+theorem exists_ndInterpreterCore (c : EffectiveNDMachineCode) :
+    ∃ (K : ℕ) (Q : Type) (_ : Fintype Q) (_ : DecidableEq Q) (R : MultiTapeTM K Bool Q)
+      (j : Fin K) (entry accept reject : Q), accept ≠ reject ∧
+      ∀ α : List Bool, ∃ C : ℕ, ∀ (x : List Bool) (t : ℕ) (s : List Bool), t ≤ s.length →
+        let z := pairEncode (pairEncode (Nat.bits t) α) x
+        let N := (c.decode α).toFinNDTM
+        let start : Cfg K Bool Q z :=
+          ⟨some entry, 1, fun i => if i = j then FinTM.bufferTape s else fun _ => none,
+            fun _ => 0, []⟩
+        let e := N.tm.runWith (s.take t) (N.tm.initCfg x)
+        ∃ T, (∀ t' ≤ t, (N.tm.runWith (s.take t') (N.tm.initCfg x)).state = none →
+                T ≤ C * (t' + x.length + (Nat.bits t).length + 1)) ∧
+          T ≤ C * (t + 1) ∧
+          (R.runFrom start T).state =
+            some (if e.state = none ∧ e.output = [true] then accept else reject) ∧
+          ∀ u < T, (R.runFrom start u).state ≠ some accept ∧
+            (R.runFrom start u).state ≠ some reject := by
+  sorry
+
+end Turing
+
+/-! ════════════════════════════════════════════════════════════════════════════════════════════
+Part F · lands as the new module `TCSlib.Complexity.ClassNP.ExhaustiveReplay`
+(`TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean`), imported by the `TCSlib.Complexity.ClassNP`
+facade. Its statements use `Turing.FinNDTM.AcceptsWithin`, which `ClassNP/NTIME.lean` defines, so
+it cannot sit in `TuringMachine/` (no module there imports `ClassNP`). -/
+-- @landing TCSlib.Complexity.ClassNP.ExhaustiveReplay
+-- @imports TCSlib.Complexity.ClassNP.NTIME
+-- @imports TCSlib.Complexity.TuringMachine.NDCodes
+
+/-!
+# The exhaustive replay of a fixed NDTM
+
+[AB09, §3.2, proof of Theorem 3.2]: the complement of a nondeterministic language is decidable
+deterministically in exponential time "by examining all the possibilities for the machine's
+nondeterministic choices", and that simulation suffices for the nondeterministic time
+hierarchy. `Turing.FinNDTM.exists_exhaustiveDecider` is that simulation
+for a fixed NDTM, as a public generic theorem (user decision 2 of 2026-10-13): on every input on
+which all branches halt within `T`, a deterministic machine decides acceptance within
+`C·2^{C·(T + 1)}`, with no input-length term. The exponential decider of the hierarchy is then
+`BF := E(UN)`, the exhaustive replay of the universal NDTM; its statement is derived here
+(`Turing.ndAcceptsWithin_decider_of_universal`, proved).
+
+## Main results
+
+* `Turing.FinNDTM.exists_exhaustiveDecider` — the exhaustive replay `E` (sorried).
+* `Turing.ndAcceptsWithin_decider_of_universal` — `BF := E(UN)` (proved).
+
+## References
+
+* [AB09] S. Arora, B. Barak, *Computational Complexity: A Modern Approach*,
+  Cambridge University Press, 2009. (§3.2, proof of Theorem 3.2.)
+-/
+
+namespace Turing
+
+/-- **The exhaustive replay `E`.** For every bundled binary NDTM `N` there is a deterministic
+machine `E` and a constant `C` such that, on every input `z` on which every branch of `N` of
+length `T` has halted (any `T`, which nobody needs to compute), `E` outputs `[true]` if `N`
+accepts `z` within `T`, and `[false]` otherwise, in either case within `C·2^{C·(T + 1)}` steps.
+There is no `|z|` term. [AB09, §3.2, proof of Theorem 3.2: the trivial exponential simulation
+of a nondeterministic machine]
+
+**Proof sketch.** Iterative deepening. For `L = 0, 1, …`: enumerate the `2^L` words of length
+`L` on a counter tape (`Turing.incrementTM`); replay each through `N.tm.replayTM` for `L` steps
+under the step-clocked runner (`Turing.exists_stepClockTMVia`, gated with the B6 hosts),
+silently (`Turing.embedSilentTM`); record whether some branch accepted (halted with output
+`[true]`) and whether some branch is still live; between replays clear the work tapes within
+radius `L` (a counter-driven window clear) and rewind the native input head. Stop at the first
+`L` at which every branch has halted; it is at most `T`, and acceptance within `L` and within
+`T` agree there (`Turing.FinNDTM.AcceptsWithin.mono` one way; the other by truncating an
+accepting word of length `T` at `L`, `Turing.NDTM.runWith_of_halt`). Answer accordingly. Each
+replay touches at most `L + 1` input cells, so there is no `|z|` term. Ledger:
+`Σ_{L ≤ T} 2^L·O_N(L + 1) ≤ C·2^{C·(T + 1)}`. -/
+theorem FinNDTM.exists_exhaustiveDecider (N : FinNDTM Bool) :
+    ∃ (E : FinTM Bool) (C : ℕ), ∀ (z : List Bool) (T : ℕ), N.tm.HaltsWithin z T →
+      (N.AcceptsWithin z T → E.ComputesInTime z [true] (C * 2 ^ (C * (T + 1)))) ∧
+      (¬N.AcceptsWithin z T → E.ComputesInTime z [false] (C * 2 ^ (C * (T + 1)))) := by
+  sorry
+
+/-- **The exponential decider from the universal NDTM**, `BF := E(UN)`: if `UN` is a timed
+universal NDTM for the scheme `c` (the statement of `Turing.exists_timed_universal_NDTM`), then
+there is a deterministic machine `BF` such that for every code `α` there is a constant `C` with
+`BF` outputting `[true]` or `[false]` on `⟨⟨bits t, α⟩, x⟩`, according to whether the coded
+machine accepts `x` within `t`, within `C·2^{C·(t + 1)}` steps (the statement of
+`Turing.exists_ndAcceptsWithin_decider`). [AB09, §3.2, proof of Theorem 3.2, step 2]
+
+**Proof sketch.** `BF` is the exhaustive replay of `UN`
+(`Turing.FinNDTM.exists_exhaustiveDecider`) with constant `C_E`. Every branch of `UN` halts
+within `C_α·(t + 1)`, so `E` decides `UN`'s acceptance within that bound, which is the coded
+machine's acceptance within `t`, in time `C_E·2^{C_E·(C_α·(t + 1) + 1)}`; with
+`C := C_E·(C_α + 1)` this is at most `C·2^{C·(t + 1)}`. -/
+theorem ndAcceptsWithin_decider_of_universal (c : EffectiveNDMachineCode)
+    (hUN : ∃ UN : FinNDTM Bool, ∀ α : List Bool, ∃ C : ℕ, ∀ (x : List Bool) (t : ℕ),
+      UN.tm.HaltsWithin (pairEncode (pairEncode (Nat.bits t) α) x) (C * (t + 1)) ∧
+      (UN.AcceptsWithin (pairEncode (pairEncode (Nat.bits t) α) x) (C * (t + 1)) ↔
+        (c.decode α).toFinNDTM.AcceptsWithin x t)) :
+    ∃ BF : FinTM Bool, ∀ α : List Bool, ∃ C : ℕ, ∀ (x : List Bool) (t : ℕ),
+      ((c.decode α).toFinNDTM.AcceptsWithin x t →
+        BF.ComputesInTime (pairEncode (pairEncode (Nat.bits t) α) x) [true]
+          (C * 2 ^ (C * (t + 1)))) ∧
+      (¬(c.decode α).toFinNDTM.AcceptsWithin x t →
+        BF.ComputesInTime (pairEncode (pairEncode (Nat.bits t) α) x) [false]
+          (C * 2 ^ (C * (t + 1)))) := by
+  obtain ⟨UN, hU⟩ := hUN
+  obtain ⟨E, CE, hE⟩ := FinNDTM.exists_exhaustiveDecider UN
+  refine ⟨E, fun α => ?_⟩
+  obtain ⟨C, hC⟩ := hU α
+  refine ⟨CE * (C + 1), fun x t => ?_⟩
+  obtain ⟨hhalt, hiff⟩ := hC x t
+  obtain ⟨hacc, hrej⟩ := hE (pairEncode (pairEncode (Nat.bits t) α) x) (C * (t + 1)) hhalt
+  have hexp : CE * (C * (t + 1) + 1) ≤ CE * (C + 1) * (t + 1) := by
+    have : C * (t + 1) + 1 ≤ (C + 1) * (t + 1) := by rw [Nat.succ_mul]; omega
+    calc CE * (C * (t + 1) + 1) ≤ CE * ((C + 1) * (t + 1)) := Nat.mul_le_mul_left CE this
+      _ = CE * (C + 1) * (t + 1) := (Nat.mul_assoc _ _ _).symm
+  have hbound : CE * 2 ^ (CE * (C * (t + 1) + 1)) ≤
+      CE * (C + 1) * 2 ^ (CE * (C + 1) * (t + 1)) := by
+    apply Nat.mul_le_mul
+    · exact Nat.le_mul_of_pos_right CE (Nat.succ_pos C)
+    · exact Nat.pow_le_pow_right (by omega) hexp
+  exact ⟨fun h => (hacc (hiff.mpr h)).mono hbound,
+    fun h => (hrej (fun h' => h (hiff.mp h'))).mono hbound⟩
+
+end Turing
+
+/-! ════════════════════════════════════════════════════════════════════════════════════════════
+Sanity probes (evidence only; not landing material). Each `example` checks a definition or a
+boundary case of a contract, by `decide`, `rfl` or a short proof. -/
+
+namespace Turing.C1Probe
+
+open Turing
+
+/-- The counter word `bits t` that the interpreter core counts down has value `t`. -/
+example (t : ℕ) : Nat.ofDigits 2 ((Nat.bits t).map Bool.toNat) = t := by
+  have h : (Nat.bits t).map Bool.toNat = (Nat.bits t).map fun b => cond b 1 0 := by
+    apply List.map_congr_left
+    intro b _
+    cases b <;> rfl
+  rw [h, ← Nat.digits_two_eq_bits, Nat.ofDigits_digits]
+
+/-- The replay machine's table has `3 · 27 = 81` records per state (three input reads, three
+reads on each of three work tapes), against `2 · 27 = 54` for the two ND tables. -/
+example : 3 * (workReadsK 3).length = 81 ∧ 2 * (3 * (workReadsK 2).length) = 54 := by decide
+
+/-- A two-choice machine with no work tapes whose `true` choice halts at once (a halting
+choice step) and whose `false` choice moves right and stays live. -/
+def haltOnTrue : NDTM 0 Bool Unit where
+  q₀ := ()
+  tr := fun b _ _ _ => ⟨1, fun i => i.elim0, none, if b then none else some ()⟩
+
+/-- Its replay along `[false, true, false]` halts at time `2`, and the choice head stops at `2`
+although three steps are run: the clause `p = t` of `Turing.NDTM.replayTM_runFrom` holds only
+while the branch is live. -/
+example :
+    let c := (haltOnTrue.replayTM).runFrom
+      (NDTM.withChoiceTape (haltOnTrue.initCfg ([] : List Bool))
+        (FinTM.bufferTape [false, true, false]) 0) 3
+    c.state = none ∧ c.workTapePos (Fin.last 0) = 2 := by
+  decide
+
+/-- The branch itself, along the same word: halted, and so it is along every extension. -/
+example : (haltOnTrue.runWith [false, true, false] (haltOnTrue.initCfg ([] : List Bool))).state
+    = none := by
+  decide
+
+/-- The bounded writer on a block of two nonblank cells. -/
+def writerStart : Cfg 1 Bool (NDWriterState Unit) ([] : List Bool) :=
+  ⟨some (.run ()), 1, fun _ p => if 0 ≤ p ∧ p < 2 then some false else none, fun _ => 0, []⟩
+
+/-- Every word of length `m + 1 = 3` reaches `done`, having written its first two bits and left
+the head after the block. -/
+example : ∀ w : List Bool, w.length = 3 →
+    let c := (ndWriterTM 1 0 () (fun _ _ => ()) (fun _ => false) true).runWith w writerStart
+    c.state = some .done ∧ c.workTapePos 0 = 2 ∧
+      c.workTapes 0 0 = w[0]? ∧ c.workTapes 0 1 = w[1]? ∧ c.workTapes 0 2 = none := by
+  intro w hw
+  match w, hw with
+  | [a, b, d], _ => cases a <;> cases b <;> cases d <;> decide
+
+/-- No word of length `m = 2` reaches `done`. -/
+example : ∀ w : List Bool, w.length = 2 →
+    ((ndWriterTM 1 0 () (fun _ _ => ()) (fun _ => false) true).runWith w writerStart).state =
+      some (.run ()) := by
+  intro w hw
+  match w, hw with
+  | [a, b], _ => cases a <;> cases b <;> decide
+
+/-- The writer over an empty block (`m = 0`): one step reaches `done`, writing nothing. -/
+example : ((ndWriterTM 1 0 () (fun _ _ => ()) (fun _ => false) true).runWith [true]
+    (⟨some (.run ()), 1, fun _ _ => none, fun _ => 0, []⟩ :
+      Cfg 1 Bool (NDWriterState Unit) ([] : List Bool))).state = some .done := by
+  decide
+
+/-- A machine that moves right on `true` and halts on anything else. -/
+def walkTrue : NDTM 0 Bool Unit where
+  q₀ := ()
+  tr := fun _ _ inp _ =>
+    if inp = some true then ⟨1, fun i => i.elim0, none, some ()⟩
+    else ⟨0, fun i => i.elim0, none, none⟩
+
+/-- Input locality is tight: with `m = 1`, a branch of `2 > m` steps on `[true, true]` and on
+its window `[true]` already differ in state (live against halted). -/
+example : (walkTrue.runWith [false, false] (walkTrue.initCfg [true, true])).state = some () ∧
+    (walkTrue.runWith [false, false] (walkTrue.initCfg ([true, true].take 1))).state = none := by
+  decide
+
+/-- At `|w| = m = 1` they agree, as `Turing.NDTM.runWith_initCfg_take` says. -/
+example : (walkTrue.runWith [false] (walkTrue.initCfg ([true, true].take 1))).state =
+    (walkTrue.runWith [false] (walkTrue.initCfg [true, true])).state :=
+  (NDTM.runWith_initCfg_take walkTrue [true, true] 1 [false] le_rfl).1
+
+/-- The exhaustive replay's hypothesis is never met at `T = 0`: the empty word leaves every
+machine live at its initial state. -/
+example (N : FinNDTM Bool) (z : List Bool) : ¬N.tm.HaltsWithin z 0 := by
+  intro h
+  have := h [] rfl
+  simp at this
+
+/-- Nor does any machine accept within `0` steps. -/
+example (N : FinNDTM Bool) (z : List Bool) : ¬N.AcceptsWithin z 0 := by
+  rintro ⟨w, hw, hhalt, -⟩
+  rw [List.length_eq_zero_iff.mp hw] at hhalt
+  simp at hhalt
+
+/-- The bridge at a one-state machine (`numStates = 0`), whatever its tables. -/
+example (tm : NDTM 2 Bool (Fin 1)) :
+    (⟨0, tm⟩ : CodeNDTM).serialize = pairEncode (Nat.bits 0)
+      (unaryFin tm.q₀ ++ (tableBitsK (tm.fixChoice false).tr ++
+        tableBitsK (tm.fixChoice true).tr)) :=
+  CodeNDTM.serialize_eq_tableBitsK ⟨0, tm⟩
+
+end Turing.C1Probe

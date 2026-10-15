@@ -1,0 +1,400 @@
+import TCSlib.Complexity.TuringMachine.Build.Catalog
+import TCSlib.Complexity.TuringMachine.Build.Seam
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+/-!
+# §12.8 fill, stream A (Catalog Part 3 + Seam): pre-ship probe, pre-issue-2 form
+
+Read-only elaboration against `oleans-pre2` (wt-pre2 = issue base candidate `5afed90b`:
+campaign + PR #28 + PR #32 trace promotion + the pre-issue-2 shared layer).
+
+* Part 1 — `#check` of the 13 targets and of every public name the brief cites, now
+  including `catalogTrace`/`catalog_trace_run` and the pre-issue-2 lemmas.
+* Part 2 — route steps as `example`s (no `sorry` of the probe's own). Against the
+  `oleans-s128r2` form (`probe-A.lean`): the local action-step and cons-shift stand-ins are
+  gone (the public `step_of_*` and layout lemmas replace them), and the one-pass helper
+  `catalog_pass_contract` is derived from the real `catalog_trace_run`.
+-/
+
+open Turing
+
+/-! ## Part 1a — the 13 targets -/
+
+#check @Turing.fieldsTape_field
+#check @Turing.compareTM_run_ofCfg
+#check @Turing.skipTM_run_ofCfg
+#check @Turing.skipBackTM_run_ofCfg
+#check @Turing.seekEndTM_run_ofCfg
+#check @Turing.seekStartTM_run_ofCfg
+#check @Turing.scanTM_run_ofCfg
+#check @Turing.scanResult_fold
+#check @Turing.scanResult_map
+#check @Turing.scanResult_shiftRight
+#check @Turing.scanResult_shiftLeft
+#check @Turing.scanResult_carry
+#check @Turing.seamCompTM₂_run_ofCfg
+
+/-! ## Part 1b — cited definitions and proved infrastructure -/
+
+-- the one trace (public since PR #32) and the pre-issue-2 shared layer
+#check @Turing.catalogTrace
+#check @Turing.catalog_trace_run
+#check @Turing.catalog_write_take
+#check @Turing.step_of_tapeAction_move
+#check @Turing.step_of_tapeAction_write
+#check @Turing.step_of_inputMoveAction
+#check @Turing.joinFields_cons_cons
+#check @Turing.fieldsTape_cons_shift
+#check @Turing.fieldOffset_succ
+#check @Turing.fieldOffset_cons_succ
+#check @Turing.length_joinFields_add_one
+#check @Turing.fieldOffset_add_length_le
+-- Part 3 vocabulary (landed definitions, frozen)
+#check @Turing.tapeAction
+#check @Turing.inputMoveAction
+#check @Turing.joinFields
+#check @Turing.fieldsTape
+#check @Turing.fieldOffset
+#check @Turing.SeekPhase
+#check @Turing.skipTM
+#check @Turing.skipBackTM
+#check @Turing.seekEndTM
+#check @Turing.seekStartTM
+#check @Turing.mealyRun
+#check @Turing.scanResult
+#check @Turing.ScanPhase
+#check @Turing.scanTM
+#check @Turing.scanKeep
+#check @Turing.scanFold
+#check @Turing.scanMap
+#check @Turing.scanShift
+#check @Turing.scanCarry
+-- R3 compare (the authorized body swaps)
+#check @Turing.FlagPhase
+#check @Turing.compareTM
+#check @Turing.compareTM_run
+#check @Turing.compareTM_spaceUsedByTape
+-- the §12.6 framed pattern the compare follows
+#check @Turing.transferTM_run_ofCfg
+#check @Turing.clearTM_run_ofCfg
+-- machine model
+#check @Turing.MultiTapeTM.step
+#check @Turing.MultiTapeTM.runFrom
+#check @Turing.MultiTapeTM.runFrom_zero
+#check @Turing.MultiTapeTM.runFrom_succ_eq_step
+#check @Turing.MultiTapeTM.runFrom_succ_eq_step'
+#check @Turing.MultiTapeTM.runFrom_add
+#check @Turing.Action.apply
+#check @Turing.Cfg.ext
+#check @Turing.Cfg.workTapeSymbols
+#check @Turing.moveInputPos_zero
+#check @Turing.Cfg.ofWords
+#check @Turing.FinTM.bufferTape
+#check @Turing.FinTM.bufferTape_nat
+#check @Turing.FinTM.bufferTape_left
+#check @Turing.FinTM.bufferTape_nil
+-- Seam (R8.8)
+#check @Turing.seamCompTM
+#check @Turing.seamCompTM₂
+#check @Turing.seamCompTM_runFrom_left
+#check @Turing.seamCompTM_run_ofCfg
+#check @Turing.seamCompTM_firstReturn_ofCfg
+#check @Turing.Cfg.mapState
+-- list facts the scan identities and the field layout need (names at this pin)
+#check @List.reverse_zipWith
+#check @List.getLast?_reverse
+#check @List.head?_reverse
+#check @List.map_reverse
+#check @List.reverse_reverse
+#check @List.takeWhile_cons
+#check @List.dropWhile_cons
+#check @List.zipWith_cons_cons
+#check @List.intersperse_cons₂
+#check @List.flatten_cons
+#check @List.getElem?_append
+#check @List.take_succ_cons
+#check @List.length_reverse
+#check @List.zipWith_append
+#check @List.reverse_append
+#check @Function.update_idem
+#check @Function.update_eq_self
+#check @List.take_succ
+#check @List.getElem?_append_left
+#check @List.getElem?_append_right
+#check @List.getLast?_cons
+#check @ite_self
+#check @SignType.pos_eq_one
+#check @SignType.coe_one
+
+/-! ## Part 2 — route steps -/
+
+namespace ProbeA
+
+/-! ### R-PASS: the one-pass helper, derived from the real `catalog_trace_run` with the
+constant return family (brief, H-pass) -/
+
+theorem catalog_pass_contract {k : ℕ} {Symbol : Type*} {x : List Symbol} {S : Type*}
+    (M : MultiTapeTM k Symbol S) (F : ℕ → Cfg k Symbol S x) (D : Cfg k Symbol S x) (L : ℕ)
+    (hF : ∀ r < L, M.step (F r) = F (r + 1)) (hexit : M.step (F L) = D) (hD : M.step D = D)
+    (P Q : Cfg k Symbol S x → Prop) (hP : ∀ r ≤ L, P (F r)) (hQ : ∀ r ≤ L, Q (F r))
+    (hQD : Q D) :
+    M.runFrom (F 0) (L + 1) = D ∧ (∀ t < L + 1, P (M.runFrom (F 0) t)) ∧
+      ∀ t ≤ L + 1, Q (M.runFrom (F 0) t) := by
+  have h : ∀ t, M.runFrom (F 0) t = if t ≤ L then F t else D := fun t => by
+    simpa [catalogTrace] using
+      catalog_trace_run M F (fun _ => D) D L hF hexit (fun _ _ => hD) hD hD t
+  refine ⟨by rw [h]; simp, fun t ht => ?_, fun t ht => ?_⟩
+  · rw [h, if_pos (by omega)]
+    exact hP t (by omega)
+  · rw [h]
+    split_ifs with h1
+    · exact hQ t h1
+    · exact hQD
+
+/-! ### R-ACT: every live anchor is stationary, by the public `step_of_inputMoveAction` at
+`0` and `moveInputPos_zero` (the `hD` obligation) -/
+
+example {Symbol State : Type*} {k : ℕ} {x : List Symbol} (M : MultiTapeTM k Symbol State)
+    (c : Cfg k Symbol State x) (q : State) (hq : c.state = some q)
+    (htr : M.tr q c.inputSymbol c.workTapeSymbols = inputMoveAction 0 q) :
+    M.step c = c := by
+  rw [step_of_inputMoveAction M c 0 hq htr, moveInputPos_zero, ← hq]
+
+
+/-! ### R-SEEK: a skip step along the one-pass family `F r` (the head of tape `i` at
+`pos + r`, nothing else changed), discharged by the public `step_of_tapeAction_move` -/
+
+example {Symbol : Type*} {k : ℕ} {x : List Symbol} (i : Fin k) (w : List Symbol)
+    (d : Cfg k Symbol SeekPhase x) (hstate : d.state = some .run)
+    (hw : ∀ p : ℤ, 0 ≤ p → p ≤ (w.length : ℤ) →
+      d.workTapes i (d.workTapePos i + p) = FinTM.bufferTape w p)
+    (r : ℕ) (hr : r < w.length) :
+    (skipTM k i).step
+        { d with workTapePos := Function.update d.workTapePos i (d.workTapePos i + r) } =
+      { d with workTapePos := Function.update d.workTapePos i (d.workTapePos i + (r + 1 : ℕ)) } := by
+  have hs : ({ d with workTapePos := Function.update d.workTapePos i (d.workTapePos i + r) } :
+      Cfg k Symbol SeekPhase x).workTapeSymbols i = some w[r] := by
+    simp [Cfg.workTapeSymbols, hw r (by omega) (by omega), List.getElem?_eq_getElem hr]
+  rw [step_of_tapeAction_move (skipTM k i) _ (q := .run) (q' := .run) i 0 .pos
+    (by simpa using hstate) (by simp only [skipTM, hs])]
+  apply Cfg.ext
+  · simp [hstate]
+  · simp
+  · rfl
+  · funext j
+    by_cases hj : j = i
+    · subst hj
+      simp only [Function.update_self, SignType.pos_eq_one, SignType.coe_one]
+      push_cast
+      ring
+    · simp [hj]
+  · rfl
+
+/-! ### R-SCAN-STEP: the scan's forward write, discharged by the public `step_of_tapeAction_write` (the per-cell step
+of the forward family; the backward family is the same shape with `.neg`) -/
+
+example {Γ : Type*} {A : Type} {k : ℕ} {x : List Γ} (i : Fin k) (δf δb : A → Γ → A × Γ)
+    (a : A) (a₀ : A) (d : Cfg k Γ (ScanPhase A) x) (γ : Γ)
+    (hstate : d.state = some (.fwd a)) (hγ : d.workTapes i (d.workTapePos i) = some γ) :
+    (scanTM k i δf δb a₀).step d =
+      { d with
+        state := some (.fwd (δf a γ).1)
+        workTapes := Function.update d.workTapes i
+          (Function.update (d.workTapes i) (d.workTapePos i) (some (δf a γ).2))
+        workTapePos := Function.update d.workTapePos i (d.workTapePos i + 1) } := by
+  have hs : d.workTapeSymbols i = some γ := hγ
+  rw [step_of_tapeAction_write (scanTM k i δf δb a₀) d (q' := .fwd (δf a γ).1) i 0
+    (some (δf a γ).2) .pos hstate (by simp only [scanTM, hs])]
+  simp [SignType.pos_eq_one]
+
+/-! ### R-CMP: the canonical compare from the framed row, `fst ≠ snd` only
+
+`compareTM_run` has no `fst ≠ snd` hypothesis (the aliased case is part of its
+statement), so it cannot cite `compareTM_run_ofCfg` alone: the brief has both canonical
+compare rows cite the generalized private trace instead. This example checks the
+specialization step (`Cfg.ofWords` satisfies the two delimited-word hypotheses, and the
+framed finish is the canonical seam) on the non-aliased branch. -/
+
+example (k : ℕ) (fst snd : Fin k) (hne : fst ≠ snd) (w : Fin k → List Bool)
+    {x : List Bool} :
+    ∃ T ≤ 2 * min (w fst).length (w snd).length + 2,
+      (∀ t < T, ∀ v : Bool, ((compareTM k fst snd).runFrom
+        (Cfg.ofWords (input := x) FlagPhase.run w) t).state
+          ≠ some (FlagPhase.done v)) ∧
+      (compareTM k fst snd).runFrom
+          (Cfg.ofWords (input := x) FlagPhase.run w) T =
+        Cfg.ofWords (FlagPhase.done (decide (w fst = w snd))) w := by
+  obtain ⟨δ, hδ, hrun, hcut, -⟩ := compareTM_run_ofCfg fst snd hne (w fst) (w snd)
+    (Cfg.ofWords (input := x) .run w) rfl
+    (by intro p _ _; simp [Cfg.ofWords]) (by intro p _ _; simp [Cfg.ofWords])
+  exact ⟨2 * δ + 2, by omega, hcut, hrun.trans rfl⟩
+
+/-- R-CMP: `catalog_compare_stop`'s body, verbatim, at a generic alphabet with decidable
+equality (the in-place generalization is types-only). -/
+example {Symbol : Type*} [DecidableEq Symbol] (u v : List Symbol) :
+    ∃ d ≤ min u.length v.length,
+      (∀ r < d, ∃ b, u[r]? = some b ∧ v[r]? = some b) ∧
+      (¬∃ b, u[d]? = some b ∧ v[d]? = some b) ∧
+      (u[d]? = v[d]? ↔ u = v) := by
+  induction u generalizing v with
+  | nil =>
+    cases v with
+    | nil => exact ⟨0, by simp, by simp, by simp, by simp⟩
+    | cons b v => exact ⟨0, by simp, by simp, by simp, by simp⟩
+  | cons a u ih =>
+    cases v with
+    | nil => exact ⟨0, by simp, by simp, by simp, by simp⟩
+    | cons b v =>
+      by_cases hab : a = b
+      · subst b
+        obtain ⟨d, hd, hp, hs, he⟩ := ih v
+        refine ⟨d + 1, by simpa using hd, ?_, ?_, ?_⟩
+        · intro r hr
+          cases r with
+          | zero => exact ⟨a, rfl, rfl⟩
+          | succ r => simpa using hp r (by omega)
+        · simpa using hs
+        · simpa using he
+      · refine ⟨0, by simp, by simp, ?_, ?_⟩
+        · simpa [eq_comm] using hab
+        · simp [hab]
+
+/-! ### R-SCAN: the pure Mealy facts the scan trace and the five identities rest on -/
+
+/-- The identity step transduces nothing. -/
+theorem mealyRun_keep {A Γ : Type*} (a : A) (l : List Γ) : mealyRun scanKeep a l = (a, l) := by
+  induction l generalizing a with
+  | nil => rfl
+  | cons γ l ih => simp [mealyRun, scanKeep, ih]
+
+/-- With the identity return, a scan is its forward pass (four of the five identities
+reduce to a `mealyRun` induction through this). -/
+theorem scanResult_keep {A Γ : Type*} (δf : A → Γ → A × Γ) (a₀ : A) (w : List Γ) :
+    scanResult δf scanKeep a₀ w = mealyRun δf a₀ w := by
+  simp [scanResult, mealyRun_keep]
+
+/-- Mealy runs split over an append (the per-cell step of both passes of the trace). -/
+theorem mealyRun_append {A Γ : Type*} (δ : A → Γ → A × Γ) (a : A) (l₁ l₂ : List Γ) :
+    mealyRun δ a (l₁ ++ l₂) =
+      ((mealyRun δ (mealyRun δ a l₁).1 l₂).1,
+        (mealyRun δ a l₁).2 ++ (mealyRun δ (mealyRun δ a l₁).1 l₂).2) := by
+  induction l₁ generalizing a with
+  | nil => simp [mealyRun]
+  | cons γ l ih => simp [mealyRun, ih]
+
+/-- Mealy runs preserve length (the scan's rewritten interval is the word interval). -/
+theorem mealyRun_length {A Γ : Type*} (δ : A → Γ → A × Γ) (a : A) (l : List Γ) :
+    (mealyRun δ a l).2.length = l.length := by
+  induction l generalizing a with
+  | nil => rfl
+  | cons γ l ih => simp [mealyRun, ih]
+
+/-- The one list identity `scanResult_shiftLeft` needs beyond `scanResult_shiftRight`:
+the right shift of the reversed word, reversed back, is the left shift. -/
+theorem shiftLeft_list {B Γ : Type*} (get : Γ → B) (set : Γ → B → Γ) (b₀ : B)
+    (w : List Γ) :
+    (List.zipWith set w.reverse (b₀ :: w.reverse.map get)).reverse =
+      List.zipWith set w (w.tail.map get ++ [b₀]) := by
+  cases w with
+  | nil => rfl
+  | cons a w =>
+    -- the reversed right shift reads one mark too many; `zipWith` drops it
+    have h1 : List.zipWith set (a :: w).reverse (b₀ :: (a :: w).reverse.map get) =
+        List.zipWith set (w.reverse ++ [a]) (b₀ :: w.reverse.map get) := by
+      have h := List.zipWith_append (f := set) (l₁ := w.reverse ++ [a]) (l₁' := [])
+        (l₂ := b₀ :: w.reverse.map get) (l₂' := [get a]) (by simp)
+      simp only [List.append_nil, List.zipWith_nil_left] at h
+      rw [← h]
+      simp
+    -- both lists now have length `|w| + 1`, so reversal commutes with `zipWith`
+    have h2 : List.zipWith set (w.reverse ++ [a]) (b₀ :: w.reverse.map get) =
+        (List.zipWith set (a :: w) (w.map get ++ [b₀])).reverse := by
+      rw [List.reverse_zipWith (by simp)]
+      simp
+    rw [h1, h2, List.reverse_reverse]
+    rfl
+
+/-! ### R-FIELD: the end blanks of a table, from the public layout facts (the seek-end
+exit and the seek-start left end) -/
+
+example {Γ : Type*} (ws : List (List Γ)) (hne : ws ≠ []) (p : ℤ)
+    (hp : (fieldOffset ws ws.length : ℤ) - 1 ≤ p) : fieldsTape ws p = none := by
+  have h := length_joinFields_add_one ws hne
+  unfold fieldsTape
+  split_ifs with h0
+  · rw [List.getElem?_eq_none (by omega)]
+    rfl
+  · rfl
+
+
+/-! ### R-SEAM: both branches of `seamCompTM₂_run_ofCfg` from the promoted prefix lemma and
+the right lockstep (here through `seamCompTM_run_ofCfg` at `h₂ := rfl`; in Seam the private
+`seamComp_right` is the same lockstep) -/
+
+section seam
+variable {k : ℕ} {Symbol S₀ S₁ S₂ : Type*} {x : List Symbol} [DecidableEq S₀] [DecidableEq S₁]
+  (M₀ : MultiTapeTM k Symbol S₀) (e₁ e₂ : S₀) (he : e₁ ≠ e₂)
+  (M₁ : MultiTapeTM k Symbol S₁) (entry₁ : S₁) (M₂ : MultiTapeTM k Symbol S₂) (entry₂ : S₂)
+  {c₀ c₁ : Cfg k Symbol S₀ x} {T₀ : ℕ}
+  (h₀ : M₀.runFrom c₀ T₀ = c₁)
+  (hcut : ∀ t < T₀, (M₀.runFrom c₀ t).state ≠ some e₁ ∧ (M₀.runFrom c₀ t).state ≠ some e₂)
+include he h₀ hcut
+
+/-- Branch `e₂`: the inner composite reaches `Sum.inl e₂` at `T₀`, and the outer seam
+dispatches. -/
+example (h2 : c₁.state = some e₂) (t : ℕ) :
+    (seamCompTM₂ M₀ e₁ e₂ M₁ entry₁ M₂ entry₂).runFrom
+        ((c₀.mapState Sum.inl).mapState Sum.inl) (T₀ + 1 + t) =
+      (M₂.runFrom (c₁.mapState fun _ => entry₂) t).mapState Sum.inr := by
+  have hcut₁ : ∀ s < T₀, (M₀.runFrom c₀ s).state ≠ some e₁ := fun s hs => (hcut s hs).1
+  have hin : (seamCompTM M₀ e₁ M₁ entry₁).runFrom (c₀.mapState Sum.inl) T₀ =
+      c₁.mapState Sum.inl := by
+    rw [seamCompTM_runFrom_left M₀ e₁ M₁ entry₁ hcut₁ T₀ le_rfl, h₀]
+  have hcutO : ∀ s < T₀, ((seamCompTM M₀ e₁ M₁ entry₁).runFrom
+      (c₀.mapState Sum.inl) s).state ≠ some (Sum.inl e₂) := by
+    intro s hs h
+    rw [seamCompTM_runFrom_left M₀ e₁ M₁ entry₁ hcut₁ s hs.le] at h
+    exact (hcut s hs).2 (by simpa [Cfg.mapState] using h)
+  have hmap : ((c₁.mapState (Sum.inl : S₀ → S₀ ⊕ S₁)).mapState (fun _ => entry₂) :
+      Cfg k Symbol S₂ x) = c₁.mapState (fun _ => entry₂) := by
+    apply Cfg.ext <;> simp [Cfg.mapState, h2]
+  have h := seamCompTM_run_ofCfg (seamCompTM M₀ e₁ M₁ entry₁) (Sum.inl e₂) M₂ entry₂ hin
+    (by simp [Cfg.mapState, h2]) hcutO
+    (rfl : M₂.runFrom ((c₁.mapState (Sum.inl : S₀ → S₀ ⊕ S₁)).mapState fun _ => entry₂) t = _)
+  rw [hmap] at h
+  exact h
+
+/-- Branch `e₁`: the outer seam never meets `Sum.inl e₂`, so its left prefix is the inner
+composite, which the right lockstep evaluates. -/
+example (h1 : c₁.state = some e₁) (t : ℕ) :
+    (seamCompTM₂ M₀ e₁ e₂ M₁ entry₁ M₂ entry₂).runFrom
+        ((c₀.mapState Sum.inl).mapState Sum.inl) (T₀ + 1 + t) =
+      ((M₁.runFrom (c₁.mapState fun _ => entry₁) t).mapState Sum.inr).mapState Sum.inl := by
+  have hcut₁ : ∀ s < T₀, (M₀.runFrom c₀ s).state ≠ some e₁ := fun s hs => (hcut s hs).1
+  have hinner : ∀ s, (seamCompTM M₀ e₁ M₁ entry₁).runFrom (c₀.mapState Sum.inl)
+      (T₀ + 1 + s) = (M₁.runFrom (c₁.mapState fun _ => entry₁) s).mapState Sum.inr :=
+    fun s => seamCompTM_run_ofCfg M₀ e₁ M₁ entry₁ h₀ h1 hcut₁ rfl
+  have hcutO : ∀ s < T₀ + 1 + t, ((seamCompTM M₀ e₁ M₁ entry₁).runFrom
+      (c₀.mapState Sum.inl) s).state ≠ some (Sum.inl e₂) := by
+    intro s hs h
+    by_cases hle : s ≤ T₀
+    · rw [seamCompTM_runFrom_left M₀ e₁ M₁ entry₁ hcut₁ s hle] at h
+      rcases Nat.lt_or_ge s T₀ with hlt | hge
+      · exact (hcut s hlt).2 (by simpa [Cfg.mapState] using h)
+      · obtain rfl : s = T₀ := by omega
+        rw [h₀] at h
+        exact he (by simpa [Cfg.mapState, h1] using h)
+    · obtain ⟨r, rfl⟩ : ∃ r, s = T₀ + 1 + r := ⟨s - (T₀ + 1), by omega⟩
+      rw [hinner r] at h
+      simp [Cfg.mapState] at h
+  have h := seamCompTM_runFrom_left (seamCompTM M₀ e₁ M₁ entry₁) (Sum.inl e₂) M₂ entry₂
+    hcutO (T₀ + 1 + t) le_rfl
+  rw [hinner t] at h
+  exact h
+
+end seam
+
+end ProbeA

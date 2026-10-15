@@ -1,0 +1,65 @@
+import TCSlib.Complexity.TuringMachine.Build.Zone
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+namespace ZFA2BoundaryRegression
+open Turing
+
+/-- Valid level-1 inward input: empty lower right zone, full donor,
+occupied outer zone. The nonempty left zone also prevents a canonical
+bufferTape representation of the whole data tape. -/
+def z : ZoneContents 3 where
+  home := none
+  left := fun j => if j.val = 0 then [some true] else []
+  right := fun j => if j.val = 1 then List.replicate 4 none
+    else if j.val = 2 then [some true] else []
+  left_le := of_decide_eq_true rfl
+  right_le := of_decide_eq_true rfl
+
+/-- The legitimate inward operation has an enabled guard. -/
+theorem inward_guard : z.right 0 = [] ∧ (z.right 1).length = zoneCapacity 1 :=
+  of_decide_eq_true rfl
+
+/-- The full donor starts at 6, occupies eight bits, and is followed by
+occupied outer data at 14. A bare transfer has no delimiter there. -/
+theorem donor_boundary :
+    2 * zoneBase 1 + 2 = 6 ∧ zoneTape z 14 = some true :=
+  of_decide_eq_true rfl
+
+/-- A displaced transfer with no boundary preparation. -/
+def start : Cfg 2 Bool SweepPhase ([] : List Bool) :=
+  ⟨some .sweep, 1,
+    (fun j => if j.val = 0 then zoneTape z else FinTM.bufferTape []),
+    (fun j => if j.val = 0 then 6 else 0), []⟩
+
+/-- The unprepared transfer consumes ten bits, including the outer pair;
+it returns at time 22 and has erased the outer presence cell. -/
+theorem unprepared_transfer :
+    ((transferTM 2 0 1).runFrom start 22).state = some .done ∧
+    ((transferTM 2 0 1).runFrom start 22).workTapePos 0 = 6 ∧
+    ((transferTM 2 0 1).runFrom start 22).workTapePos 1 = 0 ∧
+    ((transferTM 2 0 1).runFrom start 22).workTapes 0 14 = none :=
+  of_decide_eq_true rfl
+
+/-- The required inward operation preserves that outer cell. -/
+theorem required_outer_frame :
+    zoneTape (zoneShiftIn true 1 z) 14 = some true :=
+  of_decide_eq_true rfl
+
+/-- No canonical word can equal this whole data tape: cell -2 is occupied. -/
+theorem not_canonical (w : List Bool) : zoneTape z ≠ FinTM.bufferTape w := by
+  intro h
+  have hc := congrFun h (-2)
+  have hz : zoneTape z (-2) = some true := of_decide_eq_true rfl
+  rw [hz] at hc
+  simpa [FinTM.bufferTape] using hc
+
+#print axioms inward_guard
+#print axioms donor_boundary
+#print axioms unprepared_transfer
+#print axioms required_outer_frame
+#print axioms not_canonical
+
+end ZFA2BoundaryRegression

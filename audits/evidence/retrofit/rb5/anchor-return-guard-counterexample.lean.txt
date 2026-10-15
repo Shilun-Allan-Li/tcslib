@@ -1,0 +1,38 @@
+import TCSlib.Complexity.TuringMachine.Build.Loop
+
+open Turing Turing.FinTM
+open Lean Elab Term in
+elab "priv" s:str : term => do
+  let suffix := ".Turing.FinTM." ++ s.getString
+  let some (name, _) := (← getEnv).constants.toList.find? (fun (n, _) =>
+    n.toString.startsWith "_private.TCSlib.Complexity.TuringMachine.Build.Loop." &&
+    n.toString.endsWith suffix) | throwError "missing Loop declaration"
+  Lean.Meta.mkConstWithFreshMVarLevels name
+
+/-- At the permitted zero-time anchor endpoint, the one-step stop starts in
+body control. Hence the strict-prefix guard required by the proposed
+non-body Z5 transfer is false. -/
+theorem rb5_anchor_guard_false (body F : FinTM Bool) (anchor : body.State)
+    (findMode startup : Bool) {x : List Bool}
+    (c : Cfg body.k Bool body.State x) (word : List Bool)
+    (fuel : Cfg F.k Bool F.State x) (hc : c.state = some anchor) :
+    (body.tm.runFrom c 0).state = some anchor ∧
+    (0 = 0 → (false : Bool) = false) ∧
+    (∀ u < (0 : ℕ), (u = 0 ∧ (false : Bool) = true) ∨
+      (body.tm.runFrom c u).state ≠ some anchor) ∧
+    ¬ (∀ u < (0 + 1 : ℕ), ∀ q,
+      (((priv "loopHost") body F anchor findMode).tm.runFrom
+        ((priv "loopCall") body F anchor startup c false none word fuel) u).state = some q →
+      (match q with | .inr (.inl _) => False | _ => True)) := by
+  refine ⟨hc, fun _ => rfl, ?_, ?_⟩
+  · intro u hu
+    omega
+  · intro h
+    apply h 0 (by omega) (.inr (.inl (startup, (anchor, false))))
+    change some (((c.state.map (fun s => (s, false))).map id |>.map
+      (fun s => Sum.inr (Sum.inl (startup, s)))).getD
+      (Sum.inr (Sum.inr (if startup then 6 else 7 : Fin 14)))) = _
+    rw [hc]
+    rfl
+
+#print axioms rb5_anchor_guard_false

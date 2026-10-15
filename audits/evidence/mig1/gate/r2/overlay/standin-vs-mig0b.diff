@@ -1,0 +1,26 @@
+--- mig0b/Finite.lean:386-408
++++ overlay/stand-in
+@@ -1,14 +1,15 @@
+-/-- **The time-derived head envelope** (MIG-0b): after `u` steps from `cfg`, every work head
+-lies within `u` cells of its start. Every row with a time bound therefore has an interval
+-envelope, even when it states none (the install and emit calls; the find round). It is the
+-interval form of `Build/Catalog`'s private `f2_head_steps`, which retires with MIG-1 (backlog
+-F6-1(g)), and of the run head bound that the H2 promotion exports
+-(`CodeSimulator.h1Run_headBound`, backlog F7-1(a)); stated here over any alphabet and state
+-type, like the raw layer it extends.
++/-- **Stand-in, not landed** (MIG-1 round-2 overlay only). A verbatim copy, statement and
++proof, of MIG-0b's `Turing.MultiTapeTM.workTapePos_runFrom_mem_Icc` (MIG-0b's landing set,
++`TuringMachine/Finite.lean:386-408`), which lands before MIG-1 S (user decision 3, 2026-10-14)
++but is not at the campaign tip this overlay is elaborated against; only the name, `private` and
++the namespace (`Turing.FinTM` here, `Turing` there) differ. At landing this declaration is
++dropped and every citation `mig0bStandIn_workTapePos_runFrom_mem_Icc` becomes
++`MultiTapeTM.workTapePos_runFrom_mem_Icc`, with the same explicit arguments. After `u` steps
++from `cfg`, every work head lies within `u` cells of its start.
+ 
+ **Proof sketch.** Induction on `u`: each step moves a head by at most one cell
+ (`Turing.MultiTapeTM.workTapePos_step_le`). -/
+-theorem MultiTapeTM.workTapePos_runFrom_mem_Icc {k : ℕ} {Symbol State : Type*}
++private theorem mig0bStandIn_workTapePos_runFrom_mem_Icc {k : ℕ} {Symbol State : Type*}
+     {input : List Symbol} (tm : MultiTapeTM k Symbol State) (cfg : Cfg k Symbol State input)
+     (u : ℕ) (j : Fin k) :
+     (tm.runFrom cfg u).workTapePos j ∈

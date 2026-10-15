@@ -1,0 +1,22 @@
+--- a/TCSlib/Complexity/SpaceComplexity.lean
++++ b/TCSlib/Complexity/SpaceComplexity.lean
+@@ -225,14 +225,15 @@
+   a monotone memory tape, their compilation, and their time bound by configuration counting
+   (`marm_dtime`)
+ - `SpaceComplexity.ExpBFS.{Radius, Machine, Run, Relax, Search, Main}`: reachable codes at
+-  growing radii; the breadth-first search memory machine; `NSPACE S ⊆ ⋃ c, DTIME (2 ^ (c (S n + 1)))`
+-  for `S ≥ logSpace`
++  growing radii; the breadth-first search memory machine;
++  `NSPACE S ⊆ ⋃ c, DTIME (2 ^ (c (S n + 1)))` for `S ≥ logSpace`
+ - `SpaceComplexity.ExpTime`: Thm 4.2(iii), `NL ⊆ P`, Ex 4.3 (moved from
+   `SpaceComplexity.ConfigGraph`, after the codec)
+ - `SpaceComplexity.Logspace.{PathHard, PathHardRegs, PathHardMachine, PathHardWalk,
+   PathHardRun, PathHardDecide}`: the configuration-graph reduction to `PATH`, the register
+-  file and deciders of its query register machine, the machine and its runs; every `NL` language logspace-reduces to `PATH` (Thm 4.18, consumed by
+-  `PATH_NLComplete` in `SpaceComplexity.Logspace.Path`)
++  file and deciders of its query register machine, the machine and its runs; every `NL`
++  language logspace-reduces to `PATH` (Thm 4.18, consumed by `PATH_NLComplete` in
++  `SpaceComplexity.Logspace.Path`)
+ - `SpaceComplexity.Logspace.{ISCountMath, ISCountRegs}`: the combinatorics of inductive
+   counting (balls, guessed enumerations) and the register file of the counting machine
+ - `SpaceComplexity.Logspace.ISCountGen{Machine, Walk, Stage, Loop, Radius, Correct}`: the

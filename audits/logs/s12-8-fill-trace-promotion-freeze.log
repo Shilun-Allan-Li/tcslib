@@ -1,0 +1,7 @@
+# s12.8 fill pre-issue: trace promotion, comment-stripped comparison with the base (cd826a23^)
+CODE DIFFERS (comment-stripped, 475602 chars): TCSlib/Complexity/TuringMachine/Build/Catalog.lean
+# expected: differs only in the two dropped 'private' keywords and lemma -> theorem (-14 characters)
+-private def catalogTrace {Symbol : Type*} {x : List Symbol} {S : Type*} (F R : ℕ → Cfg k Symbol S x)
++def catalogTrace {Symbol : Type*} {x : List Symbol} {S : Type*} (F R : ℕ → Cfg k Symbol S x)
+-private lemma catalog_trace_run {Symbol : Type*} {x : List Symbol} {S : Type*} (M : MultiTapeTM k Symbol S)
++theorem catalog_trace_run {Symbol : Type*} {x : List Symbol} {S : Type*} (M : MultiTapeTM k Symbol S)

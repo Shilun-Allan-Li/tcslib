@@ -1,0 +1,563 @@
+# arm-fill-policy: policy.md §1-§3 checks over the 73 added files (scripts/policy.py), at the tip dc891632
+# public/private counts here key declarations by name per file; two anonymous instances in Codec/Valid.lean collapse to one (inventory log: 1,492 public)
+files 73, lines 26078, public 1491, private 16
+
+## Header and module docstring (copyright block / 3 options / # Title / Main definitions / Main results / References)
+  TCSlib/Complexity/ClassPSPACE/TQBFARM/Correct.lean: missing: ## Main definitions
+  TCSlib/Complexity/ClassPSPACE/TQBFARM/Leaf.lean: missing: ## Main definitions
+  TCSlib/Complexity/ClassPSPACE/TQBFHardBridge.lean: missing: ## Main definitions
+  TCSlib/Complexity/ClassPSPACE/TQBFHardTseitin.lean: missing: ## Main definitions
+  TCSlib/Complexity/SpaceComplexity/Codec/Engine.lean: missing: ## Main definitions
+  TCSlib/Complexity/SpaceComplexity/ExpBFS/Machine.lean: missing: ## Main results
+  TCSlib/Complexity/SpaceComplexity/ExpTime.lean: missing: ## Main definitions
+  TCSlib/Complexity/SpaceComplexity/Logspace/ISCountGenCorrect.lean: missing: ## Main definitions
+  TCSlib/Complexity/SpaceComplexity/Logspace/ISCountGenStage.lean: missing: ## Main definitions
+  TCSlib/Complexity/SpaceComplexity/Logspace/ISCountGenWalk.lean: missing: ## Main definitions
+  TCSlib/Complexity/SpaceComplexity/Logspace/ISCountRegs.lean: missing: ## Main results
+  TCSlib/Complexity/SpaceComplexity/Logspace/PathHardDecide.lean: missing: ## Main definitions
+  TCSlib/Complexity/SpaceComplexity/Machines/ARMWidth.lean: missing: ## Main definitions
+  TCSlib/Complexity/SpaceComplexity/Machines/VWord.lean: missing: ## Main definitions
+  TCSlib/Complexity/SpaceComplexity/SavitchARM/Run.lean: missing: ## Main definitions
+  (files not listed have all six)
+
+## Lines over 100 characters: 42 in 17 files
+  TCSlib/Complexity/SpaceComplexity/Codec/Bridge.lean:261  108 chars
+  TCSlib/Complexity/SpaceComplexity/Codec/Deciders.lean:110  102 chars
+  TCSlib/Complexity/SpaceComplexity/Codec/Deciders.lean:276  104 chars
+  TCSlib/Complexity/SpaceComplexity/Codec/Engine.lean:69  104 chars
+  TCSlib/Complexity/SpaceComplexity/Codec/Engine.lean:91  104 chars
+  TCSlib/Complexity/SpaceComplexity/Codec/Engine.lean:129  101 chars
+  TCSlib/Complexity/SpaceComplexity/Codec/Layout.lean:115  106 chars
+  TCSlib/Complexity/SpaceComplexity/Codec/Layout.lean:280  102 chars
+  TCSlib/Complexity/SpaceComplexity/Codec/Layout.lean:311  105 chars
+  TCSlib/Complexity/SpaceComplexity/Codec/Layout2.lean:141  104 chars
+  TCSlib/Complexity/SpaceComplexity/Codec/Layout2.lean:177  101 chars
+  TCSlib/Complexity/SpaceComplexity/Codec/Layout2.lean:200  104 chars
+  TCSlib/Complexity/SpaceComplexity/Codec/Parse.lean:196  102 chars
+  TCSlib/Complexity/SpaceComplexity/Codec/Parse.lean:223  102 chars
+  TCSlib/Complexity/SpaceComplexity/Codec/Parse.lean:273  102 chars
+  TCSlib/Complexity/SpaceComplexity/Codec/Regs.lean:324  224 chars
+  TCSlib/Complexity/SpaceComplexity/Codec/Regs.lean:328  113 chars
+  TCSlib/Complexity/SpaceComplexity/Codec/Run.lean:98  101 chars
+  TCSlib/Complexity/SpaceComplexity/Codec/Step.lean:178  104 chars
+  TCSlib/Complexity/SpaceComplexity/Codec/Step.lean:273  101 chars
+  TCSlib/Complexity/SpaceComplexity/Codec/StepDecider.lean:90  101 chars
+  TCSlib/Complexity/SpaceComplexity/Codec/StepDecider.lean:118  101 chars
+  TCSlib/Complexity/SpaceComplexity/Codec/StepDecider.lean:185  103 chars
+  TCSlib/Complexity/SpaceComplexity/Codec/StepDecider.lean:196  104 chars
+  TCSlib/Complexity/SpaceComplexity/Codec/Valid.lean:566  103 chars
+  TCSlib/Complexity/SpaceComplexity/Codec/Word.lean:306  101 chars
+  TCSlib/Complexity/SpaceComplexity/Codec/Word.lean:498  105 chars
+  TCSlib/Complexity/SpaceComplexity/Logspace/PathWalk.lean:471  102 chars
+  TCSlib/Complexity/SpaceComplexity/Logspace/PathWalkProof.lean:195  102 chars
+  TCSlib/Complexity/SpaceComplexity/Logspace/PathWalkProof.lean:247  105 chars
+  TCSlib/Complexity/SpaceComplexity/Logspace/PathWalkProof.lean:263  105 chars
+  TCSlib/Complexity/SpaceComplexity/Logspace/PathWalkProof.lean:341  101 chars
+  TCSlib/Complexity/SpaceComplexity/Logspace/PathWalkProof.lean:352  101 chars
+  TCSlib/Complexity/SpaceComplexity/Logspace/PathWalkProof.lean:395  110 chars
+  TCSlib/Complexity/SpaceComplexity/Logspace/PathWalkProof.lean:405  103 chars
+  TCSlib/Complexity/SpaceComplexity/Logspace/PathWalkProof.lean:460  102 chars
+  TCSlib/Complexity/SpaceComplexity/Logspace/PathWalkProof.lean:484  102 chars
+  TCSlib/Complexity/SpaceComplexity/Logspace/PathWalkProof.lean:491  118 chars
+  TCSlib/Complexity/SpaceComplexity/Machines/NARM.lean:23  107 chars
+  TCSlib/Complexity/SpaceComplexity/Machines/NARM.lean:44  140 chars
+  TCSlib/Complexity/SpaceComplexity/Machines/NARMCompile.lean:231  103 chars
+  TCSlib/Complexity/SpaceComplexity/Machines/NARMExample.lean:77  107 chars
+
+## Public declarations (instances exempt) without a docstring: 0
+
+## Theorems/lemmas with more than 20 non-blank code lines and no "Proof sketch" in the docstring: 2 (2 public, 0 private)
+  TCSlib/Complexity/ClassPSPACE/TQBFHardSemantics.lean:160  prefixTruth_replicate_ex  (26 lines)
+  TCSlib/Complexity/ClassPSPACE/TQBFHardSemantics.lean:193  prefixTruth_replicate_all  (24 lines)
+
+## Citation tags used in declaration docstrings: {'AB09': 54}
+
+## Public theorems with a bold "result" headline (/-- **...) and no [Tag, …] citation: 282
+  TCSlib/Complexity/ClassPSPACE/TQBFARM/Correct.lean:61  inner_spec
+  TCSlib/Complexity/ClassPSPACE/TQBFARM/Correct.lean:146  call_spec
+  TCSlib/Complexity/ClassPSPACE/TQBFARM/Leaf.lean:50  read_t
+  TCSlib/Complexity/ClassPSPACE/TQBFARM/Leaf.lean:60  read_f
+  TCSlib/Complexity/ClassPSPACE/TQBFARM/Leaf.lean:70  read_b
+  TCSlib/Complexity/ClassPSPACE/TQBFARM/Leaf.lean:95  lc_run
+  TCSlib/Complexity/ClassPSPACE/TQBFARM/Leaf.lean:140  lv_run
+  TCSlib/Complexity/ClassPSPACE/TQBFARM/Leaf.lean:200  lit_run
+  TCSlib/Complexity/ClassPSPACE/TQBFARM/Leaf.lean:231  clause_run
+  TCSlib/Complexity/ClassPSPACE/TQBFARM/Leaf.lean:276  formula_run
+  TCSlib/Complexity/ClassPSPACE/TQBFARM/Machine.lean:447  preS_A
+  TCSlib/Complexity/ClassPSPACE/TQBFARM/Machine.lean:487  cp_run
+  TCSlib/Complexity/ClassPSPACE/TQBFARM/Machine.lean:498  dm_run
+  TCSlib/Complexity/ClassPSPACE/TQBFARM/Machine.lean:507  mv_run
+  TCSlib/Complexity/ClassPSPACE/TQBFARM/Machine.lean:516  sb_run
+  TCSlib/Complexity/ClassPSPACE/TQBFARM/Machine.lean:525  hv_run
+  TCSlib/Complexity/ClassPSPACE/TQBFARM/Semantics.lean:90  synOK_spec
+  TCSlib/Complexity/ClassPSPACE/TQBFARM/Semantics.lean:131  truth_of_not_synOK
+  TCSlib/Complexity/ClassPSPACE/TQBFARM/Semantics.lean:146  repr_of_synOK
+  TCSlib/Complexity/ClassPSPACE/TQBFARM/Semantics.lean:180  asg_push
+  TCSlib/Complexity/ClassPSPACE/TQBFARM/Semantics.lean:213  val_ex
+  TCSlib/Complexity/ClassPSPACE/TQBFARM/Semantics.lean:228  val_all
+  TCSlib/Complexity/ClassPSPACE/TQBFARM/Semantics.lean:241  val_root
+  TCSlib/Complexity/ClassPSPACE/TQBFARM/Walk.lean:57  len_t
+  TCSlib/Complexity/ClassPSPACE/TQBFARM/Walk.lean:67  len_f
+  TCSlib/Complexity/ClassPSPACE/TQBFARM/Walk.lean:81  syn_run
+  TCSlib/Complexity/ClassPSPACE/TQBFARM/Walk.lean:138  node_run
+  TCSlib/Complexity/ClassPSPACE/TQBFARM/Walk.lean:158  push_run
+  TCSlib/Complexity/ClassPSPACE/TQBFARM/Walk.lean:186  pop_run
+  TCSlib/Complexity/ClassPSPACE/TQBFARM/Walk.lean:213  qlook_run
+  TCSlib/Complexity/ClassPSPACE/TQBFARM/Walk.lean:238  leaf_spec
+  TCSlib/Complexity/ClassPSPACE/TQBFHard.lean:89  dagCktSatToSAT3_encode
+  TCSlib/Complexity/ClassPSPACE/TQBFHard.lean:141  time_le
+  TCSlib/Complexity/ClassPSPACE/TQBFHard.lean:174  eval_redCircuit
+  TCSlib/Complexity/ClassPSPACE/TQBFHardBridge.lean:68  predB_iff
+  TCSlib/Complexity/ClassPSPACE/TQBFHardParams.lean:62  vlen_le_vwid
+  TCSlib/Complexity/ClassPSPACE/TQBFHardParams.lean:205  polyTimeComputable_levelBits
+  TCSlib/Complexity/ClassPSPACE/TQBFHardSemantics.lean:141  prefixTruth_congr_agree
+  TCSlib/Complexity/ClassPSPACE/TQBFHardSemantics.lean:160  prefixTruth_replicate_ex
+  TCSlib/Complexity/ClassPSPACE/TQBFHardSemantics.lean:193  prefixTruth_replicate_all
+  TCSlib/Complexity/ClassPSPACE/TQBFHardSemantics.lean:369  prefixTruth_top
+  TCSlib/Complexity/ClassPSPACE/TQBFHardSemantics.lean:422  steps_add
+  TCSlib/Complexity/ClassPSPACE/TQBFHardSemantics.lean:445  mid_iff_steps
+  TCSlib/Complexity/ClassPSPACE/TQBFHardSemantics.lean:480  levelMatrix_iff_flat
+  TCSlib/Complexity/ClassPSPACE/TQBFHardTseitin.lean:133  numVars_le_length_serialize
+  TCSlib/Complexity/ClassPSPACE/TQBFHardVerifier.lean:132  pt_eq
+  TCSlib/Complexity/ClassPSPACE/TQBFHardVerifier.lean:151  pt_indicator
+  TCSlib/Complexity/ClassPSPACE/TQBFHardVerifier.lean:365  polyTimeComputable_predB
+  TCSlib/Complexity/SpaceComplexity/Codec/Bridge.lean:119  inWin_runWith_take
+  TCSlib/Complexity/SpaceComplexity/Codec/Checks.lean:109  initChk_iff
+  TCSlib/Complexity/SpaceComplexity/Codec/Checks.lean:185  acceptChk_iff
+  TCSlib/Complexity/SpaceComplexity/Codec/Checks.lean:337  stepChk_iff
+  TCSlib/Complexity/SpaceComplexity/Codec/Checks.lean:390  validLang_iff
+  TCSlib/Complexity/SpaceComplexity/Codec/Checks.lean:404  initLang_iff
+  TCSlib/Complexity/SpaceComplexity/Codec/Checks.lean:418  acceptLang_iff
+  TCSlib/Complexity/SpaceComplexity/Codec/Checks.lean:432  stepLang_iff
+  TCSlib/Complexity/SpaceComplexity/Codec/Deciders.lean:103  one_run
+  TCSlib/Complexity/SpaceComplexity/Codec/Deciders.lean:193  validLang_mem
+  TCSlib/Complexity/SpaceComplexity/Codec/Deciders.lean:221  acceptLang_mem
+  TCSlib/Complexity/SpaceComplexity/Codec/Deciders.lean:260  init_tail
+  TCSlib/Complexity/SpaceComplexity/Codec/Deciders.lean:379  initLang_mem
+  TCSlib/Complexity/SpaceComplexity/Codec/Engine.lean:61  incChain
+  TCSlib/Complexity/SpaceComplexity/Codec/Engine.lean:83  decChain
+  TCSlib/Complexity/SpaceComplexity/Codec/Engine.lean:113  scan_loop
+  TCSlib/Complexity/SpaceComplexity/Codec/Engine.lean:229  decodeStride_loop
+  TCSlib/Complexity/SpaceComplexity/Codec/Engine.lean:348  halvCount_loop
+  TCSlib/Complexity/SpaceComplexity/Codec/Engine.lean:410  le_loop
+  TCSlib/Complexity/SpaceComplexity/Codec/Langs.lean:96  mem_validLang
+  TCSlib/Complexity/SpaceComplexity/Codec/Langs.lean:108  mem_initLang
+  TCSlib/Complexity/SpaceComplexity/Codec/Langs.lean:120  mem_acceptLang
+  TCSlib/Complexity/SpaceComplexity/Codec/Langs.lean:133  mem_stepLang
+  TCSlib/Complexity/SpaceComplexity/Codec/Layout.lean:104  layout_run
+  TCSlib/Complexity/SpaceComplexity/Codec/Layout.lean:276  le_phase
+  TCSlib/Complexity/SpaceComplexity/Codec/Layout.lean:306  vscan_run
+  TCSlib/Complexity/SpaceComplexity/Codec/Layout2.lean:67  layout2_run
+  TCSlib/Complexity/SpaceComplexity/Codec/Layout2.lean:216  insym_run
+  TCSlib/Complexity/SpaceComplexity/Codec/Parse.lean:127  sw_run
+  TCSlib/Complexity/SpaceComplexity/Codec/Parse.lean:267  parse_run
+  TCSlib/Complexity/SpaceComplexity/Codec/Parse.lean:344  parse_run₂
+  TCSlib/Complexity/SpaceComplexity/Codec/Run.lean:106  cp_run
+  TCSlib/Complexity/SpaceComplexity/Codec/Run.lean:116  sc_run
+  TCSlib/Complexity/SpaceComplexity/Codec/Run.lean:127  ic_run
+  TCSlib/Complexity/SpaceComplexity/Codec/Run.lean:153  dc_run
+  TCSlib/Complexity/SpaceComplexity/Codec/Run.lean:183  len_run
+  TCSlib/Complexity/SpaceComplexity/Codec/Run.lean:191  pr_run
+  TCSlib/Complexity/SpaceComplexity/Codec/Run.lean:210  ct_run
+  TCSlib/Complexity/SpaceComplexity/Codec/Run.lean:227  hc_run
+  TCSlib/Complexity/SpaceComplexity/Codec/Run.lean:236  le_run
+  TCSlib/Complexity/SpaceComplexity/Codec/Run.lean:247  v_run
+  TCSlib/Complexity/SpaceComplexity/Codec/Run.lean:263  s_run
+  TCSlib/Complexity/SpaceComplexity/Codec/Scan.lean:166  foldl_adStep_flatten
+  TCSlib/Complexity/SpaceComplexity/Codec/Scan.lean:285  slide_ok_iff
+  TCSlib/Complexity/SpaceComplexity/Codec/Step.lean:72  stepWith_eq_apply
+  TCSlib/Complexity/SpaceComplexity/Codec/Step.lean:151  cellOf_apply
+  TCSlib/Complexity/SpaceComplexity/Codec/Step.lean:194  boundary_iff
+  TCSlib/Complexity/SpaceComplexity/Codec/Step.lean:253  slide_step_iff
+  TCSlib/Complexity/SpaceComplexity/Codec/Step.lean:397  sScan_eq
+  TCSlib/Complexity/SpaceComplexity/Codec/Step.lean:474  sDone_step
+  TCSlib/Complexity/SpaceComplexity/Codec/StepDecider.lean:62  pm_run
+  TCSlib/Complexity/SpaceComplexity/Codec/StepDecider.lean:136  z_run
+  TCSlib/Complexity/SpaceComplexity/Codec/StepDecider.lean:179  step_tail
+  TCSlib/Complexity/SpaceComplexity/Codec/StepDecider.lean:293  stepLang_mem
+  TCSlib/Complexity/SpaceComplexity/Codec/Valid.lean:137  foldl_vStep
+  TCSlib/Complexity/SpaceComplexity/Codec/Valid.lean:269  vScan_eq
+  TCSlib/Complexity/SpaceComplexity/Codec/Valid.lean:351  cellOf_mkCfg
+  TCSlib/Complexity/SpaceComplexity/Codec/Valid.lean:456  vScan_cfgWord
+  TCSlib/Complexity/SpaceComplexity/Codec/Valid.lean:521  validChk_iff
+  TCSlib/Complexity/SpaceComplexity/Codec/Word.lean:165  encChunk_injective
+  TCSlib/Complexity/SpaceComplexity/Codec/Word.lean:362  bits_cfgCode
+  TCSlib/Complexity/SpaceComplexity/Codec/Word.lean:375  cfgWord_congr
+  TCSlib/Complexity/SpaceComplexity/Codec/Word.lean:391  coreSum_eq_of_cfgWord_eq
+  TCSlib/Complexity/SpaceComplexity/Codec/Word.lean:436  length_cfgWord_le
+  TCSlib/Complexity/SpaceComplexity/Codec/Word.lean:466  cfgCode_lt
+  TCSlib/Complexity/SpaceComplexity/Codec/Word.lean:486  decodeCfg_cfgCode
+  TCSlib/Complexity/SpaceComplexity/ExpBFS/Main.lean:89  cl_iff
+  TCSlib/Complexity/SpaceComplexity/ExpBFS/Main.lean:127  fscan_run
+  TCSlib/Complexity/SpaceComplexity/ExpBFS/Main.lean:270  iter_run
+  TCSlib/Complexity/SpaceComplexity/ExpBFS/Radius.lean:148  rcode_iff
+  TCSlib/Complexity/SpaceComplexity/ExpBFS/Radius.lean:244  card_rset_le_succ
+  TCSlib/Complexity/SpaceComplexity/ExpBFS/Radius.lean:264  winRun_of_card_eq
+  TCSlib/Complexity/SpaceComplexity/ExpBFS/Radius.lean:290  mem_iff_of_card_eq
+  TCSlib/Complexity/SpaceComplexity/ExpBFS/Radius.lean:333  card_rset_succ_of_le
+  TCSlib/Complexity/SpaceComplexity/ExpBFS/Relax.lean:150  ini_run
+  TCSlib/Complexity/SpaceComplexity/ExpBFS/Relax.lean:229  inner_run
+  TCSlib/Complexity/SpaceComplexity/ExpBFS/Relax.lean:371  outer_run
+  TCSlib/Complexity/SpaceComplexity/ExpBFS/Run.lean:64  preS_A
+  TCSlib/Complexity/SpaceComplexity/ExpBFS/Run.lean:193  cp_run
+  TCSlib/Complexity/SpaceComplexity/ExpBFS/Run.lean:204  sh_run
+  TCSlib/Complexity/SpaceComplexity/ExpBFS/Run.lean:217  mv_run
+  TCSlib/Complexity/SpaceComplexity/ExpBFS/Run.lean:242  wo_run
+  TCSlib/Complexity/SpaceComplexity/ExpBFS/Run.lean:272  wb_run
+  TCSlib/Complexity/SpaceComplexity/ExpBFS/Run.lean:301  ac_run
+  TCSlib/Complexity/SpaceComplexity/ExpBFS/Run.lean:396  lg_run
+  TCSlib/Complexity/SpaceComplexity/ExpBFS/Run.lean:428  setup_run
+  TCSlib/Complexity/SpaceComplexity/ExpBFS/Run.lean:455  mw_run
+  TCSlib/Complexity/SpaceComplexity/ExpBFS/Run.lean:493  wk_run
+  TCSlib/Complexity/SpaceComplexity/ExpBFS/Run.lean:577  d1_run
+  TCSlib/Complexity/SpaceComplexity/ExpBFS/Run.lean:589  fz_run
+  TCSlib/Complexity/SpaceComplexity/ExpBFS/Run.lean:603  nz_run
+  TCSlib/Complexity/SpaceComplexity/ExpBFS/Search.lean:94  rounds_run
+  TCSlib/Complexity/SpaceComplexity/ExpBFS/Search.lean:166  count_run
+  TCSlib/Complexity/SpaceComplexity/ExpBFS/Search.lean:224  search_run
+  TCSlib/Complexity/SpaceComplexity/Logspace/ISCountGenCorrect.lean:89  loop_run
+  TCSlib/Complexity/SpaceComplexity/Logspace/ISCountGenCorrect.lean:176  gen_start
+  TCSlib/Complexity/SpaceComplexity/Logspace/ISCountGenLoop.lean:64  gscan_run
+  TCSlib/Complexity/SpaceComplexity/Logspace/ISCountGenLoop.lean:91  ghalf_run
+  TCSlib/Complexity/SpaceComplexity/Logspace/ISCountGenLoop.lean:123  grounds_run
+  TCSlib/Complexity/SpaceComplexity/Logspace/ISCountGenLoop.lean:166  gdouble_run
+  TCSlib/Complexity/SpaceComplexity/Logspace/ISCountGenLoop.lean:211  iter_run
+  TCSlib/Complexity/SpaceComplexity/Logspace/ISCountGenLoop.lean:274  cmp_run
+  TCSlib/Complexity/SpaceComplexity/Logspace/ISCountGenLoop.lean:298  start_run
+  TCSlib/Complexity/SpaceComplexity/Logspace/ISCountGenMachine.lean:330  igA_npreS
+  TCSlib/Complexity/SpaceComplexity/Logspace/ISCountGenRadius.lean:79  mem_ball_iff_rcode
+  TCSlib/Complexity/SpaceComplexity/Logspace/ISCountGenRadius.lean:100  card_ball_eq_rset
+  TCSlib/Complexity/SpaceComplexity/Logspace/ISCountGenRadius.lean:110  card_ball_zero_code
+  TCSlib/Complexity/SpaceComplexity/Logspace/ISCountGenRadius.lean:120  noAcc_balls_iff
+  TCSlib/Complexity/SpaceComplexity/Logspace/ISCountGenRadius.lean:131  mem_of_exists_acc
+  TCSlib/Complexity/SpaceComplexity/Logspace/ISCountGenRadius.lean:142  mem_iff_exists_acc_of_card_eq
+  TCSlib/Complexity/SpaceComplexity/Logspace/ISCountGenWalk.lean:57  gwalk_loop
+  TCSlib/Complexity/SpaceComplexity/Logspace/ISCountMath.lean:131  walkLe_succ_iff
+  TCSlib/Complexity/SpaceComplexity/Logspace/ISCountMath.lean:159  mem_succ_iff
+  TCSlib/Complexity/SpaceComplexity/Logspace/ISCountMath.lean:171  not_mem_succ_iff
+  TCSlib/Complexity/SpaceComplexity/Logspace/ISCountMath.lean:221  gs_iff
+  TCSlib/Complexity/SpaceComplexity/Logspace/PathHard.lean:118  nV_le
+  TCSlib/Complexity/SpaceComplexity/Logspace/PathHard.lean:282  length_red
+  TCSlib/Complexity/SpaceComplexity/Logspace/PathHard.lean:292  length_red_le
+  TCSlib/Complexity/SpaceComplexity/Logspace/PathHard.lean:321  red_getD
+  TCSlib/Complexity/SpaceComplexity/Logspace/PathHardDecide.lean:95  query_halts
+  TCSlib/Complexity/SpaceComplexity/Logspace/PathHardDecide.lean:186  qBnd_le
+  TCSlib/Complexity/SpaceComplexity/Logspace/PathHardMachine.lean:467  preS_A
+  TCSlib/Complexity/SpaceComplexity/Logspace/PathHardMachine.lean:523  cp_run
+  TCSlib/Complexity/SpaceComplexity/Logspace/PathHardMachine.lean:533  sh_run
+  TCSlib/Complexity/SpaceComplexity/Logspace/PathHardMachine.lean:548  sb_run
+  TCSlib/Complexity/SpaceComplexity/Logspace/PathHardMachine.lean:560  le_run
+  TCSlib/Complexity/SpaceComplexity/Logspace/PathHardMachine.lean:568  hv_run
+  TCSlib/Complexity/SpaceComplexity/Logspace/PathHardRun.lean:63  parse_run
+  TCSlib/Complexity/SpaceComplexity/Logspace/PathHardRun.lean:110  setup_run
+  TCSlib/Complexity/SpaceComplexity/Logspace/PathHardRun.lean:255  check_decode_run
+  TCSlib/Complexity/SpaceComplexity/Logspace/PathHardWalk.lean:109  dispatch_halt
+  TCSlib/Complexity/SpaceComplexity/Logspace/PathHardWalk.lean:175  tail_halt
+  TCSlib/Complexity/SpaceComplexity/Logspace/PathHardWalk.lean:215  matrix_halt
+  TCSlib/Complexity/SpaceComplexity/Logspace/PathHardWalk.lean:308  walk_halt
+  TCSlib/Complexity/SpaceComplexity/Logspace/PathWalk.lean:119  walkLe_short
+  TCSlib/Complexity/SpaceComplexity/Logspace/PathWalk.lean:184  reach_iff_walkLe
+  TCSlib/Complexity/SpaceComplexity/Logspace/PathWalk.lean:235  dblAt_iff
+  TCSlib/Complexity/SpaceComplexity/Logspace/PathWalk.lean:290  eq_pathRaw_iff
+  TCSlib/Complexity/SpaceComplexity/Logspace/PathWalk.lean:402  pathAcc_iff
+  TCSlib/Complexity/SpaceComplexity/Logspace/PathWalkMachine.lean:174  pathA_npreS
+  TCSlib/Complexity/SpaceComplexity/Logspace/PathWalkMachine.lean:330  ps_row
+  TCSlib/Complexity/SpaceComplexity/Logspace/PathWalkMachine.lean:376  ps_index
+  TCSlib/Complexity/SpaceComplexity/Logspace/PathWalkProof.lean:62  ps_tcmp
+  TCSlib/Complexity/SpaceComplexity/Logspace/PathWalkProof.lean:144  ps_tphase
+  TCSlib/Complexity/SpaceComplexity/Logspace/PathWalkProof.lean:169  ps_scmp
+  TCSlib/Complexity/SpaceComplexity/Logspace/PathWalkProof.lean:275  ps_sphase
+  TCSlib/Complexity/SpaceComplexity/Logspace/PathWalkProof.lean:301  ps_mat
+  TCSlib/Complexity/SpaceComplexity/Logspace/PathWalkProof.lean:430  ps_unary
+  TCSlib/Complexity/SpaceComplexity/Logspace/PathWalkProof.lean:517  ps_start
+  TCSlib/Complexity/SpaceComplexity/Machines/ARMLoops.lean:80  move_run
+  TCSlib/Complexity/SpaceComplexity/Machines/ARMLoops.lean:137  move2_run
+  TCSlib/Complexity/SpaceComplexity/Machines/ARMLoops.lean:182  dmove_run
+  TCSlib/Complexity/SpaceComplexity/Machines/ARMLoops.lean:222  sub_run
+  TCSlib/Complexity/SpaceComplexity/Machines/ARMLoops.lean:255  halve_run
+  TCSlib/Complexity/SpaceComplexity/Machines/ARMLoops.lean:301  copy_run
+  TCSlib/Complexity/SpaceComplexity/Machines/ARMLoops.lean:325  shl_run
+  TCSlib/Complexity/SpaceComplexity/Machines/ARMReach.lean:53  astep_cases
+  TCSlib/Complexity/SpaceComplexity/Machines/ARMReach.lean:90  arm_step
+  TCSlib/Complexity/SpaceComplexity/Machines/ARMReach.lean:197  arm_reach
+  TCSlib/Complexity/SpaceComplexity/Machines/ARMWidthExample.lean:147  d1_loop
+  TCSlib/Complexity/SpaceComplexity/Machines/ARMWidthExample.lean:174  d2_loop
+  TCSlib/Complexity/SpaceComplexity/Machines/ARMWidthExample.lean:200  dbl_loop
+  TCSlib/Complexity/SpaceComplexity/Machines/ARMWidthExample.lean:230  enum_loop
+  TCSlib/Complexity/SpaceComplexity/Machines/MARM.lean:284  MReach.of_areach
+  TCSlib/Complexity/SpaceComplexity/Machines/MARMCompile.lean:194  mcompileTM_step
+  TCSlib/Complexity/SpaceComplexity/Machines/MARMCompile.lean:217  mrunFrom_eq
+  TCSlib/Complexity/SpaceComplexity/Machines/MARMCompile.lean:232  detM_step_mem
+  TCSlib/Complexity/SpaceComplexity/Machines/MARMCompile.lean:340  mdet_live
+  TCSlib/Complexity/SpaceComplexity/Machines/MARMCompile.lean:375  mdet_halt
+  TCSlib/Complexity/SpaceComplexity/Machines/MARMCompile.lean:419  mmem_step
+  TCSlib/Complexity/SpaceComplexity/Machines/MARMTime.lean:77  marm_run
+  TCSlib/Complexity/SpaceComplexity/Machines/MARMTime.lean:214  runFrom_count_eq
+  TCSlib/Complexity/SpaceComplexity/Machines/MARMTime.lean:444  marm_dtime
+  TCSlib/Complexity/SpaceComplexity/Machines/NARM.lean:188  narun_eq_arun
+  TCSlib/Complexity/SpaceComplexity/Machines/NARM.lean:249  NHalts.mono_len
+  TCSlib/Complexity/SpaceComplexity/Machines/NARM.lean:270  NHalts.det
+  TCSlib/Complexity/SpaceComplexity/Machines/NARM.lean:295  NHalts.choose
+  TCSlib/Complexity/SpaceComplexity/Machines/NARM.lean:324  NHalts.run
+  TCSlib/Complexity/SpaceComplexity/Machines/NARM.lean:382  nans_det
+  TCSlib/Complexity/SpaceComplexity/Machines/NARM.lean:398  nans_choose
+  TCSlib/Complexity/SpaceComplexity/Machines/NARM.lean:417  nans_run
+  TCSlib/Complexity/SpaceComplexity/Machines/NARM.lean:434  nans_mono_len
+  TCSlib/Complexity/SpaceComplexity/Machines/NARMCompile.lean:70  ndtm_runWith_eq_runFrom
+  TCSlib/Complexity/SpaceComplexity/Machines/NARMCompile.lean:229  ncompileTM_tr
+  TCSlib/Complexity/SpaceComplexity/Machines/NARMCompile.lean:247  detPart_step_choose
+  TCSlib/Complexity/SpaceComplexity/Machines/NARMCompile.lean:269  ncompileTM_stepWith_choose
+  TCSlib/Complexity/SpaceComplexity/Machines/NARMCompile.lean:325  ndet_live
+  TCSlib/Complexity/SpaceComplexity/Machines/NARMCompile.lean:363  ndet_halt
+  TCSlib/Complexity/SpaceComplexity/Machines/NARMExample.lean:90  validPlainLang_mem_NL
+  TCSlib/Complexity/SpaceComplexity/Machines/NARMKit.lean:104  NTerm.nhalts
+  TCSlib/Complexity/SpaceComplexity/Machines/NARMKit.lean:155  NSem.congr
+  TCSlib/Complexity/SpaceComplexity/Machines/NARMKit.lean:165  NSem.det
+  TCSlib/Complexity/SpaceComplexity/Machines/NARMKit.lean:176  NSem.choose
+  TCSlib/Complexity/SpaceComplexity/Machines/NARMKit.lean:321  NSem.decides
+  TCSlib/Complexity/SpaceComplexity/Machines/NARMKit.lean:350  nsem_guess
+  TCSlib/Complexity/SpaceComplexity/Machines/NARMKit.lean:394  nsem_copy
+  TCSlib/Complexity/SpaceComplexity/Machines/NARMKit.lean:420  nsem_addTwice
+  TCSlib/Complexity/SpaceComplexity/Machines/NARMProof.lean:85  npre_of_npreS
+  TCSlib/Complexity/SpaceComplexity/Machines/NARMRun.lean:74  NGood.mono
+  TCSlib/Complexity/SpaceComplexity/Machines/NARMRun.lean:88  NGood.seg
+  TCSlib/Complexity/SpaceComplexity/Machines/NARMRun.lean:104  NGood.choose
+  TCSlib/Complexity/SpaceComplexity/Machines/NARMRun.lean:143  narm_run
+  TCSlib/Complexity/SpaceComplexity/Machines/NARMRun.lean:226  narm_space
+  TCSlib/Complexity/SpaceComplexity/Machines/VWord.lean:51  getD_drop
+  TCSlib/Complexity/SpaceComplexity/SavitchARM/Reach.lean:69  reach_of_chain
+  TCSlib/Complexity/SpaceComplexity/SavitchARM/Reach.lean:95  reflTransGen_of_reach
+  TCSlib/Complexity/SpaceComplexity/SavitchARM/Reach.lean:116  configBound_le
+  TCSlib/Complexity/SpaceComplexity/SavitchARM/Reach.lean:163  codeWidth_le
+  TCSlib/Complexity/SpaceComplexity/SavitchARM/Reach.lean:185  radius_le
+  TCSlib/Complexity/SpaceComplexity/SavitchARM/Recursion.lean:103  Inv.bd
+  TCSlib/Complexity/SpaceComplexity/SavitchARM/Recursion.lean:117  push_lt
+  TCSlib/Complexity/SpaceComplexity/SavitchARM/Recursion.lean:140  base_spec
+  TCSlib/Complexity/SpaceComplexity/SavitchARM/Recursion.lean:190  desc1
+  TCSlib/Complexity/SpaceComplexity/SavitchARM/Recursion.lean:263  desc2
+  TCSlib/Complexity/SpaceComplexity/SavitchARM/Recursion.lean:326  tail0F
+  TCSlib/Complexity/SpaceComplexity/SavitchARM/Recursion.lean:350  tail1T
+  TCSlib/Complexity/SpaceComplexity/SavitchARM/Recursion.lean:370  tail1F
+  TCSlib/Complexity/SpaceComplexity/SavitchARM/Recursion.lean:417  loop_spec
+  TCSlib/Complexity/SpaceComplexity/SavitchARM/Run.lean:46  preS_A
+  TCSlib/Complexity/SpaceComplexity/SavitchARM/Run.lean:88  mv_run
+  TCSlib/Complexity/SpaceComplexity/SavitchARM/Run.lean:101  cp_run
+  TCSlib/Complexity/SpaceComplexity/SavitchARM/Run.lean:116  sh_run
+  TCSlib/Complexity/SpaceComplexity/SavitchARM/Run.lean:128  dm_run
+  TCSlib/Complexity/SpaceComplexity/SavitchARM/Run.lean:138  sb_run
+  TCSlib/Complexity/SpaceComplexity/SavitchARM/Run.lean:148  hv_run
+  TCSlib/Complexity/SpaceComplexity/SavitchARM/Run.lean:164  mulL_run
+  TCSlib/Complexity/SpaceComplexity/SavitchARM/Run.lean:196  mul_run
+  TCSlib/Complexity/SpaceComplexity/SavitchARM/Run.lean:229  pushV_run
+  TCSlib/Complexity/SpaceComplexity/SavitchARM/Run.lean:258  pushU_run
+  TCSlib/Complexity/SpaceComplexity/SavitchARM/Run.lean:288  pop_run
+  TCSlib/Complexity/SpaceComplexity/SavitchARM/Search.lean:106  outerV_run
+  TCSlib/Complexity/SpaceComplexity/SavitchARM/Search.lean:186  outerU_run
+  TCSlib/Complexity/SpaceComplexity/SavitchARM/Setup.lean:59  ld_run
+  TCSlib/Complexity/SpaceComplexity/SavitchARM/Setup.lean:85  pw_run
+
+## File sizes (report only; size is never a reason to split)
+    626  TCSlib/Complexity/SpaceComplexity/ExpBFS/Run.lean
+    625  TCSlib/Complexity/SpaceComplexity/SavitchARM/Machine.lean
+    618  TCSlib/Complexity/SpaceComplexity/ExpBFS/Main.lean
+    601  TCSlib/Complexity/SpaceComplexity/Codec/Valid.lean
+    599  TCSlib/Complexity/SpaceComplexity/ExpBFS/Machine.lean
+    577  TCSlib/Complexity/SpaceComplexity/Logspace/PathHardMachine.lean
+    567  TCSlib/Complexity/SpaceComplexity/Logspace/PathWalkProof.lean
+    556  TCSlib/Complexity/SpaceComplexity/Machines/MARMTime.lean
+    535  TCSlib/Complexity/ClassPSPACE/TQBFARM/Machine.lean
+    515  TCSlib/Complexity/ClassPSPACE/TQBFHardSemantics.lean
+    507  TCSlib/Complexity/SpaceComplexity/Codec/Step.lean
+    503  TCSlib/Complexity/SpaceComplexity/Codec/Word.lean
+    497  TCSlib/Complexity/SpaceComplexity/SavitchARM/Recursion.lean
+    493  TCSlib/Complexity/SpaceComplexity/Logspace/PathWalk.lean
+    477  TCSlib/Complexity/SpaceComplexity/Machines/MARMCompile.lean
+    476  TCSlib/Complexity/SpaceComplexity/Logspace/PathWalkMachine.lean
+    475  TCSlib/Complexity/SpaceComplexity/ExpBFS/Relax.lean
+    473  TCSlib/Complexity/SpaceComplexity/Machines/NARMKit.lean
+    467  TCSlib/Complexity/SpaceComplexity/Codec/Parse.lean
+    454  TCSlib/Complexity/SpaceComplexity/Codec/Engine.lean
+    448  TCSlib/Complexity/SpaceComplexity/Codec/Checks.lean
+    447  TCSlib/Complexity/SpaceComplexity/Machines/NARM.lean
+    422  TCSlib/Complexity/SpaceComplexity/Logspace/PathHardWalk.lean
+    421  TCSlib/Complexity/SpaceComplexity/Codec/StepDecider.lean
+    412  TCSlib/Complexity/SpaceComplexity/Codec/Deciders.lean
+    407  TCSlib/Complexity/SpaceComplexity/Codec/Machine.lean
+    402  TCSlib/Complexity/SpaceComplexity/Machines/NARMCompile.lean
+    392  TCSlib/Complexity/SpaceComplexity/Machines/ARMLoops.lean
+    371  TCSlib/Complexity/ClassPSPACE/TQBFHardVerifier.lean
+    363  TCSlib/Complexity/SpaceComplexity/Logspace/ISCountGenMachine.lean
+    362  TCSlib/Complexity/SpaceComplexity/Machines/NARMProof.lean
+    359  TCSlib/Complexity/SpaceComplexity/Logspace/PathHard.lean
+    356  TCSlib/Complexity/SpaceComplexity/Logspace/PathHardRegs.lean
+    354  TCSlib/Complexity/SpaceComplexity/Logspace/ISCountGenStage.lean
+    347  TCSlib/Complexity/SpaceComplexity/ExpBFS/Radius.lean
+    344  TCSlib/Complexity/SpaceComplexity/Codec/Layout.lean
+    341  TCSlib/Complexity/SpaceComplexity/Machines/ARMWidth.lean
+    336  TCSlib/Complexity/SpaceComplexity/Codec/Scan.lean
+    332  TCSlib/Complexity/SpaceComplexity/SavitchARM/Run.lean
+    331  TCSlib/Complexity/SpaceComplexity/Logspace/ISCountMath.lean
+    331  TCSlib/Complexity/SpaceComplexity/Codec/Regs.lean
+    327  TCSlib/Complexity/ClassPSPACE/TQBFHard.lean
+    325  TCSlib/Complexity/ClassPSPACE/TQBFARM/Leaf.lean
+    319  TCSlib/Complexity/SpaceComplexity/Machines/ARMWidthExample.lean
+    315  TCSlib/Complexity/SpaceComplexity/Logspace/ISCountGenLoop.lean
+    303  TCSlib/Complexity/SpaceComplexity/Logspace/PathHardRun.lean
+    303  TCSlib/Complexity/SpaceComplexity/Codec/Layout2.lean
+    302  TCSlib/Complexity/SpaceComplexity/Logspace/ISCountRegs.lean
+    299  TCSlib/Complexity/SpaceComplexity/Logspace/ISCountGenCorrect.lean
+    296  TCSlib/Complexity/SpaceComplexity/Codec/Bridge.lean
+    295  TCSlib/Complexity/SpaceComplexity/Machines/MARM.lean
+    284  TCSlib/Complexity/SpaceComplexity/SavitchARM/Search.lean
+    280  TCSlib/Complexity/SpaceComplexity/ExpBFS/Search.lean
+    279  TCSlib/Complexity/SpaceComplexity/Codec/Run.lean
+    270  TCSlib/Complexity/SpaceComplexity/Machines/NARMRun.lean
+    267  TCSlib/Complexity/ClassPSPACE/TQBFARM/Walk.lean
+    255  TCSlib/Complexity/ClassPSPACE/TQBFHardParams.lean
+    246  TCSlib/Complexity/ClassPSPACE/TQBFARM/Semantics.lean
+    237  TCSlib/Complexity/SpaceComplexity/Logspace/PathHardDecide.lean
+    234  TCSlib/Complexity/SpaceComplexity/SavitchARM/Reach.lean
+    231  TCSlib/Complexity/SpaceComplexity/Machines/ARMReach.lean
+    215  TCSlib/Complexity/ClassPSPACE/TQBFARM/Correct.lean
+    203  TCSlib/Complexity/ClassPSPACE/TQBFHardMachine.lean
+    189  TCSlib/Complexity/SpaceComplexity/SavitchARM/Setup.lean
+    188  TCSlib/Complexity/SpaceComplexity/Logspace/ISCountGenWalk.lean
+    158  TCSlib/Complexity/SpaceComplexity/Logspace/ISCountGenRadius.lean
+    156  TCSlib/Complexity/ClassPSPACE/TQBFHardTseitin.lean
+    148  TCSlib/Complexity/ClassPSPACE/TQBFHardBridge.lean
+    147  TCSlib/Complexity/SpaceComplexity/Codec/Langs.lean
+    140  TCSlib/Complexity/SpaceComplexity/SavitchARM/Correct.lean
+    137  TCSlib/Complexity/SpaceComplexity/ExpTime.lean
+    109  TCSlib/Complexity/SpaceComplexity/Machines/VWord.lean
+    102  TCSlib/Complexity/SpaceComplexity/Machines/NARMExample.lean
+rc=0
+
+## The 8 modified files (after state), same checks
+files 8, lines 5068, public 112, private 193
+
+## Header and module docstring (copyright block / 3 options / # Title / Main definitions / Main results / References)
+  TCSlib/Complexity/ClassPSPACE.lean: MISSING-OPTIONS missing: ## Main definitions, ## Main results
+  TCSlib/Complexity/SpaceComplexity.lean: MISSING-OPTIONS missing: ## Main definitions, ## Main results
+  TCSlib/Complexity/SpaceComplexity/Logspace/ImmermanSzelepcsenyi.lean: missing: ## Main definitions
+  TCSlib/Complexity/SpaceComplexity/Savitch.lean: missing: ## Main definitions
+  (files not listed have all six)
+
+## Lines over 100 characters: 7 in 2 files
+  TCSlib/Complexity/ClassPSPACE/TQBF.lean:686  104 chars
+  TCSlib/Complexity/ClassPSPACE/TQBF.lean:870  108 chars
+  TCSlib/Complexity/ClassPSPACE/TQBF.lean:1111  102 chars
+  TCSlib/Complexity/ClassPSPACE/TQBF.lean:2037  116 chars
+  TCSlib/Complexity/ClassPSPACE/TQBF.lean:2962  158 chars
+  TCSlib/Complexity/SpaceComplexity.lean:224  101 chars
+  TCSlib/Complexity/SpaceComplexity.lean:230  146 chars
+
+## Public declarations (instances exempt) without a docstring: 0
+
+## Theorems/lemmas with more than 20 non-blank code lines and no "Proof sketch" in the docstring: 0 (0 public, 0 private)
+
+## Citation tags used in declaration docstrings: {'AB09': 46, 'Sav70': 1}
+
+## Public theorems with a bold "result" headline (/-- **...) and no [Tag, …] citation: 16
+  TCSlib/Complexity/ClassPSPACE/TQBF.lean:2078  exists_adjacency_codec_cnf
+  TCSlib/Complexity/ClassPSPACE/TQBF.lean:2221  code_length
+  TCSlib/Complexity/ClassPSPACE/TQBF.lean:2277  code_input_eq
+  TCSlib/Complexity/ClassPSPACE/TQBF.lean:2340  adjacency_eval_of_ne
+  TCSlib/Complexity/ClassPSPACE/TQBF.lean:2388  exists_serialize_length_le
+  TCSlib/Complexity/ClassPSPACE/TQBF.lean:2413  polyTimeComputable_serialize_validity
+  TCSlib/Complexity/ClassPSPACE/TQBF.lean:2430  polyTimeComputable_serialize_adjacency
+  TCSlib/Complexity/ClassPSPACE/TQBF.lean:2443  polyTimeComputable_serialize_acceptance
+  TCSlib/Complexity/ClassPSPACE/TQBF.lean:2460  polyTimeComputable_code_initCfg
+  TCSlib/Complexity/SpaceComplexity/ConfigGraph.lean:235  coreSum_stepWith
+  TCSlib/Complexity/SpaceComplexity/ConfigGraph.lean:466  acceptsWithin_of_spaceUsedWith_le
+  TCSlib/Complexity/SpaceComplexity/Logspace/Path.lean:128  PATH_eq_pathRawLang
+  TCSlib/Complexity/SpaceComplexity/Machines/Compile.lean:123  compile_correct_from
+  TCSlib/Complexity/SpaceComplexity/Machines/Compile.lean:206  compile_correct
+  TCSlib/Complexity/SpaceComplexity/Machines/Compile.lean:260  compile_space
+  TCSlib/Complexity/SpaceComplexity/Savitch.lean:81  spaceConstructible_poly
+
+## File sizes (report only; size is never a reason to split)
+
+## Public declarations whose docstring names a textbook locator or named result but carries no [Tag, …] (heuristic)
+public declarations carrying a [Tag, …] citation: 53
+untagged with a locator / named-result mention: 9
+  TCSlib/Complexity/ClassPSPACE/TQBFHard.lean:89  dagCktSatToSAT3_encode  (mentions 'Tseitin')
+  TCSlib/Complexity/ClassPSPACE/TQBFHard.lean:122  redQBF  (mentions 'Tseitin')
+  TCSlib/Complexity/SpaceComplexity/SavitchARM/Correct.lean:47  decs  (mentions 'Savitch')
+  TCSlib/Complexity/SpaceComplexity/SavitchARM/Correct.lean:51  orcN  (mentions 'Savitch')
+  TCSlib/Complexity/SpaceComplexity/SavitchARM/Correct.lean:76  bigE  (mentions 'Savitch')
+  TCSlib/Complexity/SpaceComplexity/SavitchARM/Machine.lean:97  St  (mentions 'Savitch')
+  TCSlib/Complexity/SpaceComplexity/SavitchARM/Machine.lean:363  Lb  (mentions 'Savitch')
+  TCSlib/Complexity/SpaceComplexity/SavitchARM/Machine.lean:574  A  (mentions 'Savitch')
+  TCSlib/Complexity/SpaceComplexity/SavitchARM/Run.lean:46  preS_A  (mentions 'Savitch')
+
+## Lines over 100 characters in the 8 modified files: introduced by the merge vs pre-existing
+  TCSlib/Complexity/ClassPSPACE.lean | before 0 | after 0 | introduced (line, chars): []
+  TCSlib/Complexity/ClassPSPACE/TQBF.lean | before 5 | after 5 | introduced (line, chars): []
+  TCSlib/Complexity/SpaceComplexity.lean | before 0 | after 2 | introduced (line, chars): [(224, 101), (230, 146)]
+  TCSlib/Complexity/SpaceComplexity/ConfigGraph.lean | before 0 | after 0 | introduced (line, chars): []
+  TCSlib/Complexity/SpaceComplexity/Logspace/ImmermanSzelepcsenyi.lean | before 0 | after 0 | introduced (line, chars): []
+  TCSlib/Complexity/SpaceComplexity/Logspace/Path.lean | before 1 | after 0 | introduced (line, chars): []
+  TCSlib/Complexity/SpaceComplexity/Machines/Compile.lean | before 0 | after 0 | introduced (line, chars): []
+  TCSlib/Complexity/SpaceComplexity/Savitch.lean | before 0 | after 0 | introduced (line, chars): []
+
+## Tags and sketch presence of the 60 names of the axiom probe (name | [Tag, …] in its docstring | 'Proof sketch' present)
+  Complexity.TQBF_mem_PSPACE | [AB09, Theorem 4.13, membership half], [AB09] | sketch
+  Complexity.TQBF_PSPACEHard | [AB09, Lemma 6.11], [AB09, Remark 6.7], [AB09, Theorem 4.13, hardness half], [AB09] | sketch
+  Complexity.TQBF_PSPACEComplete | [AB09, Theorem 4.13] | sketch
+  Complexity.NL_eq_coNL | [AB09, §4.3.2] | sketch
+  Complexity.NSPACE_compl_eq | [AB09, Corollary 4.21], [AB09, Exercise 4.11] | sketch
+  Complexity.compl_PATH_mem_NL | [AB09, Theorem 4.20] | sketch
+  Complexity.PATH_NLComplete | [AB09, Theorem 4.18] | sketch
+  Complexity.PATH_mem_NL | [AB09, §4.1.2, the nondeterministic walk] | sketch
+  Complexity.PSPACE_eq_NPSPACE | [AB09, Theorem 4.14], [AB09, §4.2.1], [AB09] | sketch
+  Complexity.LogProg.compile_correct | no tag | sketch
+  Complexity.NSPACE_subset_exp_dtime | [AB09, Theorem 4.2, third inclusion] | sketch
+  Complexity.NL_subset_P | [AB09, §4.1.2 with Exercise 4.3's premise] | sketch
+  Complexity.polyTimeReducible_of_mem_NL | [AB09, Definition 4.16], [AB09, Exercise 4.3] | sketch
+  Complexity.LogProg.compile_correct_from | no tag | sketch
+  Complexity.PATH_eq_pathRawLang | no tag | sketch
+  Complexity.LogProg.ndtm_runWith_eq_runFrom | no tag | sketch
+  Complexity.LogProg.narm_run | no tag | sketch
+  Complexity.LogProg.narm_space | no tag | sketch
+  Complexity.LogProg.narm_decides_space | [AB09, §4.1] | sketch
+  Complexity.LogProg.narm_decides | [AB09, §4.3] | sketch
+  Complexity.LogProg.narm_decides_poly | [AB09, §4.3] | sketch
+  Complexity.LogProg.narm_decides_npspace | [AB09, §4.1, Definition 4.5] | sketch
+  Complexity.LogProg.narm_decides_npspace_of_logspace | [AB09, §4.1] | sketch
+  Complexity.LogProg.NSem.decides | no tag | sketch
+  Complexity.LogProg.validPlainLang_mem_NL | no tag | NO SKETCH
+  Complexity.LogProg.arm_decides_space | [AB09, §4.1] | sketch
+  Complexity.LogProg.arm_decides_SPACE | [AB09, §4.1] | sketch
+  Complexity.LogProg.arm_decides_pspace | [AB09, §4.1, Definition 4.5] | sketch
+  Complexity.LogProg.arm_decides_pspace_of_logspace | [AB09, §4.1] | sketch
+  Complexity.LogProg.arm_decides_pspace_val | [AB09, §4.1] | sketch
+  Complexity.LOGSPACE_subset_PSPACE | [AB09, §4.1.2, the chain `L ⊆ … ⊆ PSPACE` of p. 92 (its first and last members)] | sketch
+  Complexity.SPACE_succ_pow_subset_PSPACE | no tag | sketch
+  Complexity.LogProg.WidthExample.searchLang_mem_PSPACE | [AB09, §4.1; the exhaustive-search argument of Example 4.6] | sketch
+  Complexity.LogProg.marm_run | no tag | sketch
+  Complexity.LogProg.runFrom_count_eq | no tag | sketch
+  Complexity.LogProg.marm_dtime | no tag | sketch
+  Complexity.Codec.cfgCode_lt | no tag | NO SKETCH
+  Complexity.Codec.decodeCfg_cfgCode | no tag | sketch
+  Complexity.Codec.cfgWord_congr | no tag | NO SKETCH
+  Complexity.Codec.coreSum_eq_of_cfgWord_eq | no tag | sketch
+  Complexity.Codec.validLang_mem | no tag | sketch
+  Complexity.Codec.initLang_mem | no tag | sketch
+  Complexity.Codec.acceptLang_mem | no tag | sketch
+  Complexity.Codec.stepLang_mem | no tag | sketch
+  Complexity.Codec.inWin_runWith_take | no tag | sketch
+  Complexity.Codec.mem_of_acceptsWithin | no tag | NO SKETCH
+  Complexity.Codec.mem_of_codePath | [AB09, §4.1.1: a path from the initial to an accepting configuration in the configuration graph is an accepting branch] | sketch
+  Complexity.Codec.mem_iff_codeChain | [AB09, §4.1.1: the machine accepts iff the configuration graph has a path from the initial to an accepting configuration; Claim 4.4(1) bounds its length by the vertex count] | sketch
+  Complexity.compl_mem_NSPACE | [AB09, Corollary 4.21, proved by the inductive counting of Theorem 4.20 on the configuration graph] | sketch
+  Complexity.compl_mem_NL | [AB09, §4.3.2, Theorem 4.20 in the form `L ∈ NL → Lᶜ ∈ NL`, proved by inductive counting on the configuration graph] | sketch
+  Complexity.NSPACE_poly_subset_PSPACE | [AB09, §4.2.1, Theorem 4.14 at `S(n) = n ^ k + 1`] | sketch
+  Complexity.NPSPACE_subset_PSPACE | [AB09, §4.2.1, the corollary of Theorem 4.14] | sketch
+  Complexity.NSPACE_subset_exp_dtime_of_le | [AB09, Theorem 4.2, third inclusion] | sketch
+  Complexity.pathRawLang_mem_NL | [AB09, §4.1.2] | sketch
+  Complexity.pathRawLang_NLHard | [AB09, Theorem 4.18] | sketch
+  Complexity.PathHard.implicitlyLogspaceComputable_red | [AB09, Theorem 4.18: the reduction `x ↦ ⟨G_{N,x}, C_start, C_accept⟩` is implicitly logspace computable] | sketch
+  Complexity.LogProg.TQBFARM.truth_mem_PSPACE | [AB09, Theorem 4.13, membership half] | sketch
+  Complexity.TQBFHard.truth_redQBF | [AB09, Theorem 4.13, the proof] | sketch
+  Complexity.TQBFHard.PSPACE_polyTimeReducible_TQBF | [AB09, Theorem 4.13, hardness half] | sketch
+  Complexity.TQBFHard.toCNF_extension_iff | [AB09, §4.2, p. 83] | sketch 

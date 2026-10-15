@@ -21,14 +21,23 @@ import TCSlib.BooleanAnalysis.polylogIndep
 import TCSlib.CommunicationComplexity.DeterministicCC
 import TCSlib.CommunicationComplexity.NewmanTheorem
 
+import TCSlib.Programs
+
 import TCSlib.Complexity.CircuitComplexity
+import TCSlib.Complexity.Expanders
 import TCSlib.Complexity.NPReductions
+import TCSlib.Complexity.Randomized
 import TCSlib.Complexity.TuringMachine
 import TCSlib.Complexity.Uncomputability
 import TCSlib.Complexity.ClassP
 import TCSlib.Complexity.Formulas
+import TCSlib.Complexity.FormulaKit
 import TCSlib.Complexity.CookLevin
+import TCSlib.Complexity.RAMSimulation
 import TCSlib.Complexity.ClassNP
+import TCSlib.Complexity.ClassOracle
+import TCSlib.Complexity.Diagonalization
+import TCSlib.Complexity.ClassPSPACE
 import TCSlib.Complexity.PolyHierarchy
 import TCSlib.Complexity.TimeHierarchy
 import TCSlib.Complexity.SpaceComplexity

@@ -1,0 +1,34 @@
+import TCSlib.Complexity.TuringMachine.Build.CounterLoop
+
+/-! Pre-ship check for `briefs/s12-counter-fill.md`: the route's two state maps
+are injective, and the host's decrement phase agrees with `decrementTM`
+relabelled by `counterLoopDecExit` on the working phases. -/
+
+open Turing
+
+example {S : Type} (a : S) : Function.Injective (counterLoopDecExit a) := by
+  intro f g h
+  cases f with
+  | run => cases g <;> simp_all [counterLoopDecExit] <;> (try (rename_i b; cases b)) <;> simp_all [counterLoopDecExit]
+  | rewind v => cases g <;> simp_all [counterLoopDecExit] <;> (try (rename_i b; cases b)) <;> simp_all [counterLoopDecExit]
+  | done v => cases v <;> cases g <;> simp_all [counterLoopDecExit] <;> (try (rename_i b; cases b)) <;> simp_all [counterLoopDecExit]
+
+example {S : Type} [DecidableEq S] (a : S) (exit : Option S) :
+    Function.Injective (counterLoopRedirect a exit) := by
+  intro s t h
+  unfold counterLoopRedirect at h
+  by_cases hs : s = a <;> by_cases ht : t = a <;> simp only [hs, ht, if_true, if_false] at h
+  · exact hs.trans ht.symm
+  all_goals (try split_ifs at h) <;> simp_all
+
+example {k : ℕ} {S : Type} [DecidableEq S] (M : MultiTapeTM k Bool S) (a : S)
+    (exit : Option S) (f : FlagPhase) (hf : ∀ b, f ≠ FlagPhase.done b) inp work :
+    (counterLoopTM M a exit).tr (counterLoopDecExit a f) inp work =
+      ((decrementTM (k + 1) (Fin.last k)).tr f inp work).mapState (counterLoopDecExit a) := by
+  cases f with
+  | run => rfl
+  | rewind v => rfl
+  | done v => exact absurd rfl (hf v)
+
+-- Result (2026-10-10, scripts/lean_check_tree.sh at the merged tip fe89d903 + 0dca06f6): exit 0, no errors, no sorry;
+-- linter warnings only (style). All three facts hold.

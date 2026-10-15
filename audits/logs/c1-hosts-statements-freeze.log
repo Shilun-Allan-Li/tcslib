@@ -1,0 +1,45 @@
+# C1 host contracts statement gate: freeze check of the NTimeHierarchy docstring patch
+
+Tool: `bash <S>/tools/leanelab.sh <S>/wt-g5c1 <S>/oleans-f8 <file>` (direct `lean`, no `-o`,
+no olean written). Checkout: `wt-g5c1`, campaign commit 1781a230 (PR #84, fills-8), read-only.
+Snapshot: `oleans-f8` (all of TCSlib at that commit). Toolchain: `leanprover/lean4:v4.25.0`.
+<OUT> is the gate's output directory; <S> the scratchpad. Run: 2026-10-14 03:09 UTC.
+
+a = the checkout's `TCSlib/Complexity/Diagonalization/NTimeHierarchy.lean` (byte copy), b = a with
+the patch applied by `<OUT>/scripts/mkpatch.py` (each replacement asserted to match exactly once).
+SHA-256: a cee58a3e370e1f99755bcc617627eb488dc8d40740d420f96860bc24011ce7f3
+         checkout cee58a3e370e1f99755bcc617627eb488dc8d40740d420f96860bc24011ce7f3
+         b f70d2857829437742e65ab3eab9da7e78d641f70ab2b3bfedd7e045336f2b7da
+         patch 91da33c4dc96fa4b6e5f4b35dbc37cef8bfdc1f3cddacccfd65c871409adaa7c
+```
+raw lines changed (+/-): 175
+code lines after stripping comments: before 48, after 48
+declarations: before 6, after 6
+FREEZE OK: comment-stripped code identical (no statement, proof or import changed)
+freeze.py exit 0
+```
+* elaboration of a:
+  exit 0 | errors 0 | warnings 6 | of which `declaration uses 'sorry'` 6 | other warnings 0
+* elaboration of b:
+  exit 0 | errors 0 | warnings 6 | of which `declaration uses 'sorry'` 6 | other warnings 0
+* line widths of b (characters):
+    over-100 lines: 0
+* line widths of a (characters):
+    <OUT>/work/patch/a/TCSlib/Complexity/Diagonalization/NTimeHierarchy.lean:236: 105 chars
+    over-100 lines: 1
+
+Names cited in b's comments, `#check`ed in the unit plus `NTimeHierarchy` and `ClockLoop`;
+those that do not resolve:
+```
+Unknown identifier `A` Unknown identifier `AcceptsWithin.mono` Unknown identifier `BF` Unknown 
+identifier `C` Unknown identifier `Complexity.time_hierarchy_of_pos` Unknown identifier 
+`Complexity.time_hierarchy` Unknown identifier `C₁` Unknown identifier `D` Unknown identifier `E` 
+Unknown identifier `F` Unknown identifier `K` Unknown identifier `M'` Unknown identifier `M_i` 
+Unknown identifier `N` Unknown identifier `TCSlib.Complexity.ClassNP.ExhaustiveReplay` Unknown 
+identifier `TCSlib.Complexity.TuringMachine.Build.InputWindow` Unknown identifier 
+`TCSlib.Complexity.TuringMachine.Build.NDHost` Unknown identifier 
+`TCSlib.Complexity.TuringMachine.ChoiceReplay` Unknown identifier 
+`TCSlib.Complexity.TuringMachine.NDCodeSimulator` Unknown identifier 
+`TCSlib.Complexity.TuringMachine.NDCodes` Unknown identifier `Turing.exists_stepClockTMVia` 
+Unknown identifier `Turing.timed_universal` Unknown identifier `UN` 
+```

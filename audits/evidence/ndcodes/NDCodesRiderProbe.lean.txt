@@ -1,0 +1,40 @@
+import TCSlib.Complexity.TuringMachine.NDCodes
+import TCSlib.Complexity.TuringMachine.MathlibBridge
+
+/-! # NDCodes rider pre-ship probe (maintainer; not part of the library)
+
+Read-only elaboration at the issue tree. It checks the route the NDCodes brief prescribes
+(B5a dossier D6): `NDCodes` imports `MathlibBridge`, and a private `ndFormat : CodeFormat`
+takes as its table the two choice tables, each a `CodeTable2`. The central law
+`serialize_assemble` holds because `CodeNDTM.serialize` is the state count, the unary initial
+state, and the two choices' `codeTable2Bits` in order. The canonizer then comes from
+`CodeFormat.exists_canonizer` with `Primrec₂` of the doubled skipper. -/
+
+namespace Turing
+
+/-- The choice-`b` table of a coded NDTM, as a two-work-tape table (probe-local). -/
+def probeChoiceTable (M : CodeNDTM) (b : Bool) : CodeTable2 M.numStates :=
+  fun q inp w₀ w₁ => M.tm.tr b q inp (workPair w₀ w₁)
+
+/-- **The central law of the ND format:** the fixed ND serialization is the state count, the
+unary initial state, then the `false` and `true` choice tables in `codeTable2Bits` order. -/
+theorem probe_ndSerialize (M : CodeNDTM) :
+    M.serialize = pairEncode (Nat.bits M.numStates)
+      (unaryFin M.tm.q₀ ++ (codeTable2Bits (probeChoiceTable M false) ++
+        codeTable2Bits (probeChoiceTable M true))) := by
+  simp [CodeNDTM.serialize, codeTable2Bits, probeChoiceTable, actionBits₂_eq_actionBitsK]
+
+-- The rows the rider cites.
+#check @CodeFormat.exists_canonizer
+#check @CodeFormat.decode_serialize_pad
+#check @CodeFormat.canonical_eq
+#check @codePrimRepeat
+#check @codePrimSkipTable2
+#check @codeReadTable2_append
+#check @codeSkipTable2
+#check @codeTable2Bits_length
+#check @actionBits₂_eq_actionBitsK
+
+#print axioms probe_ndSerialize
+
+end Turing

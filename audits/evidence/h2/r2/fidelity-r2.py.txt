@@ -1,0 +1,284 @@
+"""H2-S round 2 fidelity check (finding 6): the statement draft against CodeSimulator.lean.
+
+Usage:  python3 -I fidelity-r2.py CHECKOUT DRAFT.lean [--r1 R1_DRAFT.lean]
+
+Checks, each failure printed on a line starting with `FAIL`:
+  * inventory: the draft declares exactly the 58 copied declarations of COPIED plus the six
+    additive ones of ADDITIVE, each exactly once; every original is declared exactly once in
+    CodeSimulator.lean; nothing else is declared (an unexpected addition fails);
+  * fidelity: each copied declaration matches its original after renaming (comments and
+    whitespace ignored, `private` dropped, `lemma` read as `theorem`), and has the original's
+    kind: definitions, abbreviations, inductive types and instances in full; theorems by
+    statement (up to the top-level `:=`), and in full for FULL (the four whose proofs are
+    copied);
+  * admissions: the proof of each of the seven contracts of SORRIED is exactly `by sorry`, and
+    no other declaration of the draft contains `sorry` (the additive results are proved);
+  * with --r1: every copied declaration's code (keyword to end, docstring excluded) is
+    byte-identical to the round-1 draft's, and the changed docstrings and additive
+    declarations are listed (informational).
+Exit status: 0 iff no check fails; 1 otherwise; 2 on a usage or input error.
+"""
+import collections
+import hashlib
+import os
+import re
+import sys
+
+CS_REL = 'TCSlib/Complexity/TuringMachine/CodeSimulator.lean'
+# draft name -> CodeSimulator name: the complete expected inventory of copied declarations
+COPIED = {
+ 'workReadsK': 'workReadsK', 'tableBitsK': 'tableBitsK', 'outputSummary': 'outputSummary',
+ 'summaryEmit': 'summaryEmit', 'outputSummary_append': 'outputSummary_append',
+ 'recordWidth': 'h1RecordWidth', 'RecordState': 'h1RecordState', 'tableTape': 'h1TableTape',
+ 'summaryTape': 'h1SummaryTape', 'payload': 'h1Payload', 'applyPayload': 'h1ApplyPayload',
+ 'recordTM': 'h1RecordTM', 'recordFinTM': 'h1RecordFinTM', 'recordTM_effect': 'h1Record_effect',
+ 'mem_workReadsK': 'h1WorkReads_mem', 'length_workReadsK': 'h1WorkReads_length',
+ 'workRank': 'h1WorkRank', 'inputRank': 'h1InputRank', 'readRank': 'h1ReadRank',
+ 'SuccPhase': 'h1SuccPhase', 'succFieldTM': 'h1SuccTM', 'succFieldCfg': 'h1UnaryCfg',
+ 'afterTag': 'h1AfterTag', 'succFieldTM_run': 'h1Succ_run', 'succFieldTM_cut': 'h1Succ_cut',
+ 'succFieldTM_heads': 'h1Succ_heads', 'SkipPh': 'h1SkipPh', 'skipPart': 'h1SkipPart',
+ 'skipRed': 'h1SkipRed', 'recordSkipTM': 'h1SkipTM', 'recordSkipTM_run': 'h1Skip_run',
+ 'recordSkipTM_spec': 'h1Skip_spec', 'instFintypeSkipPh': 'h1SkipPh_finite',
+ 'instDecidableEqSkipPh': 'h1SkipPh_decidable', 'SeekCtrl': 'h1SeekCtrl',
+ 'seekRouterTM': 'h1SeekRouter', 'seekNext': 'h1SeekNext', 'SeekKey': 'h1SeekKey',
+ 'SeekPh': 'h1SeekPh', 'seekPart': 'h1SeekPart', 'seekRed': 'h1SeekRed', 'seekTM': 'h1SeekTM',
+ 'twoMoveTM': 'h1TwoMoveTM', 'instFintypeSeekPh': 'h1SeekPh_finite',
+ 'instDecidableEqSeekPh': 'h1SeekPh_decidable', 'Key': 'h1RoundKey', 'Ph': 'h1RoundPh',
+ 'part': 'h1RoundPart', 'exit': 'h1RoundExit', 'red': 'h1RoundRed', 'roundTM': 'h1RoundTM',
+ 'instFintypePh': 'h1RoundPh_finite', 'instDecidableEqPh': 'h1RoundPh_decidable',
+ 'roundFinTM': 'h1RoundFinTM', 'summaryCells': 'h1SummaryState', 'Rep': 'h1RoundRep',
+ 'roundTM_effect': 'h1Round_effect', 'abs_workTapePos_runFrom_sub_le': 'h1Run_headBound',
+}
+ADDITIVE = ['summaryEmit_none', 'visitedByTapeHead_add_subset', 'visitedByTapeHead_step_subset',
+            'roundTM_visited', 'roundTM_iterate', 'roundTM_firstExit_unique']
+FULL = {'outputSummary_append', 'mem_workReadsK', 'length_workReadsK',
+        'abs_workTapePos_runFrom_sub_le'}
+SORRIED = ['recordTM_effect', 'succFieldTM_run', 'succFieldTM_cut', 'succFieldTM_heads',
+           'recordSkipTM_run', 'recordSkipTM_spec', 'roundTM_effect']
+# the remaining step-block names the copied code may mention, renamed the same way
+EXTRA_REN = {'h1Run_input': 'inputPos_runFrom_of_inputTape_eq_zero'}
+
+DECL = re.compile(r'(?:@\[[^\]]*\]\s*)*((?:(?:private|protected|noncomputable|partial)\s+)*)'
+                  r'(def|theorem|lemma|abbrev|inductive|structure|instance|class|opaque|axiom)'
+                  r'\s+([^\s:({\[]+)')
+TOP = re.compile(r'(?:@\[|private\b|protected\b|noncomputable\b|partial\b|def\b|theorem\b|'
+                 r'lemma\b|abbrev\b|inductive\b|structure\b|instance\b|class\b|namespace\b|'
+                 r'end\b|section\b|open\b|variable\b|set_option\b|attribute\b|import\b|#|'
+                 r'example\b|universe\b|local\b|scoped\b|mutual\b|opaque\b|axiom\b)')
+
+
+def comment_mask(text):
+    mask = [False] * len(text)
+    i, n, depth = 0, len(text), 0
+    while i < n:
+        if depth == 0:
+            if text.startswith('--', i):
+                j = text.find('\n', i)
+                j = n if j < 0 else j
+                for p in range(i, j):
+                    mask[p] = True
+                i = j
+                continue
+            if text.startswith('/-', i):
+                depth = 1
+                mask[i] = mask[i + 1] = True
+                i += 2
+                continue
+            i += 1
+            continue
+        mask[i] = True
+        if text.startswith('/-', i):
+            depth += 1
+            mask[i + 1] = True
+            i += 2
+        elif text.startswith('-/', i):
+            depth -= 1
+            mask[i + 1] = True
+            i += 2
+        else:
+            i += 1
+    return mask
+
+
+def strip(text):
+    m = comment_mask(text)
+    return ''.join(' ' if m[i] and text[i] != '\n' else text[i] for i in range(len(text)))
+
+
+def decls(text):
+    """name -> list of (kind, code, docstring); code from the keyword line to the next
+    top-level item, docstring the attached `/-- -/` block (or '')."""
+    lines = text.split('\n')
+    mask = comment_mask(text)
+    st = strip(text).split('\n')
+    offs, o = [], 0
+    for ln in lines:
+        offs.append(o)
+        o += len(ln) + 1
+    starts = []
+    for i, ln in enumerate(lines):
+        if not ln or ln[0] in ' \t' or (offs[i] > 0 and mask[offs[i] - 1]):
+            continue
+        if ln.startswith('/-') or ln.startswith('--'):
+            starts.append((i, 'comment'))
+        elif TOP.match(st[i]):
+            starts.append((i, 'code'))
+    out = collections.defaultdict(list)
+    for j, (i, kind) in enumerate(starts):
+        if kind != 'code':
+            continue
+        end = starts[j + 1][0] if j + 1 < len(starts) else len(lines)
+        m = DECL.match(st[i])
+        if not m:
+            continue
+        doc = ''
+        if j > 0 and starts[j - 1][1] == 'comment' and lines[starts[j - 1][0]].startswith('/--'):
+            doc = '\n'.join(lines[starts[j - 1][0]:i]).rstrip()
+        code = '\n'.join(lines[i:end]).rstrip()
+        out[m.group(3)].append((m.group(2), code, doc))
+    return out
+
+
+def norm(code):
+    t = ' '.join(strip(code).split())
+    t = re.sub(r'^(?:(?:private|protected)\s+)', '', t)
+    t = re.sub(r'^lemma\b', 'theorem', t)
+    return t
+
+
+def statement(code):
+    """(statement, proof): split at the first `:=` at bracket depth zero that does not close
+    a top-level `let` binding of the statement (`let e := v` inside a theorem's type)."""
+    depth, lets = 0, 0
+    for i, ch in enumerate(code):
+        if ch in '([{⟨':
+            depth += 1
+        elif ch in ')]}⟩':
+            depth -= 1
+        elif depth == 0 and re.match(r'(?<![A-Za-z0-9_.])let\b', code[i:i + 4]) and \
+                (i == 0 or not (code[i - 1].isalnum() or code[i - 1] in '_.')):
+            lets += 1
+        elif depth == 0 and code.startswith(':=', i):
+            if lets:
+                lets -= 1
+            else:
+                return code[:i], code[i:]
+    return code, ''
+
+
+def main():
+    if len(sys.argv) < 3:
+        print(__doc__)
+        sys.exit(2)
+    wt, draft = sys.argv[1], sys.argv[2]
+    r1 = sys.argv[sys.argv.index('--r1') + 1] if '--r1' in sys.argv else None
+    orig_path = os.path.join(wt, CS_REL)
+    otext = open(orig_path, encoding='utf-8').read()
+    dtext = open(draft, encoding='utf-8').read()
+    ren = {v: k for k, v in COPIED.items() if k != v}
+    ren.update(EXTRA_REN)
+    assert len(COPIED) == 58 and len(set(COPIED.values())) == 58
+    assert not set(ADDITIVE) & set(COPIED) and set(SORRIED) <= set(COPIED)
+    assert FULL <= set(COPIED)
+
+    def rename(s):
+        for a in sorted(ren, key=len, reverse=True):
+            s = re.sub(r'(?<![A-Za-z0-9_.])' + re.escape(a) + r'(?![A-Za-z0-9_])', ren[a], s)
+        return s
+
+    O, D = decls(otext), decls(dtext)
+    fails = []
+
+    def fail(msg):
+        fails.append(msg)
+        print('FAIL ' + msg)
+
+    print(f'# original: {orig_path} sha256 '
+          f'{hashlib.sha256(otext.encode()).hexdigest()}')
+    print(f'# draft   : {draft} sha256 {hashlib.sha256(dtext.encode()).hexdigest()}')
+    for n, v in sorted(D.items()):
+        if len(v) > 1:
+            fail(f'duplicate declaration in draft: {n} ({len(v)} times)')
+    for dn, on in COPIED.items():
+        if len(O.get(on, [])) != 1:
+            fail(f'original {on} declared {len(O.get(on, []))} times in CodeSimulator.lean')
+    for n in sorted(set(D) - set(COPIED) - set(ADDITIVE)):
+        fail(f'unexpected declaration in draft: {n}')
+    for n in ADDITIVE:
+        if n not in D:
+            fail(f'missing additive declaration: {n}')
+
+    ok = 0
+    for dn, on in COPIED.items():
+        if dn not in D:
+            fail(f'missing copied declaration: {dn} (original {on})')
+            continue
+        if len(D[dn]) != 1 or len(O.get(on, [])) != 1:
+            continue
+        dk, dcode, _ = D[dn][0]
+        ok_kind, ocode, _ = O[on][0]
+        nk = lambda k: 'theorem' if k == 'lemma' else k
+        if nk(dk) != nk(ok_kind):
+            fail(f'kind differs: {on} ({ok_kind}) -> {dn} ({dk})')
+            continue
+        a, b = norm(rename(ocode)), norm(dcode)
+        if nk(dk) == 'theorem' and dn not in FULL:
+            a, b = statement(a)[0].rstrip(), statement(b)[0].rstrip()
+            mode = 'statement'
+        else:
+            mode = 'full'
+        if a == b:
+            ok += 1
+            print(f'MATCH  {on} -> {dn} ({dk}, {mode})')
+        else:
+            i = next((j for j in range(min(len(a), len(b))) if a[j] != b[j]),
+                     min(len(a), len(b)))
+            fail(f'DIFFER {on} -> {dn} ({dk}, {mode}) at char {i}:\n'
+                 f'  orig : ...{a[max(0, i - 60):i + 80]}\n'
+                 f'  draft: ...{b[max(0, i - 60):i + 80]}')
+
+    sorry_re = re.compile(r'\bsorry\b')
+    for n, v in D.items():
+        if len(v) != 1:
+            continue
+        _, code, _ = v[0]
+        body = statement(norm(code))[1]
+        has = bool(sorry_re.search(strip(code)))
+        if n in SORRIED:
+            if body != ':= by sorry':
+                fail(f'contract {n}: proof is not exactly `by sorry` (got {body[:40]!r})')
+        elif has:
+            fail(f'{n} contains `sorry` but is not one of the seven contracts')
+    for n in ADDITIVE:
+        if n in D and len(D[n]) == 1:
+            print(f'ADDITIVE (whitelisted, proved in the draft): {n}')
+
+    if r1:
+        R = decls(open(r1, encoding='utf-8').read())
+        same = 0
+        for dn in COPIED:
+            if dn in D and dn in R and len(D[dn]) == len(R[dn]) == 1:
+                if D[dn][0][1] == R[dn][0][1]:
+                    same += 1
+                else:
+                    fail(f'r1->r2: copied {dn} code changed')
+                if D[dn][0][2] != R[dn][0][2]:
+                    print(f'R1->R2 docstring changed: {dn}')
+        print(f'R1->R2: copied declarations with byte-identical code: {same} of {len(COPIED)}')
+        for n in ADDITIVE:
+            if n not in R:
+                print(f'R1->R2 additive new in r2: {n}')
+            elif D.get(n) and D[n][0][1] != R[n][0][1]:
+                print(f'R1->R2 additive restated or reproved in r2: {n}')
+            elif D.get(n) and D[n][0][2] != R[n][0][2]:
+                print(f'R1->R2 additive docstring changed: {n}')
+        for n in sorted(set(R) - set(D)):
+            print(f'R1->R2 removed: {n}')
+
+    print(f'SUMMARY: {ok} match, {len(fails)} failing checks; inventory {len(COPIED)} copied + '
+          f'{len(ADDITIVE)} additive expected, {len(D)} declared')
+    sys.exit(0 if not fails else 1)
+
+
+if __name__ == '__main__':
+    main()

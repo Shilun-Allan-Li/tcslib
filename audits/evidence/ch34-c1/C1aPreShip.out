@@ -1,0 +1,20 @@
+@NDTM.runWith_append : ∀ {k : ℕ} {State : Type u_1} {Symbol : Type u_2} {input : List Symbol} {tm : NDTM k Symbol State}
+  (w w' : List Bool) (cfg : Cfg k Symbol State input), NDTM.runWith (w ++ w') cfg = NDTM.runWith w' (NDTM.runWith w cfg)
+@NDTM.runWith_of_halt : ∀ {k : ℕ} {State : Type u_1} {Symbol : Type u_2} {input : List Symbol}
+  {tm : NDTM k Symbol State} (cfg : Cfg k Symbol State input),
+  cfg.state = none → ∀ {w : List Bool}, NDTM.runWith w cfg = cfg
+@NDTM.spaceUsedWith_append_of_halt : ∀ {k : ℕ} {Symbol : Type u_1} {State : Type u_2} {input : List Symbol}
+  (tm : NDTM k Symbol State) {w : List Bool} {cfg : Cfg k Symbol State input},
+  (NDTM.runWith w cfg).state = none → ∀ (w' : List Bool), tm.spaceUsedWith (w ++ w') cfg = tm.spaceUsedWith w cfg
+@MultiTapeTM.toNDTM_spaceUsedWith : ∀ {k : ℕ} {Symbol : Type u_1} {State : Type u_2} {input : List Symbol}
+  (tm : MultiTapeTM k Symbol State) (w : List Bool) (cfg : Cfg k Symbol State input),
+  tm.toNDTM.spaceUsedWith w cfg = MultiTapeTM.spaceUsed cfg w.length
+@NSPACE.mono : ∀ {s₁ s₂ : ℕ → ℕ}, (∀ (n : ℕ), s₁ n ≤ s₂ n) → NSPACE s₁ ⊆ NSPACE s₂
+SPACE_subset_NSPACE : ∀ (s : ℕ → ℕ), SPACE s ⊆ NSPACE s
+space_poly_subset_PSPACE : ∀ (c : ℕ), (SPACE fun n => n ^ c + 1) ⊆ PSPACE
+PSPACE_subset_NPSPACE : PSPACE ⊆ NPSPACE
+LOGSPACE_subset_NL : LOGSPACE ⊆ NL
+DTIME_subset_SPACE : ∀ (T : ℕ → ℕ), DTIME T ⊆ SPACE T
+P_subset_PSPACE : P ⊆ PSPACE
+'Turing.FinTM.toFinNDTM_haltsWithin_and_accepts_iff' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.MultiTapeTM.spaceUsed_le_mul_succ' depends on axioms: [propext, Classical.choice, Quot.sound]

@@ -1,0 +1,30 @@
+# C1 host contracts statement gate: name screen
+
+Tool: `bash <S>/tools/leanelab.sh <S>/wt-g5c1 <S>/oleans-f8 <file>` (direct `lean`, no `-o`,
+no olean written). Checkout: `wt-g5c1`, campaign commit 1781a230 (PR #84, fills-8), read-only.
+Snapshot: `oleans-f8` (all of TCSlib at that commit). Toolchain: `leanprover/lean4:v4.25.0`.
+<OUT> is the gate's output directory; <S> the scratchpad. Run: 2026-10-14 03:09 UTC.
+
+```
+27 declarations in the unit (22 public, 5 private)
+1. full-name clashes with the TCSlib tree: 0
+2. shared with audits/evidence/b6hosts/B6HostsDraft.lean.txt: 0
+2. shared with audits/evidence/stage2-gate/NDSlice.lean.txt: 1: Turing.NDTM.runWith_eq_fixChoice_runFrom
+2. shared with audits/evidence/stage2-gate/Stage2.lean.txt: 0
+2. shared with audits/evidence/stage2-gate/LanguageExtensions.lean.txt: 0
+2. shared with audits/evidence/h2/StepBlockDraft.lean.txt: 0
+2. shared with audits/evidence/mig0/Contract-proposed-r2.lean.txt: 0
+2. shared with audits/evidence/c1/C1HostsDraft.lean.txt: 20: Turing.CodeNDTM.serialize_eq_tableBitsK, Turing.FinNDTM.exists_exhaustiveDecider, Turing.NDTM.phaseHostND, Turing.NDTM.phaseHostND_fixChoice, Turing.NDTM.phaseHostND_run, Turing.NDTM.relabelState, Turing.NDTM.relabelState_runWith, Turing.NDTM.replayTM, Turing.NDTM.replayTM_runFrom, Turing.NDTM.runWith_eq_fixChoice_runFrom, Turing.NDTM.runWith_mapState_of_agreeOn, Turing.NDTM.runWith_mapState_of_agreeOn_det, Turing.NDTM.stepWith_mapState_of_agreeOn, Turing.NDTM.withChoiceTape, Turing.NDWriterState, Turing.exists_ndInterpreterCore, Turing.exists_replayCanonizer, Turing.ndAcceptsWithin_decider_of_universal, Turing.ndWriterTM, Turing.ndWriterTM_run_block
+3. unit public names whose last component also names another TCSlib declaration: 1
+   SHORT Turing.NDTM.relabelState ~ Turing.MultiTapeTM.relabelState
+4. duplicates within the unit: []
+```
+Positive control (`<OUT>/work/screen_ctrl.lean` declares two existing full names):
+```
+2 declarations in the unit (2 public, 0 private)
+1. full-name clashes with the TCSlib tree: 2
+   CLASH Turing.MultiTapeTM.relabelState ['TCSlib/Complexity/TuringMachine/StateRenaming.lean']
+   CLASH Turing.exists_timed_universal_NDTM ['TCSlib/Complexity/Diagonalization/NTimeHierarchy.lean']
+3. unit public names whose last component also names another TCSlib declaration: 0
+4. duplicates within the unit: []
+```

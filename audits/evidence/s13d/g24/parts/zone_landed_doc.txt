@@ -1,0 +1,69 @@
+/-!
+# Machine-construction library: the zone layer, pure part (Z2, §13d)
+
+The per-track data of the Hennie–Stearns simulation ([AB09] §1.7; `machine-library-design.md`
+§13, Z2, as revised by §13d): two stacks of **zones** around a home cell, level `i` holding up to
+`2 · 2^i` virtual cells per side, with the pure rebalancing operations, the classical cascade,
+its mirror, the scanned index, the total guarded rebalance, the extension by one level, and the
+virtual tape a track represents. Nothing here is a machine. The multi-track physical carrier is
+`Build/ZoneTape` (§13d, G3) and the machine rows are `Build/ZoneRebalance` (§13d, G4).
+
+**Status: proved, apart from one cascade fact.** Every declaration is proved except
+`Turing.zoneCascadeRight_home` (the cascade's new home is the right word's first cell), sorried
+under its proof sketch for the G4 fill. History: the statement phase of tranche A-S2
+(`audits/zone-infra-findings.md`, rounds 1–3: the inward-room blocker repaired by totally guarded
+ops, the cascade added, the top-left room hypotheses); the §13d revision (2026-10-10) and its
+G3/G4 statement gate (`audits/s13d-g24-statements-findings.md`), which retired this module's
+binary realization (`zoneTape`, its paired-cell codec, the seven staging-window lemmas) and its
+two binary shift rows (`exists_zoneShiftInTM`, `exists_zoneShiftOutTM`), superseded by the rich
+alphabet and the G4 rows.
+
+## Design (13a; refined by the A-S2 audit and the §13d revision)
+
+* **The carrier is data, the invariant is the consumer's.** `ZoneContents` carries per-zone
+  words bounded by capacity; the Hennie–Stearns `{empty, half, full}` fullness discipline, the
+  `2^i`-credit amortization and the simulation theorem live with the consumer (plan §2.1).
+* **The operations are totally guarded.** The level-`i` inward shift moves the inner `2^(i-1)`
+  stored cells of zone `i` into the **empty** zone `i - 1` and carries no room premise; the
+  outward shift moves the outer half of a **full** zone `i - 1` onto the front of zone `i`, with
+  its room condition inside its guard. Outside its guard every operation is the identity.
+* **The classical rebalance is a cascade** of these ops (`zoneCascadeRight`; its mirror
+  `zoneCascadeLeft`, defined through `ZoneContents.swap`); the rebalance of §13d
+  (`zoneRebalance`) is the cascade at the scanned index `zoneShiftIndex`, total on every input
+  (decision 13d.3), and the identity when every feeding zone is empty.
+* **The extent** is a laid-out `ℓ` with an extension by one level (decision 13d.2): the new zones
+  are half full of virtual blanks (`ZoneContents.extend`), which changes no represented tape.
+
+## Main definitions
+
+* `Turing.zoneCapacity`, `Turing.zoneBase`, `Turing.zoneIndex`: the layout arithmetic.
+* `Turing.ZoneContents`, `Turing.zoneSlot`, `Turing.ZoneContents.words`: the carrier.
+* `Turing.zoneSide`, `Turing.zoneTrackTape`: the represented half-words and virtual tape.
+* `Turing.zoneShiftInW`/`Turing.zoneShiftOutW`, `Turing.zoneShiftIn`/`Turing.zoneShiftOut`:
+  the pairwise ops; `Turing.zoneMoveRight`/`Left`, `Turing.zoneMove`, `Turing.zoneHomeWrite`.
+* `Turing.zoneStepPair`, `Turing.zoneCascadeRight`, `Turing.ZoneContents.swap`,
+  `Turing.zoneCascadeLeft`, `Turing.zoneCascade`: the cascade and its mirror.
+* `Turing.zoneShiftIndex`, `Turing.zoneRebalance`, `Turing.ZoneContents.extend`: §13d's index,
+  rebalance and extension.
+
+## Main results
+
+* `Turing.zoneSide_shiftInW`/`OutW`, `Turing.zoneShiftInW_full_donor`: honesty and the
+  full-donor regression.
+* `Turing.zoneSide_cascadeRight`, `Turing.zoneCascadeRight_lengths`, `Turing.zoneCascade_cost_le`,
+  `Turing.zoneCascadeRight_zero`, `Turing.zoneCascadeRight_blocked`,
+  `Turing.zoneCascadeRight_frame`, and the mirrors `Turing.zoneSide_cascadeLeft`,
+  `Turing.zoneCascadeLeft_lengths`.
+* `Turing.zoneShiftIndex_empty`, `Turing.zoneShiftIndex_nonempty`, `Turing.zoneShiftIndex_eq`,
+  `Turing.zoneShiftIndex_extend`: the scan.
+* `Turing.zoneRebalance_frame`, `Turing.zoneSide_rebalance_right`/`left`,
+  `Turing.zoneTrackTape_rebalance_right`/`left`: what a rebalance does.
+* `Turing.zoneSide_extend`, `Turing.zoneTrackTape_extend`: the extension is invisible.
+
+## References
+
+* [AB09] S. Arora, B. Barak, *Computational Complexity: A Modern Approach*, Cambridge
+  University Press, 2009. (§1.7, the Hennie–Stearns simulation; Exercise 1.6.)
+* In-repo precedents: `SweepCell`/`SweepAlphabet` (`Robustness/SingleTape.lean`);
+  `ObliviousSetup.lean`'s guide-zone layout.
+-/

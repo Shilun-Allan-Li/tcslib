@@ -1,0 +1,16 @@
+declarations screened: 185; copy pairs (target reproduces >= half of source): 15; reproduced text: 1,501 chars
+   NP.lean::verifier_poly_reverseBound  reproduces  PolyTimePairing.lean::polyTimeComputable_prepend: 60/62 = 97%
+   OracleNondeterministic.lean::OracleNDTM  reproduces  Oracle.lean::OracleTM: 141/175 = 81%
+   Oracle.lean::OracleTM  reproduces  OracleNondeterministic.lean::OracleNDTM: 141/192 = 73%
+   OracleNondeterministic.lean::stepWith  reproduces  Oracle.lean::step: 118/165 = 72%
+   Relativization.lean::uw_scan_step  reproduces  Relativization.lean::uw_false_step: 71/100 = 71%
+   PolyTimePairing.lean::PolyTimeComputable.pairEncode  reproduces  PolyTimePairing.lean::PolyTimeComputable.append: 97/143 = 68%
+   Oracle.lean::step  reproduces  OracleNondeterministic.lean::stepWith: 118/175 = 67%
+   OracleAgreement.lean::runWith_eq_of_agree_queriesAlong  reproduces  OracleAgreement.lean::runFrom_eq_of_agree_queriesWithin: 88/135 = 65%
+   OracleNondeterministic.lean::runWith_headBlank  reproduces  OracleNondeterministic.lean::OracleNDTM.stepWith_eq_of_ne_qQuery: 83/137 = 61%
+   Relativization.lean::uw_tail  reproduces  OracleNondeterministic.lean::OracleNDTM.stepWith_eq_of_ne_qQuery: 78/137 = 57%
+   OracleAgreement.lean::runWith_eq_of_agree_length_lt  reproduces  OracleAgreement.lean::runWith_eq_of_agree_queriesAlong: 119/210 = 57%
+   Classes.lean::POracle_subset_NPOracle  reproduces  Classes.lean::P_subset_POracle: 81/148 = 55%
+   OracleAgreement.lean::runWith_eq_of_agree_queriesAlong  reproduces  OracleAgreement.lean::runWith_eq_of_agree_length_lt: 119/220 = 54%
+   Oracle.lean::runFrom_ofMultiTapeTM  reproduces  Oracle.lean::runFrom_plainEmptyOracle: 115/217 = 53%
+   PolyTimePairing.lean::polyTimeComputable_pairConcat  reproduces  PolyTimePairing.lean::PolyTimeComputable.append: 72/143 = 50%

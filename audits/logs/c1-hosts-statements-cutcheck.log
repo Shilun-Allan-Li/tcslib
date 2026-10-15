@@ -1,0 +1,56 @@
+# C1 host contracts statement gate: cut checks
+
+Tool: `bash <S>/tools/leanelab.sh <S>/wt-g5c1 <S>/oleans-f8 <file>` (direct `lean`, no `-o`,
+no olean written). Checkout: `wt-g5c1`, campaign commit 1781a230 (PR #84, fills-8), read-only.
+Snapshot: `oleans-f8` (all of TCSlib at that commit). Toolchain: `leanprover/lean4:v4.25.0`.
+<OUT> is the gate's output directory; <S> the scratchpad. Run: 2026-10-14 03:09 UTC.
+
+`python3 -I <OUT>/scripts/cutcheck.py <OUT>/C1Hosts.lean <S>/wt-g5c1 <OUT>/cut` (the stage-2
+gate's script, verbatim) writes, for each part, a file holding the imports of the part's import
+closure and the bodies of the parts in that closure, in file order. Each is elaborated on its own.
+```
+unit imports: 8; union of part imports: 8; missing from unit: []; extra in unit: []
+TCSlib.Complexity.TuringMachine.Nondeterministic: closure [Nondeterministic@50]; imports ['TCSlib.Complexity.TuringMachine.Nondeterministic', 'TCSlib.Complexity.TuringMachine.StateRenaming']
+TCSlib.Complexity.TuringMachine.ChoiceReplay: closure [Nondeterministic@50, ChoiceReplay@375]; imports ['TCSlib.Complexity.TuringMachine.Nondeterministic', 'TCSlib.Complexity.TuringMachine.StateRenaming', 'TCSlib.Complexity.TuringMachine.Simulation']
+TCSlib.Complexity.TuringMachine.Build.NDHost: closure [Nondeterministic@50, NDHost@509]; imports ['TCSlib.Complexity.TuringMachine.Nondeterministic', 'TCSlib.Complexity.TuringMachine.StateRenaming', 'TCSlib.Complexity.TuringMachine.Build.Seam']
+TCSlib.Complexity.TuringMachine.Build.InputWindow: closure [InputWindow@697]; imports ['TCSlib.Complexity.TuringMachine.Build.CounterLoop']
+TCSlib.Complexity.TuringMachine.NDCodeSimulator: closure [Nondeterministic@50, ChoiceReplay@375, NDCodeSimulator@772]; imports ['TCSlib.Complexity.TuringMachine.Nondeterministic', 'TCSlib.Complexity.TuringMachine.StateRenaming', 'TCSlib.Complexity.TuringMachine.Simulation', 'TCSlib.Complexity.TuringMachine.NDCodes', 'TCSlib.Complexity.TuringMachine.CodeSimulator']
+TCSlib.Complexity.ClassNP.ExhaustiveReplay: closure [ExhaustiveReplay@910]; imports ['TCSlib.Complexity.ClassNP.NTIME', 'TCSlib.Complexity.TuringMachine.NDCodes']
+```
+* `TCSlib.Complexity.ClassNP.ExhaustiveReplay.check.lean` (108 lines):
+  exit 0 | errors 0 | warnings 1 | of which `declaration uses 'sorry'` 1 | other warnings 0
+* `TCSlib.Complexity.TuringMachine.Build.InputWindow.check.lean` (79 lines):
+  exit 0 | errors 0 | warnings 1 | of which `declaration uses 'sorry'` 1 | other warnings 0
+* `TCSlib.Complexity.TuringMachine.Build.NDHost.check.lean` (510 lines):
+  exit 0 | errors 0 | warnings 1 | of which `declaration uses 'sorry'` 1 | other warnings 0
+* `TCSlib.Complexity.TuringMachine.ChoiceReplay.check.lean` (456 lines):
+  exit 0 | errors 0 | warnings 0 | of which `declaration uses 'sorry'` 0 | other warnings 0
+* `TCSlib.Complexity.TuringMachine.NDCodeSimulator.check.lean` (588 lines):
+  exit 0 | errors 0 | warnings 2 | of which `declaration uses 'sorry'` 2 | other warnings 0
+* `TCSlib.Complexity.TuringMachine.Nondeterministic.check.lean` (328 lines):
+  exit 0 | errors 0 | warnings 0 | of which `declaration uses 'sorry'` 0 | other warnings 0
+
+## Landing modules as they would land (`<OUT>/scripts/mklanded.py` -> `<OUT>/landed/`)
+
+Each new module is the copyright block, its part's imports, the options and the part; the
+addition to `Nondeterministic.lean` is the checkout's file with the extra import and the part
+appended. A file is elaborated standalone only when every module it imports exists in the
+snapshot; the other two import new modules and are covered by the cut checks above.
+```
+TCSlib/Complexity/TuringMachine/Nondeterministic.lean: existing module + 1 import(s) + appended part; 581 lines
+TCSlib/Complexity/TuringMachine/ChoiceReplay.lean: new module; 137 lines
+TCSlib/Complexity/TuringMachine/Build/NDHost.lean: new module; 191 lines
+TCSlib/Complexity/TuringMachine/Build/InputWindow.lean: new module; 77 lines
+TCSlib/Complexity/TuringMachine/NDCodeSimulator.lean: new module; 141 lines
+TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean: new module; 106 lines
+```
+* `landed/TCSlib/Complexity/TuringMachine/Nondeterministic.lean` (standalone):
+  exit 0 | errors 0 | warnings 0 | of which `declaration uses 'sorry'` 0 | other warnings 0
+* `landed/TCSlib/Complexity/TuringMachine/ChoiceReplay.lean` (standalone):
+  exit 0 | errors 0 | warnings 0 | of which `declaration uses 'sorry'` 0 | other warnings 0
+* `landed/TCSlib/Complexity/TuringMachine/Build/InputWindow.lean` (standalone):
+  exit 0 | errors 0 | warnings 1 | of which `declaration uses 'sorry'` 1 | other warnings 0
+* `landed/TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean` (standalone):
+  exit 0 | errors 0 | warnings 1 | of which `declaration uses 'sorry'` 1 | other warnings 0
+* `landed/TCSlib/Complexity/TuringMachine/Build/NDHost.lean`: not standalone (uses Part A).
+* `landed/TCSlib/Complexity/TuringMachine/NDCodeSimulator.lean`: not standalone (imports ChoiceReplay).
