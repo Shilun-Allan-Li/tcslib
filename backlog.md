@@ -1216,7 +1216,14 @@ The route decisions of 2026-10-12 (design §16b) add three work items, numbered 
       chars, the successor of a base pair). Replay: 87 modules from `oleans-lcanon4`. Then the G2
       fill gate;
     - G4's host first (obligation 3): identify the public host for the two-tape scratch and
-      ruler layout, or gate a missing one, before G4's fill brief.
+      ruler layout, or gate a missing one, before G4's fill brief. **Surveyed (2026-10-15;
+      `audits/evidence/s13d/g4-hosts/G4-HOSTS-SURVEY.md`):** every host is public (round
+      iteration without a counter, `Round.iterate`/`RoundContract`; `Contract.seq`/`inPhase`/
+      `branch`; the mapped column moves; the one-tape seeks; `scanTM`). One leaf is missing: a
+      two-tape lockstep walk that stays where it ends, the ruler for mirror crossings and slot
+      offsets. Its two named customers are the G4 rows. The seeks and `scanTM` also lack Contract
+      wrappers. Decision for the user: a small public statement unit (recommended), or private
+      leaves in the fill.
   **Two-tape universal (U2) designed (2026-10-14; `audits/evidence/u2/U2-design.md`, probes).**
   - **The design:** one `k`-generic construction on H2's step block. It has a new public host
     H2-F (the emitting round loop, in `Build/StepBlockLoop`), U2-S (the startup), U2-U
