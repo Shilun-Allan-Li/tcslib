@@ -64,9 +64,13 @@ the uniform form required by Example 3.6(3), audited at phase P3.2 round 2]
     `Build/StepBlockLoop` (`Turing.StepBlock.hostedLoopTM_run`; H1 harvest, gate
     `audits/h1-harvest-statements-findings.md`).
 
-  Still open: the canonizer's restored binary bound, the action-record
-  validator, the grammar loop and the emission; the simulator's nested-input
-  startup, canonizer installation and joint ledger.
+  Proved in the canonizer's continuation 4 (2026-10-15), as private components:
+  the restored binary bound (the bounded unary reader `exists_canonUnaryTM`) and
+  the generic action-record validator (`exists_canonRecordTM`).
+
+  Still open: the canonizer's grammar loop, its complete validator and the
+  emission; the simulator's nested-input startup, canonizer installation and
+  joint ledger.
 
 ## Main definitions
 
