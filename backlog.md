@@ -753,7 +753,9 @@ stopped items:**
   `Cfg.InWindow.core_bounds`; D7's single `arm_chain` lemma with `bif up`; `drop_canon` keeps
   its name.
 - **Final tree (2026-10-14; 60 of 60 at `ff4cab18`, Lean-equal to `c9cc485b`, against `oleans-ltip3`):**
-  27 files (23 code, 4 comment-only), net −938 lines; replay 119 modules. `DAGCircuitSat`'s edit
+  27 files (23 code, 4 comment-only), net −938 lines; replay 119 modules. **Landed (2026-10-15,
+  PR #101; 60 of 60 at `eb750e63`; replay 119 of 119 from #100's snapshot; snapshot `oleans-lpay`
+  for the tip `9c0ae906`).** `DAGCircuitSat`'s edit
   is exactly the two visibility changes. **It lands after MIG-1 S (#98)**, rebased and re-checked
   at that tip, then replayed from S's output. ARM round 3's pack (folder 25) is being built from
   its diff; `arm_reach` stays open for Hydroxyi.
@@ -1175,6 +1177,10 @@ The route decisions of 2026-10-12 (design §16b) add three work items, numbered 
         - Q2: the four boilerplate pairs are acknowledged, with no payback;
         - Q3–Q5 as recommended.
       - **Next:** the landing, rebuilt for the new home and re-checked at the tip.
+      - **Landing PR #102 (2026-10-15):** 10 of 10 checks fresh at `9c0ae906` against #101's
+        snapshot. These include the stricter axiom checker (m1) and its mixed-axiom control.
+        H2-F is in `Build/StepBlockForward`, and `CodeSimulator`/`StepBlockLoop` are untouched.
+        The replay is 5 modules. The §14 H2 row now records H2-F (m2).
     - **`Turing.universal` at `k = 1`** fits U2-E's statement verbatim. Its re-derivation (U-1)
       waits for U2-E's fill, so a sorry-free theorem does not come to depend on a sorried one.
   - Forwarded to G5's statement phase: `two_work_tapes_run` per run, with the converse; its
