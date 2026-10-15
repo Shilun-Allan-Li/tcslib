@@ -27,6 +27,8 @@ range of a single run of `N`.
 * `Randomized.Amplify.amp_haltsWithin`, `Randomized.Amplify.amp_outputProb` — the output is
   `[v]` with the probability that `dec` of the number of accepting blocks among `r + 1`
   independent blocks of `T` coins is `v`.
+* `Randomized.Amplify.majority_randProb_ge` — the majority of `2n + 1` blocks is correct with
+  probability at least `1 - 2 (1 - 4ε²)^n`.
 * `Randomized.Amplify.amp_usesSpace` — every branch uses at most `(r + 1) k (2 S + 1)` cells.
 
 ## References
@@ -270,6 +272,62 @@ theorem amp_outputProb (hT : N.tm.HaltsWithin x T) (v : Bool) :
   rw [init_eq_emb, run_prob hT v (by simp) (by simp) fresh_init (rewind_halts hT r 0 (by simp))
     (rewind_prob hT v r 0 (by simp))]
   simp [val]
+
+/-- **Majority of `2n + 1` independent blocks**: if `N` outputs `[v]` on `x` with probability at
+least `1/2 + ε` over `T` coins, then the majority of `2n + 1` blocks is `v` with probability at
+least `1 - 2 (1 - 4ε²)^n`. [AB09, §7.4.1]
+
+**Proof sketch.** The majority errs only if at least half of the blocks err
+(`blockCount_add_not`), and each block errs with probability at most `1/2 - ε` (for `v = false`,
+outputs `[true]` and `[false]` are disjoint), so the Chernoff-type bound `randProb_tail_le`
+applies. -/
+theorem majority_randProb_ge {T n : ℕ} {ε : ℚ} (hε : 0 ≤ ε) (v : Bool)
+    (hp : 1/2 + ε ≤ N.outputProb x T [v]) :
+    1 - 2 * (1 - 4 * ε ^ 2) ^ n ≤ randProb ((2 * n + 1) * T)
+      (fun l => decide (2 * n + 1 < 2 * blockCount T (2 * n + 1) (acc N x) l) = v) := by
+  classical
+  have tail : ∀ B : List Bool → Bool, randProb T (fun l => B l = true) ≤ 1/2 - ε →
+      randProb ((2 * n + 1) * T) (fun l => 2 * n + 1 ≤ 2 * blockCount T (2 * n + 1) B l) ≤
+        2 * (1 - 4 * ε ^ 2) ^ n := by
+    intro B hB
+    have := randProb_tail_le T (2 * n + 1) B hε hB
+    rwa [show (2 * n + 1) / 2 = n by omega] at this
+  have hpt : randProb T (fun l => acc N x l = true) = N.outputProb x T [true] :=
+    randProb_congr fun r => by simp [acc, FinNDTM.outputWith]
+  have hnot := randProb_not (m := (2 * n + 1) * T)
+    (fun l => decide (2 * n + 1 < 2 * blockCount T (2 * n + 1) (acc N x) l) = v)
+  cases v
+  · have hsum : N.outputProb x T [true] + N.outputProb x T [false] ≤ 1 := by
+      unfold FinNDTM.outputProb
+      rw [← randProb_or_disjoint _ _ fun r h => by
+        have := h.1.symm.trans h.2
+        simp at this]
+      exact randProb_le_one
+    have hB : randProb T (fun l => acc N x l = true) ≤ 1/2 - ε := by
+      rw [hpt]
+      linarith
+    have hmono : randProb ((2 * n + 1) * T)
+        (fun l => ¬ decide (2 * n + 1 < 2 * blockCount T (2 * n + 1) (acc N x) l) = false) ≤
+        randProb ((2 * n + 1) * T)
+          (fun l => 2 * n + 1 ≤ 2 * blockCount T (2 * n + 1) (acc N x) l) :=
+      randProb_mono fun r hr => by
+        simp only [decide_eq_false_iff_not, not_not] at hr
+        omega
+    linarith [tail _ hB]
+  · have hB : randProb T (fun l => (fun l => !acc N x l) l = true) ≤ 1/2 - ε := by
+      have e : randProb T (fun l => (fun l => !acc N x l) l = true) =
+          randProb T (fun l => acc N x l = false) := randProb_congr fun r => by simp
+      rw [e, randProb_bool_false, hpt]
+      linarith
+    have hmono : randProb ((2 * n + 1) * T)
+        (fun l => ¬ decide (2 * n + 1 < 2 * blockCount T (2 * n + 1) (acc N x) l) = true) ≤
+        randProb ((2 * n + 1) * T) (fun l => 2 * n + 1 ≤
+          2 * blockCount T (2 * n + 1) (fun l => !acc N x l) l) :=
+      randProb_mono fun r hr => by
+        have := blockCount_add_not T (2 * n + 1) (acc N x) (List.ofFn r)
+        simp only [decide_eq_true_eq, not_lt] at hr
+        omega
+    linarith [tail _ hB]
 
 /-! ### Space -/
 

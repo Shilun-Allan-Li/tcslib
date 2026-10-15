@@ -30,10 +30,12 @@ Halting and head bounds compose the same way (`halts_comp`, `reach_comp`).
 
 ## Main results
 
-* `Randomized.Amplify.halts_comp`, `Randomized.Amplify.randProb_comp`,
+* `Randomized.Amplify.halts_comp_pos` (with an input-head bound) and its corollary
+  `Randomized.Amplify.halts_comp`, `Randomized.Amplify.randProb_comp`,
   `Randomized.Amplify.reach_comp` — composing a simulated run with its continuation.
 * `Randomized.Amplify.step_emb` — the machine simulates `N` step by step.
-* `Randomized.Amplify.rewind_run`, `Randomized.Amplify.rewind_last` — rewinding between runs.
+* `Randomized.Amplify.rewind_run_pos` and its corollary `Randomized.Amplify.rewind_run`,
+  `Randomized.Amplify.rewind_last` — rewinding between runs.
 
 The halting, probability and space analysis is in `TCSlib.Complexity.Randomized.SpaceAmplifyRun`.
 
@@ -54,27 +56,39 @@ section Compose
 variable {K K' : ℕ} {S S' : Type} {x : List Bool} {N : NDTM K Bool S} {M : NDTM K' Bool S'}
   {φ : Cfg K Bool S x → Cfg K' Bool S' x}
 
-/-- If `M` simulates `N` through `φ` step by step, and from the image of every halted `N`
-configuration `M` halts within `m`, then `M` halts within `n + m` from the image of a
-configuration from which `N` halts within `n`.
+/-- One step moves the input head at most one cell right. -/
+theorem inputPos_stepWith_le (tm : NDTM K Bool S) (b : Bool) (c : Cfg K Bool S x) :
+    (tm.stepWith b c).inputPos.val ≤ c.inputPos.val + 1 := by
+  have key : ∀ {n : ℕ} (q : Fin (n + 2)) (s : SignType), (moveInputPos q s).val ≤ q.val + 1 := by
+    intro n ⟨q, hq⟩ s
+    rw [moveInputPos_val _ q hq s]
+    cases s <;> dsimp only <;> omega
+  unfold NDTM.stepWith
+  split
+  · omega
+  · exact key _ _
 
-**Proof sketch.** Induction on `n`. A halted `c` is the hypothesis on `φ c` (a longer word only adds
-bits read after halting); otherwise the first bit is one step of `N` and of `M` (`hstep`), and the
-induction hypothesis applies to the stepped configuration. -/
-theorem halts_comp (hstep : ∀ c b, c.state ≠ none → M.stepWith b (φ c) = φ (N.stepWith b c))
-    {m : ℕ} (hφ : ∀ c, c.state = none → ∀ w : List Bool, w.length = m →
+/-- `halts_comp` with the input head tracked: the continuation need only halt from halted
+configurations whose input head is at most `B`, if the run starts at most `n` cells before `B`
+and halts within `n`.
+
+**Proof sketch.** Induction on `n`, as `halts_comp`; each step moves the input head at most one
+cell right (`inputPos_stepWith_le`), so the invariant `inputPos + n ≤ B` is kept. -/
+theorem halts_comp_pos (hstep : ∀ c b, c.state ≠ none → M.stepWith b (φ c) = φ (N.stepWith b c))
+    {m B : ℕ} (hφ : ∀ c, c.state = none → c.inputPos.val ≤ B → ∀ w : List Bool, w.length = m →
       (M.runWith w (φ c)).state = none) :
-    ∀ (n : ℕ) (c : Cfg K Bool S x), (∀ u : List Bool, u.length = n → (N.runWith u c).state = none) →
+    ∀ (n : ℕ) (c : Cfg K Bool S x), c.inputPos.val + n ≤ B →
+      (∀ u : List Bool, u.length = n → (N.runWith u c).state = none) →
       ∀ w : List Bool, w.length = n + m → (M.runWith w (φ c)).state = none := by
   intro n
   induction n with
   | zero =>
-    intro c hc w hw
-    exact hφ c (hc [] rfl) w (by simpa using hw)
+    intro c hB hc w hw
+    exact hφ c (hc [] rfl) (by omega) w (by simpa using hw)
   | succ n ih =>
-    intro c hc w hw
+    intro c hB hc w hw
     by_cases hs : c.state = none
-    · have h := hφ c hs (w.take m) (List.length_take_of_le (by omega))
+    · have h := hφ c hs (by omega) (w.take m) (List.length_take_of_le (by omega))
       rw [← List.take_append_drop m w, NDTM.runWith_append, NDTM.runWith_of_halt _ h]
       exact h
     · obtain ⟨b, w', rfl⟩ : ∃ b w', w = b :: w' := by
@@ -82,7 +96,19 @@ theorem halts_comp (hstep : ∀ c b, c.state ≠ none → M.stepWith b (φ c) = 
         | nil => simp only [List.length_nil] at hw; omega
         | cons b w' => exact ⟨b, w', rfl⟩
       rw [NDTM.runWith_cons, hstep c b hs]
-      exact ih _ (fun u hu => hc (b :: u) (by simp [hu])) w' (by simp at hw; omega)
+      exact ih _ (by have := inputPos_stepWith_le N b c; omega)
+        (fun u hu => hc (b :: u) (by simp [hu])) w' (by simp at hw; omega)
+
+/-- If `M` simulates `N` through `φ` step by step, and from the image of every halted `N`
+configuration `M` halts within `m`, then `M` halts within `n + m` from the image of a
+configuration from which `N` halts within `n`: `halts_comp_pos` with `B := inputPos + n`. -/
+theorem halts_comp (hstep : ∀ c b, c.state ≠ none → M.stepWith b (φ c) = φ (N.stepWith b c))
+    {m : ℕ} (hφ : ∀ c, c.state = none → ∀ w : List Bool, w.length = m →
+      (M.runWith w (φ c)).state = none) :
+    ∀ (n : ℕ) (c : Cfg K Bool S x), (∀ u : List Bool, u.length = n → (N.runWith u c).state = none) →
+      ∀ w : List Bool, w.length = n + m → (M.runWith w (φ c)).state = none :=
+  fun n c hc => halts_comp_pos hstep (B := c.inputPos.val + n) (fun c' hc' _ => hφ c' hc') n c
+    le_rfl hc
 
 /-- **Probabilities compose.** Under the hypotheses of `halts_comp`, if the probability of `Q`
 from the image of a halted configuration `c` depends only on the bit `o c`, then from the
@@ -440,17 +466,17 @@ theorem seek_run {j : Fin (r + 1)} {c : Fin (r + 2)} :
     · match u, hu with
       | b :: u', hu => rw [NDTM.runWith_cons, hstep]; exact ih2 u' (by simp at hu; omega)
 
-/-- **Rewinding** after a run that is not the last: within `p + 2` steps (`p ≤ |x|`) the
-work tapes are kept and run `j + 1` restarts.
+/-- **Rewinding** after a run that is not the last, with the step count explicit: for
+`p = (moveInputPos C.inputPos (-1)).val`, within `p + 2` steps the work tapes are kept and run
+`j + 1` restarts.
 
-**Proof sketch.** The first step moves the input head left (to a position `p ≤ |x|`,
+**Proof sketch.** The first step moves the input head left (to `p ≤ |x|`,
 `moveInputPos_neg_one_le`) and enters the seek phase; then apply `seek_run`. -/
-theorem rewind_run {C : ACfg N r x} {j : Fin (r + 1)} {c : Fin (r + 2)}
+theorem rewind_run_pos {C : ACfg N r x} {j : Fin (r + 1)} {c : Fin (r + 2)}
     (hC : C.state = some (.rewind j c)) (hj : j.val < r) :
-    ∃ p ≤ x.length,
-      (∀ u : List Bool, u.length ≤ p + 2 →
+    (∀ u : List Bool, u.length ≤ (moveInputPos C.inputPos (-1)).val + 2 →
         ((amp N r dec).tm.runWith u C).workTapePos = C.workTapePos) ∧
-      ∀ u : List Bool, u.length = p + 2 →
+      ∀ u : List Bool, u.length = (moveInputPos C.inputPos (-1)).val + 2 →
         (amp N r dec).tm.runWith u C = restart C ⟨j.val + 1, by omega⟩ c := by
   have hstep : ∀ b, (amp N r dec).tm.stepWith b C =
       { C with
@@ -464,12 +490,23 @@ theorem rewind_run {C : ACfg N r x} {j : Fin (r + 1)} {c : Fin (r + 2)}
     { C with
       state := some (.seek ⟨j.val + 1, by omega⟩ c)
       inputPos := moveInputPos C.inputPos (-1) } rfl rfl (moveInputPos_neg_one_le _)
-  refine ⟨_, moveInputPos_neg_one_le C.inputPos, fun u hu => ?_, fun u hu => ?_⟩
+  refine ⟨fun u hu => ?_, fun u hu => ?_⟩
   · match u, hu with
     | [], _ => rfl
     | b :: u', hu => rw [NDTM.runWith_cons, hstep]; exact h1 u' (by simp at hu; omega)
   · match u, hu with
     | b :: u', hu => rw [NDTM.runWith_cons, hstep]; exact h2 u' (by simp at hu; omega)
+
+/-- **Rewinding** after a run that is not the last: within `p + 2` steps (`p ≤ |x|`) the
+work tapes are kept and run `j + 1` restarts (`rewind_run_pos`). -/
+theorem rewind_run {C : ACfg N r x} {j : Fin (r + 1)} {c : Fin (r + 2)}
+    (hC : C.state = some (.rewind j c)) (hj : j.val < r) :
+    ∃ p ≤ x.length,
+      (∀ u : List Bool, u.length ≤ p + 2 →
+        ((amp N r dec).tm.runWith u C).workTapePos = C.workTapePos) ∧
+      ∀ u : List Bool, u.length = p + 2 →
+        (amp N r dec).tm.runWith u C = restart C ⟨j.val + 1, by omega⟩ c :=
+  ⟨_, moveInputPos_neg_one_le C.inputPos, rewind_run_pos hC hj⟩
 
 /-- The halted configuration after the last run: the decision is emitted. -/
 def finish (dec : ℕ → Bool) (C : ACfg N r x) (c : Fin (r + 2)) : ACfg N r x :=

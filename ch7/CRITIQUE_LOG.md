@@ -272,3 +272,14 @@ Rebuild: lb.sh RandomWalkHitting BUILD EXIT 0 (logs/build-165058-91635.log); no 
 
 ## U21 — citation retag + BPP dedup — DONE (orchestrator record)
 Draft→printed retag in Classes/Adleman/SipserGacs/PolyTimeModel/ErrorReduction (Def 7.4→7.3, Def 7.1→7.2, Thm 7.17→7.14, Thm 7.18→7.15, Cor 7.11→Thm 7.10 + Cor A.15); false "Erratum" replaced by an accurate Hoeffding-vs-Chernoff note; Classes:66-69 stale note fixed. Comment-only in tracked files, verified by a Lean-aware comment stripper (identical stripped code vs pre-U21 backups and vs 8c23f3bc, modulo earlier campaign additions; positive control fires). BPP_PTMWith machinery moved to PTMEquiv; mem_BPP_PTM_iff etc. re-derived as the 2/3 case, 22 type/value hashes identical. Full lb.sh TCSlib EXIT 0 (logs/build-170443-8532.log); sweep with positive control clean. Note: the printed Thm 7.10 display itself drops Cor A.15's factor 2 and the /4 in the final exponent — not recorded in the Lean files (user decision).
+
+## U22 — round 1 — VERDICT: REVISE (facade only) → fixed by orchestrator
+- [Blocking] Randomized.lean:160-162 — new bullet split the BPPEqP bullet → fixed (bullet moved, wrapped ≤ 100 cols).
+- [Advisory] BPTIMEThreshold.lean:238-291 copies Space.lean exists_bpDecides_of_advantage → shared per-input majority lemma in SpaceAmplifyRun (assigned to U22).
+- [Advisory] halts_comp_pos / rewind_run_pos generalize halts_comp / rewind_run → derive originals (assigned).
+- [Advisory] moveInputPos helpers follow from existing moveInputPos_val lemmas; ρ < 1 and ρ : ℚ divergence bullet; two missing tags (assigned).
+(Input-head bound, fresh-tape runs, one_le soundness, both threshold directions verified; sweep with positive control clean.)
+
+## U22 — round 2 — VERDICT: PASS
+- [Advisory] SpaceAmplify.lean:31-36 — Main results should list halts_comp_pos / rewind_run_pos → done by orchestrator (comment-only).
+(Old statements of halts_comp, rewind_run, exists_bpDecides_of_advantage type-checked against HEAD; dependants build EXIT 0 (logs/build-175530-62197.log); sweep with positive control clean.)

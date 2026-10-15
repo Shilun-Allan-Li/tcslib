@@ -413,11 +413,9 @@ correct with probability at least `1/2 + δ` is repeated into a space-`O(s)` PTM
 with probability at least `1 - ε`.
 
 **Proof sketch.** Run `N` `2n + 1` times (`Amplify.amp`) and accept iff more than half of the
-runs accepted. The runs are independent blocks (`Amplify.amp_outputProb`). The majority is
-wrong only if at least half of the blocks err, and each block errs with probability at most
-`1/2 - δ` (for a non-member, accepting and outputting `[false]` are disjoint), so the
-Chernoff-type bound `randProb_tail_le` gives error at most `2 (1 - 4δ²)^n < ε` for `n` large;
-the failing blocks are counted by `blockCount_add_not`. -/
+runs accepted. The runs are independent blocks (`Amplify.amp_outputProb`), and the majority
+errs with probability at most `2 (1 - 4δ²)^n < ε` for `n` large
+(`Amplify.majority_randProb_ge`). -/
 theorem exists_bpDecides_of_advantage {N : FinNDTM Bool} {L : Language Bool} {s : ℕ → ℕ}
     {δ ε : ℚ} (hδ : 0 < δ) (hε : 0 < ε) (hN : N.UsesSpace s)
     (h : ∀ x : List Bool, ∃ T, N.tm.HaltsWithin x T ∧
@@ -438,52 +436,8 @@ theorem exists_bpDecides_of_advantage {N : FinNDTM Bool} {L : Language Bool} {s 
   obtain ⟨T, hT, hp⟩ := h x
   refine ⟨_, Amplify.amp_haltsWithin hT, ?_⟩
   rw [Amplify.amp_outputProb hT]
-  have tail : ∀ B : List Bool → Bool, randProb T (fun l => B l = true) ≤ 1/2 - d →
-      randProb ((2 * n + 1) * T) (fun l => 2 * n + 1 ≤ 2 * blockCount T (2 * n + 1) B l) < ε := by
-    intro B hB
-    have := randProb_tail_le T (2 * n + 1) B hd0.le hB
-    rw [show (2 * n + 1) / 2 = n by omega] at this
-    linarith
-  have hpt : randProb T (fun l => Amplify.acc N x l = true) = N.outputProb x T [true] :=
-    randProb_congr fun r => by simp [Amplify.acc, FinNDTM.outputWith]
-  by_cases hx : x ∈ L
-  · simp only [MultiTapeTM.indicator, hx, if_true] at hp ⊢
-    have hB : randProb T (fun l => (fun l => !Amplify.acc N x l) l = true) ≤ 1/2 - d := by
-      have e : randProb T (fun l => (fun l => !Amplify.acc N x l) l = true) =
-          randProb T (fun l => Amplify.acc N x l = false) := randProb_congr fun r => by simp
-      rw [e, randProb_bool_false, hpt]
-      linarith
-    have hmono : randProb ((2 * n + 1) * T)
-        (fun l => ¬ dec (blockCount T (2 * n + 1) (Amplify.acc N x) l) = true) ≤
-        randProb ((2 * n + 1) * T) (fun l => 2 * n + 1 ≤
-          2 * blockCount T (2 * n + 1) (fun l => !Amplify.acc N x l) l) :=
-      randProb_mono fun r hr => by
-        have := blockCount_add_not T (2 * n + 1) (Amplify.acc N x) (List.ofFn r)
-        simp only [hdec, decide_eq_true_eq, not_lt] at hr
-        omega
-    have hnot := randProb_not (m := (2 * n + 1) * T)
-      (fun l => dec (blockCount T (2 * n + 1) (Amplify.acc N x) l) = true)
-    linarith [tail _ hB]
-  · simp only [MultiTapeTM.indicator, hx, if_false] at hp ⊢
-    have hsum : N.outputProb x T [true] + N.outputProb x T [false] ≤ 1 := by
-      unfold FinNDTM.outputProb
-      rw [← randProb_or_disjoint _ _ fun r h => by
-        have := h.1.symm.trans h.2
-        simp at this]
-      exact randProb_le_one
-    have hB : randProb T (fun l => Amplify.acc N x l = true) ≤ 1/2 - d := by
-      rw [hpt]
-      linarith
-    have hmono : randProb ((2 * n + 1) * T)
-        (fun l => ¬ dec (blockCount T (2 * n + 1) (Amplify.acc N x) l) = false) ≤
-        randProb ((2 * n + 1) * T)
-          (fun l => 2 * n + 1 ≤ 2 * blockCount T (2 * n + 1) (Amplify.acc N x) l) :=
-      randProb_mono fun r hr => by
-        simp only [hdec, decide_eq_false_iff_not, not_not] at hr
-        omega
-    have hnot := randProb_not (m := (2 * n + 1) * T)
-      (fun l => dec (blockCount T (2 * n + 1) (Amplify.acc N x) l) = false)
-    linarith [tail _ hB]
+  have hm := Amplify.majority_randProb_ge (n := n) hd0.le _ (hp.trans' (by linarith))
+  exact le_trans (by linarith) hm
 
 /-- The constant `2/3` in `RSPACE` may be any `δ > 0`. [AB09, p. 139] -/
 theorem mem_RSPACE_of_pos {N : FinNDTM Bool} {L : Language Bool} {s : ℕ → ℕ} {c : ℕ} {δ : ℚ}

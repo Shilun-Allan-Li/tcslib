@@ -54,6 +54,7 @@ import TCSlib.Complexity.Randomized.BPOperator
 import TCSlib.Complexity.Randomized.AlgCircuitExample
 import TCSlib.Complexity.Randomized.QuasiPolyHierarchy
 import TCSlib.Complexity.Randomized.BPPEqP
+import TCSlib.Complexity.Randomized.BPTIMEThreshold
 import TCSlib.Complexity.Randomized.Space
 import TCSlib.Complexity.Randomized.SpaceAmplify
 import TCSlib.Complexity.Randomized.SpaceAmplifyRun
@@ -158,6 +159,8 @@ machines.
   budget.
 - `Randomized.BPPEqP`: if `BPP = P` then `BPP ⊊ DTIME(n^{log n})` and BPP has a complete problem
   [AB09, §7.5, §7.5.3].
+- `Randomized.BPTIMEThreshold`: any constant threshold in `(1/2, 1)` gives the same
+  `BPTIME(T(n))` [AB09, §7.1, p. 125].
 - `Randomized.Space`, `Randomized.SpaceAmplify`, `Randomized.SpaceAmplifyRun`: randomized
   space, `BPL`, `RL`, `RL ⊆ NL ⊆ P`, error reduction in log space ([AB09, §7.7, Def 7.18]).
 - `Randomized.RandomWalk`, `Randomized.RandomWalkHitting`, `Randomized.RandomWalkPad`:

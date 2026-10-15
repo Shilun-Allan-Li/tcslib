@@ -197,4 +197,4 @@ infrastructure for Ex 7.11.
 | G2 | §7.5 (p.135) | if BPP = P then BPP ⊊ DTIME(n^{log n}) | **proved** (U20) `Randomized.P_ssubset_DTIME_pow_log` (Randomized/QuasiPolyHierarchy.lean), `Randomized.BPP_PTM_ssubset_DTIME_pow_log_of_eq_P` (Randomized/BPPEqP.lean) |
 | G3 | §7.5.3 (p.138) | if BPP = P then BPP has a complete problem | **proved** (U20) `Randomized.exists_BPPHard_mem_BPP_PTM_of_eq_P`, `polyTimeReducible_of_mem_P` (Randomized/BPPEqP.lean) |
 | G4 | Chapter notes (p.141) | BP·P = BPP | **proved** (U18) `Randomized.BPdot_P_eq_BPP_PTM`, `Randomized.BPdot_P_eq_BPP`, consistency `Randomized.BPdot_NP_eq_BPNP` (Randomized/BPOperator.lean) |
-| G5 | §7.4.1 (p.132) | any constant > 1/2 gives BPP | **proved** (U18) `Randomized.BPP_PTMWith_const_eq_BPP_PTM` (Randomized/BPPAmplify.lean) |
+| G5 | §7.1 (p.125), §7.4.1 (p.132) | any constant > 1/2 gives the same BPTIME(T(n)) and BPP | **proved** (U18, U22) `Randomized.BPP_PTMWith_const_eq_BPP_PTM` (Randomized/BPPAmplify.lean); `Randomized.BPTIMEWith`, `Randomized.BPTIMEWith_eq_BPTIME` (no hypothesis on T; Randomized/BPTIMEThreshold.lean) |
