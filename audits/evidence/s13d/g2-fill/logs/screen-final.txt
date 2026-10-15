@@ -1,5 +1,5 @@
-# G2 maintainer fill: copy-text screen (v3), both final files (Catalog.final3, Zone.final4: the shared cascade induction) in place over the base 02553301
-declarations screened: 552; copy pairs (target reproduces >= half of source): 370; reproduced text: 116,705 chars
+# G2 maintainer fill: copy-text screen (v3), both final files (Catalog.final3; Zone.final7: the shared cascade induction, the index-0 unfolding and the frame lemma) in place over the base 02553301
+declarations screened: 554; copy pairs (target reproduces >= half of source): 369; reproduced text: 116,324 chars
    TCSlib/Complexity/TuringMachine/Build/Catalog.lean::f2_space_of_time  reproduces  Simulation.lean::ComputesInTime.spaceUsed_le: 713/713 = 100%
    Simulation.lean::ComputesInTime.spaceUsed_le  reproduces  TCSlib/Complexity/TuringMachine/Build/Catalog.lean::f2_space_of_time: 713/713 = 100%
    TCSlib/Complexity/TuringMachine/Build/Catalog.lean::f2_catalogRewind  reproduces  Simulation.lean::timed_rewind: 435/435 = 100%
@@ -228,7 +228,6 @@ declarations screened: 552; copy pairs (target reproduces >= half of source): 37
    Simulation.lean::bufferedSecondCfg  reproduces  Simulation.lean::bufferedScanCfg: 83/137 = 61%
    TCSlib/Complexity/TuringMachine/Build/Catalog.lean::f2_loopFuel_init  reproduces  Simulation.lean::bufferedFirstCfg_init: 195/322 = 61%
    TCSlib/Complexity/TuringMachine/Build/Catalog.lean::f2_splitPrepare_rewind  reproduces  TCSlib/Complexity/TuringMachine/Build/Catalog.lean::f2_extract_rewind: 464/767 = 60%
-   Zone.lean::zoneCascadeRight_lengths  reproduces  Zone.lean::zoneStepPair_pre: 608/1007 = 60%
    TCSlib/Complexity/TuringMachine/Build/Catalog.lean::f2_splitEmitCfg  reproduces  TCSlib/Complexity/TuringMachine/Build/Catalog.lean::f2_splitPrepareScan: 62/103 = 60%
    TCSlib/Complexity/TuringMachine/Build/Catalog.lean::seekEndTM_run_ofCfg  reproduces  TCSlib/Complexity/TuringMachine/Build/Catalog.lean::skipTM_run_ofCfg: 859/1430 = 60%
    TCSlib/Complexity/TuringMachine/Build/Catalog.lean::f2_counter_emit_run  reproduces  TCSlib/Complexity/TuringMachine/Build/Catalog.lean::f2_counter_emit: 378/630 = 60%
@@ -237,7 +236,6 @@ declarations screened: 552; copy pairs (target reproduces >= half of source): 37
    TCSlib/Complexity/TuringMachine/Build/Catalog.lean::f2_pairDupTM  reproduces  TCSlib/Complexity/TuringMachine/Build/Catalog.lean::f2_incFixedTM: 283/474 = 60%
    TCSlib/Complexity/TuringMachine/Build/Catalog.lean::a2_loop_prepare  reproduces  TCSlib/Complexity/TuringMachine/Build/Catalog.lean::f2_loopHost_input_rewind: 146/245 = 60%
    TCSlib/Complexity/TuringMachine/Build/Catalog.lean::f2_lenParse_run  reproduces  TCSlib/Complexity/TuringMachine/Build/Catalog.lean::f2_extract_run: 1137/1908 = 60%
-   Zone.lean::zoneCascadeRight_classical  reproduces  Zone.lean::zoneCascadeRight_zero: 87/146 = 60%
    TCSlib/Complexity/TuringMachine/Build/Catalog.lean::f2_splitBody_restore  reproduces  TCSlib/Complexity/TuringMachine/Build/Catalog.lean::f2_splitBody_rewind: 333/559 = 60%
    TCSlib/Complexity/TuringMachine/Build/Catalog.lean::f2_scanCopy_suffix  reproduces  TCSlib/Complexity/TuringMachine/Build/Catalog.lean::f2_scanCopy_finish: 160/269 = 59%
    TCSlib/Complexity/TuringMachine/Build/Catalog.lean::transferTM_spaceUsedByTape  reproduces  TCSlib/Complexity/TuringMachine/Build/Catalog.lean::clearTM_spaceUsedByTape: 258/434 = 59%
@@ -311,6 +309,7 @@ declarations screened: 552; copy pairs (target reproduces >= half of source): 37
    TCSlib/Complexity/TuringMachine/Build/Catalog.lean::a2_map_parse  reproduces  TCSlib/Complexity/TuringMachine/Build/Catalog.lean::f2_extract_run: 1035/1908 = 54%
    Simulation.lean::bufferTape_append  reproduces  TCSlib/Complexity/TuringMachine/Build/Catalog.lean::f2_catalogBuffer_erase: 64/118 = 54%
    TCSlib/Complexity/TuringMachine/Build/Catalog.lean::f2_splitEmit_double  reproduces  TCSlib/Complexity/TuringMachine/Build/Catalog.lean::f2_pairDup_double: 656/1212 = 54%
+   Zone.lean::zoneCascadeRight_lengths  reproduces  Zone.lean::zoneStepPair_below: 314/582 = 54%
    TCSlib/Complexity/TuringMachine/Build/Catalog.lean::f2_loopHost_fuel_copy  reproduces  TCSlib/Complexity/TuringMachine/Build/Catalog.lean::f2_loopHost_fuel_return: 736/1366 = 54%
    Zone.lean::zoneShiftIndex_extend  reproduces  Zone.lean::zoneShiftIndex_extend_of_lt: 179/334 = 54%
    TCSlib/Complexity/TuringMachine/Build/Catalog.lean::a2_mapSetup_run  reproduces  TCSlib/Complexity/TuringMachine/Build/Catalog.lean::catalog_redirect_loop: 75/140 = 54%

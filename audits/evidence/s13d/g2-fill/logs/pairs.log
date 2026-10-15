@@ -33,24 +33,16 @@ total 62 of 124
 ## base Catalog.lean (predecessor): catalog_transfer_trace reproduces catalog_clear_trace
 total 866 of 1617
 
-## Zone.lean: zoneCascadeRight_classical reproduces zoneCascadeRight_zero
-[87] only[zoneCascadeRight,List.range_zero,List.reverse_nil,List.foldl_nil,zoneMove,dif_posh
-total 87 of 146
-
-## Zone.lean: zoneCascadeRight_lengths reproduces zoneStepPair_pre
-[110] rw[(zoneStepPair_frame(j+1)z⟨k,byomega⟩(bydsimp;omega)(bydsimp;omega)).2]exacthrk(byomega)havehl':∀k(hk:k<j),(
-[95] rw[(zoneStepPair_frame(j+1)z⟨k,byomega⟩(bydsimp;omega)(bydsimp;omega)).1]exacthlk(byomega)haveh
-[74] rw[hactive.2.1,List.length_take,hlj(byomega)]unfoldzoneCapacityomegahavehr
-[69] havehactive:=zoneStepPair_activejhjz(hrj(byomega))(hlj(byomega))hroom
-[50] :(z.left⟨j+1,hj⟩).length+2^j≤zoneCapacity(j+1):=by
-[50] .left⟨k,byomega⟩).length=zoneCapacityk:=byintrokhk
-[42] ((zoneStepPair(j+1)z).left⟨j,hjl⟩).length=
-[33] (zoneStepPair(j+1)z).right⟨j,hjl⟩
-[32] .right⟨k,byomega⟩=[]:=byintrokhk
+## Zone.lean: zoneCascadeRight_lengths reproduces zoneStepPair_below
+[74] omegahavehactive:=zoneStepPair_activejhjz(hrj(byomega))(hlj(byomega))hroom
+[51] ⟨k,byomega⟩(bydsimp;omega)(bydsimp;omega)).1]exacth
+[44] ⟨k,byomega⟩(bydsimp;omega)(bydsimp;omega)).2
+[37] ,hlj(byomega)]unfoldzoneCapacityomega
+[28] rw[(zoneStepPair_frame(j+1)z
 [28] ((zoneStepPair(j+1)z).left⟨j
-[25] havehjl:j<ℓ:=byomegahaveh
-total 608 of 1007
+[27] (zoneStepPair(j+1)z).right⟨
+[25] (zoneStepPair_frame(j+1)z
+total 314 of 582
 
-## base Zone.lean (predecessors)
-total 117 of 146
+## base Zone.lean (predecessor): zoneCascadeRight_lengths reproduces zoneSide_cascadeRight
 total 761 of 1444
