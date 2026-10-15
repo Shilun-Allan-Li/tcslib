@@ -72,8 +72,8 @@ runs before any fill or any next phase. The auditor is an LLM from a different v
 in a fresh context, reviewing the trusted surface (definitions, statements, sketches,
 and any skeleton-time proofs) against the source text.
 
-**Artifacts**, all committed under `audits/` with campaign-scoped names
-(`ch2-phase1-*`, `epoch4-*`):
+**Artifacts**, committed under `audits/` with campaign-scoped names
+(`ch2-phase1-*`, `epoch4-*`), except the bundle:
 
 * `…-pack.md` — the auditor's instructions: the audited commit, repository-side
   attestations (freeze by path enumeration, sweep results, admission inventory, axiom
@@ -85,7 +85,10 @@ and any skeleton-time proofs) against the source text.
   **note**. `audits/TEMPLATE.md` is the skeleton.
 * `…-bundle.md` — a single uploadable file: the pack verbatim, then every attachment
   under a `## ===== <path> =====` header (prior findings, both plans, `policy.md`,
-  the root, and the full module tree).
+  the root, and the full module tree). **Not committed** (user, 2026-10-15): it is kept
+  in the local dispatch folder, and the resolutions record its SHA-256 and section
+  count. Bundles committed before then are indexed in `audits/BUNDLES.md`, with how to
+  retrieve them from history.
 * A short kickoff message (drafted per round, pasted by the maintainer into a fresh
   auditor chat with the bundle attached).
 * `…-findings.md` — the auditor's report, preserved **verbatim**, including anything
