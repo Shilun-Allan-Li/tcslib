@@ -377,6 +377,94 @@ theorem Cfg.liftOver_decodeSymbols {k : ℕ} {Γ Q : Type} [DecidableEq Γ] (e :
   · rfl
   · simp [Cfg.liftOver, Cfg.decodeSymbols, Cfg.liftSymbols]
 
+/-! ### The fields of the shadow and the overlay (B6-F1 promotion)
+
+The two configuration builders of the overlay transport, read field by field, so that a proof
+through `Turing.MultiTapeTM.liftSymbols_runFrom_over` never unfolds them. -/
+
+/-- **The shadow keeps the control state.**
+
+**Proof sketch.** Definitional (`rfl`). -/
+theorem Cfg.decodeSymbols_state {k : ℕ} {Γ Q : Type} [DecidableEq Γ] (e : Bool ↪ Γ)
+    {x : List Γ} (D : Cfg k Γ Q x) : (Cfg.decodeSymbols e D).state = D.state :=
+  rfl
+
+/-- **The shadow keeps the input position** (as a number; the input words differ).
+
+**Proof sketch.** Definitional (`rfl`). -/
+theorem Cfg.decodeSymbols_inputPos {k : ℕ} {Γ Q : Type} [DecidableEq Γ] (e : Bool ↪ Γ)
+    {x : List Γ} (D : Cfg k Γ Q x) :
+    ((Cfg.decodeSymbols e D).inputPos : ℕ) = D.inputPos :=
+  rfl
+
+/-- **The shadow's cells are the decoded cells**: a digit `e b` reads as `b`, every other
+symbol as blank.
+
+**Proof sketch.** Definitional (`rfl`). -/
+theorem Cfg.decodeSymbols_workTapes {k : ℕ} {Γ Q : Type} [DecidableEq Γ] (e : Bool ↪ Γ)
+    {x : List Γ} (D : Cfg k Γ Q x) (j : Fin k) (p : ℤ) :
+    (Cfg.decodeSymbols e D).workTapes j p = (D.workTapes j p).bind (decodeBool e) :=
+  rfl
+
+/-- **The shadow keeps every head.**
+
+**Proof sketch.** Definitional (`rfl`). -/
+theorem Cfg.decodeSymbols_workTapePos {k : ℕ} {Γ Q : Type} [DecidableEq Γ] (e : Bool ↪ Γ)
+    {x : List Γ} (D : Cfg k Γ Q x) : (Cfg.decodeSymbols e D).workTapePos = D.workTapePos :=
+  rfl
+
+/-- **The shadow's output is empty.**
+
+**Proof sketch.** Definitional (`rfl`). -/
+theorem Cfg.decodeSymbols_output {k : ℕ} {Γ Q : Type} [DecidableEq Γ] (e : Bool ↪ Γ)
+    {x : List Γ} (D : Cfg k Γ Q x) : (Cfg.decodeSymbols e D).output = [] :=
+  rfl
+
+/-- **The overlay has the `Bool` configuration's control state.**
+
+**Proof sketch.** Definitional (`rfl`). -/
+theorem Cfg.liftOver_state {k : ℕ} {Γ Q : Type} [DecidableEq Γ] (e : Bool ↪ Γ) {x : List Γ}
+    {x' : List Bool} (hx : x'.length = x.length) (D : Cfg k Γ Q x) (c : Cfg k Bool Q x') :
+    (Cfg.liftOver e hx D c).state = c.state :=
+  rfl
+
+/-- **The overlay has the `Bool` configuration's input position** (as a number).
+
+**Proof sketch.** Definitional (`rfl`). -/
+theorem Cfg.liftOver_inputPos {k : ℕ} {Γ Q : Type} [DecidableEq Γ] (e : Bool ↪ Γ) {x : List Γ}
+    {x' : List Bool} (hx : x'.length = x.length) (D : Cfg k Γ Q x) (c : Cfg k Bool Q x') :
+    ((Cfg.liftOver e hx D c).inputPos : ℕ) = c.inputPos :=
+  rfl
+
+/-- **The overlay's cells**: where the `Bool` cell agrees with the decoding of the rich cell,
+the rich cell is kept; elsewhere the `Bool` cell is written through `e`.
+
+**Proof sketch.** Definitional (`rfl`). -/
+theorem Cfg.liftOver_workTapes {k : ℕ} {Γ Q : Type} [DecidableEq Γ] (e : Bool ↪ Γ)
+    {x : List Γ} {x' : List Bool} (hx : x'.length = x.length) (D : Cfg k Γ Q x)
+    (c : Cfg k Bool Q x') (j : Fin k) (p : ℤ) :
+    (Cfg.liftOver e hx D c).workTapes j p =
+      if c.workTapes j p = (D.workTapes j p).bind (decodeBool e) then D.workTapes j p
+      else (c.workTapes j p).map e :=
+  rfl
+
+/-- **The overlay has the `Bool` configuration's heads.**
+
+**Proof sketch.** Definitional (`rfl`). -/
+theorem Cfg.liftOver_workTapePos {k : ℕ} {Γ Q : Type} [DecidableEq Γ] (e : Bool ↪ Γ)
+    {x : List Γ} {x' : List Bool} (hx : x'.length = x.length) (D : Cfg k Γ Q x)
+    (c : Cfg k Bool Q x') : (Cfg.liftOver e hx D c).workTapePos = c.workTapePos :=
+  rfl
+
+/-- **The overlay's output** is the rich configuration's, followed by the `Bool` output
+written through `e`.
+
+**Proof sketch.** Definitional (`rfl`). -/
+theorem Cfg.liftOver_output {k : ℕ} {Γ Q : Type} [DecidableEq Γ] (e : Bool ↪ Γ) {x : List Γ}
+    {x' : List Bool} (hx : x'.length = x.length) (D : Cfg k Γ Q x) (c : Cfg k Bool Q x') :
+    (Cfg.liftOver e hx D c).output = D.output ++ c.output.map e :=
+  rfl
+
 end Overlay
 
 end Turing
