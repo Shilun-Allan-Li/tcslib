@@ -61,6 +61,9 @@ self-delimiting pairing used by the universal machine.
 * `Turing.MachineCode` — the algebraic representation-scheme laws [AB09, §1.4].
 * `Turing.EffectiveMachineCode` — a scheme together with an in-model machine
   computing `serialize ∘ decode`; the standing hypothesis of the universal machine.
+* `Turing.pairDiagTM` — the diagonal pairing machine `α ↦ pairEncode α α` (MIG-1).
+* `Turing.FinTM.toCodeTM` — the code normal form of a one-work-tape binary machine
+  (MIG-1).
 
 ## Main results
 
@@ -74,6 +77,10 @@ self-delimiting pairing used by the universal machine.
   `(2^j·m).bits = 0^j ++ m.bits` and its case `m = 1` (CH34-D4).
 * `Turing.computesFunInTime_pairEncode_diag` — the diagonal pairing `α ↦ ⟨α, α⟩` is
   computable in linear time (the only code computation the `HALT` reduction needs).
+  Its witness's spec is `Turing.pairDiagTM_computes` (MIG-1; sorried until the fill
+  F-A).
+* `Turing.FinTM.toCodeTM_computesInTime_iff` — the code normal form halts with the same
+  outputs at the same times (MIG-1).
 * `Turing.exists_codeTM` — every one-work-tape binary machine is equivalent to a
   coded machine (state relabeling).
 * `Turing.exists_codeTM_spaceUsed` — the same coded machine also uses the same space at
@@ -296,9 +303,13 @@ theorem bits_two_pow_eq_replicate (n : ℕ) :
     (2 ^ n).bits = List.replicate n false ++ [true] := by
   simpa using bits_two_pow_mul n 1 Nat.one_pos
 
-/-- Six-state pairing controller: double-stay, double-move, emit-true,
-first-left, rewind, and copy. The double-stay state's blank branch emits `false`. -/
-private def pairDiagTM : FinTM Bool where
+/-- **The diagonal pairing machine**. A six-state machine with no work tapes that, on input `α`,
+writes each symbol of `α` twice, then the separator `false, true`, rewinds the input, and copies `α`
+once more, so that it outputs `pairEncode α α`. It is also the witness of
+`Turing.FinTM.computesFunInTime_pairDup` (consolidation: Primitives' private `pairDupTM`, which
+computes the same function, retires). [AB09, proof of Theorem 1.11: the self-application input of
+the `HALT` reduction] -/
+def pairDiagTM : FinTM Bool where
   k := 0
   State := Fin 6
   tm :=
@@ -474,6 +485,16 @@ private lemma pairDiag_run (x : List Bool) :
     pairDiag_step _ _ _ _ _ (pairDiag_right x (some 5) _)]
   simp only [pairDiagTM, SignType.zero_eq_zero, moveInputPos_zero, Option.toList_none, List.append_nil]
 
+/-- **The diagonal pairing machine's time**. On input `α` the diagonal pairing machine halts within
+`4|α| + 5` steps with output `pairEncode α α`.
+
+**Proof sketch.** The `have h` of today's `computesFunInTime_pairEncode_diag`, from the private
+`pairDiag_run`: the doubling pass takes `2|α|` steps, the two separator steps and the first left
+move `3`, the rewind `|α| + 1`, the copy `|α|`, and the halting transition `1`. -/
+theorem pairDiagTM_computes (x : List Bool) :
+    pairDiagTM.ComputesInTime x (pairEncode x x) (4 * x.length + 5) := by
+  sorry
+
 /-- The diagonal pairing `α ↦ pairEncode α α` — the self-application input of the
 `HALT` reduction [AB09, proof of Theorem 1.11] — is computable in linear time. This
 is the *only* computation on codes that reduction needs (phase-3 audit, round 2,
@@ -647,6 +668,40 @@ theorem exists_codeTM_spaceUsed (M : FinTM Bool) (hk : M.k = 1) :
       exact ⟨_, hhalt, hout, rfl⟩
   · intro x t
     exact MultiTapeTM.relabelState_spaceUsed tm e x t
+
+/-- **The code normal form of a one-work-tape machine**. For a binary machine `M` with one work
+tape, the coded machine with `|Q| - 1` as its state index bound, whose transition function is `M`'s
+transported along the canonical bijection `Q ≃ Fin |Q|` (`Fintype.equivFinOfCardEq`; `Q` is
+inhabited by the start state). [AB09, §1.4] Noncomputable, through `Fintype.equivFinOfCardEq`. -/
+noncomputable def FinTM.toCodeTM : (M : FinTM Bool) → M.k = 1 → CodeTM
+  | @FinTM.mk _ _ Q hQ dQ tm, rfl =>
+    letI : Fintype Q := hQ
+    letI : DecidableEq Q := dQ
+    have hcard : Fintype.card Q = (Fintype.card Q - 1) + 1 := by
+      have : 0 < Fintype.card Q := Fintype.card_pos_iff.mpr ⟨tm.q₀⟩
+      omega
+    let e := Fintype.equivFinOfCardEq hcard
+    ⟨Fintype.card Q - 1, tm.relabelState e⟩
+
+/-- **The code normal form is equivalent**. For a one-work-tape binary machine `M`, its code normal
+form halts on `x` with output `w` within `t` steps if and only if `M` does. [AB09, §1.4]
+
+**Proof sketch.** The relabelled machine's run is the image of `M`'s run under the state
+bijection (`Turing.MultiTapeTM.relabelState_runFrom_init`); halting and output are preserved. -/
+theorem FinTM.toCodeTM_computesInTime_iff (M : FinTM Bool) (hk : M.k = 1)
+    (x output : List Bool) (t : ℕ) :
+    (M.toCodeTM hk).toFinTM.ComputesInTime x output t ↔ M.ComputesInTime x output t := by
+  rcases M with @⟨k, Q, hQ, dQ, tm⟩
+  dsimp only at hk
+  subst k
+  simp only [FinTM.toCodeTM, CodeTM.toFinTM, FinTM.ComputesInTime,
+    MultiTapeTM.ComputesInTimeAndSpace, MultiTapeTM.relabelState_runFrom_init, Cfg.mapState,
+    Option.map_eq_none_iff]
+  constructor
+  · rintro ⟨s, hhalt, hout, -⟩
+    exact ⟨_, hhalt, hout, rfl⟩
+  · rintro ⟨s, hhalt, hout, -⟩
+    exact ⟨_, hhalt, hout, rfl⟩
 
 /-- Every one-work-tape binary machine is equivalent, input by input and step for
 step, to a coded machine.

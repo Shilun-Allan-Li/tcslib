@@ -91,6 +91,18 @@ on the fuel machine), which is what keeps the stated budget at
 `(T + 1) · (R + 2)` with no logarithmic factor — the round-1 audit
 validated this budget strategy (finding 4, second half).
 
+## Named witnesses and their specs (MIG-1)
+
+* `Turing.FinTM.loopHostTM` — the decision and find host of the bounded loop, with
+  `loopHostTM_contracts` (configuration level), `loopHostTM_decides`,
+  `loopHostTM_finds` (time) and `loopHostTM_spaceUsed_le_budget` (space).
+* `Turing.FinTM.emitLoopTM` — the emitting loop, with `emitLoopTM_computes`.
+* `Turing.FinTM.callTM` — the clean call, with its anchors `callEntry`, `callExit`,
+  `callTM_k_pos` and its run `callTM_run`.
+
+`callTM_k_pos` and `callTM_run` are proved; the five loop specs are sorried until the
+fill F-C.
+
 ## References
 
 * [AB09] S. Arora, B. Barak, *Computational Complexity: A Modern Approach*,
@@ -646,7 +658,14 @@ private def loopHostM (body F : FinTM Bool) (anchor : body.State) (forward findM
               | some b => act 0 none (none, 0) (none, .pos) (some b) (some (ctrl 13))
               | none => act 0 none (none, 0) (none, 0) none none }
 
-private abbrev loopHost (body F : FinTM Bool) (anchor : body.State) (findMode : Bool) :
+/-- **The loop host**. The decision and find host of the bounded loop: it runs the fuel machine `F`
+with its output captured, copies the fuel word `Nat.bits R` into a fixed-width counter, rewinds,
+starts `body`, and then alternates captured body rounds from the `anchor` seam with fixed-width
+debits of the counter (the first anchor entry is free). An accepting round halts with `[true]`, or
+in find mode replays the round's own output; underflow of the counter halts with `[false]`, or with
+nothing in find mode. It is the non-forwarding instance `loopHostM body F anchor false findMode` of
+the shared controller. -/
+abbrev loopHostTM (body F : FinTM Bool) (anchor : body.State) (findMode : Bool) :
     FinTM Bool := loopHostM body F anchor false findMode
 
 /-- The fuel states capture all fuel emissions directly in the concrete host. -/
@@ -668,7 +687,7 @@ private lemma loopHost_init (body F : FinTM Bool) (anchor : body.State) (forward
       captureCfg Sum.inl (Sum.inr (Sum.inr (0 : Fin 14))) [] []
         ((loopFuelSource body F).initCfg x) := by
   rw [initCfg_ofWords, initCfg_ofWords]
-  simp [Cfg.ofWords, captureCfg, loopHost, loopHostM, loopFuelSource]
+  simp [Cfg.ofWords, captureCfg, loopHostTM, loopHostM, loopFuelSource]
 
 /-- With no track operations, a controller action is the standard input-only action. -/
 private lemma loopControl_idle (body F : FinTM Bool) (inp : SignType)
@@ -839,13 +858,13 @@ private lemma loopHost_replay (body F : FinTM Bool) (anchor : body.State)
     (findMode : Bool) (x : List Bool) (p : Fin (x.length + 2)) (word out : List Bool)
     (tapes : Fin (body.k + 1 + (1 + F.k)) → ℤ → Option Bool)
     (heads : Fin (body.k + 1 + (1 + F.k)) → ℤ) :
-    (loopHost body F anchor findMode).tm.runFrom
+    (loopHostTM body F anchor findMode).tm.runFrom
         (rightCfg (fun _ : Unit => Sum.inr (Sum.inr (13 : Fin 14)))
           (loopReplayCfg x p (some ()) 0 word out) tapes heads) (word.length + 1) =
       rightCfg (fun _ : Unit => Sum.inr (Sum.inr (13 : Fin 14)))
         (loopReplayCfg x p none word.length word (out ++ word)) tapes heads := by
   have htr : ∀ q inp work,
-      (loopHost body F anchor findMode).tm.tr (.inr (.inr (13 : Fin 14))) inp work =
+      (loopHostTM body F anchor findMode).tm.tr (.inr (.inr (13 : Fin 14))) inp work =
         rightAction (body.k + 1 + (1 + F.k))
           (fun _ : Unit => Sum.inr (Sum.inr (13 : Fin 14)))
           (loopReplayTM.tm.tr q inp fun i => work (Fin.natAdd (body.k + 1 + (1 + F.k)) i)) := by
@@ -863,7 +882,7 @@ private lemma loopHost_replay (body F : FinTM Bool) (anchor : body.State)
           Fin.last (body.k + 1 + (1 + F.k)) from rfl, hw] using
         loopControl_payload body F .pos _ _
   refine (rightCfg_run (k := body.k + 1 + (1 + F.k)) (l := 1)
-    loopReplayTM.tm (loopHost body F anchor findMode).tm
+    loopReplayTM.tm (loopHostTM body F anchor findMode).tm
     (fun _ : Unit => Sum.inr (Sum.inr (13 : Fin 14))) htr
     (loopReplayCfg x p (some ()) 0 word out) tapes heads (word.length + 1)).trans ?_
   have hr := loopReplay_run x p word [] out
@@ -1573,7 +1592,7 @@ private lemma loopHost_halt_return (body F : FinTM Bool) (anchor : body.State)
     (ht : 0 < t) (hlive : ∀ u < t, (body.tm.runFrom c u).state ≠ none)
     (hanchor : ∀ u, 0 < u → u < t → (body.tm.runFrom c u).state ≠ some anchor)
     (hend : (body.tm.runFrom c t).state = none) :
-    (loopHost body F anchor findMode).tm.runFrom
+    (loopHostTM body F anchor findMode).tm.runFrom
         (loopCall body F anchor false c true none word fuel) t =
       loopCall body F anchor false (body.tm.runFrom c t) false (some true) word fuel := by
   have hc : c.state ≠ none := by simpa using hlive 0 ht
@@ -1877,8 +1896,8 @@ private lemma loopHost_frame_replay (body F : FinTM Bool) (anchor : body.State)
     (base : Cfg (body.k + 1 + (1 + F.k) + 1) Bool (LoopHostState body F) x)
     (p : Fin (x.length + 2)) (flag counter : ℤ → Option Bool) (ch : ℤ) (word : List Bool) :
     let c := loopFrame body F base (some (.inr (.inr 13))) p flag counter (bufferTape word) ch 0 []
-    ((loopHost body F anchor findMode).tm.runFrom c (word.length + 1)).state = none ∧
-    ((loopHost body F anchor findMode).tm.runFrom c (word.length + 1)).output = word := by
+    ((loopHostTM body F anchor findMode).tm.runFrom c (word.length + 1)).state = none ∧
+    ((loopHostTM body F anchor findMode).tm.runFrom c (word.length + 1)).output = word := by
   dsimp only
   let c := loopFrame body F base (some (.inr (.inr 13))) p flag counter (bufferTape word) ch 0 []
   let tapes := fun i : Fin (body.k + 1 + (1 + F.k)) => c.workTapes i.castSucc
@@ -1897,8 +1916,8 @@ private lemma loopHost_frame_replay (body F : FinTM Bool) (anchor : body.State)
         subst j
         have hf : body.k + 1 + (1 + F.k) ≠ body.k := by omega
         simp [c, rightCfg, loopReplayCfg, loopFrame, hf]
-  change ((loopHost body F anchor findMode).tm.runFrom c _).state = _ ∧
-    ((loopHost body F anchor findMode).tm.runFrom c _).output = _
+  change ((loopHostTM body F anchor findMode).tm.runFrom c _).state = _ ∧
+    ((loopHostTM body F anchor findMode).tm.runFrom c _).output = _
   rw [he, loopHost_replay]
   exact ⟨rfl, rfl⟩
 
@@ -1911,9 +1930,9 @@ private lemma loopHost_accept (body F : FinTM Bool) (anchor : body.State)
     (findMode : Bool) {x : List Bool} (c : Cfg body.k Bool body.State x)
     (word : List Bool) (fuel : Cfg F.k Bool F.State x) (hc : c.state = none) :
     ∃ t ≤ 2 * c.output.length + 3,
-      ((loopHost body F anchor findMode).tm.runFrom
+      ((loopHostTM body F anchor findMode).tm.runFrom
         (loopCall body F anchor false c false (some true) word fuel) t).state = none ∧
-      ((loopHost body F anchor findMode).tm.runFrom
+      ((loopHostTM body F anchor findMode).tm.runFrom
         (loopCall body F anchor false c false (some true) word fuel) t).output =
           (if findMode then c.output else [true]) := by
   let base := loopCall body F anchor false c false (some true) word fuel
@@ -1924,7 +1943,7 @@ private lemma loopHost_accept (body F : FinTM Bool) (anchor : body.State)
         some (.inr (.inr (7 : Fin 14))) := by
       simp [loopCall, captureCfg, loopBodyPadded, leftCfg, loopBodyCfg, hc]
     simpa only [hstate] using loopCall_frame body F anchor false c false (some true) word fuel
-  have hstep : (loopHost body F anchor findMode).tm.step base =
+  have hstep : (loopHostTM body F anchor findMode).tm.step base =
       if findMode then
         loopFrame body F base (some (.inr (.inr 12))) c.inputPos flag
           (bufferTape word) (bufferTape c.output) 0 (c.output.length - 1) []
@@ -1945,14 +1964,14 @@ private lemma loopHost_accept (body F : FinTM Bool) (anchor : body.State)
   cases findMode with
   | false =>
     refine ⟨1, by omega, ?_⟩
-    change ((loopHost body F anchor false).tm.step base).state = none ∧
-      ((loopHost body F anchor false).tm.step base).output = [true]
+    change ((loopHostTM body F anchor false).tm.step base).state = none ∧
+      ((loopHostTM body F anchor false).tm.step base).output = [true]
     rw [hstep]
     exact ⟨rfl, rfl⟩
   | true =>
     refine ⟨2 * c.output.length + 3, le_refl _, ?_⟩
-    have hrun : (loopHost body F anchor true).tm.runFrom base (2 * c.output.length + 3) =
-        (loopHost body F anchor true).tm.runFrom
+    have hrun : (loopHostTM body F anchor true).tm.runFrom base (2 * c.output.length + 3) =
+        (loopHostTM body F anchor true).tm.runFrom
           (loopFrame body F base (some (.inr (.inr 13))) c.inputPos flag
             (bufferTape word) (bufferTape c.output) 0 0 []) (c.output.length + 1) := by
       rw [show 2 * c.output.length + 3 =
@@ -1961,8 +1980,8 @@ private lemma loopHost_accept (body F : FinTM Bool) (anchor : body.State)
       simp only [if_true]
       rw [MultiTapeTM.runFrom_add, loopHost_payload_scan body F anchor false true 12 13 (fun _ _ => rfl) base
         c.inputPos flag (bufferTape word) 0 c.output [] c.output.length (le_refl _)]
-    change ((loopHost body F anchor true).tm.runFrom base _).state = _ ∧
-      ((loopHost body F anchor true).tm.runFrom base _).output = _
+    change ((loopHostTM body F anchor true).tm.runFrom base _).state = _ ∧
+      ((loopHostTM body F anchor true).tm.runFrom base _).output = _
     rw [hrun]
     exact loopHost_frame_replay body F anchor true base c.inputPos flag (bufferTape word) 0 c.output
 
@@ -1986,15 +2005,15 @@ private lemma loopHost_round (body F : FinTM Bool) (anchor : body.State)
     ∃ v ≤ 3 * t + 2 * word.length + 5,
       let start := loopCall body F anchor false (Cfg.ofWords anchor (stateWord body.k s)) true none word fuel
       if accepted then
-        ((loopHost body F anchor findMode).tm.runFrom start v).state = none ∧
-        ((loopHost body F anchor findMode).tm.runFrom start v).output =
+        ((loopHostTM body F anchor findMode).tm.runFrom start v).state = none ∧
+        ((loopHostTM body F anchor findMode).tm.runFrom start v).output =
           (if findMode then payload else [true])
       else if (loopDebit word).2 then
-        (loopHost body F anchor findMode).tm.runFrom start v =
+        (loopHostTM body F anchor findMode).tm.runFrom start v =
           loopCall body F anchor false (Cfg.ofWords anchor (stateWord body.k next))
             true none (loopDebit word).1 fuel
-      else ((loopHost body F anchor findMode).tm.runFrom start v).state = none ∧
-        ((loopHost body F anchor findMode).tm.runFrom start v).output =
+      else ((loopHostTM body F anchor findMode).tm.runFrom start v).state = none ∧
+        ((loopHostTM body F anchor findMode).tm.runFrom start v).output =
           (if findMode then [] else [false]) := by
   dsimp only
   let start := Cfg.ofWords (input := x) anchor (stateWord body.k s)
@@ -2007,7 +2026,7 @@ private lemma loopHost_round (body F : FinTM Bool) (anchor : body.State)
     have hw : (body.tm.runFrom start u).output.length ≤ u := by
       simpa [start, Cfg.ofWords] using loop_output_length_le body.tm start u
     refine ⟨u + v, by omega, ?_⟩
-    change ((loopHost body F anchor findMode).tm.runFrom
+    change ((loopHostTM body F anchor findMode).tm.runFrom
       (loopCall body F anchor false start true none word fuel) (u + v)).state = _ ∧ _
     rw [MultiTapeTM.runFrom_add, hcap]
     refine ⟨hstop, ?_⟩
@@ -2021,7 +2040,7 @@ private lemma loopHost_round (body F : FinTM Bool) (anchor : body.State)
     have hcap := loopHost_anchor_return body F anchor false findMode false [] start true t word fuel
       (by rw [hend]; rfl)
       (by intro hz; omega) hguard
-    change (loopHost body F anchor findMode).tm.runFrom
+    change (loopHostTM body F anchor findMode).tm.runFrom
         (loopCall body F anchor false start true none word fuel) (t + 1) =
       loopCall body F anchor false {body.tm.runFrom start t with state := none}
         false (some false) word fuel at hcap
@@ -2031,7 +2050,7 @@ private lemma loopHost_round (body F : FinTM Bool) (anchor : body.State)
       {Cfg.ofWords (input := x) anchor (stateWord body.k next) with state := none} word fuel rfl rfl
     refine ⟨(t + 1) + v, by omega, ?_⟩
     change (if (loopDebit word).2 then
-      (loopHost body F anchor findMode).tm.runFrom
+      (loopHostTM body F anchor findMode).tm.runFrom
         (loopCall body F anchor false start true none word fuel) ((t + 1) + v) = _
       else _)
     rw [MultiTapeTM.runFrom_add, hcap]
@@ -2095,20 +2114,20 @@ private lemma loopHost_contracts (body F : FinTM Bool) (anchor : body.State)
             (Cfg.ofWords (input := x) anchor (stateWord body.k s)) t =
               Cfg.ofWords anchor (stateWord body.k (stepF x s))) :
     ∃ c : ℕ, ∀ x : List Bool,
-      ∃ (cfg : ℕ → Cfg (loopHost body F anchor findMode).k Bool
-          (loopHost body F anchor findMode).State x) (startup : ℕ),
+      ∃ (cfg : ℕ → Cfg (loopHostTM body F anchor findMode).k Bool
+          (loopHostTM body F anchor findMode).State x) (startup : ℕ),
         startup ≤ c * (T x.length + 1) ∧
-        (loopHost body F anchor findMode).tm.runFrom
-          ((loopHost body F anchor findMode).tm.initCfg x) startup = cfg 0 ∧
+        (loopHostTM body F anchor findMode).tm.runFrom
+          ((loopHostTM body F anchor findMode).tm.initCfg x) startup = cfg 0 ∧
         (∀ i ≤ R x.length, (cfg i).output = []) ∧
         (cfg (R x.length + 1)).state = none ∧
         (cfg (R x.length + 1)).output = (if findMode then [] else [false]) ∧
         (∀ i ≤ R x.length, ∃ t ≤ c * (T x.length + 1),
           if acceptF x ((stepF x)^[i] (s0 x)) then
-            ((loopHost body F anchor findMode).tm.runFrom (cfg i) t).state = none ∧
-            ((loopHost body F anchor findMode).tm.runFrom (cfg i) t).output =
+            ((loopHostTM body F anchor findMode).tm.runFrom (cfg i) t).state = none ∧
+            ((loopHostTM body F anchor findMode).tm.runFrom (cfg i) t).output =
               (if findMode then out x ((stepF x)^[i] (s0 x)) else [true])
-          else (loopHost body F anchor findMode).tm.runFrom (cfg i) t = cfg (i + 1)) := by
+          else (loopHostTM body F anchor findMode).tm.runFrom (cfg i) t = cfg (i + 1)) := by
   classical
   refine ⟨loopHost_bound, ?_⟩
   intro x
@@ -2133,14 +2152,14 @@ private lemma loopHost_contracts (body F : FinTM Bool) (anchor : body.State)
   -- seams following an earlier accepting candidate.
   have hlocal : ∀ i ≤ R x.length, ∃ t ≤ loopHost_bound * (T x.length + 1),
       if acceptF x (orbit i) then
-        ((loopHost body F anchor findMode).tm.runFrom (candidate i) t).state = none ∧
-        ((loopHost body F anchor findMode).tm.runFrom (candidate i) t).output =
+        ((loopHostTM body F anchor findMode).tm.runFrom (candidate i) t).state = none ∧
+        ((loopHostTM body F anchor findMode).tm.runFrom (candidate i) t).output =
           (if findMode then out x (orbit i) else [true])
       else if i < R x.length then
-        (loopHost body F anchor findMode).tm.runFrom (candidate i) t = candidate (i + 1)
+        (loopHostTM body F anchor findMode).tm.runFrom (candidate i) t = candidate (i + 1)
       else
-        ((loopHost body F anchor findMode).tm.runFrom (candidate i) t).state = none ∧
-        ((loopHost body F anchor findMode).tm.runFrom (candidate i) t).output =
+        ((loopHostTM body F anchor findMode).tm.runFrom (candidate i) t).state = none ∧
+        ((loopHostTM body F anchor findMode).tm.runFrom (candidate i) t).output =
           (if findMode then [] else [false]) := by
     intro i hi
     obtain ⟨t, htpos, ht, hguard, hend⟩ := hround x (orbit i)
@@ -2159,20 +2178,20 @@ private lemma loopHost_contracts (body F : FinTM Bool) (anchor : body.State)
   have htime (i : ℕ) (hi : i ≤ R x.length) :
       time i ≤ loopHost_bound * (T x.length + 1) ∧
       if acceptF x (orbit i) then
-        ((loopHost body F anchor findMode).tm.runFrom (candidate i) (time i)).state = none ∧
-        ((loopHost body F anchor findMode).tm.runFrom (candidate i) (time i)).output =
+        ((loopHostTM body F anchor findMode).tm.runFrom (candidate i) (time i)).state = none ∧
+        ((loopHostTM body F anchor findMode).tm.runFrom (candidate i) (time i)).output =
           (if findMode then out x (orbit i) else [true])
       else if i < R x.length then
-        (loopHost body F anchor findMode).tm.runFrom (candidate i) (time i) = candidate (i + 1)
+        (loopHostTM body F anchor findMode).tm.runFrom (candidate i) (time i) = candidate (i + 1)
       else
-        ((loopHost body F anchor findMode).tm.runFrom (candidate i) (time i)).state = none ∧
-        ((loopHost body F anchor findMode).tm.runFrom (candidate i) (time i)).output =
+        ((loopHostTM body F anchor findMode).tm.runFrom (candidate i) (time i)).state = none ∧
+        ((loopHostTM body F anchor findMode).tm.runFrom (candidate i) (time i)).output =
           (if findMode then [] else [false]) := by
     simpa only [time, dif_pos hi] using (hlocal i hi).choose_spec
   have hlast := htime (R x.length) (le_refl _)
   let terminal := if acceptF x (orbit (R x.length)) then
       {candidate (R x.length + 1) with state := none, output := if findMode then [] else [false]}
-    else (loopHost body F anchor findMode).tm.runFrom (candidate (R x.length))
+    else (loopHostTM body F anchor findMode).tm.runFrom (candidate (R x.length))
       (time (R x.length))
   have hterminal : terminal.state = none ∧ terminal.output = (if findMode then [] else [false]) := by
     dsimp only [terminal]
@@ -2209,6 +2228,72 @@ private lemma loopHost_contracts (body F : FinTM Bool) (anchor : body.State)
         subst i
         rw [show cfg (R x.length + 1) = terminal from if_neg (by omega)]
         simp only [terminal, ha, Bool.false_eq_true, ↓reduceIte]
+
+/-- **The loop host's configuration contract**. Given a fuel machine for `Nat.bits (R |x|)` within
+`T`, an invariant `Inv` that holds at `s0 x` and is preserved by `stepF`, a body startup that
+reaches the `anchor` seam of `s0 x` within `T |x|` without visiting the anchor earlier, and body
+rounds that, from the seam of an invariant word `s`, take positive time at most `T |x|`, do not
+revisit the anchor in between, and either halt with output `out x s` (when `acceptF x s`) or reach
+the seam of `stepF x s`: then for every input `x` the host has a family `cfg` of round
+configurations with a startup of at most `10·(T |x| + 1)` steps reaching `cfg 0`, empty output at
+rounds `0, …, R |x|`, a halted terminal `cfg (R |x| + 1)` with output `[false]` (`[]` in find mode),
+and, for each round `i ≤ R |x|`, a segment of at most `10·(T |x| + 1)` steps that halts with output
+`[true]` (the round's output in find mode) if orbit point `i` is accepted, and otherwise reaches
+`cfg (i + 1)`. The coefficient `10` is today's `loopHost_bound`.
+
+**Proof sketch.** Today's private `loopHost_contracts`, whose proof opens with
+`refine ⟨loopHost_bound, ?_⟩`, `loopHost_bound = max 1 (max 9 (3 + 2 + 5)) = 10`: the fuel phase and
+the body startup give the startup (`loopHost_prepare`, `loopHost_start`); each segment is one
+captured body round followed by a debit and rewind of the counter, whose width never exceeds `T |x|`
+(`loop_fuel_width`), so every phase costs a constant multiple of `T |x| + 1` (`loopHost_round`); the
+last debit underflows into the terminal. -/
+theorem loopHostTM_contracts (body F : FinTM Bool) (anchor : body.State)
+    (Inv : List Bool → List Bool → Prop)
+    (stepF : List Bool → List Bool → List Bool)
+    (acceptF : List Bool → List Bool → Bool)
+    (out : List Bool → List Bool → List Bool) (findMode : Bool)
+    (s0 : List Bool → List Bool) (R T : ℕ → ℕ)
+    (hF : F.ComputesFunInTime (fun x => Nat.bits (R x.length)) T)
+    (hInv0 : ∀ x : List Bool, Inv x (s0 x))
+    (hInvStep : ∀ (x s : List Bool), Inv x s → Inv x (stepF x s))
+    (hstart : ∀ x : List Bool, ∃ t ≤ T x.length,
+      (∀ t' < t,
+        (body.tm.runFrom (body.tm.initCfg x) t').state ≠ some anchor) ∧
+      body.tm.runFrom (body.tm.initCfg x) t =
+        Cfg.ofWords anchor (stateWord body.k (s0 x)))
+    (hround : ∀ (x s : List Bool), Inv x s →
+      ∃ t, 0 < t ∧ t ≤ T x.length ∧
+        (∀ t', 0 < t' → t' < t →
+          (body.tm.runFrom
+            (Cfg.ofWords (input := x) anchor (stateWord body.k s)) t').state
+              ≠ some anchor) ∧
+        if acceptF x s then
+          (body.tm.runFrom
+            (Cfg.ofWords (input := x) anchor (stateWord body.k s)) t).state
+              = none ∧
+          (body.tm.runFrom
+            (Cfg.ofWords (input := x) anchor (stateWord body.k s)) t).output
+              = out x s
+        else
+          body.tm.runFrom
+            (Cfg.ofWords (input := x) anchor (stateWord body.k s)) t =
+              Cfg.ofWords anchor (stateWord body.k (stepF x s))) :
+    ∀ x : List Bool,
+      ∃ (cfg : ℕ → Cfg (loopHostTM body F anchor findMode).k Bool
+          (loopHostTM body F anchor findMode).State x) (startup : ℕ),
+        startup ≤ 10 * (T x.length + 1) ∧
+        (loopHostTM body F anchor findMode).tm.runFrom
+          ((loopHostTM body F anchor findMode).tm.initCfg x) startup = cfg 0 ∧
+        (∀ i ≤ R x.length, (cfg i).output = []) ∧
+        (cfg (R x.length + 1)).state = none ∧
+        (cfg (R x.length + 1)).output = (if findMode then [] else [false]) ∧
+        (∀ i ≤ R x.length, ∃ t ≤ 10 * (T x.length + 1),
+          if acceptF x ((stepF x)^[i] (s0 x)) then
+            ((loopHostTM body F anchor findMode).tm.runFrom (cfg i) t).state = none ∧
+            ((loopHostTM body F anchor findMode).tm.runFrom (cfg i) t).output =
+              (if findMode then out x ((stepF x)^[i] (s0 x)) else [true])
+          else (loopHostTM body F anchor findMode).tm.runFrom (cfg i) t = cfg (i + 1)) := by
+  sorry
 
 /-- **The configuration-level loop combinator** (added per round-2 finding 1 — the final-answer conclusion below cannot
 discharge a configuration contract: the round-2 audit exhibits a machine
@@ -2284,7 +2369,7 @@ theorem exists_loopCfgTM (body F : FinTM Bool) (anchor : body.State)
           else E.tm.runFrom (cfg i) t = cfg (i + 1)) := by
   obtain ⟨c, hc⟩ := loopHost_contracts body F anchor Inv stepF acceptF
     (fun _ _ => [true]) false s0 R T hF hInv0 hInvStep hstart hround
-  exact ⟨loopHost body F anchor false, c, by simpa using hc⟩
+  exact ⟨loopHostTM body F anchor false, c, by simpa using hc⟩
 
 /-- Summation with an already-halted exhaustion terminal. Unlike `loop_run`,
 this lemma requires no empty output at that terminal and charges no final
@@ -2325,6 +2410,50 @@ private lemma loop_halted_run {k : ℕ} {S : Type*} {x : List Bool}
       · rw [MultiTapeTM.runFrom_add, hc]; exact hhalt
       · rw [MultiTapeTM.runFrom_add, hc]
         simpa [hany, hb] using hout
+
+/-- **The decision loop's time**. Under the hypotheses of `loopHostTM_contracts` with accepting
+output `[true]`, the host in decision mode outputs `[true]` if some orbit point
+`(stepF x)^[i] (s0 x)` with `i ≤ R |x|` is accepted, and `[false]` otherwise, within
+`10·(T n + 1)·(R n + 2)` steps.
+
+**Proof sketch.** The body of today's `exists_loopTM` with `c = 10`: the contract family's startup
+and at most `R |x| + 1` segments sum, by the private already-halted-terminal summation lemma
+`loop_halted_run`, to at most `10·(T |x| + 1) + (R |x| + 1)·10·(T |x| + 1)` steps. -/
+theorem loopHostTM_decides (body F : FinTM Bool) (anchor : body.State)
+    (Inv : List Bool → List Bool → Prop)
+    (stepF : List Bool → List Bool → List Bool)
+    (acceptF : List Bool → List Bool → Bool)
+    (s0 : List Bool → List Bool) (R T : ℕ → ℕ)
+    (hF : F.ComputesFunInTime (fun x => Nat.bits (R x.length)) T)
+    (hInv0 : ∀ x : List Bool, Inv x (s0 x))
+    (hInvStep : ∀ (x s : List Bool), Inv x s → Inv x (stepF x s))
+    (hstart : ∀ x : List Bool, ∃ t ≤ T x.length,
+      (∀ t' < t,
+        (body.tm.runFrom (body.tm.initCfg x) t').state ≠ some anchor) ∧
+      body.tm.runFrom (body.tm.initCfg x) t =
+        Cfg.ofWords anchor (stateWord body.k (s0 x)))
+    (hround : ∀ (x s : List Bool), Inv x s →
+      ∃ t, 0 < t ∧ t ≤ T x.length ∧
+        (∀ t', 0 < t' → t' < t →
+          (body.tm.runFrom
+            (Cfg.ofWords (input := x) anchor (stateWord body.k s)) t').state
+              ≠ some anchor) ∧
+        if acceptF x s then
+          (body.tm.runFrom
+            (Cfg.ofWords (input := x) anchor (stateWord body.k s)) t).state
+              = none ∧
+          (body.tm.runFrom
+            (Cfg.ofWords (input := x) anchor (stateWord body.k s)) t).output
+              = [true]
+        else
+          body.tm.runFrom
+            (Cfg.ofWords (input := x) anchor (stateWord body.k s)) t =
+              Cfg.ofWords anchor (stateWord body.k (stepF x s))) :
+    (loopHostTM body F anchor false).ComputesFunInTime
+      (fun x => [(List.range (R x.length + 1)).any
+        fun i => acceptF x ((stepF x)^[i] (s0 x))])
+      (fun n => 10 * (T n + 1) * (R n + 2)) := by
+  sorry
 
 /-- **The decision loop combinator** (repaired per
 round-1 findings 1, 2, and 4 — see the module docstring). Hypotheses:
@@ -2464,6 +2593,100 @@ private lemma loop_find_run {k : ℕ} {S : Type*} {x : List Bool}
         simp only [List.find?_cons_of_neg hb, List.find?_map, Function.comp_def]
         cases (List.range N).find? (fun j => accept (j + 1)) <;> rfl
 
+/-- **The find loop's time**. Under the hypotheses of `loopHostTM_contracts`, the host in find mode
+outputs `out x s` for the first accepted orbit point `s = (stepF x)^[i] (s0 x)` with `i ≤ R |x|`,
+and `[]` if there is none, within `10·(T n + 1)·(R n + 2)` steps.
+
+**Proof sketch.** The body of today's `exists_loopFindTM` with `c = 10`: sum the contract family's
+segments with the private first-accept summation lemma `loop_find_run`. -/
+theorem loopHostTM_finds (body F : FinTM Bool) (anchor : body.State)
+    (Inv : List Bool → List Bool → Prop)
+    (stepF : List Bool → List Bool → List Bool)
+    (acceptF : List Bool → List Bool → Bool)
+    (out : List Bool → List Bool → List Bool)
+    (s0 : List Bool → List Bool) (R T : ℕ → ℕ)
+    (hF : F.ComputesFunInTime (fun x => Nat.bits (R x.length)) T)
+    (hInv0 : ∀ x : List Bool, Inv x (s0 x))
+    (hInvStep : ∀ (x s : List Bool), Inv x s → Inv x (stepF x s))
+    (hstart : ∀ x : List Bool, ∃ t ≤ T x.length,
+      (∀ t' < t,
+        (body.tm.runFrom (body.tm.initCfg x) t').state ≠ some anchor) ∧
+      body.tm.runFrom (body.tm.initCfg x) t =
+        Cfg.ofWords anchor (stateWord body.k (s0 x)))
+    (hround : ∀ (x s : List Bool), Inv x s →
+      ∃ t, 0 < t ∧ t ≤ T x.length ∧
+        (∀ t', 0 < t' → t' < t →
+          (body.tm.runFrom
+            (Cfg.ofWords (input := x) anchor (stateWord body.k s)) t').state
+              ≠ some anchor) ∧
+        if acceptF x s then
+          (body.tm.runFrom
+            (Cfg.ofWords (input := x) anchor (stateWord body.k s)) t).state
+              = none ∧
+          (body.tm.runFrom
+            (Cfg.ofWords (input := x) anchor (stateWord body.k s)) t).output
+              = out x s
+        else
+          body.tm.runFrom
+            (Cfg.ofWords (input := x) anchor (stateWord body.k s)) t =
+              Cfg.ofWords anchor (stateWord body.k (stepF x s))) :
+    (loopHostTM body F anchor true).ComputesFunInTime
+      (fun x => match (List.range (R x.length + 1)).find?
+          (fun i => acceptF x ((stepF x)^[i] (s0 x))) with
+        | some i => out x ((stepF x)^[i] (s0 x))
+        | none => [])
+      (fun n => 10 * (T n + 1) * (R n + 2)) := by
+  sorry
+
+/-- **The loop host's space budget**. Under the hypotheses of `loopHostTM_contracts`, in either
+mode, at every time the host has visited at most `23·k·(T |x| + 1)` work cells, where `k` is its
+tape count: space is bounded by the per-round time budget and does not grow with the number of
+rounds `R |x|`.
+
+**Proof sketch.** The space half of Catalog's private `f2_exists_loopFind_space`, which uses no
+find-mode fact: the extended contract `f2_loopHost_contracts` (it replaces `loopHost_contracts`,
+moved and re-targeted) also bounds every seam's heads by `T |x|` and the terminal's by
+`T |x| + 10·(T |x| + 1)`; each segment lasts at most `10·(T |x| + 1)` steps, so by `f2_seamed_space`
+(moved, with `f2_segment_heads` and `f2_space_radius`) every head stays within
+`T |x| + 10·(T |x| + 1)` of the origin at every time, and each tape visits at most
+`2·(11·T |x| + 10) + 1 ≤ 23·(T |x| + 1)` cells. -/
+theorem loopHostTM_spaceUsed_le_budget (body F : FinTM Bool) (anchor : body.State)
+    (Inv : List Bool → List Bool → Prop)
+    (stepF : List Bool → List Bool → List Bool)
+    (acceptF : List Bool → List Bool → Bool)
+    (out : List Bool → List Bool → List Bool) (findMode : Bool)
+    (s0 : List Bool → List Bool) (R T : ℕ → ℕ)
+    (hF : F.ComputesFunInTime (fun x => Nat.bits (R x.length)) T)
+    (hInv0 : ∀ x : List Bool, Inv x (s0 x))
+    (hInvStep : ∀ (x s : List Bool), Inv x s → Inv x (stepF x s))
+    (hstart : ∀ x : List Bool, ∃ t ≤ T x.length,
+      (∀ t' < t,
+        (body.tm.runFrom (body.tm.initCfg x) t').state ≠ some anchor) ∧
+      body.tm.runFrom (body.tm.initCfg x) t =
+        Cfg.ofWords anchor (stateWord body.k (s0 x)))
+    (hround : ∀ (x s : List Bool), Inv x s →
+      ∃ t, 0 < t ∧ t ≤ T x.length ∧
+        (∀ t', 0 < t' → t' < t →
+          (body.tm.runFrom
+            (Cfg.ofWords (input := x) anchor (stateWord body.k s)) t').state
+              ≠ some anchor) ∧
+        if acceptF x s then
+          (body.tm.runFrom
+            (Cfg.ofWords (input := x) anchor (stateWord body.k s)) t).state
+              = none ∧
+          (body.tm.runFrom
+            (Cfg.ofWords (input := x) anchor (stateWord body.k s)) t).output
+              = out x s
+        else
+          body.tm.runFrom
+            (Cfg.ofWords (input := x) anchor (stateWord body.k s)) t =
+              Cfg.ofWords anchor (stateWord body.k (stepF x s)))
+    (x : List Bool) (t : ℕ) :
+    (loopHostTM body F anchor findMode).tm.spaceUsed
+        ((loopHostTM body F anchor findMode).tm.initCfg x) t
+      ≤ 23 * (loopHostTM body F anchor findMode).k * (T x.length + 1) := by
+  sorry
+
 /-- **The result-bearing loop combinator** (added per
 round-1 finding 3 — the decision form exposes only a Boolean, which cannot
 express the split search's or the reduction emitters' outputs). Identical
@@ -2521,7 +2744,7 @@ theorem exists_loopFindTM (body F : FinTM Bool) (anchor : body.State)
         (fun n => c * (T n + 1) * (R n + 2)) := by
   obtain ⟨c, hc⟩ := loopHost_contracts body F anchor Inv stepF acceptF out true s0 R T
     hF hInv0 hInvStep hstart hround
-  let E := loopHost body F anchor true
+  let E := loopHostTM body F anchor true
   refine ⟨E, c, fun x => ?_⟩
   obtain ⟨cfg, startup, hs, hinit, _, hend, hout, hsegments⟩ := hc x
   obtain ⟨t, ht, hhalt, houtput⟩ := loop_find_run E.tm cfg
@@ -3890,11 +4113,12 @@ private def emCallPairEmbedding (M : FinTM Bool) : Fin 2 ↪ Fin (emCallSource M
     have he := congrArg (emCallPairSelect M) h
     simpa only [emCall_pair_inverse, Option.some.injEq] using he⟩
 
-/-- Native clean-call controller. Evaluation is captured at its actual
-return; each tracked triple is cleared to its observed return; the last
-phase installs or emits the capture and erases administrative storage.
-No deadline or source running time is part of this transition table. -/
-private def emCallTM (M : FinTM Bool) (emit : Bool) : FinTM Bool where
+/-- **The clean call**. From the entry seam holding an argument word on tape `0`, it runs `M` on
+that argument through tracked banks with `M`'s output captured, clears every bank to its observed
+extent, and then either installs the result in place of the argument (`emit = false`) or forwards it
+to the physical output and keeps the argument (`emit = true`), erases its administrative storage,
+and enters its exit state. -/
+def callTM (M : FinTM Bool) (emit : Bool) : FinTM Bool where
   k := (emCallSource M).k
   State := emCallState M
   tm := {
@@ -3914,6 +4138,20 @@ private def emCallTM (M : FinTM Bool) (emit : Bool) : FinTM Bool where
       | .inr (.inr q) => ((embedEmitTM (emCallPairEmbedding M) (emCallFinishTM emit).tm).tr
           q inp work).mapState
           (fun s => .inr (.inr s)) }
+
+/-- **The clean call's entry state**. The start state of the clean call. -/
+def callEntry (M : FinTM Bool) (emit : Bool) : (callTM M emit).State := (callTM M emit).tm.q₀
+
+/-- **The clean call's exit state**. The absorbing exit anchor of the finishing phase; it is a
+different summand of the state type from `callEntry`. -/
+def callExit (M : FinTM Bool) (emit : Bool) : (callTM M emit).State := .inr (.inr 5)
+
+/-- **The clean call has a tape**. The clean call's tape count is positive, so its argument seam
+lives on a genuine tape.
+
+**Proof sketch.** The layout's tape count is a successor; `Nat.zero_lt_succ`. -/
+theorem callTM_k_pos (M : FinTM Bool) (emit : Bool) : 0 < (callTM M emit).k :=
+  Nat.zero_lt_succ _
 
 /-- Canonical tape layout for the call: argument, data bank, visited bank,
 origin bank, capture. The same layout is used for contents and head positions. -/
@@ -4022,7 +4260,7 @@ private lemma emCall_pair_triple (M : FinTM Bool) (i : Fin M.k) (r : Fin 3) :
 at their known right boundaries while all three source banks are normalized. -/
 private def emCallFrame (M : FinTM Bool) (emit : Bool) (x arg cap : List Bool)
     (q : emCallState M) (data marks origin : Fin M.k → ℤ → Option Bool)
-    (heads : Fin M.k → ℤ) : Cfg (emCallTM M emit).k Bool (emCallTM M emit).State x :=
+    (heads : Fin M.k → ℤ) : Cfg (callTM M emit).k Bool (callTM M emit).State x :=
   ⟨some q, 1, emCallLayout M (bufferTape arg) (bufferTape cap) data marks origin,
     emCallLayout M arg.length cap.length heads heads heads, []⟩
 
@@ -4030,7 +4268,7 @@ private def emCallFrame (M : FinTM Bool) (emit : Bool) (x arg cap : List Bool)
 the source's exact halted trace. The native time is analysis data only. -/
 private def emCallBankFrame (M : FinTM Bool) (emit : Bool) (x arg cap : List Bool)
     (T j : ℕ) (q : emCallState M) :
-    Cfg (emCallTM M emit).k Bool (emCallTM M emit).State x :=
+    Cfg (callTM M emit).k Bool (callTM M emit).State x :=
   emCallFrame M emit x arg cap q
     (fun i => if i.val < j then fun _ => none else
       (M.tm.runFrom (M.tm.initCfg arg) T).workTapes i)
@@ -4226,7 +4464,7 @@ silent transition advances the finite bank index. -/
 private lemma emCall_bank_step (M : FinTM Bool) (emit : Bool)
     (x arg cap : List Bool) (T : ℕ) (i : Fin M.k) :
     ∃ t ≤ 6 * T + 8,
-      (emCallTM M emit).tm.runFrom
+      (callTM M emit).tm.runFrom
         (emCallBankFrame M emit x arg cap T i.val (.inr (.inl (i.castSucc, 0)))) t =
         emCallBankFrame M emit x arg cap T (i.val + 1) (.inr (.inl (i.succ, 0))) := by
   obtain ⟨t, _, ht, hfirst, hr⟩ := emCall_clear_first M arg x 1 T i
@@ -4235,11 +4473,11 @@ private lemma emCall_bank_step (M : FinTM Bool) (emit : Bool)
     ((M.tm.runFrom (M.tm.initCfg arg) T).workTapePos i)
   let frame := emCallBankFrame M emit x arg cap T i.val (.inr (.inl (i.castSucc, 0)))
   have hrun := MultiTapeTM.runFrom_mapState_of_agreeOn (embedEmitTM (emCallTripleEmbedding M i) emCallClearTM.tm)
-    (emCallTM M emit).tm
+    (callTM M emit).tm
     ⟨fun q => .inr (.inl (i.castSucc, q)), by
       intro a b h
       exact congrArg Prod.snd (Sum.inl.inj (Sum.inr.inj h))⟩ (fun q : Fin 4 => q ≠ 3)
-    (by intro q hq inp work; simp [emCallTM, i.isLt, hq]; rfl)
+    (by intro q hq inp work; simp [callTM, i.isLt, hq]; rfl)
     (embedEmitCfg (emCallTripleEmbedding M i) frame.workTapes frame.workTapePos [] c) t
     (by
       intro j hj q hs hq
@@ -4248,13 +4486,13 @@ private lemma emCall_bank_step (M : FinTM Bool) (emit : Bool)
       exact hfirst j hj hs)
   rw [embedEmitTM_runFrom] at hrun
   dsimp only [c, frame] at hrun
-  change (emCallTM M emit).tm.runFrom (emCallEmbeddedCfg (emCallTripleEmbedding M i)
+  change (callTM M emit).tm.runFrom (emCallEmbeddedCfg (emCallTripleEmbedding M i)
     (fun q => .inr (.inl (i.castSucc, q))) _ _ _) t =
     emCallEmbeddedCfg (emCallTripleEmbedding M i) (fun q => .inr (.inl (i.castSucc, q))) _ _ _ at hrun
   erw [emCall_bank_initial M emit x arg cap T i, hr, emCall_bank_final M emit x arg cap T i] at hrun
   refine ⟨t + 1, by omega, ?_⟩
   rw [MultiTapeTM.runFrom_succ_eq_step', hrun]
-  simp only [MultiTapeTM.step, emCallBankFrame, emCallFrame, emCallTM,
+  simp only [MultiTapeTM.step, emCallBankFrame, emCallFrame, callTM,
     Fin.coe_castSucc, i.isLt, ↓reduceDIte, ↓reduceIte]
   rw [controlAction_apply, moveInputPos_zero]
   rfl
@@ -4267,7 +4505,7 @@ following cleaner's entry. Zero source tapes gives the reflexive empty sequence.
 private lemma emCall_banks_run (M : FinTM Bool) (emit : Bool)
     (x arg cap : List Bool) (T : ℕ) : ∀ j (hj : j ≤ M.k),
     ∃ t ≤ j * (6 * T + 8),
-      (emCallTM M emit).tm.runFrom
+      (callTM M emit).tm.runFrom
         (emCallBankFrame M emit x arg cap T 0 (.inr (.inl (0, 0)))) t =
         emCallBankFrame M emit x arg cap T j (.inr (.inl (⟨j, by omega⟩, 0))) := by
   intro j
@@ -4289,7 +4527,7 @@ private lemma emCall_prepare_initial (M : FinTM Bool) (emit : Bool) (x arg : Lis
     emCallEmbeddedCfg (Function.Embedding.refl _) (Sum.inl : (emCallSource M).State → emCallState M)
       (fun _ _ => none) (fun _ => 0)
       (emCallEvalCfg (w := x) R (R.tm.initCfg arg) true 1) =
-      Cfg.ofWords (emCallTM M emit).tm.q₀ (stateWord (emCallTM M emit).k arg) := by
+      Cfg.ofWords (callTM M emit).tm.q₀ (stateWord (callTM M emit).k arg) := by
   dsimp only
   rw [emCall_eval_initial]
   refine Cfg.ext rfl rfl ?_ ?_ rfl
@@ -4339,17 +4577,17 @@ The full endpoint frame then takes one silent dispatch to bank zero. -/
 private lemma emCall_prepare_run (M : FinTM Bool) (emit : Bool)
     (x arg cap : List Bool) (T : ℕ) (hM : M.ComputesInTime arg cap T) :
     ∃ t ≤ 2 * T + arg.length + 4,
-      (emCallTM M emit).tm.runFrom
-        (Cfg.ofWords (emCallTM M emit).tm.q₀ (stateWord (emCallTM M emit).k arg)) t =
+      (callTM M emit).tm.runFrom
+        (Cfg.ofWords (callTM M emit).tm.q₀ (stateWord (callTM M emit).k arg)) t =
         emCallBankFrame M emit x arg cap T 0 (.inr (.inl (0, 0))) := by
   obtain ⟨t, _, ht, hfirst, hr⟩ := emCall_prepared_eval_first M x arg cap T hM
   let R := emCallRightTM (emCallTrackTM M)
   let c := emCallEvalCfg (w := x) R (R.tm.initCfg arg) true 1
   have he := MultiTapeTM.runFrom_mapState_of_agreeOn (embedEmitTM (Function.Embedding.refl _) (emCallSource M).tm)
-    (emCallTM M emit).tm
+    (callTM M emit).tm
     ⟨(Sum.inl : (emCallSource M).State → emCallState M), Sum.inl_injective⟩
     (fun q => q ≠ .inr ())
-    (by intro q hq inp work; simp [emCallTM, hq])
+    (by intro q hq inp work; simp [callTM, hq])
     (embedEmitCfg (Function.Embedding.refl _) (fun _ _ => none) (fun _ => 0) [] c) t
     (by
       intro j hj q hs hq
@@ -4358,13 +4596,13 @@ private lemma emCall_prepare_run (M : FinTM Bool) (emit : Bool)
       exact hfirst j hj hs)
   rw [embedEmitTM_runFrom] at he
   dsimp only [c, R] at he
-  change (emCallTM M emit).tm.runFrom (emCallEmbeddedCfg (Function.Embedding.refl _)
+  change (callTM M emit).tm.runFrom (emCallEmbeddedCfg (Function.Embedding.refl _)
     Sum.inl _ _ _) t = emCallEmbeddedCfg (Function.Embedding.refl _) Sum.inl _ _ _ at he
   erw [emCall_prepare_initial M emit x arg, hr,
     emCall_prepare_final M emit x arg cap T ((computesInTime_iff _ _ _ _).mp hM).2] at he
   refine ⟨t + 1, by omega, ?_⟩
   rw [MultiTapeTM.runFrom_succ_eq_step', he]
-  simp only [MultiTapeTM.step, emCallBankFrame, emCallFrame, emCallTM, ↓reduceIte]
+  simp only [MultiTapeTM.step, emCallBankFrame, emCallFrame, callTM, ↓reduceIte]
   rw [controlAction_apply, moveInputPos_zero]
 
 /-- Once all source banks are clean, the relocated finalizer's entry is the
@@ -4429,7 +4667,7 @@ private lemma emCall_finish_final (M : FinTM Bool) (emit : Bool) (x arg cap : Li
       (emCallFinishCfg emit x 1 5 (bufferTape (if emit then arg else cap))
         (fun _ => none) 0 0 (if emit then cap else [])) =
       { Cfg.ofWords (input := x) (.inr (.inr (5 : Fin 6)) : emCallState M)
-          (stateWord (emCallTM M emit).k (if emit then arg else cap))
+          (stateWord (callTM M emit).k (if emit then arg else cap))
         with output := if emit then cap else [] } := by
   refine Cfg.ext rfl rfl ?_ ?_ rfl
   · funext j
@@ -4482,27 +4720,27 @@ private lemma emCall_finish_final (M : FinTM Bool) (emit : Bool) (x arg cap : Li
 and restores every scratch tape and head. -/
 private lemma emCall_finalize_run (M : FinTM Bool) (emit : Bool)
     (x arg cap : List Bool) (T : ℕ) :
-    (emCallTM M emit).tm.runFrom
+    (callTM M emit).tm.runFrom
       (emCallBankFrame M emit x arg cap T M.k (.inr (.inl (Fin.last M.k, 0))))
       (arg.length + 3 * cap.length + 6) =
       { Cfg.ofWords (input := x) (.inr (.inr (5 : Fin 6)) : emCallState M)
-          (stateWord (emCallTM M emit).k (if emit then arg else cap))
+          (stateWord (callTM M emit).k (if emit then arg else cap))
         with output := if emit then cap else [] } := by
-  have hs : (emCallTM M emit).tm.step
+  have hs : (callTM M emit).tm.step
       (emCallBankFrame M emit x arg cap T M.k (.inr (.inl (Fin.last M.k, 0)))) =
       emCallBankFrame M emit x arg cap T M.k (.inr (.inr 0)) := by
-    simp only [MultiTapeTM.step, emCallBankFrame, emCallFrame, emCallTM,
+    simp only [MultiTapeTM.step, emCallBankFrame, emCallFrame, callTM,
       Fin.val_last, lt_self_iff_false, ↓reduceDIte]
     rw [controlAction_apply, moveInputPos_zero]
   have he := MultiTapeTM.runFrom_mapState_of_agreeOn (embedEmitTM (emCallPairEmbedding M) (emCallFinishTM emit).tm)
-    (emCallTM M emit).tm
+    (callTM M emit).tm
     ⟨fun q => .inr (.inr q), by intro a b h; exact Sum.inr.inj (Sum.inr.inj h)⟩
     (fun _ => True) (by intros; rfl)
     (embedEmitCfg (emCallPairEmbedding M) (fun _ _ => none) (fun _ => 0) []
       (emCallFinishCfg emit x 1 0 (bufferTape arg) (bufferTape cap) arg.length cap.length []))
     (arg.length + 3 * cap.length + 5) (by intros; trivial)
   rw [embedEmitTM_runFrom] at he
-  change (emCallTM M emit).tm.runFrom (emCallEmbeddedCfg (emCallPairEmbedding M)
+  change (callTM M emit).tm.runFrom (emCallEmbeddedCfg (emCallPairEmbedding M)
     (fun q => .inr (.inr q)) _ _ _) _ =
     emCallEmbeddedCfg (emCallPairEmbedding M) (fun q => .inr (.inr q)) _ _ _ at he
   erw [emCall_finish_initial M emit x arg cap T, emCall_finish_run, emCall_finish_final] at he
@@ -4519,10 +4757,10 @@ word length; no native transition reads a numerical deadline. -/
 private lemma emCall_complete (M : FinTM Bool) (emit : Bool)
     (x arg cap : List Bool) (T : ℕ) (hM : M.ComputesInTime arg cap T) :
     ∃ t ≤ (24 + 13 * M.k) * (T + arg.length + cap.length + 1),
-      (emCallTM M emit).tm.runFrom
-        (Cfg.ofWords (input := x) (emCallTM M emit).tm.q₀ (stateWord (emCallTM M emit).k arg)) t =
+      (callTM M emit).tm.runFrom
+        (Cfg.ofWords (input := x) (callTM M emit).tm.q₀ (stateWord (callTM M emit).k arg)) t =
         { Cfg.ofWords (input := x) (.inr (.inr (5 : Fin 6)) : emCallState M)
-            (stateWord (emCallTM M emit).k (if emit then arg else cap))
+            (stateWord (callTM M emit).k (if emit then arg else cap))
           with output := if emit then cap else [] } := by
   obtain ⟨a, ha, he⟩ := emCall_prepare_run M emit x arg cap T hM
   obtain ⟨b, hb, hf⟩ := emCall_banks_run M emit x arg cap T M.k (le_refl _)
@@ -4539,15 +4777,15 @@ private lemma emCall_complete (M : FinTM Bool) (emit : Bool)
       a + b + (arg.length + 3 * cap.length + 6) ≤ 24 * B + (13 * M.k) * B := by omega
       _ = (24 + 13 * M.k) * B := (Nat.add_mul _ _ _).symm
   · rw [MultiTapeTM.runFrom_add,
-      (emCallTM M emit).tm.runFrom_add _ a b, he, hf]
+      (callTM M emit).tm.runFrom_add _ a b, he, hf]
     exact emCall_finalize_run M emit x arg cap T
 
 /-- The fresh exit control is an absorbing silent state, on every tape
 configuration, so cutting at first exit preserves the entire endpoint. -/
 private lemma emCall_exit_fixed (M : FinTM Bool) (emit : Bool) (x : List Bool)
-    (z : Cfg (emCallTM M emit).k Bool (emCallTM M emit).State x)
+    (z : Cfg (callTM M emit).k Bool (callTM M emit).State x)
     (hz : z.state = some (.inr (.inr (5 : Fin 6)))) :
-    (emCallTM M emit).tm.step z = z := by
+    (callTM M emit).tm.step z = z := by
   let c : Cfg 2 Bool (Fin 6) x :=
     ⟨some 5, z.inputPos, (fun i => z.workTapes (emCallPairEmbedding M i)),
       (fun i => z.workTapePos (emCallPairEmbedding M i)), z.output⟩
@@ -4572,13 +4810,13 @@ private lemma emCall_exit_fixed (M : FinTM Bool) (emit : Bool) (x : List Bool)
     change (controlAction 0 (some (5 : Fin 6))).apply c = c
     rw [controlAction_apply, moveInputPos_zero]
   have he := MultiTapeTM.runFrom_mapState_of_agreeOn (embedEmitTM (emCallPairEmbedding M) (emCallFinishTM emit).tm)
-    (emCallTM M emit).tm
+    (callTM M emit).tm
     ⟨fun q => .inr (.inr q), by intro a b h; exact Sum.inr.inj (Sum.inr.inj h)⟩
     (fun _ => True) (by intros; rfl)
     (embedEmitCfg (emCallPairEmbedding M) z.workTapes z.workTapePos [] c) 1
     (by intros; trivial)
   rw [embedEmitTM_runFrom, hs] at he
-  change (emCallTM M emit).tm.runFrom (emCallEmbeddedCfg (emCallPairEmbedding M)
+  change (callTM M emit).tm.runFrom (emCallEmbeddedCfg (emCallPairEmbedding M)
     (fun q => .inr (.inr q)) z.workTapes z.workTapePos c) 1 =
     emCallEmbeddedCfg (emCallPairEmbedding M) (fun q => .inr (.inr q))
       z.workTapes z.workTapePos c at he
@@ -4593,16 +4831,16 @@ private lemma emCall_first (M : FinTM Bool) (emit : Bool)
     (x arg cap : List Bool) (T : ℕ) (hM : M.ComputesInTime arg cap T) :
     ∃ t ≤ (24 + 13 * M.k) * (T + arg.length + cap.length + 1),
       0 < t ∧
-      (∀ j < t, ((emCallTM M emit).tm.runFrom
-        (Cfg.ofWords (input := x) (emCallTM M emit).tm.q₀ (stateWord (emCallTM M emit).k arg)) j).state
+      (∀ j < t, ((callTM M emit).tm.runFrom
+        (Cfg.ofWords (input := x) (callTM M emit).tm.q₀ (stateWord (callTM M emit).k arg)) j).state
           ≠ some (.inr (.inr (5 : Fin 6)))) ∧
-      (emCallTM M emit).tm.runFrom
-        (Cfg.ofWords (input := x) (emCallTM M emit).tm.q₀ (stateWord (emCallTM M emit).k arg)) t =
+      (callTM M emit).tm.runFrom
+        (Cfg.ofWords (input := x) (callTM M emit).tm.q₀ (stateWord (callTM M emit).k arg)) t =
         { Cfg.ofWords (input := x) (.inr (.inr (5 : Fin 6)) : emCallState M)
-            (stateWord (emCallTM M emit).k (if emit then arg else cap))
+            (stateWord (callTM M emit).k (if emit then arg else cap))
           with output := if emit then cap else [] } := by
   obtain ⟨b, hb, he⟩ := emCall_complete M emit x arg cap T hM
-  obtain ⟨t, ht, hfirst, hr⟩ := emCall_first_entry (emCallTM M emit).tm
+  obtain ⟨t, ht, hfirst, hr⟩ := emCall_first_entry (callTM M emit).tm
     (fun q => q = (.inr (.inr (5 : Fin 6)) : emCallState M)) _ _ b
     (by rintro z ⟨q, hz, rfl⟩; exact emCall_exit_fixed M emit x z hz)
     ⟨_, rfl, rfl⟩ he
@@ -4610,7 +4848,7 @@ private lemma emCall_first (M : FinTM Bool) (emit : Bool)
     by_contra hn
     have ht0 : t = 0 := by omega
     have hstate := congrArg Cfg.state hr
-    simp [ht0, Cfg.ofWords, emCallTM] at hstate
+    simp [ht0, Cfg.ofWords, callTM] at hstate
   refine ⟨t, ht.trans hb, hpos, ?_, hr⟩
   intro j hj hs
   exact hfirst j hj ⟨_, hs, rfl⟩
@@ -4622,6 +4860,13 @@ transition of the existing loop skeleton. Body actions go through
 `Turing.emitAction`, with a stationary unused payload tape. -/
 private abbrev emLoopHost (body F : FinTM Bool) (anchor : body.State) (findMode : Bool) :
     FinTM Bool := loopHostM body F anchor true findMode
+
+/-- **The emitting loop**. The forwarding instance of the shared loop controller in find mode: the
+same fuel capture, counter and seam discipline as `loopHostTM`, with each body round's emissions
+forwarded to the physical output instead of captured, and no exhaustion verdict, so that the machine
+outputs the concatenation of the rounds' chunks. -/
+abbrev emitLoopTM (body F : FinTM Bool) (anchor : body.State) : FinTM Bool :=
+  emLoopHost body F anchor true
 
 /-- A forwarding round appends its exact chunk, then performs the silent
 fixed-width debit. Positive fuel reaches the next clean seam; underflow
@@ -4731,6 +4976,44 @@ private lemma emLoop_sum {k : ℕ} {S : Type} {x : List Bool}
       · rw [MultiTapeTM.runFrom_add, hp, ho]
         rw [List.range_succ_eq_map (n := N + 1), List.flatMap_cons, List.flatMap_map]
         simp [List.append_assoc, Function.comp_def]
+
+/-- **The emitting loop's time**. Under the hypotheses of `exists_emitLoopTM` (fuel, invariant,
+startup, and rounds that advance to the stepped seam in positive time at most `T |x|` while emitting
+exactly `emitF x s`), the emitting loop outputs the concatenation of
+`emitF x ((stepF x)^[i] (s0 x))` over `i = 0, …, R |x|` within `10·(T n + 1)·(R n + 2)` steps.
+
+**Proof sketch.** The body of today's `exists_emitLoopTM`, which fixes `c = 10`: the fuel
+preparation and the body startup take at most `10·(T |x| + 1)` steps (`loopHost_prepare`,
+`loopHost_start`); each round, its anchor stop and its debit take at most `10·(T |x| + 1)`
+(`emLoopHost_round`); the prefix-summation lemma `emLoop_sum` concatenates the `R |x| + 1` chunks.
+-/
+theorem emitLoopTM_computes (body F : FinTM Bool) (anchor : body.State)
+    (Inv : List Bool → List Bool → Prop)
+    (stepF emitF : List Bool → List Bool → List Bool)
+    (s0 : List Bool → List Bool) (R T : ℕ → ℕ)
+    (hF : F.ComputesFunInTime (fun x => Nat.bits (R x.length)) T)
+    (hInv0 : ∀ x : List Bool, Inv x (s0 x))
+    (hInvStep : ∀ (x s : List Bool), Inv x s → Inv x (stepF x s))
+    (hstart : ∀ x : List Bool, ∃ t ≤ T x.length,
+      (∀ t' < t,
+        (body.tm.runFrom (body.tm.initCfg x) t').state ≠ some anchor) ∧
+      body.tm.runFrom (body.tm.initCfg x) t =
+        Cfg.ofWords anchor (stateWord body.k (s0 x)))
+    (hround : ∀ (x s : List Bool), Inv x s →
+      ∃ t, 0 < t ∧ t ≤ T x.length ∧
+        (∀ t', 0 < t' → t' < t →
+          (body.tm.runFrom
+            (Cfg.ofWords (input := x) anchor (stateWord body.k s)) t').state
+              ≠ some anchor) ∧
+        body.tm.runFrom
+          (Cfg.ofWords (input := x) anchor (stateWord body.k s)) t =
+            { Cfg.ofWords (input := x) anchor (stateWord body.k (stepF x s))
+                with output := emitF x s }) :
+    (emitLoopTM body F anchor).ComputesFunInTime
+      (fun x => (List.range (R x.length + 1)).flatMap
+        (fun i => emitF x ((stepF x)^[i] (s0 x))))
+      (fun n => 10 * (T n + 1) * (R n + 2)) := by
+  sorry
 
 /-- **E1, the emitting loop** (design §11; customers:
 the Cook-Levin clause-group emitter (4A), 3B-cont's streaming reduction
@@ -4861,6 +5144,30 @@ theorem exists_emitLoopTM (body F : FinTM Bool) (anchor : body.State)
       simp only [Nat.mul_add, Nat.mul_one, Nat.mul_two]
       omega
 
+/-- **The clean call's run**. If `M` halts on `arg` with output `cap` within `T` steps, then from
+the entry seam holding `arg`, over any native input `x`, the clean call first enters its exit state
+at a positive time `t ≤ (24 + 13·k_M)·(T + |arg| + |cap| + 1)`, and does not visit it at any earlier
+time, including time `0`; at `t` it is at the exit seam holding `cap` with empty output (install
+mode), or holding `arg` with output `cap` (emit mode).
+
+**Proof sketch.** `emCall_first` itself: `callEntry` and `callExit` unfold to the states that it
+names. Its proof is the completion lemma `emCall_complete` (evaluation through tracked banks,
+bank clearing, install or replay, capture erasure and rewinds, within the ledger's coefficient
+`6 + 13·k_M + 3·6`) followed by the first-visit cut at the fresh absorbing exit. -/
+theorem callTM_run (M : FinTM Bool) (emit : Bool)
+    (x arg cap : List Bool) (T : ℕ) (hM : M.ComputesInTime arg cap T) :
+    ∃ t ≤ (24 + 13 * M.k) * (T + arg.length + cap.length + 1),
+      0 < t ∧
+      (∀ j < t, ((callTM M emit).tm.runFrom
+        (Cfg.ofWords (input := x) (callEntry M emit) (stateWord (callTM M emit).k arg)) j).state
+          ≠ some (callExit M emit)) ∧
+      (callTM M emit).tm.runFrom
+        (Cfg.ofWords (input := x) (callEntry M emit) (stateWord (callTM M emit).k arg)) t =
+        { Cfg.ofWords (input := x) (callExit M emit)
+            (stateWord (callTM M emit).k (if emit then arg else cap))
+          with output := if emit then cap else [] } :=
+  emCall_first M emit x arg cap T hM
+
 /-- **E5a, the install-mode clean call** (spec, added at the emitter-infra
 round-1 repair — finding 1's prepared-input/clean-return bridge;
 customers: loop and emit-loop bodies calling a catalog transducer on
@@ -4901,7 +5208,7 @@ noncomputable, `f`. The positive tape count makes the seam equality
 yield `bufferTape (f arg)` at the genuine index zero, so the installed
 result is actually extractable by the caller.
 
-**Batch L completion.** `emCallTM M false` reserves a genuine argument tape,
+**Batch L completion.** `callTM M false` reserves a genuine argument tape,
 executes the prepared input through tracked banks, and sequences every
 triple cleaner after the observed evaluator return. Since scratch starts
 blank, clearing the visited intervals restores the complete clean seam.
@@ -4922,7 +5229,7 @@ theorem exists_installCallTM (M : FinTM Bool) (f : List Bool → List Bool)
           C.tm.runFrom
             (Cfg.ofWords (input := x) entry (stateWord C.k arg)) t =
               Cfg.ofWords exit (stateWord C.k (f arg)) := by
-  refine ⟨emCallTM M false, (emCallTM M false).tm.q₀, .inr (.inr 5),
+  refine ⟨callTM M false, (callTM M false).tm.q₀, .inr (.inr 5),
     24 + 13 * M.k, ?_, ?_⟩
   · exact Nat.zero_lt_succ _
   · intro x arg
@@ -4949,7 +5256,7 @@ physical output prevents the zero-tape degeneracy for nonconstant `f`,
 but the preserved tape-resident argument is a promise of this
 interface too, and it needs a genuine tape to live on.
 
-**Batch L completion.** `emCallTM M true` uses the same tracked evaluation
+**Batch L completion.** `callTM M true` uses the same tracked evaluation
 and observed-completion cleanup as install mode. Its finishing pass preserves
 the argument, replays the captured result onto physical output, erases the
 capture, and restores every head. `emCall_complete` proves the full endpoint
@@ -4969,7 +5276,7 @@ theorem exists_emitCallTM (M : FinTM Bool) (f : List Bool → List Bool)
             (Cfg.ofWords (input := x) entry (stateWord C.k arg)) t =
               { Cfg.ofWords (input := x) exit (stateWord C.k arg)
                   with output := f arg } := by
-  refine ⟨emCallTM M true, (emCallTM M true).tm.q₀, .inr (.inr 5),
+  refine ⟨callTM M true, (callTM M true).tm.q₀, .inr (.inr 5),
     24 + 13 * M.k, ?_, ?_⟩
   · exact Nat.zero_lt_succ _
   · intro x arg
