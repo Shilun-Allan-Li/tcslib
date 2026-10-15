@@ -1177,6 +1177,14 @@ The route decisions of 2026-10-12 (design §16b) add three work items, numbered 
   - Minors 3 and 4 are fixed, in prose only. Minor 1 is annotated in the design note's §5(e);
     minors 1 and 2 are carried to G5's statement phase.
   - Replay: 87 modules from #104's snapshot.
+  - **Landed (2026-10-15, PR #106; replay 87 of 87; snapshot `oleans-lg24` for the tip `107f1687`).**
+    The only sorry counts that moved: `Build/Catalog` 0 to 2 and `Build/Zone` 2 to 1, plus the new
+    `ZoneTape` (0) and `ZoneRebalance` (2).
+  - **Next:**
+    - the G2 fill: `copyMapTM_run_ofCfg`, `transferMapTM_run_ofCfg` and the pure
+      `zoneCascadeRight_home`;
+    - G4's host first (obligation 3): identify the public host for the two-tape scratch and
+      ruler layout, or gate a missing one, before G4's fill brief.
   **Two-tape universal (U2) designed (2026-10-14; `audits/evidence/u2/U2-design.md`, probes).**
   - **The design:** one `k`-generic construction on H2's step block. It has a new public host
     H2-F (the emitting round loop, in `Build/StepBlockLoop`), U2-S (the startup), U2-U
