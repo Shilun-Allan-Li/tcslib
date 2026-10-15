@@ -1126,6 +1126,21 @@ The route decisions of 2026-10-12 (design §16b) add three work items, numbered 
       projection `rfl`s) go to the end-of-chain PR.
     - **Next:** the landing PR after MIG-1 S, with a fresh `run.sh` at that tip and an 11-module
       replay.
+  - **U2 statement gate dispatched (2026-10-14; folder 26; `audits/u2-statements-pack.md`).**
+    - **The unit:** a new `TuringMachine/UniversalK.lean` with the scheme interface
+      `EffectiveCodeK k`, the two received schemes as instances, and U2-S, U2-U and U2-E. H2-F is
+      `StepBlock.exists_forwardLoopTM` in `Build/StepBlockLoop`, renamed from `exists_emitLoopTM`,
+      which already names `Turing.FinTM.exists_emitLoopTM`. B6's `exists_selfStartupTM` and
+      `exists_selfUniversal` are re-proved in place as the `k = 1` corollaries, signatures
+      byte-identical (decision (a)). One promotion: `Code2TM.serialize_eq_serializeK`.
+    - **Status:** 4 contracts sorried, the rest proved; 10 checks pass against `oleans-ltip3`;
+      replay 10 modules. The consumer probe takes G5 as a hypothesis and reaches the `f log f` and
+      book-form hierarchy through Diagonal Part 1, with `sorryAx` only from U2-U.
+    - **Five questions to the auditor**, with recommendations: H2-F's home, two disclosed screen
+      pairs, the field name `machine`, `exists_code2TM`'s home, and U2-E's fill timing. The user
+      decides after the findings.
+    - **`Turing.universal` at `k = 1`** fits U2-E's statement verbatim. Its re-derivation (U-1)
+      waits for U2-E's fill, so a sorry-free theorem does not come to depend on a sorried one.
   - Forwarded to G5's statement phase: `two_work_tapes_run` per run, with the converse; its
     function-level form; `Nat.log 2` in the statements; a per-run export of the alphabet
     reduction.
