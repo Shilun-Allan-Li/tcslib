@@ -1222,8 +1222,10 @@ The route decisions of 2026-10-12 (design §16b) add three work items, numbered 
       `branch`; the mapped column moves; the one-tape seeks; `scanTM`). One leaf is missing: a
       two-tape lockstep walk that stays where it ends, the ruler for mirror crossings and slot
       offsets. Its two named customers are the G4 rows. The seeks and `scanTM` also lack Contract
-      wrappers. Decision for the user: a small public statement unit (recommended), or private
-      leaves in the fill.
+      wrappers. **User (2026-10-15): public, gated first.** Next: a small statement unit (the
+      walk row in both directions in `Build/Catalog` beside R8.3, its Contract, and Contract
+      wrappers for the seeks and `scanTM` in `Contract/Catalog`), with its own statement gate;
+      then G4's fill brief cites them.
   **Two-tape universal (U2) designed (2026-10-14; `audits/evidence/u2/U2-design.md`, probes).**
   - **The design:** one `k`-generic construction on H2's step block. It has a new public host
     H2-F (the emitting round loop, in `Build/StepBlockLoop`), U2-S (the startup), U2-U
