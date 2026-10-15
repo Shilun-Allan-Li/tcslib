@@ -20,10 +20,10 @@ at `timeout` when the countdown is exhausted first. It is the clock of the windo
 `Turing.counterLoopTMVia`, which restarts its body at a fixed anchor every round, it counts
 physical steps, so the body's state survives from step to step.
 
-**Status: statement gate passed 2026-10-14** (round 1, 0/0/5;
-`audits/b6-hosts-statements-findings.md`). The layout definitions are real; the contract
-`Turing.exists_stepClockTMVia` is sorried with its proof sketch, and its `Bool` instance is
-proved from it.
+**Status update (B6-F1 fill): proved.** The statement gate passed 2026-10-14 (round 1,
+0/0/5; `audits/b6-hosts-statements-findings.md`). The joint step-clock contract and its `Bool`
+instance are proved without admissions, through the prescribed fused controller, public
+transports and segment composition.
 
 ## Design
 
@@ -48,7 +48,7 @@ proved from it.
 
 ## Main results
 
-* `Turing.exists_stepClockTMVia` — the step clock over any alphabet (sorried).
+* `Turing.exists_stepClockTMVia` — the step clock over any alphabet (proved; B6-F1 fill).
 * `Turing.exists_stepClockTM` — its `Bool` instance, in C1's draft form (proved from it).
 
 ## References
@@ -563,6 +563,261 @@ private theorem sc_body_step {k : ℕ} {Γ S : Type} [DecidableEq Γ] (e : Bool 
   · have h := congrArg Cfg.output hE
     exact h
 
+/-- The two exit families, as the forbidden set of a clock segment. -/
+private def sc_exits {S : Type} : Set (Option (sc_State S)) :=
+  {q | ∃ r, q = some (.finish r) ∨ q = some (.timeout r)}
+
+/-- The controller after a body step: resume a live body, or finish a halted body. -/
+private def sc_resume {S : Type} : Option S → sc_State S
+  | some s => .dec s .run
+  | none => .finish none
+
+/-- Observations of a finite run give a segment without unfolding the segment definition.
+
+**Proof sketch.** Induct on its length, using only the public empty-segment and prepend
+operations. Shift the observations by one step for the induction hypothesis. This is an
+adapter to the existing segment interface, not a new span structure. -/
+private theorem sc_observedSegment {k : ℕ} {Γ Q : Type} {x : List Γ}
+    (N : MultiTapeTM k Γ Q) (F : Set (Option Q)) (P : (Fin k → ℤ) → Prop)
+    (a : Cfg k Γ Q x) (t : ℕ)
+    (cut : ∀ u < t, (N.runFrom a u).state ∉ F)
+    (heads : ∀ u ≤ t, P (N.runFrom a u).workTapePos) :
+    Segment N F P a (N.runFrom a t) t := by
+  induction t generalizing a with
+  | zero => exact Segment.zero (heads 0 le_rfl)
+  | succ t ih =>
+    have tail := ih (N.step a) (by
+      intro u hu
+      rw [← MultiTapeTM.runFrom_succ_eq_step]
+      exact cut (u + 1) (by omega)) (by
+      intro u hu
+      rw [← MultiTapeTM.runFrom_succ_eq_step]
+      exact heads (u + 1) (by omega))
+    have joined := Segment.cons (M := N) rfl (cut 0 (by omega)) (heads 0 (by omega)) tail
+    simpa only [Nat.succ_eq_add_one, Nat.add_comm 1,
+      MultiTapeTM.runFrom_succ_eq_step] using joined
+
+/-- A segment ending in its forbidden set has no earlier exit, through the public interface.
+
+**Proof sketch.** An earlier exit would make the corresponding prefix another first-exit
+segment. The public uniqueness theorem equates its length with the full segment's length. -/
+private theorem sc_firstExit {k : ℕ} {Γ Q : Type} {x : List Γ}
+    {N : MultiTapeTM k Γ Q} {F : Set (Option Q)} {P : (Fin k → ℤ) → Prop}
+    {a b : Cfg k Γ Q x} {t : ℕ} (h : Segment N F P a b t) (last : b.state ∈ F) :
+    ∀ u < t, (N.runFrom a u).state ∉ F := by
+  intro u hu earlier
+  have equal := Segment.time_eq (h.take hu.le) earlier h last
+  omega
+
+/-- A clock debit is a segment avoiding both exit families before its end.
+
+**Proof sketch.** Instantiate the generic debit at the prescribed redirection. Its state-image
+clause says every working state is a decrement state; its cut excludes both done phases.
+Package these observations through the public segment constructors. -/
+private theorem sc_clockDebit {k : ℕ} {Γ S : Type} [DecidableEq Γ] (e : Bool ↪ Γ)
+    (M : MultiTapeTM k Γ S) (stopAt : S → Bool) {x : List Γ} (c : Cfg k Γ S x)
+    (s : S) (hs : stopAt s = false) (w : List Bool) (ct : ℤ → Option Γ) (cp : ℤ)
+    (hw : ∀ p : ℤ, -1 ≤ p → p ≤ (w.length : ℤ) → ct (cp + p) = FinTM.bufferTape (w.map e) p) :
+    let H := sc_clockTM e M stopAt
+    let a := clockCfg (some (sc_State.dec s .run)) c ct cp
+    let b := clockCfg (some (sc_decExit s (.done (decFixed w).isSome))) c
+      (wordPatch ct cp (((decFixed w).getD (List.replicate w.length true)).map e)) cp
+    let t := 2 * (w.takeWhile not).length + 2
+    H.runFrom a t = b ∧
+      Segment H sc_exits (fun p => p (Fin.last k) ∈ Finset.Icc (cp - 1)
+        (cp + (w.length : ℤ))) a b t ∧
+      ∀ u ≤ t,
+        H.runFrom a u = clockCfg (H.runFrom a u).state c
+            ((H.runFrom a u).workTapes (Fin.last k))
+            ((H.runFrom a u).workTapePos (Fin.last k)) ∧
+          (H.runFrom a u).workTapePos (Fin.last k) ∈
+            Finset.Icc (cp - 1) (cp + (w.length : ℤ)) := by
+  intro H a b t
+  obtain ⟨run, cut, frame, image⟩ := sc_debit e H
+    ⟨sc_decExit s, sc_decExit_injective s⟩ (sc_agree e M stopAt s hs) c w ct cp hw
+  change H.runFrom a t = b at run
+  have avoid : ∀ u < t, (H.runFrom a u).state ∉ sc_exits := by
+    intro u hu
+    obtain ⟨f, hf⟩ := image u hu.le
+    change (H.runFrom a u).state = f.map (sc_decExit s) at hf
+    rintro ⟨r, exit⟩
+    cases f with
+    | none => simp [hf] at exit
+    | some f =>
+      cases f with
+      | run => simp [hf, sc_decExit] at exit
+      | rewind b => simp [hf, sc_decExit] at exit
+      | done b => exact cut u hu b hf
+  have seg := sc_observedSegment H sc_exits
+    (fun p => p (Fin.last k) ∈ Finset.Icc (cp - 1) (cp + (w.length : ℤ))) a t
+    avoid (fun u hu => (frame u hu).2)
+  rw [run] at seg
+  exact ⟨run, seg, frame⟩
+
+/-- A body that has not stopped has a live state whose stop flag is false.
+**Proof sketch.** Inspect its optional state and then its Boolean stop flag. -/
+private theorem sc_live {k : ℕ} {Γ S : Type} {x : List Γ} (stopAt : S → Bool)
+    (c : Cfg k Γ S x) (h : ¬c.Stopped stopAt) :
+    ∃ s, c.state = some s ∧ stopAt s = false := by
+  cases state : c.state with
+  | none => exact False.elim (h (Or.inl state))
+  | some s =>
+    refine ⟨s, rfl, ?_⟩
+    cases flag : stopAt s with
+    | false => rfl
+    | true => exact False.elim (h (Or.inr ⟨s, state, flag⟩))
+
+/-- The first `n` physical body steps have the exact debit-plus-step cost and a full trajectory.
+
+**Proof sketch.** Induct on `n`. The next counter word is supplied by the public decrement
+bridge; same-width patches retain the original tape frame. Append the clock debit and the
+single body action as segments. During the debit the body is at time `n`; after the action it
+is at time `n + 1`. Keep this full-configuration observation separately from the segment's
+head relation, so the input position and output use the same body time. -/
+private theorem sc_rounds {k : ℕ} {Γ S : Type} [DecidableEq Γ] (e : Bool ↪ Γ)
+    (M : MultiTapeTM k Γ S) (stopAt : S → Bool) {x : List Γ} (c : Cfg k Γ S x) (q : S)
+    (hq : c.state = some q) (w : List Bool) (ct : ℤ → Option Γ) (cp : ℤ)
+    (hw : ∀ p : ℤ, -1 ≤ p → p ≤ (w.length : ℤ) → ct (cp + p) = FinTM.bufferTape (w.map e) p)
+    (n : ℕ) (budget : n ≤ Nat.ofDigits 2 (w.map Bool.toNat))
+    (before : ∀ v < n, ¬(M.runFrom c v).Stopped stopAt) :
+    let H := sc_clockTM e M stopAt
+    let a := clockCfg (some (sc_State.dec q .run)) c ct cp
+    H.runFrom a (counterOverhead w n + n) =
+        clockCfg (some (sc_resume (M.runFrom c n).state)) (M.runFrom c n)
+          (wordPatch ct cp ((counterWord w n).map e)) cp ∧
+      Segment H sc_exits
+        (fun p => p (Fin.last k) ∈ Finset.Icc (cp - 1) (cp + (w.length : ℤ))) a
+        (clockCfg (some (sc_resume (M.runFrom c n).state)) (M.runFrom c n)
+          (wordPatch ct cp ((counterWord w n).map e)) cp) (counterOverhead w n + n) ∧
+      ∀ u ≤ counterOverhead w n + n, ∃ v ≤ n, ∃ z tape head,
+        H.runFrom a u = clockCfg z (M.runFrom c v) tape head ∧
+          head ∈ Finset.Icc (cp - 1) (cp + (w.length : ℤ)) := by
+  intro H a
+  induction n with
+  | zero =>
+    have initial := sc_wordPatch_self ct cp (w.map e) (by simpa using hw)
+    rw [counterOverhead_zero, counterWord_zero]
+    simp only [Nat.zero_add, MultiTapeTM.runFrom_zero, hq, sc_resume, initial]
+    refine ⟨rfl, Segment.zero ?_, ?_⟩
+    · simp [a, clockCfg, Finset.mem_Icc]
+    · intro u hu
+      obtain rfl : u = 0 := by omega
+      exact ⟨0, le_rfl, some (.dec q .run), ct, cp, rfl, by simp [Finset.mem_Icc]⟩
+  | succ n ih =>
+    obtain ⟨reached, segment, trace⟩ := ih (by omega) (fun v hv => before v (by omega))
+    obtain ⟨s, state, flag⟩ := sc_live stopAt (M.runFrom c n) (before n (by omega))
+    simp only [state, sc_resume] at reached segment
+    have wordNext := counter_word_decrement w n (by omega)
+    have delimited := sc_wordPatch_frame ct cp (w.map e) ((counterWord w n).map e)
+      (by simp only [List.length_map, counterWord_length]) (by simpa using hw)
+    obtain ⟨debit, debitSegment, debitTrace⟩ := sc_clockDebit e M stopAt (M.runFrom c n) s flag
+      (counterWord w n) (wordPatch ct cp ((counterWord w n).map e)) cp (by simpa using delimited)
+    have overwrite := sc_wordPatch_twice ct cp ((counterWord w n).map e)
+      ((counterWord w (n + 1)).map e) (by simp only [List.length_map, counterWord_length])
+    simp only [wordNext, Option.isSome_some, Option.getD_some, sc_decExit, overwrite,
+      counterWord_length] at debit debitSegment
+    simp only [counterWord_length] at debitTrace
+    let middle := clockCfg (some (sc_State.body s)) (M.runFrom c n)
+      (wordPatch ct cp ((counterWord w (n + 1)).map e)) cp
+    have action : H.step middle =
+        clockCfg (some (sc_resume (M.runFrom c (n + 1)).state)) (M.runFrom c (n + 1))
+          (wordPatch ct cp ((counterWord w (n + 1)).map e)) cp := by
+      simpa only [MultiTapeTM.runFrom_succ_eq_step', sc_resume] using
+        sc_body_step e M stopAt (M.runFrom c n) s state
+          (wordPatch ct cp ((counterWord w (n + 1)).map e)) cp
+    have bodySegment := Segment.one (M := H) (F := sc_exits)
+      (P := fun p => p (Fin.last k) ∈ Finset.Icc (cp - 1) (cp + (w.length : ℤ)))
+      (a := middle) (by rintro ⟨r, h⟩; simp [middle, clockCfg] at h)
+      (by simp [middle, clockCfg, Finset.mem_Icc])
+      (by rw [action]; simp [clockCfg, Finset.mem_Icc])
+    rw [action] at bodySegment
+    have combined := segment.trans (debitSegment.trans bodySegment)
+    have time : counterOverhead w (n + 1) + (n + 1) = counterOverhead w n + n +
+        ((2 * ((counterWord w n).takeWhile not).length + 2) + 1) := by
+      rw [counterOverhead_succ]
+      omega
+    rw [time]
+    refine ⟨?_, combined, ?_⟩
+    · rw [MultiTapeTM.runFrom_add, reached, MultiTapeTM.runFrom_add, debit]
+      exact action
+    · intro u hu
+      by_cases old : u ≤ counterOverhead w n + n
+      · obtain ⟨v, hv, z, tape, head, seen, bound⟩ := trace u old
+        exact ⟨v, by omega, z, tape, head, seen, bound⟩
+      · have splitTime : u = counterOverhead w n + n + (u - (counterOverhead w n + n)) := by
+          omega
+        rw [splitTime, MultiTapeTM.runFrom_add, reached]
+        by_cases during : u - (counterOverhead w n + n) ≤
+            2 * ((counterWord w n).takeWhile not).length + 2
+        · obtain ⟨seen, bound⟩ := debitTrace _ during
+          exact ⟨n, by omega, _, _, _, seen, bound⟩
+        · have last : u - (counterOverhead w n + n) =
+              (2 * ((counterWord w n).takeWhile not).length + 2) + 1 := by omega
+          rw [last, MultiTapeTM.runFrom_add, debit]
+          change ∃ v ≤ n + 1, ∃ z tape head,
+            H.step middle = clockCfg z (M.runFrom c v) tape head ∧ _
+          rw [action]
+          exact ⟨n + 1, le_rfl, _, _, cp, rfl, by simp [Finset.mem_Icc]⟩
+
+/-- Package an exit segment and its joint trajectory into the headline's concrete clauses.
+
+**Proof sketch.** First-exit uniqueness supplies the cut without unfolding `Segment`.
+Read the body fields from each observed clock configuration, keeping the same source time
+for every field. The endpoint word and the time bound are supplied by the caller. -/
+private theorem sc_deliver {k : ℕ} {Γ S : Type} [DecidableEq Γ] (e : Bool ↪ Γ)
+    (M : MultiTapeTM k Γ S) (stopAt : S → Bool) {x : List Γ} (c : Cfg k Γ S x) (q : S)
+    (w : List Bool) (ct : ℤ → Option Γ) (cp : ℤ) (τ B : ℕ)
+    (exit : Option S → sc_State S) (w' : List Bool) (T : ℕ)
+    (width : w'.length = w.length) (time : T ≤ B)
+    (exit_mem : some (exit (M.runFrom c τ).state) ∈ sc_exits)
+    (run : (sc_clockTM e M stopAt).runFrom (clockCfg (some (.dec q .run)) c ct cp) T =
+      clockCfg (some (exit (M.runFrom c τ).state)) (M.runFrom c τ)
+        (wordPatch ct cp (w'.map e)) cp)
+    (seg : Segment (sc_clockTM e M stopAt) sc_exits
+      (fun p => p (Fin.last k) ∈ Finset.Icc (cp - 1) (cp + (w.length : ℤ)))
+      (clockCfg (some (.dec q .run)) c ct cp)
+      (clockCfg (some (exit (M.runFrom c τ).state)) (M.runFrom c τ)
+        (wordPatch ct cp (w'.map e)) cp) T)
+    (trace : ∀ u ≤ T, ∃ v ≤ τ, ∃ z tape head,
+      (sc_clockTM e M stopAt).runFrom (clockCfg (some (.dec q .run)) c ct cp) u =
+        clockCfg z (M.runFrom c v) tape head ∧
+      head ∈ Finset.Icc (cp - 1) (cp + (w.length : ℤ))) :
+    ∃ T ≤ B, ∃ w' : List Bool, w'.length = w.length ∧
+      (sc_clockTM e M stopAt).runFrom (clockCfg (some (.dec q .run)) c ct cp) T =
+        clockCfg (some (exit (M.runFrom c τ).state)) (M.runFrom c τ)
+          (wordPatch ct cp (w'.map e)) cp ∧
+      (∀ u < T, ∀ r,
+        ((sc_clockTM e M stopAt).runFrom (clockCfg (some (.dec q .run)) c ct cp) u).state ≠
+            some (.finish r) ∧
+        ((sc_clockTM e M stopAt).runFrom (clockCfg (some (.dec q .run)) c ct cp) u).state ≠
+            some (.timeout r)) ∧
+      ∀ u ≤ T, ∃ v ≤ τ,
+        (∀ j : Fin k,
+          ((sc_clockTM e M stopAt).runFrom (clockCfg (some (.dec q .run)) c ct cp) u).workTapes
+              j.castSucc = (M.runFrom c v).workTapes j ∧
+          ((sc_clockTM e M stopAt).runFrom (clockCfg (some (.dec q .run)) c ct cp) u).workTapePos
+              j.castSucc = (M.runFrom c v).workTapePos j) ∧
+        ((sc_clockTM e M stopAt).runFrom (clockCfg (some (.dec q .run)) c ct cp) u).inputPos =
+          (M.runFrom c v).inputPos ∧
+        ((sc_clockTM e M stopAt).runFrom (clockCfg (some (.dec q .run)) c ct cp) u).output =
+          (M.runFrom c v).output ∧
+        ((sc_clockTM e M stopAt).runFrom (clockCfg (some (.dec q .run)) c ct cp) u).workTapePos
+            (Fin.last k) ∈ Finset.Icc (cp - 1) (cp + (w.length : ℤ)) := by
+  refine ⟨T, time, w', width, run, ?_, ?_⟩
+  · intro u hu r
+    have avoid := sc_firstExit seg exit_mem u hu
+    exact ⟨fun h => avoid ⟨r, Or.inl h⟩, fun h => avoid ⟨r, Or.inr h⟩⟩
+  · intro u hu
+    obtain ⟨v, hv, z, tape, head, seen, bound⟩ := trace u hu
+    refine ⟨v, hv, ?_, ?_, ?_, ?_⟩
+    · intro j
+      rw [seen]
+      simp [clockCfg]
+    · rw [seen]; rfl
+    · rw [seen]; rfl
+    · rw [seen]
+      simpa only [clockCfg, Fin.lastCases_last] using bound
+
 /-- **The finish clause** of `Turing.exists_stepClockTMVia` for the
 fused clock, word for word with `H := sc_clockTM e M stopAt`, `inj s := dec s .run` and
 `finish := sc_State.finish`.
@@ -603,8 +858,55 @@ private theorem sc_finish {k : ℕ} {Γ S : Type} [DecidableEq Γ] (e : Bool ↪
             (M.runFrom c v).output ∧
           ((sc_clockTM e M stopAt).runFrom (clockCfg (some (.dec q .run)) c ct cp) u).workTapePos
               (Fin.last k) ∈ Finset.Icc (cp - 1) (cp + (w.length : ℤ)) := by
-  -- Proof sketch: see the docstring (route steps 3–4).
-  sorry
+  intro τ budget stopped before
+  obtain ⟨reached, segment, trajectory⟩ := sc_rounds e M stopAt c q hq w ct cp hw τ budget before
+  have amortized := counterOverhead_le_of_le w τ budget
+  cases state : (M.runFrom c τ).state with
+  | none =>
+    rw [← state]
+    apply sc_deliver e M stopAt c q w ct cp τ (5 * τ + 2 * w.length + 2)
+      sc_State.finish (counterWord w τ) (counterOverhead w τ + τ)
+      (counterWord_length w τ) (by omega) ⟨_, Or.inl rfl⟩
+    · simpa only [state, sc_resume] using reached
+    · simpa only [state, sc_resume] using segment
+    · exact trajectory
+  | some s =>
+    have flag : stopAt s = true := by
+      rcases stopped with halt | ⟨r, hr, hflag⟩
+      · exact False.elim (Option.noConfusion (state.symm.trans halt))
+      · have same : r = s := Option.some.inj (hr.symm.trans state)
+        simpa only [same] using hflag
+    simp only [state, sc_resume] at reached segment
+    let lastStart := clockCfg (some (sc_State.dec s .run)) (M.runFrom c τ)
+      (wordPatch ct cp ((counterWord w τ).map e)) cp
+    have dispatch : (sc_clockTM e M stopAt).step lastStart =
+        clockCfg (some (sc_State.finish (some s))) (M.runFrom c τ)
+          (wordPatch ct cp ((counterWord w τ).map e)) cp :=
+      sc_stop_step e M stopAt (M.runFrom c τ) s flag
+        (wordPatch ct cp ((counterWord w τ).map e)) cp
+    have finalSegment := Segment.one (M := sc_clockTM e M stopAt) (F := sc_exits)
+      (P := fun p => p (Fin.last k) ∈ Finset.Icc (cp - 1) (cp + (w.length : ℤ)))
+      (a := lastStart) (by rintro ⟨r, h⟩; simp [lastStart, clockCfg] at h)
+      (by simp [lastStart, clockCfg, Finset.mem_Icc])
+      (by rw [dispatch]; simp [clockCfg, Finset.mem_Icc])
+    rw [dispatch] at finalSegment
+    have joined := segment.trans finalSegment
+    rw [← state]
+    apply sc_deliver e M stopAt c q w ct cp τ (5 * τ + 2 * w.length + 2)
+      sc_State.finish (counterWord w τ) (counterOverhead w τ + τ + 1)
+      (counterWord_length w τ) (by omega) ⟨_, Or.inl rfl⟩
+    · rw [MultiTapeTM.runFrom_add, reached]
+      simpa only [state] using dispatch
+    · simpa only [state] using joined
+    · intro u hu
+      by_cases old : u ≤ counterOverhead w τ + τ
+      · exact trajectory u old
+      · have last : u = counterOverhead w τ + τ + 1 := by omega
+        rw [last, MultiTapeTM.runFrom_add, reached]
+        change ∃ v ≤ τ, ∃ z tape head,
+          (sc_clockTM e M stopAt).step lastStart = clockCfg z (M.runFrom c v) tape head ∧ _
+        rw [dispatch]
+        exact ⟨τ, le_rfl, _, _, cp, rfl, by simp [Finset.mem_Icc]⟩
 
 /-- **The timeout clause** of `Turing.exists_stepClockTMVia` for the fused
 clock, word for word with `H := sc_clockTM e M stopAt`, `inj s := dec s .run` and
@@ -643,8 +945,50 @@ private theorem sc_timeout {k : ℕ} {Γ S : Type} [DecidableEq Γ] (e : Bool �
             (M.runFrom c v).output ∧
           ((sc_clockTM e M stopAt).runFrom (clockCfg (some (.dec q .run)) c ct cp) u).workTapePos
               (Fin.last k) ∈ Finset.Icc (cp - 1) (cp + (w.length : ℤ)) := by
-  -- Proof sketch: see the docstring (route steps 3–4).
-  sorry
+  intro notStopped
+  let d := Nat.ofDigits 2 (w.map Bool.toNat)
+  obtain ⟨reached, segment, trajectory⟩ := sc_rounds e M stopAt c q hq w ct cp hw d le_rfl
+    (fun u hu => notStopped u hu.le)
+  obtain ⟨s, state, flag⟩ := sc_live stopAt (M.runFrom c d) (notStopped d le_rfl)
+  simp only [state, sc_resume] at reached segment
+  have exhausted : decFixed (counterWord w d) = none := by
+    apply (counter_dec_zero _).mpr
+    have value := counterWord_value w d le_rfl
+    simpa only [d, Nat.sub_self] using value
+  have delimited := sc_wordPatch_frame ct cp (w.map e) ((counterWord w d).map e)
+    (by simp only [List.length_map, counterWord_length]) (by simpa using hw)
+  obtain ⟨debit, debitSegment, debitTrace⟩ := sc_clockDebit e M stopAt (M.runFrom c d) s flag
+    (counterWord w d) (wordPatch ct cp ((counterWord w d).map e)) cp (by simpa using delimited)
+  simp only [exhausted, Option.isSome_none, Option.getD_none, sc_decExit,
+    counterWord_length] at debit debitSegment debitTrace
+  have overwrite := sc_wordPatch_twice ct cp ((counterWord w d).map e)
+    ((List.replicate w.length true).map e)
+    (by simp only [List.length_map, List.length_replicate, counterWord_length])
+  rw [overwrite] at debit debitSegment
+  have joined := segment.trans debitSegment
+  let T := counterOverhead w d + d + (2 * ((counterWord w d).takeWhile not).length + 2)
+  have bound : T ≤ 5 * d + 2 * w.length + 2 := by
+    have amortized := counterOverhead_le w
+    rw [counterOverhead_succ] at amortized
+    dsimp only [T, d]
+    omega
+  apply sc_deliver e M stopAt c q w ct cp d (5 * d + 2 * w.length + 2)
+    sc_State.timeout (List.replicate w.length true) T (by simp) bound
+    ⟨_, Or.inr rfl⟩
+  · change (sc_clockTM e M stopAt).runFrom _
+      (counterOverhead w d + d + (2 * ((counterWord w d).takeWhile not).length + 2)) = _
+    rw [MultiTapeTM.runFrom_add, reached, debit, state]
+  · simpa only [state] using joined
+  · intro u hu
+    by_cases old : u ≤ counterOverhead w d + d
+    · exact trajectory u old
+    · have splitTime : u = counterOverhead w d + d + (u - (counterOverhead w d + d)) := by
+        omega
+      rw [splitTime, MultiTapeTM.runFrom_add, reached]
+      obtain ⟨seen, envelope⟩ := debitTrace (u - (counterOverhead w d + d)) (by
+        dsimp only [T] at hu
+        omega)
+      exact ⟨d, le_rfl, _, _, _, seen, envelope⟩
 
 /-- **H3's clock, the step-clocked runner** (joint statement with C1, whose draft
 `exists_stepClockTM` is the instance `Γ = Bool`, `e = refl`; generalized to any alphabet with
@@ -680,9 +1024,14 @@ sum to at most `4τ + 2|w|` (`Turing.counterOverhead_le_of_le`), plus the final 
 state. A decrement moves only the counter head and writes only the counter tape, and a body
 transition is the body's own step on the body tapes, which gives the frame clause. 
 
-**Fill appendix (B6-F1).** The prescribed controller, layout lemmas and headline glue are
-installed. The generic debit and the two terminal clauses are the remaining private proof
-obligations, each with its proof sketch. -/
+**Fill appendix (B6-F1).** The prescribed controller and headline glue are retained. The
+proved generic debit additionally records its optional phase image, which excludes unrelated
+host exits. The round induction keeps one joint full-configuration trajectory; the two exits
+share its packaging into the headline. Segments are introduced through `Segment.zero` and
+`Segment.cons`, concatenated through `Segment.trans`, and read for first-exit information
+through `Segment.take` and `Segment.time_eq`; their definition is never unfolded. The timeout
+uses the whole decrement-plus-underflow bound. The only extra step on finish is a live stop
+dispatch; a halting body transition finishes directly. No admission remains. -/
 theorem exists_stepClockTMVia {k : ℕ} {Γ S : Type} [Fintype S] [DecidableEq S]
     [DecidableEq Γ] (e : Bool ↪ Γ) (M : MultiTapeTM k Γ S) (stopAt : S → Bool) :
     ∃ (Q : Type) (_ : Fintype Q) (_ : DecidableEq Q) (H : MultiTapeTM (k + 1) Γ Q)
