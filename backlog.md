@@ -992,6 +992,11 @@ The route decisions of 2026-10-12 (design §16b) add three work items, numbered 
     lemmas in `CounterLoop` and `SymbolLift`). It ships a route probe that discharges every route
     seam from public names (0 errors, exactly the 3 fill stubs sorried), with a static scan for
     private citations and unfoldings. F2 is re-dispatched unchanged with the environment addendum.
+    - **Two more items for the dedup window,** in the family above: `sc_wordPatch_twice` and
+      `sc_wordPatch_frame` prove for `wordPatch` what the private `counter_patch_twice` and
+      `counter_patch_frame` prove for `counterPatch`. `sc_dec_inputPos` overlaps `Build/StepBlock`'s
+      `Bool`-only `inputPos_runFrom_of_inputTape_eq_zero`; one generic lemma in `Simulation` would
+      serve both. None makes a screen pair.
   - **F2 delivered (2026-10-15, `fill-b6-windowrun copy.zip`, SHA-256 `2cb4bfb6…d29f`; Codex
     `e260585d`; reports `audits/b6-fill-agent-reports/windowrun-1-REPORT.md` (the first attempt,
     stopped on the environment before the addendum) and `windowrun-2-REPORT.md`):
@@ -1013,11 +1018,6 @@ The route decisions of 2026-10-12 (design §16b) add three work items, numbered 
       queued.
     - **Landing:** branch `lean/b6-f2-windowrun` (cherry-picked, authorship kept). Replay 4
       modules. It lands after MIG-1 S (#98), whose replay list contains all four.
-    - **Two more items for the dedup window,** in the family above: `sc_wordPatch_twice` and
-      `sc_wordPatch_frame` prove for `wordPatch` what the private `counter_patch_twice` and
-      `counter_patch_frame` prove for `counterPatch`. `sc_dec_inputPos` overlaps `Build/StepBlock`'s
-      `Bool`-only `inputPos_runFrom_of_inputTape_eq_zero`; one generic lemma in `Simulation` would
-      serve both. None makes a screen pair.
   **Record-table row 18's fill brief issued (2026-10-14):** `briefs/w1-fill-recordtable-cont5.md`
   (inputs `8dfbc881`, at `1b6b972c`):
   - The route is a 14-phase chain over row 17 through R1. Three prescribed privates are proved;
