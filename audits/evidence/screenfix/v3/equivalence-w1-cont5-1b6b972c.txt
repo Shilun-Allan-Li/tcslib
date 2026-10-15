@@ -1,0 +1,20 @@
+# v3 against v2 on the record tables cont5 base population (1b6b972c, 43 files; screenfix/runs/w1-cont5.pop)
+# v2 output: screenfix/runs/w1-cont5-v2.txt (committed result: 2,428 pairs). v3 run: rc=0, 1,329 s niced.
+# diff <v2> <v3>:
+1c1
+< declarations screened: 2098; copy pairs (target reproduces >= half of source): 2428; reproduced text: 790,157 chars
+---
+> declarations screened: 2098; copy pairs (target reproduces >= half of source): 2430; reproduced text: 790,289 chars
+73c73
+<    CfgRecord.lean::recordRun_trans  reproduces  Basic.lean::trans: 291/291 = 100%
+---
+>    CfgRecord.lean::recordRun_trans  reproduces  Basic.lean::Turing.Segment.trans: 291/291 = 100%
+199a200,201
+>    CfgRecord.lean::Turing.{k#2  reproduces  CfgRecord.lean::Turing.{k#1: 66/66 = 100%
+>    CfgRecord.lean::Turing.{k#1  reproduces  CfgRecord.lean::Turing.{k#2: 66/66 = 100%
+224c226
+<    Basic.lean::trans  reproduces  CfgRecord.lean::recordRun_trans: 291/294 = 99%
+---
+>    Basic.lean::Turing.Segment.trans  reproduces  CfgRecord.lean::recordRun_trans: 291/294 = 99%
+# sha256 v2 output: 906e772121dd634c65e0c7dab8589762a246caeb59533a4414c20aabcbb07374
+# sha256 v3 output: 096f3566d0632090881b1c5eec805e0fe1fa4aa28df92760ff67751a3fc83ed5

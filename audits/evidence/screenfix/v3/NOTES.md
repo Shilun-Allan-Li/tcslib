@@ -38,6 +38,7 @@ v2 are in `v2-to-v3.diff`.
 | Regression control (`regression-control-v3.sh`, output `regression-control-v3.out`): one file with `N1.dup`/`N2.dup`, a generic `A.B.gen` beside `A.gen` (dotted namespace closed by `end B`, `end A`), and two anonymous instances | v2: 0 pairs. v3: all 6 pairs (the three pairs both ways), no self-pair. **PASS**, exit 0. With v2 in both roles it fails, exit 1 |
 | The gate's mutation (`audits/evidence/diagonal-p1/scripts/negctl.sh`, control `screen-restore`) | v2: 16 pairs, 3,277 characters, unchanged. v3: 18 pairs, 3,667 characters, the new pair both ways (86%, 83%). **PASS** |
 | Diagonal Part 1's before and after populations (7 files each) | v3 = v2 byte for byte; the pair lists equal the gate's v1 logs |
+| Record tables cont5 base (`1b6b972c`, 43 files, contains `Build/CfgRecord.lean`; `equivalence-w1-cont5-1b6b972c.txt`) | v2: 2,428 pairs, 790,157 characters. v3: 2,430, 790,289. The diff is exactly the predicted one: CfgRecord's instance pair both ways (`Turing.{k#1`, `#2`, 66/66), and `Contract/Basic`'s repeated `trans` relabelled `Turing.Segment.trans` in its two pairs |
 | Same-name pairs at the tip `ff4cab18`, all 723 Lean files (`../samename.py`, `samename-tip-ff4cab18.txt`) | 11 same-file same-name groups (22 declarations); 2 pairs meet the threshold, both CfgRecord's `Fintype`/`DecidableEq` instance pair, already recorded |
 
 ## Consequences
