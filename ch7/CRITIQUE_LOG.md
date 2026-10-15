@@ -264,3 +264,11 @@ Rebuild: lb.sh RandomWalkHitting BUILD EXIT 0 (logs/build-165058-91635.log); no 
 - [Blocking] QuasiPolyHierarchy.lean:181-185 — iterate_drop_one duplicates BinArith.iterate_drop_one.
 - [Advisory] privatize generic helpers; doc credit to diagLang halves; three proof-sketch labels; IsOp → isOp; DTIME_const_mul_subset later hoist to ClassP/DTIME.lean (deferred, tracked file); BPPEqP keep separate.
 (TimeConstructible honestly met; P = ⋃ DTIME(n^c+1) comparison right; hierarchy halves sorry-free; sweep with positive control clean.)
+
+## U20 — round 2 — VERDICT: PASS
+- [Advisory] QuasiPolyHierarchy.lean:279 — DTIME_const_mul_subset → later hoist to ClassP/DTIME.lean (tracked; deferred).
+- [Advisory] BPPEqP.lean (95 lines) — keep separate (layering).
+(Duplicates removed; statements unchanged vs round 1; sweep with positive control clean.)
+
+## U21 — citation retag + BPP dedup — DONE (orchestrator record)
+Draft→printed retag in Classes/Adleman/SipserGacs/PolyTimeModel/ErrorReduction (Def 7.4→7.3, Def 7.1→7.2, Thm 7.17→7.14, Thm 7.18→7.15, Cor 7.11→Thm 7.10 + Cor A.15); false "Erratum" replaced by an accurate Hoeffding-vs-Chernoff note; Classes:66-69 stale note fixed. Comment-only in tracked files, verified by a Lean-aware comment stripper (identical stripped code vs pre-U21 backups and vs 8c23f3bc, modulo earlier campaign additions; positive control fires). BPP_PTMWith machinery moved to PTMEquiv; mem_BPP_PTM_iff etc. re-derived as the 2/3 case, 22 type/value hashes identical. Full lb.sh TCSlib EXIT 0 (logs/build-170443-8532.log); sweep with positive control clean. Note: the printed Thm 7.10 display itself drops Cor A.15's factor 2 and the /4 in the final exponent — not recorded in the Lean files (user decision).
