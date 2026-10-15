@@ -49,6 +49,8 @@ ranging over `{0, 1}`, and `φ` a plain Boolean formula. Phase P4.3 of
 
 ## Main results
 
+* `Complexity.QBF.prefixTruth_congr_agree` — prefix truth from `(σ, i)` sees the leaf only on
+  assignments that agree with `σ` below `i`.
 * `Complexity.QBF.truth_exPrefix_iff_satisfiable` — an all-`∃` prefix covering
   the matrix's variables renders exactly satisfiability: the `SAT` embedding
   of [AB09, Example 4.12].
@@ -205,17 +207,33 @@ theorem truthAux_iff_prefixTruth (m : CNF ℕ) (qs : List Quant) (σ : ℕ → B
     | ex => exact exists_congr fun b => ih _ _
     | all => exact forall_congr' fun b => ih _ _
 
-/-- Prefix truth depends on its leaf predicate only through its truth values. (Proved, by
-induction on the prefix.) -/
-theorem prefixTruth_congr {P P' : (ℕ → Bool) → Prop} (h : ∀ τ, P τ ↔ P' τ)
-    (qs : List Quant) (σ : ℕ → Bool) (i : ℕ) :
+/-- **Prefix truth sees only the assignment below its start**: two leaves that agree on
+every assignment agreeing with `σ` below `i` have the same prefix truth from `(σ, i)`.
+
+**Proof sketch.** Induction on the prefix; an update at position `i` keeps agreement
+below `i + 1` equivalent to agreement below `i` together with the updated value. -/
+theorem prefixTruth_congr_agree {P P' : (ℕ → Bool) → Prop} (qs : List Quant) (σ : ℕ → Bool)
+    (i : ℕ) (h : ∀ τ : ℕ → Bool, (∀ v < i, τ v = σ v) → (P τ ↔ P' τ)) :
     PrefixTruth P qs σ i ↔ PrefixTruth P' qs σ i := by
   induction qs generalizing σ i with
-  | nil => exact h σ
+  | nil => exact h σ (fun _ _ => rfl)
   | cons q qs ih =>
+    have h' : ∀ b : Bool, ∀ τ : ℕ → Bool, (∀ v < i + 1, τ v = Function.update σ i b v) →
+        (P τ ↔ P' τ) := by
+      intro b τ hτ
+      apply h τ
+      intro v hv
+      rw [hτ v (by omega), Function.update_of_ne (by omega)]
     cases q with
-    | ex => exact exists_congr fun b => ih _ _
-    | all => exact forall_congr' fun b => ih _ _
+    | ex => exact exists_congr fun b => ih _ _ (h' b)
+    | all => exact forall_congr' fun b => ih _ _ (h' b)
+
+/-- Prefix truth depends on its leaf predicate only through its truth values. (Proved: the case
+of `prefixTruth_congr_agree` with leaves that agree everywhere.) -/
+theorem prefixTruth_congr {P P' : (ℕ → Bool) → Prop} (h : ∀ τ, P τ ↔ P' τ)
+    (qs : List Quant) (σ : ℕ → Bool) (i : ℕ) :
+    PrefixTruth P qs σ i ↔ PrefixTruth P' qs σ i :=
+  prefixTruth_congr_agree qs σ i fun τ _ => h τ
 
 /-- **Splitting a prefix**: the prefix truth of `qs ++ rs` is the prefix truth of `qs` whose
 leaf is the prefix truth of `rs`, started at the variable after `qs`. (Proved, by induction

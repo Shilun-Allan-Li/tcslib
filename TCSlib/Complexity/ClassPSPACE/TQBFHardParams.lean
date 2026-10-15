@@ -171,20 +171,10 @@ def lbStep (s : List Bool) : List Bool := pairEncode (pairFstD s) ((pairSndD s).
 def lbChunk (s : List Bool) : List Bool :=
   if pairSndD s = [] then [] else pairFstD s ++ (zeroes (pairFstD s) ++ zeroes (pairFstD s))
 
-/-- The round does not lengthen a state beyond `max |s| 2`. -/
-private theorem length_lbStep (s : List Bool) : (lbStep s).length ≤ max s.length 2 := by
-  cases hd : pairDecode s with
-  | none =>
-    have hf : pairFstD s = [] := by simp [pairFstD, hd]
-    have hs : pairSndD s = [] := by simp [pairSndD, hd]
-    simp [lbStep, hf, hs, length_pairEncode]
-  | some uv =>
-    obtain ⟨u, v⟩ := uv
-    have he := eq_pairEncode_of_pairDecode s u v hd
-    subst he
-    simp only [lbStep, pairFstD_pairEncode, pairSndD_pairEncode, length_pairEncode,
-      List.length_drop]
-    omega
+/-- The round does not lengthen a state beyond `max |s| 2` (the shared pair-step bound
+`Complexity.length_pairEncode_drop_le`, dropping one letter of the countdown only). -/
+private theorem length_lbStep (s : List Bool) : (lbStep s).length ≤ max s.length 2 :=
+  length_pairEncode_drop_le s 0 1
 
 /-- Iterates of the round on a pair drop from the countdown. -/
 private theorem lbStep_iterate (u v : List Bool) (i : ℕ) :

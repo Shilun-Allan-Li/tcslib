@@ -80,12 +80,6 @@ lemma getD_cfgWord_chunk (s : ℕ) (C : Cfg N.k Bool N.State x) (j t : ℕ) (hj 
 
 /-! ## Initial and accepting codes -/
 
-/-- An output summary is empty exactly for the empty output. -/
-lemma outSummary_eq_empty_iff (u : List Bool) : outSummary u = .empty ↔ u = [] := by
-  cases u with
-  | nil => simp [outSummary]
-  | cons a u => cases u <;> cases a <;> simp [outSummary]
-
 variable (N) in
 /-- **The initial-code check** on a word `w`: valid, header `(q₀, empty)`, every cell of the
 initial shape (blank, all heads or none), input position `1`, and (with at least one work
@@ -108,7 +102,7 @@ blank anyway) and puts all heads in one cell, and the middle-cell flag puts the 
 and codes depend only on the vertex (`cfgWord_congr`). -/
 theorem initChk_iff (s : ℕ) (w : List Bool) :
     InitChk N x s w ↔ w = cfgWord s (N.tm.initCfg x) := by
-  have hWin : InWin N s (N.tm.initCfg x) := fun i => by simp [NDTM.initCfg, Cfg.init]
+  have hWin : Cfg.InWindow s (N.tm.initCfg x) := Cfg.inWindow_init _ x s
   constructor
   · rintro ⟨hval, hhd, hiok, hpos, hcen⟩
     obtain ⟨C, hC, rfl⟩ := (validChk_iff x s w).mp hval
@@ -127,7 +121,7 @@ theorem initChk_iff (s : ℕ) (w : List Bool) :
       · have := (hiok (z + s).toNat (by rw [abs_le] at hz; omega)).1 i
         simp only [cellOf] at this
         rwa [show (((z + s).toNat : ℕ) : ℤ) - s = z by rw [abs_le] at hz; omega] at this
-      · by_contra hne; exact hz ((hC i).2 z hne)
+      · exact hC.2 i z (not_le.mp hz)
     have hheads : ∀ i, C.workTapePos i = 0 := by
       intro i
       have hk : 0 < N.k := Fin.pos i
@@ -183,7 +177,7 @@ def AcceptChk (x : List Bool) (s : ℕ) (w : List Bool) : Prop :=
 (`vScan_cfgWord`); summary index `1` is the summary `accept`, i.e. output `[true]`
 (`outSummary_eq_accept_iff`). -/
 theorem acceptChk_iff (s : ℕ) (w : List Bool) :
-    AcceptChk N x s w ↔ ∃ C : Cfg N.k Bool N.State x, InWin N s C ∧ cfgWord s C = w ∧
+    AcceptChk N x s w ↔ ∃ C : Cfg N.k Bool N.State x, Cfg.InWindow s C ∧ cfgWord s C = w ∧
       C.state = none ∧ C.output = [true] := by
   constructor
   · rintro ⟨hval, hhd⟩
@@ -311,7 +305,7 @@ lemma sScan_sel (G : Bool → SX N → SX N → SX N → SX N) (u u' : List Bool
 
 /-- The step data of a code word: the action and local rule they determine are those of the
 coded configuration. -/
-lemma aI_cfgWord (s : ℕ) (C : Cfg N.k Bool N.State x) (hC : InWin N s C) (b : Bool) :
+lemma aI_cfgWord (s : ℕ) (C : Cfg N.k Bool N.State x) (hC : Cfg.InWindow s C) (b : Bool) :
     aI N (vScan N ((cfgWord s C).take (W N * (2 * s + 1))),
         inpOf x (bitsVal (((cfgWord s C).drop (W N * (2 * s + 1))).take (wP x.length)))) b =
       effAct N C.state C.inputSymbol C.workTapeSymbols b ∧
@@ -335,8 +329,8 @@ window-bounded (`sScan_sel`, `sDone_step`); the input position of `C'` is the mo
 (`val_moveInputPos`), and a position field is determined by its value (`eq_padBits`); with
 the length and the final letter (`word_split`), the second word is the code word of `C'`. -/
 theorem stepChk_iff (s : ℕ) (w w' : List Bool) :
-    StepChk N x s w w' ↔ ∃ C : Cfg N.k Bool N.State x, InWin N s C ∧ cfgWord s C = w ∧
-      ∃ C' : Cfg N.k Bool N.State x, N.tm.CfgStep C C' ∧ InWin N s C' ∧ cfgWord s C' = w' := by
+    StepChk N x s w w' ↔ ∃ C : Cfg N.k Bool N.State x, Cfg.InWindow s C ∧ cfgWord s C = w ∧
+      ∃ C' : Cfg N.k Bool N.State x, N.tm.CfgStep C C' ∧ Cfg.InWindow s C' ∧ cfgWord s C' = w' := by
   constructor
   · rintro ⟨hval, hlen', hlast', b, hpos', hsd⟩
     obtain ⟨C, hC, rfl⟩ := (validChk_iff x s w).mp hval

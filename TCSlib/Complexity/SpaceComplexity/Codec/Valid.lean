@@ -353,7 +353,7 @@ theorem cellOf_mkCfg (x : List Bool) (s : ℕ) (f : ℕ → CellV N) (pos : Fin 
     (huniq : ∀ i, ∀ j₁ < 2 * s + 1, ∀ j₂ < 2 * s + 1,
       ((f j₁).2 i).2 = true → ((f j₂).2 i).2 = true → j₁ = j₂)
     (hex : ∀ i, ∃ j < 2 * s + 1, ((f j).2 i).2 = true) :
-    InWin N s (mkCfg x s f pos) ∧ ∀ j < 2 * s + 1, cellOf s (mkCfg x s f pos) j = f j := by
+    Cfg.InWindow s (mkCfg x s f pos) ∧ ∀ j < 2 * s + 1, cellOf s (mkCfg x s f pos) j = f j := by
   classical
   have hpos : ∀ i, ∃ j < 2 * s + 1, ((f j).2 i).2 = true ∧
       (mkCfg x s f pos).workTapePos i = (j : ℤ) - s := by
@@ -362,12 +362,11 @@ theorem cellOf_mkCfg (x : List Bool) (s : ℕ) (f : ℕ → CellV N) (pos : Fin 
       obtain ⟨j, hj, hh⟩ := hex i; exact ⟨j, hj, hh⟩
     refine ⟨Nat.find h, (Nat.find_spec h).1, (Nat.find_spec h).2, ?_⟩
     simp only [mkCfg, dif_pos h]
-  refine ⟨fun i => ⟨?_, fun z hz => ?_⟩, fun j hj => ?_⟩
+  refine ⟨⟨fun i => ?_, fun i z hz => ?_⟩, fun j hj => ?_⟩
   · obtain ⟨j, hj, -, e⟩ := hpos i
     rw [e, abs_le]; constructor <;> omega
-  · simp only [mkCfg] at hz
-    by_contra hzs
-    exact hz (if_neg hzs)
+  · simp only [mkCfg]
+    exact if_neg (not_le.mpr hz)
   · have h0 : (f 0).1.isSome := (hslot 0 (by omega)).mpr rfl
     obtain ⟨hd, hhd⟩ := Option.isSome_iff_exists.mp h0
     simp only [cellOf]
@@ -453,7 +452,7 @@ verdict of its cells.
 **Proof sketch.** The closed form of the scan (`foldl_vStep`) on the cells of a
 window-bounded configuration: the header is in cell `0` only, the head of tape `i` is
 flagged exactly in cell `pos i + s`, which is therefore the last flagged cell. -/
-theorem vScan_cfgWord (s : ℕ) {x : List Bool} (C : Cfg N.k Bool N.State x) (hC : InWin N s C) :
+theorem vScan_cfgWord (s : ℕ) {x : List Bool} (C : Cfg N.k Bool N.State x) (hC : Cfg.InWindow s C) :
     let st := vScan N ((cfgWord s C).take (W N * (2 * s + 1)))
     st.2.1 = some (C.state, sumIdx (outSummary C.output)) ∧ VAcc N st ∧
       (∀ i, st.2.2.2.1 i = C.workTapes i (C.workTapePos i)) ∧
@@ -468,7 +467,7 @@ theorem vScan_cfgWord (s : ℕ) {x : List Bool} (C : Cfg N.k Bool N.State x) (hC
   have j0 : ∀ i, ((C.workTapePos i + s).toNat < 2 * s + 1) ∧
       (((C.workTapePos i + s).toNat : ℕ) : ℤ) - s = C.workTapePos i := by
     intro i
-    have := (hC i).1
+    have := hC.1 i
     rw [abs_le] at this
     constructor <;> omega
   refine ⟨by rw [h2]; simp [cellOf], ⟨?_, fun i => ?_⟩, fun i => ?_, h7⟩
@@ -520,7 +519,7 @@ the position field is the padding of its value (`eq_padBits`) and the last lette
 so its code word is the given word. -/
 theorem validChk_iff (x : List Bool) (s : ℕ) (w : List Bool) :
     ValidChk (N := N) x.length s w ↔
-      ∃ C : Cfg N.k Bool N.State x, InWin N s C ∧ cfgWord s C = w := by
+      ∃ C : Cfg N.k Bool N.State x, Cfg.InWindow s C ∧ cfgWord s C = w := by
   constructor
   · rintro ⟨hlen, hacc, hpos, hlast⟩
     set m := 2 * s + 1 with hm

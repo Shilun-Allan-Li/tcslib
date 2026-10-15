@@ -148,7 +148,7 @@ and the updated summary (`sumIdx_append`). A tape cell changes only under the he
 written symbol. The new head of a tape is at `pos + m` for the move `m`, so the cell at `z`
 is flagged iff the old flag sits at `z - m`, i.e. in the left neighbour for a right move and
 in the right neighbour for a left move; beyond the region there is no old head (window). -/
-theorem cellOf_apply (s : ℕ) (C : Cfg N.k Bool N.State x) (hC : InWin N s C)
+theorem cellOf_apply (s : ℕ) (C : Cfg N.k Bool N.State x) (hC : Cfg.InWindow s C)
     (a : Action N.k Bool N.State) (j : ℕ) (hj : j < 2 * s + 1) :
     cellOf s (a.apply C) j =
       stepCell a (newHd a (hdOf C)) (nbL s C j) (cellOf s C j) (nbR s C j) := by
@@ -165,7 +165,7 @@ theorem cellOf_apply (s : ℕ) (C : Cfg N.k Bool N.State x) (hC : InWin N s C)
       by_cases hz : C.workTapePos i = (j : ℤ) - s
       · rw [show ((j : ℤ) - s) = C.workTapePos i from hz.symm]; simp
       · simp [hz, Function.update_of_ne (Ne.symm hz)]
-  · have hp := (hC i).1
+  · have hp := hC.1 i
     rw [abs_le] at hp
     simp only [Action.apply, signType_cast]
     cases hm : (a.workTapes i).2 with
@@ -192,11 +192,11 @@ successor of a window-bounded configuration is window-bounded.
 
 **Proof sketch.** Writes happen under the heads, inside the window; a head at `p` with
 `|p| ≤ s` moves to `p ± 1`, which leaves `[-s, s]` exactly at the two ends. -/
-theorem boundary_iff (s : ℕ) (C : Cfg N.k Bool N.State x) (hC : InWin N s C)
+theorem boundary_iff (s : ℕ) (C : Cfg N.k Bool N.State x) (hC : Cfg.InWindow s C)
     (a : Action N.k Bool N.State) (h' : Hd N) :
     (stepCell a h' (cellE N) (cellE N) (cellOf s C 0) = cellE N ∧
       stepCell a h' (cellOf s C (2 * s)) (cellE N) (cellE N) = cellE N) ↔
-      InWin N s (a.apply C) := by
+      Cfg.InWindow s (a.apply C) := by
   have left : stepCell a h' (cellE N) (cellE N) (cellOf s C 0) = cellE N ↔
       ∀ i, (a.workTapes i).2 = .neg → C.workTapePos i ≠ -s := by
     simp only [stepCell, cellE, Option.map_none, Bool.false_eq_true, ↓reduceIte, Prod.mk.injEq,
@@ -216,30 +216,30 @@ theorem boundary_iff (s : ℕ) (C : Cfg N.k Bool N.State x) (hC : InWin N s C)
     omega
   rw [left, right]
   constructor
-  · rintro ⟨hl, hr⟩ i
-    have hp := (hC i).1
-    rw [abs_le] at hp
-    refine ⟨?_, fun z hz => ?_⟩
-    · simp only [Action.apply, signType_cast]
+  · rintro ⟨hl, hr⟩
+    refine ⟨fun i => ?_, fun i z hz => ?_⟩
+    · have hp := hC.1 i
+      rw [abs_le] at hp
+      simp only [Action.apply, signType_cast]
       cases hm : (a.workTapes i).2 with
       | zero => simp; rw [abs_le]; omega
       | pos => have := hr i hm; simp; rw [abs_le]; constructor <;> omega
       | neg => have := hl i hm; simp; rw [abs_le]; constructor <;> omega
-    · simp only [Action.apply] at hz
+    · have hp := hC.1 i
+      simp only [Action.apply]
       cases hw : (a.workTapes i).1 with
-      | none => rw [hw] at hz; exact (hC i).2 z hz
+      | none => exact hC.2 i z hz
       | some w =>
-        rw [hw] at hz
-        dsimp only at hz
-        by_cases hzp : z = C.workTapePos i
-        · rw [hzp, abs_le]; exact hp
-        · rw [Function.update_of_ne hzp] at hz; exact (hC i).2 z hz
+        dsimp only
+        have hzp : z ≠ C.workTapePos i := by
+          rintro rfl; exact absurd hp (not_le.mpr hz)
+        rw [Function.update_of_ne hzp]; exact hC.2 i z hz
   · intro hW
     refine ⟨fun i hm hp => ?_, fun i hm hp => ?_⟩
-    · have := (hW i).1
+    · have := hW.1 i
       simp only [Action.apply, signType_cast, hm, hp] at this
       rw [abs_le] at this; omega
-    · have := (hW i).1
+    · have := hW.1 i
       simp only [Action.apply, signType_cast, hm, hp] at this
       rw [abs_le] at this; omega
 
@@ -251,7 +251,7 @@ window-bounded.
 **Proof sketch.** Positions `1 … 2s + 1` of the sliding relation are the cells of the
 successor (`cellOf_apply`); positions `0` and `2s + 2` are the two boundary conditions
 (`boundary_iff`). -/
-theorem slide_step_iff (s : ℕ) (C : Cfg N.k Bool N.State x) (hC : InWin N s C)
+theorem slide_step_iff (s : ℕ) (C : Cfg N.k Bool N.State x) (hC : Cfg.InWindow s C)
     (a : Action N.k Bool N.State) (v : List (Option (CellV N))) (hv : v.length = 2 * s + 1) :
     (∀ i < 2 * s + 1 + 2, (some (cellE N) :: v).getD i (some (cellE N)) =
       stepG a (newHd a (hdOf C))
@@ -264,7 +264,7 @@ theorem slide_step_iff (s : ℕ) (C : Cfg N.k Bool N.State x) (hC : InWin N s C)
           (List.range (2 * s + 1)).map fun j => some (cellOf s C j)).getD (i + 2)
             (some (cellE N)))) ↔
       (∀ j < 2 * s + 1, v.getD j (some (cellE N)) = some (cellOf s (a.apply C) j)) ∧
-        InWin N s (a.apply C) := by
+        Cfg.InWindow s (a.apply C) := by
   have hU0 : (some (cellE N) :: some (cellE N) :: (List.range (2 * s + 1)).map
       fun j => some (cellOf s C j)).getD 0 (some (cellE N)) = some (cellE N) := rfl
   have hUC : ∀ j < 2 * s + 1, (some (cellE N) :: some (cellE N) :: (List.range (2 * s + 1)).map
@@ -473,13 +473,13 @@ is window-bounded.
 successor iff each block is the successor's chunk (`decChunk_encChunk`,
 `encChunk_of_decChunk`), i.e. iff the region is the successor's chunk word
 (`eq_flatten_blocks`). -/
-theorem sDone_step (s : ℕ) (C : Cfg N.k Bool N.State x) (hC : InWin N s C)
+theorem sDone_step (s : ℕ) (C : Cfg N.k Bool N.State x) (hC : Cfg.InWindow s C)
     (a : Action N.k Bool N.State) (A' : List Bool) (hA' : A'.length = W N * (2 * s + 1)) :
     sDone N (stepG a (newHd a (hdOf C)))
         ((List.zip (blocksD N (chunksWord N (cellOf s C) (2 * s + 1)) (2 * s + 1))
           (blocksD N A' (2 * s + 1))).foldl (slStep (stepG a (newHd a (hdOf C)))) (sInit N)) =
         true ↔
-      A' = chunksWord N (cellOf s (a.apply C)) (2 * s + 1) ∧ InWin N s (a.apply C) := by
+      A' = chunksWord N (cellOf s (a.apply C)) (2 * s + 1) ∧ Cfg.InWindow s (a.apply C) := by
   rw [blocksD_chunksWord]
   have hlen : ((List.range (2 * s + 1)).map fun j => some (cellOf s C j)).length =
       (blocksD N A' (2 * s + 1)).length := by simp [blocksD]
