@@ -652,6 +652,18 @@ promotes the five families Hydroxyi named; the rest is dedup debt for the user's
 Also found: the copy-text screen labels files by basename and drops cross-file pairs between
 same-named files (17 among the new files alone). Whether earlier screens with colliding
 basenames in their populations lost pairs is to be checked.
+**Checked and fixed (2026-10-14; `audits/evidence/screenfix/`):**
+- **The fix:** `audits/evidence/retrofit/copy-text-screen-v2.py` keys files by repository path,
+  with `regression-control.sh` as its control. Where all basenames are distinct, its output is
+  byte-identical to v1's. **Future briefs and gates use v2**, and any flattened base is re-run
+  with v2 before diffing.
+- **No recorded result needs a correction.** 7 of 57 past populations had collisions; all were
+  unaffected or were run on flattened copies, and ARM's 17 pairs were in the recorded output.
+- **Residual, shared by v1 and v2:** two same-named declarations in one file are never
+  compared. The one real case is `CfgRecord`'s `Fintype`/`DecidableEq` instance pair at lines
+  1249/1255 (66 characters, 100%; s12.8 fill C cont1 recorded 689 → 690 pairs, truly 689 → 692).
+  It is accepted as an instance idiom and recorded here. A self-pair keying fix waits for the
+  next baseline reset.
 **Gate round 1 (2026-10-14): 0 blockers, 5 majors, 9 minors; open**
 (`audits/arm-extensions-fill-findings.md`). No frozen statement changed and no interface is false.
 The majors: the disclosed debt awaits acknowledgement, and D6 (seven `b4m*` twins) and D7 (the
