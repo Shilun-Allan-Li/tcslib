@@ -762,6 +762,15 @@ stopped items:**
     ARM-2 (a)'s generic guarded-run lemma (designed with Hydroxyi) lands. Round 3 also serves as
     the payback's own gate, post-merge (#101 merged without one, on the maintainer's
     recommendation).
+  - **GATE CLOSED 2026-10-15: PASS, 0 blockers / 0 majors / 2 minors**
+    (`audits/arm-extensions-fill-r3-findings.md`; resolutions `…-r3-resolutions.md`).
+    - R2-1 closes: L049 is paid back, and L066 is acknowledged. Its implementation stays with
+      ARM-2 (a), family K18.
+    - R2-2 to R2-8 close. The payback's statement gate is discharged post-merge: its 28
+      restatements and 20 additions are faithful.
+    - The received H7–H13 hosts still need their own contract gates before further consumers.
+    - R3-1 (the stale H10/H11 wording in design §14) and R3-2 (L002/L057's original side
+      relabelled `drop_len`; it is `drop_bit`) are fixed in the commit that records the gate.
 - **The B5a canonizer continuation 4 brief is issued (2026-10-15):**
   `briefs/b5a-fill-canon-cont4.md`.
   - **Inputs** `46be1104`, on a side branch from `ff4cab18`, merged in `6ee00231`, so the
@@ -771,8 +780,8 @@ stopped items:**
   PR #101; 60 of 60 at `eb750e63`; replay 119 of 119 from #100's snapshot; snapshot `oleans-lpay`
   for the tip `9c0ae906`).** `DAGCircuitSat`'s edit
   is exactly the two visibility changes. **It lands after MIG-1 S (#98)**, rebased and re-checked
-  at that tip, then replayed from S's output. ARM round 3's pack (folder 25) is being built from
-  its diff; `arm_reach` stays open for Hydroxyi.
+  at that tip, then replayed from S's output. ARM round 3 (folder 25) gated it post-merge: PASS
+  (2026-10-15). `arm_reach` stays as acknowledged debt (L066) until ARM-2 (a).
 
 ### ARM-2: the ARM layer's internal duplication, to coordinate with Hydroxyi (user, 2026-10-14)
 
@@ -1058,6 +1067,9 @@ The route decisions of 2026-10-12 (design §16b) add three work items, numbered 
       - the three files are unchanged at the tip.
     - **Landing PR #103** (cherry-picked, authorship kept); replay 80 modules from #102's
       snapshot.
+    - **Landed (2026-10-15, PR #103; replay 80 of 80 from #102's snapshot; snapshot `oleans-lf1`
+      for the tip `14c2fc19`).** The only sorry count that moved is `Build/StepClock`'s, 1 to 0.
+      C1's step clock and F2's windowed runner now rest on no `sorry`.
   **Record-table row 18's fill brief issued (2026-10-14):** `briefs/w1-fill-recordtable-cont5.md`
   (inputs `8dfbc881`, at `1b6b972c`):
   - The route is a 14-phase chain over row 17 through R1. Three prescribed privates are proved;

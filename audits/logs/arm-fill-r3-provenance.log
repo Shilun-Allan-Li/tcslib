@@ -1,0 +1,82 @@
+# arm-fill-r3-provenance (hashes from git rev-parse; checked with cat-file -e)
+campaign tip                3648415caaa5f52c2ea06d226947ea51e57c7603
+payback base                ff4cab1807c2d8f953a372a6682b20adcbee7d5e  (land-payback/work/base-commit.txt agrees)
+Lean content of the base    c9cc485baf9edcb3227fbf271ecc7ab9db32ab3f
+received commit             8c23f3bc314abb6c2c55cd2ce218e9771d6e41e0
+round-2 tree                e831b5b0d887dac3bbf1aa2c19af28983b15b982
+landing folder's base now   eb750e63ff434a6bdbff3aa80e49b55bca800d53  (work/base-commit.txt; the landing was re-run after MIG-1 S, #98)
+PR #101 (the payback) merge 9c0ae9060cb244837677371a31d8cfab12e18244  (first parent c1ae37d65e09d158e78e6497c811888f08529f9f)
+the 27 payback files: identical at ff4cab18 and eb750e63
+the 27 payback files: identical at ff4cab18 and at #101's first parent
+PR #101 changes exactly the 27 files
+the 27 files at #101's merge and at the tip equal the measured landed tree byte for byte: 27 files
+Lean files where the tip differs from the measured landed tree (PRs #98-#100, none a payback file):
+  TCSlib/Complexity/ClassP/TimeConstructible.lean (in the screen population)
+  TCSlib/Complexity/TimeHierarchy/Diagonal.lean
+  TCSlib/Complexity/TuringMachine/Build/Catalog.lean (in the screen population)
+  TCSlib/Complexity/TuringMachine/Build/Loop.lean (in the screen population)
+  TCSlib/Complexity/TuringMachine/Build/Primitives.lean (in the screen population)
+  TCSlib/Complexity/TuringMachine/Build/WindowRun.lean
+  TCSlib/Complexity/TuringMachine/Build/Wrappers.lean (in the screen population)
+  TCSlib/Complexity/TuringMachine/Composition.lean (in the screen population)
+  TCSlib/Complexity/TuringMachine/Encoding.lean (in the screen population)
+  TCSlib/Complexity/TuringMachine/Simulation.lean (in the screen population)
+Lean files in the landed tree absent at the tip: 0
+tip export (<S>/gate-arm-r3/work/tip) equals git archive of the tip: 722 files, 0 differ
+Lean files: base == c9cc485b
+base is an ancestor of the tip
+# after the bundle's tip: #102's merge, in the object store but not in the local branch ref
+d32e12c0e0db6e8913729afff11a1eca3c90fb16 descends from the tip
+  TCSlib/Complexity/TuringMachine.lean: in the population 0, bundled 0
+  TCSlib/Complexity/TuringMachine/Build/StepBlockForward.lean: in the population 0, bundled 0
+  TCSlib/Complexity/TuringMachine/Codes2Tape.lean: in the population 0, bundled 0
+  TCSlib/Complexity/TuringMachine/SelfUniversal.lean: in the population 0, bundled 0
+  TCSlib/Complexity/TuringMachine/UniversalK.lean: in the population 0, bundled 0
+v3 screen script: f4feac91d3a1ec036f3bbcaafde83e6855a1bf1a62d31dac31a40a40d878f181 (the tip's audits/evidence/retrofit/copy-text-screen-v3.py: f4feac91d3a1ec036f3bbcaafde83e6855a1bf1a62d31dac31a40a40d878f181)
+
+# the base export (<S>/gate-arm-r3/work/base) against git archive of the base, and the landed tree against base + the 27 patches
+base export: 722 Lean files, 0 differ
+base + 27 patches vs the landed tree: 0 differences
+the landing folder's tree/ (27 files) equals the landed tree byte for byte: 27 files
+files changed by the payback: 27
+PR #101's diffstat:  27 files changed, 539 insertions(+), 1549 deletions(-)
+# the 27 files by kind (comment-stripped identity), with the patch line counts
+CODE-CHANGED	TCSlib/Complexity/CircuitComplexity/DAGCircuitSat.lean	+2	-2
+CODE-CHANGED	TCSlib/Complexity/ClassNP/PolyTimeBlockLoop.lean	+29	-16
+CODE-CHANGED	TCSlib/Complexity/ClassPSPACE/TQBF.lean	+1	-724
+CODE-CHANGED	TCSlib/Complexity/ClassPSPACE/TQBFARM/Machine.lean	+2	-4
+COMMENT-ONLY	TCSlib/Complexity/ClassPSPACE/TQBFHardMachine.lean	+7	-2
+CODE-CHANGED	TCSlib/Complexity/ClassPSPACE/TQBFHardParams.lean	+4	-14
+CODE-CHANGED	TCSlib/Complexity/ClassPSPACE/TQBFHardSemantics.lean	+0	-21
+CODE-CHANGED	TCSlib/Complexity/ClassPSPACE/TQBFHardTseitin.lean	+17	-42
+COMMENT-ONLY	TCSlib/Complexity/ClassPSPACE/TQBFHardVerifier.lean	+2	-2
+CODE-CHANGED	TCSlib/Complexity/Formulas/QBF.lean	+25	-7
+COMMENT-ONLY	TCSlib/Complexity/SpaceComplexity.lean	+5	-4
+CODE-CHANGED	TCSlib/Complexity/SpaceComplexity/Codec/Bridge.lean	+20	-115
+CODE-CHANGED	TCSlib/Complexity/SpaceComplexity/Codec/Checks.lean	+6	-12
+CODE-CHANGED	TCSlib/Complexity/SpaceComplexity/Codec/Engine.lean	+26	-140
+CODE-CHANGED	TCSlib/Complexity/SpaceComplexity/Codec/Langs.lean	+9	-8
+CODE-CHANGED	TCSlib/Complexity/SpaceComplexity/Codec/Parse.lean	+6	-11
+CODE-CHANGED	TCSlib/Complexity/SpaceComplexity/Codec/Run.lean	+2	-4
+CODE-CHANGED	TCSlib/Complexity/SpaceComplexity/Codec/Step.lean	+22	-22
+CODE-CHANGED	TCSlib/Complexity/SpaceComplexity/Codec/Valid.lean	+7	-8
+CODE-CHANGED	TCSlib/Complexity/SpaceComplexity/Codec/Word.lean	+13	-18
+CODE-CHANGED	TCSlib/Complexity/SpaceComplexity/ConfigGraph.lean	+91	-256
+CODE-CHANGED	TCSlib/Complexity/SpaceComplexity/ExpBFS/Radius.lean	+37	-43
+COMMENT-ONLY	TCSlib/Complexity/SpaceComplexity/ExpBFS/Run.lean	+5	-1
+CODE-CHANGED	TCSlib/Complexity/SpaceComplexity/Logspace/InputAccess.lean	+189	-49
+CODE-CHANGED	TCSlib/Complexity/SpaceComplexity/Logspace/Mult.lean	+3	-9
+CODE-CHANGED	TCSlib/Complexity/SpaceComplexity/Logspace/QueryReshape.lean	+4	-12
+CODE-CHANGED	TCSlib/Complexity/SpaceComplexity/Machines/VWord.lean	+5	-3
+{'CODE-CHANGED': 23, 'COMMENT-ONLY': 4}
+
+# land-payback/SHA256SUMS, rechecked
+all 86 entries OK
+
+# population: round 1's 214 files + 2 modules now in the added files' closure at the base + 2 added by the payback
+population files: 218; SHA-256 of the list cbcbaadc778fe73ab18186fdfeb419ea09923602043a314307922c6d244f2a76
+closure of the 73 added files: 208 modules at the base, 210 at the landed tree
+in the base closure, not in round 1's population: ['TCSlib/Complexity/TuringMachine/Build/Contract/Basic.lean', 'TCSlib/Complexity/TuringMachine/CodeParser.lean']
+added to the closure by the payback: ['TCSlib/Programs/Compat.lean', 'TCSlib/Programs/Util/List.lean']
+round 1 population files outside both closures (round 1 named them: TQBF, Path, ImmermanSzelepcsenyi, Savitch and the supplement's four): ['TCSlib/Complexity/ClassPSPACE/TQBF.lean', 'TCSlib/Complexity/CookLevin.lean', 'TCSlib/Complexity/CookLevin/Hardness.lean', 'TCSlib/Complexity/SpaceComplexity/Inclusions.lean', 'TCSlib/Complexity/SpaceComplexity/Logspace/ImmermanSzelepcsenyi.lean', 'TCSlib/Complexity/SpaceComplexity/Logspace/Mult.lean', 'TCSlib/Complexity/SpaceComplexity/Logspace/Path.lean', 'TCSlib/Complexity/SpaceComplexity/Savitch.lean']
+pop3.txt = round 1 population (214) + 4 = 218 files: OK
