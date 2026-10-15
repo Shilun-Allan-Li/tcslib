@@ -90,8 +90,7 @@ one framed contract and one trace serve them all.
   `Turing.step_of_tapeAction_move`, `Turing.step_of_tapeAction_write` and
   `Turing.step_of_inputMoveAction`; the field-layout facts `Turing.joinFields_cons_cons`,
   `Turing.fieldsTape_cons_shift`, `Turing.fieldOffset_succ`, `Turing.fieldOffset_cons_succ`,
-  `Turing.length_joinFields_add_one` and `Turing.fieldOffset_add_length_le`; and the rewind
-  head bounds `Turing.FinTM.rewind_scan_heads`, `Turing.FinTM.rewind_heads`.
+  `Turing.length_joinFields_add_one` and `Turing.fieldOffset_add_length_le`.
 * `Turing.transferTM`, `Turing.copyTM`, `Turing.clearTM`,
   `Turing.compareTM`, `Turing.incrementTM`.
 * Part 3: `Turing.tapeAction`, `Turing.inputMoveAction` (one-tape
@@ -124,9 +123,14 @@ identities `Turing.scanResult_fold`, `Turing.scanResult_map`,
 `Turing.scanResult_shiftRight`, `Turing.scanResult_shiftLeft`,
 `Turing.scanResult_carry`.
 
+* `Turing.Cfg.ofWords_copy_endpoint`, `Turing.Cfg.ofWords_transfer_endpoint` (MIG-1):
+  the framed copy and transfer endpoints started at a canonical seam `Cfg.ofWords q w`
+  with an empty destination are canonical seams again.
 * `Turing.MultiTapeTM.spaceUsedByTape_le_card_Icc` — the head-interval bound the
   Z4 space annotation consumes — moved on to `Finite` at MIG-0b's layering split
   (2026-10-13; it was here from `Build/Zone.lean` for B4, 2026-10-12).
+* `Turing.FinTM.rewind_scan_heads`, `Turing.FinTM.rewind_heads` — the rewind head
+  bounds — moved on to `TuringMachine/Simulation` at MIG-1 stage S (2026-10-14).
 
 ## References
 
@@ -1067,6 +1071,52 @@ theorem transferTM_run_ofCfg {Symbol : Type*} {k : ℕ} {x : List Symbol} (src d
       simp only [catalogTrace]
       split_ifs <;> simp_all [catalogCopyF, catalogTransferR, catalogCopyR, Finset.mem_Icc] <;> omega
 
+/-- **The transfer endpoint from a canonical seam**. If `src ≠ dst` and the destination word of the
+seam `Cfg.ofWords q w` is empty, then the framed transfer endpoint of `Turing.transferTM_run_ofCfg`
+started there (state `q'`, the source interval blanked, the destination interval overwritten with
+`w src`, everything else unchanged) is the seam
+`Cfg.ofWords q' (Function.update (Function.update w src []) dst (w src))`.
+
+**Proof sketch.** Today's `Cfg.ext` computation in the proof of `Turing.transferTM_run`: as the copy
+endpoint, with the source interval `[0, |w src|)` blanked, which together with the blanks of
+`bufferTape (w src)` outside it is `bufferTape []`. -/
+theorem Cfg.ofWords_transfer_endpoint {k : ℕ} {S : Type*} {x : List Bool} (q q' : S)
+    (w : Fin k → List Bool) (src dst : Fin k) (hne : src ≠ dst) (hdst : w dst = []) :
+    ({ (Cfg.ofWords (input := x) q w) with
+        state := some q'
+        workTapes := fun j p =>
+          if j = src ∧ (Cfg.ofWords (input := x) q w).workTapePos j ≤ p ∧
+              p < (Cfg.ofWords (input := x) q w).workTapePos j + ((w src).length : ℤ)
+            then none
+          else if j = dst ∧ (Cfg.ofWords (input := x) q w).workTapePos j ≤ p ∧
+              p < (Cfg.ofWords (input := x) q w).workTapePos j + ((w src).length : ℤ)
+            then FinTM.bufferTape (w src) (p - (Cfg.ofWords (input := x) q w).workTapePos j)
+          else (Cfg.ofWords (input := x) q w).workTapes j p } : Cfg k Bool S x) =
+      Cfg.ofWords q' (Function.update (Function.update w src []) dst (w src)) := by
+  apply Cfg.ext <;> simp [Cfg.ofWords]
+  funext j q
+  by_cases hs : j = src
+  · subst j
+    simp only [Function.update_of_ne hne, Function.update_self,
+      FinTM.bufferTape_nil, hne, false_and, ite_false, true_and]
+    split_ifs with hq
+    · rfl
+    · by_cases h0 : 0 ≤ q
+      · simp [FinTM.bufferTape, h0]
+        omega
+      · simp [FinTM.bufferTape, h0]
+  · by_cases hd : j = dst
+    · subst j
+      simp only [Function.update_self, hdst, FinTM.bufferTape_nil,
+        hs, false_and, ite_false, true_and]
+      split_ifs with hq
+      · rfl
+      · by_cases h0 : 0 ≤ q
+        · simp [FinTM.bufferTape, h0]
+          omega
+        · simp [FinTM.bufferTape, h0]
+    · simp [hs, hd]
+
 /-- **Copy, framed** (design §12.6). As
 `Turing.transferTM_run_ofCfg`, except that the source is left intact: at
 exactly `2|w| + 2` the destination interval holds `w` and every other cell is
@@ -1106,6 +1156,38 @@ theorem copyTM_run_ofCfg {Symbol : Type*} {k : ℕ} {x : List Symbol} (src dst :
       rw [catalog_copy_trace src dst hne w d hstate hw]
       simp only [catalogTrace]
       split_ifs <;> simp_all [catalogCopyF, catalogCopyR, Finset.mem_Icc] <;> omega
+
+/-- **The copy endpoint from a canonical seam**. If the destination word of the seam
+`Cfg.ofWords q w` is empty, then the framed copy endpoint of `Turing.copyTM_run_ofCfg` started there
+(state `q'`, the destination interval overwritten with `w src`, every other cell, head and the
+output unchanged) is the seam `Cfg.ofWords q' (Function.update w dst (w src))`.
+
+**Proof sketch.** Today's `Cfg.ext` computation in the proof of `Turing.copyTM_run`: at the origin
+heads of `Cfg.ofWords` the destination interval is `[0, |w src|)`, which `bufferTape (w src)` fills
+exactly, and outside it the blank destination word agrees with `bufferTape (w src)`'s blanks; every
+other tape is untouched. -/
+theorem Cfg.ofWords_copy_endpoint {k : ℕ} {S : Type*} {x : List Bool} (q q' : S)
+    (w : Fin k → List Bool) (src dst : Fin k) (hdst : w dst = []) :
+    ({ (Cfg.ofWords (input := x) q w) with
+        state := some q'
+        workTapes := fun j p =>
+          if j = dst ∧ (Cfg.ofWords (input := x) q w).workTapePos j ≤ p ∧
+              p < (Cfg.ofWords (input := x) q w).workTapePos j + ((w src).length : ℤ)
+            then FinTM.bufferTape (w src) (p - (Cfg.ofWords (input := x) q w).workTapePos j)
+          else (Cfg.ofWords (input := x) q w).workTapes j p } : Cfg k Bool S x) =
+      Cfg.ofWords q' (Function.update w dst (w src)) := by
+  apply Cfg.ext <;> simp [Cfg.ofWords]
+  funext j q
+  by_cases hj : j = dst
+  · subst j
+    simp only [Function.update_self, hdst, FinTM.bufferTape_nil, true_and]
+    split_ifs with hq
+    · rfl
+    · by_cases h0 : 0 ≤ q
+      · simp [FinTM.bufferTape, h0]
+        omega
+      · simp [FinTM.bufferTape, h0]
+  · simp [hj]
 
 /-- **Clear, framed** (design §12.6). From any
 configuration in the sweep phase whose tape `i` carries the delimited word
@@ -10348,78 +10430,6 @@ private lemma f2_cond_time {D M₁ M₂ : FinTM Bool} {p : List Bool → Bool}
   apply hc.mono
   dsimp only [B] at *
   omega
-
-/-- **A native input rewind keeps every work head fixed** (public since the §12.8 fill), at
-every prefix, including its dispatch step.
-
-**Proof sketch.** Induct on the input position; each step is a `controlAction`. -/
-theorem rewind_scan_heads {k : ℕ} {S : Type} {x : List Bool}
-    (tm : MultiTapeTM k Bool S) (scan : S) (dest : Option S)
-    (htr : ∀ inp work, tm.tr scan inp work = match inp with
-      | some _ => controlAction .neg (some scan)
-      | none => controlAction .pos dest) :
-    ∀ (j : ℕ) (cfg : Cfg k Bool S x), cfg.state = some scan →
-      cfg.inputPos.val = j → j ≤ x.length →
-      ∀ u ≤ j + 1, (tm.runFrom cfg u).workTapePos = cfg.workTapePos := by
-  intro j
-  induction j with
-  | zero =>
-    intro cfg hs hj hp u hu
-    rcases Nat.le_one_iff_eq_zero_or_eq_one.mp hu with rfl | rfl
-    · rfl
-    · have hz : cfg.inputPos = 0 := Fin.ext hj
-      have hi : cfg.inputSymbol = none := by simp [Cfg.inputSymbol, hz]
-      change (tm.step cfg).workTapePos = _
-      simp only [MultiTapeTM.step, hs, htr, hi, controlAction_apply]
-  | succ j ih =>
-    intro cfg hs hj hp u hu
-    cases u with
-    | zero => rfl
-    | succ u =>
-      have hi : cfg.inputSymbol = some (x[j]'(by omega)) :=
-        inputSymbolInner j (by omega) (by omega)
-      have he : tm.step cfg =
-          {cfg with state := some scan, inputPos := moveInputPos cfg.inputPos .neg} := by
-        simp only [MultiTapeTM.step, hs, htr, hi, controlAction_apply]
-      rw [MultiTapeTM.runFrom_succ_eq_step, he]
-      apply ih _ rfl _ (by omega) u (by omega)
-      simp only [moveInputPos_neg_val]
-      omega
-
-/-- **The bounded rewind with its work heads fixed** (public since the §12.8 fill): it
-reaches its destination with the input head at `1` within `pos + 2` steps, and every work head
-stays put throughout.
-
-**Proof sketch.** One start step, then `Turing.FinTM.rewind_scan` for the run and
-`Turing.FinTM.rewind_scan_heads` for the heads. -/
-theorem rewind_heads {k : ℕ} {S : Type} {x : List Bool}
-    (tm : MultiTapeTM k Bool S) (start scan : S) (dest : Option S)
-    (hstart : ∀ inp work, tm.tr start inp work = controlAction .neg (some scan))
-    (hscan : ∀ inp work, tm.tr scan inp work = match inp with
-      | some _ => controlAction .neg (some scan)
-      | none => controlAction .pos dest)
-    (c : Cfg k Bool S x) (hs : c.state = some start) :
-    ∃ r ≤ c.inputPos.val + 2,
-      tm.runFrom c r = {c with state := dest, inputPos := 1} ∧
-      ∀ u ≤ r, (tm.runFrom c u).workTapePos = c.workTapePos := by
-  have hstep : tm.step c =
-      {c with state := some scan, inputPos := moveInputPos c.inputPos .neg} := by
-    simp only [MultiTapeTM.step, hs, hstart, controlAction_apply]
-  have hp : (moveInputPos c.inputPos .neg).val ≤ x.length := by
-    rw [moveInputPos_neg_val]
-    have := c.inputPos.isLt
-    omega
-  refine ⟨1 + ((moveInputPos c.inputPos .neg).val + 1), ?_, ?_, ?_⟩
-  · rw [moveInputPos_neg_val]; omega
-  · rw [MultiTapeTM.runFrom_add]
-    change tm.runFrom (tm.step c) _ = _
-    rw [hstep, rewind_scan tm scan dest hscan _ rfl hp]
-  · intro u hu
-    cases u with
-    | zero => rfl
-    | succ u =>
-      rw [MultiTapeTM.runFrom_succ_eq_step, hstep]
-      exact rewind_scan_heads tm scan dest hscan (moveInputPos c.inputPos .neg).val _ rfl rfl hp u (by omega)
 
 /-- Explicit equivalence between a disjoint pair of banks and their concatenation. -/
 private def f2_finSumEquiv (a b : ℕ) : Fin a ⊕ Fin b ≃ Fin (a + b) where

@@ -62,6 +62,10 @@ infrastructure round.
 * `Turing.FinTM.redirectTM` — the W2 transformation.
 * `Turing.FinTM.redirectTM_computes`, `Turing.FinTM.redirectTM_live` — the
   W2 contract pair.
+* `Turing.FinTM.redirectTM_runFrom` — the W2 run correspondence, field by field (MIG-1).
+* `Turing.FinTM.timedCondTM` — the W3 controller (MIG-1, the named witness), with
+  `Turing.FinTM.timedCondTM_computes` (time) and `Turing.FinTM.timedCondTM_spaceUsed`
+  (space), both sorried until the fill F-A.
 * `Turing.FinTM.computesFunInTime_cond` — the W3 timed branch.
 
 ## References
@@ -465,18 +469,46 @@ theorem redirectTM_live {M : FinTM Bool} {haltOn : Bool}
   rw [hs, hout] at hhalt
   simp only [redirectState, if_neg hlast, Option.some_ne_none] at hhalt
 
+/-- **The redirect correspondence**. At every time `t`, the redirected machine's configuration on
+`x` has the source run's input position, work tapes and work heads, an empty output, and the state
+that the source state and the source's last emitted bit determine: the source state with that bit
+while the source is live; after the source halts, halted if the bit is `haltOn`, and the stationary
+live loop otherwise.
+
+**Proof sketch.** Rewrite with the private `redirect_run`, which states that the run is the
+image of the source run under the private `redirectCfg`; each conjunct is then a field of that
+image, by `rfl`. -/
+theorem redirectTM_runFrom (M : FinTM Bool) (haltOn : Bool) (x : List Bool) (t : ℕ) :
+    ((redirectTM M haltOn).tm.runFrom ((redirectTM M haltOn).tm.initCfg x) t).state =
+        (match (M.tm.runFrom (M.tm.initCfg x) t).state with
+          | some s => some (.inl (s, (M.tm.runFrom (M.tm.initCfg x) t).output.getLast?))
+          | none =>
+            if (M.tm.runFrom (M.tm.initCfg x) t).output.getLast? = some haltOn then none
+            else some (.inr ())) ∧
+      ((redirectTM M haltOn).tm.runFrom ((redirectTM M haltOn).tm.initCfg x) t).inputPos =
+        (M.tm.runFrom (M.tm.initCfg x) t).inputPos ∧
+      ((redirectTM M haltOn).tm.runFrom ((redirectTM M haltOn).tm.initCfg x) t).workTapes =
+        (M.tm.runFrom (M.tm.initCfg x) t).workTapes ∧
+      ((redirectTM M haltOn).tm.runFrom ((redirectTM M haltOn).tm.initCfg x) t).workTapePos =
+        (M.tm.runFrom (M.tm.initCfg x) t).workTapePos ∧
+      ((redirectTM M haltOn).tm.runFrom ((redirectTM M haltOn).tm.initCfg x) t).output = [] := by
+  rw [redirect_run]
+  refine ⟨?_, rfl, rfl, rfl, rfl⟩
+  generalize M.tm.runFrom (M.tm.initCfg x) t = c
+  rcases c with ⟨q, p, tapes, heads, out⟩
+  cases q <;> rfl
+
 /-- Pad the decider with the fresh branch tapes. The added tapes are idle,
 so the public left-block simulation supplies its complete run invariant. -/
 private def timedPadTM (D : FinTM Bool) (r : ℕ) : MultiTapeTM (D.k + r) Bool D.State where
   q₀ := D.tm.q₀
   tr q inp work := leftAction r id (D.tm.tr q inp (fun i => work (Fin.castAdd r i)))
 
-/-- The conditional controller captures the decider on the last tape,
-steps back to read its singleton verdict, rewinds the physical input, then
-runs the selected branch on its untouched tape bank. In the administrative
-states, the first Boolean distinguishes back/read and the second distinguishes
-rewind-start/scan. The branch transition table is independent of its selector. -/
-private def timedCondTM (D M₁ M₂ : FinTM Bool) : FinTM Bool where
+/-- **The timed conditional**. Run the decider `D` with its output captured on the last tape, step
+back to read the verdict, rewind the input, then run `M₁` or `M₂`, as the verdict says, from its
+genuine initial configuration on its own untouched tape bank (W3). The branch tapes are idle while
+`D` runs. -/
+def timedCondTM (D M₁ M₂ : FinTM Bool) : FinTM Bool where
   k := (D.k + (M₁.k + M₂.k)) + 1
   State := D.State ⊕ (Bool ⊕ ((Bool × Bool) ⊕ (M₁.State ⊕ M₂.State)))
   tm :=
@@ -694,6 +726,41 @@ private lemma timed_start (D M₁ M₂ : FinTM Bool) (x : List Bool) (b : Bool) 
   · rw [MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_add, hcap,
       timed_read D M₁ M₂ c b hs ho, hr]
     rfl
+
+/-- **The timed conditional's time**. If `D` computes the verdict `[p x]` within `T₀` and `M₁`, `M₂`
+compute `f₁`, `f₂` within `T₁`, `T₂`, the timed conditional computes `if p x then f₁ x else f₂ x`
+within `5·(T₀ n + max (T₁ n) (T₂ n) + 1)` steps; no monotonicity is needed, since the selected
+branch runs on the same physical input.
+
+**Proof sketch.** The body of today's `computesFunInTime_cond`, which `f2_cond_time` copies: the
+captured decider run, the two-step verdict read and the input rewind take at most `2·T₀ + 5` steps
+(the private `timed_start`; the input head has moved at most once per decider step), and the
+selected branch then runs from its own initial configuration (`timed_branch_run`,
+`branchTM_computes`). -/
+theorem timedCondTM_computes {D M₁ M₂ : FinTM Bool} {p : List Bool → Bool}
+    {f₁ f₂ : List Bool → List Bool} {T₀ T₁ T₂ : ℕ → ℕ}
+    (hD : D.ComputesFunInTime (fun x => [p x]) T₀)
+    (h₁ : M₁.ComputesFunInTime f₁ T₁) (h₂ : M₂.ComputesFunInTime f₂ T₂) :
+    (timedCondTM D M₁ M₂).ComputesFunInTime
+      (fun x => if p x then f₁ x else f₂ x)
+      (fun n => 5 * (T₀ n + max (T₁ n) (T₂ n) + 1)) := by
+  sorry
+
+/-- **The timed conditional's space**. If `D` outputs `[b]` on `x` within `T` steps, then at every
+time `t` the conditional's space is at most `D`'s space at time `T`, plus the branch union's space
+at time `t`, plus two cells for the capture tape.
+
+**Proof sketch.** Catalog's `f2_cond_space`: the three tape groups are disjoint. The decider
+bank is touched only during the captured run, which halts by `T`; the branch bank only after
+the dispatch, along the branch union's own trajectory; the capture head stays in `{0, 1}`. The
+ledger `f2_cond_ledger` (moved with it) gives the head positions of the three groups at every
+time. -/
+theorem timedCondTM_spaceUsed (D M₁ M₂ : FinTM Bool) (x : List Bool) (b : Bool) (T t : ℕ)
+    (hD : D.ComputesInTime x [b] T) :
+    (timedCondTM D M₁ M₂).tm.spaceUsed ((timedCondTM D M₁ M₂).tm.initCfg x) t ≤
+      D.tm.spaceUsed (D.tm.initCfg x) T +
+        (branchTM M₁ M₂ b).tm.spaceUsed ((branchTM M₁ M₂ b).tm.initCfg x) t + 2 := by
+  sorry
 
 /-- **W3, the timed branch**: the quantitative form of
 `Turing.FinTM.exists_cond`. If a decider machine computes the test bit
