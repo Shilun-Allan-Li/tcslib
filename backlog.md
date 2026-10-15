@@ -1205,7 +1205,14 @@ The route decisions of 2026-10-12 (design §16b) add three work items, numbered 
     `ZoneTape` (0) and `ZoneRebalance` (2).
   - **Next:**
     - the G2 fill: `copyMapTM_run_ofCfg`, `transferMapTM_run_ofCfg` and the pure
-      `zoneCascadeRight_home`;
+      `zoneCascadeRight_home`. **Done by the maintainer (user 2026-10-15), PR #108 (`8e3cee48`;
+      `audits/evidence/s13d/g2-fill/NOTES.md`):** one trace lemma for both mapped rows (the
+      copy is the transfer with residue `some`), the plain rows as their identity instances,
+      and one shared induction for `zoneSide_cascadeRight` and `zoneCascadeRight_home`. Both
+      files have 0 sorry, standard axioms, 0 new warnings and no statement change. The v3
+      screen goes from 384 to 370 pairs; the 4 new-by-name pairs (in-file, 50–67%; three
+      succeed base pairs) await the user's approval. Replay: 87 modules from `oleans-lcanon4`.
+      Then the G2 fill gate;
     - G4's host first (obligation 3): identify the public host for the two-tape scratch and
       ruler layout, or gate a missing one, before G4's fill brief.
   **Two-tape universal (U2) designed (2026-10-14; `audits/evidence/u2/U2-design.md`, probes).**

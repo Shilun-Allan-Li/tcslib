@@ -1,0 +1,25 @@
+
+/-! ### Route probe: the seams of `Turing.zoneCascadeRight_home` (evidence only) -/
+
+namespace Turing
+
+/-- The step pairs keep the home: both shift wrappers copy it. -/
+example {ℓ : ℕ} (i : ℕ) (z : ZoneContents ℓ) : (zoneStepPair i z).home = z.home := rfl
+
+/-- The central move, when it fires, sets the home to the head of the right zone `0`. -/
+example {ℓ : ℕ} (hℓ : 0 < ℓ) (z : ZoneContents ℓ)
+    (h : (z.left ⟨0, hℓ⟩).length + 1 ≤ zoneCapacity 0) :
+    (zoneMove true z).home = (z.right ⟨0, hℓ⟩).headI := by
+  simp [zoneMove, hℓ, h, zoneMoveRight]
+
+/-- Zone `0` is the first word of the represented side, so a nonempty zone `0` gives the side's
+head. -/
+example {ℓ : ℕ} (hℓ : 0 < ℓ) (w : Fin ℓ → List (Option Bool)) (hne : w ⟨0, hℓ⟩ ≠ []) :
+    (zoneSide w).headI = (w ⟨0, hℓ⟩).headI := by
+  obtain ⟨n, rfl⟩ : ∃ n, ℓ = n + 1 := ⟨ℓ - 1, by omega⟩
+  obtain ⟨a, as, ha⟩ := List.exists_cons_of_ne_nil hne
+  have h0 : (0 : Fin (n + 1)) = ⟨0, hℓ⟩ := rfl
+  rw [zoneSide_succ, h0, ha]
+  rfl
+
+end Turing
