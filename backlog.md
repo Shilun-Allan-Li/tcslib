@@ -753,7 +753,7 @@ stopped items:**
   `Cfg.InWindow.core_bounds`; D7's single `arm_chain` lemma with `bif up`; `drop_canon` keeps
   its name.
 - **Final tree (2026-10-14; 60 of 60 at `ff4cab18`, Lean-equal to `c9cc485b`, against `oleans-ltip3`):**
-  27 files (23 code, 4 comment-only), net −938 lines; replay 119 modules. **Landed (2026-10-15,
+  27 files (23 code, 4 comment-only), +539 −1,549 (net −1,010) lines; replay 119 modules. **Landed (2026-10-15,
   PR #101; 60 of 60 at `eb750e63`; replay 119 of 119 from #100's snapshot; snapshot `oleans-lpay`
   for the tip `9c0ae906`).** `DAGCircuitSat`'s edit
   is exactly the two visibility changes. **It lands after MIG-1 S (#98)**, rebased and re-checked
@@ -1021,6 +1021,29 @@ The route decisions of 2026-10-12 (design §16b) add three work items, numbered 
     - **Landing:** branch `lean/b6-f2-windowrun` (cherry-picked, authorship kept). Replay 4
       modules. It lands after MIG-1 S (#98), whose replay list contains all four.
     - **Landed (2026-10-15, PR #99; replay 4 of 4 from #98's snapshot; snapshot `oleans-lf2`).**
+    - **Maintainer v3 re-screen at the tip (the 21-file population):** 495 → 497 pairs, the 2 new
+      ones exactly the pre-disclosed instance pairs (83%, 50%), none cross-file. The ledger is
+      confirmed.
+  - **F1 v2 delivered (2026-10-15, `fill-b6-stepclock-v2.zip`, SHA-256 `9ba3f781…009c`; Codex
+    `e81df474`, three commits; report `audits/b6-fill-agent-reports/stepclock-2-REPORT.md`):
+    complete.**
+    - **What's proved:** `exists_stepClockTMVia`, so the frozen `exists_stepClockTM` (C1's) is
+      admission-free and F2's runner becomes sorry-free. Standard axioms throughout.
+    - **The promotion list:** applied verbatim (both shared files equal the overlays).
+    - **Additions:** 33 privates. The only restatement is the recommended `sc_debit`, gaining
+      one state-image conclusion.
+    - **No escalations; new copies: none** (only the two pre-disclosed controller pairs).
+    - **Promotion candidates:** `sc_debit`, `sc_clockTM`, `sc_dec_inputPos`,
+      `sc_observedSegment`, `sc_firstExit`.
+    - **Maintainer checks:**
+      - checksums and the shim hash;
+      - the overlays, and the patches reproducing the files;
+      - freeze 5/5 public, only the target's body changed;
+      - no `sorry` in the final files; hygiene; width ≤ 99;
+      - no name MIG-1 S renames;
+      - the three files are unchanged at the tip.
+    - **Landing PR #103** (cherry-picked, authorship kept); replay 80 modules from #102's
+      snapshot.
   **Record-table row 18's fill brief issued (2026-10-14):** `briefs/w1-fill-recordtable-cont5.md`
   (inputs `8dfbc881`, at `1b6b972c`):
   - The route is a 14-phase chain over row 17 through R1. Three prescribed privates are proved;
@@ -1181,6 +1204,7 @@ The route decisions of 2026-10-12 (design §16b) add three work items, numbered 
         snapshot. These include the stricter axiom checker (m1) and its mixed-axiom control.
         H2-F is in `Build/StepBlockForward`, and `CodeSimulator`/`StepBlockLoop` are untouched.
         The replay is 5 modules. The §14 H2 row now records H2-F (m2).
+      - **Landed (2026-10-15, PR #102; replay 5 of 5 from #101's snapshot; snapshot `oleans-lu2`).**
     - **`Turing.universal` at `k = 1`** fits U2-E's statement verbatim. Its re-derivation (U-1)
       waits for U2-E's fill, so a sorry-free theorem does not come to depend on a sorried one.
   - Forwarded to G5's statement phase: `two_work_tapes_run` per run, with the converse; its
