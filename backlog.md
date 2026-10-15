@@ -992,6 +992,27 @@ The route decisions of 2026-10-12 (design §16b) add three work items, numbered 
     lemmas in `CounterLoop` and `SymbolLift`). It ships a route probe that discharges every route
     seam from public names (0 errors, exactly the 3 fill stubs sorried), with a static scan for
     private citations and unfoldings. F2 is re-dispatched unchanged with the environment addendum.
+  - **F2 delivered (2026-10-15, `fill-b6-windowrun copy.zip`, SHA-256 `2cb4bfb6…d29f`; Codex
+    `e260585d`; reports `audits/b6-fill-agent-reports/windowrun-1-REPORT.md` (the first attempt,
+    stopped on the environment before the addendum) and `windowrun-2-REPORT.md`):
+    **both targets proved.** `exists_windowLoopTM` uses only the standard axioms;
+    `exists_windowRunnerTM` adds `sorryAx` only through `exists_stepClockTMVia` (F1, in flight),
+    by the worker's direct-admission walk. 25 new privates, none public; prescribed machines
+    unchanged; the environment addendum used exactly as written.
+    - **Maintainer integration checks:**
+      - checksums;
+      - the patch reproduces the file, and it is the only file;
+      - freeze: 10/10 public, only the two authorized bodies changed;
+      - no forbidden construct or `sorry` in the 913 added lines; widths ≤ 98;
+      - the bundle's sole prerequisite is the base `70b503b4`;
+      - no name MIG-1 S renames.
+    - **Elaboration at the tip** (`WindowRun.lean` unchanged since the base) against
+      `oleans-ltip3`: 0 errors, 0 warnings, axioms as stated.
+    - **Screens:** the worker's v1 screens (its brief) show 2 new in-file pairs, both the
+      pre-disclosed instance boilerplate (83%, 50%). The maintainer's v3 re-screen at the tip is
+      queued.
+    - **Landing:** branch `lean/b6-f2-windowrun` (cherry-picked, authorship kept). Replay 4
+      modules. It lands after MIG-1 S (#98), whose replay list contains all four.
     - **Two more items for the dedup window,** in the family above: `sc_wordPatch_twice` and
       `sc_wordPatch_frame` prove for `wordPatch` what the private `counter_patch_twice` and
       `counter_patch_frame` prove for `counterPatch`. `sc_dec_inputPos` overlaps `Build/StepBlock`'s
