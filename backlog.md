@@ -753,7 +753,21 @@ stopped items:**
   `Cfg.InWindow.core_bounds`; D7's single `arm_chain` lemma with `bif up`; `drop_canon` keeps
   its name.
 - **Final tree (2026-10-14; 60 of 60 at `ff4cab18`, Lean-equal to `c9cc485b`, against `oleans-ltip3`):**
-  27 files (23 code, 4 comment-only), +539 −1,549 (net −1,010) lines; replay 119 modules. **Landed (2026-10-15,
+  27 files (23 code, 4 comment-only), +539 −1,549 (net −1,010) lines; replay 119 modules.
+- **ARM round 3 pack built (2026-10-15; folder 25; bundle `b0e9f8f2…f834`, 243 sections).**
+  - **Measurements:** 314 pairs at the landed tree, 48 removed and 9 new, all inspected. K+ is 142
+    declarations, 13.7% by shared text. No P1/P1+ declaration remains. #98–#102 change nothing in
+    the ledger.
+  - **User (2026-10-15):** L066 (`arm_reach` ~ `Rch.trans`) is **acknowledged as debt** until
+    ARM-2 (a)'s generic guarded-run lemma (designed with Hydroxyi) lands. Round 3 also serves as
+    the payback's own gate, post-merge (#101 merged without one, on the maintainer's
+    recommendation).
+- **The B5a canonizer continuation 4 brief is issued (2026-10-15):**
+  `briefs/b5a-fill-canon-cont4.md`.
+  - **Inputs** `46be1104`, on a side branch from `ff4cab18`, merged in `6ee00231`, so the
+    worker's base keeps the pre-ship Lean content `c9cc485b`.
+  - **Screens:** re-measured with v3, base and overlay 2,576 pairs each.
+ **Landed (2026-10-15,
   PR #101; 60 of 60 at `eb750e63`; replay 119 of 119 from #100's snapshot; snapshot `oleans-lpay`
   for the tip `9c0ae906`).** `DAGCircuitSat`'s edit
   is exactly the two visibility changes. **It lands after MIG-1 S (#98)**, rebased and re-checked
