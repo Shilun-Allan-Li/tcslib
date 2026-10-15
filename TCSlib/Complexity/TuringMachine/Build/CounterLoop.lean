@@ -367,6 +367,33 @@ theorem decrementTM_run_underflow_ofCfg {k : ℕ} {x : List Bool} (i : Fin k)
     exact (hc t ht b) ∘ (by simp only [counter_decrement_run, Cfg.mapWorkSymbols]; exact id)
   · simpa only [counter_decrement_run, Cfg.mapWorkSymbols] using hh
 
+/-- **The decrement ignores its input** (B6-F1 promotion): its transition does not depend on
+the input symbol it reads. This is the input-obliviousness that the symbol overlay transport
+`Turing.MultiTapeTM.liftSymbols_runFrom_over` asks of a table.
+
+**Proof sketch.** The increment's table ignores its input argument, and the conjugation by
+complement passes that argument through unchanged; both sides are the same term (`rfl`). -/
+theorem decrementTM_tr_input {k : ℕ} (i : Fin k) (q : FlagPhase) (inp inp' : Option Bool)
+    (work : Fin k → Option Bool) :
+    (decrementTM k i).tr q inp work = (decrementTM k i).tr q inp' work :=
+  rfl
+
+/-- **The decrement's actions keep the input head and write no blank** (B6-F1 promotion): every
+action of the table has input move `0`, and every cell it writes receives a digit. The second
+half is the blank-freeness that `Turing.MultiTapeTM.liftSymbols_runFrom_over` asks of a table;
+the first keeps a host's input head fixed during a decrement.
+
+**Proof sketch.** The conjugated table is the increment's action with its writes mapped by
+complement; the increment never moves the input head and writes either nothing or a digit.
+Split on the phase and the scanned cell. -/
+theorem decrementTM_tr_action {k : ℕ} (i : Fin k) (q : FlagPhase) (inp : Option Bool)
+    (work : Fin k → Option Bool) :
+    ((decrementTM k i).tr q inp work).inputTape = 0 ∧
+      ∀ j, (((decrementTM k i).tr q inp work).workTapes j).1 ≠ some none := by
+  unfold decrementTM MultiTapeTM.mapWorkSymbols Action.mapWorkSymbols
+  cases q <;> dsimp only [incrementTM] <;> (try split) <;>
+    exact ⟨rfl, fun j => by by_cases hj : j = i <;> simp [hj]⟩
+
 /-! ## Counter arithmetic -/
 
 /-- The counter word after `r` decrements. A decrement at value zero leaves
@@ -374,6 +401,12 @@ the word unchanged here; the machine's underflow wrap is stated in the host
 contract. -/
 def counterWord (w : List Bool) (r : ℕ) : List Bool :=
   (fun u => (decFixed u).getD u)^[r] w
+
+/-- **The counter word before any decrement** is the word itself (B6-F1 promotion).
+
+**Proof sketch.** The zeroth iterate of the optional decrement is the identity (`rfl`). -/
+theorem counterWord_zero (w : List Bool) : counterWord w 0 = w :=
+  rfl
 
 /-- The cost sum of the first `r` decrements along the frozen word orbit
 `Turing.counterWord`: the decrement of the word `u` costs
@@ -386,11 +419,28 @@ gate, SC-1). -/
 def counterOverhead (w : List Bool) (r : ℕ) : ℕ :=
   ∑ j ∈ Finset.range r, (2 * ((counterWord w j).takeWhile not).length + 2)
 
+/-- **No decrement costs nothing** (B6-F1 promotion): the cost of the first `0` decrements
+is `0`.
+
+**Proof sketch.** An empty sum (`Finset.sum_range_zero`). -/
+theorem counterOverhead_zero (w : List Bool) : counterOverhead w 0 = 0 :=
+  Finset.sum_range_zero _
+
+/-- **One more decrement adds its own cost** (B6-F1 promotion): the first `r + 1` decrements
+cost the first `r` plus `2 · |takeWhile not (counterWord w r)| + 2`, the cost of decrementing the
+`r`-th frozen word.
+
+**Proof sketch.** Split the last summand off the sum (`Finset.sum_range_succ`). -/
+theorem counterOverhead_succ (w : List Bool) (r : ℕ) :
+    counterOverhead w (r + 1) =
+      counterOverhead w r + (2 * ((counterWord w r).takeWhile not).length + 2) :=
+  Finset.sum_range_succ _ _
+
 /-- A borrow either detects an all-false word or preserves width, subtracts one,
 and changes the true-bit potential by its false-prefix length.
 **Proof sketch.** Induct on the word. A true low bit stops the borrow; a false
 low bit propagates it and gains one true bit. -/
-private lemma counter_dec_spec (w : List Bool) :
+lemma counter_dec_spec (w : List Bool) :
     match decFixed w with
     | none => w = List.replicate w.length false
     | some v => v.length = w.length ∧
@@ -418,7 +468,7 @@ private lemma counter_word_succ (w : List Bool) (r : ℕ) :
   Function.iterate_succ_apply' _ _ _
 
 /-- Underflow occurs exactly at binary value zero, including padded words. -/
-private lemma counter_dec_zero (w : List Bool) :
+lemma counter_dec_zero (w : List Bool) :
     decFixed w = none ↔ Nat.ofDigits 2 (w.map Bool.toNat) = 0 := by
   have hs := counter_dec_spec w
   cases hd : decFixed w with
@@ -476,7 +526,7 @@ theorem counterWord_value (w : List Bool) (r : ℕ)
       omega
 
 /-- Before exhaustion, the physical predecessor is the next frozen word. -/
-private lemma counter_word_decrement (w : List Bool) (r : ℕ)
+lemma counter_word_decrement (w : List Bool) (r : ℕ)
     (hr : r < Nat.ofDigits 2 (w.map Bool.toNat)) :
     decFixed (counterWord w r) = some (counterWord w (r + 1)) := by
   have hv := counterWord_value w r (by omega)
@@ -616,6 +666,12 @@ def counterLoopTM {k : ℕ} {S : Type} [DecidableEq S] (M : MultiTapeTM k Bool S
 **Proof sketch.** The singleton domain makes the constant last-tape map injective. -/
 def lastEmb (k : ℕ) : Fin 1 ↪ Fin (k + 1) :=
   ⟨fun _ => Fin.last k, fun a b _ => Subsingleton.elim a b⟩
+
+/-- **The last-tape embedding sends its one index to the last tape** (B6-F1 promotion).
+
+**Proof sketch.** Definitional (`rfl`). -/
+theorem lastEmb_apply (k : ℕ) (i : Fin 1) : lastEmb k i = Fin.last k :=
+  rfl
 
 /-- Run a rich-alphabet body with an embedded binary counter on the last tape
 (design §12.8a, R8.0b).
