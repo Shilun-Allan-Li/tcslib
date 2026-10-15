@@ -12,9 +12,28 @@ import Mathlib.Data.ZMod.Basic
 /-!
 # Bondy & Murty, *Graph Theory with Applications* — Chapter 3: Connectivity
 
-Sorry-skeleton extracted from `papers/bondy-murty-ch3-connectivity.md`.
+Sorry-skeleton originally extracted from `papers/bondy-murty-ch3-connectivity.md`.
 
-Now replaced by actual lean proof.
+⚠ **That source file is not in this repository** (there is no `papers/` directory, and
+`TCSlib/GraphTheory/README.md` advertises a `book copy/` directory that does not exist
+either).  Every "— verbatim" book quotation in the docstrings below is therefore
+*self-reported by this formalization* and has **not** been checked against Bondy &
+Murty.  Source fidelity is UNASSESSED; do not cite these quotations as evidence.
+
+## Status
+
+**Theorem 3.1 (Whitney, `κ ≤ κ' ≤ δ`) is fully proved and kernel-checked.**
+`9` declarations remain `sorry`; each carries its own `## Status` block saying so.
+Theorem 3.2 and Corollaries 3.2.1/3.2.2 still rest on
+`exists_two_internally_disjoint_paths_of_two_connected`, and Theorem 3.3 on the two
+`hararyGraph` results.  Run
+
+```
+lake build TCSlib.GraphTheory.Core.Connectivity
+```
+
+to see the current count — note this module is **not** reachable from `TCSlib.lean`,
+so a default `lake build` does not cover it.
 -/
 
 namespace SimpleGraph
@@ -719,12 +738,284 @@ Every branch lands at `κ(G) ≤ κ(H) + 1`, which is the statement.
 
 ## Status
 
-`sorry`.  Step 3 is the substantial one; steps 1–2 are routine.
+Proved, and kernel-checked with no `sorryAx`.
+
+The proof does **not** follow the book's four-way split.  It uses a cleaner one that
+never needs an isomorphism between `(G - S) - w` and `G - (S ∪ {w})`:
+
+* `H` has no vertex cut  ⇒  `κ(H) = ν - 1 ≥ κ(G)` by `vertexConnectivity_le_card_pred`;
+* otherwise take a minimum cut `S` of `H`, and split on whether `S` already cuts `G`
+  (then `κ(G) ≤ |S| = κ(H)`), on `ν(G - S) ≤ 2` (then `|S| ≥ ν - 2`, so
+  `κ(H) + 1 ≥ ν - 1 ≥ κ(G)`), or on `ν(G - S) ≥ 3` (then `e` is a bridge of the
+  connected `G - S`, which has a cut vertex `w`, and `insert w S` cuts `G`).
+
+⚠ **Disclosed duplication.**  `exists_isVertexCut_singleton_of_isBridge` is declared
+*below* this theorem (Lean has no forward references), so its argument is re-derived
+inline here as the local `have cutvertex`, specialised to the subtype `↥(↑S)ᶜ`.  That
+is roughly 80 duplicated lines.  Per `policy.md` this is debt requiring human approval;
+it is removable by moving that lemma above this one and citing it instead.
 -/
 theorem vertexConnectivity_le_deleteEdge_succ
     (G' : SimpleGraph V) (e : Sym2 V) :
-    G'.vertexConnectivity ≤ (G'.deleteEdges {e}).vertexConnectivity + 1 := by
-  sorry
+    G'.vertexConnectivity ≤ (G'.deleteEdges {e}).vertexConnectivity + 1 := (by
+  classical
+  haveI : DecidableRel G'.Adj := Classical.decRel _
+  by_cases hexc : ∃ T : Finset V, (G'.deleteEdges {e}).IsVertexCut T
+  · -- BRANCH B: `H := G' - e` has a vertex cut; realise `κ(H)` by a minimum cut `S`.
+    have hne : {n : ℕ | ∃ T : Finset V,
+        (G'.deleteEdges {e}).IsVertexCut T ∧ T.card = n}.Nonempty := by
+      obtain ⟨T, hT⟩ := hexc
+      exact ⟨T.card, T, hT, rfl⟩
+    obtain ⟨S, hS, hcard⟩ := Nat.sInf_mem hne
+    have hkH : (G'.deleteEdges {e}).vertexConnectivity = S.card := by
+      unfold vertexConnectivity
+      rw [if_pos hexc]
+      exact hcard.symm
+    by_cases hGconn : (G'.induce ((↑S : Set V)ᶜ)).Connected
+    · -- B2: `G' - S` is connected.
+      by_cases h3 : 3 ≤ Fintype.card ↥((↑S : Set V)ᶜ)
+      · -- B2a: at least three vertices survive outside `S`.
+        by_cases hedge : ∃ a b : ↥((↑S : Set V)ᶜ),
+            G'.Adj (↑a : V) (↑b : V) ∧ s((↑a : V), (↑b : V)) = e
+        · obtain ⟨x, y, hxy, hxye⟩ := hedge
+          -- (1) `s(x, y)` is a bridge of `G' - S`.
+          have hsym : ∀ a b : ↥((↑S : Set V)ᶜ),
+              s((↑a : V), (↑b : V)) = e → s(a, b) = s(x, y) := by
+            intro a b hab
+            rw [← hxye] at hab
+            rcases Sym2.eq_iff.mp hab with ⟨h1, h2⟩ | ⟨h1, h2⟩
+            · exact Sym2.eq_iff.mpr (Or.inl ⟨Subtype.ext h1, Subtype.ext h2⟩)
+            · exact Sym2.eq_iff.mpr (Or.inr ⟨Subtype.ext h1, Subtype.ext h2⟩)
+          have hle : (G'.induce ((↑S : Set V)ᶜ)).deleteEdges {s(x, y)}
+              ≤ (G'.deleteEdges {e}).induce ((↑S : Set V)ᶜ) := by
+            intro a b hab
+            rw [SimpleGraph.deleteEdges_adj] at hab
+            have hadjV : G'.Adj (↑a : V) (↑b : V) := hab.1
+            have hfin : (G'.deleteEdges {e}).Adj (↑a : V) (↑b : V) := by
+              rw [SimpleGraph.deleteEdges_adj]
+              refine ⟨hadjV, ?_⟩
+              simp only [Set.mem_singleton_iff]
+              intro hcon
+              refine hab.2 ?_
+              simp only [Set.mem_singleton_iff]
+              exact hsym a b hcon
+            exact hfin
+          have hbridge : (G'.induce ((↑S : Set V)ᶜ)).IsBridge s(x, y) := by
+            by_contra hnb
+            exact hS.2 ((hGconn.connected_delete_edge_of_not_isBridge hnb).mono hle)
+          -- (2) Exercise 2.3.1(a), inlined at the vertex type `↥(↑S)ᶜ`.
+          have cutvertex : ∀ K : SimpleGraph ↥((↑S : Set V)ᶜ), K.Connected →
+              ∀ u v : ↥((↑S : Set V)ᶜ), K.IsBridge s(u, v) →
+                ∃ ww : ↥((↑S : Set V)ᶜ), K.IsVertexCut {ww} := by
+            intro K hKconn u v hbr
+            obtain ⟨hadjuv, hnr⟩ := isBridge_iff.mp hbr
+            have huv : u ≠ v := hadjuv.ne
+            have hex2 : ∃ t : ↥((↑S : Set V)ᶜ), t ≠ u ∧ t ≠ v := by
+              by_contra hcon
+              push_neg at hcon
+              have hsub : (Finset.univ : Finset ↥((↑S : Set V)ᶜ))
+                  ⊆ ({u, v} : Finset ↥((↑S : Set V)ᶜ)) := by
+                intro t _
+                simp only [Finset.mem_insert, Finset.mem_singleton]
+                by_cases ht : t = u
+                · exact Or.inl ht
+                · exact Or.inr (hcon t ht)
+              have h1 := Finset.card_le_card hsub
+              rw [Finset.card_univ, Finset.card_pair huv] at h1
+              omega
+            obtain ⟨xx, hxu, hxv⟩ := hex2
+            have hkey : ∀ a b : ↥((↑S : Set V)ᶜ), K.Walk a b →
+                ((K \ fromEdgeSet {s(u, v)}).Reachable u a ∨
+                  (K \ fromEdgeSet {s(u, v)}).Reachable v a) →
+                ((K \ fromEdgeSet {s(u, v)}).Reachable u b ∨
+                  (K \ fromEdgeSet {s(u, v)}).Reachable v b) := by
+              intro a b p
+              induction p with
+              | nil => exact fun h => h
+              | @cons a' c' b' hadj' q ih =>
+                  intro h
+                  refine ih ?_
+                  by_cases hec : s(a', c') = s(u, v)
+                  · rcases Sym2.eq_iff.mp hec with ⟨-, h2⟩ | ⟨-, h2⟩
+                    · subst h2
+                      exact Or.inr (Reachable.refl _)
+                    · subst h2
+                      exact Or.inl (Reachable.refl _)
+                  · have hH : (K \ fromEdgeSet {s(u, v)}).Adj a' c' := by
+                      rw [sdiff_adj, fromEdgeSet_adj, Set.mem_singleton_iff]
+                      exact ⟨hadj', fun hcon => hec hcon.1⟩
+                    exact h.imp (fun hr => hr.trans hH.reachable)
+                      (fun hr => hr.trans hH.reachable)
+            have hdown : ∀ T : Set ↥((↑S : Set V)ᶜ), (u ∉ T ∨ v ∉ T) → ∀ a b : T,
+                (K.induce T).Walk a b → (K \ fromEdgeSet {s(u, v)}).Reachable ↑a ↑b := by
+              intro T hT a b r
+              induction r with
+              | nil => exact Reachable.refl _
+              | @cons a' c' b' hadj' q ih =>
+                  refine Reachable.trans ?_ ih
+                  have hadj2 : K.Adj (↑a' : ↥((↑S : Set V)ᶜ)) (↑c' : ↥((↑S : Set V)ᶜ)) := hadj'
+                  have hne2 : ¬ (s((↑a' : ↥((↑S : Set V)ᶜ)), (↑c' : ↥((↑S : Set V)ᶜ)))
+                      = s(u, v)) := by
+                    intro hcon
+                    rcases Sym2.eq_iff.mp hcon with ⟨h1, h2⟩ | ⟨h1, h2⟩
+                    · rcases hT with hT | hT
+                      · exact hT (by rw [← h1]; exact a'.2)
+                      · exact hT (by rw [← h2]; exact c'.2)
+                    · rcases hT with hT | hT
+                      · exact hT (by rw [← h2]; exact c'.2)
+                      · exact hT (by rw [← h1]; exact a'.2)
+                  have hH : (K \ fromEdgeSet {s(u, v)}).Adj
+                      (↑a' : ↥((↑S : Set V)ᶜ)) (↑c' : ↥((↑S : Set V)ᶜ)) := by
+                    rw [sdiff_adj, fromEdgeSet_adj, Set.mem_singleton_iff]
+                    exact ⟨hadj2, fun hcon => hne2 hcon.1⟩
+                  exact hH.reachable
+            have hmain : ∀ a b : ↥((↑S : Set V)ᶜ), xx ≠ a → b ≠ a →
+                ¬ (K \ fromEdgeSet {s(u, v)}).Reachable a b →
+                (K \ fromEdgeSet {s(u, v)}).Reachable a xx →
+                (u ∉ ((↑({a} : Finset ↥((↑S : Set V)ᶜ)) : Set ↥((↑S : Set V)ᶜ)))ᶜ ∨
+                  v ∉ ((↑({a} : Finset ↥((↑S : Set V)ᶜ)) : Set ↥((↑S : Set V)ᶜ)))ᶜ) →
+                ∃ ww : ↥((↑S : Set V)ᶜ), K.IsVertexCut {ww} := by
+              intro a b hxa hba hnab hax hmem
+              have hxn : xx ∉ (↑({a} : Finset ↥((↑S : Set V)ᶜ)) : Set ↥((↑S : Set V)ᶜ)) := by
+                simp [hxa]
+              refine ⟨a, ?_, ?_⟩
+              · exact Set.ssubset_univ_iff.mpr ((Set.ne_univ_iff_exists_notMem _).mpr ⟨xx, hxn⟩)
+              · intro hc
+                have hb' : b ∈ ((↑({a} : Finset ↥((↑S : Set V)ᶜ)) : Set ↥((↑S : Set V)ᶜ)))ᶜ := by
+                  simp [hba]
+                have hx' : xx ∈ ((↑({a} : Finset ↥((↑S : Set V)ᶜ)) : Set ↥((↑S : Set V)ᶜ)))ᶜ := by
+                  simp [hxa]
+                obtain ⟨r⟩ := hc.preconnected ⟨b, hb'⟩ ⟨xx, hx'⟩
+                have hbx : (K \ fromEdgeSet {s(u, v)}).Reachable b xx :=
+                  hdown ((↑({a} : Finset ↥((↑S : Set V)ᶜ)) : Set ↥((↑S : Set V)ᶜ)))ᶜ hmem
+                    ⟨b, hb'⟩ ⟨xx, hx'⟩ r
+                exact hnab (hax.trans hbx.symm)
+            obtain ⟨p⟩ := hKconn.preconnected u xx
+            rcases hkey u xx p (Or.inl (Reachable.refl u)) with hur | hvr
+            · exact hmain u v hxu (Ne.symm huv) hnr hur (Or.inl (by simp))
+            · exact hmain v u hxv huv (fun hcon => hnr hcon.symm) hvr (Or.inr (by simp))
+          obtain ⟨w, hw⟩ := cutvertex (G'.induce ((↑S : Set V)ᶜ)) hGconn x y hbridge
+          have hwcut : ¬ ((G'.induce ((↑S : Set V)ᶜ)).induce
+              (({w} : Set ↥((↑S : Set V)ᶜ))ᶜ)).Connected := by
+            have h := hw.2
+            rw [Finset.coe_singleton] at h
+            exact h
+          -- a further vertex `z ≠ w` outside `S`
+          obtain ⟨z, hz⟩ := Fintype.exists_ne_of_one_lt_card
+            (show 1 < Fintype.card ↥((↑S : Set V)ᶜ) by omega) w
+          -- membership bookkeeping for `insert ↑w S`
+          have hsplit : ∀ v : V, v ∈ ((↑(insert (↑w : V) S) : Set V)ᶜ) →
+              v ≠ (↑w : V) ∧ v ∉ S := by
+            intro v hv
+            have hv' : v ∉ (↑(insert (↑w : V) S) : Set V) := hv
+            rw [Finset.coe_insert, Set.mem_insert_iff] at hv'
+            push_neg at hv'
+            exact ⟨hv'.1, by simpa using hv'.2⟩
+          have hTm : ∀ v : V, v ∈ ((↑(insert (↑w : V) S) : Set V)ᶜ) →
+              v ∈ ((↑S : Set V)ᶜ) := by
+            intro v hv
+            have h2 := (hsplit v hv).2
+            simp only [Set.mem_compl_iff, Finset.mem_coe]
+            exact h2
+          have hUm : ∀ a : ↥((↑(insert (↑w : V) S) : Set V)ᶜ),
+              (⟨(↑a : V), hTm (↑a : V) a.2⟩ : ↥((↑S : Set V)ᶜ))
+                ∈ (({w} : Set ↥((↑S : Set V)ᶜ))ᶜ) := by
+            intro a
+            have h1 := (hsplit (↑a : V) a.2).1
+            simp only [Set.mem_compl_iff, Set.mem_singleton_iff]
+            intro hcon
+            exact h1 (congrArg Subtype.val hcon)
+          -- walks of `G' - (S ∪ {w})` transfer into `(G' - S) - w`
+          have hwalk : ∀ (a b : ↥((↑(insert (↑w : V) S) : Set V)ᶜ))
+              (p : (G'.induce ((↑(insert (↑w : V) S) : Set V)ᶜ)).Walk a b),
+              ((G'.induce ((↑S : Set V)ᶜ)).induce
+                  (({w} : Set ↥((↑S : Set V)ᶜ))ᶜ)).Reachable
+                ⟨⟨(↑a : V), hTm (↑a : V) a.2⟩, hUm a⟩
+                ⟨⟨(↑b : V), hTm (↑b : V) b.2⟩, hUm b⟩ := by
+            intro a b p
+            induction p with
+            | nil => exact Reachable.refl _
+            | @cons α β γ hadj q ih =>
+                refine Reachable.trans (Adj.reachable ?_) ih
+                exact (hadj : G'.Adj (↑α : V) (↑β : V))
+          have hBm : ∀ α : ↥(({w} : Set ↥((↑S : Set V)ᶜ))ᶜ),
+              (↑(↑α : ↥((↑S : Set V)ᶜ)) : V) ∈ ((↑(insert (↑w : V) S) : Set V)ᶜ) := by
+            intro α
+            have h1 : (↑(↑α : ↥((↑S : Set V)ᶜ)) : V) ∉ S := by
+              have hp := (↑α : ↥((↑S : Set V)ᶜ)).2
+              simp only [Set.mem_compl_iff, Finset.mem_coe] at hp
+              exact hp
+            have h2 : (↑α : ↥((↑S : Set V)ᶜ)) ≠ w := by
+              have hp := α.2
+              simp only [Set.mem_compl_iff, Set.mem_singleton_iff] at hp
+              exact hp
+            simp only [Set.mem_compl_iff, Finset.coe_insert, Set.mem_insert_iff, Finset.mem_coe,
+              not_or]
+            exact ⟨fun hcon => h2 (Subtype.ext hcon), h1⟩
+          have hzmem : (↑z : V) ∉ (↑(insert (↑w : V) S) : Set V) := by
+            simp only [Finset.coe_insert, Set.mem_insert_iff, Finset.mem_coe, not_or]
+            refine ⟨fun hcon => hz (Subtype.ext hcon), ?_⟩
+            have hp := z.2
+            simp only [Set.mem_compl_iff, Finset.mem_coe] at hp
+            exact hp
+          -- `insert ↑w S` is a vertex cut of `G'`
+          have hcutIns : G'.IsVertexCut (insert (↑w : V) S) := by
+            refine ⟨?_, ?_⟩
+            · exact Set.ssubset_univ_iff.mpr
+                ((Set.ne_univ_iff_exists_notMem _).mpr ⟨(↑z : V), hzmem⟩)
+            · intro hc
+              refine hwcut ((connected_iff _).mpr ⟨?_, ⟨⟨z, ?_⟩⟩⟩)
+              · intro α β
+                obtain ⟨p⟩ := hc.preconnected ⟨_, hBm α⟩ ⟨_, hBm β⟩
+                exact hwalk _ _ p
+              · simp only [Set.mem_compl_iff, Set.mem_singleton_iff]
+                exact hz
+          have hexG : ∃ T : Finset V, G'.IsVertexCut T := ⟨insert (↑w : V) S, hcutIns⟩
+          have hvcIns : G'.vertexConnectivity ≤ (insert (↑w : V) S).card := by
+            unfold vertexConnectivity
+            rw [if_pos hexG]
+            exact Nat.sInf_le ⟨insert (↑w : V) S, hcutIns, rfl⟩
+          have hins : (insert (↑w : V) S).card ≤ S.card + 1 := Finset.card_insert_le _ _
+          omega
+        · -- no edge of `G'` outside `S` is `e`, so deleting `e` does not touch `G' - S`
+          exfalso
+          refine hS.2 ?_
+          have hle2 : G'.induce ((↑S : Set V)ᶜ)
+              ≤ (G'.deleteEdges {e}).induce ((↑S : Set V)ᶜ) := by
+            intro a b hab
+            have hadjV : G'.Adj (↑a : V) (↑b : V) := hab
+            have hfin : (G'.deleteEdges {e}).Adj (↑a : V) (↑b : V) := by
+              rw [SimpleGraph.deleteEdges_adj]
+              refine ⟨hadjV, ?_⟩
+              simp only [Set.mem_singleton_iff]
+              intro hcon
+              exact hedge ⟨a, b, hadjV, hcon⟩
+            exact hfin
+          exact hGconn.mono hle2
+      · -- B2b: at most two vertices outside `S`, so `ν ≤ |S| + 2`
+        have hcoeS : Fintype.card ↥(↑S : Set V) = S.card := by
+          rw [← Set.toFinset_card, Finset.toFinset_coe]
+        have hcompl : Fintype.card ↥((↑S : Set V)ᶜ)
+            = Fintype.card V - Fintype.card ↥(↑S : Set V) :=
+          Fintype.card_compl_set (↑S : Set V)
+        have hSle : S.card ≤ Fintype.card V := Finset.card_le_univ S
+        have hpred := vertexConnectivity_le_card_pred G'
+        omega
+    · -- B1: `S` is already a vertex cut of `G'`
+      have hcutS : G'.IsVertexCut S := ⟨hS.1, hGconn⟩
+      have hexG : ∃ T : Finset V, G'.IsVertexCut T := ⟨S, hcutS⟩
+      have hvcS : G'.vertexConnectivity ≤ S.card := by
+        unfold vertexConnectivity
+        rw [if_pos hexG]
+        exact Nat.sInf_le ⟨S, hcutS, rfl⟩
+      omega
+  · -- BRANCH A: `H` has no vertex cut at all, so `κ(H) = ν - 1 ≥ κ(G')`
+    have hA : (G'.deleteEdges {e}).vertexConnectivity = Fintype.card V - 1 := by
+      unfold vertexConnectivity
+      rw [if_neg hexc]
+    have hB := vertexConnectivity_le_card_pred G'
+    omega
+)
 
 /-- **Exercise 2.3.1(a)**, used by `vertexConnectivity_le_deleteEdge_succ`.
 
@@ -755,13 +1046,99 @@ argument below is the standard one.
 
 ## Status
 
-`sorry`.
+Proved, and kernel-checked with no `sorryAx`.  The proof follows the plan above but
+replaces step 2-3's "walk avoiding `e`" bookkeeping with reachability in
+`G' \\ fromEdgeSet {s(u, v)}`: one induction (`hkey`) pushes "reachable from `u` or
+from `v`" along any `G'`-walk, and a second (`hdown`) carries a walk inside an
+induced subgraph back down, which serves both symmetric endgames at once.
 -/
 theorem exists_isVertexCut_singleton_of_isBridge
     (G' : SimpleGraph V) (hconn : G'.Connected) (h3 : 3 ≤ Fintype.card V)
     {u v : V} (hbr : G'.IsBridge s(u, v)) :
-    ∃ w : V, G'.IsVertexCut {w} := by
-  sorry
+    ∃ w : V, G'.IsVertexCut {w} := (by
+  classical
+  obtain ⟨hadj, hnr⟩ := isBridge_iff.mp hbr
+  have huv : u ≠ v := hadj.ne
+  -- Step 2: a third vertex `x ∉ {u, v}`.
+  have hex : ∃ y : V, y ≠ u ∧ y ≠ v := by
+    by_contra hcon
+    push_neg at hcon
+    have hsub : (Finset.univ : Finset V) ⊆ ({u, v} : Finset V) := by
+      intro y _
+      simp only [Finset.mem_insert, Finset.mem_singleton]
+      by_cases hy : y = u
+      · exact Or.inl hy
+      · exact Or.inr (hcon y hy)
+    have h1 := Finset.card_le_card hsub
+    rw [Finset.card_univ, Finset.card_pair huv] at h1
+    omega
+  obtain ⟨x, hxu, hxv⟩ := hex
+  -- Step 3: every vertex reachable in `G'` from `u` is reachable from `u` or `v` in `G' - e`.
+  have hkey : ∀ (a b : V), G'.Walk a b →
+      ((G' \ fromEdgeSet {s(u, v)}).Reachable u a ∨
+        (G' \ fromEdgeSet {s(u, v)}).Reachable v a) →
+      ((G' \ fromEdgeSet {s(u, v)}).Reachable u b ∨
+        (G' \ fromEdgeSet {s(u, v)}).Reachable v b) := by
+    intro a b p
+    induction p with
+    | nil => exact fun h => h
+    | @cons a' c' b' hadj' q ih =>
+      intro h
+      refine ih ?_
+      by_cases hec : s(a', c') = s(u, v)
+      · rcases Sym2.eq_iff.mp hec with ⟨-, h2⟩ | ⟨-, h2⟩
+        · subst h2
+          exact Or.inr (Reachable.refl _)
+        · subst h2
+          exact Or.inl (Reachable.refl _)
+      · have hH : (G' \ fromEdgeSet {s(u, v)}).Adj a' c' := by
+          rw [sdiff_adj, fromEdgeSet_adj, Set.mem_singleton_iff]
+          exact ⟨hadj', fun hcon => hec hcon.1⟩
+        exact h.imp (fun hr => hr.trans hH.reachable) (fun hr => hr.trans hH.reachable)
+  -- Step 4a: a walk inside `G'.induce T` avoids `e` whenever `T` misses `u` or `v`.
+  have hdown : ∀ (T : Set V), (u ∉ T ∨ v ∉ T) → ∀ (a b : T),
+      (G'.induce T).Walk a b → (G' \ fromEdgeSet {s(u, v)}).Reachable ↑a ↑b := by
+    intro T hT a b r
+    induction r with
+    | nil => exact Reachable.refl _
+    | @cons a' c' b' hadj' q ih =>
+      refine Reachable.trans ?_ ih
+      have hadj2 : G'.Adj (↑a' : V) (↑c' : V) := hadj'
+      have hne : ¬ (s((↑a' : V), (↑c' : V)) = s(u, v)) := by
+        intro hcon
+        rcases Sym2.eq_iff.mp hcon with ⟨h1, h2⟩ | ⟨h1, h2⟩
+        · rcases hT with hT | hT
+          · exact hT (by rw [← h1]; exact a'.2)
+          · exact hT (by rw [← h2]; exact c'.2)
+        · rcases hT with hT | hT
+          · exact hT (by rw [← h2]; exact c'.2)
+          · exact hT (by rw [← h1]; exact a'.2)
+      have hH : (G' \ fromEdgeSet {s(u, v)}).Adj (↑a' : V) (↑c' : V) := by
+        rw [sdiff_adj, fromEdgeSet_adj, Set.mem_singleton_iff]
+        exact ⟨hadj2, fun hcon => hne hcon.1⟩
+      exact hH.reachable
+  -- Step 4b: whichever endpoint shares `x`'s side of `G' - e` is a cut vertex.
+  have hmain : ∀ (a b : V), x ≠ a → b ≠ a →
+      ¬ (G' \ fromEdgeSet {s(u, v)}).Reachable a b →
+      (G' \ fromEdgeSet {s(u, v)}).Reachable a x →
+      (u ∉ ((↑({a} : Finset V) : Set V))ᶜ ∨ v ∉ ((↑({a} : Finset V) : Set V))ᶜ) →
+      ∃ w : V, G'.IsVertexCut {w} := by
+    intro a b hxa hba hnab hax hmem
+    have hxn : x ∉ (↑({a} : Finset V) : Set V) := by simp [hxa]
+    refine ⟨a, ?_, ?_⟩
+    · exact Set.ssubset_univ_iff.mpr ((Set.ne_univ_iff_exists_notMem _).mpr ⟨x, hxn⟩)
+    · intro hc
+      have hb' : b ∈ ((↑({a} : Finset V) : Set V))ᶜ := by simp [hba]
+      have hx' : x ∈ ((↑({a} : Finset V) : Set V))ᶜ := by simp [hxa]
+      obtain ⟨r⟩ := hc.preconnected ⟨b, hb'⟩ ⟨x, hx'⟩
+      have hbx : (G' \ fromEdgeSet {s(u, v)}).Reachable b x :=
+        hdown ((↑({a} : Finset V) : Set V))ᶜ hmem ⟨b, hb'⟩ ⟨x, hx'⟩ r
+      exact hnab (hax.trans hbx.symm)
+  obtain ⟨p⟩ := hconn.preconnected u x
+  rcases hkey u x p (Or.inl (Reachable.refl u)) with hur | hvr
+  · exact hmain u v hxu (Ne.symm huv) hnr hur (Or.inl (by simp))
+  · exact hmain v u hxv huv (fun hcon => hnr hcon.symm) hvr (Or.inr (by simp))
+)
 
 /-- **Theorem 3.1**, first inequality: `κ ≤ κ'`.
 
@@ -864,6 +1241,18 @@ it.  See `vertexConnectivity_le_edgeConnectivity` for the `κ ≤ κ'` proof and
 
 `⟨vertexConnectivity_le_edgeConnectivity, edgeConnectivity_le_minDegree⟩`.
 
+## Status
+
+Proved, and kernel-checked with no `sorryAx` — both halves of Theorem 3.1 are now
+closed.  (It previously depended on `sorryAx` through
+`vertexConnectivity_le_deleteEdge_succ`, while carrying no `## Status` block at all,
+which made it easy to misread as complete.)
+
+The `[Nonempty V]` instance is not mathematically necessary: for `V` empty,
+`minDegree = 0` and `edgeConnectivity = 0` because `∅` is an edge cut (Mathlib's
+`Connected` carries a `Nonempty` field, so the null graph is not connected).  It is
+required only by the subsingleton branch of `edgeConnectivity_le_minDegree`'s proof.
+
 ## Book remarks (§3.1, p. 51 and exercise 3.1.7, p. 52) — verbatim
 
 > The inequalities in theorem 3.1 are often strict. For example, the graph $G$
@@ -899,6 +1288,10 @@ Used by Theorem 3.2 (⇐), where a path avoiding `w` must be seen to survive in
 Induction on the walk.  `nil` is `Reachable.refl`; `cons` re-forms the adjacency
 inside `G.induce s` from the membership hypotheses and composes with the
 inductive tail.
+
+## Status
+
+Proved, and kernel-checked with no `sorryAx` (it needs only `propext` and `Quot.sound`).
 -/
 theorem reachable_induce_of_support_subset {s : Set V} :
     ∀ {u v : V} (p : G.Walk u v), (∀ x ∈ p.support, x ∈ s) →
@@ -1231,6 +1624,11 @@ theorem block_three_vertices_two_connected
 
 /-! ## Theorem 3.3 (Harary 1962): the Harary graph H_{m,n} is m-connected -/
 
+/-- Circular distance on `ZMod n`: the number of steps from `a` to `0` the shorter
+way round the circle.  Used to state Case 1 of the Harary construction, where `i`
+and `j` are joined exactly when they are at most `r` apart on the cycle. -/
+def zmodCircDist (n : ℕ) (a : ZMod n) : ℕ := min a.val (n - a.val)
+
 /-- The Harary graph `H_{m,n}` on vertex set `ZMod n` (a circulant).
 
 ## Book construction (§3.3, pp. 56–57) — verbatim
@@ -1264,13 +1662,38 @@ base and Cases 2–3 are `⊔` with an extra chord relation.
 
 ## Status
 
-`sorry` — the construction is **not** yet written.  Because this is a `def`
-rather than a theorem, `sorry` makes `hararyGraph` an *opaque constant with no
-defining equations*, so the three results below are not merely unproved but
-unprovable as they stand.  Filling this definition is a prerequisite for all of
-them.
+Defined.  All three book cases are written out below.  The adjacency is built with
+`SimpleGraph.fromRel`, which symmetrises the relation and removes the diagonal, so
+`symm` and `loopless` come for free and the three cases only have to say *which*
+pairs are joined.
+
+Previously this was `:= sorry`, which made `hararyGraph` an opaque constant with no
+defining equations — so `hararyGraph_isConnectivity` and `hararyGraph_edgeCard` were
+not merely unproved but *unprovable*.  They are now genuinely open goals.
 -/
-def hararyGraph (m n : ℕ) : SimpleGraph (ZMod n) := sorry
+def hararyGraph (m n : ℕ) : SimpleGraph (ZMod n) :=
+  SimpleGraph.fromRel (fun i j =>
+    -- Case 1 (`m = 2r` even): join `i` and `j` when `i - r ≤ j ≤ i + r`.
+    zmodCircDist n (i - j) ≤ m / 2
+      -- Cases 2 and 3 add chords across the circle when `m` is odd.
+      ∨ (m % 2 = 1 ∧
+          if n % 2 = 0 then
+            -- Case 2 (`m` odd, `n` even): join `i` to `i + n/2`.
+            j = i + ((n / 2 : ℕ) : ZMod n)
+          else
+            -- Case 3 (`m` odd, `n` odd): join `0` to `(n-1)/2` and `(n+1)/2`,
+            -- and `i` to `i + (n+1)/2` for `1 ≤ i < (n-1)/2`.
+            (i = 0 ∧ (j.val = (n - 1) / 2 ∨ j.val = (n + 1) / 2))
+              ∨ (1 ≤ i.val ∧ i.val < (n - 1) / 2 ∧
+                   j = i + (((n + 1) / 2 : ℕ) : ZMod n))))
+
+/-- Adjacency in `hararyGraph` is decidable, so `hararyGraph_edgeCard`'s
+`[DecidableRel (hararyGraph m n).Adj]` hypothesis can actually be discharged and the
+small cases can be checked by `decide`.  Sanity checks that hold by `decide`:
+`H₂,₃` is the triangle; `H₂,₅` joins `0` to `4` but not to `2` (`r = 1`); `H₄,₅` joins
+`0` to `2` (`r = 2`); and `H₃,₄` has the antipodal chord `0 ~ 2`. -/
+instance hararyGraphDecidableAdj (m n : ℕ) : DecidableRel (hararyGraph m n).Adj :=
+  fun i j => decidable_of_iff _ (SimpleGraph.fromRel_adj _ i j).symm
 
 /-- **Theorem 3.3** (Harary, 1962).
 
@@ -1543,11 +1966,29 @@ assembles two edge-disjoint routes.  In practice this direction should reuse
 already carries `p.edges.Disjoint q.edges` — the very reason that strengthening
 was introduced.
 
+## ⚠ Statement repaired — the nontriviality hypothesis is load-bearing
+
+As originally stated, **without** `hV : 2 ≤ Fintype.card V`, this theorem was
+*false*, not merely unproved.  Counterexample: take `V := Unit` and `G := ⊥`.
+Then `G.Connected` holds, no `F` is an `IsEdgeCut`, so
+`edgeConnectivity = sInf ∅ = 0`; meanwhile the right-hand side is **vacuously
+true**, because `Unit` has no pair of distinct vertices.  So `(⇐)` forced
+`2 ≤ 0`.  The same failure occurs for `V` empty, where `∅` is an edge cut.
+
+The book's Exercise 3.2.1 presupposes a nontrivial graph, and the vertex
+analogue in this file (`two_connected_iff_two_internally_disjoint_paths`) is
+already guarded by `3 ≤ Fintype.card V`; `2 ≤ Fintype.card V` is the matching
+minimal guard here, and it is exactly what rules the counterexample out.
+
 ## Status
 
-`sorry`.  The (⇐) direction is self-contained and the easier half.
+`sorry`.  The `(⇐)` direction is self-contained and the easier half.  `(⇒)` is
+the blocked one: it needs every edge to lie on a cycle and then the same
+induction on `d(u, v)` as Theorem 3.2, so it should reuse
+`exists_two_internally_disjoint_paths_of_two_connected` — which is itself still
+`sorry`.  So this declaration is open, but it no longer asserts a falsehood.
 -/
-theorem two_edge_connected_iff_two_edge_disjoint_paths :
+theorem two_edge_connected_iff_two_edge_disjoint_paths (hV : 2 ≤ Fintype.card V) :
     2 ≤ G.edgeConnectivity ↔
       ∀ u v : V, u ≠ v → ∃ p q : G.Walk u v,
         p.IsPath ∧ q.IsPath ∧ Disjoint p.edges.toFinset q.edges.toFinset := by
