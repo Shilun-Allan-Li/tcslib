@@ -43,7 +43,7 @@ a result about `P`, and the certificate-style `Σ₂` coincides with
 * `Randomized.inSigma2_polyTimeModel_iff` — certificate-style `Σ₂` for the
   poly-time model coincides with `Complexity.SigmaP 2`.
 * `Randomized.zpp_eq_rp_inter_corp_polyTime`,
-  `Randomized.sipser_gacs_polyTime` — [AB09, Thm 7.8] and [AB09, Thm 7.18]
+  `Randomized.sipser_gacs_polyTime` — [AB09, Thm 7.8] and [AB09, Thm 7.15]
   for polynomial-time machines, with no abstract hypotheses.
 
 ## Deviations from the source
@@ -52,7 +52,7 @@ None beyond those of `Randomized.Classes`: these declarations *discharge*
 the deviations by instantiating the abstract model.  With the library's
 `Complexity.P_subset_PPoly` ([AB09, Thm 6.6]) now available, Adleman's
 circuit hypothesis is dischargeable too
-(`Randomized.polyTimeModel_verifierHasCircuits`), so [AB09, Thm 7.17] is
+(`Randomized.polyTimeModel_verifierHasCircuits`), so [AB09, Thm 7.14] is
 stated unconditionally as `Randomized.adleman_polyTime`.
 
 ## References
@@ -70,7 +70,7 @@ output is computed by `P`-languages on the `Turing.pairEncode`d pair of
 input and random string (`some true`-set and `some false`-set each in `P`),
 and a two-witness predicate is efficient when its truth set, on the nested
 pairing used by `Complexity.SigmaP`, is in `P`.  This is "`M` is a
-polynomial-time TM" of [AB09, Def 7.4], in the library's encoding
+polynomial-time TM" of [AB09, Def 7.3], in the library's encoding
 conventions. -/
 noncomputable def polyTimeModel : VerifierModel where
   Eff M := ∃ V₁ V₀ : Language Bool, V₁ ∈ P ∧ V₀ ∈ P ∧
@@ -470,7 +470,7 @@ theorem polyTimeModel_verifierHasCircuits :
     cases hC : C.eval (BoolCircuit.pairEncodeInput r v) <;>
       cases hV : M (List.ofFn v) r <;> simp_all
 
-/-- **Adleman's theorem for polynomial-time machines** ([AB09, Thm 7.17],
+/-- **Adleman's theorem for polynomial-time machines** ([AB09, Thm 7.14],
 unconditionally): `BPP ⊆ P/poly`, with both sides the library's own classes
 (`InBPP polyTimeModel` and `Language.InPPoly`). -/
 theorem adleman_polyTime {L : Language Bool}
@@ -541,7 +541,7 @@ theorem zpp_eq_rp_inter_corp_polyTime (L : Language Bool) :
   inZPP_iff_inRP_and_inCoRP polyTimeModel polyTimeModel_closedUnderRace
     polyTimeModel_closedUnderAnswerIs polyTimeModel_closedUnderAny L
 
-/-- **Sipser–Gács for polynomial-time machines** ([AB09, Thm 7.18],
+/-- **Sipser–Gács for polynomial-time machines** ([AB09, Thm 7.15],
 unconditionally): `BPP ⊆ Σ₂ᵖ ∩ Π₂ᵖ` with the library's own polynomial
 hierarchy (`Complexity.SigmaP`/`Complexity.PiP`).
 

@@ -9,6 +9,8 @@ import Mathlib.Probability.Independence.Basic
 import Mathlib.Probability.Moments.SubGaussian
 import Mathlib.MeasureTheory.Constructions.Pi
 import Mathlib.Analysis.SpecialFunctions.Exp
+import Mathlib.Analysis.SpecialFunctions.Log.Basic
+import Mathlib.Data.Real.Archimedean
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -23,8 +25,9 @@ is correct with probability `p ≥ 1/2 + ε` and take the majority; the
 probability that the majority is wrong is exponentially small in `k`.
 
 This file states the machine-independent core over i.i.d. Bernoulli random
-variables: the Chernoff-type concentration bound [AB09, Cor 7.11] and the
-majority-vote error bound instantiating [AB09, Thm 7.10]'s calculation.
+variables: a concentration bound in the role of the Chernoff bound that
+[AB09, Thm 7.10]'s proof cites (Cor A.15), and the majority-vote error bound
+instantiating [AB09, Thm 7.10]'s calculation.
 Wrapping these into statements about `BPP`-style verifier classes is Tier B
 work and lives elsewhere.
 
@@ -39,32 +42,32 @@ work and lives elsewhere.
 
 ## Main results
 
-* `Randomized.iid_bernoulli_avg_concentration` — [AB09, Cor 7.11], with a
-  corrected constant (see **Deviations**).
+* `Randomized.iid_bernoulli_avg_concentration` — [AB09, Thm 7.10 and Cor A.15], in
+  additive Hoeffding form (see **Deviations**).
 * `Randomized.majority_error_le` — the calculation proving [AB09, Thm 7.10].
+* `Randomized.iid_bernoulli_avg_concentration_of_le`, `Randomized.exists_sample_count` —
+  [AB09, Note 7.11]: `O(log(1/δ)/ε²)` samples estimate `p` within `ε` with failure `≤ δ`.
 * `Randomized.iidBernoulli_tail_le` — the shared one-sided Hoeffding bound,
   from Mathlib's sub-Gaussian machinery
   (`ProbabilityTheory.HasSubgaussianMGF.measure_sum_ge_le_of_iIndepFun`).
 
 ## Deviations from the source
 
-* [AB09, Cor 7.11] is stated for abstract i.i.d. Boolean random variables
+* The proof of [AB09, Thm 7.10] uses independent Boolean random variables
   `X₁,…,X_k` with `Pr[Xᵢ = 1] = p`; we realize them concretely as the product
   measure of `k` Bernoulli(`p`) distributions on `Fin k → Bool`, which is the
   same joint distribution.
-* **Erratum.** [AB09, Cor 7.11] prints the bound
-  `Pr[|(1/k)ΣXᵢ − p| > δ] < e^{−(δ²/4)pk}`, which is false: for a single
-  trial (`k = 1`) with `p = 1/2` and `δ = 1/4`, the deviation event has
-  probability `1` while the claimed bound is `e^{−1/128} < 1`.  We state the
-  standard two-sided Hoeffding bound `≤ 2·e^{−2δ²k}` instead, which is what
-  the error-reduction argument needs.
+* **Hoeffding instead of Chernoff.** The book's proof of Thm 7.10 applies the
+  multiplicative Chernoff bound [AB09, Cor A.15], displayed as
+  `Pr[|Σᵢ Xᵢ − pk| > δpk] < e^{−(δ²/4)pk}` (deviation relative to the mean
+  `pk`).  We prove the additive Hoeffding form instead:
+  `Pr[|(1/k)ΣXᵢ − p| > δ] ≤ 2·e^{−2δ²k}`, and the one-sided `e^{−2ε²k}` for
+  the majority vote.  Either form yields Thm 7.10's bound.
 * [AB09, Thm 7.10] is stated for polynomial-time PTMs, with
   `p = 1/2 + |x|^{−c}` and final bound `2^{−|x|^d}`; `majority_error_le` is
   its probabilistic content with `ε` in place of `|x|^{−c}`: the one-sided
   Hoeffding bound gives majority error at most `e^{−2ε²k}`, which for
-  `k = Θ((n+1)^{2c+d})` is at most `2^{−(n+1)^d}`.  The book's displayed
-  intermediate step normalizes the sum by `1/n` where `1/k` is meant; we
-  state it with `1/k`.
+  `k = Θ((n+1)^{2c+d})` is at most `2^{−(n+1)^d}`.
 
 ## References
 
@@ -78,8 +81,8 @@ open MeasureTheory
 open scoped NNReal ENNReal
 
 /-- The joint distribution of `k` independent Bernoulli(`p`) trials, as a
-measure on `Fin k → Bool`.  [AB09, Cor 7.11: "independent identically
-distributed Boolean random variables"] -/
+measure on `Fin k → Bool`.  [AB09, Thm 7.10, proof: "independent Boolean
+random variables"] -/
 noncomputable def iidBernoulli (k : ℕ) (p : ℝ≥0) (hp : p ≤ 1) :
     Measure (Fin k → Bool) :=
   Measure.pi fun _ => (PMF.bernoulli p hp).toMeasure
@@ -231,13 +234,12 @@ theorem iidBernoulli_tail_le {p : ℝ≥0} (hp : p ≤ 1) {k : ℕ} (hk : 0 < k)
   ring
 
 /-- **Concentration for i.i.d. Boolean trials** (the role of
-[AB09, Cor 7.11], stated as the two-sided Hoeffding bound).  Let `X₁,…,X_k`
+[AB09, Cor A.15] in Thm 7.10, as the two-sided Hoeffding bound).  Let `X₁,…,X_k`
 be i.i.d. Boolean random variables with `Pr[Xᵢ = 1] = p`, and `δ > 0`.  Then
 `Pr[|(1/k)Σᵢ Xᵢ − p| > δ] ≤ 2·e^{−2δ²k}`.
 
-The book's printed bound `< e^{−(δ²/4)pk}` is false (see the module
-docstring's **Erratum**); this is the standard replacement, and suffices for
-[AB09, Thm 7.10].
+The book uses the multiplicative Chernoff form instead (see the module
+docstring's **Deviations**); either suffices for [AB09, Thm 7.10].
 
 **Proof sketch.** Hoeffding's inequality for sums of independent bounded
 random variables (in Mathlib: `measure_sum_ge_le_of_iIndepFun` for
@@ -313,8 +315,8 @@ theorem iid_bernoulli_avg_concentration {p : ℝ≥0} (hp : p ≤ 1) {k : ℕ}
 proving [AB09, Thm 7.10]).  If each of `k` i.i.d. trials succeeds with
 probability `p ≥ 1/2 + ε`, the probability that at most half the trials
 succeed — i.e. that the majority vote errs — is at most `e^{−2ε²k}`
-(one-sided Hoeffding; the book's `e^{−(δ²/4)pk}`-based route is unsound,
-see the module docstring's **Erratum**).
+(one-sided Hoeffding, where the book uses Chernoff; see the module
+docstring's **Deviations**).
 
 For advantage `ε ≥ (n+1)^{−c}/6` and `k = Θ((n+1)^{2c+d})` repetitions this
 is at most `2^{−(n+1)^d}`, which is [AB09, Thm 7.10]'s bound.
@@ -348,5 +350,53 @@ theorem majority_error_le {p : ℝ≥0} (hp : p ≤ 1) {ε : ℝ} (hε : 0 < ε)
       fun _ => measurable_id.const_sub _
   exact (measure_mono hsub).trans (iidBernoulli_tail_le hp hk hind
     (fun i => hasSubgaussianMGF_sub_coordIndicator hp i) hε.le)
+
+/-! ### Statistical estimation (Note 7.11) -/
+
+/-- **Sample count for estimation** ([AB09, Note 7.11]): with `k ≥ ln(2/δ)/(2ε²)` samples, the
+empirical frequency is within `ε` of `p` except with probability at most `δ`, for `0 < δ ≤ 1`.
+
+**Proof sketch.** `k > 0` since `ln(2/δ) > 0`; then `2e^{-2ε²k} ≤ 2e^{-ln(2/δ)} = δ` in the
+Hoeffding bound `iid_bernoulli_avg_concentration`. -/
+theorem iid_bernoulli_avg_concentration_of_le {p : ℝ≥0} (hp : p ≤ 1) {ε δ : ℝ}
+    (hε : 0 < ε) (hδ0 : 0 < δ) (hδ1 : δ ≤ 1) {k : ℕ}
+    (hk : Real.log (2 / δ) / (2 * ε ^ 2) ≤ k) :
+    iidBernoulli k p hp {ω | ε < |successCount ω / k - (p : ℝ)|} ≤ ENNReal.ofReal δ := by
+  have hlog : 0 < Real.log (2 / δ) := Real.log_pos (by rw [lt_div_iff₀ hδ0]; linarith)
+  have hk0 : 0 < k := by
+    have : 0 < Real.log (2 / δ) / (2 * ε ^ 2) := by positivity
+    exact_mod_cast this.trans_le hk
+  refine (iid_bernoulli_avg_concentration hp hk0 hε).trans (ENNReal.ofReal_le_ofReal ?_)
+  have h1 : Real.log (2 / δ) ≤ 2 * ε ^ 2 * k := by
+    rwa [div_le_iff₀ (by positivity), mul_comm] at hk
+  have h2 : Real.exp (-2 * ε ^ 2 * k) ≤ δ / 2 := by
+    calc Real.exp (-2 * ε ^ 2 * k) ≤ Real.exp (-Real.log (2 / δ)) :=
+          Real.exp_le_exp.mpr (by linarith)
+      _ = δ / 2 := by rw [Real.exp_neg, Real.exp_log (by positivity), inv_div]
+  linarith
+
+/-- **`O(log(1/δ)/ε²)` samples suffice** ([AB09, Note 7.11]): for `0 < δ ≤ 1/2` there is a
+sample count `k₀ ≤ ln(1/δ)/ε² + 1` such that, for every `p` and every `k ≥ k₀`,
+`Pr[|(1/k)Σᵢ Xᵢ − p| > ε] ≤ δ`.
+
+**Proof sketch.** Take `k₀ = ⌈ln(2/δ)/(2ε²)⌉`; since `ln 2 ≤ ln(1/δ)`,
+`ln(2/δ) ≤ 2 ln(1/δ)`, and `iid_bernoulli_avg_concentration_of_le` applies to every `k ≥ k₀`. -/
+theorem exists_sample_count {ε δ : ℝ} (hε : 0 < ε) (hδ0 : 0 < δ) (hδ : δ ≤ 1 / 2) :
+    ∃ k₀ : ℕ, (k₀ : ℝ) ≤ Real.log (1 / δ) / ε ^ 2 + 1 ∧
+      ∀ (p : ℝ≥0) (hp : p ≤ 1) (k : ℕ), k₀ ≤ k →
+        iidBernoulli k p hp {ω | ε < |successCount ω / k - (p : ℝ)|} ≤ ENNReal.ofReal δ := by
+  refine ⟨⌈Real.log (2 / δ) / (2 * ε ^ 2)⌉₊, ?_, fun p hp k hk => ?_⟩
+  · have hl2 : Real.log 2 ≤ Real.log (1 / δ) :=
+      Real.log_le_log (by norm_num) (by rw [le_div_iff₀ hδ0]; linarith)
+    have hsplit : Real.log (2 / δ) = Real.log 2 + Real.log (1 / δ) := by
+      rw [← Real.log_mul (by norm_num) (by positivity)]; congr 1; ring
+    have hle : Real.log (2 / δ) / (2 * ε ^ 2) ≤ Real.log (1 / δ) / ε ^ 2 := by
+      rw [div_le_div_iff₀ (by positivity) (by positivity)]
+      nlinarith [sq_nonneg ε, pow_pos hε 2]
+    linarith [Nat.ceil_lt_add_one (show 0 ≤ Real.log (2 / δ) / (2 * ε ^ 2) by
+      have : 0 ≤ Real.log (2 / δ) := Real.log_nonneg (by rw [le_div_iff₀ hδ0]; linarith)
+      positivity)]
+  · exact iid_bernoulli_avg_concentration_of_le hp hε hδ0 (by linarith)
+      ((Nat.le_ceil _).trans (by exact_mod_cast hk))
 
 end Randomized

@@ -12,7 +12,7 @@ set_option autoImplicit false
 /-!
 # The Sipser–Gács theorem: BPP ⊆ Σ₂ ∩ Π₂
 
-Arora–Barak's Theorem 7.18: `BPP` sits in the second level of the polynomial
+Arora–Barak's Theorem 7.15: `BPP` sits in the second level of the polynomial
 hierarchy.  The proof shows `BPP ⊆ Σ₂`: after error reduction the set `S_x`
 of accepting random strings is either almost all of `{0,1}^m` or a tiny
 fraction, and two quantifier alternations — "there exist shifts `u₁,…,u_k`
@@ -22,7 +22,7 @@ whose translates of `S_x` cover `{0,1}^m`" — distinguish the two cases.
 
 * `Randomized.InSigma2`, `Randomized.InPi2` — verifier-style `Σ₂ᵖ` and `Π₂ᵖ`
   (two quantified witness strings over an efficient predicate), the classes
-  in which [AB09, Thm 7.18] places `BPP`.
+  in which [AB09, Thm 7.15] places `BPP`.
 * `Randomized.shiftOrVerifier` — the predicate
   `(u, v) ↦ ⋁_{i ≤ k} M(x, v ⊕ uᵢ)` built from a `BPP` verifier, where `u`
   encodes the `k` shifts `u₁,…,u_k` as one concatenated string.
@@ -30,7 +30,7 @@ whose translates of `S_x` cover `{0,1}^m`" — distinguish the two cases.
 ## Main results
 
 * `Randomized.bpp_subset_sigma2` — `BPP ⊆ Σ₂ᵖ`, the core argument.
-* `Randomized.sipser_gacs` — [AB09, Thm 7.18].
+* `Randomized.sipser_gacs` — [AB09, Thm 7.15].
 
 ## Deviations from the source
 
@@ -56,8 +56,8 @@ variable (E : VerifierModel)
 
 /-- `L ∈ Σ₂ᵖ`, certificate-style: there is an efficient two-witness
 predicate `N` and polynomial witness-length bounds such that
-`x ∈ L ↔ ∃ u ∀ v, N(x, u, v)`.  [AB09, Thm 7.18]'s target class, defined in
-the style of [AB09, Def 7.4] (see the module docstring's **Deviations**). -/
+`x ∈ L ↔ ∃ u ∀ v, N(x, u, v)`.  [AB09, Thm 7.15]'s target class, defined in
+the style of [AB09, Def 7.3] (see the module docstring's **Deviations**). -/
 def InSigma2 (L : Language Bool) : Prop :=
   ∃ (N : List Bool → List Bool → List Bool → Bool) (a₁ k₁ a₂ k₂ : ℕ),
     E.EffTwoWitness N ∧
@@ -73,7 +73,7 @@ def InPi2 (L : Language Bool) : Prop :=
 /-- The two-witness predicate `(u, v) ↦ ⋁_{i < k} M(x, v ⊕ uᵢ)`, where the
 first witness `u` is the concatenation of `k` shift strings `u₁,…,u_k` of
 length `p(|x|)` each and `⊕` is bitwise XOR: the predicate with which
-[AB09, Thm 7.18]'s proof expresses "the translates of the accepting set by
+[AB09, Thm 7.15]'s proof expresses "the translates of the accepting set by
 `u₁,…,u_k` cover all random strings `v`". -/
 def shiftOrVerifier (M : List Bool → List Bool → Bool) (p k : ℕ → ℕ) :
     List Bool → List Bool → List Bool → Bool := fun x u v =>
@@ -227,7 +227,7 @@ theorem const_tail_bound (b e n : ℕ) :
         ring
 
 /-- Error reduction with an explicit error schedule `2^{-b(n+1)^e}` and an
-explicit randomness schedule — the form [AB09, Thm 7.18]'s proof consumes:
+explicit randomness schedule — the form [AB09, Thm 7.15]'s proof consumes:
 a `BPP` witness `(M₀, a₀, k₀)` amplified by `(18b+18)·(n+1)^e` majority
 repetitions.
 
@@ -367,7 +367,7 @@ theorem exists_notMem_of_card_lt {α : Type*} [Fintype α]
   rw [heq, Finset.card_univ] at h
   exact absurd h (lt_irrefl _)
 
-/-- **`BPP ⊆ Σ₂ᵖ`**, the core of [AB09, Thm 7.18].
+/-- **`BPP ⊆ Σ₂ᵖ`**, the core of [AB09, Thm 7.15].
 
 **Proof sketch.** *Setup*: amplify the `BPP` witness (`amplify_concrete`
 at `b = a₀ + 7`, `e = k₀`) to error `2^{-T}`, `T = (a₀+7)·(n+1)^{k₀}`, on
@@ -644,7 +644,7 @@ theorem bpp_subset_sigma2 (hMaj : ClosedUnderMajority E)
     rw [hN] at hfalse
     exact absurd hfalse (by simp)
 
-/-- **Sipser–Gács** ([AB09, Thm 7.18]): `BPP ⊆ Σ₂ᵖ ∩ Π₂ᵖ` — relative to the
+/-- **Sipser–Gács** ([AB09, Thm 7.15]): `BPP ⊆ Σ₂ᵖ ∩ Π₂ᵖ` — relative to the
 efficiency notion `E`, under the closure hypotheses the proof uses.
 
 **Proof.** It suffices to prove `BPP ⊆ Σ₂ᵖ` (`bpp_subset_sigma2`) and

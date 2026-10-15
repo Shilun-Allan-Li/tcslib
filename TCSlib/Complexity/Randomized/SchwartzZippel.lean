@@ -29,6 +29,8 @@ None — this module only proves theorems about existing definitions.
 ## Main results
 
 * `Randomized.schwartz_zippel` — [AB09, Lem 7.5].
+* `Randomized.two_mul_card_eval_eq_zero_le` — the counting form over an integral domain:
+  if `2 · deg p ≤ |S|`, at most half of `S^m` are zeros.
 
 ## Deviations from the source
 
@@ -91,5 +93,24 @@ theorem schwartz_zippel {m : ℕ} {p : MvPolynomial (Fin m) ℤ} (hp : p ≠ 0)
     eq_tsub_of_add_eq (by exact_mod_cast hNZ)
   rw [hcount, tsub_div, div_self hT.ne']
   exact tsub_le_tsub_left hmain 1
+
+/-! ### Over an integral domain -/
+
+/-- Schwartz–Zippel over an integral domain, counting form: if `2 · deg p ≤ |S|` then at most
+half of `S^m` are zeros of `p ≠ 0` [AB09, Lemma 7.5]. -/
+theorem two_mul_card_eval_eq_zero_le {R : Type*} [CommRing R] [IsDomain R] [DecidableEq R]
+    {m : ℕ} {p : MvPolynomial (Fin m) R} (hp : p ≠ 0) (S : Finset R)
+    (hS : 2 * p.totalDegree ≤ #S) (hS0 : 0 < #S) :
+    2 * #{f ∈ Fintype.piFinset fun _ => S | eval f p = 0} ≤ #S ^ m := by
+  have h := schwartz_zippel_totalDegree hp S
+  have hs : (0 : ℚ≥0) < #S := by exact_mod_cast hS0
+  have h2 : (p.totalDegree : ℚ≥0) / #S ≤ 1 / 2 := by
+    rw [div_le_div_iff₀ hs two_pos]
+    exact_mod_cast (by omega : p.totalDegree * 2 ≤ 1 * #S)
+  have h3 := h.trans h2
+  rw [div_le_div_iff₀ (pow_pos hs m) two_pos] at h3
+  have : #{f ∈ Fintype.piFinset fun _ => S | eval f p = 0} * 2 ≤ 1 * #S ^ m := by
+    exact_mod_cast h3
+  omega
 
 end Randomized

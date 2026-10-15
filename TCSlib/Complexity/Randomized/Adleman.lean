@@ -13,7 +13,7 @@ set_option autoImplicit false
 /-!
 # Adleman's theorem: BPP ⊆ P/poly
 
-Arora–Barak's Theorem 7.17: every language decidable by a randomized
+Arora–Barak's Theorem 7.14: every language decidable by a randomized
 polynomial-time algorithm has polynomial-size circuits.  The proof is a
 counting argument: after error reduction, so few random strings are bad for
 any input that one string `r₀` is good for *all* inputs of a given length,
@@ -27,7 +27,7 @@ and hardwiring `r₀` turns the verifier into a circuit.
 
 ## Main results
 
-* `Randomized.adleman` — [AB09, Thm 7.17].
+* `Randomized.adleman` — [AB09, Thm 7.14].
 
 ## Deviations from the source
 
@@ -68,7 +68,7 @@ def VerifierHasCircuits (M : List Bool → List Bool → Bool) (p : ℕ → ℕ)
       D.IsWellFormed ∧ D.IsFaninTwo ∧ D.size ≤ a * (n + 1) ^ k ∧
       ∀ v : Fin n → Bool, D.eval v = M (List.ofFn v) r
 
-/-- **Adleman's theorem: `BPP ⊆ P/poly`** ([AB09, Thm 7.17]).  Relative to
+/-- **Adleman's theorem: `BPP ⊆ P/poly`** ([AB09, Thm 7.14]).  Relative to
 the efficiency notion `E`: if `L ∈ BPP` and `E`-verifiers have circuits when
 their random string is fixed (`hCirc`, the residue of [AB09, Thm 6.6]), then
 `L` has polynomial-size circuits.
