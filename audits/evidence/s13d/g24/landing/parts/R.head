@@ -1,0 +1,59 @@
+
+/-! ════════════════════════════════════════════════════════════════════════════════════════════
+Part R · new module `TCSlib/Complexity/TuringMachine/Build/ZoneRebalance.lean`. It imports the
+carrier and the core contract module only. -/
+-- @landing TCSlib.Complexity.TuringMachine.Build.ZoneRebalance
+-- @imports TCSlib.Complexity.TuringMachine.Build.ZoneTape
+-- @imports TCSlib.Complexity.TuringMachine.Build.Contract.Basic
+
+/-!
+# Machine-construction library: the rebalance and extension rows (§13d G4)
+
+The machine rows of the Hennie–Stearns zone layer ([AB09] §1.7; `machine-library-design.md`
+§13d, G4; decisions 13d.2–13d.4), stated as `Turing.Contract`s from the start (§16b, item 5).
+Both rows are two-tape machines over `Turing.ZoneSym k`: tape `0` carries the zoned tape
+(`Turing.zonedTape`), tape `1` is a blank scratch tape, the buffer.
+
+* **The rebalance row**, one machine per direction and track (the track in finite control,
+  decision 13d.4): from the home, scan the feeding side for the scanned index
+  `Turing.zoneShiftIndex`, realize the total cascade there (`Turing.zoneRebalance`, decision
+  13d.3), return home; exit `done`, or `short` when every feeding zone is empty. Time
+  `O(2^{i₀} + 1)`, the zoned head within the level-`i₀` extent.
+* **The extension row** (decision 13d.2): lay out level `ℓ` on every track, half full of virtual
+  blanks, in `O(2^ℓ + 1)`.
+
+**Status: statements.** The two rows are sorried under their proof sketches (the fill plan);
+everything else here is proved. These rows replace the retired binary rows
+`exists_zoneShiftInTM` and `exists_zoneShiftOutTM` of `Build/Zone`.
+
+## How the assembly consumes the rows (§13d, G5; sketched for fit, not in this module)
+
+One simulated step reads the home tuple, applies the simulated transition in finite control,
+writes the home tuple (`Turing.zonedTape_homeWrite`), and for each moving track runs its
+rebalance row; on `short` it runs the extension row and the rebalance again, which then exits
+`done` (`Turing.zoneRebalanceIndex_extend_of_short`). Every row's endpoint satisfies the next
+row's precondition (`Turing.zoneRowPre_rebalancePost`, `Turing.zoneRowPre_extendPost`), and the
+represented tapes move as the simulated heads do (`Turing.zoneTrackTape_rebalance_right` and its
+mirror). The amortization `Σ_i T/2^{i-1} · 2^i = O(T log T)` is the consumer's mathematics.
+
+## Main definitions
+
+* `Turing.ZoneData`, `Turing.zoneRowPre`: the index and the precondition.
+* `Turing.zoneRebalanceIndex`, `Turing.zoneRebalanceData`, `Turing.zoneExtendData`.
+* `Turing.zoneRebalancePost`, `Turing.zoneExtendPost`, `Turing.zoneRowLo`, `Turing.zoneRowHi`:
+  the endpoints and envelopes.
+
+## Main results
+
+* `Turing.exists_zoneRebalanceTM`, `Turing.exists_zoneExtendTM`: the rows (sorried).
+* `Turing.zoneRowPre_rebalancePost`, `Turing.zoneRowPre_extendPost`: rows chain.
+* `Turing.zoneRebalancePost_state_done`, `Turing.zoneRebalanceData_of_short`,
+  `Turing.zoneRebalanceIndex_extend_of_short`: the two exits.
+* `Turing.zoneRebalancePost_frames`, `Turing.zoneExtendPost_frames`: the footprints.
+
+## References
+
+* [AB09] S. Arora, B. Barak, *Computational Complexity: A Modern Approach*, Cambridge University
+  Press, 2009. (§1.7, the Hennie–Stearns simulation: zones, shifts and their index.)
+-/
+

@@ -288,6 +288,12 @@ the levels below are then half full); (d) at most `log₂ T + 2` levels are ever
 controller's chaining cost: the sum of the per-track steps plus a dispatch step each, plus `O(1)`
 for steps 1–3. A zero-time stop contract (`stopContract`) is defined in the probe as glue.
 
+*Annotation at landing (2026-10-15; the gate's finding 1, carried to G5's statement phase):* the
+probe's `run_cost_le` covers the rebalance phase only. Its step budget cannot absorb a fixed
+per-step controller cost at `k = 0`, so (e) does not follow from it as stated. G5 either treats
+machines with no work tape separately, or carries a fixed overhead (`B + A·Σ(2^idx + 1) + k`,
+with `B·T` in the conclusion). `0 < k` is never assumed silently.
+
 **One caution for G5, from the probes.** A `done` exit does not mean that the head moved: on a
 non-classical input (`L_0` full, `R_0` nonempty) the scanned index is `0 < ℓ`, the cascade's move
 is blocked by its guard, and the contents are unchanged (probe `zC`). G5's correctness rests on

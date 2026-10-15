@@ -1169,6 +1169,14 @@ The route decisions of 2026-10-12 (design §16b) add three work items, numbered 
   `audits/s13d-g24-statements-findings.md`, resolutions `…-resolutions.md`):** both duplication
   families removed; it lands after MIG-1 S, rebased; G4's fill brief identifies or gates its host
   first.
+  **Landing PR #106 (2026-10-15):** rebuilt at the tip `6672531c` (after #105) against `oleans-lmain`
+  (`audits/evidence/s13d/g24/landing/`).
+  - The gate's writers apply unchanged; MIG-1 S's two `Catalog` endpoint theorems unfold no table.
+  - 7 checks and 8 checker controls pass, every result equal to the gate's. The v3 screen's delta
+    is exactly the accepted 24 new and 7 removed pairs.
+  - Minors 3 and 4 are fixed, in prose only. Minor 1 is annotated in the design note's §5(e);
+    minors 1 and 2 are carried to G5's statement phase.
+  - Replay: 87 modules from #104's snapshot.
   **Two-tape universal (U2) designed (2026-10-14; `audits/evidence/u2/U2-design.md`, probes).**
   - **The design:** one `k`-generic construction on H2's step block. It has a new public host
     H2-F (the emitting round loop, in `Build/StepBlockLoop`), U2-S (the startup), U2-U
