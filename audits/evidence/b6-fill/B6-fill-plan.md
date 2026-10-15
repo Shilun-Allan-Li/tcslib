@@ -35,7 +35,7 @@ Not among the ten, and outside this plan's batches: the headline consumers in th
 
 | Batch | Owns (disjoint files) | Contracts | Cites, statement-level only | Critical path to the headline | Serves C1 | Size (ESTIMATE, lines landed) |
 |---|---|---|---|---|---|---|
-| **F1** | `Build/StepClock.lean` | 1 | none of the ten | **1st**: the head of the runner chain | **yes**: one step clock (C1 decision 4); C1's diagonalizer caps and `E`'s replays cite its `Bool` form `exists_stepClockTM`, proved from it in the file | +700 to +1,300 |
+| **F1** | `Build/StepClock.lean`, and (brief v2) a listed promotion block in `Build/CounterLoop.lean` and `SymbolLift.lean` | 1 | none of the ten | **1st**: the head of the runner chain | **yes**: one step clock (C1 decision 4); C1's diagonalizer caps and `E`'s replays cite its `Bool` form `exists_stepClockTM`, proved from it in the file | +700 to +1,300 |
 | **F2** | `Build/WindowRun.lean` | 2, 3 | 1 (the runner is the loop under the clock) | **2nd** | no | +1,000 to +1,800 |
 | **F3** | `SpaceComplexity/WindowClock.lean` | 4 | 3 (Route A) | **3rd**; brief after F1 integrates (the gate's ruling: Route A once the shared clock is filled) | no | +500 to +1,000 (Route A); +700 to +1,200 (Route B) |
 | **F4** | `SelfUniversal.lean` | 5, 6 | none of the ten; the emitting wrapper (a host to gate first, §5) | parallel branch: `U₀` is the headline's universal machine | no | +1,200 to +2,300 (with the wrapper host, +300 to +600, in its own gate) |
@@ -210,6 +210,11 @@ contain.
 | **all** | **+7,100 to +13,950** | about 1–1.3k of it (F1) shared with C1 |
 
 ## 8. The first two briefs
+
+**Update (2026-10-14, late): F1 is re-briefed as `briefs/b6-fill-stepclock-v2.md`.** The first F1
+delivery stopped on escalation E1 (the route needed `CounterLoop` privates and unfoldings that v1's
+rule 10 forbade). v2 authorizes exactly 19 promotions in `Build/CounterLoop` and `SymbolLift` and
+ships a route probe; see the brief's "Why there is a v2". F2's brief is unchanged.
 
 F1 and F2 are written in full, with pre-ship checks at `c52663f1` against `oleans-lh1`:
 `briefs/b6-fill-stepclock.md` and `briefs/b6-fill-windowrun.md`, with their inputs in

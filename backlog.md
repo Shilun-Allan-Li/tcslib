@@ -985,6 +985,18 @@ The route decisions of 2026-10-12 (design §16b) add three work items, numbered 
   - **Dedup, for the dedup window:** the public `wordPatch` has the same definition as
     `CounterLoop`'s private `counterPatch`, which the screen misses. `counter_debit` retires onto
     F1's `sc_debit` once that is promoted.
+  - **F1 stopped on escalation E1 and is re-briefed (2026-10-14):** the route needed `CounterLoop`
+    privates and unfoldings that v1's rule 10 forbade (report
+    `audits/b6-fill-agent-reports/stepclock-1-REPORT.md`). Per the user's decision, brief v2
+    (`briefs/b6-fill-stepclock-v2.md`) authorizes exactly 19 promotions (3 visibility-only, 16 new
+    lemmas in `CounterLoop` and `SymbolLift`). It ships a route probe that discharges every route
+    seam from public names (0 errors, exactly the 3 fill stubs sorried), with a static scan for
+    private citations and unfoldings. F2 is re-dispatched unchanged with the environment addendum.
+    - **Two more items for the dedup window,** in the family above: `sc_wordPatch_twice` and
+      `sc_wordPatch_frame` prove for `wordPatch` what the private `counter_patch_twice` and
+      `counter_patch_frame` prove for `counterPatch`. `sc_dec_inputPos` overlaps `Build/StepBlock`'s
+      `Bool`-only `inputPos_runFrom_of_inputTape_eq_zero`; one generic lemma in `Simulation` would
+      serve both. None makes a screen pair.
   **Record-table row 18's fill brief issued (2026-10-14):** `briefs/w1-fill-recordtable-cont5.md`
   (inputs `8dfbc881`, at `1b6b972c`):
   - The route is a 14-phase chain over row 17 through R1. Three prescribed privates are proved;
