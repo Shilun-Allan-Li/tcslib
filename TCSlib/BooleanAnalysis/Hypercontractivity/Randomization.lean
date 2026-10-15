@@ -4,8 +4,12 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Owen McGinty
 -/
 
+import TCSlib.BooleanAnalysis.Hypercontractivity.Randomization.Basic
+import TCSlib.BooleanAnalysis.Hypercontractivity.Randomization.Centered
+import TCSlib.BooleanAnalysis.Hypercontractivity.Randomization.Contraction
 import TCSlib.BooleanAnalysis.Hypercontractivity.Randomization.Definitions
 import TCSlib.BooleanAnalysis.Hypercontractivity.Randomization.General
+import TCSlib.BooleanAnalysis.Hypercontractivity.Randomization.ProjectionBounds
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -26,8 +30,12 @@ This facade exports the complete development in its folder.
 
 ## Contents
 
+* `Basic`: Orthogonal-component identities and conditional moment bounds.
+* `Centered`: Scalar and centered-variable negative contraction.
+* `Contraction`: Coordinate and signed anisotropic noise contraction.
 * `Definitions`: Randomized Fourier components and notable-coordinate predicates.
 * `General`: Randomization inequalities and structural statements.
+* `ProjectionBounds`: Spectral identities and norm bounds for low-degree projections.
 
 ## References
 
