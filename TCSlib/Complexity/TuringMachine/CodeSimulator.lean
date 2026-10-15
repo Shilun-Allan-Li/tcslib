@@ -3117,6 +3117,1313 @@ private lemma exists_canonStripTM :
     simpa using Nat.pow_le_pow_right (show 1 ≤ x.length + 1 by omega)
       (show 1 ≤ d by dsimp [d]; omega)))
 
+/-- The bounded unary field: `codeSkipFin (n + 1)` accepts exactly `1^i 0` with `i ≤ n`.
+ -/
+private lemma canonSkipFin_iff (n : ℕ) (ys rest : List Bool) :
+    codeSkipFin (n + 1) ys = some rest ↔
+      ∃ i, i ≤ n ∧ ys = List.replicate i true ++ false :: rest := by
+  constructor
+  · intro h
+    obtain ⟨⟨i, tail⟩, hu, h⟩ := Option.bind_eq_some_iff.mp h
+    dsimp only at h
+    split at h
+    next hi =>
+      have e := Option.some.inj h
+      exact ⟨i, by omega, by rw [← e]; exact codeReadUnary_sound ys i tail hu⟩
+    · contradiction
+  · rintro ⟨i, hi, rfl⟩
+    simp [codeSkipFin, codeReadUnary_append, show i < n + 1 by omega]
+
+/-- The fixed fields of one record: the input move, the `k` work-tape writes and moves, and
+the output, each a two-bit field; the successor field follows.  -/
+private def canonSkipFields (k : ℕ) : List Bool → Option (List Bool) :=
+  let move : Bool → Bool → Bool := fun a b => a || !b
+  fun xs => ((codeSkipPair move xs).bind (codeSkipRepeat codeSkipWork k)).bind (codeSkipPair move)
+
+/-- A record is its fixed fields followed by its successor field.  -/
+private lemma canonSkipAction_eq (k n : ℕ) (xs : List Bool) :
+    codeSkipActionK k n xs = (canonSkipFields k xs).bind (codeSkipState (n + 1)) := by
+  unfold codeSkipActionK canonSkipFields
+  simp only [bind, Option.bind_assoc]
+
+/-- A successful pair skip consumes exactly two cells.  -/
+private lemma canonSkipPair_cells (v : Bool → Bool → Bool) (xs ys : List Bool)
+    (h : codeSkipPair v xs = some ys) : ∃ a b, xs = a :: b :: ys := by
+  match xs, h with
+  | a :: b :: rest, h =>
+    unfold codeSkipPair at h
+    dsimp only at h
+    split at h
+    · cases h
+      exact ⟨a, b, rfl⟩
+    · contradiction
+
+/-- Successful fixed fields consume exactly `4k + 4` cells.  -/
+private lemma canonSkipFields_cells (k : ℕ) (xs ys : List Bool)
+    (h : canonSkipFields k xs = some ys) : ∃ u, xs = u ++ ys ∧ u.length = 4 * k + 4 := by
+  have work (j : ℕ) (us vs : List Bool) (hw : codeSkipRepeat codeSkipWork j us = some vs) :
+      ∃ u, us = u ++ vs ∧ u.length = 4 * j := by
+    induction j generalizing us with
+    | zero =>
+      cases hw
+      exact ⟨[], rfl, rfl⟩
+    | succ j ih =>
+      obtain ⟨ws, hws, hrest⟩ := Option.bind_eq_some_iff.mp hw
+      obtain ⟨zs, hz, hz'⟩ := Option.bind_eq_some_iff.mp hws
+      obtain ⟨a, b, rfl⟩ := canonSkipPair_cells _ _ _ hz
+      obtain ⟨c, d, rfl⟩ := canonSkipPair_cells _ _ _ hz'
+      obtain ⟨u, rfl, hu⟩ := ih ws hrest
+      exact ⟨a :: b :: c :: d :: u, rfl, by simp only [List.length_cons, hu]; omega⟩
+  obtain ⟨zs, hz, hout⟩ := Option.bind_eq_some_iff.mp h
+  obtain ⟨ws, hws, hrep⟩ := Option.bind_eq_some_iff.mp hz
+  obtain ⟨a, b, rfl⟩ := canonSkipPair_cells _ _ _ hws
+  obtain ⟨u, rfl, hu⟩ := work k ws zs hrep
+  obtain ⟨c, d, rfl⟩ := canonSkipPair_cells _ _ _ hout
+  exact ⟨a :: b :: (u ++ [c, d]), by simp,
+    by simp only [List.length_cons, List.length_append, List.length_nil, hu]⟩
+
+/-- Repetition counts add.  -/
+private lemma canonSkipRepeat_add (r : List Bool → Option (List Bool)) (m n : ℕ)
+    (xs : List Bool) :
+    codeSkipRepeat r (m + n) xs = (codeSkipRepeat r m xs).bind (codeSkipRepeat r n) := by
+  induction m generalizing xs with
+  | zero =>
+    rw [Nat.zero_add]
+    rfl
+  | succ m ih =>
+    rw [Nat.succ_add]
+    show (r xs).bind (codeSkipRepeat r (m + n)) =
+      ((r xs).bind (codeSkipRepeat r m)).bind (codeSkipRepeat r n)
+    cases r xs with
+    | none => rfl
+    | some ys => exact ih ys
+
+/-- A repetition of repetitions is one repetition of the product length.
+ -/
+private lemma canonSkipRepeat_mul (r : List Bool → Option (List Bool)) (a b : ℕ)
+    (xs : List Bool) :
+    codeSkipRepeat (codeSkipRepeat r a) b xs = codeSkipRepeat r (a * b) xs := by
+  induction b generalizing xs with
+  | zero => rfl
+  | succ b ih =>
+    have e : a * (b + 1) = a + a * b := by ring
+    rw [e, canonSkipRepeat_add r a (a * b)]
+    show (codeSkipRepeat r a xs).bind (codeSkipRepeat (codeSkipRepeat r a) b) = _
+    congr 1
+    funext ys
+    exact ih ys
+
+/-- The fixed table grammar is `n + 1` states of `3^(k+1)` records each.
+ -/
+private lemma canonSkipTable_eq (k n : ℕ) (xs : List Bool) :
+    codeSkipTableK k n xs =
+      codeSkipRepeat (codeSkipRepeat (codeSkipActionK k n) (3 ^ (k + 1))) (n + 1) xs := by
+  have iter (j : ℕ) (r : List Bool → Option (List Bool)) :
+      (fun f => codeSkipRepeat f 3)^[j] r = codeSkipRepeat r (3 ^ j) := by
+    induction j with
+    | zero =>
+      funext ys
+      show r ys = (r ys).bind some
+      cases r ys <;> rfl
+    | succ j ih =>
+      rw [Function.iterate_succ_apply', ih]
+      funext ys
+      rw [canonSkipRepeat_mul, Nat.pow_succ]
+  unfold codeSkipTableK
+  rw [iter]
+
+/-- Read one native cell, advancing exactly when it is the requested bit. The catalog's
+native readers traverse the whole input, so this single-cell leaf supplies the local test.
+No work tape is touched and no symbol is emitted. -/
+private def canonCellTM (k : ℕ) (bit : Bool) : MultiTapeTM k Bool (Option Bool) where
+  q₀ := none
+  tr := fun _ inp _ =>
+    inputMoveAction (if inp = some bit then 1 else 0) (some (decide (inp = some bit)))
+
+/-- The native-cell leaf has exactly the public input-only action's effect. -/
+private lemma canonCell_step {k : ℕ} {x : List Bool} (bit : Bool)
+    (d : Cfg k Bool (Option Bool) x) (q : Option Bool) (hq : d.state = some q) :
+    (canonCellTM k bit).step d =
+      { d with
+        state := some (some (decide (d.inputSymbol = some bit)))
+        inputPos := moveInputPos d.inputPos (if d.inputSymbol = some bit then 1 else 0) } :=
+  step_of_inputMoveAction _ _ _ hq rfl
+
+/-- Every word has a maximal initial run of `true` cells, followed by either a
+`false` or the right blank. Only existence is used by the physical reader.
+
+**Proof sketch.** Specialize the public list decomposition into an initial constant
+run and its first different cell. A leading false cell gives a zero-length true run. -/
+private lemma canonTruePrefix (xs : List Bool) :
+    ∃ r rest, xs = List.replicate r true ++ rest ∧
+      (rest = [] ∨ ∃ ys, rest = false :: ys) := by
+  rcases List.eq_replicate_or_eq_replicate_append_cons xs with
+    rfl | ⟨n, b, rfl, positive⟩ | ⟨n, a, b, ys, rfl, positive, different⟩
+  · exact ⟨0, [], rfl, Or.inl rfl⟩
+  · cases b with
+    | false =>
+      obtain ⟨n, rfl⟩ := Nat.exists_eq_succ_of_ne_zero (by omega : n ≠ 0)
+      exact ⟨0, _, rfl, Or.inr ⟨List.replicate n false, rfl⟩⟩
+    | true => exact ⟨n, [], by simp, Or.inl rfl⟩
+  · cases a with
+    | false =>
+      obtain ⟨n, rfl⟩ := Nat.exists_eq_succ_of_ne_zero (by omega : n ≠ 0)
+      exact ⟨0, _, rfl, Or.inr ⟨List.replicate n false ++ b :: ys, rfl⟩⟩
+    | true =>
+      cases b
+      · exact ⟨n, false :: ys, rfl, Or.inr ⟨ys, rfl⟩⟩
+      · exact (different rfl).elim
+
+/-- A true prefix gives the exact body orbit of the unary reader. This is only a
+calculation of the one-cell body's orbit; the physical countdown uses the public host.
+
+**Proof sketch.** At round `r` the native head is at the original position plus `r`.
+The supplied prefix lookup makes the next one-cell action a right move and a return to
+the same anchor. The shared round-orbit successor law gives the induction step. -/
+private lemma canonTrueOrbit {k : ℕ} {x : List Bool}
+    (d : Cfg k Bool (Option Bool) x) (hs : d.state = some (some true))
+    (p r : ℕ) (hp : d.inputPos.val = p + 1) (hr : p + r ≤ x.length)
+    (hprefix : ∀ i < r, x[p + i]? = some true) :
+    counterLoopOrbit (canonCellTM k true) (fun _ => 1) d r =
+      { d with state := some (some true), inputPos := ⟨p + r + 1, by omega⟩ } := by
+  simp only [counterLoopOrbit]
+  induction r with
+  | zero =>
+    change d = _
+    refine Cfg.ext hs ?_ rfl rfl rfl
+    exact Fin.ext hp
+  | succ r ih =>
+    rw [roundOrbit_succ, ih (by omega) (fun i hi => hprefix i (by omega))]
+    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero,
+      canonCell_step true _ (some true) rfl]
+    have read :
+        ({ d with
+          state := some (some true)
+          inputPos := ⟨p + r + 1, by omega⟩ } : Cfg k Bool (Option Bool) x).inputSymbol =
+          some true := (FinTM.inputSymbol_at _ (p + r) (by omega) rfl).trans (hprefix r (by omega))
+    simp only [read, decide_true, if_true]
+    refine Cfg.ext rfl ?_ rfl rfl rfl
+    apply Fin.ext
+    change (moveInputPos (⟨p + r + 1, by omega⟩ : Fin (x.length + 2)) SignType.pos).val = _
+    rw [moveInputPos_pos_of_ne_right _ (by
+      change p + r + 1 ≠ x.length + 1
+      omega)]
+    rfl
+
+/-- Replacing a buffered word by another word of the same width changes only its interval.
+The two buffers are both blank outside that interval.
+
+**Proof sketch.** Split at zero and the common length. Inside the interval use the
+replacement branch; outside it both buffers are blank by the public list lookup bound. -/
+private lemma canonPatchWord (w v : List Bool) (width : v.length = w.length) :
+    (fun z : ℤ => if 0 ≤ z ∧ z < (w.length : ℤ) then FinTM.bufferTape v z
+      else FinTM.bufferTape w z) = FinTM.bufferTape v := by
+  funext z
+  by_cases nonneg : 0 ≤ z
+  · by_cases inside : z < (w.length : ℤ)
+    · simp [nonneg, inside]
+    · have past : w.length ≤ z.toNat := by omega
+      simp [nonneg, inside, FinTM.bufferTape,
+        List.getElem?_eq_none (show v.length ≤ z.toNat by omega)]
+  · simp [nonneg, FinTM.bufferTape]
+
+/-- The countdown reads at most the initial true hprefix. Its result keeps the body tapes,
+returns the counter head to zero, and retains a buffered counter word of the original width.
+
+**Proof sketch.** If the bound is no larger than the true hprefix, every one-cell round
+returns and the public done contract applies. Otherwise the first non-true cell is the
+escaping round. Apply the public escape contract and its hprefix amortization bound.
+Both cases use the same body-orbit calculation; no host transition is re-proved. -/
+private lemma canonUnaryLoop {x : List Bool} (d : Cfg 1 Bool (Option Bool) x)
+    (hs : d.state = some (some true)) (p r : ℕ) (hp : d.inputPos.val = p + 1)
+    (hr : p + r ≤ x.length) (hprefix : ∀ i < r, x[p + i]? = some true)
+    (stopped : x[p + r]? ≠ some true) (w : List Bool) :
+    ∃ t ≤ 5 * x.length + 2 * w.length + 7, ∃ v q,
+      v.length = w.length ∧ (q = CounterLoopState.done ∨ q = .escape) ∧
+      (counterLoopTM (canonCellTM 1 true) (some true) (some (some false))).runFrom
+          (counterLoopCfg (some (.dec .run)) d (FinTM.bufferTape w) 0) t =
+        counterLoopCfg (some q)
+          { d with inputPos := ⟨p + min (counterValue w) r + 1, by
+              have := Nat.min_le_right (counterValue w) r; omega⟩ }
+          (FinTM.bufferTape v) 0 ∧
+      ∀ u < t,
+        ((counterLoopTM (canonCellTM 1 true) (some true) (some (some false))).runFrom
+          (counterLoopCfg (some (.dec .run)) d (FinTM.bufferTape w) 0) u).state ≠ some .done ∧
+        ((counterLoopTM (canonCellTM 1 true) (some true) (some (some false))).runFrom
+          (counterLoopCfg (some (.dec .run)) d (FinTM.bufferTape w) 0) u).state ≠ some .escape := by
+  let M := canonCellTM 1 true
+  let n := counterValue w
+  have orbit (j : ℕ) (hj : j ≤ r) :
+      counterLoopOrbit M (fun _ => 1) d j =
+        { d with state := some (some true), inputPos := ⟨p + j + 1, by omega⟩ } :=
+    canonTrueOrbit d hs p j hp (by omega) (fun i hi => hprefix i (by omega))
+  by_cases fits : n ≤ r
+  · let t := n + counterOverhead w (n + 1)
+    have run := counterLoopTM_run_done M (some true) (some (some false)) (fun _ => 1)
+      d w (FinTM.bufferTape w) 0 (by intro z _ _; simp) n rfl
+      (by
+        intro j hj
+        rw [orbit j (by omega), orbit (j + 1) (by omega)]
+        exact ⟨rfl, Nat.zero_lt_one, by intro u hu hut; change u < 1 at hut; omega,
+          rfl⟩) t (by simp [t])
+    have charge := counterLoop_time_le M (fun _ => 1) d w n rfl 1
+      (by intros; exact le_rfl)
+    simp only [Finset.sum_const, Finset.card_range, nsmul_eq_mul, mul_one] at charge
+    have patch : (fun z : ℤ => if 0 ≤ z ∧ z < 0 + (w.length : ℤ) then some true
+        else FinTM.bufferTape w z) = FinTM.bufferTape (List.replicate w.length true) := by
+      rw [← canonPatchWord w (List.replicate w.length true) (by simp)]
+      funext z
+      simp only [zero_add]
+      split_ifs with inside
+      · simp [FinTM.bufferTape, inside.1,
+          show z.toNat < w.length by omega]
+      · rfl
+    refine ⟨t, by dsimp [t] at *; omega, List.replicate w.length true, .done,
+      by simp, Or.inl rfl, ?_, run.2.1⟩
+    rw [run.1, patch, orbit n fits]
+    refine Cfg.ext rfl ?_ rfl rfl rfl
+    apply Fin.ext
+    change p + n + 1 = p + min (counterValue w) r + 1
+    rw [Nat.min_eq_left fits]
+  · have before : r < n := by omega
+    have escape : counterLoopOrbit M (fun _ => 1) d (r + 1) =
+        { d with state := some (some false), inputPos := ⟨p + r + 1, by omega⟩ } := by
+      change roundOrbit M (fun _ => 1) d (r + 1) = _
+      rw [roundOrbit_succ]
+      change M.runFrom (counterLoopOrbit M (fun _ => 1) d r) 1 = _
+      rw [orbit r le_rfl, MultiTapeTM.runFrom_succ_eq_step,
+        MultiTapeTM.runFrom_zero, canonCell_step true _ (some true) rfl]
+      have read := FinTM.inputSymbol_at
+        ({ d with state := some (some true), inputPos := ⟨p + r + 1, by omega⟩ })
+        (p + r) hr rfl
+      simp only [read, if_neg stopped, decide_eq_false stopped, moveInputPos_zero]
+    let t := r + 1 + counterOverhead w (r + 1)
+    have run := counterLoopTM_run_escape M (some true) (some false) (by decide)
+      (fun _ => 1) d w (FinTM.bufferTape w) 0 (by intro z _ _; simp) r before
+      (by
+        intro j hj
+        rw [orbit j hj]
+        exact ⟨rfl, Nat.zero_lt_one, by intro u hu hut; change u < 1 at hut; omega⟩)
+      (by rw [escape]) t (by simp [t])
+    have width := counterWord_length w (r + 1)
+    have charge := counterOverhead_le_of_le w (r + 1) (by exact Nat.succ_le_of_lt before)
+    refine ⟨t, by dsimp [t]; omega, counterWord w (r + 1), .escape, width,
+      Or.inr rfl, ?_, run.2.1⟩
+    rw [run.1, escape]
+    simp only [zero_add, sub_zero]
+    rw [canonPatchWord w _ width]
+    refine Cfg.ext rfl ?_ rfl rfl rfl
+    apply Fin.ext
+    change p + r + 1 = p + min (counterValue w) r + 1
+    rw [Nat.min_eq_right (by omega : r ≤ n)]
+
+/-- The unary component has public-host phases for the countdown, terminating-cell test,
+and scratch clearing with either verdict retained in the phase tag. -/
+private abbrev canonUnaryPhase : Option (Option Bool) → Type
+  | none => CounterLoopState (Option Bool)
+  | some none => Option Bool
+  | some (some _) => SweepPhase
+
+/-- The unary phase family uses the public countdown and clearing machines. -/
+private def canonUnaryFamily (p : Option (Option Bool)) :
+    MultiTapeTM 2 Bool (canonUnaryPhase p) :=
+  match p with
+  | none => counterLoopTM (canonCellTM 1 true) (some true) (some (some false))
+  | some none => canonCellTM 2 false
+  | some (some _) => clearTM 2 1
+
+/-- Both countdown exits share the terminating-cell test, which dispatches to the
+cleanup phase with its Boolean verdict retained. The final ports are clearing's done ports. -/
+private def canonUnaryNext (p : Option (Option Bool)) :
+    canonUnaryPhase p → Option (Sigma canonUnaryPhase) := match p with
+  | none => fun q =>
+      if q = .done ∨ q = .escape then some ⟨some none, none⟩ else none
+  | some none => fun q => q.map (fun b => ⟨some (some b), .sweep⟩)
+  | some (some b) => fun q => if q = .done then some ⟨some (some b), .done⟩ else none
+
+/-- The unary core starts with the copied bound on its last tape. It is a public phase
+host, with no private controller for the transitions between the three phases. -/
+private def canonUnaryCore : MultiTapeTM 2 Bool (Sigma canonUnaryPhase) :=
+  phaseHostTM canonUnaryFamily ⟨none, .dec .run⟩ canonUnaryNext
+
+/-- In a maximal true prefix, the bounded skipper returns the suffix after the first
+false cell exactly when that cell is at or below the bound.
+
+**Proof sketch.** A false-terminated field is the public unary-reader append law. A word
+consisting only of true cells cannot satisfy `canonSkipFin_iff`, since that characterization
+would place a false cell in the word. -/
+private lemma canonUnaryField (n r : ℕ) (rest : List Bool)
+    (stop : rest = [] ∨ ∃ ys, rest = false :: ys) :
+    codeSkipFin (n + 1) (List.replicate r true ++ rest) =
+      if r ≤ n then rest.tail? else none := by
+  rcases stop with rfl | ⟨ys, rfl⟩
+  · have absent : codeSkipFin (n + 1) (List.replicate r true) = none := by
+      cases h : codeSkipFin (n + 1) (List.replicate r true) with
+      | none => rfl
+      | some ys =>
+        obtain ⟨i, _, eq⟩ := (canonSkipFin_iff n _ ys).mp h
+        have impossible : false ∈ List.replicate r true := by rw [eq]; simp
+        simp at impossible
+    simp [absent]
+  · simp [codeSkipFin, codeReadUnary_append, show (r < n + 1) ↔ r ≤ n by omega]
+
+/-- The unary core consumes a bounded unary field and then clears its scratch counter.
+It preserves the other tape, every head, and the output, with a linear time bound.
+
+**Proof sketch.** Split the suffix at its first false cell or right blank. Apply the
+public countdown contract to the one-cell orbit, test the stopping cell, and clear the
+residual word at its unchanged width. Public phase-host hprefix equations give the strict
+exit cuts. No countdown or phase-host transition is re-proved. -/
+private lemma canonUnaryCore_run {x : List Bool} (w : List Bool)
+    (d : Cfg 2 Bool (Sigma canonUnaryPhase) x)
+    (hs : d.state = some ⟨none, .dec .run⟩) (positive : 1 ≤ d.inputPos.val)
+    (counter : d.workTapes 1 = FinTM.bufferTape w) (home : d.workTapePos 1 = 0) :
+    ∃ t ≤ 12 * (x.length + w.length + 1),
+      (canonUnaryCore.runFrom d t).state = some
+        ⟨some (some (codeSkipFin (counterValue w + 1)
+          (x.drop (d.inputPos.val - 1))).isSome), .done⟩ ∧
+      (canonUnaryCore.runFrom d t).output = d.output ∧
+      (∀ u < t, ∀ b,
+        (canonUnaryCore.runFrom d u).state ≠ some ⟨some (some b), .done⟩) ∧
+      (canonUnaryCore.runFrom d t).workTapes =
+        Function.update d.workTapes 1 (FinTM.bufferTape []) ∧
+      (canonUnaryCore.runFrom d t).workTapePos = d.workTapePos ∧
+      ∀ ys, codeSkipFin (counterValue w + 1) (x.drop (d.inputPos.val - 1)) = some ys →
+        (canonUnaryCore.runFrom d t).inputPos.val = x.length + 1 - ys.length := by
+  let p := d.inputPos.val - 1
+  have pos : d.inputPos.val = p + 1 := by dsimp [p]; omega
+  have range : p ≤ x.length := by have := d.inputPos.isLt; omega
+  obtain ⟨r, rest, parts, stop⟩ := canonTruePrefix (x.drop p)
+  have size : x.length = p + r + rest.length := by
+    have lengths := congrArg List.length parts
+    simp only [List.length_drop, List.length_append, List.length_replicate] at lengths
+    omega
+  have fits : p + r ≤ x.length := by omega
+  have lookup (i : ℕ) : x[p + i]? = (List.replicate r true ++ rest)[i]? := by
+    rw [← parts]
+    simp only [List.getElem?_drop]
+  have hprefix (i : ℕ) (hi : i < r) : x[p + i]? = some true := by
+    rw [lookup]
+    simp [List.getElem?_append, hi]
+  have last : x[p + r]? = rest.head? := by
+    rw [lookup]
+    simp [List.getElem?_append]
+    cases rest <;> rfl
+  have stopped : x[p + r]? ≠ some true := by
+    rw [last]
+    rcases stop with rfl | ⟨ys, rfl⟩ <;> simp
+  let start : Cfg 2 Bool (CounterLoopState (Option Bool)) x :=
+    d.mapState (fun _ => .dec .run)
+  let body := counterLoopBody (some true) start
+  have startState : start.state = some (.dec .run) := by simp [start, Cfg.mapState, hs]
+  have layout : counterLoopCfg (some (.dec .run)) body (FinTM.bufferTape w) 0 = start := by
+    rw [← startState]
+    rw [← counter, ← home]
+    exact counterLoopCfg_body (some true) start
+  obtain ⟨l, boundL, v, q, width, which, runL, cutL⟩ :=
+    canonUnaryLoop body rfl p r pos fits hprefix stopped w
+  rw [layout] at runL cutL
+  let afterLoop := (canonUnaryFamily none).runFrom start l
+  have loopEq : afterLoop = _ := runL
+  have stateL : afterLoop.state = some q := by rw [loopEq]; rfl
+  have first := phaseHostTM_run canonUnaryFamily ⟨none, .dec .run⟩ canonUnaryNext
+    none start afterLoop l rfl q stateL ⟨some none, none⟩
+    (by simp [canonUnaryNext, which]) (by
+      intro u hu s state
+      have noDone : s ≠ .done := fun eq => (cutL u hu).1 (state.trans (congrArg some eq))
+      have noEscape : s ≠ .escape := fun eq => (cutL u hu).2
+        (state.trans (congrArg some eq))
+      simp [canonUnaryNext, noDone, noEscape])
+  have startEq : start.mapState (Sigma.mk none) = d := by
+    apply Cfg.ext <;> simp [start, Cfg.mapState, hs]
+  rw [startEq] at first
+  let cellStart : Cfg 2 Bool (Option Bool) x := afterLoop.mapState (fun _ => none)
+  have cellState : cellStart.state = some none := by simp [cellStart, Cfg.mapState, stateL]
+  let bit := decide (cellStart.inputSymbol = some false)
+  let afterCell := (canonCellTM 2 false).step cellStart
+  have cellEq : afterCell = _ := canonCell_step false cellStart none cellState
+  have stateT : afterCell.state = some (some bit) := by rw [cellEq]
+  have second := phaseHostTM_run canonUnaryFamily ⟨none, .dec .run⟩ canonUnaryNext
+    (some none) cellStart afterCell 1 rfl (some bit) stateT
+    ⟨some (some bit), .sweep⟩ rfl (by
+      intro u hu s state
+      have zero : u = 0 := by omega
+      subst u
+      have eq : s = none := (Option.some.inj (cellState.symm.trans state)).symm
+      subst s
+      rfl)
+  have cellJoin : afterLoop.mapState (fun _ => (⟨some none, none⟩ : Sigma canonUnaryPhase)) =
+      cellStart.mapState (Sigma.mk (some none)) := by
+    simp [cellStart, Cfg.mapState, Option.map_map, Function.comp_def]
+  rw [← cellJoin] at second
+  let clearStart : Cfg 2 Bool SweepPhase x := afterCell.mapState (fun _ => .sweep)
+  have clearState : clearStart.state = some .sweep := by simp [clearStart, Cfg.mapState, stateT]
+  have clearWord : clearStart.workTapes 1 = FinTM.bufferTape v ∧
+      clearStart.workTapePos 1 = 0 := by
+    change afterCell.workTapes 1 = _ ∧ afterCell.workTapePos 1 = _
+    rw [cellEq]
+    change afterLoop.workTapes 1 = _ ∧ afterLoop.workTapePos 1 = _
+    rw [loopEq]
+    simp only [counter_cfg_eq]
+    change Fin.lastCases (motive := fun _ : Fin 2 => ℤ → Option Bool)
+      (FinTM.bufferTape v) body.workTapes (Fin.last 1) = _ ∧
+      Fin.lastCases (motive := fun _ : Fin 2 => ℤ) 0 body.workTapePos (Fin.last 1) = _
+    simp only [Fin.lastCases_last, and_self]
+  have clearing := clearTM_run_ofCfg (1 : Fin 2) v clearStart clearState
+    (by intro z _ _; rw [clearWord.1, clearWord.2]; simp)
+  let c := 2 * v.length + 2
+  let afterClear := (clearTM 2 (1 : Fin 2)).runFrom clearStart c
+  have clearEq : afterClear = _ := clearing.1
+  have stateC : afterClear.state = some .done := by rw [clearEq]
+  have third := phaseHostTM_run canonUnaryFamily ⟨none, .dec .run⟩ canonUnaryNext
+    (some (some bit)) clearStart afterClear c rfl .done stateC
+    ⟨some (some bit), .done⟩ (by rfl) (by
+      intro u hu s state
+      have notDone : s ≠ .done := fun eq =>
+        clearing.2.1 u hu (state.trans (congrArg some eq))
+      simp [canonUnaryNext, notDone])
+  have clearJoin : afterCell.mapState
+      (fun _ => (⟨some (some bit), .sweep⟩ : Sigma canonUnaryPhase)) =
+      clearStart.mapState (Sigma.mk (some (some bit))) := by
+    simp [clearStart, Cfg.mapState, Option.map_map, Function.comp_def]
+  let duration := (l + 1) + 2 + c
+  have whole : canonUnaryCore.runFrom d duration =
+      afterClear.mapState (Sigma.mk (some (some bit))) := by
+    change (phaseHostTM canonUnaryFamily ⟨none, .dec .run⟩ canonUnaryNext).runFrom d _ = _
+    rw [MultiTapeTM.runFrom_add d (l + 1 + 2) c,
+      MultiTapeTM.runFrom_add d (l + 1) 2, first.2, second.2, clearJoin,
+      third.1 c le_rfl]
+  have position : cellStart.inputPos.val = p + min (counterValue w) r + 1 := by
+    change afterLoop.inputPos.val = _
+    rw [loopEq]
+    rfl
+  have read : cellStart.inputSymbol = x[p + min (counterValue w) r]? :=
+    FinTM.inputSymbol_at cellStart _
+      (by have := Nat.min_le_right (counterValue w) r; omega) position
+  have field := canonUnaryField (counterValue w) r rest stop
+  rw [← parts] at field
+  have verdict : (codeSkipFin (counterValue w + 1) (x.drop p)).isSome = bit := by
+    rw [field]
+    dsimp only [bit]
+    rw [read]
+    by_cases enough : r ≤ counterValue w
+    · rw [if_pos enough, Nat.min_eq_right enough, last]
+      rcases stop with rfl | ⟨ys, rfl⟩ <;> rfl
+    · rw [if_neg enough, Nat.min_eq_left (by omega), hprefix _ (by omega)]
+      rfl
+  have tapes : afterClear.workTapes = Function.update d.workTapes 1 (FinTM.bufferTape []) := by
+    rw [clearEq]
+    funext j z
+    fin_cases j
+    · change clearStart.workTapes 0 z = d.workTapes 0 z
+      change afterCell.workTapes 0 z = _
+      rw [cellEq]
+      change afterLoop.workTapes 0 z = _
+      rw [loopEq]
+      change Fin.lastCases (motive := fun _ : Fin 2 => ℤ → Option Bool)
+        (FinTM.bufferTape v) body.workTapes (0 : Fin 1).castSucc z = _
+      rw [Fin.lastCases_castSucc]
+      rfl
+    · simp only [FinTM.bufferTape_nil]
+      change (if (1 : Fin 2) = 1 ∧ clearStart.workTapePos 1 ≤ z ∧
+        z < clearStart.workTapePos 1 + (v.length : ℤ) then none
+        else clearStart.workTapes 1 z) = none
+      rw [clearWord.1, clearWord.2]
+      simp only [true_and, zero_add]
+      split_ifs with inside
+      · rfl
+      · by_cases nonneg : 0 ≤ z
+        · simp [FinTM.bufferTape, nonneg,
+            List.getElem?_eq_none (show v.length ≤ z.toNat by omega)]
+        · simp [FinTM.bufferTape, nonneg]
+  have heads : afterClear.workTapePos = d.workTapePos := by
+    rw [clearEq]
+    change afterCell.workTapePos = _
+    rw [cellEq]
+    change afterLoop.workTapePos = _
+    rw [loopEq]
+    funext j
+    fin_cases j
+    · change Fin.lastCases (motive := fun _ : Fin 2 => ℤ)
+        0 body.workTapePos (0 : Fin 1).castSucc = _
+      rw [Fin.lastCases_castSucc]
+      rfl
+    · change Fin.lastCases (motive := fun _ : Fin 2 => ℤ) 0 body.workTapePos (Fin.last 1) = _
+      rw [Fin.lastCases_last]
+      exact home.symm
+  have output : afterClear.output = d.output := by
+    rw [clearEq]
+    change afterCell.output = _
+    rw [cellEq]
+    change afterLoop.output = _
+    rw [loopEq]
+    rfl
+  refine ⟨duration, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
+  · dsimp [duration, c]
+    rw [width]
+    omega
+  · rw [whole]
+    change Option.map (fun s : SweepPhase =>
+      (⟨some (some bit), s⟩ : Sigma canonUnaryPhase)) afterClear.state = _
+    rw [stateC]
+    change some (⟨some (some bit), SweepPhase.done⟩ : Sigma canonUnaryPhase) =
+      some ⟨some (some (codeSkipFin (counterValue w + 1) (x.drop p)).isSome), .done⟩
+    rw [verdict]
+  · rw [whole]
+    exact output
+  · intro u hu b
+    by_cases early : u ≤ l
+    · rw [first.1 u early]
+      intro eq
+      obtain ⟨s, _, bad⟩ := Option.map_eq_some_iff.mp eq
+      have impossible := congrArg Sigma.fst bad
+      cases impossible
+    · have index : u = l + 1 + (u - (l + 1)) := by omega
+      rw [index, MultiTapeTM.runFrom_add, first.2]
+      by_cases middle : u - (l + 1) ≤ 1
+      · rw [second.1 _ middle]
+        intro eq
+        obtain ⟨s, _, bad⟩ := Option.map_eq_some_iff.mp eq
+        have impossible := congrArg Sigma.fst bad
+        cases impossible
+      · have tailIndex : u - (l + 1) = 2 + (u - (l + 1) - 2) := by omega
+        rw [tailIndex, MultiTapeTM.runFrom_add, second.2, clearJoin,
+          third.1 _ (by dsimp [duration] at hu; omega)]
+        intro eq
+        obtain ⟨s, state, tag⟩ := Option.map_eq_some_iff.mp eq
+        have equalBits : bit = b := by
+          have e := congrArg Sigma.fst tag
+          exact Option.some.inj (Option.some.inj e)
+        subst b
+        have same : s = .done := eq_of_heq (Sigma.mk.inj_iff.mp tag).2
+        exact clearing.2.1 _ (by dsimp [duration, c] at *; omega)
+          (state.trans (congrArg some same))
+  · rw [whole]
+    exact tapes
+  · rw [whole]
+    exact heads
+  · intro ys accepted
+    change codeSkipFin (counterValue w + 1) (x.drop p) = some ys at accepted
+    rw [field] at accepted
+    have enough : r ≤ counterValue w := by
+      by_contra small
+      simp [small] at accepted
+    rw [if_pos enough] at accepted
+    rcases stop with rfl | ⟨tail, rfl⟩
+    · cases accepted
+    · have same : tail = ys := Option.some.inj accepted
+      subst ys
+      have value : cellStart.inputSymbol = some false := by
+        rw [read, Nat.min_eq_right enough, last]
+        rfl
+      rw [whole, clearEq]
+      change afterCell.inputPos.val = _
+      rw [cellEq]
+      simp only [value, if_true]
+      have beforeEnd : cellStart.inputPos.val ≠ x.length + 1 := by
+        intro eq
+        simp only [List.length_cons, Nat.min_eq_right enough] at size position
+        omega
+      change (moveInputPos cellStart.inputPos SignType.pos).val = _
+      rw [moveInputPos_pos_of_ne_right _ beforeEnd]
+      change cellStart.inputPos.val + 1 = x.length + 1 - tail.length
+      simp only [List.length_cons, Nat.min_eq_right enough] at size position
+      omega
+
+/-- The bounded unary reader uses two tapes: the preserved bound and one restored scratch
+counter. It consumes the field on acceptance and preserves every work tape and head.
+
+**Proof sketch.** Copy the bound by the framed catalog row, then dispatch through the
+public seam to the unary core. That core tests its stopping cell and clears its residual
+counter. The untouched bound and blank scratch give exact restoration, and the
+copy, seam, and core ledgers fit one linear bound. -/
+private lemma exists_canonUnaryTM :
+    ∃ (m : ℕ) (S : Type) (_ : Fintype S) (_ : DecidableEq S) (U : MultiTapeTM m Bool S)
+      (entry : S) (exit : Bool → S) (bound : Fin m) (a : ℕ), Function.Injective exit ∧
+      ∀ (x w : List Bool) (d : Cfg m Bool S x), d.state = some entry →
+        1 ≤ d.inputPos.val →
+        d.workTapes bound = FinTM.bufferTape w → d.workTapePos bound = 0 →
+        (∀ j, j ≠ bound → d.workTapes j = FinTM.bufferTape [] ∧ d.workTapePos j = 0) →
+        ∃ t ≤ a * (x.length + w.length + 1),
+          (U.runFrom d t).state =
+            some (exit (codeSkipFin (counterValue w + 1) (x.drop (d.inputPos.val - 1))).isSome) ∧
+          (U.runFrom d t).output = d.output ∧
+          (∀ u < t, ∀ v, (U.runFrom d u).state ≠ some (exit v)) ∧
+          (U.runFrom d t).workTapes = d.workTapes ∧
+          (U.runFrom d t).workTapePos = d.workTapePos ∧
+          ∀ ys, codeSkipFin (counterValue w + 1) (x.drop (d.inputPos.val - 1)) = some ys →
+            (U.runFrom d t).inputPos.val = x.length + 1 - ys.length := by
+  letI : ∀ p, Fintype (canonUnaryPhase p) := fun p => by
+    cases p with
+    | none => exact inferInstance
+    | some b => cases b <;> exact inferInstance
+  letI : ∀ p, DecidableEq (canonUnaryPhase p) := fun p => by
+    cases p with
+    | none => exact inferInstance
+    | some b => cases b <;> exact inferInstance
+  let C := copyTM (Symbol := Bool) 2 0 1
+  let U := seamCompTM C .done canonUnaryCore ⟨none, .dec .run⟩
+  let exit (b : Bool) : SweepPhase ⊕ Sigma canonUnaryPhase := Sum.inr ⟨some (some b), .done⟩
+  refine ⟨2, _, inferInstance, inferInstance, U, Sum.inl .sweep, exit, 0, 16, ?_, ?_⟩
+  · intro a b eq
+    have tagged := congrArg Sigma.fst (Sum.inr.inj eq)
+    exact Option.some.inj (Option.some.inj tagged)
+  · intro x w d state positive bound home blank
+    let cp : Cfg 2 Bool SweepPhase x :=
+      ⟨some .sweep, d.inputPos, d.workTapes, d.workTapePos, d.output⟩
+    have start : cp.mapState Sum.inl = d := by
+      exact Cfg.ext state.symm rfl rfl rfl rfl
+    have scratch := blank 1 (by decide)
+    have copied := copyTM_run_ofCfg (0 : Fin 2) 1 (by decide) w cp rfl
+      (by intro z _ _; change d.workTapes 0 (d.workTapePos 0 + z) = _; rw [bound, home]; simp)
+    let e := C.runFrom cp (2 * w.length + 2)
+    have copyEq : e = _ := copied.1
+    have atExit : e.state = some .done := by rw [copyEq]
+    let next := e.mapState (fun _ => (⟨none, .dec .run⟩ : Sigma canonUnaryPhase))
+    have counter : next.workTapes 1 = FinTM.bufferTape w := by
+      change e.workTapes 1 = _
+      rw [copyEq]
+      funext z
+      change (if (1 : Fin 2) = 1 ∧ d.workTapePos 1 ≤ z ∧
+        z < d.workTapePos 1 + (w.length : ℤ) then FinTM.bufferTape w (z - d.workTapePos 1)
+        else d.workTapes 1 z) = FinTM.bufferTape w z
+      rw [scratch.1, scratch.2]
+      simp only [true_and, zero_add, sub_zero, FinTM.bufferTape_nil]
+      split_ifs with inside
+      · rfl
+      · by_cases nonneg : 0 ≤ z
+        · simp [FinTM.bufferTape, nonneg,
+            List.getElem?_eq_none (show w.length ≤ z.toNat by omega)]
+        · simp [FinTM.bufferTape, nonneg]
+    have nextPos : next.inputPos = d.inputPos := by change e.inputPos = _; rw [copyEq]
+    have nextHeads : next.workTapePos = d.workTapePos := by
+      change e.workTapePos = _
+      rw [copyEq]
+    have nextOutput : next.output = d.output := by change e.output = _; rw [copyEq]
+    obtain ⟨t, budget, finish, silent, cuts, tapes, heads, suffix⟩ :=
+      canonUnaryCore_run w next (by simp [next, Cfg.mapState, atExit])
+        (by rw [nextPos]; exact positive) counter (by rw [nextHeads]; exact scratch.2)
+    have whole := seamCompTM_run_ofCfg C .done canonUnaryCore ⟨none, .dec .run⟩
+      (rfl : C.runFrom cp (2 * w.length + 2) = e) atExit copied.2.1
+      (rfl : canonUnaryCore.runFrom next t = _)
+    rw [start] at whole
+    refine ⟨2 * w.length + 2 + 1 + t, by omega, ?_, ?_, ?_, ?_, ?_, ?_⟩
+    · rw [whole]
+      change Option.map Sum.inr (canonUnaryCore.runFrom next t).state = _
+      rw [finish, nextPos]
+      rfl
+    · rw [whole]
+      exact silent.trans nextOutput
+    · intro u hu b
+      change ((seamCompTM C .done canonUnaryCore ⟨none, .dec .run⟩).runFrom d u).state ≠ _
+      rw [← start]
+      apply canonSeam_avoids C .done canonUnaryCore ⟨none, .dec .run⟩ (exit b)
+        (rfl : C.runFrom cp (2 * w.length + 2) = e) atExit copied.2.1 (v := t)
+        (by intro z _; simp [exit, Cfg.mapState])
+        (by intro z hz; simpa [exit, Cfg.mapState] using cuts z hz b) u hu
+    · rw [whole]
+      change (canonUnaryCore.runFrom next t).workTapes = _
+      rw [tapes]
+      funext j z
+      fin_cases j
+      · change next.workTapes 0 z = _
+        change e.workTapes 0 z = _
+        rw [copyEq]
+        rfl
+      · simpa only [Function.update_self] using congrFun scratch.1.symm z
+    · rw [whole]
+      exact heads.trans nextHeads
+    · intro ys skipped
+      rw [whole]
+      exact suffix ys (by simpa only [nextPos] using skipped)
+
+/-- A finite list of two-cell validators, in native reading order. -/
+private def canonPairs : List (Bool → Bool → Bool) → List Bool → Option (List Bool)
+  | [], xs => some xs
+  | v :: vs, xs => (codeSkipPair v xs).bind (canonPairs vs)
+
+/-- The native fixed-field leaf remembers the first cell of a pair and its finite pair
+index. It rejects a blank immediately and validates each pair before proceeding.
+The catalog's input folds require a whole-input traversal from position one; this local
+fixed-width validator is the missing leaf. -/
+private def canonPairsTM (m : ℕ) (vs : List (Bool → Bool → Bool)) :
+    MultiTapeTM m Bool (Bool ⊕ (Fin (vs.length + 1) × Option Bool)) where
+  q₀ := Sum.inr (0, none)
+  tr := fun q inp _ => match q with
+    | Sum.inl b => inputMoveAction 0 (Sum.inl b)
+    | Sum.inr (j, a) =>
+      if h : j.val < vs.length then
+        match a, inp with
+        | none, some b => inputMoveAction 1 (Sum.inr (j, some b))
+        | some a, some b =>
+          if vs[j.val] a b then
+            inputMoveAction 1 (Sum.inr (⟨j.val + 1, by omega⟩, none))
+          else inputMoveAction 0 (Sum.inl false)
+        | _, none => inputMoveAction 0 (Sum.inl false)
+      else inputMoveAction 0 (Sum.inl true)
+
+/-- Native reads are lookups at the head of the current suffix. Advancing over a present
+cell leaves precisely its tail. This is a use of the public input lookup and move laws. -/
+private lemma canonNativeSuffix {m : ℕ} {S : Type} {x : List Bool}
+    (d : Cfg m Bool S x) (p : ℕ) (pos : d.inputPos.val = p + 1)
+    (range : p ≤ x.length) :
+    d.inputSymbol = (x.drop p).head? ∧
+      ∀ b ys, x.drop p = b :: ys →
+        (moveInputPos d.inputPos 1).val = p + 2 ∧ x.drop (p + 1) = ys := by
+  refine ⟨?_, ?_⟩
+  · rw [FinTM.inputSymbol_at d p range pos, List.head?_drop]
+  · intro b ys split
+    have size := congrArg List.length split
+    simp only [List.length_drop, List.length_cons] at size
+    have beforeEnd : d.inputPos.val ≠ x.length + 1 := by omega
+    constructor
+    · change (moveInputPos d.inputPos SignType.pos).val = _
+      rw [moveInputPos_pos_of_ne_right d.inputPos beforeEnd]
+      simp only [pos]
+    · have tail := congrArg (List.drop 1) split
+      simpa only [List.drop_drop, Nat.add_comm 1 p, List.drop_succ_cons, List.drop_zero] using tail
+
+/-- A native fixed-field scan is linear in the finite list of pair tests. The head never
+returns to the left blank, and every work tape and head is unchanged.
+
+**Proof sketch.** Induct on the number of remaining pairs. A missing first or second
+cell rejects immediately. A failed predicate rejects after two tests; a successful pair
+advances two cells and invokes the induction hypothesis at the next finite index.
+Only the permitted native leaf is traced; there is no private phase or loop host. -/
+private lemma canonPairs_run {m : ℕ} {x : List Bool} (vs : List (Bool → Bool → Bool))
+    (j : Fin (vs.length + 1))
+    (d : Cfg m Bool (Bool ⊕ (Fin (vs.length + 1) × Option Bool)) x)
+    (p : ℕ) (pos : d.inputPos.val = p + 1) (range : p ≤ x.length)
+    (state : d.state = some (Sum.inr (j, none))) :
+    ∃ t ≤ 2 * (vs.length - j.val) + 1,
+      ((canonPairsTM m vs).runFrom d t).state =
+        some (Sum.inl (canonPairs (vs.drop j.val) (x.drop p)).isSome) ∧
+      ((canonPairsTM m vs).runFrom d t).output = d.output ∧
+      (∀ u < t, ∀ b, ((canonPairsTM m vs).runFrom d u).state ≠ some (Sum.inl b)) ∧
+      ((canonPairsTM m vs).runFrom d t).workTapes = d.workTapes ∧
+      ((canonPairsTM m vs).runFrom d t).workTapePos = d.workTapePos ∧
+      1 ≤ ((canonPairsTM m vs).runFrom d t).inputPos.val ∧
+      ∀ ys, canonPairs (vs.drop j.val) (x.drop p) = some ys →
+        ((canonPairsTM m vs).runFrom d t).inputPos.val = x.length + 1 - ys.length := by
+  generalize hn : vs.length - j.val = n
+  induction n using Nat.strong_induction_on generalizing j d p with
+  | h n ih =>
+    let M := canonPairsTM m vs
+    have native := canonNativeSuffix d p pos range
+    have firstCut (b : Bool) : (M.runFrom d 0).state ≠ some (Sum.inl b) := by
+      simpa only [MultiTapeTM.runFrom_zero, state] using
+        (by simp : some (Sum.inr (j, none)) ≠
+          (some (Sum.inl b) : Option (Bool ⊕ (Fin (vs.length + 1) × Option Bool))))
+    by_cases more : j.val < vs.length
+    · have parse : canonPairs (vs.drop j.val) (x.drop p) =
+          (codeSkipPair vs[j.val] (x.drop p)).bind (canonPairs (vs.drop (j.val + 1))) := by
+        rw [List.drop_eq_getElem_cons more]
+        rfl
+      cases suffix : x.drop p with
+      | nil =>
+        rw [← suffix]
+        have read : d.inputSymbol = none := by rw [native.1, suffix]; rfl
+        have step := step_of_inputMoveAction M d (q' := Sum.inl false) 0 state
+          (by simp [M, canonPairsTM, more, read])
+        have run : M.runFrom d 1 = { d with state := some (Sum.inl false) } := by
+          simpa only [moveInputPos_zero] using step
+        have verdict : canonPairs (vs.drop j.val) (x.drop p) = none := by
+          rw [parse, suffix]
+          rfl
+        refine ⟨1, by omega, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
+        · rw [run, verdict]; rfl
+        · rw [run]
+        · intro u hu b
+          have zero : u = 0 := by omega
+          subst u
+          exact firstCut b
+        · rw [run]
+        · rw [run]
+        · rw [run]; change 1 ≤ d.inputPos.val; omega
+        · intro ys accepted; rw [verdict] at accepted; cases accepted
+      | cons a tail =>
+        rw [← suffix]
+        have read : d.inputSymbol = some a := by rw [native.1, suffix]; rfl
+        have advance := native.2 a tail suffix
+        let d1 : Cfg m Bool (Bool ⊕ (Fin (vs.length + 1) × Option Bool)) x :=
+          { d with
+            state := some (Sum.inr (j, some a))
+            inputPos := moveInputPos d.inputPos 1 }
+        have run1 : M.runFrom d 1 = d1 :=
+          step_of_inputMoveAction M d _ state
+            (by simp [M, canonPairsTM, more, read])
+        have pos1 : d1.inputPos.val = (p + 1) + 1 := by
+          exact advance.1
+        have range1 : p + 1 ≤ x.length := by have := d1.inputPos.isLt; omega
+        have native1 := canonNativeSuffix d1 (p + 1) pos1 range1
+        have d1state : d1.state = some (Sum.inr (j, some a)) := rfl
+        have cut1 (b : Bool) : (M.runFrom d 1).state ≠ some (Sum.inl b) := by
+          rw [run1, d1state]
+          simp
+        have fail (invalid : codeSkipPair vs[j.val] (x.drop p) = none)
+            (tr : M.tr (Sum.inr (j, some a)) d1.inputSymbol d1.workTapeSymbols =
+              inputMoveAction 0 (Sum.inl false)) :
+            ∃ t ≤ 2 * n + 1,
+              (M.runFrom d t).state =
+                some (Sum.inl (canonPairs (vs.drop j.val) (x.drop p)).isSome) ∧
+              (M.runFrom d t).output = d.output ∧
+              (∀ u < t, ∀ b, (M.runFrom d u).state ≠ some (Sum.inl b)) ∧
+              (M.runFrom d t).workTapes = d.workTapes ∧
+              (M.runFrom d t).workTapePos = d.workTapePos ∧
+              1 ≤ (M.runFrom d t).inputPos.val ∧
+              ∀ ys, canonPairs (vs.drop j.val) (x.drop p) = some ys →
+                (M.runFrom d t).inputPos.val = x.length + 1 - ys.length := by
+          have step := step_of_inputMoveAction M d1 _ d1state tr
+          have run2 : M.runFrom d 2 = { d1 with state := some (Sum.inl false) } := by
+            rw [show 2 = 1 + 1 from rfl, MultiTapeTM.runFrom_add (tm := M) d 1 1, run1]
+            simpa only [moveInputPos_zero] using step
+          have verdict : canonPairs (vs.drop j.val) (x.drop p) = none := by
+            rw [parse, invalid]
+            rfl
+          refine ⟨2, by omega, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
+          · rw [run2, verdict]; rfl
+          · rw [run2]
+          · intro u hu b
+            have choices : u = 0 ∨ u = 1 := by omega
+            rcases choices with rfl | rfl
+            · exact firstCut b
+            · exact cut1 b
+          · rw [run2]
+          · rw [run2]
+          · rw [run2]; change 1 ≤ d1.inputPos.val; omega
+          · intro ys accepted; rw [verdict] at accepted; cases accepted
+        cases tail with
+        | nil =>
+          apply fail (by rw [suffix]; rfl)
+          have read1 : d1.inputSymbol = none := by rw [native1.1, advance.2]; rfl
+          simp [M, canonPairsTM, more, read1]
+        | cons b ys =>
+          have read1 : d1.inputSymbol = some b := by rw [native1.1, advance.2]; rfl
+          by_cases valid : vs[j.val] a b = true
+          · let j' : Fin (vs.length + 1) := ⟨j.val + 1, by omega⟩
+            let d2 : Cfg m Bool (Bool ⊕ (Fin (vs.length + 1) × Option Bool)) x :=
+              { d1 with
+                state := some (Sum.inr (j', none))
+                inputPos := moveInputPos d1.inputPos 1 }
+            have run2 : M.runFrom d 2 = d2 := by
+              rw [show 2 = 1 + 1 from rfl, MultiTapeTM.runFrom_add (tm := M) d 1 1, run1]
+              exact step_of_inputMoveAction M d1 _ d1state
+                (by simp [M, canonPairsTM, more, read1, valid, j'])
+            have advance1 := native1.2 b ys advance.2
+            have pos2 : d2.inputPos.val = (p + 2) + 1 := advance1.1
+            have range2 : p + 2 ≤ x.length := by have := d2.inputPos.isLt; omega
+            have parser : canonPairs (vs.drop j.val) (x.drop p) =
+                canonPairs (vs.drop j'.val) (x.drop (p + 2)) := by
+              rw [parse, suffix]
+              simp only [codeSkipPair, valid, if_true, Option.bind_some]
+              exact congrArg (canonPairs (vs.drop j'.val)) advance1.2.symm
+            obtain ⟨t, budget, finish, silent, cuts, tapes, heads, positive, consumed⟩ :=
+              ih (vs.length - j'.val) (by dsimp [j']; omega) j' d2 (p + 2)
+                pos2 range2 rfl rfl
+            have whole : M.runFrom d (2 + t) = M.runFrom d2 t := by
+              rw [MultiTapeTM.runFrom_add (tm := M), run2]
+            refine ⟨2 + t, by dsimp [j'] at budget; omega, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
+            · rw [whole, parser]; exact finish
+            · rw [whole]; exact silent
+            · intro u hu bit
+              by_cases early : u < 2
+              · have choices : u = 0 ∨ u = 1 := by omega
+                rcases choices with rfl | rfl
+                · exact firstCut bit
+                · exact cut1 bit
+              · have index : u = 2 + (u - 2) := by omega
+                rw [index, MultiTapeTM.runFrom_add (tm := M), run2]
+                exact cuts _ (by omega) bit
+            · rw [whole]; exact tapes
+            · rw [whole]; exact heads
+            · rw [whole]; exact positive
+            · intro zs accepted
+              rw [whole]
+              exact consumed zs (parser.symm.trans accepted)
+          · apply fail (by simp [suffix, codeSkipPair, valid])
+            simp [M, canonPairsTM, more, read1, valid]
+    · have done : vs.drop j.val = [] := List.drop_eq_nil_of_le (by omega)
+      have step := step_of_inputMoveAction M d (q' := Sum.inl true) 0 state
+        (by simp [M, canonPairsTM, more])
+      have run : M.runFrom d 1 = { d with state := some (Sum.inl true) } := by
+        simpa only [moveInputPos_zero] using step
+      refine ⟨1, by omega, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
+      · rw [run, done]; rfl
+      · rw [run]
+      · intro u hu b
+        have zero : u = 0 := by omega
+        subst u
+        exact firstCut b
+      · rw [run]
+      · rw [run]
+      · rw [run]; change 1 ≤ d.inputPos.val; omega
+      · intro ys accepted
+        have same : x.drop p = ys := Option.some.inj (by simpa [done, canonPairs] using accepted)
+        have lengths := congrArg List.length same
+        simp only [List.length_drop] at lengths
+        rw [run]
+        change d.inputPos.val = _
+        omega
+
+/-- Work-tape write/move pairs followed by the output pair. Every write pair is valid;
+move and output pairs exclude precisely `false, true`. -/
+private def canonWorkPairs : ℕ → List (Bool → Bool → Bool)
+  | 0 => [fun a b => a || !b]
+  | k + 1 => (fun _ _ => true) :: (fun a b => a || !b) :: canonWorkPairs k
+
+/-- The finite pair list has exactly the grammar's fixed-field semantics.
+
+**Proof sketch.** Induct on the number of work-tape pairs, using `codeSkipWork` for
+each write/move pair and associativity of `Option.bind` for the output and input fields. -/
+private lemma canonPairs_fields (k : ℕ) (xs : List Bool) :
+    canonPairs ((fun a b => a || !b) :: canonWorkPairs k) xs = canonSkipFields k xs := by
+  have work (j : ℕ) (ys : List Bool) : canonPairs (canonWorkPairs j) ys =
+      (codeSkipRepeat codeSkipWork j ys).bind (codeSkipPair (fun a b => a || !b)) := by
+    induction j generalizing ys with
+    | zero => simp [canonWorkPairs, canonPairs, codeSkipRepeat]
+    | succ j ih =>
+      simp only [canonWorkPairs, canonPairs, ih, codeSkipRepeat, codeSkipWork, Option.bind_assoc]
+  simp only [canonPairs, work, canonSkipFields, Option.bind_assoc]
+
+/-- There are `2k + 2` fixed pairs in one action record. -/
+private lemma canonWorkPairs_length (k : ℕ) : (canonWorkPairs k).length = 2 * k + 1 := by
+  induction k with
+  | zero => rfl
+  | succ k ih => simp only [canonWorkPairs, List.length_cons, ih]; omega
+
+/-- One native tag test records blank, false, or true and advances exactly for a present
+cell. It supplies the local successor tag check, absent from the whole-input catalog. -/
+private def canonTagTM (m : ℕ) : MultiTapeTM m Bool (Option (Option Bool)) where
+  q₀ := none
+  tr := fun _ inp _ => inputMoveAction (if inp.isSome then 1 else 0) (some inp)
+
+/-- The tag leaf's single step follows the public input-only action contract. -/
+private lemma canonTag_step {m : ℕ} {x : List Bool}
+    (d : Cfg m Bool (Option (Option Bool)) x) (hs : d.state = some none) :
+    (canonTagTM m).runFrom d 1 =
+      { d with
+        state := some (some d.inputSymbol)
+        inputPos := moveInputPos d.inputPos (if d.inputSymbol.isSome then 1 else 0) } :=
+  step_of_inputMoveAction _ _ _ hs rfl
+
+/-- The record's native finite pair list. -/
+private abbrev canonRecordPairs (k : ℕ) : List (Bool → Bool → Bool) :=
+  (fun a b => a || !b) :: canonWorkPairs k
+
+/-- Fixed pairs, the successor tag, and the bounded unary component are the three
+phases. The two final ports are in the tag phase. -/
+private abbrev canonRecordPhase (k : ℕ) (S : Type) : Option Bool → Type
+  | none => Bool ⊕ (Fin ((canonRecordPairs k).length + 1) × Option Bool)
+  | some false => Option (Option Bool)
+  | some true => S
+
+/-- Each record phase is an existing component or one permitted native leaf. -/
+private def canonRecordFamily {m : ℕ} {S : Type} (k : ℕ) (U : MultiTapeTM m Bool S)
+    (p : Option Bool) : MultiTapeTM m Bool (canonRecordPhase k S p) := match p with
+  | none => canonPairsTM m (canonRecordPairs k)
+  | some false => canonTagTM m
+  | some true => U
+
+/-- The public phase host dispatches failures to the false port, a false successor tag
+to the true port, and a true successor tag to the bounded unary reader. -/
+private def canonRecordNext {S : Type} [DecidableEq S] (k : ℕ) (entry : S) (exit : Bool → S) :
+    (p : Option Bool) → canonRecordPhase k S p → Option (Sigma (canonRecordPhase k S))
+  | none, Sum.inl true => some ⟨some false, none⟩
+  | none, Sum.inl false => some ⟨some false, some none⟩
+  | none, Sum.inr _ => none
+  | some false, none => none
+  | some false, some none => some ⟨some false, some none⟩
+  | some false, some (some false) => some ⟨some false, some (some false)⟩
+  | some false, some (some true) => some ⟨some true, entry⟩
+  | some true, q =>
+    if q = exit true then some ⟨some false, some (some false)⟩
+    else if q = exit false then some ⟨some false, some none⟩ else none
+
+/-- The generic action-record validator preserves its binary bound and scratch bank.
+It decides the fixed fields and successor field with strict Boolean exits and a linear
+bound in the input length and binary width.
+
+**Proof sketch.** The native pair leaf decides the prescribed fixed fields. A public
+phase host then reads the successor tag: blank rejects, false accepts, and true dispatches
+to the proved bounded unary reader on the same bank. The reader's framed contract restores
+the bank. The fixed finite cost plus its linear ledger gives one linear bound. -/
+private lemma exists_canonRecordTM (k : ℕ) :
+    ∃ (m : ℕ) (S : Type) (_ : Fintype S) (_ : DecidableEq S) (R : MultiTapeTM m Bool S)
+      (entry : S) (exit : Bool → S) (bound : Fin m) (a : ℕ), Function.Injective exit ∧
+      ∀ (x w : List Bool) (d : Cfg m Bool S x), d.state = some entry →
+        1 ≤ d.inputPos.val →
+        d.workTapes bound = FinTM.bufferTape w → d.workTapePos bound = 0 →
+        (∀ j, j ≠ bound → d.workTapes j = FinTM.bufferTape [] ∧ d.workTapePos j = 0) →
+        ∃ t ≤ a * (x.length + w.length + 1),
+          (R.runFrom d t).state =
+            some (exit (codeSkipActionK k (counterValue w) (x.drop (d.inputPos.val - 1))).isSome) ∧
+          (R.runFrom d t).output = d.output ∧
+          (∀ u < t, ∀ v, (R.runFrom d u).state ≠ some (exit v)) ∧
+          (R.runFrom d t).workTapes = d.workTapes ∧
+          (R.runFrom d t).workTapePos = d.workTapePos ∧
+          ∀ ys, codeSkipActionK k (counterValue w) (x.drop (d.inputPos.val - 1)) = some ys →
+            (R.runFrom d t).inputPos.val = x.length + 1 - ys.length := by
+  obtain ⟨m, S, fS, dS, U, ue, ux, bound, a, injective, unary⟩ := exists_canonUnaryTM
+  letI : Fintype S := fS
+  letI : DecidableEq S := dS
+  letI : ∀ p, Fintype (canonRecordPhase k S p) := fun p => by
+    cases p with
+    | none => exact inferInstance
+    | some b => cases b <;> exact inferInstance
+  letI : ∀ p, DecidableEq (canonRecordPhase k S p) := fun p => by
+    cases p with
+    | none => exact inferInstance
+    | some b => cases b <;> exact inferInstance
+  let family := canonRecordFamily k U
+  let red := canonRecordNext k ue ux
+  let entry : Sigma (canonRecordPhase k S) := ⟨none, Sum.inr (0, none)⟩
+  let R := phaseHostTM family entry red
+  let exit (b : Bool) : Sigma (canonRecordPhase k S) :=
+    ⟨some false, some (if b then some false else none)⟩
+  refine ⟨m, _, inferInstance, inferInstance, R, entry, exit, bound, a + 4 * k + 9, ?_, ?_⟩
+  · intro b c eq
+    cases b <;> cases c <;> simp_all [exit]
+  · intro x w d state positive word origin blank
+    let p := d.inputPos.val - 1
+    have pos : d.inputPos.val = p + 1 := by dsimp [p]; omega
+    have range : p ≤ x.length := by have := d.inputPos.isLt; omega
+    let f : Cfg m Bool (canonRecordPhase k S none) x :=
+      d.mapState (fun _ => Sum.inr (0, none))
+    have fState : f.state = some (Sum.inr (0, none)) := by simp [f, Cfg.mapState, state]
+    obtain ⟨ft, fixedBudget, fixedExit, fixedOutput, fixedCuts, fixedTapes, fixedHeads,
+      fixedPositive, fixedConsumed⟩ :=
+      canonPairs_run (canonRecordPairs k) 0 f p pos range fState
+    simp only [Fin.val_zero, Nat.sub_zero, canonRecordPairs, List.length_cons,
+      canonWorkPairs_length] at fixedBudget
+    simp only [Fin.val_zero, List.drop_zero, canonRecordPairs, canonPairs_fields]
+      at fixedExit fixedConsumed
+    let fEnd := (family none).runFrom f ft
+    have fExit : fEnd.state = some (Sum.inl (canonSkipFields k (x.drop p)).isSome) := fixedExit
+    have fOutput : fEnd.output = d.output := fixedOutput
+    have fTapes : fEnd.workTapes = d.workTapes := fixedTapes
+    have fHeads : fEnd.workTapePos = d.workTapePos := fixedHeads
+    let target : Sigma (canonRecordPhase k S) :=
+      if (canonSkipFields k (x.drop p)).isSome then ⟨some false, none⟩ else exit false
+    have first := phaseHostTM_run family entry red none f fEnd ft rfl _ fExit target
+      (by cases h : (canonSkipFields k (x.drop p)).isSome <;>
+          simp [red, canonRecordNext, target, h, exit]) (by
+        intro u hu s hs
+        cases s with
+        | inr pair => rfl
+        | inl b => exact (fixedCuts u hu b hs).elim)
+    have start : f.mapState (Sigma.mk none) = d := by
+      apply Cfg.ext <;> simp [f, Cfg.mapState, state, entry]
+    rw [start] at first
+    have safeFirst (u : ℕ) (hu : u ≤ ft) (b : Bool) :
+        (R.runFrom d u).state ≠ some (exit b) := by
+      rw [first.1 u hu]
+      intro eq
+      obtain ⟨s, _, tagged⟩ := Option.map_eq_some_iff.mp eq
+      have impossible := congrArg Sigma.fst tagged
+      cases impossible
+    cases fields : canonSkipFields k (x.drop p) with
+    | none =>
+      have record : codeSkipActionK k (counterValue w) (x.drop p) = none := by
+        rw [canonSkipAction_eq, fields]
+        rfl
+      have run : R.runFrom d (ft + 1) = fEnd.mapState (fun _ => exit false) := by
+        simpa only [target, fields, Option.isSome_none, Bool.false_eq_true, if_false] using first.2
+      refine ⟨ft + 1, by nlinarith, ?_, ?_, ?_, ?_, ?_, ?_⟩
+      · rw [run]
+        change Option.map (fun _ => exit false) fEnd.state = _
+        rw [fExit]
+        change some (exit false) =
+          some (exit (codeSkipActionK k (counterValue w) (x.drop p)).isSome)
+        rw [record]
+        rfl
+      · rw [run]; exact fOutput
+      · intro u hu b; exact safeFirst u (by omega) b
+      · rw [run]; exact fTapes
+      · rw [run]; exact fHeads
+      · intro ys accepted
+        change codeSkipActionK k (counterValue w) (x.drop p) = some ys at accepted
+        rw [record] at accepted
+        cases accepted
+    | some ys =>
+      have record : codeSkipActionK k (counterValue w) (x.drop p) =
+          codeSkipState (counterValue w + 1) ys := by
+        rw [canonSkipAction_eq, fields]
+        rfl
+      obtain ⟨pre, split, width⟩ := canonSkipFields_cells k (x.drop p) ys fields
+      have size : x.length = p + pre.length + ys.length := by
+        have lengths := congrArg List.length split
+        simp only [List.length_drop, List.length_append] at lengths
+        omega
+      have tail : x.drop (p + pre.length) = ys := by
+        have e := congrArg (List.drop pre.length) split
+        simpa only [List.drop_drop, List.drop_left] using e
+      let tagStart : Cfg m Bool (Option (Option Bool)) x := fEnd.mapState (fun _ => none)
+      have tagState : tagStart.state = some none := by simp [tagStart, Cfg.mapState, fExit]
+      have tagPos : tagStart.inputPos.val = p + pre.length + 1 := by
+        have h := fixedConsumed ys fields
+        change fEnd.inputPos.val = _ at h ⊢
+        omega
+      have native := canonNativeSuffix tagStart (p + pre.length) tagPos (by omega)
+      have tagRead : tagStart.inputSymbol = ys.head? := by rw [native.1, tail]
+      let tagEnd := (canonTagTM m).runFrom tagStart 1
+      have tagEq : tagEnd = _ := canonTag_step tagStart tagState
+      have tagExit : tagEnd.state = some (some ys.head?) := by rw [tagEq, tagRead]
+      let tagNext : Sigma (canonRecordPhase k S) := match ys.head? with
+        | some true => ⟨some true, ue⟩
+        | some false => exit true
+        | none => exit false
+      have second := phaseHostTM_run family entry red (some false) tagStart tagEnd 1 rfl
+        (some ys.head?) tagExit tagNext (by
+          cases h : ys.head? with
+          | none => simp [red, canonRecordNext, tagNext, h, exit]
+          | some b => cases b <;> simp [red, canonRecordNext, tagNext, h, exit]) (by
+          intro u hu s hs
+          have zero : u = 0 := by omega
+          subst u
+          have eq : s = none := (Option.some.inj (tagState.symm.trans hs)).symm
+          subst s
+          rfl)
+      have join : fEnd.mapState (fun _ => target) =
+          tagStart.mapState (Sigma.mk (some false)) := by
+        simp [tagStart, target, fields, Cfg.mapState, Option.map_map, Function.comp_def]
+      have firstRun : R.runFrom d (ft + 1) = tagStart.mapState (Sigma.mk (some false)) := by
+        rw [first.2, join]
+      have tagRun : R.runFrom d (ft + 2) = tagEnd.mapState (Sigma.mk (some false)) := by
+        rw [show ft + 2 = ft + 1 + 1 by omega,
+          MultiTapeTM.runFrom_add d (ft + 1) 1, firstRun, second.1 1 le_rfl]
+      have tagDispatch : R.runFrom d (ft + 3) = tagEnd.mapState (fun _ => tagNext) := by
+        rw [show ft + 3 = ft + 1 + (1 + 1) by omega,
+          MultiTapeTM.runFrom_add d (ft + 1) (1 + 1), firstRun, second.2]
+      have tagOutput : tagEnd.output = d.output := by rw [tagEq]; exact fOutput
+      have tagTapes : tagEnd.workTapes = d.workTapes := by rw [tagEq]; exact fTapes
+      have tagHeads : tagEnd.workTapePos = d.workTapePos := by rw [tagEq]; exact fHeads
+      have safeTag (u : ℕ) (hu : u ≤ ft + 1) (b : Bool) :
+          (R.runFrom d u).state ≠ some (exit b) := by
+        by_cases early : u ≤ ft
+        · exact safeFirst u early b
+        · have eq : u = ft + 1 := by omega
+          rw [eq, firstRun]
+          simp [Cfg.mapState, tagState, exit]
+      cases ys with
+      | nil =>
+        refine ⟨ft + 2, by nlinarith, ?_, ?_, ?_, ?_, ?_, ?_⟩
+        · rw [tagRun]
+          change Option.map (fun s : Option (Option Bool) =>
+            (⟨some false, s⟩ : Sigma (canonRecordPhase k S))) tagEnd.state = _
+          rw [tagExit]
+          change some (exit false) =
+            some (exit (codeSkipActionK k (counterValue w) (x.drop p)).isSome)
+          rw [record]
+          rfl
+        · rw [tagRun]; exact tagOutput
+        · intro u hu b; exact safeTag u (by omega) b
+        · rw [tagRun]; exact tagTapes
+        · rw [tagRun]; exact tagHeads
+        · intro zs accepted
+          change codeSkipActionK k (counterValue w) (x.drop p) = some zs at accepted
+          rw [record] at accepted
+          cases accepted
+      | cons b ys =>
+        cases b with
+        | false =>
+          refine ⟨ft + 2, by nlinarith, ?_, ?_, ?_, ?_, ?_, ?_⟩
+          · rw [tagRun]
+            change Option.map (fun s : Option (Option Bool) =>
+              (⟨some false, s⟩ : Sigma (canonRecordPhase k S))) tagEnd.state = _
+            rw [tagExit]
+            change some (exit true) =
+              some (exit (codeSkipActionK k (counterValue w) (x.drop p)).isSome)
+            rw [record]
+            rfl
+          · rw [tagRun]; exact tagOutput
+          · intro u hu bit; exact safeTag u (by omega) bit
+          · rw [tagRun]; exact tagTapes
+          · rw [tagRun]; exact tagHeads
+          · intro zs accepted
+            change codeSkipActionK k (counterValue w) (x.drop p) = some zs at accepted
+            rw [record] at accepted
+            have same : ys = zs := Option.some.inj accepted
+            subst zs
+            rw [tagRun, tagEq]
+            change (moveInputPos tagStart.inputPos
+              (if tagStart.inputSymbol.isSome then 1 else 0)).val = _
+            rw [tagRead]
+            have advance := (native.2 false ys tail).1
+            simp only [List.head?_cons, Option.isSome_some, if_true]
+            simp only [List.length_cons] at size
+            omega
+        | true =>
+          let uStart : Cfg m Bool S x := tagEnd.mapState (fun _ => ue)
+          have uState : uStart.state = some ue := by simp [uStart, Cfg.mapState, tagExit]
+          have advance := native.2 true ys tail
+          have uPos : uStart.inputPos.val = p + pre.length + 2 := by
+            change tagEnd.inputPos.val = _
+            rw [tagEq, tagRead]
+            exact advance.1
+          have uTail : x.drop (uStart.inputPos.val - 1) = ys := by
+            rw [uPos]
+            simpa only [Nat.add_sub_cancel] using advance.2
+          obtain ⟨ut, unaryBudget, uExit, uOutput, uCuts, uTapes, uHeads, uConsumed⟩ :=
+            unary x w uStart uState (by omega)
+              (by change tagEnd.workTapes bound = _; rw [tagTapes]; exact word)
+              (by change tagEnd.workTapePos bound = _; rw [tagHeads]; exact origin)
+              (by intro j hj; change tagEnd.workTapes j = _ ∧ tagEnd.workTapePos j = _
+                  rw [tagTapes, tagHeads]; exact blank j hj)
+          let uEnd := U.runFrom uStart ut
+          let verdict := (codeSkipFin (counterValue w + 1) ys).isSome
+          have uFinal : uEnd.state = some (ux verdict) := by simpa only [uTail] using uExit
+          have third := phaseHostTM_run family entry red (some true) uStart uEnd ut rfl
+            (ux verdict) uFinal (exit verdict) (by
+              have different : ux false ≠ ux true := fun eq => Bool.false_ne_true (injective eq)
+              cases verdict <;> simp [red, canonRecordNext, exit, different]) (by
+              intro u hu s hs
+              have noTrue : s ≠ ux true := fun eq => uCuts u hu true (hs.trans (congrArg some eq))
+              have noFalse : s ≠ ux false := fun eq =>
+                uCuts u hu false (hs.trans (congrArg some eq))
+              simp [red, canonRecordNext, noTrue, noFalse])
+          have uJoin : tagEnd.mapState (fun _ => tagNext) =
+              uStart.mapState (Sigma.mk (some true)) := by
+            simp [uStart, tagNext, Cfg.mapState, Option.map_map, Function.comp_def]
+          have whole : R.runFrom d (ft + 3 + (ut + 1)) =
+              uEnd.mapState (fun _ => exit verdict) := by
+            rw [MultiTapeTM.runFrom_add d (ft + 3) (ut + 1), tagDispatch, uJoin, third.2]
+          have semantics : (codeSkipActionK k (counterValue w) (x.drop p)).isSome = verdict := by
+            rw [record]
+            rfl
+          refine ⟨ft + 3 + (ut + 1), by nlinarith, ?_, ?_, ?_, ?_, ?_, ?_⟩
+          · rw [whole]
+            change Option.map (fun _ => exit verdict) uEnd.state = _
+            rw [uFinal]
+            change some (exit verdict) =
+              some (exit (codeSkipActionK k (counterValue w) (x.drop p)).isSome)
+            rw [semantics]
+          · rw [whole]
+            exact uOutput.trans tagOutput
+          · intro u hu b
+            by_cases early : u ≤ ft + 1
+            · exact safeTag u early b
+            · by_cases onTag : u = ft + 2
+              · rw [onTag, tagRun]
+                simp [Cfg.mapState, tagExit, exit]
+              · have index : u = ft + 3 + (u - (ft + 3)) := by omega
+                rw [index, MultiTapeTM.runFrom_add d (ft + 3) (u - (ft + 3)), tagDispatch,
+                  uJoin, third.1 _ (by omega)]
+                intro eq
+                obtain ⟨s, _, tagged⟩ := Option.map_eq_some_iff.mp eq
+                have impossible := congrArg Sigma.fst tagged
+                cases impossible
+          · rw [whole]
+            exact uTapes.trans tagTapes
+          · rw [whole]
+            exact uHeads.trans tagHeads
+          · intro zs accepted
+            rw [whole]
+            apply uConsumed zs
+            rw [uTail]
+            change codeSkipActionK k (counterValue w) (x.drop p) = some zs at accepted
+            rw [record] at accepted
+            exact accepted
+
 /-- **The physical grammar stage.** Started on one bank whose tape `header` holds the
 canonical binary header `bits` (head at the origin), every other tape blank, the native head
 at the remainder's first cell and the output empty, it decides the fixed grammar on the
@@ -3264,7 +4571,15 @@ the release adapter handles coincident emit-call anchors. The prescribed timed-c
 glue now proves this headline modulo `exists_canonDecider` and `exists_canonGrammarStage`,
 which remain the named admissions. This refines the earlier prefix-copy emission route to
 validation followed by stripping or the constant fallback. The grammar and validator, and
-therefore the complete physical canonizer's note-50 checks, remain pending. -/
+therefore the complete physical canonizer's note-50 checks, remain pending.
+
+**Fill appendix (canonizer continuation 4).** Phase 2 is complete: the prescribed grammar
+bridges, the generic bounded unary reader `exists_canonUnaryTM`, and the generic record
+validator `exists_canonRecordTM` are proved. Both components are silent, restore their
+binary-bound bank, have strict Boolean exit cuts, and run in time linear in the native
+input length and binary width. Their contracts are the recommended statements unchanged.
+The physical grammar stage and validator remain the two frozen open stubs; the headline
+statement and conditional-composition proof are unchanged. -/
 theorem exists_polyCanonizer :
     ∃ (C : FinTM Bool) (d : ℕ),
       C.ComputesFunInTime (fun α => F.serialize (F.decode α)) fun n => d * (n + 1) ^ d := by
