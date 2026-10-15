@@ -649,12 +649,13 @@ window.*
     0 errors against `oleans-lg24`, and three sorry warnings: the two stubs and
     `exists_uniformSimulator`. The new declarations print the standard axioms only. 0 lint FAILs.
   - **Duplication:** one new in-file pair, `exists_canonStripTM` reproducing `canonPatchWord`
-    at 59% (a boundary-split tactic idiom, 134 characters). It waits for the user's
-    acknowledgement. The worker removed two cross-file pairs before delivering.
+    at 59% (a boundary-split tactic idiom, 134 characters). **User (2026-10-15): factor it in a
+    continuation.** The cont5 brief lifts `exists_canonStripTM`'s freeze for that one edit, so
+    that it cites `canonPatchWord`. The worker removed two cross-file pairs before delivering.
   - **PR #107** (cherry-picked, authorship kept, plus a comment-only status-text commit);
     replay 9 modules from #106's snapshot.
   - **Next: a cont5 brief**, phases 3–5: the grammar stage, the decider on one bank, then
-    note 50.
+    note 50; plus the one factoring edit above.
 
 ### ARM-1: duplication in the received ARM-extensions code (from the ARM fill gate, 2026-10-14)
 
