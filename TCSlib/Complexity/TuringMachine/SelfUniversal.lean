@@ -5,6 +5,7 @@ Authors: Seyoon Ragavan
 -/
 import TCSlib.Complexity.TuringMachine.UniversalStartup
 import TCSlib.Complexity.TuringMachine.CodeSimulator
+import TCSlib.Complexity.TuringMachine.UniversalK
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -21,8 +22,11 @@ universal machine of `Complexity.space_hierarchy`'s window route (`machine-libra
 of that proof (`policy.md` §1, *Hosts come first*).
 
 **Status: statement gate passed 2026-10-14** (round 1, 0/0/5;
-`audits/b6-hosts-statements-findings.md`). Both contracts are sorried with their proof
-sketches.
+`audits/b6-hosts-statements-findings.md`). Both statements are the `k = 1` cases of the
+`k`-generic `Turing.exists_selfStartupTMK` and `Turing.exists_selfUniversalK`
+(`TuringMachine/UniversalK.lean`, U2 statement gate pending; user decision (a), 2026-10-14), and
+are proved from them here, with their statements unchanged; the construction, its sketch and its
+fill are the generic ones.
 
 ## Design
 
@@ -46,8 +50,10 @@ None: the module uses existing definitions.
 
 ## Main results
 
-* `Turing.exists_selfStartupTM` — the startup, ending at the step block's seam (sorried).
-* `Turing.exists_selfUniversal` — `U₀`, with its forward space ledger (sorried).
+* `Turing.exists_selfStartupTM` — the startup, ending at the step block's seam (the `k = 1`
+  case of `Turing.exists_selfStartupTMK`).
+* `Turing.exists_selfUniversal` — `U₀`, with its forward space ledger (the `k = 1` case of
+  `Turing.exists_selfUniversalK`).
 
 ## References
 
@@ -76,16 +82,10 @@ the decoded machine's initial configuration on the same input (H2's seam relatio
 `Turing.StepBlock.Rep`, `TuringMachine/Build/StepBlock.lean`, at one coded work tape). [AB09,
 §1.4.1, Theorem 1.9]
 
-**Proof sketch.** Extract and canonize: `Turing.universalCanonTM c` (buffered composition of the
-prefix parser and the canonizer), with its emissions captured on a scratch tape as in
-`Turing.universalCaptureTM`; it ends after `3|α| + 4 + canonizerTime |α|` steps
-(`Turing.universalCanon_complete`) with `serialize (decode α)` captured and the input head at
-`2|α| + 3`. The serialization is `serializeK` (`Turing.oneTapeMachineFormat.serialize_eq`):
-skip its doubled state count and separator, copy the unary initial state to tape `2` at offset
-`2` and the remaining table to tape `1`; clear the scratch and the buffer. Rewind the input head
-to position `1` (`Turing.FinTM.timed_rewind`, `2|α| + 5` steps). Every phase depends on `α`
-only, so `T` and `B` do (`Turing.MultiTapeTM.spaceUsed_le_mul_succ` at the canonizer's halting
-time bounds its cells). -/
+**Proof sketch.** The case `k = 1`, `E := c.toK` of `Turing.exists_selfStartupTMK`, whose
+sketch is this construction at `k` mirrored tapes (extract and canonize, install the table and
+the unary state, rewind the input head). The generic tape indices `k` and `k + 1` are `1` and
+`2`, and `c.toK` decodes to the same machines (`Turing.EffectiveMachineCode.toK_toFinTM`). -/
 theorem exists_selfStartupTM (c : EffectiveMachineCode) :
     ∃ (K : ℕ) (P : Type) (_ : Fintype P) (_ : DecidableEq P)
       (R : MultiTapeTM (K + 3) Bool P) (exit : P),
@@ -99,7 +99,30 @@ theorem exists_selfStartupTM (c : EffectiveMachineCode) :
         (∀ u < T, (R.runFrom (R.initCfg (pairEncode α w)) u).state ≠ some exit) ∧
         (∀ u ≤ T, (R.runFrom (R.initCfg (pairEncode α w)) u).output = []) ∧
         R.spaceUsed (R.initCfg (pairEncode α w)) T ≤ B := by
-  sorry
+  obtain ⟨K, P, hP, dP, R, exit, h⟩ := exists_selfStartupTMK 1 c.toK
+  refine ⟨K, P, hP, dP, R, exit, fun α => ?_⟩
+  obtain ⟨T, B, hT⟩ := h α
+  refine ⟨T, B, fun w => ?_⟩
+  obtain ⟨hrun, hcut, hout, hspace⟩ := hT w
+  refine ⟨?_, hcut, hout, hspace⟩
+  rw [hrun]
+  congr 1
+  funext j
+  have m1 : 1 % (K + 3) = 1 := Nat.mod_eq_of_lt (by omega)
+  have m2 : 2 % (K + 3) = 2 := Nat.mod_eq_of_lt (by omega)
+  have h1 : (j = 1) ↔ j.val = 1 := by
+    rw [Fin.ext_iff]; simp [m1]
+  have h2 : (j = 2) ↔ j.val = 2 := by
+    rw [Fin.ext_iff]; simp [m2]
+  by_cases a : j.val = 1
+  · simp [h1.mpr a, EffectiveMachineCode.toK_machine]
+  · by_cases b : j.val = 2
+    · have hne : (2 : Fin (K + (1 + 2))) ≠ 1 := by
+        intro h
+        have := congrArg Fin.val h
+        simp [m1, m2] at this
+      simp [h2.mpr b, hne, m2, EffectiveMachineCode.toK_machine]
+    · simp [a, b, h1, h2]
 
 /-- **`U₀`, the self-application universal machine** (`Complexity.space_hierarchy`'s sketch;
 the sibling of `Complexity.space_universal`, with the native device in place of the
@@ -114,33 +137,11 @@ direction is claimed; `Complexity.space_hierarchy` instantiates
 Deviation: `C` depends on the code `α` (as in `Turing.universal`), and the input is the coded
 machine's own input (self-application), so no copy and no position counter is needed.
 
-**Proof sketch.** Startup, then wrapped rounds.
-(i) *Startup.* `Turing.exists_selfStartupTM` reaches, within `B_α` cells, the step block's seam
-for the coded machine's initial configuration on the same input: input head at `1`, table and
-unary state in place, output empty.
-(ii) *The wrapped round, with H2-S finding 4's reset invariant.* At every seam the step block's
-bank represents the source configuration **with its output erased**, `{c with output := []}`
-(so its summary cell is blank), while `U₀`'s own physical output is the real cumulative output
-`c.output`. From such a seam at a live `c`, run H2's step block at one coded work tape, embedded
-by R1 on tapes `0`–`2` (the public contract of the H2 promotion, `Turing.StepBlock.roundTM_effect`),
-on `{c with output := []}`. The transition read off the table depends only on the state, the
-input symbol and the work symbol, which the erasure does not change, so the round ends at the
-seam of `a.apply {c with output := []}`, with summary cell
-`Turing.StepBlock.summaryEmit none a.output = a.output`: the round's exact emission. A host leaf
-on tape `2` then emits that bit, if any, so that `U₀`'s output becomes `(a.apply c).output`, and
-blanks the cell, which re-establishes the invariant for `a.apply c`. On the halting round the
-leaf runs before `U₀` halts physically (forwarding precedes the halt).
-(iii) *Iteration.* Induct on the source steps, as H2-S round 2's repaired
-`Turing.StepBlock.roundTM_iterate` does (the additive iteration with the cofinality bound
-`t ≤ T`, H2-S finding 1), with each round replaced by the wrapped round of (ii). Finding 4 notes
-that the silent iterate is not itself a theorem about the wrapper, so the fill proves the
-wrapped iterate; it cites the repaired `Turing.StepBlock.roundTM_iterate` directly if H2-S
-round 2 states it for a general round.
-(iv) *Space.* In each round the mirrored head is at the source head's start or end cell and the
-two auxiliary heads stay in `[-B, B]` with `B := 50·(|tableBitsK| + 1)`
-(`Turing.StepBlock.roundTM_visited`); the leaf moves no head. So the mirrored tape visits only
-cells the coded machine visits, at most `s`; the auxiliary tapes at most `2B + 1` cells each;
-the startup `B_α`. The space is at most `B_α + s + 2(2B + 1) ≤ C_α · (s + 1)`. -/
+**Proof sketch.** The case `k = 1`, `E := c.toK` of `Turing.exists_selfUniversalK`, whose
+sketch is this construction at `k` mirrored tapes (the startup, then H2-F's forwarding round loop
+`Turing.StepBlock.exists_forwardLoopTM`, the wrapped rounds with the reset invariant, made a public
+host). Its forward clause gives the halting run within `C · (t + 1)` steps, so `t' := C · (t + 1)`,
+and the space `≤ C · (spaceUsed + 1) ≤ C · (s + 1)`; its time clause and converse are dropped. -/
 theorem exists_selfUniversal (c : EffectiveMachineCode) :
     ∃ U₀ : FinTM Bool, ∀ α : List Bool, ∃ C : ℕ, 0 < C ∧
       ∀ (w output : List Bool) (t s : ℕ),
@@ -149,6 +150,12 @@ theorem exists_selfUniversal (c : EffectiveMachineCode) :
             ((c.decode α).toFinTM.tm.initCfg (pairEncode α w)) t ≤ s →
           ∃ t' : ℕ, U₀.ComputesInTime (pairEncode α w) output t' ∧
             U₀.tm.spaceUsed (U₀.tm.initCfg (pairEncode α w)) t' ≤ C * (s + 1) := by
-  sorry
+  obtain ⟨U, hU⟩ := exists_selfUniversalK 1 c.toK
+  refine ⟨U, fun α => ?_⟩
+  obtain ⟨C, hC, h⟩ := hU α
+  refine ⟨C, hC, fun w output t s hrun hs => ⟨C * (t + 1), ((h w).1 output t hrun).1, ?_⟩⟩
+  have hsp := ((h w).1 output t hrun).2
+  rw [EffectiveMachineCode.toK_toFinTM] at hsp
+  exact hsp.trans (Nat.mul_le_mul_left C (by omega))
 
 end Turing

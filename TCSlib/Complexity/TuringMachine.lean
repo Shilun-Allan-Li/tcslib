@@ -48,6 +48,7 @@ import TCSlib.Complexity.TuringMachine.Build.WindowRun
 import TCSlib.Complexity.TuringMachine.Build.InputDevice
 import TCSlib.Complexity.TuringMachine.Build.StepBlock
 import TCSlib.Complexity.TuringMachine.Build.StepBlockLoop
+import TCSlib.Complexity.TuringMachine.Build.StepBlockForward
 import TCSlib.Complexity.TuringMachine.CodeSimulator
 import TCSlib.Complexity.TuringMachine.ChoiceWords
 import TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction
@@ -64,6 +65,7 @@ import TCSlib.Complexity.TuringMachine.CodeFormat
 import TCSlib.Complexity.TuringMachine.Codes2Tape
 import TCSlib.Complexity.TuringMachine.MathlibBridge
 import TCSlib.Complexity.TuringMachine.UniversalStartup
+import TCSlib.Complexity.TuringMachine.UniversalK
 import TCSlib.Complexity.TuringMachine.SelfUniversal
 import TCSlib.Complexity.TuringMachine.UniversalInterpreter
 import TCSlib.Complexity.TuringMachine.UniversalBlock
@@ -179,6 +181,10 @@ for the local modifications.
   `machine-library-design.md` §14): the binary deadline clock over the step block, native and on
   a buffered input, from any represented live start, with its early-escape bound and live
   exits. Proved; harvested from `CodeSimulator` (H1 harvest gate passed, 2026-10-14).
+* `Build/StepBlockForward` — the step block's forwarding round loop (host H2's unclocked loop form,
+  H2-F, `machine-library-design.md` §14): any `k`-tape table simulated in macro-step lockstep with
+  its emissions forwarded, per-step cost bounded by the table's length, and a space ledger.
+  Statement gate passed 2026-10-15; the contract is sorried.
 * `CodeSimulator` — the format-parameterized uniform simulator over item 8's code formats
   (B5a): one bounded-acceptance interpreter and canonizer whose one- and two-tape instances are
   the EXPCOM and Codes2Tape code schemes. Fills in progress; the module header carries its
@@ -219,7 +225,11 @@ for the local modifications.
 * `Universal` — the universal machine [AB09, Theorem 1.9]: the all-string evaluator
   with linear overhead and divergence preservation, the relaxed quadratic
   total-function form, and the time-bounded variant (code-first input layout).
+* `UniversalK` — the `k`-generic universal machine (U2) [AB09, Theorem 1.9]: the `k`-tape
+  scheme interface `EffectiveCodeK` with the one- and two-tape schemes as instances, the startup,
+  the self-application universal machine with time and space ledgers, and the code-first
+  evaluator. Statement gate passed 2026-10-15; the three contracts are sorried.
 * `SelfUniversal` — the self-application universal machine `U₀` and its startup
   [AB09, Exercise 4.1], the universal machine of the space hierarchy's window route.
-  Statement gate passed 2026-10-14; both contracts are sorried.
+  Statement gate passed 2026-10-14; both are the `k = 1` cases of `UniversalK`'s statements.
 -/
