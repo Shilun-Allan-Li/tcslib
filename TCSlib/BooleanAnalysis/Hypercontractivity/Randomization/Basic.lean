@@ -413,4 +413,407 @@ theorem condExp_moment_le {n : ℕ} (P : FiniteProduct.{u} n)
       simp only [P.expect_const]
 )
 
+
+/-- Subtracting a constant preserves a finite-product function's degree bound.
+[OD14, §8.3; Thm. 10.23 (proof)]
+
+**Proof sketch.** Orthogonal components depend linearly on the function.
+A constant has only its empty component, so subtracting it leaves every
+positive-degree component unchanged. Components above the given degree
+therefore still vanish. -/
+theorem hasDegreeLE_sub_const {n k : ℕ} (P : FiniteProduct.{u} n)
+    (f : P.Point → ℝ) (hdeg : P.HasDegreeLE k f) (c : ℝ) :
+    P.HasDegreeLE k (fun x => f x - c) :=
+  (by
+  classical
+  intro S hS x
+  have hnonempty : ¬ S ⊆ (∅ : Finset (Fin n)) := by
+    rw [Finset.subset_empty]
+    intro h
+    simpa [h] using hS
+  have hconst : P.component S (fun _ => c) x = 0 := by
+    simpa only [FiniteProduct.component, FiniteProduct.condExp, P.expect_const] using
+      signed_intersection_zero S ∅ (fun _ => c) hnonempty
+  calc
+    P.component S (fun x => f x - c) x =
+        P.component S f x - P.component S (fun _ => c) x := by
+      simp only [FiniteProduct.component, FiniteProduct.condExp, FiniteProduct.expect,
+        mul_sub, Finset.sum_sub_distrib]
+    _ = 0 := by rw [hdeg S hS x, hconst, sub_self]
+)
+
+
+/-- A finite-product function with positive variance and degree at most `k`
+must have positive degree bound `k`. [OD14, §8.3; Thm. 10.23 (proof)]
+
+**Proof sketch.** If the degree bound is zero, reconstruction leaves only
+the empty orthogonal component, which is the constant expectation.
+The function then equals its expectation everywhere, so its variance
+vanishes, contradicting the hypothesis. -/
+theorem degree_pos_of_variance_pos {n k : ℕ} (P : FiniteProduct.{u} n)
+    (f : P.Point → ℝ) (hdeg : P.HasDegreeLE k f)
+    (hvar : 0 < P.variance f) : 0 < k :=
+  (by
+  classical
+  by_contra hk
+  have hk0 : k = 0 := Nat.eq_zero_of_not_pos hk
+  subst k
+  have hconst (x : P.Point) : f x = P.expect f := by
+    calc
+      f x = ∑ S : Finset (Fin n), P.component S f x :=
+        (component_reconstruction P f x).symm
+      _ = P.component ∅ f x := by
+        apply Finset.sum_eq_single ∅
+        · intro S _ hS
+          exact hdeg S
+            (Finset.card_pos.mpr (Finset.nonempty_iff_ne_empty.mpr hS)) x
+        · simp
+      _ = P.expect f := by
+        simp [FiniteProduct.component, FiniteProduct.condExp]
+  simp only [FiniteProduct.variance, hconst, sub_self, pow_two, mul_zero,
+    P.expect_const] at hvar
+  exact lt_irrefl 0 hvar
+)
+
+
+/-- The variance of a finite-product function is the sum of the second
+moments of its nonempty orthogonal components.
+[OD14, §8.3, Thm. 8.35; §10.3, KKL Isoperimetric Theorem (proof)]
+
+**Proof sketch.** Expand variance as the second moment minus the square
+of the expectation. Parseval expresses the second moment as the sum
+of all component second moments. The empty component is the constant
+expectation, so subtracting its contribution leaves exactly the
+nonempty components. -/
+theorem variance_eq_sum_components {n : ℕ} (P : FiniteProduct.{u} n)
+    (f : P.Point → ℝ) :
+    P.variance f =
+      ∑ S : Finset (Fin n), if S = ∅ then 0 else
+        P.expect (fun x => P.component S f x ^ 2) :=
+  (by
+  classical
+  have hvariance :
+      P.variance f = P.expect (fun x => f x ^ 2) - P.expect f ^ 2 := by
+    calc
+      P.variance f = P.expect (fun x =>
+          f x ^ 2 - (2 * P.expect f) * f x + P.expect f ^ 2) := by
+        unfold FiniteProduct.variance
+        congr 1
+        funext x
+        ring
+      _ = P.expect (fun x => f x ^ 2) -
+          P.expect (fun x => (2 * P.expect f) * f x) +
+          P.expect (fun _ => P.expect f ^ 2) := by
+        simp only [FiniteProduct.expect, mul_add, mul_sub,
+          Finset.sum_add_distrib, Finset.sum_sub_distrib]
+      _ = _ := by
+        rw [P.expect_const_mul, P.expect_const]
+        ring
+  have hspectral :
+      P.expect (fun x => f x ^ 2) = P.expect f ^ 2 +
+        ∑ S : Finset (Fin n), if S = ∅ then 0 else
+          P.expect (fun x => P.component S f x ^ 2) := by
+    rw [P.parseval]
+    calc
+      _ = ∑ S : Finset (Fin n),
+          ((if S = ∅ then P.expect (fun x => P.component S f x ^ 2) else 0) +
+          (if S = ∅ then 0 else P.expect (fun x => P.component S f x ^ 2))) := by
+        apply Finset.sum_congr rfl
+        intro S _
+        by_cases hS : S = ∅ <;> simp [hS]
+      _ = _ := by
+        rw [Finset.sum_add_distrib]
+        congr 1
+        simp [FiniteProduct.component, FiniteProduct.condExp, P.expect_const]
+  rw [hvariance, hspectral]
+  ring
+)
+
+
+/-- Conditioning a function on `J` retains its orthogonal component
+indexed by `S` exactly when `S ⊆ J`, and otherwise annihilates it.
+[OD14, §8.3, Thm. 8.35]
+The identity applies to arbitrary real-valued functions on heterogeneous
+finite products.
+
+**Proof sketch.** Expand the component projection as a finite linear
+combination of conditional expectations. Their intersection composition
+rule shows that component projection commutes with conditioning on `J`.
+Apply the existing conditional-expectation formula for a component to
+determine whether it survives. -/
+theorem component_condExp {n : ℕ} (P : FiniteProduct.{u} n)
+    (J S : Finset (Fin n)) (f : P.Point → ℝ) (x : P.Point) :
+    P.component S (P.condExp J f) x =
+      if S ⊆ J then P.component S f x else 0 :=
+  (by
+  classical
+  calc
+    P.component S (P.condExp J f) x =
+        P.condExp J (P.component S f) x := by
+      change (∑ T ∈ S.powerset, (-1 : ℝ) ^ (S.card - T.card) *
+        P.condExp T (P.condExp J f) x) =
+          P.expect (fun y => ∑ T ∈ S.powerset,
+            (-1 : ℝ) ^ (S.card - T.card) *
+              P.condExp T f (fun i => if i ∈ J then x i else y i))
+      rw [P.expect_sum_mul]
+      change (∑ T ∈ S.powerset, (-1 : ℝ) ^ (S.card - T.card) *
+        P.condExp T (P.condExp J f) x) =
+          ∑ T ∈ S.powerset, (-1 : ℝ) ^ (S.card - T.card) *
+            P.condExp J (P.condExp T f) x
+      simp only [P.condExp_comp, Finset.inter_comm]
+    _ = if S ⊆ J then P.component S f x else 0 :=
+      condExp_component P J S f x
+)
+
+/-- The coordinate Laplacian retains an orthogonal component exactly when
+its index set contains that coordinate, and otherwise annihilates it.
+[OD14, §8.3, Thm. 8.35; Thm. 10.26 (proof)]
+
+**Proof sketch.** Orthogonal projection is linear and commutes with
+conditional averaging, since conditional expectations compose by
+intersecting their retained coordinate sets. Conditioning on every
+coordinate except `i` averages over `i` and retains exactly the components
+whose index sets omit `i`. Subtracting that conditional expectation
+therefore retains precisely the components containing `i`. -/
+theorem component_laplacian {n : ℕ} (P : FiniteProduct.{u} n)
+    (f : P.Point → ℝ) (i : Fin n) (S : Finset (Fin n)) (x : P.Point) :
+    P.component S (P.laplacian i f) x =
+      if i ∈ S then P.component S f x else 0 :=
+  (by
+  classical
+  calc
+    _ = P.component S f x -
+        P.component S (P.condExp (Finset.univ.erase i) f) x := by
+      simp only [FiniteProduct.component, FiniteProduct.laplacian,
+        FiniteProduct.condExp, FiniteProduct.expect, mul_sub,
+        Finset.sum_sub_distrib]
+    _ = _ := by
+      rw [component_condExp]
+      simp only [Finset.subset_erase, Finset.subset_univ, true_and]
+      by_cases hi : i ∈ S <;> simp [hi]
+)
+
+
+/-- A coordinate influence is the sum of the second moments of the
+orthogonal components whose index sets contain that coordinate.
+[OD14, §8.3, Thm. 8.35 and coordinate influence formula]
+
+**Proof sketch.** Apply Parseval to the coordinate Laplacian.
+Its orthogonal components are exactly the original components whose
+index sets contain the coordinate; the others vanish.
+Substitute this identity into the component second-moment sum. -/
+theorem influence_eq_sum_components {n : ℕ} (P : FiniteProduct.{u} n)
+    (f : P.Point → ℝ) (i : Fin n) :
+    P.influence i f =
+      ∑ S : Finset (Fin n), if i ∈ S then
+        P.expect (fun x => P.component S f x ^ 2) else 0 :=
+  (by
+  classical
+  unfold FiniteProduct.influence
+  rw [P.parseval]
+  apply Finset.sum_congr rfl
+  intro S _
+  simp_rw [component_laplacian]
+  by_cases hi : i ∈ S <;> simp [hi, P.expect_const]
+)
+
+
+/-- Total influence is the sum of orthogonal-component second moments,
+each weighted by the size of its index set.
+[OD14, §8.3, influence identities; §10.3, KKL Isoperimetric Theorem (proof)]
+
+**Proof sketch.** Sum the spectral coordinate-influence formula over
+coordinates and exchange the finite sums. A component indexed by `S`
+appears once for each coordinate in `S`, so its multiplicity is `S.card`. -/
+theorem totalInfluence_eq_sum_card_components {n : ℕ}
+    (P : FiniteProduct.{u} n) (f : P.Point → ℝ) :
+    P.totalInfluence f =
+      ∑ S : Finset (Fin n), (S.card : ℝ) *
+        P.expect (fun x => P.component S f x ^ 2) :=
+  (by
+  classical
+  simp only [FiniteProduct.totalInfluence, influence_eq_sum_components]
+  rw [Finset.sum_comm]
+  apply Finset.sum_congr rfl
+  intro S _
+  calc
+    _ = (∑ i : Fin n, if i ∈ S then (1 : ℝ) else 0) *
+        P.expect (fun x => P.component S f x ^ 2) := by
+      rw [Finset.sum_mul]
+      apply Finset.sum_congr rfl
+      intro i _
+      by_cases hi : i ∈ S <;> simp [hi]
+    _ = _ := by
+      simp only [Finset.sum_boole, Finset.filter_univ_mem]
+)
+
+/-- A Boolean function on any finite product has variance at most one.
+[OD14, §8.3, Thm. 8.35; §10.3, KKL Isoperimetric Theorem (proof)]
+
+**Proof sketch.** Express variance as the sum of the second moments
+of nonempty orthogonal components. Each component second moment is
+nonnegative, so this sum is at most the full Parseval sum.
+Parseval identifies that sum with the second moment of the function.
+Boolean values have square one, and normalization makes this second
+moment equal to one. -/
+theorem boolean_variance_le_one {n : ℕ} (P : FiniteProduct.{u} n)
+    (f : P.Point → ℝ) (hf : P.IsBoolean f) :
+    P.variance f ≤ 1 :=
+  (by
+  classical
+  calc
+    P.variance f =
+        ∑ S : Finset (Fin n), if S = ∅ then 0 else
+          P.expect (fun x => P.component S f x ^ 2) :=
+      variance_eq_sum_components P f
+    _ ≤ ∑ S : Finset (Fin n),
+        P.expect (fun x => P.component S f x ^ 2) := by
+      apply Finset.sum_le_sum
+      intro S _
+      by_cases hS : S = ∅
+      · rw [if_pos hS]
+        unfold FiniteProduct.expect
+        exact Finset.sum_nonneg fun x _ =>
+          mul_nonneg
+            (Finset.prod_nonneg fun i _ => (P.weight_pos i (x i)).le)
+            (sq_nonneg _)
+      · rw [if_neg hS]
+    _ = P.expect (fun x => f x ^ 2) := (P.parseval f).symm
+    _ = 1 := by
+      have hsq (x : P.Point) : f x ^ 2 = 1 := by
+        rcases hf x with h | h <;> rw [h] <;> norm_num
+      simpa only [hsq] using P.expect_const (1 : ℝ)
+)
+
+/-- The second moment of the residual after conditioning on `J` equals
+the sum of the second moments of orthogonal components whose index sets
+are not contained in `J`. [OD14, §8.3, Thm. 8.35]
+The identity applies to arbitrary real-valued functions on heterogeneous
+finite products.
+
+**Proof sketch.** Component projection is linear. The conditional
+projection identity therefore makes each residual component zero when
+its index set is contained in `J`, and equal to the original component
+otherwise. Apply Parseval to the residual and substitute these component
+identities. -/
+theorem condExp_residual_secondMoment {n : ℕ} (P : FiniteProduct.{u} n)
+    (J : Finset (Fin n)) (f : P.Point → ℝ) :
+    P.expect (fun x => (f x - P.condExp J f x) ^ 2) =
+      ∑ S : Finset (Fin n), if S ⊆ J then 0 else
+        P.expect (fun x => P.component S f x ^ 2) :=
+  (by
+  classical
+  rw [P.parseval]
+  apply Finset.sum_congr rfl
+  intro S _
+  have hcomponent (x : P.Point) :
+      P.component S (fun y => f y - P.condExp J f y) x =
+        P.component S f x - P.component S (P.condExp J f) x := by
+    simp only [FiniteProduct.component, FiniteProduct.condExp,
+      FiniteProduct.expect, mul_sub, Finset.sum_sub_distrib]
+  by_cases hS : S ⊆ J <;>
+    simp [hcomponent, component_condExp, hS, P.expect_const]
+)
+
+/-- The component energy above degree `k`, multiplied by `k + 1`,
+is at most the total influence of a finite-product function.
+[OD14, Prop. 3.2; §8.3, influence identities]
+This unnormalized integer-cutoff formulation extends to arbitrary
+real-valued functions on heterogeneous finite products and includes `k = 0`.
+
+**Proof sketch.** Express total influence as the degree-weighted sum
+of component second moments. These moments are nonnegative, and every
+degree above `k` is at least `k + 1`. Thus each scaled tail summand is
+bounded by its degree-weighted influence contribution. Sum these
+inequalities over all component index sets. -/
+theorem component_tail_le_totalInfluence {n : ℕ}
+    (P : FiniteProduct.{u} n) (f : P.Point → ℝ) (k : ℕ) :
+    ((k : ℝ) + 1) *
+      (∑ S : Finset (Fin n), if k < S.card then
+        P.expect (fun x => P.component S f x ^ 2) else 0) ≤
+      P.totalInfluence f :=
+  (by
+  classical
+  rw [totalInfluence_eq_sum_card_components, Finset.mul_sum]
+  apply Finset.sum_le_sum
+  intro S _
+  have hE : 0 ≤ P.expect (fun x => P.component S f x ^ 2) := by
+    unfold FiniteProduct.expect
+    exact Finset.sum_nonneg fun x _ =>
+      mul_nonneg
+        (Finset.prod_nonneg fun i _ => (P.weight_pos i (x i)).le)
+        (sq_nonneg _)
+  by_cases hS : k < S.card
+  · rw [if_pos hS]
+    apply mul_le_mul_of_nonneg_right _ hE
+    exact_mod_cast Nat.succ_le_of_lt hS
+  · rw [if_neg hS, mul_zero]
+    exact mul_nonneg (Nat.cast_nonneg _) hE
+)
+
+/-- A Boolean finite-product function has a Boolean approximation
+depending only on `J` with disagreement probability at most `a + b`
+if its energy above degree `k` is at most `a` and its omitted energy
+at degrees at most `k` is at most `b`.
+[OD14, Thm. 9.28 (second part); Prop. 3.31 (proof);
+§10.3, Friedgut's Junta Theorem]
+This criterion extends to heterogeneous finite products and uses
+deterministic sign rounding with the sum of the two energy bounds.
+
+**Proof sketch.** Conditional expectation on `J` depends only on `J`.
+Its squared residual equals the component energy outside `J`.
+Split that energy by degree: the high-degree portion is bounded by
+the full tail, and the low-degree portion is the omitted low-degree
+energy. The residual is therefore at most `a + b`.
+Apply Boolean rounding to the conditional expectation. -/
+theorem exists_boolean_junta_of_energy_bounds {n : ℕ}
+    (P : FiniteProduct.{u} n) (f : P.Point → ℝ) (hf : P.IsBoolean f)
+    (J : Finset (Fin n)) (k : ℕ) (a b : ℝ)
+    (htail : (∑ S : Finset (Fin n), if k < S.card then
+      P.expect (fun x => P.component S f x ^ 2) else 0) ≤ a)
+    (hlow : (∑ S : Finset (Fin n),
+      if S.card ≤ k ∧ ¬ S ⊆ J then
+        P.expect (fun x => P.component S f x ^ 2) else 0) ≤ b) :
+    ∃ g : P.Point → ℝ, P.IsBoolean g ∧ P.DependsOn J g ∧
+      P.prob (fun x => f x ≠ g x) ≤ a + b :=
+  (by
+  classical
+  have hdepends : P.DependsOn J (P.condExp J f) := by
+    intro x y hxy
+    unfold FiniteProduct.condExp
+    congr 1
+    funext z
+    congr 1
+    funext i
+    by_cases hi : i ∈ J
+    · simp [hi, hxy i hi]
+    · simp [hi]
+  have hresidual :
+      P.expect (fun x => (f x - P.condExp J f x) ^ 2) ≤ a + b := by
+    rw [condExp_residual_secondMoment]
+    calc
+      (∑ S : Finset (Fin n), if S ⊆ J then 0 else
+          P.expect (fun x => P.component S f x ^ 2)) ≤
+          (∑ S : Finset (Fin n), if k < S.card then
+            P.expect (fun x => P.component S f x ^ 2) else 0) +
+          ∑ S : Finset (Fin n), if S.card ≤ k ∧ ¬ S ⊆ J then
+            P.expect (fun x => P.component S f x ^ 2) else 0 := by
+        rw [← Finset.sum_add_distrib]
+        apply Finset.sum_le_sum
+        intro S _
+        have hE : 0 ≤ P.expect (fun x => P.component S f x ^ 2) := by
+          unfold FiniteProduct.expect
+          exact Finset.sum_nonneg fun x _ =>
+            mul_nonneg
+              (Finset.prod_nonneg fun i _ => (P.weight_pos i (x i)).le)
+              (sq_nonneg _)
+        by_cases hsub : S ⊆ J <;>
+          by_cases hcard : S.card ≤ k <;>
+          simp [hsub, hcard, lt_iff_not_ge, hE]
+      _ ≤ a + b := add_le_add htail hlow
+  obtain ⟨g, hg, hdep, hprob⟩ :=
+    P.exists_boolean_rounding J f (P.condExp J f) hf hdepends
+  exact ⟨g, hg, hdep, hprob.trans hresidual⟩
+)
+
 end BooleanAnalysis.Hypercontractivity.RandomizationAux

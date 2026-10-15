@@ -465,5 +465,45 @@ theorem parseval (P : FiniteProduct.{u} n) (f : P.Point → ℝ) :
       simp only [condExp, Finset.mem_univ, ite_true, P.expect_const, pow_two]
 )
 
+/-- A Boolean function `f` has a Boolean approximation depending only
+on `J` whose disagreement probability is at most the squared approximation
+error of any real-valued function `h` depending only on `J`.
+[OD14, Prop. 3.31; §10.3, Friedgut's Junta Theorem]
+This sign-rounding estimate extends to heterogeneous finite products.
+
+**Proof sketch.** Round `h` to one at nonnegative values and to minus one
+at negative values. Rounding preserves dependence on `J`. Wherever the
+rounded value disagrees with the Boolean value of `f`, the squared distance
+between `f` and `h` is at least one. Bound the disagreement indicator by
+this squared distance and average with the nonnegative product masses. -/
+theorem exists_boolean_rounding (P : FiniteProduct.{u} n)
+    (J : Finset (Fin n)) (f h : P.Point → ℝ)
+    (hf : P.IsBoolean f) (hh : P.DependsOn J h) :
+    ∃ g : P.Point → ℝ, P.IsBoolean g ∧ P.DependsOn J g ∧
+      P.prob (fun x => f x ≠ g x) ≤
+        P.expect (fun x => (f x - h x) ^ 2) :=
+  (by
+  classical
+  let g : P.Point → ℝ := fun x => if 0 ≤ h x then 1 else -1
+  refine ⟨g, ?_, ?_, ?_⟩
+  · intro x
+    by_cases hx : 0 ≤ h x <;> simp [g, hx]
+  · intro x y hxy
+    dsimp only [g]
+    rw [hh hxy]
+  · have hpoint (x : P.Point) :
+        P.indicator (fun y => f y ≠ g y) x ≤ (f x - h x) ^ 2 := by
+      rcases hf x with hfx | hfx <;>
+        by_cases hhx : 0 ≤ h x <;>
+        norm_num [FiniteProduct.indicator, g, hfx, hhx] <;>
+        nlinarith [sq_nonneg (h x), neg_le_abs (-1 - h x),
+          le_abs_self (1 - h x)]
+    unfold FiniteProduct.prob FiniteProduct.expect
+    apply Finset.sum_le_sum
+    intro x _
+    exact mul_le_mul_of_nonneg_left (hpoint x)
+      (Finset.prod_nonneg fun i _ => (P.weight_pos i (x i)).le)
+)
+
 end FiniteProduct
 end BooleanAnalysis.Hypercontractivity

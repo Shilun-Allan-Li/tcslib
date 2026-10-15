@@ -6,8 +6,11 @@ Authors: Owen McGinty
 
 import TCSlib.BooleanAnalysis.Hypercontractivity.Products.Applications
 import TCSlib.BooleanAnalysis.Hypercontractivity.Products.Basic
+import TCSlib.BooleanAnalysis.Hypercontractivity.Products.Comparison
 import TCSlib.BooleanAnalysis.Hypercontractivity.Products.General
+import TCSlib.BooleanAnalysis.Hypercontractivity.Products.NoiseKernel
 import TCSlib.BooleanAnalysis.Hypercontractivity.Products.Norms
+import TCSlib.BooleanAnalysis.Hypercontractivity.Products.Tensorization
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -30,8 +33,11 @@ This facade exports the complete development in its folder.
 
 * `Applications`: Product-space spectral and low-degree applications.
 * `Basic`: Finite-product measures, norms, and coordinate noise.
-* `General`: Product hypercontractivity statements.
-* `Norms`: Finite weighted Hölder inequality and self-adjoint norm duality.
+* `Comparison`: Weighted norm interpolation and sharp comparison-constant limits.
+* `General`: Product hypercontractivity bounds and coordinatewise tensorization.
+* `NoiseKernel`: Product resampling kernels and first-norm contraction.
+* `Norms`: Finite weighted Hölder inequality, norm recovery, and self-adjoint duality.
+* `Tensorization`: Pairing and norm tensorization for finite nonnegative kernels.
 
 ## References
 

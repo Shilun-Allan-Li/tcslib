@@ -11,7 +11,7 @@ import TCSlib.BooleanAnalysis.Hypercontractivity.Randomization.Centered
 import TCSlib.BooleanAnalysis.Hypercontractivity.Randomization.ProjectionBounds
 import TCSlib.BooleanAnalysis.Hypercontractivity.RandomVariables.Basic
 import TCSlib.BooleanAnalysis.Hypercontractivity.Applications.LowDegree
-import TCSlib.BooleanAnalysis.KKL
+import TCSlib.BooleanAnalysis.Hypercontractivity.Applications.KKL.Basic
 import TCSlib.BooleanAnalysis.LMN.DecisionTreeFourier
 
 set_option maxHeartbeats 0

@@ -5,6 +5,7 @@ Authors: Owen McGinty
 -/
 
 import TCSlib.BooleanAnalysis.Basic
+import TCSlib.BooleanAnalysis.Hypercontractivity.Products.Norms
 import TCSlib.BooleanAnalysis.ThresholdFunctions.Basic
 import Mathlib.Algebra.Notation.Indicator
 import Mathlib.Analysis.SpecialFunctions.Pow.Real
@@ -29,6 +30,9 @@ set_option autoImplicit false
 
 * `fourierCoeff_derivative`: coordinate derivatives remove their Fourier coordinate.
 * `cube_moment_interpolation`: weighted Hölder interpolates two absolute moments.
+* `cubeVariance_eq_sum_nonempty_fourier`: the Fourier variance identity.
+* `cubeVariance_rpow_ratio_le_noisy_total`: the Jensen bound for noisy Fourier energy.
+* `fourierWeightAbove_le_totalInfluence_div_succ`: total influence bounds Fourier tails.
 * `cubeLpNorm_rpow`: raising a positive-exponent power mean recovers its moment.
 * `cubeProbability_le_cubeLpNorm_div_rpow`: Markov bounds cube tails through their moments.
 * `has_degree_at_most_sub_const`: subtracting a constant preserves a Fourier degree bound.
@@ -38,7 +42,8 @@ set_option autoImplicit false
 ## References
 
 * [OD14] Ryan O'Donnell, *Analysis of Boolean Functions*, Cambridge University Press, 2014;
-  May 2021 arXiv edition, §§9.1–9.2 and §9.5, Theorems 9.7, 9.21–9.22, and 9.24.
+  May 2021 arXiv edition, §§1.4, 2.2, 3.1, Proposition 3.2, §§9.1–9.2,
+  and §§9.5–9.6, Theorems 9.7, 9.21–9.22, and 9.24.
 -/
 
 open scoped Classical
@@ -142,6 +147,92 @@ noncomputable def cubeProbability {n : ℕ} (A : BoolCube n → Prop) : ℝ :=
 /-- Variance on the uniform cube is the second centered moment. [OD14, Thm. 9.7] -/
 noncomputable def cubeVariance {n : ℕ} (f : BooleanFunc n) : ℝ :=
   expect (fun x => (f x - expect f) ^ 2)
+
+open scoped BigOperators in
+/-- The variance of any real-valued cube function is the sum of the squares of its
+nonempty Fourier coefficients. [OD14, §1.4, variance formula]
+This includes the zero-dimensional cube.
+
+**Proof sketch.** Expand the centered second moment as the expected square minus
+the square of the mean. Apply Parseval to the original function and remove the
+empty Fourier coefficient, which equals the mean. -/
+lemma cubeVariance_eq_sum_nonempty_fourier {n : ℕ} (f : BooleanFunc n) :
+    cubeVariance f =
+      ∑ S : Finset (Fin n), if S = ∅ then 0 else fourierCoeff f S ^ 2 :=
+  (by
+  classical
+  calc
+    cubeVariance f = innerProduct f f - (expect f) ^ 2 := by
+      unfold cubeVariance
+      rw [show (fun x => (f x - expect f) ^ 2) =
+          (fun x => f x * f x - (2 * expect f) * f x + (expect f) ^ 2) by
+        funext x
+        ring]
+      simp only [ThresholdFunctions.expect_add, ThresholdFunctions.expect_sub,
+        ThresholdFunctions.expect_const_mul, ThresholdFunctions.expect_const,
+        innerProduct]
+      ring
+    _ = ∑ S : Finset (Fin n), if S = ∅ then 0 else fourierCoeff f S ^ 2 := by
+      rw [parseval, ← fourierCoeff_empty,
+        show fourierCoeff f ∅ ^ 2 =
+          ∑ S : Finset (Fin n), if S = ∅ then fourierCoeff f S ^ 2 else 0 by simp,
+        ← Finset.sum_sub_distrib]
+      apply Finset.sum_congr rfl
+      intro S _
+      by_cases hS : S = ∅ <;> simp [hS]
+)
+
+open scoped BigOperators in
+/-- For a real-valued cube function of positive variance and any positive noise rate `ρ`,
+variance times `ρ` raised to normalized total influence is at most the degree-weighted
+noisy Fourier energy. [OD14, §9.6, KKL Edge-Isoperimetric Theorem proof]
+The estimate holds without an upper bound on the noise rate.
+
+**Proof sketch.** Normalize the squared nonempty Fourier coefficients by their sum,
+the variance. Jensen's inequality for the convex function `t ↦ ρ^t` bounds its value
+at their mean degree, which is total influence divided by variance. Multiply by variance,
+then insert the degree factor, which is at least one on every nonempty Fourier set. -/
+lemma cubeVariance_rpow_ratio_le_noisy_total {n : ℕ} (f : BooleanFunc n)
+    (hvar : 0 < cubeVariance f) (ρ : ℝ) (hρ : 0 < ρ) :
+    cubeVariance f * ρ ^ (totalInfluence f / cubeVariance f) ≤
+      ∑ S : Finset (Fin n), (S.card : ℝ) * ρ ^ S.card * fourierCoeff f S ^ 2 :=
+  (by
+  classical
+  let w : Finset (Fin n) → ℝ :=
+    fun S => if S = ∅ then 0 else fourierCoeff f S ^ 2
+  have hsum : (∑ S, w S) = cubeVariance f :=
+    (cubeVariance_eq_sum_nonempty_fourier f).symm
+  have hdegree : (∑ S, w S * (S.card : ℝ)) = totalInfluence f := by
+    rw [totalInfluence_eq_sum_sq_deg]
+    apply Finset.sum_congr rfl
+    intro S _
+    by_cases hS : S = ∅ <;> simp [w, hS, mul_comm]
+  have hJ := FiniteNorms.weighted_rpow_mean_le w
+    (fun S => by
+      dsimp [w]
+      split_ifs
+      · exact le_rfl
+      · exact sq_nonneg _)
+    (show 0 < ∑ S, w S by rw [hsum]; exact hvar)
+    (fun S => (S.card : ℝ)) ρ hρ
+  rw [hsum, hdegree] at hJ
+  apply hJ.trans
+  apply Finset.sum_le_sum
+  intro S _
+  rw [Real.rpow_natCast]
+  by_cases hS : S = ∅
+  · simp [w, hS]
+  · have hcard : (1 : ℝ) ≤ (S.card : ℝ) := by
+      exact_mod_cast Finset.one_le_card.mpr
+        (Finset.nonempty_iff_ne_empty.mpr hS)
+    simp only [w, if_neg hS]
+    calc
+      _ = 1 * (ρ ^ S.card * fourierCoeff f S ^ 2) := by ring
+      _ ≤ (S.card : ℝ) * (ρ ^ S.card * fourierCoeff f S ^ 2) :=
+        mul_le_mul_of_nonneg_right hcard
+          (mul_nonneg (pow_nonneg hρ.le _) (sq_nonneg _))
+      _ = _ := by ring
+)
 
 /-- The real-exponent `Lᵖ` expression on the uniform cube; applications use `p ≥ 1`.
 [OD14, §9.5, Thms. 9.21–9.22] The raw formula is retained at every real exponent so the
@@ -467,5 +558,60 @@ lemma l2Norm_noiseOp_le {n k : ℕ} (f : BooleanFunc n)
       rw [Real.sqrt_mul (sq_nonneg _),
         Real.sqrt_sq (pow_nonneg (zero_le_one.trans hρ) _)]
 )
+
+/-- For every real-valued cube function, the squared Fourier weight above degree `k`
+is at most its total influence divided by `k + 1`. [OD14, Prop. 3.2]
+This form uses the sharper integer-gap denominator for the strict tail: degrees
+greater than `k` are at least `k + 1`. It requires no ±1-valuedness assumption and
+includes `k = 0`, where the denominator is one, and the zero-dimensional cube.
+
+**Proof sketch.** Apply the weighted Markov bound with squared Fourier coefficients
+as nonnegative weights, degree as the observable, exponent one, and threshold
+`k + 1`. The strict integer cutoff is precisely this threshold event, and the
+degree-weighted first moment equals total influence. -/
+lemma fourierWeightAbove_le_totalInfluence_div_succ {n : ℕ} (f : BooleanFunc n)
+    (k : ℕ) :
+    ThresholdFunctions.fourierWeightAbove k f ≤ totalInfluence f / ((k : ℝ) + 1) :=
+  (by
+  classical
+  have hcutoff (S : Finset (Fin n)) :
+      (k : ℝ) + 1 ≤ |(S.card : ℝ)| ↔ k < S.card := by
+    rw [abs_of_nonneg (by positivity)]
+    exact_mod_cast (show k + 1 ≤ S.card ↔ k < S.card by omega)
+  have hmarkov := FiniteNorms.weighted_tail_le_norm_div_rpow
+    (fun S : Finset (Fin n) => fourierCoeff f S ^ 2)
+    (by intro S; positivity)
+    (fun S => (S.card : ℝ)) 1 ((k : ℝ) + 1)
+    (by norm_num) (by positivity)
+  calc
+    ThresholdFunctions.fourierWeightAbove k f =
+        ∑ S : Finset (Fin n), fourierCoeff f S ^ 2 *
+          {S : Finset (Fin n) | (k : ℝ) + 1 ≤ |(S.card : ℝ)|}.indicator
+            (fun _ => (1 : ℝ)) S := by
+      unfold ThresholdFunctions.fourierWeightAbove
+      apply Finset.sum_congr rfl
+      intro S _
+      change (if k < S.card then fourierCoeff f S ^ 2 else 0) =
+        fourierCoeff f S ^ 2 *
+          (if (k : ℝ) + 1 ≤ |(S.card : ℝ)| then 1 else 0)
+      by_cases hk : k < S.card
+      · rw [if_pos hk, if_pos ((hcutoff S).mpr hk)]
+        ring
+      · have hnot : ¬ (k : ℝ) + 1 ≤ |(S.card : ℝ)| := by
+          intro h
+          exact hk ((hcutoff S).mp h)
+        rw [if_neg hk, if_neg hnot]
+        ring
+    _ ≤ (∑ S : Finset (Fin n),
+        fourierCoeff f S ^ 2 * |(S.card : ℝ)|) / ((k : ℝ) + 1) := by
+      simpa using hmarkov
+    _ = totalInfluence f / ((k : ℝ) + 1) := by
+      congr 1
+      rw [totalInfluence_eq_sum_sq_deg]
+      apply Finset.sum_congr rfl
+      intro S _
+      rw [abs_of_nonneg (by positivity), mul_comm]
+)
+
 
 end BooleanAnalysis.Hypercontractivity
