@@ -1,0 +1,59 @@
+# B5a canonizer continuation 4: pre-ship checks at the issue tree (campaign tip ff4cab18, Lean content c9cc485b: #95, #96 and #97 merged), on a git-archive copy of that tree (every TCSlib blob checked against the commit), each file elaborated with lean (no olean output, no lake) against oleans-ltip3, the merged tip's catch-up replay (replay-ltip3.log: modules=152 failed=0) (tools/leanelab.sh <tree> oleans-ltip3 <file>, throttled). Supersedes the run at e8ae7fad against oleans-lh1
+## Base elaboration of briefs/orders/b5a-fill-canon-cont4.txt: 96 of 96 modules exit 0; errors=0 sorry-warnings=27 (= audits/logs/b5a-fill-canon-cont4-base-sorries.txt, declaration for declaration) warnings-in-all=418
+##   TCSlib/Complexity/TuringMachine/CodeSimulator.lean: errors=0 sorry-warnings=3 (exists_canonGrammarStage, exists_canonDecider, exists_uniformSimulator) other-warnings=0
+## audits/evidence/b5a-canon-cont4/CanonCont4ImportProbe.lean.txt: exit=0 errors=0 sorry-warnings=0 other-warnings=0 (130 #check lines; re-run after delivery)
+## audits/evidence/b5a-canon-cont4/CanonCont4Overlay.lean.txt: exit=0 errors=0 sorry-warnings=5 other-warnings=0 (tools/mkoverlay.py: the 10-declaration block at line 3119; the two stub statements and the headline pinned; the undo check byte for byte; the 5 = exists_canonUnaryTM, exists_canonRecordTM, exists_canonGrammarStage, exists_canonDecider, exists_uniformSimulator)
+## audits/evidence/b5a-canon-cont4/CanonNote50.lean.txt: exit=0 errors=0 sorry-warnings=0 other-warnings=0 (prescribed; its print below)
+##   'note50_cases' depends on axioms: [propext, sorryAx, Classical.choice, Quot.sound]
+## axiom run: the overlay with tools/axioms.lean.txt before `end MachineFormat` (mkoverlay.py with its fourth argument): errors=0; the prints:
+##   'canonSkipFin_iff' depends on axioms: [propext, Quot.sound]
+##   'canonSkipFields' does not depend on any axioms
+##   'canonSkipAction_eq' depends on axioms: [propext, Quot.sound]
+##   'canonSkipPair_cells' does not depend on any axioms
+##   'canonSkipFields_cells' depends on axioms: [propext, Quot.sound]
+##   'canonSkipRepeat_add' does not depend on any axioms
+##   'canonSkipRepeat_mul' depends on axioms: [propext, Quot.sound]
+##   'canonSkipTable_eq' depends on axioms: [propext, Quot.sound]
+##   'exists_canonUnaryTM' depends on axioms: [propext, sorryAx, Quot.sound]
+##   'exists_canonRecordTM' depends on axioms: [propext, sorryAx, Quot.sound]
+##   'exists_canonStripTM' depends on axioms: [propext, Classical.choice, Quot.sound]
+##   'exists_canonGrammarStage' depends on axioms: [propext, sorryAx, Quot.sound]
+##   'exists_canonDecider' depends on axioms: [propext, sorryAx, Classical.choice, Quot.sound]
+##   'Turing.MachineFormat.exists_polyCanonizer' depends on axioms: [propext, sorryAx, Classical.choice, Quot.sound]
+## audits/evidence/wave1-statements/B5aStatementsProbe.lean.txt (inherited, byte-identical copy): exit=0 errors=0 sorry-warnings=1 (probe-local admission) other-warnings=0
+## audits/evidence/b5a/B5aContPreShip.lean.txt (inherited, byte-identical copy): exit=0 errors=0 sorry-warnings=0 other-warnings=0
+## audits/evidence/wave1-statements/S1210StatementsProbe.lean.txt (inherited, byte-identical copy): exit=0 errors=0 sorry-warnings=1 (probe-local admission) other-warnings=0
+## audits/evidence/b5a-canon-cont3/CanonCont3ImportProbe.lean.txt (inherited, byte-identical copy): exit=0 errors=0 sorry-warnings=0 other-warnings=0
+##   S1210 census: the probe-local Complexity.exists_EXPCOM_decider is detected
+## the overlay regenerated at the tip (python3 -I tools/mkoverlay.py <tip> tools <out>) equals CanonCont4Overlay.lean.txt byte for byte; CodeSimulator.lean at the tip is byte-identical to #96's branch head e8ae7fad
+## screen base (audits/logs/b5a-fill-canon-cont4-screen-base.txt): audits/evidence/retrofit/copy-text-screen-v2.py (path-keyed) on the 45 population paths of the tip copy, nice -n 10, alone: declarations screened: 2326; copy pairs: 2574; reproduced text: 818,424 chars (1,744 s)
+##   against the e8ae7fad base (v1, flattened labels mapped to basenames): 5 new pairs, all in Build/RecordTable.lean (#95's row 18), 0 gone, 0 changed
+## screen of the overlay (audits/logs/b5a-fill-canon-cont4-screen-overlay.txt; the population staged at its repository paths with CanonCont4Overlay.lean.txt as CodeSimulator.lean, SHA-256 checked), v2, nice -n 10, alone, after the base run: declarations screened: 2334; copy pairs: 2574; reproduced text: 818,424 chars (1,634 s); pair difference by name: 0 new, 0 gone, 0 changed
+## snapshot: oleans-ltip3, used only after fills/replay/replay-ltip3.log ended '# modules=152 failed=0'
+# SHA-256
+69429f4a0bf9c5fa25cd93d1eabcc31c239baf55451bafc1b3b7ae46e86a6f6f  audits/evidence/b5a-canon-cont4/CanonCont4ImportProbe.lean.txt
+deae4083c634486de4dbc83e8919d8f062cb343cd60588e5359356310c3a0c8f  audits/evidence/b5a-canon-cont4/CanonCont4Overlay.lean.txt
+22754f5a1b5157a08d40f76d7319e00dfd802f5e3aaf7aec9e6b6ac840443f88  audits/evidence/b5a-canon-cont4/CanonNote50.lean.txt
+3ca0a2fa702a7eaf11b0546e8ae14f8dfdd4c9278107e7a9ec68dceebf90ec64  audits/evidence/b5a-canon-cont4/tools/mkoverlay.py
+0fb1f74edf9839685515711f5e7ac34bc028f318c08e780c11e2c5549a982980  audits/evidence/b5a-canon-cont4/tools/home.lean.txt
+579f257085cee55c3d53d62506ca3926c309b7b154c5b72cb29d5d65564c9ef7  audits/evidence/b5a-canon-cont4/tools/axioms.lean.txt
+896a3391c3967fc120d9ceea1ec5a0f72b0d905179cb0d4f2d28244a47e41fe7  audits/evidence/b5a-canon-cont4/b5a-canon-cont4-screen-population.txt
+f652ec0b1315ca93ff2ee2c8f9329626d35fd34c012e3f7586422c24116fdf69  audits/evidence/b5a-canon-cont4/codesimulator-regions.tsv
+a8b6d4ce68dd2b5a7bbad7a3d6266a50248c23c9b7a0dc996cba7e302f9ba16b  audits/evidence/b5a-canon-cont4/mig1s-renamed-names.txt
+6e15a93aed7ad1dddac9714b70bd1d4dd13607e5da1655b3bf62abe05a247997  briefs/orders/b5a-fill-canon-cont4.txt
+a0be6df6a5f3afb007e96747285b6245d0ef3aadafc4dac9e57c5b5d302c5300  audits/logs/b5a-fill-canon-cont4-base-sorries.txt
+b998f773a2cd9149638074fe6fc9fc8b1c116e90505afb61030e02ff708903d8  audits/logs/b5a-fill-canon-cont4-screen-base.txt
+5d6d537105459549e2f09e4e44a800082979bcd9b076477f978ab589fd2e6127  audits/logs/b5a-fill-canon-cont4-screen-overlay.txt
+6b5fefa062571b259a7722f7e6ab93e290139511f9449b8d2f83d3d70fb99e6c  TCSlib/Complexity/TuringMachine/CodeSimulator.lean (input, at ff4cab18)
+9b9205f6981486313a34faf14b46c1126fc189bdf9617d551bb72a072f43b9ea  audits/evidence/wave1-statements/B5aStatementsProbe.lean.txt (input, at ff4cab18)
+cdc91e3b74aac6508c3fd44ac8c3e0ffcfc760411d5e8556ba5a73bb1fab02db  audits/evidence/b5a/B5aContPreShip.lean.txt (input, at ff4cab18)
+50975ff60c725f999fab58705d466340a97ebcd0026c1e06ac707a56bf139f48  audits/evidence/wave1-statements/S1210StatementsProbe.lean.txt (input, at ff4cab18)
+a1a0d12286ad055e45c5cc64d59bdd33ad8a50a116645953d67a17fde450c956  audits/evidence/b5a-canon-cont3/CanonCont3ImportProbe.lean.txt (input, at ff4cab18)
+967b750d7a13270f1087043d1b8ab225deeed9dec6c964aea261fc244c0b8c64  audits/evidence/retrofit/copy-text-screen-v2.py (input, at ff4cab18)
+aa1b5cbe7103def864c7c4cde01048c04b2b96310b61cd8206640d233e12cf26  audits/evidence/mig1/gate/scripts/renames.json (input, at ff4cab18)
+
+## maintainer re-measurement with the copy-text screen v3 (2026-10-15; audits/evidence/retrofit/copy-text-screen-v3.py; one at a time, nice -n 10)
+   base rc=0 1579s: declarations screened: 2326; copy pairs (target reproduces >= half of source): 2576; reproduced text: 818,556 chars
+   overlay rc=0 1534s: declarations screened: 2334; copy pairs (target reproduces >= half of source): 2576; reproduced text: 818,556 chars
+   against the v2 logs: the CfgRecord instance pair added both ways, and Contract/Basic's repeated trans relabelled Turing.Segment.trans in its two pairs; nothing else changes
+   the two screen logs above are now the v3 outputs
