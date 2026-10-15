@@ -1,0 +1,129 @@
+
+/-! ════════════════════════════════════════════════════════════════════════════════════════════
+Sanity probes (evidence only; not landing material). Appended to a copy of the unit. -/
+
+namespace B6HostsSanity
+
+open Turing
+
+/-! ### H5: the virtual input cell and the ruler device's facts, the empty payload included -/
+
+example : inputCell ([] : List Bool) 0 = none := by decide
+example : inputCell ([] : List Bool) 1 = none := by decide
+example : inputCell [true, false] 1 = some true := by decide
+example : inputCell [true, false] 2 = some false := by decide
+example : inputCell [true, false] 3 = none := by decide
+
+/-- The boundary test on `z = [true]` (a one-cell header, empty payload): at `p = ℓ = 1` the
+probed cell is blank, at the right blank `p = 2 = |z| + 1` it is the header's cell. -/
+example : inputCell ([true] : List Bool) (1 - 1) = none ↔ 1 = 1 :=
+  inputCell_sub_eq_none_iff (by decide) (by decide) (by decide)
+example : inputCell ([true] : List Bool) (2 - 1) = none ↔ 2 = 1 :=
+  inputCell_sub_eq_none_iff (by decide) (by decide) (by decide)
+example : inputCell ([true] : List Bool) (2 - 1) ≠ none := by decide
+
+/-- Past the header of an empty payload the virtual cell is the physical right blank. -/
+example : inputCell ([] : List Bool) 1 = inputCell [true, false] (2 + 1) :=
+  inputCell_of_drop (z := [true, false]) (ℓ := 2) rfl (by decide)
+
+/-- `space_universal`'s header for a one-bit budget word `[true]` (the value of `bits 1`), the
+empty code and the empty payload: six cells, and nothing after them. -/
+example : pairEncode [true] (pairEncode [] []) = [true, true, false, true, false, true] := by
+  decide
+example : (pairEncode [true] (pairEncode [] ([] : List Bool))).length =
+    (2 * [true].length + 2 * ([] : List Bool).length + 4) + 0 :=
+  pairEncode_pairEncode_length _ _ _
+example : (pairEncode [true] (pairEncode [] ([] : List Bool))).drop
+    (2 * [true].length + 2 * ([] : List Bool).length + 4) = [] :=
+  pairEncode_pairEncode_drop _ _ _
+
+/-- The native device presents the initial configuration at virtual position `1`. -/
+example (y : List Bool) : NativeAt (Cfg.init () y : Cfg 2 Bool Unit y) 1 := nativeAt_init () y
+
+/-! ### H3: the summary tag (accept is exactly `[true]`) -/
+
+example : outSummaryCode (outSummary []) = 0 := by decide
+example : outSummaryCode (outSummary [true]) = 1 := by decide
+example : outSummaryCode (outSummary [true, true]) = 2 := by decide
+example : outSummaryCode (outSummary [false]) = 2 := by decide
+example : summaryTag 0 (some true) = 1 := by decide
+example : summaryTag 0 (some false) = 2 := by decide
+example : summaryTag 1 (some true) = 2 := by decide
+example : summaryTag 1 none = 1 := by decide
+example : summaryTag 2 (some true) = 2 := by decide
+example : ¬ (outSummaryCode (outSummary [true, false]) = 1) := by decide
+
+/-! ### H3: the windowed run on a machine that halts on its first transition, emitting `true`
+
+The machine has no work tapes; the input is empty and the window radius is `0`. Its run halts
+at time `1` by a transition that emits the deciding bit. One round is not enough (the clock is
+exhausted, with the halted configuration); two rounds report `halted` with tag `1`. -/
+
+/-- A machine with no work tapes that emits `true` and halts at its first transition. -/
+def emitHalt : MultiTapeTM 0 Bool Unit where
+  q₀ := ()
+  tr := fun _ _ _ => ⟨0, Fin.elim0, some true, none⟩
+
+theorem emitHalt_inWindow (c : Cfg 0 Bool Unit []) (s : ℕ) : c.InWindow s :=
+  ⟨fun i => i.elim0, fun i => i.elim0⟩
+
+theorem emitHalt_halts : (emitHalt.runFrom (emitHalt.initCfg []) 1).state = none := rfl
+
+theorem emitHalt_emits : emitHalt.outputSymbol (emitHalt.runFrom (emitHalt.initCfg []) 0) =
+    some true := rfl
+
+/-- Clock exhaustion on the last transition: one round reports `exhausted`, at the halted
+configuration of time `1`. -/
+example : (windowRun emitHalt 0 summaryTag 1 (emitHalt.initCfg []) 0).1 = .exhausted ∧
+    (windowRun emitHalt 0 summaryTag 1 (emitHalt.initCfg []) 0).2.1 =
+      emitHalt.runFrom (emitHalt.initCfg []) 1 :=
+  windowRun_exhausted_of_live emitHalt 0 summaryTag 1 _ 0
+    (fun u hu => by rw [show u = 0 by omega]; simp [emitHalt, MultiTapeTM.initCfg, Cfg.init])
+    (fun u _ => emitHalt_inWindow _ 0)
+
+/-- The halt on the last transition with the deciding bit: two rounds report `halted` with the
+tag of `[true]`, which is `1`. -/
+example : windowRun emitHalt 0 summaryTag 2 (emitHalt.initCfg []) 0 =
+    (.halted, emitHalt.runFrom (emitHalt.initCfg []) 1, 1) := by
+  have h := windowRun_halts_on_last_transition emitHalt 0 summaryTag
+    (fun u => outSummaryCode (outSummary u)) summaryTag_append 0 (emitHalt.initCfg []) true
+    emitHalt_halts emitHalt_emits (fun u _ => emitHalt_inWindow _ 0)
+  exact h
+
+/-! ### H5: the ruler host's contract in use (the H2-S finding 2 interface)
+
+The two directions a consumer needs, derived from `Turing.exists_rulerHostTM` alone: the host
+halts with the source's output within `C · (ℓ + 1)` times the source's time, and it never halts
+unless the source has (the exit cut and the lower bound `t ≤ t'`). -/
+
+example {m : ℕ} {S : Type} [Fintype S] [DecidableEq S] (M : MultiTapeTM m Bool S) :
+    ∃ (Q : Type) (_ : Fintype Q) (_ : DecidableEq Q) (H : MultiTapeTM (m + 1) Bool Q)
+      (inj : S → Bool → Q) (C : ℕ),
+      ∀ {y z : List Bool} (ℓ : ℕ) (hz : z.length = ℓ + y.length), 0 < ℓ → z.drop ℓ = y →
+      ∀ (rt : ℤ → Option Bool) (rp : ℤ),
+        (∀ p : ℤ, -1 ≤ p → p ≤ (ℓ : ℤ) →
+          rt (rp + p) = FinTM.bufferTape (List.replicate ℓ true) p) →
+      ∀ (c : Cfg m Bool S y) (b : Bool), (b = true ↔ c.inputPos.val = 0) →
+        (∀ t, (M.runFrom c t).state = none → ∃ t' ≤ C * (ℓ + 1) * t,
+          (H.runFrom (rulerHostCfg ℓ hz (c.state.map fun q => inj q b) c rt rp) t').state =
+              none ∧
+            (H.runFrom (rulerHostCfg ℓ hz (c.state.map fun q => inj q b) c rt rp) t').output =
+              (M.runFrom c t).output) ∧
+        (∀ h, (H.runFrom (rulerHostCfg ℓ hz (c.state.map fun q => inj q b) c rt rp) h).state =
+            none → ∃ τ ≤ h, (M.runFrom c τ).state = none) := by
+  obtain ⟨Q, hQ, dQ, H, inj, C, -, hH⟩ := exists_rulerHostTM M
+  refine ⟨Q, hQ, dQ, H, inj, C, ?_⟩
+  intro y z ℓ hz hℓ hy rt rp hrt c b hb
+  refine ⟨fun t ht => ?_, fun h hh => ?_⟩
+  · obtain ⟨t', -, ht', ⟨b', -, hrun⟩, -⟩ := hH ℓ hz hℓ hy rt rp hrt c b hb t
+    refine ⟨t', ht', ?_, ?_⟩
+    · rw [hrun]
+      simp [rulerHostCfg, ht]
+    · rw [hrun]
+      rfl
+  · obtain ⟨t', hlo, -, -, hcut, -⟩ := hH ℓ hz hℓ hy rt rp hrt c b hb (h + 1)
+    by_contra hne
+    push_neg at hne
+    exact hcut (fun u hu => hne u (by omega)) h (by omega) hh
+
+end B6HostsSanity

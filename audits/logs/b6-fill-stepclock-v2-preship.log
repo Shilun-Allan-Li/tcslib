@@ -1,0 +1,162 @@
+# B6 fill, batch F1, brief v2 (the step clock, with the CounterLoop and SymbolLift promotions): pre-ship check at the issue tree ff4cab1807c2d8f953a372a6682b20adcbee7d5e (Lean content: PRs #95-#97 merged, that of fba93e7e), elaborated with lean through tools/leanelab.sh (no olean output, no lake) against oleans-ltip3, the catch-up replay of the merged tip (152 modules, 0 failed), packages from wt-mig1s (manifest and toolchain equal to the tip's, checked)
+
+## inputs (SHA-256)
+d152c98827b91cf42601b60d4f0bfc907f53ec5cb0e315dc5baf85984298aba6  TCSlib/Complexity/TuringMachine/Build/StepClock.lean (issue tree)
+a31518b40caf5801d05796de92d480ab2683ab83fa728510ead6d2241b084d07  TCSlib/Complexity/TuringMachine/Build/CounterLoop.lean (issue tree)
+29e313f60266485e079f737c0a49c35df30668dbc43b3f602180305bc10ee40c  TCSlib/Complexity/TuringMachine/SymbolLift.lean (issue tree)
+967b750d7a13270f1087043d1b8ab225deeed9dec6c964aea261fc244c0b8c64  audits/evidence/retrofit/copy-text-screen-v2.py (issue tree)
+1893ddeb3b64a4636aa25abddde369ec413c723e617eec557265085db1de0f1f  audits/evidence/b6-fill-stepclock-v2/B6F1v2ImportProbe.lean.txt
+b1ce54a28225c0e87c0c1111a53e5af167a088bad558fd0ab6da2e959d17926c  audits/evidence/b6-fill-stepclock-v2/CounterLoopOverlay.lean.txt
+2b3fc56d2e426348d05c2513054905b69387703662ef1a0eb7b97293e8deac5c  audits/evidence/b6-fill-stepclock-v2/RouteProbe.lean.txt
+8fd8475bcdedb7574fcef1c62c7213165933b562e60ba3587da21da38f0f879d  audits/evidence/b6-fill-stepclock-v2/StepClockOverlay.lean.txt
+cbe6b0ba080bd2b6aa85d999add5df76dcc1a3dc87422da7fc118fbfb03f98f0  audits/evidence/b6-fill-stepclock-v2/SymbolLiftOverlay.lean.txt
+fa42db85818ed83b1d098b36ff3e7552f276f0f5dcddb3336c0517e11ddbf6d9  audits/evidence/b6-fill-stepclock-v2/screen-population.txt
+10d36d6792d0947d023213f8fb8e836b2efa389a5b331c7865a662033465c392  audits/evidence/b6-fill-stepclock-v2/tools/cl-counterOverhead.lean.txt
+62dec99f912ad9076c0739900e44c8cb26623dd9e89b6a37a1e630da02237729  audits/evidence/b6-fill-stepclock-v2/tools/cl-counterWord.lean.txt
+d3d93a0a26b8f4180a1466471961b969b632ed57846037f6ca41fb0756636b23  audits/evidence/b6-fill-stepclock-v2/tools/cl-decrement.lean.txt
+ae278460ce8f687f3f55da587f753de445fab6fda12e545b132d08ead49b9dc1  audits/evidence/b6-fill-stepclock-v2/tools/cl-lastEmb.lean.txt
+144c3fe7d7113f29f71eda6b838e50a26fd0d27e6e7968c5cb34c7e3f253070c  audits/evidence/b6-fill-stepclock-v2/tools/flat-screen.sh
+daa2a97e1cbf712878efa00765f418633ca7c18af9e0f5d9238946a0846ea410  audits/evidence/b6-fill-stepclock-v2/tools/headline.lean.txt
+3cb58f92694fcb3997f439237e58ceacc8d4530c253665facd4379e844286bc2  audits/evidence/b6-fill-stepclock-v2/tools/home.lean.txt
+3127920c672d1eb47fe8d34c9981ba437e1237732f0e436bf16cb9dc78d71ecf  audits/evidence/b6-fill-stepclock-v2/tools/mkoverlay.py
+f61b8ea44822a0865e6841d9e303d257e3643cec40e425bad270bcc9aae0c8f5  audits/evidence/b6-fill-stepclock-v2/tools/mkpromote.py
+d5e52ed25e8294c0325d4f290ce8253cab09678fee92f67ce515f4fa9e9cacb1  audits/evidence/b6-fill-stepclock-v2/tools/mkrouteprobe.py
+dc4bf0b4ada151f1b1e6a7806f773a57f86e73483d1dfffbd1fdfb53939b5b9a  audits/evidence/b6-fill-stepclock-v2/tools/routechecks.lean.txt
+ad3543899c7e63cd1325053e84cf065c39ed21d57f26b0bef4ad1be07d510ba6  audits/evidence/b6-fill-stepclock-v2/tools/routescan-control.lean.txt
+0a229c7cb99fcfb3dafb779f4f3437c344b286ad803964378f907b4649e2c793  audits/evidence/b6-fill-stepclock-v2/tools/routescan.py
+dd52e881b305c07876f2bdc89867cd9e96c581a711e1239bd56f2f96f36578b1  audits/evidence/b6-fill-stepclock-v2/tools/sl-fields.lean.txt
+009dcc14ff85aa673ee80ad1d07a4780278934a2712ade3b2e69621c5de1b85b  briefs/orders/b6-fill-stepclock-v2.txt
+
+## B6F1v2ImportProbe.lean.txt (95 #check): exit=0 errors=0 warnings=0
+
+## the promotion list: python3 -I tools/mkpromote.py <tree> tools <out-CounterLoop> <out-SymbolLift>
+   CounterLoop.lean: 2150 lines, sha256 a31518b40caf5801d05796de92d480ab2683ab83fa728510ead6d2241b084d07
+     promoted (visibility only) line 393: lemma counter_dec_spec
+     promoted (visibility only) line 421: lemma counter_dec_zero
+     promoted (visibility only) line 479: lemma counter_word_decrement
+     home line 369 (blank): cl-decrement.lean.txt, 26 lines
+     home line 377 (blank): cl-counterWord.lean.txt, 5 lines
+     home line 388 (blank): cl-counterOverhead.lean.txt, 16 lines
+     home line 619 (blank): cl-lastEmb.lean.txt, 5 lines
+     overlay: 2206 lines, sha256 b1ce54a28225c0e87c0c1111a53e5af167a088bad558fd0ab6da2e959d17926c
+   SymbolLift.lean: 383 lines, sha256 29e313f60266485e079f737c0a49c35df30668dbc43b3f602180305bc10ee40c
+     home line 379 (blank, before `end Overlay`): sl-fields.lean.txt, 87 lines
+     overlay: 471 lines, sha256 cbe6b0ba080bd2b6aa85d999add5df76dcc1a3dc87422da7fc118fbfb03f98f0
+## the StepClock overlay: python3 -I tools/mkoverlay.py <tree> tools/home.lean.txt tools/headline.lean.txt <out>
+   issue-tree StepClock.lean: 219 lines, sha256 d152c98827b91cf42601b60d4f0bfc907f53ec5cb0e315dc5baf85984298aba6
+   home: line 81 (blank), 375 lines inserted
+   headline body: line 167 (`  sorry`) replaced by 7 lines
+   overlay: 601 lines, sha256 8fd8475bcdedb7574fcef1c62c7213165933b562e60ba3587da21da38f0f879d
+## the route probe: python3 -I tools/mkrouteprobe.py <CounterLoop overlay> <StepClock overlay> tools/sl-fields.lean.txt tools/routechecks.lean.txt <out>
+   route probe: 3173 lines, sha256 2b3fc56d2e426348d05c2513054905b69387703662ef1a0eb7b97293e8deac5c; 14 obligations named, 48 axiom prints
+   regenerated CounterLoopOverlay, SymbolLiftOverlay, StepClockOverlay and RouteProbe byte-identical to the evidence files and to the elaborated files: True
+
+## SymbolLiftOverlay.lean.txt (standalone, its imports from the snapshot): exit=0 errors=0 sorry-warnings=0 other-warnings=0
+## CounterLoopOverlay.lean.txt (standalone, its imports from the snapshot): exit=0 errors=0 sorry-warnings=0 other-warnings=0
+## RouteProbe.lean.txt: exit=0 errors=0 sorry-warnings=3 other-warnings=0
+   sorry warnings: sc_debit (line 2591), sc_finish (line 2682), sc_timeout (line 2721)
+   (the fill: the generic debit and the two clauses; every route obligation of Part D is proved)
+   'Turing.counter_dec_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
+   'Turing.counter_dec_zero' depends on axioms: [propext, Classical.choice, Quot.sound]
+   'Turing.counter_word_decrement' depends on axioms: [propext, Classical.choice, Quot.sound]
+   'Turing.decrementTM_tr_input' depends on axioms: [Quot.sound]
+   'Turing.decrementTM_tr_action' depends on axioms: [propext, Quot.sound]
+   'Turing.counterWord_zero' does not depend on any axioms
+   'Turing.counterOverhead_zero' depends on axioms: [propext, Classical.choice, Quot.sound]
+   'Turing.counterOverhead_succ' depends on axioms: [propext, Classical.choice, Quot.sound]
+   'Turing.lastEmb_apply' depends on axioms: [propext]
+   'Turing.Cfg.decodeSymbols_state' depends on axioms: [propext, Quot.sound]
+   'Turing.Cfg.decodeSymbols_inputPos' depends on axioms: [propext, Quot.sound]
+   'Turing.Cfg.decodeSymbols_workTapes' depends on axioms: [propext, Quot.sound]
+   'Turing.Cfg.decodeSymbols_workTapePos' depends on axioms: [propext, Quot.sound]
+   'Turing.Cfg.decodeSymbols_output' depends on axioms: [propext, Quot.sound]
+   'Turing.Cfg.liftOver_state' depends on axioms: [propext]
+   'Turing.Cfg.liftOver_inputPos' depends on axioms: [propext]
+   'Turing.Cfg.liftOver_workTapes' depends on axioms: [propext]
+   'Turing.Cfg.liftOver_workTapePos' depends on axioms: [propext]
+   'Turing.Cfg.liftOver_output' depends on axioms: [propext]
+   '(private) Turing.sc_decExit_injective' depends on axioms: [propext]
+   '(private) Turing.sc_agree' depends on axioms: [propext, Quot.sound]
+   '(private) Turing.sc_layout' depends on axioms: [propext, Classical.choice, Quot.sound]
+   '(private) Turing.sc_lastLayout' depends on axioms: [propext, Classical.choice, Quot.sound]
+   '(private) Turing.sc_dec_inputPos' depends on axioms: [propext, Quot.sound]
+   '(private) Turing.sc_wordPatch_self' depends on axioms: [propext, Quot.sound]
+   '(private) Turing.sc_wordPatch_twice' depends on axioms: [propext, Quot.sound]
+   '(private) Turing.sc_wordPatch_frame' depends on axioms: [propext, Classical.choice, Quot.sound]
+   '(private) Turing.sc_stop_step' depends on axioms: [propext, Quot.sound]
+   '(private) Turing.sc_body_step' depends on axioms: [propext, Classical.choice, Quot.sound]
+   '(private) Turing.sc_debit' depends on axioms: [propext, sorryAx, Classical.choice, Quot.sound]
+   '(private) Turing.sc_finish' depends on axioms: [propext, sorryAx, Classical.choice, Quot.sound]
+   '(private) Turing.sc_timeout' depends on axioms: [propext, sorryAx, Classical.choice, Quot.sound]
+   'Turing.exists_stepClockTMVia' depends on axioms: [propext, sorryAx, Classical.choice, Quot.sound]
+   'Turing.exists_stepClockTM' depends on axioms: [propext, sorryAx, Classical.choice, Quot.sound]
+   'Turing.rp_start' depends on axioms: [propext, Classical.choice, Quot.sound]
+   'Turing.rp_dec_success_width' depends on axioms: [propext, Classical.choice, Quot.sound]
+   'Turing.rp_takeWhile_replicate' depends on axioms: [propext, Classical.choice, Quot.sound]
+   'Turing.rp_dec_underflow_cost' depends on axioms: [propext, Classical.choice, Quot.sound]
+   'Turing.rp_dec_patch_width' depends on axioms: [propext, Classical.choice, Quot.sound]
+   'Turing.rp_shadow_pre' depends on axioms: [propext, Quot.sound]
+   'Turing.rp_lift_run' depends on axioms: [propext, Quot.sound]
+   'Turing.rp_lift_frame' depends on axioms: [propext, Quot.sound]
+   'Turing.rp_round_word' depends on axioms: [propext, Classical.choice, Quot.sound]
+   'Turing.rp_round_tape' depends on axioms: [propext, Classical.choice, Quot.sound]
+   'Turing.rp_round_time' depends on axioms: [propext, Classical.choice, Quot.sound]
+   'Turing.rp_timeout_word' depends on axioms: [propext, Classical.choice, Quot.sound]
+   'Turing.rp_finish_time' depends on axioms: [propext, Classical.choice, Quot.sound]
+   'Turing.rp_timeout_time' depends on axioms: [propext, Classical.choice, Quot.sound]
+
+## static scan (rule 10, revised): python3 -I tools/routescan.py <tree> <overlays> tools/home.lean.txt tools/headline.lean.txt tools/routechecks.lean.txt
+   checked 3 blocks: 56 rewriting/unfolding tactics against 136 definition names, identifiers against 21 private names: 0 findings  (exit 0)
+   control (brief v1's home block and tools/routescan-control.lean.txt), exit 1:
+     UNFOLD home.lean.txt: simp lastEmb
+     PRIVATE routescan-control.lean.txt: counter_debit
+     UNFOLD routescan-control.lean.txt: simp only Cfg.liftOver
+     UNFOLD routescan-control.lean.txt: unfold counterWord
+     checked 2 blocks: 18 rewriting/unfolding tactics against 136 definition names, identifiers against 21 private names: 4 findings
+
+## base elaboration of the modules with a sorry (each with lean, no olean output; static scan of the 292-module order list cross-checked)
+   TuringMachine/Build/RecordTable: rc=0 errors=0 sorry-warnings=4 other-warnings=0
+   FormulaKit/Gate: rc=0 errors=0 sorry-warnings=10 other-warnings=0
+   FormulaKit/Emit: rc=0 errors=0 sorry-warnings=10 other-warnings=0
+   ClassPSPACE/TQBF: rc=0 errors=0 sorry-warnings=21 other-warnings=0
+   TuringMachine/CodeSimulator: rc=0 errors=0 sorry-warnings=3 other-warnings=0
+   Diagonalization/NTimeHierarchy: rc=0 errors=0 sorry-warnings=6 other-warnings=0
+   RAMSimulation/WordSize: rc=0 errors=0 sorry-warnings=3 other-warnings=0
+   TCSlib/Programs/WordRAM/Extended: rc=0 errors=0 sorry-warnings=18 other-warnings=0
+   RAMSimulation/Simulation: rc=0 errors=0 sorry-warnings=2 other-warnings=0
+   RAMSimulation/Classes: rc=0 errors=0 sorry-warnings=9 other-warnings=0
+   TuringMachine/Build/StepClock: rc=0 errors=0 sorry-warnings=1 other-warnings=0
+   TuringMachine/Build/WindowRun: rc=0 errors=0 sorry-warnings=2 other-warnings=0
+   SpaceComplexity/WindowClock: rc=0 errors=0 sorry-warnings=1 other-warnings=0
+   SpaceComplexity/Savitch: rc=0 errors=0 sorry-warnings=2 other-warnings=0
+   SpaceComplexity/Hierarchy: rc=0 errors=0 sorry-warnings=4 other-warnings=0
+   TuringMachine/Build/NDHost: rc=0 errors=0 sorry-warnings=1 other-warnings=0
+   TuringMachine/Build/Zone: rc=0 errors=0 sorry-warnings=2 other-warnings=0
+   TuringMachine/Build/InputWindow: rc=0 errors=0 sorry-warnings=1 other-warnings=0
+   TuringMachine/Build/InputDevice: rc=0 errors=0 sorry-warnings=3 other-warnings=0
+   TuringMachine/SelfUniversal: rc=0 errors=0 sorry-warnings=2 other-warnings=0
+   TuringMachine/NDCodeSimulator: rc=0 errors=0 sorry-warnings=2 other-warnings=0
+   static scan == elaboration: 107 declarations in 21 modules (audits/logs/b6-fill-stepclock-v2-base-sorries.txt)
+
+## duplication screens (copy-text-screen-v2.py, path-keyed; one at a time under nice -n 10)
+   base: rc=0 secs=242; declarations screened: 1000; copy pairs (target reproduces >= half of source): 673; reproduced text: 192,769 chars
+   promotions: rc=0 secs=257; declarations screened: 1001; copy pairs (target reproduces >= half of source): 673; reproduced text: 192,769 chars
+   overlay: rc=0 secs=262; declarations screened: 1015; copy pairs (target reproduces >= half of source): 675; reproduced text: 193,179 chars
+   promotions vs base: 0 pairs added, 0 removed (identical pair set and reproduced text)
+   overlay vs promotions: 2 pairs added (counterLoopTMVia <-> sc_clockTM, 56% and 66%), 0 removed
+
+## style lint: python3 -I scripts/campaign_style_lint.py TCSlib/Complexity/TuringMachine
+   issue tree: 0 FAIL, 21 WARN over 74 files
+   with the three overlays in place: 0 FAIL, 21 WARN over 74 files; the only changed WARN line is CounterLoop's size (2149 -> 2205 lines)
+   INFO TCSlib/Complexity/TuringMachine/Build/CounterLoop.lean 2205 lines; 53 public / 20 private declarations
+   INFO TCSlib/Complexity/TuringMachine/Build/StepClock.lean 600 lines; 5 public / 18 private declarations
+   INFO TCSlib/Complexity/TuringMachine/SymbolLift.lean 470 lines; 32 public / 1 private declarations
+
+## maintainer re-check with the copy-text screen v3 (audits/evidence/retrofit/copy-text-screen-v3.py, SHA-256 f4feac91d3a1ec036f3bbcaafde83e6855a1bf1a62d31dac31a40a40d878f181; one at a time under nice -n 10)
+   roots: the ff4cab18 git-archive export; copies of the 22 population files with the overlays in place
+   base rc=0 242s: declarations screened: 1000; copy pairs (target reproduces >= half of source): 673; reproduced text: 192,769 chars
+   promotions rc=0 242s: declarations screened: 1001; copy pairs (target reproduces >= half of source): 673; reproduced text: 192,769 chars
+   overlay rc=0 245s: declarations screened: 1015; copy pairs (target reproduces >= half of source): 675; reproduced text: 193,179 chars
+   base: v3 output byte-identical to audits/logs/b6-fill-stepclock-v2-screen-base.txt after its header line
+   promotions: v3 output byte-identical to audits/logs/b6-fill-stepclock-v2-screen-promotions.txt after its header line
+   overlay: v3 output byte-identical to audits/logs/b6-fill-stepclock-v2-screen-overlay.txt after its header line

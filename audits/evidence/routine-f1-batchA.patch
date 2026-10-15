@@ -1,0 +1,515 @@
+From 6983c4e7657871cec5f47b0f23978f94250586dd Mon Sep 17 00:00:00 2001
+From: Codex <codex@openai.com>
+Date: Fri, 9 Oct 2026 13:39:18 +0800
+Subject: [PATCH] Fill the thirteen audited bank-embedding contracts
+
+---
+ .../Complexity/TuringMachine/Build/Embed.lean | 374 +++++++++++++++++-
+ 1 file changed, 359 insertions(+), 15 deletions(-)
+
+diff --git a/TCSlib/Complexity/TuringMachine/Build/Embed.lean b/TCSlib/Complexity/TuringMachine/Build/Embed.lean
+index 75dc9507..db10abdc 100644
+--- a/TCSlib/Complexity/TuringMachine/Build/Embed.lean
++++ b/TCSlib/Complexity/TuringMachine/Build/Embed.lean
+@@ -124,6 +124,29 @@ sends to host tape `j`, or `none` when `j` is unselected. Injectivity of
+ private def embedSlot (ι : Fin m ↪ Fin k) (j : Fin k) : Option (Fin m) :=
+   (List.finRange m).find? fun i => decide (ι i = j)
+ 
++/-- Searching at a selected tape returns its unique source index. -/
++private lemma embedSlot_selected (ι : Fin m ↪ Fin k) (i : Fin m) :
++    embedSlot ι (ι i) = some i := by
++  unfold embedSlot
++  cases hs : (List.finRange m).find? (fun j => decide (ι j = ι i)) with
++  | none =>
++    have hn := List.find?_eq_none.mp hs i (by simp)
++    simp at hn
++  | some j =>
++    have hj := List.find?_some hs
++    have hji : j = i := ι.injective (of_decide_eq_true hj)
++    subst j
++    rfl
++
++/-- Searching outside the selected bank returns no source index. -/
++private lemma embedSlot_unselected (ι : Fin m ↪ Fin k) (j : Fin k)
++    (hj : j ∉ Set.range ι) : embedSlot ι j = none := by
++  unfold embedSlot
++  rw [List.find?_eq_none]
++  intro i _
++  simp only [decide_eq_true_eq]
++  exact fun hij => hj ⟨i, hij⟩
++
+ /-- The shared private core of the two embedding transformers (frozen
+ decision 12.4): transport one source action along `ι`, keeping the input
+ move and the successor state, performing the source's tape-`i` action on
+@@ -228,6 +251,61 @@ def embedEmitTM (ι : Fin m ↪ Fin k) (M : MultiTapeTM m Bool S) :
+   tr := fun q inp w =>
+     embedActionCore ι none (M.tr q inp fun i => w (ι i))
+ 
++/-- Applying the silent core commutes with configuration transport.
++**Proof sketch.** Selected tapes perform the source action. Off-bank tapes
++are stationary, except that capture appends the emitted bit at the old
++word length. Input movement and successor control are copied verbatim. -/
++private lemma embedSilent_apply (ι : Fin m ↪ Fin k) (cap : Fin k)
++    (tapes : Fin k → ℤ → Option Bool) (heads : Fin k → ℤ)
++    (pre out₀ : List Bool) (c : Cfg m Bool S x) (a : Action m Bool S) :
++    (embedActionCore ι (some cap) a).apply
++        (embedSilentCfg ι cap tapes heads pre out₀ c) =
++      embedSilentCfg ι cap tapes heads pre out₀ (a.apply c) := by
++  refine Cfg.ext rfl rfl ?_ ?_ ?_
++  · funext j
++    cases hs : embedSlot ι j with
++    | some i => simp [embedActionCore, embedSilentCfg, Action.apply, hs]
++    | none =>
++      by_cases hj : j = cap
++      · subst j
++        cases ho : a.output <;>
++          simp [embedActionCore, embedSilentCfg, Action.apply, hs, ho,
++            ← List.append_assoc, FinTM.bufferTape_append]
++      · simp [embedActionCore, embedSilentCfg, Action.apply, hs, hj]
++  · funext j
++    cases hs : embedSlot ι j with
++    | some i => simp [embedActionCore, embedSilentCfg, Action.apply, hs]
++    | none =>
++      by_cases hj : j = cap
++      · subst j
++        cases ho : a.output <;>
++          simp [embedActionCore, embedSilentCfg, Action.apply, hs, ho,
++            Nat.cast_add, add_assoc]
++      · simp [embedActionCore, embedSilentCfg, Action.apply, hs, hj]
++  · simp [embedActionCore, embedSilentCfg, Action.apply]
++
++/-- The silent host reads the source action and executes all its effects
++in one step; halted configurations remain fixed on both sides. -/
++private lemma embedSilent_step (ι : Fin m ↪ Fin k) (cap : Fin k)
++    (M : MultiTapeTM m Bool S)
++    (tapes : Fin k → ℤ → Option Bool) (heads : Fin k → ℤ)
++    (pre out₀ : List Bool) (c : Cfg m Bool S x) :
++    (embedSilentTM ι cap M).step (embedSilentCfg ι cap tapes heads pre out₀ c) =
++      embedSilentCfg ι cap tapes heads pre out₀ (M.step c) := by
++  unfold MultiTapeTM.step
++  cases hs : c.state with
++  | none => simp [embedSilentCfg, hs]
++  | some q =>
++    rw [show (embedSilentCfg ι cap tapes heads pre out₀ c).state = some q from hs]
++    dsimp only
++    have hr : (fun i => (embedSilentCfg ι cap tapes heads pre out₀ c).workTapeSymbols
++        (ι i)) = c.workTapeSymbols := by
++      funext i
++      simp [Cfg.workTapeSymbols, embedSilentCfg, embedSlot_selected]
++    change (embedActionCore ι (some cap) (M.tr q c.inputSymbol _)).apply _ = _
++    rw [hr]
++    exact embedSilent_apply ι cap tapes heads pre out₀ c _
++
+ /-- **R1 lockstep, suppressing flavor** (spec, fill pending — design §12;
+ [Bon26], `rename_executes`). The transported run *is* the transport of the
+ source run, at every time and with the step count preserved exactly: `t`
+@@ -255,7 +333,9 @@ theorem embedSilentTM_runFrom (ι : Fin m ↪ Fin k) (cap : Fin k)
+     (embedSilentTM ι cap M).runFrom
+         (embedSilentCfg ι cap tapes heads pre out₀ c) t =
+       embedSilentCfg ι cap tapes heads pre out₀ (M.runFrom c t) := by
+-  sorry
++  exact MultiTapeTM.runFrom_comm_of_step
++    (embedSilentCfg ι cap tapes heads pre out₀)
++    (embedSilent_step ι cap M tapes heads pre out₀) c t
+ 
+ /-- **R1 frame, suppressing flavor** (spec, fill pending — design §12).
+ Along the whole transported run, every host tape outside the selected bank
+@@ -284,7 +364,10 @@ theorem embedSilentTM_frame (ι : Fin m ↪ Fin k) (cap : Fin k)
+       = (M.runFrom c t).inputPos ∧
+     ((embedSilentTM ι cap M).runFrom
+         (embedSilentCfg ι cap tapes heads pre out₀ c) t).output = out₀ := by
+-  sorry
++  rw [embedSilentTM_runFrom ι cap hcap]
++  refine ⟨?_, rfl, rfl⟩
++  intro j hj hjc
++  simp [embedSilentCfg, embedSlot_unselected ι j hj, hjc]
+ 
+ /-- **R1 space, suppressing flavor, selected tapes** (spec, fill pending —
+ design §12: "cells visited on host tape `ι i` equal cells visited on
+@@ -308,7 +391,15 @@ theorem embedSilentTM_visitedByTapeHead (ι : Fin m ↪ Fin k) (cap : Fin k)
+     (embedSilentTM ι cap M).spaceUsedByTape
+         (embedSilentCfg ι cap tapes heads pre out₀ c) t (ι i)
+       = M.spaceUsedByTape c t i := by
+-  sorry
++  have hv : (embedSilentTM ι cap M).visitedByTapeHead
++      (embedSilentCfg ι cap tapes heads pre out₀ c) t (ι i) =
++      M.visitedByTapeHead c t i := by
++    unfold MultiTapeTM.visitedByTapeHead
++    congr 1
++    funext u
++    rw [embedSilentTM_runFrom ι cap hcap]
++    simp [embedSilentCfg, embedSlot_selected]
++  exact ⟨hv, congrArg Finset.card hv⟩
+ 
+ /-- **R1 space, suppressing flavor, unselected tapes** (spec, fill
+ pending — design §12: "unselected tapes visit nothing new"). A host tape
+@@ -328,7 +419,14 @@ theorem embedSilentTM_visitedByTapeHead_frame (ι : Fin m ↪ Fin k)
+         (embedSilentCfg ι cap tapes heads pre out₀ c) t j = {heads j} ∧
+     (embedSilentTM ι cap M).spaceUsedByTape
+         (embedSilentCfg ι cap tapes heads pre out₀ c) t j = 1 := by
+-  sorry
++  have hv : (embedSilentTM ι cap M).visitedByTapeHead
++      (embedSilentCfg ι cap tapes heads pre out₀ c) t j = {heads j} := by
++    unfold MultiTapeTM.visitedByTapeHead
++    simp_rw [embedSilentTM_runFrom ι cap hcap]
++    simp [embedSilentCfg, embedSlot_unselected ι j hj, hjc]
++    exact Finset.image_const ⟨0, by simp⟩ _
++  refine ⟨hv, ?_⟩
++  simp [MultiTapeTM.spaceUsedByTape, hv]
+ 
+ /-- **R1 space, suppressing flavor, the capture tape** (spec, fill
+ pending — design §12; every unselected tape is accounted for, the capture
+@@ -342,7 +440,10 @@ recorded emission.
+ increments bounded by one emission per step; the visited set is therefore
+ the integer interval from the initial head to the final one, of
+ cardinality the output growth plus one
+-(`Turing.MultiTapeTM.output_prefix` gives the monotone growth). -/
++(`Turing.MultiTapeTM.output_prefix` gives the monotone growth).
++
++**Fill appendix.** For the stated upper bound, the formal proof only
++needs containment in this interval, followed by its cardinality. -/
+ theorem embedSilentTM_spaceUsedByTape_cap (ι : Fin m ↪ Fin k) (cap : Fin k)
+     (hcap : cap ∉ Set.range ι) (M : MultiTapeTM m Bool S)
+     (tapes : Fin k → ℤ → Option Bool) (heads : Fin k → ℤ)
+@@ -350,7 +451,68 @@ theorem embedSilentTM_spaceUsedByTape_cap (ι : Fin m ↪ Fin k) (cap : Fin k)
+     (embedSilentTM ι cap M).spaceUsedByTape
+         (embedSilentCfg ι cap tapes heads pre out₀ c) t cap
+       ≤ (M.runFrom c t).output.length - c.output.length + 1 := by
+-  sorry
++  have hgrowth : c.output.length ≤ (M.runFrom c t).output.length := by
++    simpa using (M.output_prefix c (Nat.zero_le t)).length_le
++  have hsub : (embedSilentTM ι cap M).visitedByTapeHead
++      (embedSilentCfg ι cap tapes heads pre out₀ c) t cap ⊆
++      Finset.Icc ((pre ++ c.output).length : ℤ)
++        ((pre ++ (M.runFrom c t).output).length : ℤ) := by
++    intro z hz
++    obtain ⟨u, hu, rfl⟩ := Finset.mem_image.mp hz
++    have hut : u ≤ t := Nat.le_of_lt_succ (Finset.mem_range.mp hu)
++    have hlo : c.output.length ≤ (M.runFrom c u).output.length := by
++      simpa using (M.output_prefix c (Nat.zero_le u)).length_le
++    have hhi := (M.output_prefix c hut).length_le
++    rw [embedSilentTM_runFrom ι cap hcap]
++    simp only [embedSilentCfg, embedSlot_unselected ι cap hcap, ↓reduceIte,
++      Finset.mem_Icc, List.length_append, Nat.cast_add]
++    constructor <;> omega
++  calc
++    _ ≤ (Finset.Icc ((pre ++ c.output).length : ℤ)
++        ((pre ++ (M.runFrom c t).output).length : ℤ)).card :=
++      Finset.card_le_card hsub
++    _ = (M.runFrom c t).output.length - c.output.length + 1 := by
++      rw [Int.card_Icc]
++      simp only [List.length_append, Nat.cast_add]
++      omega
++
++/-- Applying the forwarding core commutes with configuration transport:
++selected tapes update identically, the frame stays fixed, and appending
++the optional emission associates with the existing output prefix. -/
++private lemma embedEmit_apply (ι : Fin m ↪ Fin k)
++    (tapes : Fin k → ℤ → Option Bool) (heads : Fin k → ℤ)
++    (pre : List Bool) (c : Cfg m Bool S x) (a : Action m Bool S) :
++    (embedActionCore ι none a).apply (embedEmitCfg ι tapes heads pre c) =
++      embedEmitCfg ι tapes heads pre (a.apply c) := by
++  refine Cfg.ext rfl rfl ?_ ?_ ?_
++  · funext j
++    cases hs : embedSlot ι j <;>
++      simp [embedActionCore, embedEmitCfg, Action.apply, hs]
++  · funext j
++    cases hs : embedSlot ι j <;>
++      simp [embedActionCore, embedEmitCfg, Action.apply, hs]
++  · simp [embedActionCore, embedEmitCfg, Action.apply, List.append_assoc]
++
++/-- The forwarding host reads the same source action and executes it
++completely in one step, including an emission on a halting transition. -/
++private lemma embedEmit_step (ι : Fin m ↪ Fin k) (M : MultiTapeTM m Bool S)
++    (tapes : Fin k → ℤ → Option Bool) (heads : Fin k → ℤ)
++    (pre : List Bool) (c : Cfg m Bool S x) :
++    (embedEmitTM ι M).step (embedEmitCfg ι tapes heads pre c) =
++      embedEmitCfg ι tapes heads pre (M.step c) := by
++  unfold MultiTapeTM.step
++  cases hs : c.state with
++  | none => simp [embedEmitCfg, hs]
++  | some q =>
++    rw [show (embedEmitCfg ι tapes heads pre c).state = some q from hs]
++    dsimp only
++    have hr : (fun i => (embedEmitCfg ι tapes heads pre c).workTapeSymbols
++        (ι i)) = c.workTapeSymbols := by
++      funext i
++      simp [Cfg.workTapeSymbols, embedEmitCfg, embedSlot_selected]
++    change (embedActionCore ι none (M.tr q c.inputSymbol _)).apply _ = _
++    rw [hr]
++    exact embedEmit_apply ι tapes heads pre c _
+ 
+ /-- **R1 lockstep, forwarding flavor** (spec, fill pending — design §12;
+ [Bon26], `rename_executes`). The transported run is the transport of the
+@@ -367,7 +529,8 @@ theorem embedEmitTM_runFrom (ι : Fin m ↪ Fin k) (M : MultiTapeTM m Bool S)
+     (pre : List Bool) (c : Cfg m Bool S x) (t : ℕ) :
+     (embedEmitTM ι M).runFrom (embedEmitCfg ι tapes heads pre c) t =
+       embedEmitCfg ι tapes heads pre (M.runFrom c t) := by
+-  sorry
++  exact MultiTapeTM.runFrom_comm_of_step (embedEmitCfg ι tapes heads pre)
++    (embedEmit_step ι M tapes heads pre) c t
+ 
+ /-- **R1 frame, forwarding flavor** (spec, fill pending — design §12).
+ Along the whole transported run, every host tape outside the selected
+@@ -391,7 +554,10 @@ theorem embedEmitTM_frame (ι : Fin m ↪ Fin k) (M : MultiTapeTM m Bool S)
+     ((embedEmitTM ι M).runFrom
+         (embedEmitCfg ι tapes heads pre c) t).output
+       = pre ++ (M.runFrom c t).output := by
+-  sorry
++  rw [embedEmitTM_runFrom]
++  refine ⟨?_, rfl, rfl⟩
++  intro j hj
++  simp [embedEmitCfg, embedSlot_unselected ι j hj]
+ 
+ /-- **R1 space, forwarding flavor, selected tapes** (spec, fill pending —
+ design §12). The visited set of host tape `ι i` up to time `t` is exactly
+@@ -410,7 +576,15 @@ theorem embedEmitTM_visitedByTapeHead (ι : Fin m ↪ Fin k)
+     (embedEmitTM ι M).spaceUsedByTape
+         (embedEmitCfg ι tapes heads pre c) t (ι i)
+       = M.spaceUsedByTape c t i := by
+-  sorry
++  have hv : (embedEmitTM ι M).visitedByTapeHead
++      (embedEmitCfg ι tapes heads pre c) t (ι i) =
++      M.visitedByTapeHead c t i := by
++    unfold MultiTapeTM.visitedByTapeHead
++    congr 1
++    funext u
++    rw [embedEmitTM_runFrom]
++    simp [embedEmitCfg, embedSlot_selected]
++  exact ⟨hv, congrArg Finset.card hv⟩
+ 
+ /-- **R1 space, forwarding flavor, unselected tapes** (spec, fill
+ pending — design §12). A host tape outside the selected bank visits
+@@ -428,7 +602,14 @@ theorem embedEmitTM_visitedByTapeHead_frame (ι : Fin m ↪ Fin k)
+         (embedEmitCfg ι tapes heads pre c) t j = {heads j} ∧
+     (embedEmitTM ι M).spaceUsedByTape
+         (embedEmitCfg ι tapes heads pre c) t j = 1 := by
+-  sorry
++  have hv : (embedEmitTM ι M).visitedByTapeHead
++      (embedEmitCfg ι tapes heads pre c) t j = {heads j} := by
++    unfold MultiTapeTM.visitedByTapeHead
++    simp_rw [embedEmitTM_runFrom]
++    simp only [embedEmitCfg, embedSlot_unselected ι j hj]
++    exact Finset.image_const ⟨0, by simp⟩ _
++  refine ⟨hv, ?_⟩
++  simp [MultiTapeTM.spaceUsedByTape, hv]
+ 
+ /-- **R1′, the returning suppressing embedding** (round-1 repair R1). As
+ `Turing.embedSilentTM`, on states `S ⊕ Unit`: live source states run the
+@@ -466,6 +647,120 @@ def embedEmitRetTM (ι : Fin m ↪ Fin k) (M : MultiTapeTM m Bool S) :
+         some (a.state.elim (Sum.inr ()) Sum.inl)⟩
+     | Sum.inr _ => ⟨0, fun _ => (none, 0), none, some (Sum.inr ())⟩
+ 
++/-- Replace an action's optional successor by the live return encoding,
++without changing any input, work-tape, or output effect. -/
++private def embedReturnAction (a : Action k Bool S) : Action k Bool (S ⊕ Unit) :=
++  ⟨a.inputTape, a.workTapes, a.output, some (a.state.elim (Sum.inr ()) Sum.inl)⟩
++
++/-- Encode a closed host configuration with live left states and a live
++right return anchor, preserving all four non-control fields. -/
++private def embedReturnCfg (c : Cfg k Bool S x) : Cfg k Bool (S ⊕ Unit) x :=
++  { c with state := some (c.state.elim (Sum.inr ()) Sum.inl) }
++
++/-- At a live configuration, the return encoding is ordinary left state
++mapping; at a halt it instead uses the live right anchor. -/
++private lemma embedReturnCfg_live (c : Cfg k Bool S x) (hc : c.state ≠ none) :
++    embedReturnCfg c = c.mapState Sum.inl := by
++  cases hs : c.state with
++  | none => exact (hc hs).elim
++  | some q => simp [embedReturnCfg, Cfg.mapState, hs]
++
++/-- Direct comparison of a closed host step with a returning host step.
++**Proof sketch.** At a live left state, both hosts execute the same action
++and only the successor encoding differs. At a closed halt, the returning
++anchor's idle action preserves every non-control field, just as absorption
++does on the closed side. No property of a source embedding is needed. -/
++private lemma embedReturn_step (N : MultiTapeTM k Bool S)
++    (R : MultiTapeTM k Bool (S ⊕ Unit))
++    (hleft : ∀ q inp work, R.tr (Sum.inl q) inp work =
++      embedReturnAction (N.tr q inp work))
++    (hidle : ∀ inp work, R.tr (Sum.inr ()) inp work =
++      ⟨0, fun _ => (none, 0), none, some (Sum.inr ())⟩)
++    (c : Cfg k Bool S x) :
++    R.step (embedReturnCfg c) = embedReturnCfg (N.step c) := by
++  unfold MultiTapeTM.step
++  cases hs : c.state with
++  | none => simp [embedReturnCfg, hs, hidle, Action.apply]
++  | some q =>
++    rw [show (embedReturnCfg c).state = some (Sum.inl q) by
++      simp [embedReturnCfg, hs]]
++    dsimp only
++    have hin : (embedReturnCfg c).inputSymbol = c.inputSymbol := rfl
++    have hw : (embedReturnCfg c).workTapeSymbols = c.workTapeSymbols := rfl
++    rw [hin, hw, hleft]
++    rfl
++
++/-- The silent returning step executes the entire transported source
++action, then encodes its successor as a live left state or return anchor. -/
++private lemma embedSilentRet_step (ι : Fin m ↪ Fin k) (cap : Fin k)
++    (M : MultiTapeTM m Bool S)
++    (tapes : Fin k → ℤ → Option Bool) (heads : Fin k → ℤ)
++    (pre out₀ : List Bool) (c : Cfg m Bool S x) (hc : c.state ≠ none) :
++    (embedSilentRetTM ι cap M).step
++        ((embedSilentCfg ι cap tapes heads pre out₀ c).mapState Sum.inl) =
++      embedReturnCfg (embedSilentCfg ι cap tapes heads pre out₀ (M.step c)) := by
++  have h := embedReturn_step (embedSilentTM ι cap M) (embedSilentRetTM ι cap M)
++    (fun _ _ _ => rfl) (fun _ _ => rfl)
++    (embedSilentCfg ι cap tapes heads pre out₀ c)
++  rw [embedReturnCfg_live (embedSilentCfg ι cap tapes heads pre out₀ c) hc,
++    embedSilent_step] at h
++  exact h
++
++/-- A live-step transport reaches the return anchor exactly at a positive
++first halt, with all transported data intact.
++**Proof sketch.** The initially live state and terminal halt imply positive
++time. Induct over the strict live prefix, where the successor encoding is
++ordinary left mapping. Execute the step from the last live configuration
++separately; its halted successor encodes the return anchor. Earlier states
++are left constructors, so none is the right anchor. -/
++private lemma embedThroughHalt (M : MultiTapeTM m Bool S)
++    (R : MultiTapeTM k Bool (S ⊕ Unit))
++    (E : Cfg m Bool S x → Cfg k Bool S x)
++    (hstate : ∀ d, (E d).state = d.state)
++    (hstep : ∀ d, d.state ≠ none →
++      R.step ((E d).mapState Sum.inl) = embedReturnCfg (E (M.step d)))
++    (c : Cfg m Bool S x) (T : ℕ) (hc : c.state ≠ none)
++    (hlive : ∀ t < T, (M.runFrom c t).state ≠ none)
++    (hhalt : (M.runFrom c T).state = none) :
++    (∀ t < T, R.runFrom ((E c).mapState Sum.inl) t =
++      (E (M.runFrom c t)).mapState Sum.inl) ∧
++    R.runFrom ((E c).mapState Sum.inl) T =
++      { E (M.runFrom c T) with state := some (Sum.inr ()) } ∧
++    ∀ t < T, (R.runFrom ((E c).mapState Sum.inl) t).state ≠
++      some (Sum.inr ()) := by
++  have hT : 0 < T := by
++    by_contra hn
++    have hz : T = 0 := by omega
++    subst T
++    exact hc (by simpa using hhalt)
++  have hrun : ∀ t < T, R.runFrom ((E c).mapState Sum.inl) t =
++      (E (M.runFrom c t)).mapState Sum.inl := by
++    intro t
++    induction t with
++    | zero => intro _; rfl
++    | succ t ih =>
++      intro ht
++      rw [MultiTapeTM.runFrom_succ_eq_step', ih (by omega),
++        hstep _ (hlive t (by omega)), ← MultiTapeTM.runFrom_succ_eq_step']
++      apply embedReturnCfg_live
++      rw [hstate]
++      exact hlive _ ht
++  refine ⟨hrun, ?_, ?_⟩
++  · have hlast : T - 1 + 1 = T := by omega
++    calc
++      R.runFrom ((E c).mapState Sum.inl) T =
++          R.step (R.runFrom ((E c).mapState Sum.inl) (T - 1)) :=
++        (congrArg (R.runFrom ((E c).mapState Sum.inl)) hlast).symm.trans
++          MultiTapeTM.runFrom_succ_eq_step'
++      _ = embedReturnCfg (E (M.runFrom c T)) := by
++        rw [hrun _ (by omega), hstep _ (hlive _ (by omega)),
++          ← MultiTapeTM.runFrom_succ_eq_step', hlast]
++      _ = _ := by simp [embedReturnCfg, hstate, hhalt]
++  · intro t ht
++    rw [hrun t ht]
++    simp only [Cfg.mapState, hstate]
++    cases (M.runFrom c t).state <;> simp
++
+ /-- **R1′ through-halt contract, suppressing flavor** (spec, fill pending —
+ round-1 repair R1): if the source first halts at time `T`, the returning
+ embedding runs in `Sum.inl`-lockstep through every live time and, at `T`,
+@@ -511,7 +806,21 @@ theorem embedSilentRetTM_run (ι : Fin m ↪ Fin k) (cap : Fin k)
+       ((embedSilentRetTM ι cap M).runFrom
+           ((embedSilentCfg ι cap tapes heads pre out₀ c).mapState Sum.inl)
+           t).state ≠ some (Sum.inr ()) := by
+-  sorry
++  exact embedThroughHalt M (embedSilentRetTM ι cap M)
++    (embedSilentCfg ι cap tapes heads pre out₀) (fun _ => rfl)
++    (embedSilentRet_step ι cap M tapes heads pre out₀) c T hc hlive hhalt
++
++/-- The forwarding returning step preserves the complete source action,
++including its final emission, and changes only the successor encoding. -/
++private lemma embedEmitRet_step (ι : Fin m ↪ Fin k) (M : MultiTapeTM m Bool S)
++    (tapes : Fin k → ℤ → Option Bool) (heads : Fin k → ℤ)
++    (pre : List Bool) (c : Cfg m Bool S x) (hc : c.state ≠ none) :
++    (embedEmitRetTM ι M).step ((embedEmitCfg ι tapes heads pre c).mapState Sum.inl) =
++      embedReturnCfg (embedEmitCfg ι tapes heads pre (M.step c)) := by
++  have h := embedReturn_step (embedEmitTM ι M) (embedEmitRetTM ι M)
++    (fun _ _ _ => rfl) (fun _ _ => rfl) (embedEmitCfg ι tapes heads pre c)
++  rw [embedReturnCfg_live (embedEmitCfg ι tapes heads pre c) hc, embedEmit_step] at h
++  exact h
+ 
+ /-- **R1′ through-halt contract, forwarding flavor** (spec, fill pending —
+ round-1 repair R1): as `Turing.embedSilentRetTM_run` with the final
+@@ -544,7 +853,35 @@ theorem embedEmitRetTM_run (ι : Fin m ↪ Fin k) (M : MultiTapeTM m Bool S)
+       ((embedEmitRetTM ι M).runFrom
+           ((embedEmitCfg ι tapes heads pre c).mapState Sum.inl) t).state ≠
+         some (Sum.inr ()) := by
+-  sorry
++  exact embedThroughHalt M (embedEmitRetTM ι M)
++    (embedEmitCfg ι tapes heads pre) (fun _ => rfl)
++    (embedEmitRet_step ι M tapes heads pre) c T hc hlive hhalt
++
++/-- Direct host comparison preserves every visited-head set, from any
++initial configuration and for every finite horizon.
++**Proof sketch.** Initially halted configurations stay halted on both
++sides. From a live start, iterate the direct step comparison under the
++return encoding, whose head positions are unchanged. Equality of the
++head trajectories gives equality of their finite images. This uses no
++termination hypothesis, source simulation, or capture-tape separation. -/
++private lemma embedReturn_visited (N : MultiTapeTM k Bool S)
++    (R : MultiTapeTM k Bool (S ⊕ Unit))
++    (hleft : ∀ q inp work, R.tr (Sum.inl q) inp work =
++      embedReturnAction (N.tr q inp work))
++    (hidle : ∀ inp work, R.tr (Sum.inr ()) inp work =
++      ⟨0, fun _ => (none, 0), none, some (Sum.inr ())⟩)
++    (c : Cfg k Bool S x) (t : ℕ) (j : Fin k) :
++    R.visitedByTapeHead (c.mapState Sum.inl) t j = N.visitedByTapeHead c t j := by
++  unfold MultiTapeTM.visitedByTapeHead
++  congr 1
++  funext u
++  by_cases hc : c.state = none
++  · rw [R.runFrom_of_halt _ (by simp [Cfg.mapState, hc]), N.runFrom_of_halt _ hc]
++    rfl
++  · have hrun := MultiTapeTM.runFrom_comm_of_step embedReturnCfg
++      (embedReturn_step N R hleft hidle) c u
++    rw [embedReturnCfg_live c hc] at hrun
++    exact congrArg (fun d => d.workTapePos j) hrun
+ 
+ /-- **R1′ space, suppressing flavor** (spec, fill pending — round-1 repair
+ R1): at every time and on every tape, the returning embedding's visited set
+@@ -555,7 +892,11 @@ at the live anchor while the other sits halted, both stationary.
+ **Proof sketch.** For `t` up to the first source halt, both machines apply
+ identical tape actions (`embedSilentRetTM_run`'s lockstep and the halting
+ step's shared core); beyond it, the anchor's idle action and the halted
+-absorption are both stationary, freezing both visited sets. -/
++absorption are both stationary, freezing both visited sets.
++
++**Fill appendix.** The direct host comparison `embedReturn_visited`
++handles initially halted and live starts separately. It uses neither
++through-halt contract nor a capture-separation hypothesis. -/
+ theorem embedSilentRetTM_visitedByTapeHead (ι : Fin m ↪ Fin k) (cap : Fin k)
+     (M : MultiTapeTM m Bool S)
+     (tapes : Fin k → ℤ → Option Bool) (heads : Fin k → ℤ)
+@@ -564,7 +905,9 @@ theorem embedSilentRetTM_visitedByTapeHead (ι : Fin m ↪ Fin k) (cap : Fin k)
+         ((embedSilentCfg ι cap tapes heads pre out₀ c).mapState Sum.inl) t j =
+       (embedSilentTM ι cap M).visitedByTapeHead
+         (embedSilentCfg ι cap tapes heads pre out₀ c) t j := by
+-  sorry
++  exact embedReturn_visited (embedSilentTM ι cap M) (embedSilentRetTM ι cap M)
++    (fun _ _ _ => rfl) (fun _ _ => rfl)
++    (embedSilentCfg ι cap tapes heads pre out₀ c) t j
+ 
+ /-- **R1′ space, forwarding flavor** (spec, fill pending — round-1 repair
+ R1): the forwarding analogue of
+@@ -582,6 +925,7 @@ theorem embedEmitRetTM_visitedByTapeHead (ι : Fin m ↪ Fin k)
+         ((embedEmitCfg ι tapes heads pre c).mapState Sum.inl) t j =
+       (embedEmitTM ι M).visitedByTapeHead
+         (embedEmitCfg ι tapes heads pre c) t j := by
+-  sorry
++  exact embedReturn_visited (embedEmitTM ι M) (embedEmitRetTM ι M)
++    (fun _ _ _ => rfl) (fun _ _ => rfl) (embedEmitCfg ι tapes heads pre c) t j
+ 
+ end Turing
+-- 
+2.51.1
+

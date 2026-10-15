@@ -22,6 +22,23 @@ review tactic scripts for correctness. The failure modes you are hunting are:
    `k = 0` tapes, constant absorption).
 4. **Missing hypotheses** — especially finiteness, positivity, and well-formedness side
    conditions the informal source leaves implicit.
+5. **Debt** — wholesale duplication of existing proved material (private copies of
+   another file's declarations, re-derivations of registry routines), even when
+   disclosed and mechanically forced by file ownership. Report it at **major** with
+   the proposed fix "human acknowledgment required": it does not block the gate on
+   soundness, but the gate must not close without the human maintainer explicitly
+   accepting the debt and naming its scheduled resolution. Screen for it
+   cumulatively — verify the pack's duplication ledger (per-file copied-material
+   totals) rather than assessing each copy in isolation.
+
+   **Accounting inside an acknowledged family is a minor.** Once the human
+   maintainer has acknowledged a debt family and named its resolution, a later
+   correction to that family's *accounting* is reported at **minor**, not major.
+   Examples are a missed member, a miscounted span, or an imprecise description of
+   the screen. Such a correction does not change what was approved. It is a
+   **major** again only if it changes the approval itself: the correction pushes a
+   further file past the one-fifth threshold, reveals copies outside the
+   acknowledged family's named scope, or shows the named resolution cannot work.
 
 For **every definition** in scope: restate it in your own mathematical English *without
 looking at the docstring first*, then compare your restatement against the cited source
@@ -59,5 +76,8 @@ must be accompanied by the per-definition restatements that justify it.
 | 1 | blocker / major / minor / note | | | | |
 
 Severity guide: **blocker** = a downstream phase would build on a wrong statement;
-**major** = statement is fixable but materially misleading as is; **minor** = edge case
-or naming/attribution defect; **note** = observation, no change required.
+**major** = statement is fixable but materially misleading as is, **or** accumulated
+debt (failure mode 5) that the gate may not close over without explicit human
+acknowledgment (accounting corrections inside an already-acknowledged family are
+minors; see failure mode 5); **minor** = edge case or naming/attribution defect; **note** =
+observation, no change required.

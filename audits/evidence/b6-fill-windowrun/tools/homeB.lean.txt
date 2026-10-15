@@ -1,0 +1,62 @@
+/-! ### Windowed-runner fill (B6-F2): the clocked runner (pre-ship home block B) -/
+
+/-- (Suggested.) The runner's two phases: the step clock over the loop, and the exhausted
+exit. -/
+private def wr_Ctrl (Q : Type) : Bool → Type
+  | true => Q
+  | false => Unit
+
+/-- (Suggested.) The runner's phase controls are finite. -/
+private instance wr_Ctrl_fintype (Q : Type) [Fintype Q] : (b : Bool) → Fintype (wr_Ctrl Q b)
+  | true => inferInstanceAs (Fintype Q)
+  | false => inferInstanceAs (Fintype Unit)
+
+/-- (Suggested.) The runner's phase controls have decidable equality. -/
+private instance wr_Ctrl_decidableEq (Q : Type) [DecidableEq Q] :
+    (b : Bool) → DecidableEq (wr_Ctrl Q b)
+  | true => inferInstanceAs (DecidableEq Q)
+  | false => inferInstanceAs (DecidableEq Unit)
+
+/-- (Suggested.) **H3, the windowed runner**: the step clock `H` over the loop, whose every
+`timeout r` dispatches in one stationary step to the exhausted exit (hence the `+ 3`). -/
+private def wr_runnerTM {k : ℕ} {Γ Q S : Type} [DecidableEq Q] [Fintype S]
+    (H : MultiTapeTM k Γ Q) (timeout : Option S → Q) : MultiTapeTM k Γ (Σ b, wr_Ctrl Q b) :=
+  phaseHostTM (fun b => match b with
+      | true => H
+      | false => ⟨(), fun _ _ _ => ⟨0, fun _ => (none, 0), none, some ()⟩⟩)
+    ⟨true, H.q₀⟩
+    (fun b q => match b, q with
+      | true, q => if ∃ r, q = timeout r then some ⟨false, ()⟩ else none
+      | false, _ => none)
+
+/-- (Suggested.) The runner's exits: `halted` and `left` are the clock's `finish` at the loop's
+two stops; `exhausted` is the dispatch target. -/
+private def wr_exit {P Q : Type} (finish : Option P → Q) (stop : WindowExit → P) :
+    WindowExit → Σ b, wr_Ctrl Q b
+  | .halted => ⟨true, finish (some (stop .halted))⟩
+  | .left => ⟨true, finish (some (stop .left))⟩
+  | .exhausted => ⟨false, ()⟩
+
+/-- (Prescribed, proved.) **A runner configuration in the clock's layout**: a host
+configuration at the clock state `q` is the clock layout (`Turing.clockCfg`) of its loop part
+(the first `K + 1` tapes and heads, the input head and the output, at the loop state `p`) and
+its last tape, tagged into the clock phase. This is how the runner's start meets
+`Turing.exists_stepClockTMVia`'s precondition.
+
+**Proof sketch.** Field by field; split the tape index by `Fin.lastCases`. -/
+private theorem wr_clockCfg_eta {K : ℕ} {Γ P Q : Type} {x : List Γ}
+    (d : Cfg (K + 1 + 1) Γ (Σ b, wr_Ctrl Q b) x) (q : Q) (p : P)
+    (hd : d.state = some ⟨true, q⟩) :
+    d = (clockCfg (some q)
+          (⟨some p, d.inputPos, fun j => d.workTapes j.castSucc,
+            fun j => d.workTapePos j.castSucc, d.output⟩ : Cfg (K + 1) Γ P x)
+          (d.workTapes (Fin.last (K + 1))) (d.workTapePos (Fin.last (K + 1)))).mapState
+        (fun q => (⟨true, q⟩ : Σ b, wr_Ctrl Q b)) := by
+  apply Cfg.ext
+  · simp [Cfg.mapState, clockCfg, hd]
+  · rfl
+  · funext j
+    induction j using Fin.lastCases <;> simp [Cfg.mapState, clockCfg]
+  · funext j
+    induction j using Fin.lastCases <;> simp [Cfg.mapState, clockCfg]
+  · rfl

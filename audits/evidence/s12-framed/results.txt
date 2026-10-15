@@ -1,0 +1,9 @@
+# Execution check of the five framed contracts (design §12.6): the statements are sorried; the machines are evaluated.
+# Run: LEAN_PATH=<scratch oleans + packages> lean FramedSanity.lean  (file stored with a .txt suffix so it is never built)
+# Output, in order: transfer, copy, clear, increment, negative control
+true
+true
+true
+true
+false
+# transfer 14/14, copy 21/21, clear 14/14, increment 14/14 (success and overflow branches); the negative control (copy at time 2|w|+1) is correctly rejected.

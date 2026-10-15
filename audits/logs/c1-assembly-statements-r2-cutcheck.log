@@ -1,0 +1,60 @@
+# C1-A assembly gate, round 2: cut checks and landing forms
+
+Tool: `bash <S>/tools/leanelab.sh <S>/wt-c1asm <S>/oleans-lb6 <file>` (direct `lean`, throttled, no
+`-o`, no olean written). Campaign tip: 71849323fd50059d92d599194aa44476418e6f37 (`git rev-parse origin/complexity/arora-barak-ch3-4`). Sources: <OUT>/base, the
+tip's tree (`git archive`, read-only). Snapshot: `oleans-lb6` (`base.log`). `wt-c1asm` (at
+2c3c975a, read-only) supplies only the Mathlib packages. Toolchain: `leanprover/lean4:v4.25.0`.
+<OUT> is this round's directory; <S> the scratchpad. Run: 2026-10-14 18:38 UTC.
+
+`python3 -I <OUT>/scripts/mklanded.py <OUT>/base <OUT>/C1Assembly.lean <OUT>`:
+```
+tip Embed 1126 -> landed 1149; tip NDHost 195 -> landed 1083 (Part N 867); tip Inclusions 2880 -> landed 2871; shim 46
+Part E statement copied verbatim into the landing text: True
+```
+
+The snapshot's `Build/Embed` predates the export. `cut/Embed.check.lean` is the landed Embed with
+the landing proof, elaborated in its own closure. Every file downstream of it carries the *shim*:
+Part E as in the unit, the export's docstring and statement verbatim with the evidence proof.
+
+* `<OUT>/cut/Embed.check.lean` (1149 lines; imports: Mathlib.Data.List.FinRange TCSlib.Complexity.TuringMachine.Simulation TCSlib.Complexity.TuringMachine.StateRenaming TCSlib.Complexity.TuringMachine.Build.Convention ):
+  exit 0 | errors 0 | warnings 2 | of which `declaration uses 'sorry'` 0 | other warnings 2
+```
+<OUT>/cut/Embed.check.lean:366:5: warning: unused variable `hcap`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+<OUT>/cut/Embed.check.lean:826:5: warning: unused variable `hcap`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+(end of output)
+```
+
+* `<OUT>/cut/NDHost.check.lean` (1111 lines; imports: TCSlib.Complexity.TuringMachine.Build.Seam TCSlib.Complexity.TuringMachine.Nondeterministic TCSlib.Complexity.TuringMachine.Build.Catalog ):
+  exit 0 | errors 0 | warnings 1 | of which `declaration uses 'sorry'` 1 | other warnings 0
+```
+<OUT>/cut/NDHost.check.lean:178:8: warning: declaration uses 'sorry'
+(end of output)
+```
+
+* `<OUT>/cut/NDHost.landed+shim.check.lean` (1130 lines; imports: TCSlib.Complexity.TuringMachine.Build.Seam TCSlib.Complexity.TuringMachine.Nondeterministic TCSlib.Complexity.TuringMachine.Build.Catalog ):
+  exit 0 | errors 0 | warnings 1 | of which `declaration uses 'sorry'` 1 | other warnings 0
+```
+<OUT>/cut/NDHost.landed+shim.check.lean:197:8: warning: declaration uses 'sorry'
+(end of output)
+```
+
+* `<OUT>/cut/Inclusions.check.lean` (2918 lines; imports: TCSlib.Complexity.SpaceComplexity.SpaceClasses TCSlib.Complexity.ClassNP.SAT TCSlib.Complexity.TuringMachine.Build.CounterLoop TCSlib.Complexity.TuringMachine.Build.VirtualInput TCSlib.Complexity.TuringMachine.Build.Seam TCSlib.Complexity.SpaceComplexity.Machines.Clean TCSlib.Complexity.CircuitComplexity.MeyerTableau ):
+  exit 0 | errors 0 | warnings 0 | of which `declaration uses 'sorry'` 0 | other warnings 0
+```
+
+(end of output)
+```
+
+## The export: landed statement and shim statement elaborate to the same type
+```
+@Turing.embedSilentCfg_cap : ∀ {m k : ℕ} {S : Type u_1} {Symbol : Type u_2} {x : List Symbol} (ι : Fin m ↪ Fin k),
+  ∀ cap ∉ Set.range ⇑ι,
+    ∀ (tapes : Fin k → ℤ → Option Symbol) (heads : Fin k → ℤ) (pre out₀ : List Symbol) (c : Turing.Cfg m Symbol S x),
+      (Turing.embedSilentCfg ι cap tapes heads pre out₀ c).workTapes cap = Turing.FinTM.bufferTape (pre ++ c.output) ∧
+        (Turing.embedSilentCfg ι cap tapes heads pre out₀ c).workTapePos cap = ↑(pre ++ c.output).length
+```
+(identical in the unit: yes). The landed export's axioms: 'Turing.embedSilentCfg_cap' depends on axioms: [propext, Quot.sound]

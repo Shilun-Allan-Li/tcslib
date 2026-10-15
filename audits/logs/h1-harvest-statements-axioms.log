@@ -1,0 +1,33 @@
+# H1 harvest statement gate: axiom prints
+
+Tool: `bash <S>/tools/leanelab.sh <S>/wt-h1harv <S>/oleans-lm0b <file>`, which runs, verbatim:
+```
+#!/usr/bin/env bash
+# Elaborate one module file of worktree $1 against olean tree $2 (no olean output, nothing removed).
+WT="$1"; OL="$2"; F="$3"; LP="$OL"
+for d in "$WT"/.lake/packages/*/.lake/build/lib/lean; do [ -d "$d" ] && LP="$LP:$d"; done
+export LEAN_PATH="$LP"; cd "$WT"; lean "$F"
+```
+(direct `lean`, no `-o`, no olean written; `wt-h1harv` supplies only the packages and the
+working directory, `lean` reads no TCSlib source but the file it is given). Base: the campaign
+tip e831b5b0d887dac3bbf1aa2c19af28983b15b982, exported read-only to <OUT>/base/tip by `git archive`. Snapshot: `oleans-lm0b`
+(post-MIG-0b; §0). Toolchain: `leanprover/lean4:v4.25.0`. Pending PRs read as text only:
+#92 `lean/b6-hosts` 6158e48fe0fb0a82b91e01f4019e0a3ed63f88ed, #93 `lean/arm-minor-fixes` 3fe6a2deacbf2bd88c92a80def0bfb2fbae0237e. <OUT> is the gate's output
+directory, <S> the scratchpad, <REPO> the repository. Run: 2026-10-14 16:55 UTC.
+
+Section §X of the overlay (`<OUT>/overlay/H1HarvestOverlay.lean`) prints the axioms of the ten
+harvested declarations, public and private (the private ones under their in-file names).
+```
+'Turing.StepBlock.loopTM' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.StepBlock.hostedLoopTM' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.StepBlock.loopTM_run' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.StepBlock.hostedLoopTM_run' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.StepBlock.hostedLoop_read' depends on axioms: [propext, Classical.choice, Quot.sound]
+'_private._stdin.0.Turing.StepBlock.loopRoundTime' depends on axioms: [propext, Classical.choice, Quot.sound]
+'_private._stdin.0.Turing.StepBlock.loopOrbit_succ' depends on axioms: [propext, Classical.choice, Quot.sound]
+'_private._stdin.0.Turing.StepBlock.loopRoundTime_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
+'_private._stdin.0.Turing.StepBlock.loopOrbit_rep' depends on axioms: [propext, Classical.choice, Quot.sound]
+'_private._stdin.0.Turing.StepBlock.loopOrbit_round' depends on axioms: [propext, Classical.choice, Quot.sound]
+```
+  [PASS] ten prints, each exactly the standard three
+  [PASS] no print mentions sorryAx

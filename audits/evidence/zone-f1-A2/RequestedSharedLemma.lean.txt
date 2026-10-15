@@ -1,0 +1,43 @@
+import TCSlib.Complexity.TuringMachine.Build.Catalog
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+namespace Turing
+
+/-- Proposed shared theorem type, deliberately a Prop-valued definition.
+This file checks the interface, not its truth; no proof is claimed.
+The requested home is Build/Catalog.lean, name transferTM_run_ofCfg. -/
+def requested_transferTM_run_ofCfg : Prop :=
+  ∀ {k : ℕ} {x : List Bool} (src dst : Fin k), src ≠ dst →
+  ∀ (w : List Bool) (d : Cfg k Bool SweepPhase x),
+    d.state = some SweepPhase.sweep →
+    (∀ p : ℤ, -1 ≤ p → p ≤ (w.length : ℤ) →
+      d.workTapes src (d.workTapePos src + p) = FinTM.bufferTape w p) →
+    let T := 2 * w.length + 2
+    let finish : Cfg k Bool SweepPhase x :=
+      { d with
+        state := some SweepPhase.done
+        workTapes := fun j p =>
+          if j = src then
+            if d.workTapePos j ≤ p ∧ p < d.workTapePos j + (w.length : ℤ)
+              then none else d.workTapes j p
+          else if j = dst then
+            if d.workTapePos j ≤ p ∧ p < d.workTapePos j + (w.length : ℤ)
+              then FinTM.bufferTape w (p - d.workTapePos j)
+              else d.workTapes j p
+          else d.workTapes j p }
+    (transferTM k src dst).runFrom d T = finish ∧
+    (∀ t < T, ((transferTM k src dst).runFrom d t).state ≠
+      some SweepPhase.done) ∧
+    (∀ (j : Fin k) (t : ℕ), t ≤ T →
+      if j = src ∨ j = dst then
+        ((transferTM k src dst).runFrom d t).workTapePos j ∈
+          Finset.Icc (d.workTapePos j - 1) (d.workTapePos j + (w.length : ℤ))
+      else ((transferTM k src dst).runFrom d t).workTapePos j = d.workTapePos j)
+
+#check requested_transferTM_run_ofCfg
+#print axioms requested_transferTM_run_ofCfg
+
+end Turing

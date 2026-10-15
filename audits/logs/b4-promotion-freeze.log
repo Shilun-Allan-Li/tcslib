@@ -1,0 +1,58 @@
+# B4 pre-issue promotion (user: "Promote first"; maintainer commit 40b38caf, drafted by a maintainer sub-agent and verified by the maintainer): statement freeze of the five files against 49fccb6b
+
+## ClassNP/SAT.lean
+public before/after: 5 5 private before/after: 277 265
+public added: []
+public removed: []
+private removed: ['satSyntax', 'satSyntaxStep', 'satSyntaxSuffix', 'satSyntaxSuffix_cons', 'satSyntaxSuffix_nil', 'satSyntaxSuffix_run', 'satSyntax_spec', 'sat_parseClause_repr', 'sat_parseClauses_repr', 'sat_parseLit_repr', 'sat_parse_repr', 'sat_takeTrues_repr']
+private added: []
+private changed: ['satGood', 'satReq_round', 'satSafe_spec', 'satStreamCanonical', 'satStreamCanonical_spec', 'satStreamRound_bound', 'satStreamRun_correct', 'satStreamStart', 'satStreamStart_poly', 'satSyntax_poly', 'satVerdict_false_poly', 'satVerdict_true_poly', 'satWidthStep', 'satWidth_formula', 'satWidth_index', 'sat_pipeline_poly']
+imports added: 
+lines: 4635 → 4407
+
+## ClassNP/Tautology.lean
+public before/after: 5 5 private before/after: 93 88
+public added: []
+public removed: []
+private removed: ['taut_parseClause_shape', 'taut_parseClauses_shape', 'taut_parseLit_shape', 'taut_parse_shape', 'taut_takeTrues_shape']
+private added: []
+private changed: ['tautDual_output', 'taut_machine_pair', 'taut_syntax_clause', 'taut_syntax_formula']
+imports added: 
+lines: 1728 → 1629
+
+## Formulas/CNFEncoding.lean
+public before/after: 13 25 private before/after: 9 9
+public added: ['SyntaxSuffix', 'parseClause_repr', 'parseClauses_repr', 'parseLit_repr', 'parse_repr', 'syntaxOK', 'syntaxOK_spec', 'syntaxStep', 'syntaxSuffix_cons', 'syntaxSuffix_nil', 'syntaxSuffix_run', 'takeTrues_repr']
+public removed: []
+private removed: []
+private added: []
+private changed: []
+imports added: import Mathlib.Tactic.FinCases 
+lines: 475 → 744
+
+## TuringMachine/Build/Catalog.lean
+public before/after: 89 90 private before/after: 391 391
+public added: ['MultiTapeTM.spaceUsedByTape_le_card_Icc']
+public removed: []
+private removed: []
+private added: []
+private changed: []
+imports added: 
+lines: 12732 → 12756
+
+## TuringMachine/Build/Zone.lean
+public before/after: 40 39 private before/after: 16 16
+public added: []
+public removed: ['MultiTapeTM.spaceUsedByTape_le_card_Icc']
+private removed: []
+private added: []
+private changed: []
+imports added: 
+lines: 1191 → 1173
+
+## Notes (maintainer)
+- SAT's 16 and Tautology's 4 'private changed' are pure renames: every added line of the two files, after mapping the new public names back to the old private ones, equals a removed line, apart from one rewrapped simp line.
+- CNFEncoding gains 12 publics (namespace Std.Sat.CNF): parse_repr, takeTrues_repr, parseLit_repr, parseClause_repr, parseClauses_repr, syntaxStep, SyntaxSuffix, syntaxSuffix_cons, syntaxSuffix_nil, syntaxSuffix_run, syntaxOK, syntaxOK_spec; one Mathlib import (Mathlib.Tactic.FinCases), no TCSlib import.
+- Tautology's five private taut_*_shape lemmas state exactly the promoted facts and are deleted.
+- MultiTapeTM.spaceUsedByTape_le_card_Icc moves Zone → Catalog with the same name, statement and docstring (+ a flagged note); Zone, its only user, imports Catalog directly. Catalog's private catalog_space_bound is a special case (a retirement candidate).
+- Read-only checks (sub-agent, re-run figures in its report): CNFEncoding and Catalog elaborate with 0 errors; scratch elaborations of SAT, Tautology and Zone against the added declarations give 0 errors and the original warning sets.

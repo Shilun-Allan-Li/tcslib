@@ -1,0 +1,30 @@
+# C1 guess-then-run assembly statement gate: cut check
+
+Tool: `bash <S>/tools/leanelab.sh <S>/wt-c1asm <S>/oleans-lm0b <file>` (direct `lean`, no `-o`,
+no olean written). Campaign tip: e831b5b0d887dac3bbf1aa2c19af28983b15b982. Sources: <OUT>/base, the tip's tree
+(`git archive`, read-only). Snapshot: `oleans-lm0b` (MIG-0b's replay output; the tip's Lean content up
+to docstrings, `base.log`). `wt-c1asm` (at 2c3c975a, read-only) supplies only the
+Mathlib packages (manifest unchanged at the tip). Toolchain: `leanprover/lean4:v4.25.0`.
+<OUT> is the gate's output directory; <S> the scratchpad. Run: 2026-10-14 16:48 UTC.
+
+`python3 -I <OUT>/scripts/mklanded.py <OUT>/base <OUT>/C1Assembly.lean <OUT>` writes the cut
+file (the tip's `Build/NDHost.lean` byte for byte, plus one import, plus the part) and the
+landing form (the same with the module docstring's lists extended).
+```
+tip NDHost: 195 lines; part body: 849 lines; cut file: 1046 lines; landed file: 1064 lines
+cut imports: ['TCSlib.Complexity.TuringMachine.Build.Seam', 'TCSlib.Complexity.TuringMachine.Nondeterministic', 'TCSlib.Complexity.TuringMachine.Build.Catalog']
+```
+* `<OUT>/cut/NDHost.check.lean` (1046 lines; imports: TCSlib.Complexity.TuringMachine.Build.Seam TCSlib.Complexity.TuringMachine.Nondeterministic TCSlib.Complexity.TuringMachine.Build.Catalog ):
+  exit 0 | errors 0 | warnings 1 | of which `declaration uses 'sorry'` 1 | other warnings 0
+```
+<OUT>/cut/NDHost.check.lean:178:8: warning: declaration uses 'sorry'
+(end of output)
+```
+* `<OUT>/landed/TCSlib/Complexity/TuringMachine/Build/NDHost.lean` (1064 lines; imports: TCSlib.Complexity.TuringMachine.Build.Seam TCSlib.Complexity.TuringMachine.Nondeterministic TCSlib.Complexity.TuringMachine.Build.Catalog ):
+  exit 0 | errors 0 | warnings 1 | of which `declaration uses 'sorry'` 1 | other warnings 0
+```
+<OUT>/landed/TCSlib/Complexity/TuringMachine/Build/NDHost.lean:196:8: warning: declaration uses 'sorry'
+(end of output)
+```
+The one `sorry` warning is `Turing.ndWriterTM_run_block` (line 178 of the tip's file, 195 of
+the landed file), already sorried at the tip.

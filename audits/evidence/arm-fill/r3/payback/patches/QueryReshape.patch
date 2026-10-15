@@ -1,0 +1,43 @@
+--- a/TCSlib/Complexity/SpaceComplexity/Logspace/QueryReshape.lean
++++ b/TCSlib/Complexity/SpaceComplexity/Logspace/QueryReshape.lean
+@@ -403,12 +403,13 @@
+ private lemma drop_bit (h : List Bool) (i : ℕ) :
+     dropOracle 0 (pairEncode h (Nat.bits i)) = h.getD i false := by
+   change MultiTapeTM.indicator (inputBitLang : Set (List Bool)) _ = _
+-  simp [inputBitLang, indicator_indexLang_pairEncode]
++  exact indicator_inputBitLang h i
+ 
+ /-- A length call tests a host position. -/
+ private lemma drop_len (h : List Bool) (i : ℕ) :
+     dropOracle 1 (pairEncode h (Nat.bits i)) = decide (i < h.length) := by
+-  simp [dropOracle, dropBank, inputLenLang, indicator_indexLang_pairEncode]
++  change MultiTapeTM.indicator (inputLenLang : Set (List Bool)) _ = _
++  exact indicator_inputLenLang h i
+ 
+ /-- Returning a bit halts in one bounded step. -/
+ private lemma drop_ret (mode b : Bool) (h : List Bool) (v : Fin 9 → ℕ)
+@@ -462,13 +463,6 @@
+   · intro i hi
+     rw [drop_bit]
+     exact ho i hi
+-
+-/-- The canonicality flag used by the tail loop is exactly `Canon`, including zero. -/
+-private lemma drop_canon (w : List Bool) : w.getLastD true = true ↔ Canon w := by
+-  by_cases hw : w = []
+-  · subst w; simp [Canon]
+-  · simp only [List.getLastD_eq_getLast?, List.getLast?_eq_getLast hw, Option.getD_some, Canon]
+-    exact ⟨fun h _ => h, fun h => h hw⟩
+ 
+ /-- Lookup exposes a phase-boundary vector only when its register is supplied. -/
+ @[simp] private lemma dropValues_apply (n p z s u f q t a : ℕ) (r : Fin 9) :
+@@ -1792,9 +1786,7 @@
+   have len := length_pairEncode x b
+   rw [pairEncode_getD, if_pos (by omega)]
+   have div : (4 * x.length + 4 + 2 * j) / 2 = 2 * x.length + 2 + j := by omega
+-  rw [div, pairEncode_getD, if_neg (by omega), if_neg (by omega), if_neg (by omega)]
+-  congr 1
+-  omega
++  rw [div, pairEncode_getD_snd]
+ 
+ /-- For a nonempty inner field, its final physical bit is exactly its canonicality flag.
+ The field's represented number is never computed. -/

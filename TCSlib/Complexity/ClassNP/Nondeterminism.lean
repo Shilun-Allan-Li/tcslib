@@ -7,6 +7,7 @@ import TCSlib.Complexity.ClassNP.NTIME
 import TCSlib.Complexity.ClassNP.EXP
 import TCSlib.Complexity.TuringMachine.Simulation
 import TCSlib.Complexity.TuringMachine.Build.Primitives
+import TCSlib.Complexity.TuringMachine.ChoiceWords
 import Mathlib.Tactic.FinCases
 
 set_option maxHeartbeats 0
@@ -73,31 +74,22 @@ continuation/B2-era lemmas that discharge binding contract obligations
 (`cont_poly_guess_phase`, `b2_unary_mask`, `b2_tables_coincide`,
 `certificateSplit_complete`) are deliberately retained as audited
 evidence.
+
+**Maintainer note (wave-1 statement gate, round 1, finding 2).** The certificate split and
+the choice-word truncation are shared with the relativized development
+(`Build/OracleSim.lean`) and the plain certificate shell (`Build/CertShell.lean`) through
+`TuringMachine/ChoiceWords.lean`. `certificate_split_strictMono`, `certificate_split_unique`
+and `choice_budget_le` were removed in favour of `Turing.certificateLength_strictMono`,
+`Turing.append_split_unique` and `Turing.choiceBudget_le`, and `e3_split_strictMono` and
+`e3_split_unique` in favour of `Turing.expCertificateLength_strictMono` and
+`append_split_unique`; `acceptsWithin_iff_of_halts` now cites
+`Turing.run_take_of_halted`. Statements and every other proof are unchanged.
 -/
 
 namespace Complexity
 
 open Turing
 open Turing.FinTM
-
-/-- The total length of an input and its prescribed certificate strictly increases
-with the input length, including zero coefficient and degree. -/
-private lemma certificate_split_strictMono (C c : ℕ) :
-    StrictMono (fun n : ℕ => n + C * (n + 1) ^ c) := by
-  intro n m hnm
-  exact Nat.add_lt_add_of_lt_of_le hnm
-    (Nat.mul_le_mul_left C (Nat.pow_le_pow_left (by omega) c))
-
-/-- Two concatenations satisfying the same exact certificate-length formula have
-the same input and certificate whenever their concatenated words agree. -/
-private lemma certificate_split_unique (C c : ℕ) {x u y v : List Bool}
-    (hu : u.length = C * (x.length + 1) ^ c)
-    (hv : v.length = C * (y.length + 1) ^ c) (h : x ++ u = y ++ v) :
-    x = y ∧ u = v := by
-  have hlen := congrArg List.length h
-  simp only [List.length_append, hu, hv] at hlen
-  have hx := (certificate_split_strictMono C c).injective hlen
-  exact ⟨List.append_inj_left h hx, List.append_inj_right h hx⟩
 
 /-- A finite, total specification of split recovery. Its implementation on native
 tapes, including the time for polynomial evaluation, remains a startup obligation. -/
@@ -132,7 +124,7 @@ private lemma certificateSplit_complete (C c m n : ℕ)
   | none => exact False.elim ((certificateSplit_none_iff C c m).mp hs ⟨n, hn⟩)
   | some k =>
     have hk := (certificateSplit_spec C c m k hs).2
-    have heq := (certificate_split_strictMono C c).injective (hk.trans hn.symm)
+    have heq := (certificateLength_strictMono C c).injective (hk.trans hn.symm)
     exact congrArg some heq
 
 /-- The verifier language described in the forward Theorem-2.6 sketch. This is a
@@ -151,7 +143,8 @@ private lemma choiceVerifier_append (N : FinNDTM Bool) (C c : ℕ)
       (N.tm.runWith u (N.tm.initCfg x)).output = [true] := by
   constructor
   · rintro ⟨y, v, hv, heq, hhalt, hout⟩
-    obtain ⟨rfl, rfl⟩ := certificate_split_unique C c hu hv heq
+    obtain ⟨rfl, rfl⟩ :=
+      append_split_unique (f := fun n => C * (n + 1) ^ c) (certificateLength_strictMono C c) hu hv heq
     exact ⟨hhalt, hout⟩
   · rintro ⟨hhalt, hout⟩
     exact ⟨x, u, hu, rfl, hhalt, hout⟩
@@ -173,24 +166,14 @@ private lemma acceptsWithin_iff_of_halts {N : FinNDTM Bool} {x : List Bool}
     N.AcceptsWithin x t' ↔ N.AcceptsWithin x t := by
   constructor
   · rintro ⟨w, hw, _, hout⟩
-    have hlen : (w.take t).length = t := List.length_take_of_le (hle.trans_eq hw.symm)
-    have hp := hhalt (w.take t) hlen
-    have hr := N.tm.runWith_append (w.take t) (w.drop t) (N.tm.initCfg x)
-    rw [List.take_append_drop, NDTM.runWith_of_halt _ hp] at hr
+    obtain ⟨hlen, hp, hr⟩ := run_take_of_halted (fun w => N.tm.runWith w (N.tm.initCfg x))
+      (fun c => c.state = none)
+      (fun w w' h => by
+        simp only [N.tm.runWith_append w w' (N.tm.initCfg x), NDTM.runWith_of_halt _ h])
+      hhalt (hle.trans_eq hw.symm)
     exact ⟨w.take t, hlen, hp, hr ▸ hout⟩
   · intro h
     exact h.mono hle
-
-/-- The exact certificate length with coefficient `2*a` covers the nondeterministic
-time bound, uniformly at length zero and degree zero. -/
-private lemma choice_budget_le (a c n : ℕ) :
-    a * (n ^ c + 1) ≤ (2 * a) * (n + 1) ^ c := by
-  have hp := Nat.pow_le_pow_left (Nat.le_succ n) c
-  have h1 : 1 ≤ (n + 1) ^ c := Nat.one_le_pow c _ (Nat.succ_pos n)
-  calc
-    a * (n ^ c + 1) ≤ a * ((n + 1) ^ c + (n + 1) ^ c) :=
-      Nat.mul_le_mul_left a (Nat.add_le_add hp h1)
-    _ = (2 * a) * (n + 1) ^ c := by ring
 
 /-- Padding and truncation identify language membership with certificates for the
 specified verifier. This proves the logical correspondence separately from the
@@ -200,7 +183,7 @@ private lemma choice_certificate_iff (N : FinNDTM Bool) (L : Language Bool)
     (x : List Bool) :
     x ∈ L ↔ ∃ u : List Bool, u.length = (2 * a) * (x.length + 1) ^ c ∧
       x ++ u ∈ choiceVerifier N (2 * a) c := by
-  rw [(hN x).2, ← acceptsWithin_iff_of_halts (hN x).1 (choice_budget_le a c x.length)]
+  rw [(hN x).2, ← acceptsWithin_iff_of_halts (hN x).1 (choiceBudget_le a c x.length)]
   constructor
   · rintro ⟨u, hu, hhalt, hout⟩
     exact ⟨u, hu, (choiceVerifier_append N (2 * a) c x u hu).mpr ⟨hhalt, hout⟩⟩
@@ -2359,25 +2342,6 @@ theorem NP_eq_iUnion_NTIME : NP = ⋃ c : ℕ, NTIME fun n => n ^ c + 1 := by
 
 /-! ### Exponential split and evaluation infrastructure -/
 
-/-- Exponential padding has a unique split, including coefficient zero and
-degree zero: the prefix length increases strictly and the suffix length
-is nondecreasing. -/
-private lemma e3_split_strictMono (C c : ℕ) :
-    StrictMono (fun n : ℕ => n + C * 2 ^ (n + 1) ^ c) := by
-  intro n m hnm
-  exact Nat.add_lt_add_of_lt_of_le hnm (Nat.mul_le_mul_left C
-    (Nat.pow_le_pow_right (by omega) (Nat.pow_le_pow_left (by omega) c)))
-
-/-- Exact exponential widths make both parts of a concatenation unique. -/
-private lemma e3_split_unique (C c : ℕ) {x u y v : List Bool}
-    (hu : u.length = C * 2 ^ (x.length + 1) ^ c)
-    (hv : v.length = C * 2 ^ (y.length + 1) ^ c) (h : x ++ u = y ++ v) :
-    x = y ∧ u = v := by
-  have hlen := congrArg List.length h
-  simp only [List.length_append, hu, hv] at hlen
-  have hx := (e3_split_strictMono C c).injective hlen
-  exact ⟨List.append_inj_left h hx, List.append_inj_right h hx⟩
-
 /-- The finite exponential-length search, with an explicit failure value. -/
 private def e3Split (C c m : ℕ) : Option ℕ :=
   (List.range (m + 1)).find? (fun n => decide (n + C * 2 ^ (n + 1) ^ c = m))
@@ -2414,7 +2378,8 @@ private lemma e3_choice_append (N : FinNDTM Bool) (C c : ℕ)
       (N.tm.runWith u (N.tm.initCfg x)).output = [true] := by
   constructor
   · rintro ⟨y, v, hv, heq, hhalt, hout⟩
-    obtain ⟨rfl, rfl⟩ := e3_split_unique C c hu hv heq
+    obtain ⟨rfl, rfl⟩ := append_split_unique (f := fun n => C * 2 ^ (n + 1) ^ c)
+      (expCertificateLength_strictMono C c) hu hv heq
     exact ⟨hhalt, hout⟩
   · rintro ⟨hhalt, hout⟩
     exact ⟨x, u, hu, rfl, hhalt, hout⟩

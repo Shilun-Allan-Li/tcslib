@@ -1,0 +1,125 @@
+import Lean.Util.FoldConsts
+import TCSlib.Complexity.SpaceComplexity.Logspace.InputAccess
+import TCSlib.Complexity.SpaceComplexity.Logspace.PreimageHost
+import TCSlib.Complexity.SpaceComplexity.Logspace.QueryReshape
+import TCSlib.Complexity.SpaceComplexity.Logspace.Reductions
+import TCSlib.Complexity.SpaceComplexity.Logspace.Mult
+open Lean Elab Command in
+/-- Every constant in the dependency closure of `root` whose own type or value
+mentions `sorryAx` (maintainer's read-only admission walk). -/
+def sorrySourcesOf (env : Environment) (root : Name) : Array Name := Id.run do
+  let mut visited : NameSet := {}
+  let mut stack : Array Name := #[root]
+  let mut srcs : Array Name := #[]
+  while !stack.isEmpty do
+    let c := stack.back!
+    stack := stack.pop
+    if visited.contains c then continue
+    visited := visited.insert c
+    if let some ci := env.find? c then
+      let used := ci.getUsedConstantsAsSet
+      if used.contains ``sorryAx then srcs := srcs.push c
+      for d in used.toList do
+        unless visited.contains d do stack := stack.push d
+  return srcs
+
+open Lean Elab Command in
+elab "#sorry_sources " id:ident : command => do
+  let n ← liftCoreM <| realizeGlobalConstNoOverload id
+  logInfo m!"{n}: direct sorryAx users in closure: {sorrySourcesOf (← getEnv) n}"
+
+open Lean Elab Command in
+/-- Every constant whose name starts with the given string (a module's private prefix), and
+those among them whose own type or value mentions `sorryAx` (maintainer's read-only census). -/
+elab "#private_sorry_census " pre:str : command => do
+  let env ← getEnv
+  let p := pre.getString
+  let mut n := 0
+  let mut bad : Array Name := #[]
+  for (c, ci) in env.constants.toList do
+    if (toString c).startsWith p then
+      n := n + 1
+      if ci.getUsedConstantsAsSet.contains ``sorryAx then bad := bad.push c
+  logInfo m!"{p}: {n} constants; direct sorryAx users: {bad}"
+
+-- publics of TCSlib/Complexity/SpaceComplexity/Logspace/InputAccess.lean
+#print axioms Complexity.pairEncode_ne_nil
+#print axioms Complexity.indicator_indexLang_pairEncode
+#print axioms Complexity.LogProg.vword_whole₁
+#print axioms Complexity.LogProg.RdPh
+#print axioms Complexity.LogProg.readTr
+#print axioms Complexity.LogProg.readIn_run
+#print axioms Complexity.inputBitLang
+#print axioms Complexity.inputLenLang
+#print axioms Complexity.pairEncode_getD
+#print axioms Complexity.LogProg.inputLength_loop
+#print axioms Complexity.LogProg.alignedPair_loop
+#print axioms Complexity.LogProg.register_update_le
+#print axioms Complexity.LogProg.registerCopy_loop
+#print axioms Complexity.LogProg.registerScale_loop
+#print axioms Complexity.LogProg.canonicalTail_loop
+#print axioms Complexity.LogProg.boundedDecode_loop
+#print axioms Complexity.LogProg.indexedSeek_loop
+#print axioms Complexity.implicitlyLogspaceComputable_id
+#print axioms Complexity.inputBitLang_mem
+#print axioms Complexity.inputLenLang_mem
+
+-- publics of TCSlib/Complexity/SpaceComplexity/Logspace/PreimageHost.lean
+#print axioms Complexity.LogProg.OIS.Ph
+#print axioms Complexity.LogProg.OIS.q
+#print axioms Complexity.LogProg.OIS.nextPh
+#print axioms Complexity.LogProg.OIS.liftAct
+#print axioms Complexity.LogProg.OIS.tr
+#print axioms Complexity.LogProg.OIS.call
+#print axioms Complexity.LogProg.OIS.prog
+#print axioms Complexity.LogProg.OIS.start
+#print axioms Complexity.LogProg.OIS.lo
+#print axioms Complexity.LogProg.OIS.hi
+#print axioms Complexity.LogProg.OIS.run
+#print axioms Complexity.LogProg.OIS.compile_decides
+#print axioms Complexity.mem_LOGSPACE_preimage
+
+-- publics of TCSlib/Complexity/SpaceComplexity/Logspace/QueryReshape.lean
+#print axioms Complexity.dropIdx
+#print axioms Complexity.dropIdx_pairEncode
+#print axioms Complexity.dropIdx_length_le
+#print axioms Complexity.compQ
+#print axioms Complexity.compQ_pairEncode
+#print axioms Complexity.mem_indexLang_compQ_iff
+#print axioms Complexity.compQ_length_le
+#print axioms Complexity.implicitlyLogspaceComputable_dropIdx
+#print axioms Complexity.ImplicitlyLogspaceComputable.compQ
+
+-- publics of TCSlib/Complexity/SpaceComplexity/Logspace/Reductions.lean
+#print axioms Complexity.LogspaceReducible
+#print axioms Complexity.NLComplete
+#print axioms Complexity.ImplicitlyLogspaceComputable.comp
+#print axioms Complexity.LogspaceReducible.trans
+#print axioms Complexity.mem_LOGSPACE_of_logspaceReducible
+#print axioms Complexity.LogspaceReducible.polyTimeReducible
+#print axioms Complexity.NL_eq_LOGSPACE_of_nlComplete_mem_LOGSPACE
+
+-- publics of TCSlib/Complexity/SpaceComplexity/Logspace/Mult.lean
+#print axioms Complexity.multLang
+#print axioms Complexity.multLang_mem_LOGSPACE
+
+-- admission walks of the twelve targets
+#sorry_sources Complexity.LogProg.OIS.run
+#sorry_sources Complexity.LogProg.OIS.compile_decides
+#sorry_sources Complexity.mem_LOGSPACE_preimage
+#sorry_sources Complexity.mem_LOGSPACE_of_logspaceReducible
+#sorry_sources Complexity.NL_eq_LOGSPACE_of_nlComplete_mem_LOGSPACE
+#sorry_sources Complexity.LogProg.readIn_run
+#sorry_sources Complexity.implicitlyLogspaceComputable_id
+#sorry_sources Complexity.implicitlyLogspaceComputable_dropIdx
+#sorry_sources Complexity.ImplicitlyLogspaceComputable.compQ
+#sorry_sources Complexity.ImplicitlyLogspaceComputable.comp
+#sorry_sources Complexity.LogspaceReducible.trans
+#sorry_sources Complexity.multLang_mem_LOGSPACE
+
+-- private-constant censuses of the five files
+#private_sorry_census "_private.TCSlib.Complexity.SpaceComplexity.Logspace.InputAccess.0."
+#private_sorry_census "_private.TCSlib.Complexity.SpaceComplexity.Logspace.PreimageHost.0."
+#private_sorry_census "_private.TCSlib.Complexity.SpaceComplexity.Logspace.QueryReshape.0."
+#private_sorry_census "_private.TCSlib.Complexity.SpaceComplexity.Logspace.Reductions.0."
+#private_sorry_census "_private.TCSlib.Complexity.SpaceComplexity.Logspace.Mult.0."

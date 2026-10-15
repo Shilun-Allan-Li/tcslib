@@ -71,6 +71,9 @@ deterministic embedding `DTIME ⊆ NTIME`.
 * `Complexity.NTIME.mono` — `NTIME` is monotone in the time bound.
 * `Complexity.DTIME_subset_NTIME` — deterministic time is nondeterministic time.
   [AB09, §2.1.2]
+* `Turing.FinTM.toFinNDTM_haltsWithin_and_accepts_iff` — its per-input content, a
+  deterministic decider run nondeterministically (shared with `SPACE ⊆ NSPACE`;
+  added 2026-10-10).
 * `Complexity.NTIME_eq_empty_of_exists_zero` — a vanishing time bound gives the empty
   class, as for `DTIME`.
 
@@ -119,6 +122,47 @@ def DecidesInTime (N : FinNDTM Bool) (L : Language Bool) (T : ℕ → ℕ) : Pro
 
 end Turing.FinNDTM
 
+namespace Turing.FinTM
+
+/-- **A deterministic decider, run nondeterministically.** If `M` halts on `x` within `t`
+steps with output `[x ∈ L]`, then every branch of `M.toFinNDTM` of length `t` halts, and
+`M.toFinNDTM` accepts `x` within `t` exactly when `x ∈ L`. This is the per-input content
+of `Complexity.DTIME_subset_NTIME`, shared with the space inclusion
+`Complexity.SPACE_subset_NSPACE`. [AB09, §2.1.2: a TM is an NDTM that ignores its
+choices]
+
+**Proof sketch.** By `Turing.MultiTapeTM.toNDTM_runWith`, the run under **any** choice
+word of length `t` is `M`'s deterministic run to time `t` (`Turing.FinTM.computesInTime_iff`
+unfolds the hypothesis). So every branch of length `t` is halted. A member is accepted by
+`List.replicate t false`, whose run ends with output `[true]`. For a non-member every
+branch ends with output `[false] ≠ [true]` (`Turing.MultiTapeTM.indicator`), so no branch
+accepts. -/
+theorem toFinNDTM_haltsWithin_and_accepts_iff (M : FinTM Bool) {L : Language Bool}
+    {x : List Bool} {t : ℕ}
+    (h : M.ComputesInTime x [MultiTapeTM.indicator (L : Set (List Bool)) x] t) :
+    M.toFinNDTM.tm.HaltsWithin x t ∧ (x ∈ L ↔ M.toFinNDTM.AcceptsWithin x t) := by
+  classical
+  obtain ⟨hhalt, hout⟩ := (M.computesInTime_iff _ _ _).mp h
+  have hrun (w : List Bool) :
+      M.toFinNDTM.tm.runWith w (M.toFinNDTM.tm.initCfg x) =
+        M.tm.runFrom (M.tm.initCfg x) w.length :=
+    M.tm.toNDTM_runWith w (M.tm.initCfg x)
+  refine ⟨fun w hw => ?_, fun hx => ?_, ?_⟩
+  · rw [hrun, hw]
+    exact hhalt
+  · refine ⟨List.replicate t false, List.length_replicate .., ?_, ?_⟩
+    · rw [hrun, List.length_replicate]
+      exact hhalt
+    · rw [hrun, List.length_replicate, hout]
+      simp only [MultiTapeTM.indicator, if_pos hx]
+  · rintro ⟨w, hw, _, hwout⟩
+    rw [hrun, hw, hout] at hwout
+    by_contra hx
+    simp only [MultiTapeTM.indicator, if_neg hx] at hwout
+    cases hwout
+
+end Turing.FinTM
+
 namespace Complexity
 
 open Turing
@@ -166,40 +210,12 @@ theorem NTIME.mono {T₁ T₂ : ℕ → ℕ} (h : ∀ n, T₁ n ≤ T₂ n) : NT
 that ignores its choices, so `DTIME T ⊆ NTIME T`.
 
 **Proof sketch.** Given `M` deciding `L` within `c · T n`, take
-`Turing.FinTM.toFinNDTM M`. By `Turing.MultiTapeTM.toNDTM_runWith`, the run under
-**any** choice word of length `t` is `M`'s deterministic run to time `t`, so: every
-branch of length `c · T n` is halted because `M`'s computation has halted by then
-(`Turing.FinTM.DecidesInTime` unfolded through `Turing.FinTM.computesInTime_iff`),
-giving `HaltsWithin`; and some branch of that length is halted with output `[true]` iff
-`M`'s output at that time is `[true]`, which by the indicator contract
-(`Turing.MultiTapeTM.indicator`) holds iff `x ∈ L` — for `x ∉ L` the output is
-`[false] ≠ [true]` on every branch, so no branch accepts. -/
+`Turing.FinTM.toFinNDTM M`. On each input, `M`'s computation of the indicator by time
+`c · T n` gives both clauses of `Turing.FinNDTM.DecidesInTime` at once, by
+`Turing.FinTM.toFinNDTM_haltsWithin_and_accepts_iff`. -/
 theorem DTIME_subset_NTIME (T : ℕ → ℕ) : DTIME T ⊆ NTIME T := by
-  classical
   rintro L ⟨c, M, hM⟩
-  refine ⟨c, M.toFinNDTM, ?_⟩
-  intro x
-  obtain ⟨hhalt, hout⟩ := (M.computesInTime_iff _ _ _).mp (hM x)
-  have hrun (w : List Bool) :
-      M.toFinNDTM.tm.runWith w (M.toFinNDTM.tm.initCfg x) =
-        M.tm.runFrom (M.tm.initCfg x) w.length :=
-    M.tm.toNDTM_runWith w (M.tm.initCfg x)
-  constructor
-  · intro w hw
-    rw [hrun, hw]
-    exact hhalt
-  · constructor
-    · intro hx
-      refine ⟨List.replicate (c * T x.length) false, List.length_replicate .., ?_, ?_⟩
-      · rw [hrun, List.length_replicate]
-        exact hhalt
-      · rw [hrun, List.length_replicate, hout]
-        simp only [MultiTapeTM.indicator, if_pos hx]
-    · rintro ⟨w, hw, _, hwout⟩
-      rw [hrun, hw, hout] at hwout
-      by_contra hx
-      simp only [MultiTapeTM.indicator, if_neg hx] at hwout
-      cases hwout
+  exact ⟨c, M.toFinNDTM, fun x => M.toFinNDTM_haltsWithin_and_accepts_iff (hM x)⟩
 
 /-- If the time bound vanishes at even one input length, the class is empty, exactly as
 for `Complexity.DTIME_eq_empty_of_exists_zero`: the initial configuration is not

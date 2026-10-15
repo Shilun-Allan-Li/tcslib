@@ -1,0 +1,254 @@
+diff --git a/TCSlib/Complexity/Diagonalization/EXPCOM.lean b/TCSlib/Complexity/Diagonalization/EXPCOM.lean
+index 9e8d8fe2..6a94805d 100644
+--- a/TCSlib/Complexity/Diagonalization/EXPCOM.lean
++++ b/TCSlib/Complexity/Diagonalization/EXPCOM.lean
+@@ -301,51 +301,23 @@ theorem EXP_subset_POracle_EXPCOM : EXP ⊆ POracle EXPCOM := by
+     by_contra hx
+     simp [MultiTapeTM.indicator, hx] at hi
+ 
+-/-- The binary deadline has one high bit after the unary tail's width.
+-Forced private restatement of `TimeHierarchy/Separation.bits_two_pow`;
+-promotion requested in the B5b report. -/
+-private lemma expcom_bits_two_pow (n : ℕ) :
+-    (2 ^ n).bits = List.replicate n false ++ [true] := by
+-  induction n with
+-  | zero => simp
+-  | succ n ih =>
+-    have h : 2 ^ (n + 1) = Nat.bit false (2 ^ n) := by
+-      simp [Nat.bit_val, Nat.pow_succ]; ring
+-    rw [h, Nat.bits_append_bit _ _ (fun h0 => absurd h0 (Nat.ne_of_gt (Nat.pow_pos (by decide)))), ih]
+-    simp [List.replicate_succ]
+-
+-/-- Carry through a unary prefix, retaining the fixed width. -/
+-private lemma expcom_inc_prefix (n : ℕ) (w : List Bool) :
+-    incFixed (List.replicate n true ++ w) =
+-      (incFixed w).map (List.replicate n false ++ ·) := by
+-  induction n with
+-  | zero => simp
+-  | succ n ih =>
+-    simp [List.replicate_succ, incFixed, ih, Option.map_map, Function.comp_def]
+-
+ /-- An empty increment result certifies an all-`true` word.
+-This is the needed direction of the circuit module's overflow criterion;
+-promotion to `Build/Convention` is requested in the B5b report.
+-
+-**Proof sketch.** Induct on `w`. A leading `false` increments without overflow, giving a
+-nonempty result. After a leading `true`, a tail that does not overflow also gives a nonempty
+-result, so the tail overflows and is all `true` by induction. (Maintainer, fills-6
+-integration.) -/
++This is the needed direction of the overflow criterion, now public as
++`Turing.incFixed_eq_none_iff_replicate` in `Build/Convention` (CH34-D4); this
++private form only converts the guard's `getD` form.
++
++**Proof sketch.** By the criterion it suffices that the increment overflows.
++The empty word overflows. A leading `false` increments to a nonempty word,
++contradicting the empty result. After a leading `true`, a tail that did not
++overflow would also give a nonempty result, so the tail overflows. (Maintainer,
++CH34-D4.) -/
+ private lemma expcom_all_true (w : List Bool) (h : (incFixed w).getD [] = []) :
+     w = List.replicate w.length true := by
+-  revert h
+-  induction w with
+-  | nil => intro _; rfl
+-  | cons b w ih =>
+-    intro h
+-    cases b with
+-    | false => simp [incFixed] at h
+-    | true =>
+-      cases he : incFixed w with
+-      | none =>
+-        have hw := ih (by simp [he])
+-        simpa only [List.length_cons, List.replicate_succ] using congrArg (true :: ·) hw
+-      | some v => simp [incFixed, he] at h
++  refine (incFixed_eq_none_iff_replicate w).mp ?_
++  rcases w with _ | ⟨_ | _, w⟩
++  · rfl
++  · simp [incFixed] at h
++  · cases hw : incFixed w <;> simp_all [incFixed]
+ 
+ /-- The unary deadline field, projected from a possibly malformed query. -/
+ private def expcom_tail (z : List Bool) : List Bool := pairSndD (pairSndD z)
+@@ -391,7 +363,7 @@ private lemma expcom_ok_iff (z : List Bool) :
+     exact ⟨α, x, w.length, by rw [← hw]⟩
+   · rintro ⟨α, x, n, rfl⟩
+     have hinc : incFixed (List.replicate n true) = none := by
+-      simpa [incFixed] using expcom_inc_prefix n []
++      simpa [incFixed] using incFixed_replicate_true_append n []
+     simp [expcom_ok, expcom_tail, hinc, pairDecode_pairEncode]
+ 
+ /-- The guarded input reconstruction is polynomial-time.
+@@ -434,8 +406,8 @@ private lemma expcom_front_triple (α x : List Bool) (n : ℕ) :
+       pairEncode (pairEncode (Nat.bits (2 ^ n)) α) x := by
+   have hok : expcom_ok (pairEncode α (pairEncode x (List.replicate n true))) = true :=
+     (expcom_ok_iff _).mpr ⟨α, x, n, rfl⟩
+-  simp [expcom_front, hok, expcom_simIn, expcom_tail, expcom_inc_prefix,
+-    incFixed, expcom_bits_two_pow]
++  simp [expcom_front, hok, expcom_simIn, expcom_tail, incFixed_replicate_true_append,
++    incFixed, bits_two_pow_eq_replicate]
+ 
+ /-- The polynomial front end and simulator budget fit a linear exponential.
+ 
+diff --git a/TCSlib/Complexity/SpaceComplexity/ConfigGraph.lean b/TCSlib/Complexity/SpaceComplexity/ConfigGraph.lean
+index 2b97a7fe..15d4eb4c 100644
+--- a/TCSlib/Complexity/SpaceComplexity/ConfigGraph.lean
++++ b/TCSlib/Complexity/SpaceComplexity/ConfigGraph.lean
+@@ -737,20 +737,6 @@ private theorem s1b_vertex_count (N : FinNDTM Bool) (a n u : ℕ)
+       (pow_add _ _ _).symm
+     _ ≤ _ := Nat.pow_le_pow_right (by decide) (by nlinarith)
+ 
+-/-- The radius word in decision 3 is the canonical binary expansion.
+-This is the arithmetic part of the radius-phase promotion candidate.
+-
+-**Proof sketch.** A positive integer stays positive after multiplication by
+-a power of two. Each multiplication by two prepends one low zero bit, by
+-`Nat.bit0_bits`; induction counts the prepended digits. -/
+-private theorem s1b_radius_bits (j m : ℕ) (hm : 0 < m) :
+-    (2 ^ j * m).bits = List.replicate j false ++ m.bits := by
+-  induction j with
+-  | zero => simp
+-  | succ j ih =>
+-    rw [pow_succ', mul_assoc, Nat.bit0_bits _ (Nat.mul_pos (Nat.two_pow_pos j) hm).ne']
+-    simp only [ih, List.replicate_succ, List.cons_append]
+-
+ /-- Normalizing the space constant does not change the deciding machine or
+ any branch's halting budget. No monotonicity of the space function is needed.
+ 
+@@ -769,7 +755,7 @@ private theorem s1b_normalize_radius {S : ℕ → ℕ} (hdom : ∀ n, logSpace n
+     obtain ⟨T, hhalt, hspace, hacc⟩ := hN x
+     exact ⟨T, hhalt, fun w hw => (hspace w hw).trans (Nat.mul_le_mul_right _ hc), hacc⟩
+   · intro n
+-    apply s1b_radius_bits
++    apply bits_two_pow_mul
+     have := hdom n
+     unfold logSpace at this
+     omega
+diff --git a/TCSlib/Complexity/TuringMachine/Build/Catalog.lean b/TCSlib/Complexity/TuringMachine/Build/Catalog.lean
+index 57afa3f9..16750f8c 100644
+--- a/TCSlib/Complexity/TuringMachine/Build/Catalog.lean
++++ b/TCSlib/Complexity/TuringMachine/Build/Catalog.lean
+@@ -859,15 +859,13 @@ private lemma catalog_increment_split (w : List Bool) :
+       exact ⟨p + 1, tail, by simp [List.replicate_succ, hw]⟩
+ 
+ /-- Fixed-width increment flips the leading true prefix and the first false;
+-an absent first false gives overflow. -/
++an absent first false gives overflow.
++Now derived from `Turing.incFixed_replicate_true_append` (CH34-D4). -/
+ private lemma catalog_increment_value (p : ℕ) (tail : Option (List Bool)) :
+     incFixed (List.replicate p true ++ tail.elim [] (false :: ·)) =
+       tail.map (fun v => List.replicate p false ++ true :: v) := by
+-  induction p with
+-  | zero => cases tail <;> rfl
+-  | succ p ih =>
+-    simp only [List.replicate_succ, List.cons_append, incFixed, ih]
+-    cases tail <;> rfl
++  rw [incFixed_replicate_true_append]
++  cases tail <;> rfl
+ 
+ /-- Changing the cell immediately after a framed prefix changes just that cell.
+ **Proof sketch.** At the write coordinate use indexing at the prefix length.
+diff --git a/TCSlib/Complexity/TuringMachine/Build/Convention.lean b/TCSlib/Complexity/TuringMachine/Build/Convention.lean
+index 30457c2e..af195ba6 100644
+--- a/TCSlib/Complexity/TuringMachine/Build/Convention.lean
++++ b/TCSlib/Complexity/TuringMachine/Build/Convention.lean
+@@ -18,8 +18,9 @@ notion that the library's control combinators speak, plus the pure list/
+ arithmetic functions that the primitive contracts in
+ `TCSlib.Complexity.TuringMachine.Build.Primitives` are stated against.
+ 
+-**Status: proved.** This module is fully proved (definitions and two
+-glue lemmas), and the sibling `Build` modules' contracts stated against
++**Status: proved.** This module is fully proved (definitions, two glue
++lemmas, and the two `incFixed` laws promoted at CH34-D4), and the sibling
++`Build` modules' contracts stated against
+ it are now all proved as well (library fill batches and the emitter
+ increment; zero sorries). The `Build` surface was new Chapter-1 growth,
+ audited in the shared infrastructure and emitter rounds
+@@ -51,6 +52,8 @@ generic clearing pass.
+ * `Turing.solveSplit` — least solution `i ≤ n` of the padding length
+   equation `i + C·(i+1)^e = n`, or `none` (the split-search discipline of
+   the padding constructions).
++* `Turing.incFixed_replicate_true_append`, `Turing.incFixed_eq_none_iff_replicate` — the
++  increment's carry through a `true` prefix and its overflow criterion (CH34-D4).
+ * `Turing.incFixed` — little-endian fixed-width binary increment with
+   explicit overflow (`none`), width preserved (the enumerator's counter
+   discipline; width zero overflows immediately).
+@@ -121,6 +124,36 @@ def incFixed : List Bool → Option (List Bool)
+   | false :: rest => some (true :: rest)
+   | true :: rest => (incFixed rest).map (false :: ·)
+ 
++/-- `Turing.incFixed` carries through a prefix of `true` bits: the prefix
++`1ⁿ` becomes `0ⁿ` and the remainder `w` is incremented, the width is kept,
++and the whole word overflows exactly when `w` does. Shared by the catalog's
++increment routine and the `EXPCOM` deadline guard (CH34-D4).
++
++**Proof sketch.** Induct on `n`. Each leading `true` is one step of the carry
++clause of `incFixed`, which prepends one `false` to the incremented tail. -/
++theorem incFixed_replicate_true_append (n : ℕ) (w : List Bool) :
++    incFixed (List.replicate n true ++ w) =
++      (incFixed w).map (List.replicate n false ++ ·) := by
++  induction n with
++  | zero => simp
++  | succ n ih =>
++    simp [List.replicate_succ, incFixed, ih, Option.map_map, Function.comp_def]
++
++/-- **The overflow criterion of `Turing.incFixed`**: the increment overflows
++exactly on the all-`true` word (the empty word included). The public home of
++the criterion, promoted per the fills-6 request F6-1(e) (CH34-D4).
++
++**Proof sketch.** Induct on `u`. The empty word overflows. A leading `false`
++never overflows, and the word is then not all `true`. After a leading `true`,
++the word overflows exactly when its tail does, and is all `true` exactly when
++its tail is. -/
++theorem incFixed_eq_none_iff_replicate (u : List Bool) :
++    incFixed u = none ↔ u = List.replicate u.length true := by
++  induction u with
++  | nil => simp [incFixed]
++  | cons b u ih =>
++    cases b <;> simp [incFixed, ih, List.replicate_succ]
++
+ /-- **Emitter-increment vocabulary** (design §11): least
+ solution `i ≤ n` of the width-parametric split equation `i + f i = n`, or
+ `none` — the generalization of `Turing.solveSplit` from the hardwired
+diff --git a/TCSlib/Complexity/TuringMachine/Encoding.lean b/TCSlib/Complexity/TuringMachine/Encoding.lean
+index cf0c8c63..5f0e2e1f 100644
+--- a/TCSlib/Complexity/TuringMachine/Encoding.lean
++++ b/TCSlib/Complexity/TuringMachine/Encoding.lean
+@@ -70,6 +70,8 @@ self-delimiting pairing used by the universal machine.
+   `Turing.eq_pairEncode_of_pairDecode`, `Turing.pairEncode_replicate_inj` — the shape of
+   the pairing, shared by the machine-side developments.
+ * `Turing.length_bits_le_self` — `|bits m| ≤ m`.
++* `Turing.bits_two_pow_mul`, `Turing.bits_two_pow_eq_replicate` — the `Nat.bits` shift law
++  `(2^j·m).bits = 0^j ++ m.bits` and its case `m = 1` (CH34-D4).
+ * `Turing.computesFunInTime_pairEncode_diag` — the diagonal pairing `α ↦ ⟨α, α⟩` is
+   computable in linear time (the only code computation the `HALT` reduction needs).
+ * `Turing.exists_codeTM` — every one-work-tape binary machine is equivalent to a
+@@ -268,6 +270,30 @@ lemma length_bits_le_self (m : ℕ) : m.bits.length ≤ m := by
+   rw [Nat.size_eq_bits_len]
+   exact Nat.size_le.mpr Nat.lt_two_pow_self
+ 
++/-- **The `Nat.bits` shift law**: multiplying a positive `m` by `2 ^ j`
++prepends `j` low zero bits to its little-endian binary expansion,
++`(2^j·m).bits = 0^j ++ m.bits`. (Positivity is needed: `Nat.bits 0 = []`.)
++The public home of the law, promoted per the fills-6 request F6-1(a)
++(CH34-D4).
++
++**Proof sketch.** Induct on `j`. A positive number stays positive after
++multiplication by a power of two, and doubling a nonzero number prepends one
++low zero bit to its expansion; induction counts the prepended zeros. -/
++theorem bits_two_pow_mul (j m : ℕ) (hm : 0 < m) :
++    (2 ^ j * m).bits = List.replicate j false ++ m.bits := by
++  induction j with
++  | zero => simp
++  | succ j ih =>
++    rw [pow_succ', mul_assoc, Nat.bit0_bits _ (Nat.mul_pos (Nat.two_pow_pos j) hm).ne']
++    simp only [ih, List.replicate_succ, List.cons_append]
++
++/-- The little-endian binary expansion of `2 ^ n` is `n` zero bits followed by
++one high bit: `(2^n).bits = 0^n 1`. The case `m = 1` of
++`Turing.bits_two_pow_mul`, since the expansion of `1` is the single bit `1`. -/
++theorem bits_two_pow_eq_replicate (n : ℕ) :
++    (2 ^ n).bits = List.replicate n false ++ [true] := by
++  simpa using bits_two_pow_mul n 1 Nat.one_pos
++
+ /-- Six-state pairing controller: double-stay, double-move, emit-true,
+ first-left, rewind, and copy. The double-stay state's blank branch emits `false`. -/
+ private def pairDiagTM : FinTM Bool where

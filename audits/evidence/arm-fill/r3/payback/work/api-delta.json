@@ -1,0 +1,418 @@
+{
+ "ConfigGraph": {
+  "public_removed": [],
+  "private_removed": 13,
+  "public_added": [
+   "Turing.Cfg.InWindow.core_bounds",
+   "Turing.FinNDTM.DecidesInSpace.mem_of_acceptsWithin",
+   "Turing.outSummary_eq_empty_iff"
+  ],
+  "promoted": [
+   "Turing.NDTM.abs_lt_card_visitedWith",
+   "Turing.NDTM.inWindow_of_coreSum_eq",
+   "Turing.NDTM.mem_visitedWith_of_ne_none",
+   "Turing.NDTM.runWith_take_inWindow",
+   "Turing.NDTM.take_succ_action",
+   "Turing.NDTM.visitedWith_take_subset"
+  ],
+  "public_restated": [
+   "Turing.NDTM.inWindow_of_coreSum_eq",
+   "Turing.NDTM.runWith_take_inWindow"
+  ],
+  "restated_private": [
+   "Turing.FinNDTM.count_windowed_vertices"
+  ],
+  "proofs_changed": [
+   "Turing.FinNDTM.DecidesInSpace.mem_iff_acceptsWithin_configBound",
+   "Turing.FinNDTM.count_windowed_vertices",
+   "Turing.NDTM.inWindow_of_coreSum_eq",
+   "Turing.NDTM.runWith_take_inWindow"
+  ],
+  "d1_bodies": [
+   "Turing.FinNDTM.acceptsWithin_of_spaceUsedWith_le"
+  ]
+ },
+ "Word": {
+  "public_removed": [
+   "Complexity.Codec.InWin"
+  ],
+  "private_removed": 0,
+  "public_added": [],
+  "promoted": [],
+  "public_restated": [
+   "Complexity.Codec.coreSum_eq_of_cfgWord_eq",
+   "Complexity.Codec.decodeCfg_cfgCode",
+   "Complexity.Codec.decodeCfg_eq_none"
+  ],
+  "restated_private": [],
+  "proofs_changed": [
+   "Complexity.Codec.coreSum_eq_of_cfgWord_eq"
+  ],
+  "d1_bodies": [
+   "Complexity.Codec.decodeCfg",
+   "Complexity.Codec.decodeCfg_cfgCode"
+  ]
+ },
+ "Valid": {
+  "public_removed": [],
+  "private_removed": 0,
+  "public_added": [],
+  "promoted": [],
+  "public_restated": [
+   "Complexity.Codec.cellOf_mkCfg",
+   "Complexity.Codec.vScan_cfgWord",
+   "Complexity.Codec.validChk_iff"
+  ],
+  "restated_private": [],
+  "proofs_changed": [
+   "Complexity.Codec.cellOf_mkCfg",
+   "Complexity.Codec.vScan_cfgWord"
+  ],
+  "d1_bodies": []
+ },
+ "Step": {
+  "public_removed": [],
+  "private_removed": 0,
+  "public_added": [],
+  "promoted": [],
+  "public_restated": [
+   "Complexity.Codec.boundary_iff",
+   "Complexity.Codec.cellOf_apply",
+   "Complexity.Codec.sDone_step",
+   "Complexity.Codec.slide_step_iff"
+  ],
+  "restated_private": [],
+  "proofs_changed": [
+   "Complexity.Codec.boundary_iff",
+   "Complexity.Codec.cellOf_apply"
+  ],
+  "d1_bodies": []
+ },
+ "Langs": {
+  "public_removed": [],
+  "private_removed": 0,
+  "public_added": [],
+  "promoted": [],
+  "public_restated": [
+   "Complexity.Codec.mem_acceptLang",
+   "Complexity.Codec.mem_stepLang",
+   "Complexity.Codec.mem_validLang"
+  ],
+  "restated_private": [],
+  "proofs_changed": [],
+  "d1_bodies": [
+   "Complexity.Codec.acceptLang",
+   "Complexity.Codec.stepLang",
+   "Complexity.Codec.validLang"
+  ]
+ },
+ "Checks": {
+  "public_removed": [
+   "Complexity.Codec.outSummary_eq_empty_iff"
+  ],
+  "private_removed": 0,
+  "public_added": [],
+  "promoted": [],
+  "public_restated": [
+   "Complexity.Codec.aI_cfgWord",
+   "Complexity.Codec.acceptChk_iff",
+   "Complexity.Codec.stepChk_iff"
+  ],
+  "restated_private": [],
+  "proofs_changed": [
+   "Complexity.Codec.initChk_iff"
+  ],
+  "d1_bodies": []
+ },
+ "Bridge": {
+  "public_removed": [
+   "Complexity.Codec.inWin_runWith_take",
+   "Complexity.Codec.mem_of_acceptsWithin"
+  ],
+  "private_removed": 4,
+  "public_added": [],
+  "promoted": [],
+  "public_restated": [],
+  "restated_private": [],
+  "proofs_changed": [
+   "Complexity.Codec.mem_iff_codeChain",
+   "Complexity.Codec.mem_of_codePath"
+  ],
+  "d1_bodies": []
+ },
+ "Radius": {
+  "public_removed": [
+   "Complexity.ExpBFS.inWin_of_coreSum_eq"
+  ],
+  "private_removed": 0,
+  "public_added": [],
+  "promoted": [],
+  "public_restated": [
+   "Complexity.ExpBFS.WinRun.last",
+   "Complexity.ExpBFS.WinRun.snoc",
+   "Complexity.ExpBFS.coreSum_eq_of_code_eq",
+   "Complexity.ExpBFS.inWin_init",
+   "Complexity.ExpBFS.inWin_mono",
+   "Complexity.ExpBFS.inWin_runWith_of_decides",
+   "Complexity.ExpBFS.inWin_stepWith"
+  ],
+  "restated_private": [],
+  "proofs_changed": [
+   "Complexity.ExpBFS.inWin_init",
+   "Complexity.ExpBFS.inWin_mono",
+   "Complexity.ExpBFS.inWin_runWith_of_decides",
+   "Complexity.ExpBFS.inWin_stepWith",
+   "Complexity.ExpBFS.rcode_iff",
+   "Complexity.ExpBFS.winRun_of_card_eq"
+  ],
+  "d1_bodies": [
+   "Complexity.ExpBFS.WinRun"
+  ]
+ },
+ "InputAccess": {
+  "public_removed": [],
+  "private_removed": 0,
+  "public_added": [
+   "Complexity.LogProg.arm_chain",
+   "Complexity.LogProg.boundedDecodeStride_loop",
+   "Complexity.LogProg.drop_canon",
+   "Complexity.indicator_inputBitLang",
+   "Complexity.indicator_inputLenLang",
+   "Complexity.pairEncode_getD_snd"
+  ],
+  "promoted": [
+   "Complexity.LogProg.access_width_half"
+  ],
+  "public_restated": [],
+  "restated_private": [],
+  "proofs_changed": [
+   "Complexity.LogProg.arm_increments",
+   "Complexity.LogProg.boundedDecode_loop"
+  ],
+  "d1_bodies": []
+ },
+ "Engine": {
+  "public_removed": [],
+  "private_removed": 0,
+  "public_added": [],
+  "promoted": [],
+  "public_restated": [],
+  "restated_private": [],
+  "proofs_changed": [
+   "Complexity.Codec.decChain",
+   "Complexity.Codec.decodeStride_loop",
+   "Complexity.Codec.halvCount_loop",
+   "Complexity.Codec.incChain"
+  ],
+  "d1_bodies": []
+ },
+ "QueryReshape": {
+  "public_removed": [],
+  "private_removed": 1,
+  "public_added": [],
+  "promoted": [],
+  "public_restated": [],
+  "restated_private": [],
+  "proofs_changed": [
+   "Complexity.comp_suffix_address",
+   "Complexity.drop_bit",
+   "Complexity.drop_len"
+  ],
+  "d1_bodies": []
+ },
+ "Run": {
+  "public_removed": [],
+  "private_removed": 0,
+  "public_added": [],
+  "promoted": [],
+  "public_restated": [],
+  "restated_private": [],
+  "proofs_changed": [
+   "Complexity.Codec.orc_bit",
+   "Complexity.Codec.orc_len"
+  ],
+  "d1_bodies": []
+ },
+ "TQBFARMMachine": {
+  "public_removed": [],
+  "private_removed": 0,
+  "public_added": [],
+  "promoted": [],
+  "public_restated": [],
+  "restated_private": [],
+  "proofs_changed": [
+   "Complexity.LogProg.TQBFARM.orc_bit",
+   "Complexity.LogProg.TQBFARM.orc_len"
+  ],
+  "d1_bodies": []
+ },
+ "Parse": {
+  "public_removed": [],
+  "private_removed": 0,
+  "public_added": [],
+  "promoted": [],
+  "public_restated": [],
+  "restated_private": [],
+  "proofs_changed": [
+   "Complexity.Codec.canon_of_getLastD",
+   "Complexity.Codec.getLastD_of_canon",
+   "Complexity.Codec.pe_getD_snd"
+  ],
+  "d1_bodies": []
+ },
+ "VWord": {
+  "public_removed": [],
+  "private_removed": 0,
+  "public_added": [],
+  "promoted": [],
+  "public_restated": [],
+  "restated_private": [],
+  "proofs_changed": [
+   "Complexity.getD_drop"
+  ],
+  "d1_bodies": []
+ },
+ "Mult": {
+  "public_removed": [],
+  "private_removed": 0,
+  "public_added": [],
+  "promoted": [],
+  "public_restated": [],
+  "restated_private": [],
+  "proofs_changed": [
+   "Complexity.mult_addresses"
+  ],
+  "d1_bodies": []
+ },
+ "DAGCircuitSat": {
+  "public_removed": [],
+  "private_removed": 0,
+  "public_added": [],
+  "promoted": [
+   "BoolCircuit.DAGCircuit.eval_tseitinGates_values",
+   "BoolCircuit.DAGCircuit.values_getD_eq_of_eval_tseitinGates"
+  ],
+  "public_restated": [],
+  "restated_private": [],
+  "proofs_changed": [],
+  "d1_bodies": []
+ },
+ "TQBFHardTseitin": {
+  "public_removed": [
+   "Complexity.TQBFHard.values_getD_eq_of_eval_tseitinGates"
+  ],
+  "private_removed": 0,
+  "public_added": [],
+  "promoted": [],
+  "public_restated": [],
+  "restated_private": [],
+  "proofs_changed": [
+   "Complexity.TQBFHard.toCNF_extension_iff"
+  ],
+  "d1_bodies": []
+ },
+ "TQBF": {
+  "public_removed": [],
+  "private_removed": 46,
+  "public_added": [],
+  "promoted": [],
+  "public_restated": [],
+  "restated_private": [],
+  "proofs_changed": [
+   "Complexity.codecRowOf_eq_iff"
+  ],
+  "d1_bodies": []
+ },
+ "PolyTimeBlockLoop": {
+  "public_removed": [],
+  "private_removed": 0,
+  "public_added": [
+   "Complexity.length_pairEncode_drop_le"
+  ],
+  "promoted": [],
+  "public_restated": [],
+  "restated_private": [],
+  "proofs_changed": [
+   "Complexity.length_xorPairStep_le"
+  ],
+  "d1_bodies": []
+ },
+ "TQBFHardParams": {
+  "public_removed": [],
+  "private_removed": 0,
+  "public_added": [],
+  "promoted": [],
+  "public_restated": [],
+  "restated_private": [],
+  "proofs_changed": [
+   "Complexity.TQBFHard.length_lbStep"
+  ],
+  "d1_bodies": []
+ },
+ "TQBFHardSemantics": {
+  "public_removed": [
+   "Complexity.TQBFHard.prefixTruth_congr_agree"
+  ],
+  "private_removed": 0,
+  "public_added": [],
+  "promoted": [],
+  "public_restated": [],
+  "restated_private": [],
+  "proofs_changed": [],
+  "d1_bodies": []
+ },
+ "QBF": {
+  "public_removed": [],
+  "private_removed": 0,
+  "public_added": [
+   "Complexity.QBF.prefixTruth_congr_agree"
+  ],
+  "promoted": [],
+  "public_restated": [],
+  "restated_private": [],
+  "proofs_changed": [
+   "Complexity.QBF.prefixTruth_congr"
+  ],
+  "d1_bodies": []
+ },
+ "TQBFHardMachine": {
+  "public_removed": [],
+  "private_removed": 0,
+  "public_added": [],
+  "promoted": [],
+  "public_restated": [],
+  "restated_private": [],
+  "proofs_changed": [],
+  "d1_bodies": []
+ },
+ "TQBFHardVerifier": {
+  "public_removed": [],
+  "private_removed": 0,
+  "public_added": [],
+  "promoted": [],
+  "public_restated": [],
+  "restated_private": [],
+  "proofs_changed": [],
+  "d1_bodies": []
+ },
+ "ExpBFSRun": {
+  "public_removed": [],
+  "private_removed": 0,
+  "public_added": [],
+  "promoted": [],
+  "public_restated": [],
+  "restated_private": [],
+  "proofs_changed": [],
+  "d1_bodies": []
+ },
+ "SpaceComplexity": {
+  "public_removed": [],
+  "private_removed": 0,
+  "public_added": [],
+  "promoted": [],
+  "public_restated": [],
+  "restated_private": [],
+  "proofs_changed": [],
+  "d1_bodies": []
+ }
+}

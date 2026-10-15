@@ -1,0 +1,52 @@
+§12.7 pre-ship check: results (2026-10-10)
+Harness: audits/evidence/s12-counter/CounterLoopPreShip.lean.txt, run as the
+module TCSlib/Complexity/TuringMachine/Build/CounterLoopPreShip with
+scripts/lean_check_tree.sh against Build/CounterLoop.lean as committed
+(exit 0, no errors; 2 min 45 s). The output of each #eval, in order:
+
+1. Symbol transport (MultiTapeTM.mapWorkSymbols_runFrom), every time t <= T,
+   comparing state, 2 x 40 cells, both heads, input position and output:
+   incrementTM (tape 0)               true
+   incrementTM (tape 1)               true
+   copyTM                             true
+   transferTM                         true
+   compareTM                          true
+   echoTM (moves input, emits)        true
+   control: start not renamed         false   (expected false)
+
+2. Framed decrement, every word of length <= 5 at heads 3/-4/0 with a
+   nonblank outer frame (exact final configuration, no earlier done,
+   head range [pos-1, pos+q] or [pos-1, pos+|w|], other head fixed):
+   all 63 words x 3 positions         true
+   leading-false counts [1],[0,1],[0,0,1],[0,0,0] -> [0, 1, 2, 3]
+   control: one step early            false   (expected false)
+   decFixed = incFixed conjugated by not; value drops by one,
+   width kept; none iff value 0 (all words of length <= 7)   true
+
+3. Counter arithmetic:
+   counterWord_length (|w| <= 7, r <= value + 2)             true
+   counterWord_value (|w| <= 7, r <= value)                  true
+   counterOverhead_le_of_le (|w| <= 8, r <= value)           true
+   counterOverhead_le (|w| <= 8)                             true
+   minimum prefix slack 4r + 2|w| - overhead, width 8, r >= 1: 4
+   minimum whole-run slack, width 8:                          0   (tight)
+
+4. The host. Each pair is (the theorem's hypotheses hold, every conclusion
+   clause holds): exact final configuration over 3 x 50 cells, all heads,
+   input position and output; no done/escape before T; counter head in
+   [cp-1, cp+|w|] for t <= T; body-head trajectory clause for t <= T.
+   counterLoopTM_run_done, growTM (rounds 3, 4, 6, 8, 10: configuration
+   dependent), exit = none, 8 counters of values 0..5 incl. [] and all-false:
+     counter at 0, body heads (5, -2)        8 x (true, true)
+     counter at -6, body heads (-3, 4)       8 x (true, true)
+     counter at 9, body heads (8, 0)         8 x (true, true)
+   counterLoopTM_run_done, exitTM with exit = some 2 never reached
+   (values 0, 1, 2, 0):                      4 x (true, true)
+   round times along the orbit:              [3, 4, 6, 8, 10]
+   counterLoopTM_run_escape, exitTM, exit at round 2, counter values
+   3, 4, 5, 7, at two placements:            8 x (true, true)
+   control: done one step early              (true, false)   (expected)
+   control: escape counter one decrement short (true, false) (expected)
+   counterLoop_time_le with B = max round time, 8 counters  true
+
+This is evidence, not proof.

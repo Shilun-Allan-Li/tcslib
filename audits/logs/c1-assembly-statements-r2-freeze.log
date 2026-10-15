@@ -1,0 +1,264 @@
+# C1-A assembly gate, round 2: freeze of the three landing files
+
+Tool: `bash <S>/tools/leanelab.sh <S>/wt-c1asm <S>/oleans-lb6 <file>` (direct `lean`, throttled, no
+`-o`, no olean written). Campaign tip: 71849323fd50059d92d599194aa44476418e6f37 (`git rev-parse origin/complexity/arora-barak-ch3-4`). Sources: <OUT>/base, the
+tip's tree (`git archive`, read-only). Snapshot: `oleans-lb6` (`base.log`). `wt-c1asm` (at
+2c3c975a, read-only) supplies only the Mathlib packages. Toolchain: `leanprover/lean4:v4.25.0`.
+<OUT> is this round's directory; <S> the scratchpad. Run: 2026-10-14 18:38 UTC.
+
+### Embed: SHA-256 tip b3dbb98a485fb11d…, landed 3df60ca6d7dd4aa6…
+```
+[Embed] tip declarations 46 (30 public); landed 47
+1. statements identical: 46 of 46; changed: []
+2. removed: []; added (1): Turing.embedSilentCfg_cap
+3. declarations whose code changed: [] (allowed: [])
+4. lines outside declarations: added []; removed []
+[Embed] FREEZE OK
+freeze_r2.py exit 0
+```
+Raw diff of comments and code (tip -> landed), head:
+```diff
+@@ -93,6 +93,8 @@
+ * `Turing.embedEmitTM_tr` — the forwarding transformer's transition at the action level:
+   the source action on each selected tape, `(none, 0)` on every other tape, and the input
+   move, output and successor state unchanged (12.2c item 6's export).
++* `Turing.embedSilentCfg_cap` — the silent transport's capture tape and head, off the
++  selection (the C1-A assembly gate's export, 2026-10-14).
+ * `Turing.embedSilentTM_runFrom`, `Turing.embedEmitTM_runFrom` — lockstep:
+   the transported run is the transport of the source run, same step count.
+ * `Turing.embedSilentTM_frame`, `Turing.embedEmitTM_frame` — tapes outside
+@@ -969,7 +971,8 @@
+ independently, that no old-code R1 consumer can be proved from this file's
+ public surface: the frame lemmas cover only unselected tapes, and
+ `embedSlot_selected` is private. These four projections export the
+-selected-tape fields of the two configuration transports. They are
++selected-tape fields of the two configuration transports; `Turing.embedSilentCfg_cap`, after
++them, exports the silent transport's capture field (the C1-A assembly gate, finding M1). They are
+ skeleton-time proofs (statement-phase additions flagged for the A-S1
+ audit): each is definitional at `embedSlot_selected`. -/
+ 
+@@ -1006,7 +1009,27 @@
+     (embedEmitCfg ι tapes heads pre c).workTapePos (ι i) = c.workTapePos i := by
+   simp [embedEmitCfg, embedSlot_selected]
+ 
++/-- **The silent transport's capture tape.** If the capture tape `cap` lies outside the selection
++`ι`, the transported configuration `Turing.embedSilentCfg ι cap tapes heads pre out₀ c` holds the
++recorded word `pre ++ c.output` on `cap`, and that tape's head sits just after it, at
++`|pre ++ c.output|`, for every frame, prefix, physical output and source configuration. It is the
++capture-field companion of the selected-tape exports, so that consumers need not unfold the
++transport's private slot search (the C1-A assembly gate, finding M1). (Technical glue.)
+ 
++**Proof sketch.** Off the selection the slot search finds no source tape
++(`embedSlot_unselected`), so both fields are the capture branch of the transport's
++definition. -/
++theorem embedSilentCfg_cap (ι : Fin m ↪ Fin k) (cap : Fin k)
++    (hcap : cap ∉ Set.range ι)
++    (tapes : Fin k → ℤ → Option Symbol) (heads : Fin k → ℤ)
++    (pre out₀ : List Symbol) (c : Cfg m Symbol S x) :
++    (embedSilentCfg ι cap tapes heads pre out₀ c).workTapes cap =
++        FinTM.bufferTape (pre ++ c.output) ∧
++      (embedSilentCfg ι cap tapes heads pre out₀ c).workTapePos cap =
++        ((pre ++ c.output).length : ℤ) := by
++  simp [embedSilentCfg, embedSlot_unselected ι cap hcap]
++
++
+ end Turing
+ 
+ namespace Turing
+```
+### NDHost: SHA-256 tip 9507b89d42771b82…, landed 8e413ff4e06f4e80…
+```
+[NDHost] tip declarations 6 (6 public); landed 27
+1. statements identical: 6 of 6; changed: []
+2. removed: []; added (21): Turing.NDWriterState.instFintype, Turing.GuessRunPhase, Turing.GuessRunPhase.State, Turing.GuessRunPhase.instFintypeState, Turing.GuessRunPhase.instDecidableEqState, Turing.guessRunPhases, Turing.guessRunRed, Turing.guessRunTM, Turing.guessRunCfg, Turing.streamStartCfg, private Turing.guessRun_mapState_mapState, private Turing.guessRun_split, Turing.guessRunTM_runWith_handoff, Turing.guessRunTM_runWith_live, Turing.guessRunTM_runWith_handoff_state, Turing.guessRunTM_runWith, Turing.guessRunTM_runWith_setup_halt, Turing.guessRunTM_haltsWithin, Turing.guessRunTM_accepts_iff, Turing.guessRunCfg_clean, Turing.guessRunTM_silent_spec
+3. declarations whose code changed: [] (allowed: [])
+4. lines outside declarations: added ['import TCSlib.Complexity.TuringMachine.Build.Catalog']; removed []
+[NDHost] FREEZE OK
+freeze_r2.py exit 0
+```
+Raw diff of comments and code (tip -> landed), head:
+```diff
+@@ -5,13 +5,14 @@
+ -/
+ import TCSlib.Complexity.TuringMachine.Build.Seam
+ import TCSlib.Complexity.TuringMachine.Nondeterministic
++import TCSlib.Complexity.TuringMachine.Build.Catalog
+ 
+ set_option maxHeartbeats 0
+ set_option relaxedAutoImplicit false
+ set_option autoImplicit false
+ 
+ /-!
+-# The nondeterministic phase host and the choice writer
++# The nondeterministic phase host, the choice writer, and the guess-then-run assembly
+ 
+ The nondeterministic part of the construction layer that the guess-first route needs (user
+ decision 1 of 2026-10-13; the C1 design note §3.1, §3.4). The universal NDTM and the
+@@ -39,22 +40,41 @@
+   bounded flavor (`Turing.ndWriterTM_run_block`), the two choices differ only in the written
+   symbol, so its timing is branch-independent. The bounded flavor serves the universal NDTM and
+   the diagonalizer; the controller flavor, the linear normal form's display guess.
++* **The guess-then-run assembly** `Turing.guessRunTM` composes the phase host over a
++  deterministic setup, the bounded writer, a rewind by the catalog's `Turing.skipTM` and
++  `Turing.skipBackTM`, a deterministic run ending in a live verdict, and a verdict leaf (ruling 2
++  of the C1 host-contracts gate). Its contract identifies the writer's word, transfers the
++  deterministic phases, and gives all-branch halting and exact-budget acceptance; with the
++  interpreter core run silently (`Turing.embedSilentTM`), the core's precondition and live
++  verdicts (`Turing.guessRunTM_silent_spec`).
+ 
+ ## Main definitions
+ 
+ * `Turing.NDTM.phaseHostND` — the nondeterministic phase host.
+ * `Turing.NDWriterState`, `Turing.ndWriterTM` — the choice writer. [AB09, §2.1.2]
++* `Turing.GuessRunPhase`, `Turing.guessRunPhases`, `Turing.guessRunRed`, `Turing.guessRunTM` —
++  the guess-then-run host. [AB09, §2.1.2, proof of Theorem 2.6]
++* `Turing.guessRunCfg`, `Turing.streamStartCfg` — the run's entry configuration after a guess,
++  and the interpreter core's start configuration.
+ 
+ ## Main results
+ 
+ * `Turing.NDTM.phaseHostND_fixChoice`, `Turing.NDTM.phaseHostND_run` (proved).
+ * `Turing.ndWriterTM_run_block` — the bounded flavor's contract (sorried).
++* `Turing.guessRunTM_runWith_handoff`, `Turing.guessRunTM_runWith_handoff_state`,
++  `Turing.guessRunTM_runWith_live`, `Turing.guessRunTM_runWith`,
++  `Turing.guessRunTM_haltsWithin`, `Turing.guessRunTM_accepts_iff` — the guess-then-run assembly
++  (proved modulo `Turing.ndWriterTM_run_block`); `Turing.guessRunTM_runWith_setup_halt` — a
++  halting setup (proved).
++* `Turing.guessRunCfg_clean` (proved), `Turing.guessRunTM_silent_spec` (proved modulo the
++  writer) — the interpreter core's interface: precondition, emission capture, live verdicts.
+ 
+ ## References
+ 
+ * [AB09] S. Arora, B. Barak, *Computational Complexity: A Modern Approach*,
+   Cambridge University Press, 2009. (§2.1.2: an NDTM chooses one of its two transition
+-  functions at every step.)
++  functions at every step; the proof of Theorem 2.6: guess a string, then verify it
++  deterministically; Exercise 2.6.)
+ -/
+ 
+ namespace Turing.NDTM
+@@ -191,5 +211,873 @@
+```
+### Inclusions: SHA-256 tip 55746a30c8df557c…, landed cd38e35e01ef7ce6…
+```
+[Inclusions] tip declarations 68 (4 public); landed 68
+1. statements identical: 68 of 68; changed: []
+2. removed: []; added (0): 
+3. declarations whose code changed: ['Complexity.b2b_capture_shape'] (allowed: ['Complexity.b2b_capture_shape'])
+   @@ -14,5 +13,0 @@
+   -  have hslot : (List.finRange m).find? (fun j => decide (ι j = cap)) = none := by
+   -    apply List.find?_eq_none.mpr
+   -    intro j _
+   -    simp only [decide_eq_true_eq]
+   -    exact fun hj => hcap ⟨j, hj⟩
+   @@ -25,4 +20,2 @@
+   -      change (match (List.finRange m).find? (fun a => decide (ι a = cap)) with
+   -        | some a => d.workTapes a
+   -        | none => if cap = cap then FinTM.bufferTape ([] ++ d.output) else tapes cap) = _
+   -      simp [hslot, d]
+   +      rw [(embedSilentCfg_cap ι cap hcap tapes (fun _ => 0) [] [] d).1, Function.update_self]
+   +      rfl
+   @@ -40,4 +33,2 @@
+   -      change (match (List.finRange m).find? (fun a => decide (ι a = cap)) with
+   -        | some a => d.workTapePos a
+   -        | none => if cap = cap then (([] ++ d.output).length : ℤ) else 0) = _
+   -      simp [hslot, d]
+   +      rw [(embedSilentCfg_cap ι cap hcap tapes (fun _ => 0) [] [] d).2, Function.update_self]
+   +      rfl
+4. lines outside declarations: added []; removed []
+[Inclusions] FREEZE OK
+freeze_r2.py exit 0
+```
+Raw diff of comments and code (tip -> landed), head:
+```diff
+@@ -721,8 +721,8 @@
+ startup and final configurations of setup and identity capture.
+ 
+ **Proof sketch.** On the selected banks use the embedding's tape and head
+-projections; elsewhere use the frame theorem. At the capture tape unfold the
+-captured-output entry and its head at the word's length. -/
++projections; elsewhere use the frame theorem. At the capture tape the captured-output
++entry and its head at the word's length are `Turing.embedSilentCfg_cap`. -/
+ private theorem b2b_capture_shape {k m : ℕ} {S : Type} {x : List Bool}
+     (M : MultiTapeTM m Bool S) (ι : Fin m ↪ Fin k) (cap : Fin k)
+     (hcap : cap ∉ Set.range ι) (tapes : Fin k → ℤ → Option Bool)
+@@ -736,21 +736,14 @@
+         workTapePos := Function.update (fun _ => (0 : ℤ)) cap (y.length : ℤ) } := by
+   classical
+   let d : Cfg m Bool S x := { Cfg.init s x with inputPos := p, output := y }
+-  have hslot : (List.finRange m).find? (fun j => decide (ι j = cap)) = none := by
+-    apply List.find?_eq_none.mpr
+-    intro j _
+-    simp only [decide_eq_true_eq]
+-    exact fun hj => hcap ⟨j, hj⟩
+   apply Cfg.ext <;> try rfl
+   · funext j
+     change (embedSilentCfg ι cap tapes (fun _ => 0) [] [] d).workTapes j =
+       Function.update tapes cap (FinTM.bufferTape y) j
+     by_cases hc : j = cap
+     · subst j
+-      change (match (List.finRange m).find? (fun a => decide (ι a = cap)) with
+-        | some a => d.workTapes a
+-        | none => if cap = cap then FinTM.bufferTape ([] ++ d.output) else tapes cap) = _
+-      simp [hslot, d]
++      rw [(embedSilentCfg_cap ι cap hcap tapes (fun _ => 0) [] [] d).1, Function.update_self]
++      rfl
+     · by_cases hj : j ∈ Set.range ι
+       · obtain ⟨a, rfl⟩ := hj
+         rw [embedSilentCfg_selected_tape, Function.update_of_ne hc, hbank]
+@@ -762,10 +755,8 @@
+       Function.update (fun _ => (0 : ℤ)) cap (y.length : ℤ) j
+     by_cases hc : j = cap
+     · subst j
+-      change (match (List.finRange m).find? (fun a => decide (ι a = cap)) with
+-        | some a => d.workTapePos a
+-        | none => if cap = cap then (([] ++ d.output).length : ℤ) else 0) = _
+-      simp [hslot, d]
++      rw [(embedSilentCfg_cap ι cap hcap tapes (fun _ => 0) [] [] d).2, Function.update_self]
++      rfl
+     · rw [Function.update_of_ne hc]
+       by_cases hj : j ∈ Set.range ι
+       · obtain ⟨a, rfl⟩ := hj
+```
+### The unit: round 1 -> round 2 (every round-1 statement unchanged; additions; changed proofs)
+```
+[unit] tip declarations 20 (18 public); landed 22
+1. statements identical: 20 of 20; changed: []
+2. removed: []; added (2): Turing.embedSilentCfg_cap, Turing.guessRunTM_runWith_handoff_state
+3. declarations whose code changed: ['Turing.guessRunCfg_clean'] (allowed: ['Turing.guessRunCfg_clean'])
+   @@ -10,5 +9,0 @@
+   -  have hslot : (List.finRange K).find? (fun a => decide (ι a = cap)) = none := by
+   -    apply List.find?_eq_none.mpr
+   -    intro a _
+   -    simp only [decide_eq_true_eq]
+   -    exact fun h => hcap ⟨a, h⟩
+   @@ -47,5 +42,2 @@
+   -        change _ = (match (List.finRange K).find? (fun a => decide (ι a = i)) with
+   -          | some a => (streamStartCfg z jR entry s).workTapes a
+   -          | none => if i = i then FinTM.bufferTape ([] ++ (streamStartCfg z jR entry s).output)
+   -              else (fun _ _ => none) i)
+   -        rw [hslot]
+   +        rw [(embedSilentCfg_cap ι i hcap (fun _ _ => none) (fun _ => 0) [] []
+   +          (streamStartCfg z jR entry s)).1]
+   @@ -63,5 +55,2 @@
+   -        change _ = (match (List.finRange K).find? (fun a => decide (ι a = i)) with
+   -          | some a => (streamStartCfg z jR entry s).workTapePos a
+   -          | none => if i = i then
+   -              (([] ++ (streamStartCfg z jR entry s).output).length : ℤ) else 0)
+   -        rw [hslot]
+   +        rw [(embedSilentCfg_cap ι i hcap (fun _ _ => none) (fun _ => 0) [] []
+   +          (streamStartCfg z jR entry s)).2]
+4. lines outside declarations: added ['section EmbedCapExport', 'variable {m k : ℕ} {S : Type*} {Symbol : Type*} {x : List Symbol}', 'end EmbedCapExport']; removed []
+[unit] FREEZE OK
+freeze_r2.py exit 0
+```
+### Control: a landed Embed with one existing statement changed must fail the freeze
+```
+[ctrl] tip declarations 46 (30 public); landed 47
+1. statements identical: 45 of 46; changed: ['Turing.embedSilentCfg_selected_pos']
+2. removed: []; added (1): Turing.embedSilentCfg_cap
+3. declarations whose code changed: ['Turing.embedSilentCfg_selected_pos'] (allowed: [])
+4. lines outside declarations: added []; removed []
+[ctrl] FREEZE FAILED
+exit 1
+```

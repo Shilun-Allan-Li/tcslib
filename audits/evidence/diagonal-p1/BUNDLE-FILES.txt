@@ -1,0 +1,81 @@
+# Diagonal Part 1 statement gate: the auditor's bundle, in order.
+# Paths are repository paths after the commit: the pack at audits/, this folder's other files
+# under audits/evidence/diagonal-p1/. Library files are at the base cd450a526e71a5e437ebe84245ea958bf309eda1.
+
+# 1. The pack
+audits/diagonal-p1-statements-pack.md
+
+# 2. The standards
+audits/TEMPLATE.md
+policy.md
+workflow.md
+
+# 3. The design and the decision records
+audits/evidence/u2/U2-design.md
+audits/evidence/u2/probes/U2DiagParam.lean.txt
+audits/evidence/u2/probes/U2DiagParam.out.txt
+backlog.md                                  (RD-5: the user's decisions of 2026-10-14)
+AroraBarakChapters3-4Plan.md                (§2.1: the f log f decision)
+
+# 4. The file under audit, before and after, and the change
+TCSlib/Complexity/TimeHierarchy/Diagonal.lean                               (the base)
+audits/evidence/diagonal-p1/tree/TCSlib/Complexity/TimeHierarchy/Diagonal.lean   (as landed)
+audits/evidence/diagonal-p1/patches/Diagonal.patch
+
+# 5. The library files the landed file cites (base)
+TCSlib/Complexity/TimeHierarchy/ClockMachine.lean
+TCSlib/Complexity/TimeHierarchy/ClockLoop.lean
+TCSlib/Complexity/TimeHierarchy/CodePrefix.lean
+TCSlib/Complexity/ClassP/DTIME.lean
+TCSlib/Complexity/ClassP/TimeConstructible.lean
+TCSlib/Complexity/TuringMachine/Universal.lean
+TCSlib/Complexity/TuringMachine/Encoding.lean
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean
+TCSlib/Complexity/TuringMachine/Composition.lean
+TCSlib/Complexity/TuringMachine/Finite.lean
+
+# 6. The consumers (base): the five direct importers, and the screen population's other file
+TCSlib/Complexity/TimeHierarchy/Separation.lean
+TCSlib/Complexity/Diagonalization/EXPCOM.lean
+TCSlib/Complexity/Diagonalization/NotTimeConstructible.lean
+TCSlib/Complexity/SpaceComplexity/Hierarchy.lean
+TCSlib/Complexity/TimeHierarchy.lean
+TCSlib/Complexity/Diagonalization/NTimeHierarchy.lean
+
+# 7. The evidence
+audits/evidence/diagonal-p1/LANDING-NOTES.md
+audits/evidence/diagonal-p1/replay-order.txt
+audits/evidence/diagonal-p1/logs/summary.log
+audits/evidence/diagonal-p1/logs/precheck.log
+audits/evidence/diagonal-p1/logs/mklanded.log
+audits/evidence/diagonal-p1/logs/freeze.log
+audits/evidence/diagonal-p1/logs/names.log
+audits/evidence/diagonal-p1/logs/axioms.log
+audits/evidence/diagonal-p1/logs/graph.log
+audits/evidence/diagonal-p1/logs/cutfiles.log
+audits/evidence/diagonal-p1/logs/cut.log
+audits/evidence/diagonal-p1/logs/widths-hygiene.log
+audits/evidence/diagonal-p1/logs/lint.log
+audits/evidence/diagonal-p1/logs/negative-controls.log
+audits/evidence/diagonal-p1/logs/screen-before.txt
+audits/evidence/diagonal-p1/logs/screen-after.txt
+audits/evidence/diagonal-p1/logs/screen-delta.log
+audits/evidence/diagonal-p1/scripts/run.sh
+audits/evidence/diagonal-p1/scripts/mklanded.py
+audits/evidence/diagonal-p1/scripts/decls.py
+audits/evidence/diagonal-p1/scripts/freeze.py
+audits/evidence/diagonal-p1/scripts/names.py
+audits/evidence/diagonal-p1/scripts/graph.py
+audits/evidence/diagonal-p1/scripts/tipcheck.py
+audits/evidence/diagonal-p1/scripts/cutcheck.py
+audits/evidence/diagonal-p1/scripts/axfile.py
+audits/evidence/diagonal-p1/scripts/axcheck.py
+audits/evidence/diagonal-p1/scripts/compare.py
+audits/evidence/diagonal-p1/scripts/hygiene.py
+audits/evidence/diagonal-p1/scripts/negctl.sh
+audits/evidence/diagonal-p1/scripts/screens.sh
+audits/evidence/diagonal-p1/scripts/copy-text-screen.py
+audits/evidence/diagonal-p1/scripts/screendelta.py
+audits/evidence/diagonal-p1/scripts/pairdiff.py
+audits/evidence/diagonal-p1/scripts/appendix.py
+audits/evidence/diagonal-p1/SHA256SUMS

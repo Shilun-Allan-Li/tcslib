@@ -309,7 +309,7 @@ theorem toCNF_var_lt_size (C : DAGCircuit n) : ∀ c ∈ C.toCNF, ∀ l ∈ c, l
       omega
 
 /-- The vertex values on input `x` satisfy every gate clause (fan-in at most two). -/
-private theorem eval_tseitinGates_values (C : DAGCircuit n)
+theorem eval_tseitinGates_values (C : DAGCircuit n)
     (hC : ∀ g ∈ C.gates, g.args.length ≤ 2) (x : Fin n → Bool) :
     (tseitinGates n C.gates).eval (fun v => (C.values x).getD v false) = true := by
   rw [eval_tseitinGates]
@@ -319,7 +319,7 @@ private theorem eval_tseitinGates_values (C : DAGCircuit n)
 
 /-- An assignment satisfying every gate clause agrees, at every vertex, with the circuit's
 values on the input it assigns to the input vertices (fan-in at most two). -/
-private theorem values_getD_eq_of_eval_tseitinGates (C : DAGCircuit n)
+theorem values_getD_eq_of_eval_tseitinGates (C : DAGCircuit n)
     (hC : ∀ g ∈ C.gates, g.args.length ≤ 2) (a : ℕ → Bool)
     (ha : (tseitinGates n C.gates).eval a = true) :
     ∀ v, v < n + C.gates.length → (C.values fun i => a i).getD v false = a v := by

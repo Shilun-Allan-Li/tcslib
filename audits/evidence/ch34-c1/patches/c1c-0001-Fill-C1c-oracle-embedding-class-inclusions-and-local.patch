@@ -1,0 +1,460 @@
+From c8c3f5754564b11ef4df5af7b87b465ff6418e2f Mon Sep 17 00:00:00 2001
+From: Codex <codex@openai.com>
+Date: Sun, 11 Oct 2026 01:55:56 +0200
+Subject: [PATCH] Fill C1c oracle embedding, class inclusions, and locality
+ proofs
+
+---
+ TCSlib/Complexity/ClassOracle/Classes.lean    |  35 ++++-
+ .../TuringMachine/OracleAgreement.lean        | 148 ++++++++++++++++--
+ .../TuringMachine/OracleNondeterministic.lean | 137 +++++++++++++++-
+ 3 files changed, 305 insertions(+), 15 deletions(-)
+
+diff --git a/TCSlib/Complexity/ClassOracle/Classes.lean b/TCSlib/Complexity/ClassOracle/Classes.lean
+index 5db5a51d86844299ac26e3282187509ae0a1a601..72da39bbf5b2476f0dc6d2d5a3271b592626eba4 100644
+--- a/TCSlib/Complexity/ClassOracle/Classes.lean
++++ b/TCSlib/Complexity/ClassOracle/Classes.lean
+@@ -49,7 +49,7 @@ has a mechanical oracle counterpart.
+ * `Complexity.POracle`, `Complexity.NPOracle` — `Pᴼ` and `NPᴼ`.
+   [AB09, Definition 3.5]
+ 
+-## Main results (all sorried; phase-P3.1 statements)
++## Main results (two inclusions proved; four phase-P3.1 statements remain sorried)
+ 
+ * `Complexity.P_subset_POracle` — an oracle can only help: `P ⊆ Pᴼ`.
+   [AB09, Example 3.6(2), first half]
+@@ -108,7 +108,10 @@ decidable in polynomial time with any oracle, `P ⊆ Pᴼ`.
+ `Turing.FinTM.toFinOracleTM_computesInTime` transfers `DecidesInTime` verbatim
+ (same `c`, same exponent) under every oracle `O`. -/
+ theorem P_subset_POracle (O : Language Bool) : P ⊆ POracle O := by
+-  sorry
++  intro L hL
++  obtain ⟨e, c, M, hM⟩ := Set.mem_iUnion.mp hL
++  exact Set.mem_iUnion.mpr ⟨e, c, M.toFinOracleTM,
++    fun x => (FinTM.toFinOracleTM_computesInTime M O _ _ _).mpr (hM x)⟩
+ 
+ /-- **Determinism is a special case of nondeterminism, relative to any oracle**:
+ `Pᴼ ⊆ NPᴼ`. [AB09, §3.4]
+@@ -121,7 +124,33 @@ from `M`'s halting, and some branch accepts iff `M`'s (unique) run outputs
+ `[true]`, i.e. iff `x ∈ L` by the indicator equation — mirroring
+ `Complexity.DTIME_subset_NTIME`'s proof over `Turing.MultiTapeTM.toNDTM_runWith`. -/
+ theorem POracle_subset_NPOracle (O : Language Bool) : POracle O ⊆ NPOracle O := by
+-  sorry
++  classical
++  intro L hL
++  obtain ⟨e, c, M, hM⟩ := Set.mem_iUnion.mp hL
++  refine Set.mem_iUnion.mpr ⟨e, c, M.toFinOracleNDTM, ?_⟩
++  intro x
++  obtain ⟨hhalt, hout⟩ := hM x
++  have branch (w : List Bool) (hw : w.length = c * (x.length ^ e + 1)) :
++      M.toFinOracleNDTM.tm.runWith O w (M.toFinOracleNDTM.tm.initCfg x) =
++        M.tm.runFrom O (M.tm.initCfg x) (c * (x.length ^ e + 1)) := by
++    have same := M.tm.toOracleNDTM_runWith O w (M.tm.initCfg x)
++    rw [hw] at same
++    exact same
++  refine ⟨fun w hw => ?_, ?_⟩
++  · rw [branch w hw]
++    exact hhalt
++  · constructor
++    · intro hx
++      refine ⟨List.replicate (c * (x.length ^ e + 1)) false, List.length_replicate .., ?_, ?_⟩
++      · rw [branch _ (List.length_replicate ..)]
++        exact hhalt
++      · rw [branch _ (List.length_replicate ..), hout]
++        simp only [MultiTapeTM.indicator, if_pos hx]
++    · rintro ⟨w, hw, _, accepts⟩
++      rw [branch w hw, hout] at accepts
++      by_contra hx
++      simp only [MultiTapeTM.indicator, if_neg hx] at accepts
++      cases accepts
+ 
+ /-- **The workhorse of the light oracle results**: if `L` Karp-reduces to the
+ oracle in polynomial time, then `L ∈ Pᴼ` — compute the reduction onto the query
+diff --git a/TCSlib/Complexity/TuringMachine/OracleAgreement.lean b/TCSlib/Complexity/TuringMachine/OracleAgreement.lean
+index 9289e191e9ea716f4f86e6bb264e04efb424e581..68ae1c1c6c858132642b6bd0d5887658fa058a9f 100644
+--- a/TCSlib/Complexity/TuringMachine/OracleAgreement.lean
++++ b/TCSlib/Complexity/TuringMachine/OracleAgreement.lean
+@@ -46,7 +46,7 @@ touches a queried string.
+ * `Turing.OracleNDTM.queriesAlong` — the query strings submitted along a fixed
+   choice word of a nondeterministic initialized oracle run.
+ 
+-## Main results (all sorried; phase-P3.2 statements)
++## Main results (proved; phase-P3.2 statements)
+ 
+ * `Turing.OracleTM.runFrom_eq_of_agree_length_lt` — agreement on all strings of
+   length `< t` makes the `t`-step runs coincide.
+@@ -90,6 +90,104 @@ noncomputable def queriesWithin (M : OracleTM k Symbol State) (O : Language Symb
+       some (queryString (M.runFrom O (M.initCfg x) s))
+     else none
+ 
++/-- Two oracle steps agree if the oracles agree on the current query whenever
++the current state is the query state.
++
++**Proof sketch.** Away from the query state cite oracle independence. At the
++query state, equal membership answers select the same successor state. -/
++private theorem step_eq_of_query_agree (M : OracleTM k Symbol State)
++    (O O' : Language Symbol) {input : List Symbol}
++    (cfg : Cfg (k + 1) Symbol State input)
++    (h : cfg.state = some M.qQuery → (queryString cfg ∈ O ↔ queryString cfg ∈ O')) :
++    M.step O cfg = M.step O' cfg := by
++  classical
++  by_cases hq : cfg.state = some M.qQuery
++  · have answer := propext (h hq)
++    simp only [step, hq, answer]
++  · exact step_eq_of_ne_qQuery O O' hq
++
++/-- Agreement on the queries actually submitted along a choice word under the
++first oracle makes every prefix configuration coincide under the two oracles.
++
++**Proof sketch.** Induct on the prefix length. Split the next prefix into the
++old prefix and its next bit. The induction hypothesis identifies the starting
++configurations; the fixed-choice bridge and step agreement identify their next
++steps, using the query hypothesis along the first run. This single induction
++also serves deterministic runs through their constant-choice embedding. -/
++private theorem runWith_take_eq_of_agree (N : OracleNDTM k Symbol State)
++    (O O' : Language Symbol) (x : List Symbol) (w : List Bool)
++    (h : ∀ s < w.length,
++      (N.runWith O (w.take s) (N.initCfg x)).state = some N.qQuery →
++        (queryString (N.runWith O (w.take s) (N.initCfg x)) ∈ O ↔
++          queryString (N.runWith O (w.take s) (N.initCfg x)) ∈ O')) :
++    ∀ s ≤ w.length,
++      N.runWith O (w.take s) (N.initCfg x) = N.runWith O' (w.take s) (N.initCfg x) := by
++  intro s
++  induction s with
++  | zero => intro _; rfl
++  | succ s ih =>
++    intro hs
++    have before : s < w.length := Nat.lt_of_succ_le hs
++    rw [List.take_succ, List.getElem?_eq_getElem before, Option.toList_some,
++      OracleNDTM.runWith_append, OracleNDTM.runWith_append]
++    change N.stepWith O w[s] (N.runWith O (w.take s) (N.initCfg x)) =
++      N.stepWith O' w[s] (N.runWith O' (w.take s) (N.initCfg x))
++    rw [← ih (Nat.le_of_lt before)]
++    have next := step_eq_of_query_agree (N.fixChoice w[s]) O O' _ (h s before)
++    simpa only [← OracleNDTM.stepWith_eq_fixChoice_step] using next
++
++/-- Prefixes of a constant choice word in the deterministic embedding reproduce
++the deterministic run at the prefix length.
++
++**Proof sketch.** Taking `s ≤ t` bits from the replicated word yields exactly
++`s` copies. Apply the proved deterministic-to-nondeterministic run identity. -/
++private theorem runWith_take_replicate (M : OracleTM k Symbol State)
++    (O : Language Symbol) (x : List Symbol) {s t : ℕ} (hs : s ≤ t) :
++    M.toOracleNDTM.runWith O ((List.replicate t false).take s) (M.toOracleNDTM.initCfg x) =
++      M.runFrom O (M.initCfg x) s := by
++  rw [List.take_replicate, Nat.min_eq_left hs]
++  have bridge := M.toOracleNDTM_runWith O (List.replicate s false) (M.toOracleNDTM.initCfg x)
++  simpa only [List.length_replicate] using bridge
++
++/-- Agreement at the queried configurations of a deterministic run transfers
++its final configuration to the second oracle.
++
++**Proof sketch.** Instantiate the shared branch-prefix induction with the
++deterministic embedding and a constant word of the required length. Transport
++each premise and the conclusion through the constant-word prefix bridge. -/
++private theorem runFrom_eq_of_query_agree (M : OracleTM k Symbol State)
++    (O O' : Language Symbol) (x : List Symbol) (t : ℕ)
++    (h : ∀ s < t, (M.runFrom O (M.initCfg x) s).state = some M.qQuery →
++      (queryString (M.runFrom O (M.initCfg x) s) ∈ O ↔
++        queryString (M.runFrom O (M.initCfg x) s) ∈ O')) :
++    M.runFrom O (M.initCfg x) t = M.runFrom O' (M.initCfg x) t := by
++  have branch := runWith_take_eq_of_agree M.toOracleNDTM O O' x
++    (List.replicate t false) (by
++      intro s hs hq
++      have before : s < t := by simpa only [List.length_replicate] using hs
++      rw [runWith_take_replicate M O x (Nat.le_of_lt before)] at hq ⊢
++      exact h s before hq) t (by simp only [List.length_replicate, le_refl])
++  rw [runWith_take_replicate M O x le_rfl,
++    runWith_take_replicate M O' x le_rfl] at branch
++  exact branch
++
++/-- A query selected from a filtered list of times has length at most the
++horizon if the query at each selected time has length at most that time.
++
++**Proof sketch.** Extract its originating index from filter-map membership.
++The successful branch identifies the word, whose bound at that index is at
++most the horizon. This membership argument serves both kinds of query list. -/
++private theorem length_le_of_mem_filtered_queries (f : ℕ → List Symbol)
++    (p : ℕ → Prop) [DecidablePred p] (t : ℕ)
++    (hlen : ∀ s < t, (f s).length ≤ s) {z : List Symbol}
++    (hz : z ∈ (List.range t).filterMap fun s => if p s then some (f s) else none) :
++    z.length ≤ t := by
++  obtain ⟨s, hs, selected⟩ := List.mem_filterMap.mp hz
++  have before := List.mem_range.mp hs
++  split_ifs at selected with hp
++  · cases Option.some.inj selected
++    exact (hlen s before).trans (Nat.le_of_lt before)
++
+ /-- **Length-locality of deterministic oracle runs**: if two oracles agree on
+ every string of length less than `t`, the `t`-step initialized runs under them
+ coincide — a `t`-step run can only ever submit queries of length below `t`.
+@@ -105,12 +203,17 @@ configuration's `Turing.OracleTM.queryString`, of length at most `s < t` by
+ steps move to the same answer state. Fill obligations: the `≤ t`-indexed
+ induction (successor unfolding `Function.iterate_succ_apply'` of
+ `Turing.OracleTM.runFrom`), and the two-case analysis of
+-`Turing.OracleTM.step` at a common configuration. -/
++`Turing.OracleTM.step` at a common configuration.
++
++**C1c sketch appendix.** The induction is the shared branchwise one, run along
++the constant choice word through `Turing.OracleTM.toOracleNDTM_runWith`. -/
+ theorem runFrom_eq_of_agree_length_lt (M : OracleTM k Symbol State)
+     (O O' : Language Symbol) (x : List Symbol) (t : ℕ)
+     (h : ∀ z : List Symbol, z.length < t → (z ∈ O ↔ z ∈ O')) :
+     M.runFrom O (M.initCfg x) t = M.runFrom O' (M.initCfg x) t := by
+-  sorry
++  apply runFrom_eq_of_query_agree M O O' x t
++  intro s hs _
++  exact h _ ((M.queryString_length_le O x s).trans_lt hs)
+ 
+ /-- **Query-set locality of deterministic oracle runs** — the form the
+ Baker-Gill-Solovay stage construction consumes: if two oracles agree on every
+@@ -128,12 +231,19 @@ string is, by definition of `Turing.OracleTM.queriesWithin` (its step index
+ which the inductive hypothesis identifies with the `O'`-run), an element of
+ `M.queriesWithin O x t`, where `h` makes both oracles answer alike. Fill
+ obligations: the `List.mem_filterMap` membership introduction, and the same
+-run-equality induction as the length-locality lemma. -/
++run-equality induction as the length-locality lemma.
++
++**C1c sketch appendix.** The induction is the shared branchwise one, run along
++the constant choice word through `Turing.OracleTM.toOracleNDTM_runWith`. -/
+ theorem runFrom_eq_of_agree_queriesWithin (M : OracleTM k Symbol State)
+     (O O' : Language Symbol) (x : List Symbol) (t : ℕ)
+     (h : ∀ z ∈ M.queriesWithin O x t, (z ∈ O ↔ z ∈ O')) :
+     M.runFrom O (M.initCfg x) t = M.runFrom O' (M.initCfg x) t := by
+-  sorry
++  classical
++  apply runFrom_eq_of_query_agree M O O' x t
++  intro s hs hq
++  apply h
++  exact List.mem_filterMap.mpr ⟨s, List.mem_range.mpr hs, by simp only [if_pos hq]⟩
+ 
+ /-- **Submitted queries are short**: every string in `queriesWithin M O x t`
+ has length at most `t`. (Sharper: a query submitted at step `s < t` has length
+@@ -146,7 +256,10 @@ List.range t` with the run in the query state after `s` steps, and equals
+ theorem length_le_of_mem_queriesWithin {M : OracleTM k Symbol State}
+     {O : Language Symbol} {x : List Symbol} {t : ℕ} {z : List Symbol}
+     (hz : z ∈ M.queriesWithin O x t) : z.length ≤ t := by
+-  sorry
++  classical
++  unfold queriesWithin at hz
++  exact length_le_of_mem_filtered_queries _ _ t
++    (fun s _ => M.queryString_length_le O x s) hz
+ 
+ /-- **At most `t` queries in `t` steps**: the query list of a `t`-step run has
+ length at most `t` — the counting half of the stage construction (a
+@@ -158,7 +271,8 @@ polynomial-time run cannot touch all `2^n` strings of length `n`).
+ theorem queriesWithin_length_le (M : OracleTM k Symbol State)
+     (O : Language Symbol) (x : List Symbol) (t : ℕ) :
+     (M.queriesWithin O x t).length ≤ t := by
+-  sorry
++  unfold queriesWithin
++  exact (List.length_filterMap_le _ _).trans_eq List.length_range
+ 
+ end OracleTM
+ 
+@@ -200,7 +314,11 @@ theorem runWith_eq_of_agree_length_lt (N : OracleNDTM k Symbol State)
+     (O O' : Language Symbol) (x : List Symbol) (w : List Bool)
+     (h : ∀ z : List Symbol, z.length < w.length → (z ∈ O ↔ z ∈ O')) :
+     N.runWith O w (N.initCfg x) = N.runWith O' w (N.initCfg x) := by
+-  sorry
++  have prefixes := OracleTM.runWith_take_eq_of_agree N O O' x w (by
++    intro s hs _
++    exact h _ ((N.queryString_runWith_length_le O x (w.take s)).trans_lt
++      ((List.length_take_le s w).trans_lt hs))) w.length le_rfl
++  simpa only [List.take_length] using prefixes
+ 
+ /-- **Query-set locality of nondeterministic oracle runs, branchwise**: if two
+ oracles agree on every string the branch under the *first* oracle actually
+@@ -218,7 +336,13 @@ theorem runWith_eq_of_agree_queriesAlong (N : OracleNDTM k Symbol State)
+     (O O' : Language Symbol) (x : List Symbol) (w : List Bool)
+     (h : ∀ z ∈ N.queriesAlong O x w, (z ∈ O ↔ z ∈ O')) :
+     N.runWith O w (N.initCfg x) = N.runWith O' w (N.initCfg x) := by
+-  sorry
++  classical
++  have prefixes := OracleTM.runWith_take_eq_of_agree N O O' x w (by
++    intro s hs hq
++    apply h
++    exact List.mem_filterMap.mpr ⟨s, List.mem_range.mpr hs, by simp only [if_pos hq]⟩)
++    w.length le_rfl
++  simpa only [List.take_length] using prefixes
+ 
+ /-- **Submitted queries are short, branchwise**: every string in
+ `queriesAlong N O x w` has length at most `w.length`.
+@@ -240,7 +364,11 @@ lands here; flagged for promotion), then the `Nat.find` bound exactly as in
+ theorem length_le_of_mem_queriesAlong {N : OracleNDTM k Symbol State}
+     {O : Language Symbol} {x : List Symbol} {w : List Bool} {z : List Symbol}
+     (hz : z ∈ N.queriesAlong O x w) : z.length ≤ w.length := by
+-  sorry
++  classical
++  unfold queriesAlong at hz
++  exact OracleTM.length_le_of_mem_filtered_queries _ _ w.length
++    (fun s _ => (N.queryString_runWith_length_le O x (w.take s)).trans
++      (List.length_take_le s w)) hz
+ 
+ end OracleNDTM
+ 
+diff --git a/TCSlib/Complexity/TuringMachine/OracleNondeterministic.lean b/TCSlib/Complexity/TuringMachine/OracleNondeterministic.lean
+index 9944b454399e5fc921f7f646fbe4572f52daee94..a6603ad55053e3652d236acb46809a8716c6ffbb 100644
+--- a/TCSlib/Complexity/TuringMachine/OracleNondeterministic.lean
++++ b/TCSlib/Complexity/TuringMachine/OracleNondeterministic.lean
+@@ -60,7 +60,13 @@ relativization theorem ([AB09, Theorem 3.7], phase P3.2).
+ * `Turing.OracleNDTM.HaltsWithin.mono` — all-branch halting is monotone (proved,
+   same unfolding argument as `Turing.NDTM.HaltsWithin.mono`).
+ * `Turing.OracleTM.toOracleNDTM_runWith` — the embedded deterministic oracle
+-  machine ignores its choices (sorried; the lockstep obligation of phase P3.1).
++  machine ignores its choices (proved; the lockstep obligation of phase P3.1).
++
++* `Turing.OracleNDTM.fixChoice` — the deterministic machine at a fixed choice bit.
++* `Turing.OracleNDTM.stepWith_eq_fixChoice_step` — the fixed-choice step bridge.
++* `Turing.OracleNDTM.stepWith_eq_of_ne_qQuery` — oracle independence off the query state.
++* `Turing.OracleNDTM.runWith_workTapes_invariant` — initialized head and blank-cell bounds.
++* `Turing.OracleNDTM.queryString_runWith_length_le` — the branchwise query-length bound.
+ 
+ ## References
+ 
+@@ -261,6 +267,17 @@ theorem OracleTM.toOracleNDTM_wellFormed {M : OracleTM k Symbol State}
+     (h : M.WellFormed) : M.toOracleNDTM.WellFormed :=
+   ⟨h.qQuery_ne_qYes, h.qQuery_ne_qNo, h.qYes_ne_qNo⟩
+ 
++/-- An embedded deterministic oracle step agrees with the original step under
++either choice bit.
++
++**Proof sketch.** Unfold the two step definitions once and split on the state;
++the halted, query and ordinary branches have identical fields. -/
++private theorem toOracleNDTM_stepWith (M : OracleTM k Symbol State)
++    (O : Language Symbol) (b : Bool) (cfg : Cfg (k + 1) Symbol State input) :
++    M.toOracleNDTM.stepWith O b cfg = M.step O cfg := by
++  unfold OracleNDTM.stepWith OracleTM.step
++  cases hs : cfg.state <;> rfl
++
+ /-- The embedded deterministic oracle machine ignores its choices: running
+ `toOracleNDTM` under any choice word `w` with oracle `O` is running the original
+ machine for `|w|` steps with the same oracle — the oracle counterpart of
+@@ -279,7 +296,123 @@ theorem OracleTM.toOracleNDTM_runWith (M : OracleTM k Symbol State)
+     (O : Language Symbol) {input : List Symbol} (w : List Bool)
+     (cfg : Cfg (k + 1) Symbol State input) :
+     M.toOracleNDTM.runWith O w cfg = M.runFrom O cfg w.length := by
+-  sorry
++  induction w generalizing cfg with
++  | nil => rfl
++  | cons b w ih =>
++    show M.toOracleNDTM.runWith O w (M.toOracleNDTM.stepWith O b cfg) =
++      M.runFrom O (M.step O cfg) w.length
++    rw [toOracleNDTM_stepWith]
++    exact ih (M.step O cfg)
++
++/-- Fixing the choice bit of a nondeterministic oracle machine gives a
++deterministic oracle machine with the same initial and special states.
++[AB09, Definition 3.4]
++
++**Proof sketch.** Keep the four states and select the transition table at `b`. -/
++def OracleNDTM.fixChoice (N : OracleNDTM k Symbol State) (b : Bool) :
++    OracleTM k Symbol State := ⟨N.q₀, N.qQuery, N.qYes, N.qNo, N.tr b⟩
++
++/-- A nondeterministic oracle step under bit `b` is the deterministic step of
++the machine with its choice fixed to `b`.
++
++**Proof sketch.** Apply the deterministic embedding's step identity to the
++fixed-choice machine; the nondeterministic steps are definitionally equal. -/
++theorem OracleNDTM.stepWith_eq_fixChoice_step (N : OracleNDTM k Symbol State)
++    (O : Language Symbol) (b : Bool) (cfg : Cfg (k + 1) Symbol State input) :
++    N.stepWith O b cfg = (N.fixChoice b).step O cfg :=
++  toOracleNDTM_stepWith (N.fixChoice b) O b cfg
++
++/-- Away from the query state, a nondeterministic step under a fixed bit is
++independent of the oracle.
++
++**Proof sketch.** Pass through the fixed-choice machine and cite deterministic
++oracle independence away from the query state. -/
++theorem OracleNDTM.stepWith_eq_of_ne_qQuery {N : OracleNDTM k Symbol State}
++    (O₁ O₂ : Language Symbol) {b : Bool} {cfg : Cfg (k + 1) Symbol State input}
++    (h : cfg.state ≠ some N.qQuery) : N.stepWith O₁ b cfg = N.stepWith O₂ b cfg := by
++  rw [OracleNDTM.stepWith_eq_fixChoice_step, OracleNDTM.stepWith_eq_fixChoice_step]
++  exact OracleTM.step_eq_of_ne_qQuery (M := N.fixChoice b) O₁ O₂ h
++
++/-- Heads bounded by `n` and cells blank at distance at least `n` remain bounded
++and blank beyond the enlarged radius `n + w.length` after a branch run.
++
++**Proof sketch.** Induct on the choice word, generalizing the starting
++configuration and radius. Through the fixed-choice bridge, the deterministic
++one-step bounds increase the head radius by one and preserve cells outside
++that new radius, since they differ from the old head. Apply the induction
++hypothesis to the suffix. -/
++private theorem runWith_headBlank (N : OracleNDTM k Symbol State)
++    (O : Language Symbol) (w : List Bool) (n : ℕ)
++    (cfg : Cfg (k + 1) Symbol State input)
++    (hpos : ∀ i, |cfg.workTapePos i| ≤ (n : ℤ))
++    (hblank : ∀ i (z : ℤ), (n : ℤ) ≤ |z| → cfg.workTapes i z = none) :
++    (∀ i, |(N.runWith O w cfg).workTapePos i| ≤ ((n + w.length : ℕ) : ℤ)) ∧
++      ∀ i (z : ℤ), ((n + w.length : ℕ) : ℤ) ≤ |z| →
++        (N.runWith O w cfg).workTapes i z = none := by
++  induction w generalizing n cfg with
++  | nil => simpa only [OracleNDTM.runWith_nil, List.length_nil, Nat.add_zero] using
++      And.intro hpos hblank
++  | cons b w ih =>
++    have nextPos : ∀ i, |(N.stepWith O b cfg).workTapePos i| ≤ ((n + 1 : ℕ) : ℤ) := by
++      intro i
++      rw [OracleNDTM.stepWith_eq_fixChoice_step]
++      have move := (N.fixChoice b).workTapePos_step_le O cfg i
++      have old := hpos i
++      rw [abs_le] at move old ⊢
++      omega
++    have nextBlank : ∀ i (z : ℤ), ((n + 1 : ℕ) : ℤ) ≤ |z| →
++        (N.stepWith O b cfg).workTapes i z = none := by
++      intro i z hz
++      have different : z ≠ cfg.workTapePos i := by
++        intro heq
++        have old := hpos i
++        rw [← heq] at old
++        omega
++      rw [OracleNDTM.stepWith_eq_fixChoice_step,
++        (N.fixChoice b).workTapes_step_eq_of_ne O i different]
++      exact hblank i z (by omega)
++    have suffix := ih (n + 1) (N.stepWith O b cfg) nextPos nextBlank
++    simpa only [OracleNDTM.runWith_cons, List.length_cons,
++      Nat.add_assoc, Nat.add_comm 1 w.length] using suffix
++
++/-- After an initialized branch run, every work head is within the number of
++steps of the origin, and every cell at least that far from the origin is blank.
++[AB09, proof of Theorem 3.7, applied branchwise]
++
++**Proof sketch.** Specialize the generalized head/blank invariant to radius
++zero: initially every work head is at zero and every work tape is blank. -/
++theorem OracleNDTM.runWith_workTapes_invariant (N : OracleNDTM k Symbol State)
++    (O : Language Symbol) (x : List Symbol) (w : List Bool) :
++    (∀ i, |(N.runWith O w (N.initCfg x)).workTapePos i| ≤ (w.length : ℤ)) ∧
++      ∀ i (z : ℤ), (w.length : ℤ) ≤ |z| → (N.runWith O w (N.initCfg x)).workTapes i z = none := by
++  simpa only [Nat.zero_add] using
++    runWith_headBlank N O w 0 (N.initCfg x) (by intro i; simp)
++      (by intro i z _; rfl)
++
++/-- A blank at the nonnegative query-tape cell `n` bounds the extracted query
++length by `n`, from any configuration.
++
++**Proof sketch.** The least blank exists with witness `n` and is at most `n`.
++Filtering the preceding range cannot increase its length. This is requested
++for the shared home `Oracle.lean`. -/
++private theorem queryString_length_le_of_blank (cfg : Cfg (k + 1) Symbol State input)
++    (n : ℕ) (h : cfg.workTapes (OracleTM.queryTapeIdx k) (n : ℤ) = none) :
++    (OracleTM.queryString cfg).length ≤ n := by
++  classical
++  rw [OracleTM.queryString, dif_pos ⟨n, h⟩]
++  refine (List.length_filterMap_le _ _).trans ?_
++  simpa using (Nat.find_le (h := ⟨n, h⟩) h)
++
++/-- The query string after an initialized nondeterministic branch run has length
++at most the length of the choice word. [AB09, proof of Theorem 3.7, branchwise]
++
++**Proof sketch.** The initialized invariant keeps the query cell at the branch
++length blank. The blank-cell bound then bounds the extracted query. -/
++theorem OracleNDTM.queryString_runWith_length_le (N : OracleNDTM k Symbol State)
++    (O : Language Symbol) (x : List Symbol) (w : List Bool) :
++    (OracleTM.queryString (N.runWith O w (N.initCfg x))).length ≤ w.length := by
++  exact queryString_length_le_of_blank _ w.length
++    ((N.runWith_workTapes_invariant O x w).2 _ _ (le_abs_self _))
+ 
+ /-- A bundled deterministic oracle machine as a bundled nondeterministic one, with
+ the same tapes, state type, and special states. -/
+-- 
+2.51.1
+

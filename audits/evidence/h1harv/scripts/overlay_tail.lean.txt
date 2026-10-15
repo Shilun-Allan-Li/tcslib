@@ -1,0 +1,227 @@
+/-! ════════════════════════════════════════════════════════════════════════════════════════════
+Overlay evidence (not landing material). Everything above the unit's Part A is the checkout's
+`TuringMachine/CodeSimulator.lean`, byte for byte (`overlay.log`), so its private declarations
+are visible here; Part A follows verbatim. Below: §C, the corollary direction (each harvested
+private H1 declaration of `CodeSimulator` from its public or moved form; every statement is the
+private declaration's own text, extracted by `scripts/mkoverlay.py`); §S, sanity examples;
+§X, axiom prints. -/
+
+namespace Turing
+
+namespace MachineFormat
+
+section HarvestCorollaries
+
+open StepBlock
+
+/-! ### §C. The corollary direction -/
+
+-- C1. The public machines are the private ones, definitionally.
+example (k : ℕ) : h1ClockTM k = loopTM k := rfl
+example (k : ℕ) : h1HostedClockTM k = hostedLoopTM k := rfl
+
+-- C2. The round index moved unchanged (private in both places).
+example {k : ℕ} {x : List Bool} (d : Cfg (k + 2) Bool (Σ key, Ph k key) x) :
+    h1RoundTime d = loopRoundTime d := rfl
+
+-- C3. `h1RoundTime_spec` (its statement verbatim) from the moved specification.
+@@EXAMPLE h1RoundTime_spec@@
+  exact loopRoundTime_spec M c live d entry rel
+
+-- C4. `h1Clock_orbit` from the orbit invariant generalized to any live start.
+@@EXAMPLE h1Clock_orbit@@
+  exact loopOrbit_rep M (M.initCfg x) (by simp [MultiTapeTM.initCfg, Cfg.init]) d entry rel r live
+
+-- C5. `h1Clock_round` from the live round generalized to any start.
+@@EXAMPLE h1Clock_round@@
+  exact loopOrbit_round M (M.initCfg x) d entry rel r live
+
+-- C6. `h1Clock_effect` from the public `loopTM_run` at the initial configuration (S3).
+@@EXAMPLE h1Clock_effect@@
+  have digits : Nat.ofDigits 2 (t.bits.map Bool.toNat) = t := by
+    rw [← canonBits_value]
+    exact codeBitsNat_bits t
+  obtain ⟨T, e, ct, bound, -, related, output, -, run, cut⟩ :=
+    loopTM_run M (M.initCfg x) (by simp [MultiTapeTM.initCfg, Cfg.init]) d entry rel
+      t.bits (FinTM.bufferTape t.bits) 0 (by intro p _ _; simp) t digits
+  exact ⟨T, bound, e, ct, related, output, run, cut⟩
+
+-- C7. `h1HostedClock_effect` from the public `hostedLoopTM_run` at the initial configuration,
+-- the initial tag and the empty prefix (S3).
+@@EXAMPLE h1HostedClock_effect@@
+  have digits : Nat.ofDigits 2 (t.bits.map Bool.toNat) = t := by
+    rw [← canonBits_value]
+    exact codeBitsNat_bits t
+  obtain ⟨T, e, ct, b, bound, -, related, output, -, tag, run, cut⟩ :=
+    hostedLoopTM_run M (M.initCfg x) (by simp [MultiTapeTM.initCfg, Cfg.init]) d entry rel
+      t.bits (FinTM.bufferTape t.bits) 0 (by intro p _ _; simp) t digits true
+      (by simp [FinTM.VirtualTag, MultiTapeTM.initCfg, Cfg.init]) p []
+  exact ⟨T, bound, e, ct, b, related, output, tag, run, cut⟩
+
+end HarvestCorollaries
+
+end MachineFormat
+
+namespace StepBlock
+
+/-! ### §S. Sanity examples
+
+S3, the initial-configuration start recovering today's statements, is §C's C6 and C7. -/
+
+/-- S0 (the hypotheses are satisfiable for every source configuration): every configuration `c`
+of every table has a step-block configuration at the entry that represents it, the canonical
+seam frame. So `Rep` with `entry` is never vacuous, in particular for the stream-installed
+start of the interpreter core. -/
+example {k n : ℕ} {x : List Bool}
+    (tr : Fin (n + 1) → Option Bool → (Fin k → Option Bool) → Action k Bool (Fin (n + 1)))
+    (c : Cfg k Bool (Fin (n + 1)) x) :
+    ∃ d : Cfg (k + 2) Bool (Σ key, Ph k key) x, d.state = some (exit k true) ∧ Rep tr c d := by
+  refine ⟨⟨some (exit k true), c.inputPos,
+    Fin.addCases c.workTapes (fun j => if j = 0 then FinTM.bufferTape (tableBitsK tr)
+      else summaryCells (outputSummary c.output) ((c.state.map unaryFin).getD [])),
+    Fin.addCases c.workTapePos (fun _ => 0), []⟩, rfl, ?_⟩
+  refine ⟨rfl, fun i => ⟨?_, ?_⟩, ?_, ?_, ?_, ?_⟩ <;>
+    simp [tableTape, summaryTape]
+
+/-- S1 (a zero-round run). With a counter of value `0`, for instance the empty word or the
+padded word `[false, false]`, the loop runs no round: it underflows at once into `done`, within
+`2|w| + 2` steps, with its body part representing the start itself, even if the start's first
+transition would halt. -/
+example {k n : ℕ} {x : List Bool} (M : MultiTapeTM k Bool (Fin (n + 1)))
+    (c : Cfg k Bool (Fin (n + 1)) x) (live : c.state ≠ none)
+    (d : Cfg (k + 2) Bool (Σ key, Ph k key) x) (entry : d.state = some (exit k true))
+    (rel : Rep M.tr c d) (w : List Bool) (ct : ℤ → Option Bool) (cp : ℤ)
+    (hw : ∀ p : ℤ, -1 ≤ p → p ≤ (w.length : ℤ) → ct (cp + p) = FinTM.bufferTape w p)
+    (zero : Nat.ofDigits 2 (w.map Bool.toNat) = 0) :
+    ∃ T e ct', T ≤ 2 * w.length + 2 ∧ Rep M.tr c e ∧
+      (loopTM k).runFrom (counterLoopCfg (some (.dec .run)) d ct cp) T =
+        counterLoopCfg (some .done) e ct' cp := by
+  obtain ⟨T, e, ct', bound, -, related, -, -, run, -⟩ :=
+    loopTM_run M c live d entry rel w ct cp hw 0 zero
+  rw [MultiTapeTM.runFrom_zero] at related run
+  simp only [Option.isSome_iff_ne_none.mpr live, ↓reduceIte] at run
+  exact ⟨T, e, ct', by simpa using bound, related, run⟩
+
+/-- S1, concretely: the padded zero counter `[false, false]` on a blank tape at cell `0`. -/
+example {k n : ℕ} {x : List Bool} (M : MultiTapeTM k Bool (Fin (n + 1)))
+    (c : Cfg k Bool (Fin (n + 1)) x) (live : c.state ≠ none)
+    (d : Cfg (k + 2) Bool (Σ key, Ph k key) x) (entry : d.state = some (exit k true))
+    (rel : Rep M.tr c d) :
+    ∃ T e ct', T ≤ 6 ∧ Rep M.tr c e ∧
+      (loopTM k).runFrom (counterLoopCfg (some (.dec .run)) d
+        (FinTM.bufferTape [false, false]) 0) T = counterLoopCfg (some .done) e ct' 0 := by
+  obtain ⟨T, e, ct', bound, -, related, -, -, run, -⟩ :=
+    loopTM_run M c live d entry rel [false, false] (FinTM.bufferTape [false, false]) 0
+      (by intro p _ _; simp) 0 (by decide)
+  rw [MultiTapeTM.runFrom_zero] at related run
+  simp only [Option.isSome_iff_ne_none.mpr live, ↓reduceIte] at run
+  exact ⟨T, e, ct', by simpa using bound, related, run⟩
+
+/-- S2 (an immediately escaping start). If the start's first transition halts, then for every
+deadline `t ≥ 1` the loop leaves through `escape`, with its body part representing the halted
+configuration, within `B + 4 + 2|w|` steps, where `B = 50·(|tableBitsK M.tr| + 1)`: the
+early-escape bound at `t' = 1` does not grow with the deadline. -/
+example {k n : ℕ} {x : List Bool} (M : MultiTapeTM k Bool (Fin (n + 1)))
+    (c : Cfg k Bool (Fin (n + 1)) x) (live : c.state ≠ none)
+    (d : Cfg (k + 2) Bool (Σ key, Ph k key) x) (entry : d.state = some (exit k true))
+    (rel : Rep M.tr c d) (w : List Bool) (ct : ℤ → Option Bool) (cp : ℤ)
+    (hw : ∀ p : ℤ, -1 ≤ p → p ≤ (w.length : ℤ) → ct (cp + p) = FinTM.bufferTape w p)
+    (t : ℕ) (ht : Nat.ofDigits 2 (w.map Bool.toNat) = t) (one : 1 ≤ t)
+    (halts : (M.step c).state = none) :
+    ∃ T e ct', T ≤ 50 * ((tableBitsK M.tr).length + 1) + 4 + 2 * w.length ∧
+      Rep M.tr (M.step c) e ∧
+      (loopTM k).runFrom (counterLoopCfg (some (.dec .run)) d ct cp) T =
+        counterLoopCfg (some .escape) e ct' cp := by
+  obtain ⟨T, e, ct', -, early, related, -, -, run, -⟩ :=
+    loopTM_run M c live d entry rel w ct cp hw t ht
+  have first : M.runFrom c 1 = M.step c := MultiTapeTM.runFrom_succ_eq_step
+  have absorbed : M.runFrom c t = M.step c := by
+    rw [show t = 1 + (t - 1) by omega, MultiTapeTM.runFrom_add, first,
+      MultiTapeTM.runFrom_of_halt _ halts]
+  rw [absorbed] at related run
+  simp only [halts, Option.isSome_none, Bool.false_eq_true, ↓reduceIte] at run
+  exact ⟨T, e, ct', by simpa using early 1 one (by rw [first]; exact halts), related, run⟩
+
+/-- S4 (a live exit at the first round, hosted). With the one-bit counter `[true]` (deadline
+`1`): the host is at a live state `(q, b')` (not halted, so a caller can redirect it), `q` is
+`escape` exactly when the start's first transition halts, its body part represents `M.step c`,
+and the bank cell under the summary tape's head holds the summary of `M.step c`'s output, all
+within `B + 8` steps. -/
+example {k n : ℕ} {x z : List Bool} (M : MultiTapeTM k Bool (Fin (n + 1)))
+    (c : Cfg k Bool (Fin (n + 1)) x) (live : c.state ≠ none)
+    (d : Cfg (k + 2) Bool (Σ key, Ph k key) x) (entry : d.state = some (exit k true))
+    (rel : Rep M.tr c d) (b : Bool) (hb : FinTM.VirtualTag c.inputPos b)
+    (p : Fin (z.length + 2)) (pre : List Bool) :
+    ∃ T q b', T ≤ 50 * ((tableBitsK M.tr).length + 1) + 8 ∧
+      ((hostedLoopTM k).runFrom
+          (vhostCfg (counterLoopCfg (some (.dec .run)) d (FinTM.bufferTape [true]) 0) b p pre)
+          T).state = some (q, b') ∧
+      (q = .escape ↔ (M.step c).state = none) ∧
+      ((hostedLoopTM k).runFrom
+          (vhostCfg (counterLoopCfg (some (.dec .run)) d (FinTM.bufferTape [true]) 0) b p pre)
+          T).workTapeSymbols (vhostBank (summaryTape k).castSucc) =
+        outputSummary (M.step c).output := by
+  obtain ⟨T, e, ct', b', bound, -, related, -, -, -, run, -⟩ :=
+    hostedLoopTM_run M c live d entry rel [true] (FinTM.bufferTape [true]) 0
+      (by intro p _ _; simp) 1 (by decide) b hb p pre
+  have first : M.runFrom c 1 = M.step c := MultiTapeTM.runFrom_succ_eq_step
+  rw [first] at related run
+  obtain ⟨state, -, -, cell⟩ := hostedLoop_read M.tr (M.step c) e related
+    (if (M.step c).state.isSome then .done else .escape) ct' 0 b' p pre
+  refine ⟨T, _, b', by simpa using bound, by rw [run]; exact state, ?_, by rw [run]; exact cell⟩
+  cases h : (M.step c).state <;> simp
+
+/-- S5 (a concrete instance). The one-state machine with no work tapes whose first transition
+emits `true` and halts, started on the empty input with a canonical seam frame and the counter
+`[true, false, true]` (value `5`) at cell `0`: the host leaves through `escape` and the verdict
+cell reads `some true`, within `B + 4 + 6` steps, although the deadline is `5`. -/
+example (p : Fin (([] : List Bool).length + 2)) :
+    let M : MultiTapeTM 0 Bool (Fin 1) := ⟨0, fun _ _ _ => ⟨0, Fin.elim0, some true, none⟩⟩
+    let c : Cfg 0 Bool (Fin 1) [] := M.initCfg []
+    let d : Cfg (0 + 2) Bool (Σ key, Ph 0 key) [] := ⟨some (exit 0 true), c.inputPos,
+      Fin.addCases c.workTapes (fun j => if j = 0 then FinTM.bufferTape (tableBitsK M.tr)
+        else summaryCells (outputSummary c.output) ((c.state.map unaryFin).getD [])),
+      Fin.addCases c.workTapePos (fun _ => 0), []⟩
+    ∃ (T : ℕ) (e : Cfg (0 + 2) Bool (Σ key, Ph 0 key) []) (ct' : ℤ → Option Bool) (b' : Bool),
+      T ≤ 50 * ((tableBitsK M.tr).length + 1) + 4 + 6 ∧
+      (hostedLoopTM 0).runFrom (vhostCfg (counterLoopCfg (some (.dec .run)) d
+          (FinTM.bufferTape [true, false, true]) 0) true p []) T =
+        vhostCfg (counterLoopCfg (some .escape) e ct' 0) b' p [] ∧
+      (vhostCfg (counterLoopCfg (some .escape) e ct' 0) b' p []).workTapeSymbols
+        (vhostBank (summaryTape 0).castSucc) = some true := by
+  intro M c d
+  have rel : Rep M.tr c d := by
+    refine ⟨rfl, fun i => i.elim0, ?_, ?_, ?_, ?_⟩ <;>
+      simp only [d, tableTape, summaryTape, Fin.addCases_right] <;> simp
+  have halts : (M.step c).state = none := rfl
+  have first : M.runFrom c 1 = M.step c := MultiTapeTM.runFrom_succ_eq_step
+  obtain ⟨T, e, ct', b', -, early, related, -, -, -, run, -⟩ :=
+    hostedLoopTM_run M c (by simp [c, MultiTapeTM.initCfg, Cfg.init]) d rfl rel
+      [true, false, true] (FinTM.bufferTape [true, false, true]) 0 (by intro p _ _; simp) 5
+      (by decide) true (by simp [c, FinTM.VirtualTag, MultiTapeTM.initCfg, Cfg.init]) p []
+  have absorbed : M.runFrom c 5 = M.step c := by
+    rw [show (5 : ℕ) = 1 + 4 from rfl, MultiTapeTM.runFrom_add, first,
+      MultiTapeTM.runFrom_of_halt _ halts]
+  rw [absorbed] at related run
+  simp only [halts, Option.isSome_none, Bool.false_eq_true, ↓reduceIte] at run
+  obtain ⟨-, -, -, cell⟩ := hostedLoop_read M.tr (M.step c) e related .escape ct' 0 b' p []
+  refine ⟨T, e, ct', b', by simpa using early 1 (by omega) (by rw [first]; exact halts), run, ?_⟩
+  rw [cell]
+  rfl
+
+/-! ### §X. Axiom prints: the harvested declarations, public and private -/
+
+#print axioms loopTM
+#print axioms hostedLoopTM
+#print axioms loopTM_run
+#print axioms hostedLoopTM_run
+#print axioms hostedLoop_read
+#print axioms loopRoundTime
+#print axioms loopOrbit_succ
+#print axioms loopRoundTime_spec
+#print axioms loopOrbit_rep
+#print axioms loopOrbit_round
+
+end StepBlock
+
+end Turing

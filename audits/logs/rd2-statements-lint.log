@@ -1,0 +1,41 @@
+# RD-2 statement gate — style lint (unmodified copy of scripts/style_lint.py run in a mirror tree at the landing paths) and the 100-column check
+
+## proposed files
+
+6 findings in 6 files
+
+
+
+
+TCSlib/Complexity/ClassPSPACE/TQBF.lean: 3306 lines (> 1000, must split)
+TCSlib/Complexity/ClassPSPACE/TQBF.lean:1318: `configurationCodec_pair_get` proof is 21 lines, no **Proof sketch.**
+TCSlib/Complexity/ClassPSPACE/TQBF.lean:1802: `codecExpected_step` proof is 22 lines, no **Proof sketch.**
+TCSlib/Complexity/ClassPSPACE.lean: missing `set_option maxHeartbeats 0`
+TCSlib/Complexity/ClassPSPACE.lean: missing `set_option relaxedAutoImplicit false`
+TCSlib/Complexity/ClassPSPACE.lean: missing `set_option autoImplicit false`
+
+## the same files at the tip (baseline)
+
+6 findings in 3 files
+
+TCSlib/Complexity/ClassPSPACE/TQBF.lean: 2640 lines (> 1000, must split)
+TCSlib/Complexity/ClassPSPACE/TQBF.lean:991: `configurationCodec_pair_get` proof is 21 lines, no **Proof sketch.**
+TCSlib/Complexity/ClassPSPACE/TQBF.lean:1475: `codecExpected_step` proof is 22 lines, no **Proof sketch.**
+TCSlib/Complexity/ClassPSPACE.lean: missing `set_option maxHeartbeats 0`
+TCSlib/Complexity/ClassPSPACE.lean: missing `set_option relaxedAutoImplicit false`
+TCSlib/Complexity/ClassPSPACE.lean: missing `set_option autoImplicit false`
+
+## lines over 100 columns (proposed file: line, length); tip lines over 100 columns listed after
+QBF.lean 156 113
+TQBF.lean 681 104
+TQBF.lean 865 108
+TQBF.lean 1106 102
+TQBF.lean 2032 116
+TQBF.lean 2956 158
+tip:
+QBF.lean 150 113
+TQBF.lean 354 104
+TQBF.lean 538 108
+TQBF.lean 779 102
+TQBF.lean 1703 116
+TQBF.lean 2308 158

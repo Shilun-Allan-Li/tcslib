@@ -1,0 +1,351 @@
+# Declaration-level freeze check (maintainer), base b4be0717 vs beb76cdb.
+# Part 1: scratchpad tools/declfreeze.py per file (third argument = sanctioned body changes). Note: this tool does not track block comments, so it counts the docstring line 'lemma is conditional: ...' in Codes2Tape as a public declaration 'is' (10 publics); the comment-aware union check in part 2 counts 9 at base and after.
+
+### CodeParser.lean (base b4be0717 vs after; allowed body changes: codeDecode,codeScan,codeCanonical,codeDecode_serialize_pad,codeCanonical_eq)
+public before/after: 46 41 private before/after: 16 0
+public added: []
+public removed: ['codeCanonical', 'codeCanonical_eq', 'codeDecode', 'codeDecode_serialize_pad', 'codeScan']
+private removed: ['codeAction_length', 'codeAllTrue_eq', 'codeEraseAction', 'codePairDecode_sound', 'codeParse', 'codeParseFull', 'codeParseFull_sound', 'codeParse_full', 'codeParse_serialize_pad', 'codeParse_sound', 'codeReadAction', 'codeReadAction_append', 'codeReadAction_sound', 'codeReadTable_append', 'codeScan_full', 'codeTable_length']
+private added: []
+private changed: []
+
+### MathlibBridge.lean (base b4be0717 vs after; allowed body changes: none)
+public before/after: 15 21 private before/after: 62 60
+public added: ['CodeFormat.exists_canonizer', 'CodeFormat.primrec_canonical', 'CodeFormat.primrec_scan', 'codePrimSkipActionK', 'codePrimSkipTable2', 'codePrimSkipWork']
+public removed: []
+private removed: ['codePrimCanonical', 'codePrimScan', 'codePrimSkipAction']
+private added: ['codePrimSkipTable1']
+private changed: ['codeCanonical_machine']
+
+### NDCodes.lean (base b4be0717 vs after; allowed body changes: none)
+public before/after: 9 7 private before/after: 0 0
+public added: []
+public removed: ['actionBits₂', 'workPair']
+private removed: []
+private added: []
+private changed: []
+
+### Codes2Tape.lean (base b4be0717 vs after; allowed body changes: exists_effectiveMachineCode2)
+public before/after: 10 10 private before/after: 40 20
+public added: []
+public removed: []
+authorized body change: exists_effectiveMachineCode2
+private removed: ['zfBAction_length', 'zfBCanonical', 'zfBCanonical_eq', 'zfBDecode_serialize_pad', 'zfBEraseAction', 'zfBParse', 'zfBParseFull', 'zfBParseFull_sound', 'zfBParse_full', 'zfBParse_serialize_pad', 'zfBPrimCanonical', 'zfBPrimScan', 'zfBPrimSkipAction', 'zfBReadAction', 'zfBReadAction_append', 'zfBReadAction_sound', 'zfBReadTable_append', 'zfBScan', 'zfBScan_full', 'zfBSkipAction', 'zfBTable_length']
+private added: ['twoTapeFormat']
+private changed: ['zfB3Answer_malformed', 'zfB3_decode_length', 'zfB3_decode_states', 'zfB3_guard_failure', 'zfB3_uniform_of_simulator', 'zfBDecode']
+
+### CodeFormat.lean (new file; base = empty)
+public before/after: 0 45 private before/after: 0 3
+public added: ['CodeFormat', 'CodeTable2', 'actionBitsK', 'actionBits_eq_actionBitsK', 'actionBits₂', 'actionBits₂_eq_actionBitsK', 'canonical', 'canonical_eq', 'codeActionK_length', 'codeCanonical', 'codeCanonical_eq', 'codeDecode', 'codeDecode_serialize_pad', 'codeEraseActionK', 'codeEraseTable2', 'codeEraseWork', 'codeReadActionK', 'codeReadActionK_append', 'codeReadActionK_sound', 'codeReadTable2', 'codeReadTable2_append', 'codeReadTable2_sound', 'codeReadWork', 'codeReadWork_append', 'codeReadWork_sound', 'codeScan', 'codeSkipActionK', 'codeSkipAction_eq_codeSkipActionK', 'codeSkipTable2', 'codeSkipWork', 'codeTable2Bits', 'codeTable2Bits_length', 'decode', 'decode_of_guard_lt', 'decode_of_parseFull_none', 'decode_serialize_pad', 'numStates_decode_le', 'oneTapeFormat', 'parseFull', 'parseFull_serialize_pad', 'parseFull_sound', 'scan', 'scan_full', 'serialize_decode_length_le', 'workPair']
+public removed: []
+private removed: []
+private added: ['codeEraseActionK_one', 'codeReadActionK_one_append', 'codeReadActionK_one_sound']
+private changed: []
+
+### TuringMachine.lean (facade)
+public before/after: 0 0 private before/after: 0 0
+public added: []
+public removed: []
+private removed: []
+private added: []
+private changed: []
+
+# Part 2: union freeze over the six-file set (comment-aware chunker; names keyed by namespace-qualified name, so moves between files are tracked). 'statement' = text after the docstring up to the first ':=' / 'where' / match arm, compared byte-for-byte; 'byte-identical' = docstring + statement + body identical.
+
+# Item-8 union freeze: base = b4be0717, after = delivered HEAD; six-file union
+
+## Counts (public/private) base -> after, against brief rule 6
+CodeParser.lean: 46/16 -> 41/0  (brief 46/16 -> 41/0) OK
+CodeFormat.lean: 0/0 -> 45/3  (brief 0/0 -> 45/3) OK
+MathlibBridge.lean: 15/62 -> 21/60  (brief 15/62 -> 21/60) OK
+NDCodes.lean: 9/0 -> 7/0  (brief 9/0 -> 7/0) OK
+Codes2Tape.lean: 9/40 -> 9/20  (brief 9/40 -> 9/20) OK
+publics: base 79 -> after 123
+
+## Pre-existing publics (every base public must survive; statement byte-identical)
+base publics missing after: none
+  Code2TM [Codes2Tape.lean]: byte-identical
+  Code2TM.serialize [Codes2Tape.lean]: byte-identical
+  Code2TM.toFinTM [Codes2Tape.lean]: byte-identical
+  CodeNDTM [NDCodes.lean]: byte-identical
+  CodeNDTM.serialize [NDCodes.lean]: byte-identical
+  CodeNDTM.toFinNDTM [NDCodes.lean]: byte-identical
+  EffectiveMachineCode2 [Codes2Tape.lean]: byte-identical
+  EffectiveNDMachineCode [NDCodes.lean]: byte-identical
+  MachineCode2 [Codes2Tape.lean]: byte-identical
+  MachineCode2.decode_encode [Codes2Tape.lean]: byte-identical
+  NDMachineCode [NDCodes.lean]: byte-identical
+  NDMachineCode.decode_encode [NDCodes.lean]: byte-identical
+  UniformMachineCode2 [Codes2Tape.lean]: byte-identical
+  actionBits₂ [NDCodes.lean]: moved NDCodes.lean -> CodeFormat.lean; byte-identical
+  codeBitsNat [CodeParser.lean]: byte-identical
+  codeBitsNat_bits [CodeParser.lean]: byte-identical
+  codeCanonical [CodeParser.lean]: moved CodeParser.lean -> CodeFormat.lean; definition body changed (2b sanctioned)
+  codeCanonical_eq [CodeParser.lean]: moved CodeParser.lean -> CodeFormat.lean; proof body changed (2c sanctioned)
+  codeDecode [CodeParser.lean]: moved CodeParser.lean -> CodeFormat.lean; definition body changed (2b sanctioned)
+  codeDecode_serialize_pad [CodeParser.lean]: moved CodeParser.lean -> CodeFormat.lean; proof body changed (2c sanctioned)
+  codeEraseFin [CodeParser.lean]: byte-identical
+  codeEraseOutput [CodeParser.lean]: byte-identical
+  codeEraseSign [CodeParser.lean]: byte-identical
+  codeEraseState [CodeParser.lean]: byte-identical
+  codeEraseSymbols [CodeParser.lean]: byte-identical
+  codeEraseVec [CodeParser.lean]: byte-identical
+  codeEraseWrite [CodeParser.lean]: byte-identical
+  codeErase_bind [CodeParser.lean]: byte-identical
+  codeFallback [CodeParser.lean]: byte-identical
+  codeFlatMap_length [CodeParser.lean]: byte-identical
+  codePrimAll [MathlibBridge.lean]: byte-identical
+  codePrimBit [MathlibBridge.lean]: byte-identical
+  codePrimBits [MathlibBridge.lean]: byte-identical
+  codePrimBitsNat [MathlibBridge.lean]: byte-identical
+  codePrimDrop [MathlibBridge.lean]: byte-identical
+  codePrimPair [MathlibBridge.lean]: byte-identical
+  codePrimPrefix [MathlibBridge.lean]: byte-identical
+  codePrimRepeat [MathlibBridge.lean]: byte-identical
+  codePrimSkipFin [MathlibBridge.lean]: byte-identical
+  codePrimSkipPair [MathlibBridge.lean]: byte-identical
+  codePrimSkipState [MathlibBridge.lean]: byte-identical
+  codePrimUnary [MathlibBridge.lean]: byte-identical
+  codePrim_machine [MathlibBridge.lean]: byte-identical
+  codeReadFin [CodeParser.lean]: byte-identical
+  codeReadFin_append [CodeParser.lean]: byte-identical
+  codeReadFin_sound [CodeParser.lean]: byte-identical
+  codeReadOutput [CodeParser.lean]: byte-identical
+  codeReadOutput_append [CodeParser.lean]: byte-identical
+  codeReadOutput_sound [CodeParser.lean]: byte-identical
+  codeReadSign [CodeParser.lean]: byte-identical
+  codeReadSign_append [CodeParser.lean]: byte-identical
+  codeReadSign_sound [CodeParser.lean]: byte-identical
+  codeReadState [CodeParser.lean]: byte-identical
+  codeReadState_append [CodeParser.lean]: byte-identical
+  codeReadState_sound [CodeParser.lean]: byte-identical
+  codeReadSymbols [CodeParser.lean]: byte-identical
+  codeReadSymbols_append [CodeParser.lean]: byte-identical
+  codeReadSymbols_sound [CodeParser.lean]: byte-identical
+  codeReadUnary [CodeParser.lean]: byte-identical
+  codeReadUnary_append [CodeParser.lean]: byte-identical
+  codeReadUnary_sound [CodeParser.lean]: byte-identical
+  codeReadVec [CodeParser.lean]: byte-identical
+  codeReadVec_append [CodeParser.lean]: byte-identical
+  codeReadVec_sound [CodeParser.lean]: byte-identical
+  codeReadWrite [CodeParser.lean]: byte-identical
+  codeReadWrite_append [CodeParser.lean]: byte-identical
+  codeReadWrite_sound [CodeParser.lean]: byte-identical
+  codeScan [CodeParser.lean]: moved CodeParser.lean -> CodeFormat.lean; definition body changed (2b sanctioned)
+  codeSkipAction [CodeParser.lean]: byte-identical
+  codeSkipFin [CodeParser.lean]: byte-identical
+  codeSkipPair [CodeParser.lean]: byte-identical
+  codeSkipRepeat [CodeParser.lean]: byte-identical
+  codeSkipRepeat_iter [MathlibBridge.lean]: byte-identical
+  codeSkipState [CodeParser.lean]: byte-identical
+  exists_effectiveMachineCode [MathlibBridge.lean]: byte-identical
+  exists_effectiveMachineCode2 [Codes2Tape.lean]: doc appendix (2d, prefix-preserving) + body change (2c sanctioned)
+  exists_effectiveNDMachineCode [NDCodes.lean]: byte-identical
+  exists_uniformMachineCode2 [Codes2Tape.lean]: byte-identical
+  workPair [NDCodes.lean]: moved NDCodes.lean -> CodeFormat.lean; byte-identical
+
+## New publics (must be exactly the brief's list, in the brief's files)
+  CodeFormat [CodeFormat.lean] structure: listed
+  CodeFormat.canonical [CodeFormat.lean] def: listed
+  CodeFormat.canonical_eq [CodeFormat.lean] theorem: listed
+  CodeFormat.decode [CodeFormat.lean] def: listed
+  CodeFormat.decode_of_guard_lt [CodeFormat.lean] theorem: listed
+  CodeFormat.decode_of_parseFull_none [CodeFormat.lean] theorem: listed
+  CodeFormat.decode_serialize_pad [CodeFormat.lean] theorem: listed
+  CodeFormat.exists_canonizer [MathlibBridge.lean] theorem: listed
+  CodeFormat.numStates_decode_le [CodeFormat.lean] theorem: listed
+  CodeFormat.parseFull [CodeFormat.lean] def: listed
+  CodeFormat.parseFull_serialize_pad [CodeFormat.lean] theorem: listed
+  CodeFormat.parseFull_sound [CodeFormat.lean] theorem: listed
+  CodeFormat.primrec_canonical [MathlibBridge.lean] theorem: listed
+  CodeFormat.primrec_scan [MathlibBridge.lean] theorem: listed
+  CodeFormat.scan [CodeFormat.lean] def: listed
+  CodeFormat.scan_full [CodeFormat.lean] theorem: listed
+  CodeFormat.serialize_decode_length_le [CodeFormat.lean] theorem: listed
+  CodeTable2 [CodeFormat.lean] abbrev: listed
+  actionBitsK [CodeFormat.lean] def: listed
+  actionBits_eq_actionBitsK [CodeFormat.lean] lemma: listed
+  actionBits₂_eq_actionBitsK [CodeFormat.lean] lemma: listed
+  codeActionK_length [CodeFormat.lean] lemma: listed
+  codeEraseActionK [CodeFormat.lean] lemma: listed
+  codeEraseTable2 [CodeFormat.lean] lemma: listed
+  codeEraseWork [CodeFormat.lean] lemma: listed
+  codePrimSkipActionK [MathlibBridge.lean] lemma: listed
+  codePrimSkipTable2 [MathlibBridge.lean] lemma: listed
+  codePrimSkipWork [MathlibBridge.lean] lemma: listed
+  codeReadActionK [CodeFormat.lean] def: listed
+  codeReadActionK_append [CodeFormat.lean] lemma: listed
+  codeReadActionK_sound [CodeFormat.lean] lemma: listed
+  codeReadTable2 [CodeFormat.lean] def: listed
+  codeReadTable2_append [CodeFormat.lean] lemma: listed
+  codeReadTable2_sound [CodeFormat.lean] lemma: listed
+  codeReadWork [CodeFormat.lean] def: listed
+  codeReadWork_append [CodeFormat.lean] lemma: listed
+  codeReadWork_sound [CodeFormat.lean] lemma: listed
+  codeSkipActionK [CodeFormat.lean] def: listed
+  codeSkipAction_eq_codeSkipActionK [CodeFormat.lean] lemma: listed
+  codeSkipTable2 [CodeFormat.lean] def: listed
+  codeSkipWork [CodeFormat.lean] def: listed
+  codeTable2Bits [CodeFormat.lean] def: listed
+  codeTable2Bits_length [CodeFormat.lean] lemma: listed
+  oneTapeFormat [CodeFormat.lean] def: listed
+new publics: 44 (brief: 44); listed-but-missing: none
+
+## Privates per file
+CodeParser.lean: deleted 16 (brief 16): exact
+CodeParser.lean: added 0 (brief 0): [] exact
+  unchanged privates in CodeParser.lean: 0
+CodeFormat.lean: deleted 0 (brief 0): exact
+CodeFormat.lean: added 3 (brief 3): ['codeEraseActionK_one', 'codeReadActionK_one_append', 'codeReadActionK_one_sound'] exact
+  unchanged privates in CodeFormat.lean: 0
+MathlibBridge.lean: deleted 3 (brief 3): exact
+MathlibBridge.lean: added 1 (brief 1): ['codePrimSkipTable1'] exact
+  codeCanonical_machine: changed -- proof re-proved via exists_canonizer (D10); statement frozen; statement byte-identical; doc byte-identical
+  unchanged privates in MathlibBridge.lean: 58
+NDCodes.lean: deleted 0 (brief 0): exact
+NDCodes.lean: added 0 (brief 0): [] exact
+  unchanged privates in NDCodes.lean: 0
+Codes2Tape.lean: deleted 21 (brief 21): exact
+Codes2Tape.lean: added 1 (brief 1): ['twoTapeFormat'] exact
+  zfB3Answer_malformed: changed -- hypothesis hparse retargeted (rule 2f) -- the only private statement change; statement CHANGED; doc byte-identical
+    base head: private lemma zfB3Answer_malformed (α x : List Bool) (t : ℕ) (hparse : zfBParse α = none) : zfB3Answer α x t = false
+    after head: private lemma zfB3Answer_malformed (α x : List Bool) (t : ℕ) (hparse : twoTapeFormat.parseFull α = none) : zfB3Answer α x t = false
+  zfB3_decode_length: changed -- re-proved by instantiation (Task 2.3); statement frozen; statement byte-identical; doc byte-identical
+  zfB3_decode_states: changed -- re-proved by instantiation (Task 2.3); statement frozen; statement byte-identical; doc byte-identical
+  zfB3_guard_failure: changed -- re-proved by instantiation (Task 2.3); statement frozen; statement byte-identical; doc byte-identical
+  zfB3_uniform_of_simulator: changed -- re-proved via twoTapeFormat.exists_canonizer (Task 2.4); statement frozen; statement byte-identical; doc byte-identical
+  zfBDecode: changed -- typed alias body (Task 2.1); statement frozen; statement byte-identical; doc byte-identical
+  unchanged privates in Codes2Tape.lean: 13
+
+## Module docstrings (2d: prefix-preserving Item-8 appendix)
+CodeParser.lean: prefix-preserving appendix (184 chars), flagged "Item-8": True
+CodeFormat.lean: new file
+MathlibBridge.lean: prefix-preserving appendix (244 chars), flagged "Item-8": True
+NDCodes.lean: prefix-preserving appendix (177 chars), flagged "Item-8": True
+Codes2Tape.lean: prefix-preserving appendix (241 chars), flagged "Item-8": True
+
+## Probe statement contract (new / moved declarations under final names)
+  CodeFormat: statement matches probe (Item8ContextPreShip.lean.txt, Item8PreShip.lean.txt)
+  CodeFormat.canonical: statement matches probe (Item8ContextPreShip.lean.txt, Item8PreShip.lean.txt)
+  CodeFormat.canonical_eq: statement matches probe (Item8ContextPreShip.lean.txt, Item8PreShip.lean.txt)
+  CodeFormat.decode: statement matches probe (Item8ContextPreShip.lean.txt, Item8PreShip.lean.txt)
+  CodeFormat.decode_of_guard_lt: statement matches probe (Item8ContextPreShip.lean.txt, Item8PreShip.lean.txt)
+  CodeFormat.decode_of_parseFull_none: statement matches probe (Item8ContextPreShip.lean.txt, Item8PreShip.lean.txt)
+  CodeFormat.decode_serialize_pad: statement matches probe (Item8ContextPreShip.lean.txt, Item8PreShip.lean.txt)
+  CodeFormat.exists_canonizer: statement matches probe (Item8PreShip.lean.txt)
+  CodeFormat.numStates_decode_le: statement matches probe (Item8ContextPreShip.lean.txt, Item8PreShip.lean.txt)
+  CodeFormat.parseFull: statement matches probe (Item8ContextPreShip.lean.txt, Item8PreShip.lean.txt)
+  CodeFormat.parseFull_serialize_pad: statement matches probe (Item8ContextPreShip.lean.txt, Item8PreShip.lean.txt)
+  CodeFormat.parseFull_sound: statement matches probe (Item8ContextPreShip.lean.txt, Item8PreShip.lean.txt)
+  CodeFormat.primrec_canonical: statement matches probe (Item8PreShip.lean.txt)
+  CodeFormat.primrec_scan: statement matches probe (Item8PreShip.lean.txt)
+  CodeFormat.scan: statement matches probe (Item8ContextPreShip.lean.txt, Item8PreShip.lean.txt)
+  CodeFormat.scan_full: statement matches probe (Item8ContextPreShip.lean.txt, Item8PreShip.lean.txt)
+  CodeFormat.serialize_decode_length_le: statement matches probe (Item8ContextPreShip.lean.txt, Item8PreShip.lean.txt)
+  CodeTable2: statement matches probe (Item8ContextPreShip.lean.txt, Item8PreShip.lean.txt)
+  actionBitsK: statement matches probe (Item8ContextPreShip.lean.txt, Item8MovePreShip.lean.txt, Item8PreShip.lean.txt)
+  actionBits_eq_actionBitsK: statement matches probe (Item8ContextPreShip.lean.txt, Item8PreShip.lean.txt)
+  actionBits₂: statement matches probe (Item8ContextPreShip.lean.txt, Item8MovePreShip.lean.txt)
+  actionBits₂_eq_actionBitsK: statement matches probe (Item8ContextPreShip.lean.txt, Item8MovePreShip.lean.txt, Item8PreShip.lean.txt)
+  codeActionK_length: statement matches probe (Item8ContextPreShip.lean.txt, Item8PreShip.lean.txt)
+  codeCanonical: not defined in probes
+  codeCanonical_eq: not defined in probes
+  codeDecode: not defined in probes
+  codeDecode_serialize_pad: not defined in probes
+  codeEraseActionK: statement matches probe (Item8ContextPreShip.lean.txt, Item8PreShip.lean.txt)
+  codeEraseActionK_one: statement matches probe (Item8ContextPreShip.lean.txt, Item8PreShip.lean.txt)
+  codeEraseTable2: statement matches probe (Item8ContextPreShip.lean.txt, Item8PreShip.lean.txt)
+  codeEraseWork: statement matches probe (Item8ContextPreShip.lean.txt, Item8PreShip.lean.txt)
+  codePrimSkipActionK: statement matches probe (Item8PreShip.lean.txt)
+  codePrimSkipTable1: statement matches probe (Item8PreShip.lean.txt)
+  codePrimSkipTable2: statement matches probe (Item8PreShip.lean.txt)
+  codePrimSkipWork: statement matches probe (Item8PreShip.lean.txt)
+  codeReadActionK: statement matches probe (Item8ContextPreShip.lean.txt, Item8PreShip.lean.txt)
+  codeReadActionK_append: statement matches probe (Item8ContextPreShip.lean.txt, Item8PreShip.lean.txt)
+  codeReadActionK_one_append: statement matches probe (Item8ContextPreShip.lean.txt, Item8PreShip.lean.txt)
+  codeReadActionK_one_sound: statement matches probe (Item8ContextPreShip.lean.txt, Item8PreShip.lean.txt)
+  codeReadActionK_sound: statement matches probe (Item8ContextPreShip.lean.txt, Item8PreShip.lean.txt)
+  codeReadTable2: statement matches probe (Item8ContextPreShip.lean.txt, Item8PreShip.lean.txt)
+  codeReadTable2_append: statement matches probe (Item8ContextPreShip.lean.txt, Item8PreShip.lean.txt)
+  codeReadTable2_sound: statement matches probe (Item8ContextPreShip.lean.txt, Item8PreShip.lean.txt)
+  codeReadWork: statement matches probe (Item8ContextPreShip.lean.txt, Item8PreShip.lean.txt)
+  codeReadWork_append: statement matches probe (Item8ContextPreShip.lean.txt, Item8PreShip.lean.txt)
+  codeReadWork_sound: statement matches probe (Item8ContextPreShip.lean.txt, Item8PreShip.lean.txt)
+  codeScan: not defined in probes
+  codeSkipActionK: statement matches probe (Item8ContextPreShip.lean.txt, Item8PreShip.lean.txt)
+  codeSkipAction_eq_codeSkipActionK: statement matches probe (Item8ContextPreShip.lean.txt, Item8PreShip.lean.txt)
+  codeSkipTable2: statement matches probe (Item8ContextPreShip.lean.txt, Item8PreShip.lean.txt)
+  codeSkipWork: statement matches probe (Item8ContextPreShip.lean.txt, Item8PreShip.lean.txt)
+  codeTable2Bits: statement matches probe (Item8ContextPreShip.lean.txt, Item8PreShip.lean.txt)
+  codeTable2Bits_length: statement matches probe (Item8ContextPreShip.lean.txt, Item8PreShip.lean.txt)
+  oneTapeFormat: statement matches probe (Item8ContextPreShip.lean.txt, Item8PreShip.lean.txt)
+  twoTapeFormat: statement matches probe (Item8PreShip.lean.txt)
+  workPair: statement matches probe (Item8ContextPreShip.lean.txt, Item8MovePreShip.lean.txt)
+
+## Full-body contract: CodeFormat fields and both instances (whitespace-normalised, vs probe)
+  CodeFormat vs Item8PreShip.lean.txt: identical
+  CodeFormat vs Item8ContextPreShip.lean.txt: identical
+  oneTapeFormat vs Item8PreShip.lean.txt: differs (2 diff lines):
+      --- (D5) `serialize_assemble` is definitional for the one-tape format
+      --- (D6) the dependent-structure eta step, as at the end of `codeParse_serialize_pad`
+  oneTapeFormat vs Item8ContextPreShip.lean.txt: differs (2 diff lines):
+      --- (D5) `serialize_assemble` is definitional for the one-tape format
+      --- (D6) the dependent-structure eta step, as at the end of `codeParse_serialize_pad`
+  twoTapeFormat vs Item8PreShip.lean.txt: differs (7 diff lines):
+      -fallback := probeFallback2
+      +fallback := zfBFallback
+      --- (D5') propositional, via the record bridge plus `workPair` at the literals 0 and 1.
+      --- Fallback if `simp` leaves a goal: `simp only [Code2TM.serialize, codeTable2Bits,
+      --- actionBits₂_eq_actionBitsK]` then `rfl`, using the definitional `workPair w₀ w₁ 0 ≡ w₀`
+      --- reduction that `zfBParseFull_sound` already relies on.
+      --- (D6') as at the end of `zfBParse_serialize_pad`
+
+RESULT: PASS
+
+# Part 3: non-declaration residue (every declaration chunk replaced by a placeholder; removed placeholder lines and pure blank-line removals at deleted declarations omitted)
+## CodeParser.lean
+--- base
++++ after
++## Item-8 appendix
++The record, table-format and total-decoder layer now lives in `CodeFormat`.
++This module retains the shared field readers, erasure laws and fixed one-tape skipper.
+## MathlibBridge.lean
+--- base
++++ after
+-import TCSlib.Complexity.TuringMachine.CodeParser
++import TCSlib.Complexity.TuringMachine.CodeFormat
++## Item-8 appendix
++The primitive-recursive scanner and canonizer proofs are now parameterized by
++`CodeFormat`; the one-tape scheme consumes that shared layer. The arbitrary-time
++compiler and the public effective-scheme theorem are unchanged.
+## NDCodes.lean
+--- base
++++ after
++import TCSlib.Complexity.TuringMachine.CodeFormat
++## Item-8 appendix
++The fixed `workPair` and `actionBits₂` definitions now live verbatim in
++`CodeFormat`. The nondeterministic format instance remains a later fill obligation.
+## Codes2Tape.lean
+--- base
++++ after
++## Item-8 appendix
++The two-work-tape parser and canonizer now instantiate the shared `CodeFormat`
++layer. ZF-B3 consumes its decoded-size and guard corollaries, with the existing
++silent fallback and every public scheme statement preserved.
+-This retargets the received `CodeParser` field/vector architecture to the
+-seven-field two-tape record. The inaccessible private parser and primitive
+-recursion lemmas are locally adapted under the exclusive-file rule; each is
+-itemized in the delivery's duplication ledger. Public field encodings, the
+-unary reader, suffix-skipping primitives, pairing laws, and `codePrim_machine`
+-are cited directly. No ND existence theorem is used.
+-ZF-B2 now cites all 46 promoted format-independent declarations directly.
+-Only the two-tape-specific adaptations and the regression remain local.
++The fixed silent fallback and the two-work-tape instance of `CodeFormat` supply
++this format's parser and canonizer. The common record, table and primitive-recursion
++laws live in `CodeFormat` and `MathlibBridge`; `zfBDecode` remains a typed alias
++for the frozen uniform-simulator statements.
+## TuringMachine.lean (facade)
++import TCSlib.Complexity.TuringMachine.CodeFormat
++* `CodeFormat` — shared transition-record and table-format parsers, with the one-tape instance.
++
+# (The Codes2Tape '-This retargets ... / +The fixed silent fallback ...' hunk is the body of the section comment '/-! ### Private parser and canonizer implementation (ZF-B) ... -/' (base l. 151-162), whose rewrite rule 2(e) sanctions. All other residue lines are the four sanctioned import changes and the flagged, prefix-preserving Item-8 module-doc appendices of rule 2(d).)

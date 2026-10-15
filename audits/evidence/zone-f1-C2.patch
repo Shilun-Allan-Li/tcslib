@@ -1,0 +1,1321 @@
+From aec8a1bfe0d89d7de1e942d540cc68d29779d21d Mon Sep 17 00:00:00 2001
+From: Codex <codex@openai.com>
+Date: Sat, 10 Oct 2026 02:54:44 -0300
+Subject: [PATCH] Prove demand-grown one-tape time and space bounds
+
+---
+ .../TuringMachine/Robustness/SingleTape.lean  | 1278 ++++++++++++++++-
+ 1 file changed, 1276 insertions(+), 2 deletions(-)
+
+diff --git a/TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean b/TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean
+index e3f1c0f9..c808c107 100644
+--- a/TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean
++++ b/TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean
+@@ -12,6 +12,7 @@ import Mathlib.Data.List.FinRange
+ import Mathlib.Data.Sigma.Basic
+ import TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction
+ import TCSlib.Complexity.TuringMachine.Sweep
++import TCSlib.Complexity.TuringMachine.StateRenaming
+ 
+ set_option maxHeartbeats 0
+ set_option relaxedAutoImplicit false
+@@ -985,6 +986,1213 @@ for the A-S2 audit) -/
+ 
+ namespace Turing.FinTM
+ 
++/-- Every horizon of the zero-tape embedding visits exactly its stationary origin.
++**Proof sketch.** The existing lockstep configuration map always puts the unused
++head at zero; its complete visited image is therefore the singleton `{0}`. -/
++private lemma dg_unused_space {Γ : Type} (M : FinTM Γ) (hk : M.k = 0)
++    (x : List Γ) (t : ℕ) :
++    (unusedTapeTM M hk).tm.spaceUsed ((unusedTapeTM M hk).tm.initCfg x) t = 1 := by
++  have hr (u : ℕ) := MultiTapeTM.runFrom_comm_of_step (unusedTapeCfg M)
++    (unusedTape_step M hk) (M.tm.initCfg x) u
++  have hp (u : ℕ) :
++      ((unusedTapeTM M hk).tm.runFrom ((unusedTapeTM M hk).tm.initCfg x) u).workTapePos =
++        fun _ => 0 := by
++    change ((unusedTapeTM M hk).tm.runFrom (unusedTapeCfg M (M.tm.initCfg x)) u).workTapePos = _
++    rw [hr]
++    rfl
++  simp only [MultiTapeTM.spaceUsed, MultiTapeTM.spaceUsedByTape,
++    MultiTapeTM.visitedByTapeHead, hp]
++  rw [Finset.image_const (Finset.nonempty_range_iff.mpr (Nat.succ_ne_zero t))]
++  simp [unusedTapeTM]
++
++/-- Internal input symbols are read as one fixed source symbol. This retraction
++is used in finite control; no work tape holds a copy of the retracted word. -/
++private def dgRetract {Γ : Type} {k : ℕ} (a₀ : Γ) : SweepAlphabet Γ k → Γ :=
++  Sum.elim id (fun _ => a₀)
++
++/-- Retraction fixes every genuine input symbol. -/
++private lemma dgRetract_embed {Γ : Type} {k : ℕ} (a₀ a : Γ) :
++    dgRetract (k := k) a₀ (sweepEmbed Γ k a) = a := rfl
++
++/-- A source position on the same-length retracted input is a native position. -/
++private def dgPos {Γ : Type} {k : ℕ} (a₀ : Γ) {x : List (SweepAlphabet Γ k)}
++    (p : Fin ((x.map (dgRetract a₀)).length + 2)) : Fin (x.length + 2) :=
++  ⟨p.val, by simpa only [List.length_map] using p.isLt⟩
++
++/-- Native head movement commutes with the same-length retraction. -/
++private lemma dgPos_move {Γ : Type} {k : ℕ} (a₀ : Γ) {x : List (SweepAlphabet Γ k)}
++    (p : Fin ((x.map (dgRetract a₀)).length + 2)) (d : SignType) :
++    moveInputPos (dgPos a₀ p) d = dgPos a₀ (moveInputPos p d) := by
++  apply Fin.ext
++  simp only [moveInputPos, dgPos, List.length_map]
++  split <;> rfl
++
++/-- Retraction is performed on the symbol currently read, including both
++native input boundaries. -/
++private lemma dgInput_read {Γ Q R : Type} {k : ℕ} (a₀ : Γ)
++    {x : List (SweepAlphabet Γ k)} (c : Cfg k Γ Q (x.map (dgRetract a₀)))
++    (d : Cfg 1 (SweepAlphabet Γ k) R x) (hp : d.inputPos = dgPos a₀ c.inputPos) :
++    d.inputSymbol.map (dgRetract a₀) = c.inputSymbol := by
++  have hz : dgPos a₀ c.inputPos = 0 ↔ c.inputPos = 0 := by
++    simp only [Fin.ext_iff, dgPos, Fin.val_zero]
++  have hv : (dgPos a₀ c.inputPos).val = c.inputPos.val := rfl
++  simp only [Cfg.inputSymbol, hp, hz, hv, List.length_map]
++  split
++  · rfl
++  · split
++    · rfl
++    · simp only [Option.map_some, List.getElem_map]
++
++/-- The new states are only the left-boundary writer. Every other phase uses
++the received controller state type. -/
++private abbrev DGState (Γ Q : Type) (k : ℕ) :=
++  SweepState Γ Q k ⊕ (Option Q × (Fin k → Bool) × Fin (k + 1))
++
++/-- A boundary is crossed exactly when one of its old heads moves outward. -/
++private def dgCross {Γ Q : Type} {k : ℕ} (a : Action k Γ Q)
++    (h : Fin k → Bool) (d : SignType) : Bool :=
++  decide (∃ i, h i = true ∧ (a.workTapes i).2 = d)
++
++/-- Boundary control for the demand-grown simulator [AB09, Claim 1.6].
++The shared sweep layer has no conditional extension controller. This wrapper
++delegates initialization, read/write cell transitions, and right-row generation
++to `sweepTM`; it changes only the boundary transitions and adds the missing
++left-row writer. The old witness is never used as a space witness.
++
++The read pass retains its last row's head flags, and the reverse pass brings
++its first row's old flags to the left boundary. Thus each boundary test uses
++exactly the boundary-head flags recorded by the shared transduction, together
++with the pending source movement. Retraction affects native input reads only. -/
++private def dgTM {Γ : Type} [Fintype Γ] [DecidableEq Γ]
++    (M : FinTM Γ) (a₀ : Γ) : FinTM (SweepAlphabet Γ M.k) where
++  k := 1
++  State := DGState Γ M.State M.k
++  tm :=
++    { q₀ := .inl (.init 0)
++      tr := fun q inp work =>
++        let native := inp.map (fun b => Sum.inl (dgRetract a₀ b))
++        let old := fun q => ((sweepTM M).tm.tr q native work).mapState Sum.inl
++        match q with
++        | .inl (.growLeft q _) =>
++          sweepAct (.inl (.read q (fun _ => (none, false)))) (some sweepBoundary) .pos
++        | .inl (.read q s) =>
++          match work 0 with
++          | some (.inr (some _)) => old (.read q s)
++          | _ =>
++            let a := M.tm.tr q (inp.map (dgRetract a₀)) (fun i => (s i).1)
++            if dgCross a (fun i => (s i).2) .pos then
++              sweepMove (some (.inl (.growRight q s 0))) .zero
++            else old (.growRight q s ⟨M.k, by omega⟩)
++        | .inl (.write q inp reads right) =>
++          match work 0 with
++          | some (.inr (some _)) => old (.write q inp reads right)
++          | _ =>
++            let a := M.tm.tr q inp reads
++            if dgCross a right .neg then
++              sweepMove (some (.inr (a.state,
++                fun i => right i && decide ((a.workTapes i).2 = .neg), 0))) .zero
++            else sweepMove (a.state.map (fun q => .inl (.growLeft q 0))) .zero
++        | .inl q => old q
++        | .inr (q, heads, i) =>
++          if h : i.val < M.k then
++            let j : Fin M.k := ⟨M.k - 1 - i.val, by omega⟩
++            sweepAct (.inr (q, heads, ⟨i.val + 1, by omega⟩))
++              (some (sweepSymbol (j, none, heads j, false))) .neg
++          else
++            ⟨0, fun _ => (some (some sweepBoundary), .zero), none,
++              q.map (fun q => .inl (.growLeft q 0))⟩ }
++
++/-- A complete read phase cites the unchanged source-zone transduction. -/
++private lemma dg_read {Γ : Type} [Fintype Γ] [DecidableEq Γ]
++    (M : FinTM Γ) (a₀ : Γ) {y : List Γ} (c : Cfg M.k Γ M.State y)
++    (q : M.State) (a z : ℤ) (n : ℕ) {x : List (SweepAlphabet Γ M.k)}
++    (p : Fin (x.length + 2)) (out : List (SweepAlphabet Γ M.k))
++    (l r : List (Option (SweepAlphabet Γ M.k))) :
++    (dgTM M a₀).tm.runFrom
++      (sweepCfg (some (.inl (.read q (readState c a)))) p z l
++        ((tapeZone (fun j => tapeRow c j false) a n).map
++          (fun b => some (sweepSymbol b)) ++ r) out) (n * M.k) =
++      sweepCfg (some (.inl (.read q (readState c (a + n))))) p (z + n * M.k)
++        (((tapeZone (fun j => tapeRow c j true) a n).map
++          (fun b => some (sweepSymbol b))).reverse ++ l) r out := by
++  have h := sweep_run (dgTM M a₀).tm (fun s => Sum.inl (SweepState.read q s))
++    sweepSymbol readVisit (by intro s b inp; rfl) p out
++    (tapeZone (fun j => tapeRow c j false) a n) (readState c a) z l r
++  simpa only [read_zone, tapeZone_length, Int.natCast_mul] using h
++
++/-- A complete return phase cites the unchanged source-zone transduction. -/
++private lemma dg_write {Γ : Type} [Fintype Γ] [DecidableEq Γ]
++    (M : FinTM Γ) (a₀ : Γ) {y : List Γ} (c : Cfg M.k Γ M.State y)
++    (q : M.State) (inp : Option Γ) (reads : Fin M.k → Option Γ)
++    (a z : ℤ) (n : ℕ) {x : List (SweepAlphabet Γ M.k)}
++    (p : Fin (x.length + 2)) (out : List (SweepAlphabet Γ M.k))
++    (l r : List (Option (SweepAlphabet Γ M.k))) :
++    (dgTM M a₀).tm.runFrom
++      (sweepRevCfg (some (.inl (.write q inp reads (fun i => headAt c i (a + n)))))
++        p z l ((tapeZone (fun j => tapeRow c j true) a n).reverse.map
++          (fun b => some (sweepSymbol b)) ++ r) out) (n * M.k) =
++      sweepRevCfg (some (.inl (.write q inp reads (fun i => headAt c i a))))
++        p (z - n * M.k)
++        ((tapeZone (fun j => tapeRow ((M.tm.tr q inp reads).apply c) j false) a n).map
++          (fun b => some (sweepSymbol b)) ++ l) r out := by
++  have h := sweep_run_reverse (dgTM M a₀).tm
++    (fun s => Sum.inl (SweepState.write q inp reads s)) sweepSymbol
++    (writeVisit (M.tm.tr q inp reads)) (by intro s b inp'; rfl) p out
++    (tapeZone (fun j => tapeRow c j true) a n).reverse
++    (fun i => headAt c i (a + n)) z l r
++  simpa only [write_zone, List.length_reverse, tapeZone_length,
++    List.map_reverse, List.reverse_reverse, Int.natCast_mul] using h
++
++/-- The generic forward sweep's head position at every prefix, obtained by
++applying `sweep_run` to a prefix and leaving the suffix in the zipper. -/
++private lemma dg_sweep_prefix {A Q R C : Type} (tm : MultiTapeTM 1 A Q)
++    (state : R → Q) (symbol : C → A) (visit : R → C → R × C)
++    (htr : ∀ s a inp, tm.tr (state s) inp (fun _ => some (symbol a)) =
++      sweepAct (state (visit s a).1) (some (symbol (visit s a).2)) .pos)
++    {x : List A} (p : Fin (x.length + 2)) (out : List A)
++    (as : List C) (s : R) (z : ℤ) (l r : List (Option A))
++    (u : ℕ) (hu : u ≤ as.length) :
++    (tm.runFrom (sweepCfg (some (state s)) p z l
++      (as.map (fun a => some (symbol a)) ++ r) out) u).workTapePos 0 = z + u := by
++  have h := sweep_run tm state symbol visit htr p out (as.take u) s z l
++    ((as.drop u).map (fun a => some (symbol a)) ++ r)
++  rw [← List.append_assoc, ← List.map_append, List.take_append_drop] at h
++  simpa only [List.length_take, Nat.min_eq_left hu, sweepCfg] using
++    congrArg (fun c => c.workTapePos 0) h
++
++/-- The return sweep's entire trajectory follows from its generic API on
++prefixes, rather than from an estimate of its final position. -/
++private lemma dg_sweep_reverse_prefix {A Q R C : Type} (tm : MultiTapeTM 1 A Q)
++    (state : R → Q) (symbol : C → A) (visit : R → C → R × C)
++    (htr : ∀ s a inp, tm.tr (state s) inp (fun _ => some (symbol a)) =
++      sweepAct (state (visit s a).1) (some (symbol (visit s a).2)) .neg)
++    {x : List A} (p : Fin (x.length + 2)) (out : List A)
++    (as : List C) (s : R) (z : ℤ) (l r : List (Option A))
++    (u : ℕ) (hu : u ≤ as.length) :
++    (tm.runFrom (sweepRevCfg (some (state s)) p z l
++      (as.map (fun a => some (symbol a)) ++ r) out) u).workTapePos 0 = z - u := by
++  have h := sweep_run_reverse tm state symbol visit htr p out (as.take u) s z l
++    ((as.drop u).map (fun a => some (symbol a)) ++ r)
++  rw [← List.append_assoc, ← List.map_append, List.take_append_drop] at h
++  simpa only [List.length_take, Nat.min_eq_left hu, sweepRevCfg] using
++    congrArg (fun c => c.workTapePos 0) h
++
++/-- A finite run together with containment at all its prefixes. The endpoints
++are physical coordinates, and both are counted. -/
++private def DGSpan {A Q : Type} {x : List A} (tm : MultiTapeTM 1 A Q)
++    (c d : Cfg 1 A Q x) (t : ℕ) (lo hi : ℤ) : Prop :=
++  tm.runFrom c t = d ∧ ∀ u ≤ t,
++    lo ≤ (tm.runFrom c u).workTapePos 0 ∧ (tm.runFrom c u).workTapePos 0 ≤ hi
++
++/-- Concatenating contained runs preserves containment at every physical time.
++**Proof sketch.** A prefix ends either in the first run or at a uniquely
++specified offset in the second; the equality at the join handles the latter. -/
++private lemma dgSpan_add {A Q : Type} {x : List A} {tm : MultiTapeTM 1 A Q}
++    {c d e : Cfg 1 A Q x} {s t : ℕ} {lo hi : ℤ}
++    (h₁ : DGSpan tm c d s lo hi) (h₂ : DGSpan tm d e t lo hi) :
++    DGSpan tm c e (s + t) lo hi := by
++  refine ⟨by rw [MultiTapeTM.runFrom_add, h₁.1, h₂.1], ?_⟩
++  intro u hu
++  by_cases h : u ≤ s
++  · exact h₁.2 u h
++  · have he : u = s + (u - s) := by omega
++    rw [he, MultiTapeTM.runFrom_add, h₁.1]
++    exact h₂.2 (u - s) (by omega)
++
++/-- A single transition has only its two endpoints as prefixes. -/
++private lemma dgSpan_one {A Q : Type} {x : List A} {tm : MultiTapeTM 1 A Q}
++    {c d : Cfg 1 A Q x} {lo hi : ℤ} (h : tm.step c = d)
++    (hc : lo ≤ c.workTapePos 0 ∧ c.workTapePos 0 ≤ hi)
++    (hd : lo ≤ d.workTapePos 0 ∧ d.workTapePos 0 ≤ hi) :
++    DGSpan tm c d 1 lo hi := by
++  have hr : tm.runFrom c 1 = d := by simpa using h
++  refine ⟨hr, ?_⟩
++  intro u hu
++  have he : u = 0 ∨ u = 1 := by omega
++  rcases he with rfl | rfl
++  · simpa using hc
++  · rw [hr]
++    exact hd
++
++/-- The canonical boundary configuration uses the received interleaved zone,
++with the source read position interpreted on the native, unretracted input. -/
++private def dgStart {Γ : Type} [Fintype Γ] [DecidableEq Γ] (M : FinTM Γ)
++    (a₀ : Γ) {x : List (SweepAlphabet Γ M.k)}
++    (c : Cfg M.k Γ M.State (x.map (dgRetract a₀))) (a : ℤ) (n : ℕ) (z : ℤ) :
++    Cfg 1 (SweepAlphabet Γ M.k) (DGState Γ M.State M.k) x :=
++  sweepRevCfg (c.state.map (fun q => .inl (.growLeft q 0))) (dgPos a₀ c.inputPos) z
++    ((tapeZone (fun j => tapeRow c j false) a n).map (fun b => some (sweepSymbol b)) ++
++      [some sweepBoundary]) [some sweepBoundary] (c.output.map (sweepEmbed Γ M.k))
++
++/-- Mapping a native read into the data summand makes the received decoder
++implement the total retraction, including the absent boundary symbol. -/
++private lemma dg_native {Γ : Type} {k : ℕ} (a₀ : Γ) (inp : Option (SweepAlphabet Γ k)) :
++    sweepInput (k := k) (inp.map (fun b => Sum.inl (dgRetract a₀ b))) =
++      inp.map (dgRetract a₀) := by
++  cases inp <;> rfl
++
++/-- A fixed forward writer has an exact endpoint and visits only the segment
++between its initial and final heads. This adds prefix containment to the
++existing `sweep_generate` API, without another generation induction. -/
++private lemma dgSpan_generate_right {A Q : Type} {x : List A}
++    (tm : MultiTapeTM 1 A Q) (w : List A) (state : Fin (w.length + 1) → Q)
++    (htr : ∀ (i : ℕ) (hi : i < w.length) inp work,
++      tm.tr (state ⟨i, by omega⟩) inp work =
++        sweepAct (state ⟨i + 1, by omega⟩) (some w[i]) .pos)
++    (p : Fin (x.length + 2)) (out : List A) (z : ℤ)
++    (l r : List (Option A)) (n : ℕ) (hn : n ≤ w.length) :
++    DGSpan tm (sweepCfg (some (state 0)) p z l r out)
++      (sweepCfg (some (state ⟨n, by omega⟩)) p (z + n)
++        ((w.take n).map some |>.reverse |>.append l) (r.drop n) out) n z (z + n) := by
++  let cfg := fun i z l r => sweepCfg (some (state i)) p z l r out
++  have hr (u : ℕ) (hu : u ≤ w.length) := sweep_generate tm w cfg 1
++    (fun i hi z l r => by
++      change (tm.tr (state ⟨i, by omega⟩) _ _).apply _ = _
++      rw [htr i hi]
++      exact sweepCfg_right_any _ _ p z l r out _) z l r u hu
++  refine ⟨by simpa only [cfg, one_mul] using hr n hn, ?_⟩
++  intro u hu
++  have hp := congrArg (fun c => c.workTapePos 0) (hr u (hu.trans hn))
++  change (tm.runFrom (sweepCfg (some (state 0)) p z l r out) u).workTapePos 0 = z + 1 * u at hp
++  rw [hp]
++  constructor <;> omega
++
++/-- The same prefix containment wrapper for a fixed leftward writer. -/
++private lemma dgSpan_generate_left {A Q : Type} {x : List A}
++    (tm : MultiTapeTM 1 A Q) (w : List A) (state : Fin (w.length + 1) → Q)
++    (htr : ∀ (i : ℕ) (hi : i < w.length) inp work,
++      tm.tr (state ⟨i, by omega⟩) inp work =
++        sweepAct (state ⟨i + 1, by omega⟩) (some w[i]) .neg)
++    (p : Fin (x.length + 2)) (out : List A) (z : ℤ)
++    (l r : List (Option A)) (n : ℕ) (hn : n ≤ w.length) :
++    DGSpan tm (sweepRevCfg (some (state 0)) p z l r out)
++      (sweepRevCfg (some (state ⟨n, by omega⟩)) p (z - n)
++        ((w.take n).map some |>.reverse |>.append l) (r.drop n) out) n (z - n) z := by
++  let cfg := fun i z l r => sweepRevCfg (some (state i)) p z l r out
++  have hr (u : ℕ) (hu : u ≤ w.length) := sweep_generate tm w cfg (-1)
++    (fun i hi z l r => by
++      change (tm.tr (state ⟨i, by omega⟩) _ _).apply _ = _
++      rw [htr i hi]
++      simpa only [sub_eq_add_neg] using sweepRevCfg_left_any _ _ p z l r out _)
++    z l r u hu
++  refine ⟨by simpa only [cfg, neg_one_mul, sub_eq_add_neg] using hr n hn, ?_⟩
++  intro u hu
++  have hp := congrArg (fun c => c.workTapePos 0) (hr u (hu.trans hn))
++  change (tm.runFrom (sweepRevCfg (some (state 0)) p z l r out) u).workTapePos 0 = z + -1 * u at hp
++  rw [hp]
++  constructor <;> omega
++
++/-- A containing interval can be enlarged without changing a certified run. -/
++private lemma dgSpan_mono {A Q : Type} {x : List A} {tm : MultiTapeTM 1 A Q}
++    {c d : Cfg 1 A Q x} {t : ℕ} {lo hi lo' hi' : ℤ}
++    (h : DGSpan tm c d t lo hi) (hl : lo' ≤ lo) (hr : hi ≤ hi') :
++    DGSpan tm c d t lo' hi' :=
++  ⟨h.1, fun u hu => ⟨hl.trans (h.2 u hu).1, (h.2 u hu).2.trans hr⟩⟩
++
++/-- Initialization on every native input stays in the origin block and its
++two boundary cells. It uses the generic writer and reverse-sweep APIs.
++**Proof sketch.** Generate the marked origin row, turn at its right boundary,
++scan that fixed row backward, and install its left boundary. Each of these
++four runs carries all-prefix containment before they are concatenated. -/
++private lemma dg_init {Γ : Type} [Fintype Γ] [DecidableEq Γ]
++    (M : FinTM Γ) (a₀ : Γ) (x : List (SweepAlphabet Γ M.k)) :
++    DGSpan (dgTM M a₀).tm ((dgTM M a₀).tm.initCfg x)
++      (dgStart M a₀ (M.tm.initCfg (x.map (dgRetract a₀))) 0 1 (-1))
++      (2 * M.k + 2) (-1) M.k := by
++  let B := blankRow (Γ := Γ) M.k true
++  let w := B.map sweepSymbol
++  let L := w.map some
++  have hw : w.length = M.k := by simp [w, B, blankRow]
++  have hb : B.length = M.k := by simp [B, blankRow]
++  let st : Fin (w.length + 1) → DGState Γ M.State M.k :=
++    fun i => .inl (.init ⟨i.val, by simpa only [hw] using i.isLt⟩)
++  have gen := dgSpan_generate_right (dgTM M a₀).tm w st
++    (fun i hi inp work => by
++      have hik : i < M.k := by omega
++      have he : w[i] = sweepSymbol (⟨i, hik⟩, none, true, false) := by
++        simp [w, B, blankRow]
++      simp only [st, dgTM, sweepTM, dif_pos hik, Action.mapState, sweepAct, Option.map_some]
++      rw [he]) (1 : Fin (x.length + 2)) [] 0 [] [] M.k (by omega)
++  have htake : w.take M.k = w := List.take_of_length_le (le_of_eq hw)
++  have hgen : DGSpan (dgTM M a₀).tm ((dgTM M a₀).tm.initCfg x)
++      (sweepCfg (some (.inl (.init ⟨M.k, by omega⟩))) 1 M.k L.reverse [] [])
++      M.k (-1) M.k := by
++    have hinit : (dgTM M a₀).tm.initCfg x =
++        sweepCfg (some (st 0)) 1 0 [] [] [] := by
++      apply Cfg.ext <;> try rfl
++      funext i z
++      simp [sweepCfg, sweepTape]
++    rw [hinit]
++    simpa [htake, st, L] using dgSpan_mono (lo' := -1) (hi' := M.k) gen (by omega) (by omega)
++  let c₁ : Cfg 1 (SweepAlphabet Γ M.k) (DGState Γ M.State M.k) x :=
++    sweepCfg (some (.inl (.init ⟨M.k, by omega⟩))) 1 M.k L.reverse [] []
++  let c₂ : Cfg 1 (SweepAlphabet Γ M.k) (DGState Γ M.State M.k) x :=
++    sweepRevCfg (some (.inl .back)) 1 ((M.k : ℤ) - 1) [some sweepBoundary] L.reverse []
++  have turn : (dgTM M a₀).tm.step c₁ = c₂ := by
++    change ((dgTM M a₀).tm.tr (.inl (.init ⟨M.k, by omega⟩)) _ _).apply _ = _
++    simp only [dgTM, sweepTM, lt_self_iff_false, ↓reduceDIte, Action.mapState,
++      sweepAct, Option.map_some]
++    simpa only [c₁, c₂, SignType.zero_eq_zero, moveInputPos_zero, List.tail_nil, Option.toList_none,
++      List.append_nil] using
++      sweep_turn_left (some (Sum.inl (SweepState.init ⟨M.k, by omega⟩)))
++        (some (Sum.inl (SweepState.back (Γ := Γ) (S := M.State) (k := M.k))))
++        (1 : Fin (x.length + 2)) (M.k : ℤ) L.reverse [] [] (some sweepBoundary) none .zero
++  have hturn : DGSpan (dgTM M a₀).tm c₁ c₂ 1 (-1) M.k :=
++    dgSpan_one turn (by dsimp [c₁, sweepCfg]; omega) (by dsimp [c₂, sweepRevCfg]; omega)
++  let c₃ : Cfg 1 (SweepAlphabet Γ M.k) (DGState Γ M.State M.k) x :=
++    sweepRevCfg (some (.inl .back)) 1 (-1) (L ++ [some sweepBoundary]) [] []
++  have hback : DGSpan (dgTM M a₀).tm c₂ c₃ M.k (-1) M.k := by
++    constructor
++    · have h := sweep_run_reverse (dgTM M a₀).tm
++        (fun _ : Unit => Sum.inl SweepState.back) sweepSymbol (fun s b => (s, b))
++        (by intro s b inp; rfl) (1 : Fin (x.length + 2)) [] B.reverse ()
++        ((M.k : ℤ) - 1) [some sweepBoundary] []
++      simpa [c₂, c₃, L, w, List.map_map, List.map_reverse, sweepFold_id, hb] using h
++    · intro u hu
++      have h := dg_sweep_reverse_prefix (dgTM M a₀).tm
++        (fun _ : Unit => Sum.inl SweepState.back) sweepSymbol (fun s b => (s, b))
++        (by intro s b inp; rfl) (1 : Fin (x.length + 2)) [] B.reverse ()
++        ((M.k : ℤ) - 1) [some sweepBoundary] [] u (by simpa [hb] using hu)
++      have hp : ((dgTM M a₀).tm.runFrom c₂ u).workTapePos (0 : Fin 1) = (M.k : ℤ) - 1 - u := by
++        simpa [c₂, L, w, List.map_map, List.map_reverse] using h
++      rw [hp]
++      constructor <;> omega
++  have last : (dgTM M a₀).tm.step c₃ =
++      dgStart M a₀ (M.tm.initCfg (x.map (dgRetract a₀))) 0 1 (-1) := by
++    have hw₃ : c₃.workTapeSymbols = fun _ => none := by
++      funext i
++      simp [c₃, Cfg.workTapeSymbols, sweepRevCfg, sweepTape]
++    change ((dgTM M a₀).tm.tr (.inl .back) _ _).apply _ = _
++    rw [hw₃]
++    change (sweepAct (Sum.inl (SweepState.growLeft M.tm.q₀ 0))
++      (some sweepBoundary) .zero).apply c₃ = _
++    rw [show c₃ = sweepRevCfg (some (.inl .back)) 1 (-1)
++      (L ++ [some sweepBoundary]) [] [] from rfl, sweepRevCfg_write]
++    congr 1
++    simp [tapeZone, tapeRow, headAt, L, w, B, blankRow, List.map_map]
++  have hlast := dgSpan_one last (by dsimp [c₃, sweepRevCfg]; omega)
++    (show (-1 : ℤ) ≤ (dgStart M a₀ (M.tm.initCfg (x.map (dgRetract a₀))) 0 1 (-1)).workTapePos 0 ∧
++      (dgStart M a₀ (M.tm.initCfg (x.map (dgRetract a₀))) 0 1 (-1)).workTapePos 0 ≤ M.k by
++        dsimp [dgStart, sweepRevCfg]; omega)
++  have h := dgSpan_add (dgSpan_add (dgSpan_add hgen hturn) hback) hlast
++  simpa only [show M.k + 1 + M.k + 1 = 2 * M.k + 2 by omega] using h
++
++/-- The delegated right-row writer has the exact generic prefix ledger. -/
++private lemma dg_right_span {Γ : Type} [Fintype Γ] [DecidableEq Γ]
++    (M : FinTM Γ) (a₀ : Γ) (q : M.State) (s : Fin M.k → Option Γ × Bool)
++    {x : List (SweepAlphabet Γ M.k)} (p : Fin (x.length + 2))
++    (out : List (SweepAlphabet Γ M.k)) (z : ℤ)
++    (l r : List (Option (SweepAlphabet Γ M.k))) :
++    DGSpan (dgTM M a₀).tm
++      (sweepCfg (some (.inl (.growRight q s 0))) p z l r out)
++      (sweepCfg (some (.inl (.growRight q s ⟨M.k, by omega⟩))) p (z + M.k)
++        (((rightRow s).map (fun b => some (sweepSymbol b))).reverse ++ l)
++        (r.drop M.k) out) M.k z (z + M.k) := by
++  let w := (rightRow s).map sweepSymbol
++  have hw : w.length = M.k := by simp [w, rightRow]
++  have h := dgSpan_generate_right (dgTM M a₀).tm w
++    (fun i => Sum.inl (SweepState.growRight q s ⟨i.val, by simpa [hw] using i.isLt⟩))
++    (fun i hi inp work => by
++      have hik : i < M.k := by omega
++      have he : w[i] = sweepSymbol (⟨i, hik⟩, none, false, (s ⟨i, hik⟩).2) := by
++        simp [w, rightRow]
++      simp only [dgTM, sweepTM, dif_pos hik, Action.mapState, sweepAct, Option.map_some]
++      rw [he]) p out z l r M.k (by omega)
++  have htake : w.take M.k = w := List.take_of_length_le (le_of_eq hw)
++  simpa only [htake, w, List.map_map, Function.comp_def] using h
++
++/-- A newly crossed left coordinate is a received blank row with exactly the
++incoming heads marked. -/
++private def dgLeftRow {Γ : Type} {k : ℕ} (heads : Fin k → Bool) : List (SweepCell Γ k) :=
++  (blankRow k false).map fun b => (b.1, b.2.1, heads b.1, false)
++
++/-- The new left-row writer stays within exactly the newly allocated block.
++**Proof sketch.** Instantiate the generic leftward writer with the reversed
++marked blank row. Its all-prefix ledger accounts for the new boundary too. -/
++private lemma dg_left_span {Γ : Type} [Fintype Γ] [DecidableEq Γ]
++    (M : FinTM Γ) (a₀ : Γ) (q : Option M.State) (heads : Fin M.k → Bool)
++    {x : List (SweepAlphabet Γ M.k)} (p : Fin (x.length + 2))
++    (out : List (SweepAlphabet Γ M.k)) (z : ℤ)
++    (l r : List (Option (SweepAlphabet Γ M.k))) :
++    DGSpan (dgTM M a₀).tm
++      (sweepRevCfg (some (.inr (q, heads, 0))) p z l r out)
++      (sweepRevCfg (some (.inr (q, heads, ⟨M.k, by omega⟩))) p (z - M.k)
++        ((dgLeftRow heads).map (fun b => some (sweepSymbol b)) ++ l)
++        (r.drop M.k) out) M.k (z - M.k) z := by
++  let w := (dgLeftRow (Γ := Γ) heads).reverse.map sweepSymbol
++  have hw : w.length = M.k := by simp [w, dgLeftRow, blankRow]
++  have h := dgSpan_generate_left (dgTM M a₀).tm w
++    (fun i => Sum.inr (q, heads, ⟨i.val, by simpa [hw] using i.isLt⟩))
++    (fun i hi inp work => by
++      have hik : i < M.k := by omega
++      have he : w[i] = sweepSymbol
++          (⟨M.k - 1 - i, by omega⟩, none, heads ⟨M.k - 1 - i, by omega⟩, false) := by
++        simp [w, dgLeftRow, blankRow, List.getElem_reverse]
++      simp only [dgTM, dif_pos hik]
++      rw [he]) p out z l r M.k (by omega)
++  have htake : w.take M.k = w := List.take_of_length_le (le_of_eq hw)
++  rw [htake] at h
++  simpa only [w, List.map_map, Function.comp_def,
++    List.map_reverse, List.reverse_reverse] using h
++
++/-- Entering the read phase does not allocate a left block. The complete
++forward run and all its prefixes stay between the current boundary cells.
++**Proof sketch.** Turn right without changing the zone, then apply the received
++read transduction and the generic prefix-position theorem. -/
++private lemma dg_collect {Γ : Type} [Fintype Γ] [DecidableEq Γ]
++    (M : FinTM Γ) (a₀ : Γ) {x : List (SweepAlphabet Γ M.k)}
++    (c : Cfg M.k Γ M.State (x.map (dgRetract a₀)))
++    (q : M.State) (hs : c.state = some q) (a z : ℤ) (n : ℕ)
++    (hp : ∀ i, a ≤ c.workTapePos i) :
++    DGSpan (dgTM M a₀).tm (dgStart M a₀ c a n z)
++      (sweepCfg (some (.inl (.read q (readState c (a + n)))))
++        (dgPos a₀ c.inputPos) (z + 1 + n * M.k)
++        (((tapeZone (fun j => tapeRow c j true) a n).map
++          (fun b => some (sweepSymbol b))).reverse ++ [some sweepBoundary])
++        [some sweepBoundary] (c.output.map (sweepEmbed Γ M.k)))
++      (1 + n * M.k) z (z + 1 + n * M.k) := by
++  let F := tapeZone (fun j => tapeRow c j false) a n
++  let p := dgPos a₀ c.inputPos
++  let out := c.output.map (sweepEmbed Γ M.k)
++  let d : Cfg 1 (SweepAlphabet Γ M.k) (DGState Γ M.State M.k) x :=
++    sweepCfg (some (.inl (.read q (readState c a)))) p (z + 1) [some sweepBoundary]
++      (F.map (fun b => some (sweepSymbol b)) ++ [some sweepBoundary]) out
++  have hr : readState c a = fun _ => (none, false) := by
++    funext i
++    have h := hp i
++    simp [readState, headAt, show ¬c.workTapePos i < a by omega,
++      show c.workTapePos i ≠ a - 1 by omega]
++  have step : (dgTM M a₀).tm.step (dgStart M a₀ c a n z) = d := by
++    simp only [dgStart, MultiTapeTM.step, sweepRevCfg, hs, Option.map_some]
++    change (sweepAct (Sum.inl (SweepState.read q (fun _ => (none, false))))
++      (some sweepBoundary) .pos).apply
++        (sweepRevCfg (some (.inl (.growLeft q 0))) p z
++          (F.map (fun b => some (sweepSymbol b)) ++ [some sweepBoundary])
++          [some sweepBoundary] out) = d
++    rw [sweep_turn_right]
++    simp only [d, hr, List.tail_cons]
++  have hnk : 0 ≤ (n : ℤ) * M.k := by exact_mod_cast (Nat.zero_le (n * M.k))
++  have first : DGSpan (dgTM M a₀).tm (dgStart M a₀ c a n z) d 1 z (z + 1 + n * M.k) :=
++    dgSpan_one step (by dsimp [dgStart, sweepRevCfg]; constructor <;> omega)
++      (by dsimp [d, sweepCfg]; constructor <;> omega)
++  have scan : DGSpan (dgTM M a₀).tm d
++      (sweepCfg (some (.inl (.read q (readState c (a + n))))) p (z + 1 + n * M.k)
++        (((tapeZone (fun j => tapeRow c j true) a n).map
++          (fun b => some (sweepSymbol b))).reverse ++ [some sweepBoundary])
++        [some sweepBoundary] out) (n * M.k) z (z + 1 + n * M.k) := by
++    refine ⟨dg_read M a₀ c q a (z + 1) n p out _ _, ?_⟩
++    intro u hu
++    have h := dg_sweep_prefix (dgTM M a₀).tm
++      (fun s => Sum.inl (SweepState.read q s)) sweepSymbol readVisit
++      (by intro s b inp; rfl) p out F (readState c a) (z + 1)
++      [some sweepBoundary] [some sweepBoundary] u (by simpa [F, tapeZone_length] using hu)
++    change ((dgTM M a₀).tm.runFrom d u).workTapePos (0 : Fin 1) = z + 1 + u at h
++    rw [h]
++    have hu' : (u : ℤ) ≤ (n : ℤ) * M.k := by exact_mod_cast hu
++    constructor <;> omega
++  exact dgSpan_add first scan
++
++/-- The delegated right-boundary turn performs precisely one native source
++input/output action. Retraction is used for the scanned symbol only.
++**Proof sketch.** Decode the current native read using `dgInput_read`, then
++apply the received write-and-turn zipper identity and commute the symbol map
++with the optional output append. -/
++private lemma dg_turn {Γ : Type} [Fintype Γ] [DecidableEq Γ]
++    (M : FinTM Γ) (a₀ : Γ) {x : List (SweepAlphabet Γ M.k)}
++    (c : Cfg M.k Γ M.State (x.map (dgRetract a₀))) (q : M.State)
++    (s : Fin M.k → Option Γ × Bool) (hs : (fun i => (s i).1) = c.workTapeSymbols)
++    (z : ℤ) (l r : List (Option (SweepAlphabet Γ M.k))) :
++    (dgTM M a₀).tm.step
++      (sweepCfg (some (.inl (.growRight q s ⟨M.k, by omega⟩))) (dgPos a₀ c.inputPos) z
++        l r (c.output.map (sweepEmbed Γ M.k))) =
++      sweepRevCfg (some (.inl (.write q c.inputSymbol c.workTapeSymbols (fun _ => false))))
++        (dgPos a₀ ((M.tm.tr q c.inputSymbol c.workTapeSymbols).apply c).inputPos) (z - 1)
++        (some sweepBoundary :: r.tail) l
++        (((M.tm.tr q c.inputSymbol c.workTapeSymbols).apply c).output.map (sweepEmbed Γ M.k)) := by
++  let d : Cfg 1 (SweepAlphabet Γ M.k) (DGState Γ M.State M.k) x :=
++    sweepCfg (some (.inl (.growRight q s ⟨M.k, by omega⟩))) (dgPos a₀ c.inputPos) z
++      l r (c.output.map (sweepEmbed Γ M.k))
++  let act := M.tm.tr q c.inputSymbol c.workTapeSymbols
++  have hi : sweepInput (k := M.k) (d.inputSymbol.map (fun b => Sum.inl (dgRetract a₀ b))) =
++      c.inputSymbol := (dg_native a₀ d.inputSymbol).trans (dgInput_read a₀ c d rfl)
++  change ((dgTM M a₀).tm.tr (.inl (.growRight q s ⟨M.k, by omega⟩))
++    d.inputSymbol d.workTapeSymbols).apply d = _
++  simp only [dgTM, sweepTM, lt_self_iff_false, ↓reduceDIte]
++  rw [hi, hs]
++  change (⟨act.inputTape, fun _ => (some (some sweepBoundary), .neg), act.output.map Sum.inl,
++    some (.inl (.write q c.inputSymbol c.workTapeSymbols (fun _ => false)))⟩ :
++    Action 1 (SweepAlphabet Γ M.k) (DGState Γ M.State M.k)).apply
++      (sweepCfg (some (.inl (.growRight q s ⟨M.k, by omega⟩))) (dgPos a₀ c.inputPos) z
++        l r (c.output.map (sweepEmbed Γ M.k))) = _
++  rw [sweep_turn_left, dgPos_move]
++  have ho : c.output.map (sweepEmbed Γ M.k) ++ (act.output.map Sum.inl).toList =
++      (act.apply c).output.map (sweepEmbed Γ M.k) := by
++    cases he : act.output <;> simp [Action.apply, he, List.map_append, sweepEmbed]
++  rw [ho]
++  rfl
++
++/-- The right-boundary test either enters the delegated generator or turns
++immediately. The table equality is independent of any run invariant. -/
++private lemma dg_read_boundary {Γ : Type} [Fintype Γ] [DecidableEq Γ]
++    (M : FinTM Γ) (a₀ : Γ) (q : M.State) (s : Fin M.k → Option Γ × Bool)
++    (inp : Option (SweepAlphabet Γ M.k)) :
++    (dgTM M a₀).tm.tr (.inl (.read q s)) inp (fun _ => some sweepBoundary) =
++      if dgCross (M.tm.tr q (inp.map (dgRetract a₀)) (fun i => (s i).1))
++          (fun i => (s i).2) .pos then
++        sweepMove (some (.inl (.growRight q s 0))) .zero
++      else (dgTM M a₀).tm.tr (.inl (.growRight q s ⟨M.k, by omega⟩)) inp
++        (fun _ => some sweepBoundary) := rfl
++
++/-- A negative right-boundary crossing test turns in one step and allocates
++no cell. All prefixes stay at the boundary or the cell immediately to its left. -/
++private lemma dg_turn_without_growth {Γ : Type} [Fintype Γ] [DecidableEq Γ]
++    (M : FinTM Γ) (a₀ : Γ) {x : List (SweepAlphabet Γ M.k)}
++    (c : Cfg M.k Γ M.State (x.map (dgRetract a₀))) (q : M.State)
++    (s : Fin M.k → Option Γ × Bool) (hs : (fun i => (s i).1) = c.workTapeSymbols)
++    (hc : dgCross (M.tm.tr q c.inputSymbol c.workTapeSymbols) (fun i => (s i).2) .pos = false)
++    (z : ℤ) (l : List (Option (SweepAlphabet Γ M.k))) :
++    DGSpan (dgTM M a₀).tm
++      (sweepCfg (some (.inl (.read q s))) (dgPos a₀ c.inputPos) z l
++        [some sweepBoundary] (c.output.map (sweepEmbed Γ M.k)))
++      (sweepRevCfg (some (.inl (.write q c.inputSymbol c.workTapeSymbols (fun _ => false))))
++        (dgPos a₀ ((M.tm.tr q c.inputSymbol c.workTapeSymbols).apply c).inputPos) (z - 1)
++        [some sweepBoundary] l
++        (((M.tm.tr q c.inputSymbol c.workTapeSymbols).apply c).output.map (sweepEmbed Γ M.k)))
++      1 (z - 1) z := by
++  let d : Cfg 1 (SweepAlphabet Γ M.k) (DGState Γ M.State M.k) x :=
++    sweepCfg (some (.inl (.read q s))) (dgPos a₀ c.inputPos) z l
++      [some sweepBoundary] (c.output.map (sweepEmbed Γ M.k))
++  have hw : d.workTapeSymbols = fun _ => some sweepBoundary := by
++    funext i
++    exact sweepTape_read z l _
++  have he := dg_read_boundary M a₀ q s d.inputSymbol
++  rw [dgInput_read a₀ c d rfl, hs, hc] at he
++  simp only [Bool.false_eq_true, ↓reduceIte] at he
++  have ht := dg_turn M a₀ c q s hs z l [some sweepBoundary]
++  change ((dgTM M a₀).tm.tr (.inl (.growRight q s ⟨M.k, by omega⟩))
++    d.inputSymbol d.workTapeSymbols).apply _ = _ at ht
++  rw [hw] at ht
++  apply dgSpan_one ?_ (by dsimp [sweepCfg]; constructor <;> omega)
++    (by dsimp [sweepRevCfg]; constructor <;> omega)
++  change ((dgTM M a₀).tm.tr (.inl (.read q s)) d.inputSymbol d.workTapeSymbols).apply d = _
++  rw [hw]
++  exact (congrArg (fun act => act.apply d) he).trans ht
++
++/-- A positive crossing test allocates exactly one right row, then performs
++the source action. Every prefix stays within the new right boundary.
++**Proof sketch.** Compose a stationary dispatch, the delegated row writer,
++and the already checked source input/output turn. -/
++private lemma dg_turn_with_growth {Γ : Type} [Fintype Γ] [DecidableEq Γ]
++    (M : FinTM Γ) (hk : 0 < M.k) (a₀ : Γ) {x : List (SweepAlphabet Γ M.k)}
++    (c : Cfg M.k Γ M.State (x.map (dgRetract a₀))) (q : M.State)
++    (s : Fin M.k → Option Γ × Bool) (hs : (fun i => (s i).1) = c.workTapeSymbols)
++    (hc : dgCross (M.tm.tr q c.inputSymbol c.workTapeSymbols) (fun i => (s i).2) .pos = true)
++    (z : ℤ) (l : List (Option (SweepAlphabet Γ M.k))) :
++    DGSpan (dgTM M a₀).tm
++      (sweepCfg (some (.inl (.read q s))) (dgPos a₀ c.inputPos) z l
++        [some sweepBoundary] (c.output.map (sweepEmbed Γ M.k)))
++      (sweepRevCfg (some (.inl (.write q c.inputSymbol c.workTapeSymbols (fun _ => false))))
++        (dgPos a₀ ((M.tm.tr q c.inputSymbol c.workTapeSymbols).apply c).inputPos) (z + M.k - 1)
++        [some sweepBoundary]
++        (((rightRow s).map (fun b => some (sweepSymbol b))).reverse ++ l)
++        (((M.tm.tr q c.inputSymbol c.workTapeSymbols).apply c).output.map (sweepEmbed Γ M.k)))
++      (M.k + 2) (z - 1) (z + M.k) := by
++  let p := dgPos a₀ c.inputPos
++  let out := c.output.map (sweepEmbed Γ M.k)
++  let d : Cfg 1 (SweepAlphabet Γ M.k) (DGState Γ M.State M.k) x :=
++    sweepCfg (some (.inl (.read q s))) p z l [some sweepBoundary] out
++  let e : Cfg 1 (SweepAlphabet Γ M.k) (DGState Γ M.State M.k) x :=
++    sweepCfg (some (.inl (.growRight q s 0))) p z l [some sweepBoundary] out
++  have hw : d.workTapeSymbols = fun _ => some sweepBoundary := by
++    funext i
++    exact sweepTape_read z l _
++  have he := dg_read_boundary M a₀ q s d.inputSymbol
++  rw [dgInput_read a₀ c d rfl, hs, hc] at he
++  simp only [↓reduceIte] at he
++  have step : (dgTM M a₀).tm.step d = e := by
++    change ((dgTM M a₀).tm.tr (.inl (.read q s)) d.inputSymbol d.workTapeSymbols).apply d = e
++    rw [hw]
++    exact (congrArg (fun act => act.apply d) he).trans (sweepCfg_stay _ _ _ _ _ _ _)
++  have h₁ : DGSpan (dgTM M a₀).tm d e 1 (z - 1) (z + M.k) :=
++    dgSpan_one step (by dsimp [d, sweepCfg]; constructor <;> omega)
++      (by dsimp [e, sweepCfg]; constructor <;> omega)
++  have hdrop : ([some (sweepBoundary (Γ := Γ) (k := M.k))] : List _).drop M.k = [] :=
++    List.drop_eq_nil_of_le (by simpa using hk)
++  have h₂ := dgSpan_mono (lo' := z - 1) (hi' := z + M.k)
++    (dg_right_span M a₀ q s p out z l [some sweepBoundary]) (by omega) (by omega)
++  rw [hdrop] at h₂
++  have ht := dg_turn M a₀ c q s hs (z + M.k)
++    (((rightRow s).map (fun b => some (sweepSymbol b))).reverse ++ l) []
++  have h₃ := dgSpan_one ht
++    (show z - 1 ≤ z + (M.k : ℤ) ∧ z + (M.k : ℤ) ≤ z + M.k by omega)
++    (show z - 1 ≤ z + (M.k : ℤ) - 1 ∧ z + (M.k : ℤ) - 1 ≤ z + M.k by omega)
++  have h := dgSpan_add (dgSpan_add h₁ h₂) h₃
++  simpa only [show 1 + M.k + 1 = M.k + 2 by omega, List.tail_nil] using h
++
++/-- The received stationary write identity also permits a halted successor.
++Only its state field changes; every other field is cited from that identity. -/
++private lemma dgRev_write_optional {A Q : Type} {x : List A}
++    (dummy : Q) (q q' : Option Q) (p : Fin (x.length + 2)) (z : ℤ)
++    (l r : List (Option A)) (out : List A) (b : Option A) :
++    (⟨0, fun _ => (some b, .zero), none, q'⟩ : Action 1 A Q).apply
++      (sweepRevCfg q p z l r out) = sweepRevCfg q' p z l (b :: r.tail) out := by
++  have h := sweepRevCfg_write q dummy p z l r out b
++  have hp := congrArg (fun (c : Cfg 1 A Q x) => c.inputPos) h
++  have hw := congrArg (fun (c : Cfg 1 A Q x) => c.workTapes) h
++  have hz := congrArg (fun (c : Cfg 1 A Q x) => c.workTapePos) h
++  have ho := congrArg (fun (c : Cfg 1 A Q x) => c.output) h
++  exact Cfg.ext rfl hp hw hz ho
++
++/-- When no head crosses the left boundary, the return phase ends there,
++including when the source action halts. No extra block is written. -/
++private lemma dg_end_without_growth {Γ : Type} [Fintype Γ] [DecidableEq Γ]
++    (M : FinTM Γ) (a₀ : Γ) (q : M.State) (inp : Option Γ)
++    (reads : Fin M.k → Option Γ) (right : Fin M.k → Bool)
++    (hc : dgCross (M.tm.tr q inp reads) right .neg = false)
++    {x : List (SweepAlphabet Γ M.k)} (p : Fin (x.length + 2))
++    (out : List (SweepAlphabet Γ M.k)) (z : ℤ)
++    (l : List (Option (SweepAlphabet Γ M.k))) :
++    DGSpan (dgTM M a₀).tm
++      (sweepRevCfg (some (.inl (.write q inp reads right))) p z l [some sweepBoundary] out)
++      (sweepRevCfg ((M.tm.tr q inp reads).state.map (fun q => .inl (.growLeft q 0)))
++        p z l [some sweepBoundary] out) 1 z z := by
++  refine dgSpan_one ?_ (by change z ≤ z ∧ z ≤ z; omega)
++    (by change z ≤ z ∧ z ≤ z; omega)
++  let d : Cfg 1 (SweepAlphabet Γ M.k) (DGState Γ M.State M.k) x :=
++    sweepRevCfg (some (.inl (.write q inp reads right))) p z l [some sweepBoundary] out
++  have hw : d.workTapeSymbols = fun _ => some sweepBoundary := by
++    funext i
++    exact sweepTape_read (-z) l _
++  change ((dgTM M a₀).tm.tr (.inl (.write q inp reads right)) d.inputSymbol d.workTapeSymbols).apply d = _
++  rw [hw]
++  simp only [dgTM, sweepBoundary, hc, Bool.false_eq_true, ↓reduceIte]
++  exact sweepRevCfg_stay _ _ _ _ _ _ _
++
++/-- A left crossing creates exactly one marked blank row and moves the boundary
++by its width. The endpoint may halt; containment includes the final boundary.
++**Proof sketch.** Dispatch without moving, use the new left-row writer, and
++write the new boundary with the optional successor state. -/
++private lemma dg_end_with_growth {Γ : Type} [Fintype Γ] [DecidableEq Γ]
++    (M : FinTM Γ) (hk : 0 < M.k) (a₀ : Γ) (q : M.State) (inp : Option Γ)
++    (reads : Fin M.k → Option Γ) (right : Fin M.k → Bool)
++    (hc : dgCross (M.tm.tr q inp reads) right .neg = true)
++    {x : List (SweepAlphabet Γ M.k)} (p : Fin (x.length + 2))
++    (out : List (SweepAlphabet Γ M.k)) (z : ℤ)
++    (l : List (Option (SweepAlphabet Γ M.k))) :
++    DGSpan (dgTM M a₀).tm
++      (sweepRevCfg (some (.inl (.write q inp reads right))) p z l [some sweepBoundary] out)
++      (sweepRevCfg ((M.tm.tr q inp reads).state.map (fun q => .inl (.growLeft q 0)))
++        p (z - M.k)
++        ((dgLeftRow (fun i => right i && decide (((M.tm.tr q inp reads).workTapes i).2 = .neg))).map
++          (fun b => some (sweepSymbol b)) ++ l) [some sweepBoundary] out)
++      (M.k + 2) (z - M.k) z := by
++  let act := M.tm.tr q inp reads
++  let heads := fun i => right i && decide ((act.workTapes i).2 = .neg)
++  let d : Cfg 1 (SweepAlphabet Γ M.k) (DGState Γ M.State M.k) x :=
++    sweepRevCfg (some (.inl (.write q inp reads right))) p z l [some sweepBoundary] out
++  let e : Cfg 1 (SweepAlphabet Γ M.k) (DGState Γ M.State M.k) x :=
++    sweepRevCfg (some (.inr (act.state, heads, 0))) p z l [some sweepBoundary] out
++  have step : (dgTM M a₀).tm.step d = e := by
++    have hw : d.workTapeSymbols = fun _ => some sweepBoundary := by
++      funext i
++      exact sweepTape_read (-z) l _
++    change ((dgTM M a₀).tm.tr (.inl (.write q inp reads right)) d.inputSymbol d.workTapeSymbols).apply d = e
++    rw [hw]
++    simp only [dgTM, sweepBoundary, hc, ↓reduceIte]
++    exact sweepRevCfg_stay _ _ _ _ _ _ _
++  have h₁ : DGSpan (dgTM M a₀).tm d e 1 (z - M.k) z :=
++    dgSpan_one step (by dsimp [d, sweepRevCfg]; constructor <;> omega)
++      (by dsimp [e, sweepRevCfg]; constructor <;> omega)
++  have hdrop : ([some (sweepBoundary (Γ := Γ) (k := M.k))] : List _).drop M.k = [] :=
++    List.drop_eq_nil_of_le (by simpa using hk)
++  have h₂ := dg_left_span M a₀ act.state heads p out z l [some sweepBoundary]
++  rw [hdrop] at h₂
++  let L := (dgLeftRow (Γ := Γ) heads).map (fun b => some (sweepSymbol b)) ++ l
++  have last : (dgTM M a₀).tm.step
++      (sweepRevCfg (some (.inr (act.state, heads, ⟨M.k, by omega⟩))) p (z - M.k) L [] out) =
++      sweepRevCfg (act.state.map (fun q => .inl (.growLeft q 0))) p (z - M.k) L [some sweepBoundary] out := by
++    change ((dgTM M a₀).tm.tr (.inr (act.state, heads, ⟨M.k, by omega⟩)) _ _).apply _ = _
++    simp only [dgTM, lt_self_iff_false, ↓reduceDIte]
++    exact dgRev_write_optional (Sum.inl SweepState.back) _ _ _ _ _ _ _ _
++  have h₃ := dgSpan_one last
++    (show z - (M.k : ℤ) ≤ z - M.k ∧ z - (M.k : ℤ) ≤ z by omega)
++    (show z - (M.k : ℤ) ≤ z - M.k ∧ z - (M.k : ℤ) ≤ z by omega)
++  have h := dgSpan_add (dgSpan_add h₁ h₂) h₃
++  simpa only [show 1 + M.k + 1 = M.k + 2 by omega] using h
++
++/-- The demand-grown left row is precisely the next source row. Its payloads
++are blank and its marked heads are exactly the old boundary heads moving left.
++**Proof sketch.** A source write occurs inside the old interval. At the newly
++crossed coordinate only a left-moving old boundary head can arrive. -/
++private lemma dg_new_left_row {Γ Q : Type} {k : ℕ} {x : List Γ}
++    (c : Cfg k Γ Q x) (act : Action k Γ Q) (a : ℤ)
++    (hp : ∀ i, a ≤ c.workTapePos i) (ht : ∀ i, c.workTapes i (a - 1) = none) :
++    dgLeftRow (fun i => headAt c i a && decide ((act.workTapes i).2 = .neg)) =
++      tapeRow (act.apply c) (a - 1) false := by
++  unfold dgLeftRow blankRow tapeRow
++  rw [List.map_map]
++  apply List.map_congr_left
++  intro i _
++  have hi := hp i
++  have hne : a - 1 ≠ c.workTapePos i := by omega
++  dsimp only [Function.comp_def]
++  refine Prod.ext rfl ?_
++  apply Prod.ext
++  · cases hw : (act.workTapes i).1 <;>
++      simp [Action.apply, hw, Function.update_of_ne hne, ht i]
++  · refine Prod.ext ?_ rfl
++    cases hm : (act.workTapes i).2 <;> simp [headAt, Action.apply, hm, SignType.cast] <;> omega
++
++/-- Exact cost of the conditional five-phase simulation cycle. -/
++private def dgCost (k n : ℕ) (left right : Bool) : ℕ :=
++  (1 + n * k) + (1 + right.toNat * (k + 1)) +
++    (n + right.toNat) * k + (1 + left.toNat * (k + 1))
++
++/-- One live source transition, with optional growth at each crossed boundary.
++This includes every prefix of all five phases, even when the final state halts.
++**Proof sketch.** Collect the current row interval, conditionally append its
++right neighbor, apply the unchanged reverse transduction, and conditionally
++prepend the new left row. Compose the five all-prefix ledgers. The ordinary
++cell semantics are solely the received `read_zone` and `write_zone` facts. -/
++private lemma dg_step {Γ : Type} [Fintype Γ] [DecidableEq Γ]
++    (M : FinTM Γ) (hk : 0 < M.k) (a₀ : Γ) {x : List (SweepAlphabet Γ M.k)}
++    (c : Cfg M.k Γ M.State (x.map (dgRetract a₀)))
++    (q : M.State) (hs : c.state = some q) (a z : ℤ) (n : ℕ)
++    (hp : ∀ i, a ≤ c.workTapePos i ∧ c.workTapePos i < a + n)
++    (hl : ∀ i, c.workTapes i (a - 1) = none)
++    (hr : ∀ i, c.workTapes i (a + n) = none)
++    (left right : Bool)
++    (hleft : dgCross (M.tm.tr q c.inputSymbol c.workTapeSymbols)
++      (fun i => headAt c i a) .neg = left)
++    (hright : dgCross (M.tm.tr q c.inputSymbol c.workTapeSymbols)
++      (fun i => headAt c i (a + n - 1)) .pos = right) :
++    DGSpan (dgTM M a₀).tm (dgStart M a₀ c a n z)
++      (dgStart M a₀ (M.tm.step c) (a - left.toNat) (n + right.toNat + left.toNat)
++        (z - left.toNat * M.k))
++      (dgCost M.k n left right) (z - left.toNat * M.k)
++        (z + 1 + (n + right.toNat) * M.k) := by
++  let act := M.tm.tr q c.inputSymbol c.workTapeSymbols
++  let s := readState c (a + n)
++  let p := dgPos a₀ c.inputPos
++  let out := c.output.map (sweepEmbed Γ M.k)
++  let p' := dgPos a₀ (act.apply c).inputPos
++  let out' := (act.apply c).output.map (sweepEmbed Γ M.k)
++  let put : SweepCell Γ M.k → Option (SweepAlphabet Γ M.k) := fun b => some (sweepSymbol b)
++  let F := tapeZone (fun j => tapeRow c j true) a n
++  let W := tapeZone (fun j => tapeRow c j true) a (n + right.toNat)
++  let V := tapeZone (fun j => tapeRow (act.apply c) j false) a (n + right.toNat)
++  let lo := z - (left.toNat : ℤ) * M.k
++  let hi := z + 1 + ((n + right.toNat : ℕ) : ℤ) * M.k
++  let collected : Cfg 1 (SweepAlphabet Γ M.k) (DGState Γ M.State M.k) x :=
++    sweepCfg (some (.inl (.read q s))) p (z + 1 + n * M.k)
++      ((F.map put).reverse ++ [some sweepBoundary]) [some sweepBoundary] out
++  let writing : Cfg 1 (SweepAlphabet Γ M.k) (DGState Γ M.State M.k) x :=
++    sweepRevCfg (some (.inl (.write q c.inputSymbol c.workTapeSymbols (fun _ => false))))
++      p' (z + ((n + right.toNat : ℕ) : ℤ) * M.k) [some sweepBoundary]
++      (W.reverse.map put ++ [some sweepBoundary]) out'
++  let written : Cfg 1 (SweepAlphabet Γ M.k) (DGState Γ M.State M.k) x :=
++    sweepRevCfg (some (.inl (.write q c.inputSymbol c.workTapeSymbols (fun i => headAt c i a))))
++      p' z (V.map put ++ [some sweepBoundary]) [some sweepBoundary] out'
++  have hn0 : 0 ≤ (n : ℤ) * M.k := by exact_mod_cast (Nat.zero_le (n * M.k))
++  have hl0 : 0 ≤ (left.toNat : ℤ) * M.k := by exact_mod_cast (Nat.zero_le (left.toNat * M.k))
++  have hr0 : 0 ≤ (right.toNat : ℤ) * M.k := by exact_mod_cast (Nat.zero_le (right.toNat * M.k))
++  have hsum : ((n + right.toNat : ℕ) : ℤ) * M.k = (n : ℤ) * M.k + (right.toNat : ℤ) * M.k := by
++    push_cast
++    ring
++  have hcollect : DGSpan (dgTM M a₀).tm (dgStart M a₀ c a n z) collected
++      (1 + n * M.k) lo hi :=
++    dgSpan_mono (dg_collect M a₀ c q hs a z n (fun i => (hp i).1))
++      (by dsimp [lo]; omega) (by dsimp [hi]; rw [add_mul]; omega)
++  have hreads : (fun i => (s i).1) = c.workTapeSymbols := by
++    funext i
++    exact if_pos (hp i).2
++  have hrtest : dgCross act (fun i => (s i).2) .pos = right := hright
++  have hrow : rightRow s = tapeRow c (a + n) true := by
++    unfold rightRow tapeRow
++    apply List.map_congr_left
++    intro i _
++    have hn : c.workTapePos i ≠ a + n := by have := (hp i).2; omega
++    simp [s, readState, headAt, hr i, hn]
++  have hdispatch : DGSpan (dgTM M a₀).tm collected writing
++      (1 + right.toNat * (M.k + 1)) lo hi := by
++    cases right with
++    | false =>
++      have h := dg_turn_without_growth M a₀ c q s hreads hrtest (z + 1 + n * M.k)
++        ((F.map put).reverse ++ [some sweepBoundary])
++      have h := dgSpan_mono (lo' := lo) (hi' := hi) h
++        (by dsimp [lo]; omega) (by dsimp [hi]; omega)
++      have hz : z + 1 + (n : ℤ) * M.k - 1 = z + n * M.k := by omega
++      simpa only [collected, writing, W, F, Bool.toNat_false, Nat.add_zero,
++        Nat.zero_mul, hz, List.map_reverse] using h
++    | true =>
++      have h := dg_turn_with_growth M hk a₀ c q s hreads hrtest (z + 1 + n * M.k)
++        ((F.map put).reverse ++ [some sweepBoundary])
++      have he : tapeZone (fun j => tapeRow c j true) a (n + 1) = F ++ rightRow s := by
++        rw [tapeZone_append, hrow]
++        simp only [tapeZone, List.append_nil]
++        rfl
++      have hh : z + 1 + (n : ℤ) * M.k + M.k = hi := by
++        dsimp [hi]
++        ring
++      have hz : z + 1 + (n : ℤ) * M.k + M.k - 1 = z + ((n + 1 : ℕ) : ℤ) * M.k := by
++        push_cast
++        ring
++      have h := dgSpan_mono (lo' := lo) (hi' := hi) h
++        (by dsimp [lo]; omega) (le_of_eq hh)
++      simpa [collected, writing, W, put, p, p', out, out', act, Bool.toNat_true, he, List.map_append,
++        List.reverse_append, List.map_reverse, List.append_assoc, hz,
++        show 1 + (M.k + 1) = M.k + 2 by omega] using h
++  have hzero : (fun i => headAt c i (a + (n + right.toNat : ℕ))) = fun _ => false := by
++    funext i
++    have h := (hp i).2
++    simp only [headAt, decide_eq_false_iff_not]
++    omega
++  have hwrite : DGSpan (dgTM M a₀).tm writing written ((n + right.toNat) * M.k) lo hi := by
++    constructor
++    · have h := dg_write M a₀ c q c.inputSymbol c.workTapeSymbols a
++        (z + ((n + right.toNat : ℕ) : ℤ) * M.k) (n + right.toNat) p' out'
++        [some sweepBoundary] [some sweepBoundary]
++      rw [hzero] at h
++      simpa only [writing, written, W, V, put, act, add_sub_cancel_right] using h
++    · intro u hu
++      have h := dg_sweep_reverse_prefix (dgTM M a₀).tm
++        (fun r => Sum.inl (SweepState.write q c.inputSymbol c.workTapeSymbols r))
++        sweepSymbol (writeVisit act) (by intro r b inp; rfl) p' out' W.reverse
++        (fun _ => false) (z + ((n + right.toNat : ℕ) : ℤ) * M.k)
++        [some sweepBoundary] [some sweepBoundary] u
++        (by simpa only [W, List.length_reverse, tapeZone_length] using hu)
++      change ((dgTM M a₀).tm.runFrom writing u).workTapePos (0 : Fin 1) =
++        z + ((n + right.toNat : ℕ) : ℤ) * M.k - u at h
++      rw [h]
++      have hu' : (u : ℤ) ≤ ((n + right.toNat : ℕ) : ℤ) * M.k := by exact_mod_cast hu
++      simp only [Int.natCast_add] at h hu'
++      dsimp [lo, hi]
++      constructor <;> omega
++  have hfinish : DGSpan (dgTM M a₀).tm written
++      (dgStart M a₀ (act.apply c) (a - left.toNat) (n + right.toNat + left.toNat)
++        (z - left.toNat * M.k)) (1 + left.toNat * (M.k + 1)) lo hi := by
++    cases left with
++    | false =>
++      have h := dg_end_without_growth M a₀ q c.inputSymbol c.workTapeSymbols
++        (fun i => headAt c i a) hleft p' out' z (V.map put ++ [some sweepBoundary])
++      have h := dgSpan_mono (lo' := lo) (hi' := hi) h
++        (by dsimp [lo]; simp) (by dsimp [hi]; rw [add_mul]; omega)
++      simpa only [written, dgStart, V, put, act, Bool.toNat_false, Nat.zero_mul,
++        Int.natCast_zero, zero_mul, sub_zero, Nat.add_zero] using h
++    | true =>
++      have h := dg_end_with_growth M hk a₀ q c.inputSymbol c.workTapeSymbols
++        (fun i => headAt c i a) hleft p' out' z (V.map put ++ [some sweepBoundary])
++      have he := dg_new_left_row c act a (fun i => (hp i).1) hl
++      rw [he] at h
++      have h := dgSpan_mono (lo' := lo) (hi' := hi) h
++        (by dsimp [lo]; simp) (by dsimp [hi]; rw [add_mul]; omega)
++      simpa only [written, dgStart, Bool.toNat_true, Nat.one_mul, Int.natCast_one,
++        one_mul, tapeZone, show a - 1 + 1 = a by omega, List.map_append,
++        List.append_assoc, V, put, act, show 1 + (M.k + 1) = M.k + 2 by omega] using h
++  have h := dgSpan_add (dgSpan_add (dgSpan_add hcollect hdispatch) hwrite) hfinish
++  simpa only [dgCost, MultiTapeTM.step, hs, act] using h
++
++/-- The represented coordinate interval contains the source heads and support,
++and every represented coordinate has really been visited by some source head.
++The `size` field is a separate elapsed-time bound used only for the time ledger. -/
++private structure DGWindow {Γ : Type} (M : FinTM Γ) (x : List Γ)
++    (t : ℕ) (a : ℤ) (n : ℕ) : Prop where
++  positive : 0 < n
++  heads : ∀ i, a ≤ (M.tm.runFrom (M.tm.initCfg x) t).workTapePos i ∧
++    (M.tm.runFrom (M.tm.initCfg x) t).workTapePos i < a + n
++  blank : ∀ i j, j < a ∨ a + n ≤ j →
++    (M.tm.runFrom (M.tm.initCfg x) t).workTapes i j = none
++  visited : ∀ j, a ≤ j → j < a + n → ∃ i u, u ≤ t ∧
++    (M.tm.runFrom (M.tm.initCfg x) u).workTapePos i = j
++  size : n ≤ 2 * t + 1
++  history : ∀ i u, u ≤ t → a ≤ (M.tm.runFrom (M.tm.initCfg x) u).workTapePos i ∧
++    (M.tm.runFrom (M.tm.initCfg x) u).workTapePos i < a + n
++
++/-- Positive tape count makes the origin a genuinely visited coordinate. -/
++private lemma dgWindow_init {Γ : Type} (M : FinTM Γ) (hk : 0 < M.k) (x : List Γ) :
++    DGWindow M x 0 0 1 := by
++  refine ⟨by omega, ?_, ?_, ?_, by omega, ?_⟩
++  · intro i
++    simp
++  · intro i j hj
++    rfl
++  · intro j hj₁ hj₂
++    refine ⟨⟨0, hk⟩, 0, le_refl _, ?_⟩
++    simp only [MultiTapeTM.runFrom_zero, MultiTapeTM.initCfg, Cfg.init]
++    omega
++  · intro i u hu
++    have he : u = 0 := by omega
++    subst u
++    simp
++
++/-- Conditional growth preserves the exact visited-coordinate cover.
++**Proof sketch.** Unit-speed source movement stays in the enlarged interval.
++A write cannot escape the old interval. Any new coordinate is one of its two
++neighbors, and its crossing flag supplies a source head at that coordinate
++at the next time. Both ends grow by at most one, giving the size recurrence. -/
++private lemma dgWindow_step {Γ : Type} (M : FinTM Γ) (x : List Γ)
++    (t : ℕ) (a : ℤ) (n : ℕ) (w : DGWindow M x t a n)
++    (act : Action M.k Γ M.State)
++    (hstep : M.tm.runFrom (M.tm.initCfg x) (t + 1) =
++      act.apply (M.tm.runFrom (M.tm.initCfg x) t))
++    (left right : Bool)
++    (hleft : dgCross act (fun i => headAt (M.tm.runFrom (M.tm.initCfg x) t) i a) .neg = left)
++    (hright : dgCross act (fun i => headAt (M.tm.runFrom (M.tm.initCfg x) t) i (a + n - 1)) .pos = right) :
++    DGWindow M x (t + 1) (a - left.toNat) (n + right.toNat + left.toNat) := by
++  let c := M.tm.runFrom (M.tm.initCfg x) t
++  have hl : left.toNat ≤ 1 := by cases left <;> decide
++  have hr : right.toNat ≤ 1 := by cases right <;> decide
++  have hL (i : Fin M.k) (hi : c.workTapePos i = a) (hd : (act.workTapes i).2 = .neg) : left = true := by
++    rw [← hleft]
++    simp only [dgCross, decide_eq_true_eq]
++    exact ⟨i, by simp only [headAt, show (M.tm.runFrom (M.tm.initCfg x) t).workTapePos i = a from hi,
++      decide_true], hd⟩
++  have hR (i : Fin M.k) (hi : c.workTapePos i = a + n - 1) (hd : (act.workTapes i).2 = .pos) : right = true := by
++    rw [← hright]
++    simp only [dgCross, decide_eq_true_eq]
++    exact ⟨i, by simp only [headAt, show (M.tm.runFrom (M.tm.initCfg x) t).workTapePos i = a + n - 1 from hi,
++      decide_true], hd⟩
++  have hheads : ∀ i, a - left.toNat ≤ (M.tm.runFrom (M.tm.initCfg x) (t + 1)).workTapePos i ∧
++      (M.tm.runFrom (M.tm.initCfg x) (t + 1)).workTapePos i <
++        a - left.toNat + (n + right.toNat + left.toNat : ℕ) := by
++    intro i
++    rw [hstep]
++    have hp := w.heads i
++    change a ≤ c.workTapePos i ∧ c.workTapePos i < a + n at hp
++    change a - left.toNat ≤ (act.apply c).workTapePos i ∧
++      (act.apply c).workTapePos i < a - left.toNat + (n + right.toNat + left.toNat : ℕ)
++    cases hm : (act.workTapes i).2 with
++    | neg =>
++      have h : c.workTapePos i = a → left.toNat = 1 := fun he => by rw [hL i he hm]; rfl
++      simp only [Action.apply, hm, SignType.cast]
++      constructor <;> omega
++    | zero =>
++      simp only [Action.apply, hm, SignType.cast]
++      constructor <;> omega
++    | pos =>
++      have h : c.workTapePos i = a + n - 1 → right.toNat = 1 := fun he => by rw [hR i he hm]; rfl
++      simp only [Action.apply, hm, SignType.cast]
++      constructor <;> omega
++  refine ⟨by have := w.positive; omega, hheads, ?_, ?_, by have := w.size; omega, ?_⟩
++  · intro i j hj
++    rw [hstep]
++    have hout : j < a ∨ a + n ≤ j := by omega
++    have hjnone : c.workTapes i j = none := w.blank i j hout
++    have hp := w.heads i
++    have hne : j ≠ c.workTapePos i := by
++      change a ≤ c.workTapePos i ∧ c.workTapePos i < a + n at hp
++      omega
++    change (act.apply c).workTapes i j = none
++    cases hw : (act.workTapes i).1 <;>
++      simp [Action.apply, hw, Function.update_of_ne hne, hjnone]
++  · intro j hj₁ hj₂
++    by_cases hjlo : a ≤ j
++    · by_cases hjhi : j < a + n
++      · obtain ⟨i, u, hu, he⟩ := w.visited j hjlo hjhi
++        exact ⟨i, u, by omega, he⟩
++      · have he : j = a + n := by omega
++        have ht : right = true := by cases right <;> simp_all only [Bool.toNat_false, Bool.toNat_true] <;> omega
++        have hit : ∃ i, c.workTapePos i = a + n - 1 ∧ (act.workTapes i).2 = .pos := by
++          have h := hright.trans ht
++          simpa only [dgCross, headAt, decide_eq_true_eq] using h
++        obtain ⟨i, hi, hd⟩ := hit
++        refine ⟨i, t + 1, le_refl _, ?_⟩
++        rw [hstep]
++        change (act.apply c).workTapePos i = j
++        simp only [Action.apply, hd, SignType.cast]
++        omega
++    · have he : j = a - 1 := by omega
++      have ht : left = true := by cases left <;> simp_all only [Bool.toNat_false, Bool.toNat_true] <;> omega
++      have hit : ∃ i, c.workTapePos i = a ∧ (act.workTapes i).2 = .neg := by
++        have h := hleft.trans ht
++        simpa only [dgCross, headAt, decide_eq_true_eq] using h
++      obtain ⟨i, hi, hd⟩ := hit
++      refine ⟨i, t + 1, le_refl _, ?_⟩
++      rw [hstep]
++      change (act.apply c).workTapePos i = j
++      simp only [Action.apply, hd, SignType.cast]
++      omega
++  · intro i u hu
++    by_cases hu' : u ≤ t
++    · have h := w.history i u hu'
++      constructor <;> omega
++    · have he : u = t + 1 := by omega
++      subst u
++      exact hheads i
++
++/-- The represented width is bounded by total source space: the interval
++injects into the union of the source heads' visited sets.
++**Proof sketch.** Use the window's visited witness for each coordinate, then
++bound the cardinality of the union by the sum over source tapes. -/
++private lemma dgWindow_space {Γ : Type} (M : FinTM Γ) (x : List Γ)
++    (t : ℕ) (a : ℤ) (n : ℕ) (w : DGWindow M x t a n) :
++    n ≤ M.tm.spaceUsed (M.tm.initCfg x) t := by
++  let cover := Finset.univ.biUnion (fun i => M.tm.visitedByTapeHead (M.tm.initCfg x) t i)
++  have hsub : Finset.Icc a (a + n - 1) ⊆ cover := by
++    intro j hj
++    obtain ⟨hj₁, hj₂⟩ := Finset.mem_Icc.mp hj
++    obtain ⟨i, u, hu, he⟩ := w.visited j hj₁ (by omega)
++    exact Finset.mem_biUnion.mpr ⟨i, Finset.mem_univ _,
++      Finset.mem_image.mpr ⟨u, Finset.mem_range.mpr (by omega), he⟩⟩
++  have hcard : (Finset.Icc a (a + n - 1)).card = n := by rw [Int.card_Icc]; omega
++  rw [← hcard]
++  exact (Finset.card_le_card hsub).trans Finset.card_biUnion_le
++
++/-- The new cycle cost has the same quadratic numerical majorant as the old
++cost formula. This is a fresh comparison of costs, not use of the old machine
++as a space witness or use of its timing theorem for the new machine. -/
++private lemma dgCost_le (k t n : ℕ) (hk : 0 < k) (hn : n ≤ 2 * t + 1)
++    (left right : Bool) : dgCost k n left right ≤ (4 * t + 7) * k + 4 := by
++  have h := Nat.mul_le_mul_right k hn
++  cases left <;> cases right <;>
++    simp only [dgCost, Bool.toNat_false, Bool.toNat_true, Nat.zero_mul, Nat.one_mul,
++      Nat.add_zero, Nat.add_mul, Nat.mul_add, Nat.mul_assoc] at h ⊢ <;> omega
++
++/-- Every source prefix before its first halt has a canonical simulated
++endpoint, with an all-prefix physical ledger and a quadratic time majorant.
++**Proof sketch.** Initialize at the origin. At each live step use the two
++crossing flags, preserve the source window, and concatenate the contained
++macro-step with the earlier trajectory. The interval only enlarges. The exact
++new cycle cost is bounded before invoking the old numerical sum formula. -/
++private lemma dg_simulate {Γ : Type} [Fintype Γ] [DecidableEq Γ]
++    (M : FinTM Γ) (hk : 0 < M.k) (a₀ : Γ) (x : List (SweepAlphabet Γ M.k))
++    (τ : ℕ) (hlive : ∀ t < τ,
++      (M.tm.runFrom (M.tm.initCfg (x.map (dgRetract a₀))) t).state ≠ none) :
++    ∀ t ≤ τ, ∃ (a : ℤ) (n u : ℕ),
++      DGWindow M (x.map (dgRetract a₀)) t a n ∧ u ≤ sweepTime M.k t ∧
++      DGSpan (dgTM M a₀).tm ((dgTM M a₀).tm.initCfg x)
++        (dgStart M a₀ (M.tm.runFrom (M.tm.initCfg (x.map (dgRetract a₀))) t)
++          a n (a * M.k - 1)) u (a * M.k - 1) ((a + n) * M.k) := by
++  intro t
++  induction t with
++  | zero =>
++    intro _
++    refine ⟨0, 1, 2 * M.k + 2, dgWindow_init M hk _, le_refl _, ?_⟩
++    simpa only [MultiTapeTM.runFrom_zero, zero_mul, zero_sub, Int.natCast_one,
++      zero_add, one_mul] using dg_init M a₀ x
++  | succ t ih =>
++    intro ht
++    obtain ⟨a, n, u, w, htime, hspan⟩ := ih (by omega)
++    let c := M.tm.runFrom (M.tm.initCfg (x.map (dgRetract a₀))) t
++    obtain ⟨q, hs⟩ := Option.ne_none_iff_exists'.mp (hlive t (by omega))
++    let act := M.tm.tr q c.inputSymbol c.workTapeSymbols
++    let left := dgCross act (fun i => headAt c i a) .neg
++    let right := dgCross act (fun i => headAt c i (a + n - 1)) .pos
++    have hstep : M.tm.runFrom (M.tm.initCfg (x.map (dgRetract a₀))) (t + 1) = act.apply c := by
++      rw [MultiTapeTM.runFrom_succ_eq_step']
++      simp only [MultiTapeTM.step, hs]
++      rfl
++    have w' := dgWindow_step M (x.map (dgRetract a₀)) t a n w act hstep left right rfl rfl
++    have hcycle := dg_step M hk a₀ c q hs a (a * M.k - 1) n w.heads
++      (fun i => w.blank i (a - 1) (Or.inl (by omega)))
++      (fun i => w.blank i (a + n) (Or.inr (le_refl _))) left right rfl rfl
++    have hnext : M.tm.step c = M.tm.runFrom (M.tm.initCfg (x.map (dgRetract a₀))) (t + 1) := by
++      exact MultiTapeTM.runFrom_succ_eq_step'.symm
++    rw [hnext] at hcycle
++    have hlo : a * M.k - 1 - (left.toNat : ℤ) * M.k = (a - left.toNat) * M.k - 1 := by ring
++    have hhi : a * M.k - 1 + 1 + ((n : ℤ) + right.toNat) * M.k =
++        (a - left.toNat + (n + right.toNat + left.toNat : ℕ)) * M.k := by push_cast; ring
++    rw [hlo, hhi] at hcycle
++    have hl0 : 0 ≤ (left.toNat : ℤ) * M.k := by exact_mod_cast (Nat.zero_le (left.toNat * M.k))
++    have hr0 : 0 ≤ (right.toNat : ℤ) * M.k := by exact_mod_cast (Nat.zero_le (right.toNat * M.k))
++    have hlower : (a - left.toNat) * M.k - 1 ≤ a * M.k - 1 := by rw [sub_mul]; omega
++    have hupper : (a + n) * M.k ≤
++        (a - left.toNat + (n + right.toNat + left.toNat : ℕ)) * M.k := by
++      have he : (a - left.toNat + (n + right.toNat + left.toNat : ℕ)) * M.k =
++          (a + n) * M.k + (right.toNat : ℤ) * M.k := by push_cast; ring
++      rw [he]
++      omega
++    refine ⟨a - left.toNat, n + right.toNat + left.toNat,
++      u + dgCost M.k n left right, w', ?_, ?_⟩
++    · exact Nat.add_le_add htime (dgCost_le M.k t n hk w.size left right)
++    · exact dgSpan_add (dgSpan_mono hspan hlower hupper) hcycle
++
++/-- The demand-grown witness computes on every native word after finite-control
++retraction, with both resource bounds at that word's unchanged length.
++**Proof sketch.** Simulate through the source's first halt. The final window is
++exactly covered by source visits, while the whole physical trajectory lies
++between its boundary cells. Halting absorption extends that containment to
++all later times. Its cardinality is `n*k+2`; the window bound and a single
++coefficient absorb both this space ledger and the quadratic time ledger. -/
++private lemma dg_all_inputs {Γ : Type} [Fintype Γ] [DecidableEq Γ]
++    (M : FinTM Γ) (hk : 0 < M.k) (a₀ : Γ)
++    (f : List Γ → List Γ) (T S : ℕ → ℕ) (hM : M.ComputesFunInTime f T)
++    (hS : ∀ y t, M.tm.spaceUsed (M.tm.initCfg y) t ≤ S y.length)
++    (x : List (SweepAlphabet Γ M.k)) :
++    (dgTM M a₀).ComputesInTime x ((f (x.map (dgRetract a₀))).map (sweepEmbed Γ M.k))
++      ((9 * M.k + 6) * (T x.length + 1) ^ 2) ∧
++    ∀ t, (dgTM M a₀).tm.spaceUsed ((dgTM M a₀).tm.initCfg x) t ≤
++      (9 * M.k + 6) * (S x.length + 1) := by
++  let y := x.map (dgRetract a₀)
++  obtain ⟨hhalt, hout⟩ := (computesInTime_iff M y (f y) (T y.length)).mp (hM y)
++  have hex : ∃ t, (M.tm.runFrom (M.tm.initCfg y) t).state = none := ⟨T y.length, hhalt⟩
++  let τ := Nat.find hex
++  have hτ : (M.tm.runFrom (M.tm.initCfg y) τ).state = none := Nat.find_spec hex
++  have htime : τ ≤ T y.length := Nat.find_min' hex hhalt
++  have hlive : ∀ t < τ, (M.tm.runFrom (M.tm.initCfg y) t).state ≠ none :=
++    fun _ h => Nat.find_min hex h
++  obtain ⟨a, n, u, window, hu, span⟩ := dg_simulate M hk a₀ x τ hlive τ (le_refl _)
++  have houtτ : (M.tm.runFrom (M.tm.initCfg y) τ).output = f y :=
++    (M.tm.runFrom_output_eq_of_halt (M.tm.initCfg y) htime hτ).symm.trans hout
++  let final := dgStart M a₀ (M.tm.runFrom (M.tm.initCfg y) τ) a n (a * M.k - 1)
++  have hf : final.state = none := by
++    change (M.tm.runFrom (M.tm.initCfg y) τ).state.map _ = none
++    rw [hτ]
++    rfl
++  have compute : (dgTM M a₀).ComputesInTime x ((f y).map (sweepEmbed Γ M.k)) u := by
++    apply (computesInTime_iff _ _ _ _).mpr
++    rw [span.1]
++    constructor
++    · exact hf
++    · change (M.tm.runFrom (M.tm.initCfg y) τ).output.map (sweepEmbed Γ M.k) = _
++      rw [houtτ]
++  have hpositions (v : ℕ) :
++      a * M.k - 1 ≤ ((dgTM M a₀).tm.runFrom ((dgTM M a₀).tm.initCfg x) v).workTapePos (0 : Fin 1) ∧
++      ((dgTM M a₀).tm.runFrom ((dgTM M a₀).tm.initCfg x) v).workTapePos (0 : Fin 1) ≤ (a + n) * M.k := by
++    by_cases hv : v ≤ u
++    · exact span.2 v hv
++    · have he : v = u + (v - u) := by omega
++      rw [he, MultiTapeTM.runFrom_add, span.1, MultiTapeTM.runFrom_of_halt _ hf]
++      have h := span.2 u (le_refl _)
++      rw [span.1] at h
++      exact h
++  constructor
++  · apply compute.mono
++    calc u ≤ sweepTime M.k τ := hu
++      _ ≤ (9 * M.k + 6) * (τ + 1) ^ 2 := sweepTime_le M.k τ
++      _ ≤ (9 * M.k + 6) * (T x.length + 1) ^ 2 := by
++        apply Nat.mul_le_mul_left
++        apply Nat.pow_le_pow_left
++        simpa only [y, List.length_map] using Nat.add_le_add_right htime 1
++  · intro v
++    have hsub : (dgTM M a₀).tm.visitedByTapeHead ((dgTM M a₀).tm.initCfg x) v (0 : Fin 1) ⊆
++        Finset.Icc (a * M.k - 1) ((a + n) * M.k) := by
++      intro j hj
++      obtain ⟨s, _, rfl⟩ := Finset.mem_image.mp hj
++      exact Finset.mem_Icc.mpr (hpositions s)
++    have hcard : (Finset.Icc (a * M.k - 1) ((a + n) * M.k)).card = n * M.k + 2 := by
++      rw [Int.card_Icc]
++      have he : (a + n) * M.k + 1 - (a * M.k - 1) = ((n * M.k + 2 : ℕ) : ℤ) := by
++        push_cast
++        ring
++      rw [he, Int.toNat_natCast]
++    have hphysical : (dgTM M a₀).tm.spaceUsed ((dgTM M a₀).tm.initCfg x) v ≤ n * M.k + 2 := by
++      change (∑ i : Fin 1, ((dgTM M a₀).tm.visitedByTapeHead ((dgTM M a₀).tm.initCfg x) v i).card) ≤ _
++      have hz (i : Fin 1) : i = 0 := Subsingleton.elim _ _
++      simp only [hz, Finset.sum_const, Finset.card_univ, Fintype.card_fin, Nat.nsmul_eq_mul, one_mul]
++      rw [← hcard]
++      exact Finset.card_le_card hsub
++    have hn : n ≤ S x.length := by
++      have h := (dgWindow_space M y τ a n window).trans (hS y τ)
++      simpa only [y, List.length_map] using h
++    refine hphysical.trans ?_
++    calc n * M.k + 2 ≤ (S x.length + 1) * M.k + 2 * (S x.length + 1) :=
++        Nat.add_le_add
++          ((Nat.mul_le_mul_right M.k hn).trans (Nat.mul_le_mul_right M.k (Nat.le_succ _)))
++          (Nat.le_mul_of_pos_right 2 (Nat.succ_pos _))
++      _ = (M.k + 2) * (S x.length + 1) := by ring
++      _ ≤ (9 * M.k + 6) * (S x.length + 1) := Nat.mul_le_mul_right _ (by omega)
++
+ /-- The one-work-tape reduction preserves space up to a constant: the
+ single-tape machine of `Turing.FinTM.one_work_tape` can be taken with an
+ all-time space bound of coefficient-constant shape in the source's. Part
+@@ -1019,7 +2227,53 @@ theorem one_work_tape_spaceUsed {Γ : Type} [Fintype Γ] [DecidableEq Γ]
+       (M' : FinTM Γ') (c : ℕ),
+       M'.k = 1 ∧ M'.ComputesFunInTimeVia e f (fun n => c * (T n + 1) ^ 2) ∧
+       ∀ x t, M'.tm.spaceUsed (M'.tm.initCfg x) t ≤ c * (S x.length + 1) := by
+-  sorry
++  classical
++  by_cases hk : M.k = 0
++  · refine ⟨Γ, inferInstance, inferInstance, Function.Embedding.refl Γ,
++      unusedTapeTM M hk, 1, rfl, ?_, ?_⟩
++    · intro x
++      simpa only [Function.Embedding.coe_refl, List.map_id, one_mul] using
++        ((unusedTape_computes M hk f T hM) x).mono
++          (show T x.length ≤ (T x.length + 1) ^ 2 from
++            (Nat.le_succ _).trans (by rw [pow_two]; exact Nat.le_mul_of_pos_right _ (Nat.succ_pos _)))
++    · intro x t
++      rw [dg_unused_space]
++      simp only [one_mul]
++      omega
++  by_cases hΓ : Nonempty Γ
++  · obtain ⟨a₀⟩ := hΓ
++    refine ⟨SweepAlphabet Γ M.k, inferInstance, inferInstance, sweepEmbed Γ M.k,
++      dgTM M a₀, 9 * M.k + 6, rfl, ?_, ?_⟩
++    · intro y
++      have h := (dg_all_inputs M (Nat.pos_of_ne_zero hk) a₀ f T S hM hS
++        (y.map (sweepEmbed Γ M.k))).1
++      simpa only [List.map_map, Function.comp_def, dgRetract_embed,
++        List.map_id_fun', id_eq, List.length_map] using h
++    · intro x t
++      exact (dg_all_inputs M (Nat.pos_of_ne_zero hk) a₀ f T S hM hS x).2 t
++  · let Z : FinTM Γ :=
++      { k := 0
++        State := Unit
++        tm := { q₀ := (), tr := fun _ _ _ => ⟨0, fun i => i.elim0, none, none⟩ } }
++    have hZ : Z.ComputesFunInTime f (fun _ => 1) := by
++      intro x
++      have hx : f x = [] := by
++        cases he : f x with
++        | nil => rfl
++        | cons a as => exact (hΓ ⟨a⟩).elim
++      apply (computesInTime_iff _ _ _ _).mpr
++      rw [hx]
++      exact ⟨rfl, rfl⟩
++    refine ⟨Γ, inferInstance, inferInstance, Function.Embedding.refl Γ,
++      unusedTapeTM Z rfl, 1, rfl, ?_, ?_⟩
++    · intro x
++      simpa only [Function.Embedding.coe_refl, List.map_id, one_mul] using
++        ((unusedTape_computes Z rfl f (fun _ => 1) hZ) x).mono
++          (show 1 ≤ (T x.length + 1) ^ 2 from Nat.pow_pos (Nat.succ_pos _))
++    · intro x t
++      rw [dg_unused_space]
++      simp only [one_mul]
++      omega
+ 
+ /-- The binary one-work-tape normal form preserves space up to a constant:
+ the composed conversion of `Turing.FinTM.one_work_tape_binary` with the
+@@ -1040,6 +2294,26 @@ theorem one_work_tape_binary_spaceUsed (M : FinTM Bool)
+     ∃ (M' : FinTM Bool) (c : ℕ),
+       M'.k = 1 ∧ M'.ComputesFunInTime f (fun n => c * (T n + 1) ^ 2) ∧
+       ∀ x t, M'.tm.spaceUsed (M'.tm.initCfg x) t ≤ c * (S x.length + 1) := by
+-  sorry
++  obtain ⟨Γ', instF, instD, e, M₁, c₁, hk₁, h₁, hs₁⟩ :=
++    one_work_tape_spaceUsed M f T S hM hS
++  haveI := instF
++  haveI := instD
++  obtain ⟨c₂, M₂, hk₂, h₂, hs₂⟩ :=
++    alphabet_reduction_spaceUsed e M₁ f (fun n => c₁ * (T n + 1) ^ 2)
++      (fun n => c₁ * (S n + 1)) h₁ hs₁
++  refine ⟨M₂, c₂ * (c₁ + 1), by rw [hk₂, hk₁], ?_, ?_⟩
++  · intro x
++    apply (h₂ x).mono
++    have hpow : 1 ≤ (T x.length + 1) ^ 2 := Nat.pow_pos (Nat.succ_pos _)
++    calc c₂ * (c₁ * (T x.length + 1) ^ 2 + 1)
++        ≤ c₂ * (c₁ * (T x.length + 1) ^ 2 + (T x.length + 1) ^ 2) :=
++          Nat.mul_le_mul_left _ (Nat.add_le_add_left hpow _)
++      _ = c₂ * (c₁ + 1) * (T x.length + 1) ^ 2 := by ring
++  · intro x t
++    calc M₂.tm.spaceUsed (M₂.tm.initCfg x) t
++        ≤ c₂ * (c₁ * (S x.length + 1) + 1) := hs₂ x t
++      _ ≤ c₂ * (c₁ * (S x.length + 1) + (S x.length + 1)) :=
++        Nat.mul_le_mul_left _ (Nat.add_le_add_left (Nat.succ_pos _) _)
++      _ = c₂ * (c₁ + 1) * (S x.length + 1) := by ring
+ 
+ end Turing.FinTM
+-- 
+2.51.1
+

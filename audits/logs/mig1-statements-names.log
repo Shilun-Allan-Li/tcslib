@@ -1,0 +1,25 @@
+index: 14137 declarations in 569 TCSlib modules; H2 draft: 63 declarations
+
+## 1. Exact full-name clashes of the proposed public names
+proposed public names: 71; clashes: 0
+in-place renames (the private source made public, not a clash): Turing.FinTM.idTM <- private Turing.FinTM.idTM, Turing.FinTM.constTM <- private Turing.FinTM.constTM, Turing.FinTM.ifEqTM <- private Turing.FinTM.ifEqTM, Turing.FinTM.condTM <- private Turing.FinTM.condTM, Turing.FinTM.timedCondTM <- private Turing.FinTM.timedCondTM, Turing.FinTM.incFixedTM <- private Turing.FinTM.incFixedTM, Turing.FinTM.pairValidTM <- private Turing.FinTM.pairValidTM, Turing.FinTM.pairExtractTM <- private Turing.FinTM.pairExtractTM, Turing.pairDiagTM <- private Turing.pairDiagTM
+shared with H2 by design: Turing.MultiTapeTM.abs_workTapePos_runFrom_sub_le
+
+## 2. The same last component elsewhere in TCSlib (information; other namespaces)
+polyUnaryTM: Complexity.polyUnaryTM
+
+## 3. Identifier occurrences of the proposed short names (bare or `FinTM.`-qualified)
+Catalog importers that newly see Primitives and TimeConstructible: Constructible, CfgRecord, Contract, CounterLoop, InputCall, InputLength, RecordTable, Scan, Zone
+files screened: 114; occurrences: 0
+
+## 4. Proposed private names of moved declarations
+CLASH Turing.FinTM.loopHost_contracts (home Loop): TCSlib.Complexity.TuringMachine.Build.Loop:2066 private
+moved names: 45; clashes: 1
+
+## 5. Package sources (text): proposed last components inside `namespace Turing` blocks
+package hits: 0
+
+## 6. The MIG-0b round-2 landing set (/private/tmp/claude-501/-Users-seyoonr-phd-experiments-tcslib/8f0076bc-454a-4666-b8cf-f4c7ed13c549/scratchpad/r2-mig0b/landing)
+landing files: 15; declarations: 1211
+exact full-name matches with the 71 public and 45 moved proposed names: 0
+shared last components (other namespaces): 0

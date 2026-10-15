@@ -1,0 +1,117 @@
+import TCSlib.Complexity.TuringMachine.Build.StepClock
+
+/-! Pre-ship import probe, B6 fill batch F1, brief v2 (the step clock). Every public declaration
+of the issue tree that the brief cites, and every one its hosts paragraph, pitfalls and
+prohibitions name, resolves in `Build/StepClock.lean`'s import context at the issue tree (after
+#95–#97). The promotion list's P1–P3 and N1–N17 cannot be imported before their modules are
+rebuilt; the route probe (`RouteProbe.lean.txt`) elaborates and cites every one of them. Re-run
+it after your delivery: 0 errors. -/
+
+open Turing
+
+-- StepClock (the target, its C1 form and the frozen layout)
+#check @Turing.exists_stepClockTMVia
+#check @Turing.exists_stepClockTM
+#check @Turing.clockCfg
+#check @Turing.wordPatch
+#check @Turing.Cfg.Stopped
+-- CounterLoop: the decrement and the counter arithmetic
+#check @Turing.decrementTM
+#check @Turing.decrementTM_run_succ_ofCfg
+#check @Turing.decrementTM_run_underflow_ofCfg
+#check @Turing.decFixed
+#check @Turing.counterWord
+#check @Turing.counterWord_length
+#check @Turing.counterWord_value
+#check @Turing.counterOverhead
+#check @Turing.counterOverhead_le_of_le
+#check @Turing.counterOverhead_le
+#check @Turing.lastEmb
+-- CounterLoop: the pattern (orientation only)
+#check @Turing.counterLoopTMVia
+#check @Turing.counterLoopCfg
+#check @Turing.counterLoopCfg_body
+#check @Turing.counterLoopTMVia_run_done
+#check @Turing.counterLoopTMVia_run_escape
+#check @Turing.CounterLoopState
+-- Catalog
+#check @Turing.FlagPhase
+#check @Turing.FlagPhase.run
+#check @Turing.FlagPhase.rewind
+#check @Turing.FlagPhase.done
+#check @Turing.incrementTM
+-- SymbolLift
+#check @Turing.MultiTapeTM.liftSymbols
+#check @Turing.MultiTapeTM.liftSymbols_runFrom
+#check @Turing.MultiTapeTM.liftSymbols_runFrom_over
+#check @Turing.Cfg.liftSymbols
+#check @Turing.Cfg.liftOver
+#check @Turing.Cfg.decodeSymbols
+#check @Turing.Cfg.liftOver_decodeSymbols
+#check @Turing.Cfg.liftSymbols_state
+#check @Turing.Cfg.liftSymbols_workTapePos
+#check @Turing.decodeBool_apply
+#check @Turing.decodeBool
+#check @Turing.decodeBool_eq_some
+#check @Turing.FinTM.bufferTape_map
+#check @Turing.FinTM.bufferTape_map_decode
+-- R1 (Embed)
+#check @Turing.embedEmitTM
+#check @Turing.embedEmitCfg
+#check @Turing.embedEmitTM_tr
+#check @Turing.embedEmitTM_runFrom
+#check @Turing.embedEmitTM_frame
+#check @Turing.embedEmitCfg_eq
+#check @Turing.embedEmitCfg_selected_tape
+#check @Turing.embedEmitCfg_selected_pos
+#check @Turing.embedEmitCfg_unselected
+-- State transport (StateRenaming)
+#check @Turing.Action.mapState
+#check @Turing.Cfg.mapState
+#check @Turing.Cfg.mapState_apply
+#check @Turing.MultiTapeTM.runFrom_mapState_of_agreeOn
+-- Segments and the layers named in the hosts paragraph (Contract/Basic)
+#check @Turing.Segment
+#check @Turing.Segment.zero
+#check @Turing.Segment.one
+#check @Turing.Segment.cons
+#check @Turing.Segment.trans
+#check @Turing.Segment.take
+#check @Turing.Segment.drop
+#check @Turing.Segment.mono
+#check @Turing.Segment.live
+#check @Turing.Segment.time_eq
+#check @Turing.HeadBox
+#check @Turing.Round
+#check @Turing.Round.iterate
+#check @Turing.Lockstep
+-- Runs and configurations
+#check @Turing.MultiTapeTM.step
+#check @Turing.MultiTapeTM.runFrom
+#check @Turing.MultiTapeTM.runFrom_zero
+#check @Turing.MultiTapeTM.runFrom_add
+#check @Turing.MultiTapeTM.runFrom_succ_eq_step
+#check @Turing.MultiTapeTM.runFrom_succ_eq_step'
+#check @Turing.MultiTapeTM.step_of_halt
+#check @Turing.MultiTapeTM.runFrom_of_halt
+#check @Turing.MultiTapeTM.step_output
+#check @Turing.MultiTapeTM.outputSymbol
+#check @Turing.MultiTapeTM.outputSymbol_of_halt
+#check @Turing.MultiTapeTM.workTapePos_runFrom_mem_Icc
+#check @Turing.MultiTapeTM.spaceUsedByTape_le_card_Icc
+#check @Turing.MultiTapeTM.output_prefix
+#check @Turing.Action.apply
+#check @Turing.Cfg.ext
+#check @Turing.Cfg.inputSymbol
+#check @Turing.Cfg.workTapeSymbols
+#check @Turing.moveInputPos
+#check @Turing.moveInputPos_zero
+#check @Turing.FinTM.bufferTape
+#check @Turing.FinTM.bufferTape_left
+#check @Turing.FinTM.bufferTape_nat
+-- Mathlib names in the pitfalls
+#check @Fin.coe_castSuccEmb
+#check @Fin.lastCases_last
+#check @Fin.lastCases_castSucc
+-- New at #97 (in the closure through Build/Embed; not needed by the route)
+#check @Turing.embedSilentCfg_cap

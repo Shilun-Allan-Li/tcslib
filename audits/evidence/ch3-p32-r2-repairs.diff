@@ -1,0 +1,223 @@
+diff --git a/TCSlib/Complexity/Diagonalization/EXPCOM.lean b/TCSlib/Complexity/Diagonalization/EXPCOM.lean
+index e5ff9d0a..c416c5e4 100644
+--- a/TCSlib/Complexity/Diagonalization/EXPCOM.lean
++++ b/TCSlib/Complexity/Diagonalization/EXPCOM.lean
+@@ -30,24 +30,44 @@ of [BGS75, Theorem 1] stays recorded there as the fallback).
+   `Turing.pairEncode α (Turing.pairEncode x 1ⁿ)` — the universal machine's
+   layout (code before payload, chapter-1 phase-3 audit, Argument B), nested
+   right so each component is recovered by one aligned-pair parse.
+-* **The code scheme is the campaign's fixed `Complexity.TimeHierarchy.code`**,
+-  reused rather than re-chosen, so the timed universal machine
+-  (`Turing.timed_universal`) and every encoding lemma apply verbatim.
++* **The code scheme is a uniformly-timed scheme, not the hierarchy's
++  arbitrary one** (round-1 blocker): `Turing.EffectiveMachineCode` bounds no
++  decoding time — `canonizerTime` is arbitrary, and the round-1 audit built
++  a permitted scheme embedding an arbitrarily hard decidable language into
++  `decode`, putting `EXPCOM` outside `EXP` and even separating its
++  relativized `P` from `NP`. `EXPCOM` queries carry **variable** codes, so
++  per-code constants (`∀ α, ∃ C` — `Turing.timed_universal`'s shape) cannot
++  pay for them. The new `Turing.UniformMachineCode` packages the scheme with
++  a simulator whose time is **one polynomial in the code, the input, and
++  the deadline jointly**; `EXPCOM` is defined over a scheme chosen from its
++  sorried existence (`Turing.exists_uniformMachineCode` — the
++  `TimeHierarchy.code` mirror, with the choice-over-a-sorried-existence
++  declared). The hierarchy's own `Complexity.TimeHierarchy.code` is
++  unchanged: fixed-code arguments never needed uniformity.
+ * **"Outputs `1` within `2ⁿ` steps"** is
+   `Turing.FinTM.ComputesInTime x [true] (2 ^ n)`: halting is absorbing, so the
+   predicate is monotone in the budget and "within" is faithful.
+ * **Totalization**: a string that does not parse as a triple is simply not in
+   `EXPCOM` (the existential fails); on genuine triples the witnessing
+-  decomposition is unique (`Turing.pairEncode_injective`,
+-  `Turing.pairEncode_replicate_inj`), so the defining condition is
+-  unambiguous.
++  decomposition is unique — `Turing.pairEncode_injective` applied twice,
++  then `List.length` on the equality of the replicated tails (round-1
++  finding 3 corrected the earlier `pairEncode_replicate_inj` citation, whose
++  unary component sits on the wrong side for this nesting) — so the defining
++  condition is unambiguous.
+ 
+ ## Main definitions
+ 
+-* `Complexity.EXPCOM` — the oracle language. [AB09, Example 3.6(3)]
++* `Turing.UniformMachineCode` — an effective scheme with a uniformly timed
++  bounded-acceptance simulator (round-1 repair).
++* `Complexity.expCode` — the chosen uniformly-timed scheme (noncomputable;
++  via the sorried existence).
++* `Complexity.EXPCOM` — the oracle language, over `expCode`.
++  [AB09, Example 3.6(3)]
+ 
+ ## Main results (all sorried; phase-P3.2 statements)
+ 
++* `Turing.exists_uniformMachineCode` — a uniformly-timed scheme exists.
++
+ * `Complexity.EXP_subset_POracle_EXPCOM` — one padded query decides any
+   `EXP` language.
+ * `Complexity.NPOracle_EXPCOM_subset_EXP` — the fill summit: deterministic
+@@ -66,23 +86,82 @@ of [BGS75, Theorem 1] stays recorded there as the fallback).
+   fallback oracle for the `A` half.)
+ -/
+ 
++namespace Turing
++
++/-- An effective representation scheme together with a **uniformly timed
++bounded-acceptance simulator**: one machine and one degree such that, on
++`⟨⟨bits t, α⟩, x⟩`, the simulator decides whether the decoded machine outputs
++`[true]` on `x` within `t` steps, in time one polynomial in
++`|α| + |x| + t + 1` **jointly** — uniform in the code, which is exactly what
++`EXPCOM`'s variable-code queries need and what a bare
++`Turing.EffectiveMachineCode` (arbitrary `canonizerTime`) or the per-code
++`∀ α, ∃ C` of `Turing.timed_universal` cannot supply (round-1 blocker). -/
++structure UniformMachineCode extends EffectiveMachineCode where
++  /-- the uniformly timed bounded-acceptance simulator -/
++  simulator : FinTM Bool
++  /-- the simulator's single polynomial degree and coefficient -/
++  simDegree : ℕ
++  /-- on bounded acceptance, the simulator answers `[true]` within the
++  uniform polynomial budget -/
++  simulator_accepts : ∀ (α x : List Bool) (t : ℕ),
++    (decode α).toFinTM.ComputesInTime x [true] t →
++    simulator.ComputesInTime (pairEncode (pairEncode (Nat.bits t) α) x) [true]
++      (simDegree * (α.length + x.length + t + 1) ^ simDegree)
++  /-- otherwise it answers `[false]` within the same budget -/
++  simulator_rejects : ∀ (α x : List Bool) (t : ℕ),
++    ¬(decode α).toFinTM.ComputesInTime x [true] t →
++    simulator.ComputesInTime (pairEncode (pairEncode (Nat.bits t) α) x) [false]
++      (simDegree * (α.length + x.length + t + 1) ^ simDegree)
++
++/-- **A uniformly-timed scheme exists** (spec, fill pending — phase P3.2
++round 2): the chapter-1 concrete scheme, with its time analysis made uniform.
++
++**Proof sketch.** The concrete scheme behind
++`Turing.exists_effectiveMachineCode`: its parser and canonizer
++(`TCSlib.Complexity.TuringMachine.CodeParser`) run within a fixed polynomial
++of the code length — the received construction's ledgers are per-phase
++polynomial, only never previously assembled into one exported bound — and
++the interpreter architecture of `Turing.timed_universal` costs a fixed
++polynomial of the **table size** per simulated step plus a clocked startup;
++the table size is itself polynomial in the code length. Reassembling the
++two-clause timed interface with these ledgers made explicit gives one
++degree in `|α| + |x| + t + 1` jointly. Fill obligations, named: the parser
++and canonizer uniform ledgers; the per-step interpreter cost as a
++polynomial of the code length; the clocked two-clause assembly
++(`timed_universal`'s packaging with the quadratic clock absorbed into the
++joint polynomial); the final degree arithmetic. **Continuation budget
++certain** (a re-derivation of the chapter-1 universal's time analysis with
++the code-length dependence exported). -/
++theorem exists_uniformMachineCode : Nonempty UniformMachineCode := by
++  sorry
++
++end Turing
++
+ namespace Complexity
+ 
+ open Turing
+ 
++/-- The chosen uniformly-timed scheme for the `EXPCOM` cluster — the
++`Complexity.TimeHierarchy.code` pattern over the **sorried** existence
++`Turing.exists_uniformMachineCode` (declared: until that fill lands, this
++definition and its consumers carry `sorryAx` through the choice). -/
++noncomputable def expCode : UniformMachineCode :=
++  Classical.choice exists_uniformMachineCode
++
+ /-- **The `EXPCOM` oracle** [AB09, Example 3.6(3)]: the language of triples
+ `⟨M, x, 1ⁿ⟩` such that the machine `M` outputs `1` on `x` within `2ⁿ` steps —
+-rendered with the campaign's fixed code scheme `Complexity.TimeHierarchy.code`
+-and the code-first nesting `Turing.pairEncode α (Turing.pairEncode x 1ⁿ)`, with
+-"outputs `1` within `2ⁿ` steps" as
+-`Turing.FinTM.ComputesInTime x [true] (2 ^ n)` (monotone in the budget, since
+-halting is absorbing). Strings that do not parse as such a triple are not in
+-the language; on genuine triples the decomposition is unique
+-(`Turing.pairEncode_injective`, `Turing.pairEncode_replicate_inj`). -/
++rendered over the uniformly-timed scheme `Complexity.expCode` (round-1
++repair — see the module docstring) and the code-first nesting
++`Turing.pairEncode α (Turing.pairEncode x 1ⁿ)`, with "outputs `1` within
++`2ⁿ` steps" as `Turing.FinTM.ComputesInTime x [true] (2 ^ n)` (monotone in
++the budget, since halting is absorbing). Strings that do not parse as such a
++triple are not in the language; on genuine triples the decomposition is
++unique (`Turing.pairEncode_injective` twice, then `List.length` on the
++replicated tails). -/
+ def EXPCOM : Language Bool :=
+   {z | ∃ (α x : List Bool) (n : ℕ),
+     z = pairEncode α (pairEncode x (List.replicate n true)) ∧
+-    ((TimeHierarchy.code).decode α).toFinTM.ComputesInTime x [true] (2 ^ n)}
++    (expCode.decode α).toFinTM.ComputesInTime x [true] (2 ^ n)}
+ 
+ /-- **One padded query decides any `EXP` language**: `EXP ⊆ P^EXPCOM`.
+ [AB09, Example 3.6(3), the first inclusion of the chain
+@@ -92,8 +171,9 @@ def EXPCOM : Language Bool :=
+ (`Complexity.EXP` unfolds to such data). Normal-form `M` to a one-work-tape
+ binary machine (`Turing.FinTM.one_work_tape_binary`, quadratic slowdown) and
+ relabel it to a coded machine `N` (`Turing.exists_codeTM`); put
+-`α_L := TimeHierarchy.code.encode N`, recovered by
+-`code.toMachineCode.decode_encode`. Choose the padding exponent
++`α_L := expCode.encode N`, recovered by
++`Turing.MachineCode.decode_encode` (a **fixed** code: this inclusion never
++needed uniformity, as the round-1 audit confirmed). Choose the padding exponent
+ `Q n := C · (n + 1)^c` with `C` absorbing `a`, the square, and the `+1`
+ normalizations, so that `N` outputs `[χ_L x]` within `2^(Q |x|)` steps on every
+ `x`. The reduction is `f x := pairEncode α_L (pairEncode x 1^(Q |x|))` —
+@@ -104,8 +184,8 @@ polynomial-time by the chapter-2 padding cluster: the constant prefix
+ of `Complexity.PolyTimeComputable.pairEncode`. Membership: if `x ∈ L` then the
+ witness `(α_L, x, Q |x|)` puts `f x ∈ EXPCOM`; conversely a witness for
+ `f x ∈ EXPCOM` is forced to be exactly `(α_L, x, Q |x|)`
+-(`Turing.pairEncode_injective` twice, `Turing.pairEncode_replicate_inj`), and
+-output determinism (`Turing.FinTM.ComputesInTime.output_unique`) against `N`'s
++(`Turing.pairEncode_injective` twice, then `List.length` on the replicated
++tails), and output determinism (`Turing.FinTM.ComputesInTime.output_unique`) against `N`'s
+ verdict `[χ_L x]` forces `x ∈ L`. Conclude with
+ `Complexity.mem_POracle_of_polyTimeReducible`. -/
+ theorem EXP_subset_POracle_EXPCOM : EXP ⊆ POracle EXPCOM := by
+@@ -136,17 +216,19 @@ machine, on input `x` of length `n`:
+    as `pairEncode α' (pairEncode x' 1^(n'))` by aligned two-bit parsing (the
+    `Turing.pairDecode` layer; `TCSlib.Complexity.TuringMachine.CodeParser`
+    machine precedent) — malformed strings answer "no" — and decide
+-   `z ∈ EXPCOM` by running the timed universal machine
+-   (`Turing.timed_universal` at the fixed scheme `TimeHierarchy.code`) on
+-   `(α', x')` with deadline `2^(n')`: answer "yes" exactly on success with
+-   simulated output `[true]` (report `true :: [true]`); the deadline-inclusive
+-   timeout clause makes the answer the exact membership bit, with
+-   parse-uniqueness (`Turing.pairEncode_injective`,
+-   `Turing.pairEncode_replicate_inj`) identifying the witness decomposition.
++   `z ∈ EXPCOM` by running **`expCode.simulator`** on
++   `⟨⟨bits 2^(n'), α'⟩, x'⟩`: its two uniform clauses make the answer the
++   exact membership bit at cost `simDegree · (|α'| + |x'| + 2^(n') + 1) ^
++   simDegree` — **uniform in the query's code**, which is the entire round-1
++   repair (query codes vary with the branch; `Turing.timed_universal`'s
++   per-code constant cannot pay for them) — with parse-uniqueness
++   (`Turing.pairEncode_injective` twice, then `List.length` on the
++   replicated tails) identifying the witness decomposition.
+ 4. **Ledger.** Each branch submits queries of length at most the elapsed
+    budget (`Turing.OracleTM.queryString_length_le` transferred along the
+-   simulation invariant), so `n' ≤ p n` and one oracle call costs
+-   `O((2^(p n) + 1)^2)` universal-machine steps; a round is `p n` simulated
++   simulation invariant), so `n' ≤ p n`, `|α'|, |x'| ≤ p n`, and one oracle call costs
++   `simDegree · (3 · p n + 2^(p n) + 1) ^ simDegree = 2^(O(p n))` simulator
++   steps; a round is `p n` simulated
+    steps of which each costs at most one call: the total over `2^(p n)` rounds
+    is `2^(O(p n) )·(2^(p n))^2 = 2^(O(n^k))`, inside `DTIME (2^(n^(k+1)))` by
+    `Complexity.DTIME`'s constant absorption — so `L ∈ EXP`.
+diff --git a/TCSlib/Complexity/Diagonalization/Relativization.lean b/TCSlib/Complexity/Diagonalization/Relativization.lean
+index cb454699..3e12c6cf 100644
+--- a/TCSlib/Complexity/Diagonalization/Relativization.lean
++++ b/TCSlib/Complexity/Diagonalization/Relativization.lean
+@@ -129,10 +129,15 @@ of [BGS75]'s machine/clock-exponent pairing).
+ **Proof sketch.** For fixed tape count `k` and state count `m + 1`, the oracle
+ machines over `Bool` with state space `Fin (m + 1)` form a finite type (the
+ transition table is a function between finite types), so `Fintype.equivFin`
+-enumerates the well-formed ones; a pairing of `ℕ` with `ℕ × ℕ × ℕ` (tape
+-count, state count, table rank — with infinite fibers, supplying the
+-recurrence and the unbounded clock exponents) produces the family, totalized
+-by a fixed well-formed one-state default at indices whose rank overflows.
++enumerates the well-formed ones; a pairing of `ℕ` with `ℕ × ℕ × ℕ × ℕ` —
++tape count, state count, table rank, and an explicit **repetition
++coordinate** (a bijective pairing alone has singleton fibers; the fourth
++coordinate supplies the recurrence and the unbounded clock exponents —
++round-1 finding 2) — produces the family, totalized by a fixed well-formed
++**three-state** default at indices whose rank overflows (well-formedness
++demands three pairwise-distinct special states, so no one-state machine
++qualifies — round-1 finding 2; equivalently, embed a one-state plain
++machine by `Turing.FinTM.toFinOracleTM`, which adjoins them).
+ Every bundled `M : Turing.FinOracleTM Bool` relabels its state type along
+ `Fintype.equivFin` to some `Fin (m + 1)`, preserving runs
+ configuration-by-configuration under every oracle — the oracle transport of

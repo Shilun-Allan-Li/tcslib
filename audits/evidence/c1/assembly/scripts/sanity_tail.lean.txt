@@ -1,0 +1,222 @@
+
+/-! ## Sanity probes (evidence only; not landing material)
+
+Concrete one- and two-tape machines and `decide` evaluations of the host's branches, then
+theorem-level instances showing that the hypotheses of the assembly lemmas are satisfiable on a
+nonempty guessed block. -/
+
+namespace Turing
+
+/-- A setup already at its exit `()`, on one tape: block length `0`. -/
+def sanPStay : MultiTapeTM 1 Bool Unit :=
+  ⟨(), fun _ _ _ => ⟨0, fun _ => (none, 0), none, some ()⟩⟩
+
+/-- A stationary run on `Bool` states: started at its verdict, `true` (accept) or `false`. -/
+def sanQStay : MultiTapeTM 1 Bool Bool :=
+  ⟨true, fun q _ _ => ⟨0, fun _ => (none, 0), none, some q⟩⟩
+
+/-- A one-tape setup that writes the nonblank block `true true` at cells `0, 1`, returns its head
+to cell `0`, and is at its exit `2` at time `2`. -/
+def sanPBlock2 : MultiTapeTM 1 Bool (Fin 3) :=
+  ⟨0, fun q _ _ =>
+    if q = 0 then ⟨0, fun _ => (some (some true), 1), none, some 1⟩
+    else if q = 1 then ⟨0, fun _ => (some (some true), -1), none, some 2⟩
+    else ⟨0, fun _ => (none, 0), none, some 2⟩⟩
+
+/-- The same setup on two tapes, writing on tape `0` only (tape `1` is the capture tape). -/
+def sanPBlock2c : MultiTapeTM 2 Bool (Fin 3) :=
+  ⟨0, fun q _ _ =>
+    if q = 0 then ⟨0, fun i => if i = 0 then (some (some true), 1) else (none, 0), none, some 1⟩
+    else if q = 1 then
+      ⟨0, fun i => if i = 0 then (some (some true), -1) else (none, 0), none, some 2⟩
+    else ⟨0, fun _ => (none, 0), none, some 2⟩⟩
+
+/-- A one-tape run that reads the stream from its head and reaches `2` (accept) iff it reads
+`true` then `false`, and `3` (reject) otherwise; silent when `noisy = false`, and emitting
+`true` on each reading step when `noisy = true`. -/
+def sanQRead (noisy : Bool) : MultiTapeTM 1 Bool (Fin 4) :=
+  ⟨0, fun q _ w =>
+    let o := if noisy then some true else none
+    if q = 0 then
+      (if w 0 = some true then ⟨0, fun _ => (none, 1), o, some 1⟩
+       else ⟨0, fun _ => (none, 0), o, some 3⟩)
+    else if q = 1 then
+      (if w 0 = some false then ⟨0, fun _ => (none, 0), o, some 2⟩
+       else ⟨0, fun _ => (none, 0), o, some 3⟩)
+    else ⟨0, fun _ => (none, 0), none, some q⟩⟩
+
+/-- The one-tape selection into two tapes, tape `1` left for capture. -/
+def sanι : Fin 1 ↪ Fin 2 := Fin.castSuccEmb
+
+/-- **Zero-length choice word**: the empty word leaves the host at its initial state, live. -/
+example : ((guessRunTM sanPStay () 0 sanQStay true true false).runWith []
+    ((guessRunTM sanPStay () 0 sanQStay true true false).initCfg [])).state =
+      some ⟨.pre, ()⟩ := by decide
+
+/-- **Zero-length stream, immediately accepting run** (`m = 0`, `TP = 0`, `TQ = 0`): every word
+of length `0 + 0 + 0 + 11 = 11` halts with output `[true]`; checked for all-`false` and all-`true`
+words. -/
+example : ((guessRunTM sanPStay () 0 sanQStay true true false).runWith (List.replicate 11 false)
+    ((guessRunTM sanPStay () 0 sanQStay true true false).initCfg [])).state = none ∧
+    ((guessRunTM sanPStay () 0 sanQStay true true false).runWith (List.replicate 11 false)
+    ((guessRunTM sanPStay () 0 sanQStay true true false).initCfg [])).output = [true] ∧
+    ((guessRunTM sanPStay () 0 sanQStay true true false).runWith (List.replicate 11 true)
+    ((guessRunTM sanPStay () 0 sanQStay true true false).initCfg [true])).output = [true] := by
+  decide
+
+/-- **The halting time is exact**: at length `10` the same host is still live. -/
+example : ((guessRunTM sanPStay () 0 sanQStay true true false).runWith (List.replicate 10 false)
+    ((guessRunTM sanPStay () 0 sanQStay true true false).initCfg [])).state ≠ none := by decide
+
+/-- **Immediately rejecting run**: started at `false` (the reject verdict), the host halts at
+time `11` with output `[false]`, which is not acceptance. -/
+example : ((guessRunTM sanPStay () 0 sanQStay false true false).runWith (List.replicate 11 false)
+    ((guessRunTM sanPStay () 0 sanQStay false true false).initCfg [])).state = none ∧
+    ((guessRunTM sanPStay () 0 sanQStay false true false).runWith (List.replicate 11 false)
+    ((guessRunTM sanPStay () 0 sanQStay false true false).initCfg [])).output = [false] := by
+  decide
+
+/-- **`acc = rej`**: the accept verdict is tested first, so the leaf emits `true`. -/
+example : ((guessRunTM sanPStay () 0 sanQStay true true true).runWith (List.replicate 11 false)
+    ((guessRunTM sanPStay () 0 sanQStay true true true).initCfg [])).output = [true] := by
+  decide
+
+/-- **The writer's word, identified** (`m = 2`, `TP = 2`): the stream is bits `3` and `4` of the
+word. With stream `true false` the run accepts at `TQ = 2`, so a word of length
+`2 + 4 + 2 + 11 = 19` halts with `[true]`, whatever the other bits; with any other stream it
+rejects. -/
+example :
+    ∀ pre ∈ [[false, false, false], [true, true, true], [true, false, true]],
+    ∀ post ∈ [List.replicate 14 false, List.replicate 14 true],
+      ((guessRunTM sanPBlock2 2 0 (sanQRead false) 0 2 3).runWith (pre ++ [true, false] ++ post)
+        ((guessRunTM sanPBlock2 2 0 (sanQRead false) 0 2 3).initCfg [])).output = [true] ∧
+      ((guessRunTM sanPBlock2 2 0 (sanQRead false) 0 2 3).runWith (pre ++ [true, true] ++ post)
+        ((guessRunTM sanPBlock2 2 0 (sanQRead false) 0 2 3).initCfg [])).output = [false] ∧
+      ((guessRunTM sanPBlock2 2 0 (sanQRead false) 0 2 3).runWith (pre ++ [false, false] ++ post)
+        ((guessRunTM sanPBlock2 2 0 (sanQRead false) 0 2 3).initCfg [])).output = [false] ∧
+      ((guessRunTM sanPBlock2 2 0 (sanQRead false) 0 2 3).runWith (pre ++ [false, true] ++ post)
+        ((guessRunTM sanPBlock2 2 0 (sanQRead false) 0 2 3).initCfg [])).output = [false] := by
+  decide
+
+/-- **A word longer than the halting time**: the extra choices are absorbed (length `40`). -/
+example : ((guessRunTM sanPBlock2 2 0 (sanQRead false) 0 2 3).runWith
+    ([false, false, false, true, false] ++ List.replicate 35 true)
+    ((guessRunTM sanPBlock2 2 0 (sanQRead false) 0 2 3).initCfg [true, false])).output =
+      [true] := by
+  decide
+
+/-- **A stream longer than the budget**: with `m = 2` the handoff takes `2 + 4 + 9 = 15` steps,
+so at budget `14` the branch is still live (here the all-`true` word; every word by the
+theorem-level instance below), and no budget below `15` accepts. -/
+example : ((guessRunTM sanPBlock2 2 0 (sanQRead false) 0 2 3).runWith (List.replicate 14 true)
+    ((guessRunTM sanPBlock2 2 0 (sanQRead false) 0 2 3).initCfg [])).state ≠ none := by
+  decide
+
+/-- **Emission capture.** A run that emits `true` on each reading step: run directly, the host's
+output at the verdict is `[true, true, true]`, not acceptance; run silently embedded along `sanι`
+with capture tape `1`, the host's output is exactly the verdict, `[true]`. -/
+example :
+    ((guessRunTM sanPBlock2 2 0 (sanQRead true) 0 2 3).runWith
+      ([false, false, false, true, false] ++ List.replicate 14 false)
+      ((guessRunTM sanPBlock2 2 0 (sanQRead true) 0 2 3).initCfg [])).output =
+        [true, true, true] ∧
+    ((guessRunTM sanPBlock2c 2 (sanι 0) (embedSilentTM sanι 1 (sanQRead true)) 0 2 3).runWith
+      ([false, false, false, true, false] ++ List.replicate 14 false)
+      ((guessRunTM sanPBlock2c 2 (sanι 0) (embedSilentTM sanι 1 (sanQRead true)) 0 2 3).initCfg
+        [])).output = [true] := by
+  decide
+
+/-- **Zero-length stream at the statement level**: the empty stream overwrites nothing, so the
+entry configuration is the setup's endpoint with only the state replaced. -/
+example {k : ℕ} {S S' : Type} {z : List Bool} (c : Cfg k Bool S z) (j : Fin k) (q : S') :
+    guessRunCfg c j [] q = ⟨some q, c.inputPos, c.workTapes, c.workTapePos, c.output⟩ := by
+  apply Cfg.ext <;> try rfl
+  show Function.update c.workTapes j _ = c.workTapes
+  conv_rhs => rw [← Function.update_eq_self j c.workTapes]
+  congr 1
+  funext p
+  simp
+
+/-- **Non-vacuity of the setup hypotheses** on a nonempty block: `sanPBlock2` meets every
+hypothesis of `Turing.guessRunTM_runWith_live` with `m = 2` (by evaluation), so every word of
+length below `15` leaves its host live. -/
+example (w : List Bool) (hw : w.length < 2 + 2 * 2 + 9) :
+    ((guessRunTM sanPBlock2 2 0 (sanQRead false) 0 2 3).runWith w
+      ((guessRunTM sanPBlock2 2 0 (sanQRead false) 0 2 3).initCfg [])).state ≠ none :=
+  guessRunTM_runWith_live sanPBlock2 2 0 (sanQRead false) 0 2 3 2
+    (sanPBlock2.runFrom (sanPBlock2.initCfg []) 2) rfl (by decide) (by decide) 2
+    (by decide) (by decide) (by decide) w hw
+
+/-- **Non-vacuity of the run hypotheses**: on the stream `true false`, `sanQRead` reaches its
+accept verdict first at `TQ = 2` from the entry configuration, so `Turing.guessRunTM_runWith`
+applies, and its conclusion's output is `[] ++ [true]`. -/
+example (w : List Bool) (hws : (w.drop 3).take 2 = [true, false]) (hw : 19 ≤ w.length) :
+    ((guessRunTM sanPBlock2 2 0 (sanQRead false) 0 2 3).runWith w
+      ((guessRunTM sanPBlock2 2 0 (sanQRead false) 0 2 3).initCfg [])).output = [true] := by
+  have h := guessRunTM_runWith sanPBlock2 2 0 (sanQRead false) 0 2 3 2
+    (sanPBlock2.runFrom (sanPBlock2.initCfg []) 2) rfl (by decide) (by decide) 2
+    (by decide) (by decide) (by decide) [true, false] rfl 2 (by decide) (by decide) w hws
+    (by omega)
+  rw [h]
+  decide
+
+/-- A setup that halts at once, emitting `false`, without reaching its exit `true`. -/
+def sanPHalt : MultiTapeTM 1 Bool Bool :=
+  ⟨false, fun _ _ _ => ⟨0, fun _ => (none, 0), some false, none⟩⟩
+
+/-- **A halting setup**: the host halts after one step with the setup's output `[false]`, and
+never guesses. -/
+example : ((guessRunTM sanPHalt true 0 sanQStay true true false).runWith [true, true, true]
+    ((guessRunTM sanPHalt true 0 sanQStay true true false).initCfg [])).state = none ∧
+    ((guessRunTM sanPHalt true 0 sanQStay true true false).runWith [true, true, true]
+    ((guessRunTM sanPHalt true 0 sanQStay true true false).initCfg [])).output = [false] := by
+  decide
+
+/-- **A halting setup, at the statement level**: `Turing.guessRunTM_runWith_setup_halt` applies
+(by evaluation of its hypotheses), for every word of length at least `1`. -/
+example (w : List Bool) (hw : 1 ≤ w.length) :
+    ((guessRunTM sanPHalt true 0 sanQStay true true false).runWith w
+      ((guessRunTM sanPHalt true 0 sanQStay true true false).initCfg [])).output = [false] := by
+  rw [guessRunTM_runWith_setup_halt sanPHalt true 0 sanQStay true true false 1 (by decide)
+    (by decide) w hw]
+  decide
+
+/-- A run that halts at once with output `true`, from its entry `0`, never at a verdict state
+(`1` would be accept, `2` reject). -/
+def sanQHaltTrue : MultiTapeTM 1 Bool (Fin 3) :=
+  ⟨0, fun _ _ _ => ⟨0, fun _ => (none, 0), some true, none⟩⟩
+
+/-- **The verdict hypothesis is load-bearing.** A run that halts on its own with output `[true]`,
+reaching no verdict, makes the host halt with `[true]` (an accepting branch, at length
+`0 + 0 + 9 + 1 = 10`) although no stream reaches `acc`: without the hypothesis that every stream
+reaches a verdict, the forward direction of `Turing.guessRunTM_accepts_iff` would fail. -/
+example : ((guessRunTM sanPStay () 0 sanQHaltTrue 0 1 2).runWith (List.replicate 10 false)
+    ((guessRunTM sanPStay () 0 sanQHaltTrue 0 1 2).initCfg [])).state = none ∧
+    ((guessRunTM sanPStay () 0 sanQHaltTrue 0 1 2).runWith (List.replicate 10 false)
+    ((guessRunTM sanPStay () 0 sanQHaltTrue 0 1 2).initCfg [])).output = [true] := by
+  decide
+
+/-- A one-tape setup that writes the block `true true` at cells `0, 1` but also a nonblank cell
+at `-1`, and is at its exit `4` at time `4` with its head at `0`. -/
+def sanPBlock2Dirty : MultiTapeTM 1 Bool (Fin 5) :=
+  ⟨0, fun q _ _ =>
+    if q = 0 then ⟨0, fun _ => (some (some true), -1), none, some 1⟩
+    else if q = 1 then ⟨0, fun _ => (some (some true), 1), none, some 2⟩
+    else if q = 2 then ⟨0, fun _ => (none, 1), none, some 3⟩
+    else if q = 3 then ⟨0, fun _ => (some (some true), -1), none, some 4⟩
+    else ⟨0, fun _ => (none, 0), none, some 4⟩⟩
+
+/-- **The blank before the block is load-bearing.** With a nonblank cell just before the block
+(the hypothesis `hleft` fails), the rewind overshoots to that cell, and the run reads it first:
+the stream `false true`, rejected after the clean setup `sanPBlock2`, is accepted after
+`sanPBlock2Dirty` (its stream bits are bits `5` and `6`). -/
+example :
+    ((guessRunTM sanPBlock2 2 0 (sanQRead false) 0 2 3).runWith
+      ([false, false, false, false, true] ++ List.replicate 20 false)
+      ((guessRunTM sanPBlock2 2 0 (sanQRead false) 0 2 3).initCfg [])).output = [false] ∧
+    ((guessRunTM sanPBlock2Dirty 4 0 (sanQRead false) 0 2 3).runWith
+      ([false, false, false, false, false, false, true] ++ List.replicate 20 false)
+      ((guessRunTM sanPBlock2Dirty 4 0 (sanQRead false) 0 2 3).initCfg [])).output = [true] := by
+  decide
+
+end Turing

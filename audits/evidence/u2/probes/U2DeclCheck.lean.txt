@@ -1,0 +1,122 @@
+import TCSlib.Complexity.TimeHierarchy.Separation
+import TCSlib.Complexity.TuringMachine.Codes2Tape
+import TCSlib.Complexity.TuringMachine.Build.StepBlock
+import TCSlib.Complexity.TuringMachine.Build.Contract.Basic
+import TCSlib.Complexity.TuringMachine.Robustness.SingleTape
+import TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction
+import TCSlib.Complexity.ClassNP.TMSAT
+import TCSlib.Complexity.SpaceComplexity.Hierarchy
+import TCSlib.Complexity.TuringMachine.SelfUniversal
+import TCSlib.Complexity.TuringMachine.Build.InputDevice
+import TCSlib.Complexity.TuringMachine.Build.StepBlockLoop
+import TCSlib.Complexity.TuringMachine.Build.StepClock
+
+/-! U2 design probe 1: the cited declarations exist with the stated types (tip `c52663f1`,
+snapshot `oleans-lh1`). -/
+
+open Turing Turing.FinTM Complexity Complexity.TimeHierarchy
+
+-- Diagonal.lean public surface
+#check @Complexity.TimeHierarchy.code
+#check @Complexity.TimeHierarchy.univTM
+#check @Complexity.TimeHierarchy.univTM_spec
+#check @Complexity.TimeHierarchy.diagSim
+#check @Complexity.TimeHierarchy.diagLang
+#check @Complexity.TimeHierarchy.diagLang_mem_DTIME
+#check @Complexity.TimeHierarchy.diag_cost_le
+#check @Complexity.TimeHierarchy.diagLang_not_mem_DTIME
+#check @Complexity.time_hierarchy
+#check @Complexity.time_hierarchy_of_pos
+-- Separation.lean
+#check @Complexity.dtime_poly_ssubset_dtime_two_pow
+#check @Complexity.P_ssubset_EXP
+-- the clock and the prefix machine
+#check @Complexity.TimeHierarchy.clockTM
+#check @Complexity.TimeHierarchy.clockTM_spec
+#check @Complexity.TimeHierarchy.preTM_computes
+#check @Complexity.TimeHierarchy.scanPre_pairEncode_append
+#check @Turing.FinTM.bufferedCompTM_computesInTime
+-- DTIME and constructibility
+#check @Complexity.DTIME
+#check @Complexity.TimeConstructible
+#check @Complexity.timeConstructible_poly
+#check @Complexity.timeConstructible_id
+-- the one-tape universal machine
+#check @Turing.universal
+#check @Turing.universal_quadratic
+#check @Turing.timed_universal
+#check @Turing.EffectiveMachineCode
+#check @Turing.exists_effectiveMachineCode
+#check @Turing.exists_codeTM
+-- the two-tape codes (Z3)
+#check @Turing.Code2TM
+#check @Turing.Code2TM.serialize
+#check @Turing.Code2TM.toFinTM
+#check @Turing.MachineCode2
+#check @Turing.MachineCode2.decode_encode
+#check @Turing.EffectiveMachineCode2
+#check @Turing.UniformMachineCode2
+#check @Turing.exists_effectiveMachineCode2
+#check @Turing.exists_uniformMachineCode2
+-- B5a's two open contracts
+#check @Turing.MachineFormat.exists_polyCanonizer
+#check @Turing.MachineFormat.exists_uniformSimulator
+#check @Turing.serializeK
+#check @Turing.MachineFormat
+-- the step block (H2)
+#check @Turing.tableBitsK
+#check @Turing.StepBlock.roundTM
+#check @Turing.StepBlock.roundFinTM
+#check @Turing.StepBlock.Rep
+#check @Turing.StepBlock.roundTM_effect
+#check @Turing.StepBlock.roundTM_iterate
+#check @Turing.StepBlock.roundTM_visited
+#check @Turing.StepBlock.roundTM_firstExit_unique
+#check @Turing.StepBlock.summaryEmit_none
+-- the contract library's macro-step lockstep
+#check @Turing.Lockstep
+#check @Turing.Lockstep.runFrom
+#check @Turing.Lockstep.cut
+-- the robustness conversions
+#check @Turing.FinTM.one_work_tape_binary
+#check @Turing.FinTM.one_work_tape
+#check @Turing.FinTM.alphabet_reduction
+#check @Turing.FinTM.alphabet_reduction_spaceUsed
+#check @Turing.FinTM.one_work_tape_binary_spaceUsed
+-- the space hierarchy surface (B6 consumer of `TimeHierarchy.code`)
+#check @Complexity.space_universal
+#check @Complexity.space_hierarchy
+-- landed at the new tip: B6 hosts (#92) and the H1 harvest (#94)
+#check @Turing.exists_selfStartupTM
+#check @Turing.exists_selfUniversal
+#check @Turing.NativeAt
+#check @Turing.RulerAt
+#check @Turing.exists_rulerHostTM
+#check @Turing.exists_stepClockTMVia
+#check @Turing.StepBlock.loopTM
+#check @Turing.StepBlock.hostedLoopTM
+#check @Turing.StepBlock.loopTM_run
+#check @Turing.StepBlock.hostedLoopTM_run
+#check @Turing.StepBlock.hostedLoop_read
+#check @Turing.StepBlock.outputSummary_true
+#check @Turing.workReadsK_one
+#check @Turing.tableBitsK_two
+#check @Turing.exists_codeTM_spaceUsed
+#check @Turing.MultiTapeTM.relabelState_runFrom_init
+-- logs
+#check @Nat.log
+#check @Nat.log2
+#check @Nat.log2_eq_log_two
+
+-- admissions: the effective two-tape scheme is sorry-free; the uniform one is not
+#print axioms Turing.exists_effectiveMachineCode2
+#print axioms Turing.exists_uniformMachineCode2
+#print axioms Complexity.time_hierarchy
+#print axioms Turing.universal
+#print axioms Turing.StepBlock.roundTM_effect
+#print axioms Turing.StepBlock.roundTM_iterate
+#print axioms Turing.StepBlock.loopTM_run
+#print axioms Turing.StepBlock.hostedLoopTM_run
+#print axioms Turing.exists_selfUniversal
+#print axioms Turing.exists_selfStartupTM
+#print axioms Turing.exists_rulerHostTM

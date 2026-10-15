@@ -1,0 +1,39 @@
+
+/-! ### Pre-ship checks (appended by `tools/mkchecks.py`; not part of the overlay) -/
+
+namespace Turing
+
+/-- Fit check: the generic debit `sc_debit` applies to the fused clock at a non-stop state,
+with the prescribed agreement `sc_agree` as its hypothesis and `sc_decExit s` as `ρ`. -/
+example {k : ℕ} {Γ S : Type} [DecidableEq Γ] (e : Bool ↪ Γ) (M : MultiTapeTM k Γ S)
+    (stopAt : S → Bool) (s : S) (hs : stopAt s = false) {x : List Γ} (c : Cfg k Γ S x)
+    (w : List Bool) (ct : ℤ → Option Γ) (cp : ℤ)
+    (hw : ∀ p : ℤ, -1 ≤ p → p ≤ (w.length : ℤ) → ct (cp + p) = FinTM.bufferTape (w.map e) p) :
+    (sc_clockTM e M stopAt).runFrom (clockCfg (some (.dec s .run)) c ct cp)
+        (2 * (w.takeWhile not).length + 2) =
+      clockCfg (some (sc_decExit s (.done (decFixed w).isSome))) c
+        (wordPatch ct cp (((decFixed w).getD (List.replicate w.length true)).map e)) cp :=
+  (sc_debit e (sc_clockTM e M stopAt) ⟨sc_decExit s, sc_decExit_injective s⟩
+    (fun f hf inp work => sc_agree e M stopAt s hs f hf inp work) c w ct cp hw).1
+
+/-- Fit check: the redirection's three cases, by computation. -/
+example {S : Type} (s : S) :
+    sc_decExit s .run = .dec s .run ∧ sc_decExit s (.done true) = .body s ∧
+      sc_decExit s (.done false) = .timeout (some s) :=
+  ⟨rfl, rfl, rfl⟩
+
+#print axioms sc_decExit_injective
+#print axioms sc_agree
+#print axioms sc_layout
+#print axioms sc_lastLayout
+#print axioms sc_stop_step
+#print axioms sc_body_step
+#print axioms sc_clockTM
+#print axioms sc_State_fintype
+#print axioms sc_debit
+#print axioms sc_finish
+#print axioms sc_timeout
+#print axioms exists_stepClockTMVia
+#print axioms exists_stepClockTM
+
+end Turing

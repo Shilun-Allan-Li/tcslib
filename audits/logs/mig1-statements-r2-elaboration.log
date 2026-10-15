@@ -1,0 +1,119 @@
+# MIG-1 statement gate, round 2: elaboration and check log
+worktree HEAD: 99ad2f9894121f45c79a27722d9466223be16473 (read from the git metadata file; no git command)
+olean snapshot: /private/tmp/claude-501/-Users-seyoonr-phd-experiments-tcslib/8f0076bc-454a-4666-b8cf-f4c7ed13c549/scratchpad/oleans-t1; toolchain file: leanprover/lean4:v4.25.0; MIG-0b landing set: /private/tmp/claude-501/-Users-seyoonr-phd-experiments-tcslib/8f0076bc-454a-4666-b8cf-f4c7ed13c549/scratchpad/r2-mig0b/landing
+
+## 1. Build of the unit and the probes from their templates (scripts/build_unit.py)
+  ok   lines.unit: 2950
+  ok   lines.specprobe: 4112
+  ok   lines.bridgeprobe: 321
+  ok   r1identity.MIG1Statements.lean: identical
+  ok   r1identity.probe-tail.lean: identical
+  ok   r1identity.BridgeProbe.lean: identical
+  ok   build_unit.py refuses an empty template set (exit 2) and leaves its output untouched
+
+## 2. Elaboration
+elaborated MIG1Statements.lean (2950 lines): exit 0; errors 0; sorry 31; other 6
+  ok   elab.unit: exit 0; errors 0; sorry 31; other 6
+elaborated probes/SpecProbe.lean (4112 lines): exit 0; errors 0; sorry 70; other 6
+  ok   elab.specprobe: exit 0; errors 0; sorry 70; other 6
+elaborated probes/BridgeProbe.lean (321 lines): exit 0; errors 0; sorry 0; other 0
+  ok   elab.bridgeprobe: exit 0; errors 0; sorry 0; other 0
+
+## 3. Cut checks (scripts/cutcheck.py)
+unit imports: 8; union of part imports: 8; missing from unit: []; extra in unit: []
+TCSlib.Complexity.TuringMachine.Simulation: closure [Simulation@90]; imports ['TCSlib.Complexity.TuringMachine.Simulation']
+TCSlib.Complexity.TuringMachine.Composition: closure [Simulation@90, Composition@263]; imports ['TCSlib.Complexity.TuringMachine.Simulation', 'TCSlib.Complexity.TuringMachine.Composition']
+TCSlib.Complexity.TuringMachine.Build.Wrappers: closure [Simulation@90, Composition@263, Wrappers@506]; imports ['TCSlib.Complexity.TuringMachine.Simulation', 'TCSlib.Complexity.TuringMachine.Composition', 'TCSlib.Complexity.TuringMachine.Build.Wrappers']
+TCSlib.Complexity.TuringMachine.Encoding: closure [Simulation@90, Encoding@622]; imports ['TCSlib.Complexity.TuringMachine.Simulation', 'TCSlib.Complexity.TuringMachine.Encoding']
+TCSlib.Complexity.ClassP.TimeConstructible: closure [Simulation@90, Encoding@622, TimeConstructible@718]; imports ['TCSlib.Complexity.TuringMachine.Simulation', 'TCSlib.Complexity.TuringMachine.Encoding', 'TCSlib.Complexity.ClassP.TimeConstructible']
+TCSlib.Complexity.TuringMachine.Build.Loop: closure [Simulation@90, Composition@263, Wrappers@506, Loop@799]; imports ['TCSlib.Complexity.TuringMachine.Simulation', 'TCSlib.Complexity.TuringMachine.Composition', 'TCSlib.Complexity.TuringMachine.Build.Wrappers', 'TCSlib.Complexity.TuringMachine.Build.Loop']
+TCSlib.Complexity.TuringMachine.Build.Primitives: closure [Simulation@90, Composition@263, Wrappers@506, Encoding@622, TimeConstructible@718, Loop@799, Primitives@1490]; imports ['TCSlib.Complexity.TuringMachine.Simulation', 'TCSlib.Complexity.TuringMachine.Composition', 'TCSlib.Complexity.TuringMachine.Build.Wrappers', 'TCSlib.Complexity.TuringMachine.Encoding', 'TCSlib.Complexity.ClassP.TimeConstructible', 'TCSlib.Complexity.TuringMachine.Build.Loop', 'TCSlib.Complexity.TuringMachine.Build.Primitives']
+TCSlib.Complexity.TuringMachine.Build.Catalog: closure [Simulation@90, Composition@263, Wrappers@506, Encoding@622, TimeConstructible@718, Loop@799, Primitives@1490, Catalog@2601]; imports ['TCSlib.Complexity.TuringMachine.Simulation', 'TCSlib.Complexity.TuringMachine.Composition', 'TCSlib.Complexity.TuringMachine.Build.Wrappers', 'TCSlib.Complexity.TuringMachine.Encoding', 'TCSlib.Complexity.ClassP.TimeConstructible', 'TCSlib.Complexity.TuringMachine.Build.Loop', 'TCSlib.Complexity.TuringMachine.Build.Primitives', 'TCSlib.Complexity.TuringMachine.Build.Catalog']
+  ok   cut.importunion: unit imports: 8; union of part imports: 8; missing from unit: []; extra in unit: []
+elaborated cuts/TCSlib.Complexity.ClassP.TimeConstructible.check.lean (348 lines): exit 0; errors 0; sorry 4; other 0
+  ok   cut.TCSlib.Complexity.ClassP.TimeConstructible: exit 0; errors 0; sorry 4; other 0
+elaborated cuts/TCSlib.Complexity.TuringMachine.Build.Catalog.check.lean (2824 lines): exit 0; errors 0; sorry 31; other 6
+  ok   cut.TCSlib.Complexity.TuringMachine.Build.Catalog: exit 0; errors 0; sorry 31; other 6
+elaborated cuts/TCSlib.Complexity.TuringMachine.Build.Loop.check.lean (1215 lines): exit 0; errors 0; sorry 13; other 2
+  ok   cut.TCSlib.Complexity.TuringMachine.Build.Loop: exit 0; errors 0; sorry 13; other 2
+elaborated cuts/TCSlib.Complexity.TuringMachine.Build.Primitives.check.lean (2485 lines): exit 0; errors 0; sorry 31; other 3
+  ok   cut.TCSlib.Complexity.TuringMachine.Build.Primitives: exit 0; errors 0; sorry 31; other 3
+elaborated cuts/TCSlib.Complexity.TuringMachine.Build.Wrappers.check.lean (530 lines): exit 0; errors 0; sorry 7; other 0
+  ok   cut.TCSlib.Complexity.TuringMachine.Build.Wrappers: exit 0; errors 0; sorry 7; other 0
+elaborated cuts/TCSlib.Complexity.TuringMachine.Composition.check.lean (419 lines): exit 0; errors 0; sorry 4; other 0
+  ok   cut.TCSlib.Complexity.TuringMachine.Composition: exit 0; errors 0; sorry 4; other 0
+elaborated cuts/TCSlib.Complexity.TuringMachine.Encoding.check.lean (272 lines): exit 0; errors 0; sorry 2; other 0
+  ok   cut.TCSlib.Complexity.TuringMachine.Encoding: exit 0; errors 0; sorry 2; other 0
+elaborated cuts/TCSlib.Complexity.TuringMachine.Simulation.check.lean (180 lines): exit 0; errors 0; sorry 1; other 0
+  ok   cut.TCSlib.Complexity.TuringMachine.Simulation: exit 0; errors 0; sorry 1; other 0
+
+## 4. Identity (scripts/identity.py) and its negative control
+  ok   identity.summary: entries: 158; by kind: {'verbatim': 97, 'statement': 47, 'substrings': 7, 'transform': 3, 'binders': 4}; failures: 0
+  ok   identity.control.exit: 3
+  ok   identity.control.fails: loopHostM prependTM_computes timedCondTM
+
+## 5. Axioms (probes/AxiomProbe.lean: the unit, then #print axioms of its public declarations)
+  ok   r1identity.axiom-tail.lean: identical
+elaborated probes/AxiomProbe.lean (3083 lines): exit 0; errors 0; sorry 31; other 6
+  ok   axioms.summary: declarations reported: 130 | non-standard axioms (other than propext, Classical.choice, Quot.sound, sorryAx): [] | with sorryAx: 84; sorry-free: 46
+
+## 6. Names (scripts/namescreen.py; the MIG-0b landing set by namescreen_extra.py)
+  ok   names.summary: clashes 0, exposure occurrences 0, moved clashes 1, package hits 0
+  ok   names.movedclash: CLASH Turing.FinTM.loopHost_contracts (home Loop): TCSlib.Complexity.TuringMachine.Build.Loop:2066 private
+  ok   names.mig0b: landing files: 15; declarations: 1211 | exact full-name matches with the 71 public and 45 moved proposed names: 0 | shared last components (other namespaces): 0
+
+## 7. Widths and style
+  ok   widths: lines over 100 characters: 0
+WARN  lintdir/SpecProbe.lean       4112 lines > 1000: policy requires a split or a recorded justification (escalation/decision log)
+INFO  lintdir/BridgeProbe.lean     321 lines; 0 public / 13 private declarations
+INFO  lintdir/MIG1Statements.lean  2950 lines; 130 public / 61 private declarations
+INFO  lintdir/SpecProbe.lean       4112 lines; 150 public / 114 private declarations
+
+style_lint: 0 FAIL, 2 WARN over 3 files
+  ok   lint: style_lint: 0 FAIL, 2 WARN over 3 files
+
+## 8. Consumers of the rows (scripts/consumers.py, rowtotals.py) and replay (importgraph.py)
+  ok   consumers.total: total external citations: 231 in 36 files
+  ok   consumers.rows53: rows53: 221 in 35 files
+  ok   consumers.rows34: rows34: 216 in 33 files
+rows53: 221 in 35 files (before 221 in 35; new files: [])
+rows34: 216 in 33 files (before 216 in 33; new files: [])
+  ok   replay: whole MIG-1 (ten files) 212 | PR S (statements) 212 | F-A 212 | F-B 82 | F-C 97 | F-D 34 | F-D without CodeSimulator 34
+  ok   replay.modules: 632
+
+## 9. Deletion plan: round-1 classifier (reproduction) and round-2 classifier (fates_r2.json)
+  ok   region.r1reproduces: yes
+  ok   region.unassigned: UNASSIGNED: []
+  ok   fates.total: total: 378 declarations, 9,172 lines
+  ok   fates.modified: Delete: modified copy, citations re-targeted at the original | 15 | 564
+  ok   fates.prepare: Delete: `f2_loopHost_prepare`; its fuel-head clause is added to Loop's original | 1 | 50  [f2_loopHost_prepare]
+  ok   fates.duplicates: Delete: duplicates a public declaration | 8 | 124
+  ok   fates.absorbed: Absorbed into a gated statement | 12 | 499
+
+## 10. R3 retirement sites at the tip (scripts/r3check.py)
+  ok   r3: r3: 24 sites confirmed, 0 mismatches
+
+## 11. The Loop overlay: finding 1's repair, elaborated in Loop's import closure
+elaborated work/LoopTip.lean (4980 lines): exit 0; errors 0; sorry 0; other 61
+  ok   baseline.loop: exit 0; errors 0; sorry 0
+elaborated overlay/LoopOverlay.lean (5743 lines): exit 0; errors 0; sorry 0; other 61
+  overlay check (0 errors, 0 sorries, the tip's warnings, 23 sorry-free prints): RESULT: PASS
+  part-1 diff against the tip: added 219 (expected 219); removed 19 (expected 19); added lines over 100 characters: 0; hunks: 12; RESULT: PASS
+  ok   overlay.stmts: STATEMENT CHANGED: ['private loopHost_contracts', 'private loopHost_prepare']
+  ok   overlay.body: body-only changes: ['public exists_emitLoopTM', 'public exists_loopCfgTM', 'public exists_loopFindTM']
+  ok   overlay.added: added: ['private loopCall_heads', 'private mig0bStandIn_workTapePos_runFrom_mem_Icc', 'private seamed_space', 'private segment_heads', 'private space_radius']
+
+## 12. Retarget checks (Lean) and the systematic retarget table
+  ok   retarget.examples: examples: 21 (r2 file); 20 (tip file)
+elaborated checks/RetargetChecks-r2.lean (5506 lines): exit 0; errors 0; sorry 0; other 85
+elaborated checks/RetargetChecks-tip.lean (5299 lines): exit 1; errors 2; sorry 0; other 84
+  retarget checks: r2 file errors: 0; tip file errors: 2, by restated copy: {'f2_loopHost_prepare': 1, 'f2_loopHost_contracts': 1}; RESULT: PASS
+  ok   retarget.population: population: 59 declarations (Counter({'move': 47, 'absorbed into a gated public statement': 12})); citations: 215
+  ok   retarget.classes: classes: {'IDENTICAL': 53, 'MOVES-WITH': 112, 'GENERALIZATION': 11, 'NOT-CARRIED': 38, 'WEAKER at the tip; GENERALIZATION after the round-2 repair': 1}
+  ok   retarget.accessible: accessible: {'yes': 174, '-': 38, "yes after F-A's import in Simulation (decision 4)": 3}
+
+## 13. The eight citation specs proved at S: from which batch each is sorry-free (srecords.py)
+  ok   srecords.summary: unit sorried statements: 31; promotions: 4; the eight: 8; filled later: 19
+  ok   srecords.batches: callTM_run S | redirectTM_runFrom S | polyUnaryTM_computes S | pairLenCheckTM_computes S | stripLastTM_computes F-A | splitSolveTM_computes F-C | splitSolveTM_spaceUsed F-C | splitSolveWithTM_computes F-C
+
+RESULT: PASS (every check matched scripts/expected-r2.json)

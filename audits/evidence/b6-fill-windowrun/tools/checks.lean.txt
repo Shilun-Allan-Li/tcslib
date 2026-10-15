@@ -1,0 +1,26 @@
+
+/-! ### Pre-ship checks (appended by `tools/mkchecks.py`; not part of the overlay) -/
+
+namespace Turing
+
+/-- Fit check: the loop's start meets the phase host's entry, and its stops are the stop
+phase's states (the shapes `exists_windowLoopTM` asks for). -/
+example {K : ℕ} {Q T Pt Ps : Type} [DecidableEq Pt] [DecidableEq Ps]
+    (Rt : MultiTapeTM 1 (RecSym Q T) Pt) (Rs : MultiTapeTM (K + 1) (RecSym Q T) Ps)
+    (te ty tn : Pt) (se sy sn : Ps) :
+    (wl_loopTM Rt Rs te ty tn se sy sn).q₀ = ⟨.anchor, ()⟩ ∧
+      wl_red te ty tn se sy sn .anchor () = some ⟨.test, te⟩ ∧
+      wl_red te ty tn se sy sn .stop WindowExit.left = none :=
+  ⟨rfl, rfl, rfl⟩
+
+#print axioms wl_Ctrl_fintype
+#print axioms wl_Ctrl_decidableEq
+#print axioms wl_loopTM
+#print axioms wr_Ctrl_fintype
+#print axioms wr_runnerTM
+#print axioms wr_exit
+#print axioms wr_clockCfg_eta
+#print axioms exists_windowLoopTM
+#print axioms exists_windowRunnerTM
+
+end Turing

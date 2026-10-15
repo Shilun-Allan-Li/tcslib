@@ -1,0 +1,560 @@
+import TCSlib.Complexity.TuringMachine.Build.Catalog
+import TCSlib.Complexity.TuringMachine.Build.Embed
+import TCSlib.Complexity.TuringMachine.Build.Seam
+
+-- Each example signature below is the exact base signature after replacing
+-- only the declaration keyword/name by `example` (and removing attributes).
+-- Base: 93f51a65b0047de217b5df1d23221bd7055fb31e.
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+namespace Turing.FinTM
+section
+
+-- The empty-buffer statement has no alphabet-bearing argument.
+-- A local notation fixes Bool while leaving the base statement verbatim.
+local notation "bufferTape" => Turing.FinTM.bufferTape (Symbol := Bool)
+-- TCSlib/Complexity/TuringMachine/Simulation.lean:498 Turing.FinTM.bufferTape_nil
+example : bufferTape [] = fun _ => none := by
+  exact bufferTape_nil (Symbol := Bool)
+end
+end Turing.FinTM
+
+namespace Turing.FinTM
+section
+
+-- TCSlib/Complexity/TuringMachine/Simulation.lean:504 Turing.FinTM.bufferTape_nat
+example (w : List Bool) (i : ℕ) :
+    bufferTape w i = w[i]? := by
+  exact bufferTape_nat (Symbol := Bool) (w := w) (i := i)
+end
+end Turing.FinTM
+
+namespace Turing.FinTM
+section
+
+-- TCSlib/Complexity/TuringMachine/Simulation.lean:508 Turing.FinTM.bufferTape_left
+example (w : List Bool) : bufferTape w (-1) = none := by
+  exact bufferTape_left (Symbol := Bool) (w := w)
+end
+end Turing.FinTM
+
+namespace Turing.FinTM
+section
+
+-- TCSlib/Complexity/TuringMachine/Simulation.lean:516 Turing.FinTM.bufferTape_append
+example (w : List Bool) (b : Bool) :
+    bufferTape (w ++ [b]) = Function.update (bufferTape w) (w.length : ℤ) (some b) := by
+  exact bufferTape_append (Symbol := Bool) (w := w) (b := b)
+end
+end Turing.FinTM
+
+namespace Turing
+section
+variable {m k : ℕ} {S : Type*} {x : List Bool}
+
+-- TCSlib/Complexity/TuringMachine/Build/Embed.lean:330 Turing.embedSilentTM_runFrom
+example (ι : Fin m ↪ Fin k) (cap : Fin k)
+    (hcap : cap ∉ Set.range ι) (M : MultiTapeTM m Bool S)
+    (tapes : Fin k → ℤ → Option Bool) (heads : Fin k → ℤ)
+    (pre out₀ : List Bool) (c : Cfg m Bool S x) (t : ℕ) :
+    (embedSilentTM ι cap M).runFrom
+        (embedSilentCfg ι cap tapes heads pre out₀ c) t =
+      embedSilentCfg ι cap tapes heads pre out₀ (M.runFrom c t) := by
+  exact embedSilentTM_runFrom (Symbol := Bool) (ι := ι) (cap := cap) (hcap := hcap) (M := M) (tapes := tapes) (heads := heads) (pre := pre) (out₀ := out₀) (c := c) (t := t)
+end
+end Turing
+
+namespace Turing
+section
+variable {m k : ℕ} {S : Type*} {x : List Bool}
+
+-- TCSlib/Complexity/TuringMachine/Build/Embed.lean:352 Turing.embedSilentTM_frame
+example (ι : Fin m ↪ Fin k) (cap : Fin k)
+    (hcap : cap ∉ Set.range ι) (M : MultiTapeTM m Bool S)
+    (tapes : Fin k → ℤ → Option Bool) (heads : Fin k → ℤ)
+    (pre out₀ : List Bool) (c : Cfg m Bool S x) (t : ℕ) :
+    (∀ j : Fin k, j ∉ Set.range ι → j ≠ cap →
+      ((embedSilentTM ι cap M).runFrom
+          (embedSilentCfg ι cap tapes heads pre out₀ c) t).workTapes j
+        = tapes j ∧
+      ((embedSilentTM ι cap M).runFrom
+          (embedSilentCfg ι cap tapes heads pre out₀ c) t).workTapePos j
+        = heads j) ∧
+    ((embedSilentTM ι cap M).runFrom
+        (embedSilentCfg ι cap tapes heads pre out₀ c) t).inputPos
+      = (M.runFrom c t).inputPos ∧
+    ((embedSilentTM ι cap M).runFrom
+        (embedSilentCfg ι cap tapes heads pre out₀ c) t).output = out₀ := by
+  exact embedSilentTM_frame (Symbol := Bool) (ι := ι) (cap := cap) (hcap := hcap) (M := M) (tapes := tapes) (heads := heads) (pre := pre) (out₀ := out₀) (c := c) (t := t)
+end
+end Turing
+
+namespace Turing
+section
+variable {m k : ℕ} {S : Type*} {x : List Bool}
+
+-- TCSlib/Complexity/TuringMachine/Build/Embed.lean:385 Turing.embedSilentTM_visitedByTapeHead
+example (ι : Fin m ↪ Fin k) (cap : Fin k)
+    (hcap : cap ∉ Set.range ι) (M : MultiTapeTM m Bool S)
+    (tapes : Fin k → ℤ → Option Bool) (heads : Fin k → ℤ)
+    (pre out₀ : List Bool) (c : Cfg m Bool S x) (t : ℕ) (i : Fin m) :
+    (embedSilentTM ι cap M).visitedByTapeHead
+        (embedSilentCfg ι cap tapes heads pre out₀ c) t (ι i)
+      = M.visitedByTapeHead c t i ∧
+    (embedSilentTM ι cap M).spaceUsedByTape
+        (embedSilentCfg ι cap tapes heads pre out₀ c) t (ι i)
+      = M.spaceUsedByTape c t i := by
+  exact embedSilentTM_visitedByTapeHead (Symbol := Bool) (ι := ι) (cap := cap) (hcap := hcap) (M := M) (tapes := tapes) (heads := heads) (pre := pre) (out₀ := out₀) (c := c) (t := t) (i := i)
+end
+end Turing
+
+namespace Turing
+section
+variable {m k : ℕ} {S : Type*} {x : List Bool}
+
+-- TCSlib/Complexity/TuringMachine/Build/Embed.lean:414 Turing.embedSilentTM_visitedByTapeHead_frame
+example (ι : Fin m ↪ Fin k)
+    (cap : Fin k) (hcap : cap ∉ Set.range ι) (M : MultiTapeTM m Bool S)
+    (tapes : Fin k → ℤ → Option Bool) (heads : Fin k → ℤ)
+    (pre out₀ : List Bool) (c : Cfg m Bool S x) (t : ℕ)
+    (j : Fin k) (hj : j ∉ Set.range ι) (hjc : j ≠ cap) :
+    (embedSilentTM ι cap M).visitedByTapeHead
+        (embedSilentCfg ι cap tapes heads pre out₀ c) t j = {heads j} ∧
+    (embedSilentTM ι cap M).spaceUsedByTape
+        (embedSilentCfg ι cap tapes heads pre out₀ c) t j = 1 := by
+  exact embedSilentTM_visitedByTapeHead_frame (Symbol := Bool) (ι := ι) (cap := cap) (hcap := hcap) (M := M) (tapes := tapes) (heads := heads) (pre := pre) (out₀ := out₀) (c := c) (t := t) (j := j) (hj := hj) (hjc := hjc)
+end
+end Turing
+
+namespace Turing
+section
+variable {m k : ℕ} {S : Type*} {x : List Bool}
+
+-- TCSlib/Complexity/TuringMachine/Build/Embed.lean:448 Turing.embedSilentTM_spaceUsedByTape_cap
+example (ι : Fin m ↪ Fin k) (cap : Fin k)
+    (hcap : cap ∉ Set.range ι) (M : MultiTapeTM m Bool S)
+    (tapes : Fin k → ℤ → Option Bool) (heads : Fin k → ℤ)
+    (pre out₀ : List Bool) (c : Cfg m Bool S x) (t : ℕ) :
+    (embedSilentTM ι cap M).spaceUsedByTape
+        (embedSilentCfg ι cap tapes heads pre out₀ c) t cap
+      ≤ (M.runFrom c t).output.length - c.output.length + 1 := by
+  exact embedSilentTM_spaceUsedByTape_cap (Symbol := Bool) (ι := ι) (cap := cap) (hcap := hcap) (M := M) (tapes := tapes) (heads := heads) (pre := pre) (out₀ := out₀) (c := c) (t := t)
+end
+end Turing
+
+namespace Turing
+section
+variable {m k : ℕ} {S : Type*} {x : List Bool}
+
+-- TCSlib/Complexity/TuringMachine/Build/Embed.lean:528 Turing.embedEmitTM_runFrom
+example (ι : Fin m ↪ Fin k) (M : MultiTapeTM m Bool S)
+    (tapes : Fin k → ℤ → Option Bool) (heads : Fin k → ℤ)
+    (pre : List Bool) (c : Cfg m Bool S x) (t : ℕ) :
+    (embedEmitTM ι M).runFrom (embedEmitCfg ι tapes heads pre c) t =
+      embedEmitCfg ι tapes heads pre (M.runFrom c t) := by
+  exact embedEmitTM_runFrom (Symbol := Bool) (ι := ι) (M := M) (tapes := tapes) (heads := heads) (pre := pre) (c := c) (t := t)
+end
+end Turing
+
+namespace Turing
+section
+variable {m k : ℕ} {S : Type*} {x : List Bool}
+
+-- TCSlib/Complexity/TuringMachine/Build/Embed.lean:544 Turing.embedEmitTM_frame
+example (ι : Fin m ↪ Fin k) (M : MultiTapeTM m Bool S)
+    (tapes : Fin k → ℤ → Option Bool) (heads : Fin k → ℤ)
+    (pre : List Bool) (c : Cfg m Bool S x) (t : ℕ) :
+    (∀ j : Fin k, j ∉ Set.range ι →
+      ((embedEmitTM ι M).runFrom
+          (embedEmitCfg ι tapes heads pre c) t).workTapes j = tapes j ∧
+      ((embedEmitTM ι M).runFrom
+          (embedEmitCfg ι tapes heads pre c) t).workTapePos j = heads j) ∧
+    ((embedEmitTM ι M).runFrom
+        (embedEmitCfg ι tapes heads pre c) t).inputPos
+      = (M.runFrom c t).inputPos ∧
+    ((embedEmitTM ι M).runFrom
+        (embedEmitCfg ι tapes heads pre c) t).output
+      = pre ++ (M.runFrom c t).output := by
+  exact embedEmitTM_frame (Symbol := Bool) (ι := ι) (M := M) (tapes := tapes) (heads := heads) (pre := pre) (c := c) (t := t)
+end
+end Turing
+
+namespace Turing
+section
+variable {m k : ℕ} {S : Type*} {x : List Bool}
+
+-- TCSlib/Complexity/TuringMachine/Build/Embed.lean:570 Turing.embedEmitTM_visitedByTapeHead
+example (ι : Fin m ↪ Fin k)
+    (M : MultiTapeTM m Bool S)
+    (tapes : Fin k → ℤ → Option Bool) (heads : Fin k → ℤ)
+    (pre : List Bool) (c : Cfg m Bool S x) (t : ℕ) (i : Fin m) :
+    (embedEmitTM ι M).visitedByTapeHead
+        (embedEmitCfg ι tapes heads pre c) t (ι i)
+      = M.visitedByTapeHead c t i ∧
+    (embedEmitTM ι M).spaceUsedByTape
+        (embedEmitCfg ι tapes heads pre c) t (ι i)
+      = M.spaceUsedByTape c t i := by
+  exact embedEmitTM_visitedByTapeHead (Symbol := Bool) (ι := ι) (M := M) (tapes := tapes) (heads := heads) (pre := pre) (c := c) (t := t) (i := i)
+end
+end Turing
+
+namespace Turing
+section
+variable {m k : ℕ} {S : Type*} {x : List Bool}
+
+-- TCSlib/Complexity/TuringMachine/Build/Embed.lean:597 Turing.embedEmitTM_visitedByTapeHead_frame
+example (ι : Fin m ↪ Fin k)
+    (M : MultiTapeTM m Bool S)
+    (tapes : Fin k → ℤ → Option Bool) (heads : Fin k → ℤ)
+    (pre : List Bool) (c : Cfg m Bool S x) (t : ℕ)
+    (j : Fin k) (hj : j ∉ Set.range ι) :
+    (embedEmitTM ι M).visitedByTapeHead
+        (embedEmitCfg ι tapes heads pre c) t j = {heads j} ∧
+    (embedEmitTM ι M).spaceUsedByTape
+        (embedEmitCfg ι tapes heads pre c) t j = 1 := by
+  exact embedEmitTM_visitedByTapeHead_frame (Symbol := Bool) (ι := ι) (M := M) (tapes := tapes) (heads := heads) (pre := pre) (c := c) (t := t) (j := j) (hj := hj)
+end
+end Turing
+
+namespace Turing
+section
+variable {m k : ℕ} {S : Type*} {x : List Bool}
+
+-- TCSlib/Complexity/TuringMachine/Build/Embed.lean:790 Turing.embedSilentRetTM_run
+example (ι : Fin m ↪ Fin k) (cap : Fin k)
+    (hcap : cap ∉ Set.range ι) (M : MultiTapeTM m Bool S)
+    (tapes : Fin k → ℤ → Option Bool) (heads : Fin k → ℤ)
+    (pre out₀ : List Bool) (c : Cfg m Bool S x) (T : ℕ)
+    (hc : c.state ≠ none)
+    (hlive : ∀ t < T, (M.runFrom c t).state ≠ none)
+    (hhalt : (M.runFrom c T).state = none) :
+    (∀ t < T,
+      (embedSilentRetTM ι cap M).runFrom
+          ((embedSilentCfg ι cap tapes heads pre out₀ c).mapState Sum.inl) t =
+        (embedSilentCfg ι cap tapes heads pre out₀
+          (M.runFrom c t)).mapState Sum.inl) ∧
+    (embedSilentRetTM ι cap M).runFrom
+        ((embedSilentCfg ι cap tapes heads pre out₀ c).mapState Sum.inl) T =
+      { embedSilentCfg ι cap tapes heads pre out₀ (M.runFrom c T) with
+          state := some (Sum.inr ()) } ∧
+    ∀ t < T,
+      ((embedSilentRetTM ι cap M).runFrom
+          ((embedSilentCfg ι cap tapes heads pre out₀ c).mapState Sum.inl)
+          t).state ≠ some (Sum.inr ()) := by
+  exact embedSilentRetTM_run (Symbol := Bool) (ι := ι) (cap := cap) (hcap := hcap) (M := M) (tapes := tapes) (heads := heads) (pre := pre) (out₀ := out₀) (c := c) (T := T) (hc := hc) (hlive := hlive) (hhalt := hhalt)
+end
+end Turing
+
+namespace Turing
+section
+variable {m k : ℕ} {S : Type*} {x : List Bool}
+
+-- TCSlib/Complexity/TuringMachine/Build/Embed.lean:839 Turing.embedEmitRetTM_run
+example (ι : Fin m ↪ Fin k) (M : MultiTapeTM m Bool S)
+    (tapes : Fin k → ℤ → Option Bool) (heads : Fin k → ℤ)
+    (pre : List Bool) (c : Cfg m Bool S x) (T : ℕ)
+    (hc : c.state ≠ none)
+    (hlive : ∀ t < T, (M.runFrom c t).state ≠ none)
+    (hhalt : (M.runFrom c T).state = none) :
+    (∀ t < T,
+      (embedEmitRetTM ι M).runFrom
+          ((embedEmitCfg ι tapes heads pre c).mapState Sum.inl) t =
+        (embedEmitCfg ι tapes heads pre (M.runFrom c t)).mapState Sum.inl) ∧
+    (embedEmitRetTM ι M).runFrom
+        ((embedEmitCfg ι tapes heads pre c).mapState Sum.inl) T =
+      { embedEmitCfg ι tapes heads pre (M.runFrom c T) with
+          state := some (Sum.inr ()) } ∧
+    ∀ t < T,
+      ((embedEmitRetTM ι M).runFrom
+          ((embedEmitCfg ι tapes heads pre c).mapState Sum.inl) t).state ≠
+        some (Sum.inr ()) := by
+  exact embedEmitRetTM_run (Symbol := Bool) (ι := ι) (M := M) (tapes := tapes) (heads := heads) (pre := pre) (c := c) (T := T) (hc := hc) (hlive := hlive) (hhalt := hhalt)
+end
+end Turing
+
+namespace Turing
+section
+variable {m k : ℕ} {S : Type*} {x : List Bool}
+
+-- TCSlib/Complexity/TuringMachine/Build/Embed.lean:901 Turing.embedSilentRetTM_visitedByTapeHead
+example (ι : Fin m ↪ Fin k) (cap : Fin k)
+    (M : MultiTapeTM m Bool S)
+    (tapes : Fin k → ℤ → Option Bool) (heads : Fin k → ℤ)
+    (pre out₀ : List Bool) (c : Cfg m Bool S x) (t : ℕ) (j : Fin k) :
+    (embedSilentRetTM ι cap M).visitedByTapeHead
+        ((embedSilentCfg ι cap tapes heads pre out₀ c).mapState Sum.inl) t j =
+      (embedSilentTM ι cap M).visitedByTapeHead
+        (embedSilentCfg ι cap tapes heads pre out₀ c) t j := by
+  exact embedSilentRetTM_visitedByTapeHead (Symbol := Bool) (ι := ι) (cap := cap) (M := M) (tapes := tapes) (heads := heads) (pre := pre) (out₀ := out₀) (c := c) (t := t) (j := j)
+end
+end Turing
+
+namespace Turing
+section
+variable {m k : ℕ} {S : Type*} {x : List Bool}
+
+-- TCSlib/Complexity/TuringMachine/Build/Embed.lean:921 Turing.embedEmitRetTM_visitedByTapeHead
+example (ι : Fin m ↪ Fin k)
+    (M : MultiTapeTM m Bool S)
+    (tapes : Fin k → ℤ → Option Bool) (heads : Fin k → ℤ)
+    (pre : List Bool) (c : Cfg m Bool S x) (t : ℕ) (j : Fin k) :
+    (embedEmitRetTM ι M).visitedByTapeHead
+        ((embedEmitCfg ι tapes heads pre c).mapState Sum.inl) t j =
+      (embedEmitTM ι M).visitedByTapeHead
+        (embedEmitCfg ι tapes heads pre c) t j := by
+  exact embedEmitRetTM_visitedByTapeHead (Symbol := Bool) (ι := ι) (M := M) (tapes := tapes) (heads := heads) (pre := pre) (c := c) (t := t) (j := j)
+end
+end Turing
+
+namespace Turing
+section
+variable {m k : ℕ} {S : Type*} {x : List Bool}
+
+-- TCSlib/Complexity/TuringMachine/Build/Embed.lean:944 Turing.embedSilentCfg_selected_tape
+example (ι : Fin m ↪ Fin k) (cap : Fin k)
+    (tapes : Fin k → ℤ → Option Bool) (heads : Fin k → ℤ)
+    (pre out₀ : List Bool) (c : Cfg m Bool S x) (i : Fin m) :
+    (embedSilentCfg ι cap tapes heads pre out₀ c).workTapes (ι i) =
+      c.workTapes i := by
+  exact embedSilentCfg_selected_tape (Symbol := Bool) (ι := ι) (cap := cap) (tapes := tapes) (heads := heads) (pre := pre) (out₀ := out₀) (c := c) (i := i)
+end
+end Turing
+
+namespace Turing
+section
+variable {m k : ℕ} {S : Type*} {x : List Bool}
+
+-- TCSlib/Complexity/TuringMachine/Build/Embed.lean:953 Turing.embedSilentCfg_selected_pos
+example (ι : Fin m ↪ Fin k) (cap : Fin k)
+    (tapes : Fin k → ℤ → Option Bool) (heads : Fin k → ℤ)
+    (pre out₀ : List Bool) (c : Cfg m Bool S x) (i : Fin m) :
+    (embedSilentCfg ι cap tapes heads pre out₀ c).workTapePos (ι i) =
+      c.workTapePos i := by
+  exact embedSilentCfg_selected_pos (Symbol := Bool) (ι := ι) (cap := cap) (tapes := tapes) (heads := heads) (pre := pre) (out₀ := out₀) (c := c) (i := i)
+end
+end Turing
+
+namespace Turing
+section
+variable {m k : ℕ} {S : Type*} {x : List Bool}
+
+-- TCSlib/Complexity/TuringMachine/Build/Embed.lean:962 Turing.embedEmitCfg_selected_tape
+example (ι : Fin m ↪ Fin k)
+    (tapes : Fin k → ℤ → Option Bool) (heads : Fin k → ℤ)
+    (pre : List Bool) (c : Cfg m Bool S x) (i : Fin m) :
+    (embedEmitCfg ι tapes heads pre c).workTapes (ι i) = c.workTapes i := by
+  exact embedEmitCfg_selected_tape (Symbol := Bool) (ι := ι) (tapes := tapes) (heads := heads) (pre := pre) (c := c) (i := i)
+end
+end Turing
+
+namespace Turing
+section
+variable {m k : ℕ} {S : Type*} {x : List Bool}
+
+-- TCSlib/Complexity/TuringMachine/Build/Embed.lean:970 Turing.embedEmitCfg_selected_pos
+example (ι : Fin m ↪ Fin k)
+    (tapes : Fin k → ℤ → Option Bool) (heads : Fin k → ℤ)
+    (pre : List Bool) (c : Cfg m Bool S x) (i : Fin m) :
+    (embedEmitCfg ι tapes heads pre c).workTapePos (ι i) = c.workTapePos i := by
+  exact embedEmitCfg_selected_pos (Symbol := Bool) (ι := ι) (tapes := tapes) (heads := heads) (pre := pre) (c := c) (i := i)
+end
+end Turing
+
+namespace Turing
+section
+variable {m k : ℕ} {S : Type*} {x : List Bool}
+
+-- TCSlib/Complexity/TuringMachine/Build/Embed.lean:984 Turing.MultiTapeTM.runFrom_mapState_of_agreeOn
+example {k : ℕ} {S H : Type} {x : List Bool}
+    (src : MultiTapeTM k Bool S) (host : MultiTapeTM k Bool H)
+    (emb : S ↪ H) (good : S → Prop)
+    (hagree : ∀ q, good q → ∀ inp work,
+      host.tr (emb q) inp work = (src.tr q inp work).mapState emb)
+    (c : Cfg k Bool S x) (t : ℕ)
+    (hguard : ∀ u < t, ∀ q, (src.runFrom c u).state = some q → good q) :
+    host.runFrom (c.mapState emb) t = (src.runFrom c t).mapState emb := by
+  exact MultiTapeTM.runFrom_mapState_of_agreeOn (Symbol := Bool) (k := k) (S := S) (H := H) (x := x) (src := src) (host := host) (emb := emb) (good := good) (hagree := hagree) (c := c) (t := t) (hguard := hguard)
+end
+end Turing
+
+namespace Turing
+section
+variable {k : ℕ} {S₁ S₂ S : Type*} {x : List Bool}
+
+-- TCSlib/Complexity/TuringMachine/Build/Seam.lean:514 Turing.seamCompTM_run_ofCfg
+example [DecidableEq S₁] (M₁ : MultiTapeTM k Bool S₁)
+    (exit : S₁) (M₂ : MultiTapeTM k Bool S₂) (entry : S₂)
+    {c₀ c₁ : Cfg k Bool S₁ x} {c₃ : Cfg k Bool S₂ x} {T₁ T₂ : ℕ}
+    (h₁ : M₁.runFrom c₀ T₁ = c₁) (hexit : c₁.state = some exit)
+    (hcut : ∀ t < T₁, (M₁.runFrom c₀ t).state ≠ some exit)
+    (h₂ : M₂.runFrom (c₁.mapState fun _ => entry) T₂ = c₃) :
+    (seamCompTM M₁ exit M₂ entry).runFrom (c₀.mapState Sum.inl)
+        (T₁ + 1 + T₂) =
+      c₃.mapState Sum.inr := by
+  exact seamCompTM_run_ofCfg (Symbol := Bool) (M₁ := M₁) (exit := exit) (M₂ := M₂) (entry := entry) (c₀ := c₀) (c₁ := c₁) (c₃ := c₃) (T₁ := T₁) (T₂ := T₂) (h₁ := h₁) (hexit := hexit) (hcut := hcut) (h₂ := h₂)
+end
+end Turing
+
+namespace Turing
+section
+variable {k : ℕ} {S₁ S₂ S : Type*} {x : List Bool}
+
+-- TCSlib/Complexity/TuringMachine/Build/Seam.lean:534 Turing.seamCompTM_firstReturn_ofCfg
+example [DecidableEq S₁]
+    (M₁ : MultiTapeTM k Bool S₁) (exit : S₁)
+    (M₂ : MultiTapeTM k Bool S₂) (entry : S₂) (q₂ : S₂)
+    {c₀ c₁ : Cfg k Bool S₁ x} {c₃ : Cfg k Bool S₂ x} {T₁ T₂ : ℕ}
+    (h₁ : M₁.runFrom c₀ T₁ = c₁) (hexit : c₁.state = some exit)
+    (hcut : ∀ t < T₁, (M₁.runFrom c₀ t).state ≠ some exit)
+    (h₂ : M₂.runFrom (c₁.mapState fun _ => entry) T₂ = c₃)
+    (hq : c₃.state = some q₂)
+    (hcut₂ : ∀ t < T₂,
+      (M₂.runFrom (c₁.mapState fun _ => entry) t).state ≠ some q₂) :
+    ∀ t < T₁ + 1 + T₂,
+      ((seamCompTM M₁ exit M₂ entry).runFrom (c₀.mapState Sum.inl) t).state ≠
+        some (Sum.inr q₂) := by
+  exact seamCompTM_firstReturn_ofCfg (Symbol := Bool) (M₁ := M₁) (exit := exit) (M₂ := M₂) (entry := entry) (q₂ := q₂) (c₀ := c₀) (c₁ := c₁) (c₃ := c₃) (T₁ := T₁) (T₂ := T₂) (h₁ := h₁) (hexit := hexit) (hcut := hcut) (h₂ := h₂) (hq := hq) (hcut₂ := hcut₂)
+end
+end Turing
+
+namespace Turing
+section
+variable {k : ℕ} {S₁ S₂ S : Type*} {x : List Bool}
+
+-- TCSlib/Complexity/TuringMachine/Build/Seam.lean:559 Turing.seamCompTM_visitedByTapeHead_ofCfg
+example [DecidableEq S₁]
+    (M₁ : MultiTapeTM k Bool S₁) (exit : S₁)
+    (M₂ : MultiTapeTM k Bool S₂) (entry : S₂)
+    {c₀ c₁ : Cfg k Bool S₁ x} {T₁ T₂ : ℕ}
+    (h₁ : M₁.runFrom c₀ T₁ = c₁) (hexit : c₁.state = some exit)
+    (hcut : ∀ t < T₁, (M₁.runFrom c₀ t).state ≠ some exit) (i : Fin k) :
+    (seamCompTM M₁ exit M₂ entry).visitedByTapeHead (c₀.mapState Sum.inl)
+        (T₁ + 1 + T₂) i ⊆
+      M₁.visitedByTapeHead c₀ T₁ i ∪
+        M₂.visitedByTapeHead (c₁.mapState fun _ => entry) T₂ i := by
+  exact seamCompTM_visitedByTapeHead_ofCfg (Symbol := Bool) (M₁ := M₁) (exit := exit) (M₂ := M₂) (entry := entry) (c₀ := c₀) (c₁ := c₁) (T₁ := T₁) (T₂ := T₂) (h₁ := h₁) (hexit := hexit) (hcut := hcut) (i := i)
+end
+end Turing
+
+namespace Turing
+section
+variable {k : ℕ} {S₁ S₂ S : Type*} {x : List Bool}
+
+-- TCSlib/Complexity/TuringMachine/Build/Seam.lean:644 Turing.seamReleaseTM_firstReturn
+example (M : MultiTapeTM k Bool S) (anchor : S)
+    {c c' : Cfg k Bool S x} {T : ℕ}
+    (hc : c.state = some anchor) (hT : 0 < T) (h : M.runFrom c T = c')
+    (hc' : c'.state = some anchor)
+    (hcut : ∀ t, 0 < t → t < T → (M.runFrom c t).state ≠ some anchor) :
+    (seamReleaseTM M anchor).runFrom (c.mapState fun _ => Sum.inl ()) T =
+        c'.mapState Sum.inr ∧
+      ∀ t < T,
+        ((seamReleaseTM M anchor).runFrom
+            (c.mapState fun _ => Sum.inl ()) t).state ≠
+          some (Sum.inr anchor) := by
+  exact seamReleaseTM_firstReturn (Symbol := Bool) (M := M) (anchor := anchor) (c := c) (c' := c') (T := T) (hc := hc) (hT := hT) (h := h) (hc' := hc') (hcut := hcut)
+end
+end Turing
+
+namespace Turing
+section
+variable {k : ℕ} {S₁ S₂ S : Type*} {x : List Bool}
+
+-- TCSlib/Complexity/TuringMachine/Build/Seam.lean:677 Turing.seamReleaseTM_visitedByTapeHead
+example (M : MultiTapeTM k Bool S)
+    (anchor : S) {c : Cfg k Bool S x} (hc : c.state = some anchor)
+    (t : ℕ) (i : Fin k) :
+    (seamReleaseTM M anchor).visitedByTapeHead
+        (c.mapState fun _ => Sum.inl ()) t i =
+      M.visitedByTapeHead c t i := by
+  exact seamReleaseTM_visitedByTapeHead (Symbol := Bool) (M := M) (anchor := anchor) (c := c) (hc := hc) (t := t) (i := i)
+end
+end Turing
+
+namespace Turing
+section
+variable {k : ℕ} {x : List Bool}
+
+-- TCSlib/Complexity/TuringMachine/Build/Catalog.lean:973 Turing.transferTM_run_ofCfg
+example {k : ℕ} {x : List Bool} (src dst : Fin k)
+    (hne : src ≠ dst) (w : List Bool) (d : Cfg k Bool SweepPhase x)
+    (hstate : d.state = some SweepPhase.sweep)
+    (hw : ∀ p : ℤ, -1 ≤ p → p ≤ (w.length : ℤ) →
+      d.workTapes src (d.workTapePos src + p) = FinTM.bufferTape w p) :
+    (transferTM k src dst).runFrom d (2 * w.length + 2) =
+        { d with
+          state := some SweepPhase.done
+          workTapes := fun j q =>
+            if j = src ∧ d.workTapePos j ≤ q ∧ q < d.workTapePos j + (w.length : ℤ)
+              then none
+            else if j = dst ∧ d.workTapePos j ≤ q ∧
+                q < d.workTapePos j + (w.length : ℤ)
+              then FinTM.bufferTape w (q - d.workTapePos j)
+            else d.workTapes j q } ∧
+      (∀ t < 2 * w.length + 2,
+        ((transferTM k src dst).runFrom d t).state ≠ some SweepPhase.done) ∧
+      (∀ (j : Fin k) (t : ℕ), t ≤ 2 * w.length + 2 →
+        if j = src ∨ j = dst then
+          ((transferTM k src dst).runFrom d t).workTapePos j ∈
+            Finset.Icc (d.workTapePos j - 1) (d.workTapePos j + (w.length : ℤ))
+        else ((transferTM k src dst).runFrom d t).workTapePos j = d.workTapePos j) := by
+  exact transferTM_run_ofCfg (Symbol := Bool) (k := k) (x := x) (src := src) (dst := dst) (hne := hne) (w := w) (d := d) (hstate := hstate) (hw := hw)
+end
+end Turing
+
+namespace Turing
+section
+variable {k : ℕ} {x : List Bool}
+
+-- TCSlib/Complexity/TuringMachine/Build/Catalog.lean:1016 Turing.copyTM_run_ofCfg
+example {k : ℕ} {x : List Bool} (src dst : Fin k)
+    (hne : src ≠ dst) (w : List Bool) (d : Cfg k Bool SweepPhase x)
+    (hstate : d.state = some SweepPhase.sweep)
+    (hw : ∀ p : ℤ, -1 ≤ p → p ≤ (w.length : ℤ) →
+      d.workTapes src (d.workTapePos src + p) = FinTM.bufferTape w p) :
+    (copyTM k src dst).runFrom d (2 * w.length + 2) =
+        { d with
+          state := some SweepPhase.done
+          workTapes := fun j q =>
+            if j = dst ∧ d.workTapePos j ≤ q ∧ q < d.workTapePos j + (w.length : ℤ)
+              then FinTM.bufferTape w (q - d.workTapePos j)
+            else d.workTapes j q } ∧
+      (∀ t < 2 * w.length + 2,
+        ((copyTM k src dst).runFrom d t).state ≠ some SweepPhase.done) ∧
+      (∀ (j : Fin k) (t : ℕ), t ≤ 2 * w.length + 2 →
+        if j = src ∨ j = dst then
+          ((copyTM k src dst).runFrom d t).workTapePos j ∈
+            Finset.Icc (d.workTapePos j - 1) (d.workTapePos j + (w.length : ℤ))
+        else ((copyTM k src dst).runFrom d t).workTapePos j = d.workTapePos j) := by
+  exact copyTM_run_ofCfg (Symbol := Bool) (k := k) (x := x) (src := src) (dst := dst) (hne := hne) (w := w) (d := d) (hstate := hstate) (hw := hw)
+end
+end Turing
+
+namespace Turing
+section
+variable {k : ℕ} {x : List Bool}
+
+-- TCSlib/Complexity/TuringMachine/Build/Catalog.lean:1058 Turing.clearTM_run_ofCfg
+example {k : ℕ} {x : List Bool} (i : Fin k) (w : List Bool)
+    (d : Cfg k Bool SweepPhase x) (hstate : d.state = some SweepPhase.sweep)
+    (hw : ∀ p : ℤ, -1 ≤ p → p ≤ (w.length : ℤ) →
+      d.workTapes i (d.workTapePos i + p) = FinTM.bufferTape w p) :
+    (clearTM k i).runFrom d (2 * w.length + 2) =
+        { d with
+          state := some SweepPhase.done
+          workTapes := fun j q =>
+            if j = i ∧ d.workTapePos j ≤ q ∧ q < d.workTapePos j + (w.length : ℤ)
+              then none
+            else d.workTapes j q } ∧
+      (∀ t < 2 * w.length + 2,
+        ((clearTM k i).runFrom d t).state ≠ some SweepPhase.done) ∧
+      (∀ (j : Fin k) (t : ℕ), t ≤ 2 * w.length + 2 →
+        if j = i then
+          ((clearTM k i).runFrom d t).workTapePos j ∈
+            Finset.Icc (d.workTapePos j - 1) (d.workTapePos j + (w.length : ℤ))
+        else ((clearTM k i).runFrom d t).workTapePos j = d.workTapePos j) := by
+  exact clearTM_run_ofCfg (Symbol := Bool) (k := k) (x := x) (i := i) (w := w) (d := d) (hstate := hstate) (hw := hw)
+end
+end Turing
+

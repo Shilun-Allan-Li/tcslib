@@ -1,0 +1,208 @@
+/-!
+# U2 gate, consumer probe: the time hierarchy's chain to `Diagonal.lean`'s `SelfSimulator`
+
+A probe, not a landing. It is elaborated after the bodies of Diagonal Part 1 (as in its gate)
+and of the U2 unit's `Codes2Tape` and `UniversalK`. It shows, with **G5's interface as an
+explicit hypothesis** (`G5Interface`, never a `sorry`):
+
+1. the two-tape `SelfSimulator logOverhead` built from U2-U at `k = 2` over the sorry-free
+   effective two-tape scheme (`twoTapeSelfSimulator`);
+2. the time hierarchy at `f log f` and its book form from it, through Diagonal Part 1's
+   `DiagSimulator.time_hierarchy` (`time_hierarchy_log`, `time_hierarchy_book`);
+3. fit examples: U2-E at `k = 1` is `Turing.universal`'s statement; U2-U and U2-E at `k = 0`;
+   B6's statements are the unit's own `k = 1` corollaries (proved in `SelfUniversal`).
+
+The probe-local lemmas (`exists_code2TM`, `logOverhead_mul_le` and its helpers) are end-of-chain
+material, not part of this gate.
+-/
+
+namespace Turing.U2ConsumerProbe
+
+open Turing Turing.FinTM Complexity Complexity.TimeHierarchy
+
+/-- **G5's interface** (forwarded to G5's statement phase, function-level form): every binary
+machine computing `f` within `T` has a two-work-tape binary equivalent within
+`c · (T + 1)(log₂(T + 1) + 1)`. Here a hypothesis, not a `sorry`. -/
+def G5Interface : Prop :=
+  ∀ (M : FinTM Bool) (f : List Bool → List Bool) (T : ℕ → ℕ), M.ComputesFunInTime f T →
+    ∃ (M' : FinTM Bool) (c : ℕ), M'.k = 2 ∧
+      M'.ComputesFunInTime f fun n => c * ((T n + 1) * (Nat.log 2 (T n + 1) + 1))
+
+/-- The two-tape coding step (probe-local; the mirror of `Turing.exists_codeTM`). -/
+theorem exists_code2TM (M : FinTM Bool) (hk : M.k = 2) :
+    ∃ M' : Code2TM, ∀ (x output : List Bool) (t : ℕ),
+      M'.toFinTM.ComputesInTime x output t ↔ M.ComputesInTime x output t := by
+  classical
+  rcases M with @⟨k, Q, hQ, dQ, tm⟩
+  dsimp only at hk
+  subst k
+  letI : Fintype Q := hQ
+  letI : DecidableEq Q := dQ
+  have hcard : Fintype.card Q = (Fintype.card Q - 1) + 1 := by
+    have : 0 < Fintype.card Q := Fintype.card_pos_iff.mpr ⟨tm.q₀⟩
+    omega
+  let e := Fintype.equivFinOfCardEq hcard
+  refine ⟨⟨Fintype.card Q - 1, tm.relabelState e⟩, ?_⟩
+  intro x output t
+  simp only [Code2TM.toFinTM, FinTM.ComputesInTime, MultiTapeTM.ComputesInTimeAndSpace,
+    MultiTapeTM.relabelState_runFrom_init, Cfg.mapState, Option.map_eq_none_iff]
+  constructor
+  · rintro ⟨s, hhalt, hout, -⟩
+    exact ⟨_, hhalt, hout, rfl⟩
+  · rintro ⟨s, hhalt, hout, -⟩
+    exact ⟨_, hhalt, hout, rfl⟩
+
+/-- The Hennie–Stearns overhead `(t + 1)(log₂(t + 1) + 1)`. -/
+def logOverhead (t : ℕ) : ℕ := (t + 1) * (Nat.log 2 (t + 1) + 1)
+
+theorem log_mul_two_pow {n : ℕ} (hn : n ≠ 0) (m : ℕ) :
+    Nat.log 2 (n * 2 ^ m) = Nat.log 2 n + m := by
+  induction m with
+  | zero => simp
+  | succ m ih =>
+    rw [pow_succ, ← Nat.mul_assoc, Nat.log_mul_base (by norm_num) (by positivity), ih]
+    ring
+
+theorem logOverhead_mul_le (c₀ T : ℕ) :
+    logOverhead (c₀ * T) ≤ (c₀ + 1) * (Nat.log 2 (c₀ + 1) + 2) * logOverhead T := by
+  unfold logOverhead
+  set m := Nat.log 2 (c₀ + 1) + 1 with hm
+  have hc : c₀ + 1 < 2 ^ m := Nat.lt_pow_succ_log_self (by norm_num) _
+  have h1 : c₀ * T + 1 ≤ (c₀ + 1) * (T + 1) := by nlinarith
+  have h2 : c₀ * T + 1 ≤ (T + 1) * 2 ^ m := by nlinarith
+  have hlog : Nat.log 2 (c₀ * T + 1) ≤ Nat.log 2 (T + 1) + m := by
+    calc Nat.log 2 (c₀ * T + 1) ≤ Nat.log 2 ((T + 1) * 2 ^ m) := Nat.log_mono_right h2
+      _ = Nat.log 2 (T + 1) + m := log_mul_two_pow (by omega) m
+  have h3 : Nat.log 2 (c₀ * T + 1) + 1 ≤ (m + 1) * (Nat.log 2 (T + 1) + 1) := by nlinarith
+  calc (c₀ * T + 1) * (Nat.log 2 (c₀ * T + 1) + 1)
+      ≤ ((c₀ + 1) * (T + 1)) * ((m + 1) * (Nat.log 2 (T + 1) + 1)) := Nat.mul_le_mul h1 h3
+    _ = (c₀ + 1) * (m + 1) * ((T + 1) * (Nat.log 2 (T + 1) + 1)) := by ring
+
+/-- The two-tape scheme of the hierarchy (sorry-free; no uniformity is needed). -/
+noncomputable def code₂ : EffectiveMachineCode2 := Classical.choice exists_effectiveMachineCode2
+
+/-- **The two-tape self-simulator**: U2-U at `k = 2` over `code₂`, with G5 and the coding step
+as its normal form. -/
+noncomputable def twoTapeSelfSimulator (hG5 : G5Interface) : SelfSimulator logOverhead where
+  W := Classical.choose (exists_selfUniversalK 2 code₂.toK)
+  decode α := (code₂.decode α).toFinTM
+  simulates α := by
+    obtain ⟨C, _, hC⟩ := Classical.choose_spec (exists_selfUniversalK 2 code₂.toK) α
+    refine ⟨C, fun w b t h => ?_⟩
+    have h' := ((hC w).1 [b] t (by rw [EffectiveMachineCode2.toK_toFinTM]; exact h)).1
+    exact h'.mono (Nat.mul_le_mul_left C (by omega))
+  normalForm T L := by
+    rintro ⟨c₀, M, hM⟩
+    obtain ⟨M₁, c₁, hk, h₁⟩ := hG5 M
+      (fun x => [MultiTapeTM.indicator (L : Set (List Bool)) x]) (fun n => c₀ * T n) hM
+    obtain ⟨N, hN⟩ := exists_code2TM M₁ hk
+    refine ⟨code₂.encode N, c₁ * ((c₀ + 1) * (Nat.log 2 (c₀ + 1) + 2)), fun x => ?_⟩
+    rw [show code₂.decode (code₂.encode N) = N from code₂.toMachineCode2.decode_encode N]
+    apply ((hN x _ _).2 (h₁ x)).mono
+    have := Nat.mul_le_mul_left c₁ (logOverhead_mul_le c₀ (T x.length))
+    show c₁ * ((c₀ * T x.length + 1) * (Nat.log 2 (c₀ * T x.length + 1) + 1)) ≤ _
+    refine this.trans ?_
+    rw [Nat.mul_assoc c₁]
+    exact Nat.mul_le_mul_left c₁ (Nat.mul_le_mul_left _ (Nat.le_succ _))
+
+theorem logOverhead_add_le (t n : ℕ) :
+    logOverhead t + n + 1 ≤ 2 * ((t + n + 1) * (Nat.log 2 (t + n + 1) + 1)) := by
+  unfold logOverhead
+  have hlog : Nat.log 2 (t + 1) ≤ Nat.log 2 (t + n + 1) := Nat.log_mono_right (by omega)
+  have h1 : (t + 1) * (Nat.log 2 (t + 1) + 1) ≤ (t + n + 1) * (Nat.log 2 (t + n + 1) + 1) :=
+    Nat.mul_le_mul (by omega) (by omega)
+  nlinarith
+
+theorem le_logDiagOverhead (t n : ℕ) : t ≤ (t + n + 1) * (Nat.log 2 (t + n + 1) + 1) := by
+  nlinarith
+
+/-- **The time hierarchy at `f log f`**, through Diagonal Part 1, modulo G5 (a hypothesis) and
+U2-U (the gate's sorried contract). -/
+theorem time_hierarchy_log (hG5 : G5Interface) {f g : ℕ → ℕ} (hg : TimeConstructible g)
+    (hfg : ∀ A : ℕ, ∃ N, ∀ n ≥ N,
+      A * ((f n + n + 1) * (Nat.log 2 (f n + n + 1) + 1)) ≤ g n) :
+    DTIME f ⊂ DTIME (fun n => g n + 1) :=
+  ((twoTapeSelfSimulator hG5).toDiagSimulator.mono 2 logOverhead_add_le).time_hierarchy
+    le_logDiagOverhead hg hfg
+
+/-- `(f + n + 1)(log₂(f + n + 1) + 1) ≤ 12 · f · log₂ f` for `2 ≤ n ≤ f`. -/
+theorem le_book {f n : ℕ} (hn : 2 ≤ n) (hf : n ≤ f) :
+    (f + n + 1) * (Nat.log 2 (f + n + 1) + 1) ≤ 12 * (f * Nat.log 2 f) := by
+  have hf2 : 2 ≤ f := le_trans hn hf
+  have hlog1 : 1 ≤ Nat.log 2 f := Nat.le_log_of_pow_le (by norm_num) (by simpa using hf2)
+  have h3 : f + n + 1 ≤ f * 2 * 2 := by omega
+  have hlog : Nat.log 2 (f + n + 1) ≤ Nat.log 2 f + 2 := by
+    calc Nat.log 2 (f + n + 1) ≤ Nat.log 2 (f * 2 * 2) := Nat.log_mono_right h3
+      _ = Nat.log 2 f + 2 := by
+        rw [Nat.log_mul_base (by norm_num) (by omega),
+          Nat.log_mul_base (by norm_num) (by omega)]
+  calc (f + n + 1) * (Nat.log 2 (f + n + 1) + 1) ≤ (3 * f) * (4 * Nat.log 2 f) :=
+        Nat.mul_le_mul (by omega) (by omega)
+    _ = 12 * (f * Nat.log 2 f) := by ring
+
+/-- **The book form** [AB09, Theorem 3.1], modulo G5 and U2-U. -/
+theorem time_hierarchy_book (hG5 : G5Interface) {f g : ℕ → ℕ} (hg : TimeConstructible g)
+    (hf : ∀ n, n ≤ f n) (hfg : ∀ A : ℕ, ∃ N, ∀ n ≥ N, A * (f n * Nat.log 2 (f n)) ≤ g n) :
+    DTIME f ⊂ DTIME (fun n => g n + 1) := by
+  refine time_hierarchy_log hG5 hg fun A => ?_
+  obtain ⟨N, hN⟩ := hfg (12 * A)
+  refine ⟨max N 2, fun n hn => ?_⟩
+  have h := hN n (le_of_max_le_left hn)
+  have hb := le_book (le_of_max_le_right hn) (hf n)
+  calc A * ((f n + n + 1) * (Nat.log 2 (f n + n + 1) + 1)) ≤ A * (12 * (f n * Nat.log 2 (f n))) :=
+        Nat.mul_le_mul_left A hb
+    _ = 12 * A * (f n * Nat.log 2 (f n)) := by ring
+    _ ≤ g n := h
+
+/-! ## Fit examples -/
+
+/-- U2-E at `k = 1` has `Turing.universal`'s statement, verbatim (the U-1 re-derivation's
+statement-level fit; the proof swap is deferred). -/
+example (c : EffectiveMachineCode) :
+    ∃ U : FinTM Bool, ∀ α : List Bool, ∃ C : ℕ, ∀ x : List Bool,
+      (∀ (output : List Bool) (t : ℕ),
+        (c.decode α).toFinTM.ComputesInTime x output t →
+        U.ComputesInTime (pairEncode α x) output (C * (t + 1))) ∧
+      (∀ output : List Bool,
+        (∃ t, U.ComputesInTime (pairEncode α x) output t) →
+        ∃ t, (c.decode α).toFinTM.ComputesInTime x output t) :=
+  universalK 1 c.toK
+
+/-- The statements at `k = 0` (machines without work tapes) are well-formed instances. -/
+example (E : EffectiveCodeK 0) := exists_selfUniversalK 0 E
+example (E : EffectiveCodeK 0) := universalK 0 E
+example (E : EffectiveCodeK 0) := exists_selfStartupTMK 0 E
+
+end Turing.U2ConsumerProbe
+
+/-! Cited declarations of the unit's docstrings and sketches exist (their types print). -/
+#check @Turing.universalCanonTM
+#check @Turing.universalCaptureTM
+#check @Turing.universalCanon_complete
+#check @Turing.FinTM.timed_rewind
+#check @Turing.MultiTapeTM.spaceUsed_le_mul_succ
+#check @Turing.universal_pair_length
+#check @Turing.exists_rulerHostTM
+#check @Turing.RulerAt
+#check @Turing.NativeAt
+#check @Turing.Lockstep
+#check @Turing.Lockstep.runFrom
+#check @Turing.Lockstep.cut
+#check @Turing.StepBlock.Rep
+#check @Turing.StepBlock.roundTM_effect
+#check @Turing.StepBlock.roundTM_firstExit_unique
+#check @Turing.StepBlock.roundTM_visited
+#check @Turing.StepBlock.summaryEmit_none
+#check @Turing.MultiTapeTM.visitedByTapeHead_add_subset
+#check @Turing.oneTapeMachineFormat
+#check @Turing.serializeK
+#check @Complexity.TimeHierarchy.SelfSimulator
+#check @Complexity.TimeHierarchy.DiagSimulator.time_hierarchy
+
+/-! Axioms: the chain carries `sorryAx` only through U2-U (the gate's sorried contract); G5 is a
+hypothesis. -/
+#print axioms Turing.U2ConsumerProbe.exists_code2TM
+#print axioms Turing.U2ConsumerProbe.logOverhead_mul_le
+#print axioms Turing.U2ConsumerProbe.twoTapeSelfSimulator
+#print axioms Turing.U2ConsumerProbe.time_hierarchy_log
+#print axioms Turing.U2ConsumerProbe.time_hierarchy_book

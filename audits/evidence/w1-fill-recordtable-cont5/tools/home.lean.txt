@@ -1,0 +1,190 @@
+/-! ### Initial-record fill, continuation 5 (pre-ship: prescribed home) -/
+
+/-- (Prescribed, proved.) Row 17 on an R1-selected bank of a larger rich host. The
+template's destination is `ι 0`, its radius `ι 1`, and its other tapes `ι j`, `2 ≤ j`,
+blank; the unselected host tapes, the host's prior output and every head are kept.
+
+**Proof sketch.** Select the bank (`Turing.Cfg.select`: output `[]`, the host's output as
+the R1 prefix); the host is the embedding of its selection (`Turing.embedEmitCfg_select`).
+Run `exists_recordTemplateTM` on the selection, transport its run, cut and envelope by
+`embedEmitTM_runFrom` and `rt_embed_radius`, and identify the endpoint by the public R1
+reconstruction lemma `Turing.embedEmitCfg_eq`. -/
+private theorem rt_exists_scratchTemplateTM (Q T : Type) [Fintype Q] [DecidableEq Q]
+    [Fintype T] [DecidableEq T] :
+    ∃ (K : ℕ) (P : Type) (_ : Fintype P) (_ : DecidableEq P)
+      (R : MultiTapeTM (K + 2) (RecSym Q T) P) (entry exit : P) (C : ℕ),
+      ∀ {k : ℕ} (ι : Fin (K + 2) ↪ Fin k) {x : List Bool} (s : ℕ) (ws : List Bool),
+        Nat.ofDigits 2 (ws.map Bool.toNat) = s →
+      ∀ d : Cfg k (RecSym Q T) P (x.map (RecSym.digitEmb Q T)),
+        d.state = some entry → d.inputPos = 1 →
+        (∀ p : ℤ, -1 ≤ p → p ≤ (ws.length : ℤ) →
+          d.workTapes (ι 1) (d.workTapePos (ι 1) + p) =
+            FinTM.bufferTape (ws.map RecSym.digit) p) →
+        (∀ p : ℤ, -1 ≤ p → p ≤ ((joinFields (recordTemplate Q T x.length s)).length : ℤ) →
+          d.workTapes (ι 0) (d.workTapePos (ι 0) + p) = none) →
+        (∀ j : Fin (K + 2), 2 ≤ j.val → ∀ p, d.workTapes (ι j) p = none) →
+        ∃ t ≤ C * ((joinFields (recordTemplate Q T x.length s)).length + ws.length +
+            x.length + 1),
+          (∀ u < t, ((embedEmitTM ι R).runFrom d u).state ≠ some exit) ∧
+          (∀ u ≤ t, ∀ j : Fin k,
+            |((embedEmitTM ι R).runFrom d u).workTapePos j - d.workTapePos j| ≤
+              ((C * ((joinFields (recordTemplate Q T x.length s)).length + ws.length + 1) :
+                ℕ) : ℤ)) ∧
+          (embedEmitTM ι R).runFrom d t =
+            { d with
+              state := some exit
+              workTapes := fun j q =>
+                if j = ι 0 ∧ d.workTapePos j ≤ q ∧
+                    q < d.workTapePos j + ((joinFields (recordTemplate Q T x.length s)).length : ℤ)
+                  then fieldsTape (recordTemplate Q T x.length s) (q - d.workTapePos j)
+                else d.workTapes j q } := by
+  obtain ⟨K, P, fin, eq, R, en, ex, C, bound⟩ := exists_recordTemplateTM Q T
+  refine ⟨K, P, fin, eq, R, en, ex, C, ?_⟩
+  intro k ι x s ws value d state input radius slot blank
+  let a := d.select ι
+  have initial : embedEmitCfg ι d.workTapes d.workTapePos d.output a = d :=
+    embedEmitCfg_select ι d
+  obtain ⟨t, cost, first, heads, run⟩ := bound s ws value a state input radius slot blank
+  have transport (u : ℕ) :
+      (embedEmitTM ι R).runFrom d u =
+        embedEmitCfg ι d.workTapes d.workTapePos d.output (R.runFrom a u) := by
+    rw [← embedEmitTM_runFrom ι R d.workTapes d.workTapePos d.output a u, initial]
+  refine ⟨t, cost, ?_, ?_, ?_⟩
+  · intro u hu
+    rw [transport u]
+    exact first u hu
+  · intro u hu j
+    have h := rt_embed_radius ι R d.workTapes d.workTapePos d.output a t _ (by positivity)
+      heads u hu j
+    rwa [initial] at h
+  · rw [transport t, run]
+    apply embedEmitCfg_eq ι
+    · rfl
+    · rfl
+    · simp [a, Cfg.select]
+    · intro i
+      refine ⟨?_, rfl⟩
+      funext q
+      simp only [a, Cfg.select, EmbeddingLike.apply_eq_iff_eq]
+    · intro j off
+      have ne : j ≠ ι 0 := fun h => off ⟨0, h.symm⟩
+      exact ⟨by funext q; simp only [ne, false_and, if_false], rfl⟩
+
+/-- (Prescribed, proved.) The digits of `1` at a positive width: a leading `true`,
+then `false`s.
+
+**Proof sketch.** `List.range (w + 1)` is `0` followed by the successors; bit `0` of
+`1` is set and every higher bit is clear. -/
+private theorem rt_binDigits_one (w : ℕ) (hw : 0 < w) :
+    binDigits w 1 = true :: List.replicate (w - 1) false := by
+  obtain ⟨v, rfl⟩ : ∃ v, w = v + 1 := ⟨w - 1, by omega⟩
+  rw [binDigits, List.range_succ_eq_map, List.map_cons, List.map_map, Nat.add_sub_cancel]
+  congr 1
+  apply List.ext_getElem
+  · simp
+  · intro j h₁ h₂
+    simp [Nat.testBit_succ]
+
+/-- (Prescribed, proved.) The initial record in the words the route writes: the state
+cell, the digits of `1` at the width of row 17's bound field `Nat.bits (|x| + 1)`, `k`
+copies of row 17's window field, and the tag cell.
+
+**Proof sketch.** `Turing.cfgRecord_init`, then `rt_binDigits_one` at the positive
+width and `rt_centeredWord` for the window. -/
+private theorem rt_initRecord_fields {k : ℕ} {Q T : Type} (x : List Bool) (s : ℕ) (q₀ : Q)
+    (τ₀ : T) :
+    cfgRecord s (Cfg.init q₀ x : Cfg k Bool Q x) τ₀ =
+      [RecSym.st (some q₀)] ::
+        (RecSym.digit true ::
+          List.replicate ((x.length + 1).bits.length - 1) (RecSym.digit false)) ::
+          (List.replicate k
+              ((List.replicate s false ++ true :: List.replicate s false).map
+                (RecSym.cell none)) ++
+            [[RecSym.tag τ₀]]) := by
+  have width : 0 < posWidth x.length := by
+    simpa only [posWidth, Nat.size_eq_bits_len] using
+      (Nat.size_pos.mpr (Nat.succ_pos x.length))
+  rw [cfgRecord_init, rt_binDigits_one _ width, rt_centeredWord]
+  simp only [List.map_cons, List.map_replicate, posWidth]
+
+/-! The tail writer below is the brief's *suggested* shape (not binding), modelled on the
+frozen recursive copier `rt_copyMachine`: `k` copies of a source field, each crossed, then
+a one-cell last field, with the destination head returned. Its definitions elaborate; its
+contract `rt_tail_run` is a sorried guard of the suggested statement. -/
+
+/-- (Suggested.) The tail writer's finite control, by recursion on the copy count. -/
+private def rt_tailState : ℕ → Type
+  | 0 => WritePhase 1
+  | k + 1 => SweepPhase ⊕ (SeekPhase ⊕ (rt_tailState k ⊕ SeekPhase))
+
+/-- (Suggested.) The tail writer's control is finite. -/
+private instance rt_tailState_fintype : (k : ℕ) → Fintype (rt_tailState k)
+  | 0 => inferInstanceAs (Fintype (WritePhase 1))
+  | k + 1 => by
+    letI := rt_tailState_fintype k
+    change Fintype (SweepPhase ⊕ (SeekPhase ⊕ (rt_tailState k ⊕ SeekPhase)))
+    infer_instance
+
+/-- (Suggested.) The tail writer's control has decidable equality. -/
+private instance rt_tailState_decidableEq : (k : ℕ) → DecidableEq (rt_tailState k)
+  | 0 => inferInstanceAs (DecidableEq (WritePhase 1))
+  | k + 1 => by
+    letI := rt_tailState_decidableEq k
+    change DecidableEq (SweepPhase ⊕ (SeekPhase ⊕ (rt_tailState k ⊕ SeekPhase)))
+    infer_instance
+
+/-- (Suggested.) The tail writer's entry. -/
+private def rt_tailEntry : (k : ℕ) → rt_tailState k
+  | 0 => .wr 0
+  | _ + 1 => .inl .sweep
+
+/-- (Suggested.) The tail writer's exit. -/
+private def rt_tailExit : (k : ℕ) → rt_tailState k
+  | 0 => .done
+  | _ + 1 => .inr (.inr (.inr .done))
+
+/-- (Suggested.) Write `k` copies of the field under the head of `src`, each crossed on
+`dst`, then the one-cell field `[last]`, and return the head of `dst`. Catalog rows and
+R2 seams only, as `rt_copyMachine`. -/
+private def rt_tailTM {Γ : Type*} (m : ℕ) (src dst : Fin m) (last : Γ) :
+    (k : ℕ) → MultiTapeTM m Γ (rt_tailState k)
+  | 0 => writeConstTM m dst [last]
+  | k + 1 =>
+    seamCompTM (copyTM m src dst) .done
+      (seamCompTM (skipTM m dst) .done
+        (seamCompTM (rt_tailTM m src dst last k) (rt_tailExit k) (skipBackTM m dst) .run)
+        (.inl (rt_tailEntry k)))
+      (.inl .run)
+
+/-- (Suggested guard; the statement elaborates, the proof is the fill's.) The tail
+writer's framed contract.
+
+**Proof sketch.** Induct on `k`. Zero: `Turing.writeConstTM_run_ofCfg`. Successor: the
+public copy contract writes the field (the source frame is intact), `skipTM_run_ofCfg`
+crosses it (the slot supplies its right delimiter), the induction hypothesis writes the
+rest one cell further on, and `skipBackTM_run_ofCfg` returns the head (the slot supplies
+the left delimiter). Join by `rt_copy_seam`; `fieldsTape_field` splits the layout. -/
+private theorem rt_tail_run {Γ : Type*} {m : ℕ} {x : List Γ} (src dst : Fin m)
+    (different : src ≠ dst) (last : Γ) (w : List Γ) (k : ℕ)
+    (d : Cfg m Γ (rt_tailState k) x) (entry : d.state = some (rt_tailEntry k))
+    (source : ∀ p : ℤ, -1 ≤ p → p ≤ (w.length : ℤ) →
+      d.workTapes src (d.workTapePos src + p) = FinTM.bufferTape w p)
+    (slot : ∀ p : ℤ, -1 ≤ p →
+      p ≤ ((joinFields (List.replicate k w ++ [[last]])).length : ℤ) →
+      d.workTapes dst (d.workTapePos dst + p) = none) :
+    ∃ t ≤ (k + 1) * (4 * w.length + 12),
+      (∀ u < t, ((rt_tailTM m src dst last k).runFrom d u).state ≠ some (rt_tailExit k)) ∧
+      (∀ u ≤ t, ∀ j,
+        |((rt_tailTM m src dst last k).runFrom d u).workTapePos j - d.workTapePos j| ≤
+          ((joinFields (List.replicate k w ++ [[last]])).length : ℤ) + 1) ∧
+      (rt_tailTM m src dst last k).runFrom d t =
+        { d with
+          state := some (rt_tailExit k)
+          workTapes := fun j q =>
+            if j = dst ∧ d.workTapePos j ≤ q ∧
+                q < d.workTapePos j + ((joinFields (List.replicate k w ++ [[last]])).length : ℤ)
+              then fieldsTape (List.replicate k w ++ [[last]]) (q - d.workTapePos j)
+            else d.workTapes j q } := by
+  -- Proof sketch: as in the docstring (pre-ship guard only).
+  sorry
+

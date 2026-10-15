@@ -1,0 +1,51 @@
+
+/-! ## Sanity checks of the mirror (probe only; not part of any landing module) -/
+
+namespace Light.Probe
+
+open Light
+
+-- a coin then emitting it: output [true], consumed [true], cost 1 + 2
+example (lim : XLimits) (P : XProgram) (σ : State) :
+    ∃ σ', XExec lim P 0 (.seq (.coin 0) (.emit (.var 0))) σ σ' [true] [true] (1 + 2) :=
+  ⟨_, .seq (.coin true) (.emit trivial)⟩
+
+-- the other coin outcome emits false
+example (lim : XLimits) (P : XProgram) (σ : State) :
+    ∃ σ', XExec lim P 0 (.seq (.coin 0) (.emit (.var 0))) σ σ' [false] [false] (1 + 2) :=
+  ⟨_, .seq (.coin false) (.emit trivial)⟩
+
+-- inBit reads the input field of the limits; off the input and at negative positions it reads 0
+example : inBitVal [false, true] 1 = 1 := by decide
+example : inBitVal [false, true] 0 = 0 := by decide
+example : inBitVal [false, true] 2 = 0 := by decide
+example : inBitVal [false, true] (-1) = 0 := by decide
+
+-- half rounds down, as WordRAM's arithmetic shift does
+example : ((-3 : ℤ) / 2) = -2 := by decide
+example : ((-1 : ℤ) / 2) = -1 := by decide
+
+-- EndsIO of a coin under a stream that starts with true
+example (lim : XLimits) (P : XProgram) (σ : State) :
+    EndsIO lim P 0 (.coin 3) σ [true, false] 1 fun σ' _ r => σ'.loc 3 = 1 ∧ r = [true] :=
+  ⟨_, [], [true], 1, .coin true, ⟨[false], rfl⟩, le_rfl, by simp, rfl⟩
+
+-- adversarial: under the empty stream a coin has no EndsIO run at all
+example (lim : XLimits) (P : XProgram) (σ : State) (T : ℕ) :
+    ¬ EndsIO lim P 0 (.coin 3) σ [] T fun _ _ _ => True := by
+  rintro ⟨σ', o, r, c, h, hr, -, -⟩
+  cases h with
+  | coin b => exact absurd (List.prefix_nil.mp hr) (by simp)
+
+-- I/O-freeness: inBit and half are I/O-free, emit and coin are not
+example : (XStmt.seq (.inBit 0 (.var 1)) (.half 0 (.var 0))).IOFree := ⟨trivial, trivial⟩
+example : ¬ (XStmt.seq .skip (.emit (.var 0))).IOFree := fun h => h.2
+example : ¬ (XStmt.while (.lt (.var 0) (.var 1)) (.coin 0)).IOFree := fun h => h
+
+-- the conservativity map on a vendored statement
+example : XStmt.ofStmt (.seq .skip (.set 0 (.const 1))) = .seq .skip (.set 0 (.const 1)) := rfl
+
+-- the outermost statement has the text of the vendored `mainStmt` (`ProgramCode.lean:77`)
+example (p0 : ℕ) : xmainStmt p0 = XStmt.ofStmt (.call p0 [.var 1, .var 2] 0) := rfl
+
+end Light.Probe

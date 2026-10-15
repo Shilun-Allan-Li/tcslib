@@ -1,0 +1,45 @@
+# fidelity-r2.py negative controls (python3 -I); expected verdict FAIL (exit 1) for each
+# draft: StepBlockDraft-r2.lean, mutated by negctl.py; checkout wt-r2h2 at 1781a230
+
+## N1: 2 changed lines
+FAIL DIFFER h1RecordWidth -> recordWidth (abbrev, full) at char 42:
+SUMMARY: 57 match, 1 failing checks; inventory 58 copied + 6 additive expected, 64 declared
+exit status: 1
+
+## N2: 2 changed lines
+FAIL DIFFER h1Round_effect -> roundTM_effect (theorem, statement) at char 377:
+SUMMARY: 57 match, 1 failing checks; inventory 58 copied + 6 additive expected, 64 declared
+exit status: 1
+
+## N3: 2 changed lines
+FAIL DIFFER h1Round_effect -> roundTM_effect (theorem, statement) at char 1138:
+SUMMARY: 57 match, 1 failing checks; inventory 58 copied + 6 additive expected, 64 declared
+exit status: 1
+
+## N4: 27 changed lines
+FAIL missing copied declaration: recordSkipTM_spec (original h1Skip_spec)
+SUMMARY: 57 match, 1 failing checks; inventory 58 copied + 6 additive expected, 63 declared
+exit status: 1
+
+## N5: 3 changed lines
+FAIL unexpected declaration in draft: extra_sanity
+SUMMARY: 58 match, 1 failing checks; inventory 58 copied + 6 additive expected, 65 declared
+exit status: 1
+
+## N6: 7 changed lines
+FAIL duplicate declaration in draft: inputRank (2 times)
+SUMMARY: 57 match, 1 failing checks; inventory 58 copied + 6 additive expected, 64 declared
+exit status: 1
+
+## N7: 26 changed lines
+FAIL roundTM_firstExit_unique contains `sorry` but is not one of the seven contracts
+SUMMARY: 58 match, 1 failing checks; inventory 58 copied + 6 additive expected, 64 declared
+exit status: 1
+
+## Baseline: the round-1 script (audits/evidence/h2/fidelity.py.txt) on mutations
+N1: 1 DIFFER; SUMMARY: 57 match, 1 differ; exit status: 0
+N2: 1 DIFFER; SUMMARY: 57 match, 1 differ; exit status: 0
+N5: 0 DIFFER; SUMMARY: 58 match, 0 differ; exit status: 0
+(round-1 behaviour, finding 6: DIFFER yet exit 0; the unexpected extra_sanity is labelled ADDITIVE)
+
+NEGATIVE CONTROLS: PASS (all seven fail as expected)

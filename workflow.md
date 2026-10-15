@@ -58,7 +58,10 @@ not ready to land). Ground rules:
   with the proofs declared part of the audited surface.
 * Sketches name their obligations: a sketch that will need a machine construction
   names each sub-machine as an explicit fill obligation, so the eventual brief can
-  inherit the list.
+  inherit the list. It also names every **host** the route needs (policy §1, **Hosts come
+  first**), from the registry in `machine-library-design.md` §14. A sketch that needs an
+  unregistered host is not ready: the host's public contract is a statement-phase item of
+  its own, gated before the consumer's fill.
 * Everything gate-verifies before commit: per-module checks plus a full fresh sweep
   (§6), style lint, and the headline axiom prints.
 
@@ -69,8 +72,8 @@ runs before any fill or any next phase. The auditor is an LLM from a different v
 in a fresh context, reviewing the trusted surface (definitions, statements, sketches,
 and any skeleton-time proofs) against the source text.
 
-**Artifacts**, all committed under `audits/` with campaign-scoped names
-(`ch2-phase1-*`, `epoch4-*`):
+**Artifacts**, committed under `audits/` with campaign-scoped names
+(`ch2-phase1-*`, `epoch4-*`), except the bundle:
 
 * `…-pack.md` — the auditor's instructions: the audited commit, repository-side
   attestations (freeze by path enumeration, sweep results, admission inventory, axiom
@@ -82,7 +85,10 @@ and any skeleton-time proofs) against the source text.
   **note**. `audits/TEMPLATE.md` is the skeleton.
 * `…-bundle.md` — a single uploadable file: the pack verbatim, then every attachment
   under a `## ===== <path> =====` header (prior findings, both plans, `policy.md`,
-  the root, and the full module tree).
+  the root, and the full module tree). **Not committed** (user, 2026-10-15): it is kept
+  in the local dispatch folder, and the resolutions record its SHA-256 and section
+  count. Bundles committed before then are indexed in `audits/BUNDLES.md`, with how to
+  retrieve them from history.
 * A short kickoff message (drafted per round, pasted by the maintainer into a fresh
   auditor chat with the bundle attached).
 * `…-findings.md` — the auditor's report, preserved **verbatim**, including anything
@@ -111,25 +117,47 @@ ownership, from self-contained briefs in `briefs/`.
 
 1. **Exclusive file ownership.** Helpers live `private` in owned files; a lemma that
    belongs in a shared file is *requested* in the report and added serially at epoch
-   merge, flagged for the next audit.
+   merge, flagged for the next audit. **Hosts are the exception** (rule 4).
 2. **Statement freeze.** Audited declarations are never renamed, re-signatured, or
    re-stated by fill work. A target that looks unprovable as stated is an
    *escalation*, reported with the obstruction — never "fixed" inline.
 3. **Verification per batch**: the check script (§6) over the owned files, zero
    `error:` lines, sorries only at documented out-of-scope items.
+4. **Hosts first** (user, 2026-10-12; policy §1). A batch never builds a search,
+   recursion, interpreter, runner or input device as a private one-off. It cites the
+   registered public host its brief names. If the route turns out to need a host the
+   brief does not name, that is an escalation, reported with the contract the batch
+   would need; the batch continues on its other targets.
+
+**Hosts in briefs.** A fill brief is issued only when every host its route needs is
+registered (`machine-library-design.md` §14) and the host's statement gate has closed. The
+host's own fill may run in the same wave, in its own batch, with consumers citing it under
+the proved-modulo rule. The readiness check for any target lists the hosts it needs. A
+private host already in the tree is harvested (a promotion PR and its gate) before a second
+consumer is briefed against it.
 
 **Delivery is by zip, not PR.** Each batch returns an archive containing `REPORT.md`,
 the full source files, a `git format-patch` series, a git bundle, the batch's sweep
 log, the axiom-print log, and `SHA256SUMS`. The maintainer verifies before
 integrating: checksums; the statement freeze (comment-stripped comparison of every
 audited signature); enumeration of any removals; public-declaration drift; a full
-fresh sweep; the headline axiom prints. Integration is `git am -3` from the patch
-series, preserving the agent's authorship. Large fills that exhaust one agent's budget
+fresh sweep; the headline axiom prints; and the **duplication ledger** — every
+private copy of existing proved material in the delivery enumerated, with each
+touched file's cumulative copied-material count and fraction. If a delivery pushes a
+file past **one fifth copied material**, or adds copies to a file that already
+received copies in an earlier epoch, the maintainer opens a `backlog.md` §1
+human-review item before the epoch's audit pack ships — no discretion. Integration
+is `git am -3` from the patch series, preserving the agent's authorship. Large fills that exhaust one agent's budget
 continue via a continuation brief to a fresh agent (the `universal` B2 precedent).
 
 **Epoch boundaries**: the maintainer re-runs the full sweep, produces a **drift
-attestation** (§6), and prepares the epoch's audit pack with elaboration evidence;
-the epoch's gate follows the same zero-blockers/majors rule as phase gates.
+attestation** (§6), and prepares the epoch's audit pack with elaboration evidence
+and the epoch's **duplication ledger**, which the auditor verifies independently
+(audit template failure mode 5); the epoch's gate follows the same
+zero-blockers/majors rule as phase gates, and a debt major closes only by explicit
+human acknowledgment recorded in the resolutions file. Once a family is
+acknowledged, later corrections to its accounting are minors (audit template
+failure mode 5) and do not hold the gate; the ledger is still corrected.
 
 ## 5. Closure
 
@@ -176,6 +204,8 @@ pipeline detail).
 
 ## 7. Relationship to the other documents
 
+* [`ROADMAP.md`](ROADMAP.md) — a one-page orientation: the phases ahead and pointers to
+  the documents that hold the detail.
 * [`policy.md`](policy.md) — the standards this workflow enforces (modularity,
   attribution, sketches, review checklist).
 * [`lean-glossary.md`](lean-glossary.md) — the Lean/Mathlib jargon appearing in

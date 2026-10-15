@@ -1,0 +1,218 @@
+#!/usr/bin/env bash
+# H2-S round 2: regenerate every derived file and log from the draft and the checkout.
+# Read-only on the checkout; Lean only through tools/leanelab.sh; Python only as python3 -I.
+# Base: campaign commit 1781a230 (PR #84, fills-8) in wt-r2h2, oleans-f8 (all of TCSlib there).
+set -u
+S=${S:-<scratchpad>}
+WT=$S/wt-r2h2; OL=$S/oleans-f8; R=$S/r2-h2; W=$R/work; L=$R/logs
+cd "$R"
+D=Turing.Draft.StepBlock
+ADD=summaryEmit_none,visitedByTapeHead_add_subset,visitedByTapeHead_step_subset,roundTM_visited,roundTM_iterate,roundTM_firstExit_unique
+CONTRACTS="$D.recordTM_effect,$D.succFieldTM_run,$D.succFieldTM_cut,$D.succFieldTM_heads,$D.recordSkipTM_run,$D.recordSkipTM_spec,$D.roundTM_effect"
+# fills-8: H1's style cleanup rewrote the proof bodies of these 24 step-block declarations
+BODY24=h1Unary_step,h1Succ_heads,h1Action_split,h1Skip_run,h1Skip_path,h1Seek_request,h1Seek_many,h1Seek_stateStep,h1Seek_rank,h1Seek_groups,h1Seek_observe,h1ReadActions_at,h1Table_cut,h1Seek_lookup,h1Unary_read,h1Data_stateCell,h1Round_prepare,h1Buffer_reads,h1Round_payload,h1Buffer_suffix,h1Round_restore,h1Round_lookup,h1Round_canonical,h1Round_effect
+R1PROBE=$WT/audits/evidence/h2/MoveProbe.lean.txt
+rc_all=0
+note() { echo "$*"; }
+run() { "$@"; local rc=$?; [ $rc -ne 0 ] && rc_all=1; return $rc; }
+mkdir -p "$W" "$L"
+
+# 1. dependency manifest
+run python3 -I importclosure.py "$WT" "$L/import-graph.txt" > "$L/importclosure.out" 2>&1
+note "importclosure: $?"
+
+# 2. ownership manifest at the integration base, with the H2-M edits: the move file (proposed
+#    visibility), the post-move rehearsal, and the comparison with the round-1 dry run (stale:
+#    exactly the 24 cleaned-up proof bodies may differ, no statement)
+run python3 -I movemanifest.py "$WT" --visibility proposed --h2m-edits \
+  --emit-move "$W/MoveProbe-r2.lean" --emit-postmove "$W/PostMoveProbe.lean" \
+  --compare-to "$R1PROBE" --allow-body-diff "$BODY24" \
+  --draft StepBlockDraft-r2.lean --additive "$ADD" > "$L/movemanifest.out" 2>&1
+note "movemanifest: $?"
+# the same move without the H2-M edits (the alpha probes' reference text)
+run python3 -I movemanifest.py "$WT" --visibility proposed \
+  --emit-move "$W/MoveProbe-r2-unedited.lean" > "$L/movemanifest-unedited.out" 2>&1
+note "movemanifest (unedited move): $?"
+# the round-1 comparison without the allowance, for the record (expected: 12 FAILs)
+python3 -I movemanifest.py "$WT" --compare-to "$R1PROBE" > "$L/movemanifest-vs-r1-strict.out" 2>&1
+note "strict comparison with the round-1 probe: $(grep -c '^FAIL compare' "$L/movemanifest-vs-r1-strict.out") differing declarations"
+
+# 2b. negative control of the manifest: a simulated next integration base (mm-negctl.py),
+#     compared with this base's move
+rm -rf "$W/fakebase"; python3 -I mm-negctl.py "$WT" "$W/fakebase" > /dev/null
+{
+  echo "# movemanifest.py on a simulated integration base (mm-negctl.py: M1 a new h1 lemma, M2 a"
+  echo "# renamed and a tier-C reference in the headline, M3 one moved proof changed), compared with"
+  echo "# the move generated from 1781a230; expected: exit 1 and exactly 4 FAIL lines"
+  python3 -I movemanifest.py "$W/fakebase" --compare-to "$W/MoveProbe-r2-unedited.lean" 2>&1
+  echo "exit status: $?"
+} > "$L/movemanifest-negctl.log"
+nf=$(grep -c '^FAIL' "$L/movemanifest-negctl.log")
+{ grep -q '^exit status: 1$' "$L/movemanifest-negctl.log" && [ "$nf" -eq 4 ]; } || rc_all=1
+note "movemanifest negctl: $nf FAIL lines, $(tail -1 "$L/movemanifest-negctl.log")"
+
+# 3. probes: axiom-probe copy of the draft; move plus additives; alpha probes; CO-RF probe
+run python3 -I mkprobes.py StepBlockDraft-r2.lean "$W/MoveProbe-r2.lean" "$W/AxProbe-r2.lean" \
+  "$W/MovePlusAdditive-r2.lean" > "$L/mkprobes.out" 2>&1
+note "mkprobes: $?"
+run python3 -I mkalpha.py "$W/MoveProbe-r2.lean" "$W/MoveProbe-r2-unedited.lean" \
+  "$W/AlphaProbe.lean" "$W/AlphaNeg.lean" > "$L/mkalpha.out" 2>&1
+note "mkalpha: $?"
+python3 -I -c '
+import sys
+d = open(sys.argv[1], encoding="utf-8").read(); end = "\nend Turing.Draft.StepBlock\n"
+assert d.endswith(end)
+t = open(sys.argv[2], encoding="utf-8").read()
+open(sys.argv[3], "w", encoding="utf-8").write(d[:-len(end)] + "\n\n" + t)
+' StepBlockDraft-r2.lean ResetProbe-tail.lean.txt "$W/ResetProbe.lean"
+
+# 4. elaboration
+ELAB="StepBlockDraft-r2 AxProbe-r2 MovePlusAdditive-r2 PostMoveProbe ResetProbe AlphaProbe AlphaNeg"
+for b in $ELAB; do
+  if [ "$b" = StepBlockDraft-r2 ]; then f=$R/$b.lean; else f=$W/$b.lean; fi
+  start=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+  ( cd "$S" && bash "$S/tools/leanelab.sh" "$WT" "$OL" "$f" ) > "$W/$b.out" 2>&1
+  echo "$? $start" > "$W/$b.status"
+  note "elab $b: $(cut -d' ' -f1 "$W/$b.status")"
+done
+run python3 -I elabsummary.py "$W/StepBlockDraft-r2.out" --expect-errors 0 \
+  --expect-sorry-decls 7 --expect-other-warnings 0 > "$W/sum-StepBlockDraft-r2.txt"
+run python3 -I elabsummary.py "$W/AxProbe-r2.out" --expect-errors 0 --expect-sorry-decls 7 \
+  --expect-other-warnings 0 --expect-axiom-lines 64 \
+  --expect-sorryax "$CONTRACTS,$D.roundTM_visited,$D.roundTM_iterate,$D.roundTM_firstExit_unique" \
+  > "$W/sum-AxProbe-r2.txt"
+run python3 -I elabsummary.py "$W/MovePlusAdditive-r2.out" --expect-errors 0 \
+  --expect-sorry-decls 0 --expect-other-warnings 0 --expect-axiom-lines 127 \
+  --expect-sorryax "" > "$W/sum-MovePlusAdditive-r2.txt"
+run python3 -I elabsummary.py "$W/PostMoveProbe.out" --expect-errors 0 --expect-sorry-decls 2 \
+  --expect-other-warnings 0 > "$W/sum-PostMoveProbe.txt"
+run python3 -I elabsummary.py "$W/ResetProbe.out" --expect-errors 0 --expect-sorry-decls 7 \
+  --expect-other-warnings 0 --expect-axiom-lines 3 --expect-sorryax "" > "$W/sum-ResetProbe.txt"
+run python3 -I elabsummary.py "$W/AlphaProbe.out" --expect-errors 0 --expect-sorry-decls 9 \
+  --expect-other-warnings 0 > "$W/sum-AlphaProbe.txt"
+# the negative control must fail with exactly one error, at its reducible check
+python3 -I elabsummary.py "$W/AlphaNeg.out" --expect-errors 1 > "$W/sum-AlphaNeg.txt"
+{ [ "$(cut -d' ' -f1 "$W/AlphaNeg.status")" != 0 ] && grep -q "Tactic \`rfl\` failed" "$W/AlphaNeg.out" \
+  && grep -q '^expect errors = 1: PASS' "$W/sum-AlphaNeg.txt"; } || rc_all=1
+for b in $ELAB; do note "  summary $b: $(tail -1 "$W/sum-$b.txt")"; done
+
+# 5. fidelity: pass run (with the round-1 byte comparison) and the negative controls
+run python3 -I fidelity-r2.py "$WT" StepBlockDraft-r2.lean \
+  --r1 "$WT/audits/evidence/h2/StepBlockDraft.lean.txt" > "$L/fidelity-r2-pass.log" 2>&1
+note "fidelity pass: $?"
+rm -rf "$W/negctl"; python3 -I negctl.py StepBlockDraft-r2.lean "$W/negctl" > /dev/null
+cp "$WT/audits/evidence/h2/fidelity.py.txt" "$W/fidelity-r1.py"
+{
+  echo "# fidelity-r2.py negative controls (python3 -I); expected verdict FAIL (exit 1) for each"
+  echo "# draft: StepBlockDraft-r2.lean, mutated by negctl.py; checkout wt-r2h2 at 1781a230"
+  neg_ok=1
+  for n in N1 N2 N3 N4 N5 N6 N7; do
+    f=$W/negctl/StepBlockDraft-r2-$n.lean
+    echo; echo "## $n: $(diff StepBlockDraft-r2.lean "$f" | grep -c '^[<>]') changed lines"
+    python3 -I fidelity-r2.py "$WT" "$f" > "$W/negctl/$n.out" 2>&1; rc=$?
+    grep "^FAIL\|^SUMMARY" "$W/negctl/$n.out" | cut -c1-160
+    echo "exit status: $rc"; [ $rc -eq 1 ] || neg_ok=0
+  done
+  echo; echo "## Baseline: the round-1 script (audits/evidence/h2/fidelity.py.txt) on mutations"
+  for n in N1 N2 N5; do
+    python3 -I "$W/fidelity-r1.py" "$WT" "$W/negctl/StepBlockDraft-r2-$n.lean" \
+      > "$W/negctl/r1-$n.out" 2>&1; rc=$?
+    echo "$n: $(grep -c '^DIFFER' "$W/negctl/r1-$n.out") DIFFER; $(grep SUMMARY "$W/negctl/r1-$n.out"); exit status: $rc"
+  done
+  echo "(round-1 behaviour, finding 6: DIFFER yet exit 0; the unexpected extra_sanity is labelled ADDITIVE)"
+  echo; echo "NEGATIVE CONTROLS: $([ $neg_ok -eq 1 ] && echo 'PASS (all seven fail as expected)' || echo FAIL)"
+} > "$L/fidelity-r2-negctl.log"
+grep -q "NEGATIVE CONTROLS: PASS" "$L/fidelity-r2-negctl.log" || rc_all=1
+note "negctl: $(tail -1 "$L/fidelity-r2-negctl.log")"
+
+# 6. line lengths: the moved regions of the base (ranges as located by name in step 2), the
+#    round-1 probe and draft, the round-2 draft and the round-2 move with the H2-M edits
+CS=$WT/TCSlib/Complexity/TuringMachine/CodeSimulator.lean
+RANGES=$(sed -n '/## Moved regions/,/between/p' "$L/movemanifest.out" | \
+  sed -n 's/^  lines \([0-9]*-[0-9]*\):.*/\1/p' | paste -sd, -)
+python3 -I linelen.py "$CS:$RANGES" "$CS" "$R1PROBE" \
+  "$WT/audits/evidence/h2/StepBlockDraft.lean.txt" StepBlockDraft-r2.lean \
+  "$W/MoveProbe-r2-unedited.lean" "$W/MoveProbe-r2.lean" > "$L/linelen.out"
+# the fills-7 file (round 1's base), from the round-1 checkout, for finding 8's corrected counts
+F7=$S/wt-h2/TCSlib/Complexity/TuringMachine/CodeSimulator.lean
+if [ -f "$F7" ] && [ "$(shasum -a 256 "$F7" | cut -d' ' -f1)" = \
+    32272004733507a20fd4f5559a8d9b498e0cab5db76bdd1aa9c40b80fdb0e207 ]; then
+  { echo "# fills-7 CodeSimulator.lean (sha256 32272004...e207 = campaign 385d6e5a), round 1's moved ranges:"
+    python3 -I linelen.py "$F7:85-101,1950-1999,2039-4867" | sed "s#$S/wt-h2/#fills-7:#"; } >> "$L/linelen.out"
+fi
+note "linelen: moved ranges $RANGES"
+
+# 7. size analysis and the repository's style lint (on a copy: it resolves against its root)
+run python3 -I splitcost.py "$WT" > "$L/splitcost.out"
+rm -rf "$W/lint"; mkdir -p "$W/lint/scripts"
+cp "$WT/scripts/style_lint.py" "$W/lint/scripts/style_lint.py"
+cp StepBlockDraft-r2.lean "$W/lint/StepBlockDraft-r2.lean"
+( cd "$W/lint" && python3 -I scripts/style_lint.py StepBlockDraft-r2.lean ) > "$L/style-lint.out" 2>&1
+note "style lint exit: $? (only the size finding expected; design note §6)"
+
+# 8. sanitized copies for the bundle: local paths replaced by repository-relative ones
+san() { sed -e "s#$WT/##g" -e "s#$S/r2-h2/work/#h2/r2/work/#g" -e "s#$S/r2-h2/#h2/r2/#g" \
+  -e "s#$S/h2/#h2/#g" -e "s#$S/##g" "$1"; }
+rm -rf "$R/bundle"; mkdir -p "$R/bundle"
+for f in importclosure.out movemanifest.out movemanifest-vs-r1-strict.out movemanifest-negctl.log \
+         fidelity-r2-pass.log fidelity-r2-negctl.log linelen.out splitcost.out style-lint.out; do
+  san "$L/$f" > "$R/bundle/$f"; done
+san "$L/import-graph.txt" > "$R/bundle/import-graph.txt"
+for b in MovePlusAdditive-r2 PostMoveProbe AlphaProbe AlphaNeg; do
+  san "$W/$b.out" > "$R/bundle/$b.out.txt"; done
+cp "$W/MovePlusAdditive-r2.lean" "$R/bundle/MovePlusAdditive-r2.lean.txt"
+# the probes' own text, without the generated move they all start with (MovePlusAdditive holds it)
+for b in AlphaProbe AlphaNeg; do
+  awk '/^\/-! ## (Probe, not a landing file|Negative control)/{f=1} f' "$W/$b.lean" \
+    > "$R/bundle/$b-tail.lean.txt"; done
+awk '/===== CodeSimulator.lean after H2-M commit 1/{f=1} f' "$W/PostMoveProbe.lean" \
+  > "$R/bundle/PostMove-CodeSimulator.lean.txt"
+H1R=$WT/audits/b5a-fill-agent-reports/h1-3-REPORT.md
+{
+  echo "# Excerpt: audits/b5a-fill-agent-reports/h1-3-REPORT.md, lines 100-158 (verbatim)"
+  echo "# source sha256 $(shasum -a 256 "$H1R" | cut -d' ' -f1), at campaign commit 1781a230"
+  echo
+  sed -n 100,158p "$H1R"
+} > "$R/bundle/h1-3-escalation-excerpt.md"
+sed -e "s#^S=\${S:-.*}#S=\${S:-<scratchpad>}#" run-all.sh > "$R/bundle/run-all.sh.txt"
+for p in importclosure movemanifest mm-negctl fidelity-r2 negctl mkprobes mkalpha elabsummary \
+         linelen splitcost; do cp "$p.py" "$R/bundle/$p.py.txt"; done
+cp ResetProbe-tail.lean.txt "$R/bundle/ResetProbe-tail.lean.txt"
+cp StepBlockDraft-r2.lean "$R/bundle/StepBlockDraft-r2.lean.txt"
+lv=$(cat "$WT/lean-toolchain")
+desc() {
+  case "$1" in
+    StepBlockDraft-r2) echo "the statement draft itself; full output follows" ;;
+    AxProbe-r2) echo "axiom probe: a scratch copy of the draft with #print axioms for all 64 declarations (not part of the draft)" ;;
+    MovePlusAdditive-r2) echo "the 121 declarations generated by name from 1781a230 (movemanifest.py: proposed visibility, H2-M edits) plus the draft's six additive results, generic lemmas at their landing names; #print axioms for all 127; full output MovePlusAdditive-r2.out.txt" ;;
+    PostMoveProbe) echo "single-file rehearsal of H2-M commit 1: the generated StepBlock module, then CodeSimulator.lean with the 121 declarations deleted, its summary-clock family and H1 clock in section StepBlockClients with open StepBlock, the H1 clock's references renamed; full output PostMoveProbe.out.txt" ;;
+    ResetProbe) echo "consumer obligation CO-RF, data-level steps: the draft plus ResetProbe-tail.lean.txt (three probe lemmas, not H2 surface)" ;;
+    AlphaProbe) echo "alpha probe: the edited move plus, for each of the 11 edited declarations, its unedited copy X_orig (theorem proofs sorry: 9 sorry warnings expected) and the check type_of% @X_orig = type_of% @X by with_reducible rfl (definitions also @X_orig = @X by rfl)" ;;
+    AlphaNeg) echo "negative control, expected to FAIL: seekTM_stateStep with its binder dropped (ite for dite) under the same reducible check" ;;
+  esac
+}
+{
+  echo "# H2-S round 2: elaboration log (read-only; no olean written)"
+  echo "# checkout wt-r2h2 at campaign commit 1781a230 (PR #84, fills-8); oleans: oleans-f8 (all of TCSlib there)"
+  echo "# command, for each file F: bash tools/leanelab.sh wt-r2h2 oleans-f8 F, where tools/leanelab.sh is:"
+  sed 's/^/#   /' "$S/tools/leanelab.sh"
+  echo "# lean: $lv (the checkout's lean-toolchain)"
+  for b in $ELAB; do
+    st=$(cat "$W/$b.status")
+    echo; echo "## $b.lean  (started ${st#* }; lean exit status ${st%% *})"
+    echo "# $(desc "$b")"
+    case $b in
+      StepBlockDraft-r2|AxProbe-r2|ResetProbe|AlphaProbe)
+        echo "# --- output begins ---"; san "$W/$b.out"; echo "# --- output ends ---" ;;
+      AlphaNeg) echo "# --- output (first 12 lines) ---"; san "$W/$b.out" | head -12; echo "# ..." ;;
+      *) echo "# --- axiom lines ---"; grep "axioms" "$W/$b.out" | san /dev/stdin ;;
+    esac
+    echo "# --- summary (elabsummary.py, python3 -I) ---"; sed 1d "$W/sum-$b.txt"
+  done
+} > "$R/elaboration.log"
+cp "$R/elaboration.log" "$R/bundle/elaboration.log"
+note "elaboration.log: $(grep -c '^## ' "$R/elaboration.log") sections"
+note "local paths left in bundle/: $(grep -l "$S" "$R"/bundle/* 2>/dev/null | wc -l | tr -d ' ') files"
+
+echo "ALL: $([ $rc_all -eq 0 ] && echo PASS || echo FAIL)"
+exit $rc_all

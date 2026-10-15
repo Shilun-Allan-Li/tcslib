@@ -1,0 +1,1808 @@
+From 06fb5b1f18268285546e5ad98775aa8ab441cbbb Mon Sep 17 00:00:00 2001
+From: Codex <codex@openai.com>
+Date: Sat, 10 Oct 2026 00:46:39 -0300
+Subject: [PATCH 1/2] Prove the effective deterministic two-tape code scheme
+
+---
+ .../Complexity/TuringMachine/Codes2Tape.lean  | 908 +++++++++++++++++-
+ 1 file changed, 906 insertions(+), 2 deletions(-)
+
+diff --git a/TCSlib/Complexity/TuringMachine/Codes2Tape.lean b/TCSlib/Complexity/TuringMachine/Codes2Tape.lean
+index 70d03557..f0661a57 100644
+--- a/TCSlib/Complexity/TuringMachine/Codes2Tape.lean
++++ b/TCSlib/Complexity/TuringMachine/Codes2Tape.lean
+@@ -5,6 +5,8 @@ Authors: Seyoon Ragavan
+ -/
+ import TCSlib.Complexity.TuringMachine.Encoding
+ import TCSlib.Complexity.TuringMachine.NDCodes
++import TCSlib.Complexity.TuringMachine.MathlibBridge
++import Mathlib.Tactic.FinCases
+ 
+ set_option maxHeartbeats 0
+ set_option relaxedAutoImplicit false
+@@ -54,6 +56,12 @@ statements are `sorry`d with proof sketches naming the received routes.
+ * [AB09] S. Arora, B. Barak, *Computational Complexity: A Modern
+   Approach*, Cambridge University Press, 2009. (§1.4, machine codes;
+   §1.7/§3.1 for the two-tape consumer.)
++
++**ZF-B status appendix.** The skeleton-status text above records the received
++statement phase. `exists_effectiveMachineCode2` is now proved; the uniform
++simulator remains the continuation target. The new implementation includes
++private adaptations of inaccessible helpers in `CodeParser.lean` and
++`MathlibBridge.lean`, with declaration-level provenance in `REPORT.md`.
+ -/
+ 
+ namespace Turing
+@@ -131,6 +139,885 @@ structure EffectiveMachineCode2 extends MachineCode2 where
+   canonizer_computes :
+     canonizer.ComputesFunInTime (fun α => (decode α).serialize) canonizerTime
+ 
++/-! ### Private parser and canonizer implementation (ZF-B)
++
++This retargets the received `CodeParser` field/vector architecture to the
++seven-field two-tape record. The inaccessible private parser and primitive
++recursion lemmas are locally adapted under the exclusive-file rule; each is
++itemized in the delivery's duplication ledger. Public field encodings, the
++unary reader, suffix-skipping primitives, pairing laws, and `codePrim_machine`
++are cited directly. No ND existence theorem is used.
++-/
++
++
++
++/-- The unary reader leaves an arbitrary suffix untouched. -/
++private lemma zfBReadUnary_append (n : ℕ) (xs : List Bool) :
++    codeReadUnary (List.replicate n true ++ false :: xs) = some (n, xs) := by
++  induction n with
++  | zero => rfl
++  | succ n ih =>
++    simpa [List.replicate_succ, codeReadUnary] using
++      congrArg (Option.map fun p : ℕ × List Bool => (p.1 + 1, p.2)) ih
++
++/-- A unary index is accepted only when it belongs to the declared state space. -/
++private def zfBReadFin (n : ℕ) (xs : List Bool) : Option (Fin n × List Bool) := do
++  let (i, rest) ← codeReadUnary xs
++  if h : i < n then some (⟨i, h⟩, rest) else none
++
++/-- Decode the fixed dictionary for a head movement. -/
++private def zfBReadSign : List Bool → Option (SignType × List Bool)
++  | true :: true :: xs => some (.neg, xs)
++  | false :: false :: xs => some (.zero, xs)
++  | true :: false :: xs => some (.pos, xs)
++  | _ => none
++
++/-- Decode the fixed dictionary for an optional output bit. -/
++private def zfBReadOutput : List Bool → Option (Option Bool × List Bool)
++  | false :: false :: xs => some (none, xs)
++  | true :: false :: xs => some (some false, xs)
++  | true :: true :: xs => some (some true, xs)
++  | _ => none
++
++/-- Decode the fixed dictionary for an optional work-tape write. -/
++private def zfBReadWrite : List Bool → Option (Option (Option Bool) × List Bool)
++  | false :: false :: xs => some (none, xs)
++  | false :: true :: xs => some (some none, xs)
++  | true :: false :: xs => some (some (some false), xs)
++  | true :: true :: xs => some (some (some true), xs)
++  | _ => none
++
++/-- Read the halt tag or a range-checked live successor state. -/
++private def zfBReadState (n : ℕ) : List Bool → Option (Option (Fin n) × List Bool)
++  | false :: xs => some (none, xs)
++  | true :: xs => (zfBReadFin n xs).map fun p => (some p.1, p.2)
++  | [] => none
++
++/-- Read the seven fields of a transition, failing as soon as any field fails. -/
++private def zfBReadAction (n : ℕ) (xs : List Bool) :
++    Option (Action 2 Bool (Fin (n + 1)) × List Bool) := do
++  let (im, xs) ← zfBReadSign xs
++  let (wr, xs) ← zfBReadWrite xs
++  let (wm, xs) ← zfBReadSign xs
++  let (wr₁, xs) ← zfBReadWrite xs
++  let (wm₁, xs) ← zfBReadSign xs
++  let (out, xs) ← zfBReadOutput xs
++  let (q, xs) ← zfBReadState (n + 1) xs
++  pure (⟨im, fun i => if i = 0 then (wr, wm) else (wr₁, wm₁), out, q⟩, xs)
++
++/-- Read one entry for each tape symbol, in blank/false/true order. -/
++private def zfBReadSymbols {A : Type} (read : List Bool → Option (A × List Bool))
++    (xs : List Bool) : Option ((Option Bool → A) × List Bool) := do
++  let (a, xs) ← read xs
++  let (b, xs) ← read xs
++  let (c, xs) ← read xs
++  pure ((fun s => match s with | none => a | some false => b | some true => c), xs)
++
++/-- Read a fixed-size vector. Its caller checks the minimum total input length
++before invoking it; a malformed field also aborts immediately. -/
++private def zfBReadVec {A : Type} (read : List Bool → Option (A × List Bool)) :
++    (n : ℕ) → List Bool → Option ((Fin n → A) × List Bool)
++  | 0, xs => some (Fin.elim0, xs)
++  | n + 1, xs => do
++    let (a, xs) ← read xs
++    let (as, xs) ← zfBReadVec read n xs
++    pure (Fin.cases a as, xs)
++
++
++/-- The fallback is the one-state, immediately halting, silent machine. -/
++private def zfBFallback : Code2TM :=
++  ⟨0, ⟨0, fun _ _ _ => ⟨.zero, fun _ => (none, .zero), none, none⟩⟩⟩
++
++/-- The one-state halting fallback has the audited 354-bit serialization.
++The closed computation includes its header and all 27 thirteen-bit records. -/
++private lemma zfBFallback_serialize_length : zfBFallback.serialize.length = 354 := by
++  unfold Code2TM.serialize
++  dsimp only [zfBFallback]
++  set_option maxRecDepth 10000 in
++    norm_num [length_pairEncode, unaryFin, actionBits₂, signBits, optOptBoolBits,
++      optBoolBits, optStateBits, List.finRange_succ, List.finRange_zero]
++
++/-- Parse the exact serialization grammar of the phase-3 re-audit, Argument A.
++The length guard precedes vector recursion: every state requires 27 records,
++each containing at least thirteen bits. The suffix must consist entirely of true bits. -/
++private def zfBParse (xs : List Bool) : Option Code2TM := do
++  let (bits, rest) ← pairDecode xs
++  let n := codeBitsNat bits
++  if bits ≠ n.bits then none else do
++    if 351 * (n + 1) > rest.length then none else do
++      let (q, rest) ← zfBReadFin (n + 1) rest
++      let (table, rest) ← zfBReadVec
++        (zfBReadSymbols (zfBReadSymbols (zfBReadSymbols (zfBReadAction n)))) (n + 1) rest
++      if rest.all id then
++        pure ⟨n, ⟨q, fun s inp w => table s inp (w 0) (w 1)⟩⟩
++      else none
++
++/-- Total decoding: every malformed string denotes the fixed fallback. -/
++private def zfBDecode (xs : List Bool) : Code2TM := (zfBParse xs).getD zfBFallback
++
++/-- Reading an encoded bounded index is an exact prefix inverse. -/
++private lemma zfBReadFin_append {n : ℕ} (i : Fin n) (xs : List Bool) :
++    zfBReadFin n (unaryFin i ++ xs) = some (i, xs) := by
++  simp [zfBReadFin, unaryFin, List.append_assoc, zfBReadUnary_append, i.isLt]
++
++/-- Reading an encoded head movement is an exact prefix inverse. -/
++private lemma zfBReadSign_append (s : SignType) (xs : List Bool) :
++    zfBReadSign (signBits s ++ xs) = some (s, xs) := by
++  cases s <;> rfl
++
++/-- Reading an encoded optional output is an exact prefix inverse. -/
++private lemma zfBReadOutput_append (b : Option Bool) (xs : List Bool) :
++    zfBReadOutput (optBoolBits b ++ xs) = some (b, xs) := by
++  rcases b with _ | b
++  · rfl
++  · cases b <;> rfl
++
++/-- Reading an encoded optional write is an exact prefix inverse. -/
++private lemma zfBReadWrite_append (b : Option (Option Bool)) (xs : List Bool) :
++    zfBReadWrite (optOptBoolBits b ++ xs) = some (b, xs) := by
++  rcases b with _ | (_ | b)
++  · rfl
++  · rfl
++  · cases b <;> rfl
++
++/-- Reading an encoded successor is an exact prefix inverse. -/
++private lemma zfBReadState_append {n : ℕ} (s : Option (Fin n)) (xs : List Bool) :
++    zfBReadState n (optStateBits s ++ xs) = some (s, xs) := by
++  cases s with
++  | none => rfl
++  | some s => simp [optStateBits, zfBReadState, zfBReadFin_append]
++
++/-- All seven fields round-trip, including both work-tape coordinates. -/
++private lemma zfBReadAction_append {n : ℕ} (a : Action 2 Bool (Fin (n + 1)))
++    (xs : List Bool) : zfBReadAction n (actionBits₂ a ++ xs) = some (a, xs) := by
++  simp only [actionBits₂, List.append_assoc, zfBReadAction, zfBReadSign_append,
++    zfBReadWrite_append, zfBReadOutput_append, zfBReadState_append,
++    bind, Option.bind, pure]
++  congr 2
++  cases a
++  congr
++  funext i
++  fin_cases i <;> rfl
++
++/-- Three prefix inverses assemble in the required blank/false/true order. -/
++private lemma zfBReadSymbols_append {A : Type}
++    (read : List Bool → Option (A × List Bool)) (write : A → List Bool)
++    (h : ∀ a xs, read (write a ++ xs) = some (a, xs))
++    (f : Option Bool → A) (xs : List Bool) :
++    zfBReadSymbols read
++      (([none, some false, some true] : List (Option Bool)).flatMap
++        (fun s => write (f s)) ++ xs) = some (f, xs) := by
++  simp only [List.flatMap_cons, List.flatMap_nil, List.append_nil,
++    List.append_assoc, zfBReadSymbols, h, bind, Option.bind, pure]
++  congr 2
++  funext s
++  rcases s with _ | b
++  · rfl
++  · cases b <;> rfl
++
++/-- Fixed-size vector parsing is a prefix inverse of enumeration-order writing.
++**Proof sketch.** Induct on the vector length. The first field reader recovers the head and leaves the concatenated tail; the induction hypothesis recovers the remaining vector. Extensionality identifies the reconstructed function on bounded indices. -/
++private lemma zfBReadVec_append {A : Type}
++    (read : List Bool → Option (A × List Bool)) (write : A → List Bool)
++    (h : ∀ a xs, read (write a ++ xs) = some (a, xs)) :
++    ∀ n (f : Fin n → A) xs,
++      zfBReadVec read n ((List.finRange n).flatMap (fun i => write (f i)) ++ xs) =
++        some (f, xs) := by
++  intro n
++  induction n with
++  | zero =>
++    intro f xs
++    simp only [List.finRange_zero, List.flatMap_nil, List.nil_append, zfBReadVec]
++    congr 2
++    funext i
++    exact i.elim0
++  | succ n ih =>
++    intro f xs
++    simp only [List.finRange_succ, List.flatMap_cons, List.flatMap_map,
++      List.append_assoc, zfBReadVec, h, bind, Option.bind, ih, pure]
++    congr 2
++    funext i
++    refine Fin.cases ?_ (fun j => ?_) i <;> rfl
++
++/-- Binary reconstruction inverts the canonical little-endian representation,
++including the empty representation of zero. -/
++private lemma zfBBitsNat_bits (n : ℕ) : codeBitsNat n.bits = n := by
++  induction n using Nat.binaryRec' with
++  | zero => simp [codeBitsNat]
++  | bit b n hn ih =>
++    rw [Nat.bits_append_bit n b hn]
++    simpa only [codeBitsNat, List.foldr_cons] using congrArg (Nat.bit b) ih
++
++/-- Every record has twelve fixed bits and a nonempty successor field. -/
++private lemma zfBAction_length {n : ℕ} (a : Action 2 Bool (Fin (n + 1))) :
++    13 ≤ (actionBits₂ a).length := by
++  have hs (s : SignType) : (signBits s).length = 2 := by cases s <;> rfl
++  have ho (b : Option Bool) : (optBoolBits b).length = 2 := by
++    rcases b with _ | b
++    · rfl
++    · cases b <;> rfl
++  have hw (b : Option (Option Bool)) : (optOptBoolBits b).length = 2 := by
++    rcases b with _ | (_ | b)
++    · rfl
++    · rfl
++    · cases b <;> rfl
++  have hq : 1 ≤ (optStateBits a.state).length := by
++    cases a.state <;> simp [optStateBits, unaryFin]
++  simp only [actionBits₂, List.length_append, hs, ho, hw]
++  omega
++
++/-- Concatenating words with a common length lower bound preserves that bound. -/
++private lemma zfBFlatMap_length {A : Type} (xs : List A) (f : A → List Bool)
++    (c : ℕ) (h : ∀ a ∈ xs, c ≤ (f a).length) :
++    c * xs.length ≤ (xs.flatMap f).length := by
++  induction xs with
++  | nil => simp
++  | cons a xs ih =>
++    have ha := h a (by simp)
++    have ht := ih (fun b hb => h b (by simp [hb]))
++    simp only [List.flatMap_cons, List.length_append, List.length_cons, Nat.mul_add,
++      Nat.mul_one]
++    omega
++
++/-- The complete table contains at least 351 bits per live state.
++
++**Proof sketch.** Every action contains twelve fixed field bits and at least one successor bit. Summing this lower bound over the three symbols for each work tape, three input symbols, and all states gives at least 351 bits per state. -/
++private lemma zfBTable_length (M : Code2TM) :
++    351 * (M.numStates + 1) ≤
++      ((List.finRange (M.numStates + 1)).flatMap fun q =>
++        ([none, some false, some true] : List (Option Bool)).flatMap fun inp =>
++          ([none, some false, some true] : List (Option Bool)).flatMap fun w₀ =>
++            ([none, some false, some true] : List (Option Bool)).flatMap fun w₁ =>
++              actionBits₂ (M.tm.tr q inp (workPair w₀ w₁))).length := by
++  have h := zfBFlatMap_length (List.finRange (M.numStates + 1))
++    (fun q => ([none, some false, some true] : List (Option Bool)).flatMap fun inp =>
++      ([none, some false, some true] : List (Option Bool)).flatMap fun w₀ =>
++        ([none, some false, some true] : List (Option Bool)).flatMap fun w₁ =>
++          actionBits₂ (M.tm.tr q inp (workPair w₀ w₁))) 351 (by
++      intro q _
++      have h := zfBFlatMap_length ([none, some false, some true] : List (Option Bool))
++        (fun inp => ([none, some false, some true] : List (Option Bool)).flatMap fun w₀ =>
++          ([none, some false, some true] : List (Option Bool)).flatMap fun w₁ =>
++            actionBits₂ (M.tm.tr q inp (workPair w₀ w₁))) 117 (by
++          intro inp _
++          have h := zfBFlatMap_length ([none, some false, some true] : List (Option Bool))
++            (fun w₀ => ([none, some false, some true] : List (Option Bool)).flatMap fun w₁ =>
++              actionBits₂ (M.tm.tr q inp (workPair w₀ w₁))) 39 (by
++                intro w₀ _
++                simpa using zfBFlatMap_length
++                  ([none, some false, some true] : List (Option Bool))
++                  (fun w₁ => actionBits₂ (M.tm.tr q inp (workPair w₀ w₁))) 13
++                  (fun _ _ => zfBAction_length _))
++          simpa using h)
++      simpa using h)
++  simpa using h
++
++/-- The table reader recovers every transition. Blank/false/true exhaust each
++read alphabet; a two-work-tape read vector is determined by its two coordinates. -/
++private lemma zfBReadTable_append (M : Code2TM) (xs : List Bool) :
++    zfBReadVec (zfBReadSymbols (zfBReadSymbols (zfBReadSymbols (zfBReadAction M.numStates))))
++      (M.numStates + 1)
++      (((List.finRange (M.numStates + 1)).flatMap fun q =>
++        ([none, some false, some true] : List (Option Bool)).flatMap fun inp =>
++          ([none, some false, some true] : List (Option Bool)).flatMap fun w₀ =>
++            ([none, some false, some true] : List (Option Bool)).flatMap fun w₁ =>
++              actionBits₂ (M.tm.tr q inp (workPair w₀ w₁))) ++ xs) =
++      some ((fun q inp w₀ w₁ => M.tm.tr q inp (workPair w₀ w₁)), xs) :=
++  zfBReadVec_append _ _
++    (fun _ _ => zfBReadSymbols_append _ _
++      (fun _ _ => zfBReadSymbols_append _ _
++        (fun _ _ => zfBReadSymbols_append _ _ zfBReadAction_append _ _) _ _) _ _) _ _ _
++
++/-- The complete parser recovers a serialized machine under arbitrary true padding.
++**Proof sketch.** The doubled-bit parser first recovers the canonical state-count bits. The table length bound discharges the early guard; the field and vector inverse laws then recover the initial state and every transition. The remaining replicated true bits pass the suffix test. -/
++private lemma zfBParse_serialize_pad (M : Code2TM) (m : ℕ) :
++    zfBParse (M.serialize ++ List.replicate m true) = some M := by
++  have hp (a b c : List Bool) : pairEncode a b ++ c = pairEncode a (b ++ c) := by
++    simp [pairEncode, List.append_assoc]
++  unfold Code2TM.serialize
++  rw [hp]
++  unfold zfBParse
++  rw [pairDecode_pairEncode]
++  dsimp only [bind, Option.bind]
++  rw [zfBBitsNat_bits]
++  simp only [ne_eq, not_true_eq_false, ↓reduceIte]
++  have hlen := zfBTable_length M
++  simp only [List.length_append, List.length_replicate] at *
++  rw [if_neg (by omega)]
++  simp only [List.append_assoc, zfBReadFin_append, zfBReadTable_append,
++    List.all_replicate, id_eq, ite_self, ↓reduceIte, pure]
++  congr 1
++  cases M with
++  | mk n tm =>
++    congr 1
++    cases tm with
++    | mk q tr =>
++      congr 1
++      funext s inp w
++      apply congrArg (tr s inp)
++      funext i
++      fin_cases i <;> simp [workPair]
++
++/-- The total decoder satisfies the required exact padded round-trip law. -/
++private lemma zfBDecode_serialize_pad (M : Code2TM) (m : ℕ) :
++    zfBDecode (M.serialize ++ List.replicate m true) = M := by
++  simp only [zfBDecode, zfBParse_serialize_pad, Option.getD_some]
++
++/-- Successful unary parsing characterizes the exact consumed prefix.
++
++**Proof sketch.** Induct on the input. A false bit terminates the number immediately; a true bit increments the recursively recovered number. Empty input cannot succeed. -/
++private lemma zfBReadUnary_sound (xs : List Bool) (n : ℕ) (rest : List Bool)
++    (h : codeReadUnary xs = some (n, rest)) :
++    xs = List.replicate n true ++ false :: rest := by
++  induction xs generalizing n with
++  | nil => simp [codeReadUnary] at h
++  | cons b xs ih =>
++    cases b with
++    | false =>
++      simp only [codeReadUnary, Option.some.injEq, Prod.mk.injEq] at h
++      rcases h with ⟨rfl, rfl⟩
++      rfl
++    | true =>
++      cases hr : codeReadUnary xs with
++      | none => simp [codeReadUnary, hr] at h
++      | some p =>
++        rcases p with ⟨k, tail⟩
++        simp only [codeReadUnary, hr, Option.map_some, Option.some.injEq,
++          Prod.mk.injEq] at h
++        rcases h with ⟨rfl, rfl⟩
++        simp [List.replicate_succ, ih k hr]
++
++/-- Successful bounded-index parsing determines its complete unary prefix. -/
++private lemma zfBReadFin_sound {n : ℕ} (xs : List Bool) (i : Fin n) (rest : List Bool)
++    (h : zfBReadFin n xs = some (i, rest)) : xs = unaryFin i ++ rest := by
++  obtain ⟨⟨j, tail⟩, hj, h⟩ := Option.bind_eq_some_iff.mp h
++  dsimp only at h
++  split at h
++  · simp only [Option.some.injEq, Prod.mk.injEq] at h
++    rcases h with ⟨rfl, rfl⟩
++    simpa [unaryFin, List.append_assoc] using zfBReadUnary_sound xs j tail hj
++  · contradiction
++
++
++/-- A successful movement read consumes precisely its two-bit dictionary entry. -/
++private lemma zfBReadSign_sound (xs : List Bool) (s : SignType) (rest : List Bool)
++    (h : zfBReadSign xs = some (s, rest)) : xs = signBits s ++ rest := by
++  rcases xs with _ | ⟨b, _ | ⟨c, tail⟩⟩
++  · simp [zfBReadSign] at h
++  · cases b <;> simp [zfBReadSign] at h
++  · cases b <;> cases c <;>
++      simp only [zfBReadSign, Option.some.injEq, Prod.mk.injEq, reduceCtorEq] at h
++    all_goals first | contradiction | (rcases h with ⟨rfl, rfl⟩; rfl)
++
++/-- A successful output read consumes precisely its two-bit dictionary entry. -/
++private lemma zfBReadOutput_sound (xs : List Bool) (b : Option Bool) (rest : List Bool)
++    (h : zfBReadOutput xs = some (b, rest)) : xs = optBoolBits b ++ rest := by
++  rcases xs with _ | ⟨a, _ | ⟨c, tail⟩⟩
++  · simp [zfBReadOutput] at h
++  · cases a <;> simp [zfBReadOutput] at h
++  · cases a <;> cases c <;>
++      simp only [zfBReadOutput, Option.some.injEq, Prod.mk.injEq, reduceCtorEq] at h
++    all_goals first | contradiction | (rcases h with ⟨rfl, rfl⟩; rfl)
++
++/-- A successful write read consumes precisely its two-bit dictionary entry. -/
++private lemma zfBReadWrite_sound (xs : List Bool) (b : Option (Option Bool)) (rest : List Bool)
++    (h : zfBReadWrite xs = some (b, rest)) : xs = optOptBoolBits b ++ rest := by
++  rcases xs with _ | ⟨a, _ | ⟨c, tail⟩⟩
++  · simp [zfBReadWrite] at h
++  · cases a <;> simp [zfBReadWrite] at h
++  · cases a <;> cases c <;>
++      simp only [zfBReadWrite, Option.some.injEq, Prod.mk.injEq] at h
++    all_goals rcases h with ⟨rfl, rfl⟩; rfl
++
++/-- A successful successor read consumes exactly its halt/live unary field.
++
++**Proof sketch.** Split the leading tag. A false tag is exactly the halted state encoding; a true tag delegates to the soundness of the bounded unary reader. Empty input is rejected. -/
++private lemma zfBReadState_sound {n : ℕ} (xs : List Bool) (s : Option (Fin n))
++    (rest : List Bool) (h : zfBReadState n xs = some (s, rest)) :
++    xs = optStateBits s ++ rest := by
++  rcases xs with _ | ⟨b, tail⟩
++  · simp [zfBReadState] at h
++  · cases b with
++    | false =>
++      simp only [zfBReadState, Option.some.injEq, Prod.mk.injEq] at h
++      rcases h with ⟨rfl, rfl⟩
++      rfl
++    | true =>
++      cases hr : zfBReadFin n tail with
++      | none => simp [zfBReadState, hr] at h
++      | some p =>
++        rcases p with ⟨i, suffix⟩
++        simp only [zfBReadState, hr, Option.map_some, Option.some.injEq,
++          Prod.mk.injEq] at h
++        rcases h with ⟨rfl, rfl⟩
++        simp only [optStateBits, List.cons_append]
++        exact congrArg (List.cons true) (zfBReadFin_sound tail i suffix hr)
++
++/-- Successful record parsing characterizes its complete serialized prefix.
++**Proof sketch.** Decompose the seven successful reads, apply the dictionary
++inverse to each, and concatenate their consumed prefixes in order. -/
++private lemma zfBReadAction_sound {n : ℕ} (xs : List Bool)
++    (a : Action 2 Bool (Fin (n + 1))) (rest : List Bool)
++    (h : zfBReadAction n xs = some (a, rest)) : xs = actionBits₂ a ++ rest := by
++  simp only [zfBReadAction, bind, Option.bind_eq_some_iff] at h
++  obtain ⟨⟨im, r₁⟩, h₁, ⟨⟨wr, r₂⟩, h₂, ⟨⟨wm, r₃⟩, h₃,
++    ⟨⟨wr₁, r₄⟩, h₄, ⟨⟨wm₁, r₅⟩, h₅, ⟨⟨out, r₆⟩, h₆,
++      ⟨⟨q, r₇⟩, h₇, h⟩⟩⟩⟩⟩⟩⟩ := h
++  simp only [pure, Option.some.injEq, Prod.mk.injEq] at h
++  rcases h with ⟨rfl, rfl⟩
++  rw [zfBReadSign_sound xs im r₁ h₁, zfBReadWrite_sound r₁ wr r₂ h₂,
++    zfBReadSign_sound r₂ wm r₃ h₃, zfBReadWrite_sound r₃ wr₁ r₄ h₄,
++    zfBReadSign_sound r₄ wm₁ r₅ h₅, zfBReadOutput_sound r₅ out r₆ h₆,
++    zfBReadState_sound r₆ q r₇ h₇]
++  simp [actionBits₂, List.append_assoc]
++
++/-- Three sound prefix readers reconstruct the symbol-indexed row they consumed. -/
++private lemma zfBReadSymbols_sound {A : Type}
++    (read : List Bool → Option (A × List Bool)) (write : A → List Bool)
++    (sound : ∀ xs a rest, read xs = some (a, rest) → xs = write a ++ rest)
++    (xs : List Bool) (f : Option Bool → A) (rest : List Bool)
++    (h : zfBReadSymbols read xs = some (f, rest)) :
++    xs = ([none, some false, some true] : List (Option Bool)).flatMap
++      (fun s => write (f s)) ++ rest := by
++  simp only [zfBReadSymbols, bind, Option.bind_eq_some_iff] at h
++  obtain ⟨⟨a, r₁⟩, h₁, ⟨⟨b, r₂⟩, h₂, ⟨⟨c, r₃⟩, h₃, h⟩⟩⟩ := h
++  simp only [pure, Option.some.injEq, Prod.mk.injEq] at h
++  rcases h with ⟨rfl, rfl⟩
++  rw [sound xs a r₁ h₁, sound r₁ b r₂ h₂, sound r₂ c r₃ h₃]
++  simp [List.append_assoc]
++
++/-- Sound vector parsing reconstructs the entire consumed enumeration.
++**Proof sketch.** Induct on the number of entries. Successful parsing splits into a successful head parse and a successful tail parse. Their soundness equations concatenate in the same order as the bounded-state enumeration. -/
++private lemma zfBReadVec_sound {A : Type}
++    (read : List Bool → Option (A × List Bool)) (write : A → List Bool)
++    (sound : ∀ xs a rest, read xs = some (a, rest) → xs = write a ++ rest) :
++    ∀ n xs (f : Fin n → A) rest, zfBReadVec read n xs = some (f, rest) →
++      xs = (List.finRange n).flatMap (fun i => write (f i)) ++ rest := by
++  intro n
++  induction n with
++  | zero =>
++    intro xs f rest h
++    simpa only [zfBReadVec, Option.some.injEq, Prod.mk.injEq,
++      List.finRange_zero, List.flatMap_nil, List.nil_append] using
++      (show xs = rest from congrArg Prod.snd (Option.some.inj h))
++  | succ n ih =>
++    intro xs f rest h
++    simp only [zfBReadVec, bind, Option.bind_eq_some_iff] at h
++    obtain ⟨⟨a, r₁⟩, h₁, ⟨⟨as, r₂⟩, h₂, h⟩⟩ := h
++    simp only [pure, Option.some.injEq, Prod.mk.injEq] at h
++    rcases h with ⟨rfl, rfl⟩
++    rw [sound xs a r₁ h₁, ih r₁ as r₂ h₂]
++    simp [List.finRange_succ, List.flatMap_map, List.append_assoc]
++
++
++/-- Skip one seven-field transition record, keeping only the unconsumed suffix. -/
++private def zfBSkipAction (n : ℕ) (xs : List Bool) : Option (List Bool) := do
++  let xs ← codeSkipPair (fun a b => a || !b) xs
++  let xs ← codeSkipPair (fun _ _ => true) xs
++  let xs ← codeSkipPair (fun a b => a || !b) xs
++  let xs ← codeSkipPair (fun _ _ => true) xs
++  let xs ← codeSkipPair (fun a b => a || !b) xs
++  let xs ← codeSkipPair (fun a b => a || !b) xs
++  codeSkipState (n + 1) xs
++
++
++private lemma zfBEraseFin (n : ℕ) (xs : List Bool) :
++    (zfBReadFin n xs).map Prod.snd = codeSkipFin n xs := by
++  simp only [zfBReadFin, codeSkipFin, bind, Option.map_bind, Function.comp_def]
++  congr 1
++  funext p
++  split <;> rfl
++
++private lemma zfBEraseSign (xs : List Bool) :
++    (zfBReadSign xs).map Prod.snd = codeSkipPair (fun a b => a || !b) xs := by
++  cases xs with
++  | nil => rfl
++  | cons a xs =>
++    cases xs with
++    | nil => cases a <;> rfl
++    | cons b xs => cases a <;> cases b <;> rfl
++
++private lemma zfBEraseOutput (xs : List Bool) :
++    (zfBReadOutput xs).map Prod.snd = codeSkipPair (fun a b => a || !b) xs := by
++  cases xs with
++  | nil => rfl
++  | cons a xs =>
++    cases xs with
++    | nil => cases a <;> rfl
++    | cons b xs => cases a <;> cases b <;> rfl
++
++private lemma zfBEraseWrite (xs : List Bool) :
++    (zfBReadWrite xs).map Prod.snd = codeSkipPair (fun _ _ => true) xs := by
++  cases xs with
++  | nil => rfl
++  | cons a xs =>
++    cases xs with
++    | nil => cases a <;> rfl
++    | cons b xs => cases a <;> cases b <;> rfl
++
++private lemma zfBEraseState (n : ℕ) (xs : List Bool) :
++    (zfBReadState n xs).map Prod.snd = codeSkipState n xs := by
++  cases xs with
++  | nil => rfl
++  | cons b xs =>
++    cases b
++    · rfl
++    · simpa only [zfBReadState, codeSkipState, ↓reduceIte,
++        Option.map_map, Function.comp_def] using zfBEraseFin n xs
++
++private lemma zfBErase_bind {A B : Type} (r : Option (A × List Bool))
++    (f : List Bool → Option B) :
++    r.bind (fun p => f p.2) = (r.map Prod.snd).bind f := by
++  cases r <;> rfl
++
++private lemma zfBEraseAction (n : ℕ) (xs : List Bool) :
++    (zfBReadAction n xs).map Prod.snd = zfBSkipAction n xs := by
++  simp only [zfBReadAction, zfBSkipAction, bind, Option.map_bind, Function.comp_def, pure, Option.map_some]
++  rw [← zfBEraseSign xs, ← zfBErase_bind]
++  congr 1; funext p
++  rw [← zfBEraseWrite p.2, ← zfBErase_bind]
++  congr 1; funext p
++  rw [← zfBEraseSign p.2, ← zfBErase_bind]
++  congr 1; funext p
++  rw [← zfBEraseWrite p.2, ← zfBErase_bind]
++  congr 1; funext p
++  rw [← zfBEraseSign p.2, ← zfBErase_bind]
++  congr 1; funext p
++  rw [← zfBEraseOutput p.2, ← zfBErase_bind]
++  congr 1; funext p
++  simpa only [Option.map_eq_bind, Function.comp_def] using zfBEraseState (n + 1) p.2
++
++private lemma zfBEraseSymbols {A : Type} (r : List Bool → Option (A × List Bool)) (xs : List Bool) :
++    (zfBReadSymbols r xs).map Prod.snd = codeSkipRepeat (fun s => (r s).map Prod.snd) 3 xs := by
++  simp only [zfBReadSymbols, bind, Option.map_bind, Function.comp_def, pure, Option.map_some,
++    codeSkipRepeat, Option.bind_map]
++
++private lemma zfBEraseVec {A : Type} (r : List Bool → Option (A × List Bool)) (n : ℕ) :
++    ∀ xs, (zfBReadVec r n xs).map Prod.snd = codeSkipRepeat (fun s => (r s).map Prod.snd) n xs := by
++  induction n with
++  | zero => intro xs; rfl
++  | succ n ih =>
++    intro xs
++    simp only [zfBReadVec, bind, Option.map_bind, Function.comp_def, pure, Option.map_some]
++    have inner (p : A × List Bool) :
++        (zfBReadVec r n p.2).bind (fun q => some q.2) = codeSkipRepeat (fun s => (r s).map Prod.snd) n p.2 := by
++      simpa only [Option.map_eq_bind, Function.comp_def] using ih p.2
++    simp only [inner, zfBErase_bind, codeSkipRepeat]
++
++private def zfBParseFull (xs : List Bool) : Option (Code2TM × List Bool) := do
++  let (bits, rest) ← pairDecode xs
++  let n := codeBitsNat bits
++  if bits ≠ n.bits then none else do
++    if 351 * (n + 1) > rest.length then none else do
++      let (q, rest) ← zfBReadFin (n + 1) rest
++      let (table, rest) ← zfBReadVec
++        (zfBReadSymbols (zfBReadSymbols (zfBReadSymbols (zfBReadAction n)))) (n + 1) rest
++      if rest.all id then
++        pure (⟨n, ⟨q, fun s inp w => table s inp (w 0) (w 1)⟩⟩, rest)
++      else none
++
++/-- The erased parser: accept exactly the strings the parser accepts, returning only the unconsumed all-true suffix. -/
++private def zfBScan (xs : List Bool) : Option (List Bool) := do
++  let (bits, rest) ← pairDecode xs
++  let n := codeBitsNat bits
++  if bits ≠ n.bits then none else do
++    if 351 * (n + 1) > rest.length then none else do
++      let rest ← codeSkipFin (n + 1) rest
++      let rest ← codeSkipRepeat (codeSkipRepeat (codeSkipRepeat (codeSkipRepeat (zfBSkipAction n) 3) 3) 3) (n + 1) rest
++      if rest.all id then pure rest else none
++
++private lemma zfBParse_full (xs : List Bool) : zfBParse xs = (zfBParseFull xs).map Prod.fst := by
++  simp only [zfBParse, zfBParseFull, bind, Option.map_bind, Function.comp_def]
++  congr 1
++  funext p
++  dsimp only
++  split <;> try simp only [Option.map_none]
++  split <;> try simp only [Option.map_none, Option.map_bind, Function.comp_def]
++  congr 1; funext q
++  congr 1; funext t
++  dsimp only
++  split <;> rfl
++
++private lemma zfBScan_full (xs : List Bool) : zfBScan xs = (zfBParseFull xs).map Prod.snd := by
++  simp only [zfBScan, zfBParseFull, bind, Option.map_bind, Function.comp_def]
++  congr 1
++  funext p
++  dsimp only
++  split <;> try simp only [Option.map_none]
++  split <;> try simp only [Option.map_none, Option.map_bind, Function.comp_def]
++  have h (q : Fin (codeBitsNat p.1 + 1) × List Bool)
++      (t : (Fin (codeBitsNat p.1 + 1) → Option Bool → Option Bool → Option Bool → Action 2 Bool (Fin (codeBitsNat p.1 + 1))) × List Bool) :
++      (if t.2.all id then some ((⟨codeBitsNat p.1, ⟨q.1, fun s inp w => t.1 s inp (w 0) (w 1)⟩⟩ : Code2TM), t.2) else none).map Prod.snd =
++        (if t.2.all id then some t.2 else none) := by split <;> rfl
++  simp only [pure, h]
++  rw [← zfBEraseFin _ _, ← zfBErase_bind]
++  congr 1; funext q
++  have ht := zfBEraseVec (zfBReadSymbols (zfBReadSymbols (zfBReadSymbols (zfBReadAction (codeBitsNat p.1)))))
++    (codeBitsNat p.1 + 1) q.2
++  simp only [zfBEraseSymbols, zfBEraseAction] at ht
++  rw [← ht, ← zfBErase_bind]
++
++/-- **Proof sketch.** Use the same decomposition as parser soundness, retaining the exact unconsumed suffix. The field soundness equations and the canonical count check reconstruct the original input as the machine serialization followed by that suffix. -/
++private lemma zfBParseFull_sound (xs : List Bool) (M : Code2TM) (tail : List Bool)
++    (h : zfBParseFull xs = some (M, tail)) : xs = M.serialize ++ tail := by
++  unfold zfBParseFull at h
++  obtain ⟨⟨bits, rest⟩, hp, h⟩ := Option.bind_eq_some_iff.mp h
++  dsimp only at h
++  split at h
++  · contradiction
++  next hb =>
++    have hb : bits = (codeBitsNat bits).bits := not_not.mp hb
++    split at h
++    · contradiction
++    next _ =>
++      simp only [bind, Option.bind_eq_some_iff] at h
++      obtain ⟨⟨q, r₁⟩, hq, ⟨⟨table, r₂⟩, ht, h⟩⟩ := h
++      split at h
++      next hpad =>
++        simp only [pure, Option.some.injEq, Prod.mk.injEq] at h
++        rcases h with ⟨rfl, rfl⟩
++        have htable := zfBReadVec_sound _ _
++          (fun _ _ _ => zfBReadSymbols_sound _ _
++            (fun _ _ _ => zfBReadSymbols_sound _ _
++              (fun _ _ _ => zfBReadSymbols_sound _ _ zfBReadAction_sound _ _ _) _ _ _) _ _ _)
++          _ _ _ _ ht
++        dsimp only at htable
++        rw [eq_pairEncode_of_pairDecode xs bits rest hp, zfBReadFin_sound rest q r₁ hq, htable]
++        simp only [Code2TM.serialize, pairEncode, List.append_assoc]
++        congr 1
++        exact congrArg (List.flatMap fun b : Bool => [b, b]) hb
++      · contradiction
++
++/-- The canonical serialization of the machine a string denotes: the consumed prefix on scanner success, the fallback machine's serialization otherwise. -/
++private def zfBCanonical (xs : List Bool) : List Bool :=
++  (zfBScan xs).casesOn zfBFallback.serialize fun tail => xs.take (xs.length - tail.length)
++
++/-- The suffix scanner computes exactly the fixed serialization of the decoded machine. -/
++private lemma zfBCanonical_eq (xs : List Bool) : zfBCanonical xs = (zfBDecode xs).serialize := by
++  unfold zfBCanonical zfBDecode
++  rw [zfBScan_full, zfBParse_full]
++  cases h : zfBParseFull xs with
++  | none => rfl
++  | some p =>
++    rcases p with ⟨M, tail⟩
++    simp only [Option.map_some, Option.getD_some]
++    rw [zfBParseFull_sound xs M tail h]
++    simp
++
++
++
++private lemma zfBPrimUnary : Primrec codeReadUnary := by
++  have h := Primrec.list_rec (α := List Bool) (β := Bool) Primrec.id (Primrec.const (none : Option (ℕ × List Bool)))
++    (Primrec.to₂ (Primrec.cond (Primrec.fst.comp Primrec.snd)
++      (Primrec.option_map (Primrec.snd.comp (Primrec.snd.comp Primrec.snd))
++        (Primrec.to₂ (Primrec.pair (Primrec.succ.comp (Primrec.fst.comp Primrec.snd)) (Primrec.snd.comp Primrec.snd))))
++      (Primrec.option_some.comp (Primrec.pair (Primrec.const 0) (Primrec.fst.comp (Primrec.snd.comp Primrec.snd))))))
++  apply h.of_eq
++  intro xs
++  induction xs with
++  | nil => rfl
++  | cons b xs ih =>
++    dsimp only [id, List.recOn] at ih ⊢
++    cases b <;> simp [codeReadUnary, ih]
++
++private lemma zfBPrimBit : Primrec₂ Nat.bit := by
++  apply (Primrec.cond Primrec.fst
++    (Primrec.succ.comp (Primrec.nat_double.comp Primrec.snd))
++    (Primrec.nat_double.comp Primrec.snd)).of_eq
++  intro p
++  rcases p with ⟨b, n⟩
++  cases b <;> simp [Nat.bit]
++
++private lemma zfBPrimBitsNat : Primrec codeBitsNat :=
++  Primrec.list_foldr Primrec.id (Primrec.const 0)
++    (zfBPrimBit.comp₂ (Primrec.fst.comp₂ Primrec₂.right) (Primrec.snd.comp₂ Primrec₂.right))
++
++/-- **Proof sketch.** A list recursion stores the aligned-parser results for both the current suffix and its tail. Adding one input bit can therefore inspect the next bit and reuse the result two positions ahead. This realizes the two-bit recursion using primitive recursive list operations. -/
++private lemma zfBPrimPair : Primrec pairDecode := by
++  let step : Bool × List Bool × (Option (List Bool × List Bool) × Option (List Bool × List Bool)) →
++      Option (List Bool × List Bool) × Option (List Bool × List Bool) := fun p =>
++    ((p.2.1.head?).bind fun b =>
++      bif p.1 == b then p.2.2.2.map (fun q => (p.1 :: q.1, q.2))
++      else bif p.1 then none else some ([], p.2.1.tail), p.2.2.1)
++  have hstep : Primrec step := by
++    apply Primrec.pair
++    · apply Primrec.option_bind (Primrec.list_head?.comp (Primrec.fst.comp Primrec.snd))
++      change Primrec _
++      apply Primrec.cond (Primrec.beq.comp (Primrec.fst.comp Primrec.fst) Primrec.snd)
++      · apply Primrec.option_map (Primrec.snd.comp (Primrec.snd.comp (Primrec.snd.comp Primrec.fst)))
++        exact (Primrec.pair
++          (Primrec.list_cons.comp (Primrec.fst.comp (Primrec.fst.comp Primrec.fst)) (Primrec.fst.comp Primrec.snd))
++          (Primrec.snd.comp Primrec.snd)).to₂
++      · exact Primrec.cond (Primrec.fst.comp Primrec.fst) (Primrec.const none)
++          (Primrec.option_some.comp (Primrec.pair (Primrec.const [])
++            (Primrec.list_tail.comp (Primrec.fst.comp (Primrec.snd.comp Primrec.fst)))))
++    · exact Primrec.fst.comp (Primrec.snd.comp Primrec.snd)
++  have h := Primrec.list_rec (α := List Bool) (β := Bool) Primrec.id
++    (Primrec.const (none, none)) (hstep.comp Primrec.snd).to₂
++  have he (xs : List Bool) :
++      List.recOn xs (none, none) (fun b xs ih => step (b, xs, ih)) =
++        (pairDecode xs, pairDecode xs.tail) := by
++    induction xs with
++    | nil => rfl
++    | cons b xs ih =>
++      dsimp only [List.recOn] at ih ⊢
++      rw [ih]
++      cases xs with
++      | nil => cases b <;> rfl
++      | cons a xs => cases b <;> cases a <;> rfl
++  exact (Primrec.fst.comp h).of_eq fun xs => congrArg Prod.fst (he xs)
++
++/-- **Proof sketch.** Use well-founded primitive recursion with the natural number itself as measure and its half as the sole recursive dependency. The zero case emits no bits; otherwise prepend the parity bit to the recursively computed bits of the half. -/
++private lemma zfBPrimBits : Primrec Nat.bits := by
++  let deps : ℕ → List ℕ := fun n => if n = 0 then [] else [n.div2]
++  let step : ℕ → List (List Bool) → Option (List Bool) := fun n vals =>
++    if n = 0 then some [] else vals.head?.map (fun xs => n.bodd :: xs)
++  have hd : Primrec deps := Primrec.ite (Primrec.eq.comp Primrec.id (Primrec.const 0))
++    (Primrec.const []) (Primrec.list_cons.comp Primrec.nat_div2 (Primrec.const []))
++  have hs : Primrec₂ step := Primrec.ite (Primrec.eq.comp Primrec.fst (Primrec.const 0))
++    (Primrec.const (some [])) (Primrec.option_map (Primrec.list_head?.comp Primrec.snd)
++      (Primrec.to₂ (Primrec.list_cons.comp (Primrec.nat_bodd.comp (Primrec.fst.comp Primrec.fst)) Primrec.snd)))
++  apply Primrec.nat_omega_rec' Nat.bits (m := id) (l := deps) (g := step) Primrec.id hd hs
++  · intro n a ha
++    by_cases hn : n = 0
++    · simp [deps, hn] at ha
++    · simp only [deps, hn, ↓reduceIte, List.mem_singleton] at ha
++      subst a
++      exact Nat.binaryRec_decreasing hn
++  · intro n
++    by_cases hn : n = 0
++    · simp [step, deps, hn]
++    · have hb : n.div2 = 0 → n.bodd = true := by
++        intro h
++        have he := Nat.bit_bodd_div2 n
++        rw [h] at he
++        cases hh : n.bodd
++        · simp [hh] at he
++          exact (hn he.symm).elim
++        · rfl
++      simp only [deps, step, hn, ↓reduceIte, List.map_cons, List.map_nil, List.head?_cons, Option.map_some]
++      congr 1
++      exact (Nat.bits_append_bit n.div2 n.bodd hb).symm.trans (congrArg Nat.bits (Nat.bit_bodd_div2 n))
++
++private lemma zfBPrimSkipPair (valid : Bool → Bool → Bool) : Primrec (codeSkipPair valid) := by
++  have hi : Primrec₂ (fun p : Bool × List Bool => fun q : Bool × List Bool =>
++      if valid p.1 q.1 then some q.2 else none) :=
++    Primrec.ite (Primrec.eq.comp ((Primrec.dom_bool₂ valid).comp
++      (Primrec.fst.comp Primrec.fst) (Primrec.fst.comp Primrec.snd)) (Primrec.const true))
++      (Primrec.option_some.comp (Primrec.snd.comp Primrec.snd)) (Primrec.const none)
++  have ho := Primrec.list_casesOn Primrec.snd (Primrec.const none) hi
++  exact Primrec.list_casesOn Primrec.id (Primrec.const none) (ho.comp Primrec.snd).to₂
++
++private lemma zfBPrimSkipFin : Primrec₂ codeSkipFin := by
++  unfold codeSkipFin
++  apply Primrec.option_bind (zfBPrimUnary.comp Primrec.snd)
++  change Primrec _
++  exact Primrec.ite (Primrec.nat_lt.comp (Primrec.fst.comp Primrec.snd) (Primrec.fst.comp Primrec.fst))
++    (Primrec.option_some.comp (Primrec.snd.comp Primrec.snd)) (Primrec.const none)
++
++private lemma zfBPrimSkipState : Primrec₂ codeSkipState := by
++  have h : Primrec₂ (fun p : ℕ × List Bool => fun q : Bool × List Bool =>
++      if q.1 then codeSkipFin p.1 q.2 else some q.2) :=
++    Primrec.ite (Primrec.eq.comp (Primrec.fst.comp Primrec.snd) (Primrec.const true))
++      (zfBPrimSkipFin.comp (Primrec.fst.comp Primrec.fst) (Primrec.snd.comp Primrec.snd))
++      (Primrec.option_some.comp (Primrec.snd.comp Primrec.snd))
++  exact Primrec.list_casesOn Primrec.snd (Primrec.const none) h
++
++private lemma zfBPrimSkipAction : Primrec₂ zfBSkipAction := by
++  unfold zfBSkipAction
++  apply Primrec.option_bind ((zfBPrimSkipPair _).comp Primrec.snd)
++  change Primrec _
++  apply Primrec.option_bind ((zfBPrimSkipPair _).comp Primrec.snd)
++  change Primrec _
++  apply Primrec.option_bind ((zfBPrimSkipPair _).comp Primrec.snd)
++  change Primrec _
++  apply Primrec.option_bind ((zfBPrimSkipPair _).comp Primrec.snd)
++  change Primrec _
++  apply Primrec.option_bind ((zfBPrimSkipPair _).comp Primrec.snd)
++  change Primrec _
++  apply Primrec.option_bind ((zfBPrimSkipPair _).comp Primrec.snd)
++  change Primrec _
++  exact zfBPrimSkipState.comp (Primrec.succ.comp
++    (Primrec.fst.comp (Primrec.fst.comp (Primrec.fst.comp (Primrec.fst.comp
++      (Primrec.fst.comp (Primrec.fst.comp Primrec.fst))))))) Primrec.snd
++
++private lemma zfBSkipRepeat_iter (r : List Bool → Option (List Bool)) (n : ℕ) (xs : List Bool) :
++    codeSkipRepeat r n xs = (fun o => o.bind r)^[n] (some xs) := by
++  induction n generalizing xs with
++  | zero => rfl
++  | succ n ih =>
++    rw [codeSkipRepeat, Function.iterate_succ_apply]
++    cases h : r xs with
++    | none =>
++      simp only [Option.bind_none, Option.bind_some, h]
++      clear ih xs h
++      induction n with
++      | zero => rfl
++      | succ n ih => simpa only [Function.iterate_succ_apply, Option.bind_none] using ih
++    | some ys => simpa only [Option.bind_some, Option.bind_some, h] using ih ys
++
++private lemma zfBPrimRepeat {A : Type} [Primcodable A]
++    (r : A → List Bool → Option (List Bool)) (hr : Primrec₂ r)
++    (count : A → ℕ) (hn : Primrec count) :
++    Primrec₂ (fun a xs => codeSkipRepeat (r a) (count a) xs) := by
++  have h := Primrec.nat_iterate (hn.comp Primrec.fst) (Primrec.option_some.comp Primrec.snd)
++    (Primrec.option_bind Primrec.snd
++      (hr.comp (Primrec.fst.comp (Primrec.fst.comp Primrec.fst)) Primrec.snd).to₂).to₂
++  exact h.of_eq fun p => (zfBSkipRepeat_iter (r p.1) (count p.1) p.2).symm
++
++private lemma zfBPrimAll : Primrec (fun xs : List Bool => xs.all id) := by
++  have h := Primrec.list_foldr (α := List Bool) (β := Bool) Primrec.id (Primrec.const true)
++    ((Primrec.dom_bool₂ Bool.and).comp (Primrec.fst.comp Primrec.snd) (Primrec.snd.comp Primrec.snd)).to₂
++  exact h.of_eq fun xs => by
++    dsimp only [id]
++    induction xs with
++    | nil => rfl
++    | cons b xs ih => simpa only [List.foldr_cons, List.all_cons, id_eq] using congrArg (fun z => b && z) ih
++
++/-- **Proof sketch.** Compose primitive recursive readers, comparisons, and fixed-count iterations in the exact order of the erased parser. The canonical-count check and minimum-length check surround the state and record scans. The final branch accepts precisely an all-true suffix. -/
++private lemma zfBPrimScan : Primrec zfBScan := by
++  unfold zfBScan
++  apply Primrec.option_bind zfBPrimPair
++  change Primrec _
++  apply Primrec.ite ((Primrec.eq.comp (Primrec.fst.comp Primrec.snd)
++    (zfBPrimBits.comp (zfBPrimBitsNat.comp (Primrec.fst.comp Primrec.snd)))).not)
++    (Primrec.const none)
++  apply Primrec.ite (Primrec.nat_lt.comp (Primrec.list_length.comp (Primrec.snd.comp Primrec.snd))
++    (Primrec.nat_mul.comp (Primrec.const 351) (Primrec.succ.comp (zfBPrimBitsNat.comp (Primrec.fst.comp Primrec.snd)))))
++    (Primrec.const none)
++  apply Primrec.option_bind (zfBPrimSkipFin.comp
++    (Primrec.succ.comp (zfBPrimBitsNat.comp (Primrec.fst.comp Primrec.snd))) (Primrec.snd.comp Primrec.snd))
++  change Primrec _
++  have hr := zfBPrimRepeat _ (zfBPrimRepeat _ (zfBPrimRepeat _ (zfBPrimRepeat _ zfBPrimSkipAction (fun _ => 3) (Primrec.const 3))
++    (fun _ => 3) (Primrec.const 3))
++    (fun _ => 3) (Primrec.const 3)) (fun n => n + 1) Primrec.succ
++  apply Primrec.option_bind (hr.comp
++    (zfBPrimBitsNat.comp (Primrec.fst.comp (Primrec.snd.comp Primrec.fst))) Primrec.snd)
++  change Primrec _
++  exact Primrec.ite (Primrec.eq.comp (zfBPrimAll.comp Primrec.snd) (Primrec.const true))
++    (Primrec.option_some.comp Primrec.snd) (Primrec.const none)
++
++private lemma zfBPrimDrop : Primrec₂ (fun xs : List Bool => fun n => xs.drop n) := by
++  have h := Primrec.nat_iterate (α := List Bool × ℕ) (β := List Bool) Primrec.snd Primrec.fst (Primrec.list_tail.comp Primrec.snd).to₂
++  apply h.of_eq
++  intro p
++  rcases p with ⟨xs, n⟩
++  induction n generalizing xs with
++  | zero => rfl
++  | succ n ih =>
++    rw [Function.iterate_succ_apply, ih]
++    cases xs <;> simp
++
++private lemma zfBPrimPrefix : Primrec₂ (fun xs : List Bool => fun n => xs.take (xs.length - n)) := by
++  have h := Primrec.list_reverse.comp (zfBPrimDrop.comp (Primrec.list_reverse.comp Primrec.fst) Primrec.snd)
++  exact h.of_eq fun p => by simp only [List.reverse_drop, List.reverse_reverse, List.length_reverse]
++
++private lemma zfBPrimCanonical : Primrec zfBCanonical :=
++  Primrec.option_casesOn zfBPrimScan (Primrec.const zfBFallback.serialize)
++    (zfBPrimPrefix.comp Primrec.fst (Primrec.list_length.comp Primrec.snd))
++
++
++
+ /-- **An effective two-tape code scheme exists** (spec, fill pending —
+ tranche A-S2).
+ 
+@@ -149,9 +1036,26 @@ computability route of the received deterministic construction
+ (`TCSlib.Complexity.TuringMachine.MathlibBridge`), so no polynomial
+ canonizer is claimed. Fill obligations, named: the record parser and its
+ fallback totalization; the pad-tolerance lemma; the canonizer assembly
+-and its time bound. -/
++and its time bound.
++
++**ZF-B implementation appendix.** The private seven-field parser and its
++suffix scanner implement this route, including the up-front 351-per-state
++length guard. The scanner-based canonizer is proved primitive recursive,
++then compiled by the public `codePrim_machine` theorem. Its arbitrary
++length-only time bound is supplied by that theorem. The private parser and
++primitive-recursion adaptations are itemized in the delivery's duplication
++ledger; no ND existence theorem is used. -/
+ theorem exists_effectiveMachineCode2 : Nonempty EffectiveMachineCode2 := by
+-  sorry
++  obtain ⟨M, T, h⟩ := codePrim_machine zfBCanonical zfBPrimCanonical
++  refine ⟨{
++    encode := Code2TM.serialize
++    decode := zfBDecode
++    decode_encode_pad := zfBDecode_serialize_pad
++    canonizer := M
++    canonizerTime := T
++    canonizer_computes := ?_ }⟩
++  simpa only [show zfBCanonical = fun xs => (zfBDecode xs).serialize from
++    funext zfBCanonical_eq] using h
+ 
+ /-- A *uniformly timed* scheme for two-tape codes: the effective scheme
+ together with a bounded-acceptance simulator whose budget is one
+-- 
+2.51.1
+
+From 3a621e903bd27311741456994917473478994bb8 Mon Sep 17 00:00:00 2001
+From: Codex <codex@openai.com>
+Date: Sat, 10 Oct 2026 02:08:46 -0300
+Subject: [PATCH 2/2] Replace 46 two-tape parser copies with promoted public
+ declarations
+
+---
+ .../Complexity/TuringMachine/Codes2Tape.lean  | 649 ++----------------
+ 1 file changed, 72 insertions(+), 577 deletions(-)
+
+diff --git a/TCSlib/Complexity/TuringMachine/Codes2Tape.lean b/TCSlib/Complexity/TuringMachine/Codes2Tape.lean
+index f0661a57..18dacd5e 100644
+--- a/TCSlib/Complexity/TuringMachine/Codes2Tape.lean
++++ b/TCSlib/Complexity/TuringMachine/Codes2Tape.lean
+@@ -62,6 +62,13 @@ statement phase. `exists_effectiveMachineCode2` is now proved; the uniform
+ simulator remains the continuation target. The new implementation includes
+ private adaptations of inaccessible helpers in `CodeParser.lean` and
+ `MathlibBridge.lean`, with declaration-level provenance in `REPORT.md`.
++
++**ZF-B2 cleanup appendix.** The ZF-B provenance above records the original
++delivery. Its 46 format-independent local copies have now been deleted:
++all uses cite the promoted public readers and primitive-recursion lemmas.
++The 24 remaining private declarations implement the two-tape format and
++its 354-bit regression; their one-tape counterparts and retained proof
++material are itemized in this delivery's duplication ledger.
+ -/
+ 
+ namespace Turing
+@@ -147,83 +154,25 @@ recursion lemmas are locally adapted under the exclusive-file rule; each is
+ itemized in the delivery's duplication ledger. Public field encodings, the
+ unary reader, suffix-skipping primitives, pairing laws, and `codePrim_machine`
+ are cited directly. No ND existence theorem is used.
+--/
+-
+-
+-
+-/-- The unary reader leaves an arbitrary suffix untouched. -/
+-private lemma zfBReadUnary_append (n : ℕ) (xs : List Bool) :
+-    codeReadUnary (List.replicate n true ++ false :: xs) = some (n, xs) := by
+-  induction n with
+-  | zero => rfl
+-  | succ n ih =>
+-    simpa [List.replicate_succ, codeReadUnary] using
+-      congrArg (Option.map fun p : ℕ × List Bool => (p.1 + 1, p.2)) ih
+ 
+-/-- A unary index is accepted only when it belongs to the declared state space. -/
+-private def zfBReadFin (n : ℕ) (xs : List Bool) : Option (Fin n × List Bool) := do
+-  let (i, rest) ← codeReadUnary xs
+-  if h : i < n then some (⟨i, h⟩, rest) else none
+-
+-/-- Decode the fixed dictionary for a head movement. -/
+-private def zfBReadSign : List Bool → Option (SignType × List Bool)
+-  | true :: true :: xs => some (.neg, xs)
+-  | false :: false :: xs => some (.zero, xs)
+-  | true :: false :: xs => some (.pos, xs)
+-  | _ => none
+-
+-/-- Decode the fixed dictionary for an optional output bit. -/
+-private def zfBReadOutput : List Bool → Option (Option Bool × List Bool)
+-  | false :: false :: xs => some (none, xs)
+-  | true :: false :: xs => some (some false, xs)
+-  | true :: true :: xs => some (some true, xs)
+-  | _ => none
++ZF-B2 now cites all 46 promoted format-independent declarations directly.
++Only the two-tape-specific adaptations and the regression remain local.
++-/
+ 
+-/-- Decode the fixed dictionary for an optional work-tape write. -/
+-private def zfBReadWrite : List Bool → Option (Option (Option Bool) × List Bool)
+-  | false :: false :: xs => some (none, xs)
+-  | false :: true :: xs => some (some none, xs)
+-  | true :: false :: xs => some (some (some false), xs)
+-  | true :: true :: xs => some (some (some true), xs)
+-  | _ => none
+ 
+-/-- Read the halt tag or a range-checked live successor state. -/
+-private def zfBReadState (n : ℕ) : List Bool → Option (Option (Fin n) × List Bool)
+-  | false :: xs => some (none, xs)
+-  | true :: xs => (zfBReadFin n xs).map fun p => (some p.1, p.2)
+-  | [] => none
+ 
+ /-- Read the seven fields of a transition, failing as soon as any field fails. -/
+ private def zfBReadAction (n : ℕ) (xs : List Bool) :
+     Option (Action 2 Bool (Fin (n + 1)) × List Bool) := do
+-  let (im, xs) ← zfBReadSign xs
+-  let (wr, xs) ← zfBReadWrite xs
+-  let (wm, xs) ← zfBReadSign xs
+-  let (wr₁, xs) ← zfBReadWrite xs
+-  let (wm₁, xs) ← zfBReadSign xs
+-  let (out, xs) ← zfBReadOutput xs
+-  let (q, xs) ← zfBReadState (n + 1) xs
++  let (im, xs) ← codeReadSign xs
++  let (wr, xs) ← codeReadWrite xs
++  let (wm, xs) ← codeReadSign xs
++  let (wr₁, xs) ← codeReadWrite xs
++  let (wm₁, xs) ← codeReadSign xs
++  let (out, xs) ← codeReadOutput xs
++  let (q, xs) ← codeReadState (n + 1) xs
+   pure (⟨im, fun i => if i = 0 then (wr, wm) else (wr₁, wm₁), out, q⟩, xs)
+ 
+-/-- Read one entry for each tape symbol, in blank/false/true order. -/
+-private def zfBReadSymbols {A : Type} (read : List Bool → Option (A × List Bool))
+-    (xs : List Bool) : Option ((Option Bool → A) × List Bool) := do
+-  let (a, xs) ← read xs
+-  let (b, xs) ← read xs
+-  let (c, xs) ← read xs
+-  pure ((fun s => match s with | none => a | some false => b | some true => c), xs)
+-
+-/-- Read a fixed-size vector. Its caller checks the minimum total input length
+-before invoking it; a malformed field also aborts immediately. -/
+-private def zfBReadVec {A : Type} (read : List Bool → Option (A × List Bool)) :
+-    (n : ℕ) → List Bool → Option ((Fin n → A) × List Bool)
+-  | 0, xs => some (Fin.elim0, xs)
+-  | n + 1, xs => do
+-    let (a, xs) ← read xs
+-    let (as, xs) ← zfBReadVec read n xs
+-    pure (Fin.cases a as, xs)
+-
+-
+ /-- The fallback is the one-state, immediately halting, silent machine. -/
+ private def zfBFallback : Code2TM :=
+   ⟨0, ⟨0, fun _ _ _ => ⟨.zero, fun _ => (none, .zero), none, none⟩⟩⟩
+@@ -245,9 +194,9 @@ private def zfBParse (xs : List Bool) : Option Code2TM := do
+   let n := codeBitsNat bits
+   if bits ≠ n.bits then none else do
+     if 351 * (n + 1) > rest.length then none else do
+-      let (q, rest) ← zfBReadFin (n + 1) rest
+-      let (table, rest) ← zfBReadVec
+-        (zfBReadSymbols (zfBReadSymbols (zfBReadSymbols (zfBReadAction n)))) (n + 1) rest
++      let (q, rest) ← codeReadFin (n + 1) rest
++      let (table, rest) ← codeReadVec
++        (codeReadSymbols (codeReadSymbols (codeReadSymbols (zfBReadAction n)))) (n + 1) rest
+       if rest.all id then
+         pure ⟨n, ⟨q, fun s inp w => table s inp (w 0) (w 1)⟩⟩
+       else none
+@@ -255,43 +204,11 @@ private def zfBParse (xs : List Bool) : Option Code2TM := do
+ /-- Total decoding: every malformed string denotes the fixed fallback. -/
+ private def zfBDecode (xs : List Bool) : Code2TM := (zfBParse xs).getD zfBFallback
+ 
+-/-- Reading an encoded bounded index is an exact prefix inverse. -/
+-private lemma zfBReadFin_append {n : ℕ} (i : Fin n) (xs : List Bool) :
+-    zfBReadFin n (unaryFin i ++ xs) = some (i, xs) := by
+-  simp [zfBReadFin, unaryFin, List.append_assoc, zfBReadUnary_append, i.isLt]
+-
+-/-- Reading an encoded head movement is an exact prefix inverse. -/
+-private lemma zfBReadSign_append (s : SignType) (xs : List Bool) :
+-    zfBReadSign (signBits s ++ xs) = some (s, xs) := by
+-  cases s <;> rfl
+-
+-/-- Reading an encoded optional output is an exact prefix inverse. -/
+-private lemma zfBReadOutput_append (b : Option Bool) (xs : List Bool) :
+-    zfBReadOutput (optBoolBits b ++ xs) = some (b, xs) := by
+-  rcases b with _ | b
+-  · rfl
+-  · cases b <;> rfl
+-
+-/-- Reading an encoded optional write is an exact prefix inverse. -/
+-private lemma zfBReadWrite_append (b : Option (Option Bool)) (xs : List Bool) :
+-    zfBReadWrite (optOptBoolBits b ++ xs) = some (b, xs) := by
+-  rcases b with _ | (_ | b)
+-  · rfl
+-  · rfl
+-  · cases b <;> rfl
+-
+-/-- Reading an encoded successor is an exact prefix inverse. -/
+-private lemma zfBReadState_append {n : ℕ} (s : Option (Fin n)) (xs : List Bool) :
+-    zfBReadState n (optStateBits s ++ xs) = some (s, xs) := by
+-  cases s with
+-  | none => rfl
+-  | some s => simp [optStateBits, zfBReadState, zfBReadFin_append]
+-
+ /-- All seven fields round-trip, including both work-tape coordinates. -/
+ private lemma zfBReadAction_append {n : ℕ} (a : Action 2 Bool (Fin (n + 1)))
+     (xs : List Bool) : zfBReadAction n (actionBits₂ a ++ xs) = some (a, xs) := by
+-  simp only [actionBits₂, List.append_assoc, zfBReadAction, zfBReadSign_append,
+-    zfBReadWrite_append, zfBReadOutput_append, zfBReadState_append,
++  simp only [actionBits₂, List.append_assoc, zfBReadAction, codeReadSign_append,
++    codeReadWrite_append, codeReadOutput_append, codeReadState_append,
+     bind, Option.bind, pure]
+   congr 2
+   cases a
+@@ -299,55 +216,6 @@ private lemma zfBReadAction_append {n : ℕ} (a : Action 2 Bool (Fin (n + 1)))
+   funext i
+   fin_cases i <;> rfl
+ 
+-/-- Three prefix inverses assemble in the required blank/false/true order. -/
+-private lemma zfBReadSymbols_append {A : Type}
+-    (read : List Bool → Option (A × List Bool)) (write : A → List Bool)
+-    (h : ∀ a xs, read (write a ++ xs) = some (a, xs))
+-    (f : Option Bool → A) (xs : List Bool) :
+-    zfBReadSymbols read
+-      (([none, some false, some true] : List (Option Bool)).flatMap
+-        (fun s => write (f s)) ++ xs) = some (f, xs) := by
+-  simp only [List.flatMap_cons, List.flatMap_nil, List.append_nil,
+-    List.append_assoc, zfBReadSymbols, h, bind, Option.bind, pure]
+-  congr 2
+-  funext s
+-  rcases s with _ | b
+-  · rfl
+-  · cases b <;> rfl
+-
+-/-- Fixed-size vector parsing is a prefix inverse of enumeration-order writing.
+-**Proof sketch.** Induct on the vector length. The first field reader recovers the head and leaves the concatenated tail; the induction hypothesis recovers the remaining vector. Extensionality identifies the reconstructed function on bounded indices. -/
+-private lemma zfBReadVec_append {A : Type}
+-    (read : List Bool → Option (A × List Bool)) (write : A → List Bool)
+-    (h : ∀ a xs, read (write a ++ xs) = some (a, xs)) :
+-    ∀ n (f : Fin n → A) xs,
+-      zfBReadVec read n ((List.finRange n).flatMap (fun i => write (f i)) ++ xs) =
+-        some (f, xs) := by
+-  intro n
+-  induction n with
+-  | zero =>
+-    intro f xs
+-    simp only [List.finRange_zero, List.flatMap_nil, List.nil_append, zfBReadVec]
+-    congr 2
+-    funext i
+-    exact i.elim0
+-  | succ n ih =>
+-    intro f xs
+-    simp only [List.finRange_succ, List.flatMap_cons, List.flatMap_map,
+-      List.append_assoc, zfBReadVec, h, bind, Option.bind, ih, pure]
+-    congr 2
+-    funext i
+-    refine Fin.cases ?_ (fun j => ?_) i <;> rfl
+-
+-/-- Binary reconstruction inverts the canonical little-endian representation,
+-including the empty representation of zero. -/
+-private lemma zfBBitsNat_bits (n : ℕ) : codeBitsNat n.bits = n := by
+-  induction n using Nat.binaryRec' with
+-  | zero => simp [codeBitsNat]
+-  | bit b n hn ih =>
+-    rw [Nat.bits_append_bit n b hn]
+-    simpa only [codeBitsNat, List.foldr_cons] using congrArg (Nat.bit b) ih
+-
+ /-- Every record has twelve fixed bits and a nonempty successor field. -/
+ private lemma zfBAction_length {n : ℕ} (a : Action 2 Bool (Fin (n + 1))) :
+     13 ≤ (actionBits₂ a).length := by
+@@ -366,19 +234,6 @@ private lemma zfBAction_length {n : ℕ} (a : Action 2 Bool (Fin (n + 1))) :
+   simp only [actionBits₂, List.length_append, hs, ho, hw]
+   omega
+ 
+-/-- Concatenating words with a common length lower bound preserves that bound. -/
+-private lemma zfBFlatMap_length {A : Type} (xs : List A) (f : A → List Bool)
+-    (c : ℕ) (h : ∀ a ∈ xs, c ≤ (f a).length) :
+-    c * xs.length ≤ (xs.flatMap f).length := by
+-  induction xs with
+-  | nil => simp
+-  | cons a xs ih =>
+-    have ha := h a (by simp)
+-    have ht := ih (fun b hb => h b (by simp [hb]))
+-    simp only [List.flatMap_cons, List.length_append, List.length_cons, Nat.mul_add,
+-      Nat.mul_one]
+-    omega
+-
+ /-- The complete table contains at least 351 bits per live state.
+ 
+ **Proof sketch.** Every action contains twelve fixed field bits and at least one successor bit. Summing this lower bound over the three symbols for each work tape, three input symbols, and all states gives at least 351 bits per state. -/
+@@ -389,22 +244,22 @@ private lemma zfBTable_length (M : Code2TM) :
+           ([none, some false, some true] : List (Option Bool)).flatMap fun w₀ =>
+             ([none, some false, some true] : List (Option Bool)).flatMap fun w₁ =>
+               actionBits₂ (M.tm.tr q inp (workPair w₀ w₁))).length := by
+-  have h := zfBFlatMap_length (List.finRange (M.numStates + 1))
++  have h := codeFlatMap_length (List.finRange (M.numStates + 1))
+     (fun q => ([none, some false, some true] : List (Option Bool)).flatMap fun inp =>
+       ([none, some false, some true] : List (Option Bool)).flatMap fun w₀ =>
+         ([none, some false, some true] : List (Option Bool)).flatMap fun w₁ =>
+           actionBits₂ (M.tm.tr q inp (workPair w₀ w₁))) 351 (by
+       intro q _
+-      have h := zfBFlatMap_length ([none, some false, some true] : List (Option Bool))
++      have h := codeFlatMap_length ([none, some false, some true] : List (Option Bool))
+         (fun inp => ([none, some false, some true] : List (Option Bool)).flatMap fun w₀ =>
+           ([none, some false, some true] : List (Option Bool)).flatMap fun w₁ =>
+             actionBits₂ (M.tm.tr q inp (workPair w₀ w₁))) 117 (by
+           intro inp _
+-          have h := zfBFlatMap_length ([none, some false, some true] : List (Option Bool))
++          have h := codeFlatMap_length ([none, some false, some true] : List (Option Bool))
+             (fun w₀ => ([none, some false, some true] : List (Option Bool)).flatMap fun w₁ =>
+               actionBits₂ (M.tm.tr q inp (workPair w₀ w₁))) 39 (by
+                 intro w₀ _
+-                simpa using zfBFlatMap_length
++                simpa using codeFlatMap_length
+                   ([none, some false, some true] : List (Option Bool))
+                   (fun w₁ => actionBits₂ (M.tm.tr q inp (workPair w₀ w₁))) 13
+                   (fun _ _ => zfBAction_length _))
+@@ -415,7 +270,7 @@ private lemma zfBTable_length (M : Code2TM) :
+ /-- The table reader recovers every transition. Blank/false/true exhaust each
+ read alphabet; a two-work-tape read vector is determined by its two coordinates. -/
+ private lemma zfBReadTable_append (M : Code2TM) (xs : List Bool) :
+-    zfBReadVec (zfBReadSymbols (zfBReadSymbols (zfBReadSymbols (zfBReadAction M.numStates))))
++    codeReadVec (codeReadSymbols (codeReadSymbols (codeReadSymbols (zfBReadAction M.numStates))))
+       (M.numStates + 1)
+       (((List.finRange (M.numStates + 1)).flatMap fun q =>
+         ([none, some false, some true] : List (Option Bool)).flatMap fun inp =>
+@@ -423,10 +278,10 @@ private lemma zfBReadTable_append (M : Code2TM) (xs : List Bool) :
+             ([none, some false, some true] : List (Option Bool)).flatMap fun w₁ =>
+               actionBits₂ (M.tm.tr q inp (workPair w₀ w₁))) ++ xs) =
+       some ((fun q inp w₀ w₁ => M.tm.tr q inp (workPair w₀ w₁)), xs) :=
+-  zfBReadVec_append _ _
+-    (fun _ _ => zfBReadSymbols_append _ _
+-      (fun _ _ => zfBReadSymbols_append _ _
+-        (fun _ _ => zfBReadSymbols_append _ _ zfBReadAction_append _ _) _ _) _ _) _ _ _
++  codeReadVec_append _ _
++    (fun _ _ => codeReadSymbols_append _ _
++      (fun _ _ => codeReadSymbols_append _ _
++        (fun _ _ => codeReadSymbols_append _ _ zfBReadAction_append _ _) _ _) _ _) _ _ _
+ 
+ /-- The complete parser recovers a serialized machine under arbitrary true padding.
+ **Proof sketch.** The doubled-bit parser first recovers the canonical state-count bits. The table length bound discharges the early guard; the field and vector inverse laws then recover the initial state and every transition. The remaining replicated true bits pass the suffix test. -/
+@@ -439,12 +294,12 @@ private lemma zfBParse_serialize_pad (M : Code2TM) (m : ℕ) :
+   unfold zfBParse
+   rw [pairDecode_pairEncode]
+   dsimp only [bind, Option.bind]
+-  rw [zfBBitsNat_bits]
++  rw [codeBitsNat_bits]
+   simp only [ne_eq, not_true_eq_false, ↓reduceIte]
+   have hlen := zfBTable_length M
+   simp only [List.length_append, List.length_replicate] at *
+   rw [if_neg (by omega)]
+-  simp only [List.append_assoc, zfBReadFin_append, zfBReadTable_append,
++  simp only [List.append_assoc, codeReadFin_append, zfBReadTable_append,
+     List.all_replicate, id_eq, ite_self, ↓reduceIte, pure]
+   congr 1
+   cases M with
+@@ -463,96 +318,6 @@ private lemma zfBDecode_serialize_pad (M : Code2TM) (m : ℕ) :
+     zfBDecode (M.serialize ++ List.replicate m true) = M := by
+   simp only [zfBDecode, zfBParse_serialize_pad, Option.getD_some]
+ 
+-/-- Successful unary parsing characterizes the exact consumed prefix.
+-
+-**Proof sketch.** Induct on the input. A false bit terminates the number immediately; a true bit increments the recursively recovered number. Empty input cannot succeed. -/
+-private lemma zfBReadUnary_sound (xs : List Bool) (n : ℕ) (rest : List Bool)
+-    (h : codeReadUnary xs = some (n, rest)) :
+-    xs = List.replicate n true ++ false :: rest := by
+-  induction xs generalizing n with
+-  | nil => simp [codeReadUnary] at h
+-  | cons b xs ih =>
+-    cases b with
+-    | false =>
+-      simp only [codeReadUnary, Option.some.injEq, Prod.mk.injEq] at h
+-      rcases h with ⟨rfl, rfl⟩
+-      rfl
+-    | true =>
+-      cases hr : codeReadUnary xs with
+-      | none => simp [codeReadUnary, hr] at h
+-      | some p =>
+-        rcases p with ⟨k, tail⟩
+-        simp only [codeReadUnary, hr, Option.map_some, Option.some.injEq,
+-          Prod.mk.injEq] at h
+-        rcases h with ⟨rfl, rfl⟩
+-        simp [List.replicate_succ, ih k hr]
+-
+-/-- Successful bounded-index parsing determines its complete unary prefix. -/
+-private lemma zfBReadFin_sound {n : ℕ} (xs : List Bool) (i : Fin n) (rest : List Bool)
+-    (h : zfBReadFin n xs = some (i, rest)) : xs = unaryFin i ++ rest := by
+-  obtain ⟨⟨j, tail⟩, hj, h⟩ := Option.bind_eq_some_iff.mp h
+-  dsimp only at h
+-  split at h
+-  · simp only [Option.some.injEq, Prod.mk.injEq] at h
+-    rcases h with ⟨rfl, rfl⟩
+-    simpa [unaryFin, List.append_assoc] using zfBReadUnary_sound xs j tail hj
+-  · contradiction
+-
+-
+-/-- A successful movement read consumes precisely its two-bit dictionary entry. -/
+-private lemma zfBReadSign_sound (xs : List Bool) (s : SignType) (rest : List Bool)
+-    (h : zfBReadSign xs = some (s, rest)) : xs = signBits s ++ rest := by
+-  rcases xs with _ | ⟨b, _ | ⟨c, tail⟩⟩
+-  · simp [zfBReadSign] at h
+-  · cases b <;> simp [zfBReadSign] at h
+-  · cases b <;> cases c <;>
+-      simp only [zfBReadSign, Option.some.injEq, Prod.mk.injEq, reduceCtorEq] at h
+-    all_goals first | contradiction | (rcases h with ⟨rfl, rfl⟩; rfl)
+-
+-/-- A successful output read consumes precisely its two-bit dictionary entry. -/
+-private lemma zfBReadOutput_sound (xs : List Bool) (b : Option Bool) (rest : List Bool)
+-    (h : zfBReadOutput xs = some (b, rest)) : xs = optBoolBits b ++ rest := by
+-  rcases xs with _ | ⟨a, _ | ⟨c, tail⟩⟩
+-  · simp [zfBReadOutput] at h
+-  · cases a <;> simp [zfBReadOutput] at h
+-  · cases a <;> cases c <;>
+-      simp only [zfBReadOutput, Option.some.injEq, Prod.mk.injEq, reduceCtorEq] at h
+-    all_goals first | contradiction | (rcases h with ⟨rfl, rfl⟩; rfl)
+-
+-/-- A successful write read consumes precisely its two-bit dictionary entry. -/
+-private lemma zfBReadWrite_sound (xs : List Bool) (b : Option (Option Bool)) (rest : List Bool)
+-    (h : zfBReadWrite xs = some (b, rest)) : xs = optOptBoolBits b ++ rest := by
+-  rcases xs with _ | ⟨a, _ | ⟨c, tail⟩⟩
+-  · simp [zfBReadWrite] at h
+-  · cases a <;> simp [zfBReadWrite] at h
+-  · cases a <;> cases c <;>
+-      simp only [zfBReadWrite, Option.some.injEq, Prod.mk.injEq] at h
+-    all_goals rcases h with ⟨rfl, rfl⟩; rfl
+-
+-/-- A successful successor read consumes exactly its halt/live unary field.
+-
+-**Proof sketch.** Split the leading tag. A false tag is exactly the halted state encoding; a true tag delegates to the soundness of the bounded unary reader. Empty input is rejected. -/
+-private lemma zfBReadState_sound {n : ℕ} (xs : List Bool) (s : Option (Fin n))
+-    (rest : List Bool) (h : zfBReadState n xs = some (s, rest)) :
+-    xs = optStateBits s ++ rest := by
+-  rcases xs with _ | ⟨b, tail⟩
+-  · simp [zfBReadState] at h
+-  · cases b with
+-    | false =>
+-      simp only [zfBReadState, Option.some.injEq, Prod.mk.injEq] at h
+-      rcases h with ⟨rfl, rfl⟩
+-      rfl
+-    | true =>
+-      cases hr : zfBReadFin n tail with
+-      | none => simp [zfBReadState, hr] at h
+-      | some p =>
+-        rcases p with ⟨i, suffix⟩
+-        simp only [zfBReadState, hr, Option.map_some, Option.some.injEq,
+-          Prod.mk.injEq] at h
+-        rcases h with ⟨rfl, rfl⟩
+-        simp only [optStateBits, List.cons_append]
+-        exact congrArg (List.cons true) (zfBReadFin_sound tail i suffix hr)
+-
+ /-- Successful record parsing characterizes its complete serialized prefix.
+ **Proof sketch.** Decompose the seven successful reads, apply the dictionary
+ inverse to each, and concatenate their consumed prefixes in order. -/
+@@ -565,51 +330,12 @@ private lemma zfBReadAction_sound {n : ℕ} (xs : List Bool)
+       ⟨⟨q, r₇⟩, h₇, h⟩⟩⟩⟩⟩⟩⟩ := h
+   simp only [pure, Option.some.injEq, Prod.mk.injEq] at h
+   rcases h with ⟨rfl, rfl⟩
+-  rw [zfBReadSign_sound xs im r₁ h₁, zfBReadWrite_sound r₁ wr r₂ h₂,
+-    zfBReadSign_sound r₂ wm r₃ h₃, zfBReadWrite_sound r₃ wr₁ r₄ h₄,
+-    zfBReadSign_sound r₄ wm₁ r₅ h₅, zfBReadOutput_sound r₅ out r₆ h₆,
+-    zfBReadState_sound r₆ q r₇ h₇]
++  rw [codeReadSign_sound xs im r₁ h₁, codeReadWrite_sound r₁ wr r₂ h₂,
++    codeReadSign_sound r₂ wm r₃ h₃, codeReadWrite_sound r₃ wr₁ r₄ h₄,
++    codeReadSign_sound r₄ wm₁ r₅ h₅, codeReadOutput_sound r₅ out r₆ h₆,
++    codeReadState_sound r₆ q r₇ h₇]
+   simp [actionBits₂, List.append_assoc]
+ 
+-/-- Three sound prefix readers reconstruct the symbol-indexed row they consumed. -/
+-private lemma zfBReadSymbols_sound {A : Type}
+-    (read : List Bool → Option (A × List Bool)) (write : A → List Bool)
+-    (sound : ∀ xs a rest, read xs = some (a, rest) → xs = write a ++ rest)
+-    (xs : List Bool) (f : Option Bool → A) (rest : List Bool)
+-    (h : zfBReadSymbols read xs = some (f, rest)) :
+-    xs = ([none, some false, some true] : List (Option Bool)).flatMap
+-      (fun s => write (f s)) ++ rest := by
+-  simp only [zfBReadSymbols, bind, Option.bind_eq_some_iff] at h
+-  obtain ⟨⟨a, r₁⟩, h₁, ⟨⟨b, r₂⟩, h₂, ⟨⟨c, r₃⟩, h₃, h⟩⟩⟩ := h
+-  simp only [pure, Option.some.injEq, Prod.mk.injEq] at h
+-  rcases h with ⟨rfl, rfl⟩
+-  rw [sound xs a r₁ h₁, sound r₁ b r₂ h₂, sound r₂ c r₃ h₃]
+-  simp [List.append_assoc]
+-
+-/-- Sound vector parsing reconstructs the entire consumed enumeration.
+-**Proof sketch.** Induct on the number of entries. Successful parsing splits into a successful head parse and a successful tail parse. Their soundness equations concatenate in the same order as the bounded-state enumeration. -/
+-private lemma zfBReadVec_sound {A : Type}
+-    (read : List Bool → Option (A × List Bool)) (write : A → List Bool)
+-    (sound : ∀ xs a rest, read xs = some (a, rest) → xs = write a ++ rest) :
+-    ∀ n xs (f : Fin n → A) rest, zfBReadVec read n xs = some (f, rest) →
+-      xs = (List.finRange n).flatMap (fun i => write (f i)) ++ rest := by
+-  intro n
+-  induction n with
+-  | zero =>
+-    intro xs f rest h
+-    simpa only [zfBReadVec, Option.some.injEq, Prod.mk.injEq,
+-      List.finRange_zero, List.flatMap_nil, List.nil_append] using
+-      (show xs = rest from congrArg Prod.snd (Option.some.inj h))
+-  | succ n ih =>
+-    intro xs f rest h
+-    simp only [zfBReadVec, bind, Option.bind_eq_some_iff] at h
+-    obtain ⟨⟨a, r₁⟩, h₁, ⟨⟨as, r₂⟩, h₂, h⟩⟩ := h
+-    simp only [pure, Option.some.injEq, Prod.mk.injEq] at h
+-    rcases h with ⟨rfl, rfl⟩
+-    rw [sound xs a r₁ h₁, ih r₁ as r₂ h₂]
+-    simp [List.finRange_succ, List.flatMap_map, List.append_assoc]
+-
+-
+ /-- Skip one seven-field transition record, keeping only the unconsumed suffix. -/
+ private def zfBSkipAction (n : ℕ) (xs : List Bool) : Option (List Bool) := do
+   let xs ← codeSkipPair (fun a b => a || !b) xs
+@@ -621,97 +347,31 @@ private def zfBSkipAction (n : ℕ) (xs : List Bool) : Option (List Bool) := do
+   codeSkipState (n + 1) xs
+ 
+ 
+-private lemma zfBEraseFin (n : ℕ) (xs : List Bool) :
+-    (zfBReadFin n xs).map Prod.snd = codeSkipFin n xs := by
+-  simp only [zfBReadFin, codeSkipFin, bind, Option.map_bind, Function.comp_def]
+-  congr 1
+-  funext p
+-  split <;> rfl
+-
+-private lemma zfBEraseSign (xs : List Bool) :
+-    (zfBReadSign xs).map Prod.snd = codeSkipPair (fun a b => a || !b) xs := by
+-  cases xs with
+-  | nil => rfl
+-  | cons a xs =>
+-    cases xs with
+-    | nil => cases a <;> rfl
+-    | cons b xs => cases a <;> cases b <;> rfl
+-
+-private lemma zfBEraseOutput (xs : List Bool) :
+-    (zfBReadOutput xs).map Prod.snd = codeSkipPair (fun a b => a || !b) xs := by
+-  cases xs with
+-  | nil => rfl
+-  | cons a xs =>
+-    cases xs with
+-    | nil => cases a <;> rfl
+-    | cons b xs => cases a <;> cases b <;> rfl
+-
+-private lemma zfBEraseWrite (xs : List Bool) :
+-    (zfBReadWrite xs).map Prod.snd = codeSkipPair (fun _ _ => true) xs := by
+-  cases xs with
+-  | nil => rfl
+-  | cons a xs =>
+-    cases xs with
+-    | nil => cases a <;> rfl
+-    | cons b xs => cases a <;> cases b <;> rfl
+-
+-private lemma zfBEraseState (n : ℕ) (xs : List Bool) :
+-    (zfBReadState n xs).map Prod.snd = codeSkipState n xs := by
+-  cases xs with
+-  | nil => rfl
+-  | cons b xs =>
+-    cases b
+-    · rfl
+-    · simpa only [zfBReadState, codeSkipState, ↓reduceIte,
+-        Option.map_map, Function.comp_def] using zfBEraseFin n xs
+-
+-private lemma zfBErase_bind {A B : Type} (r : Option (A × List Bool))
+-    (f : List Bool → Option B) :
+-    r.bind (fun p => f p.2) = (r.map Prod.snd).bind f := by
+-  cases r <;> rfl
+-
+ private lemma zfBEraseAction (n : ℕ) (xs : List Bool) :
+     (zfBReadAction n xs).map Prod.snd = zfBSkipAction n xs := by
+   simp only [zfBReadAction, zfBSkipAction, bind, Option.map_bind, Function.comp_def, pure, Option.map_some]
+-  rw [← zfBEraseSign xs, ← zfBErase_bind]
++  rw [← codeEraseSign xs, ← codeErase_bind]
+   congr 1; funext p
+-  rw [← zfBEraseWrite p.2, ← zfBErase_bind]
++  rw [← codeEraseWrite p.2, ← codeErase_bind]
+   congr 1; funext p
+-  rw [← zfBEraseSign p.2, ← zfBErase_bind]
++  rw [← codeEraseSign p.2, ← codeErase_bind]
+   congr 1; funext p
+-  rw [← zfBEraseWrite p.2, ← zfBErase_bind]
++  rw [← codeEraseWrite p.2, ← codeErase_bind]
+   congr 1; funext p
+-  rw [← zfBEraseSign p.2, ← zfBErase_bind]
++  rw [← codeEraseSign p.2, ← codeErase_bind]
+   congr 1; funext p
+-  rw [← zfBEraseOutput p.2, ← zfBErase_bind]
++  rw [← codeEraseOutput p.2, ← codeErase_bind]
+   congr 1; funext p
+-  simpa only [Option.map_eq_bind, Function.comp_def] using zfBEraseState (n + 1) p.2
+-
+-private lemma zfBEraseSymbols {A : Type} (r : List Bool → Option (A × List Bool)) (xs : List Bool) :
+-    (zfBReadSymbols r xs).map Prod.snd = codeSkipRepeat (fun s => (r s).map Prod.snd) 3 xs := by
+-  simp only [zfBReadSymbols, bind, Option.map_bind, Function.comp_def, pure, Option.map_some,
+-    codeSkipRepeat, Option.bind_map]
+-
+-private lemma zfBEraseVec {A : Type} (r : List Bool → Option (A × List Bool)) (n : ℕ) :
+-    ∀ xs, (zfBReadVec r n xs).map Prod.snd = codeSkipRepeat (fun s => (r s).map Prod.snd) n xs := by
+-  induction n with
+-  | zero => intro xs; rfl
+-  | succ n ih =>
+-    intro xs
+-    simp only [zfBReadVec, bind, Option.map_bind, Function.comp_def, pure, Option.map_some]
+-    have inner (p : A × List Bool) :
+-        (zfBReadVec r n p.2).bind (fun q => some q.2) = codeSkipRepeat (fun s => (r s).map Prod.snd) n p.2 := by
+-      simpa only [Option.map_eq_bind, Function.comp_def] using ih p.2
+-    simp only [inner, zfBErase_bind, codeSkipRepeat]
++  simpa only [Option.map_eq_bind, Function.comp_def] using codeEraseState (n + 1) p.2
+ 
+ private def zfBParseFull (xs : List Bool) : Option (Code2TM × List Bool) := do
+   let (bits, rest) ← pairDecode xs
+   let n := codeBitsNat bits
+   if bits ≠ n.bits then none else do
+     if 351 * (n + 1) > rest.length then none else do
+-      let (q, rest) ← zfBReadFin (n + 1) rest
+-      let (table, rest) ← zfBReadVec
+-        (zfBReadSymbols (zfBReadSymbols (zfBReadSymbols (zfBReadAction n)))) (n + 1) rest
++      let (q, rest) ← codeReadFin (n + 1) rest
++      let (table, rest) ← codeReadVec
++        (codeReadSymbols (codeReadSymbols (codeReadSymbols (zfBReadAction n)))) (n + 1) rest
+       if rest.all id then
+         pure (⟨n, ⟨q, fun s inp w => table s inp (w 0) (w 1)⟩⟩, rest)
+       else none
+@@ -750,12 +410,12 @@ private lemma zfBScan_full (xs : List Bool) : zfBScan xs = (zfBParseFull xs).map
+       (if t.2.all id then some ((⟨codeBitsNat p.1, ⟨q.1, fun s inp w => t.1 s inp (w 0) (w 1)⟩⟩ : Code2TM), t.2) else none).map Prod.snd =
+         (if t.2.all id then some t.2 else none) := by split <;> rfl
+   simp only [pure, h]
+-  rw [← zfBEraseFin _ _, ← zfBErase_bind]
++  rw [← codeEraseFin _ _, ← codeErase_bind]
+   congr 1; funext q
+-  have ht := zfBEraseVec (zfBReadSymbols (zfBReadSymbols (zfBReadSymbols (zfBReadAction (codeBitsNat p.1)))))
++  have ht := codeEraseVec (codeReadSymbols (codeReadSymbols (codeReadSymbols (zfBReadAction (codeBitsNat p.1)))))
+     (codeBitsNat p.1 + 1) q.2
+-  simp only [zfBEraseSymbols, zfBEraseAction] at ht
+-  rw [← ht, ← zfBErase_bind]
++  simp only [codeEraseSymbols, zfBEraseAction] at ht
++  rw [← ht, ← codeErase_bind]
+ 
+ /-- **Proof sketch.** Use the same decomposition as parser soundness, retaining the exact unconsumed suffix. The field soundness equations and the canonical count check reconstruct the original input as the machine serialization followed by that suffix. -/
+ private lemma zfBParseFull_sound (xs : List Bool) (M : Code2TM) (tail : List Bool)
+@@ -776,13 +436,13 @@ private lemma zfBParseFull_sound (xs : List Bool) (M : Code2TM) (tail : List Boo
+       next hpad =>
+         simp only [pure, Option.some.injEq, Prod.mk.injEq] at h
+         rcases h with ⟨rfl, rfl⟩
+-        have htable := zfBReadVec_sound _ _
+-          (fun _ _ _ => zfBReadSymbols_sound _ _
+-            (fun _ _ _ => zfBReadSymbols_sound _ _
+-              (fun _ _ _ => zfBReadSymbols_sound _ _ zfBReadAction_sound _ _ _) _ _ _) _ _ _)
++        have htable := codeReadVec_sound _ _
++          (fun _ _ _ => codeReadSymbols_sound _ _
++            (fun _ _ _ => codeReadSymbols_sound _ _
++              (fun _ _ _ => codeReadSymbols_sound _ _ zfBReadAction_sound _ _ _) _ _ _) _ _ _)
+           _ _ _ _ ht
+         dsimp only at htable
+-        rw [eq_pairEncode_of_pairDecode xs bits rest hp, zfBReadFin_sound rest q r₁ hq, htable]
++        rw [eq_pairEncode_of_pairDecode xs bits rest hp, codeReadFin_sound rest q r₁ hq, htable]
+         simp only [Code2TM.serialize, pairEncode, List.append_assoc]
+         congr 1
+         exact congrArg (List.flatMap fun b : Bool => [b, b]) hb
+@@ -806,215 +466,50 @@ private lemma zfBCanonical_eq (xs : List Bool) : zfBCanonical xs = (zfBDecode xs
+ 
+ 
+ 
+-private lemma zfBPrimUnary : Primrec codeReadUnary := by
+-  have h := Primrec.list_rec (α := List Bool) (β := Bool) Primrec.id (Primrec.const (none : Option (ℕ × List Bool)))
+-    (Primrec.to₂ (Primrec.cond (Primrec.fst.comp Primrec.snd)
+-      (Primrec.option_map (Primrec.snd.comp (Primrec.snd.comp Primrec.snd))
+-        (Primrec.to₂ (Primrec.pair (Primrec.succ.comp (Primrec.fst.comp Primrec.snd)) (Primrec.snd.comp Primrec.snd))))
+-      (Primrec.option_some.comp (Primrec.pair (Primrec.const 0) (Primrec.fst.comp (Primrec.snd.comp Primrec.snd))))))
+-  apply h.of_eq
+-  intro xs
+-  induction xs with
+-  | nil => rfl
+-  | cons b xs ih =>
+-    dsimp only [id, List.recOn] at ih ⊢
+-    cases b <;> simp [codeReadUnary, ih]
+-
+-private lemma zfBPrimBit : Primrec₂ Nat.bit := by
+-  apply (Primrec.cond Primrec.fst
+-    (Primrec.succ.comp (Primrec.nat_double.comp Primrec.snd))
+-    (Primrec.nat_double.comp Primrec.snd)).of_eq
+-  intro p
+-  rcases p with ⟨b, n⟩
+-  cases b <;> simp [Nat.bit]
+-
+-private lemma zfBPrimBitsNat : Primrec codeBitsNat :=
+-  Primrec.list_foldr Primrec.id (Primrec.const 0)
+-    (zfBPrimBit.comp₂ (Primrec.fst.comp₂ Primrec₂.right) (Primrec.snd.comp₂ Primrec₂.right))
+-
+-/-- **Proof sketch.** A list recursion stores the aligned-parser results for both the current suffix and its tail. Adding one input bit can therefore inspect the next bit and reuse the result two positions ahead. This realizes the two-bit recursion using primitive recursive list operations. -/
+-private lemma zfBPrimPair : Primrec pairDecode := by
+-  let step : Bool × List Bool × (Option (List Bool × List Bool) × Option (List Bool × List Bool)) →
+-      Option (List Bool × List Bool) × Option (List Bool × List Bool) := fun p =>
+-    ((p.2.1.head?).bind fun b =>
+-      bif p.1 == b then p.2.2.2.map (fun q => (p.1 :: q.1, q.2))
+-      else bif p.1 then none else some ([], p.2.1.tail), p.2.2.1)
+-  have hstep : Primrec step := by
+-    apply Primrec.pair
+-    · apply Primrec.option_bind (Primrec.list_head?.comp (Primrec.fst.comp Primrec.snd))
+-      change Primrec _
+-      apply Primrec.cond (Primrec.beq.comp (Primrec.fst.comp Primrec.fst) Primrec.snd)
+-      · apply Primrec.option_map (Primrec.snd.comp (Primrec.snd.comp (Primrec.snd.comp Primrec.fst)))
+-        exact (Primrec.pair
+-          (Primrec.list_cons.comp (Primrec.fst.comp (Primrec.fst.comp Primrec.fst)) (Primrec.fst.comp Primrec.snd))
+-          (Primrec.snd.comp Primrec.snd)).to₂
+-      · exact Primrec.cond (Primrec.fst.comp Primrec.fst) (Primrec.const none)
+-          (Primrec.option_some.comp (Primrec.pair (Primrec.const [])
+-            (Primrec.list_tail.comp (Primrec.fst.comp (Primrec.snd.comp Primrec.fst)))))
+-    · exact Primrec.fst.comp (Primrec.snd.comp Primrec.snd)
+-  have h := Primrec.list_rec (α := List Bool) (β := Bool) Primrec.id
+-    (Primrec.const (none, none)) (hstep.comp Primrec.snd).to₂
+-  have he (xs : List Bool) :
+-      List.recOn xs (none, none) (fun b xs ih => step (b, xs, ih)) =
+-        (pairDecode xs, pairDecode xs.tail) := by
+-    induction xs with
+-    | nil => rfl
+-    | cons b xs ih =>
+-      dsimp only [List.recOn] at ih ⊢
+-      rw [ih]
+-      cases xs with
+-      | nil => cases b <;> rfl
+-      | cons a xs => cases b <;> cases a <;> rfl
+-  exact (Primrec.fst.comp h).of_eq fun xs => congrArg Prod.fst (he xs)
+-
+-/-- **Proof sketch.** Use well-founded primitive recursion with the natural number itself as measure and its half as the sole recursive dependency. The zero case emits no bits; otherwise prepend the parity bit to the recursively computed bits of the half. -/
+-private lemma zfBPrimBits : Primrec Nat.bits := by
+-  let deps : ℕ → List ℕ := fun n => if n = 0 then [] else [n.div2]
+-  let step : ℕ → List (List Bool) → Option (List Bool) := fun n vals =>
+-    if n = 0 then some [] else vals.head?.map (fun xs => n.bodd :: xs)
+-  have hd : Primrec deps := Primrec.ite (Primrec.eq.comp Primrec.id (Primrec.const 0))
+-    (Primrec.const []) (Primrec.list_cons.comp Primrec.nat_div2 (Primrec.const []))
+-  have hs : Primrec₂ step := Primrec.ite (Primrec.eq.comp Primrec.fst (Primrec.const 0))
+-    (Primrec.const (some [])) (Primrec.option_map (Primrec.list_head?.comp Primrec.snd)
+-      (Primrec.to₂ (Primrec.list_cons.comp (Primrec.nat_bodd.comp (Primrec.fst.comp Primrec.fst)) Primrec.snd)))
+-  apply Primrec.nat_omega_rec' Nat.bits (m := id) (l := deps) (g := step) Primrec.id hd hs
+-  · intro n a ha
+-    by_cases hn : n = 0
+-    · simp [deps, hn] at ha
+-    · simp only [deps, hn, ↓reduceIte, List.mem_singleton] at ha
+-      subst a
+-      exact Nat.binaryRec_decreasing hn
+-  · intro n
+-    by_cases hn : n = 0
+-    · simp [step, deps, hn]
+-    · have hb : n.div2 = 0 → n.bodd = true := by
+-        intro h
+-        have he := Nat.bit_bodd_div2 n
+-        rw [h] at he
+-        cases hh : n.bodd
+-        · simp [hh] at he
+-          exact (hn he.symm).elim
+-        · rfl
+-      simp only [deps, step, hn, ↓reduceIte, List.map_cons, List.map_nil, List.head?_cons, Option.map_some]
+-      congr 1
+-      exact (Nat.bits_append_bit n.div2 n.bodd hb).symm.trans (congrArg Nat.bits (Nat.bit_bodd_div2 n))
+-
+-private lemma zfBPrimSkipPair (valid : Bool → Bool → Bool) : Primrec (codeSkipPair valid) := by
+-  have hi : Primrec₂ (fun p : Bool × List Bool => fun q : Bool × List Bool =>
+-      if valid p.1 q.1 then some q.2 else none) :=
+-    Primrec.ite (Primrec.eq.comp ((Primrec.dom_bool₂ valid).comp
+-      (Primrec.fst.comp Primrec.fst) (Primrec.fst.comp Primrec.snd)) (Primrec.const true))
+-      (Primrec.option_some.comp (Primrec.snd.comp Primrec.snd)) (Primrec.const none)
+-  have ho := Primrec.list_casesOn Primrec.snd (Primrec.const none) hi
+-  exact Primrec.list_casesOn Primrec.id (Primrec.const none) (ho.comp Primrec.snd).to₂
+-
+-private lemma zfBPrimSkipFin : Primrec₂ codeSkipFin := by
+-  unfold codeSkipFin
+-  apply Primrec.option_bind (zfBPrimUnary.comp Primrec.snd)
+-  change Primrec _
+-  exact Primrec.ite (Primrec.nat_lt.comp (Primrec.fst.comp Primrec.snd) (Primrec.fst.comp Primrec.fst))
+-    (Primrec.option_some.comp (Primrec.snd.comp Primrec.snd)) (Primrec.const none)
+-
+-private lemma zfBPrimSkipState : Primrec₂ codeSkipState := by
+-  have h : Primrec₂ (fun p : ℕ × List Bool => fun q : Bool × List Bool =>
+-      if q.1 then codeSkipFin p.1 q.2 else some q.2) :=
+-    Primrec.ite (Primrec.eq.comp (Primrec.fst.comp Primrec.snd) (Primrec.const true))
+-      (zfBPrimSkipFin.comp (Primrec.fst.comp Primrec.fst) (Primrec.snd.comp Primrec.snd))
+-      (Primrec.option_some.comp (Primrec.snd.comp Primrec.snd))
+-  exact Primrec.list_casesOn Primrec.snd (Primrec.const none) h
+-
+ private lemma zfBPrimSkipAction : Primrec₂ zfBSkipAction := by
+   unfold zfBSkipAction
+-  apply Primrec.option_bind ((zfBPrimSkipPair _).comp Primrec.snd)
++  apply Primrec.option_bind ((codePrimSkipPair _).comp Primrec.snd)
+   change Primrec _
+-  apply Primrec.option_bind ((zfBPrimSkipPair _).comp Primrec.snd)
++  apply Primrec.option_bind ((codePrimSkipPair _).comp Primrec.snd)
+   change Primrec _
+-  apply Primrec.option_bind ((zfBPrimSkipPair _).comp Primrec.snd)
++  apply Primrec.option_bind ((codePrimSkipPair _).comp Primrec.snd)
+   change Primrec _
+-  apply Primrec.option_bind ((zfBPrimSkipPair _).comp Primrec.snd)
++  apply Primrec.option_bind ((codePrimSkipPair _).comp Primrec.snd)
+   change Primrec _
+-  apply Primrec.option_bind ((zfBPrimSkipPair _).comp Primrec.snd)
++  apply Primrec.option_bind ((codePrimSkipPair _).comp Primrec.snd)
+   change Primrec _
+-  apply Primrec.option_bind ((zfBPrimSkipPair _).comp Primrec.snd)
++  apply Primrec.option_bind ((codePrimSkipPair _).comp Primrec.snd)
+   change Primrec _
+-  exact zfBPrimSkipState.comp (Primrec.succ.comp
++  exact codePrimSkipState.comp (Primrec.succ.comp
+     (Primrec.fst.comp (Primrec.fst.comp (Primrec.fst.comp (Primrec.fst.comp
+       (Primrec.fst.comp (Primrec.fst.comp Primrec.fst))))))) Primrec.snd
+ 
+-private lemma zfBSkipRepeat_iter (r : List Bool → Option (List Bool)) (n : ℕ) (xs : List Bool) :
+-    codeSkipRepeat r n xs = (fun o => o.bind r)^[n] (some xs) := by
+-  induction n generalizing xs with
+-  | zero => rfl
+-  | succ n ih =>
+-    rw [codeSkipRepeat, Function.iterate_succ_apply]
+-    cases h : r xs with
+-    | none =>
+-      simp only [Option.bind_none, Option.bind_some, h]
+-      clear ih xs h
+-      induction n with
+-      | zero => rfl
+-      | succ n ih => simpa only [Function.iterate_succ_apply, Option.bind_none] using ih
+-    | some ys => simpa only [Option.bind_some, Option.bind_some, h] using ih ys
+-
+-private lemma zfBPrimRepeat {A : Type} [Primcodable A]
+-    (r : A → List Bool → Option (List Bool)) (hr : Primrec₂ r)
+-    (count : A → ℕ) (hn : Primrec count) :
+-    Primrec₂ (fun a xs => codeSkipRepeat (r a) (count a) xs) := by
+-  have h := Primrec.nat_iterate (hn.comp Primrec.fst) (Primrec.option_some.comp Primrec.snd)
+-    (Primrec.option_bind Primrec.snd
+-      (hr.comp (Primrec.fst.comp (Primrec.fst.comp Primrec.fst)) Primrec.snd).to₂).to₂
+-  exact h.of_eq fun p => (zfBSkipRepeat_iter (r p.1) (count p.1) p.2).symm
+-
+-private lemma zfBPrimAll : Primrec (fun xs : List Bool => xs.all id) := by
+-  have h := Primrec.list_foldr (α := List Bool) (β := Bool) Primrec.id (Primrec.const true)
+-    ((Primrec.dom_bool₂ Bool.and).comp (Primrec.fst.comp Primrec.snd) (Primrec.snd.comp Primrec.snd)).to₂
+-  exact h.of_eq fun xs => by
+-    dsimp only [id]
+-    induction xs with
+-    | nil => rfl
+-    | cons b xs ih => simpa only [List.foldr_cons, List.all_cons, id_eq] using congrArg (fun z => b && z) ih
+-
+ /-- **Proof sketch.** Compose primitive recursive readers, comparisons, and fixed-count iterations in the exact order of the erased parser. The canonical-count check and minimum-length check surround the state and record scans. The final branch accepts precisely an all-true suffix. -/
+ private lemma zfBPrimScan : Primrec zfBScan := by
+   unfold zfBScan
+-  apply Primrec.option_bind zfBPrimPair
++  apply Primrec.option_bind codePrimPair
+   change Primrec _
+   apply Primrec.ite ((Primrec.eq.comp (Primrec.fst.comp Primrec.snd)
+-    (zfBPrimBits.comp (zfBPrimBitsNat.comp (Primrec.fst.comp Primrec.snd)))).not)
++    (codePrimBits.comp (codePrimBitsNat.comp (Primrec.fst.comp Primrec.snd)))).not)
+     (Primrec.const none)
+   apply Primrec.ite (Primrec.nat_lt.comp (Primrec.list_length.comp (Primrec.snd.comp Primrec.snd))
+-    (Primrec.nat_mul.comp (Primrec.const 351) (Primrec.succ.comp (zfBPrimBitsNat.comp (Primrec.fst.comp Primrec.snd)))))
++    (Primrec.nat_mul.comp (Primrec.const 351) (Primrec.succ.comp (codePrimBitsNat.comp (Primrec.fst.comp Primrec.snd)))))
+     (Primrec.const none)
+-  apply Primrec.option_bind (zfBPrimSkipFin.comp
+-    (Primrec.succ.comp (zfBPrimBitsNat.comp (Primrec.fst.comp Primrec.snd))) (Primrec.snd.comp Primrec.snd))
++  apply Primrec.option_bind (codePrimSkipFin.comp
++    (Primrec.succ.comp (codePrimBitsNat.comp (Primrec.fst.comp Primrec.snd))) (Primrec.snd.comp Primrec.snd))
+   change Primrec _
+-  have hr := zfBPrimRepeat _ (zfBPrimRepeat _ (zfBPrimRepeat _ (zfBPrimRepeat _ zfBPrimSkipAction (fun _ => 3) (Primrec.const 3))
++  have hr := codePrimRepeat _ (codePrimRepeat _ (codePrimRepeat _ (codePrimRepeat _ zfBPrimSkipAction (fun _ => 3) (Primrec.const 3))
+     (fun _ => 3) (Primrec.const 3))
+     (fun _ => 3) (Primrec.const 3)) (fun n => n + 1) Primrec.succ
+   apply Primrec.option_bind (hr.comp
+-    (zfBPrimBitsNat.comp (Primrec.fst.comp (Primrec.snd.comp Primrec.fst))) Primrec.snd)
++    (codePrimBitsNat.comp (Primrec.fst.comp (Primrec.snd.comp Primrec.fst))) Primrec.snd)
+   change Primrec _
+-  exact Primrec.ite (Primrec.eq.comp (zfBPrimAll.comp Primrec.snd) (Primrec.const true))
++  exact Primrec.ite (Primrec.eq.comp (codePrimAll.comp Primrec.snd) (Primrec.const true))
+     (Primrec.option_some.comp Primrec.snd) (Primrec.const none)
+ 
+-private lemma zfBPrimDrop : Primrec₂ (fun xs : List Bool => fun n => xs.drop n) := by
+-  have h := Primrec.nat_iterate (α := List Bool × ℕ) (β := List Bool) Primrec.snd Primrec.fst (Primrec.list_tail.comp Primrec.snd).to₂
+-  apply h.of_eq
+-  intro p
+-  rcases p with ⟨xs, n⟩
+-  induction n generalizing xs with
+-  | zero => rfl
+-  | succ n ih =>
+-    rw [Function.iterate_succ_apply, ih]
+-    cases xs <;> simp
+-
+-private lemma zfBPrimPrefix : Primrec₂ (fun xs : List Bool => fun n => xs.take (xs.length - n)) := by
+-  have h := Primrec.list_reverse.comp (zfBPrimDrop.comp (Primrec.list_reverse.comp Primrec.fst) Primrec.snd)
+-  exact h.of_eq fun p => by simp only [List.reverse_drop, List.reverse_reverse, List.length_reverse]
+-
+ private lemma zfBPrimCanonical : Primrec zfBCanonical :=
+   Primrec.option_casesOn zfBPrimScan (Primrec.const zfBFallback.serialize)
+-    (zfBPrimPrefix.comp Primrec.fst (Primrec.list_length.comp Primrec.snd))
++    (codePrimPrefix.comp Primrec.fst (Primrec.list_length.comp Primrec.snd))
+ 
+ 
+ 
+-- 
+2.51.1
+

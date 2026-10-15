@@ -1,0 +1,36 @@
+# §13d G2–G4 statement gate: name screen
+
+Tool: `bash <S>/tools/leanelab.sh <OUT>/base <S>/oleans-lb6 <file>` (direct `lean`, no `-o`, no olean
+written). Base: <OUT>/base, a read-only `git archive` export of f2d48ad5 (the local
+`origin/complexity/arora-barak-ch3-4`; its Lean files equal 1b6b972c's: PRs #92 and #93 merged); its `.lake` is
+a symlink to <S>/wt-g24's packages (same `lake-manifest.json`). Snapshot: `oleans-lb6`. Toolchain:
+`leanprover/lean4:v4.25.0`. <OUT> is the gate's output directory; <S> the scratchpad. Run: 2026-10-14 18:28 UTC.
+
+Against every declaration of the base tree (PRs #92 and #93 merged), and the pending statement units
+of the base: MIG-1, the C1 assembly, the H1 harvest, the B5a canonizer overlay, RD-2 and stage 2.
+```
+108 declarations in the unit (108 public, 0 private)
+1. full-name clashes with the TCSlib tree: 1
+   CLASH Turing.zoneCascadeRight_frame ['TCSlib/Complexity/TuringMachine/Build/Zone.lean']
+2. shared with audits/evidence/mig1/gate/MIG1Statements.lean.txt: 0
+2. shared with audits/evidence/c1/assembly/C1Assembly.lean.txt: 0
+2. shared with audits/evidence/h1harv/H1Harvest.lean.txt: 0
+2. shared with audits/evidence/b5a-canon-cont3/CanonCont3Overlay.lean.txt: 0
+2. shared with audits/evidence/rd2-gate/FormulaKitGate.lean.txt: 0
+2. shared with audits/evidence/stage2-gate/Stage2.lean.txt: 0
+2. shared with audits/evidence/stage2-gate/LanguageExtensions.lean.txt: 0
+3. unit public names whose last component also names another TCSlib declaration: 3
+   SHORT Turing.ZoneContents.swap ~ CommunicationComplexity.Deterministic.Protocol.swap, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.DisjointCoordinate.swap
+   SHORT Turing.ZoneContents.swap_swap ~ CommunicationComplexity.Deterministic.Protocol.swap_swap, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.DisjointCoordinate.swap_swap
+   SHORT Turing.ZoneContents.extend ~ SwitchingLemma.Restriction.extend, Turing.Action.extend
+4. duplicates within the unit: []
+```
+Positive control (`<OUT>/work/screen_ctrl.lean` declares two existing full names):
+```
+2 declarations in the unit (2 public, 0 private)
+1. full-name clashes with the TCSlib tree: 2
+   CLASH Turing.zoneSide ['TCSlib/Complexity/TuringMachine/Build/Zone.lean']
+   CLASH Turing.zoneBase_succ ['TCSlib/Complexity/TuringMachine/Build/Zone.lean']
+3. unit public names whose last component also names another TCSlib declaration: 0
+4. duplicates within the unit: []
+```

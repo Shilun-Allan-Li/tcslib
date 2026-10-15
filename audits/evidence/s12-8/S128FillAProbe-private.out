@@ -1,0 +1,13 @@
+@Turing.catalogTrace : {k : ℕ} →
+  {Symbol : Type u_1} →
+    {x : List Symbol} →
+      {S : Type u_2} →
+        (ℕ → Turing.Cfg k Symbol S x) →
+          (ℕ → Turing.Cfg k Symbol S x) → Turing.Cfg k Symbol S x → ℕ → ℕ → Turing.Cfg k Symbol S x
+@Turing.catalog_trace_run : ∀ {k : ℕ} {Symbol : Type u_1} {x : List Symbol} {S : Type u_2}
+  (M : Turing.MultiTapeTM k Symbol S) (F R : ℕ → Turing.Cfg k Symbol S x) (D : Turing.Cfg k Symbol S x) (L : ℕ),
+  (∀ r < L, Turing.MultiTapeTM.step (F r) = F (r + 1)) →
+    Turing.MultiTapeTM.step (F L) = R L →
+      (∀ r < L, Turing.MultiTapeTM.step (R (r + 1)) = R r) →
+        Turing.MultiTapeTM.step (R 0) = D →
+          Turing.MultiTapeTM.step D = D → ∀ (t : ℕ), Turing.MultiTapeTM.runFrom (F 0) t = Turing.catalogTrace F R D L t

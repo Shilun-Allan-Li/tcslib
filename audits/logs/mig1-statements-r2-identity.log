@@ -1,0 +1,164 @@
+PASS verbatim   abs_workTapePos_runFrom_sub_le (MIG1Statements.lean:110) <- H2Draft:729 abs_workTapePos_runFrom_sub_le
+PASS verbatim   ComputesInTime.spaceUsed_le (MIG1Statements.lean:139) <- Catalog:4192 f2_space_of_time [rename Space]
+PASS statement  branchTM_spaceUsed (MIG1Statements.lean:174) <- Catalog:10477 f2_branch_space [rename Branch]
+PASS verbatim   rewind_scan_heads (MIG1Statements.lean:189) <- Catalog:10376 rewind_scan_heads
+PASS verbatim   rewind_heads (MIG1Statements.lean:229) <- Catalog:10415 rewind_heads
+PASS verbatim   idTM (MIG1Statements.lean:275) <- Composition:88 idTM
+PASS verbatim   constTM (MIG1Statements.lean:300) <- Composition:168 constTM
+PASS verbatim   ifEqTM (MIG1Statements.lean:322) <- Composition:189 ifEqTM
+PASS verbatim   condTM (MIG1Statements.lean:442) <- Composition:517 condTM
+PASS substrings constTM_computes (MIG1Statements.lean:311) <- Composition:179 computesFunInTime_const
+PASS substrings bufferedCompTM_computesFunInTime (MIG1Statements.lean:360) <- Composition:391 computesFunInTime_comp
+PASS substrings bufferedCompTM_computesFunInTime_on_image (MIG1Statements.lean:382) <- Composition:415 exists_comp_on_image
+PASS substrings bufferedCompTM_computes_iff (MIG1Statements.lean:402) <- Composition:474 exists_comp_partial
+PASS verbatim   timedPadTM (MIG1Statements.lean:516) <- Wrappers:470 timedPadTM
+PASS verbatim   timedCondTM (MIG1Statements.lean:526) <- Wrappers:479 timedCondTM
+PASS statement  timedCondTM_computes (MIG1Statements.lean:562) <- Catalog:10344 f2_cond_time [rename Cond]
+PASS statement  timedCondTM_spaceUsed (MIG1Statements.lean:582) <- Catalog:10633 f2_cond_space [rename Cond]
+PASS verbatim   pairDiagTM (MIG1Statements.lean:637) <- Encoding:299 pairDiagTM
+PASS substrings FinTM.toCodeTM (MIG1Statements.lean:675) <- Encoding:609 exists_codeTM
+PASS substrings FinTM.toCodeTM_computesInTime_iff (MIG1Statements.lean:692) <- Encoding:609 exists_codeTM
+PASS verbatim   counterBump (MIG1Statements.lean:730) <- TimeConstructible:123 counterBump
+PASS verbatim   _root_.Turing.FinTM.lengthBitsTM (MIG1Statements.lean:744) <- TimeConstructible:130 counterTM [rename TC]
+PASS statement  _root_.Turing.FinTM.lengthBitsTM_computes (MIG1Statements.lean:774) <- Catalog:3671 f2_counter_computes [rename CounterTC]
+PASS statement  _root_.Turing.FinTM.lengthBitsTM_spaceUsed (MIG1Statements.lean:788) <- Catalog:3799 f2_counter_space [rename CounterTC]
+PASS verbatim   loopBodyTM (MIG1Statements.lean:810) <- Loop:393 loopBodyTM
+PASS verbatim   LoopHostState (MIG1Statements.lean:831) <- Loop:517 LoopHostState
+PASS verbatim   loopFuelSource (MIG1Statements.lean:834) <- Loop:521 loopFuelSource
+PASS verbatim   loopBodySource (MIG1Statements.lean:841) <- Loop:529 loopBodySource
+PASS verbatim   loopControlAction (MIG1Statements.lean:847) <- Loop:536 loopControlAction
+PASS verbatim   loopBodyDispatch (MIG1Statements.lean:860) <- Loop:552 loopBodyDispatch
+PASS verbatim   loopHostM (MIG1Statements.lean:873) <- Loop:576 loopHostM
+PASS verbatim   emLoopHost (MIG1Statements.lean:1169) <- Loop:4623 emLoopHost
+PASS verbatim   emCallIdleTM (MIG1Statements.lean:1222) <- Loop:2560 emCallIdleTM
+PASS verbatim   emCallEvalTM (MIG1Statements.lean:1227) <- Loop:2568 emCallEvalTM
+PASS verbatim   emCallClearTM (MIG1Statements.lean:1237) <- Loop:2713 emCallClearTM
+PASS verbatim   emCallSlots (MIG1Statements.lean:1254) <- Loop:2940 emCallSlots
+PASS verbatim   emCallTrackTM (MIG1Statements.lean:1257) <- Loop:2947 emCallTrackTM
+PASS verbatim   emCallRightTM (MIG1Statements.lean:1277) <- Loop:3322 emCallRightTM
+PASS verbatim   emCallFinishTM (MIG1Statements.lean:1291) <- Loop:3544 emCallFinishTM
+PASS verbatim   emCallSource (MIG1Statements.lean:1320) <- Loop:3825 emCallSource
+PASS verbatim   emCallState (MIG1Statements.lean:1323) <- Loop:3830 emCallState
+PASS verbatim   emCallTripleIndex (MIG1Statements.lean:1326) <- Loop:3834 emCallTripleIndex
+PASS verbatim   emCallTripleSelect (MIG1Statements.lean:1336) <- Loop:3845 emCallTripleSelect
+PASS verbatim   emCall_triple_inverse (MIG1Statements.lean:1342) <- Loop:3853 emCall_triple_inverse
+PASS verbatim   emCallPairIndex (MIG1Statements.lean:1349) <- Loop:3861 emCallPairIndex
+PASS verbatim   emCallPairSelect (MIG1Statements.lean:1353) <- Loop:3866 emCallPairSelect
+PASS verbatim   emCall_pair_inverse (MIG1Statements.lean:1359) <- Loop:3873 emCall_pair_inverse
+PASS verbatim   emCallTripleEmbedding (MIG1Statements.lean:1364) <- Loop:3879 emCallTripleEmbedding
+PASS verbatim   emCallPairEmbedding (MIG1Statements.lean:1371) <- Loop:3887 emCallPairEmbedding
+PASS verbatim   loopHostTM (MIG1Statements.lean:956) <- Loop:649 loopHost [rename Loop]
+PASS verbatim   callTM (MIG1Statements.lean:1384) <- Loop:3897 emCallTM [rename Loop]
+PASS transform  loopHostTM_contracts (MIG1Statements.lean:978) <- Loop:2066 loopHost_contracts [rename LoopSpec] [2 substitutions]
+PASS binders    loopHostTM_decides (MIG1Statements.lean:1035) <- Loop:2370 exists_loopTM
+PASS binders    loopHostTM_finds (MIG1Statements.lean:1079) <- Loop:2484 exists_loopFindTM
+PASS binders    loopHostTM_spaceUsed_le_budget (MIG1Statements.lean:1131) <- Loop:2066 loopHost_contracts
+PASS binders    emitLoopTM_computes (MIG1Statements.lean:1193) <- Loop:4775 exists_emitLoopTM
+PASS substrings emitLoopTM (MIG1Statements.lean:1179) <- Loop:4775 exists_emitLoopTM
+PASS transform  callTM_run (MIG1Statements.lean:1435) <- Loop:4592 emCall_first [rename LoopSpec] [3 substitutions]
+PASS verbatim   CatalogPolyControl (MIG1Statements.lean:1504) <- Primitives:982 CatalogPolyControl
+PASS verbatim   catalogPolyControlFintype (MIG1Statements.lean:1511) <- Primitives:990 catalogPolyControlFintype
+PASS verbatim   catalogPolyControlDecidableEq (MIG1Statements.lean:1514) <- Primitives:994 catalogPolyControlDecidableEq
+PASS verbatim   catalogPolyMove (MIG1Statements.lean:1517) <- Primitives:1002 catalogPolyMove
+PASS verbatim   catalogPolyUnaryTM (MIG1Statements.lean:1521) <- Primitives:1009 catalogPolyUnaryTM
+PASS verbatim   lenAction (MIG1Statements.lean:1550) <- Primitives:1409 lenAction
+PASS verbatim   pairCountTM (MIG1Statements.lean:1555) <- Primitives:1417 pairCountTM
+PASS verbatim   rawStripTM (MIG1Statements.lean:1583) <- Primitives:1758 rawStripTM
+PASS verbatim   anyTrueTM (MIG1Statements.lean:1602) <- Primitives:1953 anyTrueTM
+PASS verbatim   splitRestoreTM (MIG1Statements.lean:1612) <- Primitives:3015 splitRestoreTM
+PASS verbatim   splitCountAction (MIG1Statements.lean:1632) <- Primitives:3188 splitCountAction
+PASS verbatim   splitPrepareTM (MIG1Statements.lean:1638) <- Primitives:3382 splitPrepareTM
+PASS verbatim   splitRewindTM (MIG1Statements.lean:1654) <- Primitives:3574 splitRewindTM
+PASS verbatim   splitEmitTM (MIG1Statements.lean:1666) <- Primitives:3589 splitEmitTM
+PASS verbatim   SplitBodyState (MIG1Statements.lean:1681) <- Primitives:3606 SplitBodyState
+PASS verbatim   splitBodyStateFintype (MIG1Statements.lean:1690) <- Primitives:3615 splitBodyStateFintype
+PASS verbatim   splitBodyStateDecidableEq (MIG1Statements.lean:1693) <- Primitives:3620 splitBodyStateDecidableEq
+PASS verbatim   splitBodyTM (MIG1Statements.lean:1706) <- Primitives:3636 splitBodyTM
+PASS verbatim   emitterCompareTM (MIG1Statements.lean:1727) <- Primitives:4468 emitterCompareTM
+PASS verbatim   emitterP2EraseTM (MIG1Statements.lean:1745) <- Primitives:4700 emitterP2EraseTM
+PASS verbatim   emitterP2PrepareTM (MIG1Statements.lean:1759) <- Primitives:4813 emitterP2PrepareTM
+PASS verbatim   emitterP2LeftIndex (MIG1Statements.lean:1789) <- Primitives:5187 emitterP2LeftIndex
+PASS verbatim   emitterP2RightIndex (MIG1Statements.lean:1792) <- Primitives:5191 emitterP2RightIndex
+PASS verbatim   emitterP2OneIndex (MIG1Statements.lean:1795) <- Primitives:5267 emitterP2OneIndex
+PASS verbatim   emitterP2SmallIndex (MIG1Statements.lean:1799) <- Primitives:5284 emitterP2SmallIndex
+PASS verbatim   emitterP2PairIndex (MIG1Statements.lean:1809) <- Primitives:5326 emitterP2PairIndex
+PASS verbatim   EmitterP2State (MIG1Statements.lean:1819) <- Primitives:5416 EmitterP2State
+PASS verbatim   emitterP2StateFintype (MIG1Statements.lean:1832) <- Primitives:5429 emitterP2StateFintype
+PASS verbatim   emitterP2StateDecidableEq (MIG1Statements.lean:1835) <- Primitives:5433 emitterP2StateDecidableEq
+PASS verbatim   emitterP2BodyTM (MIG1Statements.lean:1852) <- Primitives:5455 emitterP2BodyTM
+PASS verbatim   prependTM (MIG1Statements.lean:1900) <- Primitives:129 catalogPrefixTM [rename Prim]
+PASS verbatim   incFixedTM (MIG1Statements.lean:1929) <- Primitives:460 incFixedTM
+PASS verbatim   pairValidTM (MIG1Statements.lean:1965) <- Primitives:569 pairValidTM
+PASS verbatim   pairExtractTM (MIG1Statements.lean:1993) <- Primitives:665 pairExtractTM
+PASS verbatim   unaryTokenTM (MIG1Statements.lean:2434) <- Primitives:6087 emitterTokenTM [rename Prim]
+PASS verbatim   appendBitTM (MIG1Statements.lean:2468) <- Primitives:6252 emitterAppendTM [rename Prim]
+PASS statement  prependTM_computes (MIG1Statements.lean:1920) <- Primitives:198 catalogPrefixTM_computes [rename Prim]
+PASS statement  incFixedTM_computes (MIG1Statements.lean:1957) <- Primitives:487 incFixed_computes [rename Prim]
+PASS statement  pairValidTM_computes (MIG1Statements.lean:1984) <- Primitives:651 pairValid_computes [rename Prim]
+PASS statement  pairExtractTM_computes (MIG1Statements.lean:2030) <- Primitives:960 pairExtract_computes [rename Prim]
+PASS verbatim   FwdMapState (MIG1Statements.lean:2238) <- Catalog:5100 a2_MapState [rename Fwd]
+PASS verbatim   fwdMapStateFintype (MIG1Statements.lean:2244) <- Catalog:5106 a2_mapStateFintype [rename Fwd]
+PASS verbatim   fwdMapAct (MIG1Statements.lean:2247) <- Catalog:5110 a2_mapAct [rename Fwd]
+PASS verbatim   fwdMapTM (MIG1Statements.lean:2252) <- Catalog:5120 a2_mapTM [rename Fwd]
+PASS verbatim   catalogPolyTape (probe-tail.lean:11) <- Primitives:998 catalogPolyTape
+PASS verbatim   catalogPolyCost (probe-tail.lean:14) <- Primitives:1124 catalogPolyCost
+PASS verbatim   splitStep (probe-tail.lean:18) <- Primitives:2884 splitStep
+PASS verbatim   splitAccept (probe-tail.lean:21) <- Primitives:2888 splitAccept
+PASS verbatim   splitBank (probe-tail.lean:24) <- Primitives:3659 splitBank
+PASS verbatim   emitterSplitAccept (probe-tail.lean:28) <- Primitives:4343 emitterSplitAccept
+PASS statement  catalogPoly_unary_computes (probe-tail.lean:41) <- Primitives:1371 catalogPoly_unary_computes [rename Prim]
+PASS statement  catalogPolyCost_le (probe-tail.lean:35) <- Primitives:1254 catalogPolyCost_le [rename Prim]
+PASS statement  pairCount_computes (probe-tail.lean:49) <- Primitives:1738 pairCount_computes [rename Prim]
+PASS statement  rawStrip_computes (probe-tail.lean:59) <- Primitives:1933 rawStrip_computes [rename Prim]
+PASS statement  anyTrue_computes (probe-tail.lean:65) <- Primitives:1999 anyTrue_computes [rename Prim]
+PASS statement  catalogMarker_cases (probe-tail.lean:71) <- Primitives:2015 catalogMarker_cases [rename Prim]
+PASS statement  splitStep_inv (probe-tail.lean:79) <- Primitives:2892 splitStep_inv [rename Prim]
+PASS statement  splitLoop_result (probe-tail.lean:85) <- Primitives:2935 splitLoop_result [rename Prim]
+PASS statement  splitLoop_bound (probe-tail.lean:98) <- Primitives:2955 splitLoop_bound [rename Prim]
+PASS statement  splitBody_start (probe-tail.lean:105) <- Primitives:3665 splitBody_start [rename Prim]
+PASS statement  splitBody_round (probe-tail.lean:112) <- Primitives:3981 splitBody_round [rename Prim]
+PASS statement  splitSource_poly (probe-tail.lean:131) <- Primitives:4171 splitSource_poly [rename Prim]
+PASS statement  splitSource_constant (probe-tail.lean:141) <- Primitives:4181 splitSource_constant [rename Prim]
+PASS statement  splitBody_envelope (probe-tail.lean:150) <- Primitives:4202 splitBody_envelope [rename Prim]
+PASS statement  emitterSplit_result (probe-tail.lean:158) <- Primitives:4361 emitterSplit_result [rename Prim]
+PASS statement  emitterSplit_loop_bound (probe-tail.lean:171) <- Primitives:4380 emitterSplit_loop_bound [rename Prim]
+PASS statement  emitter_width_budget (probe-tail.lean:178) <- Primitives:4672 emitter_width_budget [rename Prim]
+PASS statement  emitterP2_body_start (probe-tail.lean:188) <- Primitives:5493 emitterP2_body_start [rename Prim]
+PASS statement  emitterP2_body_round (probe-tail.lean:196) <- Primitives:5891 emitterP2_body_round [rename Prim]
+PASS statement  f2_seamed_space (probe-tail.lean:220) <- Catalog:8390 f2_seamed_space
+PASS transform  loopHost_contracts_heads (probe-tail.lean:237) <- Catalog:8113 f2_loopHost_contracts [rename ExtHeads] [2 substitutions]
+PASS statement  idTM_run (probe-tail.lean:632) <- Composition:100 idTM_run
+PASS statement  ifEq_run (probe-tail.lean:640) <- Composition:226 ifEq_run
+PASS statement  condTM_start (probe-tail.lean:651) <- Composition:594 condTM_start
+PASS verbatim   redirectState (probe-tail.lean:657) <- Wrappers:337 redirectState
+PASS verbatim   redirectCfg (probe-tail.lean:663) <- Wrappers:350 redirectCfg
+PASS statement  redirect_run (probe-tail.lean:670) <- Wrappers:411 redirect_run
+PASS verbatim   scanCfg (probe-tail.lean:674) <- Primitives:211 scanCfg
+PASS statement  scanCfg_read (probe-tail.lean:679) <- Primitives:216 scanCfg_read [rename Prim]
+PASS statement  emitterToken_run (probe-tail.lean:686) <- Primitives:6150 emitterToken_run [rename Prim]
+PASS statement  emitterToken_length (probe-tail.lean:697) <- Primitives:6210 emitterToken_length [rename Prim]
+PASS statement  emitterAppend_run (probe-tail.lean:703) <- Primitives:6264 emitterAppend_run [rename Prim]
+PASS statement  loop_halted_run (probe-tail.lean:710) <- Loop:2296 loop_halted_run
+PASS statement  loop_find_run (probe-tail.lean:725) <- Loop:2435 loop_find_run
+PASS statement  emCall_first (probe-tail.lean:740) <- Loop:4592 emCall_first [rename Loop]
+PASS verbatim   fwdMapVirtual (probe-tail.lean:753) <- Catalog:5173 a2_mapVirtual [rename FwdAll]
+PASS statement  fwdMapVirtual_run (probe-tail.lean:763) <- Catalog:5628 a2_mapVirtual_run [rename FwdAll]
+PASS statement  fwdMapSetup_heads (probe-tail.lean:773) <- Catalog:5729 a2_mapSetup_heads [rename FwdAll]
+PASS statement  fwdMap_launch (probe-tail.lean:780) <- Catalog:5740 a2_map_launch [rename FwdAll]
+PASS statement  fwdMap_reject (probe-tail.lean:791) <- Catalog:5774 a2_map_reject [rename FwdAll]
+PASS statement  fwdMap_space (probe-tail.lean:802) <- Catalog:5841 a2_map_space [rename FwdAll]
+PASS statement  catalogPoly_space (probe-tail.lean:820) <- Catalog:3288 f2_poly_space [rename PolySpace]
+PASS verbatim   pairDiagCfg (probe-tail.lean:1144) <- Encoding:320 pairDiagCfg
+PASS statement  pairDiag_run (probe-tail.lean:1149) <- Encoding:455 pairDiag_run
+PASS verbatim   f2_loopBodyTM (BridgeProbe.lean:35) <- Catalog:6434 f2_loopBodyTM
+PASS verbatim   f2_LoopHostState (BridgeProbe.lean:56) <- Catalog:6585 f2_LoopHostState
+PASS verbatim   f2_loopFuelSource (BridgeProbe.lean:59) <- Catalog:6589 f2_loopFuelSource
+PASS verbatim   f2_loopBodySource (BridgeProbe.lean:66) <- Catalog:6597 f2_loopBodySource
+PASS verbatim   f2_loopControlAction (BridgeProbe.lean:72) <- Catalog:6604 f2_loopControlAction
+PASS verbatim   f2_loopHost (BridgeProbe.lean:85) <- Catalog:6628 f2_loopHost
+entries: 158; by kind: {'verbatim': 97, 'statement': 47, 'substrings': 7, 'transform': 3, 'binders': 4}; failures: 0
+
+## negative control (three single-token mutations; identity.py exit 3)
+FAIL verbatim   timedCondTM (mutant.lean:526) <- Wrappers:479 timedCondTM  -- declarations differ
+FAIL verbatim   loopHostM (mutant.lean:873) <- Loop:576 loopHostM  -- declarations differ
+FAIL statement  prependTM_computes (mutant.lean:1920) <- Primitives:198 catalogPrefixTM_computes [rename Prim]  -- statements differ

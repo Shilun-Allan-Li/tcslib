@@ -1,0 +1,27 @@
+  classical
+  obtain ⟨K, P, hP, dP, L, entry, stop, CL, hne, hstop, hloop⟩ := exists_windowLoopTM M upd hupd
+  letI := hP
+  letI := dP
+  obtain ⟨Q, hQ, dQ, H, inj, finish, timeout, hfin, hto, hft, hif, hclock⟩ :=
+    exists_stepClockTMVia (RecSym.digitEmb M.State T) L
+      (fun p => decide (p = stop .halted ∨ p = stop .left))
+  letI := hQ
+  letI := dQ
+  refine ⟨K, Σ b, wr_Ctrl Q b, inferInstance, inferInstance, wr_runnerTM H timeout,
+    ⟨true, inj entry⟩, wr_exit finish stop, CL + 1, ?_, ?_, ?_⟩
+  · intro e h
+    cases e with
+    | halted => exact (hif entry _).1 (eq_of_heq (Sigma.mk.inj h).2).symm
+    | left => exact (hif entry _).1 (eq_of_heq (Sigma.mk.inj h).2).symm
+    | exhausted => exact absurd (Sigma.mk.inj h).1 (by decide)
+  · intro a b h
+    cases a <;> cases b <;> first
+      | rfl
+      | exact absurd (Sigma.mk.inj h).1 (by decide)
+      | exact absurd (hstop (Option.some.inj (hfin (eq_of_heq (Sigma.mk.inj h).2)))) (by decide)
+  -- Pre-ship skeleton: the loop and the clock are obtained, the machine is `wr_runnerTM`, and the
+  -- two distinctness clauses are proved. What remains is the contract (route steps 5–8).
+  intro x s c τ hc w d hd hrec hclk hblank
+  -- Proof sketch: the clock's finish or timeout clause at the loop, the dispatch by
+  -- `Turing.phaseHostTM_run`, and the loop's every-`N` clause (route steps 5–8).
+  sorry

@@ -1,0 +1,19 @@
+/-- **The silent transport's capture tape.** If the capture tape `cap` lies outside the selection
+`ι`, the transported configuration `Turing.embedSilentCfg ι cap tapes heads pre out₀ c` holds the
+recorded word `pre ++ c.output` on `cap`, and that tape's head sits just after it, at
+`|pre ++ c.output|`, for every frame, prefix, physical output and source configuration. It is the
+capture-field companion of the selected-tape exports, so that consumers need not unfold the
+transport's private slot search (the C1-A assembly gate, finding M1). (Technical glue.)
+
+**Proof sketch.** Off the selection the slot search finds no source tape
+(`embedSlot_unselected`), so both fields are the capture branch of the transport's
+definition. -/
+theorem embedSilentCfg_cap (ι : Fin m ↪ Fin k) (cap : Fin k)
+    (hcap : cap ∉ Set.range ι)
+    (tapes : Fin k → ℤ → Option Symbol) (heads : Fin k → ℤ)
+    (pre out₀ : List Symbol) (c : Cfg m Symbol S x) :
+    (embedSilentCfg ι cap tapes heads pre out₀ c).workTapes cap =
+        FinTM.bufferTape (pre ++ c.output) ∧
+      (embedSilentCfg ι cap tapes heads pre out₀ c).workTapePos cap =
+        ((pre ++ c.output).length : ℤ) := by
+  simp [embedSilentCfg, embedSlot_unselected ι cap hcap]

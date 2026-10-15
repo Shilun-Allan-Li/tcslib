@@ -1,0 +1,114 @@
+# retarget checks: r2 file exit 0; errors 0; sorry 0; other 85; tip file (negative control) exit 1; errors 2; sorry 0; other 84
+examples: 21 (r2 file); 20 (tip file)
+   f2_loopHost_fuel_capture -> loopHost_fuel_capture (forward := false)
+   f2_loopHost_init -> loopHost_init (forward := false)
+   f2_loopHost_input_rewind -> loopHost_input_rewind (forward := false)
+   f2_loopHost_fuel_copy -> loopHost_fuel_copy (forward := false)
+   f2_loopHost_fuel_return -> loopHost_fuel_return (forward := false)
+   f2_loopHost_fuel_setup -> loopHost_fuel_setup (forward := false)
+   f2_loopHost_prepare -> loopHost_prepare (forward := false)
+   f2_loopHost_anchor_return -> loopHost_anchor_return (forward := false) (pre := [])
+   f2_loopHost_release -> loopHost_release (forward := false)
+   f2_loopHost_start -> loopHost_start (forward := false)
+   f2_loopHost_halt_return -> loopHost_halt_return (none)
+   f2_loopCall_frame -> loopCall_frame (none)
+   f2_loopHost_borrow_step -> loopHost_borrow_step (forward := false)
+   f2_loopHost_borrow_run -> loopHost_borrow_run (forward := false)
+   f2_loopHost_borrow_rewind -> loopHost_borrow_rewind (forward := false)
+   f2_loopHost_borrow -> loopHost_borrow (forward := false)
+   f2_loopHost_reject -> loopHost_reject (forward := false)
+   f2_loopHost_accept -> loopHost_accept (none)
+   f2_loopHost_round -> loopHost_round (none)
+   f2_loopHost_contracts -> loopHost_contracts ⟨10, ·⟩ (the witness re-packed)
+
+r2 file errors: 0
+tip file errors: 2, by restated copy: {'f2_loopHost_prepare': 1, 'f2_loopHost_contracts': 1}
+RESULT: PASS
+
+# retarget table (data/retarget-table.tsv)
+population: 59 declarations (Counter({'move': 47, 'absorbed into a gated public statement': 12})); citations: 215
+classes: {'IDENTICAL': 53, 'MOVES-WITH': 112, 'GENERALIZATION': 11, 'NOT-CARRIED': 38, 'WEAKER at the tip; GENERALIZATION after the round-2 repair': 1}
+accessible: {'yes': 174, '-': 38, "yes after F-A's import in Simulation (decision 4)": 3}
+carried citations by class: {'IDENTICAL': 53, 'MOVES-WITH': 112, 'GENERALIZATION': 11, 'WEAKER at the tip; GENERALIZATION after the round-2 repair': 1}
+f2_poly_space | Primitives | yes | f2_head_steps | Turing.MultiTapeTM.workTapePos_runFrom_mem_Icc | Finite (MIG-0b) (public) | GENERALIZATION | yes | Lean: checks/RetargetChecks-r2.lean (Finset.mem_Icc.mp of the stand-in)
+f2_counter_computes | TimeConstructible | no | f2_counterCfg | counterCfg | - | NOT-CARRIED | - | the citer's proof is replaced over the named witnesses
+f2_counter_computes | TimeConstructible | no | f2_counterTM | counterTM | - | NOT-CARRIED | - | the citer's proof is replaced over the named witnesses
+f2_counter_computes | TimeConstructible | no | f2_counter_count | counter_count | - | NOT-CARRIED | - | the citer's proof is replaced over the named witnesses
+f2_counter_computes | TimeConstructible | no | f2_counter_emit | counter_emit | - | NOT-CARRIED | - | the citer's proof is replaced over the named witnesses
+f2_counter_count_space | TimeConstructible | yes | f2_head_steps | Turing.MultiTapeTM.workTapePos_runFrom_mem_Icc | Finite (MIG-0b) (public) | GENERALIZATION | yes | Lean: checks/RetargetChecks-r2.lean (Finset.mem_Icc.mp of the stand-in)
+f2_counter_heads | TimeConstructible | yes | f2_head_steps | Turing.MultiTapeTM.workTapePos_runFrom_mem_Icc | Finite (MIG-0b) (public) | GENERALIZATION | yes | Lean: checks/RetargetChecks-r2.lean (Finset.mem_Icc.mp of the stand-in)
+f2_unary_sharp | Primitives | no | computesFunInTime_const_spaceUsed | computesFunInTime_const_spaceUsed | - | NOT-CARRIED | - | the citer's proof is replaced over the named witnesses
+f2_unary_sharp | Primitives | no | f2_catalogPolyUnaryTM | catalogPolyUnaryTM | - | NOT-CARRIED | - | the citer's proof is replaced over the named witnesses
+f2_unary_sharp | Primitives | no | f2_catalogPoly_unary_computes | catalogPoly_unary_computes | - | NOT-CARRIED | - | the citer's proof is replaced over the named witnesses
+f2_first_length | Primitives | yes | f2_catalogPair_inverse | Turing.eq_pairEncode_of_pairDecode | Encoding (public) | GENERALIZATION | yes | Lean: bridge probe (one public term, binders reordered)
+f2_strip_linear | Primitives | no | computesFunInTime_const_spaceUsed | computesFunInTime_const_spaceUsed | - | NOT-CARRIED | - | the citer's proof is replaced over the named witnesses
+f2_strip_linear | Primitives | no | computesFunInTime_pairSnd_spaceUsed | computesFunInTime_pairSnd_spaceUsed | - | NOT-CARRIED | - | the citer's proof is replaced over the named witnesses
+f2_strip_linear | Primitives | no | f2_anyTrue_computes | anyTrue_computes | - | NOT-CARRIED | - | the citer's proof is replaced over the named witnesses
+f2_strip_linear | Primitives | no | f2_catalogMarker_cases | catalogMarker_cases | - | NOT-CARRIED | - | the citer's proof is replaced over the named witnesses
+f2_strip_linear | Primitives | no | f2_catalogPair_inverse | f2_catalogPair_inverse | - | NOT-CARRIED | - | the citer's proof is replaced over the named witnesses
+f2_strip_linear | Primitives | no | f2_rawStrip_computes | rawStrip_computes | - | NOT-CARRIED | - | the citer's proof is replaced over the named witnesses
+a2_map_space | Primitives | yes | a2_map_sum | Fin.sum_univ_add | Mathlib.Algebra.BigOperators.Fin (public) | IDENTICAL | yes after F-A's import in Simulation (decision 4) | Lean: bridge probe (one public term)
+f2_loopHost_contracts | Loop | yes | f2_head_steps | Turing.MultiTapeTM.workTapePos_runFrom_mem_Icc | Finite (MIG-0b) (public) | GENERALIZATION | yes | Lean: checks/RetargetChecks-r2.lean (Finset.mem_Icc.mp of the stand-in)
+f2_loopHost_contracts | Loop | yes | f2_loopHost | loopHost | Loop (private) | GENERALIZATION | yes | definition: f2_loopHost body F anchor findMode = loopHostM body F anchor false findMode by
+f2_loopHost_contracts | Loop | yes | f2_loopHost_prepare | loopHost_prepare | Loop (private) | WEAKER at the tip; GENERALIZATION after the round-2 repair | yes | Lean, checks/RetargetChecks-r2.lean: (forward := false); the same example fails against th
+f2_loopHost_contracts | Loop | yes | f2_loopHost_start | loopHost_start | Loop (private) | GENERALIZATION | yes | Lean, checks/RetargetChecks-r2.lean: (forward := false)
+f2_segment_heads | Loop | yes | f2_head_steps | Turing.MultiTapeTM.workTapePos_runFrom_mem_Icc | Finite (MIG-0b) (public) | GENERALIZATION | yes | Lean: checks/RetargetChecks-r2.lean (Finset.mem_Icc.mp of the stand-in)
+f2_seamed_space | Loop | yes | f2_head_steps | Turing.MultiTapeTM.workTapePos_runFrom_mem_Icc | Finite (MIG-0b) (public) | GENERALIZATION | yes | Lean: checks/RetargetChecks-r2.lean (Finset.mem_Icc.mp of the stand-in)
+f2_exists_loopFind_space | Loop | yes | f2_loopHost | loopHost | Loop (private) | GENERALIZATION | yes | definition: f2_loopHost body F anchor findMode = loopHostM body F anchor false findMode by
+f2_exists_loopFind_space | Loop | yes | f2_loopHost_contracts | loopHost_contracts | Loop (private) | GENERALIZATION | yes | the moved contract, ∃ c removed and c ↦ 10: Lean, checks/RetargetChecks-r2.lean (⟨10, loop
+f2_splitSolve_of_body | Primitives | no | computesFunInTime_lengthBits_spaceUsed | computesFunInTime_lengthBits_spaceUsed | - | NOT-CARRIED | - | the citer's proof is replaced over the named witnesses
+f2_splitSolve_of_body | Primitives | no | f2_exists_loopFind_space | f2_exists_loopFind_space | - | NOT-CARRIED | - | the citer's proof is replaced over the named witnesses
+f2_splitSolve_of_body | Primitives | no | f2_splitAccept | splitAccept | - | NOT-CARRIED | - | the citer's proof is replaced over the named witnesses
+f2_splitSolve_of_body | Primitives | no | f2_splitLoop_bound | splitLoop_bound | - | NOT-CARRIED | - | the citer's proof is replaced over the named witnesses
+f2_splitSolve_of_body | Primitives | no | f2_splitLoop_result | splitLoop_result | - | NOT-CARRIED | - | the citer's proof is replaced over the named witnesses
+f2_splitSolve_of_body | Primitives | no | f2_splitStep | splitStep | - | NOT-CARRIED | - | the citer's proof is replaced over the named witnesses
+f2_splitSolve_of_body | Primitives | no | f2_splitStep_inv | splitStep_inv | - | NOT-CARRIED | - | the citer's proof is replaced over the named witnesses
+f2_splitSolve_source | as f2_splitSolve_of_body | no | f2_splitAccept | splitAccept | - | NOT-CARRIED | - | the citer's proof is replaced over the named witnesses
+f2_splitSolve_source | as f2_splitSolve_of_body | no | f2_splitBank | splitBank | - | NOT-CARRIED | - | the citer's proof is replaced over the named witnesses
+f2_splitSolve_source | as f2_splitSolve_of_body | no | f2_splitBodyTM | splitBodyTM | - | NOT-CARRIED | - | the citer's proof is replaced over the named witnesses
+f2_splitSolve_source | as f2_splitSolve_of_body | no | f2_splitBody_envelope | splitBody_envelope | - | NOT-CARRIED | - | the citer's proof is replaced over the named witnesses
+f2_splitSolve_source | as f2_splitSolve_of_body | no | f2_splitBody_round | splitBody_round | - | NOT-CARRIED | - | the citer's proof is replaced over the named witnesses
+f2_splitSolve_source | as f2_splitSolve_of_body | no | f2_splitBody_start | splitBody_start | - | NOT-CARRIED | - | the citer's proof is replaced over the named witnesses
+f2_splitSolve_source | as f2_splitSolve_of_body | no | f2_splitSolve_of_body | splitSolve_of_body | - | NOT-CARRIED | - | the citer's proof is replaced over the named witnesses
+f2_splitSolve_closed | as f2_splitSolve_of_body | no | f2_catalogPolyCost | catalogPolyCost | - | NOT-CARRIED | - | the citer's proof is replaced over the named witnesses
+f2_splitSolve_closed | as f2_splitSolve_of_body | no | f2_catalogPolyCost_le | catalogPolyCost_le | - | NOT-CARRIED | - | the citer's proof is replaced over the named witnesses
+f2_splitSolve_closed | as f2_splitSolve_of_body | no | f2_catalogPolyUnaryTM | catalogPolyUnaryTM | - | NOT-CARRIED | - | the citer's proof is replaced over the named witnesses
+f2_splitSolve_closed | as f2_splitSolve_of_body | no | f2_catalogPrefixTM | catalogPrefixTM | - | NOT-CARRIED | - | the citer's proof is replaced over the named witnesses
+f2_splitSolve_closed | as f2_splitSolve_of_body | no | f2_splitSolve_source | splitSolve_source | - | NOT-CARRIED | - | the citer's proof is replaced over the named witnesses
+f2_splitSolve_closed | as f2_splitSolve_of_body | no | f2_splitSource_constant | splitSource_constant | - | NOT-CARRIED | - | the citer's proof is replaced over the named witnesses
+f2_splitSolve_closed | as f2_splitSolve_of_body | no | f2_splitSource_poly | splitSource_poly | - | NOT-CARRIED | - | the citer's proof is replaced over the named witnesses
+f2_cond_time | Wrappers | no | f2_timedBranchCfg | timedBranchCfg | - | NOT-CARRIED | - | the citer's proof is replaced over the named witnesses
+f2_cond_time | Wrappers | no | f2_timedCondTM | timedCondTM | - | NOT-CARRIED | - | the citer's proof is replaced over the named witnesses
+f2_cond_time | Wrappers | no | f2_timed_branch_run | timed_branch_run | - | NOT-CARRIED | - | the citer's proof is replaced over the named witnesses
+f2_cond_time | Wrappers | no | f2_timed_start | timed_start | - | NOT-CARRIED | - | the citer's proof is replaced over the named witnesses
+f2_branch_space | Simulation | yes | f2_sum_add | Fin.sum_univ_add | Mathlib.Algebra.BigOperators.Fin (public) | IDENTICAL | yes after F-A's import in Simulation (decision 4) | Lean: bridge probe (one public term)
+f2_cond_space | Wrappers | yes | f2_sum_add | Fin.sum_univ_add | Mathlib.Algebra.BigOperators.Fin (public) | IDENTICAL | yes after F-A's import in Simulation (decision 4) | Lean: bridge probe (one public term)
+
+# full elaborator output of the tip negative control (checks/RetargetChecks-tip.lean)
+/private/tmp/claude-501/-Users-seyoonr-phd-experiments-tcslib/8f0076bc-454a-4666-b8cf-f4c7ed13c549/scratchpad/gate-mig1-r2/gate/checks/RetargetChecks-tip.lean:5063:2: error: Tactic `apply` failed: could not unify the conclusion of `fun body F anchor => loopHost_prepare body F anchor false`
+  ∃ c t,
+    c.state = none ∧
+      c.output = Nat.bits (?R (List.length ?x)) ∧
+        t ≤ 5 * ?T (List.length ?x) + 7 ∧ MultiTapeTM.runFrom (MultiTapeTM.initCfg ?x) t = loopReady ?body ?F c
+with the goal
+  ∃ c t,
+    c.state = none ∧
+      c.output = (R x.length).bits ∧
+        t ≤ 5 * T x.length + 7 ∧
+          MultiTapeTM.runFrom (MultiTapeTM.initCfg x) t = body.loopReady F c ∧
+            ∀ (i : Fin F.k), -↑(T x.length) ≤ c.workTapePos i ∧ c.workTapePos i ≤ ↑(T x.length)
+
+--
+/private/tmp/claude-501/-Users-seyoonr-phd-experiments-tcslib/8f0076bc-454a-4666-b8cf-f4c7ed13c549/scratchpad/gate-mig1-r2/gate/checks/RetargetChecks-tip.lean:5296:7: error: Application type mismatch: The argument
+  loopHost_contracts body F anchor Inv stepF acceptF out findMode s0 R T hF hInv0 hInvStep hstart hround
+has type
+  ∃ c,
+    ∀ (x : List Bool),
+      ∃ cfg,
+        ∃ startup ≤ c * (T x.length + 1),
+          MultiTapeTM.runFrom (MultiTapeTM.initCfg x) startup = cfg 0 ∧
+            (∀ i ≤ R x.length, (cfg i).output = []) ∧
+              (cfg (R x.length + 1)).state = none ∧
+                ((cfg (R x.length + 1)).output = if findMode = true then [] else [false]) ∧
+                  ∀ i ≤ R x.length,
+                    ∃ t ≤ c * (T x.length + 1),
