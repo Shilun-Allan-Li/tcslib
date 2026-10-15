@@ -5,7 +5,7 @@
 - Clone: `https://github.com/Shilun-Allan-Li/tcslib`
 - Check out branch **`complexity/arora-barak-ch3-4`**, this exact branch, NOT `main`.
 - **If Lean cannot start, follow `briefs/fill-environment-addendum.md` exactly.**
-- Before you start, confirm that `git merge-base --is-ancestor @ANCESTOR@ HEAD`
+- Before you start, confirm that `git merge-base --is-ancestor 15c404be6ba320bbf6e8be1788a1d4b8b43a0c4f HEAD`
   succeeds. That commit contains:
   - the B6 hosts (#92), the H1 harvest (#94), record-table row 18 proved (#95), the canonizer's
     continuation 3 (#96) and the C1-A assembly with the public `Turing.embedSilentCfg_cap` in
@@ -22,8 +22,8 @@
 - **Branch at exactly that commit, not at the campaign tip:**
 
   ```sh
-  git checkout -b fill/b6-stepclock-v2 @ANCESTOR@
-  git rev-parse HEAD        # must print @ANCESTOR@
+  git checkout -b fill/b6-stepclock-v2 15c404be6ba320bbf6e8be1788a1d4b8b43a0c4f
+  git rev-parse HEAD        # must print 15c404be6ba320bbf6e8be1788a1d4b8b43a0c4f
   ```
 
   Record that hash as your base in `REPORT.md`. Never rebase, merge or cherry-pick later campaign
@@ -32,7 +32,7 @@
   Ground rule 10 says what the pinned base means for your citations.
 - **Delivery is by zip, not PR or push** (`workflow.md` §4): `fill-b6-stepclock-v2.zip`,
   containing `REPORT.md`, the full modified sources (all three owned files), a `git format-patch`
-  series against `@ANCESTOR@`, a git bundle whose only prerequisite is `@ANCESTOR@`, the bootstrap
+  series against `15c404be6ba320bbf6e8be1788a1d4b8b43a0c4f`, a git bundle whose only prerequisite is `15c404be6ba320bbf6e8be1788a1d4b8b43a0c4f`, the bootstrap
   and final sweep logs, the axiom log, the sanity evidence file `B6F1Sanity.lean.txt` and its log,
   the route-probe re-run log, both screen outputs, and `SHA256SUMS`.
 
@@ -56,7 +56,7 @@ statement is the one B6-F2 cites.
 
 - **Lines in this brief are those of campaign commit `ff4cab18`**, whose Lean content is the merge
   of #95–#97 (`c9cc485b`'s). No commit after `c9cc485b` up to and including the inputs commit
-  `@ANCESTOR@` touches a `.lean` file, so your base's Lean content is exactly `c9cc485b`'s. `Build/StepClock.lean`, `Build/CounterLoop.lean` and
+  `15c404be6ba320bbf6e8be1788a1d4b8b43a0c4f` touches a `.lean` file, so your base's Lean content is exactly `c9cc485b`'s. `Build/StepClock.lean`, `Build/CounterLoop.lean` and
   `SymbolLift.lean` are byte-identical to their `c52663f1` versions (checked); v1's line numbers in
   them stand. Every probe and measurement below was run at `ff4cab18`, against the olean snapshot
   of that tip's catch-up replay (`oleans-ltip3`).
@@ -350,7 +350,7 @@ within `2` steps; (b) an initial designated stop finishes within `2 · |w| + 2` 
 finishes; (d) at timeout the returned counter word has the original width and the counter head is
 back at `cp` (`w = [false, false]`). No `#eval`, `native_decide` or `IO`. A partial says "pending".
 
-## Cited infrastructure (public at `@ANCESTOR@` once the promotion list is applied; all in `B6F1v2ImportProbe.lean.txt` or the route probe)
+## Cited infrastructure (public at `15c404be6ba320bbf6e8be1788a1d4b8b43a0c4f` once the promotion list is applied; all in `B6F1v2ImportProbe.lean.txt` or the route probe)
 
 - **Added by the promotion list:** P1–P3 and N1–N16 above. The import probe cannot import them (no
   olean of the edited modules); the route probe elaborates every one, and its Part D cites them.
@@ -409,7 +409,7 @@ back at `cp` (`w = [false, false]`). No `#eval`, `native_decide` or `IO`. A part
 9. **Continuation budget.** A partial zip is expected and fine (phase reached, open `private`
    helpers each with a literal "Proof sketch", what is proved modulo them).
 10. **The pinned base, revised.**
-    - Cite only declarations public at `@ANCESTOR@`, **the promotion list's P1–P3 and N1–N16**, and
+    - Cite only declarations public at `15c404be6ba320bbf6e8be1788a1d4b8b43a0c4f`, **the promotion list's P1–P3 and N1–N16**, and
       your file's own privates.
     - **The definitional projections of `Turing.lastEmb`, `Turing.counterWord` at `0`,
       `Turing.counterOverhead`, `Turing.decrementTM`'s table, `Turing.Cfg.decodeSymbols` and
@@ -543,7 +543,7 @@ license.
 
 ## REPORT.md checklist
 
-- [ ] 1/1, or the phase reached (rule 9); the base hash (equal to `@ANCESTOR@`) and the ancestor
+- [ ] 1/1, or the phase reached (rule 9); the base hash (equal to `15c404be6ba320bbf6e8be1788a1d4b8b43a0c4f`) and the ancestor
       check; whether the environment addendum was needed.
 - [ ] Phase 0: the generator's output, both files' SHA-256 against the overlays, the phase-0 sweep.
 - [ ] Every new declaration with its role; the prescribed block as taken (any deviation, with its
