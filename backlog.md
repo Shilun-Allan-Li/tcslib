@@ -633,6 +633,28 @@ window.*
   - **Next: a cont4 brief**, phases 2–5 of the report's frontier: the bounded unary reader, the
     record validator, the grammar stage with its fail-fast length bound, the decider on one
     bank, then note 50.
+- **(i) The canonizer cont4 brief issued (2026-10-15):** `briefs/b5a-fill-canon-cont4.md`.
+  - **Inputs** `46be1104`, on a side branch from `ff4cab18`, merged in `6ee00231`, so the
+    worker's base keeps the pre-ship Lean content `c9cc485b`.
+  - **Screens:** re-measured with v3, base and overlay 2,576 pairs each.
+- **(j) Canonizer cont4 delivered, phase 2 (2026-10-15; `fill-b5a-canon-cont4.zip`, Codex
+  `e8bbf4a7`, report `audits/b5a-fill-agent-reports/canon-5-REPORT.md`).**
+  - **Proved:** the eight prescribed grammar bridges, the bounded unary reader
+    `exists_canonUnaryTM` (C1) and the generic record validator `exists_canonRecordTM` (C2), with
+    the recommended statements unchanged. 35 new privates; no public or statement change.
+  - **Still open:** the two frozen stubs `exists_canonGrammarStage` and `exists_canonDecider`.
+    The headline is proved modulo exactly those two (the delivery's admission walk, re-run at
+    the tip).
+  - **At the tip** (`CodeSimulator` unchanged since the base; its imports moved with #98–#106):
+    0 errors against `oleans-lg24`, and three sorry warnings: the two stubs and
+    `exists_uniformSimulator`. The new declarations print the standard axioms only. 0 lint FAILs.
+  - **Duplication:** one new in-file pair, `exists_canonStripTM` reproducing `canonPatchWord`
+    at 59% (a boundary-split tactic idiom, 134 characters). It waits for the user's
+    acknowledgement. The worker removed two cross-file pairs before delivering.
+  - **PR #107** (cherry-picked, authorship kept, plus a comment-only status-text commit);
+    replay 9 modules from #106's snapshot.
+  - **Next: a cont5 brief**, phases 3–5: the grammar stage, the decider on one bank, then
+    note 50.
 
 ### ARM-1: duplication in the received ARM-extensions code (from the ARM fill gate, 2026-10-14)
 
@@ -754,6 +776,12 @@ stopped items:**
   its name.
 - **Final tree (2026-10-14; 60 of 60 at `ff4cab18`, Lean-equal to `c9cc485b`, against `oleans-ltip3`):**
   27 files (23 code, 4 comment-only), +539 −1,549 (net −1,010) lines; replay 119 modules.
+  **Landed (2026-10-15,
+  PR #101; 60 of 60 at `eb750e63`; replay 119 of 119 from #100's snapshot; snapshot `oleans-lpay`
+  for the tip `9c0ae906`).** `DAGCircuitSat`'s edit
+  is exactly the two visibility changes. **It lands after MIG-1 S (#98)**, rebased and re-checked
+  at that tip, then replayed from S's output. ARM round 3 (folder 25) gated it post-merge: PASS
+  (2026-10-15). `arm_reach` stays as acknowledged debt (L066) until ARM-2 (a).
 - **ARM round 3 pack built (2026-10-15; folder 25; bundle `b0e9f8f2…f834`, 243 sections).**
   - **Measurements:** 314 pairs at the landed tree, 48 removed and 9 new, all inspected. K+ is 142
     declarations, 13.7% by shared text. No P1/P1+ declaration remains. #98–#102 change nothing in
@@ -771,17 +799,6 @@ stopped items:**
     - The received H7–H13 hosts still need their own contract gates before further consumers.
     - R3-1 (the stale H10/H11 wording in design §14) and R3-2 (L002/L057's original side
       relabelled `drop_len`; it is `drop_bit`) are fixed in the commit that records the gate.
-- **The B5a canonizer continuation 4 brief is issued (2026-10-15):**
-  `briefs/b5a-fill-canon-cont4.md`.
-  - **Inputs** `46be1104`, on a side branch from `ff4cab18`, merged in `6ee00231`, so the
-    worker's base keeps the pre-ship Lean content `c9cc485b`.
-  - **Screens:** re-measured with v3, base and overlay 2,576 pairs each.
- **Landed (2026-10-15,
-  PR #101; 60 of 60 at `eb750e63`; replay 119 of 119 from #100's snapshot; snapshot `oleans-lpay`
-  for the tip `9c0ae906`).** `DAGCircuitSat`'s edit
-  is exactly the two visibility changes. **It lands after MIG-1 S (#98)**, rebased and re-checked
-  at that tip, then replayed from S's output. ARM round 3 (folder 25) gated it post-merge: PASS
-  (2026-10-15). `arm_reach` stays as acknowledged debt (L066) until ARM-2 (a).
 
 ### ARM-2: the ARM layer's internal duplication, to coordinate with Hydroxyi (user, 2026-10-14)
 
