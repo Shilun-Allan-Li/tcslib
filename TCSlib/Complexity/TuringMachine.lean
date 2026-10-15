@@ -40,6 +40,9 @@ import TCSlib.Complexity.TuringMachine.Build.RecordTable
 import TCSlib.Complexity.TuringMachine.Build.CertShell
 import TCSlib.Complexity.TuringMachine.Build.OracleSim
 import TCSlib.Complexity.TuringMachine.Build.Contract
+import TCSlib.Complexity.TuringMachine.Build.NDCombinators
+import TCSlib.Complexity.TuringMachine.Build.NDClockHost
+import TCSlib.Complexity.TuringMachine.Build.NDClockHostRun
 import TCSlib.Complexity.TuringMachine.CodeSimulator
 import TCSlib.Complexity.TuringMachine.ChoiceWords
 import TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction
@@ -163,6 +166,10 @@ for the local modifications.
   exact time, an endpoint function, an exit set with a no-earlier-exit cut and head envelopes, a
   derived frames layer, and the compositions `trans`, `seq`, `inPhase`, `embed`, `branch` and
   `ReturnContract.release` as thin wrappers over the public rows. Proved; MIG-0a gate closed.
+* `Build/NDCombinators`, `Build/NDClockHost`, `Build/NDClockHostRun` — the nondeterministic
+  construction rows: run locality, output maps and the coin dispatcher for binary-choice
+  machines, and the clocked restart host `Turing.FinNDTM.clockHost` (clocked runner and
+  restart loop of [AB09, §7.4.2, Exercise 7.6(a)]) with its startup and round contracts.
 * `Build/Convention`, `Build/Wrappers`, `Build/Loop`, `Build/Primitives` — the
   machine-construction library (`machine-library-design.md`): the `Cfg.ofWords` seam
   discipline, the capture/silence and halt-redirect wrappers with the timed branch,

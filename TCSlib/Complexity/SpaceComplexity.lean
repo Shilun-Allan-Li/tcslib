@@ -60,6 +60,9 @@ import TCSlib.Complexity.SpaceComplexity.Machines.NARMRun
 import TCSlib.Complexity.SpaceComplexity.Machines.NARMProof
 import TCSlib.Complexity.SpaceComplexity.Machines.NARMExample
 import TCSlib.Complexity.SpaceComplexity.Machines.NARMKit
+import TCSlib.Complexity.SpaceComplexity.Machines.NARMProb
+import TCSlib.Complexity.SpaceComplexity.Machines.NARMPSem
+import TCSlib.Complexity.SpaceComplexity.Machines.NARMLogspace
 import TCSlib.Complexity.SpaceComplexity.Machines.VWord
 import TCSlib.Complexity.SpaceComplexity.Machines.ARMLoops
 import TCSlib.Complexity.SpaceComplexity.Codec.Word
@@ -175,6 +178,12 @@ running counter program is simulated by an abstract register machine in
 - `SpaceComplexity.Machines.NARMKit`: proving nondeterministic register machines correct by
   continuation (`NTerm`, `NAcc`, `NSem`), their step lemmas and generic nondeterministic
   loops
+- `SpaceComplexity.Machines.NARMProb`: compilation preserves acceptance probabilities when
+  `choose` bits are fair coins (`narm_randProb`) [AB09, Def 7.1, §7.7]
+- `SpaceComplexity.Machines.NARMPSem`: the probabilistic continuation semantics `PSem` of
+  such machines [AB09, §7.7]
+- `SpaceComplexity.Machines.NARMLogspace`: their compilation to logspace PTMs
+  (`narm_logspace_ptm`) and the bridge `narm_mem_RL` to `RL` [AB09, §7.7]
 - `SpaceComplexity.Machines.DblLang`: reading the unary length `⟨1ⁿ, bits (2n)⟩` in
   logarithmic space
 - `SpaceComplexity.ImplicitPoly`: implicitly logspace computable functions are
