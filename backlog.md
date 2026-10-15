@@ -654,6 +654,11 @@ window.*
     that it cites `canonPatchWord`. The worker removed two cross-file pairs before delivering.
   - **PR #107** (cherry-picked, authorship kept, plus a comment-only status-text commit);
     replay 9 modules from #106's snapshot.
+  - **Landed (2026-10-15, PR #107 as `6354471a`; replay 9 of 9, 0 errors, at the PR head
+    `510c87c1`; snapshot `oleans-lcanon4` for the tip `6354471a`).** CodeSimulator keeps its
+    three sorry warnings (the two stubs and `exists_uniformSimulator`); the eight downstream
+    modules' sorry counts equal #106's replay. The merge differs from the replayed head only in
+    records (`backlog.md` and the report).
   - **Next: a cont5 brief**, phases 3–5: the grammar stage, the decider on one bank, then
     note 50; plus the one factoring edit above.
 
