@@ -1212,8 +1212,8 @@ The route decisions of 2026-10-12 (design §16b) add three work items, numbered 
       `zoneCascadeRight_home`, with the index-0 unfolding and the frame half each proved once.
       Both files have 0 sorry, standard axioms, 0 new warnings and no statement change. The v3
       screen goes from 384 to 369 pairs. **User (2026-10-15):** factor the Zone pairs and
-      approve the two Catalog idiom pairs. One Zone pair remains for the user (54%, 314 chars,
-      the successor of a base pair). Replay: 87 modules from `oleans-lcanon4`. Then the G2
+      approve the two Catalog idiom pairs; then approve the one remaining Zone pair (54%, 314
+      chars, the successor of a base pair). Replay: 87 modules from `oleans-lcanon4`. Then the G2
       fill gate;
     - G4's host first (obligation 3): identify the public host for the two-tape scratch and
       ruler layout, or gate a missing one, before G4's fill brief.

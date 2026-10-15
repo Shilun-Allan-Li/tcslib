@@ -81,7 +81,7 @@ cite `zoneStepPair_below` and `zoneCascadeRight_zero_eq` instead of re-deriving 
 | Widths | No new line over 100 characters. | |
 | Pre-ship probes | `probes/G2ImportProbe.lean.txt`: 52 `#check`s, 0 errors. `probes/zone-seams.lean.txt`: the three seams proved. | `probes/*.out` |
 
-## 3. Duplication: three pairs, two approved
+## 3. Duplication: three pairs, all approved
 
 The first screen of the fill left four pairs, all below the 90% factoring line. The user chose on
 2026-10-15 to factor the two Zone pairs in #108 and to approve the two Catalog pairs ("Zone now,
@@ -93,7 +93,7 @@ lists the reproduced segments.
 |---|---|---|---|
 | `catalog_transferMap_trace` ← `catalog_clear_trace` | 67%, 1,086 chars | The successor of the base's `catalog_transfer_trace` ← `catalog_clear_trace` (54%, 866 chars). The shared sweep-trace tactic idiom (`split_ifs <;> simp_all <;> omega`, `apply Cfg.ext <;> simp [...]`, the `change ((M).tr _ _ _).apply _ = _` steps). It grew because one trace now carries both rows. | approved (user, 2026-10-15) |
 | `catalog_transferMap_trace` ← `catalog_write_take` | 50%, 62 chars | New: two 31-character idiom fragments. | approved (user, 2026-10-15) |
-| `zoneCascadeRight_lengths` ← `zoneStepPair_below` | 54%, 314 chars | The successor of the base's `zoneCascadeRight_lengths` ← `zoneSide_cascadeRight` (53%, 761 chars). What remains is calls to the same two lemmas on different configurations: the `zoneStepPair_active` invocation, and the `zoneStepPair_frame` rewrites for the ascending pass's `z2`. | for the user |
+| `zoneCascadeRight_lengths` ← `zoneStepPair_below` | 54%, 314 chars | The successor of the base's `zoneCascadeRight_lengths` ← `zoneSide_cascadeRight` (53%, 761 chars). What remains is calls to the same two lemmas on different configurations: the `zoneStepPair_active` invocation, and the `zoneStepPair_frame` rewrites for the ascending pass's `z2`. | approved (user, 2026-10-15) |
 
 The 18 gone pairs include:
 - the base's 91% `catalog_transfer_trace` ← `catalog_copy_trace`;
