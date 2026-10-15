@@ -1,0 +1,23 @@
+# Diagonal Part 1: copy-text screen, before (the base)
+
+`nice -n 10 python3 -I scripts/copy-text-screen.py <root> <files>` (the retrofit screen,
+verbatim). Root: <D>/base. Population (the edited file, its directory, and the two files that
+cite its argument's idioms): TCSlib/Complexity/TimeHierarchy/Diagonal.lean TCSlib/Complexity/TimeHierarchy/Separation.lean TCSlib/Complexity/TimeHierarchy/ClockMachine.lean TCSlib/Complexity/TimeHierarchy/ClockLoop.lean TCSlib/Complexity/TimeHierarchy/CodePrefix.lean TCSlib/Complexity/Diagonalization/NTimeHierarchy.lean TCSlib/Complexity/SpaceComplexity/Hierarchy.lean.
+
+declarations screened: 53; copy pairs (target reproduces >= half of source): 16; reproduced text: 3,277 chars
+   ClockLoop.lean::wstep  reproduces  ClockLoop.lean::underflow_step: 90/93 = 97%
+   ClockMachine.lean::ctrVal_replicate_true  reproduces  ClockMachine.lean::ctrVal_replicate_false: 91/115 = 79%
+   ClockLoop.lean::borrow_run  reproduces  ClockLoop.lean::underflow_step: 66/93 = 71%
+   ClockLoop.lean::ret_run  reproduces  ClockLoop.lean::underflow_step: 63/93 = 68%
+   ClockLoop.lean::wstep  reproduces  ClockMachine.lean::kCfg_init: 185/274 = 68%
+   CodePrefix.lean::pre_scan  reproduces  CodePrefix.lean::pre_copy: 579/863 = 67%
+   ClockMachine.lean::cScanCfg_run  reproduces  ClockLoop.lean::ret_run: 435/657 = 66%
+   ClockLoop.lean::ret_run  reproduces  ClockMachine.lean::cScanCfg_run: 435/682 = 64%
+   ClockMachine.lean::ctrAction_apply  reproduces  ClockMachine.lean::kCfg_init: 168/274 = 61%
+   ClockMachine.lean::kCfg_step  reproduces  ClockMachine.lean::kCfg_init: 161/274 = 59%
+   ClockMachine.lean::ctrPop_replicate  reproduces  ClockMachine.lean::ctrVal_replicate_false: 64/115 = 56%
+   ClockMachine.lean::kCfg_step  reproduces  ClockLoop.lean::wstep: 376/680 = 55%
+   ClockLoop.lean::wstep  reproduces  ClockMachine.lean::ctrAction_apply: 225/417 = 54%
+   ClockMachine.lean::ctrVal_replicate_true  reproduces  ClockMachine.lean::ctrPop_replicate: 64/121 = 53%
+   ClockMachine.lean::ctrVal_replicate_false  reproduces  ClockMachine.lean::ctrPop_replicate: 64/121 = 53%
+   ClockMachine.lean::kCfg_step  reproduces  ClockMachine.lean::ctrAction_apply: 211/417 = 51%

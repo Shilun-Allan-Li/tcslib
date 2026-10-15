@@ -1,0 +1,36 @@
+## Header (copyright block, imports, options: everything before the module docstring)
+byte-identical: True
+
+## Received declarations (10): heads byte-identical, bodies, docstrings
+| declaration | kind | visibility | head | body | docstring |
+|---|---|---|---|---|---|
+| `Complexity.TimeHierarchy.code` | def | public | identical | unchanged | unchanged |
+| `Complexity.TimeHierarchy.univTM` | def | public | identical | unchanged | unchanged |
+| `Complexity.TimeHierarchy.univTM_spec` | lemma | public | identical | unchanged | unchanged |
+| `Complexity.TimeHierarchy.diagSim` | def | public | identical | unchanged | unchanged |
+| `Complexity.TimeHierarchy.diagLang` | def | public | identical | unchanged | unchanged |
+| `Complexity.TimeHierarchy.diagLang_mem_DTIME` | theorem | public | identical | changed | changed |
+| `Complexity.TimeHierarchy.diag_cost_le` | lemma | public | identical | unchanged | changed |
+| `Complexity.TimeHierarchy.diagLang_not_mem_DTIME` | theorem | public | identical | changed | changed |
+| `Complexity.time_hierarchy` | theorem | public | identical | changed | changed |
+| `Complexity.time_hierarchy_of_pos` | theorem | public | identical | changed | changed |
+
+## New declarations (14)
+- `Complexity.TimeHierarchy.diagLangOf` (def, public, line 170; docstring: yes)
+- `Complexity.TimeHierarchy.diagLang_eq_diagLangOf` (theorem, public, line 174; docstring: yes)
+- `Complexity.TimeHierarchy.diagLangOf_mem_DTIME` (theorem, public, line 184; docstring: yes)
+- `Complexity.TimeHierarchy.DiagSimulator` (structure, public, line 212; docstring: yes)
+- `Complexity.TimeHierarchy.DiagSimulator.mono` (def, public, line 226; docstring: yes)
+- `Complexity.TimeHierarchy.DiagSimulator.diagLang_not_mem_DTIME` (theorem, public, line 245; docstring: yes)
+- `Complexity.TimeHierarchy.DiagSimulator.time_hierarchy` (theorem, public, line 278; docstring: yes)
+- `Complexity.TimeHierarchy.DiagSimulator.time_hierarchy_of_pos` (theorem, public, line 310; docstring: yes)
+- `Complexity.TimeHierarchy.SelfSimulator` (structure, public, line 341; docstring: yes)
+- `Complexity.TimeHierarchy.SelfSimulator.toDiagSimulator` (def, public, line 364; docstring: yes)
+- `Complexity.TimeHierarchy.oneTapeSelfSimulator` (def, public, line 429; docstring: yes)
+- `Complexity.TimeHierarchy.le_sq_overhead` (theorem, public, line 458; docstring: yes)
+- `Complexity.TimeHierarchy.sqDiagSimulator` (def, public, line 465; docstring: yes)
+- `Complexity.TimeHierarchy.sqDiagSimulator_W` (theorem, public, line 473; docstring: yes)
+
+## Admissions in the landed code (comments stripped): none
+
+FREEZE: PASS — 10 received declarations, every head byte-identical; 14 new declarations; header identical; no admission
