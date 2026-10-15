@@ -39,66 +39,223 @@ namespace Turing
 
 variable {k : ℕ} {Γ : Type}
 
+/-! ### One constructor for the framed sweep rows (§13d G2, shared with R3 clear)
+
+Every two-pass sweep row of the §12.6 shape (`Turing.clearTM_run_ofCfg`, the mapped copy and the
+mapped transfer) gives a contract in the same way: the index is the word read from one tape, the
+time `2|w| + 2`, the exit `done`, the touched heads within one cell of the word interval and the
+others fixed. `Turing.sweepContract` builds it once from the row's framed theorem, and
+`Turing.sweepPost` is the endpoint shape they share (an interval of one tape overwritten); the
+instances supply only the machine, the read tape, the touched tapes and the written values.
+(Landing: this block is inserted before `Turing.clearTM_contract`, which is then defined through
+it.) -/
+
+/-- **The endpoint of a sweep row**: `d` at the exit `done`, with the word interval
+`[pos, pos + |w|)` of tape `a` (from its head) overwritten cell by cell, cell `q` by `v w d j q`,
+and every other cell, all work heads, the input position and the output unchanged. -/
+def sweepPost {S : Type} {x : List Γ} (done : S) (a : Fin k)
+    (v : List Γ → Cfg k Γ S x → Fin k → ℤ → Option Γ) (w : List Γ) (d : Cfg k Γ S x) :
+    Cfg k Γ S x :=
+  { d with
+    state := some done
+    workTapes := fun j q =>
+      if j = a ∧ d.workTapePos j ≤ q ∧ q < d.workTapePos j + (w.length : ℤ) then v w d j q
+      else d.workTapes j q }
+
+/-- **The contract of a framed two-pass sweep row** (§12.6 shape; design §13d, G2). Given a
+machine `M`, its entry and exit `done`, the tape `src` it reads, the predicate `touched` of the
+tapes whose heads move, an endpoint `post` at `done`, and the row's framed theorem `hrun` (from
+the entry, with a word `w` delimited at the head of `src`: the run reaches `post w d` at exactly
+`2|w| + 2`, no `done` earlier, touched heads within `[pos - 1, pos + |w|]`, the others fixed), this
+is the contract with index `w`, that precondition, time `2|w| + 2`, endpoint `post`, exits
+`{some done}`, and those envelopes. [AFM26], design adaptation (full entry in
+`Build/Contract/Basic`): a specification used in place of the run.
+
+**Proof sketch.** Each field is the matching clause of `hrun`; the exit is `hpost`; a fixed head
+lies in its one-point interval. -/
+def sweepContract {S : Type} (M : MultiTapeTM k Γ S) (entry done : S) (src : Fin k)
+    (touched : Fin k → Prop) [DecidablePred touched] (x : List Γ)
+    (post : List Γ → Cfg k Γ S x → Cfg k Γ S x) (hpost : ∀ w d, (post w d).state = some done)
+    (hrun : ∀ (w : List Γ) (d : Cfg k Γ S x), d.state = some entry →
+      (∀ p : ℤ, -1 ≤ p → p ≤ (w.length : ℤ) →
+        d.workTapes src (d.workTapePos src + p) = FinTM.bufferTape w p) →
+      M.runFrom d (2 * w.length + 2) = post w d ∧
+      (∀ t < 2 * w.length + 2, (M.runFrom d t).state ≠ some done) ∧
+      (∀ (j : Fin k) (t : ℕ), t ≤ 2 * w.length + 2 →
+        if touched j then
+          (M.runFrom d t).workTapePos j ∈
+            Finset.Icc (d.workTapePos j - 1) (d.workTapePos j + (w.length : ℤ))
+        else (M.runFrom d t).workTapePos j = d.workTapePos j)) :
+    Contract M entry {some done} (List Γ) x where
+  pre w d := ∀ p : ℤ, -1 ≤ p → p ≤ (w.length : ℤ) →
+    d.workTapes src (d.workTapePos src + p) = FinTM.bufferTape w p
+  time w _ := 2 * w.length + 2
+  post := post
+  lo w d j := if touched j then d.workTapePos j - 1 else d.workTapePos j
+  hi w d j := if touched j then d.workTapePos j + w.length else d.workTapePos j
+  run w d hd hp := (hrun w d hd hp).1
+  exit_mem w d _ _ := by
+    show (post w d).state ∈ ({some done} : Set (Option S))
+    rw [hpost]
+    exact Set.mem_singleton _
+  cut w d hd hp u hu h := (hrun w d hd hp).2.1 u hu (Set.mem_singleton_iff.mp h)
+  env w d hd hp u hu j := by
+    have h := (hrun w d hd hp).2.2 j u hu
+    by_cases hj : touched j
+    · simpa only [hj, if_true] using h
+    · simp only [hj, if_false] at h ⊢
+      rw [h]
+      exact Finset.mem_Icc.mpr ⟨le_rfl, le_rfl⟩
+
+/-- **The joint trajectory of every framed sweep contract**: every untouched head stays at its
+start, a relation on the whole head vector.
+
+**Proof sketch.** An untouched head's envelope is the one-point interval at its start. -/
+theorem sweepContract_traj {S : Type} (M : MultiTapeTM k Γ S) (entry done : S) (src : Fin k)
+    (touched : Fin k → Prop) [DecidablePred touched] (x : List Γ)
+    (post : List Γ → Cfg k Γ S x → Cfg k Γ S x) (hpost : ∀ w d, (post w d).state = some done)
+    (hrun : ∀ (w : List Γ) (d : Cfg k Γ S x), d.state = some entry →
+      (∀ p : ℤ, -1 ≤ p → p ≤ (w.length : ℤ) →
+        d.workTapes src (d.workTapePos src + p) = FinTM.bufferTape w p) →
+      M.runFrom d (2 * w.length + 2) = post w d ∧
+      (∀ t < 2 * w.length + 2, (M.runFrom d t).state ≠ some done) ∧
+      (∀ (j : Fin k) (t : ℕ), t ≤ 2 * w.length + 2 →
+        if touched j then
+          (M.runFrom d t).workTapePos j ∈
+            Finset.Icc (d.workTapePos j - 1) (d.workTapePos j + (w.length : ℤ))
+        else (M.runFrom d t).workTapePos j = d.workTapePos j)) :
+    (sweepContract M entry done src touched x post hpost hrun).Traj
+      fun _ d p => ∀ j, ¬ touched j → p j = d.workTapePos j := by
+  intro w d hd hp u hu j hj
+  have h := (sweepContract M entry done src touched x post hpost hrun).env w d hd hp u hu j
+  have hlo : (sweepContract M entry done src touched x post hpost hrun).lo w d j =
+      d.workTapePos j := if_neg hj
+  have hhi : (sweepContract M entry done src touched x post hpost hrun).hi w d j =
+      d.workTapePos j := if_neg hj
+  rw [hlo, hhi, Finset.mem_Icc] at h
+  exact le_antisymm h.2 h.1
+
+/-- **A cell outside an overwritten interval keeps its value**: the frame of every sweep row,
+whose endpoint overwrites `[lo, lo + n)` on tape `a` (with any values) and keeps every other
+cell. If `q` lies outside that footprint, the endpoint's cell is the start's. -/
+theorem sweep_ite_keep {α : Type} {j a : Fin k} {lo : ℤ} {n : ℕ} {q : ℤ} (v f : α)
+    (hq : q ∉ (if j = a then Set.Ico lo (lo + n) else ∅)) :
+    (if j = a ∧ lo ≤ q ∧ q < lo + n then v else f) = f := by
+  rw [if_neg]
+  rintro ⟨rfl, h₁, h₂⟩
+  rw [if_pos rfl] at hq
+  exact hq ⟨h₁, h₂⟩
+
 /-- **R3 clear as a contract** (the fit test, from `Turing.clearTM_run_ofCfg`): the index is the
 stored word `w`. Started in the sweep phase with `w`, delimited, at the head of tape `i`, the
 routine reaches `done` in exactly `2|w| + 2` steps, and not earlier, with the cells
 `[pos, pos + |w|)` of tape `i` blank and every other field unchanged; through the endpoint the
 head of tape `i` stays in `[pos - 1, pos + |w|]` and every other head is fixed.
 
-**Proof sketch.** Each field is the corresponding clause of `Turing.clearTM_run_ofCfg`; a fixed
-head lies in its one-point interval. -/
+**Proof sketch.** `Turing.sweepContract` with the clauses of `Turing.clearTM_run_ofCfg`. -/
 def clearTM_contract (i : Fin k) (x : List Γ) :
-    Contract (clearTM k i) SweepPhase.sweep {some SweepPhase.done} (List Γ) x where
-  pre w d := ∀ p : ℤ, -1 ≤ p → p ≤ (w.length : ℤ) →
-    d.workTapes i (d.workTapePos i + p) = FinTM.bufferTape w p
-  time w _ := 2 * w.length + 2
-  post w d :=
-    { d with
-      state := some SweepPhase.done
-      workTapes := fun j q =>
-        if j = i ∧ d.workTapePos j ≤ q ∧ q < d.workTapePos j + (w.length : ℤ) then none
-        else d.workTapes j q }
-  lo w d j := if j = i then d.workTapePos j - 1 else d.workTapePos j
-  hi w d j := if j = i then d.workTapePos j + w.length else d.workTapePos j
-  run w d hd hp := (clearTM_run_ofCfg i w d hd hp).1
-  exit_mem _ _ _ _ := Set.mem_singleton _
-  cut w d hd hp u hu h := (clearTM_run_ofCfg i w d hd hp).2.1 u hu (Set.mem_singleton_iff.mp h)
-  env w d hd hp u hu j := by
-    have h := (clearTM_run_ofCfg i w d hd hp).2.2 j u hu
-    by_cases hj : j = i
-    · subst hj
-      simpa using h
-    · simp only [hj, if_false] at h ⊢
-      rw [h]
-      exact Finset.mem_Icc.mpr ⟨le_rfl, le_rfl⟩
+    Contract (clearTM k i) SweepPhase.sweep {some SweepPhase.done} (List Γ) x :=
+  sweepContract _ _ _ i (fun j => j = i) x (sweepPost .done i fun _ _ _ _ => none) (fun _ _ => rfl)
+    (clearTM_run_ofCfg i)
 
 /-- R3 clear frames the cleared word's cells on its tape, and nothing else: its footprint is
 `[pos, pos + |w|)` on tape `i` and empty on every other tape.
 
-**Proof sketch.** The endpoint blanks a cell only when the cell lies in the footprint; any other
-cell takes the `else` branch of its definition, which is the start's cell. -/
+**Proof sketch.** `Turing.sweep_ite_keep` at tape `i`. -/
 theorem clearTM_contract_frames (i : Fin k) (x : List Γ) :
     (clearTM_contract i x).Frames fun w d j =>
-      if j = i then Set.Ico (d.workTapePos j) (d.workTapePos j + w.length) else ∅ := by
-  intro w d _ _ j q hq
-  show (if j = i ∧ d.workTapePos j ≤ q ∧ q < d.workTapePos j + (w.length : ℤ) then none
-      else d.workTapes j q) = d.workTapes j q
-  rw [if_neg]
-  rintro ⟨rfl, h₁, h₂⟩
-  apply hq
-  show q ∈ if j = j then Set.Ico (d.workTapePos j) (d.workTapePos j + w.length) else ∅
-  rw [if_pos rfl]
-  exact ⟨h₁, h₂⟩
+      if j = i then Set.Ico (d.workTapePos j) (d.workTapePos j + w.length) else ∅ :=
+  fun _ _ _ _ _ _ hq => sweep_ite_keep _ _ hq
 
 /-- **A joint trajectory of R3 clear** (an instance): every head other than the cleared tape's
 stays at its start, a relation on the whole head vector. -/
 theorem clearTM_contract_traj (i : Fin k) (x : List Γ) :
-    (clearTM_contract i x).Traj fun _ d p => ∀ j, j ≠ i → p j = d.workTapePos j := by
-  intro w d hd hp u hu j hj
-  have h := (clearTM_contract i x).env w d hd hp u hu j
-  have hlo : (clearTM_contract i x).lo w d j = d.workTapePos j := if_neg hj
-  have hhi : (clearTM_contract i x).hi w d j = d.workTapePos j := if_neg hj
-  rw [hlo, hhi, Finset.mem_Icc] at h
-  exact le_antisymm h.2 h.1
+    (clearTM_contract i x).Traj fun _ d p => ∀ j, j ≠ i → p j = d.workTapePos j :=
+  sweepContract_traj _ _ _ _ _ _ _ _ _
+
+end Turing
+
+namespace Turing
+
+variable {k : ℕ} {Γ : Type}
+
+/-! ### §13d G2: the mapped sweeps as contracts
+
+The two G2 rows of `Build/Catalog` stated as `Turing.Contract`s from the start (design §16b,
+item 5), through the shared constructor `Turing.sweepContract` and endpoint `Turing.sweepPost`. -/
+
+/-- The values a mapped sweep writes into its destination interval: at cell `q`, the merge of the
+cell's original content with the extract of the source word's symbol at offset `q - pos`. -/
+def sweepMapWrite {S : Type} {x : List Γ} {Δ : Type} (extract : Γ → Δ) (merge : Option Γ → Δ → Γ)
+    (w : List Γ) (d : Cfg k Γ S x) (j : Fin k) (q : ℤ) : Option Γ :=
+  (FinTM.bufferTape w (q - d.workTapePos j)).map fun γ => merge (d.workTapes j q) (extract γ)
+
+/-- **The mapped copy as a contract** (design §13d, G2): the index is the source word `w`.
+Started in the sweep phase with `w`, delimited, at the head of tape `src`, the mapped copy
+reaches `done` in exactly `2|w| + 2` steps, and not earlier, with the destination interval
+`[pos, pos + |w|)` holding `merge c (extract γ)` cell by cell (`c` the original destination
+cell, `γ` the source cell) and every other field unchanged; through the endpoint the heads of
+`src` and `dst` stay within one cell of their intervals and every other head is fixed.
+
+**Proof sketch.** `Turing.sweepContract` with the clauses of `Turing.copyMapTM_run_ofCfg`. -/
+def copyMapTM_contract {Δ : Type} (src dst : Fin k) (hne : src ≠ dst) (extract : Γ → Δ)
+    (merge : Option Γ → Δ → Γ) (x : List Γ) :
+    Contract (copyMapTM k src dst extract merge) SweepPhase.sweep {some SweepPhase.done}
+      (List Γ) x :=
+  sweepContract _ _ _ src (fun j => j = src ∨ j = dst) x
+    (sweepPost .done dst (sweepMapWrite extract merge)) (fun _ _ => rfl)
+    (copyMapTM_run_ofCfg src dst hne extract merge)
+
+/-- **The mapped transfer as a contract** (design §13d, G2): as `Turing.copyMapTM_contract`,
+with the source interval holding the residues `rest γ` at the endpoint.
+
+**Proof sketch.** `Turing.sweepContract` with the clauses of `Turing.transferMapTM_run_ofCfg`. -/
+def transferMapTM_contract {Δ : Type} (src dst : Fin k) (hne : src ≠ dst) (extract : Γ → Δ)
+    (merge : Option Γ → Δ → Γ) (rest : Γ → Option Γ) (x : List Γ) :
+    Contract (transferMapTM k src dst extract merge rest) SweepPhase.sweep
+      {some SweepPhase.done} (List Γ) x :=
+  sweepContract _ _ _ src (fun j => j = src ∨ j = dst) x
+    (fun w d => sweepPost .done src (fun w d j q => (FinTM.bufferTape w (q - d.workTapePos j)).bind
+      rest) w (sweepPost .done dst (sweepMapWrite extract merge) w d)) (fun _ _ => rfl)
+    (transferMapTM_run_ofCfg src dst hne extract merge rest)
+
+/-- The mapped copy frames exactly the destination interval: its footprint is
+`[pos, pos + |w|)` on tape `dst` and empty elsewhere.
+
+**Proof sketch.** `Turing.sweep_ite_keep` at `dst`. -/
+theorem copyMapTM_contract_frames {Δ : Type} (src dst : Fin k) (hne : src ≠ dst)
+    (extract : Γ → Δ) (merge : Option Γ → Δ → Γ) (x : List Γ) :
+    (copyMapTM_contract src dst hne extract merge x).Frames fun w d j =>
+      if j = dst then Set.Ico (d.workTapePos j) (d.workTapePos j + w.length) else ∅ :=
+  fun _ _ _ _ _ _ hq => sweep_ite_keep _ _ hq
+
+/-- The mapped transfer frames exactly its two word intervals, on `src` and on `dst`: its
+footprint is `[pos, pos + |w|)` on each and empty elsewhere.
+
+**Proof sketch.** `Turing.sweep_ite_keep` at `src`, then at `dst`. -/
+theorem transferMapTM_contract_frames {Δ : Type} (src dst : Fin k) (hne : src ≠ dst)
+    (extract : Γ → Δ) (merge : Option Γ → Δ → Γ) (rest : Γ → Option Γ) (x : List Γ) :
+    (transferMapTM_contract src dst hne extract merge rest x).Frames fun w d j =>
+      if j = src ∨ j = dst then Set.Ico (d.workTapePos j) (d.workTapePos j + w.length)
+      else ∅ := by
+  intro w d _ _ j q hq
+  have hs : q ∉ (if j = src then Set.Ico (d.workTapePos j) (d.workTapePos j + w.length)
+      else ∅) := by
+    by_cases h : j = src <;> simp_all
+  have hd : q ∉ (if j = dst then Set.Ico (d.workTapePos j) (d.workTapePos j + w.length)
+      else ∅) := by
+    by_cases h : j = dst <;> simp_all
+  exact (sweep_ite_keep _ _ hs).trans (sweep_ite_keep _ _ hd)
+
+/-- **A joint trajectory of the mapped copy**: every head other than the two touched ones stays
+at its start.
+
+**Proof sketch.** `Turing.sweepContract_traj`. -/
+theorem copyMapTM_contract_traj {Δ : Type} (src dst : Fin k) (hne : src ≠ dst)
+    (extract : Γ → Δ) (merge : Option Γ → Δ → Γ) (x : List Γ) :
+    (copyMapTM_contract src dst hne extract merge x).Traj
+      fun _ d p => ∀ j, j ≠ src → j ≠ dst → p j = d.workTapePos j :=
+  fun w d hd hp u hu j h₁ h₂ =>
+    sweepContract_traj _ _ _ _ _ _ _ _ _ w d hd hp u hu j (by tauto)
 
 end Turing

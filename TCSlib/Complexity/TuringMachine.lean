@@ -30,6 +30,8 @@ import TCSlib.Complexity.TuringMachine.Build.Seam
 import TCSlib.Complexity.TuringMachine.Build.NDHost
 import TCSlib.Complexity.TuringMachine.Build.VirtualInput
 import TCSlib.Complexity.TuringMachine.Build.Zone
+import TCSlib.Complexity.TuringMachine.Build.ZoneTape
+import TCSlib.Complexity.TuringMachine.Build.ZoneRebalance
 import TCSlib.Complexity.TuringMachine.Build.Catalog
 import TCSlib.Complexity.TuringMachine.Build.OracleCall
 import TCSlib.Complexity.TuringMachine.SymbolLift
@@ -148,8 +150,13 @@ for the local modifications.
   contract is sorried.
 * `Build/VirtualInput` — virtual-input hosting (`machine-library-design.md` §13, Z1): a
   machine whose input is a buffered work-tape word runs inside a host, one step per step.
-* `Build/Zone` — the zoned tape carrier (§13, Z2), under the §13d revision: its two
-  superseded shift rows are scheduled for retirement through the G3/G4 gate.
+* `Build/Zone` — the pure zone layer (§13, Z2, as revised by §13d): zone contents, the
+  guarded pairwise ops, the cascade and its mirror, the scanned index, the total rebalance,
+  the extension by one level, and the virtual tape a track represents.
+* `Build/ZoneTape` — the multi-track zoned carrier over `ZoneSym k` (§13d, G3): the layout
+  with blank separators, the inner-packed encoding `zonedTape` and its invariants.
+* `Build/ZoneRebalance` — the rebalance and extension rows (§13d, G4), as contracts;
+  sorried for the G4 fill.
 * `Build/OracleCall` — the oracle-machine rows (`machine-library-design.md` §12.9):
   W1 capture onto the query tape, landing in `qQuery`, and the two-step answer tail.
 * `SymbolLift` — the embedding transport (`machine-library-design.md` §12.8, R8.0): a
