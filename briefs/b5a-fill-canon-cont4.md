@@ -4,7 +4,7 @@
 
 - Clone: `https://github.com/Shilun-Allan-Li/tcslib`
 - Check out branch **`complexity/arora-barak-ch3-4`**, this exact branch, NOT `main`.
-- Confirm that `git merge-base --is-ancestor @ANCESTOR@ HEAD` succeeds. That commit contains:
+- Confirm that `git merge-base --is-ancestor 46be11046b74b3ef0018c81afe272c9b411e5cfb HEAD` succeeds. That commit contains:
   - **your predecessor's phase-1 delivery (PR #96, merged):** the strip machine
     `exists_canonStripTM`, five helpers, the prescribed `computesFunInTime_cond` glue, and the two
     open stubs `exists_canonGrammarStage` and `exists_canonDecider`; its report
@@ -24,7 +24,7 @@
   If the check fails, **stop**.
 - If Lean cannot start, follow `briefs/fill-environment-addendum.md` exactly.
 - **Branch from exactly that commit**, not from the moving campaign tip:
-  `git checkout -b fill/b5a-canon-cont4 @ANCESTOR@`. Record the base hash in `REPORT.md`. Never
+  `git checkout -b fill/b5a-canon-cont4 46be11046b74b3ef0018c81afe272c9b411e5cfb`. Record the base hash in `REPORT.md`. Never
   rebase, merge or cherry-pick anything into your branch.
 - **Delivery is by zip, not PR or push** (`workflow.md` §4): `fill-b5a-canon-cont4.zip`,
   containing `REPORT.md`, the full modified source, a `git format-patch` series against your
@@ -35,7 +35,7 @@
 
 - **Lines in this brief are those of the campaign tip `ff4cab18`**, whose Lean content is
   `c9cc485b` (#95, #96 and #97 merged, in that order). `CodeSimulator.lean` is byte-identical
-  to #96's branch head, so no line in it moved. The inputs commit `@ANCESTOR@` adds no Lean
+  to #96's branch head, so no line in it moved. The inputs commit `46be11046b74b3ef0018c81afe272c9b411e5cfb` adds no Lean
   change. Every probe and measurement below was run at the tip, against the olean snapshot of the
   merged tip's catch-up replay.
 - **Since #96, four modules changed, none of them yours:** `Build/Embed` (upstream of you; one
