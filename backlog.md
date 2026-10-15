@@ -734,6 +734,19 @@ maintainer installs the registry rows and the record corrections.
   which is ARM-2's reachability-kit design, so R2-1 stays open on that one copy until he decides,
   or until the user acknowledges it in the meantime.
 - **Hydroxyi is consulted on ARM-2.** He is told about H7–H13's gate-before-reuse rule.
+**Payback tree built (2026-10-14; `$S/land-payback`, 59/59 at `c52663f1`), and the user's decisions on its
+stopped items:**
+- **D4 extended:** `DAGCircuitSat`'s second private lemma, `values_getD_eq_of_eval_tseitinGates`,
+  is also made public (visibility only), so L024's copy goes.
+- **G-pairidx:** a new public `pairEncode_getD_snd` in `InputAccess` replaces L050 and L052.
+- **G-rep** (`pt_rep_mul`, whose original is private in `CookLevin/Hardness`) goes to ARM-2 and
+  the dedup window, with a home decision.
+- **G-vword** (L119/L120) is accepted as not real duplication.
+- **Accepted:** the extra deletion of `codec_core_window` via the public
+  `Cfg.InWindow.core_bounds`; D7's single `arm_chain` lemma with `bif up`; `drop_canon` keeps
+  its name.
+- **Next:** the payback PR at the merged tip, with the catch-up snapshot `oleans-ltip3`, then ARM
+  round 3.
 
 ### ARM-2: the ARM layer's internal duplication, to coordinate with Hydroxyi (user, 2026-10-14)
 
