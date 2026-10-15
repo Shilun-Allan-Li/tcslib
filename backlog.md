@@ -2030,6 +2030,28 @@ Remaining Chapter-6 items (each documented as a divergence in its file):
 
 ## 5. Repository housekeeping
 
+* **The campaign's merge to `main` (user, 2026-10-15).**
+  - **Purpose:** our infrastructure goes to `main`, and `main` then goes into
+    `cryptography/garg-ch1-3`, so the cryptography work can build on it. The cryptography
+    branch does not go to `main` yet.
+  - **Bundles pruned first** (`99a0e4b3`): the campaign's 75 dispatched bundles (122.8 MB)
+    leave the tree, indexed in `audits/BUNDLES.md`; bundles are no longer committed
+    (`workflow.md`). Hydroxyi has been told, since the merge carries the campaign's edits
+    to 14 of his files.
+  - **Checks before the merge:** the 19 campaign-side root facades load together in Lean.
+    A static name scan finds no clash with main's other modules or with the cryptography
+    branch.
+  - **#104 landed** (main into the campaign; `policy.md` resolved to the campaign's text,
+    which contains main's). **Root-build replay: 265 of 265,** the root's import closure
+    missing from the snapshot and then the root itself, at `ff2d6f6b`. Snapshot
+    `oleans-lmain` is the first that covers the whole root closure (699 modules).
+  - **The PR into `main`** comes from `integrate/campaign-to-main`, fixed at the replayed
+    state. Later campaign work reaches `main` in later merges, each after a root-build
+    replay.
+  - **Hydroxyi's `complexity/arora-barak-ch7`** forks from the campaign at `8c23f3bc` and
+    conflicts with it in five files. Four are `Randomized/*`, where the comment-only
+    citation renumbering `f4b23f05` meets his edits; the fifth is the TuringMachine facade.
+    Its integration is his.
 * **Legacy `Complexity/NPReductions/*`**: 14 pre-existing style-lint FAILs
   (missing docstrings/References), outside the campaign surface; eventual
   fate coupled to the §3 retargeting idea. The ch6 branch adds (clean,
