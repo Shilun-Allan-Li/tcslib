@@ -664,6 +664,13 @@ basenames in their populations lost pairs is to be checked.
   1249/1255 (66 characters, 100%; s12.8 fill C cont1 recorded 689 → 690 pairs, truly 689 → 692).
   It is accepted as an instance idiom and recorded here. A self-pair keying fix waits for the
   next baseline reset.
+- **v3 (2026-10-14; the Diagonal Part 1 gate's minor m2; `audits/evidence/screenfix/v3/`):** the
+  residual is fixed. `audits/evidence/retrofit/copy-text-screen-v3.py` identifies a declaration
+  by path and source position and skips only the declaration itself. A short name repeated in a
+  file is labelled by its namespace-qualified name. Where no file repeats a screened short name,
+  the output is byte-identical to v2's. At the tip `ff4cab18` (723 files) the only pair v3 adds is
+  the CfgRecord instance pair above, already recorded. **Future briefs and gates use v3**, in
+  place of v2.
 **Gate round 1 (2026-10-14): 0 blockers, 5 majors, 9 minors; open**
 (`audits/arm-extensions-fill-findings.md`). No frozen statement changed and no interface is false.
 The majors: the disclosed debt awaits acknowledgement, and D6 (seven `b4m*` twins) and D7 (the
@@ -1093,6 +1100,17 @@ The route decisions of 2026-10-12 (design §16b) add three work items, numbered 
       not copied;
     - the facade `TimeHierarchy.lean`'s one stale docstring sentence is fixed in the Diagonal PR;
     - **Diagonal Part 1 (the parameterization) lands early,** by PR plus a small statement gate.
+  - **Diagonal Part 1 statement gate CLOSED (2026-10-14; folder 24; PASS 0/0/2;
+    `audits/diagonal-p1-statements-findings.md`, resolutions `…-resolutions.md`).**
+    - **The two minors:** both are evidence-checker fixes, repaired in the closing commit with
+      three new negative controls: the name screen missed fully qualified names, and the copy
+      screen had a same-name blind spot (now v3).
+    - **Rulings:** `W`, `diag_cost_le` and the verdict-only clause are kept. The facade sentence
+      waits for the end-of-chain PR.
+    - **The auditor's suggested compiled checks** (zero overheads, a constant `decode`, the
+      projection `rfl`s) go to the end-of-chain PR.
+    - **Next:** the landing PR after MIG-1 S, with a fresh `run.sh` at that tip and an 11-module
+      replay.
   - Forwarded to G5's statement phase: `two_work_tapes_run` per run, with the converse; its
     function-level form; `Nat.log 2` in the statements; a per-run export of the alphabet
     reduction.

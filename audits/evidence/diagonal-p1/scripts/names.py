@@ -5,7 +5,10 @@ Usage: python3 -I names.py <base root> <base Diagonal.lean> <landed Diagonal.lea
 Lists the new public names (declarations, plus the constructors and fields Lean generates for
 the two structures), and screens every new name's distinctive component as a whole word over
 every `.lean` file of the base tree (`<base root>/TCSlib`, `TCSlib.lean`): an occurrence would
-be a collision or a downstream reference to a name that did not exist. Exit 1 on any hit.
+be a collision or a downstream reference to a name that did not exist. A component counts whether
+it stands alone or follows a dot, so fully qualified declarations and references are caught
+(gate m1; the dot was excluded before). Exit 1 on any hit. Run it on the base and again on the
+landing tip's tree (before the patch), since unrelated files can change in between.
 """
 import os
 import re
@@ -42,7 +45,9 @@ def main():
     for f in sorted(files):
         src = open(f, encoding="utf-8").read()
         for t in tokens:
-            for m in re.finditer(r"(?<![A-Za-z0-9_'.])" + re.escape(t) + r"(?![A-Za-z0-9_'])",
+            # a component may follow a dot: `Complexity.TimeHierarchy.DiagSimulator` (a fully
+            # qualified declaration or reference) is a hit, as is `DiagSimulator` (gate m1)
+            for m in re.finditer(r"(?<![A-Za-z0-9_'])" + re.escape(t) + r"(?![A-Za-z0-9_'])",
                                  src):
                 line = src.count("\n", 0, m.start()) + 1
                 hits.append(f"{os.path.relpath(f, root)}:{line}: {t}")

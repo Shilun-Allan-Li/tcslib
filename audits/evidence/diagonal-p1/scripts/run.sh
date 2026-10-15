@@ -1,8 +1,10 @@
 #!/usr/bin/env bash
 # Diagonal Part 1: rebuild the landing tree and re-run every check, fail-closed.
-# Usage: bash run.sh <S> <repo>
-#   <S>    the scratchpad (holds tools/leanelab.sh, oleans-lh1, wt-u2 for the Lean packages)
-#   <repo> the tcslib clone, used read-only (git rev-parse, git cat-file) by the precheck only
+# Usage: bash run.sh <S> <repo> [<snapshot>]
+#   <S>        the scratchpad (holds tools/leanelab.sh, wt-u2 for the Lean packages)
+#   <repo>     the tcslib clone, used read-only (git rev-parse, cat-file, ls-tree, hash-object
+#              without -w, archive) by the precheck and the name screen only
+#   <snapshot> the olean tree (default <S>/oleans-lh1; at landing, the tip's snapshot)
 # `lean` only through <S>/tools/leanelab.sh (no -o, no olean written); python3 -I; diff/patch on
 # scratch copies; nothing is written outside <S>/diag-p1. Any failed step stops the run.
 set -euo pipefail
@@ -10,7 +12,7 @@ S="$1"; REPO="$2"; D="$S/diag-p1"; SC="$D/scripts"; W="$D/work"; LG="$D/logs"
 BASE_REV=cd450a526e71a5e437ebe84245ea958bf309eda1
 BASE_SHA=ab89c9578b230a19c127c9f3508bad453e01c79c9afb3f52e712336c5fb5ef17
 REL=TCSlib/Complexity/TimeHierarchy/Diagonal.lean
-OL="$S/oleans-lh1"; WT="$S/wt-u2"; ELAB="$S/tools/leanelab.sh"
+OL="${3:-$S/oleans-lh1}"; WT="$S/wt-u2"; ELAB="$S/tools/leanelab.sh"
 IMPORTERS=(Diagonalization.EXPCOM Diagonalization.NotTimeConstructible SpaceComplexity.Hierarchy
            TimeHierarchy.Separation TimeHierarchy)
 san() { sed "s|$D|<D>|g; s|$S|<S>|g"; }
@@ -46,7 +48,7 @@ ls -d "$WT"/.lake/packages/*/.lake/build/lib/lean > /dev/null || { echo "prechec
     echo "tip moved; Lean files changed since the base:"
     git -C "$REPO" diff --name-only "$BASE_REV" "$tip" -- '*.lean' | sed 's/^/  /'
   fi
-  echo "snapshot: <S>/oleans-lh1; packages: <S>/wt-u2/.lake/packages"; } > "$LG/precheck.log"
+  echo "snapshot: $OL; packages: <S>/wt-u2/.lake/packages" | san; } > "$LG/precheck.log"
 if [ "$tip" != "$BASE_REV" ]; then
   # the tip moved: the landing stays valid only if tipcheck.py's conditions (a)-(c) hold
   rm -rf "$W/tip"; mkdir -p "$W/tip"
@@ -84,8 +86,17 @@ ok "replay-order.txt regenerated identically (topological, root excluded, import
 # ---- 4. freeze, names, widths and hygiene, lint ----------------------------------------------
 python3 -I "$SC/freeze.py" "$D/base/$REL" "$D/tree/$REL" > "$LG/freeze.log"
 ok "freeze (received heads byte-identical, header identical, no admission)"
-python3 -I "$SC/names.py" "$D/base" "$D/base/$REL" "$D/tree/$REL" | san > "$LG/names.log"
-ok "names (22 new public names, none occurring in the base tree)"
+# the name screen runs on the base and again on the tip's whole tree (gate m1: unrelated files
+# may change between them); the tip's Diagonal.lean must still be the base's
+rm -rf "$W/tipexport"; mkdir -p "$W/tipexport"
+git -C "$REPO" archive "$tip" TCSlib TCSlib.lean | tar -x -C "$W/tipexport"
+cmp "$W/tipexport/$REL" "$D/base/$REL"
+{ echo "# names.py on the base (${BASE_REV:0:8})"
+  python3 -I "$SC/names.py" "$D/base" "$D/base/$REL" "$D/tree/$REL" | san
+  echo; echo "# names.py on the tip's tree (${tip:0:8}; git archive)"
+  python3 -I "$SC/names.py" "$W/tipexport" "$D/base/$REL" "$D/tree/$REL" | san; } > "$LG/names.log"
+[ "$(grep -c "^NAMES: PASS" "$LG/names.log")" = 2 ]
+ok "names (22 new public names; none occurs, alone or after a dot, in the base or the tip's tree)"
 python3 -I "$SC/hygiene.py" "$D/base/$REL" "$D/tree/$REL" > "$LG/widths-hygiene.log"
 ok "widths (<= 100) and hygiene"
 rm -rf "$W/lintroot"; mkdir -p "$W/lintroot/scripts" "$W/lintroot/$(dirname "$REL")"
@@ -122,17 +133,18 @@ done
 ok "cut checks: the 5 direct importers elaborate against the landed text, diagnostics = baseline"
 
 # ---- 6. negative controls ---------------------------------------------------------------------
-bash "$SC/negctl.sh" "$S" "$D" | san > "$LG/negative-controls.log"
-[ "$(grep -c -- "— PASS" "$LG/negative-controls.log")" = 6 ] || { echo "negative controls"; exit 1; }
-ok "negative controls: every check fails on its broken input (6 controls)"
+bash "$SC/negctl.sh" "$S" "$D" "$OL" | san > "$LG/negative-controls.log"
+[ "$(grep -c -- "— PASS" "$LG/negative-controls.log")" = 9 ] || { echo "negative controls"; exit 1; }
+! grep -q -- "— FAIL" "$LG/negative-controls.log" || { echo "negative controls"; exit 1; }
+ok "negative controls: every check fails on its broken input (9 controls)"
 
 # ---- 7. copy-text screens, niced, one at a time ---------------------------------------------
 bash "$SC/screens.sh" "$D" > /dev/null
-{ echo "## Delta (screendelta.py, pairdiff.py, copied verbatim from <S>/tools)"
+{ echo "## Delta (screendelta.py, pairdiff.py, copied verbatim from <S>/tools; screen v3)"
   python3 -I "$SC/screendelta.py" "$LG/screen-before.txt" "$LG/screen-after.txt"
   python3 -I "$SC/pairdiff.py" "$LG/screen-after.txt" "$LG/screen-before.txt"; } > "$LG/screen-delta.log"
 grep -q "new 0 (cross-file 0)" "$LG/screen-delta.log"
-ok "copy-text screen: no new pair (before 16, after 16, all pre-existing in the clock files)"
+ok "copy-text screen v3: no new pair (before 16, after 16, all pre-existing in the clock files)"
 
 # ---- 8. checksums -----------------------------------------------------------------------------
 echo "TOTAL: $pass checks PASS" | tee -a "$LG/summary.log"
