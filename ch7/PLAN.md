@@ -140,7 +140,7 @@ grader accepts.
 - U7 advisories: zipWith_map_map → core; lovaszRows/bitBlock via blockVal; adjWord shared with Path.lean; privatize tU..tDet; eq_of_bitsVal_eq hoist.
 - U6 class advisories: hoist forLoop/getW/uHead/uRest/hasFalse/app lemmas to BinaryArith; wrap 8 long lines; Fingerprint future-tense docstring; testLen lemma dedup.
 
-## Phase 2 — closing every remaining printed item (no deferrals)
+## Phase 2 — closing every remaining printed item (no deferrals) · DONE: completeness grader round 3 GRADE: COMPLETE (2026-10-14)
 
 After U11, SURVEY shows these items still missing or provisional. Each one is assigned below; NOT_FORMALIZED.md keeps only items the book itself cites without proof or defers to a later chapter.
 

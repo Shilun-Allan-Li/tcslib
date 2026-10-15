@@ -15,11 +15,11 @@ Final list after Phase 2 (U12–U16). Every exercise and every proved claim of t
 
 | Item | Where the book places it |
 |---|---|
-| §7.2.4 and chapter notes: Lovász's matching test can be done in NC [Lov79] | Exercise 6.16 |
+| §7.2.4 and chapter notes: Lovász's matching test can be done in NC [Lov79]; probabilistic NC algorithms that find a perfect matching [KUW85, MVV87] | Exercise 6.16; cited research results (ch. 7 proves the RP test: `Randomized.Matching.BipartitePerfectMatching_mem_RP_PTM`) |
 | p.138: the ⟨M, x, 1ᵗ⟩ language is #P-complete | Ch. 17 (its BPP-hardness, the ch. 7 claim, is proved: `Randomized.probAccept_bppHard`) |
 | §7.6: reducing SAT to instances with a unique satisfying assignment (Valiant–Vazirani) | Ch. 17 |
 | §7.7: deterministic logspace algorithm for UPATH | §21.4 |
-| §7.2.1 and chapter notes: PRIMES ∈ P [AKS04] | cited; ch. 7 proves PRIMES ∈ coRP (`Randomized.PRIMESBin_mem_coRP_PTM`) |
+| §7.2.1 and chapter notes: PRIMES ∈ P [AKS04]; Rabin's (Miller–Rabin) test [Rab80] | cited; ch. 7 proves PRIMES ∈ coRP (`Randomized.PRIMESBin_mem_coRP_PTM`) |
 | §7.2.1: factoring is efficient on quantum computers | Ch. 10 |
 | Introduction and §7.5: evidence that BPP = P (derandomization) | Ch. 19–20 |
 | Chapter notes: BPP in classes weaker than Σ₂ ∩ Π₂ [Can96, RS95]; hierarchy theorems for BPP/1; promise-BPP; the class PP [Gil74] (Ch. 17) | cited research results |
