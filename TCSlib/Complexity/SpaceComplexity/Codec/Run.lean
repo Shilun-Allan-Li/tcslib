@@ -59,15 +59,13 @@ noncomputable def orc : Fin 2 → List Bool → Bool :=
 /-- The bit oracle reads the input. -/
 lemma orc_bit (y : List Bool) (a : ℕ) : orc jBit (pairEncode y (Nat.bits a)) = y.getD a false := by
   show MultiTapeTM.indicator (inputBitLang : Set (List Bool)) _ = _
-  rw [inputBitLang, indicator_indexLang_pairEncode]
-  cases y.getD a false <;> simp
+  exact indicator_inputBitLang y a
 
 /-- The length oracle compares with the input length. -/
 lemma orc_len (y : List Bool) (a : ℕ) :
     orc jLen (pairEncode y (Nat.bits a)) = decide (a < y.length) := by
   show MultiTapeTM.indicator (inputLenLang : Set (List Bool)) _ = _
-  rw [inputLenLang, indicator_indexLang_pairEncode]
-  exact decide_eq_decide.mpr Iff.rfl
+  exact indicator_inputLenLang y a
 
 variable {N : FinNDTM Bool} {mode : CMode}
 

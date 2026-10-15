@@ -26,18 +26,18 @@ preconditions with all registers bounded by `B`.
   pair of bits to a finite-state step; the run ends in the label of the fold of the step
   over the zipped words read.
 * `Complexity.Codec.decodeStride_loop` — decode a binary field laid out at any stride
-  (most significant letter last), the strided form of `boundedDecode_loop`.
+  (most significant letter last), `boundedDecodeStride_loop`.
 * `Complexity.Codec.halvCount_loop` — count the binary digits of a register by halving.
 * `Complexity.Codec.le_loop` — compare two registers by counting.
 
 Logspace machine infrastructure ([AB09, §4.1: logspace algorithms keep a constant number of
 `O(log n)`-bit counters]); not a result of [AB09].
 
-**Duplication disclosure.** `decodeStride_loop` is `boundedDecode_loop` of
-`TCSlib.Complexity.SpaceComplexity.Logspace.InputAccess` with its single decrement replaced
-by a chain of `stride` decrements (the codec's fields are doubled in the virtual input); the
-proof is adapted from that one. `incChain` is the public form of the private
-`arm_increments` there. A shared generalization of both is requested.
+The chains and the stride decoder are those of
+`TCSlib.Complexity.SpaceComplexity.Logspace.InputAccess`: `incChain` and `decChain` are the two
+directions of `Complexity.LogProg.arm_chain`, and `decodeStride_loop` is
+`Complexity.LogProg.boundedDecodeStride_loop` (the codec's fields are doubled in the virtual
+input, so it reads at stride two), all stated here through the guard `GuardLe`.
 
 ## Main definitions
 
@@ -61,50 +61,28 @@ open Turing LogProg
 
 variable {m d : ℕ} {Λ : Type}
 
-/-- **A chain of increments** of register `r` along the labels `labels 0, …, labels k`. -/
+/-- **A chain of increments** of register `r` along the labels `labels 0, …, labels k`.
+
+**Proof sketch.** `Complexity.LogProg.arm_chain` with `up = true`. -/
 theorem incChain (A : ARM m d Λ) (oracle : Fin d → List Bool → Bool) (y : List Bool)
     (r : Fin m) (labels : ℕ → Λ) (k B : ℕ)
     (hcode : ∀ i < k, A (labels i) = .inc r (labels (i + 1)))
     (v : Fin m → ℕ) (hv : ∀ s, v s ≤ B) (hk : v r + k ≤ B) :
     AReach A oracle y (GuardLe A y B) (some (labels 0), v, none)
-      (some (labels k), Function.update v r (v r + k), none) := by
-  induction k generalizing labels v with
-  | zero => simpa only [Nat.add_zero, Function.update_eq_self] using
-      (AReach.refl (A := A) (oracle := oracle) (x := y) (G := GuardLe A y B)
-        (some (labels 0), v, none))
-  | succ k ih =>
-    have hc := hcode 0 (by omega)
-    apply AReach.step ⟨by simp [PreS, hc], hv⟩
-    simp only [astep, hc]
-    have hv' : ∀ s, Function.update v r (v r + 1) s ≤ B :=
-      register_update_le v r B _ hv (by omega)
-    have hp := ih (fun i => labels (i + 1)) (fun i hi => hcode (i + 1) (by omega))
-      (Function.update v r (v r + 1)) hv' (by simp; omega)
-    simpa only [Function.update_self, Function.update_idem, Nat.add_assoc,
-      Nat.add_comm 1 k] using hp
+      (some (labels k), Function.update v r (v r + k), none) :=
+  arm_chain A oracle y r true labels k B hcode v hv hk
 
 /-- **A chain of decrements** of register `r` along the labels `labels 0, …, labels k`
-(with `k ≤ v r`, so no decrement truncates). -/
+(with `k ≤ v r`, so no decrement truncates).
+
+**Proof sketch.** `Complexity.LogProg.arm_chain` with `up = false`. -/
 theorem decChain (A : ARM m d Λ) (oracle : Fin d → List Bool → Bool) (y : List Bool)
     (r : Fin m) (labels : ℕ → Λ) (k B : ℕ)
     (hcode : ∀ i < k, A (labels i) = .dec r (labels (i + 1)))
     (v : Fin m → ℕ) (hv : ∀ s, v s ≤ B) (hk : k ≤ v r) :
     AReach A oracle y (GuardLe A y B) (some (labels 0), v, none)
-      (some (labels k), Function.update v r (v r - k), none) := by
-  induction k generalizing labels v with
-  | zero => simpa only [Nat.sub_zero, Function.update_eq_self] using
-      (AReach.refl (A := A) (oracle := oracle) (x := y) (G := GuardLe A y B)
-        (some (labels 0), v, none))
-  | succ k ih =>
-    have hc := hcode 0 (by omega)
-    apply AReach.step ⟨by simp [PreS, hc], hv⟩
-    simp only [astep, hc]
-    have hv' : ∀ s, Function.update v r (v r - 1) s ≤ B :=
-      register_update_le v r B _ hv (by have := hv r; omega)
-    have hp := ih (fun i => labels (i + 1)) (fun i hi => hcode (i + 1) (by omega))
-      (Function.update v r (v r - 1)) hv' (by simp; omega)
-    simpa only [Function.update_self, Function.update_idem,
-      show v r - 1 - k = v r - (k + 1) by omega] using hp
+      (some (labels k), Function.update v r (v r - k), none) :=
+  arm_chain A oracle y r false labels k B hcode v hv hk
 
 /-- **The scan engine.** Two pointer registers `p`, `q` walk in lockstep with stride
 `stride` until `p` reaches `lim`; at each position the bits `u_i`, `u'_i` under the pointers
@@ -224,15 +202,10 @@ theorem scan_loop {σ : Type} (A : ARM m d Λ) (oracle : Fin d → List Bool →
 /-- **A strided reverse scan decodes a bounded binary field** laid out at positions
 `base + stride · i` (least significant letter first): from the pointer at
 `base + stride · k`, with the suffix value from letter `k` in the accumulator, the run
-reaches `done` with the value of the whole field. This is `boundedDecode_loop` of
-`TCSlib.Complexity.SpaceComplexity.Logspace.InputAccess` with the pointer stepped by
-`stride` decrements (duplication disclosed in the module docstring).
+reaches `done` with the value of the whole field.
 
-**Proof sketch.** Induction on `k`. At `k = 0` the pointer is at the base and the run
-exits. Otherwise step the pointer down by `stride` (`decChain`), read letter `k - 1`, copy
-the accumulator into the temporary (`registerCopy_loop`), clear the accumulator, transfer
-twice the temporary back (`registerScale_loop`), and add the letter: the accumulator holds
-the suffix value from `k - 1`. -/
+**Proof sketch.** The stride decoder `Complexity.LogProg.boundedDecodeStride_loop` of
+`TCSlib.Complexity.SpaceComplexity.Logspace.InputAccess`, whose guard is `GuardLe`. -/
 theorem decodeStride_loop (A : ARM m d Λ) (oracle : Fin d → List Bool → Bool)
     (y : List Bool) (ptr base acc tmp : Fin m)
     (hpb : ptr ≠ base) (hpa : ptr ≠ acc) (hpt : ptr ≠ tmp)
@@ -258,100 +231,16 @@ theorem decodeStride_loop (A : ARM m d Λ) (oracle : Fin d → List Bool → Boo
       oracle j (pairEncode y (Nat.bits (v base + stride * i))) = w.getD i false) :
     ∃ v', (∀ r, v' r ≤ B) ∧ v' ptr = v base ∧ v' acc = bitsVal w ∧ v' tmp = 0 ∧
       (∀ r, r ≠ ptr → r ≠ acc → r ≠ tmp → v' r = v r) ∧
-      AReach A oracle y (GuardLe A y B) (some test, v, none) (some done, v', none) := by
-  induction k generalizing v with
-  | zero =>
-    have eq : v ptr = v base := by simpa using hp
-    refine ⟨v, hv, eq, by simpa using ha, ht, fun _ _ _ _ => rfl, ?_⟩
-    simpa [astep, htest, eq] using
-      (AReach.single (A := A) (oracle := oracle) (x := y) (G := GuardLe A y B)
-        (a := (some test, v, none)) ⟨by simp [PreS, htest, hpb], hv⟩)
-  | succ k ih =>
-    have kin : k < w.length := by omega
-    let b := w.getD k false
-    have val : bitsVal (w.drop k) = b.toNat + 2 * bitsVal (w.drop (k + 1)) := by
-      rw [List.drop_eq_getElem_cons kin]
-      simp only [bitsVal]
-      congr 1
-      simp [b, List.getD_eq_getElem?_getD, kin]
-    have bound : 2 * v acc + b.toNat ≤ B := by
-      have vb := values k (by omega)
-      rw [val, ← ha] at vb
-      omega
-    let vd := Function.update v ptr (v base + stride * k)
-    let vc := Function.update vd tmp (v acc)
-    let vz := Function.update vc acc 0
-    let vs := Function.update (Function.update vz tmp 0) acc (2 * v acc)
-    let vn := Function.update vs acc (bitsVal (w.drop k))
-    have bd : ∀ r, vd r ≤ B := register_update_le v ptr B _ hv (by
-      have := hv ptr; rw [hp, Nat.mul_succ] at this; omega)
-    have bc : ∀ r, vc r ≤ B := register_update_le vd tmp B _ bd (hv acc)
-    have bz : ∀ r, vz r ≤ B := register_update_le vc acc B 0 bc (Nat.zero_le _)
-    have bs : ∀ r, vs r ≤ B := register_update_le _ acc B _
-      (register_update_le vz tmp B 0 bz (Nat.zero_le _)) (by omega)
-    have bn : ∀ r, vn r ≤ B := register_update_le vs acc B _ bs (values k (by omega))
-    have vb : vn base = v base := by simp [vn, vs, vz, vc, vd, hba, hbt, hpb.symm]
-    have vp : vn ptr = v base + stride * k := by simp [vn, vs, vz, vc, vd, hpa, hpt]
-    have va : vn acc = bitsVal (w.drop k) := by simp [vn]
-    have vt : vn tmp = 0 := by simp [vn, vs, hat.symm]
-    have vf : ∀ r, r ≠ ptr → r ≠ acc → r ≠ tmp → vn r = v r := by
-      intro r hr hp ht
-      simp [vn, vs, vz, vc, vd, Function.update_of_ne, hr, hp, ht]
-    obtain ⟨v', bv, ep, ea, et, frame, rest⟩ := ih (by omega) vn bn
-      (by rw [vp, vb]) va vt (by simpa only [vb] using ho)
-    refine ⟨v', bv, by simpa only [vb] using ep, ea, et, ?_, ?_⟩
-    · intro r hr hp ht
-      exact (frame r hr hp ht).trans (vf r hr hp ht)
-    · have ne : v ptr ≠ v base := by rw [hp, Nat.mul_succ]; omega
-      apply AReach.step ⟨by simp [PreS, htest, hpb], hv⟩
-      simp only [astep, htest, if_neg ne]
-      have dc := decChain A oracle y ptr downs stride B hdowns v hv
-        (by rw [hp, Nat.mul_succ]; omega)
-      have pred : v ptr - stride = v base + stride * k := by rw [hp, Nat.mul_succ]; omega
-      rw [pred, hdend] at dc
-      apply dc.trans
-      change AReach A oracle y _ (some read, vd, none) _
-      apply AReach.step ⟨by simp [PreS, hread], bd⟩
-      have bit : oracle j (pairEncode y (Nat.bits (vd ptr))) = b := by
-        simpa only [vd, Function.update_self] using ho k kin
-      simp only [astep, hread, vword_whole₁, bit]
-      have cb : (if b = true then copy true else copy false) = copy b := by cases b <;> rfl
-      rw [cb]
-      have cr := registerCopy_loop A oracle y tmp acc hat.symm (copy b) (bump b) (clear b)
-        (hcopy b) (hbump b) B vd bd (by simp [vd, hpt.symm, hpa.symm, ht])
-      have ca : vd acc = v acc := by simp [vd, hpa.symm]
-      simp only [ca] at cr
-      apply cr.trans
-      change AReach A oracle y _ (some (clear b), vc, none) _
-      apply AReach.step ⟨by simp [PreS, hclear], bc⟩
-      simp only [astep, hclear]
-      change AReach A oracle y _ (some (scale b), vz, none) _
-      have za : vz acc = 0 := by simp [vz]
-      have zt : vz tmp = v acc := by simp [vz, vc, hat.symm]
-      have sr := registerScale_loop A oracle y tmp acc hat.symm (scale b) (take b) (add b)
-        (incs b) 2 (hscale b) (htake b) (hincs b) (hend b) B vz bz
-        (by rw [za, zt]; omega)
-      simp only [za, zt, Nat.zero_add] at sr
-      apply sr.trans
-      change AReach A oracle y _ (some (add b), vs, none) _
-      apply AReach.step ⟨by cases b <;> simp [PreS, hadd], bs⟩
-      have nb : astep A oracle y (some (add b), vs, none) = (some test, vn, none) := by
-        have sv : vs acc = 2 * v acc := by simp [vs]
-        have kv : bitsVal (w.drop k) = b.toNat + 2 * v acc := by rw [val, ← ha]
-        cases hb : b
-        · have same : vn = vs := by
-            simp only [vn, kv, hb, Bool.toNat_false, Nat.zero_add, ← sv, Function.update_eq_self]
-          simp [astep, hadd, same]
-        · simp only [astep, hadd, ↓reduceIte]
-          simp only [vn, kv, hb, Bool.toNat_true, sv, Nat.add_comm]
-      rw [nb]
-      exact rest
+      AReach A oracle y (GuardLe A y B) (some test, v, none) (some done, v', none) :=
+  boundedDecodeStride_loop A oracle y ptr base acc tmp hpb hpa hpt hba hbt hat j test read done
+    downs copy bump clear scale take add incs stride htest hdowns hdend hread hcopy hbump hclear
+    hscale htake hincs hend hadd w B values k hk v hv hs hp ha ht ho
 
 /-- **Counting binary digits by halving**: halving `t` until it is zero while incrementing
 `c` adds `|bits t|` to `c` and clears `t`.
 
 **Proof sketch.** Strong induction on the value of `t`: a nonzero value loses exactly one
-binary digit when halved (`bits_half`). -/
+binary digit when halved (`Complexity.LogProg.access_width_half`). -/
 theorem halvCount_loop (A : ARM m d Λ) (oracle : Fin d → List Bool → Bool) (y : List Bool)
     (t c : Fin m) (htc : t ≠ c) (test halve bump done : Λ)
     (htest : A test = .jz t done halve) (hhalve : A halve = .half t bump)
@@ -376,11 +265,8 @@ theorem halvCount_loop (A : ARM m d Λ) (oracle : Fin d → List Bool → Bool) 
         (AReach.single (A := A) (oracle := oracle) (x := y) (G := GuardLe A y B)
           (a := (some test, v, none)) ⟨by simp [PreS, htest], hv⟩)
     · rw [hn] at hc
-      have hlen : (Nat.bits (n / 2)).length + 1 = (Nat.bits n).length := by
-        rw [bits_half, List.length_tail]
-        have : 0 < (Nat.bits n).length := by
-          rw [Nat.size_eq_bits_len]; exact Nat.size_pos.mpr hpos
-        omega
+      have hlen : (Nat.bits (n / 2)).length + 1 = (Nat.bits n).length :=
+        access_width_half n (Nat.pos_iff_ne_zero.mp hpos)
       set v₁ := Function.update v t (n / 2)
       set v₂ := Function.update v₁ c (v c + 1)
       have b₁ : ∀ r, v₁ r ≤ B := register_update_le v t B _ hv (by have := hv t; omega)
