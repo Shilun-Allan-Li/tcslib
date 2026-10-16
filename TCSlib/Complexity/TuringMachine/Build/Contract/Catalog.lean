@@ -23,6 +23,12 @@ framed rows join it.
 ## Main definitions
 
 * `Turing.clearTM_contract`: R3 clear as a contract.
+* `Turing.framedContract`: the contract of any framed one-exit row; `Turing.sweepContract` is
+  its two-pass instance.
+* `Turing.walkTM_contract`, `Turing.skipTM_contract`, `Turing.skipBackTM_contract`,
+  `Turing.seekEndTM_contract`, `Turing.seekStartTM_contract`, `Turing.scanTM_contract`: the
+  lockstep walk, the seek family and the scan as contracts (§13d G4), with the seek family's
+  endpoint `Turing.seekPost`.
 
 ## Main results
 
@@ -38,6 +44,56 @@ framed rows join it.
 namespace Turing
 
 variable {k : ℕ} {Γ : Type}
+
+/-! ### One constructor for the framed one-exit rows (§13d G4's hosts survey; user 2026-10-15)
+
+Every framed catalog row with one live exit states its run in one shape: from the entry under
+its precondition, the run reaches the endpoint at exactly the row's time, never the exit
+earlier, every touched head within its interval and every other head fixed.
+`Turing.framedContract` turns that statement into a contract once. `Turing.sweepContract` is
+its two-pass instance, and the seek family and the lockstep walk get theirs below, so that the
+G4 rows can be composed by `Turing.Contract.seq`, `inPhase` and `branch`. -/
+
+/-- **The contract of a framed one-exit row.** Given a machine `M`, its entry and its exit
+`done`, a precondition, an exact time, an endpoint at `done`, the predicate `touched` of the
+tapes whose heads may move with their intervals `[lo, hi]`, and the row's framed theorem in the
+catalog's shape (from the entry under the precondition: the run reaches the endpoint at exactly
+the time, never `done` earlier, each touched head within its interval and every other head
+fixed), this is the contract with those fields, the exits `{some done}`, and the untouched heads'
+envelopes their one-point intervals. [AFM26], design adaptation (full entry in
+`Build/Contract/Basic`).
+
+**Proof sketch.** Each field is the matching clause of `hrun`; the exit is `hpost`; a fixed head
+lies in its one-point interval. -/
+def framedContract {S ι : Type} (M : MultiTapeTM k Γ S) (entry done : S) (x : List Γ)
+    (pre : ι → Cfg k Γ S x → Prop) (time : ι → Cfg k Γ S x → ℕ)
+    (post : ι → Cfg k Γ S x → Cfg k Γ S x) (touched : Fin k → Prop) [DecidablePred touched]
+    (lo hi : ι → Cfg k Γ S x → Fin k → ℤ) (hpost : ∀ i d, (post i d).state = some done)
+    (hrun : ∀ i d, d.state = some entry → pre i d →
+      M.runFrom d (time i d) = post i d ∧
+      (∀ t < time i d, (M.runFrom d t).state ≠ some done) ∧
+      (∀ (j : Fin k) (t : ℕ), t ≤ time i d →
+        if touched j then (M.runFrom d t).workTapePos j ∈ Finset.Icc (lo i d j) (hi i d j)
+        else (M.runFrom d t).workTapePos j = d.workTapePos j)) :
+    Contract M entry {some done} ι x where
+  pre := pre
+  time := time
+  post := post
+  lo i d j := if touched j then lo i d j else d.workTapePos j
+  hi i d j := if touched j then hi i d j else d.workTapePos j
+  run i d hd hp := (hrun i d hd hp).1
+  exit_mem i d _ _ := by
+    show (post i d).state ∈ ({some done} : Set (Option S))
+    rw [hpost]
+    exact Set.mem_singleton _
+  cut i d hd hp u hu h := (hrun i d hd hp).2.1 u hu (Set.mem_singleton_iff.mp h)
+  env i d hd hp u hu j := by
+    have h := (hrun i d hd hp).2.2 j u hu
+    by_cases hj : touched j
+    · simpa only [hj, if_true] using h
+    · simp only [hj, if_false] at h ⊢
+      rw [h]
+      exact Finset.mem_Icc.mpr ⟨le_rfl, le_rfl⟩
 
 /-! ### One constructor for the framed sweep rows (§13d G2, shared with R3 clear)
 
@@ -71,8 +127,8 @@ is the contract with index `w`, that precondition, time `2|w| + 2`, endpoint `po
 `{some done}`, and those envelopes. [AFM26], design adaptation (full entry in
 `Build/Contract/Basic`): a specification used in place of the run.
 
-**Proof sketch.** Each field is the matching clause of `hrun`; the exit is `hpost`; a fixed head
-lies in its one-point interval. -/
+**Proof sketch.** `Turing.framedContract` at the two-pass shape: time `2|w| + 2`, the touched
+heads within one cell of the word interval. -/
 def sweepContract {S : Type} (M : MultiTapeTM k Γ S) (entry done : S) (src : Fin k)
     (touched : Fin k → Prop) [DecidablePred touched] (x : List Γ)
     (post : List Γ → Cfg k Γ S x → Cfg k Γ S x) (hpost : ∀ w d, (post w d).state = some done)
@@ -86,26 +142,12 @@ def sweepContract {S : Type} (M : MultiTapeTM k Γ S) (entry done : S) (src : Fi
           (M.runFrom d t).workTapePos j ∈
             Finset.Icc (d.workTapePos j - 1) (d.workTapePos j + (w.length : ℤ))
         else (M.runFrom d t).workTapePos j = d.workTapePos j)) :
-    Contract M entry {some done} (List Γ) x where
-  pre w d := ∀ p : ℤ, -1 ≤ p → p ≤ (w.length : ℤ) →
-    d.workTapes src (d.workTapePos src + p) = FinTM.bufferTape w p
-  time w _ := 2 * w.length + 2
-  post := post
-  lo w d j := if touched j then d.workTapePos j - 1 else d.workTapePos j
-  hi w d j := if touched j then d.workTapePos j + w.length else d.workTapePos j
-  run w d hd hp := (hrun w d hd hp).1
-  exit_mem w d _ _ := by
-    show (post w d).state ∈ ({some done} : Set (Option S))
-    rw [hpost]
-    exact Set.mem_singleton _
-  cut w d hd hp u hu h := (hrun w d hd hp).2.1 u hu (Set.mem_singleton_iff.mp h)
-  env w d hd hp u hu j := by
-    have h := (hrun w d hd hp).2.2 j u hu
-    by_cases hj : touched j
-    · simpa only [hj, if_true] using h
-    · simp only [hj, if_false] at h ⊢
-      rw [h]
-      exact Finset.mem_Icc.mpr ⟨le_rfl, le_rfl⟩
+    Contract M entry {some done} (List Γ) x :=
+  framedContract M entry done x
+    (fun w d => ∀ p : ℤ, -1 ≤ p → p ≤ (w.length : ℤ) →
+      d.workTapes src (d.workTapePos src + p) = FinTM.bufferTape w p)
+    (fun w _ => 2 * w.length + 2) post touched
+    (fun _ d j => d.workTapePos j - 1) (fun w d j => d.workTapePos j + w.length) hpost hrun
 
 /-- **The joint trajectory of every framed sweep contract**: every untouched head stays at its
 start, a relation on the whole head vector.
@@ -257,5 +299,131 @@ theorem copyMapTM_contract_traj {Δ : Type} (src dst : Fin k) (hne : src ≠ dst
       fun _ d p => ∀ j, j ≠ src → j ≠ dst → p j = d.workTapePos j :=
   fun w d hd hp u hu j h₁ h₂ =>
     sweepContract_traj _ _ _ _ _ _ _ _ _ w d hd hp u hu j (by tauto)
+
+/-- **The lockstep walk as a contract** (design §13d, G4): index the ruler `w` read along `dir`
+from `src`'s head; time `|w| + 1`; endpoint every moved head `|w| + 1` cells along `dir`; each
+moved head between its start and its end. From `Turing.walkTM_run_ofCfg`.
+
+**Proof sketch.** `Turing.framedContract`. The walk's framed theorem gives each moved head's
+exact position `pos + dir · t`, which for `t ≤ |w| + 1` lies between `pos` and
+`pos + dir · (|w| + 1)`, by cases on the sign of `dir`. -/
+def walkTM_contract (src : Fin k) (moved : Fin k → Prop) [DecidablePred moved]
+    (hsrc : moved src) (dir : SignType) (x : List Γ) :
+    Contract (walkTM k src moved dir) SeekPhase.run {some SeekPhase.done} (List Γ) x :=
+  framedContract (walkTM k src moved dir) .run .done x
+    (fun w d => ∀ p : ℕ, p ≤ w.length →
+      d.workTapes src (d.workTapePos src + (dir : ℤ) * p) = FinTM.bufferTape w p)
+    (fun w _ => w.length + 1)
+    (fun w d => { d with
+      state := some .done
+      workTapePos := fun j =>
+        d.workTapePos j + if moved j then (dir : ℤ) * ((w.length + 1 : ℕ) : ℤ) else 0 })
+    moved
+    (fun w d j => d.workTapePos j + min 0 ((dir : ℤ) * ((w.length + 1 : ℕ) : ℤ)))
+    (fun w d j => d.workTapePos j + max 0 ((dir : ℤ) * ((w.length + 1 : ℕ) : ℤ)))
+    (fun _ _ => rfl)
+    (fun w d hd hp => by
+      obtain ⟨h1, h2, h3⟩ := walkTM_run_ofCfg src moved hsrc dir w d hd hp
+      refine ⟨h1, h2, fun j t ht => ?_⟩
+      dsimp only at ht ⊢
+      rw [h3 j t ht]
+      by_cases hj : moved j
+      · simp only [hj, if_true, Finset.mem_Icc]
+        rcases dir with _ | _ | _ <;> simp <;> omega
+      · simp [hj])
+
+/-- **The endpoint of a seek-family row**: `d` at the exit `done`, with the head of tape `i` at
+`p` and everything else unchanged. -/
+def seekPost {S : Type} {x : List Γ} (done : S) (i : Fin k) (p : ℤ) (d : Cfg k Γ S x) :
+    Cfg k Γ S x :=
+  { d with state := some done, workTapePos := Function.update d.workTapePos i p }
+
+/-- **R8.3 skip as a contract**: index the word `w` from the head of tape `i`; time `|w| + 1`;
+endpoint the head one past `w`'s right delimiter. `Turing.skipTM_run_ofCfg`. -/
+def skipTM_contract (i : Fin k) (x : List Γ) :
+    Contract (skipTM k i) SeekPhase.run {some SeekPhase.done} (List Γ) x :=
+  framedContract (skipTM k i) .run .done x
+    (fun w d => ∀ p : ℤ, 0 ≤ p → p ≤ (w.length : ℤ) →
+      d.workTapes i (d.workTapePos i + p) = FinTM.bufferTape w p)
+    (fun w _ => w.length + 1)
+    (fun w d => seekPost .done i (d.workTapePos i + w.length + 1) d)
+    (· = i) (fun _ d j => d.workTapePos j) (fun w d j => d.workTapePos j + w.length + 1)
+    (fun _ _ => rfl) (fun w d hd hp => skipTM_run_ofCfg i w d hd hp)
+
+/-- **R8.3 skip back as a contract**: index the delimited word `u` ending one blank before the
+head of tape `i`; time `|u| + 3`; endpoint the head at `u`'s first cell.
+`Turing.skipBackTM_run_ofCfg`. -/
+def skipBackTM_contract (i : Fin k) (x : List Γ) :
+    Contract (skipBackTM k i) SeekPhase.run {some SeekPhase.done} (List Γ) x :=
+  framedContract (skipBackTM k i) .run .done x
+    (fun u d => ∀ p : ℤ, -1 ≤ p → p ≤ (u.length : ℤ) →
+      d.workTapes i (d.workTapePos i - u.length - 1 + p) = FinTM.bufferTape u p)
+    (fun u _ => u.length + 3)
+    (fun u d => seekPost .done i (d.workTapePos i - u.length - 1) d)
+    (· = i) (fun u d j => d.workTapePos j - u.length - 2) (fun _ d j => d.workTapePos j)
+    (fun _ _ => rfl) (fun u d hd hp => skipBackTM_run_ofCfg i u d hd hp)
+
+/-- **R8.3 seek to the end as a contract**: index a nonempty list `ws` of nonempty fields laid
+out from the head of tape `i` (`Turing.fieldsTape`); time `fieldOffset ws |ws| + 1`; endpoint the
+head at the layout's end. `Turing.seekEndTM_run_ofCfg`. -/
+def seekEndTM_contract (i : Fin k) (x : List Γ) :
+    Contract (seekEndTM k i) SeekPhase.run {some SeekPhase.done} (List (List Γ)) x :=
+  framedContract (seekEndTM k i) .run .done x
+    (fun ws d => ws ≠ [] ∧ (∀ u ∈ ws, u ≠ []) ∧
+      ∀ p : ℤ, 0 ≤ p → p ≤ (fieldOffset ws ws.length : ℤ) →
+        d.workTapes i (d.workTapePos i + p) = fieldsTape ws p)
+    (fun ws _ => fieldOffset ws ws.length + 1)
+    (fun ws d => seekPost .done i (d.workTapePos i + fieldOffset ws ws.length) d)
+    (· = i) (fun _ d j => d.workTapePos j)
+    (fun ws d j => d.workTapePos j + fieldOffset ws ws.length)
+    (fun _ _ => rfl) (fun ws d hd hp => seekEndTM_run_ofCfg i ws hp.1 hp.2.1 d hd hp.2.2)
+
+/-- **R8.3 seek to the start as a contract**: index the fields `ws` ending at the head of tape
+`i`, its current cell nonblank; time `fieldOffset ws |ws| + 4`; endpoint the head at the layout's
+first cell. `Turing.seekStartTM_run_ofCfg`. -/
+def seekStartTM_contract (i : Fin k) (x : List Γ) :
+    Contract (seekStartTM k i) SeekPhase.run {some SeekPhase.done} (List (List Γ)) x :=
+  framedContract (seekStartTM k i) .run .done x
+    (fun ws d => (∀ u ∈ ws, u ≠ []) ∧ d.workTapes i (d.workTapePos i) ≠ none ∧
+      ∀ p : ℤ, -2 ≤ p → p < (fieldOffset ws ws.length : ℤ) →
+        d.workTapes i (d.workTapePos i - fieldOffset ws ws.length + p) = fieldsTape ws p)
+    (fun ws _ => fieldOffset ws ws.length + 4)
+    (fun ws d => seekPost .done i (d.workTapePos i - fieldOffset ws ws.length) d)
+    (· = i) (fun ws d j => d.workTapePos j - fieldOffset ws ws.length - 2)
+    (fun _ d j => d.workTapePos j)
+    (fun _ _ => rfl) (fun ws d hd hp => seekStartTM_run_ofCfg i ws hp.1 d hd hp.2.1 hp.2.2)
+
+/-- **R8.2 the scan as a contract**: index the word `w` delimited at the head of tape `i`; time
+`2|w| + 2`; endpoint the word's interval rewritten to the scan's output, at the exit carrying the
+final accumulator; exits every `done a`; the head within one cell of the interval, the others
+fixed. `Turing.scanTM_run_ofCfg`. The exit set is not a singleton, so this is built directly.
+
+**Proof sketch.** Each field is the matching clause of the scan's framed theorem; the exit lies in
+the range by construction; a fixed head lies in its one-point interval. -/
+def scanTM_contract {A : Type} (i : Fin k) (δf δb : A → Γ → A × Γ) (a₀ : A) (x : List Γ) :
+    Contract (scanTM k i δf δb a₀) (ScanPhase.fwd a₀) (Set.range fun a => some (ScanPhase.done a))
+      (List Γ) x where
+  pre w d := ∀ p : ℤ, -1 ≤ p → p ≤ (w.length : ℤ) →
+    d.workTapes i (d.workTapePos i + p) = FinTM.bufferTape w p
+  time w _ := 2 * w.length + 2
+  post w d := { d with
+    state := some (.done (scanResult δf δb a₀ w).1)
+    workTapes := fun j q =>
+      if j = i ∧ d.workTapePos j ≤ q ∧ q < d.workTapePos j + (w.length : ℤ)
+        then FinTM.bufferTape (scanResult δf δb a₀ w).2 (q - d.workTapePos j)
+      else d.workTapes j q }
+  lo w d j := if j = i then d.workTapePos j - 1 else d.workTapePos j
+  hi w d j := if j = i then d.workTapePos j + w.length else d.workTapePos j
+  run w d hd hp := (scanTM_run_ofCfg i δf δb a₀ w d hd hp).1
+  exit_mem w d _ _ := ⟨_, rfl⟩
+  cut w d hd hp u hu h := by
+    obtain ⟨a, ha⟩ := h
+    exact (scanTM_run_ofCfg i δf δb a₀ w d hd hp).2.1 u hu a ha.symm
+  env w d hd hp u hu j := by
+    have h := (scanTM_run_ofCfg i δf δb a₀ w d hd hp).2.2 j u hu
+    split_ifs at h ⊢ with hj
+    · exact h
+    · rw [h]
+      exact Finset.mem_Icc.mpr ⟨le_rfl, le_rfl⟩
 
 end Turing
