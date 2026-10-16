@@ -20,9 +20,9 @@ its mirror, the scanned index, the total guarded rebalance, the extension by one
 virtual tape a track represents. Nothing here is a machine. The multi-track physical carrier is
 `Build/ZoneTape` (§13d, G3) and the machine rows are `Build/ZoneRebalance` (§13d, G4).
 
-**Status: proved, apart from one cascade fact.** Every declaration is proved except
-`Turing.zoneCascadeRight_home` (the cascade's new home is the right word's first cell), sorried
-under its proof sketch for the G4 fill. History: the statement phase of tranche A-S2
+**Status: proved.** Every declaration is proved; the last, `Turing.zoneCascadeRight_home` (the
+cascade's new home is the right word's first cell), in the §13d G2 fill. History: the
+statement phase of tranche A-S2
 (`audits/zone-infra-findings.md`, rounds 1–3: the inward-room blocker repaired by totally guarded
 ops, the cascade added, the top-left room hypotheses); the §13d revision (2026-10-10) and its
 G3/G4 statement gate (`audits/s13d-g24-statements-findings.md`), which retired this module's
@@ -551,6 +551,126 @@ theorem zoneCascadeRight_frame {ℓ : ℕ} (j : ℕ) (z : ZoneContents ℓ)
     rw [(ih _ (by omega)).1, (ih _ (by omega)).2]
     exact zoneStepPair_frame _ _ k (by omega) (by omega)
 
+/-- The index-`0` cascade is the guarded head move once level zero has room: both folds run
+over `List.range 0 = []`, and `zoneMove`'s guard fires. -/
+private theorem zoneCascadeRight_zero_eq {ℓ : ℕ} (hℓ : 0 < ℓ) (z : ZoneContents ℓ)
+    (hroom : (z.left ⟨0, hℓ⟩).length + 1 ≤ zoneCapacity 0) :
+    zoneCascadeRight 0 z = zoneMoveRight hℓ z hroom := by
+  show zoneMove true z = _
+  simp only [zoneMove, dif_pos hℓ, dif_pos hroom]
+
+/-- **The levels below `j` after the outer step pair.** From the classical lower state at index
+`j + 1` (right zones below `j + 1` empty, left zones below it full) with room for one pass at
+`j + 1`, the outer step pair `zoneStepPair (j + 1)` leaves the right zones below `j` empty, the
+left zones below `j` full, and `2^j` cells in the left zone `j`.
+
+**Proof sketch.** The pair touches levels `j` and `j + 1` only (`zoneStepPair_frame`); at level
+`j` it keeps the first `2^j` of the full left zone's `2 · 2^j` cells (`zoneStepPair_active`). -/
+private theorem zoneStepPair_below {ℓ : ℕ} (j : ℕ) (hj : j + 1 < ℓ) (z : ZoneContents ℓ)
+    (hr : ∀ k (hk : k < j + 1), z.right ⟨k, by omega⟩ = [])
+    (hl : ∀ k (hk : k < j + 1), (z.left ⟨k, by omega⟩).length = zoneCapacity k)
+    (hroom' : (z.left ⟨j + 1, hj⟩).length + 2 ^ j ≤ zoneCapacity (j + 1)) :
+    (∀ k (hk : k < j), (zoneStepPair (j + 1) z).right ⟨k, by omega⟩ = []) ∧
+    (∀ k (hk : k < j),
+      ((zoneStepPair (j + 1) z).left ⟨k, by omega⟩).length = zoneCapacity k) ∧
+    ((zoneStepPair (j + 1) z).left ⟨j, by omega⟩).length = 2 ^ j := by
+  have hjl : j < ℓ := by omega
+  have hactive := zoneStepPair_active j hj z (hr j (by omega))
+    (hl j (by omega)) hroom'
+  have hr' : ∀ k (hk : k < j),
+      (zoneStepPair (j + 1) z).right ⟨k, by omega⟩ = [] := by
+    intro k hk
+    rw [(zoneStepPair_frame (j + 1) z ⟨k, by omega⟩ (by dsimp; omega) (by dsimp; omega)).2]
+    exact hr k (by omega)
+  have hl' : ∀ k (hk : k < j),
+      ((zoneStepPair (j + 1) z).left ⟨k, by omega⟩).length = zoneCapacity k := by
+    intro k hk
+    rw [(zoneStepPair_frame (j + 1) z ⟨k, by omega⟩ (by dsimp; omega) (by dsimp; omega)).1]
+    exact hl k (by omega)
+  have hlower : ((zoneStepPair (j + 1) z).left ⟨j, hjl⟩).length = 2 ^ j := by
+    rw [hactive.2.1, List.length_take, hl j (by omega)]
+    unfold zoneCapacity
+    omega
+  exact ⟨hr', hl', hlower⟩
+
+/-- **The classical pre-state descends one level.** If `z` is in the classical pre-state of
+`Turing.zoneSide_cascadeRight` at index `j + 1`, then the outer step pair `zoneStepPair (j + 1)`
+leaves it in the classical pre-state at index `j`: the right zones below `j` empty, the left zones
+below `j` full, a nonempty donor at `j`, and room for one pass on the left at `j`.
+
+**Proof sketch.** The levels below `j`, and the `2^j` cells left in the left zone `j`, are
+`zoneStepPair_below`. At level `j` the pair moves the donor's first `2^j` cells in, which are
+nonempty since the donor is (`zoneStepPair_active`), and the `2^j` left cells with `2^(j-1)` more
+fit the capacity `2 · 2^j`. -/
+private theorem zoneStepPair_pre {ℓ : ℕ} (j : ℕ) (hj : j + 1 < ℓ) (z : ZoneContents ℓ)
+    (hr : ∀ k (hk : k < j + 1), z.right ⟨k, by omega⟩ = [])
+    (hl : ∀ k (hk : k < j + 1), (z.left ⟨k, by omega⟩).length = zoneCapacity k)
+    (hdonor : z.right ⟨j + 1, hj⟩ ≠ [])
+    (hroom : (z.left ⟨j + 1, hj⟩).length + 2 ^ (j + 1 - 1) ≤ zoneCapacity (j + 1)) :
+    (∀ k (hk : k < j), (zoneStepPair (j + 1) z).right ⟨k, by omega⟩ = []) ∧
+    (∀ k (hk : k < j),
+      ((zoneStepPair (j + 1) z).left ⟨k, by omega⟩).length = zoneCapacity k) ∧
+    (zoneStepPair (j + 1) z).right ⟨j, by omega⟩ ≠ [] ∧
+    ((zoneStepPair (j + 1) z).left ⟨j, by omega⟩).length + 2 ^ (j - 1) ≤ zoneCapacity j := by
+  have hjl : j < ℓ := by omega
+  have hroom' : (z.left ⟨j + 1, hj⟩).length + 2 ^ j ≤
+      zoneCapacity (j + 1) := by simpa using hroom
+  have hactive := zoneStepPair_active j hj z (hr j (by omega))
+    (hl j (by omega)) hroom'
+  obtain ⟨hr', hl', hlower⟩ := zoneStepPair_below j hj z hr hl hroom'
+  have hd' : (zoneStepPair (j + 1) z).right ⟨j, hjl⟩ ≠ [] := by
+    rw [hactive.1]
+    apply List.ne_nil_of_length_pos
+    rw [List.length_take]
+    exact lt_min (Nat.two_pow_pos j) (List.length_pos_iff.mpr hdonor)
+  have hroomlower : ((zoneStepPair (j + 1) z).left ⟨j, hjl⟩).length +
+      2 ^ (j - 1) ≤ zoneCapacity j := by
+    rw [hlower]
+    have hp := Nat.pow_le_pow_right (by decide : 0 < 2) (Nat.sub_le j 1)
+    unfold zoneCapacity
+    omega
+  exact ⟨hr', hl', hd', hroomlower⟩
+
+/-- **The classical right cascade, both facts by one induction.** Under the classical pre-state
+at index `j`, the cascade's words are the old ones with the home pushed on the left and the right
+word's head popped (`Turing.zoneSide_cascadeRight`), and its new home is that head
+(`Turing.zoneCascadeRight_home`).
+
+**Proof sketch.** Induction on `j`. At `0` the cascade is the central move: it pushes the old home
+on the left and pops the donor's head into the home (`Turing.zoneSide_moveRight`), and the donor,
+zone `0`, is the right word's first word. At `j + 1` the outer step pair leaves the pre-state at
+`j` (`zoneStepPair_pre`), and both step pairs keep both concatenations and the home
+(`zoneStepPair_side`), so the induction hypothesis gives both facts. -/
+private theorem zoneCascadeRight_classical {ℓ : ℕ} (j : ℕ) (hj : j < ℓ) (z : ZoneContents ℓ)
+    (hr : ∀ k (hk : k < j), z.right ⟨k, by omega⟩ = [])
+    (hl : ∀ k (hk : k < j), (z.left ⟨k, by omega⟩).length = zoneCapacity k)
+    (hdonor : z.right ⟨j, hj⟩ ≠ [])
+    (hroom : (z.left ⟨j, hj⟩).length + 2 ^ (j - 1) ≤ zoneCapacity j) :
+    (zoneSide (zoneCascadeRight j z).left = z.home :: zoneSide z.left ∧
+      zoneSide (zoneCascadeRight j z).right = (zoneSide z.right).tail) ∧
+    (zoneCascadeRight j z).home = (zoneSide z.right).headI := by
+  induction j generalizing z with
+  | zero =>
+    have hroom0 : (z.left ⟨0, hj⟩).length + 1 ≤ zoneCapacity 0 := by
+      simpa using hroom
+    rw [zoneCascadeRight_zero_eq hj z hroom0]
+    refine ⟨zoneSide_moveRight hj z hroom0 hdonor, ?_⟩
+    obtain ⟨n, rfl⟩ : ∃ n, ℓ = n + 1 := ⟨ℓ - 1, by omega⟩
+    obtain ⟨a, as, ha⟩ := List.exists_cons_of_ne_nil hdonor
+    simp only [zoneMoveRight]
+    rw [zoneSide_succ, show (0 : Fin (n + 1)) = ⟨0, hj⟩ from rfl, ha]
+    rfl
+  | succ j ih =>
+    obtain ⟨hr', hl', hd', hroomlower⟩ := zoneStepPair_pre j hj z hr hl hdonor hroom
+    obtain ⟨hinner, hhome⟩ := ih (by omega) (zoneStepPair (j + 1) z) hr' hl' hd' hroomlower
+    rw [zoneCascadeRight_succ]
+    refine ⟨?_, ?_⟩
+    · rw [(zoneStepPair_side _ _).1, (zoneStepPair_side _ _).2, hinner.1, hinner.2,
+        (zoneStepPair_side _ _).1, (zoneStepPair_side _ _).2]
+      exact ⟨rfl, rfl⟩
+    · show (zoneCascadeRight j (zoneStepPair (j + 1) z)).home = _
+      rw [hhome, (zoneStepPair_side _ _).2]
+
 /-- The cascade realizes exactly one virtual right move. Preconditions are
 the classical pre-state at index `j` — on the right, zones below `j` empty
 and the donor `j` nonempty; on the left, zones below `j` full — **plus the
@@ -570,7 +690,8 @@ for the push under `hroom`; every surrounding shift preserves the
 concatenations whether its guard fires or not
 (`zoneSide_shiftInW`/`OutW`), so the single legal push/pop
 (`zoneSide_moveRight`) gives exactly the two word equalities. Half-full
-restoration is **not** used. -/
+restoration is **not** used. Formally the induction on `j` is shared with
+`Turing.zoneCascadeRight_home` (the private `zoneCascadeRight_classical`). -/
 theorem zoneSide_cascadeRight {ℓ : ℕ} (j : ℕ) (hj : j < ℓ)
     (z : ZoneContents ℓ)
     (hr : ∀ k (hk : k < j), z.right ⟨k, by omega⟩ = [])
@@ -579,50 +700,8 @@ theorem zoneSide_cascadeRight {ℓ : ℕ} (j : ℕ) (hj : j < ℓ)
     (hdonor : z.right ⟨j, hj⟩ ≠ [])
     (hroom : (z.left ⟨j, hj⟩).length + 2 ^ (j - 1) ≤ zoneCapacity j) :
     zoneSide (zoneCascadeRight j z).left = z.home :: zoneSide z.left ∧
-    zoneSide (zoneCascadeRight j z).right = (zoneSide z.right).tail := by
-  induction j generalizing z with
-  | zero =>
-    have hroom0 : (z.left ⟨0, hj⟩).length + 1 ≤ zoneCapacity 0 := by
-      simpa using hroom
-    simpa only [zoneCascadeRight, List.range_zero, List.reverse_nil,
-      List.foldl_nil, zoneMove, dif_pos hj, dif_pos hroom0] using
-      zoneSide_moveRight hj z hroom0 hdonor
-  | succ j ih =>
-    have hjl : j < ℓ := by omega
-    have hroom' : (z.left ⟨j + 1, hj⟩).length + 2 ^ j ≤
-        zoneCapacity (j + 1) := by simpa using hroom
-    have hactive := zoneStepPair_active j hj z (hr j (by omega))
-      (hl j (by omega)) hroom'
-    have hr' : ∀ k (hk : k < j),
-        (zoneStepPair (j + 1) z).right ⟨k, by omega⟩ = [] := by
-      intro k hk
-      rw [(zoneStepPair_frame (j + 1) z ⟨k, by omega⟩ (by dsimp; omega) (by dsimp; omega)).2]
-      exact hr k (by omega)
-    have hl' : ∀ k (hk : k < j),
-        ((zoneStepPair (j + 1) z).left ⟨k, by omega⟩).length = zoneCapacity k := by
-      intro k hk
-      rw [(zoneStepPair_frame (j + 1) z ⟨k, by omega⟩ (by dsimp; omega) (by dsimp; omega)).1]
-      exact hl k (by omega)
-    have hd' : (zoneStepPair (j + 1) z).right ⟨j, hjl⟩ ≠ [] := by
-      rw [hactive.1]
-      apply List.ne_nil_of_length_pos
-      rw [List.length_take]
-      exact lt_min (Nat.two_pow_pos j) (List.length_pos_iff.mpr hdonor)
-    have hlower : ((zoneStepPair (j + 1) z).left ⟨j, hjl⟩).length = 2 ^ j := by
-      rw [hactive.2.1, List.length_take, hl j (by omega)]
-      unfold zoneCapacity
-      omega
-    have hroomlower : ((zoneStepPair (j + 1) z).left ⟨j, hjl⟩).length +
-        2 ^ (j - 1) ≤ zoneCapacity j := by
-      rw [hlower]
-      have hp := Nat.pow_le_pow_right (by decide : 0 < 2) (Nat.sub_le j 1)
-      unfold zoneCapacity
-      omega
-    have hinner := ih hjl (zoneStepPair (j + 1) z) hr' hl' hd' hroomlower
-    rw [zoneCascadeRight_succ, (zoneStepPair_side _ _).1,
-      (zoneStepPair_side _ _).2, hinner.1, hinner.2,
-      (zoneStepPair_side _ _).1, (zoneStepPair_side _ _).2]
-    exact ⟨rfl, rfl⟩
+    zoneSide (zoneCascadeRight j z).right = (zoneSide z.right).tail :=
+  (zoneCascadeRight_classical j hj z hr hl hdonor hroom).1
 
 /-- The cascade restores the half-full discipline below its index: after a
 classical right move at index `j` from a donor holding at least `2^j`
@@ -662,8 +741,7 @@ theorem zoneCascadeRight_lengths {ℓ : ℕ} (j : ℕ) (hj : j < ℓ)
   | zero =>
     have hroom0 : (z.left ⟨0, hj⟩).length + 1 ≤ zoneCapacity 0 := by
       simpa using hroom
-    have hm : zoneCascadeRight 0 z = zoneMoveRight hj z hroom0 := by
-      simp [zoneCascadeRight, zoneMove, hj, hroom0]
+    have hm := zoneCascadeRight_zero_eq hj z hroom0
     rw [hm]
     refine ⟨?_, ?_, ?_⟩
     · intro k hk
@@ -680,29 +758,13 @@ theorem zoneCascadeRight_lengths {ℓ : ℕ} (j : ℕ) (hj : j < ℓ)
     have hactive := zoneStepPair_active j hj z (hr j (by omega))
       (hl j (by omega)) hroom1
     let z1 := zoneStepPair (j + 1) z
-    have hr' : ∀ k (hk : k < j), z1.right ⟨k, by omega⟩ = [] := by
-      intro k hk
-      change (zoneStepPair (j + 1) z).right ⟨k, _⟩ = []
-      rw [(zoneStepPair_frame (j + 1) z ⟨k, by omega⟩
-        (by dsimp; omega) (by dsimp; omega)).2]
-      exact hr k (by omega)
-    have hl' : ∀ k (hk : k < j),
-        (z1.left ⟨k, by omega⟩).length = zoneCapacity k := by
-      intro k hk
-      change ((zoneStepPair (j + 1) z).left ⟨k, _⟩).length = _
-      rw [(zoneStepPair_frame (j + 1) z ⟨k, by omega⟩
-        (by dsimp; omega) (by dsimp; omega)).1]
-      exact hl k (by omega)
+    have hbelow := zoneStepPair_below j hj z hr hl hroom1
     have hrlower : (z1.right ⟨j, hjl⟩).length = 2 ^ j := by
       change ((zoneStepPair (j + 1) z).right ⟨j, hjl⟩).length = _
       rw [hactive.1, List.length_take]
       rw [pow_succ] at hdonor
       omega
-    have hllower : (z1.left ⟨j, hjl⟩).length = 2 ^ j := by
-      change ((zoneStepPair (j + 1) z).left ⟨j, hjl⟩).length = _
-      rw [hactive.2.1, List.length_take, hl j (by omega)]
-      unfold zoneCapacity
-      omega
+    have hllower : (z1.left ⟨j, hjl⟩).length = 2 ^ j := hbelow.2.2
     have hrtop : (z1.right ⟨j + 1, hj⟩).length =
         (z.right ⟨j + 1, hj⟩).length - 2 ^ j := by
       change ((zoneStepPair (j + 1) z).right ⟨j + 1, hj⟩).length = _
@@ -713,7 +775,7 @@ theorem zoneCascadeRight_lengths {ℓ : ℕ} (j : ℕ) (hj : j < ℓ)
       rw [hactive.2.2.2, List.length_append, List.length_drop, hl j (by omega)]
       unfold zoneCapacity
       omega
-    have hinner := ih hjl z1 hr' hl' (by rw [hrlower]) (by
+    have hinner := ih hjl z1 hbelow.1 hbelow.2.1 (by rw [hrlower]) (by
       rw [hllower]
       unfold zoneCapacity
       omega)
@@ -783,9 +845,8 @@ theorem zoneCascadeRight_zero {ℓ : ℕ} (hℓ : 0 < ℓ) (z : ZoneContents ℓ
     (hroom : (z.left ⟨0, hℓ⟩).length + 1 ≤ zoneCapacity 0) :
     zoneSide (zoneCascadeRight 0 z).left = z.home :: zoneSide z.left ∧
     zoneSide (zoneCascadeRight 0 z).right = (zoneSide z.right).tail := by
-  simpa only [zoneCascadeRight, List.range_zero, List.reverse_nil,
-    List.foldl_nil, zoneMove, dif_pos hℓ, dif_pos hroom] using
-    zoneSide_moveRight hℓ z hroom hdonor
+  rw [zoneCascadeRight_zero_eq hℓ z hroom]
+  exact zoneSide_moveRight hℓ z hroom hdonor
 
 /-- Regression (round-2 audit, A-S2-R2-1): a **full top receiver** blocks
 the cascade harmlessly — with the classical lower-left state and
@@ -1203,14 +1264,17 @@ cascade is the one the central move sets: the head of zone `0` on the right afte
 descending pass. That pass keeps the right concatenation (`Turing.zoneSide_shiftInW`) and
 leaves zone `0` nonempty (each descending prefix of the nonempty donor is nonempty, as in the
 proof of `Turing.zoneSide_cascadeRight`), and zone `0` is the first word of the
-concatenation, so its head is the right word's head. -/
+concatenation, so its head is the right word's head. Formally the induction on `j` is shared
+with `Turing.zoneSide_cascadeRight` (the private `zoneCascadeRight_classical`): at `0` the
+cascade is the central move, which sets the home to the donor's head; at `j + 1` the outer step
+pair keeps the right concatenation and leaves the pre-state at `j`. -/
 theorem zoneCascadeRight_home {ℓ : ℕ} (j : ℕ) (hj : j < ℓ) (z : ZoneContents ℓ)
     (hr : ∀ k (hk : k < j), z.right ⟨k, by omega⟩ = [])
     (hl : ∀ k (hk : k < j), (z.left ⟨k, by omega⟩).length = zoneCapacity k)
     (hdonor : z.right ⟨j, hj⟩ ≠ [])
     (hroom : (z.left ⟨j, hj⟩).length + 2 ^ (j - 1) ≤ zoneCapacity j) :
-    (zoneCascadeRight j z).home = (zoneSide z.right).headI := by
-  sorry
+    (zoneCascadeRight j z).home = (zoneSide z.right).headI :=
+  (zoneCascadeRight_classical j hj z hr hl hdonor hroom).2
 
 /-- **The cascade realizes the virtual right move on the represented tape**: under the
 classical pre-state of `Turing.zoneSide_cascadeRight`, the tape the cascade represents is the
