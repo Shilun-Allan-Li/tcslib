@@ -71,6 +71,8 @@ alphabet and the G4 rows.
 * `Turing.zoneRebalance_frame`, `Turing.zoneSide_rebalance_right`/`left`,
   `Turing.zoneTrackTape_rebalance_right`/`left`: what a rebalance does.
 * `Turing.zoneSide_extend`, `Turing.zoneTrackTape_extend`: the extension is invisible.
+* `Turing.zoneCapacity_eq` — a zone's capacity as an equation, the specification API (user,
+  2026-10-16).
 
 ## References
 
@@ -86,6 +88,10 @@ namespace Turing
 
 /-- The capacity of zone `i`, in virtual cells per side. -/
 def zoneCapacity (i : ℕ) : ℕ := 2 * 2 ^ i
+
+/-- **A zone's capacity as an equation** (the specification API, user 2026-10-16). -/
+theorem zoneCapacity_eq (i : ℕ) : zoneCapacity i = 2 * 2 ^ i :=
+  rfl
 
 /-- The first virtual slot of zone `i`: the exact total capacity of the
 zones inside it. -/
