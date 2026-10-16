@@ -1134,6 +1134,19 @@ The route decisions of 2026-10-12 (design §16b) add three work items, numbered 
     - **Delivered (2026-10-15):** `fill-b6-configclock.zip`, SHA-256 `73708719…d8bd`. Under review
       by a review sub-agent (user, 2026-10-15: sub-agents are reserved for reviewing incoming fills
       and audits).
+    - **Reviewed (2026-10-15; `audits/evidence/b6-fill-configclock/delivery-review.md`):** a clean
+      partial, 0 of 1. It adds five private arithmetic lemmas (`cw_*`), and every check passes:
+      integrity, freeze, elaboration at the tip, probes, axioms, lint, and the v3 screen (0 new
+      pairs). Its escalation **E1 is real:** ground rule 10 forbids unfolding `RecordAt`, but the
+      route needs its cells, and no public eliminator exists. The same holds for `recordLength`'s
+      formula and `n + 2 ≤ 2^posWidth n`.
+      - **User (2026-10-15):** (a) the continuation may unfold the specification-level
+        definitions `RecordAt`, `recordLength` and `posWidth` in WindowClock (no API PR); and
+        the partial lands now.
+      - **Landing PR #111** (`lean/b6-f3-partial`): the worker's commit cherry-picked from the
+        bundle, plus the appendix updated for the ruling. Replay `replay-lf3p.sh` covers 2
+        modules, after #110's (snapshot `oleans-lf3p` from `oleans-lpcanon`). Next: F3's
+        continuation brief.
   **Record-table row 18's fill brief issued (2026-10-14):** `briefs/w1-fill-recordtable-cont5.md`
   (inputs `8dfbc881`, at `1b6b972c`):
   - The route is a 14-phase chain over row 17 through R1. Three prescribed privates are proved;
