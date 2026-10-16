@@ -1230,7 +1230,9 @@ The route decisions of 2026-10-12 (design §16b) add three work items, numbered 
       chars, the successor of a base pair). Replay: 87 modules from `oleans-lcanon4`.
       **Landed (2026-10-15, PR #108 as `b6e0344c`; replay 87 of 87, 0 errors, at `a9ee4701`;
       snapshot `oleans-lg2` for the tip `b6e0344c`).** The only sorry counts that moved:
-      `Build/Catalog` 2 to 0 and `Build/Zone` 1 to 0. Next: the G2 fill gate (folder 27);
+      `Build/Catalog` 2 to 0 and `Build/Zone` 1 to 0. **The G2 fill gate dispatched
+      (2026-10-15; folder 27, bundle SHA-256 `f6044d47…dcfc7`, 60 sections; pack
+      `audits/s13d-g2-fill-pack.md`).**
     - G4's host first (obligation 3): identify the public host for the two-tape scratch and
       ruler layout, or gate a missing one, before G4's fill brief. **Surveyed (2026-10-15;
       `audits/evidence/s13d/g4-hosts/G4-HOSTS-SURVEY.md`):** every host is public (round
@@ -1249,7 +1251,8 @@ The route decisions of 2026-10-12 (design §16b) add three work items, numbered 
       skip back, seek end, seek start, scan). 119 publics, standard axioms, 0 new warnings. The
       screen goes from 392 to 390 pairs; one new mirror pair (`seekStartTM_contract` ←
       `seekEndTM_contract`, 53%), **approved by the user (2026-10-15)**. The landing PR
-      (`lean/walk-row`) follows the gate.
+      (`lean/walk-row`) follows the gate. **The walk statement gate dispatched (2026-10-15;
+      folder 28, bundle SHA-256 `66f5d270…22b6d`, 50 sections).**
   **Two-tape universal (U2) designed (2026-10-14; `audits/evidence/u2/U2-design.md`, probes).**
   - **The design:** one `k`-generic construction on H2's step block. It has a new public host
     H2-F (the emitting round loop, in `Build/StepBlockLoop`), U2-S (the startup), U2-U
