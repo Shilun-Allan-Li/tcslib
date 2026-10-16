@@ -13,9 +13,12 @@ set_option autoImplicit false
 /-!
 # The step block's forwarding round loop (H2-F)
 
-**Status: statement gate passed** (2026-10-15, `audits/u2-statements-findings.md`: PASS,
-0 blockers, 0 majors, 2 minors; resolutions `audits/u2-statements-resolutions.md`). The contract
-`Turing.StepBlock.exists_forwardLoopTM` is sorried with its proof sketch; the encoding is defined.
+**Status: proved** (fill H2-F, 2026-10-16; the fill gate, with U2-S and U2-U, is pending). The
+statement gate passed on 2026-10-15 (`audits/u2-statements-findings.md`: PASS, 0 blockers,
+0 majors, 2 minors; resolutions `audits/u2-statements-resolutions.md`). The contract
+`Turing.StepBlock.exists_forwardLoopTM` is proved: the step block, released by
+`Turing.seamReleaseTM`, and a forwarding leaf, as one machine on the public phase host. The
+encoding is defined.
 
 **H2's unclocked loop form** (host H2, `machine-library-design.md` §14): the step block
 `Turing.StepBlock.roundTM` followed by a forwarding leaf, run until the simulated machine halts.
@@ -39,7 +42,7 @@ on it.
 
 * `Turing.StepBlock.exists_forwardLoopTM` — H2-F, the forwarding round loop: a macro-step
   lockstep of any `k`-tape table with its emissions forwarded, per-step cost
-  `≤ 50 · (|table| + 1) + C`, and the space ledger (sorried).
+  `≤ 50 · (|table| + 1) + C` (with `C = 3`), and the space ledger.
 
 ## References
 
