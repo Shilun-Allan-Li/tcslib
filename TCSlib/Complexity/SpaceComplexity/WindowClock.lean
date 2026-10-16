@@ -141,6 +141,87 @@ theorem FinTM.configBound_le_two_pow (M : FinTM Bool) (n s : ℕ) :
 
 /-! ### The runner -/
 
+/-- An all-true binary clock has value one less than the corresponding power of two.
+**Proof sketch.** Induct on the width, using the binary digit recurrence. -/
+private lemma cw_true_value (W : ℕ) :
+    Nat.ofDigits 2 ((List.replicate W true).map Bool.toNat) = 2 ^ W - 1 := by
+  induction W with
+  | zero => simp
+  | succ W ih =>
+    simp only [List.replicate_succ, List.map_cons, Nat.ofDigits_cons, Bool.toNat_true, ih,
+      pow_succ]
+    have hp : 0 < 2 ^ W := Nat.pow_pos (by decide)
+    omega
+
+/-- The runner's per-round cost is at most a power of two when the position width
+fits in the record length. **Proof sketch.** Bound each summand by `2 ^ L`. -/
+private lemma cw_round_cost {L n p : ℕ} (hp : p ≤ L) (hn : n + 2 ≤ 2 ^ p) :
+    L + n + 1 ≤ 2 ^ (L + 1) := by
+  have hpow : 2 ^ p ≤ 2 ^ L := Nat.pow_le_pow_right (by decide) hp
+  have hL : L < 2 ^ L := Nat.lt_two_pow_self
+  rw [pow_succ]
+  omega
+
+/-- A constant number of passes over field cells supplies every certified round,
+including the extra halt-test round. The layout identities are explicit hypotheses.
+**Proof sketch.** Bound the runner cost, configuration count plus one and runner
+constant by powers of two. Their combined exponent is strictly below the clock width. -/
+private lemma cw_budget {q k n s p L B : ℕ} (C : ℕ)
+    (hL : L = k * (2 * s + 1) + p + k + 4) (hn : n + 2 ≤ 2 ^ p)
+    (hB : B ≤ 2 ^ (q + p + 3 * k * (2 * s + 1))) :
+    C * (B + 1) * (L + n + 1) ≤
+      2 ^ ((C + q + 8) * (k * (2 * s + 1) + p + 2)) - 1 := by
+  let F := k * (2 * s + 1) + p + 2
+  let A := q + p + 3 * k * (2 * s + 1)
+  have hk : k ≤ k * (2 * s + 1) := by nlinarith
+  have hF : 2 ≤ F := by dsimp [F]; omega
+  have hLF : L ≤ 2 * F := by dsimp [F]; omega
+  have hA : A ≤ q + 3 * F := by dsimp [A, F]; nlinarith
+  have hcost := cw_round_cost (show p ≤ L by omega) hn
+  have hC : C ≤ 2 ^ C := (Nat.lt_two_pow_self).le
+  have hBp : B + 1 ≤ 2 ^ (A + 1) := by
+    have hpos : 0 < 2 ^ A := Nat.pow_pos (by decide)
+    rw [pow_succ]
+    change B ≤ 2 ^ A at hB
+    omega
+  have hprod : C * (B + 1) * (L + n + 1) ≤ 2 ^ (C + (A + 1) + (L + 1)) := by
+    rw [pow_add, pow_add]
+    exact Nat.mul_le_mul (Nat.mul_le_mul hC hBp) hcost
+  have hexp : C + (A + 1) + (L + 1) < (C + q + 8) * F := by nlinarith
+  have hstrict : 2 ^ (C + (A + 1) + (L + 1)) < 2 ^ ((C + q + 8) * F) :=
+    Nat.pow_lt_pow_right (by decide) hexp
+  exact Nat.le_sub_one_of_lt (lt_of_le_of_lt hprod hstrict)
+
+/-- Linear writer and cleanup costs fit the target's single exponential envelope.
+**Proof sketch.** The same power bounds `2 ^ W`, `L + 1` and one; multiply
+these three bounds by their nonnegative coefficients and add. -/
+private lemma cw_time_bound {c L W : ℕ} (A D : ℕ) (hW : W ≤ c * L) :
+    A * (L + 1) + (5 * (2 ^ W - 1) + 2 * W + 3) + (2 * W + 2) + D ≤
+      (A + 4 * c + D + 10) * 2 ^ ((A + 4 * c + D + 10) * (L + 1)) := by
+  let C := A + 4 * c + D + 10
+  let P := 2 ^ (C * (L + 1))
+  have hC : 1 ≤ C ∧ c ≤ C := by dsimp [C]; omega
+  have hLp : L + 1 ≤ P := (Nat.lt_two_pow_self).le.trans
+    (Nat.pow_le_pow_right (by decide) (show L + 1 ≤ C * (L + 1) by nlinarith))
+  have hWp : 2 ^ W ≤ P := Nat.pow_le_pow_right (by decide)
+    (show W ≤ C * (L + 1) by nlinarith)
+  have hP : 1 ≤ P := Nat.one_le_pow _ _ (by decide)
+  have hwrite := Nat.mul_le_mul_left A hLp
+  have hlinear := Nat.mul_le_mul_left (4 * c) hLp
+  have hdispatch := Nat.mul_le_mul_left (D + 5) hP
+  have hsub : 2 ^ W - 1 ≤ 2 ^ W := Nat.sub_le _ _
+  change _ ≤ C * P
+  dsimp [C]
+  nlinarith
+
+/-- A clock of linear width preserves the runner's linear head envelope. -/
+private lemma cw_head_bound {c L W : ℕ} (C : ℕ) (hW : W ≤ c * L) :
+    C * (L + W + 1) ≤ C * (c + 1) * (L + 1) := by
+  calc
+    C * (L + W + 1) ≤ C * ((c + 1) * (L + 1)) :=
+      Nat.mul_le_mul_left C (by nlinarith)
+    _ = C * (c + 1) * (L + 1) := by ring
+
 /-- **H3 with the configuration-count clock** (what `Complexity.space_hierarchy`'s
 diagonalizer cites). The windowed runner that builds its own clock. For a fixed binary machine
 `M` and a tag update `upd` that ignores silent steps, there is a module over the record alphabet
@@ -183,7 +264,19 @@ round's start and the halt and window exits merged into its one optional early e
 (`Turing.counterLoopTMVia_run_done`); after an escape, one more test row tells `halted` from
 `left` on the unchanged record. The clock word has width `|Q| + posWidth |x| + 3k(2s + 1) + 1`
 or more, so its value exceeds `configBound M |x| s`: rounds, not steps, are counted, and the
-time is at most the clock value times `C · (L + |x| + 1)` (`Turing.counterLoop_time_le`). -/
+time is at most the clock value times `C · (L + |x| + 1)` (`Turing.counterLoop_time_le`).
+
+**Fill appendix (B6-F3, partial).** The private `cw_` lemmas prove the all-true
+clock value, its numerical certification budget, and the time and head-envelope
+absorptions. The clock writer is not inserted, and this target remains open.
+The numerical helpers take the record-length formula and the position-width bound as
+explicit hypotheses. The specification-level definitions `RecordAt`, `recordLength` and
+`posWidth` may be unfolded in this module (user ruling on the delivery's escalation E1,
+2026-10-15), which discharges them and gives the field cells from a `RecordAt` hypothesis.
+**Proof sketch (remaining).** Compose the mapped-copy writer, F2's runner and the framed
+clear by the prescribed seams or phase host, then apply the private arithmetic lemmas to
+their ledgers.
+ -/
 theorem exists_configWindowRunnerTM (M : FinTM Bool) {T : Type} [Fintype T] [DecidableEq T]
     (upd : T → Option Bool → T) (hupd : ∀ τ, upd τ none = τ) :
     ∃ (K : ℕ) (P : Type) (_ : Fintype P) (_ : DecidableEq P)
