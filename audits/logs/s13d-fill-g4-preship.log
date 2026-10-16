@@ -1,0 +1,27 @@
+# §13d G4 fill: pre-ship log (maintainer, 2026-10-15)
+# Base: Lean content e5fcd8ee (#109 merged). Snapshot: oleans-lwalk, #109's replay output (84 of 84, failed=0).
+# Lean only through scripts/leanelab.sh (no olean written); Python as python3 -I.
+
+## 1. The overlay (the two authorized imports and the two layout-bridge stubs)
+overlay written: 369 lines
+ZoneRebalanceOverlay.lean:138:14: warning: declaration uses 'sorry'
+ZoneRebalanceOverlay.lean:154:14: warning: declaration uses 'sorry'
+ZoneRebalanceOverlay.lean:202:8: warning: declaration uses 'sorry'
+ZoneRebalanceOverlay.lean:236:8: warning: declaration uses 'sorry'
+errors: 0; non-sorry warnings: 0; sorry warnings: 4 (the two stubs, the two rows)
+
+## 2. The import probe (94 #checks, with the two imports)
+G4ImportProbe: errors=0 warnings=0
+
+## 3. Imports
+ZoneRebalance's closure (base) reaches Contract/Basic, ZoneTape and Zone only; not Catalog, Contract/Catalog, Contract/Seam, Seam, Embed or Scan. Contract/Catalog and Contract/Seam do not import ZoneRebalance (no cycle); its only importer is the TuringMachine facade.
+
+## 4. Order list and base sorry set
+79 modules (with the two imports); downstream of ZoneRebalance: itself and the TuringMachine facade
+base sorry set: 37 declarations in 16 modules; replay-log cross-check 75 of 79, no mismatch; the other four unchanged since 64e8fe2b (0 sorry there)
+
+## 5. Copy-text screen (v3; 10 files)
+base: declarations screened: 763; copy pairs (target reproduces >= half of source): 429; reproduced text: 126,953 chars — # exit=0 elapsed=283s
+
+## 6. Lint (base)
+style_lint: 0 FAIL, 14 WARN over 36 files
