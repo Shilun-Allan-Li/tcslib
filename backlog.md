@@ -1379,6 +1379,20 @@ The route decisions of 2026-10-12 (design §16b) add three work items, numbered 
           block runs inside the release adapter `seamReleaseTM`, as one phase of the phase host,
           beside a one-step forwarding leaf. The cost is `T + 3` (`T + 2` on a halting step), so
           `C = 3`.
+      - **U2-S's pre-issue promotion (user, 2026-10-15: "Maintainer PR first"): PR #110**
+        (`lean/u2s-prefix-canon`, `cb669b4d`).
+        - `prefixCanonTM F`, with `prefixCanon_start`, `_run` and `_complete`, generic in the
+          canonizer. `universalCanonTM` and `universalCanon_complete` become its instance, the
+          latter's statement unchanged. The parser `universalPrefixTM` is public because the
+          generic statements name it.
+        - **Replay:** 101 modules (`replay-lpcanon.sh`, snapshot `oleans-lpcanon` from
+          `oleans-lwalk`).
+        - **U2-S's cleanup (user, 2026-10-15): cite Hydroxyi's `Complexity.LogProg.cleanTM` as it
+          is**, with the one import `SpaceComplexity.Machines.Clean` authorized in U2-S's brief.
+          The route runs the cleaned canonizer inside `prefixCanonTM`, so `prefixCanon_run`'s
+          exact formula gives suffix independence. Capture and placement go through R1′
+          (`embedSilentRetTM`).
+        - The U2-S brief is drafted. Its inputs are measured after #110 merges.
     - **`Turing.universal` at `k = 1`** fits U2-E's statement verbatim. Its re-derivation (U-1)
       waits for U2-E's fill, so a sorry-free theorem does not come to depend on a sorried one.
   - Forwarded to G5's statement phase: `two_work_tapes_run` per run, with the converse; its
