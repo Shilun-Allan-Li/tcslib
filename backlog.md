@@ -1120,6 +1120,8 @@ The route decisions of 2026-10-12 (design §16b) add three work items, numbered 
       radius word, meets the precondition) are clean.
     - **Inputs measured:** order list 176 modules; base sorry set 28; v3 screen base on F2's
       21-file population: 503 pairs.
+    - **Dispatched (2026-10-15)**: brief attachment SHA-256 `6bf925d1…2980`, the addendum
+      `a25474c5…`; branch `fill/b6-configclock`; delivery `fill-b6-configclock.zip`.
   **Record-table row 18's fill brief issued (2026-10-14):** `briefs/w1-fill-recordtable-cont5.md`
   (inputs `8dfbc881`, at `1b6b972c`):
   - The route is a 14-phase chain over row 17 through R1. Three prescribed privates are proved;
