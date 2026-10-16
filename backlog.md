@@ -1241,7 +1241,15 @@ The route decisions of 2026-10-12 (design §16b) add three work items, numbered 
       wrappers. **User (2026-10-15): public, gated first.** Next: a small statement unit (the
       walk row in both directions in `Build/Catalog` beside R8.3, its Contract, and Contract
       wrappers for the seeks and `scanTM` in `Contract/Catalog`), with its own statement gate;
-      then G4's fill brief cites them.
+      then G4's fill brief cites them. **Built (2026-10-15; `audits/evidence/s13d/walk/`, pack
+      `audits/s13d-walk-statements-pack.md`, folder 28), and complete:** `walkTM` with its
+      proved framed row; the skip is its one-tape instance (`skipTM_eq_walkTM` by `rfl`;
+      `skipTM_run_ofCfg` re-proved through it). In `Contract/Catalog`: `framedContract`
+      (`sweepContract` now its two-pass instance), `seekPost`, and six contracts (walk, skip,
+      skip back, seek end, seek start, scan). 119 publics, standard axioms, 0 new warnings. The
+      screen goes from 392 to 390 pairs; one new mirror pair (`seekStartTM_contract` ←
+      `seekEndTM_contract`, 53%), **approved by the user (2026-10-15)**. The landing PR
+      (`lean/walk-row`) follows the gate.
   **Two-tape universal (U2) designed (2026-10-14; `audits/evidence/u2/U2-design.md`, probes).**
   - **The design:** one `k`-generic construction on H2's step block. It has a new public host
     H2-F (the emitting round loop, in `Build/StepBlockLoop`), U2-S (the startup), U2-U
