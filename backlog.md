@@ -1479,9 +1479,11 @@ The route decisions of 2026-10-12 (design §16b) add three work items, numbered 
         - **The replay passed (user, 2026-10-16):** `replay-lapi2.sh`, 85 of 85, 0 failed. The
           sorry counts equal round 1's, except `StepBlockForward`, 1 → 0 (#114). The snapshot
           `oleans-lapi2` is the merged head `caa93c12`, which is the tip plus #112.
-        - **Round-2 gate staged:** `infra_local/gate-dispatches/31-spec-api-r2-gate/`, bundle
-          SHA-256 `a82bd16a…710a` (78 sections; Lean `caa93c12`, other `a8d25f5b`). Pack
-          `audits/spec-api-r2-pack.md`. Not yet dispatched.
+        - **Round-2 gate** (folder 31, bundle `a82bd16a…710a`), dispatched by the user, returned
+          **PASS, 0/0/0/1. The gate is CLOSED** (`audits/spec-api-r2-findings.md`, the review
+          `r2/gate-review-r2.md`). The note asked for consumer-instantiation evidence; it is
+          resolved by the review's `ConsumerProbe` (exit 0) and the copy-route probe's recorded
+          exit. **PR #112 is ready to merge,** before #116.
       - **#116's gate returned (user, 2026-10-16): FAIL, 0/2/3/0** (`audits/core-api-findings.md`,
         untracked until resolved).
         - Major 1: `cleanTM`'s initialization.
@@ -1500,9 +1502,10 @@ The route decisions of 2026-10-12 (design §16b) add three work items, numbered 
           - `395771bc`: the tip merged in;
           - `93c4c630`: #112's round 2 merged in, stacked and chained as for #112 and #113.
             **#112 merges first.**
-        - The replay `replay-lcapi.sh` (320 modules, from `oleans-lapi2`) is ready for the user.
-          Round-2 pack: `audits/core-api-r2-pack.md`. The bundle is built after the replay,
-          with its log.
+        - **The replay passed (user, 2026-10-16):** `replay-lcapi.sh`, 320 of 320, 0 failed. The
+          sorry counts equal a static count (94 in total). The snapshot `oleans-lcapi` is the
+          stacked head `93c4c630` (the tip plus #112 plus #116).
+        - The round-2 gate is staged in folder 32 (pack `audits/core-api-r2-pack.md`).
       - **#114 and #115 merged (user, 2026-10-16; `a2b834b3`, `c451e358`).** H2-F is complete
         (`exists_forwardLoopTM` proved; the §14 H2 row is updated), and G4's partial has landed.
         The library's snapshot for the tip is `oleans-lg4p`; it was built on #112's tree, which

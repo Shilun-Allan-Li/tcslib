@@ -41,6 +41,10 @@ alone is insufficient.
   - lint check 8: Finite's line goes, nothing new;
   - copy-text screen of the three touched files: 50 declarations, 10 pairs, 0 new.
 - **Replay:** `replay-lcapi.sh` covers the eleven changed modules' downstream closure at the stacked
-  head (320 modules), from `oleans-lapi2`, the tip plus #112. The user runs it.
+  head (320 modules), from `oleans-lapi2`, the tip plus #112. **Passed (user, 2026-10-16):**
+  320 of 320, 0 failed (`r2/replay-lcapi.log`).
+  - The per-module sorry counts equal a static count of the tree, 0 mismatches, 94 in total
+    (`r2/replay-lcapi-static.txt`).
+  - On the 85 modules shared with #112's round-2 replay they are unchanged.
 - **Round-2 gate:** a short check of findings 1 and 2's repair, with the replay log and the
   merged-head consumers. Pack: `audits/core-api-r2-pack.md`.

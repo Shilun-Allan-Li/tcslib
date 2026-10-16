@@ -47,7 +47,10 @@ Round 1 (`audits/core-api-pack.md`) returned **FAIL, 0 blockers, 2 majors, 3 min
    - **Axioms:** `logs/axioms.log`, round 2's section.
    - **Copy-text screen:** `r2/logs/screen-{base,repaired}.txt` (three files, 0 new pairs).
    - **Lint check 8:** `r2/logs/lint-*-check8.txt`.
-   - **Replay:** `r2/replay-lcapi.log`, 320 modules at the stacked head.
+   - **Replay:** `r2/replay-lcapi.log` at the stacked head `93c4c630`: 320 of 320, 0 failed. The
+     per-module sorry counts equal a static count of the tree (`r2/replay-lcapi-static.txt`: 0
+     mismatches, 94 in total), and on the 85 modules shared with #112's round-2 replay they are
+     unchanged.
 6. **Records.** Check the resolutions and this pack against the evidence.
 
 ## Findings format

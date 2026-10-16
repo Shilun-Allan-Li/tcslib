@@ -61,3 +61,27 @@ reversal; the screen at 711 → 712 declarations, 350 pairs and 116,080 characte
   `StepBlockForward`, 1 → 0 (#114's H2-F).
 - **Round-2 gate:** a short check of the repair diff (finding 1 is the remaining major), with the
   replay log. Pack: `audits/spec-api-r2-pack.md`.
+
+## Round 2 result
+
+The findings are in `audits/spec-api-r2-findings.md`, verbatim. **PASS: 0 blockers, 0 majors,
+0 minors, 1 note. The gate is CLOSED (2026-10-16).**
+- The auditor found finding 1 closed, with all 15 required and 25 further equations faithful, and
+  findings 2–4 repaired. The replay log was supplied.
+- The maintainer's review (`r2/gate-review-r2.md`) checked the audit's factual claims:
+  - the bundle: 78 sections, hash;
+  - the patches, byte-identical to the review's;
+  - 3 theorems and 40 equations;
+  - the screen: 712 → 714 declarations, 350 pairs, 0 new;
+  - check 8: 205 → 188;
+  - the replay: 85/85.
+
+  All hold. The audit could not elaborate or recompute the closure; the review did both, and they
+  agree.
+
+| # | Severity | Finding | Resolution |
+|---|---|---|---|
+| 1 | note | The probes check the generated types, not a consumer instantiation, and the copy-route probe's output records no exit status. | **Resolved in the evidence (no Lean change):**<br>- The copy-route probe was re-run with its exit recorded: 0 errors, exit 0 (`r2/logs/probe-ApiRunRoute.out`).<br>- An import-only consumer probe, `r2/probes/ConsumerProbe.lean.txt`, against `oleans-lapi2`: 0 errors, 0 warnings, exit 0 (`r2/logs/probe-ConsumerProbe.out`). It applies the round release (`release_pre` discharges the precondition, then `run` with `release_time`/`release_post`). It sequences a released returning round by `Contract.seq` (time through `seq_time` and the release equations). It takes `Round.iterate` through `Contract.ofSegment` (time and endpoint through the `ofSegment` equations). |
+
+PR #112 is ready to merge. PR #116 is stacked on it and merges after it.
+
