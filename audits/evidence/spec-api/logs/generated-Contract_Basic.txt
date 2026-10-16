@@ -1,0 +1,37 @@
+@Turing.Contract.trans_pre : ∀ {k : ℕ} {Γ S : Type} {M : Turing.MultiTapeTM k Γ S} {e₁ e₂ : S} {X : Set (Option S)}
+  {ι κ : Type} {x : List Γ} (C₁ : Turing.Contract M e₁ {some e₂} ι x) (C₂ : Turing.Contract M e₂ X κ x) (link : ι → κ)
+  (hlink : ∀ (i : ι) (d : Turing.Cfg k Γ S x), d.state = some e₁ → C₁.pre i d → C₂.pre (link i) (C₁.post i d))
+  (hX :
+    ∀ (i : ι) (d : Turing.Cfg k Γ S x),
+      d.state = some e₁ → C₁.pre i d → ∀ u < C₁.time i d, (Turing.MultiTapeTM.runFrom d u).state ∉ X)
+  (a : ι) (a_1 : Turing.Cfg k Γ S x), (C₁.trans C₂ link hlink hX).pre a a_1 = C₁.pre a a_1
+@Turing.Contract.trans_time : ∀ {k : ℕ} {Γ S : Type} {M : Turing.MultiTapeTM k Γ S} {e₁ e₂ : S} {X : Set (Option S)}
+  {ι κ : Type} {x : List Γ} (C₁ : Turing.Contract M e₁ {some e₂} ι x) (C₂ : Turing.Contract M e₂ X κ x) (link : ι → κ)
+  (hlink : ∀ (i : ι) (d : Turing.Cfg k Γ S x), d.state = some e₁ → C₁.pre i d → C₂.pre (link i) (C₁.post i d))
+  (hX :
+    ∀ (i : ι) (d : Turing.Cfg k Γ S x),
+      d.state = some e₁ → C₁.pre i d → ∀ u < C₁.time i d, (Turing.MultiTapeTM.runFrom d u).state ∉ X)
+  (i : ι) (d : Turing.Cfg k Γ S x), (C₁.trans C₂ link hlink hX).time i d = C₁.time i d + C₂.time (link i) (C₁.post i d)
+@Turing.Contract.trans_post : ∀ {k : ℕ} {Γ S : Type} {M : Turing.MultiTapeTM k Γ S} {e₁ e₂ : S} {X : Set (Option S)}
+  {ι κ : Type} {x : List Γ} (C₁ : Turing.Contract M e₁ {some e₂} ι x) (C₂ : Turing.Contract M e₂ X κ x) (link : ι → κ)
+  (hlink : ∀ (i : ι) (d : Turing.Cfg k Γ S x), d.state = some e₁ → C₁.pre i d → C₂.pre (link i) (C₁.post i d))
+  (hX :
+    ∀ (i : ι) (d : Turing.Cfg k Γ S x),
+      d.state = some e₁ → C₁.pre i d → ∀ u < C₁.time i d, (Turing.MultiTapeTM.runFrom d u).state ∉ X)
+  (i : ι) (d : Turing.Cfg k Γ S x), (C₁.trans C₂ link hlink hX).post i d = C₂.post (link i) (C₁.post i d)
+@Turing.Contract.trans_lo : ∀ {k : ℕ} {Γ S : Type} {M : Turing.MultiTapeTM k Γ S} {e₁ e₂ : S} {X : Set (Option S)}
+  {ι κ : Type} {x : List Γ} (C₁ : Turing.Contract M e₁ {some e₂} ι x) (C₂ : Turing.Contract M e₂ X κ x) (link : ι → κ)
+  (hlink : ∀ (i : ι) (d : Turing.Cfg k Γ S x), d.state = some e₁ → C₁.pre i d → C₂.pre (link i) (C₁.post i d))
+  (hX :
+    ∀ (i : ι) (d : Turing.Cfg k Γ S x),
+      d.state = some e₁ → C₁.pre i d → ∀ u < C₁.time i d, (Turing.MultiTapeTM.runFrom d u).state ∉ X)
+  (i : ι) (d : Turing.Cfg k Γ S x) (j : Fin k),
+  (C₁.trans C₂ link hlink hX).lo i d j = min (C₁.lo i d j) (C₂.lo (link i) (C₁.post i d) j)
+@Turing.Contract.trans_hi : ∀ {k : ℕ} {Γ S : Type} {M : Turing.MultiTapeTM k Γ S} {e₁ e₂ : S} {X : Set (Option S)}
+  {ι κ : Type} {x : List Γ} (C₁ : Turing.Contract M e₁ {some e₂} ι x) (C₂ : Turing.Contract M e₂ X κ x) (link : ι → κ)
+  (hlink : ∀ (i : ι) (d : Turing.Cfg k Γ S x), d.state = some e₁ → C₁.pre i d → C₂.pre (link i) (C₁.post i d))
+  (hX :
+    ∀ (i : ι) (d : Turing.Cfg k Γ S x),
+      d.state = some e₁ → C₁.pre i d → ∀ u < C₁.time i d, (Turing.MultiTapeTM.runFrom d u).state ∉ X)
+  (i : ι) (d : Turing.Cfg k Γ S x) (j : Fin k),
+  (C₁.trans C₂ link hlink hX).hi i d j = max (C₁.hi i d j) (C₂.hi (link i) (C₁.post i d) j)
