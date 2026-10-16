@@ -1393,6 +1393,10 @@ The route decisions of 2026-10-12 (design §16b) add three work items, numbered 
       - **Overnight replay started (user, 2026-10-16):** `replay-overnight.sh` runs #113's replay
         (9 modules, `oleans-lc5p`), then #112's (89 modules, `oleans-lapi`). The landings prepared
         overnight chain after it.
+        - **Both passed:** #113's 9 of 9 (CodeSimulator has 2 sorries, as expected) and #112's 89 of
+          89, failed 0. The per-module sorry counts match the static set at #112's tree (89 of
+          89, 0 mismatches; 58 in total).
+        - **#113 is ready to merge.** #112 waits for its gate.
       - **User (2026-10-16), the primitives boundary:** workers read `MultiTapeTM.step`, `runFrom`,
         `Action.apply` and `Cfg.mapState` through the existing lemmas, and may unfold `step` and
         `Action.apply` only for a leaf defined in their own file.
