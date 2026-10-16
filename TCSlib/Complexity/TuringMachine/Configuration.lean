@@ -54,6 +54,8 @@ the configuration the run ends in.
 
 **The specification API** (user, 2026-10-16): `Turing.Cfg.init_state`, `_inputPos`,
 `_workTapes`, `_workTapePos` and `_output`, the initial configuration's fields as equations.
+`Turing.Cfg.inputSymbol_of_zero`, `Turing.Cfg.inputSymbol_of_end` (with `inputSymbolInner`) and
+`Turing.Cfg.workTapeSymbols_eq`: the heads' readings.
 
 ## References
 
@@ -184,6 +186,22 @@ lemma inputSymbolInner {cfg : Cfg k Symbol State input} (p : ℕ)
 /-- The symbol read by work tape `i`. -/
 def Cfg.workTapeSymbols (cfg : Cfg k Symbol State input) (i : Fin k) : Option Symbol :=
   cfg.workTapes i (cfg.workTapePos i)
+
+/-- **The input head's reading at the left blank** (the specification API, user 2026-10-16). -/
+theorem Cfg.inputSymbol_of_zero {cfg : Cfg k Symbol State input} (h : cfg.inputPos = 0) :
+    cfg.inputSymbol = none := by
+  simp [Cfg.inputSymbol, h]
+
+/-- **The input head's reading at the right blank** (the specification API, user 2026-10-16). -/
+theorem Cfg.inputSymbol_of_end {cfg : Cfg k Symbol State input}
+    (h : cfg.inputPos.val = input.length + 1) : cfg.inputSymbol = none := by
+  have he : cfg.inputPos = Fin.last (input.length + 1) := Fin.ext h
+  simp [Cfg.inputSymbol, he]
+
+/-- **A work head's reading** (the specification API, user 2026-10-16): the cell under it. -/
+theorem Cfg.workTapeSymbols_eq (cfg : Cfg k Symbol State input) (i : Fin k) :
+    cfg.workTapeSymbols i = cfg.workTapes i (cfg.workTapePos i) :=
+  rfl
 
 /-- A configuration is halted when it has no state to continue from. -/
 abbrev Cfg.Halted (cfg : Cfg k Symbol State input) : Prop := cfg.state = none

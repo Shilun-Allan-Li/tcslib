@@ -101,7 +101,8 @@ We define a number of structures and concepts related to multi-tape Turing machi
 * `DecidableInTimeAndSpace`: a proof that a TM decides a language within a certain time
     and space bound.
 
-**The specification API** (user, 2026-10-16): `Turing.MultiTapeTM.mem_visitedByTapeHead_iff`,
+**The specification API** (user, 2026-10-16): `Turing.MultiTapeTM.initCfg_eq`,
+`Turing.MultiTapeTM.mem_visitedByTapeHead_iff`,
 and the split lemmas `visitedByTapeHead_add_subset` and `visitedByTapeHead_step_subset` (moved
 here from `Build/StepBlock`, design note O9).
 
@@ -162,6 +163,10 @@ def outputSymbol (cfg : Cfg k Symbol State input) : Option Symbol :=
 /-- The initial configuration corresponding to an input string. -/
 @[simp]
 def initCfg (input : List Symbol) : Cfg k Symbol State input := Cfg.init tm.q₀ input
+
+/-- **The initial configuration as an equation** (the specification API, user 2026-10-16). -/
+theorem initCfg_eq (input : List Symbol) : tm.initCfg input = Cfg.init tm.q₀ input :=
+  rfl
 
 @[simp]
 lemma step_of_halt {cfg : Cfg k Symbol State input} (h : cfg.state = none) :
