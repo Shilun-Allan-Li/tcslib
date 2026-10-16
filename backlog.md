@@ -685,6 +685,10 @@ window.*
     - **User (2026-10-16):** cont6 is authorized to use the worker's `phaseHostTM` adapter with a
       fresh anchor (a composition over the phase host, not a new host). The partial lands once
       its screens are clean.
+    - **Screens clean** (0 new pairs; one pair removed by the factoring). **Landing PR #113**
+      (`lean/b5a-canon-cont5-partial`): the two delivered commits cherry-picked from the bundle,
+      plus the status text and the grammar-stage appendix updated for the ruling. Replay
+      `replay-lc5p.sh` covers 9 modules (snapshot `oleans-lc5p` from `oleans-lf3p`).
 
 ### ARM-1: duplication in the received ARM-extensions code (from the ARM fill gate, 2026-10-14)
 
@@ -873,7 +877,36 @@ rules (a PR plus its gate). Its input is the round-2 classified ledger of the AR
 
 The user lifted the no-retroactive-migration rules for this work and chose scenario B. Duplicate
 statement families are retired, with full gates and consumer edits. Restyling is opportunistic:
-**pick any row whose prerequisites are met.** The estimates come from seven read-only reviews
+**pick any row whose prerequisites are met.**
+
+**Schedule (user, 2026-10-16, in answer to a modularity review): interleave MIG items with the
+fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24, below).**
+- **The review's evidence** (maintainer, 2026-10-16):
+  - `TuringMachine/` has 2,201 private declarations against 1,509 public ones (78 files).
+  - In the ten files of #116 alone, the copy-text screen finds 103 pairs, 14 of them at 90% or
+    more. Most are left/right or silent/emit siblings: `zoneShiftIn`/`zoneShiftOut`,
+    `embedSilentRetTM`/`embedEmitRetTM`, `zonedTape_left`/`_right`,
+    `rewind_heads`/`timed_rewind`.
+  - There is one cross-file verbatim copy: `canonOffset_spec` (CodeSimulator) repeats
+    Encoding's `length_bits_le_self` (100%).
+  - MIG-2 to MIG-17 are largely unexecuted.
+- **MIG-12 first needs its part of MIG-11.** It depends on MIG-11, of which 9 framed rows have
+  contracts so far (`Build/Contract/Catalog`: clear, the two mapped sweeps, walk, skip,
+  skip-back, seek-end, seek-start, scan). Its first phase is therefore the contracts of the
+  framed rows that `CfgRecord` composes. Under the new definitions-with-lemmas rule, they land
+  with their `simps` field equations.
+- **MIG-4: closed as done** (user, 2026-10-16; see its row). The proofs were already shared.
+- **MIG-12's plan:** `audits/evidence/mig12/DESIGN.md`. The order is #112 merged, then MIG-11a
+  (contracts for copy, compare, and the increment and decrement successes, with a public
+  `compareStop` for compare's exact time; a maintainer PR and a statement gate), then the MIG-12
+  fill brief (swap gate).
+- **Not adopted** (user, 2026-10-16): a systematic promotion pass at each landing, and a public
+  one-step leaf row. Policy's existing route stays: a private copy plus a requested shared
+  lemma, promoted at a shared-file window.
+- **Adopted with it:** *definitions land with their lemmas* (`policy.md` §1; lint check 8,
+  `b19ab034`). At the tip, check 8 lists 205 public definitions in 50 `TuringMachine/` files,
+  and 1,173 in 254 files of `TCSlib/Complexity`, that predate the rule. #112 and #116 cover part
+  of that list. The rest is covered as consumers need it. The estimates come from seven read-only reviews
 (design §16), in lines, and are ESTIMATED unless marked; negative means saved.
 
 **Gates:**
@@ -889,7 +922,7 @@ statement families are retired, with full gates and consumer edits. Restyling is
 | MIG-1 | `Build/Catalog` (the `f2_` region, about lines 1785–11365), `Primitives`, `Composition`, `Loop`, `Wrappers`, `Encoding`, `Simulation`, `ClassP/TimeConstructible` | Named witnesses (about 30 defs with spec theorems) for the 66 existential rows; then delete the 304 `f2_` copies (6,255 of their lines are verbatim, MEASURED). The 22 space rows become corollaries. Retire the R3 canonical `_run` rows (0 external consumers) | −7.6k to −8.3k, +0.4k | decision 12.2 lifted | stmt + full | highest confidence; half the saving. **Drafted (2026-10-13):** `audits/evidence/mig1/` (design, measured inventory, statement draft: 0 errors, 26 sorries). Measured at `6aa9f67b`: 53 existential rows, not 66 (plus `timeConstructible_id`, hidden in a definition); 304 copies, of which 232 are code-identical to a home declaration (4,351 lines; the 6,255 is not reproduced); 20 of the 22 region publics are space rows, the other two head lemmas; the R3 `_run` rows have 5 citations in 2 files (`CertShell`, `CodeSimulator`), not 0. Net about −7.4k (ESTIMATE). Spec theorems in the existing style, not `Contract` instances (layering: the landed `Contract.lean` imports `Catalog`; MIG-0b's split removes that obstacle, and the decision rests on the rows' shape and the order of work). **Answered (user, 2026-10-13): all four as recommended**: the R3 retirement in MIG-1's last PR, after the B5a continuation integrates (else five rows, leaving `copyTM_run`); both consolidations; the space rows stay in Catalog as corollaries; MIG-17's named loop hosts are done by MIG-1. **Statement gate (2026-10-14):** `audits/mig1-statements-pack.md`. It covers the 26 witnesses with their real bodies, 45 new public statements (14 proved), the 55 rows as `type_of%` corollaries (all proved), and the deletion plan for 378 declarations. Net about −7.0k lines (ESTIMATE). **Round 1 (2026-10-14): 0 blockers, 1 major, 3 minors; open** (`audits/mig1-statements-findings.md`). No public statement is false and no witness body differs from its source. The major is in the deletion plan: it retargets the extended loop contract's preparation step at Loop's private `loopHost_prepare`, which lacks the fuel-head clause (`∀ i, -T ≤ c.workTapePos i ≤ T`) that the contract passes to its head lemma. The repair strengthens `loopHost_prepare` in F-C, and is shown by elaborating the moved contract against the surviving home lemmas. The minors: the evidence runner masks failures, the bundle lacks inputs its reproduction names, three pack sentences overstate. **Open questions answered (user, 2026-10-14): all five as recommended**: the decision-loop S-form family is dropped (its 14 `a2_` lemmas deleted); the eight citation specs are proved at S (the three split specs stay dependent on F-C's loop specs); the run head bound has one proof, MIG-0b's `workTapePos_runFrom_mem_Icc` in `Finite`, with H2's absolute form a corollary beside it; Simulation imports `Mathlib.Algebra.BigOperators.Fin` and homes `ComputesInTime.spaceUsed_le`. **Round 2 CLOSED** (2026-10-14: 0 blockers / 0 majors / 3 minors; `audits/mig1-statements-r2-findings.md`, resolutions `audits/mig1-statements-r2-resolutions.md`): the strengthened `loopHost_prepare` and the overlay over surviving home lemmas repair finding 1; the minors are runner and checker strength and one accessibility description, recorded for S and F-C. Next: stage S, unblocked now that the B6 hosts landed (#92, 2026-10-14; both edit `Encoding.lean`), re-measured at its base, with MIG-0b's interval lemma as the head bound. **The rule "F-D before the next B5a brief" is lifted** (user, 2026-10-14): B5a's canonizer continuation goes first, and F-D's one CodeSimulator site rebases onto it; B5a's H1 continuation follows the C1 H1-harvest landing (user: harvest first). **Stage S built (2026-10-14; `$S/land-mig1s`, 51 of 51 checks, at `3a6e89f4`):** 25 witnesses (15 public in place, 10 new), 42 statements (25 proved, 17 sorried), 67 public names (70 with F-B's 3), 191 asserted renames; no row's statement or proof changes; replay about 306 modules. The head lemma is untouched: StepBlock's `abs_workTapePos_runFrom_sub_le` keeps its own proof, and its re-proof as a corollary of `workTapePos_runFrom_mem_Icc` is for H2/MIG-0b's owners. **User (2026-10-14): a cleanup pass in S's PR**: drop the gated docstrings' stale "(landing: …)" notes, update the module docstrings for the new names and the moved head lemmas, remove 3 unused `simp` arguments, accept two whitespace wraps. Its PR follows #94 (H1), so the replays chain. Carried: F-D gains 2 docstring sites; `exists_codeTM_spaceUsed` (added by #92, a 54th existential row) becomes a corollary of a `toCodeTM_spaceUsed` spec at F-A. **PR #98 (2026-10-14):** rebuilt at the merged tip `c9cc485b` against `oleans-ltip3`, 54 of 54 checks. Three checks that were pinned to the first base now take the run's base and snapshot commit: the merges list, the snapshot's build commit, and the CodeSimulator R3 site's line, which #94/#96 moved from 1282 to 1275 (still one site). Replay 307 modules. It merges first; Diagonal Part 1 and the dedup payback rebase on it, one after the other (their replay lists share 4 facades). **Merged (2026-10-15, `eb750e63`; replay 307 of 307, sorry warnings 80 + the 17 sorried specs; snapshot `oleans-lmig1s`).** Next for MIG-1: the fill batches F-A to F-D |
 | MIG-2 | `TuringMachine/Universal` (195–1316, 1317–1606, 2367–2644) | Retire the duplicate timed layer (`timedCut*`, `timedPrefix`, `timedCapture`), through a stop-before variant or proofs parametric in the table | about −1k | — | swap | `timed_universal_concrete`'s coefficient must not grow (TMSAT); **merged with U-1** (one re-derivation, from both directions) |
 | MIG-3 | `Robustness/SingleTape` | `one_work_tape` reuses `dg_all_inputs`; drop the `sweep_*` chain | about −450 | — | swap | |
-| MIG-4 | `Build/CounterLoop` | R80B-E1: `counterLoopTM` becomes the identity instance of `counterLoopTMVia`; retire the duplicated statements | about −450 | — | full | consumer `Inclusions.lean` (14 uses) |
+| MIG-4 | `Build/CounterLoop` | R80B-E1: `counterLoopTM` becomes the identity instance of `counterLoopTMVia`; retire the duplicated statements | about −450 | — | full | **Closed as done (user, 2026-10-16).** R8.0b had already derived `counterLoopTM_run_done`/`_run_escape` from `counterLoopTMVia`'s through the 94-line bridge `counter_refl_agree`. What remains is the two definitions and the two corollaries; `counterLoopTM` has about 70 uses in 10 files (not 14 in one). Kept as is |
 | MIG-5 | `Build/EmitIterBody`, `Build/EmitIterEmbed` | Cite `inputCopyTM_run_ofCfg` and the rewinds (223 re-proved lines); derive `padAction`/`embedCfg` from Embed and retire them | −300 to −420 | — | full | CH7-D2; 1 external consumer |
 | MIG-6 | `TuringMachine/Encoding`, `Codes2Tape` | Parameterize by tape count; retire the mirror | about −180 | — | full | CH34-D2; 4 external consumers |
 | MIG-7 | `TuringMachine/UniversalStartup` | `universalCaptureTM` onto Embed's `embedSilentTM` | about −130 | — | swap | |
@@ -908,6 +941,7 @@ statement families are retired, with full gates and consumer edits. Restyling is
 | MIG-21 | `CookLevin/Hardness` (`clPlacement`, the selectors) | 12.2c item 13: restate the layouts as plain `Fin k ↪ Fin l` embeddings; delete the selector layer (about 120–259 lines) | about −150 to −250 | the T2a gate (item 6's export) | swap | Hardness stays at machine level |
 | MIG-22 | `ClassPSPACE/TQBF` (B4 membership's delivery) | **Closed 2026-10-14 (moot):** `TQBF_mem_PSPACE` is `LogProg.TQBFARM.truth_mem_PSPACE`; the pure core is deleted with the `b4m*` appendix (D6). The general AND/OR evaluator stays registry H1. *Was:* `TQBF_mem_PSPACE` as a program: a recursive QBF evaluator in the §15 language, compiled through stage 2, with the proved pure core (`b4mValue`, `b4mValue_truth`, `b4mWalk_value`) as its specification. Retire the unused leaf-contract definitions, which lack an input/records precondition | to be estimated with stage 2's space accounting | stage 2 with a space bound, the input extensions (§15a) | stmt + swap | user, 2026-10-12: "Stop; do it as a program". Registry H1, the AND/OR evaluator (design §14) |
 | MIG-23 | `Build/RecordTable` rows 15, 16, 19, 20 (find, append, validity, next) | Paused, with no consumer since S1b stopped and Savitch moved to the language. Retire them under scenario B unless stage 2's memory design or another consumer claims them; keep the proved find round (`rt_findRound` and its contracts) | small (statements only) | a consumer decision | full | user, 2026-10-12: "Narrow to rows 17–18"; rows 17–18 continue for B6's window route |
+| MIG-24 | the mirror and sibling pairs: `Build/Zone` (`zoneShiftIn`/`Out`'s lifting skeleton), `Build/ZoneTape` (`zonedTape_left`/`_right`, `_left_sep`/`_right_sep`, `zoneOwner_sep`/`_beyond`), `Build/Embed` (the silent/emit transports, their steps and return forms), `Simulation` (`leftCfg_step`/`rightCfg_step`, `rewind_heads`/`timed_rewind`), `Encoding` (`pairDiag_double`/`_copy`; `exists_codeTM_spaceUsed`); one cross-file copy (`canonOffset_spec` onto `length_bits_le_self`) | Derive one sibling from the other through a symmetry (as `zoneCascadeLeft` through `ZoneContents.swap`), or state one side- or flavour-parametric form with the two as instances. Statements are kept where consumers cite them. The vendored `Configuration`/`Deterministic` pairs are excluded | ESTIMATED small (hundreds of lines); a library-wide screen measures the full list first | — | swap where statements are kept; full where a sibling retires | user, 2026-10-16: added to the schedule |
 | MIG-18 | port of [AFM26]'s `Util/Asymptotics` (1,769 lines upstream) | `Dominated`, `Scale.SoftO` and the `growth` tactic, then ledgers without constants | +0.5k to +1.4k; saves part of about 3.5k ledger lines | the PROG-1 port tooling | fidelity, then swap | payoff mostly in ClassNP, ClassP, SpaceComplexity and PolyHierarchy |
 
 **RS: the restyling backlog, opportunistic; chip away at it.**
@@ -1341,6 +1375,113 @@ The route decisions of 2026-10-12 (design §16b) add three work items, numbered 
         `Contract` combinators' fields and the layout's base and boundary facts (with F3's
         three). It has its own audit gate (the §13d PR-plus-gate rule). The replay is about 89
         modules. The G4 partial lands once its screens are clean (user).
+      - **Review final (2026-10-16):** screens clean, 763 → 778 declarations and 429 = 429 pairs, 0
+        new. Landing next (user: prepare clean landings overnight). The appendices' "blocked under
+        rule 10" wording is reworded at landing.
+      - **Landing PR #115** (`lean/s13d-g4-partial`): the worker's commit, plus the appendices
+        reworded to point to #112. Replay `replay-lg4p.sh` covers 2 modules, chained after H2-F's
+        (`oleans-lg4p` from `oleans-lh2f`). **Re-pointing candidate:** `zr_mirror_tape` unfolds
+        `zonedTape`, which predates the no-unfolding rule.
+      - **The specification API, PR #112** (`lean/spec-api`, `9f66ac7e`; pack `audits/spec-api-pack.md`,
+        evidence `audits/evidence/spec-api/`).
+        - **Generated:** 85 field equations (`simps`, `isSimp := false`) for `Contract.trans`,
+          `seq`, `inPhase`, `branch`, `framedContract`, `seekPost`, `sweepPost` and the ten row
+          contracts.
+        - **Hand-written:** seven layout lemmas in Catalog, `recordAt_iff`, `record_pos_lt`
+          public, `recordLength_eq`.
+        - Checks clean; the screen is running. The gate is dispatched next, and the merge waits
+          for it. The replay (89 modules) is re-sequenced after the partials landing first.
+      - **User (2026-10-16), the rule's scope: "Everything".** Every definition a brief's route reads
+        gets a published equation lemma before dispatch, wherever it lives. A pre-ship inventory
+        per brief finds the missing ones.
+        - Maintainer's boundary, stated to the user: the machine model's semantic primitives
+          (`MultiTapeTM.step`, `runFrom`, `Action.apply`, `Cfg.mapState`) are read through their
+          existing lemmas. A worker's own leaf may unfold `step` on its own table.
+        - **Core API PR, in preparation** (`lean/core-api`, for U2-S and F5): `Cfg.init`'s fields,
+          `bufferedFirstCfg`'s and `bufferedSecondCfg`'s fields, `pairEncode_eq`, `unaryFin_eq`,
+          `embedSilentCfg_unselected` and the transports' scalar fields,
+          `mem_visitedByTapeHead_iff`, and the two visited-set splits moved from `StepBlock` to
+          `Deterministic`. Next to add: `serializeK_eq`, after #113. It has its own gate, and its
+          replay is about 320 modules (from `Configuration`).
+        - U2-S's and F5's briefs (inputs measured at `c2897d7f`) wait for it.
+        - **PR #116 opened (overnight, 2026-10-16;** `lean/core-api`, head `2cdc026e`). Beyond the list
+          above, it adds:
+          - `serializeK_eq` (a CodeSimulator hunk apart from #113's);
+          - `Cfg.inputSymbol_of_zero`/`_of_end`, `Cfg.workTapeSymbols_eq`;
+          - `MultiTapeTM.initCfg_eq`.
+          Checks are clean. On the screen, the one changed pair is pre-existing, relocated by the
+          move (`roundTM_iterate` ← `visitedByTapeHead_step_subset`, 76% → 71%).
+          - **Its gate is staged, not dispatched:** `infra_local/gate-dispatches/30-core-api-gate/`,
+            bundle SHA-256 `0b8860d6…1a0e` (48 sections), pack `audits/core-api-pack.md`.
+          - Its replay (about 320 modules) waits until #112, #114 and #115 merge; the branch is
+            then brought up to date.
+          - The U2-S and F5 drafts now carry the new rule 10 and their API lemma lists (copies in
+            `audits/evidence/core-api/drafts/`).
+          - **Extended overnight (head `84acb1f7`)** with the F3 and G4 continuation inventories'
+            gaps beyond #112: `wordPatch_of_mem`/`_of_not_mem` (F3 reads F2's endpoint through
+            `wordPatch`) and `zoneCapacity_eq`. The nine-file screen is 440 → 443 declarations,
+            92 = 92 pairs. The gate is **re-staged** with bundle SHA-256 `79b8052e…d4bf` (56
+            sections), still not dispatched.
+        - **Open for the user: G4's continuation and the zone layer.** G4's original brief let the
+          worker unfold `Build/Zone`'s and `Build/ZoneTape`'s pure definitions. Under "Everything",
+          its continuation needs published lemmas for the zone definitions the rebalance route
+          reads. 14 of the 34 zone definitions have none (`zoneShiftIn`/`Out`, `zoneMove`,
+          `zoneStepPair`, `zoneHomeWrite`, `swap`, `zoneSlotSet`, `zoneCellAt`, …). The options
+          are to add a zone API to #116 before its gate, to make a separate zone-API PR with its
+          own gate, or to carve out an exception for the zone layer. That is a design ruling, so
+          the maintainer stopped there.
+        - **Ruled (user, 2026-10-16): option (a), the zone API joins #116 before its gate.**
+          Applied as #116's fifth commit `d5255232`. The full inventory counts 35 definitions:
+          - 3 need no lemma (`ZoneCell`, `ZoneSym`, the structure `ZoneContents`);
+          - 5 were already covered (`zoneCapacity`, `zoneStart`, `zoneOwner`, `zoneIndex`,
+            `zoneShiftIndex`);
+          - the other 27 now have equations covering every input (32 hand-written lemmas, 24
+            `simps` field equations).
+
+          The same commit rewrites six bare-label docstrings to state their formulas (#112's
+          finding 4, same style). The elaboration is clean (Zone and ZoneTape: 0 errors, 0
+          warnings), with standard axioms only, the lint unchanged and the freeze adds only. The
+          ten-file screen goes 462 → 468 declarations and 103 → 103 pairs, with no new copy. The
+          gate was re-staged (bundle rebuilt) and is not yet dispatched.
+        - **Drafts (not issued):** `audits/evidence/drafts/` holds the F3 continuation (on the new
+          rule, citing #112's lemmas), cont6 (the adapter authorized; the order list includes
+          `ClassNP/TMSAT`), U2-S and F5.
+      - **#112's gate dispatched (user, 2026-10-16):** `infra_local/gate-dispatches/29-spec-api-gate/`,
+        bundle SHA-256 `91f96cf5…dca1` (52 sections). Lean comes from #112's head `28824c36`, now
+        stacked on #113 (user: "stack and chain"); everything else from `2e4f414c`.
+      - **Overnight replay started (user, 2026-10-16):** `replay-overnight.sh` runs #113's replay
+        (9 modules, `oleans-lc5p`), then #112's (89 modules, `oleans-lapi`). The landings prepared
+        overnight chain after it.
+        - **Both passed:** #113's 9 of 9 (CodeSimulator has 2 sorries, as expected) and #112's 89 of
+          89, failed 0. The per-module sorry counts match the static set at #112's tree (89 of
+          89, 0 mismatches; 58 in total).
+        - **#113 is ready to merge.** #112 waits for its gate.
+        - **#113 merged (user, 2026-10-16, `5eff4146`).** The chained replays passed: `replay-lh2f.sh`
+          4 of 4 (UniversalK has 3 sorries; StepBlockForward 0) and `replay-lg4p.sh` 2 of 2
+          (ZoneRebalance has 2). **#114 and #115 are ready to merge.** Each branch holds only its
+          own commits on the campaign branch, so neither carries #112. Each file was checked both
+          without #112 (the review elaborations, against `oleans-lwalk`) and with it (the
+          replays).
+      - **#112's gate returned (user, 2026-10-16): FAIL, 0/2/2/1** (`audits/spec-api-findings.md`).
+        - Major 1: field equations for `ReturnContract.release`, `RoundContract.release` and
+          `Contract.ofSegment`.
+        - Major 2: an application equation for `sweepMapWrite`.
+        - Minor 3: WindowClock's appendix still says unfolding is permitted.
+        - Minor 4: two docstrings use the bare-label style.
+        - Note 5: the replay log was not in the bundle.
+
+        The review sub-agent is verifying the findings. Round 2 then repairs #112, re-replays it
+        and re-gates it. The round-2 edits are drafted and elaborate cleanly (local,
+        `scratchpad/api/r2/mkapi-r2.py`); they wait for the review.
+      - **#114 and #115 merged (user, 2026-10-16; `a2b834b3`, `c451e358`).** H2-F is complete
+        (`exists_forwardLoopTM` proved; the §14 H2 row is updated), and G4's partial has landed.
+        The library's snapshot for the tip is `oleans-lg4p`; it was built on #112's tree, which
+        adds lemmas only.
+      - **#116's gate dispatched (user, 2026-10-16):** `infra_local/gate-dispatches/30-core-api-gate/`,
+        bundle SHA-256 `fc8219a6…78e5` (63 sections; Lean `d5255232`, other `e2301305`).
+      - **User (2026-10-16), the primitives boundary:** workers read `MultiTapeTM.step`, `runFrom`,
+        `Action.apply` and `Cfg.mapState` through the existing lemmas, and may unfold `step` and
+        `Action.apply` only for a leaf defined in their own file.
   **Two-tape universal (U2) designed (2026-10-14; `audits/evidence/u2/U2-design.md`, probes).**
   - **The design:** one `k`-generic construction on H2's step block. It has a new public host
     H2-F (the emitting round loop, in `Build/StepBlockLoop`), U2-S (the startup), U2-U
@@ -1413,6 +1554,22 @@ The route decisions of 2026-10-12 (design §16b) add three work items, numbered 
           block runs inside the release adapter `seamReleaseTM`, as one phase of the phase host,
           beside a one-step forwarding leaf. The cost is `T + 3` (`T + 2` on a halting step), so
           `C = 3`.
+        - **Dispatched (user) and delivered (2026-10-16):** `fill-h2f-forwardloop.zip`, SHA-256
+          `7fc0da15…8037`. **Reviewed: complete, 1 of 1**
+          (`audits/evidence/h2f-fill/delivery-review.md`). The route is the brief's: the release
+          adapter inside the phase host, the forwarding leaf, cost `T + 3`/`T + 2`, `C = 3`.
+          - It has 20 `fl_` privates and no admission (axioms standard; the sorry walk is empty).
+          - The v3 screen is 404/100 → 418/101. The one new pair is in-file, `fl_restore` ←
+            `fl_home` at 55%: shared `Fin.addCases` scaffolding, below the 90% copy threshold.
+          - Landing next (user, 2026-10-16: prepare clean landings overnight).
+          - **Landing PR #114** (`lean/h2f-forwardloop`): the worker's commit cherry-picked from the
+            bundle, plus the module status text. Replay `replay-lh2f.sh` covers 4 modules,
+            chained after the overnight #112 replay (`oleans-lh2f` from `oleans-lapi`). The
+            sorry count drops by one.
+          - **Re-pointing candidate (the no-unfolding rule postdates its brief):** the proof
+            unfolds StepBlock's `Rep`, `summaryCells`, `outputSummary`, `tableTape`,
+            `summaryTape` and `exit`, and `visitedByTapeHead`. Re-point it once those get published
+            lemmas. Optional; the fill gate may note it.
       - **U2-S's pre-issue promotion (user, 2026-10-15: "Maintainer PR first"): PR #110**
         (`lean/u2s-prefix-canon`, `cb669b4d`).
         - `prefixCanonTM F`, with `prefixCanon_start`, `_run` and `_complete`, generic in the
