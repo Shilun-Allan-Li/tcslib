@@ -1303,6 +1303,10 @@ The route decisions of 2026-10-12 (design §16b) add three work items, numbered 
         429 pairs.
       - The brief carries the walk gate's convention adjustment, and recommends a commuting
         reorder of each pass (proved pure first) with a unary zone count on scratch.
+      - **Dispatched (2026-10-15, user):** brief attachment SHA-256 `21c3c31f…4e081`, the
+        addendum `a25474c5…`; branch `fill/s13d-g4`; delivery `fill-s13d-g4.zip`.
+      - **Delivered (2026-10-15):** `fill-s13d-g4.zip`, SHA-256 `31b1ce63…28c6`. Queued third for
+        the review sub-agent, after B6 F3 and the canonizer's continuation 5.
   **Two-tape universal (U2) designed (2026-10-14; `audits/evidence/u2/U2-design.md`, probes).**
   - **The design:** one `k`-generic construction on H2's step block. It has a new public host
     H2-F (the emitting round loop, in `Build/StepBlockLoop`), U2-S (the startup), U2-U
