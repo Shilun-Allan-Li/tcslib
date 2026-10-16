@@ -1441,7 +1441,14 @@ The route decisions of 2026-10-12 (design §16b) add three work items, numbered 
         - Note 5: the replay log was not in the bundle.
 
         The review sub-agent is verifying the findings. Round 2 then repairs #112, re-replays it
-        and re-gates it.
+        and re-gates it. The round-2 edits are drafted and elaborate cleanly (local,
+        `scratchpad/api/r2/mkapi-r2.py`); they wait for the review.
+      - **#114 and #115 merged (user, 2026-10-16; `a2b834b3`, `c451e358`).** H2-F is complete
+        (`exists_forwardLoopTM` proved; the §14 H2 row is updated), and G4's partial has landed.
+        The library's snapshot for the tip is `oleans-lg4p`; it was built on #112's tree, which
+        adds lemmas only.
+      - **#116's gate dispatched (user, 2026-10-16):** `infra_local/gate-dispatches/30-core-api-gate/`,
+        bundle SHA-256 `fc8219a6…78e5` (63 sections; Lean `d5255232`, other `e2301305`).
       - **User (2026-10-16), the primitives boundary:** workers read `MultiTapeTM.step`, `runFrom`,
         `Action.apply` and `Cfg.mapState` through the existing lemmas, and may unfold `step` and
         `Action.apply` only for a leaf defined in their own file.
