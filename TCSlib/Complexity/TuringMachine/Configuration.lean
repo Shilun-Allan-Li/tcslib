@@ -52,6 +52,9 @@ the configuration the run ends in.
 * `Cfg.Halted`, `Cfg.init`: halting, and the configuration a machine starts in
 * `spaceUsedOfCfgs`: work tape cells touched along a list of configurations
 
+**The specification API** (user, 2026-10-16): `Turing.Cfg.init_state`, `_inputPos`,
+`_workTapes`, `_workTapePos` and `_output`, the initial configuration's fields as equations.
+
 ## References
 
 * [AB09] S. Arora, B. Barak, *Computational Complexity: A Modern Approach*,
@@ -189,6 +192,11 @@ abbrev Cfg.Halted (cfg : Cfg k Symbol State input) : Prop := cfg.state = none
 @[simp]
 def Cfg.init (q₀ : State) (input : List Symbol) : Cfg k Symbol State input :=
   ⟨some q₀, 1, fun _ _ => none, fun _ => 0, []⟩
+
+/-! The specification API (user, 2026-10-16): `Turing.Cfg.init`'s fields as equations
+(`Cfg.init_state`, `_inputPos`, `_workTapes`, `_workTapePos`, `_output`), without the
+`simp` attribute. -/
+attribute [simps (config := { isSimp := false })] Cfg.init
 
 /--
 The effect of an action on a configuration: move the input head, write and move on the work tapes,

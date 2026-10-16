@@ -90,6 +90,8 @@ The concrete parser/decoder realizing a scheme lives in
 `TCSlib.Complexity.TuringMachine.CodeParser`, and the existence of an effective
 scheme (`Turing.exists_effectiveMachineCode`) is proved in
 `TCSlib.Complexity.TuringMachine.MathlibBridge`.
+* `Turing.pairEncode_eq`, `Turing.unaryFin_eq` — the two encodings as equations, the
+  specification API (user, 2026-10-16).
 
 ## References
 
@@ -128,6 +130,12 @@ Argument B: with the input first, no bound `C · (t + 1)` with `C` independent o
 can hold). -/
 def pairEncode (x α : List Bool) : List Bool :=
   (x.flatMap fun b => [b, b]) ++ [false, true] ++ α
+
+/-- **The pairing as an equation** (the specification API, user 2026-10-16): the code doubled,
+the separator `false, true`, then the second word. -/
+theorem pairEncode_eq (x α : List Bool) :
+    pairEncode x α = (x.flatMap fun b => [b, b]) ++ [false, true] ++ α :=
+  rfl
 
 /-- Parse aligned doubled bits until the separator, leaving its suffix untouched. -/
 def pairDecode : List Bool → Option (List Bool × List Bool)
@@ -545,6 +553,11 @@ def optOptBoolBits : Option (Option Bool) → List Bool
 /-- Self-delimiting unary serialization of a state index. -/
 def unaryFin {n : ℕ} (s : Fin n) : List Bool :=
   List.replicate (s : ℕ) true ++ [false]
+
+/-- **The unary state word as an equation** (the specification API, user 2026-10-16): `s`
+`true`s, then the delimiter `false`. -/
+theorem unaryFin_eq {n : ℕ} (s : Fin n) : unaryFin s = List.replicate (s : ℕ) true ++ [false] :=
+  rfl
 
 /-- Serialization of an optional successor state (`none` = halt). -/
 def optStateBits {n : ℕ} : Option (Fin n) → List Bool
