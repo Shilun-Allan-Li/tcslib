@@ -159,3 +159,17 @@ Lean-identical to the replayed head; the snapshot `oleans-lg2` covers it.
 `Catalog.base.lean.txt` and `Zone.base.lean.txt` are the two files at the PR's parent `83a463ee`.
 `pr108.patch` is the PR's diff (`git diff 83a463ee a9ee4701` on the two files). The replay script
 and its log are also there.
+
+## Erratum (G2 fill gate, round 1, minors 2 and 3; `audits/s13d-g2-fill-resolutions.md`)
+
+- **§3's in-file subtotals** were per basename. They are, per file:
+  - `Build/Catalog.lean` 105,568 → 98,150;
+  - `Build/Contract/Catalog.lean` 240 → 240;
+  - `Build/Zone.lean` 3,840 → 2,844.
+
+  They are directed overlap sums, not unique copied-source sizes. The global totals and the three
+  approved pairs were correct.
+- **§1's "moves verbatim"** applies to the two `_plain` declarations only. The statements are
+  preserved; the two target proofs are filled, and the block is ordered by dependency (the
+  transfer before the copy).
+- **The two mapped rows' sketches** kept pre-fill wording; PR #109 corrects them.

@@ -1245,7 +1245,11 @@ The route decisions of 2026-10-12 (design §16b) add three work items, numbered 
       snapshot `oleans-lg2` for the tip `b6e0344c`).** The only sorry counts that moved:
       `Build/Catalog` 2 to 0 and `Build/Zone` 1 to 0. **The G2 fill gate dispatched
       (2026-10-15; folder 27, bundle SHA-256 `f6044d47…dcfc7`, 60 sections; pack
-      `audits/s13d-g2-fill-pack.md`).**
+      `audits/s13d-g2-fill-pack.md`).** **CLOSED (round 1: PASS 0/0/3;
+      `audits/s13d-g2-fill-findings.md`, resolutions `…-resolutions.md`).** The re-pointed
+      regression is accepted. Minor 1 (the clear row's inline clauses, residual in the acknowledged
+      §12.6 family) and minor 3 (two stale sketches) are fixed in PR #109; minor 2 (the notes'
+      per-file subtotals) is corrected by an erratum.
     - G4's host first (obligation 3): identify the public host for the two-tape scratch and
       ruler layout, or gate a missing one, before G4's fill brief. **Surveyed (2026-10-15;
       `audits/evidence/s13d/g4-hosts/G4-HOSTS-SURVEY.md`):** every host is public (round
@@ -1265,7 +1269,13 @@ The route decisions of 2026-10-12 (design §16b) add three work items, numbered 
       screen goes from 392 to 390 pairs; one new mirror pair (`seekStartTM_contract` ←
       `seekEndTM_contract`, 53%), **approved by the user (2026-10-15)**. The landing PR
       (`lean/walk-row`) follows the gate. **The walk statement gate dispatched (2026-10-15;
-      folder 28, bundle SHA-256 `66f5d270…22b6d`, 50 sections).**
+      folder 28, bundle SHA-256 `66f5d270…22b6d`, 50 sections).** **CLOSED (round 1: PASS
+      0/0/2; `audits/s13d-walk-statements-findings.md`, resolutions `…-resolutions.md`).**
+      Minor 1 is an erratum to the survey's displacement convention: the walk moves `|w| + 1`. G4's
+      fill brief uses the auditor's adjustment (one ruler-only step, then the walk over the
+      tail). Minor 2 (the walk's sketch) is fixed in PR #109. **Landing PR #109** (`93ea007f`; it
+      also carries the G2 fill gate's minors 1 and 3): replay 84 modules from `oleans-lg2`.
+      Next: G4's fill brief, after #109 lands.
   **Two-tape universal (U2) designed (2026-10-14; `audits/evidence/u2/U2-design.md`, probes).**
   - **The design:** one `k`-generic construction on H2's step block. It has a new public host
     H2-F (the emitting round loop, in `Build/StepBlockLoop`), U2-S (the startup), U2-U
