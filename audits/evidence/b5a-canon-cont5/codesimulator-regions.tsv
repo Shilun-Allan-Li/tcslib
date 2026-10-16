@@ -1,0 +1,151 @@
+# CodeSimulator.lean at the issue tree (campaign tip 64e8fe2b, Lean = 6354471a, after #107): every declaration, its line, its docstring line, visibility, kind and region
+line	doc	visibility	kind	name	region
+102	100	public	def	serializeK	frozen: layout and formats
+107	105	public	def	codeSkipTableK	frozen: layout and formats
+111	110	private	lemma	fin_cons_one	frozen: layout and formats
+116	115	private	lemma	fin_cons_two	frozen: layout and formats
+121	120	public	lemma	workReadsK_one	frozen: layout and formats
+126	125	public	lemma	workReadsK_two	frozen: layout and formats
+132	131	public	lemma	tableBitsK_two	frozen: layout and formats
+140	139	public	lemma	codeSkipTable2_eq_codeSkipTableK	frozen: layout and formats
+148	145	public	structure	MachineFormat	frozen: layout and formats
+159	158	public	def	MachineFormat.toFinTM	frozen: layout and formats
+166	164	private	lemma	oneTape_skipTable_eq	frozen: layout and formats
+175	173	private	lemma	oneTape_serialize_eq	frozen: layout and formats
+183	180	public	def	oneTapeMachineFormat	frozen: layout and formats
+205	201	private	lemma	skipRepeat_consumes	canonizer: inherited, frozen
+221	220	private	lemma	skipSymbols_consumes	canonizer: inherited, frozen
+236	234	private	lemma	skipTable_consumes	canonizer: inherited, frozen
+255	248	private	lemma	scan_grammar_guard	canonizer: inherited, frozen
+281	278	private	def	guardedScan	canonizer: inherited, frozen
+291	286	private	lemma	guardedScan_eq	canonizer: inherited, frozen
+309	307	private	lemma	decode_of_grammar_guard	canonizer: inherited, frozen
+322	321	private	lemma	grammar_guard_states	canonizer: inherited, frozen
+334	332	private	def	canonHeader	canonizer: inherited, frozen
+338	337	private	lemma	canonHeader_length	canonizer: inherited, frozen
+354	348	private	lemma	exists_canonHeaderCall	canonizer: inherited, frozen
+386	385	private	def	guardPhase	canonizer: inherited, frozen
+391	389	private	def	guardBlockTM	canonizer: inherited, frozen
+400	399	private	def	guardCfg	canonizer: inherited, frozen
+407	405	private	lemma	guardBlock_step	canonizer: inherited, frozen
+431	427	private	lemma	guardBlock_run	canonizer: inherited, frozen
+444	443	private	lemma	guardBlock_blank	canonizer: inherited, frozen
+455	453	private	lemma	guardBlock_short	canonizer: inherited, frozen
+466	464	private	def	guardTime	canonizer: inherited, frozen
+475	470	private	lemma	guardBlock_interior	canonizer: inherited, frozen
+495	493	private	def	binaryGuardTM	canonizer: inherited, frozen
+501	499	private	def	binaryGuardStart	canonizer: inherited, frozen
+513	507	private	lemma	guardBlock_orbit	canonizer: inherited, frozen
+546	544	private	lemma	guardBlock_segment	canonizer: inherited, frozen
+564	557	private	lemma	binaryGuard_done	canonizer: inherited, frozen
+618	611	private	lemma	binaryGuard_escape	canonizer: inherited, frozen
+700	699	private	def	canonBitsOK	canonizer: inherited, frozen
+703	702	private	lemma	canonBits_fold	canonizer: inherited, frozen
+715	710	private	lemma	canonBits_of_last	canonizer: inherited, frozen
+738	733	private	lemma	canonBits_bits	canonizer: inherited, frozen
+754	753	private	lemma	canonBitsOK_iff	canonizer: inherited, frozen
+765	764	private	def	canonCount	canonizer: inherited, frozen
+774	768	private	lemma	canonCount_spec	canonizer: inherited, frozen
+796	794	private	def	canonBitsTM	canonizer: inherited, frozen
+806	799	private	lemma	canonBitsTM_run	canonizer: inherited, frozen
+833	826	private	lemma	exists_canonHeaderSeam	canonizer: inherited, frozen
+873	867	private	lemma	exists_canonCountTM	canonizer: inherited, frozen
+891	889	private	def	canonVerdictTM	canonizer: inherited, frozen
+903	897	private	lemma	canonVerdictTM_run	canonizer: inherited, frozen
+937	930	private	lemma	exists_canonHeaderBitsTM	canonizer: inherited, frozen
+986	984	private	def	canonHeaderOK	canonizer: inherited, frozen
+991	989	private	lemma	canonHeaderOK_iff	canonizer: inherited, frozen
+1006	1000	private	lemma	scan_eq_none_of_canonHeaderOK	canonizer: inherited, frozen
+1026	1019	private	lemma	exists_canonHeaderOKTM	canonizer: inherited, frozen
+1057	1054	private	def	canonGuardBlock	canonizer: inherited, frozen
+1061	1060	private	lemma	canonGuardBlock_pos	canonizer: inherited, frozen
+1070	1065	private	lemma	decode_of_canonGuard	canonizer: inherited, frozen
+1090	1080	private	lemma	canonGuard_run	canonizer: inherited, frozen
+1149	1142	private	lemma	canonStrictInstall	canonizer: inherited, frozen
+1189	1183	private	lemma	canonEmbedEq	canonizer: inherited, frozen
+1219	1213	private	lemma	canonEmbedWords	canonizer: inherited, frozen
+1241	1232	private	lemma	canonPreserveInstall	canonizer: inherited, frozen
+1327	1317	private	lemma	exists_canonHeaderCountSeam	canonizer: inherited, frozen
+1426	1423	private	def	canonOffset	canonizer: inherited, frozen
+1435	1429	private	lemma	canonOffset_spec	canonizer: inherited, frozen
+1458	1452	private	lemma	exists_canonOffsetTM	canonizer: inherited, frozen
+1492	1490	private	def	canonReadyWords	canonizer: inherited, frozen
+1505	1496	private	lemma	exists_canonReadySeam	canonizer: inherited, frozen
+1653	1645	private	lemma	exists_canonSeekOnBank	canonizer: inherited, frozen
+1705	1694	private	lemma	exists_canonGuardFront	canonizer: inherited, frozen
+1868	1865	private	def	canonBoolPopTM	canonizer: inherited, frozen
+1876	1874	private	lemma	canonBoolPop_run	canonizer: inherited, frozen
+1910	1897	private	lemma	exists_canonBoolBranch	canonizer: inherited, frozen
+1995	1993	private	lemma	exists_canonHeaderBranch	canonizer: inherited, frozen
+2008	2006	private	lemma	decode_of_canonHeader	canonizer: inherited, frozen
+2025	2015	private	lemma	canonSeam_avoids	canonizer: inherited, frozen
+2048	2047	private	def	canonCounterBank	canonizer: inherited, frozen
+2060	2051	private	lemma	canonGuard_onBank	canonizer: inherited, frozen
+2133	2124	private	lemma	exists_canonGuardReady	canonizer: inherited, frozen
+2309	2302	private	lemma	exists_canonGuardFrontStrict	canonizer: inherited, frozen
+2367	2364	private	lemma	canonBlankLift	canonizer: inherited, frozen
+2387	2376	private	lemma	exists_canonCheckedFront	canonizer: inherited, frozen
+2553	2541	private	lemma	canonExitDispatch	canonizer: inherited, frozen
+2619	2610	private	lemma	exists_canonParseFront	canonizer: inherited, frozen
+2663	2658	private	def	canonGrammar	canonizer: cont3 delivery (#96), frozen
+2674	2667	private	lemma	scan_eq_canonGrammar	canonizer: cont3 delivery (#96), frozen
+2698	2691	private	lemma	canonGrammar_verdict	canonizer: cont3 delivery (#96), frozen
+2716	2713	private	def	canonStrip	canonizer: cont3 delivery (#96), frozen
+2721	2719	private	lemma	canonStrip_append	canonizer: cont3 delivery (#96), frozen
+2732	2730	private	lemma	canonFlatMap_last	canonizer: cont3 delivery (#96), frozen
+2740	2738	private	lemma	actionBitsK_last	canonizer: cont3 delivery (#96), frozen
+2754	2752	private	lemma	serializeK_last	canonizer: cont3 delivery (#96), frozen
+2773	2772	private	lemma	canonScan_all	canonizer: cont3 delivery (#96), frozen
+2797	2790	private	lemma	canonStrip_of_scan	canonizer: cont3 delivery (#96), frozen
+2814	2810	private	lemma	canonStrip_split	canonizer: cont3 delivery (#96), frozen
+2838	2833	private	lemma	canonStrip_boundary	canonizer: cont3 delivery (#96), frozen
+2861	2857	private	def	canonTrimTM	canonizer: cont3 delivery (#96), frozen
+2878	2874	private	lemma	canonEraseLast	canonizer: cont3 delivery (#96), frozen
+2893	2885	private	lemma	canonTrim_run	canonizer: cont3 delivery (#96), frozen
+3003	2995	private	lemma	exists_canonStripTM	canonizer: cont3 delivery (#96), frozen except the prescribed factoring edit
+3126	3124	private	lemma	canonSkipFin_iff	canonizer: cont4 delivery (#107), frozen
+3143	3141	private	def	canonSkipFields	canonizer: cont4 delivery (#107), frozen
+3148	3147	private	lemma	canonSkipAction_eq	canonizer: cont4 delivery (#107), frozen
+3154	3153	private	lemma	canonSkipPair_cells	canonizer: cont4 delivery (#107), frozen
+3166	3165	private	lemma	canonSkipFields_cells	canonizer: cont4 delivery (#107), frozen
+3190	3189	private	lemma	canonSkipRepeat_add	canonizer: cont4 delivery (#107), frozen
+3207	3205	private	lemma	canonSkipRepeat_mul	canonizer: cont4 delivery (#107), frozen
+3222	3220	private	lemma	canonSkipTable_eq	canonizer: cont4 delivery (#107), frozen
+3242	3239	private	def	canonCellTM	canonizer: cont4 delivery (#107), frozen
+3248	3247	private	lemma	canonCell_step	canonizer: cont4 delivery (#107), frozen
+3261	3256	private	lemma	canonTruePrefix	canonizer: cont4 delivery (#107), frozen
+3287	3281	private	lemma	canonTrueOrbit	canonizer: cont4 delivery (#107), frozen
+3322	3317	private	lemma	canonPatchWord	canonizer: cont4 delivery (#107), frozen except the prescribed factoring edit
+3341	3334	private	lemma	canonUnaryLoop	canonizer: cont4 delivery (#107), frozen
+3426	3424	private	abbrev	canonUnaryPhase	canonizer: cont4 delivery (#107), frozen
+3432	3431	private	def	canonUnaryFamily	canonizer: cont4 delivery (#107), frozen
+3441	3439	private	def	canonUnaryNext	canonizer: cont4 delivery (#107), frozen
+3450	3448	private	def	canonUnaryCore	canonizer: cont4 delivery (#107), frozen
+3459	3453	private	lemma	canonUnaryField	canonizer: cont4 delivery (#107), frozen
+3481	3474	private	lemma	canonUnaryCore_run	canonizer: cont4 delivery (#107), frozen
+3744	3737	private	lemma	exists_canonUnaryTM	canonizer: cont4 delivery (#107), frozen
+3845	3844	private	def	canonPairs	canonizer: cont4 delivery (#107), frozen
+3853	3849	private	def	canonPairsTM	canonizer: cont4 delivery (#107), frozen
+3871	3869	private	lemma	canonNativeSuffix	canonizer: cont4 delivery (#107), frozen
+3897	3890	private	lemma	canonPairs_run	canonizer: cont4 delivery (#107), frozen
+4074	4072	private	def	canonWorkPairs	canonizer: cont4 delivery (#107), frozen
+4082	4078	private	lemma	canonPairs_fields	canonizer: cont4 delivery (#107), frozen
+4093	4092	private	lemma	canonWorkPairs_length	canonizer: cont4 delivery (#107), frozen
+4100	4098	private	def	canonTagTM	canonizer: cont4 delivery (#107), frozen
+4105	4104	private	lemma	canonTag_step	canonizer: cont4 delivery (#107), frozen
+4114	4113	private	abbrev	canonRecordPairs	canonizer: cont4 delivery (#107), frozen
+4119	4117	private	abbrev	canonRecordPhase	canonizer: cont4 delivery (#107), frozen
+4125	4124	private	def	canonRecordFamily	canonizer: cont4 delivery (#107), frozen
+4133	4131	private	def	canonRecordNext	canonizer: cont4 delivery (#107), frozen
+4154	4146	private	lemma	exists_canonRecordTM	canonizer: cont4 delivery (#107), frozen
+4443	4431	private	lemma	exists_canonGrammarStage	canonizer: prescribed stub (body owned, statement frozen)
+4470	4460	private	lemma	exists_canonDecider	canonizer: prescribed stub (body owned, statement frozen)
+4587	4484	public	theorem	exists_polyCanonizer	canonizer: headline (docstring appendix owned, statement and glue frozen)
+4651	4647	private	def	summaryClock	frozen: D4 semantic clock
+4664	4657	private	lemma	summaryClock_correct	frozen: D4 semantic clock
+4675	4673	private	lemma	summaryClock_accepts	frozen: D4 semantic clock
+4683	4682	private	lemma	summaryClock_zero	frozen: D4 semantic clock
+4689	4686	private	def	h1HostedVerdictTM	H1, off-limits
+4707	4698	private	theorem	h1HostedVerdict_effect	H1, off-limits
+4754	4751	private	theorem	h1HostedVerdict_accepts	H1, off-limits
+4877	4775	public	theorem	exists_uniformSimulator	H1, off-limits

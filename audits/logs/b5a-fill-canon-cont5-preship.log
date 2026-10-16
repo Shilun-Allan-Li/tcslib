@@ -1,0 +1,51 @@
+# B5a canonizer continuation 5: pre-ship log (maintainer, 2026-10-15)
+# Base: the campaign tip 64e8fe2b (Lean content 6354471a: #107 merged). Snapshot: oleans-lcanon4, #107's replay output (9 of 9, failed=0).
+# Lean only through scripts/leanelab.sh (no olean written); Python as python3 -I.
+
+## 1. The factoring patch
+$ python3 -I tools/mkfactor.py CodeSimulator.lean(base) CanonFactor.lean
+factored overlay written: 4894 lines; 1 private added, 2 proofs re-pointed
+$ git apply --check factor.patch   (at 64e8fe2b)
+applies cleanly
+$ elaborate CanonFactor.lean against oleans-lcanon4
+CanonFactor.lean:4448:14: warning: declaration uses 'sorry'
+CanonFactor.lean:4475:14: warning: declaration uses 'sorry'
+CanonFactor.lean:4882:8: warning: declaration uses 'sorry'
+errors: 0; non-sorry warnings: 0; sorry warnings: 3 (exists_canonGrammarStage, exists_canonDecider, exists_uniformSimulator)
+(an earlier draft passed one unused simp argument, the v-side lookup bound; removed before this run)
+
+## 2. Probes at the base
+CanonCont4ImportProbe: errors=0 warnings=0 sorry=0
+CanonCont3ImportProbe: errors=0 warnings=0 sorry=0
+B5aStatementsProbe: errors=0 warnings=1 sorry=1
+B5aContPreShip: errors=0 warnings=0 sorry=0
+S1210StatementsProbe: errors=0 warnings=1 sorry=1
+CanonNote50: errors=0 warnings=0 sorry=0
+(B5aStatementsProbe and S1210StatementsProbe: their one probe-local admission each, as recorded for cont4)
+S1210 control:
+Complexity.EXP_subset_POracle_EXPCOM: [Turing.MachineFormat.exists_uniformSimulator,
+ _private.TCSlib.Complexity.TuringMachine.CodeSimulator.0.Turing.MachineFormat.exists_canonDecider,
+note 50:
+'note50_cases' depends on axioms: [propext, sorryAx, Classical.choice, Quot.sound]
+CanonNote50Walk (the note-50 file plus the S1210 probe's read-only #sorry_sources): errors=0
+note50_cases: [_private.TCSlib.Complexity.TuringMachine.CodeSimulator.0.Turing.MachineFormat.exists_canonDecider,
+ _private.TCSlib.Complexity.TuringMachine.CodeSimulator.0.Turing.MachineFormat.exists_canonGrammarStage]
+Turing.MachineFormat.exists_polyCanonizer: [_private.TCSlib.Complexity.TuringMachine.CodeSimulator.0.Turing.MachineFormat.exists_canonDecider,
+ _private.TCSlib.Complexity.TuringMachine.CodeSimulator.0.Turing.MachineFormat.exists_canonGrammarStage]
+
+## 3. Order list and base sorry set
+100 modules: downstream of CodeSimulator 9, upstream closure 100
+base sorry set: 46 declarations in 19 modules (static); replay-log cross-check 96 of 100 modules, no mismatch; the other four elaborated:
+ChoiceWords exit=0 errors=0 sorry=0
+Configuration exit=0 errors=0 sorry=0
+Deterministic exit=0 errors=0 sorry=0
+UnaryTape exit=0 errors=0 sorry=0
+
+## 4. Regions table
+149 declarations; regions carried from cont4's table by name; the 35 new names are exactly #107's
+
+## 5. Copy-text screens (v3, one at a time, nice -n 10; population: cont4's 45 files)
+base (the tip):    declarations screened: 2388; copy pairs (target reproduces >= half of source): 2648; reproduced text: 834,815 chars — # exit=0 elapsed=1666s
+overlay (patched): declarations screened: 2389; copy pairs (target reproduces >= half of source): 2647; reproduced text: 834,681 chars — # exit=0 elapsed=1692s
+head pairs 2647; union of earlier 2648; new at head 0; earlier-only 1
+  GONE  CodeSimulator.lean::exists_canonStripTM  reproduces  CodeSimulator.lean::canonPatchWord: 134/229 = 59%
