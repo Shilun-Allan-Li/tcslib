@@ -685,6 +685,10 @@ window.*
     - **User (2026-10-16):** cont6 is authorized to use the worker's `phaseHostTM` adapter with a
       fresh anchor (a composition over the phase host, not a new host). The partial lands once
       its screens are clean.
+    - **Screens clean** (0 new pairs; one pair removed by the factoring). **Landing PR #113**
+      (`lean/b5a-canon-cont5-partial`): the two delivered commits cherry-picked from the bundle,
+      plus the status text and the grammar-stage appendix updated for the ruling. Replay
+      `replay-lc5p.sh` covers 9 modules (snapshot `oleans-lc5p` from `oleans-lf3p`).
 
 ### ARM-1: duplication in the received ARM-extensions code (from the ARM fill gate, 2026-10-14)
 
@@ -1341,6 +1345,28 @@ The route decisions of 2026-10-12 (design §16b) add three work items, numbered 
         `Contract` combinators' fields and the layout's base and boundary facts (with F3's
         three). It has its own audit gate (the §13d PR-plus-gate rule). The replay is about 89
         modules. The G4 partial lands once its screens are clean (user).
+      - **The specification API, PR #112** (`lean/spec-api`, `9f66ac7e`; pack `audits/spec-api-pack.md`,
+        evidence `audits/evidence/spec-api/`).
+        - **Generated:** 85 field equations (`simps`, `isSimp := false`) for `Contract.trans`,
+          `seq`, `inPhase`, `branch`, `framedContract`, `seekPost`, `sweepPost` and the ten row
+          contracts.
+        - **Hand-written:** seven layout lemmas in Catalog, `recordAt_iff`, `record_pos_lt`
+          public, `recordLength_eq`.
+        - Checks clean; the screen is running. The gate is dispatched next, and the merge waits
+          for it. The replay (89 modules) is re-sequenced after the partials landing first.
+      - **User (2026-10-16), the rule's scope: "Everything".** Every definition a brief's route reads
+        gets a published equation lemma before dispatch, wherever it lives. A pre-ship inventory
+        per brief finds the missing ones.
+        - Maintainer's boundary, stated to the user: the machine model's semantic primitives
+          (`MultiTapeTM.step`, `runFrom`, `Action.apply`, `Cfg.mapState`) are read through their
+          existing lemmas. A worker's own leaf may unfold `step` on its own table.
+        - **Core API PR, in preparation** (`lean/core-api`, for U2-S and F5): `Cfg.init`'s fields,
+          `bufferedFirstCfg`'s and `bufferedSecondCfg`'s fields, `pairEncode_eq`, `unaryFin_eq`,
+          `embedSilentCfg_unselected` and the transports' scalar fields,
+          `mem_visitedByTapeHead_iff`, and the two visited-set splits moved from `StepBlock` to
+          `Deterministic`. Next to add: `serializeK_eq`, after #113. It has its own gate, and its
+          replay is about 320 modules (from `Configuration`).
+        - U2-S's and F5's briefs (inputs measured at `c2897d7f`) wait for it.
   **Two-tape universal (U2) designed (2026-10-14; `audits/evidence/u2/U2-design.md`, probes).**
   - **The design:** one `k`-generic construction on H2's step block. It has a new public host
     H2-F (the emitting round loop, in `Build/StepBlockLoop`), U2-S (the startup), U2-U
