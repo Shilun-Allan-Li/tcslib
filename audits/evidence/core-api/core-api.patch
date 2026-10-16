@@ -1,0 +1,432 @@
+From b27ed47fdda5de2f9a4d1bd482406f24a11243c0 Mon Sep 17 00:00:00 2001
+From: Seyoon Ragavan <complexzetaprime@gmail.com>
+Date: Fri, 16 Oct 2026 00:43:27 -0400
+Subject: [PATCH 1/3] The core specification API: Cfg.init, the buffered
+ configurations, the encodings, the transports, the visited sets
+
+User ruling (2026-10-16): every definition a brief's route reads gets a published equation lemma
+("Everything"), first for U2-S and B6 F5.
+
+- Configuration: Cfg.init's fields; Simulation: bufferedFirstCfg's and bufferedSecondCfg's
+  fields (simps, without the simp attribute).
+- Encoding: pairEncode_eq, unaryFin_eq.
+- Build/Embed: embedSilentCfg_unselected; both transports' state, inputPos and output.
+- Deterministic: mem_visitedByTapeHead_iff, and the split lemmas visitedByTapeHead_add_subset and
+  visitedByTapeHead_step_subset moved here from Build/StepBlock (design note O9; names unchanged).
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+---
+ .../Complexity/TuringMachine/Build/Embed.lean | 21 ++++++++
+ .../TuringMachine/Build/StepBlock.lean        | 50 +++---------------
+ .../TuringMachine/Configuration.lean          |  8 +++
+ .../TuringMachine/Deterministic.lean          | 51 +++++++++++++++++++
+ TCSlib/Complexity/TuringMachine/Encoding.lean | 13 +++++
+ .../Complexity/TuringMachine/Simulation.lean  | 12 +++++
+ 6 files changed, 112 insertions(+), 43 deletions(-)
+
+diff --git a/TCSlib/Complexity/TuringMachine/Build/Embed.lean b/TCSlib/Complexity/TuringMachine/Build/Embed.lean
+index c191fc4f..5ceae723 100644
+--- a/TCSlib/Complexity/TuringMachine/Build/Embed.lean
++++ b/TCSlib/Complexity/TuringMachine/Build/Embed.lean
+@@ -112,6 +112,9 @@ then consumes as its left exit (`Turing.captureAction`'s and
+ * `Turing.embedSilentRetTM_visitedByTapeHead`,
+   `Turing.embedEmitRetTM_visitedByTapeHead` — the returning flavors visit
+   exactly what the closed flavors visit, at every time.
++* `Turing.embedSilentCfg_unselected`, `Turing.embedSilentCfg_state`, `_inputPos`, `_output`,
++  `Turing.embedEmitCfg_state`, `_inputPos`, `_output` — the transports' remaining fields, the
++  specification API (user, 2026-10-16).
+ 
+ ## References
+ 
+@@ -1029,6 +1032,24 @@ theorem embedSilentCfg_cap (ι : Fin m ↪ Fin k) (cap : Fin k)
+         ((pre ++ c.output).length : ℤ) := by
+   simp [embedSilentCfg, embedSlot_unselected ι cap hcap]
+ 
++/-- **The silent transport's frame** (the specification API, user 2026-10-16): a host tape
++outside the selection `ι`, other than the capture tape, holds the ambient frame `tapes j` with
++its head at `heads j`. The frame companion of `Turing.embedSilentCfg_cap`.
++
++**Proof sketch.** Off the selection the slot search finds no source tape
++(`embedSlot_unselected`), and `j ≠ cap` selects the frame branch. -/
++theorem embedSilentCfg_unselected (ι : Fin m ↪ Fin k) (cap : Fin k)
++    (tapes : Fin k → ℤ → Option Symbol) (heads : Fin k → ℤ)
++    (pre out₀ : List Symbol) (c : Cfg m Symbol S x) (j : Fin k) (hj : j ∉ Set.range ι)
++    (hcap : j ≠ cap) :
++    (embedSilentCfg ι cap tapes heads pre out₀ c).workTapes j = tapes j ∧
++      (embedSilentCfg ι cap tapes heads pre out₀ c).workTapePos j = heads j := by
++  simp [embedSilentCfg, embedSlot_unselected ι j hj, hcap]
++
++/-! The specification API (user, 2026-10-16): the two transports' state, input position and
++output as equations, without the `simp` attribute. -/
++attribute [simps (config := { isSimp := false }) state inputPos output] embedSilentCfg embedEmitCfg
++
+ 
+ end Turing
+ 
+diff --git a/TCSlib/Complexity/TuringMachine/Build/StepBlock.lean b/TCSlib/Complexity/TuringMachine/Build/StepBlock.lean
+index 49d3532a..94a222d1 100644
+--- a/TCSlib/Complexity/TuringMachine/Build/StepBlock.lean
++++ b/TCSlib/Complexity/TuringMachine/Build/StepBlock.lean
+@@ -42,9 +42,10 @@ one simulated transition of any `k`-work-tape binary transition table held, in t
+   ranks, the selector, the two-cell mover and the phase tables) and the trace internals are
+   `private`.
+ * **Additive results**, gated with the move and proved here: `summaryEmit_none`,
+-  `Turing.MultiTapeTM.visitedByTapeHead_add_subset`,
+-  `Turing.MultiTapeTM.visitedByTapeHead_step_subset`, `roundTM_visited`, `roundTM_iterate`,
+-  `roundTM_firstExit_unique`.
++  `roundTM_visited`, `roundTM_iterate`, `roundTM_firstExit_unique`. The two generic
++  visited-set splits `Turing.MultiTapeTM.visitedByTapeHead_add_subset` and
++  `visitedByTapeHead_step_subset`, first proved here, moved to `Deterministic.lean` with the
++  specification API (user, 2026-10-16).
+ 
+ ## Main definitions
+ 
+@@ -70,8 +71,9 @@ one simulated transition of any `k`-work-tape binary transition table held, in t
+ * Additive: `summaryEmit_none` (a blanked summary cell records one round's emission),
+   `roundTM_visited` (the per-round space ledger, from the head envelope), `roundTM_iterate`
+   (rounds compose into a run of the source table, cofinally, with its visited cells),
+-  `roundTM_firstExit_unique` (the round time is the unique first positive exit), and the
+-  generic `Turing.MultiTapeTM.visitedByTapeHead_add_subset`, `visitedByTapeHead_step_subset`.
++  `roundTM_firstExit_unique` (the round time is the unique first positive exit). The generic
++  `Turing.MultiTapeTM.visitedByTapeHead_add_subset` and `visitedByTapeHead_step_subset` are
++  in `Deterministic.lean`.
+ 
+ ## References
+ 
+@@ -3217,44 +3219,6 @@ serves the unclocked consumers (B6's `U₀`, backlog U-1) and their space ledger
+ the silent block only. A host that blanks and forwards the summary cell around each round
+ needs its own simulation invariant (the design note's consumer obligation CO-RF). -/
+ 
+-/-- **Visited cells split at an intermediate time** (additive; generic, a candidate for
+-`Deterministic.lean` later, design note O9): the cells visited by head `j` in `T₁ + T₂`
+-steps from `d` are those visited in the first `T₁` steps, together with
+-those visited in `T₂` steps from where the run is at time `T₁`.
+-
+-**Proof sketch.** A visiting time `u ≤ T₁ + T₂` is either at most `T₁`, or `T₁ + v` with
+-`v ≤ T₂`, and then run additivity identifies the configuration. -/
+-lemma _root_.Turing.MultiTapeTM.visitedByTapeHead_add_subset {m : ℕ} {S : Type} {x : List Bool}
+-    (M : MultiTapeTM m Bool S) (d : Cfg m Bool S x) (T₁ T₂ : ℕ) (j : Fin m) :
+-    M.visitedByTapeHead d (T₁ + T₂) j ⊆
+-      M.visitedByTapeHead d T₁ j ∪ M.visitedByTapeHead (M.runFrom d T₁) T₂ j := by
+-  intro p hp
+-  simp only [MultiTapeTM.visitedByTapeHead, Finset.mem_union, Finset.mem_image,
+-    Finset.mem_range] at hp ⊢
+-  obtain ⟨u, hu, rfl⟩ := hp
+-  by_cases hle : u ≤ T₁
+-  · exact Or.inl ⟨u, by omega, rfl⟩
+-  · refine Or.inr ⟨u - T₁, by omega, ?_⟩
+-    rw [← MultiTapeTM.runFrom_add]
+-    congr 2
+-    omega
+-
+-/-- **Visited cells after the first step** (additive; generic): the cells visited in `t` steps
+-from the successor of `c`, and `c`'s own head cell, are among those visited in `t + 1` steps
+-from `c`.
+-
+-**Proof sketch.** Shift every visiting time by one; time `0` gives `c`'s cell. -/
+-lemma _root_.Turing.MultiTapeTM.visitedByTapeHead_step_subset {m : ℕ} {S : Type} {x : List Bool}
+-    (M : MultiTapeTM m Bool S) (c : Cfg m Bool S x) (t : ℕ) (j : Fin m) :
+-    insert (c.workTapePos j) (M.visitedByTapeHead (M.step c) t j) ⊆
+-      M.visitedByTapeHead c (t + 1) j := by
+-  intro p hp
+-  simp only [MultiTapeTM.visitedByTapeHead, Finset.mem_insert, Finset.mem_image,
+-    Finset.mem_range] at hp ⊢
+-  rcases hp with rfl | ⟨v, hv, rfl⟩
+-  · exact ⟨0, by omega, by rw [MultiTapeTM.runFrom_zero]⟩
+-  · exact ⟨v + 1, by omega, by rw [MultiTapeTM.runFrom_succ_eq_step]⟩
+-
+ /-- **The per-round space ledger** (additive): under the contract's hypotheses, with `a` the
+ action of `tr` at `c` and `B = 50·(|tableBitsK tr| + 1)`, some time `T` with `0 < T ≤ B` ends
+ the round at `exit k a.state.isSome` in a configuration representing `a.apply c`, with the
+diff --git a/TCSlib/Complexity/TuringMachine/Configuration.lean b/TCSlib/Complexity/TuringMachine/Configuration.lean
+index 0656a471..55c70dfd 100644
+--- a/TCSlib/Complexity/TuringMachine/Configuration.lean
++++ b/TCSlib/Complexity/TuringMachine/Configuration.lean
+@@ -52,6 +52,9 @@ the configuration the run ends in.
+ * `Cfg.Halted`, `Cfg.init`: halting, and the configuration a machine starts in
+ * `spaceUsedOfCfgs`: work tape cells touched along a list of configurations
+ 
++**The specification API** (user, 2026-10-16): `Turing.Cfg.init_state`, `_inputPos`,
++`_workTapes`, `_workTapePos` and `_output`, the initial configuration's fields as equations.
++
+ ## References
+ 
+ * [AB09] S. Arora, B. Barak, *Computational Complexity: A Modern Approach*,
+@@ -190,6 +193,11 @@ abbrev Cfg.Halted (cfg : Cfg k Symbol State input) : Prop := cfg.state = none
+ def Cfg.init (q₀ : State) (input : List Symbol) : Cfg k Symbol State input :=
+   ⟨some q₀, 1, fun _ _ => none, fun _ => 0, []⟩
+ 
++/-! The specification API (user, 2026-10-16): `Turing.Cfg.init`'s fields as equations
++(`Cfg.init_state`, `_inputPos`, `_workTapes`, `_workTapePos`, `_output`), without the
++`simp` attribute. -/
++attribute [simps (config := { isSimp := false })] Cfg.init
++
+ /--
+ The effect of an action on a configuration: move the input head, write and move on the work tapes,
+ append the emitted symbol to the output tape, and go to the successor state. This is the part of a
+diff --git a/TCSlib/Complexity/TuringMachine/Deterministic.lean b/TCSlib/Complexity/TuringMachine/Deterministic.lean
+index 2e60877d..56975981 100644
+--- a/TCSlib/Complexity/TuringMachine/Deterministic.lean
++++ b/TCSlib/Complexity/TuringMachine/Deterministic.lean
+@@ -101,6 +101,10 @@ We define a number of structures and concepts related to multi-tape Turing machi
+ * `DecidableInTimeAndSpace`: a proof that a TM decides a language within a certain time
+     and space bound.
+ 
++**The specification API** (user, 2026-10-16): `Turing.MultiTapeTM.mem_visitedByTapeHead_iff`,
++and the split lemmas `visitedByTapeHead_add_subset` and `visitedByTapeHead_step_subset` (moved
++here from `Build/StepBlock`, design note O9).
++
+ ## References
+ 
+ * [Pap94] C. Papadimitriou, *Computational Complexity*, Addison-Wesley, 1994.
+@@ -283,6 +287,53 @@ lemma spaceUsed_eq_spaceUsedOfCfgs (cfg : Cfg k Symbol State input) (t : ℕ) :
+   ext z
+   simp [visitedByTapeHead, visitedOfCfgs]
+ 
++/-- **Membership in a visited set** (the specification API, user 2026-10-16): a cell is visited by
++head `i` within `t` steps exactly when the head stands on it at some time `u ≤ t`.
++
++**Proof sketch.** `Turing.MultiTapeTM.visitedByTapeHead` is the image of the head positions over
++`Finset.range (t + 1)`. -/
++theorem mem_visitedByTapeHead_iff (cfg : Cfg k Symbol State input) (t : ℕ) (i : Fin k) (p : ℤ) :
++    p ∈ tm.visitedByTapeHead cfg t i ↔ ∃ u ≤ t, (tm.runFrom cfg u).workTapePos i = p := by
++  simp only [visitedByTapeHead, Finset.mem_image, Finset.mem_range, Nat.lt_succ_iff]
++
++/-- **Visited cells split at an intermediate time** (moved here from `Build/StepBlock`, design
++note O9, with the specification API, user 2026-10-16): the cells visited by head `j` in
++`T₁ + T₂` steps from `d` are those visited in the first `T₁` steps, together with those visited
++in `T₂` steps from where the run is at time `T₁`.
++
++**Proof sketch.** A visiting time `u ≤ T₁ + T₂` is either at most `T₁`, or `T₁ + v` with
++`v ≤ T₂`, and then run additivity identifies the configuration. -/
++lemma visitedByTapeHead_add_subset {m : ℕ} {S : Type} {x : List Bool}
++    (M : MultiTapeTM m Bool S) (d : Cfg m Bool S x) (T₁ T₂ : ℕ) (j : Fin m) :
++    M.visitedByTapeHead d (T₁ + T₂) j ⊆
++      M.visitedByTapeHead d T₁ j ∪ M.visitedByTapeHead (M.runFrom d T₁) T₂ j := by
++  intro p hp
++  simp only [MultiTapeTM.visitedByTapeHead, Finset.mem_union, Finset.mem_image,
++    Finset.mem_range] at hp ⊢
++  obtain ⟨u, hu, rfl⟩ := hp
++  by_cases hle : u ≤ T₁
++  · exact Or.inl ⟨u, by omega, rfl⟩
++  · refine Or.inr ⟨u - T₁, by omega, ?_⟩
++    rw [← MultiTapeTM.runFrom_add]
++    congr 2
++    omega
++
++/-- **Visited cells after the first step** (moved here from `Build/StepBlock`, with the
++specification API): the cells visited in `t` steps from the successor of `c`, and `c`'s own head
++cell, are among those visited in `t + 1` steps from `c`.
++
++**Proof sketch.** Shift every visiting time by one; time `0` gives `c`'s cell. -/
++lemma visitedByTapeHead_step_subset {m : ℕ} {S : Type} {x : List Bool}
++    (M : MultiTapeTM m Bool S) (c : Cfg m Bool S x) (t : ℕ) (j : Fin m) :
++    insert (c.workTapePos j) (M.visitedByTapeHead (M.step c) t j) ⊆
++      M.visitedByTapeHead c (t + 1) j := by
++  intro p hp
++  simp only [MultiTapeTM.visitedByTapeHead, Finset.mem_insert, Finset.mem_image,
++    Finset.mem_range] at hp ⊢
++  rcases hp with rfl | ⟨v, hv, rfl⟩
++  · exact ⟨0, by omega, by rw [MultiTapeTM.runFrom_zero]⟩
++  · exact ⟨v + 1, by omega, by rw [MultiTapeTM.runFrom_succ_eq_step]⟩
++
+ end Space
+ 
+ open Cfg
+diff --git a/TCSlib/Complexity/TuringMachine/Encoding.lean b/TCSlib/Complexity/TuringMachine/Encoding.lean
+index 2427f112..d861225b 100644
+--- a/TCSlib/Complexity/TuringMachine/Encoding.lean
++++ b/TCSlib/Complexity/TuringMachine/Encoding.lean
+@@ -90,6 +90,8 @@ The concrete parser/decoder realizing a scheme lives in
+ `TCSlib.Complexity.TuringMachine.CodeParser`, and the existence of an effective
+ scheme (`Turing.exists_effectiveMachineCode`) is proved in
+ `TCSlib.Complexity.TuringMachine.MathlibBridge`.
++* `Turing.pairEncode_eq`, `Turing.unaryFin_eq` — the two encodings as equations, the
++  specification API (user, 2026-10-16).
+ 
+ ## References
+ 
+@@ -129,6 +131,12 @@ can hold). -/
+ def pairEncode (x α : List Bool) : List Bool :=
+   (x.flatMap fun b => [b, b]) ++ [false, true] ++ α
+ 
++/-- **The pairing as an equation** (the specification API, user 2026-10-16): the code doubled,
++the separator `false, true`, then the second word. -/
++theorem pairEncode_eq (x α : List Bool) :
++    pairEncode x α = (x.flatMap fun b => [b, b]) ++ [false, true] ++ α :=
++  rfl
++
+ /-- Parse aligned doubled bits until the separator, leaving its suffix untouched. -/
+ def pairDecode : List Bool → Option (List Bool × List Bool)
+   | false :: false :: rest => (pairDecode rest).map fun p => (false :: p.1, p.2)
+@@ -546,6 +554,11 @@ def optOptBoolBits : Option (Option Bool) → List Bool
+ def unaryFin {n : ℕ} (s : Fin n) : List Bool :=
+   List.replicate (s : ℕ) true ++ [false]
+ 
++/-- **The unary state word as an equation** (the specification API, user 2026-10-16): `s`
++`true`s, then the delimiter `false`. -/
++theorem unaryFin_eq {n : ℕ} (s : Fin n) : unaryFin s = List.replicate (s : ℕ) true ++ [false] :=
++  rfl
++
+ /-- Serialization of an optional successor state (`none` = halt). -/
+ def optStateBits {n : ℕ} : Option (Fin n) → List Bool
+   | none => [false]
+diff --git a/TCSlib/Complexity/TuringMachine/Simulation.lean b/TCSlib/Complexity/TuringMachine/Simulation.lean
+index 4adca020..646d91f6 100644
+--- a/TCSlib/Complexity/TuringMachine/Simulation.lean
++++ b/TCSlib/Complexity/TuringMachine/Simulation.lean
+@@ -60,6 +60,10 @@ gadget needs.
+   and an exact `|y| + 2` rewind-and-dispatch ledger. These extend the scope of
+   the native-input embeddings above without changing their statements.
+ 
++**The specification API** (user, 2026-10-16): the fields of the buffered composite's two
++configuration shapes, `Turing.FinTM.bufferedFirstCfg_*` and `bufferedSecondCfg_*`, as
++equations.
++
+ ## References
+ 
+ * [AB09] S. Arora, B. Barak, *Computational Complexity: A Modern Approach*,
+@@ -858,6 +862,10 @@ lemma bufferedFirstCfg_run (M₁ M₂ : FinTM Bool) {x : List Bool}
+     rw [MultiTapeTM.runFrom_succ_eq_step', ih (fun s hs => h s (by omega)),
+       bufferedFirstCfg_step M₁ M₂ _ (h t (by omega)), MultiTapeTM.runFrom_succ_eq_step']
+ 
++/-! The specification API (user, 2026-10-16): `Turing.FinTM.bufferedFirstCfg`'s fields as
++equations, without the `simp` attribute. -/
++attribute [simps (config := { isSimp := false })] bufferedFirstCfg
++
+ /-- Embed a configuration on virtual input `y` while the physical input remains
+ `x`. The buffer head represents virtual position minus one. The left block and
+ native input head retain arbitrary inactive contents from phase one. -/
+@@ -871,6 +879,10 @@ def bufferedSecondCfg (M₁ M₂ : FinTM Bool) {x y : List Bool}
+   workTapePos := tapeBlocks heads ((c.inputPos.val : ℤ) - 1) c.workTapePos
+   output := c.output
+ 
++/-! The specification API (user, 2026-10-16): `Turing.FinTM.bufferedSecondCfg`'s fields as
++equations, without the `simp` attribute. -/
++attribute [simps (config := { isSimp := false })] bufferedSecondCfg
++
+ /-- One second-phase step simulates one native step, with a valid new arrival
+ tag. The statement includes the absorbing halting case.
+ 
+-- 
+2.50.1 (Apple Git-155)
+
+
+From b23f78055d4475b756e2e9205f5db4ac09873774 Mon Sep 17 00:00:00 2001
+From: Seyoon Ragavan <complexzetaprime@gmail.com>
+Date: Fri, 16 Oct 2026 00:59:40 -0400
+Subject: [PATCH 2/3] The core specification API: serializeK_eq
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+---
+ TCSlib/Complexity/TuringMachine/CodeSimulator.lean | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
+
+diff --git a/TCSlib/Complexity/TuringMachine/CodeSimulator.lean b/TCSlib/Complexity/TuringMachine/CodeSimulator.lean
+index 05a7c41e..11bd6992 100644
+--- a/TCSlib/Complexity/TuringMachine/CodeSimulator.lean
++++ b/TCSlib/Complexity/TuringMachine/CodeSimulator.lean
+@@ -77,6 +77,8 @@ the uniform form required by Example 3.6(3), audited at phase P3.2 round 2]
+ * `Turing.serializeK`, `Turing.codeSkipTableK` — the fixed `k`-record serialization
+   and grammar, over the table layout `Turing.workReadsK`, `Turing.tableBitsK` of
+   `Build/StepBlock`.
++* `Turing.serializeK_eq` — the serialization as an equation, the specification API (user,
++  2026-10-16).
+ * `Turing.MachineFormat`, `Turing.MachineFormat.toFinTM` — the format parameter.
+ * `Turing.oneTapeMachineFormat` — the one-work-tape instance.
+ 
+@@ -102,6 +104,14 @@ states: the binary state count, the unary initial state, the table. [AB09, §1.4
+ def serializeK {k n : ℕ} (M : MultiTapeTM k Bool (Fin (n + 1))) : List Bool :=
+   pairEncode n.bits (unaryFin M.q₀ ++ tableBitsK M.tr)
+ 
++/-- **The serialization as an equation** (the specification API, user 2026-10-16): the doubled
++binary state count, the separator, the unary initial state, then the table. Consumers read the
++captured serialization through this equation (with `Turing.pairEncode_eq` and
++`Turing.unaryFin_eq`), not by unfolding `Turing.serializeK`. -/
++theorem serializeK_eq {k n : ℕ} (M : MultiTapeTM k Bool (Fin (n + 1))) :
++    serializeK M = pairEncode n.bits (unaryFin M.q₀ ++ tableBitsK M.tr) :=
++  rfl
++
+ /-- The table skipper of the `k`-record grammar: `n + 1` states of `3^(k+1)`
+ records each. [AB09, §1.4] -/
+ def codeSkipTableK (k n : ℕ) : List Bool → Option (List Bool) :=
+-- 
+2.50.1 (Apple Git-155)
+
+
+From 2cdc026e528a8312f122d0ac5d18aa189f87cfd8 Mon Sep 17 00:00:00 2001
+From: Seyoon Ragavan <complexzetaprime@gmail.com>
+Date: Fri, 16 Oct 2026 01:01:17 -0400
+Subject: [PATCH 3/3] The core specification API: the heads' readings
+ (inputSymbol at both blanks, workTapeSymbols) and initCfg_eq
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+---
+ .../TuringMachine/Configuration.lean           | 18 ++++++++++++++++++
+ .../TuringMachine/Deterministic.lean           |  7 ++++++-
+ 2 files changed, 24 insertions(+), 1 deletion(-)
+
+diff --git a/TCSlib/Complexity/TuringMachine/Configuration.lean b/TCSlib/Complexity/TuringMachine/Configuration.lean
+index 55c70dfd..26407482 100644
+--- a/TCSlib/Complexity/TuringMachine/Configuration.lean
++++ b/TCSlib/Complexity/TuringMachine/Configuration.lean
+@@ -54,6 +54,8 @@ the configuration the run ends in.
+ 
+ **The specification API** (user, 2026-10-16): `Turing.Cfg.init_state`, `_inputPos`,
+ `_workTapes`, `_workTapePos` and `_output`, the initial configuration's fields as equations.
++`Turing.Cfg.inputSymbol_of_zero`, `Turing.Cfg.inputSymbol_of_end` (with `inputSymbolInner`) and
++`Turing.Cfg.workTapeSymbols_eq`: the heads' readings.
+ 
+ ## References
+ 
+@@ -185,6 +187,22 @@ lemma inputSymbolInner {cfg : Cfg k Symbol State input} (p : ℕ)
+ def Cfg.workTapeSymbols (cfg : Cfg k Symbol State input) (i : Fin k) : Option Symbol :=
+   cfg.workTapes i (cfg.workTapePos i)
+ 
++/-- **The input head's reading at the left blank** (the specification API, user 2026-10-16). -/
++theorem Cfg.inputSymbol_of_zero {cfg : Cfg k Symbol State input} (h : cfg.inputPos = 0) :
++    cfg.inputSymbol = none := by
++  simp [Cfg.inputSymbol, h]
++
++/-- **The input head's reading at the right blank** (the specification API, user 2026-10-16). -/
++theorem Cfg.inputSymbol_of_end {cfg : Cfg k Symbol State input}
++    (h : cfg.inputPos.val = input.length + 1) : cfg.inputSymbol = none := by
++  have he : cfg.inputPos = Fin.last (input.length + 1) := Fin.ext h
++  simp [Cfg.inputSymbol, he]
++
++/-- **A work head's reading** (the specification API, user 2026-10-16): the cell under it. -/
++theorem Cfg.workTapeSymbols_eq (cfg : Cfg k Symbol State input) (i : Fin k) :
++    cfg.workTapeSymbols i = cfg.workTapes i (cfg.workTapePos i) :=
++  rfl
++
+ /-- A configuration is halted when it has no state to continue from. -/
+ abbrev Cfg.Halted (cfg : Cfg k Symbol State input) : Prop := cfg.state = none
+ 
+diff --git a/TCSlib/Complexity/TuringMachine/Deterministic.lean b/TCSlib/Complexity/TuringMachine/Deterministic.lean
+index 56975981..8e111ec2 100644
+--- a/TCSlib/Complexity/TuringMachine/Deterministic.lean
++++ b/TCSlib/Complexity/TuringMachine/Deterministic.lean
+@@ -101,7 +101,8 @@ We define a number of structures and concepts related to multi-tape Turing machi
+ * `DecidableInTimeAndSpace`: a proof that a TM decides a language within a certain time
+     and space bound.
+ 
+-**The specification API** (user, 2026-10-16): `Turing.MultiTapeTM.mem_visitedByTapeHead_iff`,
++**The specification API** (user, 2026-10-16): `Turing.MultiTapeTM.initCfg_eq`,
++`Turing.MultiTapeTM.mem_visitedByTapeHead_iff`,
+ and the split lemmas `visitedByTapeHead_add_subset` and `visitedByTapeHead_step_subset` (moved
+ here from `Build/StepBlock`, design note O9).
+ 
+@@ -163,6 +164,10 @@ def outputSymbol (cfg : Cfg k Symbol State input) : Option Symbol :=
+ @[simp]
+ def initCfg (input : List Symbol) : Cfg k Symbol State input := Cfg.init tm.q₀ input
+ 
++/-- **The initial configuration as an equation** (the specification API, user 2026-10-16). -/
++theorem initCfg_eq (input : List Symbol) : tm.initCfg input = Cfg.init tm.q₀ input :=
++  rfl
++
+ @[simp]
+ lemma step_of_halt {cfg : Cfg k Symbol State input} (h : cfg.state = none) :
+     tm.step cfg = cfg := by
+-- 
+2.50.1 (Apple Git-155)
+

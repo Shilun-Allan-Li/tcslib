@@ -1,0 +1,55 @@
+== Configuration
+public before/after: 18 21 private before/after: 0 0
+public added: ['Cfg.inputSymbol_of_end', 'Cfg.inputSymbol_of_zero', 'Cfg.workTapeSymbols_eq']
+public removed: []
+private removed: []
+private added: []
+private changed: []
+== Deterministic
+public before/after: 34 38 private before/after: 0 0
+public added: ['initCfg_eq', 'mem_visitedByTapeHead_iff', 'visitedByTapeHead_add_subset', 'visitedByTapeHead_step_subset']
+public removed: []
+UNAUTHORIZED BODY CHANGE: initCfg
+private removed: []
+private added: []
+private changed: []
+== Encoding
+public before/after: 38 40 private before/after: 9 9
+public added: ['pairEncode_eq', 'unaryFin_eq']
+public removed: []
+private removed: []
+private added: []
+private changed: []
+== Simulation
+public before/after: 56 56 private before/after: 0 0
+public added: []
+public removed: []
+private removed: []
+private added: []
+private changed: []
+== Build/Embed
+public before/after: 31 32 private before/after: 16 16
+public added: ['embedSilentCfg_unselected']
+public removed: []
+private removed: []
+private added: []
+private changed: []
+== Build/StepBlock
+public before/after: 56 54 private before/after: 71 71
+public added: []
+public removed: ['_root_.Turing.MultiTapeTM.visitedByTapeHead_add_subset', '_root_.Turing.MultiTapeTM.visitedByTapeHead_step_subset']
+private removed: []
+private added: []
+private changed: []
+== CodeSimulator
+public before/after: 11 12 private before/after: 138 138
+public added: ['serializeK_eq']
+public removed: []
+private removed: []
+private added: []
+private changed: []
+
+# Maintainer note: "UNAUTHORIZED BODY CHANGE: initCfg" is the tool's chunking heuristic. The
+# chunk of `initCfg` used to end with the next declaration's `@[simp]` line, and `initCfg_eq` is
+# now inserted between them. `git diff -U1 62fa2330 -- Deterministic.lean` shows `initCfg`'s
+# text unchanged (only insertions around it).

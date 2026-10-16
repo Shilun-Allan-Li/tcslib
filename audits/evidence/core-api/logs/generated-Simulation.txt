@@ -1,0 +1,34 @@
+TCSlib/Complexity/TuringMachine/SimulationChk.lean:388:8: warning: declaration uses 'sorry'
+Turing.FinTM.bufferedFirstCfg_state : ∀ (M₁ M₂ : Turing.FinTM Bool) {x : List Bool}
+  (c : Turing.Cfg M₁.k Bool M₁.State x), (M₁.bufferedFirstCfg M₂ c).state = some (Sum.inl c.state)
+Turing.FinTM.bufferedFirstCfg_inputPos : ∀ (M₁ M₂ : Turing.FinTM Bool) {x : List Bool}
+  (c : Turing.Cfg M₁.k Bool M₁.State x), (M₁.bufferedFirstCfg M₂ c).inputPos = c.inputPos
+Turing.FinTM.bufferedFirstCfg_workTapes : ∀ (M₁ M₂ : Turing.FinTM Bool) {x : List Bool}
+  (c : Turing.Cfg M₁.k Bool M₁.State x) (a : Fin (M₁.k + (1 + M₂.k))) (a_1 : ℤ),
+  (M₁.bufferedFirstCfg M₂ c).workTapes a a_1 =
+    Turing.FinTM.tapeBlocks c.workTapes (Turing.FinTM.bufferTape c.output) (fun x x_1 => none) a a_1
+Turing.FinTM.bufferedFirstCfg_workTapePos : ∀ (M₁ M₂ : Turing.FinTM Bool) {x : List Bool}
+  (c : Turing.Cfg M₁.k Bool M₁.State x) (a : Fin (M₁.k + (1 + M₂.k))),
+  (M₁.bufferedFirstCfg M₂ c).workTapePos a = Turing.FinTM.tapeBlocks c.workTapePos (↑c.output.length) (fun x => 0) a
+Turing.FinTM.bufferedFirstCfg_output : ∀ (M₁ M₂ : Turing.FinTM Bool) {x : List Bool}
+  (c : Turing.Cfg M₁.k Bool M₁.State x), (M₁.bufferedFirstCfg M₂ c).output = []
+Turing.FinTM.bufferedSecondCfg_state : ∀ (M₁ M₂ : Turing.FinTM Bool) {x y : List Bool}
+  (c : Turing.Cfg M₂.k Bool M₂.State y) (b : Bool) (p : Fin (x.length + 2)) (tapes : Fin M₁.k → ℤ → Option Bool)
+  (heads : Fin M₁.k → ℤ),
+  (M₁.bufferedSecondCfg M₂ c b p tapes heads).state = Option.map (fun q => Sum.inr (Sum.inr (q, b))) c.state
+Turing.FinTM.bufferedSecondCfg_inputPos : ∀ (M₁ M₂ : Turing.FinTM Bool) {x y : List Bool}
+  (c : Turing.Cfg M₂.k Bool M₂.State y) (b : Bool) (p : Fin (x.length + 2)) (tapes : Fin M₁.k → ℤ → Option Bool)
+  (heads : Fin M₁.k → ℤ), (M₁.bufferedSecondCfg M₂ c b p tapes heads).inputPos = p
+Turing.FinTM.bufferedSecondCfg_workTapes : ∀ (M₁ M₂ : Turing.FinTM Bool) {x y : List Bool}
+  (c : Turing.Cfg M₂.k Bool M₂.State y) (b : Bool) (p : Fin (x.length + 2)) (tapes : Fin M₁.k → ℤ → Option Bool)
+  (heads : Fin M₁.k → ℤ) (a : Fin (M₁.k + (1 + M₂.k))) (a_1 : ℤ),
+  (M₁.bufferedSecondCfg M₂ c b p tapes heads).workTapes a a_1 =
+    Turing.FinTM.tapeBlocks tapes (Turing.FinTM.bufferTape y) c.workTapes a a_1
+Turing.FinTM.bufferedSecondCfg_workTapePos : ∀ (M₁ M₂ : Turing.FinTM Bool) {x y : List Bool}
+  (c : Turing.Cfg M₂.k Bool M₂.State y) (b : Bool) (p : Fin (x.length + 2)) (tapes : Fin M₁.k → ℤ → Option Bool)
+  (heads : Fin M₁.k → ℤ) (a : Fin (M₁.k + (1 + M₂.k))),
+  (M₁.bufferedSecondCfg M₂ c b p tapes heads).workTapePos a =
+    Turing.FinTM.tapeBlocks heads (↑↑c.inputPos - 1) c.workTapePos a
+Turing.FinTM.bufferedSecondCfg_output : ∀ (M₁ M₂ : Turing.FinTM Bool) {x y : List Bool}
+  (c : Turing.Cfg M₂.k Bool M₂.State y) (b : Bool) (p : Fin (x.length + 2)) (tapes : Fin M₁.k → ℤ → Option Bool)
+  (heads : Fin M₁.k → ℤ), (M₁.bufferedSecondCfg M₂ c b p tapes heads).output = c.output

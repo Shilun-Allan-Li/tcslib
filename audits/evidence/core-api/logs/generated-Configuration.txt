@@ -1,0 +1,19 @@
+TCSlib/Complexity/TuringMachine/ConfigurationChk.lean:140:17: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+TCSlib/Complexity/TuringMachine/ConfigurationChk.lean:143:61: warning: unused variable `h`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+TCSlib/Complexity/TuringMachine/ConfigurationChk.lean:158:17: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+@Turing.Cfg.init_state : ∀ {k : ℕ} {State : Type u_1} {Symbol : Type u_2} (q₀ : State) (input : List Symbol),
+  (Turing.Cfg.init q₀ input).state = some q₀
+@Turing.Cfg.init_inputPos : ∀ {k : ℕ} {State : Type u_1} {Symbol : Type u_2} (q₀ : State) (input : List Symbol),
+  (Turing.Cfg.init q₀ input).inputPos = 1
+@Turing.Cfg.init_workTapes : ∀ {k : ℕ} {State : Type u_1} {Symbol : Type u_2} (q₀ : State) (input : List Symbol)
+  (x : Fin k) (x_1 : ℤ), (Turing.Cfg.init q₀ input).workTapes x x_1 = none
+@Turing.Cfg.init_workTapePos : ∀ {k : ℕ} {State : Type u_1} {Symbol : Type u_2} (q₀ : State) (input : List Symbol)
+  (x : Fin k), (Turing.Cfg.init q₀ input).workTapePos x = 0
+@Turing.Cfg.init_output : ∀ {k : ℕ} {State : Type u_1} {Symbol : Type u_2} (q₀ : State) (input : List Symbol),
+  (Turing.Cfg.init q₀ input).output = []
