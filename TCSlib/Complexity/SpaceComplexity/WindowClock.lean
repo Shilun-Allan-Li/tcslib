@@ -270,9 +270,9 @@ time is at most the clock value times `C · (L + |x| + 1)` (`Turing.counterLoop_
 clock value, its numerical certification budget, and the time and head-envelope
 absorptions. The clock writer is not inserted, and this target remains open.
 The numerical helpers take the record-length formula and the position-width bound as
-explicit hypotheses. The specification-level definitions `RecordAt`, `recordLength` and
-`posWidth` may be unfolded in this module (user ruling on the delivery's escalation E1,
-2026-10-15), which discharges them and gives the field cells from a `RecordAt` hypothesis.
+explicit hypotheses. The specification API discharges them (`Turing.recordLength_eq`,
+`Turing.record_pos_lt`) and reads a `RecordAt` hypothesis's cells (`Turing.recordAt_iff`): the
+user's ruling on E1 (2026-10-16), superseding the 2026-10-15 permission to unfold.
 **Proof sketch (remaining).** Compose the mapped-copy writer, F2's runner and the framed
 clear by the prescribed seams or phase host, then apply the private arithmetic lemmas to
 their ledgers.

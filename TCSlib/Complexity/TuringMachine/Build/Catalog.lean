@@ -132,6 +132,10 @@ identities `Turing.scanResult_fold`, `Turing.scanResult_map`,
   (2026-10-13; it was here from `Build/Zone.lean` for B4, 2026-10-12).
 * `Turing.FinTM.rewind_scan_heads`, `Turing.FinTM.rewind_heads` — the rewind head
   bounds — moved on to `TuringMachine/Simulation` at MIG-1 stage S (2026-10-14).
+* `Turing.joinFields_nil`, `Turing.joinFields_singleton`, `Turing.fieldsTape_of_nonneg`,
+  `Turing.fieldsTape_of_neg`, `Turing.fieldsTape_of_length_le`, `Turing.fieldsTape_nil`,
+  `Turing.fieldOffset_zero` — the field layout's base and boundary facts, the specification
+  API (user, 2026-10-16).
 
 ## References
 
@@ -11698,6 +11702,48 @@ one cell, `(joinFields fs).length + 1`, which is where a further field would
 start. The empty layout has offset `0` there, not `1`. -/
 def fieldOffset {Γ : Type*} (fs : List (List Γ)) (j : ℕ) : ℕ :=
   ((fs.take j).map (·.length + 1)).sum
+
+/-! #### The layout's base and boundary facts (the specification API, user 2026-10-16)
+
+Consumers read the layout through these equations, not by unfolding its definitions. -/
+
+/-- **The empty layout** (the specification API): no cells. -/
+theorem joinFields_nil {Γ : Type*} : joinFields ([] : List (List Γ)) = [] := by
+  simp [joinFields, List.intercalate]
+
+/-- **A one-field layout** (the specification API): the field's cells. -/
+theorem joinFields_singleton {Γ : Type*} (u : List Γ) : joinFields [u] = u.map some := by
+  simp [joinFields, List.intercalate]
+
+/-- **The layout tape inside its range** (the specification API): from cell `0` on, the
+layout's cells, blank past its end. -/
+theorem fieldsTape_of_nonneg {Γ : Type*} (fs : List (List Γ)) {z : ℤ} (hz : 0 ≤ z) :
+    fieldsTape fs z = ((joinFields fs)[z.toNat]?).join := by
+  simp [fieldsTape, hz]
+
+/-- **The layout tape left of the origin** (the specification API): blank at every negative
+cell. -/
+theorem fieldsTape_of_neg {Γ : Type*} (fs : List (List Γ)) {z : ℤ} (hz : z < 0) :
+    fieldsTape fs z = none := by
+  simp [fieldsTape, not_le.mpr hz]
+
+/-- **The layout tape past its end** (the specification API): blank from cell
+`|joinFields fs|` on.
+
+**Proof sketch.** The cell is nonnegative, and its index is past the list. -/
+theorem fieldsTape_of_length_le {Γ : Type*} (fs : List (List Γ)) {z : ℤ}
+    (hz : ((joinFields fs).length : ℤ) ≤ z) : fieldsTape fs z = none := by
+  have h0 : 0 ≤ z := le_trans (Int.natCast_nonneg _) hz
+  rw [fieldsTape_of_nonneg fs h0, List.getElem?_eq_none (by omega)]
+  rfl
+
+/-- **The empty layout's tape** (the specification API): blank everywhere. -/
+theorem fieldsTape_nil {Γ : Type*} (z : ℤ) : fieldsTape ([] : List (List Γ)) z = none := by
+  simp [fieldsTape, joinFields_nil]
+
+/-- **The first field's offset** (the specification API): field `0` starts at cell `0`. -/
+theorem fieldOffset_zero {Γ : Type*} (fs : List (List Γ)) : fieldOffset fs 0 = 0 := by
+  simp [fieldOffset]
 
 /-- **The field layout, one field at a time** (§12.8 fill): two or more fields are the first
 field, a separator, and the layout of the rest. -/
