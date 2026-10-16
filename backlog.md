@@ -1280,6 +1280,17 @@ The route decisions of 2026-10-12 (design §16b) add three work items, numbered 
       **Landed (2026-10-15, PR #109 as `e5fcd8ee`; replay 84 of 84, 0 errors, at `93ea007f`, no
       sorry count moved; snapshot `oleans-lwalk` for the tip `e5fcd8ee`).** Next: G4's fill
       brief.
+    - **G4's fill brief issued (2026-10-15): `briefs/s13d-fill-g4.md`.**
+      - **User (2026-10-15):** one brief in two phases (the kit and the extension row, then the
+        rebalance row); the brief authorizes exactly two imports (`Build/Contract/Catalog`,
+        `Build/Contract/Seam`) as the worker's first edit.
+      - **Inputs** `1299799c`, merged in `4db8beff` (Lean content `e5fcd8ee`).
+      - **Pre-ship:** the overlay (the imports and two recommended layout bridges) gives 4 sorry
+        warnings, the stubs and the rows, and no other. The import probe resolves 94 names.
+      - **Measured:** order list 79; base sorry set 37; v3 screen base on a 10-file population:
+        429 pairs.
+      - The brief carries the walk gate's convention adjustment, and recommends a commuting
+        reorder of each pass (proved pure first) with a unary zone count on scratch.
   **Two-tape universal (U2) designed (2026-10-14; `audits/evidence/u2/U2-design.md`, probes).**
   - **The design:** one `k`-generic construction on H2's step block. It has a new public host
     H2-F (the emitting round loop, in `Build/StepBlockLoop`), U2-S (the startup), U2-U
