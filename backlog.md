@@ -877,7 +877,33 @@ rules (a PR plus its gate). Its input is the round-2 classified ledger of the AR
 
 The user lifted the no-retroactive-migration rules for this work and chose scenario B. Duplicate
 statement families are retired, with full gates and consumer edits. Restyling is opportunistic:
-**pick any row whose prerequisites are met.** The estimates come from seven read-only reviews
+**pick any row whose prerequisites are met.**
+
+**Schedule (user, 2026-10-16, in answer to a modularity review): interleave MIG items with the
+fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24, below).**
+- **The review's evidence** (maintainer, 2026-10-16):
+  - `TuringMachine/` has 2,201 private declarations against 1,509 public ones (78 files).
+  - In the ten files of #116 alone, the copy-text screen finds 103 pairs, 14 of them at 90% or
+    more. Most are left/right or silent/emit siblings: `zoneShiftIn`/`zoneShiftOut`,
+    `embedSilentRetTM`/`embedEmitRetTM`, `zonedTape_left`/`_right`,
+    `rewind_heads`/`timed_rewind`.
+  - There is one cross-file verbatim copy: `canonOffset_spec` (CodeSimulator) repeats
+    Encoding's `length_bits_le_self` (100%).
+  - MIG-2 to MIG-17 are largely unexecuted.
+- **MIG-12 first needs its part of MIG-11.** It depends on MIG-11, of which 9 framed rows have
+  contracts so far (`Build/Contract/Catalog`: clear, the two mapped sweeps, walk, skip,
+  skip-back, seek-end, seek-start, scan). Its first phase is therefore the contracts of the
+  framed rows that `CfgRecord` composes. Under the new definitions-with-lemmas rule, they land
+  with their `simps` field equations.
+- **MIG-4** has no prerequisite and a full gate. `counterLoopTM` becomes the identity instance of
+  `counterLoopTMVia`, and its 14 uses in `Inclusions.lean` are edited.
+- **Not adopted** (user, 2026-10-16): a systematic promotion pass at each landing, and a public
+  one-step leaf row. Policy's existing route stays: a private copy plus a requested shared
+  lemma, promoted at a shared-file window.
+- **Adopted with it:** *definitions land with their lemmas* (`policy.md` §1; lint check 8,
+  `b19ab034`). At the tip, check 8 lists 205 public definitions in 50 `TuringMachine/` files,
+  and 1,173 in 254 files of `TCSlib/Complexity`, that predate the rule. #112 and #116 cover part
+  of that list. The rest is covered as consumers need it. The estimates come from seven read-only reviews
 (design §16), in lines, and are ESTIMATED unless marked; negative means saved.
 
 **Gates:**
@@ -912,6 +938,7 @@ statement families are retired, with full gates and consumer edits. Restyling is
 | MIG-21 | `CookLevin/Hardness` (`clPlacement`, the selectors) | 12.2c item 13: restate the layouts as plain `Fin k ↪ Fin l` embeddings; delete the selector layer (about 120–259 lines) | about −150 to −250 | the T2a gate (item 6's export) | swap | Hardness stays at machine level |
 | MIG-22 | `ClassPSPACE/TQBF` (B4 membership's delivery) | **Closed 2026-10-14 (moot):** `TQBF_mem_PSPACE` is `LogProg.TQBFARM.truth_mem_PSPACE`; the pure core is deleted with the `b4m*` appendix (D6). The general AND/OR evaluator stays registry H1. *Was:* `TQBF_mem_PSPACE` as a program: a recursive QBF evaluator in the §15 language, compiled through stage 2, with the proved pure core (`b4mValue`, `b4mValue_truth`, `b4mWalk_value`) as its specification. Retire the unused leaf-contract definitions, which lack an input/records precondition | to be estimated with stage 2's space accounting | stage 2 with a space bound, the input extensions (§15a) | stmt + swap | user, 2026-10-12: "Stop; do it as a program". Registry H1, the AND/OR evaluator (design §14) |
 | MIG-23 | `Build/RecordTable` rows 15, 16, 19, 20 (find, append, validity, next) | Paused, with no consumer since S1b stopped and Savitch moved to the language. Retire them under scenario B unless stage 2's memory design or another consumer claims them; keep the proved find round (`rt_findRound` and its contracts) | small (statements only) | a consumer decision | full | user, 2026-10-12: "Narrow to rows 17–18"; rows 17–18 continue for B6's window route |
+| MIG-24 | the mirror and sibling pairs: `Build/Zone` (`zoneShiftIn`/`Out`'s lifting skeleton), `Build/ZoneTape` (`zonedTape_left`/`_right`, `_left_sep`/`_right_sep`, `zoneOwner_sep`/`_beyond`), `Build/Embed` (the silent/emit transports, their steps and return forms), `Simulation` (`leftCfg_step`/`rightCfg_step`, `rewind_heads`/`timed_rewind`), `Encoding` (`pairDiag_double`/`_copy`; `exists_codeTM_spaceUsed`); one cross-file copy (`canonOffset_spec` onto `length_bits_le_self`) | Derive one sibling from the other through a symmetry (as `zoneCascadeLeft` through `ZoneContents.swap`), or state one side- or flavour-parametric form with the two as instances. Statements are kept where consumers cite them. The vendored `Configuration`/`Deterministic` pairs are excluded | ESTIMATED small (hundreds of lines); a library-wide screen measures the full list first | — | swap where statements are kept; full where a sibling retires | user, 2026-10-16: added to the schedule |
 | MIG-18 | port of [AFM26]'s `Util/Asymptotics` (1,769 lines upstream) | `Dominated`, `Scale.SoftO` and the `growth` tactic, then ledgers without constants | +0.5k to +1.4k; saves part of about 3.5k ledger lines | the PROG-1 port tooling | fidelity, then swap | payoff mostly in ClassNP, ClassP, SpaceComplexity and PolyHierarchy |
 
 **RS: the restyling backlog, opportunistic; chip away at it.**
