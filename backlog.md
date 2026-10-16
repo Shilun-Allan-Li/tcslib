@@ -661,6 +661,18 @@ window.*
     records (`backlog.md` and the report).
   - **Next: a cont5 brief**, phases 3–5: the grammar stage, the decider on one bank, then
     note 50; plus the one factoring edit above.
+- **(k) The canonizer cont5 brief issued (2026-10-15):** `briefs/b5a-fill-canon-cont5.md`.
+  - **Inputs** `596cae56`, on a side branch from `ce418f21`, merged in `a842a356`, so the
+    worker's base keeps the pre-ship Lean content `6354471a` (#107 merged).
+  - **The factoring edit is prescribed as a patch** (`audits/evidence/b5a-canon-cont5/factor.patch`,
+    applied as the worker's first commit). A new private `canonPatchWord_le` (patching a buffered
+    word by one at least as long) is cited by the strip machine's copy block and by
+    `canonPatchWord`, its equal-width instance. Patched file: 0 errors, the 3 expected sorry
+    warnings, no other warning.
+  - **Screens** (v3, cont4's 45 files): base 2,648 pairs, patched 2,647. The pair
+    `exists_canonStripTM` ← `canonPatchWord` is gone and no pair is new.
+  - **Pre-ship:** every inherited probe passes. Note 50 and the headline reach `sorryAx` only
+    through the two frozen stubs (the read-only walk). Order list 100 modules; base sorry set 46.
 
 ### ARM-1: duplication in the received ARM-extensions code (from the ARM fill gate, 2026-10-14)
 
