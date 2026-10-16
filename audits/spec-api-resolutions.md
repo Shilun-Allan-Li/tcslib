@@ -56,6 +56,8 @@ reversal; the screen at 711 → 712 declarations, 350 pairs and 116,080 characte
   - the lint shows 0 FAIL, with the WARN sets unchanged;
   - the copy-text screen of the six-file population gives 714 declarations, 350 pairs, 0 new.
 - **Replay:** `replay-lapi2.sh` covers the six files' downstream closure at the merged tree
-  (85 modules), from `oleans-lg4p`, the campaign tip plus round 1. The user runs it.
+  (85 modules), from `oleans-lg4p`, the campaign tip plus round 1. **Passed (user, 2026-10-16):**
+  85 of 85, 0 failed (`r2/replay-lapi2.log`). The sorry counts equal round 1's, except
+  `StepBlockForward`, 1 → 0 (#114's H2-F).
 - **Round-2 gate:** a short check of the repair diff (finding 1 is the remaining major), with the
   replay log. Pack: `audits/spec-api-r2-pack.md`.
