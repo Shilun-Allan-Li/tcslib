@@ -188,9 +188,11 @@ pipeline detail).
 * **`scripts/campaign_style_lint.py`** (named `scripts/style_lint.py` until the
   main merge, which adopted main's per-file policy linter under that name — the
   historical audit logs' invocations refer to this tool) — mechanical policy checks: statement-prose docstrings,
-  sketch-before-sorry, file sizes, `## References`, facade coverage. Campaign
-  baseline: zero FAIL (legacy pre-campaign files outside the audited surface are
-  tolerated and listed).
+  sketch-before-sorry, file sizes, `## References`, facade coverage, and (check 8, since
+  2026-10-16) public definitions without a lemma beside them (`policy.md` §1, *Definitions
+  land with their lemmas*). Campaign baseline: zero FAIL (legacy pre-campaign files outside
+  the audited surface are tolerated and listed). Check 8 is a WARN listing names; a landing
+  adds no name to it.
 * **Axiom prints** — `#print axioms` for every headline theorem on the *fresh* olean
   tree: closed results must show exactly `[propext, Classical.choice, Quot.sound]`;
   sorried statements show `sorryAx`, and any other axiom is a stop-the-line event.
