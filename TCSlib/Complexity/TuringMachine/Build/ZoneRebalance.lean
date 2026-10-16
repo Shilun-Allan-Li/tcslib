@@ -391,8 +391,8 @@ cleared before the exit. The sum `Σ_{i ≤ i₀} O(2^i)` is `O(2^{i₀})`
 **Fill appendix (§13d G4).** The private kit proves the physical empty, full, and room guards,
 the scanned-index characterization, the short case's identity, and the tape mirror. The
 single-cell controller supplies the permitted guard leaf. The scan round, column moves, passes,
-home move, and cleanup are still open. Contract assembly is blocked by the missing public
-projection equations under ground rule 10; see escalation E1 in `REPORT.md`. -/
+home move, and cleanup are still open. Contract assembly needs the contracts' field equations,
+which the specification API supplies (PR #112; the user's ruling on escalation E1, 2026-10-16). -/
 theorem exists_zoneRebalanceTM (k : ℕ) :
     ∃ C : ℕ, ∀ (dir : Bool) (t : Fin k),
       ∃ (S : Type) (_ : Fintype S) (_ : DecidableEq S) (M : MultiTapeTM 2 (ZoneSym k) S)
@@ -431,9 +431,10 @@ distance; clear the ruler and return home. Each phase is `O(2^ℓ)`.
 **Fill appendix (§13d G4).** The private kit proves the ruler's tail premise, its length,
 the extension's constant-cell specification, and the geometric extent bound. The single-cell
 controller supplies the permitted ruler-head adjustment and writes. The two layout bridges,
-ruler construction, composed side passes, and cleanup remain open: ground rule 10 forbids the
-definition unfolding needed by the pinned layout and contract APIs (escalation E1 in
-`REPORT.md`). No unproved bridge or additional admission is inserted. -/
+ruler construction, composed side passes, and cleanup remain open. They need the layout's
+boundary facts and the contracts' field equations, which the specification API supplies (PR #112;
+the user's ruling on escalation E1, 2026-10-16). No unproved bridge or additional admission is
+inserted. -/
 theorem exists_zoneExtendTM (k : ℕ) :
     ∃ (C : ℕ) (S : Type) (_ : Fintype S) (_ : DecidableEq S)
       (M : MultiTapeTM 2 (ZoneSym k) S) (entry done : S),
