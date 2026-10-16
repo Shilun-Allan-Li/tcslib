@@ -68,9 +68,13 @@ the uniform form required by Example 3.6(3), audited at phase P3.2 round 2]
   the restored binary bound (the bounded unary reader `exists_canonUnaryTM`) and
   the generic action-record validator (`exists_canonRecordTM`).
 
-  Still open: the canonizer's grammar loop, its complete validator and the
-  emission; the simulator's nested-input startup, canonizer installation and
-  joint ledger.
+  Proved in the canonizer's continuation 5 (2026-10-16), modulo the grammar loop: the
+  validator composition `exists_canonDecider` (the front end seamed to the grammar
+  stage on one bank) and the emission (`canonEmitVerdict`, one public phase dispatch and
+  a one-step emitting halt).
+
+  Still open: the canonizer's grammar loop (`exists_canonGrammarStage`); the simulator's
+  nested-input startup, canonizer installation and joint ledger.
 
 ## Main definitions
 
@@ -4623,12 +4627,12 @@ records, with the generic record validator as its body; check the all-`true` suf
 right input blank. Every record consumes at least `4k + 5` cells and every round fails fast
 on input exhaustion, so at most `|x| + 1` rounds run, each charged `O(|x| + |bits|)`.
 
-**Fill appendix (canonizer continuation 5).** This stub remains open. The direct-body route
-needs a control-interface correction: C2 returns at its separate true exit, whereas the
-counter host requires a positive return to its entry anchor. The brief's no-wrapper claim
-cannot supply that premise. The delivery reports this obstruction under ground rule 4.
-A public phase-host adapter with a fresh return anchor would bridge the two interfaces;
-its permission and contract are requested before continuing this item. -/
+**Fill appendix (canonizer continuation 5).** This stub remains open. C2 cannot be the
+counter loop's body directly: it stops at a separate, stationary true exit, whereas the
+counter host needs each round to return to its entry anchor. A phase-host adapter with a
+fresh return anchor bridges the two interfaces (success returns to the anchor, failure
+escapes); it is a composition over the public phase host, authorized for the continuation
+(user, 2026-10-16). -/
 private lemma exists_canonGrammarStage (F : MachineFormat) :
     ∃ (m : ℕ) (S : Type) (_ : Fintype S) (_ : DecidableEq S) (G : MultiTapeTM m Bool S)
       (entry : S) (exit : Bool → S) (a : ℕ) (header : Fin m), Function.Injective exit ∧
