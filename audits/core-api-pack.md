@@ -9,8 +9,9 @@ Campaign: the Arora-Barak chapters 3-4 plan; the machine library (`machine-libra
   leaf.
 - PR #112 (gated separately, `audits/spec-api-pack.md`) publishes the machine library's contract
   and layout facts.
-- **This PR publishes the core definitions** that the U2-S startup and the B6 F5 ruler device read.
-  It gets its own gate before it merges.
+- **This PR publishes the core definitions** that the U2-S startup and the B6 F5 ruler device read,
+  and the two gaps the F3 and G4 continuation inventories found beyond #112 (`wordPatch`'s cells,
+  `zoneCapacity`). It gets its own gate before it merges.
 
 | File | Additions |
 |---|---|
@@ -20,10 +21,12 @@ Campaign: the Arora-Barak chapters 3-4 plan; the machine library (`machine-libra
 | `Simulation.lean` | `FinTM.bufferedFirstCfg_*`, `FinTM.bufferedSecondCfg_*` |
 | `Build/Embed.lean` | `embedSilentCfg_unselected`; `embedSilentCfg_{state,inputPos,output}`, `embedEmitCfg_{state,inputPos,output}` |
 | `Build/StepBlock.lean` | the two moved lemmas removed; docstrings updated |
+| `Build/StepClock.lean` | `wordPatch_of_mem`, `wordPatch_of_not_mem` (F3's continuation reads F2's endpoint through `wordPatch`) |
+| `Build/Zone.lean` | `zoneCapacity_eq` (G4's continuation) |
 | `CodeSimulator.lean` | `serializeK_eq` |
 
 - **Evidence:** `audits/evidence/core-api/`, with the patch, the logs and `NOTES.md`.
-- **The bundle** contains the seven files at the PR head, the two drafted briefs
+- **The bundle** contains the nine files at the PR head, the two drafted briefs
   (`audits/evidence/core-api/drafts/`, not dispatched; placeholders unfilled), and the drafted
   inventories' consumers:
   `UniversalK.lean` (U2-S's target), `Build/InputDevice.lean` (F5's targets),
@@ -63,7 +66,7 @@ Campaign: the Arora-Barak chapters 3-4 plan; the machine library (`machine-libra
 5. **Placement.** Each lemma should sit beside its definition, which is why the replay is the
    closure of `Configuration`. Should any move (for example, the generic visited-set lemmas
    generalized beyond `Bool`)? A note is enough; the generalization is not in scope.
-6. **Duplication** (failure mode 5): the screen of the seven files, before and after
+6. **Duplication** (failure mode 5): the screen of the nine files, before and after
    (`logs/screen-*.txt`).
 7. **Records.** Check `NOTES.md` and this pack against the evidence.
 
@@ -76,7 +79,7 @@ Campaign: the Arora-Barak chapters 3-4 plan; the machine library (`machine-libra
 - **Axioms:** the hand-written lemmas use standard axioms only.
 - **Freeze:** publics added only, apart from the move. The `initCfg` flag is a chunking artifact.
 - **Lint:** unchanged.
-- **Screen:** the seven files, before and after: 355 → 358 declarations, 80 → 80 pairs, 17,590 characters (`logs/screen-delta.log`, head against base). The one changed pair is pre-existing and relocated by the move: `roundTM_iterate` reproduces `visitedByTapeHead_step_subset` at 76% in the base and at 71% from its new home (the text lacks the `_root_` prefix). **No new copy**; the gate may comment on the now cross-file pair.
+- **Screen:** the nine files, before and after: 440 → 443 declarations, 92 → 92 pairs, 20,434 characters (`logs/screen-delta.log`, head against base). The one changed pair is pre-existing and relocated by the move: `roundTM_iterate` reproduces `visitedByTapeHead_step_subset` at 76% in the base and at 71% from its new home (the text lacks the `_root_` prefix). **No new copy**; the gate may comment on the now cross-file pair
 - **Replay:** about 320 modules, after #112, #114 and #115 merge (run by the user).
 
 ## Findings format

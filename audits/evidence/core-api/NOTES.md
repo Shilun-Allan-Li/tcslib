@@ -21,7 +21,7 @@ This PR covers the inventories of the next two briefs:
 
 ## What
 
-The patch is `core-api.patch`: three commits, seven files.
+The patch is `core-api.patch`: four commits, nine files.
 - **Configuration:**
   - `Cfg.init`'s five fields (`simps`, `isSimp := false`);
   - `Cfg.inputSymbol_of_zero`, `Cfg.inputSymbol_of_end` (with the existing `inputSymbolInner`,
@@ -40,12 +40,16 @@ The patch is `core-api.patch`: three commits, seven files.
   state, input position and output of both transports (`simps`, `isSimp := false`).
 - **CodeSimulator:** `serializeK_eq`. Its hunk (line ~102) is apart from #113's, so the two merge
   cleanly.
+- **Build/StepClock:** `wordPatch_of_mem`, `wordPatch_of_not_mem`. F3's continuation reads F2's
+  runner endpoint, whose clock tape is a `wordPatch`, to clear the clock.
+- **Build/Zone:** `zoneCapacity_eq`. G4's partial unfolded `zoneCapacity`, and its continuation
+  measures rulers by it.
 
 ## Checks (maintainer; against `oleans-lf3p`)
 
 - **Elaboration** (`logs/elab-*-{base,head}.out`): each changed file except StepBlock has 0 errors,
   with warning counts equal to the base (Configuration 3, Deterministic 0, Encoding 1,
-  Simulation 1, Embed 2, CodeSimulator 3). StepBlock cites the moved lemmas and needs the new
+  Simulation 1, Embed 2, CodeSimulator 3, StepClock 0, Zone 0). StepBlock cites the moved lemmas and needs the new
   Deterministic olean, so the replay checks it.
 - **Generated names** (`logs/generated-*.txt`): all resolve in-module, with their statements as
   Lean prints them.
@@ -55,7 +59,8 @@ The patch is `core-api.patch`: three commits, seven files.
   The `initCfg` flag is the tool's chunking heuristic (annotated in the log).
 - **Lint** (`logs/lint-{base,head}.txt`): 0 FAIL, 23 WARN over 78 files, as at the base. No added
   line over 100 characters.
-- **Screen** (`logs/screen-{base,head}.txt`, `logs/screen-delta.log`): 355 → 358 declarations,
-  80 pairs before and after. The one changed pair is relocated by the move; no new copy.
+- **Screen** (`logs/screen-{base,head}.txt`, `logs/screen-delta.log`; nine files): 440 → 443
+  declarations, 92 pairs before and after. The one changed pair is relocated by the move; no new
+  copy.
 - **Replay:** the closure of `Configuration` (about 320 modules) contains the files of #112, #114
   and #115. The branch is brought up to date after those merge, and the user runs the replay.
