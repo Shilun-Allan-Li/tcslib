@@ -1,0 +1,31 @@
+# B6 F3 (the configuration-count runner): pre-ship log (maintainer, 2026-10-15)
+# Base: Lean content b6e0344c (#108 merged). Snapshot: oleans-lg2, #108's replay output (87 of 87, failed=0).
+# Lean only through scripts/leanelab.sh (no olean written); Python as python3 -I.
+
+## 1. The overlay (the clock-writer stub at the home)
+overlay written: 252 lines
+WindowClockOverlay.lean:157:14: warning: declaration uses 'sorry'
+WindowClockOverlay.lean:220:8: warning: declaration uses 'sorry'
+errors: 0; non-sorry warnings: 0; sorry warnings: 2 (the stub, the target)
+
+## 2. Probes
+F3ImportProbe: errors=0 warnings=0
+F3ConsumerProbe: errors=0 warnings=0
+(F3ImportProbe: 54 #checks)
+
+## 3. Order list and base sorry set
+176 modules: downstream of WindowClock 2 (itself and the SpaceComplexity facade), upstream closure 176
+base sorry set: 28 declarations in 11 modules; replay-log cross-check 171 of 176, no mismatch; the other five:
+Formulas/CNF exit=0 errors=0 sorry=0
+SpaceComplexity/Machines/Bin exit=0 errors=0 sorry=0
+Configuration, Deterministic, UnaryTape: unchanged since 64e8fe2b, elaborated there: 0 errors, 0 sorry
+
+## 4. Imports
+WindowClock's closure (55 TCSlib modules) has Build/Catalog, Build/Scan, Build/Seam, Build/Embed, Build/RecordTable, Build/StepClock, Build/CfgRecord, SpaceComplexity/ConfigCount; not Build/Contract/{Seam,Catalog}.
+
+## 5. Lint (base)
+style_lint: 0 FAIL, 4 WARN over 107 files
+
+## 6. Copy-text screen (v3; F2's 21-file population)
+base: declarations screened: 1020; copy pairs (target reproduces >= half of source): 503; reproduced text: 149,653 chars — # exit=0 elapsed=598s
+(the stub's body, `sorry`, is under the screen's 60-character floor, so the overlay adds no declaration to it)

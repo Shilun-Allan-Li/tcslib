@@ -1,0 +1,43 @@
+import TCSlib.Complexity.SpaceComplexity.WindowClock
+
+/-! Pre-ship consumer probe, B6 F3 (`Turing.exists_configWindowRunnerTM`). Its consumer, the
+headline region H of `SpaceComplexity/Hierarchy`, runs row 18 (`Turing.exists_recordInitTM`)
+and then this runner. Row 18's endpoint holds the record on tape `0`
+(`audits/evidence/w1-fill-recordtable-cont5/RT5ConsumerProbe.lean.txt` shows `RecordAt` and the
+window), the radius word on tape `1`, and blanks elsewhere. This probe shows the remaining
+precondition: once the radius word is cleared, in the exact shape of
+`Turing.clearTM_run_ofCfg`'s endpoint, every tape other than `0` is blank, provided tape `1` was
+blank outside the radius word (as H's radius phase leaves it). Evidence only. -/
+
+open Turing
+
+/-- After the clear, every tape other than `0` is blank. -/
+example {K : ℕ} {Γ S : Type} {x : List Γ} (d : Cfg (K + 2) Γ S x) (r : List Γ)
+    (h1 : ∀ q : ℤ, (q < d.workTapePos 1 ∨ d.workTapePos 1 + (r.length : ℤ) ≤ q) →
+      d.workTapes 1 q = none)
+    (hrest : ∀ j : Fin (K + 2), 2 ≤ j.val → ∀ p, d.workTapes j p = none) :
+    ∀ j : Fin (K + 2), j ≠ 0 → ∀ p : ℤ,
+      (if j = 1 ∧ d.workTapePos j ≤ p ∧ p < d.workTapePos j + (r.length : ℤ) then none
+        else d.workTapes j p) = none := by
+  intro j hj p
+  by_cases h : j = 1
+  · subst h
+    split_ifs with hin
+    · rfl
+    · exact h1 p (by omega)
+  · rw [if_neg (fun hc => h hc.1)]
+    apply hrest j
+    have h0 : j.val ≠ 0 := fun hv => hj (Fin.ext hv)
+    have h1' : j.val ≠ 1 := fun hv => h (Fin.ext (by simpa using hv))
+    omega
+
+/-- Row 18, the clear and this runner instantiate together at the diagonalizer's data. -/
+example (M : FinTM Bool) : True := by
+  obtain ⟨K, P, _, _, R, en, ex, C, init⟩ :=
+    exists_recordInitTM M.k (Q := M.State) (T := Fin 3) M.tm.q₀ (outSummaryCode (outSummary []))
+  obtain ⟨K', P', _, _, R', en', ex', C', run⟩ :=
+    exists_configWindowRunnerTM M summaryTag summaryTag_none
+  trivial
+
+#check @Turing.clearTM_run_ofCfg
+#check @Turing.exists_recordInitTM
