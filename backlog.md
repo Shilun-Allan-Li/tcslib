@@ -1348,6 +1348,10 @@ The route decisions of 2026-10-12 (design §16b) add three work items, numbered 
       - **Review final (2026-10-16):** screens clean, 763 → 778 declarations and 429 = 429 pairs, 0
         new. Landing next (user: prepare clean landings overnight). The appendices' "blocked under
         rule 10" wording is reworded at landing.
+      - **Landing PR #115** (`lean/s13d-g4-partial`): the worker's commit, plus the appendices
+        reworded to point to #112. Replay `replay-lg4p.sh` covers 2 modules, chained after H2-F's
+        (`oleans-lg4p` from `oleans-lh2f`). **Re-pointing candidate:** `zr_mirror_tape` unfolds
+        `zonedTape`, which predates the no-unfolding rule.
       - **The specification API, PR #112** (`lean/spec-api`, `9f66ac7e`; pack `audits/spec-api-pack.md`,
         evidence `audits/evidence/spec-api/`).
         - **Generated:** 85 field equations (`simps`, `isSimp := false`) for `Contract.trans`,
@@ -1459,6 +1463,14 @@ The route decisions of 2026-10-12 (design §16b) add three work items, numbered 
           - The v3 screen is 404/100 → 418/101. The one new pair is in-file, `fl_restore` ←
             `fl_home` at 55%: shared `Fin.addCases` scaffolding, below the 90% copy threshold.
           - Landing next (user, 2026-10-16: prepare clean landings overnight).
+          - **Landing PR #114** (`lean/h2f-forwardloop`): the worker's commit cherry-picked from the
+            bundle, plus the module status text. Replay `replay-lh2f.sh` covers 4 modules,
+            chained after the overnight #112 replay (`oleans-lh2f` from `oleans-lapi`). The
+            sorry count drops by one.
+          - **Re-pointing candidate (the no-unfolding rule postdates its brief):** the proof
+            unfolds StepBlock's `Rep`, `summaryCells`, `outputSummary`, `tableTape`,
+            `summaryTape` and `exit`, and `visitedByTapeHead`. Re-point it once those get published
+            lemmas. Optional; the fill gate may note it.
       - **U2-S's pre-issue promotion (user, 2026-10-15: "Maintainer PR first"): PR #110**
         (`lean/u2s-prefix-canon`, `cb669b4d`).
         - `prefixCanonTM F`, with `prefixCanon_start`, `_run` and `_complete`, generic in the
