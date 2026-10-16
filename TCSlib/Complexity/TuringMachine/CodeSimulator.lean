@@ -77,6 +77,8 @@ the uniform form required by Example 3.6(3), audited at phase P3.2 round 2]
 * `Turing.serializeK`, `Turing.codeSkipTableK` — the fixed `k`-record serialization
   and grammar, over the table layout `Turing.workReadsK`, `Turing.tableBitsK` of
   `Build/StepBlock`.
+* `Turing.serializeK_eq` — the serialization as an equation, the specification API (user,
+  2026-10-16).
 * `Turing.MachineFormat`, `Turing.MachineFormat.toFinTM` — the format parameter.
 * `Turing.oneTapeMachineFormat` — the one-work-tape instance.
 
@@ -101,6 +103,14 @@ namespace Turing
 states: the binary state count, the unary initial state, the table. [AB09, §1.4] -/
 def serializeK {k n : ℕ} (M : MultiTapeTM k Bool (Fin (n + 1))) : List Bool :=
   pairEncode n.bits (unaryFin M.q₀ ++ tableBitsK M.tr)
+
+/-- **The serialization as an equation** (the specification API, user 2026-10-16): the doubled
+binary state count, the separator, the unary initial state, then the table. Consumers read the
+captured serialization through this equation (with `Turing.pairEncode_eq` and
+`Turing.unaryFin_eq`), not by unfolding `Turing.serializeK`. -/
+theorem serializeK_eq {k n : ℕ} (M : MultiTapeTM k Bool (Fin (n + 1))) :
+    serializeK M = pairEncode n.bits (unaryFin M.q₀ ++ tableBitsK M.tr) :=
+  rfl
 
 /-- The table skipper of the `k`-record grammar: `n + 1` states of `3^(k+1)`
 records each. [AB09, §1.4] -/
