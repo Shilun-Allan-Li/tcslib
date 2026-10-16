@@ -1476,8 +1476,12 @@ The route decisions of 2026-10-12 (design §16b) add three work items, numbered 
         - **Round 2 pushed:** `lean/spec-api` `52965dc9` applies the review's patches unchanged
           (they supersede the maintainer's draft). `caa93c12` then merges the tip, with #114 and
           #115.
-        - The replay `replay-lapi2.sh` (85 modules, from `oleans-lg4p`) is ready for the user.
-          Its log goes into the round-2 bundle (pack `audits/spec-api-r2-pack.md`).
+        - **The replay passed (user, 2026-10-16):** `replay-lapi2.sh`, 85 of 85, 0 failed. The
+          sorry counts equal round 1's, except `StepBlockForward`, 1 → 0 (#114). The snapshot
+          `oleans-lapi2` is the merged head `caa93c12`, which is the tip plus #112.
+        - **Round-2 gate staged:** `infra_local/gate-dispatches/31-spec-api-r2-gate/`, bundle
+          SHA-256 `a82bd16a…710a` (78 sections; Lean `caa93c12`, other `a8d25f5b`). Pack
+          `audits/spec-api-r2-pack.md`. Not yet dispatched.
       - **#116's gate returned (user, 2026-10-16): FAIL, 0/2/3/0** (`audits/core-api-findings.md`,
         untracked until resolved).
         - Major 1: `cleanTM`'s initialization.
