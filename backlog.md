@@ -673,6 +673,8 @@ window.*
     `exists_canonStripTM` ← `canonPatchWord` is gone and no pair is new.
   - **Pre-ship:** every inherited probe passes. Note 50 and the headline reach `sorryAx` only
     through the two frozen stubs (the read-only walk). Order list 100 modules; base sorry set 46.
+  - **Dispatched (2026-10-15)**: brief attachment SHA-256 `ecf6553c…cac5`, the addendum
+    `a25474c5…`; branch `fill/b5a-canon-cont5`; delivery `fill-b5a-canon-cont5.zip`.
 
 ### ARM-1: duplication in the received ARM-extensions code (from the ARM fill gate, 2026-10-14)
 
@@ -1225,8 +1227,10 @@ The route decisions of 2026-10-12 (design §16b) add three work items, numbered 
       Both files have 0 sorry, standard axioms, 0 new warnings and no statement change. The v3
       screen goes from 384 to 369 pairs. **User (2026-10-15):** factor the Zone pairs and
       approve the two Catalog idiom pairs; then approve the one remaining Zone pair (54%, 314
-      chars, the successor of a base pair). Replay: 87 modules from `oleans-lcanon4`. Then the G2
-      fill gate;
+      chars, the successor of a base pair). Replay: 87 modules from `oleans-lcanon4`.
+      **Landed (2026-10-15, PR #108 as `b6e0344c`; replay 87 of 87, 0 errors, at `a9ee4701`;
+      snapshot `oleans-lg2` for the tip `b6e0344c`).** The only sorry counts that moved:
+      `Build/Catalog` 2 to 0 and `Build/Zone` 1 to 0. Next: the G2 fill gate (folder 27);
     - G4's host first (obligation 3): identify the public host for the two-tape scratch and
       ruler layout, or gate a missing one, before G4's fill brief. **Surveyed (2026-10-15;
       `audits/evidence/s13d/g4-hosts/G4-HOSTS-SURVEY.md`):** every host is public (round

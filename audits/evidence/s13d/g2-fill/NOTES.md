@@ -10,7 +10,8 @@ finishes, then PR"). The PR is #108, branch `lean/g2-fill`. It has two commits:
 - `a9ee4701`, the Zone factoring the user chose after the first screen ("Zone now, approve
   Catalog", 2026-10-15; §3).
 
-Next comes the G2 fill gate.
+It merged on 2026-10-15 as `b6e0344c`, after the user's replay (87 of 87, 0 errors; §5). Next
+comes the G2 fill gate.
 
 ## 0. Base, snapshot, tools
 
@@ -147,3 +148,14 @@ Expected result:
 - `Build/Catalog`: 2 sorry warnings to 0;
 - `Build/Zone`: 1 to 0;
 - the other 85 modules: as in the replays of #106 and #107.
+
+**Replay result** (run by the user at the PR head `a9ee4701`; `gate/replay-lg2.log`, script
+`gate/replay-lg2.sh`): 87 of 87 modules, 0 errors. The only sorry counts that moved are
+`Build/Catalog` (2 to 0) and `Build/Zone` (1 to 0), as expected. Merged as `b6e0344c`, which is
+Lean-identical to the replayed head; the snapshot `oleans-lg2` covers it.
+
+## 6. The gate folder (`gate/`)
+
+`Catalog.base.lean.txt` and `Zone.base.lean.txt` are the two files at the PR's parent `83a463ee`.
+`pr108.patch` is the PR's diff (`git diff 83a463ee a9ee4701` on the two files). The replay script
+and its log are also there.
