@@ -1489,7 +1489,20 @@ The route decisions of 2026-10-12 (design §16b) add three work items, numbered 
         - Minor 3: the bundle's consumer files predate #115.
         - Minors 4 and 5: the records.
 
-        The review sub-agent is verifying them.
+        - **Reviewed:** all five findings are true, at the auditor's severities
+          (`audits/evidence/core-api/r2/gate-review.md`; resolutions `audits/core-api-resolutions.md`).
+          Finding 1's proposed home, `Machines/CleanSweep`, is Hydroxyi's. The fix is instead a
+          generic restart pair in campaign-owned `Finite.lean` (`runFrom_with_q₀`,
+          `initCfg_with_q₀`), and U2-S restarts the cleaned canonizer through `cleanTM_run` (the
+          U2-S draft is updated).
+        - **Round 2 pushed:** `lean/core-api`:
+          - `f2e0f3d7`: the review's patches, unchanged;
+          - `395771bc`: the tip merged in;
+          - `93c4c630`: #112's round 2 merged in, stacked and chained as for #112 and #113.
+            **#112 merges first.**
+        - The replay `replay-lcapi.sh` (320 modules, from `oleans-lapi2`) is ready for the user.
+          Round-2 pack: `audits/core-api-r2-pack.md`. The bundle is built after the replay,
+          with its log.
       - **#114 and #115 merged (user, 2026-10-16; `a2b834b3`, `c451e358`).** H2-F is complete
         (`exists_forwardLoopTM` proved; the §14 H2 row is updated), and G4's partial has landed.
         The library's snapshot for the tip is `oleans-lg4p`; it was built on #112's tree, which
