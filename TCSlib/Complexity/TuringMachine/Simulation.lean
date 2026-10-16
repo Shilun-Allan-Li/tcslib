@@ -60,6 +60,10 @@ gadget needs.
   and an exact `|y| + 2` rewind-and-dispatch ledger. These extend the scope of
   the native-input embeddings above without changing their statements.
 
+**The specification API** (user, 2026-10-16): the fields of the buffered composite's two
+configuration shapes, `Turing.FinTM.bufferedFirstCfg_*` and `bufferedSecondCfg_*`, as
+equations.
+
 ## References
 
 * [AB09] S. Arora, B. Barak, *Computational Complexity: A Modern Approach*,
@@ -858,6 +862,10 @@ lemma bufferedFirstCfg_run (M₁ M₂ : FinTM Bool) {x : List Bool}
     rw [MultiTapeTM.runFrom_succ_eq_step', ih (fun s hs => h s (by omega)),
       bufferedFirstCfg_step M₁ M₂ _ (h t (by omega)), MultiTapeTM.runFrom_succ_eq_step']
 
+/-! The specification API (user, 2026-10-16): `Turing.FinTM.bufferedFirstCfg`'s fields as
+equations, without the `simp` attribute. -/
+attribute [simps (config := { isSimp := false })] bufferedFirstCfg
+
 /-- Embed a configuration on virtual input `y` while the physical input remains
 `x`. The buffer head represents virtual position minus one. The left block and
 native input head retain arbitrary inactive contents from phase one. -/
@@ -870,6 +878,10 @@ def bufferedSecondCfg (M₁ M₂ : FinTM Bool) {x y : List Bool}
   workTapes := tapeBlocks tapes (bufferTape y) c.workTapes
   workTapePos := tapeBlocks heads ((c.inputPos.val : ℤ) - 1) c.workTapePos
   output := c.output
+
+/-! The specification API (user, 2026-10-16): `Turing.FinTM.bufferedSecondCfg`'s fields as
+equations, without the `simp` attribute. -/
+attribute [simps (config := { isSimp := false })] bufferedSecondCfg
 
 /-- One second-phase step simulates one native step, with a valid new arrival
 tag. The statement includes the absorbing halting case.
