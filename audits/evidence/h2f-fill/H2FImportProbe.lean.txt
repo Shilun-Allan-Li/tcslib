@@ -1,0 +1,55 @@
+import TCSlib.Complexity.TuringMachine.Build.StepBlockForward
+
+/-! H2-F fill (`Turing.StepBlock.exists_forwardLoopTM`): every public declaration the brief cites
+resolves from `Build/StepBlockForward`'s import context. -/
+
+open Turing
+
+-- The target and its encoding
+#check @Turing.StepBlock.exists_forwardLoopTM
+#check @Turing.StepBlock.forwardLoopCfg
+
+-- The step block (H2)
+#check @Turing.StepBlock.roundTM
+#check @Turing.StepBlock.roundTM_effect
+#check @Turing.StepBlock.roundTM_visited
+#check @Turing.StepBlock.roundTM_iterate
+#check @Turing.StepBlock.roundTM_firstExit_unique
+#check @Turing.StepBlock.Rep
+#check @Turing.StepBlock.summaryEmit
+#check @Turing.StepBlock.summaryEmit_none
+#check @Turing.StepBlock.summaryTape
+#check @Turing.StepBlock.summaryCells
+#check @Turing.StepBlock.exit
+#check @Turing.StepBlock.Ph
+#check @Turing.StepBlock.tableTape
+#check @Turing.StepBlock.outputSummary
+#check @Turing.tableBitsK
+#check @Turing.unaryFin
+
+-- The lockstep and the run calculus
+#check @Turing.Lockstep
+#check @Turing.Lockstep.runFrom
+#check @Turing.Lockstep.cut
+#check @Turing.Lockstep.locate
+#check @Turing.MultiTapeTM.runFrom_add
+#check @Turing.MultiTapeTM.runFrom_succ_eq_step'
+#check @Turing.MultiTapeTM.visitedByTapeHead_add_subset
+#check @Turing.MultiTapeTM.visitedByTapeHead_step_subset
+#check @Turing.MultiTapeTM.visitedByTapeHead
+
+-- Composition and leaves
+#check @Turing.phaseHostTM
+#check @Turing.phaseHostTM_run
+#check @Turing.seamCompTM
+#check @Turing.seamReleaseTM
+#check @Turing.seamReleaseTM_step_fresh
+#check @Turing.seamReleaseTM_step_inr
+#check @Turing.seamReleaseTM_runFrom_pos
+#check @Turing.seamReleaseTM_visitedByTapeHead
+#check @Turing.Cfg.mapState
+#check @Turing.tapeAction
+#check @Turing.inputMoveAction
+#check @Turing.step_of_tapeAction_move
+#check @Turing.step_of_tapeAction_write
+#check @Turing.step_of_inputMoveAction
