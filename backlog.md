@@ -1505,7 +1505,9 @@ The route decisions of 2026-10-12 (design §16b) add three work items, numbered 
         - **The replay passed (user, 2026-10-16):** `replay-lcapi.sh`, 320 of 320, 0 failed. The
           sorry counts equal a static count (94 in total). The snapshot `oleans-lcapi` is the
           stacked head `93c4c630` (the tip plus #112 plus #116).
-        - The round-2 gate is staged in folder 32 (pack `audits/core-api-r2-pack.md`).
+        - **The round-2 gate is staged:** `infra_local/gate-dispatches/32-core-api-r2-gate/`, bundle
+          SHA-256 `559c64bb…592b` (89 sections; Lean `93c4c630`, other `179db5b3`), pack
+          `audits/core-api-r2-pack.md`. Not yet dispatched.
       - **#114 and #115 merged (user, 2026-10-16; `a2b834b3`, `c451e358`).** H2-F is complete
         (`exists_forwardLoopTM` proved; the §14 H2 row is updated), and G4's partial has landed.
         The library's snapshot for the tip is `oleans-lg4p`; it was built on #112's tree, which
