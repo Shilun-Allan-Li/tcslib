@@ -1374,6 +1374,19 @@ The route decisions of 2026-10-12 (design §16b) add three work items, numbered 
           `Deterministic`. Next to add: `serializeK_eq`, after #113. It has its own gate, and its
           replay is about 320 modules (from `Configuration`).
         - U2-S's and F5's briefs (inputs measured at `c2897d7f`) wait for it.
+        - **PR #116 opened (overnight, 2026-10-16;** `lean/core-api`, head `2cdc026e`). Beyond the list
+          above, it adds:
+          - `serializeK_eq` (a CodeSimulator hunk apart from #113's);
+          - `Cfg.inputSymbol_of_zero`/`_of_end`, `Cfg.workTapeSymbols_eq`;
+          - `MultiTapeTM.initCfg_eq`.
+          Checks are clean. On the screen, the one changed pair is pre-existing, relocated by the
+          move (`roundTM_iterate` ← `visitedByTapeHead_step_subset`, 76% → 71%).
+          - **Its gate is staged, not dispatched:** `infra_local/gate-dispatches/30-core-api-gate/`,
+            bundle SHA-256 `0b8860d6…1a0e` (48 sections), pack `audits/core-api-pack.md`.
+          - Its replay (about 320 modules) waits until #112, #114 and #115 merge; the branch is
+            then brought up to date.
+          - The U2-S and F5 drafts now carry the new rule 10 and their API lemma lists (copies in
+            `audits/evidence/core-api/drafts/`).
       - **#112's gate dispatched (user, 2026-10-16):** `infra_local/gate-dispatches/29-spec-api-gate/`,
         bundle SHA-256 `91f96cf5…dca1` (52 sections). Lean comes from #112's head `28824c36`, now
         stacked on #113 (user: "stack and chain"); everything else from `2e4f414c`.
