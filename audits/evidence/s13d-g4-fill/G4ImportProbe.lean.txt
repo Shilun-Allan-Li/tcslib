@@ -1,0 +1,114 @@
+import TCSlib.Complexity.TuringMachine.Build.ZoneTape
+import TCSlib.Complexity.TuringMachine.Build.Contract.Basic
+import TCSlib.Complexity.TuringMachine.Build.Contract.Catalog
+import TCSlib.Complexity.TuringMachine.Build.Contract.Seam
+import TCSlib.Complexity.TuringMachine.Build.ZoneRebalance
+
+/-! §13d G4 fill: every public declaration the brief cites resolves from `Build/ZoneRebalance`'s
+import context with the two authorized imports (`Build/Contract/Catalog`, `Build/Contract/Seam`). -/
+
+open Turing
+
+-- The rows' data, endpoints, envelopes and frames
+#check @Turing.exists_zoneRebalanceTM
+#check @Turing.exists_zoneExtendTM
+#check @Turing.ZoneData
+#check @Turing.zoneRowPre
+#check @Turing.zoneRebalanceIndex
+#check @Turing.zoneRebalanceData
+#check @Turing.zoneExtendData
+#check @Turing.zoneRebalancePost
+#check @Turing.zoneExtendPost
+#check @Turing.zoneRowLo
+#check @Turing.zoneRowHi
+#check @Turing.zoneRowPre_rebalancePost
+#check @Turing.zoneRowPre_extendPost
+#check @Turing.zoneRebalancePost_state_done
+#check @Turing.zoneRebalanceData_of_short
+#check @Turing.zoneRebalanceIndex_extend_of_short
+#check @Turing.zoneRebalancePost_frames
+#check @Turing.zoneExtendPost_frames
+
+-- The pure zone layer
+#check @Turing.ZoneContents
+#check @Turing.ZoneContents.extend
+#check @Turing.zoneCapacity
+#check @Turing.zoneShiftIndex
+#check @Turing.zoneRebalance
+#check @Turing.zoneCascade
+#check @Turing.zoneCascadeRight
+#check @Turing.zoneCascadeLeft
+#check @Turing.zoneMove
+#check @Turing.zoneShiftInW
+#check @Turing.zoneShiftOutW
+#check @Turing.zoneSide_rebalance_right
+#check @Turing.zoneCascade_cost_le
+#check @Turing.zoneRebalance_frame
+
+-- The zoned carrier
+#check @Turing.ZoneSym
+#check @Turing.ZoneCell
+#check @Turing.zoneSlotOf
+#check @Turing.zoneSlotSet
+#check @Turing.zoneStart
+#check @Turing.zoneStart_succ
+#check @Turing.zoneStart_eq
+#check @Turing.zoneOwner
+#check @Turing.zoneCells
+#check @Turing.zonedTape
+#check @Turing.zonedTape_zero
+#check @Turing.zonedTape_right
+#check @Turing.zonedTape_left
+#check @Turing.zonedTape_right_sep
+#check @Turing.zonedTape_left_sep
+#check @Turing.zonedTape_blank_outside
+#check @Turing.zonedTape_right_word
+#check @Turing.zonedTape_left_word
+#check @Turing.zonedTape_update_slot
+#check @Turing.zonedTape_isSome
+#check @Turing.zonedTape_extend
+
+-- The rows as contracts (Build/Contract/Catalog, #108 and #109)
+#check @Turing.framedContract
+#check @Turing.sweepContract
+#check @Turing.seekPost
+#check @Turing.walkTM
+#check @Turing.walkTM_run_ofCfg
+#check @Turing.walkTM_contract
+#check @Turing.skipTM_contract
+#check @Turing.skipBackTM_contract
+#check @Turing.seekEndTM_contract
+#check @Turing.seekStartTM_contract
+#check @Turing.scanTM_contract
+#check @Turing.scanResult
+#check @Turing.scanMap
+#check @Turing.scanShift
+#check @Turing.copyMapTM_contract
+#check @Turing.transferMapTM_contract
+#check @Turing.clearTM_contract
+#check @Turing.fieldsTape
+#check @Turing.fieldOffset
+#check @Turing.fieldsTape_cons_shift
+#check @Turing.fieldOffset_succ
+#check @Turing.joinFields
+
+-- Composition and iteration (Build/Contract/Basic, Build/Contract/Seam)
+#check @Turing.Contract
+#check @Turing.Contract.seq
+#check @Turing.Contract.inPhase
+#check @Turing.Contract.branch
+#check @Turing.Contract.trans
+#check @Turing.Contract.Traj
+#check @Turing.Contract.Frames
+#check @Turing.Contract.Traj.seq
+#check @Turing.Contract.Frames.seq
+#check @Turing.Round
+#check @Turing.Round.iterate
+#check @Turing.roundOrbit
+#check @Turing.RoundContract
+#check @Turing.RoundContract.release
+#check @Turing.ReturnContract.release
+#check @Turing.tapeAction
+#check @Turing.inputMoveAction
+#check @Turing.step_of_tapeAction_move
+#check @Turing.step_of_inputMoveAction
