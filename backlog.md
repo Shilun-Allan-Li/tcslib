@@ -1365,6 +1365,16 @@ The route decisions of 2026-10-12 (design §16b) add three work items, numbered 
         H2-F is in `Build/StepBlockForward`, and `CodeSimulator`/`StepBlockLoop` are untouched.
         The replay is 5 modules. The §14 H2 row now records H2-F (m2).
       - **Landed (2026-10-15, PR #102; replay 5 of 5 from #101's snapshot; snapshot `oleans-lu2`).**
+      - **H2-F's fill brief issued (2026-10-15): `briefs/h2f-fill-forwardloop.md`** (user: H2-F,
+        then U2-S and U2-U).
+        - **Inputs** `54fb8482`, merged in `409c47a4` (Lean content `e5fcd8ee`).
+        - **Pre-ship:** the import probe resolves 41 names with no import added.
+        - **Measured:** order list 79; base sorry set 37; v3 screen base on an 11-file population:
+          100 pairs, 2 of them `forwardLoopCfg`'s frozen 52% pairs with `Simulation`.
+        - **The composition** is fixed in the brief. The block's live exit is its entry, so the
+          block runs inside the release adapter `seamReleaseTM`, as one phase of the phase host,
+          beside a one-step forwarding leaf. The cost is `T + 3` (`T + 2` on a halting step), so
+          `C = 3`.
     - **`Turing.universal` at `k = 1`** fits U2-E's statement verbatim. Its re-derivation (U-1)
       waits for U2-E's fill, so a sorry-free theorem does not come to depend on a sorried one.
   - Forwarded to G5's statement phase: `two_work_tapes_run` per run, with the converse; its
