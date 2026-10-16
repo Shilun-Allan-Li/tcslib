@@ -1107,6 +1107,19 @@ The route decisions of 2026-10-12 (design §16b) add three work items, numbered 
     - **Landed (2026-10-15, PR #103; replay 80 of 80 from #102's snapshot; snapshot `oleans-lf1`
       for the tip `14c2fc19`).** The only sorry count that moved is `Build/StepClock`'s, 1 to 0.
       C1's step clock and F2's windowed runner now rest on no `sorry`.
+  - **F3's brief issued (2026-10-15): `briefs/b6-fill-configclock.md`** (Route A, the gate's ruling
+    now that the shared clock is filled).
+    - **Inputs** `8420da14`, on a side branch from `ef45bcb2`, merged in `7755f6a2`, so the worker's
+      base keeps the Lean content `b6e0344c` (#108 merged).
+    - **The clock:** all-`true` digits of width `c · (field total)`, written by a recommended
+      generic two-tape clock writer (stub, elaborated). It uses the mapped copy (#108) per field,
+      `skipTM`, one permitted one-cell move (no public row stops on a delimiter) and
+      `skipBackTM`. Then F2's runner, then `clearTM_run_ofCfg` on `halted`/`left`.
+    - **Pre-ship:** the overlay gives 2 sorry warnings (the stub and the target), no other. The
+      import probe (54 names) and the consumer probe (row 18's endpoint, after clearing the
+      radius word, meets the precondition) are clean.
+    - **Inputs measured:** order list 176 modules; base sorry set 28; v3 screen base on F2's
+      21-file population: 503 pairs.
   **Record-table row 18's fill brief issued (2026-10-14):** `briefs/w1-fill-recordtable-cont5.md`
   (inputs `8dfbc881`, at `1b6b972c`):
   - The route is a 14-phase chain over row 17 through R1. Three prescribed privates are proved;
