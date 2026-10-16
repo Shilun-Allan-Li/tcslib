@@ -1,0 +1,32 @@
+@Turing.ReturnContract.release_pre : ∀ {k : ℕ} {Γ S : Type} {M : Turing.MultiTapeTM k Γ S} {anchor : S} {ι : Type}
+  {x : List Γ} (C : Turing.ReturnContract M anchor ι x) (i : ι) (d : Turing.Cfg k Γ (Unit ⊕ S) x),
+  C.release.pre i d = C.pre i (Turing.Cfg.mapState (fun x => anchor) d)
+@Turing.ReturnContract.release_time : ∀ {k : ℕ} {Γ S : Type} {M : Turing.MultiTapeTM k Γ S} {anchor : S} {ι : Type}
+  {x : List Γ} (C : Turing.ReturnContract M anchor ι x) (i : ι) (d : Turing.Cfg k Γ (Unit ⊕ S) x),
+  C.release.time i d = C.time i (Turing.Cfg.mapState (fun x => anchor) d)
+@Turing.ReturnContract.release_post : ∀ {k : ℕ} {Γ S : Type} {M : Turing.MultiTapeTM k Γ S} {anchor : S} {ι : Type}
+  {x : List Γ} (C : Turing.ReturnContract M anchor ι x) (i : ι) (d : Turing.Cfg k Γ (Unit ⊕ S) x),
+  C.release.post i d = Turing.Cfg.mapState Sum.inr (C.post i (Turing.Cfg.mapState (fun x => anchor) d))
+@Turing.ReturnContract.release_lo : ∀ {k : ℕ} {Γ S : Type} {M : Turing.MultiTapeTM k Γ S} {anchor : S} {ι : Type}
+  {x : List Γ} (C : Turing.ReturnContract M anchor ι x) (i : ι) (d : Turing.Cfg k Γ (Unit ⊕ S) x) (a : Fin k),
+  C.release.lo i d a = C.lo i (Turing.Cfg.mapState (fun x => anchor) d) a
+@Turing.ReturnContract.release_hi : ∀ {k : ℕ} {Γ S : Type} {M : Turing.MultiTapeTM k Γ S} {anchor : S} {ι : Type}
+  {x : List Γ} (C : Turing.ReturnContract M anchor ι x) (i : ι) (d : Turing.Cfg k Γ (Unit ⊕ S) x) (a : Fin k),
+  C.release.hi i d a = C.hi i (Turing.Cfg.mapState (fun x => anchor) d) a
+@Turing.RoundContract.release_pre : ∀ {k : ℕ} {Γ S : Type} {M : Turing.MultiTapeTM k Γ S} {anchor : S}
+  {escape : Set (Option S)} {ι : Type} {x : List Γ} (R : Turing.RoundContract M anchor escape ι x) (i : ι)
+  (d : Turing.Cfg k Γ (Unit ⊕ S) x), R.release.pre i d = R.pre i (Turing.Cfg.mapState (fun x => anchor) d)
+@Turing.RoundContract.release_time : ∀ {k : ℕ} {Γ S : Type} {M : Turing.MultiTapeTM k Γ S} {anchor : S}
+  {escape : Set (Option S)} {ι : Type} {x : List Γ} (R : Turing.RoundContract M anchor escape ι x) (i : ι)
+  (d : Turing.Cfg k Γ (Unit ⊕ S) x), R.release.time i d = R.time i (Turing.Cfg.mapState (fun x => anchor) d)
+@Turing.RoundContract.release_post : ∀ {k : ℕ} {Γ S : Type} {M : Turing.MultiTapeTM k Γ S} {anchor : S}
+  {escape : Set (Option S)} {ι : Type} {x : List Γ} (R : Turing.RoundContract M anchor escape ι x) (i : ι)
+  (d : Turing.Cfg k Γ (Unit ⊕ S) x),
+  R.release.post i d = Turing.Cfg.mapState Sum.inr (R.post i (Turing.Cfg.mapState (fun x => anchor) d))
+@Turing.RoundContract.release_lo : ∀ {k : ℕ} {Γ S : Type} {M : Turing.MultiTapeTM k Γ S} {anchor : S}
+  {escape : Set (Option S)} {ι : Type} {x : List Γ} (R : Turing.RoundContract M anchor escape ι x) (i : ι)
+  (d : Turing.Cfg k Γ (Unit ⊕ S) x) (a : Fin k), R.release.lo i d a = R.lo i (Turing.Cfg.mapState (fun x => anchor) d) a
+@Turing.RoundContract.release_hi : ∀ {k : ℕ} {Γ S : Type} {M : Turing.MultiTapeTM k Γ S} {anchor : S}
+  {escape : Set (Option S)} {ι : Type} {x : List Γ} (R : Turing.RoundContract M anchor escape ι x) (i : ι)
+  (d : Turing.Cfg k Γ (Unit ⊕ S) x) (a : Fin k), R.release.hi i d a = R.hi i (Turing.Cfg.mapState (fun x => anchor) d) a
+exit=0

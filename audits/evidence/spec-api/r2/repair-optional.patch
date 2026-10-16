@@ -1,0 +1,49 @@
+diff --git a/TCSlib/Complexity/TuringMachine/Build/Contract/Basic.lean b/TCSlib/Complexity/TuringMachine/Build/Contract/Basic.lean
+index f2f8978..0c1cdaf 100644
+--- a/TCSlib/Complexity/TuringMachine/Build/Contract/Basic.lean
++++ b/TCSlib/Complexity/TuringMachine/Build/Contract/Basic.lean
+@@ -100,6 +100,9 @@ trajectories*, relations on the whole head vector.
+   `simps` without the `simp` attribute, so that consumers never unfold the definition.
+ * `Turing.Contract.ofSegment_pre`, `_time`, `_post`, `_lo`, `_hi` — the segment bridge's
+   fields, the same way (the specification API's gate, finding 1).
++* `Turing.RoundContract.returning_*`, `Turing.RoundContract.escaping_*`,
++  `Turing.ReturnContract.toRound_*`, `Turing.Contract.mapState_*`, `Turing.Contract.lockstep_*`
++  (`pre`, `time`, `post`, `lo`, `hi`) — the remaining constructors' fields, the same way.
+ 
+ ## References
+ 
+@@ -818,6 +821,10 @@ def escaping (R : RoundContract M anchor escape ι x) (ha : some anchor ∉ esca
+   cut i d hd hp := ((R.round i d hd hp.1).segment ha).2.1
+   env i d hd hp := R.env i d hd hp.1
+ 
++/-! The specification API: the two restrictions' data fields as equations, without the `simp`
++attribute. -/
++attribute [simps (config := { isSimp := false }) pre time post lo hi] returning escaping
++
+ end RoundContract
+ 
+ /-- **A returning contract is a round contract without escapes.** Its intermediate states are
+@@ -849,6 +856,10 @@ def ReturnContract.toRound {S : Type} {M : MultiTapeTM k Γ S} {anchor : S} {ι
+       refine ⟨s, rfl, fun h => C.cut i d hd hp u hu hut (by rw [hs, h]), fun h => h⟩
+   env := C.env
+ 
++/-! The specification API: the conversion's data fields as equations, without the `simp`
++attribute. -/
++attribute [simps (config := { isSimp := false }) pre time post lo hi] ReturnContract.toRound
++
+ /-! ## Hulls of round boxes along an orbit (MIG-0b)
+ 
+ The envelope of an iterated round contract: the tape-wise hull of the first `n` round boxes and
+@@ -1289,6 +1300,12 @@ def Contract.lockstep {k' : ℕ} {Γ' S S' : Type} {x : List Γ} {x' : List Γ'}
+     exact ⟨(Finset.inf'_le (fun u => blo (M.runFrom p.2 u) j) hmem).trans hb.1,
+       hb.2.trans (Finset.le_sup' (fun u => bhi (M.runFrom p.2 u) j) hmem)⟩
+ 
++/-! The specification API: the state renaming's and the lockstep transport's data fields as
++equations, without the `simp` attribute. (`Turing.Contract.mapState`'s line sits here, not after
++its definition, so that the copy-text screen does not attach it to that body.) -/
++attribute [simps (config := { isSimp := false }) pre time post lo hi]
++  Contract.mapState Contract.lockstep
++
+ /-- **Admissible starts of a lockstep transport** (the entry-compatibility condition, MIG-0b
+ gate, round 1, minor 3). If the encoding sends every source configuration at `entry` to a target
+ configuration at `entry'`, then every admissible source start `c` gives an admissible target start

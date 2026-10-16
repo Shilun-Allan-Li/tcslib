@@ -1,0 +1,24 @@
+import TCSlib.Complexity.TuringMachine.Build.Contract.Catalog
+
+/-! Review probe (spec-API gate, finding 2): reading the mapped copy's endpoint cells at an
+admissible start with the published API only (no new lemma): the contract's `run` field, the
+generated `_time`/`_pre` equations, and the public framed theorem `copyMapTM_run_ofCfg`. -/
+
+open Turing
+
+example {k : ℕ} {Γ Δ : Type} (src dst : Fin k) (hne : src ≠ dst) (extract : Γ → Δ)
+    (merge : Option Γ → Δ → Γ) (x w : List Γ) (d : Cfg k Γ SweepPhase x)
+    (hd : d.state = some SweepPhase.sweep)
+    (hp : (copyMapTM_contract src dst hne extract merge x).pre w d) :
+    (copyMapTM_contract src dst hne extract merge x).post w d =
+      { d with
+        state := some SweepPhase.done
+        workTapes := fun j q =>
+          if j = dst ∧ d.workTapePos j ≤ q ∧ q < d.workTapePos j + (w.length : ℤ)
+            then (FinTM.bufferTape w (q - d.workTapePos j)).map
+              fun γ => merge (d.workTapes j q) (extract γ)
+          else d.workTapes j q } := by
+  rw [← (copyMapTM_contract src dst hne extract merge x).run w d hd hp,
+    copyMapTM_contract_time]
+  rw [copyMapTM_contract_pre] at hp
+  exact (copyMapTM_run_ofCfg src dst hne extract merge w d hd hp).1

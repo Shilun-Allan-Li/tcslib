@@ -1470,9 +1470,22 @@ The route decisions of 2026-10-12 (design §16b) add three work items, numbered 
         - Minor 4: two docstrings use the bare-label style.
         - Note 5: the replay log was not in the bundle.
 
-        The review sub-agent is verifying the findings. Round 2 then repairs #112, re-replays it
-        and re-gates it. The round-2 edits are drafted and elaborate cleanly (local,
-        `scratchpad/api/r2/mkapi-r2.py`); they wait for the review.
+        - **Reviewed:** all five findings are true, and finding 2 is downgraded to minor
+          (`audits/evidence/spec-api/r2/gate-review.md`; resolutions in
+          `audits/spec-api-resolutions.md`).
+        - **Round 2 pushed:** `lean/spec-api` `52965dc9` applies the review's patches unchanged
+          (they supersede the maintainer's draft). `caa93c12` then merges the tip, with #114 and
+          #115.
+        - The replay `replay-lapi2.sh` (85 modules, from `oleans-lg4p`) is ready for the user.
+          Its log goes into the round-2 bundle (pack `audits/spec-api-r2-pack.md`).
+      - **#116's gate returned (user, 2026-10-16): FAIL, 0/2/3/0** (`audits/core-api-findings.md`,
+        untracked until resolved).
+        - Major 1: `cleanTM`'s initialization.
+        - Major 2: `FinTM.ComputesFunInTime`.
+        - Minor 3: the bundle's consumer files predate #115.
+        - Minors 4 and 5: the records.
+
+        The review sub-agent is verifying them.
       - **#114 and #115 merged (user, 2026-10-16; `a2b834b3`, `c451e358`).** H2-F is complete
         (`exists_forwardLoopTM` proved; the §14 H2 row is updated), and G4's partial has landed.
         The library's snapshot for the tip is `oleans-lg4p`; it was built on #112's tree, which
