@@ -1043,6 +1043,13 @@ The route decisions of 2026-10-12 (design §16b) add three work items, numbered 
     - F6: `space_universal`.
   - **Later, H,** the headline region of `Hierarchy`.
   - **Critical path to `space_hierarchy`:** F1 → F2 → F3 → H, with F4 alongside.
+  - **User (2026-10-15), the remaining batches:**
+    - **F4** (`U₀`) is the `k = 1` case of U2's statements (#102). Brief H2-F
+      (`StepBlock.exists_forwardLoopTM`) next, then U2-S and U2-U; `U₀` follows as their `k = 1`
+      corollaries (the U2 design's decision (a)).
+    - **Imports** (fill plan decisions 3 and 4): each brief authorizes exactly its imports as the
+      worker's first edit. F5: `Build/Contract/Basic` and `Build/Seam` in `InputDevice`. F6 and H:
+      the union, with H after F6 integrates.
   - **Briefs `b6-fill-stepclock.md` (F1) and `b6-fill-windowrun.md` (F2) are issued.**
   - **Dedup, for the dedup window:** the public `wordPatch` has the same definition as
     `CounterLoop`'s private `counterPatch`, which the screen misses. `counter_debit` retires onto
