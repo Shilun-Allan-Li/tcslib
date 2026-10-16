@@ -67,3 +67,41 @@ private changed: []
 # chunk of `initCfg` used to end with the next declaration's `@[simp]` line, and `initCfg_eq` is
 # now inserted between them. `git diff -U1 62fa2330 -- Deterministic.lean` shows `initCfg`'s
 # text unchanged (only insertions around it).
+
+## The zone layer and the docstring rewrites (#116 head d5255232 against 84acb1f7)
+== Zone
+public added: ['ZoneContents.words_false', 'ZoneContents.words_true', 'zoneBase_eq', 'zoneCascadeLeft_eq', 'zoneCascadeRight_eq', 'zoneCascade_false', 'zoneCascade_true', 'zoneIndex_eq', 'zoneMove_false', 'zoneMove_true', 'zoneRebalance_of_lt', 'zoneShiftInW_eq', 'zoneShiftIndex_eq_findIdx', 'zoneShiftOutW_eq', 'zoneSide_eq', 'zoneSlot_of_le', 'zoneSlot_of_lt', 'zoneStepPair_eq', 'zoneTrackTape_of_neg', 'zoneTrackTape_of_pos', 'zoneTrackTape_zero']
+public removed: []
+UNAUTHORIZED BODY CHANGE: zoneCapacity_eq
+private removed: []
+private added: []
+private changed: []
+== ZoneTape
+public before/after: 37 48 private before/after: 0 0
+public added: ['zoneCellAt_eq', 'zoneCellOfCell_inl', 'zoneCellOfCell_inr', 'zoneCellOfCell_none', 'zoneCells_eq', 'zoneOwner_eq', 'zoneSlotOf_inl', 'zoneSlotOf_inr', 'zoneSlotSet_eq', 'zonedTape_of_neg', 'zonedTape_of_pos']
+public removed: []
+private removed: []
+private added: []
+private changed: []
+== StepClock
+public removed: []
+UNAUTHORIZED BODY CHANGE: wordPatch_of_mem
+UNAUTHORIZED BODY CHANGE: wordPatch_of_not_mem
+private removed: []
+private added: []
+private changed: []
+== Configuration
+UNAUTHORIZED BODY CHANGE: Cfg.inputSymbol_of_end
+UNAUTHORIZED BODY CHANGE: Cfg.inputSymbol_of_zero
+UNAUTHORIZED BODY CHANGE: Cfg.workTapeSymbols_eq
+private removed: []
+private added: []
+private changed: []
+== Deterministic
+public added: []
+public removed: []
+UNAUTHORIZED BODY CHANGE: initCfg_eq
+private removed: []
+private added: []
+private changed: []
+Annotation (maintainer): the five BODY CHANGE flags (zoneCapacity_eq, wordPatch_of_mem, wordPatch_of_not_mem, Cfg.inputSymbol_of_zero/_of_end, Cfg.workTapeSymbols_eq, initCfg_eq) are docstring rewrites only (each docstring now states its formula); git diff -U0 shows no statement or proof line changed. Zone/ZoneTape: publics added only.

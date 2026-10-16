@@ -1400,6 +1400,19 @@ The route decisions of 2026-10-12 (design §16b) add three work items, numbered 
           are to add a zone API to #116 before its gate, to make a separate zone-API PR with its
           own gate, or to carve out an exception for the zone layer. That is a design ruling, so
           the maintainer stopped there.
+        - **Ruled (user, 2026-10-16): option (a), the zone API joins #116 before its gate.**
+          Applied as #116's fifth commit `d5255232`. The full inventory counts 35 definitions:
+          - 3 need no lemma (`ZoneCell`, `ZoneSym`, the structure `ZoneContents`);
+          - 5 were already covered (`zoneCapacity`, `zoneStart`, `zoneOwner`, `zoneIndex`,
+            `zoneShiftIndex`);
+          - the other 27 now have equations covering every input (32 hand-written lemmas, 24
+            `simps` field equations).
+
+          The same commit rewrites six bare-label docstrings to state their formulas (#112's
+          finding 4, same style). The elaboration is clean (Zone and ZoneTape: 0 errors, 0
+          warnings), with standard axioms only, the lint unchanged and the freeze adds only. The
+          ten-file screen goes 462 → 468 declarations and 103 → 103 pairs, with no new copy. The
+          gate was re-staged (bundle rebuilt) and is not yet dispatched.
         - **Drafts (not issued):** `audits/evidence/drafts/` holds the F3 continuation (on the new
           rule, citing #112's lemmas), cont6 (the adapter authorized; the order list includes
           `ClassNP/TMSAT`), U2-S and F5.
@@ -1413,6 +1426,22 @@ The route decisions of 2026-10-12 (design §16b) add three work items, numbered 
           89, failed 0. The per-module sorry counts match the static set at #112's tree (89 of
           89, 0 mismatches; 58 in total).
         - **#113 is ready to merge.** #112 waits for its gate.
+        - **#113 merged (user, 2026-10-16, `5eff4146`).** The chained replays passed: `replay-lh2f.sh`
+          4 of 4 (UniversalK has 3 sorries; StepBlockForward 0) and `replay-lg4p.sh` 2 of 2
+          (ZoneRebalance has 2). **#114 and #115 are ready to merge.** Each branch holds only its
+          own commits on the campaign branch, so neither carries #112. Each file was checked both
+          without #112 (the review elaborations, against `oleans-lwalk`) and with it (the
+          replays).
+      - **#112's gate returned (user, 2026-10-16): FAIL, 0/2/2/1** (`audits/spec-api-findings.md`).
+        - Major 1: field equations for `ReturnContract.release`, `RoundContract.release` and
+          `Contract.ofSegment`.
+        - Major 2: an application equation for `sweepMapWrite`.
+        - Minor 3: WindowClock's appendix still says unfolding is permitted.
+        - Minor 4: two docstrings use the bare-label style.
+        - Note 5: the replay log was not in the bundle.
+
+        The review sub-agent is verifying the findings. Round 2 then repairs #112, re-replays it
+        and re-gates it.
       - **User (2026-10-16), the primitives boundary:** workers read `MultiTapeTM.step`, `runFrom`,
         `Action.apply` and `Cfg.mapState` through the existing lemmas, and may unfold `step` and
         `Action.apply` only for a leaf defined in their own file.
