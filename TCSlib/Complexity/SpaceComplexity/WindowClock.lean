@@ -269,13 +269,13 @@ time is at most the clock value times `C · (L + |x| + 1)` (`Turing.counterLoop_
 **Fill appendix (B6-F3, partial).** The private `cw_` lemmas prove the all-true
 clock value, its numerical certification budget, and the time and head-envelope
 absorptions. The clock writer is not inserted, and this target remains open.
-Rule 10 prevents extracting the field-cell hypothesis from `RecordAt` by unfolding
-its definition; the pinned public contracts supply no eliminator. The numerical
-helpers keep the record-length formula and the position-width bound as explicit
-hypotheses for the same reason. See the delivery report's escalation E1.
-**Proof sketch (remaining).** After the missing public layout facts are supplied,
-compose the mapped-copy writer, F2's runner and the framed clear by the prescribed
-seams or phase host, then apply the private arithmetic lemmas to their ledgers.
+The numerical helpers take the record-length formula and the position-width bound as
+explicit hypotheses. The specification-level definitions `RecordAt`, `recordLength` and
+`posWidth` may be unfolded in this module (user ruling on the delivery's escalation E1,
+2026-10-15), which discharges them and gives the field cells from a `RecordAt` hypothesis.
+**Proof sketch (remaining).** Compose the mapped-copy writer, F2's runner and the framed
+clear by the prescribed seams or phase host, then apply the private arithmetic lemmas to
+their ledgers.
  -/
 theorem exists_configWindowRunnerTM (M : FinTM Bool) {T : Type} [Fintype T] [DecidableEq T]
     (upd : T → Option Bool → T) (hupd : ∀ τ, upd τ none = τ) :
