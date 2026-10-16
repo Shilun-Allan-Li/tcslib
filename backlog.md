@@ -677,6 +677,14 @@ window.*
     `a25474c5…`; branch `fill/b5a-canon-cont5`; delivery `fill-b5a-canon-cont5.zip`.
   - **Delivered (2026-10-15):** `fill-b5a-canon-cont5.zip`, SHA-256 `52e94a60…4dba0`. Queued for
     the same review sub-agent, after F3.
+  - **Reviewed (2026-10-16, screens pending):** ready to integrate as an escalation partial.
+    `exists_canonDecider` is proved modulo the open `exists_canonGrammarStage`. Its **E1 is real:**
+    the brief's pitfall that the record parser can be the counter-loop body without a wrapper is
+    false, since the parser never returns to its entry. The brief's order list also missed
+    `ClassNP/TMSAT`.
+    - **User (2026-10-16):** cont6 is authorized to use the worker's `phaseHostTM` adapter with a
+      fresh anchor (a composition over the phase host, not a new host). The partial lands once
+      its screens are clean.
 
 ### ARM-1: duplication in the received ARM-extensions code (from the ARM fill gate, 2026-10-14)
 
@@ -1147,6 +1155,11 @@ The route decisions of 2026-10-12 (design §16b) add three work items, numbered 
         bundle, plus the appendix updated for the ruling. Replay `replay-lf3p.sh` covers 2
         modules, after #110's (snapshot `oleans-lf3p` from `oleans-lpcanon`). Next: F3's
         continuation brief.
+      - **Landed (2026-10-16, PR #111; replay 2 of 2; snapshot `oleans-lf3p`, the tip `c2897d7f`).**
+      - **Superseded for the continuation (user, 2026-10-16, G4's E1 ruling, below):**
+        specification facts come from published equation lemmas, not from unfolding. F3's
+        three facts go into the same API PR: a `RecordAt` eliminator, `recordLength`'s formula
+        and `n + 2 ≤ 2^posWidth n`.
   **Record-table row 18's fill brief issued (2026-10-14):** `briefs/w1-fill-recordtable-cont5.md`
   (inputs `8dfbc881`, at `1b6b972c`):
   - The route is a 14-phase chain over row 17 through R1. Three prescribed privates are proved;
@@ -1320,6 +1333,14 @@ The route decisions of 2026-10-12 (design §16b) add three work items, numbered 
         addendum `a25474c5…`; branch `fill/s13d-g4`; delivery `fill-s13d-g4.zip`.
       - **Delivered (2026-10-15):** `fill-s13d-g4.zip`, SHA-256 `31b1ce63…28c6`. Queued third for
         the review sub-agent, after B6 F3 and the canonizer's continuation 5.
+      - **Reviewed (2026-10-16, screens pending):** partial 0 of 2. It adds 18 checked `zr_`
+        helpers, and every non-screen check passes. Its **E1 is real**, the same rule-10 class as
+        F3's: the layout data and every row contract's fields can only be read by unfolding.
+      - **User (2026-10-16): an API PR first**, not unfolding, and it is the rule for future
+        briefs. A maintainer PR adds public equation lemmas for the contracts used, the
+        `Contract` combinators' fields and the layout's base and boundary facts (with F3's
+        three). It has its own audit gate (the §13d PR-plus-gate rule). The replay is about 89
+        modules. The G4 partial lands once its screens are clean (user).
   **Two-tape universal (U2) designed (2026-10-14; `audits/evidence/u2/U2-design.md`, probes).**
   - **The design:** one `k`-generic construction on H2's step block. It has a new public host
     H2-F (the emitting round loop, in `Build/StepBlockLoop`), U2-S (the startup), U2-U
@@ -1406,6 +1427,9 @@ The route decisions of 2026-10-12 (design §16b) add three work items, numbered 
           exact formula gives suffix independence. Capture and placement go through R1′
           (`embedSilentRetTM`).
         - The U2-S brief is drafted. Its inputs are measured after #110 merges.
+        - **Landed (2026-10-16, PR #110; replay 101 of 101, failed 0; snapshot `oleans-lpcanon`).**
+          #110's own copy-text screen was still queued at the merge, behind the review
+          sub-agent's screens. Its result is recorded when it runs.
     - **`Turing.universal` at `k = 1`** fits U2-E's statement verbatim. Its re-derivation (U-1)
       waits for U2-E's fill, so a sorry-free theorem does not come to depend on a sorried one.
   - Forwarded to G5's statement phase: `two_work_tapes_run` per run, with the converse; its
