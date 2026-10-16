@@ -1277,7 +1277,9 @@ The route decisions of 2026-10-12 (design §16b) add three work items, numbered 
       fill brief uses the auditor's adjustment (one ruler-only step, then the walk over the
       tail). Minor 2 (the walk's sketch) is fixed in PR #109. **Landing PR #109** (`93ea007f`; it
       also carries the G2 fill gate's minors 1 and 3): replay 84 modules from `oleans-lg2`.
-      Next: G4's fill brief, after #109 lands.
+      **Landed (2026-10-15, PR #109 as `e5fcd8ee`; replay 84 of 84, 0 errors, at `93ea007f`, no
+      sorry count moved; snapshot `oleans-lwalk` for the tip `e5fcd8ee`).** Next: G4's fill
+      brief.
   **Two-tape universal (U2) designed (2026-10-14; `audits/evidence/u2/U2-design.md`, probes).**
   - **The design:** one `k`-generic construction on H2's step block. It has a new public host
     H2-F (the emitting round loop, in `Build/StepBlockLoop`), U2-S (the startup), U2-U
