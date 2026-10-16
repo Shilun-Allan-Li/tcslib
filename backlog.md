@@ -675,6 +675,8 @@ window.*
     through the two frozen stubs (the read-only walk). Order list 100 modules; base sorry set 46.
   - **Dispatched (2026-10-15)**: brief attachment SHA-256 `ecf6553c…cac5`, the addendum
     `a25474c5…`; branch `fill/b5a-canon-cont5`; delivery `fill-b5a-canon-cont5.zip`.
+  - **Delivered (2026-10-15):** `fill-b5a-canon-cont5.zip`, SHA-256 `52e94a60…4dba0`. Queued for
+    the same review sub-agent, after F3.
 
 ### ARM-1: duplication in the received ARM-extensions code (from the ARM fill gate, 2026-10-14)
 
@@ -1129,6 +1131,9 @@ The route decisions of 2026-10-12 (design §16b) add three work items, numbered 
       21-file population: 503 pairs.
     - **Dispatched (2026-10-15)**: brief attachment SHA-256 `6bf925d1…2980`, the addendum
       `a25474c5…`; branch `fill/b6-configclock`; delivery `fill-b6-configclock.zip`.
+    - **Delivered (2026-10-15):** `fill-b6-configclock.zip`, SHA-256 `73708719…d8bd`. Under review
+      by a review sub-agent (user, 2026-10-15: sub-agents are reserved for reviewing incoming fills
+      and audits).
   **Record-table row 18's fill brief issued (2026-10-14):** `briefs/w1-fill-recordtable-cont5.md`
   (inputs `8dfbc881`, at `1b6b972c`):
   - The route is a 14-phase chain over row 17 through R1. Three prescribed privates are proved;
