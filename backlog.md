@@ -1484,6 +1484,8 @@ The route decisions of 2026-10-12 (design §16b) add three work items, numbered 
           `r2/gate-review-r2.md`). The note asked for consumer-instantiation evidence; it is
           resolved by the review's `ConsumerProbe` (exit 0) and the copy-route probe's recorded
           exit. **PR #112 is ready to merge,** before #116.
+        - **#112 merged (user, 2026-10-16).** The tip's Lean equals `caa93c12`, so the tip's
+          snapshot is `oleans-lapi2`.
       - **#116's gate returned (user, 2026-10-16): FAIL, 0/2/3/0** (`audits/core-api-findings.md`,
         untracked until resolved).
         - Major 1: `cleanTM`'s initialization.
@@ -1507,7 +1509,7 @@ The route decisions of 2026-10-12 (design §16b) add three work items, numbered 
           stacked head `93c4c630` (the tip plus #112 plus #116).
         - **The round-2 gate is staged:** `infra_local/gate-dispatches/32-core-api-r2-gate/`, bundle
           SHA-256 `559c64bb…592b` (89 sections; Lean `93c4c630`, other `179db5b3`), pack
-          `audits/core-api-r2-pack.md`. Not yet dispatched.
+          `audits/core-api-r2-pack.md`. **Dispatched (user, 2026-10-16).**
       - **#114 and #115 merged (user, 2026-10-16; `a2b834b3`, `c451e358`).** H2-F is complete
         (`exists_forwardLoopTM` proved; the §14 H2 row is updated), and G4's partial has landed.
         The library's snapshot for the tip is `oleans-lg4p`; it was built on #112's tree, which
