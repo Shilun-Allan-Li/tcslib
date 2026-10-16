@@ -55,6 +55,10 @@ head, so the simulator reads and writes all `k` virtual heads in one step.
 * `Turing.zonedTape_homeWrite`, `Turing.zonedTape_extend`: what the home write and the extension
   change.
 * `Turing.zonedTape_injective`: the encoding is faithful.
+* The specification API (user, 2026-10-16), the definitions as equations:
+  `Turing.zoneSlotOf_inl`/`_inr`, `Turing.zoneCellOfCell_inr`/`_inl`/`_none`,
+  `Turing.zoneSlotSet_eq`, `Turing.zoneOwner_eq`, `Turing.zoneCells_eq`, `Turing.zoneCellAt_eq`,
+  `Turing.zonedTape_of_pos`/`_of_neg`.
 
 ## References
 
@@ -86,11 +90,37 @@ def zoneSlotOf {k : ℕ} (t : Fin k) : ZoneSym k → Option (Option Bool)
   | .inl _ => none
   | .inr c => c t
 
+/-- A binary symbol has `⊠` in every track's slot: `zoneSlotOf t (.inl b) = none`
+(the specification API, user 2026-10-16). -/
+theorem zoneSlotOf_inl {k : ℕ} (t : Fin k) (b : Bool) : zoneSlotOf t (.inl b) = none :=
+  rfl
+
+/-- A zone cell's track-`t` slot is its `t`-th entry: `zoneSlotOf t (.inr c) = c t`
+(the specification API, user 2026-10-16). -/
+theorem zoneSlotOf_inr {k : ℕ} (t : Fin k) (c : ZoneCell k) : zoneSlotOf t (.inr c) = c t :=
+  rfl
+
 /-- The zone cell a physical cell holds: its cell if it holds one, all `⊠` otherwise (a blank
 or a binary cell). -/
 def zoneCellOfCell {k : ℕ} : Option (ZoneSym k) → ZoneCell k
   | some (.inr c) => c
   | _ => fun _ => none
+
+/-- A physical cell holding a zone cell gives that cell: `zoneCellOfCell (some (.inr c)) = c`
+(the specification API, user 2026-10-16). -/
+theorem zoneCellOfCell_inr {k : ℕ} (c : ZoneCell k) : zoneCellOfCell (some (.inr c)) = c :=
+  rfl
+
+/-- A physical cell holding a binary symbol gives the all-`⊠` cell:
+`zoneCellOfCell (some (.inl b)) = fun _ => none` (the specification API, user 2026-10-16). -/
+theorem zoneCellOfCell_inl {k : ℕ} (b : Bool) :
+    zoneCellOfCell (k := k) (some (.inl b)) = fun _ => none :=
+  rfl
+
+/-- A blank physical cell gives the all-`⊠` cell: `zoneCellOfCell none = fun _ => none`
+(the specification API, user 2026-10-16). -/
+theorem zoneCellOfCell_none {k : ℕ} : zoneCellOfCell (k := k) none = fun _ => none :=
+  rfl
 
 /-- Overwrite track `t`'s slot of a physical cell, keeping its other tracks; a blank or binary
 cell is read as all `⊠` first. This is the `merge` of the per-track mapped sweeps (design §13d,
@@ -98,6 +128,13 @@ G2; `merge : Option Γ → Δ → Γ`, so that blank destinations are admitted).
 def zoneSlotSet {k : ℕ} (t : Fin k) (cell : Option (ZoneSym k)) (s : Option (Option Bool)) :
     ZoneSym k :=
   .inr (Function.update (zoneCellOfCell cell) t s)
+
+/-- Setting track `t`'s slot to `s` gives the zone cell of the old cell updated at `t`:
+`zoneSlotSet t cell s = .inr (Function.update (zoneCellOfCell cell) t s)`
+(the specification API, user 2026-10-16). -/
+theorem zoneSlotSet_eq {k : ℕ} (t : Fin k) (cell : Option (ZoneSym k)) (s : Option (Option Bool)) :
+    zoneSlotSet t cell s = .inr (Function.update (zoneCellOfCell cell) t s) :=
+  rfl
 
 /-- Setting a track's slot sets that slot. -/
 @[simp] theorem zoneSlotOf_slotSet_self {k : ℕ} (t : Fin k) (cell : Option (ZoneSym k))
@@ -154,6 +191,13 @@ have no owner. -/
 def zoneOwner (ℓ n : ℕ) : Option (Fin ℓ) :=
   Fin.find fun i : Fin ℓ => zoneStart i ≤ n ∧ n < zoneStart i + zoneCapacity i
 
+/-- The owner of distance `n` is the first laid-out zone whose cells contain `n`:
+`zoneOwner ℓ n = Fin.find (fun i => zoneStart i ≤ n ∧ n < zoneStart i + zoneCapacity i)`
+(the specification API, user 2026-10-16). -/
+theorem zoneOwner_eq (ℓ n : ℕ) :
+    zoneOwner ℓ n = Fin.find fun i : Fin ℓ => zoneStart i ≤ n ∧ n < zoneStart i + zoneCapacity i :=
+  rfl
+
 /-- A cell inside a laid-out zone is owned by that zone.
 
 **Proof sketch.** `Fin.find_eq_some_iff`; minimality holds because another owner `j` would
@@ -206,11 +250,29 @@ def zoneCells {k ℓ : ℕ} (side : Bool) (z : Fin k → ZoneContents ℓ) (i : 
     List (ZoneSym k) :=
   (List.range (zoneCapacity i)).map fun p => .inr fun t => ((z t).words side i)[p]?
 
+/-- Zone `i`'s cells are its `zoneCapacity i` offsets, offset `p` holding in track `t`'s slot
+cell `p` of that track's zone word, or `⊠` beyond it:
+`zoneCells side z i = (List.range (zoneCapacity i)).map (fun p => .inr fun t => …[p]?)`
+(the specification API, user 2026-10-16). -/
+theorem zoneCells_eq {k ℓ : ℕ} (side : Bool) (z : Fin k → ZoneContents ℓ) (i : Fin ℓ) :
+    zoneCells side z i =
+      (List.range (zoneCapacity i)).map fun p => .inr fun t => ((z t).words side i)[p]? :=
+  rfl
+
 /-- The cell at distance `n ≥ 1` from home on one side: the matching zone cell when a laid-out
 zone owns it, blank otherwise (a separator, or beyond the layout). -/
 def zoneCellAt {k ℓ : ℕ} (side : Bool) (z : Fin k → ZoneContents ℓ) (n : ℕ) :
     Option (ZoneSym k) :=
   (zoneOwner ℓ n).map fun i => .inr fun t => ((z t).words side i)[n - zoneStart i]?
+
+/-- The cell at distance `n` is, for its owner `i`, the zone cell holding in track `t`'s slot
+cell `n - zoneStart i` of that track's zone word, and blank without an owner:
+`zoneCellAt side z n = (zoneOwner ℓ n).map (fun i => .inr fun t => …[n - zoneStart i]?)`
+(the specification API, user 2026-10-16). -/
+theorem zoneCellAt_eq {k ℓ : ℕ} (side : Bool) (z : Fin k → ZoneContents ℓ) (n : ℕ) :
+    zoneCellAt side z n =
+      (zoneOwner ℓ n).map fun i => .inr fun t => ((z t).words side i)[n - zoneStart i]? :=
+  rfl
 
 /-- **The zoned tape** (design §13d, G3): the physical work tape that represents `k` tracks of
 zone contents on `ℓ` laid-out levels. Cell `0` is the home, holding every track's virtual
@@ -224,6 +286,20 @@ def zonedTape {k ℓ : ℕ} (z : Fin k → ZoneContents ℓ) (c : ℤ) : Option 
   if c = 0 then some (.inr fun t => some (z t).home)
   else if 0 < c then zoneCellAt true z c.toNat
   else zoneCellAt false z (-c).toNat
+
+/-- A positive cell of the zoned tape is the right side's cell at that distance:
+`zonedTape z c = zoneCellAt true z c.toNat` when `0 < c`
+(the specification API, user 2026-10-16). -/
+theorem zonedTape_of_pos {k ℓ : ℕ} (z : Fin k → ZoneContents ℓ) {c : ℤ} (hc : 0 < c) :
+    zonedTape z c = zoneCellAt true z c.toNat := by
+  simp only [zonedTape, if_neg (show c ≠ 0 by omega), if_pos hc]
+
+/-- A negative cell of the zoned tape is the left side's cell at that distance:
+`zonedTape z c = zoneCellAt false z (-c).toNat` when `c < 0`
+(the specification API, user 2026-10-16). -/
+theorem zonedTape_of_neg {k ℓ : ℕ} (z : Fin k → ZoneContents ℓ) {c : ℤ} (hc : c < 0) :
+    zonedTape z c = zoneCellAt false z (-c).toNat := by
+  simp only [zonedTape, if_neg (show c ≠ 0 by omega), if_neg (show ¬ 0 < c by omega)]
 
 /-- A zone has exactly `zoneCapacity i` cells. -/
 @[simp] theorem zoneCells_length {k ℓ : ℕ} (side : Bool) (z : Fin k → ZoneContents ℓ)

@@ -76,15 +76,16 @@ cell is `ct`'s. -/
 def wordPatch {Γ : Type*} (ct : ℤ → Option Γ) (cp : ℤ) (u : List Γ) : ℤ → Option Γ :=
   fun q => if cp ≤ q ∧ q < cp + (u.length : ℤ) then FinTM.bufferTape u (q - cp) else ct q
 
-/-- **A patched cell inside the word** (the specification API, user 2026-10-16): it holds the
-word's letter. -/
+/-- A cell inside the patched interval holds the word's letter at its offset:
+`wordPatch ct cp u q = FinTM.bufferTape u (q - cp)` when `cp ≤ q < cp + u.length`
+(the specification API, user 2026-10-16). -/
 theorem wordPatch_of_mem {Γ : Type*} (ct : ℤ → Option Γ) (cp : ℤ) (u : List Γ) {q : ℤ}
     (h₁ : cp ≤ q) (h₂ : q < cp + (u.length : ℤ)) :
     wordPatch ct cp u q = FinTM.bufferTape u (q - cp) := by
   simp [wordPatch, h₁, h₂]
 
-/-- **A patched cell outside the word** (the specification API, user 2026-10-16): it is the
-original tape's. -/
+/-- A cell outside the patched interval is the original tape's: `wordPatch ct cp u q = ct q`
+(the specification API, user 2026-10-16). -/
 theorem wordPatch_of_not_mem {Γ : Type*} (ct : ℤ → Option Γ) (cp : ℤ) (u : List Γ) {q : ℤ}
     (h : ¬(cp ≤ q ∧ q < cp + (u.length : ℤ))) : wordPatch ct cp u q = ct q := by
   simp only [wordPatch, if_neg h]

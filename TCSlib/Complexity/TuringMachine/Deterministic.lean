@@ -164,7 +164,8 @@ def outputSymbol (cfg : Cfg k Symbol State input) : Option Symbol :=
 @[simp]
 def initCfg (input : List Symbol) : Cfg k Symbol State input := Cfg.init tm.q₀ input
 
-/-- **The initial configuration as an equation** (the specification API, user 2026-10-16). -/
+/-- A machine's initial configuration on `input` is `Cfg.init` at its start state:
+`tm.initCfg input = Cfg.init tm.q₀ input` (the specification API, user 2026-10-16). -/
 theorem initCfg_eq (input : List Symbol) : tm.initCfg input = Cfg.init tm.q₀ input :=
   rfl
 
