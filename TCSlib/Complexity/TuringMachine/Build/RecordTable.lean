@@ -99,6 +99,8 @@ already-landed `Turing.RecordValid.joinFields_length` is admission-free as well.
   (proved; fill continuation 5).
 * `Turing.exists_recordValidTM`, `Turing.exists_recordNextTM` — the remaining
   record rows of R8.7 (statements).
+* `Turing.recordLength_eq` — the record length's formula, the specification API (user,
+  2026-10-16).
 
 ## References
 
@@ -151,6 +153,12 @@ with `k` tapes, input length `n` and radius `s` — `k` tape fields of `2s + 1`
 cells, `posWidth n` position digits, the state and tag cells, and `k + 2`
 separators. -/
 def recordLength (k n s : ℕ) : ℕ := k * (2 * s + 1) + posWidth n + k + 4
+
+/-- **The record length's formula** (the specification API, user 2026-10-16), so that
+consumers never unfold `Turing.recordLength`. -/
+theorem recordLength_eq (k n s : ℕ) :
+    recordLength k n s = k * (2 * s + 1) + posWidth n + k + 4 :=
+  rfl
 
 /-- **Every record has the record length** (design §12.8b). The layout of
 `Turing.cfgRecord s c τ` has length `Turing.recordLength k |x| s`, whatever the

@@ -75,6 +75,8 @@ this module is admitted.
   `Turing.exists_recordTestTM` — the record rows R8.7: one simulated step, record
   equality, and a test of the state and tag (fill-C continuation 3 status update:
   all three are proved).
+* `Turing.recordAt_iff`, `Turing.record_pos_lt` — reading a record and the position-width
+  bound, the specification API (user, 2026-10-16).
 
 ## References
 
@@ -161,8 +163,11 @@ theorem cfgRecord_length {k : ℕ} {Q T : Type} {x : List Bool} (s : ℕ) (c : C
     (τ : T) : (cfgRecord s c τ).length = k + 3 := by
   simp [cfgRecord]
 
-/-- Every native input position is strictly below the power of two specified by its width. -/
-private theorem record_pos_lt (n : ℕ) : n + 1 < 2 ^ posWidth n := by
+/-- Every native input position is strictly below the power of two specified by its width:
+`n + 2 ≤ 2 ^ posWidth n`. (Public since the specification API, user 2026-10-16.)
+
+**Proof sketch.** `posWidth n` is the bit length of `n + 1`, which is its `Nat.size`. -/
+theorem record_pos_lt (n : ℕ) : n + 1 < 2 ^ posWidth n := by
   unfold posWidth
   rw [Nat.size_eq_bits_len]
   exact Nat.lt_size_self _
@@ -358,6 +363,14 @@ def RecordAt {K : ℕ} {Γ S : Type*} {x : List Γ} (d : Cfg K Γ S x) (r : Fin 
     (fs : List (List Γ)) : Prop :=
   ∀ p : ℤ, -1 ≤ p → p ≤ ((joinFields fs).length : ℤ) →
     d.workTapes r (d.workTapePos r + p) = fieldsTape fs p
+
+/-- **Reading a record** (the specification API, user 2026-10-16): `Turing.RecordAt` as an
+equivalence, so that consumers read the cells of a record without unfolding the definition. -/
+theorem recordAt_iff {K : ℕ} {Γ S : Type*} {x : List Γ} (d : Cfg K Γ S x) (r : Fin K)
+    (fs : List (List Γ)) :
+    RecordAt d r fs ↔ ∀ p : ℤ, -1 ≤ p → p ≤ ((joinFields fs).length : ℤ) →
+      d.workTapes r (d.workTapePos r + p) = fieldsTape fs p :=
+  Iff.rfl
 
 /-! ### R8.7 — the record rows -/
 
