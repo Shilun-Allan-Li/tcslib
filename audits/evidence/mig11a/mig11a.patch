@@ -1,0 +1,456 @@
+From 08bcc57d4c83c1c08e088797c7707e8a2b3de63b Mon Sep 17 00:00:00 2001
+From: Seyoon Ragavan <complexzetaprime@gmail.com>
+Date: Fri, 16 Oct 2026 11:34:00 -0400
+Subject: [PATCH] MIG-11a: the row contracts MIG-12 composes (R3 copy, the
+ framed compare, the successful increment and decrement)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+- Build/Catalog: compareStop (the common prefix's length), with compareStop_eq,
+  compareStop_cons_cons, compareStop_spec, compareStop_unique, compareStop_le; the framed compare
+  at its exact time, compareTM_run_stop_ofCfg, of which compareTM_run_ofCfg is now a corollary
+  (statement unchanged).
+- Build/Contract/Catalog: copyTM_contract (with copyTM_contract_frames) and compareTM_contract
+  (exits both verdicts), with their simps field equations.
+- Build/Contract/Counter (new, beside CounterLoop): counterRowContract, the one constructor of a
+  successful counter row, and its instances incrementTM_contract and decrementTM_contract.
+- Build/Contract facade: imports and lists the new module.
+
+New definitions land with their lemmas (policy §1); no @[simp]; no statement changes.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+---
+ .../TuringMachine/Build/Catalog.lean          | 137 ++++++++++++++++--
+ .../TuringMachine/Build/Contract.lean         |   7 +-
+ .../TuringMachine/Build/Contract/Catalog.lean |  60 ++++++++
+ .../TuringMachine/Build/Contract/Counter.lean | 131 +++++++++++++++++
+ 4 files changed, 319 insertions(+), 16 deletions(-)
+ create mode 100644 TCSlib/Complexity/TuringMachine/Build/Contract/Counter.lean
+
+diff --git a/TCSlib/Complexity/TuringMachine/Build/Catalog.lean b/TCSlib/Complexity/TuringMachine/Build/Catalog.lean
+index 8c50e94d..4d5b414a 100644
+--- a/TCSlib/Complexity/TuringMachine/Build/Catalog.lean
++++ b/TCSlib/Complexity/TuringMachine/Build/Catalog.lean
+@@ -102,6 +102,11 @@ one framed contract and one trace serve them all.
+   `Turing.scanTM`, and the instance steps `Turing.scanKeep`,
+   `Turing.scanFold`, `Turing.scanMap`, `Turing.scanShift`,
+   `Turing.scanCarry`.
++* `Turing.compareStop` — the compare's stop, the length of the two words' common prefix
++  (MIG-11a, user 2026-10-16), with `Turing.compareStop_eq`, `Turing.compareStop_cons_cons`,
++  `Turing.compareStop_spec`, `Turing.compareStop_unique` and `Turing.compareStop_le`; the framed
++  compare at that exact time, `Turing.compareTM_run_stop_ofCfg`, of which
++  `Turing.compareTM_run_ofCfg` is now a corollary.
+ 
+ ## Main results
+ 
+@@ -858,6 +863,80 @@ private def catalogCompareR {Symbol : Type*} {x : List Symbol} (fst snd : Fin k)
+     state := some (.rewind v)
+     workTapePos := fun j => d.workTapePos j + if j = fst ∨ j = snd then (r : ℤ) - 1 else 0 }
+ 
++/-- **The compare's stop** (MIG-11a, user 2026-10-16): the number of leading positions at which `u`
++and `v` hold the same symbol, before the first position where they differ or either word ends,
++`compareStop u v = |takeWhile (fun p => p.1 = p.2) (zip u v)|`. The framed compare
++(`Turing.compareTM_run_stop_ofCfg`) reads exactly this many cells forward. -/
++def compareStop {Symbol : Type*} [DecidableEq Symbol] (u v : List Symbol) : ℕ :=
++  ((u.zip v).takeWhile fun p => decide (p.1 = p.2)).length
++
++/-- The compare's stop as an equation:
++`compareStop u v = ((u.zip v).takeWhile fun p => decide (p.1 = p.2)).length` (MIG-11a, user
++2026-10-16). -/
++theorem compareStop_eq {Symbol : Type*} [DecidableEq Symbol] (u v : List Symbol) :
++    compareStop u v = ((u.zip v).takeWhile fun p => decide (p.1 = p.2)).length :=
++  rfl
++
++/-- The stop on two nonempty words: one more than the tails' stop when the heads agree, `0`
++otherwise, `compareStop (a :: u) (b :: v) = if a = b then compareStop u v + 1 else 0` (MIG-11a, user
++2026-10-16). -/
++theorem compareStop_cons_cons {Symbol : Type*} [DecidableEq Symbol] (a b : Symbol)
++    (u v : List Symbol) :
++    compareStop (a :: u) (b :: v) = if a = b then compareStop u v + 1 else 0 := by
++  unfold compareStop
++  by_cases h : a = b <;> simp [List.zip_cons_cons, h]
++
++/-- **The stop's characterization** (MIG-11a, user 2026-10-16): below `compareStop u v` both words
++hold the same symbol, and at it they do not (they differ, or one has ended).
++
++**Proof sketch.** Induction on `u`: an empty word stops at `0`; two heads that agree add one to the
++tails' stop, and two that differ stop at `0`. -/
++theorem compareStop_spec {Symbol : Type*} [DecidableEq Symbol] (u v : List Symbol) :
++    (∀ r < compareStop u v, ∃ b, u[r]? = some b ∧ v[r]? = some b) ∧
++      ¬∃ b, u[compareStop u v]? = some b ∧ v[compareStop u v]? = some b := by
++  induction u generalizing v with
++  | nil => simp [compareStop]
++  | cons a u ih =>
++    cases v with
++    | nil => simp [compareStop]
++    | cons b v =>
++      rw [compareStop_cons_cons]
++      by_cases hab : a = b
++      · subst hab
++        obtain ⟨h1, h2⟩ := ih v
++        simp only [if_true]
++        refine ⟨fun r hr => ?_, ?_⟩
++        · cases r with
++          | zero => exact ⟨a, rfl, rfl⟩
++          | succ r => simpa using h1 r (by omega)
++        · simpa using h2
++      · simp only [hab, if_false]
++        refine ⟨fun r hr => absurd hr (Nat.not_lt_zero _), ?_⟩
++        rintro ⟨c, hc1, hc2⟩
++        simp at hc1 hc2
++        exact hab (hc1.trans hc2.symm)
++
++/-- **The stop is the unique such position** (MIG-11a, user 2026-10-16): a position below which both
++words hold the same symbol and at which they do not is `compareStop u v`.
++
++**Proof sketch.** By `Turing.compareStop_spec`, a smaller position contradicts its own second
++clause, and a larger one the stop's. -/
++theorem compareStop_unique {Symbol : Type*} [DecidableEq Symbol] {u v : List Symbol} {d : ℕ}
++    (h1 : ∀ r < d, ∃ b, u[r]? = some b ∧ v[r]? = some b)
++    (h2 : ¬∃ b, u[d]? = some b ∧ v[d]? = some b) : d = compareStop u v := by
++  obtain ⟨c1, c2⟩ := compareStop_spec u v
++  rcases Nat.lt_trichotomy d (compareStop u v) with h | h | h
++  · exact absurd (c1 d h) h2
++  · exact h
++  · exact absurd (h1 _ h) c2
++
++/-- The stop is at most either word's length: `compareStop u v ≤ min |u| |v|` (MIG-11a, user
++2026-10-16). -/
++theorem compareStop_le {Symbol : Type*} [DecidableEq Symbol] (u v : List Symbol) :
++    compareStop u v ≤ min u.length v.length := by
++  unfold compareStop
++  exact (List.takeWhile_sublist _).length_le.trans (by simp)
++
+ /-- Comparison's exact framed invariant at a first differing or blank position.
+ Proof sketch: the delimited common prefix supplies both passes' reads. The stopping
+ condition determines the turn and verdict, and both heads return to their entry positions. -/
+@@ -11881,6 +11960,47 @@ theorem fieldsTape_field {Γ : Type*} (fs : List (List Γ)) (j : ℕ) (hj : j <
+ 
+ /-! ### R8.1 — the framed compare -/
+ 
++/-- **R8.1, compare, framed, at its exact time** (MIG-11a, user 2026-10-16): as
++`Turing.compareTM_run_ofCfg`, with the stop named. From the working phase, with `u` and `v`
++delimited at the heads of `fst` and `snd`, the compare reaches `done (decide (u = v))` at exactly
++`2 · compareStop u v + 2`, with no verdict earlier and nothing written; the two heads stay within
++`[pos - 1, pos + compareStop u v]` and every other head is fixed.
++
++**Proof sketch.** The shared framed trace at the stop of `catalog_compare_stop`, which is
++`Turing.compareStop u v` by `Turing.compareStop_unique`. -/
++theorem compareTM_run_stop_ofCfg {Symbol : Type*} [DecidableEq Symbol] {k : ℕ}
++    {x : List Symbol} (fst snd : Fin k) (hne : fst ≠ snd) (u v : List Symbol)
++    (d : Cfg k Symbol FlagPhase x) (hstate : d.state = some FlagPhase.run)
++    (hu : ∀ p : ℤ, -1 ≤ p → p ≤ (u.length : ℤ) →
++      d.workTapes fst (d.workTapePos fst + p) = FinTM.bufferTape u p)
++    (hv : ∀ p : ℤ, -1 ≤ p → p ≤ (v.length : ℤ) →
++      d.workTapes snd (d.workTapePos snd + p) = FinTM.bufferTape v p) :
++    (compareTM k fst snd).runFrom d (2 * compareStop u v + 2) =
++        { d with state := some (FlagPhase.done (decide (u = v))) } ∧
++      (∀ t < 2 * compareStop u v + 2, ∀ b,
++        ((compareTM k fst snd).runFrom d t).state ≠ some (FlagPhase.done b)) ∧
++      (∀ (j : Fin k) (t : ℕ), t ≤ 2 * compareStop u v + 2 →
++        if j = fst ∨ j = snd then
++          ((compareTM k fst snd).runFrom d t).workTapePos j ∈
++            Finset.Icc (d.workTapePos j - 1) (d.workTapePos j + (compareStop u v : ℤ))
++        else ((compareTM k fst snd).runFrom d t).workTapePos j = d.workTapePos j) := by
++  -- D2: the shared framed trace also covers aliased tape indices.
++  have _ := hne
++  obtain ⟨δ, hδ, hp, hs, he⟩ := catalog_compare_stop u v
++  rw [← compareStop_unique hp hs]
++  refine ⟨?_, ?_, ?_⟩
++  · rw [catalog_compare_trace fst snd u v d hstate hu hv δ hδ hp hs he]
++    simp [catalogTrace, show ¬2 * δ + 2 ≤ δ by omega]
++  · intro t ht b
++    rw [catalog_compare_trace fst snd u v d hstate hu hv δ hδ hp hs he]
++    simp only [catalogTrace]
++    split_ifs <;> simp_all [catalogCompareF, catalogCompareR]
++    omega
++  · intro j t ht
++    rw [catalog_compare_trace fst snd u v d hstate hu hv δ hδ hp hs he]
++    simp only [catalogTrace]
++    split_ifs <;> simp_all [catalogCompareF, catalogCompareR, Finset.mem_Icc] <;> omega
++
+ /-- **R8.1, compare, framed** (design §12.8a; the generic form of
+ `Turing.compareTM_run`). From any configuration in the working phase whose
+ tapes `fst` and `snd` carry delimited words `u` and `v` at their heads, the
+@@ -11916,21 +12036,8 @@ theorem compareTM_run_ofCfg {Symbol : Type*} [DecidableEq Symbol] {k : ℕ} {x :
+             ((compareTM k fst snd).runFrom d t).workTapePos j ∈
+               Finset.Icc (d.workTapePos j - 1) (d.workTapePos j + (δ : ℤ))
+           else ((compareTM k fst snd).runFrom d t).workTapePos j = d.workTapePos j) := by
+-  -- D2: the shared framed trace also covers aliased tape indices.
+-  have _ := hne
+-  obtain ⟨δ, hδ, hp, hs, he⟩ := catalog_compare_stop u v
+-  refine ⟨δ, hδ, ?_, ?_, ?_⟩
+-  · rw [catalog_compare_trace fst snd u v d hstate hu hv δ hδ hp hs he]
+-    simp [catalogTrace, show ¬2 * δ + 2 ≤ δ by omega]
+-  · intro t ht b
+-    rw [catalog_compare_trace fst snd u v d hstate hu hv δ hδ hp hs he]
+-    simp only [catalogTrace]
+-    split_ifs <;> simp_all [catalogCompareF, catalogCompareR]
+-    omega
+-  · intro j t ht
+-    rw [catalog_compare_trace fst snd u v d hstate hu hv δ hδ hp hs he]
+-    simp only [catalogTrace]
+-    split_ifs <;> simp_all [catalogCompareF, catalogCompareR, Finset.mem_Icc] <;> omega
++  exact ⟨compareStop u v, compareStop_le u v,
++    compareTM_run_stop_ofCfg fst snd hne u v d hstate hu hv⟩
+ 
+ /-! ### R8.3 — the seek family -/
+ 
+diff --git a/TCSlib/Complexity/TuringMachine/Build/Contract.lean b/TCSlib/Complexity/TuringMachine/Build/Contract.lean
+index bb2bd67b..f1a6de16 100644
+--- a/TCSlib/Complexity/TuringMachine/Build/Contract.lean
++++ b/TCSlib/Complexity/TuringMachine/Build/Contract.lean
+@@ -7,6 +7,7 @@ import TCSlib.Complexity.TuringMachine.Build.Contract.Basic
+ import TCSlib.Complexity.TuringMachine.Build.Contract.Seam
+ import TCSlib.Complexity.TuringMachine.Build.Contract.Embed
+ import TCSlib.Complexity.TuringMachine.Build.Contract.Catalog
++import TCSlib.Complexity.TuringMachine.Build.Contract.Counter
+ import TCSlib.Complexity.TuringMachine.Build.Contract.Lift
+ 
+ set_option maxHeartbeats 0
+@@ -37,7 +38,11 @@ work head inside an interval. The core adds segments, rounds and joint trajector
+ * `TCSlib.Complexity.TuringMachine.Build.Contract.Seam` — `seq`, `inPhase`, `branch` and the
+   release adapters over `Build/Seam`, with their trajectories, frames and positivity.
+ * `TCSlib.Complexity.TuringMachine.Build.Contract.Embed` — `embed` over `Build/Embed`.
+-* `TCSlib.Complexity.TuringMachine.Build.Contract.Catalog` — R3 clear as a contract.
++* `TCSlib.Complexity.TuringMachine.Build.Contract.Catalog` — the catalog rows as contracts:
++  R3 clear and copy, the mapped sweeps, the walk, the seek family, the scan and the framed
++  compare.
++* `TCSlib.Complexity.TuringMachine.Build.Contract.Counter` — the counter rows (the successful
++  increment and decrement) as contracts (MIG-11a, user 2026-10-16), beside `Build/CounterLoop`.
+ * `TCSlib.Complexity.TuringMachine.Build.Contract.Lift` — the symbol lift.
+ 
+ Elsewhere, beside the machinery they adapt: the counter loop over round contracts in
+diff --git a/TCSlib/Complexity/TuringMachine/Build/Contract/Catalog.lean b/TCSlib/Complexity/TuringMachine/Build/Contract/Catalog.lean
+index 686b56a0..0800ff0c 100644
+--- a/TCSlib/Complexity/TuringMachine/Build/Contract/Catalog.lean
++++ b/TCSlib/Complexity/TuringMachine/Build/Contract/Catalog.lean
+@@ -29,6 +29,9 @@ framed rows join it.
+   `Turing.seekEndTM_contract`, `Turing.seekStartTM_contract`, `Turing.scanTM_contract`: the
+   lockstep walk, the seek family and the scan as contracts (§13d G4), with the seek family's
+   endpoint `Turing.seekPost`.
++* `Turing.copyTM_contract`, `Turing.compareTM_contract`: R3 copy and the framed compare as
++  contracts (MIG-11a, user 2026-10-16), with `Turing.copyTM_contract_frames`. The counter rows'
++  contracts are in `Build/Contract/Counter`.
+ 
+ ## Main results
+ 
+@@ -278,6 +281,28 @@ def transferMapTM_contract {Δ : Type} (src dst : Fin k) (hne : src ≠ dst) (ex
+       rest) w (sweepPost .done dst (sweepMapWrite extract merge) w d)) (fun _ _ => rfl)
+     (transferMapTM_run_ofCfg src dst hne extract merge rest)
+ 
++/-- **R3 copy as a contract** (MIG-11a, user 2026-10-16): the index is the source word `w`.
++Started in the sweep phase with `w` delimited at the head of tape `src`, the copy reaches `done`
++at exactly `2|w| + 2`, and not earlier, with the destination interval `[pos, pos + |w|)` of tape
++`dst` (from its head `pos`) holding `w` cell by cell and every other cell unchanged; the heads of
++`src` and `dst` stay within one cell of their intervals and every other head is fixed.
++
++**Proof sketch.** `Turing.sweepContract` with the clauses of `Turing.copyTM_run_ofCfg`. -/
++def copyTM_contract (src dst : Fin k) (hne : src ≠ dst) (x : List Γ) :
++    Contract (copyTM k src dst) SweepPhase.sweep {some SweepPhase.done} (List Γ) x :=
++  sweepContract _ _ _ src (fun j => j = src ∨ j = dst) x
++    (sweepPost .done dst fun w d j q => FinTM.bufferTape w (q - d.workTapePos j)) (fun _ _ => rfl)
++    (copyTM_run_ofCfg src dst hne)
++
++/-- R3 copy frames exactly the destination interval: its footprint is `[pos, pos + |w|)` on tape
++`dst` and empty elsewhere (MIG-11a, user 2026-10-16).
++
++**Proof sketch.** `Turing.sweep_ite_keep` at `dst`. -/
++theorem copyTM_contract_frames (src dst : Fin k) (hne : src ≠ dst) (x : List Γ) :
++    (copyTM_contract src dst hne x).Frames fun w d j =>
++      if j = dst then Set.Ico (d.workTapePos j) (d.workTapePos j + w.length) else ∅ :=
++  fun _ _ _ _ _ _ hq => sweep_ite_keep _ _ hq
++
+ /-- The mapped copy frames exactly the destination interval: its footprint is
+ `[pos, pos + |w|)` on tape `dst` and empty elsewhere.
+ 
+@@ -443,6 +468,39 @@ def scanTM_contract {A : Type} (i : Fin k) (δf δb : A → Γ → A × Γ) (a
+     · rw [h]
+       exact Finset.mem_Icc.mpr ⟨le_rfl, le_rfl⟩
+ 
++/-- **The framed compare as a contract** (MIG-11a, user 2026-10-16): the index is the pair of
++words `(u, v)`, delimited at the heads of tapes `fst` and `snd`. From the working phase the
++compare reaches the verdict `done (decide (u = v))` at exactly `2 · compareStop u v + 2`, with no
++verdict earlier and nothing written; the two heads stay within `[pos - 1, pos + compareStop u v]`
++and every other head is fixed. The exits are both verdicts, so the exit is not a singleton and
++the contract is built directly.
++
++**Proof sketch.** Each field is the matching clause of `Turing.compareTM_run_stop_ofCfg`; the
++exit lies in the range at the verdict; a fixed head lies in its one-point interval. -/
++def compareTM_contract [DecidableEq Γ] (fst snd : Fin k) (hne : fst ≠ snd) (x : List Γ) :
++    Contract (compareTM k fst snd) FlagPhase.run (Set.range fun b => some (FlagPhase.done b))
++      (List Γ × List Γ) x where
++  pre p d := (∀ q : ℤ, -1 ≤ q → q ≤ (p.1.length : ℤ) →
++      d.workTapes fst (d.workTapePos fst + q) = FinTM.bufferTape p.1 q) ∧
++    ∀ q : ℤ, -1 ≤ q → q ≤ (p.2.length : ℤ) →
++      d.workTapes snd (d.workTapePos snd + q) = FinTM.bufferTape p.2 q
++  time p _ := 2 * compareStop p.1 p.2 + 2
++  post p d := { d with state := some (FlagPhase.done (decide (p.1 = p.2))) }
++  lo p d j := if j = fst ∨ j = snd then d.workTapePos j - 1 else d.workTapePos j
++  hi p d j := if j = fst ∨ j = snd then d.workTapePos j + (compareStop p.1 p.2 : ℤ)
++    else d.workTapePos j
++  run p d hd hp := (compareTM_run_stop_ofCfg fst snd hne p.1 p.2 d hd hp.1 hp.2).1
++  exit_mem _ _ _ _ := ⟨_, rfl⟩
++  cut p d hd hp u hu h := by
++    obtain ⟨b, hb⟩ := h
++    exact (compareTM_run_stop_ofCfg fst snd hne p.1 p.2 d hd hp.1 hp.2).2.1 u hu b hb.symm
++  env p d hd hp u hu j := by
++    have h := (compareTM_run_stop_ofCfg fst snd hne p.1 p.2 d hd hp.1 hp.2).2.2 j u hu
++    split_ifs at h ⊢ with hj
++    · exact h
++    · rw [h]
++      exact Finset.mem_Icc.mpr ⟨le_rfl, le_rfl⟩
++
+ /-! ### The specification API (user, 2026-10-16)
+ 
+ The data fields of every contract in this file, and the fields of the two endpoint shapes,
+@@ -460,6 +518,8 @@ attribute [simps! (config := { isSimp := false }) pre time post lo hi]
+   walkTM_contract skipTM_contract skipBackTM_contract
+ attribute [simps! (config := { isSimp := false }) pre time post lo hi]
+   seekEndTM_contract seekStartTM_contract scanTM_contract
++attribute [simps! (config := { isSimp := false }) pre time post lo hi] copyTM_contract
++attribute [simps (config := { isSimp := false }) pre time post lo hi] compareTM_contract
+ 
+ /-- **The mapped copy's cells at its endpoint** (the specification API's gate, finding 2): on
+ tape `dst`, inside the word interval `[pos, pos + |w|)` from its head `pos`, cell `q` holds
+diff --git a/TCSlib/Complexity/TuringMachine/Build/Contract/Counter.lean b/TCSlib/Complexity/TuringMachine/Build/Contract/Counter.lean
+new file mode 100644
+index 00000000..e19cd9b1
+--- /dev/null
++++ b/TCSlib/Complexity/TuringMachine/Build/Contract/Counter.lean
+@@ -0,0 +1,131 @@
++/-
++Copyright (c) 2026 Seyoon Ragavan. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++Authors: Seyoon Ragavan
++-/
++import TCSlib.Complexity.TuringMachine.Build.CounterLoop
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# Framed contracts: the counter rows
++
++**Status: proved (MIG-11a, user 2026-10-16).** The successful increment and decrement of a
++fixed-width binary counter as contracts: the instances of MIG-11 that `Build/CfgRecord`'s
++rebase onto the contract layer (MIG-12) composes. They sit in their own module, beside
++`Build/CounterLoop` where the decrement is defined, so that `Build/Contract/Catalog` does not
++import the counter loop.
++
++## Main definitions
++
++* `Turing.counterRowContract`: the contract of a successful counter row, from its framed
++  theorem; `Turing.incrementTM_contract` and `Turing.decrementTM_contract` are its instances,
++  indexed by the counter word and its successor (resp. predecessor), exiting at either verdict.
++
++## Main results
++
++* `Turing.counterRowContract_pre`, `_time`, `_post`, `_lo`, `_hi`, and the same for its two
++  instances: their fields as equations, without the `simp` attribute (`policy.md` §1,
++  *Definitions land with their lemmas*).
++
++## References
++
++* [AFM26] Anthropic, PBC, `anthropics/formal-math`, project `3sum-apsp`, commit `e1a4e650`,
++  Apache-2.0: the contract shape, a design adaptation (full entry in `Build/Contract/Basic`).
++-/
++
++namespace Turing
++
++variable {k : ℕ}
++
++/-- **The contract of a successful counter row** (MIG-11a, user 2026-10-16): one constructor for
++the increment and the decrement. Given a machine `M` over `FlagPhase`, its tape `i`, the
++width-preserving word map `fix` it computes and the bit `lead`-cells it carries through, and the
++row's framed theorem `hrun`, this is the contract indexed by pairs `(w, v)` with `fix w = some v`
++and `w` delimited at the head of tape `i`: time `2 · |takeWhile lead w| + 2`, endpoint the word's
++interval holding `v` at `done true`, exits both verdicts, the head of tape `i` within
++`[pos - 1, pos + |takeWhile lead w|]` and every other head fixed.
++
++**Proof sketch.** Each field is the matching clause of `hrun`; the exit lies in the range at
++`true`; a fixed head lies in its one-point interval. -/
++def counterRowContract (M : MultiTapeTM k Bool FlagPhase) (i : Fin k) (x : List Bool)
++    (fix : List Bool → Option (List Bool)) (lead : Bool → Bool)
++    (hrun : ∀ (w v : List Bool), fix w = some v → ∀ (d : Cfg k Bool FlagPhase x),
++      d.state = some FlagPhase.run →
++      (∀ q : ℤ, -1 ≤ q → q ≤ (w.length : ℤ) →
++        d.workTapes i (d.workTapePos i + q) = FinTM.bufferTape w q) →
++      M.runFrom d (2 * (w.takeWhile lead).length + 2) =
++          { d with
++            state := some (FlagPhase.done true)
++            workTapes := fun j q =>
++              if j = i ∧ d.workTapePos j ≤ q ∧ q < d.workTapePos j + (w.length : ℤ)
++                then FinTM.bufferTape v (q - d.workTapePos j)
++              else d.workTapes j q } ∧
++        (∀ t < 2 * (w.takeWhile lead).length + 2, ∀ b : Bool,
++          (M.runFrom d t).state ≠ some (FlagPhase.done b)) ∧
++        (∀ (j : Fin k) (t : ℕ), t ≤ 2 * (w.takeWhile lead).length + 2 →
++          if j = i then
++            (M.runFrom d t).workTapePos j ∈
++              Finset.Icc (d.workTapePos j - 1)
++                (d.workTapePos j + ((w.takeWhile lead).length : ℤ))
++          else (M.runFrom d t).workTapePos j = d.workTapePos j)) :
++    Contract M FlagPhase.run (Set.range fun b => some (FlagPhase.done b))
++      (List Bool × List Bool) x where
++  pre p d := fix p.1 = some p.2 ∧ ∀ q : ℤ, -1 ≤ q → q ≤ (p.1.length : ℤ) →
++    d.workTapes i (d.workTapePos i + q) = FinTM.bufferTape p.1 q
++  time p _ := 2 * (p.1.takeWhile lead).length + 2
++  post p d := { d with
++    state := some (FlagPhase.done true)
++    workTapes := fun j q =>
++      if j = i ∧ d.workTapePos j ≤ q ∧ q < d.workTapePos j + (p.1.length : ℤ)
++        then FinTM.bufferTape p.2 (q - d.workTapePos j)
++      else d.workTapes j q }
++  lo p d j := if j = i then d.workTapePos j - 1 else d.workTapePos j
++  hi p d j := if j = i then d.workTapePos j + ((p.1.takeWhile lead).length : ℤ)
++    else d.workTapePos j
++  run p d hd hp := (hrun p.1 p.2 hp.1 d hd hp.2).1
++  exit_mem _ _ _ _ := ⟨true, rfl⟩
++  cut p d hd hp u hu h := by
++    obtain ⟨b, hb⟩ := h
++    exact (hrun p.1 p.2 hp.1 d hd hp.2).2.1 u hu b hb.symm
++  env p d hd hp u hu j := by
++    have h := (hrun p.1 p.2 hp.1 d hd hp.2).2.2 j u hu
++    split_ifs at h ⊢ with hj
++    · exact h
++    · rw [h]
++      exact Finset.mem_Icc.mpr ⟨le_rfl, le_rfl⟩
++
++/-- **The successful increment as a contract** (MIG-11a, user 2026-10-16): the counter-row
++contract of `Turing.incrementTM` at `fix = incFixed` and `lead = id`. From the working phase,
++with `incFixed w = some v` and `w` delimited at the head of tape `i`, the increment reaches
++`done true` at exactly `2 · |takeWhile id w| + 2` (its leading `true` cells, each crossed twice,
++and the two turning steps) with the word's interval holding `v`; no verdict earlier.
++
++**Proof sketch.** `Turing.counterRowContract` with `Turing.incrementTM_run_succ_ofCfg`. -/
++def incrementTM_contract (i : Fin k) (x : List Bool) :
++    Contract (incrementTM k i) FlagPhase.run (Set.range fun b => some (FlagPhase.done b))
++      (List Bool × List Bool) x :=
++  counterRowContract (incrementTM k i) i x incFixed id (incrementTM_run_succ_ofCfg i)
++
++/-- **The successful decrement as a contract** (MIG-11a, user 2026-10-16): the counter-row
++contract of `Turing.decrementTM` at `fix = decFixed` and `lead = not`. From the working phase,
++with `decFixed w = some v` and `w` delimited at the head of tape `i`, the decrement reaches
++`done true` at exactly `2 · |takeWhile not w| + 2` (its leading `false` cells, each crossed
++twice, and the two turning steps) with the word's interval holding `v`; no verdict earlier.
++
++**Proof sketch.** `Turing.counterRowContract` with `Turing.decrementTM_run_succ_ofCfg`. -/
++def decrementTM_contract (i : Fin k) (x : List Bool) :
++    Contract (decrementTM k i) FlagPhase.run (Set.range fun b => some (FlagPhase.done b))
++      (List Bool × List Bool) x :=
++  counterRowContract (decrementTM k i) i x decFixed not (decrementTM_run_succ_ofCfg i)
++
++/-! The specification API (user, 2026-10-16): the contracts' data fields as equations, generated
++by `simps` without the `simp` attribute (`simps!` for the two instances, which are built through
++`Turing.counterRowContract`). -/
++attribute [simps (config := { isSimp := false }) pre time post lo hi] counterRowContract
++attribute [simps! (config := { isSimp := false }) pre time post lo hi]
++  incrementTM_contract decrementTM_contract
++
++end Turing
+-- 
+2.50.1 (Apple Git-155)
+
