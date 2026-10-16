@@ -1387,6 +1387,22 @@ The route decisions of 2026-10-12 (design §16b) add three work items, numbered 
             then brought up to date.
           - The U2-S and F5 drafts now carry the new rule 10 and their API lemma lists (copies in
             `audits/evidence/core-api/drafts/`).
+          - **Extended overnight (head `84acb1f7`)** with the F3 and G4 continuation inventories'
+            gaps beyond #112: `wordPatch_of_mem`/`_of_not_mem` (F3 reads F2's endpoint through
+            `wordPatch`) and `zoneCapacity_eq`. The nine-file screen is 440 → 443 declarations,
+            92 = 92 pairs. The gate is **re-staged** with bundle SHA-256 `79b8052e…d4bf` (56
+            sections), still not dispatched.
+        - **Open for the user: G4's continuation and the zone layer.** G4's original brief let the
+          worker unfold `Build/Zone`'s and `Build/ZoneTape`'s pure definitions. Under "Everything",
+          its continuation needs published lemmas for the zone definitions the rebalance route
+          reads. 14 of the 34 zone definitions have none (`zoneShiftIn`/`Out`, `zoneMove`,
+          `zoneStepPair`, `zoneHomeWrite`, `swap`, `zoneSlotSet`, `zoneCellAt`, …). The options
+          are to add a zone API to #116 before its gate, to make a separate zone-API PR with its
+          own gate, or to carve out an exception for the zone layer. That is a design ruling, so
+          the maintainer stopped there.
+        - **Drafts (not issued):** `audits/evidence/drafts/` holds the F3 continuation (on the new
+          rule, citing #112's lemmas), cont6 (the adapter authorized; the order list includes
+          `ClassNP/TMSAT`), U2-S and F5.
       - **#112's gate dispatched (user, 2026-10-16):** `infra_local/gate-dispatches/29-spec-api-gate/`,
         bundle SHA-256 `91f96cf5…dca1` (52 sections). Lean comes from #112's head `28824c36`, now
         stacked on #113 (user: "stack and chain"); everything else from `2e4f414c`.
