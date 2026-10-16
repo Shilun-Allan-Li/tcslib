@@ -1345,6 +1345,9 @@ The route decisions of 2026-10-12 (design §16b) add three work items, numbered 
         `Contract` combinators' fields and the layout's base and boundary facts (with F3's
         three). It has its own audit gate (the §13d PR-plus-gate rule). The replay is about 89
         modules. The G4 partial lands once its screens are clean (user).
+      - **Review final (2026-10-16):** screens clean, 763 → 778 declarations and 429 = 429 pairs, 0
+        new. Landing next (user: prepare clean landings overnight). The appendices' "blocked under
+        rule 10" wording is reworded at landing.
       - **The specification API, PR #112** (`lean/spec-api`, `9f66ac7e`; pack `audits/spec-api-pack.md`,
         evidence `audits/evidence/spec-api/`).
         - **Generated:** 85 field equations (`simps`, `isSimp := false`) for `Contract.trans`,
@@ -1367,6 +1370,15 @@ The route decisions of 2026-10-12 (design §16b) add three work items, numbered 
           `Deterministic`. Next to add: `serializeK_eq`, after #113. It has its own gate, and its
           replay is about 320 modules (from `Configuration`).
         - U2-S's and F5's briefs (inputs measured at `c2897d7f`) wait for it.
+      - **#112's gate dispatched (user, 2026-10-16):** `infra_local/gate-dispatches/29-spec-api-gate/`,
+        bundle SHA-256 `91f96cf5…dca1` (52 sections). Lean comes from #112's head `28824c36`, now
+        stacked on #113 (user: "stack and chain"); everything else from `2e4f414c`.
+      - **Overnight replay started (user, 2026-10-16):** `replay-overnight.sh` runs #113's replay
+        (9 modules, `oleans-lc5p`), then #112's (89 modules, `oleans-lapi`). The landings prepared
+        overnight chain after it.
+      - **User (2026-10-16), the primitives boundary:** workers read `MultiTapeTM.step`, `runFrom`,
+        `Action.apply` and `Cfg.mapState` through the existing lemmas, and may unfold `step` and
+        `Action.apply` only for a leaf defined in their own file.
   **Two-tape universal (U2) designed (2026-10-14; `audits/evidence/u2/U2-design.md`, probes).**
   - **The design:** one `k`-generic construction on H2's step block. It has a new public host
     H2-F (the emitting round loop, in `Build/StepBlockLoop`), U2-S (the startup), U2-U
@@ -1439,6 +1451,14 @@ The route decisions of 2026-10-12 (design §16b) add three work items, numbered 
           block runs inside the release adapter `seamReleaseTM`, as one phase of the phase host,
           beside a one-step forwarding leaf. The cost is `T + 3` (`T + 2` on a halting step), so
           `C = 3`.
+        - **Dispatched (user) and delivered (2026-10-16):** `fill-h2f-forwardloop.zip`, SHA-256
+          `7fc0da15…8037`. **Reviewed: complete, 1 of 1**
+          (`audits/evidence/h2f-fill/delivery-review.md`). The route is the brief's: the release
+          adapter inside the phase host, the forwarding leaf, cost `T + 3`/`T + 2`, `C = 3`.
+          - It has 20 `fl_` privates and no admission (axioms standard; the sorry walk is empty).
+          - The v3 screen is 404/100 → 418/101. The one new pair is in-file, `fl_restore` ←
+            `fl_home` at 55%: shared `Fin.addCases` scaffolding, below the 90% copy threshold.
+          - Landing next (user, 2026-10-16: prepare clean landings overnight).
       - **U2-S's pre-issue promotion (user, 2026-10-15: "Maintainer PR first"): PR #110**
         (`lean/u2s-prefix-canon`, `cb669b4d`).
         - `prefixCanonTM F`, with `prefixCanon_start`, `_run` and `_complete`, generic in the

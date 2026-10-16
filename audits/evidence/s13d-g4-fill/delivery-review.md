@@ -1,5 +1,3 @@
-> **Copy of the review sub-agent's report as of 2026-10-16, before its screen rows were filled** (they are marked `@SCREEN_*@`). The E1 assessment is final. The maintainer replaces this copy with the final report when it arrives.
-
 # Review — §13d G4 fill (`Turing.exists_zoneExtendTM`, `Turing.exists_zoneRebalanceTM`), delivery `fill-s13d-g4.zip`
 
 **Verdict: partial (0/2). It lands now (screens clean); the continuation is blocked on the
