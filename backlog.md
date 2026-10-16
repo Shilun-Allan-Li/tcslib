@@ -1428,8 +1428,8 @@ The route decisions of 2026-10-12 (design §16b) add three work items, numbered 
           (`embedSilentRetTM`).
         - The U2-S brief is drafted. Its inputs are measured after #110 merges.
         - **Landed (2026-10-16, PR #110; replay 101 of 101, failed 0; snapshot `oleans-lpcanon`).**
-          #110's own copy-text screen was still queued at the merge, behind the review
-          sub-agent's screens. Its result is recorded when it runs.
+          #110's own copy-text screen ran after the merge (it had been queued behind the review
+          sub-agent's): 111 declarations and 57 pairs before and after, 0 new pairs.
     - **`Turing.universal` at `k = 1`** fits U2-E's statement verbatim. Its re-derivation (U-1)
       waits for U2-E's fill, so a sorry-free theorem does not come to depend on a sorried one.
   - Forwarded to G5's statement phase: `two_work_tapes_run` per run, with the converse; its
