@@ -48,8 +48,8 @@ Round 1 (`audits/spec-api-pack.md`) returned **FAIL, 0 blockers, 2 majors, 2 min
    - **Lint:** check 8 of the rule *definitions land with their lemmas* (`policy.md` §1,
      adopted 2026-10-16) adds no name, and 17 leave it (`r2/logs/lint-{tip,head}-check8.txt`).
    - **Replay:** `r2/replay-lapi2.log` at the merged head `caa93c12`: 85 of 85 modules, 0 failed.
-     Per-module sorry counts equal round 1's replay (`logs/../replay-lapi.log` evidence:
-     89 modules, 0 failed) on every common module. The one exception is
+     Per-module sorry counts equal round 1's replay (`audits/evidence/spec-api/replay-lapi.log`:
+     89 modules, 0 failed at `28824c36`) on every common module. The one exception is
      `Build/StepBlockForward`, 1 → 0: H2-F, proved by #114, merged in.
 7. **Records.** Check the resolutions and this pack against the evidence.
 
