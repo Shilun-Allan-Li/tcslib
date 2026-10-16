@@ -364,8 +364,10 @@ def RecordAt {K : ℕ} {Γ S : Type*} {x : List Γ} (d : Cfg K Γ S x) (r : Fin 
   ∀ p : ℤ, -1 ≤ p → p ≤ ((joinFields fs).length : ℤ) →
     d.workTapes r (d.workTapePos r + p) = fieldsTape fs p
 
-/-- **Reading a record** (the specification API, user 2026-10-16): `Turing.RecordAt` as an
-equivalence, so that consumers read the cells of a record without unfolding the definition. -/
+/-- **Reading a record** (the specification API, user 2026-10-16): `RecordAt d r fs` holds
+exactly when, at every offset `p` with `-1 ≤ p ≤ |joinFields fs|`, the cell of tape `r` at its
+head plus `p` holds `fieldsTape fs p`: the layout's cells, with blank delimiters at offsets `-1`
+and `|joinFields fs|`. Cells outside that interval are unconstrained. -/
 theorem recordAt_iff {K : ℕ} {Γ S : Type*} {x : List Γ} (d : Cfg K Γ S x) (r : Fin K)
     (fs : List (List Γ)) :
     RecordAt d r fs ↔ ∀ p : ℤ, -1 ≤ p → p ≤ ((joinFields fs).length : ℤ) →

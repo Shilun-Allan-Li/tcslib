@@ -154,8 +154,9 @@ cells, `posWidth n` position digits, the state and tag cells, and `k + 2`
 separators. -/
 def recordLength (k n s : ℕ) : ℕ := k * (2 * s + 1) + posWidth n + k + 4
 
-/-- **The record length's formula** (the specification API, user 2026-10-16), so that
-consumers never unfold `Turing.recordLength`. -/
+/-- **The record length's formula** (the specification API, user 2026-10-16):
+`recordLength k n s = k (2s + 1) + posWidth n + k + 4`, that is, `k` tape fields of `2s + 1`
+cells, `posWidth n` position digits, the state and tag cells, and `k + 2` separators. -/
 theorem recordLength_eq (k n s : ℕ) :
     recordLength k n s = k * (2 * s + 1) + posWidth n + k + 4 :=
   rfl
