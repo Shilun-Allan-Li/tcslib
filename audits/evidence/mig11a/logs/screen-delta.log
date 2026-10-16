@@ -1,0 +1,9 @@
+# MIG-11a: head (wt-m11a, the PR) against base (the tip c2ec34c5); pairdiff (head, base):
+head pairs 321; union of earlier 320; new at head 2; earlier-only 1
+  NEW   TCSlib/Complexity/TuringMachine/Build/Contract/Catalog.lean::transferMapTM_contract  reproduces  TCSlib/Complexity/TuringMachine/Build/Contract/Catalog.lean::copyTM_contract: 76/141 = 54%
+  NEW   TCSlib/Complexity/TuringMachine/Build/Catalog.lean::compareTM_run_stop_ofCfg  reproduces  TCSlib/Complexity/TuringMachine/Build/Catalog.lean::compareTM_run: 193/384 = 50%
+  GONE  TCSlib/Complexity/TuringMachine/Build/Catalog.lean::compareTM_run_ofCfg  reproduces  TCSlib/Complexity/TuringMachine/Build/Catalog.lean::compareTM_run: 193/384 = 50%
+
+# Maintainer annotation: 549 -> 559 declarations, 320 -> 321 pairs, 105,754 -> 105,830 characters.
+# - compareTM_run_stop_ofCfg <- compareTM_run (50%) is the pre-existing compareTM_run_ofCfg pair, moved with the proof body.
+# - transferMapTM_contract <- copyTM_contract (54%, 76 characters) is the shared sweepContract call (the touched predicate, the endpoint argument, the rfl), the constructor pattern of every sweep-row contract (clear, the two mapped sweeps, copy). No new copied proof.

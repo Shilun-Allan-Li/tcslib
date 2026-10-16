@@ -66,6 +66,12 @@ The patch is `mig11a.patch`: one commit, `08bcc57d`, on the tip `c2ec34c5`. It i
   check 8 lists none of the new definitions.
 - **The development probe:** `probes/StopScratch.lean.txt`, `compareStop`'s lemmas developed
   against the snapshot before insertion.
-- **Screen:** see below.
+- **Screen** (`logs/screen-{base,head}.txt`, `logs/screen-delta.log`; the population is `Catalog`,
+  `Contract/Basic`, `Contract/Catalog` and `CounterLoop`, plus `Contract/Counter` at the head):
+  549 → 559 declarations, 320 → 321 pairs. No new copied proof:
+  - `compareTM_run_stop_ofCfg` ← `compareTM_run` (50%) is the pre-existing pair of
+    `compareTM_run_ofCfg`, moved with the body;
+  - `transferMapTM_contract` ← `copyTM_contract` (54%, 76 characters) is the shared
+    `sweepContract` call, the sweep-row contracts' constructor pattern.
 - **Replay:** `replay-lm11a.sh`, the four modules' downstream closure at the stacked head
   (86 modules), from `oleans-lcapi`. The user runs it.
