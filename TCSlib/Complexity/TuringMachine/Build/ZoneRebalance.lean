@@ -5,6 +5,8 @@ Authors: Seyoon Ragavan
 -/
 import TCSlib.Complexity.TuringMachine.Build.ZoneTape
 import TCSlib.Complexity.TuringMachine.Build.Contract.Basic
+import TCSlib.Complexity.TuringMachine.Build.Contract.Catalog
+import TCSlib.Complexity.TuringMachine.Build.Contract.Seam
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -122,6 +124,230 @@ def zoneRowHi {k : ℕ} {S : Type} {x : List (ZoneSym k)} (r : ZoneData k → �
     (D : ZoneData k) (d : Cfg 2 (ZoneSym k) S x) (j : Fin 2) : ℤ :=
   if j = 0 then (zoneStart (r D + 1) : ℤ) else d.workTapePos j + C * (2 ^ r D + 1)
 
+/-- The directed position of a slot, measured from the zone's inner end. -/
+private def zr_zonePos (side : Bool) (i p : ℕ) : ℤ :=
+  if side then (zoneStart i + p : ℕ) else -((zoneStart i + p : ℕ) : ℤ)
+
+/-- Reading a slot uses the same formula on both sides; the left side is mirrored. -/
+private lemma zr_read_slot {k ℓ : ℕ} (side : Bool) (z : Fin k → ZoneContents ℓ)
+    (i : Fin ℓ) (t : Fin k) (p : ℕ) (hp : p < zoneCapacity i) :
+    (zonedTape z (zr_zonePos side i p)).map (zoneSlotOf t) =
+      some ((z t).words side i)[p]? := by
+  have hcell : zonedTape z (zr_zonePos side i p) =
+      some (.inr fun s => ((z s).words side i)[p]?) := by
+    cases side
+    · exact zonedTape_left z i p hp
+    · exact zonedTape_right z i p hp
+  rw [hcell]
+  rfl
+
+/-- Every physical zone has positive capacity. -/
+private lemma zr_capacity_pos (i : ℕ) : 0 < zoneCapacity i :=
+  Nat.mul_pos (by decide) (Nat.two_pow_pos i)
+
+/-- Inner packing turns a buffer-slot test into a length comparison. -/
+private lemma zr_slot_empty_iff {k ℓ : ℕ} (side : Bool) (z : Fin k → ZoneContents ℓ)
+    (i : Fin ℓ) (t : Fin k) (p : ℕ) (hp : p < zoneCapacity i) :
+    (zonedTape z (zr_zonePos side i p)).map (zoneSlotOf t) = some none ↔
+      ((z t).words side i).length ≤ p := by
+  rw [zr_read_slot side z i t p hp, Option.some.injEq, List.getElem?_eq_none_iff]
+
+/-- The scan's innermost-slot test detects exactly an empty feeding zone. -/
+private lemma zr_inner_empty_iff {k ℓ : ℕ} (side : Bool) (z : Fin k → ZoneContents ℓ)
+    (i : Fin ℓ) (t : Fin k) :
+    (zonedTape z (zr_zonePos side i 0)).map (zoneSlotOf t) = some none ↔
+      (z t).words side i = [] := by
+  have hp := zr_capacity_pos i.val
+  rw [zr_slot_empty_iff side z i t 0 hp]
+  simp only [Nat.le_zero, List.length_eq_zero_iff]
+
+/-- A zone is full exactly when its outermost slot is occupied. -/
+private lemma zr_outer_full_iff {k ℓ : ℕ} (side : Bool) (z : Fin k → ZoneContents ℓ)
+    (i : Fin ℓ) (t : Fin k) :
+    (zonedTape z (zr_zonePos side i (zoneCapacity i - 1))).map (zoneSlotOf t) ≠
+        some none ↔ ((z t).words side i).length = zoneCapacity i := by
+  have hc := zr_capacity_pos i.val
+  have hfit := (z t).words_le side i
+  rw [ne_eq, zr_slot_empty_iff side z i t _ (by omega)]
+  omega
+
+/-- The outward-shift room guard is one slot test, including equality at the boundary.
+The amount must be positive so that the tested slot belongs to the zone. -/
+private lemma zr_room_iff {k ℓ : ℕ} (side : Bool) (z : Fin k → ZoneContents ℓ)
+    (i : Fin ℓ) (t : Fin k) (m : ℕ) (hm : 0 < m) (hcap : m ≤ zoneCapacity i) :
+    (zonedTape z (zr_zonePos side i (zoneCapacity i - m))).map (zoneSlotOf t) =
+        some none ↔ ((z t).words side i).length + m ≤ zoneCapacity i := by
+  rw [zr_slot_empty_iff side z i t _ (by omega)]
+  omega
+
+/-- The physical scan tests characterize the pure scanned index.
+
+**Proof sketch.** Convert each innermost-slot test to emptiness. The public least-nonempty
+index characterization then identifies the first occupied level. -/
+private lemma zr_scan_index {k ℓ : ℕ} (side : Bool) (z : Fin k → ZoneContents ℓ)
+    (t : Fin k) (j : ℕ) (hj : j < ℓ)
+    (hbefore : ∀ i : Fin ℓ, i.val < j →
+      (zonedTape z (zr_zonePos side i 0)).map (zoneSlotOf t) = some none)
+    (hat : (zonedTape z (zr_zonePos side j 0)).map (zoneSlotOf t) ≠ some none) :
+    zoneShiftIndex side (z t) = j := by
+  apply zoneShiftIndex_eq side (z t) j hj
+  · intro i hi
+    exact (zr_inner_empty_iff side z i t).mp (hbefore i hi)
+  · intro he
+    exact hat ((zr_inner_empty_iff side z ⟨j, hj⟩ t).mpr he)
+
+/-- If every scanned slot is empty, the pure rebalance takes its identity branch. -/
+private lemma zr_scan_short {k ℓ : ℕ} (side : Bool) (z : Fin k → ZoneContents ℓ)
+    (t : Fin k) (h : ∀ i : Fin ℓ,
+      (zonedTape z (zr_zonePos side i 0)).map (zoneSlotOf t) = some none) :
+    zoneRebalance side (z t) = z t := by
+  apply zoneRebalance_of_le
+  have he := (zoneShiftIndex_eq_length_iff side (z t)).mpr
+    (fun i => (zr_inner_empty_iff side z i t).mp (h i))
+  omega
+
+/-- The preceding zone is a ruler of the new zone's half-capacity. -/
+private lemma zr_ruler_length (i : ℕ) (hi : 1 ≤ i) : zoneCapacity (i - 1) = 2 ^ i := by
+  have he : i = (i - 1) + 1 := by omega
+  conv_rhs => rw [he, pow_succ]
+  simp only [zoneCapacity, Nat.mul_comm]
+
+/-- The level extent has a uniform geometric bound, including level zero. -/
+private lemma zr_extent_cost (i : ℕ) : zoneStart (i + 1) ≤ 6 * (2 ^ i + 1) := by
+  have hi : i < 2 ^ i := Nat.lt_two_pow_self
+  rw [zoneStart_eq]
+  simp only [pow_succ]
+  omega
+
+/-- Swapping every track's sides mirrors the physical tape about home.
+
+**Proof sketch.** Home is unchanged. At a positive or negative cell, the owner depends only on
+its absolute distance, and swapping contents exchanges the selected side's word. -/
+private lemma zr_mirror_tape {k ℓ : ℕ} (z : Fin k → ZoneContents ℓ) (c : ℤ) :
+    zonedTape (fun t => (z t).swap) c = zonedTape z (-c) := by
+  by_cases hc : c = 0
+  · subst c
+    rfl
+  · have hn : -c ≠ 0 := neg_ne_zero.mpr hc
+    simp only [zonedTape, hc, hn, if_false]
+    by_cases hp : 0 < c
+    · rw [if_pos hp, if_neg (by omega), neg_neg]
+      rfl
+    · rw [if_neg hp, if_pos (by omega)]
+      rfl
+
+/-- The extension writes its two constant half-words on either side of home. -/
+private lemma zr_extend_cell {k ℓ : ℕ} (side : Bool) (z : Fin k → ZoneContents ℓ)
+    (p : ℕ) (hp : p < zoneCapacity ℓ) :
+    zonedTape (fun t => (z t).extend) (zr_zonePos side ℓ p) =
+      some (.inr fun _ => if p < 2 ^ ℓ then some none else none) := by
+  have ha : |zr_zonePos side ℓ p| = ((zoneStart ℓ + p : ℕ) : ℤ) := by
+    cases side
+    · change |-((zoneStart ℓ + p : ℕ) : ℤ)| = _
+      rw [abs_neg, abs_of_nonneg (by omega)]
+    · change |((zoneStart ℓ + p : ℕ) : ℤ)| = _
+      exact abs_of_nonneg (by omega)
+  rw [zonedTape_extend, ha, if_pos (by omega)]
+  simp only [Int.toNat_natCast, Nat.add_sub_cancel_left]
+
+/-- Advancing only the ruler head exposes its tail as the next directed word.
+
+**Proof sketch.** At offset `p` after that advance, the old offset is `p + 1`. The old word is
+nonempty, so this offset is covered by the original word premise, including its delimiter.
+The bound is valid for a one-cell ruler, whose tail is empty. -/
+private lemma zr_ruler_tail {Γ : Type} (tape : ℤ → Option Γ) (q : ℤ) (dir : SignType)
+    (w : List Γ) (hw : w ≠ [])
+    (hword : ∀ p : ℕ, p ≤ w.length →
+      tape (q + (dir : ℤ) * p) = FinTM.bufferTape w p) :
+    ∀ p : ℕ, p ≤ w.tail.length →
+      tape ((q + (dir : ℤ)) + (dir : ℤ) * p) = FinTM.bufferTape w.tail p := by
+  cases w with
+  | nil => exact False.elim (hw rfl)
+  | cons a w =>
+    intro p hp
+    have he : (q + (dir : ℤ)) + (dir : ℤ) * p =
+        q + (dir : ℤ) * ((p + 1 : ℕ) : ℤ) := by
+      rw [Nat.cast_add, Nat.cast_one, mul_add, mul_one]
+      omega
+    rw [he, hword (p + 1) (by simpa using hp)]
+    simp only [FinTM.bufferTape_nat, List.getElem?_cons_succ, List.tail_cons]
+
+/-- A single-cell controller with two live verdicts. No public row performs just one optional
+write, one work-head step, and a slot-dependent verdict: the sweep and seek rows traverse whole
+words. This permitted leaf covers the ruler adjustment, constant writes, and slot tests; it
+contains no iteration or phase dispatch. State `none` is the entry; `some b` is verdict `b`. -/
+private def zr_cellTM {k : ℕ} (i : Fin 2) (choose : Option (ZoneSym k) → Bool)
+    (wr : Option (Option (ZoneSym k))) (dir : SignType) :
+    MultiTapeTM 2 (ZoneSym k) (Option Bool) where
+  q₀ := none
+  tr q _ a := match q with
+    | none => tapeAction i 0 wr dir (some (choose (a i)))
+    | some b => inputMoveAction 0 (some b)
+
+/-- The single-cell leaf's endpoint; all unmentioned configuration fields are preserved. -/
+private def zr_cellPost {k : ℕ} {x : List (ZoneSym k)} (i : Fin 2)
+    (choose : Option (ZoneSym k) → Bool) (wr : Option (Option (ZoneSym k)))
+    (dir : SignType) (d : Cfg 2 (ZoneSym k) (Option Bool) x) :
+    Cfg 2 (ZoneSym k) (Option Bool) x :=
+  { d with
+    state := some (some (choose (d.workTapeSymbols i)))
+    workTapes := match wr with
+      | none => d.workTapes
+      | some a => Function.update d.workTapes i
+          (Function.update (d.workTapes i) (d.workTapePos i) a)
+    workTapePos := Function.update d.workTapePos i (d.workTapePos i + dir) }
+
+/-- The leaf takes its advertised single step, using the public action lemmas.
+
+**Proof sketch.** Split on whether a write was requested, and apply the existing writing or
+non-writing action lemma. The input movement is zero in either case. -/
+private lemma zr_cell_step {k : ℕ} {x : List (ZoneSym k)} (i : Fin 2)
+    (choose : Option (ZoneSym k) → Bool) (wr : Option (Option (ZoneSym k)))
+    (dir : SignType) (d : Cfg 2 (ZoneSym k) (Option Bool) x)
+    (hd : d.state = some none) :
+    (zr_cellTM i choose wr dir).step d = zr_cellPost i choose wr dir d := by
+  cases wr with
+  | none =>
+    simpa only [moveInputPos_zero] using
+      step_of_tapeAction_move (zr_cellTM i choose none dir) d i 0 dir hd rfl
+  | some a =>
+    simpa only [moveInputPos_zero] using
+      step_of_tapeAction_write (zr_cellTM i choose (some a) dir) d i 0 a dir hd rfl
+
+/-- The one-cell leaf as a contract: exact time one, with each head between its two endpoints.
+No condition is imposed on the tape, the input position, or the existing output.
+
+**Proof sketch.** The public single-action equations give the run. The only strict-prefix time
+is zero, when the entry differs from both verdicts. At time zero and time one the head lies at
+one of the two ends of the stated interval. -/
+private def zr_cellContract {k : ℕ} (i : Fin 2) (choose : Option (ZoneSym k) → Bool)
+    (wr : Option (Option (ZoneSym k))) (dir : SignType) (x : List (ZoneSym k)) :
+    Contract (zr_cellTM i choose wr dir) none (Set.range fun b : Bool => some (some b))
+      Unit x where
+  pre _ _ := True
+  time _ _ := 1
+  post _ d := zr_cellPost i choose wr dir d
+  lo _ d j := min (d.workTapePos j) ((zr_cellPost i choose wr dir d).workTapePos j)
+  hi _ d j := max (d.workTapePos j) ((zr_cellPost i choose wr dir d).workTapePos j)
+  run _ d hd _ := by
+    rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero,
+      zr_cell_step i choose wr dir d hd]
+  exit_mem _ d _ _ := ⟨choose (d.workTapeSymbols i), rfl⟩
+  cut _ d hd _ u hu := by
+    have he : u = 0 := by omega
+    subst u
+    rw [MultiTapeTM.runFrom_zero, hd]
+    rintro ⟨b, hb⟩
+    cases hb
+  env _ d hd _ u hu j := by
+    have he : u = 0 ∨ u = 1 := by omega
+    rcases he with rfl | rfl
+    · rw [MultiTapeTM.runFrom_zero]
+      exact Finset.mem_Icc.mpr ⟨min_le_left _ _, le_max_left _ _⟩
+    · rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero,
+        zr_cell_step i choose wr dir d hd]
+      exact Finset.mem_Icc.mpr ⟨min_le_right _ _, le_max_right _ _⟩
+
 /-! ### The rows -/
 
 /-- **§13d G4, the rebalance rows** (design §13d, G4; decisions 13d.2–13d.4). For every track
@@ -160,7 +386,13 @@ copies the track-`t` column of the zones involved to the scratch tape with the m
 zones are delimited words (`Turing.zonedTape_right_word`, `Turing.zonedTape_left_word`); the
 mirror side is reached through a scratch ruler of the distance to home. The scratch tape is
 cleared before the exit. The sum `Σ_{i ≤ i₀} O(2^i)` is `O(2^{i₀})`
-(`Turing.zoneCascade_cost_le`). -/
+(`Turing.zoneCascade_cost_le`).
+
+**Fill appendix (§13d G4).** The private kit proves the physical empty, full, and room guards,
+the scanned-index characterization, the short case's identity, and the tape mirror. The
+single-cell controller supplies the permitted guard leaf. The scan round, column moves, passes,
+home move, and cleanup are still open. Contract assembly needs the contracts' field equations,
+which the specification API supplies (PR #112; the user's ruling on escalation E1, 2026-10-16). -/
 theorem exists_zoneRebalanceTM (k : ℕ) :
     ∃ C : ℕ, ∀ (dir : Bool) (t : Fin k),
       ∃ (S : Type) (_ : Fintype S) (_ : DecidableEq S) (M : MultiTapeTM 2 (ZoneSym k) S)
@@ -194,7 +426,15 @@ consecutive blanks (the separator after zone `ℓ - 1`); measure the new zone wi
 ruler of zone `ℓ - 1`'s length doubled (zone `ℓ` has twice its capacity; at `ℓ = 0` finite
 control writes the two cells); write the inner half as all-tracks virtual blanks and the outer
 half as all-`⊠` cells; return through home and do the same on the left, through a ruler of the
-distance; clear the ruler and return home. Each phase is `O(2^ℓ)`. -/
+distance; clear the ruler and return home. Each phase is `O(2^ℓ)`.
+
+**Fill appendix (§13d G4).** The private kit proves the ruler's tail premise, its length,
+the extension's constant-cell specification, and the geometric extent bound. The single-cell
+controller supplies the permitted ruler-head adjustment and writes. The two layout bridges,
+ruler construction, composed side passes, and cleanup remain open. They need the layout's
+boundary facts and the contracts' field equations, which the specification API supplies (PR #112;
+the user's ruling on escalation E1, 2026-10-16). No unproved bridge or additional admission is
+inserted. -/
 theorem exists_zoneExtendTM (k : ℕ) :
     ∃ (C : ℕ) (S : Type) (_ : Fintype S) (_ : DecidableEq S)
       (M : MultiTapeTM 2 (ZoneSym k) S) (entry done : S),

@@ -1,0 +1,254 @@
+From 9f66ac7e91f4225b9f9423497d71cc3c62c0b508 Mon Sep 17 00:00:00 2001
+From: Seyoon Ragavan <complexzetaprime@gmail.com>
+Date: Fri, 16 Oct 2026 00:26:17 -0400
+Subject: [PATCH] The specification API: contract field equations and the
+ layout and record facts
+
+User ruling (2026-10-16, G4's and B6 F3's escalations E1): consumers read specification-level
+definitions through published equation lemmas, never by unfolding them.
+
+- Contract/Basic, Contract/Seam: the data fields (pre, time, post, lo, hi) of Contract.trans,
+  seq, inPhase and branch, by simps without the simp attribute.
+- Contract/Catalog: the same for framedContract, every row contract (simps!), and the fields
+  of the endpoint shapes seekPost and sweepPost.
+- Catalog: joinFields_nil, joinFields_singleton, fieldsTape_of_nonneg, fieldsTape_of_neg,
+  fieldsTape_of_length_le, fieldsTape_nil, fieldOffset_zero.
+- CfgRecord: recordAt_iff; record_pos_lt public. RecordTable: recordLength_eq.
+
+No statement changes; no simp lemma added.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+---
+ .../TuringMachine/Build/Catalog.lean          | 46 +++++++++++++++++++
+ .../TuringMachine/Build/CfgRecord.lean        | 17 ++++++-
+ .../TuringMachine/Build/Contract/Basic.lean   |  7 +++
+ .../TuringMachine/Build/Contract/Catalog.lean | 21 +++++++++
+ .../TuringMachine/Build/Contract/Seam.lean    | 10 ++++
+ .../TuringMachine/Build/RecordTable.lean      |  8 ++++
+ 6 files changed, 107 insertions(+), 2 deletions(-)
+
+diff --git a/TCSlib/Complexity/TuringMachine/Build/Catalog.lean b/TCSlib/Complexity/TuringMachine/Build/Catalog.lean
+index 0c6a1339..8c50e94d 100644
+--- a/TCSlib/Complexity/TuringMachine/Build/Catalog.lean
++++ b/TCSlib/Complexity/TuringMachine/Build/Catalog.lean
+@@ -132,6 +132,10 @@ identities `Turing.scanResult_fold`, `Turing.scanResult_map`,
+   (2026-10-13; it was here from `Build/Zone.lean` for B4, 2026-10-12).
+ * `Turing.FinTM.rewind_scan_heads`, `Turing.FinTM.rewind_heads` — the rewind head
+   bounds — moved on to `TuringMachine/Simulation` at MIG-1 stage S (2026-10-14).
++* `Turing.joinFields_nil`, `Turing.joinFields_singleton`, `Turing.fieldsTape_of_nonneg`,
++  `Turing.fieldsTape_of_neg`, `Turing.fieldsTape_of_length_le`, `Turing.fieldsTape_nil`,
++  `Turing.fieldOffset_zero` — the field layout's base and boundary facts, the specification
++  API (user, 2026-10-16).
+ 
+ ## References
+ 
+@@ -11699,6 +11703,48 @@ start. The empty layout has offset `0` there, not `1`. -/
+ def fieldOffset {Γ : Type*} (fs : List (List Γ)) (j : ℕ) : ℕ :=
+   ((fs.take j).map (·.length + 1)).sum
+ 
++/-! #### The layout's base and boundary facts (the specification API, user 2026-10-16)
++
++Consumers read the layout through these equations, not by unfolding its definitions. -/
++
++/-- **The empty layout** (the specification API): no cells. -/
++theorem joinFields_nil {Γ : Type*} : joinFields ([] : List (List Γ)) = [] := by
++  simp [joinFields, List.intercalate]
++
++/-- **A one-field layout** (the specification API): the field's cells. -/
++theorem joinFields_singleton {Γ : Type*} (u : List Γ) : joinFields [u] = u.map some := by
++  simp [joinFields, List.intercalate]
++
++/-- **The layout tape inside its range** (the specification API): from cell `0` on, the
++layout's cells, blank past its end. -/
++theorem fieldsTape_of_nonneg {Γ : Type*} (fs : List (List Γ)) {z : ℤ} (hz : 0 ≤ z) :
++    fieldsTape fs z = ((joinFields fs)[z.toNat]?).join := by
++  simp [fieldsTape, hz]
++
++/-- **The layout tape left of the origin** (the specification API): blank at every negative
++cell. -/
++theorem fieldsTape_of_neg {Γ : Type*} (fs : List (List Γ)) {z : ℤ} (hz : z < 0) :
++    fieldsTape fs z = none := by
++  simp [fieldsTape, not_le.mpr hz]
++
++/-- **The layout tape past its end** (the specification API): blank from cell
++`|joinFields fs|` on.
++
++**Proof sketch.** The cell is nonnegative, and its index is past the list. -/
++theorem fieldsTape_of_length_le {Γ : Type*} (fs : List (List Γ)) {z : ℤ}
++    (hz : ((joinFields fs).length : ℤ) ≤ z) : fieldsTape fs z = none := by
++  have h0 : 0 ≤ z := le_trans (Int.natCast_nonneg _) hz
++  rw [fieldsTape_of_nonneg fs h0, List.getElem?_eq_none (by omega)]
++  rfl
++
++/-- **The empty layout's tape** (the specification API): blank everywhere. -/
++theorem fieldsTape_nil {Γ : Type*} (z : ℤ) : fieldsTape ([] : List (List Γ)) z = none := by
++  simp [fieldsTape, joinFields_nil]
++
++/-- **The first field's offset** (the specification API): field `0` starts at cell `0`. -/
++theorem fieldOffset_zero {Γ : Type*} (fs : List (List Γ)) : fieldOffset fs 0 = 0 := by
++  simp [fieldOffset]
++
+ /-- **The field layout, one field at a time** (§12.8 fill): two or more fields are the first
+ field, a separator, and the layout of the rest. -/
+ theorem joinFields_cons_cons {Γ : Type*} (u v : List Γ) (fs : List (List Γ)) :
+diff --git a/TCSlib/Complexity/TuringMachine/Build/CfgRecord.lean b/TCSlib/Complexity/TuringMachine/Build/CfgRecord.lean
+index 11e9066b..7e0ba250 100644
+--- a/TCSlib/Complexity/TuringMachine/Build/CfgRecord.lean
++++ b/TCSlib/Complexity/TuringMachine/Build/CfgRecord.lean
+@@ -75,6 +75,8 @@ this module is admitted.
+   `Turing.exists_recordTestTM` — the record rows R8.7: one simulated step, record
+   equality, and a test of the state and tag (fill-C continuation 3 status update:
+   all three are proved).
++* `Turing.recordAt_iff`, `Turing.record_pos_lt` — reading a record and the position-width
++  bound, the specification API (user, 2026-10-16).
+ 
+ ## References
+ 
+@@ -161,8 +163,11 @@ theorem cfgRecord_length {k : ℕ} {Q T : Type} {x : List Bool} (s : ℕ) (c : C
+     (τ : T) : (cfgRecord s c τ).length = k + 3 := by
+   simp [cfgRecord]
+ 
+-/-- Every native input position is strictly below the power of two specified by its width. -/
+-private theorem record_pos_lt (n : ℕ) : n + 1 < 2 ^ posWidth n := by
++/-- Every native input position is strictly below the power of two specified by its width:
++`n + 2 ≤ 2 ^ posWidth n`. (Public since the specification API, user 2026-10-16.)
++
++**Proof sketch.** `posWidth n` is the bit length of `n + 1`, which is its `Nat.size`. -/
++theorem record_pos_lt (n : ℕ) : n + 1 < 2 ^ posWidth n := by
+   unfold posWidth
+   rw [Nat.size_eq_bits_len]
+   exact Nat.lt_size_self _
+@@ -359,6 +364,14 @@ def RecordAt {K : ℕ} {Γ S : Type*} {x : List Γ} (d : Cfg K Γ S x) (r : Fin
+   ∀ p : ℤ, -1 ≤ p → p ≤ ((joinFields fs).length : ℤ) →
+     d.workTapes r (d.workTapePos r + p) = fieldsTape fs p
+ 
++/-- **Reading a record** (the specification API, user 2026-10-16): `Turing.RecordAt` as an
++equivalence, so that consumers read the cells of a record without unfolding the definition. -/
++theorem recordAt_iff {K : ℕ} {Γ S : Type*} {x : List Γ} (d : Cfg K Γ S x) (r : Fin K)
++    (fs : List (List Γ)) :
++    RecordAt d r fs ↔ ∀ p : ℤ, -1 ≤ p → p ≤ ((joinFields fs).length : ℤ) →
++      d.workTapes r (d.workTapePos r + p) = fieldsTape fs p :=
++  Iff.rfl
++
+ /-! ### R8.7 — the record rows -/
+ 
+ /-- A finite run segment, recording its endpoint, verdict cut, and a common head radius.
+diff --git a/TCSlib/Complexity/TuringMachine/Build/Contract/Basic.lean b/TCSlib/Complexity/TuringMachine/Build/Contract/Basic.lean
+index 09971e4b..e24fa1a1 100644
+--- a/TCSlib/Complexity/TuringMachine/Build/Contract/Basic.lean
++++ b/TCSlib/Complexity/TuringMachine/Build/Contract/Basic.lean
+@@ -95,6 +95,9 @@ trajectories*, relations on the whole head vector.
+ * `Turing.Contract.Traj.trans`, `Turing.Contract.Frames.trans`: preservation by `trans`.
+ * `Turing.Contract.time_eq_zero_iff`, `Turing.Contract.trans_positive`: sanity lemmas.
+ * `Turing.Contract.lockstep_admissible`: the target entry compatible with the encoding.
++* `Turing.Contract.trans_pre`, `_time`, `_post`, `_lo`, `_hi` — the specification API
++  (user, 2026-10-16): the fields of a sequenced contract as equations, generated by
++  `simps` without the `simp` attribute, so that consumers never unfold the definition.
+ 
+ ## References
+ 
+@@ -227,6 +230,10 @@ def trans {S : Type} {M : MultiTapeTM k Γ S} {e₁ e₂ : S} {X : Set (Option S
+       exact Finset.Icc_subset_Icc (min_le_right _ _) (le_max_right _ _)
+         (C₂.env _ _ hx (hlink i d hd hp) v (by omega) j)
+ 
++/-! The specification API (user, 2026-10-16): `Turing.Contract.trans`'s data fields as
++equations, without the `simp` attribute. -/
++attribute [simps (config := { isSimp := false }) pre time post lo hi] trans
++
+ /-- **Liveness**: a contract run is live strictly before its endpoint. A halt would persist to
+ the endpoint, putting `none` among the exits, which the cut excludes.
+ 
+diff --git a/TCSlib/Complexity/TuringMachine/Build/Contract/Catalog.lean b/TCSlib/Complexity/TuringMachine/Build/Contract/Catalog.lean
+index 8fe4ed07..bd7d4ac6 100644
+--- a/TCSlib/Complexity/TuringMachine/Build/Contract/Catalog.lean
++++ b/TCSlib/Complexity/TuringMachine/Build/Contract/Catalog.lean
+@@ -33,6 +33,9 @@ framed rows join it.
+ ## Main results
+ 
+ * `Turing.clearTM_contract_frames`, `Turing.clearTM_contract_traj`.
++* `Turing.framedContract_pre` … `_hi`, `Turing.seekPost_workTapePos`, `Turing.sweepPost_workTapes`,
++  and `Turing.<row>_contract_pre`, `_time`, `_post`, `_lo`, `_hi` for every row contract — the
++  specification API (user, 2026-10-16): fields as equations, without the `simp` attribute.
+ 
+ ## References
+ 
+@@ -426,4 +429,22 @@ def scanTM_contract {A : Type} (i : Fin k) (δf δb : A → Γ → A × Γ) (a
+     · rw [h]
+       exact Finset.mem_Icc.mpr ⟨le_rfl, le_rfl⟩
+ 
++/-! ### The specification API (user, 2026-10-16)
++
++The data fields of every contract in this file, and the fields of the two endpoint shapes,
++as equations: generated by `simps` without the `simp` attribute, so that consumers read a
++contract's precondition, time, endpoint and envelope without unfolding its definition. The row
++contracts are built through `Turing.framedContract`, so their lemmas use `simps!`. -/
++
++attribute [simps (config := { isSimp := false }) pre time post lo hi] framedContract
++attribute [simps (config := { isSimp := false })] seekPost sweepPost
++attribute [simps! (config := { isSimp := false }) pre time post lo hi]
++  sweepContract clearTM_contract
++attribute [simps! (config := { isSimp := false }) pre time post lo hi]
++  copyMapTM_contract transferMapTM_contract
++attribute [simps! (config := { isSimp := false }) pre time post lo hi]
++  walkTM_contract skipTM_contract skipBackTM_contract
++attribute [simps! (config := { isSimp := false }) pre time post lo hi]
++  seekEndTM_contract seekStartTM_contract scanTM_contract
++
+ end Turing
+diff --git a/TCSlib/Complexity/TuringMachine/Build/Contract/Seam.lean b/TCSlib/Complexity/TuringMachine/Build/Contract/Seam.lean
+index 4eb9169b..0b1c84c2 100644
+--- a/TCSlib/Complexity/TuringMachine/Build/Contract/Seam.lean
++++ b/TCSlib/Complexity/TuringMachine/Build/Contract/Seam.lean
+@@ -44,6 +44,9 @@ through a seam, which dispatches only at a live anchor.
+ * `Turing.Contract.seq_positive`, `Turing.Contract.inPhase_positive`,
+   `Turing.Contract.branch_positive`, `Turing.ReturnContract.release_positive`,
+   `Turing.RoundContract.release_positive`: positivity.
++* `Turing.Contract.seq_pre`, `Turing.Contract.inPhase_time`, `Turing.Contract.branch_post`
++  and the rest — the specification API (user, 2026-10-16): the composites' data fields as
++  equations, without the `simp` attribute.
+ 
+ ## References
+ 
+@@ -518,6 +521,13 @@ def branch {S₀ S₁ S₂ : Type} [DecidableEq S₀] [DecidableEq S₁] {M₀ :
+         exact Finset.Icc_subset_Icc (min_le_right _ _) (le_max_right _ _)
+           (C₂.env _ _ hd₂ (h₂ i _ hc hp h') v (by omega) j)
+ 
++/-! ### The specification API (user, 2026-10-16)
++
++The data fields of the seam, phase and branch composites as equations, generated by `simps`
++without the `simp` attribute, so that consumers never unfold the definitions. -/
++
++attribute [simps (config := { isSimp := false }) pre time post lo hi] seq inPhase branch
++
+ end Contract
+ 
+ /-! ## The release adapter -/
+diff --git a/TCSlib/Complexity/TuringMachine/Build/RecordTable.lean b/TCSlib/Complexity/TuringMachine/Build/RecordTable.lean
+index 59bc0a7a..c95ea67d 100644
+--- a/TCSlib/Complexity/TuringMachine/Build/RecordTable.lean
++++ b/TCSlib/Complexity/TuringMachine/Build/RecordTable.lean
+@@ -99,6 +99,8 @@ already-landed `Turing.RecordValid.joinFields_length` is admission-free as well.
+   (proved; fill continuation 5).
+ * `Turing.exists_recordValidTM`, `Turing.exists_recordNextTM` — the remaining
+   record rows of R8.7 (statements).
++* `Turing.recordLength_eq` — the record length's formula, the specification API (user,
++  2026-10-16).
+ 
+ ## References
+ 
+@@ -152,6 +154,12 @@ cells, `posWidth n` position digits, the state and tag cells, and `k + 2`
+ separators. -/
+ def recordLength (k n s : ℕ) : ℕ := k * (2 * s + 1) + posWidth n + k + 4
+ 
++/-- **The record length's formula** (the specification API, user 2026-10-16), so that
++consumers never unfold `Turing.recordLength`. -/
++theorem recordLength_eq (k n s : ℕ) :
++    recordLength k n s = k * (2 * s + 1) + posWidth n + k + 4 :=
++  rfl
++
+ /-- **Every record has the record length** (design §12.8b). The layout of
+ `Turing.cfgRecord s c τ` has length `Turing.recordLength k |x| s`, whatever the
+ configuration and the tag. So the valid records at `(k, n, s)` all occupy the
+-- 
+2.50.1 (Apple Git-155)
+

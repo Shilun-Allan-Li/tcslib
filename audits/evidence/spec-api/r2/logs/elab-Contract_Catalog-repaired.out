@@ -1,0 +1,24 @@
+@Turing.sweepMapWrite_apply : ∀ {k : ℕ} {Γ S : Type} {x : List Γ} {Δ : Type} (extract : Γ → Δ)
+  (merge : Option Γ → Δ → Γ) (w : List Γ) (d : Turing.Cfg k Γ S x) (j : Fin k) (q : ℤ),
+  Turing.sweepMapWrite extract merge w d j q =
+    Option.map (fun γ => merge (d.workTapes j q) (extract γ)) (Turing.FinTM.bufferTape w (q - d.workTapePos j))
+'Turing.sweepMapWrite_apply' does not depend on any axioms
+@Turing.copyMapTM_contract_post_workTapes : ∀ {k : ℕ} {Γ Δ : Type} (src dst : Fin k) (hne : src ≠ dst) (extract : Γ → Δ)
+  (merge : Option Γ → Δ → Γ) (x w : List Γ) (d : Turing.Cfg k Γ Turing.SweepPhase x) (j : Fin k) (q : ℤ),
+  ((Turing.copyMapTM_contract src dst hne extract merge x).post w d).workTapes j q =
+    if j = dst ∧ d.workTapePos j ≤ q ∧ q < d.workTapePos j + ↑w.length then
+      Option.map (fun γ => merge (d.workTapes j q) (extract γ)) (Turing.FinTM.bufferTape w (q - d.workTapePos j))
+    else d.workTapes j q
+'Turing.copyMapTM_contract_post_workTapes' depends on axioms: [propext, Classical.choice, Quot.sound]
+@Turing.transferMapTM_contract_post_workTapes : ∀ {k : ℕ} {Γ Δ : Type} (src dst : Fin k) (hne : src ≠ dst)
+  (extract : Γ → Δ) (merge : Option Γ → Δ → Γ) (rest : Γ → Option Γ) (x w : List Γ)
+  (d : Turing.Cfg k Γ Turing.SweepPhase x) (j : Fin k) (q : ℤ),
+  ((Turing.transferMapTM_contract src dst hne extract merge rest x).post w d).workTapes j q =
+    if j = src ∧ d.workTapePos j ≤ q ∧ q < d.workTapePos j + ↑w.length then
+      (Turing.FinTM.bufferTape w (q - d.workTapePos j)).bind rest
+    else
+      if j = dst ∧ d.workTapePos j ≤ q ∧ q < d.workTapePos j + ↑w.length then
+        Option.map (fun γ => merge (d.workTapes j q) (extract γ)) (Turing.FinTM.bufferTape w (q - d.workTapePos j))
+      else d.workTapes j q
+'Turing.transferMapTM_contract_post_workTapes' depends on axioms: [propext, Classical.choice, Quot.sound]
+exit=0
