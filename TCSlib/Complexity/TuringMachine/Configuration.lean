@@ -11,8 +11,16 @@ Local modifications (see policy.md §2, vendored code):
   for compatibility with our v4.25.0 toolchain;
 * remapped `Mathlib.Basic.Sign.Defs` to its location at our mathlib pin,
   `Mathlib.Data.Sign.Defs`; dropped the cslib-internal `Cslib.Init` import;
-* added the repository-standard `set_option` header.
-The mathematical content is unchanged.
+* added the repository-standard `set_option` header;
+* re-proved `moveInputPos_leftBoundary`, `moveInputPos_rightBoundary`,
+  `moveInputPos_neg_of_ne_left`, `moveInputPos_pos_of_ne_right` and `inputSymbolInner` for our
+  mathlib pin (`dite_eq_left`/`dite_eq_right` are absent there), statements unchanged
+  (2026-09-16);
+* added lemmas that are not upstream, the specification API (user, 2026-10-16): the fields of
+  `Cfg.init` (`Cfg.init_state`, `_inputPos`, `_workTapes`, `_workTapePos`, `_output`, generated
+  by `simps` without the `simp` attribute), `Cfg.inputSymbol_of_zero`, `Cfg.inputSymbol_of_end`
+  and `Cfg.workTapeSymbols_eq`.
+The upstream definitions and theorems are otherwise unchanged.
 -/
 import Mathlib.Algebra.Order.BigOperators.Group.Finset
 import Mathlib.Algebra.Order.Group.Abs

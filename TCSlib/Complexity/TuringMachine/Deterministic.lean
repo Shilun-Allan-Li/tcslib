@@ -21,8 +21,13 @@ Local modifications (see policy.md §2, vendored code):
 * added the repository-standard `set_option` header;
 * corrected the module docstring's attribution of the non-blank space measure
   ([AB09, Def 4.1] counts visited cells for `SPACE`, non-blank cells only for
-  `NSPACE`); comments only, no code change (2026-10-08).
-The remaining mathematical content is unchanged.
+  `NSPACE`); comments only, no code change (2026-10-08);
+* added `timed_input_bound`, promoted from the campaign (D6, 2026-10-05);
+* added lemmas that are not upstream, the specification API (user, 2026-10-16):
+  `initCfg_eq` and `mem_visitedByTapeHead_iff`, and the split lemmas
+  `visitedByTapeHead_add_subset`, `visitedByTapeHead_step_subset`, moved here from
+  `Build/StepBlock` with their statements and proofs (design note O9).
+The upstream definitions and theorems are otherwise unchanged.
 -/
 import Mathlib.Algebra.Order.Group.Abs
 import Mathlib.Algebra.Order.Group.Int
