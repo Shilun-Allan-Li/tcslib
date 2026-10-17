@@ -92,6 +92,8 @@ with binary digits embedded into its dedicated counter tape.
 * `Turing.counterWord_length`, `Turing.counterWord_value`,
   `Turing.counterOverhead_le_of_le`, `Turing.counterOverhead_le` — counter
   arithmetic, including the amortized bound.
+* `Turing.counterWord_succ` — the counter word's successor case (the brief-inventory API,
+  round 3: the unfolding ledger of `Build/CfgRecord`).
 * `Turing.counterLoopTM_run_done`, `Turing.counterLoopTM_run_escape` — the
   host's exact whole-run contracts, with no earlier exit, the counter
   head's range, and the body heads' trajectory.
@@ -426,6 +428,13 @@ def counterWord (w : List Bool) (r : ℕ) : List Bool :=
 **Proof sketch.** The zeroth iterate of the optional decrement is the identity (`rfl`). -/
 theorem counterWord_zero (w : List Bool) : counterWord w 0 = w :=
   rfl
+
+/-- **One more decrement** (the brief-inventory API, round 3; user 2026-10-17): the counter word
+after `r + 1` decrements is one optional decrement of the word after `r`,
+`counterWord w (r + 1) = (decFixed (counterWord w r)).getD (counterWord w r)`. -/
+theorem counterWord_succ (w : List Bool) (r : ℕ) :
+    counterWord w (r + 1) = (decFixed (counterWord w r)).getD (counterWord w r) :=
+  Function.iterate_succ_apply' _ _ _
 
 /-- The cost sum of the first `r` decrements along the frozen word orbit
 `Turing.counterWord`: the decrement of the word `u` costs
