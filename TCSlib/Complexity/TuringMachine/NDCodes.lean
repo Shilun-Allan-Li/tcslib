@@ -67,6 +67,8 @@ time bound, as required by the audited contract.
   (skeleton-time proof, mirror of `Turing.MachineCode.decode_encode`).
 * `Turing.exists_effectiveNDMachineCode` — an effective scheme exists
   (proved; phase P3.3).
+* `Turing.CodeNDTM.toFinNDTM_k`, `_State`, `_tm` — the bundled machine's fields (the ND
+  inventory API, C1's pre-ship inventory, 2026-10-17).
 
 ## References
 
@@ -105,6 +107,11 @@ def CodeNDTM.toFinNDTM (M : CodeNDTM) : FinNDTM Bool where
   k := 2
   State := Fin (M.numStates + 1)
   tm := M.tm
+
+/-! The bundled machine's fields as equations (the ND inventory API, 2026-10-17), by `simps` without
+the `simp` attribute: `M.toFinNDTM.k = 2`, `M.toFinNDTM.State = Fin (M.numStates + 1)` and
+`M.toFinNDTM.tm = M.tm`. -/
+attribute [simps (config := { isSimp := false }) k State tm] CodeNDTM.toFinNDTM
 
 /-- The **fixed, scheme-independent** canonical serialization of a coded
 nondeterministic machine, mirroring `Turing.CodeTM.serialize`: the state count,

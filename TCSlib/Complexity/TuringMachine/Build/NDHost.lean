@@ -68,6 +68,9 @@ up front, with one small nondeterministic leaf, and then run deterministically.
   halting setup (proved).
 * `Turing.guessRunCfg_clean` (proved), `Turing.guessRunTM_silent_spec` (proved modulo the
   writer) — the interpreter core's interface: precondition, emission capture, live verdicts.
+* The fields of the two configurations `Turing.guessRunCfg_state`, `_inputPos`, `_workTapes`,
+  `_workTapePos`, `_output` and `Turing.streamStartCfg_state`, `_inputPos`, `_workTapes`,
+  `_workTapePos`, `_output` (the ND inventory API, C1's pre-ship inventory, 2026-10-17).
 
 ## References
 
@@ -384,12 +387,24 @@ def guessRunCfg {k : ℕ} {S S' : Type} {z : List Bool} (c : Cfg k Bool S z) (j 
       else c.workTapes j p),
     c.workTapePos, c.output⟩
 
+/-! The handoff configuration's fields as equations (the ND inventory API, 2026-10-17), by `simps`
+without the `simp` attribute: the state is `some q`, tape `j` holds `s` from its head with every
+other cell `c`'s, and the input head, every other tape, every head and the output are `c`'s. -/
+attribute [simps (config := { isSimp := false }) state inputPos workTapes workTapePos output]
+  guessRunCfg
+
 /-- **The interpreter core's start configuration**: state `q`, input head on the first symbol
 of `z`, the stream `s` on tape `j` from cell `0`, every other tape blank, every head at `0`,
 empty output. It is the configuration `start` of `Turing.exists_ndInterpreterCore`, verbatim. -/
 def streamStartCfg {K : ℕ} {S : Type} (z : List Bool) (j : Fin K) (q : S) (s : List Bool) :
     Cfg K Bool S z :=
   ⟨some q, 1, fun i => if i = j then FinTM.bufferTape s else fun _ => none, fun _ => 0, []⟩
+
+/-! The start configuration's fields as equations (the ND inventory API, 2026-10-17), by `simps`
+without the `simp` attribute: state `some q`, input head `1`, tape `j` the buffer of `s` and every
+other tape blank, every head `0`, output `[]`. -/
+attribute [simps (config := { isSimp := false }) state inputPos workTapes workTapePos output]
+  streamStartCfg
 
 /-- Renaming a configuration's state twice is renaming it once, along the composite. -/
 private theorem guessRun_mapState_mapState {k : ℕ} {S S' S'' : Type} {x : List Bool}
