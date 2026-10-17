@@ -146,8 +146,8 @@ for the local modifications.
   general-configuration forms and the release adapter, and the space-annotated
   catalog rows.
 * `Build/NDHost` — the nondeterministic phase host over NDTM phases and the choice writer, for
-  the guess-first route of the nondeterministic time hierarchy (C1). The writer's bounded
-  contract is sorried.
+  the guess-first route of the nondeterministic time hierarchy (C1). Proved, the writer's
+  bounded contract included (C1-W, 2026-10-17).
 * `Build/VirtualInput` — virtual-input hosting (`machine-library-design.md` §13, Z1): a
   machine whose input is a buffered work-tape word runs inside a host, one step per step.
 * `Build/Zone` — the pure zone layer (§13, Z2, as revised by §13d): zone contents, the
