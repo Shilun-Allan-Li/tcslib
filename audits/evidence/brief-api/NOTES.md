@@ -75,6 +75,8 @@ All declarations are added; no `@[simp]`; every docstring states its formula.
 - The method is the same: `inventory/G4C-inventory.out` (the 94 names of G4's probe),
   `G4C-fields-inventory.out` (the 260 published lemmas its route can read, from
   `scripts/EnumLemmas.lean.txt`), and `G4C-enum-rounds.out`.
+- The statements behind the "covered" judgments are printed by `probes/G4CoveredProbe.lean.txt`
+  at `4ae686be` against `oleans-lbapi2` (`inventory/G4C-covered-probe.out`, 0 errors).
 
 ## Checks (maintainer, against `oleans-lm11a`)
 
