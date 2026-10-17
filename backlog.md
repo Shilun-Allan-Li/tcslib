@@ -1054,6 +1054,14 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
       `drafts/issue-inputs/r3/`): U2-S 655, F3 1,043, G4 795, MIG-12 870, cont6 2,411
       declarations. Each is one more than before (`scanResult_keep_keep`), with identical pair
       sets. The drafts take these counts at issue.
+- **#118 merged (user, 2026-10-17; `f7546373`). The six briefs are issued** (inputs and briefs
+  `94b986d4`, the ancestor; dispatch files in `infra_local/fill-dispatches/`, prompts given in chat):
+  - U2-S `6e579c35…`, F5 `e181d7e2…`, F3 cont1 `2196f09e…`, cont6 `4c9f226e…`, G4 cont1
+    `cd1809a7…`, MIG-12 `d815282a…` (SHA-256 of the dispatch files);
+  - base `f7546373`, whose Lean is #118's `531b98a2`; the pre-ship logs are the `oleans-lbapi4` run;
+  - F3's continuation got its own paths (`b6-fill-configclock-cont1`), so F3's first-round base
+    records are not overwritten.
+  - **#119's replay is cleared to run** (`replay-lndapi.sh`, 111 modules).
 - **C1's fill plan and the ND inventory API (2026-10-17, while #118 merges;**
   `audits/evidence/c1/C1-fill-plan.md`, `audits/evidence/nd-api/`).
   - **C1's eleven stubs** are all briefable: every shared host they wait on is proved (the step
