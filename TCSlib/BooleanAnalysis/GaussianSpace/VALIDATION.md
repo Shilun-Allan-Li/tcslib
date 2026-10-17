@@ -211,3 +211,69 @@ separate from the Lean/kernel evidence and human approval.
 
 The six surface-area source proofs remain `sorry`. No blueprint theorem entries,
 approved proofmatch certificates, or `\leanok` markers were changed.
+
+## Surface-area completion (2026-10-17)
+
+This completion supersedes the historical surface-area status above. All six
+original statements in `SurfaceArea.lean` now have complete proofs. A direct
+comparison with `HEAD` confirms that their signatures are unchanged:
+
+- `surfaceArea_rotation_limit`;
+- `surfaceArea_congr_ae`;
+- `surfaceArea_halfspace`;
+- `rotationSensitivity_le_surfaceArea`;
+- `surfaceArea_volume_lower_bound`;
+- `gaussian_isoperimetric`.
+
+The proof chain separates Gaussian projection and halfspace crossing limits,
+averaged-indicator approximation and regularity, smooth rotation variation,
+and Gaussian Bobkov. The latter reuses the proved Boolean Bobkov inequality,
+the existing fourth-order invariance theorem, normalized Boolean blocks, and
+Mathlib weak convergence. Product-density differentiation supplies explicit
+bounded Lipschitz derivatives for the averaged indicators. The final profile
+limit gives the original isoperimetric conclusion for every interior volume,
+without a finite-area or positive-dimensional assumption. All nontrivial
+proofs carry source references and mathematical sketches.
+
+### Completed language-server checks
+
+Fresh Lean LSP diagnostics for all 21 touched Lean files completed with
+`partial: false`, `timed_out: false`, `success: true`, no errors, and no failed
+dependencies. `SurfaceArea.lean` has no `sorry` warnings. Its only two warnings
+are unused original measurability arguments `hA` and `hB` in
+`surfaceArea_congr_ae`; that proof uses a stronger almost-everywhere congruence
+lemma. The other 20 files have empty diagnostics, including the GaussianSpace
+facade and all 16 new supporting modules.
+
+Fresh `lean_verify` checks for each of the six original declarations report
+exactly `propext`, `Classical.choice`, and `Quot.sound`, with no `sorryAx` and
+no source-scan warnings in `SurfaceArea.lean`. In the supporting
+`ProductHessian.lean`, two documented local instance aliases reuse the canonical
+nested continuous-linear-map structures via `inferInstance` to control
+elaboration. They introduce no axioms or alternative mathematical structures.
+
+No shell `lean`, `lake build`, dependency updates, or toolchain changes were
+used. These are completed file/declaration checks through Lean LSP, not a claim
+of a from-clean whole-project build or a sorry-free project.
+
+### Independent review and hygiene
+
+A separate read-only semantic reviewer checked the original statements,
+normalizations, independence and integrability, Gaussian moment bounds,
+derivative scaling, Boolean block transport, and the limiting arguments.
+The final review found no unresolved issues, including at dimension zero
+and infinite surface area. This is model judgment, separate from Lean/kernel
+evidence and human approval.
+
+- `scripts/style_lint.py`: **0 findings in all 21 touched Lean files**.
+- `git diff --check` and direct whitespace checks on new files: passed.
+- Source scans of all 21 files: no proof placeholders, new axioms, unsafe
+  declarations, or temporary axiom-print commands.
+- The local import graph has no cycles. Every new module is exported through
+  the GaussianSpace facade and the existing `TCSlib.lean` import.
+- The largest touched Lean module has 462 lines. Supporting lemmas are split
+  by mathematical purpose and reuse existing project and Mathlib objects.
+
+The coverage ledger and module summaries now reflect all six completed
+surface-area statements. No blueprint theorem entries, approved proofmatch
+certificates, or `\leanok` markers were changed.

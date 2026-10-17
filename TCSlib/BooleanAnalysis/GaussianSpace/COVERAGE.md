@@ -2,8 +2,9 @@
 
 This is a **partial formalization**, not a claim that the whole chapter is covered.
 The five rotation-sensitivity statements, their product-Gaussian rotation-law bridge,
-all three Boolean Bobkov inequalities, the Basic Invariance Principle, and both
-invariance corollaries are proved. The six surface-area source proofs remain `sorry`. The five source
+all three Boolean Bobkov inequalities, the Basic Invariance Principle, both
+invariance corollaries, smooth Gaussian Bobkov, and all six surface-area source
+statements are proved, including general-volume Gaussian isoperimetry. The five source
 definitions/structures have concrete bodies. The original theorem statements are unchanged.
 The facade is `TCSlib.BooleanAnalysis.GaussianSpace`, exported from `TCSlib.lean`.
 
@@ -37,12 +38,28 @@ certificates were added: those require the existing approved proofmatch workflow
 | `Definitions.lean` | Rotation sensitivity, extended rotation-limit surface area, profile endpoint adapter | `Measure.pi`, `Measure.prod`, `Filter.liminf`, existing Chapter 5 Gaussian law/profile |
 | `Profile.lean` | Gaussian quantile calculus, symmetry, convexity, and closed-profile continuity | Existing Gaussian CDF/PDF/quantile and Mathlib inverse differentiation/convexity |
 | `Inputs.lean` | Hypothesis 11.65 | `Hypercontractivity.IsBReasonable` and its finite fourth-moment field |
+| `InputMoments.lean` | Proved Gaussian moments and Gaussian/Boolean invariance input instances | Mathlib Gaussian MGF, finite moments, and uniform finite laws |
+| `GaussianDensity.lean` | Proved scalar density differentiation and bounded Lipschitz first derivatives of Gaussian averages | Parametric integration, Gaussian moments and integrable envelopes |
+| `ProductDensity.lean` | Proved product density and affine Gaussian integration formulas | Finite-product integration and scalar Gaussian law transformations |
+| `ProductDifferentiation.lean` | Proved continuous differentiability of bounded product Gaussian averages | Scalar envelopes, product rule, parametric integration and dominated convergence |
+| `ProductBounds.lean` | Proved first/Hessian coordinate kernel integrability and moment bounds | Explicit quadratic domination and Gaussian coordinate second moments |
+| `ProductHessian.lean` | Proved second differentiation and Lipschitz first derivatives of product Gaussian averages | Local integrable Hessian envelopes, coordinate moment bounds, and the mean value inequality |
 | `Rotation.lean` | Proved rotation subadditivity and balanced grid bound | Mathlib Gaussian rotation invariance, product-law equivalences, symmetric differences, and finite sums |
-| `SurfaceArea.lean` | Surface-area limits and lower bounds | `Rotation`, existing Gaussian PDF and interior profile |
+| `Halfspace.lean` | Proved unit Gaussian projection and normalized halfspace crossing limit | Existing weighted Gaussian sums, Gaussian CDF calculus, and dominated convergence |
+| `IndicatorSmoothing.lean` | Proved exact integral approximation, mean preservation, and contraction of rotation variation | Existing Gaussian rotation coupling, product-measure conditioning, and the four-Gaussian coupling |
+| `IndicatorRegularity.lean` | Proved differentiability and bounded Lipschitz derivatives of averaged indicators | Product-density representation and cosine scaling of the existing derivative |
+| `ProfileApproximation.lean` | Proved vanishing profile integral for averaged indicators | Compact uniform continuity, exact integral approximation, and rotation continuity |
+| `SmoothVariation.lean` | Proved smooth gradient bound from normalized rotation variation | Chain rule, Gaussian directional moments, Tonelli, and Fatou |
+| `SurfaceArea.lean` | Proved surface-area limits, halfspace formula, and Gaussian isoperimetry | Rotation bounds, Gaussian Bobkov, smooth variation, and averaged indicators |
 | `Bobkov.lean` | Boolean two-point/full inequalities and noise monotonicity | `expect`, `derivative`, `noiseOp` |
 | `Bobkov/TwoPoint.lean`, `Cube.lean` | Scalar profile estimates and cube length identities | Bobkov's original calculus proof, existing coordinate restrictions and Euclidean norms |
 | `Bobkov/Interpolation.lean`, `Noise.lean`, `Tensorization.lean` | Symmetric-pair contraction and dimension induction | Mathlib concavity/compactness, existing noise kernel and semigroup law |
+| `BooleanBlocks.lean` | Proved finite-index and array Boolean Bobkov adapters | Existing cube Bobkov, coordinate equivalences, finite currying |
+| `Bobkov/DiscreteApproximation.lean` | Proved first-order Taylor control of normalized Boolean block derivatives | Lipschitz derivatives, coordinate updates, and the mean value inequality |
+| `GaussianBobkov.lean` | Proved smooth Gaussian Bobkov and additive profile/gradient bound | Normalized Boolean block convergence, discrete Taylor bounds and Euclidean length estimates |
 | `Invariance.lean` | General-input C4 invariance and two quantitative corollaries | Existing multilinear polynomials/evaluation, independence, cube variance/influence, iterated derivatives |
+| `NormalizedSums.lean` | Proved degree-one Lipschitz Gaussian approximation | Fourth-order invariance, Gaussian projection, and the input-moment instances |
+| `NormalizedBlocks.lean` | Proved finite-dimensional normalized Boolean block convergence | Scalar comparison, Mathlib Portmanteau and continuity of finite products |
 | `Invariance/Coordinates.lean`, `Moments.lean` | Coordinate decomposition and fourth moments | Existing cube derivative, coefficient identities, general-input Bonami |
 | `Invariance/Taylor.lean`, `Replacement.lean` | Cubic cancellation and single-coordinate replacement | Mathlib Taylor theorem, independent integration, finite fourth moments |
 | `Invariance/Sequence.lean`, `Smoothing.lean` | Telescoping, law transport, and Lipschitz smoothing | Product marginals, identical distributions, Mathlib interval averages and calculus |
@@ -63,17 +80,18 @@ Names below are relative to `BooleanAnalysis.GaussianSpace`.
 | Thm. 11.43, final assertion | `rotationSensitivity_div_nat` | Proved equal-step statement with positive integer divisor |
 | Cor. 11.44 proof; Thm. 11.52 proof | `rotationSensitivity_pi_div_two` | Proved exact independent-endpoint formula `2α(1-α)` |
 | Cor. 11.44 | `rotationSensitivity_balanced_grid` | Proved for volume one half and angle `π/(2ℓ)` |
-| Def. 11.48 | `gaussianSurfaceArea` | Concrete ENNReal lower-limit definition; right-limit equivalence is an explicit obligation |
-| Def. 11.48; Eq. (11.14) | `surfaceArea_rotation_limit` | Includes infinite surface area; `sorry` |
-| Discussion preceding Def. 11.48 | `surfaceArea_congr_ae` | Measurable null modifications preserve area; `sorry` |
-| Prop. 11.49 | `surfaceArea_halfspace` | Closed halfspace with unit normal, threshold `t`, area `φ(t)`; `sorry` |
-| Thm. 11.51 | `rotationSensitivity_le_surfaceArea` | Every positive angle; `sorry` |
-| Thm. 11.52 | `surfaceArea_volume_lower_bound` | `2 sqrt(2/π) α(1-α)` bound; `sorry` |
-| §11.4, Gaussian Isoperimetric Inequality | `gaussian_isoperimetric` | Interior volume `α∈(0,1)`; endpoint bound is ENNReal nonnegativity; `sorry` |
+| Def. 11.48 | `gaussianSurfaceArea` | Concrete ENNReal lower-limit definition; right-limit equivalence is proved |
+| Def. 11.48; Eq. (11.14) | `surfaceArea_rotation_limit` | Proved, including infinite surface area, by continuity and subadditivity |
+| Discussion preceding Def. 11.48 | `surfaceArea_congr_ae` | Proved via equality of every rotation sensitivity under null modifications |
+| Prop. 11.49 | `surfaceArea_halfspace` | Proved for a closed halfspace with unit normal and arbitrary threshold by conditional CDF increments |
+| Thm. 11.51 | `rotationSensitivity_le_surfaceArea` | Proved for every positive angle by the subadditive lower-limit bound |
+| Thm. 11.52 | `surfaceArea_volume_lower_bound` | Proved by independence at angle `π/2` and normalization |
+| §11.4, Gaussian Isoperimetric Inequality | `gaussian_isoperimetric` | Proved for interior volume `α∈(0,1)` through smooth Gaussian Bobkov and averaged indicators; endpoint bound is ENNReal nonnegativity |
 | Def. 5.26; §11.4, Eq. (11.15) | `closedGaussianProfile` | Concrete adapter: reuse the existing interior profile and set endpoint values to zero |
 | §11.4, Eq. (11.15) | `bobkovFunctional` | Concrete expected length using the existing discrete gradient |
 | §11.4, Bobkov's Two-Point Inequality | `bobkov_two_point` | Proved on the full closed interval, including endpoints, using [Bob97, Proposition 1] |
 | §11.4, Bobkov's Inequality (11.15) | `bobkov_inequality` | Proved for all `[0,1]`-valued cube functions by coordinate induction and the triangle inequality |
+| §11.4, Gaussian Bobkov | `gaussian_bobkov_smooth` | Proved for unit-interval functions with explicit bounded Lipschitz derivative family |
 | Thm. 11.55 | `bobkovFunctional_noise_monotone` | Proved on correlation interval `[0,1]`; deterministic bounded-supremum argument replaces the source's stopped walk |
 | Hyp. 11.65 | `HasInvarianceMoments` | Concrete Prop structure reusing 9-reasonability |
 | §11.6, Basic Invariance Principle, Eq. (11.29) | `basic_invariance_principle` | Proved exact `(C/12)9^k Σ Inf²` bound for arbitrary independent input laws |
@@ -169,12 +187,12 @@ this bounded search. Global nonexistence across GitHub cannot be certified by se
 
 | Source range | Reuse / explicit remaining work |
 | --- | --- |
-| §11.1, Notation 11.1–Fact 11.13 | Reuse local Gaussian laws and Mathlib Lp; upstream correlated/Mehler noise exists. BitsToGaussians and transport to the local cube API are deferred, not redeclared. |
+| §11.1, Notation 11.1–Fact 11.13 | Reuse local Gaussian laws and Mathlib Lp; upstream correlated/Mehler noise exists. Independent normalized Boolean blocks and their finite-dimensional Gaussian convergence are now proved using the existing cube API. |
 | §11.1, Props. 11.15–11.17; Thms. 11.22–11.23 | External contraction/smoothing/density/hypercontractivity overlap. Audit full Lp endpoints and negative correlations before proposing any genuinely missing bridge. |
 | §11.1, Def. 11.24–Prop. 11.28; Gaussian LogSob | Reuse external OU calculus/LogSob; operator domains and core-to-L2 closure need explicit integration. No vague-domain skeleton is added. |
 | §11.2, Def. 11.29–Prop. 11.40 | Mathlib Hermite polynomials and upstream Gaussian Hilbert/chaos/spectral theory. Normalization and coefficient/L2 transport remain future adapter work. |
 | §11.3, Borell; Cor. 11.20/Sheppard material | Existing local Sheppard and external Borell statements. Only the distinct rotation-sensitivity development is new. |
-| §11.4, Def. 11.48 relaxation/Minkowski equivalences | Only the rotation definition/right-limit assertion are included. Smooth relaxation, attainment by noise smoothing, and sufficiently regular boundary comparisons are deferred until their exact function/set classes are fixed. |
+| §11.4, Def. 11.48 relaxation/Minkowski equivalences | The rotation definition/right-limit assertion, the one-sided smooth gradient bound, and averaged-indicator approximation are proved. Full relaxation/attainment equalities and sufficiently regular boundary comparisons remain deferred until their exact function/set classes are fixed. |
 | §11.4, Example 11.50 | Convex upper bounds already external. Ball/PTF bounds and interval formulas are deferred for representation/overlap review, not silently counted as covered. |
 | §11.4, Claim 11.54 | A proof-internal stopped-walk claim; no new stochastic-process model is introduced in this starting skeleton. |
 | §11.5, Def. 11.57 and smoothing/scalar consequences | Reuse Mathlib distance/mollification APIs and external Berry–Esseen. Exact remaining scalar test-function adapters are deferred. |
@@ -191,5 +209,5 @@ into another `sorry` skeleton.
 ## Validation
 
 See `VALIDATION.md` for language-server diagnostics, axiom inspection, independent
-semantic review, and repository hygiene checks. A `sorry` warning is expected here
-and must never be reported as a completed proof.
+semantic review, and repository hygiene checks. The completed source statements
+have no `sorry` dependencies; unrelated chapter results remain outside this scope.

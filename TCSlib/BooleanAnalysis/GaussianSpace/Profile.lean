@@ -36,7 +36,7 @@ The quantile and profile are reused from `ThresholdFunctions.GaussianTail`.
   Probability 25 (1997), 206–214, Proposition 1 and Lemmas 2–3.
 -/
 
-open Filter Set
+open MeasureTheory Filter Set
 open scoped Topology
 
 namespace BooleanAnalysis.ThresholdFunctions
@@ -320,5 +320,41 @@ lemma continuousOn_closedGaussianProfile :
   · subst a
     exact continuousAt_closedGaussianProfile_one.continuousWithinAt
   exact (hasDerivAt_closedGaussianProfile ⟨h0, h1⟩).continuousAt.continuousWithinAt
+
+/-- The Gaussian profile extended by zero outside the probability interval is
+continuous on the real line. [OD14, Def. 5.26; §11.4]
+
+**Proof sketch.** Use the profile derivative in the interior and its vanishing
+endpoint limits. Away from the closed probability interval the extension is
+locally constant. -/
+lemma continuous_closedGaussianProfile : Continuous closedGaussianProfile := by
+  refine continuous_iff_continuousAt.mpr fun x => ?_
+  rcases lt_trichotomy x 0 with hx | rfl | hx
+  · apply (continuousAt_const (y := (0 : ℝ))).congr_of_eventuallyEq
+    filter_upwards [eventually_lt_nhds hx] with p hp
+    simp [closedGaussianProfile, not_lt_of_ge hp.le]
+  · exact continuousAt_closedGaussianProfile_zero
+  rcases lt_trichotomy x 1 with hx1 | rfl | hx1
+  · exact (hasDerivAt_closedGaussianProfile ⟨hx, hx1⟩).continuousAt
+  · exact continuousAt_closedGaussianProfile_one
+  · apply (continuousAt_const (y := (0 : ℝ))).congr_of_eventuallyEq
+    filter_upwards [eventually_gt_nhds hx1] with p hp
+    simp [closedGaussianProfile, not_lt_of_ge hp.le]
+
+/-- The closed Gaussian profile of a measurable unit-interval-valued function
+is integrable on every finite measure space. [OD14, §11.4, equation (11.15)]
+
+**Proof sketch.** Continuity makes the composition measurable, and compactness
+bounds the profile uniformly on the probability interval. Dominate by that
+constant, which is integrable for a finite measure. -/
+lemma integrable_closedGaussianProfile_comp {Ω : Type*} [MeasurableSpace Ω]
+    {μ : Measure Ω} [IsFiniteMeasure μ] {f : Ω → ℝ}
+    (hf : Measurable f) (hfrange : ∀ x, f x ∈ Icc (0 : ℝ) 1) :
+    Integrable (fun x => closedGaussianProfile (f x)) μ := by
+  obtain ⟨M, hM⟩ := isCompact_Icc.exists_bound_of_continuousOn
+    continuousOn_closedGaussianProfile
+  exact (integrable_const M).mono'
+    (continuous_closedGaussianProfile.measurable.comp hf).aestronglyMeasurable
+    (Eventually.of_forall fun x => hM (f x) (hfrange x))
 
 end BooleanAnalysis.GaussianSpace

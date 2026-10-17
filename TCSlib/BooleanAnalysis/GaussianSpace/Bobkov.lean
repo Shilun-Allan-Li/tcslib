@@ -6,6 +6,7 @@ Authors: TCSlib Contributors
 
 import TCSlib.BooleanAnalysis.GaussianSpace.Bobkov.TwoPoint
 import TCSlib.BooleanAnalysis.GaussianSpace.Bobkov.Cube
+import TCSlib.BooleanAnalysis.GaussianSpace.Bobkov.DiscreteApproximation
 import TCSlib.BooleanAnalysis.GaussianSpace.Bobkov.Interpolation
 import TCSlib.BooleanAnalysis.GaussianSpace.Bobkov.Noise
 import TCSlib.BooleanAnalysis.GaussianSpace.Bobkov.Tensorization
@@ -22,6 +23,7 @@ set_option autoImplicit false
 
 * `Bobkov.TwoPoint`: Gaussian-profile calculus estimates and the scalar inequality.
 * `Bobkov.Cube`: coordinate restrictions, derivative identities, and length inequalities.
+* `Bobkov.DiscreteApproximation`: quadratic linearization and normalized-block derivative estimates.
 * `Bobkov.Interpolation`: symmetric-pair contraction with extra Euclidean coordinates.
 * `Bobkov.Noise`: interval preservation and noise/restriction identities.
 * `Bobkov.Tensorization`: dimension induction for the extended noise functional.
@@ -39,7 +41,8 @@ set_option autoImplicit false
 
 The profile's zero endpoint values use `closedGaussianProfile`, whose interior formula
 is reused from Chapter 5. The scalar calculus is factored into `Bobkov.TwoPoint`.
-The smooth Gaussian analogue is deferred until its precise operator domain is selected.
+The smooth Gaussian analogue with bounded Lipschitz derivatives is proved separately
+in `GaussianBobkov`, using these Boolean inequalities and normalized block convergence.
 
 ## References
 

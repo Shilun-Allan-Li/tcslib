@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: TCSlib Contributors
 -/
 
+import Mathlib.MeasureTheory.Measure.ContinuousPreimage
 import Mathlib.Probability.Distributions.Gaussian.Fernique
 import TCSlib.BooleanAnalysis.GaussianSpace.Definitions
 
@@ -21,6 +22,7 @@ set_option autoImplicit false
 ## Main results
 
 * `measurePreserving_gaussianRotation`: rotation invariance of the product Gaussian law.
+* `rotationSensitivity_tendsto_zero`: continuity at angle zero.
 * `rotationSensitivity_subadditive`: subadditivity under addition of angles.
 * `rotationSensitivity_sum_le`: the finite-angle form of Theorem 11.43.
 * `rotationSensitivity_div_nat`: the equal-step form of Theorem 11.43.
@@ -38,8 +40,8 @@ existing local and external locations are recorded in `COVERAGE.md`.
   2014; May 2021 arXiv edition, §11.3, Theorem 11.43 and Corollary 11.44.
 -/
 
-open MeasureTheory
-open scoped BigOperators
+open MeasureTheory Filter
+open scoped BigOperators ENNReal Topology
 
 namespace BooleanAnalysis.GaussianSpace
 
@@ -219,5 +221,50 @@ theorem rotationSensitivity_balanced_grid (hA : MeasurableSet A)
   apply (div_le_iff₀ (by positivity : (0 : ℝ) < 2 * (ℓ : ℝ))).mpr
   nlinarith [h]
 )
+
+/-- Rotation sensitivity tends to zero as the angle tends to zero.
+[OD14, §11.4, discussion before Def. 11.48]
+
+**Proof sketch.** Gaussian rotations vary continuously and preserve the joint
+Gaussian law. Mathlib's continuity theorem for measurable preimages makes the
+measure of the symmetric difference with the unrotated cylinder tend to zero. -/
+lemma rotationSensitivity_tendsto_zero (hA : MeasurableSet A) :
+    Tendsto (rotationSensitivity A) (𝓝 (0 : ℝ)) (𝓝 0) := by
+  classical
+  letI : IsProbabilityMeasure standardGaussianMeasure := by
+    unfold standardGaussianMeasure
+    infer_instance
+  let μ := (Measure.pi fun _ : Fin n => standardGaussianMeasure).prod
+    (Measure.pi fun _ : Fin n => standardGaussianMeasure)
+  let E : Set ((Fin n → ℝ) × (Fin n → ℝ)) := Prod.fst ⁻¹' A
+  let f (u : ℝ) : C((Fin n → ℝ) × (Fin n → ℝ),
+      (Fin n → ℝ) × (Fin n → ℝ)) :=
+    ⟨ContinuousLinearMap.rotation u, (ContinuousLinearMap.rotation u).continuous⟩
+  have hf : Continuous f := by
+    apply ContinuousMap.continuous_of_continuous_uncurry
+    change Continuous (fun p : ℝ × ((Fin n → ℝ) × (Fin n → ℝ)) =>
+      (Real.cos p.1 • p.2.1 + Real.sin p.1 • p.2.2,
+        -Real.sin p.1 • p.2.1 + Real.cos p.1 • p.2.2))
+    fun_prop
+  have hlim := tendsto_measure_symmDiff_preimage_nhds_zero (μ := μ) (ν := μ)
+    (s := E) (hf.tendsto 0)
+    (Filter.Eventually.of_forall (fun u => measurePreserving_gaussianRotation (n := n) u))
+    (measurePreserving_gaussianRotation (n := n) 0)
+    (hA.preimage measurable_fst).nullMeasurableSet (measure_ne_top μ E)
+  have hsens (u : ℝ) :
+      rotationSensitivity A u = (μ (symmDiff (f u ⁻¹' E) (f 0 ⁻¹' E))).toReal := by
+    unfold rotationSensitivity
+    congr 2
+    ext z
+    change (¬ (z.1 ∈ A ↔
+      (fun i => Real.cos u * z.1 i + Real.sin u * z.2 i) ∈ A)) ↔
+      (((Real.cos u • z.1 + Real.sin u • z.2) ∈ A ∧
+          (Real.cos 0 • z.1 + Real.sin 0 • z.2) ∉ A) ∨
+        ((Real.cos 0 • z.1 + Real.sin 0 • z.2) ∈ A ∧
+          (Real.cos u • z.1 + Real.sin u • z.2) ∉ A))
+    simp only [Real.cos_zero, Real.sin_zero, one_smul, zero_smul, add_zero]
+    tauto
+  simpa only [Function.comp_def, ← hsens, ENNReal.toReal_zero] using
+    (ENNReal.continuousAt_toReal ENNReal.zero_ne_top).tendsto.comp hlim
 
 end BooleanAnalysis.GaussianSpace
