@@ -1074,6 +1074,18 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
       dispatched after #119 merges.
     - **NF moves to a new module,** `ClassNP/NDNormalForm`, by a small PR with a statement gate.
     - **C1-E's statement phase** starts now.
+  - **#120** (`lean/nd-normalform` at `95a3b6a0`, stacked on #119) moves NF, byte-identical, into
+    `ClassNP/NDNormalForm`. It moves the declaration under its own name, where the plan's wording
+    had a citation; this is disclosed in the PR. Replay: `replay-lndnf.sh`, 4 modules, after
+    #119's. Evidence: `audits/evidence/nd-normalform/`.
+  - **C1-E's statement phase** (`audits/evidence/c1/c1e/`). The user (2026-10-17) chose, all as
+    recommended: one stage-query machine, the `Nat.unpair` schedule, a new module. **#121**
+    (`lean/ntime-diag` at `2ff6cc0c`, stacked on #120) is `Diagonalization/NTimeDiagonalizer`:
+    - the ladder, stage, schedule and stage query, with 13 laws proved;
+    - `exists_queryTM` and `exists_diagonalizer`, sorried, for the fills E-Q and E-D.
+
+    Replay: `replay-lndiag.sh`, 2 modules, after #120's.
+  - **The gates for #119, #120 and #121** are staged as each replay passes.
 - **The scratchpad was hit by the nightly /tmp cleaner (2026-10-17, ~03:00).**
   - **What it deleted:** files not accessed for about 3 days, including the campaign worktree
     `wt-hk`'s `.git` link and most of `tools/`.

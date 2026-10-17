@@ -52,6 +52,15 @@ because `query` is defined mathematically.
 3. **The home.** A new module, so `NTimeHierarchy` (owned by wave 1's UN brief) is untouched.
    `ntime_hierarchy`'s fill adds the import later.
 
+**Answered (user, 2026-10-17): all three as recommended.** One query machine; the `Nat.unpair`
+schedule; a new module. The unit is PR #121 (`lean/ntime-diag` at `2ff6cc0c`, stacked on #120).
+It adds `budget_eq` and `stageCode_eq`, which lint check 8 asks for. Its checks are in `pr/`:
+- elaboration: 0 errors and the 2 `sorry`s;
+- freeze: 20 publics;
+- lint: 1 WARN, as before;
+- screen: no new pair;
+- replay closure: 2 modules.
+
 ## After the gate (sizes ESTIMATE)
 
 - **E-Q,** `exists_queryTM`: 2–4k lines (the locator 1.5–3k, the writer 300–600, the glue).
