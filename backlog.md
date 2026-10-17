@@ -1065,6 +1065,8 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
     pack `audits/s13d-g4-cont1-fill-pack.md`.
   - **#126** (X2: BF as a hypothesis of `exists_diagonalizer`; `5333b29b`; replay 2): gate 45's
     pack `audits/ntime-diag-bf-statements-pack.md`.
+  - **E cont1 issued** (ancestor `9e77d2b2`; dispatch file `a00bdc6f…`; addendum v2 `2a80b0ef…`,
+    v1 kept as `fill-environment-addendum-v1.md`). WC cont1 drafted (issues after #122).
   - **Continuations to brief** (addendum v2; dispatch at most two at a time): WC cont1 (the
     in-imports join, `agreeOn_iff`), E cont1 (the three imports pre-authorized, P1–P4), R cont1
     (after #122 and #124; G2's contract; the drafts), G4 cont2 (F2's route amendment; check 8's
