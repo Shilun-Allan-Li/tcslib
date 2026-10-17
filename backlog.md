@@ -1039,7 +1039,8 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
       - `531b98a2`: `counterWord_succ`, `scanResult_keep_keep`.
     - Checks clean. Replay `replay-lbapi4.sh` covers 320 modules. Pack
       `audits/brief-api-r3-pack.md`; resolutions updated; MIG-12's and F5's drafts corrected.
-    - **Morning:** the user approves the push, runs the replay, then the r3 gate (folder 36).
+    - **Pushed (user's go-ahead, 2026-10-17):** `lean/brief-api` at `531b98a2`; the PR body is
+      updated (15 files). The user is running `replay-lbapi4.sh`; then the r3 gate (folder 36).
       After the merge, issue: re-run the pre-ship checks against `oleans-lbapi4`.
     - **The screen bases re-measured at the round-3 head** (`531b98a2`;
       `drafts/issue-inputs/r3/`): U2-S 655, F3 1,043, G4 795, MIG-12 870, cont6 2,411
