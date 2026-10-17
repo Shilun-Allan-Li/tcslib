@@ -198,6 +198,10 @@ def _root_.Turing.Cfg.bindState {S S' : Type} {x : List Γ} (d : Cfg k Γ S x) (
     Cfg k Γ S' x :=
   ⟨d.state.bind f, d.inputPos, d.workTapes, d.workTapePos, d.output⟩
 
+/-! The redirect's fields as equations, generated without the `simp` attribute (`policy.md` §1):
+the state is `d.state.bind f`, and the input position, tapes, heads and output are `d`'s. -/
+attribute [simps (config := { isSimp := false })] Turing.Cfg.bindState
+
 /-- The phase-host trajectory of a contract run: the tagged prefix through the phase's exit,
 the redirected endpoint one dispatch step later, and the live exit state.
 
