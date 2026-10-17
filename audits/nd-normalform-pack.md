@@ -21,8 +21,9 @@ plan's question 3) moves the linear-overhead coded normal form (NF) into a new m
 - **Evidence:** `audits/evidence/nd-normalform/` (NOTES, the move script, the logs, the freeze, the
   lint, the replay closure and script, the patch).
 - **The bundle** also contains `ClassNP/NDNormalForm`, `Diagonalization/NTimeHierarchy` and the
-  `ClassNP` facade at the head, the old `NTimeHierarchy` at #119's head, and the P3.3 statement
-  gate's records for NF's statement.
+  `ClassNP` facade at the head, and the P3.3 statement gate's records for NF's statement. The old
+  `NTimeHierarchy`'s removed lines are in the evidence patch (`nd-normalform.patch`), and the base
+  elaboration is `logs/base-NTimeHierarchy.out`.
 
 ## Brief for the auditor
 
