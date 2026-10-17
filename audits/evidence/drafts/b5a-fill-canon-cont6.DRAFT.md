@@ -46,7 +46,10 @@
 - **In flight, merging after your base and invisible to it:**
   - U2-S (`UniversalK`), B6 F5 (`Build/InputDevice`), the B6 F3 continuation
     (`SpaceComplexity/WindowClock`), G4's continuation (`Build/ZoneRebalance`);
-  - MIG-12 (`Build/CfgRecord`) if issued;
+  - MIG-12 (`Build/CfgRecord`);
+  - the C1 PRs #119, #120 and #121 (new equations in the nondeterministic model, `Build/NDHost`,
+    `Build/StepClock`, `Build/StepBlock` and `Build/VirtualInput`, and new statements in two new
+    modules; declarations only);
   - MIG-1's batches F-A to F-D. F-D retires the six R3 canonical rows and edits the one consumer
     in your file (ground rule 11).
 

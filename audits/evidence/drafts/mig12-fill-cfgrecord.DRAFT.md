@@ -55,7 +55,11 @@
 - **In flight, merging after your base and invisible to it:** U2-S (`UniversalK`), B6 F5
   (`Build/InputDevice`), the B6 F3 continuation (`SpaceComplexity/WindowClock`, which cites
   `CfgRecord`'s public statements only), the canonizer's continuation 6 (`CodeSimulator`), G4's
-  continuation (`Build/ZoneRebalance`), and MIG-1's batches. Cite nothing they add.
+  continuation (`Build/ZoneRebalance`), MIG-1's batches, and
+  the C1 PRs #119, #120 and #121 (new equations in the nondeterministic model, `Build/NDHost`,
+  `Build/StepClock`, `Build/StepBlock` and `Build/VirtualInput`, and new statements in two new
+  modules; declarations only). Cite
+  nothing they add.
 
 ## What this is
 

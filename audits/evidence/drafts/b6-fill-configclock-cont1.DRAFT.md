@@ -25,10 +25,10 @@
   - the B6 fill plan (`audits/evidence/b6-fill/B6-fill-plan.md`; F3 is §3 and §6, Route A);
   - the fill-agent environment addendum `briefs/fill-environment-addendum.md`, and the
     declaration-keyed copy-text screen v3 `audits/evidence/retrofit/copy-text-screen-v3.py`;
-  - **this round's inputs** (`audits/evidence/b6-fill-configclock/`): the pre-ship overlay and its
+  - **this round's inputs** (`audits/evidence/b6-fill-configclock-cont1/`): the pre-ship overlay and its
     generator, the import probe, the consumer probe, and the screen population. Also the order
-    list `briefs/orders/b6-fill-configclock.txt`, the base sorry set, the screen base and the
-    pre-ship log (`audits/logs/b6-fill-configclock-*`).
+    list `briefs/orders/b6-fill-configclock-cont1.txt`, the base sorry set, the screen base and the
+    pre-ship log (`audits/logs/b6-fill-configclock-cont1-*`).
 - If Lean cannot start, follow `briefs/fill-environment-addendum.md` exactly.
 - **Branch at exactly that commit, not at the campaign tip:**
 
@@ -56,9 +56,12 @@
 - **In flight, merging after your base and invisible to it:**
   - the canonizer's continuation 6 (`CodeSimulator`), G4's continuation (`ZoneRebalance`), U2-S
     (`UniversalK`) and F5 (`Build/InputDevice`);
-  - MIG-12 (`Build/CfgRecord`) if issued: it keeps every public statement there, so your citations
+  - MIG-12 (`Build/CfgRecord`): it keeps every public statement there, so your citations
     of `CfgRecord`'s public facts are unaffected;
-  - MIG-1's batches.
+  - MIG-1's batches;
+  - the C1 PRs #119, #120 and #121 (new equations in the nondeterministic model, `Build/NDHost`,
+    `Build/StepClock`, `Build/StepBlock` and `Build/VirtualInput`, and new statements in two new
+    modules; declarations only).
 
   Cite nothing these add.
 
@@ -94,8 +97,8 @@ The specification API (PR #112, in your base) gives the field cells from a `Reco
 - the fill plan's F3 paragraphs.
 
 **Pre-ship check** (maintainer, at the base, against `oleans-lf3p`;
-`audits/logs/b6-fill-configclock-preship.log`):
-- **The overlay** (`audits/evidence/b6-fill-configclock/WindowClockOverlay.lean.txt`, generator
+`audits/logs/b6-fill-configclock-cont1-preship.log`):
+- **The overlay** (`audits/evidence/b6-fill-configclock-cont1/WindowClockOverlay.lean.txt`, generator
   `tools/mkoverlay.py` with `tools/home.lean.txt`): `WindowClock.lean` with the recommended
   clock-writer stub at the home. **0 errors, 0 non-sorry warnings, 2 sorry warnings** (the stub
   and the target). The generator pins the target byte for byte and undoes its edit.
@@ -294,13 +297,13 @@ The probe's 60 names, in six groups:
 Run the text-level screen **before and after**, **one run at a time, under `nice -n 10`**
 (`audits/TEMPLATE.md` failure mode 5; `policy.md`, **Duplication**).
 - **The population** is F2's 21 files, unchanged
-  (`audits/evidence/b6-fill-configclock/screen-population.txt`): your file, the files the route
+  (`audits/evidence/b6-fill-configclock-cont1/screen-population.txt`): your file, the files the route
   cites, the known overlaps and the consumers.
 - **The screen** is the declaration-keyed `audits/evidence/retrofit/copy-text-screen-v3.py`, on
   the repository paths. v3 labels the two basename collisions (`Build/Seam` with
   `Build/Contract/Seam`, `Build/Embed` with `Build/Contract/Embed`) by full path, so F2's
   flattening is no longer needed.
-- **The base**, at the issue tree, is `audits/logs/b6-fill-configclock-screen-base.txt`:
+- **The base**, at the issue tree, is `audits/logs/b6-fill-configclock-cont1-screen-base.txt`:
   **1,043 declarations, 510 pairs, 147,693 characters** (MEASURED at #118's round-2 head). The stub's body is under the screen's 60-character floor, so the
   overlay adds nothing.
 
@@ -330,18 +333,18 @@ nice -n 10 python3 -I audits/evidence/retrofit/copy-text-screen-v3.py . \
 
 - Lean 4 v4.25.0, mathlib pinned; `lake exe cache get`; **never `lake build`**. Use
   `scripts/lean_check_tree.sh` for every check.
-- **Bootstrap once** from `briefs/orders/b6-fill-configclock.txt` (**176 modules**: the upstream
+- **Bootstrap once** from `briefs/orders/b6-fill-configclock-cont1.txt` (**176 modules**: the upstream
   closure of your owned file and of every module downstream of it, without the root `TCSlib`; one
   module is downstream of it, the `SpaceComplexity` facade, since H's import of `WindowClock` into
   `Hierarchy` comes with H):
 
   ```sh
   ( while read -r m; do bash scripts/lean_check_tree.sh "$m" || exit 1; done \
-      < briefs/orders/b6-fill-configclock.txt )
+      < briefs/orders/b6-fill-configclock-cont1.txt )
   ```
 
   **The base sorry-warning set has 28 entries in 11 modules**
-  (`audits/logs/b6-fill-configclock-base-sorries.txt`, one per declaration). Yours is
+  (`audits/logs/b6-fill-configclock-cont1-base-sorries.txt`, one per declaration). Yours is
   `SpaceComplexity/WindowClock`'s one, the target. Record the base list by name first, and report
   any difference.
 - **Final checks:**
