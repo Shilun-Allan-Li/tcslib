@@ -1,6 +1,6 @@
 # Ch3–4 fill campaign — C1, wave 1, W: the bounded choice writer (`Turing.ndWriterTM_run_block`, `Build/NDHost.lean`)
 
-> **DRAFT (maintainer, 2026-10-17). Not issued.** Measured at #120's head `95a3b6a0` (the tip once
+> **DRAFT (maintainer, 2026-10-17). Not issued.** Measured at #120's head `e18a7bfa` (the tip once
 > #118, #119 and #120 merge). It issues with wave 1 after #119 and #120 merge (C1's fill plan; user,
 > 2026-10-17). ⟨…⟩ are filled then.
 
@@ -232,7 +232,7 @@ nice -n 10 python3 -I audits/evidence/retrofit/copy-text-screen-v3.py . \
 - **Axiom prints** for the target, the seven assembly theorems that cite it, and every new private:
   within `[propext, Classical.choice, Quot.sound]`, no `sorryAx` for a complete delivery.
 - **Lint:** `python3 -I scripts/campaign_style_lint.py TCSlib/Complexity/TuringMachine/Build`,
-  0 FAIL (base: 0 FAIL, 31 WARN over 37 files). No new line over 100 characters.
+  0 FAIL (base: 0 FAIL, 30 WARN over 37 files). No new line over 100 characters.
 
 ## REPORT.md checklist
 
