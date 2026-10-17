@@ -937,9 +937,22 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
     - `decFixed`, for #117 and MIG-12.
   - **Checks:** elaboration clean, standard axioms, freeze adds only; check 8 goes 168 → 158.
     Pack `audits/brief-api-pack.md`.
-  - **The replay** `replay-lbapi.sh` (311 modules, from `oleans-lm11a`): **running (user,
-    2026-10-16).** The screen of the six files shows 0 new pairs (404 declarations, 167 pairs at
-    base and head).
+  - **The replay** `replay-lbapi.sh` (311 modules, from `oleans-lm11a`): **passed (user,
+    2026-10-16)**, 311 of 311, static-equal (94). The screen of the six files shows 0 new pairs
+    (404 declarations, 167 pairs at base and head).
+  - **Second commit `36325650`, for the G4 continuation** (2026-10-16). G4's pre-ship inventory
+    (the 94 probe names and the 260 published lemmas its route reads) found that the
+    contract layer's predicates have no `_iff`: `Round`, `Segment`, `HeadBox`,
+    `Cfg.SameOutside`, `Contract.Traj`. The rebalance scan's rounds (two escapes and a head
+    relation) cannot come from `Round.of_cut`. Also missing were `roundOrbit_zero`, the hull
+    formulas, and `Cfg.bindState`'s fields (`inPhase_post` is stated through it).
+    - Added before the gate, following the user's #116 precedent (the zone API, option (a)).
+    - Checks clean; check 8 drops 6 more. The two-file screen's 9 new pairs are the
+      `variable`-line artifact.
+    - **The chained replay `replay-lbapi2.sh` (86 modules, from `oleans-lbapi`) is ready for
+      the user.**
+    - G4's partial helpers that unfold `zonedTape`, `zoneSlotOf` and `zoneCapacity` re-point
+      to #116's lemmas in the continuation brief.
   - **Measured for issue (U2-S):** order 91, base sorry set 35 (cross-checked against the
     replays, 0 mismatches), probe 85 names. F5: order 79, sorry set 35. The briefs issue after
     #118 merges.

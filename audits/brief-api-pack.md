@@ -6,9 +6,11 @@ Campaign: the Arora-Barak chapters 3-4 plan.
 - **The rule's standing form** (`policy.md` §1, *Definitions land with their lemmas*).
 - Earlier API PRs, both gated and merged: #112 (the specification API) and #116 (the core API,
   with the zone layer).
-- This PR fills the gaps that the inventories of the four drafted briefs found: U2-S, the B6 F3
-  continuation, B6 F5, and the canonizer's continuation 6. **It gets its own gate before it
-  merges.**
+- This PR fills the gaps that the inventories of five briefs found: U2-S, the B6 F3
+  continuation, B6 F5, the canonizer's continuation 6 (first commit `277735f2`), and the §13d G4
+  continuation (second commit `36325650`). **It gets its own gate before it merges.**
+- G4's continuation resumes the landed partial (PR #115) on its original brief's route
+  (`briefs/s13d-fill-g4.md`); its continuation brief is drafted after this PR.
 
 | File | Additions |
 |---|---|
@@ -18,14 +20,22 @@ Campaign: the Arora-Barak chapters 3-4 plan.
 | `Build/CfgRecord.lean` | `RecSym.digitEmb_apply`, `binDigits_eq`, `posWidth_eq` |
 | `Build/CounterLoop.lean` | `counterLoopBody_{state,inputPos,workTapes,workTapePos,output}`; `decFixed_nil`, `decFixed_true_cons`, `decFixed_false_cons` |
 | `Build/Loop.lean` | `stateWord_eq` |
+| `Build/Contract/Basic.lean` (second commit) | `Cfg.sameOutside_iff`, `headBox_iff`, `segment_iff`, `round_iff`, `Contract.traj_iff`; `roundOrbit_zero`; `RoundContract.hullLo_eq`, `hullHi_eq` |
+| `Build/Contract/Seam.lean` (second commit) | `Cfg.bindState_{state,inputPos,workTapes,workTapePos,output}` |
 
 - **Evidence:** `audits/evidence/brief-api/`:
   - `NOTES.md`, with the inventory method and the judgment table;
   - the patch and the logs;
   - the inventories (`inventory/`) and the inventory elaborators (`scripts/`).
-- **The bundle** also contains the four drafted briefs, the six files, and the consumers the routes
-  read the new lemmas through: `UniversalK`, `Build/InputDevice`, `SpaceComplexity/WindowClock`
-  and `CodeSimulator`.
+- **The bundle** also contains:
+  - the four drafted briefs, and G4's original brief with its partial's delivery review and
+    import probe;
+  - the eight files;
+  - the consumers the routes read the new lemmas through: `UniversalK`, `Build/InputDevice`,
+    `SpaceComplexity/WindowClock`, `CodeSimulator`, `Build/ZoneRebalance` (G4's partial),
+    `Build/Contract/Catalog`, and `Build/Contract/Counter` (#117's `decFixed` consumer).
+  - `Build/Contract/Counter` is bundled at this PR's head, where it carries #117's original
+    docstring. #117's gate corrected it in `98472df2`, a commit this PR does not contain.
 
 ## Brief for the auditor
 
@@ -33,8 +43,12 @@ Campaign: the Arora-Barak chapters 3-4 plan.
    field equations, the case lemmas of `decFixed` (all three constructors), and the `rfl`
    equations.
 2. **The inventory.**
-   - The main question: is the inventory complete for the four routes? Read the judgment table
-     in `NOTES.md` and the inventories; challenge any "not needed" or "opaque" judgment.
+   - The main question: is the inventory complete for the five routes? Read the judgment table
+     in `NOTES.md` and the inventories; challenge any "not needed", "opaque" or "covered"
+     judgment.
+   - For G4, check the route of `briefs/s13d-fill-g4.md` against the contract layer: does it
+     read any definition of `Build/Contract/*`, `Build/Catalog` or the zone layer that still has
+     no published lemma?
    - Name any definition outside the worker's file that a route would still have to unfold,
      other than the model's primitives (`MultiTapeTM.step`, `runFrom`, `Action.apply`,
      `Cfg.mapState`).
@@ -50,8 +64,14 @@ Campaign: the Arora-Barak chapters 3-4 plan.
 - Built on #117's head `1358ff73` (stacked), against `oleans-lm11a`.
 - **Elaboration:** 0 errors; warnings equal to the base. **Axioms:** standard only. **Freeze:**
   publics added only.
-- **Lint:** 0 FAIL; check 8 drops 10 names and adds none.
-- **Screen and replay:** `logs/screen-delta.log` and `replay-lbapi.log` (311 modules).
+- **Lint:** 0 FAIL. Check 8 adds no name: the first commit drops 10 names, the second 6.
+- **Screens:**
+  - first commit, the six files: `logs/screen-delta.log`, 0 new pairs;
+  - second commit, the two files: `logs/g4/screen-delta.log`. Its 9 new pairs are all a
+    segmentation artifact of the `variable` lines (`logs/g4/screen-pairtext.txt`).
+- **Replays:**
+  - `replay-lbapi.log`, 311 of 311 at `277735f2`, static-equal;
+  - the chained `replay-lbapi2.log`, 86 modules at `36325650`.
 
 ## Findings format
 
