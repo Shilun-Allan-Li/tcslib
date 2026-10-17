@@ -42,7 +42,7 @@
 - **Your base's Lean content is the campaign tip after #118** (⟨BASE-LEAN⟩). The inputs commit
   adds no Lean change. Lines in this brief are those of that tree. `CodeSimulator.lean` is #113's
   (5,271 lines; 12 public, 144 private). Every probe and measurement below was run there, against
-  the olean snapshot of #118's replays (`oleans-lbapi2`).
+  the olean snapshot of #118's round-3 replay (`oleans-lbapi4`).
 - **In flight, merging after your base and invisible to it:**
   - U2-S (`UniversalK`), B6 F5 (`Build/InputDevice`), the B6 F3 continuation
     (`SpaceComplexity/WindowClock`), G4's continuation (`Build/ZoneRebalance`);
@@ -105,7 +105,7 @@ Baker–Gill–Solovay then lose their last canonizer admission.
   round 2), the repetition's two cases;
 - `Build/Seam.lean`: `phaseHostTM` and `phaseHostTM_run`, the adapter's host.
 
-**Pre-ship check** (maintainer, at the base, against `oleans-lbapi2`;
+**Pre-ship check** (maintainer, at the base, against `oleans-lbapi4`;
 `audits/logs/b5a-fill-canon-cont6-preship.log`):
 - **`CodeSimulator.lean` at the base** elaborates with 0 errors and exactly 2 sorry warnings: your
   stub and `exists_uniformSimulator`.

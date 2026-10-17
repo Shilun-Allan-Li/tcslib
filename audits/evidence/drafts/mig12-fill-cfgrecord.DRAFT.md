@@ -1,8 +1,9 @@
 # Ch3–4 migration — MIG-12: `Build/CfgRecord` onto the contract layer (a swap: every public statement frozen)
 
-> **DRAFT (maintainer, 2026-10-16/17). Not issued.** Measured at MIG-12's API head `9872634e`,
-> and its probe at #118's round-2 head `4624fc05` (which contains MIG-12's API). It issues with
-> the five briefs after #118 merges (user, 2026-10-17); ⟨…⟩ are filled then.
+> **DRAFT (maintainer, 2026-10-16/17). Not issued.** Measured at MIG-12's API head `9872634e`;
+> its probe and pre-ship re-run at #118's round-3 head `531b98a2` (which contains MIG-12's
+> API). It issues with the five briefs after #118 merges (user, 2026-10-17); ⟨…⟩ are filled
+> then.
 
 ## Repository and branch — read this before anything else
 
@@ -87,7 +88,7 @@ statement.** The user scheduled the MIG items between the fills, starting with M
 - `CfgRecord.lean` in full, in particular `RecordRun` (line 396) and its kit, `recordStepMachine`
   (the phase host), and the three public rows.
 
-**Pre-ship check** (maintainer, at the base, against `oleans-lbapi3`, #118's round-2 replay;
+**Pre-ship check** (maintainer, at the base, against `oleans-lbapi4`, #118's round-3 replay;
 `audits/logs/mig12-fill-preship.log`):
 - **The inventory** (`audits/evidence/mig12-fill/`): every external definition `CfgRecord` uses
   (68), crossed with **its unfolding ledger** (`unfold-sites.tsv`, 173 rows, #118's round-3 review):
@@ -98,7 +99,7 @@ statement.** The user scheduled the MIG items between the fills, starting with M
   With #118's three rounds every row has a published lemma to re-point to.
 - **The import overlay** (`audits/evidence/mig12-fill/CfgRecordOverlay.lean.txt`): your file with
   the authorized import. 0 errors, 0 warnings.
-- **The import probe** (`MIG12ImportProbe.lean.txt`, 219 `#check`s): every public declaration
+- **The import probe** (`MIG12ImportProbe.lean.txt`, 227 `#check`s): every public declaration
   this brief cites resolves from `CfgRecord`'s import context. 0 errors, 0 warnings. **Re-run it
   after your delivery.**
 
@@ -197,10 +198,12 @@ boundary, or after any whole lemma within Phase 2, and lists what remains:
 
 ## Cited infrastructure (public and proved at the issue commit; all in `MIG12ImportProbe.lean.txt`)
 
-The probe's 219 names: the row contracts and their field equations; the combinators and their
+The probe's 227 names: the row contracts and their field equations; the combinators and their
 field equations; the segment layer with `segment_iff`, `headBox_iff`; `phaseHostTM_run`,
 `embedEmitTM_runFrom`, `embedEmitTM_frame`, `embedEmitCfg_*`; `MultiTapeTM.liftSymbols_runFrom`
-and the lifts' fields; the counter loop's run theorems; the layout facts.
+and the lifts' fields; the counter loop's run theorems; the layout facts; and #118's round 3:
+`Action.apply_state`/`_inputPos`/`_workTapePos`/`_output`, `MultiTapeTM.step_of_some`,
+`outputSymbol_of_some`, `counterWord_succ`, `scanResult_keep_keep`.
 
 ## Ground rules (binding)
 

@@ -125,3 +125,31 @@ blobs.
 - The snapshot `oleans-lbapi4` is the tip plus #118's round 3.
 - The F5 and MIG-12 drafts' probes, with the round-3 names (58 and 227), elaborate against it with
   0 errors.
+
+## Round 3 result
+
+The findings are in `audits/brief-api-r3-findings.md`, verbatim. **PASS: 0 blockers, 0 majors,
+2 minors, 0 notes.** The gate closes.
+- Round 2's major is closed: the four `Action.apply` equations give exactly its non-tape fields,
+  and `step_of_some` and `outputSymbol_of_some` give the live cases for an arbitrary machine.
+- All eight added equations are faithful, and the auditor found no further missing primitive
+  equation on the supplied routes.
+- The ledger now has every previously reported site, and round 2's erratum (12 and 33 names)
+  stands.
+
+The maintainer's review sub-agent verified both minors and the PASS at `531b98a2`, with the
+records at the tip `e5b5e6f9` (`audits/evidence/brief-api/r3/gate-review-r3.md`). Both minors
+are true, at the auditor's severity. Its spot-checks hold:
+- the round-3 Lean is the reviewed patches (the four files' blobs equal the replay pins);
+- the eight formulas match the probe outputs;
+- the ledger has 173 rows, 76 explicit and 97 implicit;
+- the replay has 320 of 320 modules with 0 failed, static-equal (94);
+- the screen goes from 798 to 799 declarations with identical pair lines.
+
+| # | Severity | Finding | Resolution |
+|---|---|---|---|
+| 1 | minor | Three rows of the corrected ledger, in all three byte-identical copies, still give the interfaces from before the repair: `CfgRecord:529` (`counterWord`) and both `CfgRecord:1189` rows (`scanFold`, `scanKeep`). | **True.** The review's generator mapped the re-point lemmas before `531b98a2` existed; it is fixed.<br>**Fixed:** the review's corrected file (blob `3768b9f8`) replaces all three copies:<br>- line 529 cites `counterWord_succ, counterWord_zero (round 3)`;<br>- both 1189 rows cite `scanResult_keep_keep (round 3)`;<br>- the header carries the auditor's qualification: implicit rows are a lower bound inside a tactic block, and the definitional uses of reducible abbreviations are not detected.<br>No row says "no own lemma" now. |
+| 2 | minor | The MIG-12 draft describes its probe as 219 checks (it has 227), and the F5 draft and `drafts/README.md` say 52 (it has 58). | **True; fixed.**<br>- **The drafts:** MIG-12's draft says 227 and lists round 3's eight names. F5's says 58 in eight groups, the eighth being the live-step API.<br>- **The README** is rewritten for the six briefs at the round-3 head. It gives the old counts (52, 219) and snapshot as labelled history.<br>- **The pre-ship elaborations,** all 19 for the six briefs, were re-run against `oleans-lbapi4` (`drafts/issue-tools/preship-lbapi4-summary.txt`). Every output's messages equal the run against `oleans-lbapi3` line for line. All six drafts now cite `oleans-lbapi4`.<br>- MIG-12's "52 modules" (its downstream closure) is a different count and is unchanged. |
+
+**#118 is ready to merge at `531b98a2`.** `gh` reports it mergeable. The tip has no Lean change
+since #118's merge base `bd1ae147`, so the 320-module replay covers the merged Lean.

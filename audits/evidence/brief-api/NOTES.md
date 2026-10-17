@@ -160,10 +160,15 @@ modules from `oleans-lm12api`. **Passed (user, 2026-10-17):** 274 of 274, static
   - MIG-12's unfolding ledger, now 173 rows: 76 explicit sites and 97 definitional ones;
   - a count erratum.
 
-**Round 3 (`531b98a2`, prepared locally; not pushed):**
+**Round 3 (`531b98a2`, prepared locally, then pushed):**
 - `74765ef4`: the live-step API (`Action.apply_*`, `step_of_some`, `outputSymbol_of_some`);
 - `531b98a2`: `counterWord_succ`, `scanResult_keep_keep`.
 
 The checks are in `r3/`. The replay `replay-lbapi4.sh` covers 320 modules, from `oleans-lbapi3`.
 **Pushed and passed (user, 2026-10-17):** 320 of 320, static-equal (94).
 
+**Round 3's gate: PASS 0/0/2** (`audits/brief-api-r3-findings.md`; review `r3/gate-review-r3.md`).
+The two minors were records only: three stale rows in the ledger's three copies, and the
+drafts' probe counts (MIG-12 227, F5 58). Both are fixed. The six briefs' pre-ship elaborations
+were re-run against `oleans-lbapi4`, with the same messages as before. The gate is closed, and
+#118 is ready to merge at `531b98a2`.

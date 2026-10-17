@@ -1010,15 +1010,14 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
     niced.
 - **Issue procedure for the six briefs, once #118 merges** (prepared on the night of 2026-10-17;
   `audits/evidence/drafts/issue-tools/`):
-  1. Check that the merged tip's Lean equals #118's `4624fc05`, with
-     `git diff --quiet 4624fc05 <tip> -- '*.lean'`. If it does, every measurement holds:
-     the pre-ship elaborations were re-run against `oleans-lbapi3` (`preship-summary.txt`, all as
-     expected), and MIG-12's screen base is 869 declarations, 437 pairs.
-  2. Fill F3's and cont6's screen bases from the overnight re-measures, since their populations
-     contain round-2 files.
-  3. Run `issue.py plan`, then `apply <tip-short>`. Commit the inputs and briefs to the
-     campaign branch; that commit is the ancestor.
-  4. Run `issue.py dispatch <ancestor>`, then give the six prompts in chat with the environment
+  1. Check that the merged tip's Lean equals #118's round-3 head, with
+     `git diff --quiet 531b98a2 <tip> -- '*.lean'`. If it does, every measurement holds:
+     - the pre-ship elaborations were re-run against `oleans-lbapi4` (2026-10-17,
+       `preship-lbapi4-summary.txt`; the same messages as against `oleans-lbapi3`);
+     - the screen bases are the round-3 ones (`drafts/README.md`).
+  2. Run `issue.py plan` (it passes as of 2026-10-17), then `apply <tip-short>`. Commit the
+     inputs and briefs to the campaign branch; that commit is the ancestor.
+  3. Run `issue.py dispatch <ancestor>`, then give the six prompts in chat with the environment
      addendum.
 - **The night of 2026-10-17:**
   - **#118's round-2 gate: FAIL 0/1/2** (`audits/brief-api-r2-findings.md`, verbatim). Round 1's
@@ -1043,9 +1042,14 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
       updated (15 files). **`replay-lbapi4.sh` passed (user):** 320 of 320, static-equal (94);
       snapshot `oleans-lbapi4`.
     - **The r3 gate is staged:** `infra_local/gate-dispatches/36-brief-api-r3-gate/`, bundle
-      SHA-256 `2b75b765…6c9a` (124 sections; Lean `531b98a2`, other `2adfd457`). Not yet
-      dispatched.
-      After the merge, issue: re-run the pre-ship checks against `oleans-lbapi4`.
+      SHA-256 `2b75b765…6c9a` (124 sections; Lean `531b98a2`, other `2adfd457`). Dispatched
+      (user).
+    - **#118's round-3 gate: PASS 0/0/2** (`audits/brief-api-r3-findings.md`, verbatim;
+      resolutions "Round 3 result"). The minors were records only: the ledger's three
+      stale rows, and the drafts' probe counts. Both are fixed. Reviewed: the PASS holds
+      (`r3/gate-review-r3.md`). The pre-ship checks were re-run against `oleans-lbapi4`,
+      with the same messages. **The gate is closed; #118 is ready to merge at `531b98a2`.**
+      After the merge, issue (the pre-ship re-run against `oleans-lbapi4` is done; below).
     - **The screen bases re-measured at the round-3 head** (`531b98a2`;
       `drafts/issue-inputs/r3/`): U2-S 655, F3 1,043, G4 795, MIG-12 870, cont6 2,411
       declarations. Each is one more than before (`scanResult_keep_keep`), with identical pair

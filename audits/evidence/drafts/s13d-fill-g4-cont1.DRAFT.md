@@ -48,7 +48,7 @@
 - **Your base's Lean content is the campaign tip after #118** (⟨BASE-LEAN⟩). The inputs commit
   adds no Lean change. Lines in this brief are those of that tree. `Build/ZoneRebalance.lean` is
   the partial's (571 lines; 18 public, 18 private). Every probe and measurement below was run
-  there, against the olean snapshot of #118's replays (`oleans-lbapi2`).
+  there, against the olean snapshot of #118's round-3 replay (`oleans-lbapi4`).
 - **In flight, merging after your base and invisible to it:**
   - U2-S (`UniversalK`), B6 F5 (`Build/InputDevice`), the B6 F3 continuation
     (`SpaceComplexity/WindowClock`), the canonizer's continuation 6 (`CodeSimulator`);
@@ -93,7 +93,7 @@ then the rebalance row), continued by continuations; exactly the two imports alr
 - in `Build/Contract/Basic`: `Contract.ofSegment`, `Segment`, `Round`, `Round.iterate`,
   `RoundContract.release`, with their `_iff`s and field equations.
 
-**Pre-ship check** (maintainer, at the base, against `oleans-lbapi2`;
+**Pre-ship check** (maintainer, at the base, against `oleans-lbapi4`;
 `audits/logs/s13d-fill-g4-cont1-preship.log`):
 - **The overlay** (`audits/evidence/s13d-g4-cont1/ZoneRebalanceOverlay.lean.txt`, generator
   `tools/mkoverlay.py` with `tools/home.lean.txt`): `ZoneRebalance.lean` with the two recommended

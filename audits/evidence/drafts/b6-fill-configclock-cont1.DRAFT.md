@@ -50,7 +50,7 @@
 - **Your base's Lean content is the campaign tip after #118** (⟨BASE-LEAN⟩). The inputs commit
   adds no Lean change. Lines in this brief are those of that tree. `WindowClock.lean` is the
   partial's (312 lines; 4 public, 5 private). Every probe and measurement below was run there,
-  against the olean snapshot of #118's replays (`oleans-lbapi2`).
+  against the olean snapshot of #118's round-3 replay (`oleans-lbapi4`).
 - **F2's runner is proved and sorry-free** in your base. Its proof is in
   `Build/WindowRun.lean`, but **cite only its statement** (ground rule 10).
 - **In flight, merging after your base and invisible to it:**

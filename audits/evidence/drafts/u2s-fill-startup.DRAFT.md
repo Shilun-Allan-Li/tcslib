@@ -48,7 +48,7 @@
 - **Your base's Lean content is the campaign tip after #118** (⟨BASE-LEAN⟩). The inputs commit
   adds no Lean change. Lines in this brief are those of that tree. `UniversalK.lean` is unchanged
   since #102 (279 lines). Every probe and measurement below was run there, against the olean
-  snapshot of #118's replays (`oleans-lbapi2`).
+  snapshot of #118's round-3 replay (`oleans-lbapi4`).
 - **In flight, merging after your base and invisible to it:**
   - B6 F5 (`Build/InputDevice`) and the B6 F3 continuation (`SpaceComplexity/WindowClock`);
   - the canonizer's continuation 6 (`CodeSimulator`);
@@ -108,7 +108,7 @@
 - `Build/Embed.lean`: `embedSilentCfg`, `embedSilentRetTM`, `embedSilentRetTM_run`,
   `embedSilentRetTM_visitedByTapeHead`.
 
-**Pre-ship check** (maintainer, at the base, against `oleans-lbapi2`; `audits/logs/u2s-fill-preship.log`):
+**Pre-ship check** (maintainer, at the base, against `oleans-lbapi4`; `audits/logs/u2s-fill-preship.log`):
 - **The import overlay** (`audits/evidence/u2s-fill/UniversalKOverlay.lean.txt`): your file with
   the one authorized import added after line 9. It elaborates with your target's sorry warning
   and the other two, and nothing else.

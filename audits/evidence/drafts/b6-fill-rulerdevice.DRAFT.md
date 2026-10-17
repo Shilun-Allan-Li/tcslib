@@ -44,7 +44,7 @@
 - **Your base's Lean content is the campaign tip after #118** (⟨BASE-LEAN⟩). The inputs commit
   adds no Lean change. Lines in this brief are those of that tree. `Build/InputDevice.lean` is
   unchanged since #92 (339 lines). Every probe and measurement below was run there, against the
-  olean snapshot of #118's replays (`oleans-lbapi2`).
+  olean snapshot of #118's round-3 replay (`oleans-lbapi4`).
 - **In flight, merging after your base and invisible to it:** U2-S (`UniversalK`), F3's
   continuation (`WindowClock`), the canonizer's continuation 6 (`CodeSimulator`), G4's
   continuation (`ZoneRebalance`), MIG-12 (`Build/CfgRecord`) if issued, and MIG-1's batches. Cite
@@ -90,7 +90,7 @@ PR #118; ground rule 10):
 - **The import overlay** (`audits/evidence/b6-fill-rulerdevice/InputDeviceOverlay.lean.txt`):
   your file with the two authorized imports added after line 7. It elaborates with the three
   targets' sorry warnings, and nothing else.
-- **The import probe** (`B6F5ImportProbe.lean.txt`, 52 `#check`s): every public declaration
+- **The import probe** (`B6F5ImportProbe.lean.txt`, 58 `#check`s): every public declaration
   this brief cites resolves from the overlay's import context. 0 errors, 0 warnings. Re-run it
   after your delivery.
 
@@ -167,14 +167,16 @@ A partial may leave only targets open. Insert a helper only once it is proved.
 
 ## Cited infrastructure (public and proved at the issue commit; all in `B6F5ImportProbe.lean.txt`)
 
-The probe's 52 names, in seven groups:
+The probe's 58 names, in eight groups:
 - the targets, the device layer and its facts;
 - the lockstep and the run calculus;
 - seams, the phase host and the release adapter;
 - R1 embedding;
 - Z1's host, for the pattern only;
 - the brief-inventory API (#118);
-- the renamings' field equations (#118's round 2).
+- the renamings' field equations (#118's round 2);
+- the live-step API (#118's round 3): `Action.apply_state`/`_inputPos`/`_workTapePos`/`_output`,
+  `MultiTapeTM.step_of_some`, `MultiTapeTM.outputSymbol_of_some`.
 
 **Proved modulo, exactly:** none.
 
