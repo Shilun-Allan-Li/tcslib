@@ -103,7 +103,7 @@ NDTM [AB09, §3.2], as a public generic theorem. One target, frozen:
   (`audits/evidence/c1-fill-exhaustive/ExhaustiveReplayOverlay.lean.txt`): your file with the three
   authorized imports added after line 7. It elaborates with your target's sorry warning and
   nothing else.
-- **The import probe** (`C1ExhaustiveImportProbe.lean.txt`, 63 `#check`s): every public
+- **The import probe** (`C1ExhaustiveImportProbe.lean.txt`, 61 `#check`s): every public
   declaration this brief cites resolves from the overlay's import context. 0 errors, 0 warnings.
   Re-run it after your delivery.
 
@@ -176,8 +176,7 @@ statement, and every other file. The maintainer updates the module's status text
 
 ## Cited infrastructure (public and proved at the issue commit; all in `C1ExhaustiveImportProbe.lean.txt`)
 
-The probe's names, in seven groups:
-- the target and its consumer;
+The probe's names (your file's own declarations are not listed), in six groups:
 - the ND semantics;
 - the replay;
 - the step clock;

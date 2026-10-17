@@ -112,7 +112,7 @@ that runs the coded NDTM's branch along a guessed stream at linear overhead. One
 - **The import overlay** (`audits/evidence/c1-fill-core/NDCodeSimulatorOverlay.lean.txt`): your file
   with the two authorized imports added after line 8. It elaborates with your file's two sorry
   warnings and nothing else.
-- **The import probe** (`C1CoreImportProbe.lean.txt`, 80 `#check`s): every public
+- **The import probe** (`C1CoreImportProbe.lean.txt`, 77 `#check`s): every public
   declaration this brief cites resolves from the overlay's import context. 0 errors, 0 warnings.
   Re-run it after your delivery.
 
@@ -196,7 +196,7 @@ The docstring's route, refined. Never write a second host, seam, embedding, loop
 ## Cited infrastructure (public and proved at the issue commit; all in `C1CoreImportProbe.lean.txt`)
 
 The probe's names, in seven groups:
-- the target, the replay canonizer's statement, and the window copier's statement;
+- the window copier's statement (the target, the replay canonizer and the bridge are in your file);
 - the header;
 - the installation;
 - the loop;

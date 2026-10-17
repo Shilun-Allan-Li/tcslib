@@ -5,10 +5,9 @@ import TCSlib.Complexity.TuringMachine.Build.StepClock
 import TCSlib.Complexity.TuringMachine.Build.Seam
 
 /-! C1 wave 1, E (the exhaustive replay, `ClassNP/ExhaustiveReplay`): every public declaration the
-brief cites resolves from the overlay's import context (the three authorized imports). -/
+brief cites resolves from the overlay's import context; the owned file's own
+declarations are not listed (the three authorized imports). -/
 
-#check @Turing.FinNDTM.exists_exhaustiveDecider
-#check @Turing.ndAcceptsWithin_decider_of_universal
 #check @Turing.NDTM.haltsWithin_iff
 #check @Turing.FinNDTM.acceptsWithin_iff
 #check @Turing.NDTM.initCfg_eq

@@ -46,8 +46,13 @@ after both merge, by `issue-tools/issue2.py.txt`, once the pre-ship elaborations
 |---|---|---|---|---|---|---|
 | `c1-fill-writer` | W, `ndWriterTM_run_block` (`Build/NDHost`) | none | 80 | 35 in 15 modules | 20 names | 780 declarations, 1,018 pairs |
 | `c1-fill-window` | WC, `exists_inputWindowCopyTM` (`Build/InputWindow`) | none | 80 | 35 in 15 modules | 49 names | 125 declarations, 43 pairs |
-| `c1-fill-exhaustive` | E, `FinNDTM.exists_exhaustiveDecider` (`ClassNP/ExhaustiveReplay`) | 3 | 77 | 19 in 9 modules | 63 names | 278 declarations, 106 pairs |
-| `c1-fill-core` | R, `exists_ndInterpreterCore` (`NDCodeSimulator`) | 2 | 80 | 35 in 15 modules | 80 names | 171 declarations, 19 pairs |
-| `c1-fill-universal` | UN with BF, H′ and S (`Diagonalization/NTimeHierarchy`) | 5 | 72 | 29 in 13 modules | 58 names | 67 declarations, 14 pairs |
+| `c1-fill-exhaustive` | E, `FinNDTM.exists_exhaustiveDecider` (`ClassNP/ExhaustiveReplay`) | 3 | 77 | 19 in 9 modules | 61 names | 278 declarations, 106 pairs |
+| `c1-fill-core` | R, `exists_ndInterpreterCore` (`NDCodeSimulator`) | 2 | 80 | 35 in 15 modules | 77 names | 171 declarations, 19 pairs |
+| `c1-fill-universal` | UN with BF, H′ and S (`Diagonalization/NTimeHierarchy`) | 5 | 72 | 29 in 13 modules | 53 names | 67 declarations, 14 pairs |
 
 The route inventories behind them are in `audits/evidence/nd-api/` (#119's three commits).
+
+**Pre-ship, against `oleans-lndnf`** (`issue-tools/preship-wave1.log`; 2026-10-17): the three overlays
+and W's and WC's own files elaborate with exactly their expected sorry warnings; the five import
+probes have 0 errors. E's, R's and UN's probes list only names from other files: the owned file's
+own declarations are not in the overlay's import context. `issue2.py plan` passes.

@@ -9,13 +9,9 @@ import TCSlib.Complexity.ClassNP.ExhaustiveReplay
 import TCSlib.Complexity.ClassNP.TMSAT
 
 /-! C1 wave 1, UN (the universal NDTM with BF, H′ and S, `Diagonalization/NTimeHierarchy`): every public
-declaration the brief cites resolves from the overlay's import context (the five authorized imports). -/
+declaration the brief cites resolves from the overlay's import context; the owned file's own
+declarations are not listed (the five authorized imports). -/
 
-#check @Turing.exists_timed_universal_NDTM
-#check @Turing.exists_ndAcceptsWithin_decider
-#check @Complexity.ntime_hierarchy
-#check @Complexity.ntime_hierarchy_of_pos
-#check @Complexity.NTIME_linear_ssubset_square
 #check @Turing.exists_ndInterpreterCore
 #check @Turing.ndAcceptsWithin_decider_of_universal
 #check @Turing.FinNDTM.exists_exhaustiveDecider

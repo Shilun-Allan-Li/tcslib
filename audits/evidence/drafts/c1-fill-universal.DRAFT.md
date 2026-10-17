@@ -136,7 +136,7 @@ tape `jR`, build `P`:
 - **The import overlay** (`audits/evidence/c1-fill-universal/NTimeHierarchyOverlay.lean.txt`): your
   file with the five authorized imports added after line 9. It elaborates with the file's five sorry
   warnings and nothing else.
-- **The import probe** (`C1UniversalImportProbe.lean.txt`, 58 `#check`s): every public declaration
+- **The import probe** (`C1UniversalImportProbe.lean.txt`, 53 `#check`s): every public declaration
   this brief cites resolves from the overlay's import context. 0 errors, 0 warnings. Re-run it after
   your delivery.
 
@@ -207,8 +207,8 @@ statements, and every other file. The maintainer updates the module's status tex
 
 ## Cited infrastructure (public and proved at the issue commit; all in `C1UniversalImportProbe.lean.txt`)
 
-The probe's 58 names: the four targets and `ntime_hierarchy`; the core and BF's derivation; the
-assembly; the setup's rows; the semantics; H′'s and S's facts; the model.
+The probe's 53 names (the four targets and `ntime_hierarchy` are in your file): the core and BF's
+derivation; the assembly; the setup's rows; the semantics; H′'s and S's facts; the model.
 
 ## Ground rules (binding)
 

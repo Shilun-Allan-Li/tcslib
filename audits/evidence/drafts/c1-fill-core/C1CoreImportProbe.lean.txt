@@ -5,10 +5,9 @@ import TCSlib.Complexity.TuringMachine.Build.InputWindow
 import TCSlib.Complexity.TuringMachine.UniversalStartup
 
 /-! C1 wave 1, R (the interpreter core, `NDCodeSimulator`): every public declaration the brief cites
-resolves from the overlay's import context (the two authorized imports). -/
+resolves from the overlay's import context; the owned file's own
+declarations are not listed (the two authorized imports). -/
 
-#check @Turing.exists_ndInterpreterCore
-#check @Turing.exists_replayCanonizer
 #check @Turing.exists_inputWindowCopyTM
 #check @Turing.prefixCanonTM
 #check @Turing.prefixCanonTM_eq
@@ -42,7 +41,6 @@ resolves from the overlay's import context (the two authorized imports). -/
 #check @Turing.vhostBank_eq
 #check @Turing.counter_cfg_eq
 #check @Turing.serializeK_eq
-#check @Turing.CodeNDTM.serialize_eq_tableBitsK
 #check @Turing.CodeNDTM.toFinNDTM_k
 #check @Turing.CodeNDTM.toFinNDTM_State
 #check @Turing.CodeNDTM.toFinNDTM_tm
