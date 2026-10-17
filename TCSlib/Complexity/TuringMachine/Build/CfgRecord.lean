@@ -7,6 +7,7 @@ import Mathlib.Data.Nat.Bits
 import TCSlib.Complexity.TuringMachine.Build.Catalog
 import TCSlib.Complexity.TuringMachine.SymbolLift
 import TCSlib.Complexity.TuringMachine.Build.InputCall
+import TCSlib.Complexity.TuringMachine.Build.Contract
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
