@@ -74,6 +74,11 @@
 #112; ground rule 10):
 - `serializeK_eq`, `pairEncode_eq`, `unaryFin_eq`: the captured word's shape;
 - `MultiTapeTM.initCfg_eq` and `Cfg.init_*`: the starting configurations (for `cleanTM_run`);
+- `MultiTapeTM.initCfg_with_q₀` and `MultiTapeTM.runFrom_with_q₀`: the restarted machine's start
+  and runs, which are `cleanTM`'s (the same device serves a host composite `R`, whose `q₀` has no
+  equation);
+- `FinTM.computesFunInTime_iff` (with `computesInTime_iff`): a function computation, input by
+  input;
 - `FinTM.bufferedSecondCfg_*` with `tapeBlocks_left`/`_buffer`/`_right`: the prefix canonizer's
   configuration from `prefixCanon_run`;
 - `embedSilentCfg_selected_tape`/`_pos`, `embedSilentCfg_cap`, `embedSilentCfg_unselected` and
@@ -161,8 +166,11 @@ maintainer updates the module's status text at integration.
 
 ### The route (binding where it names a row)
 
-1. **The cleaned canonizer.** `F' := cleanTM E.canonizer.tm` as a `FinTM`, and
-   `F'.ComputesFunInTime (fun α => serializeK (E.machine α)) τ'`. In the halted configuration
+1. **The cleaned canonizer.** `F' := ⟨_, _, { cleanTM E.canonizer.tm E.canonizer.tm.q₀ with
+   q₀ := .init E.canonizer.tm.q₀ }, _, _⟩`: the cleaned machine restarted at its cleaning state,
+   so its initial state is read without unfolding `cleanTM` (the #116 gate, finding 1). Prove
+   `F'.ComputesFunInTime (fun α => serializeK (E.machine α)) τ'` through
+   `FinTM.computesFunInTime_iff` and `FinTM.computesInTime_iff`. In the halted configuration
    its work tapes are blank, its heads are at `0`, and its virtual input position is a
    function of `α`.
 2. **The prefix phase.** `prefixCanonTM F'` on `pairEncode α w`. Its first halt is at
@@ -348,8 +356,10 @@ license.
 - **`FinTM` bundles its instances:** a `FinTM` around `cleanTM` needs `Fintype` and
   `DecidableEq` of `CleanSt S k`, which derive from the canonizer's (`E.canonizer.fintypeState`,
   `E.canonizer.decEqState`).
-- **`initCfg` is `Cfg.init q₀`**, so the cleaned canonizer's initial configuration is
-  `Cfg.init (.init q₀) α`, `cleanTM_run`'s starting point.
+- **`initCfg` is `Cfg.init q₀`**: the restarted cleaned canonizer's initial configuration is
+  `Cfg.init (.init q₀) α` by `MultiTapeTM.initCfg_with_q₀`, `cleanTM_run`'s starting point, and its
+  runs are `cleanTM`'s by `MultiTapeTM.runFrom_with_q₀`. `cleanTM`'s own `q₀` has no published
+  equation (Hydroxyi's file, cited as is).
 - **`ComputesFunInTime` bounds by the input's length:** `cleanTM_run`'s time depends on the
   string. Take the maximum over the strings of each length (a `Finset.sup` over a finite type).
 - **`prefixCanon_run` names the virtual head** through the canonizer's own `inputPos` (the buffer

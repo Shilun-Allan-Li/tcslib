@@ -900,6 +900,15 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
   (contracts for copy, compare, and the increment and decrement successes, with a public
   `compareStop` for compare's exact time; a maintainer PR and a statement gate), then the MIG-12
   fill brief (swap gate).
+- **MIG-11a opened (2026-10-16): PR #117** (`lean/mig11a-row-contracts`).
+  - `08bcc57d` on the tip; then `b131d239`, stacked on #116, so #116 merges first.
+  - Adds `compareStop` with its lemmas and the exact-time compare (`compareTM_run_ofCfg` is now
+    its corollary); `copyTM_contract`, `compareTM_contract`; and `Build/Contract/Counter` with
+    `counterRowContract` and the increment and decrement as its instances.
+  - Elaboration clean, standard axioms, freeze adds only, lint check 8 unchanged.
+  - Evidence `audits/evidence/mig11a/`; pack `audits/mig11a-statements-pack.md`.
+  - The replay `replay-lm11a.sh` (86 modules, from `oleans-lcapi`) is ready for the user. The
+    statement gate is built after the replay and the screen.
 - **Not adopted** (user, 2026-10-16): a systematic promotion pass at each landing, and a public
   one-step leaf row. Policy's existing route stays: a private copy plus a requested shared
   lemma, promoted at a shared-file window.
@@ -1479,9 +1488,13 @@ The route decisions of 2026-10-12 (design §16b) add three work items, numbered 
         - **The replay passed (user, 2026-10-16):** `replay-lapi2.sh`, 85 of 85, 0 failed. The
           sorry counts equal round 1's, except `StepBlockForward`, 1 → 0 (#114). The snapshot
           `oleans-lapi2` is the merged head `caa93c12`, which is the tip plus #112.
-        - **Round-2 gate staged:** `infra_local/gate-dispatches/31-spec-api-r2-gate/`, bundle
-          SHA-256 `a82bd16a…710a` (78 sections; Lean `caa93c12`, other `a8d25f5b`). Pack
-          `audits/spec-api-r2-pack.md`. Not yet dispatched.
+        - **Round-2 gate** (folder 31, bundle `a82bd16a…710a`), dispatched by the user, returned
+          **PASS, 0/0/0/1. The gate is CLOSED** (`audits/spec-api-r2-findings.md`, the review
+          `r2/gate-review-r2.md`). The note asked for consumer-instantiation evidence; it is
+          resolved by the review's `ConsumerProbe` (exit 0) and the copy-route probe's recorded
+          exit. **PR #112 is ready to merge,** before #116.
+        - **#112 merged (user, 2026-10-16).** The tip's Lean equals `caa93c12`, so the tip's
+          snapshot is `oleans-lapi2`.
       - **#116's gate returned (user, 2026-10-16): FAIL, 0/2/3/0** (`audits/core-api-findings.md`,
         untracked until resolved).
         - Major 1: `cleanTM`'s initialization.
@@ -1489,7 +1502,26 @@ The route decisions of 2026-10-12 (design §16b) add three work items, numbered 
         - Minor 3: the bundle's consumer files predate #115.
         - Minors 4 and 5: the records.
 
-        The review sub-agent is verifying them.
+        - **Reviewed:** all five findings are true, at the auditor's severities
+          (`audits/evidence/core-api/r2/gate-review.md`; resolutions `audits/core-api-resolutions.md`).
+          Finding 1's proposed home, `Machines/CleanSweep`, is Hydroxyi's. The fix is instead a
+          generic restart pair in campaign-owned `Finite.lean` (`runFrom_with_q₀`,
+          `initCfg_with_q₀`), and U2-S restarts the cleaned canonizer through `cleanTM_run` (the
+          U2-S draft is updated).
+        - **Round 2 pushed:** `lean/core-api`:
+          - `f2e0f3d7`: the review's patches, unchanged;
+          - `395771bc`: the tip merged in;
+          - `93c4c630`: #112's round 2 merged in, stacked and chained as for #112 and #113.
+            **#112 merges first.**
+        - **The replay passed (user, 2026-10-16):** `replay-lcapi.sh`, 320 of 320, 0 failed. The
+          sorry counts equal a static count (94 in total). The snapshot `oleans-lcapi` is the
+          stacked head `93c4c630` (the tip plus #112 plus #116).
+        - **The round-2 gate is staged:** `infra_local/gate-dispatches/32-core-api-r2-gate/`, bundle
+          SHA-256 `559c64bb…592b` (89 sections; Lean `93c4c630`, other `179db5b3`), pack
+          `audits/core-api-r2-pack.md`. **Dispatched (user, 2026-10-16).**
+        - **It returned PASS, 0/0/0/0. The gate is CLOSED** (`audits/core-api-r2-findings.md`; the
+          review `r2/gate-review-r2.md`, with `RestartPublishedProbe`, exit 0). **PR #116 is ready
+          to merge;** #117 is stacked on it.
       - **#114 and #115 merged (user, 2026-10-16; `a2b834b3`, `c451e358`).** H2-F is complete
         (`exists_forwardLoopTM` proved; the §14 H2 row is updated), and G4's partial has landed.
         The library's snapshot for the tip is `oleans-lg4p`; it was built on #112's tree, which

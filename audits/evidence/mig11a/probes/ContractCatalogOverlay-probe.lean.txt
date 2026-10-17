@@ -1,0 +1,22 @@
+-- The overlay: the new Build/Catalog and Build/Contract/Catalog bodies concatenated under their
+-- merged imports (Build/Catalog itself dropped), then this probe. Only the probe is reproduced here;
+-- the bodies are the patch.
+-- maintainer probe
+#check @Turing.copyTM_contract_pre
+#check @Turing.copyTM_contract_time
+#check @Turing.copyTM_contract_post
+#check @Turing.copyTM_contract_lo
+#check @Turing.copyTM_contract_hi
+#check @Turing.compareTM_contract_pre
+#check @Turing.compareTM_contract_time
+#check @Turing.compareTM_contract_post
+#check @Turing.compareTM_contract_lo
+#check @Turing.compareTM_contract_hi
+#print axioms Turing.compareStop_eq
+#print axioms Turing.compareStop_cons_cons
+#print axioms Turing.compareStop_spec
+#print axioms Turing.compareStop_unique
+#print axioms Turing.compareStop_le
+#print axioms Turing.compareTM_run_stop_ofCfg
+#print axioms Turing.compareTM_run_ofCfg
+#print axioms Turing.copyTM_contract_frames

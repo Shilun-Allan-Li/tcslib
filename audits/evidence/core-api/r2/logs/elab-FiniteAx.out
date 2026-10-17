@@ -1,0 +1,33 @@
+ReviewScratch/FiniteAx.lean:176:37: warning: This simp argument is unused:
+  hi
+
+Hint: Omit it from the simp argument list.
+  simp only [MultiTapeTM.step, hs, hi̵,̵ ̵h̵w]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+ReviewScratch/FiniteAx.lean:176:41: warning: This simp argument is unused:
+  hw
+
+Hint: Omit it from the simp argument list.
+  simp only [MultiTapeTM.step, hs, hi,̵ ̵h̵w̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+@Turing.MultiTapeTM.runFrom_with_q₀ : ∀ {k : ℕ} {Symbol : Type u_1} {State : Type u_2} {input : List Symbol}
+  (tm : Turing.MultiTapeTM k Symbol State) (q : State) (cfg : Turing.Cfg k Symbol State input) (t : ℕ),
+  Turing.MultiTapeTM.runFrom cfg t = Turing.MultiTapeTM.runFrom cfg t
+'Turing.MultiTapeTM.runFrom_with_q₀' depends on axioms: [propext, Quot.sound]
+@Turing.MultiTapeTM.initCfg_with_q₀ : ∀ {k : ℕ} {Symbol : Type u_1} {State : Type u_2}
+  (tm : Turing.MultiTapeTM k Symbol State) (q : State) (x : List Symbol),
+  Turing.MultiTapeTM.initCfg x = Turing.Cfg.init q x
+'Turing.MultiTapeTM.initCfg_with_q₀' depends on axioms: [propext]
+@Turing.FinTM.computesFunInTime_iff : ∀ {Symbol : Type} (M : Turing.FinTM Symbol) (f : List Symbol → List Symbol)
+  (T : ℕ → ℕ), M.ComputesFunInTime f T ↔ ∀ (input : List Symbol), M.ComputesInTime input (f input) (T input.length)
+'Turing.FinTM.computesFunInTime_iff' depends on axioms: [propext, Classical.choice, Quot.sound]
+@Turing.FinTM.computesFunInTimeVia_iff : ∀ {α Γ : Type} (M : Turing.FinTM Γ) (e : α ↪ Γ) (f : List α → List α)
+  (T : ℕ → ℕ),
+  M.ComputesFunInTimeVia e f T ↔ ∀ (x : List α), M.ComputesInTime (List.map (⇑e) x) (List.map (⇑e) (f x)) (T x.length)
+'Turing.FinTM.computesFunInTimeVia_iff' depends on axioms: [propext, Classical.choice, Quot.sound]
+@Turing.FinTM.computes_iff : ∀ {Symbol : Type} (M : Turing.FinTM Symbol) (f : List Symbol → List Symbol),
+  M.Computes f ↔ ∀ (input : List Symbol), ∃ t, M.ComputesInTime input (f input) t
+'Turing.FinTM.computes_iff' depends on axioms: [propext, Classical.choice, Quot.sound]
+exit=0

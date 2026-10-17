@@ -1,0 +1,41 @@
+import TCSlib.Complexity.SpaceComplexity.Machines.Clean
+
+/-! Review probe (#116 round-2 gate): findings 1 and 2 with the **published** lemmas (no
+stand-ins), against the replayed head. The cleaned machine restarted at `init q`, bundled as a
+`FinTM`, computes `f` in time `τ`: each input is read as `ComputesInTime` through
+`computesInTime_iff` and the restart pair, and assembled through `computesFunInTime_iff`.
+`cleanTM` is never unfolded; only the probe's own `FinTM` literal is reduced. -/
+
+open Turing
+
+/-- The restarted cleaned machine, bundled as a `FinTM` (the U2-S draft's step 1). -/
+def probeClean {k : ℕ} {S : Type} [Fintype S] [DecidableEq S] (M : MultiTapeTM k Bool S)
+    (q : S) : FinTM Bool :=
+  { k := k + k, State := Complexity.LogProg.CleanSt S k,
+    tm := { Complexity.LogProg.cleanTM M q with q₀ := .init q } }
+
+/-- The bundle's machine, by definition (the probe's own definition). -/
+theorem probeClean_tm {k : ℕ} {S : Type} [Fintype S] [DecidableEq S]
+    (M : MultiTapeTM k Bool S) (q : S) :
+    (probeClean M q).tm = { Complexity.LogProg.cleanTM M q with q₀ := .init q } :=
+  rfl
+
+example {k : ℕ} {S : Type} [Fintype S] [DecidableEq S] (M : MultiTapeTM k Bool S) (q : S)
+    (f : List Bool → List Bool) (T : ℕ → ℕ)
+    (hT : ∀ V : List Bool, (M.runFrom (Cfg.init q V) (T V.length)).state = none ∧
+      (M.runFrom (Cfg.init q V) (T V.length)).output = f V)
+    (s : List Bool → ℕ)
+    (hs : ∀ V i, (M.visitedByTapeHead (Cfg.init q V) (T V.length) i).card ≤ s V)
+    (τ : ℕ → ℕ)
+    (hτ : ∀ V : List Bool, ∀ T', ((Complexity.LogProg.cleanTM M q).runFrom
+        (Cfg.init (.init q) V) T').state = none → T' ≤ τ V.length) :
+    (probeClean M q).ComputesFunInTime f τ := by
+  rw [FinTM.computesFunInTime_iff]
+  intro V
+  obtain ⟨T', h1, h2, -⟩ :=
+    Complexity.LogProg.cleanTM_run M q q V (T V.length) (hT V).1 (s V) (hs V)
+  have h : (probeClean M q).ComputesInTime V (f V) T' := by
+    rw [FinTM.computesInTime_iff, probeClean_tm, MultiTapeTM.initCfg_with_q₀,
+      MultiTapeTM.runFrom_with_q₀]
+    exact ⟨h1, h2.trans (hT V).2⟩
+  exact h.mono (hτ V T' h1)

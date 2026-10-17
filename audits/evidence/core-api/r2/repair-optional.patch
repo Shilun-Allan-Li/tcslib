@@ -1,0 +1,34 @@
+diff --git a/TCSlib/Complexity/TuringMachine/Finite.lean b/TCSlib/Complexity/TuringMachine/Finite.lean
+index 8890909..c923402 100644
+--- a/TCSlib/Complexity/TuringMachine/Finite.lean
++++ b/TCSlib/Complexity/TuringMachine/Finite.lean
+@@ -298,6 +298,15 @@ def ComputesFunInTimeVia {α Γ : Type} (M : FinTM Γ) (e : α ↪ Γ)
+     (f : List α → List α) (T : ℕ → ℕ) : Prop :=
+   ∀ x : List α, M.ComputesInTime (x.map e) ((f x).map e) (T x.length)
+ 
++/-- **Computing via an embedding, input by input** (the core specification API): `M` computes
++`f` via `e` in time `T` exactly when, on every `x`, it halts on `x.map e` within `T |x|` steps
++with `(f x).map e` on its output tape. -/
++theorem computesFunInTimeVia_iff {α Γ : Type} (M : FinTM Γ) (e : α ↪ Γ)
++    (f : List α → List α) (T : ℕ → ℕ) :
++    M.ComputesFunInTimeVia e f T ↔
++      ∀ x : List α, M.ComputesInTime (x.map e) ((f x).map e) (T x.length) :=
++  Iff.rfl
++
+ /-- The machine `M` *computes* the string function `f`, with no time constraint: on
+ every input it eventually halts with `f input` on the output tape. This is the notion
+ of computability underlying the uncomputability results [AB09, §1.4, p. 20; §1.5];
+@@ -308,6 +317,13 @@ related by `Turing.FinTM.ComputesFunInTime.computes` (below) and
+ def Computes (M : FinTM Symbol) (f : List Symbol → List Symbol) : Prop :=
+   ∀ input : List Symbol, ∃ t, M.ComputesInTime input (f input) t
+ 
++/-- **Computing a function, input by input** (the core specification API): `M` computes `f`
++exactly when, on every input `x`, it halts after some number of steps with `f x` on its output
++tape. -/
++theorem computes_iff (M : FinTM Symbol) (f : List Symbol → List Symbol) :
++    M.Computes f ↔ ∀ input, ∃ t, M.ComputesInTime input (f input) t :=
++  Iff.rfl
++
+ /-- Halting is absorbing, so a time bound can be weakened: if `M` produces `output`
+ within `t` steps it also does so within any `t' ≥ t` steps.
+ 
