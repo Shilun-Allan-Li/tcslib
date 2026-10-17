@@ -49,8 +49,9 @@
   olean snapshot of #120's replay (`oleans-lndnf`).
 - **In flight, merging after your base and invisible to it:** wave 1's other four briefs (W in
   `Build/NDHost`, E in `ClassNP/ExhaustiveReplay`, R in `NDCodeSimulator`, UN in
-  `Diagonalization/NTimeHierarchy`); the six #118 briefs; C1-E's statements (#121). Cite nothing
-  they add.
+  `Diagonalization/NTimeHierarchy`); the six #118 briefs; C1-E's statements (#121), and C1's
+  follow-up API PR (gate 37's repairs: equations in `Build/StepBlock`, `CodeFormat`, `Encoding` and
+  `Build/VirtualInput`; declarations only). Cite nothing they add.
 
 ## Parallel batches this round
 

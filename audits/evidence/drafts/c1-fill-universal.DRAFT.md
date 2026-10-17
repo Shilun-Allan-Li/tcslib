@@ -55,7 +55,9 @@
   (`oleans-lndnf`).
 - **In flight, merging after your base and invisible to it:** wave 1's other four briefs (W, the
   writer your assembly passes through; WC; E, the exhaustive decider BF cites; R, the interpreter
-  core you cite); the six #118 briefs; C1-E's statements (#121). Cite nothing they add.
+  core you cite); the six #118 briefs; C1-E's statements (#121), and C1's follow-up API PR (gate
+  37's repairs: equations in `Build/StepBlock`, `CodeFormat`, `Encoding` and `Build/VirtualInput`;
+  declarations only). Cite nothing they add.
 - **Your file's other stub,** `Complexity.ntime_hierarchy` (line 299), is C1-E's and stays sorried:
   H′ and S cite its statement.
 

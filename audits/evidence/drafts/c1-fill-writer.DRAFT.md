@@ -51,7 +51,9 @@
   `Build/InputWindow`, E in `ClassNP/ExhaustiveReplay`, R in `NDCodeSimulator`, UN in
   `Diagonalization/NTimeHierarchy`); the six #118 briefs (U2-S, F5, F3's continuation, the
   canonizer's continuation 6, G4's continuation, MIG-12); C1-E's statements (#121,
-  `Diagonalization/NTimeDiagonalizer`). Cite nothing they add.
+  `Diagonalization/NTimeDiagonalizer`); C1's follow-up API PR (gate 37's repairs: equations in
+  `Build/StepBlock`, `CodeFormat`, `Encoding` and `Build/VirtualInput`; declarations only). Cite
+  nothing they add.
 
 ## Parallel batches this round
 

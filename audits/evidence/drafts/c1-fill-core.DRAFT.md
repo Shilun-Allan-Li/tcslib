@@ -55,7 +55,9 @@
 - **In flight, merging after your base and invisible to it:** wave 1's other four briefs (W in
   `Build/NDHost`, WC in `Build/InputWindow`, E in `ClassNP/ExhaustiveReplay`, UN in
   `Diagonalization/NTimeHierarchy`); the six #118 briefs, among them the canonizer's continuation 6
-  in `CodeSimulator`, which your file imports; C1-E's statements (#121). Cite nothing they add.
+  in `CodeSimulator`, which your file imports; C1-E's statements (#121), and C1's follow-up API PR
+  (gate 37's repairs: equations in `Build/StepBlock`, `CodeFormat`, `Encoding` and
+  `Build/VirtualInput`; declarations only). Cite nothing they add.
 - **Your file's other stub,** the replay canonizer `exists_replayCanonizer` (line 91), is wave 2's
   and stays sorried: you cite its statement.
 
@@ -92,10 +94,11 @@ that runs the coded NDTM's branch along a guessed stream at linear overhead. One
   the prefix clause), `StepBlock.hostedLoop_read` (the verdict), with `StepBlock.Rep_iff`,
   `exit_true`, `exit_false`, `summaryTape_eq`, `tableTape_eq`, `outputSummary_nil`,
   `summaryCells_eq` (#119), `vhostCfg`'s fields and `vhostBank_eq`, `counter_cfg_eq`;
-- **the code and its replay:** `serializeK_eq`, `tableBitsK`'s lemmas,
-  `CodeNDTM.serialize_eq_tableBitsK` (proved, your file), `CodeNDTM.toFinNDTM_k`, `_State`, `_tm`,
-  `NDTM.replayTM_runFrom` (the replay lemma), `replayTM_q₀`, `_tr`, `withChoiceTape`'s fields,
-  `NDTM.runWith_initCfg_take` (input locality), `NDTM.initCfg_eq` with `Cfg.init`'s fields;
+- **the code and its replay:** `serializeK_eq`, `tableBitsK` read opaquely (through `serializeK_eq`
+  and `Rep_iff`), `CodeNDTM.serialize_eq_tableBitsK` (proved, your file), `CodeNDTM.toFinNDTM_k`,
+  `_State`, `_tm`, `NDTM.replayTM_runFrom` (the replay lemma), `replayTM_q₀`, `_tr`,
+  `withChoiceTape`'s fields, `NDTM.runWith_initCfg_take` (input locality), `NDTM.initCfg_eq` with
+  `Cfg.init`'s fields;
 - **composition:** `seamCompTM_run_ofCfg`, `seamReleaseTM_firstReturn`, `phaseHostTM_run`,
   `embedSilentTM_runFrom` and `embedSilentCfg_*` (capturing a sub-machine's output on a tape);
 - **the model:** `MultiTapeTM.step_of_some`, `step_of_halt`, the run algebra, `Action.apply`'s
