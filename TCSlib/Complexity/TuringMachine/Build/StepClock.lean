@@ -52,6 +52,9 @@ transports and segment composition.
 
 * `Turing.exists_stepClockTMVia` — the step clock over any alphabet (proved; B6-F1 fill).
 * `Turing.exists_stepClockTM` — its `Bool` instance, in C1's draft form (proved from it).
+* `Turing.clockCfg_state`, `_inputPos`, `_workTapes`, `_workTapePos`, `_output` — the clocked
+  configuration's fields, and `Turing.Cfg.stopped_iff` (the ND inventory API, C1's pre-ship
+  inventory, 2026-10-17).
 
 ## References
 
@@ -70,6 +73,13 @@ input head and output. -/
 def clockCfg {k : ℕ} {Γ S Q : Type} {x : List Γ} (q : Option Q) (c : Cfg k Γ S x)
     (ct : ℤ → Option Γ) (cp : ℤ) : Cfg (k + 1) Γ Q x :=
   ⟨q, c.inputPos, Fin.lastCases ct c.workTapes, Fin.lastCases cp c.workTapePos, c.output⟩
+
+/-! The clocked configuration's fields as equations (the ND inventory API, 2026-10-17), by `simps`
+without the `simp` attribute: the state is `q`, the input head and output are `c`'s,
+`(clockCfg q c ct cp).workTapes = Fin.lastCases ct c.workTapes` and
+`(clockCfg q c ct cp).workTapePos = Fin.lastCases cp c.workTapePos`. -/
+attribute [simps (config := { isSimp := false }) state inputPos workTapes workTapePos output]
+  clockCfg
 
 /-- **A tape with a word patched in**: the cells `cp, …, cp + |u| - 1` hold `u`, every other
 cell is `ct`'s. -/
@@ -94,6 +104,13 @@ theorem wordPatch_of_not_mem {Γ : Type*} (ct : ℤ → Option Γ) (cp : ℤ) (u
 def Cfg.Stopped {k : ℕ} {Γ S : Type*} {x : List Γ} (stopAt : S → Bool) (c : Cfg k Γ S x) :
     Prop :=
   c.state = none ∨ ∃ s, c.state = some s ∧ stopAt s = true
+
+/-- **A stopped configuration, unfolded** (the ND inventory API, 2026-10-17): `c.Stopped stopAt`
+holds iff `c` is halted or live in a state `s` with `stopAt s = true`. -/
+theorem Cfg.stopped_iff {k : ℕ} {Γ S : Type*} {x : List Γ} {stopAt : S → Bool}
+    {c : Cfg k Γ S x} :
+    c.Stopped stopAt ↔ c.state = none ∨ ∃ s, c.state = some s ∧ stopAt s = true :=
+  Iff.rfl
 
 /-! ### Step-clock fill (B6-F1, brief v2): the fused control -/
 

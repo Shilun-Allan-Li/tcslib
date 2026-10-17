@@ -59,6 +59,9 @@ one simulated transition of any `k`-work-tape binary transition table held, in t
 
 ## Main results
 
+* `Turing.StepBlock.tableTape_eq`, `summaryTape_eq`, `exit_true`, `exit_false`, `Rep_iff`,
+  `outputSummary_nil`, `summaryCells_eq` — the definitions the hosted loop's statements read,
+  as equations (the ND inventory API, C1's pre-ship inventory, 2026-10-17).
 * `Turing.StepBlock.roundTM_effect` — the step-block contract.
 * `Turing.StepBlock.recordSkipTM_run`, `recordSkipTM_spec` — the skipper's contract.
 * `Turing.StepBlock.succFieldTM_run`, `succFieldTM_cut`, `succFieldTM_heads` — the leaf's
@@ -117,6 +120,9 @@ def outputSummary : List Bool → Option Bool
   | [] => none
   | [true] => some true
   | _ => some false
+
+/-- **The empty output's summary** (the ND inventory API, 2026-10-17): `outputSummary [] = none`. -/
+theorem outputSummary_nil : outputSummary [] = none := rfl
 
 /-- **The summary update**: the summary after one more transition emitting `b`, given the
 summary `s` before it. (Formerly private in `CodeSimulator`.) -/
@@ -185,9 +191,16 @@ abbrev RecordState (k : ℕ) :=
 /-- The table tape: work tape `k`, after the `k` mirrored work tapes. (`h1TableTape`.) -/
 def tableTape (k : ℕ) : Fin (k + 2) := Fin.natAdd k (0 : Fin 2)
 
+/-- The table tape, unfolded (the ND inventory API, 2026-10-17): `tableTape k = Fin.natAdd k 0`. -/
+theorem tableTape_eq (k : ℕ) : tableTape k = Fin.natAdd k (0 : Fin 2) := rfl
+
 /-- The summary tape: work tape `k + 1`, holding the output summary at cell `0` and the unary
 current state from cell `2`. (`h1SummaryTape`.) -/
 def summaryTape (k : ℕ) : Fin (k + 2) := Fin.natAdd k (1 : Fin 2)
+
+/-- The summary tape, unfolded (the ND inventory API, 2026-10-17): `summaryTape k = Fin.natAdd k
+1`. -/
+theorem summaryTape_eq (k : ℕ) : summaryTape k = Fin.natAdd k (1 : Fin 2) := rfl
 
 /-- Every mirrored work tape is distinct from the record tape. -/
 private lemma mirror_ne_table (k : ℕ) (i : Fin k) :
@@ -2001,6 +2014,12 @@ private lemma bufferTape_unary (q r : ℕ) (hr : r ≤ q) :
 def summaryCells (summary : Option Bool) (word : List Bool) (z : ℤ) : Option Bool :=
   if z = 0 then summary else FinTM.bufferTape word (z - 2)
 
+/-- The summary tape's cells, unfolded (the ND inventory API, 2026-10-17): cell `0` is the summary,
+and cell `z ≠ 0` is the state word's buffer at `z - 2`. -/
+theorem summaryCells_eq (summary : Option Bool) (word : List Bool) (z : ℤ) :
+    summaryCells summary word z = if z = 0 then summary else FinTM.bufferTape word (z - 2) :=
+  rfl
+
 /-- The state word and its left delimiter are a framed ordinary buffer,
 separated from the summary cell. -/
 lemma summaryCells_shift (summary : Option Bool) (word : List Bool) (z : ℤ) (hz : -1 ≤ z) :
@@ -2196,6 +2215,14 @@ private def part (k : ℕ) : (key : Key) → MultiTapeTM (k + 2) Bool (Ph k key)
 `entry`; a halting one ends at the separate live exit `halt`. (`h1RoundExit`.) -/
 def exit (k : ℕ) (live : Bool) : Σ key, Ph k key :=
   if live then ⟨.entry, ()⟩ else ⟨.halt, ()⟩
+
+/-- A live round exits at the anchor (the ND inventory API, 2026-10-17):
+`exit k true = ⟨.entry, ()⟩`. -/
+theorem exit_true (k : ℕ) : exit k true = ⟨.entry, ()⟩ := rfl
+
+/-- A halting round exits at `halt` (the ND inventory API, 2026-10-17):
+`exit k false = ⟨.halt, ()⟩`. -/
+theorem exit_false (k : ℕ) : exit k false = ⟨.halt, ()⟩ := rfl
 
 /-- The round's stationary, silent phase dispatches. A simulated halt goes
 to a live physical exit only after the action and all restoration have run. -/
@@ -3047,6 +3074,22 @@ def Rep {k n : ℕ} {x : List Bool}
   d.workTapes (summaryTape k) =
     summaryCells (outputSummary c.output) ((c.state.map unaryFin).getD []) ∧
   d.workTapePos (tableTape k) = 0 ∧ d.workTapePos (summaryTape k) = 0
+
+/-- **The step block's representation, unfolded** (the ND inventory API, 2026-10-17): `Rep tr c d`
+holds iff `d` has `c`'s input head and its `k` work tapes and heads, the table `tableBitsK tr` on
+the table tape, the summary cells of `c` on the summary tape, and both auxiliary heads at `0`. -/
+theorem Rep_iff {k n : ℕ} {x : List Bool}
+    {tr : Fin (n + 1) → Option Bool → (Fin k → Option Bool) → Action k Bool (Fin (n + 1))}
+    {c : Cfg k Bool (Fin (n + 1)) x} {d : Cfg (k + 2) Bool (Σ key, Ph k key) x} :
+    Rep tr c d ↔
+      d.inputPos = c.inputPos ∧
+      (∀ i : Fin k, d.workTapes (Fin.castAdd 2 i) = c.workTapes i ∧
+        d.workTapePos (Fin.castAdd 2 i) = c.workTapePos i) ∧
+      d.workTapes (tableTape k) = FinTM.bufferTape (tableBitsK tr) ∧
+      d.workTapes (summaryTape k) =
+        summaryCells (outputSummary c.output) ((c.state.map unaryFin).getD []) ∧
+      d.workTapePos (tableTape k) = 0 ∧ d.workTapePos (summaryTape k) = 0 :=
+  Iff.rfl
 
 /-- A related entry configuration is exactly the canonical round frame,
 with its arbitrary physical output prefix retained. This only unpacks the
