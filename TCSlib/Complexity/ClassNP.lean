@@ -17,6 +17,7 @@ import TCSlib.Complexity.ClassNP.Reductions
 import TCSlib.Complexity.ClassNP.NTIME
 import TCSlib.Complexity.ClassNP.Nondeterminism
 import TCSlib.Complexity.ClassNP.ExhaustiveReplay
+import TCSlib.Complexity.ClassNP.NDNormalForm
 import TCSlib.Complexity.ClassNP.SAT
 import TCSlib.Complexity.ClassNP.TMSAT
 import TCSlib.Complexity.ClassNP.Tautology
