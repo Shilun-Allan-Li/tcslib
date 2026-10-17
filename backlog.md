@@ -1069,6 +1069,10 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
     inventory, round 3 (R's and UN's header parsing and installation), gave #119 a third commit:
     `Cfg.ofWords`'s four missing fields (`Build/Convention`, `1e45f50a`). #120 and #121 merged it
     (`6d18902f`, `13f52659`).
+  - **MIG-24 triaged** (`audits/evidence/mig24/TRIAGE.md`). All 34 `SpaceComplexity/` candidates are
+    ARM-2's. 21 `TuringMachine/` pairs belong to other items. 37 remain in 8 groups (T1–T7, T2b).
+    **User (2026-10-17): fold them into MIG-1's fill batches** as named factoring obligations, by
+    file; the singletons go into the next PR touching their file.
   - **#119's replay passed (user, 2026-10-17):** 189 of 189, 0 failed, static-equal (87); snapshot
     `oleans-lndapi`. Its gate (folder 37) is staged. #120's replay (4 modules) is next.
 - **C1's fill plan and the ND inventory API (2026-10-17, while #118 merges;**

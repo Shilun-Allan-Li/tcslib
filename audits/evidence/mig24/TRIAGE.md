@@ -51,3 +51,7 @@ and T2b into MIG-1's batches as named factoring obligations. Each file is then e
 once, and MIG-1's deletions and MIG-24's factoring cannot collide. T7's singletons go into the next PR
 that edits their file. The alternative is a separate MIG-24 pass after MIG-1, which costs a second
 round of replays over the same closures.
+
+**Answered (user, 2026-10-17): fold into MIG-1.** T1–T6 and T2b become named factoring obligations
+of MIG-1's fill batches F-A to F-D, by file. T7's singletons go into the next PR that edits their
+file.
