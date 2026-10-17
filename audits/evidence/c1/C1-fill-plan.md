@@ -69,6 +69,12 @@
    join wave 1.
 4. **C1-E's statement phase now?** *Recommended:* yes, as maintainer drafting alongside wave 1.
 
+**Answered (user, 2026-10-17): all four as recommended.**
+1. The ND API is its own PR, #119, with its own replay and gate.
+2. Wave 1 is all five briefs.
+3. NF goes to a new module.
+4. C1-E's statement phase starts now.
+
 ## The inventory
 
 The seed-inclusive inventory and its judgements are in `audits/evidence/nd-api/NOTES.md`. Each brief's

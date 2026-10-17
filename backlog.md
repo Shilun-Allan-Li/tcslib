@@ -1066,7 +1066,14 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
     7 hand-written and 34 generated. The six files have 0 errors, with warnings equal to the
     bases'. Freeze: publics added only. Lint: 67 to 64 WARN and 16 to 15. Screen: 5 boilerplate
     pairs from the shared `simps` line. Replay closure: 102 modules.
-  - **For the user:** the PR and its gate, wave 1's size, NF's home, and C1-E's statement phase.
+  - **User (2026-10-17), all four as recommended:**
+    - **#119** (`lean/nd-api`, stacked on #118) gets its own gate. It is pushed and open. Its replay
+      `replay-lndapi.sh` (102 modules, from `oleans-lbapi4`) is ready for the user. The pack is
+      `audits/nd-api-pack.md`; the bundle follows the replay.
+    - **Wave 1 has five briefs:** W, WC, E, R, and UN with BF, H′ and S. They are drafted now and
+      dispatched after #119 merges.
+    - **NF moves to a new module,** `ClassNP/NDNormalForm`, by a small PR with a statement gate.
+    - **C1-E's statement phase** starts now.
 - **The scratchpad was hit by the nightly /tmp cleaner (2026-10-17, ~03:00).**
   - **What it deleted:** files not accessed for about 3 days, including the campaign worktree
     `wt-hk`'s `.git` link and most of `tools/`.
