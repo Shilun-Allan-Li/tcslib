@@ -900,6 +900,21 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
   (contracts for copy, compare, and the increment and decrement successes, with a public
   `compareStop` for compare's exact time; a maintainer PR and a statement gate), then the MIG-12
   fill brief (swap gate).
+- **MIG-11a opened (2026-10-16): PR #117** (`lean/mig11a-row-contracts`).
+  - `08bcc57d` on the tip; then `b131d239`, stacked on #116, so #116 merges first.
+  - Adds `compareStop` with its lemmas and the exact-time compare (`compareTM_run_ofCfg` is now
+    its corollary); `copyTM_contract`, `compareTM_contract`; and `Build/Contract/Counter` with
+    `counterRowContract` and the increment and decrement as its instances.
+  - Elaboration clean, standard axioms, freeze adds only, lint check 8 unchanged.
+  - Evidence `audits/evidence/mig11a/`; pack `audits/mig11a-statements-pack.md`.
+  - **The replay passed (user, 2026-10-16):** 86 of 86, sorry counts static-equal. The
+    snapshot `oleans-lm11a` is the tip plus #116 plus #117. The screen shows no new copied
+    proof.
+  - The statement gate is staged in folder 33.
+- **#116's merge check (2026-10-16):** GitHub showed #116 as conflicting with a stale base
+  (`eaedd234`). A local merge was clean. The tip, with records only, was merged into
+  `lean/core-api` (`b22e7214`); its Lean content is identical to the gated `93c4c630`, and
+  GitHub now reports clean.
 - **Not adopted** (user, 2026-10-16): a systematic promotion pass at each landing, and a public
   one-step leaf row. Policy's existing route stays: a private copy plus a requested shared
   lemma, promoted at a shared-file window.
@@ -1510,6 +1525,9 @@ The route decisions of 2026-10-12 (design §16b) add three work items, numbered 
         - **The round-2 gate is staged:** `infra_local/gate-dispatches/32-core-api-r2-gate/`, bundle
           SHA-256 `559c64bb…592b` (89 sections; Lean `93c4c630`, other `179db5b3`), pack
           `audits/core-api-r2-pack.md`. **Dispatched (user, 2026-10-16).**
+        - **It returned PASS, 0/0/0/0. The gate is CLOSED** (`audits/core-api-r2-findings.md`; the
+          review `r2/gate-review-r2.md`, with `RestartPublishedProbe`, exit 0). **PR #116 is ready
+          to merge;** #117 is stacked on it.
       - **#114 and #115 merged (user, 2026-10-16; `a2b834b3`, `c451e358`).** H2-F is complete
         (`exists_forwardLoopTM` proved; the §14 H2 row is updated), and G4's partial has landed.
         The library's snapshot for the tip is `oleans-lg4p`; it was built on #112's tree, which
