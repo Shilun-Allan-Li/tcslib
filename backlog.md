@@ -1020,6 +1020,27 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
      campaign branch; that commit is the ancestor.
   4. Run `issue.py dispatch <ancestor>`, then give the six prompts in chat with the environment
      addendum.
+- **The night of 2026-10-17:**
+  - **#118's round-2 gate: FAIL 0/1/2** (`audits/brief-api-r2-findings.md`, verbatim). Round 1's
+    findings and N1 are closed.
+    - The major is MIG-12's route: it reads primitives for an arbitrary action or machine
+      (`Action.apply`'s head, the live-state `step` and `outputSymbol`), and none of these is
+      published.
+    - The minors are MIG-12's unfold-site ledger (at least 48 sites, not 44; the counter-loop
+      exception has one direct use, not three) and the pack's count (12 MIG-12 names, not 13).
+    - With the review sub-agent. Round 3 is prepared locally, per the user's ruling.
+  - **The screen bases re-measured at `4624fc05`:** F3 1,042 / 510, cont6 2,410 / 2,631. The
+    issue plan passes.
+    - cont6's re-measure shows a new 55% pair: the public `incFixed_length` reproduces
+      `RecordTable`'s private `rt_incFixed_length`. It is the duplicate #117's review predicted,
+      below the copy threshold. **Follow-up** (with the decrement's twin `sc_dec_success_width`,
+      `StepClock`): re-point both private copies to the public lemmas in the next PR that edits
+      those files.
+  - **MIG-24 measured** (`audits/evidence/mig24/`): at 90% or more, `TuringMachine/` has 394
+    unordered pairs and `SpaceComplexity/` 123.
+    - Of `TuringMachine/`'s, 185 are MIG-1's `f2_` copies, 38 are MIG-2's timed layer, 113 are
+      small, and 58 are MIG-24 candidates. `SpaceComplexity/` has 34 candidates.
+    - Each candidate needs reading before any factoring is scheduled.
     - **Packaging waits for #118's gate:** it goes into #118's round 2 if there is one, or
       otherwise becomes its own PR and gate.
 - **Lint check 8's blind spot (2026-10-16):** a definition counts as covered when any lemma is
