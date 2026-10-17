@@ -102,6 +102,11 @@ one framed contract and one trace serve them all.
   `Turing.scanTM`, and the instance steps `Turing.scanKeep`,
   `Turing.scanFold`, `Turing.scanMap`, `Turing.scanShift`,
   `Turing.scanCarry`.
+* `Turing.compareStop` — the compare's stop, the length of the two words' common prefix
+  (MIG-11a, user 2026-10-16), with `Turing.compareStop_eq`, `Turing.compareStop_cons_cons`,
+  `Turing.compareStop_spec`, `Turing.compareStop_unique` and `Turing.compareStop_le`; the framed
+  compare at that exact time, `Turing.compareTM_run_stop_ofCfg`, of which
+  `Turing.compareTM_run_ofCfg` is now a corollary.
 
 ## Main results
 
@@ -857,6 +862,80 @@ private def catalogCompareR {Symbol : Type*} {x : List Symbol} (fst snd : Fin k)
   { d with
     state := some (.rewind v)
     workTapePos := fun j => d.workTapePos j + if j = fst ∨ j = snd then (r : ℤ) - 1 else 0 }
+
+/-- **The compare's stop** (MIG-11a, user 2026-10-16): the number of leading positions at which `u`
+and `v` hold the same symbol, before the first position where they differ or either word ends,
+`compareStop u v = |takeWhile (fun p => p.1 = p.2) (zip u v)|`. The framed compare
+(`Turing.compareTM_run_stop_ofCfg`) reads exactly this many cells forward. -/
+def compareStop {Symbol : Type*} [DecidableEq Symbol] (u v : List Symbol) : ℕ :=
+  ((u.zip v).takeWhile fun p => decide (p.1 = p.2)).length
+
+/-- The compare's stop as an equation:
+`compareStop u v = ((u.zip v).takeWhile fun p => decide (p.1 = p.2)).length` (MIG-11a, user
+2026-10-16). -/
+theorem compareStop_eq {Symbol : Type*} [DecidableEq Symbol] (u v : List Symbol) :
+    compareStop u v = ((u.zip v).takeWhile fun p => decide (p.1 = p.2)).length :=
+  rfl
+
+/-- The stop on two nonempty words: one more than the tails' stop when the heads agree, `0`
+otherwise, `compareStop (a :: u) (b :: v) = if a = b then compareStop u v + 1 else 0` (MIG-11a, user
+2026-10-16). -/
+theorem compareStop_cons_cons {Symbol : Type*} [DecidableEq Symbol] (a b : Symbol)
+    (u v : List Symbol) :
+    compareStop (a :: u) (b :: v) = if a = b then compareStop u v + 1 else 0 := by
+  unfold compareStop
+  by_cases h : a = b <;> simp [List.zip_cons_cons, h]
+
+/-- **The stop's characterization** (MIG-11a, user 2026-10-16): below `compareStop u v` both words
+hold the same symbol, and at it they do not (they differ, or one has ended).
+
+**Proof sketch.** Induction on `u`: an empty word stops at `0`; two heads that agree add one to the
+tails' stop, and two that differ stop at `0`. -/
+theorem compareStop_spec {Symbol : Type*} [DecidableEq Symbol] (u v : List Symbol) :
+    (∀ r < compareStop u v, ∃ b, u[r]? = some b ∧ v[r]? = some b) ∧
+      ¬∃ b, u[compareStop u v]? = some b ∧ v[compareStop u v]? = some b := by
+  induction u generalizing v with
+  | nil => simp [compareStop]
+  | cons a u ih =>
+    cases v with
+    | nil => simp [compareStop]
+    | cons b v =>
+      rw [compareStop_cons_cons]
+      by_cases hab : a = b
+      · subst hab
+        obtain ⟨h1, h2⟩ := ih v
+        simp only [if_true]
+        refine ⟨fun r hr => ?_, ?_⟩
+        · cases r with
+          | zero => exact ⟨a, rfl, rfl⟩
+          | succ r => simpa using h1 r (by omega)
+        · simpa using h2
+      · simp only [hab, if_false]
+        refine ⟨fun r hr => absurd hr (Nat.not_lt_zero _), ?_⟩
+        rintro ⟨c, hc1, hc2⟩
+        simp at hc1 hc2
+        exact hab (hc1.trans hc2.symm)
+
+/-- **The stop is the unique such position** (MIG-11a, user 2026-10-16): a position below which both
+words hold the same symbol and at which they do not is `compareStop u v`.
+
+**Proof sketch.** By `Turing.compareStop_spec`, a smaller position contradicts its own second
+clause, and a larger one the stop's. -/
+theorem compareStop_unique {Symbol : Type*} [DecidableEq Symbol] {u v : List Symbol} {d : ℕ}
+    (h1 : ∀ r < d, ∃ b, u[r]? = some b ∧ v[r]? = some b)
+    (h2 : ¬∃ b, u[d]? = some b ∧ v[d]? = some b) : d = compareStop u v := by
+  obtain ⟨c1, c2⟩ := compareStop_spec u v
+  rcases Nat.lt_trichotomy d (compareStop u v) with h | h | h
+  · exact absurd (c1 d h) h2
+  · exact h
+  · exact absurd (h1 _ h) c2
+
+/-- The stop is at most either word's length: `compareStop u v ≤ min |u| |v|` (MIG-11a, user
+2026-10-16). -/
+theorem compareStop_le {Symbol : Type*} [DecidableEq Symbol] (u v : List Symbol) :
+    compareStop u v ≤ min u.length v.length := by
+  unfold compareStop
+  exact (List.takeWhile_sublist _).length_le.trans (by simp)
 
 /-- Comparison's exact framed invariant at a first differing or blank position.
 Proof sketch: the delimited common prefix supplies both passes' reads. The stopping
@@ -11881,6 +11960,47 @@ theorem fieldsTape_field {Γ : Type*} (fs : List (List Γ)) (j : ℕ) (hj : j < 
 
 /-! ### R8.1 — the framed compare -/
 
+/-- **R8.1, compare, framed, at its exact time** (MIG-11a, user 2026-10-16): as
+`Turing.compareTM_run_ofCfg`, with the stop named. From the working phase, with `u` and `v`
+delimited at the heads of `fst` and `snd`, the compare reaches `done (decide (u = v))` at exactly
+`2 · compareStop u v + 2`, with no verdict earlier and nothing written; the two heads stay within
+`[pos - 1, pos + compareStop u v]` and every other head is fixed.
+
+**Proof sketch.** The shared framed trace at the stop of `catalog_compare_stop`, which is
+`Turing.compareStop u v` by `Turing.compareStop_unique`. -/
+theorem compareTM_run_stop_ofCfg {Symbol : Type*} [DecidableEq Symbol] {k : ℕ}
+    {x : List Symbol} (fst snd : Fin k) (hne : fst ≠ snd) (u v : List Symbol)
+    (d : Cfg k Symbol FlagPhase x) (hstate : d.state = some FlagPhase.run)
+    (hu : ∀ p : ℤ, -1 ≤ p → p ≤ (u.length : ℤ) →
+      d.workTapes fst (d.workTapePos fst + p) = FinTM.bufferTape u p)
+    (hv : ∀ p : ℤ, -1 ≤ p → p ≤ (v.length : ℤ) →
+      d.workTapes snd (d.workTapePos snd + p) = FinTM.bufferTape v p) :
+    (compareTM k fst snd).runFrom d (2 * compareStop u v + 2) =
+        { d with state := some (FlagPhase.done (decide (u = v))) } ∧
+      (∀ t < 2 * compareStop u v + 2, ∀ b,
+        ((compareTM k fst snd).runFrom d t).state ≠ some (FlagPhase.done b)) ∧
+      (∀ (j : Fin k) (t : ℕ), t ≤ 2 * compareStop u v + 2 →
+        if j = fst ∨ j = snd then
+          ((compareTM k fst snd).runFrom d t).workTapePos j ∈
+            Finset.Icc (d.workTapePos j - 1) (d.workTapePos j + (compareStop u v : ℤ))
+        else ((compareTM k fst snd).runFrom d t).workTapePos j = d.workTapePos j) := by
+  -- D2: the shared framed trace also covers aliased tape indices.
+  have _ := hne
+  obtain ⟨δ, hδ, hp, hs, he⟩ := catalog_compare_stop u v
+  rw [← compareStop_unique hp hs]
+  refine ⟨?_, ?_, ?_⟩
+  · rw [catalog_compare_trace fst snd u v d hstate hu hv δ hδ hp hs he]
+    simp [catalogTrace, show ¬2 * δ + 2 ≤ δ by omega]
+  · intro t ht b
+    rw [catalog_compare_trace fst snd u v d hstate hu hv δ hδ hp hs he]
+    simp only [catalogTrace]
+    split_ifs <;> simp_all [catalogCompareF, catalogCompareR]
+    omega
+  · intro j t ht
+    rw [catalog_compare_trace fst snd u v d hstate hu hv δ hδ hp hs he]
+    simp only [catalogTrace]
+    split_ifs <;> simp_all [catalogCompareF, catalogCompareR, Finset.mem_Icc] <;> omega
+
 /-- **R8.1, compare, framed** (design §12.8a; the generic form of
 `Turing.compareTM_run`). From any configuration in the working phase whose
 tapes `fst` and `snd` carry delimited words `u` and `v` at their heads, the
@@ -11916,21 +12036,8 @@ theorem compareTM_run_ofCfg {Symbol : Type*} [DecidableEq Symbol] {k : ℕ} {x :
             ((compareTM k fst snd).runFrom d t).workTapePos j ∈
               Finset.Icc (d.workTapePos j - 1) (d.workTapePos j + (δ : ℤ))
           else ((compareTM k fst snd).runFrom d t).workTapePos j = d.workTapePos j) := by
-  -- D2: the shared framed trace also covers aliased tape indices.
-  have _ := hne
-  obtain ⟨δ, hδ, hp, hs, he⟩ := catalog_compare_stop u v
-  refine ⟨δ, hδ, ?_, ?_, ?_⟩
-  · rw [catalog_compare_trace fst snd u v d hstate hu hv δ hδ hp hs he]
-    simp [catalogTrace, show ¬2 * δ + 2 ≤ δ by omega]
-  · intro t ht b
-    rw [catalog_compare_trace fst snd u v d hstate hu hv δ hδ hp hs he]
-    simp only [catalogTrace]
-    split_ifs <;> simp_all [catalogCompareF, catalogCompareR]
-    omega
-  · intro j t ht
-    rw [catalog_compare_trace fst snd u v d hstate hu hv δ hδ hp hs he]
-    simp only [catalogTrace]
-    split_ifs <;> simp_all [catalogCompareF, catalogCompareR, Finset.mem_Icc] <;> omega
+  exact ⟨compareStop u v, compareStop_le u v,
+    compareTM_run_stop_ofCfg fst snd hne u v d hstate hu hv⟩
 
 /-! ### R8.3 — the seek family -/
 
