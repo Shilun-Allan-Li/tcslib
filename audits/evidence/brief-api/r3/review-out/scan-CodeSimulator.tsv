@@ -1,0 +1,204 @@
+line	definition	module	category	tactic	source
+137	Turing.workReadsK	TuringMachine.Build.StepBlock	definition	simp	simp [workReadsK, fin_cons_one]
+143	Turing.workReadsK	TuringMachine.Build.StepBlock	definition	simp	simp [workReadsK, fin_cons_one, fin_cons_two]
+149	Turing.codeTable2Bits	TuringMachine.CodeFormat	definition	unfold	unfold tableBitsK codeTable2Bits
+149	Turing.tableBitsK	TuringMachine.Build.StepBlock	definition	unfold	unfold tableBitsK codeTable2Bits
+190	Turing.CodeTM.serialize	TuringMachine.Encoding	definition	unfold	unfold CodeTM.serialize serializeK tableBitsK
+190	Turing.tableBitsK	TuringMachine.Build.StepBlock	definition	unfold	unfold CodeTM.serialize serializeK tableBitsK
+272	Turing.CodeFormat.scan	TuringMachine.CodeFormat	definition	unfold	unfold CodeFormat.scan at hs
+308	Turing.CodeFormat.scan	TuringMachine.CodeFormat	definition	simp	| none => simp [CodeFormat.scan, hp]
+463	Turing.Cfg.inputSymbol	TuringMachine.Configuration	primitive	simp	simp [guardBlockTM, guardPhase, Cfg.inputSymbol, guardCfg])]
+793	Turing.incFixed	TuringMachine.Build.Convention	definition	simp	| nil => simp [canonCount, incFixed, Nat.bit]
+797	Turing.incFixed	TuringMachine.Build.Convention	definition	simp	simp [canonCount, incFixed, List.foldr_append, Nat.bit]
+804	Turing.incFixed	TuringMachine.Build.Convention	definition	simp	simp only [List.cons_append, incFixed, ih.1, Option.map_some,
+829	Turing.Cfg.ofWords	TuringMachine.Build.Convention	definition	simp	(w i) d rfl (by intro p _ _; simp [d, Cfg.ofWords])
+834	Turing.Cfg.ofWords	TuringMachine.Build.Convention	definition	dsimp	dsimp only [d, Cfg.ofWords]
+868	Turing.Cfg.mapState	TuringMachine.StateRenaming	definition	simpa	· simpa only [R, Cfg.ofWords, Cfg.mapState, Option.map_some] using hr.2
+868	Turing.Cfg.ofWords	TuringMachine.Build.Convention	definition	simpa	· simpa only [R, Cfg.ofWords, Cfg.mapState, Option.map_some] using hr.2
+869	Turing.Cfg.mapState	TuringMachine.StateRenaming	definition	simpa	· simpa only [R, Cfg.ofWords, Cfg.mapState, Option.map_some] using hr.1
+869	Turing.Cfg.ofWords	TuringMachine.Build.Convention	definition	simpa	· simpa only [R, Cfg.ofWords, Cfg.mapState, Option.map_some] using hr.1
+931	Turing.Action.mapState	TuringMachine.StateRenaming	definition	simp	| fwd a => simp [canonVerdictTM, Action.mapState]
+932	Turing.Action.mapState	TuringMachine.StateRenaming	definition	simp	| bwd a => simp [canonVerdictTM, Action.mapState]
+938	Turing.Cfg.mapState	TuringMachine.StateRenaming	definition	simp	simp only [hid, Cfg.mapState, Option.map_id, id_eq] at hpre
+941	Turing.Action.apply	TuringMachine.Configuration	primitive	simp	simp [MultiTapeTM.step, Cfg.ofWords, canonVerdictTM, Action.apply]
+941	Turing.Cfg.ofWords	TuringMachine.Build.Convention	definition	simp	simp [MultiTapeTM.step, Cfg.ofWords, canonVerdictTM, Action.apply]
+941	Turing.MultiTapeTM.step	TuringMachine.Deterministic	primitive	simp	simp [MultiTapeTM.step, Cfg.ofWords, canonVerdictTM, Action.apply]
+968	Turing.stateWord	TuringMachine.Build.Loop	definition	simp	have hw : w i = canonHeader α := by simp [w, stateWord, i]
+975	Turing.Cfg.mapState	TuringMachine.StateRenaming	definition	simp	simp only [Cfg.ofWords, Cfg.mapState, Option.map_some]
+975	Turing.Cfg.ofWords	TuringMachine.Build.Convention	definition	simp	simp only [Cfg.ofWords, Cfg.mapState, Option.map_some]
+979	Turing.Cfg.init	TuringMachine.Configuration	primitive	simp	simp [M, MultiTapeTM.initCfg, Cfg.init, Cfg.ofWords, Cfg.mapState,
+979	Turing.Cfg.mapState	TuringMachine.StateRenaming	definition	simp	simp [M, MultiTapeTM.initCfg, Cfg.init, Cfg.ofWords, Cfg.mapState,
+979	Turing.Cfg.ofWords	TuringMachine.Build.Convention	definition	simp	simp [M, MultiTapeTM.initCfg, Cfg.init, Cfg.ofWords, Cfg.mapState,
+979	Turing.MultiTapeTM.initCfg	TuringMachine.Deterministic	primitive	simp	simp [M, MultiTapeTM.initCfg, Cfg.init, Cfg.ofWords, Cfg.mapState,
+987	Turing.Cfg.mapState	TuringMachine.StateRenaming	definition	simpa	simpa only [Cfg.mapState, hv.1, Option.map_none, hw] using hv
+1012	Turing.codeBitsNat	TuringMachine.CodeParser	definition	simp	simp [canonHeaderOK, canonHeader, hp, canonBitsOK_iff, codeBitsNat]
+1023	Turing.CodeFormat.scan	TuringMachine.CodeFormat	definition	simp	| none => simp [CodeFormat.scan, hp]
+1031	Turing.CodeFormat.scan	TuringMachine.CodeFormat	definition	simp	simp [CodeFormat.scan, hp, hb]
+1186	Turing.Cfg.mapState	TuringMachine.StateRenaming	definition	simpa	simpa only [Cfg.ofWords, Cfg.mapState, Option.map_some] using first, by
+1186	Turing.Cfg.ofWords	TuringMachine.Build.Convention	definition	simpa	simpa only [Cfg.ofWords, Cfg.mapState, Option.map_some] using first, by
+1187	Turing.Cfg.mapState	TuringMachine.StateRenaming	definition	simpa	simpa only [Cfg.ofWords, Cfg.mapState, Option.map_some] using released⟩
+1187	Turing.Cfg.ofWords	TuringMachine.Build.Convention	definition	simpa	simpa only [Cfg.ofWords, Cfg.mapState, Option.map_some] using released⟩
+1213	Turing.embedEmitCfg	TuringMachine.Build.Embed	definition	simpa	apply Cfg.ext hs hp ?_ ?_ (by simpa only [embedEmitCfg, List.nil_append] using ho)
+1280	Turing.stateWord	TuringMachine.Build.Loop	definition	simp	have source : w 0 = arg := by simp [w, stateWord]
+1281	Turing.stateWord	TuringMachine.Build.Loop	definition	simp	have fresh : w dst = [] := by simp [w, stateWord, dst]
+1288	Turing.stateWord	TuringMachine.Build.Loop	definition	simp	simp [w, stateWord, dst, bank, zero, Function.update_apply, Fin.ext_iff]
+1327	Turing.Cfg.mapState	TuringMachine.StateRenaming	definition	simpa	· simpa only [C, Cfg.ofWords, Cfg.mapState, Option.map_some] using first
+1327	Turing.Cfg.ofWords	TuringMachine.Build.Convention	definition	simpa	· simpa only [C, Cfg.ofWords, Cfg.mapState, Option.map_some] using first
+1328	Turing.Cfg.mapState	TuringMachine.StateRenaming	definition	simpa	· simpa only [C, result, w, Cfg.ofWords, Cfg.mapState, Option.map_some] using whole
+1328	Turing.Cfg.ofWords	TuringMachine.Build.Convention	definition	simpa	· simpa only [C, result, w, Cfg.ofWords, Cfg.mapState, Option.map_some] using whole
+1388	Turing.stateWord	TuringMachine.Build.Loop	definition	simp	simp [w, stateWord, nonzero]
+1433	Turing.Cfg.mapState	TuringMachine.StateRenaming	definition	simpa	· simpa only [C, Cfg.ofWords, Cfg.mapState, Option.map_some] using cut
+1433	Turing.Cfg.ofWords	TuringMachine.Build.Convention	definition	simpa	· simpa only [C, Cfg.ofWords, Cfg.mapState, Option.map_some] using cut
+1434	Turing.Cfg.mapState	TuringMachine.StateRenaming	definition	simpa	· simpa only [C, result, w, header, Cfg.ofWords, Cfg.mapState, Option.map_some] using run
+1434	Turing.Cfg.ofWords	TuringMachine.Build.Convention	definition	simpa	· simpa only [C, result, w, header, Cfg.ofWords, Cfg.mapState, Option.map_some] using run
+1566	Turing.stateWord	TuringMachine.Build.Loop	definition	dsimp	dsimp only [stateWord]
+1575	Turing.stateWord	TuringMachine.Build.Loop	definition	simp	simp only [out, canonReadyWords, pval, Function.update_apply, eqv, stateWord]
+1596	Turing.stateWord	TuringMachine.Build.Loop	definition	simp	simp [mid, out, Function.update_of_ne h1, canonReadyWords, stateWord,
+1617	Turing.stateWord	TuringMachine.Build.Loop	definition	simp	simp [mid, Function.update_of_ne ne, stateWord, nz]
+1655	Turing.Cfg.mapState	TuringMachine.StateRenaming	definition	simpa	· simpa only [C, Cfg.ofWords, Cfg.mapState, Option.map_some] using firstExit
+1655	Turing.Cfg.ofWords	TuringMachine.Build.Convention	definition	simpa	· simpa only [C, Cfg.ofWords, Cfg.mapState, Option.map_some] using firstExit
+1656	Turing.Cfg.mapState	TuringMachine.StateRenaming	definition	simpa	· simpa only [C, out, head, Cfg.ofWords, Cfg.mapState, Option.map_some] using whole
+1656	Turing.Cfg.ofWords	TuringMachine.Build.Convention	definition	simpa	· simpa only [C, out, head, Cfg.ofWords, Cfg.mapState, Option.map_some] using whole
+1767	Turing.Cfg.ofWords	TuringMachine.Build.Convention	definition	simp	inRange s₀ rfl (by intro q _ _; simp [s₀, Cfg.ofWords, address])
+1768	Turing.Cfg.ofWords	TuringMachine.Build.Convention	definition	simp	(by intro q; simp [s₀, Cfg.ofWords, scratch, FinTM.bufferTape])
+1768	Turing.FinTM.bufferTape	TuringMachine.Simulation	definition	simp	(by intro q; simp [s₀, Cfg.ofWords, scratch, FinTM.bufferTape])
+1779	Turing.Cfg.mapState	TuringMachine.StateRenaming	definition	simp	(Fin.ext (by simp [g₀, binaryGuardStart, counter_cfg_eq, guardCfg,
+1807	Turing.embedEmitCfg	TuringMachine.Build.Embed	definition	simpa	have outputD : d₁.output = [] := by simpa only [d₁, embedEmitCfg, List.nil_append] using outG
+1835	Turing.Cfg.mapState	TuringMachine.StateRenaming	definition	simp	inRange r₀ (by simp [r₀, Cfg.mapState, done])
+1836	Turing.Cfg.mapState	TuringMachine.StateRenaming	definition	simp	(by intro q _ _; simp [r₀, Cfg.mapState, (framed (sb 0) (by simp [sb])).1,
+1838	Turing.Cfg.mapState	TuringMachine.StateRenaming	definition	simp	(by intro q; simp [r₀, Cfg.mapState, (framed (sb 1) (by simp [sb])).1,
+1839	Turing.FinTM.bufferTape	TuringMachine.Simulation	definition	simp	(by intro q; simp [r₀, Cfg.mapState, (framed (sb 1) (by simp [sb])).1,
+1849	Turing.Cfg.mapState	TuringMachine.StateRenaming	definition	simp	simp only [good, if_true, Cfg.mapState, Option.map_some]
+1856	Turing.Cfg.mapState	TuringMachine.StateRenaming	definition	simp	simp only [good, if_false, Cfg.mapState, stateD, Option.map_some]
+1865	Turing.Cfg.mapState	TuringMachine.StateRenaming	definition	simpa	simpa only [C, Cfg.ofWords, Cfg.mapState, Option.map_some, Option.map_map,
+1865	Turing.Cfg.ofWords	TuringMachine.Build.Convention	definition	simpa	simpa only [C, Cfg.ofWords, Cfg.mapState, Option.map_some, Option.map_map,
+1900	Turing.Cfg.ofWords	TuringMachine.Build.Convention	definition	simp	simp [MultiTapeTM.step, canonBoolPopTM, Cfg.ofWords, Cfg.workTapeSymbols,
+1900	Turing.Cfg.workTapeSymbols	TuringMachine.Configuration	primitive	simp	simp [MultiTapeTM.step, canonBoolPopTM, Cfg.ofWords, Cfg.workTapeSymbols,
+1900	Turing.MultiTapeTM.step	TuringMachine.Deterministic	primitive	simp	simp [MultiTapeTM.step, canonBoolPopTM, Cfg.ofWords, Cfg.workTapeSymbols,
+1901	Turing.Action.apply	TuringMachine.Configuration	primitive	simp	simp [MultiTapeTM.step, canonBoolPopTM, Cfg.ofWords, Cfg.workTapeSymbols,
+1901	Turing.FinTM.bufferTape	TuringMachine.Simulation	definition	simp	simp [MultiTapeTM.step, canonBoolPopTM, Cfg.ofWords, Cfg.workTapeSymbols,
+1901	Turing.stateWord	TuringMachine.Build.Loop	definition	simp	simp [MultiTapeTM.step, canonBoolPopTM, Cfg.ofWords, Cfg.workTapeSymbols,
+1901	Turing.tapeAction	TuringMachine.Build.Catalog	definition	simp	simp [MultiTapeTM.step, canonBoolPopTM, Cfg.ofWords, Cfg.workTapeSymbols,
+1959	Turing.Cfg.ofWords	TuringMachine.Build.Convention	definition	simp	simp only [initial, Cfg.ofWords, stateWord, i, ↓reduceIte, zero_add, sub_zero]
+1959	Turing.stateWord	TuringMachine.Build.Loop	definition	simp	simp only [initial, Cfg.ofWords, stateWord, i, ↓reduceIte, zero_add, sub_zero]
+1964	Turing.FinTM.bufferTape	TuringMachine.Simulation	definition	simp	simp [FinTM.bufferTape, hn,
+1966	Turing.FinTM.bufferTape	TuringMachine.Simulation	definition	simp	· simp [FinTM.bufferTape, hn]
+1968	Turing.Cfg.ofWords	TuringMachine.Build.Convention	definition	simp	simp [initial, Cfg.ofWords, stateWord, hj, nz]
+1968	Turing.stateWord	TuringMachine.Build.Loop	definition	simp	simp [initial, Cfg.ofWords, stateWord, hj, nz]
+1997	Turing.Cfg.mapState	TuringMachine.StateRenaming	definition	simp	simp [Cfg.mapState]
+2004	Turing.Cfg.mapState	TuringMachine.StateRenaming	definition	simp	simp [middle, Cfg.mapState, Cfg.ofWords]
+2004	Turing.Cfg.ofWords	TuringMachine.Build.Convention	definition	simp	simp [middle, Cfg.mapState, Cfg.ofWords]
+2005	Turing.Cfg.mapState	TuringMachine.StateRenaming	definition	simpa	· simpa only [C, initial, duration, Cfg.ofWords, Cfg.mapState, Option.map_some] using whole
+2005	Turing.Cfg.ofWords	TuringMachine.Build.Convention	definition	simpa	· simpa only [C, initial, duration, Cfg.ofWords, Cfg.mapState, Option.map_some] using whole
+2198	Turing.Cfg.ofWords	TuringMachine.Build.Convention	definition	simp	(by intro z _ _; simp [beginning, Cfg.ofWords, words, canonReadyWords, addressBank])
+2199	Turing.Cfg.ofWords	TuringMachine.Build.Convention	definition	simp	(by intro z; simp [beginning, Cfg.ofWords, words, canonReadyWords, addressBank])
+2227	Turing.Cfg.mapState	TuringMachine.StateRenaming	definition	simp	range rewind (by simp [rewind, Cfg.mapState, done])
+2247	Turing.Cfg.mapState	TuringMachine.StateRenaming	definition	simp	simp [fits, port, Cfg.mapState]
+2251	Turing.Cfg.mapState	TuringMachine.StateRenaming	definition	simp	simp [fits, Cfg.mapState]
+2257	Turing.Cfg.mapState	TuringMachine.StateRenaming	definition	simp	| true => simp [port, Cfg.mapState]
+2266	Turing.Cfg.mapState	TuringMachine.StateRenaming	definition	simpa	simpa [port, Cfg.mapState] using avoids
+2269	Turing.Cfg.mapState	TuringMachine.StateRenaming	definition	simpa	| true => simpa [port, Cfg.mapState] using firstR z hz
+2270	Turing.Cfg.mapState	TuringMachine.StateRenaming	definition	simp	| false => simp [port, Cfg.mapState]
+2277	Turing.Cfg.mapState	TuringMachine.StateRenaming	definition	simpa	simpa [fits, port, Cfg.mapState] using guardState
+2285	Turing.Cfg.mapState	TuringMachine.StateRenaming	definition	simp	| true => simp [port, Cfg.mapState]
+2286	Turing.Cfg.mapState	TuringMachine.StateRenaming	definition	simpa	| false => simpa [port, Cfg.mapState] using (guardCut u hu).2
+2310	Turing.Cfg.mapState	TuringMachine.StateRenaming	definition	simp	simp [Cfg.mapState]
+2312	Turing.Cfg.mapState	TuringMachine.StateRenaming	definition	simpa	simpa [Cfg.mapState] using cutV z hz b
+2363	Turing.Cfg.mapState	TuringMachine.StateRenaming	definition	simp	simp only [Cfg.mapState, stateT, Option.map_some]
+2372	Turing.Cfg.mapState	TuringMachine.StateRenaming	definition	simp	simp [Cfg.mapState]
+2374	Turing.Cfg.mapState	TuringMachine.StateRenaming	definition	simpa	simpa [Cfg.mapState] using cutT z hz d
+2470	Turing.Cfg.mapState	TuringMachine.StateRenaming	definition	simpa	| none => simpa [exit, Cfg.mapState] using headerCut u hu false
+2471	Turing.Cfg.mapState	TuringMachine.StateRenaming	definition	simp	| some q => simp [exit, Cfg.mapState]
+2511	Turing.Cfg.mapState	TuringMachine.StateRenaming	definition	simp	| some d => simp [exit, Cfg.mapState]
+2519	Turing.Cfg.mapState	TuringMachine.StateRenaming	definition	simpa	simpa [exit, Cfg.mapState] using avoids
+2522	Turing.Cfg.mapState	TuringMachine.StateRenaming	definition	simp	| none => simp [exit, Cfg.mapState]
+2523	Turing.Cfg.mapState	TuringMachine.StateRenaming	definition	simpa	| some d => simpa [exit, Cfg.mapState] using cut z hz d
+2663	Turing.Cfg.mapState	TuringMachine.StateRenaming	definition	simp	simp only [Cfg.mapState, control, Option.map_some]
+2694	Turing.CodeFormat.scan	TuringMachine.CodeFormat	definition	unfold	unfold CodeFormat.scan canonGrammar
+2759	Turing.optStateBits	TuringMachine.Encoding	definition	simp	| some s => exact ⟨true :: List.replicate s.val true, by simp [optStateBits, unaryFin]⟩
+2759	Turing.unaryFin	TuringMachine.Encoding	definition	simp	| some s => exact ⟨true :: List.replicate s.val true, by simp [optStateBits, unaryFin]⟩
+2764	Turing.actionBitsK	TuringMachine.CodeFormat	definition	simp	simp only [actionBitsK, hv, List.append_assoc]
+2784	Turing.pairEncode	TuringMachine.Encoding	definition	simp	simp only [serializeK, pairEncode, ht, List.append_assoc]
+2789	Turing.CodeFormat.scan	TuringMachine.CodeFormat	definition	unfold	unfold CodeFormat.scan at hs
+2817	Turing.CodeFormat.decode	TuringMachine.CodeFormat	definition	simp	simp [CodeFormat.decode, hp]
+2928	Turing.Cfg.ofWords	TuringMachine.Build.Convention	definition	simp	have start : fwd 0 = base := by simp [fwd, base, Cfg.ofWords]
+2932	Turing.Cfg.ofWords	TuringMachine.Build.Convention	definition	simp	simp [fwd, base, Cfg.ofWords, Cfg.workTapeSymbols, w, hr]
+2932	Turing.Cfg.workTapeSymbols	TuringMachine.Configuration	primitive	simp	simp [fwd, base, Cfg.ofWords, Cfg.workTapeSymbols, w, hr]
+2940	Turing.Cfg.ofWords	TuringMachine.Build.Convention	definition	simp	simp [fwd, base, Cfg.ofWords, Cfg.workTapeSymbols, w]
+2940	Turing.Cfg.workTapeSymbols	TuringMachine.Configuration	primitive	simp	simp [fwd, base, Cfg.ofWords, Cfg.workTapeSymbols, w]
+2944	Turing.Cfg.ofWords	TuringMachine.Build.Convention	definition	simp	simp [fwd, back, m, small, Function.update_idem, base, Cfg.ofWords, w,
+2949	Turing.Cfg.workTapeSymbols	TuringMachine.Configuration	primitive	simp	simp only [back, Cfg.workTapeSymbols, Function.update_self, Nat.cast_add,
+2981	Turing.Cfg.workTapeSymbols	TuringMachine.Configuration	primitive	simp	simp [back, Cfg.workTapeSymbols]
+2985	Turing.Cfg.ofWords	TuringMachine.Build.Convention	definition	simp	all_goals simp [back, done, base, Cfg.ofWords, m, pref, Function.update_idem]
+2992	Turing.Cfg.ofWords	TuringMachine.Build.Convention	definition	simp	simp [done, Cfg.ofWords]
+2999	Turing.catalogTrace	TuringMachine.Build.Catalog	definition	rw	rw [catalogTrace, if_neg (by dsimp [w]; omega), if_neg (by dsimp [w]; omega)]
+3002	Turing.catalogTrace	TuringMachine.Build.Catalog	definition	simp	simp only [catalogTrace]
+3004	Turing.Cfg.ofWords	TuringMachine.Build.Convention	definition	simp	· simp [fwd, base, Cfg.ofWords]
+3021	Turing.FinTM.bufferTape	TuringMachine.Simulation	definition	simp	· simp [nonneg, inside, FinTM.bufferTape,
+3023	Turing.FinTM.bufferTape	TuringMachine.Simulation	definition	simp	· simp [nonneg, FinTM.bufferTape]
+3063	Turing.Cfg.ofWords	TuringMachine.Build.Convention	definition	simp	simp only [source, Cfg.ofWords, stateWord, index, zero_add, sub_zero,
+3063	Turing.stateWord	TuringMachine.Build.Loop	definition	simp	simp only [source, Cfg.ofWords, stateWord, index, zero_add, sub_zero,
+3069	Turing.stateWord	TuringMachine.Build.Loop	definition	simp	have word : stateWord E.k x i = x := by simp [stateWord, i]
+3074	Turing.stateWord	TuringMachine.Build.Loop	definition	simp	· subst j; simp [stateWord, i]
+3076	Turing.stateWord	TuringMachine.Build.Loop	definition	simp	simp [Function.update_of_ne selected, stateWord, other]
+3097	Turing.Cfg.mapState	TuringMachine.StateRenaming	definition	simp	| zero => simp [callStart, Cfg.ofWords, Cfg.mapState]
+3097	Turing.Cfg.ofWords	TuringMachine.Build.Convention	definition	simp	| zero => simp [callStart, Cfg.ofWords, Cfg.mapState]
+3110	Turing.MultiTapeTM.step	TuringMachine.Deterministic	primitive	simp	simp [stopped, halt, MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.step,
+3111	Turing.Action.apply	TuringMachine.Configuration	primitive	simp	simp [stopped, halt, MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.step,
+3111	Turing.Cfg.mapState	TuringMachine.StateRenaming	definition	simp	simp [stopped, halt, MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.step,
+3111	Turing.Cfg.ofWords	TuringMachine.Build.Convention	definition	simp	simp [stopped, halt, MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.step,
+3165	Turing.codeSkipFin	TuringMachine.CodeParser	definition	simp	simp [codeSkipFin, codeReadUnary_append, show i < n + 1 by omega]
+3176	Turing.codeSkipActionK	TuringMachine.CodeFormat	definition	unfold	unfold codeSkipActionK canonSkipFields
+3184	Turing.codeSkipPair	TuringMachine.CodeParser	definition	unfold	unfold codeSkipPair at h
+3319	Turing.counterLoopOrbit	TuringMachine.Build.CounterLoop	abbrev	simp	simp only [counterLoopOrbit]
+3401	Turing.FinTM.bufferTape	TuringMachine.Simulation	definition	simp	· simp [FinTM.bufferTape, inside.1,
+3491	Turing.codeSkipFin	TuringMachine.CodeParser	definition	simp	· simp [codeSkipFin, codeReadUnary_append, show (r < n + 1) ↔ r ≤ n by omega]
+3541	Turing.Cfg.mapState	TuringMachine.StateRenaming	definition	simp	have startState : start.state = some (.dec .run) := by simp [start, Cfg.mapState, hs]
+3561	Turing.Cfg.mapState	TuringMachine.StateRenaming	definition	simp	apply Cfg.ext <;> simp [start, Cfg.mapState, hs]
+3564	Turing.Cfg.mapState	TuringMachine.StateRenaming	definition	simp	have cellState : cellStart.state = some none := by simp [cellStart, Cfg.mapState, stateL]
+3580	Turing.Cfg.mapState	TuringMachine.StateRenaming	definition	simp	simp [cellStart, Cfg.mapState, Option.map_map, Function.comp_def]
+3583	Turing.Cfg.mapState	TuringMachine.StateRenaming	definition	simp	have clearState : clearStart.state = some .sweep := by simp [clearStart, Cfg.mapState, stateT]
+3611	Turing.Cfg.mapState	TuringMachine.StateRenaming	definition	simp	simp [clearStart, Cfg.mapState, Option.map_map, Function.comp_def]
+3659	Turing.FinTM.bufferTape	TuringMachine.Simulation	definition	simp	· simp [FinTM.bufferTape, nonneg,
+3661	Turing.FinTM.bufferTape	TuringMachine.Simulation	definition	simp	· simp [FinTM.bufferTape, nonneg]
+3818	Turing.FinTM.bufferTape	TuringMachine.Simulation	definition	simp	· simp [FinTM.bufferTape, nonneg,
+3820	Turing.FinTM.bufferTape	TuringMachine.Simulation	definition	simp	· simp [FinTM.bufferTape, nonneg]
+3827	Turing.Cfg.mapState	TuringMachine.StateRenaming	definition	simp	canonUnaryCore_run w next (by simp [next, Cfg.mapState, atExit])
+3845	Turing.Cfg.mapState	TuringMachine.StateRenaming	definition	simp	(by intro z _; simp [exit, Cfg.mapState])
+3846	Turing.Cfg.mapState	TuringMachine.StateRenaming	definition	simpa	(by intro z hz; simpa [exit, Cfg.mapState] using cuts z hz b) u hu
+4041	Turing.codeSkipPair	TuringMachine.CodeParser	definition	simp	simp only [codeSkipPair, valid, if_true, Option.bind_some]
+4066	Turing.codeSkipPair	TuringMachine.CodeParser	definition	simp	· apply fail (by simp [suffix, codeSkipPair, valid])
+4106	Turing.codeSkipRepeat	TuringMachine.CodeParser	definition	simp	| zero => simp [canonWorkPairs, canonPairs, codeSkipRepeat]
+4108	Turing.codeSkipRepeat	TuringMachine.CodeParser	definition	simp	simp only [canonWorkPairs, canonPairs, ih, codeSkipRepeat, codeSkipWork, Option.bind_assoc]
+4108	Turing.codeSkipWork	TuringMachine.CodeFormat	definition	simp	simp only [canonWorkPairs, canonPairs, ih, codeSkipRepeat, codeSkipWork, Option.bind_assoc]
+4215	Turing.Cfg.mapState	TuringMachine.StateRenaming	definition	simp	have fState : f.state = some (Sum.inr (0, none)) := by simp [f, Cfg.mapState, state]
+4238	Turing.Cfg.mapState	TuringMachine.StateRenaming	definition	simp	apply Cfg.ext <;> simp [f, Cfg.mapState, state, entry]
+4284	Turing.Cfg.mapState	TuringMachine.StateRenaming	definition	simp	have tagState : tagStart.state = some none := by simp [tagStart, Cfg.mapState, fExit]
+4311	Turing.Cfg.mapState	TuringMachine.StateRenaming	definition	simp	simp [tagStart, target, fields, Cfg.mapState, Option.map_map, Function.comp_def]
+4329	Turing.Cfg.mapState	TuringMachine.StateRenaming	definition	simp	simp [Cfg.mapState, tagState, exit]
+4380	Turing.Cfg.mapState	TuringMachine.StateRenaming	definition	simp	have uState : uStart.state = some ue := by simp [uStart, Cfg.mapState, tagExit]
+4409	Turing.Cfg.mapState	TuringMachine.StateRenaming	definition	simp	simp [uStart, tagNext, Cfg.mapState, Option.map_map, Function.comp_def]
+4430	Turing.Cfg.mapState	TuringMachine.StateRenaming	definition	simp	simp [Cfg.mapState, tagExit, exit]
+4559	Turing.MultiTapeTM.step	TuringMachine.Deterministic	primitive	simp	simp [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.step, hs,
+4560	Turing.Action.apply	TuringMachine.Configuration	primitive	simp	simp [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.step, hs,
+4606	Turing.Cfg.mapState	TuringMachine.StateRenaming	definition	simp	have live : z.state = some bit := by simp [z, Cfg.mapState, state, e]
+4609	Turing.Cfg.mapState	TuringMachine.StateRenaming	definition	simp	simp [z, Cfg.mapState, Option.map_map, Function.comp_def]
+4623	Turing.Cfg.mapState	TuringMachine.StateRenaming	definition	simp	· simp only [Cfg.mapState, halted.1, Option.map_none]
+4625	Turing.Cfg.mapState	TuringMachine.StateRenaming	definition	simpa	simpa only [Cfg.mapState, blank, List.nil_append] using halted.2
+4757	Turing.Cfg.mapState	TuringMachine.StateRenaming	definition	simp	simp [Cfg.mapState, es, ports]
+4763	Turing.Cfg.mapState	TuringMachine.StateRenaming	definition	simpa	| none => simpa [ports, Cfg.mapState] using ec u hu false
+4764	Turing.Cfg.mapState	TuringMachine.StateRenaming	definition	simp	| some bit => simp [ports, Cfg.mapState]
+4806	Turing.Cfg.mapState	TuringMachine.StateRenaming	definition	simp	(by simp [g, Cfg.mapState, es]) rfl eo.symm
+4829	Turing.Cfg.mapState	TuringMachine.StateRenaming	definition	simp	simp [Cfg.mapState, hs, ports]
+4838	Turing.Cfg.mapState	TuringMachine.StateRenaming	definition	simp	| some bit => simp [ports, Cfg.mapState]
+4848	Turing.Cfg.mapState	TuringMachine.StateRenaming	definition	simpa	simpa [ports, Cfg.mapState] using avoid
+4851	Turing.Cfg.mapState	TuringMachine.StateRenaming	definition	simp	| none => simp [ports, Cfg.mapState]
+4852	Turing.Cfg.mapState	TuringMachine.StateRenaming	definition	simpa	| some bit => simpa [ports, Cfg.mapState] using hc z hz bit
+5102	Turing.Cfg.init	TuringMachine.Configuration	primitive	simp	hostedLoopTM_run M (M.initCfg x) (by simp [MultiTapeTM.initCfg, Cfg.init]) d entry rel
+5102	Turing.MultiTapeTM.initCfg	TuringMachine.Deterministic	primitive	simp	hostedLoopTM_run M (M.initCfg x) (by simp [MultiTapeTM.initCfg, Cfg.init]) d entry rel
+5104	Turing.Cfg.init	TuringMachine.Configuration	primitive	simp	(by simp [FinTM.VirtualTag, MultiTapeTM.initCfg, Cfg.init]) p []
+5104	Turing.FinTM.VirtualTag	TuringMachine.Simulation	definition	simp	(by simp [FinTM.VirtualTag, MultiTapeTM.initCfg, Cfg.init]) p []
+5104	Turing.MultiTapeTM.initCfg	TuringMachine.Deterministic	primitive	simp	(by simp [FinTM.VirtualTag, MultiTapeTM.initCfg, Cfg.init]) p []
+5127	Turing.MultiTapeTM.step	TuringMachine.Deterministic	primitive	unfold	unfold MultiTapeTM.step
+5131	Turing.Action.apply	TuringMachine.Configuration	primitive	simp	simp [Action.apply, vhostCfg, counter_cfg_eq, output, moveInputPos_zero]
+5131	Turing.vhostCfg	TuringMachine.Build.VirtualInput	definition	simp	simp [Action.apply, vhostCfg, counter_cfg_eq, output, moveInputPos_zero]

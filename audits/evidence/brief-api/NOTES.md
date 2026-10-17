@@ -151,3 +151,18 @@ the head's Lean, and the snapshot `oleans-lbapi2` serves the tip after #118.
 
 The checks are in `r2/logs/` and `r2/review-out/`. The replay `replay-lbapi3.sh` covers 274
 modules from `oleans-lm12api`. **Passed (user, 2026-10-17):** 274 of 274, static-equal (88).
+
+**Round 2's gate: FAIL, 0/1/2** (`audits/brief-api-r2-findings.md`; the review
+`r3/gate-review-r2.md`).
+- **The major:** MIG-12's route (and, the review found, F5's ruler host) reads the model's
+  primitives for an arbitrary action or machine.
+- **The minors:**
+  - MIG-12's unfolding ledger, now 173 rows: 76 explicit sites and 97 definitional ones;
+  - a count erratum.
+
+**Round 3 (`531b98a2`, prepared locally; not pushed):**
+- `74765ef4`: the live-step API (`Action.apply_*`, `step_of_some`, `outputSymbol_of_some`);
+- `531b98a2`: `counterWord_succ`, `scanResult_keep_keep`.
+
+The checks are in `r3/`. The replay `replay-lbapi4.sh` covers 320 modules, from `oleans-lbapi3`.
+

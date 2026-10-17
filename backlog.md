@@ -1028,7 +1028,21 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
       published.
     - The minors are MIG-12's unfold-site ledger (at least 48 sites, not 44; the counter-loop
       exception has one direct use, not three) and the pack's count (12 MIG-12 names, not 13).
-    - With the review sub-agent. Round 3 is prepared locally, per the user's ruling.
+    - **Reviewed:** all three are true, and findings 1–2 are wider than the auditor saw:
+      - F5's ruler host reads the same primitives;
+      - `CfgRecord` has four more arbitrary-action reads;
+      - the corrected ledger has 173 rows (76 explicit, 97 definitional), with two laws
+        private-only.
+    - **Round 3 is prepared locally and not pushed** (the user's ruling), in `wt-bapi` at
+      `531b98a2`:
+      - `74765ef4`: `Action.apply_*`, `step_of_some`, `outputSymbol_of_some`;
+      - `531b98a2`: `counterWord_succ`, `scanResult_keep_keep`.
+    - Checks clean. Replay `replay-lbapi4.sh` covers 320 modules. Pack
+      `audits/brief-api-r3-pack.md`; resolutions updated; MIG-12's and F5's drafts corrected.
+    - **Morning:** the user approves the push, runs the replay, then the r3 gate (folder 36).
+      After the merge, issue: re-run the pre-ship checks against `oleans-lbapi4`, and re-measure
+      the screen bases whose populations contain `Catalog`, `CounterLoop`, `Configuration` or
+      `Deterministic` (U2-S, F3, cont6, G4, MIG-12).
   - **The screen bases re-measured at `4624fc05`:** F3 1,042 / 510, cont6 2,410 / 2,631. The
     issue plan passes.
     - cont6's re-measure shows a new 55% pair: the public `incFixed_length` reproduces

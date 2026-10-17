@@ -1,0 +1,81 @@
+line	declaration	error	mentioned irreducible definitions	source
+407	recordRun_zero	Application type mismatch: The argument	MultiTapeTM.runFrom	refine ⟨rfl, by omega, ?_⟩
+465	recordRun_tagged	Type mismatch	Cfg.mapState MultiTapeTM.runFrom	exact hb u ht j
+529	recordStep_digits_succ	'change' tactic failed, pattern	counterWord decFixed	change (decFixed (binDigits w (n + 1))).getD (binDigits w (n + 1)) = binDigits w n at hw
+589	recordStep_window	Application type mismatch: The argument		exact (heads i).mp (h.1 i)
+591	recordStep_window	Type mismatch		refine ⟨fun i => (heads i).mpr (h i), ?_⟩
+618	recordStep_restrict	Tactic `rfl` failed: The left-hand side	Cfg.liftSymbols MultiTapeTM.runFrom decodeBool embedEmitCfg	· rfl
+619	recordStep_restrict	Tactic `rfl` failed: The left-hand side	Cfg.liftSymbols MultiTapeTM.runFrom decodeBool embedEmitCfg	· apply Fin.ext; rfl
+625	recordStep_restrict	'change' tactic failed, pattern	Cfg.liftSymbols decodeBool	change d.workTapes (ι i) p =
+632	recordStep_restrict	Type mismatch	Cfg.liftSymbols MultiTapeTM.runFrom decodeBool embedEmitCfg	· exact (frame j h).1.symm
+637	recordStep_restrict	Tactic `rfl` failed: The left-hand side	Cfg.liftSymbols MultiTapeTM.runFrom decodeBool embedEmitCfg	rfl
+638	recordStep_restrict	Type mismatch	Cfg.liftSymbols MultiTapeTM.runFrom decodeBool embedEmitCfg	· exact (frame j h).2.symm
+666	recordStep_native_frame	Application type mismatch: The argument	MultiTapeTM.runFrom	| zero => exact ⟨rfl, rfl, rfl⟩
+717	recordStep_read_run	'change' tactic failed, pattern	MultiTapeTM.runFrom MultiTapeTM.step decodeBool	· change recordStepRead.step d = _
+743	recordStep_save_orbit	Application type mismatch: The argument		| zero => intro _; exact ⟨hc, rfl, rfl⟩
+743	recordStep_save_orbit	Application type mismatch: The argument		| zero => intro _; exact ⟨hc, rfl, rfl⟩
+748	recordStep_save_orbit	'change' tactic failed, pattern	MultiTapeTM.runFrom MultiTapeTM.step	change (recordStepSave.step (counterLoopOrbit recordStepSave (fun _ => 1) c r)).state = some false ∧
+761	recordStep_save_orbit	'change' tactic failed, pattern	MultiTapeTM.runFrom MultiTapeTM.step	change (recordStepSave.step (counterLoopOrbit recordStepSave (fun _ => 1) c c.inputPos.val)).state = some true ∧
+821	recordStep_probe_run	'change' tactic failed, pattern	MultiTapeTM.runFrom MultiTapeTM.step moveInputPos	· change recordStepProbe.step (recordStepProbe.step d) = _
+827	recordStep_probe_run	'change' tactic failed, pattern	MultiTapeTM.runFrom MultiTapeTM.step	· change (recordStepProbe.step d).state ≠ _
+853	recordStep_probe_run	'change' tactic failed, pattern	MultiTapeTM.runFrom MultiTapeTM.step	· change recordStepProbe.step d = _
+1189	recordStep_cell_shift	Type mismatch: After simplification, term	scanFold scanKeep scanResult	simpa only [SignType.zero_eq_zero, SignType.coe_zero, add_zero] using congrArg Prod.snd hi
+1258	recordStep_tape_word	Type mismatch	scanKeep scanResult scanShift	exact recordStep_cell_shift s ((a.apply c).workTapes i) (c.workTapePos i) (hc.1 i)
+1520	recordStep_state_run	unsolved goals	Cfg.mapState FinTM.bufferTape MultiTapeTM.runFrom scanFold scanKeep scanResult	have hin : c.mapState (Sigma.mk i) = d := by
+1524	recordStep_state_run	Type mismatch	Cfg.mapState	(fun _ => out) = {d with state := some out} := rfl
+1731	recordStep_read_prefix	Type mismatch	Cfg.mapState	exact phase
+1782	recordStep_read_prefix	Type mismatch	Cfg.mapState	exact phase
+1835	recordStep_read_prefix	Type mismatch	Cfg.mapState MultiTapeTM.runFrom	exact recordStep_phase_run M upd seek start finish ⟨.copyB, data⟩ (by intro b h; cases h)
+1850	recordStep_read_prefix	Type mismatch	Cfg.mapState MultiTapeTM.runFrom	exact recordStep_phase_run M upd seek start finish ⟨.copyD, data⟩ (by intro b h; cases h)
+1996	recordStep_read_fields	Type mismatch	Cfg.mapState MultiTapeTM.runFrom	exact recordStep_phase_run M upd seek start finish ⟨.positionSkip, dat 0⟩
+2047	recordStep_read_fields	Application type mismatch: The argument	Cfg.mapState	have ht := recordRun_trans hread hskip
+2094	recordStep_read_fields	Type mismatch: After simplification, term	Cfg.mapState	simpa only [readState, lt_self_iff_false, ↓reduceDIte] using hp
+2150	recordStep_read_fields	Type mismatch: After simplification, term	Cfg.mapState	simpa [backState, Nat.add_sub_cancel] using hp
+2211	recordStep_read_all	'change' tactic failed, pattern	fieldOffset joinFields	change 2 + ((binDigits (posWidth x.length) c.inputPos.val).map
+2335	recordStep_halt_run	Application type mismatch: The argument	Cfg.mapState	have ht := recordRun_trans pB pD
+2308	recordStep_halt_run	unsolved goals	Cfg.mapState MultiTapeTM.runFrom	(4 * w.length + 6) := by
+2388	recordStep_seek_transport	'change' tactic failed, pattern	Cfg.liftSymbols MultiTapeTM.runFrom decodeBool embedEmitCfg	change d = embedEmitCfg ι d.workTapes d.workTapePos d.output (c.liftSymbols e) at zero
+2630	recordStep_save_transport	'change' tactic failed, pattern	Cfg.liftSymbols MultiTapeTM.runFrom embedEmitCfg	change (embedEmitCfg ι d.workTapes d.workTapePos d.output
+2639	recordStep_save_transport	Tactic `rfl` failed: The left-hand side	Cfg.liftSymbols FinTM.bufferTape MultiTapeTM.runFrom counterLoopCfg counterLoopTM counterWord decodeBool embedEmitCfg	rfl
+2640	recordStep_save_transport	Type mismatch	Cfg.liftSymbols FinTM.bufferTape MultiTapeTM.runFrom counterWord embedEmitCfg	· exact (frame t j hj).2
+2644	recordStep_save_transport	'change' tactic failed, pattern	Cfg.liftSymbols MultiTapeTM.runFrom decodeBool embedEmitCfg	change (B.runFrom raw u).state ≠ some .done ∧ (B.runFrom raw u).state ≠ some .escape
+2658	recordStep_save_transport	'change' tactic failed, pattern	Cfg.liftSymbols MultiTapeTM.runFrom	change |(B.runFrom raw u).workTapePos 0 - d.workTapePos 3| ≤ _
+2661	recordStep_save_transport	'change' tactic failed, pattern	Cfg.liftSymbols MultiTapeTM.runFrom embedEmitCfg	change (embedEmitCfg ι d.workTapes d.workTapePos d.output
+2791	recordStep_prepare_native	Application type mismatch: The argument	Cfg.mapState	· have total := recordRun_trans (recordRun_trans pf pp) ps
+2860	recordStep_seek_read	'change' tactic failed, pattern	Cfg.liftSymbols decodeBool	change (c.liftSymbols e).inputSymbol.bind (decodeBool e) = c.inputSymbol
+2883	recordStep_seek_read	Application type mismatch: The argument	Cfg.mapState	simpa [a, r, d', Cfg.mapState, recordStepSnapshot] using recordRun_trans ps pr
+2976	recordStep_arithmetic_transport	Tactic `rfl` failed: The left-hand side	Cfg.liftSymbols FinTM.bufferTape MultiTapeTM.runFrom decFixed decodeBool embedEmitCfg incFixed	· rfl
+2977	recordStep_arithmetic_transport	Tactic `rfl` failed: The left-hand side	Cfg.liftSymbols FinTM.bufferTape MultiTapeTM.runFrom decFixed decodeBool embedEmitCfg incFixed	· apply Fin.ext; rfl
+2990	recordStep_arithmetic_transport	Tactic `rfl` failed: The left-hand side	Cfg.liftSymbols FinTM.bufferTape MultiTapeTM.runFrom decFixed decodeBool decrementTM embedEmitCfg incFixed incrementTM	rfl
+2993	recordStep_arithmetic_transport	Type mismatch	Cfg.liftSymbols FinTM.bufferTape MultiTapeTM.runFrom embedEmitCfg	exact h
+2997	recordStep_arithmetic_transport	Type mismatch	Cfg.liftSymbols MultiTapeTM.runFrom decodeBool embedEmitCfg	exact spec.2.1 u hu b
+3006	recordStep_arithmetic_transport	'change' tactic failed, pattern	Cfg.liftSymbols MultiTapeTM.runFrom decodeBool	change |(row.runFrom raw u).workTapePos 0 - raw.workTapePos 0| ≤ _
+3009	recordStep_arithmetic_transport	'change' tactic failed, pattern	Cfg.liftSymbols MultiTapeTM.runFrom embedEmitCfg	change (embedEmitCfg bank d.workTapes d.workTapePos d.output
+3216	recordStep_restore_native	Application type mismatch: The argument	Cfg.mapState	simpa [a, cur, w, Cfg.mapState, recordStepSnapshot] using recordRun_trans ps' pc')
+3215	recordStep_restore_native	unsolved goals	Cfg.mapState FinTM.bufferTape MultiTapeTM.runFrom counterWord	have total := recordRun_trans pa' (by
+3157	recordStep_restore_native	unsolved goals	Cfg.mapState MultiTapeTM.runFrom counterWord	(recordStepSnapshot d (recordStepApply M data) 0 b []) t := by
+3459	recordStep_tape_run	Application type mismatch: The argument	Cfg.mapState	have total := recordRun_trans p1 p2
+3369	recordStep_tape_run	unsolved goals	Cfg.mapState FinTM.bufferTape MultiTapeTM.runFrom scanKeep scanResult scanShift scanTM	else d.workTapes j z} (4 * (2 * s + 1) + 6) := by
+3529	recordStep_copyback_run	Application type mismatch: The argument	Cfg.mapState	have total := recordRun_trans pc pe
+3483	recordStep_copyback_run	unsolved goals	Cfg.mapState FinTM.bufferTape MultiTapeTM.runFrom	(4 * w.length + 6) := by
+3764	recordStep_position_run	'change' tactic failed, pattern	decFixed incFixed moveInputPos	change (match a.inputTape with
+4019	recordStep_apply_run	Tactic `rfl` failed: The left-hand side	FinTM.bufferTape MultiTapeTM.runFrom fieldOffset fieldsTape joinFields scanKeep scanMap scanTM	have last : gs[0]'(by omega) = [RecSym.st a.state] := by rfl
+4024	recordStep_apply_run	Application type mismatch: The argument	MultiTapeTM.runFrom fieldOffset	4 run (.done ()) rfl (⟨⟨.skipNewState, data⟩, .run⟩ : RecordStepControl k Q T S) rfl
+4026	recordStep_apply_run	Application type mismatch: The argument	MultiTapeTM.runFrom fieldOffset	| done v => exact (cut u hu v hq).elim
+4034	recordStep_apply_run	Application type mismatch: The argument	MultiTapeTM.runFrom fieldOffset	(cfg .done (fieldOffset fs 1) (fieldOffset fs 1) w) 2 run .done rfl posEntry (by
+4037	recordStep_apply_run	Application type mismatch: The argument	MultiTapeTM.runFrom fieldOffset	| done => exact (cut u hu hq).elim
+4042	recordStep_apply_run	Application type mismatch: The argument	Cfg.mapState fieldOffset	exact recordRun_trans pm ps
+4100	recordStep_apply_run	Application type mismatch: The argument	Cfg.mapState fieldOffset	refine ⟨t + (fs[1].length + 2), ?_, recordRun_trans pm ps⟩
+4101	recordStep_apply_run	Tactic `rfl` failed: The left-hand side	Cfg.mapState FinTM.bufferTape MultiTapeTM.runFrom fieldOffset fieldsTape joinFields scanKeep scanMap scanTM	have off1 : fieldOffset fs 1 = 2 := by rfl
+4120	recordStep_apply_run	unsolved goals	FinTM.bufferTape MultiTapeTM.runFrom fieldOffset fieldsTape joinFields scanKeep scanMap scanTM	RecSym.cell ((a.apply c).workTapes i ((z : ℤ) - s)) (decide ((a.apply c).workTapePos i = (z : ℤ) - s)) := by
+4154	recordStep_apply_run	Application type mismatch: The argument	Cfg.mapState fieldOffset	have joined := recordRun_trans pm ps
+4200	recordStep_apply_run	Type mismatch: After simplification, term	Cfg.mapState fieldOffset	simpa only [tapeState, lt_self_iff_false, ↓reduceDIte] using phase
+4220	recordStep_apply_run	Application type mismatch: The argument	FinTM.bufferTape fieldOffset fieldsTape	simpa only [fieldOffset, List.take_zero, List.map_nil, List.sum_nil, Nat.cast_zero, zero_add, add_zero] using f.trans g.
+4385	exists_recordStepTM	'change' tactic failed, pattern	fieldOffset joinFields	change 2 + w.length ≤ L at span
+4686	exists_recordEqTM	Tactic `apply` failed: could not unify the type of `recordRu	Cfg.mapState FinTM.bufferTape MultiTapeTM.runFrom fieldOffset joinFields phaseHostTM	apply recordRun_tagged hphase.1 hphase.2 (by intro h; cases h) (by intro h; cases h) ?_
+4686	exists_recordEqTM	Dependent elimination failed: Failed to solve equation		apply recordRun_tagged hphase.1 hphase.2 (by intro h; cases h) (by intro h; cases h) ?_
+4686	exists_recordEqTM	Dependent elimination failed: Failed to solve equation		apply recordRun_tagged hphase.1 hphase.2 (by intro h; cases h) (by intro h; cases h) ?_
+5119	exists_recordTestTM	Tactic `apply` failed: could not unify the type of `recordRu	Cfg.mapState FinTM.bufferTape MultiTapeTM.runFrom fieldOffset joinFields phaseHostTM	apply recordRun_tagged hp.1 hp.2 (by intro h; cases h) (by intro h; cases h) ?_
+5119	exists_recordTestTM	Dependent elimination failed: Failed to solve equation		apply recordRun_tagged hp.1 hp.2 (by intro h; cases h) (by intro h; cases h) ?_
+5119	exists_recordTestTM	Dependent elimination failed: Failed to solve equation		apply recordRun_tagged hp.1 hp.2 (by intro h; cases h) (by intro h; cases h) ?_
+5300	Cfg.inWindow_init	Type mismatch		⟨fun _ => by simp, fun _ _ _ => rfl⟩

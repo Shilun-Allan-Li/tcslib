@@ -1,0 +1,1317 @@
+PerDef_CfgRecord.lean:469:6: error: Type mismatch
+  hb u ht j
+has type
+  |(MultiTapeTM.runFrom c u).workTapePos j - base j| ≤ ↑radius
+but is expected to have type
+  |(Cfg.mapState (Sigma.mk i) (MultiTapeTM.runFrom c u)).workTapePos j - base j| ≤ ↑radius
+PerDef_CfgRecord.lean:1524:44: error: unsolved goals
+case inputPos
+k : ℕ
+Q T S : Type
+inst✝² : DecidableEq Q
+inst✝¹ : DecidableEq T
+inst✝ : DecidableEq S
+M : MultiTapeTM k Bool Q
+upd : T → Option Bool → T
+seek : MultiTapeTM 2 Bool S
+start finish : S
+x : List (RecSym Q T)
+d : Cfg 4 (RecSym Q T) (RecordStepControl k Q T S) x
+hd : d.state = some recordStepEntry
+q : Option Q
+hw : ∀ (z : ℤ), -1 ≤ z → z ≤ 1 → d.workTapes 0 (d.workTapePos 0 + z) = FinTM.bufferTape [RecSym.st q] z
+i : RecordStepIndex k Q T := ⋯
+c : Cfg 4 (RecSym Q T) (ScanPhase (Option Q)) x := ⋯
+δ : Option Q → RecSym Q T → Option Q := ⋯
+hrow :
+  MultiTapeTM.runFrom c (2 * [RecSym.st q].length + 2) =
+    { state := some (ScanPhase.done (q, [RecSym.st q]).1), inputPos := c.inputPos,
+      workTapes := fun j q_1 =>
+        if j = 0 ∧ c.workTapePos j ≤ q_1 ∧ q_1 < c.workTapePos j + ↑[RecSym.st q].length then
+          FinTM.bufferTape (q, [RecSym.st q]).2 (q_1 - c.workTapePos j)
+        else c.workTapes j q_1,
+      workTapePos := c.workTapePos, output := c.output }
+hcut : ∀ t < 2 * [RecSym.st q].length + 2, ∀ (a : Option Q), (MultiTapeTM.runFrom c t).state ≠ some (ScanPhase.done a)
+hheads :
+  ∀ (j : Fin 4),
+    ∀ t ≤ 2 * [RecSym.st q].length + 2,
+      if j = 0 then
+        (MultiTapeTM.runFrom c t).workTapePos j ∈
+          Finset.Icc (c.workTapePos j - 1) (c.workTapePos j + ↑[RecSym.st q].length)
+      else (MultiTapeTM.runFrom c t).workTapePos j = c.workTapePos j
+hfold : scanResult (scanFold δ) scanKeep none [RecSym.st q] = (q, [RecSym.st q])
+he :
+  MultiTapeTM.runFrom c 4 =
+    { state := some (ScanPhase.done q), inputPos := c.inputPos, workTapes := c.workTapes, workTapePos := c.workTapePos,
+      output := c.output }
+out : RecordStepControl k Q T S := ⋯
+phase :
+  (∀ u ≤ 4, MultiTapeTM.runFrom (Cfg.mapState (Sigma.mk i) c) u = Cfg.mapState (Sigma.mk i) (MultiTapeTM.runFrom c u)) ∧
+    MultiTapeTM.runFrom (Cfg.mapState (Sigma.mk i) c) (4 + 1) =
+      Cfg.mapState (fun x => out)
+        { state := some (ScanPhase.done q), inputPos := c.inputPos, workTapes := c.workTapes,
+          workTapePos := c.workTapePos, output := c.output }
+⊢ (Cfg.mapState (Sigma.mk i) c).inputPos = d.inputPos
+
+case workTapes
+k : ℕ
+Q T S : Type
+inst✝² : DecidableEq Q
+inst✝¹ : DecidableEq T
+inst✝ : DecidableEq S
+M : MultiTapeTM k Bool Q
+upd : T → Option Bool → T
+seek : MultiTapeTM 2 Bool S
+start finish : S
+x : List (RecSym Q T)
+d : Cfg 4 (RecSym Q T) (RecordStepControl k Q T S) x
+hd : d.state = some recordStepEntry
+q : Option Q
+hw : ∀ (z : ℤ), -1 ≤ z → z ≤ 1 → d.workTapes 0 (d.workTapePos 0 + z) = FinTM.bufferTape [RecSym.st q] z
+i : RecordStepIndex k Q T := ⋯
+c : Cfg 4 (RecSym Q T) (ScanPhase (Option Q)) x := ⋯
+δ : Option Q → RecSym Q T → Option Q := ⋯
+hrow :
+  MultiTapeTM.runFrom c (2 * [RecSym.st q].length + 2) =
+    { state := some (ScanPhase.done (q, [RecSym.st q]).1), inputPos := c.inputPos,
+      workTapes := fun j q_1 =>
+        if j = 0 ∧ c.workTapePos j ≤ q_1 ∧ q_1 < c.workTapePos j + ↑[RecSym.st q].length then
+          FinTM.bufferTape (q, [RecSym.st q]).2 (q_1 - c.workTapePos j)
+        else c.workTapes j q_1,
+      workTapePos := c.workTapePos, output := c.output }
+hcut : ∀ t < 2 * [RecSym.st q].length + 2, ∀ (a : Option Q), (MultiTapeTM.runFrom c t).state ≠ some (ScanPhase.done a)
+hheads :
+  ∀ (j : Fin 4),
+    ∀ t ≤ 2 * [RecSym.st q].length + 2,
+      if j = 0 then
+        (MultiTapeTM.runFrom c t).workTapePos j ∈
+          Finset.Icc (c.workTapePos j - 1) (c.workTapePos j + ↑[RecSym.st q].length)
+      else (MultiTapeTM.runFrom c t).workTapePos j = c.workTapePos j
+hfold : scanResult (scanFold δ) scanKeep none [RecSym.st q] = (q, [RecSym.st q])
+he :
+  MultiTapeTM.runFrom c 4 =
+    { state := some (ScanPhase.done q), inputPos := c.inputPos, workTapes := c.workTapes, workTapePos := c.workTapePos,
+      output := c.output }
+out : RecordStepControl k Q T S := ⋯
+phase :
+  (∀ u ≤ 4, MultiTapeTM.runFrom (Cfg.mapState (Sigma.mk i) c) u = Cfg.mapState (Sigma.mk i) (MultiTapeTM.runFrom c u)) ∧
+    MultiTapeTM.runFrom (Cfg.mapState (Sigma.mk i) c) (4 + 1) =
+      Cfg.mapState (fun x => out)
+        { state := some (ScanPhase.done q), inputPos := c.inputPos, workTapes := c.workTapes,
+          workTapePos := c.workTapePos, output := c.output }
+⊢ (Cfg.mapState (Sigma.mk i) c).workTapes = d.workTapes
+
+case workTapePos
+k : ℕ
+Q T S : Type
+inst✝² : DecidableEq Q
+inst✝¹ : DecidableEq T
+inst✝ : DecidableEq S
+M : MultiTapeTM k Bool Q
+upd : T → Option Bool → T
+seek : MultiTapeTM 2 Bool S
+start finish : S
+x : List (RecSym Q T)
+d : Cfg 4 (RecSym Q T) (RecordStepControl k Q T S) x
+hd : d.state = some recordStepEntry
+q : Option Q
+hw : ∀ (z : ℤ), -1 ≤ z → z ≤ 1 → d.workTapes 0 (d.workTapePos 0 + z) = FinTM.bufferTape [RecSym.st q] z
+i : RecordStepIndex k Q T := ⋯
+c : Cfg 4 (RecSym Q T) (ScanPhase (Option Q)) x := ⋯
+δ : Option Q → RecSym Q T → Option Q := ⋯
+hrow :
+  MultiTapeTM.runFrom c (2 * [RecSym.st q].length + 2) =
+    { state := some (ScanPhase.done (q, [RecSym.st q]).1), inputPos := c.inputPos,
+      workTapes := fun j q_1 =>
+        if j = 0 ∧ c.workTapePos j ≤ q_1 ∧ q_1 < c.workTapePos j + ↑[RecSym.st q].length then
+          FinTM.bufferTape (q, [RecSym.st q]).2 (q_1 - c.workTapePos j)
+        else c.workTapes j q_1,
+      workTapePos := c.workTapePos, output := c.output }
+hcut : ∀ t < 2 * [RecSym.st q].length + 2, ∀ (a : Option Q), (MultiTapeTM.runFrom c t).state ≠ some (ScanPhase.done a)
+hheads :
+  ∀ (j : Fin 4),
+    ∀ t ≤ 2 * [RecSym.st q].length + 2,
+      if j = 0 then
+        (MultiTapeTM.runFrom c t).workTapePos j ∈
+          Finset.Icc (c.workTapePos j - 1) (c.workTapePos j + ↑[RecSym.st q].length)
+      else (MultiTapeTM.runFrom c t).workTapePos j = c.workTapePos j
+hfold : scanResult (scanFold δ) scanKeep none [RecSym.st q] = (q, [RecSym.st q])
+he :
+  MultiTapeTM.runFrom c 4 =
+    { state := some (ScanPhase.done q), inputPos := c.inputPos, workTapes := c.workTapes, workTapePos := c.workTapePos,
+      output := c.output }
+out : RecordStepControl k Q T S := ⋯
+phase :
+  (∀ u ≤ 4, MultiTapeTM.runFrom (Cfg.mapState (Sigma.mk i) c) u = Cfg.mapState (Sigma.mk i) (MultiTapeTM.runFrom c u)) ∧
+    MultiTapeTM.runFrom (Cfg.mapState (Sigma.mk i) c) (4 + 1) =
+      Cfg.mapState (fun x => out)
+        { state := some (ScanPhase.done q), inputPos := c.inputPos, workTapes := c.workTapes,
+          workTapePos := c.workTapePos, output := c.output }
+⊢ (Cfg.mapState (Sigma.mk i) c).workTapePos = d.workTapePos
+
+case output
+k : ℕ
+Q T S : Type
+inst✝² : DecidableEq Q
+inst✝¹ : DecidableEq T
+inst✝ : DecidableEq S
+M : MultiTapeTM k Bool Q
+upd : T → Option Bool → T
+seek : MultiTapeTM 2 Bool S
+start finish : S
+x : List (RecSym Q T)
+d : Cfg 4 (RecSym Q T) (RecordStepControl k Q T S) x
+hd : d.state = some recordStepEntry
+q : Option Q
+hw : ∀ (z : ℤ), -1 ≤ z → z ≤ 1 → d.workTapes 0 (d.workTapePos 0 + z) = FinTM.bufferTape [RecSym.st q] z
+i : RecordStepIndex k Q T := ⋯
+c : Cfg 4 (RecSym Q T) (ScanPhase (Option Q)) x := ⋯
+δ : Option Q → RecSym Q T → Option Q := ⋯
+hrow :
+  MultiTapeTM.runFrom c (2 * [RecSym.st q].length + 2) =
+    { state := some (ScanPhase.done (q, [RecSym.st q]).1), inputPos := c.inputPos,
+      workTapes := fun j q_1 =>
+        if j = 0 ∧ c.workTapePos j ≤ q_1 ∧ q_1 < c.workTapePos j + ↑[RecSym.st q].length then
+          FinTM.bufferTape (q, [RecSym.st q]).2 (q_1 - c.workTapePos j)
+        else c.workTapes j q_1,
+      workTapePos := c.workTapePos, output := c.output }
+hcut : ∀ t < 2 * [RecSym.st q].length + 2, ∀ (a : Option Q), (MultiTapeTM.runFrom c t).state ≠ some (ScanPhase.done a)
+hheads :
+  ∀ (j : Fin 4),
+    ∀ t ≤ 2 * [RecSym.st q].length + 2,
+      if j = 0 then
+        (MultiTapeTM.runFrom c t).workTapePos j ∈
+          Finset.Icc (c.workTapePos j - 1) (c.workTapePos j + ↑[RecSym.st q].length)
+      else (MultiTapeTM.runFrom c t).workTapePos j = c.workTapePos j
+hfold : scanResult (scanFold δ) scanKeep none [RecSym.st q] = (q, [RecSym.st q])
+he :
+  MultiTapeTM.runFrom c 4 =
+    { state := some (ScanPhase.done q), inputPos := c.inputPos, workTapes := c.workTapes, workTapePos := c.workTapePos,
+      output := c.output }
+out : RecordStepControl k Q T S := ⋯
+phase :
+  (∀ u ≤ 4, MultiTapeTM.runFrom (Cfg.mapState (Sigma.mk i) c) u = Cfg.mapState (Sigma.mk i) (MultiTapeTM.runFrom c u)) ∧
+    MultiTapeTM.runFrom (Cfg.mapState (Sigma.mk i) c) (4 + 1) =
+      Cfg.mapState (fun x => out)
+        { state := some (ScanPhase.done q), inputPos := c.inputPos, workTapes := c.workTapes,
+          workTapePos := c.workTapePos, output := c.output }
+⊢ (Cfg.mapState (Sigma.mk i) c).output = d.output
+PerDef_CfgRecord.lean:1528:53: error: Type mismatch
+  rfl
+has type
+  ?m.546 = ?m.546
+but is expected to have type
+  Cfg.mapState (fun x => out)
+      { state := some (ScanPhase.done q), inputPos := c.inputPos, workTapes := c.workTapes,
+        workTapePos := c.workTapePos, output := c.output } =
+    { state := some out, inputPos := d.inputPos, workTapes := d.workTapes, workTapePos := d.workTapePos,
+      output := d.output }
+PerDef_CfgRecord.lean:1735:4: error: Type mismatch
+  phase
+has type
+  RecordRun (recordStepMachine M upd seek start finish) (recordStepVerdict true) (recordStepVerdict false) d.workTapePos
+    (L + 1) (Cfg.mapState (Sigma.mk (RecordStepStage.stateSkip, { state := c.state })) a)
+    (Cfg.mapState (fun x_1 => ⟨(RecordStepStage.position, { state := c.state }), ScanPhase.fwd (0, true)⟩)
+      (recordStepSnapshot d SeekPhase.done 2 [] []))
+    (2 + 1)
+but is expected to have type
+  RecordRun (recordStepMachine M upd seek start finish) (recordStepVerdict true) (recordStepVerdict false) d.workTapePos
+    (L + 1) (cfg ⟨(RecordStepStage.stateSkip, { state := c.state }), SeekPhase.run⟩ 0 [] [])
+    (cfg ⟨(RecordStepStage.position, { state := c.state }), ScanPhase.fwd (0, true)⟩ 2 [] []) 3
+PerDef_CfgRecord.lean:1786:4: error: Type mismatch
+  phase
+has type
+  RecordRun (recordStepMachine M upd seek start finish) (recordStepVerdict true) (recordStepVerdict false) d.workTapePos
+    (L + 1) (Cfg.mapState (Sigma.mk (RecordStepStage.position, { state := c.state })) a)
+    (Cfg.mapState (fun x => ⟨(RecordStepStage.copyB, data), SweepPhase.sweep⟩)
+      { state := some (ScanPhase.done result), inputPos := a.inputPos, workTapes := a.workTapes,
+        workTapePos := a.workTapePos, output := a.output })
+    (2 * w.length + 2 + 1)
+but is expected to have type
+  RecordRun (recordStepMachine M upd seek start finish) (recordStepVerdict true) (recordStepVerdict false) d.workTapePos
+    (L + 1) (cfg ⟨(RecordStepStage.position, { state := c.state }), ScanPhase.fwd (0, true)⟩ 2 [] [])
+    (cfg ⟨(RecordStepStage.copyB, data), SweepPhase.sweep⟩ 2 [] []) (2 * w.length + 3)
+PerDef_CfgRecord.lean:1839:4: error: Type mismatch
+  recordStep_phase_run M upd seek start finish (RecordStepStage.copyB, data)
+    (fun b h =>
+      Eq.casesOn (motive := fun a t => RecordStepStage.verdict b = a → h ≍ t → False) h
+        (fun h_1 => False.elim (noConfusion_of_Nat RecordStepStage.ctorIdx h_1)) (Eq.refl (RecordStepStage.verdict b))
+        (HEq.refl h))
+    (recordStepSnapshot d SweepPhase.sweep 2 [] []) (recordStepSnapshot d SweepPhase.done 2 w []) (2 * w.length + 2) he
+    SweepPhase.done rfl ⟨(RecordStepStage.copyD, data), SweepPhase.sweep⟩ rfl
+    (fun u hu q hq =>
+      SweepPhase.casesOn (motive := fun t =>
+        q = t → recordStepNext M start finish (RecordStepStage.copyB, data) q = none) q
+        (fun h =>
+          Eq.ndrec (motive := fun q =>
+            (MultiTapeTM.runFrom (recordStepSnapshot d SweepPhase.sweep 2 [] []) u).state = some q →
+              recordStepNext M start finish (RecordStepStage.copyB, data) q = none)
+            (fun hq => Eq.refl (recordStepNext M start finish (RecordStepStage.copyB, data) SweepPhase.sweep))
+            (Eq.symm h) hq)
+        (fun h =>
+          Eq.ndrec (motive := fun q =>
+            (MultiTapeTM.runFrom (recordStepSnapshot d SweepPhase.sweep 2 [] []) u).state = some q →
+              recordStepNext M start finish (RecordStepStage.copyB, data) q = none)
+            (fun hq => Eq.refl (recordStepNext M start finish (RecordStepStage.copyB, data) SweepPhase.rewind))
+            (Eq.symm h) hq)
+        (fun h =>
+          Eq.ndrec (motive := fun q =>
+            (MultiTapeTM.runFrom (recordStepSnapshot d SweepPhase.sweep 2 [] []) u).state = some q →
+              recordStepNext M start finish (RecordStepStage.copyB, data) q = none)
+            (fun hq => False.elim (ht u hu hq)) (Eq.symm h) hq)
+        (Eq.refl q))
+    d.workTapePos (L + 1) hh
+has type
+  RecordRun (recordStepMachine M upd seek start finish) (recordStepVerdict true) (recordStepVerdict false) d.workTapePos
+    (L + 1) (Cfg.mapState (Sigma.mk (RecordStepStage.copyB, data)) (recordStepSnapshot d SweepPhase.sweep 2 [] []))
+    (Cfg.mapState (fun x => ⟨(RecordStepStage.copyD, data), SweepPhase.sweep⟩)
+      (recordStepSnapshot d SweepPhase.done 2 w []))
+    (2 * w.length + 2 + 1)
+but is expected to have type
+  RecordRun (recordStepMachine M upd seek start finish) (recordStepVerdict true) (recordStepVerdict false) d.workTapePos
+    (L + 1) (cfg ⟨(RecordStepStage.copyB, data), SweepPhase.sweep⟩ 2 [] [])
+    (cfg ⟨(RecordStepStage.copyD, data), SweepPhase.sweep⟩ 2 w []) (2 * w.length + 3)
+PerDef_CfgRecord.lean:1854:4: error: Type mismatch
+  recordStep_phase_run M upd seek start finish (RecordStepStage.copyD, data)
+    (fun b h =>
+      Eq.casesOn (motive := fun a t => RecordStepStage.verdict b = a → h ≍ t → False) h
+        (fun h_1 => False.elim (noConfusion_of_Nat RecordStepStage.ctorIdx h_1)) (Eq.refl (RecordStepStage.verdict b))
+        (HEq.refl h))
+    (recordStepSnapshot d SweepPhase.sweep 2 w []) (recordStepSnapshot d SweepPhase.done 2 w w) (2 * w.length + 2) he
+    SweepPhase.done rfl ⟨(RecordStepStage.positionSkip, data), SeekPhase.run⟩ rfl
+    (fun u hu q hq =>
+      SweepPhase.casesOn (motive := fun t =>
+        q = t → recordStepNext M start finish (RecordStepStage.copyD, data) q = none) q
+        (fun h =>
+          Eq.ndrec (motive := fun q =>
+            (MultiTapeTM.runFrom (recordStepSnapshot d SweepPhase.sweep 2 w []) u).state = some q →
+              recordStepNext M start finish (RecordStepStage.copyD, data) q = none)
+            (fun hq => Eq.refl (recordStepNext M start finish (RecordStepStage.copyD, data) SweepPhase.sweep))
+            (Eq.symm h) hq)
+        (fun h =>
+          Eq.ndrec (motive := fun q =>
+            (MultiTapeTM.runFrom (recordStepSnapshot d SweepPhase.sweep 2 w []) u).state = some q →
+              recordStepNext M start finish (RecordStepStage.copyD, data) q = none)
+            (fun hq => Eq.refl (recordStepNext M start finish (RecordStepStage.copyD, data) SweepPhase.rewind))
+            (Eq.symm h) hq)
+        (fun h =>
+          Eq.ndrec (motive := fun q =>
+            (MultiTapeTM.runFrom (recordStepSnapshot d SweepPhase.sweep 2 w []) u).state = some q →
+              recordStepNext M start finish (RecordStepStage.copyD, data) q = none)
+            (fun hq => False.elim (ht u hu hq)) (Eq.symm h) hq)
+        (Eq.refl q))
+    d.workTapePos (L + 1) hh
+has type
+  RecordRun (recordStepMachine M upd seek start finish) (recordStepVerdict true) (recordStepVerdict false) d.workTapePos
+    (L + 1) (Cfg.mapState (Sigma.mk (RecordStepStage.copyD, data)) (recordStepSnapshot d SweepPhase.sweep 2 w []))
+    (Cfg.mapState (fun x => ⟨(RecordStepStage.positionSkip, data), SeekPhase.run⟩)
+      (recordStepSnapshot d SweepPhase.done 2 w w))
+    (2 * w.length + 2 + 1)
+but is expected to have type
+  RecordRun (recordStepMachine M upd seek start finish) (recordStepVerdict true) (recordStepVerdict false) d.workTapePos
+    (L + 1) (cfg ⟨(RecordStepStage.copyD, data), SweepPhase.sweep⟩ 2 w [])
+    (cfg ⟨(RecordStepStage.positionSkip, data), SeekPhase.run⟩ 2 w w) (2 * w.length + 3)
+PerDef_CfgRecord.lean:2000:4: error: Type mismatch
+  recordStep_phase_run M upd seek start finish (RecordStepStage.positionSkip, dat 0)
+    (fun b h =>
+      Eq.casesOn (motive := fun a t => RecordStepStage.verdict b = a → h ≍ t → False) h
+        (fun h_1 => False.elim (noConfusion_of_Nat RecordStepStage.ctorIdx h_1)) (Eq.refl (RecordStepStage.verdict b))
+        (HEq.refl h))
+    (cfg SeekPhase.run 1) (cfg SeekPhase.done 2) (fs[1].length + 1) he SeekPhase.done rfl (readState 0)
+    (of_eq_true
+      (Eq.trans
+        (congrArg
+          (fun x =>
+            some x =
+              some
+                (if hr : 0 < k then
+                  ⟨(RecordStepStage.tapeRead ⟨0, hr⟩, dat 0), ScanPhase.fwd (false, none, false, false)⟩
+                else ⟨(RecordStepStage.tagRead, dat 0), ScanPhase.fwd none⟩))
+          (dite_congr (Eq.refl (0 < k))
+            (fun h =>
+              ite_cond_eq_false
+                ⟨(RecordStepStage.writeTape ⟨0, Eq.mpr_prop (Eq.refl (0 < k)) h⟩, dat 0), ScanPhase.fwd ()⟩
+                ⟨(RecordStepStage.tapeRead ⟨0, Eq.mpr_prop (Eq.refl (0 < k)) h⟩, dat 0),
+                  ScanPhase.fwd (false, none, false, false)⟩
+                Bool.false_eq_true)
+            fun h =>
+            ite_cond_eq_false ⟨(RecordStepStage.writeTag, dat 0), ScanPhase.fwd ()⟩
+              ⟨(RecordStepStage.tagRead, dat 0), ScanPhase.fwd none⟩ Bool.false_eq_true))
+        (eq_self
+          (some
+            (if h : 0 < k then
+              ⟨(RecordStepStage.tapeRead ⟨0, Eq.mpr_prop (Eq.refl (0 < k)) h⟩, dat 0),
+                ScanPhase.fwd (false, none, false, false)⟩
+            else ⟨(RecordStepStage.tagRead, dat 0), ScanPhase.fwd none⟩)))))
+    (fun u hu q hq =>
+      SeekPhase.casesOn (motive := fun t =>
+        q = t → recordStepNext M start finish (RecordStepStage.positionSkip, dat 0) q = none) q
+        (fun h =>
+          Eq.ndrec (motive := fun q =>
+            (MultiTapeTM.runFrom (cfg SeekPhase.run 1) u).state = some q →
+              recordStepNext M start finish (RecordStepStage.positionSkip, dat 0) q = none)
+            (fun hq => Eq.refl (recordStepNext M start finish (RecordStepStage.positionSkip, dat 0) SeekPhase.run))
+            (Eq.symm h) hq)
+        (fun h =>
+          Eq.ndrec (motive := fun q =>
+            (MultiTapeTM.runFrom (cfg SeekPhase.run 1) u).state = some q →
+              recordStepNext M start finish (RecordStepStage.positionSkip, dat 0) q = none)
+            (fun hq => Eq.refl (recordStepNext M start finish (RecordStepStage.positionSkip, dat 0) SeekPhase.gap))
+            (Eq.symm h) hq)
+        (fun h =>
+          Eq.ndrec (motive := fun q =>
+            (MultiTapeTM.runFrom (cfg SeekPhase.run 1) u).state = some q →
+              recordStepNext M start finish (RecordStepStage.positionSkip, dat 0) q = none)
+            (fun hq => Eq.refl (recordStepNext M start finish (RecordStepStage.positionSkip, dat 0) SeekPhase.back))
+            (Eq.symm h) hq)
+        (fun h =>
+          Eq.ndrec (motive := fun q =>
+            (MultiTapeTM.runFrom (cfg SeekPhase.run 1) u).state = some q →
+              recordStepNext M start finish (RecordStepStage.positionSkip, dat 0) q = none)
+            (fun hq => False.elim (ht u hu hq)) (Eq.symm h) hq)
+        (Eq.refl q))
+    d.workTapePos (L + 1) hh
+has type
+  RecordRun (recordStepMachine M upd seek start finish) (recordStepVerdict true) (recordStepVerdict false) d.workTapePos
+    (L + 1) (Cfg.mapState (Sigma.mk (RecordStepStage.positionSkip, dat 0)) (cfg SeekPhase.run 1))
+    (Cfg.mapState (fun x => readState 0) (cfg SeekPhase.done 2)) (fs[1].length + 1 + 1)
+but is expected to have type
+  RecordRun (recordStepMachine M upd seek start finish) (recordStepVerdict true) (recordStepVerdict false) d.workTapePos
+    (L + 1) (cfg ⟨(RecordStepStage.positionSkip, dat 0), SeekPhase.run⟩ 1) (cfg (readState 0) 2) (fs[1].length + 2)
+PerDef_CfgRecord.lean:2051:37: error: Application type mismatch: The argument
+  hskip
+has type
+  RecordRun (recordStepMachine M upd seek start finish) (recordStepVerdict true) (recordStepVerdict false) d.workTapePos
+    (L + 1) (Cfg.mapState (Sigma.mk (RecordStepStage.tapeSkip i, dat (r + 1))) (cfg SeekPhase.run (r + 2)))
+    (Cfg.mapState (fun x => readState (r + 1)) (cfg SeekPhase.done (r + 3))) (fs[r + 2].length + 1 + 1)
+but is expected to have type
+  RecordRun (recordStepMachine M upd seek start finish) (recordStepVerdict true) (recordStepVerdict false) d.workTapePos
+    (L + 1)
+    (Cfg.mapState (fun x => ⟨(RecordStepStage.tapeSkip i, dat (r + 1)), SeekPhase.run⟩)
+      (cfg (ScanPhase.done result) (r + 2)))
+    ?m.1831 ?m.1833
+in the application
+  recordRun_trans hread hskip
+PerDef_CfgRecord.lean:2098:4: error: Type mismatch: After simplification, term
+  hp
+ has type
+  RecordRun (recordStepMachine M upd seek start finish) (recordStepVerdict true) (recordStepVerdict false) d.workTapePos
+    (L + 1) (Cfg.mapState (Sigma.mk (RecordStepStage.tagRead, dat k)) (cfg (ScanPhase.fwd none) (k + 2)))
+    (Cfg.mapState (fun x => backState (k + 2) ⋯) (cfg (ScanPhase.done (some τ)) (k + 2))) (4 + 1)
+but is expected to have type
+  RecordRun (recordStepMachine M upd seek start finish) (recordStepVerdict true) (recordStepVerdict false) d.workTapePos
+    (L + 1) (cfg ⟨(RecordStepStage.tagRead, dat k), ScanPhase.fwd none⟩ (k + 2)) (cfg (backState (k + 2) ⋯) (k + 2)) 5
+PerDef_CfgRecord.lean:2154:4: error: Type mismatch: After simplification, term
+  hp
+ has type
+  RecordRun (recordStepMachine M upd seek start finish) (recordStepVerdict true) (recordStepVerdict false) d.workTapePos
+    (L + 1) (Cfg.mapState (Sigma.mk (RecordStepStage.readBack ⟨j, hj⟩, data)) (cfg SeekPhase.run (j + 1)))
+    (Cfg.mapState
+      (fun x_1 =>
+        if h : 0 < j then ⟨(RecordStepStage.readBack ⟨j - 1, ⋯⟩, data), SeekPhase.run⟩ else recordStepReadExit data)
+      (cfg SeekPhase.done j))
+    (fs[j].length + 3 + 1)
+but is expected to have type
+  RecordRun (recordStepMachine M upd seek start finish) (recordStepVerdict true) (recordStepVerdict false) d.workTapePos
+    (L + 1) (cfg ⟨(RecordStepStage.readBack ⟨j, ⋯⟩, data), SeekPhase.run⟩ (j + 1))
+    (cfg (if h : 0 < j then ⟨(RecordStepStage.readBack ⟨j - 1, ⋯⟩, data), SeekPhase.run⟩ else recordStepReadExit data)
+      j)
+    (fs[j].length + 4)
+PerDef_CfgRecord.lean:2339:32: error: Application type mismatch: The argument
+  pD
+has type
+  RecordRun (recordStepMachine M upd seek start finish) (recordStepVerdict true) (recordStepVerdict false) d.workTapePos
+    (w.length + 1)
+    (Cfg.mapState (Sigma.mk (RecordStepStage.clearHaltD, data)) (recordStepSnapshot d SweepPhase.sweep 0 [] w))
+    (Cfg.mapState (fun x => recordStepVerdict true) (recordStepSnapshot d SweepPhase.done 0 [] []))
+    (2 * w.length + 2 + 1)
+but is expected to have type
+  RecordRun (recordStepMachine M upd seek start finish) (recordStepVerdict true) (recordStepVerdict false) d.workTapePos
+    (w.length + 1)
+    (Cfg.mapState (fun x => ⟨(RecordStepStage.clearHaltD, data), SweepPhase.sweep⟩)
+      (recordStepSnapshot d SweepPhase.done 0 [] w))
+    ?m.491 ?m.493
+in the application
+  recordRun_trans pB pD
+PerDef_CfgRecord.lean:2312:28: error: unsolved goals
+k : ℕ
+Q T S : Type
+inst✝² : DecidableEq Q
+inst✝¹ : DecidableEq T
+inst✝ : DecidableEq S
+M : MultiTapeTM k Bool Q
+upd : T → Option Bool → T
+seek : MultiTapeTM 2 Bool S
+start finish : S
+x : List (RecSym Q T)
+d : Cfg 4 (RecSym Q T) (RecordStepControl k Q T S) x
+w : List (RecSym Q T)
+data : RecordStepData k Q T
+halted : data.state = none
+clear :
+  ∀ (dst : Fin 4),
+    dst = 1 ∨ dst = 3 →
+      ∀ (b e : List (RecSym Q T)),
+        (dst = 1 → b = w) →
+          (dst = 3 → e = w) →
+            have a := recordStepSnapshot d SweepPhase.sweep 0 b e;
+            MultiTapeTM.runFrom a (2 * w.length + 2) =
+                recordStepSnapshot d SweepPhase.done 0 (if dst = 1 then [] else b) (if dst = 3 then [] else e) ∧
+              (∀ u < 2 * w.length + 2, (MultiTapeTM.runFrom a u).state ≠ some SweepPhase.done) ∧
+                ∀ (j : Fin 4),
+                  ∀ u ≤ 2 * w.length + 2,
+                    if j = dst then
+                      (MultiTapeTM.runFrom a u).workTapePos j ∈
+                        Finset.Icc (d.workTapePos j - 1) (d.workTapePos j + ↑w.length)
+                    else (MultiTapeTM.runFrom a u).workTapePos j = a.workTapePos j
+bounds :
+  ∀ (dst : Fin 4),
+    dst = 1 ∨ dst = 3 →
+      ∀ (b e : List (RecSym Q T)),
+        (dst = 1 → b = w) →
+          (dst = 3 → e = w) →
+            ∀ u ≤ 2 * w.length + 2,
+              ∀ (j : Fin 4),
+                |(MultiTapeTM.runFrom (recordStepSnapshot d SweepPhase.sweep 0 b e) u).workTapePos j -
+                      d.workTapePos j| ≤
+                  ↑(w.length + 1)
+hB :
+  MultiTapeTM.runFrom (recordStepSnapshot d SweepPhase.sweep 0 w w) (2 * w.length + 2) =
+    recordStepSnapshot d SweepPhase.done 0 (if 1 = 1 then [] else w) (if 1 = 3 then [] else w)
+cutB :
+  ∀ u < 2 * w.length + 2,
+    (MultiTapeTM.runFrom (recordStepSnapshot d SweepPhase.sweep 0 w w) u).state ≠ some SweepPhase.done
+right✝¹ :
+  ∀ (j : Fin 4),
+    ∀ u ≤ 2 * w.length + 2,
+      if j = 1 then
+        (MultiTapeTM.runFrom (recordStepSnapshot d SweepPhase.sweep 0 w w) u).workTapePos j ∈
+          Finset.Icc (d.workTapePos j - 1) (d.workTapePos j + ↑w.length)
+      else
+        (MultiTapeTM.runFrom (recordStepSnapshot d SweepPhase.sweep 0 w w) u).workTapePos j =
+          (recordStepSnapshot d SweepPhase.sweep 0 w w).workTapePos j
+pB :
+  RecordRun (recordStepMachine M upd seek start finish) (recordStepVerdict true) (recordStepVerdict false) d.workTapePos
+    (w.length + 1)
+    (Cfg.mapState (Sigma.mk (RecordStepStage.clearHaltB, data)) (recordStepSnapshot d SweepPhase.sweep 0 w w))
+    (Cfg.mapState (fun x => ⟨(RecordStepStage.clearHaltD, data), SweepPhase.sweep⟩)
+      (recordStepSnapshot d SweepPhase.done 0 [] w))
+    (2 * w.length + 2 + 1)
+hD :
+  MultiTapeTM.runFrom (recordStepSnapshot d SweepPhase.sweep 0 [] w) (2 * w.length + 2) =
+    recordStepSnapshot d SweepPhase.done 0 (if 3 = 1 then [] else []) (if 3 = 3 then [] else w)
+cutD :
+  ∀ u < 2 * w.length + 2,
+    (MultiTapeTM.runFrom (recordStepSnapshot d SweepPhase.sweep 0 [] w) u).state ≠ some SweepPhase.done
+right✝ :
+  ∀ (j : Fin 4),
+    ∀ u ≤ 2 * w.length + 2,
+      if j = 3 then
+        (MultiTapeTM.runFrom (recordStepSnapshot d SweepPhase.sweep 0 [] w) u).workTapePos j ∈
+          Finset.Icc (d.workTapePos j - 1) (d.workTapePos j + ↑w.length)
+      else
+        (MultiTapeTM.runFrom (recordStepSnapshot d SweepPhase.sweep 0 [] w) u).workTapePos j =
+          (recordStepSnapshot d SweepPhase.sweep 0 [] w).workTapePos j
+pD :
+  RecordRun (recordStepMachine M upd seek start finish) (recordStepVerdict true) (recordStepVerdict false) d.workTapePos
+    (w.length + 1)
+    (Cfg.mapState (Sigma.mk (RecordStepStage.clearHaltD, data)) (recordStepSnapshot d SweepPhase.sweep 0 [] w))
+    (Cfg.mapState (fun x => recordStepVerdict true) (recordStepSnapshot d SweepPhase.done 0 [] []))
+    (2 * w.length + 2 + 1)
+⊢ RecordRun (recordStepMachine M upd seek start finish) (recordStepVerdict true) (recordStepVerdict false) d.workTapePos
+    (w.length + 1) (recordStepSnapshot d (recordStepReadExit data) 0 w w)
+    (recordStepSnapshot d (recordStepVerdict true) 0 [] []) (4 * w.length + 6)
+PerDef_CfgRecord.lean:2795:54: error: Application type mismatch: The argument
+  pp
+has type
+  RecordRun (recordStepMachine M upd seek start finish) (recordStepVerdict true) (recordStepVerdict false) d.workTapePos
+    (w.length + 1) (Cfg.mapState (Sigma.mk (RecordStepStage.probe, data)) dp)
+    (Cfg.mapState
+      (fun x =>
+        ⟨(RecordStepStage.save,
+            { state := data.state, widthOne := data.widthOne, posZero := data.posZero, symbols := data.symbols,
+              edgeLeft := data.edgeLeft, edgeRight := data.edgeRight, tag := data.tag, nativeRight := b,
+              input := data.input }),
+          CounterLoopState.dec FlagPhase.run⟩)
+      (recordStepSnapshot dq (RecordStepProbe.done b) 0 digits (List.map (⇑e) fuel)))
+    (tp + 1)
+but is expected to have type
+  RecordRun (recordStepMachine M upd seek start finish) (recordStepVerdict true) (recordStepVerdict false) d.workTapePos
+    (w.length + 1)
+    (Cfg.mapState (fun x => ⟨(RecordStepStage.probe, data), RecordStepProbe.start⟩)
+      (recordStepSnapshot d (ScanPhase.done ()) 0 digits (List.map (⇑e) fuel)))
+    ?m.1795 ?m.1797
+in the application
+  recordRun_trans pf pp
+PerDef_CfgRecord.lean:2887:78: error: Application type mismatch: The argument
+  pr
+has type
+  RecordRun (recordStepMachine M upd seek start finish) (recordStepVerdict true) (recordStepVerdict false) d.workTapePos
+    (C * (w.length + 1)) (Cfg.mapState (Sigma.mk (RecordStepStage.read, data)) r)
+    (Cfg.mapState
+      (fun x_1 =>
+        ⟨(RecordStepStage.complement,
+            { state := data.state, widthOne := data.widthOne, posZero := data.posZero, symbols := data.symbols,
+              edgeLeft := data.edgeLeft, edgeRight := data.edgeRight, tag := data.tag, nativeRight := data.nativeRight,
+              input := c.inputSymbol }),
+          ScanPhase.fwd ()⟩)
+      (recordStepSnapshot d' (some c.inputSymbol) 0 (List.map (⇑e) w) saved))
+    (1 + 1)
+but is expected to have type
+  RecordRun (recordStepMachine M upd seek start finish) (recordStepVerdict true) (recordStepVerdict false) d.workTapePos
+    (C * (w.length + 1))
+    (Cfg.mapState (fun x => ⟨(RecordStepStage.read, data), none⟩)
+      (recordStepSnapshot d' finish 0 (List.map (⇑e) w) saved))
+    ?m.1318 ?m.1320
+in the application
+  recordRun_trans ps pr
+PerDef_CfgRecord.lean:3220:82: error: Application type mismatch: The argument
+  pc'
+has type
+  RecordRun (recordStepMachine M upd seek start finish) (recordStepVerdict true) (recordStepVerdict false) d.workTapePos
+    ((C + 1) * (W + 1))
+    (Cfg.mapState (Sigma.mk (RecordStepStage.clearD, data))
+      (recordStepSnapshot d SweepPhase.sweep 0 b (List.map (⇑e) w)))
+    (Cfg.mapState (fun x => recordStepApply M data) (recordStepSnapshot d SweepPhase.done 0 b [])) (2 * W + 2 + 1)
+but is expected to have type
+  RecordRun (recordStepMachine M upd seek start finish) (recordStepVerdict true) (recordStepVerdict false) d.workTapePos
+    ((C + 1) * (W + 1))
+    (Cfg.mapState (fun x => ⟨(RecordStepStage.clearD, data), SweepPhase.sweep⟩)
+      (recordStepSnapshot d finish 0 b (List.map (⇑e) w)))
+    ?m.1224 ?m.1226
+in the application
+  recordRun_trans ps' pc'
+PerDef_CfgRecord.lean:3219:37: error: unsolved goals
+k : ℕ
+Q T S : Type
+inst✝² : DecidableEq Q
+inst✝¹ : DecidableEq T
+inst✝ : DecidableEq S
+M : MultiTapeTM k Bool Q
+upd : T → Option Bool → T
+seek : MultiTapeTM 2 Bool S
+start finish : S
+C : ℕ
+hseek : RecordStepSeekSpec seek start finish C
+x : List Bool
+d : Cfg 4 (RecSym Q T) (RecordStepControl k Q T S) (List.map (⇑(RecSym.digitEmb Q T)) x)
+pos : Fin ((List.map (⇑(RecSym.digitEmb Q T)) x).length + 2)
+b : List (RecSym Q T)
+data : RecordStepData k Q T
+W q : ℕ
+blank : ∀ (z : ℤ), d.workTapes 2 z = none
+hq : q + 1 < 2 ^ W
+hp : ↑d.inputPos = if data.nativeRight = true then q + 1 else q
+e : Bool ↪ RecSym Q T := RecSym.digitEmb Q T
+cur : Cfg 4 (RecSym Q T) (RecordStepControl k Q T S) (List.map (⇑(RecSym.digitEmb Q T)) x) :=
+  { state := d.state, inputPos := pos, workTapes := d.workTapes, workTapePos := d.workTapePos, output := d.output }
+w : List Bool := binDigits W ↑d.inputPos
+len : w.length = W
+hval : ↑d.inputPos < 2 ^ W
+hpx : ↑d.inputPos ≤ x.length + 1
+ta : ℕ
+hta : ta ≤ 4 * W + 6
+pa :
+  RecordRun (recordStepMachine M upd seek start finish) (recordStepVerdict true) (recordStepVerdict false)
+    cur.workTapePos (W + 1)
+    (recordStepSnapshot cur ⟨(RecordStepStage.complement, data), ScanPhase.fwd ()⟩ 0 b
+      (List.map (⇑(RecSym.digitEmb Q T)) (counterWord (List.replicate W true) (q + 1))))
+    (recordStepSnapshot cur ⟨(RecordStepStage.restore, data), start⟩ 0 b
+      (List.map (⇑(RecSym.digitEmb Q T)) (binDigits W ↑d.inputPos)))
+    ta
+a : Cfg 4 (RecSym Q T) S (List.map (⇑(RecSym.digitEmb Q T)) x) := recordStepSnapshot cur start 0 b (List.map (⇑e) w)
+dig : ∀ (i : Fin 2) (z : ℤ) (γ : RecSym Q T), a.workTapes ((recordStepSeekBank true) i) z = some γ → ∃ v, γ = e v
+ts : ℕ
+hts : ts ≤ C * (w.length + ↑a.inputPos + ↑d.inputPos + 1)
+cs : ∀ u < ts, (MultiTapeTM.runFrom a u).state ≠ some finish
+hs : ∀ u ≤ ts, ∀ (j : Fin 4), |(MultiTapeTM.runFrom a u).workTapePos j - a.workTapePos j| ≤ ↑(C * (w.length + 1))
+es :
+  MultiTapeTM.runFrom a ts =
+    { state := some finish, inputPos := ⟨↑d.inputPos, ⋯⟩, workTapes := a.workTapes, workTapePos := a.workTapePos,
+      output := a.output }
+ps :
+  RecordRun (recordStepMachine M upd seek start finish) (recordStepVerdict true) (recordStepVerdict false) d.workTapePos
+    (C * (W + 1)) (Cfg.mapState (Sigma.mk (RecordStepStage.restore, data)) a)
+    (Cfg.mapState (fun x => ⟨(RecordStepStage.clearD, data), SweepPhase.sweep⟩)
+      (recordStepSnapshot d finish 0 b (List.map (⇑e) w)))
+    (ts + 1)
+ec :
+  MultiTapeTM.runFrom (recordStepSnapshot d SweepPhase.sweep 0 b (List.map (⇑e) w)) (2 * (List.map (⇑e) w).length + 2) =
+    recordStepSnapshot d SweepPhase.done 0 (if 3 = 1 then [] else b) (if 3 = 3 then [] else List.map (⇑e) w)
+cc :
+  ∀ u < 2 * (List.map (⇑e) w).length + 2,
+    (MultiTapeTM.runFrom (recordStepSnapshot d SweepPhase.sweep 0 b (List.map (⇑e) w)) u).state ≠ some SweepPhase.done
+right✝ :
+  ∀ (j : Fin 4),
+    ∀ u ≤ 2 * (List.map (⇑e) w).length + 2,
+      if j = 3 then
+        (MultiTapeTM.runFrom (recordStepSnapshot d SweepPhase.sweep 0 b (List.map (⇑e) w)) u).workTapePos j ∈
+          Finset.Icc (d.workTapePos j - 1) (d.workTapePos j + ↑(List.map (⇑e) w).length)
+      else
+        (MultiTapeTM.runFrom (recordStepSnapshot d SweepPhase.sweep 0 b (List.map (⇑e) w)) u).workTapePos j =
+          (recordStepSnapshot d SweepPhase.sweep 0 b (List.map (⇑e) w)).workTapePos j
+pc :
+  RecordRun (recordStepMachine M upd seek start finish) (recordStepVerdict true) (recordStepVerdict false) d.workTapePos
+    (W + 1)
+    (Cfg.mapState (Sigma.mk (RecordStepStage.clearD, data))
+      (recordStepSnapshot d SweepPhase.sweep 0 b (List.map (⇑e) w)))
+    (Cfg.mapState (fun x => recordStepApply M data) (recordStepSnapshot d SweepPhase.done 0 b [])) (2 * W + 2 + 1)
+small : W + 1 ≤ (C + 1) * (W + 1)
+seekBound : C * (W + 1) ≤ (C + 1) * (W + 1)
+pa' :
+  RecordRun (recordStepMachine M upd seek start finish) (recordStepVerdict true) (recordStepVerdict false)
+    cur.workTapePos ((C + 1) * (W + 1))
+    (recordStepSnapshot cur ⟨(RecordStepStage.complement, data), ScanPhase.fwd ()⟩ 0 b
+      (List.map (⇑(RecSym.digitEmb Q T)) (counterWord (List.replicate W true) (q + 1))))
+    (recordStepSnapshot cur ⟨(RecordStepStage.restore, data), start⟩ 0 b
+      (List.map (⇑(RecSym.digitEmb Q T)) (binDigits W ↑d.inputPos)))
+    ta
+ps' :
+  RecordRun (recordStepMachine M upd seek start finish) (recordStepVerdict true) (recordStepVerdict false) d.workTapePos
+    ((C + 1) * (W + 1)) (Cfg.mapState (Sigma.mk (RecordStepStage.restore, data)) a)
+    (Cfg.mapState (fun x => ⟨(RecordStepStage.clearD, data), SweepPhase.sweep⟩)
+      (recordStepSnapshot d finish 0 b (List.map (⇑e) w)))
+    (ts + 1)
+pc' :
+  RecordRun (recordStepMachine M upd seek start finish) (recordStepVerdict true) (recordStepVerdict false) d.workTapePos
+    ((C + 1) * (W + 1))
+    (Cfg.mapState (Sigma.mk (RecordStepStage.clearD, data))
+      (recordStepSnapshot d SweepPhase.sweep 0 b (List.map (⇑e) w)))
+    (Cfg.mapState (fun x => recordStepApply M data) (recordStepSnapshot d SweepPhase.done 0 b [])) (2 * W + 2 + 1)
+⊢ RecordRun (recordStepMachine M upd seek start finish) (recordStepVerdict true) (recordStepVerdict false) d.workTapePos
+    ((C + 1) * (W + 1))
+    { state := some ⟨(RecordStepStage.restore, data), start⟩, inputPos := pos,
+      workTapes := fun j z =>
+        if j = 1 then FinTM.bufferTape b (z - d.workTapePos j)
+        else
+          if j = 3 then
+            FinTM.bufferTape (List.map (⇑(RecSym.digitEmb Q T)) (binDigits W ↑d.inputPos)) (z - d.workTapePos j)
+          else d.workTapes j z,
+      workTapePos := fun j => d.workTapePos j, output := d.output }
+    ?m.1224 (ts + 1 + ?m.1226)
+PerDef_CfgRecord.lean:3161:68: error: unsolved goals
+k : ℕ
+Q T S : Type
+inst✝² : DecidableEq Q
+inst✝¹ : DecidableEq T
+inst✝ : DecidableEq S
+M : MultiTapeTM k Bool Q
+upd : T → Option Bool → T
+seek : MultiTapeTM 2 Bool S
+start finish : S
+C : ℕ
+hseek : RecordStepSeekSpec seek start finish C
+x : List Bool
+d : Cfg 4 (RecSym Q T) (RecordStepControl k Q T S) (List.map (⇑(RecSym.digitEmb Q T)) x)
+pos : Fin ((List.map (⇑(RecSym.digitEmb Q T)) x).length + 2)
+b : List (RecSym Q T)
+data : RecordStepData k Q T
+W q : ℕ
+blank : ∀ (z : ℤ), d.workTapes 2 z = none
+hq : q + 1 < 2 ^ W
+hp : ↑d.inputPos = if data.nativeRight = true then q + 1 else q
+e : Bool ↪ RecSym Q T := RecSym.digitEmb Q T
+cur : Cfg 4 (RecSym Q T) (RecordStepControl k Q T S) (List.map (⇑(RecSym.digitEmb Q T)) x) :=
+  { state := d.state, inputPos := pos, workTapes := d.workTapes, workTapePos := d.workTapePos, output := d.output }
+w : List Bool := binDigits W ↑d.inputPos
+len : w.length = W
+hval : ↑d.inputPos < 2 ^ W
+hpx : ↑d.inputPos ≤ x.length + 1
+ta : ℕ
+hta : ta ≤ 4 * W + 6
+pa :
+  RecordRun (recordStepMachine M upd seek start finish) (recordStepVerdict true) (recordStepVerdict false)
+    cur.workTapePos (W + 1)
+    (recordStepSnapshot cur ⟨(RecordStepStage.complement, data), ScanPhase.fwd ()⟩ 0 b
+      (List.map (⇑(RecSym.digitEmb Q T)) (counterWord (List.replicate W true) (q + 1))))
+    (recordStepSnapshot cur ⟨(RecordStepStage.restore, data), start⟩ 0 b
+      (List.map (⇑(RecSym.digitEmb Q T)) (binDigits W ↑d.inputPos)))
+    ta
+a : Cfg 4 (RecSym Q T) S (List.map (⇑(RecSym.digitEmb Q T)) x) := recordStepSnapshot cur start 0 b (List.map (⇑e) w)
+dig : ∀ (i : Fin 2) (z : ℤ) (γ : RecSym Q T), a.workTapes ((recordStepSeekBank true) i) z = some γ → ∃ v, γ = e v
+ts : ℕ
+hts : ts ≤ C * (w.length + ↑a.inputPos + ↑d.inputPos + 1)
+cs : ∀ u < ts, (MultiTapeTM.runFrom a u).state ≠ some finish
+hs : ∀ u ≤ ts, ∀ (j : Fin 4), |(MultiTapeTM.runFrom a u).workTapePos j - a.workTapePos j| ≤ ↑(C * (w.length + 1))
+es :
+  MultiTapeTM.runFrom a ts =
+    { state := some finish, inputPos := ⟨↑d.inputPos, ⋯⟩, workTapes := a.workTapes, workTapePos := a.workTapePos,
+      output := a.output }
+ps :
+  RecordRun (recordStepMachine M upd seek start finish) (recordStepVerdict true) (recordStepVerdict false) d.workTapePos
+    (C * (W + 1)) (Cfg.mapState (Sigma.mk (RecordStepStage.restore, data)) a)
+    (Cfg.mapState (fun x => ⟨(RecordStepStage.clearD, data), SweepPhase.sweep⟩)
+      (recordStepSnapshot d finish 0 b (List.map (⇑e) w)))
+    (ts + 1)
+ec :
+  MultiTapeTM.runFrom (recordStepSnapshot d SweepPhase.sweep 0 b (List.map (⇑e) w)) (2 * (List.map (⇑e) w).length + 2) =
+    recordStepSnapshot d SweepPhase.done 0 (if 3 = 1 then [] else b) (if 3 = 3 then [] else List.map (⇑e) w)
+cc :
+  ∀ u < 2 * (List.map (⇑e) w).length + 2,
+    (MultiTapeTM.runFrom (recordStepSnapshot d SweepPhase.sweep 0 b (List.map (⇑e) w)) u).state ≠ some SweepPhase.done
+right✝ :
+  ∀ (j : Fin 4),
+    ∀ u ≤ 2 * (List.map (⇑e) w).length + 2,
+      if j = 3 then
+        (MultiTapeTM.runFrom (recordStepSnapshot d SweepPhase.sweep 0 b (List.map (⇑e) w)) u).workTapePos j ∈
+          Finset.Icc (d.workTapePos j - 1) (d.workTapePos j + ↑(List.map (⇑e) w).length)
+      else
+        (MultiTapeTM.runFrom (recordStepSnapshot d SweepPhase.sweep 0 b (List.map (⇑e) w)) u).workTapePos j =
+          (recordStepSnapshot d SweepPhase.sweep 0 b (List.map (⇑e) w)).workTapePos j
+pc :
+  RecordRun (recordStepMachine M upd seek start finish) (recordStepVerdict true) (recordStepVerdict false) d.workTapePos
+    (W + 1)
+    (Cfg.mapState (Sigma.mk (RecordStepStage.clearD, data))
+      (recordStepSnapshot d SweepPhase.sweep 0 b (List.map (⇑e) w)))
+    (Cfg.mapState (fun x => recordStepApply M data) (recordStepSnapshot d SweepPhase.done 0 b [])) (2 * W + 2 + 1)
+small : W + 1 ≤ (C + 1) * (W + 1)
+seekBound : C * (W + 1) ≤ (C + 1) * (W + 1)
+pa' :
+  RecordRun (recordStepMachine M upd seek start finish) (recordStepVerdict true) (recordStepVerdict false)
+    cur.workTapePos ((C + 1) * (W + 1))
+    (recordStepSnapshot cur ⟨(RecordStepStage.complement, data), ScanPhase.fwd ()⟩ 0 b
+      (List.map (⇑(RecSym.digitEmb Q T)) (counterWord (List.replicate W true) (q + 1))))
+    (recordStepSnapshot cur ⟨(RecordStepStage.restore, data), start⟩ 0 b
+      (List.map (⇑(RecSym.digitEmb Q T)) (binDigits W ↑d.inputPos)))
+    ta
+ps' :
+  RecordRun (recordStepMachine M upd seek start finish) (recordStepVerdict true) (recordStepVerdict false) d.workTapePos
+    ((C + 1) * (W + 1)) (Cfg.mapState (Sigma.mk (RecordStepStage.restore, data)) a)
+    (Cfg.mapState (fun x => ⟨(RecordStepStage.clearD, data), SweepPhase.sweep⟩)
+      (recordStepSnapshot d finish 0 b (List.map (⇑e) w)))
+    (ts + 1)
+pc' :
+  RecordRun (recordStepMachine M upd seek start finish) (recordStepVerdict true) (recordStepVerdict false) d.workTapePos
+    ((C + 1) * (W + 1))
+    (Cfg.mapState (Sigma.mk (RecordStepStage.clearD, data))
+      (recordStepSnapshot d SweepPhase.sweep 0 b (List.map (⇑e) w)))
+    (Cfg.mapState (fun x => recordStepApply M data) (recordStepSnapshot d SweepPhase.done 0 b [])) (2 * W + 2 + 1)
+⊢ ∃ t ≤ C * (W + ↑pos + ↑d.inputPos + 1) + 6 * W + 10,
+    RecordRun (recordStepMachine M upd seek start finish) (recordStepVerdict true) (recordStepVerdict false)
+      d.workTapePos ((C + 1) * (W + 1))
+      (recordStepSnapshot
+        { state := d.state, inputPos := pos, workTapes := d.workTapes, workTapePos := d.workTapePos,
+          output := d.output }
+        ⟨(RecordStepStage.complement, data), ScanPhase.fwd ()⟩ 0 b
+        (List.map (⇑(RecSym.digitEmb Q T)) (counterWord (List.replicate W true) (q + 1))))
+      (recordStepSnapshot d (recordStepApply M data) 0 b []) t
+PerDef_CfgRecord.lean:3463:35: error: Application type mismatch: The argument
+  p2
+has type
+  RecordRun (recordStepMachine M upd seek start finish) (recordStepVerdict true) (recordStepVerdict false) d.workTapePos
+    (2 * s + 2) (Cfg.mapState (Sigma.mk (RecordStepStage.shiftTape i, data)) middle)
+    (Cfg.mapState (fun x => ⟨(RecordStepStage.skipNewTape i, data), SeekPhase.run⟩) final) (2 * old.length + 2 + 1)
+but is expected to have type
+  RecordRun (recordStepMachine M upd seek start finish) (recordStepVerdict true) (recordStepVerdict false) d.workTapePos
+    (2 * s + 2)
+    (Cfg.mapState (fun x => ⟨(RecordStepStage.shiftTape i, data), ScanPhase.fwd false⟩)
+      { state := some (ScanPhase.done ()), inputPos := d.inputPos, workTapes := patch written,
+        workTapePos := d.workTapePos, output := d.output })
+    ?m.1522 ?m.1524
+in the application
+  recordRun_trans p1 p2
+PerDef_CfgRecord.lean:3373:57: error: unsolved goals
+k : ℕ
+Q T S : Type
+inst✝² : DecidableEq Q
+inst✝¹ : DecidableEq T
+inst✝ : DecidableEq S
+M : MultiTapeTM k Bool Q
+upd : T → Option Bool → T
+seek : MultiTapeTM 2 Bool S
+start finish : S
+x : List Bool
+s : ℕ
+c : Cfg k Bool Q x
+hc : Cfg.InWindow s c
+data : RecordStepData k Q T
+i : Fin k
+d : Cfg 4 (RecSym Q T) (RecordStepControl k Q T S) (List.map (⇑(RecSym.digitEmb Q T)) x)
+hw :
+  ∀ (z : ℤ),
+    -1 ≤ z →
+      z ≤ ↑(2 * s + 1) →
+        d.workTapes 0 (d.workTapePos 0 + z) =
+          FinTM.bufferTape
+            (List.map (fun r => RecSym.cell (c.workTapes i (↑r - ↑s)) (decide (c.workTapePos i = ↑r - ↑s)))
+              (List.range (2 * s + 1)))
+            z
+old : List (RecSym Q T) :=
+  List.map (fun r => RecSym.cell (c.workTapes i (↑r - ↑s)) (decide (c.workTapePos i = ↑r - ↑s)))
+    (List.range (2 * s + 1))
+a : Action k Bool Q := recordStepAction M data
+write : RecSym Q T → RecSym Q T := recordStepWriteCell (a.workTapes i).1
+written : List (RecSym Q T) := List.map write old
+patch : List (RecSym Q T) → Fin 4 → ℤ → Option (RecSym Q T) :=
+  fun v j z =>
+    if j = 0 ∧ d.workTapePos j ≤ z ∧ z < d.workTapePos j + ↑old.length then FinTM.bufferTape v (z - d.workTapePos j)
+    else d.workTapes j z
+first : Cfg 4 (RecSym Q T) (ScanPhase Unit) (List.map (⇑(RecSym.digitEmb Q T)) x) :=
+  { state := some (ScanPhase.fwd ()), inputPos := d.inputPos, workTapes := d.workTapes, workTapePos := d.workTapePos,
+    output := d.output }
+len : old.length = 2 * s + 1
+wlen : written.length = old.length
+e1 :
+  MultiTapeTM.runFrom first (2 * old.length + 2) =
+    { state := some (ScanPhase.done ((), List.map write old).1), inputPos := first.inputPos,
+      workTapes := fun j q =>
+        if j = 0 ∧ first.workTapePos j ≤ q ∧ q < first.workTapePos j + ↑old.length then
+          FinTM.bufferTape ((), List.map write old).2 (q - first.workTapePos j)
+        else first.workTapes j q,
+      workTapePos := first.workTapePos, output := first.output }
+c1 : ∀ t < 2 * old.length + 2, ∀ (a : Unit), (MultiTapeTM.runFrom first t).state ≠ some (ScanPhase.done a)
+h1 :
+  ∀ (j : Fin 4),
+    ∀ t ≤ 2 * old.length + 2,
+      if j = 0 then
+        (MultiTapeTM.runFrom first t).workTapePos j ∈
+          Finset.Icc (first.workTapePos j - 1) (first.workTapePos j + ↑old.length)
+      else (MultiTapeTM.runFrom first t).workTapePos j = first.workTapePos j
+middle : Cfg 4 (RecSym Q T) (ScanPhase Bool) (List.map (⇑(RecSym.digitEmb Q T)) x) :=
+  { state := some (ScanPhase.fwd false), inputPos := d.inputPos, workTapes := patch written,
+    workTapePos := d.workTapePos, output := d.output }
+midword :
+  ∀ (z : ℤ), -1 ≤ z → z ≤ ↑written.length → middle.workTapes 0 (middle.workTapePos 0 + z) = FinTM.bufferTape written z
+f : Bool → RecSym Q T → Bool × RecSym Q T :=
+  match (motive := SignType → Bool → RecSym Q T → Bool × RecSym Q T) (a.workTapes i).2 with
+  | SignType.pos => scanShift recordStepGetMark recordStepSetMark
+  | x => scanKeep
+g : Bool → RecSym Q T → Bool × RecSym Q T :=
+  match (motive := SignType → Bool → RecSym Q T → Bool × RecSym Q T) (a.workTapes i).2 with
+  | SignType.neg => scanShift recordStepGetMark recordStepSetMark
+  | x => scanKeep
+result : Bool × List (RecSym Q T) := scanResult f g false written
+e2 :
+  MultiTapeTM.runFrom middle (2 * written.length + 2) =
+    { state := some (ScanPhase.done (scanResult f g false written).1), inputPos := middle.inputPos,
+      workTapes := fun j q =>
+        if j = 0 ∧ middle.workTapePos j ≤ q ∧ q < middle.workTapePos j + ↑written.length then
+          FinTM.bufferTape (scanResult f g false written).2 (q - middle.workTapePos j)
+        else middle.workTapes j q,
+      workTapePos := middle.workTapePos, output := middle.output }
+c2 : ∀ t < 2 * written.length + 2, ∀ (a : Bool), (MultiTapeTM.runFrom middle t).state ≠ some (ScanPhase.done a)
+h2 :
+  ∀ (j : Fin 4),
+    ∀ t ≤ 2 * written.length + 2,
+      if j = 0 then
+        (MultiTapeTM.runFrom middle t).workTapePos j ∈
+          Finset.Icc (middle.workTapePos j - 1) (middle.workTapePos j + ↑written.length)
+      else (MultiTapeTM.runFrom middle t).workTapePos j = middle.workTapePos j
+word :
+  result.2 =
+    List.map (fun r => RecSym.cell ((a.apply c).workTapes i (↑r - ↑s)) (decide ((a.apply c).workTapePos i = ↑r - ↑s)))
+      (List.range (2 * s + 1))
+bounded :
+  ∀ {A : Type} (row : MultiTapeTM 4 (RecSym Q T) A) (base : Cfg 4 (RecSym Q T) A (List.map (⇑(RecSym.digitEmb Q T)) x))
+    (n : ℕ),
+    base.workTapePos = d.workTapePos →
+      (∀ (j : Fin 4),
+          ∀ u ≤ n,
+            if j = 0 then
+              (MultiTapeTM.runFrom base u).workTapePos j ∈
+                Finset.Icc (base.workTapePos j - 1) (base.workTapePos j + ↑old.length)
+            else (MultiTapeTM.runFrom base u).workTapePos j = base.workTapePos j) →
+        ∀ u ≤ n, ∀ (j : Fin 4), |(MultiTapeTM.runFrom base u).workTapePos j - d.workTapePos j| ≤ ↑(2 * s + 2)
+p1 :
+  RecordRun (recordStepMachine M upd seek start finish) (recordStepVerdict true) (recordStepVerdict false) d.workTapePos
+    (2 * s + 2) (Cfg.mapState (Sigma.mk (RecordStepStage.writeTape i, data)) first)
+    (Cfg.mapState (fun x => ⟨(RecordStepStage.shiftTape i, data), ScanPhase.fwd false⟩)
+      { state := some (ScanPhase.done ()), inputPos := d.inputPos, workTapes := patch written,
+        workTapePos := d.workTapePos, output := d.output })
+    (2 * old.length + 2 + 1)
+row2 : recordStepRows M upd seek (RecordStepStage.shiftTape i, data) = scanTM 4 0 f g false
+final : Cfg 4 (RecSym Q T) (ScanPhase Bool) (List.map (⇑(RecSym.digitEmb Q T)) x) :=
+  { state := some (ScanPhase.done result.1), inputPos := d.inputPos, workTapes := patch result.2,
+    workTapePos := d.workTapePos, output := d.output }
+end2 : MultiTapeTM.runFrom middle (2 * old.length + 2) = final
+p2 :
+  RecordRun (recordStepMachine M upd seek start finish) (recordStepVerdict true) (recordStepVerdict false) d.workTapePos
+    (2 * s + 2) (Cfg.mapState (Sigma.mk (RecordStepStage.shiftTape i, data)) middle)
+    (Cfg.mapState (fun x => ⟨(RecordStepStage.skipNewTape i, data), SeekPhase.run⟩) final) (2 * old.length + 2 + 1)
+⊢ RecordRun (recordStepMachine M upd seek start finish) (recordStepVerdict true) (recordStepVerdict false) d.workTapePos
+    (2 * s + 2)
+    { state := some ⟨(RecordStepStage.writeTape i, data), ScanPhase.fwd ()⟩, inputPos := d.inputPos,
+      workTapes := d.workTapes, workTapePos := d.workTapePos, output := d.output }
+    { state := some ⟨(RecordStepStage.skipNewTape i, data), SeekPhase.run⟩, inputPos := d.inputPos,
+      workTapes := fun j z =>
+        if j = 0 ∧ d.workTapePos j ≤ z ∧ z < d.workTapePos j + ↑(2 * s + 1) then
+          FinTM.bufferTape
+            (List.map
+              (fun r =>
+                RecSym.cell (((recordStepAction M data).apply c).workTapes i (↑r - ↑s))
+                  (decide (((recordStepAction M data).apply c).workTapePos i = ↑r - ↑s)))
+              (List.range (2 * s + 1)))
+            (z - d.workTapePos j)
+        else d.workTapes j z,
+      workTapePos := d.workTapePos, output := d.output }
+    (4 * (2 * s + 1) + 6)
+PerDef_CfgRecord.lean:3533:35: error: Application type mismatch: The argument
+  pe
+has type
+  RecordRun (recordStepMachine M upd seek start finish) (recordStepVerdict true) (recordStepVerdict false) d.workTapePos
+    (w.length + 1)
+    (Cfg.mapState (Sigma.mk (RecordStepStage.clearB, data)) (recordStepSnapshot changed SweepPhase.sweep 0 w []))
+    (Cfg.mapState (fun x => ⟨(RecordStepStage.skipNewPos, data), SeekPhase.run⟩)
+      (recordStepSnapshot changed SweepPhase.done 0 [] []))
+    (2 * w.length + 2 + 1)
+but is expected to have type
+  RecordRun (recordStepMachine M upd seek start finish) (recordStepVerdict true) (recordStepVerdict false) d.workTapePos
+    (w.length + 1)
+    (Cfg.mapState (fun x => ⟨(RecordStepStage.clearB, data), SweepPhase.sweep⟩)
+      (recordStepSnapshot changed SweepPhase.done 0 w []))
+    ?m.1113 ?m.1115
+in the application
+  recordRun_trans pc pe
+PerDef_CfgRecord.lean:3487:28: error: unsolved goals
+k : ℕ
+Q T S : Type
+inst✝² : DecidableEq Q
+inst✝¹ : DecidableEq T
+inst✝ : DecidableEq S
+M : MultiTapeTM k Bool Q
+upd : T → Option Bool → T
+seek : MultiTapeTM 2 Bool S
+start finish : S
+x : List (RecSym Q T)
+d : Cfg 4 (RecSym Q T) (RecordStepControl k Q T S) x
+w : List (RecSym Q T)
+data : RecordStepData k Q T
+changed : Cfg 4 (RecSym Q T) (RecordStepControl k Q T S) x :=
+  { state := d.state, inputPos := d.inputPos,
+    workTapes := fun j z =>
+      if j = 0 ∧ d.workTapePos j ≤ z ∧ z < d.workTapePos j + ↑w.length then FinTM.bufferTape w (z - d.workTapePos j)
+      else d.workTapes j z,
+    workTapePos := d.workTapePos, output := d.output }
+a : Cfg 4 (RecSym Q T) SweepPhase x := recordStepSnapshot d SweepPhase.sweep 0 w []
+ec :
+  MultiTapeTM.runFrom a (2 * w.length + 2) =
+    { state := some SweepPhase.done, inputPos := a.inputPos,
+      workTapes := fun j q =>
+        if j = 0 ∧ a.workTapePos j ≤ q ∧ q < a.workTapePos j + ↑w.length then FinTM.bufferTape w (q - a.workTapePos j)
+        else a.workTapes j q,
+      workTapePos := a.workTapePos, output := a.output }
+cc : ∀ t < 2 * w.length + 2, (MultiTapeTM.runFrom a t).state ≠ some SweepPhase.done
+hc :
+  ∀ (j : Fin 4),
+    ∀ t ≤ 2 * w.length + 2,
+      if j = 1 ∨ j = 0 then
+        (MultiTapeTM.runFrom a t).workTapePos j ∈ Finset.Icc (a.workTapePos j - 1) (a.workTapePos j + ↑w.length)
+      else (MultiTapeTM.runFrom a t).workTapePos j = a.workTapePos j
+apos : a.workTapePos = d.workTapePos
+pc :
+  RecordRun (recordStepMachine M upd seek start finish) (recordStepVerdict true) (recordStepVerdict false) d.workTapePos
+    (w.length + 1) (Cfg.mapState (Sigma.mk (RecordStepStage.copyBack, data)) a)
+    (Cfg.mapState (fun x => ⟨(RecordStepStage.clearB, data), SweepPhase.sweep⟩)
+      (recordStepSnapshot changed SweepPhase.done 0 w []))
+    (2 * w.length + 2 + 1)
+ee :
+  MultiTapeTM.runFrom (recordStepSnapshot changed SweepPhase.sweep 0 w []) (2 * w.length + 2) =
+    recordStepSnapshot changed SweepPhase.done 0 (if 1 = 1 then [] else w) (if 1 = 3 then [] else [])
+ce :
+  ∀ u < 2 * w.length + 2,
+    (MultiTapeTM.runFrom (recordStepSnapshot changed SweepPhase.sweep 0 w []) u).state ≠ some SweepPhase.done
+right✝ :
+  ∀ (j : Fin 4),
+    ∀ u ≤ 2 * w.length + 2,
+      if j = 1 then
+        (MultiTapeTM.runFrom (recordStepSnapshot changed SweepPhase.sweep 0 w []) u).workTapePos j ∈
+          Finset.Icc (changed.workTapePos j - 1) (changed.workTapePos j + ↑w.length)
+      else
+        (MultiTapeTM.runFrom (recordStepSnapshot changed SweepPhase.sweep 0 w []) u).workTapePos j =
+          (recordStepSnapshot changed SweepPhase.sweep 0 w []).workTapePos j
+pe :
+  RecordRun (recordStepMachine M upd seek start finish) (recordStepVerdict true) (recordStepVerdict false) d.workTapePos
+    (w.length + 1)
+    (Cfg.mapState (Sigma.mk (RecordStepStage.clearB, data)) (recordStepSnapshot changed SweepPhase.sweep 0 w []))
+    (Cfg.mapState (fun x => ⟨(RecordStepStage.skipNewPos, data), SeekPhase.run⟩)
+      (recordStepSnapshot changed SweepPhase.done 0 [] []))
+    (2 * w.length + 2 + 1)
+⊢ RecordRun (recordStepMachine M upd seek start finish) (recordStepVerdict true) (recordStepVerdict false) d.workTapePos
+    (w.length + 1) (recordStepSnapshot d ⟨(RecordStepStage.copyBack, data), SweepPhase.sweep⟩ 0 w [])
+    (recordStepSnapshot
+      { state := d.state, inputPos := d.inputPos,
+        workTapes := fun j z =>
+          if j = 0 ∧ d.workTapePos j ≤ z ∧ z < d.workTapePos j + ↑w.length then FinTM.bufferTape w (z - d.workTapePos j)
+          else d.workTapes j z,
+        workTapePos := d.workTapePos, output := d.output }
+      ⟨(RecordStepStage.skipNewPos, data), SeekPhase.run⟩ 0 [] [])
+    (4 * w.length + 6)
+PerDef_CfgRecord.lean:4046:29: error: Application type mismatch: The argument
+  ps
+has type
+  RecordRun (recordStepMachine M upd seek start finish) (recordStepVerdict true) (recordStepVerdict false) d.workTapePos
+    (L + 1) (Cfg.mapState (Sigma.mk (RecordStepStage.skipNewState, data)) (cfg SeekPhase.run 0 (fieldOffset fs 1) w))
+    (Cfg.mapState (fun x => posEntry) (cfg SeekPhase.done (fieldOffset fs 1) (fieldOffset fs 1) w)) (2 + 1)
+but is expected to have type
+  RecordRun (recordStepMachine M upd seek start finish) (recordStepVerdict true) (recordStepVerdict false) d.workTapePos
+    (L + 1)
+    (Cfg.mapState (fun x => ⟨(RecordStepStage.skipNewState, data), SeekPhase.run⟩)
+      (cfg (ScanPhase.done ()) 0 (fieldOffset fs 1) w))
+    ?m.4334 ?m.4336
+in the application
+  recordRun_trans pm ps
+PerDef_CfgRecord.lean:4104:59: error: Application type mismatch: The argument
+  ps
+has type
+  RecordRun (recordStepMachine M upd seek start finish) (recordStepVerdict true) (recordStepVerdict false) d.workTapePos
+    (L + 1)
+    (Cfg.mapState (Sigma.mk (RecordStepStage.skipNewPos, data))
+      (cfg SeekPhase.run (fieldOffset fs 1) (fieldOffset fs 2) []))
+    (Cfg.mapState (fun x => tapeState 0) (cfg SeekPhase.done (fieldOffset fs 2) (fieldOffset fs 2) []))
+    (fs[1].length + 1 + 1)
+but is expected to have type
+  RecordRun (recordStepMachine M upd seek start finish) (recordStepVerdict true) (recordStepVerdict false) d.workTapePos
+    (L + 1) (cfg ⟨(RecordStepStage.skipNewPos, data), SeekPhase.run⟩ (fieldOffset fs 1) (fieldOffset fs 2) [])
+    (cfg (tapeState 0) (fieldOffset fs 2) (fieldOffset fs 2) []) (fs[1].length + 2)
+in the application
+  recordRun_trans pm ps
+PerDef_CfgRecord.lean:4158:38: error: Application type mismatch: The argument
+  ps
+has type
+  RecordRun (recordStepMachine M upd seek start finish) (recordStepVerdict true) (recordStepVerdict false) d.workTapePos
+    (L + 1)
+    (Cfg.mapState (Sigma.mk (RecordStepStage.skipNewTape i, data))
+      (cfg SeekPhase.run (fieldOffset fs (r + 2)) (fieldOffset fs (r + 3)) []))
+    (Cfg.mapState (fun x => tapeState (r + 1))
+      (cfg SeekPhase.done (fieldOffset fs (r + 3)) (fieldOffset fs (r + 3)) []))
+    (fs[r + 2].length + 1 + 1)
+but is expected to have type
+  RecordRun (recordStepMachine M upd seek start finish) (recordStepVerdict true) (recordStepVerdict false) d.workTapePos
+    (L + 1)
+    (cfg ⟨(RecordStepStage.skipNewTape i, data), SeekPhase.run⟩ (fieldOffset fs (r + 2)) (fieldOffset fs (r + 3)) [])
+    ?m.6010 ?m.6012
+in the application
+  recordRun_trans pm ps
+PerDef_CfgRecord.lean:4204:4: error: Type mismatch: After simplification, term
+  phase
+ has type
+  RecordRun (recordStepMachine M upd seek start finish) (recordStepVerdict true) (recordStepVerdict false) d.workTapePos
+    (L + 1)
+    (Cfg.mapState (Sigma.mk (RecordStepStage.writeTag, data))
+      (cfg (ScanPhase.fwd ()) (fieldOffset fs (k + 2)) (fieldOffset fs (k + 2)) []))
+    (Cfg.mapState (fun x_1 => ⟨(RecordStepStage.writeBack ⟨k + 1, ⋯⟩, data), SeekPhase.run⟩)
+      (cfg (ScanPhase.done ()) (fieldOffset fs (k + 2)) (fieldOffset fs (k + 3)) []))
+    (4 + 1)
+but is expected to have type
+  RecordRun (recordStepMachine M upd seek start finish) (recordStepVerdict true) (recordStepVerdict false) d.workTapePos
+    (L + 1)
+    (cfg ⟨(RecordStepStage.writeTag, data), ScanPhase.fwd ()⟩ (fieldOffset fs (k + 2)) (fieldOffset fs (k + 2)) [])
+    (cfg ⟨(RecordStepStage.writeBack ⟨k + 1, ⋯⟩, data), SeekPhase.run⟩ (fieldOffset fs (k + 2)) (fieldOffset fs (k + 3))
+      [])
+    5
+PerDef_CfgRecord.lean:4690:4: error: Tactic `apply` failed: could not unify the type of `recordRun_tagged hphase.left hphase.right ?m.1553 ?m.1554 ?m.1555
+  ?m.1560`
+  RecordRun (phaseHostTM recordEqRows entry recordEqNext) ?m.1539 ?m.1540 ?m.1541 ?m.1542
+    (Cfg.mapState (Sigma.mk (RecordEqIndex.forward j i)) (cfg SeekPhase.run p))
+    (Cfg.mapState
+      (fun x =>
+        if i = 0 then ⟨RecordEqIndex.forward j 1, SeekPhase.run⟩
+        else ⟨RecordEqIndex.compare ⟨↑j + 1, ⋯⟩, FlagPhase.run⟩)
+      (cfg SeekPhase.done (Function.update p i (↑j + 1))))
+    (fs[↑j].length + 1 + 1)
+with the goal
+  RecordRun R yes no d.workTapePos (L + 1) (cfg ⟨RecordEqIndex.forward j i, SeekPhase.run⟩ p)
+    (cfg
+      (if i = 0 then ⟨RecordEqIndex.forward j 1, SeekPhase.run⟩ else ⟨RecordEqIndex.compare ⟨↑j + 1, ⋯⟩, FlagPhase.run⟩)
+      (Function.update p i (↑j + 1)))
+    (fs[↑j].length + 2)
+
+k : ℕ
+Q T : Type
+inst✝³ : Fintype Q
+inst✝² : DecidableEq Q
+inst✝¹ : Fintype T
+inst✝ : DecidableEq T
+S : Type := (i : RecordEqIndex k) × recordEqPhase i
+entry : S := ⟨RecordEqIndex.compare ⟨0, ⋯⟩, FlagPhase.run⟩
+yes : S := ⟨RecordEqIndex.verdict true, SeekPhase.run⟩
+no : S := ⟨RecordEqIndex.verdict false, SeekPhase.run⟩
+R : MultiTapeTM 2 (RecSym Q T) S := phaseHostTM recordEqRows entry recordEqNext
+x : List (RecSym Q T)
+fs gs : List (List (RecSym Q T))
+hfs : fs.length = k + 3
+hgs : gs.length = k + 3
+d : Cfg 2 (RecSym Q T) S x
+hd : d.state = some entry
+hrf : RecordAt d 0 fs
+hrg : RecordAt d 1 gs
+L : ℕ := (joinFields fs).length
+B : ℕ := 12 * (L + 1)
+cfg : {A : Type} → A → (Fin 2 → ℕ) → Cfg 2 (RecSym Q T) A x :=
+  fun {A} q p =>
+    { state := some q, inputPos := d.inputPos, workTapes := d.workTapes,
+      workTapePos := fun i => d.workTapePos i + ↑(fieldOffset fs (p i)), output := d.output }
+hhead :
+  ∀ {A : Type} (q : A) (p : Fin 2 → ℕ),
+    (∀ (i : Fin 2), p i < fs.length) → ∀ (i : Fin 2), |(cfg q p).workTapePos i - d.workTapePos i| ≤ ↑(L + 1)
+hprefix : ∀ (j l : ℕ), l ≤ j → List.take j fs = List.take j gs → List.take l fs = List.take l gs
+hfield :
+  ∀ (j l : ℕ), l < j → ∀ (hf : l < fs.length) (hg : l < gs.length), List.take j fs = List.take j gs → fs[l] = gs[l]
+hword0 :
+  ∀ (j : ℕ) (hj : j < fs.length) (z : ℤ),
+    -1 ≤ z → z ≤ ↑fs[j].length → d.workTapes 0 (d.workTapePos 0 + ↑(fieldOffset fs j) + z) = FinTM.bufferTape fs[j] z
+hword1 :
+  ∀ (j : ℕ) (hj : j < gs.length),
+    List.take j fs = List.take j gs →
+      ∀ (z : ℤ),
+        -1 ≤ z →
+          z ≤ ↑gs[j].length → d.workTapes 1 (d.workTapePos 1 + ↑(fieldOffset fs j) + z) = FinTM.bufferTape gs[j] z
+hword :
+  ∀ (i : Fin 2) (j : ℕ) (hj : j < k + 3),
+    List.take (j + 1) fs = List.take (j + 1) gs →
+      ∀ (z : ℤ),
+        -1 ≤ z →
+          z ≤ ↑fs[j].length → d.workTapes i (d.workTapePos i + ↑(fieldOffset fs j) + z) = FinTM.bufferTape fs[j] z
+j : Fin (k + 2)
+he : List.take (↑j + 1) fs = List.take (↑j + 1) gs
+i : Fin 2
+p : Fin 2 → ℕ
+hpi : p i = ↑j
+hp : ∀ (r : Fin 2), p r < fs.length
+hr :
+  MultiTapeTM.runFrom (cfg SeekPhase.run p) (fs[↑j].length + 1) =
+    { state := some SeekPhase.done, inputPos := (cfg SeekPhase.run p).inputPos,
+      workTapes := (cfg SeekPhase.run p).workTapes,
+      workTapePos :=
+        Function.update (cfg SeekPhase.run p).workTapePos i ((cfg SeekPhase.run p).workTapePos i + ↑fs[↑j].length + 1),
+      output := (cfg SeekPhase.run p).output }
+hc : ∀ t < fs[↑j].length + 1, (MultiTapeTM.runFrom (cfg SeekPhase.run p) t).state ≠ some SeekPhase.done
+hh :
+  ∀ (j_1 : Fin 2),
+    ∀ t ≤ fs[↑j].length + 1,
+      if j_1 = i then
+        (MultiTapeTM.runFrom (cfg SeekPhase.run p) t).workTapePos j_1 ∈
+          Finset.Icc ((cfg SeekPhase.run p).workTapePos j_1)
+            ((cfg SeekPhase.run p).workTapePos j_1 + ↑fs[↑j].length + 1)
+      else (MultiTapeTM.runFrom (cfg SeekPhase.run p) t).workTapePos j_1 = (cfg SeekPhase.run p).workTapePos j_1
+hn : ∀ (r : Fin 2), Function.update p i (↑j + 1) r < fs.length
+hend : MultiTapeTM.runFrom (cfg SeekPhase.run p) (fs[↑j].length + 1) = cfg SeekPhase.done (Function.update p i (↑j + 1))
+hphase :
+  (∀ u ≤ fs[↑j].length + 1,
+      MultiTapeTM.runFrom (Cfg.mapState (Sigma.mk (RecordEqIndex.forward j i)) (cfg SeekPhase.run p)) u =
+        Cfg.mapState (Sigma.mk (RecordEqIndex.forward j i)) (MultiTapeTM.runFrom (cfg SeekPhase.run p) u)) ∧
+    MultiTapeTM.runFrom (Cfg.mapState (Sigma.mk (RecordEqIndex.forward j i)) (cfg SeekPhase.run p))
+        (fs[↑j].length + 1 + 1) =
+      Cfg.mapState
+        (fun x =>
+          if i = 0 then ⟨RecordEqIndex.forward j 1, SeekPhase.run⟩
+          else ⟨RecordEqIndex.compare ⟨↑j + 1, ⋯⟩, FlagPhase.run⟩)
+        (cfg SeekPhase.done (Function.update p i (↑j + 1)))
+⊢ RecordRun R yes no d.workTapePos (L + 1) (cfg ⟨RecordEqIndex.forward j i, SeekPhase.run⟩ p)
+    (cfg
+      (if i = 0 then ⟨RecordEqIndex.forward j 1, SeekPhase.run⟩ else ⟨RecordEqIndex.compare ⟨↑j + 1, ⋯⟩, FlagPhase.run⟩)
+      (Function.update p i (↑j + 1)))
+    (fs[↑j].length + 2)
+PerDef_CfgRecord.lean:4690:58: error: Dependent elimination failed: Failed to solve equation
+  ?m.1539.1 = RecordEqIndex.forward j i
+PerDef_CfgRecord.lean:4690:80: error: Dependent elimination failed: Failed to solve equation
+  ?m.1540.1 = RecordEqIndex.forward j i
+PerDef_CfgRecord.lean:5123:4: error: Tactic `apply` failed: could not unify the type of `recordRun_tagged hp.left hp.right ?m.1464 ?m.1465 ?m.1466 ?m.1471`
+  RecordRun (phaseHostTM (recordTestRows P) entry recordTestNext) ?m.1450 ?m.1451 ?m.1452 ?m.1453
+    (Cfg.mapState (Sigma.mk (RecordTestIndex.forward q ⟨j, hj⟩)) (cfg SeekPhase.run j))
+    (Cfg.mapState
+      (fun x =>
+        if h : j + 1 < k + 2 then ⟨RecordTestIndex.forward q ⟨j + 1, h⟩, SeekPhase.run⟩
+        else ⟨RecordTestIndex.tag q, ScanPhase.fwd none⟩)
+      (cfg SeekPhase.done (j + 1)))
+    (fs[j].length + 1 + 1)
+with the goal
+  RecordRun R yes no d.workTapePos (L + 1) (cfg ⟨RecordTestIndex.forward q ⟨j, hj⟩, SeekPhase.run⟩ j)
+    (cfg
+      (if h : j + 1 < k + 2 then ⟨RecordTestIndex.forward q ⟨j + 1, h⟩, SeekPhase.run⟩
+      else ⟨RecordTestIndex.tag q, ScanPhase.fwd none⟩)
+      (j + 1))
+    (fs[j].length + 2)
+
+k : ℕ
+Q T : Type
+inst✝³ : Fintype Q
+inst✝² : DecidableEq Q
+inst✝¹ : Fintype T
+inst✝ : DecidableEq T
+P : Option Q → T → Bool
+S : Type := (i : RecordTestIndex k Q) × recordTestPhase i
+entry : S := ⟨RecordTestIndex.state, ScanPhase.fwd none⟩
+yes : S := ⟨RecordTestIndex.verdict true, SeekPhase.run⟩
+no : S := ⟨RecordTestIndex.verdict false, SeekPhase.run⟩
+R : MultiTapeTM 1 (RecSym Q T) ((i : RecordTestIndex k Q) × recordTestPhase i) :=
+  phaseHostTM (recordTestRows P) entry recordTestNext
+x : List Bool
+s : ℕ
+c : Cfg k Bool Q x
+τ : T
+y : List (RecSym Q T)
+d : Cfg 1 (RecSym Q T) S y
+hd : d.state = some entry
+hrec : RecordAt d 0 (cfgRecord s c τ)
+fs : List (List (RecSym Q T)) := cfgRecord s c τ
+L : ℕ := (joinFields fs).length
+B : ℕ := 6 * (L + 1)
+hlen : fs.length = k + 3
+cfg : {A : Type} → A → ℕ → Cfg 1 (RecSym Q T) A y :=
+  fun {A} q j =>
+    { state := some q, inputPos := d.inputPos, workTapes := d.workTapes,
+      workTapePos := fun i => d.workTapePos i + ↑(fieldOffset fs j), output := d.output }
+hhead : ∀ {A : Type} (q : A), ∀ j < fs.length, ∀ (i : Fin 1), |(cfg q j).workTapePos i - d.workTapePos i| ≤ ↑(L + 1)
+hword :
+  ∀ (j : ℕ) (hj : j < fs.length) (p : ℤ),
+    -1 ≤ p → p ≤ ↑fs[j].length → d.workTapes 0 (d.workTapePos 0 + ↑(fieldOffset fs j) + p) = FinTM.bufferTape fs[j] p
+hfold :
+  ∀ {A : Type} (δ : A → RecSym Q T → A) (a : A) (j : ℕ) (hj : j < fs.length),
+    MultiTapeTM.runFrom (cfg (ScanPhase.fwd a) j) (2 * fs[j].length + 2) =
+        cfg (ScanPhase.done (List.foldl δ a fs[j])) j ∧
+      (∀ u < 2 * fs[j].length + 2,
+          ∀ (b : A), (MultiTapeTM.runFrom (cfg (ScanPhase.fwd a) j) u).state ≠ some (ScanPhase.done b)) ∧
+        ∀ u ≤ 2 * fs[j].length + 2,
+          ∀ (i : Fin 1), |(MultiTapeTM.runFrom (cfg (ScanPhase.fwd a) j) u).workTapePos i - d.workTapePos i| ≤ ↑(L + 1)
+fstate : Option Q → (j : ℕ) → j ≤ k + 2 → S :=
+  fun q j _hj =>
+    if h : j < k + 2 then ⟨RecordTestIndex.forward q ⟨j, h⟩, SeekPhase.run⟩
+    else ⟨RecordTestIndex.tag q, ScanPhase.fwd none⟩
+bstate : Bool → (j : ℕ) → j ≤ k + 2 → S :=
+  fun b j hj =>
+    if h : 0 < j then ⟨RecordTestIndex.backward b ⟨j - 1, ⋯⟩, SeekPhase.run⟩
+    else ⟨RecordTestIndex.verdict b, SeekPhase.run⟩
+q : Option Q
+j : ℕ
+hj : j < k + 2
+hjf : j < fs.length
+hnext : j + 1 < fs.length
+hr :
+  MultiTapeTM.runFrom (cfg SeekPhase.run j) (fs[j].length + 1) =
+    { state := some SeekPhase.done, inputPos := (cfg SeekPhase.run j).inputPos,
+      workTapes := (cfg SeekPhase.run j).workTapes,
+      workTapePos :=
+        Function.update (cfg SeekPhase.run j).workTapePos 0 ((cfg SeekPhase.run j).workTapePos 0 + ↑fs[j].length + 1),
+      output := (cfg SeekPhase.run j).output }
+hc : ∀ t < fs[j].length + 1, (MultiTapeTM.runFrom (cfg SeekPhase.run j) t).state ≠ some SeekPhase.done
+hh :
+  ∀ (j_1 : Fin 1),
+    ∀ t ≤ fs[j].length + 1,
+      if j_1 = 0 then
+        (MultiTapeTM.runFrom (cfg SeekPhase.run j) t).workTapePos j_1 ∈
+          Finset.Icc ((cfg SeekPhase.run j).workTapePos j_1) ((cfg SeekPhase.run j).workTapePos j_1 + ↑fs[j].length + 1)
+      else (MultiTapeTM.runFrom (cfg SeekPhase.run j) t).workTapePos j_1 = (cfg SeekPhase.run j).workTapePos j_1
+he : MultiTapeTM.runFrom (cfg SeekPhase.run j) (fs[j].length + 1) = cfg SeekPhase.done (j + 1)
+hp :
+  (∀ u ≤ fs[j].length + 1,
+      MultiTapeTM.runFrom (Cfg.mapState (Sigma.mk (RecordTestIndex.forward q ⟨j, hj⟩)) (cfg SeekPhase.run j)) u =
+        Cfg.mapState (Sigma.mk (RecordTestIndex.forward q ⟨j, hj⟩)) (MultiTapeTM.runFrom (cfg SeekPhase.run j) u)) ∧
+    MultiTapeTM.runFrom (Cfg.mapState (Sigma.mk (RecordTestIndex.forward q ⟨j, hj⟩)) (cfg SeekPhase.run j))
+        (fs[j].length + 1 + 1) =
+      Cfg.mapState
+        (fun x =>
+          if h : j + 1 < k + 2 then ⟨RecordTestIndex.forward q ⟨j + 1, h⟩, SeekPhase.run⟩
+          else ⟨RecordTestIndex.tag q, ScanPhase.fwd none⟩)
+        (cfg SeekPhase.done (j + 1))
+⊢ RecordRun R yes no d.workTapePos (L + 1) (cfg ⟨RecordTestIndex.forward q ⟨j, hj⟩, SeekPhase.run⟩ j)
+    (cfg
+      (if h : j + 1 < k + 2 then ⟨RecordTestIndex.forward q ⟨j + 1, h⟩, SeekPhase.run⟩
+      else ⟨RecordTestIndex.tag q, ScanPhase.fwd none⟩)
+      (j + 1))
+    (fs[j].length + 2)
+PerDef_CfgRecord.lean:5123:50: error: Dependent elimination failed: Failed to solve equation
+  ?m.1450.1 = RecordTestIndex.forward q ⟨j, hj⟩
+PerDef_CfgRecord.lean:5123:72: error: Dependent elimination failed: Failed to solve equation
+  ?m.1451.1 = RecordTestIndex.forward q ⟨j, hj⟩
+exit=1 elapsed=103s

@@ -90,8 +90,12 @@ statement.** The user scheduled the MIG items between the fills, starting with M
 **Pre-ship check** (maintainer, at the base, against `oleans-lbapi3`, #118's round-2 replay;
 `audits/logs/mig12-fill-preship.log`):
 - **The inventory** (`audits/evidence/mig12-fill/`): every external definition `CfgRecord` uses
-  (68), crossed with its 44 unfolding sites. With MIG-12's API every one has a published lemma, is
-  a primitive of the machine model, or is a structure field.
+  (68), crossed with **its unfolding ledger** (`unfold-sites.tsv`, 173 rows, #118's round-3 review):
+  - 76 explicit sites (named in a tactic list, read across line breaks, or `unfold`);
+  - 97 definitional ones (`change`, `show`, `rfl`, `exact` steps found by making each
+    definition irreducible in turn; a lower bound within a tactic block).
+
+  With #118's three rounds every row has a published lemma to re-point to.
 - **The import overlay** (`audits/evidence/mig12-fill/CfgRecordOverlay.lean.txt`): your file with
   the authorized import. 0 errors, 0 warnings.
 - **The import probe** (`MIG12ImportProbe.lean.txt`, 219 `#check`s): every public declaration
@@ -138,9 +142,10 @@ statement.** The user scheduled the MIG items between the fills, starting with M
   verdicts by their stage indices (`record_tag_ne` stays).
 - **Sequences** by `Segment.trans` (same machine) or `Contract.seq`/`Contract.trans`.
 - **Weaken** each composed segment to the phase lemma's box by `Segment.mono` and `headBox_iff`.
-- **The counter-loop phase** (`counterLoopTM_run_escape`, 3 uses: `recordStep_probe_run`,
-  `recordStep_save_run`, `recordStep_apply_run`) **stays on its run theorem**: its contract form
-  is MIG-15. It is the one named exception.
+- **The counter-loop phase** (`counterLoopTM_run_escape`: one direct use, line 895 in
+  `recordStep_save_run`; through it `recordStep_save_transport`, `recordStep_prepare_native`,
+  `recordStep_live_native` and `exists_recordStepTM`) **stays on its run theorem**: its contract
+  form is MIG-15. It is the one named exception.
 - Work smallest first (`recordStep_halt_run`, `recordStep_state_run`, `recordStep_copyback_run`,
   …), and keep the file elaborating after each lemma.
 
@@ -148,17 +153,23 @@ statement.** The user scheduled the MIG items between the fills, starting with M
 `exists_recordTestTM`): re-compose them over the new phase lemmas. Their statements are frozen
 byte for byte.
 
-**Phase 4, the remaining unfolding sites** (ground rule 10). The base's 44 sites
-(`audits/evidence/mig12-fill/unfold-sites.tsv`) re-point to:
+**Phase 4, the remaining unfolding sites** (ground rule 10). **The ledger
+`audits/evidence/mig12-fill/unfold-sites.tsv` is the binding list**: 173 rows, explicit and
+definitional, each with the lemma to re-point to. By definition (explicit / definitional rows):
 
-| Definition | Sites | Published lemmas |
+| Definition | Rows | Published lemmas |
 |---|---|---|
-| `fieldOffset`, `fieldsTape` | 14 | `fieldOffset_zero`, `fieldOffset_succ`, `fieldOffset_cons_succ`, `fieldsTape_*`, `joinFields_*` (#112) |
-| `Cfg.liftSymbols` | 7 | `Cfg.liftSymbols_inputPos`/`_workTapes`/`_output` (MIG-12's API), `Cfg.liftSymbols_state`, `_workTapePos`, `_inputSymbol` |
-| `FinTM.bufferTape` | 7 | the `FinTM.bufferTape_*` lemmas |
-| `embedEmitCfg` | 5 | `embedEmitCfg_eq`, `_selected_tape`/`_pos`, `_unselected`, `_state`/`_inputPos`/`_output` (#116) |
-| `decFixed`, `incFixed` | 5 | `decFixed_nil`/`_true_cons`/`_false_cons` (#118), `incFixed_nil`/`_false_cons`/`_true_cons` (MIG-12's API) |
-| `Cfg.inputSymbol`, `Cfg.workTapeSymbols`, `moveInputPos` | 6 | `Cfg.inputSymbol_of_zero`/`_of_end`, `inputSymbolInner`, `Cfg.workTapeSymbols_eq` (#116), the `moveInputPos_*` lemmas |
+| `Cfg.mapState` | 21 / 26 | `Cfg.mapState_state`/`_inputPos`/`_workTapes`/`_workTapePos`/`_output` (#118, round 2) |
+| `Cfg.liftSymbols` | 7 / 20 | `Cfg.liftSymbols_inputPos`/`_workTapes`/`_output` (#118's MIG-12 commit), `Cfg.liftSymbols_state`, `_workTapePos`, `_inputSymbol` |
+| `MultiTapeTM.runFrom` | 0 / 16 | `runFrom_zero`, `runFrom_succ_eq_step`, `runFrom_succ_eq_step'`, `runFrom_add` |
+| `fieldOffset`, `fieldsTape` | 15 / 7 | `fieldOffset_zero`, `fieldOffset_succ`, `fieldOffset_cons_succ`, `fieldsTape_*`, `joinFields_*` (#112) |
+| `embedEmitCfg` | 5 / 12 | `embedEmitCfg_eq`, `_selected_tape`/`_pos`, `_unselected`, `_state`/`_inputPos`/`_output` (#116) |
+| `FinTM.bufferTape` | 10 / 1 | the `FinTM.bufferTape_*` lemmas (`bufferTape_nat`, `bufferTape_left`, …) |
+| `Action.apply`, `MultiTapeTM.step`, `MultiTapeTM.outputSymbol` | 3 / 6 | `Action.apply_state`/`_inputPos`/`_workTapePos`/`_output`, `Action.apply_workTapes`, `MultiTapeTM.step_of_some`, `outputSymbol_of_some` (#118, round 3). The arbitrary-action reads are at 589/591, 1258, 3335/3337, 3764, 4019 and 4120 |
+| `decFixed`, `incFixed` | 5 / 1 | `decFixed_nil`/`_true_cons`/`_false_cons`, `incFixed_nil`/`_false_cons`/`_true_cons` (#118) |
+| `roundOrbit`, `counterLoopOrbit` | 4 / 3 | `roundOrbit_zero`, `roundOrbit_succ`; through the abbreviation by `exact` or `simp only`, not `rw` |
+| `counterWord`, `scanFold`/`scanKeep` | 0 / 3 | `counterWord_succ`, `scanResult_keep_keep` (#118, round 3), `scanResult_fold` |
+| `Cfg.inputSymbol`, `Cfg.workTapeSymbols`, `moveInputPos`, `Cfg.init` | 6 / 2 | `Cfg.inputSymbol_of_zero`/`_of_end`, `inputSymbolInner`, `Cfg.workTapeSymbols_eq`, `Cfg.init_*` (#116), the `moveInputPos_*` lemmas |
 
 The ledger's arithmetic (`record_digits_inj`, the counter values) may unfold your own file's
 definitions.
@@ -217,8 +228,11 @@ and the lifts' fields; the counter loop's run theorems; the layout facts.
     - **Never unfold a definition of another file.** Read every definition through its published
       lemmas (the four API PRs and the landed lemmas the probe lists).
     - **The machine model's primitives** (`MultiTapeTM.step`, `runFrom`, `Action.apply`,
-      `Cfg.mapState`) are read through their existing lemmas. Unfold `step` and `Action.apply` only
-      for a leaf defined in your own file. `phaseHostTM`'s table is read through `phaseHostTM_run`.
+      `Cfg.mapState`) are read through their published lemmas: `step_of_some`/`step_of_halt`,
+      `outputSymbol_of_some`/`_of_halt`, the `runFrom` equations, `Action.apply_*` (with
+      `Action.apply_workTapes`) and `Cfg.mapState_*`. This holds for an arbitrary action or
+      machine as well (#118, round 3). Unfold `step` and `Action.apply` only for a leaf defined in
+      your own file. `phaseHostTM`'s table is read through `phaseHostTM_run`.
     - Your own file's definitions may be unfolded.
     - If a fact you need about another file's definition has no published lemma, **stop on that
       item and escalate**, naming the lemma you need.
@@ -262,8 +276,9 @@ Run the text-level screen **before and after**, **one run at a time, under `nice
 - [ ] The phase reached; the base hash and the ancestor check.
 - [ ] `RecordRun`'s retirement: each former use and its replacement.
 - [ ] Each phase lemma: the row contracts it composes, and how the host's verdicts are excluded.
-- [ ] The counter-loop exception: the three lemmas, unchanged in route.
-- [ ] Phase 4: each unfolding site and the lemma it now cites.
+- [ ] The counter-loop exception: `recordStep_save_run`'s one direct use, unchanged in route.
+- [ ] Phase 4: each row of `unfold-sites.tsv` and the lemma it now cites (or why the row no longer
+      exists after the rewrite).
 - [ ] The freeze log (21 publics unchanged), the line count before and after.
 - [ ] Rule 10 and 11 greps of your diff; the probe re-run.
 - [ ] Duplication: both v3 screens, every new pair justified, the removed pairs.

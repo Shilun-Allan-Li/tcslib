@@ -1,0 +1,64 @@
+diff --git a/TCSlib/Complexity/TuringMachine/Build/Catalog.lean b/TCSlib/Complexity/TuringMachine/Build/Catalog.lean
+index 4d5b414..c2802df 100644
+--- a/TCSlib/Complexity/TuringMachine/Build/Catalog.lean
++++ b/TCSlib/Complexity/TuringMachine/Build/Catalog.lean
+@@ -127,7 +127,8 @@ Part 3 (proved): `Turing.fieldsTape_field`;
+ `Turing.seekStartTM_run_ofCfg`; `Turing.scanTM_run_ofCfg`; and the instance
+ identities `Turing.scanResult_fold`, `Turing.scanResult_map`,
+ `Turing.scanResult_shiftRight`, `Turing.scanResult_shiftLeft`,
+-`Turing.scanResult_carry`.
++`Turing.scanResult_carry`, and the identity scan `Turing.scanResult_keep_keep` (the
++brief-inventory API, round 3).
+ 
+ * `Turing.Cfg.ofWords_copy_endpoint`, `Turing.Cfg.ofWords_transfer_endpoint` (MIG-1):
+   the framed copy and transfer endpoints started at a canonical seam `Cfg.ofWords q w`
+@@ -13151,6 +13152,22 @@ theorem scanResult_fold {A Γ : Type*} (δ : A → Γ → A) (a₀ : A) (w : Lis
+   intro b γ l r hr
+   simp only [scanFold, List.foldl_cons, hr]
+ 
++/-- **Scan instance, identity** (the brief-inventory API, round 3; user 2026-10-17): the scan by
++the identity step both ways returns its state and word unchanged,
++`scanResult scanKeep scanKeep a₀ w = (a₀, w)`.
++
++**Proof sketch.** The identity step is the fold by the constant update, so
++`Turing.scanResult_fold` gives `(w.foldl (fun b _ => b) a₀, w)`, and that fold is `a₀`. -/
++theorem scanResult_keep_keep {A Γ : Type*} (a₀ : A) (w : List Γ) :
++    scanResult scanKeep scanKeep a₀ w = (a₀, w) := by
++  have hf : ∀ b : A, w.foldl (fun b (_ : Γ) => b) b = b := by
++    induction w with
++    | nil => exact fun _ => rfl
++    | cons γ w ih => exact fun b => ih b
++  have h := scanResult_fold (fun b (_ : Γ) => b) a₀ w
++  rw [hf] at h
++  exact h
++
+ /-- **Scan instance, in-place map** (design §12.8a, R8.2). The scan by the map
+ step and the identity return rewrites the word to `w.map f`, with the state
+ unchanged.
+diff --git a/TCSlib/Complexity/TuringMachine/Build/CounterLoop.lean b/TCSlib/Complexity/TuringMachine/Build/CounterLoop.lean
+index 74f6b6d..963a97e 100644
+--- a/TCSlib/Complexity/TuringMachine/Build/CounterLoop.lean
++++ b/TCSlib/Complexity/TuringMachine/Build/CounterLoop.lean
+@@ -92,6 +92,8 @@ with binary digits embedded into its dedicated counter tape.
+ * `Turing.counterWord_length`, `Turing.counterWord_value`,
+   `Turing.counterOverhead_le_of_le`, `Turing.counterOverhead_le` — counter
+   arithmetic, including the amortized bound.
++* `Turing.counterWord_succ` — the counter word's successor case (the brief-inventory API,
++  round 3: the unfolding ledger of `Build/CfgRecord`).
+ * `Turing.counterLoopTM_run_done`, `Turing.counterLoopTM_run_escape` — the
+   host's exact whole-run contracts, with no earlier exit, the counter
+   head's range, and the body heads' trajectory.
+@@ -427,6 +429,13 @@ def counterWord (w : List Bool) (r : ℕ) : List Bool :=
+ theorem counterWord_zero (w : List Bool) : counterWord w 0 = w :=
+   rfl
+ 
++/-- **One more decrement** (the brief-inventory API, round 3; user 2026-10-17): the counter word
++after `r + 1` decrements is one optional decrement of the word after `r`,
++`counterWord w (r + 1) = (decFixed (counterWord w r)).getD (counterWord w r)`. -/
++theorem counterWord_succ (w : List Bool) (r : ℕ) :
++    counterWord w (r + 1) = (decFixed (counterWord w r)).getD (counterWord w r) :=
++  Function.iterate_succ_apply' _ _ _
++
+ /-- The cost sum of the first `r` decrements along the frozen word orbit
+ `Turing.counterWord`: the decrement of the word `u` costs
+ `2 * (u.takeWhile not).length + 2`, which is also the underflow cost

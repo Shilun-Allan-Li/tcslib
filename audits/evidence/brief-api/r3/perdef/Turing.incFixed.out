@@ -1,0 +1,17 @@
+PerDef_CfgRecord.lean:551:8: error: Tactic `rfl` failed: The left-hand side
+  incFixed (false :: u)
+is not definitionally equal to the right-hand side
+  some (true :: u)
+
+case cons.true
+w n : ℕ
+hn : n + 1 < 2 ^ w
+hv : Nat.ofDigits 2 (List.map Bool.toNat (binDigits w (n + 1))) = n + 1
+hc : Nat.ofDigits 2 (List.map Bool.toNat (counterWord (binDigits w (n + 1)) 1)) = n + 1 - 1
+hlen : (counterWord (binDigits w (n + 1)) 1).length = w
+hw : (decFixed (binDigits w (n + 1))).getD (binDigits w (n + 1)) = binDigits w n
+hd : decFixed (binDigits w (n + 1)) = some (binDigits w n)
+u : List Bool
+ih : ∀ (v : List Bool), decFixed u = some v → incFixed v = some u
+⊢ incFixed (false :: u) = some (true :: u)
+exit=1 elapsed=23s

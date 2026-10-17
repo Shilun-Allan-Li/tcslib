@@ -205,7 +205,11 @@ The probe's 52 names, in seven groups:
       `Cfg.mapState`) are read through their existing lemmas (`runFrom_add`,
       `runFrom_succ_eq_step'`, `step_of_*`, and the renamings' field equations
       `Cfg.mapState_state`/`_inputPos`/`_workTapes`/`_workTapePos`/`_output` and
-      `Action.mapState_*`, #118's round 2). Unfold `step` and `Action.apply`
+      `Action.mapState_*`, #118's round 2). **The ruler host simulates an arbitrary machine:**
+      read its steps by `MultiTapeTM.step_of_some`/`step_of_halt`, its emission by
+      `outputSymbol_of_some`/`_of_halt`, and the applied action by `Action.apply_state`,
+      `_inputPos`, `_workTapePos`, `_output` and `Action.apply_workTapes` (#118, round 3).
+      Unfold `step` and `Action.apply`
       only for a leaf defined in your own file. `phaseHostTM`'s two-line table is read through
       `phaseHostTM_run`.
     - Your own file's definitions (`RulerAt`, `rulerHostCfg`, `inputCell`) may be unfolded.

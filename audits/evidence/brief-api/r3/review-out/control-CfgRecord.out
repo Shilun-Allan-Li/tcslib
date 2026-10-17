@@ -1,0 +1,15 @@
+Control_CfgRecord.lean:590:23: error: Application type mismatch: The argument
+  h.left i
+has type
+  |(a.apply c).workTapePos i| ≤ ↑s
+but is expected to have type
+  |c.workTapePos i + ↑(a.workTapes i).2| ≤ ↑s
+in the application
+  (heads i).mp (h.left i)
+Control_CfgRecord.lean:592:21: error: Type mismatch
+  (heads i).mpr (h i)
+has type
+  |c.workTapePos i + ↑(a.workTapes i).2| ≤ ↑s
+but is expected to have type
+  |(a.apply c).workTapePos i| ≤ ↑s
+exit=1

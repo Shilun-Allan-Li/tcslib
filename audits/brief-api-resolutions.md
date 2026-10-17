@@ -79,3 +79,43 @@ All five probes elaborate (0 errors).
 - **The drafts** are updated for the new lemmas: cont6 cites `codeSkipRepeat_zero`/`_succ` and the
   counter-loop contracts' fields, and F5 and U2-S cite `Cfg.mapState_state` and its siblings.
   Their probes grow by those names.
+
+## Round 2 result
+
+The findings are in `audits/brief-api-r2-findings.md`, verbatim. **FAIL: 0 blockers, 1 major,
+2 minors, 0 notes.**
+- Round 1's three findings and N1 are closed, and every new equation is faithful.
+- The auditor reproduced the patch reversals, the lint, the replay arithmetic and the two-file
+  screen.
+
+The maintainer's review sub-agent verified each finding at `4624fc05`
+(`audits/evidence/brief-api/r3/gate-review-r2.md`). All three are true, at the auditor's
+severities, and findings 1 and 2 are wider than the auditor saw.
+
+| # | Severity | Finding | Resolution |
+|---|---|---|---|
+| 1 | major | MIG-12's route reads the model's primitives for an arbitrary action or machine (`CfgRecord`'s `recordStep_window`, `recordStep_observed_action`), outside the local-leaf exception. No published lemma gives an applied action's head, a live step, or a live emission. | **True; wider.**<br>None of the three facts exists under any public name. Published are only the halted cases (`step_of_halt`, `outputSymbol_of_halt`), `step_output`, the head bounds and `Action.apply_workTapes`.<br>`CfgRecord` reads arbitrary actions at four more places (1258, 3764, 4019, 4120).<br>**F5's ruler host reads the same primitives:** it simulates an arbitrary machine step by step. U2-S reads its arbitrary canonizer only through public run lemmas; G4, F3 and cont6 read primitives only for their own leaves. H1's later brief will read them too (`exists_uniformSimulator`'s region).<br>**Fixed in round 3 (`74765ef4`):**<br>- `Action.apply_state`, `_inputPos`, `_workTapePos`, `_output` (`Configuration`, `simps`);<br>- `MultiTapeTM.step_of_some` and `outputSymbol_of_some` (`Deterministic`), beside the halted cases.<br>Both vendoring headers list the additions (#116's precedent). The review's consumer probe re-proves the two helpers through only these lemmas, with the definitions made irreducible. The original proof fails under the same irreducibility. |
+| 2 | minor | MIG-12's unfold-site ledger (44) misses names inside multi-line tactic lists and the orbit unfoldings; the draft's three counter-loop uses are one direct use. | **True; wider.**<br>The corrected ledger (`r3/unfold-sites-r3.tsv`, now the draft's `unfold-sites.tsv`) has 173 rows:<br>- **76 explicit sites**, every tactic list read across line breaks. All 44 old ones are found, plus the auditor's 4, the orbit's 4, the three primitives and 21 `Cfg.mapState` sites.<br>- **97 definitional unfoldings** (`change`, `show`, `rfl`, `exact`), found by making each of 34 definitions irreducible in turn. A run with all 200 irreducible is fully explained by them. This is a lower bound within a tactic block.<br>Every row has a published lemma to re-point to, except two laws that were private. **Fixed in round 3 (`531b98a2`):** `counterWord_succ` (`CounterLoop`) and `scanResult_keep_keep` (`Catalog`).<br>`counterLoopTM_run_escape` has one direct use (line 895, `recordStep_save_run`). The MIG-12 draft's Phase 4, its rule 10 and its counter-loop exception are corrected, and so is F5's primitive clause. |
+| 3 | minor | The pack counted 13 MIG-12 API names; there are 12. | **True.** **Erratum:** MIG-12's API adds 12 names, and round 2 adds 33 in all (21 + 12). |
+
+## Round 3
+
+**Prepared locally, not pushed** (the user's ruling for the night of 2026-10-17). `lean/brief-api`
+in `wt-bapi` at `531b98a2` has two commits on round 2's `4624fc05`:
+- `74765ef4` (finding 1);
+- `531b98a2` (finding 2's two private-only laws).
+
+Both are the review's patches, applied unchanged. They add 8 names (4 generated, 4 hand-written),
+declarations only, without `@[simp]`.
+
+**Tested** (the review, then the maintainer, against `oleans-lbapi3`):
+- the four files elaborate with 0 errors, and their warnings are the bases' (Configuration 3,
+  Catalog 77, Deterministic and CounterLoop 0);
+- the 8 names resolve, with `[propext]` or `[propext, Quot.sound]`;
+- the freeze adds publics only (`STATEMENT CHANGED: []`);
+- the lint has 0 FAIL and 67 WARN before and after;
+- the 14-file screen goes from 798 to 799 declarations and keeps its 487 pairs: no new pair.
+
+**Replay:** `replay-lbapi4.sh` covers Configuration's downstream closure (320 modules), from
+`oleans-lbapi3`. It checks that the head is pushed and pins the four files to the reviewed
+blobs.
