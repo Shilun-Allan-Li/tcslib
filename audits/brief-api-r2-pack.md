@@ -63,7 +63,9 @@ Every addition is a declaration, without `@[simp]`, with a docstring stating its
 - **Replays:**
   - MIG-12's API, `mig12-api/replay-lm12api.log`: 160 of 160 at `9872634e`, static-equal (80);
   - round 2, `replay-lbapi3.log`: the three repaired files' downstream closure, 274 modules, from
-    `oleans-lm12api`.
+    `oleans-lm12api`: 274 of 274 at `4624fc05`, 0 failed, static-equal (88).
+- **The drafts' probes** with the new names (U2-S 100, F5 52, cont6 156): 0 errors against the
+  round-2 snapshot (`r2/draft-probes/`).
 
 ## Findings format
 

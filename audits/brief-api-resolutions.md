@@ -71,7 +71,11 @@ All five probes elaborate (0 errors).
   - lint: 0 FAIL, 67 WARN before and after;
   - the screens: no new pair.
 - **Replay:** `replay-lbapi3.sh` covers the three files' downstream closure at the round-2 head
-  (274 modules), from `oleans-lm12api`.
+  (274 modules), from `oleans-lm12api`. **Passed (user, 2026-10-17):** 274 of 274, 0 failed
+  (`r2/replay-lbapi3.log`). The sorry counts equal a static count (0 mismatches, 88 in total;
+  `r2/replay-lbapi3-static.txt`). The snapshot `oleans-lbapi3` is the tip plus #118's round 2.
+- **The drafts' probes**, extended by the new names (U2-S 100, F5 52, cont6 156), elaborate
+  against `oleans-lbapi3` with 0 errors (`r2/draft-probes/`).
 - **The drafts** are updated for the new lemmas: cont6 cites `codeSkipRepeat_zero`/`_succ` and the
   counter-loop contracts' fields, and F5 and U2-S cite `Cfg.mapState_state` and its siblings.
   Their probes grow by those names.

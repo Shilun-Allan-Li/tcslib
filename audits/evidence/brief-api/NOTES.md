@@ -149,5 +149,5 @@ the head's Lean, and the snapshot `oleans-lbapi2` serves the tip after #118.
 - `88fb25f3` (findings 1 and 2);
 - `4624fc05` (N1).
 
-The checks are in `r2/logs/` and `r2/review-out/`; the replay `replay-lbapi3.sh` covers 274
-modules from `oleans-lm12api`.
+The checks are in `r2/logs/` and `r2/review-out/`. The replay `replay-lbapi3.sh` covers 274
+modules from `oleans-lm12api`. **Passed (user, 2026-10-17):** 274 of 274, static-equal (88).

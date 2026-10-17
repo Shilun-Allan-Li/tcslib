@@ -110,7 +110,7 @@ Baker–Gill–Solovay then lose their last canonizer admission.
 - **`CodeSimulator.lean` at the base** elaborates with 0 errors and exactly 2 sorry warnings: your
   stub and `exists_uniformSimulator`.
 - **The import probe** `audits/evidence/b5a-canon-cont6/CanonCont6ImportProbe.lean.txt`: cont4's
-  130 `#check`s and #118's 14, every public declaration this brief cites. 0 errors, 0 warnings.
+  130 `#check`s, #118's 14 and its round 2's 12, every public declaration this brief cites. 0 errors, 0 warnings.
   **Re-run it after your delivery.**
 - **Note 50** (`audits/evidence/b5a-canon-cont4/CanonNote50.lean.txt`, prescribed): 0 errors,
   0 warnings. `note50_cases` prints `sorryAx` today. The pre-ship walk
@@ -239,7 +239,7 @@ As in cont4 and cont5:
 ## Cited infrastructure (public and proved at the issue commit)
 
 Exactly cont4's list ("Cited infrastructure" there) and #118's lemmas for this brief, all of it
-resolving in `CanonCont6ImportProbe.lean.txt` at your base (144 names). In your file you also
+resolving in `CanonCont6ImportProbe.lean.txt` at your base (156 names). In your file you also
 cite:
 - C1, C2 and their contracts;
 - the eight bridges;

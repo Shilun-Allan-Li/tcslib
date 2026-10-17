@@ -112,7 +112,7 @@
 - **The import overlay** (`audits/evidence/u2s-fill/UniversalKOverlay.lean.txt`): your file with
   the one authorized import added after line 9. It elaborates with your target's sorry warning
   and the other two, and nothing else.
-- **The import probe** (`audits/evidence/u2s-fill/U2SImportProbe.lean.txt`, 91 `#check`s): every
+- **The import probe** (`audits/evidence/u2s-fill/U2SImportProbe.lean.txt`, 100 `#check`s): every
   public declaration this brief cites resolves from the overlay's import context. 0 errors,
   0 warnings. Re-run it after your delivery.
 
@@ -221,13 +221,14 @@ A partial may leave only the target open. Insert a helper only once it is proved
 
 ## Cited infrastructure (public and proved at the issue commit; all in `U2SImportProbe.lean.txt`)
 
-The probe's 91 names, in six groups:
+The probe's 100 names, in seven groups:
 - the target and the scheme;
 - the prefix canonizer and buffered composition;
 - the cleaned machine;
 - embedding, capture and composition;
 - the catalog rows and the rewind;
-- the brief-inventory API (#118).
+- the brief-inventory API (#118);
+- the renamings' field equations (#118's round 2).
 
 **Proved modulo, exactly:** none. A complete delivery has no `sorryAx` in the target.
 

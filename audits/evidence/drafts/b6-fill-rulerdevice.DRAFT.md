@@ -90,7 +90,7 @@ PR #118; ground rule 10):
 - **The import overlay** (`audits/evidence/b6-fill-rulerdevice/InputDeviceOverlay.lean.txt`):
   your file with the two authorized imports added after line 7. It elaborates with the three
   targets' sorry warnings, and nothing else.
-- **The import probe** (`B6F5ImportProbe.lean.txt`, 43 `#check`s): every public declaration
+- **The import probe** (`B6F5ImportProbe.lean.txt`, 52 `#check`s): every public declaration
   this brief cites resolves from the overlay's import context. 0 errors, 0 warnings. Re-run it
   after your delivery.
 
@@ -167,13 +167,14 @@ A partial may leave only targets open. Insert a helper only once it is proved.
 
 ## Cited infrastructure (public and proved at the issue commit; all in `B6F5ImportProbe.lean.txt`)
 
-The probe's 43 names, in six groups:
+The probe's 52 names, in seven groups:
 - the targets, the device layer and its facts;
 - the lockstep and the run calculus;
 - seams, the phase host and the release adapter;
 - R1 embedding;
 - Z1's host, for the pattern only;
-- the brief-inventory API (#118).
+- the brief-inventory API (#118);
+- the renamings' field equations (#118's round 2).
 
 **Proved modulo, exactly:** none.
 

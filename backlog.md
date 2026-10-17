@@ -995,8 +995,9 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
     - Pack `audits/brief-api-r2-pack.md`; evidence `audits/evidence/brief-api/r2/`.
     - Drafts updated (cont6, F5, U2-S, F3's Route B note); the staged probes have the new names.
   - **Pushed (user's go-ahead, 2026-10-17):** `lean/brief-api` at `4624fc05`; the PR body is
-    updated. The user is running `replay-lbapi3.sh`. Then the r2 gate; after the merge, the five
-    briefs issue (and MIG-12's).
+    updated. **`replay-lbapi3.sh` passed (user):** 274 of 274, static-equal (88); snapshot
+    `oleans-lbapi3`. Next the r2 gate (folder 35); after the merge, the five briefs issue (and
+    MIG-12's).
     - **Packaging waits for #118's gate:** it goes into #118's round 2 if there is one, or
       otherwise becomes its own PR and gate.
 - **Lint check 8's blind spot (2026-10-16):** a definition counts as covered when any lemma is
