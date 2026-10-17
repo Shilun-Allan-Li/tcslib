@@ -957,6 +957,33 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
   - **The gate is staged:** `infra_local/gate-dispatches/34-brief-api-gate/`, bundle SHA-256
     `ea12197a…d6bf` (100 sections; Lean `4ae686be`, other `a2b27243`). **Dispatched (user,
     2026-10-16).**
+- **The next briefs, drafted and measured at #118's head (2026-10-16;
+  `audits/evidence/drafts/README.md`).** U2-S, F5, the F3 continuation, the canonizer's
+  continuation 6 (now a full brief) and **the G4 continuation** (new: it re-points the partial's
+  four helpers that unfold `zonedTape`, `zoneSlotOf` and `zoneCapacity`). All pre-ship checks
+  pass against `oleans-lbapi2`. Each issues after #118 merges, with its base hash filled.
+- **MIG-12's brief, drafted** (`audits/evidence/drafts/mig12-fill-cfgrecord.DRAFT.md`):
+  - the swap: `RecordRun` retires onto `Segment`, and the phases become row-contract
+    compositions, with every one of the 21 publics frozen;
+  - the counter-loop phase stays (MIG-15);
+  - order 279, base sorries 83 (none in `CfgRecord`), replay closure 52;
+  - the import overlay (adding the contract facade) is clean.
+  - **Its inventory found three gaps**, in `SymbolLift` and `Convention`:
+    - `Cfg.liftSymbols` had only state and head lemmas;
+    - `Action.liftSymbols` had none;
+    - `incFixed` had no case lemmas.
+  - **MIG-12's API** (branch `lean/mig12-api`, `9872634e`, stacked on #118):
+    - the contents: the lifts' fields, `incFixed`'s cases, and `incFixed_length` and
+      `decFixed_length` (#117's gate review);
+    - checks: clean, standard axioms, freeze adds only, the WARN set unchanged;
+    - replay `replay-lm12api.sh`: 160 modules from `oleans-lbapi2`.
+    - **Packaging waits for #118's gate:** it goes into #118's round 2 if there is one, or
+      otherwise becomes its own PR and gate.
+- **Lint check 8's blind spot (2026-10-16):** a definition counts as covered when any lemma is
+  named after it. `Cfg.liftSymbols` passed on `Cfg.liftSymbols_inputSymbol` alone, without its
+  field equations. **Proposed check 8b:** a structure-valued definition needs `simps` or a
+  lemma per field. Until then, inventories cross the definitions with their unfolding sites,
+  as MIG-12's did.
     - G4's partial helpers that unfold `zonedTape`, `zoneSlotOf` and `zoneCapacity` re-point
       to #116's lemmas in the continuation brief.
   - **Measured for issue (U2-S):** order 91, base sorry set 35 (cross-checked against the
