@@ -37,6 +37,7 @@ import TCSlib.Complexity.TuringMachine.Build.OracleCall
 import TCSlib.Complexity.TuringMachine.SymbolLift
 import TCSlib.Complexity.TuringMachine.Build.CounterLoop
 import TCSlib.Complexity.TuringMachine.Build.InputWindow
+import TCSlib.Complexity.TuringMachine.Build.SeamLayout
 import TCSlib.Complexity.TuringMachine.Build.Scan
 import TCSlib.Complexity.TuringMachine.Build.InputCall
 import TCSlib.Complexity.TuringMachine.Build.CfgRecord
@@ -166,6 +167,9 @@ for the local modifications.
   `expandTM` (§12.8, R8.6).
 * `Build/InputWindow` — the counter-driven copy of a bounded window of the native input onto a
   work tape (C1; user decision 5 of 2026-10-13). Sorried.
+* `Build/SeamLayout` — the step block's table and summary tapes from a captured serialization,
+  the one redistribution the step-block startups cite (C1-R's review, gap G2; the user,
+  2026-10-17). Sorried.
 * `Build/Scan`, `Build/InputCall`, `Build/CfgRecord` — the §12.8 rows, with the field
   layout, compare, seeks and two-pass scan in `Build/Catalog`'s Part 3: the constant and
   advancing writers and the native-input copy and fold; the input call and input seek;
