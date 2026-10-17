@@ -910,7 +910,12 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
   - **The replay passed (user, 2026-10-16):** 86 of 86, sorry counts static-equal. The
     snapshot `oleans-lm11a` is the tip plus #116 plus #117. The screen shows no new copied
     proof.
-  - The statement gate is staged in folder 33.
+  - **The statement gate is staged:** `infra_local/gate-dispatches/33-mig11a-statements-gate/`,
+    bundle SHA-256 `84d0442f…b99b` (39 sections; Lean `1358ff73`, other `455cb240`). Not yet
+    dispatched.
+- **#116 merged (user, 2026-10-16; `d1bf6c99`).** The tip's Lean is `93c4c630`, so its snapshot
+  is `oleans-lcapi`. #117 is brought up to date (`1358ff73`, Lean unchanged since its replay) and
+  GitHub reports it clean.
 - **#116's merge check (2026-10-16):** GitHub showed #116 as conflicting with a stale base
   (`eaedd234`). A local merge was clean. The tip, with records only, was merged into
   `lean/core-api` (`b22e7214`); its Lean content is identical to the gated `93c4c630`, and
