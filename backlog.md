@@ -1519,6 +1519,9 @@ The route decisions of 2026-10-12 (design §16b) add three work items, numbered 
         - **The round-2 gate is staged:** `infra_local/gate-dispatches/32-core-api-r2-gate/`, bundle
           SHA-256 `559c64bb…592b` (89 sections; Lean `93c4c630`, other `179db5b3`), pack
           `audits/core-api-r2-pack.md`. **Dispatched (user, 2026-10-16).**
+        - **It returned PASS, 0/0/0/0. The gate is CLOSED** (`audits/core-api-r2-findings.md`; the
+          review `r2/gate-review-r2.md`, with `RestartPublishedProbe`, exit 0). **PR #116 is ready
+          to merge;** #117 is stacked on it.
       - **#114 and #115 merged (user, 2026-10-16; `a2b834b3`, `c451e358`).** H2-F is complete
         (`exists_forwardLoopTM` proved; the §14 H2 row is updated), and G4's partial has landed.
         The library's snapshot for the tip is `oleans-lg4p`; it was built on #112's tree, which

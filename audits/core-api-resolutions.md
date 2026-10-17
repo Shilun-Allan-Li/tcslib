@@ -48,3 +48,30 @@ alone is insufficient.
   - On the 85 modules shared with #112's round-2 replay they are unchanged.
 - **Round-2 gate:** a short check of findings 1 and 2's repair, with the replay log and the
   merged-head consumers. Pack: `audits/core-api-r2-pack.md`.
+
+## Round 2 result
+
+The findings are in `audits/core-api-r2-findings.md`, verbatim. **PASS: 0 blockers, 0 majors,
+0 minors, 0 notes. The gate is CLOSED (2026-10-16).**
+- The auditor found both majors and all three minors closed. It could not elaborate.
+- The maintainer's review (`r2/gate-review-r2.md`) checked every claim against the head and the
+  tip:
+  - the bundle (89 sections, `--verify`);
+  - the patches, blob-identical;
+  - the eleven-file diff, with Hydroxyi's files untouched;
+  - the axiom log (51 names, no `sorryAx`);
+  - the screen and the lint;
+  - the replay (320/320, sorry sum 94).
+
+  It also reproduced the two attestations the auditor took on trust: the static sorry comparison,
+  and the replay closure by `graph2`.
+- **Findings 1 and 2 are confirmed closed under the no-unfolding rule** by
+  `r2/probes/RestartPublishedProbe.lean.txt`, against `oleans-lcapi`, with 0 errors and exit 0.
+  The restarted cleaned machine `{ cleanTM M q with q₀ := .init q }` is bundled as a `FinTM`.
+  Its `ComputesFunInTime` is proved from `cleanTM_run` through the published
+  `computesFunInTime_iff`, `computesInTime_iff`, `initCfg_with_q₀` and `runFrom_with_q₀`. No other
+  file's definition is unfolded, `cleanTM`'s included.
+
+PR #116 is ready to merge. It contains #112, already merged. PR #117 is stacked on it and merges
+after it.
+
