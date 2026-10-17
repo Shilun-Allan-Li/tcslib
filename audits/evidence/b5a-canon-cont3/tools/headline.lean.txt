@@ -1,0 +1,46 @@
+theorem exists_polyCanonizer :
+    ∃ (C : FinTM Bool) (d : ℕ),
+      C.ComputesFunInTime (fun α => F.serialize (F.decode α)) fun n => d * (n + 1) ^ d := by
+  obtain ⟨D, a, decider⟩ := exists_canonDecider F
+  choose verdict spec using decider
+  obtain ⟨M, b, strip⟩ := exists_canonStripTM
+  obtain ⟨E, e, fallback⟩ := FinTM.computesFunInTime_const (F.serialize F.fallback)
+  have decides : D.ComputesFunInTime (fun α => [verdict α]) fun n => a * (n + 1) ^ a :=
+    fun α => (spec α).1
+  obtain ⟨C, c, branch⟩ := FinTM.computesFunInTime_cond decides strip fallback
+  refine ⟨C, c * (a + b + e + 1) + a + b + 1, ?_⟩
+  intro α
+  have output : (if verdict α then canonStrip α else F.serialize F.fallback) =
+      F.serialize (F.decode α) := by
+    cases hv : verdict α with
+    | false =>
+      rw [(spec α).2.1 hv]
+      rfl
+    | true =>
+      obtain ⟨tail, hs⟩ := (spec α).2.2 hv
+      exact canonStrip_of_scan F α tail hs
+  have run := branch α
+  dsimp only at run ⊢
+  rw [output] at run
+  apply run.mono
+  set d := c * (a + b + e + 1) + a + b + 1
+  set P := (α.length + 1) ^ d
+  have base : 1 ≤ α.length + 1 := by omega
+  have pa : (α.length + 1) ^ a ≤ P := Nat.pow_le_pow_right base (by omega)
+  have pb : (α.length + 1) ^ b ≤ P := Nat.pow_le_pow_right base (by omega)
+  have p1 : α.length + 1 ≤ P := by
+    simpa using Nat.pow_le_pow_right base (show 1 ≤ d by omega)
+  have p0 : 1 ≤ P := Nat.one_le_pow _ _ (by omega)
+  have inner : a * (α.length + 1) ^ a +
+      max (b * (α.length + 1) ^ b) (e * (α.length + 1)) + 1 ≤ (a + b + e + 1) * P := by
+    have ha := Nat.mul_le_mul_left a pa
+    have hb := Nat.mul_le_mul_left b pb
+    have he := Nat.mul_le_mul_left e p1
+    have hm : max (b * (α.length + 1) ^ b) (e * (α.length + 1)) ≤ b * P + e * P :=
+      max_le (by omega) (by omega)
+    nlinarith
+  calc
+    c * (a * (α.length + 1) ^ a + max (b * (α.length + 1) ^ b) (e * (α.length + 1)) + 1)
+        ≤ c * ((a + b + e + 1) * P) := Nat.mul_le_mul_left c inner
+    _ = (c * (a + b + e + 1)) * P := by ring
+    _ ≤ d * P := Nat.mul_le_mul_right P (by omega)

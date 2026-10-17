@@ -125,7 +125,7 @@ theorem Reach.step {C : Cfg N.k Bool N.State x} (h : Reach C) (b : Bool) :
 
 /-- Reachable configurations are in the window. -/
 theorem Reach.inWin {S : ℕ} {sp : ℕ → ℕ} (hN : N.UsesSpace sp) (hs : sp x.length ≤ S)
-    {C : Cfg N.k Bool N.State x} (h : Reach C) : ∃ D, InWin N S D ∧
+    {C : Cfg N.k Bool N.State x} (h : Reach C) : ∃ D, Cfg.InWindow S D ∧
       NDTM.coreSum D = NDTM.coreSum C ∧ cfgCode S D = cfgCode S C := by
   obtain ⟨u, hu⟩ := h
   exact ⟨_, BPLInP.inWin_run hN hs u, hu, by rw [cfgCode, cfgWord_congr hu]; rfl⟩
@@ -158,7 +158,7 @@ theorem mem_stepLang_iff {S : ℕ} {sp : ℕ → ℕ} (hN : N.UsesSpace sp) (hs 
         stepLang N ↔ ∃ b, c' = cfgCode S (N.tm.stepWith b C) := by
   obtain ⟨u, hDC⟩ := hC
   set D := N.tm.runWith u (N.tm.initCfg x)
-  have hD : InWin N S D := BPLInP.inWin_run hN hs u
+  have hD : Cfg.InWindow S D := BPLInP.inWin_run hN hs u
   have hcD : cfgCode S D = cfgCode S C := by rw [cfgCode, cfgWord_congr hDC]; rfl
   rw [mem_stepLang]
   constructor

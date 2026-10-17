@@ -23,7 +23,7 @@ The chapter-neutral composition primitive behind "run a `P`-decider on
 polynomially many fixed-size blocks of the input and aggregate the answers":
 the folklore closure of polynomial time under polynomial repetition, used
 tacitly throughout [AB09] (§7.3, proof of Theorem 7.8; §7.4.1, repeated
-trials; proofs of Theorems 7.17 and 7.18).
+trials; proofs of Theorems 7.14 and 7.15).
 
 Everything here lives at the level of `Complexity.PolyTimeComputable`; the
 `P`-closure corollaries (`Complexity.mem_P_of_blockAny` and friends) are
@@ -59,7 +59,7 @@ stated in `TCSlib.Complexity.ClassNP.PClosure`, which imports this file.
 
 * [AB09] S. Arora, B. Barak, *Computational Complexity: A Modern Approach*,
   Cambridge University Press, 2009. (§7.3, Theorem 7.8; §7.4.1; Theorems
-  7.17–7.18: the implicit "simulate the machine on each block" closures.)
+  7.14–7.15: the implicit "simulate the machine on each block" closures.)
 -/
 
 namespace Complexity
@@ -216,6 +216,31 @@ theorem length_pair_components_le (y : List Bool) :
     have hz := eq_pairEncode_of_pairDecode y p u hd
     conv_rhs => rw [hz]
     rw [length_pairEncode, hz, pairFstD_pairEncode, pairSndD_pairEncode]
+    omega
+
+/-- **Dropping leading letters of the components keeps a pair state within `max |s| 2`**:
+re-pairing the two components of `s` with `i` and `j` leading letters dropped gives a word no
+longer than `s`, or than the empty pair (length `2`) when `s` is not a pair. It is the length
+bound of the pair-stepping block loops (`xorPairStep` here, the level-bit loop of the `TQBF`
+reduction).
+
+**Proof sketch.** If `s` decodes as `⟨a, b⟩`, the new pair is no longer than `s`
+(`length_pairEncode`); otherwise both components are empty and the new pair is the empty
+pair. -/
+theorem length_pairEncode_drop_le (s : List Bool) (i j : ℕ) :
+    (pairEncode ((pairFstD s).drop i) ((pairSndD s).drop j)).length ≤ max s.length 2 := by
+  cases h : pairDecode s with
+  | none =>
+    have h1 : pairFstD s = [] := by simp [pairFstD, h]
+    have h2 : pairSndD s = [] := by simp [pairSndD, h]
+    refine le_trans ?_ (le_max_right _ _)
+    simp [h1, h2, length_pairEncode]
+  | some ab =>
+    obtain ⟨a, b⟩ := ab
+    have hz := eq_pairEncode_of_pairDecode s a b h
+    refine le_trans ?_ (le_max_left _ _)
+    rw [hz]
+    simp only [pairFstD_pairEncode, pairSndD_pairEncode, length_pairEncode, List.length_drop]
     omega
 
 /-- Dropping a slice never grows a word beyond `max` with the constant pair. -/
@@ -672,23 +697,11 @@ private theorem polyTimeComputable_xorPairEmit : PolyTimeComputable xorPairEmit 
       (polyTimeComputable_ite hd2 (polyTimeComputable_const [true])
         (polyTimeComputable_const [false])))
 
-/-- One XOR round never grows the state beyond `max` with the empty pair. -/
+/-- One XOR round never grows the state beyond `max` with the empty pair
+(`length_pairEncode_drop_le` with one letter dropped from each component). -/
 private theorem length_xorPairStep_le (s : List Bool) :
-    (xorPairStep s).length ≤ max s.length 2 := by
-  cases h : pairDecode s with
-  | none =>
-    have h1 : pairFstD s = [] := by simp [pairFstD, h]
-    have h2 : pairSndD s = [] := by simp [pairSndD, h]
-    refine le_trans ?_ (le_max_right _ _)
-    simp [xorPairStep, h1, h2, length_pairEncode]
-  | some ab =>
-    obtain ⟨a, b⟩ := ab
-    have hz := eq_pairEncode_of_pairDecode s a b h
-    refine le_trans ?_ (le_max_left _ _)
-    rw [hz]
-    simp only [xorPairStep, pairFstD_pairEncode, pairSndD_pairEncode, length_pairEncode,
-      List.length_drop]
-    omega
+    (xorPairStep s).length ≤ max s.length 2 :=
+  length_pairEncode_drop_le s 1 1
 
 /-- The XOR transducer's orbit drops both components one symbol per round. -/
 private theorem xorPairStep_orbit (p u : List Bool) (i : ℕ) :

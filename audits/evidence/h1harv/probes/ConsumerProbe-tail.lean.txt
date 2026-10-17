@@ -1,0 +1,77 @@
+/-! ════════════════════════════════════════════════════════════════════════════════════════════
+Consumer probe (evidence; not landing material), appended to the overlay. It derives, from the
+harvested public contracts alone (`hostedLoopTM_run`, `hostedLoop_read`), the loop step that
+the sketch of the interpreter core `Turing.exists_ndInterpreterCore` takes as given: one
+constant per simulated table, the verdict read at a live exit, no exit earlier, the full-budget
+bound and the prefix clause. Its only other citations are public library lemmas and the
+counter's value lemma for `bits t` (`canonBits_value`, private to `CodeSimulator`; the replay
+probe re-proves it, since `R`'s module cannot see it). The replay probe
+(`probes/ReplayProbe.lean`) instantiates the same step at the replay machine of a coded NDTM. -/
+
+namespace Turing
+
+namespace StepBlock
+
+/-- **The loop step of `R`, for any simulated table** (consumer probe). For a fixed `k`-work-tape
+binary machine `M` with `n + 1` states there is one constant `C` such that for every deadline
+`t`, every live start `c` on any simulated input `y`, every step-block configuration `d` at the
+entry that represents it (the postcondition of `R`'s setup), every native input `z` with its
+head at `p` and every valid boundary tag `b`, the hosted loop over the counter `bits t` at cell
+`0` reaches a live state `(q, b')` with `q` one of the two exits at some time `T`, at no exit
+earlier, and:
+* (the verdict) `q = escape` with the summary cell reading `some true` exactly when `M`'s run
+  from `c` has halted by `t` with output exactly `[true]`;
+* `T ≤ C·(t + 1)`;
+* (the prefix clause) `T ≤ C·(t' + |bits t| + 1)` whenever that run has halted by `t' ≤ t`. -/
+example {k n : ℕ} (M : MultiTapeTM k Bool (Fin (n + 1))) :
+    ∃ C : ℕ, ∀ {y z : List Bool} (t : ℕ) (c : Cfg k Bool (Fin (n + 1)) y), c.state ≠ none →
+      ∀ d : Cfg (k + 2) Bool (Σ key, Ph k key) y, d.state = some (exit k true) →
+      Rep M.tr c d → ∀ b : Bool, FinTM.VirtualTag c.inputPos b → ∀ p : Fin (z.length + 2),
+      ∃ T q b',
+        ((hostedLoopTM k).runFrom (vhostCfg (counterLoopCfg (some (.dec .run)) d
+          (FinTM.bufferTape t.bits) 0) b p []) T).state = some (q, b') ∧
+        (q = .done ∨ q = .escape) ∧
+        (∀ u < T, ∀ tag,
+          ((hostedLoopTM k).runFrom (vhostCfg (counterLoopCfg (some (.dec .run)) d
+            (FinTM.bufferTape t.bits) 0) b p []) u).state ≠ some (.done, tag) ∧
+          ((hostedLoopTM k).runFrom (vhostCfg (counterLoopCfg (some (.dec .run)) d
+            (FinTM.bufferTape t.bits) 0) b p []) u).state ≠ some (.escape, tag)) ∧
+        ((q = .escape ∧
+            ((hostedLoopTM k).runFrom (vhostCfg (counterLoopCfg (some (.dec .run)) d
+              (FinTM.bufferTape t.bits) 0) b p []) T).workTapeSymbols
+                (vhostBank (summaryTape k).castSucc) = some true) ↔
+          ((M.runFrom c t).state = none ∧ (M.runFrom c t).output = [true])) ∧
+        T ≤ C * (t + 1) ∧
+        ∀ t' ≤ t, (M.runFrom c t').state = none → T ≤ C * (t' + t.bits.length + 1) := by
+  refine ⟨50 * ((tableBitsK M.tr).length + 1) + 6, ?_⟩
+  intro y z t c live d entry rel b hb p
+  have digits : Nat.ofDigits 2 (t.bits.map Bool.toNat) = t := by
+    rw [← MachineFormat.canonBits_value]
+    exact codeBitsNat_bits t
+  obtain ⟨T, e, ct', b', bound, early, related, -, -, -, run, cut⟩ :=
+    hostedLoopTM_run M c live d entry rel t.bits (FinTM.bufferTape t.bits) 0
+      (by intro p _ _; simp) t digits b hb p []
+  obtain ⟨state, -, -, cell⟩ := hostedLoop_read M.tr (M.runFrom c t) e related
+    (if (M.runFrom c t).state.isSome then .done else .escape) ct' 0 b' p []
+  have width := length_bits_le_self t
+  refine ⟨T, _, b', by rw [run]; exact state, ?_, cut, ?_, ?_, ?_⟩
+  · by_cases h : (M.runFrom c t).state.isSome <;> simp [h]
+  · rw [run, cell, outputSummary_true]
+    cases h : (M.runFrom c t).state <;> simp
+  · generalize 50 * ((tableBitsK M.tr).length + 1) = B at bound ⊢
+    have expand : (B + 6) * (t + 1) = t * B + 6 * t + B + 6 := by
+      rw [Nat.mul_succ, Nat.add_mul, Nat.mul_comm B t]
+      omega
+    omega
+  · intro t' ht' halt'
+    have clause := early t' ht' halt'
+    generalize 50 * ((tableBitsK M.tr).length + 1) = B at clause ⊢
+    have expand : (B + 6) * (t' + t.bits.length + 1) =
+        t' * B + B * t.bits.length + 6 * t' + 6 * t.bits.length + B + 6 := by
+      rw [Nat.mul_succ, Nat.add_mul, Nat.mul_add, Nat.mul_add, Nat.mul_comm B t']
+      omega
+    omega
+
+end StepBlock
+
+end Turing

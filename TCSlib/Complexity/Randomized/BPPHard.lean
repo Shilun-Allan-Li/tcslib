@@ -27,7 +27,6 @@ machine `M` of `L'`.
 * `Turing.CodePTM` — the code normal form of a PTM: `k` work tapes, states `Fin (n + 1)`.
 * `Turing.PTMCode` — a representation scheme for coded PTMs: total decoding, codes recovered
   under `true`-padding.
-* `Turing.NDTM.relabelState` — transport a nondeterministic machine along a state equivalence.
 * `Turing.FinNDTM.acceptWithinProb` — `Pr[M(x) = 1 within t steps]` over `t` coins.
 * `Randomized.ProbAccept` — the language `{⟨M, x, 1^t⟩ : Pr[M(x) = 1 within t steps] ≥ 2/3}`.
 * `Randomized.BPPHard` — every language of `BPP` Karp-reduces to `L`.
@@ -144,32 +143,6 @@ theorem PTMCode.nonempty : Nonempty PTMCode := by
   simp only [hlen]
   exact Function.leftInverse_invFun hf M
 
-namespace NDTM
-
-variable {k : ℕ} {Symbol State State' : Type*}
-
-/-- Transport a nondeterministic machine along a state equivalence (both transition functions,
-as `Turing.MultiTapeTM.relabelState`). -/
-def relabelState (tm : NDTM k Symbol State) (e : State ≃ State') : NDTM k Symbol State' :=
-  ⟨e tm.q₀, fun b q inp ws => (tm.tr b (e.symm q) inp ws).mapState e⟩
-
-/-- Relabeling commutes with each step under either choice. -/
-theorem relabelState_stepWith {input : List Symbol} (tm : NDTM k Symbol State)
-    (e : State ≃ State') (b : Bool) (cfg : Cfg k Symbol State input) :
-    (tm.relabelState e).stepWith b (cfg.mapState e) = (tm.stepWith b cfg).mapState e := by
-  rw [stepWith_eq_fixChoice_step, stepWith_eq_fixChoice_step]
-  exact MultiTapeTM.relabelState_step (tm.fixChoice b) e cfg
-
-/-- Relabeling commutes with runs under every choice word. -/
-theorem relabelState_runWith {input : List Symbol} (tm : NDTM k Symbol State)
-    (e : State ≃ State') (w : List Bool) (cfg : Cfg k Symbol State input) :
-    (tm.relabelState e).runWith w (cfg.mapState e) = (tm.runWith w cfg).mapState e := by
-  induction w generalizing cfg with
-  | nil => rfl
-  | cons b w ih => rw [runWith_cons, runWith_cons, relabelState_stepWith, ih]
-
-end NDTM
-
 namespace FinNDTM
 
 /-- `Pr[M(x) = 1 within t steps]`: the fraction of coin words of length `t` whose run on `x` has
@@ -191,7 +164,7 @@ theorem exists_codePTM (N : FinNDTM Bool) : ∃ M : CodePTM, ∀ x w : List Bool
     omega
   let e := Fintype.equivFinOfCardEq hcard
   refine ⟨⟨k, Fintype.card Q - 1, tm.relabelState e⟩, fun x w => ?_⟩
-  have hrun := NDTM.relabelState_runWith tm e w (tm.initCfg x)
+  have hrun := NDTM.relabelState_runWith tm e (tm.initCfg x) w
   have hinit : (tm.relabelState e).initCfg x = (tm.initCfg x).mapState e := rfl
   simp only [CodePTM.toFinNDTM, outputWith]
   rw [hinit, hrun]

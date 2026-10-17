@@ -22,6 +22,12 @@ and length mode) with polynomially bounded registers (`Complexity.LogProg.arm_de
 Together with the correctness of the reduction (`Complexity.PathHard.red_mem_iff`), every
 language in `NL` reduces to the raw `PATH` language.
 
+## Main definitions
+
+* `Complexity.PathHard.qLang` — the query languages of the reduction: bits
+  (`mode = false`) and length (`mode = true`).
+* `Complexity.PathHard.qBnd` — the register bound of the query machine.
+
 ## Main results
 
 * `Complexity.PathHard.query_halts` — the query machine answers the bit (length) queries.

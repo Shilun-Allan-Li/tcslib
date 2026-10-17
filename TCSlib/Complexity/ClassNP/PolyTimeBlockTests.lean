@@ -45,7 +45,7 @@ These are the `PolyTimeComputable` engines of the `P`-closure lemmas
 
 * [AB09] S. Arora, B. Barak, *Computational Complexity: A Modern Approach*,
   Cambridge University Press, 2009. (§7.3, Theorem 7.8; §7.4.1; Theorems
-  7.17–7.18: the implicit "simulate the machine on each block" closures.)
+  7.14–7.15: the implicit "simulate the machine on each block" closures.)
 -/
 
 namespace Complexity

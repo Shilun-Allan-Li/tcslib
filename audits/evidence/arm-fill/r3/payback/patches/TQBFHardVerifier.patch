@@ -1,0 +1,20 @@
+--- a/TCSlib/Complexity/ClassPSPACE/TQBFHardVerifier.lean
++++ b/TCSlib/Complexity/ClassPSPACE/TQBFHardVerifier.lean
+@@ -39,7 +39,8 @@
+ linear-time binary length counter (`Turing.FinTM.computesFunInTime_lengthBits` with
+ `Complexity.polyTimeComputable_of_linear`), and the disjunction over records is the OR-flag
+ block loop `Complexity.BlockLoop.polyTimeComputable_orLoop`. On an input whose second
+-component is an assignment of the prefix variables, it is the flat matrix (`predB_iff`).
++component is an assignment of the prefix variables, it is the flat matrix
++(`Complexity.TQBFHard.predB_iff`, in `TQBFHardBridge`).
+ 
+ Infrastructure for `Complexity.TQBF_PSPACEHard`; not itself a book result. [AB09, Theorem
+ 4.13]'s proof says the formula "can be computed in polynomial time" without detail; this is
+@@ -52,7 +53,6 @@
+ ## Main results
+ 
+ * `Complexity.TQBFHard.polyTimeComputable_predB` — the verifier is polynomial-time.
+-* `Complexity.TQBFHard.predB_iff` — on an assignment it is the flat matrix.
+ 
+ ## References
+ 

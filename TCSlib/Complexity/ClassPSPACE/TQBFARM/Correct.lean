@@ -19,6 +19,12 @@ The correctness of the assignment walk of the `TQBF` register machine
 [AB09, Theorem 4.13], by the recursive evaluation of its proof run with an explicit stack
 of assignment bits.
 
+## Main definitions
+
+* none (correctness theorems for the machine `Complexity.LogProg.TQBFARM.A`; the walk's
+  correctness predicate `Complexity.LogProg.TQBFARM.CallOK` is in
+  `TCSlib.Complexity.ClassPSPACE.TQBFARM.Walk`).
+
 ## Main results
 
 * `Complexity.LogProg.TQBFARM.inner_spec`, `Complexity.LogProg.TQBFARM.call_spec` — the
@@ -166,8 +172,12 @@ the syntax automaton over `x` (`syn_run`). A rejected string decodes to a true f
 (`truth_of_not_synOK`), and the machine answers `1`. An accepted string is
 `pairEncode qs (serialize φ)` (`repr_of_synOK`); the walk from the root returns
 `Val qs φ 0 1` (`call_spec`), the truth of the decoded formula (`val_root`). Every register
-stays at most `2 ^ (|qs| + 1) ≤ 2 ^ (|x| + 1)`: the stack has at most `|qs| + 1` binary
-digits and the pointer, depth and counters are at most `|x|`. -/
+stays at most the value bound `2 ^ (|x| + 1)`. In the syntax scan the stack is `1`, the
+pointer is at most `|x|` and the other registers are `0`. On the walk the stack and its
+scratch copy `T` stay below `2 ^ (|qs| + 1)`, which is at most `2 ^ (|x| + 1)` because an
+encoding has `2|qs| + 2 ≤ |x|`; the pointer, the depth, the halving counter and the
+literal's variable stay at most `|x|`; and the copy loops' scratch register `Z` stays at most
+the register being copied. -/
 theorem truth_mem_PSPACE : {x : List Bool | (QBF.decode x).truth} ∈ PSPACE := by
   refine arm_decides_pspace_val A .init decs (fun j => LOGSPACE_subset_PSPACE (decs_mem j)) 1 1
     fun x => ?_

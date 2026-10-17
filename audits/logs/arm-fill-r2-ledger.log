@@ -1,0 +1,147 @@
+# arm-fill-r2-ledger: round 1's ledger.py rerun on round 1's inputs, then scripts/ledger2.py (accountings A1-A4+)
+round 1's ledger reproduces byte for byte
+manual (below-floor) entries:
+D	TCSlib/Complexity/SpaceComplexity/Codec/Word.lean	InWin	49	P1	tiled 0; copy line 78, 2 code lines, body 49; original TCSlib/Complexity/SpaceComplexity/ConfigGraph.lean::InWindow line 146, body 49; D1 (response; Word.lean docstring); below the screen floor; identical up to the bound variable's name
+D	TCSlib/Complexity/SpaceComplexity/ExpBFS/Radius.lean	inWin_of_coreSum_eq	0	P1	tiled 0; copy line 63, 7 code lines, body 119; original TCSlib/Complexity/SpaceComplexity/ConfigGraph.lean::inWindow_of_coreSum_eq line 343, body 166; D5 (response); re-proved, no screen pair with its original
+D	TCSlib/Complexity/ClassPSPACE/TQBFARM/Semantics.lean	synOK	38	P1	tiled 0; copy line 73, 2 code lines, body 38; original TCSlib/Complexity/ClassPSPACE/TQBF.lean::b4mValid line 2491, body 44; D6 twin below the screen floor; identical up to names
+M1	TCSlib/Complexity/SpaceComplexity/Codec/Run.lean	codecAs	0	A2b	tiled 0; copy line 47, 1 code lines, body 43; original TCSlib/Complexity/ClassPSPACE/TQBFARM/Machine.lean::decs line 72, body 28; input decider bank restated (bit and length languages, other order)
+M1	TCSlib/Complexity/SpaceComplexity/Logspace/PathWalkMachine.lean	pathAs	28	A2b	tiled 28; copy line 181, 1 code lines, body 28; original TCSlib/Complexity/ClassPSPACE/TQBFARM/Machine.lean::decs line 72, body 28; input decider bank restated
+M1	TCSlib/Complexity/SpaceComplexity/Codec/Run.lean	orc	29	A2b	tiled 29; copy line 56, 2 code lines, body 53; original TCSlib/Complexity/ClassPSPACE/TQBFARM/Machine.lean::orc line 81, body 50; bank oracle restated
+M1	TCSlib/Complexity/SpaceComplexity/Logspace/PathWalkMachine.lean	pathOr	29	A2b	tiled 29; copy line 184, 2 code lines, body 52; original TCSlib/Complexity/ClassPSPACE/TQBFARM/Machine.lean::orc line 81, body 50; bank oracle restated
+M1	TCSlib/Complexity/SpaceComplexity/Codec/Run.lean	codecAs_mem	0	A2b	tiled 0; copy line 50, 4 code lines, body 56; original TCSlib/Complexity/ClassPSPACE/TQBFARM/Machine.lean::decs_mem line 75, body 56; bank membership lemma restated
+M1	TCSlib/Complexity/SpaceComplexity/Logspace/PathWalkMachine.lean	pathAs_mem	56	A2b	tiled 56; copy line 198, 4 code lines, body 56; original TCSlib/Complexity/ClassPSPACE/TQBFARM/Machine.lean::decs_mem line 75, body 56; bank membership lemma restated
+M1	TCSlib/Complexity/SpaceComplexity/ExpBFS/Main.lean	decs	37	A2b	tiled 37; copy line 56, 2 code lines, body 65; original TCSlib/Complexity/SpaceComplexity/SavitchARM/Correct.lean::decs line 47, body 65; code decider bank restated (the same four languages, other order)
+M1	TCSlib/Complexity/SpaceComplexity/ExpBFS/Main.lean	orcN	51	A2b	tiled 51; copy line 60, 3 code lines, body 86; original TCSlib/Complexity/SpaceComplexity/SavitchARM/Correct.lean::orcN line 51, body 51; code bank oracle restated
+M1	TCSlib/Complexity/SpaceComplexity/Logspace/PathHardRegs.lean	As	0	A2b	tiled 0; copy line 301, 3 code lines, body 117; original TCSlib/Complexity/SpaceComplexity/SavitchARM/Correct.lean::decs line 47, body 65; five-decider bank (input and code languages through dropIdx)
+M1	TCSlib/Complexity/SpaceComplexity/Logspace/PathHardRegs.lean	orc	29	A2b	tiled 29; copy line 316, 2 code lines, body 49; original TCSlib/Complexity/SpaceComplexity/SavitchARM/Correct.lean::orcN line 51, body 51; bank oracle restated
+M2	TCSlib/Complexity/SpaceComplexity/Machines/VWord.lean	getD_drop	27	P1+	tiled 27; copy line 51, 2 code lines, body 34; original TCSlib/Programs/Util/List.lean::getD_drop line 79, body 57; Bool specialization of the public generic lemma (vendored [AFM26], 2026-10-12); below the floor and outside the screen population
+
+# ledger2: denominators over the 73 added files: 17227 code lines, 421911 body characters
+# accounting | declarations | whole-body code lines (share) | whole-body chars (share) | shared-text chars (share) | shared-text code lines, prorated (share)
+A1 | 151 | 3731 (21.66%) | 108250 (25.66%) | 42676 (10.11%) | 1554 (9.02%)
+A2 | 242 | 5642 (32.75%) | 163343 (38.72%) | 73896 (17.51%) | 2707 (15.71%)
+A3 | 93 | 2416 (14.02%) | 72338 (17.15%) | 37089 (8.79%) | 1310 (7.60%)
+A4 | 149 | 3972 (23.06%) | 117468 (27.84%) | 64109 (15.19%) | 2280 (13.23%)
+A4+ | 163 | 4009 (23.27%) | 118313 (28.04%) | 64482 (15.28%) | 2297 (13.33%)
+
+## A4+ by class (each declaration once, under its highest class: D > U > S:internal > S:same > G:lib > G:internal > G:same; manual entries M*)
+D | 18 decls | 304 code lines (1.76%) | 7799 chars (1.85%) | shared 6956 (1.65%) | shared lines 270
+U | 12 decls | 513 code lines (2.98%) | 13990 chars (3.32%) | shared 7146 (1.69%) | shared lines 284
+S:internal | 20 decls | 1197 code lines (6.95%) | 40521 chars (9.60%) | shared 18810 (4.46%) | shared lines 548
+S:same | 42 decls | 1440 code lines (8.36%) | 43111 chars (10.22%) | shared 24207 (5.74%) | shared lines 832
+G:lib | 17 decls | 140 code lines (0.81%) | 3403 chars (0.81%) | shared 1615 (0.38%) | shared lines 70
+G:internal | 29 decls | 273 code lines (1.58%) | 6831 chars (1.62%) | shared 3650 (0.87%) | shared lines 176
+G:same | 14 decls | 116 code lines (0.67%) | 2019 chars (0.48%) | shared 1812 (0.43%) | shared lines 104
+M1 | 10 decls | 24 code lines (0.14%) | 605 chars (0.14%) | shared 259 (0.06%) | shared lines 11
+M2 | 1 decls | 2 code lines (0.01%) | 34 chars (0.01%) | shared 27 (0.01%) | shared lines 2
+
+## A4+ by group (user dedup decisions; each declaration once, under its first group in the order P1, P1+, A2a, A2b)
+P1 | 20 decls | 336 code lines (1.95%) | 8641 chars (2.05%) | shared 7641 (1.81%) | shared lines 296
+P1+ | 14 decls | 98 code lines (0.57%) | 2269 chars (0.54%) | shared 1291 (0.31%) | shared lines 57
+A2a | 10 decls | 259 code lines (1.50%) | 7256 chars (1.72%) | shared 2254 (0.53%) | shared lines 96
+A2b | 119 decls | 3316 code lines (19.25%) | 100147 chars (23.74%) | shared 53296 (12.63%) | shared lines 1848
+
+## Pair counts by category, class and group (unordered)
+internal G A2b: 35
+internal N X: 47
+internal S A2b: 21
+lib D P1: 15
+lib G A2a: 6
+lib G P1+: 15
+lib N X: 59
+lib U A2a: 18
+lib U A2b: 4
+lib U P1: 3
+same G A2a: 1
+same G A2b: 14
+same N X: 71
+same S A2b: 43
+same S P1: 1
+
+## Files past one fifth, per accounting and measure
+A1 whole body, characters: 32
+A1 whole body, code lines: 28
+A1 shared text, characters: 14
+A1 shared text, code lines (prorated): 13
+A2 whole body, characters: 47
+A2 whole body, code lines: 44
+A2 shared text, characters: 28
+A2 shared text, code lines (prorated): 23
+A3 whole body, characters: 21
+A3 whole body, code lines: 15
+A3 shared text, characters: 13
+A3 shared text, code lines (prorated): 11
+A4 whole body, characters: 34
+A4 whole body, code lines: 29
+A4 shared text, characters: 20
+A4 shared text, code lines (prorated): 18
+A4+ whole body, characters: 34
+A4+ whole body, code lines: 29
+A4+ shared text, characters: 20
+A4+ shared text, code lines (prorated): 18
+
+## A4 (the classified ledger with same-file pairs) against round 1 (A1) and against A3, per measure
+- whole body, characters: A4 34 files; newly past vs round 1 (A1): ClassPSPACE/TQBFHardSemantics.lean, SpaceComplexity/Codec/Deciders.lean, SpaceComplexity/Codec/Langs.lean, SpaceComplexity/Codec/Parse.lean, SpaceComplexity/ExpBFS/Run.lean, SpaceComplexity/Logspace/PathHardRegs.lean, SpaceComplexity/Logspace/PathWalkProof.lean, SpaceComplexity/Machines/ARMLoops.lean; no longer past vs A1 (only incidental pairs had taken them over): ClassPSPACE/TQBFHardVerifier.lean, SpaceComplexity/Codec/Scan.lean, SpaceComplexity/Codec/Word.lean, SpaceComplexity/Logspace/ISCountGenCorrect.lean, SpaceComplexity/Logspace/ISCountGenRadius.lean, SpaceComplexity/Machines/NARMKit.lean; newly past vs A3 (same-file pairs alone): ClassPSPACE/TQBFHardParams.lean, ClassPSPACE/TQBFHardSemantics.lean, SpaceComplexity/Codec/Deciders.lean, SpaceComplexity/Codec/Langs.lean, SpaceComplexity/Codec/Parse.lean, SpaceComplexity/ExpBFS/Run.lean, SpaceComplexity/Logspace/ISCountGenStage.lean, SpaceComplexity/Logspace/ISCountGenWalk.lean, SpaceComplexity/Logspace/PathHardRegs.lean, SpaceComplexity/Logspace/PathWalkProof.lean, SpaceComplexity/Machines/ARMLoops.lean, SpaceComplexity/SavitchARM/Recursion.lean, SpaceComplexity/SavitchARM/Run.lean
+- whole body, code lines: A4 29 files; newly past vs round 1 (A1): ClassPSPACE/TQBFHardSemantics.lean, SpaceComplexity/Codec/Deciders.lean, SpaceComplexity/Codec/Langs.lean, SpaceComplexity/Codec/Parse.lean, SpaceComplexity/ExpBFS/Run.lean, SpaceComplexity/Logspace/PathHardRegs.lean, SpaceComplexity/Logspace/PathWalkProof.lean, SpaceComplexity/Machines/ARMLoops.lean, SpaceComplexity/Machines/ARMWidthExample.lean; no longer past vs A1 (only incidental pairs had taken them over): ClassPSPACE/TQBFARM/Machine.lean, ClassPSPACE/TQBFHardVerifier.lean, SpaceComplexity/Codec/Scan.lean, SpaceComplexity/Codec/Valid.lean, SpaceComplexity/Codec/Word.lean, SpaceComplexity/Logspace/ISCountGenCorrect.lean, SpaceComplexity/Logspace/ISCountGenRadius.lean, SpaceComplexity/Machines/ARMReach.lean; newly past vs A3 (same-file pairs alone): ClassPSPACE/TQBFHardParams.lean, ClassPSPACE/TQBFHardSemantics.lean, SpaceComplexity/Codec/Deciders.lean, SpaceComplexity/Codec/Langs.lean, SpaceComplexity/Codec/Parse.lean, SpaceComplexity/ExpBFS/Run.lean, SpaceComplexity/Logspace/ISCountGenStage.lean, SpaceComplexity/Logspace/ISCountGenWalk.lean, SpaceComplexity/Logspace/PathHardRegs.lean, SpaceComplexity/Logspace/PathWalkProof.lean, SpaceComplexity/Machines/ARMLoops.lean, SpaceComplexity/Machines/ARMWidthExample.lean, SpaceComplexity/SavitchARM/Recursion.lean, SpaceComplexity/SavitchARM/Run.lean
+- shared text, characters: A4 20 files; newly past vs round 1 (A1): SpaceComplexity/Codec/Deciders.lean, SpaceComplexity/Codec/Langs.lean, SpaceComplexity/ExpBFS/Run.lean, SpaceComplexity/Logspace/ISCountGenWalk.lean, SpaceComplexity/Logspace/PathWalkProof.lean, SpaceComplexity/Machines/ARMLoops.lean, SpaceComplexity/SavitchARM/Run.lean; no longer past vs A1 (only incidental pairs had taken them over): ClassPSPACE/TQBFARM/Machine.lean; newly past vs A3 (same-file pairs alone): SpaceComplexity/Codec/Deciders.lean, SpaceComplexity/Codec/Langs.lean, SpaceComplexity/ExpBFS/Run.lean, SpaceComplexity/Logspace/ISCountGenWalk.lean, SpaceComplexity/Logspace/PathWalkProof.lean, SpaceComplexity/Machines/ARMLoops.lean, SpaceComplexity/SavitchARM/Run.lean
+- shared text, code lines (prorated): A4 18 files; newly past vs round 1 (A1): SpaceComplexity/Codec/Deciders.lean, SpaceComplexity/Codec/Langs.lean, SpaceComplexity/ExpBFS/Run.lean, SpaceComplexity/Logspace/ISCountGenWalk.lean, SpaceComplexity/Logspace/PathWalkProof.lean, SpaceComplexity/Machines/ARMLoops.lean, SpaceComplexity/SavitchARM/Run.lean; no longer past vs A1 (only incidental pairs had taken them over): ClassPSPACE/TQBFARM/Machine.lean, SpaceComplexity/Machines/MARMCompile.lean; newly past vs A3 (same-file pairs alone): SpaceComplexity/Codec/Deciders.lean, SpaceComplexity/Codec/Langs.lean, SpaceComplexity/ExpBFS/Run.lean, SpaceComplexity/Logspace/ISCountGenWalk.lean, SpaceComplexity/Logspace/PathWalkProof.lean, SpaceComplexity/Machines/ARMLoops.lean, SpaceComplexity/SavitchARM/Run.lean
+
+## Per-file table (A1 | A3 | A4 | A4+): whole-body chars %, whole-body lines %, shared chars %, shared lines %
+ClassPSPACE/TQBFARM/Leaf.lean | chars 6004 lines 237 | 3.1% 6.8% 2.2% 4.8% | 0.0% 0.0% 0.0% 0.0% | 0.0% 0.0% 0.0% 0.0% | 0.0% 0.0% 0.0% 0.0%
+ClassPSPACE/TQBFARM/Machine.lean | chars 4472 lines 296 | 36.4% 25.7% 29.8% 21.5% | 20.2% 15.2% 19.3% 14.7% | 20.2% 15.2% 19.3% 14.7% | 20.2% 15.2% 19.3% 14.7%
+ClassPSPACE/TQBFARM/Semantics.lean | chars 2543 lines 142 | 60.0% 50.7% 55.2% 46.8% | 60.0% 50.7% 55.2% 46.8% | 60.0% 50.7% 55.2% 46.8% | 61.5% 52.1% 56.7% 48.2%
+ClassPSPACE/TQBFARM/Walk.lean | chars 3870 lines 165 | 5.6% 9.7% 3.5% 6.0% | 0.0% 0.0% 0.0% 0.0% | 19.5% 15.2% 15.3% 12.0% | 19.5% 15.2% 15.3% 12.0%
+ClassPSPACE/TQBFHardParams.lean | chars 4816 lines 169 | 48.1% 45.6% 8.8% 10.7% | 6.5% 7.7% 4.3% 5.1% | 36.5% 33.1% 12.0% 11.6% | 36.5% 33.1% 12.0% 11.6%
+ClassPSPACE/TQBFHardSemantics.lean | chars 7071 lines 351 | 11.6% 13.4% 3.8% 4.4% | 4.2% 4.3% 1.7% 1.7% | 20.7% 20.2% 13.6% 13.2% | 20.7% 20.2% 13.6% 13.2%
+ClassPSPACE/TQBFHardTseitin.lean | chars 2020 lines 88 | 57.4% 54.5% 28.0% 30.5% | 57.4% 54.5% 28.0% 30.5% | 57.4% 54.5% 28.0% 30.5% | 57.4% 54.5% 28.0% 30.5%
+ClassPSPACE/TQBFHardVerifier.lean | chars 6293 lines 230 | 26.4% 24.8% 5.6% 6.9% | 2.8% 4.3% 1.0% 1.6% | 7.0% 10.4% 4.9% 7.3% | 7.0% 10.4% 4.9% 7.3%
+SpaceComplexity/Codec/Bridge.lean | chars 5353 lines 182 | 98.5% 95.1% 40.2% 40.8% | 73.8% 71.4% 37.9% 38.3% | 73.8% 71.4% 37.9% 38.3% | 73.8% 71.4% 37.9% 38.3%
+SpaceComplexity/Codec/Checks.lean | chars 8030 lines 309 | 7.8% 8.1% 2.6% 3.1% | 2.9% 3.6% 1.9% 2.4% | 9.9% 11.3% 7.4% 8.6% | 9.9% 11.3% 7.4% 8.6%
+SpaceComplexity/Codec/Deciders.lean | chars 10023 lines 306 | 1.0% 1.0% 1.0% 1.0% | 1.0% 1.0% 1.0% 1.0% | 29.1% 27.1% 21.6% 20.1% | 29.1% 27.1% 21.6% 20.1%
+SpaceComplexity/Codec/Engine.lean | chars 9652 lines 357 | 58.6% 57.7% 40.3% 38.9% | 43.9% 42.3% 39.5% 38.0% | 43.9% 42.3% 40.2% 38.7% | 43.9% 42.3% 40.2% 38.7%
+SpaceComplexity/Codec/Langs.lean | chars 1448 lines 72 | 0.0% 0.0% 0.0% 0.0% | 0.0% 0.0% 0.0% 0.0% | 68.9% 72.2% 61.0% 64.3% | 68.9% 72.2% 61.0% 64.3%
+SpaceComplexity/Codec/Layout.lean | chars 9149 lines 263 | 72.9% 61.6% 45.2% 38.2% | 72.9% 61.6% 45.2% 38.2% | 72.9% 61.6% 45.2% 38.2% | 72.9% 61.6% 45.2% 38.2%
+SpaceComplexity/Codec/Layout2.lean | chars 9477 lines 243 | 57.1% 55.6% 43.7% 42.5% | 57.1% 55.6% 43.7% 42.5% | 57.1% 55.6% 43.7% 42.5% | 57.1% 55.6% 43.7% 42.5%
+SpaceComplexity/Codec/Parse.lean | chars 10387 lines 366 | 6.5% 7.1% 3.9% 4.4% | 6.5% 7.1% 3.9% 4.4% | 41.4% 40.7% 19.5% 19.4% | 41.4% 40.7% 19.5% 19.4%
+SpaceComplexity/Codec/Run.lean | chars 3439 lines 170 | 8.8% 5.9% 7.7% 5.2% | 8.8% 5.9% 7.7% 5.2% | 8.8% 5.9% 7.7% 5.2% | 13.2% 10.0% 8.6% 5.8%
+SpaceComplexity/Codec/Scan.lean | chars 6121 lines 232 | 22.9% 21.6% 1.7% 1.6% | 0.0% 0.0% 0.0% 0.0% | 0.0% 0.0% 0.0% 0.0% | 0.0% 0.0% 0.0% 0.0%
+SpaceComplexity/Codec/StepDecider.lean | chars 11717 lines 340 | 64.6% 59.1% 11.9% 10.4% | 42.8% 37.4% 11.2% 9.8% | 42.8% 37.4% 11.2% 9.8% | 42.8% 37.4% 11.2% 9.8%
+SpaceComplexity/Codec/Valid.lean | chars 10768 lines 436 | 24.9% 20.9% 4.9% 4.2% | 23.4% 19.3% 4.1% 3.3% | 23.4% 19.3% 4.1% 3.3% | 23.4% 19.3% 4.1% 3.3%
+SpaceComplexity/Codec/Word.lean | chars 6462 lines 304 | 35.4% 25.7% 6.9% 5.4% | 12.1% 8.6% 2.2% 1.5% | 12.1% 8.6% 2.2% 1.5% | 12.9% 9.2% 3.0% 2.2%
+SpaceComplexity/ExpBFS/Machine.lean | chars 4903 lines 344 | 26.0% 11.6% 13.6% 8.1% | 26.0% 11.6% 13.6% 8.1% | 26.0% 11.6% 13.6% 8.1% | 26.0% 11.6% 13.6% 8.1%
+SpaceComplexity/ExpBFS/Main.lean | chars 14832 lines 472 | 17.4% 16.9% 6.2% 6.2% | 17.4% 16.9% 6.2% 6.2% | 17.4% 16.9% 6.2% 6.2% | 18.4% 18.0% 6.8% 6.8%
+SpaceComplexity/ExpBFS/Radius.lean | chars 5312 lines 209 | 2.2% 3.3% 1.5% 2.2% | 0.0% 0.0% 0.0% 0.0% | 0.0% 0.0% 0.0% 0.0% | 2.2% 3.3% 0.0% 0.0%
+SpaceComplexity/ExpBFS/Relax.lean | chars 9297 lines 358 | 96.0% 83.2% 27.5% 23.8% | 96.0% 83.2% 27.5% 23.8% | 96.0% 83.2% 37.6% 32.4% | 96.0% 83.2% 37.6% 32.4%
+SpaceComplexity/ExpBFS/Run.lean | chars 11913 lines 455 | 1.8% 2.0% 1.5% 1.6% | 1.8% 2.0% 1.5% 1.6% | 32.6% 32.5% 23.9% 24.6% | 32.6% 32.5% 23.9% 24.6%
+SpaceComplexity/Logspace/ISCountGenCorrect.lean | chars 5282 lines 199 | 54.1% 50.3% 3.5% 3.1% | 12.0% 10.1% 2.2% 1.9% | 12.0% 10.1% 2.2% 1.9% | 12.0% 10.1% 2.2% 1.9%
+SpaceComplexity/Logspace/ISCountGenMachine.lean | chars 3144 lines 195 | 13.4% 8.7% 4.3% 3.1% | 0.0% 0.0% 0.0% 0.0% | 0.0% 0.0% 0.0% 0.0% | 0.0% 0.0% 0.0% 0.0%
+SpaceComplexity/Logspace/ISCountGenRadius.lean | chars 1488 lines 74 | 23.4% 20.3% 10.2% 8.9% | 0.0% 0.0% 0.0% 0.0% | 0.0% 0.0% 0.0% 0.0% | 0.0% 0.0% 0.0% 0.0%
+SpaceComplexity/Logspace/ISCountGenStage.lean | chars 7689 lines 270 | 58.9% 60.0% 5.4% 5.6% | 0.0% 0.0% 0.0% 0.0% | 41.1% 37.0% 16.6% 14.9% | 41.1% 37.0% 16.6% 14.9%
+SpaceComplexity/Logspace/ISCountGenWalk.lean | chars 3680 lines 128 | 68.9% 64.1% 5.9% 5.5% | 0.0% 0.0% 0.0% 0.0% | 68.9% 64.1% 22.6% 21.0% | 68.9% 64.1% 22.6% 21.0%
+SpaceComplexity/Logspace/ISCountMath.lean | chars 4940 lines 210 | 11.3% 11.9% 1.4% 1.5% | 0.0% 0.0% 0.0% 0.0% | 0.0% 0.0% 0.0% 0.0% | 0.0% 0.0% 0.0% 0.0%
+SpaceComplexity/Logspace/PathHard.lean | chars 5619 lines 219 | 11.8% 10.5% 1.8% 1.6% | 0.0% 0.0% 0.0% 0.0% | 0.0% 0.0% 0.0% 0.0% | 0.0% 0.0% 0.0% 0.0%
+SpaceComplexity/Logspace/PathHardMachine.lean | chars 4455 lines 324 | 17.7% 11.1% 12.7% 8.5% | 8.7% 6.5% 7.9% 6.0% | 8.7% 6.5% 7.9% 6.0% | 8.7% 6.5% 7.9% 6.0%
+SpaceComplexity/Logspace/PathHardRegs.lean | chars 4521 lines 202 | 5.4% 4.5% 3.6% 3.0% | 3.0% 2.5% 2.2% 1.8% | 53.9% 23.8% 17.4% 8.2% | 57.5% 26.2% 18.0% 8.7%
+SpaceComplexity/Logspace/PathWalk.lean | chars 8246 lines 341 | 2.3% 2.3% 1.0% 1.0% | 0.0% 0.0% 0.0% 0.0% | 0.0% 0.0% 0.0% 0.0% | 0.0% 0.0% 0.0% 0.0%
+SpaceComplexity/Logspace/PathWalkMachine.lean | chars 7079 lines 316 | 1.5% 2.2% 1.0% 1.4% | 0.0% 0.0% 0.0% 0.0% | 0.0% 0.0% 0.0% 0.0% | 1.9% 2.2% 1.6% 1.9%
+SpaceComplexity/Logspace/PathWalkProof.lean | chars 15935 lines 463 | 0.0% 0.0% 0.0% 0.0% | 0.0% 0.0% 0.0% 0.0% | 46.2% 46.2% 29.9% 30.2% | 46.2% 46.2% 29.9% 30.2%
+SpaceComplexity/Machines/ARMLoops.lean | chars 6751 lines 288 | 0.0% 0.0% 0.0% 0.0% | 0.0% 0.0% 0.0% 0.0% | 94.3% 89.6% 56.5% 54.8% | 94.3% 89.6% 56.5% 54.8%
+SpaceComplexity/Machines/ARMReach.lean | chars 3971 lines 158 | 17.6% 21.5% 3.7% 4.6% | 0.0% 0.0% 0.0% 0.0% | 0.0% 0.0% 0.0% 0.0% | 0.0% 0.0% 0.0% 0.0%
+SpaceComplexity/Machines/ARMWidth.lean | chars 6079 lines 226 | 31.8% 32.7% 27.7% 28.5% | 31.8% 32.7% 27.7% 28.5% | 31.8% 32.7% 27.7% 28.5% | 31.8% 32.7% 27.7% 28.5%
+SpaceComplexity/Machines/ARMWidthExample.lean | chars 5029 lines 212 | 22.8% 16.0% 2.0% 1.4% | 22.8% 16.0% 2.0% 1.4% | 45.1% 35.8% 17.6% 15.4% | 45.1% 35.8% 17.6% 15.4%
+SpaceComplexity/Machines/MARM.lean | chars 2352 lines 159 | 30.3% 19.5% 24.0% 15.5% | 24.2% 15.7% 21.4% 13.8% | 24.2% 15.7% 21.4% 13.8% | 24.2% 15.7% 21.4% 13.8%
+SpaceComplexity/Machines/MARMCompile.lean | chars 7627 lines 329 | 43.6% 40.4% 24.8% 23.1% | 35.6% 31.0% 22.0% 19.2% | 35.6% 31.0% 22.0% 19.2% | 35.6% 31.0% 22.0% 19.2%
+SpaceComplexity/Machines/MARMTime.lean | chars 12427 lines 429 | 76.9% 73.4% 17.2% 16.9% | 56.7% 52.0% 15.8% 15.2% | 56.7% 52.0% 15.8% 15.2% | 56.7% 52.0% 15.8% 15.2%
+SpaceComplexity/Machines/NARM.lean | chars 4866 lines 280 | 1.9% 1.8% 1.3% 1.2% | 0.0% 0.0% 0.0% 0.0% | 16.1% 13.6% 12.7% 10.7% | 16.1% 13.6% 12.7% 10.7%
+SpaceComplexity/Machines/NARMCompile.lean | chars 5753 lines 262 | 62.7% 54.2% 34.5% 30.4% | 54.3% 47.7% 33.3% 29.5% | 54.3% 47.7% 33.3% 29.5% | 54.3% 47.7% 33.3% 29.5%
+SpaceComplexity/Machines/NARMKit.lean | chars 5369 lines 312 | 21.1% 14.1% 10.0% 6.7% | 10.9% 7.7% 5.3% 3.7% | 10.9% 7.7% 5.3% 3.7% | 10.9% 7.7% 5.3% 3.7%
+SpaceComplexity/Machines/NARMProof.lean | chars 5594 lines 241 | 60.1% 60.2% 38.3% 39.9% | 60.1% 60.2% 38.3% 39.9% | 60.1% 60.2% 38.3% 39.9% | 60.1% 60.2% 38.3% 39.9%
+SpaceComplexity/Machines/NARMRun.lean | chars 3878 lines 179 | 0.0% 0.0% 0.0% 0.0% | 0.0% 0.0% 0.0% 0.0% | 16.3% 13.4% 11.0% 9.1% | 16.3% 13.4% 11.0% 9.1%
+SpaceComplexity/Machines/VWord.lean | chars 294 lines 39 | 52.0% 30.8% 44.2% 26.1% | 52.0% 30.8% 44.2% 26.1% | 52.0% 30.8% 44.2% 26.1% | 63.6% 35.9% 53.4% 30.2%
+SpaceComplexity/SavitchARM/Correct.lean | chars 1513 lines 68 | 75.7% 45.6% 7.7% 4.7% | 75.7% 45.6% 7.7% 4.7% | 75.7% 45.6% 7.7% 4.7% | 75.7% 45.6% 7.7% 4.7%
+SpaceComplexity/SavitchARM/Machine.lean | chars 4908 lines 353 | 29.3% 14.4% 18.8% 11.6% | 29.3% 14.4% 18.8% 11.6% | 29.3% 14.4% 18.8% 11.6% | 29.3% 14.4% 18.8% 11.6%
+SpaceComplexity/SavitchARM/Recursion.lean | chars 8604 lines 345 | 45.7% 37.7% 3.0% 2.2% | 0.9% 0.6% 0.8% 0.5% | 29.7% 32.2% 14.7% 18.2% | 29.7% 32.2% 14.7% 18.2%
+SpaceComplexity/SavitchARM/Run.lean | chars 5859 lines 230 | 21.7% 24.3% 16.9% 19.1% | 10.3% 11.7% 8.9% 10.2% | 63.3% 50.9% 41.3% 33.8% | 63.3% 50.9% 41.3% 33.8%
+SpaceComplexity/SavitchARM/Search.lean | chars 4975 lines 192 | 4.0% 3.6% 1.4% 1.3% | 0.0% 0.0% 0.0% 0.0% | 0.0% 0.0% 0.0% 0.0% | 0.0% 0.0% 0.0% 0.0%
+
+## Net view of A4+ (accounting convention only: one member of each internal/same-file component, earliest in import order, treated as the original): 49 components; 125 declarations, 2989 code lines (17.35%), 87530 chars (20.75%), shared 47701 (11.31%)

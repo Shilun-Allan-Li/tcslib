@@ -1,0 +1,251 @@
+
+### raw output: StepBlockLoop.check
+<G>/work/cut/StepBlockLoop.check.lean:574:8: warning: declaration uses 'sorry'
+'Turing.StepBlock.loopTM' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.StepBlock.hostedLoopTM' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.StepBlock.loopTM_run' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.StepBlock.hostedLoopTM_run' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.StepBlock.hostedLoop_read' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.StepBlock.forwardLoopCfg' depends on axioms: [propext, Quot.sound]
+'Turing.StepBlock.exists_forwardLoopTM' depends on axioms: [propext, sorryAx, Classical.choice, Quot.sound]
+
+### raw output: Codes2Tape.check
+'Turing.Code2TM' does not depend on any axioms
+'Turing.Code2TM.toFinTM' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.Code2TM.serialize' depends on axioms: [propext, Quot.sound]
+'Turing.MachineCode2' does not depend on any axioms
+'Turing.MachineCode2.decode_encode' depends on axioms: [propext]
+'Turing.EffectiveMachineCode2' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.exists_effectiveMachineCode2' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.UniformMachineCode2' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.Code2TM.serialize_eq_serializeK' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.exists_uniformMachineCode2' depends on axioms: [propext, sorryAx, Classical.choice, Quot.sound]
+
+### raw output: UniversalK.cut
+<G>/work/cut/UniversalK.cut.lean:519:8: warning: declaration uses 'sorry'
+<G>/work/cut/UniversalK.cut.lean:564:8: warning: declaration uses 'sorry'
+<G>/work/cut/UniversalK.cut.lean:602:8: warning: declaration uses 'sorry'
+'Turing.EffectiveCodeK' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.EffectiveCodeK.toFinTM' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.EffectiveCodeK.ofSerialize' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.EffectiveMachineCode.toK' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.EffectiveMachineCode2.toK' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.EffectiveMachineCode.toK_toFinTM' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.EffectiveMachineCode2.toK_toFinTM' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.EffectiveMachineCode.toK_machine' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.EffectiveMachineCode2.toK_machine' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.exists_selfStartupTMK' depends on axioms: [propext, sorryAx, Classical.choice, Quot.sound]
+'Turing.exists_selfUniversalK' depends on axioms: [propext, sorryAx, Classical.choice, Quot.sound]
+'Turing.universalK' depends on axioms: [propext, sorryAx, Classical.choice, Quot.sound]
+
+### raw output: SelfUniversal.cut
+<G>/work/cut/SelfUniversal.cut.lean:519:8: warning: declaration uses 'sorry'
+<G>/work/cut/SelfUniversal.cut.lean:564:8: warning: declaration uses 'sorry'
+<G>/work/cut/SelfUniversal.cut.lean:602:8: warning: declaration uses 'sorry'
+'Turing.exists_selfStartupTM' depends on axioms: [propext, sorryAx, Classical.choice, Quot.sound]
+'Turing.exists_selfUniversal' depends on axioms: [propext, sorryAx, Classical.choice, Quot.sound]
+
+### raw output: U2Consumer.cut
+<G>/work/cut/U2Consumer.cut.lean:1054:8: warning: declaration uses 'sorry'
+<G>/work/cut/U2Consumer.cut.lean:1099:8: warning: declaration uses 'sorry'
+<G>/work/cut/U2Consumer.cut.lean:1137:8: warning: declaration uses 'sorry'
+Turing.universalCanonTM : Turing.EffectiveMachineCode → Turing.FinTM Bool
+@Turing.universalCaptureTM : {S : Type} →
+  [Fintype S] → [DecidableEq S] → Turing.FinTM Bool → Turing.MultiTapeTM 4 Bool S → Turing.FinTM Bool
+Turing.universalCanon_complete : ∀ (c : Turing.EffectiveMachineCode) (α x : List Bool),
+  have cfg :=
+    Turing.MultiTapeTM.runFrom (Turing.MultiTapeTM.initCfg (Turing.pairEncode α x))
+      (3 * α.length + 4 + c.canonizerTime α.length);
+  cfg.state = none ∧ cfg.output = (c.decode α).serialize ∧ ↑cfg.inputPos = 2 * α.length + 3
+@Turing.FinTM.timed_rewind : ∀ {k : ℕ} {S : Type} {x : List Bool} (tm : Turing.MultiTapeTM k Bool S) (start scan : S)
+  (dest : Option S),
+  (∀ (inp : Option Bool) (work : Fin k → Option Bool),
+      tm.tr start inp work = Turing.FinTM.controlAction SignType.neg (some scan)) →
+    (∀ (inp : Option Bool) (work : Fin k → Option Bool),
+        tm.tr scan inp work =
+          match inp with
+          | some val => Turing.FinTM.controlAction SignType.neg (some scan)
+          | none => Turing.FinTM.controlAction SignType.pos dest) →
+      ∀ (c : Turing.Cfg k Bool S x),
+        c.state = some start →
+          ∃ r ≤ ↑c.inputPos + 2,
+            Turing.MultiTapeTM.runFrom c r =
+              { state := dest, inputPos := 1, workTapes := c.workTapes, workTapePos := c.workTapePos,
+                output := c.output }
+@Turing.MultiTapeTM.spaceUsed_le_mul_succ : ∀ {k : ℕ} {Symbol : Type u_1} {State : Type u_2} {input : List Symbol}
+  (tm : Turing.MultiTapeTM k Symbol State) (cfg : Turing.Cfg k Symbol State input) (t : ℕ),
+  Turing.MultiTapeTM.spaceUsed cfg t ≤ k * (t + 1)
+Turing.universal_pair_length : ∀ (α x : List Bool), (Turing.pairEncode α x).length = 2 * α.length + 2 + x.length
+@Turing.exists_rulerHostTM : ∀ {m : ℕ} {S : Type} [Fintype S] [DecidableEq S] (M : Turing.MultiTapeTM m Bool S),
+  ∃ Q x x H inj C,
+    0 < C ∧
+      ∀ {y z : List Bool} (ℓ : ℕ) (hz : z.length = ℓ + y.length),
+        0 < ℓ →
+          List.drop ℓ z = y →
+            ∀ (rt : ℤ → Option Bool) (rp : ℤ),
+              (∀ (p : ℤ), -1 ≤ p → p ≤ ↑ℓ → rt (rp + p) = Turing.FinTM.bufferTape (List.replicate ℓ true) p) →
+                ∀ (c : Turing.Cfg m Bool S y) (b : Bool),
+                  (b = true ↔ ↑c.inputPos = 0) →
+                    ∀ (t : ℕ),
+                      have d := Turing.rulerHostCfg ℓ hz (Option.map (fun q => inj q b) c.state) c rt rp;
+                      ∃ t',
+                        t ≤ t' ∧
+                          t' ≤ C * (ℓ + 1) * t ∧
+                            (∃ b',
+                                (b' = true ↔ ↑(Turing.MultiTapeTM.runFrom c t).inputPos = 0) ∧
+                                  Turing.MultiTapeTM.runFrom d t' =
+                                    Turing.rulerHostCfg ℓ hz
+                                      (Option.map (fun q => inj q b') (Turing.MultiTapeTM.runFrom c t).state)
+                                      (Turing.MultiTapeTM.runFrom c t) rt rp) ∧
+                              ((∀ u < t, (Turing.MultiTapeTM.runFrom c u).state ≠ none) →
+                                  ∀ u < t', (Turing.MultiTapeTM.runFrom d u).state ≠ none) ∧
+                                (∀ u ≤ t',
+                                    ∃ v ≤ t,
+                                      (∀ (i : Fin m),
+                                          (Turing.MultiTapeTM.runFrom d u).workTapes i.castSucc =
+                                              (Turing.MultiTapeTM.runFrom c v).workTapes i ∧
+                                            (Turing.MultiTapeTM.runFrom d u).workTapePos i.castSucc =
+                                              (Turing.MultiTapeTM.runFrom c v).workTapePos i) ∧
+                                        (Turing.MultiTapeTM.runFrom d u).output =
+                                            (Turing.MultiTapeTM.runFrom c v).output ∧
+                                          (Turing.MultiTapeTM.runFrom d u).workTapes (Fin.last m) = rt ∧
+                                            (Turing.MultiTapeTM.runFrom d u).workTapePos (Fin.last m) ∈
+                                              Finset.Icc (rp - 1) (rp + ↑ℓ)) ∧
+                                  (∀ (i : Fin m),
+                                      Turing.MultiTapeTM.visitedByTapeHead d t' i.castSucc =
+                                        Turing.MultiTapeTM.visitedByTapeHead c t i) ∧
+                                    Turing.MultiTapeTM.visitedByTapeHead d t' (Fin.last m) ⊆
+                                      Finset.Icc (rp - 1) (rp + ↑ℓ)
+@Turing.RulerAt : {K : ℕ} →
+  {S : Type u_1} → {y z : List Bool} → ℕ → Fin K → Turing.Cfg K Bool S z → Fin (y.length + 2) → Prop
+@Turing.NativeAt : {K : ℕ} →
+  {Γ : Type u_1} → {S : Type u_2} → {y : List Γ} → Turing.Cfg K Γ S y → Fin (y.length + 2) → Prop
+@Turing.Lockstep : {k : ℕ} →
+  {Γ : Type} →
+    {k' : ℕ} →
+      {Γ' S S' : Type} →
+        {x : List Γ} →
+          {x' : List Γ'} →
+            Turing.MultiTapeTM k Γ S →
+              Turing.MultiTapeTM k' Γ' S' →
+                (Turing.Cfg k Γ S x → Turing.Cfg k' Γ' S' x') →
+                  (Turing.Cfg k Γ S x → ℕ) → Set (Option S) → Set (Option S') → Prop
+@Turing.Lockstep.runFrom : ∀ {k : ℕ} {Γ : Type} {k' : ℕ} {Γ' S S' : Type} {x : List Γ} {x' : List Γ'}
+  {M : Turing.MultiTapeTM k Γ S} {N : Turing.MultiTapeTM k' Γ' S'} {enc : Turing.Cfg k Γ S x → Turing.Cfg k' Γ' S' x'}
+  {cost : Turing.Cfg k Γ S x → ℕ} {X : Set (Option S)} {X' : Set (Option S')},
+  Turing.Lockstep M N enc cost X X' →
+    ∀ (d : Turing.Cfg k Γ S x) (t : ℕ),
+      (∀ u < t, (Turing.MultiTapeTM.runFrom d u).state ∉ X) →
+        Turing.MultiTapeTM.runFrom (enc d) (∑ u ∈ Finset.range t, cost (Turing.MultiTapeTM.runFrom d u)) =
+          enc (Turing.MultiTapeTM.runFrom d t)
+@Turing.Lockstep.cut : ∀ {k : ℕ} {Γ : Type} {k' : ℕ} {Γ' S S' : Type} {x : List Γ} {x' : List Γ'}
+  {M : Turing.MultiTapeTM k Γ S} {N : Turing.MultiTapeTM k' Γ' S'} {enc : Turing.Cfg k Γ S x → Turing.Cfg k' Γ' S' x'}
+  {cost : Turing.Cfg k Γ S x → ℕ} {X : Set (Option S)} {X' : Set (Option S')},
+  Turing.Lockstep M N enc cost X X' →
+    ∀ (d : Turing.Cfg k Γ S x) (t : ℕ),
+      (∀ u < t, (Turing.MultiTapeTM.runFrom d u).state ∉ X) →
+        ∀ v < ∑ u ∈ Finset.range t, cost (Turing.MultiTapeTM.runFrom d u),
+          (Turing.MultiTapeTM.runFrom (enc d) v).state ∉ X'
+@Turing.StepBlock.Rep : {k n : ℕ} →
+  {x : List Bool} →
+    (Fin (n + 1) → Option Bool → (Fin k → Option Bool) → Turing.Action k Bool (Fin (n + 1))) →
+      Turing.Cfg k Bool (Fin (n + 1)) x →
+        Turing.Cfg (k + 2) Bool ((key : Turing.StepBlock.Key) × Turing.StepBlock.Ph k key) x → Prop
+@Turing.StepBlock.roundTM_effect : ∀ {k n : ℕ} {x : List Bool}
+  (tr : Fin (n + 1) → Option Bool → (Fin k → Option Bool) → Turing.Action k Bool (Fin (n + 1)))
+  (c : Turing.Cfg k Bool (Fin (n + 1)) x) (q : Fin (n + 1)),
+  c.state = some q →
+    ∀ (d : Turing.Cfg (k + 2) Bool ((key : Turing.StepBlock.Key) × Turing.StepBlock.Ph k key) x),
+      d.state = some ⟨Turing.StepBlock.Key.entry, ()⟩ →
+        Turing.StepBlock.Rep tr c d →
+          have a := tr q c.inputSymbol c.workTapeSymbols;
+          ∃ T,
+            0 < T ∧
+              T ≤ 50 * ((Turing.tableBitsK tr).length + 1) ∧
+                have e := Turing.MultiTapeTM.runFrom d T;
+                e.state = some (Turing.StepBlock.exit k a.state.isSome) ∧
+                  Turing.StepBlock.Rep tr (a.apply c) e ∧
+                    e.workTapeSymbols (Turing.StepBlock.summaryTape k) =
+                        Turing.StepBlock.summaryEmit (d.workTapeSymbols (Turing.StepBlock.summaryTape k)) a.output ∧
+                      (∀ (u : ℕ),
+                          0 < u →
+                            u < T →
+                              ∃ s,
+                                (Turing.MultiTapeTM.runFrom d u).state = some s ∧
+                                  s ≠ ⟨Turing.StepBlock.Key.entry, ()⟩ ∧ s ≠ ⟨Turing.StepBlock.Key.halt, ()⟩) ∧
+                        (∀ u ≤ T, (Turing.MultiTapeTM.runFrom d u).output = d.output) ∧
+                          (∀ u ≤ T,
+                              have f := Turing.MultiTapeTM.runFrom d u;
+                              (f.inputPos = d.inputPos ∨ f.inputPos = e.inputPos) ∧
+                                |↑↑f.inputPos - ↑↑d.inputPos| ≤ 1 ∧
+                                  (∀ (i : Fin k),
+                                      f.workTapePos (Fin.castAdd 2 i) = d.workTapePos (Fin.castAdd 2 i) ∨
+                                        f.workTapePos (Fin.castAdd 2 i) = e.workTapePos (Fin.castAdd 2 i)) ∧
+                                    ∀ (j : Fin (k + 2)),
+                                      |f.workTapePos j - d.workTapePos j| ≤
+                                        ↑(if ↑j < k then 1 else 50 * ((Turing.tableBitsK tr).length + 1))) ∧
+                            ∀ (j : Fin (k + 2)), k ≤ ↑j → d.workTapePos j = 0 ∧ e.workTapePos j = 0
+@Turing.StepBlock.roundTM_firstExit_unique : ∀ {k n : ℕ} {x : List Bool}
+  (tr : Fin (n + 1) → Option Bool → (Fin k → Option Bool) → Turing.Action k Bool (Fin (n + 1)))
+  (c : Turing.Cfg k Bool (Fin (n + 1)) x) (q : Fin (n + 1)),
+  c.state = some q →
+    ∀ (d : Turing.Cfg (k + 2) Bool ((key : Turing.StepBlock.Key) × Turing.StepBlock.Ph k key) x),
+      d.state = some ⟨Turing.StepBlock.Key.entry, ()⟩ →
+        Turing.StepBlock.Rep tr c d →
+          ∃! T,
+            0 < T ∧
+              ((Turing.MultiTapeTM.runFrom d T).state = some ⟨Turing.StepBlock.Key.entry, ()⟩ ∨
+                  (Turing.MultiTapeTM.runFrom d T).state = some ⟨Turing.StepBlock.Key.halt, ()⟩) ∧
+                ∀ (u : ℕ),
+                  0 < u →
+                    u < T →
+                      (Turing.MultiTapeTM.runFrom d u).state ≠ some ⟨Turing.StepBlock.Key.entry, ()⟩ ∧
+                        (Turing.MultiTapeTM.runFrom d u).state ≠ some ⟨Turing.StepBlock.Key.halt, ()⟩
+@Turing.StepBlock.roundTM_visited : ∀ {k n : ℕ} {x : List Bool}
+  (tr : Fin (n + 1) → Option Bool → (Fin k → Option Bool) → Turing.Action k Bool (Fin (n + 1)))
+  (c : Turing.Cfg k Bool (Fin (n + 1)) x) (q : Fin (n + 1)),
+  c.state = some q →
+    ∀ (d : Turing.Cfg (k + 2) Bool ((key : Turing.StepBlock.Key) × Turing.StepBlock.Ph k key) x),
+      d.state = some ⟨Turing.StepBlock.Key.entry, ()⟩ →
+        Turing.StepBlock.Rep tr c d →
+          have a := tr q c.inputSymbol c.workTapeSymbols;
+          ∃ T,
+            0 < T ∧
+              T ≤ 50 * ((Turing.tableBitsK tr).length + 1) ∧
+                (Turing.MultiTapeTM.runFrom d T).state = some (Turing.StepBlock.exit k a.state.isSome) ∧
+                  Turing.StepBlock.Rep tr (a.apply c) (Turing.MultiTapeTM.runFrom d T) ∧
+                    (∀ (u : ℕ),
+                        0 < u →
+                          u < T →
+                            ∃ s,
+                              (Turing.MultiTapeTM.runFrom d u).state = some s ∧
+                                s ≠ ⟨Turing.StepBlock.Key.entry, ()⟩ ∧ s ≠ ⟨Turing.StepBlock.Key.halt, ()⟩) ∧
+                      (∀ u ≤ T, (Turing.MultiTapeTM.runFrom d u).output = d.output) ∧
+                        (∀ (i : Fin k),
+                            Turing.MultiTapeTM.visitedByTapeHead d T (Fin.castAdd 2 i) ⊆
+                              {c.workTapePos i, (a.apply c).workTapePos i}) ∧
+                          ∀ (j : Fin (k + 2)),
+                            k ≤ ↑j →
+                              Turing.MultiTapeTM.visitedByTapeHead d T j ⊆
+                                Finset.Icc (-↑(50 * ((Turing.tableBitsK tr).length + 1)))
+                                  ↑(50 * ((Turing.tableBitsK tr).length + 1))
+Turing.StepBlock.summaryEmit_none : ∀ (b : Option Bool), Turing.StepBlock.summaryEmit none b = b
+@Turing.MultiTapeTM.visitedByTapeHead_add_subset : ∀ {m : ℕ} {S : Type} {x : List Bool}
+  (M : Turing.MultiTapeTM m Bool S) (d : Turing.Cfg m Bool S x) (T₁ T₂ : ℕ) (j : Fin m),
+  Turing.MultiTapeTM.visitedByTapeHead d (T₁ + T₂) j ⊆
+    Turing.MultiTapeTM.visitedByTapeHead d T₁ j ∪
+      Turing.MultiTapeTM.visitedByTapeHead (Turing.MultiTapeTM.runFrom d T₁) T₂ j
+Turing.oneTapeMachineFormat : Turing.MachineFormat
+@Turing.serializeK : {k n : ℕ} → Turing.MultiTapeTM k Bool (Fin (n + 1)) → List Bool
+Complexity.TimeHierarchy.SelfSimulator : (ℕ → ℕ) → Type 1
+@Complexity.TimeHierarchy.DiagSimulator.time_hierarchy : ∀ {Φ : ℕ → ℕ → ℕ}
+  (S : Complexity.TimeHierarchy.DiagSimulator Φ),
+  (∀ (t n : ℕ), t ≤ Φ t n) →
+    ∀ {f g : ℕ → ℕ},
+      Complexity.TimeConstructible g →
+        (∀ (A : ℕ), ∃ N, ∀ n ≥ N, A * Φ (f n) n ≤ g n) → Complexity.DTIME f ⊂ Complexity.DTIME fun n => g n + 1
+'Turing.U2ConsumerProbe.exists_code2TM' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.U2ConsumerProbe.logOverhead_mul_le' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.U2ConsumerProbe.twoTapeSelfSimulator' depends on axioms: [propext, sorryAx, Classical.choice, Quot.sound]
+'Turing.U2ConsumerProbe.time_hierarchy_log' depends on axioms: [propext, sorryAx, Classical.choice, Quot.sound]
+'Turing.U2ConsumerProbe.time_hierarchy_book' depends on axioms: [propext, sorryAx, Classical.choice, Quot.sound]

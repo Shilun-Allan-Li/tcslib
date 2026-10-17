@@ -5,13 +5,14 @@ Authors: Owen McGinty
 -/
 
 import TCSlib.BooleanAnalysis.Hypercontractivity.Cube.Definitions
+import TCSlib.BooleanAnalysis.Hypercontractivity.Concentration
 import TCSlib.BooleanAnalysis.Hypercontractivity.Cube.Bonami
 import TCSlib.BooleanAnalysis.Hypercontractivity.Applications.SmallSetExpansion
 import TCSlib.BooleanAnalysis.ThresholdFunctions.Basic
 import TCSlib.BooleanAnalysis.ThresholdFunctions.DegreeOne
 import TCSlib.BooleanAnalysis.ThresholdFunctions.LowDegreeNorm
 import TCSlib.BooleanAnalysis.ThresholdFunctions.LinearThresholdInfluence
-import TCSlib.BooleanAnalysis.KKL
+import TCSlib.BooleanAnalysis.Hypercontractivity.Applications.KKL.Basic
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -304,17 +305,9 @@ the lower bound becomes `2e`. Divide by the positive number `e`. -/
 private lemma concentration_parameter {k : ℕ} (hk : 0 < k) (t : ℝ)
     (ht : Real.sqrt (2 * Real.exp 1) ^ k ≤ t) :
     0 < t ∧ 2 ≤ t ^ (2 / (k : ℝ)) / Real.exp 1 := (by
-  have hs : 0 < Real.sqrt (2 * Real.exp 1) :=
-    Real.sqrt_pos.mpr (by positivity)
-  have ht0 : 0 < t := lt_of_lt_of_le (pow_pos hs k) ht
-  have hkR : 0 < (k : ℝ) := Nat.cast_pos.mpr hk
-  refine ⟨ht0, ?_⟩
-  have hpow := Real.rpow_le_rpow (pow_pos hs k).le ht
-    (by positivity : 0 ≤ 2 / (k : ℝ))
-  rw [← Real.rpow_natCast _ k, ← Real.rpow_mul hs.le,
-    mul_div_cancel₀ 2 hkR.ne', Real.rpow_two, Real.sq_sqrt (by positivity)] at hpow
-  exact (le_div_iff₀ (Real.exp_pos 1)).mpr hpow
+  exact ConcentrationAux.concentration_parameter hk t ht
 )
+
 
 /-- For positive degree `k` and threshold `t`, the optimizing moment exponent
 `q = t ^ (2 / k) / e` gives
@@ -331,26 +324,9 @@ private lemma concentration_optimized_moment {k : ℕ} (hk : 0 < k)
     (Real.sqrt q ^ k / t) ^ q =
       Real.exp (-(k : ℝ) / (2 * Real.exp 1) * t ^ (2 / (k : ℝ))) :=
   (by
-  let q : ℝ := t ^ (2 / (k : ℝ)) / Real.exp 1
-  change (Real.sqrt q ^ k / t) ^ q =
-    Real.exp (-(k : ℝ) / (2 * Real.exp 1) * t ^ (2 / (k : ℝ)))
-  have hkR : 0 < (k : ℝ) := Nat.cast_pos.mpr hk
-  have hq : 0 < q := div_pos (Real.rpow_pos_of_pos ht _) (Real.exp_pos _)
-  have hlogq : Real.log q = (2 / (k : ℝ)) * Real.log t - 1 := by
-    dsimp [q]
-    rw [Real.log_div (Real.rpow_pos_of_pos ht _).ne' (Real.exp_pos _).ne',
-      Real.log_rpow ht, Real.log_exp]
-  have hratio : Real.log (Real.sqrt q ^ k / t) = -(k : ℝ) / 2 := by
-    rw [Real.log_div (pow_pos (Real.sqrt_pos.mpr hq) k).ne' ht.ne',
-      Real.log_pow, Real.log_sqrt hq.le, hlogq]
-    field_simp [hkR.ne']
-    ring
-  rw [Real.rpow_def_of_pos (div_pos (pow_pos (Real.sqrt_pos.mpr hq) k) ht),
-    hratio]
-  congr 1
-  dsimp [q]
-  field_simp
+  exact ConcentrationAux.concentration_optimized_moment hk t ht
 )
+
 
 /-- For positive `k` and nonzero degree-`k` functions, the tail above `t‖f‖₂` is at most
 `exp(-k t^(2/k)/(2e))` for `t ≥ (√(2e))^k`. [OD14, Thm. 9.23]

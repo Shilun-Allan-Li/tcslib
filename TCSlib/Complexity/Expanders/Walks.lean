@@ -15,7 +15,7 @@ set_option autoImplicit false
 # Expander walks
 
 Random walks driven by a symmetric stochastic matrix, and Arora–Barak's
-Theorem 7.38: a random walk on an expander escapes any small vertex set with
+Theorem 21.12: a random walk on an expander escapes any small vertex set with
 probability exponentially close to one.
 
 ## Main definitions
@@ -25,25 +25,25 @@ probability exponentially close to one.
 * `Expander.walkPMF` — the `k`-step random walk started uniformly, as a `PMF`
   on `Fin (k+1) → Fin n` (a sequence of `k+1` visited vertices).
 * `Expander.resMatrix`, `Expander.resVec` — the `B`-restricted transition
-  matrix `B̂A` and the vectors `(B̂A)^k B̂𝟙` of the proof of Thm 7.38.
+  matrix `B̂A` and the vectors `(B̂A)^k B̂𝟙` of the proof of Thm 21.12.
 
 ## Main results
 
 * `Expander.opNorm_le_one` — a symmetric stochastic matrix has `L²` operator
-  norm at most `1` ([AB09, after Def 7.39], via [AB09, Exercise 10]).
+  norm at most `1` ([AB09, after Def 21.13], via [AB09, Exercise 21.5]).
 * `Expander.exists_decomposition` — `A = (1−λ)J + λC` with `‖C‖ ≤ 1`
-  ([AB09, Lem 7.40]).
+  ([AB09, Lem 21.14]).
 * `Expander.walk_filter_sum` — the probability that the walk stays in `B`
   and ends at `j` is the `j`-th entry of `(B̂A)^k B̂𝟙`.
-* `Expander.walk_all_mem_le` — the expander-walk bound [AB09, Thm 7.38].
+* `Expander.walk_all_mem_le` — the expander-walk bound [AB09, Thm 21.12].
 
 ## Deviations from the source
 
-* [AB09, Def 7.39] defines the matrix norm as "the maximum `α` such that
-  `‖A𝐯‖₂ ≤ α‖𝐯‖₂` for every `𝐯`" (i.e. the minimum such bound); we use
+* [AB09, Def 21.13] defines the spectral norm as "the maximum of `‖A𝐯‖₂` over all
+  vectors `𝐯` satisfying `‖𝐯‖₂ = 1`"; we use
   Mathlib's `L²` operator norm of the associated continuous linear map, which
   is that quantity.
-* [AB09, Thm 7.38] speaks of a `(k−1)`-step walk `X₁,…,X_k` on an
+* [AB09, Thm 21.12] speaks of a `(k−1)`-step walk `X₁,…,X_k` on an
   `(N,d,λ)`-graph and bounds `Pr[∀ i ≤ k, X_i ∈ B] ≤ ((1−λ)√β + λ)^{k−1}`.
   We index by the number of *steps* `k`, so the walk visits `k+1` vertices
   and the bound's exponent is `k`.  As in `Expanders.Basic`, the graph is
@@ -66,13 +66,13 @@ variable {n : ℕ}
 
 /-- The `n × n` matrix `J` with `J i j = 1/n` for every `i, j`: the normalized
 adjacency matrix of the `n`-clique with self-loops.  `J𝐩` is the uniform
-distribution for every probability vector `𝐩`.  [AB09, Lem 7.40] -/
+distribution for every probability vector `𝐩`.  [AB09, Lem 21.14] -/
 noncomputable def unifMatrix (n : ℕ) : Matrix (Fin n) (Fin n) ℝ :=
   Matrix.of fun _ _ => (n : ℝ)⁻¹
 
 /-- A symmetric stochastic matrix has `L²` operator norm at most `1`.
-[AB09, remark after Def 7.39: "if `A` is a normalized adjacency matrix then
-`‖A‖ = 1`"]; the inequality is [AB09, Exercise 10].
+[AB09, after Def 21.13: "the spectral norm of every random-walk matrix is 1"]; the
+inequality is [AB09, Exercise 21.5].
 
 **Proof sketch.** For a unit vector `𝐯`, expand `‖A𝐯‖₂²` and apply
 Cauchy–Schwarz with the weights `Aᵢⱼ` in each coordinate, using that every
@@ -88,7 +88,7 @@ theorem opNorm_le_one {A : Matrix (Fin n) (Fin n) ℝ} (hA : IsSymmStochastic A)
 matrix and `‖C‖ ≤ 1`: a step of the walk behaves, for the purposes of `L²`
 analysis, like moving to the uniform distribution with probability `1−λ`.
 (`C` may have negative entries, so this is not a literal convex combination
-of walks.)  [AB09, Lem 7.40], including the degenerate case `λ = 0` the book
+of walks.)  [AB09, Lem 21.14], including the degenerate case `λ = 0` the book
 permits (e.g. `A = J` itself).
 
 **Proof sketch.** For `λ > 0`, define `C = (1/λ)(A − (1−λ)J)`.  Decompose
@@ -224,7 +224,7 @@ theorem exists_decomposition {A : Matrix (Fin n) (Fin n) ℝ}
 /-- One step of the random walk from vertex `i`: move to `j` with probability
 `A i j`.  For the normalized adjacency matrix of a `d`-regular multigraph
 this is exactly "choose a random neighbor of `i` (with multiplicity)".
-[AB09, §7.A.1] -/
+[AB09, §21.1.1] -/
 noncomputable def stepPMF {A : Matrix (Fin n) (Fin n) ℝ}
     (hA : IsSymmStochastic A) (i : Fin n) : PMF (Fin n) :=
   PMF.ofFintype (fun j => ENNReal.ofReal (A i j)) (by
@@ -233,7 +233,7 @@ noncomputable def stepPMF {A : Matrix (Fin n) (Fin n) ℝ}
 
 /-- The `B`-restricted transition matrix `B̂A`: row `i` of `A` where `i ∈ B`,
 zero rows elsewhere.  One application advances the walk one step and kills
-the probability mass outside `B`.  [AB09, proof of Thm 7.38] -/
+the probability mass outside `B`.  [AB09, proof of Thm 21.12] -/
 noncomputable def resMatrix (A : Matrix (Fin n) (Fin n) ℝ) (B : Finset (Fin n)) :
     Matrix (Fin n) (Fin n) ℝ :=
   Matrix.of fun i j => if i ∈ B then A i j else 0
@@ -247,7 +247,7 @@ noncomputable def resMatrix (A : Matrix (Fin n) (Fin n) ℝ) (B : Finset (Fin n)
 /-- The sub-probability vector of the `B`-restricted walk: `resVec A B k j`
 will be shown to equal the probability that the first `k + 1` vertices of the
 walk all lie in `B` and the last one is `j` (`Expander.walk_filter_sum`).
-[AB09, proof of Thm 7.38: the vector `(B̂A)^k B̂𝟙`] -/
+[AB09, proof of Thm 21.12: the vector `(B̂A)^k B̂𝟙`] -/
 noncomputable def resVec (A : Matrix (Fin n) (Fin n) ℝ) (B : Finset (Fin n)) :
     ℕ → EuclideanSpace ℝ (Fin n)
   | 0 => (WithLp.equiv 2 (Fin n → ℝ)).symm fun j => if j ∈ B then (n : ℝ)⁻¹ else 0
@@ -272,7 +272,7 @@ variable [NeZero n]
 
 omit [NeZero n] in
 /-- Cauchy–Schwarz against the all-ones vector: the coordinate sum of a
-Euclidean vector is at most `√n` times its `L²` norm ([AB09, Note 7.24],
+Euclidean vector is at most `√n` times its `L²` norm ([AB09, Claim 21.1],
 the comparison `|𝐯|₁ ≤ √n·‖𝐯‖₂`, without absolute values on the left). -/
 theorem sum_le_sqrt_mul_norm (x : EuclideanSpace ℝ (Fin n)) :
     ∑ j, x j ≤ Real.sqrt n * ‖x‖ := by
@@ -320,9 +320,9 @@ theorem norm_resVec_zero_le {A : Matrix (Fin n) (Fin n) ℝ} {B : Finset (Fin n)
     _ = β * ((n : ℝ) * (n : ℝ)⁻¹) * (n : ℝ)⁻¹ := by ring
     _ = β * (n : ℝ)⁻¹ := by rw [mul_inv_cancel₀ hn.ne', mul_one]
 
-/-- The key operator estimate behind [AB09, Thm 7.38]: one `B`-restricted
+/-- The key operator estimate behind [AB09, Thm 21.12]: one `B`-restricted
 step shrinks the `L²` norm by a factor `(1−λ)√β + λ`, via the decomposition
-`A = (1−λ)J + λC` of [AB09, Lem 7.40].
+`A = (1−λ)J + λC` of [AB09, Lem 21.14].
 
 **Proof sketch.** Write `A = (1−λ)J + λC` with `‖C‖ ≤ 1`
 (`exists_decomposition`); restriction is entrywise, so
@@ -472,7 +472,7 @@ theorem norm_resVec_le {A : Matrix (Fin n) (Fin n) ℝ}
 /-- The `k`-step random walk driven by `A`, started at a uniformly random
 vertex: a probability distribution on the `k+1` visited vertices
 `X₀, X₁, …, X_k` (the book's `X₁, …, X_k` with `k` vertices and `k−1` steps).
-[AB09, Thm 7.38] -/
+[AB09, Thm 21.12] -/
 noncomputable def walkPMF {A : Matrix (Fin n) (Fin n) ℝ}
     (hA : IsSymmStochastic A) : (k : ℕ) → PMF (Fin (k + 1) → Fin n)
   | 0 => (PMF.uniformOfFintype (Fin n)).map fun v _ => v
@@ -538,7 +538,7 @@ theorem walkPMF_succ_apply {A : Matrix (Fin n) (Fin n) ℝ}
 
 /-- The probability that the walk stays inside `B` and ends at `j` is the
 `j`-th entry of the restricted-walk vector `resVec A B k`:
-in matrix language, of `(B̂A)^k B̂𝟙`.  [AB09, proof of Thm 7.38]
+in matrix language, of `(B̂A)^k B̂𝟙`.  [AB09, proof of Thm 21.12]
 
 **Proof sketch.** Induction on `k`.  For `k = 0` the filtered set is the
 single constant trajectory at `j` when `j ∈ B` (probability `1/n` by
@@ -673,7 +673,7 @@ theorem walk_filter_sum {A : Matrix (Fin n) (Fin n) ℝ}
         rw [if_neg hj, zero_mul]
       rw [hfilter, hres, Finset.sum_empty, ENNReal.ofReal_zero]
 
-/-- **Expander walks** ([AB09, Thm 7.38]).  Let `A` be symmetric stochastic
+/-- **Expander walks** ([AB09, Thm 21.12]).  Let `A` be symmetric stochastic
 with `λ(A) ≤ λ` (for a graph: an `(N,d,λ)`-graph), and let `B` be a set of at
 most `βN` vertices.  The probability that a uniformly-started `k`-step random
 walk stays inside `B` for all of its `k+1` visited vertices is at most
@@ -682,20 +682,20 @@ walk stays inside `B` for all of its `k+1` visited vertices is at most
 (The book's statement, with `k` visited vertices, has exponent `k−1`; note
 that if `λ, β < 1` are constants then so is `(1−λ)√β + λ`.  The hypothesis
 `lam ≤ 1` makes explicit the `λ < 1` of the book's `(N,d,λ)`-graph
-[AB09, Def 7.31]; without it the base `(1−λ)√β + λ` can be negative and the
+[AB09, Def 21.6]; without it the base `(1−λ)√β + λ` can be negative and the
 bound false.)
 
 **Proof sketch.** If `β ≥ 1` the bound is trivial: `lam ≤ 1` makes the base
 `(1−λ)√β + λ ≥ (1−λ) + λ = 1`, so the right-hand side is at least `1` and
 every probability qualifies.  So assume `β < 1`.  With `B̂` the diagonal
 projection that zeroes coordinates outside `B`, the probability equals
-`|(B̂A)^k B̂𝟙|₁`.  By Lemma 7.40, `B̂A = B̂((1−λ)J + λC)`, so
+`|(B̂A)^k B̂𝟙|₁`.  By Lemma 21.14, `B̂A = B̂((1−λ)J + λC)`, so
 `‖B̂A‖ ≤ (1−λ)‖B̂J‖ + λ‖B̂C‖ ≤ (1−λ)√β + λ`, since `J`'s image consists of
 uniform vectors of which `B̂` keeps `|B| ≤ βN` coordinates, and
 `‖B̂‖, ‖C‖ ≤ 1`.  As `‖B̂𝟙‖₂ = √|B|/N ≤ √β/√N` (the hypothesis `hB` is an
 inequality, not an equality), we get
 `‖(B̂A)^k B̂𝟙‖₂ ≤ ((1−λ)√β + λ)^k √β/√N`, and `|𝐯|₁ ≤ √N ‖𝐯‖₂`
-(Note 7.24) concludes, dropping the extra factor `√β`, which is `≤ 1` in
+(Claim 21.1) concludes, dropping the extra factor `√β`, which is `≤ 1` in
 the case `β < 1` under consideration. -/
 theorem walk_all_mem_le {A : Matrix (Fin n) (Fin n) ℝ}
     (hA : IsSymmStochastic A) {lam : ℝ} (hlam : lambda A ≤ lam)

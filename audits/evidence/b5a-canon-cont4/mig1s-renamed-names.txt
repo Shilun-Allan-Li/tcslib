@@ -1,0 +1,46 @@
+# MIG-1 stage S's rename map (audits/evidence/mig1/gate/scripts/renames.json at the campaign tip
+# ff4cab18; identical to the stage-S landing's copy): every old name, its declaration at the issue tree, and
+# the map entries that rename it. Cite none of these names; CodeSimulator.lean cites none today.
+# The 35 private ones are not reachable from CodeSimulator anyway; the two public ones
+# (rewind_scan_heads, rewind_heads) are named here so that no new citation appears.
+old name	declared at	renamed by (group:new name)
+catalogPrefixTM	private TuringMachine/Build/Primitives.lean:129	Prim:prependTM
+emitterTokenTM	private TuringMachine/Build/Primitives.lean:6087	Prim:unaryTokenTM
+emitterAppendTM	private TuringMachine/Build/Primitives.lean:6252	Prim:appendBitTM
+catalogPrefixTM_computes	private TuringMachine/Build/Primitives.lean:198	Prim:prependTM_computes
+pairExtract_computes	private TuringMachine/Build/Primitives.lean:960	Prim:pairExtractTM_computes
+pairValid_computes	private TuringMachine/Build/Primitives.lean:651	Prim:pairValidTM_computes
+incFixed_computes	private TuringMachine/Build/Primitives.lean:487	Prim:incFixedTM_computes
+loopHost	private TuringMachine/Build/Loop.lean:649	Loop:loopHostTM, LoopSpec:loopHostTM
+emCallTM	private TuringMachine/Build/Loop.lean:3897	Loop:callTM, LoopSpec:callTM
+a2_MapState	private TuringMachine/Build/Catalog.lean:5080	Fwd:FwdMapState, FwdAll:FwdMapState
+a2_mapStateFintype	private TuringMachine/Build/Catalog.lean:5086	Fwd:fwdMapStateFintype, FwdAll:fwdMapStateFintype
+a2_mapAct	private TuringMachine/Build/Catalog.lean:5090	Fwd:fwdMapAct, FwdAll:fwdMapAct
+a2_mapTM	private TuringMachine/Build/Catalog.lean:5100	Fwd:fwdMapTM, FwdAll:fwdMapTM
+f2_timedCondTM	private TuringMachine/Build/Catalog.lean:10105	Cond:timedCondTM
+f2_cond_time	private TuringMachine/Build/Catalog.lean:10324	Cond:timedCondTM_computes
+f2_cond_space	private TuringMachine/Build/Catalog.lean:10613	Cond:timedCondTM_spaceUsed
+f2_counterTM	private TuringMachine/Build/Catalog.lean:3370	Counter:lengthBitsTM, CounterTC:FinTM.lengthBitsTM
+f2_counter_computes	private TuringMachine/Build/Catalog.lean:3651	Counter:lengthBitsTM_computes, CounterTC:_root_.Turing.FinTM.lengthBitsTM_computes
+f2_counter_space	private TuringMachine/Build/Catalog.lean:3779	Counter:lengthBitsTM_spaceUsed, CounterTC:_root_.Turing.FinTM.lengthBitsTM_spaceUsed
+f2_branch_space	private TuringMachine/Build/Catalog.lean:10457	Branch:branchTM_spaceUsed
+f2_space_of_time	private TuringMachine/Build/Catalog.lean:4172	Space:ComputesInTime.spaceUsed_le
+f2_head_steps	private TuringMachine/Build/Catalog.lean:3250	Head:workTapePos_runFrom_le
+rewind_scan_heads	public TuringMachine/Build/Catalog.lean:10356	Rewind:MIG1Gate.rewind_scan_heads
+rewind_heads	public TuringMachine/Build/Catalog.lean:10395	Rewind:MIG1Gate.rewind_heads
+counterTM	private ClassP/TimeConstructible.lean:130	TC:_root_.Turing.FinTM.lengthBitsTM
+loopHost_contracts	private TuringMachine/Build/Loop.lean:2066	LoopSpec:loopHostTM_contracts
+emCall_first	private TuringMachine/Build/Loop.lean:4592	LoopSpec:callTM_run
+f2_loopHost	private TuringMachine/Build/Catalog.lean:6608	ExtHeads:loopHostTM
+f2_loopHost_contracts	private TuringMachine/Build/Catalog.lean:8093	ExtHeads:loopHost_contracts_heads
+a2_mapVirtual	private TuringMachine/Build/Catalog.lean:5153	FwdAll:fwdMapVirtual
+a2_map_reject	private TuringMachine/Build/Catalog.lean:5754	FwdAll:fwdMap_reject
+a2_map_launch	private TuringMachine/Build/Catalog.lean:5720	FwdAll:fwdMap_launch
+a2_mapVirtual_run	private TuringMachine/Build/Catalog.lean:5608	FwdAll:fwdMapVirtual_run
+a2_mapSetup_heads	private TuringMachine/Build/Catalog.lean:5709	FwdAll:fwdMapSetup_heads
+a2_map_space	private TuringMachine/Build/Catalog.lean:5821	FwdAll:fwdMap_space
+f2_catalogPolyUnaryTM	private TuringMachine/Build/Catalog.lean:2700	PolySpace:catalogPolyUnaryTM
+f2_poly_space	private TuringMachine/Build/Catalog.lean:3268	PolySpace:catalogPoly_space
+#
+# MIG-1 F-D's six retired R3 rows (unchanged rule): copyTM_run, transferTM_run, clearTM_run,
+# compareTM_run, incrementTM_run_succ, incrementTM_run_overflow; cite their framed _ofCfg forms.

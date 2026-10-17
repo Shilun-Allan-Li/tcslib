@@ -9,6 +9,7 @@ import TCSlib.Complexity.TuringMachine.StateRenaming
 import TCSlib.Complexity.TuringMachine.Finite
 import TCSlib.Complexity.TuringMachine.Nondeterministic
 import TCSlib.Complexity.TuringMachine.NondeterministicSpace
+import TCSlib.Complexity.TuringMachine.ChoiceReplay
 import TCSlib.Complexity.TuringMachine.Oracle
 import TCSlib.Complexity.TuringMachine.OracleFinite
 import TCSlib.Complexity.TuringMachine.OracleNondeterministic
@@ -26,12 +27,14 @@ import TCSlib.Complexity.TuringMachine.Build.Loop
 import TCSlib.Complexity.TuringMachine.Build.Primitives
 import TCSlib.Complexity.TuringMachine.Build.Embed
 import TCSlib.Complexity.TuringMachine.Build.Seam
+import TCSlib.Complexity.TuringMachine.Build.NDHost
 import TCSlib.Complexity.TuringMachine.Build.VirtualInput
 import TCSlib.Complexity.TuringMachine.Build.Zone
 import TCSlib.Complexity.TuringMachine.Build.Catalog
 import TCSlib.Complexity.TuringMachine.Build.OracleCall
 import TCSlib.Complexity.TuringMachine.SymbolLift
 import TCSlib.Complexity.TuringMachine.Build.CounterLoop
+import TCSlib.Complexity.TuringMachine.Build.InputWindow
 import TCSlib.Complexity.TuringMachine.Build.Scan
 import TCSlib.Complexity.TuringMachine.Build.InputCall
 import TCSlib.Complexity.TuringMachine.Build.CfgRecord
@@ -43,6 +46,12 @@ import TCSlib.Complexity.TuringMachine.Build.Contract
 import TCSlib.Complexity.TuringMachine.Build.NDCombinators
 import TCSlib.Complexity.TuringMachine.Build.NDClockHost
 import TCSlib.Complexity.TuringMachine.Build.NDClockHostRun
+import TCSlib.Complexity.TuringMachine.Build.StepClock
+import TCSlib.Complexity.TuringMachine.Build.WindowRun
+import TCSlib.Complexity.TuringMachine.Build.InputDevice
+import TCSlib.Complexity.TuringMachine.Build.StepBlock
+import TCSlib.Complexity.TuringMachine.Build.StepBlockLoop
+import TCSlib.Complexity.TuringMachine.Build.StepBlockForward
 import TCSlib.Complexity.TuringMachine.CodeSimulator
 import TCSlib.Complexity.TuringMachine.ChoiceWords
 import TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction
@@ -59,10 +68,13 @@ import TCSlib.Complexity.TuringMachine.CodeFormat
 import TCSlib.Complexity.TuringMachine.Codes2Tape
 import TCSlib.Complexity.TuringMachine.MathlibBridge
 import TCSlib.Complexity.TuringMachine.UniversalStartup
+import TCSlib.Complexity.TuringMachine.UniversalK
+import TCSlib.Complexity.TuringMachine.SelfUniversal
 import TCSlib.Complexity.TuringMachine.UniversalInterpreter
 import TCSlib.Complexity.TuringMachine.UniversalBlock
 import TCSlib.Complexity.TuringMachine.Universal
 import TCSlib.Complexity.TuringMachine.NDCodes
+import TCSlib.Complexity.TuringMachine.NDCodeSimulator
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -96,10 +108,13 @@ for the local modifications.
 * `Finite` — the bundled `FinTM` layer carrying `Fintype`/`DecidableEq` state instances;
   all headline definitions are stated over it.
 * `Nondeterministic` — binary-choice nondeterministic machines [AB09, §2.1.2]:
-  choice-word run semantics, all-branch halting, the bundled `FinNDTM` layer, and the
-  deterministic embedding (the classes live in `ClassNP/NTIME`).
+  choice-word run semantics, all-branch halting, the bundled `FinNDTM` layer, the
+  deterministic embedding, and the run-level transfer, slice, relabelling and input-locality
+  lemmas (the classes live in `ClassNP/NTIME`).
 * `NondeterministicSpace` — the space measure of binary-choice NDTMs along choice-word
   runs: visited cells, as for the deterministic `SPACE` [AB09, Definition 4.1].
+* `ChoiceReplay` — choice-tape determinization: the replay machine of an NDTM, which reads its
+  choices from an extra work tape, and the replay lemma [AB09, §2.1.2, Theorem 2.6]. Proved.
 * `Oracle` — oracle machines `OracleTM` [AB09, §3.4]: same configurations, oracle-dependent
   step; the embedding of plain machines and its oracle-independence sanity theorems.
 * `OracleFinite` — the bundled finite layer `FinOracleTM`, carrying well-formedness as a
@@ -111,6 +126,9 @@ for the local modifications.
 * `NDCodes` — codes for nondeterministic machines [AB09, §1.4, §3.2]: the two-work-tape
   coded normal form, its fixed serialization, and the scheme laws with the effective
   (canonizer) form.
+* `NDCodeSimulator` — the interpreter core for nondeterministic codes (C1): the serialization
+  bridge, the per-code replay canonizer and the core `R` [AB09, Exercise 2.6]. The canonizer
+  and the core are sorried.
 * `Simulation` — generic machine-construction gadgets: emission chains, control
   actions, disjoint tape-block embeddings with lockstep run lemmas, the input-head
   rewind, and the two-machine branch union.
@@ -128,6 +146,9 @@ for the local modifications.
   transformers with their returning flavors, seam composition with the
   general-configuration forms and the release adapter, and the space-annotated
   catalog rows.
+* `Build/NDHost` — the nondeterministic phase host over NDTM phases and the choice writer, for
+  the guess-first route of the nondeterministic time hierarchy (C1). The writer's bounded
+  contract is sorried.
 * `Build/VirtualInput` — virtual-input hosting (`machine-library-design.md` §13, Z1): a
   machine whose input is a buffered work-tape word runs inside a host, one step per step.
 * `Build/Zone` — the zoned tape carrier (§13, Z2), under the §13d revision: its two
@@ -139,6 +160,8 @@ for the local modifications.
   unchanged.
 * `Build/CounterLoop` — the counter-driven loop (§12.7) and the pattern expansion
   `expandTM` (§12.8, R8.6).
+* `Build/InputWindow` — the counter-driven copy of a bounded window of the native input onto a
+  work tape (C1; user decision 5 of 2026-10-13). Sorried.
 * `Build/Scan`, `Build/InputCall`, `Build/CfgRecord` — the §12.8 rows, with the field
   layout, compare, seeks and two-pass scan in `Build/Catalog`'s Part 3: the constant and
   advancing writers and the native-input copy and fold; the input call and input seek;
@@ -152,6 +175,19 @@ for the local modifications.
   plain host simulating an oracle machine with queries answered by a plain decider, the
   choice-word machine of an oracle NDTM, and the plain certificate shell. Fills in progress;
   each module's header carries its status.
+* `Build/StepBlock` — the step block (host H2, `machine-library-design.md` §14): one finite
+  machine per work-tape count `k` that performs one simulated transition of a `k`-tape
+  binary table held as data, with its contract `Turing.StepBlock.roundTM_effect`, the
+  record skipper and fixed-field reader, the per-round space ledger and the cofinal
+  iteration. Proved; promoted from `CodeSimulator` (H2-S gate closed, round 2).
+* `Build/StepBlockLoop` — the step block's counter loop (host H2's loop form, H2-L,
+  `machine-library-design.md` §14): the binary deadline clock over the step block, native and on
+  a buffered input, from any represented live start, with its early-escape bound and live
+  exits. Proved; harvested from `CodeSimulator` (H1 harvest gate passed, 2026-10-14).
+* `Build/StepBlockForward` — the step block's forwarding round loop (host H2's unclocked loop form,
+  H2-F, `machine-library-design.md` §14): any `k`-tape table simulated in macro-step lockstep with
+  its emissions forwarded, per-step cost bounded by the table's length, and a space ledger.
+  Statement gate passed 2026-10-15; the contract is sorried.
 * `CodeSimulator` — the format-parameterized uniform simulator over item 8's code formats
   (B5a): one bounded-acceptance interpreter and canonizer whose one- and two-tape instances are
   the EXPCOM and Codes2Tape code schemes. Fills in progress; the module header carries its
@@ -162,14 +198,24 @@ for the local modifications.
   choice-word law and the certificate shell (wave-1 statement gate, round 1).
 * `CounterProgInput` — transport a counter-program run past an input prefix
   that has already been consumed.
-* `Build/Contract` — the framed-contract structure (MIG-0a, `machine-library-design.md` §16a):
-  exact time, an endpoint function, an exit set with a no-earlier-exit cut and head envelopes, a
-  derived frames layer, and the compositions `trans`, `seq`, `inPhase`, `embed`, `branch` and
-  `ReturnContract.release` as thin wrappers over the public rows. Proved; MIG-0a gate closed.
+* `Build/Contract` — the framed-contract library (MIG-0a and MIG-0b, `machine-library-design.md`
+  §16a), the facade of `Build/Contract/{Basic,Seam,Embed,Catalog,Lift}`: exact time, an endpoint
+  function, an exit set with a no-earlier-exit cut and head envelopes, a derived frames layer,
+  the compositions `trans`, `seq`, `inPhase`, `embed`, `branch` and the releases as thin
+  wrappers over the public rows, and the segment, round and joint-trajectory layers with state
+  renaming and the macro-step lockstep. The core, `Build/Contract/Basic`, imports only the
+  machine core. Proved; the MIG-0a and MIG-0b gates closed.
 * `Build/NDCombinators`, `Build/NDClockHost`, `Build/NDClockHostRun` — the nondeterministic
   construction rows: run locality, output maps and the coin dispatcher for binary-choice
   machines, and the clocked restart host `Turing.FinNDTM.clockHost` (clocked runner and
   restart loop of [AB09, §7.4.2, Exercise 7.6(a)]) with its startup and round contracts.
+* `Build/StepClock`, `Build/WindowRun` — host H3 (`machine-library-design.md` §14): the
+  step-clocked runner, shared with the nondeterministic time hierarchy; the semantic windowed
+  run `windowRun`; the windowed round loop and the step-clocked windowed runner. Statement gate
+  passed 2026-10-14; the specification is proved, the machine contracts are sorried.
+* `Build/InputDevice` — host H5: the input-device interface, the native device, and the
+  bounded-prefix ruler device with its host transformer. Statement gate passed 2026-10-14; the
+  devices' facts are proved, the machine contracts are sorried.
 * `Build/Convention`, `Build/Wrappers`, `Build/Loop`, `Build/Primitives` — the
   machine-construction library (`machine-library-design.md`): the `Cfg.ofWords` seam
   discipline, the capture/silence and halt-redirect wrappers with the timed branch,
@@ -186,4 +232,11 @@ for the local modifications.
 * `Universal` — the universal machine [AB09, Theorem 1.9]: the all-string evaluator
   with linear overhead and divergence preservation, the relaxed quadratic
   total-function form, and the time-bounded variant (code-first input layout).
+* `UniversalK` — the `k`-generic universal machine (U2) [AB09, Theorem 1.9]: the `k`-tape
+  scheme interface `EffectiveCodeK` with the one- and two-tape schemes as instances, the startup,
+  the self-application universal machine with time and space ledgers, and the code-first
+  evaluator. Statement gate passed 2026-10-15; the three contracts are sorried.
+* `SelfUniversal` — the self-application universal machine `U₀` and its startup
+  [AB09, Exercise 4.1], the universal machine of the space hierarchy's window route.
+  Statement gate passed 2026-10-14; both are the `k = 1` cases of `UniversalK`'s statements.
 -/

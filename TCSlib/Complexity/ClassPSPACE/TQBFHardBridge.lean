@@ -22,6 +22,10 @@ the initial-code test on the block at `w`, the accepting-code test on the block 
 
 Infrastructure for `Complexity.TQBF_PSPACEHard`; not itself a book result.
 
+## Main definitions
+
+* none (theorems about the verifier `Complexity.TQBFHard.predB` of `TQBFHardVerifier`).
+
 ## Main results
 
 * `Complexity.TQBFHard.predB_iff` — the verifier on an assignment.

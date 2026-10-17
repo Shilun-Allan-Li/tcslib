@@ -23,6 +23,12 @@ arithmetic of `lv_run`. Every run is through register files bounded by `B`.
 Infrastructure for [AB09, §4.2, Theorem 4.13, membership half]; not itself a result of the
 book.
 
+## Main definitions
+
+* none (run theorems of the input reads and the matrix evaluation; the file also adds the
+  scoped tactics `bdt` and `sext`, which close register-file bounds and register-file
+  equations).
+
 ## Main results
 
 * `Complexity.LogProg.TQBFARM.read_t`, `read_f` — a read of the input.

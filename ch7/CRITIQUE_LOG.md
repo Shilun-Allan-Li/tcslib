@@ -283,3 +283,36 @@ Draft→printed retag in Classes/Adleman/SipserGacs/PolyTimeModel/ErrorReduction
 ## U22 — round 2 — VERDICT: PASS
 - [Advisory] SpaceAmplify.lean:31-36 — Main results should list halts_comp_pos / rewind_run_pos → done by orchestrator (comment-only).
 (Old statements of halts_comp, rewind_run, exists_bpDecides_of_advantage type-checked against HEAD; dependants build EXIT 0 (logs/build-175530-62197.log); sweep with positive control clean.)
+
+## Integration — merge `origin/main` into the campaign branch (2026-10-17, orchestrator record)
+Precedent: the chapters 3–4 campaign (PR #104 merge main into the campaign, then PR #105 campaign
+into main). Branch was 6 ahead / 112 behind `origin/main` after PR #105 and the MIG-1 / B6 / ARM
+dedup work landed on main.
+- Conflicts (5): `Randomized.lean`, `Randomized/Classes.lean`, `Randomized/ErrorReduction.lean`,
+  `Randomized/SipserGacs.lean` — prose only; main's PR #89 (draft→printed retag, comment-only) is
+  superseded by U21's retag and the Hoeffding-vs-Chernoff note, branch side kept.
+  `TuringMachine.lean` facade — both sides' imports and module bullets kept (main's `Build/Contract`
+  bullet, the branch's `Build/ND*` bullet, main's `StepClock`/`WindowRun`/`InputDevice` bullets).
+- Source fixes (3 files, all forced by main's ARM dedup payback `56716442`):
+  `BPPHard.lean` — the deferred "NDTM.relabelState → StateRenaming" advisory is now resolved by
+  main: `Turing.NDTM.relabelState` / `relabelState_runWith` live in `TuringMachine/Nondeterministic`;
+  the campaign's duplicate block (def + `relabelState_stepWith` + `relabelState_runWith`) deleted,
+  the one call site re-pointed (main's lemma takes the configuration before the coin word), the
+  Main-definitions bullet dropped. `BPLInPCount.lean`, `SpaceAmplifyPolyCode.lean` —
+  `Complexity.Codec.InWin N s C` → `Turing.Cfg.InWindow s C` (main's D1 rewrite) and
+  `Codec.inWin_runWith_take` → `Turing.NDTM.runWith_take_inWindow N.tm` (main deleted the disclosed
+  duplicate). No statement of a campaign declaration changed otherwise.
+- Build: direct-`lean` scratch builder (`scripts/policy_build.py`, one process at a time) over the
+  138 files main changed plus their 305 transitive importers; the Complexity closure (394 modules)
+  builds with 0 errors after the fixes; 3 `LMN/*Fourier*` modules never built on the branch were
+  built for main's new KKL importers. Stale `.lake` oleans of modules main deleted
+  (`BooleanAnalysis/KKL`) and of modules that failed were purged so that nothing loads a stale import.
+- Lint (`campaign_style_lint.py TCSlib/Complexity`): no finding present on the merged tree that is
+  absent from both the branch and main (36 FAIL / 35 WARN, all pre-existing; the facade-grandchild
+  rule fires on main's `Build/Contract/*` the same way as on `ClassP/BinaryArith/*`).
+- Sorries: none in the 90 campaign modules; the 25 sorried modules in the rebuilt set are main's
+  open host statements (MIG-1 stage S, B6) and the intentional `Expanders/Chernoff` stub.
+- Axiom sweep: `scratch/ch7_merge_axioms.lean` (untracked), module-index filter over the 90
+  campaign modules: 6616 constants swept, 0 outside {propext, Classical.choice, Quot.sound}; positive
+  control `Build/InputDevice` (sorried on main) reports 3/27 — the control fires. (`Build/StepClock`
+  was tried first and is inert: it carries no sorry despite the facade's note.)

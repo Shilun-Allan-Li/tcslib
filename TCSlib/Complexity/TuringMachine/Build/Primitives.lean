@@ -58,6 +58,24 @@ data-retaining pipelines), and the threaded-map combinator `pairMapSnd`;
 P10's narrowing is recorded, and result-bearing search is now
 `Turing.FinTM.exists_loopFindTM` (`machine-library-design.md` §9b).
 
+## Named witnesses and their specs (MIG-1)
+
+The rows' witnesses are public, each with its spec theorem:
+* `Turing.FinTM.prependTM` (`prependTM_computes`), `incFixedTM` (`incFixedTM_computes`),
+  `pairValidTM` (`pairValidTM_computes`), `pairExtractTM` (`pairExtractTM_computes`,
+  `pairExtractTM_fst`, `pairExtractTM_snd`, `pairExtractTM_concat`);
+* `polyUnaryTM` (`polyUnaryTM_computes`, `polyUnaryTM_spaceUsed`), `polyBitsTM`
+  (`polyBitsTM_computes`), `pairLenCheckTM` (`pairLenCheckTM_computes`), `stripLastTM`
+  (`stripLastTM_computes`);
+* `splitSolveTM` (`splitSolveTM_computes`, `splitSolveTM_spaceUsed`), `splitSolveWithTM`
+  (`splitSolveWithTM_computes`);
+* `unaryTokenTM` (`unaryTokenTM_computes`), `appendBitTM` (`appendBitTM_computes`).
+
+`polyUnaryTM_spaceUsed`, `unaryTokenTM_computes` and `appendBitTM_computes` are sorried
+until the fill F-B; every other spec has a proof, and the ones that cite a spec sorried until
+its own fill depend on it (`polyBitsTM_computes`, `stripLastTM_computes` and the three
+split-search specs).
+
 ## References
 
 * [AB09] S. Arora, B. Barak, *Computational Complexity: A Modern Approach*,
@@ -124,9 +142,10 @@ namespace Turing.FinTM
 adapted in-file from `ClassNP/Reductions.lean`; no private declaration from
 that module is used. Completed contracts retain their audited spec docstrings. -/
 
-/-- Emit the fixed prefix, then copy the input verbatim. No work tape is needed;
-the last finite state is the copy state. -/
-private def catalogPrefixTM (w : List Bool) : FinTM Bool where
+/-- **The prepending machine**. A machine with no work tapes that writes the fixed word `w` and then
+copies its input, so that it computes `x ↦ w ++ x`; its last state is the copy state. [AB09, §1.2]
+-/
+def prependTM (w : List Bool) : FinTM Bool where
   k := 0
   State := Fin (w.length + 1)
   tm :=
@@ -146,18 +165,18 @@ private def catalogPrefixCfg (w x : List Bool) (q : Option (Fin (w.length + 1)))
 /-- After `i` prefix steps exactly the first `i` fixed bits have been emitted,
 and the input head has not moved. -/
 private lemma catalogPrefixTM_emit (w x : List Bool) : ∀ i (hi : i ≤ w.length),
-    (catalogPrefixTM w).tm.runFrom ((catalogPrefixTM w).tm.initCfg x) i =
+    (prependTM w).tm.runFrom ((prependTM w).tm.initCfg x) i =
       catalogPrefixCfg w x (some ⟨i, by omega⟩) 1 (w.take i) := by
   intro i
   induction i with
   | zero =>
     intro hi
-    apply Cfg.ext_zero_tapes <;> simp [catalogPrefixCfg, catalogPrefixTM]
+    apply Cfg.ext_zero_tapes <;> simp [catalogPrefixCfg, prependTM]
   | succ i ih =>
     intro hi
     rw [MultiTapeTM.runFrom_succ_eq_step', ih (by omega)]
     have hlt : i < w.length := by omega
-    simp only [MultiTapeTM.step, catalogPrefixCfg, catalogPrefixTM, dif_pos hlt, Action.apply]
+    simp only [MultiTapeTM.step, catalogPrefixCfg, prependTM, dif_pos hlt, Action.apply]
     apply Cfg.ext_zero_tapes
     · rfl
     · simp
@@ -165,7 +184,7 @@ private lemma catalogPrefixTM_emit (w x : List Bool) : ∀ i (hi : i ≤ w.lengt
 
 /-- The copy phase emits one input bit per step and preserves the fixed prefix. -/
 private lemma catalogPrefixTM_copy (w x : List Bool) : ∀ i (hi : i ≤ x.length),
-    (catalogPrefixTM w).tm.runFrom
+    (prependTM w).tm.runFrom
       (catalogPrefixCfg w x (some ⟨w.length, by omega⟩) 1 w) i =
       catalogPrefixCfg w x (some ⟨w.length, by omega⟩) ⟨i + 1, by omega⟩
         (w ++ x.take i) := by
@@ -178,25 +197,25 @@ private lemma catalogPrefixTM_copy (w x : List Bool) : ∀ i (hi : i ≤ x.lengt
     have hsym : (catalogPrefixCfg w x (some ⟨w.length, by omega⟩)
         ⟨i + 1, by omega⟩ (w ++ x.take i)).inputSymbol = some (x[i]'(by omega)) :=
       inputSymbolInner i (by simp only [catalogPrefixCfg]; omega) (by omega)
-    change ((catalogPrefixTM w).tm.tr ⟨w.length, by omega⟩
+    change ((prependTM w).tm.tr ⟨w.length, by omega⟩
       (catalogPrefixCfg w x (some ⟨w.length, by omega⟩) ⟨i + 1, by omega⟩
         (w ++ x.take i)).inputSymbol _).apply _ = _
     rw [hsym]
-    simp only [catalogPrefixTM, Nat.lt_irrefl, ↓reduceDIte, Action.apply, catalogPrefixCfg]
+    simp only [prependTM, Nat.lt_irrefl, ↓reduceDIte, Action.apply, catalogPrefixCfg]
     apply Cfg.ext_zero_tapes
     · rfl
     · change moveInputPos (⟨i + 1, by omega⟩ : Fin (x.length + 2)) .pos = _
       rw [moveInputPos_pos_of_ne_right _ (by simp; omega)]
     · rw [List.take_succ, List.getElem?_eq_getElem (by omega), List.append_assoc]
 
-/-- Prefixing computes `w ++ x` in exactly the bound `|w| + |x| + 1`,
-including the final blank-reading halting step.
+/-- **The prepending machine's time**. The prepending machine computes `x ↦ w ++ x` within
+`|w| + n + 1` steps.
 
-**Proof sketch.** Concatenate the fixed-word emission run and the input-copy
-run; the input head then scans the right boundary, so one final step halts
-without emitting anything further. This also covers empty prefix and input. -/
-private lemma catalogPrefixTM_computes (w : List Bool) :
-    (catalogPrefixTM w).ComputesFunInTime (fun x => w ++ x) (fun n => w.length + n + 1) := by
+**Proof sketch.** Today's proof: the emission chain writes `w` in `|w|` steps
+(`catalogPrefixTM_emit`), the copy state copies the input in `|x|` more (`catalogPrefixTM_copy`),
+and the blank after the input halts. -/
+theorem prependTM_computes (w : List Bool) :
+    (prependTM w).ComputesFunInTime (fun x => w ++ x) (fun n => w.length + n + 1) := by
   intro x
   apply (FinTM.computesInTime_iff _ _ _ _).mpr
   dsimp only
@@ -204,7 +223,7 @@ private lemma catalogPrefixTM_computes (w : List Bool) :
     MultiTapeTM.runFrom_add, catalogPrefixTM_emit w x w.length (Nat.le_refl _)]
   simp only [List.take_length]
   rw [MultiTapeTM.runFrom_succ_eq_step', catalogPrefixTM_copy w x x.length (Nat.le_refl _)]
-  simp [catalogPrefixTM, catalogPrefixCfg, MultiTapeTM.step, Cfg.inputSymbol, Fin.ext_iff, Action.apply]
+  simp [prependTM, catalogPrefixCfg, MultiTapeTM.step, Cfg.inputSymbol, Fin.ext_iff, Action.apply]
 
 
 /-- A zero-work-tape configuration indexed by the number of input bits passed. -/
@@ -454,10 +473,11 @@ private lemma incFixed_cases (x : List Bool) :
       · exact Or.inr ⟨j + 1, rest, by simp [hx, List.replicate_succ],
           by simp [incFixed, hinc, List.replicate_succ]⟩
 
-/-- Detect a nonoverflowing word silently, rewind, then perform the carry
-while emitting. This is the enumerator's carry discipline adapted to native
-input and append-only output; unlike the in-place harvest, it validates first. -/
-private def incFixedTM : FinTM Bool where
+/-- **The fixed-width incrementer**. A machine with no work tapes that first scans its input for a
+`false` without emitting (an all-`true` word is the overflow, which halts with empty output),
+rewinds, and then emits the little-endian fixed-width successor `Turing.incFixed x`: `false` over
+the carry prefix, `true` at the first `false`, then the rest verbatim. -/
+def incFixedTM : FinTM Bool where
   k := 0
   State := Fin 4
   tm :=
@@ -478,13 +498,12 @@ private def incFixedTM : FinTM Bool where
           | some b => ⟨.pos, fun j => j.elim0, some b, some 3⟩
           | none => ⟨0, fun j => j.elim0, none, none⟩ }
 
-/-- Fixed-width increment is computed within `3(|x|+1)` steps, with no output
-on overflow, including the empty word.
-**Proof sketch.** The all-true case scans and halts silently. Otherwise let
-`j` be the first false's index. Detection plus rewind costs `2j+2`; carry
-emission and suffix copy cost `|x|+1`. Since `j < |x|`, the advertised
-linear envelope covers the whole run. -/
-private lemma incFixed_computes (x : List Bool) :
+/-- **The incrementer's time**. On every input the incrementer halts within `3·(|x| + 1)` steps with
+output `(incFixed x).getD []`.
+
+**Proof sketch.** Today's proof: the overflow scan, the rewind and the emitting pass each cost
+at most `|x| + 1` steps, by the case split `incFixed_cases`. -/
+theorem incFixedTM_computes (x : List Bool) :
     incFixedTM.ComputesInTime x ((incFixed x).getD []) (3 * (x.length + 1)) := by
   rcases incFixed_cases x with ⟨hx, hinc⟩ | ⟨j, rest, hx, hinc⟩
   · have hr := scanTrues_run incFixedTM.tm (0 : Fin 4) false (fun _ => rfl)
@@ -564,9 +583,10 @@ private lemma scanStep_right {S : Type} (tm : MultiTapeTM 0 Bool S)
   · exact moveInputPos_pos_of_ne_right _ (by simp [scanCfg]; omega)
   · rfl
 
-/-- Scan aligned pairs of bits, retaining just the first bit of the current
-block. Only a terminal verdict transition emits output. -/
-private def pairValidTM : FinTM Bool where
+/-- **The pair-grammar validator**. A machine with no work tapes that scans aligned pairs of input
+bits, remembering the first bit of the current pair, and emits the single verdict
+`(pairDecode x).isSome` at the separator `false, true` or at the first malformed pair. -/
+def pairValidTM : FinTM Bool where
   k := 0
   State := Option Bool
   tm :=
@@ -646,9 +666,12 @@ private lemma pairValid_run (x rest : List Bool) : ∀ pre (hx : x = pre ++ rest
       rw [pairValid_block x pre rest b c hx, if_neg h]
       cases b <;> cases c <;> simp_all [scanCfg, pairDecode]
 
-/-- The validity test starts with an empty aligned prefix and uses the
-linear envelope `|x|+1`. -/
-private lemma pairValid_computes (x : List Bool) :
+/-- **The validator's time**. On every input the validator halts within `|x| + 1` steps with output
+`[(pairDecode x).isSome]`.
+
+**Proof sketch.** Today's proof: one step per input symbol (`pairValid_run`), and the verdict
+is emitted on the halting transition. -/
+theorem pairValidTM_computes (x : List Bool) :
     pairValidTM.ComputesInTime x [(pairDecode x).isSome] (x.length + 1) := by
   obtain ⟨t, ht, hs, ho⟩ := pairValid_run x x [] rfl
   have hinit : pairValidTM.tm.initCfg x = scanCfg x (some none) 0 (by omega) [] := by
@@ -659,10 +682,11 @@ private lemma pairValid_computes (x : List Bool) :
     exact ⟨hs, ho⟩
   exact h.mono ht
 
-/-- A shared extractor buffers the decoded prefix, validates the separator,
-rewinds and replays the buffer, then optionally copies the suffix. The two
-flags select the first component, the second, or their concatenation. -/
-private def pairExtractTM (first second : Bool) : FinTM Bool where
+/-- **The pair extractor**. On `pairEncode a b` it validates the doubled prefix while buffering `a`
+on its single work tape, then emits `a` if `first` and the suffix `b` if `second`; on a malformed
+input it halts with empty output. One machine serves the first-component, second-component and
+concatenation rows. -/
+def pairExtractTM (first second : Bool) : FinTM Bool where
   k := 1
   State := Option Bool ⊕ Fin 3
   tm :=
@@ -955,9 +979,14 @@ private lemma extract_run (first second : Bool) (x rest : List Bool) :
         simp [extractCfg, pairDecode]
       · exact False.elim (h rfl)
 
-/-- The three extractor modes share the uniform linear envelope `5(|x|+1)`.
-The initial buffer and decoded prefix are empty. -/
-private lemma pairExtract_computes (first second : Bool) (x : List Bool) :
+/-- **The extractor's time**. On every input the extractor halts within `5·(|x| + 1)` steps; its
+output is the selected components of the decoded pair, and empty when the input is not a pair
+encoding.
+
+**Proof sketch.** Today's proof: the aligned scan reads the doubled prefix two cells at a time
+while buffering, the separator turns it into a rewind of the buffer, the replay emits `a`, and
+the suffix copy emits `b`; each phase is linear in `|x|` (`extract_run`). -/
+theorem pairExtractTM_computes (first second : Bool) (x : List Bool) :
     (pairExtractTM first second).ComputesInTime x
       (match pairDecode x with
         | some (a, b) => (if first then a else []) ++ (if second then b else [])
@@ -974,6 +1003,47 @@ private lemma pairExtract_computes (first second : Bool) (x : List Bool) :
     rw [hinit]
     exact ⟨hs, by simpa using ho⟩
   exact hh.mono (by simp only [List.length_nil] at ht; omega)
+
+/-- **First component**. The extractor at `(true, false)` computes the first component of a decoded
+pair, and `[]` on a malformed input, within `5·(n + 1)` steps.
+
+**Proof sketch.** Specialize `pairExtractTM_computes` and split on the decoding. -/
+theorem pairExtractTM_fst :
+    (pairExtractTM true false).ComputesFunInTime
+      (fun x => ((pairDecode x).map Prod.fst).getD []) (fun n => 5 * (n + 1)) := by
+  intro x
+  have h := pairExtractTM_computes true false x
+  cases hd : pairDecode x with
+  | none => simpa [hd] using h
+  | some p => cases p; simpa [hd] using h
+
+/-- **Second component**. The extractor at `(false, true)` computes the second component of a
+decoded pair, and `[]` on a malformed input, within `5·(n + 1)` steps.
+
+**Proof sketch.** Specialize `pairExtractTM_computes` and split on the decoding. -/
+theorem pairExtractTM_snd :
+    (pairExtractTM false true).ComputesFunInTime
+      (fun x => ((pairDecode x).map Prod.snd).getD []) (fun n => 5 * (n + 1)) := by
+  intro x
+  have h := pairExtractTM_computes false true x
+  cases hd : pairDecode x with
+  | none => simpa [hd] using h
+  | some p => cases p; simpa [hd] using h
+
+/-- **Concatenation of the components**. The extractor at `(true, true)` maps `pairEncode a b` to
+`a ++ b`, and a malformed input to `[]`, within `5·(n + 1)` steps.
+
+**Proof sketch.** Specialize `pairExtractTM_computes` and split on the decoding. -/
+theorem pairExtractTM_concat :
+    (pairExtractTM true true).ComputesFunInTime
+      (fun z => match pairDecode z with
+        | some (a, b) => a ++ b
+        | none => []) (fun n => 5 * (n + 1)) := by
+  intro x
+  have h := pairExtractTM_computes true true x
+  cases hd : pairDecode x with
+  | none => simpa [hd] using h
+  | some p => cases p; simpa [hd] using h
 
 /-! The unary polynomial generator below is adapted privately from
 `ClassNP/TMSAT.lean`, including its exact loop-depth ledger. -/
@@ -1034,6 +1104,24 @@ private def catalogPolyUnaryTM (c C : ℕ) : FinTM Bool where
         if h : j.val = 0 then ⟨0, fun _ => (none, 0), none, some (.advance 0)⟩
         else ⟨0, fun _ => (none, 0), some true,
           some (.emit ⟨j.val - 1, by omega⟩)⟩ }
+
+/-- **The unary polynomial generator**. The machine that writes `C·(|x| + 1)^e` ones: for `e = 0`
+the constant machine of `List.replicate C true`, and for `e = d + 1` the private engine with `d + 1`
+nested unary loop tapes of side `|x| + 1`, installed by one input scan, which emits `C` ones at each
+point of the box. -/
+def polyUnaryTM (C : ℕ) : ℕ → FinTM Bool
+  | 0 => constTM (List.replicate C true)
+  | d + 1 => catalogPolyUnaryTM d C
+
+/-- **The binary polynomial evaluator**. The machine computing `x ↦ Nat.bits (C·(|x| + 1)^e)`: the
+constant machine of the answer when `C = 0` or `e = 0`, and otherwise the unary generator buffered
+into the binary length counter. The split avoids the generator's linear banks where the answer is a
+constant (round-1 finding 5 of the space rows). -/
+def polyBitsTM (C e : ℕ) : FinTM Bool :=
+  if C = 0 then constTM (Nat.bits 0) else
+    match e with
+    | 0 => constTM (Nat.bits C)
+    | d + 1 => bufferedCompTM (polyUnaryTM C (d + 1)) lengthBitsTM
 
 /-- A loop configuration, with all unary tapes installed and arbitrary head positions. -/
 private def catalogPolyCfg {c C : ℕ} (x : List Bool) (q : ℕ)
@@ -1441,6 +1529,12 @@ private def pairCountTM (M : FinTM Bool) : FinTM Bool where
         | some d => if b = d then lenAction M .pos 0 none (some (.inr (.inr none)))
           else if b then lenAction M 0 0 (some false) none
           else lenAction M .pos 0 none (some (.inr (.inl 3))) }
+
+/-- **The threaded length check**. Capture the unary generator applied to the decoded first
+component, then validate the input pair and count its second component down against the captured
+unary word; emit the single verdict. -/
+def pairLenCheckTM (C e : ℕ) : FinTM Bool :=
+  pairCountTM (bufferedCompTM (pairExtractTM true false) (polyUnaryTM C e))
 
 /-- Checker configurations retain the completed generator bank and its
 captured output; `r` is the number of still available countdown cells. -/
@@ -1960,6 +2054,12 @@ private def anyTrueTM : FinTM Bool where
       | some true => ⟨0, fun i => i.elim0, some true, none⟩
       | none => ⟨0, fun i => i.elim0, some false, none⟩ }
 
+/-- **The marker strip**. The timed conditional whose decider tests whether the second component of
+the pair contains a `true`, whose positive branch is the private raw strip (copy the input, erase
+its final `false` run and last `true`, replay), and whose negative branch outputs `[]`. -/
+def stripLastTM : FinTM Bool :=
+  timedCondTM (bufferedCompTM (pairExtractTM false true) anyTrueTM) rawStripTM (constTM [])
+
 /-- The marker-existence scan halts within one more than the remaining length.
 **Proof sketch.** False bits advance silently; a true or the right boundary
 emits the corresponding verdict and halts. -/
@@ -2065,7 +2165,7 @@ private lemma catalogPayload_computes {Mg : FinTM Bool}
   intro x
   let y := (pairDecode x).map Prod.snd |>.getD []
   have hF : (pairExtractTM false true).ComputesInTime x y (5 * (x.length + 1)) := by
-    have hf := pairExtract_computes false true x
+    have hf := pairExtractTM_computes false true x
     cases hd : pairDecode x with
     | none => simpa [y, hd] using hf
     | some p => cases p; simpa [y, hd] using hf
@@ -2096,7 +2196,7 @@ exact budget `|w| + |x| + 1`. -/
 theorem computesFunInTime_prepend (w : List Bool) :
     ∃ (M : FinTM Bool) (c : ℕ),
       M.ComputesFunInTime (fun x => w ++ x) fun n => c * (n + 1) := by
-  refine ⟨catalogPrefixTM w, w.length + 1, fun x => (catalogPrefixTM_computes w x).mono ?_⟩
+  refine ⟨prependTM w, w.length + 1, fun x => (prependTM_computes w x).mono ?_⟩
   simp only [Nat.add_mul, Nat.mul_add, Nat.one_mul, Nat.mul_one]
   omega
 
@@ -2113,6 +2213,36 @@ theorem computesFunInTime_lengthBits :
       M.ComputesFunInTime (fun x => Nat.bits x.length) fun n => c * (n + 1) := by
   obtain ⟨_, c, _, M, hM⟩ := Complexity.timeConstructible_id
   exact ⟨M, c, hM⟩
+
+/-- **The unary generator's time**. The generator writes `C·(|x| + 1)^e` ones within
+`(C + 5e + 4)·(n + 1)^e` steps: the sharp degree `e`, not the row's `e + 1`.
+
+**Proof sketch.** For `e = 0`, `constTM_computes` gives `C + 1 ≤ C + 4` steps. For `e = d + 1`,
+today's private `catalogPoly_unary_computes d C` is exactly the bound
+`(C + 5(d + 1) + 4)·(n + 1)^(d + 1)`. This replaces Catalog's `f2_unary_sharp`, whose `e = 0` case
+went through a linear allowance only because it reused the constant row's existential constant. -/
+theorem polyUnaryTM_computes (C e : ℕ) :
+    (polyUnaryTM C e).ComputesFunInTime
+      (fun x => List.replicate (C * (x.length + 1) ^ e) true)
+      (fun n => (C + 5 * e + 4) * (n + 1) ^ e) := by
+  intro x
+  cases e with
+  | zero =>
+    simp only [polyUnaryTM, pow_zero, Nat.mul_one]
+    exact (constTM_computes (List.replicate C true) x).mono (by simp)
+  | succ d => exact catalogPoly_unary_computes d C x
+
+/-- **The unary generator's space**. At every time the generator has visited at most `5e·(|x| + 1)`
+work cells.
+
+**Proof sketch.** For `e = 0` there are no work tapes. For `e = d + 1`, `f2_poly_space`: the
+startup lasts `2(|x| + 1)` steps from the origin, and the loop invariant confines every later
+head to `[-1, |x| + 1]`, including after the halt; contain the visited images in the larger
+interval and sum over the `d + 1` tapes. The number of loop iterations never appears. -/
+theorem polyUnaryTM_spaceUsed (C e : ℕ) (x : List Bool) (t : ℕ) :
+    (polyUnaryTM C e).tm.spaceUsed ((polyUnaryTM C e).tm.initCfg x) t ≤
+      5 * e * (x.length + 1) := by
+  sorry
 
 /-- **P5, polynomial evaluation, unary clause**
 (harvest: the TMSAT batch's `polyUnaryTM`/`poly_unary_computes`, proved with
@@ -2142,6 +2272,45 @@ theorem computesFunInTime_polyUnary (C e : ℕ) :
     refine ⟨catalogPolyUnaryTM d C, C + 5 * (d + 1) + 4, fun x => ?_⟩
     apply (catalogPoly_unary_computes d C x).mono
     exact Nat.mul_le_mul_left _ (Nat.pow_le_pow_right (Nat.succ_pos x.length) (by omega))
+
+/-- **The binary evaluator's time**. The evaluator computes `x ↦ Nat.bits (C·(|x| + 1)^e)` within
+`(7C + 5e + 11)·(n + 1)^e` steps.
+
+**Proof sketch.** If `C = 0` or `e = 0`, the constant machine of the answer takes
+`|Nat.bits C| + 1 ≤ C + 1` steps (`Turing.length_bits_le_self`). Otherwise the buffered
+composition takes the generator's `(C + 5e + 4)·P` steps, `P = (n + 1)^e`, plus the
+intermediate's length `C·P` and `2`, plus the counter's `5·(C·P + 1)`, in all
+`(7C + 5e + 4)·P + 7 ≤ (7C + 5e + 11)·P` (`bufferedCompTM_computesInTime`). -/
+theorem polyBitsTM_computes (C e : ℕ) :
+    (polyBitsTM C e).ComputesFunInTime (fun x => Nat.bits (C * (x.length + 1) ^ e))
+      (fun n => (7 * C + 5 * e + 11) * (n + 1) ^ e) := by
+  intro x
+  have hp : 1 ≤ (x.length + 1) ^ e := Nat.one_le_pow _ _ (Nat.succ_pos _)
+  by_cases hC : C = 0
+  · subst hC
+    simp only [polyBitsTM, if_true, Nat.zero_mul]
+    refine (constTM_computes (Nat.bits 0) x).mono ?_
+    rw [Nat.zero_bits, List.length_nil]
+    exact Nat.mul_pos (by omega) hp
+  · cases e with
+    | zero =>
+      simp only [polyBitsTM, hC, if_false, pow_zero, Nat.mul_one]
+      refine (constTM_computes (Nat.bits C) x).mono ?_
+      have := Turing.length_bits_le_self C
+      omega
+    | succ d =>
+      simp only [polyBitsTM, hC, if_false]
+      have h := bufferedCompTM_computesInTime (polyUnaryTM C (d + 1)) lengthBitsTM
+        (polyUnaryTM_computes C (d + 1) x)
+        (lengthBitsTM_computes (List.replicate (C * (x.length + 1) ^ (d + 1)) true))
+      simp only [List.length_replicate] at h
+      refine h.mono ?_
+      dsimp only
+      generalize (x.length + 1) ^ (d + 1) = P at hp ⊢
+      calc (C + 5 * (d + 1) + 4) * P + C * P + 2 + 5 * (C * P + 1)
+          = (7 * C + 5 * (d + 1) + 4) * P + 7 := by ring
+        _ ≤ (7 * C + 5 * (d + 1) + 4) * P + 7 * P := by omega
+        _ = (7 * C + 5 * (d + 1) + 11) * P := by ring
 
 /-- **P5, polynomial evaluation, binary clause**
 (harvest: the TMSAT batch's composition of the unary generator with the
@@ -2211,7 +2380,7 @@ theorem computesFunInTime_pairFst :
       M.ComputesFunInTime (fun x => ((pairDecode x).map Prod.fst).getD [])
         fun n => c * (n + 1) := by
   refine ⟨pairExtractTM true false, 5, fun x => ?_⟩
-  have h := pairExtract_computes true false x
+  have h := pairExtractTM_computes true false x
   cases hd : pairDecode x with
   | none => simpa [hd] using h
   | some p => cases p; simpa [hd] using h
@@ -2230,7 +2399,7 @@ theorem computesFunInTime_pairSnd :
       M.ComputesFunInTime (fun x => ((pairDecode x).map Prod.snd).getD [])
         fun n => c * (n + 1) := by
   refine ⟨pairExtractTM false true, 5, fun x => ?_⟩
-  have h := pairExtract_computes false true x
+  have h := pairExtractTM_computes false true x
   cases hd : pairDecode x with
   | none => simpa [hd] using h
   | some p => cases p; simpa [hd] using h
@@ -2246,7 +2415,7 @@ theorem computesFunInTime_pairValid :
     ∃ (M : FinTM Bool) (c : ℕ),
       M.ComputesFunInTime (fun x => [(pairDecode x).isSome])
         fun n => c * (n + 1) := by
-  exact ⟨pairValidTM, 1, fun x => by simpa using pairValid_computes x⟩
+  exact ⟨pairValidTM, 1, fun x => by simpa using pairValidTM_computes x⟩
 
 /-- **P13, pair to concatenation** (round-2 addition
 per round-1 finding 3 — the D-WRAP obligation's exact shape). On
@@ -2266,7 +2435,7 @@ theorem computesFunInTime_pairConcat :
           | none => [])
         fun n => c * (n + 1) := by
   refine ⟨pairExtractTM true true, 5, fun x => ?_⟩
-  have h := pairExtract_computes true true x
+  have h := pairExtractTM_computes true true x
   cases hd : pairDecode x with
   | none => simpa [hd] using h
   | some p => cases p; simpa [hd] using h
@@ -2736,6 +2905,65 @@ theorem computesFunInTime_pairMapSnd {Mg : FinTM Bool}
   rw [heq] at hc
   exact hc.mono (by dsimp only; omega)
 
+/-- **The threaded length check's time**. On `pairEncode a b` the check outputs
+`[decide (|b| ≤ C·(|a| + 1)^e)]`, and `[false]` on a malformed input, within
+`(C + 5e + 17)·((n + 1)^e + n + 1)` steps.
+
+**Proof sketch.** The time half of Catalog's `computesFunInTime_pairLenCheck_spaceUsed`, over the
+named witness: the decoded first component has length at most `n` (Catalog's `f2_first_length`,
+moved), so the buffered composition costs
+`5(n + 1) + n + 2 + (C + 5e + 4)·(n + 1)^e ≤ (C + 5e + 12)·((n + 1)^e + n + 1)`, and the private
+`pairCount_computes` adds `2n + 5`. -/
+theorem pairLenCheckTM_computes (C e : ℕ) :
+    (pairLenCheckTM C e).ComputesFunInTime
+      (fun x => [match pairDecode x with
+        | some (a, b) => decide (b.length ≤ C * (a.length + 1) ^ e)
+        | none => false])
+      (fun n => (C + 5 * e + 17) * ((n + 1) ^ e + n + 1)) := by
+  have hlen (x : List Bool) : (((pairDecode x).map Prod.fst).getD []).length ≤ x.length := by
+    cases hd : pairDecode x with
+    | none => simp
+    | some ab =>
+      rcases ab with ⟨a, b⟩
+      simp only [Option.map_some, Option.getD_some]
+      rw [Turing.eq_pairEncode_of_pairDecode x a b hd, length_pairEncode]
+      omega
+  have hG : (bufferedCompTM (pairExtractTM true false) (polyUnaryTM C e)).ComputesFunInTime
+      (fun x => List.replicate
+        (C * ((((pairDecode x).map Prod.fst).getD []).length + 1) ^ e) true)
+      (fun n => (C + 5 * e + 12) * ((n + 1) ^ e + n + 1)) := by
+    intro x
+    have hpow := Nat.pow_le_pow_left (Nat.add_le_add_right (hlen x) 1) e
+    have h := bufferedCompTM_computesInTime _ _ (pairExtractTM_fst x)
+      (polyUnaryTM_computes C e (((pairDecode x).map Prod.fst).getD []))
+    refine h.mono ?_
+    dsimp only
+    have := hlen x
+    have h3 := Nat.mul_le_mul_left (C + 5 * e + 4) hpow
+    generalize (x.length + 1) ^ e = P at h3 ⊢
+    generalize ((((pairDecode x).map Prod.fst).getD []).length + 1) ^ e = P' at h3 ⊢
+    have h4 : (C + 5 * e + 12) * (P + x.length + 1) =
+        (C + 5 * e + 4) * P + 8 * P + (C + 5 * e + 12) * (x.length + 1) := by ring
+    have h5 : 8 * (x.length + 1) ≤ (C + 5 * e + 12) * (x.length + 1) :=
+      Nat.mul_le_mul_right _ (by omega)
+    omega
+  intro x
+  have h := pairCount_computes hG x
+  have hh : (pairLenCheckTM C e).ComputesInTime x
+      [match pairDecode x with
+        | some (a, b) => decide (b.length ≤ C * (a.length + 1) ^ e)
+        | none => false]
+      ((C + 5 * e + 12) * ((x.length + 1) ^ e + x.length + 1) + 2 * x.length + 5) := by
+    cases hd : pairDecode x with
+    | none => simpa [pairLenCheckTM, hd] using h
+    | some uv => cases uv; simpa [pairLenCheckTM, hd] using h
+  refine hh.mono ?_
+  dsimp only
+  generalize (x.length + 1) ^ e = P
+  have h6 : (C + 5 * e + 17) * (P + x.length + 1) =
+      (C + 5 * e + 12) * (P + x.length + 1) + 5 * (P + x.length + 1) := by ring
+  omega
+
 /-- **P8, threaded length-bound check** (new; the
 original-bound re-check discipline of the Exercise-2.1 reverse verifier,
 in threaded form). On `pairEncode a b`, decide `|b| ≤ C·(|a|+1)^e` — the
@@ -2796,6 +3024,57 @@ theorem computesFunInTime_pairLenCheck (C e : ℕ) :
     _ ≤ d * ((a + b * (a + 1) ^ (e + 1) + 1) * P) + 7 * P :=
       Nat.add_le_add (Nat.mul_le_mul_left d hsum) (by omega)
     _ = (d * (a + b * (a + 1) ^ (e + 1) + 1) + 7) * P := by ring
+
+/-- **The marker strip's time**. On `pairEncode a v` the strip outputs `pairEncode a u` where `u` is
+`v` cut at its last `true` (`Turing.splitAtLastTrue`), and `[]` if `v` has no `true` or the input is
+malformed, within `150·(n + 1)` steps: linear.
+
+**Proof sketch.** Today's proof of `computesFunInTime_stripLast` before its weakening (and
+Catalog's `f2_strip_linear`), with the constants of the named parts: the decider
+(`bufferedCompTM_computesFunInTime` over `pairExtractTM_snd` and the private `anyTrue_computes`)
+runs within `2·(5(n + 1) + (5(n + 1) + 1) + 1)`, the raw strip within `4(n + 1)`
+(`rawStrip_computes`) and the empty constant within `1`, and `timedCondTM_computes` gives
+`5·(20(n + 1) + 4 + 4(n + 1) + 1) ≤ 150·(n + 1)`. The output identity is the private
+`catalogMarker_cases` with `Turing.eq_pairEncode_of_pairDecode`. -/
+theorem stripLastTM_computes :
+    stripLastTM.ComputesFunInTime
+      (fun x => match pairDecode x with
+        | some (a, v) =>
+          match splitAtLastTrue v with
+          | some u => pairEncode a u
+          | none => []
+        | none => [])
+      (fun n => 150 * (n + 1)) := by
+  have hD := bufferedCompTM_computesFunInTime pairExtractTM_snd anyTrue_computes
+    (by intro m n h; exact Nat.add_le_add_right h 1)
+  have hE : (constTM []).ComputesFunInTime (fun _ => []) (fun _ => 1) :=
+    fun x => constTM_computes [] x
+  have hM := timedCondTM_computes (p := fun x => ((pairDecode x).map Prod.snd |>.getD []).any id)
+    hD rawStrip_computes hE
+  intro x
+  have hm := hM x
+  have hh : stripLastTM.ComputesInTime x
+      (match pairDecode x with
+        | some (u, v) => match splitAtLastTrue v with
+          | some w => pairEncode u w
+          | none => []
+        | none => [])
+      (5 * (2 * (5 * (x.length + 1) + (5 * (x.length + 1) + 1) + 1) +
+        max (4 * (x.length + 1)) 1 + 1)) := by
+    cases hd : pairDecode x with
+    | none => simpa [stripLastTM, hd] using hm
+    | some uv =>
+      rcases uv with ⟨u, v⟩
+      rcases catalogMarker_cases v with ⟨ha, hs⟩ | ⟨w, ha, hs, hp⟩
+      · simpa [stripLastTM, hd, ha, hs] using hm
+      · have hx : splitAtLastTrue x = some (pairEncode u w) := by
+          rw [Turing.eq_pairEncode_of_pairDecode x u v hd]
+          exact hp _
+        simpa [stripLastTM, hd, ha, hs, hx] using hm
+  refine hh.mono ?_
+  dsimp only
+  have : max (4 * (x.length + 1)) 1 = 4 * (x.length + 1) := max_eq_left (by omega)
+  omega
 
 /-- **P9, marker strip** (harvest: the semantic layer
 is the Exercise-2.1 batch's proved `stripCertificate` family; the machine
@@ -3654,6 +3933,17 @@ private def splitBodyTM (M : FinTM Bool) (start : M.State) : FinTM Bool where
         else ((splitRestoreTM M.k).tm.tr p inp work).mapState .restore
       | .emit p => ((splitEmitTM M.k).tm.tr p inp work).mapState .emit }
 
+/-- **The padding split search**. The find-mode loop host over the split-search body, fuelled by the
+binary length counter: the round state is a candidate `i` in unary, and each round evaluates
+`C·(i + 1)^e` in unary by the source of today's case split (the prepending machine of
+`List.replicate C true` for `e = 0`, the unary engine for `e = d + 1`), compares `i + C·(i + 1)^e`
+with `|w|`, and either emits `pairEncode (w.take i) (w.drop i)` or advances. -/
+def splitSolveTM (C : ℕ) : ℕ → FinTM Bool
+  | 0 => loopHostTM (splitBodyTM (prependTM (List.replicate C true))
+      (0 : Fin ((List.replicate C true).length + 1))) lengthBitsTM .anchor true
+  | e + 1 => loopHostTM (splitBodyTM (catalogPolyUnaryTM e C) (.loop (Fin.last e)))
+      lengthBitsTM .anchor true
+
 /-- The source bank has the candidate's successor length on each tape and
 all heads at zero; its virtual input is empty. -/
 private def splitBank (M : FinTM Bool) (s : List Bool)
@@ -4179,18 +4469,20 @@ private lemma splitSource_poly (c C : ℕ) (s : List Bool) :
 /-- Exponent zero uses the fixed prefix source on empty virtual input, with
 no scratch tapes. Its last blank-reading step is included in the bound. -/
 private lemma splitSource_constant (C : ℕ) (s : List Bool) :
-    (catalogPrefixTM (List.replicate C true)).tm.runFrom
-      (splitBank (catalogPrefixTM (List.replicate C true)) s (some (0 : Fin ((List.replicate C true).length + 1))) []) (C + 1) =
-      splitBank (catalogPrefixTM (List.replicate C true)) s none (List.replicate C true) := by
-  have hi : splitBank (catalogPrefixTM (List.replicate C true)) s (some (0 : Fin ((List.replicate C true).length + 1))) [] =
-      (catalogPrefixTM (List.replicate C true)).tm.initCfg [] := by
+    (prependTM (List.replicate C true)).tm.runFrom
+      (splitBank (prependTM (List.replicate C true)) s
+        (some (0 : Fin ((List.replicate C true).length + 1))) []) (C + 1) =
+      splitBank (prependTM (List.replicate C true)) s none (List.replicate C true) := by
+  have hi : splitBank (prependTM (List.replicate C true)) s
+      (some (0 : Fin ((List.replicate C true).length + 1))) [] =
+      (prependTM (List.replicate C true)).tm.initCfg [] := by
     apply Cfg.ext_zero_tapes <;> rfl
   rw [hi, MultiTapeTM.runFrom_succ_eq_step']
   have he := catalogPrefixTM_emit (List.replicate C true) [] C (by simp)
   rw [he]
   simp only [List.take_replicate, Nat.min_self]
   apply Cfg.ext_zero_tapes <;>
-    simp [MultiTapeTM.step, catalogPrefixTM, catalogPrefixCfg, Cfg.inputSymbol,
+    simp [MultiTapeTM.step, prependTM, catalogPrefixCfg, Cfg.inputSymbol,
       Fin.ext_iff, Action.apply, splitBank]
 
 /-- The invariant bounds every candidate, including the one-past-end stall,
@@ -4261,7 +4553,7 @@ private lemma splitSolve_closed (C e : ℕ) :
         fun n => c * (n + 1) ^ (e + 2) := by
   cases e with
   | zero =>
-    apply splitSolve_source C 0 (catalogPrefixTM (List.replicate C true))
+    apply splitSolve_source C 0 (prependTM (List.replicate C true))
       (0 : Fin ((List.replicate C true).length + 1)) (fun _ => C + 1)
     · intro s
       simpa using splitSource_constant C s
@@ -4272,6 +4564,131 @@ private lemma splitSolve_closed (C e : ℕ) :
     · exact splitSource_poly e C
     · intro l
       exact Nat.add_le_add_right (catalogPolyCost_le (l + 1) C (by omega) (e + 1)) 1
+
+/-- The split-search round contracts in the loop's hypothesis form, for any exact unary source
+(today's `splitSolve_source`, with the round budget `(A + 5)·(n + 1)^(e + 1)`). -/
+private theorem split_hyps (C e : ℕ) (M : FinTM Bool) (start : M.State) (B : ℕ → ℕ)
+    (hsource : ∀ s : List Bool, M.tm.runFrom (splitBank M s (some start) []) (B s.length) =
+      splitBank M s none (List.replicate (C * (s.length + 1) ^ e) true))
+    (hbound : ∀ l, B l ≤ (C + 1 + 5 * e) * (l + 1) ^ e + 1) :
+    (∀ w : List Bool, ∃ t ≤ ((C + 1 + 5 * e) * 2 ^ e + 40 + 5) * (w.length + 1) ^ (e + 1),
+      (∀ t' < t, ((splitBodyTM M start).tm.runFrom ((splitBodyTM M start).tm.initCfg w)
+        t').state ≠ some .anchor) ∧
+      (splitBodyTM M start).tm.runFrom ((splitBodyTM M start).tm.initCfg w) t =
+        Cfg.ofWords .anchor (stateWord (splitBodyTM M start).k [])) ∧
+    (∀ (w s : List Bool), s.length ≤ w.length + 1 →
+      ∃ t, 0 < t ∧ t ≤ ((C + 1 + 5 * e) * 2 ^ e + 40 + 5) * (w.length + 1) ^ (e + 1) ∧
+        (∀ t', 0 < t' → t' < t →
+          ((splitBodyTM M start).tm.runFrom (Cfg.ofWords (input := w) .anchor
+            (stateWord (splitBodyTM M start).k s)) t').state ≠ some .anchor) ∧
+        if splitAccept C e w s then
+          ((splitBodyTM M start).tm.runFrom (Cfg.ofWords (input := w) .anchor
+            (stateWord (splitBodyTM M start).k s)) t).state = none ∧
+          ((splitBodyTM M start).tm.runFrom (Cfg.ofWords (input := w) .anchor
+            (stateWord (splitBodyTM M start).k s)) t).output =
+              pairEncode (w.take s.length) (w.drop s.length)
+        else
+          (splitBodyTM M start).tm.runFrom (Cfg.ofWords (input := w) .anchor
+            (stateWord (splitBodyTM M start).k s)) t =
+              Cfg.ofWords .anchor (stateWord (splitBodyTM M start).k (splitStep w s))) := by
+  refine ⟨fun w => ⟨0, Nat.zero_le _, fun j hj => absurd hj (Nat.not_lt_zero _),
+    splitBody_start M start w⟩, fun w s hs => ?_⟩
+  obtain ⟨t, htpos, ht, hsafe, hend⟩ := splitBody_round M start w s
+    (List.replicate (C * (s.length + 1) ^ e) true) (B s.length) (hsource s)
+  refine ⟨t, htpos, (ht.trans (splitBody_envelope C e s.length w.length (B s.length) hs
+    (hbound s.length))).trans (Nat.mul_le_mul_right _ (Nat.le_add_right _ _)), hsafe, ?_⟩
+  simpa only [splitAccept, List.length_replicate] using hend
+
+/-- The two exact unary sources of `splitSolveTM` (today's `splitSolve_closed`). -/
+private theorem split_sources (C e : ℕ) :
+    ∃ (M : FinTM Bool) (start : M.State) (B : ℕ → ℕ),
+      splitSolveTM C e = loopHostTM (splitBodyTM M start) lengthBitsTM .anchor true ∧
+      (∀ s : List Bool, M.tm.runFrom (splitBank M s (some start) []) (B s.length) =
+        splitBank M s none (List.replicate (C * (s.length + 1) ^ e) true)) ∧
+      (∀ l, B l ≤ (C + 1 + 5 * e) * (l + 1) ^ e + 1) := by
+  cases e with
+  | zero =>
+    exact ⟨prependTM (List.replicate C true), (0 : Fin ((List.replicate C true).length + 1)),
+      fun _ => C + 1, rfl, fun s => by simpa using splitSource_constant C s, fun l => by simp⟩
+  | succ e =>
+    exact ⟨catalogPolyUnaryTM e C, .loop (Fin.last e),
+      fun l => catalogPolyCost (l + 1) C (e + 1) + 1, rfl, splitSource_poly e C,
+      fun l => Nat.add_le_add_right (catalogPolyCost_le (l + 1) C (by omega) (e + 1)) 1⟩
+
+/-- The length counter at the split search's round budget. -/
+private theorem split_fuel (C e : ℕ) :
+    lengthBitsTM.ComputesFunInTime (fun w => Nat.bits (id w.length))
+      (fun n => ((C + 1 + 5 * e) * 2 ^ e + 40 + 5) * (n + 1) ^ (e + 1)) := by
+  intro w
+  refine (lengthBitsTM_computes w).mono ?_
+  have hn : w.length + 1 ≤ (w.length + 1) ^ (e + 1) := Nat.le_self_pow (Nat.succ_ne_zero e) _
+  exact (Nat.mul_le_mul_left 5 hn).trans (Nat.mul_le_mul_right _ (Nat.le_add_left _ _))
+
+/-- **The padding split search's time**. The split search computes
+`w ↦ pairEncode (w.take i) (w.drop i)` for the solution `i` of `i + C·(i + 1)^e = |w|`
+(`Turing.solveSplit`), and `[]` if there is none, within
+`20·((C + 1 + 5e)·2^e + 46)·(n + 1)^(e + 2)` steps.
+
+**Proof sketch.** Today's `splitSolve_closed`, `splitSolve_source` and `splitSolve_of_body`,
+with the existential loop replaced by `loopHostTM_finds`: the body coefficient is
+`A = (C + 1 + 5e)·2^e + 40` (`splitBody_envelope`), the counter's `5` enlarges it to the round
+budget `T n = (A + 5)·(n + 1)^(e + 1)`, the fuel is `R n = n`, and `splitLoop_bound` turns
+`10·(T n + 1)·(n + 2)` into `2·10·(A + 6)·(n + 1)^(e + 2)`; `splitLoop_result` identifies the
+first accepting candidate with `solveSplit`. -/
+theorem splitSolveTM_computes (C e : ℕ) :
+    (splitSolveTM C e).ComputesFunInTime
+      (fun w => match solveSplit C e w.length with
+        | some i => pairEncode (w.take i) (w.drop i)
+        | none => [])
+      (fun n => 20 * ((C + 1 + 5 * e) * 2 ^ e + 46) * (n + 1) ^ (e + 2)) := by
+  obtain ⟨M, start, B, heq, hsource, hbound⟩ := split_sources C e
+  obtain ⟨hstart, hround⟩ := split_hyps C e M start B hsource hbound
+  rw [heq]
+  have hM := loopHostTM_finds (splitBodyTM M start) lengthBitsTM .anchor
+    (fun w s => s.length ≤ w.length + 1) splitStep (splitAccept C e)
+    (fun w s => pairEncode (w.take s.length) (w.drop s.length)) (fun _ => [])
+    id (fun n => ((C + 1 + 5 * e) * 2 ^ e + 40 + 5) * (n + 1) ^ (e + 1))
+    (split_fuel C e) (by intro w; simp) splitStep_inv hstart hround
+  intro w
+  have hm := hM w
+  dsimp only [id_eq] at hm
+  have hb : 10 * (((C + 1 + 5 * e) * 2 ^ e + 40 + 5) * (w.length + 1) ^ (e + 1) + 1) *
+      (w.length + 2) ≤ 20 * ((C + 1 + 5 * e) * 2 ^ e + 46) * (w.length + 1) ^ (e + 2) :=
+    (splitLoop_bound 10 ((C + 1 + 5 * e) * 2 ^ e + 40 + 5) e w.length).trans
+      (le_of_eq (by ring))
+  convert hm.mono hb using 1
+  exact (splitLoop_result C e w).symm
+
+/-- **The padding split search's space**. At every time the split search has visited at most
+`23·k·((C + 1 + 5e)·2^e + 46)·(|x| + 1)^(e + 1)` work cells, where `k` is its tape count: one
+polynomial degree below its time.
+
+**Proof sketch.** The space half of Catalog's `f2_splitSolve_of_body`, over the named witness:
+`loopHostTM_spaceUsed_le_budget` with the round budget `T n = (A + 5)·(n + 1)^(e + 1)` of
+`splitSolveTM_computes` gives `23·k·(T |x| + 1) ≤ 23·k·(A + 6)·(|x| + 1)^(e + 1)`. The round
+contracts are today's (the Catalog copy `f2_splitBody_round` has the same statement as
+`splitBody_round`); the number of rounds does not appear. -/
+theorem splitSolveTM_spaceUsed (C e : ℕ) (x : List Bool) (t : ℕ) :
+    (splitSolveTM C e).tm.spaceUsed ((splitSolveTM C e).tm.initCfg x) t ≤
+      23 * (splitSolveTM C e).k * ((C + 1 + 5 * e) * 2 ^ e + 46) * (x.length + 1) ^ (e + 1) := by
+  obtain ⟨M, start, B, heq, hsource, hbound⟩ := split_sources C e
+  obtain ⟨hstart, hround⟩ := split_hyps C e M start B hsource hbound
+  rw [heq]
+  refine (loopHostTM_spaceUsed_le_budget (splitBodyTM M start) lengthBitsTM .anchor
+    (fun w s => s.length ≤ w.length + 1) splitStep (splitAccept C e)
+    (fun w s => pairEncode (w.take s.length) (w.drop s.length)) true (fun _ => [])
+    id (fun n => ((C + 1 + 5 * e) * 2 ^ e + 40 + 5) * (n + 1) ^ (e + 1))
+    (split_fuel C e) (by intro w; simp) splitStep_inv hstart hround x t).trans ?_
+  have hp : 1 ≤ (x.length + 1) ^ (e + 1) := Nat.one_le_pow _ _ (Nat.succ_pos _)
+  generalize (x.length + 1) ^ (e + 1) = P at hp ⊢
+  generalize (C + 1 + 5 * e) * 2 ^ e = A
+  calc 23 * (loopHostTM (splitBodyTM M start) lengthBitsTM .anchor true).k *
+        ((A + 40 + 5) * P + 1)
+      ≤ 23 * (loopHostTM (splitBodyTM M start) lengthBitsTM .anchor true).k *
+        ((A + 46) * P) := Nat.mul_le_mul_left _ (by
+          have : (A + 46) * P = (A + 40 + 5) * P + P := by ring
+          omega)
+    _ = _ := by ring
 
 /-- **P10, padding split search** (new; the bounded
 search both padding constructions perform, realizable as a
@@ -4323,7 +4740,7 @@ most twice the width plus two. -/
 theorem computesFunInTime_incFixed :
     ∃ (M : FinTM Bool) (c : ℕ),
       M.ComputesFunInTime (fun x => (incFixed x).getD []) fun n => c * (n + 1) := by
-  exact ⟨incFixedTM, 3, incFixed_computes⟩
+  exact ⟨incFixedTM, 3, incFixedTM_computes⟩
 
 /-! Emitter implementation. The append-bit and unary-token contracts are
 proved below with coefficients one and three. The width-parametric split
@@ -5489,6 +5906,18 @@ private def emitterP2BodyTM (C D : FinTM Bool) (hk : 0 < C.k) (hl : 0 < D.k)
       | .emit p => ((embedEmitTM (emitterP2OneIndex (0 : Fin (C.k + D.k + 1)))
           (splitEmitTM 0).tm).tr p inp work).mapState .emit }
 
+/-- **The width-parametric split search**. The find-mode loop host, fuelled by the binary length
+counter, over the native split body that, per candidate `i` in unary, evaluates the width machine
+`E` on the candidate and the length counter on the suffix through two install-mode clean calls,
+compares the two binary words, and either emits the split or advances. The width function itself
+does not occur in the machine. -/
+def splitSolveWithTM (E : FinTM Bool) : FinTM Bool :=
+  loopHostTM
+    (emitterP2BodyTM (callTM E false) (callTM lengthBitsTM false) (callTM_k_pos E false)
+      (callTM_k_pos lengthBitsTM false) (callEntry E false) (callExit E false)
+      (callEntry lengthBitsTM false) (callExit lengthBitsTM false))
+    lengthBitsTM .anchor true
+
 /-- Genuine startup is already the canonical empty-candidate anchor. -/
 private lemma emitterP2_body_start (C D : FinTM Bool) (hk : 0 < C.k) (hl : 0 < D.k)
     (ce cx : C.State) (de dx : D.State) (w : List Bool) :
@@ -6049,6 +6478,132 @@ private lemma emitterP2_closed (f : ℕ → ℕ) (E : FinTM Bool) (TE : ℕ → 
         Nat.add_le_add (Nat.add_le_add hCa' hDb') (Nat.mul_le_mul_left _ hsum)
       _ = A * (TE (w.length + 1) + w.length + 2) := by dsimp [A, H]; ring
 
+/-- **The width-parametric split search's time**. If `E` computes `s ↦ Nat.bits (f |s|)` within a
+monotone `TE`, the split search computes `w ↦ pairEncode (w.take i) (w.drop i)` for the first
+solution `i` of `i + f i = |w|` (`Turing.solveSplitWith`), and `[]` if there is none, within
+`20·(591 + 26·k_E)·(n + 1)·(TE (n + 1) + n + 2)` steps.
+
+**Proof sketch.** Today's `emitterP2_closed` and `emitterSplit_of_body` with every existential
+named: the clean calls cost `(24 + 13·k_E)` and `(24 + 13·1)` times their arguments
+(`callTM_run`), the round coefficient is `A = 2(24 + 13·k_E) + 37·11 + 10·13 = 585 + 26·k_E`
+(`emitterP2_body_round`, `emitter_width_budget`), the counter's `5` enlarges it, and
+`emitterSplit_loop_bound` turns the find loop's `10·(T n + 1)·(n + 2)` into
+`2·10·(A + 6)·(n + 1)·(TE (n + 1) + n + 2)`. -/
+theorem splitSolveWithTM_computes (f : ℕ → ℕ) (E : FinTM Bool) (TE : ℕ → ℕ)
+    (hTE : Monotone TE) (hE : E.ComputesFunInTime (fun s => Nat.bits (f s.length)) TE) :
+    (splitSolveWithTM E).ComputesFunInTime
+      (fun w => match solveSplitWith f w.length with
+        | some i => pairEncode (w.take i) (w.drop i)
+        | none => [])
+      (fun n => 20 * (591 + 26 * E.k) * (n + 1) * (TE (n + 1) + n + 2)) := by
+  let C := callTM E false
+  let D := callTM lengthBitsTM false
+  let B := emitterP2BodyTM C D (callTM_k_pos E false) (callTM_k_pos lengthBitsTM false)
+    (callEntry E false) (callExit E false) (callEntry lengthBitsTM false)
+    (callExit lengthBitsTM false)
+  let A := 2 * (24 + 13 * E.k) + (24 + 13 * lengthBitsTM.k) * (2 * 5 + 1) + 10 * (5 + 8)
+  -- the install-call contracts of the two named calls, from `callTM_run`
+  have hCall (M : FinTM Bool) (g : List Bool → List Bool) (Tg : ℕ → ℕ)
+      (hg : M.ComputesFunInTime g Tg) (x arg : List Bool) :
+      ∃ t ≤ (24 + 13 * M.k) * (Tg arg.length + arg.length + (g arg).length + 1), 0 < t ∧
+        (∀ t', 0 < t' → t' < t → ((callTM M false).tm.runFrom
+          (Cfg.ofWords (input := x) (callEntry M false) (stateWord (callTM M false).k arg))
+            t').state ≠ some (callExit M false)) ∧
+        (callTM M false).tm.runFrom
+          (Cfg.ofWords (input := x) (callEntry M false) (stateWord (callTM M false).k arg)) t =
+            Cfg.ofWords (callExit M false) (stateWord (callTM M false).k (g arg)) := by
+    obtain ⟨t, ht, hpos, hfirst, hr⟩ := callTM_run M false x arg (g arg) (Tg arg.length) (hg arg)
+    exact ⟨t, ht, hpos, fun j _ hj => hfirst j hj, by simpa using hr⟩
+  have hstart : ∀ w : List Bool, ∃ t ≤ (A + 5) * (TE (w.length + 1) + w.length + 2),
+      (∀ t' < t, (B.tm.runFrom (B.tm.initCfg w) t').state ≠ some .anchor) ∧
+      B.tm.runFrom (B.tm.initCfg w) t = Cfg.ofWords .anchor (stateWord B.k []) := fun w =>
+    ⟨0, Nat.zero_le _, fun j hj => absurd hj (Nat.not_lt_zero _),
+      emitterP2_body_start C D _ _ _ _ _ _ w⟩
+  have hround : ∀ (w s : List Bool), s.length ≤ w.length + 1 →
+      ∃ t, 0 < t ∧ t ≤ (A + 5) * (TE (w.length + 1) + w.length + 2) ∧
+        (∀ t', 0 < t' → t' < t →
+          (B.tm.runFrom (Cfg.ofWords (input := w) .anchor (stateWord B.k s)) t').state
+            ≠ some .anchor) ∧
+        if emitterSplitAccept f w s then
+          (B.tm.runFrom (Cfg.ofWords (input := w) .anchor (stateWord B.k s)) t).state = none ∧
+          (B.tm.runFrom (Cfg.ofWords (input := w) .anchor (stateWord B.k s)) t).output =
+            pairEncode (w.take s.length) (w.drop s.length)
+        else
+          B.tm.runFrom (Cfg.ofWords (input := w) .anchor (stateWord B.k s)) t =
+            Cfg.ofWords .anchor (stateWord B.k (splitStep w s)) := by
+    intro w s hs
+    have hL := lengthBitsTM_computes
+    let H := TE (w.length + 1) + w.length + 2
+    let u := Nat.bits (f s.length)
+    let v := Nat.bits (w.drop s.length).length
+    obtain ⟨_, hu, hmono⟩ := emitter_width_budget f E TE hTE hE w s hs
+    have hdrop : (w.drop s.length).length ≤ w.length := by
+      simp only [List.length_drop]; omega
+    have hv : v.length ≤ 5 * ((w.drop s.length).length + 1) := by
+      have hout := ((computesInTime_iff _ _ _ _).mp (hL (w.drop s.length))).2
+      simpa only [hout, v] using lengthBitsTM.tm.output_length_le (w.drop s.length)
+        (5 * ((w.drop s.length).length + 1))
+    obtain ⟨a, ha, hap, haf, har⟩ := hCall E (fun s => Nat.bits (f s.length)) TE hE w s
+    obtain ⟨b, hb, hbp, hbf, hbr⟩ :=
+      hCall lengthBitsTM (fun s => Nat.bits s.length) (fun n => 5 * (n + 1)) hL w
+        (w.drop s.length)
+    obtain ⟨t, htpos, ht, hfirst, hr⟩ := emitterP2_body_round f C D _ _ _ _ _ _
+      w s a b hap hbp haf har hbf hbr
+    refine ⟨t, htpos, ?_, hfirst, hr⟩
+    have hHs : s.length ≤ H := by dsimp [H]; omega
+    have hHn : w.length ≤ H := by dsimp [H]; omega
+    have hHu : u.length ≤ H := by dsimp [u, H]; omega
+    have hLd : 5 * ((w.drop s.length).length + 1) ≤ 5 * H :=
+      Nat.mul_le_mul_left 5 (by dsimp [H]; omega)
+    have hHv : v.length ≤ 5 * H := hv.trans hLd
+    have hCa : TE s.length + s.length + u.length + 1 ≤ 2 * H := by
+      dsimp [u, H]; omega
+    have hCa' : a ≤ (2 * (24 + 13 * E.k)) * H := by
+      calc
+        a ≤ (24 + 13 * E.k) * (TE s.length + s.length + u.length + 1) := ha
+        _ ≤ (24 + 13 * E.k) * (2 * H) := Nat.mul_le_mul_left _ hCa
+        _ = (2 * (24 + 13 * E.k)) * H := by ring
+    have hDb : 5 * ((w.drop s.length).length + 1) + (w.drop s.length).length + v.length + 1 ≤
+        (2 * 5 + 1) * H := by
+      dsimp [H] at *; omega
+    have hDb' : b ≤ ((24 + 13 * lengthBitsTM.k) * (2 * 5 + 1)) * H := by
+      calc
+        b ≤ (24 + 13 * lengthBitsTM.k) *
+            (5 * ((w.drop s.length).length + 1) + (w.drop s.length).length + v.length + 1) :=
+          hb
+        _ ≤ (24 + 13 * lengthBitsTM.k) * ((2 * 5 + 1) * H) := Nat.mul_le_mul_left _ hDb
+        _ = ((24 + 13 * lengthBitsTM.k) * (2 * 5 + 1)) * H := by ring
+    have hsum : s.length + w.length + u.length + v.length + 10 ≤ (5 + 8) * H := by
+      rw [Nat.add_mul]
+      omega
+    calc
+      t ≤ a + b + 10 * (s.length + w.length + u.length + v.length + 10) := ht
+      _ ≤ (2 * (24 + 13 * E.k)) * H + ((24 + 13 * lengthBitsTM.k) * (2 * 5 + 1)) * H +
+          10 * ((5 + 8) * H) :=
+        Nat.add_le_add (Nat.add_le_add hCa' hDb') (Nat.mul_le_mul_left _ hsum)
+      _ = A * H := by dsimp [A]; ring
+      _ ≤ (A + 5) * H := Nat.mul_le_mul_right _ (Nat.le_add_right _ _)
+  have hF : lengthBitsTM.ComputesFunInTime (fun w => Nat.bits (id w.length))
+      (fun n => (A + 5) * (TE (n + 1) + n + 2)) := by
+    intro w
+    refine (lengthBitsTM_computes w).mono ?_
+    exact (Nat.mul_le_mul_left 5 (by omega : w.length + 1 ≤
+      TE (w.length + 1) + w.length + 2)).trans (Nat.mul_le_mul_right _ (by omega))
+  have hM := loopHostTM_finds B lengthBitsTM .anchor
+    (fun w s => s.length ≤ w.length + 1) splitStep (emitterSplitAccept f)
+    (fun w s => pairEncode (w.take s.length) (w.drop s.length)) (fun _ => [])
+    id (fun n => (A + 5) * (TE (n + 1) + n + 2)) hF (by intro w; simp) splitStep_inv
+    hstart hround
+  intro w
+  have hm := hM w
+  dsimp only [id_eq] at hm
+  have hb : 10 * ((A + 5) * (TE (w.length + 1) + w.length + 2) + 1) * (w.length + 2) ≤
+      20 * (591 + 26 * E.k) * (w.length + 1) * (TE (w.length + 1) + w.length + 2) :=
+    (emitterSplit_loop_bound 10 (A + 5) w.length (TE (w.length + 1))).trans
+      (le_of_eq (by simp only [A, show lengthBitsTM.k = 1 from rfl]; ring))
+  convert hm.mono hb using 1
+  exact (emitterSplit_result f w).symm
+
 /-- **E4′, width-parametric split search** (design
 §11; customers: 3A-cont's exponential padding equation — whose bespoke
 body is this contract's harvest template — and every later padding
@@ -6080,11 +6635,11 @@ theorem computesFunInTime_splitSolveWith (f : ℕ → ℕ) (E : FinTM Bool)
         fun n => c * (n + 1) * (TE (n + 1) + n + 2) := by
   exact emitterP2_closed f E TE hTE hE
 
-/-- Double token bits in states zero, one, and two; after a false token
-delimiter, emit the pair separator in states three and four, then copy the
-remainder in state five. A right blank in state zero starts the separator
-directly, so an unterminated token and the empty input are both retained. -/
-private def emitterTokenTM : FinTM Bool where
+/-- **The unary token splitter**. A machine with no work tapes that, in one left-to-right scan,
+emits the leading unary token of its input (the `true`s up to and including the first `false`)
+doubled, then the pair separator, then the rest of the input, so that it outputs `pairEncode` of
+`Turing.unaryTokenSplit x`. -/
+def unaryTokenTM : FinTM Bool where
   k := 0
   State := Fin 6
   tm :=
@@ -6105,40 +6660,40 @@ private def emitterTokenTM : FinTM Bool where
 only a false bit ends token scanning. -/
 private lemma emitterToken_double (x pre rest out : List Bool) (b : Bool)
     (hx : x = pre ++ b :: rest) :
-    emitterTokenTM.tm.runFrom
+    unaryTokenTM.tm.runFrom
       (scanCfg x (some (0 : Fin 6)) pre.length (by simp [hx]) out) 2 =
       scanCfg x (some (if b then (0 : Fin 6) else 3)) (pre ++ [b]).length
         (by simp [hx]) (out ++ [b, b]) := by
   have hlen : pre.length < x.length := by simp [hx]
   have hread : x[pre.length]? = some b := by simp [hx]
-  have hfirst : emitterTokenTM.tm.step
+  have hfirst : unaryTokenTM.tm.step
       (scanCfg x (some (0 : Fin 6)) pre.length (by omega) out) =
       scanCfg x (some (if b then (1 : Fin 6) else 2)) pre.length (by omega)
         (out ++ [b]) := by
     unfold MultiTapeTM.step
-    change (emitterTokenTM.tm.tr (0 : Fin 6) _ _).apply _ = _
+    change (unaryTokenTM.tm.tr (0 : Fin 6) _ _).apply _ = _
     rw [scanCfg_read, hread]
-    apply Cfg.ext_zero_tapes <;> simp [emitterTokenTM, Action.apply, scanCfg]
+    apply Cfg.ext_zero_tapes <;> simp [unaryTokenTM, Action.apply, scanCfg]
   rw [show 2 = 1 + 1 by omega, MultiTapeTM.runFrom_succ_eq_step',
     MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero, hfirst]
   cases b <;>
     apply Cfg.ext_zero_tapes
   all_goals first
     | rfl
-    | simpa [MultiTapeTM.step, emitterTokenTM, Action.apply, scanCfg] using
+    | simpa [MultiTapeTM.step, unaryTokenTM, Action.apply, scanCfg] using
         moveInputPos_pos_of_ne_right
           (⟨pre.length + 1, by omega⟩ : Fin (x.length + 2)) (by simp; omega)
-    | simp [MultiTapeTM.step, emitterTokenTM, Action.apply, scanCfg, List.append_assoc]
+    | simp [MultiTapeTM.step, unaryTokenTM, Action.apply, scanCfg, List.append_assoc]
 
 /-- The two separator transitions preserve the input position and append the
 unique pair delimiter before entering the suffix copier. -/
 private lemma emitterToken_separator (x out : List Bool) (i : ℕ) (hi : i ≤ x.length) :
-    emitterTokenTM.tm.runFrom (scanCfg x (some (3 : Fin 6)) i hi out) 2 =
+    unaryTokenTM.tm.runFrom (scanCfg x (some (3 : Fin 6)) i hi out) 2 =
       scanCfg x (some (5 : Fin 6)) i hi (out ++ [false, true]) := by
   rw [show 2 = 1 + 1 by omega, MultiTapeTM.runFrom_succ_eq_step',
     MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero]
   apply Cfg.ext_zero_tapes <;>
-    simp [MultiTapeTM.step, emitterTokenTM, Action.apply, scanCfg, List.append_assoc]
+    simp [MultiTapeTM.step, unaryTokenTM, Action.apply, scanCfg, List.append_assoc]
 
 /-- The streaming token encoder emits the exact recursive split, after any
 already-consumed prefix. Its time is twice the token length plus the remainder
@@ -6149,7 +6704,7 @@ separator and copy the suffix. A true bit is doubled and the induction
 hypothesis processes the remaining token. No standalone marker is consumed. -/
 private lemma emitterToken_run (x rest : List Bool) :
     ∀ pre out (hx : x = pre ++ rest),
-      emitterTokenTM.tm.runFrom
+      unaryTokenTM.tm.runFrom
         (scanCfg x (some (0 : Fin 6)) pre.length (by simp [hx]) out)
         (2 * (unaryTokenSplit rest).1.length + (unaryTokenSplit rest).2.length + 3) =
         scanCfg x none x.length (by omega)
@@ -6160,26 +6715,26 @@ private lemma emitterToken_run (x rest : List Bool) :
     have hlen : pre.length = x.length := by simp [hx]
     have hread : x[pre.length]? = none := by simp [hlen]
     simp only [unaryTokenSplit, List.length_nil, Nat.mul_zero, Nat.zero_add]
-    have hfirst : emitterTokenTM.tm.step
+    have hfirst : unaryTokenTM.tm.step
         (scanCfg x (some (0 : Fin 6)) pre.length (by omega) out) =
         scanCfg x (some (4 : Fin 6)) pre.length (by omega) (out ++ [false]) := by
       unfold MultiTapeTM.step
-      change (emitterTokenTM.tm.tr (0 : Fin 6) _ _).apply _ = _
+      change (unaryTokenTM.tm.tr (0 : Fin 6) _ _).apply _ = _
       rw [scanCfg_read, hread]
-      apply Cfg.ext_zero_tapes <;> simp [emitterTokenTM, Action.apply, scanCfg]
-    have hsecond : emitterTokenTM.tm.step
+      apply Cfg.ext_zero_tapes <;> simp [unaryTokenTM, Action.apply, scanCfg]
+    have hsecond : unaryTokenTM.tm.step
         (scanCfg x (some (4 : Fin 6)) pre.length (by omega) (out ++ [false])) =
         scanCfg x (some (5 : Fin 6)) pre.length (by omega) (out ++ [false, true]) := by
       apply Cfg.ext_zero_tapes <;>
-        simp [MultiTapeTM.step, emitterTokenTM, Action.apply, scanCfg, List.append_assoc]
+        simp [MultiTapeTM.step, unaryTokenTM, Action.apply, scanCfg, List.append_assoc]
     rw [show 3 = (0 + 1) + 1 + 1 by omega,
       MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_succ_eq_step',
       MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero, hfirst, hsecond]
     unfold MultiTapeTM.step
-    change (emitterTokenTM.tm.tr (5 : Fin 6) _ _).apply _ = _
+    change (unaryTokenTM.tm.tr (5 : Fin 6) _ _).apply _ = _
     rw [scanCfg_read, hread]
     apply Cfg.ext_zero_tapes <;>
-      simp [emitterTokenTM, Action.apply, scanCfg, pairEncode, List.append_assoc, hlen]
+      simp [unaryTokenTM, Action.apply, scanCfg, pairEncode, List.append_assoc, hlen]
   | cons b rest ih =>
     intro pre out hx
     cases b with
@@ -6189,7 +6744,7 @@ private lemma emitterToken_run (x rest : List Bool) :
         MultiTapeTM.runFrom_add, emitterToken_double x pre rest out false hx]
       simp only [Bool.false_eq_true, ↓reduceIte]
       rw [MultiTapeTM.runFrom_add, emitterToken_separator]
-      have he := scanCopy_suffix emitterTokenTM.tm (5 : Fin 6) (fun _ _ => rfl)
+      have he := scanCopy_suffix unaryTokenTM.tm (5 : Fin 6) (fun _ _ => rfl)
         x rest (pre ++ [false]) ((out ++ [false, false]) ++ [false, true])
         (by simpa only [List.append_assoc, List.singleton_append] using hx)
       simpa [pairEncode, List.append_assoc] using he
@@ -6213,6 +6768,18 @@ private lemma emitterToken_length (x : List Bool) :
   | nil => rfl
   | cons b x ih => cases b <;> simp_all [unaryTokenSplit] <;> omega
 
+/-- **The token splitter's time**. The splitter computes
+`x ↦ pairEncode (unaryTokenSplit x).1 (unaryTokenSplit x).2` within `3·(n + 1)` steps.
+
+**Proof sketch.** The body of today's `computesFunInTime_unaryToken`: the private scan lemma
+`emitterToken_run` reaches the halt in `2·|token| + |rest| + 3` steps, and `|token| + |rest| = |x|`
+(`emitterToken_length`). -/
+theorem unaryTokenTM_computes :
+    unaryTokenTM.ComputesFunInTime
+      (fun x => pairEncode (unaryTokenSplit x).1 (unaryTokenSplit x).2)
+      (fun n => 3 * (n + 1)) := by
+  sorry
+
 /-- **P16, the unary token step** (design §11;
 customers: 3B-cont's streaming scanner, the Cook-Levin emitter's index
 reads (4A), 4B's dual scanner — the fourth re-derivation of this atom
@@ -6228,15 +6795,15 @@ theorem computesFunInTime_unaryToken :
       M.ComputesFunInTime
         (fun x => pairEncode (unaryTokenSplit x).1 (unaryTokenSplit x).2)
         fun n => c * (n + 1) := by
-  refine ⟨emitterTokenTM, 3, fun x => ?_⟩
+  refine ⟨unaryTokenTM, 3, fun x => ?_⟩
   have hr := emitterToken_run x x [] [] rfl
-  have hc : emitterTokenTM.ComputesInTime x
+  have hc : unaryTokenTM.ComputesInTime x
       (pairEncode (unaryTokenSplit x).1 (unaryTokenSplit x).2)
       (2 * (unaryTokenSplit x).1.length + (unaryTokenSplit x).2.length + 3) := by
     apply (FinTM.computesInTime_iff _ _ _ _).mpr
-    have hinit : emitterTokenTM.tm.initCfg x =
+    have hinit : unaryTokenTM.tm.initCfg x =
         scanCfg x (some (0 : Fin 6)) 0 (by omega) [] := by
-      apply Cfg.ext_zero_tapes <;> simp [emitterTokenTM, scanCfg]
+      apply Cfg.ext_zero_tapes <;> simp [unaryTokenTM, scanCfg]
     rw [hinit]
     constructor
     · simpa only [List.length_nil, scanCfg] using congrArg Cfg.state hr
@@ -6247,9 +6814,9 @@ theorem computesFunInTime_unaryToken :
   have hl := emitterToken_length x
   omega
 
-/-- Copy each input bit, then append the fixed bit on the right-blank
-halting transition. The machine has no work tapes. -/
-private def emitterAppendTM (b : Bool) : FinTM Bool where
+/-- **The bit appender**. A machine with no work tapes that copies its input and emits the fixed bit
+`b` on the halting transition, so that it computes `x ↦ x ++ [b]`. -/
+def appendBitTM (b : Bool) : FinTM Bool where
   k := 0
   State := Unit
   tm :=
@@ -6263,25 +6830,35 @@ private def emitterAppendTM (b : Bool) : FinTM Bool where
 copies its bit and advances once; the emitting halt is still ahead. -/
 private lemma emitterAppend_run (b : Bool) (x : List Bool) :
     ∀ j (hj : j ≤ x.length),
-      (emitterAppendTM b).tm.runFrom ((emitterAppendTM b).tm.initCfg x) j =
+      (appendBitTM b).tm.runFrom ((appendBitTM b).tm.initCfg x) j =
         scanCfg x (some ()) j hj (x.take j) := by
   intro j
   induction j with
   | zero =>
     intro hj
-    apply Cfg.ext_zero_tapes <;> simp [scanCfg, emitterAppendTM]
+    apply Cfg.ext_zero_tapes <;> simp [scanCfg, appendBitTM]
   | succ j ih =>
     intro hj
     rw [MultiTapeTM.runFrom_succ_eq_step', ih (by omega)]
     unfold MultiTapeTM.step
-    change ((emitterAppendTM b).tm.tr ()
+    change ((appendBitTM b).tm.tr ()
       (scanCfg x (some ()) j (by omega) (x.take j)).inputSymbol _).apply _ = _
     rw [scanCfg_read, List.getElem?_eq_getElem (by omega)]
     apply Cfg.ext_zero_tapes
     · rfl
     · exact moveInputPos_pos_of_ne_right _ (by simp [scanCfg]; omega)
-    · simp only [emitterAppendTM, Action.apply, scanCfg, Option.toList_some,
+    · simp only [appendBitTM, Action.apply, scanCfg, Option.toList_some,
         List.take_succ, List.getElem?_eq_getElem (by omega : j < x.length)]
+
+/-- **The bit appender's time**. On every input `x` the appender halts within `|x| + 1` steps with
+output `x ++ [b]`.
+
+**Proof sketch.** The body of today's `computesFunInTime_appendBit`: the private copy invariant
+`emitterAppend_run` holds for `|x|` steps, and the next step reads the blank, emits `b` and halts.
+-/
+theorem appendBitTM_computes (b : Bool) (x : List Bool) :
+    (appendBitTM b).ComputesInTime x (x ++ [b]) (x.length + 1) := by
+  sorry
 
 /-- **P18′, append one bit** (design §11, narrowed at
 spec time from the drafted accumulator row: cross-round persistence is the
@@ -6295,15 +6872,15 @@ copier with one extra emission on the halting transition. -/
 theorem computesFunInTime_appendBit (b : Bool) :
     ∃ (M : FinTM Bool) (c : ℕ),
       M.ComputesFunInTime (fun x => x ++ [b]) fun n => c * (n + 1) := by
-  refine ⟨emitterAppendTM b, 1, fun x => ?_⟩
+  refine ⟨appendBitTM b, 1, fun x => ?_⟩
   apply (FinTM.computesInTime_iff _ _ _ _).mpr
   simp only [one_mul]
   rw [MultiTapeTM.runFrom_succ_eq_step', emitterAppend_run b x x.length (by omega)]
   unfold MultiTapeTM.step
-  change let d := ((emitterAppendTM b).tm.tr ()
+  change let d := ((appendBitTM b).tm.tr ()
     (scanCfg x (some ()) x.length (by omega) (x.take x.length)).inputSymbol _).apply _
     d.Halted ∧ d.output = x ++ [b]
   rw [scanCfg_read]
-  simp [emitterAppendTM, scanCfg, Action.apply, Cfg.Halted]
+  simp [appendBitTM, scanCfg, Action.apply, Cfg.Halted]
 
 end Turing.FinTM

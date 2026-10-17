@@ -138,7 +138,8 @@ theorem layout2_run (y x w w' rest : List Bool)
   · have heq : f + 4 = 2 * n + 2 * w.length + 2 * w'.length + 6 := by
       rw [hlen]; simp only [f, e, b]; ring
     have r15 : Reach N .step y B .lenChk2 R14.val .term2 R14.val :=
-      Reach.single' (gd_of hR14.val_le (by simp [PreS, CA]; decide)) (by simp [astep, CA, R14, heq, hP])
+      Reach.single' (gd_of hR14.val_le (by simp [PreS, CA]; decide))
+        (by simp [astep, CA, R14, heq, hP])
     have hterm : y.getD f false = w'.getD (W N * (2 * s + 1) + wP n) false := by
       rw [show f = 2 * x.length + 2 * w.length + 4 + 2 * (W N * (2 * s + 1) + wP n) by
           simp only [f, e, b, n]; ring, hy, getD_w2 _ _ _ _ _ (by omega)]
@@ -174,7 +175,8 @@ theorem layout2_run (y x w w' rest : List Bool)
           (fun i hi => by
             rw [hpf] at hi
             simp only [dcBase, dcStride, R14, Regs.val_E2]
-            rw [hy, show e + 2 * i = 2 * x.length + 2 * w.length + 4 + 2 * (W N * (2 * s + 1) + i) by
+            rw [hy,
+              show e + 2 * i = 2 * x.length + 2 * w.length + 4 + 2 * (W N * (2 * s + 1) + i) by
                 rw [he2]; simp only [b, n]; ring,
               getD_w2 _ _ _ _ _ (by omega)]
             simp only [pf, List.getD_eq_getElem?_getD, List.getElem?_take, if_pos hi,
@@ -197,7 +199,8 @@ theorem layout2_run (y x w w' rest : List Bool)
       have : 4 * W N * s + 2 * W N = 2 * (W N * (2 * s + 1)) := by ring
       omega
     have r15 : Reach N .step y B .lenChk2 R14.val .rej R14.val :=
-      Reach.single' (gd_of hR14.val_le (by simp [PreS, CA]; decide)) (by simp [astep, CA, R14, hP, hne])
+      Reach.single' (gd_of hR14.val_le (by simp [PreS, CA]; decide))
+        (by simp [astep, CA, R14, hP, hne])
     exact halt_rej (r5_14.trans r15) hR14.val_le
 
 /-- The register code of an optional input symbol: `0` blank, `1` for `0`, `2` for `1`. -/

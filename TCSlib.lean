@@ -15,7 +15,6 @@ import TCSlib.BooleanAnalysis.Basic
 import TCSlib.BooleanAnalysis.ArrowTheorem
 import TCSlib.BooleanAnalysis.Hypercontractivity
 import TCSlib.BooleanAnalysis.Switching
-import TCSlib.BooleanAnalysis.KKL
 import TCSlib.BooleanAnalysis.ThresholdFunctions
 import TCSlib.BooleanAnalysis.polylogIndep
 

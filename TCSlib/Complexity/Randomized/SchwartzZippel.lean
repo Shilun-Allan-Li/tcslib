@@ -34,14 +34,14 @@ None — this module only proves theorems about existing definitions.
 
 ## Deviations from the source
 
-* [AB09, Lem 7.5] samples `a₁, …, a_m` "randomly with replacement from `S`"
+* [AB09, Lem 7.5] samples `a₁, …, a_m` "randomly chosen with replacement from `S`"
   and bounds `Pr[p(a₁,…,a_m) ≠ 0] ≥ 1 − d/|S|`.  Uniform sampling with
   replacement of the tuple is the uniform distribution on `S^m`, so the
   probability is the counting ratio `#{a ∈ S^m | p(a) ≠ 0} / |S|^m`; we state
   the bound as that ratio, valued in `ℚ≥0` (with truncated subtraction, which
   makes the statement trivially true — and still correct — when `d ≥ |S|`).
-* The book leaves implicit that `p` is not the zero polynomial (otherwise the
-  claim fails); `hp` makes this explicit.
+* The book assumes `p` is a nonzero polynomial (otherwise the
+  claim fails); `hp` records this.
 
 ## References
 

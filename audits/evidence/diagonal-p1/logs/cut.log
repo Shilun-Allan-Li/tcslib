@@ -1,0 +1,43 @@
+| importer | baseline messages | cut-check messages | errors | equal |
+|---|---|---|---|---|
+| `Diagonalization.EXPCOM` | 9 | 9 | 0 | yes |
+| `Diagonalization.NotTimeConstructible` | 1 | 1 | 0 | yes |
+| `SpaceComplexity.Hierarchy` | 8 | 8 | 0 | yes |
+| `TimeHierarchy.Separation` | 6 | 6 | 0 | yes |
+| `TimeHierarchy` | 0 | 0 | 0 | yes |
+
+CUT: PASS — every importer elaborates against the landed text with exactly its baseline diagnostics and axiom prints
+
+### Diagonalization.EXPCOM: cut-check output
+'Turing.UniformMachineCode' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.exists_uniformMachineCode' depends on axioms: [propext, sorryAx, Classical.choice, Quot.sound]
+'Complexity.expCode' depends on axioms: [propext, sorryAx, Classical.choice, Quot.sound]
+'Complexity.EXPCOM' depends on axioms: [propext, sorryAx, Classical.choice, Quot.sound]
+'Complexity.EXP_subset_POracle_EXPCOM' depends on axioms: [propext, sorryAx, Classical.choice, Quot.sound]
+'Complexity.NPOracle_EXPCOM_subset_EXP' depends on axioms: [propext, sorryAx, Classical.choice, Quot.sound]
+'Complexity.POracle_EXPCOM_eq_EXP' depends on axioms: [propext, sorryAx, Classical.choice, Quot.sound]
+'Complexity.NPOracle_EXPCOM_eq_EXP' depends on axioms: [propext, sorryAx, Classical.choice, Quot.sound]
+'Complexity.POracle_EXPCOM_eq_NPOracle_EXPCOM' depends on axioms: [propext, sorryAx, Classical.choice, Quot.sound]
+
+### Diagonalization.NotTimeConstructible: cut-check output
+'Complexity.exists_not_timeConstructible' depends on axioms: [propext, Classical.choice, Quot.sound]
+
+### SpaceComplexity.Hierarchy: cut-check output
+<D>/work/cut/SpaceComplexity.Hierarchy.cut.lean:681:8: warning: declaration uses 'sorry'
+<D>/work/cut/SpaceComplexity.Hierarchy.cut.lean:798:8: warning: declaration uses 'sorry'
+<D>/work/cut/SpaceComplexity.Hierarchy.cut.lean:815:8: warning: declaration uses 'sorry'
+<D>/work/cut/SpaceComplexity.Hierarchy.cut.lean:845:8: warning: declaration uses 'sorry'
+'Complexity.space_universal' depends on axioms: [propext, sorryAx, Classical.choice, Quot.sound]
+'Complexity.space_hierarchy' depends on axioms: [propext, sorryAx, Classical.choice, Quot.sound]
+'Complexity.LOGSPACE_ssubset_PSPACE' depends on axioms: [propext, sorryAx, Classical.choice, Quot.sound]
+'Complexity.SPACE_linear_ne_NP' depends on axioms: [propext, sorryAx, Classical.choice, Quot.sound]
+
+### TimeHierarchy.Separation: cut-check output
+'Complexity.timeConstructible_two_pow' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.eventually_poly_le_two_pow' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.eventually_poly_sq_le_two_pow' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.dtime_poly_ssubset_dtime_two_pow' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.P_ssubset_EXP' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.P_ne_EXP' depends on axioms: [propext, Classical.choice, Quot.sound]
+
+### TimeHierarchy: cut-check output

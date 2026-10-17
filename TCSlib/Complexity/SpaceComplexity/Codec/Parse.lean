@@ -62,9 +62,8 @@ lemma pe_getD_fst (u v : List Bool) (i : ℕ) (hi : i < u.length) :
 
 /-- Letter `j` of the second component of a pair sits at position `2|u| + 2 + j`. -/
 lemma pe_getD_snd (u v : List Bool) (j : ℕ) :
-    (pairEncode u v).getD (2 * u.length + 2 + j) false = v.getD j false := by
-  rw [pairEncode_getD, if_neg (by omega), if_neg (by omega), if_neg (by omega)]
-  congr 1; omega
+    (pairEncode u v).getD (2 * u.length + 2 + j) false = v.getD j false :=
+  pairEncode_getD_snd u v j
 
 /-- The second component of a pair is its suffix after `2|u| + 2` letters. -/
 lemma pe_drop (u v : List Bool) : (pairEncode u v).drop (2 * u.length + 2) = v := by
@@ -73,9 +72,8 @@ lemma pe_drop (u v : List Bool) : (pairEncode u v).drop (2 * u.length + 2) = v :
   simp
 
 /-- A word whose last letter (default `true`) is `true` is canonical. -/
-lemma canon_of_getLastD {w : List Bool} (h : w.getLastD true = true) : Canon w := by
-  intro hw
-  rwa [List.getLastD_eq_getLast?, List.getLast?_eq_getLast hw, Option.getD_some] at h
+lemma canon_of_getLastD {w : List Bool} (h : w.getLastD true = true) : Canon w :=
+  (drop_canon w).mp h
 
 /-- The last letter (default `true`) of a binary word is `true`. -/
 lemma getLastD_bits (s : ℕ) : (Nat.bits s).getLastD true = true := by
@@ -101,11 +99,8 @@ lemma bitsVal_le_of_width (w : List Bool) (L : ℕ) (hL : 1 ≤ L)
   omega
 
 /-- A canonical word has last letter (default `true`) `true`. -/
-lemma getLastD_of_canon {w : List Bool} (h : Canon w) : w.getLastD true = true := by
-  by_cases hw : w = []
-  · rw [hw]; rfl
-  · rw [List.getLastD_eq_getLast?, List.getLast?_eq_getLast hw, Option.getD_some]
-    exact h hw
+lemma getLastD_of_canon {w : List Bool} (h : Canon w) : w.getLastD true = true :=
+  (drop_canon w).mpr h
 
 /-! ## Rejection -/
 
@@ -193,7 +188,8 @@ theorem sw_run (y : List Bool) (R : Regs) (p : ℕ) (hBd : R.Bd (bnd N y))
   · right
     refine ⟨fun h => hok (hc.mpr h), ?_⟩
     rw [show (if (y.drop p).length ≤ (Nat.bits y.length).length then
-        if (y.drop p).getLastD true then Lab.cp CpId.Q2 else Lab.rej else Lab.rej) = (Lab.rej : Lab N)
+        if (y.drop p).getLastD true then Lab.cp CpId.Q2 else Lab.rej else Lab.rej) =
+          (Lab.rej : Lab N)
       by split_ifs with h1 h2 <;> first | rfl | exact absurd ⟨h1, h2⟩ hok] at r3
     exact halt_rej ((r1.trans r2).trans r3) hv'
 
@@ -220,7 +216,8 @@ theorem parse_x (y : List Bool) :
       Reach N mode y (bnd N y) .lenScan ({} : Regs).val (.prScan 1)
         ({ L := y.length, P := 2 * x.length + 2, A := 2 * x.length + 2 } : Regs).val) ∨
     ((∀ x r, y ≠ pairEncode x r) ∧
-      AHalt (CA N mode) orc y (GuardLe (CA N mode) y (bnd N y)) (some .lenScan, ({} : Regs).val, none)
+      AHalt (CA N mode) orc y (GuardLe (CA N mode) y (bnd N y))
+        (some .lenScan, ({} : Regs).val, none)
         false) := by
   set B := bnd N y
   have hLB : y.length ≤ B := length_le_bnd y
@@ -270,7 +267,8 @@ theorem parse_run (hm : mode ≠ .step) (y : List Bool) :
         ({ L := y.length, P := 2 * x.length + 2 * w.length + 4, A := 2 * x.length + 2,
            Q1 := q1, Cap := cap, Q2 := 2 * x.length + 2 * w.length + 4, S := s } : Regs).val) ∨
     ((¬ ∃ x w s, Shape1 y x w s) ∧
-      AHalt (CA N mode) orc y (GuardLe (CA N mode) y (bnd N y)) (some .lenScan, ({} : Regs).val, none)
+      AHalt (CA N mode) orc y (GuardLe (CA N mode) y (bnd N y))
+        (some .lenScan, ({} : Regs).val, none)
         false) := by
   set B := bnd N y
   have hLB : y.length ≤ B := length_le_bnd y

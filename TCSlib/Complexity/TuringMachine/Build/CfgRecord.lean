@@ -66,6 +66,7 @@ this module is admitted.
 ## Main results
 
 * `Turing.cfgRecord_length` — a record has `k + 3` fields.
+* `Turing.Cfg.inWindow_init` — the initial configuration is in every window.
 * `Turing.cfgRecord_inj` — on windowed configurations, records agree exactly
   when configuration cores and tags do (proved; fill-C status update).
 * `Turing.recordValid_iff` — validity as a field-by-field shape condition
@@ -713,7 +714,7 @@ private theorem recordStep_save_orbit {x : List Bool} (c : Cfg 0 Bool Bool x)
     | succ r ih =>
       intro hr
       obtain ⟨hs, hi, ho⟩ := ih (by omega)
-      rw [counterLoopOrbit, Function.iterate_succ_apply']
+      rw [counterLoopOrbit, roundOrbit, Function.iterate_succ_apply']
       change (recordStepSave.step (counterLoopOrbit recordStepSave (fun _ => 1) c r)).state = some false ∧
         (recordStepSave.step (counterLoopOrbit recordStepSave (fun _ => 1) c r)).inputPos.val = c.inputPos.val - (r + 1) ∧
         (recordStepSave.step (counterLoopOrbit recordStepSave (fun _ => 1) c r)).output = c.output
@@ -726,7 +727,7 @@ private theorem recordStep_save_orbit {x : List Bool} (c : Cfg 0 Bool Bool x)
       omega
   refine ⟨before, ?_⟩
   obtain ⟨hs, hi, ho⟩ := before c.inputPos.val le_rfl
-  rw [counterLoopOrbit, Function.iterate_succ_apply']
+  rw [counterLoopOrbit, roundOrbit, Function.iterate_succ_apply']
   change (recordStepSave.step (counterLoopOrbit recordStepSave (fun _ => 1) c c.inputPos.val)).state = some true ∧
     (recordStepSave.step (counterLoopOrbit recordStepSave (fun _ => 1) c c.inputPos.val)).inputPos.val = 0 ∧
     (recordStepSave.step (counterLoopOrbit recordStepSave (fun _ => 1) c c.inputPos.val)).output = c.output
@@ -5252,5 +5253,20 @@ theorem exists_recordTestTM {k : ℕ} {Q T : Type} [Fintype Q] [DecidableEq Q] [
     · rfl
     · funext i; simp [cfg, fieldOffset]
     · rfl
+
+end Turing
+
+namespace Turing
+
+/-! ### The initial configuration is windowed -/
+
+/-- **The initial configuration is in every window**: its heads are at `0` and its work
+tapes are blank. It is the windowed runner's precondition at the start of a simulation from
+an initial configuration (H3; `Complexity.space_hierarchy`'s diagonalizer). [AB09, §4.1.1]
+
+**Proof sketch.** Unfold `Turing.Cfg.init`. -/
+theorem Cfg.inWindow_init {k : ℕ} {Symbol State : Type} (q₀ : State)
+    (x : List Symbol) (s : ℕ) : (Cfg.init q₀ x : Cfg k Symbol State x).InWindow s :=
+  ⟨fun _ => by simp, fun _ _ _ => rfl⟩
 
 end Turing

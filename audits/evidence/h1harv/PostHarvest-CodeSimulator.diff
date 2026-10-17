@@ -1,0 +1,417 @@
+--- a/TCSlib/Complexity/TuringMachine/CodeSimulator.lean	2026-10-14 12:15:50
++++ b/TCSlib/Complexity/TuringMachine/CodeSimulator.lean	2026-10-14 12:55:38
+@@ -8,6 +8,7 @@
+ import TCSlib.Complexity.TuringMachine.Build.Seam
+ import TCSlib.Complexity.TuringMachine.Build.VirtualInput
+ import TCSlib.Complexity.TuringMachine.Build.StepBlock
++import TCSlib.Complexity.TuringMachine.Build.StepBlockLoop
+ -- B5a continuation: sanctioned imports for the physical binary-header loader.
+ import TCSlib.Complexity.TuringMachine.Build.Primitives
+ import TCSlib.Complexity.TuringMachine.Build.InputCall
+@@ -59,7 +60,9 @@
+     (H2-M) to the public module `Build/StepBlock` (gate
+     `audits/h2-promotion-r2-findings.md`); and the binary deadline clock around
+     it, hosted on the virtual input, with its one-bit verdict
+-    (`h1HostedVerdict_accepts`).
++    (`h1HostedVerdict_accepts`). The clock itself is the public loop of
++    `Build/StepBlockLoop` (`Turing.StepBlock.hostedLoopTM_run`; H1 harvest, gate
++    `audits/h1-harvest-statements-findings.md`).
+ 
+   Still open: the canonizer's restored binary bound, the action-record
+   validator, the grammar loop and the emission; the simulator's nested-input
+@@ -2799,295 +2802,18 @@
+ /-- The zero-deadline clock rejects every initialized machine. -/
+ private lemma summaryClock_zero (M : FinTM Bool) (x : List Bool) :
+     summaryClock M.tm 0 (M.tm.initCfg x) none = false := rfl
+-
+-/-- The sanctioned binary clock around the frozen step block. The virtual
+-input host is applied outside this clock, so its changing boundary tag is
+-never mistaken for part of the counter loop's fixed return anchor. -/
+-private def h1ClockTM (k : ℕ) :=
+-  counterLoopTM (roundTM k) (exit k true) (some (exit k false))
+-
+-/-- The physical buffered clock uses exactly the public forwarding host.
+-Its buffer carries the simulated input; the last payload tape is the clock. -/
+-private def h1HostedClockTM (k : ℕ) := vhostEmitTM (h1ClockTM k)
+-
+-/-- The first positive return to either frozen round exit. This is a proof
+-index for the public clock contract, not a machine that computes a time. -/
+-private noncomputable def h1RoundTime {k : ℕ} {x : List Bool}
+-    (d : Cfg (k + 2) Bool (Σ key, Ph k key) x) : ℕ := by
+-  classical
+-  exact if h : ∃ t, 0 < t ∧ ∃ b, ((roundTM k).runFrom d t).state =
+-      some (exit k b) then Nat.find h else 0
+-
+-/-- The first-return index inherits the frozen block's endpoint, strict cut,
+-silence and linear time bound. No second interpreter trace is proved.
+-
+-**Proof sketch.** The frozen contract supplies a positive exit time. Its
+-strict interior excludes both exits, so that time is the least positive
+-exit time used by the public counter loop. -/
+-private lemma h1RoundTime_spec {k n : ℕ} {x : List Bool}
+-    (M : MultiTapeTM k Bool (Fin (n + 1))) (c : Cfg k Bool (Fin (n + 1)) x)
+-    (live : c.state ≠ none) (d : Cfg (k + 2) Bool (Σ key, Ph k key) x)
+-    (entry : d.state = some (exit k true)) (rel : Rep M.tr c d) :
+-    0 < h1RoundTime d ∧ h1RoundTime d ≤ 50 * ((tableBitsK M.tr).length + 1) ∧
+-      let e := (roundTM k).runFrom d (h1RoundTime d)
+-      e.state = some (exit k (M.step c).state.isSome) ∧
+-      Rep M.tr (M.step c) e ∧ e.output = d.output ∧
+-      (∀ u, 0 < u → u < h1RoundTime d → ∃ s,
+-        ((roundTM k).runFrom d u).state = some s ∧
+-          s ≠ exit k true ∧ s ≠ exit k false) := by
+-  classical
+-  obtain ⟨q, hq⟩ := Option.ne_none_iff_exists'.mp live
+-  obtain ⟨T, positive, bound, state, related, _, cut, silent, _⟩ :=
+-    roundTM_effect M.tr c q hq d entry rel
+-  have step : M.step c = (M.tr q c.inputSymbol c.workTapeSymbols).apply c := by
+-    simp only [MultiTapeTM.step, hq]
+-  have existsExit : ∃ t, 0 < t ∧ ∃ b,
+-      ((roundTM k).runFrom d t).state = some (exit k b) :=
+-    ⟨T, positive, _, state⟩
+-  have least : Nat.find existsExit = T := by
+-    apply (Nat.find_eq_iff existsExit).mpr
+-    refine ⟨⟨positive, _, state⟩, ?_⟩
+-    intro u hu earlier
+-    obtain ⟨s, hs, he, hh⟩ := cut u earlier.1 hu
+-    obtain ⟨b, hb⟩ := earlier.2
+-    have equal : s = exit k b := Option.some.inj (hs.symm.trans hb)
+-    cases b
+-    · exact hh equal
+-    · exact he equal
+-  have duration : h1RoundTime d = T := by
+-    simp only [h1RoundTime, dif_pos existsExit, least]
+-  rw [duration]
+-  exact ⟨positive, bound, by simpa only [step] using state,
+-    by simpa only [step] using related, silent T le_rfl, cut⟩
+-
+-/-- The public body orbit represents the corresponding source run up to
+-and including its first halting transition. This is the representation
+-invariant for the existing counter loop, not another physical runner.
+-
+-**Proof sketch.** Induct on the number of completed source transitions.
+-Each live source configuration uses the frozen round contract at its
+-first-return index. The source's run-addition law identifies the successor.
+-The output prefix is preserved by each cited round. -/
+-private lemma h1Clock_orbit {k n : ℕ} {x : List Bool}
+-    (M : MultiTapeTM k Bool (Fin (n + 1)))
+-    (d : Cfg (k + 2) Bool (Σ key, Ph k key) x)
+-    (entry : d.state = some (exit k true))
+-    (rel : Rep M.tr (M.initCfg x) d)
+-    (r : ℕ) (live : ∀ u < r, (M.runFrom (M.initCfg x) u).state ≠ none) :
+-    let e := counterLoopOrbit (roundTM k) h1RoundTime d r
+-    e.state = some (exit k (M.runFrom (M.initCfg x) r).state.isSome) ∧
+-      Rep M.tr (M.runFrom (M.initCfg x) r) e ∧ e.output = d.output := by
+-  induction r with
+-  | zero => exact ⟨entry, rel, rfl⟩
+-  | succ r ih =>
+-    obtain ⟨state, related, output⟩ := ih (fun u hu => live u (by omega))
+-    have alive := live r (by omega)
+-    have anchor :
+-        (counterLoopOrbit (roundTM k) h1RoundTime d r).state =
+-          some (exit k true) := by
+-      simpa only [Option.isSome_iff_ne_none.mpr alive] using state
+-    obtain ⟨_, _, hs, hr, ho, _⟩ := h1RoundTime_spec M (M.runFrom (M.initCfg x) r) alive
+-      (counterLoopOrbit (roundTM k) h1RoundTime d r) anchor related
+-    change _ ∧ _ ∧ _
+-    simp only [counterLoopOrbit, roundOrbit, Function.iterate_succ_apply']
+-    simpa only [MultiTapeTM.runFrom_succ_eq_step'] using
+-      And.intro hs (And.intro hr (ho.trans output))
+ 
+-/-- The clock's round hypotheses and budget follow from the source liveness
+-invariant and the already proved step-block contract. -/
+-private lemma h1Clock_round {k n : ℕ} {x : List Bool}
+-    (M : MultiTapeTM k Bool (Fin (n + 1)))
+-    (d : Cfg (k + 2) Bool (Σ key, Ph k key) x)
+-    (entry : d.state = some (exit k true))
+-    (rel : Rep M.tr (M.initCfg x) d)
+-    (r : ℕ) (live : ∀ u ≤ r, (M.runFrom (M.initCfg x) u).state ≠ none) :
+-    let e := counterLoopOrbit (roundTM k) h1RoundTime d r
+-    e.state = some (exit k true) ∧
+-      0 < h1RoundTime e ∧ h1RoundTime e ≤ 50 * ((tableBitsK M.tr).length + 1) ∧
+-      (∀ u, 0 < u → u < h1RoundTime e → ∃ s,
+-        ((roundTM k).runFrom e u).state = some s ∧
+-          s ≠ exit k true ∧ s ≠ exit k false) := by
+-  obtain ⟨state, related, _⟩ := h1Clock_orbit M d entry rel r
+-    (fun u hu => live u (Nat.le_of_lt hu))
+-  have alive := live r le_rfl
+-  have anchor :
+-      (counterLoopOrbit (roundTM k) h1RoundTime d r).state =
+-        some (exit k true) := by
+-    simpa only [Option.isSome_iff_ne_none.mpr alive] using state
+-  obtain ⟨positive, bound, _, _, _, cut⟩ := h1RoundTime_spec M (M.runFrom (M.initCfg x) r) alive
+-    (counterLoopOrbit (roundTM k) h1RoundTime d r) anchor related
+-  exact ⟨anchor, positive, bound, cut⟩
+-
+-/-- The physical binary clock reaches timeout or simulated halt, with the
+-source represented at the inclusive deadline and with the exact physical
+-output prefix preserved. Both exit cuts and every decrement are included.
+-
+-**Proof sketch.** If the source is still live at the deadline, all previous
+-configurations are live: apply the public returning loop theorem and its
+-amortized bound. Otherwise take the public first-halt witness and apply the
+-escaping theorem to its last transition. Its index is strictly below the
+-deadline, even for a halt exactly at that deadline. Halt absorption identifies
+-the represented source endpoint with the deadline configuration. -/
+-private lemma h1Clock_effect {k n : ℕ} {x : List Bool}
+-    (M : MultiTapeTM k Bool (Fin (n + 1)))
+-    (d : Cfg (k + 2) Bool (Σ key, Ph k key) x)
+-    (entry : d.state = some (exit k true))
+-    (rel : Rep M.tr (M.initCfg x) d) (t : ℕ) :
+-    ∃ T ≤ t * (50 * ((tableBitsK M.tr).length + 1)) + 4 * t + 2 * t.bits.length + 2,
+-      ∃ e ct, Rep M.tr (M.runFrom (M.initCfg x) t) e ∧ e.output = d.output ∧
+-        (h1ClockTM k).runFrom
+-          (counterLoopCfg (some (.dec .run)) d (FinTM.bufferTape t.bits) 0) T =
+-          counterLoopCfg
+-            (some (if (M.runFrom (M.initCfg x) t).state.isSome then .done else .escape)) e ct 0 ∧
+-        (∀ u < T,
+-          ((h1ClockTM k).runFrom
+-            (counterLoopCfg (some (.dec .run)) d (FinTM.bufferTape t.bits) 0) u).state ≠
+-              some .done ∧
+-          ((h1ClockTM k).runFrom
+-            (counterLoopCfg (some (.dec .run)) d (FinTM.bufferTape t.bits) 0) u).state ≠
+-              some .escape) := by
+-  have digits : Nat.ofDigits 2 (t.bits.map Bool.toNat) = t := by
+-    rw [← canonBits_value]
+-    exact codeBitsNat_bits t
+-  by_cases halted : (M.runFrom (M.initCfg x) t).state = none
+-  · obtain ⟨u, deadline, before, same⟩ := M.exists_first_halt (M.initCfg x) halted
+-    have positive : 0 < u := by
+-      by_contra h
+-      have zero : u = 0 := by omega
+-      have bad := congrArg Cfg.state same
+-      rw [zero, halted] at bad
+-      cases bad
+-    let r := u - 1
+-    have count : r + 1 = u := by dsimp [r]; omega
+-    have live (j : ℕ) (hj : j ≤ r) : (M.runFrom (M.initCfg x) j).state ≠ none :=
+-      before j (by omega)
+-    have round (j : ℕ) (hj : j ≤ r) :=
+-      h1Clock_round M d entry rel j (fun i hi => live i (hi.trans hj))
+-    obtain ⟨lastState, lastRep, lastOutput⟩ := h1Clock_orbit M d entry rel u before
+-    rw [same, halted, Option.isSome_none] at lastState
+-    rw [same] at lastRep
+-    let T := (∑ j ∈ Finset.range u,
+-      h1RoundTime (counterLoopOrbit (roundTM k) h1RoundTime d j)) +
+-        counterOverhead t.bits u
+-    have run := counterLoopTM_run_escape (roundTM k)
+-      (exit k true) (exit k false) (by simp [exit])
+-      h1RoundTime d t.bits (FinTM.bufferTape t.bits) 0
+-      (by intro p _ _; simp) r (by rw [digits]; omega)
+-      (fun j hj => ⟨(round j hj).1, (round j hj).2.1, (round j hj).2.2.2⟩)
+-      (by simpa only [count] using lastState) T (by simp only [T, count])
+-    have sumBound : (∑ j ∈ Finset.range u,
+-        h1RoundTime (counterLoopOrbit (roundTM k) h1RoundTime d j)) ≤
+-        u * (50 * ((tableBitsK M.tr).length + 1)) := by
+-      calc
+-        _ ≤ ∑ _j ∈ Finset.range u, (50 * ((tableBitsK M.tr).length + 1)) :=
+-          Finset.sum_le_sum (fun j hj => (round j (by
+-            have := Finset.mem_range.mp hj; omega)).2.2.1)
+-        _ = _ := by simp
+-    have overhead := counterOverhead_le_of_le t.bits u (by rw [digits]; omega)
+-    refine ⟨T, ?_, counterLoopOrbit (roundTM k) h1RoundTime d u,
+-      (fun q => if 0 ≤ q ∧ q < (t.bits.length : ℤ) then
+-        FinTM.bufferTape (counterWord t.bits u) q else FinTM.bufferTape t.bits q),
+-      lastRep, lastOutput, ?_, run.2.1⟩
+-    · have bounded := Nat.mul_le_mul_right (50 * ((tableBitsK M.tr).length + 1)) deadline
+-      dsimp [T]
+-      omega
+-    · simpa only [h1ClockTM, count, halted, Option.isSome_none, Bool.false_eq_true,
+-        ↓reduceIte, zero_add, sub_zero] using run.1
+-  · have live (j : ℕ) (hj : j ≤ t) : (M.runFrom (M.initCfg x) j).state ≠ none :=
+-      M.runFrom_state_ne_none_of_le (M.initCfg x) t halted j hj
+-    have round (j : ℕ) (hj : j < t) :=
+-      h1Clock_round M d entry rel j (fun i hi => live i (by omega))
+-    let T := (∑ j ∈ Finset.range t,
+-      h1RoundTime (counterLoopOrbit (roundTM k) h1RoundTime d j)) +
+-        counterOverhead t.bits (t + 1)
+-    have run := counterLoopTM_run_done (roundTM k) (exit k true)
+-      (some (exit k false)) h1RoundTime d t.bits (FinTM.bufferTape t.bits) 0
+-      (by intro p _ _; simp) t digits (by
+-        intro j hj
+-        obtain ⟨anchor, positive, _, interior⟩ := round j hj
+-        obtain ⟨next, _, _⟩ := h1Clock_orbit M d entry rel (j + 1)
+-          (fun i hi => live i (by omega))
+-        refine ⟨anchor, positive, ?_, ?_⟩
+-        · intro v hv ht
+-          obtain ⟨s, hs, ha, he⟩ := interior v hv ht
+-          exact ⟨s, hs, ha, fun eq => he (Option.some.inj eq).symm⟩
+-        · simpa only [Option.isSome_iff_ne_none.mpr (live (j + 1) (by omega))] using next)
+-      T rfl
+-    obtain ⟨_, finalRep, finalOutput⟩ := h1Clock_orbit M d entry rel t
+-      (fun j hj => live j (Nat.le_of_lt hj))
+-    refine ⟨T, counterLoop_time_le (roundTM k) h1RoundTime d t.bits t digits
+-      (50 * ((tableBitsK M.tr).length + 1)) (fun j hj => (round j hj).2.2.1),
+-      counterLoopOrbit (roundTM k) h1RoundTime d t,
+-      (fun q => if 0 ≤ q ∧ q < (t.bits.length : ℤ) then some true
+-        else FinTM.bufferTape t.bits q), finalRep, finalOutput, ?_,
+-      run.2.1⟩
+-    simpa only [h1ClockTM, Option.isSome_iff_ne_none.mpr halted, ↓reduceIte, zero_add]
+-      using run.1
+-
+-/-- The completed clock hosted on a buffered input, with a valid boundary
+-tag at its final seam and strict cuts at both exits for either tag.
+-The native input is arbitrary and its head is fixed by the public host.
+-
+-**Proof sketch.** Apply the native clock contract, then the public virtual
+-input run theorem to its entire execution. Apply that same theorem at each
+-strict prefix to transfer the two exit cuts; the arrival tag is existential,
+-never assumed to be the initial tag. -/
+-private lemma h1HostedClock_effect {k n : ℕ} {x z : List Bool}
+-    (M : MultiTapeTM k Bool (Fin (n + 1)))
+-    (d : Cfg (k + 2) Bool (Σ key, Ph k key) x)
+-    (entry : d.state = some (exit k true))
+-    (rel : Rep M.tr (M.initCfg x) d) (t : ℕ)
+-    (p : Fin (z.length + 2)) :
+-    ∃ T ≤ t * (50 * ((tableBitsK M.tr).length + 1)) + 4 * t + 2 * t.bits.length + 2,
+-      ∃ e ct b, Rep M.tr (M.runFrom (M.initCfg x) t) e ∧ e.output = d.output ∧
+-        FinTM.VirtualTag e.inputPos b ∧
+-        (h1HostedClockTM k).runFrom
+-          (vhostCfg (counterLoopCfg (some (.dec .run)) d
+-            (FinTM.bufferTape t.bits) 0) true p []) T =
+-          vhostCfg (counterLoopCfg
+-            (some (if (M.runFrom (M.initCfg x) t).state.isSome then .done else .escape))
+-            e ct 0) b p [] ∧
+-        (∀ u < T, ∀ tag,
+-          ((h1HostedClockTM k).runFrom
+-            (vhostCfg (counterLoopCfg (some (.dec .run)) d
+-              (FinTM.bufferTape t.bits) 0) true p []) u).state ≠ some (.done, tag) ∧
+-          ((h1HostedClockTM k).runFrom
+-            (vhostCfg (counterLoopCfg (some (.dec .run)) d
+-              (FinTM.bufferTape t.bits) 0) true p []) u).state ≠ some (.escape, tag)) := by
+-  obtain ⟨T, bound, e, ct, related, output, run, cut⟩ := h1Clock_effect M d entry rel t
+-  let start := counterLoopCfg (some (.dec .run)) d (FinTM.bufferTape t.bits) 0
+-  have valid : FinTM.VirtualTag start.inputPos true := by
+-    change FinTM.VirtualTag d.inputPos true
+-    rw [rel.1]
+-    simp [FinTM.VirtualTag, MultiTapeTM.initCfg, Cfg.init]
+-  obtain ⟨b, tag, hosted⟩ := vhostEmitTM_runFrom (h1ClockTM k) start true valid p [] T
+-  rw [run] at tag hosted
+-  refine ⟨T, bound, e, ct, b, related, output, tag, hosted, ?_⟩
+-  intro u hu tag'
+-  obtain ⟨b', _, hostedPrefix⟩ := vhostEmitTM_runFrom (h1ClockTM k) start true valid p [] u
+-  change ((vhostEmitTM (h1ClockTM k)).runFrom (vhostCfg start true p []) u).state ≠ _ ∧ _
+-  rw [hostedPrefix]
+-  constructor
+-  all_goals
+-    intro bad
+-    have projected := congrArg (Option.map Prod.fst) bad
+-    simp only [vhostCfg, Option.map_map, Function.comp_def, Option.map_id_fun',
+-      Option.map_some] at projected
+-    first
+-    | exact (cut u hu).1 projected
+-    | exact (cut u hu).2 projected
+-
+-/-- The hosted clock with its two live exits replaced by the one-step
+-verdict. Timeout emits false; simulated halt tests the restored summary
++/-- The hosted clock `StepBlock.hostedLoopTM` with its two live exits replaced by the
++one-step verdict. Timeout emits false; simulated halt tests the restored summary
+ cell. Every other transition is the existing hosted clock transition. -/
+ private def h1HostedVerdictTM (k : ℕ) :
+     MultiTapeTM (1 + (k + 2 + 1)) Bool (CounterLoopState (Σ key, Ph k key) × Bool) :=
+-  { h1HostedClockTM k with tr := fun q inp work =>
++  { hostedLoopTM k with tr := fun q inp work =>
+       if q.1 = .done ∨ q.1 = .escape then
+         ⟨0, fun _ => (none, 0),
+           some (if q.1 = .escape then
+             work (vhostBank (summaryTape k).castSucc) == some true else false), none⟩
+-      else (h1HostedClockTM k).tr q inp work }
++      else (hostedLoopTM k).tr q inp work }
+ 
+ /-- The physical hosted clock and its verdict, from the prepared round
+ seam. The endpoint is halted and emits precisely the inherited semantic
+@@ -3110,11 +2836,16 @@
+           (FinTM.bufferTape t.bits) 0) true p []) T
+       e.state = none ∧ e.inputPos = p ∧
+         e.output = d.output ++ [summaryClock M t (M.initCfg x) none] := by
+-  obtain ⟨T, bound, e, ct, b, related, output, _, run, cut⟩ :=
+-    h1HostedClock_effect M d entry rel t p
++  have digits : Nat.ofDigits 2 (t.bits.map Bool.toNat) = t := by
++    rw [← canonBits_value]
++    exact codeBitsNat_bits t
++  obtain ⟨T, e, ct, b, bound, -, related, output, -, _, run, cut⟩ :=
++    hostedLoopTM_run M (M.initCfg x) (by simp [MultiTapeTM.initCfg, Cfg.init]) d entry rel
++      t.bits (FinTM.bufferTape t.bits) 0 (by intro p _ _; simp) t digits true
++      (by simp [FinTM.VirtualTag, MultiTapeTM.initCfg, Cfg.init]) p []
+   let start := vhostCfg (counterLoopCfg (some (.dec .run)) d
+     (FinTM.bufferTape t.bits) 0) true p []
+-  have agree : (h1HostedClockTM k).AgreeOn (h1HostedVerdictTM k)
++  have agree : (hostedLoopTM k).AgreeOn (h1HostedVerdictTM k)
+       {q | q.1 ≠ .done ∧ q.1 ≠ .escape} := by
+     intro q hq inp work
+     simp only [h1HostedVerdictTM, hq.1, hq.2, or_self, ↓reduceIte]
+@@ -3125,40 +2856,20 @@
+       exact (cut u hu q.2).1 (hq.trans (congrArg some (Prod.ext bad rfl)))
+     · intro bad
+       exact (cut u hu q.2).2 (hq.trans (congrArg some (Prod.ext bad rfl))))
+-  have cell : e.workTapeSymbols (summaryTape k) =
+-      outputSummary (M.runFrom (M.initCfg x) t).output := by
+-    simp only [Cfg.workTapeSymbols, related.2.2.2.2.2, related.2.2.2.1,
+-      summaryCells, ↓reduceIte]
+   have semantic : summaryClock M t (M.initCfg x) none =
+       ((M.runFrom (M.initCfg x) t).state.isNone &&
+         (outputSummary (M.runFrom (M.initCfg x) t).output == some true)) :=
+     summaryClock_correct M (M.initCfg x) t
++  obtain ⟨hs, -, -, cell⟩ := hostedLoop_read M.tr (M.runFrom (M.initCfg x) t) e related
++    (if (M.runFrom (M.initCfg x) t).state.isSome then .done else .escape) ct 0 b p []
+   refine ⟨T + 1, by omega, ?_⟩
+   change ((h1HostedVerdictTM k).runFrom start (T + 1)).state = none ∧ _
+-  rw [MultiTapeTM.runFrom_succ_eq_step', transfer, run]
+-  rw [semantic]
+-  have projected :
+-      (embedEmitCfg Fin.castSuccEmb (fun _ => ct) (fun _ => 0) [] e).workTapeSymbols
+-        (summaryTape k).castSucc =
+-        outputSummary (M.runFrom (M.initCfg x) t).output := by
+-    change (embedEmitCfg Fin.castSuccEmb (fun _ => ct) (fun _ => 0) [] e).workTapes
+-      (Fin.castSuccEmb (summaryTape k))
+-      ((embedEmitCfg Fin.castSuccEmb (fun _ => ct) (fun _ => 0) [] e).workTapePos
+-        (Fin.castSuccEmb (summaryTape k))) = _
+-    rw [embedEmitCfg_selected_tape, embedEmitCfg_selected_pos]
+-    exact cell
+-  have projectedOutput :
+-      (embedEmitCfg Fin.castSuccEmb (fun _ => ct) (fun _ => 0) [] e).output =
+-        d.output := output
++  rw [MultiTapeTM.runFrom_succ_eq_step', transfer, run, semantic]
++  unfold MultiTapeTM.step
++  rw [hs]
++  simp only [h1HostedVerdictTM, cell]
+   cases state : (M.runFrom (M.initCfg x) t).state <;>
+-    simp [MultiTapeTM.step, h1HostedVerdictTM, vhostCfg, counterLoopCfg,
+-      Cfg.workTapeSymbols, vhostBank, Action.apply, Cfg.mapState,
+-      projectedOutput, show
+-        (embedEmitCfg Fin.castSuccEmb (fun _ => ct) (fun _ => 0) [] e).workTapes
+-            (summaryTape k).castSucc
+-            ((embedEmitCfg Fin.castSuccEmb (fun _ => ct) (fun _ => 0) [] e).workTapePos
+-              (summaryTape k).castSucc) =
+-          outputSummary (M.runFrom (M.initCfg x) t).output from projected]
++    simp [Action.apply, vhostCfg, counter_cfg_eq, output, moveInputPos_zero]
+ 
+ /-- The hosted verdict's bit is bounded acceptance, by the inherited
+ semantic bridge. This specializes only the prepared-seam contract: parsing
+@@ -3256,9 +2967,9 @@
+ exact-deadline checks remain. The original statement and pending tag are unchanged.
+ **Fill appendix (H1 continuation 2, partial; complete hosted clock and verdict).**
+ The frozen `StepBlock.roundTM_effect` now feeds the public binary counter loop
+-through `h1RoundTime_spec`, `h1Clock_orbit`, and `h1Clock_effect`. The counter
++through the round index, the orbit invariant and `StepBlock.loopTM_run`. The counter
+ loop is inside the public virtual-input host: its round anchor is fixed while
+-the host's boundary tag may change. `h1HostedClock_effect` proves the valid arrival
++the host's boundary tag may change. `StepBlock.hostedLoopTM_run` proves the valid arrival
+ tag and strict cuts at both exits, including an escape on the last permitted
+ round. `h1HostedVerdict_effect` adds one stationary halting emission and gives
+ the inherited `summaryClock` answer in at most
+@@ -3274,6 +2985,15 @@
+ `audits/evidence/h2/r2/H2-design-r2.md`, Appendix A); the appendices above use the
+ new names. This headline's statement and admission are unchanged.
+ 
++**H1 harvest.** The hosted clock moved, generalized to any represented live start and
++renamed, to the public module `Build/StepBlockLoop` (gate
++`audits/h1-harvest-statements-findings.md`): `h1ClockTM` and `h1HostedClockTM` are
++`StepBlock.loopTM` and `StepBlock.hostedLoopTM`; `h1Clock_effect` and
++`h1HostedClock_effect` are the cases of `StepBlock.loopTM_run` and
++`StepBlock.hostedLoopTM_run` at the initial configuration; the round index and the orbit
++lemmas moved as private helpers. The appendices above use the new names; this
++headline's statement and admission are unchanged.
++
+ -/
+ theorem exists_uniformSimulator :
+     ∃ (S : FinTM Bool) (d : ℕ), ∀ (α x : List Bool) (t : ℕ),

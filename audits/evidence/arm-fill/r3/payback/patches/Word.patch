@@ -1,0 +1,89 @@
+--- a/TCSlib/Complexity/SpaceComplexity/Codec/Word.lean
++++ b/TCSlib/Complexity/SpaceComplexity/Codec/Word.lean
+@@ -40,11 +40,11 @@
+ vertex, and that is all the graph algorithms need.
+ 
+ This codec is configuration-graph infrastructure, not a result of [AB09]; its conventions
+-(window `[-s, s]`, the output summary) are those of `TCSlib.Complexity.SpaceComplexity.ConfigGraph`.
++(the window `Turing.Cfg.InWindow` of radius `s`, the output summary) are those of
++`TCSlib.Complexity.SpaceComplexity.ConfigGraph`.
+ 
+ ## Main definitions
+ 
+-* `Complexity.Codec.InWin` — heads and nonblank work cells lie in `[-s, s]`.
+ * `Complexity.Codec.CellV`, `Complexity.Codec.encChunk` — cell values and their chunks.
+ * `Complexity.Codec.cfgWord`, `Complexity.Codec.cfgCode` — the code word and the code.
+ * `Complexity.Codec.decodeCfg` — the decoder.
+@@ -73,11 +73,6 @@
+ 
+ /-! ## Words -/
+ 
+-/-- The window predicate at radius `s`: every work head and every nonblank work cell lies in
+-`[-s, s]`. (The coding window of the configuration graph, [AB09, Claim 4.4(1)].) -/
+-def InWin {x : List Bool} (s : ℕ) (C : Cfg N.k Bool N.State x) : Prop :=
+-  ∀ i, |C.workTapePos i| ≤ s ∧ ∀ z, C.workTapes i z ≠ none → |z| ≤ s
+-
+ /-- The index of an output summary. -/
+ def sumIdx : OutSummary → Fin 3
+   | .empty => 0
+@@ -390,7 +385,7 @@
+ position, and outside `[-s, s]` both tapes are blank and no head lies there (window
+ hypotheses). Equal position fields have equal values (`bitsVal_padBits`). -/
+ theorem coreSum_eq_of_cfgWord_eq {s : ℕ} {C D : Cfg N.k Bool N.State x}
+-    (hC : InWin N s C) (hD : InWin N s D) (h : cfgWord s C = cfgWord s D) :
++    (hC : Cfg.InWindow s C) (hD : Cfg.InWindow s D) (h : cfgWord s C = cfgWord s D) :
+     NDTM.coreSum C = NDTM.coreSum D := by
+   have hlen : (chunksWord N (cellOf s C) (2 * s + 1)).length =
+       (chunksWord N (cellOf s D) (2 * s + 1)).length := by simp [length_chunksWord]
+@@ -417,13 +412,11 @@
+   · funext i z
+     by_cases hz : |z| ≤ s
+     · exact (tape i z hz).1
+-    · have h1 : C.workTapes i z = none := by
+-        by_contra hne; exact hz ((hC i).2 z hne)
+-      have h2 : D.workTapes i z = none := by
+-        by_contra hne; exact hz ((hD i).2 z hne)
++    · have h1 : C.workTapes i z = none := hC.2 i z (not_le.mp hz)
++      have h2 : D.workTapes i z = none := hD.2 i z (not_le.mp hz)
+       rw [h1, h2]
+   · funext i
+-    exact ((tape i _ (hC i).1).2.mp rfl).symm
++    exact ((tape i _ (hC.1 i)).2.mp rfl).symm
+ 
+ /-- The constant of the code length: `2 W + 2`. -/
+ def codeK (N : FinNDTM Bool) : ℕ := 2 * W N + 2
+@@ -476,7 +469,8 @@
+ (chosen; it is determined up to the configuration-graph vertex,
+ `decodeCfg_cfgCode`). -/
+ noncomputable def decodeCfg (x : List Bool) (s c : ℕ) : Option (Cfg N.k Bool N.State x) :=
+-  if h : ∃ C : Cfg N.k Bool N.State x, InWin N s C ∧ cfgCode s C = c then some (Classical.choose h)
++  if h : ∃ C : Cfg N.k Bool N.State x, Cfg.InWindow s C ∧ cfgCode s C = c then
++    some (Classical.choose h)
+   else none
+ 
+ /-- **Decoding a code recovers the vertex**: the decoder succeeds on the code of a
+@@ -484,11 +478,12 @@
+ 
+ **Proof sketch.** The chosen configuration has the same code, hence the same code word
+ (`bits_cfgCode`), hence the same vertex (`coreSum_eq_of_cfgWord_eq`). -/
+-theorem decodeCfg_cfgCode (s : ℕ) (C : Cfg N.k Bool N.State x) (hC : InWin N s C) :
+-    ∃ D, decodeCfg x s (cfgCode s C) = some D ∧ InWin N s D ∧ cfgCode s D = cfgCode s C ∧
++theorem decodeCfg_cfgCode (s : ℕ) (C : Cfg N.k Bool N.State x) (hC : Cfg.InWindow s C) :
++    ∃ D, decodeCfg x s (cfgCode s C) = some D ∧ Cfg.InWindow s D ∧ cfgCode s D = cfgCode s C ∧
+       NDTM.coreSum D = NDTM.coreSum C := by
+   classical
+-  have h : ∃ D : Cfg N.k Bool N.State x, InWin N s D ∧ cfgCode s D = cfgCode s C := ⟨C, hC, rfl⟩
++  have h : ∃ D : Cfg N.k Bool N.State x, Cfg.InWindow s D ∧ cfgCode s D = cfgCode s C :=
++    ⟨C, hC, rfl⟩
+   refine ⟨Classical.choose h, by simp [decodeCfg, h], (Classical.choose_spec h).1,
+     (Classical.choose_spec h).2, ?_⟩
+   apply coreSum_eq_of_cfgWord_eq (Classical.choose_spec h).1 hC
+@@ -497,7 +492,7 @@
+ /-- The decoder fails exactly on numbers that are not codes. -/
+ theorem decodeCfg_eq_none (s c : ℕ) :
+     decodeCfg (N := N) x s c = none ↔
+-      ¬ ∃ C : Cfg N.k Bool N.State x, InWin N s C ∧ cfgCode s C = c := by
++      ¬ ∃ C : Cfg N.k Bool N.State x, Cfg.InWindow s C ∧ cfgCode s C = c := by
+   classical
+   unfold decodeCfg
+   split_ifs with h <;> simp [h]

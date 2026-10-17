@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Hydroxyi
 -/
 import TCSlib.Complexity.SpaceComplexity.Logspace.InputAccess
+import TCSlib.Programs.Util.List
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -15,7 +16,8 @@ set_option autoImplicit false
 Small facts used by several register machines that read their input by index:
 
 * `Complexity.getD_drop` — the letters of a suffix `y.drop a` of the input are the letters
-  of `y` shifted by `a` (with default `false`); used by the codec parsers
+  of `y` shifted by `a` (with default `false`; the `Bool` case of the vendored
+  `List.getD_drop` of `TCSlib.Programs.Util.List`); used by the codec parsers
   (`TCSlib.Complexity.SpaceComplexity.Codec.Run`) and the `PATH` walk
   (`TCSlib.Complexity.SpaceComplexity.Logspace.PathWalk`).
 * `Complexity.getD_of_drop`, `Complexity.drop_succ_of_drop`, `Complexity.lt_of_drop`,
@@ -30,6 +32,11 @@ Small facts used by several register machines that read their input by index:
 
 Infrastructure for the register-machine description of logspace algorithms of
 [AB09, §4.1]; not itself a result of the book.
+
+## Main definitions
+
+* none (lemmas about suffixes and letters of words, and about the virtual inputs of
+  `whole`-mode calls).
 
 ## Main results
 
@@ -48,8 +55,8 @@ namespace Complexity
 
 /-- **Letters of a suffix**: position `i` of `y.drop a` is position `a + i` of `y` (reading
 with default `false`). -/
-lemma getD_drop (y : List Bool) (a i : ℕ) : (y.drop a).getD i false = y.getD (a + i) false := by
-  simp [List.getD_eq_getElem?_getD]
+lemma getD_drop (y : List Bool) (a i : ℕ) : (y.drop a).getD i false = y.getD (a + i) false :=
+  List.getD_drop y a i false
 
 /-- The head of a suffix is the letter at its offset. -/
 lemma getD_of_drop {x r : List Bool} {p : ℕ} {b : Bool} (h : x.drop p = b :: r) :

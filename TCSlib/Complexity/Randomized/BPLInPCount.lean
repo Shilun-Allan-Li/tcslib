@@ -99,12 +99,12 @@ local notation "run" w => N.tm.runWith w (N.tm.initCfg x)
 /-- Configurations reached on a branch of a space-`sp` PTM lie in the window of radius
 `s ≥ sp(|x|)`. -/
 theorem inWin_run {sp : ℕ → ℕ} (hN : N.UsesSpace sp) (hs : sp x.length ≤ s) (w : List Bool) :
-    InWin N s (run w) := by
-  simpa using inWin_runWith_take w ((hN x w).trans hs) w.length
+    Cfg.InWindow s (run w) := by
+  simpa using NDTM.runWith_take_inWindow N.tm w ((hN x w).trans hs) w.length
 
 /-- Equal codes of window-bounded configurations give equal vertices. -/
-theorem coreSum_eq_of_code_eq {C D : Cfg N.k Bool N.State x} (hC : InWin N s C)
-    (hD : InWin N s D) (h : cfgCode s C = cfgCode s D) : NDTM.coreSum C = NDTM.coreSum D :=
+theorem coreSum_eq_of_code_eq {C D : Cfg N.k Bool N.State x} (hC : Cfg.InWindow s C)
+    (hD : Cfg.InWindow s D) (h : cfgCode s C = cfgCode s D) : NDTM.coreSum C = NDTM.coreSum D :=
   coreSum_eq_of_cfgWord_eq hC hD (by rw [← bits_cfgCode, ← bits_cfgCode, h])
 
 /-- From a reachable code, the coin-`b` step relation points exactly at the code of the

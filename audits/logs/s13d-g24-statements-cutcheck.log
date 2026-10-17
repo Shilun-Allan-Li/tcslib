@@ -1,0 +1,85 @@
+# §13d G2–G4 statement gate: cut checks and landed forms
+
+Tool: `bash <S>/tools/leanelab.sh <OUT>/base <S>/oleans-lb6 <file>` (direct `lean`, no `-o`, no olean
+written). Base: <OUT>/base, a read-only `git archive` export of f2d48ad5 (the local
+`origin/complexity/arora-barak-ch3-4`; its Lean files equal 1b6b972c's: PRs #92 and #93 merged); its `.lake` is
+a symlink to <S>/wt-g24's packages (same `lake-manifest.json`). Snapshot: `oleans-lb6`. Toolchain:
+`leanprover/lean4:v4.25.0`. <OUT> is the gate's output directory; <S> the scratchpad. Run: 2026-10-14 18:28 UTC.
+
+`python3 -I <OUT>/scripts/cutcheck.py <OUT>/G24Statements.lean <OUT>/base <OUT>/cut` (the C1 and
+stage-2 gates' script, verbatim) writes, for each part, a file holding the imports of the part's import
+closure and the bodies of the parts in that closure, in file order. Each is elaborated on its own.
+```
+unit imports: 5; union of part imports: 5; missing from unit: []; extra in unit: []
+TCSlib.Complexity.TuringMachine.Build.Zone: closure [Zone@58]; imports ['TCSlib.Complexity.TuringMachine.Build.Zone']
+TCSlib.Complexity.TuringMachine.Build.Catalog.part1: closure [Catalog@546]; imports ['TCSlib.Complexity.TuringMachine.Build.Catalog']
+TCSlib.Complexity.TuringMachine.Build.Catalog.part2: closure [Catalog@546, Catalog@635]; imports ['TCSlib.Complexity.TuringMachine.Build.Catalog']
+TCSlib.Complexity.TuringMachine.Build.Contract.Catalog.part3: closure [Catalog@735]; imports ['TCSlib.Complexity.TuringMachine.Build.Contract.Catalog']
+TCSlib.Complexity.TuringMachine.Build.Contract.Catalog.part4: closure [Catalog@546, Catalog@635, Catalog@735, Catalog@858]; imports ['TCSlib.Complexity.TuringMachine.Build.Catalog', 'TCSlib.Complexity.TuringMachine.Build.Contract.Catalog']
+TCSlib.Complexity.TuringMachine.Build.ZoneTape: closure [Zone@58, ZoneTape@950]; imports ['TCSlib.Complexity.TuringMachine.Build.Zone', 'TCSlib.Complexity.TuringMachine.Simulation']
+TCSlib.Complexity.TuringMachine.Build.ZoneRebalance: closure [Zone@58, ZoneTape@950, ZoneRebalance@1438]; imports ['TCSlib.Complexity.TuringMachine.Build.Zone', 'TCSlib.Complexity.TuringMachine.Simulation', 'TCSlib.Complexity.TuringMachine.Build.Contract.Basic']
+```
+* `TCSlib.Complexity.TuringMachine.Build.Catalog.part1.check.lean` (92 lines):
+  exit 0 | errors 0 | warnings 0 | of which `declaration uses 'sorry'` 0 | other warnings 0
+  sorried: 
+* `TCSlib.Complexity.TuringMachine.Build.Catalog.part2.check.lean` (187 lines):
+  exit 0 | errors 0 | warnings 2 | of which `declaration uses 'sorry'` 2 | other warnings 0
+  sorried: copyMapTM_run_ofCfg transferMapTM_run_ofCfg 
+* `TCSlib.Complexity.TuringMachine.Build.Contract.Catalog.part3.check.lean` (125 lines):
+  exit 0 | errors 0 | warnings 0 | of which `declaration uses 'sorry'` 0 | other warnings 0
+  sorried: 
+* `TCSlib.Complexity.TuringMachine.Build.Contract.Catalog.part4.check.lean` (388 lines):
+  exit 0 | errors 0 | warnings 2 | of which `declaration uses 'sorry'` 2 | other warnings 0
+  sorried: copyMapTM_run_ofCfg transferMapTM_run_ofCfg 
+* `TCSlib.Complexity.TuringMachine.Build.Zone.check.lean` (491 lines):
+  exit 0 | errors 0 | warnings 2 | of which `declaration uses 'sorry'` 2 | other warnings 0
+  sorried: zoneCascadeRight_frame zoneCascadeRight_home 
+* `TCSlib.Complexity.TuringMachine.Build.ZoneRebalance.check.lean` (1296 lines):
+  exit 0 | errors 0 | warnings 4 | of which `declaration uses 'sorry'` 4 | other warnings 0
+  sorried: zoneCascadeRight_frame zoneCascadeRight_home exists_zoneRebalanceTM exists_zoneExtendTM 
+* `TCSlib.Complexity.TuringMachine.Build.ZoneTape.check.lean` (974 lines):
+  exit 0 | errors 0 | warnings 2 | of which `declaration uses 'sorry'` 2 | other warnings 0
+  sorried: zoneCascadeRight_frame zoneCascadeRight_home 
+
+## Landed forms (`<OUT>/landed/`)
+
+`mklanded.py` (C1 gate, verbatim) writes the new modules; `mklanded_zone.py` the retirements, the
+promotion and the narrowed imports of `Build/Zone.lean` (retire.log); `mklanded_catalog.py` the
+restructured `Build/Catalog.lean` and `Build/Contract/Catalog.lean` (freeze below); `mkfacade.py` the
+facade. Every edit is an asserted, content-anchored replacement or insertion.
+```
+TCSlib/Complexity/TuringMachine/Build/Zone.lean: existing module + 0 import(s) + appended part; 1654 lines
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean: existing module + 0 import(s) + appended part; 12812 lines
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean: existing module + 0 import(s) + appended part; 12826 lines
+TCSlib/Complexity/TuringMachine/Build/Contract/Catalog.lean: existing module + 0 import(s) + appended part; 217 lines
+TCSlib/Complexity/TuringMachine/Build/Contract/Catalog.lean: existing module + 0 import(s) + appended part; 189 lines
+TCSlib/Complexity/TuringMachine/Build/ZoneTape.lean: new module; 492 lines
+TCSlib/Complexity/TuringMachine/Build/ZoneRebalance.lean: new module; 331 lines
+landed Zone.lean: 1324 lines; deleted 281 lines in 5 blocks
+landed Catalog.lean: 12863 lines; repairs: [('simp only [copyTM, hs]', 3), ('simp only [copyTM, hs]', 1), ('· apply Cfg.ext <;> simp [MultiTapeTM.step, copyTM, Action.apply]', 1), ('simp only [transferTM, hs]', 3), ('· apply Cfg.ext <;> simp [MultiTapeTM.step, transferTM, Action.apply]', 1)]
+landed Contract/Catalog.lean: 261 lines
+chain: 2127 lines
+```
+* `landed/.../Build/Zone.lean` (standalone, narrowed imports: import Mathlib.Algebra.BigOperators.Group.Finset.Basic import Mathlib.Data.List.FinRange ):
+  exit 0 | errors 0 | warnings 1 | of which `declaration uses 'sorry'` 1 | other warnings 0
+  sorried: zoneCascadeRight_home 
+* `work/LandedChain.lean`: the landed `Zone.lean` (narrowed imports) plus the imports of `ZoneTape` and
+  `ZoneRebalance`, then those two landed modules' bodies, in one file:
+  exit 0 | errors 0 | warnings 3 | of which `declaration uses 'sorry'` 3 | other warnings 0
+  sorried: zoneCascadeRight_home exists_zoneRebalanceTM exists_zoneExtendTM 
+* `landed/.../Build/Catalog.lean` (standalone, 12863 lines, 34 s):
+  exit 0 | errors 0 | warnings 92 | of which `declaration uses 'sorry'` 2 | other warnings 90
+  sorried: copyMapTM_run_ofCfg transferMapTM_run_ofCfg 
+* baseline: the base's `Build/Catalog.lean` (a byte copy), standalone:
+  exit 0 | errors 0 | warnings 90 | of which `declaration uses 'sorry'` 0 | other warnings 90
+  warnings of the landed file minus the baseline's (messages, line numbers dropped):
+    > warning: declaration uses 'sorry'
+    > warning: declaration uses 'sorry'
+* `work/CatChain.lean`: the landed `Build/Catalog.lean` with the import of `Build/Contract/Basic`, then the
+  landed `Build/Contract/Catalog.lean`'s body (re-pointed `clearTM_contract`, its frames and trajectory,
+  the shared constructor and the G2 contracts), in one file:
+  exit 0 | errors 0 | warnings 92 | of which `declaration uses 'sorry'` 2 | other warnings 90
+  sorried: copyMapTM_run_ofCfg transferMapTM_run_ofCfg 
+  warnings minus the base Catalog's: 2 lines (the 2 sorries expected)
+* baseline: the base's `Build/Zone.lean` (a byte copy), standalone:
+  exit 0 | errors 0 | warnings 2 | of which `declaration uses 'sorry'` 2 | other warnings 0

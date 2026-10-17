@@ -1,0 +1,68 @@
+"""Build the full-file overlay and the files appended to it (standard library only).
+
+Usage: python3 -I mkoverlay.py <tip CodeSimulator.lean> <unit.lean> <tail template> <out>
+                               [<extra tail> <extra out>]
+
+<out> is: the tip file's bytes, unchanged; one newline; the unit's Part A body (everything after
+its last `-- @imports` line), verbatim; one newline; the tail template, in which each line
+`@@EXAMPLE <name>@@` is replaced by the statement of the tip's private declaration <name> (its
+header line through the first line ending in ` := by`), the header's `private lemma <name>` or
+`private theorem <name>` replaced by `example`. With an extra tail, <extra out> is <out> followed
+by one newline and that tail. Every textual operation is asserted to match exactly once, and
+the copied prefix is checked to be byte-identical to the tip.
+"""
+import re
+import sys
+
+
+def part_body(unit):
+    lines = unit.split("\n")
+    last = max(i for i, l in enumerate(lines) if l.startswith("-- @imports "))
+    assert sum(1 for l in lines if l.startswith("-- @landing ")) == 1
+    return "\n".join(lines[last + 1:]).strip("\n") + "\n"
+
+
+def statement(tip_lines, name):
+    heads = [i for i, l in enumerate(tip_lines)
+             if re.match(rf"^private (lemma|theorem) {re.escape(name)}(\s|$)", l)]
+    assert len(heads) == 1, (name, heads)
+    h = heads[0]
+    end = next(i for i in range(h, len(tip_lines)) if tip_lines[i].endswith(" := by"))
+    block = tip_lines[h:end + 1]
+    new0, n = re.subn(rf"^private (lemma|theorem) {re.escape(name)}", "example", block[0])
+    assert n == 1
+    return h + 1, end + 1, [new0] + block[1:]
+
+
+def main():
+    tip_path, unit_path, tail_path, out = sys.argv[1:5]
+    tip = open(tip_path, encoding="utf-8").read()
+    unit = open(unit_path, encoding="utf-8").read()
+    tail = open(tail_path, encoding="utf-8").read()
+    tip_lines = tip.split("\n")
+    out_lines = []
+    for l in tail.split("\n"):
+        m = re.fullmatch(r"@@EXAMPLE (\S+)@@", l)
+        if m:
+            a, b, block = statement(tip_lines, m.group(1))
+            print(f"example from {m.group(1)}: tip lines {a}-{b} ({b - a + 1} statement lines)")
+            out_lines.extend(block)
+        else:
+            assert "@@" not in l, l
+            out_lines.append(l)
+    text = tip + "\n" + part_body(unit) + "\n" + "\n".join(out_lines)
+    assert text.startswith(tip) and text[len(tip)] == "\n"
+    open(out, "w", encoding="utf-8").write(text)
+    print(f"{out}: {text.count(chr(10))} lines; copied prefix = the tip file "
+          f"({len(tip)} characters)")
+    if len(sys.argv) > 5:
+        extra_tail = open(sys.argv[5], encoding="utf-8").read()
+        assert "@@" not in extra_tail
+        text2 = text + "\n" + extra_tail
+        assert text2.startswith(text)
+        open(sys.argv[6], "w", encoding="utf-8").write(text2)
+        print(f"{sys.argv[6]}: {text2.count(chr(10))} lines; prefix = the overlay")
+
+
+if __name__ == "__main__":
+    main()

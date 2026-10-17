@@ -1,0 +1,36 @@
+# C1 guess-then-run assembly statement gate: base sources and snapshot
+
+Tool: `bash <S>/tools/leanelab.sh <S>/wt-c1asm <S>/oleans-lm0b <file>` (direct `lean`, no `-o`,
+no olean written). Campaign tip: e831b5b0d887dac3bbf1aa2c19af28983b15b982. Sources: <OUT>/base, the tip's tree
+(`git archive`, read-only). Snapshot: `oleans-lm0b` (MIG-0b's replay output; the tip's Lean content up
+to docstrings, `base.log`). `wt-c1asm` (at 2c3c975a, read-only) supplies only the
+Mathlib packages (manifest unchanged at the tip). Toolchain: `leanprover/lean4:v4.25.0`.
+<OUT> is the gate's output directory; <S> the scratchpad. Run: 2026-10-14 16:48 UTC.
+
+## 1. The sources
+
+`git archive e831b5b0d887dac3bbf1aa2c19af28983b15b982` of `TCSlib`, `lean-toolchain`, `lake-manifest.json`,
+`scripts/campaign_style_lint.py` and `audits/evidence`, extracted to <OUT>/base.
+Tree 6081ecbdce163c34e112d3809a7771d2f06b5ba0; files under TCSlib: in the commit 717, extracted 717.
+Lean files changed between 13a16a69 (PR #91's merge, the snapshot's content) and the tip: 0.
+lake-manifest.json and lean-toolchain changed between wt-c1asm's HEAD and the tip: 0.
+
+## 2. Snapshot consistency
+
+The tip's sources of `Build/NDHost`, the new import `Build/Catalog`, and the three MIG-0b-changed
+modules in NDHost's closure that the unit uses (`Build/Embed`, `Build/Seam`, `StateRenaming`),
+copied to <OUT>/work/srccheck/ and elaborated against the snapshot:
+* `Build/NDHost` (SHA-256 9507b89d42771b82…):
+  exit 0 | errors 0 | warnings 1 | of which `declaration uses 'sorry'` 1 | other warnings 0
+* `Build/Catalog` (SHA-256 edbcecbe09a8f479…):
+  exit 0 | errors 0 | warnings 90 | of which `declaration uses 'sorry'` 0 | other warnings 90
+* `Build/Embed` (SHA-256 b3dbb98a485fb11d…):
+  exit 0 | errors 0 | warnings 2 | of which `declaration uses 'sorry'` 0 | other warnings 2
+* `Build/Seam` (SHA-256 14b3b7978928ceba…):
+  exit 0 | errors 0 | warnings 5 | of which `declaration uses 'sorry'` 0 | other warnings 5
+* `StateRenaming` (SHA-256 5ee8c69c8f4f5fa8…):
+  exit 0 | errors 0 | warnings 0 | of which `declaration uses 'sorry'` 0 | other warnings 0
+
+Provenance of the snapshot: `<S>/land-b6r/LANDING-NOTES.md` (the B6 hosts' landing run at 13a16a69
+used it: "MIG-0b's replay output. It differs from the tip only in the docstrings of the 18 files of
+#89 and #91").

@@ -31,8 +31,8 @@ symbols of the second component. Malformed pairs produce the empty string.
 ## References
 
 * [AB09] S. Arora, B. Barak, *Computational Complexity: A Modern Approach*,
-  Cambridge University Press, 2009. (§7.3: splitting random strings in the
-  proof of Theorem 7.8; §7.4.1: repeated trials.)
+  Cambridge University Press, 2009. (§7.3: splitting random strings for
+  Theorem 7.8 (Exercise 7.6); §7.4.1: repeated trials.)
 -/
 
 namespace Complexity

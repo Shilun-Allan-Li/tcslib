@@ -1,0 +1,84 @@
+# Record tables continuation 5 (row 18): pre-ship check at the issue tree 1b6b972cf0ba0ffb8ccbac421ae1b894400783a1 (PRs #90 MIG-0b, #91, #92 the B6 hosts and #93 merged), elaborated with lean through tools/leanelab.sh (no olean output, no lake) against the olean snapshot of PR #92's replay (valid for the tip apart from #93's comment- and import-only edits to ARM files, none of them in RecordTable's import closure or used by these probes)
+
+## inputs (SHA-256)
+2ba1255ed07c2c58e7c4761934b728a7648b1efbbb6fe42133177efeb47ffa43  TCSlib/Complexity/TuringMachine/Build/RecordTable.lean (issue tree)
+39ce51024c19c3bbf2858faa6141fafc523032bf6b52bc13348c0c6f0efc0292  audits/evidence/retrofit/copy-text-screen.py (issue tree)
+9eb3ca0e78df977366ffab96df7024fac0a67b084c2182ae33aea1972aca414c  audits/evidence/w1-fill-recordtable-cont5/RT5ImportProbe.lean.txt
+0d67b36ac3bff37ef10ed1fedf462462edf2e3f8d49de03266a05ce7d3910243  audits/evidence/w1-fill-recordtable-cont5/RT5ConsumerProbe.lean.txt
+59136a4646404a397f926875e474500ac04bb3d71b6b6cbb02adab8e2f3a7bcf  audits/evidence/w1-fill-recordtable-cont5/RecordTableOverlay.lean.txt
+4acfaf98ea11504f7424a3bfeb92acfc14320489ac4204e2590bdc80e57ec576  audits/evidence/w1-fill-recordtable-cont5/screen-population.txt
+ba63749bd2a995cd7401a905f316e840c0620b1ee05747bbe7315d9d5972f1ec  audits/evidence/w1-fill-recordtable-cont5/tools/mkoverlay.py
+af2a71b35c60d37129aada9ccb42bfc4f3d8849bb88abd066145d9ae83f9b655  audits/evidence/w1-fill-recordtable-cont5/tools/mkchecks.py
+4affe3760500ab29679ffb8c22dc75fd12a84be91c82506f017fe87a4c47b4cb  audits/evidence/w1-fill-recordtable-cont5/tools/home.lean.txt
+5dab86a710a11ab68721d7cb6a32c61fe9391f7f9ce03395356087f1cf60eafa  audits/evidence/w1-fill-recordtable-cont5/tools/row18body.lean.txt
+144c3fe7d7113f29f71eda6b838e50a26fd0d27e6e7968c5cb34c7e3f253070c  audits/evidence/w1-fill-recordtable-cont5/tools/flat-screen.sh
+
+## audits/evidence/w1-fill-recordtable-cont5/RT5ImportProbe.lean.txt (86 #check, 0 example): exit=0 errors=0 warnings=0
+## audits/evidence/w1-fill-recordtable-cont5/RT5ConsumerProbe.lean.txt (4 #check, 2 example): exit=0 errors=0 warnings=0
+
+## overlay: python3 -I tools/mkoverlay.py <tree> tools/home.lean.txt tools/row18body.lean.txt <out>
+   tip RecordTable.lean: 4780 lines, sha256 2ba1255ed07c2c58e7c4761934b728a7648b1efbbb6fe42133177efeb47ffa43
+   home: tip line 4574 (blank), 189 lines inserted
+   row 18 body: tip line 4636 (`  sorry`) replaced by 123 lines
+   overlay: 5092 lines, sha256 59136a4646404a397f926875e474500ac04bb3d71b6b6cbb02adab8e2f3a7bcf
+   regenerated overlay byte-identical to RecordTableOverlay.lean.txt: True
+## RecordTableOverlay.lean.txt: exit=0 errors=0 sorry-warnings=6 other-warnings=0
+   sorry warnings: exists_tableFindTM (line 1925), exists_tableAppendTM (line 2199), rt_tail_run (line 4741), exists_recordInitTM (line 4800), exists_recordValidTM (line 4980), exists_recordNextTM (line 5041)
+   (rows 15, 16, 19, 20 paused; rt_tail_run the suggested guard; exists_recordInitTM the skeleton, whose one sorried obligation is `rest`)
+
+## checks variant: python3 -I tools/mkchecks.py <overlay> <out> (axiom prints, and #check of the cited inherited privates): exit=0 errors=0 sorry-warnings=6 other-warnings=0
+   '(private) Turing.rt_exists_scratchTemplateTM' depends on axioms: [propext, Classical.choice, Quot.sound]
+   '(private) Turing.rt_binDigits_one' depends on axioms: [propext, Quot.sound]
+   '(private) Turing.rt_initRecord_fields' depends on axioms: [propext, Classical.choice, Quot.sound]
+   '(private) Turing.rt_tailTM' depends on axioms: [propext, Quot.sound]
+   '(private) Turing.rt_tail_run' depends on axioms: [propext, sorryAx, Classical.choice, Quot.sound]
+   'Turing.exists_recordTemplateTM' depends on axioms: [propext, Classical.choice, Quot.sound]
+   'Turing.exists_recordInitTM' depends on axioms: [propext, sorryAx, Classical.choice, Quot.sound]
+   inherited privates resolved (11): rt_copy_seam, rt_embed_matches, rt_embed_radius, rt_moveWordTM, rt_moveWord_run, rt_bufferMask, rt_template_fields, rt_centeredWord, rt_copyState, rt_copyMachine, rt_copy_run
+
+## base elaboration of the modules with a sorry (each with lean, no olean output)
+   ClassPSPACE_TQBF: rc=0 errors=0 sorry-warnings=21 other-warnings=0
+   FormulaKit_Emit: rc=0 errors=0 sorry-warnings=10 other-warnings=0
+   FormulaKit_Gate: rc=0 errors=0 sorry-warnings=10 other-warnings=0
+   SpaceComplexity_Hierarchy: rc=0 errors=0 sorry-warnings=4 other-warnings=0
+   SpaceComplexity_Savitch: rc=0 errors=0 sorry-warnings=2 other-warnings=0
+   SpaceComplexity_WindowClock: rc=0 errors=0 sorry-warnings=1 other-warnings=0
+   TuringMachine_Build_InputDevice: rc=0 errors=0 sorry-warnings=3 other-warnings=0
+   TuringMachine_Build_InputWindow: rc=0 errors=0 sorry-warnings=1 other-warnings=0
+   TuringMachine_Build_NDHost: rc=0 errors=0 sorry-warnings=1 other-warnings=0
+   TuringMachine_Build_RecordTable: rc=0 errors=0 sorry-warnings=5 other-warnings=0
+   TuringMachine_Build_StepClock: rc=0 errors=0 sorry-warnings=1 other-warnings=0
+   TuringMachine_Build_WindowRun: rc=0 errors=0 sorry-warnings=2 other-warnings=0
+   TuringMachine_Build_Zone: rc=0 errors=0 sorry-warnings=2 other-warnings=0
+   TuringMachine_CodeSimulator: rc=0 errors=0 sorry-warnings=2 other-warnings=0
+   TuringMachine_NDCodeSimulator: rc=0 errors=0 sorry-warnings=2 other-warnings=0
+   TuringMachine_SelfUniversal: rc=0 errors=0 sorry-warnings=2 other-warnings=0
+   (warnings mapped to declaration names: identical to the static scan, 69 in 16 modules; audits/logs/w1-fill-recordtable-cont5-base-sorries.txt)
+
+## order list: briefs/orders/w1-fill-recordtable-cont5.txt
+   271 modules, topological (every import precedes its importer), no root `TCSlib`; the upstream closure of RecordTable (23 modules, now including Build/Contract/Basic through CounterLoop) and of its 50 downstream modules (Build/WindowRun and SpaceComplexity/WindowClock new); RecordTable is module 157, 114 modules follow it. Against briefs/orders/w1-fill-cont4.txt: 137 added, 0 removed. Every module has an olean in the snapshot.
+
+## screen base: bash tools/flat-screen.sh <tree> screen-population.txt <empty dir> (43 files; rc=0 secs=1306)
+   declarations screened: 2098; copy pairs (target reproduces >= half of source): 2428; reproduced text: 790,157 chars
+   written with its header to audits/logs/w1-fill-recordtable-cont5-screen-base.txt
+   control, unflattened (basename labels), same population (rc=0 secs=1307):
+   flattened: 2098 declarations, 2428 pairs, 790,157 chars
+   control (basename labels): 2098 declarations, 2428 pairs, 790,157 chars
+   pairs in the flattened screen and not in the control (by basename): 0
+   pairs in the control and not in the flattened screen: 0
+   flattened pairs between two different files with the same basename: 0
+   pairs touching Build/RecordTable.lean at the base: 10, all in-file
+## home-block screen: the tip's RecordTable with only tools/home.lean.txt inserted at the home (asserted), same population, flattened (rc=0 secs=1234)
+   declarations screened: 2105; copy pairs (target reproduces >= half of source): 2430; reproduced text: 790,285 chars
+   pairs added against the base:
+      TCSlib__Complexity__TuringMachine__Build__RecordTable.lean::rt_tailState_decidableEq  reproduces  TCSlib__Complexity__TuringMachine__Build__RecordTable.lean::rt_tailState_fintype: 64/98 = 65%
+      TCSlib__Complexity__TuringMachine__Build__RecordTable.lean::rt_tailState_fintype  reproduces  TCSlib__Complexity__TuringMachine__Build__RecordTable.lean::rt_tailState_decidableEq: 64/106 = 60%
+   pairs removed against the base: 0
+
+## other checks
+   lint at the issue tree: python3 -I scripts/campaign_style_lint.py TCSlib/Complexity/TuringMachine/Build
+   WARN  TCSlib/Complexity/TuringMachine/Build/RecordTable.lean       4779 lines > 1000: policy requires a split or a recorded justification (escalation/decision log)
+   INFO  TCSlib/Complexity/TuringMachine/Build/RecordTable.lean       4779 lines; 28 public / 82 private declarations
+   style_lint: 0 FAIL, 11 WARN over 32 files
+   RecordTable.lean is byte-identical at 2c3c975a (the first drafting base) and at the issue tree; lake-manifest.json, lakefile and lean-toolchain unchanged
+   name clash: no declaration named rt_* outside Build/RecordTable.lean at the issue tree (grep)

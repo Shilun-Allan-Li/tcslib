@@ -28,6 +28,12 @@ not computed from a space-constructibility witness: the machine grows it until t
 reachable codes stops growing (`TCSlib.Complexity.SpaceComplexity.ExpBFS.Radius`), so only the
 book's standing convention `S ≥ log` is used.
 
+## Main definitions
+
+* none (the correctness of the machine `Complexity.LogProg.ISGen.igA` of
+  `TCSlib.Complexity.SpaceComplexity.Logspace.ISCountGenMachine`, and the complement
+  closures it gives).
+
 ## Main results
 
 * `Complexity.LogProg.ISGen.loop_run` — the radius loop decides non-membership.

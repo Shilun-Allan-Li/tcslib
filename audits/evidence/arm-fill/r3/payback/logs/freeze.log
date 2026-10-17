@@ -1,0 +1,383 @@
+## ConfigGraph (TCSlib/Complexity/SpaceComplexity/ConfigGraph.lean)
+declarations before/after: 44/34 (public 22/31)
+public removed (0): []
+private removed (13): ['Complexity.s1b_constructor_count', 'Complexity.s1b_constructor_time', 'Complexity.s1b_count_le_exp', 'Complexity.s1b_normalize_radius', 'Complexity.s1b_vertex_count', 'Turing.FinNDTM.s1b_record', 'Turing.FinNDTM.s1b_recordEdge', 'Turing.FinNDTM.s1b_recordPath_lift', 'Turing.FinNDTM.s1b_recordPath_of_run', 'Turing.FinNDTM.s1b_record_accepts', 'Turing.FinNDTM.s1b_record_eq_iff', 'Turing.InWindow', 'Turing.inWindow_iff_cfgInWindow']
+public added (3): ['Turing.Cfg.InWindow.core_bounds', 'Turing.FinNDTM.DecidesInSpace.mem_of_acceptsWithin', 'Turing.outSummary_eq_empty_iff']
+made public in place (6): ['Turing.NDTM.abs_lt_card_visitedWith', 'Turing.NDTM.inWindow_of_coreSum_eq', 'Turing.NDTM.mem_visitedWith_of_ne_none', 'Turing.NDTM.runWith_take_inWindow', 'Turing.NDTM.take_succ_action', 'Turing.NDTM.visitedWith_take_subset']
+D1 restatements (3, public 2): ['Turing.FinNDTM.count_windowed_vertices', 'Turing.NDTM.inWindow_of_coreSum_eq', 'Turing.NDTM.runWith_take_inWindow']
+D1 rewrite of a body alone (1): ['Turing.FinNDTM.acceptsWithin_of_spaceUsedWith_le']
+bodies changed by the edits (4): ['Turing.FinNDTM.DecidesInSpace.mem_iff_acceptsWithin_configBound', 'Turing.FinNDTM.count_windowed_vertices', 'Turing.NDTM.inWindow_of_coreSum_eq', 'Turing.NDTM.runWith_take_inWindow']
+docstrings changed (2): ['Turing.FinNDTM.DecidesInSpace.mem_iff_acceptsWithin_configBound', 'Turing.NDTM.inWindow_of_coreSum_eq']
+other comments (module docstring, section headers): changed
+imports added: []
+public statements kept byte-identical (whitespace-collapsed): 22 of 22
+RESULT: PASS
+## Word (TCSlib/Complexity/SpaceComplexity/Codec/Word.lean)
+declarations before/after: 47/46 (public 47/46)
+public removed (1): ['Complexity.Codec.InWin']
+private removed (0): []
+public added (0): []
+made public in place (0): []
+D1 restatements (3, public 3): ['Complexity.Codec.coreSum_eq_of_cfgWord_eq', 'Complexity.Codec.decodeCfg_cfgCode', 'Complexity.Codec.decodeCfg_eq_none']
+D1 rewrite of a body alone (2): ['Complexity.Codec.decodeCfg', 'Complexity.Codec.decodeCfg_cfgCode']
+bodies changed by the edits (1): ['Complexity.Codec.coreSum_eq_of_cfgWord_eq']
+docstrings changed (0): []
+other comments (module docstring, section headers): changed
+imports added: []
+public statements kept byte-identical (whitespace-collapsed): 43 of 46
+RESULT: PASS
+## Valid (TCSlib/Complexity/SpaceComplexity/Codec/Valid.lean)
+declarations before/after: 36/36 (public 36/36)
+public removed (0): []
+private removed (0): []
+public added (0): []
+made public in place (0): []
+D1 restatements (3, public 3): ['Complexity.Codec.cellOf_mkCfg', 'Complexity.Codec.vScan_cfgWord', 'Complexity.Codec.validChk_iff']
+D1 rewrite of a body alone (0): []
+bodies changed by the edits (2): ['Complexity.Codec.cellOf_mkCfg', 'Complexity.Codec.vScan_cfgWord']
+docstrings changed (0): []
+other comments (module docstring, section headers): unchanged
+imports added: []
+public statements kept byte-identical (whitespace-collapsed): 33 of 36
+RESULT: PASS
+## Step (TCSlib/Complexity/SpaceComplexity/Codec/Step.lean)
+declarations before/after: 30/30 (public 29/29)
+public removed (0): []
+private removed (0): []
+public added (0): []
+made public in place (0): []
+D1 restatements (4, public 4): ['Complexity.Codec.boundary_iff', 'Complexity.Codec.cellOf_apply', 'Complexity.Codec.sDone_step', 'Complexity.Codec.slide_step_iff']
+D1 rewrite of a body alone (0): []
+bodies changed by the edits (2): ['Complexity.Codec.boundary_iff', 'Complexity.Codec.cellOf_apply']
+docstrings changed (0): []
+other comments (module docstring, section headers): unchanged
+imports added: []
+public statements kept byte-identical (whitespace-collapsed): 25 of 29
+RESULT: PASS
+## Langs (TCSlib/Complexity/SpaceComplexity/Codec/Langs.lean)
+declarations before/after: 9/9 (public 9/9)
+public removed (0): []
+private removed (0): []
+public added (0): []
+made public in place (0): []
+D1 restatements (3, public 3): ['Complexity.Codec.mem_acceptLang', 'Complexity.Codec.mem_stepLang', 'Complexity.Codec.mem_validLang']
+D1 rewrite of a body alone (3): ['Complexity.Codec.acceptLang', 'Complexity.Codec.stepLang', 'Complexity.Codec.validLang']
+bodies changed by the edits (0): []
+docstrings changed (0): []
+other comments (module docstring, section headers): unchanged
+imports added: []
+public statements kept byte-identical (whitespace-collapsed): 6 of 9
+RESULT: PASS
+## Checks (TCSlib/Complexity/SpaceComplexity/Codec/Checks.lean)
+declarations before/after: 27/26 (public 27/26)
+public removed (1): ['Complexity.Codec.outSummary_eq_empty_iff']
+private removed (0): []
+public added (0): []
+made public in place (0): []
+D1 restatements (3, public 3): ['Complexity.Codec.aI_cfgWord', 'Complexity.Codec.acceptChk_iff', 'Complexity.Codec.stepChk_iff']
+D1 rewrite of a body alone (0): []
+bodies changed by the edits (1): ['Complexity.Codec.initChk_iff']
+docstrings changed (0): []
+other comments (module docstring, section headers): unchanged
+imports added: []
+public statements kept byte-identical (whitespace-collapsed): 23 of 26
+RESULT: PASS
+## Bridge (TCSlib/Complexity/SpaceComplexity/Codec/Bridge.lean)
+declarations before/after: 10/4 (public 6/4)
+public removed (2): ['Complexity.Codec.inWin_runWith_take', 'Complexity.Codec.mem_of_acceptsWithin']
+private removed (4): ['Complexity.Codec.abs_lt_card_visitedWith', 'Complexity.Codec.mem_visitedWith_of_ne_none', 'Complexity.Codec.take_succ_action', 'Complexity.Codec.visitedWith_take_subset']
+public added (0): []
+made public in place (0): []
+D1 restatements (0, public 0): []
+D1 rewrite of a body alone (0): []
+bodies changed by the edits (2): ['Complexity.Codec.mem_iff_codeChain', 'Complexity.Codec.mem_of_codePath']
+docstrings changed (2): ['Complexity.Codec.mem_iff_codeChain', 'Complexity.Codec.mem_of_codePath']
+other comments (module docstring, section headers): changed
+imports added: []
+public statements kept byte-identical (whitespace-collapsed): 4 of 4
+RESULT: PASS
+## Radius (TCSlib/Complexity/SpaceComplexity/ExpBFS/Radius.lean)
+declarations before/after: 26/25 (public 26/25)
+public removed (1): ['Complexity.ExpBFS.inWin_of_coreSum_eq']
+private removed (0): []
+public added (0): []
+made public in place (0): []
+D1 restatements (7, public 7): ['Complexity.ExpBFS.WinRun.last', 'Complexity.ExpBFS.WinRun.snoc', 'Complexity.ExpBFS.coreSum_eq_of_code_eq', 'Complexity.ExpBFS.inWin_init', 'Complexity.ExpBFS.inWin_mono', 'Complexity.ExpBFS.inWin_runWith_of_decides', 'Complexity.ExpBFS.inWin_stepWith']
+D1 rewrite of a body alone (1): ['Complexity.ExpBFS.WinRun']
+bodies changed by the edits (6): ['Complexity.ExpBFS.inWin_init', 'Complexity.ExpBFS.inWin_mono', 'Complexity.ExpBFS.inWin_runWith_of_decides', 'Complexity.ExpBFS.inWin_stepWith', 'Complexity.ExpBFS.rcode_iff', 'Complexity.ExpBFS.winRun_of_card_eq']
+docstrings changed (2): ['Complexity.ExpBFS.inWin_runWith_of_decides', 'Complexity.ExpBFS.rcode_iff']
+other comments (module docstring, section headers): unchanged
+imports added: []
+public statements kept byte-identical (whitespace-collapsed): 18 of 25
+RESULT: PASS
+## InputAccess (TCSlib/Complexity/SpaceComplexity/Logspace/InputAccess.lean)
+declarations before/after: 78/84 (public 20/27)
+public removed (0): []
+private removed (0): []
+public added (6): ['Complexity.LogProg.arm_chain', 'Complexity.LogProg.boundedDecodeStride_loop', 'Complexity.LogProg.drop_canon', 'Complexity.indicator_inputBitLang', 'Complexity.indicator_inputLenLang', 'Complexity.pairEncode_getD_snd']
+made public in place (1): ['Complexity.LogProg.access_width_half']
+D1 restatements (0, public 0): []
+D1 rewrite of a body alone (0): []
+bodies changed by the edits (2): ['Complexity.LogProg.arm_increments', 'Complexity.LogProg.boundedDecode_loop']
+docstrings changed (3): ['Complexity.LogProg.access_width_half', 'Complexity.LogProg.arm_increments', 'Complexity.LogProg.boundedDecode_loop']
+other comments (module docstring, section headers): changed
+imports added: []
+public statements kept byte-identical (whitespace-collapsed): 20 of 20
+RESULT: PASS
+## Engine (TCSlib/Complexity/SpaceComplexity/Codec/Engine.lean)
+declarations before/after: 6/6 (public 6/6)
+public removed (0): []
+private removed (0): []
+public added (0): []
+made public in place (0): []
+D1 restatements (0, public 0): []
+D1 rewrite of a body alone (0): []
+bodies changed by the edits (4): ['Complexity.Codec.decChain', 'Complexity.Codec.decodeStride_loop', 'Complexity.Codec.halvCount_loop', 'Complexity.Codec.incChain']
+docstrings changed (4): ['Complexity.Codec.decChain', 'Complexity.Codec.decodeStride_loop', 'Complexity.Codec.halvCount_loop', 'Complexity.Codec.incChain']
+other comments (module docstring, section headers): changed
+imports added: []
+public statements kept byte-identical (whitespace-collapsed): 6 of 6
+RESULT: PASS
+## QueryReshape (TCSlib/Complexity/SpaceComplexity/Logspace/QueryReshape.lean)
+declarations before/after: 121/120 (public 9/9)
+public removed (0): []
+private removed (1): ['Complexity.drop_canon']
+public added (0): []
+made public in place (0): []
+D1 restatements (0, public 0): []
+D1 rewrite of a body alone (0): []
+bodies changed by the edits (3): ['Complexity.comp_suffix_address', 'Complexity.drop_bit', 'Complexity.drop_len']
+docstrings changed (0): []
+other comments (module docstring, section headers): unchanged
+imports added: []
+public statements kept byte-identical (whitespace-collapsed): 9 of 9
+RESULT: PASS
+## Run (TCSlib/Complexity/SpaceComplexity/Codec/Run.lean)
+declarations before/after: 25/25 (public 25/25)
+public removed (0): []
+private removed (0): []
+public added (0): []
+made public in place (0): []
+D1 restatements (0, public 0): []
+D1 rewrite of a body alone (0): []
+bodies changed by the edits (2): ['Complexity.Codec.orc_bit', 'Complexity.Codec.orc_len']
+docstrings changed (0): []
+other comments (module docstring, section headers): unchanged
+imports added: []
+public statements kept byte-identical (whitespace-collapsed): 25 of 25
+RESULT: PASS
+## TQBFARMMachine (TCSlib/Complexity/ClassPSPACE/TQBFARM/Machine.lean)
+declarations before/after: 54/54 (public 54/54)
+public removed (0): []
+private removed (0): []
+public added (0): []
+made public in place (0): []
+D1 restatements (0, public 0): []
+D1 rewrite of a body alone (0): []
+bodies changed by the edits (2): ['Complexity.LogProg.TQBFARM.orc_bit', 'Complexity.LogProg.TQBFARM.orc_len']
+docstrings changed (0): []
+other comments (module docstring, section headers): unchanged
+imports added: []
+public statements kept byte-identical (whitespace-collapsed): 54 of 54
+RESULT: PASS
+## Parse (TCSlib/Complexity/SpaceComplexity/Codec/Parse.lean)
+declarations before/after: 16/16 (public 16/16)
+public removed (0): []
+private removed (0): []
+public added (0): []
+made public in place (0): []
+D1 restatements (0, public 0): []
+D1 rewrite of a body alone (0): []
+bodies changed by the edits (3): ['Complexity.Codec.canon_of_getLastD', 'Complexity.Codec.getLastD_of_canon', 'Complexity.Codec.pe_getD_snd']
+docstrings changed (0): []
+other comments (module docstring, section headers): unchanged
+imports added: []
+public statements kept byte-identical (whitespace-collapsed): 16 of 16
+RESULT: PASS
+## VWord (TCSlib/Complexity/SpaceComplexity/Machines/VWord.lean)
+declarations before/after: 8/8 (public 8/8)
+public removed (0): []
+private removed (0): []
+public added (0): []
+made public in place (0): []
+D1 restatements (0, public 0): []
+D1 rewrite of a body alone (0): []
+bodies changed by the edits (1): ['Complexity.getD_drop']
+docstrings changed (0): []
+other comments (module docstring, section headers): changed
+imports added: ['TCSlib.Programs.Util.List']
+public statements kept byte-identical (whitespace-collapsed): 8 of 8
+RESULT: PASS
+## Mult (TCSlib/Complexity/SpaceComplexity/Logspace/Mult.lean)
+declarations before/after: 64/64 (public 2/2)
+public removed (0): []
+private removed (0): []
+public added (0): []
+made public in place (0): []
+D1 restatements (0, public 0): []
+D1 rewrite of a body alone (0): []
+bodies changed by the edits (1): ['Complexity.mult_addresses']
+docstrings changed (0): []
+other comments (module docstring, section headers): unchanged
+imports added: []
+public statements kept byte-identical (whitespace-collapsed): 2 of 2
+RESULT: PASS
+## DAGCircuitSat (TCSlib/Complexity/CircuitComplexity/DAGCircuitSat.lean)
+declarations before/after: 23/23 (public 21/23)
+public removed (0): []
+private removed (0): []
+public added (0): []
+made public in place (2): ['BoolCircuit.DAGCircuit.eval_tseitinGates_values', 'BoolCircuit.DAGCircuit.values_getD_eq_of_eval_tseitinGates']
+D1 restatements (0, public 0): []
+D1 rewrite of a body alone (0): []
+bodies changed by the edits (0): []
+docstrings changed (0): []
+other comments (module docstring, section headers): unchanged
+imports added: []
+public statements kept byte-identical (whitespace-collapsed): 21 of 21
+RESULT: PASS
+## TQBFHardTseitin (TCSlib/Complexity/ClassPSPACE/TQBFHardTseitin.lean)
+declarations before/after: 5/4 (public 3/2)
+public removed (1): ['Complexity.TQBFHard.values_getD_eq_of_eval_tseitinGates']
+private removed (0): []
+public added (0): []
+made public in place (0): []
+D1 restatements (0, public 0): []
+D1 rewrite of a body alone (0): []
+bodies changed by the edits (1): ['Complexity.TQBFHard.toCNF_extension_iff']
+docstrings changed (2): ['Complexity.TQBFHard.numVars_le_length_serialize', 'Complexity.TQBFHard.toCNF_extension_iff']
+other comments (module docstring, section headers): changed
+imports added: []
+public statements kept byte-identical (whitespace-collapsed): 2 of 2
+RESULT: PASS
+## TQBF (TCSlib/Complexity/ClassPSPACE/TQBF.lean)
+declarations before/after: 236/190 (public 72/72)
+public removed (0): []
+private removed (46): 46 (b4m* and codec_core_window)
+public added (0): []
+made public in place (0): []
+D1 restatements (0, public 0): []
+D1 rewrite of a body alone (0): []
+bodies changed by the edits (1): ['Complexity.codecRowOf_eq_iff']
+docstrings changed (0): []
+other comments (module docstring, section headers): changed
+imports added: []
+public statements kept byte-identical (whitespace-collapsed): 72 of 72
+RESULT: PASS
+## PolyTimeBlockLoop (TCSlib/Complexity/ClassNP/PolyTimeBlockLoop.lean)
+declarations before/after: 50/51 (public 39/40)
+public removed (0): []
+private removed (0): []
+public added (1): ['Complexity.length_pairEncode_drop_le']
+made public in place (0): []
+D1 restatements (0, public 0): []
+D1 rewrite of a body alone (0): []
+bodies changed by the edits (1): ['Complexity.length_xorPairStep_le']
+docstrings changed (1): ['Complexity.length_xorPairStep_le']
+other comments (module docstring, section headers): unchanged
+imports added: []
+public statements kept byte-identical (whitespace-collapsed): 39 of 39
+RESULT: PASS
+## TQBFHardParams (TCSlib/Complexity/ClassPSPACE/TQBFHardParams.lean)
+declarations before/after: 14/14 (public 11/11)
+public removed (0): []
+private removed (0): []
+public added (0): []
+made public in place (0): []
+D1 restatements (0, public 0): []
+D1 rewrite of a body alone (0): []
+bodies changed by the edits (1): ['Complexity.TQBFHard.length_lbStep']
+docstrings changed (1): ['Complexity.TQBFHard.length_lbStep']
+other comments (module docstring, section headers): unchanged
+imports added: []
+public statements kept byte-identical (whitespace-collapsed): 11 of 11
+RESULT: PASS
+## TQBFHardSemantics (TCSlib/Complexity/ClassPSPACE/TQBFHardSemantics.lean)
+declarations before/after: 29/28 (public 29/28)
+public removed (1): ['Complexity.TQBFHard.prefixTruth_congr_agree']
+private removed (0): []
+public added (0): []
+made public in place (0): []
+D1 restatements (0, public 0): []
+D1 rewrite of a body alone (0): []
+bodies changed by the edits (0): []
+docstrings changed (0): []
+other comments (module docstring, section headers): unchanged
+imports added: []
+public statements kept byte-identical (whitespace-collapsed): 28 of 28
+RESULT: PASS
+## QBF (TCSlib/Complexity/Formulas/QBF.lean)
+declarations before/after: 14/15 (public 11/12)
+public removed (0): []
+private removed (0): []
+public added (1): ['Complexity.QBF.prefixTruth_congr_agree']
+made public in place (0): []
+D1 restatements (0, public 0): []
+D1 rewrite of a body alone (0): []
+bodies changed by the edits (1): ['Complexity.QBF.prefixTruth_congr']
+docstrings changed (1): ['Complexity.QBF.prefixTruth_congr']
+other comments (module docstring, section headers): changed
+imports added: []
+public statements kept byte-identical (whitespace-collapsed): 11 of 11
+RESULT: PASS
+## TQBFHardMachine (TCSlib/Complexity/ClassPSPACE/TQBFHardMachine.lean)
+declarations before/after: 8/8 (public 8/8)
+public removed (0): []
+private removed (0): []
+public added (0): []
+made public in place (0): []
+D1 restatements (0, public 0): []
+D1 rewrite of a body alone (0): []
+bodies changed by the edits (0): []
+docstrings changed (1): ['Complexity.TQBFHard.reflTransGen_stepRel']
+other comments (module docstring, section headers): unchanged
+imports added: []
+public statements kept byte-identical (whitespace-collapsed): 8 of 8
+RESULT: PASS
+## TQBFHardVerifier (TCSlib/Complexity/ClassPSPACE/TQBFHardVerifier.lean)
+declarations before/after: 34/34 (public 34/34)
+public removed (0): []
+private removed (0): []
+public added (0): []
+made public in place (0): []
+D1 restatements (0, public 0): []
+D1 rewrite of a body alone (0): []
+bodies changed by the edits (0): []
+docstrings changed (0): []
+other comments (module docstring, section headers): changed
+imports added: []
+public statements kept byte-identical (whitespace-collapsed): 34 of 34
+RESULT: PASS
+## ExpBFSRun (TCSlib/Complexity/SpaceComplexity/ExpBFS/Run.lean)
+declarations before/after: 40/40 (public 40/40)
+public removed (0): []
+private removed (0): []
+public added (0): []
+made public in place (0): []
+D1 restatements (0, public 0): []
+D1 rewrite of a body alone (0): []
+bodies changed by the edits (0): []
+docstrings changed (1): ['Complexity.LogProg.ExpBFS.nz_run']
+other comments (module docstring, section headers): unchanged
+imports added: []
+public statements kept byte-identical (whitespace-collapsed): 40 of 40
+RESULT: PASS
+## SpaceComplexity (TCSlib/Complexity/SpaceComplexity.lean)
+declarations before/after: 0/0 (public 0/0)
+public removed (0): []
+private removed (0): []
+public added (0): []
+made public in place (0): []
+D1 restatements (0, public 0): []
+D1 rewrite of a body alone (0): []
+bodies changed by the edits (0): []
+docstrings changed (0): []
+other comments (module docstring, section headers): unchanged
+imports added: []
+public statements kept byte-identical (whitespace-collapsed): 0 of 0
+RESULT: PASS
+move Complexity.Codec.outSummary_eq_empty_iff (Checks) -> Turing.outSummary_eq_empty_iff (ConfigGraph): statement and body kept: True
+move Complexity.drop_canon (QueryReshape) -> Complexity.LogProg.drop_canon (InputAccess): statement and body kept: True
+move Complexity.TQBFHard.prefixTruth_congr_agree (TQBFHardSemantics) -> Complexity.QBF.prefixTruth_congr_agree (QBF): statement and body kept: True
+files in the tree other than the 27 touched files: []
+OVERALL: PASS

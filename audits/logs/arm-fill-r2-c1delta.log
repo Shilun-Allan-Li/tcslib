@@ -1,0 +1,46 @@
+# arm-fill-r2-c1delta: PR #87 (C1's host contracts) against the received tree
+PR #87 diff (d054888d445760915f1791296c08a881b06b80bb..4d14979854120a7619a1316bef41535c5832d949): 10 paths; SHA-256 7d9dfcf2ac891da013cd182c80c4cdf14853111a8337cb4b2a08171bd468d3bd
+dc891632..733c22b7 diff: SHA-256 7d9dfcf2ac891da013cd182c80c4cdf14853111a8337cb4b2a08171bd468d3bd
+the two diffs are byte-identical: the replay revision is the received tree plus exactly PR #87's diff
+PR #87's first parent has the received tree's Lean files (dc891632's)
+
+path	status	blob@dc891632	blob@733c22b7	SHA-256@733c22b7	bytes	blob@tip	same at tip
+TCSlib/Complexity/ClassNP.lean	M	fe7a3cad3ef1d95da1f25f1b25bde0b7e0a08b98	cecb4d9a8ab1aba009a6dfd7e8909cdeb321eaeb	2d24409e723b0c939db752777baaf97a3c26ebf83c97d5d56d725f8636f90f0b	3693	cecb4d9a8ab1aba009a6dfd7e8909cdeb321eaeb	yes
+TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean	A	-	78ec52ae323848d72cce3ea2695ea180302ecc1f	a2d721ecfee3ad76f40e99762419451d3bd3a427a7553b00dbbe694fa501a286	6209	78ec52ae323848d72cce3ea2695ea180302ecc1f	yes
+TCSlib/Complexity/Diagonalization/NTimeHierarchy.lean	M	0488e98f98f66e55a551e78d3c2c1b605cfbe1da	ad262c1492320b05c11fe9ddd1c4950458f804bd	2fa273acc56a8b974d66ac7c25df976d679ff55a7f91ed31fddf015514019335	23188	ad262c1492320b05c11fe9ddd1c4950458f804bd	yes
+TCSlib/Complexity/TuringMachine.lean	M	24f337e508ecb1646ae4215b9cbe2300bdcf1bee	d71df26046a70c596c3993f9e3a88d3e298bdef1	27921038cc8450c7721c46e49a24d311e59c783d4ab3012a32461d2e8b34b69e	12940	9fd2b01a8233381514095ed019d590cb72f5da09	no
+TCSlib/Complexity/TuringMachine/Build/InputWindow.lean	A	-	5fd86b0392924e50a45df0b373de37f65ebac781	488c4ef352f0eb80023ebdb0a74fe2471ae643050bf0548133a3ecb736fd1d93	4602	5fd86b0392924e50a45df0b373de37f65ebac781	yes
+TCSlib/Complexity/TuringMachine/Build/NDHost.lean	A	-	63d50799d6af7f0fd9cd57fc0a50ad283faedae9	9507b89d42771b824c42f9cc53b24cb505a5c08f9afcfb568ff727137ec7ede1	10405	63d50799d6af7f0fd9cd57fc0a50ad283faedae9	yes
+TCSlib/Complexity/TuringMachine/ChoiceReplay.lean	A	-	8c2be4c180ec5f183b6ac690e0ce758eda51daaf	665b4ecc83b48ae2418990ea18d87b67fdda866c72b859585019de03fd22c6ac	6386	8c2be4c180ec5f183b6ac690e0ce758eda51daaf	yes
+TCSlib/Complexity/TuringMachine/NDCodeSimulator.lean	A	-	2637a25a354d33dc4b69a873130c2683d5cde5af	51dd3667c60805b249d76b635a7ca6c797868332ae4b258bbb163a301df209b3	9085	2637a25a354d33dc4b69a873130c2683d5cde5af	yes
+TCSlib/Complexity/TuringMachine/Nondeterministic.lean	M	f3f16a7ccd834e40361ce54b861ca3adeff53fb0	1eb091adde4e04ac83d69a524546942ca5890016	a3bd59ebd8e1b721f5fa3c87fb4967d4421bd43bb7c3ab7a1cd7d86ed39cf628	32660	1eb091adde4e04ac83d69a524546942ca5890016	yes
+TCSlib/Complexity/TuringMachine/NondeterministicSpace.lean	M	a8267803edbfef5adb31a38ccb002841e56def1c	f9f2cacf583eb088bb904dc1c5913f675e9b770e	5519f3f061d87587a3a041567e7dfcc8906fae48389743f02a0ce96dbab90237	9599	f9f2cacf583eb088bb904dc1c5913f675e9b770e	yes
+
+# which of the ten are in the upstream import closure of the 81 received modules (round 1's closure list, received tree)
+TCSlib/Complexity/ClassNP.lean: 0
+TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean: 0
+TCSlib/Complexity/Diagonalization/NTimeHierarchy.lean: 0
+TCSlib/Complexity/TuringMachine.lean: 0
+TCSlib/Complexity/TuringMachine/Build/InputWindow.lean: 0
+TCSlib/Complexity/TuringMachine/Build/NDHost.lean: 0
+TCSlib/Complexity/TuringMachine/ChoiceReplay.lean: 0
+TCSlib/Complexity/TuringMachine/NDCodeSimulator.lean: 0
+TCSlib/Complexity/TuringMachine/Nondeterministic.lean: 1
+TCSlib/Complexity/TuringMachine/NondeterministicSpace.lean: 1
+
+# sorry tokens (comment-stripped code) in the two upstream files, before and after
+dc891632 Nondeterministic.lean: 1 sorry token(s)
+dc891632 NondeterministicSpace.lean: 1 sorry token(s)
+733c22b7 Nondeterministic.lean: 0 sorry token(s)
+733c22b7 NondeterministicSpace.lean: 0 sorry token(s)
+
+# text hits (comments included), at the received tree, of the two lemmas C1 proved
+TCSlib/Complexity/RAMSimulation/Simulation.lean:148:`N.tm.fixChoice false` (`Turing.NDTM.runWith_eq_fixChoice_runFrom`, in `TuringMachine/Nondeterministic.lean`),
+TCSlib/Complexity/TuringMachine/Nondeterministic.lean:75:* `Turing.NDTM.runWith_eq_fixChoice_runFrom` — a branch that meets no real choice is the run of
+TCSlib/Complexity/TuringMachine/Nondeterministic.lean:285:theorem runWith_eq_fixChoice_runFrom (tm : NDTM k Symbol State) (b : Bool) (w : List Bool)
+TCSlib/Complexity/TuringMachine/NondeterministicSpace.lean:35:* `Turing.NDTM.spaceUsedWith_eq_fixChoice_spaceUsed` — such a branch uses exactly the slice's
+TCSlib/Complexity/TuringMachine/NondeterministicSpace.lean:169:`runWith_eq_fixChoice_runFrom`, the branch of `tm` under `w` visits exactly the cells that the
+TCSlib/Complexity/TuringMachine/NondeterministicSpace.lean:174:`j ≤ |w|`; each prefix satisfies the hypothesis, so by `runWith_eq_fixChoice_runFrom` its run is
+TCSlib/Complexity/TuringMachine/NondeterministicSpace.lean:177:theorem spaceUsedWith_eq_fixChoice_spaceUsed (tm : NDTM k Symbol State) (b : Bool)
+# the same files comment-stripped: code references other than the two declaration headers
+code references outside the declaring headers: 0

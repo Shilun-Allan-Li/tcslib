@@ -1,0 +1,84 @@
+namespace Turing
+
+variable {k : ℕ} {Γ : Type}
+
+/-! ### §13d G2: the mapped sweeps as contracts
+
+The two G2 rows of `Build/Catalog` stated as `Turing.Contract`s from the start (design §16b,
+item 5), through the shared constructor `Turing.sweepContract` and endpoint `Turing.sweepPost`. -/
+
+/-- The values a mapped sweep writes into its destination interval: at cell `q`, the merge of the
+cell's original content with the extract of the source word's symbol at offset `q - pos`. -/
+def sweepMapWrite {S : Type} {x : List Γ} {Δ : Type} (extract : Γ → Δ) (merge : Option Γ → Δ → Γ)
+    (w : List Γ) (d : Cfg k Γ S x) (j : Fin k) (q : ℤ) : Option Γ :=
+  (FinTM.bufferTape w (q - d.workTapePos j)).map fun γ => merge (d.workTapes j q) (extract γ)
+
+/-- **The mapped copy as a contract** (design §13d, G2): the index is the source word `w`.
+Started in the sweep phase with `w`, delimited, at the head of tape `src`, the mapped copy
+reaches `done` in exactly `2|w| + 2` steps, and not earlier, with the destination interval
+`[pos, pos + |w|)` holding `merge c (extract γ)` cell by cell (`c` the original destination
+cell, `γ` the source cell) and every other field unchanged; through the endpoint the heads of
+`src` and `dst` stay within one cell of their intervals and every other head is fixed.
+
+**Proof sketch.** `Turing.sweepContract` with the clauses of `Turing.copyMapTM_run_ofCfg`. -/
+def copyMapTM_contract {Δ : Type} (src dst : Fin k) (hne : src ≠ dst) (extract : Γ → Δ)
+    (merge : Option Γ → Δ → Γ) (x : List Γ) :
+    Contract (copyMapTM k src dst extract merge) SweepPhase.sweep {some SweepPhase.done}
+      (List Γ) x :=
+  sweepContract _ _ _ src (fun j => j = src ∨ j = dst) x
+    (sweepPost .done dst (sweepMapWrite extract merge)) (fun _ _ => rfl)
+    (copyMapTM_run_ofCfg src dst hne extract merge)
+
+/-- **The mapped transfer as a contract** (design §13d, G2): as `Turing.copyMapTM_contract`,
+with the source interval holding the residues `rest γ` at the endpoint.
+
+**Proof sketch.** `Turing.sweepContract` with the clauses of `Turing.transferMapTM_run_ofCfg`. -/
+def transferMapTM_contract {Δ : Type} (src dst : Fin k) (hne : src ≠ dst) (extract : Γ → Δ)
+    (merge : Option Γ → Δ → Γ) (rest : Γ → Option Γ) (x : List Γ) :
+    Contract (transferMapTM k src dst extract merge rest) SweepPhase.sweep
+      {some SweepPhase.done} (List Γ) x :=
+  sweepContract _ _ _ src (fun j => j = src ∨ j = dst) x
+    (fun w d => sweepPost .done src (fun w d j q => (FinTM.bufferTape w (q - d.workTapePos j)).bind
+      rest) w (sweepPost .done dst (sweepMapWrite extract merge) w d)) (fun _ _ => rfl)
+    (transferMapTM_run_ofCfg src dst hne extract merge rest)
+
+/-- The mapped copy frames exactly the destination interval: its footprint is
+`[pos, pos + |w|)` on tape `dst` and empty elsewhere.
+
+**Proof sketch.** `Turing.sweep_ite_keep` at `dst`. -/
+theorem copyMapTM_contract_frames {Δ : Type} (src dst : Fin k) (hne : src ≠ dst)
+    (extract : Γ → Δ) (merge : Option Γ → Δ → Γ) (x : List Γ) :
+    (copyMapTM_contract src dst hne extract merge x).Frames fun w d j =>
+      if j = dst then Set.Ico (d.workTapePos j) (d.workTapePos j + w.length) else ∅ :=
+  fun _ _ _ _ _ _ hq => sweep_ite_keep _ _ hq
+
+/-- The mapped transfer frames exactly its two word intervals, on `src` and on `dst`: its
+footprint is `[pos, pos + |w|)` on each and empty elsewhere.
+
+**Proof sketch.** `Turing.sweep_ite_keep` at `src`, then at `dst`. -/
+theorem transferMapTM_contract_frames {Δ : Type} (src dst : Fin k) (hne : src ≠ dst)
+    (extract : Γ → Δ) (merge : Option Γ → Δ → Γ) (rest : Γ → Option Γ) (x : List Γ) :
+    (transferMapTM_contract src dst hne extract merge rest x).Frames fun w d j =>
+      if j = src ∨ j = dst then Set.Ico (d.workTapePos j) (d.workTapePos j + w.length)
+      else ∅ := by
+  intro w d _ _ j q hq
+  have hs : q ∉ (if j = src then Set.Ico (d.workTapePos j) (d.workTapePos j + w.length)
+      else ∅) := by
+    by_cases h : j = src <;> simp_all
+  have hd : q ∉ (if j = dst then Set.Ico (d.workTapePos j) (d.workTapePos j + w.length)
+      else ∅) := by
+    by_cases h : j = dst <;> simp_all
+  exact (sweep_ite_keep _ _ hs).trans (sweep_ite_keep _ _ hd)
+
+/-- **A joint trajectory of the mapped copy**: every head other than the two touched ones stays
+at its start.
+
+**Proof sketch.** `Turing.sweepContract_traj`. -/
+theorem copyMapTM_contract_traj {Δ : Type} (src dst : Fin k) (hne : src ≠ dst)
+    (extract : Γ → Δ) (merge : Option Γ → Δ → Γ) (x : List Γ) :
+    (copyMapTM_contract src dst hne extract merge x).Traj
+      fun _ d p => ∀ j, j ≠ src → j ≠ dst → p j = d.workTapePos j :=
+  fun w d hd hp u hu j h₁ h₂ =>
+    sweepContract_traj _ _ _ _ _ _ _ _ _ w d hd hp u hu j (by tauto)
+
+end Turing

@@ -22,17 +22,12 @@ This is the form in which configuration-graph algorithms (Savitch's midpoint rec
 §4.2, §4.3]: they search for such chains over register-held codes, calling the logspace
 deciders of the code languages.
 
-**Duplication disclosure.** The window lemma `Complexity.Codec.inWin_runWith_take` restates
-the private `runWith_take_inWindow` of `TCSlib.Complexity.SpaceComplexity.ConfigGraph` for
-the codec's public window predicate; its proof replays the private helpers there
-(`take_succ_action`, `abs_lt_card_visitedWith`, `mem_visitedWith_of_ne_none`,
-`visitedWith_take_subset`). The window predicate `Complexity.Codec.InWin` (Word.lean) is a
-public copy of the private `InWindow` there, and `mem_of_acceptsWithin` replays the backward
-branch of `Turing.FinNDTM.DecidesInSpace.mem_iff_acceptsWithin_configBound`. Public exports from
-`ConfigGraph` (`InWindow`, `runWith_take_inWindow`, an "accepting branch of any length implies
-membership" lemma) are requested, after which these copies are deleted. Within the codec, the
-path-to-membership argument exists once (`mem_of_codePath`); `mem_iff_codeChain` and the
-Savitch machine (`Complexity.LogProg.SavitchARM.mem_iff_reach`) both use it.
+The window of a space-bounded branch and the step "an accepting branch of any length gives
+membership" are those of `TCSlib.Complexity.SpaceComplexity.ConfigGraph`
+(`Turing.NDTM.runWith_take_inWindow`, `Turing.FinNDTM.DecidesInSpace.mem_of_acceptsWithin`),
+over the window predicate `Turing.Cfg.InWindow`. Within the codec, the path-to-membership
+argument exists once (`mem_of_codePath`); `mem_iff_codeChain` and the Savitch machine
+(`Complexity.LogProg.SavitchARM.mem_iff_reach`) both use it.
 
 ## Main definitions
 
@@ -40,9 +35,7 @@ Savitch machine (`Complexity.LogProg.SavitchARM.mem_iff_reach`) both use it.
 
 ## Main results
 
-* `Complexity.Codec.configBound_mono`, `Complexity.Codec.mem_of_acceptsWithin` — helpers.
-* `Complexity.Codec.inWin_runWith_take` — prefixes of a space-bounded branch are in the
-  window.
+* `Complexity.Codec.configBound_mono` — a helper.
 * `Complexity.Codec.mem_of_codePath` — a `StepRel`-path of any length from an initial to an
   accepting code gives membership.
 * `Complexity.Codec.mem_iff_codeChain` — the bridge lemma. [AB09, §4.1.1, Claim 4.4(1) in
@@ -60,81 +53,6 @@ open Turing LogProg
 
 variable {N : FinNDTM Bool} {x : List Bool}
 
-/-! ## Windows of space-bounded branches -/
-
-/-- Successive choice prefixes either leave the configuration fixed or apply one action. -/
-private theorem take_succ_action (w : List Bool) (c : Cfg N.k Bool N.State x) (j : ℕ) :
-    N.tm.runWith (w.take (j + 1)) c = N.tm.runWith (w.take j) c ∨
-      ∃ a : Action N.k Bool N.State,
-        N.tm.runWith (w.take (j + 1)) c = a.apply (N.tm.runWith (w.take j) c) := by
-  rw [List.take_succ, NDTM.runWith_append]
-  cases w[j]? with
-  | none => exact Or.inl rfl
-  | some b =>
-    simp only [Option.toList_some, NDTM.runWith_cons, NDTM.runWith_nil,
-      NDTM.stepWith_eq_fixChoice_step]
-    unfold MultiTapeTM.step
-    cases (N.tm.runWith (w.take j) c).state with
-    | none => exact Or.inl rfl
-    | some q => exact Or.inr ⟨_, rfl⟩
-
-/-- A visited position has absolute value below the visited-set size. -/
-private theorem abs_lt_card_visitedWith (w : List Bool) (i : Fin N.k) {z : ℤ}
-    (hz : z ∈ N.tm.visitedWith w (N.tm.initCfg x) i) :
-    |z| < (N.tm.visitedWith w (N.tm.initCfg x) i).card := by
-  apply MultiTapeTM.ConfigCount.abs_lt_card_image_of_unitSteps
-    (fun j => (N.tm.runWith (w.take j) (N.tm.initCfg x)).workTapePos i) (by simp) _ w.length hz
-  intro j
-  dsimp only
-  rcases take_succ_action w (N.tm.initCfg x) j with same | ⟨a, step⟩
-  · rw [same]; simp
-  · rw [step]; exact workTapePos_apply_le a _ i
-
-/-- Every nonblank cell of a run from initialization has been visited. -/
-private theorem mem_visitedWith_of_ne_none (w : List Bool) (i : Fin N.k) (z : ℤ)
-    (hz : (N.tm.runWith w (N.tm.initCfg x)).workTapes i z ≠ none) :
-    z ∈ N.tm.visitedWith w (N.tm.initCfg x) i :=
-  MultiTapeTM.ConfigCount.mem_image_workTapePos_of_ne_none
-    (fun j => N.tm.runWith (w.take j) (N.tm.initCfg x)) (by simp)
-    (take_succ_action w (N.tm.initCfg x)) w.length i z
-    (by simpa only [List.take_length] using hz)
-
-/-- Taking a choice prefix only removes visited positions. -/
-private theorem visitedWith_take_subset (w : List Bool) (c : Cfg N.k Bool N.State x) (j : ℕ)
-    (i : Fin N.k) : N.tm.visitedWith (w.take j) c i ⊆ N.tm.visitedWith w c i := by
-  apply Finset.image_subset_iff.mpr
-  intro n hn
-  have hn' : n ≤ min j w.length := by simpa using Nat.le_of_lt_succ (Finset.mem_range.mp hn)
-  apply Finset.mem_image.mpr
-  refine ⟨n, Finset.mem_range.mpr (by omega), ?_⟩
-  rw [List.take_take, Nat.min_eq_left (by omega : n ≤ j)]
-
-/-- **Prefixes of a space-bounded branch are in the window**: if the branch under `w` visits
-at most `s` work cells, every configuration along it has its heads and nonblank cells in
-`[-s, s]`. (A restatement of `ConfigGraph`'s private `runWith_take_inWindow`.)
-
-**Proof sketch.** The visited set of a tape is an interval around `0` of size at most `s`, so
-its positions have absolute value below `s`; heads are visited, and nonblank cells were
-visited by a prefix. -/
-theorem inWin_runWith_take (w : List Bool) {s : ℕ}
-    (hs : N.tm.spaceUsedWith w (N.tm.initCfg x) ≤ s) (j : ℕ) :
-    InWin N s (N.tm.runWith (w.take j) (N.tm.initCfg x)) := by
-  intro i
-  have card_bound : (N.tm.visitedWith w (N.tm.initCfg x) i).card ≤ s :=
-    (Finset.single_le_sum (f := fun i => (N.tm.visitedWith w (N.tm.initCfg x) i).card)
-      (fun _ _ => Nat.zero_le _) (Finset.mem_univ i)).trans hs
-  have bounded (z : ℤ) (hz : z ∈ N.tm.visitedWith (w.take j) (N.tm.initCfg x) i) : |z| ≤ s := by
-    have hz' := visitedWith_take_subset w (N.tm.initCfg x) j i hz
-    have small := abs_lt_card_visitedWith w i hz'
-    omega
-  constructor
-  · apply bounded
-    apply Finset.mem_image.mpr
-    exact ⟨(w.take j).length, Finset.mem_range.mpr (Nat.lt_succ_self _), by
-      rw [List.take_length]⟩
-  · intro z hz
-    exact bounded z (mem_visitedWith_of_ne_none (w.take j) i z hz)
-
 /-! ## The bridge -/
 
 /-- The vertex count is monotone in the window radius. -/
@@ -146,21 +64,6 @@ lemma configBound_mono (N : FinNDTM Bool) (n : ℕ) {s s' : ℕ} (h : s ≤ s') 
   · apply Nat.mul_le_mul_left
     exact Nat.pow_le_pow_right (by norm_num) (Nat.mul_le_mul_left _ (by omega))
   · exact Nat.pow_le_pow_left (by omega) _
-
-/-- An accepting branch of any length makes the input a member. -/
-lemma mem_of_acceptsWithin {L : Language Bool} {sp : ℕ → ℕ} (h : N.DecidesInSpace L sp)
-    {t : ℕ} (ha : N.AcceptsWithin x t) : x ∈ L := by
-  obtain ⟨T, halt, -, iff_at_T⟩ := h x
-  apply iff_at_T.mpr
-  by_cases ht : t ≤ T
-  · exact ha.mono ht
-  · obtain ⟨w, hw, _, output⟩ := ha
-    have prefix_length : (w.take T).length = T := List.length_take_of_le (by omega)
-    have prefix_halt := halt (w.take T) prefix_length
-    have frozen : N.tm.runWith w (N.tm.initCfg x) = N.tm.runWith (w.take T) (N.tm.initCfg x) := by
-      conv_lhs => rw [← List.take_append_drop T w]
-      rw [NDTM.runWith_append, NDTM.runWith_of_halt _ prefix_halt]
-    exact ⟨w.take T, prefix_length, prefix_halt, by rw [← frozen]; exact output⟩
 
 /-- **The code-level step relation** of `N` on `x` at radius `s`: `⟨x, ⟨bits a, ⟨bits b,
 bits s⟩⟩⟩` is a step pair (a member of `Complexity.Codec.stepLang N`). -/
@@ -179,7 +82,8 @@ accepting branch]
 the vertex of the current code: codes determine vertices on window-bounded configurations
 (`coreSum_eq_of_cfgWord_eq`) and steps respect vertices (`Turing.NDTM.coreSum_stepWith`).
 At the accepting code the vertex is halted with output `[true]`, so the word accepts, and an
-accepting branch of any length gives membership (`mem_of_acceptsWithin`). -/
+accepting branch of any length gives membership
+(`Turing.FinNDTM.DecidesInSpace.mem_of_acceptsWithin`). -/
 theorem mem_of_codePath {L : Language Bool} {sp : ℕ → ℕ} (h : N.DecidesInSpace L sp)
     (x : List Bool) (s u v : ℕ)
     (hinit : pairEncode x (pairEncode (Nat.bits u) (Nat.bits s)) ∈ initLang N)
@@ -187,12 +91,12 @@ theorem mem_of_codePath {L : Language Bool} {sp : ℕ → ℕ} (h : N.DecidesInS
     (hacc : pairEncode x (pairEncode (Nat.bits v) (Nat.bits s)) ∈ acceptLang N) : x ∈ L := by
   rw [mem_initLang] at hinit
   have chain : ∀ c, Relation.ReflTransGen (StepRel N x s) u c → ∃ w : List Bool,
-      ∃ D : Cfg N.k Bool N.State x, InWin N s D ∧ cfgCode s D = c ∧
+      ∃ D : Cfg N.k Bool N.State x, Cfg.InWindow s D ∧ cfgCode s D = c ∧
         NDTM.coreSum (N.tm.runWith w (N.tm.initCfg x)) = NDTM.coreSum D := by
     intro c hc
     induction hc with
     | refl =>
-      exact ⟨[], N.tm.initCfg x, fun i => by simp [NDTM.initCfg, Cfg.init], hinit, rfl⟩
+      exact ⟨[], N.tm.initCfg x, Cfg.inWindow_init _ x s, hinit, rfl⟩
     | tail _ hst ih =>
       obtain ⟨w, D, hD, hcD, hcore⟩ := ih
       obtain ⟨C, hC, hcC, C', ⟨b, hb⟩, hC', hcC'⟩ := (mem_stepLang N x _ _ s).mp hst
@@ -206,7 +110,7 @@ theorem mem_of_codePath {L : Language Bool} {sp : ℕ → ℕ} (h : N.DecidesInS
   have hDC : NDTM.coreSum D = NDTM.coreSum C :=
     coreSum_eq_of_cfgWord_eq hD hC (by rw [← bits_cfgCode, ← bits_cfgCode, hcD, hcC])
   have hfin := hcore.trans hDC
-  apply mem_of_acceptsWithin h (t := w.length)
+  apply h.mem_of_acceptsWithin (t := w.length)
   refine ⟨w, rfl, ?_, ?_⟩
   · have := congrArg (fun z => z.1.1) hfin
     simp only [NDTM.coreSum, MultiTapeTM.ConfigCount.core] at this
@@ -226,8 +130,9 @@ configuration; Claim 4.4(1) bounds its length by the vertex count]
 
 **Proof sketch.** (⇒) Take an accepting branch of length the vertex count at the space bound
 (`DecidesInSpace.mem_iff_acceptsWithin_configBound`, `configBound_mono`); its prefixes stay in
-the window `[-s, s]` (`inWin_runWith_take`: compare with a branch of the halting budget —
-padding the accepting word, or truncating it where every branch has halted); the codes of
+the window `[-s, s]` (`Turing.NDTM.runWith_take_inWindow`: compare with a branch of the
+halting budget — padding the accepting word, or truncating it where every branch has halted);
+the codes of
 the prefix configurations form the chain, consecutive prefixes differing by one step, the
 last halted with output `[true]`; codes are short (`cfgCode_lt`). (⇐) The chain is a
 `StepRel`-path from the initial to the accepting code, which gives membership
@@ -246,7 +151,7 @@ theorem mem_iff_codeChain {L : Language Bool} {sp : ℕ → ℕ} (h : N.DecidesI
     set tb := N.configBound x.length (sp x.length)
     obtain ⟨T, hHalt, hSpace, -⟩ := h x
     -- every prefix configuration is in the window
-    have hwin : ∀ j, InWin N s (N.tm.runWith (w.take j) (N.tm.initCfg x)) := by
+    have hwin : ∀ j, Cfg.InWindow s (N.tm.runWith (w.take j) (N.tm.initCfg x)) := by
       by_cases hT : tb ≤ T
       · intro j
         set w' := w ++ List.replicate (T - tb) false
@@ -255,17 +160,18 @@ theorem mem_iff_codeChain {L : Language Bool} {sp : ℕ → ℕ} (h : N.DecidesI
         by_cases hj : j ≤ tb
         · have e : w'.take j = w.take j := by
             simp only [w']; rw [List.take_append_of_le_length (by omega)]
-          rw [← e]; exact inWin_runWith_take w' hsp j
+          rw [← e]; exact NDTM.runWith_take_inWindow N.tm w' hsp j
         · have e1 : w.take j = w := List.take_of_length_le (by omega)
           have e2 : w'.take tb = w := by
-            simp only [w']; rw [List.take_append_of_le_length (by omega), List.take_of_length_le (by omega)]
-          rw [e1, ← e2]; exact inWin_runWith_take w' hsp tb
+            simp only [w']; rw [List.take_append_of_le_length (by omega),
+              List.take_of_length_le (by omega)]
+          rw [e1, ← e2]; exact NDTM.runWith_take_inWindow N.tm w' hsp tb
       · intro j
         have hlen : (w.take T).length = T := List.length_take_of_le (by omega)
         have hsp := (hSpace (w.take T) hlen).trans hs
         by_cases hj : j ≤ T
         · have e : (w.take T).take j = w.take j := by rw [List.take_take, Nat.min_eq_left hj]
-          rw [← e]; exact inWin_runWith_take (w.take T) hsp j
+          rw [← e]; exact NDTM.runWith_take_inWindow N.tm (w.take T) hsp j
         · have frozen : N.tm.runWith (w.take j) (N.tm.initCfg x) =
               N.tm.runWith (w.take T) (N.tm.initCfg x) := by
             have : w.take j = w.take T ++ (w.take j).drop T := by
@@ -273,7 +179,7 @@ theorem mem_iff_codeChain {L : Language Bool} {sp : ℕ → ℕ} (h : N.DecidesI
               rw [List.take_take, Nat.min_eq_left (by omega : T ≤ j)]
             rw [this, NDTM.runWith_append, NDTM.runWith_of_halt _ (hHalt _ hlen)]
           rw [frozen, show w.take T = (w.take T).take T by simp]
-          exact inWin_runWith_take (w.take T) hsp T
+          exact NDTM.runWith_take_inWindow N.tm (w.take T) hsp T
     refine ⟨tb, fun i => cfgCode s (N.tm.runWith (w.take i) (N.tm.initCfg x)),
       configBound_mono N _ hs, ?_, fun i hi => ?_, ?_, fun i _ => cfgCode_lt s _⟩
     · rw [mem_initLang]; simp

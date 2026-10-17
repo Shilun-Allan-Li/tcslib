@@ -20,8 +20,8 @@ step, consumed left to right, ignored by the deterministic instructions — exac
 of the binary-choice machines `Turing.NDTM` [AB09, §2.1.2]. This is how nondeterministic
 logspace algorithms are described in [AB09, §4.3] ("guess the next vertex"); the compilation
 onto `Turing.FinNDTM` is in `TCSlib.Complexity.SpaceComplexity.Machines.NARMCompile` and the
-space theorem in `TCSlib.Complexity.SpaceComplexity.Machines.NARMRun`, the bridges to `NL` and `NPSPACE` in
-`TCSlib.Complexity.SpaceComplexity.Machines.NARMProof`.
+space theorem in `TCSlib.Complexity.SpaceComplexity.Machines.NARMRun`, the bridges to `NL` and
+`NPSPACE` in `TCSlib.Complexity.SpaceComplexity.Machines.NARMProof`.
 
 The machine model is infrastructure for [AB09, §4.1–4.3], not itself a result of the book.
 
@@ -41,8 +41,9 @@ The machine model is infrastructure for [AB09, §4.1–4.3], not itself a result
 
 * `Complexity.LogProg.narun_append`, `Complexity.LogProg.narun_halted` — the run algebra.
 * the combinators `Complexity.LogProg.NHalts.det`, `NHalts.choose`, `NHalts.run`,
-  `NHalts.mono_len` (and their converses `NHalts.of_det`, `NHalts.of_choose`), and `Complexity.LogProg.nans_det`, `nans_choose`, `nans_run`,
-  `nans_mono_len`, for proving machines correct by induction over their loops.
+  `NHalts.mono_len` (and their converses `NHalts.of_det`, `NHalts.of_choose`), and
+  `Complexity.LogProg.nans_det`, `nans_choose`, `nans_run`, `nans_mono_len`, for proving
+  machines correct by induction over their loops.
 
 ## References
 

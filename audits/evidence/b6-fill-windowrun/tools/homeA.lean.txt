@@ -1,0 +1,76 @@
+/-! ### Windowed-runner fill (B6-F2): the loop's phase host (pre-ship home block A) -/
+
+/-- (Suggested.) The loop's four phases: the round anchor, the halted-state test, the record
+step, and the stationary stops. -/
+private inductive wl_Phase where
+  /-- the round anchor: one stationary dispatch step into the test -/
+  | anchor
+  /-- the halted-state test, `Turing.exists_recordTestTM` on tape `0` -/
+  | test
+  /-- the record step, `Turing.exists_recordStepTM` on the whole bank -/
+  | step
+  /-- the three stationary stops -/
+  | stop
+  deriving DecidableEq, Fintype
+
+/-- (Suggested.) The phase controls: the anchor's one state, the test row's and the step row's
+controls, and the stops, indexed by the exit they report. -/
+private def wl_Ctrl (Pt Ps : Type) : wl_Phase → Type
+  | .anchor => Unit
+  | .test => Pt
+  | .step => Ps
+  | .stop => WindowExit
+
+/-- (Suggested.) The phase controls are finite. `Turing.WindowExit` has no public `Fintype`
+instance, so its three values are listed here, locally. -/
+private instance wl_Ctrl_fintype (Pt Ps : Type) [Fintype Pt] [Fintype Ps] :
+    (i : wl_Phase) → Fintype (wl_Ctrl Pt Ps i)
+  | .anchor => inferInstanceAs (Fintype Unit)
+  | .test => inferInstanceAs (Fintype Pt)
+  | .step => inferInstanceAs (Fintype Ps)
+  | .stop => show Fintype WindowExit from
+    ⟨{.halted, .left, .exhausted}, fun e => by cases e <;> simp⟩
+
+/-- (Suggested.) The phase controls have decidable equality. -/
+private instance wl_Ctrl_decidableEq (Pt Ps : Type) [DecidableEq Pt] [DecidableEq Ps] :
+    (i : wl_Phase) → DecidableEq (wl_Ctrl Pt Ps i)
+  | .anchor => inferInstanceAs (DecidableEq Unit)
+  | .test => inferInstanceAs (DecidableEq Pt)
+  | .step => inferInstanceAs (DecidableEq Ps)
+  | .stop => inferInstanceAs (DecidableEq WindowExit)
+
+/-- (Suggested.) The record tape `0` as a one-tape bank, for the test row's R1 embedding. -/
+private def wl_recordTape (K : ℕ) : Fin 1 ↪ Fin (K + 1) :=
+  ⟨fun _ => 0, fun a b _ => Subsingleton.elim a b⟩
+
+/-- (Suggested.) The phase machines: a stationary anchor (always redirected), the test row on
+tape `0` by R1, the step row on the whole bank, and stationary stops. -/
+private def wl_rows {K : ℕ} {Q T Pt Ps : Type} (Rt : MultiTapeTM 1 (RecSym Q T) Pt)
+    (Rs : MultiTapeTM (K + 1) (RecSym Q T) Ps) :
+    (i : wl_Phase) → MultiTapeTM (K + 1) (RecSym Q T) (wl_Ctrl Pt Ps i)
+  | .anchor => ⟨(), fun _ _ _ => ⟨0, fun _ => (none, 0), none, some ()⟩⟩
+  | .test => embedEmitTM (wl_recordTape K) Rt
+  | .step => Rs
+  | .stop => ⟨WindowExit.exhausted, fun e _ _ => ⟨0, fun _ => (none, 0), none, some e⟩⟩
+
+/-- (Suggested.) The redirect table: the anchor enters the test; the test's `yes` (halted)
+stops with `halted` and its `no` enters the step; the step's `yes` returns to the anchor and its
+`no` (the next configuration leaves the window) stops with `left`. Each redirect is one
+stationary dispatch step (`Turing.phaseHostTM`), so a round takes at least three steps. -/
+private def wl_red {Pt Ps : Type} [DecidableEq Pt] [DecidableEq Ps] (te ty tn : Pt)
+    (se sy sn : Ps) : (i : wl_Phase) → wl_Ctrl Pt Ps i → Option (Σ i, wl_Ctrl Pt Ps i)
+  | .anchor, _ => some ⟨.test, te⟩
+  | .test, q =>
+    if q = ty then some ⟨.stop, (WindowExit.halted : WindowExit)⟩
+    else if q = tn then some ⟨.step, se⟩ else none
+  | .step, q =>
+    if q = sy then some ⟨.anchor, ()⟩
+    else if q = sn then some ⟨.stop, (WindowExit.left : WindowExit)⟩ else none
+  | .stop, _ => none
+
+/-- (Suggested.) **H3's round loop**: the phase host over the two record rows, entered at the
+anchor. -/
+private def wl_loopTM {K : ℕ} {Q T Pt Ps : Type} [DecidableEq Pt] [DecidableEq Ps]
+    (Rt : MultiTapeTM 1 (RecSym Q T) Pt) (Rs : MultiTapeTM (K + 1) (RecSym Q T) Ps)
+    (te ty tn : Pt) (se sy sn : Ps) : MultiTapeTM (K + 1) (RecSym Q T) (Σ i, wl_Ctrl Pt Ps i) :=
+  phaseHostTM (wl_rows Rt Rs) ⟨.anchor, ()⟩ (wl_red te ty tn se sy sn)

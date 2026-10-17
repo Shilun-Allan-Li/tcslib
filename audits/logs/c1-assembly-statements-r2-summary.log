@@ -1,0 +1,54 @@
+PASS base sources archived from the tip
+PASS probe files built
+PASS landing forms and cut files built
+PASS controls built
+PASS base: every TCSlib file of the tip extracted
+PASS base: tip Lean content = 1b6b972c; manifest unchanged
+PASS snapshot consistency: TuringMachine/Build/NDHost elaborates
+PASS snapshot consistency: TuringMachine/Build/Catalog elaborates
+PASS snapshot consistency: TuringMachine/Build/Embed elaborates
+PASS snapshot consistency: TuringMachine/Build/Seam elaborates
+PASS snapshot consistency: TuringMachine/StateRenaming elaborates
+PASS snapshot consistency: TuringMachine/Encoding elaborates
+PASS snapshot consistency: SpaceComplexity/Inclusions elaborates
+PASS unit: 0 errors
+PASS unit: 0 warnings
+PASS sanity probes: 0 errors
+PASS negative control neg1 fails by decide refuting it
+PASS negative control neg2 fails by decide refuting it
+PASS negative control neg3 fails by decide refuting it
+PASS negative control neg4 fails by decide refuting it
+PASS consumer probe: 0 errors
+PASS widths: no new line over 100 characters
+PASS no forbidden constructs
+PASS lint.py is the tip's lint up to ROOT
+PASS style lint: 0 FAIL on the three landing files
+PASS cited-name file generated
+PASS M1: no slot-search text in the landed NDHost and Inclusions; Embed's unchanged
+PASS checkout unchanged (tracked files)
+PASS cut Embed.check.lean: 0 errors
+PASS cut Embed.check.lean: warnings identical to the tip's Embed
+PASS cut NDHost.check.lean: 0 errors
+PASS cut NDHost.check.lean: warnings identical to the tip's NDHost
+PASS cut NDHost.landed+shim.check.lean: 0 errors
+PASS cut NDHost.landed+shim.check.lean: warnings identical to the tip's NDHost
+PASS cut Inclusions.check.lean: 0 errors
+PASS cut Inclusions.check.lean: warnings identical to the tip's Inclusions
+PASS export: landed and shim types identical
+PASS export (landing proof): standard axioms only
+PASS freeze: Embed statements unchanged, additions only
+PASS freeze: NDHost statements unchanged, additions only
+PASS freeze: Inclusions statements unchanged, additions only
+PASS freeze: round-1 unit statements unchanged in round 2
+PASS freeze control: a changed statement is caught
+PASS axioms probe elaborates
+PASS sorryAx exactly on the seven run theorems and the writer's contract
+PASS isolation C1Assembly: generated
+PASS isolation C1Assembly: no sorryAx
+PASS isolation AssemblyConsumerProbe: generated
+PASS isolation AssemblyConsumerProbe: no sorryAx
+PASS isolation control: failure propagates, stale target removed
+PASS names: no clash (tree or pending, outside the allowlist)
+PASS names control: tree clashes caught, exit 1
+PASS names control: pending clash makes the screen fail
+failed checks: 0

@@ -35,6 +35,15 @@ Infrastructure for [AB09, §4.3.2]; not itself a result of the book.
   `Complexity.LogProg.ISCount.AccO` — the tests read from the deciders.
 * `Complexity.LogProg.ISCount.lgv` — the halving count `size |x| + 1`.
 
+## Main results
+
+* `Complexity.LogProg.ISCount.St.toV_zero` — the all-zero register file is the zero
+  valuation.
+* the simp lemmas `St.toV_n`, …, `St.toV_stp` (reads) and `St.upd_n`, …, `St.upd_stp`
+  (writes) of the register file.
+* `Complexity.LogProg.ISCount.toV_wT`, `toV_wB`, `toV_rY` — reading the site-indexed
+  registers.
+
 ## References
 
 * [AB09] S. Arora, B. Barak, *Computational Complexity: A Modern Approach*,

@@ -48,6 +48,15 @@ Infrastructure for [AB09, §4.1.1, Theorem 4.2]; not itself a result of the book
 * `Complexity.LogProg.ExpBFS.Lb` — the labels.
 * `Complexity.LogProg.ExpBFS.A` — the machine.
 
+## Main results
+
+* `Complexity.LogProg.ExpBFS.St.toV_zero` — the all-zero register file is the zero
+  valuation.
+* the simp lemmas `St.toV_N`, …, `St.toV_c1` (reads) and `St.upd_N`, …, `St.upd_c1`
+  (writes) of the register file.
+* `Complexity.LogProg.ExpBFS.St.Bd.toV` — a bounded register file has bounded register
+  values.
+
 ## References
 
 * [AB09] S. Arora, B. Barak, *Computational Complexity: A Modern Approach*,

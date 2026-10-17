@@ -59,15 +59,13 @@ noncomputable def orc : Fin 2 → List Bool → Bool :=
 /-- The bit oracle reads the input. -/
 lemma orc_bit (y : List Bool) (a : ℕ) : orc jBit (pairEncode y (Nat.bits a)) = y.getD a false := by
   show MultiTapeTM.indicator (inputBitLang : Set (List Bool)) _ = _
-  rw [inputBitLang, indicator_indexLang_pairEncode]
-  cases y.getD a false <;> simp
+  exact indicator_inputBitLang y a
 
 /-- The length oracle compares with the input length. -/
 lemma orc_len (y : List Bool) (a : ℕ) :
     orc jLen (pairEncode y (Nat.bits a)) = decide (a < y.length) := by
   show MultiTapeTM.indicator (inputLenLang : Set (List Bool)) _ = _
-  rw [inputLenLang, indicator_indexLang_pairEncode]
-  exact decide_eq_decide.mpr Iff.rfl
+  exact indicator_inputLenLang y a
 
 variable {N : FinNDTM Bool} {mode : CMode}
 
@@ -95,7 +93,8 @@ lemma Reach.single' {y : List Bool} {B : ℕ} {l l' : Lab N} {v v' : Fin 21 → 
 
 /-- The guard at a label that is not a register comparison or a call. -/
 lemma gd_of {y : List Bool} {B : ℕ} {l : Lab N} {v : Fin 21 → ℕ} (hv : ∀ r, v r ≤ B)
-    (h : PreS (CA N mode) y (some l, v, none)) : GuardLe (CA N mode) y B (some l, v, none) := ⟨h, hv⟩
+    (h : PreS (CA N mode) y (some l, v, none)) : GuardLe (CA N mode) y B (some l, v, none) :=
+  ⟨h, hv⟩
 
 /-! ## Copies, scales, increment chains -/
 

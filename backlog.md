@@ -578,6 +578,11 @@ window.*
   **Round 2 CLOSED the gate** (2026-10-14: 0 blockers / 0 majors / 8 minors;
   `audits/h2-promotion-r2-findings.md`, resolutions `audits/h2-promotion-r2-resolutions.md`).
   Next: H2-M, the move PR, before any B5a brief.
+  **H2-M landed (2026-10-14, PR #88; replay 7 of 7 modules):** `Build/StepBlock.lean` holds the
+  121 moved declarations under their round-2 names and the six additives, all proved;
+  `CodeSimulator.lean` keeps its 105 staying declarations and its two headline sorries. Eleven
+  moved private lemmas with long proofs lack a proof sketch, as they did in `CodeSimulator`: a
+  docs-only follow-up.
   The move, H2-M (a
   freeze-checked maintainer PR with an 8-module replay), lands **between** the B5a
   continuations, since both own regions of `CodeSimulator.lean`.
@@ -602,6 +607,218 @@ window.*
   MIG-0a gate's minor 5) rather than promoting them as they are.
 - **(e) Style debt, for each owner's next continuation:** H1's 67 Lean linter warnings and 83
   lines over 100 characters; the record tables' 8 lines; the canonizer's 1 line.
+- **(f) A frozen canonizer copy (from the B5a canonizer cont3 brief, 2026-10-14):**
+  `CodeSimulator`'s private `canonOffset_spec` reproduces `Encoding`'s `length_bits_le_self` in full
+  (100% shared text). It became visible once `Encoding` joined the brief's screen population. It
+  is in the frozen canonizer region, so it is not touched by cont3: retire it, by citing the
+  public lemma, at the canonizer's completion or in MIG-1 F-D's CodeSimulator edit.
+- **(g) The canonizer cont3 integration after #94 (2026-10-14).** The H1 landing (#94) moves the
+  canonizer's private `canonBits_value` to the public `Turing.foldr_bit_eq_ofDigits` in
+  `Build/CounterLoop`. If #94 lands before the cont3 delivery integrates, every citation of
+  `canonBits_value` in that delivery is renamed at integration. This is mechanical and done by the
+  maintainer. The brief lists it among the frozen privates it may cite.
+- **(h) Canonizer cont3 delivered, phase 1 (2026-10-14; `fill-b5a-canon-cont3.zip`, Codex
+  `80d32a96`, report `audits/b5a-fill-agent-reports/canon-4-REPORT.md`).**
+  - The strip machine `exists_canonStripTM` and the prescribed `computesFunInTime_cond` glue are
+    proved. So the headline `exists_polyCanonizer` is proved modulo exactly two private stubs,
+    `exists_canonDecider` and `exists_canonGrammarStage`. This is the user's partial rule, checked
+    by an axiom walk.
+  - A continuation-budget partial with no mathematical obstruction. 18 new privates; no public
+    or statement change.
+  - It cherry-picks cleanly onto the post-#94 tip, and cites no `canonBits_value`, so (g)'s
+    rename is not needed. At the tip it gives 0 errors and three sorry warnings: the two stubs
+    and `exists_uniformSimulator`.
+  - Duplication: only the pre-disclosed in-file pair (`scan_grammar_guard`/`canonScan_all`, 55%).
+  - Integration PR on branch `lean/b5a-canon-cont3`; replay of 8 modules.
+  - **Next: a cont4 brief**, phases 2–5 of the report's frontier: the bounded unary reader, the
+    record validator, the grammar stage with its fail-fast length bound, the decider on one
+    bank, then note 50.
+
+### ARM-1: duplication in the received ARM-extensions code (from the ARM fill gate, 2026-10-14)
+
+*Origin: Hydroxyi's merge `8c23f3bc`, pushed directly to the campaign branch (backlog §2, ARM
+extensions); the gate pack `audits/arm-extensions-fill-pack.md`.*
+
+The pack's copy-text screen (MEASURED before the audit) puts the received code past the
+one-fifth escalation threshold of `workflow.md` §4: 33 of its 73 files by whole-body share, 14 by
+shared text, 8 of them on copies of existing library material alone. Copies of existing
+material: 18 declarations disclosed by Hydroxyi and 47 not, 12 of them substantive (mostly
+re-derivations of `arm_decides` in `Machines/`); among the new files, 103 internal pairs in 45
+families. Disclosure gaps: seven `b4m*` twins (the reply says three); Bridge's four helpers and
+Engine's `InputAccess` adaptations, disclosed only in the files; `decChain`, a copy of the
+private `arm_increments`, disclosed nowhere. **Needs the user's acknowledgement** before the
+ARM fill gate closes. Payback (user, 2026-10-14): a separate PR after the B6 hosts land
+promotes the five families Hydroxyi named; the rest is dedup debt for the user's dedup window.
+Also found: the copy-text screen labels files by basename and drops cross-file pairs between
+same-named files (17 among the new files alone). Whether earlier screens with colliding
+basenames in their populations lost pairs is to be checked.
+**Checked and fixed (2026-10-14; `audits/evidence/screenfix/`):**
+- **The fix:** `audits/evidence/retrofit/copy-text-screen-v2.py` keys files by repository path,
+  with `regression-control.sh` as its control. Where all basenames are distinct, its output is
+  byte-identical to v1's. **Future briefs and gates use v2**, and any flattened base is re-run
+  with v2 before diffing.
+- **No recorded result needs a correction.** 7 of 57 past populations had collisions; all were
+  unaffected or were run on flattened copies, and ARM's 17 pairs were in the recorded output.
+- **Residual, shared by v1 and v2:** two same-named declarations in one file are never
+  compared. The one real case is `CfgRecord`'s `Fintype`/`DecidableEq` instance pair at lines
+  1249/1255 (66 characters, 100%; s12.8 fill C cont1 recorded 689 → 690 pairs, truly 689 → 692).
+  It is accepted as an instance idiom and recorded here. A self-pair keying fix waits for the
+  next baseline reset.
+- **v3 (2026-10-14; the Diagonal Part 1 gate's minor m2; `audits/evidence/screenfix/v3/`):** the
+  residual is fixed. `audits/evidence/retrofit/copy-text-screen-v3.py` identifies a declaration
+  by path and source position and skips only the declaration itself. A short name repeated in a
+  file is labelled by its namespace-qualified name. Where no file repeats a screened short name,
+  the output is byte-identical to v2's. At the tip `ff4cab18` (723 files) the only pair v3 adds is
+  the CfgRecord instance pair above, already recorded. **Future briefs and gates use v3**, in
+  place of v2.
+**Gate round 1 (2026-10-14): 0 blockers, 5 majors, 9 minors; open**
+(`audits/arm-extensions-fill-findings.md`). No frozen statement changed and no interface is false.
+The majors: the disclosed debt awaits acknowledgement, and D6 (seven `b4m*` twins) and D7 (the
+`InputAccess` adaptations) are outside the payback PR; twelve substantive library adaptations
+were undisclosed; the internal families (103 pairs) and the same-file overlaps (130 pairs, dropped
+by the ledger script) need classifying; and the received machinery is not in the §14 registry
+(hosts come first). **User (2026-10-14):** the complete ledger is recounted and classified first,
+then acknowledged once, in round 2; the deduplication is the user's own window, coordinated with
+Hydroxyi; the received machinery is registered in §14, its first uses an accepted exception, with
+a contract gate before any further consumer; the maintainer makes the minor fixes in the new files
+in one PR, which the user clears with Hydroxyi.
+**Minor fixes landed (2026-10-14, PR #93; replay 74 of 74):** findings 6 (`truth_mem_PSPACE`'s
+sketch bound), 10 (the `ClassPSPACE` facade's twelve direct imports) and 11 (42 long lines, 15
+headings, two sketches); comments and imports only. Left over: the `SpaceComplexity` facade's two
+long Contents lines (into the payback PR, which edits that area); proof sketches for
+`numVars_le_length_serialize`, `reflTransGen_stepRel` and `nz_run`; `TQBFHardVerifier`'s Main
+results entry for `predB_iff`, which `TQBFHardBridge` declares.
+**Dedup decisions, copies of campaign code (user, 2026-10-14).** These go in the payback PR after
+the B6 hosts. It changes public statements (D1), so it gets a full gate.
+- **D1:** standardize on the existing public `Turing.Cfg.InWindow` (`Build/CfgRecord.lean`).
+  Delete ConfigGraph's private `InWindow`, its bridge `inWindow_iff_cfgInWindow`, and Codec's
+  `InWin` (`Codec/Word.lean`). The user's fallback for an import cycle is not needed: `CfgRecord`
+  is already in `Codec/Word`'s closure (`Word` → `ConfigGraph` → `RecordTable` → `CfgRecord`,
+  checked at `6fbdefac`). The two predicates are equivalent but are not the same term (the head
+  and cell bounds are grouped differently). So `InWin`'s 48 uses in seven files change
+  (`Codec/{Bridge,Checks,Langs,Step,Valid,Word}`, `ExpBFS/Radius`), public statements among them.
+  `Radius`'s general window lemmas (`inWin_mono`, `inWin_stepWith`, `inWin_init`) are candidates to
+  move next to `Cfg.InWindow`.
+- **D2, D2h, D3, D5:** promote ConfigGraph's originals, stated with `Cfg.InWindow`, and delete the
+  copies in `Codec/Bridge` and `ExpBFS/Radius`. Delete ConfigGraph's dead private `s1b_*` block in
+  the same PR.
+- **D4:** promote `CircuitComplexity/DAGCircuitSat`'s Tseitin lemma and delete
+  `TQBFHardTseitin`'s copy. Both are Hydroxyi's files, so D4 is cleared with him, as with the ARM
+  minor-fix PR.
+- **D6:** delete our private `b4m*` appendix of `ClassPSPACE/TQBF.lean` (lines 2474–3185 at
+  `6fbdefac`: 45 declarations, 712 lines; corrected from 44 by the round-2 count). It is dead because `TQBF_mem_PSPACE` is now
+  `LogProg.TQBFARM.truth_mem_PSPACE`. `TQBFARM/Semantics`' public twins stay.
+- **D7 and `decChain`:** one parameterized stride decoder in `Logspace/InputAccess`, with
+  `Codec/Engine`'s `decodeStride_loop`, `incChain` and `decChain` as its instances.
+- **`length_lbStep`** (private, `TQBFHardParams`): share a helper with
+  `PolyTimeBlockLoop.length_xorPairStep_le`.
+**Round 2 (2026-10-14).** The complete classified ledger is **acknowledged by the user**
+(`audits/evidence/arm-fill/r2/ledger-r2-tables.md`; A4+: 163 declarations, 15.3% of the received
+code by shared text). Added to this list by the user: the 15 proposed pairs (13 small copies of
+campaign helpers private in `QueryReshape`, `Mult`, CookLevin, `InputAccess`, `QBF` and beside
+ConfigGraph's `outSummary_eq_accept_iff`, with `toCNF_extension_iff` riding with D4; the ledger's
+§3) and `VWord.getD_drop`, a Bool copy of the public `Programs/Util/List.getD_drop`. The round-2
+pack is dispatch folder 21. Its auditor rules whether the scope is complete.
+**Round 2 returned (2026-10-14): OPEN, 0 blockers / 2 majors / 6 minors**
+(`audits/arm-extensions-fill-r2-findings.md`; resolutions `…-r2-resolutions.md`). The arithmetic
+reproduces; findings 6, 7, 10, 12, 13 and 14 close. Majors: two genuine copies were classified
+incidental (`arm_reach` inlines `DblLang.Rch.trans`; `halvCount_loop` re-proves `InputAccess`'s
+`access_width_half`), and H7–H13 are not yet installed in design §14. **User: remove the two
+copies before closure**, by a refactor PR cleared with Hydroxyi (a generic guarded-segment
+composition lemma, the seed of K18; the promoted `access_width_half`), presented in round 3. The
+maintainer installs the registry rows and the record corrections.
+**Clearance with Hydroxyi (user, 2026-10-14).**
+- **No consultation needed, only an FYI, for the mechanical edits in his files:**
+  - the payback PR's copy deletions and re-points;
+  - D1's swap to the equivalent `Cfg.InWindow`;
+  - D7, with his public statements kept;
+  - the documentation leftovers;
+  - round 3's `halvCount_loop`.
+- **D4:** a one-time exception to the `CircuitComplexity/*` rule. It covers making
+  `DAGCircuitSat`'s private `eval_tseitinGates_values` public (visibility only), in the payback
+  PR.
+- **`arm_reach` waits for Hydroxyi.** Its removal needs a generic guarded-run composition lemma,
+  which is ARM-2's reachability-kit design, so R2-1 stays open on that one copy until he decides,
+  or until the user acknowledges it in the meantime.
+- **Hydroxyi is consulted on ARM-2.** He is told about H7–H13's gate-before-reuse rule.
+**Payback tree built (2026-10-14; `$S/land-payback`, 59/59 at `c52663f1`), and the user's decisions on its
+stopped items:**
+- **D4 extended:** `DAGCircuitSat`'s second private lemma, `values_getD_eq_of_eval_tseitinGates`,
+  is also made public (visibility only), so L024's copy goes.
+- **G-pairidx:** a new public `pairEncode_getD_snd` in `InputAccess` replaces L050 and L052.
+- **G-rep** (`pt_rep_mul`, whose original is private in `CookLevin/Hardness`) goes to ARM-2 and
+  the dedup window, with a home decision.
+- **G-vword** (L119/L120) is accepted as not real duplication.
+- **Accepted:** the extra deletion of `codec_core_window` via the public
+  `Cfg.InWindow.core_bounds`; D7's single `arm_chain` lemma with `bif up`; `drop_canon` keeps
+  its name.
+- **Final tree (2026-10-14; 60 of 60 at `ff4cab18`, Lean-equal to `c9cc485b`, against `oleans-ltip3`):**
+  27 files (23 code, 4 comment-only), +539 −1,549 (net −1,010) lines; replay 119 modules.
+- **ARM round 3 pack built (2026-10-15; folder 25; bundle `b0e9f8f2…f834`, 243 sections).**
+  - **Measurements:** 314 pairs at the landed tree, 48 removed and 9 new, all inspected. K+ is 142
+    declarations, 13.7% by shared text. No P1/P1+ declaration remains. #98–#102 change nothing in
+    the ledger.
+  - **User (2026-10-15):** L066 (`arm_reach` ~ `Rch.trans`) is **acknowledged as debt** until
+    ARM-2 (a)'s generic guarded-run lemma (designed with Hydroxyi) lands. Round 3 also serves as
+    the payback's own gate, post-merge (#101 merged without one, on the maintainer's
+    recommendation).
+  - **GATE CLOSED 2026-10-15: PASS, 0 blockers / 0 majors / 2 minors**
+    (`audits/arm-extensions-fill-r3-findings.md`; resolutions `…-r3-resolutions.md`).
+    - R2-1 closes: L049 is paid back, and L066 is acknowledged. Its implementation stays with
+      ARM-2 (a), family K18.
+    - R2-2 to R2-8 close. The payback's statement gate is discharged post-merge: its 28
+      restatements and 20 additions are faithful.
+    - The received H7–H13 hosts still need their own contract gates before further consumers.
+    - R3-1 (the stale H10/H11 wording in design §14) and R3-2 (L002/L057's original side
+      relabelled `drop_len`; it is `drop_bit`) are fixed in the commit that records the gate.
+- **The B5a canonizer continuation 4 brief is issued (2026-10-15):**
+  `briefs/b5a-fill-canon-cont4.md`.
+  - **Inputs** `46be1104`, on a side branch from `ff4cab18`, merged in `6ee00231`, so the
+    worker's base keeps the pre-ship Lean content `c9cc485b`.
+  - **Screens:** re-measured with v3, base and overlay 2,576 pairs each.
+ **Landed (2026-10-15,
+  PR #101; 60 of 60 at `eb750e63`; replay 119 of 119 from #100's snapshot; snapshot `oleans-lpay`
+  for the tip `9c0ae906`).** `DAGCircuitSat`'s edit
+  is exactly the two visibility changes. **It lands after MIG-1 S (#98)**, rebased and re-checked
+  at that tip, then replayed from S's output. ARM round 3 (folder 25) gated it post-merge: PASS
+  (2026-10-15). `arm_reach` stays as acknowledged debt (L066) until ARM-2 (a).
+
+### ARM-2: the ARM layer's internal duplication, to coordinate with Hydroxyi (user, 2026-10-14)
+
+*Origin: the ARM fill gate (ARM-1), groups B and C of the maintainer's duplication summary.*
+
+The user judges a correct fix nontrivial: it needs shared interfaces designed, not mechanical
+promotions. So it is to be coordinated with Hydroxyi before any brief, then landed under the zone
+rules (a PR plus its gate). Its input is the round-2 classified ledger of the ARM gate.
+- **(a) Re-derivations of Hydroxyi's earlier `Machines/` library:**
+  - `narm_decides` from `arm_decides` (54%);
+  - `narm_decides_poly` from `arm_decides_poly` (90%);
+  - `spaceUsedWith_le_of_ranges` from `Compile.spaceUsed_le_of_ranges`;
+  - `runFrom_count_eq` from `ConfigCount.coreCode_inj`;
+  - `MReach.trans` and `MReach.halt` from `ReachesB.trans` and `AReach.halt` (99%).
+
+  Direction: state the reachability facts once over an arbitrary step relation, and give the ARM
+  variants (ARM, NARM, the wide-register forms, MARM) one step-semantics interface. Then a single
+  bridge theorem has the nondeterministic and memory-tape bridges as instances, for example
+  deriving the nondeterministic bridge from the deterministic one through `detPart`.
+- **(b) Duplication inside the new files:**
+  - the bank-setup and precondition plumbing: `arm_decides_space`, `marm_dtime` and
+    `narm_decides_space` are 76–88% shared with `npre_of_npreS`;
+  - the codec layout runs `layout_run` and `layout2_run` (4,139 shared characters);
+  - the register-loop blocks of the Savitch, inductive-counting, PATH and TQBF machines (103
+    cross-file pairs in 45 families);
+  - 130 same-file pairs, for example `ps_tcmp`/`ps_scmp`, `move2_run`/`dmove_run` and
+    `parse_run`/`parse_run₂`.
+
+  Direction: a small shared kit, with one bank-setup and precondition lemma, a generic layout run,
+  parameterized comparison and transfer loops, and generic endpoint-field comparisons.
+- **(c) Finding 12's helper moves** (user, 2026-10-14): `Path.getD_flatMap_rows`,
+  `NARMProof.NSPACE.mono_const`, `ARMWidth`'s `LOGSPACE_subset_PSPACE` and
+  `SPACE_succ_pow_subset_PSPACE`, and the `Complexity.ExpBFS` / `Complexity.LogProg.ExpBFS`
+  namespace split.
+- **Scope** (acknowledged, round 2): the ledger's groups A2a (10 declarations) and A2b (119),
+  with their families K1–K20.
+- **Later:** the run-composition kit is a candidate to unify with `Build/Contract` (MIG-0).
 
 ## 2. Campaign work queued or on hold
 
@@ -622,7 +839,7 @@ statement families are retired, with full gates and consumer edits. Restyling is
 | ID | Scope | Action | Estimate | Needs | Gate | Notes |
 |---|---|---|---|---|---|---|
 | MIG-0 | new `Build/Contract.lean` | Item 0, with the §16 requirements: the contract structure, tape frames and `.keep`, composition theorems as thin wrappers over the existing public rows, and tactics | +1.5k to +2.5k (MEASURED after MIG-0b round 2: about +3.2k, MIG-0a 1,101 lines and MIG-0b net +2,084 over 17 files; round-2 minor 1) | — | stmt | first; unlocks MIG-11 to MIG-17 and RS. **Statement draft fit-tested** (design §16a; user, 2026-10-12: universe `Type`, frames a derived layer). Two increments: MIG-0a (the structure, frames, `trans`, `seq`, `inPhase`, `embed`, `branch`, `release`, and two additive exports in Embed and Seam; gate round 1: 0/1/5, round 2 closed 0/0/1, landed by PR #83), then MIG-0b (gate round 1, 2026-10-13: 0/2/4; round 2 CLOSED 2026-10-14, 0/0/3, `audits/mig0b-r2-findings.md`; next its landing PR, without part 7, the alphabet pair, which lands with RS-5), revised after that round (design §16a): the segment, round and joint-trajectory layers, the layering split, the release export, the lift, the counter loop, renaming, the alphabet-reduction and robustness adapters, the tactics |
-| MIG-1 | `Build/Catalog` (the `f2_` region, about lines 1785–11365), `Primitives`, `Composition`, `Loop`, `Wrappers`, `Encoding`, `Simulation`, `ClassP/TimeConstructible` | Named witnesses (about 30 defs with spec theorems) for the 66 existential rows; then delete the 304 `f2_` copies (6,255 of their lines are verbatim, MEASURED). The 22 space rows become corollaries. Retire the R3 canonical `_run` rows (0 external consumers) | −7.6k to −8.3k, +0.4k | decision 12.2 lifted | stmt + full | highest confidence; half the saving. **Drafted (2026-10-13):** `audits/evidence/mig1/` (design, measured inventory, statement draft: 0 errors, 26 sorries). Measured at `6aa9f67b`: 53 existential rows, not 66 (plus `timeConstructible_id`, hidden in a definition); 304 copies, of which 232 are code-identical to a home declaration (4,351 lines; the 6,255 is not reproduced); 20 of the 22 region publics are space rows, the other two head lemmas; the R3 `_run` rows have 5 citations in 2 files (`CertShell`, `CodeSimulator`), not 0. Net about −7.4k (ESTIMATE). Spec theorems in the existing style, not `Contract` instances (layering: the landed `Contract.lean` imports `Catalog`; MIG-0b's split removes that obstacle, and the decision rests on the rows' shape and the order of work). **Answered (user, 2026-10-13): all four as recommended**: the R3 retirement in MIG-1's last PR, after the B5a continuation integrates (else five rows, leaving `copyTM_run`); both consolidations; the space rows stay in Catalog as corollaries; MIG-17's named loop hosts are done by MIG-1. **Statement gate (2026-10-14):** `audits/mig1-statements-pack.md`. It covers the 26 witnesses with their real bodies, 45 new public statements (14 proved), the 55 rows as `type_of%` corollaries (all proved), and the deletion plan for 378 declarations. Net about −7.0k lines (ESTIMATE). **Round 1 (2026-10-14): 0 blockers, 1 major, 3 minors; open** (`audits/mig1-statements-findings.md`). No public statement is false and no witness body differs from its source. The major is in the deletion plan: it retargets the extended loop contract's preparation step at Loop's private `loopHost_prepare`, which lacks the fuel-head clause (`∀ i, -T ≤ c.workTapePos i ≤ T`) that the contract passes to its head lemma. The repair strengthens `loopHost_prepare` in F-C, and is shown by elaborating the moved contract against the surviving home lemmas. The minors: the evidence runner masks failures, the bundle lacks inputs its reproduction names, three pack sentences overstate. **Open questions answered (user, 2026-10-14): all five as recommended**: the decision-loop S-form family is dropped (its 14 `a2_` lemmas deleted); the eight citation specs are proved at S (the three split specs stay dependent on F-C's loop specs); the run head bound has one proof, MIG-0b's `workTapePos_runFrom_mem_Icc` in `Finite`, with H2's absolute form a corollary beside it; Simulation imports `Mathlib.Algebra.BigOperators.Fin` and homes `ComputesInTime.spaceUsed_le`. Next: round 2, re-measured at the tip (PRs #85 and #86 add consumers in `FormulaKit/Emit` and `RAMSimulation/WordSize`) |
+| MIG-1 | `Build/Catalog` (the `f2_` region, about lines 1785–11365), `Primitives`, `Composition`, `Loop`, `Wrappers`, `Encoding`, `Simulation`, `ClassP/TimeConstructible` | Named witnesses (about 30 defs with spec theorems) for the 66 existential rows; then delete the 304 `f2_` copies (6,255 of their lines are verbatim, MEASURED). The 22 space rows become corollaries. Retire the R3 canonical `_run` rows (0 external consumers) | −7.6k to −8.3k, +0.4k | decision 12.2 lifted | stmt + full | highest confidence; half the saving. **Drafted (2026-10-13):** `audits/evidence/mig1/` (design, measured inventory, statement draft: 0 errors, 26 sorries). Measured at `6aa9f67b`: 53 existential rows, not 66 (plus `timeConstructible_id`, hidden in a definition); 304 copies, of which 232 are code-identical to a home declaration (4,351 lines; the 6,255 is not reproduced); 20 of the 22 region publics are space rows, the other two head lemmas; the R3 `_run` rows have 5 citations in 2 files (`CertShell`, `CodeSimulator`), not 0. Net about −7.4k (ESTIMATE). Spec theorems in the existing style, not `Contract` instances (layering: the landed `Contract.lean` imports `Catalog`; MIG-0b's split removes that obstacle, and the decision rests on the rows' shape and the order of work). **Answered (user, 2026-10-13): all four as recommended**: the R3 retirement in MIG-1's last PR, after the B5a continuation integrates (else five rows, leaving `copyTM_run`); both consolidations; the space rows stay in Catalog as corollaries; MIG-17's named loop hosts are done by MIG-1. **Statement gate (2026-10-14):** `audits/mig1-statements-pack.md`. It covers the 26 witnesses with their real bodies, 45 new public statements (14 proved), the 55 rows as `type_of%` corollaries (all proved), and the deletion plan for 378 declarations. Net about −7.0k lines (ESTIMATE). **Round 1 (2026-10-14): 0 blockers, 1 major, 3 minors; open** (`audits/mig1-statements-findings.md`). No public statement is false and no witness body differs from its source. The major is in the deletion plan: it retargets the extended loop contract's preparation step at Loop's private `loopHost_prepare`, which lacks the fuel-head clause (`∀ i, -T ≤ c.workTapePos i ≤ T`) that the contract passes to its head lemma. The repair strengthens `loopHost_prepare` in F-C, and is shown by elaborating the moved contract against the surviving home lemmas. The minors: the evidence runner masks failures, the bundle lacks inputs its reproduction names, three pack sentences overstate. **Open questions answered (user, 2026-10-14): all five as recommended**: the decision-loop S-form family is dropped (its 14 `a2_` lemmas deleted); the eight citation specs are proved at S (the three split specs stay dependent on F-C's loop specs); the run head bound has one proof, MIG-0b's `workTapePos_runFrom_mem_Icc` in `Finite`, with H2's absolute form a corollary beside it; Simulation imports `Mathlib.Algebra.BigOperators.Fin` and homes `ComputesInTime.spaceUsed_le`. **Round 2 CLOSED** (2026-10-14: 0 blockers / 0 majors / 3 minors; `audits/mig1-statements-r2-findings.md`, resolutions `audits/mig1-statements-r2-resolutions.md`): the strengthened `loopHost_prepare` and the overlay over surviving home lemmas repair finding 1; the minors are runner and checker strength and one accessibility description, recorded for S and F-C. Next: stage S, unblocked now that the B6 hosts landed (#92, 2026-10-14; both edit `Encoding.lean`), re-measured at its base, with MIG-0b's interval lemma as the head bound. **The rule "F-D before the next B5a brief" is lifted** (user, 2026-10-14): B5a's canonizer continuation goes first, and F-D's one CodeSimulator site rebases onto it; B5a's H1 continuation follows the C1 H1-harvest landing (user: harvest first). **Stage S built (2026-10-14; `$S/land-mig1s`, 51 of 51 checks, at `3a6e89f4`):** 25 witnesses (15 public in place, 10 new), 42 statements (25 proved, 17 sorried), 67 public names (70 with F-B's 3), 191 asserted renames; no row's statement or proof changes; replay about 306 modules. The head lemma is untouched: StepBlock's `abs_workTapePos_runFrom_sub_le` keeps its own proof, and its re-proof as a corollary of `workTapePos_runFrom_mem_Icc` is for H2/MIG-0b's owners. **User (2026-10-14): a cleanup pass in S's PR**: drop the gated docstrings' stale "(landing: …)" notes, update the module docstrings for the new names and the moved head lemmas, remove 3 unused `simp` arguments, accept two whitespace wraps. Its PR follows #94 (H1), so the replays chain. Carried: F-D gains 2 docstring sites; `exists_codeTM_spaceUsed` (added by #92, a 54th existential row) becomes a corollary of a `toCodeTM_spaceUsed` spec at F-A. **PR #98 (2026-10-14):** rebuilt at the merged tip `c9cc485b` against `oleans-ltip3`, 54 of 54 checks. Three checks that were pinned to the first base now take the run's base and snapshot commit: the merges list, the snapshot's build commit, and the CodeSimulator R3 site's line, which #94/#96 moved from 1282 to 1275 (still one site). Replay 307 modules. It merges first; Diagonal Part 1 and the dedup payback rebase on it, one after the other (their replay lists share 4 facades). **Merged (2026-10-15, `eb750e63`; replay 307 of 307, sorry warnings 80 + the 17 sorried specs; snapshot `oleans-lmig1s`).** Next for MIG-1: the fill batches F-A to F-D |
 | MIG-2 | `TuringMachine/Universal` (195–1316, 1317–1606, 2367–2644) | Retire the duplicate timed layer (`timedCut*`, `timedPrefix`, `timedCapture`), through a stop-before variant or proofs parametric in the table | about −1k | — | swap | `timed_universal_concrete`'s coefficient must not grow (TMSAT); **merged with U-1** (one re-derivation, from both directions) |
 | MIG-3 | `Robustness/SingleTape` | `one_work_tape` reuses `dg_all_inputs`; drop the `sweep_*` chain | about −450 | — | swap | |
 | MIG-4 | `Build/CounterLoop` | R80B-E1: `counterLoopTM` becomes the identity instance of `counterLoopTMVia`; retire the duplicated statements | about −450 | — | full | consumer `Inclusions.lean` (14 uses) |
@@ -639,10 +856,10 @@ statement families are retired, with full gates and consumer edits. Restyling is
 | MIG-15 | `Build/CounterLoop` | `counterSpan`, a segment property that admits time zero, becomes MIG-0b's segment layer with a joint-trajectory relation; the loop body's interface uses the round layer. **Corrected (MIG-0a gate, round 1, major; round 2, minor 1):** per-tape intervals cannot carry its head-vector relation, and a `ReturnContract` excludes the escaping round. **MIG-0b round 2:** `counterLoopOrbit` becomes an abbreviation of `roundOrbit` at MIG-0b; the compatibility name stays, and its four consumer edits land with MIG-0b | −440 to −640 | MIG-0b, MIG-4 | swap | |
 | MIG-16 | `Build/OracleSim` | Rebase on the R1 contracts | −250 to −400 | MIG-0 | swap | exact lockstep lemmas stay |
 | MIG-17 | `Build/Primitives`, `Build/Loop` | Named loop hosts (done by MIG-1; user, 2026-10-13); `splitSafe` (private in `Build/Primitives`, avoidance through the endpoint) becomes MIG-0b's `SafeSegment`, and `SafeRun` (`Build/EmitIterEmbed.lean`, avoidance strictly before the endpoint) a `Segment`; first-exit Contracts only where a first exit is proved (MIG-0a gate, round 2, minor 1; locations from the MIG-0b draft). `Loop` must import the core contract module, so MIG-0b's layering split comes first | −1k to −2k | MIG-0b, MIG-1 | swap | 15 external files cite the P-rows (statements kept) |
-| MIG-19 | `SpaceComplexity/ConfigGraph` (S1b's delivery) | Re-derive `NSPACE ⊆ DTIME(2^O(S))`, `NL ⊆ P` and Ex 4.3 as programs (design §16, decision 3); retire S1b's private BFS host | S1b's delivery added 333 lines (612 → 945, MEASURED); the program's own cost is estimated with stage 2 | stage 2, machine-configuration routines | swap | user, 2026-10-12: S1b finished first, then stopped as a partial (fills-6): the two corollaries are proved modulo `NSPACE_subset_exp_dtime` only, so this row needs the simulation alone |
+| MIG-19 | `SpaceComplexity/ConfigGraph` (S1b's delivery) | **Closed 2026-10-14 (moot):** the three are proved (`ExpTime.lean`, ARM route, design §14 H12); S1b's private block is deleted by the payback PR (§1 ARM-1). *Was:* Re-derive `NSPACE ⊆ DTIME(2^O(S))`, `NL ⊆ P` and Ex 4.3 as programs (design §16, decision 3); retire S1b's private BFS host | S1b's delivery added 333 lines (612 → 945, MEASURED); the program's own cost is estimated with stage 2 | stage 2, machine-configuration routines | swap | user, 2026-10-12: S1b finished first, then stopped as a partial (fills-6): the two corollaries are proved modulo `NSPACE_subset_exp_dtime` only, so this row needs the simulation alone |
 | MIG-20 | the chapter-2 emitter files (`emitterCompare*`, `emitterP2Erase*`) | 12.2c item 3 (F25a/F27a): onto `compareTM` and `clearTM` | small | MIG-1 (the Catalog→Primitives import) | swap | |
 | MIG-21 | `CookLevin/Hardness` (`clPlacement`, the selectors) | 12.2c item 13: restate the layouts as plain `Fin k ↪ Fin l` embeddings; delete the selector layer (about 120–259 lines) | about −150 to −250 | the T2a gate (item 6's export) | swap | Hardness stays at machine level |
-| MIG-22 | `ClassPSPACE/TQBF` (B4 membership's delivery) | `TQBF_mem_PSPACE` as a program: a recursive QBF evaluator in the §15 language, compiled through stage 2, with the proved pure core (`b4mValue`, `b4mValue_truth`, `b4mWalk_value`) as its specification. Retire the unused leaf-contract definitions, which lack an input/records precondition | to be estimated with stage 2's space accounting | stage 2 with a space bound, the input extensions (§15a) | stmt + swap | user, 2026-10-12: "Stop; do it as a program". Registry H1, the AND/OR evaluator (design §14) |
+| MIG-22 | `ClassPSPACE/TQBF` (B4 membership's delivery) | **Closed 2026-10-14 (moot):** `TQBF_mem_PSPACE` is `LogProg.TQBFARM.truth_mem_PSPACE`; the pure core is deleted with the `b4m*` appendix (D6). The general AND/OR evaluator stays registry H1. *Was:* `TQBF_mem_PSPACE` as a program: a recursive QBF evaluator in the §15 language, compiled through stage 2, with the proved pure core (`b4mValue`, `b4mValue_truth`, `b4mWalk_value`) as its specification. Retire the unused leaf-contract definitions, which lack an input/records precondition | to be estimated with stage 2's space accounting | stage 2 with a space bound, the input extensions (§15a) | stmt + swap | user, 2026-10-12: "Stop; do it as a program". Registry H1, the AND/OR evaluator (design §14) |
 | MIG-23 | `Build/RecordTable` rows 15, 16, 19, 20 (find, append, validity, next) | Paused, with no consumer since S1b stopped and Savitch moved to the language. Retire them under scenario B unless stage 2's memory design or another consumer claims them; keep the proved find round (`rt_findRound` and its contracts) | small (statements only) | a consumer decision | full | user, 2026-10-12: "Narrow to rows 17–18"; rows 17–18 continue for B6's window route |
 | MIG-18 | port of [AFM26]'s `Util/Asymptotics` (1,769 lines upstream) | `Dominated`, `Scale.SoftO` and the `growth` tactic, then ledgers without constants | +0.5k to +1.4k; saves part of about 3.5k ledger lines | the PROG-1 port tooling | fidelity, then swap | payoff mostly in ClassNP, ClassP, SpaceComplexity and PolyHierarchy |
 
@@ -723,6 +940,10 @@ proved); fix it in the first MIG PR that touches Build.
   `audits/stage2-statements-findings.md`, resolutions `audits/stage2-statements-resolutions.md`).
   No theorem is false; the homes, the namespace and `initMem` are approved. Next: the landing PR
   (parts A, C, D, E and the slice lemmas), then PROG-2's scripted edit and its fidelity gate.
+  **Landed** (PR #86). **Paused (user, 2026-10-14):** the ARM merge proves PSPACE = NPSPACE,
+  `PATH ∈ NL` and NL = coNL, the customers of the coin programs and of Savitch at polynomial
+  space; general `savitch` stays sorried. No stage-2 brief (PROG-2's edit and fidelity gate,
+  PROG-4's fills) is written until the user resumes it.
 
 The route decisions of 2026-10-12 (design §16b) add three work items, numbered by §16b's items
 (items 1 and 4 are PROG-4):
@@ -740,6 +961,13 @@ The route decisions of 2026-10-12 (design §16b) add three work items, numbered 
   resolutions `audits/rd2-statements-resolutions.md`). Next: the landing PR (with minor 1's sketch
   fix), then the semantic re-fill (RD-2a) and the uniformity fill (RD-2b). `fragment_append`
   joins the Cook–Levin re-basing family (minor 2).
+  **Landed** (PR #85). **Fills held (user, 2026-10-14):** the ARM merge proves `TQBF_PSPACEHard`
+  without `ConfigCodec` or `FormulaKit`, which now have no consumer. The RD-2a/b briefs are
+  drafted (the maintainer re-ran their six pre-ship probes: 0 errors) but not committed or
+  dispatched; their base data predates the ARM merge's `TQBF.lean` changes, so it is
+  regenerated if they go ahead. The user's four answers on them (2026-10-14, all as
+  recommended): integrate partials; delete the two unusable KEEP rows as a disclosed deviation;
+  `Mathlib.Data.List.MinMax` in `Gate.lean`; `CfgRecord`'s docstring is the maintainer's.
 * **RD-3: re-route B6 and restate `space_universal` forward-only** (§16b item 3).
   `SpaceComplexity/Hierarchy.lean`: `space_universal` keeps only its forward clause ([AB09]
   Exercise 4.1), and `space_hierarchy`'s sketch moves to the window route (a self-simulating
@@ -761,7 +989,113 @@ The route decisions of 2026-10-12 (design §16b) add three work items, numbered 
   additions to six existing files. The unit has 0 errors, its 10 contracts are sorried, and
   `space_universal` is strengthened to `C·s`. The step clock's trajectory clause is strengthened to
   carry the tapes, the input position and the output; C1's form `exists_stepClockTM` is unchanged.
-  Next: the landing PR, carrying the five fixes.
+  **Landed (2026-10-14, PR #92; replay 270 of 270):** regenerated from the gated unit at
+  `13a16a69`, with the five fixes; `SelfUniversal` keeps the gated `CodeSimulator` import. The
+  first replay attempt failed on a missing Mathlib link in the new PR worktree (maintainer
+  error, now prechecked). Follow-up, a small PR of its own: switch that import to
+  `Build.StepBlock` and re-point `exists_selfStartupTM`'s citation of
+  `Turing.oneTapeMachineFormat.serialize_eq`. Next: the B6 fill briefs for the ten contracts,
+  with record-table row 18.
+  **B6 fill plan (2026-10-14; `audits/evidence/b6-fill/B6-fill-plan.md`).**
+  - **Six batches:**
+    - F1: StepClock, `exists_stepClockTMVia`, which also serves C1;
+    - F2: WindowRun, the two window rows;
+    - F3: WindowClock, briefed by Route A after F1 integrates;
+    - F4: SelfUniversal;
+    - F5: InputDevice, the three ruler rows;
+    - F6: `space_universal`.
+  - **Later, H,** the headline region of `Hierarchy`.
+  - **Critical path to `space_hierarchy`:** F1 → F2 → F3 → H, with F4 alongside.
+  - **Briefs `b6-fill-stepclock.md` (F1) and `b6-fill-windowrun.md` (F2) are issued.**
+  - **Dedup, for the dedup window:** the public `wordPatch` has the same definition as
+    `CounterLoop`'s private `counterPatch`, which the screen misses. `counter_debit` retires onto
+    F1's `sc_debit` once that is promoted.
+  - **F1 stopped on escalation E1 and is re-briefed (2026-10-14):** the route needed `CounterLoop`
+    privates and unfoldings that v1's rule 10 forbade (report
+    `audits/b6-fill-agent-reports/stepclock-1-REPORT.md`). Per the user's decision, brief v2
+    (`briefs/b6-fill-stepclock-v2.md`) authorizes exactly 19 promotions (3 visibility-only, 16 new
+    lemmas in `CounterLoop` and `SymbolLift`). It ships a route probe that discharges every route
+    seam from public names (0 errors, exactly the 3 fill stubs sorried), with a static scan for
+    private citations and unfoldings. F2 is re-dispatched unchanged with the environment addendum.
+    - **Two more items for the dedup window,** in the family above: `sc_wordPatch_twice` and
+      `sc_wordPatch_frame` prove for `wordPatch` what the private `counter_patch_twice` and
+      `counter_patch_frame` prove for `counterPatch`. `sc_dec_inputPos` overlaps `Build/StepBlock`'s
+      `Bool`-only `inputPos_runFrom_of_inputTape_eq_zero`; one generic lemma in `Simulation` would
+      serve both. None makes a screen pair.
+  - **F2 delivered (2026-10-15, `fill-b6-windowrun copy.zip`, SHA-256 `2cb4bfb6…d29f`; Codex
+    `e260585d`; reports `audits/b6-fill-agent-reports/windowrun-1-REPORT.md` (the first attempt,
+    stopped on the environment before the addendum) and `windowrun-2-REPORT.md`):
+    **both targets proved.** `exists_windowLoopTM` uses only the standard axioms;
+    `exists_windowRunnerTM` adds `sorryAx` only through `exists_stepClockTMVia` (F1, in flight),
+    by the worker's direct-admission walk. 25 new privates, none public; prescribed machines
+    unchanged; the environment addendum used exactly as written.
+    - **Maintainer integration checks:**
+      - checksums;
+      - the patch reproduces the file, and it is the only file;
+      - freeze: 10/10 public, only the two authorized bodies changed;
+      - no forbidden construct or `sorry` in the 913 added lines; widths ≤ 98;
+      - the bundle's sole prerequisite is the base `70b503b4`;
+      - no name MIG-1 S renames.
+    - **Elaboration at the tip** (`WindowRun.lean` unchanged since the base) against
+      `oleans-ltip3`: 0 errors, 0 warnings, axioms as stated.
+    - **Screens:** the worker's v1 screens (its brief) show 2 new in-file pairs, both the
+      pre-disclosed instance boilerplate (83%, 50%). The maintainer's v3 re-screen at the tip is
+      queued.
+    - **Landing:** branch `lean/b6-f2-windowrun` (cherry-picked, authorship kept). Replay 4
+      modules. It lands after MIG-1 S (#98), whose replay list contains all four.
+    - **Landed (2026-10-15, PR #99; replay 4 of 4 from #98's snapshot; snapshot `oleans-lf2`).**
+    - **Maintainer v3 re-screen at the tip (the 21-file population):** 495 → 497 pairs, the 2 new
+      ones exactly the pre-disclosed instance pairs (83%, 50%), none cross-file. The ledger is
+      confirmed.
+  - **F1 v2 delivered (2026-10-15, `fill-b6-stepclock-v2.zip`, SHA-256 `9ba3f781…009c`; Codex
+    `e81df474`, three commits; report `audits/b6-fill-agent-reports/stepclock-2-REPORT.md`):
+    complete.**
+    - **What's proved:** `exists_stepClockTMVia`, so the frozen `exists_stepClockTM` (C1's) is
+      admission-free and F2's runner becomes sorry-free. Standard axioms throughout.
+    - **The promotion list:** applied verbatim (both shared files equal the overlays).
+    - **Additions:** 33 privates. The only restatement is the recommended `sc_debit`, gaining
+      one state-image conclusion.
+    - **No escalations; new copies: none** (only the two pre-disclosed controller pairs).
+    - **Promotion candidates:** `sc_debit`, `sc_clockTM`, `sc_dec_inputPos`,
+      `sc_observedSegment`, `sc_firstExit`.
+    - **Maintainer checks:**
+      - checksums and the shim hash;
+      - the overlays, and the patches reproducing the files;
+      - freeze 5/5 public, only the target's body changed;
+      - no `sorry` in the final files; hygiene; width ≤ 99;
+      - no name MIG-1 S renames;
+      - the three files are unchanged at the tip.
+    - **Landing PR #103** (cherry-picked, authorship kept); replay 80 modules from #102's
+      snapshot.
+    - **Landed (2026-10-15, PR #103; replay 80 of 80 from #102's snapshot; snapshot `oleans-lf1`
+      for the tip `14c2fc19`).** The only sorry count that moved is `Build/StepClock`'s, 1 to 0.
+      C1's step clock and F2's windowed runner now rest on no `sorry`.
+  **Record-table row 18's fill brief issued (2026-10-14):** `briefs/w1-fill-recordtable-cont5.md`
+  (inputs `8dfbc881`, at `1b6b972c`):
+  - The route is a 14-phase chain over row 17 through R1. Three prescribed privates are proved;
+    one obligation remains.
+  - The tail writer's recursion on `k` is not a host (the user's ruling).
+  - Its consumer probe shows the endpoint meets `exists_configWindowRunnerTM`'s precondition. The
+    consumer must clear the radius tape.
+  - Dedup, for the dedup window: `rt_embed_matches` is now a private twin of the public
+    `embedEmitCfg_eq`. Its consumers are `rt_exists_cleanDigitBoundTM` and `rt_cellWindow_ready_run`.
+  **Row 18 delivered (2026-10-14, `fill-w1-recordtable-cont5.zip`; Codex `6aef1d2a`, report
+  `audits/wave1-fill-agent-reports/recordtable-6-REPORT.md`): `exists_recordInitTM` is proved**,
+  with its statement unchanged, 18 new privates, and only the standard axioms.
+  - **Maintainer integration checks:** checksums; the patch reproduces the file; one file only;
+    freeze 28/28 public, no statement changed, only row 18's body changed, no existing private
+    changed; no forbidden construct, `sorry` or `axiom` in added lines. It elaborates at the
+    post-#94 tip against `oleans-lh1` with 0 errors and the four paused rows' sorries.
+  - **Duplication ledger:** 5 new in-file pairs, no cross-file pair.
+    - Two are the pre-disclosed `rt_tailState` instance pair.
+    - One is a 113-character composition pair.
+    - **Two are larger:** `rt_position_run` and `rt_tail_run` reproduce 954 and 836 of
+      `rt_moveWord_run`'s 1,606 characters. The worker classifies them as shared framed-contract
+      and R2 bookkeeping, not re-proved moves. They are carried to the epoch's duplication ledger
+      for classification. RecordTable already holds earlier debt (`rt_embed_matches`).
+  - **Integration PR:** branch `lean/rt5-row18`; replay of 51 modules from `oleans-lh1`.
+  - **Promotion candidates** (the worker's): the scratch-template transport, the finite-tail
+    writer, the position component, the two-field cleanup, and `binDigits_one`.
 * **C1-D: the NTIME hierarchy's design** (2026-10-13; `audits/evidence/c1/C1-design.md`, statement
   draft `C1HostsDraft.lean.txt`: 0 errors, 5 sorries, 10 theorems proved). The proposed route:
   - **guess first:** the universal NDTM and the diagonalizer write the whole choice word with a
@@ -793,9 +1127,124 @@ The route decisions of 2026-10-12 (design §16b) add three work items, numbered 
   is already proved (plan §4e's C1 row). Still to fix: `NTimeHierarchy.lean`'s docstring says
   "quadratic" (lines 51 and 110), to correct in C1's first Lean PR; and design §12.8 routed
   `PATH_mem_NL` through SC-3, stale since C2 moved to programs (marked superseded 2026-10-13).
-* **RD-5: §13d G2–G4 after MIG-0b** (§16b item 5). The statements of design §13d's G2–G4, stated as
+  **Landed (2026-10-14, PR #87; replay 147 of 147, with the ARM merge):** `Nondeterministic.lean`'s
+  Part A proves `runWith_eq_fixChoice_runFrom` (#86's `sorry` closed), and
+  `NondeterministicSpace.lean` proves its space companion. The new `ChoiceReplay`,
+  `Build/NDHost`, `Build/InputWindow`, `NDCodeSimulator` and `ClassNP/ExhaustiveReplay` carry the
+  five gated contracts, sorried for the C1 fills. `NTimeHierarchy.lean`'s "quadratic" docstrings
+  are fixed. Next: the guess-then-run assembly gate and the H1 hosted-clock harvest, then the
+  fill briefs.
+  **C1-A assembly statement gate (2026-10-14):** `audits/c1-assembly-statements-pack.md`
+  (dispatch folder 19, built at `e831b5b0`). It covers the host `Turing.guessRunTM` (six phases
+  over `phaseHostND`) and eight theorems, appended to `Build/NDHost.lean`: the handoff, liveness,
+  the whole branch, the halting setup, all-branch halting, exact-budget acceptance, the core's
+  clean precondition and the silent composite. The unit (896 lines) has 0 errors and no new
+  `sorry`; six theorems are proved modulo the gated `ndWriterTM_run_block`. Consumer probes derive
+  UN's frozen statement and D's `NTIME` shape. Four open questions (the rewind's `Catalog` import,
+  UN's setup as a fill obligation, an `embedSilentCfg_cap` export, the verdict leaf inline).
+  Independent of #92 and #93; if #92 lands first, the landing re-runs the cut check.
+  **Round 1 (2026-10-14): OPEN, 0 blockers / 1 major / 3 minors**
+  (`audits/c1-assembly-statements-findings.md`; resolutions `…-resolutions.md`). No theorem is
+  false and no hypothesis is spurious. The major is policy only: `guessRunCfg_clean` repeats
+  `Inclusions`' private `b2b_capture_shape`. It is repaired by the public `embedSilentCfg_cap` in
+  `Build/Embed`, with `b2b_capture_shape` retired onto it. The minors are one docstring and two
+  evidence-tooling fixes. Rulings: the `Catalog` import kept, UN's setup a fill obligation (its
+  `hsetup` verbatim in UN's brief), the export added, the leaf inline. Next: round 2 at the tip.
+  **Round 2 CLOSED (2026-10-14): 0 blockers / 0 majors / 1 minor**
+  (`audits/c1-assembly-statements-r2-findings.md`). The export is in `Build/Embed`, and
+  `b2b_capture_shape` stays private, rebased on it. The minor is the name screen's allowlist
+  boundary, fixed in the landing. Next: the landing PR for Embed, NDHost and Inclusions, with
+  about 150 downstream modules to replay.
+  **H1 hosted-clock harvest statement gate (2026-10-14):** `audits/h1-harvest-statements-pack.md`
+  (folder 20): the public counter loop over the step block in a new `Build/StepBlockLoop.lean`,
+  with CodeSimulator's eight private declarations deleted. **CLOSED** (round 1: PASS, 0 blockers /
+  0 majors / 4 minors; `audits/h1-harvest-statements-findings.md`, resolutions `…-resolutions.md`).
+  Ruling 5 is satisfied and R's loop phase follows. The minors are three checker-strength fixes
+  and one stale citation, all fixed for the landing. Next: one maintainer landing PR at the
+  merged base (a 9-module replay with `SelfUniversal`); registry row H2-L when it lands.
+  **Landed (2026-10-14, PR #94; replay 76 of 76):** `Build/StepBlockLoop`, CodeSimulator's private
+  assembly deleted, `counterValue_bits` and the moved `foldr_bit_eq_ofDigits` in `Build/CounterLoop`;
+  new snapshot `oleans-lh1`. R's brief cites the public contracts.
+* **RD-5: §13d G2–G4 after MIG-0b** (§16b item 5). **G2–G4 statement gate CLOSED (2026-10-14: PASS 0/0/5;
+  `audits/s13d-g24-statements-findings.md`, resolutions `…-resolutions.md`):** both duplication
+  families removed; it lands after MIG-1 S, rebased; G4's fill brief identifies or gates its host
+  first.
+  **Two-tape universal (U2) designed (2026-10-14; `audits/evidence/u2/U2-design.md`, probes).**
+  - **The design:** one `k`-generic construction on H2's step block. It has a new public host
+    H2-F (the emitting round loop, in `Build/StepBlockLoop`), U2-S (the startup), U2-U
+    (self-application universal, `C_α·(t+1)` time and `C·(s+1)` space) and U2-E (the code-first
+    evaluator, which re-derives `Turing.universal` at `k = 1`).
+  - The hierarchy needs only U2-U at `k = 2`, on the native input. Hydroxyi's `clockTM` clocks;
+    there is no uniform scheme or input copy.
+  - `Diagonal.lean`'s parameterization over `DiagSimulator Φ` and `SelfSimulator Ψ` is fully
+    proved in the probe, with standard axioms. All four public theorems re-derive verbatim.
+  - **User (2026-10-14), all as recommended:**
+    - (a) B6's `U₀` and its startup are generalized to `k` before B6's `U₀` fill is briefed, with
+      B6's statements kept verbatim as the `k = 1` corollaries;
+    - (b) H2-F becomes a public host, gated hosts-first;
+    - (c) no verdict-only variant;
+    - (d) Theorem 1.9 keeps the relaxed quantifier;
+    - the illustration `DTIME(n+1) ⊊ DTIME((n+1)²)` is dropped, so `Separation`'s log lemma is
+      not copied;
+    - the facade `TimeHierarchy.lean`'s one stale docstring sentence is fixed in the Diagonal PR;
+    - **Diagonal Part 1 (the parameterization) lands early,** by PR plus a small statement gate.
+  - **Diagonal Part 1 statement gate CLOSED (2026-10-14; folder 24; PASS 0/0/2;
+    `audits/diagonal-p1-statements-findings.md`, resolutions `…-resolutions.md`).**
+    - **The two minors:** both are evidence-checker fixes, repaired in the closing commit with
+      three new negative controls: the name screen missed fully qualified names, and the copy
+      screen had a same-name blind spot (now v3).
+    - **Rulings:** `W`, `diag_cost_le` and the verdict-only clause are kept. The facade sentence
+      waits for the end-of-chain PR.
+    - **The auditor's suggested compiled checks** (zero overheads, a constant `decode`, the
+      projection `rfl`s) go to the end-of-chain PR.
+    - **Next:** the landing PR after MIG-1 S, with a fresh `run.sh` at that tip and an 11-module
+      replay.
+    - **Landed (2026-10-15, PR #100; 14 of 14 checks fresh at `eb750e63` against #98's snapshot;
+      replay 11 of 11 from #99's; snapshot `oleans-ldiag`, valid for the tip `dc8d0409`).**
+  - **U2 statement gate dispatched (2026-10-14; folder 26; `audits/u2-statements-pack.md`).**
+    - **The unit:** a new `TuringMachine/UniversalK.lean` with the scheme interface
+      `EffectiveCodeK k`, the two received schemes as instances, and U2-S, U2-U and U2-E. H2-F is
+      `StepBlock.exists_forwardLoopTM` in `Build/StepBlockLoop`, renamed from `exists_emitLoopTM`,
+      which already names `Turing.FinTM.exists_emitLoopTM`. B6's `exists_selfStartupTM` and
+      `exists_selfUniversal` are re-proved in place as the `k = 1` corollaries, signatures
+      byte-identical (decision (a)). One promotion: `Code2TM.serialize_eq_serializeK`.
+    - **Status:** 4 contracts sorried, the rest proved; 10 checks pass against `oleans-ltip3`;
+      replay 10 modules. The consumer probe takes G5 as a hypothesis and reaches the `f log f` and
+      book-form hierarchy through Diagonal Part 1, with `sorryAx` only from U2-U.
+    - **Five questions to the auditor**, with recommendations: H2-F's home, two disclosed screen
+      pairs, the field name `machine`, `exists_code2TM`'s home, and U2-E's fill timing. The user
+      decides after the findings.
+    - **Gate CLOSED (2026-10-15: PASS, 0 blockers / 0 majors / 2 minors / 3 notes;
+      `audits/u2-statements-findings.md`, resolutions `…-resolutions.md`).**
+      - **The auditor's review:** no false or vacuous contract and no changed signature; each
+        contract argued true constructively; H2-F is the right host boundary.
+      - **The minors:** the axiom checker's strictness (m1), fixed for the landing; and H2-F's
+        §14 registry entry (m2), added at landing.
+      - **User (2026-10-15):**
+        - Q1: H2-F moves to a new `Build/StepBlockForward.lean`, so `CodeSimulator` (the B5a
+          continuation 4's file) stays out of U2's replay;
+        - Q2: the four boilerplate pairs are acknowledged, with no payback;
+        - Q3–Q5 as recommended.
+      - **Next:** the landing, rebuilt for the new home and re-checked at the tip.
+      - **Landing PR #102 (2026-10-15):** 10 of 10 checks fresh at `9c0ae906` against #101's
+        snapshot. These include the stricter axiom checker (m1) and its mixed-axiom control.
+        H2-F is in `Build/StepBlockForward`, and `CodeSimulator`/`StepBlockLoop` are untouched.
+        The replay is 5 modules. The §14 H2 row now records H2-F (m2).
+      - **Landed (2026-10-15, PR #102; replay 5 of 5 from #101's snapshot; snapshot `oleans-lu2`).**
+    - **`Turing.universal` at `k = 1`** fits U2-E's statement verbatim. Its re-derivation (U-1)
+      waits for U2-E's fill, so a sorry-free theorem does not come to depend on a sorried one.
+  - Forwarded to G5's statement phase: `two_work_tapes_run` per run, with the converse; its
+    function-level form; `Nat.log 2` in the statements; a per-run export of the alphabet
+    reduction.
+  - Estimate: about 1.8k–3.3k lines on the hierarchy path (ESTIMATE). The statements of design §13d's G2–G4, stated as
   `Contract`s, then their gate and fills, then the Hennie–Stearns assembly. The open zone rows
   `exists_zoneShiftInTM` and `exists_zoneShiftOutTM` retire through the G3/G4 gate.
+  **Started (user, 2026-10-14):** the G2–G4 statement pack is being drafted as `Contract`s over
+  MIG-0b's library, with a design note for the two-tape universal machine (linear overhead) in
+  parallel. The last step parameterizes the diagonal argument in Hydroxyi's
+  `TimeHierarchy/Diagonal.lean` in place, over the universal machine and its overhead, so the
+  `f log f` theorem is a corollary: done by the maintainer and the user, no new file (user
+  authorization, 2026-10-14).
 
 * **Chapter-2 fill campaign (E1-E5)** — **active** (hold lifted
   2026-10-02 after the ch-6 integration and audit closed). All four
@@ -1331,6 +1780,20 @@ The route decisions of 2026-10-12 (design §16b) add three work items, numbered 
   extension (3) is replaced by the language's machine-configuration
   routines (design §15c). The rest of the sync agenda stands. Hydroxyi
   should be told when next in touch (the user's call).
+  **Reply received and merged (2026-10-14).** Hydroxyi accepted all three extensions, added a
+  fourth (MARM, a monotone memory tape with a time bridge) and proved the customers:
+  `PATH_NLComplete`, `compl_PATH_mem_NL`, `NL_eq_coNL`, `NSPACE_compl_eq`, `TQBF_mem_PSPACE`,
+  `TQBF_PSPACEHard`, `TQBF_PSPACEComplete`, `PSPACE_eq_NPSPACE` and `NSPACE_subset_exp_dtime`
+  (which moved, with `NL_subset_P` and `polyTimeReducible_of_mem_NL`, to
+  `SpaceComplexity/ExpTime.lean`). The merge `8c23f3bc` (74 files added, 8 changed) was pushed
+  directly to the campaign branch, not by PR; the reply is `arm-extensions-response.md`. No
+  statement of ours changed (maintainer freeze). The classes stay defined at Turing-machine
+  level: ARM programs enter only through bridge theorems whose conclusions are statements about
+  `FinTM`/`FinNDTM`. Their answers: `CounterProg` keeps its one-way input (ARM's indexed access
+  serves the searches), and both provenance questions are answered no. **User (2026-10-14):** a
+  fill-style external gate of the received code; the payback promotions in a separate PR after
+  the B6 hosts; RD-2's fills held; stage 2 paused. §1 ARM-1 records the duplication and the payback decisions; §1 ARM-2 the
+  refactor to coordinate with Hydroxyi.
 
 ---
 
@@ -1567,6 +2030,28 @@ Remaining Chapter-6 items (each documented as a divergence in its file):
 
 ## 5. Repository housekeeping
 
+* **The campaign's merge to `main` (user, 2026-10-15).**
+  - **Purpose:** our infrastructure goes to `main`, and `main` then goes into
+    `cryptography/garg-ch1-3`, so the cryptography work can build on it. The cryptography
+    branch does not go to `main` yet.
+  - **Bundles pruned first** (`99a0e4b3`): the campaign's 75 dispatched bundles (122.8 MB)
+    leave the tree, indexed in `audits/BUNDLES.md`; bundles are no longer committed
+    (`workflow.md`). Hydroxyi has been told, since the merge carries the campaign's edits
+    to 14 of his files.
+  - **Checks before the merge:** the 19 campaign-side root facades load together in Lean.
+    A static name scan finds no clash with main's other modules or with the cryptography
+    branch.
+  - **#104 landed** (main into the campaign; `policy.md` resolved to the campaign's text,
+    which contains main's). **Root-build replay: 265 of 265,** the root's import closure
+    missing from the snapshot and then the root itself, at `ff2d6f6b`. Snapshot
+    `oleans-lmain` is the first that covers the whole root closure (699 modules).
+  - **The PR into `main`** comes from `integrate/campaign-to-main`, fixed at the replayed
+    state. Later campaign work reaches `main` in later merges, each after a root-build
+    replay.
+  - **Hydroxyi's `complexity/arora-barak-ch7`** forks from the campaign at `8c23f3bc` and
+    conflicts with it in five files. Four are `Randomized/*`, where the comment-only
+    citation renumbering `f4b23f05` meets his edits; the fifth is the TuringMachine facade.
+    Its integration is his.
 * **Legacy `Complexity/NPReductions/*`**: 14 pre-existing style-lint FAILs
   (missing docstrings/References), outside the campaign surface; eventual
   fate coupled to the §3 retargeting idea. The ch6 branch adds (clean,

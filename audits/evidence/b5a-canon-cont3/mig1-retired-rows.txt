@@ -1,0 +1,40 @@
+# MIG-1 and CodeSimulator's import closure (measured at 9d441a4e, identical to 759471be, from the gated MIG-1 data:
+# audits/evidence/mig1/gate/data/{deletion-plan.tsv,moved-names.json,r3-retirement.tsv}).
+# Of the 438 plan rows, 385 name a declaration in CodeSimulator's upstream closure (28 modules);
+# 357 of them are private there, so no CodeSimulator proof can cite them. The 28 public ones:
+#
+# (1) RETIRED by F-D: cite none of these anew; use the framed form on the right.
+transferTM_run	TCSlib/Complexity/TuringMachine/Build/Catalog:1277	framed form: transferTM_run_ofCfg
+copyTM_run	TCSlib/Complexity/TuringMachine/Build/Catalog:1362	framed form: copyTM_run_ofCfg
+clearTM_run	TCSlib/Complexity/TuringMachine/Build/Catalog:1434	framed form: clearTM_run_ofCfg
+compareTM_run	TCSlib/Complexity/TuringMachine/Build/Catalog:1502	framed form: compareTM_run_ofCfg
+incrementTM_run_succ	TCSlib/Complexity/TuringMachine/Build/Catalog:1584	framed form: incrementTM_run_succ_ofCfg
+incrementTM_run_overflow	TCSlib/Complexity/TuringMachine/Build/Catalog:1631	framed form: incrementTM_run_overflow_ofCfg
+#
+# (2) KEPT: statement and name unchanged (MIG-1 re-proves them in place or moves them inside
+#     the closure); citing them is stable.
+computesFunInTime_id_spaceUsed	TCSlib/Complexity/TuringMachine/Build/Catalog:4206	deletion plan: corollary in place (statement and name unchanged; proof from the gated specs)
+computesFunInTime_const_spaceUsed	TCSlib/Complexity/TuringMachine/Build/Catalog:4249	deletion plan: corollary in place (statement and name unchanged; proof from the gated specs)
+computesFunInTime_prepend_spaceUsed	TCSlib/Complexity/TuringMachine/Build/Catalog:4274	deletion plan: corollary in place (statement and name unchanged; proof from the gated specs)
+computesFunInTime_lengthBits_spaceUsed	TCSlib/Complexity/TuringMachine/Build/Catalog:4298	deletion plan: corollary in place (statement and name unchanged; proof from the gated specs)
+computesFunInTime_polyUnary_spaceUsed	TCSlib/Complexity/TuringMachine/Build/Catalog:4315	deletion plan: corollary in place (statement and name unchanged; proof from the gated specs)
+computesFunInTime_polyBits_spaceUsed	TCSlib/Complexity/TuringMachine/Build/Catalog:4357	deletion plan: corollary in place (statement and name unchanged; proof from the gated specs)
+computesFunInTime_pairEncodeFixed_spaceUsed	TCSlib/Complexity/TuringMachine/Build/Catalog:4427	deletion plan: corollary in place (statement and name unchanged; proof from the gated specs)
+computesFunInTime_pairFst_spaceUsed	TCSlib/Complexity/TuringMachine/Build/Catalog:4445	deletion plan: corollary in place (statement and name unchanged; proof from the gated specs)
+computesFunInTime_pairSnd_spaceUsed	TCSlib/Complexity/TuringMachine/Build/Catalog:4470	deletion plan: corollary in place (statement and name unchanged; proof from the gated specs)
+computesFunInTime_pairValid_spaceUsed	TCSlib/Complexity/TuringMachine/Build/Catalog:4495	deletion plan: corollary in place (statement and name unchanged; proof from the gated specs)
+computesFunInTime_pairConcat_spaceUsed	TCSlib/Complexity/TuringMachine/Build/Catalog:4515	deletion plan: corollary in place (statement and name unchanged; proof from the gated specs)
+computesFunInTime_pairDup_spaceUsed	TCSlib/Complexity/TuringMachine/Build/Catalog:4543	deletion plan: corollary in place (statement and name unchanged; proof from the gated specs)
+computesFunInTime_pairLenCheck_spaceUsed	TCSlib/Complexity/TuringMachine/Build/Catalog:4595	deletion plan: corollary in place (statement and name unchanged; proof from the gated specs)
+computesFunInTime_stripLast_spaceUsed	TCSlib/Complexity/TuringMachine/Build/Catalog:5029	deletion plan: corollary in place (statement and name unchanged; proof from the gated specs)
+computesFunInTime_incFixed_spaceUsed	TCSlib/Complexity/TuringMachine/Build/Catalog:5067	deletion plan: corollary in place (statement and name unchanged; proof from the gated specs)
+computesFunInTime_pairMapSnd_spaceUsed	TCSlib/Complexity/TuringMachine/Build/Catalog:5881	deletion plan: corollary in place (statement and name unchanged; proof from the gated specs)
+computesFunInTime_splitSolve_spaceUsed	TCSlib/Complexity/TuringMachine/Build/Catalog:9973	deletion plan: corollary in place (statement and name unchanged; proof from the gated specs)
+redirectTM_spaceUsedByTape	TCSlib/Complexity/TuringMachine/Build/Catalog:10081	deletion plan: corollary in place (statement and name unchanged; proof from the gated specs)
+rewind_scan_heads	TCSlib/Complexity/TuringMachine/Build/Catalog:10356	deletion plan: move (statement, name and proof unchanged)
+rewind_heads	TCSlib/Complexity/TuringMachine/Build/Catalog:10395	deletion plan: move (statement, name and proof unchanged)
+computesFunInTime_cond_spaceUsed	TCSlib/Complexity/TuringMachine/Build/Catalog:10673	deletion plan: corollary in place (statement and name unchanged; proof from the gated specs)
+exists_loopTM_spaceUsed	TCSlib/Complexity/TuringMachine/Build/Catalog:11189	deletion plan: corollary in place (statement and name unchanged; proof from the gated specs)
+#
+# CodeSimulator's only MIG-1-affected citation at the base: copyTM_run at CodeSimulator.lean:1282,
+# inside the private canonPreserveInstall (F-D's consumer edit, rebased onto this round's result).

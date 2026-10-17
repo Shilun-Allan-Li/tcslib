@@ -133,30 +133,19 @@ theorem readBlock_congr {τ τ' : ℕ → Bool} {i w : ℕ} (h : ∀ j < w, τ (
 
 /-! ### Prefix truth: congruence and blocks of quantifiers -/
 
-/-- **Prefix truth sees only the assignment below its start**: two leaves that agree on
-every assignment agreeing with `σ` below `i` have the same prefix truth from `(σ, i)`.
-
-**Proof sketch.** Induction on the prefix; an update at position `i` keeps agreement
-below `i + 1` equivalent to agreement below `i` together with the updated value. -/
-theorem prefixTruth_congr_agree {P P' : (ℕ → Bool) → Prop} (qs : List Quant) (σ : ℕ → Bool)
-    (i : ℕ) (h : ∀ τ : ℕ → Bool, (∀ v < i, τ v = σ v) → (P τ ↔ P' τ)) :
-    PrefixTruth P qs σ i ↔ PrefixTruth P' qs σ i := by
-  induction qs generalizing σ i with
-  | nil => exact h σ (fun _ _ => rfl)
-  | cons q qs ih =>
-    have h' : ∀ b : Bool, ∀ τ : ℕ → Bool, (∀ v < i + 1, τ v = Function.update σ i b v) →
-        (P τ ↔ P' τ) := by
-      intro b τ hτ
-      apply h τ
-      intro v hv
-      rw [hτ v (by omega), Function.update_of_ne (by omega)]
-    cases q with
-    | ex => exact exists_congr fun b => ih _ _ (h' b)
-    | all => exact forall_congr' fun b => ih _ _ (h' b)
-
 /-- **A block of existential quantifiers is an existential over blocks**: `w` existential
 quantifiers from position `i` hold iff some block of `w` values written at `i` makes the
-rest hold. (Proved, by induction on `w`.) -/
+rest hold.
+
+**Proof sketch.** Induction on `w`, for every assignment and start position. For `w = 0`
+the only block is the empty one, and writing it changes nothing. For `w + 1`, the first
+quantifier chooses a value `b` at position `i`, and the induction hypothesis, applied to the
+assignment updated at `i` and the position `i + 1`, turns the remaining `w` quantifiers into
+a block `β` of length `w` written from `i + 1`. Writing `β` from `i + 1` after updating
+position `i` to `b` is writing the block `b :: β` from `i` (`writeBlock_update_cons`), and
+`(i + 1) + w = i + (w + 1)`. Conversely, a block of length `w + 1` is `b :: β` with `β` of
+length `w`, and the same two identities read backwards give the choice `b` and the
+induction hypothesis's block `β`. -/
 theorem prefixTruth_replicate_ex (P : (ℕ → Bool) → Prop) (w : ℕ) (rest : List Quant)
     (σ : ℕ → Bool) (i : ℕ) :
     PrefixTruth P (List.replicate w .ex ++ rest) σ i ↔
@@ -189,7 +178,16 @@ theorem prefixTruth_replicate_ex (P : (ℕ → Bool) → Prop) (w : ℕ) (rest :
 
 /-- **A block of universal quantifiers is a universal over blocks**: `w` universal
 quantifiers from position `i` hold iff every block of `w` values written at `i` makes the
-rest hold. (Proved, by induction on `w`.) -/
+rest hold.
+
+**Proof sketch.** Induction on `w`, for every assignment and start position, as for
+`prefixTruth_replicate_ex`. For `w = 0` the only block of length `0` is the empty one, and
+writing it changes nothing. For `w + 1`, the first quantifier ranges over the value `b` at
+position `i`, and the induction hypothesis, applied to the assignment updated at `i` and the
+position `i + 1`, ranges over the blocks `β` of length `w` written from `i + 1`. The blocks of
+length `w + 1` are exactly the `b :: β`, and writing `β` from `i + 1` after updating position
+`i` to `b` is writing `b :: β` from `i` (`writeBlock_update_cons`), with
+`(i + 1) + w = i + (w + 1)`; both directions are this rewriting. -/
 theorem prefixTruth_replicate_all (P : (ℕ → Bool) → Prop) (w : ℕ) (rest : List Quant)
     (σ : ℕ → Bool) (i : ℕ) :
     PrefixTruth P (List.replicate w .all ++ rest) σ i ↔

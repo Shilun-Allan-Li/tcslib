@@ -52,6 +52,8 @@ remaining §12.11 contracts in `CodeSimulator`; its own admission is removed.
 * `Turing.MachineCode2`, `Turing.EffectiveMachineCode2`,
   `Turing.UniformMachineCode2` — the scheme laws, the effective scheme,
   and the uniformly timed scheme.
+* `Turing.Code2TM.serialize_eq_serializeK` — the frozen serialization is the generic
+  `k`-record one at two work tapes.
 * `Turing.exists_effectiveMachineCode2`,
   `Turing.exists_uniformMachineCode2` — proved existence statements (the latter
   modulo the two §12.11 contracts; B5a partial, flagged update).
@@ -281,8 +283,12 @@ the nine remaining private preparation declarations were removed.
 The 354-bit fallback regression above is retained.
 -/
 
-/-- The frozen two-tape writer is the generic writer at two work tapes. -/
-private lemma twoTape_serialize_eq (M : Code2TM) : M.serialize = serializeK M.tm := by
+/-- **The two-tape serialization is the generic one** [AB09, §1.4]: for every coded two-tape
+machine `M`, the frozen serialization `M.serialize` is the fixed `k`-record serialization
+`serializeK M.tm` at two work tapes. (Promoted from the private `twoTape_serialize_eq` for the
+two-tape scheme's `k`-tape view `Turing.EffectiveMachineCode2.toK`; statement and proof
+unchanged.) -/
+lemma Code2TM.serialize_eq_serializeK (M : Code2TM) : M.serialize = serializeK M.tm := by
   unfold Code2TM.serialize serializeK
   rw [tableBitsK_two]
   simp only [codeTable2Bits, actionBits₂_eq_actionBitsK]
@@ -290,7 +296,7 @@ private lemma twoTape_serialize_eq (M : Code2TM) : M.serialize = serializeK M.tm
 /-- The existing two-tape parser equipped with its fixed machine semantics. -/
 private def twoTapeMachineFormat : MachineFormat :=
   MachineFormat.mk twoTapeFormat 2 Code2TM.tm
-    twoTape_serialize_eq codeSkipTable2_eq_codeSkipTableK
+    Code2TM.serialize_eq_serializeK codeSkipTable2_eq_codeSkipTableK
 
 /-- **A uniformly timed two-tape scheme exists** (proved modulo §12.11; B5a partial).
 

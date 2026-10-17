@@ -34,6 +34,9 @@ gadget needs.
   `moveInputPos_neg_val`, `rewind_scan`, `rewind_from_any`): reading at a
   position, the clamped left move, and the audited rewind-to-start procedure
   (one unconditional left move, left while reading a symbol, one right move).
+  The rewind head bounds `Turing.FinTM.rewind_scan_heads` and `rewind_heads` (every
+  work head stays put throughout the rewind) moved here from `Build/Catalog` at
+  MIG-1 stage S (2026-10-14).
 * **Disjoint tape-block embeddings** (`Turing.FinTM.leftAction`/`rightAction`,
   `leftCfg`/`rightCfg`, their `apply`/`step`/`run` lemmas): run a machine on
   the left or right block of a `k + l`-tape machine, in lockstep, with the
@@ -44,7 +47,10 @@ gadget needs.
   top.
 * **Branch union** (`Turing.FinTM.branchTM`, `branchTM_computes`): two
   machines in disjoint tape and state blocks; the Boolean chooses only the
-  initial state.
+  initial state. Its space, `Turing.FinTM.branchTM_spaceUsed` (MIG-1; sorried until
+  the fill F-A): the selected machine's space plus one origin cell per idle tape.
+* **Space from time** (`Turing.FinTM.ComputesInTime.spaceUsed_le`, MIG-1): a machine
+  that halts within `T` steps visits at most `k · (T + 1)` work cells at every time.
 * **Optional-write normalization** (`Turing.Action.apply_workTapes`): the raw
   action-application identity for work tapes, promoted at the epoch-2/epoch-3
   boundary.
@@ -334,6 +340,53 @@ lemma branchTM_computes (M₁ M₂ : FinTM Bool) (b : Bool) (x w : List Bool) (t
       leftCfg_run M₁.tm (branchTM M₁ M₂ true).tm Sum.inl (fun _ _ _ => rfl)]
     simp only [leftCfg, Option.map_eq_none_iff]
 
+/-- **Space from time**. If `M` halts on `x` with output `y` within `T` steps, then at every time
+`t` its work tapes have visited at most `M.k · (T + 1)` cells in all. [AB09, Definition 4.1, and the
+remark opening the proof of Theorem 4.2: a machine running in time `T` visits at most `T + 1` cells
+of each tape.]
+
+**Proof sketch.** After the halt the configuration no longer changes, so every head position at
+any time `t` already occurs at some time `u ≤ T`. Each tape's visited set is therefore contained
+in the image of `{0, …, T}`, which has at most `T + 1` elements; sum over the `k` tapes. -/
+theorem ComputesInTime.spaceUsed_le {M : FinTM Bool} {x y : List Bool} {T : ℕ}
+    (h : M.ComputesInTime x y T) (t : ℕ) :
+    M.tm.spaceUsed (M.tm.initCfg x) t ≤ M.k * (T + 1) := by
+  have hh := ((computesInTime_iff _ _ _ _).mp h).1
+  have hsub (i : Fin M.k) :
+      M.tm.visitedByTapeHead (M.tm.initCfg x) t i ⊆
+        M.tm.visitedByTapeHead (M.tm.initCfg x) T i := by
+    intro z hz
+    obtain ⟨u, _, rfl⟩ := Finset.mem_image.mp hz
+    by_cases hu : u ≤ T
+    · exact Finset.mem_image.mpr ⟨u, Finset.mem_range.mpr (by omega), rfl⟩
+    · have hr : M.tm.runFrom (M.tm.initCfg x) u =
+          M.tm.runFrom (M.tm.initCfg x) T := by
+        rw [show u = T + (u - T) by omega, MultiTapeTM.runFrom_add,
+          MultiTapeTM.runFrom_of_halt _ hh]
+      exact Finset.mem_image.mpr ⟨T, Finset.mem_range.mpr (by omega),
+        congrArg (fun c => c.workTapePos i) hr.symm⟩
+  calc
+    _ ≤ ∑ _i : Fin M.k, (T + 1) := by
+      apply Finset.sum_le_sum
+      intro i _
+      exact (Finset.card_le_card (hsub i)).trans (by
+        unfold MultiTapeTM.visitedByTapeHead
+        exact (Finset.card_image_le).trans (by rw [Finset.card_range]))
+    _ = _ := by simp
+
+/-- **The branch union's space**. The branch union selecting `b` uses exactly the selected machine's
+space plus one origin cell for each tape of the idle bank.
+
+**Proof sketch.** Catalog's `f2_branch_space`: the branch union runs the selected machine on its
+own bank (`leftCfg_run`, `rightCfg_run`) and never moves the other bank's heads, whose visited
+sets stay the origin singletons; split the sum over the two banks with `Fin.sum_univ_add`, which
+replaces the copied `f2_sum_add`. -/
+theorem branchTM_spaceUsed (M₁ M₂ : FinTM Bool) (b : Bool) (x : List Bool) (t : ℕ) :
+    (branchTM M₁ M₂ b).tm.spaceUsed ((branchTM M₁ M₂ b).tm.initCfg x) t =
+      if b then M₁.tm.spaceUsed (M₁.tm.initCfg x) t + M₂.k
+      else M₂.tm.spaceUsed (M₂.tm.initCfg x) t + M₁.k := by
+  sorry
+
 /-- A control action leaves all work tapes, work heads, and output unchanged. -/
 lemma controlAction_apply {k : ℕ} {S : Type} {x : List Bool}
     (cfg : Cfg k Bool S x) (m : SignType) (q : Option S) :
@@ -467,6 +520,79 @@ lemma timed_rewind {k : ℕ} {S : Type} {x : List Bool}
   · rw [MultiTapeTM.runFrom_add]
     change tm.runFrom (tm.step c) _ = _
     rw [hstep, rewind_scan tm scan dest hscan _ rfl hp]
+
+/-- **A native input rewind keeps every work head fixed** (public since the §12.8 fill), at
+every prefix, including its dispatch step.
+
+**Proof sketch.** Induct on the input position; each step is a `controlAction`. -/
+theorem rewind_scan_heads {k : ℕ} {S : Type} {x : List Bool}
+    (tm : MultiTapeTM k Bool S) (scan : S) (dest : Option S)
+    (htr : ∀ inp work, tm.tr scan inp work = match inp with
+      | some _ => controlAction .neg (some scan)
+      | none => controlAction .pos dest) :
+    ∀ (j : ℕ) (cfg : Cfg k Bool S x), cfg.state = some scan →
+      cfg.inputPos.val = j → j ≤ x.length →
+      ∀ u ≤ j + 1, (tm.runFrom cfg u).workTapePos = cfg.workTapePos := by
+  intro j
+  induction j with
+  | zero =>
+    intro cfg hs hj hp u hu
+    rcases Nat.le_one_iff_eq_zero_or_eq_one.mp hu with rfl | rfl
+    · rfl
+    · have hz : cfg.inputPos = 0 := Fin.ext hj
+      have hi : cfg.inputSymbol = none := by simp [Cfg.inputSymbol, hz]
+      change (tm.step cfg).workTapePos = _
+      simp only [MultiTapeTM.step, hs, htr, hi, controlAction_apply]
+  | succ j ih =>
+    intro cfg hs hj hp u hu
+    cases u with
+    | zero => rfl
+    | succ u =>
+      have hi : cfg.inputSymbol = some (x[j]'(by omega)) :=
+        inputSymbolInner j (by omega) (by omega)
+      have he : tm.step cfg =
+          {cfg with state := some scan, inputPos := moveInputPos cfg.inputPos .neg} := by
+        simp only [MultiTapeTM.step, hs, htr, hi, controlAction_apply]
+      rw [MultiTapeTM.runFrom_succ_eq_step, he]
+      apply ih _ rfl _ (by omega) u (by omega)
+      simp only [moveInputPos_neg_val]
+      omega
+
+/-- **The bounded rewind with its work heads fixed** (public since the §12.8 fill): it
+reaches its destination with the input head at `1` within `pos + 2` steps, and every work head
+stays put throughout.
+
+**Proof sketch.** One start step, then `Turing.FinTM.rewind_scan` for the run and
+`Turing.FinTM.rewind_scan_heads` for the heads. -/
+theorem rewind_heads {k : ℕ} {S : Type} {x : List Bool}
+    (tm : MultiTapeTM k Bool S) (start scan : S) (dest : Option S)
+    (hstart : ∀ inp work, tm.tr start inp work = controlAction .neg (some scan))
+    (hscan : ∀ inp work, tm.tr scan inp work = match inp with
+      | some _ => controlAction .neg (some scan)
+      | none => controlAction .pos dest)
+    (c : Cfg k Bool S x) (hs : c.state = some start) :
+    ∃ r ≤ c.inputPos.val + 2,
+      tm.runFrom c r = {c with state := dest, inputPos := 1} ∧
+      ∀ u ≤ r, (tm.runFrom c u).workTapePos = c.workTapePos := by
+  have hstep : tm.step c =
+      {c with state := some scan, inputPos := moveInputPos c.inputPos .neg} := by
+    simp only [MultiTapeTM.step, hs, hstart, controlAction_apply]
+  have hp : (moveInputPos c.inputPos .neg).val ≤ x.length := by
+    rw [moveInputPos_neg_val]
+    have := c.inputPos.isLt
+    omega
+  refine ⟨1 + ((moveInputPos c.inputPos .neg).val + 1), ?_, ?_, ?_⟩
+  · rw [moveInputPos_neg_val]; omega
+  · rw [MultiTapeTM.runFrom_add]
+    change tm.runFrom (tm.step c) _ = _
+    rw [hstep, rewind_scan tm scan dest hscan _ rfl hp]
+  · intro u hu
+    cases u with
+    | zero => rfl
+    | succ u =>
+      rw [MultiTapeTM.runFrom_succ_eq_step, hstep]
+      exact rewind_scan_heads tm scan dest hscan (moveInputPos c.inputPos .neg).val _ rfl rfl hp u
+        (by omega)
 
 /-- Assemble the left work block, one buffer tape, and the right work block.
 All three projections use the same nested `Fin.addCases` partition. -/
