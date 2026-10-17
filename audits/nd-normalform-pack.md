@@ -21,16 +21,16 @@ plan's question 3) moves the linear-overhead coded normal form (NF) into a new m
 - **Evidence:** `audits/evidence/nd-normalform/` (NOTES, the move script, the logs, the freeze, the
   lint, the replay closure and script, the patch).
 - **The bundle** also contains `ClassNP/NDNormalForm`, `Diagonalization/NTimeHierarchy` and the
-  `ClassNP` facade at the head, the old `NTimeHierarchy` at #119's head, and the P3.3 statement gate's
-  records for NF's statement.
+  `ClassNP` facade at the head, the old `NTimeHierarchy` at #119's head, and the P3.3 statement
+  gate's records for NF's statement.
 
 ## Brief for the auditor
 
 1. **The move is exact.** The declaration and its docstring are byte-identical in the new module
    (`move.py.txt` asserts it). No statement changes, nothing else is removed, and the new module's
-   imports suffice. Is the moved statement's meaning unchanged? Check the namespaces (`Turing.FinNDTM`)
-   and the elaboration context: the options, and the imports' definitions of `CodeNDTM`,
-   `FinNDTM.AcceptsWithin`.
+   imports suffice. Is the moved statement's meaning unchanged? Check the namespaces
+   (`Turing.FinNDTM`) and the elaboration context: the options, and the imports' definitions of
+   `CodeNDTM`, `FinNDTM.AcceptsWithin`.
 2. **No consumer breaks.** Every use of the name resolves through the new import. The hierarchy's
    sketch cites NF by name.
 3. **Placement.** Is `ClassNP/` the right home, beside `ExhaustiveReplay`, given that NF's statement
@@ -44,7 +44,8 @@ plan's question 3) moves the linear-overhead coded normal form (NF) into a new m
   `sorry`). The two modules' bodies in one check file have 0 errors and the six `sorry` warnings of
   the base `NTimeHierarchy`, because the new module has no olean before the replay.
 - **Freeze:** `NTimeHierarchy` loses only NF's public, and `NDNormalForm` adds it.
-- **Lint:** 0 FAIL. `ClassNP/` stays at 15 WARN (now over 21 files), and `Diagonalization/` at 1 WARN.
+- **Lint:** 0 FAIL. `ClassNP/` stays at 15 WARN (now over 21 files), and `Diagonalization/` at 1
+  WARN.
 - **Replay:** `replay-lndnf.sh`, 4 modules, chained from `oleans-lndapi` (#119's replay).
   ⟨REPLAY RESULT⟩
 

@@ -3,8 +3,8 @@
 Campaign: the Arora-Barak chapters 3-4 plan, C1 (the nondeterministic time hierarchy, [AB09, Theorem
 3.2] [Coo72]). C1's design (`audits/evidence/c1/C1-design.md` §2.5) lists the diagonalizer `D`'s
 pieces. The P3.3 statement gate's round 2 (`audits/ch3-p33-r2-findings.md` §§1–5) pinned its capped
-locator, its clock reserve and the chain. None of the missing pieces was stated. This unit states them,
-so that their fills (E-Q, E-D) and the hierarchy's own fill (the chain) can run in parallel.
+locator, its clock reserve and the chain. None of the missing pieces was stated. This unit states
+them, so that their fills (E-Q, E-D) and the hierarchy's own fill (the chain) can run in parallel.
 - **The user's rulings** (2026-10-17; `audits/evidence/c1/c1e/C1E-design.md`):
   - one deterministic machine for the stage query, rather than separate locator and materializer
     contracts;
@@ -39,22 +39,23 @@ The `Diagonalization` facade lists the module, and its module list points the no
    - At the top `n = ℓᵢ₊₁`: `⟨⟨bits T*, α⟩, 1^{ℓᵢ + 1}⟩`, for BF.
    - In the middle: `⟨⟨bits (g n), α⟩, 1^{n + 1}⟩`, for the interpreter core.
    - The flag, and `[]` off unary inputs of length at least 3.
-3. **`exists_queryTM` is true.** The bound `C·(g n + 1)` must be achievable for every time-constructible
-   `f`, `g`. Check it against the gate's §2 ledger: the capped locator is `O(n + log³ n)`, and `n ≤ g n`.
-   Watch for any rung or length at which computing the query requires time beyond that, in particular
-   the binary arithmetic on `T*` and the materialization of `1^{n+1}` and `1^{ℓᵢ+1}`.
+3. **`exists_queryTM` is true.** The bound `C·(g n + 1)` must be achievable for every
+   time-constructible `f`, `g`. Check it against the gate's §2 ledger: the capped locator is
+   `O(n + log³ n)`, and `n ≤ g n`. Watch for any rung or length at which computing the query
+   requires time beyond that, in particular the binary arithmetic on `T*` and the materialization of
+   `1^{n+1}` and `1^{ℓᵢ+1}`.
 4. **`exists_diagonalizer` is true, and sufficient.**
-   - **True:** is each clause achievable by the route in its sketch (guess, interpreter core, BF, the
-     step clock with the uniform reserve `K ≥ P + 2`), for a single uniform `K` and a per-code `C`?
-     Consider the middle soundness (an accept implies the coded acceptance of `1^{n+1}` within
+   - **True:** is each clause achievable by the route in its sketch (guess, interpreter core, BF,
+     the step clock with the uniform reserve `K ≥ P + 2`), for a single uniform `K` and a per-code
+     `C`? Consider the middle soundness (an accept implies the coded acceptance of `1^{n+1}` within
      `g n`), the middle completeness (`C·(t' + 1) ≤ g n`), the top flip (`C·2^{C·(T* + 1)} ≤ n`) and
      uniform halting.
    - **Not vacuous:** could a trivial `D` satisfy it? For instance one rejecting everything, or a
      choice of `C` that never meets the hypotheses.
-   - **Sufficient:** together with the normal form, `NDMachineCode.decode_encode` and the stage lemmas,
-     does it give the gate's chain (§§4–5): the middle equivalence at the fixed `A*`, the bottom
-     transfer, the top flip, all thresholds before the stage choice? `acceptLang_mem_NTIME` gives the
-     time half.
+   - **Sufficient:** together with the normal form, `NDMachineCode.decode_encode` and the stage
+     lemmas, does it give the gate's chain (§§4–5): the middle equivalence at the fixed `A*`, the
+     bottom transfer, the top flip, all thresholds before the stage choice? `acceptLang_mem_NTIME`
+     gives the time half.
 5. **The deviations, for the gate:**
    - one query machine instead of the design's separate locator (D4) and materializer (D5)
      contracts;
@@ -80,4 +81,5 @@ The `Diagonalization` facade lists the module, and its module list points the no
 |---|---|---|---|---|---|
 
 Severity guide as in `audits/TEMPLATE.md`. Findings go verbatim into
-`audits/ntime-diag-statements-findings.md`. The gate closes when it has zero blockers and zero majors.
+`audits/ntime-diag-statements-findings.md`. The gate closes when it has zero blockers and zero
+majors.
