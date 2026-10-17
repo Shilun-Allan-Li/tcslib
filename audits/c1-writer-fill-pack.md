@@ -70,7 +70,10 @@ its bounded contract, which every guess-then-run assembly theorem of the module 
   new pairs are `guessRunCfg`/`wr_cfg` (56%, 50%), within the file. The base equals the brief's
   measured base exactly.
 - **Replay:** `replay-lc1w.sh`, `Build/NDHost`'s downstream closure (2 modules: it and the
-  `TuringMachine` facade), chained from `oleans-lndapi2` (#122's replay). REPLAY-RESULT
+  `TuringMachine` facade), chained from `oleans-lndapi2` (#122's replay). **Passed (user,
+  2026-10-17):** 2 of 2 at `c567568f`, 0 failed (`land/replay-lc1w.log`); the sorry counts equal a
+  static count (0 mismatches, 0). The snapshot `oleans-lc1w` is the tip plus #121's round 2, #122
+  and #123.
 
 ## Findings format
 

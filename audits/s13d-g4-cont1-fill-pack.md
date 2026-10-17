@@ -61,7 +61,9 @@ Its proved pieces are on the brief's route, so it lands as a partial, as the fir
   brief's measured base). The two new pairs are within the file, `zr_pair_pass`/`zr_inPass_out`
   (72%, 62%), as the review found; no cross-file pair (`land/screen-*.txt`).
 - **Replay:** `replay-lg4c1.sh`, 2 modules (`Build/ZoneRebalance` and the `TuringMachine` facade),
-  chained from `oleans-lseam` (#124's replay). REPLAY-RESULT
+  chained from `oleans-lseam` (#124's replay). **Passed (user, 2026-10-17):** 2 of 2 at `4ab012d9`,
+  0 failed (`land/replay-lg4c1.log`); the sorry counts equal a static count (0 mismatches, 2). The
+  snapshot `oleans-lg4c1` is the tip plus #121's round 2 and #122–#125.
 
 ## Findings format
 

@@ -1,0 +1,15 @@
+/private/tmp/claude-501/-Users-seyoonr-phd-experiments-tcslib/8f0076bc-454a-4666-b8cf-f4c7ed13c549/scratchpad/review/g4-cont1-fill/wt-base/TCSlib/Complexity/TuringMachine/Build/ZoneRebalance.lean -> /private/tmp/claude-501/-Users-seyoonr-phd-experiments-tcslib/8f0076bc-454a-4666-b8cf-f4c7ed13c549/scratchpad/review/g4-cont1-fill/wt-head/TCSlib/Complexity/TuringMachine/Build/ZoneRebalance.lean: 313 code lines, 14 not found in order
+   MISSING:   rw [hcell]
+   MISSING:   rfl
+   MISSING:   Nat.mul_pos (by decide) (Nat.two_pow_pos i)
+   MISSING:   simp only [zoneCapacity, Nat.mul_comm]
+   MISSING:   by_cases hc : c = 0
+   MISSING:   · subst c
+   MISSING:     rfl
+   MISSING:   · have hn : -c ≠ 0 := neg_ne_zero.mpr hc
+   MISSING:     simp only [zonedTape, hc, hn, if_false]
+   MISSING:     by_cases hp : 0 < c
+   MISSING:     · rw [if_pos hp, if_neg (by omega), neg_neg]
+   MISSING:       rfl
+   MISSING:     · rw [if_neg hp, if_pos (by omega)]
+   MISSING:       rfl

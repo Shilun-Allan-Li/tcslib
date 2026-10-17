@@ -47,8 +47,8 @@ Nothing else changes: the conclusion, the other declarations and the imports are
    - E-D's fill needs no import of `NTimeHierarchy`.
    - `ntime_hierarchy`'s fill can import `NTimeDiagonalizer`.
 5. **The docstrings** describe the route correctly.
-6. **Records:** do this pack, the PR body and the resolutions (`audits/ntime-diag-statements-resolutions.md`,
-   round 2's X2) agree?
+6. **Records:** do this pack, the PR body and the resolutions
+   (`audits/ntime-diag-statements-resolutions.md`, round 2's X2) agree?
 
 ## Repository-side attestations (verify or challenge)
 
@@ -60,7 +60,9 @@ Nothing else changes: the conclusion, the other declarations and the imports are
 - **Lint:** `Diagonalization/` 0 FAIL, 1 WARN (`EXPCOM`, unrelated), unchanged.
 - **Screen** (gate 39's 7-file population): 49 → 49 declarations, 6 → 6 pairs, no new pair.
 - **Replay:** `replay-lx2.sh`, 2 modules (`NTimeDiagonalizer` and the `Diagonalization` facade),
-  chained from `oleans-lg4c1`. REPLAY-RESULT
+  chained from `oleans-lg4c1`. **Passed (user, 2026-10-17):** 2 of 2 at `5333b29b`, 0 failed
+  (`x2/replay-lx2.log`); the sorry counts equal a static count (0 mismatches, 2). The snapshot
+  `oleans-lx2` is the tip plus #121's round 2 and #122–#126.
 
 ## Findings format
 

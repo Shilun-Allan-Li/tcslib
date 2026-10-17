@@ -84,8 +84,10 @@ Then the machine reaches `done` at some `T ≤ C·(|s| + 1)`, and not before, wi
 - **Elaboration** (against `oleans-lndnf`): 0 errors; 1 warning, the contract's `sorry`.
 - **Consumer probe:** 0 errors; the only warning is the inline contract's `sorry`.
 - **Lint:** `TuringMachine/` 0 FAIL, 63 WARN, unchanged.
-- **Replay:** `replay-lseam.sh`, 2 modules (the module and the `TuringMachine` facade), chained
-  from `oleans-lc1w` (#123's replay). REPLAY-RESULT
+- **Replay:** `replay-lseam.sh`, 2 modules (the module and the `TuringMachine` facade), chained from
+  `oleans-lc1w` (#123's replay). **Passed (user, 2026-10-17):** 2 of 2 at `0355da56`, 0 failed
+  (`audits/evidence/c1/seam-layout/replay-lseam.log`); the sorry counts equal a static count (0
+  mismatches, 1). The snapshot `oleans-lseam` is the tip plus #121's round 2 and #122–#124.
 
 ## Findings format
 
