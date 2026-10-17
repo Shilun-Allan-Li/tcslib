@@ -479,6 +479,15 @@ lemma counter_dec_spec (w : List Bool) :
         simp [decFixed, hd, Nat.ofDigits_cons, hl]
         omega
 
+/-- **The decrement keeps the width:** `decFixed w = some v → |v| = |w|`, the width clause of
+`Turing.counter_dec_spec`'s successful branch.
+
+**Proof sketch.** Specialize `Turing.counter_dec_spec` at `w`; its match reduces by `h`. -/
+theorem decFixed_length {w v : List Bool} (h : decFixed w = some v) : v.length = w.length := by
+  have hs := counter_dec_spec w
+  simp only [h] at hs
+  exact hs.1
+
 /-- The next frozen counter word is obtained by one optional decrement. -/
 private lemma counter_word_succ (w : List Bool) (r : ℕ) :
     counterWord w (r + 1) = (decFixed (counterWord w r)).getD (counterWord w r) :=

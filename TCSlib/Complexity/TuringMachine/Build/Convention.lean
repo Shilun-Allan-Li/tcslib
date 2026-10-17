@@ -124,6 +124,45 @@ def incFixed : List Bool → Option (List Bool)
   | false :: rest => some (true :: rest)
   | true :: rest => (incFixed rest).map (false :: ·)
 
+/-- The empty word overflows: `incFixed [] = none`. -/
+theorem incFixed_nil : incFixed [] = none :=
+  rfl
+
+/-- A low `false` absorbs the carry: `incFixed (false :: w) = some (true :: w)`. -/
+theorem incFixed_false_cons (w : List Bool) : incFixed (false :: w) = some (true :: w) :=
+  rfl
+
+/-- A low `true` passes the carry on: `incFixed (true :: w) = (incFixed w).map (false :: ·)`. -/
+theorem incFixed_true_cons (w : List Bool) :
+    incFixed (true :: w) = (incFixed w).map (false :: ·) :=
+  rfl
+
+/-- **The increment keeps the width:** `incFixed w = some v → |v| = |w|`.
+
+**Proof sketch.** Induct on `w` through the three case equations: the empty word overflows, a
+low `false` becomes `true`, and a low `true` becomes `false` before the incremented tail. -/
+theorem incFixed_length {w v : List Bool} (h : incFixed w = some v) : v.length = w.length := by
+  induction w generalizing v with
+  | nil =>
+    rw [incFixed_nil] at h
+    exact absurd h (by simp)
+  | cons b w ih =>
+    cases b with
+    | false =>
+      rw [incFixed_false_cons, Option.some.injEq] at h
+      subst v
+      rfl
+    | true =>
+      rw [incFixed_true_cons] at h
+      cases he : incFixed w with
+      | none =>
+        rw [he] at h
+        exact absurd h (by simp)
+      | some z =>
+        rw [he, Option.map_some, Option.some.injEq] at h
+        subst v
+        rw [List.length_cons, List.length_cons, ih he]
+
 /-- `Turing.incFixed` carries through a prefix of `true` bits: the prefix
 `1ⁿ` becomes `0ⁿ` and the remainder `w` is incremented, the width is kept,
 and the whole word overflows exactly when `w` does. Shared by the catalog's

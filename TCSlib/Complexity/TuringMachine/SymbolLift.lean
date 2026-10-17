@@ -95,6 +95,14 @@ def Cfg.liftSymbols (e : Bool ↪ Γ) {x : List Bool} (c : Cfg k Bool State x) :
   workTapePos := c.workTapePos
   output := c.output.map e
 
+/-! The two lifts' fields as equations, generated without the `simp` attribute (`policy.md` §1):
+a lifted action keeps its input move and state and maps its writes and emission by `e`; a lifted
+configuration keeps its input position and maps its cells and output by `e`. Its state and heads
+have the earlier lemmas `Turing.Cfg.liftSymbols_state` and `Turing.Cfg.liftSymbols_workTapePos`
+(below, `@[simp]`). -/
+attribute [simps (config := { isSimp := false })] Action.liftSymbols
+attribute [simps (config := { isSimp := false }) inputPos workTapes output] Cfg.liftSymbols
+
 /-- Lift a machine along `e`: read through `decodeBool e`, write through `e`. -/
 def MultiTapeTM.liftSymbols [DecidableEq Γ] (M : MultiTapeTM k Bool State) (e : Bool ↪ Γ) :
     MultiTapeTM k Γ State where
