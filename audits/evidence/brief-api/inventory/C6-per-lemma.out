@@ -1,0 +1,1075 @@
+MachineFormat.exists_polyCanonizer : ∀ (F : MachineFormat),
+  ∃ C d, C.ComputesFunInTime (fun α => F.serialize (F.decode α)) fun n => d * (n + 1) ^ d
+MachineFormat.exists_uniformSimulator : ∀ (F : MachineFormat),
+  ∃ S d,
+    ∀ (α x : List Bool) (t : ℕ),
+      ((F.toFinTM (F.decode α)).ComputesInTime x [true] t →
+          S.ComputesInTime (pairEncode (pairEncode t.bits α) x) [true] (d * (α.length + x.length + t + 1) ^ d)) ∧
+        (¬(F.toFinTM (F.decode α)).ComputesInTime x [true] t →
+          S.ComputesInTime (pairEncode (pairEncode t.bits α) x) [false] (d * (α.length + x.length + t + 1) ^ d))
+MachineFormat : Type 1
+MachineFormat.serialize_eq : ∀ (self : MachineFormat) (M : self.Code), self.serialize M = serializeK (self.machine M)
+MachineFormat.skipTable_eq : ∀ (self : MachineFormat) (n : ℕ) (xs : List Bool),
+  self.skipTable n xs = codeSkipTableK self.k n xs
+MachineFormat.toFinTM : (F : MachineFormat) → F.Code → FinTM Bool
+oneTapeMachineFormat : MachineFormat
+@serializeK : {k n : ℕ} → MultiTapeTM k Bool (Fin (n + 1)) → List Bool
+codeSkipTableK : ℕ → ℕ → List Bool → Option (List Bool)
+codeSkipTable2_eq_codeSkipTableK : ∀ (n : ℕ) (xs : List Bool), codeSkipTable2 n xs = codeSkipTableK 2 n xs
+CodeFormat.scan : CodeFormat → List Bool → Option (List Bool)
+CodeFormat.parseFull : (F : CodeFormat) → List Bool → Option (F.Code × List Bool)
+CodeFormat.decode : (F : CodeFormat) → List Bool → F.Code
+CodeFormat.canonical : CodeFormat → List Bool → List Bool
+CodeFormat.canonical_eq : ∀ (F : CodeFormat) (xs : List Bool), F.canonical xs = F.serialize (F.decode xs)
+CodeFormat.scan_full : ∀ (F : CodeFormat) (xs : List Bool), F.scan xs = Option.map Prod.snd (F.parseFull xs)
+CodeFormat.parseFull_sound : ∀ (F : CodeFormat) (xs : List Bool) (M : F.Code) (tail : List Bool),
+  F.parseFull xs = some (M, tail) → xs = F.serialize M ++ tail
+CodeFormat.decode_of_parseFull_none : ∀ (F : CodeFormat) (α : List Bool), F.parseFull α = none → F.decode α = F.fallback
+CodeFormat.decode_of_guard_lt : ∀ (F : CodeFormat) (α bits rest : List Bool),
+  pairDecode α = some (bits, rest) → rest.length < F.guard * (codeBitsNat bits + 1) → F.decode α = F.fallback
+CodeFormat.decode_serialize_pad : ∀ (F : CodeFormat) (M : F.Code) (m : ℕ),
+  F.decode (F.serialize M ++ List.replicate m true) = M
+@actionBitsK : {k n : ℕ} → Action k Bool (Fin (n + 1)) → List Bool
+codeSkipActionK : ℕ → ℕ → List Bool → Option (List Bool)
+codeReadActionK : (k n : ℕ) → List Bool → Option (Action k Bool (Fin (n + 1)) × List Bool)
+@codeReadActionK_sound : ∀ {k n : ℕ} (xs : List Bool) (a : Action k Bool (Fin (n + 1))) (rest : List Bool),
+  codeReadActionK k n xs = some (a, rest) → xs = actionBitsK a ++ rest
+codeEraseActionK : ∀ (k n : ℕ) (xs : List Bool), Option.map Prod.snd (codeReadActionK k n xs) = codeSkipActionK k n xs
+@codeActionK_length : ∀ {k n : ℕ} (a : Action k Bool (Fin (n + 1))), 4 * k + 5 ≤ (actionBitsK a).length
+codeSkipWork : List Bool → Option (List Bool)
+codeSkipFin : ℕ → List Bool → Option (List Bool)
+codeSkipState : ℕ → List Bool → Option (List Bool)
+codeSkipRepeat : (List Bool → Option (List Bool)) → ℕ → List Bool → Option (List Bool)
+codeSkipPair : (Bool → Bool → Bool) → List Bool → Option (List Bool)
+codeReadFin : (n : ℕ) → List Bool → Option (Fin n × List Bool)
+@codeReadFin_sound : ∀ {n : ℕ} (xs : List Bool) (i : Fin n) (rest : List Bool),
+  codeReadFin n xs = some (i, rest) → xs = unaryFin i ++ rest
+codeEraseFin : ∀ (n : ℕ) (xs : List Bool), Option.map Prod.snd (codeReadFin n xs) = codeSkipFin n xs
+codeEraseState : ∀ (n : ℕ) (xs : List Bool), Option.map Prod.snd (codeReadState n xs) = codeSkipState n xs
+codeBitsNat : List Bool → ℕ
+codeBitsNat_bits : ∀ (n : ℕ), codeBitsNat n.bits = n
+codeReadUnary : List Bool → Option (ℕ × List Bool)
+codeReadUnary_sound : ∀ (xs : List Bool) (n : ℕ) (rest : List Bool),
+  codeReadUnary xs = some (n, rest) → xs = List.replicate n true ++ false :: rest
+codeReadUnary_append : ∀ (n : ℕ) (xs : List Bool), codeReadUnary (List.replicate n true ++ false :: xs) = some (n, xs)
+pairDecode : List Bool → Option (List Bool × List Bool)
+pairEncode : List Bool → List Bool → List Bool
+eq_pairEncode_of_pairDecode : ∀ (z a b : List Bool), pairDecode z = some (a, b) → z = pairEncode a b
+length_pairEncode : ∀ (x y : List Bool), (pairEncode x y).length = 2 * x.length + 2 + y.length
+@unaryFin : {n : ℕ} → Fin n → List Bool
+@optStateBits : {n : ℕ} → Option (Fin n) → List Bool
+length_bits_le_self : ∀ (m : ℕ), m.bits.length ≤ m
+workReadsK : (k : ℕ) → List (Fin k → Option Bool)
+@tableBitsK : {k n : ℕ} → (Fin (n + 1) → Option Bool → (Fin k → Option Bool) → Action k Bool (Fin (n + 1))) → List Bool
+StepBlock.length_workReadsK : ∀ (k : ℕ), (workReadsK k).length = 3 ^ k
+StepBlock.recordWidth : ℕ → ℕ
+StepBlock.recordTM : (k : ℕ) → MultiTapeTM (k + 2) Bool (StepBlock.RecordState k)
+StepBlock.recordSkipTM : (k : ℕ) → MultiTapeTM (k + 2) Bool ((b : Bool) × StepBlock.SkipPh k b)
+@StepBlock.succFieldTM : {m : ℕ} → Fin m → Fin m → Bool → MultiTapeTM m Bool StepBlock.SuccPhase
+@FinTM.ComputesInTime : {Symbol : Type} → FinTM Symbol → List Symbol → List Symbol → ℕ → Prop
+@FinTM.ComputesFunInTime : {Symbol : Type} → FinTM Symbol → (List Symbol → List Symbol) → (ℕ → ℕ) → Prop
+@FinTM.ComputesInTime.mono : ∀ {Symbol : Type} {M : FinTM Symbol} {input output : List Symbol} {t t' : ℕ},
+  M.ComputesInTime input output t → t ≤ t' → M.ComputesInTime input output t'
+@FinTM.computesInTime_iff : ∀ {Symbol : Type} (M : FinTM Symbol) (x w : List Symbol) (t : ℕ),
+  M.ComputesInTime x w t ↔
+    (MultiTapeTM.runFrom (MultiTapeTM.initCfg x) t).state = none ∧
+      (MultiTapeTM.runFrom (MultiTapeTM.initCfg x) t).output = w
+@FinTM.bufferTape : {Symbol : Type u_1} → List Symbol → ℤ → Option Symbol
+FinTM.computesFunInTime_const : ∀ (w : List Bool), ∃ M c, M.ComputesFunInTime (fun x => w) fun n => c * (n + 1)
+FinTM.computesFunInTime_id : ∃ M c, M.ComputesFunInTime id fun n => c * (n + 1)
+@FinTM.computesFunInTime_comp : ∀ {M₁ M₂ : FinTM Bool} {f g : List Bool → List Bool} {T₁ T₂ : ℕ → ℕ},
+  M₁.ComputesFunInTime f T₁ →
+    M₂.ComputesFunInTime g T₂ → Monotone T₂ → ∃ M c, M.ComputesFunInTime (g ∘ f) fun n => c * (T₁ n + T₂ (T₁ n) + 1)
+@FinTM.computesFunInTime_cond : ∀ {D M₁ M₂ : FinTM Bool} {p : List Bool → Bool} {f₁ f₂ : List Bool → List Bool}
+  {T₀ T₁ T₂ : ℕ → ℕ},
+  D.ComputesFunInTime (fun x => [p x]) T₀ →
+    M₁.ComputesFunInTime f₁ T₁ →
+      M₂.ComputesFunInTime f₂ T₂ →
+        ∃ M c,
+          M.ComputesFunInTime (fun x => if p x = true then f₁ x else f₂ x) fun n => c * (T₀ n + max (T₁ n) (T₂ n) + 1)
+@Cfg.ofWords : {k : ℕ} → {State : Type u_1} → {input : List Bool} → State → (Fin k → List Bool) → Cfg k Bool State input
+@initCfg_ofWords : ∀ {k : ℕ} {State : Type u_1} (tm : MultiTapeTM k Bool State) (x : List Bool),
+  MultiTapeTM.initCfg x = Cfg.ofWords tm.q₀ fun x => []
+stateWord : (k : ℕ) → List Bool → Fin k → List Bool
+@MultiTapeTM.runFrom_add : ∀ {k : ℕ} {State : Type u_1} {Symbol : Type u_2} {input : List Symbol}
+  {tm : MultiTapeTM k Symbol State} (cfg : Cfg k Symbol State input) (a b : ℕ),
+  MultiTapeTM.runFrom cfg (a + b) = MultiTapeTM.runFrom (MultiTapeTM.runFrom cfg a) b
+@MultiTapeTM.runFrom_succ_eq_step' : ∀ {k : ℕ} {State : Type u_1} {Symbol : Type u_2} {input : List Symbol}
+  {tm : MultiTapeTM k Symbol State} {cfg : Cfg k Symbol State input} {t : ℕ},
+  MultiTapeTM.runFrom cfg (t + 1) = MultiTapeTM.step (MultiTapeTM.runFrom cfg t)
+@MultiTapeTM.step_of_halt : ∀ {k : ℕ} {State : Type u_1} {Symbol : Type u_2} {input : List Symbol}
+  {tm : MultiTapeTM k Symbol State} {cfg : Cfg k Symbol State input}, cfg.state = none → MultiTapeTM.step cfg = cfg
+@MultiTapeTM.outputSymbol_of_halt : ∀ {k : ℕ} {State : Type u_1} {Symbol : Type u_2} {input : List Symbol}
+  {tm : MultiTapeTM k Symbol State} {cfg : Cfg k Symbol State input},
+  cfg.state = none → MultiTapeTM.outputSymbol cfg = none
+@seamCompTM : {k : ℕ} →
+  {S₁ : Type u_1} →
+    {S₂ : Type u_2} →
+      {Symbol : Type u_3} →
+        [DecidableEq S₁] → MultiTapeTM k Symbol S₁ → S₁ → MultiTapeTM k Symbol S₂ → S₂ → MultiTapeTM k Symbol (S₁ ⊕ S₂)
+@seamCompTM_run_ofCfg : ∀ {k : ℕ} {S₁ : Type u_1} {S₂ : Type u_2} {Symbol : Type u_3} {x : List Symbol}
+  [inst : DecidableEq S₁] (M₁ : MultiTapeTM k Symbol S₁) (exit : S₁) (M₂ : MultiTapeTM k Symbol S₂) (entry : S₂)
+  {c₀ c₁ : Cfg k Symbol S₁ x} {c₃ : Cfg k Symbol S₂ x} {T₁ T₂ : ℕ},
+  MultiTapeTM.runFrom c₀ T₁ = c₁ →
+    c₁.state = some exit →
+      (∀ t < T₁, (MultiTapeTM.runFrom c₀ t).state ≠ some exit) →
+        MultiTapeTM.runFrom (Cfg.mapState (fun x => entry) c₁) T₂ = c₃ →
+          MultiTapeTM.runFrom (Cfg.mapState Sum.inl c₀) (T₁ + 1 + T₂) = Cfg.mapState Sum.inr c₃
+@seamCompTM_firstReturn_ofCfg : ∀ {k : ℕ} {S₁ : Type u_1} {S₂ : Type u_2} {Symbol : Type u_3} {x : List Symbol}
+  [inst : DecidableEq S₁] (M₁ : MultiTapeTM k Symbol S₁) (exit : S₁) (M₂ : MultiTapeTM k Symbol S₂) (entry q₂ : S₂)
+  {c₀ c₁ : Cfg k Symbol S₁ x} {c₃ : Cfg k Symbol S₂ x} {T₁ T₂ : ℕ},
+  MultiTapeTM.runFrom c₀ T₁ = c₁ →
+    c₁.state = some exit →
+      (∀ t < T₁, (MultiTapeTM.runFrom c₀ t).state ≠ some exit) →
+        MultiTapeTM.runFrom (Cfg.mapState (fun x => entry) c₁) T₂ = c₃ →
+          c₃.state = some q₂ →
+            (∀ t < T₂, (MultiTapeTM.runFrom (Cfg.mapState (fun x => entry) c₁) t).state ≠ some q₂) →
+              ∀ t < T₁ + 1 + T₂, (MultiTapeTM.runFrom (Cfg.mapState Sum.inl c₀) t).state ≠ some (Sum.inr q₂)
+@seamReleaseTM : {k : ℕ} →
+  {S : Type u_1} → {Symbol : Type u_2} → MultiTapeTM k Symbol S → S → MultiTapeTM k Symbol (Unit ⊕ S)
+@seamReleaseTM_firstReturn : ∀ {k : ℕ} {S : Type u_1} {Symbol : Type u_2} {x : List Symbol} (M : MultiTapeTM k Symbol S)
+  (anchor : S) {c c' : Cfg k Symbol S x} {T : ℕ},
+  c.state = some anchor →
+    0 < T →
+      MultiTapeTM.runFrom c T = c' →
+        c'.state = some anchor →
+          (∀ (t : ℕ), 0 < t → t < T → (MultiTapeTM.runFrom c t).state ≠ some anchor) →
+            MultiTapeTM.runFrom (Cfg.mapState (fun x => Sum.inl ()) c) T = Cfg.mapState Sum.inr c' ∧
+              ∀ t < T, (MultiTapeTM.runFrom (Cfg.mapState (fun x => Sum.inl ()) c) t).state ≠ some (Sum.inr anchor)
+@phaseHostTM : {k : ℕ} →
+  {Γ I : Type} →
+    {Ph : I → Type} →
+      ((i : I) → MultiTapeTM k Γ (Ph i)) →
+        (i : I) × Ph i → ((i : I) → Ph i → Option ((i : I) × Ph i)) → MultiTapeTM k Γ ((i : I) × Ph i)
+@phaseHostTM_run : ∀ {k : ℕ} {Γ I : Type} {Ph : I → Type} (M : (i : I) → MultiTapeTM k Γ (Ph i)) (q0 : (i : I) × Ph i)
+  (red : (i : I) → Ph i → Option ((i : I) × Ph i)) (i : I) {x : List Γ} (c c' : Cfg k Γ (Ph i) x) (T : ℕ),
+  MultiTapeTM.runFrom c T = c' →
+    ∀ (s' : Ph i),
+      c'.state = some s' →
+        ∀ (q' : (i : I) × Ph i),
+          red i s' = some q' →
+            (∀ u < T, ∀ (s : Ph i), (MultiTapeTM.runFrom c u).state = some s → red i s = none) →
+              (∀ u ≤ T,
+                  MultiTapeTM.runFrom (Cfg.mapState (Sigma.mk i) c) u =
+                    Cfg.mapState (Sigma.mk i) (MultiTapeTM.runFrom c u)) ∧
+                MultiTapeTM.runFrom (Cfg.mapState (Sigma.mk i) c) (T + 1) = Cfg.mapState (fun x => q') c'
+@embedEmitTM : {m k : ℕ} →
+  {S : Type u_1} → {Symbol : Type u_2} → (Fin m ↪ Fin k) → MultiTapeTM m Symbol S → MultiTapeTM k Symbol S
+@embedEmitCfg : {m k : ℕ} →
+  {S : Type u_1} →
+    {Symbol : Type u_2} →
+      {x : List Symbol} →
+        (Fin m ↪ Fin k) → (Fin k → ℤ → Option Symbol) → (Fin k → ℤ) → List Symbol → Cfg m Symbol S x → Cfg k Symbol S x
+@embedEmitTM_runFrom : ∀ {m k : ℕ} {S : Type u_1} {Symbol : Type u_2} {x : List Symbol} (ι : Fin m ↪ Fin k)
+  (M : MultiTapeTM m Symbol S) (tapes : Fin k → ℤ → Option Symbol) (heads : Fin k → ℤ) (pre : List Symbol)
+  (c : Cfg m Symbol S x) (t : ℕ),
+  MultiTapeTM.runFrom (embedEmitCfg ι tapes heads pre c) t = embedEmitCfg ι tapes heads pre (MultiTapeTM.runFrom c t)
+@embedEmitTM_frame : ∀ {m k : ℕ} {S : Type u_1} {Symbol : Type u_2} {x : List Symbol} (ι : Fin m ↪ Fin k)
+  (M : MultiTapeTM m Symbol S) (tapes : Fin k → ℤ → Option Symbol) (heads : Fin k → ℤ) (pre : List Symbol)
+  (c : Cfg m Symbol S x) (t : ℕ),
+  (∀ j ∉ Set.range ⇑ι,
+      (MultiTapeTM.runFrom (embedEmitCfg ι tapes heads pre c) t).workTapes j = tapes j ∧
+        (MultiTapeTM.runFrom (embedEmitCfg ι tapes heads pre c) t).workTapePos j = heads j) ∧
+    (MultiTapeTM.runFrom (embedEmitCfg ι tapes heads pre c) t).inputPos = (MultiTapeTM.runFrom c t).inputPos ∧
+      (MultiTapeTM.runFrom (embedEmitCfg ι tapes heads pre c) t).output = pre ++ (MultiTapeTM.runFrom c t).output
+@embedEmitCfg_eq : ∀ {k : ℕ} {Γ : Type u_1} {m : ℕ} {S : Type u_2} {x : List Γ} (σ : Fin m ↪ Fin k)
+  (tapes : Fin k → ℤ → Option Γ) (heads : Fin k → ℤ) (pre : List Γ) (c : Cfg m Γ S x) (d : Cfg k Γ S x),
+  c.state = d.state →
+    c.inputPos = d.inputPos →
+      pre ++ c.output = d.output →
+        (∀ (i : Fin m), c.workTapes i = d.workTapes (σ i) ∧ c.workTapePos i = d.workTapePos (σ i)) →
+          (∀ j ∉ Set.range ⇑σ, tapes j = d.workTapes j ∧ heads j = d.workTapePos j) →
+            embedEmitCfg σ tapes heads pre c = d
+@embedEmitCfg_selected_tape : ∀ {m k : ℕ} {S : Type u_1} {Symbol : Type u_2} {x : List Symbol} (ι : Fin m ↪ Fin k)
+  (tapes : Fin k → ℤ → Option Symbol) (heads : Fin k → ℤ) (pre : List Symbol) (c : Cfg m Symbol S x) (i : Fin m),
+  (embedEmitCfg ι tapes heads pre c).workTapes (ι i) = c.workTapes i
+@embedEmitCfg_selected_pos : ∀ {m k : ℕ} {S : Type u_1} {Symbol : Type u_2} {x : List Symbol} (ι : Fin m ↪ Fin k)
+  (tapes : Fin k → ℤ → Option Symbol) (heads : Fin k → ℤ) (pre : List Symbol) (c : Cfg m Symbol S x) (i : Fin m),
+  (embedEmitCfg ι tapes heads pre c).workTapePos (ι i) = c.workTapePos i
+@counterLoopTM : {k : ℕ} →
+  {S : Type} → [DecidableEq S] → MultiTapeTM k Bool S → S → Option S → MultiTapeTM (k + 1) Bool (CounterLoopState S)
+@counterLoopCfg : {k : ℕ} →
+  {Symbol S : Type} →
+    {x : List Symbol} →
+      Option (CounterLoopState S) →
+        Cfg k Symbol S x → (ℤ → Option Symbol) → ℤ → Cfg (k + 1) Symbol (CounterLoopState S) x
+@counterLoopOrbit : {k : ℕ} →
+  {Symbol S : Type} →
+    {x : List Symbol} → MultiTapeTM k Symbol S → (Cfg k Symbol S x → ℕ) → Cfg k Symbol S x → ℕ → Cfg k Symbol S x
+@roundOrbit : {k : ℕ} →
+  {Γ S : Type} → {x : List Γ} → MultiTapeTM k Γ S → (Cfg k Γ S x → ℕ) → Cfg k Γ S x → ℕ → Cfg k Γ S x
+@counterLoopTM_run_done : ∀ {k : ℕ} {S : Type} [inst : DecidableEq S] {x : List Bool} (M : MultiTapeTM k Bool S) (a : S)
+  (exit : Option S) (τ : Cfg k Bool S x → ℕ) (c : Cfg k Bool S x) (w : List Bool) (ct : ℤ → Option Bool) (cp : ℤ),
+  (∀ (p : ℤ), -1 ≤ p → p ≤ ↑w.length → ct (cp + p) = FinTM.bufferTape w p) →
+    ∀ (d : ℕ),
+      Nat.ofDigits 2 (List.map Bool.toNat w) = d →
+        (∀ r < d,
+            (counterLoopOrbit M τ c r).state = some a ∧
+              0 < τ (counterLoopOrbit M τ c r) ∧
+                (∀ (u : ℕ),
+                    0 < u →
+                      u < τ (counterLoopOrbit M τ c r) →
+                        ∃ s,
+                          (MultiTapeTM.runFrom (counterLoopOrbit M τ c r) u).state = some s ∧ s ≠ a ∧ exit ≠ some s) ∧
+                  (counterLoopOrbit M τ c (r + 1)).state = some a) →
+          ∀ (T : ℕ),
+            T = ∑ r ∈ Finset.range d, τ (counterLoopOrbit M τ c r) + counterOverhead w (d + 1) →
+              MultiTapeTM.runFrom (counterLoopCfg (some (CounterLoopState.dec FlagPhase.run)) c ct cp) T =
+                  counterLoopCfg (some CounterLoopState.done) (counterLoopOrbit M τ c d)
+                    (fun q => if cp ≤ q ∧ q < cp + ↑w.length then some true else ct q) cp ∧
+                (∀ t < T,
+                    (MultiTapeTM.runFrom (counterLoopCfg (some (CounterLoopState.dec FlagPhase.run)) c ct cp) t).state ≠
+                        some CounterLoopState.done ∧
+                      (MultiTapeTM.runFrom (counterLoopCfg (some (CounterLoopState.dec FlagPhase.run)) c ct cp)
+                            t).state ≠
+                        some CounterLoopState.escape) ∧
+                  (∀ t ≤ T,
+                      (MultiTapeTM.runFrom (counterLoopCfg (some (CounterLoopState.dec FlagPhase.run)) c ct cp)
+                              t).workTapePos
+                          (Fin.last k) ∈
+                        Finset.Icc (cp - 1) (cp + ↑w.length)) ∧
+                    ∀ t ≤ T,
+                      ∃ r u,
+                        (r < d ∧ u ≤ τ (counterLoopOrbit M τ c r) ∨ r = d ∧ u = 0) ∧
+                          ∀ (j : Fin k),
+                            (MultiTapeTM.runFrom (counterLoopCfg (some (CounterLoopState.dec FlagPhase.run)) c ct cp)
+                                    t).workTapePos
+                                j.castSucc =
+                              (MultiTapeTM.runFrom (counterLoopOrbit M τ c r) u).workTapePos j
+@counterLoopTM_run_escape : ∀ {k : ℕ} {S : Type} [inst : DecidableEq S] {x : List Bool} (M : MultiTapeTM k Bool S)
+  (a e : S),
+  e ≠ a →
+    ∀ (τ : Cfg k Bool S x → ℕ) (c : Cfg k Bool S x) (w : List Bool) (ct : ℤ → Option Bool) (cp : ℤ),
+      (∀ (p : ℤ), -1 ≤ p → p ≤ ↑w.length → ct (cp + p) = FinTM.bufferTape w p) →
+        ∀ r₀ < Nat.ofDigits 2 (List.map Bool.toNat w),
+          (∀ r ≤ r₀,
+              (counterLoopOrbit M τ c r).state = some a ∧
+                0 < τ (counterLoopOrbit M τ c r) ∧
+                  ∀ (u : ℕ),
+                    0 < u →
+                      u < τ (counterLoopOrbit M τ c r) →
+                        ∃ s, (MultiTapeTM.runFrom (counterLoopOrbit M τ c r) u).state = some s ∧ s ≠ a ∧ s ≠ e) →
+            (counterLoopOrbit M τ c (r₀ + 1)).state = some e →
+              ∀ (T : ℕ),
+                T = ∑ r ∈ Finset.range (r₀ + 1), τ (counterLoopOrbit M τ c r) + counterOverhead w (r₀ + 1) →
+                  MultiTapeTM.runFrom (counterLoopCfg (some (CounterLoopState.dec FlagPhase.run)) c ct cp) T =
+                      counterLoopCfg (some CounterLoopState.escape) (counterLoopOrbit M τ c (r₀ + 1))
+                        (fun q =>
+                          if cp ≤ q ∧ q < cp + ↑w.length then FinTM.bufferTape (counterWord w (r₀ + 1)) (q - cp)
+                          else ct q)
+                        cp ∧
+                    (∀ t < T,
+                        (MultiTapeTM.runFrom (counterLoopCfg (some (CounterLoopState.dec FlagPhase.run)) c ct cp)
+                                t).state ≠
+                            some CounterLoopState.done ∧
+                          (MultiTapeTM.runFrom (counterLoopCfg (some (CounterLoopState.dec FlagPhase.run)) c ct cp)
+                                t).state ≠
+                            some CounterLoopState.escape) ∧
+                      (∀ t ≤ T,
+                          (MultiTapeTM.runFrom (counterLoopCfg (some (CounterLoopState.dec FlagPhase.run)) c ct cp)
+                                  t).workTapePos
+                              (Fin.last k) ∈
+                            Finset.Icc (cp - 1) (cp + ↑w.length)) ∧
+                        ∀ t ≤ T,
+                          ∃ r u,
+                            (r ≤ r₀ ∧ u ≤ τ (counterLoopOrbit M τ c r) ∨ r = r₀ + 1 ∧ u = 0) ∧
+                              ∀ (j : Fin k),
+                                (MultiTapeTM.runFrom
+                                        (counterLoopCfg (some (CounterLoopState.dec FlagPhase.run)) c ct cp)
+                                        t).workTapePos
+                                    j.castSucc =
+                                  (MultiTapeTM.runFrom (counterLoopOrbit M τ c r) u).workTapePos j
+@counterLoop_time_le : ∀ {k : ℕ} {Symbol S : Type} {x : List Symbol} (M : MultiTapeTM k Symbol S)
+  (τ : Cfg k Symbol S x → ℕ) (c : Cfg k Symbol S x) (w : List Bool) (d : ℕ),
+  Nat.ofDigits 2 (List.map Bool.toNat w) = d →
+    ∀ (B : ℕ),
+      (∀ r < d, τ (counterLoopOrbit M τ c r) ≤ B) →
+        ∑ r ∈ Finset.range d, τ (counterLoopOrbit M τ c r) + counterOverhead w (d + 1) ≤
+          d * B + 4 * d + 2 * w.length + 2
+counterOverhead_le_of_le : ∀ (w : List Bool),
+  ∀ r ≤ Nat.ofDigits 2 (List.map Bool.toNat w), counterOverhead w r ≤ 4 * r + 2 * w.length
+decrementTM : (k : ℕ) → Fin k → MultiTapeTM k Bool FlagPhase
+counterValue : List Bool → ℕ
+counterValue_bits : ∀ (t : ℕ), counterValue t.bits = t
+foldr_bit_eq_ofDigits : ∀ (w : List Bool), List.foldr Nat.bit 0 w = Nat.ofDigits 2 (List.map Bool.toNat w)
+counterWord : List Bool → ℕ → List Bool
+@RoundContract.counterLoopDone_traj : ∀ {k : ℕ} {Γ S : Type} [inst : DecidableEq S] [inst_1 : DecidableEq Γ]
+  (e : Bool ↪ Γ) {M : MultiTapeTM k Γ S} {a : S} {exit : Option S} {ι : Type} {x : List Γ}
+  (R : RoundContract M a {exit} ι x),
+  (RoundContract.counterLoopDone e R).Traj fun p d q =>
+    ∃ r u,
+      (r < counterValue p.2 ∧ u ≤ R.time p.1 (roundOrbit M (R.time p.1) (counterLoopBody a d) r) ∨
+          r = counterValue p.2 ∧ u = 0) ∧
+        ∀ (j : Fin k),
+          q j.castSucc = (MultiTapeTM.runFrom (roundOrbit M (R.time p.1) (counterLoopBody a d) r) u).workTapePos j
+@RoundContract.counterLoopEscape_traj : ∀ {k : ℕ} {Γ S : Type} [inst : DecidableEq S] [inst_1 : DecidableEq Γ]
+  (e : Bool ↪ Γ) {M : MultiTapeTM k Γ S} {a ex : S} (hea : ex ≠ a) {ι : Type} {x : List Γ}
+  (R : RoundContract M a {some ex} ι x),
+  (RoundContract.counterLoopEscape e hea R).Traj fun p d q =>
+    ∃ r u,
+      (r ≤ p.2.2 ∧ u ≤ R.time p.1 (roundOrbit M (R.time p.1) (counterLoopBody a d) r) ∨ r = p.2.2 + 1 ∧ u = 0) ∧
+        ∀ (j : Fin k),
+          q j.castSucc = (MultiTapeTM.runFrom (roundOrbit M (R.time p.1) (counterLoopBody a d) r) u).workTapePos j
+StepBlock.loopTM : (k : ℕ) →
+  MultiTapeTM (k + 2 + 1) Bool (CounterLoopState ((key : StepBlock.Key) × StepBlock.Ph k key))
+@StepBlock.loopTM_run : ∀ {k n : ℕ} {x : List Bool} (M : MultiTapeTM k Bool (Fin (n + 1)))
+  (c : Cfg k Bool (Fin (n + 1)) x),
+  c.state ≠ none →
+    ∀ (d : Cfg (k + 2) Bool ((key : StepBlock.Key) × StepBlock.Ph k key) x),
+      d.state = some (StepBlock.exit k true) →
+        StepBlock.Rep M.tr c d →
+          ∀ (w : List Bool) (ct : ℤ → Option Bool) (cp : ℤ),
+            (∀ (p : ℤ), -1 ≤ p → p ≤ ↑w.length → ct (cp + p) = FinTM.bufferTape w p) →
+              ∀ (t : ℕ),
+                Nat.ofDigits 2 (List.map Bool.toNat w) = t →
+                  ∃ T e ct',
+                    T ≤ t * (50 * ((tableBitsK M.tr).length + 1)) + 4 * t + 2 * w.length + 2 ∧
+                      (∀ t' ≤ t,
+                          (MultiTapeTM.runFrom c t').state = none →
+                            T ≤ t' * (50 * ((tableBitsK M.tr).length + 1)) + 4 * t' + 2 * w.length) ∧
+                        StepBlock.Rep M.tr (MultiTapeTM.runFrom c t) e ∧
+                          e.output = d.output ∧
+                            (∀ (q : ℤ), ¬(cp ≤ q ∧ q < cp + ↑w.length) → ct' q = ct q) ∧
+                              MultiTapeTM.runFrom (counterLoopCfg (some (CounterLoopState.dec FlagPhase.run)) d ct cp)
+                                    T =
+                                  counterLoopCfg
+                                    (some
+                                      (if (MultiTapeTM.runFrom c t).state.isSome = true then CounterLoopState.done
+                                      else CounterLoopState.escape))
+                                    e ct' cp ∧
+                                ∀ u < T,
+                                  (MultiTapeTM.runFrom
+                                          (counterLoopCfg (some (CounterLoopState.dec FlagPhase.run)) d ct cp)
+                                          u).state ≠
+                                      some CounterLoopState.done ∧
+                                    (MultiTapeTM.runFrom
+                                          (counterLoopCfg (some (CounterLoopState.dec FlagPhase.run)) d ct cp)
+                                          u).state ≠
+                                      some CounterLoopState.escape
+@catalog_trace_run : ∀ {k : ℕ} {Symbol : Type u_1} {x : List Symbol} {S : Type u_2} (M : MultiTapeTM k Symbol S)
+  (F R : ℕ → Cfg k Symbol S x) (D : Cfg k Symbol S x) (L : ℕ),
+  (∀ r < L, MultiTapeTM.step (F r) = F (r + 1)) →
+    MultiTapeTM.step (F L) = R L →
+      (∀ r < L, MultiTapeTM.step (R (r + 1)) = R r) →
+        MultiTapeTM.step (R 0) = D →
+          MultiTapeTM.step D = D → ∀ (t : ℕ), MultiTapeTM.runFrom (F 0) t = catalogTrace F R D L t
+FinTM.exists_installCallTM : ∀ (M : FinTM Bool) (f : List Bool → List Bool) (T : ℕ → ℕ),
+  M.ComputesFunInTime f T →
+    ∃ C entry exit c,
+      0 < C.k ∧
+        ∀ (x arg : List Bool),
+          ∃ t ≤ c * (T arg.length + arg.length + (f arg).length + 1),
+            0 < t ∧
+              (∀ (t' : ℕ),
+                  0 < t' →
+                    t' < t → (MultiTapeTM.runFrom (Cfg.ofWords entry (stateWord C.k arg)) t').state ≠ some exit) ∧
+                MultiTapeTM.runFrom (Cfg.ofWords entry (stateWord C.k arg)) t = Cfg.ofWords exit (stateWord C.k (f arg))
+FinTM.exists_emitCallTM : ∀ (M : FinTM Bool) (f : List Bool → List Bool) (T : ℕ → ℕ),
+  M.ComputesFunInTime f T →
+    ∃ C entry exit c,
+      0 < C.k ∧
+        ∀ (x arg : List Bool),
+          ∃ t ≤ c * (T arg.length + arg.length + (f arg).length + 1),
+            0 < t ∧
+              (∀ (t' : ℕ),
+                  0 < t' →
+                    t' < t → (MultiTapeTM.runFrom (Cfg.ofWords entry (stateWord C.k arg)) t').state ≠ some exit) ∧
+                MultiTapeTM.runFrom (Cfg.ofWords entry (stateWord C.k arg)) t =
+                  have __src := Cfg.ofWords exit (stateWord C.k arg);
+                  { state := __src.state, inputPos := __src.inputPos, workTapes := __src.workTapes,
+                    workTapePos := __src.workTapePos, output := f arg }
+FinTM.exists_inputCallTM : ∀ (M : FinTM Bool) (f : List Bool → List Bool) (T : ℕ → ℕ),
+  M.ComputesFunInTime f T →
+    ∃ C entry exit c,
+      0 < C.k ∧
+        ∀ (x : List Bool),
+          ∃ t ≤ c * (T x.length + x.length + (f x).length + 1),
+            0 < t ∧
+              (∀ (t' : ℕ),
+                  0 < t' → t' < t → (MultiTapeTM.runFrom (Cfg.ofWords entry fun x => []) t').state ≠ some exit) ∧
+                MultiTapeTM.runFrom (Cfg.ofWords entry fun x => []) t = Cfg.ofWords exit (stateWord C.k (f x))
+exists_inputSeekTM : ∃ S x x R entry exit C,
+  ∀ {x : List Bool} (p : ℕ) (w : List Bool),
+    Nat.ofDigits 2 (List.map Bool.toNat w) = p →
+      p ≤ x.length + 1 →
+        ∀ (d : Cfg 2 Bool S x),
+          d.state = some entry →
+            (∀ (q : ℤ), -1 ≤ q → q ≤ ↑w.length → d.workTapes 0 (d.workTapePos 0 + q) = FinTM.bufferTape w q) →
+              (∀ (q : ℤ), d.workTapes 1 q = none) →
+                ∃ t ≤ C * (w.length + ↑d.inputPos + p + 1),
+                  (∀ u < t, (MultiTapeTM.runFrom d u).state ≠ some exit) ∧
+                    (∀ u ≤ t,
+                        ∀ (j : Fin 2),
+                          |(MultiTapeTM.runFrom d u).workTapePos j - d.workTapePos j| ≤ ↑(C * (w.length + 1))) ∧
+                      (MultiTapeTM.runFrom d t).state = some exit ∧
+                        ↑(MultiTapeTM.runFrom d t).inputPos = p ∧
+                          (MultiTapeTM.runFrom d t).workTapes = d.workTapes ∧
+                            (MultiTapeTM.runFrom d t).workTapePos = d.workTapePos ∧
+                              (MultiTapeTM.runFrom d t).output = d.output
+@copyTM_run_ofCfg : ∀ {Symbol : Type u_1} {k : ℕ} {x : List Symbol} (src dst : Fin k),
+  src ≠ dst →
+    ∀ (w : List Symbol) (d : Cfg k Symbol SweepPhase x),
+      d.state = some SweepPhase.sweep →
+        (∀ (p : ℤ), -1 ≤ p → p ≤ ↑w.length → d.workTapes src (d.workTapePos src + p) = FinTM.bufferTape w p) →
+          MultiTapeTM.runFrom d (2 * w.length + 2) =
+              { state := some SweepPhase.done, inputPos := d.inputPos,
+                workTapes := fun j q =>
+                  if j = dst ∧ d.workTapePos j ≤ q ∧ q < d.workTapePos j + ↑w.length then
+                    FinTM.bufferTape w (q - d.workTapePos j)
+                  else d.workTapes j q,
+                workTapePos := d.workTapePos, output := d.output } ∧
+            (∀ t < 2 * w.length + 2, (MultiTapeTM.runFrom d t).state ≠ some SweepPhase.done) ∧
+              ∀ (j : Fin k),
+                ∀ t ≤ 2 * w.length + 2,
+                  if j = src ∨ j = dst then
+                    (MultiTapeTM.runFrom d t).workTapePos j ∈
+                      Finset.Icc (d.workTapePos j - 1) (d.workTapePos j + ↑w.length)
+                  else (MultiTapeTM.runFrom d t).workTapePos j = d.workTapePos j
+@clearTM_run_ofCfg : ∀ {Symbol : Type u_1} {k : ℕ} {x : List Symbol} (i : Fin k) (w : List Symbol)
+  (d : Cfg k Symbol SweepPhase x),
+  d.state = some SweepPhase.sweep →
+    (∀ (p : ℤ), -1 ≤ p → p ≤ ↑w.length → d.workTapes i (d.workTapePos i + p) = FinTM.bufferTape w p) →
+      MultiTapeTM.runFrom d (2 * w.length + 2) =
+          { state := some SweepPhase.done, inputPos := d.inputPos,
+            workTapes := fun j q =>
+              if j = i ∧ d.workTapePos j ≤ q ∧ q < d.workTapePos j + ↑w.length then none else d.workTapes j q,
+            workTapePos := d.workTapePos, output := d.output } ∧
+        (∀ t < 2 * w.length + 2, (MultiTapeTM.runFrom d t).state ≠ some SweepPhase.done) ∧
+          ∀ (j : Fin k),
+            ∀ t ≤ 2 * w.length + 2,
+              if j = i then
+                (MultiTapeTM.runFrom d t).workTapePos j ∈ Finset.Icc (d.workTapePos j - 1) (d.workTapePos j + ↑w.length)
+              else (MultiTapeTM.runFrom d t).workTapePos j = d.workTapePos j
+@transferTM_run_ofCfg : ∀ {Symbol : Type u_1} {k : ℕ} {x : List Symbol} (src dst : Fin k),
+  src ≠ dst →
+    ∀ (w : List Symbol) (d : Cfg k Symbol SweepPhase x),
+      d.state = some SweepPhase.sweep →
+        (∀ (p : ℤ), -1 ≤ p → p ≤ ↑w.length → d.workTapes src (d.workTapePos src + p) = FinTM.bufferTape w p) →
+          MultiTapeTM.runFrom d (2 * w.length + 2) =
+              { state := some SweepPhase.done, inputPos := d.inputPos,
+                workTapes := fun j q =>
+                  if j = src ∧ d.workTapePos j ≤ q ∧ q < d.workTapePos j + ↑w.length then none
+                  else
+                    if j = dst ∧ d.workTapePos j ≤ q ∧ q < d.workTapePos j + ↑w.length then
+                      FinTM.bufferTape w (q - d.workTapePos j)
+                    else d.workTapes j q,
+                workTapePos := d.workTapePos, output := d.output } ∧
+            (∀ t < 2 * w.length + 2, (MultiTapeTM.runFrom d t).state ≠ some SweepPhase.done) ∧
+              ∀ (j : Fin k),
+                ∀ t ≤ 2 * w.length + 2,
+                  if j = src ∨ j = dst then
+                    (MultiTapeTM.runFrom d t).workTapePos j ∈
+                      Finset.Icc (d.workTapePos j - 1) (d.workTapePos j + ↑w.length)
+                  else (MultiTapeTM.runFrom d t).workTapePos j = d.workTapePos j
+@compareTM_run_ofCfg : ∀ {Symbol : Type u_1} [inst : DecidableEq Symbol] {k : ℕ} {x : List Symbol} (fst snd : Fin k),
+  fst ≠ snd →
+    ∀ (u v : List Symbol) (d : Cfg k Symbol FlagPhase x),
+      d.state = some FlagPhase.run →
+        (∀ (p : ℤ), -1 ≤ p → p ≤ ↑u.length → d.workTapes fst (d.workTapePos fst + p) = FinTM.bufferTape u p) →
+          (∀ (p : ℤ), -1 ≤ p → p ≤ ↑v.length → d.workTapes snd (d.workTapePos snd + p) = FinTM.bufferTape v p) →
+            ∃ δ ≤ min u.length v.length,
+              MultiTapeTM.runFrom d (2 * δ + 2) =
+                  { state := some (FlagPhase.done (decide (u = v))), inputPos := d.inputPos, workTapes := d.workTapes,
+                    workTapePos := d.workTapePos, output := d.output } ∧
+                (∀ t < 2 * δ + 2, ∀ (b : Bool), (MultiTapeTM.runFrom d t).state ≠ some (FlagPhase.done b)) ∧
+                  ∀ (j : Fin k),
+                    ∀ t ≤ 2 * δ + 2,
+                      if j = fst ∨ j = snd then
+                        (MultiTapeTM.runFrom d t).workTapePos j ∈
+                          Finset.Icc (d.workTapePos j - 1) (d.workTapePos j + ↑δ)
+                      else (MultiTapeTM.runFrom d t).workTapePos j = d.workTapePos j
+@incrementTM_run_succ_ofCfg : ∀ {k : ℕ} {x : List Bool} (i : Fin k) (w v : List Bool),
+  incFixed w = some v →
+    ∀ (d : Cfg k Bool FlagPhase x),
+      d.state = some FlagPhase.run →
+        (∀ (p : ℤ), -1 ≤ p → p ≤ ↑w.length → d.workTapes i (d.workTapePos i + p) = FinTM.bufferTape w p) →
+          MultiTapeTM.runFrom d (2 * (List.takeWhile id w).length + 2) =
+              { state := some (FlagPhase.done true), inputPos := d.inputPos,
+                workTapes := fun j q =>
+                  if j = i ∧ d.workTapePos j ≤ q ∧ q < d.workTapePos j + ↑w.length then
+                    FinTM.bufferTape v (q - d.workTapePos j)
+                  else d.workTapes j q,
+                workTapePos := d.workTapePos, output := d.output } ∧
+            (∀ t < 2 * (List.takeWhile id w).length + 2,
+                ∀ (b : Bool), (MultiTapeTM.runFrom d t).state ≠ some (FlagPhase.done b)) ∧
+              ∀ (j : Fin k),
+                ∀ t ≤ 2 * (List.takeWhile id w).length + 2,
+                  if j = i then
+                    (MultiTapeTM.runFrom d t).workTapePos j ∈
+                      Finset.Icc (d.workTapePos j - 1) (d.workTapePos j + ↑(List.takeWhile id w).length)
+                  else (MultiTapeTM.runFrom d t).workTapePos j = d.workTapePos j
+@incrementTM_run_overflow_ofCfg : ∀ {k : ℕ} {x : List Bool} (i : Fin k) (w : List Bool),
+  incFixed w = none →
+    ∀ (d : Cfg k Bool FlagPhase x),
+      d.state = some FlagPhase.run →
+        (∀ (p : ℤ), -1 ≤ p → p ≤ ↑w.length → d.workTapes i (d.workTapePos i + p) = FinTM.bufferTape w p) →
+          MultiTapeTM.runFrom d (2 * w.length + 2) =
+              { state := some (FlagPhase.done false), inputPos := d.inputPos,
+                workTapes := fun j q =>
+                  if j = i ∧ d.workTapePos j ≤ q ∧ q < d.workTapePos j + ↑w.length then
+                    FinTM.bufferTape (List.replicate w.length false) (q - d.workTapePos j)
+                  else d.workTapes j q,
+                workTapePos := d.workTapePos, output := d.output } ∧
+            (∀ t < 2 * w.length + 2, ∀ (b : Bool), (MultiTapeTM.runFrom d t).state ≠ some (FlagPhase.done b)) ∧
+              ∀ (j : Fin k),
+                ∀ t ≤ 2 * w.length + 2,
+                  if j = i then
+                    (MultiTapeTM.runFrom d t).workTapePos j ∈
+                      Finset.Icc (d.workTapePos j - 1) (d.workTapePos j + ↑w.length)
+                  else (MultiTapeTM.runFrom d t).workTapePos j = d.workTapePos j
+@seekEndTM_run_ofCfg : ∀ {Symbol : Type u_1} {k : ℕ} {x : List Symbol} (i : Fin k) (ws : List (List Symbol)),
+  ws ≠ [] →
+    (∀ u ∈ ws, u ≠ []) →
+      ∀ (d : Cfg k Symbol SeekPhase x),
+        d.state = some SeekPhase.run →
+          (∀ (p : ℤ), 0 ≤ p → p ≤ ↑(fieldOffset ws ws.length) → d.workTapes i (d.workTapePos i + p) = fieldsTape ws p) →
+            MultiTapeTM.runFrom d (fieldOffset ws ws.length + 1) =
+                { state := some SeekPhase.done, inputPos := d.inputPos, workTapes := d.workTapes,
+                  workTapePos := Function.update d.workTapePos i (d.workTapePos i + ↑(fieldOffset ws ws.length)),
+                  output := d.output } ∧
+              (∀ t < fieldOffset ws ws.length + 1, (MultiTapeTM.runFrom d t).state ≠ some SeekPhase.done) ∧
+                ∀ (j : Fin k),
+                  ∀ t ≤ fieldOffset ws ws.length + 1,
+                    if j = i then
+                      (MultiTapeTM.runFrom d t).workTapePos j ∈
+                        Finset.Icc (d.workTapePos j) (d.workTapePos j + ↑(fieldOffset ws ws.length))
+                    else (MultiTapeTM.runFrom d t).workTapePos j = d.workTapePos j
+@seekStartTM_run_ofCfg : ∀ {Symbol : Type u_1} {k : ℕ} {x : List Symbol} (i : Fin k) (ws : List (List Symbol)),
+  (∀ u ∈ ws, u ≠ []) →
+    ∀ (d : Cfg k Symbol SeekPhase x),
+      d.state = some SeekPhase.run →
+        d.workTapes i (d.workTapePos i) ≠ none →
+          (∀ (p : ℤ),
+              -2 ≤ p →
+                p < ↑(fieldOffset ws ws.length) →
+                  d.workTapes i (d.workTapePos i - ↑(fieldOffset ws ws.length) + p) = fieldsTape ws p) →
+            MultiTapeTM.runFrom d (fieldOffset ws ws.length + 4) =
+                { state := some SeekPhase.done, inputPos := d.inputPos, workTapes := d.workTapes,
+                  workTapePos := Function.update d.workTapePos i (d.workTapePos i - ↑(fieldOffset ws ws.length)),
+                  output := d.output } ∧
+              (∀ t < fieldOffset ws ws.length + 4, (MultiTapeTM.runFrom d t).state ≠ some SeekPhase.done) ∧
+                ∀ (j : Fin k),
+                  ∀ t ≤ fieldOffset ws ws.length + 4,
+                    if j = i then
+                      (MultiTapeTM.runFrom d t).workTapePos j ∈
+                        Finset.Icc (d.workTapePos j - ↑(fieldOffset ws ws.length) - 2) (d.workTapePos j)
+                    else (MultiTapeTM.runFrom d t).workTapePos j = d.workTapePos j
+@skipTM_run_ofCfg : ∀ {Symbol : Type u_1} {k : ℕ} {x : List Symbol} (i : Fin k) (w : List Symbol)
+  (d : Cfg k Symbol SeekPhase x),
+  d.state = some SeekPhase.run →
+    (∀ (p : ℤ), 0 ≤ p → p ≤ ↑w.length → d.workTapes i (d.workTapePos i + p) = FinTM.bufferTape w p) →
+      MultiTapeTM.runFrom d (w.length + 1) =
+          { state := some SeekPhase.done, inputPos := d.inputPos, workTapes := d.workTapes,
+            workTapePos := Function.update d.workTapePos i (d.workTapePos i + ↑w.length + 1), output := d.output } ∧
+        (∀ t < w.length + 1, (MultiTapeTM.runFrom d t).state ≠ some SeekPhase.done) ∧
+          ∀ (j : Fin k),
+            ∀ t ≤ w.length + 1,
+              if j = i then
+                (MultiTapeTM.runFrom d t).workTapePos j ∈ Finset.Icc (d.workTapePos j) (d.workTapePos j + ↑w.length + 1)
+              else (MultiTapeTM.runFrom d t).workTapePos j = d.workTapePos j
+@scanTM_run_ofCfg : ∀ {Γ : Type u_1} {A : Type} {k : ℕ} {x : List Γ} (i : Fin k) (δf δb : A → Γ → A × Γ) (a₀ : A)
+  (w : List Γ) (d : Cfg k Γ (ScanPhase A) x),
+  d.state = some (ScanPhase.fwd a₀) →
+    (∀ (p : ℤ), -1 ≤ p → p ≤ ↑w.length → d.workTapes i (d.workTapePos i + p) = FinTM.bufferTape w p) →
+      MultiTapeTM.runFrom d (2 * w.length + 2) =
+          { state := some (ScanPhase.done (scanResult δf δb a₀ w).1), inputPos := d.inputPos,
+            workTapes := fun j q =>
+              if j = i ∧ d.workTapePos j ≤ q ∧ q < d.workTapePos j + ↑w.length then
+                FinTM.bufferTape (scanResult δf δb a₀ w).2 (q - d.workTapePos j)
+              else d.workTapes j q,
+            workTapePos := d.workTapePos, output := d.output } ∧
+        (∀ t < 2 * w.length + 2, ∀ (a : A), (MultiTapeTM.runFrom d t).state ≠ some (ScanPhase.done a)) ∧
+          ∀ (j : Fin k),
+            ∀ t ≤ 2 * w.length + 2,
+              if j = i then
+                (MultiTapeTM.runFrom d t).workTapePos j ∈ Finset.Icc (d.workTapePos j - 1) (d.workTapePos j + ↑w.length)
+              else (MultiTapeTM.runFrom d t).workTapePos j = d.workTapePos j
+@inputCopyTM_run_ofCfg : ∀ {Symbol : Type u_1} {k : ℕ} {x : List Symbol} (i : Fin k) (d : Cfg k Symbol SweepPhase x),
+  d.state = some SweepPhase.sweep →
+    d.inputPos = 1 →
+      MultiTapeTM.runFrom d (2 * x.length + 2) =
+          { state := some SweepPhase.done, inputPos := d.inputPos,
+            workTapes := fun j q =>
+              if j = i ∧ d.workTapePos j ≤ q ∧ q < d.workTapePos j + ↑x.length then
+                FinTM.bufferTape x (q - d.workTapePos j)
+              else d.workTapes j q,
+            workTapePos := d.workTapePos, output := d.output } ∧
+        (∀ t < 2 * x.length + 2, (MultiTapeTM.runFrom d t).state ≠ some SweepPhase.done) ∧
+          ∀ (j : Fin k),
+            ∀ t ≤ 2 * x.length + 2,
+              if j = i then
+                (MultiTapeTM.runFrom d t).workTapePos j ∈ Finset.Icc (d.workTapePos j - 1) (d.workTapePos j + ↑x.length)
+              else (MultiTapeTM.runFrom d t).workTapePos j = d.workTapePos j
+@inputFoldTM_run_ofCfg : ∀ {Γ : Type u_1} {A : Type} {k : ℕ} {x : List Γ} (δ : A → Γ → A) (a₀ : A)
+  (d : Cfg k Γ (ScanPhase A) x),
+  d.state = some (ScanPhase.fwd a₀) →
+    d.inputPos = 1 →
+      MultiTapeTM.runFrom d (2 * x.length + 2) =
+          { state := some (ScanPhase.done (List.foldl δ a₀ x)), inputPos := d.inputPos, workTapes := d.workTapes,
+            workTapePos := d.workTapePos, output := d.output } ∧
+        (∀ t < 2 * x.length + 2, ∀ (a : A), (MultiTapeTM.runFrom d t).state ≠ some (ScanPhase.done a)) ∧
+          ∀ (j : Fin k), ∀ t ≤ 2 * x.length + 2, (MultiTapeTM.runFrom d t).workTapePos j = d.workTapePos j
+@writeConstTM_run_ofCfg : ∀ {Symbol : Type u_1} {k : ℕ} {x : List Symbol} (i : Fin k) (w₀ : List Symbol)
+  (d : Cfg k Symbol (WritePhase w₀.length) x),
+  d.state = some (WritePhase.wr 0) →
+    MultiTapeTM.runFrom d (2 * w₀.length + 2) =
+        { state := some WritePhase.done, inputPos := d.inputPos,
+          workTapes := fun j q =>
+            if j = i ∧ d.workTapePos j ≤ q ∧ q < d.workTapePos j + ↑w₀.length then
+              FinTM.bufferTape w₀ (q - d.workTapePos j)
+            else d.workTapes j q,
+          workTapePos := d.workTapePos, output := d.output } ∧
+      (∀ t < 2 * w₀.length + 2, (MultiTapeTM.runFrom d t).state ≠ some WritePhase.done) ∧
+        ∀ (j : Fin k),
+          ∀ t ≤ 2 * w₀.length + 2,
+            if j = i then
+              (MultiTapeTM.runFrom d t).workTapePos j ∈ Finset.Icc (d.workTapePos j) (d.workTapePos j + ↑w₀.length)
+            else (MultiTapeTM.runFrom d t).workTapePos j = d.workTapePos j
+@writeAdvTM_run_ofCfg : ∀ {Symbol : Type u_1} {k : ℕ} {x : List Symbol} (i : Fin k) (w₀ : List Symbol)
+  (d : Cfg k Symbol (Fin (w₀.length + 1)) x),
+  d.state = some 0 →
+    MultiTapeTM.runFrom d (w₀.length + 1) =
+        { state := some 0, inputPos := d.inputPos,
+          workTapes := fun j q =>
+            if j = i ∧ d.workTapePos j ≤ q ∧ q < d.workTapePos j + ↑w₀.length then
+              FinTM.bufferTape w₀ (q - d.workTapePos j)
+            else d.workTapes j q,
+          workTapePos := Function.update d.workTapePos i (d.workTapePos i + ↑w₀.length), output := d.output } ∧
+      (∀ (t : ℕ), 0 < t → t < w₀.length + 1 → (MultiTapeTM.runFrom d t).state ≠ some 0) ∧
+        ∀ (j : Fin k),
+          ∀ t ≤ w₀.length + 1,
+            if j = i then
+              (MultiTapeTM.runFrom d t).workTapePos j ∈ Finset.Icc (d.workTapePos j) (d.workTapePos j + ↑w₀.length)
+            else (MultiTapeTM.runFrom d t).workTapePos j = d.workTapePos j
+@tapeAction : {k : ℕ} →
+  {Symbol : Type u_1} →
+    {State : Type u_2} → Fin k → SignType → Option (Option Symbol) → SignType → State → Action k Symbol State
+@inputMoveAction : {k : ℕ} → {Symbol : Type u_1} → {State : Type u_2} → SignType → State → Action k Symbol State
+@step_of_inputMoveAction : ∀ {Symbol : Type u_1} {State : Type u_2} {k : ℕ} {x : List Symbol}
+  (M : MultiTapeTM k Symbol State) (c : Cfg k Symbol State x) {q q' : State} (inp : SignType),
+  c.state = some q →
+    M.tr q c.inputSymbol c.workTapeSymbols = inputMoveAction inp q' →
+      MultiTapeTM.step c =
+        { state := some q', inputPos := moveInputPos c.inputPos inp, workTapes := c.workTapes,
+          workTapePos := c.workTapePos, output := c.output }
+@step_of_tapeAction_move : ∀ {Symbol : Type u_1} {State : Type u_2} {k : ℕ} {x : List Symbol}
+  (M : MultiTapeTM k Symbol State) (c : Cfg k Symbol State x) {q q' : State} (i : Fin k) (inp m : SignType),
+  c.state = some q →
+    M.tr q c.inputSymbol c.workTapeSymbols = tapeAction i inp none m q' →
+      MultiTapeTM.step c =
+        { state := some q', inputPos := moveInputPos c.inputPos inp, workTapes := c.workTapes,
+          workTapePos := Function.update c.workTapePos i (c.workTapePos i + ↑m), output := c.output }
+@copyTM_run : ∀ {x : List Bool} (k : ℕ) (src dst : Fin k),
+  src ≠ dst →
+    ∀ (w : Fin k → List Bool),
+      w dst = [] →
+        ∃ T ≤ 3 * (w src).length + 3,
+          (∀ t < T, (MultiTapeTM.runFrom (Cfg.ofWords SweepPhase.sweep w) t).state ≠ some SweepPhase.done) ∧
+            MultiTapeTM.runFrom (Cfg.ofWords SweepPhase.sweep w) T =
+              Cfg.ofWords SweepPhase.done (Function.update w dst (w src))
+@transferTM_run : ∀ {x : List Bool} (k : ℕ) (src dst : Fin k),
+  src ≠ dst →
+    ∀ (w : Fin k → List Bool),
+      w dst = [] →
+        ∃ T ≤ 3 * (w src).length + 3,
+          (∀ t < T, (MultiTapeTM.runFrom (Cfg.ofWords SweepPhase.sweep w) t).state ≠ some SweepPhase.done) ∧
+            MultiTapeTM.runFrom (Cfg.ofWords SweepPhase.sweep w) T =
+              Cfg.ofWords SweepPhase.done (Function.update (Function.update w src []) dst (w src))
+@clearTM_run : ∀ {x : List Bool} (k : ℕ) (i : Fin k) (w : Fin k → List Bool),
+  ∃ T ≤ 2 * (w i).length + 2,
+    (∀ t < T, (MultiTapeTM.runFrom (Cfg.ofWords SweepPhase.sweep w) t).state ≠ some SweepPhase.done) ∧
+      MultiTapeTM.runFrom (Cfg.ofWords SweepPhase.sweep w) T = Cfg.ofWords SweepPhase.done (Function.update w i [])
+@compareTM_run : ∀ {x : List Bool} (k : ℕ) (fst snd : Fin k) (w : Fin k → List Bool),
+  ∃ T ≤ 2 * min (w fst).length (w snd).length + 2,
+    (∀ t < T, ∀ (v : Bool), (MultiTapeTM.runFrom (Cfg.ofWords FlagPhase.run w) t).state ≠ some (FlagPhase.done v)) ∧
+      MultiTapeTM.runFrom (Cfg.ofWords FlagPhase.run w) T = Cfg.ofWords (FlagPhase.done (decide (w fst = w snd))) w
+@incrementTM_run_succ : ∀ {x : List Bool} (k : ℕ) (i : Fin k) (w : Fin k → List Bool) (v : List Bool),
+  incFixed (w i) = some v →
+    ∃ T ≤ 2 * (w i).length + 2,
+      (∀ t < T, ∀ (b : Bool), (MultiTapeTM.runFrom (Cfg.ofWords FlagPhase.run w) t).state ≠ some (FlagPhase.done b)) ∧
+        MultiTapeTM.runFrom (Cfg.ofWords FlagPhase.run w) T = Cfg.ofWords (FlagPhase.done true) (Function.update w i v)
+@incrementTM_run_overflow : ∀ {x : List Bool} (k : ℕ) (i : Fin k) (w : Fin k → List Bool),
+  incFixed (w i) = none →
+    ∃ T ≤ 2 * (w i).length + 2,
+      (∀ t < T, ∀ (b : Bool), (MultiTapeTM.runFrom (Cfg.ofWords FlagPhase.run w) t).state ≠ some (FlagPhase.done b)) ∧
+        MultiTapeTM.runFrom (Cfg.ofWords FlagPhase.run w) T =
+          Cfg.ofWords (FlagPhase.done false) (Function.update w i (List.replicate (w i).length false))
+INV Turing.MachineFormat.exists_polyCanonizer -> Turing.FinTM.ComputesFunInTime @ TCSlib.Complexity.TuringMachine.Finite
+INV Turing.MachineFormat.exists_polyCanonizer -> Turing.CodeFormat.serialize @ TCSlib.Complexity.TuringMachine.CodeFormat
+INV Turing.MachineFormat.exists_polyCanonizer -> Turing.MachineFormat.toCodeFormat @ TCSlib.Complexity.TuringMachine.CodeSimulator
+INV Turing.MachineFormat.exists_polyCanonizer -> Turing.CodeFormat.decode @ TCSlib.Complexity.TuringMachine.CodeFormat
+INV Turing.MachineFormat.exists_uniformSimulator -> Turing.FinTM.ComputesInTime @ TCSlib.Complexity.TuringMachine.Finite
+INV Turing.MachineFormat.exists_uniformSimulator -> Turing.MachineFormat.toFinTM @ TCSlib.Complexity.TuringMachine.CodeSimulator
+INV Turing.MachineFormat.exists_uniformSimulator -> Turing.CodeFormat.decode @ TCSlib.Complexity.TuringMachine.CodeFormat
+INV Turing.MachineFormat.exists_uniformSimulator -> Turing.MachineFormat.toCodeFormat @ TCSlib.Complexity.TuringMachine.CodeSimulator
+INV Turing.MachineFormat.exists_uniformSimulator -> Turing.pairEncode @ TCSlib.Complexity.TuringMachine.Encoding
+INV Turing.MachineFormat.serialize_eq -> Turing.CodeFormat.Code @ TCSlib.Complexity.TuringMachine.CodeFormat
+INV Turing.MachineFormat.serialize_eq -> Turing.MachineFormat.toCodeFormat @ TCSlib.Complexity.TuringMachine.CodeSimulator
+INV Turing.MachineFormat.serialize_eq -> Turing.CodeFormat.serialize @ TCSlib.Complexity.TuringMachine.CodeFormat
+INV Turing.MachineFormat.serialize_eq -> Turing.serializeK @ TCSlib.Complexity.TuringMachine.CodeSimulator
+INV Turing.MachineFormat.serialize_eq -> Turing.MachineFormat.k @ TCSlib.Complexity.TuringMachine.CodeSimulator
+INV Turing.MachineFormat.serialize_eq -> Turing.CodeFormat.numStates @ TCSlib.Complexity.TuringMachine.CodeFormat
+INV Turing.MachineFormat.serialize_eq -> Turing.MachineFormat.machine @ TCSlib.Complexity.TuringMachine.CodeSimulator
+INV Turing.MachineFormat.skipTable_eq -> Turing.CodeFormat.skipTable @ TCSlib.Complexity.TuringMachine.CodeFormat
+INV Turing.MachineFormat.skipTable_eq -> Turing.MachineFormat.toCodeFormat @ TCSlib.Complexity.TuringMachine.CodeSimulator
+INV Turing.MachineFormat.skipTable_eq -> Turing.codeSkipTableK @ TCSlib.Complexity.TuringMachine.CodeSimulator
+INV Turing.MachineFormat.skipTable_eq -> Turing.MachineFormat.k @ TCSlib.Complexity.TuringMachine.CodeSimulator
+INV Turing.MachineFormat.toFinTM -> Turing.CodeFormat.Code @ TCSlib.Complexity.TuringMachine.CodeFormat
+INV Turing.MachineFormat.toFinTM -> Turing.MachineFormat.toCodeFormat @ TCSlib.Complexity.TuringMachine.CodeSimulator
+INV Turing.codeSkipTable2_eq_codeSkipTableK -> Turing.codeSkipTable2 @ TCSlib.Complexity.TuringMachine.CodeFormat
+INV Turing.codeSkipTable2_eq_codeSkipTableK -> Turing.codeSkipTableK @ TCSlib.Complexity.TuringMachine.CodeSimulator
+INV Turing.CodeFormat.parseFull -> Turing.CodeFormat.Code @ TCSlib.Complexity.TuringMachine.CodeFormat
+INV Turing.CodeFormat.decode -> Turing.CodeFormat.Code @ TCSlib.Complexity.TuringMachine.CodeFormat
+INV Turing.CodeFormat.canonical_eq -> Turing.CodeFormat.canonical @ TCSlib.Complexity.TuringMachine.CodeFormat
+INV Turing.CodeFormat.canonical_eq -> Turing.CodeFormat.serialize @ TCSlib.Complexity.TuringMachine.CodeFormat
+INV Turing.CodeFormat.canonical_eq -> Turing.CodeFormat.decode @ TCSlib.Complexity.TuringMachine.CodeFormat
+INV Turing.CodeFormat.scan_full -> Turing.CodeFormat.scan @ TCSlib.Complexity.TuringMachine.CodeFormat
+INV Turing.CodeFormat.scan_full -> Turing.CodeFormat.Code @ TCSlib.Complexity.TuringMachine.CodeFormat
+INV Turing.CodeFormat.scan_full -> Turing.CodeFormat.parseFull @ TCSlib.Complexity.TuringMachine.CodeFormat
+INV Turing.CodeFormat.parseFull_sound -> Turing.CodeFormat.Code @ TCSlib.Complexity.TuringMachine.CodeFormat
+INV Turing.CodeFormat.parseFull_sound -> Turing.CodeFormat.parseFull @ TCSlib.Complexity.TuringMachine.CodeFormat
+INV Turing.CodeFormat.parseFull_sound -> Turing.CodeFormat.serialize @ TCSlib.Complexity.TuringMachine.CodeFormat
+INV Turing.CodeFormat.decode_of_parseFull_none -> Turing.CodeFormat.Code @ TCSlib.Complexity.TuringMachine.CodeFormat
+INV Turing.CodeFormat.decode_of_parseFull_none -> Turing.CodeFormat.parseFull @ TCSlib.Complexity.TuringMachine.CodeFormat
+INV Turing.CodeFormat.decode_of_parseFull_none -> Turing.CodeFormat.decode @ TCSlib.Complexity.TuringMachine.CodeFormat
+INV Turing.CodeFormat.decode_of_parseFull_none -> Turing.CodeFormat.fallback @ TCSlib.Complexity.TuringMachine.CodeFormat
+INV Turing.CodeFormat.decode_of_guard_lt -> Turing.pairDecode @ TCSlib.Complexity.TuringMachine.Encoding
+INV Turing.CodeFormat.decode_of_guard_lt -> Turing.CodeFormat.guard @ TCSlib.Complexity.TuringMachine.CodeFormat
+INV Turing.CodeFormat.decode_of_guard_lt -> Turing.codeBitsNat @ TCSlib.Complexity.TuringMachine.CodeParser
+INV Turing.CodeFormat.decode_of_guard_lt -> Turing.CodeFormat.Code @ TCSlib.Complexity.TuringMachine.CodeFormat
+INV Turing.CodeFormat.decode_of_guard_lt -> Turing.CodeFormat.decode @ TCSlib.Complexity.TuringMachine.CodeFormat
+INV Turing.CodeFormat.decode_of_guard_lt -> Turing.CodeFormat.fallback @ TCSlib.Complexity.TuringMachine.CodeFormat
+INV Turing.CodeFormat.decode_serialize_pad -> Turing.CodeFormat.Code @ TCSlib.Complexity.TuringMachine.CodeFormat
+INV Turing.CodeFormat.decode_serialize_pad -> Turing.CodeFormat.decode @ TCSlib.Complexity.TuringMachine.CodeFormat
+INV Turing.CodeFormat.decode_serialize_pad -> Turing.CodeFormat.serialize @ TCSlib.Complexity.TuringMachine.CodeFormat
+INV Turing.codeReadActionK_sound -> Turing.codeReadActionK @ TCSlib.Complexity.TuringMachine.CodeFormat
+INV Turing.codeReadActionK_sound -> Turing.actionBitsK @ TCSlib.Complexity.TuringMachine.CodeFormat
+INV Turing.codeEraseActionK -> Turing.codeReadActionK @ TCSlib.Complexity.TuringMachine.CodeFormat
+INV Turing.codeEraseActionK -> Turing.codeSkipActionK @ TCSlib.Complexity.TuringMachine.CodeFormat
+INV Turing.codeActionK_length -> Turing.actionBitsK @ TCSlib.Complexity.TuringMachine.CodeFormat
+INV Turing.codeReadFin_sound -> Turing.codeReadFin @ TCSlib.Complexity.TuringMachine.CodeParser
+INV Turing.codeReadFin_sound -> Turing.unaryFin @ TCSlib.Complexity.TuringMachine.Encoding
+INV Turing.codeEraseFin -> Turing.codeReadFin @ TCSlib.Complexity.TuringMachine.CodeParser
+INV Turing.codeEraseFin -> Turing.codeSkipFin @ TCSlib.Complexity.TuringMachine.CodeParser
+INV Turing.codeEraseState -> Turing.codeReadState @ TCSlib.Complexity.TuringMachine.CodeParser
+INV Turing.codeEraseState -> Turing.codeSkipState @ TCSlib.Complexity.TuringMachine.CodeParser
+INV Turing.codeBitsNat_bits -> Turing.codeBitsNat @ TCSlib.Complexity.TuringMachine.CodeParser
+INV Turing.codeReadUnary_sound -> Turing.codeReadUnary @ TCSlib.Complexity.TuringMachine.CodeParser
+INV Turing.codeReadUnary_append -> Turing.codeReadUnary @ TCSlib.Complexity.TuringMachine.CodeParser
+INV Turing.eq_pairEncode_of_pairDecode -> Turing.pairDecode @ TCSlib.Complexity.TuringMachine.Encoding
+INV Turing.eq_pairEncode_of_pairDecode -> Turing.pairEncode @ TCSlib.Complexity.TuringMachine.Encoding
+INV Turing.length_pairEncode -> Turing.pairEncode @ TCSlib.Complexity.TuringMachine.Encoding
+INV Turing.StepBlock.length_workReadsK -> Turing.workReadsK @ TCSlib.Complexity.TuringMachine.Build.StepBlock
+INV Turing.StepBlock.recordTM -> Turing.StepBlock.RecordState @ TCSlib.Complexity.TuringMachine.Build.StepBlock
+INV Turing.StepBlock.recordSkipTM -> Turing.StepBlock.SkipPh @ TCSlib.Complexity.TuringMachine.Build.StepBlock
+INV Turing.FinTM.ComputesInTime.mono -> Turing.FinTM.ComputesInTime @ TCSlib.Complexity.TuringMachine.Finite
+INV Turing.FinTM.computesInTime_iff -> Turing.FinTM.ComputesInTime @ TCSlib.Complexity.TuringMachine.Finite
+INV Turing.FinTM.computesInTime_iff -> Turing.FinTM.State @ TCSlib.Complexity.TuringMachine.Finite
+INV Turing.FinTM.computesInTime_iff -> Turing.Cfg.state @ TCSlib.Complexity.TuringMachine.Configuration
+INV Turing.FinTM.computesInTime_iff -> Turing.FinTM.k @ TCSlib.Complexity.TuringMachine.Finite
+INV Turing.FinTM.computesInTime_iff -> Turing.MultiTapeTM.runFrom @ TCSlib.Complexity.TuringMachine.Deterministic
+INV Turing.FinTM.computesInTime_iff -> Turing.FinTM.tm @ TCSlib.Complexity.TuringMachine.Finite
+INV Turing.FinTM.computesInTime_iff -> Turing.MultiTapeTM.initCfg @ TCSlib.Complexity.TuringMachine.Deterministic
+INV Turing.FinTM.computesInTime_iff -> Turing.Cfg.output @ TCSlib.Complexity.TuringMachine.Configuration
+INV Turing.FinTM.computesFunInTime_const -> Turing.FinTM.ComputesFunInTime @ TCSlib.Complexity.TuringMachine.Finite
+INV Turing.FinTM.computesFunInTime_id -> Turing.FinTM.ComputesFunInTime @ TCSlib.Complexity.TuringMachine.Finite
+INV Turing.FinTM.computesFunInTime_comp -> Turing.FinTM.ComputesFunInTime @ TCSlib.Complexity.TuringMachine.Finite
+INV Turing.FinTM.computesFunInTime_cond -> Turing.FinTM.ComputesFunInTime @ TCSlib.Complexity.TuringMachine.Finite
+INV Turing.initCfg_ofWords -> Turing.MultiTapeTM.initCfg @ TCSlib.Complexity.TuringMachine.Deterministic
+INV Turing.initCfg_ofWords -> Turing.Cfg.ofWords @ TCSlib.Complexity.TuringMachine.Build.Convention
+INV Turing.initCfg_ofWords -> Turing.MultiTapeTM.q₀ @ TCSlib.Complexity.TuringMachine.Deterministic
+INV Turing.MultiTapeTM.runFrom_add -> Turing.MultiTapeTM.runFrom @ TCSlib.Complexity.TuringMachine.Deterministic
+INV Turing.MultiTapeTM.runFrom_succ_eq_step' -> Turing.MultiTapeTM.runFrom @ TCSlib.Complexity.TuringMachine.Deterministic
+INV Turing.MultiTapeTM.runFrom_succ_eq_step' -> Turing.MultiTapeTM.step @ TCSlib.Complexity.TuringMachine.Deterministic
+INV Turing.MultiTapeTM.step_of_halt -> Turing.Cfg.state @ TCSlib.Complexity.TuringMachine.Configuration
+INV Turing.MultiTapeTM.step_of_halt -> Turing.MultiTapeTM.step @ TCSlib.Complexity.TuringMachine.Deterministic
+INV Turing.MultiTapeTM.outputSymbol_of_halt -> Turing.Cfg.state @ TCSlib.Complexity.TuringMachine.Configuration
+INV Turing.MultiTapeTM.outputSymbol_of_halt -> Turing.MultiTapeTM.outputSymbol @ TCSlib.Complexity.TuringMachine.Deterministic
+INV Turing.seamCompTM_run_ofCfg -> Turing.MultiTapeTM.runFrom @ TCSlib.Complexity.TuringMachine.Deterministic
+INV Turing.seamCompTM_run_ofCfg -> Turing.Cfg.state @ TCSlib.Complexity.TuringMachine.Configuration
+INV Turing.seamCompTM_run_ofCfg -> Turing.Cfg.mapState @ TCSlib.Complexity.TuringMachine.StateRenaming
+INV Turing.seamCompTM_run_ofCfg -> Turing.seamCompTM @ TCSlib.Complexity.TuringMachine.Build.Seam
+INV Turing.seamCompTM_firstReturn_ofCfg -> Turing.MultiTapeTM.runFrom @ TCSlib.Complexity.TuringMachine.Deterministic
+INV Turing.seamCompTM_firstReturn_ofCfg -> Turing.Cfg.state @ TCSlib.Complexity.TuringMachine.Configuration
+INV Turing.seamCompTM_firstReturn_ofCfg -> Turing.Cfg.mapState @ TCSlib.Complexity.TuringMachine.StateRenaming
+INV Turing.seamCompTM_firstReturn_ofCfg -> Turing.seamCompTM @ TCSlib.Complexity.TuringMachine.Build.Seam
+INV Turing.seamReleaseTM_firstReturn -> Turing.Cfg.state @ TCSlib.Complexity.TuringMachine.Configuration
+INV Turing.seamReleaseTM_firstReturn -> Turing.MultiTapeTM.runFrom @ TCSlib.Complexity.TuringMachine.Deterministic
+INV Turing.seamReleaseTM_firstReturn -> Turing.seamReleaseTM @ TCSlib.Complexity.TuringMachine.Build.Seam
+INV Turing.seamReleaseTM_firstReturn -> Turing.Cfg.mapState @ TCSlib.Complexity.TuringMachine.StateRenaming
+INV Turing.phaseHostTM_run -> Turing.MultiTapeTM.runFrom @ TCSlib.Complexity.TuringMachine.Deterministic
+INV Turing.phaseHostTM_run -> Turing.Cfg.state @ TCSlib.Complexity.TuringMachine.Configuration
+INV Turing.phaseHostTM_run -> Turing.phaseHostTM @ TCSlib.Complexity.TuringMachine.Build.Seam
+INV Turing.phaseHostTM_run -> Turing.Cfg.mapState @ TCSlib.Complexity.TuringMachine.StateRenaming
+INV Turing.embedEmitTM_runFrom -> Turing.MultiTapeTM.runFrom @ TCSlib.Complexity.TuringMachine.Deterministic
+INV Turing.embedEmitTM_runFrom -> Turing.embedEmitTM @ TCSlib.Complexity.TuringMachine.Build.Embed
+INV Turing.embedEmitTM_runFrom -> Turing.embedEmitCfg @ TCSlib.Complexity.TuringMachine.Build.Embed
+INV Turing.embedEmitTM_frame -> Turing.Cfg.workTapes @ TCSlib.Complexity.TuringMachine.Configuration
+INV Turing.embedEmitTM_frame -> Turing.MultiTapeTM.runFrom @ TCSlib.Complexity.TuringMachine.Deterministic
+INV Turing.embedEmitTM_frame -> Turing.embedEmitTM @ TCSlib.Complexity.TuringMachine.Build.Embed
+INV Turing.embedEmitTM_frame -> Turing.embedEmitCfg @ TCSlib.Complexity.TuringMachine.Build.Embed
+INV Turing.embedEmitTM_frame -> Turing.Cfg.workTapePos @ TCSlib.Complexity.TuringMachine.Configuration
+INV Turing.embedEmitTM_frame -> Turing.Cfg.inputPos @ TCSlib.Complexity.TuringMachine.Configuration
+INV Turing.embedEmitTM_frame -> Turing.Cfg.output @ TCSlib.Complexity.TuringMachine.Configuration
+INV Turing.embedEmitCfg_eq -> Turing.Cfg.state @ TCSlib.Complexity.TuringMachine.Configuration
+INV Turing.embedEmitCfg_eq -> Turing.Cfg.inputPos @ TCSlib.Complexity.TuringMachine.Configuration
+INV Turing.embedEmitCfg_eq -> Turing.Cfg.output @ TCSlib.Complexity.TuringMachine.Configuration
+INV Turing.embedEmitCfg_eq -> Turing.Cfg.workTapes @ TCSlib.Complexity.TuringMachine.Configuration
+INV Turing.embedEmitCfg_eq -> Turing.Cfg.workTapePos @ TCSlib.Complexity.TuringMachine.Configuration
+INV Turing.embedEmitCfg_eq -> Turing.embedEmitCfg @ TCSlib.Complexity.TuringMachine.Build.Embed
+INV Turing.embedEmitCfg_selected_tape -> Turing.Cfg.workTapes @ TCSlib.Complexity.TuringMachine.Configuration
+INV Turing.embedEmitCfg_selected_tape -> Turing.embedEmitCfg @ TCSlib.Complexity.TuringMachine.Build.Embed
+INV Turing.embedEmitCfg_selected_pos -> Turing.Cfg.workTapePos @ TCSlib.Complexity.TuringMachine.Configuration
+INV Turing.embedEmitCfg_selected_pos -> Turing.embedEmitCfg @ TCSlib.Complexity.TuringMachine.Build.Embed
+INV Turing.counterLoopTM_run_done -> Turing.FinTM.bufferTape @ TCSlib.Complexity.TuringMachine.Simulation
+INV Turing.counterLoopTM_run_done -> Turing.Cfg.state @ TCSlib.Complexity.TuringMachine.Configuration
+INV Turing.counterLoopTM_run_done -> Turing.counterLoopOrbit @ TCSlib.Complexity.TuringMachine.Build.CounterLoop
+INV Turing.counterLoopTM_run_done -> Turing.MultiTapeTM.runFrom @ TCSlib.Complexity.TuringMachine.Deterministic
+INV Turing.counterLoopTM_run_done -> Turing.counterOverhead @ TCSlib.Complexity.TuringMachine.Build.CounterLoop
+INV Turing.counterLoopTM_run_done -> Turing.counterLoopTM @ TCSlib.Complexity.TuringMachine.Build.CounterLoop
+INV Turing.counterLoopTM_run_done -> Turing.counterLoopCfg @ TCSlib.Complexity.TuringMachine.Build.CounterLoop
+INV Turing.counterLoopTM_run_done -> Turing.Cfg.workTapePos @ TCSlib.Complexity.TuringMachine.Configuration
+INV Turing.counterLoopTM_run_escape -> Turing.FinTM.bufferTape @ TCSlib.Complexity.TuringMachine.Simulation
+INV Turing.counterLoopTM_run_escape -> Turing.Cfg.state @ TCSlib.Complexity.TuringMachine.Configuration
+INV Turing.counterLoopTM_run_escape -> Turing.counterLoopOrbit @ TCSlib.Complexity.TuringMachine.Build.CounterLoop
+INV Turing.counterLoopTM_run_escape -> Turing.MultiTapeTM.runFrom @ TCSlib.Complexity.TuringMachine.Deterministic
+INV Turing.counterLoopTM_run_escape -> Turing.counterOverhead @ TCSlib.Complexity.TuringMachine.Build.CounterLoop
+INV Turing.counterLoopTM_run_escape -> Turing.counterLoopTM @ TCSlib.Complexity.TuringMachine.Build.CounterLoop
+INV Turing.counterLoopTM_run_escape -> Turing.counterLoopCfg @ TCSlib.Complexity.TuringMachine.Build.CounterLoop
+INV Turing.counterLoopTM_run_escape -> Turing.counterWord @ TCSlib.Complexity.TuringMachine.Build.CounterLoop
+INV Turing.counterLoopTM_run_escape -> Turing.Cfg.workTapePos @ TCSlib.Complexity.TuringMachine.Configuration
+INV Turing.counterLoop_time_le -> Turing.counterLoopOrbit @ TCSlib.Complexity.TuringMachine.Build.CounterLoop
+INV Turing.counterLoop_time_le -> Turing.counterOverhead @ TCSlib.Complexity.TuringMachine.Build.CounterLoop
+INV Turing.counterOverhead_le_of_le -> Turing.counterOverhead @ TCSlib.Complexity.TuringMachine.Build.CounterLoop
+INV Turing.counterValue_bits -> Turing.counterValue @ TCSlib.Complexity.TuringMachine.Build.CounterLoop
+INV Turing.RoundContract.counterLoopDone_traj -> Turing.Contract.Traj @ TCSlib.Complexity.TuringMachine.Build.Contract.Basic
+INV Turing.RoundContract.counterLoopDone_traj -> Turing.counterLoopTMVia @ TCSlib.Complexity.TuringMachine.Build.CounterLoop
+INV Turing.RoundContract.counterLoopDone_traj -> Turing.RoundContract.counterLoopDone @ TCSlib.Complexity.TuringMachine.Build.CounterLoop
+INV Turing.RoundContract.counterLoopDone_traj -> Turing.counterValue @ TCSlib.Complexity.TuringMachine.Build.CounterLoop
+INV Turing.RoundContract.counterLoopDone_traj -> Turing.RoundContract.time @ TCSlib.Complexity.TuringMachine.Build.Contract.Basic
+INV Turing.RoundContract.counterLoopDone_traj -> Turing.roundOrbit @ TCSlib.Complexity.TuringMachine.Build.Contract.Basic
+INV Turing.RoundContract.counterLoopDone_traj -> Turing.counterLoopBody @ TCSlib.Complexity.TuringMachine.Build.CounterLoop
+INV Turing.RoundContract.counterLoopDone_traj -> Turing.Cfg.workTapePos @ TCSlib.Complexity.TuringMachine.Configuration
+INV Turing.RoundContract.counterLoopDone_traj -> Turing.MultiTapeTM.runFrom @ TCSlib.Complexity.TuringMachine.Deterministic
+INV Turing.RoundContract.counterLoopEscape_traj -> Turing.Contract.Traj @ TCSlib.Complexity.TuringMachine.Build.Contract.Basic
+INV Turing.RoundContract.counterLoopEscape_traj -> Turing.counterLoopTMVia @ TCSlib.Complexity.TuringMachine.Build.CounterLoop
+INV Turing.RoundContract.counterLoopEscape_traj -> Turing.RoundContract.counterLoopEscape @ TCSlib.Complexity.TuringMachine.Build.CounterLoop
+INV Turing.RoundContract.counterLoopEscape_traj -> Turing.RoundContract.time @ TCSlib.Complexity.TuringMachine.Build.Contract.Basic
+INV Turing.RoundContract.counterLoopEscape_traj -> Turing.roundOrbit @ TCSlib.Complexity.TuringMachine.Build.Contract.Basic
+INV Turing.RoundContract.counterLoopEscape_traj -> Turing.counterLoopBody @ TCSlib.Complexity.TuringMachine.Build.CounterLoop
+INV Turing.RoundContract.counterLoopEscape_traj -> Turing.Cfg.workTapePos @ TCSlib.Complexity.TuringMachine.Configuration
+INV Turing.RoundContract.counterLoopEscape_traj -> Turing.MultiTapeTM.runFrom @ TCSlib.Complexity.TuringMachine.Deterministic
+INV Turing.StepBlock.loopTM -> Turing.StepBlock.Ph @ TCSlib.Complexity.TuringMachine.Build.StepBlock
+INV Turing.StepBlock.loopTM_run -> Turing.Cfg.state @ TCSlib.Complexity.TuringMachine.Configuration
+INV Turing.StepBlock.loopTM_run -> Turing.StepBlock.Ph @ TCSlib.Complexity.TuringMachine.Build.StepBlock
+INV Turing.StepBlock.loopTM_run -> Turing.StepBlock.exit @ TCSlib.Complexity.TuringMachine.Build.StepBlock
+INV Turing.StepBlock.loopTM_run -> Turing.StepBlock.Rep @ TCSlib.Complexity.TuringMachine.Build.StepBlock
+INV Turing.StepBlock.loopTM_run -> Turing.MultiTapeTM.tr @ TCSlib.Complexity.TuringMachine.Deterministic
+INV Turing.StepBlock.loopTM_run -> Turing.FinTM.bufferTape @ TCSlib.Complexity.TuringMachine.Simulation
+INV Turing.StepBlock.loopTM_run -> Turing.tableBitsK @ TCSlib.Complexity.TuringMachine.Build.StepBlock
+INV Turing.StepBlock.loopTM_run -> Turing.MultiTapeTM.runFrom @ TCSlib.Complexity.TuringMachine.Deterministic
+INV Turing.StepBlock.loopTM_run -> Turing.Cfg.output @ TCSlib.Complexity.TuringMachine.Configuration
+INV Turing.StepBlock.loopTM_run -> Turing.StepBlock.loopTM @ TCSlib.Complexity.TuringMachine.Build.StepBlockLoop
+INV Turing.StepBlock.loopTM_run -> Turing.counterLoopCfg @ TCSlib.Complexity.TuringMachine.Build.CounterLoop
+INV Turing.catalog_trace_run -> Turing.MultiTapeTM.step @ TCSlib.Complexity.TuringMachine.Deterministic
+INV Turing.catalog_trace_run -> Turing.MultiTapeTM.runFrom @ TCSlib.Complexity.TuringMachine.Deterministic
+INV Turing.catalog_trace_run -> Turing.catalogTrace @ TCSlib.Complexity.TuringMachine.Build.Catalog
+INV Turing.FinTM.exists_installCallTM -> Turing.FinTM.ComputesFunInTime @ TCSlib.Complexity.TuringMachine.Finite
+INV Turing.FinTM.exists_installCallTM -> Turing.FinTM.State @ TCSlib.Complexity.TuringMachine.Finite
+INV Turing.FinTM.exists_installCallTM -> Turing.FinTM.k @ TCSlib.Complexity.TuringMachine.Finite
+INV Turing.FinTM.exists_installCallTM -> Turing.Cfg.state @ TCSlib.Complexity.TuringMachine.Configuration
+INV Turing.FinTM.exists_installCallTM -> Turing.MultiTapeTM.runFrom @ TCSlib.Complexity.TuringMachine.Deterministic
+INV Turing.FinTM.exists_installCallTM -> Turing.FinTM.tm @ TCSlib.Complexity.TuringMachine.Finite
+INV Turing.FinTM.exists_installCallTM -> Turing.Cfg.ofWords @ TCSlib.Complexity.TuringMachine.Build.Convention
+INV Turing.FinTM.exists_installCallTM -> Turing.stateWord @ TCSlib.Complexity.TuringMachine.Build.Loop
+INV Turing.FinTM.exists_emitCallTM -> Turing.FinTM.ComputesFunInTime @ TCSlib.Complexity.TuringMachine.Finite
+INV Turing.FinTM.exists_emitCallTM -> Turing.FinTM.State @ TCSlib.Complexity.TuringMachine.Finite
+INV Turing.FinTM.exists_emitCallTM -> Turing.FinTM.k @ TCSlib.Complexity.TuringMachine.Finite
+INV Turing.FinTM.exists_emitCallTM -> Turing.Cfg.state @ TCSlib.Complexity.TuringMachine.Configuration
+INV Turing.FinTM.exists_emitCallTM -> Turing.MultiTapeTM.runFrom @ TCSlib.Complexity.TuringMachine.Deterministic
+INV Turing.FinTM.exists_emitCallTM -> Turing.FinTM.tm @ TCSlib.Complexity.TuringMachine.Finite
+INV Turing.FinTM.exists_emitCallTM -> Turing.Cfg.ofWords @ TCSlib.Complexity.TuringMachine.Build.Convention
+INV Turing.FinTM.exists_emitCallTM -> Turing.stateWord @ TCSlib.Complexity.TuringMachine.Build.Loop
+INV Turing.FinTM.exists_emitCallTM -> Turing.Cfg.inputPos @ TCSlib.Complexity.TuringMachine.Configuration
+INV Turing.FinTM.exists_emitCallTM -> Turing.Cfg.workTapes @ TCSlib.Complexity.TuringMachine.Configuration
+INV Turing.FinTM.exists_emitCallTM -> Turing.Cfg.workTapePos @ TCSlib.Complexity.TuringMachine.Configuration
+INV Turing.FinTM.exists_inputCallTM -> Turing.FinTM.ComputesFunInTime @ TCSlib.Complexity.TuringMachine.Finite
+INV Turing.FinTM.exists_inputCallTM -> Turing.FinTM.State @ TCSlib.Complexity.TuringMachine.Finite
+INV Turing.FinTM.exists_inputCallTM -> Turing.FinTM.k @ TCSlib.Complexity.TuringMachine.Finite
+INV Turing.FinTM.exists_inputCallTM -> Turing.Cfg.state @ TCSlib.Complexity.TuringMachine.Configuration
+INV Turing.FinTM.exists_inputCallTM -> Turing.MultiTapeTM.runFrom @ TCSlib.Complexity.TuringMachine.Deterministic
+INV Turing.FinTM.exists_inputCallTM -> Turing.FinTM.tm @ TCSlib.Complexity.TuringMachine.Finite
+INV Turing.FinTM.exists_inputCallTM -> Turing.Cfg.ofWords @ TCSlib.Complexity.TuringMachine.Build.Convention
+INV Turing.FinTM.exists_inputCallTM -> Turing.stateWord @ TCSlib.Complexity.TuringMachine.Build.Loop
+INV Turing.exists_inputSeekTM -> Turing.Cfg.state @ TCSlib.Complexity.TuringMachine.Configuration
+INV Turing.exists_inputSeekTM -> Turing.Cfg.workTapes @ TCSlib.Complexity.TuringMachine.Configuration
+INV Turing.exists_inputSeekTM -> Turing.Cfg.workTapePos @ TCSlib.Complexity.TuringMachine.Configuration
+INV Turing.exists_inputSeekTM -> Turing.FinTM.bufferTape @ TCSlib.Complexity.TuringMachine.Simulation
+INV Turing.exists_inputSeekTM -> Turing.Cfg.inputPos @ TCSlib.Complexity.TuringMachine.Configuration
+INV Turing.exists_inputSeekTM -> Turing.MultiTapeTM.runFrom @ TCSlib.Complexity.TuringMachine.Deterministic
+INV Turing.exists_inputSeekTM -> Turing.Cfg.output @ TCSlib.Complexity.TuringMachine.Configuration
+INV Turing.copyTM_run_ofCfg -> Turing.Cfg.state @ TCSlib.Complexity.TuringMachine.Configuration
+INV Turing.copyTM_run_ofCfg -> Turing.Cfg.workTapes @ TCSlib.Complexity.TuringMachine.Configuration
+INV Turing.copyTM_run_ofCfg -> Turing.Cfg.workTapePos @ TCSlib.Complexity.TuringMachine.Configuration
+INV Turing.copyTM_run_ofCfg -> Turing.FinTM.bufferTape @ TCSlib.Complexity.TuringMachine.Simulation
+INV Turing.copyTM_run_ofCfg -> Turing.MultiTapeTM.runFrom @ TCSlib.Complexity.TuringMachine.Deterministic
+INV Turing.copyTM_run_ofCfg -> Turing.copyTM @ TCSlib.Complexity.TuringMachine.Build.Catalog
+INV Turing.copyTM_run_ofCfg -> Turing.Cfg.inputPos @ TCSlib.Complexity.TuringMachine.Configuration
+INV Turing.copyTM_run_ofCfg -> Turing.Cfg.output @ TCSlib.Complexity.TuringMachine.Configuration
+INV Turing.clearTM_run_ofCfg -> Turing.Cfg.state @ TCSlib.Complexity.TuringMachine.Configuration
+INV Turing.clearTM_run_ofCfg -> Turing.Cfg.workTapes @ TCSlib.Complexity.TuringMachine.Configuration
+INV Turing.clearTM_run_ofCfg -> Turing.Cfg.workTapePos @ TCSlib.Complexity.TuringMachine.Configuration
+INV Turing.clearTM_run_ofCfg -> Turing.FinTM.bufferTape @ TCSlib.Complexity.TuringMachine.Simulation
+INV Turing.clearTM_run_ofCfg -> Turing.MultiTapeTM.runFrom @ TCSlib.Complexity.TuringMachine.Deterministic
+INV Turing.clearTM_run_ofCfg -> Turing.clearTM @ TCSlib.Complexity.TuringMachine.Build.Catalog
+INV Turing.clearTM_run_ofCfg -> Turing.Cfg.inputPos @ TCSlib.Complexity.TuringMachine.Configuration
+INV Turing.clearTM_run_ofCfg -> Turing.Cfg.output @ TCSlib.Complexity.TuringMachine.Configuration
+INV Turing.transferTM_run_ofCfg -> Turing.Cfg.state @ TCSlib.Complexity.TuringMachine.Configuration
+INV Turing.transferTM_run_ofCfg -> Turing.Cfg.workTapes @ TCSlib.Complexity.TuringMachine.Configuration
+INV Turing.transferTM_run_ofCfg -> Turing.Cfg.workTapePos @ TCSlib.Complexity.TuringMachine.Configuration
+INV Turing.transferTM_run_ofCfg -> Turing.FinTM.bufferTape @ TCSlib.Complexity.TuringMachine.Simulation
+INV Turing.transferTM_run_ofCfg -> Turing.MultiTapeTM.runFrom @ TCSlib.Complexity.TuringMachine.Deterministic
+INV Turing.transferTM_run_ofCfg -> Turing.transferTM @ TCSlib.Complexity.TuringMachine.Build.Catalog
+INV Turing.transferTM_run_ofCfg -> Turing.Cfg.inputPos @ TCSlib.Complexity.TuringMachine.Configuration
+INV Turing.transferTM_run_ofCfg -> Turing.Cfg.output @ TCSlib.Complexity.TuringMachine.Configuration
+INV Turing.compareTM_run_ofCfg -> Turing.Cfg.state @ TCSlib.Complexity.TuringMachine.Configuration
+INV Turing.compareTM_run_ofCfg -> Turing.Cfg.workTapes @ TCSlib.Complexity.TuringMachine.Configuration
+INV Turing.compareTM_run_ofCfg -> Turing.Cfg.workTapePos @ TCSlib.Complexity.TuringMachine.Configuration
+INV Turing.compareTM_run_ofCfg -> Turing.FinTM.bufferTape @ TCSlib.Complexity.TuringMachine.Simulation
+INV Turing.compareTM_run_ofCfg -> Turing.MultiTapeTM.runFrom @ TCSlib.Complexity.TuringMachine.Deterministic
+INV Turing.compareTM_run_ofCfg -> Turing.compareTM @ TCSlib.Complexity.TuringMachine.Build.Catalog
+INV Turing.compareTM_run_ofCfg -> Turing.Cfg.inputPos @ TCSlib.Complexity.TuringMachine.Configuration
+INV Turing.compareTM_run_ofCfg -> Turing.Cfg.output @ TCSlib.Complexity.TuringMachine.Configuration
+INV Turing.incrementTM_run_succ_ofCfg -> Turing.incFixed @ TCSlib.Complexity.TuringMachine.Build.Convention
+INV Turing.incrementTM_run_succ_ofCfg -> Turing.Cfg.state @ TCSlib.Complexity.TuringMachine.Configuration
+INV Turing.incrementTM_run_succ_ofCfg -> Turing.Cfg.workTapes @ TCSlib.Complexity.TuringMachine.Configuration
+INV Turing.incrementTM_run_succ_ofCfg -> Turing.Cfg.workTapePos @ TCSlib.Complexity.TuringMachine.Configuration
+INV Turing.incrementTM_run_succ_ofCfg -> Turing.FinTM.bufferTape @ TCSlib.Complexity.TuringMachine.Simulation
+INV Turing.incrementTM_run_succ_ofCfg -> Turing.MultiTapeTM.runFrom @ TCSlib.Complexity.TuringMachine.Deterministic
+INV Turing.incrementTM_run_succ_ofCfg -> Turing.incrementTM @ TCSlib.Complexity.TuringMachine.Build.Catalog
+INV Turing.incrementTM_run_succ_ofCfg -> Turing.Cfg.inputPos @ TCSlib.Complexity.TuringMachine.Configuration
+INV Turing.incrementTM_run_succ_ofCfg -> Turing.Cfg.output @ TCSlib.Complexity.TuringMachine.Configuration
+INV Turing.incrementTM_run_overflow_ofCfg -> Turing.incFixed @ TCSlib.Complexity.TuringMachine.Build.Convention
+INV Turing.incrementTM_run_overflow_ofCfg -> Turing.Cfg.state @ TCSlib.Complexity.TuringMachine.Configuration
+INV Turing.incrementTM_run_overflow_ofCfg -> Turing.Cfg.workTapes @ TCSlib.Complexity.TuringMachine.Configuration
+INV Turing.incrementTM_run_overflow_ofCfg -> Turing.Cfg.workTapePos @ TCSlib.Complexity.TuringMachine.Configuration
+INV Turing.incrementTM_run_overflow_ofCfg -> Turing.FinTM.bufferTape @ TCSlib.Complexity.TuringMachine.Simulation
+INV Turing.incrementTM_run_overflow_ofCfg -> Turing.MultiTapeTM.runFrom @ TCSlib.Complexity.TuringMachine.Deterministic
+INV Turing.incrementTM_run_overflow_ofCfg -> Turing.incrementTM @ TCSlib.Complexity.TuringMachine.Build.Catalog
+INV Turing.incrementTM_run_overflow_ofCfg -> Turing.Cfg.inputPos @ TCSlib.Complexity.TuringMachine.Configuration
+INV Turing.incrementTM_run_overflow_ofCfg -> Turing.Cfg.output @ TCSlib.Complexity.TuringMachine.Configuration
+INV Turing.seekEndTM_run_ofCfg -> Turing.Cfg.state @ TCSlib.Complexity.TuringMachine.Configuration
+INV Turing.seekEndTM_run_ofCfg -> Turing.fieldOffset @ TCSlib.Complexity.TuringMachine.Build.Catalog
+INV Turing.seekEndTM_run_ofCfg -> Turing.Cfg.workTapes @ TCSlib.Complexity.TuringMachine.Configuration
+INV Turing.seekEndTM_run_ofCfg -> Turing.Cfg.workTapePos @ TCSlib.Complexity.TuringMachine.Configuration
+INV Turing.seekEndTM_run_ofCfg -> Turing.fieldsTape @ TCSlib.Complexity.TuringMachine.Build.Catalog
+INV Turing.seekEndTM_run_ofCfg -> Turing.MultiTapeTM.runFrom @ TCSlib.Complexity.TuringMachine.Deterministic
+INV Turing.seekEndTM_run_ofCfg -> Turing.seekEndTM @ TCSlib.Complexity.TuringMachine.Build.Catalog
+INV Turing.seekEndTM_run_ofCfg -> Turing.Cfg.inputPos @ TCSlib.Complexity.TuringMachine.Configuration
+INV Turing.seekEndTM_run_ofCfg -> Turing.Cfg.output @ TCSlib.Complexity.TuringMachine.Configuration
+INV Turing.seekStartTM_run_ofCfg -> Turing.Cfg.state @ TCSlib.Complexity.TuringMachine.Configuration
+INV Turing.seekStartTM_run_ofCfg -> Turing.Cfg.workTapes @ TCSlib.Complexity.TuringMachine.Configuration
+INV Turing.seekStartTM_run_ofCfg -> Turing.Cfg.workTapePos @ TCSlib.Complexity.TuringMachine.Configuration
+INV Turing.seekStartTM_run_ofCfg -> Turing.fieldOffset @ TCSlib.Complexity.TuringMachine.Build.Catalog
+INV Turing.seekStartTM_run_ofCfg -> Turing.fieldsTape @ TCSlib.Complexity.TuringMachine.Build.Catalog
+INV Turing.seekStartTM_run_ofCfg -> Turing.MultiTapeTM.runFrom @ TCSlib.Complexity.TuringMachine.Deterministic
+INV Turing.seekStartTM_run_ofCfg -> Turing.seekStartTM @ TCSlib.Complexity.TuringMachine.Build.Catalog
+INV Turing.seekStartTM_run_ofCfg -> Turing.Cfg.inputPos @ TCSlib.Complexity.TuringMachine.Configuration
+INV Turing.seekStartTM_run_ofCfg -> Turing.Cfg.output @ TCSlib.Complexity.TuringMachine.Configuration
+INV Turing.skipTM_run_ofCfg -> Turing.Cfg.state @ TCSlib.Complexity.TuringMachine.Configuration
+INV Turing.skipTM_run_ofCfg -> Turing.Cfg.workTapes @ TCSlib.Complexity.TuringMachine.Configuration
+INV Turing.skipTM_run_ofCfg -> Turing.Cfg.workTapePos @ TCSlib.Complexity.TuringMachine.Configuration
+INV Turing.skipTM_run_ofCfg -> Turing.FinTM.bufferTape @ TCSlib.Complexity.TuringMachine.Simulation
+INV Turing.skipTM_run_ofCfg -> Turing.MultiTapeTM.runFrom @ TCSlib.Complexity.TuringMachine.Deterministic
+INV Turing.skipTM_run_ofCfg -> Turing.skipTM @ TCSlib.Complexity.TuringMachine.Build.Catalog
+INV Turing.skipTM_run_ofCfg -> Turing.Cfg.inputPos @ TCSlib.Complexity.TuringMachine.Configuration
+INV Turing.skipTM_run_ofCfg -> Turing.Cfg.output @ TCSlib.Complexity.TuringMachine.Configuration
+INV Turing.scanTM_run_ofCfg -> Turing.Cfg.state @ TCSlib.Complexity.TuringMachine.Configuration
+INV Turing.scanTM_run_ofCfg -> Turing.Cfg.workTapes @ TCSlib.Complexity.TuringMachine.Configuration
+INV Turing.scanTM_run_ofCfg -> Turing.Cfg.workTapePos @ TCSlib.Complexity.TuringMachine.Configuration
+INV Turing.scanTM_run_ofCfg -> Turing.FinTM.bufferTape @ TCSlib.Complexity.TuringMachine.Simulation
+INV Turing.scanTM_run_ofCfg -> Turing.MultiTapeTM.runFrom @ TCSlib.Complexity.TuringMachine.Deterministic
+INV Turing.scanTM_run_ofCfg -> Turing.scanTM @ TCSlib.Complexity.TuringMachine.Build.Catalog
+INV Turing.scanTM_run_ofCfg -> Turing.scanResult @ TCSlib.Complexity.TuringMachine.Build.Catalog
+INV Turing.scanTM_run_ofCfg -> Turing.Cfg.inputPos @ TCSlib.Complexity.TuringMachine.Configuration
+INV Turing.scanTM_run_ofCfg -> Turing.Cfg.output @ TCSlib.Complexity.TuringMachine.Configuration
+INV Turing.inputCopyTM_run_ofCfg -> Turing.Cfg.state @ TCSlib.Complexity.TuringMachine.Configuration
+INV Turing.inputCopyTM_run_ofCfg -> Turing.Cfg.inputPos @ TCSlib.Complexity.TuringMachine.Configuration
+INV Turing.inputCopyTM_run_ofCfg -> Turing.MultiTapeTM.runFrom @ TCSlib.Complexity.TuringMachine.Deterministic
+INV Turing.inputCopyTM_run_ofCfg -> Turing.inputCopyTM @ TCSlib.Complexity.TuringMachine.Build.Scan
+INV Turing.inputCopyTM_run_ofCfg -> Turing.Cfg.workTapePos @ TCSlib.Complexity.TuringMachine.Configuration
+INV Turing.inputCopyTM_run_ofCfg -> Turing.FinTM.bufferTape @ TCSlib.Complexity.TuringMachine.Simulation
+INV Turing.inputCopyTM_run_ofCfg -> Turing.Cfg.workTapes @ TCSlib.Complexity.TuringMachine.Configuration
+INV Turing.inputCopyTM_run_ofCfg -> Turing.Cfg.output @ TCSlib.Complexity.TuringMachine.Configuration
+INV Turing.inputFoldTM_run_ofCfg -> Turing.Cfg.state @ TCSlib.Complexity.TuringMachine.Configuration
+INV Turing.inputFoldTM_run_ofCfg -> Turing.Cfg.inputPos @ TCSlib.Complexity.TuringMachine.Configuration
+INV Turing.inputFoldTM_run_ofCfg -> Turing.MultiTapeTM.runFrom @ TCSlib.Complexity.TuringMachine.Deterministic
+INV Turing.inputFoldTM_run_ofCfg -> Turing.inputFoldTM @ TCSlib.Complexity.TuringMachine.Build.Scan
+INV Turing.inputFoldTM_run_ofCfg -> Turing.Cfg.workTapes @ TCSlib.Complexity.TuringMachine.Configuration
+INV Turing.inputFoldTM_run_ofCfg -> Turing.Cfg.workTapePos @ TCSlib.Complexity.TuringMachine.Configuration
+INV Turing.inputFoldTM_run_ofCfg -> Turing.Cfg.output @ TCSlib.Complexity.TuringMachine.Configuration
+INV Turing.writeConstTM_run_ofCfg -> Turing.Cfg.state @ TCSlib.Complexity.TuringMachine.Configuration
+INV Turing.writeConstTM_run_ofCfg -> Turing.MultiTapeTM.runFrom @ TCSlib.Complexity.TuringMachine.Deterministic
+INV Turing.writeConstTM_run_ofCfg -> Turing.writeConstTM @ TCSlib.Complexity.TuringMachine.Build.Scan
+INV Turing.writeConstTM_run_ofCfg -> Turing.Cfg.inputPos @ TCSlib.Complexity.TuringMachine.Configuration
+INV Turing.writeConstTM_run_ofCfg -> Turing.Cfg.workTapePos @ TCSlib.Complexity.TuringMachine.Configuration
+INV Turing.writeConstTM_run_ofCfg -> Turing.FinTM.bufferTape @ TCSlib.Complexity.TuringMachine.Simulation
+INV Turing.writeConstTM_run_ofCfg -> Turing.Cfg.workTapes @ TCSlib.Complexity.TuringMachine.Configuration
+INV Turing.writeConstTM_run_ofCfg -> Turing.Cfg.output @ TCSlib.Complexity.TuringMachine.Configuration
+INV Turing.writeAdvTM_run_ofCfg -> Turing.Cfg.state @ TCSlib.Complexity.TuringMachine.Configuration
+INV Turing.writeAdvTM_run_ofCfg -> Turing.MultiTapeTM.runFrom @ TCSlib.Complexity.TuringMachine.Deterministic
+INV Turing.writeAdvTM_run_ofCfg -> Turing.writeAdvTM @ TCSlib.Complexity.TuringMachine.Build.Scan
+INV Turing.writeAdvTM_run_ofCfg -> Turing.Cfg.inputPos @ TCSlib.Complexity.TuringMachine.Configuration
+INV Turing.writeAdvTM_run_ofCfg -> Turing.Cfg.workTapePos @ TCSlib.Complexity.TuringMachine.Configuration
+INV Turing.writeAdvTM_run_ofCfg -> Turing.FinTM.bufferTape @ TCSlib.Complexity.TuringMachine.Simulation
+INV Turing.writeAdvTM_run_ofCfg -> Turing.Cfg.workTapes @ TCSlib.Complexity.TuringMachine.Configuration
+INV Turing.writeAdvTM_run_ofCfg -> Turing.Cfg.output @ TCSlib.Complexity.TuringMachine.Configuration
+INV Turing.step_of_inputMoveAction -> Turing.Cfg.state @ TCSlib.Complexity.TuringMachine.Configuration
+INV Turing.step_of_inputMoveAction -> Turing.MultiTapeTM.tr @ TCSlib.Complexity.TuringMachine.Deterministic
+INV Turing.step_of_inputMoveAction -> Turing.Cfg.inputSymbol @ TCSlib.Complexity.TuringMachine.Configuration
+INV Turing.step_of_inputMoveAction -> Turing.Cfg.workTapeSymbols @ TCSlib.Complexity.TuringMachine.Configuration
+INV Turing.step_of_inputMoveAction -> Turing.inputMoveAction @ TCSlib.Complexity.TuringMachine.Build.Catalog
+INV Turing.step_of_inputMoveAction -> Turing.MultiTapeTM.step @ TCSlib.Complexity.TuringMachine.Deterministic
+INV Turing.step_of_inputMoveAction -> Turing.moveInputPos @ TCSlib.Complexity.TuringMachine.Configuration
+INV Turing.step_of_inputMoveAction -> Turing.Cfg.inputPos @ TCSlib.Complexity.TuringMachine.Configuration
+INV Turing.step_of_inputMoveAction -> Turing.Cfg.workTapes @ TCSlib.Complexity.TuringMachine.Configuration
+INV Turing.step_of_inputMoveAction -> Turing.Cfg.workTapePos @ TCSlib.Complexity.TuringMachine.Configuration
+INV Turing.step_of_inputMoveAction -> Turing.Cfg.output @ TCSlib.Complexity.TuringMachine.Configuration
+INV Turing.step_of_tapeAction_move -> Turing.Cfg.state @ TCSlib.Complexity.TuringMachine.Configuration
+INV Turing.step_of_tapeAction_move -> Turing.MultiTapeTM.tr @ TCSlib.Complexity.TuringMachine.Deterministic
+INV Turing.step_of_tapeAction_move -> Turing.Cfg.inputSymbol @ TCSlib.Complexity.TuringMachine.Configuration
+INV Turing.step_of_tapeAction_move -> Turing.Cfg.workTapeSymbols @ TCSlib.Complexity.TuringMachine.Configuration
+INV Turing.step_of_tapeAction_move -> Turing.tapeAction @ TCSlib.Complexity.TuringMachine.Build.Catalog
+INV Turing.step_of_tapeAction_move -> Turing.MultiTapeTM.step @ TCSlib.Complexity.TuringMachine.Deterministic
+INV Turing.step_of_tapeAction_move -> Turing.moveInputPos @ TCSlib.Complexity.TuringMachine.Configuration
+INV Turing.step_of_tapeAction_move -> Turing.Cfg.inputPos @ TCSlib.Complexity.TuringMachine.Configuration
+INV Turing.step_of_tapeAction_move -> Turing.Cfg.workTapes @ TCSlib.Complexity.TuringMachine.Configuration
+INV Turing.step_of_tapeAction_move -> Turing.Cfg.workTapePos @ TCSlib.Complexity.TuringMachine.Configuration
+INV Turing.step_of_tapeAction_move -> Turing.Cfg.output @ TCSlib.Complexity.TuringMachine.Configuration
+INV Turing.copyTM_run -> Turing.Cfg.state @ TCSlib.Complexity.TuringMachine.Configuration
+INV Turing.copyTM_run -> Turing.MultiTapeTM.runFrom @ TCSlib.Complexity.TuringMachine.Deterministic
+INV Turing.copyTM_run -> Turing.copyTM @ TCSlib.Complexity.TuringMachine.Build.Catalog
+INV Turing.copyTM_run -> Turing.Cfg.ofWords @ TCSlib.Complexity.TuringMachine.Build.Convention
+INV Turing.transferTM_run -> Turing.Cfg.state @ TCSlib.Complexity.TuringMachine.Configuration
+INV Turing.transferTM_run -> Turing.MultiTapeTM.runFrom @ TCSlib.Complexity.TuringMachine.Deterministic
+INV Turing.transferTM_run -> Turing.transferTM @ TCSlib.Complexity.TuringMachine.Build.Catalog
+INV Turing.transferTM_run -> Turing.Cfg.ofWords @ TCSlib.Complexity.TuringMachine.Build.Convention
+INV Turing.clearTM_run -> Turing.Cfg.state @ TCSlib.Complexity.TuringMachine.Configuration
+INV Turing.clearTM_run -> Turing.MultiTapeTM.runFrom @ TCSlib.Complexity.TuringMachine.Deterministic
+INV Turing.clearTM_run -> Turing.clearTM @ TCSlib.Complexity.TuringMachine.Build.Catalog
+INV Turing.clearTM_run -> Turing.Cfg.ofWords @ TCSlib.Complexity.TuringMachine.Build.Convention
+INV Turing.compareTM_run -> Turing.Cfg.state @ TCSlib.Complexity.TuringMachine.Configuration
+INV Turing.compareTM_run -> Turing.MultiTapeTM.runFrom @ TCSlib.Complexity.TuringMachine.Deterministic
+INV Turing.compareTM_run -> Turing.compareTM @ TCSlib.Complexity.TuringMachine.Build.Catalog
+INV Turing.compareTM_run -> Turing.Cfg.ofWords @ TCSlib.Complexity.TuringMachine.Build.Convention
+INV Turing.incrementTM_run_succ -> Turing.incFixed @ TCSlib.Complexity.TuringMachine.Build.Convention
+INV Turing.incrementTM_run_succ -> Turing.Cfg.state @ TCSlib.Complexity.TuringMachine.Configuration
+INV Turing.incrementTM_run_succ -> Turing.MultiTapeTM.runFrom @ TCSlib.Complexity.TuringMachine.Deterministic
+INV Turing.incrementTM_run_succ -> Turing.incrementTM @ TCSlib.Complexity.TuringMachine.Build.Catalog
+INV Turing.incrementTM_run_succ -> Turing.Cfg.ofWords @ TCSlib.Complexity.TuringMachine.Build.Convention
+INV Turing.incrementTM_run_overflow -> Turing.incFixed @ TCSlib.Complexity.TuringMachine.Build.Convention
+INV Turing.incrementTM_run_overflow -> Turing.Cfg.state @ TCSlib.Complexity.TuringMachine.Configuration
+INV Turing.incrementTM_run_overflow -> Turing.MultiTapeTM.runFrom @ TCSlib.Complexity.TuringMachine.Deterministic
+INV Turing.incrementTM_run_overflow -> Turing.incrementTM @ TCSlib.Complexity.TuringMachine.Build.Catalog
+INV Turing.incrementTM_run_overflow -> Turing.Cfg.ofWords @ TCSlib.Complexity.TuringMachine.Build.Convention
+exit=0

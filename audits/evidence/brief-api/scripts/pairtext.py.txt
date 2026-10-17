@@ -1,0 +1,23 @@
+"""For named declaration pairs of one file, print the screen's body of each and the >=25-character
+shared segments (the v3 screen's own stripping, segmentation and tiling). Read-only.
+Usage: python3 -I pairtext.py <screen script> <root> <file> <a>:<b> ..."""
+import sys, re, types
+src = open(sys.argv[1], encoding='utf-8').read()
+cut = src.index('decls = []')
+mod = types.ModuleType('scr'); mod.__dict__['__name__'] = 'scr'
+sys.argv_saved = sys.argv; root, path = sys.argv[2], sys.argv[3]
+sys.argv = ['x', root, path]
+exec(src[:cut], mod.__dict__)
+t = mod.strip(open(f'{root}/{path}', encoding='utf-8').read()); ms = list(mod.DECL.finditer(t))
+bodies = {}
+for i, m in enumerate(ms):
+    end = ms[i + 1].start() if i + 1 < len(ms) else len(t)
+    bodies.setdefault(m.group(3), re.sub(r'\s+', '', mod.body(t[m.start():end])))
+for pr in sys.argv_saved[4:]:
+    a, b = pr.split(':'); ta, tb = bodies[a], bodies[b]
+    segs = []; x, y = tb, ta
+    while True:
+        n, seg = mod.lcs(x, y)
+        if n < 25: break
+        segs.append(seg); x = x.replace(seg, '\x00', 1); y = y.replace(seg, '\x01', 1)
+    print(f'== {a} <- {b}\n  body({b}) = {tb[:160]}\n  shared: {segs}')

@@ -1,0 +1,16 @@
+@Turing.counterLoopBody_state : ∀ {k : ℕ} {Γ S : Type} {x : List Γ} (a : S)
+  (d : Turing.Cfg (k + 1) Γ (Turing.CounterLoopState S) x), (Turing.counterLoopBody a d).state = some a
+@Turing.counterLoopBody_inputPos : ∀ {k : ℕ} {Γ S : Type} {x : List Γ} (a : S)
+  (d : Turing.Cfg (k + 1) Γ (Turing.CounterLoopState S) x), (Turing.counterLoopBody a d).inputPos = d.inputPos
+@Turing.counterLoopBody_workTapes : ∀ {k : ℕ} {Γ S : Type} {x : List Γ} (a : S)
+  (d : Turing.Cfg (k + 1) Γ (Turing.CounterLoopState S) x) (j : Fin k) (a_1 : ℤ),
+  (Turing.counterLoopBody a d).workTapes j a_1 = d.workTapes j.castSucc a_1
+@Turing.counterLoopBody_workTapePos : ∀ {k : ℕ} {Γ S : Type} {x : List Γ} (a : S)
+  (d : Turing.Cfg (k + 1) Γ (Turing.CounterLoopState S) x) (j : Fin k),
+  (Turing.counterLoopBody a d).workTapePos j = d.workTapePos j.castSucc
+@Turing.counterLoopBody_output : ∀ {k : ℕ} {Γ S : Type} {x : List Γ} (a : S)
+  (d : Turing.Cfg (k + 1) Γ (Turing.CounterLoopState S) x), (Turing.counterLoopBody a d).output = d.output
+'Turing.decFixed_nil' does not depend on any axioms
+'Turing.decFixed_true_cons' does not depend on any axioms
+'Turing.decFixed_false_cons' does not depend on any axioms
+exit=0

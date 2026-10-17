@@ -1,0 +1,27 @@
+== safeSegment_iff <- segment_iff
+  body(segment_iff) = Iff.rflnamespaceSegmentvariable{S:Type}{x:ListΓ}{M:MultiTapeTMkΓS}{F:Set(OptionS)}{P:(Fink→ℤ)→Prop}
+  shared: ['eSegmentvariable{S:Type}{x:ListΓ}{M:MultiTapeTMkΓS}{F:Set(OptionS)}{P:(Fink→ℤ)→Prop}']
+== endpoint_not_mem <- traj_iff
+  body(traj_iff) = Iff.rflsectionTrajBasicvariable{S:Type}{M:MultiTapeTMkΓS}{entry:S}{exits:Set(OptionS)}{ι:Type}{x:ListΓ}
+  shared: ['variable{S:Type}{M:MultiTapeTMkΓS}{entry:S}{exits:Set(OptionS)}{ι:Type}{x:ListΓ}']
+== Frames.trans <- traj_iff
+  body(traj_iff) = Iff.rflsectionTrajBasicvariable{S:Type}{M:MultiTapeTMkΓS}{entry:S}{exits:Set(OptionS)}{ι:Type}{x:ListΓ}
+  shared: ['variable{S:Type}{M:MultiTapeTMkΓS}{entry:S}{exits:Set(OptionS)}{ι:Type}{x:ListΓ}']
+== Cfg.SameOutside.keep_blank <- traj_iff
+  body(traj_iff) = Iff.rflsectionTrajBasicvariable{S:Type}{M:MultiTapeTMkΓS}{entry:S}{exits:Set(OptionS)}{ι:Type}{x:ListΓ}
+  shared: ['variable{S:Type}{M:MultiTapeTMkΓS}{entry:S}{exits:Set(OptionS)}{ι:Type}{x:ListΓ}']
+== round_iff <- segment_iff
+  body(segment_iff) = Iff.rflnamespaceSegmentvariable{S:Type}{x:ListΓ}{M:MultiTapeTMkΓS}{F:Set(OptionS)}{P:(Fink→ℤ)→Prop}
+  shared: ['variable{S:Type}{x:ListΓ}{M:MultiTapeTMkΓS}{', ':Set(OptionS)}{P:(Fink→ℤ)→Prop}']
+== segment_iff <- round_iff
+  body(round_iff) = Iff.rflnamespaceRoundvariable{S:Type}{x:ListΓ}{M:MultiTapeTMkΓS}{a:S}{E:Set(OptionS)}{P:(Fink→ℤ)→Prop}
+  shared: ['variable{S:Type}{x:ListΓ}{M:MultiTapeTMkΓS}{', ':Set(OptionS)}{P:(Fink→ℤ)→Prop}']
+== safeSegment_iff <- round_iff
+  body(round_iff) = Iff.rflnamespaceRoundvariable{S:Type}{x:ListΓ}{M:MultiTapeTMkΓS}{a:S}{E:Set(OptionS)}{P:(Fink→ℤ)→Prop}
+  shared: ['variable{S:Type}{x:ListΓ}{M:MultiTapeTMkΓS}{', ':Set(OptionS)}{P:(Fink→ℤ)→Prop}']
+== traj_iff <- endpoint_not_mem
+  body(endpoint_not_mem) = h.2endSafeSegmentnamespaceContractvariable{S:Type}{M:MultiTapeTMkΓS}{entry:S}{exits:Set(OptionS)}{ι:Type}{x:ListΓ}
+  shared: ['variable{S:Type}{M:MultiTapeTMkΓS}{entry:S}{exits:Set(OptionS)}{ι:Type}{x:ListΓ}']
+== traj_iff <- Cfg.SameOutside.keep_blank
+  body(Cfg.SameOutside.keep_blank) = funq=>(hjq(bysimp[hfp])).trans(hbq)namespaceContractvariable{S:Type}{M:MultiTapeTMkΓS}{entry:S}{exits:Set(OptionS)}{ι:Type}{x:ListΓ}
+  shared: ['variable{S:Type}{M:MultiTapeTMkΓS}{entry:S}{exits:Set(OptionS)}{ι:Type}{x:ListΓ}']

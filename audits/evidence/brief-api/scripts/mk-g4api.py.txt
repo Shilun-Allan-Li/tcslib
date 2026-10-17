@@ -1,0 +1,161 @@
+"""G4 continuation API: the predicate `_iff` lemmas of Contract/Basic, `roundOrbit_zero`, the hull
+formulas, and `Cfg.bindState`'s field equations (Contract/Seam). Asserted edits.
+Usage: python3 -I mk-g4api.py <worktree root>"""
+import sys
+root = sys.argv[1]
+B = f'{root}/TCSlib/Complexity/TuringMachine/Build/Contract/Basic.lean'
+G = f'{root}/TCSlib/Complexity/TuringMachine/Build/Contract/Seam.lean'
+
+def edit(path, pairs):
+    t = open(path, encoding='utf-8').read()
+    for a, b in pairs:
+        assert t.count(a) == 1, (path, a[:70], t.count(a))
+        t = t.replace(a, b)
+    open(path, 'w', encoding='utf-8').write(t)
+
+edit(B, [
+("""    (d' : Cfg k Γ S' x) : Prop :=
+  ∀ j q, q ∉ fp j → d'.workTapes j q = d.workTapes j q
+""",
+"""    (d' : Cfg k Γ S' x) : Prop :=
+  ∀ j q, q ∉ fp j → d'.workTapes j q = d.workTapes j q
+
+/-- `Turing.Cfg.SameOutside fp d d'` holds exactly when every cell `q` of every work tape `j`
+outside `fp j` holds in `d'` what it holds in `d`:
+`∀ j q, q ∉ fp j → d'.workTapes j q = d.workTapes j q` (the definition as a lemma). -/
+theorem Cfg.sameOutside_iff {S S' : Type} {x : List Γ} (fp : Fin k → Set ℤ) (d : Cfg k Γ S x)
+    (d' : Cfg k Γ S' x) :
+    Cfg.SameOutside fp d d' ↔ ∀ j q, q ∉ fp j → d'.workTapes j q = d.workTapes j q :=
+  Iff.rfl
+"""),
+("""def HeadBox (lo hi : Fin k → ℤ) (p : Fin k → ℤ) : Prop :=
+  ∀ j, p j ∈ Finset.Icc (lo j) (hi j)
+""",
+"""def HeadBox (lo hi : Fin k → ℤ) (p : Fin k → ℤ) : Prop :=
+  ∀ j, p j ∈ Finset.Icc (lo j) (hi j)
+
+/-- A head vector `p` lies in the box `Turing.HeadBox lo hi` exactly when
+`p j ∈ [lo j, hi j]` on every tape `j` (the definition as a lemma). -/
+theorem headBox_iff (lo hi p : Fin k → ℤ) :
+    HeadBox lo hi p ↔ ∀ j, p j ∈ Finset.Icc (lo j) (hi j) :=
+  Iff.rfl
+"""),
+("""    (P : (Fin k → ℤ) → Prop) (a b : Cfg k Γ S x) (t : ℕ) : Prop :=
+  M.runFrom a t = b ∧ (∀ u < t, (M.runFrom a u).state ∉ F) ∧
+    ∀ u ≤ t, P (M.runFrom a u).workTapePos
+""",
+"""    (P : (Fin k → ℤ) → Prop) (a b : Cfg k Γ S x) (t : ℕ) : Prop :=
+  M.runFrom a t = b ∧ (∀ u < t, (M.runFrom a u).state ∉ F) ∧
+    ∀ u ≤ t, P (M.runFrom a u).workTapePos
+
+/-- `Turing.Segment M F P a b t` holds exactly when `M.runFrom a t = b`, no state at a time
+`u < t` lies in `F`, and the head vector satisfies `P` at every time `u ≤ t` (the definition as
+a lemma). -/
+theorem segment_iff {S : Type} {x : List Γ} (M : MultiTapeTM k Γ S) (F : Set (Option S))
+    (P : (Fin k → ℤ) → Prop) (a b : Cfg k Γ S x) (t : ℕ) :
+    Segment M F P a b t ↔ M.runFrom a t = b ∧ (∀ u < t, (M.runFrom a u).state ∉ F) ∧
+      ∀ u ≤ t, P (M.runFrom a u).workTapePos :=
+  Iff.rfl
+"""),
+("""    (P : (Fin k → ℤ) → Prop) (c c' : Cfg k Γ S x) (t : ℕ) : Prop :=
+  c.state = some a ∧ 0 < t ∧ M.runFrom c t = c' ∧ c'.state ∈ insert (some a) E ∧
+    (∀ u, 0 < u → u < t → (M.runFrom c u).state ∉ roundStop a E) ∧
+    ∀ u ≤ t, P (M.runFrom c u).workTapePos
+""",
+"""    (P : (Fin k → ℤ) → Prop) (c c' : Cfg k Γ S x) (t : ℕ) : Prop :=
+  c.state = some a ∧ 0 < t ∧ M.runFrom c t = c' ∧ c'.state ∈ insert (some a) E ∧
+    (∀ u, 0 < u → u < t → (M.runFrom c u).state ∉ roundStop a E) ∧
+    ∀ u ≤ t, P (M.runFrom c u).workTapePos
+
+/-- `Turing.Round M a E P c c' t` holds exactly when `c` is at the anchor `a`, `0 < t`,
+`M.runFrom c t = c'`, the state of `c'` is `some a` or in `E`, every state at a time
+`0 < u < t` lies outside `Turing.roundStop a E`, and the head vector satisfies `P` at every time
+`u ≤ t` (the definition as a lemma). -/
+theorem round_iff {S : Type} {x : List Γ} (M : MultiTapeTM k Γ S) (a : S) (E : Set (Option S))
+    (P : (Fin k → ℤ) → Prop) (c c' : Cfg k Γ S x) (t : ℕ) :
+    Round M a E P c c' t ↔ c.state = some a ∧ 0 < t ∧ M.runFrom c t = c' ∧
+      c'.state ∈ insert (some a) E ∧
+      (∀ u, 0 < u → u < t → (M.runFrom c u).state ∉ roundStop a E) ∧
+      ∀ u ≤ t, P (M.runFrom c u).workTapePos :=
+  Iff.rfl
+"""),
+("""    (c : Cfg k Γ S x) (r : ℕ) : Cfg k Γ S x :=
+  (fun c => M.runFrom c (τ c))^[r] c
+""",
+"""    (c : Cfg k Γ S x) (r : ℕ) : Cfg k Γ S x :=
+  (fun c => M.runFrom c (τ c))^[r] c
+
+/-- The orbit starts at its start: `roundOrbit M τ c 0 = c`. -/
+theorem roundOrbit_zero {S : Type} {x : List Γ} (M : MultiTapeTM k Γ S) (τ : Cfg k Γ S x → ℕ)
+    (c : Cfg k Γ S x) : roundOrbit M τ c 0 = c :=
+  rfl
+"""),
+("""def hullLo (R : RoundContract M a E ι x) (i : ι) (c : Cfg k Γ S x) (n : ℕ) (j : Fin k) : ℤ :=
+  (Finset.range (n + 1)).inf' Finset.nonempty_range_add_one fun r =>
+    if r < n then R.lo i (roundOrbit M (R.time i) c r) j
+    else (roundOrbit M (R.time i) c r).workTapePos j
+""",
+"""def hullLo (R : RoundContract M a E ι x) (i : ι) (c : Cfg k Γ S x) (n : ℕ) (j : Fin k) : ℤ :=
+  (Finset.range (n + 1)).inf' Finset.nonempty_range_add_one fun r =>
+    if r < n then R.lo i (roundOrbit M (R.time i) c r) j
+    else (roundOrbit M (R.time i) c r).workTapePos j
+
+/-- The hull's lower end on tape `j` is the least, over `r ≤ n`, of the `r`-th round's lower end
+`R.lo i (orbit r) j` for `r < n` and of the `n`-th orbit point's head, the orbit taken with the
+round contract's time (the definition as a lemma). -/
+theorem hullLo_eq (R : RoundContract M a E ι x) (i : ι) (c : Cfg k Γ S x) (n : ℕ) (j : Fin k) :
+    R.hullLo i c n j = (Finset.range (n + 1)).inf' Finset.nonempty_range_add_one fun r =>
+      if r < n then R.lo i (roundOrbit M (R.time i) c r) j
+      else (roundOrbit M (R.time i) c r).workTapePos j :=
+  rfl
+"""),
+("""def hullHi (R : RoundContract M a E ι x) (i : ι) (c : Cfg k Γ S x) (n : ℕ) (j : Fin k) : ℤ :=
+  (Finset.range (n + 1)).sup' Finset.nonempty_range_add_one fun r =>
+    if r < n then R.hi i (roundOrbit M (R.time i) c r) j
+    else (roundOrbit M (R.time i) c r).workTapePos j
+""",
+"""def hullHi (R : RoundContract M a E ι x) (i : ι) (c : Cfg k Γ S x) (n : ℕ) (j : Fin k) : ℤ :=
+  (Finset.range (n + 1)).sup' Finset.nonempty_range_add_one fun r =>
+    if r < n then R.hi i (roundOrbit M (R.time i) c r) j
+    else (roundOrbit M (R.time i) c r).workTapePos j
+
+/-- The hull's upper end on tape `j` is the greatest, over `r ≤ n`, of the `r`-th round's upper
+end `R.hi i (orbit r) j` for `r < n` and of the `n`-th orbit point's head, the orbit taken with
+the round contract's time (the definition as a lemma). -/
+theorem hullHi_eq (R : RoundContract M a E ι x) (i : ι) (c : Cfg k Γ S x) (n : ℕ) (j : Fin k) :
+    R.hullHi i c n j = (Finset.range (n + 1)).sup' Finset.nonempty_range_add_one fun r =>
+      if r < n then R.hi i (roundOrbit M (R.time i) c r) j
+      else (roundOrbit M (R.time i) c r).workTapePos j :=
+  rfl
+"""),
+("""    (R : ι → Cfg k Γ S x → (Fin k → ℤ) → Prop) : Prop :=
+  ∀ i d, d.state = some entry → C.pre i d → ∀ u ≤ C.time i d, R i d (M.runFrom d u).workTapePos
+""",
+"""    (R : ι → Cfg k Γ S x → (Fin k → ℤ) → Prop) : Prop :=
+  ∀ i d, d.state = some entry → C.pre i d → ∀ u ≤ C.time i d, R i d (M.runFrom d u).workTapePos
+
+/-- A contract has the joint trajectory `R` exactly when, for every index `i` and every
+admissible start `d` at the entry, the head vector satisfies `R i d` at every time
+`u ≤ C.time i d` (the definition as a lemma). -/
+theorem traj_iff {S : Type} {M : MultiTapeTM k Γ S} {entry : S} {exits : Set (Option S)}
+    {ι : Type} {x : List Γ} (C : Contract M entry exits ι x)
+    (R : ι → Cfg k Γ S x → (Fin k → ℤ) → Prop) :
+    C.Traj R ↔ ∀ i d, d.state = some entry → C.pre i d →
+      ∀ u ≤ C.time i d, R i d (M.runFrom d u).workTapePos :=
+  Iff.rfl
+"""),
+])
+
+edit(G, [
+("""    Cfg k Γ S' x :=
+  ⟨d.state.bind f, d.inputPos, d.workTapes, d.workTapePos, d.output⟩
+""",
+"""    Cfg k Γ S' x :=
+  ⟨d.state.bind f, d.inputPos, d.workTapes, d.workTapePos, d.output⟩
+
+/-! The redirect's fields as equations, generated without the `simp` attribute (`policy.md` §1):
+the state is `d.state.bind f`, and the input position, tapes, heads and output are `d`'s. -/
+attribute [simps (config := { isSimp := false })] Turing.Cfg.bindState
+"""),
+])
+print('ok')

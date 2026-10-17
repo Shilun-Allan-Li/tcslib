@@ -910,7 +910,55 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
   - **The replay passed (user, 2026-10-16):** 86 of 86, sorry counts static-equal. The
     snapshot `oleans-lm11a` is the tip plus #116 plus #117. The screen shows no new copied
     proof.
-  - The statement gate is staged in folder 33.
+  - **The statement gate is staged:** `infra_local/gate-dispatches/33-mig11a-statements-gate/`,
+    bundle SHA-256 `84d0442f…b99b` (39 sections; Lean `1358ff73`, other `455cb240`).
+    **Dispatched (user, 2026-10-16).**
+  - **Gate: PASS, 0/0/2/0, CLOSED (2026-10-16).** `audits/mig11a-statements-{findings,resolutions}.md`.
+    Minor 1 (a docstring claimed a width-preserving `fix`) is fixed in `98472df2`, docstring only;
+    minor 2 (a stale lint log) is corrected: 0 FAIL, 69 WARN over 79 files at `1358ff73`.
+    **Ready to merge at `98472df2`, before #118.**
+  - **Follow-up (the review, 2026-10-16):** publish `incFixed_length` (`Build/Convention`) and
+    `decFixed_length` (`Build/CounterLoop`, from `counter_dec_spec`), each
+    `fix w = some v → v.length = w.length`. Then have the private copies `rt_incFixed_length`
+    (`RecordTable`) and `sc_dec_success_width` (`StepClock`) cite them. MIG-12 does not need them,
+    because its transport takes the width as a hypothesis. They ride with the next PR that edits
+    those files.
+- **The briefs' pre-ship inventories (2026-10-16), and PR #118, the brief-inventory API**
+  (`lean/brief-api`, `277735f2`, stacked on #117).
+  - **The inventories:** U2-S, the F3 continuation, F5 and cont6, measured at the tip (#116's
+    Lean). A read-only elaborator lists the definitions in each brief's cited statements; the
+    list is crossed with lint check 8 and judged against each route
+    (`audits/evidence/brief-api/NOTES.md`).
+  - **The gaps it fills:**
+    - `bufferedCompTM`, `universalPrefixTM` and `prefixCanonTM` (`k`/`State`), for U2-S;
+    - `VirtualTag`, `vhostBuffer`, `vhostBank`, for F5;
+    - `RecSym.digitEmb`, `posWidth`, `binDigits`, for F3;
+    - `counterLoopBody`, `stateWord`, for cont6;
+    - `decFixed`, for #117 and MIG-12.
+  - **Checks:** elaboration clean, standard axioms, freeze adds only; check 8 goes 168 → 158.
+    Pack `audits/brief-api-pack.md`.
+  - **The replay** `replay-lbapi.sh` (311 modules, from `oleans-lm11a`): **passed (user,
+    2026-10-16)**, 311 of 311, static-equal (94). The screen of the six files shows 0 new pairs
+    (404 declarations, 167 pairs at base and head).
+  - **Second commit `36325650`, for the G4 continuation** (2026-10-16). G4's pre-ship inventory
+    (the 94 probe names and the 260 published lemmas its route reads) found that the
+    contract layer's predicates have no `_iff`: `Round`, `Segment`, `HeadBox`,
+    `Cfg.SameOutside`, `Contract.Traj`. The rebalance scan's rounds (two escapes and a head
+    relation) cannot come from `Round.of_cut`. Also missing were `roundOrbit_zero`, the hull
+    formulas, and `Cfg.bindState`'s fields (`inPhase_post` is stated through it).
+    - Added before the gate, following the user's #116 precedent (the zone API, option (a)).
+    - Checks clean; check 8 drops 6 more. The two-file screen's 9 new pairs are the
+      `variable`-line artifact.
+    - **The chained replay `replay-lbapi2.sh` (86 modules, from `oleans-lbapi`) is ready for
+      the user.**
+    - G4's partial helpers that unfold `zonedTape`, `zoneSlotOf` and `zoneCapacity` re-point
+      to #116's lemmas in the continuation brief.
+  - **Measured for issue (U2-S):** order 91, base sorry set 35 (cross-checked against the
+    replays, 0 mismatches), probe 85 names. F5: order 79, sorry set 35. The briefs issue after
+    #118 merges.
+- **#116 merged (user, 2026-10-16; `d1bf6c99`).** The tip's Lean is `93c4c630`, so its snapshot
+  is `oleans-lcapi`. #117 is brought up to date (`1358ff73`, Lean unchanged since its replay) and
+  GitHub reports it clean.
 - **#116's merge check (2026-10-16):** GitHub showed #116 as conflicting with a stale base
   (`eaedd234`). A local merge was clean. The tip, with records only, was merged into
   `lean/core-api` (`b22e7214`); its Lean content is identical to the gated `93c4c630`, and

@@ -64,6 +64,9 @@ The patch is `mig11a.patch`: one commit, `08bcc57d`, on the tip `c2ec34c5`. It i
   the one authorized body change is `compareTM_run_ofCfg`.
 - **Lint** (`logs/lint-head.txt`): 0 FAIL, 72 WARN over 79 files. The new file adds no WARN, and
   check 8 lists none of the new definitions.
+  - **Corrected at the gate (minor 2):** that log was taken before the counter contracts were
+    factored and before #116 merged. Re-run at `1358ff73` (`gate/lint-head-1358ff73.txt`): **0 FAIL,
+    69 WARN over 79 files**, the tip's WARN set; `Contract/Counter` 131 lines, 3 public, no WARN.
 - **The development probe:** `probes/StopScratch.lean.txt`, `compareStop`'s lemmas developed
   against the snapshot before insertion.
 - **Screen** (`logs/screen-{base,head}.txt`, `logs/screen-delta.log`; the population is `Catalog`,
@@ -80,3 +83,15 @@ The patch is `mig11a.patch`: one commit, `08bcc57d`, on the tip `c2ec34c5`. It i
     `replay-lm11a-static.txt`).
   - On the 85 modules shared with #116's replay they are unchanged; the 86th is the new
     `Contract/Counter`.
+
+## The statement gate (2026-10-16)
+
+**PASS, 0 blockers, 0 majors, 2 minors: CLOSED.** Findings `audits/mig11a-statements-findings.md`
+(verbatim); resolutions `audits/mig11a-statements-resolutions.md`; the review sub-agent's check
+`gate/gate-review.md`.
+- **Minor 1:** `counterRowContract`'s docstring claimed a width-preserving `fix`. Fixed in
+  `98472df2`, docstring only (`gate/repair-docstring.patch`). `Contract/Counter` re-elaborated
+  against `oleans-lm11a`: 0 errors, 0 warnings (`gate/elab-ContractCounter-docfix.out`).
+- **Minor 2:** the stale lint log, corrected above.
+- The replay at `b131d239` covers the head's Lean: no `.lean` file differs from `1358ff73`, and
+  `98472df2` changes one docstring.

@@ -1,0 +1,24 @@
+
+open Lean Elab Command in
+/-- Maintainer pre-ship inventory (read-only): the definitions (not theorems, instances,
+structures or inductives) of `TCSlib` modules that occur in the *types* of the named constants,
+with their modules: what a consumer reading those statements must read. -/
+elab "#def_inventory " ids:ident* : command => do
+  let env ← getEnv
+  let mut seen : NameSet := {}
+  let mut out : Array String := #[]
+  for id in ids do
+    let some ci := env.find? id.getId | throwError "unknown constant {id.getId}"
+    for c in ci.type.getUsedConstants do
+      if seen.contains c then continue
+      seen := seen.insert c
+      match env.find? c with
+      | some (.defnInfo _) =>
+        let modName := match env.getModuleIdxFor? c with
+          | some idx => env.header.moduleNames[idx.toNat]!.toString
+          | none => "(this file)"
+        if modName.startsWith "TCSlib" || modName == "(this file)" then
+          if !(Lean.Meta.isInstanceCore env c) && !c.isInternal then
+            out := out.push s!"{c} @ {modName}"
+      | _ => pure ()
+  logInfo m!"{String.intercalate "\n" (out.qsort (· < ·)).toList}"
