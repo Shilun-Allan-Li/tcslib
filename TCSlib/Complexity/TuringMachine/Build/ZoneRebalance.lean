@@ -138,12 +138,12 @@ private lemma zr_read_slot {k ℓ : ℕ} (side : Bool) (z : Fin k → ZoneConten
     cases side
     · exact zonedTape_left z i p hp
     · exact zonedTape_right z i p hp
-  rw [hcell]
-  rfl
+  simp only [hcell, Option.map_some, zoneSlotOf_inr]
 
 /-- Every physical zone has positive capacity. -/
-private lemma zr_capacity_pos (i : ℕ) : 0 < zoneCapacity i :=
-  Nat.mul_pos (by decide) (Nat.two_pow_pos i)
+private lemma zr_capacity_pos (i : ℕ) : 0 < zoneCapacity i := by
+  rw [zoneCapacity_eq]
+  exact Nat.mul_pos (by decide) (Nat.two_pow_pos i)
 
 /-- Inner packing turns a buffer-slot test into a length comparison. -/
 private lemma zr_slot_empty_iff {k ℓ : ℕ} (side : Bool) (z : Fin k → ZoneContents ℓ)
@@ -210,7 +210,7 @@ private lemma zr_scan_short {k ℓ : ℕ} (side : Bool) (z : Fin k → ZoneConte
 private lemma zr_ruler_length (i : ℕ) (hi : 1 ≤ i) : zoneCapacity (i - 1) = 2 ^ i := by
   have he : i = (i - 1) + 1 := by omega
   conv_rhs => rw [he, pow_succ]
-  simp only [zoneCapacity, Nat.mul_comm]
+  simp only [zoneCapacity_eq, Nat.mul_comm]
 
 /-- The level extent has a uniform geometric bound, including level zero. -/
 private lemma zr_extent_cost (i : ℕ) : zoneStart (i + 1) ≤ 6 * (2 ^ i + 1) := by
@@ -225,16 +225,14 @@ private lemma zr_extent_cost (i : ℕ) : zoneStart (i + 1) ≤ 6 * (2 ^ i + 1) :
 its absolute distance, and swapping contents exchanges the selected side's word. -/
 private lemma zr_mirror_tape {k ℓ : ℕ} (z : Fin k → ZoneContents ℓ) (c : ℤ) :
     zonedTape (fun t => (z t).swap) c = zonedTape z (-c) := by
-  by_cases hc : c = 0
-  · subst c
-    rfl
-  · have hn : -c ≠ 0 := neg_ne_zero.mpr hc
-    simp only [zonedTape, hc, hn, if_false]
-    by_cases hp : 0 < c
-    · rw [if_pos hp, if_neg (by omega), neg_neg]
-      rfl
-    · rw [if_neg hp, if_pos (by omega)]
-      rfl
+  rcases lt_trichotomy c 0 with hn | rfl | hp
+  · rw [zonedTape_of_neg _ hn, zonedTape_of_pos _ (by omega)]
+    simp only [zoneCellAt_eq, ZoneContents.words_false, ZoneContents.swap_left,
+      ZoneContents.words_true]
+  · simp only [neg_zero, zonedTape_zero, ZoneContents.swap_home]
+  · rw [zonedTape_of_pos _ hp, zonedTape_of_neg _ (by omega)]
+    simp only [neg_neg, zoneCellAt_eq, ZoneContents.words_true, ZoneContents.swap_right,
+      ZoneContents.words_false]
 
 /-- The extension writes its two constant half-words on either side of home. -/
 private lemma zr_extend_cell {k ℓ : ℕ} (side : Bool) (z : Fin k → ZoneContents ℓ)
@@ -348,6 +346,297 @@ private def zr_cellContract {k : ℕ} (i : Fin 2) (choose : Option (ZoneSym k) �
         zr_cell_step i choose wr dir d hd]
       exact Finset.mem_Icc.mpr ⟨min_le_right _ _, le_max_right _ _⟩
 
+/-- Agreement with each delimited field determines the layout up to its end offset.
+
+**Proof sketch.** Induct on the number of fields covered. A position is either before the
+last field's offset or in that field, including its right separator. Use the public field
+word theorem in the latter case; no layout implementation is unfolded. -/
+private lemma zr_fieldsTape_eq {Γ : Type} (fs : List (List Γ)) (tape : ℤ → Option Γ)
+    (hword : ∀ (j : ℕ) (hj : j < fs.length) (q : ℤ), 0 ≤ q →
+      q ≤ (fs[j].length : ℤ) →
+      tape ((fieldOffset fs j : ℤ) + q) = FinTM.bufferTape fs[j] q)
+    (p : ℤ) (hp : 0 ≤ p) (he : p < (fieldOffset fs fs.length : ℤ)) :
+    tape p = fieldsTape fs p := by
+  have cover : ∀ n, n ≤ fs.length → ∀ q : ℤ, 0 ≤ q →
+      q < (fieldOffset fs n : ℤ) → tape q = fieldsTape fs q := by
+    intro n
+    induction n with
+    | zero =>
+      intro hn q hq hend
+      rw [fieldOffset_zero] at hend
+      omega
+    | succ n ih =>
+      intro hn q hq hend
+      by_cases hb : q < (fieldOffset fs n : ℤ)
+      · exact ih (by omega) q hq hb
+      · have hindex : n < fs.length := by omega
+        have hs := fieldOffset_succ fs n hindex
+        have h0 : 0 ≤ q - (fieldOffset fs n : ℤ) := by omega
+        have h1 : q - (fieldOffset fs n : ℤ) ≤ (fs[n].length : ℤ) := by
+          rw [hs] at hend
+          omega
+        have hq' : (fieldOffset fs n : ℤ) + (q - fieldOffset fs n) = q := by omega
+        calc
+          tape q = tape ((fieldOffset fs n : ℤ) + (q - fieldOffset fs n)) :=
+            congrArg tape hq'.symm
+          _ = FinTM.bufferTape fs[n] (q - fieldOffset fs n) := hword n hindex _ h0 h1
+          _ = fieldsTape fs ((fieldOffset fs n : ℤ) + (q - fieldOffset fs n)) :=
+            (fieldsTape_field fs n hindex _ (by omega) h1).symm
+          _ = fieldsTape fs q := congrArg (fieldsTape fs) hq'
+  exact cover fs.length le_rfl p hp he
+
+/-- The right layout's level `i` begins at the physical start of zone `i`.
+
+**Proof sketch.** The home field contributes two cells including its separator. Each further
+field contributes the capacity of its zone and one separator, exactly the zone-start recurrence. -/
+private lemma zr_right_offset {k ℓ : ℕ} (z : Fin k → ZoneContents ℓ) (i : ℕ)
+    (hi : i ≤ ℓ) :
+    fieldOffset ([.inr fun t => some (z t).home] :: List.ofFn (zoneCells true z)) (i + 1) =
+      zoneStart i := by
+  induction i with
+  | zero =>
+    rw [fieldOffset_cons_succ, fieldOffset_zero, zoneStart_eq]
+    norm_num
+  | succ i ih =>
+    rw [fieldOffset_succ _ (i + 1) (by simp only [List.length_cons, List.length_ofFn]; omega)]
+    rw [ih (by omega)]
+    simp only [List.getElem_cons_succ, List.getElem_ofFn, zoneCells_length]
+    rw [zoneStart_succ]
+    omega
+
+/-- From home, the right zones form the field layout required by the seek-to-end row.
+
+**Proof sketch.** The home and its following separator form the first field. Every later
+field is the corresponding right-zone word at the offset computed above. The shared layout
+comparison covers the interior; the published blank-outside equation covers the end. -/
+private lemma zr_zonedTape_right_fields {k ℓ : ℕ} (z : Fin k → ZoneContents ℓ) :
+    ∀ p : ℤ, 0 ≤ p →
+      p ≤ (fieldOffset ([.inr fun t => some (z t).home] :: List.ofFn (zoneCells true z))
+        (ℓ + 1) : ℤ) →
+      zonedTape z p =
+        fieldsTape ([.inr fun t => some (z t).home] :: List.ofFn (zoneCells true z)) p := by
+  let fs : List (List (ZoneSym k)) :=
+    [.inr fun t => some (z t).home] :: List.ofFn (zoneCells true z)
+  have hlen : fs.length = ℓ + 1 := by simp only [fs, List.length_cons, List.length_ofFn]
+  have hend : fieldOffset fs fs.length = zoneStart ℓ := by
+    rw [hlen]
+    exact zr_right_offset z ℓ le_rfl
+  intro p hp hp'
+  change zonedTape z p = fieldsTape fs p
+  by_cases he : p < (fieldOffset fs fs.length : ℤ)
+  · apply zr_fieldsTape_eq fs (zonedTape z) _ p hp he
+    intro j hj q hq hq'
+    cases j with
+    | zero =>
+      simp only [fs, List.getElem_cons_zero, List.length_singleton] at hq' ⊢
+      rw [fieldOffset_zero]
+      have hcases : q = 0 ∨ q = 1 := by omega
+      rcases hcases with rfl | rfl
+      · simp only [Nat.cast_zero, zero_add, zonedTape_zero]
+        simpa only [Nat.cast_zero, List.getElem?_cons_zero] using
+          (FinTM.bufferTape_nat ([.inr fun t => some (z t).home] : List (ZoneSym k)) 0).symm
+      · have hsep := zonedTape_right_sep z 0
+        norm_num only [zoneStart_eq, pow_one, Nat.add_zero, Nat.cast_ofNat] at hsep
+        simpa only [Nat.cast_zero, zero_add, FinTM.bufferTape_nat,
+          List.getElem?_cons_succ, List.getElem?_nil] using hsep
+    | succ j =>
+      have hj' : j < ℓ := by omega
+      simp only [fs, List.getElem_cons_succ, List.getElem_ofFn, zoneCells_length] at hq' ⊢
+      rw [zr_right_offset z j (by omega)]
+      exact zonedTape_right_word z ⟨j, hj'⟩ q (by omega) hq'
+  · have pe : p = (zoneStart ℓ : ℤ) := by
+      change p ≤ (fieldOffset fs (ℓ + 1) : ℤ) at hp'
+      rw [← hlen, hend] at hp'
+      rw [hend] at he
+      omega
+    have hjoin := length_joinFields_add_one fs (by simp only [fs, ne_eq, List.cons_ne_nil,
+      not_false_eq_true])
+    rw [fieldsTape_of_length_le fs (by omega), pe]
+    exact zonedTape_blank_outside z _ (by rw [abs_of_nonneg (by omega)]; omega)
+
+/-- The reversed left layout's prefix and its remaining zone extent add to the full extent.
+
+**Proof sketch.** Each field removes one zone from the remaining extent. Its length and
+separator are precisely the difference of successive zone starts. -/
+private lemma zr_left_offset {k ℓ : ℕ} (z : Fin k → ZoneContents ℓ) (j : ℕ)
+    (hj : j ≤ ℓ) :
+    fieldOffset (List.ofFn fun i : Fin ℓ => (zoneCells false z i.rev).reverse) j +
+      zoneStart (ℓ - j) = zoneStart ℓ := by
+  induction j with
+  | zero => rw [fieldOffset_zero, Nat.sub_zero, Nat.zero_add]
+  | succ j ih =>
+    rw [fieldOffset_succ _ j (by simp only [List.length_ofFn]; omega)]
+    simp only [List.getElem_ofFn, List.length_reverse, zoneCells_length, Fin.val_rev]
+    have hs := zoneStart_succ (ℓ - (j + 1))
+    have he : ℓ - j = (ℓ - (j + 1)) + 1 := by omega
+    have hp := ih (by omega)
+    rw [he] at hp
+    omega
+
+/-- The left zones, reversed within each zone and in level order, form the seek-start layout.
+
+**Proof sketch.** The prefix formula places each reversed zone exactly at its physical outer
+end. The shared layout comparison then applies to the left-zone word equations. The two cells
+before the layout are blank by the published extent bound. This also covers zero levels. -/
+private lemma zr_zonedTape_left_fields {k ℓ : ℕ} (z : Fin k → ZoneContents ℓ) :
+    ∀ p : ℤ, -2 ≤ p →
+      p < (fieldOffset (List.ofFn fun i : Fin ℓ => (zoneCells false z i.rev).reverse)
+        ℓ : ℤ) →
+      zonedTape z (-(fieldOffset (List.ofFn fun i : Fin ℓ =>
+          (zoneCells false z i.rev).reverse) ℓ : ℤ) + p) =
+        fieldsTape (List.ofFn fun i : Fin ℓ => (zoneCells false z i.rev).reverse) p := by
+  let fs := List.ofFn fun i : Fin ℓ => (zoneCells false z i.rev).reverse
+  have hlen : fs.length = ℓ := List.length_ofFn
+  have htotal : fieldOffset fs ℓ + 2 = zoneStart ℓ := by
+    have ht := zr_left_offset z ℓ le_rfl
+    simpa only [Nat.sub_self, zoneStart_eq, pow_one, Nat.add_zero] using ht
+  intro p hp hp'
+  change zonedTape z (-(fieldOffset fs ℓ : ℤ) + p) = fieldsTape fs p
+  by_cases h0 : 0 ≤ p
+  · apply zr_fieldsTape_eq fs (fun q => zonedTape z (-(fieldOffset fs ℓ : ℤ) + q)) _ p h0
+      (by simpa only [hlen] using hp')
+    intro j hj q hq hq'
+    have hj' : j < ℓ := by omega
+    let i : Fin ℓ := (⟨j, hj'⟩ : Fin ℓ).rev
+    have hi : i.val = ℓ - (j + 1) := Fin.val_rev _
+    have hoff := zr_left_offset z j (by omega)
+    have hs := zoneStart_succ i.val
+    have he : ℓ - j = i.val + 1 := by omega
+    rw [he] at hoff
+    change fieldOffset fs j + zoneStart (i.val + 1) = zoneStart ℓ at hoff
+    simp only [fs, List.getElem_ofFn, List.length_reverse, zoneCells_length] at hq' ⊢
+    have hpos : -(fieldOffset fs ℓ : ℤ) + ((fieldOffset fs j : ℤ) + q) =
+        -((zoneStart i : ℤ) + zoneCapacity i - 1) + q := by omega
+    rw [hpos]
+    exact zonedTape_left_word z i q (by omega) hq'
+  · rw [fieldsTape_of_neg fs (by omega)]
+    apply zonedTape_blank_outside
+    rw [abs_of_nonpos (by omega)]
+    omega
+
+/-- A physical zone is a nonempty field, even when every virtual slot is empty. -/
+private lemma zr_zoneCells_ne_nil {k ℓ : ℕ} (side : Bool) (z : Fin k → ZoneContents ℓ)
+    (i : Fin ℓ) : zoneCells side z i ≠ [] := by
+  apply List.ne_nil_of_length_pos
+  rw [zoneCells_length]
+  exact zr_capacity_pos i
+
+/-- The right bridge discharges the seek-to-end contract's entire precondition. -/
+private lemma zr_seekEnd_pre {k ℓ : ℕ} {x : List (ZoneSym k)}
+    (z : Fin k → ZoneContents ℓ) (d : Cfg 2 (ZoneSym k) SeekPhase x)
+    (hd : zoneRowPre ⟨ℓ, z⟩ d) :
+    (seekEndTM_contract 0 x).pre
+      ([.inr fun t => some (z t).home] :: List.ofFn (zoneCells true z)) d := by
+  rw [seekEndTM_contract_pre]
+  refine ⟨List.cons_ne_nil _ _, ?_, ?_⟩
+  · intro u hu
+    simp only [List.mem_cons, List.mem_ofFn] at hu
+    rcases hu with rfl | ⟨i, rfl⟩
+    · exact List.cons_ne_nil _ _
+    · exact zr_zoneCells_ne_nil true z i
+  · intro p hp he
+    rw [hd.1, hd.2.1, zero_add]
+    apply zr_zonedTape_right_fields z p hp
+    simpa only [List.length_cons, List.length_ofFn] using he
+
+/-- The left bridge discharges the seek-to-start contract's entire precondition. -/
+private lemma zr_seekStart_pre {k ℓ : ℕ} {x : List (ZoneSym k)}
+    (z : Fin k → ZoneContents ℓ) (d : Cfg 2 (ZoneSym k) SeekPhase x)
+    (hd : zoneRowPre ⟨ℓ, z⟩ d) :
+    (seekStartTM_contract 0 x).pre
+      (List.ofFn fun i : Fin ℓ => (zoneCells false z i.rev).reverse) d := by
+  rw [seekStartTM_contract_pre]
+  refine ⟨?_, ?_, ?_⟩
+  · intro u hu
+    obtain ⟨i, rfl⟩ := List.mem_ofFn.mp hu
+    exact List.reverse_ne_nil_iff.mpr (zr_zoneCells_ne_nil false z i.rev)
+  · rw [hd.1, hd.2.1, zonedTape_zero]
+    exact Option.some_ne_none _
+  · intro p hp he
+    rw [hd.1, hd.2.1, zero_sub]
+    simp only [List.length_ofFn] at he ⊢
+    exact zr_zonedTape_left_fields z p hp he
+
+/-- Two half-capacity walks from the old left layout stop one cell right of the new outer end.
+This records the left-pass alignment obstruction in the continuation brief, without changing
+either machine row's statement or implementing an amended route.
+
+**Proof sketch.** The old layout starts at `2 - zoneStart ℓ`. Subtracting the new capacity
+lands at `2 - zoneStart ℓ - zoneCapacity ℓ`; the new outermost cell is one cell farther left. -/
+private lemma zr_left_two_walks {k ℓ : ℕ} (z : Fin k → ZoneContents ℓ) :
+    -(fieldOffset (List.ofFn fun i : Fin ℓ => (zoneCells false z i.rev).reverse) ℓ : ℤ) -
+        (2 ^ ℓ : ℕ) - (2 ^ ℓ : ℕ) =
+      -((zoneStart ℓ : ℤ) + zoneCapacity ℓ - 1) + 1 := by
+  have ht := zr_left_offset z ℓ le_rfl
+  simp only [Nat.sub_self] at ht
+  have hz : zoneStart 0 = 2 := by norm_num [zoneStart_eq]
+  rw [hz] at ht
+  rw [zoneCapacity_eq]
+  push_cast
+  omega
+
+
+/-- A right inward shift commutes with a left outward shift, including their guards.
+
+**Proof sketch.** The home is fixed; each operation reads and writes only its own side.
+The published field equations therefore give equal home, left and right fields. -/
+private lemma zr_shift_commute {ℓ : ℕ} (i j : ℕ) (z : ZoneContents ℓ) :
+    zoneShiftIn true i (zoneShiftOut false j z) =
+      zoneShiftOut false j (zoneShiftIn true i z) := by
+  have hl : (zoneShiftIn true i z).left = z.left := by
+    funext t
+    simp only [zoneShiftIn_left, if_true]
+  have hr : (zoneShiftOut false j z).right = z.right := by
+    funext t
+    simp only [zoneShiftOut_right, Bool.false_eq_true, if_false]
+  apply ZoneContents.ext'
+  · simp only [zoneShiftIn_home, zoneShiftOut_home]
+  · funext t
+    simp only [zoneShiftIn_left, zoneShiftOut_left, Bool.false_eq_true, if_false, if_true, hl]
+  · funext t
+    simp only [zoneShiftIn_right, zoneShiftOut_right, Bool.false_eq_true, if_false, if_true, hr]
+
+/-- A whole right-side pass commutes past one left-side outward shift.
+
+**Proof sketch.** Induct on the pass list, commuting its first shift by the preceding lemma. -/
+private lemma zr_inPass_out {ℓ : ℕ} (is : List ℕ) (j : ℕ) (z : ZoneContents ℓ) :
+    is.foldl (fun a i => zoneShiftIn true (i + 1) a) (zoneShiftOut false j z) =
+      zoneShiftOut false j (is.foldl (fun a i => zoneShiftIn true (i + 1) a) z) := by
+  induction is generalizing z with
+  | nil => simp only [List.foldl_nil]
+  | cons i is ih =>
+    rw [List.foldl_cons, zr_shift_commute, ih, List.foldl_cons]
+
+/-- A list of guarded pairs equals its right-side pass followed by its left-side pass.
+
+**Proof sketch.** Expand one pair by its public equation, use the induction hypothesis for
+the remaining pairs, then move the first left shift past the remaining right pass. No guard
+assumption is needed, so this applies to the total cascade on arbitrary zone contents. -/
+private lemma zr_pair_pass {ℓ : ℕ} (is : List ℕ) (z : ZoneContents ℓ) :
+    is.foldl (fun a i => zoneStepPair (i + 1) a) z =
+      is.foldl (fun a i => zoneShiftOut false (i + 1) a)
+        (is.foldl (fun a i => zoneShiftIn true (i + 1) a) z) := by
+  induction is generalizing z with
+  | nil => simp only [List.foldl_nil]
+  | cons i is ih =>
+    rw [List.foldl_cons, zoneStepPair_eq, ih, zr_inPass_out]
+    simp only [List.foldl_cons]
+
+/-- The total right cascade can perform each side's pass separately around the home move.
+
+**Proof sketch.** Read the public cascade equation and apply the one shared pair-pass
+reordering to the descending and ascending lists. The guarded home move stays between them. -/
+private lemma zr_cascade_passes {ℓ : ℕ} (j : ℕ) (z : ZoneContents ℓ) :
+    zoneCascadeRight j z =
+      (List.range j).foldl (fun a i => zoneShiftOut false (i + 1) a)
+        ((List.range j).foldl (fun a i => zoneShiftIn true (i + 1) a)
+          (zoneMove true
+            ((List.range j).reverse.foldl (fun a i => zoneShiftOut false (i + 1) a)
+              ((List.range j).reverse.foldl (fun a i => zoneShiftIn true (i + 1) a) z)))) := by
+  rw [zoneCascadeRight_eq]
+  simp only [zr_pair_pass]
+
+
 /-! ### The rows -/
 
 /-- **§13d G4, the rebalance rows** (design §13d, G4; decisions 13d.2–13d.4). For every track
@@ -388,11 +677,12 @@ mirror side is reached through a scratch ruler of the distance to home. The scra
 cleared before the exit. The sum `Σ_{i ≤ i₀} O(2^i)` is `O(2^{i₀})`
 (`Turing.zoneCascade_cost_le`).
 
-**Fill appendix (§13d G4).** The private kit proves the physical empty, full, and room guards,
-the scanned-index characterization, the short case's identity, and the tape mirror. The
-single-cell controller supplies the permitted guard leaf. The scan round, column moves, passes,
-home move, and cleanup are still open. Contract assembly needs the contracts' field equations,
-which the specification API supplies (PR #112; the user's ruling on escalation E1, 2026-10-16). -/
+**Fill appendix (§13d G4).** The guards, scan-index facts, short identity, tape mirror, and
+one-cell leaf are proved. The four inherited helpers now cite published equations. The pure
+cascade's descending and ascending pair lists have a shared, checked side-pass reordering
+(`zr_cascade_passes`), valid with every guard and no fullness assumption. The scan with both
+exits, guarded column-move machines, machine passes, home move, and cleanup remain open.
+Only this target's own body is admitted. -/
 theorem exists_zoneRebalanceTM (k : ℕ) :
     ∃ C : ℕ, ∀ (dir : Bool) (t : Fin k),
       ∃ (S : Type) (_ : Fintype S) (_ : DecidableEq S) (M : MultiTapeTM 2 (ZoneSym k) S)
@@ -428,13 +718,12 @@ control writes the two cells); write the inner half as all-tracks virtual blanks
 half as all-`⊠` cells; return through home and do the same on the left, through a ruler of the
 distance; clear the ruler and return home. Each phase is `O(2^ℓ)`.
 
-**Fill appendix (§13d G4).** The private kit proves the ruler's tail premise, its length,
-the extension's constant-cell specification, and the geometric extent bound. The single-cell
-controller supplies the permitted ruler-head adjustment and writes. The two layout bridges,
-ruler construction, composed side passes, and cleanup remain open. They need the layout's
-boundary facts and the contracts' field equations, which the specification API supplies (PR #112;
-the user's ruling on escalation E1, 2026-10-16). No unproved bridge or additional admission is
-inserted. -/
+**Fill appendix (§13d G4).** Both layout bridges, their offset formulas, and the complete
+seek-contract preconditions are proved, alongside the inherited ruler-tail and one-cell kit.
+The left route is stopped under ground rule 4: `zr_left_two_walks` proves that its prescribed
+two half-capacity walks stop one cell right of the new zone's outermost cell (escalation E1).
+The ruler builder, composed side passes, return-home rounds, and cleanup remain open. No route
+amendment is implemented, and only this target's own body is admitted. -/
 theorem exists_zoneExtendTM (k : ℕ) :
     ∃ (C : ℕ) (S : Type) (_ : Fintype S) (_ : DecidableEq S)
       (M : MultiTapeTM 2 (ZoneSym k) S) (entry done : S),
