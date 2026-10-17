@@ -1040,9 +1040,24 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
     - Checks clean. Replay `replay-lbapi4.sh` covers 320 modules. Pack
       `audits/brief-api-r3-pack.md`; resolutions updated; MIG-12's and F5's drafts corrected.
     - **Morning:** the user approves the push, runs the replay, then the r3 gate (folder 36).
-      After the merge, issue: re-run the pre-ship checks against `oleans-lbapi4`, and re-measure
-      the screen bases whose populations contain `Catalog`, `CounterLoop`, `Configuration` or
-      `Deterministic` (U2-S, F3, cont6, G4, MIG-12).
+      After the merge, issue: re-run the pre-ship checks against `oleans-lbapi4`.
+    - **The screen bases re-measured at the round-3 head** (`531b98a2`;
+      `drafts/issue-inputs/r3/`): U2-S 655, F3 1,043, G4 795, MIG-12 870, cont6 2,411
+      declarations. Each is one more than before (`scanResult_keep_keep`), with identical pair
+      sets. The drafts take these counts at issue.
+- **The scratchpad was hit by the nightly /tmp cleaner (2026-10-17, ~03:00).**
+  - **What it deleted:** files not accessed for about 3 days, including the campaign worktree
+    `wt-hk`'s `.git` link and most of `tools/`.
+  - **Repaired:**
+    - `wt-hk` was recreated at the pushed tip `4ca38f61` (the broken copy is kept as
+      `wt-hk.broken-20261017`);
+    - the tools were restored from surviving copies, except `privstmt.py`, to be rewritten when
+      next needed;
+    - `touch -a` was run over the whole scratchpad, resetting the 3-day clock.
+  - **Nothing committed was lost**, round 3's local commits included (the main repo's object
+    store). The snapshots `oleans-lbapi2`/`lm12api`/`lbapi3` are intact (710 oleans each).
+  - **For the user:** whether to move durable state (worktrees, snapshots, tools) out of `/tmp`,
+    or to keep refreshing access times before each gap.
   - **The screen bases re-measured at `4624fc05`:** F3 1,042 / 510, cont6 2,410 / 2,631. The
     issue plan passes.
     - cont6's re-measure shows a new 55% pair: the public `incFixed_length` reproduces
