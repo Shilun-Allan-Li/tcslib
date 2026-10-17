@@ -1054,6 +1054,10 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
       `drafts/issue-inputs/r3/`): U2-S 655, F3 1,043, G4 795, MIG-12 870, cont6 2,411
       declarations. Each is one more than before (`scanResult_keep_keep`), with identical pair
       sets. The drafts take these counts at issue.
+- **C1 wave 1's five briefs are drafted** (`audits/evidence/drafts/c1-fill-*`, README table) at #120's
+  head `6d18902f`. They issue after #119 and #120 merge, by `issue2.py` with the pre-ship run against
+  `oleans-lndnf`. Next drafts: NF (its own module since #120, so it can join wave 1), C1-E's E-Q
+  and E-D (after #121), and wave 2's RC.
 - **#118 merged (user, 2026-10-17; `f7546373`). The six briefs are issued** (inputs and briefs
   `94b986d4`, the ancestor; dispatch files in `infra_local/fill-dispatches/`, prompts given in chat):
   - U2-S `6e579c35…`, F5 `e181d7e2…`, F3 cont1 `2196f09e…`, cont6 `4c9f226e…`, G4 cont1
