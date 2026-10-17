@@ -1,6 +1,6 @@
 # Ch3–4 fill campaign — C1, wave 1, E: the exhaustive replay of a fixed NDTM (`Turing.FinNDTM.exists_exhaustiveDecider`, `ClassNP/ExhaustiveReplay.lean`)
 
-> **DRAFT (maintainer, 2026-10-17). Not issued.** Measured at #120's head `e18a7bfa` (the tip once
+> **DRAFT (maintainer, 2026-10-17). Not issued.** Measured at #120's head `6d18902f` (the tip once
 > #118, #119 and #120 merge). It issues with wave 1 after #119 and #120 merge (C1's fill plan; user,
 > 2026-10-17). ⟨…⟩ are filled then.
 
