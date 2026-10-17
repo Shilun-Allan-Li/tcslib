@@ -12,8 +12,8 @@
   fails, **stop**. That commit contains:
   - **your target as a gated statement** (the C1 host-contracts gate,
     `audits/c1-hosts-statements-findings.md`, PASS 0/0/11; resolutions
-    `audits/c1-hosts-statements-resolutions.md`), and its consumer `ndAcceptsWithin_decider_of_universal`
-    (proved, in your file);
+    `audits/c1-hosts-statements-resolutions.md`), and its consumer
+    `ndAcceptsWithin_decider_of_universal` (proved, in your file);
   - C1's design (`audits/evidence/c1/C1-design.md`; `E` is §3.5, and `BF := E(UN)` is the user's
     decision 2) and C1's fill plan (`audits/evidence/c1/C1-fill-plan.md`; you are wave 1's E);
   - the step clock `Turing.exists_stepClockTMVia` (B6-F1, PR #103, proved), the replay machine and
@@ -99,9 +99,10 @@ NDTM [AB09, §3.2], as a public generic theorem. One target, frozen:
 
 **Pre-ship check** (maintainer, at the base, against `oleans-lndnf`;
 `audits/logs/c1-fill-exhaustive-preship.log`):
-- **The import overlay** (`audits/evidence/c1-fill-exhaustive/ExhaustiveReplayOverlay.lean.txt`): your
-  file with the three authorized imports added after line 7. It elaborates with your target's sorry
-  warning and nothing else.
+- **The import overlay**
+  (`audits/evidence/c1-fill-exhaustive/ExhaustiveReplayOverlay.lean.txt`): your file with the three
+  authorized imports added after line 7. It elaborates with your target's sorry warning and
+  nothing else.
 - **The import probe** (`C1ExhaustiveImportProbe.lean.txt`, 63 `#check`s): every public
   declaration this brief cites resolves from the overlay's import context. 0 errors, 0 warnings.
   Re-run it after your delivery.
@@ -121,8 +122,9 @@ Your regions (line numbers before your import edit; add 3 after it):
   and before the target's docstring. `private` only, and no `section`, `open` or `variable` that
   leaks past one.
 - **(c) the body**, the `sorry` on line **65**.
-- **(d) a flagged "Fill appendix (C1-E)" paragraph at the end of the target's docstring**, before its
-  closing ` -/` (line 60). The closer ends a text line; put it on its own line after your paragraph.
+- **(d) a flagged "Fill appendix (C1-E)" paragraph at the end of the target's docstring**, before
+  its closing ` -/` (line 60). The closer ends a text line; put it on its own line after your
+  paragraph.
 
 Frozen: the module header and docstring, `ndAcceptsWithin_decider_of_universal`, the target's
 statement, and every other file. The maintainer updates the module's status text at integration.
