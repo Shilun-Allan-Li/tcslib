@@ -1069,6 +1069,8 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
     inventory, round 3 (R's and UN's header parsing and installation), gave #119 a third commit:
     `Cfg.ofWords`'s four missing fields (`Build/Convention`, `1e45f50a`). #120 and #121 merged it
     (`6d18902f`, `13f52659`).
+  - **#119's replay passed (user, 2026-10-17):** 189 of 189, 0 failed, static-equal (87); snapshot
+    `oleans-lndapi`. Its gate (folder 37) is staged. #120's replay (4 modules) is next.
 - **C1's fill plan and the ND inventory API (2026-10-17, while #118 merges;**
   `audits/evidence/c1/C1-fill-plan.md`, `audits/evidence/nd-api/`).
   - **C1's eleven stubs** are all briefable: every shared host they wait on is proved (the step

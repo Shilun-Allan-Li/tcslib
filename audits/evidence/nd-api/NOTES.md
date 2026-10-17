@@ -118,3 +118,7 @@ hosted loop.
 
 **In all:** 59 equations (20 hand-written, 39 generated) in nine files. #120 and #121 merged the
 new head (`6d18902f`, `13f52659`), and their replay scripts chain from 189.
+
+**Replay passed (user, 2026-10-17):** `replay-lndapi.sh`, 189 of 189 at `1e45f50a`, 0 failed; the
+sorry counts equal a static count (0 mismatches, 87). The snapshot `oleans-lndapi` is the tip plus
+#119. The gate is staged in `infra_local/gate-dispatches/37-nd-api-gate/`.

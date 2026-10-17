@@ -78,7 +78,9 @@ In all: 59 names, 20 hand-written and 39 generated, every `simps` with `isSimp :
 - **Screen** (13 files, `screen2/`): 240 declarations and 33 pairs at the base, 244 and 38 at the
   head (5 new, boilerplate, all from the first commit).
 - **Replay:** `replay-lndapi.sh`, the nine files' downstream closure (189 modules), from
-  `oleans-lbapi4`. ⟨REPLAY RESULT⟩
+  `oleans-lbapi4`. **Passed (user, 2026-10-17):** 189 of 189 at `1e45f50a`, 0 failed
+  (`replay-lndapi.log`); the sorry counts equal a static count (0 mismatches, 87;
+  `replay-lndapi-static.txt`). The snapshot `oleans-lndapi` is the tip plus #119.
 
 ## Findings format
 
