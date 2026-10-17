@@ -79,3 +79,10 @@
 
 The seed-inclusive inventory and its judgements are in `audits/evidence/nd-api/NOTES.md`. Each brief's
 own route inventory, crossed with its unfolding sites, runs when the brief is drafted.
+
+## NF's writer (user, 2026-10-17)
+
+NF guesses its display records with the writer's controller-stopped flavor, which has no contract,
+and `ndWriterTM` is `Build/NDHost`'s. **Ruling: a public controller contract.** After W integrates, a
+small statement PR states the controller flavor's contract in `Build/NDHost`, with its gate. A W
+continuation fills it, and NF's brief cites it modulo. NF issues in wave 2.

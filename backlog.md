@@ -1069,6 +1069,8 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
     inventory, round 3 (R's and UN's header parsing and installation), gave #119 a third commit:
     `Cfg.ofWords`'s four missing fields (`Build/Convention`, `1e45f50a`). #120 and #121 merged it
     (`6d18902f`, `13f52659`).
+  - **NF's writer (user, 2026-10-17): a public controller contract.** After W integrates, a statement
+    PR in `Build/NDHost` and its gate; a W continuation fills it; NF issues in wave 2, citing it.
   - **Lint check 8b is in, opt-in** (`scripts/campaign_style_lint.py --check8b`; the user's ruling:
     after the #118 briefs issue). It reports public definitions whose value is a configuration, an
     action, a bundled conversion or a contract, given as a structure literal, with neither `simps`, nor
