@@ -998,8 +998,8 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
     updated. **`replay-lbapi3.sh` passed (user):** 274 of 274, static-equal (88); snapshot
     `oleans-lbapi3`.
   - **The r2 gate is staged:** `infra_local/gate-dispatches/35-brief-api-r2-gate/`, bundle SHA-256
-    `901e1fa9…c2bd` (108 sections; Lean `4624fc05`, other `00e23bf3`). Not yet dispatched. After
-    the merge, the five briefs issue (and MIG-12's).
+    `901e1fa9…c2bd` (108 sections; Lean `4624fc05`, other `00e23bf3`). **Dispatched (user,
+    2026-10-17).** After the merge, the five briefs issue (and MIG-12's).
     - **Packaging waits for #118's gate:** it goes into #118's round 2 if there is one, or
       otherwise becomes its own PR and gate.
 - **Lint check 8's blind spot (2026-10-16):** a definition counts as covered when any lemma is
