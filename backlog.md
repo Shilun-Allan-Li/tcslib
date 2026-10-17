@@ -1054,6 +1054,19 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
       `drafts/issue-inputs/r3/`): U2-S 655, F3 1,043, G4 795, MIG-12 870, cont6 2,411
       declarations. Each is one more than before (`scanResult_keep_keep`), with identical pair
       sets. The drafts take these counts at issue.
+- **C1's fill plan and the ND inventory API (2026-10-17, while #118 merges;**
+  `audits/evidence/c1/C1-fill-plan.md`, `audits/evidence/nd-api/`).
+  - **C1's eleven stubs** are all briefable: every shared host they wait on is proved (the step
+    clock, H2's loop, H2-F). One worker per file, so `NTimeHierarchy` (six stubs) and
+    `NDCodeSimulator` (two) serialize. The showcase needs no new witness
+    (`timeConstructible_poly`).
+  - **The seed-inclusive inventory** (47 seeds, 152 rows) found the nondeterministic model's
+    counterparts of #118's API missing.
+  - **`lean/nd-api` at `4abca360`** (local; stacked on #118's `531b98a2`) adds 41 equations,
+    7 hand-written and 34 generated. The six files have 0 errors, with warnings equal to the
+    bases'. Freeze: publics added only. Lint: 67 to 64 WARN and 16 to 15. Screen: 5 boilerplate
+    pairs from the shared `simps` line. Replay closure: 102 modules.
+  - **For the user:** the PR and its gate, wave 1's size, NF's home, and C1-E's statement phase.
 - **The scratchpad was hit by the nightly /tmp cleaner (2026-10-17, ~03:00).**
   - **What it deleted:** files not accessed for about 3 days, including the campaign worktree
     `wt-hk`'s `.git` link and most of `tools/`.

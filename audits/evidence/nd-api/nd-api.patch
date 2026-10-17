@@ -1,0 +1,345 @@
+From 4abca36096a9314cc6a6c847ad7b018723a68474 Mon Sep 17 00:00:00 2001
+From: Seyoon Ragavan <complexzetaprime@gmail.com>
+Date: Sat, 17 Oct 2026 12:47:53 -0400
+Subject: [PATCH] The ND inventory API: the nondeterministic model's equations
+ for the C1 fill briefs
+
+C1's pre-ship inventory (the user's "Everything" rule, 2026-10-16) found the nondeterministic
+counterparts of #118's deterministic API missing. 41 equations, declarations and simps
+attributes only (isSimp := false, no @[simp]):
+
+- Nondeterministic: stepWith_of_some (the live ND step, beside stepWith_of_halt), initCfg_eq,
+  haltsWithin_iff; the fields of fixChoice, MultiTapeTM.toNDTM, FinTM.toFinNDTM, relabelState
+- NTIME: acceptsWithin_iff, decidesInTime_iff, mem_NTIME_iff
+- ChoiceReplay: the fields of replayTM and withChoiceTape
+- NDCodes: the fields of CodeNDTM.toFinNDTM
+- Build/NDHost: the fields of guessRunCfg and streamStartCfg
+- Build/StepClock: the fields of clockCfg, and Cfg.stopped_iff
+
+Stacked on #118 (lean/brief-api 531b98a2): its replay closure overlaps.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+---
+ TCSlib/Complexity/ClassNP/NTIME.lean          | 26 ++++++++++
+ .../TuringMachine/Build/NDHost.lean           | 15 ++++++
+ .../TuringMachine/Build/StepClock.lean        | 17 +++++++
+ .../TuringMachine/ChoiceReplay.lean           | 16 +++++++
+ TCSlib/Complexity/TuringMachine/NDCodes.lean  |  7 +++
+ .../TuringMachine/Nondeterministic.lean       | 47 +++++++++++++++++++
+ 6 files changed, 128 insertions(+)
+
+diff --git a/TCSlib/Complexity/ClassNP/NTIME.lean b/TCSlib/Complexity/ClassNP/NTIME.lean
+index bf0108d2..1b21c9c5 100644
+--- a/TCSlib/Complexity/ClassNP/NTIME.lean
++++ b/TCSlib/Complexity/ClassNP/NTIME.lean
+@@ -74,6 +74,9 @@ deterministic embedding `DTIME ⊆ NTIME`.
+ * `Turing.FinTM.toFinNDTM_haltsWithin_and_accepts_iff` — its per-input content, a
+   deterministic decider run nondeterministically (shared with `SPACE ⊆ NSPACE`;
+   added 2026-10-10).
++* `Turing.FinNDTM.acceptsWithin_iff`, `Turing.FinNDTM.decidesInTime_iff`,
++  `Complexity.mem_NTIME_iff` — the three definitions unfolded (the ND inventory API, C1's
++  pre-ship inventory, 2026-10-17).
+ * `Complexity.NTIME_eq_empty_of_exists_zero` — a vanishing time bound gives the empty
+   class, as for `DTIME`.
+ 
+@@ -95,6 +98,15 @@ def AcceptsWithin (N : FinNDTM Bool) (x : List Bool) (t : ℕ) : Prop :=
+     (N.tm.runWith w (N.tm.initCfg x)).state = none ∧
+     (N.tm.runWith w (N.tm.initCfg x)).output = [true]
+ 
++/-- **Acceptance, unfolded** (the ND inventory API, 2026-10-17): `N.AcceptsWithin x t` holds iff
++some choice word `w` of length `t` leaves the run from `N.tm.initCfg x` halted with output
++`[true]`. -/
++theorem acceptsWithin_iff {N : FinNDTM Bool} {x : List Bool} {t : ℕ} :
++    N.AcceptsWithin x t ↔ ∃ w : List Bool, w.length = t ∧
++      (N.tm.runWith w (N.tm.initCfg x)).state = none ∧
++      (N.tm.runWith w (N.tm.initCfg x)).output = [true] :=
++  Iff.rfl
++
+ /-- Acceptance is monotone in the branch length: an accepting branch stays accepting
+ when the choice word is extended.
+ 
+@@ -120,6 +132,14 @@ def DecidesInTime (N : FinNDTM Bool) (L : Language Bool) (T : ℕ → ℕ) : Pro
+   ∀ x : List Bool,
+     N.tm.HaltsWithin x (T x.length) ∧ (x ∈ L ↔ N.AcceptsWithin x (T x.length))
+ 
++/-- **Nondeterministic decision, unfolded** (the ND inventory API, 2026-10-17):
++`N.DecidesInTime L T` holds iff on every input `x` every branch of length `T |x|` halts and
++`x ∈ L ↔ N.AcceptsWithin x (T |x|)`. -/
++theorem decidesInTime_iff {N : FinNDTM Bool} {L : Language Bool} {T : ℕ → ℕ} :
++    N.DecidesInTime L T ↔ ∀ x : List Bool,
++      N.tm.HaltsWithin x (T x.length) ∧ (x ∈ L ↔ N.AcceptsWithin x (T x.length)) :=
++  Iff.rfl
++
+ end Turing.FinNDTM
+ 
+ namespace Turing.FinTM
+@@ -174,6 +194,12 @@ decides it within `c · T n` steps on inputs of length `n`, in the sense of
+ def NTIME (T : ℕ → ℕ) : Set (Language Bool) :=
+   {L | ∃ (c : ℕ) (N : FinNDTM Bool), N.DecidesInTime L fun n => c * T n}
+ 
++/-- **Membership in `NTIME`, unfolded** (the ND inventory API, 2026-10-17): `L ∈ NTIME T` iff some
++machine `N` decides `L` within `c · T n` for some constant `c`. -/
++theorem mem_NTIME_iff {T : ℕ → ℕ} {L : Language Bool} :
++    L ∈ NTIME T ↔ ∃ (c : ℕ) (N : FinNDTM Bool), N.DecidesInTime L fun n => c * T n :=
++  Iff.rfl
++
+ /-- `NTIME` is monotone in the time bound.
+ 
+ **Proof sketch.** The same machine works at the larger budget `c · T₂ n ≥ c · T₁ n`.
+diff --git a/TCSlib/Complexity/TuringMachine/Build/NDHost.lean b/TCSlib/Complexity/TuringMachine/Build/NDHost.lean
+index 2779b93d..7485a6fa 100644
+--- a/TCSlib/Complexity/TuringMachine/Build/NDHost.lean
++++ b/TCSlib/Complexity/TuringMachine/Build/NDHost.lean
+@@ -68,6 +68,9 @@ up front, with one small nondeterministic leaf, and then run deterministically.
+   halting setup (proved).
+ * `Turing.guessRunCfg_clean` (proved), `Turing.guessRunTM_silent_spec` (proved modulo the
+   writer) — the interpreter core's interface: precondition, emission capture, live verdicts.
++* The fields of the two configurations `Turing.guessRunCfg_state`, `_inputPos`, `_workTapes`,
++  `_workTapePos`, `_output` and `Turing.streamStartCfg_state`, `_inputPos`, `_workTapes`,
++  `_workTapePos`, `_output` (the ND inventory API, C1's pre-ship inventory, 2026-10-17).
+ 
+ ## References
+ 
+@@ -384,6 +387,12 @@ def guessRunCfg {k : ℕ} {S S' : Type} {z : List Bool} (c : Cfg k Bool S z) (j
+       else c.workTapes j p),
+     c.workTapePos, c.output⟩
+ 
++/-! The handoff configuration's fields as equations (the ND inventory API, 2026-10-17), by `simps`
++without the `simp` attribute: the state is `some q`, tape `j` holds `s` from its head with every
++other cell `c`'s, and the input head, every other tape, every head and the output are `c`'s. -/
++attribute [simps (config := { isSimp := false }) state inputPos workTapes workTapePos output]
++  guessRunCfg
++
+ /-- **The interpreter core's start configuration**: state `q`, input head on the first symbol
+ of `z`, the stream `s` on tape `j` from cell `0`, every other tape blank, every head at `0`,
+ empty output. It is the configuration `start` of `Turing.exists_ndInterpreterCore`, verbatim. -/
+@@ -391,6 +400,12 @@ def streamStartCfg {K : ℕ} {S : Type} (z : List Bool) (j : Fin K) (q : S) (s :
+     Cfg K Bool S z :=
+   ⟨some q, 1, fun i => if i = j then FinTM.bufferTape s else fun _ => none, fun _ => 0, []⟩
+ 
++/-! The start configuration's fields as equations (the ND inventory API, 2026-10-17), by `simps`
++without the `simp` attribute: state `some q`, input head `1`, tape `j` the buffer of `s` and every
++other tape blank, every head `0`, output `[]`. -/
++attribute [simps (config := { isSimp := false }) state inputPos workTapes workTapePos output]
++  streamStartCfg
++
+ /-- Renaming a configuration's state twice is renaming it once, along the composite. -/
+ private theorem guessRun_mapState_mapState {k : ℕ} {S S' S'' : Type} {x : List Bool}
+     (c : Cfg k Bool S x) (f : S → S') (g : S' → S'') :
+diff --git a/TCSlib/Complexity/TuringMachine/Build/StepClock.lean b/TCSlib/Complexity/TuringMachine/Build/StepClock.lean
+index 5a73db95..d7e21718 100644
+--- a/TCSlib/Complexity/TuringMachine/Build/StepClock.lean
++++ b/TCSlib/Complexity/TuringMachine/Build/StepClock.lean
+@@ -52,6 +52,9 @@ transports and segment composition.
+ 
+ * `Turing.exists_stepClockTMVia` — the step clock over any alphabet (proved; B6-F1 fill).
+ * `Turing.exists_stepClockTM` — its `Bool` instance, in C1's draft form (proved from it).
++* `Turing.clockCfg_state`, `_inputPos`, `_workTapes`, `_workTapePos`, `_output` — the clocked
++  configuration's fields, and `Turing.Cfg.stopped_iff` (the ND inventory API, C1's pre-ship
++  inventory, 2026-10-17).
+ 
+ ## References
+ 
+@@ -71,6 +74,13 @@ def clockCfg {k : ℕ} {Γ S Q : Type} {x : List Γ} (q : Option Q) (c : Cfg k 
+     (ct : ℤ → Option Γ) (cp : ℤ) : Cfg (k + 1) Γ Q x :=
+   ⟨q, c.inputPos, Fin.lastCases ct c.workTapes, Fin.lastCases cp c.workTapePos, c.output⟩
+ 
++/-! The clocked configuration's fields as equations (the ND inventory API, 2026-10-17), by `simps`
++without the `simp` attribute: the state is `q`, the input head and output are `c`'s,
++`(clockCfg q c ct cp).workTapes = Fin.lastCases ct c.workTapes` and
++`(clockCfg q c ct cp).workTapePos = Fin.lastCases cp c.workTapePos`. -/
++attribute [simps (config := { isSimp := false }) state inputPos workTapes workTapePos output]
++  clockCfg
++
+ /-- **A tape with a word patched in**: the cells `cp, …, cp + |u| - 1` hold `u`, every other
+ cell is `ct`'s. -/
+ def wordPatch {Γ : Type*} (ct : ℤ → Option Γ) (cp : ℤ) (u : List Γ) : ℤ → Option Γ :=
+@@ -95,6 +105,13 @@ def Cfg.Stopped {k : ℕ} {Γ S : Type*} {x : List Γ} (stopAt : S → Bool) (c
+     Prop :=
+   c.state = none ∨ ∃ s, c.state = some s ∧ stopAt s = true
+ 
++/-- **A stopped configuration, unfolded** (the ND inventory API, 2026-10-17): `c.Stopped stopAt`
++holds iff `c` is halted or live in a state `s` with `stopAt s = true`. -/
++theorem Cfg.stopped_iff {k : ℕ} {Γ S : Type*} {x : List Γ} {stopAt : S → Bool}
++    {c : Cfg k Γ S x} :
++    c.Stopped stopAt ↔ c.state = none ∨ ∃ s, c.state = some s ∧ stopAt s = true :=
++  Iff.rfl
++
+ /-! ### Step-clock fill (B6-F1, brief v2): the fused control -/
+ 
+ /-- **The step clock's control**: a decrement phase carrying the body state it
+diff --git a/TCSlib/Complexity/TuringMachine/ChoiceReplay.lean b/TCSlib/Complexity/TuringMachine/ChoiceReplay.lean
+index 8c2be4c1..99ff78af 100644
+--- a/TCSlib/Complexity/TuringMachine/ChoiceReplay.lean
++++ b/TCSlib/Complexity/TuringMachine/ChoiceReplay.lean
+@@ -40,6 +40,9 @@ deterministic verifier checks by simulation).
+ ## Main results
+ 
+ * `Turing.NDTM.replayTM_runFrom` — the replay lemma (proved).
++* The fields of the replay machine `Turing.NDTM.replayTM_q₀`, `_tr` and of the extended
++  configuration `Turing.NDTM.withChoiceTape_state`, `_inputPos`, `_workTapes`, `_workTapePos`,
++  `_output` (the ND inventory API, C1's pre-ship inventory, 2026-10-17).
+ 
+ ## References
+ 
+@@ -63,12 +66,25 @@ def replayTM (N : NDTM k Bool S) : MultiTapeTM (k + 1) Bool S where
+     let a := N.tr ((w (Fin.last k)).getD false) q inp (fun i => w i.castSucc)
+     ⟨a.inputTape, Fin.lastCases (none, 1) a.workTapes, a.output, a.state⟩
+ 
++/-! The replay machine's fields as equations (the ND inventory API, 2026-10-17), by `simps` without
++the `simp` attribute: `N.replayTM.q₀ = N.q₀`, and `N.replayTM.tr q inp w` is the action of
++`N.tr ((w (Fin.last k)).getD false) q inp (fun i => w i.castSucc)` on the first `k` tapes, with the
++choice tape unwritten and its head moved right. -/
++attribute [simps (config := { isSimp := false }) q₀ tr] replayTM
++
+ /-- The configuration `c` of an NDTM extended by a choice tape `ct` with its head at `cp` as the
+ last work tape; every other field is `c`'s. -/
+ def withChoiceTape {x : List Bool} (c : Cfg k Bool S x) (ct : ℤ → Option Bool) (cp : ℤ) :
+     Cfg (k + 1) Bool S x :=
+   ⟨c.state, c.inputPos, Fin.lastCases ct c.workTapes, Fin.lastCases cp c.workTapePos, c.output⟩
+ 
++/-! The extended configuration's fields as equations (the ND inventory API, 2026-10-17), by `simps`
++without the `simp` attribute: the state, input head and output are `c`'s, and
++`(withChoiceTape c ct cp).workTapes = Fin.lastCases ct c.workTapes`,
++`(withChoiceTape c ct cp).workTapePos = Fin.lastCases cp c.workTapePos`. -/
++attribute [simps (config := { isSimp := false }) state inputPos workTapes workTapePos output]
++  withChoiceTape
++
+ /-- **The replay lemma.** With the word `s` on the choice tape from cell `0`, the replay
+ machine's run for `t ≤ |s|` steps is the NDTM's branch along `s.take t`, extended by the
+ unchanged choice tape, with the choice head at some `p ≤ t`, and at exactly `t` while that
+diff --git a/TCSlib/Complexity/TuringMachine/NDCodes.lean b/TCSlib/Complexity/TuringMachine/NDCodes.lean
+index 3d11090a..53ffa79e 100644
+--- a/TCSlib/Complexity/TuringMachine/NDCodes.lean
++++ b/TCSlib/Complexity/TuringMachine/NDCodes.lean
+@@ -67,6 +67,8 @@ time bound, as required by the audited contract.
+   (skeleton-time proof, mirror of `Turing.MachineCode.decode_encode`).
+ * `Turing.exists_effectiveNDMachineCode` — an effective scheme exists
+   (proved; phase P3.3).
++* `Turing.CodeNDTM.toFinNDTM_k`, `_State`, `_tm` — the bundled machine's fields (the ND
++  inventory API, C1's pre-ship inventory, 2026-10-17).
+ 
+ ## References
+ 
+@@ -106,6 +108,11 @@ def CodeNDTM.toFinNDTM (M : CodeNDTM) : FinNDTM Bool where
+   State := Fin (M.numStates + 1)
+   tm := M.tm
+ 
++/-! The bundled machine's fields as equations (the ND inventory API, 2026-10-17), by `simps` without
++the `simp` attribute: `M.toFinNDTM.k = 2`, `M.toFinNDTM.State = Fin (M.numStates + 1)` and
++`M.toFinNDTM.tm = M.tm`. -/
++attribute [simps (config := { isSimp := false }) k State tm] CodeNDTM.toFinNDTM
++
+ /-- The **fixed, scheme-independent** canonical serialization of a coded
+ nondeterministic machine, mirroring `Turing.CodeTM.serialize`: the state count,
+ the initial state, then the full two-table transition list in the fixed
+diff --git a/TCSlib/Complexity/TuringMachine/Nondeterministic.lean b/TCSlib/Complexity/TuringMachine/Nondeterministic.lean
+index 1eb091ad..9c8d77e5 100644
+--- a/TCSlib/Complexity/TuringMachine/Nondeterministic.lean
++++ b/TCSlib/Complexity/TuringMachine/Nondeterministic.lean
+@@ -93,6 +93,11 @@ state embeddings, the slice lemma, state relabelling and input locality.
+ * `Turing.NDTM.relabelState_runWith` — relabelled branches are the renamed branches (proved).
+ * `Turing.NDTM.runWith_initCfg_take` — input locality: a branch of at most `m` steps reads only
+   the first `m` input symbols (proved, C1).
++* The ND inventory API (C1's pre-ship inventory, 2026-10-17): the live step
++  `Turing.NDTM.stepWith_of_some`; `Turing.NDTM.initCfg_eq` and `Turing.NDTM.haltsWithin_iff`;
++  the fields of the slice `Turing.NDTM.fixChoice_q₀`, `_tr`, of the embedding
++  `Turing.MultiTapeTM.toNDTM_q₀`, `_tr` and `Turing.FinTM.toFinNDTM_k`, `_State`, `_tm`, and of
++  the relabelling `Turing.NDTM.relabelState_q₀`, `_tr`.
+ 
+ ## References
+ 
+@@ -139,6 +144,12 @@ deterministic initialization (blank work tapes, input head on the first symbol).
+ @[simp]
+ def initCfg (input : List Symbol) : Cfg k Symbol State input := Cfg.init tm.q₀ input
+ 
++/-- **The initial configuration is `Cfg.init` at the start state** (the ND inventory API,
++2026-10-17), the counterpart of `Turing.MultiTapeTM.initCfg_eq`:
++`tm.initCfg input = Cfg.init tm.q₀ input`. -/
++theorem initCfg_eq (input : List Symbol) : tm.initCfg input = Cfg.init tm.q₀ input :=
++  rfl
++
+ /-- The configuration reached from `cfg` by running under the choice word `w`, one
+ choice bit per step, consumed left to right: `|w|` steps in total. This is the
+ nondeterministic counterpart of `Turing.MultiTapeTM.runFrom`; a "branch" of the
+@@ -171,6 +182,10 @@ configuration-graph layer; added 2026-10-10.) -/
+ def fixChoice (tm : NDTM k Symbol State) (b : Bool) : MultiTapeTM k Symbol State :=
+   ⟨tm.q₀, tm.tr b⟩
+ 
++/-! The slice's fields as equations (the ND inventory API, 2026-10-17), generated by `simps` without
++the `simp` attribute: `(tm.fixChoice b).q₀ = tm.q₀` and `(tm.fixChoice b).tr = tm.tr b`. -/
++attribute [simps (config := { isSimp := false }) q₀ tr] fixChoice
++
+ /-- One nondeterministic step under the choice bit `b` is one step of the slice at `b`.
+ 
+ **Proof sketch.** Both steps fix a halted configuration, and otherwise apply the action
+@@ -186,6 +201,16 @@ lemma stepWith_of_halt {b : Bool} {cfg : Cfg k Symbol State input} (h : cfg.stat
+   unfold stepWith
+   rw [h]
+ 
++/-- **A live step applies the chosen action** (the ND inventory API, 2026-10-17), the counterpart of
++`Turing.MultiTapeTM.step_of_some`: at a live state `q` one step under the choice bit `b` applies the
++action of `tm.tr b` for the scanned symbols, `cfg.state = some q →`
++`tm.stepWith b cfg = (tm.tr b q cfg.inputSymbol cfg.workTapeSymbols).apply cfg`. -/
++theorem stepWith_of_some {b : Bool} {cfg : Cfg k Symbol State input} {q : State}
++    (h : cfg.state = some q) :
++    tm.stepWith b cfg = (tm.tr b q cfg.inputSymbol cfg.workTapeSymbols).apply cfg := by
++  unfold stepWith
++  rw [h]
++
+ /-- Running from a halted configuration stays there, under **every** choice word — the
+ counterpart of `Turing.MultiTapeTM.runFrom_of_halt`. Extending a choice word beyond the
+ halting time therefore never changes the reached configuration. -/
+@@ -205,6 +230,14 @@ words, and `Turing.NDTM.HaltsWithin.mono` makes this precise. -/
+ def HaltsWithin (tm : NDTM k Symbol State) (input : List Symbol) (t : ℕ) : Prop :=
+   ∀ w : List Bool, w.length = t → (tm.runWith w (tm.initCfg input)).state = none
+ 
++/-- **All-branch halting, unfolded** (the ND inventory API, 2026-10-17): `tm.HaltsWithin input t`
++holds iff every choice word `w` of length `t` leaves the run from `tm.initCfg input` halted,
++`∀ w, w.length = t → (tm.runWith w (tm.initCfg input)).state = none`. -/
++theorem haltsWithin_iff {tm : NDTM k Symbol State} {input : List Symbol} {t : ℕ} :
++    tm.HaltsWithin input t ↔
++      ∀ w : List Bool, w.length = t → (tm.runWith w (tm.initCfg input)).state = none :=
++  Iff.rfl
++
+ /-- All-branch halting is monotone in the time bound.
+ 
+ **Proof sketch.** Given `w` with `|w| = t' ≥ t`, split `w = w.take t ++ w.drop t`
+@@ -249,6 +282,10 @@ coincide: both choices apply the deterministic transition. This is the embedding
+ def MultiTapeTM.toNDTM (tm : MultiTapeTM k Symbol State) : NDTM k Symbol State :=
+   ⟨tm.q₀, fun _ => tm.tr⟩
+ 
++/-! The embedding's fields as equations (the ND inventory API, 2026-10-17), by `simps` without the
++`simp` attribute: `tm.toNDTM.q₀ = tm.q₀` and `tm.toNDTM.tr b = tm.tr` for either choice. -/
++attribute [simps (config := { isSimp := false }) q₀ tr] MultiTapeTM.toNDTM
++
+ /-- The embedded deterministic machine starts where the original does. -/
+ @[simp]
+ lemma MultiTapeTM.toNDTM_initCfg (tm : MultiTapeTM k Symbol State) (input : List Symbol) :
+@@ -277,6 +314,11 @@ layer of `Turing.MultiTapeTM.toNDTM`, with the same tapes and state type. -/
+ def FinTM.toFinNDTM {Symbol : Type} (M : FinTM Symbol) : FinNDTM Symbol :=
+   ⟨M.k, M.State, M.tm.toNDTM⟩
+ 
++/-! The bundled embedding's fields as equations (the ND inventory API, 2026-10-17), by `simps`
++without the `simp` attribute: `M.toFinNDTM.k = M.k`, `M.toFinNDTM.State = M.State` and
++`M.toFinNDTM.tm = M.tm.toNDTM`. -/
++attribute [simps (config := { isSimp := false }) k State tm] FinTM.toFinNDTM
++
+ end Turing
+ 
+ /-! ## Branches along state embeddings, deterministic slices, relabelling, input locality
+@@ -433,6 +475,11 @@ def relabelState (tm : NDTM k Γ S) (e : S ≃ S') : NDTM k Γ S' where
+   q₀ := e tm.q₀
+   tr := fun b q inp w => (tm.tr b (e.symm q) inp w).mapState e
+ 
++/-! The relabelling's fields as equations (the ND inventory API, 2026-10-17), by `simps` without the
++`simp` attribute: `(tm.relabelState e).q₀ = e tm.q₀` and
++`(tm.relabelState e).tr b q inp w = (tm.tr b (e.symm q) inp w).mapState e`. -/
++attribute [simps (config := { isSimp := false }) q₀ tr] relabelState
++
+ /-- **Relabelled branches are the renamed branches**, under every choice word and from every
+ configuration: `(tm.relabelState e).runWith w (c.mapState e) = (tm.runWith w c).mapState e`.
+ 
+-- 
+2.50.1 (Apple Git-155)
+
