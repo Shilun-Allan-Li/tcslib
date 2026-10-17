@@ -62,6 +62,8 @@ one simulated transition of any `k`-work-tape binary transition table held, in t
 * `Turing.StepBlock.tableTape_eq`, `summaryTape_eq`, `exit_true`, `exit_false`, `Rep_iff`,
   `outputSummary_nil`, `summaryCells_eq` — the definitions the hosted loop's statements read,
   as equations (the ND inventory API, C1's pre-ship inventory, 2026-10-17).
+* `Turing.workReadsK_zero`, `workReadsK_succ`, `tableBitsK_eq` — the table layout as equations
+  (the ND inventory API, round 2; gate 37, finding 1).
 * `Turing.StepBlock.roundTM_effect` — the step-block contract.
 * `Turing.StepBlock.recordSkipTM_run`, `recordSkipTM_spec` — the skipper's contract.
 * `Turing.StepBlock.succFieldTM_run`, `succFieldTM_cut`, `succFieldTM_heads` — the leaf's
@@ -107,6 +109,27 @@ def tableBitsK {k n : ℕ}
   (List.finRange (n + 1)).flatMap fun q =>
     ([none, some false, some true] : List (Option Bool)).flatMap fun inp =>
       (workReadsK k).flatMap fun w => actionBitsK (tr q inp w)
+
+/-- **No work tapes** (the ND inventory API, round 2; gate 37, finding 1): one read,
+`workReadsK 0 = [Fin.elim0]`. -/
+theorem workReadsK_zero : workReadsK 0 = [Fin.elim0] := rfl
+
+/-- **One more work tape** (the ND inventory API, round 2; gate 37, finding 1): tape `0`
+outermost over `none`, `some false`, `some true`, the other `k` tapes' reads inside,
+`workReadsK (k + 1) = [none, some false, some true].flatMap fun w =>
+(workReadsK k).map (Fin.cons w)`. -/
+theorem workReadsK_succ (k : ℕ) : workReadsK (k + 1) =
+    ([none, some false, some true] : List (Option Bool)).flatMap fun w =>
+      (workReadsK k).map fun r => (Fin.cons w r : Fin (k + 1) → Option Bool) := rfl
+
+/-- **The table's layout** (the ND inventory API, round 2; gate 37, finding 1): states in `Fin`
+order, then the input read, then the work reads in `workReadsK` order, one `actionBitsK` record
+each. -/
+theorem tableBitsK_eq {k n : ℕ}
+    (tr : Fin (n + 1) → Option Bool → (Fin k → Option Bool) → Action k Bool (Fin (n + 1))) :
+    tableBitsK tr = (List.finRange (n + 1)).flatMap fun q =>
+      ([none, some false, some true] : List (Option Bool)).flatMap fun inp =>
+        (workReadsK k).flatMap fun w => actionBitsK (tr q inp w) := rfl
 
 namespace StepBlock
 
