@@ -9,7 +9,7 @@ screen base (⟨BASE-COUNTS⟩) left to fill.
 | `u2s-fill-startup` | `exists_selfStartupTMK` (`UniversalK`) | 92 | 35 in 15 modules | 100 names | 654 declarations, 514 pairs |
 | `b6-fill-rulerdevice` | F5's three rows (`Build/InputDevice`) | 80 | 35 in 15 modules | 52 names | 272 declarations, 138 pairs |
 | `b6-fill-configclock-cont1` | `exists_configWindowRunnerTM` (`WindowClock`) | 176 | 28 in 11 modules | 60 names | 1,042 declarations, 510 pairs |
-| `b5a-fill-canon-cont6` | `exists_canonGrammarStage` (`CodeSimulator`) | 102 | 41 in 16 modules | 156 names | 2,409 declarations, 2,630 pairs |
+| `b5a-fill-canon-cont6` | `exists_canonGrammarStage` (`CodeSimulator`) | 102 | 41 in 16 modules | 156 names | 2,410 declarations, 2,631 pairs |
 | `s13d-fill-g4-cont1` | G4's two rows (`Build/ZoneRebalance`) | 80 | 35 in 15 modules | 338 names | 794 declarations, 437 pairs |
 
 - **Pre-ship, all against `oleans-lbapi2`:**
