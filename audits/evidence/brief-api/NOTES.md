@@ -165,4 +165,5 @@ modules from `oleans-lm12api`. **Passed (user, 2026-10-17):** 274 of 274, static
 - `531b98a2`: `counterWord_succ`, `scanResult_keep_keep`.
 
 The checks are in `r3/`. The replay `replay-lbapi4.sh` covers 320 modules, from `oleans-lbapi3`.
+**Pushed and passed (user, 2026-10-17):** 320 of 320, static-equal (94).
 

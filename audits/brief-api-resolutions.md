@@ -119,3 +119,9 @@ declarations only, without `@[simp]`.
 **Replay:** `replay-lbapi4.sh` covers Configuration's downstream closure (320 modules), from
 `oleans-lbapi3`. It checks that the head is pushed and pins the four files to the reviewed
 blobs.
+- **Pushed** (user's go-ahead, 2026-10-17).
+- **Passed (user):** 320 of 320, 0 failed (`r3/replay-lbapi4.log`). The sorry counts equal a
+  static count (0 mismatches, 94; `r3/replay-lbapi4-static.txt`).
+- The snapshot `oleans-lbapi4` is the tip plus #118's round 3.
+- The F5 and MIG-12 drafts' probes, with the round-3 names (58 and 227), elaborate against it with
+  0 errors.

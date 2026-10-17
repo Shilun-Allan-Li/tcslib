@@ -61,7 +61,9 @@ definition a brief's route reads gets a published equation before the brief is d
 - **Consumer probe:** `CfgRecord`'s two helpers re-proved through only the new lemmas, with the
   definitions irreducible. The original proof fails under the same irreducibility (the control).
 - **Replay:** `replay-lbapi4.log`, Configuration's downstream closure (320 modules), from
-  `oleans-lbapi3`. ⟨REPLAY⟩
+  `oleans-lbapi3`: 320 of 320 at `531b98a2`, 0 failed, static-equal (94).
+- **The drafts' probes** with the round-3 names (F5 58, MIG-12 227): 0 errors against the
+  round-3 snapshot (`r3/draft-probes/`).
 
 ## Findings format
 
