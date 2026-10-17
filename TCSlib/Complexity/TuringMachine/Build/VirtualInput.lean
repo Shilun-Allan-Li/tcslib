@@ -85,6 +85,9 @@ are retained on the contracts as the audit record.
   `Turing.vhostCfg_buffer_head_mem` (the clamp interval, empty word
   included) and `Turing.vhostEmitTM_emitting_halt` (a source halting
   emission is forwarded before the host control dies).
+* `Turing.vhostCfg_state`, `_inputPos`, `_workTapes`, `_workTapePos`, `_output`,
+  `Turing.vhostCap_eq` and `Turing.vhostSilentCfg_eq` — the configurations and the capture tape
+  as equations (the ND inventory API, C1's pre-ship inventory, 2026-10-17).
 
 ## References
 
@@ -137,6 +140,13 @@ def vhostCfg (c : Cfg m Bool S y) (b : Bool) (p : Fin (x.length + 2))
   workTapePos := Fin.addCases (fun _ => (c.inputPos.val : ℤ) - 1) c.workTapePos
   output := pre ++ c.output
 
+/-! Z1's configuration fields as equations (the ND inventory API, 2026-10-17), by `simps` without
+the `simp` attribute: the state is `c`'s tagged by `b`, the input head is `p`, tape `0` is the
+buffer of `y` with its head at `c.inputPos - 1`, the other tapes and heads are `c`'s, and the output
+is `pre ++ c.output`. -/
+attribute [simps (config := { isSimp := false }) state inputPos workTapes workTapePos output]
+  vhostCfg
+
 /-- **Z1, the forwarding virtual-input transformer** (design §13, decision
 13.4). Host the `m`-tape machine `M` on `1 + m` tapes with its input read
 from the buffer: each step reads the buffer cell as the source's input
@@ -161,6 +171,10 @@ def vhostEmitTM (M : MultiTapeTM m Bool S) :
 `(1 + m) + 1` work tapes. -/
 def vhostCap (m : ℕ) : Fin ((1 + m) + 1) := Fin.natAdd (1 + m) (0 : Fin 1)
 
+/-- The capture tape, unfolded (the ND inventory API, 2026-10-17):
+`vhostCap m = Fin.natAdd (1 + m) 0`, the last. -/
+theorem vhostCap_eq (m : ℕ) : vhostCap m = Fin.natAdd (1 + m) (0 : Fin 1) := rfl
+
 /-- **Z1, the suppressing virtual-input transformer**: the layer composing
 with itself. The R1 capture wrapper runs the forwarding host on the first
 `1 + m` tapes of a `(1 + m) + 1`-tape machine, records every emission on
@@ -180,6 +194,16 @@ def vhostSilentCfg (c : Cfg m Bool S y) (b : Bool) (p : Fin (x.length + 2))
     (capPre out₀ : List Bool) : Cfg ((1 + m) + 1) Bool (S × Bool) x :=
   embedSilentCfg (Fin.castAddEmb 1) (vhostCap m) (fun _ _ => none) (fun _ => 0)
     capPre out₀ (vhostCfg c b p [])
+
+/-- **Z1's suppressing configuration, unfolded** (the ND inventory API, 2026-10-17): the R1 capture
+transport of the forwarding configuration with an empty prefix, along `Fin.castAddEmb 1`, the
+capture tape `vhostCap m` holding `capPre`. -/
+theorem vhostSilentCfg_eq (c : Cfg m Bool S y) (b : Bool) (p : Fin (x.length + 2))
+    (capPre out₀ : List Bool) :
+    vhostSilentCfg c b p capPre out₀ =
+      embedSilentCfg (Fin.castAddEmb 1) (vhostCap m) (fun _ _ => none) (fun _ => 0)
+        capPre out₀ (vhostCfg c b p []) :=
+  rfl
 
 /-- One forwarding host step simulates one source step, producing a valid
 arrival tag; the statement includes the absorbing halted case and the
