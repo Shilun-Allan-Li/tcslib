@@ -74,4 +74,9 @@ The patch is `mig11a.patch`: one commit, `08bcc57d`, on the tip `c2ec34c5`. It i
   - `transferMapTM_contract` ← `copyTM_contract` (54%, 76 characters) is the shared
     `sweepContract` call, the sweep-row contracts' constructor pattern.
 - **Replay:** `replay-lm11a.sh`, the four modules' downstream closure at the stacked head
-  (86 modules), from `oleans-lcapi`. The user runs it.
+  (86 modules), from `oleans-lcapi`. **Passed (user, 2026-10-16):** 86 of 86, 0 failed
+  (`replay-lm11a.log`).
+  - The per-module sorry counts equal a static count (0 mismatches, 57 in total;
+    `replay-lm11a-static.txt`).
+  - On the 85 modules shared with #116's replay they are unchanged; the 86th is the new
+    `Contract/Counter`.

@@ -70,7 +70,9 @@ Campaign: the Arora-Barak chapters 3-4 plan; the machine library's foundation mi
   overlay, 0 errors. `Contract/Counter` 0 errors, 0 warnings.
 - **Axioms:** standard only. **Freeze:** publics added only, plus the one authorized body change.
 - **Lint:** 0 FAIL; check 8 adds nothing.
-- **Screen and replay:** in `logs/` and `replay-lm11a.log`.
+- **Screen:** `logs/screen-delta.log`, no new copied proof.
+- **Replay:** `replay-lm11a.log`, 86 of 86 at `b131d239`, 0 failed. The sorry counts equal a
+  static count, 0 mismatches.
 
 ## Findings format
 

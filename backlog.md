@@ -907,8 +907,14 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
     `counterRowContract` and the increment and decrement as its instances.
   - Elaboration clean, standard axioms, freeze adds only, lint check 8 unchanged.
   - Evidence `audits/evidence/mig11a/`; pack `audits/mig11a-statements-pack.md`.
-  - The replay `replay-lm11a.sh` (86 modules, from `oleans-lcapi`) is ready for the user. The
-    statement gate is built after the replay and the screen.
+  - **The replay passed (user, 2026-10-16):** 86 of 86, sorry counts static-equal. The
+    snapshot `oleans-lm11a` is the tip plus #116 plus #117. The screen shows no new copied
+    proof.
+  - The statement gate is staged in folder 33.
+- **#116's merge check (2026-10-16):** GitHub showed #116 as conflicting with a stale base
+  (`eaedd234`). A local merge was clean. The tip, with records only, was merged into
+  `lean/core-api` (`b22e7214`); its Lean content is identical to the gated `93c4c630`, and
+  GitHub now reports clean.
 - **Not adopted** (user, 2026-10-16): a systematic promotion pass at each landing, and a public
   one-step leaf row. Policy's existing route stays: a private copy plus a requested shared
   lemma, promoted at a shared-file window.
