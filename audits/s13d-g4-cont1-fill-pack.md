@@ -57,7 +57,9 @@ Its proved pieces are on the brief's route, so it lands as a partial, as the fir
   through its own body.
 - **Import probe** (the review): 338/338, 0 errors.
 - **Lint:** 0 FAIL, warnings unchanged; widest new line 99.
-- **Screen:** SCREEN-RESULT
+- **Screen:** 795 → 808 declarations, 437 → 439 pairs, 127,810 → 127,994 characters (the base is the
+  brief's measured base). The two new pairs are within the file, `zr_pair_pass`/`zr_inPass_out`
+  (72%, 62%), as the review found; no cross-file pair (`land/screen-*.txt`).
 - **Replay:** `replay-lg4c1.sh`, 2 modules (`Build/ZoneRebalance` and the `TuringMachine` facade),
   chained from `oleans-lseam` (#124's replay). REPLAY-RESULT
 
