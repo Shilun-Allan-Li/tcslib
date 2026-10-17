@@ -64,7 +64,8 @@ statements, and so does every other declaration.
    gated statement? Or does an unused clause in a contract mislead its fill? Recommend, without
    reopening R's gate.
 6. **Records:** do the resolutions, the corrected design notes, this pack and the PR body agree with
-   the evidence? The PR body as of round 2's head is `pr/r2/pr-body.md` (round 1's: `pr/pr-body.md`).
+   the evidence? The PR body as of round 2's head is `pr/r2/pr-body.md` (round 1's:
+   `pr/pr-body.md`).
 
 ## Repository-side attestations (verify or challenge)
 
