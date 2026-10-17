@@ -233,7 +233,7 @@ Run the text-level screen **before and after**, **one run at a time, under `nice
   composes (`Build/Contract/Basic`, `Build/Contract/Catalog`, `Build/Contract/Counter`,
   `Build/Contract/Seam`, `Build/Seam`, `Build/Catalog`, `Build/CounterLoop`, `Build/Embed`); and
   the siblings `Build/RecordTable` (MIG-13's) and `SpaceComplexity/WindowClock`.
-- **The base** is `audits/logs/mig12-fill-screen-base.txt`: ⟨BASE-COUNTS⟩ (MEASURED).
+- **The base** is `audits/logs/mig12-fill-screen-base.txt`: **869 declarations, 437 pairs, 132,126 characters** (MEASURED).
 - **A swap should remove pairs, not add them.** Every new pair with your file on one side is
   justified in `REPORT.md`; at 90% or more it is a copy, so factor it. Report the in-file pairs
   that the swap removed.

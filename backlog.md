@@ -1008,6 +1008,18 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
     after the briefs issue, so their recorded lint bases stay valid.
   - **MIG-24's library-wide copy-text screen** runs overnight: measurement only, one screen,
     niced.
+- **Issue procedure for the six briefs, once #118 merges** (prepared on the night of 2026-10-17;
+  `audits/evidence/drafts/issue-tools/`):
+  1. Check that the merged tip's Lean equals #118's `4624fc05`, with
+     `git diff --quiet 4624fc05 <tip> -- '*.lean'`. If it does, every measurement holds:
+     the pre-ship elaborations were re-run against `oleans-lbapi3` (`preship-summary.txt`, all as
+     expected), and MIG-12's screen base is 869 declarations, 437 pairs.
+  2. Fill F3's and cont6's screen bases from the overnight re-measures, since their populations
+     contain round-2 files.
+  3. Run `issue.py plan`, then `apply <tip-short>`. Commit the inputs and briefs to the
+     campaign branch; that commit is the ancestor.
+  4. Run `issue.py dispatch <ancestor>`, then give the six prompts in chat with the environment
+     addendum.
     - **Packaging waits for #118's gate:** it goes into #118's round 2 if there is one, or
       otherwise becomes its own PR and gate.
 - **Lint check 8's blind spot (2026-10-16):** a definition counts as covered when any lemma is
