@@ -314,7 +314,7 @@ Run the text-level screen **before and after**, **one run at a time, under `nice
 - **The screen** is the declaration-keyed `audits/evidence/retrofit/copy-text-screen-v3.py`, run on
   the repository paths.
 - **The base**, at the issue tree, is `audits/logs/b5a-fill-canon-cont6-screen-base.txt`:
-  **⟨BASE-COUNTS⟩** (MEASURED with v3; about 30 minutes).
+  **2,409 declarations, 2,630 pairs, 823,910 characters** (MEASURED with v3; about 30 minutes).
 
 ```sh
 P=audits/evidence/b5a-canon-cont6
