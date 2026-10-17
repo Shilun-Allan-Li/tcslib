@@ -268,10 +268,10 @@ Two remarks on this design (INFERRED):
 | D3. Guess `g n` stream bits | `expandTM` + the choice writer + `skipBackTM` | writer [missing] |
 | D4. **Locator** (audit round 2 §2): iterate stages from `ℓ₀ = 2`. At each stage prepare `1^a` (Z1 buffer), run `f`'s witness **capped** at `c_f(n + 1)` (step-clocked runner), and compare `f a` with `n` (binary `≤`). If small, form `u = f a + a + 1` in unary (geometric cost) and compare `u⁴` with `⌊log₂ n⌋` (capped unary arithmetic, `O(log² n)`), testing whether `n` is a power of two in the equal case; otherwise write `ℓᵢ₊₁` in binary, increment and advance. At the end, schedule `j = ν₂(i + 1)` (the 2-adic pairing) and unrank `αⱼ` (`bits (j + 1)` without its top bit) | `exists_inputLengthTM` [pub] `Build/InputLength.lean:473`; `expandTM`; `incrementTM`; `compareTM` is **equality only** [pub] `Catalog.lean:258-266`; a numeric `≤` row, capped unary multiply, a power-of-two test, `ν₂` and unranking rows, and the amortized `O(n)` ledger | [missing] (the arithmetic rows overlap stage 2's planned rows, design §15a "New rows needed", `machine-library-design.md` §15a) |
 | D5. Materialize `⟨⟨bits t, αⱼ⟩, 1^m⟩` on a buffer | a `pairEncode` writer (bit doubling and separator) | [missing] (a candidate instance of §13d G2's mapped sweeps) |
-| D6. Mid-rung: run `R` (§3.6) hosted by Z1 on the materialized word, with the guessed stream, under the step-clocked runner at `K'(g n + 1)` | Z1 [pub]; the step-clocked runner [missing]; `R` [missing] | |
+| D6. Mid-rung: run `R` (§3.6) hosted by Z1 on the materialized word with its budget field rewritten to a guessed `bits b`, `b ≤ g n` (gate 39, finding 1), with the guessed stream, under the step-clocked runner at `K'(g n + 1)` | Z1 [pub]; the step-clocked runner [missing]; `R` [missing] | |
 | D7. Top rung: run `BF` hosted by `vhostSilentTM` on `⟨⟨bits T*, αⱼ⟩, 1^a⟩` under the same runner, and emit the negated completed verdict (default reject) | `vhostSilentTM_runFrom` [pub] `VirtualInput.lean:434`; `BF` from `E` | |
 | D8. `D ∈ NTIME (g + 1)` by construction: every phase is code-independent or clocked. Characterize `L(D)` per rung (mid: `∃ s`, the clocked `R` accepts; top: the clocked `BF` completes with `[false]`) | the ND assembly lemma; the clock contract | [missing] |
-| D9. The chain: fix `N` and `c₀`; take `M'`, `C₁` from statement 3, `α = c.encode M'` (recovered by `NDMachineCode.decode_encode`, `NDCodes.lean:142`), `j₀ = rank α`, and `C_α`, `C_BF`. Choose a stage with `ν₂(i + 1) = j₀` past all thresholds. The mid equivalences (forward transfer + the prefix clause; backward transfer + truncation by `NTIME.mono`'s argument) and the top flip contradict | the contracts of statements 1 and 3, `R`, `E`; `AcceptsWithin.mono`; `run_take_of_halted` [pub] `ChoiceWords.lean` | [missing] (pure) |
+| D9. The chain: fix `N` and `c₀`; take `M'`, `C₁` from statement 3, `α = c.encode M'` (recovered by `NDMachineCode.decode_encode`, `NDCodes.lean:142`), `j₀ = rank α`, and `C_α`, `C_BF`. Choose a stage with `ν₂(i + 1) = j₀` past all thresholds. The mid equivalences (forward transfer + the guessed budget `b = t'` and R's total-time clause; backward transfer + truncation by `NTIME.mono`'s argument) and the top flip contradict | the contracts of statements 1 and 3, `R`, `E`; `AcceptsWithin.mono`; `run_take_of_halted` [pub] `ChoiceWords.lean` | [missing] (pure) |
 | P. `ntime_hierarchy_of_pos` | the mirror of `time_hierarchy_of_pos` [pub] `Diagonal.lean:299-311` | [missing] (pure; can be proved now, modulo statement 4) |
 | S. Showcase: the arithmetic `A(3n + 4) ≤ (n + 1)²` for `n ≥ 3A + 4`; `TimeConstructible (n + 1)` and `TimeConstructible ((n + 1)²)` | `timeConstructible_id` [pub] `TimeConstructible.lean:422` as precedent; unary square via `expandTM`, then binary counting with amortized `incrementTM` | witnesses [missing] (independent of everything else) |
 
@@ -477,15 +477,15 @@ codes, with a designated stream tape `j`.
 - **Exit:** it reaches `accept` or `reject` according to whether the decoded machine's branch
   along `s.take t` halts with output `[true]`, and no exit earlier.
 - **Time, with a per-code `C`:**
-  - **the prefix form:** at most `C·(t' + 1) + 2|bits t|` when that branch first halts at
-    `t' ≤ t`;
+  - **the prefix form:** at most `C·(t' + |x| + |bits t| + 1)` when that branch first halts at
+    `t' ≤ t` (the gated clause);
   - at most `C·(t + 1)` in every case.
 
 The prefix clause is the gate's prefix-bound obligation (`ch3-p33-resolutions.md:37`). It is
 free from the exact escape time of `counterLoopTMVia_run_escape` and from
-`counterOverhead_le_of_le` (`4r + 2|w|`). If the gate prefers it, D can avoid the clause by
-guessing a nominal budget `t' ≤ g n` (a fallback, INFERRED sound by re-running the mid-rung
-chain of `ch3-p33-r2-findings.md:153-192` with `t'` in place of `g n`).
+`counterOverhead_le_of_le` (`4r + 2|w|`). D uses the guessed budget `b ≤ g n` and R's total-time
+clause (gate 39, finding 1); the prefix clause's `|x|` term cannot be absorbed into D's uniform `K`.
+The clause stays in R's statement (the user, 2026-10-17), with no consumer.
 
 ### 3.7 Machine level: confirmed
 

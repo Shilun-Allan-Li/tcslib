@@ -1054,6 +1054,18 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
       `drafts/issue-inputs/r3/`): U2-S 655, F3 1,043, G4 795, MIG-12 870, cont6 2,411
       declarations. Each is one more than before (`scanResult_keep_keep`), with identical pair
       sets. The drafts take these counts at issue.
+- **Gates 37–39 recorded (2026-10-17).** Resolutions: `audits/nd-api-resolutions.md` (round 1;
+  round 2 planned), `audits/nd-normalform-resolutions.md` (closed), and
+  `audits/ntime-diag-statements-resolutions.md` (round 1, with the user's rulings: the guessed
+  budget, and R's prefix clause kept). NOTES, C1's design and C1-E's design corrected; the PR bodies
+  of #119, #120 and #121 snapshotted (`pr-body.md`).
+  - **#121 round 2** (`lean/ntime-diag` at `0a5878ed`: the tip merged, then the review's patch):
+    the sketch rewritten to the guessed budget, `stage_of_le_two` and `query_of_not_guard` added.
+    Checks in `audits/evidence/c1/c1e/pr/r2/`. Next: `replay-lndiag2.sh` (2 modules, from
+    `oleans-lndnf`), then gate 40.
+  - **Next Lean PR: the ND inventory API's round 2**, stacked on `0a5878ed`: gate 37's findings 1
+    and 3 and gate 38's minor 5 (StepBlock, CodeFormat, Encoding, VirtualInput, the `ClassNP`
+    facade), about 255 modules of replay, its own gate.
 - **#119 and #120 merged (user, 2026-10-17; tip `75edca6f`, Lean = #120's `6d18902f`), before their
   gates returned.** Gate 37 (#119): FAIL 0/2/3/2, both majors on wave-2 routes (RC's serialization
   equations; NF's controller writer, resolved by the controller-contract ruling). Gate 38 (#120):

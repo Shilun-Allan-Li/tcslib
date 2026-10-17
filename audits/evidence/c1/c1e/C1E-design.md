@@ -13,7 +13,7 @@ contracts' `sorry`s (`draft.out`). Every proved lemma uses standard axioms only.
 | Declaration | Kind | Status |
 |---|---|---|
 | `budget`, `ladder`, `stage`, `stageCode`, `query` (namespace `Turing.NTimeDiag`) | pure definitions: the ladder `ℓ₀ = 2`, `ℓᵢ₊₁ = 2^{(T*ᵢ)²}` with `T*ᵢ = (f aᵢ + aᵢ + 1)²`; the stage `ℓᵢ < n ≤ ℓᵢ₊₁`; the scheduled code; the stage query | — |
-| `ladder_zero`, `ladder_succ`, `two_mul_lt_ladder_succ`, `le_ladder`, `ladder_strictMono`, `exists_le_ladder_succ`, `stage_spec`, `stage_eq`, `stageCode_frequently`, `query_eq` | the stages' laws | proved |
+| `budget_eq`, `ladder_zero`, `ladder_succ`, `two_mul_lt_ladder_succ`, `le_ladder`, `ladder_strictMono`, `exists_le_ladder_succ`, `stage_spec`, `stage_eq`, `stage_of_le_two` (round 2), `stageCode_eq`, `stageCode_frequently`, `query_eq`, `query_of_not_guard` (round 2) | the stages' laws | proved |
 | `acceptLang_mem_NTIME` | a halting NDTM's bounded language is in `NTIME (g + 1)` | proved |
 | `exists_queryTM` | one deterministic machine computes the stage query within `C · (g n + 1)` | sorried: fill E-Q |
 | `exists_diagonalizer` | `D`: uniform time `K · (g n + 1)`; per code `α` a constant `C`; middle soundness, and completeness under `C · (t' + 1) ≤ g n`; the top flip when `C · 2^{C · (T* + 1)} ≤ n` | sorried: fill E-D |
@@ -51,13 +51,16 @@ because `query` is defined mathematically.
    and polylog machine cost either way.
 3. **The home.** A new module, so `NTimeHierarchy` (owned by wave 1's UN brief) is untouched.
    `ntime_hierarchy`'s fill adds the import later.
+4. **The middle rung guesses a nominal budget** (C1's design §3.6), since R's gated prefix clause
+   has a per-code `|x|` term (gate 39, finding 1). Added in round 2, by the user's ruling
+   (2026-10-17); the statements are unchanged.
 
 **Answered (user, 2026-10-17): all three as recommended.** One query machine; the `Nat.unpair`
 schedule; a new module. The unit is PR #121 (`lean/ntime-diag` at `2ff6cc0c`, stacked on #120; merged with #119's
 later commits, head `13f52659`, its own Lean unchanged).
 It adds `budget_eq` and `stageCode_eq`, which lint check 8 asks for. Its checks are in `pr/`:
 - elaboration: 0 errors and the 2 `sorry`s;
-- freeze: 20 publics;
+- freeze: 20 publics (round 2: 22, two added);
 - lint: 1 WARN, as before;
 - screen: no new pair;
 - replay closure: 2 modules.

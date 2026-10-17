@@ -8,14 +8,17 @@ file. `NTimeHierarchy` holds the universal machine's brief (UN with BF, H′ and
 merged with #119's second and third commits (head `6d18902f`); the Lean diff from #119's head
 `1e45f50a` is the same three files.
 - The new `ClassNP/NDNormalForm` holds NF's declaration with its docstring, byte-identical (2,599
-  characters, asserted by `move.py.txt`). It imports `ClassNP/NTIME` and `TuringMachine/NDCodes`, as
-  `ExhaustiveReplay` does.
+  characters; checked by comparing the extracted block of `NTimeHierarchy` at the base with
+  `NDNormalForm` at the head; the script itself asserts only substring counts). It imports
+  `ClassNP/NTIME` and `TuringMachine/NDCodes`, as `ExhaustiveReplay` does.
 - `NTimeHierarchy` imports it, and its docstrings point there.
 - The `ClassNP` facade lists it.
 - The plan described a copy under a new name with a one-line citation in `NTimeHierarchy`. The PR
   moves the declaration itself under its existing name instead: one public statement, not two.
 - An `NDCodes` docstring pointer ("in the consumer module") stays as is. It is still true, and editing
-  it would have put `NDCodes`' whole downstream closure into the replay.
+  it would have put `NDCodes`' whole downstream closure into the replay. `move.py.txt` as saved also
+  rewrote `NDCodes`' pointer (lines 88–91); that edit was reverted before commit, and the committed
+  change is the three-file patch (gate 38, minor 6).
 
 **Checks** (maintainer, against `oleans-lbapi4`; `logs/`):
 - `NDNormalForm` alone has 0 errors and 1 warning (NF's `sorry`).

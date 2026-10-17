@@ -6,7 +6,8 @@ gets a published equation before the brief is dispatched. #118 did this for the 
 C1's routes read the nondeterministic model, and its counterparts were missing.
 
 **The inventory** (`inventory/`): the seed-inclusive elaborator (`maintainer-tools/DefInventorySeeds`)
-over 47 seeds: the five C1 host contracts, the three headline statements and the names their proof
+over 48 seed identifiers (the inductive `NDWriterState` among them; 29 are definitions and print
+`SEED` rows): the five C1 host contracts, the three headline statements and the names their proof
 sketches cite. It elaborates against `oleans-lbapi4` (the tip plus #118's round 3) with 0 errors and
 prints 152 rows. Each flagged definition is judged:
 
@@ -15,8 +16,9 @@ prints 152 rows. Each flagged definition is judged:
 | **Gap, fixed here** | `NDTM.stepWith` (no live case), `NDTM.fixChoice`, `NDTM.initCfg`, `NDTM.HaltsWithin`, `FinNDTM.AcceptsWithin`, `FinNDTM.DecidesInTime`, `NTIME`, `MultiTapeTM.toNDTM`, `FinTM.toFinNDTM`, `NDTM.relabelState`, `NDTM.replayTM`, `NDTM.withChoiceTape`, `CodeNDTM.toFinNDTM`, `guessRunCfg`, `streamStartCfg`, `clockCfg`, `Cfg.Stopped` |
 | A machine read through its run lemmas | `expandTM`, `skipBackTM`, `NDTM.phaseHostND`, `guessRunTM` with `guessRunPhases`, `guessRunRed` and `GuessRunPhase.State` |
 | A model primitive, read through its run algebra | `MultiTapeTM.runFrom`, `NDTM.runWith` |
-| The worker's own file | `ndWriterTM` (the writer's brief) |
-| Covered | `serializeK` (`serializeK_eq`), `tableBitsK`, `CodeNDTM.serialize` (`serialize_eq_tableBitsK`), `pairEncode`, `FinTM.bufferTape`, `ComputesInTime`, `ComputesFunInTime`, `counterOverhead`, `unaryFin`, `wordPatch`, `TimeConstructible`, the renamings |
+| The worker's own file | `ndWriterTM` — W's own file (the bounded flavor, `ndWriterTM_run_block`). NF's controller-stopped flavor reads a public contract to be stated in `Build/NDHost` (user, 2026-10-17; `C1-fill-plan.md`, last section), not the exemption (gate 37, finding 2). |
+| Covered | `serializeK` (`serializeK_eq`), `CodeNDTM.serialize` (`serialize_eq_tableBitsK`), `pairEncode`, `FinTM.bufferTape`, `ComputesInTime`, `ComputesFunInTime`, `counterOverhead`, `unaryFin`, `wordPatch`, `TimeConstructible`, the renamings |
+| **Gap for RC, in round 2** (gate 37, finding 1) | `workReadsK`, `tableBitsK`, `actionBitsK`, `codeSkipActionK`, `signBits`, `optBoolBits`, `optOptBoolBits`, `optStateBits`: R reads `tableBitsK` opaquely, but RC re-emits the table record by record (`audits/nd-api-resolutions.md`) |
 
 Each brief's own inventory (its route's definitions crossed with their unfolding sites, as MIG-12's)
 is still run when the brief is drafted.
@@ -81,7 +83,8 @@ and seams, H2's hosted loop, Z1, the input call and the guess-run lemmas. It run
   use none; the rest use only `propext`, `Quot.sound` and `Classical.choice`.
 - **Freeze:** publics added only.
 - **Lint:** `TuringMachine/` goes from 64 to 63 WARN. `VirtualInput`'s warning goes, and
-  `StepBlock`'s list shrinks from 12 to 8; those 8 are the step block's internals, read through its
+  `StepBlock`'s list shrinks from 12 to 8; of those 8, `workReadsK` and `tableBitsK` are on RC's
+  route (gate 37, finding 1; round 2), and the rest are the step block's internals, read through its
   run lemmas.
 - **Screen** over 13 files (`screen2/`, the first population plus `StepBlock` and `VirtualInput`):
   240 declarations and 33 pairs at the base, 244 and 38 at the head. The new pairs are the first
