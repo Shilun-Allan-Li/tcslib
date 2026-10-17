@@ -1,3 +1,9 @@
+/-
+Copyright (c) 2026 TCSlib Contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Owen McGinty
+-/
+
 import TCSlib.BooleanAnalysis.LMN.DecisionTreeFourier
 import TCSlib.BooleanAnalysis.ThresholdFunctions.Basic
 
@@ -21,6 +27,8 @@ No new definitions are exported.
 
 * `MultilinearPolynomial.fourierCoeff_eval`: the Fourier coefficients of `p.eval` are the
   coefficients of `p`.
+* `MultilinearPolynomial.has_degree_at_most_eval`: coefficient degree bounds imply Fourier
+  degree bounds for the evaluation.
 * `MultilinearPolynomial.innerProduct_eval_self` and `MultilinearPolynomial.innerProduct_eval`:
   Parseval and Plancherel for polynomials.
 * `MultilinearPolynomial.abs_coeff_le_expect_abs`: each coefficient is bounded by the `L¹` norm.
@@ -47,6 +55,16 @@ variable {n : ℕ} (p : MultilinearPolynomial n)
 @[simp]
 lemma fourierCoeff_eval (S : Finset (Fin n)) : fourierCoeff p.eval S = p S :=
   DecisionTree.fourierCoeff_sum_chiS p S
+
+/-- A coefficient degree bound for a multilinear polynomial is also a Fourier degree
+bound for its evaluation. [OD14, §1.4, uniqueness of the Fourier expansion] -/
+lemma has_degree_at_most_eval {k : ℕ} (hp : p.HasDegreeAtMost k) :
+    has_degree_at_most p.eval k := by
+  intro S hS
+  by_contra hcard
+  apply hS
+  rw [p.fourierCoeff_eval]
+  exact hp S (by omega)
 
 /-- Parseval's identity for a multilinear polynomial: its squared `L²` norm is the sum of its
 squared coefficients. [OD14, §1.4] -/
@@ -89,7 +107,12 @@ lemma expect_abs_eval_eq_innerProduct {f : BooleanFunc n}
   rw [← hrep]
   simp only [innerProduct, threshold, mul_thresholdSign_self]
 
-/-- A multilinear polynomial of degree at most one is an affine form in the `±1` variables. -/
+/-- A multilinear polynomial of degree at most one is an affine form in the `±1` variables.
+[OD14, §1.3, degree-one Fourier expansion]
+
+**Proof sketch.** All coefficients outside the empty set and singleton sets vanish
+by the degree bound. Restrict the evaluation sum to those sets, then identify their
+characters as the constant one and the individual signed variables. -/
 lemma eval_of_degree_le_one {p : MultilinearPolynomial n} (hp : p.HasDegreeAtMost 1)
     (x : BoolCube n) :
     p.eval x = p ∅ + ∑ i : Fin n, p {i} * boolToSign (x i) := by
