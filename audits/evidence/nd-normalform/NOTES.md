@@ -25,3 +25,7 @@ merged with #119's second and third commits (head `6d18902f`); the Lean diff fro
 - **Lint:** 0 FAIL. `ClassNP/` stays at 15 WARN (now over 21 files), `Diagonalization/` at 1.
 - **Replay closure:** 4 modules (`replay-order.txt`). `replay-lndnf.sh` chains from `oleans-lndapi`
   (#119's replay, 189 modules).
+
+**Replay passed (user, 2026-10-17):** `replay-lndnf.sh`, 4 of 4 at `6d18902f`, 0 failed, static-equal
+(6). The snapshot `oleans-lndnf` is the tip plus #119 and #120. The gate is staged in
+`infra_local/gate-dispatches/38-nd-normalform-gate/`.

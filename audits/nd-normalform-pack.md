@@ -46,8 +46,10 @@ plan's question 3) moves the linear-overhead coded normal form (NF) into a new m
 - **Freeze:** `NTimeHierarchy` loses only NF's public, and `NDNormalForm` adds it.
 - **Lint:** 0 FAIL. `ClassNP/` stays at 15 WARN (now over 21 files), and `Diagonalization/` at 1
   WARN.
-- **Replay:** `replay-lndnf.sh`, 4 modules, chained from `oleans-lndapi` (#119's replay).
-  ⟨REPLAY RESULT⟩
+- **Replay:** `replay-lndnf.sh`, 4 modules, chained from `oleans-lndapi` (#119's replay). **Passed
+  (user, 2026-10-17):** 4 of 4 at `6d18902f`, 0 failed (`replay-lndnf.log`); the sorry counts equal a
+  static count (0 mismatches, 6; `replay-lndnf-static.txt`). The snapshot `oleans-lndnf` is the tip plus
+  #119 and #120.
 
 ## Findings format
 
