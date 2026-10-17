@@ -53,8 +53,8 @@ diagonalization, as two contracts over a pure description of its stages. C1-E's 
 ## Main results
 
 * `Turing.NTimeDiag.budget_eq`, `ladder_zero`, `ladder_succ`, `two_mul_lt_ladder_succ`,
-  `stage_spec`, `stage_eq`, `stageCode_eq`, `stageCode_frequently`, `query_eq` — the stages' laws
-  (proved).
+  `stage_spec`, `stage_eq`, `stage_of_le_two`, `stageCode_eq`, `stageCode_frequently`, `query_eq`,
+  `query_of_not_guard` — the stages' laws (proved).
 * `Turing.NTimeDiag.acceptLang_mem_NTIME` — a halting NDTM's bounded language is in `NTIME`
   (proved).
 * `Turing.NTimeDiag.exists_queryTM` — the stage query in linear time (sorried; C1-E's first fill).
@@ -160,6 +160,14 @@ theorem stage_eq (f : ℕ → ℕ) {n i : ℕ} (hlo : ladder f i < n) (hhi : n �
     omega
   · exact heq
 
+/-- **Short lengths are in stage `0`** (the statement gate, finding 3): for `n ≤ 2`,
+`stage f n = 0`.
+
+**Proof sketch.** `n ≤ 2 < 3 ≤ ℓ₁` (`Turing.NTimeDiag.le_ladder`), so `0` already satisfies the
+search. -/
+theorem stage_of_le_two (f : ℕ → ℕ) {n : ℕ} (hn : n ≤ 2) : stage f n = 0 :=
+  (Nat.find_eq_zero (exists_le_ladder_succ f n)).2 (le_trans (by omega) (le_ladder f 1))
+
 /-- **The code a stage diagonalizes against**: the binary word of index `j = (Nat.unpair i).1`,
 `(Nat.bits (j + 1)).dropLast` (the binary expansion of `j + 1` without its top bit). Every word
 arises for exactly one `j`, and every `j` for unboundedly many stages
@@ -215,6 +223,14 @@ theorem query_eq (f g : ℕ → ℕ) {n : ℕ} (hn : 3 ≤ n) :
         false :: pairEncode (pairEncode (Nat.bits (g n)) (stageCode (stage f n)))
           (List.replicate (n + 1) true) := by
   simp only [query, List.length_replicate, true_and, hn, ↓reduceIte]
+
+/-- **The stage query off its guard is empty** (the statement gate, finding 3): unless `x` is
+unary of length at least `3`, `query f g x = []`. With `Turing.NTimeDiag.query_eq` it covers every
+input. -/
+theorem query_of_not_guard (f g : ℕ → ℕ) {x : List Bool}
+    (hx : ¬(x = List.replicate x.length true ∧ 3 ≤ x.length)) : query f g x = [] := by
+  unfold query
+  exact if_neg hx
 
 /-- **A halting NDTM's bounded language is in `NTIME`**: if every branch of `D` on every `x` halts
 within `K · (g |x| + 1)`, then the language `{x | D accepts x within K · (g |x| + 1)}` is in
@@ -273,27 +289,41 @@ a nondeterministic machine `D` and a constant `K` with:
 - **query:** the stage query by `Turing.NTimeDiag.exists_queryTM`'s machine, called on the native
   input (`Turing.FinTM.exists_inputCallTM`);
 - **guess:** `bits (g n)` by `g`'s witness, expanded to a block (`Turing.expandTM`), overwritten by
-  the choice writer (`Turing.ndWriterTM_run_block`) and rewound;
-- **middle:** the interpreter core `Turing.exists_ndInterpreterCore` on the query word with the
-  guessed stream, under the step clock (`Turing.exists_stepClockTMVia`), accepting iff it accepts in
-  time;
+  the choice writer (`Turing.ndWriterTM_run_block`) and rewound: the stream `s`, with `|s| = g n`.
+  In the middle, also a **nominal budget** `b` (C1's design §3.6, the fallback): a word of the
+  width of `bits (g n)` from the choice writer, rejected unless its value is at most `g n`, and
+  normalized to `bits b`;
+- **middle:** the query word with its budget field rewritten from `bits (g n)` to `bits b`, that
+  is `⟨⟨bits b, α⟩, 1^{n + 1}⟩`, run by the interpreter core `Turing.exists_ndInterpreterCore` with
+  the stream `s` (`b ≤ |s|`), under the step clock (`Turing.exists_stepClockTMVia`) with the body
+  allowance `g n` (its counter is `bits (g n)`), accepting iff the interpreter accepts in time;
 - **top:** the exponential decider `Turing.exists_ndAcceptsWithin_decider` on the query word
   (hosted by `Turing.vhostSilentTM`), under the same clock, accepting iff it completes with
   `[false]`;
 - default reject.
 
-Every phase before the simulators is code-independent and costs `O(g n + 1)`. The simulators are
-cut by the clock at `K · (g n + 1)` with `K ≥ P + 2`, where `P` is the uniform setup reserve. So
-every branch halts in time.
-- **Middle:** the interpreter's prefix clause leaves a run accepting at `t'` within
-  `C_R · (t' + 1) + 2 · |bits (g n)|`, inside the clock when `C · (t' + 1) ≤ g n`. Conversely an
-  accepting interpreter run is a genuine accepting branch of length `g n`: the replay lemma, with
-  the guessed word truncated.
-- **Top:** the decider's time is `C_BF · 2^{C_BF · (T* + 1)} ≤ n ≤ g n`.
+**Time.** Every phase before the simulators is code-independent and costs at most `P · (g n + 1)`
+for a uniform `P`: the query, the stream, and the budget's guess, test, normalization and rewrite.
+The clock runs a simulator for at most its body allowance, `g n` steps, at a physical cost of at
+most `5 · g n + 2 · |bits (g n)| + 2 ≤ 7 · (g n + 1)`, and the final dispatch costs a constant `P'`.
+So `K = P + 7 + P'` bounds every branch; the body allowance and `K` are distinct quantities.
+- **Middle completeness:** if the coded machine accepts `1^{n + 1}` along a word of length `t'`
+  with `C · (t' + 1) ≤ g n`, take `b = t'` and a stream whose first `t'` bits are that word. The
+  interpreter's total-time clause, `T ≤ C_R · (b + 1)` with no `|x|` term, gives
+  `T ≤ C · (t' + 1) ≤ g n` when `C ≥ C_R`: inside the allowance, with the verdict `accept`.
+- **Middle soundness:** an accepting interpreter run is an accepting branch along `s.take b` (the
+  replay lemma), and acceptance within `b ≤ g n` is acceptance within `g n`
+  (`Turing.FinNDTM.AcceptsWithin.mono`). A guess `b` below every acceptance time sees no halted
+  accepting branch and rejects.
+- **Top:** the decider's time is `C_BF · 2^{C_BF · (T* + 1)} ≤ n ≤ g n`, inside the allowance.
 
-Fill obligations, named: the assembly; the transfer to every branch
+The interpreter's prefix clause is not used: its `|x|` term (`|x| = n + 1`) carries the per-code
+constant, which the uniform `K` cannot absorb when `g n = n` (the statement gate, finding 1).
+
+Fill obligations, named: the assembly; the budget's guess, test, normalization and rewrite (a
+private leaf in `O(g n + 1)`); the transfer to every branch
 (`Turing.NDTM.runWith_mapState_of_agreeOn_det`); the clock's two exits per rung; the per-code
-constant `C = max C_R C_BF` with the reserve. -/
+constant `C = max 1 (max C_R C_BF)`. -/
 theorem exists_diagonalizer {f g : ℕ → ℕ} (hf : Complexity.TimeConstructible f)
     (hg : Complexity.TimeConstructible g) (c : EffectiveNDMachineCode) :
     ∃ (D : FinNDTM Bool) (K : ℕ),
