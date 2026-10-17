@@ -1054,6 +1054,16 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
       `drafts/issue-inputs/r3/`): U2-S 655, F3 1,043, G4 795, MIG-12 870, cont6 2,411
       declarations. Each is one more than before (`scanResult_keep_keep`), with identical pair
       sets. The drafts take these counts at issue.
+- **#119 and #120 merged (user, 2026-10-17; tip `75edca6f`, Lean = #120's `6d18902f`), before their
+  gates returned.** Gate 37 (#119): FAIL 0/2/3/2, both majors on wave-2 routes (RC's serialization
+  equations; NF's controller writer, resolved by the controller-contract ruling). Gate 38 (#120):
+  PASS 0/0/3/4. The review (`$S/review/nd-api-gate/`, `nd-normalform-gate/`) confirms all findings,
+  and nothing blocks wave 1. The repairs go into a follow-up API PR with its own gate: StepBlock's
+  `workReadsK`/`tableBitsK`, CodeFormat's `actionBitsK`, Encoding's bit encoders,
+  `vhostSilentCfg_eq`'s docstring, and the ClassNP facade's Contents line.
+- **C1 wave 1 issued** (ancestor `83ec6348`; base `75edca6f`; dispatch files in
+  `infra_local/fill-dispatches/`): W `21d13911…`, WC `4c05c6af…`, E `4807189d…`, R `15a09e9c…`,
+  UN `12086525…`.
 - **C1 wave 1's five briefs are drafted** (`audits/evidence/drafts/c1-fill-*`, README table) at #120's
   head `6d18902f`. They issue after #119 and #120 merge, by `issue2.py` with the pre-ship run against
   `oleans-lndnf`. Next drafts: NF (its own module since #120, so it can join wave 1), C1-E's E-Q
