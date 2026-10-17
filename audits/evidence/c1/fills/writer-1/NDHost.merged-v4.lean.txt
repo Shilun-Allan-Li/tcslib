@@ -1,0 +1,1245 @@
+/-
+Copyright (c) 2026 Seyoon Ragavan. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Seyoon Ragavan
+-/
+import TCSlib.Complexity.TuringMachine.Build.Seam
+import TCSlib.Complexity.TuringMachine.Nondeterministic
+import TCSlib.Complexity.TuringMachine.Build.Catalog
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+/-!
+# The nondeterministic phase host, the choice writer, and the guess-then-run assembly
+
+The nondeterministic part of the construction layer that the guess-first route needs (user
+decision 1 of 2026-10-13; the C1 design note §3.1, §3.4). The universal NDTM and the
+diagonalizer of `TCSlib.Complexity.Diagonalization.NTimeHierarchy` guess their whole choice word
+up front, with one small nondeterministic leaf, and then run deterministically.
+
+## Design
+
+* **The ND phase host** `Turing.NDTM.phaseHostND` is `Turing.phaseHostTM` over nondeterministic
+  phases, deterministic phases entering as `Turing.MultiTapeTM.toNDTM`. Each of its two slices
+  is the deterministic phase host of the phases' slices (`Turing.NDTM.phaseHostND_fixChoice`,
+  by `rfl`), and a phase runs inside it along every word
+  (`Turing.NDTM.phaseHostND_run`, from the transfer `Turing.NDTM.runWith_mapState_of_agreeOn`).
+* **Never put a choice inside a round body.** A host whose correctness is a per-step lockstep
+  (the phase host, Z1, the R1 embedding, renaming) lifts to NDTMs slice by slice. A host that
+  composes multi-step rounds (`Turing.counterLoopTMVia`, the step clock) does not: a branch
+  mixes slices across rounds. So no nondeterministic counter loop is built (statement note
+  SC-3 of design §12.7 is closed by this route); choices are guessed by the writer below, before
+  any round host runs.
+* **The choice writer** `Turing.ndWriterTM` is the guessed flavor of a choice source (H5's
+  device family): on one tape, while its controller does not stop it (and, in the bounded
+  flavor, while the cell under the head is nonblank), it writes its choice bit and moves right.
+  Under a general controller, control is choice-dependent: the successor `δ q b`, and with it
+  every later stop, depends on the bit. In the trivial-controller, never-stop instance of the
+  bounded flavor (`Turing.ndWriterTM_run_block`), the two choices differ only in the written
+  symbol, so its timing is branch-independent. The bounded flavor serves the universal NDTM and
+  the diagonalizer; the controller flavor, the linear normal form's display guess.
+* **The guess-then-run assembly** `Turing.guessRunTM` composes the phase host over a
+  deterministic setup, the bounded writer, a rewind by the catalog's `Turing.skipTM` and
+  `Turing.skipBackTM`, a deterministic run ending in a live verdict, and a verdict leaf (ruling 2
+  of the C1 host-contracts gate). Its contract identifies the writer's word, transfers the
+  deterministic phases, and gives all-branch halting and exact-budget acceptance; with the
+  interpreter core run silently (`Turing.embedSilentTM`), the core's precondition and live
+  verdicts (`Turing.guessRunTM_silent_spec`).
+
+## Main definitions
+
+* `Turing.NDTM.phaseHostND` — the nondeterministic phase host.
+* `Turing.NDWriterState`, `Turing.ndWriterTM` — the choice writer. [AB09, §2.1.2]
+* `Turing.GuessRunPhase`, `Turing.guessRunPhases`, `Turing.guessRunRed`, `Turing.guessRunTM` —
+  the guess-then-run host. [AB09, §2.1.2, proof of Theorem 2.6]
+* `Turing.guessRunCfg`, `Turing.streamStartCfg` — the run's entry configuration after a guess,
+  and the interpreter core's start configuration.
+
+## Main results
+
+* `Turing.NDTM.phaseHostND_fixChoice`, `Turing.NDTM.phaseHostND_run` (proved).
+* `Turing.ndWriterTM_run_block` — the bounded flavor's contract (sorried).
+* `Turing.guessRunTM_runWith_handoff`, `Turing.guessRunTM_runWith_handoff_state`,
+  `Turing.guessRunTM_runWith_live`, `Turing.guessRunTM_runWith`,
+  `Turing.guessRunTM_haltsWithin`, `Turing.guessRunTM_accepts_iff` — the guess-then-run assembly
+  (proved modulo `Turing.ndWriterTM_run_block`); `Turing.guessRunTM_runWith_setup_halt` — a
+  halting setup (proved).
+* `Turing.guessRunCfg_clean` (proved), `Turing.guessRunTM_silent_spec` (proved modulo the
+  writer) — the interpreter core's interface: precondition, emission capture, live verdicts.
+* The fields of the two configurations `Turing.guessRunCfg_state`, `_inputPos`, `_workTapes`,
+  `_workTapePos`, `_output` and `Turing.streamStartCfg_state`, `_inputPos`, `_workTapes`,
+  `_workTapePos`, `_output` (the ND inventory API, C1's pre-ship inventory, 2026-10-17).
+
+## References
+
+* [AB09] S. Arora, B. Barak, *Computational Complexity: A Modern Approach*,
+  Cambridge University Press, 2009. (§2.1.2: an NDTM chooses one of its two transition
+  functions at every step; the proof of Theorem 2.6: guess a string, then verify it
+  deterministically; Exercise 2.6.)
+-/
+
+namespace Turing.NDTM
+
+variable {k : ℕ} {Γ : Type}
+
+/-- **The nondeterministic phase host**: `Turing.phaseHostTM` over nondeterministic phases.
+Its states are the tagged phase states. A state that `red` maps to `some q` takes one
+stationary, silent dispatch step to `q` under either choice; every other state of phase `i`
+follows phase `i`'s two transition functions, with successors tagged by `i`. Deterministic
+phases enter as `Turing.MultiTapeTM.toNDTM`. (A host of the construction layer; [AB09,
+§2.1.2].) -/
+def phaseHostND {I : Type} {Ph : I → Type} (M : (i : I) → NDTM k Γ (Ph i))
+    (q0 : Σ i, Ph i) (red : (i : I) → Ph i → Option (Σ i, Ph i)) :
+    NDTM k Γ (Σ i, Ph i) where
+  q₀ := q0
+  tr := fun b q inp w =>
+    match red q.1 q.2 with
+    | some q' => ⟨0, fun _ => (none, 0), none, some q'⟩
+    | none => ((M q.1).tr b q.2 inp w).mapState (Sigma.mk q.1)
+
+/-- **Each slice of the ND phase host is a deterministic phase host**: fixing the choice `b`
+in `Turing.NDTM.phaseHostND` gives `Turing.phaseHostTM` over the phases' slices at `b`. -/
+theorem phaseHostND_fixChoice {I : Type} {Ph : I → Type} (M : (i : I) → NDTM k Γ (Ph i))
+    (q0 : Σ i, Ph i) (red : (i : I) → Ph i → Option (Σ i, Ph i)) (b : Bool) :
+    (phaseHostND M q0 red).fixChoice b = phaseHostTM (fun i => (M i).fixChoice b) q0 red :=
+  rfl
+
+/-- **The ND phase lemma** (the nondeterministic counterpart of `Turing.phaseHostTM_run`). Let
+phase `i` run under the word `w` from `c` to `c'`, ending at a state `s'` that `red` redirects
+to `q'`, and reaching no redirected state before. Then inside the host, every prefix of `w`
+drives the tagged phase run from the tagged `c`, and one further choice, either bit, performs
+the dispatch to `q'` with every other field of `c'` unchanged.
+
+**Proof sketch.** `Turing.NDTM.runWith_mapState_of_agreeOn` along `Sigma.mk i`, with the good
+states those that `red` does not redirect; the final dispatch is one explicit step. -/
+theorem phaseHostND_run {I : Type} {Ph : I → Type} (M : (i : I) → NDTM k Γ (Ph i))
+    (q0 : Σ i, Ph i) (red : (i : I) → Ph i → Option (Σ i, Ph i)) (i : I) {x : List Γ}
+    (c c' : Cfg k Γ (Ph i) x) (w : List Bool) (h : (M i).runWith w c = c') (s' : Ph i)
+    (hs' : c'.state = some s') (q' : Σ i, Ph i) (hred : red i s' = some q')
+    (hguard : ∀ u < w.length, ∀ s, ((M i).runWith (w.take u) c).state = some s →
+      red i s = none) (b : Bool) :
+    (∀ u ≤ w.length, (phaseHostND M q0 red).runWith (w.take u) (c.mapState (Sigma.mk i)) =
+        ((M i).runWith (w.take u) c).mapState (Sigma.mk i)) ∧
+      (phaseHostND M q0 red).runWith (w ++ [b]) (c.mapState (Sigma.mk i)) =
+        c'.mapState (fun _ => q') := by
+  let emb : Ph i ↪ (Σ i, Ph i) := ⟨Sigma.mk i, sigma_mk_injective⟩
+  have hagree : ∀ (b : Bool) (s : Ph i), red i s = none → ∀ inp work,
+      (phaseHostND M q0 red).tr b (emb s) inp work =
+        ((M i).tr b s inp work).mapState emb := by
+    intro b s hs inp work
+    simp only [phaseHostND, emb, Function.Embedding.coeFn_mk, hs]
+  have hpre : ∀ u ≤ w.length,
+      (phaseHostND M q0 red).runWith (w.take u) (c.mapState (Sigma.mk i)) =
+        ((M i).runWith (w.take u) c).mapState (Sigma.mk i) := by
+    intro u hu
+    exact runWith_mapState_of_agreeOn (M i) (phaseHostND M q0 red) emb
+      (fun s => red i s = none) hagree c (w.take u) (by
+        intro v hv s hs
+        rw [List.length_take] at hv
+        rw [List.take_take, Nat.min_eq_left (by omega)] at hs
+        exact hguard v (by omega) s hs)
+  refine ⟨hpre, ?_⟩
+  rw [runWith_append]
+  have hw := hpre w.length le_rfl
+  rw [List.take_length, h] at hw
+  rw [hw, runWith_cons, runWith_nil]
+  have hst : (c'.mapState (Sigma.mk i)).state = some ⟨i, s'⟩ := by
+    simp [Cfg.mapState, hs']
+  unfold stepWith
+  rw [hst]
+  simp only [phaseHostND, hred]
+  apply Cfg.ext <;> simp [Cfg.mapState, hs']
+
+end Turing.NDTM
+
+namespace Turing
+
+/-- Control of the choice writer: running with a controller state `q`, or `done` (the live exit
+anchor). -/
+inductive NDWriterState (Q : Type) where
+  /-- writing, with controller state `q` -/
+  | run (q : Q)
+  /-- the live exit anchor -/
+  | done
+  deriving DecidableEq
+
+/-- **The choice writer** (H5's choice device, guessed flavor). An NDTM with `k` work tapes and
+writer tape `j`. In state `run q`: if the controller asks to stop (`stop q`), or, in the
+`bounded` flavor, the cell under the head of tape `j` is blank, it moves to `done` without
+moving or writing; otherwise it writes its choice bit `b` on tape `j`, moves that head right,
+and updates the controller to `δ q b`. `done` is a silent, stationary, live self-loop. Under a
+general controller the choice also selects the successor `δ q b`, so control is
+choice-dependent; with the trivial controller that never stops, the two choices differ only in
+the written symbol. The controller type `Q` need not be finite. No input move, no output.
+[AB09, §2.1.2: the choice at each step] -/
+def ndWriterTM (k : ℕ) (j : Fin k) {Q : Type} (q₀ : Q) (δ : Q → Bool → Q)
+    (stop : Q → Bool) (bounded : Bool) : NDTM k Bool (NDWriterState Q) where
+  q₀ := .run q₀
+  tr := fun b q _ w =>
+    match q with
+    | .done => ⟨0, fun _ => (none, 0), none, some .done⟩
+    | .run q =>
+      if stop q || (bounded && (w j).isNone) then ⟨0, fun _ => (none, 0), none, some .done⟩
+      else ⟨0, fun i => if i = j then (some (some b), 1) else (none, 0), none,
+        some (.run (δ q b))⟩
+
+/-- The configuration after writing the word `s`, before testing the next cell. -/
+private def wr_cfg {k : ℕ} (j : Fin k) {x : List Bool}
+    (c : Cfg k Bool (NDWriterState Unit) x) (s : List Bool) :
+    Cfg k Bool (NDWriterState Unit) x :=
+  { c with
+    state := some (.run ())
+    workTapes := Function.update c.workTapes j (fun p =>
+      if c.workTapePos j ≤ p ∧ p < c.workTapePos j + s.length then
+        FinTM.bufferTape s (p - c.workTapePos j)
+      else c.workTapes j p)
+    workTapePos := Function.update c.workTapePos j (c.workTapePos j + s.length) }
+
+/-- Extending a written interval by one bit is a single update at its right boundary.
+
+**Proof sketch.** At the boundary use the buffer's append equation. Off the boundary the
+update is inert, and the two integer interval tests agree. -/
+private theorem wr_tape_append (t : ℤ → Option Bool) (a : ℤ) (s : List Bool) (b : Bool) :
+    Function.update (fun p => if a ≤ p ∧ p < a + s.length then
+      FinTM.bufferTape s (p - a) else t p) (a + s.length) (some b) =
+    fun p => if a ≤ p ∧ p < a + (s ++ [b]).length then
+      FinTM.bufferTape (s ++ [b]) (p - a) else t p := by
+  funext p
+  rw [FinTM.bufferTape_append]
+  simp only [List.length_append, List.length_singleton, Nat.cast_add, Nat.cast_one]
+  by_cases hp : p = a + s.length
+  · subst p
+    rw [Function.update_self, if_pos (by omega)]
+    rw [show a + (s.length : ℤ) - a = s.length by omega, Function.update_self]
+  · rw [Function.update_of_ne hp]
+    have hoff : p - a ≠ (s.length : ℤ) := by omega
+    rw [Function.update_of_ne hoff]
+    by_cases h : a ≤ p ∧ p < a + s.length
+    · rw [if_pos h, if_pos (by omega)]
+    · rw [if_neg h, if_neg (by omega)]
+
+/-- The empty written prefix gives the original running configuration. -/
+private theorem wr_cfg_nil {k : ℕ} (j : Fin k) {x : List Bool}
+    (c : Cfg k Bool (NDWriterState Unit) x) (hc : c.state = some (.run ())) :
+    wr_cfg j c [] = c := by
+  apply Cfg.ext
+  · exact hc.symm
+  · rfl
+  · funext i p
+    have hempty : ¬ (c.workTapePos j ≤ p ∧ p < c.workTapePos j) := by omega
+    by_cases hi : i = j <;> simp [wr_cfg, hi, hempty]
+  · funext i
+    by_cases hi : i = j <;> simp [wr_cfg, hi]
+  · rfl
+
+/-- The next cell of the block still has its original symbol. -/
+private theorem wr_cfg_scan {k : ℕ} (j : Fin k) {x : List Bool}
+    (c : Cfg k Bool (NDWriterState Unit) x) (s : List Bool) :
+    (wr_cfg j c s).workTapeSymbols j = c.workTapes j (c.workTapePos j + s.length) := by
+  rw [Cfg.workTapeSymbols_eq]
+  simp only [wr_cfg, Function.update_self, lt_self_iff_false, and_false, if_false]
+
+/-- One writer step from the written-prefix configuration: at a blank next cell, the stationary
+live exit; otherwise the written prefix extended by the choice bit, the writer's head one cell
+further right.
+
+**Proof sketch.** Read the live step through `Turing.NDTM.stepWith_of_some` and the writer's
+blank test at the next cell (`wr_cfg_scan`), then the applied action through its field
+equations. On both branches the input head and the output are unchanged. At a blank cell the
+action is stationary and writes nothing; at a nonblank cell the buffer append equation
+(`wr_tape_append`) gives the written tape and the head moves by one. -/
+private theorem wr_cfg_stepWith {k : ℕ} (j : Fin k) {x : List Bool}
+    (c : Cfg k Bool (NDWriterState Unit) x) (s : List Bool) (b : Bool) :
+    (ndWriterTM k j () (fun _ _ => ()) (fun _ => false) true).stepWith b (wr_cfg j c s) =
+      if c.workTapes j (c.workTapePos j + s.length) = none then
+        { wr_cfg j c s with state := some .done }
+      else wr_cfg j c (s ++ [b]) := by
+  rw [NDTM.stepWith_of_some (q := .run ()) (by rfl)]
+  simp only [ndWriterTM, Bool.false_or, Bool.true_and, Option.isNone_iff_eq_none, wr_cfg_scan]
+  split_ifs with hcell <;> apply Cfg.ext <;>
+    first
+    | (rw [Action.apply_state]; try rfl)
+    | (rw [Action.apply_inputPos]; exact moveInputPos_zero _)
+    | (rw [Action.apply_output]; simp only [Option.toList_none, List.append_nil, wr_cfg])
+    | skip
+  · funext i
+    rw [Action.apply_workTapes]
+    simp only [Option.getD_none, Cfg.workTapeSymbols_eq, Function.update_eq_self]
+  · funext i
+    rw [Action.apply_workTapePos]
+    simp only [SignType.coe_zero, add_zero]
+  · funext i
+    rw [Action.apply_workTapes]
+    by_cases hi : i = j
+    · subst i
+      simp only [wr_cfg, Function.update_self, ↓reduceIte, Option.getD_some]
+      exact wr_tape_append (c.workTapes j) (c.workTapePos j) s b
+    · simp only [wr_cfg, if_neg hi, Option.getD_none, Cfg.workTapeSymbols_eq,
+        Function.update_eq_self, Function.update_of_ne hi]
+  · funext i
+    rw [Action.apply_workTapePos]
+    by_cases hi : i = j
+    · subst i
+      simp only [wr_cfg, Function.update_self, ↓reduceIte, SignType.coe_one,
+        List.length_append, List.length_singleton, Nat.cast_add, Nat.cast_one]
+      omega
+    · simp only [wr_cfg, Function.update_of_ne hi, if_neg hi, SignType.coe_zero, add_zero]
+
+/-- Every prefix that fits in the nonblank block is exactly the written-prefix configuration.
+
+**Proof sketch.** Induct once on the prefix length. The next scanned cell is the original
+nonblank cell at that offset, so the one-step lemma appends the next choice bit. -/
+private theorem wr_prefix {k : ℕ} (j : Fin k) {x : List Bool}
+    (c : Cfg k Bool (NDWriterState Unit) x) (hc : c.state = some (.run ()))
+    (m : ℕ) (hblock : ∀ p : ℕ, p < m → c.workTapes j (c.workTapePos j + p) ≠ none)
+    (w : List Bool) (u : ℕ) (hu : u ≤ m) (hw : u ≤ w.length) :
+    (ndWriterTM k j () (fun _ _ => ()) (fun _ => false) true).runWith (w.take u) c =
+      wr_cfg j c (w.take u) := by
+  revert hu hw
+  induction u with
+  | zero =>
+    intro _ _
+    rw [List.take_zero, NDTM.runWith_nil, wr_cfg_nil j c hc]
+  | succ u ih =>
+    intro hu hw
+    have hlt : u < w.length := by omega
+    have hlen : (w.take u).length = u := List.length_take_of_le (by omega)
+    rw [List.take_succ_eq_append_getElem hlt, NDTM.runWith_append,
+      ih (by omega) (by omega), NDTM.runWith_cons, NDTM.runWith_nil]
+    rw [wr_cfg_stepWith, if_neg (by rw [hlen]; exact hblock u (by omega))]
+
+/-- **The bounded choice writer's contract.** Start the bounded writer with the trivial
+controller at `run ()` over a nonblank block of `m` cells of tape `j` from its head, followed by
+a blank. Then every choice word `w` of length `m + 1` overwrites the block with its first `m`
+bits, leaves the head of tape `j` just after the block, and reaches `done`; every other field is
+unchanged. No shorter word reaches `done`. So the guessed stream is exactly `w.take m`, on every
+branch at the same time `m + 1`, and every stream of length `m` is guessed (by `s ++ [b]`).
+[AB09, §2.1.2]
+
+**Proof sketch.** Induct on the first `m` steps: at step `u < m` the head of tape `j` is at cell
+`u` of the block, which still holds its original nonblank symbol, so the writer writes `w[u]`
+and moves right, keeping state `run ()`. At step `m` the head reads the blank after the block,
+and the writer moves to `done` without moving. Before step `m + 1` the state is `run ()`.
+
+**Fill appendix (C1-W).** This delivery leaves the contract open because the pinned baseline
+could not be bootstrapped in the fill environment. The authorized executable-path fallback
+started Lean 4.25.0, but dependency-cache and resource failures blocked elaboration. The
+unverified draft in `REPORT.md` follows the single prefix-length induction above, using the
+published step and action-field equations and the buffer append lemma. No new declaration,
+import, or proof admission is added; the existing admission remains pending verification.
+-/
+theorem ndWriterTM_run_block {k : ℕ} (j : Fin k) {x : List Bool}
+    (c : Cfg k Bool (NDWriterState Unit) x) (hc : c.state = some (.run ()))
+    (m : ℕ) (hblock : ∀ p : ℕ, p < m → c.workTapes j (c.workTapePos j + p) ≠ none)
+    (hend : c.workTapes j (c.workTapePos j + m) = none)
+    (w : List Bool) (hw : w.length = m + 1) :
+    (ndWriterTM k j () (fun _ _ => ()) (fun _ => false) true).runWith w c =
+      { c with
+        state := some .done
+        workTapes := Function.update c.workTapes j (fun p =>
+          if c.workTapePos j ≤ p ∧ p < c.workTapePos j + m then
+            FinTM.bufferTape (w.take m) (p - c.workTapePos j)
+          else c.workTapes j p)
+        workTapePos := Function.update c.workTapePos j (c.workTapePos j + m) } ∧
+    ∀ w' : List Bool, w'.length < m + 1 →
+      ((ndWriterTM k j () (fun _ _ => ()) (fun _ => false) true).runWith w' c).state ≠
+        some .done := by
+  have hm : m < w.length := by omega
+  have hlen : (w.take m).length = m := List.length_take_of_le (by omega)
+  constructor
+  · have hsplit : w = w.take m ++ [w[m]] := by
+      rw [← List.take_succ_eq_append_getElem hm, ← hw, List.take_length]
+    conv_lhs => rw [hsplit]
+    rw [NDTM.runWith_append, wr_prefix j c hc m hblock w m le_rfl (by omega),
+      NDTM.runWith_cons, NDTM.runWith_nil, wr_cfg_stepWith,
+      if_pos (by simpa only [hlen] using hend)]
+    simp only [wr_cfg, hlen]
+  · intro w' hw'
+    have hrun := wr_prefix j c hc m hblock w' w'.length (by omega) le_rfl
+    rw [List.take_length] at hrun
+    rw [hrun]
+    simp only [wr_cfg, ne_eq, Option.some.injEq, reduceCtorEq, not_false_eq_true]
+
+end Turing
+
+/-! ## The guess-then-run assembly
+
+The universal NDTM and the diagonalizer of `TCSlib.Complexity.Diagonalization.NTimeHierarchy`
+share one shape (user decision 1 of 2026-10-13; ruling 2 of the C1 host-contracts gate). A
+deterministic setup leaves a nonblank block of `m` cells on a stream tape; the bounded choice
+writer overwrites it with `m` choice bits; the stream head is rewound; a deterministic run ends in
+one of two live verdict states; and a verdict leaf emits the verdict bit and halts. This is a
+composition of the present host `Turing.NDTM.phaseHostND` over six phases, with the catalog's
+`Turing.skipTM` and `Turing.skipBackTM` as the rewind: no new host. Deterministic phases enter as
+`Turing.MultiTapeTM.toNDTM`, so the writer is the only choice-dependent phase, and a branch is
+determined by the `m` bits it writes.
+
+* `Turing.guessRunTM_runWith_handoff`: every word of length `TP + 2m + 9` drives the host to the
+  run's entry, with the block overwritten by the word's `m` bits after its first `TP + 1` (the
+  writer's word, identified) and every head where the setup left it.
+* `Turing.guessRunTM_runWith_live`: no shorter word halts the host;
+  `Turing.guessRunTM_runWith_handoff_state`: at the handoff itself the host is live, at the run's
+  entry.
+* `Turing.guessRunTM_runWith_setup_halt`: a setup that halts before its exit halts the host,
+  unguessed.
+* `Turing.guessRunTM_runWith`: the whole branch, through the run's first verdict, halted by time
+  `TP + 2m + TQ + 11` with the verdict bit appended to the output; later choices are absorbed.
+* `Turing.guessRunTM_haltsWithin`, `Turing.guessRunTM_accepts_iff`: all-branch halting, and
+  exact-budget acceptance in both directions.
+* `Turing.guessRunCfg_clean`, `Turing.guessRunTM_silent_spec`: the interface of the interpreter
+  core `Turing.exists_ndInterpreterCore`. From a clean setup the run's entry is the core's start
+  configuration, silently embedded (`Turing.embedSilentTM` captures the core's emissions), and
+  the core's live verdicts become the host's.
+
+Every theorem here is proved. The seven that pass the writer use `Turing.ndWriterTM_run_block`,
+its sorried contract, and so are proved modulo it; `Turing.guessRunTM_runWith_setup_halt` and
+`Turing.guessRunCfg_clean` do not use it.
+-/
+
+namespace Turing
+
+/-- The choice writer's control states are finite when the controller's are: `NDWriterState Q`
+is equivalent to `Option Q` (`run q ↦ some q`, `done ↦ none`). Needed to bundle the
+guess-then-run host as a `Turing.FinNDTM`. -/
+instance NDWriterState.instFintype {Q : Type} [Fintype Q] : Fintype (NDWriterState Q) :=
+  Fintype.ofEquiv (Option Q)
+    { toFun := fun o => match o with
+        | some q => .run q
+        | none => .done
+      invFun := fun s => match s with
+        | .run q => some q
+        | .done => none
+      left_inv := fun o => by cases o <;> rfl
+      right_inv := fun s => by cases s <;> rfl }
+
+/-- **The phases of the guess-then-run host**, in run order: the deterministic setup, the bounded
+choice writer, one step right past the guessed block, the rewind of the writer's tape to the
+block's start, the deterministic run up to a live verdict, and the verdict emission. (Technical
+glue: the phase index of `Turing.guessRunTM`.) -/
+inductive GuessRunPhase where
+  /-- the deterministic setup -/
+  | pre
+  /-- the bounded choice writer -/
+  | guess
+  /-- one step right, past the blank after the guessed block -/
+  | skip
+  /-- the rewind of the writer's tape to the block's start -/
+  | back
+  /-- the deterministic run, up to a live verdict -/
+  | run
+  /-- the verdict emission -/
+  | out
+  deriving DecidableEq, Fintype
+
+/-- **The control states of each phase of the guess-then-run host**: the setup's `SP`; the
+writer's `Turing.NDWriterState Unit`; the seek phases `Turing.SeekPhase` for the step right and
+for the rewind; the run's `SQ`; and the verdict bit for the emission. -/
+def GuessRunPhase.State (SP SQ : Type) : GuessRunPhase → Type
+  | .pre => SP
+  | .guess => NDWriterState Unit
+  | .skip => SeekPhase
+  | .back => SeekPhase
+  | .run => SQ
+  | .out => Bool
+
+/-- Each phase's state type is finite when the setup's and the run's are. -/
+instance GuessRunPhase.instFintypeState {SP SQ : Type} [Fintype SP] [Fintype SQ] :
+    (i : GuessRunPhase) → Fintype (GuessRunPhase.State SP SQ i)
+  | .pre => inferInstanceAs (Fintype SP)
+  | .guess => inferInstanceAs (Fintype (NDWriterState Unit))
+  | .skip => inferInstanceAs (Fintype SeekPhase)
+  | .back => inferInstanceAs (Fintype SeekPhase)
+  | .run => inferInstanceAs (Fintype SQ)
+  | .out => inferInstanceAs (Fintype Bool)
+
+/-- Each phase's state type has decidable equality when the setup's and the run's have. -/
+instance GuessRunPhase.instDecidableEqState {SP SQ : Type} [DecidableEq SP] [DecidableEq SQ] :
+    (i : GuessRunPhase) → DecidableEq (GuessRunPhase.State SP SQ i)
+  | .pre => inferInstanceAs (DecidableEq SP)
+  | .guess => inferInstanceAs (DecidableEq (NDWriterState Unit))
+  | .skip => inferInstanceAs (DecidableEq SeekPhase)
+  | .back => inferInstanceAs (DecidableEq SeekPhase)
+  | .run => inferInstanceAs (DecidableEq SQ)
+  | .out => inferInstanceAs (DecidableEq Bool)
+
+/-- **The phase machines of the guess-then-run host.** The setup `P` and the run `Q`, as
+`Turing.MultiTapeTM.toNDTM` (both choices apply their one transition function); the bounded choice
+writer `Turing.ndWriterTM` on tape `j` with the trivial controller that never stops (the instance
+of `Turing.ndWriterTM_run_block`); `Turing.skipTM` and `Turing.skipBackTM` on tape `j`, as
+`toNDTM`; and the verdict leaf, which in state `b` emits `b` and halts under either choice, moving
+no head and writing nothing. The leaf is hand-built: the construction layer has no public
+emit-and-halt row for plain machines (`Turing.OracleTM.answerAction` is the oracle machines'
+one), so its one transition is written here, as in the hand-built deciders of the library. -/
+def guessRunPhases {k : ℕ} {SP SQ : Type} (P : MultiTapeTM k Bool SP) (j : Fin k)
+    (Q : MultiTapeTM k Bool SQ) :
+    (i : GuessRunPhase) → NDTM k Bool (GuessRunPhase.State SP SQ i)
+  | .pre => P.toNDTM
+  | .guess => ndWriterTM k j () (fun _ _ => ()) (fun _ => false) true
+  | .skip => (skipTM k j).toNDTM
+  | .back => (skipBackTM k j).toNDTM
+  | .run => Q.toNDTM
+  | .out => ⟨false, fun _ b _ _ => ⟨0, fun _ => (none, 0), some b, none⟩⟩
+
+/-- **The redirects of the guess-then-run host.** The setup's exit `pexit` dispatches to the
+writer's start `run ()`; the writer's `done` to the start of the step right; its `done` to the
+start of the rewind; the rewind's `done` to the run's entry `qentry`; the run's verdict `acc` to
+the leaf's `true`, and `rej` to its `false` (`acc` is tested first). No other state is
+redirected, so a halt of the run is the host's halt. Each redirect is one stationary, silent
+step of the host under either choice (`Turing.NDTM.phaseHostND`). -/
+def guessRunRed {SP SQ : Type} [DecidableEq SP] [DecidableEq SQ] (pexit : SP)
+    (qentry acc rej : SQ) :
+    (i : GuessRunPhase) → GuessRunPhase.State SP SQ i →
+      Option (Σ i, GuessRunPhase.State SP SQ i)
+  | .pre, s => if s = pexit then some ⟨.guess, NDWriterState.run ()⟩ else none
+  | .guess, .done => some ⟨.skip, SeekPhase.run⟩
+  | .guess, .run _ => none
+  | .skip, .done => some ⟨.back, SeekPhase.run⟩
+  | .skip, .run => none
+  | .skip, .gap => none
+  | .skip, .back => none
+  | .back, .done => some ⟨.run, qentry⟩
+  | .back, .run => none
+  | .back, .gap => none
+  | .back, .back => none
+  | .run, s => if s = acc then some ⟨.out, true⟩ else if s = rej then some ⟨.out, false⟩
+      else none
+  | .out, _ => none
+
+/-- **The guess-then-run host.** The nondeterministic phase host `Turing.NDTM.phaseHostND` over
+`Turing.guessRunPhases P j Q` with the redirects `Turing.guessRunRed pexit qentry acc rej`,
+started at the setup's initial state. The setup `P` runs to its exit `pexit`; the bounded choice
+writer guesses the block on tape `j` from that tape's head; one step right and the rewind
+`Turing.skipBackTM` return the head of tape `j` to the block's start; the run `Q` starts at
+`qentry` and runs to a live verdict, `acc` or `rej`; the verdict leaf emits `true` or `false`
+and halts. If `Q` halts on its own, so does the host. Every phase but the writer is
+deterministic, so a branch is determined by the writer's bits. A composition of the present host
+with catalog rows (ruling 2 of the C1 host-contracts gate), not a new host. [AB09, §2.1.2, proof
+of Theorem 2.6: an NDTM writes down a guessed string, then runs a deterministic verifier] -/
+def guessRunTM {k : ℕ} {SP SQ : Type} [DecidableEq SP] [DecidableEq SQ]
+    (P : MultiTapeTM k Bool SP) (pexit : SP) (j : Fin k) (Q : MultiTapeTM k Bool SQ)
+    (qentry acc rej : SQ) : NDTM k Bool (Σ i, GuessRunPhase.State SP SQ i) :=
+  NDTM.phaseHostND (guessRunPhases P j Q) ⟨.pre, P.q₀⟩ (guessRunRed pexit qentry acc rej)
+
+/-- **The run's entry configuration after a guess.** The configuration `c` in state `q`, with
+the `|s|` cells of tape `j` from its head overwritten by `s`; the input head, every other tape,
+every head (that of tape `j` included) and the output are `c`'s. -/
+def guessRunCfg {k : ℕ} {S S' : Type} {z : List Bool} (c : Cfg k Bool S z) (j : Fin k)
+    (s : List Bool) (q : S') : Cfg k Bool S' z :=
+  ⟨some q, c.inputPos,
+    Function.update c.workTapes j (fun p =>
+      if c.workTapePos j ≤ p ∧ p < c.workTapePos j + s.length then
+        FinTM.bufferTape s (p - c.workTapePos j)
+      else c.workTapes j p),
+    c.workTapePos, c.output⟩
+
+/-! The handoff configuration's fields as equations (the ND inventory API, 2026-10-17), by `simps`
+without the `simp` attribute: the state is `some q`, tape `j` holds `s` from its head with every
+other cell `c`'s, and the input head, every other tape, every head and the output are `c`'s. -/
+attribute [simps (config := { isSimp := false }) state inputPos workTapes workTapePos output]
+  guessRunCfg
+
+/-- **The interpreter core's start configuration**: state `q`, input head on the first symbol
+of `z`, the stream `s` on tape `j` from cell `0`, every other tape blank, every head at `0`,
+empty output. It is the configuration `start` of `Turing.exists_ndInterpreterCore`, verbatim. -/
+def streamStartCfg {K : ℕ} {S : Type} (z : List Bool) (j : Fin K) (q : S) (s : List Bool) :
+    Cfg K Bool S z :=
+  ⟨some q, 1, fun i => if i = j then FinTM.bufferTape s else fun _ => none, fun _ => 0, []⟩
+
+/-! The start configuration's fields as equations (the ND inventory API, 2026-10-17), by `simps`
+without the `simp` attribute: state `some q`, input head `1`, tape `j` the buffer of `s` and every
+other tape blank, every head `0`, output `[]`. -/
+attribute [simps (config := { isSimp := false }) state inputPos workTapes workTapePos output]
+  streamStartCfg
+
+/-- Renaming a configuration's state twice is renaming it once, along the composite. -/
+private theorem guessRun_mapState_mapState {k : ℕ} {S S' S'' : Type} {x : List Bool}
+    (c : Cfg k Bool S x) (f : S → S') (g : S' → S'') :
+    (c.mapState f).mapState g = c.mapState (g ∘ f) := by
+  cases c
+  simp [Cfg.mapState, Option.map_map]
+
+/-- A word longer than `L` splits as its first `L` bits, one bit, and the rest. -/
+private theorem guessRun_split (L : ℕ) (w : List Bool) (h : L < w.length) :
+    ∃ (a : List Bool) (b : Bool) (r : List Bool), w = a ++ [b] ++ r ∧ a.length = L := by
+  refine ⟨w.take L, w[L], w.drop (L + 1), ?_, by simp; omega⟩
+  rw [List.append_assoc, List.singleton_append, ← List.drop_eq_getElem_cons h,
+    List.take_append_drop]
+
+/-- **Through the guess and the rewind.** Let the setup `P` run from its initial configuration on
+`z` to `cP` at time `TP`, at its exit `pexit` and not at `pexit` before, with a nonblank block of
+`m` cells of tape `j` from its head, a blank just after the block and a blank just before it.
+Then every choice word `w` of length `TP + 2m + 9` drives the host to the run's entry
+configuration `Turing.guessRunCfg cP j s qentry`, tagged by the run phase, where `s` is the `m`
+bits of `w` after its first `TP + 1`: the block holds `s`, the head of tape `j` is back at the
+block's start, and every other field is `cP`'s. The time is `TP` for the setup, `1` per dispatch
+(four), `m + 1` for the writer, `1` for the step right and `m + 3` for the rewind. The first
+`TP + 1` bits and the writer's last bit are ignored, and every stream of length `m` is the
+stream of some word. [AB09, §2.1.2, proof of Theorem 2.6]
+
+**Proof sketch.** Split `w` into the setup's `TP` bits and a dispatch bit, the writer's `m + 1`
+bits and a dispatch bit, the step right's bit and a dispatch bit, and the rewind's `m + 3` bits
+and a dispatch bit. Each phase is one application of `Turing.NDTM.phaseHostND_run`. The setup's
+branch is its run (`Turing.MultiTapeTM.toNDTM_runWith`), with no redirect before `TP`. The
+writer's branch is `Turing.ndWriterTM_run_block` (sorried in this module, so the theorem is proved
+modulo it), whose second clause is the guard. The step right is `Turing.skipTM_run_ofCfg` over the
+empty word (the cell after the block is blank). The rewind is `Turing.skipBackTM_run_ofCfg` over
+`s` (the cells before and after the block are blank). Each phase's endpoint, renamed, is the next
+phase's start; the last is the entry configuration, the head of tape `j` restored. -/
+theorem guessRunTM_runWith_handoff {k : ℕ} {SP SQ : Type} [DecidableEq SP] [DecidableEq SQ]
+    (P : MultiTapeTM k Bool SP) (pexit : SP) (j : Fin k) (Q : MultiTapeTM k Bool SQ)
+    (qentry acc rej : SQ) {z : List Bool} (TP : ℕ) (cP : Cfg k Bool SP z)
+    (hP : P.runFrom (P.initCfg z) TP = cP) (hPexit : cP.state = some pexit)
+    (hPfirst : ∀ u < TP, (P.runFrom (P.initCfg z) u).state ≠ some pexit)
+    (m : ℕ) (hblock : ∀ p : ℕ, p < m → cP.workTapes j (cP.workTapePos j + p) ≠ none)
+    (hend : cP.workTapes j (cP.workTapePos j + m) = none)
+    (hleft : cP.workTapes j (cP.workTapePos j - 1) = none)
+    (w : List Bool) (hw : w.length = TP + 2 * m + 9) :
+    (guessRunTM P pexit j Q qentry acc rej).runWith w
+        ((guessRunTM P pexit j Q qentry acc rej).initCfg z) =
+      (guessRunCfg cP j ((w.drop (TP + 1)).take m) qentry).mapState
+        (Sigma.mk GuessRunPhase.run) := by
+  classical
+  -- the five segments of the word
+  obtain ⟨a₁, b₁, r₁, rfl, ha₁⟩ := guessRun_split TP w (by omega)
+  have hr₁ : r₁.length = 2 * m + 8 := by simp [ha₁] at hw; omega
+  obtain ⟨a₂, b₂, r₂, rfl, ha₂⟩ := guessRun_split (m + 1) r₁ (by omega)
+  have hr₂ : r₂.length = m + 6 := by simp at hr₁; omega
+  obtain ⟨a₃, b₃, r₃, rfl, ha₃⟩ := guessRun_split 1 r₂ (by omega)
+  have hr₃ : r₃.length = m + 4 := by simp at hr₂; omega
+  obtain ⟨a₄, b₄, r₄, rfl, ha₄⟩ := guessRun_split (m + 3) r₃ (by omega)
+  have hr₄ : r₄ = [] := by simp at hr₃; exact List.eq_nil_of_length_eq_zero (by omega)
+  subst hr₄
+  have hs : ((a₁ ++ [b₁] ++ (a₂ ++ [b₂] ++ (a₃ ++ [b₃] ++ (a₄ ++ [b₄] ++ [])))).drop
+      (TP + 1)).take m = a₂.take m := by
+    rw [List.drop_left' (by simp [ha₁])]
+    rw [List.append_assoc, List.append_assoc, List.take_append_of_le_length (by omega)]
+  rw [hs]
+  set s := a₂.take m with hs_def
+  have hslen : s.length = m := by simp [s, ha₂]
+  set M := guessRunPhases P j Q
+  set red := guessRunRed pexit qentry acc rej
+  have hN : guessRunTM P pexit j Q qentry acc rej = NDTM.phaseHostND M ⟨.pre, P.q₀⟩ red := rfl
+  rw [hN]
+  set H := NDTM.phaseHostND M ⟨GuessRunPhase.pre, P.q₀⟩ red with hH
+  have hinit : H.initCfg z = (P.initCfg z).mapState (Sigma.mk GuessRunPhase.pre) := rfl
+  -- phase 1: the setup, then one dispatch
+  have h1 : H.runWith (a₁ ++ [b₁]) ((P.initCfg z).mapState (Sigma.mk GuessRunPhase.pre)) =
+      cP.mapState (fun _ =>
+        (⟨.guess, NDWriterState.run ()⟩ : Σ i, GuessRunPhase.State SP SQ i)) := by
+    refine (NDTM.phaseHostND_run M ⟨.pre, P.q₀⟩ red GuessRunPhase.pre (P.initCfg z) cP a₁ ?_
+      pexit hPexit _ ?_ ?_ b₁).2
+    · show P.toNDTM.runWith a₁ (P.initCfg z) = cP
+      rw [MultiTapeTM.toNDTM_runWith, ha₁, hP]
+    · show (if pexit = pexit then _ else none) = _
+      simp
+    · intro u hu s' hs'
+      change (P.toNDTM.runWith (a₁.take u) (P.initCfg z)).state = some s' at hs'
+      rw [MultiTapeTM.toNDTM_runWith, List.length_take, Nat.min_eq_left hu.le] at hs'
+      have hne := hPfirst u (by omega)
+      show (if s' = pexit then _ else none) = none
+      rw [if_neg]
+      rintro rfl
+      exact hne hs'
+  -- phase 2: the bounded writer, then one dispatch
+  let cW : Cfg k Bool (NDWriterState Unit) z := cP.mapState (fun _ => NDWriterState.run ())
+  have hcW : cP.mapState (fun _ =>
+      (⟨.guess, NDWriterState.run ()⟩ : Σ i, GuessRunPhase.State SP SQ i)) =
+      cW.mapState (Sigma.mk GuessRunPhase.guess) := by
+    rw [guessRun_mapState_mapState]; rfl
+  have hWst : cW.state = some (NDWriterState.run ()) := by simp [cW, Cfg.mapState, hPexit]
+  obtain ⟨hW1, hW2⟩ := ndWriterTM_run_block j cW hWst m hblock hend a₂ ha₂
+  have h2 := (NDTM.phaseHostND_run M ⟨.pre, P.q₀⟩ red GuessRunPhase.guess cW _ a₂ hW1
+    NDWriterState.done rfl ⟨.skip, SeekPhase.run⟩ rfl (by
+      intro u hu s' hs'
+      cases s' with
+      | done => exact absurd hs' (hW2 (a₂.take u) (by simp; omega))
+      | run _ => rfl) b₂).2
+  -- the writer's endpoint, named
+  let tW : ℤ → Option Bool := fun p =>
+    if cP.workTapePos j ≤ p ∧ p < cP.workTapePos j + (m : ℤ) then
+      FinTM.bufferTape s (p - cP.workTapePos j)
+    else cP.workTapes j p
+  let cW' : Cfg k Bool (NDWriterState Unit) z :=
+    ⟨some .done, cP.inputPos, Function.update cP.workTapes j tW,
+      Function.update cP.workTapePos j (cP.workTapePos j + m), cP.output⟩
+  change _ = cW'.mapState _ at h2
+  -- phase 3: one step right, onto the cell after the block's right blank, then one dispatch
+  let cS : Cfg k Bool SeekPhase z := cW'.mapState (fun _ => SeekPhase.run)
+  have hcS : cW'.mapState (fun _ =>
+      (⟨.skip, SeekPhase.run⟩ : Σ i, GuessRunPhase.State SP SQ i)) =
+      cS.mapState (Sigma.mk GuessRunPhase.skip) := by
+    rw [guessRun_mapState_mapState]; rfl
+  have hS := skipTM_run_ofCfg (x := z) j ([] : List Bool) cS rfl (by
+    intro p h0 h1
+    have hp : p = 0 := by simp at h1; omega
+    subst hp
+    simp [cS, cW', tW, Cfg.mapState, hend])
+  let cS' : Cfg k Bool SeekPhase z :=
+    { cS with
+      state := some .done
+      workTapePos := Function.update cS.workTapePos j
+        (cS.workTapePos j + ([] : List Bool).length + 1) }
+  have h3 := (NDTM.phaseHostND_run M ⟨.pre, P.q₀⟩ red GuessRunPhase.skip cS cS' a₃ (by
+      show (skipTM k j).toNDTM.runWith a₃ cS = cS'
+      rw [MultiTapeTM.toNDTM_runWith, ha₃]
+      exact hS.1)
+    SeekPhase.done rfl ⟨.back, SeekPhase.run⟩ rfl (by
+      intro u hu s' hs'
+      change ((skipTM k j).toNDTM.runWith (a₃.take u) cS).state = some s' at hs'
+      rw [MultiTapeTM.toNDTM_runWith] at hs'
+      have hne := hS.2.1 (a₃.take u).length (by simp; omega)
+      cases s' with
+      | done => exact absurd hs' hne
+      | run => rfl
+      | gap => rfl
+      | back => rfl) b₃).2
+  -- phase 4: the rewind over the guessed block, then one dispatch into the deterministic run
+  let cB : Cfg k Bool SeekPhase z := cS'.mapState (fun _ => SeekPhase.run)
+  have hcB : cS'.mapState (fun _ =>
+      (⟨.back, SeekPhase.run⟩ : Σ i, GuessRunPhase.State SP SQ i)) =
+      cB.mapState (Sigma.mk GuessRunPhase.back) := by
+    rw [guessRun_mapState_mapState]; rfl
+  have hBpos : cB.workTapePos j = cP.workTapePos j + m + 1 := by
+    simp [cB, cS', cS, cW', Cfg.mapState]
+  have hB := skipBackTM_run_ofCfg (x := z) j s cB rfl (by
+    intro p h0 h1
+    rw [hBpos, hslen]
+    have harg : cP.workTapePos j + m + 1 - m - 1 + p = cP.workTapePos j + p := by ring
+    rw [harg]
+    simp only [cB, cS', cS, cW', Cfg.mapState, Function.update_self]
+    simp only [tW]
+    by_cases hin : 0 ≤ p ∧ p < (m : ℤ)
+    · rw [if_pos (by omega)]
+      congr 1
+      ring
+    · rw [if_neg (by omega)]
+      rw [hslen] at h1
+      rcases (show p = -1 ∨ p = (m : ℤ) by omega) with rfl | rfl
+      · rw [FinTM.bufferTape_left, ← hleft]
+        congr 1
+      · rw [hend, FinTM.bufferTape_nat, List.getElem?_eq_none (by omega)])
+  let cB' : Cfg k Bool SeekPhase z :=
+    { cB with
+      state := some .done
+      workTapePos := Function.update cB.workTapePos j (cB.workTapePos j - s.length - 1) }
+  have h4 := (NDTM.phaseHostND_run M ⟨.pre, P.q₀⟩ red GuessRunPhase.back cB cB' a₄ (by
+      show (skipBackTM k j).toNDTM.runWith a₄ cB = cB'
+      rw [MultiTapeTM.toNDTM_runWith, ha₄, ← hslen]
+      exact hB.1)
+    SeekPhase.done rfl ⟨.run, qentry⟩ rfl (by
+      intro u hu s' hs'
+      change ((skipBackTM k j).toNDTM.runWith (a₄.take u) cB).state = some s' at hs'
+      rw [MultiTapeTM.toNDTM_runWith] at hs'
+      have hne := hB.2.1 (a₄.take u).length (by simp; omega)
+      cases s' with
+      | done => exact absurd hs' hne
+      | run => rfl
+      | gap => rfl
+      | back => rfl) b₄).2
+  -- the chain
+  rw [hinit, NDTM.runWith_append, h1, hcW, NDTM.runWith_append, h2]
+  erw [hcS]
+  rw [NDTM.runWith_append, h3]
+  erw [hcB]
+  rw [List.append_nil, h4]
+  apply Cfg.ext
+  · rfl
+  · rfl
+  · show Function.update cP.workTapes j tW = _
+    simp only [guessRunCfg, Cfg.mapState, hslen]
+    rfl
+  · show Function.update (Function.update (Function.update cP.workTapePos j
+      (cP.workTapePos j + m)) j _) j _ = _
+    simp only [guessRunCfg, Cfg.mapState]
+    rw [Function.update_idem, Function.update_idem, hBpos, hslen]
+    have : cP.workTapePos j + m + 1 - m - 1 = cP.workTapePos j := by ring
+    rw [this, Function.update_eq_self]
+  · rfl
+
+/-- **No branch halts before the handoff.** Under the setup hypotheses of
+`Turing.guessRunTM_runWith_handoff`, every choice word shorter than `TP + 2m + 9` leaves the host
+live. So a budget below the handoff time accepts nothing, whatever the run does.
+
+**Proof sketch.** Pad the word to length `TP + 2m + 9`. If its branch had halted, absorption
+(`Turing.NDTM.runWith_of_halt`) would keep it halted, but the padded word reaches the live entry
+configuration (`Turing.guessRunTM_runWith_handoff`). -/
+theorem guessRunTM_runWith_live {k : ℕ} {SP SQ : Type} [DecidableEq SP] [DecidableEq SQ]
+    (P : MultiTapeTM k Bool SP) (pexit : SP) (j : Fin k) (Q : MultiTapeTM k Bool SQ)
+    (qentry acc rej : SQ) {z : List Bool} (TP : ℕ) (cP : Cfg k Bool SP z)
+    (hP : P.runFrom (P.initCfg z) TP = cP) (hPexit : cP.state = some pexit)
+    (hPfirst : ∀ u < TP, (P.runFrom (P.initCfg z) u).state ≠ some pexit)
+    (m : ℕ) (hblock : ∀ p : ℕ, p < m → cP.workTapes j (cP.workTapePos j + p) ≠ none)
+    (hend : cP.workTapes j (cP.workTapePos j + m) = none)
+    (hleft : cP.workTapes j (cP.workTapePos j - 1) = none)
+    (w : List Bool) (hw : w.length < TP + 2 * m + 9) :
+    ((guessRunTM P pexit j Q qentry acc rej).runWith w
+        ((guessRunTM P pexit j Q qentry acc rej).initCfg z)).state ≠ none := by
+  intro h
+  have hh := guessRunTM_runWith_handoff P pexit j Q qentry acc rej TP cP hP hPexit hPfirst m
+    hblock hend hleft (w ++ List.replicate (TP + 2 * m + 9 - w.length) false)
+    (by simp; omega)
+  rw [NDTM.runWith_append, NDTM.runWith_of_halt _ h] at hh
+  rw [hh] at h
+  simp [guessRunCfg, Cfg.mapState] at h
+
+/-- **At the handoff the host is live, at the run's entry.** Under the setup hypotheses of
+`Turing.guessRunTM_runWith_handoff`, every choice word of length exactly `TP + 2m + 9` leaves the
+host in the state `⟨run, qentry⟩`: live, and at the run's entry. With
+`Turing.guessRunTM_runWith_live` (every shorter word), the host is live at every length up to
+the handoff.
+
+**Proof sketch.** The state field of the configuration that
+`Turing.guessRunTM_runWith_handoff` gives. -/
+theorem guessRunTM_runWith_handoff_state {k : ℕ} {SP SQ : Type} [DecidableEq SP]
+    [DecidableEq SQ] (P : MultiTapeTM k Bool SP) (pexit : SP) (j : Fin k)
+    (Q : MultiTapeTM k Bool SQ) (qentry acc rej : SQ) {z : List Bool} (TP : ℕ)
+    (cP : Cfg k Bool SP z) (hP : P.runFrom (P.initCfg z) TP = cP)
+    (hPexit : cP.state = some pexit)
+    (hPfirst : ∀ u < TP, (P.runFrom (P.initCfg z) u).state ≠ some pexit)
+    (m : ℕ) (hblock : ∀ p : ℕ, p < m → cP.workTapes j (cP.workTapePos j + p) ≠ none)
+    (hend : cP.workTapes j (cP.workTapePos j + m) = none)
+    (hleft : cP.workTapes j (cP.workTapePos j - 1) = none)
+    (w : List Bool) (hw : w.length = TP + 2 * m + 9) :
+    ((guessRunTM P pexit j Q qentry acc rej).runWith w
+        ((guessRunTM P pexit j Q qentry acc rej).initCfg z)).state =
+      some ⟨GuessRunPhase.run, qentry⟩ := by
+  rw [guessRunTM_runWith_handoff P pexit j Q qentry acc rej TP cP hP hPexit hPfirst m hblock
+    hend hleft w hw]
+  rfl
+
+/-- **The whole branch.** Under the setup hypotheses of `Turing.guessRunTM_runWith_handoff`,
+let `s` be a stream of length `m`, and let the run `Q` from the entry configuration
+`Turing.guessRunCfg cP j s qentry` reach a verdict state, `acc` or `rej`, first at time `TQ`, in
+the configuration `d`. Then every choice word whose `m` bits after its first `TP + 1` are `s`,
+of length at least `TP + 2m + TQ + 11`, halts the host with `d`'s input head, tapes and heads, and
+with output `d`'s output followed by the verdict bit (`true` iff `d` is at `acc`). The branch
+is halted by time `TP + 2m + TQ + 11`: the handoff, the run, one dispatch and the leaf's
+emitting step.
+Choices after the stream are ignored. The run's own emissions stay in the output; capturing them
+is the caller's choice (`Turing.guessRunTM_silent_spec`). [AB09, §2.1.2]
+
+**Proof sketch.** `Turing.guessRunTM_runWith_handoff` on the first `TP + 2m + 9` bits. Then
+`Turing.NDTM.phaseHostND_run` for the run phase: its branch is the deterministic run
+(`Turing.MultiTapeTM.toNDTM_runWith`), its first verdict the redirected exit, and the earlier
+states, none a verdict, the guard. One step of the verdict leaf emits the bit and halts, and
+absorption (`Turing.NDTM.runWith_of_halt`) takes the remaining choices. -/
+theorem guessRunTM_runWith {k : ℕ} {SP SQ : Type} [DecidableEq SP] [DecidableEq SQ]
+    (P : MultiTapeTM k Bool SP) (pexit : SP) (j : Fin k) (Q : MultiTapeTM k Bool SQ)
+    (qentry acc rej : SQ) {z : List Bool} (TP : ℕ) (cP : Cfg k Bool SP z)
+    (hP : P.runFrom (P.initCfg z) TP = cP) (hPexit : cP.state = some pexit)
+    (hPfirst : ∀ u < TP, (P.runFrom (P.initCfg z) u).state ≠ some pexit)
+    (m : ℕ) (hblock : ∀ p : ℕ, p < m → cP.workTapes j (cP.workTapePos j + p) ≠ none)
+    (hend : cP.workTapes j (cP.workTapePos j + m) = none)
+    (hleft : cP.workTapes j (cP.workTapePos j - 1) = none)
+    (s : List Bool) (hs : s.length = m) (TQ : ℕ)
+    (hverd : (Q.runFrom (guessRunCfg cP j s qentry) TQ).state = some acc ∨
+      (Q.runFrom (guessRunCfg cP j s qentry) TQ).state = some rej)
+    (hfirst : ∀ u < TQ, (Q.runFrom (guessRunCfg cP j s qentry) u).state ≠ some acc ∧
+      (Q.runFrom (guessRunCfg cP j s qentry) u).state ≠ some rej)
+    (w : List Bool) (hws : (w.drop (TP + 1)).take m = s)
+    (hw : TP + 2 * m + TQ + 11 ≤ w.length) :
+    let d := Q.runFrom (guessRunCfg cP j s qentry) TQ
+    (guessRunTM P pexit j Q qentry acc rej).runWith w
+        ((guessRunTM P pexit j Q qentry acc rej).initCfg z) =
+      ⟨none, d.inputPos, d.workTapes, d.workTapePos,
+        d.output ++ [decide (d.state = some acc)]⟩ := by
+  intro d
+  set M := guessRunPhases P j Q
+  set red := guessRunRed pexit qentry acc rej
+  have hN : guessRunTM P pexit j Q qentry acc rej = NDTM.phaseHostND M ⟨.pre, P.q₀⟩ red := rfl
+  -- through the guess and the rewind
+  have hH := guessRunTM_runWith_handoff P pexit j Q qentry acc rej TP cP hP hPexit hPfirst m
+    hblock hend hleft (w.take (TP + 2 * m + 9)) (by simp; omega)
+  have hs' : ((w.take (TP + 2 * m + 9)).drop (TP + 1)).take m = s := by
+    rw [← hws, List.drop_take, List.take_take]
+    congr 1
+    omega
+  rw [hs'] at hH
+  rw [← List.take_append_drop (TP + 2 * m + 9) w, NDTM.runWith_append, hH, hN]
+  -- the deterministic run up to its verdict, then one dispatch into the verdict leaf
+  obtain ⟨a, b, r, hv, ha⟩ := guessRun_split TQ (w.drop (TP + 2 * m + 9)) (by simp; omega)
+  have hr : 1 ≤ r.length := by
+    have := congrArg List.length hv
+    simp [ha] at this
+    omega
+  obtain ⟨b', r', rfl⟩ : ∃ b' r', r = b' :: r' := by
+    cases r with
+    | nil => simp at hr
+    | cons b' r' => exact ⟨b', r', rfl⟩
+  obtain ⟨sv, hsv, hred⟩ : ∃ sv, d.state = some sv ∧
+      red GuessRunPhase.run sv = some ⟨.out, decide (d.state = some acc)⟩ := by
+    rcases hverd with h | h
+    · have h' : d.state = some acc := h
+      exact ⟨acc, h', by simp [red, guessRunRed, h']⟩
+    · have h' : d.state = some rej := h
+      by_cases hra : rej = acc
+      · subst hra
+        exact ⟨rej, h', by simp [red, guessRunRed, h']⟩
+      · exact ⟨rej, h', by simp [red, guessRunRed, h', hra]⟩
+  have hQ := (NDTM.phaseHostND_run M ⟨.pre, P.q₀⟩ red GuessRunPhase.run
+    (guessRunCfg cP j s qentry) d a (by
+      show Q.toNDTM.runWith a (guessRunCfg cP j s qentry) = d
+      rw [MultiTapeTM.toNDTM_runWith, ha]) sv hsv _ hred (by
+      intro u hu s' hs'
+      change (Q.toNDTM.runWith (a.take u) (guessRunCfg cP j s qentry)).state = some s' at hs'
+      rw [MultiTapeTM.toNDTM_runWith, List.length_take, Nat.min_eq_left hu.le] at hs'
+      have hne := hfirst u (by omega)
+      show (if s' = acc then _ else if s' = rej then _ else none) = none
+      rw [if_neg (fun h => hne.1 (by rw [← h]; exact hs')),
+        if_neg (fun h => hne.2 (by rw [← h]; exact hs'))]) b).2
+  rw [hv, NDTM.runWith_append, hQ, NDTM.runWith_cons]
+  -- the verdict leaf emits the verdict bit and halts; the rest of the word is absorbed
+  have hout : (NDTM.phaseHostND M ⟨.pre, P.q₀⟩ red).stepWith b'
+      (d.mapState (fun _ => (⟨.out, decide (d.state = some acc)⟩ :
+        Σ i, GuessRunPhase.State SP SQ i))) =
+      ⟨none, d.inputPos, d.workTapes, d.workTapePos,
+        d.output ++ [decide (d.state = some acc)]⟩ := by
+    have hst : (d.mapState (fun _ => (⟨.out, decide (d.state = some acc)⟩ :
+        Σ i, GuessRunPhase.State SP SQ i))).state =
+        some ⟨.out, decide (d.state = some acc)⟩ := by
+      simp [Cfg.mapState, hsv]
+    unfold NDTM.stepWith
+    rw [hst]
+    apply Cfg.ext <;>
+      simp [NDTM.phaseHostND, red, guessRunRed, M, guessRunPhases, Cfg.mapState,
+        Action.mapState]
+  erw [hout]
+  rw [NDTM.runWith_of_halt _ rfl]
+
+/-- **A setup that halts before its exit.** If the setup `P` halts on `z` at time `TP` without
+being at its exit `pexit` before, then every choice word of length at least `TP` leaves the host
+in `P`'s halted configuration, tagged by the setup phase: the host halts without guessing, with
+`P`'s output. (For inputs that a consumer rejects outright, such as the diagonalizer's non-unary
+inputs.) [AB09, §2.1.2]
+
+**Proof sketch.** `Turing.NDTM.runWith_mapState_of_agreeOn_det` with `P` as the deterministic
+source along the setup phase's tag, the good states being those other than `pexit`, where the
+host redirects nothing and so follows `P`'s transitions, renamed; then absorption
+(`Turing.NDTM.runWith_of_halt`) takes the remaining choices. -/
+theorem guessRunTM_runWith_setup_halt {k : ℕ} {SP SQ : Type} [DecidableEq SP]
+    [DecidableEq SQ] (P : MultiTapeTM k Bool SP) (pexit : SP) (j : Fin k)
+    (Q : MultiTapeTM k Bool SQ) (qentry acc rej : SQ) {z : List Bool} (TP : ℕ)
+    (hhalt : (P.runFrom (P.initCfg z) TP).state = none)
+    (hPfirst : ∀ u < TP, (P.runFrom (P.initCfg z) u).state ≠ some pexit)
+    (w : List Bool) (hw : TP ≤ w.length) :
+    (guessRunTM P pexit j Q qentry acc rej).runWith w
+        ((guessRunTM P pexit j Q qentry acc rej).initCfg z) =
+      (P.runFrom (P.initCfg z) TP).mapState (Sigma.mk GuessRunPhase.pre) := by
+  set M := guessRunPhases P j Q
+  set red := guessRunRed pexit qentry acc rej
+  have hN : guessRunTM P pexit j Q qentry acc rej = NDTM.phaseHostND M ⟨.pre, P.q₀⟩ red := rfl
+  rw [hN]
+  let emb : SP ↪ (Σ i, GuessRunPhase.State SP SQ i) :=
+    ⟨fun s => ⟨GuessRunPhase.pre, s⟩, fun a b h => sigma_mk_injective h⟩
+  have hpre := NDTM.runWith_mapState_of_agreeOn_det P (NDTM.phaseHostND M ⟨.pre, P.q₀⟩ red) emb
+    (fun s => s ≠ pexit) (by
+      intro b s hs inp work
+      have hr : red GuessRunPhase.pre s = none := by
+        show (if s = pexit then _ else none) = none
+        rw [if_neg hs]
+      change (NDTM.phaseHostND M ⟨.pre, P.q₀⟩ red).tr b ⟨GuessRunPhase.pre, s⟩ inp work = _
+      simp only [NDTM.phaseHostND, hr]
+      rfl)
+    (P.initCfg z) (w.take TP) (by
+      intro u hu s hs
+      rw [List.length_take, Nat.min_eq_left hw] at hu
+      rintro rfl
+      exact hPfirst u hu hs)
+  rw [List.length_take, Nat.min_eq_left hw] at hpre
+  rw [← List.take_append_drop TP w, NDTM.runWith_append]
+  erw [hpre]
+  rw [NDTM.runWith_of_halt _ (by
+    show Option.map _ (P.runFrom (P.initCfg z) TP).state = none
+    rw [hhalt]
+    rfl)]
+  rfl
+
+/-- **All-branch halting.** Under the setup hypotheses of
+`Turing.guessRunTM_runWith_handoff`, if for every stream `s` of length `m` the run from the entry
+configuration `Turing.guessRunCfg cP j s qentry` reaches a verdict first at some time at most
+`T`, then every branch of the host on `z` halts within `TP + 2m + T + 11`
+(`Turing.NDTM.HaltsWithin`). [AB09, §2.1.2: every branch halts within the bound]
+
+**Proof sketch.** A word of that length has some stream as its `m` bits after its first
+`TP + 1`; `Turing.guessRunTM_runWith` at that stream's verdict time gives a halted branch. -/
+theorem guessRunTM_haltsWithin {k : ℕ} {SP SQ : Type} [DecidableEq SP] [DecidableEq SQ]
+    (P : MultiTapeTM k Bool SP) (pexit : SP) (j : Fin k) (Q : MultiTapeTM k Bool SQ)
+    (qentry acc rej : SQ) {z : List Bool} (TP : ℕ) (cP : Cfg k Bool SP z)
+    (hP : P.runFrom (P.initCfg z) TP = cP) (hPexit : cP.state = some pexit)
+    (hPfirst : ∀ u < TP, (P.runFrom (P.initCfg z) u).state ≠ some pexit)
+    (m : ℕ) (hblock : ∀ p : ℕ, p < m → cP.workTapes j (cP.workTapePos j + p) ≠ none)
+    (hend : cP.workTapes j (cP.workTapePos j + m) = none)
+    (hleft : cP.workTapes j (cP.workTapePos j - 1) = none) (T : ℕ)
+    (hQ : ∀ s : List Bool, s.length = m → ∃ TQ ≤ T,
+      ((Q.runFrom (guessRunCfg cP j s qentry) TQ).state = some acc ∨
+        (Q.runFrom (guessRunCfg cP j s qentry) TQ).state = some rej) ∧
+      ∀ u < TQ, (Q.runFrom (guessRunCfg cP j s qentry) u).state ≠ some acc ∧
+        (Q.runFrom (guessRunCfg cP j s qentry) u).state ≠ some rej) :
+    (guessRunTM P pexit j Q qentry acc rej).HaltsWithin z (TP + 2 * m + T + 11) := by
+  intro w hw
+  obtain ⟨TQ, hTQ, hv, hf⟩ := hQ ((w.drop (TP + 1)).take m) (by simp; omega)
+  rw [guessRunTM_runWith P pexit j Q qentry acc rej TP cP hP hPexit hPfirst m hblock hend
+    hleft _ (by simp; omega) TQ hv hf w rfl (by omega)]
+
+/-- **Exact-budget acceptance, both directions.** Under the hypotheses of
+`Turing.guessRunTM_haltsWithin`, at every budget `B` at least `TP + 2m + T + 11`: some choice word
+of length exactly `B` halts the host with output exactly `[true]` (the shape of
+`Turing.FinNDTM.AcceptsWithin`) iff some stream `s` of length `m` makes the run's first verdict
+`acc`, with an empty output at that time. A stream whose first verdict state is `rej` and
+different from `acc`, or whose run's output (the setup's emissions included) is nonempty at the
+verdict, gives no accepting branch; when `acc = rej` that verdict accepts, since the leaf tests
+`acc` first.
+[AB09, §2.1.2, proof of Theorem 2.6]
+
+**Proof sketch.** Forward: take the accepting word's stream; by `Turing.guessRunTM_runWith` at
+that stream's verdict time, the output is the run's output followed by the verdict bit, which is
+`[true]` only if the run's output is empty and the verdict is `acc`. Backward: the word made of
+`TP + 1` bits `false`, then `s`, then `false` up to length `B`, has stream `s`; the first verdict
+time is unique, hence at most `T`, and `Turing.guessRunTM_runWith` gives the output
+`[] ++ [true]`. -/
+theorem guessRunTM_accepts_iff {k : ℕ} {SP SQ : Type} [DecidableEq SP] [DecidableEq SQ]
+    (P : MultiTapeTM k Bool SP) (pexit : SP) (j : Fin k) (Q : MultiTapeTM k Bool SQ)
+    (qentry acc rej : SQ) {z : List Bool} (TP : ℕ) (cP : Cfg k Bool SP z)
+    (hP : P.runFrom (P.initCfg z) TP = cP) (hPexit : cP.state = some pexit)
+    (hPfirst : ∀ u < TP, (P.runFrom (P.initCfg z) u).state ≠ some pexit)
+    (m : ℕ) (hblock : ∀ p : ℕ, p < m → cP.workTapes j (cP.workTapePos j + p) ≠ none)
+    (hend : cP.workTapes j (cP.workTapePos j + m) = none)
+    (hleft : cP.workTapes j (cP.workTapePos j - 1) = none) (T : ℕ)
+    (hQ : ∀ s : List Bool, s.length = m → ∃ TQ ≤ T,
+      ((Q.runFrom (guessRunCfg cP j s qentry) TQ).state = some acc ∨
+        (Q.runFrom (guessRunCfg cP j s qentry) TQ).state = some rej) ∧
+      ∀ u < TQ, (Q.runFrom (guessRunCfg cP j s qentry) u).state ≠ some acc ∧
+        (Q.runFrom (guessRunCfg cP j s qentry) u).state ≠ some rej)
+    (B : ℕ) (hB : TP + 2 * m + T + 11 ≤ B) :
+    (∃ w : List Bool, w.length = B ∧
+      ((guessRunTM P pexit j Q qentry acc rej).runWith w
+        ((guessRunTM P pexit j Q qentry acc rej).initCfg z)).state = none ∧
+      ((guessRunTM P pexit j Q qentry acc rej).runWith w
+        ((guessRunTM P pexit j Q qentry acc rej).initCfg z)).output = [true]) ↔
+    ∃ s : List Bool, s.length = m ∧ ∃ TQ : ℕ,
+      (Q.runFrom (guessRunCfg cP j s qentry) TQ).state = some acc ∧
+      (∀ u < TQ, (Q.runFrom (guessRunCfg cP j s qentry) u).state ≠ some acc ∧
+        (Q.runFrom (guessRunCfg cP j s qentry) u).state ≠ some rej) ∧
+      (Q.runFrom (guessRunCfg cP j s qentry) TQ).output = [] := by
+  constructor
+  · rintro ⟨w, hw, -, hout⟩
+    have hslen : ((w.drop (TP + 1)).take m).length = m := by simp; omega
+    obtain ⟨TQ, hTQ, hv, hf⟩ := hQ _ hslen
+    rw [guessRunTM_runWith P pexit j Q qentry acc rej TP cP hP hPexit hPfirst m hblock hend
+      hleft _ hslen TQ hv hf w rfl (by omega)] at hout
+    have hlen := congrArg List.length hout
+    simp only [List.length_append, List.length_singleton] at hlen
+    have hnil : (Q.runFrom (guessRunCfg cP j ((w.drop (TP + 1)).take m) qentry) TQ).output =
+        [] := List.eq_nil_of_length_eq_zero (by omega)
+    rw [hnil, List.nil_append, List.singleton_inj, decide_eq_true_iff] at hout
+    exact ⟨_, hslen, TQ, hout, hf, hnil⟩
+  · rintro ⟨s, hslen, TQ', hacc, hf', hnil⟩
+    obtain ⟨TQ, hTQ, hv, hf⟩ := hQ s hslen
+    have heq : TQ' = TQ := by
+      by_contra hne
+      rcases Nat.lt_or_gt_of_ne hne with h | h
+      · exact (hf TQ' h).1 hacc
+      · rcases hv with hv | hv
+        · exact (hf' TQ h).1 hv
+        · exact (hf' TQ h).2 hv
+    subst heq
+    let w := List.replicate (TP + 1) false ++ s ++ List.replicate (B - (TP + 1 + m)) false
+    have hwlen : w.length = B := by simp [w, hslen]; omega
+    have hws : (w.drop (TP + 1)).take m = s := by
+      simp only [w, List.append_assoc]
+      rw [List.drop_left' (by simp), List.take_append_of_le_length (by omega),
+        List.take_of_length_le (by omega)]
+    refine ⟨w, hwlen, ?_⟩
+    rw [guessRunTM_runWith P pexit j Q qentry acc rej TP cP hP hPexit hPfirst m hblock hend
+      hleft s hslen TQ' (Or.inl hacc) hf' w hws (by omega)]
+    simp [hacc, hnil]
+
+/-- **The core's precondition at the handoff.** Let the setup end clean: in a state `q`, with
+the input head on the first symbol, every tape blank except tape `ι jR`, which holds a block `blk`
+blank outside the cells `0, …, m - 1`, every head at `0`, and an empty output. Then, for every
+stream `s` of length `m`, the run's entry configuration in state `entry` is the core's start
+configuration `Turing.streamStartCfg z jR entry s`, silently embedded along `ι` with the capture
+tape `cap` outside the selection (`Turing.embedSilentCfg` with a blank frame, heads at `0`, an
+empty capture word and an empty host output). This is the clean-bank, head and output
+precondition of `Turing.exists_ndInterpreterCore`, delivered by the guess and the rewind.
+
+**Proof sketch.** Field by field. The state and the input head are `entry` and `1` on both
+sides. A selected tape `ι a` is the core's tape `a` (`Turing.embedSilentCfg_selected_tape`): at
+`a = jR` the overwritten block is `bufferTape s`, since `blk` is blank outside the block and so is
+`bufferTape s`; elsewhere both are blank. The capture tape holds the empty capture word with its
+head at `0` (`Turing.embedSilentCfg_cap`); every other unselected tape is the blank frame
+(`Turing.embedSilentTM_frame` at time `0`). Heads are `0`; outputs are
+empty. -/
+theorem guessRunCfg_clean {K k : ℕ} {SP SR : Type} {z : List Bool} (ι : Fin K ↪ Fin k)
+    (cap : Fin k) (hcap : cap ∉ Set.range ι) (jR : Fin K) (blk : ℤ → Option Bool) (m : ℕ)
+    (hblk : ∀ p : ℤ, (p < 0 ∨ (m : ℤ) ≤ p) → blk p = none) (q : SP) (entry : SR)
+    (s : List Bool) (hs : s.length = m) :
+    guessRunCfg (⟨some q, 1, Function.update (fun _ _ => none) (ι jR) blk, fun _ => 0, []⟩ :
+        Cfg k Bool SP z) (ι jR) s entry =
+      embedSilentCfg ι cap (fun _ _ => none) (fun _ => 0) [] []
+        (streamStartCfg z jR entry s) := by
+  classical
+  -- a one-state machine whose frame lemma at time `0` reads the unselected tapes
+  let M0 : MultiTapeTM K Bool SR :=
+    ⟨entry, fun _ _ _ => ⟨0, fun _ => (none, 0), none, none⟩⟩
+  have hframe := (embedSilentTM_frame ι cap hcap M0 (fun _ _ => none) (fun _ => 0) [] []
+    (streamStartCfg z jR entry s) 0).1
+  simp only [MultiTapeTM.runFrom_zero] at hframe
+  apply Cfg.ext
+  · rfl
+  · rfl
+  · funext i
+    by_cases hi : i ∈ Set.range ι
+    · obtain ⟨a, rfl⟩ := hi
+      rw [embedSilentCfg_selected_tape]
+      simp only [guessRunCfg, streamStartCfg]
+      by_cases ha : a = jR
+      · subst ha
+        rw [Function.update_self, if_pos rfl]
+        funext p
+        simp only [Function.update_self, zero_add, sub_zero, hs]
+        by_cases hp : 0 ≤ p ∧ p < (m : ℤ)
+        · rw [if_pos hp]
+        · rw [if_neg hp, hblk p (by omega)]
+          simp only [FinTM.bufferTape]
+          split_ifs with h0
+          · symm
+            exact List.getElem?_eq_none (by rw [hs]; omega)
+          · rfl
+      · have hne : ι a ≠ ι jR := fun h => ha (ι.injective h)
+        rw [Function.update_of_ne hne, Function.update_of_ne hne, if_neg ha]
+    · by_cases hc : i = cap
+      · subst hc
+        have hne : i ≠ ι jR := fun h => hi ⟨jR, h.symm⟩
+        simp only [guessRunCfg, Function.update_of_ne hne]
+        -- the capture tape holds the empty capture word
+        rw [(embedSilentCfg_cap ι i hcap (fun _ _ => none) (fun _ => 0) [] []
+          (streamStartCfg z jR entry s)).1]
+        simp [streamStartCfg]
+      · have hne : i ≠ ι jR := fun h => hi ⟨jR, h.symm⟩
+        simp only [guessRunCfg, Function.update_of_ne hne]
+        exact ((hframe i hi hc).1).symm
+  · funext i
+    by_cases hi : i ∈ Set.range ι
+    · obtain ⟨a, rfl⟩ := hi
+      rw [embedSilentCfg_selected_pos]
+      rfl
+    · by_cases hc : i = cap
+      · subst hc
+        -- the capture head sits after the empty capture word
+        rw [(embedSilentCfg_cap ι i hcap (fun _ _ => none) (fun _ => 0) [] []
+          (streamStartCfg z jR entry s)).2]
+        simp [guessRunCfg, streamStartCfg]
+      · exact ((hframe i hi hc).2).symm
+  · rfl
+
+/-- **Guess, then run the interpreter core** (the assembly `Turing.exists_timed_universal_NDTM`'s
+sketch names). Let `R` be a `K`-tape machine with an entry state `entry` and live verdicts `acc`
+and `rej`, run silently on the host tapes selected by `ι`, its emissions captured on a tape
+`cap` outside the selection (`Turing.embedSilentTM`). Let the setup `P` reach its exit `pexit`
+first at time `TP`, clean: input head on the first symbol, every tape blank except tape `ι jR`,
+which is nonblank exactly at the cells `0, …, m - 1`, every head at `0`, empty output. Suppose
+that for every stream `s` of length `m`, `R` from its start configuration
+`Turing.streamStartCfg z jR entry s` reaches a verdict first within `T`. Then the host `N` halts
+on every branch within `TP + 2m + T + 11`, and at every budget `B` at least that, `N` has a branch
+of length exactly `B` halting with output exactly `[true]` iff some stream `s` of length `m`
+makes `R`'s first verdict `acc`. `R`'s own output is never examined: the capture makes the host's
+output exactly the verdict bit. [AB09, §2.1.2, proof of Theorem 2.6; Exercise 2.6]
+
+**Proof sketch.** The setup's endpoint satisfies the block hypotheses of
+`Turing.guessRunTM_runWith_handoff` (nonblank inside the block, blank at `m` and at `-1`). By
+`Turing.guessRunCfg_clean` the entry configuration is `R`'s start, silently embedded, so the
+run's states are `R`'s and its output stays empty (`Turing.embedSilentTM_runFrom`). Conclude by
+`Turing.guessRunTM_haltsWithin` and `Turing.guessRunTM_accepts_iff`, whose output condition then
+holds. -/
+theorem guessRunTM_silent_spec {K k : ℕ} {SP SR : Type} [DecidableEq SP] [DecidableEq SR]
+    (ι : Fin K ↪ Fin k) (cap : Fin k) (hcap : cap ∉ Set.range ι) (jR : Fin K)
+    (R : MultiTapeTM K Bool SR) (entry acc rej : SR)
+    (P : MultiTapeTM k Bool SP) (pexit : SP) {z : List Bool} (TP m : ℕ)
+    (blk : ℤ → Option Bool) (hblk : ∀ p : ℤ, blk p ≠ none ↔ 0 ≤ p ∧ p < m)
+    (hP : P.runFrom (P.initCfg z) TP =
+      ⟨some pexit, 1, Function.update (fun _ _ => none) (ι jR) blk, fun _ => 0, []⟩)
+    (hPfirst : ∀ u < TP, (P.runFrom (P.initCfg z) u).state ≠ some pexit) (T : ℕ)
+    (hR : ∀ s : List Bool, s.length = m → ∃ TR ≤ T,
+      ((R.runFrom (streamStartCfg z jR entry s) TR).state = some acc ∨
+        (R.runFrom (streamStartCfg z jR entry s) TR).state = some rej) ∧
+      ∀ u < TR, (R.runFrom (streamStartCfg z jR entry s) u).state ≠ some acc ∧
+        (R.runFrom (streamStartCfg z jR entry s) u).state ≠ some rej) :
+    let N := guessRunTM P pexit (ι jR) (embedSilentTM ι cap R) entry acc rej
+    N.HaltsWithin z (TP + 2 * m + T + 11) ∧
+      ∀ B : ℕ, TP + 2 * m + T + 11 ≤ B →
+        ((∃ w : List Bool, w.length = B ∧ (N.runWith w (N.initCfg z)).state = none ∧
+            (N.runWith w (N.initCfg z)).output = [true]) ↔
+          ∃ s : List Bool, s.length = m ∧ ∃ TR : ℕ,
+            (R.runFrom (streamStartCfg z jR entry s) TR).state = some acc ∧
+            ∀ u < TR, (R.runFrom (streamStartCfg z jR entry s) u).state ≠ some acc ∧
+              (R.runFrom (streamStartCfg z jR entry s) u).state ≠ some rej) := by
+  intro N
+  set cP : Cfg k Bool SP z :=
+    ⟨some pexit, 1, Function.update (fun _ _ => none) (ι jR) blk, fun _ => 0, []⟩ with hcP
+  have hout : ∀ p : ℤ, (p < 0 ∨ (m : ℤ) ≤ p) → blk p = none := by
+    intro p hp
+    by_contra h
+    have := (hblk p).mp h
+    omega
+  have hblock : ∀ p : ℕ, p < m → cP.workTapes (ι jR) (cP.workTapePos (ι jR) + p) ≠ none := by
+    intro p hp
+    simp only [cP, Function.update_self, zero_add]
+    exact (hblk p).mpr ⟨by omega, by omega⟩
+  have hend : cP.workTapes (ι jR) (cP.workTapePos (ι jR) + m) = none := by
+    simp only [cP, Function.update_self, zero_add]
+    exact hout m (Or.inr le_rfl)
+  have hleft : cP.workTapes (ι jR) (cP.workTapePos (ι jR) - 1) = none := by
+    simp only [cP, Function.update_self, zero_sub]
+    exact hout (-1) (Or.inl (by omega))
+  -- the handoff is the silently embedded start of `R`, and the embedded run is `R`'s
+  have hrun : ∀ (s : List Bool), s.length = m → ∀ u : ℕ,
+      (embedSilentTM ι cap R).runFrom (guessRunCfg cP (ι jR) s entry) u =
+        embedSilentCfg ι cap (fun _ _ => none) (fun _ => 0) [] []
+          (R.runFrom (streamStartCfg z jR entry s) u) := by
+    intro s hs u
+    rw [hcP, guessRunCfg_clean ι cap hcap jR blk m hout pexit entry s hs]
+    exact embedSilentTM_runFrom ι cap hcap R _ _ [] [] _ u
+  have hQ : ∀ s : List Bool, s.length = m → ∃ TQ ≤ T,
+      (((embedSilentTM ι cap R).runFrom (guessRunCfg cP (ι jR) s entry) TQ).state =
+          some acc ∨
+        ((embedSilentTM ι cap R).runFrom (guessRunCfg cP (ι jR) s entry) TQ).state =
+          some rej) ∧
+      ∀ u < TQ,
+        ((embedSilentTM ι cap R).runFrom (guessRunCfg cP (ι jR) s entry) u).state ≠ some acc ∧
+        ((embedSilentTM ι cap R).runFrom (guessRunCfg cP (ι jR) s entry) u).state ≠
+          some rej := by
+    intro s hs
+    obtain ⟨TR, hTR, hv, hf⟩ := hR s hs
+    refine ⟨TR, hTR, ?_, ?_⟩
+    · rw [hrun s hs]
+      exact hv
+    · intro u hu
+      rw [hrun s hs]
+      exact hf u hu
+  refine ⟨guessRunTM_haltsWithin P pexit (ι jR) (embedSilentTM ι cap R) entry acc rej TP cP
+    hP rfl hPfirst m hblock hend hleft T hQ, fun B hB => ?_⟩
+  rw [guessRunTM_accepts_iff P pexit (ι jR) (embedSilentTM ι cap R) entry acc rej TP cP
+    hP rfl hPfirst m hblock hend hleft T hQ B hB]
+  constructor
+  · rintro ⟨s, hs, TQ, hacc, hf, -⟩
+    refine ⟨s, hs, TQ, ?_, ?_⟩
+    · rw [hrun s hs] at hacc
+      exact hacc
+    · intro u hu
+      have h := hf u hu
+      rw [hrun s hs] at h
+      exact h
+  · rintro ⟨s, hs, TR, hacc, hf⟩
+    refine ⟨s, hs, TR, ?_, ?_, ?_⟩
+    · rw [hrun s hs]
+      exact hacc
+    · intro u hu
+      rw [hrun s hs]
+      exact hf u hu
+    · rw [hrun s hs]
+      rfl
+
+end Turing

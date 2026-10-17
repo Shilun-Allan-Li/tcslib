@@ -1,0 +1,122 @@
+import TCSlib.Complexity.TuringMachine.Build.InputWindow
+
+/-! Review probe (C1-WC review, not a delivery; the maintainer's reviewer, 2026-10-17).
+
+1. An exit join inside `Build/InputWindow`'s import context, replacing the appendix's
+   `Turing.phaseHostTM_run` (in `Build/Seam`, outside that context): the counter loop with its
+   `escape` anchor redirected, in one stationary silent step, to its `done` anchor. Its run is the
+   loop's run while `escape` has not been visited (`MultiTapeTM.runFrom_eq_of_agreeOn`, public
+   in `Simulation`), and from `escape` one step reaches `done`.
+2. The `C = 6` ledger in both cases, for a one-step round (`τ = 1`), with the join step counted
+   in both cases (the delivery's ledger) and in the escape case only (this probe's join).
+
+Only published lemmas are cited; no definition of another file is unfolded. -/
+
+namespace Turing
+
+/-- The counter loop with `escape` redirected in one stationary, silent step to `done`. -/
+def iwProbe_joinTM {k : ℕ} {S : Type} [DecidableEq S] (M : MultiTapeTM k Bool S) (a e : S) :
+    MultiTapeTM (k + 1) Bool (CounterLoopState S) where
+  q₀ := .dec .run
+  tr := fun q inp work =>
+    if q = .escape then ⟨0, fun _ => (none, 0), none, some .done⟩
+    else (counterLoopTM M a (some e)).tr q inp work
+
+/-- Before `escape` is visited, the join's run is the loop's run. -/
+theorem iwProbe_join_prefix {k : ℕ} {S : Type} [DecidableEq S] (M : MultiTapeTM k Bool S)
+    (a e : S) {x : List Bool} (c : Cfg (k + 1) Bool (CounterLoopState S) x) (t : ℕ)
+    (h : ∀ u < t, ((counterLoopTM M a (some e)).runFrom c u).state ≠ some .escape) :
+    (iwProbe_joinTM M a e).runFrom c t = (counterLoopTM M a (some e)).runFrom c t := by
+  refine MultiTapeTM.runFrom_eq_of_agreeOn (Q := {q | q ≠ .escape}) ?_ c t ?_
+  · intro q hq inp work
+    have hq' : q ≠ .escape := hq
+    simp only [iwProbe_joinTM, if_neg hq']
+  · intro u hu q hq
+    show q ≠ _
+    rintro rfl
+    exact h u hu hq
+
+/-- From `escape`, one join step reaches `done` and changes nothing else. -/
+theorem iwProbe_join_step {k : ℕ} {S : Type} [DecidableEq S] (M : MultiTapeTM k Bool S)
+    (a e : S) {x : List Bool} (c : Cfg (k + 1) Bool (CounterLoopState S) x)
+    (hc : c.state = some .escape) :
+    (iwProbe_joinTM M a e).runFrom c 1 = { c with state := some .done } := by
+  change (iwProbe_joinTM M a e).runFrom c (0 + 1) = _
+  rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero,
+    MultiTapeTM.step_of_some hc]
+  have htr : ∀ inp work, (iwProbe_joinTM M a e).tr .escape inp work =
+      ⟨0, fun _ => (none, 0), none, some .done⟩ := by
+    intro inp work
+    simp [iwProbe_joinTM]
+  rw [htr]
+  apply Cfg.ext
+  · simp only [Action.apply_state]
+  · simp only [Action.apply_inputPos, moveInputPos_zero]
+  · funext i
+    rw [Action.apply_workTapes, Cfg.workTapeSymbols_eq]
+    simp
+  · funext i
+    rw [Action.apply_workTapePos]
+    simp
+  · rw [Action.apply_output]
+    simp
+
+/-- The exhaustion ledger with a join step: `d + overhead + 1 ≤ 6(d + 1) + 2|w|`. -/
+theorem iwProbe_ledger_done (w : List Bool) (d : ℕ)
+    (hd : Nat.ofDigits 2 (w.map Bool.toNat) = d) :
+    (∑ _r ∈ Finset.range d, 1) + counterOverhead w (d + 1) + 1 ≤
+      6 * (d + 1) + 2 * w.length := by
+  have h := counterOverhead_le w
+  rw [hd] at h
+  have hs : (∑ _r ∈ Finset.range d, 1) = d := by simp
+  omega
+
+/-- The escape ledger with a join step, at `r = r₀ + 1 = |y| + 1`:
+`r + overhead + 1 ≤ 6r + 2|w|`. -/
+theorem iwProbe_ledger_escape (w : List Bool) (r₀ : ℕ)
+    (hr : r₀ < Nat.ofDigits 2 (w.map Bool.toNat)) :
+    (∑ _r ∈ Finset.range (r₀ + 1), 1) + counterOverhead w (r₀ + 1) + 1 ≤
+      6 * (r₀ + 1) + 2 * w.length := by
+  have h := counterOverhead_le_of_le w (r₀ + 1) hr
+  have hs : (∑ _r ∈ Finset.range (r₀ + 1), 1) = r₀ + 1 := by simp
+  omega
+
+/-- With this probe's join (no step on exhaustion), `C = 5` suffices on exhaustion. -/
+theorem iwProbe_ledger_done_nojoin (w : List Bool) (d : ℕ)
+    (hd : Nat.ofDigits 2 (w.map Bool.toNat) = d) :
+    (∑ _r ∈ Finset.range d, 1) + counterOverhead w (d + 1) ≤ 5 * (d + 1) + 2 * w.length := by
+  have h := counterOverhead_le w
+  rw [hd] at h
+  have hs : (∑ _r ∈ Finset.range d, 1) = d := by simp
+  omega
+
+/-- Drafted API (the review's item 6; not in the base): `MultiTapeTM.AgreeOn` as its
+defining statement, so that a fill can introduce it without unfolding `Simulation`'s
+definition. -/
+theorem MultiTapeTM.agreeOn_iff_probe {k : ℕ} {Symbol State : Type*}
+    (M N : MultiTapeTM k Symbol State) (Q : Set State) :
+    M.AgreeOn N Q ↔ ∀ q ∈ Q, ∀ inp work, M.tr q inp work = N.tr q inp work :=
+  Iff.rfl
+
+/-- The prefix lemma again, introducing the agreement through the drafted equation. -/
+theorem iwProbe_join_prefix' {k : ℕ} {S : Type} [DecidableEq S] (M : MultiTapeTM k Bool S)
+    (a e : S) {x : List Bool} (c : Cfg (k + 1) Bool (CounterLoopState S) x) (t : ℕ)
+    (h : ∀ u < t, ((counterLoopTM M a (some e)).runFrom c u).state ≠ some .escape) :
+    (iwProbe_joinTM M a e).runFrom c t = (counterLoopTM M a (some e)).runFrom c t := by
+  refine MultiTapeTM.runFrom_eq_of_agreeOn (Q := {q | q ≠ .escape})
+    ((MultiTapeTM.agreeOn_iff_probe _ _ _).2 fun q hq inp work => ?_) c t ?_
+  · have hq' : q ≠ .escape := hq
+    simp only [iwProbe_joinTM, if_neg hq']
+  · intro u hu q hq
+    show q ≠ _
+    rintro rfl
+    exact h u hu hq
+
+end Turing
+
+#print axioms Turing.iwProbe_join_prefix
+#print axioms Turing.iwProbe_join_step
+#print axioms Turing.iwProbe_ledger_done
+#print axioms Turing.iwProbe_ledger_escape
+#print axioms Turing.iwProbe_ledger_done_nojoin
+#print axioms Turing.iwProbe_join_prefix'
