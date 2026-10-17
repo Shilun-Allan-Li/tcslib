@@ -1,0 +1,33 @@
+
+open Lean Meta in
+#eval show MetaM Unit from do
+  let s ← getSimpTheorems
+  for n in [``Turing.RoundContract.counterLoopDone_pre, ``Turing.RoundContract.counterLoopDone_time,
+      ``Turing.RoundContract.counterLoopDone_post, ``Turing.RoundContract.counterLoopDone_lo,
+      ``Turing.RoundContract.counterLoopDone_hi, ``Turing.RoundContract.counterLoopEscape_pre,
+      ``Turing.RoundContract.counterLoopEscape_time, ``Turing.RoundContract.counterLoopEscape_post,
+      ``Turing.RoundContract.counterLoopEscape_lo, ``Turing.RoundContract.counterLoopEscape_hi] do
+    IO.println s!"{n} simp={s.isLemma (.decl n)}"
+
+/-! Review probe (seed-inclusive inventory): can a consumer reach `roundOrbit_zero`/`_succ`
+through the abbreviation `counterLoopOrbit` without unfolding it? -/
+section OrbitProbe
+open Turing
+variable {k : ℕ} {Γ S : Type} {x : List Γ}
+
+example (M : MultiTapeTM k Γ S) (τ : Cfg k Γ S x → ℕ) (c : Cfg k Γ S x) (r : ℕ) :
+    counterLoopOrbit M τ c (r + 1) =
+      M.runFrom (counterLoopOrbit M τ c r) (τ (counterLoopOrbit M τ c r)) := by
+  fail_if_success rw [roundOrbit_succ]
+  exact roundOrbit_succ M τ c r
+
+example (M : MultiTapeTM k Γ S) (τ : Cfg k Γ S x → ℕ) (c : Cfg k Γ S x) (r : ℕ) :
+    counterLoopOrbit M τ c (r + 1) =
+      M.runFrom (counterLoopOrbit M τ c r) (τ (counterLoopOrbit M τ c r)) := by
+  simp only [roundOrbit_succ]
+
+example (M : MultiTapeTM k Γ S) (τ : Cfg k Γ S x → ℕ) (c : Cfg k Γ S x) :
+    counterLoopOrbit M τ c 0 = c :=
+  roundOrbit_zero M τ c
+
+end OrbitProbe

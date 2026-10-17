@@ -84,8 +84,9 @@ All declarations are added; no `@[simp]`; every docstring states its formula.
   base. `UniversalStartup` (6) and `Loop` (66) were compared by `warndiff` against their
   unchanged elaborations (`logs/elab-*-base.out`), with no new warning; `Simulation` has 1 as at
   the base; the other three have 0.
-- **Generated names and axioms** (`logs/probe-*.out`): the 9 generated equations resolve; the 15
-  hand-written theorems print standard axioms only.
+- **Generated names and axioms** (`logs/probe-*.out`): the 9 generated equations resolve; the 11
+  hand-written theorems print standard axioms only (corrected at the gate, finding 3; this said
+  15).
 - **Freeze** (`logs/freeze.log`): publics added only, in all six files.
 - **Lint** (`logs/lint-head.txt`): 0 FAIL, 68 WARN over 79 files. Check 8 adds no name and drops
   10 (168 → 158 in `TuringMachine/`).
@@ -131,3 +132,22 @@ checked in a worktree at #117's head. The patch applied to #118's head gives a b
 from the replayed `36325650` only in #117's gate correction of `counterRowContract`'s docstring
 (`98472df2`), which #117's gate re-elaborated (0 errors, 0 warnings). The replays therefore cover
 the head's Lean, and the snapshot `oleans-lbapi2` serves the tip after #118.
+
+## The gate, round 1, and round 2 (2026-10-16 and 17)
+
+**Round 1: FAIL, 0 blockers, 2 majors, 1 minor** (`audits/brief-api-findings.md`; resolutions
+`audits/brief-api-resolutions.md`; the review `r2/gate-review.md`).
+- **Findings 1 and 2** were cont6's: `codeSkipRepeat`'s two cases, and the field equations of
+  the two round-contract counter loops.
+- **Finding 3** was the count above.
+- The inventory method missed the cited definitions themselves. The seed-inclusive elaborator
+  (`r2/probes/DefInventorySeeds.lean.part.txt`) re-ran all five briefs and found N1:
+  `Cfg.mapState`'s and `Action.mapState`'s fields.
+
+**Round 2 (`lean/brief-api` at `4624fc05`):**
+- MIG-12's API (`9872634e`, fast-forwarded; its replay passed, 160 of 160);
+- `88fb25f3` (findings 1 and 2);
+- `4624fc05` (N1).
+
+The checks are in `r2/logs/` and `r2/review-out/`; the replay `replay-lbapi3.sh` covers 274
+modules from `oleans-lm12api`.

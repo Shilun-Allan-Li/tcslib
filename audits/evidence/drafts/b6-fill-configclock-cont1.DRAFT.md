@@ -230,7 +230,9 @@ A partial may leave only the target open, with the clock writer proved or not in
 - **The B6 hosts gate's minors** bind as fixed at landing (`audits/b6-hosts-statements-resolutions.md`).
   In particular, the bound `N ≤ configBound + 1` contains the extra halt-test round (RD-3's
   check 4).
-- **Route B** is not a parallel route. Use it only on a recorded Route A obstruction.
+- **Route B** is not a parallel route. Use it only on a recorded Route A obstruction. It would
+  also meet `counterLoopCfg`'s layout outside the Bool alphabet, which is private (#118's gate
+  review, N2): escalate for its lemma before using it.
 
 ## Cited infrastructure (public and proved at the issue commit; all in `F3ImportProbe.lean.txt`)
 

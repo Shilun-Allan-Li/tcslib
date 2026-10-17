@@ -260,7 +260,9 @@ The probe's 91 names, in six groups:
       (PR #116) and the brief-inventory API (PR #118), and the landed lemmas the probe lists.
     - **The machine model's primitives** (`MultiTapeTM.step`, `runFrom`, `Action.apply`,
       `Cfg.mapState`) are read through their existing lemmas (`runFrom_add`,
-      `runFrom_succ_eq_step'`, `step_of_*`, `mapState_state`, …). Unfold `step` and `Action.apply`
+      `runFrom_succ_eq_step'`, `step_of_*`, and the renamings' field equations
+      `Cfg.mapState_state`/`_inputPos`/`_workTapes`/`_workTapePos`/`_output` and
+      `Action.mapState_*`, #118's round 2). Unfold `step` and `Action.apply`
       only for a leaf defined in your own file. `phaseHostTM`'s two-line table is read through
       `phaseHostTM_run`.
     - Your own file's definitions may be unfolded.

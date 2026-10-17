@@ -980,6 +980,22 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
       2026-10-16):** 160 of 160, 0 failed, static-equal (80); snapshot `oleans-lm12api`.
     - #118's gate failed (0/2/1; findings 1–2 are cont6's inventory), so MIG-12's API folds into
       #118's round 2, as planned.
+- **#118's gate, round 1: FAIL 0/2/1 (2026-10-16/17;** `audits/brief-api-{findings,resolutions}.md`).
+  - **Findings 1–2 (cont6):** `codeSkipRepeat`'s cases; the two round-contract counter loops'
+    fields.
+  - **Finding 3:** a miscount in NOTES.
+  - **The method fix:** the inventory now includes the cited definitions themselves and checks
+    structure fields. The review's re-run found **N1**, `Cfg.mapState`'s and
+    `Action.mapState`'s fields: the F5 and U2-S drafts cited a private Seam lemma.
+  - **Round 2 is prepared locally, not pushed** (`wt-bapi`, `4624fc05`). It fast-forwards to
+    MIG-12's API `9872634e`, then adds `88fb25f3` (findings 1–2) and `4624fc05` (N1), the
+    review's patches unchanged.
+    - Checks are clean.
+    - Replay `replay-lbapi3.sh`: 274 modules from `oleans-lm12api`.
+    - Pack `audits/brief-api-r2-pack.md`; evidence `audits/evidence/brief-api/r2/`.
+    - Drafts updated (cont6, F5, U2-S, F3's Route B note); the staged probes have the new names.
+  - **Next:** the user pushes or approves the push, then runs the replay, then the r2 gate.
+    After the merge, the five briefs issue.
     - **Packaging waits for #118's gate:** it goes into #118's round 2 if there is one, or
       otherwise becomes its own PR and gate.
 - **Lint check 8's blind spot (2026-10-16):** a definition counts as covered when any lemma is

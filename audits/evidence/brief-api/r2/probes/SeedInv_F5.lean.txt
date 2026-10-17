@@ -1,0 +1,83 @@
+import TCSlib.Complexity.TuringMachine.Build.VirtualInput
+import TCSlib.Complexity.TuringMachine.UniversalStartup
+import TCSlib.Complexity.TuringMachine.Build.Contract.Basic
+import TCSlib.Complexity.TuringMachine.Build.Seam
+import TCSlib.Complexity.TuringMachine.Build.InputDevice
+
+/-! B6 F5 fill (the ruler device, `Build/InputDevice`): every public declaration the brief cites resolves from the
+owned file's import context, with the brief's authorized imports. -/
+
+-- The targets, the device layer and its facts
+
+-- The lockstep and the run calculus
+
+-- Seams, the phase host and the release adapter
+
+-- R1 embedding
+
+-- Z1's host (the pattern only)
+
+-- the brief-inventory API (PR #118)
+
+open Lean Elab Command in
+/-- Review re-run of the pre-ship inventory, with the seeds included (read-only). For the cited
+names: `SEED <name> @ <module>` when the name is itself a `TCSlib` definition (not an instance or
+internal, not a structure projection); `INV <name> -> <def> @ <module>` for every such definition in its type, as
+`#def_inventory_each` printed. Then, for every definition listed, `LEM <def> <count> : <names>`,
+the `TCSlib` theorems (and this file's) whose statement mentions it; and
+`FLD <def> : <structure> data <n> missing [...]` for a structure-valued definition, the
+data fields with no `<def>_<field>` lemma. -/
+elab "#def_inventory_seeds " ids:ident* : command => do
+  let env ← getEnv
+  let modOf : Name → String := fun c => match env.getModuleIdxFor? c with
+    | some idx => env.header.moduleNames[idx.toNat]!.toString
+    | none => "(this file)"
+  let local? : Name → Bool := fun c =>
+    (modOf c).startsWith "TCSlib" || modOf c == "(this file)"
+  let isTDef : Name → Bool := fun c => match env.find? c with
+    | some (.defnInfo _) => local? c && !(Lean.Meta.isInstanceCore env c) && !c.isInternal &&
+        !env.isProjectionFn c
+    | _ => false
+  let mut out : Array String := #[]
+  let mut defs : NameSet := {}
+  for id in ids do
+    let n ← liftCoreM (realizeGlobalConstNoOverload id)
+    let some ci := env.find? n | throwError "unknown constant {n}"
+    if isTDef n then
+      out := out.push s!"SEED {n} @ {modOf n}"
+      defs := defs.insert n
+    for c in ci.type.getUsedConstants do
+      if isTDef c then
+        out := out.push s!"INV {n} -> {c} @ {modOf c}"
+        defs := defs.insert c
+  let lem : NameMap (Array Name) := env.constants.fold (init := {}) fun acc n ci =>
+    match ci with
+    | .thmInfo t =>
+      if local? n && !n.isInternal then
+        t.type.getUsedConstants.foldl (init := acc) fun acc c =>
+          if defs.contains c then acc.insert c (((acc.find? c).getD #[]).push n) else acc
+      else acc
+    | _ => acc
+  for d in defs.toList do
+    let ls := ((lem.find? d).getD #[]).map toString
+    let ls := ls.qsort (· < ·)
+    out := out.push s!"LEM {d} {ls.size} : {String.intercalate " " ls.toList}"
+  -- check 8's blind spot: a structure-valued definition's data fields without a `<def>_<field>`
+  for d in defs.toList do
+    let some ci := env.find? d | continue
+    let some s := ci.type.getForallBody.getAppFn.constName? | continue
+    let some info := getStructureInfo? env s | continue
+    let mut miss : Array String := #[]
+    let mut data : Nat := 0
+    for f in info.fieldNames do
+      let some pf := getProjFnForField? env s f | continue
+      let some pci := env.find? pf | continue
+      let isPf ← liftTermElabM <| Meta.forallTelescope pci.type fun _ b => Meta.isProp b
+      if isPf then continue
+      data := data + 1
+      let eqn := d.appendAfter ("_" ++ f.toString)
+      unless env.contains eqn do miss := miss.push f.toString
+    out := out.push s!"FLD {d} : {s} data {data} missing [{String.intercalate " " miss.toList}]"
+  logInfo m!"{String.intercalate "\n" (out.qsort (· < ·)).toList}"
+
+#def_inventory_seeds Turing.exists_rulerTestTM Turing.exists_rulerDeviceTM Turing.exists_rulerHostTM Turing.RulerAt Turing.rulerHostCfg Turing.inputCell Turing.inputCell_sub_eq_none_iff Turing.inputCell_of_drop Turing.Cfg.inputSymbol_eq_inputCell Turing.NativeAt Turing.moveInputPos Turing.Lockstep Turing.Lockstep.runFrom Turing.Lockstep.cut Turing.Lockstep.locate Turing.MultiTapeTM.runFrom_add Turing.MultiTapeTM.runFrom_succ_eq_step' Turing.MultiTapeTM.visitedByTapeHead Turing.seamCompTM Turing.seamCompTM_run_ofCfg Turing.seamCompTM_firstReturn_ofCfg Turing.seamCompTM₂ Turing.seamReleaseTM Turing.seamReleaseTM_runFrom_pos Turing.phaseHostTM Turing.phaseHostTM_run Turing.Cfg.mapState Turing.MultiTapeTM.runFrom_mapState_of_agreeOn Turing.embedEmitTM Turing.embedEmitTM_runFrom Turing.embedEmitTM_frame Turing.embedEmitCfg Turing.embedEmitCfg_eq Turing.embedSilentTM Turing.embedSilentTM_runFrom Turing.embedSilentTM_frame Turing.vhostEmitTM Turing.vhostEmitTM_runFrom Turing.vhostEmitTM_visitedByTapeHead_bank Turing.vhostEmitTM_visitedByTapeHead_buffer Turing.FinTM.VirtualTag_iff Turing.vhostBuffer_eq Turing.vhostBank_eq

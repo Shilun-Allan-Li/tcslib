@@ -1,0 +1,26 @@
+== C6: 49 seed definitions, 10 in no cited type
+  Turing.StepBlock.recordSkipTM @ TuringMachine.Build.StepBlock [2] 
+      StepBlock.recordSkipTM_run StepBlock.recordSkipTM_spec
+  Turing.StepBlock.recordTM @ TuringMachine.Build.StepBlock [3] 
+      StepBlock.recordSkipTM_run StepBlock.recordSkipTM_spec StepBlock.recordTM_effect
+  Turing.StepBlock.recordWidth @ TuringMachine.Build.StepBlock [2] 
+      StepBlock.recordSkipTM_spec StepBlock.recordTM_effect
+  Turing.StepBlock.succFieldTM @ TuringMachine.Build.StepBlock [3] 
+      StepBlock.succFieldTM_cut StepBlock.succFieldTM_heads StepBlock.succFieldTM_run
+  Turing.codeSkipPair @ TuringMachine.CodeParser [3] CHECK8
+      codeEraseOutput codeEraseSign codeEraseWrite
+  Turing.codeSkipRepeat @ TuringMachine.CodeParser [2] 
+      codeEraseSymbols codeEraseVec
+  Turing.codeSkipWork @ TuringMachine.CodeFormat [1] CHECK8
+      codeEraseWork
+  Turing.decrementTM @ TuringMachine.Build.CounterLoop [4] 
+      decrementTM_run_succ_ofCfg decrementTM_run_underflow_ofCfg decrementTM_tr_action decrementTM_tr_input
+  Turing.oneTapeMachineFormat @ TuringMachine.CodeSimulator [0] CHECK8
+      
+  Turing.optStateBits @ TuringMachine.Encoding [5] CHECK8
+      StepBlock.succFieldTM_cut StepBlock.succFieldTM_heads StepBlock.succFieldTM_run codeReadState_append codeReadState_sound
+== G4: 72 seed definitions, 2 in no cited type
+  Turing.Action.apply @ TuringMachine.Configuration [10] 
+      Action.apply_workTapes Cfg.mapState_apply FinTM.controlAction_apply FinTM.leftCfg_apply FinTM.rightCfg_apply FinTM.sweepCfg_right FinTM.sweepCfg_right_any FinTM.sweepRevCfg_left FinTM.sweepRevCfg_left_any workTapePos_apply_le
+  Turing.sweepContract @ TuringMachine.Build.Contract.Catalog [6] 
+      sweepContract_hi sweepContract_lo sweepContract_post sweepContract_pre sweepContract_time sweepContract_traj

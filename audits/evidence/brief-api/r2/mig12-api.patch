@@ -1,0 +1,116 @@
+From 9872634e635d49d0dd69e5a5d6492d132a608567 Mon Sep 17 00:00:00 2001
+From: Seyoon Ragavan <complexzetaprime@gmail.com>
+Date: Fri, 16 Oct 2026 23:36:24 -0400
+Subject: [PATCH] MIG-12's API: the lifts' fields, incFixed's cases, the
+ counter words' widths
+
+MIG-12 rewrites Build/CfgRecord's proofs onto the contract layer under the no-unfolding rule. Its
+pre-ship inventory (every external definition CfgRecord uses, crossed with each unfolding site)
+found three definitions without the lemmas the rewrite reads:
+- SymbolLift: `Action.liftSymbols`'s fields and `Cfg.liftSymbols`'s input position, cells and
+  output (`simps`, `isSimp := false`); its state and heads have the earlier `@[simp]` lemmas.
+- Convention: `incFixed_nil`, `incFixed_false_cons`, `incFixed_true_cons`, and
+  `incFixed_length` (the width; #117's gate review).
+- CounterLoop: `decFixed_length`, from `counter_dec_spec` (the width; #117's gate review).
+
+Declarations only; no `@[simp]`; no statement changes.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+---
+ .../TuringMachine/Build/Convention.lean       | 39 +++++++++++++++++++
+ .../TuringMachine/Build/CounterLoop.lean      |  9 +++++
+ .../Complexity/TuringMachine/SymbolLift.lean  |  8 ++++
+ 3 files changed, 56 insertions(+)
+
+diff --git a/TCSlib/Complexity/TuringMachine/Build/Convention.lean b/TCSlib/Complexity/TuringMachine/Build/Convention.lean
+index af195ba6..2420d4e0 100644
+--- a/TCSlib/Complexity/TuringMachine/Build/Convention.lean
++++ b/TCSlib/Complexity/TuringMachine/Build/Convention.lean
+@@ -124,6 +124,45 @@ def incFixed : List Bool → Option (List Bool)
+   | false :: rest => some (true :: rest)
+   | true :: rest => (incFixed rest).map (false :: ·)
+ 
++/-- The empty word overflows: `incFixed [] = none`. -/
++theorem incFixed_nil : incFixed [] = none :=
++  rfl
++
++/-- A low `false` absorbs the carry: `incFixed (false :: w) = some (true :: w)`. -/
++theorem incFixed_false_cons (w : List Bool) : incFixed (false :: w) = some (true :: w) :=
++  rfl
++
++/-- A low `true` passes the carry on: `incFixed (true :: w) = (incFixed w).map (false :: ·)`. -/
++theorem incFixed_true_cons (w : List Bool) :
++    incFixed (true :: w) = (incFixed w).map (false :: ·) :=
++  rfl
++
++/-- **The increment keeps the width:** `incFixed w = some v → |v| = |w|`.
++
++**Proof sketch.** Induct on `w` through the three case equations: the empty word overflows, a
++low `false` becomes `true`, and a low `true` becomes `false` before the incremented tail. -/
++theorem incFixed_length {w v : List Bool} (h : incFixed w = some v) : v.length = w.length := by
++  induction w generalizing v with
++  | nil =>
++    rw [incFixed_nil] at h
++    exact absurd h (by simp)
++  | cons b w ih =>
++    cases b with
++    | false =>
++      rw [incFixed_false_cons, Option.some.injEq] at h
++      subst v
++      rfl
++    | true =>
++      rw [incFixed_true_cons] at h
++      cases he : incFixed w with
++      | none =>
++        rw [he] at h
++        exact absurd h (by simp)
++      | some z =>
++        rw [he, Option.map_some, Option.some.injEq] at h
++        subst v
++        rw [List.length_cons, List.length_cons, ih he]
++
+ /-- `Turing.incFixed` carries through a prefix of `true` bits: the prefix
+ `1ⁿ` becomes `0ⁿ` and the remainder `w` is incremented, the width is kept,
+ and the whole word overflows exactly when `w` does. Shared by the catalog's
+diff --git a/TCSlib/Complexity/TuringMachine/Build/CounterLoop.lean b/TCSlib/Complexity/TuringMachine/Build/CounterLoop.lean
+index 77a7cf13..e5649a8a 100644
+--- a/TCSlib/Complexity/TuringMachine/Build/CounterLoop.lean
++++ b/TCSlib/Complexity/TuringMachine/Build/CounterLoop.lean
+@@ -479,6 +479,15 @@ lemma counter_dec_spec (w : List Bool) :
+         simp [decFixed, hd, Nat.ofDigits_cons, hl]
+         omega
+ 
++/-- **The decrement keeps the width:** `decFixed w = some v → |v| = |w|`, the width clause of
++`Turing.counter_dec_spec`'s successful branch.
++
++**Proof sketch.** Specialize `Turing.counter_dec_spec` at `w`; its match reduces by `h`. -/
++theorem decFixed_length {w v : List Bool} (h : decFixed w = some v) : v.length = w.length := by
++  have hs := counter_dec_spec w
++  simp only [h] at hs
++  exact hs.1
++
+ /-- The next frozen counter word is obtained by one optional decrement. -/
+ private lemma counter_word_succ (w : List Bool) (r : ℕ) :
+     counterWord w (r + 1) = (decFixed (counterWord w r)).getD (counterWord w r) :=
+diff --git a/TCSlib/Complexity/TuringMachine/SymbolLift.lean b/TCSlib/Complexity/TuringMachine/SymbolLift.lean
+index fdf0b6e1..50de39c2 100644
+--- a/TCSlib/Complexity/TuringMachine/SymbolLift.lean
++++ b/TCSlib/Complexity/TuringMachine/SymbolLift.lean
+@@ -95,6 +95,14 @@ def Cfg.liftSymbols (e : Bool ↪ Γ) {x : List Bool} (c : Cfg k Bool State x) :
+   workTapePos := c.workTapePos
+   output := c.output.map e
+ 
++/-! The two lifts' fields as equations, generated without the `simp` attribute (`policy.md` §1):
++a lifted action keeps its input move and state and maps its writes and emission by `e`; a lifted
++configuration keeps its input position and maps its cells and output by `e`. Its state and heads
++have the earlier lemmas `Turing.Cfg.liftSymbols_state` and `Turing.Cfg.liftSymbols_workTapePos`
++(below, `@[simp]`). -/
++attribute [simps (config := { isSimp := false })] Action.liftSymbols
++attribute [simps (config := { isSimp := false }) inputPos workTapes output] Cfg.liftSymbols
++
+ /-- Lift a machine along `e`: read through `decodeBool e`, write through `e`. -/
+ def MultiTapeTM.liftSymbols [DecidableEq Γ] (M : MultiTapeTM k Bool State) (e : Bool ↪ Γ) :
+     MultiTapeTM k Γ State where
+-- 
+2.50.1 (Apple Git-155)
+

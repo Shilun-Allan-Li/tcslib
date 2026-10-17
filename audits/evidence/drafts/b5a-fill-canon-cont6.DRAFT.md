@@ -98,8 +98,11 @@ Baker–Gill–Solovay then lose their last canonizer admission.
 - `CodeSimulator.lean` lines 1–4661;
 - `Build/CounterLoop.lean`: `counterLoopTM`, its `_run_done`/`_run_escape` contracts,
   `counterLoop_time_le`, `counterOverhead_le_of_le`, `counterValue`, `counterWord`,
-  `RoundContract.counterLoopDone_traj`/`counterLoopEscape_traj`, and `counterLoopBody`'s field
-  equations;
+  `RoundContract.counterLoopDone`/`counterLoopEscape` with their `_traj` theorems and their field
+  equations (`_pre`, `_time`, `_post`, `_lo`, `_hi`; #118's round 2), and `counterLoopBody`'s
+  field equations;
+- `CodeParser.lean`: `codeSkipRepeat` with `codeSkipRepeat_zero` and `codeSkipRepeat_succ` (#118's
+  round 2), the repetition's two cases;
 - `Build/Seam.lean`: `phaseHostTM` and `phaseHostTM_run`, the adapter's host.
 
 **Pre-ship check** (maintainer, at the base, against `oleans-lbapi2`;
@@ -143,8 +146,8 @@ All new declarations live in the **home**, the blank line 4626. It sits between 
   - the phase host: `phaseHostTM`, `phaseHostTM_run` (the adapter's host);
   - R1 embedding: `embedEmitTM`, `embedEmitCfg_eq`;
   - the counter loop: `counterLoopTM`, `counterLoopTM_run_done`, `counterLoopTM_run_escape`, or
-    the contract-level `RoundContract.counterLoopDone_traj`/`counterLoopEscape_traj`, read
-    through `counterLoopBody`'s field equations (#118);
+    the contract-level `RoundContract.counterLoopDone`/`counterLoopEscape`, read through their
+    field equations and `_traj` theorems and `counterLoopBody`'s field equations (#118);
   - the framed catalog rows: `copyTM_run_ofCfg`, `clearTM_run_ofCfg`, `writeConstTM_run_ofCfg`,
     `incrementTM_run_succ_ofCfg`.
 
@@ -178,12 +181,13 @@ changes:
      body. Write its counter word with `writeConstTM_run_ofCfg` at the start of each state block.
    - **The outer loop:** a public counter loop over the states. A header copy as its counter gives
      `n` rounds, so either run one leading state block before the loop
-     (`codeSkipRepeat f (n + 1) xs = (f xs).bind (codeSkipRepeat f n)` holds by `rfl`), or install
+     (`codeSkipRepeat_succ`: `codeSkipRepeat f (n + 1) xs = (f xs).bind (codeSkipRepeat f n)`), or install
      `n + 1` with `incrementTM_run_succ_ofCfg` on a copy with a spare `false`.
    - A body failure is the loop's escape.
    - **Prove the generic link once, over the adapter's contract:** a counter loop whose body
-     decides a skipper `r` decides `codeSkipRepeat r (counterValue c)`, failing fast.
-     `canonSkipRepeat_mul` and `canonSkipTable_eq` are the bridges.
+     decides a skipper `r` decides `codeSkipRepeat r (counterValue c)`, failing fast. Its two
+     cases are `codeSkipRepeat_zero` and `codeSkipRepeat_succ`; `canonSkipRepeat_mul` and
+     `canonSkipTable_eq` are the bridges.
    - Do not copy `MathlibBridge.codeSkipRepeat_iter`, the H1 loop proofs in
      `Build/StepBlockLoop.lean`, or C1's countdown (`canonUnaryLoop`, `canonTrueOrbit`). If C1's
      loop lemma fits a step of the link, cite it.
@@ -432,8 +436,11 @@ can be a counter-loop body without a wrapper, which is withdrawn** (E1). In part
 - `counterLoopTM M` has `k + 1` tapes with the counter at `Fin.last k`. On `done` the counter
   interval is all `true`; on `escape` it holds `counterWord w r`, so clear or re-write it before
   reuse.
-- `codeSkipRepeat r (n + 1) xs = (r xs).bind (codeSkipRepeat r n)` holds by `rfl`, but the nested
-  `codeSkipTableK` does not (use `canonSkipTable_eq`).
+- `codeSkipRepeat r (n + 1) xs = (r xs).bind (codeSkipRepeat r n)` is `codeSkipRepeat_succ` (cite
+  it; do not rely on `rfl` through another file's definition), and the nested `codeSkipTableK`
+  needs `canonSkipTable_eq`.
+- `counterLoopOrbit` is an `abbrev` of `roundOrbit`, so `rw [roundOrbit_succ]` does not fire on
+  it; `exact` and `simp only [roundOrbit_succ]` do (#118's gate review, N3).
 - `seamCompTM_firstReturn_ofCfg` needs the callee's cut at `t = 0` as well.
 - The inherited canonizer lemmas take `(F : MachineFormat)` explicitly.
 - C1 and C2 run on a two-tape bank with the bound at index `0`. C2's coefficient is
