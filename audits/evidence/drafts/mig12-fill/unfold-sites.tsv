@@ -1,0 +1,46 @@
+# MIG-12 pre-ship (maintainer, 2026-10-16, at 9872634e): each site in Build/CfgRecord.lean where a tactic names another module's definition to unfold it (model primitives excluded)
+line	definition	module	source
+541	decFixed	TuringMachine.Build.CounterLoop	| nil => simp [decFixed] at h
+545	decFixed	TuringMachine.Build.CounterLoop	simp only [decFixed, Option.some.injEq] at h
+550	decFixed	TuringMachine.Build.CounterLoop	| none => simp [decFixed, htail] at h
+552	decFixed	TuringMachine.Build.CounterLoop	simp only [decFixed, htail, Option.map_some, Option.some.injEq] at h
+554	incFixed	TuringMachine.Build.Convention	simp [incFixed, ih v' htail]
+639	embedEmitCfg	TuringMachine.Build.Embed	· simp [embedEmitCfg, Cfg.liftSymbols]
+639	Cfg.liftSymbols	TuringMachine.SymbolLift	· simp [embedEmitCfg, Cfg.liftSymbols]
+766	Cfg.inputSymbol	TuringMachine.Configuration	have hin : a.inputSymbol = none := by simp [Cfg.inputSymbol, ha]
+776	Cfg.inputSymbol	TuringMachine.Configuration	· simp [Cfg.inputSymbol, h0]
+778	Cfg.inputSymbol	TuringMachine.Configuration	· simp [Cfg.inputSymbol, h0, hR]
+831	moveInputPos	TuringMachine.Configuration	· have hpos : a.inputPos.val = 1 := by simp [a, moveInputPos, h0]
+839	moveInputPos	TuringMachine.Configuration	· have hpos : a.inputPos.val = 1 := by simp [a, moveInputPos, h0]
+1671	fieldOffset	TuringMachine.Build.Catalog	simpa [cfgRecord, fieldOffset, w, L] using this
+1676	fieldOffset	TuringMachine.Build.Catalog	simpa [cfgRecord, fieldOffset] using
+1682	fieldOffset	TuringMachine.Build.Catalog	simpa [cfgRecord, fieldOffset, w] using
+1803	FinTM.bufferTape	TuringMachine.Simulation	unfold FinTM.bufferTape
+2160	fieldOffset	TuringMachine.Build.Catalog	simp [cfg, recordStepSnapshot, fieldOffset]
+2253	FinTM.bufferTape	TuringMachine.Simulation	· unfold FinTM.bufferTape
+2456	FinTM.bufferTape	TuringMachine.Simulation	· simp only [FinTM.bufferTape, if_neg hz]
+2604	FinTM.bufferTape	TuringMachine.Simulation	· simp only [FinTM.bufferTape, if_neg hn]
+2618	embedEmitCfg	TuringMachine.Build.Embed	· simp [row, embedEmitCfg, Cfg.liftSymbols]
+2618	Cfg.liftSymbols	TuringMachine.SymbolLift	· simp [row, embedEmitCfg, Cfg.liftSymbols]
+2620	embedEmitCfg	TuringMachine.Build.Embed	simp [row, embedEmitCfg, Cfg.liftSymbols]
+2620	Cfg.liftSymbols	TuringMachine.SymbolLift	simp [row, embedEmitCfg, Cfg.liftSymbols]
+2627	Cfg.liftSymbols	TuringMachine.SymbolLift	simpa [Cfg.liftSymbols] using (FinTM.bufferTape_map e (counterWord w (d.inputPos.val + 1))
+2641	embedEmitCfg	TuringMachine.Build.Embed	· simp [row, embedEmitCfg, Cfg.liftSymbols]
+2641	Cfg.liftSymbols	TuringMachine.SymbolLift	· simp [row, embedEmitCfg, Cfg.liftSymbols]
+2956	FinTM.bufferTape	TuringMachine.Simulation	· simp only [FinTM.bufferTape, if_neg hneg]
+2982	Cfg.liftSymbols	TuringMachine.SymbolLift	simpa [last, raw, bank, e, Cfg.liftSymbols] using (FinTM.bufferTape_map e v (z - d.workTap
+2994	embedEmitCfg	TuringMachine.Build.Embed	· simp [embedEmitCfg, last, raw, Cfg.liftSymbols]
+2994	Cfg.liftSymbols	TuringMachine.SymbolLift	· simp [embedEmitCfg, last, raw, Cfg.liftSymbols]
+3327	Cfg.workTapeSymbols	TuringMachine.Configuration	simp [data, recordStepReadData, Cfg.workTapeSymbols]
+3397	FinTM.bufferTape	TuringMachine.Simulation	· simp [FinTM.bufferTape, wlen, len]
+3631	fieldOffset	TuringMachine.Build.Catalog	simpa [cfg, L, fieldOffset] using returns (k + 1) (by omega)
+3843	fieldOffset	TuringMachine.Build.Catalog	simpa only [fieldOffset, List.map_take] using congrArg (fun ns : List ℕ => (ns.take j).sum
+3915	FinTM.bufferTape	TuringMachine.Simulation	simpa [FinTM.bufferTape] using hf
+4220	fieldOffset	TuringMachine.Build.Catalog	simpa only [fieldOffset, List.take_zero, List.map_nil, List.sum_nil, Nat.cast_zero, zero_a
+4263	fieldsTape	TuringMachine.Build.Catalog	fieldsTape gs (L : ℤ) = none := by rw [← sameLength]; simp [fieldsTape]
+4264	fieldsTape	TuringMachine.Build.Catalog	_ = d.workTapes 0 (d.workTapePos 0 + (L : ℤ)) := by simpa [L, fieldsTape] using old.symm
+4635	fieldOffset	TuringMachine.Build.Catalog	have hoff : fieldOffset fs j = fieldOffset gs j := by unfold fieldOffset; rw [he]
+4904	fieldOffset	TuringMachine.Build.Catalog	· funext i; simp [cfg, fieldOffset]
+4920	fieldOffset	TuringMachine.Build.Catalog	simp [cfg, fieldOffset]
+5265	fieldOffset	TuringMachine.Build.Catalog	· funext i; simp [cfg, fieldOffset]
+5284	fieldOffset	TuringMachine.Build.Catalog	· funext i; simp [cfg, fieldOffset]
