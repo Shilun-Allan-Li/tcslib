@@ -69,3 +69,7 @@ It adds `budget_eq` and `stageCode_eq`, which lint check 8 asks for. Its checks 
 - **H,** `ntime_hierarchy`: 1–2k lines, pure, after the UN brief integrates (the same file).
 
 E-Q and E-D can run in parallel with wave 1.
+
+**Replay passed (user, 2026-10-17):** `replay-lndiag.sh`, 2 of 2 at `13f52659`, static-equal (2);
+snapshot `oleans-lndiag`. The statement gate is staged in
+`infra_local/gate-dispatches/39-ntime-diag-statements-gate/`.

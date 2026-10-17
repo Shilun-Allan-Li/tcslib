@@ -72,8 +72,10 @@ The `Diagonalization` facade lists the module, and its module list points the no
 - **Lint:** 0 FAIL; `Diagonalization/` has 1 WARN, as before. Check 8 is satisfied for the new
   definitions.
 - **Screen** (7 files): 40 → 48 declarations, 6 → 6 pairs, none new.
-- **Replay:** `replay-lndiag.sh`, 2 modules, chained from `oleans-lndnf` (#120's replay).
-  ⟨REPLAY RESULT⟩
+- **Replay:** `replay-lndiag.sh`, 2 modules, chained from `oleans-lndnf` (#120's replay). **Passed
+  (user, 2026-10-17):** 2 of 2 at `13f52659`, 0 failed (`pr/replay-lndiag.log`); the sorry counts equal
+  a static count (0 mismatches, 2; `pr/replay-lndiag-static.txt`). The snapshot `oleans-lndiag` is the
+  tip plus #119, #120 and #121.
 
 ## Findings format
 
