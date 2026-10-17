@@ -1000,6 +1000,14 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
   - **The r2 gate is staged:** `infra_local/gate-dispatches/35-brief-api-r2-gate/`, bundle SHA-256
     `901e1fa9…c2bd` (108 sections; Lean `4624fc05`, other `00e23bf3`). **Dispatched (user,
     2026-10-17).** After the merge, the five briefs issue (and MIG-12's).
+- **The user's rulings before the night of 2026-10-17:**
+  - **Round 3 of #118, if needed** (majors of the same kind): prepare it locally (the review, the
+    patches as local commits, the checks, the replay script and records). Do not push.
+  - **MIG-12's brief issues with the five** at the post-#118 tip.
+  - **Check 8b** (structure-valued definitions need `simps` or a lemma per field) is implemented
+    after the briefs issue, so their recorded lint bases stay valid.
+  - **MIG-24's library-wide copy-text screen** runs overnight: measurement only, one screen,
+    niced.
     - **Packaging waits for #118's gate:** it goes into #118's round 2 if there is one, or
       otherwise becomes its own PR and gate.
 - **Lint check 8's blind spot (2026-10-16):** a definition counts as covered when any lemma is
