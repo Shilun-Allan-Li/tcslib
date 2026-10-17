@@ -913,6 +913,7 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
   - **The statement gate is staged:** `infra_local/gate-dispatches/33-mig11a-statements-gate/`,
     bundle SHA-256 `84d0442f…b99b` (39 sections; Lean `1358ff73`, other `455cb240`).
     **Dispatched (user, 2026-10-16).**
+  - **Merged (user, 2026-10-16; `bd1ae147`).** The tip's Lean is #117's `98472df2`.
   - **Gate: PASS, 0/0/2/0, CLOSED (2026-10-16).** `audits/mig11a-statements-{findings,resolutions}.md`.
     Minor 1 (a docstring claimed a width-preserving `fix`) is fixed in `98472df2`, docstring only;
     minor 2 (a stale lint log) is corrected: 0 FAIL, 69 WARN over 79 files at `1358ff73`.
@@ -949,8 +950,10 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
     - Added before the gate, following the user's #116 precedent (the zone API, option (a)).
     - Checks clean; check 8 drops 6 more. The two-file screen's 9 new pairs are the
       `variable`-line artifact.
-    - **The chained replay `replay-lbapi2.sh` (86 modules, from `oleans-lbapi`) is ready for
-      the user.**
+    - **The chained replay `replay-lbapi2.sh` passed (user, 2026-10-16):** 86 of 86,
+      static-equal (56). The snapshot `oleans-lbapi2` is the tip plus #118.
+    - The head `4ae686be` merges the tip (#117); its Lean differs from the replayed head only in
+      #117's corrected docstring.
     - G4's partial helpers that unfold `zonedTape`, `zoneSlotOf` and `zoneCapacity` re-point
       to #116's lemmas in the continuation brief.
   - **Measured for issue (U2-S):** order 91, base sorry set 35 (cross-checked against the

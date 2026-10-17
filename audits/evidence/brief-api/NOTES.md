@@ -119,4 +119,13 @@ checked in a worktree at #117's head. The patch applied to #118's head gives a b
   - The two gone pairs are the same artifact: `Traj` no longer takes in `section TrajBasic`'s
     line.
 - **Chained replay** `replay-lbapi2.sh`: the two files' downstream closure at `36325650`
-  (86 modules, all within the first replay's 311), from `oleans-lbapi`. The user runs it.
+  (86 modules, all within the first replay's 311), from `oleans-lbapi`. **Passed (user,
+  2026-10-16):** 86 of 86, 0 failed (`replay-lbapi2.log`). The sorry counts equal a static count
+  (0 mismatches, 56 in total; `replay-lbapi2-static.txt`).
+
+## Up to date with the tip
+
+#117 merged (user, 2026-10-16; `bd1ae147`). The head `4ae686be` merges the tip. Its Lean differs
+from the replayed `36325650` only in #117's gate correction of `counterRowContract`'s docstring
+(`98472df2`), which #117's gate re-elaborated (0 errors, 0 warnings). The replays therefore cover
+the head's Lean, and the snapshot `oleans-lbapi2` serves the tip after #118.
