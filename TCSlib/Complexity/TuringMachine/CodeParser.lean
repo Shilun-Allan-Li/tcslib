@@ -42,6 +42,7 @@ epoch-3→4 merge; its content is the epoch-3 fill, batch A.
   and `codeFlatMap_length` — for reuse by other machine-code formats.
 * `Turing.codeSkipRepeat_zero`, `Turing.codeSkipRepeat_succ` — the repetition's two cases, the
   brief-inventory API (its gate, finding 1).
+* `Turing.codeBitsNat_eq` — the binary value as an equation (the ND inventory API, round 2).
 
 ## References
 
@@ -125,6 +126,10 @@ def codeReadVec {A : Type} (read : List Bool → Option (A × List Bool)) :
 /-- Interpret a least-significant-bit-first word. Canonical syntax is checked
 separately, so this function also has a value on noncanonical words. -/
 def codeBitsNat (xs : List Bool) : ℕ := xs.foldr Nat.bit 0
+
+/-- **The binary value, unfolded** (the ND inventory API, round 2; C1-R's escalation E1):
+`codeBitsNat xs = xs.foldr Nat.bit 0`. -/
+theorem codeBitsNat_eq (xs : List Bool) : codeBitsNat xs = xs.foldr Nat.bit 0 := rfl
 
 /-- The fallback is the one-state, immediately halting, silent machine. -/
 def codeFallback : CodeTM :=

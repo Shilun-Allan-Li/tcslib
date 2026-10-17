@@ -197,7 +197,8 @@ def vhostSilentCfg (c : Cfg m Bool S y) (b : Bool) (p : Fin (x.length + 2))
 
 /-- **Z1's suppressing configuration, unfolded** (the ND inventory API, 2026-10-17): the R1 capture
 transport of the forwarding configuration with an empty prefix, along `Fin.castAddEmb 1`, the
-capture tape `vhostCap m` holding `capPre`. -/
+capture tape `vhostCap m` holding `capPre` followed by the source's emissions `c.output`, and the
+physical output `out₀` (corrected in round 2; gate 37, finding 3). -/
 theorem vhostSilentCfg_eq (c : Cfg m Bool S y) (b : Bool) (p : Fin (x.length + 2))
     (capPre out₀ : List Bool) :
     vhostSilentCfg c b p capPre out₀ =

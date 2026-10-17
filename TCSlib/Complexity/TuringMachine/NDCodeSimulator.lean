@@ -34,9 +34,9 @@ change to `TCSlib.Complexity.TuringMachine.NDCodes`.
   has the same states and initial state) and re-serializes the two tables into the replay
   machine's one table, at `3^4 = 81` records per state rather than `2·27 = 54`.
 * **The interpreter core** `Turing.exists_ndInterpreterCore` is deterministic: the stream of
-  choices is on a tape before it starts (guess first, user decision 1). Its time is stated as a
-  function of the simulated branch's halting time (the prefix clause), which the diagonalizer's
-  mid-rung needs.
+  choices is on a tape before it starts (guess first, user decision 1). Its prefix clause (time in
+  the simulated branch's halting time) is kept with no consumer (user, 2026-10-17): the universal
+  and the diagonalizer's mid-rung, at a guessed budget, use the total-time clause `C·(t + 1)`.
 
 ## Main definitions
 
