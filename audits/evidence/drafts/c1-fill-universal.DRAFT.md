@@ -76,10 +76,13 @@ three small corollaries. Four targets, all frozen:
    from `ntime_hierarchy` (cited, sorried);
 4. **`Complexity.NTIME_linear_ssubset_square`** (line 338), S: the showcase, from H′.
 
-**Proved modulo, exactly:** `Turing.exists_ndInterpreterCore` (R, this wave),
-`Turing.ndWriterTM_run_block` (W, this wave, through the assembly), `FinNDTM.exists_exhaustiveDecider`
-(E, this wave, through BF's derivation) and `Complexity.ntime_hierarchy` (C1-E). Cite their
-statements; never their bodies.
+**Proved modulo, exactly:**
+- `Turing.exists_ndInterpreterCore` (R, this wave);
+- `Turing.ndWriterTM_run_block` (W, this wave, through the assembly);
+- `FinNDTM.exists_exhaustiveDecider` (E, this wave, through BF's derivation);
+- `Complexity.ntime_hierarchy` (C1-E).
+
+Cite their statements; never their bodies.
 
 **Your setup obligation, verbatim** (the C1-A gate's ruling 2: its quantifier order, its first exit,
 its complete cleanup, no input-length term in its bound). For the core's tape count `K` and stream
