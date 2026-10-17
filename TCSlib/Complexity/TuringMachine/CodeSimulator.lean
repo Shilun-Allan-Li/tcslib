@@ -4624,6 +4624,329 @@ private lemma canonEmitVerdict {k : ℕ} {S : Type} [Fintype S] [DecidableEq S]
   · have blank : z.output = [] := silent
     simpa only [Cfg.mapState, blank, List.nil_append] using halted.2
 
+/-- A Boolean-exit computation becomes a first-return-or-escape round. A fresh anchor
+enters the source in one phase dispatch; its successful exit returns to that anchor and
+its failed exit reaches a separate port in one more dispatch. All data fields are those
+of the source endpoint, and the exact additional cost is two steps.
+
+**Proof sketch.** Apply the public phase-host contract once at time zero in the fresh
+phase, and once at the source's first verdict. During the intervening source run, the
+phase tag excludes both fresh ports. Liveness follows from the source's live endpoint.
+The source table is reused in the two fresh phases, where this contract executes no
+source transition. This generic adapter is a promotion candidate. -/
+private lemma canonReturnAdapter {m : ℕ} {S : Type} [Fintype S] [DecidableEq S]
+    (M : MultiTapeTM m Bool S) (entry : S) (exit : Bool → S)
+    (distinct : Function.Injective exit) :
+    ∃ (H : Type) (_ : Fintype H) (_ : DecidableEq H) (N : MultiTapeTM m Bool H)
+      (anchor escape : H), escape ≠ anchor ∧
+      ∀ (x : List Bool) (d : Cfg m Bool S x), d.state = some entry →
+        ∀ (t : ℕ) (v : Bool), (M.runFrom d t).state = some (exit v) →
+          (∀ u < t, ∀ b, (M.runFrom d u).state ≠ some (exit b)) →
+          0 < t + 2 ∧
+          N.runFrom (d.mapState (fun _ => anchor)) (t + 2) =
+            (M.runFrom d t).mapState (fun _ => if v then anchor else escape) ∧
+          ∀ u, 0 < u → u < t + 2 →
+            ∃ q, (N.runFrom (d.mapState (fun _ => anchor)) u).state = some q ∧
+              q ≠ anchor ∧ q ≠ escape := by
+  classical
+  let P : Option Bool → Type := fun _ => S
+  let phases (_ : Option Bool) : MultiTapeTM m Bool S := M
+  let port (b : Bool) : Sigma P := if b then ⟨some true, entry⟩ else ⟨none, entry⟩
+  let initial : Sigma P := ⟨some false, entry⟩
+  let redirect (b : Option Bool) : S → Option (Sigma P) := match b with
+    | some false => fun q => if q = exit true then some (port true)
+        else if q = exit false then some (port false) else none
+    | some true => fun _ => some initial
+    | none => fun _ => none
+  let host := phaseHostTM phases (port true) redirect
+  refine ⟨Sigma P, inferInstance, inferInstance, host, port true, port false, ?_, ?_⟩
+  · intro h
+    have impossible := congrArg Sigma.fst h
+    cases impossible
+  · intro x d hd t v ht hcut
+    have launch := phaseHostTM_run phases (port true) redirect (some true) d d 0
+      MultiTapeTM.runFrom_zero entry hd initial rfl (by intro u hu; omega)
+    have source := phaseHostTM_run phases (port true) redirect (some false) d (M.runFrom d t) t
+      rfl (exit v) ht (port v) (by cases v <;> simp [redirect, distinct.eq_iff]) (by
+        intro u hu q hq
+        have avoid (b : Bool) : q ≠ exit b :=
+          fun h => hcut u hu b (hq.trans (congrArg some h))
+        simp only [redirect, if_neg (avoid true), if_neg (avoid false)])
+    have begin : d.mapState (Sigma.mk (some true)) = d.mapState (fun _ => port true) := by
+      apply Cfg.ext
+      · simp only [Cfg.mapState_state, hd, Option.map_some, port, if_true]
+      · simp only [Cfg.mapState_inputPos]
+      · funext j z; simp only [Cfg.mapState_workTapes]
+      · funext j; simp only [Cfg.mapState_workTapePos]
+      · simp only [Cfg.mapState_output]
+    have enter : d.mapState (fun _ => initial) = d.mapState (Sigma.mk (some false)) := by
+      apply Cfg.ext
+      · simp only [Cfg.mapState_state, hd, Option.map_some, initial]
+      · simp only [Cfg.mapState_inputPos]
+      · funext j z; simp only [Cfg.mapState_workTapes]
+      · funext j; simp only [Cfg.mapState_workTapePos]
+      · simp only [Cfg.mapState_output]
+    rw [begin, enter] at launch
+    have middleRun (u : ℕ) (hu : u ≤ t) :
+        host.runFrom (d.mapState (fun _ => port true)) (1 + u) =
+          (M.runFrom d u).mapState (Sigma.mk (some false)) := by
+      rw [MultiTapeTM.runFrom_add, launch.2, source.1 u hu]
+    refine ⟨by omega, ?_, ?_⟩
+    · rw [show t + 2 = 1 + (t + 1) by omega, MultiTapeTM.runFrom_add,
+        launch.2, source.2]
+      cases v <;> rfl
+    · intro u positive before
+      have offset : u = 1 + (u - 1) := by omega
+      rw [offset, middleRun (u - 1) (by omega), Cfg.mapState_state]
+      have live := M.runFrom_state_ne_none_of_le d t (by rw [ht]; exact Option.some_ne_none _)
+        (u - 1) (by omega)
+      obtain ⟨q, hq⟩ := Option.ne_none_iff_exists'.mp live
+      refine ⟨⟨some false, q⟩, by rw [hq]; rfl, ?_, ?_⟩
+      all_goals
+        intro h
+        have impossible := congrArg Sigma.fst h
+        cases impossible
+
+/-- The record validator, wrapped as a positive round with one fresh returning anchor.
+It restores the whole work bank, preserves output, and retains C2's accepted suffix.
+Its linear coefficient is C2's coefficient plus two, for the two phase dispatches.
+
+**Proof sketch.** Instantiate the generic return adapter with C2. Relabel an arbitrary
+anchor configuration to C2's entry, invoke C2's published private contract, and relabel
+its endpoint back to the selected fresh port. The adapter supplies the entire interior
+cut, including times at which C2 revisits its own entry. -/
+private lemma exists_canonRecordRound (k : ℕ) :
+    ∃ (m : ℕ) (H : Type) (_ : Fintype H) (_ : DecidableEq H) (N : MultiTapeTM m Bool H)
+      (anchor escape : H) (bound : Fin m) (a : ℕ), escape ≠ anchor ∧
+      ∀ (x w : List Bool) (d : Cfg m Bool H x), d.state = some anchor →
+        1 ≤ d.inputPos.val →
+        d.workTapes bound = FinTM.bufferTape w → d.workTapePos bound = 0 →
+        (∀ j, j ≠ bound → d.workTapes j = FinTM.bufferTape [] ∧ d.workTapePos j = 0) →
+        ∃ t ≤ a * (x.length + w.length + 1), 0 < t ∧
+          (N.runFrom d t).state = some
+            (if (codeSkipActionK k (counterValue w) (x.drop (d.inputPos.val - 1))).isSome
+              then anchor else escape) ∧
+          (N.runFrom d t).output = d.output ∧
+          (∀ u, 0 < u → u < t →
+            ∃ q, (N.runFrom d u).state = some q ∧ q ≠ anchor ∧ q ≠ escape) ∧
+          (N.runFrom d t).workTapes = d.workTapes ∧
+          (N.runFrom d t).workTapePos = d.workTapePos ∧
+          ∀ ys, codeSkipActionK k (counterValue w) (x.drop (d.inputPos.val - 1)) = some ys →
+            (N.runFrom d t).inputPos.val = x.length + 1 - ys.length := by
+  obtain ⟨m, S, finiteS, eqS, R, entry, exit, bound, a, separate, record⟩ :=
+    exists_canonRecordTM k
+  letI : Fintype S := finiteS
+  letI : DecidableEq S := eqS
+  obtain ⟨H, finiteH, eqH, N, anchor, escape, different, adapt⟩ :=
+    canonReturnAdapter R entry exit separate
+  refine ⟨m, H, finiteH, eqH, N, anchor, escape, bound, a + 2, different, ?_⟩
+  intro x w d state positive word home blank
+  let c := d.mapState (fun _ => entry)
+  have live : c.state = some entry := by
+    rw [Cfg.mapState_state, state, Option.map_some]
+  obtain ⟨t, cost, verdict, output, cut, tapes, heads, suffix⟩ := record x w c live
+    (by simpa only [c, Cfg.mapState_inputPos] using positive)
+    (by simpa only [c, Cfg.mapState_workTapes] using word)
+    (by simpa only [c, Cfg.mapState_workTapePos] using home)
+    (by simpa only [c, Cfg.mapState_workTapes, Cfg.mapState_workTapePos] using blank)
+  obtain ⟨elapsed, run, interior⟩ := adapt x c live t _ verdict cut
+  have restored : c.mapState (fun _ => anchor) = d := by
+    apply Cfg.ext
+    · simp only [c, Cfg.mapState_state, state, Option.map_some]
+    · simp only [c, Cfg.mapState_inputPos]
+    · funext j z; simp only [c, Cfg.mapState_workTapes]
+    · funext j; simp only [c, Cfg.mapState_workTapePos]
+    · simp only [c, Cfg.mapState_output]
+  rw [restored] at run interior
+  refine ⟨t + 2, by nlinarith, elapsed, ?_, ?_, interior, ?_, ?_, ?_⟩
+  · rw [run, Cfg.mapState_state, verdict, Option.map_some, Cfg.mapState_inputPos]
+  · rw [run, Cfg.mapState_output, output, Cfg.mapState_output]
+  · rw [run]
+    funext j z
+    simp only [Cfg.mapState_workTapes, tapes, c]
+  · rw [run]
+    funext j
+    simp only [Cfg.mapState_workTapePos, heads, c]
+  · intro ys hy
+    rw [run, Cfg.mapState_inputPos]
+    exact suffix ys (by simpa only [c, Cfg.mapState_inputPos] using hy)
+
+/-- Appending one skipper call is the right-hand successor form of the inherited
+repetition-addition law. Both repetition cases are read through the public API. -/
+private lemma canonRepeat_last (r : List Bool → Option (List Bool)) (n : ℕ)
+    (xs : List Bool) :
+    codeSkipRepeat r (n + 1) xs = (codeSkipRepeat r n xs).bind r := by
+  rw [canonSkipRepeat_add r n 1]
+  congr 1
+  funext ys
+  rw [codeSkipRepeat_succ]
+  cases r ys with
+  | none => rw [Option.bind_none]
+  | some zs => rw [Option.bind_some, codeSkipRepeat_zero]
+
+/-- The semantic orbit of a returning skipper either completes all requested calls or
+stops at its first failure. Every attempted call starts with the supplied invariant and
+at the returning anchor. This is a parser induction over the public round orbit, not a
+second physical loop.
+
+**Proof sketch.** Append one call using `canonRepeat_last`. An earlier failed prefix
+remains failed. Otherwise apply the single-round specification at the last successful
+prefix; its two verdicts either extend that prefix or establish the first failure. -/
+private lemma canonRepeat_orbit {m : ℕ} {S : Type} {x : List Bool}
+    (M : MultiTapeTM m Bool S) (anchor escape : S) (τ : Cfg m Bool S x → ℕ)
+    (valid : Cfg m Bool S x → Prop) (tail : Cfg m Bool S x → List Bool)
+    (r : List Bool → Option (List Bool))
+    (step : ∀ c, valid c → c.state = some anchor →
+      (M.runFrom c (τ c)).state = some (if (r (tail c)).isSome then anchor else escape) ∧
+      ∀ ys, r (tail c) = some ys → valid (M.runFrom c (τ c)) ∧
+        tail (M.runFrom c (τ c)) = ys)
+    (c : Cfg m Bool S x) (hc : valid c) (ha : c.state = some anchor) (n : ℕ) :
+    ∃ j ≤ n,
+      (∀ i < j, valid (roundOrbit M τ c i) ∧ (roundOrbit M τ c i).state = some anchor) ∧
+      ((j = n ∧ valid (roundOrbit M τ c j) ∧
+          (roundOrbit M τ c j).state = some anchor ∧
+          codeSkipRepeat r n (tail c) = some (tail (roundOrbit M τ c j))) ∨
+        (0 < j ∧ (roundOrbit M τ c j).state = some escape ∧
+          codeSkipRepeat r n (tail c) = none)) := by
+  induction n with
+  | zero =>
+    refine ⟨0, le_rfl, by intro i hi; omega, Or.inl ?_⟩
+    simp only [roundOrbit_zero, codeSkipRepeat_zero]
+    exact ⟨True.intro, hc, ha, True.intro⟩
+  | succ n ih =>
+    obtain ⟨j, bound, earlier, success | failure⟩ := ih
+    · obtain ⟨same, good, state, parsed⟩ := success
+      subst j
+      obtain ⟨nextState, nextTail⟩ := step _ good state
+      have starts : ∀ i < n + 1,
+          valid (roundOrbit M τ c i) ∧ (roundOrbit M τ c i).state = some anchor := by
+        intro i hi
+        by_cases lt : i < n
+        · exact earlier i lt
+        · have eq : i = n := by omega
+          subst i
+          exact ⟨good, state⟩
+      refine ⟨n + 1, le_rfl, starts, ?_⟩
+      rw [canonRepeat_last, parsed, Option.bind_some]
+      cases result : r (tail (roundOrbit M τ c n)) with
+      | none =>
+        apply Or.inr
+        refine ⟨by omega, ?_, rfl⟩
+        rw [roundOrbit_succ]
+        simpa only [result, Option.isSome_none, Bool.false_eq_true, if_false] using nextState
+      | some ys =>
+        obtain ⟨preserved, suffix⟩ := nextTail ys result
+        apply Or.inl
+        refine ⟨rfl, ?_, ?_, ?_⟩
+        · rw [roundOrbit_succ]; exact preserved
+        · rw [roundOrbit_succ]
+          simpa only [result, Option.isSome_some, if_true] using nextState
+        · rw [roundOrbit_succ, suffix]
+    · refine ⟨j, by omega, earlier, Or.inr ⟨failure.1, failure.2.1, ?_⟩⟩
+      rw [canonRepeat_last, failure.2.2, Option.bind_none]
+
+/-- A public counter loop whose positive rounds decide a skipper decides its repetition,
+failing at the first unsuccessful round. The exact time counts only attempted rounds;
+the displayed upper bound uses the binary counter value and its width. The residual
+counter is the public host's all-true word on completion or its decremented word on escape.
+
+**Proof sketch.** The semantic orbit lemma supplies either all successful rounds or the
+first failing round. Apply the public done or escape contract once. Bound the round sum
+by the per-round budget and cite the corresponding public amortized counter bound.
+No counter transition, host trace, or decrement arithmetic is repeated. -/
+private lemma canonCounterRepeat {m : ℕ} {S : Type} [DecidableEq S] {x : List Bool}
+    (M : MultiTapeTM m Bool S) (anchor escape : S) (different : escape ≠ anchor)
+    (τ : Cfg m Bool S x → ℕ) (valid : Cfg m Bool S x → Prop)
+    (tail : Cfg m Bool S x → List Bool) (r : List Bool → Option (List Bool)) (B : ℕ)
+    (spec : ∀ d, valid d → d.state = some anchor →
+      0 < τ d ∧ τ d ≤ B ∧
+      (∀ u, 0 < u → u < τ d →
+        ∃ q, (M.runFrom d u).state = some q ∧ q ≠ anchor ∧ q ≠ escape) ∧
+      (M.runFrom d (τ d)).state = some (if (r (tail d)).isSome then anchor else escape) ∧
+      ∀ ys, r (tail d) = some ys → valid (M.runFrom d (τ d)) ∧
+        tail (M.runFrom d (τ d)) = ys)
+    (c : Cfg m Bool S x) (hc : valid c) (ha : c.state = some anchor)
+    (w : List Bool) (ct : ℤ → Option Bool) (cp : ℤ)
+    (word : ∀ z : ℤ, -1 ≤ z → z ≤ (w.length : ℤ) →
+      ct (cp + z) = FinTM.bufferTape w z)
+    (n : ℕ) (value : Nat.ofDigits 2 (w.map Bool.toNat) = n) :
+    ∃ T ≤ n * (B + 4) + 2 * w.length + 2, ∃ j ≤ n,
+      T = (∑ i ∈ Finset.range j, τ (roundOrbit M τ c i)) +
+        counterOverhead w (j + if (codeSkipRepeat r n (tail c)).isSome then 1 else 0) ∧
+      (counterLoopTM M anchor (some escape)).runFrom
+          (counterLoopCfg (some (.dec .run)) c ct cp) T =
+        counterLoopCfg (some (if (codeSkipRepeat r n (tail c)).isSome then .done else .escape))
+          (roundOrbit M τ c j)
+          (fun z => if cp ≤ z ∧ z < cp + (w.length : ℤ) then
+            if (codeSkipRepeat r n (tail c)).isSome then some true
+            else FinTM.bufferTape (counterWord w j) (z - cp) else ct z) cp ∧
+      (∀ u < T,
+        ((counterLoopTM M anchor (some escape)).runFrom
+          (counterLoopCfg (some (.dec .run)) c ct cp) u).state ≠ some .done ∧
+        ((counterLoopTM M anchor (some escape)).runFrom
+          (counterLoopCfg (some (.dec .run)) c ct cp) u).state ≠ some .escape) ∧
+      (∀ ys, codeSkipRepeat r n (tail c) = some ys →
+        j = n ∧ valid (roundOrbit M τ c j) ∧ tail (roundOrbit M τ c j) = ys) ∧
+      (codeSkipRepeat r n (tail c) = none →
+        0 < j ∧ (roundOrbit M τ c j).state = some escape) := by
+  obtain ⟨j, hj, starts, finished | failed⟩ := canonRepeat_orbit M anchor escape τ valid tail r
+    (fun d hd hs => (spec d hd hs).2.2.2) c hc ha n
+  · obtain ⟨same, good, state, parsed⟩ := finished
+    subst j
+    let T := (∑ i ∈ Finset.range n, τ (roundOrbit M τ c i)) + counterOverhead w (n + 1)
+    have result := counterLoopTM_run_done M anchor (some escape) τ c w ct cp word n value
+      (by
+        intro i hi
+        obtain ⟨hd, hs⟩ := starts i hi
+        obtain ⟨positive, _, interior, _, _⟩ := spec _ hd hs
+        refine ⟨hs, positive, ?_, ?_⟩
+        · intro u hu ht
+          obtain ⟨q, hq, hqa, hqe⟩ := interior u hu ht
+          exact ⟨q, hq, hqa, fun eq => hqe (Option.some.inj eq).symm⟩
+        · by_cases earlier : i + 1 < n
+          · exact (starts (i + 1) earlier).2
+          · have last : i + 1 = n := by omega
+            simpa only [last] using state) T rfl
+    have budget := counterLoop_time_le M τ c w n value B
+      (fun i hi => (spec _ (starts i hi).1 (starts i hi).2).2.1)
+    refine ⟨T, by dsimp only [T]; nlinarith [budget], n, le_rfl, ?_, ?_, result.2.1, ?_, ?_⟩
+    · simp only [parsed, Option.isSome_some, if_true]
+      rfl
+    · simpa only [parsed, Option.isSome_some, if_true] using result.1
+    · intro ys hy
+      exact ⟨rfl, good, Option.some.inj (parsed.symm.trans hy)⟩
+    · intro impossible
+      rw [parsed] at impossible
+      cases impossible
+  · obtain ⟨positive, state, parsed⟩ := failed
+    have rounds : j - 1 + 1 = j := by omega
+    let T := (∑ i ∈ Finset.range j, τ (roundOrbit M τ c i)) + counterOverhead w j
+    have result := counterLoopTM_run_escape M anchor escape different τ c w ct cp word
+      (j - 1) (by omega) (by
+        intro i hi
+        obtain ⟨hd, hs⟩ := starts i (by omega)
+        obtain ⟨pos, _, interior, _, _⟩ := spec _ hd hs
+        exact ⟨hs, pos, interior⟩) (by simpa only [rounds] using state)
+      T (by rw [rounds])
+    rw [rounds] at result
+    have sumBound : (∑ i ∈ Finset.range j, τ (roundOrbit M τ c i)) ≤ j * B := by
+      calc
+        _ ≤ ∑ _i ∈ Finset.range j, B := Finset.sum_le_sum (fun i hi =>
+          (spec _ (starts i (Finset.mem_range.mp hi)).1
+            (starts i (Finset.mem_range.mp hi)).2).2.1)
+        _ = j * B := by simp only [Finset.sum_const, Finset.card_range, nsmul_eq_mul, Nat.cast_id]
+    have counterBound := counterOverhead_le_of_le w j (by omega)
+    have cost : T ≤ n * (B + 4) + 2 * w.length + 2 := by
+      dsimp only [T]
+      nlinarith [Nat.mul_le_mul_right B hj]
+    refine ⟨T, cost, j, hj, ?_, ?_, result.2.1, ?_, fun _ => ⟨positive, state⟩⟩
+    · simp only [parsed, Option.isSome_none, Bool.false_eq_true, if_false, Nat.add_zero]
+      rfl
+    · simpa only [parsed, Option.isSome_none, Bool.false_eq_true, if_false] using result.1
+    · intro ys impossible
+      rw [parsed] at impossible
+      cases impossible
+
 /-- **The physical grammar stage.** Started on one bank whose tape `header` holds the
 canonical binary header `bits` (head at the origin), every other tape blank, the native head
 at the remainder's first cell and the output empty, it decides the fixed grammar on the
@@ -4637,12 +4960,13 @@ records, with the generic record validator as its body; check the all-`true` suf
 right input blank. Every record consumes at least `4k + 5` cells and every round fails fast
 on input exhaustion, so at most `|x| + 1` rounds run, each charged `O(|x| + |bits|)`.
 
-**Fill appendix (canonizer continuation 5).** This stub remains open. C2 cannot be the
-counter loop's body directly: it stops at a separate, stationary true exit, whereas the
-counter host needs each round to return to its entry anchor. A phase-host adapter with a
-fresh return anchor bridges the two interfaces (success returns to the anchor, failure
-escapes); it is a composition over the public phase host, authorized for the continuation
-(user, 2026-10-16). -/
+**Fill appendix (canonizer continuation 6).** Partial, through the generic repetition
+link. `canonReturnAdapter` supplies the fresh first-return anchor and two-step dispatch
+ledger; `exists_canonRecordRound` applies it to C2. `canonCounterRepeat` connects a returning
+skipper to the public counter loop, including its first failure and residual counter.
+The stub remains open: assemble C1, the initialized inner and outer loops, their scratch
+resets, and the suffix scan; close the stage's polynomial ledger. No new admission is
+introduced by these components. -/
 private lemma exists_canonGrammarStage (F : MachineFormat) :
     ∃ (m : ℕ) (S : Type) (_ : Fintype S) (_ : DecidableEq S) (G : MultiTapeTM m Bool S)
       (entry : S) (exit : Bool → S) (a : ℕ) (header : Fin m), Function.Injective exit ∧
@@ -4965,7 +5289,13 @@ statement and conditional-composition proof are unchanged.
 applied unchanged. The validator composition is proved modulo `exists_canonGrammarStage`,
 which is now the only canonizer admission. Its direct-C2 counter-loop route is escalated
 for the distinct entry/success-anchor mismatch; the stage remains explicitly open. Note 50
-therefore remains pending on the complete canonizer. The headline glue is unchanged. -/
+therefore remains pending on the complete canonizer. The headline glue is unchanged.
+
+**Fill appendix (canonizer continuation 6).** Partial, phases 1 and 2. The fresh-anchor
+adapter and the generic skipper-to-counter-loop link are proved, with C2's adapted
+first-return contract. The grammar-stage assembly and its polynomial ledger remain in
+`exists_canonGrammarStage`, the headline's sole admission source. Note 50 is pending on
+that stub; the headline statement and its existing composition are unchanged. -/
 theorem exists_polyCanonizer :
     ∃ (C : FinTM Bool) (d : ℕ),
       C.ComputesFunInTime (fun α => F.serialize (F.decode α)) fun n => d * (n + 1) ^ d := by
