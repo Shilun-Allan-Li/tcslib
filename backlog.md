@@ -955,7 +955,8 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
     - The head `4ae686be` merges the tip (#117); its Lean differs from the replayed head only in
       #117's corrected docstring.
   - **The gate is staged:** `infra_local/gate-dispatches/34-brief-api-gate/`, bundle SHA-256
-    `ea12197a…d6bf` (100 sections; Lean `4ae686be`, other `a2b27243`). Not yet dispatched.
+    `ea12197a…d6bf` (100 sections; Lean `4ae686be`, other `a2b27243`). **Dispatched (user,
+    2026-10-16).**
     - G4's partial helpers that unfold `zonedTape`, `zoneSlotOf` and `zoneCapacity` re-point
       to #116's lemmas in the continuation brief.
   - **Measured for issue (U2-S):** order 91, base sorry set 35 (cross-checked against the
