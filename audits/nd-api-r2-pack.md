@@ -94,7 +94,9 @@ results or Contents names its additions.
   - `tableBitsK_eq` now ends the chunk at 141.
 - **Replay:** `replay-lndapi2.sh`, the nine files' downstream closure: 313 modules,
   `Simulation`'s closure. Chained from `oleans-lndiag2` (#121 round 2's replay).
-  REPLAY-RESULT
+  **Passed (user, 2026-10-17):** 313 of 313 at `6a48b93e`, 0 failed (`r2/replay-lndapi2.log`); the
+  sorry counts equal a static count (0 mismatches, 96; `r2/replay-lndapi2-static.txt`). The snapshot
+  `oleans-lndapi2` is the tip plus #121's round 2 and #122.
 
 ## Findings format
 

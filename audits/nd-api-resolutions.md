@@ -47,7 +47,16 @@ worker does not look for k = 3 lemmas.
 `guessRunCfg` patch, the capture word of `vhostSilentCfg`) are not gate requirements. They are
 offered to the fills that meet them.
 
-## Round 2 (planned)
+## Round 2: PR #122 (`lean/nd-api-r2` at `6a48b93e`)
+
+Five commits on #121's round-2 head `0a5878ed`: finding 1's API and finding 3's docstring, gate 38's
+minor 5, and the equations the reviews of C1 wave 1's first deliveries found missing
+(`counterValue_eq`, `codeBitsNat_eq`, `agreeOn_iff`, `bufferTape_eq`, `bufferTape_of_neg`), and
+gate 40's minor 1 (`NDCodeSimulator`'s Design bullet). 22 equations, 3 docstrings
+(`audits/nd-api-r2-pack.md`; evidence `audits/evidence/nd-api/r2/`). **Replay passed (user,
+2026-10-17):** 313 of 313, static-equal (96). Gate 41 is staged.
+
+## Round 2's plan (as written before the PR)
 
 A follow-up Lean PR, stacked on #121's round-2 head `0a5878ed` (its replay closure overlaps
 #121's). It carries finding 1's API and finding 3's docstring, together with gate 38's minor 5 (the
