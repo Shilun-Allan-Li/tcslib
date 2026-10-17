@@ -390,7 +390,7 @@ Run the text-level screen **before and after**, **one run at a time, under `nice
 - **The screen** is the declaration-keyed `audits/evidence/retrofit/copy-text-screen-v3.py`, on the
   repository paths.
 - **The base**, at the issue tree, is `audits/logs/s13d-fill-g4-cont1-screen-base.txt`:
-  **794 declarations, 437 pairs, 127,810 characters** (MEASURED; about 5 minutes). The overlay's stubs have bodies under the 60-character floor.
+  **795 declarations, 437 pairs, 127,810 characters** (MEASURED; about 5 minutes). The overlay's stubs have bodies under the 60-character floor.
 
 ```sh
 P=audits/evidence/s13d-g4-cont1

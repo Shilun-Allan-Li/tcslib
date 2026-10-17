@@ -301,7 +301,7 @@ Run the text-level screen **before and after**, **one run at a time, under `nice
   `Build/Contract/Seam`, `Build/Embed` with `Build/Contract/Embed`) by full path, so F2's
   flattening is no longer needed.
 - **The base**, at the issue tree, is `audits/logs/b6-fill-configclock-screen-base.txt`:
-  **1,042 declarations, 510 pairs, 147,693 characters** (MEASURED at #118's round-2 head). The stub's body is under the screen's 60-character floor, so the
+  **1,043 declarations, 510 pairs, 147,693 characters** (MEASURED at #118's round-2 head). The stub's body is under the screen's 60-character floor, so the
   overlay adds nothing.
 
 ```sh

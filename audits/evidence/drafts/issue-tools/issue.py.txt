@@ -25,7 +25,7 @@ BRIEFS = [
          files={'UniversalKOverlay.lean.txt': f'{II}/UniversalKOverlay.lean.txt',
                 'U2SImportProbe.lean.txt': f'{II}/U2SImportProbe.lean.txt',
                 'screen-population.txt': f'{II}/u2s-pop.txt'},
-         order=f'{II}/u2s-order.txt', sorries=f'{II}/u2s-sorries.txt', screen=f'{II}/u2s-screen-base.txt',
+         order=f'{II}/u2s-order.txt', sorries=f'{II}/u2s-sorries.txt', screen=f'{S}/issue-r3/u2s-screen-base-r3.txt',
          preship=pre('u2s', ['UniversalKOverlay', 'U2SImportProbe'])),
     dict(name='b6-fill-rulerdevice', draft='b6-fill-rulerdevice', logs='b6-fill-rulerdevice',
          ev='audits/evidence/b6-fill-rulerdevice',
@@ -39,13 +39,13 @@ BRIEFS = [
          files={'WindowClockOverlay.lean.txt': f'{II}/WindowClockOverlay.lean.txt',
                 'F3ImportProbe.lean.txt': f'{II}/F3ImportProbe.lean.txt',
                 'screen-population.txt': f'{II}/f3-pop.txt'},
-         order=f'{II}/f3-order.txt', sorries=f'{II}/f3-sorries.txt', screen=f'{S}/issue5/f3-screen-base-r2.txt',
+         order=f'{II}/f3-order.txt', sorries=f'{II}/f3-sorries.txt', screen=f'{S}/issue-r3/f3-screen-base-r3.txt',
          preship=pre('f3', ['WindowClockOverlay', 'F3ImportProbe', 'F3ConsumerProbe'])),
     dict(name='b5a-fill-canon-cont6', draft='b5a-fill-canon-cont6', logs='b5a-fill-canon-cont6',
          ev='audits/evidence/b5a-canon-cont6',
          files={'CanonCont6ImportProbe.lean.txt': f'{II}/CanonCont6ImportProbe.lean.txt',
                 'b5a-canon-cont6-screen-population.txt': f'{II}/c6-pop.txt'},
-         order=f'{II}/c6-order.txt', sorries=f'{II}/c6-sorries.txt', screen=f'{S}/issue5/c6-screen-base-r2.txt',
+         order=f'{II}/c6-order.txt', sorries=f'{II}/c6-sorries.txt', screen=f'{S}/issue-r3/c6-screen-base-r3.txt',
          preship=pre('c6', ['CodeSimulator', 'CanonCont6ImportProbe', 'CanonNote50', 'CanonNote50Walk',
                             'CanonCont3ImportProbe', 'B5aStatementsProbe', 'B5aContPreShip',
                             'S1210StatementsProbe'])),
@@ -58,7 +58,7 @@ BRIEFS = [
                 'tools/mkoverlay.py': f'{II}/mkoverlay-g4c1.py',
                 'tools/home.lean.txt': f'{WT}/audits/evidence/s13d-g4-fill/tools/home.lean.txt'},
          order=f'{II}/s13d-fill-g4-cont1-order.txt', sorries=f'{II}/s13d-fill-g4-cont1-base-sorries.txt',
-         screen=f'{II}/s13d-fill-g4-cont1-screen-base.txt',
+         screen=f'{S}/issue-r3/g4-screen-base-r3.txt',
          preship=pre('g4', ['ZoneRebalanceOverlay', 'G4C1ImportProbe'])),
     dict(name='mig12-fill-cfgrecord', draft='mig12-fill-cfgrecord', logs='mig12-fill', ev='audits/evidence/mig12-fill',
          files={f: f'{DR}/mig12-fill/{f}' for f in [
@@ -66,7 +66,7 @@ BRIEFS = [
              'recordrun-uses.tsv', 'unfold-sites.tsv', 'frozen-publics.txt', 'cfgrecord-declarations.tsv',
              'cfgrecord-external-uses.out', 'route-lemmas-enum.out', 'replay-closure.txt']},
          order=f'{DR}/mig12-fill/mig12-fill-cfgrecord-order.txt', sorries=f'{DR}/mig12-fill/mig12-fill-base-sorries.txt',
-         screen=f'{S}/mig12/screen-base.txt',
+         screen=f'{S}/issue-r3/m12-screen-base-r3.txt',
          preship=pre('m12', ['CfgRecordOverlay', 'MIG12ImportProbe'])),
 ]
 
@@ -106,7 +106,7 @@ def apply(base):
         shutil.copyfile(b['sorries'], f"{WT}/audits/logs/{b['logs']}-base-sorries.txt")
         shutil.copyfile(b['screen'], f"{WT}/audits/logs/{b['logs']}-screen-base.txt")
         with open(f"{WT}/audits/logs/{b['logs']}-preship.log", 'w', encoding='utf-8') as f:
-            f.write(f"# {b['name']}: pre-ship elaborations against oleans-lbapi3 (#118's round-2 replay), maintainer\n")
+            f.write(f"# {b['name']}: pre-ship elaborations against the post-#118 snapshot, maintainer\n")
             for p in b['preship']:
                 f.write(f"\n## {os.path.basename(p)}\n"); f.write(open(p, encoding='utf-8').read())
         print('applied', b['name'])

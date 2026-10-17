@@ -286,7 +286,7 @@ Run the text-level screen **before and after**, **one run at a time, under `nice
   Hydroxyi's `Machines/Clean` and `Machines/CleanSweep`.
 - **The screen** is the declaration-keyed `audits/evidence/retrofit/copy-text-screen-v3.py`, on
   the repository paths.
-- **The base**, at the issue tree, is `audits/logs/u2s-fill-screen-base.txt`: **654 declarations, 514 pairs, 151,065 characters**
+- **The base**, at the issue tree, is `audits/logs/u2s-fill-screen-base.txt`: **655 declarations, 514 pairs, 151,065 characters**
   (MEASURED).
 
 ```sh
