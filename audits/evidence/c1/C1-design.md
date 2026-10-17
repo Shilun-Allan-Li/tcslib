@@ -47,7 +47,9 @@ Companion artifacts, in the scratchpad's `c1/` folder:
 5. **The gate's prefix-bound obligation becomes a contract clause.** The interpreter core's
    contract states its time as a function of the *simulated halting time*. This comes free
    from the exact escape time of `counterLoopTMVia_run_escape`
-   (`Build/CounterLoop.lean:1306`).
+   (`Build/CounterLoop.lean:1306`). **Superseded for `D`** (gate 39, finding 1): its mid-rung
+   guesses a nominal budget and uses R's total-time clause instead (§3.6). The clause stays in
+   R's statement with no consumer (the user, 2026-10-17).
 6. **New hosts, by the host-first rule:**
    - the **step-clocked runner**, H3's clock. Its consumers are the diagonalizer, `E`, B6's
      window runner, and a re-derivation of Hydroxyi's `clockTM`;
@@ -161,8 +163,10 @@ sketch-level routes change, and each is a declared deviation for the next gate:
 - **Universal, items 1 and 4(iii):** the choice word is guessed up front instead of passed
   through per step.
 - **Item 2:** `BF := E(UN)` instead of a dedicated replay loop.
-- **Item 4(iii):** the prefix bound is a clause of the interpreter-core contract, so the
-  sketch's obligation is discharged by the contract rather than by a separate argument.
+- **Item 4(iii):** the sketch's prefix-bound obligation is met by a guessed nominal budget, not by
+  the core's prefix clause (gate 39, finding 1): the mid-rung guesses `b ≤ g n`, and at `b = t'`
+  R's total-time clause gives `C·(t' + 1)`. The prefix clause's `|x|` term cannot be absorbed into
+  D's uniform `K`; the clause stays in R's statement with no consumer (the user, 2026-10-17).
 
 Everything else the gate carried is kept, in particular the schedule, the ladder, the capped
 locator and its ledger, the fused physical clock, the transfers and the chain. One point is
@@ -199,10 +203,14 @@ NF  (exists_codeNDTM_accepts_linear), a per-N NDTM with two work tapes A, B:
     ─▶ sweep 1: input claims vs native input ─▶ sweeps 2..k+1: tape j claims replayed on B
     ─▶ relabel states into Fin (n+1)
 
-D   (the diagonalizer of ntime_hierarchy), an NDTM:
-    unary check ─▶ bits (g n) by g's witness ─▶ GUESS g n stream bits ─▶ locator (stage, j, αⱼ, a, T*, rung)
-    ─▶ mid:  step-clock( Z1( R on ⟨⟨bits g n, αⱼ⟩, 1^{n+1}⟩ with the stream ) ), accept iff R accepts in time
-    ─▶ top:  step-clock( Z1( BF on ⟨⟨bits T*, αⱼ⟩, 1^a⟩ ) ), output the flipped verdict, default reject
+D   (the diagonalizer of ntime_hierarchy, Turing.NTimeDiag.exists_diagonalizer), an NDTM:
+    query: exists_queryTM's machine (unary check, locator, bits (g n), the query word)
+    ─▶ bits (g n) by g's witness ─▶ GUESS g n stream bits s
+    ─▶ mid:  GUESS a budget b of the width of bits (g n), reject unless b ≤ g n, normalize to bits b
+             ─▶ clock( Z1( R on ⟨⟨bits b, αⱼ⟩, 1^{n+1}⟩ with s ) ), accept iff R accepts in time
+    ─▶ top:  clock( vhostSilent( BF on ⟨⟨bits T*, αⱼ⟩, 1^a⟩ ) ), accept iff BF outputs [false]
+    ─▶ default reject. clock: the step-clocked runner, body allowance g n (counter bits (g n)),
+       physical cost at most 7(g n + 1); one uniform K bounds every branch (gate 39, findings 1-2)
 ```
 
 ### 2.2 The universal NDTM (statement 1)
@@ -268,9 +276,9 @@ Two remarks on this design (INFERRED):
 | D3. Guess `g n` stream bits | `expandTM` + the choice writer + `skipBackTM` | writer [missing] |
 | D4. **Locator** (audit round 2 §2): iterate stages from `ℓ₀ = 2`. At each stage prepare `1^a` (Z1 buffer), run `f`'s witness **capped** at `c_f(n + 1)` (step-clocked runner), and compare `f a` with `n` (binary `≤`). If small, form `u = f a + a + 1` in unary (geometric cost) and compare `u⁴` with `⌊log₂ n⌋` (capped unary arithmetic, `O(log² n)`), testing whether `n` is a power of two in the equal case; otherwise write `ℓᵢ₊₁` in binary, increment and advance. At the end, schedule `j = ν₂(i + 1)` (the 2-adic pairing) and unrank `αⱼ` (`bits (j + 1)` without its top bit) | `exists_inputLengthTM` [pub] `Build/InputLength.lean:473`; `expandTM`; `incrementTM`; `compareTM` is **equality only** [pub] `Catalog.lean:258-266`; a numeric `≤` row, capped unary multiply, a power-of-two test, `ν₂` and unranking rows, and the amortized `O(n)` ledger | [missing] (the arithmetic rows overlap stage 2's planned rows, design §15a "New rows needed", `machine-library-design.md` §15a) |
 | D5. Materialize `⟨⟨bits t, αⱼ⟩, 1^m⟩` on a buffer | a `pairEncode` writer (bit doubling and separator) | [missing] (a candidate instance of §13d G2's mapped sweeps) |
-| D6. Mid-rung: run `R` (§3.6) hosted by Z1 on the materialized word with its budget field rewritten to a guessed `bits b`, `b ≤ g n` (gate 39, finding 1), with the guessed stream, under the step-clocked runner at `K'(g n + 1)` | Z1 [pub]; the step-clocked runner [missing]; `R` [missing] | |
+| D6. Mid-rung: guess a nominal budget `b` of the width of `bits (g n)`, reject unless `b ≤ g n`, and normalize it to `bits b`; run `R` (§3.6) hosted by Z1 on the materialized word with its budget field rewritten to `bits b` (gate 39, finding 1), with the guessed stream, under the step-clocked runner with the body allowance `g n` (its counter `bits (g n)`; physical cost at most `7(g n + 1)`, gate 39, finding 2) | Z1 [pub]; the step-clocked runner [missing]; `R` [missing]; the budget's guess, test, normalization and rewrite (a private leaf of E-D) [missing] | |
 | D7. Top rung: run `BF` hosted by `vhostSilentTM` on `⟨⟨bits T*, αⱼ⟩, 1^a⟩` under the same runner, and emit the negated completed verdict (default reject) | `vhostSilentTM_runFrom` [pub] `VirtualInput.lean:434`; `BF` from `E` | |
-| D8. `D ∈ NTIME (g + 1)` by construction: every phase is code-independent or clocked. Characterize `L(D)` per rung (mid: `∃ s`, the clocked `R` accepts; top: the clocked `BF` completes with `[false]`) | the ND assembly lemma; the clock contract | [missing] |
+| D8. `D ∈ NTIME (g + 1)` by construction: every phase is code-independent or clocked. Characterize `L(D)` per rung (mid: `∃ s` and `b ≤ g n`, the clocked `R` on `bits b` accepts; top: the clocked `BF` completes with `[false]`) | the ND assembly lemma; the clock contract | [missing] |
 | D9. The chain: fix `N` and `c₀`; take `M'`, `C₁` from statement 3, `α = c.encode M'` (recovered by `NDMachineCode.decode_encode`, `NDCodes.lean:142`), `j₀ = rank α`, and `C_α`, `C_BF`. Choose a stage with `ν₂(i + 1) = j₀` past all thresholds. The mid equivalences (forward transfer + the guessed budget `b = t'` and R's total-time clause; backward transfer + truncation by `NTIME.mono`'s argument) and the top flip contradict | the contracts of statements 1 and 3, `R`, `E`; `AcceptsWithin.mono`; `run_take_of_halted` [pub] `ChoiceWords.lean` | [missing] (pure) |
 | P. `ntime_hierarchy_of_pos` | the mirror of `time_hierarchy_of_pos` [pub] `Diagonal.lean:299-311` | [missing] (pure; can be proved now, modulo statement 4) |
 | S. Showcase: the arithmetic `A(3n + 4) ≤ (n + 1)²` for `n ≥ 3A + 4`; `TimeConstructible (n + 1)` and `TimeConstructible ((n + 1)²)` | `timeConstructible_id` [pub] `TimeConstructible.lean:422` as precedent; unary square via `expandTM`, then binary counting with amortized `incrementTM` | witnesses [missing] (independent of everything else) |

@@ -1062,8 +1062,9 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
   - **#121 round 2** (`lean/ntime-diag` at `0a5878ed`: the tip merged, then the review's patch):
     the sketch rewritten to the guessed budget, `stage_of_le_two` and `query_of_not_guard` added.
     Checks in `audits/evidence/c1/c1e/pr/r2/`. **Replay passed (user, 2026-10-17):** 2 of 2,
-    static-equal (2); snapshot `oleans-lndiag2`. Gate 40 staged (pack
-    `audits/ntime-diag-statements-r2-pack.md`).
+    static-equal (2); snapshot `oleans-lndiag2`. **Gate 40: PASS 0/0/1/12; closed. #121 is clear to
+    merge.** X1 (`ntime_hierarchy`'s sketch) waits for UN's integration. **X2 (user): BF becomes a
+    hypothesis of `exists_diagonalizer`** in a statement PR after #121 merges, gated before E-D.
   - **Next Lean PR: the ND inventory API's round 2**, stacked on `0a5878ed`: gate 37's findings 1
     and 3 and gate 38's minor 5 (StepBlock, CodeFormat, Encoding, VirtualInput, the `ClassNP`
     facade), about 255 modules of replay, its own gate. **Opened: #122** (`lean/nd-api-r2` at

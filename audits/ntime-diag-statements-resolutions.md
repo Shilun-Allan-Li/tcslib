@@ -54,4 +54,36 @@ R's early-escape ledger.
   - screen (the 7-file population): 48 → 49 declarations, 6 → 6 pairs, 1,814 characters, no new
     pair;
   - replay: `replay-lndiag2.sh`, 2 modules, chained from `oleans-lndnf`.
-- Its gate (folder 40) is staged after the replay passes.
+- **Replay passed** (user, 2026-10-17): 2 of 2 at `0a5878ed`, static-equal (2); snapshot
+  `oleans-lndiag2`.
+- **Gate 40** (folder `40-ntime-diag-statements-r2-gate/`; bundle SHA-256 `3e2b3694…32ef`, 55
+  sections; pack `audits/ntime-diag-statements-r2-pack.md`).
+
+### Round 2's result: PASS (0 blockers, 0 majors, 1 minor, 12 notes). The gate is closed.
+
+The findings are in `audits/ntime-diag-statements-r2-findings.md`, verbatim. The maintainer's
+review sub-agent rebuilt the bundle byte for byte and verified every finding at `0a5878ed`: all
+true, at the auditor's severities (`audits/evidence/c1/c1e/gate40-review.md`).
+
+| # | Severity | Finding | Resolution |
+|---|---|---|---|
+| 1 | minor | Overview text still describes the superseded middle-rung route. | **True, and wider than reported.** **Records:** five edits in `audits/evidence/c1/C1-design.md` (§0 item 5, §1.2, the §2.1 diagram, D6, D8), applied. **`.lean`:** `NDCodeSimulator`'s module Design bullet, in #122 (`6a48b93e`, docstring only). **X1, deferred:** `ntime_hierarchy`'s proof sketch (`NTimeHierarchy.lean:244–264, 274–282, 290–291`) still describes the prefix-clause route. It is UN's in-flight file, so the review's drafted patch is applied when UN integrates, before H's brief. |
+| 2–13 | notes | Integrity, the definitions, soundness, completeness, the rewrite's cost, the ledger, `exists_queryTM`, sufficiency, the adversarial checks, the kept clause, the screen and lint, the records. | No action. Note 11, the kept prefix clause, carries into R's continuation brief: proving only the total-time clause is a partial, and the worker escalates rather than weakening the clause. |
+
+**An erratum in round 1's resolutions above:** D's old sketch was not the prefix clause's only
+consumer. `ntime_hierarchy`'s sketch also used it (X1). Both now read the total-time clause.
+
+**X2, the import topology (the review; the user's ruling, 2026-10-17).** E-D needs BF
+(`Turing.exists_ndAcceptsWithin_decider`), which is stated in `NTimeHierarchy`. H's proof must
+import `NTimeDiagonalizer`, so the two files cannot import each other. **Ruling: BF becomes a
+hypothesis of `exists_diagonalizer`, after #121 merges.** A small statement PR adds it, and H
+supplies it from `exists_ndAcceptsWithin_decider`. It gets its own gate, before E-D's brief.
+
+**X3 (note):** `NTimeDiagonalizer.lean:32` and `:197` still call the middle word R's input; D
+now rewrites its budget field first. The review's one-line replacements ride with the X2
+statement PR.
+
+**Carry-forward** (the review's section (c)): E-Q and E-D share a file, so they run in sequence.
+The fill gates' bundles include every file their lint and screen read.
+
+**#121 is clear to merge** at `0a5878ed`.

@@ -1,0 +1,85 @@
+diff --git a/TCSlib/Complexity/Diagonalization/NTimeHierarchy.lean b/TCSlib/Complexity/Diagonalization/NTimeHierarchy.lean
+--- a/TCSlib/Complexity/Diagonalization/NTimeHierarchy.lean
++++ b/TCSlib/Complexity/Diagonalization/NTimeHierarchy.lean
+@@ -242,26 +242,26 @@
+ `g n` once by `g`'s witness. **(iii) the self-clocked mid-rung, guess first** (user decision 1 of
+ 2026-10-13; a declared sketch deviation from passing choice bits through):
+ right after computing `g n`, `D` **guesses a stream of `g n` choice bits**
+-with the bounded choice writer (`Turing.ndWriterTM_run_block`), its only
+-nondeterministic phase; every later phase is deterministic. For
+-`ℓ_i < n < ℓ_{i+1}`, `D` materializes `⟨⟨bits (g n), α_j⟩, 1^{n+1}⟩` and
++with the bounded choice writer (`Turing.ndWriterTM_run_block`) and, in the
++middle, a **nominal budget** `b`: a word of the width of `bits (g n)`,
++rejected unless `b ≤ g n` and normalized to `bits b` (the diagonalizer's
++statement gate, finding 1; user ruling of 2026-10-17). These are its only
++nondeterministic phases; every later phase is deterministic. For
++`ℓ_i < n < ℓ_{i+1}`, `D` materializes `⟨⟨bits b, α_j⟩, 1^{n+1}⟩` and
+ runs the deterministic interpreter core `Turing.exists_ndInterpreterCore`
+-on it, hosted by Z1, with the guessed stream, at nominal simulated budget
+-`g n`, under `D`'s **own step-clocked countdown of `K·(g n + 1)` steps**
+-(the step clock `Turing.exists_stepClockTMVia`, shared with the B6 hosts)
+-— `K` fixed by `D`'s architecture, independent of the code, **with the
+-allowance split stated** (round-2 finding 2): a fixed share is reserved
+-ahead of simulation for the one `g`-witness run (bounded by its own
+-`c_g·(g n + 1)` clause — it runs *before* the countdown exists and is not
+-cut by it), for the guess, for budget and countdown preparation, and for
+-the worst single binary borrow; the **prefix-bound obligation is a clause
+-of the core's contract**: when the simulated branch halts at `t' ≤ g n`,
+-the core stops within `C_α·(t' + |x| + |bits (g n)| + 1)` (here
+-`|x| = n + 1`, the bounded window copy of user decision 5), so the
+-remaining share covers the relevant branches; `D` accepts iff the core
+-accepts within the countdown, and branches cut by the countdown **reject**
+-(sound: a cut branch is non-accepting, and completed accepting simulations
+-are sound).
++on it, hosted by Z1, with the guessed stream, under the step clock
++`Turing.exists_stepClockTMVia` (shared with the B6 hosts) with the **body
++allowance `g n`** (its counter `bits (g n)`; physical cost at most
++`7·(g n + 1)`). Every other phase is code-independent and costs
++`O(g n + 1)`, so one `K`, fixed by `D`'s architecture, bounds every branch
++by `K·(g n + 1)`: **the allowance split** (round-2 finding 2), with the
++body allowance and `K` distinct (the diagonalizer's gate, finding 2). The
++core's **total-time clause** bounds its run by `C_α·(b + 1)`, with no `|x|`
++term; its prefix clause is not used, since the per-code `|x| = n + 1` term
++does not fit the completeness condition `C·(t' + 1) ≤ g n` of the assembly
++`Turing.NTimeDiag.exists_diagonalizer`. `D` accepts iff the core accepts
++within the allowance, and branches cut by the clock **reject** (sound: a
++cut branch is non-accepting, and completed accepting simulations are sound).
+ **(iv) the top rung**: at `n = ℓ_{i+1}`, `D` runs `BF` on
+ `⟨bits T*_i, α_j, 1^{a}⟩` under the same self-cap and **flips** a completed
+ verdict (default answer if the cap trips); non-unary inputs reject.
+@@ -271,15 +271,15 @@
+ decider:* given `N` deciding `L(D)` within `c₀ · f`, take `M'` and `C₁`
+ from `Turing.FinNDTM.exists_codeNDTM_accepts_linear N` and let `α` be
+ `M'`'s code with its **fixed** interpreter constant `C_α`. Mid-rung, at the
+-late stages of `α`'s subsequence: by the core's prefix clause the genuine
+-simulation of an accepting `N`-branch costs at most
+-`C_α·(C₁·(c₀·f(n+1) + 1) + (n + 1) + |bits (g n)| + 1)`, which is at most
+-`A*·(f(n+1) + n + 1) + C_α·|bits (g n)|` host steps with
+-`A* := C_α·(C₁·c₀ + C₁ + 2) + 1` **fixed**, and the domination hypothesis
+-(its `f(n+1)` and `n + 1` addends; the logarithmic term is `o(g n)`) puts
+-that below `K·(g n + 1)` eventually — so the countdown never cuts the
+-relevant branches, and
+-`D(1^n) = [M'` accepts `1^{n+1}` within the window`] = [1^{n+1} ∈ L(D)]`
++late stages of `α`'s subsequence: an accepting `N`-branch on `1^{n+1}`
++transfers to an accepting `M'`-branch of length `t' ≤ C₁·(c₀·f(n+1) + 1)`.
++At the guess `b = t'` the core's total-time clause bounds its run by
++`C_α·(t' + 1) ≤ A*·(f(n+1) + n + 1)` with
++`A* := C_α·(C₁·c₀ + C₁ + 1)` **fixed**, and the domination hypothesis (its
++`f(n+1)` and `n + 1` addends) puts that below the allowance `g n`
++eventually — so the clock never cuts the relevant branches, and `D`
++accepts `1^n` within `K·(g n + 1)` iff `M'` accepts `1^{n+1}` within `g n`,
++iff `1^{n+1} ∈ L(D)`
+ (forward by the linear transfer and `AcceptsWithin.mono`; backward by the
+ unbounded transfer plus truncation at `N`'s own all-branch budget,
+ `Turing.NDTM.runWith_of_halt`) — the chain (3.3). Top rung: the flip needs
+@@ -287,8 +287,8 @@
+ `T*_i = (f a + a + 1)² ≥ C₁·(c₀·f a + 1)` eventually — the square against
+ fixed constants, no `g a` comparison needed; the hypothesis's `f n` addend
+ serves the inclusion half (round-2 note 3) — and `BF`'s cost
+-`C_BF·2^{C_BF·(T*_i + 1)} ≤ K·(g n + 1)` eventually along the subsequence
+-since `g n ≥ n = 2^{(T*_i)²}` — the ladder's square in the exponent
++`C_BF·2^{C_BF·(T*_i + 1)} ≤ n ≤ g n` (the allowance) eventually along the
++subsequence since `n = 2^{(T*_i)²}` — the ladder's square in the exponent
+ outruns any fixed linear exponent — which is the chain's (3.4); `N`
+ agreeing with `D` on the whole stage collapses (3.3) into (3.4)'s flip,
+ the contradiction of [AB09, Figure 3.1]. Fill obligations, named: the
