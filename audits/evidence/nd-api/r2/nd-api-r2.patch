@@ -1,0 +1,205 @@
+diff --git a/TCSlib/Complexity/ClassNP.lean b/TCSlib/Complexity/ClassNP.lean
+index e411fb17..a6f11f08 100644
+--- a/TCSlib/Complexity/ClassNP.lean
++++ b/TCSlib/Complexity/ClassNP.lean
+@@ -66,6 +66,10 @@ The classes and reduction notions of [AB09, ch. 2] (see
+   deterministically within `C·2^{C·(T + 1)}` wherever every branch halts within `T`
+   [AB09, §3.2, proof of Theorem 3.2], and `BF := E(UN)` for the hierarchy. The replay is
+   sorried.
++* `NDNormalForm` — the linear-overhead coded normal form: every bundled binary NDTM has a
++  coded two-work-tape equivalent whose acceptance tracks its own, forward within a linear
++  allowance and backward unboundedly [AB09, §3.2]; the time hierarchy diagonalizes over
++  these codes. The normal form is sorried.
+ * `SAT` — the languages `SAT` and `3SAT`, their membership in `NP`, and
+   `SAT ≤ₚ 3SAT` [AB09, §2.3.1, Theorem 2.10 (membership), Lemma 2.14] (the
+   formula layer lives in `TCSlib.Complexity.Formulas`).
+diff --git a/TCSlib/Complexity/TuringMachine/Build/StepBlock.lean b/TCSlib/Complexity/TuringMachine/Build/StepBlock.lean
+index 04e38f62..4f77af36 100644
+--- a/TCSlib/Complexity/TuringMachine/Build/StepBlock.lean
++++ b/TCSlib/Complexity/TuringMachine/Build/StepBlock.lean
+@@ -62,6 +62,8 @@ one simulated transition of any `k`-work-tape binary transition table held, in t
+ * `Turing.StepBlock.tableTape_eq`, `summaryTape_eq`, `exit_true`, `exit_false`, `Rep_iff`,
+   `outputSummary_nil`, `summaryCells_eq` — the definitions the hosted loop's statements read,
+   as equations (the ND inventory API, C1's pre-ship inventory, 2026-10-17).
++* `Turing.workReadsK_zero`, `workReadsK_succ`, `tableBitsK_eq` — the table layout as equations
++  (the ND inventory API, round 2; gate 37, finding 1).
+ * `Turing.StepBlock.roundTM_effect` — the step-block contract.
+ * `Turing.StepBlock.recordSkipTM_run`, `recordSkipTM_spec` — the skipper's contract.
+ * `Turing.StepBlock.succFieldTM_run`, `succFieldTM_cut`, `succFieldTM_heads` — the leaf's
+@@ -108,6 +110,27 @@ def tableBitsK {k n : ℕ}
+     ([none, some false, some true] : List (Option Bool)).flatMap fun inp =>
+       (workReadsK k).flatMap fun w => actionBitsK (tr q inp w)
+ 
++/-- **No work tapes** (the ND inventory API, round 2; gate 37, finding 1): one read,
++`workReadsK 0 = [Fin.elim0]`. -/
++theorem workReadsK_zero : workReadsK 0 = [Fin.elim0] := rfl
++
++/-- **One more work tape** (the ND inventory API, round 2; gate 37, finding 1): tape `0`
++outermost over `none`, `some false`, `some true`, the other `k` tapes' reads inside,
++`workReadsK (k + 1) = [none, some false, some true].flatMap fun w =>
++(workReadsK k).map (Fin.cons w)`. -/
++theorem workReadsK_succ (k : ℕ) : workReadsK (k + 1) =
++    ([none, some false, some true] : List (Option Bool)).flatMap fun w =>
++      (workReadsK k).map fun r => (Fin.cons w r : Fin (k + 1) → Option Bool) := rfl
++
++/-- **The table's layout** (the ND inventory API, round 2; gate 37, finding 1): states in `Fin`
++order, then the input read, then the work reads in `workReadsK` order, one `actionBitsK` record
++each. -/
++theorem tableBitsK_eq {k n : ℕ}
++    (tr : Fin (n + 1) → Option Bool → (Fin k → Option Bool) → Action k Bool (Fin (n + 1))) :
++    tableBitsK tr = (List.finRange (n + 1)).flatMap fun q =>
++      ([none, some false, some true] : List (Option Bool)).flatMap fun inp =>
++        (workReadsK k).flatMap fun w => actionBitsK (tr q inp w) := rfl
++
+ namespace StepBlock
+ 
+ /-! ## The three-valued output summary -/
+diff --git a/TCSlib/Complexity/TuringMachine/Build/VirtualInput.lean b/TCSlib/Complexity/TuringMachine/Build/VirtualInput.lean
+index 8e807a61..56545fff 100644
+--- a/TCSlib/Complexity/TuringMachine/Build/VirtualInput.lean
++++ b/TCSlib/Complexity/TuringMachine/Build/VirtualInput.lean
+@@ -197,7 +197,8 @@ def vhostSilentCfg (c : Cfg m Bool S y) (b : Bool) (p : Fin (x.length + 2))
+ 
+ /-- **Z1's suppressing configuration, unfolded** (the ND inventory API, 2026-10-17): the R1 capture
+ transport of the forwarding configuration with an empty prefix, along `Fin.castAddEmb 1`, the
+-capture tape `vhostCap m` holding `capPre`. -/
++capture tape `vhostCap m` holding `capPre` followed by the source's emissions `c.output`, and the
++physical output `out₀` (corrected in round 2; gate 37, finding 3). -/
+ theorem vhostSilentCfg_eq (c : Cfg m Bool S y) (b : Bool) (p : Fin (x.length + 2))
+     (capPre out₀ : List Bool) :
+     vhostSilentCfg c b p capPre out₀ =
+diff --git a/TCSlib/Complexity/TuringMachine/CodeFormat.lean b/TCSlib/Complexity/TuringMachine/CodeFormat.lean
+index 4c8d6da3..9af1b240 100644
+--- a/TCSlib/Complexity/TuringMachine/CodeFormat.lean
++++ b/TCSlib/Complexity/TuringMachine/CodeFormat.lean
+@@ -27,6 +27,8 @@ This factors the one- and two-work-tape constructions of [AB09, §1.4].
+ * `Turing.CodeFormat.decode_serialize_pad` — padded decoding recovers the machine.
+ * `Turing.CodeFormat.canonical_eq` — scanning computes its canonical serialization.
+ * `Turing.CodeFormat.numStates_decode_le` — the guarded decoded-size bound.
++* `Turing.actionBitsK_eq`, `Turing.codeSkipActionK_append` — a record's fields, and skipping it
++  (the ND inventory API, round 2; gate 37, finding 1).
+ 
+ ## References
+ 
+@@ -47,6 +49,14 @@ def actionBitsK {k n : ℕ} (a : Action k Bool (Fin (n + 1))) : List Bool :=
+       (fun i => optOptBoolBits (a.workTapes i).1 ++ signBits (a.workTapes i).2) ++
+     optBoolBits a.output ++ optStateBits a.state
+ 
++/-- **A record's fields** (the ND inventory API, round 2; gate 37, finding 1): the input move,
++each work tape's write and move in tape order, the output, the successor state. [AB09, §1.4] -/
++theorem actionBitsK_eq {k n : ℕ} (a : Action k Bool (Fin (n + 1))) :
++    actionBitsK a = signBits a.inputTape ++
++      (List.finRange k).flatMap
++        (fun i => optOptBoolBits (a.workTapes i).1 ++ signBits (a.workTapes i).2) ++
++      optBoolBits a.output ++ optStateBits a.state := rfl
++
+ /-- Read an optional work-tape write and its head move. [AB09, §1.4] -/
+ def codeReadWork (xs : List Bool) :
+     Option ((Option (Option Bool) × SignType) × List Bool) := do
+@@ -143,6 +153,16 @@ lemma codeEraseActionK (k n : ℕ) (xs : List Bool) :
+   congr 1; funext p
+   simpa only [Option.map_eq_bind, Function.comp_def] using codeEraseState (n + 1) p.2
+ 
++/-- **Skipping a serialized record leaves its suffix** (the ND inventory API, round 2; gate 37,
++finding 1): `codeSkipActionK k n (actionBitsK a ++ xs) = some xs`. [AB09, §1.4]
++
++**Proof sketch.** The skipper is the reader with its result erased (`codeEraseActionK`), and the
++reader recovers `a` with the suffix `xs` (`codeReadActionK_append`). -/
++theorem codeSkipActionK_append {k n : ℕ} (a : Action k Bool (Fin (n + 1))) (xs : List Bool) :
++    codeSkipActionK k n (actionBitsK a ++ xs) = some xs := by
++  rw [← codeEraseActionK, codeReadActionK_append]
++  rfl
++
+ /-- Every `k`-work-tape record has at least `4 * k + 5` bits. [AB09, §1.4]
+ 
+ **Proof sketch.** Each work tape contributes four bits. The input move and output contribute
+diff --git a/TCSlib/Complexity/TuringMachine/Encoding.lean b/TCSlib/Complexity/TuringMachine/Encoding.lean
+index d861225b..3948815e 100644
+--- a/TCSlib/Complexity/TuringMachine/Encoding.lean
++++ b/TCSlib/Complexity/TuringMachine/Encoding.lean
+@@ -92,6 +92,10 @@ scheme (`Turing.exists_effectiveMachineCode`) is proved in
+ `TCSlib.Complexity.TuringMachine.MathlibBridge`.
+ * `Turing.pairEncode_eq`, `Turing.unaryFin_eq` — the two encodings as equations, the
+   specification API (user, 2026-10-16).
++* `Turing.signBits_neg`/`_zero`/`_pos`, `Turing.optBoolBits_none`/`_some_false`/`_some_true`,
++  `Turing.optOptBoolBits_none`/`_some_none`/`_some_false`/`_some_true`,
++  `Turing.optStateBits_none`/`_some` — the record fields' encoders, case by case (the ND inventory
++  API, round 2; gate 37, finding 1).
+ 
+ ## References
+ 
+@@ -537,12 +541,36 @@ def signBits : SignType → List Bool
+   | .zero => [false, false]
+   | .pos => [true, false]
+ 
++/-- **A left move's bits** (the ND inventory API, round 2; gate 37, finding 1):
++`signBits .neg = [true, true]`. -/
++theorem signBits_neg : signBits .neg = [true, true] := rfl
++
++/-- **A stay's bits** (the ND inventory API, round 2; gate 37, finding 1):
++`signBits .zero = [false, false]`. -/
++theorem signBits_zero : signBits .zero = [false, false] := rfl
++
++/-- **A right move's bits** (the ND inventory API, round 2; gate 37, finding 1):
++`signBits .pos = [true, false]`. -/
++theorem signBits_pos : signBits .pos = [true, false] := rfl
++
+ /-- Fixed two-bit serialization of an optional bit. -/
+ def optBoolBits : Option Bool → List Bool
+   | none => [false, false]
+   | some false => [true, false]
+   | some true => [true, true]
+ 
++/-- **No bit's bits** (the ND inventory API, round 2; gate 37, finding 1):
++`optBoolBits none = [false, false]`. -/
++theorem optBoolBits_none : optBoolBits none = [false, false] := rfl
++
++/-- **The bit `false`'s bits** (the ND inventory API, round 2; gate 37, finding 1):
++`optBoolBits (some false) = [true, false]`. -/
++theorem optBoolBits_some_false : optBoolBits (some false) = [true, false] := rfl
++
++/-- **The bit `true`'s bits** (the ND inventory API, round 2; gate 37, finding 1):
++`optBoolBits (some true) = [true, true]`. -/
++theorem optBoolBits_some_true : optBoolBits (some true) = [true, true] := rfl
++
+ /-- Fixed two-bit serialization of an optional write (which may itself write blank). -/
+ def optOptBoolBits : Option (Option Bool) → List Bool
+   | none => [false, false]
+@@ -550,6 +578,22 @@ def optOptBoolBits : Option (Option Bool) → List Bool
+   | some (some false) => [true, false]
+   | some (some true) => [true, true]
+ 
++/-- **No write's bits** (the ND inventory API, round 2; gate 37, finding 1):
++`optOptBoolBits none = [false, false]`. -/
++theorem optOptBoolBits_none : optOptBoolBits none = [false, false] := rfl
++
++/-- **A blank write's bits** (the ND inventory API, round 2; gate 37, finding 1):
++`optOptBoolBits (some none) = [false, true]`. -/
++theorem optOptBoolBits_some_none : optOptBoolBits (some none) = [false, true] := rfl
++
++/-- **Writing `false`, in bits** (the ND inventory API, round 2; gate 37, finding 1):
++`optOptBoolBits (some (some false)) = [true, false]`. -/
++theorem optOptBoolBits_some_false : optOptBoolBits (some (some false)) = [true, false] := rfl
++
++/-- **Writing `true`, in bits** (the ND inventory API, round 2; gate 37, finding 1):
++`optOptBoolBits (some (some true)) = [true, true]`. -/
++theorem optOptBoolBits_some_true : optOptBoolBits (some (some true)) = [true, true] := rfl
++
+ /-- Self-delimiting unary serialization of a state index. -/
+ def unaryFin {n : ℕ} (s : Fin n) : List Bool :=
+   List.replicate (s : ℕ) true ++ [false]
+@@ -564,6 +608,14 @@ def optStateBits {n : ℕ} : Option (Fin n) → List Bool
+   | none => [false]
+   | some s => true :: unaryFin s
+ 
++/-- **Halting's bits** (the ND inventory API, round 2; gate 37, finding 1):
++`optStateBits none = [false]`. -/
++theorem optStateBits_none {n : ℕ} : optStateBits (none : Option (Fin n)) = [false] := rfl
++
++/-- **A successor state's bits** (the ND inventory API, round 2; gate 37, finding 1):
++`optStateBits (some s) = true :: unaryFin s`. -/
++theorem optStateBits_some {n : ℕ} (s : Fin n) : optStateBits (some s) = true :: unaryFin s := rfl
++
+ /-- Serialization of one transition record. -/
+ def actionBits {n : ℕ} (a : Action 1 Bool (Fin (n + 1))) : List Bool :=
+   signBits a.inputTape ++ optOptBoolBits (a.workTapes 0).1 ++
