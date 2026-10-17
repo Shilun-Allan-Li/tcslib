@@ -1061,7 +1061,10 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
   - base `f7546373`, whose Lean is #118's `531b98a2`; the pre-ship logs are the `oleans-lbapi4` run;
   - F3's continuation got its own paths (`b6-fill-configclock-cont1`), so F3's first-round base
     records are not overwritten.
-  - **#119's replay is cleared to run** (`replay-lndapi.sh`, 111 modules).
+  - **#119's replay is cleared to run** (`replay-lndapi.sh`, 189 modules). Before that, wave 1's route
+    inventory, round 3 (R's and UN's header parsing and installation), gave #119 a third commit:
+    `Cfg.ofWords`'s four missing fields (`Build/Convention`, `1e45f50a`). #120 and #121 merged it
+    (`6d18902f`, `13f52659`).
 - **C1's fill plan and the ND inventory API (2026-10-17, while #118 merges;**
   `audits/evidence/c1/C1-fill-plan.md`, `audits/evidence/nd-api/`).
   - **C1's eleven stubs** are all briefable: every shared host they wait on is proved (the step

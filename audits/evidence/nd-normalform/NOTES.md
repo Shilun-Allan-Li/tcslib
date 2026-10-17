@@ -5,8 +5,8 @@ file. `NTimeHierarchy` holds the universal machine's brief (UN with BF, H′ and
 (`Turing.FinNDTM.exists_codeNDTM_accepts_linear`, 2.5–5k lines of fill) moves out.
 
 **What:** `lean/nd-normalform`, one commit (`95a3b6a0`) on #119's first commit `4abca360`. It is now
-merged with #119's second commit (head `e18a7bfa`); the Lean diff from #119's head `85f2c916` is the
-same three files.
+merged with #119's second and third commits (head `6d18902f`); the Lean diff from #119's head
+`1e45f50a` is the same three files.
 - The new `ClassNP/NDNormalForm` holds NF's declaration with its docstring, byte-identical (2,599
   characters, asserted by `move.py.txt`). It imports `ClassNP/NTIME` and `TuringMachine/NDCodes`, as
   `ExhaustiveReplay` does.
@@ -24,4 +24,4 @@ same three files.
 - **Freeze** (`freeze/`): `NTimeHierarchy` removes only NF's public, and `NDNormalForm` adds it.
 - **Lint:** 0 FAIL. `ClassNP/` stays at 15 WARN (now over 21 files), `Diagonalization/` at 1.
 - **Replay closure:** 4 modules (`replay-order.txt`). `replay-lndnf.sh` chains from `oleans-lndapi`
-  (#119's replay, 111 modules).
+  (#119's replay, 189 modules).

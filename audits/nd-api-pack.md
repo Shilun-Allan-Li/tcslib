@@ -7,8 +7,9 @@ reads gets a published equation before the brief is dispatched.
   2026-10-17: this PR with its own gate; wave 1 of five briefs; the normal form in its own module; C1-E's
   statement phase now). Their routes read the nondeterministic machine model. #118 (gate closed,
   `audits/brief-api-r3-findings.md`) published the deterministic counterparts.
-- **The head:** `lean/nd-api` at `85f2c916`, two commits on #118's round-3 head `531b98a2`: `4abca360`
-  (the stubs' inventory) and `85f2c916` (wave 1's route inventory).
+- **The head:** `lean/nd-api` at `1e45f50a`, three commits on #118's round-3 head `531b98a2` (the
+  tip's Lean since #118 merged): `4abca360` (the stubs' inventory), `85f2c916` and `1e45f50a`
+  (wave 1's route inventory).
 
 | File | Additions |
 |---|---|
@@ -19,9 +20,10 @@ reads gets a published equation before the brief is dispatched.
 | `TuringMachine/Build/NDHost` | the fields of `guessRunCfg` and `streamStartCfg` (`simps`) |
 | `TuringMachine/Build/StepClock` | the fields of `clockCfg` (`simps`); `Cfg.stopped_iff` (`Iff.rfl`) |
 | `TuringMachine/Build/StepBlock` (second commit) | `tableTape_eq`, `summaryTape_eq`, `exit_true`, `exit_false`, `Rep_iff`, `outputSummary_nil`, `summaryCells_eq` |
+| `TuringMachine/Build/Convention` (third commit) | `Cfg.ofWords_state`, `_inputPos`, `_workTapePos`, `_output` |
 | `TuringMachine/Build/VirtualInput` (second commit) | `vhostCfg`'s five fields (`simps`); `vhostCap_eq`, `vhostSilentCfg_eq` |
 
-In all: 55 names, 16 hand-written and 39 generated, every `simps` with `isSimp := false`, and no
+In all: 59 names, 20 hand-written and 39 generated, every `simps` with `isSimp := false`, and no
 `@[simp]`. Each file's Main-results list names its additions.
 
 - **Evidence:** `audits/evidence/nd-api/`. It holds:
@@ -66,16 +68,16 @@ In all: 55 names, 16 hand-written and 39 generated, every `simps` with `isSimp :
 
 ## Repository-side attestations (verify or challenge)
 
-- **Elaboration** of the eight files with probes appended, against `oleans-lbapi4` (the tip plus
+- **Elaboration** of the nine files with probes appended, against `oleans-lbapi4` (the tip plus
   #118's round 3): 0 errors. The warnings equal the bases': NTIME has 1 (a Mathlib deprecation),
   NDHost 1 (the writer's `sorry`), the others 0.
-- **New names:** the 55 resolve. 12 depend on no axioms; the rest use only `propext`, `Quot.sound` and
+- **New names:** the 59 resolve. 12 depend on no axioms; the rest use only `propext`, `Quot.sound` and
   `Classical.choice`.
 - **Freeze:** publics added only.
 - **Lint:** 0 FAIL. `TuringMachine/` goes from 67 to 63 WARN, and `ClassNP/` from 16 to 15.
 - **Screen** (13 files, `screen2/`): 240 declarations and 33 pairs at the base, 244 and 38 at the
   head (5 new, boilerplate, all from the first commit).
-- **Replay:** `replay-lndapi.sh`, the eight files' downstream closure (111 modules), from
+- **Replay:** `replay-lndapi.sh`, the nine files' downstream closure (189 modules), from
   `oleans-lbapi4`. ⟨REPLAY RESULT⟩
 
 ## Findings format

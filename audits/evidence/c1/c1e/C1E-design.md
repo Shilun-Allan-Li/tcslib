@@ -53,7 +53,8 @@ because `query` is defined mathematically.
    `ntime_hierarchy`'s fill adds the import later.
 
 **Answered (user, 2026-10-17): all three as recommended.** One query machine; the `Nat.unpair`
-schedule; a new module. The unit is PR #121 (`lean/ntime-diag` at `2ff6cc0c`, stacked on #120).
+schedule; a new module. The unit is PR #121 (`lean/ntime-diag` at `2ff6cc0c`, stacked on #120; merged with #119's
+later commits, head `13f52659`, its own Lean unchanged).
 It adds `budget_eq` and `stageCode_eq`, which lint check 8 asks for. Its checks are in `pr/`:
 - elaboration: 0 errors and the 2 `sorry`s;
 - freeze: 20 publics;

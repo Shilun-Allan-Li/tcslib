@@ -70,7 +70,7 @@ and seams, H2's hosted loop, Z1, the input call and the guess-run lemmas. It run
 | **Gap, fixed in the second commit** | `StepBlock.Rep`, `exit`, `summaryTape`, `tableTape`, `outputSummary` (no empty case), `summaryCells` (the definitions `hostedLoopTM_run` and `hostedLoop_read` read); `vhostCfg`, `vhostSilentCfg`, `vhostCap` |
 | Covered | `counterLoopCfg` at Bool (`counter_cfg_eq`), `counterLoopOrbit` (an `abbrev`, with #118's N3 pitfall), `embedEmitCfg` and `embedSilentCfg` (their selected and unselected lemmas), `MultiTapeTM.initCfg` (`initCfg_eq` and `Cfg.init`'s fields), `vhostBank` (`vhostBank_eq`) |
 | Machines read through their run lemmas | `counterLoopTM`, `StepBlock.loopTM`, `hostedLoopTM`, `embedEmitTM`, `embedSilentTM`, `clearTM`, `incrementTM`, `skipTM`, `skipBackTM`, `expandTM`, `phaseHostTM`, `seamCompTM`, `vhostEmitTM`, `vhostSilentTM`, `guessRunTM`, `phaseHostND` |
-| **Deferred** | `Cfg.ofWords`: four of its five fields have no equation. Only the input call reads it (`exists_inputCallTM`), and that is the diagonalizer fill's route (E-D), not wave 1's. It lives in `Simulation`, which would put 311 modules in this replay; it goes with E-D's inventory. |
+| **Deferred, then fixed in the third commit** | `Cfg.ofWords`: four of its five fields had no equation. The second commit's note took it for the diagonalizer fill's route only, and for a `Simulation` definition. It is in `Build/Convention`, and R's startup reads it through `exists_installCallTM` (below). |
 
 **The commit:** 14 equations in two files, `StepBlock` (7 hand-written) and `VirtualInput`
 (`vhostCfg`'s five fields by `simps`, and 2 hand-written).
@@ -90,3 +90,31 @@ and seams, H2's hosted loop, Z1, the input call and the guess-run lemmas. It run
 
 The stacked #120 and #121 merged the new head (`e18a7bfa`, `250dad4e`). Their Lean diffs from their
 bases are unchanged, and their replay scripts chain from 111.
+
+## The third commit (`1e45f50a`): the seam configuration's fields
+
+Wave 1's route inventory, round 3 (`inventory/C1Wave1Inv2.*`), seeds the header-parsing and
+installation pieces of R's and UN's routes: the prefix parser and canonizer (`UniversalStartup`),
+the buffered composition, `FinTM.exists_installCallTM`, `pairExtractTM`, `counterValue_bits` and the
+hosted loop.
+- **Covered:**
+  - `prefixCanonTM` through `prefixCanonTM_eq` and `bufferedCompTM`'s fields (#118);
+  - `universalPrefixTM`, read through `prefixCanon_start`, `_run` and `_complete`;
+  - `pairExtractTM`, through `pairExtractTM_computes`, `_fst` and `_snd`.
+- **The gap:** `Cfg.ofWords`. `exists_installCallTM`'s contract is stated through `Cfg.ofWords`
+  seams, so R's startup reads them, and only `Cfg.ofWords_workTapes` was published. It lives in
+  `Build/Convention`, not in `Simulation` as the second commit's note assumed, and it is on wave
+  1's route, not only E-D's.
+
+**The commit:** `Cfg.ofWords_state`, `_inputPos`, `_workTapePos`, `_output` (`rfl`), beside
+`Cfg.ofWords_workTapes`.
+
+**Checks:**
+- **Elaboration** with a probe appended: 0 errors and 0 warnings, as at the base.
+- **New names:** the 4 use `[propext]` only.
+- **Freeze:** publics added only.
+- **Lint:** 63 WARN, unchanged.
+- **Replay closure:** 189 modules, from 111; `Convention` is upstream of the seams.
+
+**In all:** 59 equations (20 hand-written, 39 generated) in nine files. #120 and #121 merged the
+new head (`6d18902f`, `13f52659`), and their replay scripts chain from 189.

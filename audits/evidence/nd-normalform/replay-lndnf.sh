@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
-# Chained replay for #120, C1's normal form in its own module (lean/nd-normalform at e18a7bfa, stacked
-# on #119's 85f2c916): ClassNP/NDNormalForm (new), Diagonalization/NTimeHierarchy, the ClassNP facade and
+# Chained replay for #120, C1's normal form in its own module (lean/nd-normalform at 6d18902f, stacked
+# on #119's 1e45f50a): ClassNP/NDNormalForm (new), Diagonalization/NTimeHierarchy, the ClassNP facade and
 # their downstream closure (4 modules, graph2.py), fresh .oleans into oleans-lndnf, a copy of
-# oleans-lndapi (#119's replay, 111 of 111), via scripts/lean_check_tree.sh. The root TCSlib module is
+# oleans-lndapi (#119's replay, 189 of 189), via scripts/lean_check_tree.sh. The root TCSlib module is
 # not listed (replay rule). Run by the user. The precheck pins the three files' blob hashes.
 S=/private/tmp/claude-501/-Users-seyoonr-phd-experiments-tcslib/8f0076bc-454a-4666-b8cf-f4c7ed13c549/scratchpad
 WT="$S/wt-ndnf"
@@ -16,12 +16,12 @@ TCSlib/Complexity/Diagonalization/NTimeHierarchy.lean:cbb0cef88552c147346a2128ce
 git -C "$WT" fetch -q origin 2>/dev/null
 [ "$(git -C "$WT" rev-parse HEAD)" = "$(git -C "$WT" rev-parse origin/lean/nd-normalform 2>/dev/null)" ] || { echo "precheck: $WT is not at the pushed PR head; nothing copied" >&2; exit 2; }
 [ -z "$(git -C "$WT" status --porcelain --untracked-files=no)" ] || { echo "precheck: $WT has local changes; nothing copied" >&2; exit 2; }
-git -C "$WT" merge-base --is-ancestor 85f2c916c697bcb5633de0e98c410312d14c0bd4 HEAD || { echo "precheck: the head must contain #119's 85f2c916; nothing copied" >&2; exit 2; }
-[ "$(git -C "$WT" diff --name-only 85f2c916c697bcb5633de0e98c410312d14c0bd4 HEAD -- '*.lean' | sort)" = "$(printf '%s\n' "$PINS" | cut -d: -f1 | sort)" ] || { echo "precheck: the Lean diff from 85f2c916 must be exactly the three files; nothing copied" >&2; exit 2; }
+git -C "$WT" merge-base --is-ancestor 1e45f50a3b7c80db7e817eb3f9e06ae72b18235b HEAD || { echo "precheck: the head must contain #119's 1e45f50a; nothing copied" >&2; exit 2; }
+[ "$(git -C "$WT" diff --name-only 1e45f50a3b7c80db7e817eb3f9e06ae72b18235b HEAD -- '*.lean' | sort)" = "$(printf '%s\n' "$PINS" | cut -d: -f1 | sort)" ] || { echo "precheck: the Lean diff from 1e45f50a must be exactly the three files; nothing copied" >&2; exit 2; }
 while IFS=: read -r f b; do
   [ "$(git -C "$WT" rev-parse "HEAD:$f")" = "$b" ] || { echo "precheck: $f is not the checked blob; nothing copied" >&2; exit 2; }
 done <<< "$PINS"
-tail -1 "$S/fills/replay/replay-lndapi.log" 2>/dev/null | grep -qx "# modules=111 failed=0" || { echo "precheck: #119's replay must have passed; nothing copied" >&2; exit 2; }
+tail -1 "$S/fills/replay/replay-lndapi.log" 2>/dev/null | grep -qx "# modules=189 failed=0" || { echo "precheck: #119's replay must have passed; nothing copied" >&2; exit 2; }
 [ "$(wc -l < "$LIST" | tr -d ' ')" = "4" ] || { echo "precheck: the replay list must have 4 modules; nothing copied" >&2; exit 2; }
 grep -qx "TCSlib" "$LIST" && { echo "precheck: the replay list must not contain the root TCSlib; nothing copied" >&2; exit 2; }
 [ -d "$S/oleans-lndnf" ] && { echo "precheck: $S/oleans-lndnf already exists; remove it for a fresh copy" >&2; exit 2; }

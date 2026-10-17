@@ -1,7 +1,7 @@
 From 4abca36096a9314cc6a6c847ad7b018723a68474 Mon Sep 17 00:00:00 2001
 From: Seyoon Ragavan <complexzetaprime@gmail.com>
 Date: Sat, 17 Oct 2026 12:47:53 -0400
-Subject: [PATCH 1/2] The ND inventory API: the nondeterministic model's
+Subject: [PATCH 1/3] The ND inventory API: the nondeterministic model's
  equations for the C1 fill briefs
 
 C1's pre-ship inventory (the user's "Everything" rule, 2026-10-16) found the nondeterministic
@@ -347,7 +347,7 @@ index 1eb091ad..9c8d77e5 100644
 From 85f2c916c697bcb5633de0e98c410312d14c0bd4 Mon Sep 17 00:00:00 2001
 From: Seyoon Ragavan <complexzetaprime@gmail.com>
 Date: Sat, 17 Oct 2026 13:34:21 -0400
-Subject: [PATCH 2/2] The ND inventory API, second commit: the hosted
+Subject: [PATCH 2/3] The ND inventory API, second commit: the hosted
  step-block loop's and Z1's definitions
 
 C1 wave 1's route inventory (R's interpreter core is H2's step block in H1's hosted counter loop,
@@ -516,6 +516,67 @@ index 0cee8ba7..8e807a61 100644
  /-- One forwarding host step simulates one source step, producing a valid
  arrival tag; the statement includes the absorbing halted case and the
  empty buffered word, with no liveness or nonemptiness premises.
+-- 
+2.50.1 (Apple Git-155)
+
+
+From 1e45f50a3b7c80db7e817eb3f9e06ae72b18235b Mon Sep 17 00:00:00 2001
+From: Seyoon Ragavan <complexzetaprime@gmail.com>
+Date: Sat, 17 Oct 2026 14:49:50 -0400
+Subject: [PATCH 3/3] The ND inventory API, third commit: the seam
+ configuration's fields (Cfg.ofWords)
+
+C1 wave 1's route inventory, round 3: R's startup installs the replay table by
+FinTM.exists_installCallTM, whose contract is stated through Cfg.ofWords seams, and only
+Cfg.ofWords_workTapes was published. Build/Convention: Cfg.ofWords_state, _inputPos, _workTapePos,
+_output (rfl), beside it. Declarations only.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+---
+ .../TuringMachine/Build/Convention.lean       | 23 +++++++++++++++++++
+ 1 file changed, 23 insertions(+)
+
+diff --git a/TCSlib/Complexity/TuringMachine/Build/Convention.lean b/TCSlib/Complexity/TuringMachine/Build/Convention.lean
+index 2420d4e0..d9725eb7 100644
+--- a/TCSlib/Complexity/TuringMachine/Build/Convention.lean
++++ b/TCSlib/Complexity/TuringMachine/Build/Convention.lean
+@@ -46,6 +46,8 @@ generic clearing pass.
+ * `Turing.Cfg.ofWords` — the canonical seam configuration: anchor state,
+   input head at 1, work tape `i` holding word `w i` from the origin, heads
+   at the origin, empty output.
++* `Turing.Cfg.ofWords_state`, `_inputPos`, `_workTapePos`, `_output` — the seam's fields beside
++  `Turing.Cfg.ofWords_workTapes` (the ND inventory API, C1's pre-ship inventory, 2026-10-17).
+ * `Turing.splitAtLastTrue` — strip a marker suffix: the prefix before the
+   last `true`, or `none` if the word is all `false` (the audited marker
+   discipline of the Chapter-2 Exercise-2.1 construction).
+@@ -98,6 +100,27 @@ lemma Cfg.ofWords_workTapes {input : List Bool} (q : State)
+     (Cfg.ofWords (input := input) q w).workTapes i = FinTM.bufferTape (w i) :=
+   rfl
+ 
++/-- The seam's other fields (the ND inventory API, 2026-10-17; C1 wave 1's route inventory): the
++state is `some q`, `(Cfg.ofWords q w).state = some q`. -/
++theorem Cfg.ofWords_state {input : List Bool} (q : State) (w : Fin k → List Bool) :
++    (Cfg.ofWords (input := input) q w).state = some q :=
++  rfl
++
++/-- At a seam the input head is at its initial position: `(Cfg.ofWords q w).inputPos = 1`. -/
++theorem Cfg.ofWords_inputPos {input : List Bool} (q : State) (w : Fin k → List Bool) :
++    (Cfg.ofWords (input := input) q w).inputPos = 1 :=
++  rfl
++
++/-- At a seam every work head is at the origin: `(Cfg.ofWords q w).workTapePos i = 0`. -/
++theorem Cfg.ofWords_workTapePos {input : List Bool} (q : State) (w : Fin k → List Bool)
++    (i : Fin k) : (Cfg.ofWords (input := input) q w).workTapePos i = 0 :=
++  rfl
++
++/-- At a seam the output is empty: `(Cfg.ofWords q w).output = []`. -/
++theorem Cfg.ofWords_output {input : List Bool} (q : State) (w : Fin k → List Bool) :
++    (Cfg.ofWords (input := input) q w).output = [] :=
++  rfl
++
+ /-- Strip a marker suffix: the prefix of `v` before its **last** `true`, or
+ `none` when `v` is all `false`. This is the Chapter-2 Exercise-2.1 marker
+ discipline (split at the last `true`; an all-`false` certificate region is
 -- 
 2.50.1 (Apple Git-155)
 

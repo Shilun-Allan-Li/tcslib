@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# Chained replay for #121, C1-E's statements (lean/ntime-diag at 250dad4e, stacked on #120's
-# e18a7bfa): Diagonalization/NTimeDiagonalizer (new) and the Diagonalization facade (2 modules,
+# Chained replay for #121, C1-E's statements (lean/ntime-diag at 13f52659, stacked on #120's
+# 6d18902f): Diagonalization/NTimeDiagonalizer (new) and the Diagonalization facade (2 modules,
 # graph2.py), fresh .oleans into oleans-lndiag, a copy of oleans-lndnf (#120's replay, 4 of 4), via
 # scripts/lean_check_tree.sh. The root TCSlib module is not listed (replay rule). Run by the user.
 # The precheck pins the two files' blob hashes.
@@ -15,8 +15,8 @@ TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:29eaf7934f868564a28bc76
 git -C "$WT" fetch -q origin 2>/dev/null
 [ "$(git -C "$WT" rev-parse HEAD)" = "$(git -C "$WT" rev-parse origin/lean/ntime-diag 2>/dev/null)" ] || { echo "precheck: $WT is not at the pushed PR head; nothing copied" >&2; exit 2; }
 [ -z "$(git -C "$WT" status --porcelain --untracked-files=no)" ] || { echo "precheck: $WT has local changes; nothing copied" >&2; exit 2; }
-git -C "$WT" merge-base --is-ancestor e18a7bfa66d84c32b19fc674057cbb9dfab4fa27 HEAD || { echo "precheck: the head must contain #120's e18a7bfa; nothing copied" >&2; exit 2; }
-[ "$(git -C "$WT" diff --name-only e18a7bfa66d84c32b19fc674057cbb9dfab4fa27 HEAD -- '*.lean' | sort)" = "$(printf '%s\n' "$PINS" | cut -d: -f1 | sort)" ] || { echo "precheck: the Lean diff from e18a7bfa must be exactly the two files; nothing copied" >&2; exit 2; }
+git -C "$WT" merge-base --is-ancestor 6d18902f3453eb51be6178d5542304bbafe3302a HEAD || { echo "precheck: the head must contain #120's 6d18902f; nothing copied" >&2; exit 2; }
+[ "$(git -C "$WT" diff --name-only 6d18902f3453eb51be6178d5542304bbafe3302a HEAD -- '*.lean' | sort)" = "$(printf '%s\n' "$PINS" | cut -d: -f1 | sort)" ] || { echo "precheck: the Lean diff from 6d18902f must be exactly the two files; nothing copied" >&2; exit 2; }
 while IFS=: read -r f b; do
   [ "$(git -C "$WT" rev-parse "HEAD:$f")" = "$b" ] || { echo "precheck: $f is not the checked blob; nothing copied" >&2; exit 2; }
 done <<< "$PINS"
