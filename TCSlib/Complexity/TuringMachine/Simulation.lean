@@ -63,6 +63,8 @@ gadget needs.
   `runFrom_eq_of_agreeOn`): two tables agreeing on a set of control states run identically while
   the control stays inside it. `Turing.MultiTapeTM.agreeOn_iff` states the agreement as an
   equivalence (the ND inventory API, round 2).
+* **Buffers** (`Turing.FinTM.bufferTape`): a word stored from cell `0`, blank elsewhere;
+  `Turing.FinTM.bufferTape_eq` and `bufferTape_of_neg` (the ND inventory API, round 2).
 
 **The specification API** (user, 2026-10-16): the fields of the buffered composite's two
 configuration shapes, `Turing.FinTM.bufferedFirstCfg_*` and `bufferedSecondCfg_*`, as
@@ -641,6 +643,18 @@ optional word entry, so position `w.length` is the right blank. -/
 /-- Cell minus one is the left blank, including for an empty word. -/
 @[simp] lemma bufferTape_left {Symbol : Type*} (w : List Symbol) : bufferTape w (-1) = none := by
   simp [bufferTape]
+
+/-- **The buffer, unfolded** (the ND inventory API, round 2; G2's consumer): cell `z` reads
+`w[z.toNat]?` when `0 ≤ z`, and is blank otherwise. -/
+theorem bufferTape_eq {Symbol : Type*} (w : List Symbol) (z : ℤ) :
+    bufferTape w z = if 0 ≤ z then w[z.toNat]? else none :=
+  rfl
+
+/-- **Every negative cell is blank** (the ND inventory API, round 2): `bufferTape w z = none` for
+`z < 0`. -/
+theorem bufferTape_of_neg {Symbol : Type*} (w : List Symbol) {z : ℤ} (hz : z < 0) :
+    bufferTape w z = none := by
+  rw [bufferTape_eq, if_neg (by omega)]
 
 /-- Appending one emitted symbol changes just the old right-blank cell.
 
