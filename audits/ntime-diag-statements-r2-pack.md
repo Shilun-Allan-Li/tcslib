@@ -31,8 +31,8 @@ statements, and so does every other declaration.
 - **Evidence:** `audits/evidence/c1/c1e/`:
   - round 1's `pr/`;
   - round 2's `pr/r2/` (the patch, the elaboration, the freeze, the lint, the screen, the replay
-    script and log);
-  - `pr/pr-body.md`;
+    script, log and static check, the PR body);
+  - round 1's PR body, `pr/pr-body.md`;
   - the design note, corrected for round 2.
 - **C1's design** (`audits/evidence/c1/C1-design.md`) is corrected in §3.6 and in D6 and D9.
 
@@ -63,9 +63,8 @@ statements, and so does every other declaration.
 5. **The prefix-clause ruling.** R keeps a clause with no consumer. Is that acceptable for a frozen,
    gated statement? Or does an unused clause in a contract mislead its fill? Recommend, without
    reopening R's gate.
-6. **Records:** do the resolutions, the corrected design notes, this pack and the PR body
-   (`pr/pr-body.md`, as of round 1's head; the round-2 PR text is in the resolutions) agree with
-   the evidence?
+6. **Records:** do the resolutions, the corrected design notes, this pack and the PR body agree with
+   the evidence? The PR body as of round 2's head is `pr/r2/pr-body.md` (round 1's: `pr/pr-body.md`).
 
 ## Repository-side attestations (verify or challenge)
 
@@ -78,7 +77,9 @@ statements, and so does every other declaration.
   declarations, 6 → 6 pairs, 1,814 characters, no new pair (`pr/r2/screen-head.txt`; the base is
   round 1's `pr/screen-head.txt`).
 - **Replay:** `replay-lndiag2.sh`, 2 modules, chained from `oleans-lndnf` (the tip's snapshot).
-  REPLAY-RESULT
+  **Passed (user, 2026-10-17):** 2 of 2 at `0a5878ed`, 0 failed (`pr/r2/replay-lndiag2.log`); the
+  sorry counts equal a static count (0 mismatches, 2; `pr/r2/replay-lndiag2-static.txt`). The
+  snapshot `oleans-lndiag2` is the tip plus #121's round 2.
 
 ## Findings format
 

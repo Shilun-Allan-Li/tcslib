@@ -1061,11 +1061,17 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
   of #119, #120 and #121 snapshotted (`pr-body.md`).
   - **#121 round 2** (`lean/ntime-diag` at `0a5878ed`: the tip merged, then the review's patch):
     the sketch rewritten to the guessed budget, `stage_of_le_two` and `query_of_not_guard` added.
-    Checks in `audits/evidence/c1/c1e/pr/r2/`. Next: `replay-lndiag2.sh` (2 modules, from
-    `oleans-lndnf`), then gate 40.
+    Checks in `audits/evidence/c1/c1e/pr/r2/`. **Replay passed (user, 2026-10-17):** 2 of 2,
+    static-equal (2); snapshot `oleans-lndiag2`. Gate 40 staged (pack
+    `audits/ntime-diag-statements-r2-pack.md`).
   - **Next Lean PR: the ND inventory API's round 2**, stacked on `0a5878ed`: gate 37's findings 1
     and 3 and gate 38's minor 5 (StepBlock, CodeFormat, Encoding, VirtualInput, the `ClassNP`
-    facade), about 255 modules of replay, its own gate.
+    facade), about 255 modules of replay, its own gate. **Opened: #122** (`lean/nd-api-r2` at
+    `b6627401`). Its second commit adds `counterValue_eq` and `codeBitsNat_eq` (C1-R's escalation E1),
+    at no replay cost. Replay `replay-lndapi2.sh` (256 modules, from `oleans-lndiag2`), cleared.
+  - **C1 wave 1's first four deliveries (W, WC, E, R), 2026-10-17: all environment-blocked
+    partials.** The workers' sandboxes ran out of disk (dependency cache) or crashed bootstrapping;
+    no target is proved. Under review (`$S/review/c1-*-fill/`).
 - **#119 and #120 merged (user, 2026-10-17; tip `75edca6f`, Lean = #120's `6d18902f`), before their
   gates returned.** Gate 37 (#119): FAIL 0/2/3/2, both majors on wave-2 routes (RC's serialization
   equations; NF's controller writer, resolved by the controller-contract ruling). Gate 38 (#120):
