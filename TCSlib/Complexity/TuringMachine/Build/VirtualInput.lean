@@ -107,9 +107,19 @@ variable {m : ℕ} {S : Type*} {x y : List Bool}
 `1 + m` work tapes. -/
 def vhostBuffer (m : ℕ) : Fin (1 + m) := Fin.castAdd m (0 : Fin 1)
 
+/-- The buffer is the host's first tape: `vhostBuffer m = Fin.castAdd m 0` (the specification API,
+the briefs' pre-ship inventories, 2026-10-16). -/
+theorem vhostBuffer_eq (m : ℕ) : vhostBuffer m = Fin.castAdd m (0 : Fin 1) :=
+  rfl
+
 /-- The payload-bank tape of the canonical virtual-input host carrying the
 source's work tape `i`. -/
 def vhostBank (i : Fin m) : Fin (1 + m) := Fin.natAdd 1 i
+
+/-- The bank tape of source tape `i` is the host's tape `1 + i`: `vhostBank i = Fin.natAdd 1 i` (the
+specification API, the briefs' pre-ship inventories, 2026-10-16). -/
+theorem vhostBank_eq (i : Fin m) : vhostBank i = Fin.natAdd 1 i :=
+  rfl
 
 /-- A source configuration on virtual input `y`, viewed inside the
 `1 + m`-tape host over native input `x`: the control carries the source

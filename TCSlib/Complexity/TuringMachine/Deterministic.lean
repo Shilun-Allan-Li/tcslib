@@ -26,7 +26,10 @@ Local modifications (see policy.md §2, vendored code):
 * added lemmas that are not upstream, the specification API (user, 2026-10-16):
   `initCfg_eq` and `mem_visitedByTapeHead_iff`, and the split lemmas
   `visitedByTapeHead_add_subset`, `visitedByTapeHead_step_subset`, moved here from
-  `Build/StepBlock` with their statements and proofs (design note O9).
+  `Build/StepBlock` with their statements and proofs (design note O9);
+* added `step_of_some` and `outputSymbol_of_some`, the live-state cases beside the upstream
+  `step_of_halt` and `outputSymbol_of_halt`, the brief-inventory API's round 3 (user,
+  2026-10-17).
 The upstream definitions and theorems are otherwise unchanged.
 -/
 import Mathlib.Algebra.Order.Group.Abs
@@ -111,6 +114,9 @@ We define a number of structures and concepts related to multi-tape Turing machi
 and the split lemmas `visitedByTapeHead_add_subset` and `visitedByTapeHead_step_subset` (moved
 here from `Build/StepBlock`, design note O9).
 
+**The brief-inventory API, round 3** (user, 2026-10-17): `Turing.MultiTapeTM.step_of_some` and
+`Turing.MultiTapeTM.outputSymbol_of_some`, a live step and its emission as equations.
+
 ## References
 
 * [Pap94] C. Papadimitriou, *Computational Complexity*, Addison-Wesley, 1994.
@@ -180,6 +186,15 @@ lemma step_of_halt {cfg : Cfg k Symbol State input} (h : cfg.state = none) :
   unfold step
   rw [h]
 
+/-- **A live step applies the chosen action** (the brief-inventory API, round 3; the round-2
+gate's finding 1): at a live state `q` one step applies the transition table's action for the
+scanned symbols, `cfg.state = some q →`
+`tm.step cfg = (tm.tr q cfg.inputSymbol cfg.workTapeSymbols).apply cfg`. -/
+theorem step_of_some {cfg : Cfg k Symbol State input} {q : State} (h : cfg.state = some q) :
+    tm.step cfg = (tm.tr q cfg.inputSymbol cfg.workTapeSymbols).apply cfg := by
+  unfold step
+  rw [h]
+
 /-- The configuration reached by running the Turing machine for `t` steps from `cfg`.
 If the Turing machine halts, it will stay at the halting configuration. -/
 def runFrom (cfg : Cfg k Symbol State input) (t : ℕ) : Cfg k Symbol State input := tm.step^[t] cfg
@@ -245,6 +260,15 @@ lemma runFrom_of_halt (cfg : Cfg k Symbol State input) (h : cfg.state = none) {n
 lemma outputSymbol_of_halt {cfg : Cfg k Symbol State input} (h_halt : cfg.state = none) :
     tm.outputSymbol cfg = none := by
   simp [outputSymbol, h_halt]
+
+/-- **A live step emits the chosen action's symbol** (the brief-inventory API, round 3; the
+round-2 gate's finding 1): at a live state `q`, `cfg.state = some q →`
+`tm.outputSymbol cfg = (tm.tr q cfg.inputSymbol cfg.workTapeSymbols).output`. -/
+theorem outputSymbol_of_some {cfg : Cfg k Symbol State input} {q : State}
+    (h : cfg.state = some q) :
+    tm.outputSymbol cfg = (tm.tr q cfg.inputSymbol cfg.workTapeSymbols).output := by
+  unfold outputSymbol
+  rw [h]
 
 /-- The work-tape head moves by at most one cell in a single step. -/
 lemma workTapePos_step_le (c : Cfg k Symbol State input) (i : Fin k) :

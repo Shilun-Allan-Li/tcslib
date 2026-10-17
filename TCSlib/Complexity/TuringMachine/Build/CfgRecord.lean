@@ -132,16 +132,31 @@ input are lifted to rich tapes (`Turing.MultiTapeTM.liftSymbols`). -/
 def RecSym.digitEmb (Q T : Type) : Bool ↪ RecSym Q T :=
   ⟨RecSym.digit, fun _ _ h => by cases h; rfl⟩
 
+/-- The digit embedding sends a bit to its digit symbol: `RecSym.digitEmb Q T b = RecSym.digit b`
+(the specification API, the briefs' pre-ship inventories, 2026-10-16). -/
+theorem RecSym.digitEmb_apply (Q T : Type) (b : Bool) : RecSym.digitEmb Q T b = RecSym.digit b :=
+  rfl
+
 /-! ### The record -/
 
 /-- **Fixed-width binary digits** (design §12.8a §2): the `w` low bits of `v`,
 least significant first. -/
 def binDigits (w v : ℕ) : List Bool := (List.range w).map v.testBit
 
+/-- The `w` low bits of `v`, least significant first: `binDigits w v = (range w).map v.testBit` (the
+specification API, the briefs' pre-ship inventories, 2026-10-16). -/
+theorem binDigits_eq (w v : ℕ) : binDigits w v = (List.range w).map v.testBit :=
+  rfl
+
 /-- **The input-position width** (design §12.8a §2) at input length `n`: the
 bit length of `n + 1`, so that `2 ^ posWidth n > n + 1` and every input
 position `0, …, n + 1` has a distinct `Turing.binDigits` code. -/
 def posWidth (n : ℕ) : ℕ := (Nat.bits (n + 1)).length
+
+/-- The input-position width is the bit length of `n + 1`: `posWidth n = (Nat.bits (n + 1)).length`
+(the specification API, the briefs' pre-ship inventories, 2026-10-16). -/
+theorem posWidth_eq (n : ℕ) : posWidth n = (Nat.bits (n + 1)).length :=
+  rfl
 
 /-- **The configuration record** (design §12.8a §2) of `c` at window radius
 `s` with tag `τ`: `k + 3` fields. Field `0` is the state, field `1` the input

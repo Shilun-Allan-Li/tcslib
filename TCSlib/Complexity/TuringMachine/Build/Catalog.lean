@@ -127,7 +127,8 @@ Part 3 (proved): `Turing.fieldsTape_field`;
 `Turing.seekStartTM_run_ofCfg`; `Turing.scanTM_run_ofCfg`; and the instance
 identities `Turing.scanResult_fold`, `Turing.scanResult_map`,
 `Turing.scanResult_shiftRight`, `Turing.scanResult_shiftLeft`,
-`Turing.scanResult_carry`.
+`Turing.scanResult_carry`, and the identity scan `Turing.scanResult_keep_keep` (the
+brief-inventory API, round 3).
 
 * `Turing.Cfg.ofWords_copy_endpoint`, `Turing.Cfg.ofWords_transfer_endpoint` (MIG-1):
   the framed copy and transfer endpoints started at a canonical seam `Cfg.ofWords q w`
@@ -13150,6 +13151,22 @@ theorem scanResult_fold {A Γ : Type*} (δ : A → Γ → A) (a₀ : A) (w : Lis
     (fun _ => rfl) ?_ a₀ w
   intro b γ l r hr
   simp only [scanFold, List.foldl_cons, hr]
+
+/-- **Scan instance, identity** (the brief-inventory API, round 3; user 2026-10-17): the scan by
+the identity step both ways returns its state and word unchanged,
+`scanResult scanKeep scanKeep a₀ w = (a₀, w)`.
+
+**Proof sketch.** The identity step is the fold by the constant update, so
+`Turing.scanResult_fold` gives `(w.foldl (fun b _ => b) a₀, w)`, and that fold is `a₀`. -/
+theorem scanResult_keep_keep {A Γ : Type*} (a₀ : A) (w : List Γ) :
+    scanResult scanKeep scanKeep a₀ w = (a₀, w) := by
+  have hf : ∀ b : A, w.foldl (fun b (_ : Γ) => b) b = b := by
+    induction w with
+    | nil => exact fun _ => rfl
+    | cons γ w ih => exact fun b => ih b
+  have h := scanResult_fold (fun b (_ : Γ) => b) a₀ w
+  rw [hf] at h
+  exact h
 
 /-- **Scan instance, in-place map** (design §12.8a, R8.2). The scan by the map
 step and the identity return rewrites the word to `w.map f`, with the state
