@@ -55,4 +55,38 @@ and `simps` attributes only (`isSimp := false`, no `@[simp]`):
   `TuringMachine/UniversalK` (U2-S). The additions are declarations only, so those fills are unaffected
   whichever merges first.
 
-**Status:** local only. Push, PR, replay and gate wait for the user.
+**Status:** pushed as PR #119 (user, 2026-10-17: its own PR and gate).
+
+## The second commit (`85f2c916`): C1 wave 1's route inventory
+
+The first inventory's seeds were the stubs' statements and the names their sketches cite. Wave 1's
+route inventory (`inventory/C1Wave1Inv.*`) seeds what the routes of WC, E, R and UN read: the
+counter loop, the embeddings, the replay lemma, the step clock, the catalog's rows, the phase host
+and seams, H2's hosted loop, Z1, the input call and the guess-run lemmas. It runs against
+`oleans-lbapi4`, which predates #119, so the first commit's fixes are discounted by hand.
+
+| Judgement | Definitions |
+|---|---|
+| **Gap, fixed in the second commit** | `StepBlock.Rep`, `exit`, `summaryTape`, `tableTape`, `outputSummary` (no empty case), `summaryCells` (the definitions `hostedLoopTM_run` and `hostedLoop_read` read); `vhostCfg`, `vhostSilentCfg`, `vhostCap` |
+| Covered | `counterLoopCfg` at Bool (`counter_cfg_eq`), `counterLoopOrbit` (an `abbrev`, with #118's N3 pitfall), `embedEmitCfg` and `embedSilentCfg` (their selected and unselected lemmas), `MultiTapeTM.initCfg` (`initCfg_eq` and `Cfg.init`'s fields), `vhostBank` (`vhostBank_eq`) |
+| Machines read through their run lemmas | `counterLoopTM`, `StepBlock.loopTM`, `hostedLoopTM`, `embedEmitTM`, `embedSilentTM`, `clearTM`, `incrementTM`, `skipTM`, `skipBackTM`, `expandTM`, `phaseHostTM`, `seamCompTM`, `vhostEmitTM`, `vhostSilentTM`, `guessRunTM`, `phaseHostND` |
+| **Deferred** | `Cfg.ofWords`: four of its five fields have no equation. Only the input call reads it (`exists_inputCallTM`), and that is the diagonalizer fill's route (E-D), not wave 1's. It lives in `Simulation`, which would put 311 modules in this replay; it goes with E-D's inventory. |
+
+**The commit:** 14 equations in two files, `StepBlock` (7 hand-written) and `VirtualInput`
+(`vhostCfg`'s five fields by `simps`, and 2 hand-written).
+
+**Checks**, against `oleans-lbapi4`:
+- **Elaboration** with probes appended: 0 errors and 0 warnings, as at the base (`logs/`).
+- **New names:** the 14 resolve with their formulas. Over all 55 names the axioms are standard: 12
+  use none; the rest use only `propext`, `Quot.sound` and `Classical.choice`.
+- **Freeze:** publics added only.
+- **Lint:** `TuringMachine/` goes from 64 to 63 WARN. `VirtualInput`'s warning goes, and
+  `StepBlock`'s list shrinks from 12 to 8; those 8 are the step block's internals, read through its
+  run lemmas.
+- **Screen** over 13 files (`screen2/`, the first population plus `StepBlock` and `VirtualInput`):
+  240 declarations and 33 pairs at the base, 244 and 38 at the head. The new pairs are the first
+  commit's 5 boilerplate pairs; the second commit adds none.
+- **Replay closure:** 111 modules (`replay-order.txt`), from 102.
+
+The stacked #120 and #121 merged the new head (`e18a7bfa`, `250dad4e`). Their Lean diffs from their
+bases are unchanged, and their replay scripts chain from 111.

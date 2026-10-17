@@ -1,0 +1,26 @@
+@Turing.vhostCfg_state : ∀ {m : ℕ} {S : Type u_1} {x y : List Bool} (c : Turing.Cfg m Bool S y) (b : Bool)
+  (p : Fin (x.length + 2)) (pre : List Bool), (Turing.vhostCfg c b p pre).state = Option.map (fun q => (q, b)) c.state
+'Turing.vhostCfg_state' depends on axioms: [propext, Quot.sound]
+@Turing.vhostCfg_inputPos : ∀ {m : ℕ} {S : Type u_1} {x y : List Bool} (c : Turing.Cfg m Bool S y) (b : Bool)
+  (p : Fin (x.length + 2)) (pre : List Bool), (Turing.vhostCfg c b p pre).inputPos = p
+'Turing.vhostCfg_inputPos' depends on axioms: [propext, Quot.sound]
+@Turing.vhostCfg_workTapes : ∀ {m : ℕ} {S : Type u_1} {x y : List Bool} (c : Turing.Cfg m Bool S y) (b : Bool)
+  (p : Fin (x.length + 2)) (pre : List Bool) (i : Fin (1 + m)) (a : ℤ),
+  (Turing.vhostCfg c b p pre).workTapes i a =
+    Fin.addCases (motive := fun x => ℤ → Option Bool) (fun x => Turing.FinTM.bufferTape y) c.workTapes i a
+'Turing.vhostCfg_workTapes' depends on axioms: [propext, Quot.sound]
+@Turing.vhostCfg_workTapePos : ∀ {m : ℕ} {S : Type u_1} {x y : List Bool} (c : Turing.Cfg m Bool S y) (b : Bool)
+  (p : Fin (x.length + 2)) (pre : List Bool) (i : Fin (1 + m)),
+  (Turing.vhostCfg c b p pre).workTapePos i = Fin.addCases (fun x => ↑↑c.inputPos - 1) c.workTapePos i
+'Turing.vhostCfg_workTapePos' depends on axioms: [propext, Quot.sound]
+@Turing.vhostCfg_output : ∀ {m : ℕ} {S : Type u_1} {x y : List Bool} (c : Turing.Cfg m Bool S y) (b : Bool)
+  (p : Fin (x.length + 2)) (pre : List Bool), (Turing.vhostCfg c b p pre).output = pre ++ c.output
+'Turing.vhostCfg_output' depends on axioms: [propext, Quot.sound]
+Turing.vhostCap_eq : ∀ (m : ℕ), Turing.vhostCap m = Fin.natAdd (1 + m) 0
+'Turing.vhostCap_eq' depends on axioms: [propext]
+@Turing.vhostSilentCfg_eq : ∀ {m : ℕ} {S : Type u_1} {x y : List Bool} (c : Turing.Cfg m Bool S y) (b : Bool)
+  (p : Fin (x.length + 2)) (capPre out₀ : List Bool),
+  Turing.vhostSilentCfg c b p capPre out₀ =
+    Turing.embedSilentCfg (Fin.castAddEmb 1) (Turing.vhostCap m) (fun x x_1 => none) (fun x => 0) capPre out₀
+      (Turing.vhostCfg c b p [])
+'Turing.vhostSilentCfg_eq' depends on axioms: [propext, Quot.sound]

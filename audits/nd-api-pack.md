@@ -7,7 +7,8 @@ reads gets a published equation before the brief is dispatched.
   2026-10-17: this PR with its own gate; wave 1 of five briefs; the normal form in its own module; C1-E's
   statement phase now). Their routes read the nondeterministic machine model. #118 (gate closed,
   `audits/brief-api-r3-findings.md`) published the deterministic counterparts.
-- **The head:** `lean/nd-api` at `4abca360`, one commit on #118's round-3 head `531b98a2`.
+- **The head:** `lean/nd-api` at `85f2c916`, two commits on #118's round-3 head `531b98a2`: `4abca360`
+  (the stubs' inventory) and `85f2c916` (wave 1's route inventory).
 
 | File | Additions |
 |---|---|
@@ -17,8 +18,10 @@ reads gets a published equation before the brief is dispatched.
 | `TuringMachine/NDCodes` | `CodeNDTM.toFinNDTM`'s `k`, `State`, `tm` (`simps`) |
 | `TuringMachine/Build/NDHost` | the fields of `guessRunCfg` and `streamStartCfg` (`simps`) |
 | `TuringMachine/Build/StepClock` | the fields of `clockCfg` (`simps`); `Cfg.stopped_iff` (`Iff.rfl`) |
+| `TuringMachine/Build/StepBlock` (second commit) | `tableTape_eq`, `summaryTape_eq`, `exit_true`, `exit_false`, `Rep_iff`, `outputSummary_nil`, `summaryCells_eq` |
+| `TuringMachine/Build/VirtualInput` (second commit) | `vhostCfg`'s five fields (`simps`); `vhostCap_eq`, `vhostSilentCfg_eq` |
 
-In all: 41 names, 7 hand-written and 34 generated, every `simps` with `isSimp := false`, and no
+In all: 55 names, 16 hand-written and 39 generated, every `simps` with `isSimp := false`, and no
 `@[simp]`. Each file's Main-results list names its additions.
 
 - **Evidence:** `audits/evidence/nd-api/`. It holds:
@@ -27,9 +30,10 @@ In all: 41 names, 7 hand-written and 34 generated, every `simps` with `isSimp :=
   - the per-file elaborations with probes appended, and their bases (`logs/`);
   - the freeze, the lint, the screen, the replay closure, the patch, and the edit scripts.
 - **The bundle** also contains:
-  - the six touched files at the head;
+  - the eight touched files at the head;
   - the C1 consumers `Diagonalization/NTimeHierarchy`, `ClassNP/ExhaustiveReplay`,
-    `TuringMachine/NDCodeSimulator`, `TuringMachine/Build/InputWindow`;
+    `TuringMachine/NDCodeSimulator`, `TuringMachine/Build/InputWindow`, and the hosted loop
+    `TuringMachine/Build/StepBlockLoop` (the second commit's consumer);
   - the deterministic precedents `TuringMachine/Deterministic` (`step_of_some`, `initCfg_eq`) and
     `TuringMachine/Configuration` (`Cfg.init`'s fields);
   - the C1 design and the fill plan.
@@ -62,16 +66,16 @@ In all: 41 names, 7 hand-written and 34 generated, every `simps` with `isSimp :=
 
 ## Repository-side attestations (verify or challenge)
 
-- **Elaboration** of the six files with probes appended, against `oleans-lbapi4` (the tip plus
+- **Elaboration** of the eight files with probes appended, against `oleans-lbapi4` (the tip plus
   #118's round 3): 0 errors. The warnings equal the bases': NTIME has 1 (a Mathlib deprecation),
   NDHost 1 (the writer's `sorry`), the others 0.
-- **New names:** the 41 resolve. 10 depend on no axioms; the rest use only `propext`, `Quot.sound` and
+- **New names:** the 55 resolve. 12 depend on no axioms; the rest use only `propext`, `Quot.sound` and
   `Classical.choice`.
 - **Freeze:** publics added only.
-- **Lint:** 0 FAIL. `TuringMachine/` goes from 67 to 64 WARN, and `ClassNP/` from 16 to 15.
-- **Screen** (11 files): 136 declarations and 22 pairs at the base, 140 and 27 at the head (5 new,
-  boilerplate).
-- **Replay:** `replay-lndapi.sh`, the six files' downstream closure (102 modules), from
+- **Lint:** 0 FAIL. `TuringMachine/` goes from 67 to 63 WARN, and `ClassNP/` from 16 to 15.
+- **Screen** (13 files, `screen2/`): 240 declarations and 33 pairs at the base, 244 and 38 at the
+  head (5 new, boilerplate, all from the first commit).
+- **Replay:** `replay-lndapi.sh`, the eight files' downstream closure (111 modules), from
   `oleans-lbapi4`. ⟨REPLAY RESULT⟩
 
 ## Findings format

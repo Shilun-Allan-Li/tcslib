@@ -1,8 +1,8 @@
 From 4abca36096a9314cc6a6c847ad7b018723a68474 Mon Sep 17 00:00:00 2001
 From: Seyoon Ragavan <complexzetaprime@gmail.com>
 Date: Sat, 17 Oct 2026 12:47:53 -0400
-Subject: [PATCH] The ND inventory API: the nondeterministic model's equations
- for the C1 fill briefs
+Subject: [PATCH 1/2] The ND inventory API: the nondeterministic model's
+ equations for the C1 fill briefs
 
 C1's pre-ship inventory (the user's "Everything" rule, 2026-10-16) found the nondeterministic
 counterparts of #118's deterministic API missing. 41 equations, declarations and simps
@@ -340,6 +340,182 @@ index 1eb091ad..9c8d77e5 100644
  /-- **Relabelled branches are the renamed branches**, under every choice word and from every
  configuration: `(tm.relabelState e).runWith w (c.mapState e) = (tm.runWith w c).mapState e`.
  
+-- 
+2.50.1 (Apple Git-155)
+
+
+From 85f2c916c697bcb5633de0e98c410312d14c0bd4 Mon Sep 17 00:00:00 2001
+From: Seyoon Ragavan <complexzetaprime@gmail.com>
+Date: Sat, 17 Oct 2026 13:34:21 -0400
+Subject: [PATCH 2/2] The ND inventory API, second commit: the hosted
+ step-block loop's and Z1's definitions
+
+C1 wave 1's route inventory (R's interpreter core is H2's step block in H1's hosted counter loop,
+hosted by Z1; the diagonalizer's top rung runs under Z1's suppressing host). 14 equations,
+declarations and simps attributes only (isSimp := false, no @[simp]):
+
+- Build/StepBlock: tableTape_eq, summaryTape_eq, exit_true, exit_false, Rep_iff,
+  outputSummary_nil, summaryCells_eq (the definitions hostedLoopTM_run and hostedLoop_read read)
+- Build/VirtualInput: vhostCfg's five fields (simps), vhostCap_eq, vhostSilentCfg_eq
+
+Cfg.ofWords's remaining fields wait for the diagonalizer fill's inventory (Simulation would put
+311 modules in this replay).
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+---
+ .../TuringMachine/Build/StepBlock.lean        | 43 +++++++++++++++++++
+ .../TuringMachine/Build/VirtualInput.lean     | 24 +++++++++++
+ 2 files changed, 67 insertions(+)
+
+diff --git a/TCSlib/Complexity/TuringMachine/Build/StepBlock.lean b/TCSlib/Complexity/TuringMachine/Build/StepBlock.lean
+index 94a222d1..04e38f62 100644
+--- a/TCSlib/Complexity/TuringMachine/Build/StepBlock.lean
++++ b/TCSlib/Complexity/TuringMachine/Build/StepBlock.lean
+@@ -59,6 +59,9 @@ one simulated transition of any `k`-work-tape binary transition table held, in t
+ 
+ ## Main results
+ 
++* `Turing.StepBlock.tableTape_eq`, `summaryTape_eq`, `exit_true`, `exit_false`, `Rep_iff`,
++  `outputSummary_nil`, `summaryCells_eq` — the definitions the hosted loop's statements read,
++  as equations (the ND inventory API, C1's pre-ship inventory, 2026-10-17).
+ * `Turing.StepBlock.roundTM_effect` — the step-block contract.
+ * `Turing.StepBlock.recordSkipTM_run`, `recordSkipTM_spec` — the skipper's contract.
+ * `Turing.StepBlock.succFieldTM_run`, `succFieldTM_cut`, `succFieldTM_heads` — the leaf's
+@@ -118,6 +121,9 @@ def outputSummary : List Bool → Option Bool
+   | [true] => some true
+   | _ => some false
+ 
++/-- **The empty output's summary** (the ND inventory API, 2026-10-17): `outputSummary [] = none`. -/
++theorem outputSummary_nil : outputSummary [] = none := rfl
++
+ /-- **The summary update**: the summary after one more transition emitting `b`, given the
+ summary `s` before it. (Formerly private in `CodeSimulator`.) -/
+ def summaryEmit : Option Bool → Option Bool → Option Bool
+@@ -185,10 +191,17 @@ abbrev RecordState (k : ℕ) :=
+ /-- The table tape: work tape `k`, after the `k` mirrored work tapes. (`h1TableTape`.) -/
+ def tableTape (k : ℕ) : Fin (k + 2) := Fin.natAdd k (0 : Fin 2)
+ 
++/-- The table tape, unfolded (the ND inventory API, 2026-10-17): `tableTape k = Fin.natAdd k 0`. -/
++theorem tableTape_eq (k : ℕ) : tableTape k = Fin.natAdd k (0 : Fin 2) := rfl
++
+ /-- The summary tape: work tape `k + 1`, holding the output summary at cell `0` and the unary
+ current state from cell `2`. (`h1SummaryTape`.) -/
+ def summaryTape (k : ℕ) : Fin (k + 2) := Fin.natAdd k (1 : Fin 2)
+ 
++/-- The summary tape, unfolded (the ND inventory API, 2026-10-17): `summaryTape k = Fin.natAdd k
++1`. -/
++theorem summaryTape_eq (k : ℕ) : summaryTape k = Fin.natAdd k (1 : Fin 2) := rfl
++
+ /-- Every mirrored work tape is distinct from the record tape. -/
+ private lemma mirror_ne_table (k : ℕ) (i : Fin k) :
+     Fin.castAdd 2 i ≠ tableTape k := by
+@@ -2001,6 +2014,12 @@ private lemma bufferTape_unary (q r : ℕ) (hr : r ≤ q) :
+ def summaryCells (summary : Option Bool) (word : List Bool) (z : ℤ) : Option Bool :=
+   if z = 0 then summary else FinTM.bufferTape word (z - 2)
+ 
++/-- The summary tape's cells, unfolded (the ND inventory API, 2026-10-17): cell `0` is the summary,
++and cell `z ≠ 0` is the state word's buffer at `z - 2`. -/
++theorem summaryCells_eq (summary : Option Bool) (word : List Bool) (z : ℤ) :
++    summaryCells summary word z = if z = 0 then summary else FinTM.bufferTape word (z - 2) :=
++  rfl
++
+ /-- The state word and its left delimiter are a framed ordinary buffer,
+ separated from the summary cell. -/
+ lemma summaryCells_shift (summary : Option Bool) (word : List Bool) (z : ℤ) (hz : -1 ≤ z) :
+@@ -2197,6 +2216,14 @@ private def part (k : ℕ) : (key : Key) → MultiTapeTM (k + 2) Bool (Ph k key)
+ def exit (k : ℕ) (live : Bool) : Σ key, Ph k key :=
+   if live then ⟨.entry, ()⟩ else ⟨.halt, ()⟩
+ 
++/-- A live round exits at the anchor (the ND inventory API, 2026-10-17):
++`exit k true = ⟨.entry, ()⟩`. -/
++theorem exit_true (k : ℕ) : exit k true = ⟨.entry, ()⟩ := rfl
++
++/-- A halting round exits at `halt` (the ND inventory API, 2026-10-17):
++`exit k false = ⟨.halt, ()⟩`. -/
++theorem exit_false (k : ℕ) : exit k false = ⟨.halt, ()⟩ := rfl
++
+ /-- The round's stationary, silent phase dispatches. A simulated halt goes
+ to a live physical exit only after the action and all restoration have run. -/
+ private def red (k : ℕ) : (key : Key) → Ph k key → Option (Σ key, Ph k key)
+@@ -3048,6 +3075,22 @@ def Rep {k n : ℕ} {x : List Bool}
+     summaryCells (outputSummary c.output) ((c.state.map unaryFin).getD []) ∧
+   d.workTapePos (tableTape k) = 0 ∧ d.workTapePos (summaryTape k) = 0
+ 
++/-- **The step block's representation, unfolded** (the ND inventory API, 2026-10-17): `Rep tr c d`
++holds iff `d` has `c`'s input head and its `k` work tapes and heads, the table `tableBitsK tr` on
++the table tape, the summary cells of `c` on the summary tape, and both auxiliary heads at `0`. -/
++theorem Rep_iff {k n : ℕ} {x : List Bool}
++    {tr : Fin (n + 1) → Option Bool → (Fin k → Option Bool) → Action k Bool (Fin (n + 1))}
++    {c : Cfg k Bool (Fin (n + 1)) x} {d : Cfg (k + 2) Bool (Σ key, Ph k key) x} :
++    Rep tr c d ↔
++      d.inputPos = c.inputPos ∧
++      (∀ i : Fin k, d.workTapes (Fin.castAdd 2 i) = c.workTapes i ∧
++        d.workTapePos (Fin.castAdd 2 i) = c.workTapePos i) ∧
++      d.workTapes (tableTape k) = FinTM.bufferTape (tableBitsK tr) ∧
++      d.workTapes (summaryTape k) =
++        summaryCells (outputSummary c.output) ((c.state.map unaryFin).getD []) ∧
++      d.workTapePos (tableTape k) = 0 ∧ d.workTapePos (summaryTape k) = 0 :=
++  Iff.rfl
++
+ /-- A related entry configuration is exactly the canonical round frame,
+ with its arbitrary physical output prefix retained. This only unpacks the
+ seam relation; it makes no assumption about the mirrored source tapes.
+diff --git a/TCSlib/Complexity/TuringMachine/Build/VirtualInput.lean b/TCSlib/Complexity/TuringMachine/Build/VirtualInput.lean
+index 0cee8ba7..8e807a61 100644
+--- a/TCSlib/Complexity/TuringMachine/Build/VirtualInput.lean
++++ b/TCSlib/Complexity/TuringMachine/Build/VirtualInput.lean
+@@ -85,6 +85,9 @@ are retained on the contracts as the audit record.
+   `Turing.vhostCfg_buffer_head_mem` (the clamp interval, empty word
+   included) and `Turing.vhostEmitTM_emitting_halt` (a source halting
+   emission is forwarded before the host control dies).
++* `Turing.vhostCfg_state`, `_inputPos`, `_workTapes`, `_workTapePos`, `_output`,
++  `Turing.vhostCap_eq` and `Turing.vhostSilentCfg_eq` — the configurations and the capture tape
++  as equations (the ND inventory API, C1's pre-ship inventory, 2026-10-17).
+ 
+ ## References
+ 
+@@ -137,6 +140,13 @@ def vhostCfg (c : Cfg m Bool S y) (b : Bool) (p : Fin (x.length + 2))
+   workTapePos := Fin.addCases (fun _ => (c.inputPos.val : ℤ) - 1) c.workTapePos
+   output := pre ++ c.output
+ 
++/-! Z1's configuration fields as equations (the ND inventory API, 2026-10-17), by `simps` without
++the `simp` attribute: the state is `c`'s tagged by `b`, the input head is `p`, tape `0` is the
++buffer of `y` with its head at `c.inputPos - 1`, the other tapes and heads are `c`'s, and the output
++is `pre ++ c.output`. -/
++attribute [simps (config := { isSimp := false }) state inputPos workTapes workTapePos output]
++  vhostCfg
++
+ /-- **Z1, the forwarding virtual-input transformer** (design §13, decision
+ 13.4). Host the `m`-tape machine `M` on `1 + m` tapes with its input read
+ from the buffer: each step reads the buffer cell as the source's input
+@@ -161,6 +171,10 @@ def vhostEmitTM (M : MultiTapeTM m Bool S) :
+ `(1 + m) + 1` work tapes. -/
+ def vhostCap (m : ℕ) : Fin ((1 + m) + 1) := Fin.natAdd (1 + m) (0 : Fin 1)
+ 
++/-- The capture tape, unfolded (the ND inventory API, 2026-10-17):
++`vhostCap m = Fin.natAdd (1 + m) 0`, the last. -/
++theorem vhostCap_eq (m : ℕ) : vhostCap m = Fin.natAdd (1 + m) (0 : Fin 1) := rfl
++
+ /-- **Z1, the suppressing virtual-input transformer**: the layer composing
+ with itself. The R1 capture wrapper runs the forwarding host on the first
+ `1 + m` tapes of a `(1 + m) + 1`-tape machine, records every emission on
+@@ -181,6 +195,16 @@ def vhostSilentCfg (c : Cfg m Bool S y) (b : Bool) (p : Fin (x.length + 2))
+   embedSilentCfg (Fin.castAddEmb 1) (vhostCap m) (fun _ _ => none) (fun _ => 0)
+     capPre out₀ (vhostCfg c b p [])
+ 
++/-- **Z1's suppressing configuration, unfolded** (the ND inventory API, 2026-10-17): the R1 capture
++transport of the forwarding configuration with an empty prefix, along `Fin.castAddEmb 1`, the
++capture tape `vhostCap m` holding `capPre`. -/
++theorem vhostSilentCfg_eq (c : Cfg m Bool S y) (b : Bool) (p : Fin (x.length + 2))
++    (capPre out₀ : List Bool) :
++    vhostSilentCfg c b p capPre out₀ =
++      embedSilentCfg (Fin.castAddEmb 1) (vhostCap m) (fun _ _ => none) (fun _ => 0)
++        capPre out₀ (vhostCfg c b p []) :=
++  rfl
++
+ /-- One forwarding host step simulates one source step, producing a valid
+ arrival tag; the statement includes the absorbing halted case and the
+ empty buffered word, with no liveness or nonemptiness premises.
 -- 
 2.50.1 (Apple Git-155)
 
