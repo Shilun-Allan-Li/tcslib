@@ -1,0 +1,63 @@
+import TCSlib.Complexity.TuringMachine.Build.VirtualInput
+import TCSlib.Complexity.TuringMachine.UniversalStartup
+import TCSlib.Complexity.TuringMachine.Build.Contract.Basic
+import TCSlib.Complexity.TuringMachine.Build.Seam
+import TCSlib.Complexity.TuringMachine.Build.InputDevice
+
+/-! B6 F5 fill (the ruler device, `Build/InputDevice`): every public declaration the brief cites resolves from the
+owned file's import context, with the brief's authorized imports. -/
+
+-- The targets, the device layer and its facts
+#check @Turing.exists_rulerTestTM
+#check @Turing.exists_rulerDeviceTM
+#check @Turing.exists_rulerHostTM
+#check @Turing.RulerAt
+#check @Turing.rulerHostCfg
+#check @Turing.inputCell
+#check @Turing.inputCell_sub_eq_none_iff
+#check @Turing.inputCell_of_drop
+#check @Turing.Cfg.inputSymbol_eq_inputCell
+#check @Turing.NativeAt
+#check @Turing.moveInputPos
+
+-- The lockstep and the run calculus
+#check @Turing.Lockstep
+#check @Turing.Lockstep.runFrom
+#check @Turing.Lockstep.cut
+#check @Turing.Lockstep.locate
+#check @Turing.MultiTapeTM.runFrom_add
+#check @Turing.MultiTapeTM.runFrom_succ_eq_step'
+#check @Turing.MultiTapeTM.visitedByTapeHead
+
+-- Seams, the phase host and the release adapter
+#check @Turing.seamCompTM
+#check @Turing.seamCompTM_run_ofCfg
+#check @Turing.seamCompTM_firstReturn_ofCfg
+#check @Turing.seamCompTM₂
+#check @Turing.seamReleaseTM
+#check @Turing.seamReleaseTM_runFrom_pos
+#check @Turing.phaseHostTM
+#check @Turing.phaseHostTM_run
+#check @Turing.Cfg.mapState
+#check @Turing.MultiTapeTM.runFrom_mapState_of_agreeOn
+
+-- R1 embedding
+#check @Turing.embedEmitTM
+#check @Turing.embedEmitTM_runFrom
+#check @Turing.embedEmitTM_frame
+#check @Turing.embedEmitCfg
+#check @Turing.embedEmitCfg_eq
+#check @Turing.embedSilentTM
+#check @Turing.embedSilentTM_runFrom
+#check @Turing.embedSilentTM_frame
+
+-- Z1's host (the pattern only)
+#check @Turing.vhostEmitTM
+#check @Turing.vhostEmitTM_runFrom
+#check @Turing.vhostEmitTM_visitedByTapeHead_bank
+#check @Turing.vhostEmitTM_visitedByTapeHead_buffer
+
+-- the brief-inventory API (PR #118)
+#check @Turing.FinTM.VirtualTag_iff
+#check @Turing.vhostBuffer_eq
+#check @Turing.vhostBank_eq
