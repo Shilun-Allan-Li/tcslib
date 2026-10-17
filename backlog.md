@@ -1054,6 +1054,10 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
       `drafts/issue-inputs/r3/`): U2-S 655, F3 1,043, G4 795, MIG-12 870, cont6 2,411
       declarations. Each is one more than before (`scanResult_keep_keep`), with identical pair
       sets. The drafts take these counts at issue.
+- **#121 merged (user, 2026-10-17; `cce26061`, Lean = `0a5878ed`, replayed).** #122 retargeted to
+  the campaign branch. **All five stack replays passed** (#122 313/313, #123–#126 2/2 each, all
+  static-equal; snapshot chain `oleans-lndapi2` → `lc1w` → `lseam` → `lg4c1` → `lx2`). Gates 41–45
+  staged (`infra_local/gate-dispatches/41-…` to `45-…`).
 - **The stack after #121 (2026-10-17), each PR on the previous, replays chained:**
   - **#122** (ND inventory API round 2, `6a48b93e`, 5 commits, 22 equations, replay 313 modules):
     gate 41's pack `audits/nd-api-r2-pack.md`.
