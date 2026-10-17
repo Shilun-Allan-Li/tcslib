@@ -1,0 +1,92 @@
+import sys, re
+WT = sys.argv[1]
+H = f'{WT}/TCSlib/Complexity/Diagonalization/NTimeHierarchy.lean'
+N = f'{WT}/TCSlib/Complexity/ClassNP/NDNormalForm.lean'
+F = f'{WT}/TCSlib/Complexity/ClassNP.lean'
+C = f'{WT}/TCSlib/Complexity/TuringMachine/NDCodes.lean'
+t = open(H, encoding='utf-8').read()
+start = t.index("namespace FinNDTM\n\n/-- **The linear-overhead coded normal form**")
+end = t.index("end FinNDTM\n\n", start) + len("end FinNDTM\n\n")
+block = t[start:end]
+assert block.count('theorem ') == 1 and 'theorem exists_codeNDTM_accepts_linear' in block
+assert block.rstrip().endswith('end FinNDTM') and '  sorry\n' in block
+inner = block[len("namespace FinNDTM\n\n"):-len("end FinNDTM\n\n")]
+t = t[:start] + t[end:]
+# imports
+oi = "import TCSlib.Complexity.ClassP.TimeConstructible\n"
+assert t.count(oi) == 1
+t = t.replace(oi, oi + "import TCSlib.Complexity.ClassNP.NDNormalForm\n")
+# Main results bullet
+ob = ("* `Turing.FinNDTM.exists_codeNDTM_accepts_linear` — the linear-overhead coded\n"
+      "  normal form ([BGW70]-style).\n")
+assert t.count(ob) == 1
+t = t.replace(ob, "* `Turing.FinNDTM.exists_codeNDTM_accepts_linear` — the linear-overhead coded\n"
+                  "  normal form ([BGW70]-style), stated in\n"
+                  "  `TCSlib.Complexity.ClassNP.NDNormalForm` (moved there, user 2026-10-17).\n")
+# design paragraph: the host-contract modules
+od = ("  `TCSlib.Complexity.TuringMachine.NDCodeSimulator` and\n"
+      "  `TCSlib.Complexity.ClassNP.ExhaustiveReplay`.\n")
+assert t.count(od) == 1
+t = t.replace(od, "  `TCSlib.Complexity.TuringMachine.NDCodeSimulator` and\n"
+                  "  `TCSlib.Complexity.ClassNP.ExhaustiveReplay`; the normal form is in\n"
+                  "  `TCSlib.Complexity.ClassNP.NDNormalForm`.\n")
+assert 'theorem exists_codeNDTM_accepts_linear' not in t
+open(H, 'w', encoding='utf-8').write(t)
+
+hdr = '''/-
+Copyright (c) 2026 Seyoon Ragavan. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Seyoon Ragavan
+-/
+import TCSlib.Complexity.ClassNP.NTIME
+import TCSlib.Complexity.TuringMachine.NDCodes
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+/-!
+# The linear-overhead coded normal form of an NDTM
+
+[AB09, §3.2] ([BGW70]-style guess-then-verify): every bundled binary nondeterministic machine has a
+coded two-work-tape equivalent (`Turing.CodeNDTM`) whose acceptance tracks the original's at linear
+time overhead, forward with an explicit constant and backward in unbounded form. The
+nondeterministic time hierarchy (`TCSlib.Complexity.Diagonalization.NTimeHierarchy`) diagonalizes
+over these codes. The statement was gated with phase P3.3's statements and lived in that module. It
+moved here unchanged (user, 2026-10-17; C1's fill plan, `audits/evidence/c1/C1-fill-plan.md`), so
+that its fill can run beside the universal machine's in `NTimeHierarchy`.
+
+## Main definitions
+
+No new definitions: the normal form is an existential contract.
+
+## Main results
+
+* `Turing.FinNDTM.exists_codeNDTM_accepts_linear` — the linear-overhead coded normal form (sorried;
+  phase P3.3).
+
+## References
+
+* [AB09] S. Arora, B. Barak, *Computational Complexity: A Modern Approach*,
+  Cambridge University Press, 2009. (§3.2.)
+* [BGW70] R. Book, S. Greibach, B. Wegbreit, *Time- and tape-bounded Turing
+  acceptors and AFLs*, JCSS 4(6), 1970. (Cited through [AB09]; no external text is required.)
+-/
+
+namespace Turing
+
+namespace FinNDTM
+
+'''
+open(N, 'w', encoding='utf-8').write(hdr + inner + "end FinNDTM\n\nend Turing\n")
+
+f = open(F, encoding='utf-8').read()
+oe = "import TCSlib.Complexity.ClassNP.ExhaustiveReplay\n"
+assert f.count(oe) == 1
+open(F, 'w', encoding='utf-8').write(f.replace(oe, oe + "import TCSlib.Complexity.ClassNP.NDNormalForm\n"))
+
+c = open(C, encoding='utf-8').read()
+oc = "  `Turing.FinNDTM.exists_codeNDTM_accepts_linear` in the consumer module)\n"
+assert c.count(oc) == 1
+open(C, 'w', encoding='utf-8').write(c.replace(oc, "  `Turing.FinNDTM.exists_codeNDTM_accepts_linear` in `TCSlib.Complexity.ClassNP.NDNormalForm`)\n"))
+print('moved', len(inner.splitlines()), 'lines')
