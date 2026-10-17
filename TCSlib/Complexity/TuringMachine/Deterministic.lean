@@ -21,8 +21,13 @@ Local modifications (see policy.md §2, vendored code):
 * added the repository-standard `set_option` header;
 * corrected the module docstring's attribution of the non-blank space measure
   ([AB09, Def 4.1] counts visited cells for `SPACE`, non-blank cells only for
-  `NSPACE`); comments only, no code change (2026-10-08).
-The remaining mathematical content is unchanged.
+  `NSPACE`); comments only, no code change (2026-10-08);
+* added `timed_input_bound`, promoted from the campaign (D6, 2026-10-05);
+* added lemmas that are not upstream, the specification API (user, 2026-10-16):
+  `initCfg_eq` and `mem_visitedByTapeHead_iff`, and the split lemmas
+  `visitedByTapeHead_add_subset`, `visitedByTapeHead_step_subset`, moved here from
+  `Build/StepBlock` with their statements and proofs (design note O9).
+The upstream definitions and theorems are otherwise unchanged.
 -/
 import Mathlib.Algebra.Order.Group.Abs
 import Mathlib.Algebra.Order.Group.Int
@@ -101,6 +106,11 @@ We define a number of structures and concepts related to multi-tape Turing machi
 * `DecidableInTimeAndSpace`: a proof that a TM decides a language within a certain time
     and space bound.
 
+**The specification API** (user, 2026-10-16): `Turing.MultiTapeTM.initCfg_eq`,
+`Turing.MultiTapeTM.mem_visitedByTapeHead_iff`,
+and the split lemmas `visitedByTapeHead_add_subset` and `visitedByTapeHead_step_subset` (moved
+here from `Build/StepBlock`, design note O9).
+
 ## References
 
 * [Pap94] C. Papadimitriou, *Computational Complexity*, Addison-Wesley, 1994.
@@ -158,6 +168,11 @@ def outputSymbol (cfg : Cfg k Symbol State input) : Option Symbol :=
 /-- The initial configuration corresponding to an input string. -/
 @[simp]
 def initCfg (input : List Symbol) : Cfg k Symbol State input := Cfg.init tm.q₀ input
+
+/-- A machine's initial configuration on `input` is `Cfg.init` at its start state:
+`tm.initCfg input = Cfg.init tm.q₀ input` (the specification API, user 2026-10-16). -/
+theorem initCfg_eq (input : List Symbol) : tm.initCfg input = Cfg.init tm.q₀ input :=
+  rfl
 
 @[simp]
 lemma step_of_halt {cfg : Cfg k Symbol State input} (h : cfg.state = none) :
@@ -282,6 +297,53 @@ lemma spaceUsed_eq_spaceUsedOfCfgs (cfg : Cfg k Symbol State input) (t : ℕ) :
   refine Finset.sum_congr rfl fun i _ => congrArg Finset.card ?_
   ext z
   simp [visitedByTapeHead, visitedOfCfgs]
+
+/-- **Membership in a visited set** (the specification API, user 2026-10-16): a cell is visited by
+head `i` within `t` steps exactly when the head stands on it at some time `u ≤ t`.
+
+**Proof sketch.** `Turing.MultiTapeTM.visitedByTapeHead` is the image of the head positions over
+`Finset.range (t + 1)`. -/
+theorem mem_visitedByTapeHead_iff (cfg : Cfg k Symbol State input) (t : ℕ) (i : Fin k) (p : ℤ) :
+    p ∈ tm.visitedByTapeHead cfg t i ↔ ∃ u ≤ t, (tm.runFrom cfg u).workTapePos i = p := by
+  simp only [visitedByTapeHead, Finset.mem_image, Finset.mem_range, Nat.lt_succ_iff]
+
+/-- **Visited cells split at an intermediate time** (moved here from `Build/StepBlock`, design
+note O9, with the specification API, user 2026-10-16): the cells visited by head `j` in
+`T₁ + T₂` steps from `d` are those visited in the first `T₁` steps, together with those visited
+in `T₂` steps from where the run is at time `T₁`.
+
+**Proof sketch.** A visiting time `u ≤ T₁ + T₂` is either at most `T₁`, or `T₁ + v` with
+`v ≤ T₂`, and then run additivity identifies the configuration. -/
+lemma visitedByTapeHead_add_subset {m : ℕ} {S : Type} {x : List Bool}
+    (M : MultiTapeTM m Bool S) (d : Cfg m Bool S x) (T₁ T₂ : ℕ) (j : Fin m) :
+    M.visitedByTapeHead d (T₁ + T₂) j ⊆
+      M.visitedByTapeHead d T₁ j ∪ M.visitedByTapeHead (M.runFrom d T₁) T₂ j := by
+  intro p hp
+  simp only [MultiTapeTM.visitedByTapeHead, Finset.mem_union, Finset.mem_image,
+    Finset.mem_range] at hp ⊢
+  obtain ⟨u, hu, rfl⟩ := hp
+  by_cases hle : u ≤ T₁
+  · exact Or.inl ⟨u, by omega, rfl⟩
+  · refine Or.inr ⟨u - T₁, by omega, ?_⟩
+    rw [← MultiTapeTM.runFrom_add]
+    congr 2
+    omega
+
+/-- **Visited cells after the first step** (moved here from `Build/StepBlock`, with the
+specification API): the cells visited in `t` steps from the successor of `c`, and `c`'s own head
+cell, are among those visited in `t + 1` steps from `c`.
+
+**Proof sketch.** Shift every visiting time by one; time `0` gives `c`'s cell. -/
+lemma visitedByTapeHead_step_subset {m : ℕ} {S : Type} {x : List Bool}
+    (M : MultiTapeTM m Bool S) (c : Cfg m Bool S x) (t : ℕ) (j : Fin m) :
+    insert (c.workTapePos j) (M.visitedByTapeHead (M.step c) t j) ⊆
+      M.visitedByTapeHead c (t + 1) j := by
+  intro p hp
+  simp only [MultiTapeTM.visitedByTapeHead, Finset.mem_insert, Finset.mem_image,
+    Finset.mem_range] at hp ⊢
+  rcases hp with rfl | ⟨v, hv, rfl⟩
+  · exact ⟨0, by omega, by rw [MultiTapeTM.runFrom_zero]⟩
+  · exact ⟨v + 1, by omega, by rw [MultiTapeTM.runFrom_succ_eq_step]⟩
 
 end Space
 

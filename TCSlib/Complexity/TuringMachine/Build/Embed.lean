@@ -112,6 +112,9 @@ then consumes as its left exit (`Turing.captureAction`'s and
 * `Turing.embedSilentRetTM_visitedByTapeHead`,
   `Turing.embedEmitRetTM_visitedByTapeHead` — the returning flavors visit
   exactly what the closed flavors visit, at every time.
+* `Turing.embedSilentCfg_unselected`, `Turing.embedSilentCfg_state`, `_inputPos`, `_output`,
+  `Turing.embedEmitCfg_state`, `_inputPos`, `_output` — the transports' remaining fields, the
+  specification API (user, 2026-10-16).
 
 ## References
 
@@ -1028,6 +1031,24 @@ theorem embedSilentCfg_cap (ι : Fin m ↪ Fin k) (cap : Fin k)
       (embedSilentCfg ι cap tapes heads pre out₀ c).workTapePos cap =
         ((pre ++ c.output).length : ℤ) := by
   simp [embedSilentCfg, embedSlot_unselected ι cap hcap]
+
+/-- **The silent transport's frame** (the specification API, user 2026-10-16): a host tape
+outside the selection `ι`, other than the capture tape, holds the ambient frame `tapes j` with
+its head at `heads j`. The frame companion of `Turing.embedSilentCfg_cap`.
+
+**Proof sketch.** Off the selection the slot search finds no source tape
+(`embedSlot_unselected`), and `j ≠ cap` selects the frame branch. -/
+theorem embedSilentCfg_unselected (ι : Fin m ↪ Fin k) (cap : Fin k)
+    (tapes : Fin k → ℤ → Option Symbol) (heads : Fin k → ℤ)
+    (pre out₀ : List Symbol) (c : Cfg m Symbol S x) (j : Fin k) (hj : j ∉ Set.range ι)
+    (hcap : j ≠ cap) :
+    (embedSilentCfg ι cap tapes heads pre out₀ c).workTapes j = tapes j ∧
+      (embedSilentCfg ι cap tapes heads pre out₀ c).workTapePos j = heads j := by
+  simp [embedSilentCfg, embedSlot_unselected ι j hj, hcap]
+
+/-! The specification API (user, 2026-10-16): the two transports' state, input position and
+output as equations, without the `simp` attribute. -/
+attribute [simps (config := { isSimp := false }) state inputPos output] embedSilentCfg embedEmitCfg
 
 
 end Turing

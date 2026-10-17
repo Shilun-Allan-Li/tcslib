@@ -44,6 +44,8 @@ transports and segment composition.
 
 * `Turing.clockCfg` — the host layout: body tapes first, the counter tape last.
 * `Turing.wordPatch` — a tape with a word written over an interval.
+* `Turing.wordPatch_of_mem`, `Turing.wordPatch_of_not_mem` — its cells, the specification API
+  (user, 2026-10-16).
 * `Turing.Cfg.Stopped` — a body configuration that is halted or in a designated stop state.
 
 ## Main results
@@ -73,6 +75,20 @@ def clockCfg {k : ℕ} {Γ S Q : Type} {x : List Γ} (q : Option Q) (c : Cfg k �
 cell is `ct`'s. -/
 def wordPatch {Γ : Type*} (ct : ℤ → Option Γ) (cp : ℤ) (u : List Γ) : ℤ → Option Γ :=
   fun q => if cp ≤ q ∧ q < cp + (u.length : ℤ) then FinTM.bufferTape u (q - cp) else ct q
+
+/-- A cell inside the patched interval holds the word's letter at its offset:
+`wordPatch ct cp u q = FinTM.bufferTape u (q - cp)` when `cp ≤ q < cp + u.length`
+(the specification API, user 2026-10-16). -/
+theorem wordPatch_of_mem {Γ : Type*} (ct : ℤ → Option Γ) (cp : ℤ) (u : List Γ) {q : ℤ}
+    (h₁ : cp ≤ q) (h₂ : q < cp + (u.length : ℤ)) :
+    wordPatch ct cp u q = FinTM.bufferTape u (q - cp) := by
+  simp [wordPatch, h₁, h₂]
+
+/-- A cell outside the patched interval is the original tape's: `wordPatch ct cp u q = ct q`
+(the specification API, user 2026-10-16). -/
+theorem wordPatch_of_not_mem {Γ : Type*} (ct : ℤ → Option Γ) (cp : ℤ) (u : List Γ) {q : ℤ}
+    (h : ¬(cp ≤ q ∧ q < cp + (u.length : ℤ))) : wordPatch ct cp u q = ct q := by
+  simp only [wordPatch, if_neg h]
 
 /-- **A stopped body configuration**: halted, or live in a designated stop state. -/
 def Cfg.Stopped {k : ℕ} {Γ S : Type*} {x : List Γ} (stopAt : S → Bool) (c : Cfg k Γ S x) :

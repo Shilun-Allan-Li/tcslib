@@ -11,8 +11,16 @@ Local modifications (see policy.md §2, vendored code):
   for compatibility with our v4.25.0 toolchain;
 * remapped `Mathlib.Basic.Sign.Defs` to its location at our mathlib pin,
   `Mathlib.Data.Sign.Defs`; dropped the cslib-internal `Cslib.Init` import;
-* added the repository-standard `set_option` header.
-The mathematical content is unchanged.
+* added the repository-standard `set_option` header;
+* re-proved `moveInputPos_leftBoundary`, `moveInputPos_rightBoundary`,
+  `moveInputPos_neg_of_ne_left`, `moveInputPos_pos_of_ne_right` and `inputSymbolInner` for our
+  mathlib pin (`dite_eq_left`/`dite_eq_right` are absent there), statements unchanged
+  (2026-09-16);
+* added lemmas that are not upstream, the specification API (user, 2026-10-16): the fields of
+  `Cfg.init` (`Cfg.init_state`, `_inputPos`, `_workTapes`, `_workTapePos`, `_output`, generated
+  by `simps` without the `simp` attribute), `Cfg.inputSymbol_of_zero`, `Cfg.inputSymbol_of_end`
+  and `Cfg.workTapeSymbols_eq`.
+The upstream definitions and theorems are otherwise unchanged.
 -/
 import Mathlib.Algebra.Order.BigOperators.Group.Finset
 import Mathlib.Algebra.Order.Group.Abs
@@ -51,6 +59,11 @@ the configuration the run ends in.
 * `Action.apply`: the effect of one action on a configuration
 * `Cfg.Halted`, `Cfg.init`: halting, and the configuration a machine starts in
 * `spaceUsedOfCfgs`: work tape cells touched along a list of configurations
+
+**The specification API** (user, 2026-10-16): `Turing.Cfg.init_state`, `_inputPos`,
+`_workTapes`, `_workTapePos` and `_output`, the initial configuration's fields as equations.
+`Turing.Cfg.inputSymbol_of_zero`, `Turing.Cfg.inputSymbol_of_end` (with `inputSymbolInner`) and
+`Turing.Cfg.workTapeSymbols_eq`: the heads' readings.
 
 ## References
 
@@ -182,6 +195,26 @@ lemma inputSymbolInner {cfg : Cfg k Symbol State input} (p : ℕ)
 def Cfg.workTapeSymbols (cfg : Cfg k Symbol State input) (i : Fin k) : Option Symbol :=
   cfg.workTapes i (cfg.workTapePos i)
 
+/-- At input position `0`, the blank left of the input, the input head reads blank:
+`cfg.inputSymbol = none` (the specification API, user 2026-10-16). -/
+theorem Cfg.inputSymbol_of_zero {cfg : Cfg k Symbol State input} (h : cfg.inputPos = 0) :
+    cfg.inputSymbol = none := by
+  simp [Cfg.inputSymbol, h]
+
+/-- At input position `input.length + 1`, the blank right of the input, the input head reads
+blank: `cfg.inputSymbol = none` (the specification API, user 2026-10-16). -/
+theorem Cfg.inputSymbol_of_end {cfg : Cfg k Symbol State input}
+    (h : cfg.inputPos.val = input.length + 1) : cfg.inputSymbol = none := by
+  have he : cfg.inputPos = Fin.last (input.length + 1) := Fin.ext h
+  simp [Cfg.inputSymbol, he]
+
+/-- Work head `i` reads the cell under it:
+`cfg.workTapeSymbols i = cfg.workTapes i (cfg.workTapePos i)`
+(the specification API, user 2026-10-16). -/
+theorem Cfg.workTapeSymbols_eq (cfg : Cfg k Symbol State input) (i : Fin k) :
+    cfg.workTapeSymbols i = cfg.workTapes i (cfg.workTapePos i) :=
+  rfl
+
 /-- A configuration is halted when it has no state to continue from. -/
 abbrev Cfg.Halted (cfg : Cfg k Symbol State input) : Prop := cfg.state = none
 
@@ -189,6 +222,11 @@ abbrev Cfg.Halted (cfg : Cfg k Symbol State input) : Prop := cfg.state = none
 @[simp]
 def Cfg.init (q₀ : State) (input : List Symbol) : Cfg k Symbol State input :=
   ⟨some q₀, 1, fun _ _ => none, fun _ => 0, []⟩
+
+/-! The specification API (user, 2026-10-16): `Turing.Cfg.init`'s fields as equations
+(`Cfg.init_state`, `_inputPos`, `_workTapes`, `_workTapePos`, `_output`), without the
+`simp` attribute. -/
+attribute [simps (config := { isSimp := false })] Cfg.init
 
 /--
 The effect of an action on a configuration: move the input head, write and move on the work tapes,
