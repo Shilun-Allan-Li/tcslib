@@ -913,6 +913,24 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
   - **The statement gate is staged:** `infra_local/gate-dispatches/33-mig11a-statements-gate/`,
     bundle SHA-256 `84d0442f…b99b` (39 sections; Lean `1358ff73`, other `455cb240`).
     **Dispatched (user, 2026-10-16).**
+- **The briefs' pre-ship inventories (2026-10-16), and PR #118, the brief-inventory API**
+  (`lean/brief-api`, `277735f2`, stacked on #117).
+  - **The inventories:** U2-S, the F3 continuation, F5 and cont6, measured at the tip (#116's
+    Lean). A read-only elaborator lists the definitions in each brief's cited statements; the
+    list is crossed with lint check 8 and judged against each route
+    (`audits/evidence/brief-api/NOTES.md`).
+  - **The gaps it fills:**
+    - `bufferedCompTM`, `universalPrefixTM` and `prefixCanonTM` (`k`/`State`), for U2-S;
+    - `VirtualTag`, `vhostBuffer`, `vhostBank`, for F5;
+    - `RecSym.digitEmb`, `posWidth`, `binDigits`, for F3;
+    - `counterLoopBody`, `stateWord`, for cont6;
+    - `decFixed`, for #117 and MIG-12.
+  - **Checks:** elaboration clean, standard axioms, freeze adds only; check 8 goes 168 → 158.
+    Pack `audits/brief-api-pack.md`.
+  - **The replay** `replay-lbapi.sh` (311 modules, from `oleans-lm11a`) is ready for the user.
+  - **Measured for issue (U2-S):** order 91, base sorry set 35 (cross-checked against the
+    replays, 0 mismatches), probe 85 names. F5: order 79, sorry set 35. The briefs issue after
+    #118 merges.
 - **#116 merged (user, 2026-10-16; `d1bf6c99`).** The tip's Lean is `93c4c630`, so its snapshot
   is `oleans-lcapi`. #117 is brought up to date (`1358ff73`, Lean unchanged since its replay) and
   GitHub reports it clean.
