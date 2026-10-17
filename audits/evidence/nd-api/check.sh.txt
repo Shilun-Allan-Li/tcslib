@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+# ND API checks: each edited file with its probe appended (wt-ndapi), and each base file (wt-bapi),
+# against oleans-lbapi4; two streams at once (the leanelab limit).
+S=/private/tmp/claude-501/-Users-seyoonr-phd-experiments-tcslib/8f0076bc-454a-4666-b8cf-f4c7ed13c549/scratchpad
+L=$S/ndapi/logs
+probe_stream() {
+  while IFS=$'\t' read -r m names; do
+    b=$(basename $m); src=$S/wt-ndapi/TCSlib/Complexity/$m.lean; dst=$S/wt-ndapi/TCSlib/NDApiProbe_$b.lean
+    { cat "$src"; printf '\n-- ND API probe (maintainer)\n'; for n in $names; do printf '#check @%s\n#print axioms %s\n' "$n" "$n"; done; } > "$dst"
+    bash $S/tools/leanelab.sh $S/wt-ndapi $S/oleans-lbapi4 "$dst" > $L/probe-$b.out 2>&1; echo "probe $b exit=$? errors=$(grep -c ': error' $L/probe-$b.out) warnings=$(grep -c ': warning' $L/probe-$b.out)"
+    rm -f "$dst"
+  done < $S/ndapi/names.tsv
+}
+base_stream() {
+  while IFS=$'\t' read -r m names; do
+    b=$(basename $m)
+    bash $S/tools/leanelab.sh $S/wt-bapi $S/oleans-lbapi4 TCSlib/Complexity/$m.lean > $L/base-$b.out 2>&1; echo "base $b exit=$? errors=$(grep -c ': error' $L/base-$b.out) warnings=$(grep -c ': warning' $L/base-$b.out)"
+  done < $S/ndapi/names.tsv
+}
+probe_stream > $L/probe-summary.txt 2>&1 &
+base_stream > $L/base-summary.txt 2>&1 &
+wait
+echo DONE

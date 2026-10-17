@@ -1,0 +1,25 @@
+
+/-! Review probe (round 3): the live-step equations, their axioms, that neither is `simp`, and a
+consumer through them with `step`/`outputSymbol` irreducible. -/
+#check @Turing.MultiTapeTM.step_of_some
+#check @Turing.MultiTapeTM.outputSymbol_of_some
+#print axioms Turing.MultiTapeTM.step_of_some
+#print axioms Turing.MultiTapeTM.outputSymbol_of_some
+
+open Lean Meta in
+#eval show MetaM Unit from do
+  let s ← getSimpTheorems
+  for n in [``Turing.MultiTapeTM.step_of_some, ``Turing.MultiTapeTM.outputSymbol_of_some] do
+    IO.println s!"{n} simp={s.isLemma (.decl n)}"
+
+section R3Consumer
+open Turing
+variable {k : ℕ} {Γ S : Type} {x : List Γ}
+attribute [local irreducible] Turing.MultiTapeTM.step Turing.MultiTapeTM.outputSymbol in
+example (M : MultiTapeTM k Γ S) (c : Cfg k Γ S x) (q : S) (hq : c.state = some q) :
+    M.step c = (M.tr q c.inputSymbol c.workTapeSymbols).apply c ∧
+      M.outputSymbol c = (M.tr q c.inputSymbol c.workTapeSymbols).output ∧
+      (M.runFrom c 1) = (M.tr q c.inputSymbol c.workTapeSymbols).apply c :=
+  ⟨MultiTapeTM.step_of_some hq, MultiTapeTM.outputSymbol_of_some hq, by
+    rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero, MultiTapeTM.step_of_some hq]⟩
+end R3Consumer

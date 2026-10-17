@@ -1,0 +1,36 @@
+/-- **The right side from home is a field layout** (Recommended shape; you may restate it).
+From the home, the zoned tape holds the home cell as a one-cell field followed by the right zones
+`0, …, ℓ - 1`, blank-separated, so the seek family's field-layout rows (`Turing.seekEndTM_contract`
+and the others) run on it. The layout's end, where `Turing.seekEndTM` stops, is the cell
+`zoneStart ℓ`, the new right zone's first cell.
+
+**Proof sketch.** Induct on the zones with `Turing.fieldsTape_cons_shift` and
+`Turing.fieldOffset_succ`: zone `i` starts at `zoneStart i` (`Turing.zoneStart_succ`), holds
+`Turing.zoneCells true z i` (`Turing.zonedTape_right_word`), and is preceded by a blank
+(`Turing.zonedTape_right_sep`); beyond the layout the tape is blank
+(`Turing.zonedTape_blank_outside`). -/
+private lemma zonedTape_right_fields {k ℓ : ℕ} (z : Fin k → ZoneContents ℓ) :
+    ∀ p : ℤ, 0 ≤ p →
+      p ≤ (fieldOffset ([.inr fun t => some (z t).home] :: List.ofFn (zoneCells true z))
+        (ℓ + 1) : ℤ) →
+      zonedTape z p =
+        fieldsTape ([.inr fun t => some (z t).home] :: List.ofFn (zoneCells true z)) p := by
+  sorry
+
+/-- **The left side up to home is a field layout** (Recommended shape; you may restate it), read
+left to right: the left zones `ℓ - 1, …, 0`, each reversed (`Turing.zonedTape_left_word`),
+blank-separated, ending at cell `-2`, with the separator at `-1` and the home at `0`. This is
+`Turing.seekStartTM_contract`'s precondition with the head at home, so that row returns from home
+to the left layout's first cell.
+
+**Proof sketch.** The mirror of `zonedTape_right_fields`, with `Turing.zonedTape_left_word` and
+`Turing.zonedTape_left_sep`. -/
+private lemma zonedTape_left_fields {k ℓ : ℕ} (z : Fin k → ZoneContents ℓ) :
+    ∀ p : ℤ, -2 ≤ p →
+      p < (fieldOffset ((List.ofFn fun i : Fin ℓ => (zoneCells false z i.rev).reverse))
+        ℓ : ℤ) →
+      zonedTape z (-(fieldOffset ((List.ofFn fun i : Fin ℓ => (zoneCells false z i.rev).reverse))
+          ℓ : ℤ) + p) =
+        fieldsTape (List.ofFn fun i : Fin ℓ => (zoneCells false z i.rev).reverse) p := by
+  sorry
+

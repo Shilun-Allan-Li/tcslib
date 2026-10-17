@@ -1,0 +1,126 @@
+FLD Turing.Action.mapState : Turing.Action data 4 missing [inputTape workTapes output state]
+FLD Turing.Cfg.mapState : Turing.Cfg data 5 missing [state inputPos workTapes workTapePos output]
+FLD Turing.MultiTapeTM.runFrom : Turing.Cfg data 5 missing [state inputPos workTapes workTapePos output]
+FLD Turing.MultiTapeTM.step : Turing.Cfg data 5 missing [state inputPos workTapes workTapePos]
+FLD Turing.MultiTapeTM.visitedByTapeHead : Finset data 1 missing [val]
+FLD Turing.embedEmitCfg : Turing.Cfg data 5 missing [workTapes workTapePos]
+FLD Turing.embedEmitTM : Turing.MultiTapeTM data 2 missing [q₀]
+FLD Turing.embedSilentCfg : Turing.Cfg data 5 missing [workTapes workTapePos]
+FLD Turing.embedSilentTM : Turing.MultiTapeTM data 2 missing [q₀ tr]
+FLD Turing.moveInputPos : Fin data 1 missing [val]
+FLD Turing.phaseHostTM : Turing.MultiTapeTM data 2 missing [q₀ tr]
+FLD Turing.rulerHostCfg : Turing.Cfg data 5 missing [state inputPos workTapes workTapePos output]
+FLD Turing.seamCompTM : Turing.MultiTapeTM data 2 missing [q₀ tr]
+FLD Turing.seamCompTM₂ : Turing.MultiTapeTM data 2 missing [q₀ tr]
+FLD Turing.seamReleaseTM : Turing.MultiTapeTM data 2 missing [q₀ tr]
+FLD Turing.vhostBank : Fin data 1 missing [val]
+FLD Turing.vhostBuffer : Fin data 1 missing [val]
+FLD Turing.vhostCfg : Turing.Cfg data 5 missing [state inputPos workTapes workTapePos output]
+FLD Turing.vhostEmitTM : Turing.MultiTapeTM data 2 missing [q₀ tr]
+INV Turing.Cfg.inputSymbol_eq_inputCell -> Turing.Cfg.inputSymbol @ TCSlib.Complexity.TuringMachine.Configuration
+INV Turing.Cfg.inputSymbol_eq_inputCell -> Turing.inputCell @ TCSlib.Complexity.TuringMachine.Build.InputDevice
+INV Turing.FinTM.VirtualTag_iff -> Turing.FinTM.VirtualTag @ TCSlib.Complexity.TuringMachine.Simulation
+INV Turing.Lockstep.cut -> Turing.MultiTapeTM.runFrom @ TCSlib.Complexity.TuringMachine.Deterministic
+INV Turing.Lockstep.locate -> Turing.MultiTapeTM.runFrom @ TCSlib.Complexity.TuringMachine.Deterministic
+INV Turing.Lockstep.runFrom -> Turing.MultiTapeTM.runFrom @ TCSlib.Complexity.TuringMachine.Deterministic
+INV Turing.MultiTapeTM.runFrom_add -> Turing.MultiTapeTM.runFrom @ TCSlib.Complexity.TuringMachine.Deterministic
+INV Turing.MultiTapeTM.runFrom_mapState_of_agreeOn -> Turing.Action.mapState @ TCSlib.Complexity.TuringMachine.StateRenaming
+INV Turing.MultiTapeTM.runFrom_mapState_of_agreeOn -> Turing.Cfg.mapState @ TCSlib.Complexity.TuringMachine.StateRenaming
+INV Turing.MultiTapeTM.runFrom_mapState_of_agreeOn -> Turing.MultiTapeTM.runFrom @ TCSlib.Complexity.TuringMachine.Deterministic
+INV Turing.MultiTapeTM.runFrom_succ_eq_step' -> Turing.MultiTapeTM.runFrom @ TCSlib.Complexity.TuringMachine.Deterministic
+INV Turing.MultiTapeTM.runFrom_succ_eq_step' -> Turing.MultiTapeTM.step @ TCSlib.Complexity.TuringMachine.Deterministic
+INV Turing.embedEmitCfg_eq -> Turing.embedEmitCfg @ TCSlib.Complexity.TuringMachine.Build.Embed
+INV Turing.embedEmitTM_frame -> Turing.MultiTapeTM.runFrom @ TCSlib.Complexity.TuringMachine.Deterministic
+INV Turing.embedEmitTM_frame -> Turing.embedEmitCfg @ TCSlib.Complexity.TuringMachine.Build.Embed
+INV Turing.embedEmitTM_frame -> Turing.embedEmitTM @ TCSlib.Complexity.TuringMachine.Build.Embed
+INV Turing.embedEmitTM_runFrom -> Turing.MultiTapeTM.runFrom @ TCSlib.Complexity.TuringMachine.Deterministic
+INV Turing.embedEmitTM_runFrom -> Turing.embedEmitCfg @ TCSlib.Complexity.TuringMachine.Build.Embed
+INV Turing.embedEmitTM_runFrom -> Turing.embedEmitTM @ TCSlib.Complexity.TuringMachine.Build.Embed
+INV Turing.embedSilentTM_frame -> Turing.MultiTapeTM.runFrom @ TCSlib.Complexity.TuringMachine.Deterministic
+INV Turing.embedSilentTM_frame -> Turing.embedSilentCfg @ TCSlib.Complexity.TuringMachine.Build.Embed
+INV Turing.embedSilentTM_frame -> Turing.embedSilentTM @ TCSlib.Complexity.TuringMachine.Build.Embed
+INV Turing.embedSilentTM_runFrom -> Turing.MultiTapeTM.runFrom @ TCSlib.Complexity.TuringMachine.Deterministic
+INV Turing.embedSilentTM_runFrom -> Turing.embedSilentCfg @ TCSlib.Complexity.TuringMachine.Build.Embed
+INV Turing.embedSilentTM_runFrom -> Turing.embedSilentTM @ TCSlib.Complexity.TuringMachine.Build.Embed
+INV Turing.exists_rulerDeviceTM -> Turing.MultiTapeTM.runFrom @ TCSlib.Complexity.TuringMachine.Deterministic
+INV Turing.exists_rulerDeviceTM -> Turing.RulerAt @ TCSlib.Complexity.TuringMachine.Build.InputDevice
+INV Turing.exists_rulerDeviceTM -> Turing.inputCell @ TCSlib.Complexity.TuringMachine.Build.InputDevice
+INV Turing.exists_rulerDeviceTM -> Turing.moveInputPos @ TCSlib.Complexity.TuringMachine.Configuration
+INV Turing.exists_rulerHostTM -> Turing.FinTM.bufferTape @ TCSlib.Complexity.TuringMachine.Simulation
+INV Turing.exists_rulerHostTM -> Turing.MultiTapeTM.runFrom @ TCSlib.Complexity.TuringMachine.Deterministic
+INV Turing.exists_rulerHostTM -> Turing.MultiTapeTM.visitedByTapeHead @ TCSlib.Complexity.TuringMachine.Deterministic
+INV Turing.exists_rulerHostTM -> Turing.rulerHostCfg @ TCSlib.Complexity.TuringMachine.Build.InputDevice
+INV Turing.exists_rulerTestTM -> Turing.FinTM.bufferTape @ TCSlib.Complexity.TuringMachine.Simulation
+INV Turing.exists_rulerTestTM -> Turing.MultiTapeTM.runFrom @ TCSlib.Complexity.TuringMachine.Deterministic
+INV Turing.inputCell_of_drop -> Turing.inputCell @ TCSlib.Complexity.TuringMachine.Build.InputDevice
+INV Turing.inputCell_sub_eq_none_iff -> Turing.inputCell @ TCSlib.Complexity.TuringMachine.Build.InputDevice
+INV Turing.phaseHostTM_run -> Turing.Cfg.mapState @ TCSlib.Complexity.TuringMachine.StateRenaming
+INV Turing.phaseHostTM_run -> Turing.MultiTapeTM.runFrom @ TCSlib.Complexity.TuringMachine.Deterministic
+INV Turing.phaseHostTM_run -> Turing.phaseHostTM @ TCSlib.Complexity.TuringMachine.Build.Seam
+INV Turing.seamCompTM_firstReturn_ofCfg -> Turing.Cfg.mapState @ TCSlib.Complexity.TuringMachine.StateRenaming
+INV Turing.seamCompTM_firstReturn_ofCfg -> Turing.MultiTapeTM.runFrom @ TCSlib.Complexity.TuringMachine.Deterministic
+INV Turing.seamCompTM_firstReturn_ofCfg -> Turing.seamCompTM @ TCSlib.Complexity.TuringMachine.Build.Seam
+INV Turing.seamCompTM_run_ofCfg -> Turing.Cfg.mapState @ TCSlib.Complexity.TuringMachine.StateRenaming
+INV Turing.seamCompTM_run_ofCfg -> Turing.MultiTapeTM.runFrom @ TCSlib.Complexity.TuringMachine.Deterministic
+INV Turing.seamCompTM_run_ofCfg -> Turing.seamCompTM @ TCSlib.Complexity.TuringMachine.Build.Seam
+INV Turing.seamReleaseTM_runFrom_pos -> Turing.Cfg.mapState @ TCSlib.Complexity.TuringMachine.StateRenaming
+INV Turing.seamReleaseTM_runFrom_pos -> Turing.MultiTapeTM.runFrom @ TCSlib.Complexity.TuringMachine.Deterministic
+INV Turing.seamReleaseTM_runFrom_pos -> Turing.seamReleaseTM @ TCSlib.Complexity.TuringMachine.Build.Seam
+INV Turing.vhostBank_eq -> Turing.vhostBank @ TCSlib.Complexity.TuringMachine.Build.VirtualInput
+INV Turing.vhostBuffer_eq -> Turing.vhostBuffer @ TCSlib.Complexity.TuringMachine.Build.VirtualInput
+INV Turing.vhostEmitTM_runFrom -> Turing.FinTM.VirtualTag @ TCSlib.Complexity.TuringMachine.Simulation
+INV Turing.vhostEmitTM_runFrom -> Turing.MultiTapeTM.runFrom @ TCSlib.Complexity.TuringMachine.Deterministic
+INV Turing.vhostEmitTM_runFrom -> Turing.vhostCfg @ TCSlib.Complexity.TuringMachine.Build.VirtualInput
+INV Turing.vhostEmitTM_runFrom -> Turing.vhostEmitTM @ TCSlib.Complexity.TuringMachine.Build.VirtualInput
+INV Turing.vhostEmitTM_visitedByTapeHead_bank -> Turing.FinTM.VirtualTag @ TCSlib.Complexity.TuringMachine.Simulation
+INV Turing.vhostEmitTM_visitedByTapeHead_bank -> Turing.MultiTapeTM.visitedByTapeHead @ TCSlib.Complexity.TuringMachine.Deterministic
+INV Turing.vhostEmitTM_visitedByTapeHead_bank -> Turing.vhostBank @ TCSlib.Complexity.TuringMachine.Build.VirtualInput
+INV Turing.vhostEmitTM_visitedByTapeHead_bank -> Turing.vhostCfg @ TCSlib.Complexity.TuringMachine.Build.VirtualInput
+INV Turing.vhostEmitTM_visitedByTapeHead_bank -> Turing.vhostEmitTM @ TCSlib.Complexity.TuringMachine.Build.VirtualInput
+INV Turing.vhostEmitTM_visitedByTapeHead_buffer -> Turing.FinTM.VirtualTag @ TCSlib.Complexity.TuringMachine.Simulation
+INV Turing.vhostEmitTM_visitedByTapeHead_buffer -> Turing.MultiTapeTM.runFrom @ TCSlib.Complexity.TuringMachine.Deterministic
+INV Turing.vhostEmitTM_visitedByTapeHead_buffer -> Turing.MultiTapeTM.visitedByTapeHead @ TCSlib.Complexity.TuringMachine.Deterministic
+INV Turing.vhostEmitTM_visitedByTapeHead_buffer -> Turing.vhostBuffer @ TCSlib.Complexity.TuringMachine.Build.VirtualInput
+INV Turing.vhostEmitTM_visitedByTapeHead_buffer -> Turing.vhostCfg @ TCSlib.Complexity.TuringMachine.Build.VirtualInput
+INV Turing.vhostEmitTM_visitedByTapeHead_buffer -> Turing.vhostEmitTM @ TCSlib.Complexity.TuringMachine.Build.VirtualInput
+LEM Turing.Action.mapState 10 : Turing.Action.mapState.eq_1 Turing.Cfg.mapState_apply Turing.Contract.mapState_hi Turing.Contract.mapState_lo Turing.Contract.mapState_post Turing.Contract.mapState_pre Turing.Contract.mapState_time Turing.MultiTapeTM.relabelState.eq_1 Turing.MultiTapeTM.runFrom_mapState_of_agreeOn Turing.phaseHostTM.eq_1
+LEM Turing.Cfg.inputSymbol 14 : Turing.Cfg.inputSymbol.eq_1 Turing.Cfg.inputSymbol_eq_inputCell Turing.Cfg.inputSymbol_of_end Turing.Cfg.inputSymbol_of_zero Turing.FinTM.bufferTape_inputSymbol Turing.FinTM.inputSymbol_at Turing.FinTM.virtualMove_correct Turing.MultiTapeTM.outputSymbol.eq_1 Turing.MultiTapeTM.step.eq_1 Turing.NativeAt.inputSymbol_eq Turing.inputSymbolInner Turing.universalInput_move Turing.universalInput_read Turing.vhostEmitTM_emitting_halt
+LEM Turing.Cfg.mapState 28 : Turing.Cfg.SameOutside.mapState Turing.Cfg.mapState.eq_1 Turing.Cfg.mapState_apply Turing.Contract.mapState_hi Turing.Contract.mapState_lo Turing.Contract.mapState_post Turing.Contract.mapState_pre Turing.Contract.mapState_time Turing.MultiTapeTM.relabelState_runFrom_init Turing.MultiTapeTM.relabelState_step Turing.MultiTapeTM.runFrom_mapState_of_agreeOn Turing.embedEmitCfg_mapState_eq Turing.embedEmitRetTM_run Turing.embedEmitRetTM_visitedByTapeHead Turing.embedSilentRetTM_run Turing.embedSilentRetTM_visitedByTapeHead Turing.phaseHostTM_run Turing.seamCompTM_firstReturn_ofCfg Turing.seamCompTM_runFrom_left Turing.seamCompTM_runFrom_right Turing.seamCompTM_run_ofCfg Turing.seamCompTM_visitedByTapeHead_ofCfg Turing.seamCompTM₂_run_ofCfg Turing.seamReleaseTM_firstReturn Turing.seamReleaseTM_runFrom_pos Turing.seamReleaseTM_step_fresh Turing.seamReleaseTM_step_inr Turing.seamReleaseTM_visitedByTapeHead
+LEM Turing.FinTM.VirtualTag 14 : Turing.FinTM.VirtualTag.eq_1 Turing.FinTM.VirtualTag_iff Turing.FinTM.bufferedSecondCfg_run Turing.FinTM.bufferedSecondCfg_step Turing.FinTM.virtualMove_correct Turing.vhostCfg_buffer_head_mem Turing.vhostEmitTM_emitting_halt Turing.vhostEmitTM_runFrom Turing.vhostEmitTM_spaceUsed_le Turing.vhostEmitTM_step Turing.vhostEmitTM_visitedByTapeHead_bank Turing.vhostEmitTM_visitedByTapeHead_buffer Turing.vhostSilentTM_runFrom Turing.vhostSilentTM_spaceUsed_le
+LEM Turing.FinTM.bufferTape 23 : Turing.Cfg.SameOutside.keep_word Turing.Cfg.ofWords.eq_1 Turing.Cfg.ofWords_workTapes Turing.FinTM.bufferTape.eq_1 Turing.FinTM.bufferTape_append Turing.FinTM.bufferTape_inputSymbol Turing.FinTM.bufferTape_left Turing.FinTM.bufferTape_nat Turing.FinTM.bufferTape_nil Turing.FinTM.bufferedFirstCfg.eq_1 Turing.FinTM.bufferedFirstCfg_workTapes Turing.FinTM.bufferedScanCfg.eq_1 Turing.FinTM.bufferedSecondCfg.eq_1 Turing.FinTM.bufferedSecondCfg_workTapes Turing.embedEmitCfg_ofWords_eq Turing.embedSilentCfg.eq_1 Turing.embedSilentCfg_cap Turing.exists_rulerHostTM Turing.exists_rulerTestTM Turing.universalCaptureCfg.eq_1 Turing.universalInput_move Turing.universalInput_read Turing.vhostCfg.eq_1
+LEM Turing.MultiTapeTM.runFrom 137 : Turing.Contract.Frames.trans Turing.Contract.Traj.trans Turing.Contract.cut Turing.Contract.env Turing.Contract.live Turing.Contract.lockstep_admissible Turing.Contract.lockstep_admissible_map Turing.Contract.lockstep_hi Turing.Contract.lockstep_lo Turing.Contract.lockstep_post Turing.Contract.lockstep_pre Turing.Contract.lockstep_time Turing.Contract.mapState_hi Turing.Contract.mapState_lo Turing.Contract.mapState_post Turing.Contract.mapState_pre Turing.Contract.mapState_time Turing.Contract.mk.inj Turing.Contract.mk.injEq Turing.Contract.mk.sizeOf_spec Turing.Contract.run Turing.Contract.time_envelope Turing.Contract.traj_iff Turing.Contract.trans_hi Turing.Contract.trans_lo Turing.Contract.trans_positive Turing.Contract.trans_post Turing.Contract.trans_pre Turing.Contract.trans_time Turing.Contract.within Turing.FinTM.bufferedComp_start Turing.FinTM.bufferedFirstCfg_rewind Turing.FinTM.bufferedFirstCfg_run Turing.FinTM.bufferedScanCfg_run Turing.FinTM.bufferedSecondCfg_run Turing.FinTM.computesInTime_iff Turing.FinTM.emit_halts Turing.FinTM.emit_run Turing.FinTM.leftCfg_run Turing.FinTM.rewind_from_any Turing.FinTM.rewind_heads Turing.FinTM.rewind_scan Turing.FinTM.rewind_scan_heads Turing.FinTM.rightCfg_run Turing.FinTM.source_bounds Turing.FinTM.sweep_generate Turing.FinTM.sweep_run Turing.FinTM.sweep_run_reverse Turing.FinTM.timed_rewind Turing.Lockstep.cut Turing.Lockstep.inner Turing.Lockstep.locate Turing.Lockstep.runFrom Turing.Lockstep.step Turing.MultiTapeTM.ComputesInTimeAndSpace.eq_1 Turing.MultiTapeTM.exists_first_halt Turing.MultiTapeTM.haltsAtStep.eq_1 Turing.MultiTapeTM.mem_visitedByTapeHead_iff Turing.MultiTapeTM.not_halts_of_repeat_nonhalt Turing.MultiTapeTM.output_length_le Turing.MultiTapeTM.output_prefix Turing.MultiTapeTM.relabelState_runFrom_init Turing.MultiTapeTM.runFrom.eq_1 Turing.MultiTapeTM.runFrom_add Turing.MultiTapeTM.runFrom_comm_of_step Turing.MultiTapeTM.runFrom_eq_of_agreeOn Turing.MultiTapeTM.runFrom_mapState_of_agreeOn Turing.MultiTapeTM.runFrom_of_halt Turing.MultiTapeTM.runFrom_output_eq_of_halt Turing.MultiTapeTM.runFrom_output_prepend Turing.MultiTapeTM.runFrom_state_ne_none_of_le Turing.MultiTapeTM.runFrom_succ_eq_step Turing.MultiTapeTM.runFrom_succ_eq_step' Turing.MultiTapeTM.runFrom_with_q₀ Turing.MultiTapeTM.runFrom_zero Turing.MultiTapeTM.spaceUsedByTape_le_card_Icc Turing.MultiTapeTM.spaceUsed_eq_spaceUsedOfCfgs Turing.MultiTapeTM.timed_input_bound Turing.MultiTapeTM.visitedByTapeHead.eq_1 Turing.MultiTapeTM.visitedByTapeHead_add_subset Turing.MultiTapeTM.workTapePos_runFrom_mem_Icc Turing.ReturnContract.cut Turing.ReturnContract.env Turing.ReturnContract.mk.inj Turing.ReturnContract.mk.injEq Turing.ReturnContract.mk.sizeOf_spec Turing.ReturnContract.run Turing.Round.cut_some Turing.Round.of_cut Turing.RoundContract.cut Turing.RoundContract.env Turing.RoundContract.mk.inj Turing.RoundContract.mk.injEq Turing.RoundContract.mk.sizeOf_spec Turing.RoundContract.run Turing.Segment.drop Turing.Segment.take Turing.embedEmitRetTM_run Turing.embedEmitTM_frame Turing.embedEmitTM_runFrom Turing.embedSilentRetTM_run Turing.embedSilentTM_frame Turing.embedSilentTM_runFrom Turing.embedSilentTM_spaceUsedByTape_cap Turing.exists_rulerDeviceTM Turing.exists_rulerHostTM Turing.exists_rulerTestTM Turing.phaseHostTM_run Turing.prefixCanon_complete Turing.prefixCanon_run Turing.prefixCanon_start Turing.roundOrbit.eq_1 Turing.roundOrbit_succ Turing.round_iff Turing.safeSegment_iff Turing.seamCompTM_firstReturn Turing.seamCompTM_firstReturn_ofCfg Turing.seamCompTM_run Turing.seamCompTM_runFrom_left Turing.seamCompTM_runFrom_right Turing.seamCompTM_run_ofCfg Turing.seamCompTM_spaceUsedByTape_le_add Turing.seamCompTM_spaceUsedByTape_le_max Turing.seamCompTM_spaceUsed_le_add Turing.seamCompTM_visitedByTapeHead Turing.seamCompTM_visitedByTapeHead_ofCfg Turing.seamCompTM₂_run_ofCfg Turing.seamReleaseTM_firstReturn Turing.seamReleaseTM_runFrom_pos Turing.segment_iff Turing.universalCanon_complete Turing.universalCapture_start Turing.vhostCfg_buffer_head_mem Turing.vhostEmitTM_runFrom Turing.vhostEmitTM_visitedByTapeHead_buffer Turing.vhostSilentTM_runFrom Turing.vhostSilentTM_spaceUsed_le
+LEM Turing.MultiTapeTM.step 24 : Turing.FinTM.bufferedFirstCfg_step Turing.FinTM.bufferedSecondCfg_step Turing.FinTM.leftCfg_step Turing.FinTM.rightCfg_step Turing.FinTM.sweep_generate Turing.Lockstep.step Turing.MultiTapeTM.relabelState_step Turing.MultiTapeTM.runFrom.eq_1 Turing.MultiTapeTM.runFrom_comm_of_step Turing.MultiTapeTM.runFrom_succ_eq_step Turing.MultiTapeTM.runFrom_succ_eq_step' Turing.MultiTapeTM.step.eq_1 Turing.MultiTapeTM.step_eq_of_agreeOn Turing.MultiTapeTM.step_of_halt Turing.MultiTapeTM.step_output Turing.MultiTapeTM.step_output_prepend Turing.MultiTapeTM.visitedByTapeHead_step_subset Turing.MultiTapeTM.workTapePos_step_le Turing.Segment.cons Turing.Segment.one Turing.seamReleaseTM_step_fresh Turing.seamReleaseTM_step_inr Turing.vhostEmitTM_emitting_halt Turing.vhostEmitTM_step
+LEM Turing.MultiTapeTM.visitedByTapeHead 19 : Turing.MultiTapeTM.mem_visitedByTapeHead_iff Turing.MultiTapeTM.relabelState_visitedByTapeHead Turing.MultiTapeTM.spaceUsedByTape.eq_1 Turing.MultiTapeTM.visitedByTapeHead.eq_1 Turing.MultiTapeTM.visitedByTapeHead_add_subset Turing.MultiTapeTM.visitedByTapeHead_step_subset Turing.embedEmitRetTM_visitedByTapeHead Turing.embedEmitTM_visitedByTapeHead Turing.embedEmitTM_visitedByTapeHead_frame Turing.embedSilentRetTM_visitedByTapeHead Turing.embedSilentTM_visitedByTapeHead Turing.embedSilentTM_visitedByTapeHead_frame Turing.exists_rulerHostTM Turing.seamCompTM_spaceUsedByTape_le_max Turing.seamCompTM_visitedByTapeHead Turing.seamCompTM_visitedByTapeHead_ofCfg Turing.seamReleaseTM_visitedByTapeHead Turing.vhostEmitTM_visitedByTapeHead_bank Turing.vhostEmitTM_visitedByTapeHead_buffer
+LEM Turing.NativeAt 3 : Turing.NativeAt.inputSymbol_eq Turing.NativeAt.move Turing.nativeAt_init
+LEM Turing.RulerAt 1 : Turing.exists_rulerDeviceTM
+LEM Turing.embedEmitCfg 17 : Turing.embedEmitCfg.eq_1 Turing.embedEmitCfg_eq Turing.embedEmitCfg_inputPos Turing.embedEmitCfg_mapState_eq Turing.embedEmitCfg_ofWords_eq Turing.embedEmitCfg_output Turing.embedEmitCfg_select Turing.embedEmitCfg_selected_pos Turing.embedEmitCfg_selected_tape Turing.embedEmitCfg_state Turing.embedEmitCfg_unselected Turing.embedEmitRetTM_run Turing.embedEmitRetTM_visitedByTapeHead Turing.embedEmitTM_frame Turing.embedEmitTM_runFrom Turing.embedEmitTM_visitedByTapeHead Turing.embedEmitTM_visitedByTapeHead_frame
+LEM Turing.embedEmitTM 7 : Turing.embedEmitRetTM_visitedByTapeHead Turing.embedEmitTM.eq_1 Turing.embedEmitTM_frame Turing.embedEmitTM_runFrom Turing.embedEmitTM_tr Turing.embedEmitTM_visitedByTapeHead Turing.embedEmitTM_visitedByTapeHead_frame
+LEM Turing.embedSilentCfg 15 : Turing.embedSilentCfg.eq_1 Turing.embedSilentCfg_cap Turing.embedSilentCfg_inputPos Turing.embedSilentCfg_output Turing.embedSilentCfg_selected_pos Turing.embedSilentCfg_selected_tape Turing.embedSilentCfg_state Turing.embedSilentCfg_unselected Turing.embedSilentRetTM_run Turing.embedSilentRetTM_visitedByTapeHead Turing.embedSilentTM_frame Turing.embedSilentTM_runFrom Turing.embedSilentTM_spaceUsedByTape_cap Turing.embedSilentTM_visitedByTapeHead Turing.embedSilentTM_visitedByTapeHead_frame
+LEM Turing.embedSilentTM 6 : Turing.embedSilentRetTM_visitedByTapeHead Turing.embedSilentTM_frame Turing.embedSilentTM_runFrom Turing.embedSilentTM_spaceUsedByTape_cap Turing.embedSilentTM_visitedByTapeHead Turing.embedSilentTM_visitedByTapeHead_frame
+LEM Turing.inputCell 6 : Turing.Cfg.inputSymbol_eq_inputCell Turing.NativeAt.inputSymbol_eq Turing.exists_rulerDeviceTM Turing.inputCell.eq_1 Turing.inputCell_of_drop Turing.inputCell_sub_eq_none_iff
+LEM Turing.moveInputPos 13 : Turing.Action.apply.eq_1 Turing.FinTM.controlAction_apply Turing.FinTM.moveInputPos_neg_val Turing.FinTM.virtualMove_correct Turing.NativeAt.move Turing.exists_rulerDeviceTM Turing.moveInputPos.eq_1 Turing.moveInputPos_leftBoundary Turing.moveInputPos_neg_of_ne_left Turing.moveInputPos_pos_of_ne_right Turing.moveInputPos_rightBoundary Turing.moveInputPos_zero Turing.universalInput_move
+LEM Turing.phaseHostTM 2 : Turing.phaseHostTM.eq_1 Turing.phaseHostTM_run
+LEM Turing.rulerHostCfg 1 : Turing.exists_rulerHostTM
+LEM Turing.seamCompTM 11 : Turing.seamCompTM_firstReturn Turing.seamCompTM_firstReturn_ofCfg Turing.seamCompTM_run Turing.seamCompTM_runFrom_left Turing.seamCompTM_runFrom_right Turing.seamCompTM_run_ofCfg Turing.seamCompTM_spaceUsedByTape_le_add Turing.seamCompTM_spaceUsedByTape_le_max Turing.seamCompTM_spaceUsed_le_add Turing.seamCompTM_visitedByTapeHead Turing.seamCompTM_visitedByTapeHead_ofCfg
+LEM Turing.seamCompTM₂ 1 : Turing.seamCompTM₂_run_ofCfg
+LEM Turing.seamReleaseTM 5 : Turing.seamReleaseTM_firstReturn Turing.seamReleaseTM_runFrom_pos Turing.seamReleaseTM_step_fresh Turing.seamReleaseTM_step_inr Turing.seamReleaseTM_visitedByTapeHead
+LEM Turing.vhostBank 3 : Turing.vhostBank.eq_1 Turing.vhostBank_eq Turing.vhostEmitTM_visitedByTapeHead_bank
+LEM Turing.vhostBuffer 4 : Turing.vhostBuffer.eq_1 Turing.vhostBuffer_eq Turing.vhostCfg_buffer_head_mem Turing.vhostEmitTM_visitedByTapeHead_buffer
+LEM Turing.vhostCfg 8 : Turing.vhostCfg.eq_1 Turing.vhostCfg_buffer_head_mem Turing.vhostEmitTM_emitting_halt Turing.vhostEmitTM_runFrom Turing.vhostEmitTM_spaceUsed_le Turing.vhostEmitTM_step Turing.vhostEmitTM_visitedByTapeHead_bank Turing.vhostEmitTM_visitedByTapeHead_buffer
+LEM Turing.vhostEmitTM 7 : Turing.vhostCfg_buffer_head_mem Turing.vhostEmitTM_emitting_halt Turing.vhostEmitTM_runFrom Turing.vhostEmitTM_spaceUsed_le Turing.vhostEmitTM_step Turing.vhostEmitTM_visitedByTapeHead_bank Turing.vhostEmitTM_visitedByTapeHead_buffer
+SEED Turing.Cfg.mapState @ TCSlib.Complexity.TuringMachine.StateRenaming
+SEED Turing.MultiTapeTM.visitedByTapeHead @ TCSlib.Complexity.TuringMachine.Deterministic
+SEED Turing.NativeAt @ TCSlib.Complexity.TuringMachine.Build.InputDevice
+SEED Turing.RulerAt @ TCSlib.Complexity.TuringMachine.Build.InputDevice
+SEED Turing.embedEmitCfg @ TCSlib.Complexity.TuringMachine.Build.Embed
+SEED Turing.embedEmitTM @ TCSlib.Complexity.TuringMachine.Build.Embed
+SEED Turing.embedSilentTM @ TCSlib.Complexity.TuringMachine.Build.Embed
+SEED Turing.inputCell @ TCSlib.Complexity.TuringMachine.Build.InputDevice
+SEED Turing.moveInputPos @ TCSlib.Complexity.TuringMachine.Configuration
+SEED Turing.phaseHostTM @ TCSlib.Complexity.TuringMachine.Build.Seam
+SEED Turing.rulerHostCfg @ TCSlib.Complexity.TuringMachine.Build.InputDevice
+SEED Turing.seamCompTM @ TCSlib.Complexity.TuringMachine.Build.Seam
+SEED Turing.seamCompTM₂ @ TCSlib.Complexity.TuringMachine.Build.Seam
+SEED Turing.seamReleaseTM @ TCSlib.Complexity.TuringMachine.Build.Seam
+SEED Turing.vhostEmitTM @ TCSlib.Complexity.TuringMachine.Build.VirtualInput
+exit=0

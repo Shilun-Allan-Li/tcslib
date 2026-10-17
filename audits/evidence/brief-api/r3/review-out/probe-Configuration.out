@@ -1,0 +1,30 @@
+Probe_Configuration.lean:157:17: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+Probe_Configuration.lean:160:61: warning: unused variable `h`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+Probe_Configuration.lean:175:17: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+@Turing.Action.apply_state : ∀ {k : ℕ} {State : Type u_1} {Symbol : Type u_2} {input : List Symbol}
+  (action : Turing.Action k Symbol State) (cfg : Turing.Cfg k Symbol State input),
+  (action.apply cfg).state = action.state
+@Turing.Action.apply_inputPos : ∀ {k : ℕ} {State : Type u_1} {Symbol : Type u_2} {input : List Symbol}
+  (action : Turing.Action k Symbol State) (cfg : Turing.Cfg k Symbol State input),
+  (action.apply cfg).inputPos = Turing.moveInputPos cfg.inputPos action.inputTape
+@Turing.Action.apply_workTapePos : ∀ {k : ℕ} {State : Type u_1} {Symbol : Type u_2} {input : List Symbol}
+  (action : Turing.Action k Symbol State) (cfg : Turing.Cfg k Symbol State input) (i : Fin k),
+  (action.apply cfg).workTapePos i = cfg.workTapePos i + ↑(action.workTapes i).2
+@Turing.Action.apply_output : ∀ {k : ℕ} {State : Type u_1} {Symbol : Type u_2} {input : List Symbol}
+  (action : Turing.Action k Symbol State) (cfg : Turing.Cfg k Symbol State input),
+  (action.apply cfg).output = cfg.output ++ action.output.toList
+'Turing.Action.apply_state' depends on axioms: [propext, Quot.sound]
+'Turing.Action.apply_inputPos' depends on axioms: [propext, Quot.sound]
+'Turing.Action.apply_workTapePos' depends on axioms: [propext, Quot.sound]
+'Turing.Action.apply_output' depends on axioms: [propext, Quot.sound]
+Turing.Action.apply_state simp=false
+Turing.Action.apply_inputPos simp=false
+Turing.Action.apply_workTapePos simp=false
+Turing.Action.apply_output simp=false
+exit=0

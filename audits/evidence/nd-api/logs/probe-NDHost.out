@@ -1,0 +1,38 @@
+$S/wt-ndapi/TCSlib/NDApiProbe_NDHost.lean:200:8: warning: declaration uses 'sorry'
+@Turing.guessRunCfg_state : ∀ {k : ℕ} {S S' : Type} {z : List Bool} (c : Turing.Cfg k Bool S z) (j : Fin k)
+  (s : List Bool) (q : S'), (Turing.guessRunCfg c j s q).state = some q
+'Turing.guessRunCfg_state' does not depend on any axioms
+@Turing.guessRunCfg_inputPos : ∀ {k : ℕ} {S S' : Type} {z : List Bool} (c : Turing.Cfg k Bool S z) (j : Fin k)
+  (s : List Bool) (q : S'), (Turing.guessRunCfg c j s q).inputPos = c.inputPos
+'Turing.guessRunCfg_inputPos' does not depend on any axioms
+@Turing.guessRunCfg_workTapes : ∀ {k : ℕ} {S S' : Type} {z : List Bool} (c : Turing.Cfg k Bool S z) (j : Fin k)
+  (s : List Bool) (q : S') (a : Fin k) (a_1 : ℤ),
+  (Turing.guessRunCfg c j s q).workTapes a a_1 =
+    Function.update c.workTapes j
+      (fun p =>
+        if c.workTapePos j ≤ p ∧ p < c.workTapePos j + ↑s.length then Turing.FinTM.bufferTape s (p - c.workTapePos j)
+        else c.workTapes j p)
+      a a_1
+'Turing.guessRunCfg_workTapes' does not depend on any axioms
+@Turing.guessRunCfg_workTapePos : ∀ {k : ℕ} {S S' : Type} {z : List Bool} (c : Turing.Cfg k Bool S z) (j : Fin k)
+  (s : List Bool) (q : S') (a : Fin k), (Turing.guessRunCfg c j s q).workTapePos a = c.workTapePos a
+'Turing.guessRunCfg_workTapePos' does not depend on any axioms
+@Turing.guessRunCfg_output : ∀ {k : ℕ} {S S' : Type} {z : List Bool} (c : Turing.Cfg k Bool S z) (j : Fin k)
+  (s : List Bool) (q : S'), (Turing.guessRunCfg c j s q).output = c.output
+'Turing.guessRunCfg_output' does not depend on any axioms
+@Turing.streamStartCfg_state : ∀ {K : ℕ} {S : Type} (z : List Bool) (j : Fin K) (q : S) (s : List Bool),
+  (Turing.streamStartCfg z j q s).state = some q
+'Turing.streamStartCfg_state' depends on axioms: [propext]
+@Turing.streamStartCfg_inputPos : ∀ {K : ℕ} {S : Type} (z : List Bool) (j : Fin K) (q : S) (s : List Bool),
+  (Turing.streamStartCfg z j q s).inputPos = 1
+'Turing.streamStartCfg_inputPos' depends on axioms: [propext]
+@Turing.streamStartCfg_workTapes : ∀ {K : ℕ} {S : Type} (z : List Bool) (j : Fin K) (q : S) (s : List Bool) (i : Fin K)
+  (a : ℤ),
+  (Turing.streamStartCfg z j q s).workTapes i a = (if i = j then Turing.FinTM.bufferTape s else fun x => none) a
+'Turing.streamStartCfg_workTapes' depends on axioms: [propext]
+@Turing.streamStartCfg_workTapePos : ∀ {K : ℕ} {S : Type} (z : List Bool) (j : Fin K) (q : S) (s : List Bool)
+  (x : Fin K), (Turing.streamStartCfg z j q s).workTapePos x = 0
+'Turing.streamStartCfg_workTapePos' depends on axioms: [propext]
+@Turing.streamStartCfg_output : ∀ {K : ℕ} {S : Type} (z : List Bool) (j : Fin K) (q : S) (s : List Bool),
+  (Turing.streamStartCfg z j q s).output = []
+'Turing.streamStartCfg_output' depends on axioms: [propext]

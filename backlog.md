@@ -913,6 +913,7 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
   - **The statement gate is staged:** `infra_local/gate-dispatches/33-mig11a-statements-gate/`,
     bundle SHA-256 `84d0442f…b99b` (39 sections; Lean `1358ff73`, other `455cb240`).
     **Dispatched (user, 2026-10-16).**
+  - **Merged (user, 2026-10-16; `bd1ae147`).** The tip's Lean is #117's `98472df2`.
   - **Gate: PASS, 0/0/2/0, CLOSED (2026-10-16).** `audits/mig11a-statements-{findings,resolutions}.md`.
     Minor 1 (a docstring claimed a width-preserving `fix`) is fixed in `98472df2`, docstring only;
     minor 2 (a stale lint log) is corrected: 0 FAIL, 69 WARN over 79 files at `1358ff73`.
@@ -949,8 +950,219 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
     - Added before the gate, following the user's #116 precedent (the zone API, option (a)).
     - Checks clean; check 8 drops 6 more. The two-file screen's 9 new pairs are the
       `variable`-line artifact.
-    - **The chained replay `replay-lbapi2.sh` (86 modules, from `oleans-lbapi`) is ready for
-      the user.**
+    - **The chained replay `replay-lbapi2.sh` passed (user, 2026-10-16):** 86 of 86,
+      static-equal (56). The snapshot `oleans-lbapi2` is the tip plus #118.
+    - The head `4ae686be` merges the tip (#117); its Lean differs from the replayed head only in
+      #117's corrected docstring.
+  - **The gate is staged:** `infra_local/gate-dispatches/34-brief-api-gate/`, bundle SHA-256
+    `ea12197a…d6bf` (100 sections; Lean `4ae686be`, other `a2b27243`). **Dispatched (user,
+    2026-10-16).**
+- **The next briefs, drafted and measured at #118's head (2026-10-16;
+  `audits/evidence/drafts/README.md`).** U2-S, F5, the F3 continuation, the canonizer's
+  continuation 6 (now a full brief) and **the G4 continuation** (new: it re-points the partial's
+  four helpers that unfold `zonedTape`, `zoneSlotOf` and `zoneCapacity`). All pre-ship checks
+  pass against `oleans-lbapi2`. Each issues after #118 merges, with its base hash filled.
+- **MIG-12's brief, drafted** (`audits/evidence/drafts/mig12-fill-cfgrecord.DRAFT.md`):
+  - the swap: `RecordRun` retires onto `Segment`, and the phases become row-contract
+    compositions, with every one of the 21 publics frozen;
+  - the counter-loop phase stays (MIG-15);
+  - order 279, base sorries 83 (none in `CfgRecord`), replay closure 52;
+  - the import overlay (adding the contract facade) is clean.
+  - **Its inventory found three gaps**, in `SymbolLift` and `Convention`:
+    - `Cfg.liftSymbols` had only state and head lemmas;
+    - `Action.liftSymbols` had none;
+    - `incFixed` had no case lemmas.
+  - **MIG-12's API** (branch `lean/mig12-api`, `9872634e`, stacked on #118):
+    - the contents: the lifts' fields, `incFixed`'s cases, and `incFixed_length` and
+      `decFixed_length` (#117's gate review);
+    - checks: clean, standard axioms, freeze adds only, the WARN set unchanged;
+    - replay `replay-lm12api.sh`: 160 modules from `oleans-lbapi2`. **Passed (user,
+      2026-10-16):** 160 of 160, 0 failed, static-equal (80); snapshot `oleans-lm12api`.
+    - #118's gate failed (0/2/1; findings 1–2 are cont6's inventory), so MIG-12's API folds into
+      #118's round 2, as planned.
+- **#118's gate, round 1: FAIL 0/2/1 (2026-10-16/17;** `audits/brief-api-{findings,resolutions}.md`).
+  - **Findings 1–2 (cont6):** `codeSkipRepeat`'s cases; the two round-contract counter loops'
+    fields.
+  - **Finding 3:** a miscount in NOTES.
+  - **The method fix:** the inventory now includes the cited definitions themselves and checks
+    structure fields. The review's re-run found **N1**, `Cfg.mapState`'s and
+    `Action.mapState`'s fields: the F5 and U2-S drafts cited a private Seam lemma.
+  - **Round 2 is prepared locally, not pushed** (`wt-bapi`, `4624fc05`). It fast-forwards to
+    MIG-12's API `9872634e`, then adds `88fb25f3` (findings 1–2) and `4624fc05` (N1), the
+    review's patches unchanged.
+    - Checks are clean.
+    - Replay `replay-lbapi3.sh`: 274 modules from `oleans-lm12api`.
+    - Pack `audits/brief-api-r2-pack.md`; evidence `audits/evidence/brief-api/r2/`.
+    - Drafts updated (cont6, F5, U2-S, F3's Route B note); the staged probes have the new names.
+  - **Pushed (user's go-ahead, 2026-10-17):** `lean/brief-api` at `4624fc05`; the PR body is
+    updated. **`replay-lbapi3.sh` passed (user):** 274 of 274, static-equal (88); snapshot
+    `oleans-lbapi3`.
+  - **The r2 gate is staged:** `infra_local/gate-dispatches/35-brief-api-r2-gate/`, bundle SHA-256
+    `901e1fa9…c2bd` (108 sections; Lean `4624fc05`, other `00e23bf3`). **Dispatched (user,
+    2026-10-17).** After the merge, the five briefs issue (and MIG-12's).
+- **The user's rulings before the night of 2026-10-17:**
+  - **Round 3 of #118, if needed** (majors of the same kind): prepare it locally (the review, the
+    patches as local commits, the checks, the replay script and records). Do not push.
+  - **MIG-12's brief issues with the five** at the post-#118 tip.
+  - **Check 8b** (structure-valued definitions need `simps` or a lemma per field) is implemented
+    after the briefs issue, so their recorded lint bases stay valid.
+  - **MIG-24's library-wide copy-text screen** runs overnight: measurement only, one screen,
+    niced.
+- **Issue procedure for the six briefs, once #118 merges** (prepared on the night of 2026-10-17;
+  `audits/evidence/drafts/issue-tools/`):
+  1. Check that the merged tip's Lean equals #118's round-3 head, with
+     `git diff --quiet 531b98a2 <tip> -- '*.lean'`. If it does, every measurement holds:
+     - the pre-ship elaborations were re-run against `oleans-lbapi4` (2026-10-17,
+       `preship-lbapi4-summary.txt`; the same messages as against `oleans-lbapi3`);
+     - the screen bases are the round-3 ones (`drafts/README.md`).
+  2. Run `issue.py plan` (it passes as of 2026-10-17), then `apply <tip-short>`. Commit the
+     inputs and briefs to the campaign branch; that commit is the ancestor.
+  3. Run `issue.py dispatch <ancestor>`, then give the six prompts in chat with the environment
+     addendum.
+- **The night of 2026-10-17:**
+  - **#118's round-2 gate: FAIL 0/1/2** (`audits/brief-api-r2-findings.md`, verbatim). Round 1's
+    findings and N1 are closed.
+    - The major is MIG-12's route: it reads primitives for an arbitrary action or machine
+      (`Action.apply`'s head, the live-state `step` and `outputSymbol`), and none of these is
+      published.
+    - The minors are MIG-12's unfold-site ledger (at least 48 sites, not 44; the counter-loop
+      exception has one direct use, not three) and the pack's count (12 MIG-12 names, not 13).
+    - **Reviewed:** all three are true, and findings 1–2 are wider than the auditor saw:
+      - F5's ruler host reads the same primitives;
+      - `CfgRecord` has four more arbitrary-action reads;
+      - the corrected ledger has 173 rows (76 explicit, 97 definitional), with two laws
+        private-only.
+    - **Round 3 is prepared locally and not pushed** (the user's ruling), in `wt-bapi` at
+      `531b98a2`:
+      - `74765ef4`: `Action.apply_*`, `step_of_some`, `outputSymbol_of_some`;
+      - `531b98a2`: `counterWord_succ`, `scanResult_keep_keep`.
+    - Checks clean. Replay `replay-lbapi4.sh` covers 320 modules. Pack
+      `audits/brief-api-r3-pack.md`; resolutions updated; MIG-12's and F5's drafts corrected.
+    - **Pushed (user's go-ahead, 2026-10-17):** `lean/brief-api` at `531b98a2`; the PR body is
+      updated (15 files). **`replay-lbapi4.sh` passed (user):** 320 of 320, static-equal (94);
+      snapshot `oleans-lbapi4`.
+    - **The r3 gate is staged:** `infra_local/gate-dispatches/36-brief-api-r3-gate/`, bundle
+      SHA-256 `2b75b765…6c9a` (124 sections; Lean `531b98a2`, other `2adfd457`). Dispatched
+      (user).
+    - **#118's round-3 gate: PASS 0/0/2** (`audits/brief-api-r3-findings.md`, verbatim;
+      resolutions "Round 3 result"). The minors were records only: the ledger's three
+      stale rows, and the drafts' probe counts. Both are fixed. Reviewed: the PASS holds
+      (`r3/gate-review-r3.md`). The pre-ship checks were re-run against `oleans-lbapi4`,
+      with the same messages. **The gate is closed; #118 is ready to merge at `531b98a2`.**
+      After the merge, issue (the pre-ship re-run against `oleans-lbapi4` is done; below).
+    - **The screen bases re-measured at the round-3 head** (`531b98a2`;
+      `drafts/issue-inputs/r3/`): U2-S 655, F3 1,043, G4 795, MIG-12 870, cont6 2,411
+      declarations. Each is one more than before (`scanResult_keep_keep`), with identical pair
+      sets. The drafts take these counts at issue.
+- **#119 and #120 merged (user, 2026-10-17; tip `75edca6f`, Lean = #120's `6d18902f`), before their
+  gates returned.** Gate 37 (#119): FAIL 0/2/3/2, both majors on wave-2 routes (RC's serialization
+  equations; NF's controller writer, resolved by the controller-contract ruling). Gate 38 (#120):
+  PASS 0/0/3/4. The review (`$S/review/nd-api-gate/`, `nd-normalform-gate/`) confirms all findings,
+  and nothing blocks wave 1. The repairs go into a follow-up API PR with its own gate: StepBlock's
+  `workReadsK`/`tableBitsK`, CodeFormat's `actionBitsK`, Encoding's bit encoders,
+  `vhostSilentCfg_eq`'s docstring, and the ClassNP facade's Contents line.
+- **C1 wave 1 issued** (ancestor `83ec6348`; base `75edca6f`; dispatch files in
+  `infra_local/fill-dispatches/`): W `21d13911…`, WC `4c05c6af…`, E `4807189d…`, R `15a09e9c…`,
+  UN `12086525…`.
+- **C1 wave 1's five briefs are drafted** (`audits/evidence/drafts/c1-fill-*`, README table) at #120's
+  head `6d18902f`. They issue after #119 and #120 merge, by `issue2.py` with the pre-ship run against
+  `oleans-lndnf`. Next drafts: NF (its own module since #120, so it can join wave 1), C1-E's E-Q
+  and E-D (after #121), and wave 2's RC.
+- **#118 merged (user, 2026-10-17; `f7546373`). The six briefs are issued** (inputs and briefs
+  `94b986d4`, the ancestor; dispatch files in `infra_local/fill-dispatches/`, prompts given in chat):
+  - U2-S `6e579c35…`, F5 `e181d7e2…`, F3 cont1 `2196f09e…`, cont6 `4c9f226e…`, G4 cont1
+    `cd1809a7…`, MIG-12 `d815282a…` (SHA-256 of the dispatch files);
+  - base `f7546373`, whose Lean is #118's `531b98a2`; the pre-ship logs are the `oleans-lbapi4` run;
+  - F3's continuation got its own paths (`b6-fill-configclock-cont1`), so F3's first-round base
+    records are not overwritten.
+  - **#119's replay is cleared to run** (`replay-lndapi.sh`, 189 modules). Before that, wave 1's route
+    inventory, round 3 (R's and UN's header parsing and installation), gave #119 a third commit:
+    `Cfg.ofWords`'s four missing fields (`Build/Convention`, `1e45f50a`). #120 and #121 merged it
+    (`6d18902f`, `13f52659`).
+  - **NF's writer (user, 2026-10-17): a public controller contract.** After W integrates, a statement
+    PR in `Build/NDHost` and its gate; a W continuation fills it; NF issues in wave 2, citing it.
+  - **Lint check 8b is in, opt-in** (`scripts/campaign_style_lint.py --check8b`; the user's ruling:
+    after the #118 briefs issue). It reports public definitions whose value is a configuration, an
+    action, a bundled conversion or a contract, given as a structure literal, with neither `simps`, nor
+    an unfolding `_eq`, nor a lemma per field. The default output is unchanged, so the issued briefs'
+    lint bases hold. At the tip it lists 62 definitions in 33 `TuringMachine/` files and 27 in 16
+    `SpaceComplexity/` files: debt to cover as consumers need it, as for check 8. Some names are
+    covered by differently named lemmas (`counterLoopCfg` by `counter_cfg_eq`). It becomes default
+    once the in-flight fills return.
+  - **MIG-24 triaged** (`audits/evidence/mig24/TRIAGE.md`). All 34 `SpaceComplexity/` candidates are
+    ARM-2's. 21 `TuringMachine/` pairs belong to other items. 37 remain in 8 groups (T1–T7, T2b).
+    **User (2026-10-17): fold them into MIG-1's fill batches** as named factoring obligations, by
+    file; the singletons go into the next PR touching their file.
+  - **#119's replay passed (user, 2026-10-17):** 189 of 189, 0 failed, static-equal (87); snapshot
+    `oleans-lndapi`. Its gate (folder 37) is staged. #120's replay (4 modules) is next.
+  - **#120's replay passed (user, 2026-10-17):** 4 of 4, static-equal (6); snapshot `oleans-lndnf`.
+    Its gate (folder 38) is staged. #121's replay (2 modules) is next.
+  - **#121's replay passed (user, 2026-10-17):** 2 of 2, static-equal (2); snapshot `oleans-lndiag`.
+    Its statement gate (folder 39) is staged.
+- **C1's fill plan and the ND inventory API (2026-10-17, while #118 merges;**
+  `audits/evidence/c1/C1-fill-plan.md`, `audits/evidence/nd-api/`).
+  - **C1's eleven stubs** are all briefable: every shared host they wait on is proved (the step
+    clock, H2's loop, H2-F). One worker per file, so `NTimeHierarchy` (six stubs) and
+    `NDCodeSimulator` (two) serialize. The showcase needs no new witness
+    (`timeConstructible_poly`).
+  - **The seed-inclusive inventory** (47 seeds, 152 rows) found the nondeterministic model's
+    counterparts of #118's API missing.
+  - **`lean/nd-api` at `4abca360`** (local; stacked on #118's `531b98a2`) adds 41 equations,
+    7 hand-written and 34 generated. The six files have 0 errors, with warnings equal to the
+    bases'. Freeze: publics added only. Lint: 67 to 64 WARN and 16 to 15. Screen: 5 boilerplate
+    pairs from the shared `simps` line. Replay closure: 102 modules.
+  - **User (2026-10-17), all four as recommended:**
+    - **#119** (`lean/nd-api`, stacked on #118) gets its own gate. It is pushed and open. Its replay
+      `replay-lndapi.sh` (102 modules, from `oleans-lbapi4`) is ready for the user. The pack is
+      `audits/nd-api-pack.md`; the bundle follows the replay.
+    - **Wave 1 has five briefs:** W, WC, E, R, and UN with BF, H′ and S. They are drafted now and
+      dispatched after #119 merges.
+    - **NF moves to a new module,** `ClassNP/NDNormalForm`, by a small PR with a statement gate.
+    - **C1-E's statement phase** starts now.
+  - **#120** (`lean/nd-normalform` at `95a3b6a0`, stacked on #119) moves NF, byte-identical, into
+    `ClassNP/NDNormalForm`. It moves the declaration under its own name, where the plan's wording
+    had a citation; this is disclosed in the PR. Replay: `replay-lndnf.sh`, 4 modules, after
+    #119's. Evidence: `audits/evidence/nd-normalform/`.
+  - **C1-E's statement phase** (`audits/evidence/c1/c1e/`). The user (2026-10-17) chose, all as
+    recommended: one stage-query machine, the `Nat.unpair` schedule, a new module. **#121**
+    (`lean/ntime-diag` at `2ff6cc0c`, stacked on #120) is `Diagonalization/NTimeDiagonalizer`:
+    - the ladder, stage, schedule and stage query, with 13 laws proved;
+    - `exists_queryTM` and `exists_diagonalizer`, sorried, for the fills E-Q and E-D.
+
+    Replay: `replay-lndiag.sh`, 2 modules, after #120's.
+  - **The gates for #119, #120 and #121** are staged as each replay passes.
+- **The scratchpad was hit by the nightly /tmp cleaner (2026-10-17, ~03:00).**
+  - **What it deleted:** files not accessed for about 3 days, including the campaign worktree
+    `wt-hk`'s `.git` link and most of `tools/`.
+  - **Repaired:**
+    - `wt-hk` was recreated at the pushed tip `4ca38f61` (the broken copy is kept as
+      `wt-hk.broken-20261017`);
+    - the tools were restored from surviving copies, except `privstmt.py`, to be rewritten when
+      next needed;
+    - `touch -a` was run over the whole scratchpad, resetting the 3-day clock.
+  - **Nothing committed was lost**, round 3's local commits included (the main repo's object
+    store). The snapshots `oleans-lbapi2`/`lm12api`/`lbapi3` are intact (710 oleans each).
+  - **For the user:** whether to move durable state (worktrees, snapshots, tools) out of `/tmp`,
+    or to keep refreshing access times before each gap.
+  - **The screen bases re-measured at `4624fc05`:** F3 1,042 / 510, cont6 2,410 / 2,631. The
+    issue plan passes.
+    - cont6's re-measure shows a new 55% pair: the public `incFixed_length` reproduces
+      `RecordTable`'s private `rt_incFixed_length`. It is the duplicate #117's review predicted,
+      below the copy threshold. **Follow-up** (with the decrement's twin `sc_dec_success_width`,
+      `StepClock`): re-point both private copies to the public lemmas in the next PR that edits
+      those files.
+  - **MIG-24 measured** (`audits/evidence/mig24/`): at 90% or more, `TuringMachine/` has 394
+    unordered pairs and `SpaceComplexity/` 123.
+    - Of `TuringMachine/`'s, 185 are MIG-1's `f2_` copies, 38 are MIG-2's timed layer, 113 are
+      small, and 58 are MIG-24 candidates. `SpaceComplexity/` has 34 candidates.
+    - Each candidate needs reading before any factoring is scheduled.
+    - **Packaging waits for #118's gate:** it goes into #118's round 2 if there is one, or
+      otherwise becomes its own PR and gate.
+- **Lint check 8's blind spot (2026-10-16):** a definition counts as covered when any lemma is
+  named after it. `Cfg.liftSymbols` passed on `Cfg.liftSymbols_inputSymbol` alone, without its
+  field equations. **Proposed check 8b:** a structure-valued definition needs `simps` or a
+  lemma per field. Until then, inventories cross the definitions with their unfolding sites,
+  as MIG-12's did.
     - G4's partial helpers that unfold `zonedTape`, `zoneSlotOf` and `zoneCapacity` re-point
       to #116's lemmas in the continuation brief.
   - **Measured for issue (U2-S):** order 91, base sorry set 35 (cross-checked against the

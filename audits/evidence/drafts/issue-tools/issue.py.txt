@@ -1,0 +1,127 @@
+"""Issue the six briefs drafted at #118's head (maintainer tool; standard library only).
+
+Usage:
+  python3 -I issue.py plan
+      check every source exists and every draft has only the issue-time placeholders left
+  python3 -I issue.py apply <base-lean-short>
+      write the briefs and copy their inputs into the campaign worktree (wt-hk); no commit
+  python3 -I issue.py dispatch <inputs-commit-full>
+      write infra_local/fill-dispatches/<brief>.md with @ANCESTOR@ filled; print SHA-256s
+"""
+import hashlib, os, re, shutil, sys
+
+S = '/private/tmp/claude-501/-Users-seyoonr-phd-experiments-tcslib/8f0076bc-454a-4666-b8cf-f4c7ed13c549/scratchpad'
+WT = f'{S}/wt-hk'
+DR = f'{WT}/audits/evidence/drafts'
+II = f'{DR}/issue-inputs'
+PS = f'{S}/issue/preship'
+DISPATCH = '/Users/seyoonr/phd_experiments/tcslib/infra_local/fill-dispatches'
+
+def pre(b, names):
+    return [f'{PS}/{b}/{n}.out' for n in names]
+
+BRIEFS = [
+    dict(name='u2s-fill-startup', draft='u2s-fill-startup', logs='u2s-fill', ev='audits/evidence/u2s-fill',
+         files={'UniversalKOverlay.lean.txt': f'{II}/UniversalKOverlay.lean.txt',
+                'U2SImportProbe.lean.txt': f'{II}/U2SImportProbe.lean.txt',
+                'screen-population.txt': f'{II}/u2s-pop.txt'},
+         order=f'{II}/u2s-order.txt', sorries=f'{II}/u2s-sorries.txt', screen=f'{S}/issue-r3/u2s-screen-base-r3.txt',
+         preship=pre('u2s', ['UniversalKOverlay', 'U2SImportProbe'])),
+    dict(name='b6-fill-rulerdevice', draft='b6-fill-rulerdevice', logs='b6-fill-rulerdevice',
+         ev='audits/evidence/b6-fill-rulerdevice',
+         files={'InputDeviceOverlay.lean.txt': f'{II}/InputDeviceOverlay.lean.txt',
+                'B6F5ImportProbe.lean.txt': f'{II}/B6F5ImportProbe.lean.txt',
+                'screen-population.txt': f'{II}/f5-pop.txt'},
+         order=f'{II}/f5-order.txt', sorries=f'{II}/f5-sorries.txt', screen=f'{II}/f5-screen-base.txt',
+         preship=pre('f5', ['InputDeviceOverlay', 'B6F5ImportProbe'])),
+    dict(name='b6-fill-configclock-cont1', draft='b6-fill-configclock-cont1', logs='b6-fill-configclock-cont1',
+         ev='audits/evidence/b6-fill-configclock-cont1',
+         files={'WindowClockOverlay.lean.txt': f'{II}/WindowClockOverlay.lean.txt',
+                'F3ImportProbe.lean.txt': f'{II}/F3ImportProbe.lean.txt',
+                'screen-population.txt': f'{II}/f3-pop.txt'},
+         order=f'{II}/f3-order.txt', sorries=f'{II}/f3-sorries.txt', screen=f'{S}/issue-r3/f3-screen-base-r3.txt',
+         preship=pre('f3', ['WindowClockOverlay', 'F3ImportProbe', 'F3ConsumerProbe'])),
+    dict(name='b5a-fill-canon-cont6', draft='b5a-fill-canon-cont6', logs='b5a-fill-canon-cont6',
+         ev='audits/evidence/b5a-canon-cont6',
+         files={'CanonCont6ImportProbe.lean.txt': f'{II}/CanonCont6ImportProbe.lean.txt',
+                'b5a-canon-cont6-screen-population.txt': f'{II}/c6-pop.txt'},
+         order=f'{II}/c6-order.txt', sorries=f'{II}/c6-sorries.txt', screen=f'{S}/issue-r3/c6-screen-base-r3.txt',
+         preship=pre('c6', ['CodeSimulator', 'CanonCont6ImportProbe', 'CanonNote50', 'CanonNote50Walk',
+                            'CanonCont3ImportProbe', 'B5aStatementsProbe', 'B5aContPreShip',
+                            'S1210StatementsProbe'])),
+    dict(name='s13d-fill-g4-cont1', draft='s13d-fill-g4-cont1', logs='s13d-fill-g4-cont1',
+         ev='audits/evidence/s13d-g4-cont1',
+         files={'ZoneRebalanceOverlay.lean.txt': f'{II}/ZoneRebalanceOverlay.lean.txt',
+                'G4C1ImportProbe.lean.txt': f'{II}/G4C1ImportProbe.lean.txt',
+                'screen-population.txt': f'{II}/s13d-fill-g4-cont1-screen-population.txt',
+                'repoint.md': f'{DR}/s13d-g4-cont1/repoint.md',
+                'tools/mkoverlay.py': f'{II}/mkoverlay-g4c1.py',
+                'tools/home.lean.txt': f'{WT}/audits/evidence/s13d-g4-fill/tools/home.lean.txt'},
+         order=f'{II}/s13d-fill-g4-cont1-order.txt', sorries=f'{II}/s13d-fill-g4-cont1-base-sorries.txt',
+         screen=f'{S}/issue-r3/g4-screen-base-r3.txt',
+         preship=pre('g4', ['ZoneRebalanceOverlay', 'G4C1ImportProbe'])),
+    dict(name='mig12-fill-cfgrecord', draft='mig12-fill-cfgrecord', logs='mig12-fill', ev='audits/evidence/mig12-fill',
+         files={f: f'{DR}/mig12-fill/{f}' for f in [
+             'CfgRecordOverlay.lean.txt', 'MIG12ImportProbe.lean.txt', 'screen-population.txt',
+             'recordrun-uses.tsv', 'unfold-sites.tsv', 'frozen-publics.txt', 'cfgrecord-declarations.tsv',
+             'cfgrecord-external-uses.out', 'route-lemmas-enum.out', 'replay-closure.txt']},
+         order=f'{DR}/mig12-fill/mig12-fill-cfgrecord-order.txt', sorries=f'{DR}/mig12-fill/mig12-fill-base-sorries.txt',
+         screen=f'{S}/issue-r3/m12-screen-base-r3.txt',
+         preship=pre('m12', ['CfgRecordOverlay', 'MIG12ImportProbe'])),
+]
+
+ALLOWED = {'⟨BASE-LEAN⟩'}
+
+def sources(b):
+    return list(b['files'].values()) + [b['order'], b['sorries'], b['screen']] + b['preship'] + [f"{DR}/{b['draft']}.DRAFT.md"]
+
+def strip_banner(t):
+    # drop a leading "> **DRAFT …" block quote, if any
+    return re.sub(r'\n> \*\*DRAFT[^\n]*\n(?:>[^\n]*\n)*\n', '\n', t, count=1)
+
+def plan():
+    bad = 0
+    for b in BRIEFS:
+        miss = [p for p in sources(b) if not os.path.isfile(p)]
+        t = open(f"{DR}/{b['draft']}.DRAFT.md", encoding='utf-8').read()
+        ph = set(re.findall(r'⟨[A-Z][^⟩]*⟩', t)) - ALLOWED
+        anc = t.count('@ANCESTOR@')
+        print(f"{b['name']}: sources {len(sources(b)) - len(miss)}/{len(sources(b))}; "
+              f"other placeholders {sorted(ph)}; @ANCESTOR@ x{anc}" + (f"; MISSING {miss}" if miss else ''))
+        bad += len(miss) + len(ph) + (anc == 0)
+    print('plan:', 'OK' if bad == 0 else f'{bad} problems')
+    return bad
+
+def apply(base):
+    assert plan() == 0
+    for b in BRIEFS:
+        t = strip_banner(open(f"{DR}/{b['draft']}.DRAFT.md", encoding='utf-8').read())
+        assert t.count('⟨BASE-LEAN⟩') <= 1
+        t = t.replace('⟨BASE-LEAN⟩', f'`{base}`')
+        assert not re.search(r'⟨[A-Z][^⟩]*⟩', t)
+        open(f"{WT}/briefs/{b['name']}.md", 'w', encoding='utf-8').write(t)
+        for dst, src in b['files'].items():
+            d = f"{WT}/{b['ev']}/{dst}"; os.makedirs(os.path.dirname(d), exist_ok=True); shutil.copyfile(src, d)
+        shutil.copyfile(b['order'], f"{WT}/briefs/orders/{b.get('order_name', b['name'])}.txt")
+        shutil.copyfile(b['sorries'], f"{WT}/audits/logs/{b['logs']}-base-sorries.txt")
+        shutil.copyfile(b['screen'], f"{WT}/audits/logs/{b['logs']}-screen-base.txt")
+        with open(f"{WT}/audits/logs/{b['logs']}-preship.log", 'w', encoding='utf-8') as f:
+            f.write(f"# {b['name']}: pre-ship elaborations against the post-#118 snapshot, maintainer\n")
+            for p in b['preship']:
+                f.write(f"\n## {os.path.basename(p)}\n"); f.write(open(p, encoding='utf-8').read())
+        print('applied', b['name'])
+
+def dispatch(anc):
+    assert re.fullmatch(r'[0-9a-f]{40}', anc)
+    for b in BRIEFS:
+        t = open(f"{WT}/briefs/{b['name']}.md", encoding='utf-8').read()
+        assert '@ANCESTOR@' in t and not re.search(r'⟨[A-Z][^⟩]*⟩', t)
+        out = f"{DISPATCH}/{b['name']}.md"
+        open(out, 'w', encoding='utf-8').write(t.replace('@ANCESTOR@', anc))
+        print(hashlib.sha256(open(out, 'rb').read()).hexdigest(), b['name'])
+
+if __name__ == '__main__':
+    cmd = sys.argv[1]
+    if cmd == 'plan': sys.exit(1 if plan() else 0)
+    elif cmd == 'apply': apply(sys.argv[2])
+    elif cmd == 'dispatch': dispatch(sys.argv[2])

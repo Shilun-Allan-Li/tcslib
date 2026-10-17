@@ -1,0 +1,77 @@
+line	definition	module	category	tactic	source
+441	Turing.Cfg.mapState	TuringMachine.StateRenaming	definition	simp	| none => simp [Cfg.mapState, hs]
+444	Turing.Cfg.mapState	TuringMachine.StateRenaming	definition	simpa	have he : (⟨i, s⟩ : Σ i, Ph i) = v := by simpa [Cfg.mapState, hs] using h
+541	Turing.decFixed	TuringMachine.Build.CounterLoop	definition	simp	| nil => simp [decFixed] at h
+545	Turing.decFixed	TuringMachine.Build.CounterLoop	definition	simp	simp only [decFixed, Option.some.injEq] at h
+550	Turing.decFixed	TuringMachine.Build.CounterLoop	definition	simp	| none => simp [decFixed, htail] at h
+552	Turing.decFixed	TuringMachine.Build.CounterLoop	definition	simp	simp only [decFixed, htail, Option.map_some, Option.some.injEq] at h
+554	Turing.incFixed	TuringMachine.Build.Convention	definition	simp	simp [incFixed, ih v' htail]
+598	Turing.Action.apply	TuringMachine.Configuration	primitive	simp	simp only [Action.apply]
+639	Turing.Cfg.liftSymbols	TuringMachine.SymbolLift	definition	simp	· simp [embedEmitCfg, Cfg.liftSymbols]
+639	Turing.embedEmitCfg	TuringMachine.Build.Embed	definition	simp	· simp [embedEmitCfg, Cfg.liftSymbols]
+747	Turing.counterLoopOrbit	TuringMachine.Build.CounterLoop	abbrev	rw	rw [counterLoopOrbit, roundOrbit, Function.iterate_succ_apply']
+747	Turing.roundOrbit	TuringMachine.Build.Contract.Basic	definition	rw	rw [counterLoopOrbit, roundOrbit, Function.iterate_succ_apply']
+760	Turing.counterLoopOrbit	TuringMachine.Build.CounterLoop	abbrev	rw	rw [counterLoopOrbit, roundOrbit, Function.iterate_succ_apply']
+760	Turing.roundOrbit	TuringMachine.Build.Contract.Basic	definition	rw	rw [counterLoopOrbit, roundOrbit, Function.iterate_succ_apply']
+766	Turing.Cfg.inputSymbol	TuringMachine.Configuration	primitive	simp	have hin : a.inputSymbol = none := by simp [Cfg.inputSymbol, ha]
+776	Turing.Cfg.inputSymbol	TuringMachine.Configuration	primitive	simp	· simp [Cfg.inputSymbol, h0]
+778	Turing.Cfg.inputSymbol	TuringMachine.Configuration	primitive	simp	· simp [Cfg.inputSymbol, h0, hR]
+831	Turing.moveInputPos	TuringMachine.Configuration	primitive	simp	· have hpos : a.inputPos.val = 1 := by simp [a, moveInputPos, h0]
+839	Turing.moveInputPos	TuringMachine.Configuration	primitive	simp	· have hpos : a.inputPos.val = 1 := by simp [a, moveInputPos, h0]
+1522	Turing.Cfg.mapState	TuringMachine.StateRenaming	definition	simpa	simpa [Cfg.mapState, c, recordStepEntry, i] using hd.symm
+1579	Turing.Cfg.mapState	TuringMachine.StateRenaming	definition	simpa	simpa only [hr, Cfg.mapState] using hh t le_rfl j)
+1671	Turing.fieldOffset	TuringMachine.Build.Catalog	definition	simpa	simpa [cfgRecord, fieldOffset, w, L] using this
+1676	Turing.fieldOffset	TuringMachine.Build.Catalog	definition	simpa	simpa [cfgRecord, fieldOffset] using
+1682	Turing.fieldOffset	TuringMachine.Build.Catalog	definition	simpa	simpa [cfgRecord, fieldOffset, w] using
+1803	Turing.FinTM.bufferTape	TuringMachine.Simulation	definition	unfold	unfold FinTM.bufferTape
+2160	Turing.fieldOffset	TuringMachine.Build.Catalog	definition	simp	simp [cfg, recordStepSnapshot, fieldOffset]
+2180	Turing.fieldOffset	TuringMachine.Build.Catalog	definition	simpa	simpa only [cfg, fs, fieldOffset_cons_succ, fieldOffset, List.take_zero, List.map_nil,
+2253	Turing.FinTM.bufferTape	TuringMachine.Simulation	definition	unfold	· unfold FinTM.bufferTape
+2338	Turing.Cfg.mapState	TuringMachine.StateRenaming	definition	simpa	simpa [recordStepReadExit, halted, Cfg.mapState, recordStepSnapshot] using ht
+2454	Turing.FinTM.bufferTape	TuringMachine.Simulation	definition	simp	simp only [FinTM.bufferTape, if_pos hz, List.getElem?_eq_none hn,
+2456	Turing.FinTM.bufferTape	TuringMachine.Simulation	definition	simp	· simp only [FinTM.bufferTape, if_neg hz]
+2499	Turing.Cfg.mapState	TuringMachine.StateRenaming	definition	simpa	simpa [recordStepReadExit, live, empty, Cfg.mapState, recordStepSnapshot] using hphase
+2525	Turing.Cfg.mapState	TuringMachine.StateRenaming	definition	simpa	simpa [recordStepApply, outside, Cfg.mapState, recordStepSnapshot] using hphase
+2601	Turing.FinTM.bufferTape	TuringMachine.Simulation	definition	simp	simp only [FinTM.bufferTape, if_pos hn, List.getElem?_eq_none hl,
+2604	Turing.FinTM.bufferTape	TuringMachine.Simulation	definition	simp	· simp only [FinTM.bufferTape, if_neg hn]
+2618	Turing.Cfg.liftSymbols	TuringMachine.SymbolLift	definition	simp	· simp [row, embedEmitCfg, Cfg.liftSymbols]
+2618	Turing.embedEmitCfg	TuringMachine.Build.Embed	definition	simp	· simp [row, embedEmitCfg, Cfg.liftSymbols]
+2620	Turing.Cfg.liftSymbols	TuringMachine.SymbolLift	definition	simp	simp [row, embedEmitCfg, Cfg.liftSymbols]
+2620	Turing.embedEmitCfg	TuringMachine.Build.Embed	definition	simp	simp [row, embedEmitCfg, Cfg.liftSymbols]
+2627	Turing.Cfg.liftSymbols	TuringMachine.SymbolLift	definition	simpa	simpa [Cfg.liftSymbols] using (FinTM.bufferTape_map e (counterWord w (d.inputPos.val + 1))
+2641	Turing.Cfg.liftSymbols	TuringMachine.SymbolLift	definition	simp	· simp [row, embedEmitCfg, Cfg.liftSymbols]
+2641	Turing.embedEmitCfg	TuringMachine.Build.Embed	definition	simp	· simp [row, embedEmitCfg, Cfg.liftSymbols]
+2792	Turing.Cfg.mapState	TuringMachine.StateRenaming	definition	simpa	simpa [recordStepReadExit, live, wide, Cfg.mapState, recordStepSnapshot,
+2883	Turing.Cfg.mapState	TuringMachine.StateRenaming	definition	simpa	simpa [a, r, d', Cfg.mapState, recordStepSnapshot] using recordRun_trans ps pr
+2954	Turing.FinTM.bufferTape	TuringMachine.Simulation	definition	simp	simp only [FinTM.bufferTape, if_pos hneg, List.getElem?_eq_none hlarge,
+2956	Turing.FinTM.bufferTape	TuringMachine.Simulation	definition	simp	· simp only [FinTM.bufferTape, if_neg hneg]
+2982	Turing.Cfg.liftSymbols	TuringMachine.SymbolLift	definition	simpa	simpa [last, raw, bank, e, Cfg.liftSymbols] using (FinTM.bufferTape_map e v (z - d.workTapePos (bank 0))).symm
+2994	Turing.Cfg.liftSymbols	TuringMachine.SymbolLift	definition	simp	· simp [embedEmitCfg, last, raw, Cfg.liftSymbols]
+2994	Turing.embedEmitCfg	TuringMachine.Build.Embed	definition	simp	· simp [embedEmitCfg, last, raw, Cfg.liftSymbols]
+3087	Turing.Cfg.mapState	TuringMachine.StateRenaming	definition	simpa	simpa [next, flag, hp', successor, residual, fuel, e, Cfg.mapState, recordStepSnapshot] using pm
+3113	Turing.Cfg.mapState	TuringMachine.StateRenaming	definition	simpa	simpa [a, next, flag, Cfg.mapState, recordStepSnapshot] using pm
+3117	Turing.Cfg.mapState	TuringMachine.StateRenaming	definition	simpa	· simpa [hp', residual, fuel, e, Cfg.mapState, recordStepSnapshot] using recordRun_trans pm' pd
+3216	Turing.Cfg.mapState	TuringMachine.StateRenaming	definition	simpa	simpa [a, cur, w, Cfg.mapState, recordStepSnapshot] using recordRun_trans ps' pc')
+3221	Turing.Cfg.mapState	TuringMachine.StateRenaming	definition	simpa	· simpa [cur, Cfg.mapState, recordStepSnapshot] using total
+3327	Turing.Cfg.workTapeSymbols	TuringMachine.Configuration	primitive	simp	simp [data, recordStepReadData, Cfg.workTapeSymbols]
+3335	Turing.MultiTapeTM.step	TuringMachine.Deterministic	primitive	rw	rw [action, MultiTapeTM.step, hq]
+3337	Turing.MultiTapeTM.outputSymbol	TuringMachine.Deterministic	primitive	rw	· rw [action, MultiTapeTM.outputSymbol, hq]
+3397	Turing.FinTM.bufferTape	TuringMachine.Simulation	definition	simp	· simp [FinTM.bufferTape, wlen, len]
+3462	Turing.Cfg.mapState	TuringMachine.StateRenaming	definition	simpa	simpa [first, middle, final, patch, Cfg.mapState, word, a, len] using total
+3532	Turing.Cfg.mapState	TuringMachine.StateRenaming	definition	simpa	simpa [a, changed, Cfg.mapState, recordStepSnapshot] using total
+3617	Turing.Cfg.mapState	TuringMachine.StateRenaming	definition	simpa	simpa [cfg, next, Cfg.mapState, recordStepSnapshot] using segment
+3629	Turing.Cfg.mapState	TuringMachine.StateRenaming	definition	simpa	simpa [cfg, next, Cfg.mapState, recordStepSnapshot] using segment
+3631	Turing.fieldOffset	TuringMachine.Build.Catalog	definition	simpa	simpa [cfg, L, fieldOffset] using returns (k + 1) (by omega)
+3706	Turing.Cfg.mapState	TuringMachine.StateRenaming	definition	simpa	simpa [unchanged, Cfg.mapState, recordStepSnapshot, wl] using phase
+3744	Turing.Cfg.mapState	TuringMachine.StateRenaming	definition	simpa	simpa [raw, last, Cfg.mapState, recordStepSnapshot] using h
+3753	Turing.Cfg.mapState	TuringMachine.StateRenaming	definition	simpa	simpa [raw, last, Cfg.mapState, recordStepSnapshot] using h
+3843	Turing.fieldOffset	TuringMachine.Build.Catalog	definition	simpa	simpa only [fieldOffset, List.map_take] using congrArg (fun ns : List ℕ => (ns.take j).sum) sizes
+3915	Turing.FinTM.bufferTape	TuringMachine.Simulation	definition	simpa	simpa [FinTM.bufferTape] using hf
+4220	Turing.fieldOffset	TuringMachine.Build.Catalog	definition	simpa	simpa only [fieldOffset, List.take_zero, List.map_nil, List.sum_nil, Nat.cast_zero, zero_add, add_zero] using f.trans g.symm
+4263	Turing.fieldsTape	TuringMachine.Build.Catalog	definition	simp	fieldsTape gs (L : ℤ) = none := by rw [← sameLength]; simp [fieldsTape]
+4264	Turing.fieldsTape	TuringMachine.Build.Catalog	definition	simpa	_ = d.workTapes 0 (d.workTapePos 0 + (L : ℤ)) := by simpa [L, fieldsTape] using old.symm
+4635	Turing.fieldOffset	TuringMachine.Build.Catalog	definition	unfold	have hoff : fieldOffset fs j = fieldOffset gs j := by unfold fieldOffset; rw [he]
+4904	Turing.fieldOffset	TuringMachine.Build.Catalog	definition	simp	· funext i; simp [cfg, fieldOffset]
+4920	Turing.fieldOffset	TuringMachine.Build.Catalog	definition	simp	simp [cfg, fieldOffset]
+5265	Turing.fieldOffset	TuringMachine.Build.Catalog	definition	simp	· funext i; simp [cfg, fieldOffset]
+5284	Turing.fieldOffset	TuringMachine.Build.Catalog	definition	simp	· funext i; simp [cfg, fieldOffset]

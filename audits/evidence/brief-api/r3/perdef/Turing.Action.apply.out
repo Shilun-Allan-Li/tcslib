@@ -1,0 +1,321 @@
+PerDef_CfgRecord.lean:593:23: error: Application type mismatch: The argument
+  h.left i
+has type
+  |(a.apply c).workTapePos i| ≤ ↑s
+but is expected to have type
+  |c.workTapePos i + ↑(a.workTapes i).2| ≤ ↑s
+in the application
+  (heads i).mp (h.left i)
+PerDef_CfgRecord.lean:595:21: error: Type mismatch
+  (heads i).mpr (h i)
+has type
+  |c.workTapePos i + ↑(a.workTapes i).2| ≤ ↑s
+but is expected to have type
+  |(a.apply c).workTapePos i| ≤ ↑s
+PerDef_CfgRecord.lean:1262:2: error: Type mismatch
+  recordStep_cell_shift s ((a.apply c).workTapes i) (c.workTapePos i) (hc.left i) (a.workTapes i).2
+has type
+  have w :=
+    List.map (fun j => RecSym.cell ((a.apply c).workTapes i (↑j - ↑s)) (decide (c.workTapePos i = ↑j - ↑s)))
+      (List.range (2 * s + 1));
+  (match (a.workTapes i).2 with
+    | SignType.neg => (scanResult scanKeep (scanShift recordStepGetMark recordStepSetMark) false w).2
+    | SignType.zero => (scanResult scanKeep scanKeep false w).2
+    | SignType.pos => (scanResult (scanShift recordStepGetMark recordStepSetMark) scanKeep false w).2) =
+    List.map
+      (fun j =>
+        RecSym.cell ((a.apply c).workTapes i (↑j - ↑s)) (decide (c.workTapePos i + ↑(a.workTapes i).2 = ↑j - ↑s)))
+      (List.range (2 * s + 1))
+but is expected to have type
+  (match (a.workTapes i).2 with
+    | SignType.neg =>
+      (scanResult scanKeep (scanShift recordStepGetMark recordStepSetMark) false
+          (List.map (fun j => RecSym.cell ((a.apply c).workTapes i (↑j - ↑s)) (decide (c.workTapePos i = ↑j - ↑s)))
+            (List.range (2 * s + 1)))).2
+    | SignType.zero =>
+      (scanResult scanKeep scanKeep false
+          (List.map (fun j => RecSym.cell ((a.apply c).workTapes i (↑j - ↑s)) (decide (c.workTapePos i = ↑j - ↑s)))
+            (List.range (2 * s + 1)))).2
+    | SignType.pos =>
+      (scanResult (scanShift recordStepGetMark recordStepSetMark) scanKeep false
+          (List.map (fun j => RecSym.cell ((a.apply c).workTapes i (↑j - ↑s)) (decide (c.workTapePos i = ↑j - ↑s)))
+            (List.range (2 * s + 1)))).2) =
+    List.map (fun j => RecSym.cell ((a.apply c).workTapes i (↑j - ↑s)) (decide ((a.apply c).workTapePos i = ↑j - ↑s)))
+      (List.range (2 * s + 1))
+PerDef_CfgRecord.lean:3768:2: error: 'change' tactic failed, pattern
+  (match a.inputTape with
+    | SignType.zero => some w
+    | SignType.neg => if ↑c.inputPos = 0 then some w else decFixed w
+    | SignType.pos => if (c.inputSymbol.isNone && !decide (↑c.inputPos = 0)) = true then some w else incFixed w) =
+    some v
+is not definitionally equal to target
+  (match a.inputTape with
+    | SignType.zero => some (binDigits (posWidth x.length) ↑c.inputPos)
+    | SignType.neg =>
+      if ↑c.inputPos = 0 then some (binDigits (posWidth x.length) ↑c.inputPos)
+      else decFixed (binDigits (posWidth x.length) ↑c.inputPos)
+    | SignType.pos =>
+      if (c.inputSymbol.isNone && !decide (↑c.inputPos = 0)) = true then
+        some (binDigits (posWidth x.length) ↑c.inputPos)
+      else incFixed (binDigits (posWidth x.length) ↑c.inputPos)) =
+    some (binDigits (posWidth x.length) ↑(moveInputPos c.inputPos a.inputTape))
+PerDef_CfgRecord.lean:4023:61: error: Tactic `rfl` failed: The left-hand side
+  gs[0]
+is not definitionally equal to the right-hand side
+  [RecSym.st a.state]
+
+k : ℕ
+Q T S : Type
+inst✝² : DecidableEq Q
+inst✝¹ : DecidableEq T
+inst✝ : DecidableEq S
+M : MultiTapeTM k Bool Q
+upd : T → Option Bool → T
+seek : MultiTapeTM 2 Bool S
+start finish : S
+x : List Bool
+s : ℕ
+c : Cfg k Bool Q x
+τ : T
+hc : Cfg.InWindow s c
+data : RecordStepData k Q T
+hinput : data.input = c.inputSymbol
+hzero : data.posZero = decide (↑c.inputPos = 0)
+htag : data.tag = some τ
+d : Cfg 4 (RecSym Q T) (RecordStepControl k Q T S) (List.map (⇑(RecSym.digitEmb Q T)) x)
+hrec : RecordAt d 0 (cfgRecord s c τ)
+blank : ∀ (j : Fin 4), j ≠ 0 → ∀ (z : ℤ), d.workTapes j z = none
+a : Action k Bool Q := recordStepAction M data
+fs : List (List (RecSym Q T)) := cfgRecord s c τ
+gs : List (List (RecSym Q T)) := cfgRecord s (a.apply c) (upd τ a.output)
+L : ℕ := (joinFields fs).length
+w : List (RecSym Q T) := List.map (⇑(RecSym.digitEmb Q T)) (binDigits (posWidth x.length) ↑c.inputPos)
+cfg : {A : Type} → A → ℕ → ℕ → List (RecSym Q T) → Cfg 4 (RecSym Q T) A (List.map (⇑(RecSym.digitEmb Q T)) x) :=
+  fun {A} q head cut b =>
+    recordStepSnapshot
+      { state := d.state, inputPos := d.inputPos,
+        workTapes := fun j z =>
+          if j = 0 ∧ d.workTapePos j ≤ z ∧ z < d.workTapePos j + ↑cut then fieldsTape gs (z - d.workTapePos j)
+          else d.workTapes j z,
+        workTapePos := d.workTapePos, output := d.output }
+      q (↑head) b []
+snap :
+  ∀ {A B : Type} (q : A) (q' : B) (head cut p : ℕ) (b : List (RecSym Q T)),
+    recordStepSnapshot (cfg q head cut []) q' (↑p) b [] = cfg q' (head + p) cut b
+snap0 :
+  ∀ {A B : Type} (q : A) (q' : B) (head cut : ℕ) (b : List (RecSym Q T)),
+    recordStepSnapshot (cfg q head cut []) q' 0 b [] = cfg q' head cut b
+flen : fs.length = k + 3
+glen : gs.length = k + 3
+lengths : List.map List.length fs = List.map List.length gs
+sizes : List.map (fun u => u.length + 1) fs = List.map (fun u => u.length + 1) gs
+offsets : ∀ (j : ℕ), fieldOffset fs j = fieldOffset gs j
+sameLength : (joinFields gs).length = L
+len : ∀ (j : ℕ) (hj : j < k + 3), gs[j].length = fs[j].length
+oldField :
+  ∀ (j : ℕ) (hj : j < k + 3) (z : ℤ),
+    -1 ≤ z → z ≤ ↑fs[j].length → d.workTapes 0 (d.workTapePos 0 + ↑(fieldOffset fs j) + z) = FinTM.bufferTape fs[j] z
+newField :
+  ∀ (j : ℕ) (hj : j < k + 3) (z : ℤ),
+    -1 ≤ z → z ≤ ↑fs[j].length → fieldsTape gs (↑(fieldOffset fs j) + z) = FinTM.bufferTape gs[j] z
+field :
+  ∀ {A : Type} (q : A) (j : ℕ) (hj : j < k + 3) (b : List (RecSym Q T)) (z : ℤ),
+    -1 ≤ z →
+      z ≤ ↑fs[j].length →
+        (cfg q (fieldOffset fs j) (fieldOffset fs j) b).workTapes 0
+            ((cfg q (fieldOffset fs j) (fieldOffset fs j) b).workTapePos 0 + z) =
+          FinTM.bufferTape fs[j] z
+extend :
+  ∀ {A : Type} (q : A) (j : ℕ) (hj : j < k + 3) (b : List (RecSym Q T)),
+    (let __src := cfg q (fieldOffset fs j) (fieldOffset fs j) b;
+      { state := __src.state, inputPos := __src.inputPos,
+        workTapes := fun i z =>
+          if
+              i = 0 ∧
+                (cfg q (fieldOffset fs j) (fieldOffset fs j) b).workTapePos i ≤ z ∧
+                  z < (cfg q (fieldOffset fs j) (fieldOffset fs j) b).workTapePos i + ↑fs[j].length then
+            FinTM.bufferTape gs[j] (z - (cfg q (fieldOffset fs j) (fieldOffset fs j) b).workTapePos i)
+          else (cfg q (fieldOffset fs j) (fieldOffset fs j) b).workTapes i z,
+        workTapePos := __src.workTapePos, output := __src.output }) =
+      cfg q (fieldOffset fs j) (fieldOffset fs (j + 1)) b
+processed :
+  ∀ {A : Type} (q : A) (j : ℕ) (hj : j < k + 3) (b : List (RecSym Q T)) (z : ℤ),
+    -1 ≤ z →
+      z ≤ ↑fs[j].length →
+        (cfg q (fieldOffset fs j) (fieldOffset fs (j + 1)) b).workTapes 0
+            ((cfg q (fieldOffset fs j) (fieldOffset fs (j + 1)) b).workTapePos 0 + z) =
+          FinTM.bufferTape gs[j] z
+shift :
+  ∀ {A : Type} (q : A) (head cut : ℕ) (b : List (RecSym Q T))
+    {u v : Cfg 4 (RecSym Q T) (RecordStepControl k Q T S) (List.map (⇑(RecSym.digitEmb Q T)) x)} {t r : ℕ},
+    RecordRun (recordStepMachine M upd seek start finish) (recordStepVerdict true) (recordStepVerdict false)
+        (cfg q head cut b).workTapePos r u v t →
+      head + r ≤ L + 1 →
+        RecordRun (recordStepMachine M upd seek start finish) (recordStepVerdict true) (recordStepVerdict false)
+          d.workTapePos (L + 1) u v t
+mapRaw :
+  ∀ (j : ℕ) (hj : j < k + 3) (b : List (RecSym Q T)) (f : RecSym Q T → RecSym Q T),
+    List.map f fs[j] = gs[j] →
+      let raw := cfg (ScanPhase.fwd ()) (fieldOffset fs j) (fieldOffset fs j) b;
+      let row := scanTM 4 0 (scanMap f) scanKeep ();
+      MultiTapeTM.runFrom raw (2 * fs[j].length + 2) =
+          cfg (ScanPhase.done ()) (fieldOffset fs j) (fieldOffset fs (j + 1)) b ∧
+        (∀ u < 2 * fs[j].length + 2, ∀ (v : Unit), (MultiTapeTM.runFrom raw u).state ≠ some (ScanPhase.done v)) ∧
+          ∀ u ≤ 2 * fs[j].length + 2,
+            ∀ (i : Fin 4), |(MultiTapeTM.runFrom raw u).workTapePos i - d.workTapePos i| ≤ ↑(L + 1)
+skipRaw :
+  ∀ (j : ℕ) (hj : j < k + 2) (b : List (RecSym Q T)),
+    let raw := cfg SeekPhase.run (fieldOffset fs j) (fieldOffset fs (j + 1)) b;
+    MultiTapeTM.runFrom raw fs[j].length.succ = cfg SeekPhase.done (fieldOffset fs (j + 1)) (fieldOffset fs (j + 1)) b ∧
+      (∀ u < fs[j].length + 1, (MultiTapeTM.runFrom raw u).state ≠ some SeekPhase.done) ∧
+        ∀ u ≤ fs[j].length + 1, ∀ (i : Fin 4), |(MultiTapeTM.runFrom raw u).workTapePos i - d.workTapePos i| ≤ ↑(L + 1)
+posEntry : RecordStepControl k Q T S :=
+  match a.inputTape with
+  | SignType.zero => ⟨(RecordStepStage.clearB, data), SweepPhase.sweep⟩
+  | SignType.neg =>
+    if data.posZero = true then ⟨(RecordStepStage.clearB, data), SweepPhase.sweep⟩
+    else ⟨(RecordStepStage.decB, data), FlagPhase.run⟩
+  | SignType.pos =>
+    if (data.input.isNone && !data.posZero) = true then ⟨(RecordStepStage.clearB, data), SweepPhase.sweep⟩
+    else ⟨(RecordStepStage.incB, data), FlagPhase.run⟩
+first : fs[0] = [RecSym.st c.state]
+⊢ gs[0] = [RecSym.st a.state]
+PerDef_CfgRecord.lean:4124:114: error: unsolved goals
+k : ℕ
+Q T S : Type
+inst✝² : DecidableEq Q
+inst✝¹ : DecidableEq T
+inst✝ : DecidableEq S
+M : MultiTapeTM k Bool Q
+upd : T → Option Bool → T
+seek : MultiTapeTM 2 Bool S
+start finish : S
+x : List Bool
+s : ℕ
+c : Cfg k Bool Q x
+τ : T
+hc : Cfg.InWindow s c
+data : RecordStepData k Q T
+hinput : data.input = c.inputSymbol
+hzero : data.posZero = decide (↑c.inputPos = 0)
+htag : data.tag = some τ
+d : Cfg 4 (RecSym Q T) (RecordStepControl k Q T S) (List.map (⇑(RecSym.digitEmb Q T)) x)
+hrec : RecordAt d 0 (cfgRecord s c τ)
+blank : ∀ (j : Fin 4), j ≠ 0 → ∀ (z : ℤ), d.workTapes j z = none
+a : Action k Bool Q := recordStepAction M data
+fs : List (List (RecSym Q T)) := cfgRecord s c τ
+gs : List (List (RecSym Q T)) := cfgRecord s (a.apply c) (upd τ a.output)
+L : ℕ := (joinFields fs).length
+w : List (RecSym Q T) := List.map (⇑(RecSym.digitEmb Q T)) (binDigits (posWidth x.length) ↑c.inputPos)
+cfg : {A : Type} → A → ℕ → ℕ → List (RecSym Q T) → Cfg 4 (RecSym Q T) A (List.map (⇑(RecSym.digitEmb Q T)) x) :=
+  fun {A} q head cut b =>
+    recordStepSnapshot
+      { state := d.state, inputPos := d.inputPos,
+        workTapes := fun j z =>
+          if j = 0 ∧ d.workTapePos j ≤ z ∧ z < d.workTapePos j + ↑cut then fieldsTape gs (z - d.workTapePos j)
+          else d.workTapes j z,
+        workTapePos := d.workTapePos, output := d.output }
+      q (↑head) b []
+snap :
+  ∀ {A B : Type} (q : A) (q' : B) (head cut p : ℕ) (b : List (RecSym Q T)),
+    recordStepSnapshot (cfg q head cut []) q' (↑p) b [] = cfg q' (head + p) cut b
+snap0 :
+  ∀ {A B : Type} (q : A) (q' : B) (head cut : ℕ) (b : List (RecSym Q T)),
+    recordStepSnapshot (cfg q head cut []) q' 0 b [] = cfg q' head cut b
+flen : fs.length = k + 3
+glen : gs.length = k + 3
+lengths : List.map List.length fs = List.map List.length gs
+sizes : List.map (fun u => u.length + 1) fs = List.map (fun u => u.length + 1) gs
+offsets : ∀ (j : ℕ), fieldOffset fs j = fieldOffset gs j
+sameLength : (joinFields gs).length = L
+len : ∀ (j : ℕ) (hj : j < k + 3), gs[j].length = fs[j].length
+oldField :
+  ∀ (j : ℕ) (hj : j < k + 3) (z : ℤ),
+    -1 ≤ z → z ≤ ↑fs[j].length → d.workTapes 0 (d.workTapePos 0 + ↑(fieldOffset fs j) + z) = FinTM.bufferTape fs[j] z
+newField :
+  ∀ (j : ℕ) (hj : j < k + 3) (z : ℤ),
+    -1 ≤ z → z ≤ ↑fs[j].length → fieldsTape gs (↑(fieldOffset fs j) + z) = FinTM.bufferTape gs[j] z
+field :
+  ∀ {A : Type} (q : A) (j : ℕ) (hj : j < k + 3) (b : List (RecSym Q T)) (z : ℤ),
+    -1 ≤ z →
+      z ≤ ↑fs[j].length →
+        (cfg q (fieldOffset fs j) (fieldOffset fs j) b).workTapes 0
+            ((cfg q (fieldOffset fs j) (fieldOffset fs j) b).workTapePos 0 + z) =
+          FinTM.bufferTape fs[j] z
+extend :
+  ∀ {A : Type} (q : A) (j : ℕ) (hj : j < k + 3) (b : List (RecSym Q T)),
+    (let __src := cfg q (fieldOffset fs j) (fieldOffset fs j) b;
+      { state := __src.state, inputPos := __src.inputPos,
+        workTapes := fun i z =>
+          if
+              i = 0 ∧
+                (cfg q (fieldOffset fs j) (fieldOffset fs j) b).workTapePos i ≤ z ∧
+                  z < (cfg q (fieldOffset fs j) (fieldOffset fs j) b).workTapePos i + ↑fs[j].length then
+            FinTM.bufferTape gs[j] (z - (cfg q (fieldOffset fs j) (fieldOffset fs j) b).workTapePos i)
+          else (cfg q (fieldOffset fs j) (fieldOffset fs j) b).workTapes i z,
+        workTapePos := __src.workTapePos, output := __src.output }) =
+      cfg q (fieldOffset fs j) (fieldOffset fs (j + 1)) b
+processed :
+  ∀ {A : Type} (q : A) (j : ℕ) (hj : j < k + 3) (b : List (RecSym Q T)) (z : ℤ),
+    -1 ≤ z →
+      z ≤ ↑fs[j].length →
+        (cfg q (fieldOffset fs j) (fieldOffset fs (j + 1)) b).workTapes 0
+            ((cfg q (fieldOffset fs j) (fieldOffset fs (j + 1)) b).workTapePos 0 + z) =
+          FinTM.bufferTape gs[j] z
+shift :
+  ∀ {A : Type} (q : A) (head cut : ℕ) (b : List (RecSym Q T))
+    {u v : Cfg 4 (RecSym Q T) (RecordStepControl k Q T S) (List.map (⇑(RecSym.digitEmb Q T)) x)} {t r : ℕ},
+    RecordRun (recordStepMachine M upd seek start finish) (recordStepVerdict true) (recordStepVerdict false)
+        (cfg q head cut b).workTapePos r u v t →
+      head + r ≤ L + 1 →
+        RecordRun (recordStepMachine M upd seek start finish) (recordStepVerdict true) (recordStepVerdict false)
+          d.workTapePos (L + 1) u v t
+mapRaw :
+  ∀ (j : ℕ) (hj : j < k + 3) (b : List (RecSym Q T)) (f : RecSym Q T → RecSym Q T),
+    List.map f fs[j] = gs[j] →
+      let raw := cfg (ScanPhase.fwd ()) (fieldOffset fs j) (fieldOffset fs j) b;
+      let row := scanTM 4 0 (scanMap f) scanKeep ();
+      MultiTapeTM.runFrom raw (2 * fs[j].length + 2) =
+          cfg (ScanPhase.done ()) (fieldOffset fs j) (fieldOffset fs (j + 1)) b ∧
+        (∀ u < 2 * fs[j].length + 2, ∀ (v : Unit), (MultiTapeTM.runFrom raw u).state ≠ some (ScanPhase.done v)) ∧
+          ∀ u ≤ 2 * fs[j].length + 2,
+            ∀ (i : Fin 4), |(MultiTapeTM.runFrom raw u).workTapePos i - d.workTapePos i| ≤ ↑(L + 1)
+skipRaw :
+  ∀ (j : ℕ) (hj : j < k + 2) (b : List (RecSym Q T)),
+    let raw := cfg SeekPhase.run (fieldOffset fs j) (fieldOffset fs (j + 1)) b;
+    MultiTapeTM.runFrom raw fs[j].length.succ = cfg SeekPhase.done (fieldOffset fs (j + 1)) (fieldOffset fs (j + 1)) b ∧
+      (∀ u < fs[j].length + 1, (MultiTapeTM.runFrom raw u).state ≠ some SeekPhase.done) ∧
+        ∀ u ≤ fs[j].length + 1, ∀ (i : Fin 4), |(MultiTapeTM.runFrom raw u).workTapePos i - d.workTapePos i| ≤ ↑(L + 1)
+posEntry : RecordStepControl k Q T S :=
+  match a.inputTape with
+  | SignType.zero => ⟨(RecordStepStage.clearB, data), SweepPhase.sweep⟩
+  | SignType.neg =>
+    if data.posZero = true then ⟨(RecordStepStage.clearB, data), SweepPhase.sweep⟩
+    else ⟨(RecordStepStage.decB, data), FlagPhase.run⟩
+  | SignType.pos =>
+    if (data.input.isNone && !data.posZero) = true then ⟨(RecordStepStage.clearB, data), SweepPhase.sweep⟩
+    else ⟨(RecordStepStage.incB, data), FlagPhase.run⟩
+stateRun :
+  RecordRun (recordStepMachine M upd seek start finish) (recordStepVerdict true) (recordStepVerdict false) d.workTapePos
+    (L + 1) (cfg ⟨(RecordStepStage.writeState, data), ScanPhase.fwd ()⟩ 0 0 w)
+    (cfg posEntry (fieldOffset fs 1) (fieldOffset fs 1) w) 8
+tapeState : ℕ → RecordStepControl k Q T S :=
+  fun r =>
+    if h : r < k then ⟨(RecordStepStage.writeTape ⟨r, h⟩, data), ScanPhase.fwd ()⟩
+    else ⟨(RecordStepStage.writeTag, data), ScanPhase.fwd ()⟩
+positionRun :
+  ∃ t ≤ 8 * (L + 1),
+    RecordRun (recordStepMachine M upd seek start finish) (recordStepVerdict true) (recordStepVerdict false)
+      d.workTapePos (L + 1) (cfg posEntry (fieldOffset fs 1) (fieldOffset fs 1) w)
+      (cfg (tapeState 0) (fieldOffset fs 2) (fieldOffset fs 2) []) t
+r : ℕ
+hr : r < k
+i : Fin k := ⟨r, hr⟩
+word :
+  fs[r + 2] =
+    List.map (fun z => RecSym.cell (c.workTapes i (↑z - ↑s)) (decide (c.workTapePos i = ↑z - ↑s)))
+      (List.range (2 * s + 1))
+⊢ ∀ a_1 < 2 * s + 1,
+    decide (c.workTapePos ⟨r, ⋯⟩ + ↑(a.workTapes ⟨r, ⋯⟩).2 = ↑a_1 - ↑s) =
+      decide (c.workTapePos ⟨r, hr⟩ + ↑(a.workTapes ⟨r, hr⟩).2 = ↑a_1 - ↑s)
+exit=1 elapsed=22s

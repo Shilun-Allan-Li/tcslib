@@ -10,12 +10,16 @@
     `audits/u2-statements-findings.md`, PASS 0/0/2, resolutions `audits/u2-statements-resolutions.md`).
     The auditor's constructive outline of your target is the gate's "four admitted contracts",
     item 2;
-  - **the prefix canonizer, generic in the canonizer** (PR ⟨PCANON-PR⟩, `UniversalStartup`):
+  - **the prefix canonizer, generic in the canonizer** (PR #110, `UniversalStartup`):
     `Turing.prefixCanonTM` with `prefixCanon_start`, `prefixCanon_run` and `prefixCanon_complete`,
     promoted for you (user, 2026-10-15);
   - **the cleaned machine** `Complexity.LogProg.cleanTM` (`SpaceComplexity/Machines/Clean`, by
     Hydroxyi) with `cleanTM_run`. You cite it as it is, under the one import this brief
     authorizes (user, 2026-10-15);
+  - **the API PRs** (the user's "Everything" rule, 2026-10-16: every definition your route reads
+    has a published lemma): the specification API (PR #112), the core API (PR #116) and the
+    brief-inventory API (PR #118, which gives the buffered composite's and the prefix machines'
+    tape counts and state types for this brief);
   - the returning silent embedding `Turing.embedSilentRetTM` (`Build/Embed`), the catalog rows
     (`Build/Catalog`), the phase host and R2 seams (`Build/Seam`);
   - the fill-agent environment addendum `briefs/fill-environment-addendum.md`, and the
@@ -41,14 +45,17 @@
 
 ## Base, line numbers and what lands around you
 
-- **Your base's Lean content is the campaign tip after PR ⟨PCANON-PR⟩** (⟨PCANON-LEAN⟩). The
-  inputs commit adds no Lean change. Lines in this brief are those of that tree.
-  `UniversalK.lean` is unchanged since #102 (279 lines). Every probe and measurement below was run
-  there, against the olean snapshot of that PR's replay.
+- **Your base's Lean content is the campaign tip after #118** (⟨BASE-LEAN⟩). The inputs commit
+  adds no Lean change. Lines in this brief are those of that tree. `UniversalK.lean` is unchanged
+  since #102 (279 lines). Every probe and measurement below was run there, against the olean
+  snapshot of #118's round-3 replay (`oleans-lbapi4`).
 - **In flight, merging after your base and invisible to it:**
-  - H2-F (`Build/StepBlockForward`, the same campaign's other U2 fill);
-  - the canonizer's continuation 5 (`CodeSimulator`);
-  - B6 F3 (`WindowClock`), G4 (`ZoneRebalance`), and MIG-1's batches.
+  - B6 F5 (`Build/InputDevice`) and the B6 F3 continuation (`SpaceComplexity/WindowClock`);
+  - the canonizer's continuation 6 (`CodeSimulator`);
+  - G4's continuation (`Build/ZoneRebalance`), MIG-12 (`Build/CfgRecord`), and MIG-1's batches;
+  - the C1 PRs #119, #120 and #121 (new equations in the nondeterministic model, `Build/NDHost`,
+    `Build/StepClock`, `Build/StepBlock` and `Build/VirtualInput`, and new statements in two new
+    modules; declarations only).
 
   Cite nothing they add.
 
@@ -70,8 +77,12 @@
   (`SelfUniversal.lean`).
 - **The fill gate** covers this target with H2-F and U2-U (design note §6).
 
-**The published lemmas your route reads** (the core API, PR #116, and the specification API, PR
-#112; ground rule 10):
+**The published lemmas your route reads** (the core API, PR #116, the specification API, PR
+#112, and the brief-inventory API, PR #118; ground rule 10):
+- `FinTM.bufferedCompTM_k`, `FinTM.bufferedCompTM_State`, `universalPrefixTM_k`,
+  `universalPrefixTM_State` and `prefixCanonTM_eq` (#118): the prefix canonizer's tape count and
+  state type, for placing it in your host; `FinTM.VirtualTag_iff` (#118), if you cite
+  `bufferedSecondCfg_run` directly;
 - `serializeK_eq`, `pairEncode_eq`, `unaryFin_eq`: the captured word's shape;
 - `MultiTapeTM.initCfg_eq` and `Cfg.init_*`: the starting configurations (for `cleanTM_run`);
 - `MultiTapeTM.initCfg_with_q₀` and `MultiTapeTM.runFrom_with_q₀`: the restarted machine's start
@@ -99,11 +110,11 @@
 - `Build/Embed.lean`: `embedSilentCfg`, `embedSilentRetTM`, `embedSilentRetTM_run`,
   `embedSilentRetTM_visitedByTapeHead`.
 
-**Pre-ship check** (maintainer, at the base, against ⟨SNAPSHOT⟩; `audits/logs/u2s-fill-preship.log`):
+**Pre-ship check** (maintainer, at the base, against `oleans-lbapi4`; `audits/logs/u2s-fill-preship.log`):
 - **The import overlay** (`audits/evidence/u2s-fill/UniversalKOverlay.lean.txt`): your file with
   the one authorized import added after line 9. It elaborates with your target's sorry warning
   and the other two, and nothing else.
-- **The import probe** (`audits/evidence/u2s-fill/U2SImportProbe.lean.txt`, ⟨N⟩ `#check`s): every
+- **The import probe** (`audits/evidence/u2s-fill/U2SImportProbe.lean.txt`, 100 `#check`s): every
   public declaration this brief cites resolves from the overlay's import context. 0 errors,
   0 warnings. Re-run it after your delivery.
 
@@ -212,12 +223,14 @@ A partial may leave only the target open. Insert a helper only once it is proved
 
 ## Cited infrastructure (public and proved at the issue commit; all in `U2SImportProbe.lean.txt`)
 
-The probe's ⟨N⟩ names, in five groups:
+The probe's 100 names, in seven groups:
 - the target and the scheme;
 - the prefix canonizer and buffered composition;
 - the cleaned machine;
 - embedding, capture and composition;
-- the catalog rows and the rewind.
+- the catalog rows and the rewind;
+- the brief-inventory API (#118);
+- the renamings' field equations (#118's round 2).
 
 **Proved modulo, exactly:** none. A complete delivery has no `sorryAx` in the target.
 
@@ -246,11 +259,13 @@ The probe's ⟨N⟩ names, in five groups:
 10. **The pinned base, and no unfolding (user, 2026-10-16).**
     - Cite only declarations public at your base, and your file's own privates.
     - **Never unfold a definition of another file.** Read every definition through its published
-      lemmas: the equation and field lemmas of the specification API (PR #112) and the core API
-      (PR #116), and the landed lemmas the probe lists.
+      lemmas: the equation and field lemmas of the specification API (PR #112), the core API
+      (PR #116) and the brief-inventory API (PR #118), and the landed lemmas the probe lists.
     - **The machine model's primitives** (`MultiTapeTM.step`, `runFrom`, `Action.apply`,
       `Cfg.mapState`) are read through their existing lemmas (`runFrom_add`,
-      `runFrom_succ_eq_step'`, `step_of_*`, `mapState_state`, …). Unfold `step` and `Action.apply`
+      `runFrom_succ_eq_step'`, `step_of_*`, and the renamings' field equations
+      `Cfg.mapState_state`/`_inputPos`/`_workTapes`/`_workTapePos`/`_output` and
+      `Action.mapState_*`, #118's round 2). Unfold `step` and `Action.apply`
       only for a leaf defined in your own file. `phaseHostTM`'s two-line table is read through
       `phaseHostTM_run`.
     - Your own file's definitions may be unfolded.
@@ -267,13 +282,13 @@ The probe's ⟨N⟩ names, in five groups:
 
 Run the text-level screen **before and after**, **one run at a time, under `nice -n 10`**
 (`audits/TEMPLATE.md` failure mode 5; `policy.md`, **Duplication**).
-- **The population** is ⟨POP⟩ files (`audits/evidence/u2s-fill/screen-population.txt`): your file;
+- **The population** is 10 files (`audits/evidence/u2s-fill/screen-population.txt`): your file;
   `UniversalStartup` and `Universal`'s startup users (`UniversalInterpreter`); `Simulation`
   (buffered composition); `Build/Embed`, `Build/Catalog`, `Build/Seam`, `Build/Wrappers`; and
   Hydroxyi's `Machines/Clean` and `Machines/CleanSweep`.
 - **The screen** is the declaration-keyed `audits/evidence/retrofit/copy-text-screen-v3.py`, on
   the repository paths.
-- **The base**, at the issue tree, is `audits/logs/u2s-fill-screen-base.txt`: ⟨BASE-COUNTS⟩
+- **The base**, at the issue tree, is `audits/logs/u2s-fill-screen-base.txt`: **655 declarations, 514 pairs, 151,065 characters**
   (MEASURED).
 
 ```sh
@@ -301,7 +316,7 @@ nice -n 10 python3 -I audits/evidence/retrofit/copy-text-screen-v3.py . \
 
 - Lean 4 v4.25.0, mathlib pinned; `lake exe cache get`; **never `lake build`**. Use
   `scripts/lean_check_tree.sh` for every check.
-- **Bootstrap once** from `briefs/orders/u2s-fill-startup.txt` (**⟨ORDER⟩ modules**: the upstream
+- **Bootstrap once** from `briefs/orders/u2s-fill-startup.txt` (**92 modules**: the upstream
   closure of your owned file, with the authorized import, and of every module downstream of it,
   without the root `TCSlib`; downstream of it: `SelfUniversal` and the `TuringMachine` facade):
 
@@ -310,7 +325,7 @@ nice -n 10 python3 -I audits/evidence/retrofit/copy-text-screen-v3.py . \
       < briefs/orders/u2s-fill-startup.txt )
   ```
 
-  **The base sorry-warning set has ⟨SORRIES⟩ entries** (`audits/logs/u2s-fill-base-sorries.txt`,
+  **The base sorry-warning set has 35 entries in 15 modules** (`audits/logs/u2s-fill-base-sorries.txt`,
   one per declaration). Yours is `UniversalK`'s first, the target. Record the base list by name
   first, and report any difference.
 - **Final checks:**
@@ -322,7 +337,7 @@ nice -n 10 python3 -I audits/evidence/retrofit/copy-text-screen-v3.py . \
   and every new private: within `[propext, Classical.choice, Quot.sound]`, no `sorryAx` for a
   complete delivery.
 - **Lint:** `python3 -I scripts/campaign_style_lint.py TCSlib/Complexity/TuringMachine`, 0 FAIL
-  (base: ⟨LINT⟩). No new line over 100 characters.
+  (base: 0 FAIL, 67 WARN over 79 files). No new line over 100 characters.
 
 ## Out-of-scope sorries you will see (leave every one untouched)
 

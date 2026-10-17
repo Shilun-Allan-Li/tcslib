@@ -13,6 +13,9 @@
     `Turing.recordAt_iff`, `Turing.recordLength_eq` and the public `Turing.record_pos_lt`, the
     layout facts (`fieldsTape_*`, `fieldOffset_zero`, `joinFields_*`), and every row contract's
     field equations;
+  - **the core API (PR #116) and the brief-inventory API (PR #118)**, the rest of the user's
+    "Everything" rule (2026-10-16). For this brief, #118 gives `Turing.RecSym.digitEmb_apply` (a
+    lifted digit is `RecSym.digit`), `Turing.binDigits_eq` and `Turing.posWidth_eq`;
   - **B6's first two batches, both landed:**
     - F1 (PR #103): the step clock `exists_stepClockTMVia`, proved;
     - F2 (PR #99): the windowed loop and the windowed runner `exists_windowRunnerTM`, both proved
@@ -22,10 +25,10 @@
   - the B6 fill plan (`audits/evidence/b6-fill/B6-fill-plan.md`; F3 is §3 and §6, Route A);
   - the fill-agent environment addendum `briefs/fill-environment-addendum.md`, and the
     declaration-keyed copy-text screen v3 `audits/evidence/retrofit/copy-text-screen-v3.py`;
-  - **this round's inputs** (`audits/evidence/b6-fill-configclock/`): the pre-ship overlay and its
+  - **this round's inputs** (`audits/evidence/b6-fill-configclock-cont1/`): the pre-ship overlay and its
     generator, the import probe, the consumer probe, and the screen population. Also the order
-    list `briefs/orders/b6-fill-configclock.txt`, the base sorry set, the screen base and the
-    pre-ship log (`audits/logs/b6-fill-configclock-*`).
+    list `briefs/orders/b6-fill-configclock-cont1.txt`, the base sorry set, the screen base and the
+    pre-ship log (`audits/logs/b6-fill-configclock-cont1-*`).
 - If Lean cannot start, follow `briefs/fill-environment-addendum.md` exactly.
 - **Branch at exactly that commit, not at the campaign tip:**
 
@@ -44,16 +47,21 @@
 
 ## Base, line numbers and what lands around you
 
-- **Your base's Lean content is the campaign tip after #112** (⟨BASE-LEAN⟩). The inputs commit
+- **Your base's Lean content is the campaign tip after #118** (⟨BASE-LEAN⟩). The inputs commit
   adds no Lean change. Lines in this brief are those of that tree. `WindowClock.lean` is the
   partial's (312 lines; 4 public, 5 private). Every probe and measurement below was run there,
-  against the olean snapshot of #112's replay.
+  against the olean snapshot of #118's round-3 replay (`oleans-lbapi4`).
 - **F2's runner is proved and sorry-free** in your base. Its proof is in
   `Build/WindowRun.lean`, but **cite only its statement** (ground rule 10).
 - **In flight, merging after your base and invisible to it:**
-  - the canonizer's continuation 5 (`CodeSimulator`), G4's fill (`ZoneRebalance`), H2-F
-    (`StepBlockForward`) and U2-S (`UniversalK`);
-  - MIG-1's batches.
+  - the canonizer's continuation 6 (`CodeSimulator`), G4's continuation (`ZoneRebalance`), U2-S
+    (`UniversalK`) and F5 (`Build/InputDevice`);
+  - MIG-12 (`Build/CfgRecord`): it keeps every public statement there, so your citations
+    of `CfgRecord`'s public facts are unaffected;
+  - MIG-1's batches;
+  - the C1 PRs #119, #120 and #121 (new equations in the nondeterministic model, `Build/NDHost`,
+    `Build/StepClock`, `Build/StepBlock` and `Build/VirtualInput`, and new statements in two new
+    modules; declarations only).
 
   Cite nothing these add.
 
@@ -89,12 +97,12 @@ The specification API (PR #112, in your base) gives the field cells from a `Reco
 - the fill plan's F3 paragraphs.
 
 **Pre-ship check** (maintainer, at the base, against `oleans-lf3p`;
-`audits/logs/b6-fill-configclock-preship.log`):
-- **The overlay** (`audits/evidence/b6-fill-configclock/WindowClockOverlay.lean.txt`, generator
+`audits/logs/b6-fill-configclock-cont1-preship.log`):
+- **The overlay** (`audits/evidence/b6-fill-configclock-cont1/WindowClockOverlay.lean.txt`, generator
   `tools/mkoverlay.py` with `tools/home.lean.txt`): `WindowClock.lean` with the recommended
   clock-writer stub at the home. **0 errors, 0 non-sorry warnings, 2 sorry warnings** (the stub
   and the target). The generator pins the target byte for byte and undoes its edit.
-- **The import probe** (`F3ImportProbe.lean.txt`, 54 `#check`s): every public declaration this
+- **The import probe** (`F3ImportProbe.lean.txt`, 60 `#check`s): every public declaration this
   brief cites resolves from `WindowClock`'s import context. 0 errors, 0 warnings. **Re-run it
   after your delivery.**
 - **The consumer probe** (`F3ConsumerProbe.lean.txt`): row 18's endpoint, after the radius word
@@ -172,7 +180,8 @@ pass writes `(fs.map List.length).sum` cells.
 1. **The clock.**
    - The clock tape is the runner's last tape (`Fin.last (K + 1)` in F2's statement). Your
      runner's `K + 1` tapes are F2's `K' + 2`.
-   - Write `w := List.replicate W true`, as `RecSym.digitEmb`-digits, with the clock writer at
+   - Write `w := List.replicate W true`, as `RecSym.digitEmb`-digits (`RecSym.digitEmb_apply`),
+     with the clock writer at
      `e := RecSym.digitEmb M.State T true`, `m := k + 3` (`cfgRecord`'s field count), and a constant
      `c` depending only on `M` and `upd`. Then `W = c · (fs.map List.length).sum`.
    - The clock tape is blank in your precondition, so the word is delimited, as F2's runner needs.
@@ -224,16 +233,20 @@ A partial may leave only the target open, with the clock writer proved or not in
 - **The B6 hosts gate's minors** bind as fixed at landing (`audits/b6-hosts-statements-resolutions.md`).
   In particular, the bound `N ≤ configBound + 1` contains the extra halt-test round (RD-3's
   check 4).
-- **Route B** is not a parallel route. Use it only on a recorded Route A obstruction.
+- **Route B** is not a parallel route. Use it only on a recorded Route A obstruction. It would
+  also meet `counterLoopCfg`'s layout outside the Bool alphabet, which is private (#118's gate
+  review, N2): escalate for its lemma before using it.
 
 ## Cited infrastructure (public and proved at the issue commit; all in `F3ImportProbe.lean.txt`)
 
-The probe's 54 names, in five groups:
+The probe's 60 names, in six groups:
 - the target, its runner and the window semantics;
 - the configuration count and the record layout;
 - the framed rows of the clock writer and the cleanup;
 - composition;
-- Route B, for the fallback only.
+- Route B, for the fallback only;
+- the record facts and the brief-inventory API (`recordAt_iff`, `recordLength_eq`,
+  `record_pos_lt`; #118's `RecSym.digitEmb_apply`, `binDigits_eq`, `posWidth_eq`).
 
 **Proved modulo, exactly:** none. A complete delivery has no `sorryAx` in your target.
 
@@ -260,8 +273,8 @@ The probe's 54 names, in five groups:
 10. **The pinned base, and no unfolding (user, 2026-10-16).**
     - Cite only declarations public at your base, and your file's own privates.
     - **Never unfold a definition of another file.** Read every definition through its published
-      lemmas: the specification API (PR #112), the core API (PR #116) where your base has it, and
-      the landed lemmas the probe lists.
+      lemmas: the specification API (PR #112), the core API (PR #116), the brief-inventory API
+      (PR #118), and the landed lemmas the probe lists.
     - **The machine model's primitives** (`MultiTapeTM.step`, `runFrom`, `Action.apply`,
       `Cfg.mapState`) are read through their existing lemmas. Unfold `step` and `Action.apply`
       only for a leaf defined in your own file. `phaseHostTM`'s table is read through
@@ -284,14 +297,14 @@ The probe's 54 names, in five groups:
 Run the text-level screen **before and after**, **one run at a time, under `nice -n 10`**
 (`audits/TEMPLATE.md` failure mode 5; `policy.md`, **Duplication**).
 - **The population** is F2's 21 files, unchanged
-  (`audits/evidence/b6-fill-configclock/screen-population.txt`): your file, the files the route
+  (`audits/evidence/b6-fill-configclock-cont1/screen-population.txt`): your file, the files the route
   cites, the known overlaps and the consumers.
 - **The screen** is the declaration-keyed `audits/evidence/retrofit/copy-text-screen-v3.py`, on
   the repository paths. v3 labels the two basename collisions (`Build/Seam` with
   `Build/Contract/Seam`, `Build/Embed` with `Build/Contract/Embed`) by full path, so F2's
   flattening is no longer needed.
-- **The base**, at the issue tree, is `audits/logs/b6-fill-configclock-screen-base.txt`:
-  **⟨BASE-COUNTS⟩** (MEASURED). The stub's body is under the screen's 60-character floor, so the
+- **The base**, at the issue tree, is `audits/logs/b6-fill-configclock-cont1-screen-base.txt`:
+  **1,043 declarations, 510 pairs, 147,693 characters** (MEASURED at #118's round-2 head). The stub's body is under the screen's 60-character floor, so the
   overlay adds nothing.
 
 ```sh
@@ -320,31 +333,31 @@ nice -n 10 python3 -I audits/evidence/retrofit/copy-text-screen-v3.py . \
 
 - Lean 4 v4.25.0, mathlib pinned; `lake exe cache get`; **never `lake build`**. Use
   `scripts/lean_check_tree.sh` for every check.
-- **Bootstrap once** from `briefs/orders/b6-fill-configclock.txt` (**⟨ORDER⟩ modules**: the upstream
+- **Bootstrap once** from `briefs/orders/b6-fill-configclock-cont1.txt` (**176 modules**: the upstream
   closure of your owned file and of every module downstream of it, without the root `TCSlib`; one
   module is downstream of it, the `SpaceComplexity` facade, since H's import of `WindowClock` into
   `Hierarchy` comes with H):
 
   ```sh
   ( while read -r m; do bash scripts/lean_check_tree.sh "$m" || exit 1; done \
-      < briefs/orders/b6-fill-configclock.txt )
+      < briefs/orders/b6-fill-configclock-cont1.txt )
   ```
 
-  **The base sorry-warning set has ⟨SORRIES⟩ entries in ⟨SMODS⟩ modules**
-  (`audits/logs/b6-fill-configclock-base-sorries.txt`, one per declaration). Yours is
+  **The base sorry-warning set has 28 entries in 11 modules**
+  (`audits/logs/b6-fill-configclock-cont1-base-sorries.txt`, one per declaration). Yours is
   `SpaceComplexity/WindowClock`'s one, the target. Record the base list by name first, and report
   any difference.
 - **Final checks:**
   1. `SpaceComplexity/WindowClock`: zero errors, no sorry warning (for a partial, exactly the open
      declarations'), and no other warning in anything you added.
   2. Every other module of the order list: zero errors, and sorry warnings exactly the base's minus
-     yours (**⟨SORRIES−1⟩** for a complete delivery).
+     yours (**27** for a complete delivery).
   3. Re-run `F3ImportProbe.lean.txt` and `F3ConsumerProbe.lean.txt`: 0 errors.
 - **Axiom prints** (in a scratch copy of your module with `#print axioms` appended) for the target
   and every new private: within `[propext, Classical.choice, Quot.sound]`, no `sorryAx` for a
   complete delivery.
 - **Lint:** `python3 -I scripts/campaign_style_lint.py TCSlib/Complexity/SpaceComplexity`, 0 FAIL
-  (base: 0 FAIL, 4 WARN over 107 files). No new line over 100 characters.
+  (base: 0 FAIL, 81 WARN over 107 files). No new line over 100 characters.
 
 ## Out-of-scope sorries you will see (leave every one untouched)
 

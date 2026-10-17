@@ -1,0 +1,32 @@
+@Turing.Action.mapState_inputTape : ∀ {k : ℕ} {Symbol : Type u_1} {State : Type u_2} {State' : Type u_3}
+  (f : State → State') (a : Turing.Action k Symbol State), (Turing.Action.mapState f a).inputTape = a.inputTape
+'Turing.Action.mapState_inputTape' does not depend on any axioms
+@Turing.Action.mapState_workTapes : ∀ {k : ℕ} {Symbol : Type u_1} {State : Type u_2} {State' : Type u_3}
+  (f : State → State') (a : Turing.Action k Symbol State) (a_1 : Fin k),
+  (Turing.Action.mapState f a).workTapes a_1 = a.workTapes a_1
+'Turing.Action.mapState_workTapes' does not depend on any axioms
+@Turing.Action.mapState_output : ∀ {k : ℕ} {Symbol : Type u_1} {State : Type u_2} {State' : Type u_3}
+  (f : State → State') (a : Turing.Action k Symbol State), (Turing.Action.mapState f a).output = a.output
+'Turing.Action.mapState_output' does not depend on any axioms
+@Turing.Action.mapState_state : ∀ {k : ℕ} {Symbol : Type u_1} {State : Type u_2} {State' : Type u_3}
+  (f : State → State') (a : Turing.Action k Symbol State), (Turing.Action.mapState f a).state = Option.map f a.state
+'Turing.Action.mapState_state' does not depend on any axioms
+@Turing.Cfg.mapState_state : ∀ {k : ℕ} {Symbol : Type u_1} {State : Type u_2} {State' : Type u_3} {input : List Symbol}
+  (f : State → State') (cfg : Turing.Cfg k Symbol State input),
+  (Turing.Cfg.mapState f cfg).state = Option.map f cfg.state
+'Turing.Cfg.mapState_state' does not depend on any axioms
+@Turing.Cfg.mapState_inputPos : ∀ {k : ℕ} {Symbol : Type u_1} {State : Type u_2} {State' : Type u_3}
+  {input : List Symbol} (f : State → State') (cfg : Turing.Cfg k Symbol State input),
+  (Turing.Cfg.mapState f cfg).inputPos = cfg.inputPos
+'Turing.Cfg.mapState_inputPos' does not depend on any axioms
+@Turing.Cfg.mapState_workTapes : ∀ {k : ℕ} {Symbol : Type u_1} {State : Type u_2} {State' : Type u_3}
+  {input : List Symbol} (f : State → State') (cfg : Turing.Cfg k Symbol State input) (a : Fin k) (a_1 : ℤ),
+  (Turing.Cfg.mapState f cfg).workTapes a a_1 = cfg.workTapes a a_1
+'Turing.Cfg.mapState_workTapes' does not depend on any axioms
+@Turing.Cfg.mapState_workTapePos : ∀ {k : ℕ} {Symbol : Type u_1} {State : Type u_2} {State' : Type u_3}
+  {input : List Symbol} (f : State → State') (cfg : Turing.Cfg k Symbol State input) (a : Fin k),
+  (Turing.Cfg.mapState f cfg).workTapePos a = cfg.workTapePos a
+'Turing.Cfg.mapState_workTapePos' does not depend on any axioms
+@Turing.Cfg.mapState_output : ∀ {k : ℕ} {Symbol : Type u_1} {State : Type u_2} {State' : Type u_3} {input : List Symbol}
+  (f : State → State') (cfg : Turing.Cfg k Symbol State input), (Turing.Cfg.mapState f cfg).output = cfg.output
+'Turing.Cfg.mapState_output' does not depend on any axioms

@@ -1,0 +1,12 @@
+@Turing.Cfg.ofWords_state : ∀ {k : ℕ} {State : Type u_1} {input : List Bool} (q : State) (w : Fin k → List Bool),
+  (Turing.Cfg.ofWords q w).state = some q
+'Turing.Cfg.ofWords_state' depends on axioms: [propext]
+@Turing.Cfg.ofWords_inputPos : ∀ {k : ℕ} {State : Type u_1} {input : List Bool} (q : State) (w : Fin k → List Bool),
+  (Turing.Cfg.ofWords q w).inputPos = 1
+'Turing.Cfg.ofWords_inputPos' depends on axioms: [propext]
+@Turing.Cfg.ofWords_workTapePos : ∀ {k : ℕ} {State : Type u_1} {input : List Bool} (q : State) (w : Fin k → List Bool)
+  (i : Fin k), (Turing.Cfg.ofWords q w).workTapePos i = 0
+'Turing.Cfg.ofWords_workTapePos' depends on axioms: [propext]
+@Turing.Cfg.ofWords_output : ∀ {k : ℕ} {State : Type u_1} {input : List Bool} (q : State) (w : Fin k → List Bool),
+  (Turing.Cfg.ofWords q w).output = []
+'Turing.Cfg.ofWords_output' depends on axioms: [propext]

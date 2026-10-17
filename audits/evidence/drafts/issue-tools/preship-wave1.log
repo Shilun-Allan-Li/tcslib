@@ -1,0 +1,16 @@
+w C1WriterImportProbe exit=0 errors=0 warnings=0 sorry=0
+w OwnedFile exit=0 errors=0 warnings=1 sorry=1
+wc C1WindowImportProbe exit=0 errors=0 warnings=0 sorry=0
+wc OwnedFile exit=0 errors=0 warnings=1 sorry=1
+e ExhaustiveReplayOverlay exit=0 errors=0 warnings=1 sorry=1
+e C1ExhaustiveImportProbe exit=1 errors=2 warnings=0 sorry=0
+r NDCodeSimulatorOverlay exit=0 errors=0 warnings=2 sorry=2
+r C1CoreImportProbe exit=1 errors=3 warnings=0 sorry=0
+un NTimeHierarchyOverlay exit=0 errors=0 warnings=5 sorry=5
+un C1UniversalImportProbe exit=1 errors=5 warnings=0 sorry=0
+DONE
+
+# re-run of the three probes after dropping the owned files' own declarations
+e C1ExhaustiveImportProbe exit=0 errors=0 warnings=0 sorry=0
+r C1CoreImportProbe exit=0 errors=0 warnings=0 sorry=0
+un C1UniversalImportProbe exit=0 errors=0 warnings=0 sorry=0

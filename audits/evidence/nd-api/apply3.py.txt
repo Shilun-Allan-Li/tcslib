@@ -1,0 +1,78 @@
+import sys
+WT = sys.argv[1]
+B = f'{WT}/TCSlib/Complexity/TuringMachine/Build'
+def edit(path, pairs):
+    t = open(path, encoding='utf-8').read()
+    for anchor, add, where in pairs:
+        assert t.count(anchor) == 1, (path, anchor[:70], t.count(anchor))
+        t = t.replace(anchor, anchor + add if where == 'after' else add + anchor)
+    open(path, 'w', encoding='utf-8').write(t)
+    print('edited', path.split('TCSlib/')[1], len(pairs))
+T = "(the ND inventory API, 2026-10-17)"
+edit(f'{B}/StepBlock.lean', [
+ ("* `Turing.StepBlock.roundTM_effect` — the step-block contract.\n",
+  "* `Turing.StepBlock.tableTape_eq`, `summaryTape_eq`, `exit_true`, `exit_false`, `Rep_iff`,\n"
+  "  `outputSummary_nil`, `summaryCells_eq` — the definitions the hosted loop's statements read,\n"
+  "  as equations (the ND inventory API, C1's pre-ship inventory, 2026-10-17).\n", 'before'),
+ ("  | [true] => some true\n  | _ => some false\n",
+  "\n/-- **The empty output's summary** " + T + ": `outputSummary [] = none`. -/\n"
+  "theorem outputSummary_nil : outputSummary [] = none := rfl\n", 'after'),
+ ("def tableTape (k : ℕ) : Fin (k + 2) := Fin.natAdd k (0 : Fin 2)\n",
+  "\n/-- The table tape, unfolded " + T + ": `tableTape k = Fin.natAdd k 0`. -/\n"
+  "theorem tableTape_eq (k : ℕ) : tableTape k = Fin.natAdd k (0 : Fin 2) := rfl\n", 'after'),
+ ("def summaryTape (k : ℕ) : Fin (k + 2) := Fin.natAdd k (1 : Fin 2)\n",
+  "\n/-- The summary tape, unfolded " + T + ": `summaryTape k = Fin.natAdd k 1`. -/\n"
+  "theorem summaryTape_eq (k : ℕ) : summaryTape k = Fin.natAdd k (1 : Fin 2) := rfl\n", 'after'),
+ ("def exit (k : ℕ) (live : Bool) : Σ key, Ph k key :=\n  if live then ⟨.entry, ()⟩ else ⟨.halt, ()⟩\n",
+  "\n/-- A live round exits at the anchor " + T + ": `exit k true = ⟨.entry, ()⟩`. -/\n"
+  "theorem exit_true (k : ℕ) : exit k true = ⟨.entry, ()⟩ := rfl\n\n"
+  "/-- A halting round exits at `halt` " + T + ": `exit k false = ⟨.halt, ()⟩`. -/\n"
+  "theorem exit_false (k : ℕ) : exit k false = ⟨.halt, ()⟩ := rfl\n", 'after'),
+ ("def summaryCells (summary : Option Bool) (word : List Bool) (z : ℤ) : Option Bool :=\n"
+  "  if z = 0 then summary else FinTM.bufferTape word (z - 2)\n",
+  "\n/-- The summary tape's cells, unfolded " + T + ": cell `0` is the summary, and cell `z ≠ 0`\n"
+  "is the state word's buffer at `z - 2`. -/\n"
+  "theorem summaryCells_eq (summary : Option Bool) (word : List Bool) (z : ℤ) :\n"
+  "    summaryCells summary word z = if z = 0 then summary else FinTM.bufferTape word (z - 2) :=\n"
+  "  rfl\n", 'after'),
+ ("  d.workTapes (summaryTape k) =\n    summaryCells (outputSummary c.output) ((c.state.map unaryFin).getD []) ∧\n"
+  "  d.workTapePos (tableTape k) = 0 ∧ d.workTapePos (summaryTape k) = 0\n",
+  "\n/-- **The step block's representation, unfolded** " + T + ": `Rep tr c d` holds iff `d` has\n"
+  "`c`'s input head and its `k` work tapes and heads, the table `tableBitsK tr` on the table tape, the\n"
+  "summary cells of `c` on the summary tape, and both auxiliary heads at `0`. -/\n"
+  "theorem Rep_iff {k n : ℕ} {x : List Bool}\n"
+  "    {tr : Fin (n + 1) → Option Bool → (Fin k → Option Bool) → Action k Bool (Fin (n + 1))}\n"
+  "    {c : Cfg k Bool (Fin (n + 1)) x} {d : Cfg (k + 2) Bool (Σ key, Ph k key) x} :\n"
+  "    Rep tr c d ↔\n"
+  "      d.inputPos = c.inputPos ∧\n"
+  "      (∀ i : Fin k, d.workTapes (Fin.castAdd 2 i) = c.workTapes i ∧\n"
+  "        d.workTapePos (Fin.castAdd 2 i) = c.workTapePos i) ∧\n"
+  "      d.workTapes (tableTape k) = FinTM.bufferTape (tableBitsK tr) ∧\n"
+  "      d.workTapes (summaryTape k) =\n"
+  "        summaryCells (outputSummary c.output) ((c.state.map unaryFin).getD []) ∧\n"
+  "      d.workTapePos (tableTape k) = 0 ∧ d.workTapePos (summaryTape k) = 0 :=\n"
+  "  Iff.rfl\n", 'after'),
+])
+V = f'{B}/VirtualInput.lean'
+edit(V, [
+ ("  output := pre ++ c.output\n",
+  "\n/-! Z1's configuration fields as equations " + T + ", by `simps` without the `simp`\n"
+  "attribute: the state is `c`'s tagged by `b`, the input head is `p`, tape `0` is the buffer of `y`\n"
+  "with its head at `c.inputPos - 1`, the other tapes and heads are `c`'s, and the output is\n"
+  "`pre ++ c.output`. -/\n"
+  "attribute [simps (config := { isSimp := false }) state inputPos workTapes workTapePos output]\n"
+  "  vhostCfg\n", 'after'),
+ ("def vhostCap (m : ℕ) : Fin ((1 + m) + 1) := Fin.natAdd (1 + m) (0 : Fin 1)\n",
+  "\n/-- The capture tape, unfolded " + T + ": `vhostCap m = Fin.natAdd (1 + m) 0`, the last. -/\n"
+  "theorem vhostCap_eq (m : ℕ) : vhostCap m = Fin.natAdd (1 + m) (0 : Fin 1) := rfl\n", 'after'),
+ ("  embedSilentCfg (Fin.castAddEmb 1) (vhostCap m) (fun _ _ => none) (fun _ => 0)\n    capPre out₀ (vhostCfg c b p [])\n",
+  "\n/-- **Z1's suppressing configuration, unfolded** " + T + ": the R1 capture transport of the\n"
+  "forwarding configuration with an empty prefix, along `Fin.castAddEmb 1`, the capture tape\n"
+  "`vhostCap m` holding `capPre`. -/\n"
+  "theorem vhostSilentCfg_eq (c : Cfg m Bool S y) (b : Bool) (p : Fin (x.length + 2))\n"
+  "    (capPre out₀ : List Bool) :\n"
+  "    vhostSilentCfg c b p capPre out₀ =\n"
+  "      embedSilentCfg (Fin.castAddEmb 1) (vhostCap m) (fun _ _ => none) (fun _ => 0)\n"
+  "        capPre out₀ (vhostCfg c b p []) :=\n"
+  "  rfl\n", 'after'),
+])

@@ -34,8 +34,6 @@ Campaign: the Arora-Barak chapters 3-4 plan.
   - the consumers the routes read the new lemmas through: `UniversalK`, `Build/InputDevice`,
     `SpaceComplexity/WindowClock`, `CodeSimulator`, `Build/ZoneRebalance` (G4's partial),
     `Build/Contract/Catalog`, and `Build/Contract/Counter` (#117's `decFixed` consumer).
-  - `Build/Contract/Counter` is bundled at this PR's head, where it carries #117's original
-    docstring. #117's gate corrected it in `98472df2`, a commit this PR does not contain.
 
 ## Brief for the auditor
 
@@ -61,7 +59,9 @@ Campaign: the Arora-Barak chapters 3-4 plan.
 
 ## Repository-side attestations (verify or challenge)
 
-- Built on #117's head `1358ff73` (stacked), against `oleans-lm11a`.
+- Built on #117's head `1358ff73` (stacked), against `oleans-lm11a`. #117 has merged, and the
+  head `4ae686be` merges the tip. Its Lean differs from the replayed `36325650` only in #117's
+  gate-corrected docstring (`Contract/Counter`).
 - **Elaboration:** 0 errors; warnings equal to the base. **Axioms:** standard only. **Freeze:**
   publics added only.
 - **Lint:** 0 FAIL. Check 8 adds no name: the first commit drops 10 names, the second 6.
@@ -71,7 +71,7 @@ Campaign: the Arora-Barak chapters 3-4 plan.
     segmentation artifact of the `variable` lines (`logs/g4/screen-pairtext.txt`).
 - **Replays:**
   - `replay-lbapi.log`, 311 of 311 at `277735f2`, static-equal;
-  - the chained `replay-lbapi2.log`, 86 modules at `36325650`.
+  - the chained `replay-lbapi2.log`, 86 of 86 at `36325650`, static-equal (56).
 
 ## Findings format
 

@@ -1,0 +1,35 @@
+import TCSlib.Complexity.TuringMachine.Build.NDHost
+
+/-! Draft (maintainer): the controller-stopped flavor's contract, for NF's display guess (the user's
+ruling of 2026-10-17). Statement only; it lands in `Build/NDHost` by a statement PR after W integrates. -/
+
+namespace Turing
+
+/-- **The controller-stopped choice writer's contract.** Start the writer, unbounded, at `run q` on any
+tape `j`. Let a choice word `w` first stop the controller after `m` written bits: the controller state
+after writing `w.take i` is `(w.take i).foldl δ q`, which does not stop for `i < m` and stops at `m`,
+with `m < |w|`. Then the prefix `w.take (m + 1)` overwrites the `m` cells of tape `j` from its head
+with `w.take m`, leaves the head just after them and reaches `done`, every other field unchanged; and
+no prefix of length at most `m` reaches `done`. [AB09, §2.1.2]
+
+**Proof sketch.** Induct on `i ≤ m`: after `w.take i` the configuration is the block-update with
+`w.take i`, the head at `c.workTapePos j + i`, state `run ((w.take i).foldl δ q)`. At `i < m` the
+controller does not stop, so the writer writes `w[i]` and moves right; at `m` it stops and moves to
+`done` without moving. -/
+theorem ndWriterTM_run_controller {k : ℕ} (j : Fin k) {Q : Type} (q₀ : Q) (δ : Q → Bool → Q)
+    (stop : Q → Bool) {x : List Bool} (c : Cfg k Bool (NDWriterState Q) x) (q : Q)
+    (hc : c.state = some (.run q)) (w : List Bool) (m : ℕ) (hm : m < w.length)
+    (hlive : ∀ i < m, stop ((w.take i).foldl δ q) = false)
+    (hstop : stop ((w.take m).foldl δ q) = true) :
+    (ndWriterTM k j q₀ δ stop false).runWith (w.take (m + 1)) c =
+      { c with
+        state := some .done
+        workTapes := Function.update c.workTapes j (fun p =>
+          if c.workTapePos j ≤ p ∧ p < c.workTapePos j + m then
+            FinTM.bufferTape (w.take m) (p - c.workTapePos j)
+          else c.workTapes j p)
+        workTapePos := Function.update c.workTapePos j (c.workTapePos j + m) } ∧
+    ∀ i ≤ m, ((ndWriterTM k j q₀ δ stop false).runWith (w.take i) c).state ≠ some .done := by
+  sorry
+
+end Turing

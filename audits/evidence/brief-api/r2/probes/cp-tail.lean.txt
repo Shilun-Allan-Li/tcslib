@@ -1,0 +1,18 @@
+
+/-! Review probe (brief-inventory API gate, finding 1): names, statements, axioms, and a
+cont6-style consumer step through the published equations only. -/
+#check @Turing.codeSkipRepeat_zero
+#check @Turing.codeSkipRepeat_succ
+#print axioms Turing.codeSkipRepeat_zero
+#print axioms Turing.codeSkipRepeat_succ
+
+example (r : List Bool → Option (List Bool)) (xs ys : List Bool) (h : r xs = some ys) (n : ℕ) :
+    Turing.codeSkipRepeat r (n + 1) xs = Turing.codeSkipRepeat r n ys := by
+  rw [Turing.codeSkipRepeat_succ, h, Option.bind_some]
+
+example (r : List Bool → Option (List Bool)) (xs : List Bool) (h : r xs = none) (n : ℕ) :
+    Turing.codeSkipRepeat r (n + 1) xs = none := by
+  rw [Turing.codeSkipRepeat_succ, h, Option.bind_none]
+
+example (r : List Bool → Option (List Bool)) (xs : List Bool) :
+    Turing.codeSkipRepeat r 0 xs = some xs := Turing.codeSkipRepeat_zero r xs

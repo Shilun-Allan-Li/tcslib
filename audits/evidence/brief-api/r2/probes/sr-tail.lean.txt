@@ -1,0 +1,50 @@
+
+/-! Review probe (brief-inventory API gate, the seed-inclusive inventory): the renamings'
+generated field equations, their axioms, that none is `simp`, and a consumer through them. -/
+#check @Turing.Action.mapState_inputTape
+#check @Turing.Action.mapState_workTapes
+#check @Turing.Action.mapState_output
+#check @Turing.Action.mapState_state
+#check @Turing.Cfg.mapState_state
+#check @Turing.Cfg.mapState_inputPos
+#check @Turing.Cfg.mapState_workTapes
+#check @Turing.Cfg.mapState_workTapePos
+#check @Turing.Cfg.mapState_output
+#print axioms Turing.Action.mapState_inputTape
+#print axioms Turing.Action.mapState_workTapes
+#print axioms Turing.Action.mapState_output
+#print axioms Turing.Action.mapState_state
+#print axioms Turing.Cfg.mapState_state
+#print axioms Turing.Cfg.mapState_inputPos
+#print axioms Turing.Cfg.mapState_workTapes
+#print axioms Turing.Cfg.mapState_workTapePos
+#print axioms Turing.Cfg.mapState_output
+
+open Lean Meta in
+#eval show MetaM Unit from do
+  let s ← getSimpTheorems
+  for n in [``Turing.Action.mapState_inputTape, ``Turing.Action.mapState_workTapes,
+      ``Turing.Action.mapState_output, ``Turing.Action.mapState_state,
+      ``Turing.Cfg.mapState_state, ``Turing.Cfg.mapState_inputPos,
+      ``Turing.Cfg.mapState_workTapes, ``Turing.Cfg.mapState_workTapePos,
+      ``Turing.Cfg.mapState_output] do
+    IO.println s!"{n} simp={s.isLemma (.decl n)}"
+
+section BapiConsumer
+open Turing
+variable {k : ℕ} {Γ S S' : Type} {x : List Γ}
+
+example (f : S → S') (c : Cfg k Γ S x) (q : S) (h : c.state = some q) :
+    (c.mapState f).state = some (f q) := by
+  rw [Cfg.mapState_state, h, Option.map_some]
+
+example (f : S → S') (c : Cfg k Γ S x) (i : Fin k) :
+    (c.mapState f).workTapes i ((c.mapState f).workTapePos i) =
+      c.workTapes i (c.workTapePos i) := by
+  rw [Cfg.mapState_workTapes, Cfg.mapState_workTapePos]
+
+example (f : S → S') (a : Action k Γ S) :
+    (a.mapState f).state = a.state.map f ∧ (a.mapState f).output = a.output :=
+  ⟨Action.mapState_state f a, Action.mapState_output f a⟩
+
+end BapiConsumer

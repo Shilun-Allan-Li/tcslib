@@ -75,6 +75,8 @@ All declarations are added; no `@[simp]`; every docstring states its formula.
 - The method is the same: `inventory/G4C-inventory.out` (the 94 names of G4's probe),
   `G4C-fields-inventory.out` (the 260 published lemmas its route can read, from
   `scripts/EnumLemmas.lean.txt`), and `G4C-enum-rounds.out`.
+- The statements behind the "covered" judgments are printed by `probes/G4CoveredProbe.lean.txt`
+  at `4ae686be` against `oleans-lbapi2` (`inventory/G4C-covered-probe.out`, 0 errors).
 
 ## Checks (maintainer, against `oleans-lm11a`)
 
@@ -82,8 +84,9 @@ All declarations are added; no `@[simp]`; every docstring states its formula.
   base. `UniversalStartup` (6) and `Loop` (66) were compared by `warndiff` against their
   unchanged elaborations (`logs/elab-*-base.out`), with no new warning; `Simulation` has 1 as at
   the base; the other three have 0.
-- **Generated names and axioms** (`logs/probe-*.out`): the 9 generated equations resolve; the 15
-  hand-written theorems print standard axioms only.
+- **Generated names and axioms** (`logs/probe-*.out`): the 9 generated equations resolve; the 11
+  hand-written theorems print standard axioms only (corrected at the gate, finding 3; this said
+  15).
 - **Freeze** (`logs/freeze.log`): publics added only, in all six files.
 - **Lint** (`logs/lint-head.txt`): 0 FAIL, 68 WARN over 79 files. Check 8 adds no name and drops
   10 (168 → 158 in `TuringMachine/`).
@@ -119,4 +122,53 @@ checked in a worktree at #117's head. The patch applied to #118's head gives a b
   - The two gone pairs are the same artifact: `Traj` no longer takes in `section TrajBasic`'s
     line.
 - **Chained replay** `replay-lbapi2.sh`: the two files' downstream closure at `36325650`
-  (86 modules, all within the first replay's 311), from `oleans-lbapi`. The user runs it.
+  (86 modules, all within the first replay's 311), from `oleans-lbapi`. **Passed (user,
+  2026-10-16):** 86 of 86, 0 failed (`replay-lbapi2.log`). The sorry counts equal a static count
+  (0 mismatches, 56 in total; `replay-lbapi2-static.txt`).
+
+## Up to date with the tip
+
+#117 merged (user, 2026-10-16; `bd1ae147`). The head `4ae686be` merges the tip. Its Lean differs
+from the replayed `36325650` only in #117's gate correction of `counterRowContract`'s docstring
+(`98472df2`), which #117's gate re-elaborated (0 errors, 0 warnings). The replays therefore cover
+the head's Lean, and the snapshot `oleans-lbapi2` serves the tip after #118.
+
+## The gate, round 1, and round 2 (2026-10-16 and 17)
+
+**Round 1: FAIL, 0 blockers, 2 majors, 1 minor** (`audits/brief-api-findings.md`; resolutions
+`audits/brief-api-resolutions.md`; the review `r2/gate-review.md`).
+- **Findings 1 and 2** were cont6's: `codeSkipRepeat`'s two cases, and the field equations of
+  the two round-contract counter loops.
+- **Finding 3** was the count above.
+- The inventory method missed the cited definitions themselves. The seed-inclusive elaborator
+  (`r2/probes/DefInventorySeeds.lean.part.txt`) re-ran all five briefs and found N1:
+  `Cfg.mapState`'s and `Action.mapState`'s fields.
+
+**Round 2 (`lean/brief-api` at `4624fc05`):**
+- MIG-12's API (`9872634e`, fast-forwarded; its replay passed, 160 of 160);
+- `88fb25f3` (findings 1 and 2);
+- `4624fc05` (N1).
+
+The checks are in `r2/logs/` and `r2/review-out/`. The replay `replay-lbapi3.sh` covers 274
+modules from `oleans-lm12api`. **Passed (user, 2026-10-17):** 274 of 274, static-equal (88).
+
+**Round 2's gate: FAIL, 0/1/2** (`audits/brief-api-r2-findings.md`; the review
+`r3/gate-review-r2.md`).
+- **The major:** MIG-12's route (and, the review found, F5's ruler host) reads the model's
+  primitives for an arbitrary action or machine.
+- **The minors:**
+  - MIG-12's unfolding ledger, now 173 rows: 76 explicit sites and 97 definitional ones;
+  - a count erratum.
+
+**Round 3 (`531b98a2`, prepared locally, then pushed):**
+- `74765ef4`: the live-step API (`Action.apply_*`, `step_of_some`, `outputSymbol_of_some`);
+- `531b98a2`: `counterWord_succ`, `scanResult_keep_keep`.
+
+The checks are in `r3/`. The replay `replay-lbapi4.sh` covers 320 modules, from `oleans-lbapi3`.
+**Pushed and passed (user, 2026-10-17):** 320 of 320, static-equal (94).
+
+**Round 3's gate: PASS 0/0/2** (`audits/brief-api-r3-findings.md`; review `r3/gate-review-r3.md`).
+The two minors were records only: three stale rows in the ledger's three copies, and the
+drafts' probe counts (MIG-12 227, F5 58). Both are fixed. The six briefs' pre-ship elaborations
+were re-run against `oleans-lbapi4`, with the same messages as before. The gate is closed, and
+#118 is ready to merge at `531b98a2`.

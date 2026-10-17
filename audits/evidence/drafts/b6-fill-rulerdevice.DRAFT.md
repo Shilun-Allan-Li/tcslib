@@ -13,6 +13,10 @@
   - the macro-step lockstep `Turing.Lockstep` (`Build/Contract/Basic`), the R2 seams and the
     phase host (`Build/Seam`), the R1 embeddings (`Build/Embed`), and Z1's virtual-input host
     (`Build/VirtualInput`), the model for your host;
+  - **the API PRs** (the user's "Everything" rule, 2026-10-16: every definition your route reads
+    has a published lemma): the specification API (PR #112), the core API (PR #116) and the
+    brief-inventory API (PR #118, which gives `VirtualTag` and the virtual-input host's tapes for
+    this brief);
   - the fill-agent environment addendum `briefs/fill-environment-addendum.md`, and the
     declaration-keyed copy-text screen v3 `audits/evidence/retrofit/copy-text-screen-v3.py`;
   - **this round's inputs** (`audits/evidence/b6-fill-rulerdevice/`): the import overlay, the
@@ -37,12 +41,16 @@
 
 ## Base, line numbers and what lands around you
 
-- **Your base's Lean content is ⟨BASE-LEAN⟩.** The inputs commit adds no Lean change. Lines in
-  this brief are those of that tree. `Build/InputDevice.lean` is unchanged since #92 (339 lines).
-  Every probe and measurement below was run there, against ⟨SNAPSHOT⟩.
-- **In flight, merging after your base and invisible to it:** H2-F (`Build/StepBlockForward`),
-  U2-S (`UniversalK`), F3's continuation (`WindowClock`), the canonizer's continuation 5
-  (`CodeSimulator`), G4 (`ZoneRebalance`), and MIG-1's batches. Cite nothing they add.
+- **Your base's Lean content is the campaign tip after #118** (⟨BASE-LEAN⟩). The inputs commit
+  adds no Lean change. Lines in this brief are those of that tree. `Build/InputDevice.lean` is
+  unchanged since #92 (339 lines). Every probe and measurement below was run there, against the
+  olean snapshot of #118's round-3 replay (`oleans-lbapi4`).
+- **In flight, merging after your base and invisible to it:** U2-S (`UniversalK`), F3's
+  continuation (`WindowClock`), the canonizer's continuation 6 (`CodeSimulator`), G4's
+  continuation (`ZoneRebalance`), MIG-12 (`Build/CfgRecord`), MIG-1's batches, and
+  the C1 PRs #119, #120 and #121 (new equations in the nondeterministic model, `Build/NDHost`,
+  `Build/StepClock`, `Build/StepBlock` and `Build/VirtualInput`, and new statements in two new
+  modules; declarations only). Cite nothing they add.
 
 ## Parallel batches this round
 
@@ -59,7 +67,10 @@ Three targets, all frozen:
 3. **`Turing.exists_rulerHostTM`** (line 313), the ruler host, a positive finite block
    simulation of any native-input machine on a suffix input.
 
-**The published lemmas your route reads** (the core API, PR #116; ground rule 10):
+**The published lemmas your route reads** (the core API, PR #116, and the brief-inventory API,
+PR #118; ground rule 10):
+- `FinTM.VirtualTag_iff` (#118): the virtual-input rows' tag hypotheses; `vhostBuffer_eq` and
+  `vhostBank_eq` (#118): Z1's tape indices, where you read its statements;
 - `MultiTapeTM.mem_visitedByTapeHead_iff`, `visitedByTapeHead_add_subset`,
   `visitedByTapeHead_step_subset` (moved to `Deterministic`): the host's space ledger;
 - `embedEmitCfg_selected_tape`/`_pos`, `embedEmitCfg_unselected`, `embedEmitCfg_eq`,
@@ -81,7 +92,7 @@ Three targets, all frozen:
 - **The import overlay** (`audits/evidence/b6-fill-rulerdevice/InputDeviceOverlay.lean.txt`):
   your file with the two authorized imports added after line 7. It elaborates with the three
   targets' sorry warnings, and nothing else.
-- **The import probe** (`B6F5ImportProbe.lean.txt`, ⟨N⟩ `#check`s): every public declaration
+- **The import probe** (`B6F5ImportProbe.lean.txt`, 58 `#check`s): every public declaration
   this brief cites resolves from the overlay's import context. 0 errors, 0 warnings. Re-run it
   after your delivery.
 
@@ -158,12 +169,16 @@ A partial may leave only targets open. Insert a helper only once it is proved.
 
 ## Cited infrastructure (public and proved at the issue commit; all in `B6F5ImportProbe.lean.txt`)
 
-The probe's ⟨N⟩ names, in five groups:
+The probe's 58 names, in eight groups:
 - the targets, the device layer and its facts;
 - the lockstep and the run calculus;
 - seams, the phase host and the release adapter;
 - R1 embedding;
-- Z1's host, for the pattern only.
+- Z1's host, for the pattern only;
+- the brief-inventory API (#118);
+- the renamings' field equations (#118's round 2);
+- the live-step API (#118's round 3): `Action.apply_state`/`_inputPos`/`_workTapePos`/`_output`,
+  `MultiTapeTM.step_of_some`, `MultiTapeTM.outputSymbol_of_some`.
 
 **Proved modulo, exactly:** none.
 
@@ -188,11 +203,17 @@ The probe's ⟨N⟩ names, in five groups:
 10. **The pinned base, and no unfolding (user, 2026-10-16).**
     - Cite only declarations public at your base, and your file's own privates.
     - **Never unfold a definition of another file.** Read every definition through its published
-      lemmas: the equation and field lemmas of the specification API (PR #112) and the core API
-      (PR #116), and the landed lemmas the probe lists.
+      lemmas: the equation and field lemmas of the specification API (PR #112), the core API
+      (PR #116) and the brief-inventory API (PR #118), and the landed lemmas the probe lists.
     - **The machine model's primitives** (`MultiTapeTM.step`, `runFrom`, `Action.apply`,
       `Cfg.mapState`) are read through their existing lemmas (`runFrom_add`,
-      `runFrom_succ_eq_step'`, `step_of_*`, `mapState_state`, …). Unfold `step` and `Action.apply`
+      `runFrom_succ_eq_step'`, `step_of_*`, and the renamings' field equations
+      `Cfg.mapState_state`/`_inputPos`/`_workTapes`/`_workTapePos`/`_output` and
+      `Action.mapState_*`, #118's round 2). **The ruler host simulates an arbitrary machine:**
+      read its steps by `MultiTapeTM.step_of_some`/`step_of_halt`, its emission by
+      `outputSymbol_of_some`/`_of_halt`, and the applied action by `Action.apply_state`,
+      `_inputPos`, `_workTapePos`, `_output` and `Action.apply_workTapes` (#118, round 3).
+      Unfold `step` and `Action.apply`
       only for a leaf defined in your own file. `phaseHostTM`'s two-line table is read through
       `phaseHostTM_run`.
     - Your own file's definitions (`RulerAt`, `rulerHostCfg`, `inputCell`) may be unfolded.
@@ -209,7 +230,7 @@ The probe's ⟨N⟩ names, in five groups:
 
 Run the text-level screen **before and after**, **one run at a time, under `nice -n 10`**
 (`audits/TEMPLATE.md` failure mode 5; `policy.md`, **Duplication**).
-- **The population** is ⟨POP⟩ files (`audits/evidence/b6-fill-rulerdevice/screen-population.txt`):
+- **The population** is 11 files (`audits/evidence/b6-fill-rulerdevice/screen-population.txt`):
   - your file;
   - `Build/VirtualInput` (Z1, the model and the main hazard);
   - `UniversalStartup` (`universalInput_read`/`_move`, the chapter-1 virtual head over a suffix);
@@ -218,7 +239,7 @@ Run the text-level screen **before and after**, **one run at a time, under `nice
   - `Build/Seam`, `Build/Embed`, `Build/Contract/Basic` and `Simulation`;
   - the consumers `UniversalK` and `SpaceComplexity/Hierarchy`.
 - **The screen** is `audits/evidence/retrofit/copy-text-screen-v3.py`, on the repository paths.
-- **The base** is `audits/logs/b6-fill-rulerdevice-screen-base.txt`: ⟨BASE-COUNTS⟩ (MEASURED).
+- **The base** is `audits/logs/b6-fill-rulerdevice-screen-base.txt`: **272 declarations, 138 pairs, 31,217 characters** (MEASURED).
 
 ```sh
 P=audits/evidence/b6-fill-rulerdevice
@@ -244,7 +265,7 @@ nice -n 10 python3 -I audits/evidence/retrofit/copy-text-screen-v3.py . \
 
 - Lean 4 v4.25.0, mathlib pinned; `lake exe cache get`; **never `lake build`**. Use
   `scripts/lean_check_tree.sh` for every check.
-- **Bootstrap once** from `briefs/orders/b6-fill-rulerdevice.txt` (**⟨ORDER⟩ modules**: the
+- **Bootstrap once** from `briefs/orders/b6-fill-rulerdevice.txt` (**80 modules**: the
   upstream closure of your owned file, with the two imports, and of every module downstream of
   it, without the root `TCSlib`).
 
@@ -253,7 +274,7 @@ nice -n 10 python3 -I audits/evidence/retrofit/copy-text-screen-v3.py . \
       < briefs/orders/b6-fill-rulerdevice.txt )
   ```
 
-  **The base sorry-warning set has ⟨SORRIES⟩ entries** (`audits/logs/b6-fill-rulerdevice-base-sorries.txt`).
+  **The base sorry-warning set has 35 entries in 15 modules** (`audits/logs/b6-fill-rulerdevice-base-sorries.txt`).
   Yours are `Build/InputDevice`'s three. Record the base list by name first, and report any
   difference.
 - **Final checks:**
@@ -265,7 +286,7 @@ nice -n 10 python3 -I audits/evidence/retrofit/copy-text-screen-v3.py . \
 - **Axiom prints** for the three targets and every new private: within
   `[propext, Classical.choice, Quot.sound]`, no `sorryAx` for a complete delivery.
 - **Lint:** `python3 -I scripts/campaign_style_lint.py TCSlib/Complexity/TuringMachine/Build`,
-  0 FAIL (base: ⟨LINT⟩). No new line over 100 characters.
+  0 FAIL (base: 0 FAIL, 32 WARN over 37 files). No new line over 100 characters.
 
 ## REPORT.md checklist
 
