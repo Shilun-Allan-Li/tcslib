@@ -1054,6 +1054,21 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
       `drafts/issue-inputs/r3/`): U2-S 655, F3 1,043, G4 795, MIG-12 870, cont6 2,411
       declarations. Each is one more than before (`scanResult_keep_keep`), with identical pair
       sets. The drafts take these counts at issue.
+- **The stack after #121 (2026-10-17), each PR on the previous, replays chained:**
+  - **#122** (ND inventory API round 2, `6a48b93e`, 5 commits, 22 equations, replay 313 modules):
+    gate 41's pack `audits/nd-api-r2-pack.md`.
+  - **#123** (C1-W landed: `ndWriterTM_run_block` proved from the worker's repaired draft, the
+    user's ruling; `c567568f`; replay 2): gate 42's pack `audits/c1-writer-fill-pack.md`.
+  - **#124** (G2: `Build/SeamLayout`, `exists_seamLayoutTM`, sorried; `0355da56`; replay 2): gate
+    43's pack `audits/seam-layout-statements-pack.md`.
+  - **#125** (the §13d G4 cont1 partial landed, with F1's fix; `4ab012d9`; replay 2): gate 44's
+    pack `audits/s13d-g4-cont1-fill-pack.md`.
+  - **#126** (X2: BF as a hypothesis of `exists_diagonalizer`; `5333b29b`; replay 2): gate 45's
+    pack `audits/ntime-diag-bf-statements-pack.md`.
+  - **Continuations to brief** (addendum v2; dispatch at most two at a time): WC cont1 (the
+    in-imports join, `agreeOn_iff`), E cont1 (the three imports pre-authorized, P1–P4), R cont1
+    (after #122 and #124; G2's contract; the drafts), G4 cont2 (F2's route amendment; check 8's
+    `zoneExtendData`, `zoneRowHi`, `zoneRowLo`). E-Q, then E-D, after #126.
 - **Gates 37–39 recorded (2026-10-17).** Resolutions: `audits/nd-api-resolutions.md` (round 1;
   round 2 planned), `audits/nd-normalform-resolutions.md` (closed), and
   `audits/ntime-diag-statements-resolutions.md` (round 1, with the user's rulings: the guessed

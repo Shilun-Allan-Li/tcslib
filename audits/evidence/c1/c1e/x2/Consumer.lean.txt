@@ -1,0 +1,39 @@
+import TCSlib.Complexity.Diagonalization.NTimeHierarchy
+import TCSlib.Complexity.Diagonalization.NTimeDiagonalizer
+
+/-! X2 consumer probe (maintainer): the hypothesis form of `exists_diagonalizer`, declared here
+with `sorry`, is discharged by BF's statement, as `ntime_hierarchy`'s proof will. -/
+
+namespace Turing.NTimeDiag
+
+theorem exists_diagonalizer' {f g : ℕ → ℕ} (hf : Complexity.TimeConstructible f)
+    (hg : Complexity.TimeConstructible g) (c : EffectiveNDMachineCode)
+    (hBF : ∃ BF : FinTM Bool, ∀ α : List Bool, ∃ C : ℕ, ∀ (x : List Bool) (t : ℕ),
+      ((c.decode α).toFinNDTM.AcceptsWithin x t →
+        BF.ComputesInTime (pairEncode (pairEncode (Nat.bits t) α) x) [true]
+          (C * 2 ^ (C * (t + 1)))) ∧
+      (¬(c.decode α).toFinNDTM.AcceptsWithin x t →
+        BF.ComputesInTime (pairEncode (pairEncode (Nat.bits t) α) x) [false]
+          (C * 2 ^ (C * (t + 1))))) :
+    ∃ (D : FinNDTM Bool) (K : ℕ),
+      (∀ x : List Bool, D.tm.HaltsWithin x (K * (g x.length + 1))) ∧
+      ∀ α : List Bool, ∃ C : ℕ, ∀ n : ℕ, 3 ≤ n → stageCode (stage f n) = α →
+        (n ≠ ladder f (stage f n + 1) →
+          (D.AcceptsWithin (List.replicate n true) (K * (g n + 1)) →
+            (c.decode α).toFinNDTM.AcceptsWithin (List.replicate (n + 1) true) (g n)) ∧
+          (∀ t' : ℕ, (c.decode α).toFinNDTM.AcceptsWithin (List.replicate (n + 1) true) t' →
+            C * (t' + 1) ≤ g n →
+            D.AcceptsWithin (List.replicate n true) (K * (g n + 1)))) ∧
+        (n = ladder f (stage f n + 1) →
+          C * 2 ^ (C * (budget f (ladder f (stage f n)) + 1)) ≤ n →
+          (D.AcceptsWithin (List.replicate n true) (K * (g n + 1)) ↔
+            ¬(c.decode α).toFinNDTM.AcceptsWithin
+              (List.replicate (ladder f (stage f n) + 1) true)
+              (budget f (ladder f (stage f n))))) := by
+  sorry
+
+example {f g : ℕ → ℕ} (hf : Complexity.TimeConstructible f) (hg : Complexity.TimeConstructible g)
+    (c : EffectiveNDMachineCode) :=
+  exists_diagonalizer' hf hg c (Turing.exists_ndAcceptsWithin_decider c)
+
+end Turing.NTimeDiag

@@ -1,0 +1,29 @@
+diff --git a/TCSlib/Complexity/TuringMachine/Build/ZoneRebalance.lean b/TCSlib/Complexity/TuringMachine/Build/ZoneRebalance.lean
+index bae3aac8..e88edbda 100644
+--- a/TCSlib/Complexity/TuringMachine/Build/ZoneRebalance.lean
++++ b/TCSlib/Complexity/TuringMachine/Build/ZoneRebalance.lean
+@@ -437,8 +437,8 @@ private lemma zr_zonedTape_right_fields {k ℓ : ℕ} (z : Fin k → ZoneContent
+           (FinTM.bufferTape_nat ([.inr fun t => some (z t).home] : List (ZoneSym k)) 0).symm
+       · have hsep := zonedTape_right_sep z 0
+         norm_num only [zoneStart_eq, pow_one, Nat.add_zero, Nat.cast_ofNat] at hsep
+-        simpa only [Nat.cast_zero, zero_add, FinTM.bufferTape_nat,
+-          List.getElem?_cons_succ, List.getElem?_nil] using hsep
++        rw [Nat.cast_zero, zero_add, ← Nat.cast_one, FinTM.bufferTape_nat]
++        simpa only [Nat.cast_one, List.getElem?_cons_succ, List.getElem?_nil] using hsep
+     | succ j =>
+       have hj' : j < ℓ := by omega
+       simp only [fs, List.getElem_cons_succ, List.getElem_ofFn, zoneCells_length] at hq' ⊢
+@@ -721,9 +721,10 @@ distance; clear the ruler and return home. Each phase is `O(2^ℓ)`.
+ **Fill appendix (§13d G4).** Both layout bridges, their offset formulas, and the complete
+ seek-contract preconditions are proved, alongside the inherited ruler-tail and one-cell kit.
+ The left route is stopped under ground rule 4: `zr_left_two_walks` proves that its prescribed
+-two half-capacity walks stop one cell right of the new zone's outermost cell (escalation E1).
+-The ruler builder, composed side passes, return-home rounds, and cleanup remain open. No route
+-amendment is implemented, and only this target's own body is admitted. -/
++two half-capacity walks stop one cell right of the new zone's outermost cell (continuation 1's
++escalation cont1-E1; `audits/evidence/s13d-g4-cont1-fill/REVIEW.md`, F2). The ruler builder,
++composed side passes, return-home rounds, and cleanup remain open. No route amendment is
++implemented, and only this target's own body is admitted. -/
+ theorem exists_zoneExtendTM (k : ℕ) :
+     ∃ (C : ℕ) (S : Type) (_ : Fintype S) (_ : DecidableEq S)
+       (M : MultiTapeTM 2 (ZoneSym k) S) (entry done : S),

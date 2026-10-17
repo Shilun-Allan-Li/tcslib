@@ -1,0 +1,81 @@
+import TCSlib.Complexity.TuringMachine.NDCodeSimulator
+
+/-! Review probe (gate 37, major 1): the drafted serialization API for the replay canonizer's route,
+declared here with its proofs (homes: `Build/StepBlock`, `CodeFormat`, `Encoding`), and a consumer
+that reads the three-tape table with the definitions irreducible. -/
+
+namespace Turing
+
+-- Build/StepBlock, beside `workReadsK` and `tableBitsK`
+theorem workReadsK_zero : workReadsK 0 = [Fin.elim0] := rfl
+
+theorem workReadsK_succ (k : ℕ) : workReadsK (k + 1) =
+    ([none, some false, some true] : List (Option Bool)).flatMap fun w =>
+      (workReadsK k).map fun r => (Fin.cons w r : Fin (k + 1) → Option Bool) := rfl
+
+theorem tableBitsK_eq {k n : ℕ}
+    (tr : Fin (n + 1) → Option Bool → (Fin k → Option Bool) → Action k Bool (Fin (n + 1))) :
+    tableBitsK tr = (List.finRange (n + 1)).flatMap fun q =>
+      ([none, some false, some true] : List (Option Bool)).flatMap fun inp =>
+        (workReadsK k).flatMap fun w => actionBitsK (tr q inp w) := rfl
+
+-- CodeFormat, beside `actionBitsK` and `codeSkipActionK`
+theorem actionBitsK_eq {k n : ℕ} (a : Action k Bool (Fin (n + 1))) :
+    actionBitsK a = signBits a.inputTape ++
+      (List.finRange k).flatMap
+        (fun i => optOptBoolBits (a.workTapes i).1 ++ signBits (a.workTapes i).2) ++
+      optBoolBits a.output ++ optStateBits a.state := rfl
+
+theorem codeSkipActionK_append {k n : ℕ} (a : Action k Bool (Fin (n + 1))) (xs : List Bool) :
+    codeSkipActionK k n (actionBitsK a ++ xs) = some xs := by
+  rw [← codeEraseActionK, codeReadActionK_append]
+  rfl
+
+-- Encoding, beside the four field encoders
+theorem signBits_neg : signBits .neg = [true, true] := rfl
+theorem signBits_zero : signBits .zero = [false, false] := rfl
+theorem signBits_pos : signBits .pos = [true, false] := rfl
+theorem optBoolBits_none : optBoolBits none = [false, false] := rfl
+theorem optBoolBits_some_false : optBoolBits (some false) = [true, false] := rfl
+theorem optBoolBits_some_true : optBoolBits (some true) = [true, true] := rfl
+theorem optOptBoolBits_none : optOptBoolBits none = [false, false] := rfl
+theorem optOptBoolBits_some_none : optOptBoolBits (some none) = [false, true] := rfl
+theorem optOptBoolBits_some_false : optOptBoolBits (some (some false)) = [true, false] := rfl
+theorem optOptBoolBits_some_true : optOptBoolBits (some (some true)) = [true, true] := rfl
+theorem optStateBits_none {n : ℕ} : optStateBits (none : Option (Fin n)) = [false] := rfl
+theorem optStateBits_some {n : ℕ} (s : Fin n) : optStateBits (some s) = true :: unaryFin s := rfl
+
+end Turing
+
+#print axioms Turing.codeSkipActionK_append
+
+/-! The consumer: RC's three-tape facts, with the definitions irreducible. -/
+section Consumer
+open Turing
+attribute [local irreducible] Turing.workReadsK Turing.tableBitsK Turing.actionBitsK
+  Turing.signBits Turing.optOptBoolBits Turing.optBoolBits Turing.optStateBits
+
+example : (workReadsK 3).length = 27 := StepBlock.length_workReadsK 3 |>.trans (by norm_num)
+
+-- the order: tape 0 outermost, the last (choice) tape innermost
+example : workReadsK 3 =
+    ([none, some false, some true] : List (Option Bool)).flatMap fun w₀ =>
+      (([none, some false, some true] : List (Option Bool)).flatMap fun w₁ =>
+        (([none, some false, some true] : List (Option Bool)).flatMap fun w₂ =>
+          [Fin.elim0].map fun r => (Fin.cons w₂ r : Fin 1 → Option Bool)).map fun r =>
+            (Fin.cons w₁ r : Fin 2 → Option Bool)).map fun r =>
+              (Fin.cons w₀ r : Fin 3 → Option Bool) := by
+  rw [workReadsK_succ, workReadsK_succ, workReadsK_succ, workReadsK_zero]
+
+-- the choice tape's field `(none, +1)` in a re-emitted record
+example : optOptBoolBits none ++ signBits .pos = [false, false, true, false] := by
+  rw [optOptBoolBits_none, signBits_pos]; rfl
+
+example {n : ℕ} (tr : Fin (n + 1) → Option Bool → (Fin 3 → Option Bool) →
+    Action 3 Bool (Fin (n + 1))) : tableBitsK tr = (List.finRange (n + 1)).flatMap fun q =>
+      ([none, some false, some true] : List (Option Bool)).flatMap fun inp =>
+        (workReadsK 3).flatMap fun w => actionBitsK (tr q inp w) := tableBitsK_eq tr
+
+example {n : ℕ} (a : Action 2 Bool (Fin (n + 1))) (xs : List Bool) :
+    codeSkipActionK 2 n (actionBitsK a ++ xs) = some xs := codeSkipActionK_append a xs
+end Consumer

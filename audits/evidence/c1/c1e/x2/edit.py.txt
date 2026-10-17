@@ -1,0 +1,39 @@
+import sys
+p = sys.argv[1]; t = open(p).read()
+def r(old, new):
+    global t
+    assert t.count(old) == 1, old[:70]
+    t = t.replace(old, new)
+r("  - In the middle it is the flag `false` and the interpreter's input `⟨⟨bits (g n), α⟩, 1^{n+1}⟩`.\n",
+  "  - In the middle it is the flag `false` and `⟨⟨bits (g n), α⟩, 1^{n+1}⟩`; `D` rewrites its budget.\n")
+r("/-- **The stage query** on an input `x`: the word the diagonalizer hands to its simulators. On a\n",
+  "/-- **The stage query** on an input `x`: the word the diagonalizer builds its rungs from. On a\n")
+r("""P3.3 gate's round 2, §§3–5): for time-constructible `f`, `g` and an effective scheme `c` there are
+a nondeterministic machine `D` and a constant `K` with:""",
+"""P3.3 gate's round 2, §§3–5): for time-constructible `f`, `g`, an effective scheme `c` and a
+deterministic decider of the coded machines' bounded acceptance in exponential time (`hBF`, the
+conclusion of `Turing.exists_ndAcceptsWithin_decider`) there are a nondeterministic machine `D` and
+a constant `K` with:""")
+r("""**Proof sketch.** `D` is assembled by the nondeterministic phase host""",
+"""**Why the decider is a hypothesis** (gate 40's review, X2; the user, 2026-10-17). It is stated in
+`TCSlib.Complexity.Diagonalization.NTimeHierarchy`, which imports this module for
+`ntime_hierarchy`; that proof supplies it from `Turing.exists_ndAcceptsWithin_decider`. Taking it as
+a hypothesis keeps the two modules' imports acyclic.
+
+**Proof sketch.** `D` is assembled by the nondeterministic phase host""")
+r("- **top:** the exponential decider `Turing.exists_ndAcceptsWithin_decider` on the query word",
+  "- **top:** the exponential decider of `hBF` on the query word")
+r("""theorem exists_diagonalizer {f g : ℕ → ℕ} (hf : Complexity.TimeConstructible f)
+    (hg : Complexity.TimeConstructible g) (c : EffectiveNDMachineCode) :
+""", """theorem exists_diagonalizer {f g : ℕ → ℕ} (hf : Complexity.TimeConstructible f)
+    (hg : Complexity.TimeConstructible g) (c : EffectiveNDMachineCode)
+    (hBF : ∃ BF : FinTM Bool, ∀ α : List Bool, ∃ C : ℕ, ∀ (x : List Bool) (t : ℕ),
+      ((c.decode α).toFinNDTM.AcceptsWithin x t →
+        BF.ComputesInTime (pairEncode (pairEncode (Nat.bits t) α) x) [true]
+          (C * 2 ^ (C * (t + 1)))) ∧
+      (¬(c.decode α).toFinNDTM.AcceptsWithin x t →
+        BF.ComputesInTime (pairEncode (pairEncode (Nat.bits t) α) x) [false]
+          (C * 2 ^ (C * (t + 1))))) :
+""")
+open(p, "w").write(t)
+print("ok", [(i, len(l)) for i, l in enumerate(t.split("\n"), 1) if len(l) > 100])
