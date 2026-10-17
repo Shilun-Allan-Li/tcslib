@@ -38,6 +38,10 @@ phase, not yet issued.
   | `embedEmitTM` | 1 | `Contract.embed` |
   | `phaseHostTM` | 14 | `Contract.inPhase` |
 
+  The "Uses" column counts mentions, prose included (MIG-11a gate). The proof call sites of the
+  four rows MIG-11a covers are: copy 2 (lines 1779, 3474), compare 1 (4804; 4551 is prose),
+  increment 1 (2924), decrement 1 (2923).
+
 ## Phase 0: MIG-11a, the four missing row contracts (a maintainer PR with a statement gate)
 
 Each is a thin wrapper over the row's existing `_run_ofCfg` lemma, as `clearTM_contract` is over

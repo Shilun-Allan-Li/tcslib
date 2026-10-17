@@ -1,0 +1,26 @@
+diff --git a/TCSlib/Complexity/TuringMachine/Build/Contract/Counter.lean b/TCSlib/Complexity/TuringMachine/Build/Contract/Counter.lean
+index e19cd9b..901cf7f 100644
+--- a/TCSlib/Complexity/TuringMachine/Build/Contract/Counter.lean
++++ b/TCSlib/Complexity/TuringMachine/Build/Contract/Counter.lean
+@@ -41,12 +41,15 @@ namespace Turing
+ variable {k : ℕ}
+ 
+ /-- **The contract of a successful counter row** (MIG-11a, user 2026-10-16): one constructor for
+-the increment and the decrement. Given a machine `M` over `FlagPhase`, its tape `i`, the
+-width-preserving word map `fix` it computes and the bit `lead`-cells it carries through, and the
+-row's framed theorem `hrun`, this is the contract indexed by pairs `(w, v)` with `fix w = some v`
+-and `w` delimited at the head of tape `i`: time `2 · |takeWhile lead w| + 2`, endpoint the word's
+-interval holding `v` at `done true`, exits both verdicts, the head of tape `i` within
+-`[pos - 1, pos + |takeWhile lead w|]` and every other head fixed.
++the increment and the decrement. Given a machine `M` over `FlagPhase`, its tape `i`, the word map
++`fix` it computes and the bit `lead`-cells it carries through, and the row's framed theorem
++`hrun`, this is the contract indexed by pairs `(w, v)` with `fix w = some v` and `w` delimited at
++the head `pos` of tape `i`: time `2 · |takeWhile lead w| + 2`; endpoint at `done true`, with each
++cell `q` of the word's interval `[pos, pos + |w|)` holding `bufferTape v (q - pos)` and every
++other cell unchanged; exits both verdicts; the head of tape `i` within
++`[pos - 1, pos + |takeWhile lead w|]` and every other head fixed. No width condition on `fix` is
++assumed: the interval holds exactly `v` when `|v| = |w|`, as for both instances (`incFixed` and
++`decFixed` keep the width).
+ 
+ **Proof sketch.** Each field is the matching clause of `hrun`; the exit lies in the range at
+ `true`; a fixed head lies in its one-point interval. -/

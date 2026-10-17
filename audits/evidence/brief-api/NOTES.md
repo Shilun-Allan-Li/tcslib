@@ -68,6 +68,11 @@ All declarations are added; no `@[simp]`; every docstring states its formula.
 - **Freeze** (`logs/freeze.log`): publics added only, in all six files.
 - **Lint** (`logs/lint-head.txt`): 0 FAIL, 68 WARN over 79 files. Check 8 adds no name and drops
   10 (168 → 158 in `TuringMachine/`).
-- **Screen:** see `logs/screen-delta.log` (added when done).
+- **Screen** (copy-text v3; `logs/screen-{base,head}.txt`, `logs/screen-delta.log`; the population
+  is the six files, `logs/screen-population.txt`; base #117's `1358ff73`): 404 → 404 declarations,
+  167 → 167 pairs, 0 new at the head.
+  - The count does not grow because the screen skips bodies under 60 characters (outside
+    whitespace). Every new theorem's body is 3 to 7 characters (`rfl`, `Iff.rfl` and the like;
+    `logs/screen-bodylen.txt`), and `simps` attributes are not declarations.
 - **Replay:** `replay-lbapi.sh`, the six files' downstream closure at the stacked head
   (311 modules), from `oleans-lm11a`. The user runs it.

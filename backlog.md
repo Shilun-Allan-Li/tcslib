@@ -913,6 +913,16 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
   - **The statement gate is staged:** `infra_local/gate-dispatches/33-mig11a-statements-gate/`,
     bundle SHA-256 `84d0442f…b99b` (39 sections; Lean `1358ff73`, other `455cb240`).
     **Dispatched (user, 2026-10-16).**
+  - **Gate: PASS, 0/0/2/0, CLOSED (2026-10-16).** `audits/mig11a-statements-{findings,resolutions}.md`.
+    Minor 1 (a docstring claimed a width-preserving `fix`) is fixed in `98472df2`, docstring only;
+    minor 2 (a stale lint log) is corrected: 0 FAIL, 69 WARN over 79 files at `1358ff73`.
+    **Ready to merge at `98472df2`, before #118.**
+  - **Follow-up (the review, 2026-10-16):** publish `incFixed_length` (`Build/Convention`) and
+    `decFixed_length` (`Build/CounterLoop`, from `counter_dec_spec`), each
+    `fix w = some v → v.length = w.length`. Then have the private copies `rt_incFixed_length`
+    (`RecordTable`) and `sc_dec_success_width` (`StepClock`) cite them. MIG-12 does not need them,
+    because its transport takes the width as a hypothesis. They ride with the next PR that edits
+    those files.
 - **The briefs' pre-ship inventories (2026-10-16), and PR #118, the brief-inventory API**
   (`lean/brief-api`, `277735f2`, stacked on #117).
   - **The inventories:** U2-S, the F3 continuation, F5 and cont6, measured at the tip (#116's
@@ -927,7 +937,9 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
     - `decFixed`, for #117 and MIG-12.
   - **Checks:** elaboration clean, standard axioms, freeze adds only; check 8 goes 168 → 158.
     Pack `audits/brief-api-pack.md`.
-  - **The replay** `replay-lbapi.sh` (311 modules, from `oleans-lm11a`) is ready for the user.
+  - **The replay** `replay-lbapi.sh` (311 modules, from `oleans-lm11a`): **running (user,
+    2026-10-16).** The screen of the six files shows 0 new pairs (404 declarations, 167 pairs at
+    base and head).
   - **Measured for issue (U2-S):** order 91, base sorry set 35 (cross-checked against the
     replays, 0 mismatches), probe 85 names. F5: order 79, sorry set 35. The briefs issue after
     #118 merges.

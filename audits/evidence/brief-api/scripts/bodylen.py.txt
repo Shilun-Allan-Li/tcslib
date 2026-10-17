@@ -1,0 +1,13 @@
+import re, sys
+names = sys.argv[2:]
+for p in open(sys.argv[1]).read().split():
+    t = open(p, encoding='utf-8').read()
+    for n in names:
+        m = re.search(r'^theorem ' + re.escape(n) + r'\b(.*?)(?=^(?:theorem|lemma|def|attribute|/--|/-!|end |section|namespace|@\[)|\Z)', t, re.M | re.S)
+        if not m: continue
+        b = m.group(1); d = 0; out = None
+        for i, ch in enumerate(b):
+            if ch in '([{⟨': d += 1
+            elif ch in ')]}⟩': d -= 1
+            elif b.startswith(':=', i) and d == 0: out = b[i+2:]; break
+        print(n, len(re.sub(r'\s+', '', out or '')))
