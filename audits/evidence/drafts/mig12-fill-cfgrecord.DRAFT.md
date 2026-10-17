@@ -1,7 +1,8 @@
 # Ch3–4 migration — MIG-12: `Build/CfgRecord` onto the contract layer (a swap: every public statement frozen)
 
-> **DRAFT (maintainer, 2026-10-16). Not issued.** Measured at MIG-12's API head `9872634e`
-> (#118 plus the API commit). It issues after #118 and MIG-12's API merge; ⟨…⟩ are filled then.
+> **DRAFT (maintainer, 2026-10-16/17). Not issued.** Measured at MIG-12's API head `9872634e`,
+> and its probe at #118's round-2 head `4624fc05` (which contains MIG-12's API). It issues with
+> the five briefs after #118 merges (user, 2026-10-17); ⟨…⟩ are filled then.
 
 ## Repository and branch — read this before anything else
 
@@ -19,7 +20,7 @@
   - **the API PRs** (the user's "Everything" rule, 2026-10-16): the specification API (#112: the
     contracts' and combinators' field equations, the layout facts), the core API (#116), the
     brief-inventory API (#118: `segment_iff`, `headBox_iff`, `round_iff`, `Cfg.bindState`'s
-    fields), and **MIG-12's API** (PR ⟨M12API-PR⟩: `Cfg.liftSymbols`'s and
+    fields), and **MIG-12's API** (#118's round 2: `Cfg.liftSymbols`'s and
     `Action.liftSymbols`'s fields, `incFixed`'s cases, `incFixed_length`, `decFixed_length`);
   - **the design note** `audits/evidence/mig12/DESIGN.md` (its Phase 1 is this brief);
   - the fill-agent environment addendum `briefs/fill-environment-addendum.md`, and the
@@ -47,7 +48,7 @@
 
 ## Base, line numbers and what lands around you
 
-- **Your base's Lean content is the campaign tip after MIG-12's API** (⟨BASE-LEAN⟩). The inputs
+- **Your base's Lean content is the campaign tip after #118** (⟨BASE-LEAN⟩). The inputs
   commit adds no Lean change. Lines in this brief are those of that tree. `Build/CfgRecord.lean`
   has 5,302 lines and 119 declarations (21 public, 98 private), **and no admission**.
 - **In flight, merging after your base and invisible to it:** U2-S (`UniversalK`), B6 F5
@@ -86,13 +87,14 @@ statement.** The user scheduled the MIG items between the fills, starting with M
 - `CfgRecord.lean` in full, in particular `RecordRun` (line 396) and its kit, `recordStepMachine`
   (the phase host), and the three public rows.
 
-**Pre-ship check** (maintainer, at the base, against ⟨SNAPSHOT⟩; `audits/logs/mig12-fill-preship.log`):
+**Pre-ship check** (maintainer, at the base, against `oleans-lbapi3`, #118's round-2 replay;
+`audits/logs/mig12-fill-preship.log`):
 - **The inventory** (`audits/evidence/mig12-fill/`): every external definition `CfgRecord` uses
   (68), crossed with its 44 unfolding sites. With MIG-12's API every one has a published lemma, is
   a primitive of the machine model, or is a structure field.
 - **The import overlay** (`audits/evidence/mig12-fill/CfgRecordOverlay.lean.txt`): your file with
   the authorized import. 0 errors, 0 warnings.
-- **The import probe** (`MIG12ImportProbe.lean.txt`, ⟨N⟩ `#check`s): every public declaration
+- **The import probe** (`MIG12ImportProbe.lean.txt`, 219 `#check`s): every public declaration
   this brief cites resolves from `CfgRecord`'s import context. 0 errors, 0 warnings. **Re-run it
   after your delivery.**
 
@@ -184,7 +186,7 @@ boundary, or after any whole lemma within Phase 2, and lists what remains:
 
 ## Cited infrastructure (public and proved at the issue commit; all in `MIG12ImportProbe.lean.txt`)
 
-The probe's ⟨N⟩ names: the row contracts and their field equations; the combinators and their
+The probe's 219 names: the row contracts and their field equations; the combinators and their
 field equations; the segment layer with `segment_iff`, `headBox_iff`; `phaseHostTM_run`,
 `embedEmitTM_runFrom`, `embedEmitTM_frame`, `embedEmitCfg_*`; `MultiTapeTM.liftSymbols_runFrom`
 and the lifts' fields; the counter loop's run theorems; the layout facts.
