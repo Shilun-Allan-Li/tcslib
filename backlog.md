@@ -1069,6 +1069,14 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
     inventory, round 3 (R's and UN's header parsing and installation), gave #119 a third commit:
     `Cfg.ofWords`'s four missing fields (`Build/Convention`, `1e45f50a`). #120 and #121 merged it
     (`6d18902f`, `13f52659`).
+  - **Lint check 8b is in, opt-in** (`scripts/campaign_style_lint.py --check8b`; the user's ruling:
+    after the #118 briefs issue). It reports public definitions whose value is a configuration, an
+    action, a bundled conversion or a contract, given as a structure literal, with neither `simps`, nor
+    an unfolding `_eq`, nor a lemma per field. The default output is unchanged, so the issued briefs'
+    lint bases hold. At the tip it lists 62 definitions in 33 `TuringMachine/` files and 27 in 16
+    `SpaceComplexity/` files: debt to cover as consumers need it, as for check 8. Some names are
+    covered by differently named lemmas (`counterLoopCfg` by `counter_cfg_eq`). It becomes default
+    once the in-flight fills return.
   - **MIG-24 triaged** (`audits/evidence/mig24/TRIAGE.md`). All 34 `SpaceComplexity/` candidates are
     ARM-2's. 21 `TuringMachine/` pairs belong to other items. 37 remain in 8 groups (T1–T7, T2b).
     **User (2026-10-17): fold them into MIG-1's fill batches** as named factoring obligations, by

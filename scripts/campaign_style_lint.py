@@ -19,7 +19,10 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-SUBTREE = Path(sys.argv[1]) if len(sys.argv) > 1 else Path("TCSlib/Complexity")
+# `--check8b` (opt-in; user, 2026-10-17: after the #118 briefs issue) adds check 8b below.
+CHECK8B = "--check8b" in sys.argv[1:]
+_ARGS = [a for a in sys.argv[1:] if a != "--check8b"]
+SUBTREE = Path(_ARGS[0]) if _ARGS else Path("TCSlib/Complexity")
 
 SIZE_TARGET = 600     # policy section 1: target upper end
 SIZE_THRESHOLD = 1000 # policy section 1: split unless positively justified
@@ -134,6 +137,72 @@ def strip_comments(src: str) -> str:
     return "\n".join(l.split("--")[0] for l in "".join(out).splitlines())
 
 
+# Check 8b (opt-in, `--check8b`): structure-valued definitions need their fields as equations.
+FIELDS8B = {
+    "Cfg": ["state", "inputPos", "workTapes", "workTapePos", "output"],
+    "Action": ["inputTape", "workTapes", "output", "state"],
+    "FinTM": ["k", "State", "tm"],
+    "FinNDTM": ["k", "State", "tm"],
+    "Contract": ["pre", "time", "post", "lo", "hi"],
+    "RoundContract": ["pre", "time", "post", "lo", "hi"],
+    "ReturnContract": ["pre", "time", "post", "lo", "hi"],
+}
+
+
+def uncovered_fields(stripped: str) -> list:
+    """Public `def`s whose value is a configuration, an action, a bundled machine or a contract
+    (`FIELDS8B`), with neither a `simps` attribute, nor an unfolding `<def>_eq`, nor a
+    `<def>_<field>` lemma for every data field (check 8b; policy section 1). Machine-valued
+    definitions are left to check 8, which accepts their run lemmas; so are definitions whose body
+    is not a structure literal (recursion, an application), and bundled machines with a `_computes`
+    or `_run` lemma. A heuristic on the result type's head: it reports names, review judges them."""
+    def last(n):
+        return n.rsplit(".", 1)[-1]
+
+    lemmas = {last(m.group(2)) for m in API_LEMMA_RE.finditer(stripped) if not m.group(1)}
+    simps = set()
+    for m in API_ATTR_RE.finditer(stripped):
+        if "simps" in m.group(1):
+            simps.update(last(x) for x in m.group(2).split())
+    out = []
+    for m in API_DEF_RE.finditer(stripped):
+        if m.group(1):
+            continue
+        name = last(m.group(2))
+        rest = stripped[m.end():]
+        cut = min([i for i in (rest.find(":="), rest.find(" where"), rest.find("\n  |")) if i >= 0] or [len(rest)])
+        header = rest[:cut]
+        depth, colon = 0, -1
+        for i, ch in enumerate(header):
+            if ch in "([{⟨": depth += 1
+            elif ch in ")]}⟩": depth -= 1
+            elif ch == ":" and depth == 0: colon = i
+        if colon < 0:
+            continue
+        rtype = header[colon + 1:].split("→")[-1].strip()
+        head = rtype.split()[0].strip("(") if rtype.split() else ""
+        head = last(head)
+        if head not in FIELDS8B:
+            continue
+        body = rest[cut:].lstrip()
+        if body.startswith(":="):
+            body = body[2:].lstrip()
+        literal = body.startswith(("where", "⟨", "{"))
+        if not literal:
+            continue  # recursion or an application: check 8 asks for its equation
+        if head in ("FinTM", "FinNDTM") and any(
+                l.startswith(name + "_") and ("comput" in l or "run" in l) for l in lemmas):
+            continue  # a bundled machine read through its run or computation lemma
+        line_start = stripped.rfind("\n", 0, m.start()) + 1
+        attrs = stripped[line_start:m.start() + 40]
+        if "simps" in attrs or name in simps or name + "_eq" in lemmas:
+            continue
+        if all(f"{name}_{f}" in lemmas for f in FIELDS8B[head]):
+            continue
+        out.append(name)
+    return out
+
+
 def uncovered_defs(stripped: str) -> list:
     """Public `def`s with no published lemma beside them (check 8). A definition is covered when
     a `simps` attribute is attached to it, or when a public theorem or lemma of the same file is
@@ -235,6 +304,11 @@ def check_file(path: Path):
         if bare:
             note("WARN", rel, f"{len(bare)} public def(s) without a lemma beside them "
                               f"(check 8): {', '.join(sorted(bare))}")
+        if CHECK8B:
+            nofields = uncovered_fields(stripped)
+            if nofields:
+                note("WARN", rel, f"{len(nofields)} structure-valued def(s) without field equations "
+                                  f"(check 8b): {', '.join(sorted(nofields))}")
 
     # 7. Statement prose (policy section 2): every public declaration
     #    (instances and vendored files exempt) is immediately preceded by a
