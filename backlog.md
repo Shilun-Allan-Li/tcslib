@@ -976,7 +976,10 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
     - the contents: the lifts' fields, `incFixed`'s cases, and `incFixed_length` and
       `decFixed_length` (#117's gate review);
     - checks: clean, standard axioms, freeze adds only, the WARN set unchanged;
-    - replay `replay-lm12api.sh`: 160 modules from `oleans-lbapi2`.
+    - replay `replay-lm12api.sh`: 160 modules from `oleans-lbapi2`. **Passed (user,
+      2026-10-16):** 160 of 160, 0 failed, static-equal (80); snapshot `oleans-lm12api`.
+    - #118's gate failed (0/2/1; findings 1–2 are cont6's inventory), so MIG-12's API folds into
+      #118's round 2, as planned.
     - **Packaging waits for #118's gate:** it goes into #118's round 2 if there is one, or
       otherwise becomes its own PR and gate.
 - **Lint check 8's blind spot (2026-10-16):** a definition counts as covered when any lemma is
