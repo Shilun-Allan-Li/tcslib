@@ -26,9 +26,9 @@ The module is in `SpaceComplexity` because it uses `Turing.FinTM.configBound`
 (`SpaceComplexity/ConfigCount.lean`) and the summary tag (`SpaceComplexity/ConfigGraph.lean`),
 so that `Build/WindowRun.lean` imports nothing from `SpaceComplexity`.
 
-**Status: statement gate passed 2026-10-14** (round 1, 0/0/5;
-`audits/b6-hosts-statements-findings.md`). The bridges are proved;
-`Turing.exists_configWindowRunnerTM` is sorried with its proof sketch.
+**Status.** The bridges are proved. `Turing.exists_configWindowRunnerTM` is sorried with its
+proof sketch; private lemmas toward it (the clock arithmetic at the actual record, the one-cell
+move, a field's constant copy and the clock's clear) are proved.
 
 ## Main definitions
 
@@ -401,21 +401,21 @@ round's start and the halt and window exits merged into its one optional early e
 or more, so its value exceeds `configBound M |x| s`: rounds, not steps, are counted, and the
 time is at most the clock value times `C · (L + |x| + 1)` (`Turing.counterLoop_time_le`).
 
-**Fill appendix (B6-F3).** The original numerical lemmas are unchanged. The new
-`cw_field_total` and `cw_record_clock` instantiate their hypotheses at the actual record,
-with pass count `C + Fintype.card M.State + 8`, including the extra halt-test round.
-The authorized one-cell leaf, the constant mapped-copy endpoint, and a framed clear
-endpoint are proved. The clear accepts a tape blank outside its word patch and restores
-that entire tape to blank without a second patch-normalization argument.
-The generic writer is not inserted. Its adjacent-write identity is already proved privately
-in `RecordTable`; ground rules 7 and 10 require a public reuse lemma (escalation E2 in
-`REPORT.md`). No additional admission is introduced, and this target remains open.
-**Proof sketch (remaining).** With that public identity, compose the prescribed
-mapped-copy/skip/left-move passes and rewind both heads. Embed the proved writer by R1,
-run F2, clear halted/left endpoints, and dispatch through the prescribed seams or phase
-host. Apply the record clock budget and the conditional time/head ledgers, and use
-`windowRun_stop_unique` for the semantic certification. The composition and its common
-constant are not yet supplied.
+**Implementation status.** The private `cw_` lemmas prove the clock arithmetic at the actual
+record. `cw_field_total` counts the record's field cells, `k(2s + 1) + posWidth |x| + 2`, and
+`cw_record_clock` shows that the all-true word over `c = C + |Q| + 8` passes of them has width
+at most `c · L` and a value large enough for every round up to `configBound + 1`, the extra
+halt-test round included (`C` is the runner's constant). The one-cell left move (`cw_leftTM`,
+`cw_left_run`), the constant mapped copy of one field (`cw_copy_constant`) and the clear of the
+clock after the runner (`cw_clear_patch`, which leaves the clock tape blank) are proved. The
+clock writer is not yet assembled, and this target remains open.
+**Proof sketch (remaining).** Write the clock field by field: a constant mapped copy, a skip
+past the field on each tape and a one-cell move back onto the clock's delimiter, joining
+adjacent constant writes into one interval. Repeat for the `c` passes and rewind both heads.
+Embed the writer on the record and clock tapes, run `Turing.exists_windowRunnerTM` on the word,
+clear the clock after a `halted` or `left` exit, and dispatch to the exits. The time and head
+bounds follow from the clock budget and the linear writer and clear costs, and
+`Turing.windowRun_stop_unique` moves the certification to the statement's `N`.
  -/
 theorem exists_configWindowRunnerTM (M : FinTM Bool) {T : Type} [Fintype T] [DecidableEq T]
     (upd : T → Option Bool → T) (hupd : ∀ τ, upd τ none = τ) :
