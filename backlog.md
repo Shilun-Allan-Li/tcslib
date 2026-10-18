@@ -1054,6 +1054,10 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
       `drafts/issue-inputs/r3/`): U2-S 655, F3 1,043, G4 795, MIG-12 870, cont6 2,411
       declarations. Each is one more than before (`scanResult_keep_keep`), with identical pair
       sets. The drafts take these counts at issue.
+- **Fill rulings (user, 2026-10-18):** UN-1 by an API PR (`FinTM.pairExtractTM_fst_run` in
+  `Build/Primitives`) with the cast-indexed `bufferedSecondCfg` pair (`Simulation`); canonizer cont6
+  lands as a partial with the review's F1 fix; MIG-12's phase 1 folds into its continuation (no
+  landing now). Reviews: `audits/evidence/b5a-canon-cont6-fill/`, `audits/evidence/mig12-fill/round1/`.
 - **#128 merged (2026-10-18):** #123, #125 and #126 reached the campaign branch (they had been merged
   into stacked bases; no content was lost: tree = `5fd5dce8`'s). #124 retargeted; gate 46 (its round 2)
   dispatched. **UN and U2-S landed as partials:** #129 (C1-UN: BF, H′, S proved; UN-1 open) and #130
