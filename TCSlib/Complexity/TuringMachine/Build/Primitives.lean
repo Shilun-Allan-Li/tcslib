@@ -63,7 +63,8 @@ P10's narrowing is recorded, and result-bearing search is now
 The rows' witnesses are public, each with its spec theorem:
 * `Turing.FinTM.prependTM` (`prependTM_computes`), `incFixedTM` (`incFixedTM_computes`),
   `pairValidTM` (`pairValidTM_computes`), `pairExtractTM` (`pairExtractTM_computes`,
-  `pairExtractTM_fst`, `pairExtractTM_snd`, `pairExtractTM_concat`);
+  `pairExtractTM_fst`, `pairExtractTM_snd`, `pairExtractTM_concat`; the first component's complete
+  run, `pairExtractTM_fst_run` and `pairExtractTM_fst_run_budget`);
 * `polyUnaryTM` (`polyUnaryTM_computes`, `polyUnaryTM_spaceUsed`), `polyBitsTM`
   (`polyBitsTM_computes`), `pairLenCheckTM` (`pairLenCheckTM_computes`), `stripLastTM`
   (`stripLastTM_computes`);
@@ -1044,6 +1045,131 @@ theorem pairExtractTM_concat :
   cases hd : pairDecode x with
   | none => simpa [hd] using h
   | some p => cases p; simpa [hd] using h
+
+/-! ### The first-component extractor's complete run -/
+
+/-- Re-indexing an extractor configuration along equal indices. -/
+private lemma extractCfg_congr (x : List Bool) (q : Option (Option Bool ⊕ Fin 3))
+    {i j : ℕ} (hi : i ≤ x.length) (hj : j ≤ x.length) (hij : i = j) {a a' : List Bool}
+    (ha : a = a') {z z' : ℤ} (hz : z = z') (out : List Bool) :
+    extractCfg x q i hi a z out = extractCfg x q j hj a' z' out := by
+  subst hij ha hz; rfl
+
+/-- The aligned scan buffers a doubled word silently, two steps per bit. -/
+private lemma extract_scan (first second : Bool) (x rest : List Bool) :
+    ∀ (w pre a : List Bool) (hx : x = pre ++ dbl w ++ rest),
+    (pairExtractTM first second).tm.runFrom
+      (extractCfg x (some (.inl none)) pre.length (by simp [hx]) a a.length []) (2 * w.length) =
+      extractCfg x (some (.inl none)) (pre.length + 2 * w.length)
+        (by simp [hx]) (a ++ w) (a ++ w).length [] := by
+  intro w
+  induction w with
+  | nil =>
+    intro pre a hx
+    simp only [List.length_nil, Nat.mul_zero, MultiTapeTM.runFrom_zero]
+    exact extractCfg_congr _ _ _ _ (by omega) (by simp) (by simp) _
+  | cons b w ih =>
+    intro pre a hx
+    have hx' : x = pre ++ b :: b :: (dbl w ++ rest) := by simp [hx]
+    have h1 := extract_block first second x pre (dbl w ++ rest) a b b hx'
+    rw [if_pos rfl] at h1
+    have h2 := ih (pre ++ [b, b]) (a ++ [b]) (by simp [hx])
+    have e : 2 * (b :: w).length = 2 + 2 * w.length := by simp; ring
+    simp only [e]
+    rw [MultiTapeTM.runFrom_add, h1]
+    rw [extractCfg_congr x (some (.inl none)) _ (by simp [hx])
+      (by simp : pre.length + 2 = (pre ++ [b, b]).length) rfl rfl []]
+    rw [h2]
+    exact extractCfg_congr _ _ _ _ (by simp; omega) (by simp) (by simp) _
+
+/-- **The first-component extractor's complete run.** On
+`pairEncode a b` the extractor `pairExtractTM true false` first halts after exactly
+`4·|a| + 5` steps, with output `a`, its input head on cell `2·|a| + 3` (just past the
+separator), and its single work tape holding `a` as a buffer with the head one past it.
+
+**Proof sketch.** The aligned scan buffers `a` in `2·|a|` steps; the separator block `01`
+starts the rewind (two steps); rewinding and replaying cost `(|a| + 1) + (|a| + 1)` steps;
+the suffix flag is off, so one silent stationary step halts. Liveness before the halt is
+`runFrom_state_ne_none_of_le` at the replay's last configuration. -/
+theorem pairExtractTM_fst_run (a b : List Bool) :
+    (pairExtractTM true false).tm.runFrom
+        ((pairExtractTM true false).tm.initCfg (pairEncode a b)) (4 * a.length + 5) =
+      ⟨none, ⟨2 * a.length + 3, by simp [length_pairEncode]; omega⟩,
+        fun _ => bufferTape a, fun _ => (a.length : ℤ), a⟩ ∧
+    ∀ u < 4 * a.length + 5, ((pairExtractTM true false).tm.runFrom
+        ((pairExtractTM true false).tm.initCfg (pairEncode a b)) u).state ≠ none := by
+  set x := pairEncode a b with hxdef
+  have hx0 : x = [] ++ dbl a ++ (false :: true :: b) := by simp [hxdef, pairEncode_eq_dbl]
+  have hlen : (dbl a).length + 2 ≤ x.length := by simp [hxdef, length_pairEncode]
+  have hinit : (pairExtractTM true false).tm.initCfg x =
+      extractCfg x (some (.inl none)) ([] : List Bool).length (by simp)
+        ([] : List Bool) ([] : List Bool).length [] := by
+    apply Cfg.ext <;> simp [pairExtractTM, extractCfg, MultiTapeTM.initCfg, Cfg.init]
+  have hscan := extract_scan true false x (false :: true :: b) a [] [] hx0
+  have hsep := extract_block true false x (dbl a) b a false true
+    (by simp [hxdef, pairEncode_eq_dbl])
+  simp only [Bool.false_eq_true, ↓reduceIte] at hsep
+  have hp : (pairExtractTM true false).tm.runFrom
+      (extractCfg x (some (.inr 0)) ((dbl a).length + 2) (by omega)
+        a ((a.length : ℤ) - 1) []) ((a.length + 1) + (a.length + 1)) =
+      extractCfg x (some (.inr 2)) ((dbl a).length + 2) (by omega)
+        a a.length a := by
+    rw [MultiTapeTM.runFrom_add, extract_rewind true false x a _ _ _ (by omega),
+      extract_replay_finish]
+    rfl
+  have hlast : (pairExtractTM true false).tm.step
+      (extractCfg x (some (.inr 2)) ((dbl a).length + 2) (by omega)
+        a a.length a) =
+      extractCfg x none ((dbl a).length + 2) (by omega) a a.length a := by
+    unfold MultiTapeTM.step
+    simp only [pairExtractTM, extractCfg]
+    refine Cfg.ext rfl (moveInputPos_zero _) rfl ?_ ?_
+    · funext k; simp [Action.apply]
+    · simp [Action.apply]
+  have hmid : (pairExtractTM true false).tm.runFrom
+      ((pairExtractTM true false).tm.initCfg x)
+        (2 * a.length + 2 + ((a.length + 1) + (a.length + 1))) =
+      extractCfg x (some (.inr 2)) ((dbl a).length + 2) (by omega)
+        a a.length a := by
+    have hA : (pairExtractTM true false).tm.runFrom
+        ((pairExtractTM true false).tm.initCfg x) (2 * a.length) =
+        extractCfg x (some (.inl none)) (dbl a).length (by omega)
+          a a.length [] := by
+      rw [hinit, hscan]
+      exact extractCfg_congr _ _ _ _ (by simp) (by simp) (by simp) _
+    rw [MultiTapeTM.runFrom_add _ (2 * a.length + 2), MultiTapeTM.runFrom_add _ (2 * a.length) 2,
+      hA, hsep]
+    exact hp
+  have htot : 4 * a.length + 5 = (2 * a.length + 2 + ((a.length + 1) + (a.length + 1))) + 1 := by
+    ring
+  refine ⟨?_, ?_⟩
+  · rw [htot, MultiTapeTM.runFrom_succ_eq_step', hmid, hlast]
+    refine Cfg.ext rfl ?_ rfl rfl rfl
+    simp [extractCfg]
+  · intro u hu
+    refine MultiTapeTM.runFrom_state_ne_none_of_le _ _
+      (2 * a.length + 2 + ((a.length + 1) + (a.length + 1)))
+      ?_ u (by omega)
+    rw [hmid]
+    simp [extractCfg]
+
+/-- **The extractor's run at its published budget**, as a corollary of the exact form: at the
+extractor's published time budget `5·(|z| + 1)` the run has halted in the
+complete configuration. -/
+theorem pairExtractTM_fst_run_budget (a b : List Bool) :
+    let M := pairExtractTM true false
+    let d := M.tm.runFrom (M.tm.initCfg (pairEncode a b)) (5 * ((pairEncode a b).length + 1))
+    d.state = none ∧ d.output = a ∧ d.inputPos.val = 2 * a.length + 3 ∧
+      ∀ j : Fin M.k, d.workTapes j = bufferTape a ∧ d.workTapePos j = (a.length : ℤ) := by
+  intro M d
+  obtain ⟨h, -⟩ := pairExtractTM_fst_run a b
+  have hle : 4 * a.length + 5 ≤ 5 * ((pairEncode a b).length + 1) := by
+    rw [length_pairEncode]; omega
+  have hd : d = M.tm.runFrom (M.tm.initCfg (pairEncode a b)) (4 * a.length + 5) := by
+    change M.tm.runFrom _ _ = _
+    rw [← Nat.add_sub_of_le hle, MultiTapeTM.runFrom_add, h, MultiTapeTM.runFrom_of_halt _ rfl]
+  rw [hd, h]
+  exact ⟨rfl, rfl, rfl, fun _ => ⟨rfl, rfl⟩⟩
 
 /-! The unary polynomial generator below is adapted privately from
 `ClassNP/TMSAT.lean`, including its exact loop-depth ledger. -/
