@@ -1787,7 +1787,8 @@ private theorem xr_heads_upd_dep {k : ℕ} (hk : Fin k → ℤ) (hch hctr hcp hd
 /-- **The catalog rows' result tape.** A row that rewrites the cells `[0, |w|)` of a bank holding
 the word `w` at the origin with a same-width word `v` leaves that bank holding `v`. -/
 private theorem xr_patch_eq {K : ℕ} (tp : Fin K → ℤ → Option Bool) (hd : Fin K → ℤ) (i : Fin K)
-    (hi : hd i = 0) (w v : List Bool) (hv : v.length = w.length) (hw : tp i = FinTM.bufferTape w) :
+    (hi : hd i = 0) (w v w₀ : List Bool) (hv : v.length = w.length) (hw : tp i = FinTM.bufferTape w₀)
+    (hlen : w₀.length ≤ w.length) :
     (fun j q => if j = i ∧ hd j ≤ q ∧ q < hd j + (w.length : ℤ) then FinTM.bufferTape v (q - hd j)
       else tp j q) = Function.update tp i (FinTM.bufferTape v) := by
   funext j q
