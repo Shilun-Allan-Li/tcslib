@@ -1,0 +1,95 @@
+diff --git a/TCSlib/Complexity/SpaceComplexity/WindowClock.lean b/TCSlib/Complexity/SpaceComplexity/WindowClock.lean
+index 9baf1502..5860ed0c 100644
+--- a/TCSlib/Complexity/SpaceComplexity/WindowClock.lean
++++ b/TCSlib/Complexity/SpaceComplexity/WindowClock.lean
+@@ -356,6 +356,16 @@ private lemma cw_clear_patch {Γ : Type} {k : ℕ} {x : List Γ} (i : Fin k)
+     · rw [if_neg hq, wordPatch_of_not_mem _ _ _ hq, hb q (by omega)]
+   · simp only [hj, false_and, ite_false]
+ 
++/-- Two adjacent constant fills are one constant fill of their combined width.
++**Proof sketch.** Split on the cell: the two intervals partition the combined one, and
++outside it both sides read the original tape. -/
++private lemma cw_fill_append {Γ : Type} (tape : ℤ → Option Γ) (o : ℤ) (a b : ℕ) (e : Γ) :
++    (fun z => if o + (a : ℤ) ≤ z ∧ z < o + a + (b : ℤ) then some e
++      else if o ≤ z ∧ z < o + (a : ℤ) then some e else tape z) =
++    (fun z => if o ≤ z ∧ z < o + ((a + b : ℕ) : ℤ) then some e else tape z) := by
++  funext z
++  push_cast
++  split_ifs <;> first | rfl | omega
+ 
+ /-- **H3 with the configuration-count clock** (what `Complexity.space_hierarchy`'s
+ diagonalizer cites). The windowed runner that builds its own clock. For a fixed binary machine
+@@ -401,21 +411,21 @@ round's start and the halt and window exits merged into its one optional early e
+ or more, so its value exceeds `configBound M |x| s`: rounds, not steps, are counted, and the
+ time is at most the clock value times `C · (L + |x| + 1)` (`Turing.counterLoop_time_le`).
+ 
+-**Fill appendix (B6-F3).** The original numerical lemmas are unchanged. The new
+-`cw_field_total` and `cw_record_clock` instantiate their hypotheses at the actual record,
+-with pass count `C + Fintype.card M.State + 8`, including the extra halt-test round.
+-The authorized one-cell leaf, the constant mapped-copy endpoint, and a framed clear
+-endpoint are proved. The clear accepts a tape blank outside its word patch and restores
+-that entire tape to blank without a second patch-normalization argument.
+-The generic writer is not inserted. Its adjacent-write identity is already proved privately
+-in `RecordTable`; ground rules 7 and 10 require a public reuse lemma (escalation E2 in
+-`REPORT.md`). No additional admission is introduced, and this target remains open.
+-**Proof sketch (remaining).** With that public identity, compose the prescribed
+-mapped-copy/skip/left-move passes and rewind both heads. Embed the proved writer by R1,
+-run F2, clear halted/left endpoints, and dispatch through the prescribed seams or phase
+-host. Apply the record clock budget and the conditional time/head ledgers, and use
+-`windowRun_stop_unique` for the semantic certification. The composition and its common
+-constant are not yet supplied.
++**Fill appendix (partial).** The private `cw_` lemmas prove the clock arithmetic at the actual
++record. `cw_field_total` counts the record's field cells, `k(2s + 1) + posWidth |x| + 2`, and
++`cw_record_clock` shows that the all-true word over `c = C + |Q| + 8` passes of them has width
++at most `c · L` and a value large enough for every round up to `configBound + 1`, the extra
++halt-test round included (`C` is the runner's constant). The one-cell left move (`cw_leftTM`,
++`cw_left_run`), the constant mapped copy of one field (`cw_copy_constant`) and the clear of the
++clock after the runner (`cw_clear_patch`, which leaves the clock tape blank) are proved. The
++clock writer is not yet assembled, and this target remains open.
++**Proof sketch (remaining).** Write the clock field by field: a constant mapped copy, a skip
++past the field on each tape and a one-cell move back onto the clock's delimiter, joining
++adjacent constant writes into one interval. Repeat for the `c` passes and rewind both heads.
++Embed the writer on the record and clock tapes, run `Turing.exists_windowRunnerTM` on the word,
++clear the clock after a `halted` or `left` exit, and dispatch to the exits. The time and head
++bounds follow from the clock budget and the linear writer and clear costs, and
++`Turing.windowRun_stop_unique` moves the certification to the statement's `N`.
+  -/
+ theorem exists_configWindowRunnerTM (M : FinTM Bool) {T : Type} [Fintype T] [DecidableEq T]
+     (upd : T → Option Bool → T) (hupd : ∀ τ, upd τ none = τ) :
+diff --git a/TCSlib/Complexity/TuringMachine/Build/StepClock.lean b/TCSlib/Complexity/TuringMachine/Build/StepClock.lean
+index 5a73db95..c2b16992 100644
+--- a/TCSlib/Complexity/TuringMachine/Build/StepClock.lean
++++ b/TCSlib/Complexity/TuringMachine/Build/StepClock.lean
+@@ -90,6 +90,32 @@ theorem wordPatch_of_not_mem {Γ : Type*} (ct : ℤ → Option Γ) (cp : ℤ) (u
+     (h : ¬(cp ≤ q ∧ q < cp + (u.length : ℤ))) : wordPatch ct cp u q = ct q := by
+   simp only [wordPatch, if_neg h]
+ 
++/-- **Adjacent patches join**: patching `u` at `cp` and then `v` at `cp + |u|`, right after it,
++is patching `u ++ v` at `cp`.
++
++**Proof sketch.** Split on the cell. Inside `u`'s interval both sides read `u`'s letter, since
++`u ++ v` begins with `u`; inside `v`'s interval both read `v`'s letter at the offset past `u`;
++outside both intervals both read the original tape. -/
++theorem wordPatch_append {Γ : Type*} (ct : ℤ → Option Γ) (cp : ℤ) (u v : List Γ) :
++    wordPatch (wordPatch ct cp u) (cp + u.length) v = wordPatch ct cp (u ++ v) := by
++  funext q
++  have hlen : ((u ++ v).length : ℤ) = u.length + v.length := by simp
++  by_cases h₁ : cp ≤ q ∧ q < cp + (u.length : ℤ)
++  · have hn : 0 ≤ q - cp := by omega
++    rw [wordPatch_of_not_mem _ _ _ (by omega), wordPatch_of_mem _ _ _ h₁.1 h₁.2,
++      wordPatch_of_mem _ _ _ h₁.1 (by omega), ← Int.toNat_of_nonneg hn, FinTM.bufferTape_nat,
++      FinTM.bufferTape_nat, List.getElem?_append_left (by omega)]
++  · by_cases h₂ : cp + (u.length : ℤ) ≤ q ∧ q < cp + u.length + (v.length : ℤ)
++    · have hn : 0 ≤ q - (cp + u.length) := by omega
++      have hm : 0 ≤ q - cp := by omega
++      rw [wordPatch_of_mem _ _ _ h₂.1 h₂.2, wordPatch_of_mem _ _ _ (by omega) (by omega),
++        ← Int.toNat_of_nonneg hn, ← Int.toNat_of_nonneg hm, FinTM.bufferTape_nat,
++        FinTM.bufferTape_nat, List.getElem?_append_right (by omega)]
++      congr 1
++      omega
++    · rw [wordPatch_of_not_mem _ _ _ h₂, wordPatch_of_not_mem _ _ _ h₁,
++        wordPatch_of_not_mem _ _ _ (by omega)]
++
+ /-- **A stopped body configuration**: halted, or live in a designated stop state. -/
+ def Cfg.Stopped {k : ℕ} {Γ S : Type*} {x : List Γ} (stopAt : S → Bool) (c : Cfg k Γ S x) :
+     Prop :=

@@ -1062,6 +1062,23 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
   `ss_captureInitial`/`ss_capture_indices` sketches are a required item of the U2-S continuation's
   brief; 49's stale status prose rides cont7's landing (`CodeSimulator`) and the docstring-cleanup
   pass (`Codes2Tape`, `EXPCOM`). #129 and #130 declared clear to merge; #131 after #130 (retarget).
+- **B6 F3 cont1 reviewed (2026-10-18):** a clean partial: six private `cw_` helpers (phase 0, the
+  one-cell leaf, a field's constant copy, the clock clear); the target open. Lands as a partial
+  (`lean/b6-f3-cont1-partial`, with the review's public-facing appendix, headed "Implementation
+  status.", and the status line without the moved records path; the stale Route A sketch is left,
+  since it still describes a valid route). Review: `campaign/fills/b6/reviews/configclock-cont1/`.
+  **Pending user decision (E2, for F3 cont2's brief):** A, a private `cw_fill_append` in the owned
+  file (four lines, unblocks the continuation now), or B, a public `wordPatch_append` in
+  `Build/StepClock` by a maintainer API PR (the public form of `RecordTable`'s private
+  `rt_adjacentWrites`, which it would let re-point). Both verified (`suggested-fix.diff`).
+- **Pending user decision (the seam-layout standalone fill's brief):** its word identities exist
+  only as `StepBlock`'s privates (`bufferTape_suffix`, `_reads`, `_outside`, `_unary`), outside the
+  layout's closure. Local private copies plus a duplication-ledger entry (gate 46's review
+  recommends it: a smaller replay), or an API PR promoting them to `Simulation`'s
+  `FinTM.bufferTape` API. The brief is drafted around this choice.
+- **Landing order (2026-10-18):** #129, #130, #131 (retargeted after #130), then #132 (its
+  313-module replay covers every module of #133's and F3 cont1's closures), then #133 (F5) and the
+  F3 cont1 landing, each replayed from #132's snapshot.
 - **B6 F5 reviewed (2026-10-18):** phase 1 (`exists_rulerTestTM`, `C = 2`) proved; the other two
   targets open. **Rulings (user):** the landing imports `Build/Catalog` and cites
   `Turing.tapeAction` / `step_of_tapeAction_move` instead of the private joint move (the review's

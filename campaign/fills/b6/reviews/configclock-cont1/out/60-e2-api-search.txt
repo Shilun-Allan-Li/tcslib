@@ -1,0 +1,66 @@
+== wt-base (94b986d4)
+TCSlib/Complexity/TuringMachine/Build/RecordTable.lean:3199:private theorem rt_adjacentWrites {Γ : Type*} (tape : ℤ → Option Γ) (o : ℤ)
+TCSlib/Complexity/TuringMachine/Build/RecordTable.lean:3238:private theorem rt_advanceCfg_append {k : ℕ} {Γ P S : Type*} {x : List Γ}
+TCSlib/Complexity/TuringMachine/Build/Zone.lean:219:private theorem zoneSide_adjacent {n : ℕ} (a : ℕ) (ha : a + 1 < n)
+TCSlib/Complexity/TuringMachine/Build/StepClock.lean:82:theorem wordPatch_of_mem {Γ : Type*} (ct : ℤ → Option Γ) (cp : ℤ) (u : List Γ) {q : ℤ}
+TCSlib/Complexity/TuringMachine/Build/StepClock.lean:89:theorem wordPatch_of_not_mem {Γ : Type*} (ct : ℤ → Option Γ) (cp : ℤ) (u : List Γ) {q : ℤ}
+TCSlib/Complexity/TuringMachine/Build/StepClock.lean:247:private theorem sc_wordPatch_self {Γ : Type} (ct : ℤ → Option Γ) (cp : ℤ) (u : List Γ)
+TCSlib/Complexity/TuringMachine/Build/StepClock.lean:263:private theorem sc_wordPatch_twice {Γ : Type} (ct : ℤ → Option Γ) (cp : ℤ) (u v : List Γ)
+TCSlib/Complexity/TuringMachine/Build/StepClock.lean:277:private theorem sc_wordPatch_frame {Γ : Type} (ct : ℤ → Option Γ) (cp : ℤ) (u v : List Γ)
+== wt-tipd (b175e512)
+TCSlib/Complexity/TuringMachine/Build/StepClock.lean:92:theorem wordPatch_of_mem {Γ : Type*} (ct : ℤ → Option Γ) (cp : ℤ) (u : List Γ) {q : ℤ}
+TCSlib/Complexity/TuringMachine/Build/StepClock.lean:99:theorem wordPatch_of_not_mem {Γ : Type*} (ct : ℤ → Option Γ) (cp : ℤ) (u : List Γ) {q : ℤ}
+TCSlib/Complexity/TuringMachine/Build/StepClock.lean:264:private theorem sc_wordPatch_self {Γ : Type} (ct : ℤ → Option Γ) (cp : ℤ) (u : List Γ)
+TCSlib/Complexity/TuringMachine/Build/StepClock.lean:280:private theorem sc_wordPatch_twice {Γ : Type} (ct : ℤ → Option Γ) (cp : ℤ) (u v : List Γ)
+TCSlib/Complexity/TuringMachine/Build/StepClock.lean:294:private theorem sc_wordPatch_frame {Γ : Type} (ct : ℤ → Option Γ) (cp : ℤ) (u v : List Γ)
+TCSlib/Complexity/TuringMachine/Build/Zone.lean:219:private theorem zoneSide_adjacent {n : ℕ} (a : ℕ) (ha : a + 1 < n)
+TCSlib/Complexity/TuringMachine/Build/RecordTable.lean:3199:private theorem rt_adjacentWrites {Γ : Type*} (tape : ℤ → Option Γ) (o : ℤ)
+TCSlib/Complexity/TuringMachine/Build/RecordTable.lean:3238:private theorem rt_advanceCfg_append {k : ℕ} {Γ P S : Type*} {x : List Γ}
+== declarations added by the open PRs (vs their merge base with the tip)
+-- origin/lean/seam-layout
++theorem exists_seamLayoutTM (k 
+-- lean/c1-un-partial
+-- lean/u2s-partial
++private def ss_cleanCanonizer (F 
++private theorem ss_cleanCanonizer_run (F 
++private theorem ss_cleanCanonizer_halts (F 
++private theorem ss_lengthBound (time 
++private theorem ss_cleanCanonizer_computes (F 
++private theorem ss_bufferedHalt_iff (M₁ M₂ 
++private theorem ss_prefix_first_halt (F 
++private theorem ss_cleanCanonizer_first_halt (F 
++private theorem ss_captureInitial {m n 
++private def ss_captureTM (F 
++private theorem ss_capture_run (F 
++private theorem ss_capturedPrefix_run (F 
++private def ss_sourceSlot (m k 
++private def ss_captureTape (m k 
++private theorem ss_capture_indices (m k 
+-- lean/canon-cont6-partial
++private lemma canonReturnAdapter {m 
++private lemma exists_canonRecordRound (k 
++private lemma canonRepeat_last (r 
++private lemma canonRepeat_orbit {m 
++private lemma canonCounterRepeat {m 
++private def ss_cleanCanonizer (F 
++private theorem ss_cleanCanonizer_run (F 
++private theorem ss_cleanCanonizer_halts (F 
++private theorem ss_lengthBound (time 
++private theorem ss_cleanCanonizer_computes (F 
++private theorem ss_bufferedHalt_iff (M₁ M₂ 
++private theorem ss_prefix_first_halt (F 
++private theorem ss_cleanCanonizer_first_halt (F 
++private theorem ss_captureInitial {m n 
++private def ss_captureTM (F 
++private theorem ss_capture_run (F 
++private theorem ss_capturedPrefix_run (F 
++private def ss_sourceSlot (m k 
++private def ss_captureTape (m k 
++private theorem ss_capture_indices (m k 
+-- lean/un-u2s-api
++private lemma extractCfg_congr (x 
++private lemma extract_scan (first second 
++theorem pairExtractTM_fst_run (a b 
++theorem pairExtractTM_fst_run_budget (a b 
++theorem bufferedSecondCfg_workTapes_cast (M₁ M₂ 
++theorem bufferedSecondCfg_workTapePos_cast (M₁ M₂ 
