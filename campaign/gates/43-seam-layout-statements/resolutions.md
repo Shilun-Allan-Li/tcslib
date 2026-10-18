@@ -32,4 +32,20 @@ at the auditor's severities.
   2026-10-17).
 - **Checks:** elaboration against `oleans-lc1w`, 0 errors, the contract's `sorry` only; the freeze
   flags the intended statement change; the round-2 probe has only its inline contract's `sorry`.
-- **Replay:** `replay-lseam2.sh`, 2 modules, chained from `oleans-lx2b`.
+- **Replay:** `replay-lseam2.sh`, 2 modules, chained from `oleans-lx2b`. **Passed (user,
+  2026-10-18):** 2 of 2 at `45b79f5f`, 0 failed, static-equal (1).
+
+## Round 2: PASS (0 blockers, 0 majors, 1 minor, 11 notes)
+
+Gate 46 (dispatch folder `46-seam-layout-statements-r2-gate/`, bundle SHA-256 `301f6081…a347`).
+The findings are in `findings-r2.md`, verbatim. The maintainer's review
+(`campaign/items/c1/seam-layout/gate46-review.md`) verified every finding at `45b79f5f`: all
+true, at the auditor's severities.
+
+| # | Severity | Finding | Resolution |
+|---|---|---|---|
+| 1 | minor | The PR description kept the superseded fill plan (U2-S's private leaf promoted), round 1's check and replay identifiers (`oleans-lndnf`; `replay-lseam.sh` from `oleans-lc1w`), and miscounted the route ("eight exact `_run_ofCfg` contracts and two named leaves"). | **Fixed in the records; no `.lean` change.** The PR description is replaced by `campaign/items/c1/seam-layout/r2/pr-body-gate46.md`: the standalone-fill ruling; round 2's checks and replay (`replay-lseam2.sh` from `oleans-lx2b`, passed); eight phases, six catalog rows and two leaves. It also records the merged stack and the moved paths. Round 1's records (`pack.md`, `findings.md`, `campaign/items/c1/seam-layout/pr-body.md`, `gate43-review.md`) and `r2/pr-body.md` (as dispatched) are preserved; this row records their supersession. |
+| 2–12 | note | Integrity and the freeze; achievability with `C = 18`; the phase joins and the exact time; the three consumers; non-vacuity and the edge cases; docstrings, imports and reuse; the attestations; lint. | **No action.** Notes 3–9 carry forward to the standalone fill's brief (the route, the time ledger, the edge cases): the review's section (c). |
+
+**The gate closes (PASS).** #124's statement is final. The standalone fill proves it along the
+eight-phase sketch.
