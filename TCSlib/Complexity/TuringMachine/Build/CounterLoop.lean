@@ -112,6 +112,7 @@ with binary digits embedded into its dedicated counter tape.
   finding 2).
 * `Turing.foldr_bit_eq_ofDigits`, `Turing.counterValue_bits` — the counter value of a word is its
   binary value, and the counter word `t.bits` has value `t` (H1 harvest landing).
+* `Turing.counterValue_eq` — the counter value as an equation (the ND inventory API, round 2).
 
 ## References
 
@@ -2038,6 +2039,12 @@ theorem counterLoopCfg_body {S : Type} {x : List Γ} (a : S)
 /-- The value of a counter word. -/
 def counterValue (w : List Bool) : ℕ :=
   Nat.ofDigits 2 (w.map Bool.toNat)
+
+/-- **The counter value, unfolded** (the ND inventory API, round 2; C1-R's escalation E1):
+`counterValue w = Nat.ofDigits 2 (w.map Bool.toNat)`, the form of the hosted loop's value
+hypothesis (`Turing.StepBlock.hostedLoopTM_run`'s `ht`). -/
+theorem counterValue_eq (w : List Bool) : counterValue w = Nat.ofDigits 2 (w.map Bool.toNat) :=
+  rfl
 
 /-- **The counter value is the parser's binary value**: the `foldr` of `Nat.bit` over a word, its
 value as a little-endian binary numeral (`Turing.codeBitsNat`), is `Nat.ofDigits 2` of its bits,

@@ -59,6 +59,12 @@ gadget needs.
   reads and clamping invariant, first- and second-phase run correspondence,
   and an exact `|y| + 2` rewind-and-dispatch ledger. These extend the scope of
   the native-input embeddings above without changing their statements.
+* **Machine agreement** (`Turing.MultiTapeTM.AgreeOn`, `step_eq_of_agreeOn`,
+  `runFrom_eq_of_agreeOn`): two tables agreeing on a set of control states run identically while
+  the control stays inside it. `Turing.MultiTapeTM.agreeOn_iff` states the agreement as an
+  equivalence (the ND inventory API, round 2).
+* **Buffers** (`Turing.FinTM.bufferTape`): a word stored from cell `0`, blank elsewhere;
+  `Turing.FinTM.bufferTape_eq` and `bufferTape_of_neg` (the ND inventory API, round 2).
 
 **The specification API** (user, 2026-10-16): the fields of the buffered composite's two
 configuration shapes, `Turing.FinTM.bufferedFirstCfg_*` and `bufferedSecondCfg_*`, as
@@ -638,6 +644,18 @@ optional word entry, so position `w.length` is the right blank. -/
 @[simp] lemma bufferTape_left {Symbol : Type*} (w : List Symbol) : bufferTape w (-1) = none := by
   simp [bufferTape]
 
+/-- **The buffer, unfolded** (the ND inventory API, round 2; G2's consumer): cell `z` reads
+`w[z.toNat]?` when `0 ≤ z`, and is blank otherwise. -/
+theorem bufferTape_eq {Symbol : Type*} (w : List Symbol) (z : ℤ) :
+    bufferTape w z = if 0 ≤ z then w[z.toNat]? else none :=
+  rfl
+
+/-- **Every negative cell is blank** (the ND inventory API, round 2): `bufferTape w z = none` for
+`z < 0`. -/
+theorem bufferTape_of_neg {Symbol : Type*} (w : List Symbol) {z : ℤ} (hz : z < 0) :
+    bufferTape w z = none := by
+  rw [bufferTape_eq, if_neg (by omega)]
+
 /-- Appending one emitted symbol changes just the old right-blank cell.
 
 **Proof sketch.** At that cell the appended singleton is read. At a smaller
@@ -1120,6 +1138,13 @@ halting. -/
 def AgreeOn {k : ℕ} {Symbol State : Type*} (M N : MultiTapeTM k Symbol State)
     (Q : Set State) : Prop :=
   ∀ q ∈ Q, ∀ inp work, M.tr q inp work = N.tr q inp work
+
+/-- **The agreement, unfolded** (the ND inventory API, round 2; C1-WC's review): the tables agree
+on `Q` iff `M.tr q inp work = N.tr q inp work` for every `q ∈ Q` and all reads. -/
+theorem agreeOn_iff {k : ℕ} {Symbol State : Type*} (M N : MultiTapeTM k Symbol State)
+    (Q : Set State) :
+    M.AgreeOn N Q ↔ ∀ q ∈ Q, ∀ inp work, M.tr q inp work = N.tr q inp work :=
+  Iff.rfl
 
 /-- One step transfers across an agreement: if the configuration's control
 state (when live) lies in the agreement set, both machines step it to the
