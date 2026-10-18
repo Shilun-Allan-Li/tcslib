@@ -286,10 +286,11 @@ a constant `K` with:
     `K · (g n + 1)` iff the coded machine does not accept the bottom `1^{ℓᵢ + 1}` within
     `T* = budget f ℓᵢ`.
 
-**Why the decider is a hypothesis** (gate 40's review, X2; the user, 2026-10-17). It is stated in
-`TCSlib.Complexity.Diagonalization.NTimeHierarchy`, which imports this module for
-`ntime_hierarchy`; that proof supplies it from `Turing.exists_ndAcceptsWithin_decider`. Taking it as
-a hypothesis keeps the two modules' imports acyclic.
+**Why the decider is a hypothesis.** It is stated in
+`TCSlib.Complexity.Diagonalization.NTimeHierarchy`, whose `ntime_hierarchy` needs this module,
+so this module cannot import it. That proof supplies it from
+`Turing.exists_ndAcceptsWithin_decider`; taking it as a hypothesis keeps the two modules' imports
+acyclic.
 
 **Proof sketch.** `D` is assembled by the nondeterministic phase host
 `Turing.NDTM.phaseHostND`:
