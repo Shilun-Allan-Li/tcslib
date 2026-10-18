@@ -82,12 +82,12 @@ and any skeleton-time proofs) against the source text.
   prioritized brief (the plan's seeded design questions go here), and the findings
   table format with the severity guide: **blocker** (a downstream phase would build on
   a wrong statement) / **major** (fixable but materially misleading) / **minor** /
-  **note**. `audits/TEMPLATE.md` is the skeleton.
+  **note**. `campaign/standards/TEMPLATE.md` is the skeleton.
 * `…-bundle.md` — a single uploadable file: the pack verbatim, then every attachment
   under a `## ===== <path> =====` header (prior findings, both plans, `policy.md`,
   the root, and the full module tree). **Not committed** (user, 2026-10-15): it is kept
   in the local dispatch folder, and the resolutions record its SHA-256 and section
-  count. Bundles committed before then are indexed in `audits/BUNDLES.md`, with how to
+  count. Bundles committed before then are indexed in `campaign/BUNDLES.md`, with how to
   retrieve them from history.
 * A short kickoff message (drafted per round, pasted by the maintainer into a fresh
   auditor chat with the bundle attached).
@@ -101,7 +101,7 @@ be swept in the closing commit and re-verified). Repairs adopt the auditor's own
 constructions where supplied, are re-gated, and are recorded in the decision log; when
 the loop closes, `…-resolutions.md` summarizes every round, every repair, and the note
 dispositions. The complete worked example is the three-round
-`audits/ch2-phase1-{pack,findings,reaudit-…,round3-…,resolutions}.md` loop.
+`campaign/gates/ch2-phase1{,-reaudit,-round3}/{pack,findings,resolutions}.md` loop.
 
 Audits complement, never replace, in-Lean sanity theorems — the machine-checked and
 permanent form of the same checks.

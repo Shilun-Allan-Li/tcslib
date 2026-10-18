@@ -4,7 +4,7 @@
 anthropics/formal-math, folder `3sum-apsp`, commit `e1a4e6508154ea59f030480661590a9fe3018011`.
 Every change to the upstream text is made by these scripts and listed in each file's header. That
 way the port can be regenerated, and audited by reading the diff
-(`audits/evidence/programs-vendor/upstream-to-vendored.diff`).
+(`campaign/gates/programs-vendor/evidence/upstream-to-vendored.diff`).
 
 | Script | What it does |
 |---|---|
