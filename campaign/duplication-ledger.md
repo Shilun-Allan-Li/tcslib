@@ -334,5 +334,13 @@ instance and re-check consumers. `CounterLoop`'s other new pair, `counterLoopTM_
 ↔ `_run_escape` at 83%/72%, is two Z5 re-derivations sharing transport setup. It is not a
 member (gate note F8).
 
+**RW-1, the rewind row's frame helper** (PR #138, `Build/Rewind`, 2026-10-18): the private
+`rw_cfg` reproduces `Build/Catalog`'s private `catalogSeekCfg` at 79/79 = 100%, both ways (one
+record update over a different phase type); no proof is copied. **ACKNOWLEDGED (user,
+2026-10-18)**, before gate 55. **Cleanup owner and window:** the user's dedup window, through
+backlog §1 RW-1: one public frame over any state type, cited from both files, with Catalog's next
+edit. `Build/Rewind`: 1 member of 5 declarations (20%, at one fifth and not past it; the §1
+item is opened anyway and answered), 79 copied characters.
+
 Any new copy in a future delivery enters through the per-delivery ledger
 and the one-fifth escalation rule of `workflow.md` §4.

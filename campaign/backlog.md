@@ -871,6 +871,23 @@ rules (a PR plus its gate). Its input is the round-2 classified ledger of the AR
   with their families K1–K20.
 - **Later:** the run-composition kit is a candidate to unify with `Build/Contract` (MIG-0).
 
+### RW-1: the rewind row's frame helper, a copy of Catalog's seek frame (user, 2026-10-18)
+
+*Origin: the screen of PR #138 (the public rewind row, `Build/Rewind`), before gate 55.*
+
+`Build/Rewind`'s private `rw_cfg` reproduces `Build/Catalog`'s private `catalogSeekCfg` at 100%
+(79 characters, both ways): the three-line record update that sets the state and moves one head,
+over `RewindPhase` instead of `SeekPhase`. Catalog's helper is private and specific to
+`SeekPhase`, so the new module cannot cite it. The step lemmas over the two frames, `rw_step` and
+Catalog's private `catalog_seek_step`, state the same step; the screen pairs them below its
+half threshold.
+- **Acknowledged (user, 2026-10-18)**, before gate 55, on condition that the retirement stays on
+  this backlog.
+- **Retirement, in the user's dedup window:** publish one frame over any state type (with its
+  step lemma, through the public `step_of_tapeAction_move`) and cite it from both files. It
+  edits `Build/Catalog`, whose downstream is most of the library, so it goes with Catalog's next
+  edit (12.2c T3, Catalog core, or MIG-1).
+
 ## 2. Campaign work queued or on hold
 
 ### MIG / RS: the foundation migration and the restyling backlog (user, 2026-10-12; design §16)
@@ -1124,15 +1141,18 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
   (`lean/b6-f3-cont1-partial`, with the review's public-facing appendix, headed "Implementation
   status.", and the status line without the moved records path; the stale Route A sketch is left,
   since it still describes a valid route). Review: `campaign/fills/b6/reviews/configclock-cont1/`.
-  **Pending user decision (E2, for F3 cont2's brief):** A, a private `cw_fill_append` in the owned
-  file (four lines, unblocks the continuation now), or B, a public `wordPatch_append` in
-  `Build/StepClock` by a maintainer API PR (the public form of `RecordTable`'s private
-  `rt_adjacentWrites`, which it would let re-point). Both verified (`suggested-fix.diff`).
-- **Pending user decision (the seam-layout standalone fill's brief):** its word identities exist
-  only as `StepBlock`'s privates (`bufferTape_suffix`, `_reads`, `_outside`, `_unary`), outside the
-  layout's closure. Local private copies plus a duplication-ledger entry (gate 46's review
-  recommends it: a smaller replay), or an API PR promoting them to `Simulation`'s
-  `FinTM.bufferTape` API. The brief is drafted around this choice.
+  **E2 ruled (user, 2026-10-18): B**, a public `wordPatch_append` in `Build/StepClock` by a
+  maintainer API PR, with its own replay (StepClock's downstream) and gate, before F3 cont2's
+  brief issues. It is the public form of `RecordTable`'s private `rt_adjacentWrites`, which can
+  re-point to it in the user's dedup window. (Option A, a private `cw_fill_append`, was not
+  chosen.) Both were verified (`suggested-fix.diff`).
+- **The seam-layout standalone fill's word identities, ruled (user, 2026-10-18):** they exist only
+  as `StepBlock`'s privates (`bufferTape_suffix`, `_reads`, `_outside`, `_unary`), outside the
+  layout's closure. **A new small public module beside `Simulation`** publishes the four, by a
+  maintainer API PR with its own replay (the module and the facade) and gate; the fill's brief
+  authorizes its import. `StepBlock`'s four privates become an acknowledged copy family, re-pointed
+  in the user's dedup window. (Not chosen: local private copies, which gate 46's review
+  recommended; promotion into `Simulation`, a 313-module replay.)
 - **Landing order (2026-10-18):** #129, #130, #131 (retargeted after #130), then #132 (its
   313-module replay covers every module of #133's and F3 cont1's closures), then #133 (F5) and the
   F3 cont1 landing, each replayed from #132's snapshot.
