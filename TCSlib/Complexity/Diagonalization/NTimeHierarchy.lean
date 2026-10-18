@@ -7,6 +7,11 @@ import TCSlib.Complexity.TuringMachine.NDCodes
 import TCSlib.Complexity.ClassNP.NTIME
 import TCSlib.Complexity.ClassP.TimeConstructible
 import TCSlib.Complexity.ClassNP.NDNormalForm
+import TCSlib.Complexity.TuringMachine.Build.NDHost
+import TCSlib.Complexity.TuringMachine.NDCodeSimulator
+import TCSlib.Complexity.TuringMachine.UniversalStartup
+import TCSlib.Complexity.ClassNP.ExhaustiveReplay
+import TCSlib.Complexity.ClassNP.TMSAT
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -26,10 +31,9 @@ the linear-overhead coded normal form ([BGW70]-style guess-then-verify).
 Phase P3.3 of `AroraBarakChapters3-4Plan.md`, over the code layer of
 `TCSlib.Complexity.TuringMachine.NDCodes`.
 
-**Status: statement skeleton (phase P3.3).** Every contract is sorried with a
-sketch naming its fill obligations. The `Diagonalization.lean` facade is
-frozen under the live P3.2 gate; this module is wired through the root import
-only, with facade wiring at that gate's close (the P4.2 precedent).
+**Status.** The universal NDTM `Turing.exists_timed_universal_NDTM` and the hierarchy
+`Complexity.ntime_hierarchy` are sorried; the exponential decider and the two corollaries are
+proved from them.
 
 ## Design (declared deviations, each for the audit)
 
@@ -82,7 +86,7 @@ only, with facade wiring at that gate's close (the P4.2 precedent).
   `TCSlib.Complexity.ClassNP.ExhaustiveReplay`; the normal form is in
   `TCSlib.Complexity.ClassNP.NDNormalForm`.
 
-## Main results (all sorried; phase-P3.3 statements)
+## Main results
 
 * `Turing.exists_timed_universal_NDTM` — [AB09, Exercise 2.6] at linear
   overhead (CH34-Q8).
@@ -186,7 +190,8 @@ with `C := C_E·(C_α+1)`. This derivation is proved, as
 `Turing.ndAcceptsWithin_decider_of_universal`. Fill obligation, named: `E`
 itself (iterative deepening over the choice words of the fixed `UN`, each
 replayed by its replay machine under the step-clocked runner, with a window
-clear between replays; no `|x|` term). -/
+clear between replays; no `|x|` term). The proof applies
+`Turing.ndAcceptsWithin_decider_of_universal` to `Turing.exists_timed_universal_NDTM`. -/
 theorem exists_ndAcceptsWithin_decider (c : EffectiveNDMachineCode) :
     ∃ BF : FinTM Bool, ∀ α : List Bool, ∃ C : ℕ, ∀ (x : List Bool) (t : ℕ),
       ((c.decode α).toFinNDTM.AcceptsWithin x t →
@@ -195,7 +200,7 @@ theorem exists_ndAcceptsWithin_decider (c : EffectiveNDMachineCode) :
       (¬(c.decode α).toFinNDTM.AcceptsWithin x t →
         BF.ComputesInTime (pairEncode (pairEncode (Nat.bits t) α) x) [false]
           (C * 2 ^ (C * (t + 1)))) := by
-  sorry
+  exact ndAcceptsWithin_decider_of_universal c (exists_timed_universal_NDTM c)
 
 end Turing
 
@@ -309,12 +314,26 @@ with the larger class exactly `NTIME g` when `g` never vanishes — mirroring
 
 **Proof sketch.** `c·(g n + 1) ≤ 2c · g n` when `g n ≥ 1`, so
 `NTIME (g + 1) ⊆ NTIME g`; the reverse is `Complexity.NTIME.mono`; conclude
-from `Complexity.ntime_hierarchy`. -/
+from `Complexity.ntime_hierarchy`.
+
+Formally, the factor `2` is absorbed into the membership witness's constant
+(`Complexity.mem_NTIME_iff`, `Turing.FinNDTM.decidesInTime_iff`). -/
 theorem ntime_hierarchy_of_pos {f g : ℕ → ℕ} (hf : TimeConstructible f)
     (hg : TimeConstructible g) (hpos : ∀ n, 0 < g n)
     (hfg : ∀ A : ℕ, ∃ N, ∀ n ≥ N, A * (f (n + 1) + f n + n + 1) ≤ g n) :
     NTIME f ⊂ NTIME g := by
-  sorry
+  have hback : NTIME (fun n => g n + 1) ⊆ NTIME g := by
+    intro L hL
+    have hscale : L ∈ NTIME (fun n => 2 * g n) :=
+      NTIME.mono (fun n => by have := hpos n; omega) hL
+    obtain ⟨a, N, hN⟩ := mem_NTIME_iff.mp hscale
+    apply mem_NTIME_iff.mpr
+    refine ⟨a * 2, N, FinNDTM.decidesInTime_iff.mpr ?_⟩
+    intro x
+    simpa only [Nat.mul_assoc] using (FinNDTM.decidesInTime_iff.mp hN x)
+  have heq : NTIME (fun n => g n + 1) = NTIME g :=
+    Set.Subset.antisymm hback (NTIME.mono (fun n => Nat.le_succ (g n)))
+  simpa only [heq] using ntime_hierarchy hf hg hfg
 
 /-- **The showcase separation** (spec, fill pending — phase P3.3):
 `NTIME(n + 1) ⊊ NTIME((n + 1)²)`, the ℕ-rendering of the book's displayed
@@ -329,14 +348,27 @@ vacuously), so no square-overhead route separates these two classes
 **Proof sketch.** `Complexity.ntime_hierarchy_of_pos` at `f := n + 1`,
 `g := (n + 1)²`: positivity is immediate; domination is
 `A·((n + 2) + (n + 1) + n + 1) = A·(3n + 4) ≤ (n + 1)²` for `n ≥ 3A + 4`.
-Fill obligations, named: the two constructibility witnesses —
-`TimeConstructible (n + 1)` (dominance `n ≤ n + 1`; an input-scan counter
-emitting `bits (n + 1)`, the `Complexity.timeConstructible_id` idiom) and
-`TimeConstructible ((n + 1)²)` (dominance `n ≤ (n + 1)²`; the grade-school
-square of the scanned length within `O((n + 1)²)` steps — a §12
-catalog/counter consumer). -/
+The two constructibility witnesses are `Complexity.timeConstructible_poly` at
+`(C, c) = (1, 0)` and `(1, 1)`; domination takes `N = 3A + 4` and multiplies `N ≤ n` by `n`. -/
 theorem NTIME_linear_ssubset_square :
     NTIME (fun n => n + 1) ⊂ NTIME (fun n => (n + 1) ^ 2) := by
-  sorry
+  have hf : TimeConstructible (fun n => n + 1) := by
+    have h : (fun n : ℕ => 1 * (n + 1) ^ (0 + 1)) = (fun n => n + 1) := by
+      funext n
+      simp only [Nat.zero_add, pow_one, one_mul]
+    rw [← h]
+    exact timeConstructible_poly 1 0 (by decide)
+  have hg : TimeConstructible (fun n => (n + 1) ^ 2) := by
+    have h : (fun n : ℕ => 1 * (n + 1) ^ (1 + 1)) = (fun n => (n + 1) ^ 2) := by
+      funext n
+      simp only [one_mul]
+    rw [← h]
+    exact timeConstructible_poly 1 1 (by decide)
+  apply ntime_hierarchy_of_pos hf hg
+  · intro n
+    exact pow_pos (Nat.succ_pos n) _
+  · intro A
+    refine ⟨3 * A + 4, fun n hn => ?_⟩
+    nlinarith [Nat.mul_le_mul_right n hn]
 
 end Complexity
