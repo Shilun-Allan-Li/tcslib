@@ -1054,6 +1054,10 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
       `drafts/issue-inputs/r3/`): U2-S 655, F3 1,043, G4 795, MIG-12 870, cont6 2,411
       declarations. Each is one more than before (`scanResult_keep_keep`), with identical pair
       sets. The drafts take these counts at issue.
+- **Restacked (2026-10-18; the user's rulings on gate 43):** #122 ← #123 ← #125 (`e6917ea0`) ← #126
+  (`5fd5dce8`, with gate 45's minor 1) ← #124 (`45b79f5f`, round 2). Re-replays `lg4c1b`, `lx2b`,
+  `lseam2` (2 modules each, from `oleans-lc1w`). The seam-layout contract gets a standalone fill
+  after its round-2 gate; U2-S's continuation may import it.
 - **Gates 41–45 returned (2026-10-17).** 41 (#122) PASS, 42 (#123) PASS, 44 (#125) PASS, 45 (#126)
   PASS: reviewed, records committed (resolutions, `gate4N-review.md`). 43 (#124) FAIL 0/2/1/7:
   reviewed, round-2 patch drafted (`$S/review/gate43/`), decisions pending. Deferred `.lean` minors:
