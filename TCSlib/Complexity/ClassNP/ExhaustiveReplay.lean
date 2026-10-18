@@ -281,10 +281,11 @@ private theorem xr_runFrom_fixed {k : ℕ} {S : Type} {x : List Bool} (tm : Mult
   | zero => exact MultiTapeTM.runFrom_zero
   | succ n ih => rw [MultiTapeTM.runFrom_succ_eq_step', ih, hd]
 
+open MultiTapeTM in
 /-- One step of a run. -/
 private theorem xr_runFrom_one {k : ℕ} {S : Type} {x : List Bool} (tm : MultiTapeTM k Bool S)
     (d : Cfg k Bool S x) : tm.runFrom d 1 = tm.step d := by
-  rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero]
+  rw [runFrom_succ_eq_step', runFrom_zero]
 
 /-- Two steps of a run. -/
 private theorem xr_runFrom_two {k : ℕ} {S : Type} {x : List Bool} (tm : MultiTapeTM k Bool S)
