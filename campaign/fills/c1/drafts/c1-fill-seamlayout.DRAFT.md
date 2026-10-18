@@ -239,7 +239,7 @@ Run the text-level screen **before and after**, **one run at a time, under `nice
   `Build/StepBlock` (its private word identities and its phase key), `UniversalStartup` (the
   chapter-1 startup) and `Build/Primitives` (the pair extractor, next to `pairSkip`).
 - **The screen** is `scripts/copy-text-screen-v3.py`, on the repository paths.
-- **The base** is `campaign/fills/c1/logs/c1-fill-seamlayout-screen-base.txt`: **⟨SCREEN-BASE⟩**
+- **The base** is `campaign/fills/c1/logs/c1-fill-seamlayout-screen-base.txt`: **858 declarations, 1,112 pairs, 406,659 characters**
   (MEASURED).
 
 ```sh
