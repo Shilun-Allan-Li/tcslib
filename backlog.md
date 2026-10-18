@@ -1054,6 +1054,12 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
       `drafts/issue-inputs/r3/`): U2-S 655, F3 1,043, G4 795, MIG-12 870, cont6 2,411
       declarations. Each is one more than before (`scanResult_keep_keep`), with identical pair
       sets. The drafts take these counts at issue.
+- **#128 merged (2026-10-18):** #123, #125 and #126 reached the campaign branch (they had been merged
+  into stacked bases; no content was lost: tree = `5fd5dce8`'s). #124 retargeted; gate 46 (its round 2)
+  dispatched. **UN and U2-S landed as partials:** #129 (C1-UN: BF, H′, S proved; UN-1 open) and #130
+  (U2-S: 15 phase-1 helpers), both on the campaign branch, replays `lun`/`lu2s` from `oleans-lx2b`.
+  Pending decisions: UN-1's route (an API lemma `FinTM.pairExtractTM_fst_run`, or the `Machines/Clean`
+  import); the cast-indexed `bufferedSecondCfg` field pair (shared by UN and U2-S).
 - **Restacked (2026-10-18; the user's rulings on gate 43):** #122 ← #123 ← #125 (`e6917ea0`) ← #126
   (`5fd5dce8`, with gate 45's minor 1) ← #124 (`45b79f5f`, round 2). Re-replays `lg4c1b`, `lx2b`,
   `lseam2` (2 modules each, from `oleans-lc1w`). The seam-layout contract gets a standalone fill
