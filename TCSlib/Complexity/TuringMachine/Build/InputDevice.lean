@@ -7,6 +7,7 @@ import TCSlib.Complexity.TuringMachine.Build.VirtualInput
 import TCSlib.Complexity.TuringMachine.UniversalStartup
 import TCSlib.Complexity.TuringMachine.Build.Contract.Basic
 import TCSlib.Complexity.TuringMachine.Build.Seam
+import TCSlib.Complexity.TuringMachine.Build.Catalog
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -42,9 +43,9 @@ the source at some source time (the intermediate frames), the host does not halt
 source does (the exit cut), and the time and space ledgers are separate clauses. Literal
 lockstep is the native special case.
 
-**Status: statement gate passed 2026-10-14** (round 1, 0/0/5;
-`audits/b6-hosts-statements-findings.md`). The definitions and the devices' correctness facts
-are proved; the three machine contracts are sorried with their proof sketches.
+**Status.** The definitions, the devices' correctness facts and the restoring boundary test
+`Turing.exists_rulerTestTM` are proved; the call rows `Turing.exists_rulerDeviceTM` and the host
+`Turing.exists_rulerHostTM` are sorried with their proof sketches.
 
 ## Main definitions
 
@@ -61,8 +62,9 @@ are proved; the three machine contracts are sorried with their proof sketches.
   correctness facts, the empty payload included (proved).
 * `Turing.pairEncode_pairEncode_length`, `Turing.pairEncode_pairEncode_drop` — the header of
   `Complexity.space_universal`'s input (proved).
-* `Turing.exists_rulerTestTM`, `Turing.exists_rulerDeviceTM`, `Turing.exists_rulerHostTM` — the
-  restoring boundary test, the call rows and the host (sorried).
+* `Turing.exists_rulerTestTM` — the restoring boundary test (proved).
+* `Turing.exists_rulerDeviceTM`, `Turing.exists_rulerHostTM` — the call rows and the host
+  (sorried).
 
 ## References
 
@@ -205,37 +207,16 @@ theorem pairEncode_pairEncode_drop (u α x : List Bool) :
 /-- The forward state, followed by return and verdict states carrying one Boolean. -/
 private abbrev rd_State := Unit ⊕ Bool × Bool
 
-/-- A silent joint input/work-head move. No catalog row moves both heads together. -/
-private def rd_move {S : Type} (q : Option S) (a b : SignType) : Action 1 Bool S :=
-  ⟨a, fun _ => (none, b), none, q⟩
-
-/-- The joint move preserves the tape contents and output. -/
-private theorem rd_move_apply {S : Type} {z : List Bool} (d : Cfg 1 Bool S z)
-    (q : Option S) (a b : SignType) :
-    (rd_move q a b).apply d =
-      { d with
-        state := q
-        inputPos := moveInputPos d.inputPos a
-        workTapePos := fun i => d.workTapePos i + (b : ℤ) } := by
-  refine Cfg.ext (Action.apply_state _ _) (Action.apply_inputPos _ _) ?_ ?_ ?_
-  · funext i
-    rw [Action.apply_workTapes]
-    simp only [rd_move, Option.getD_none, Cfg.workTapeSymbols_eq, Function.update_eq_self]
-  · funext i
-    exact Action.apply_workTapePos _ _ i
-  · rw [Action.apply_output]
-    simp only [rd_move, Option.toList_none, List.append_nil]
-
 /-- The ruler test is a leaf: scan jointly left/right, read once, and return jointly.
-No catalog row provides the joint input and work-head movement. -/
+No catalog row moves the input head together with a work head. -/
 private def rd_test : MultiTapeTM 1 Bool rd_State where
   q₀ := .inl ()
   tr q v w := match q with
-    | .inl _ => if w 0 = some true then rd_move (some (.inl ())) (-1) 1
-        else rd_move (some (.inr (v.isNone, false))) 0 (-1)
-    | .inr (b, false) => if w 0 = some true then rd_move (some (.inr (b, false))) 1 (-1)
-        else rd_move (some (.inr (b, true))) 0 1
-    | .inr (b, true) => rd_move (some (.inr (b, true))) 0 0
+    | .inl _ => if w 0 = some true then tapeAction 0 (-1) none 1 (.inl ())
+        else tapeAction 0 0 none (-1) (.inr (v.isNone, false))
+    | .inr (b, false) => if w 0 = some true then tapeAction 0 1 none (-1) (.inr (b, false))
+        else tapeAction 0 0 none 1 (.inr (b, true))
+    | .inr (b, true) => tapeAction 0 0 none 0 (.inr (b, true))
 
 /-- A point of the restoring trace, with distance from the original input head. -/
 private def rd_cfg {z : List Bool} (d : Cfg 1 Bool rd_State z) (q : rd_State)
@@ -265,21 +246,22 @@ private theorem rd_read_nat {z : List Bool} (ℓ : ℕ) (d : Cfg 1 Bool rd_State
   rw [hr n (by omega) (by omega), FinTM.bufferTape_nat]
   simp only [List.getElem?_replicate, if_pos hn]
 
-/-- One table row moves between two trace points using the joint-move equation. -/
+/-- One table row moves between two trace points using `Turing.step_of_tapeAction_move`. -/
 private theorem rd_cfg_step {z : List Bool} (d : Cfg 1 Bool rd_State z)
     (q q' : rd_State) (n n' : ℕ) (e e' : ℤ) (a b : SignType)
     (ht : rd_test.tr q (rd_cfg d q n e).inputSymbol
-      (rd_cfg d q n e).workTapeSymbols = rd_move (some q') a b)
+      (rd_cfg d q n e).workTapeSymbols = tapeAction 0 a none b q')
     (hi : moveInputPos (rd_cfg d q n e).inputPos a = (rd_cfg d q' n' e').inputPos)
     (he : e + (b : ℤ) = e') :
     rd_test.step (rd_cfg d q n e) = rd_cfg d q' n' e' := by
-  rw [MultiTapeTM.step_of_some (show (rd_cfg d q n e).state = some q from rfl), ht,
-    rd_move_apply]
+  rw [step_of_tapeAction_move rd_test (rd_cfg d q n e) 0 a b rfl ht]
   refine Cfg.ext rfl hi rfl ?_ rfl
   funext i
-  simp only [rd_cfg, add_assoc, he]
+  rw [Subsingleton.elim i 0]
+  simp only [Function.update_self, rd_cfg, add_assoc, he]
 
 /-- Each successive point follows the table, including both delimiter turns.
+
 **Proof sketch.** Interior ruler cells move both heads; the right delimiter records the
 semantic boundary test, and the left delimiter restores the ruler head before the verdict. -/
 private theorem rd_trace_step {z : List Bool} (ℓ : ℕ) (d : Cfg 1 Bool rd_State z)
@@ -370,8 +352,6 @@ private theorem rd_run {z : List Bool} (ℓ : ℕ) (d : Cfg 1 Bool rd_State z)
     rw [MultiTapeTM.runFrom_succ_eq_step', ih (by omega)]
     exact rd_trace_step ℓ d hℓ hp hr u (by omega)
 
-
-
 /-- **The restoring suffix-boundary test** (the ruler device's core; the RD-3 gate's suggested
 sanity obligation). There is a one-tape binary module with an entry and two distinct verdicts
 as follows. Start it at its entry with the delimited ruler `true^ℓ`, `ℓ > 0`, at its head and
@@ -386,11 +366,11 @@ at `p - ℓ`: it is blank exactly when `p - ℓ = 0`, since `p - ℓ ≤ |z| + 1
 (`Turing.inputCell_sub_eq_none_iff`). Move both heads back `ℓ` cells (the ruler head stops at
 the blank before the ruler, then steps right). A finite control carries the verdict.
 
-**Fill appendix (B6-F5).** The joint-head move is a leaf because no catalog row moves
-the input head together with a work head. One finite trajectory and one induction give
-the exact time `2 * ℓ + 2`, hence `C = 2`. The turn reads the published boundary fact;
-the return preserves the input, ruler, and output and restores both heads.
- -/
+**Implementation.** The test is a hand-built controller that moves the input head and the
+ruler head in the same step (a `Turing.tapeAction`); no catalog row does that. One
+forward-and-return trajectory, identified by a single induction, takes exactly `2ℓ + 2` steps, so
+`C = 2`. The turn reads the boundary through `Turing.inputCell_sub_eq_none_iff`; the return leg
+changes no tape and no output and restores both heads. -/
 theorem exists_rulerTestTM :
     ∃ (P : Type) (_ : Fintype P) (_ : DecidableEq P) (R : MultiTapeTM 1 Bool P)
       (entry yes no : P) (C : ℕ), yes ≠ no ∧
@@ -452,12 +432,7 @@ on `yes` answer blank; on `no` answer the native symbol under the head, which is
 `y[i - 1]` or the right blank (`Turing.inputCell_of_drop`). Move: a right move is the native
 clamped move (at `i = |y| + 1` the physical head is at `|z| + 1` and clamps exactly as
 `moveInputPos` does); a stationary move does nothing; a left move is suppressed on `yes` and is
-the native left move on `no`. Rows are joined by R2 seams; the dispatch steps add a constant.
-
-**Fill appendix (B6-F5).** Open in this partial delivery. **Proof sketch.** Compose
-the proved boundary test with the read/move leaves through the public phase host;
-share the phase argument for both call modes and use the suffix-cell equation.
- -/
+the native left move on `no`. Rows are joined by R2 seams; the dispatch steps add a constant. -/
 theorem exists_rulerDeviceTM :
     ∃ (P : Type) (_ : Fintype P) (_ : DecidableEq P) (R : MultiTapeTM 1 Bool P)
       (readEntry : P) (readExit : Option Bool → P) (moveEntry : SignType → P) (moveExit : P)
@@ -521,13 +496,7 @@ halting source transition halts the host in the same step, with no pause. The pa
 `C · (ℓ + 1)` steps, moves no bank head, writes nothing and emits nothing, which gives the
 frames and the cut. Induct on `t` as `Turing.vhostEmitTM_runFrom` does; the visited-set clauses
 follow `Turing.vhostEmitTM_visitedByTapeHead_bank` and
-`Turing.vhostEmitTM_visitedByTapeHead_buffer`.
-
-**Fill appendix (B6-F5).** Open in this partial delivery. **Proof sketch.** Build
-the source-step transformer with a boundary tag and embed the test on the last tape
-by R1. Package a host step and its optional pause as a `Turing.Lockstep`, then use
-its endpoint, cut and locate theorems for the time and space clauses.
- -/
+`Turing.vhostEmitTM_visitedByTapeHead_buffer`. -/
 theorem exists_rulerHostTM {m : ℕ} {S : Type} [Fintype S] [DecidableEq S]
     (M : MultiTapeTM m Bool S) :
     ∃ (Q : Type) (_ : Fintype Q) (_ : DecidableEq Q) (H : MultiTapeTM (m + 1) Bool Q)
