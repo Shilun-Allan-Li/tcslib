@@ -1054,6 +1054,20 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
       `drafts/issue-inputs/r3/`): U2-S 655, F3 1,043, G4 795, MIG-12 870, cont6 2,411
       declarations. Each is one more than before (`scanResult_keep_keep`), with identical pair
       sets. The drafts take these counts at issue.
+- **Gates 46–49 closed (2026-10-18).** 46 (#124 round 2) PASS 0/0/1/11: the minor was the PR
+  description, replaced; **#124 merged** (`dac6b3b0`; `TCSlib/` tree = `45b79f5f`'s, replayed as
+  `lseam2`). 47 (#129) PASS 0/0/1/8, 48 (#130) PASS 0/0/1/12, 49 (#131) PASS 0/0/2/11: records in
+  `campaign/gates/4{7,8,9}-*/`. **Their docstring minors are deferred (user: "defer and merge
+  tonight")**: 47's stale "spec, fill pending" labels ride UN's continuation landing; 48's missing
+  `ss_captureInitial`/`ss_capture_indices` sketches are a required item of the U2-S continuation's
+  brief; 49's stale status prose rides cont7's landing (`CodeSimulator`) and the docstring-cleanup
+  pass (`Codes2Tape`, `EXPCOM`). #129 and #130 declared clear to merge; #131 after #130 (retarget).
+- **B6 F5 reviewed (2026-10-18):** phase 1 (`exists_rulerTestTM`, `C = 2`) proved; the other two
+  targets open. **Rulings (user):** the landing imports `Build/Catalog` and cites
+  `Turing.tapeAction` / `step_of_tapeAction_move` instead of the private joint move (the review's
+  variant), and phase 2's brief authorizes the same import; the environment addendum gains one
+  sentence (v2.1: `lake exe cache get` runs Lake internally; not a `lake build` violation). Review:
+  `campaign/fills/b6/reviews/rulerdevice-1/`.
 - **Fill rulings (user, 2026-10-18):** UN-1 by an API PR (`FinTM.pairExtractTM_fst_run` in
   `Build/Primitives`) with the cast-indexed `bufferedSecondCfg` pair (`Simulation`); canonizer cont6
   lands as a partial with the review's F1 fix; MIG-12's phase 1 folds into its continuation (no
