@@ -4746,9 +4746,12 @@ private lemma exists_canonRecordRound (k : ℕ) :
     rw [Cfg.mapState_state, state, Option.map_some]
   obtain ⟨t, cost, verdict, output, cut, tapes, heads, suffix⟩ := record x w c live
     (by simpa only [c, Cfg.mapState_inputPos] using positive)
-    (by simpa only [c, Cfg.mapState_workTapes] using word)
+    (by funext z; simpa only [c, Cfg.mapState_workTapes] using congrFun word z)
     (by simpa only [c, Cfg.mapState_workTapePos] using home)
-    (by simpa only [c, Cfg.mapState_workTapes, Cfg.mapState_workTapePos] using blank)
+    (fun j hj => by
+      refine ⟨?_, by simpa only [c, Cfg.mapState_workTapePos] using (blank j hj).2⟩
+      funext z
+      simpa only [c, Cfg.mapState_workTapes] using congrFun (blank j hj).1 z)
   obtain ⟨elapsed, run, interior⟩ := adapt x c live t _ verdict cut
   have restored : c.mapState (fun _ => anchor) = d := by
     apply Cfg.ext
@@ -4958,15 +4961,7 @@ depend on the header's numerical value.
 below `n + 1`; run one public counter loop over the `n + 1` states, each of `3^(k+1)`
 records, with the generic record validator as its body; check the all-`true` suffix to the
 right input blank. Every record consumes at least `4k + 5` cells and every round fails fast
-on input exhaustion, so at most `|x| + 1` rounds run, each charged `O(|x| + |bits|)`.
-
-**Fill appendix (canonizer continuation 6).** Partial, through the generic repetition
-link. `canonReturnAdapter` supplies the fresh first-return anchor and two-step dispatch
-ledger; `exists_canonRecordRound` applies it to C2. `canonCounterRepeat` connects a returning
-skipper to the public counter loop, including its first failure and residual counter.
-The stub remains open: assemble C1, the initialized inner and outer loops, their scratch
-resets, and the suffix scan; close the stage's polynomial ledger. No new admission is
-introduced by these components. -/
+on input exhaustion, so at most `|x| + 1` rounds run, each charged `O(|x| + |bits|)`. -/
 private lemma exists_canonGrammarStage (F : MachineFormat) :
     ∃ (m : ℕ) (S : Type) (_ : Fintype S) (_ : DecidableEq S) (G : MultiTapeTM m Bool S)
       (entry : S) (exit : Bool → S) (a : ℕ) (header : Fin m), Function.Injective exit ∧
@@ -5289,13 +5284,7 @@ statement and conditional-composition proof are unchanged.
 applied unchanged. The validator composition is proved modulo `exists_canonGrammarStage`,
 which is now the only canonizer admission. Its direct-C2 counter-loop route is escalated
 for the distinct entry/success-anchor mismatch; the stage remains explicitly open. Note 50
-therefore remains pending on the complete canonizer. The headline glue is unchanged.
-
-**Fill appendix (canonizer continuation 6).** Partial, phases 1 and 2. The fresh-anchor
-adapter and the generic skipper-to-counter-loop link are proved, with C2's adapted
-first-return contract. The grammar-stage assembly and its polynomial ledger remain in
-`exists_canonGrammarStage`, the headline's sole admission source. Note 50 is pending on
-that stub; the headline statement and its existing composition are unchanged. -/
+therefore remains pending on the complete canonizer. The headline glue is unchanged. -/
 theorem exists_polyCanonizer :
     ∃ (C : FinTM Bool) (d : ℕ),
       C.ComputesFunInTime (fun α => F.serialize (F.decode α)) fun n => d * (n + 1) ^ d := by
