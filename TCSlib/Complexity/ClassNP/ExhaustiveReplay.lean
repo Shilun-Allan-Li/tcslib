@@ -32,7 +32,7 @@ No new definitions: the exhaustive replay and `BF` are existential contracts.
 
 ## Main results
 
-* `Turing.FinNDTM.exists_exhaustiveDecider` — the exhaustive replay `E` (sorried).
+* `Turing.FinNDTM.exists_exhaustiveDecider` — the exhaustive replay `E` (proved).
 * `Turing.ndAcceptsWithin_decider_of_universal` — `BF := E(UN)` (proved).
 
 ## References
@@ -43,7 +43,7 @@ No new definitions: the exhaustive replay and `BF` are existential contracts.
 
 namespace Turing
 
-/-! ### C1-E fill infrastructure (the `xr_` privates)
+/-! ### The construction of the exhaustive replay (the `xr_` privates)
 
 The semantic and arithmetic parts of the exhaustive replay, read through the published ND
 semantics only: no branch halts at depth `0`; a branch of length `|w|` stays within the
@@ -2094,7 +2094,7 @@ private theorem xr_branch_inputPos_le {N : FinNDTM Bool} (z s : List Bool) :
     (NDTM.withChoiceTape (N.tm.initCfg z) (FinTM.bufferTape s) 0) s.length
   rw [hrun, NDTM.withChoiceTape_inputPos, NDTM.withChoiceTape_inputPos, List.take_length,
     NDTM.initCfg_eq, Cfg.init_inputPos] at h
-  simpa using h
+  simpa [NDTM.initCfg_eq] using h
 
 /-! ##### The redirect table, read -/
 

@@ -172,7 +172,7 @@ theorem exists_timed_universal_NDTM (c : EffectiveNDMachineCode) :
 
 /-- **Nondeterministic acceptance evaluates deterministically in exponential
 time** ([AB09, §3.2: "this trivial exponential simulation … does suffice to
-establish a hierarchy theorem"]; spec, fill pending — phase P3.3): a
+establish a hierarchy theorem"]): a
 deterministic machine decides, on input `⟨⟨bits t, α⟩, x⟩`, whether the coded
 machine accepts `x` within `t`, in time `C · 2^{C·(t+1)}`. This is the flip
 at each stage top of the lazy diagonalization — the only place the answer is
@@ -187,10 +187,11 @@ universal NDTM `UN` of `Turing.exists_timed_universal_NDTM`. On
 decides `UN`'s acceptance within that bound, which is the coded machine's
 acceptance within `t`, in time `C_E·2^{C_E·(C_α·(t+1)+1)} ≤ C·2^{C·(t+1)}`
 with `C := C_E·(C_α+1)`. This derivation is proved, as
-`Turing.ndAcceptsWithin_decider_of_universal`. Fill obligation, named: `E`
-itself (iterative deepening over the choice words of the fixed `UN`, each
-replayed by its replay machine under the step-clocked runner, with a window
-clear between replays; no `|x|` term). The proof applies
+`Turing.ndAcceptsWithin_decider_of_universal`. `E` itself is
+`Turing.FinNDTM.exists_exhaustiveDecider`, proved (iterative deepening over the
+choice words of the fixed `UN`, each replayed by its replay machine under the
+step-clocked runner, with a window clear between replays; no `|x|` term), so the
+decider's only open dependency is the universal NDTM. The proof applies
 `Turing.ndAcceptsWithin_decider_of_universal` to `Turing.exists_timed_universal_NDTM`. -/
 theorem exists_ndAcceptsWithin_decider (c : EffectiveNDMachineCode) :
     ∃ BF : FinTM Bool, ∀ α : List Bool, ∃ C : ℕ, ∀ (x : List Bool) (t : ℕ),
