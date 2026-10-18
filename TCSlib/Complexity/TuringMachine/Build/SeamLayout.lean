@@ -13,13 +13,13 @@ set_option autoImplicit false
 /-!
 # The step block's seam layout from a captured serialization
 
-The startups of the step-block simulators (the deterministic universal machine's U2-S, H1, and
-the nondeterministic interpreter core R of C1) capture a machine's canonical serialization
+The startups of the step-block simulators (the `k`-generic universal machine's
+`Turing.exists_selfStartupTMK`, the record-table canonizer, and the nondeterministic interpreter
+core `Turing.exists_ndInterpreterCore`) capture a machine's canonical serialization
 `serializeK M = pairEncode n.bits (unaryFin M.q₀ ++ tableBitsK M.tr)` on a scratch tape. The step
 block's represented start (`Turing.StepBlock.Rep`) instead wants the bare table on the table tape
 and the unary initial state on the summary tape from cell `2`. This module states the one machine
-that redistributes the first into the second, so that every startup cites it (the user's ruling of
-2026-10-17, C1-R's review, gap G2).
+that redistributes the first into the second, so that every startup cites it.
 
 ## Main results
 
@@ -34,11 +34,12 @@ that redistributes the first into the second, so that every startup cites it (th
 namespace Turing
 
 /-- **The seam layout from a captured serialization.** For distinct work tapes `src`, `tbl` and
-`sm` there is a machine with an entry state `entry`, a live exit `done` and a constant `C` such
-that: started at `entry` with tape `src` holding exactly the word
-`s = pairEncode a ((List.replicate q true ++ [false]) ++ v)` from cell `0` (blank elsewhere), its
-head anywhere from `0` to `|s|`, and tapes `tbl` and `sm` blank with their heads at `0`, it
-reaches `done` within `C·(|s| + 1)` steps, and not before, with
+`sm` there is a machine with an entry state `entry`, a live exit `done` and a constant `C` with
+the following property. Let `s = pairEncode a ((List.replicate q true ++ [false]) ++ v)` and let
+`r ≤ |s|`. There is **one time** `T ≤ C·(|s| + 1)`, depending on `a`, `v`, `q` and `r` only
+(chosen before the native input and every other tape), such that: started at `entry` with tape
+`src` holding exactly `s` from cell `0` (blank elsewhere), its head at `r`, and tapes `tbl` and
+`sm` blank with their heads at `0`, the machine reaches `done` at `T`, and not before, with
 * tape `tbl` holding exactly `v` from cell `0`;
 * tape `sm` holding exactly the unary word `List.replicate q true ++ [false]` from cell `2`
   (cells `0` and `1` blank);
@@ -46,35 +47,64 @@ reaches `done` within `C·(|s| + 1)` steps, and not before, with
 * the heads of the three tapes at `0`, and every other tape, head, the input position and the
   output unchanged; it emits nothing.
 
+**Why `T` comes before the configuration.** The universal startup (`Turing.exists_selfStartupTMK`)
+must exit first at a time that does not depend on its input's suffix. Consumers that need only the
+bound use the corollary with `T` chosen per configuration.
+
 At `a = n.bits`, `q = M.q₀` and `v = tableBitsK M.tr`, the start word is `serializeK M`
 (`Turing.serializeK_eq`, `Turing.unaryFin_eq`), and the end is the step block's table and summary
 tapes for an empty output (`Turing.StepBlock.summaryCells_eq`,
-`Turing.StepBlock.outputSummary_nil`). (A row of the construction layer; [AB09, §1.4].)
+`Turing.StepBlock.outputSummary_nil`, `Turing.FinTM.bufferTape_of_neg`). (A row of the
+construction layer; [AB09, §1.4].)
 
-**Proof sketch.** Phases composed by `Turing.phaseHostTM`, each a catalog row through its
-`_run_ofCfg` contract or a small leaf:
-- rewind `src` to cell `0` (`Turing.skipBackTM_run_ofCfg`, then one step right);
-- skip the doubled region of `pairEncode` up to and over its separator `[false, true]` (a leaf
-  reading two cells per round: equal cells continue, `false, true` ends; no row reads pairs);
-- move the head of `sm` two cells right, and copy the unary word up to and including its first
-  `false` onto `sm` (a leaf: the copy row stops at a blank, not at a `false`);
-- copy the rest `v` onto `tbl` (`Turing.copyTM_run_ofCfg`);
-- rewind `tbl` and `sm` to cell `0` (`Turing.skipBackTM_run_ofCfg`), and clear `src` from cell `0`
-  (`Turing.clearTM_run_ofCfg`, then rewind).
-Each phase costs `O(|s| + 1)`. Fill obligations, named: the two leaves, the phase joins, and the
-endpoint's frame. -/
+**Proof sketch.** Write `m = List.replicate q true ++ [false]` and `h = 2|a| + 2` for the length
+of the header `pairEncode a []`. So `s` is the header on `[0, h)`, `m` on `[h, h + q]` and `v`
+from `h + q + 1`, and `n = |s| = h + q + 1 + |v|`. Eight phases are composed by
+`Turing.phaseHostTM` (`Turing.phaseHostTM_run`: one silent stationary dispatch step between
+consecutive phases). Each is a catalog row through its `_run_ofCfg` contract, whose hypothesis
+the previous phase's endpoint meets, or one of two leaves:
+1. `Turing.skipTM_run_ofCfg` on `src` at `w = s.drop r`: the cells `r, …, n` are `s.drop r` and
+   its right blank. `n - r + 1` steps; the head ends at `n + 1`.
+2. `Turing.skipBackTM_run_ofCfg` on `src` at `u = s`: the cells `-1, …, n` are `s` between two
+   blanks, ending one blank before the head. `n + 3` steps; the head ends at `0`.
+3. **Leaf `pairSkip`** (read-only on `src`): from cell `0` of `pairEncode a _`, read aligned pairs.
+   An equal pair continues; `false, true` exits one cell past it. `h` steps; the head ends at `h`.
+   No row serves it: the seek rows stop at blanks and none reads pairs.
+4. **Leaf `unarySplit`** (on `src` and `sm`): move the head of `sm` right twice. Then, while `src`
+   reads `true`, write `true` on `sm` and move both heads right. At the `false`, write `false` on
+   `sm` (its head stays) and blank that cell of `src` (its head moves right). `q + 3` steps. Now
+   `src` has its head at `h + q + 1` and a blank at `h + q`, and `sm` holds `m` from cell `2`,
+   its head at `q + 2`. No row serves it: the copy row stops at a blank, not at a `false`.
+5. `Turing.walkTM_run_ofCfg` with ruler `sm`, `moved = (· = sm)` and `dir = .neg`, at
+   `w = m.reverse`: the cells `q + 2, …, 2` read leftward, then the blank cell `1`. `q + 2`
+   steps; the head of `sm` ends at `0`.
+6. `Turing.transferTM_run_ofCfg` from `src` to `tbl` at `w = v`: phase 4's blank at relative
+   `-1`, then `v`, then the right blank at relative `|v|`. `2|v| + 2` steps. `tbl` becomes
+   `bufferTape v` (it was blank), `v` is erased from `src`, and both heads return, to `h + q + 1`
+   and `0`.
+7. `Turing.skipBackTM_run_ofCfg` on `src` at `u = s.take (h + q)`: all that remains on `src`,
+   ending one blank before the head. `h + q + 3` steps; the head ends at `0`.
+8. `Turing.clearTM_run_ofCfg` on `src` at `w = s.take (h + q)`. `2(h + q) + 2` steps; `src` is
+   blank and the row returns its head to `0`. This row's `done` is the exit `done`.
+
+In all, with the seven dispatch steps, `T = 2n - r + 4h + 5q + 2|v| + 23 ≤ 7n + 18 ≤ 18(n + 1)`,
+a function of `a`, `v`, `q` and `r`: no phase reads the native input or a tape other than `src`,
+`tbl` and `sm`, so the run on those three tapes, and hence `T`, is the same for every frame.
+Fill obligations, named: the two leaves' framed contracts; the word identities for `s.drop r`,
+`s.take (h + q)` and the cells of `m` and `v` (from `Turing.pairEncode_eq`); the phase joins;
+and the endpoint's frame. -/
 theorem exists_seamLayoutTM (k : ℕ) (src tbl sm : Fin k) (hst : src ≠ tbl) (hss : src ≠ sm)
     (hts : tbl ≠ sm) :
     ∃ (Q : Type) (_ : Fintype Q) (_ : DecidableEq Q) (L : MultiTapeTM k Bool Q)
       (entry done : Q) (C : ℕ),
-      ∀ {z : List Bool} (d : Cfg k Bool Q z) (a v : List Bool) (q : ℕ),
+      ∀ (a v : List Bool) (q r : ℕ),
         let s := pairEncode a ((List.replicate q true ++ [false]) ++ v)
-        d.state = some entry →
-        d.workTapes src = FinTM.bufferTape s →
-        0 ≤ d.workTapePos src → d.workTapePos src ≤ (s.length : ℤ) →
-        d.workTapes tbl = (fun _ => none) → d.workTapePos tbl = 0 →
-        d.workTapes sm = (fun _ => none) → d.workTapePos sm = 0 →
-        ∃ T ≤ C * (s.length + 1),
+        r ≤ s.length →
+        ∃ T ≤ C * (s.length + 1), ∀ {z : List Bool} (d : Cfg k Bool Q z),
+          d.state = some entry →
+          d.workTapes src = FinTM.bufferTape s → d.workTapePos src = r →
+          d.workTapes tbl = (fun _ => none) → d.workTapePos tbl = 0 →
+          d.workTapes sm = (fun _ => none) → d.workTapePos sm = 0 →
           (L.runFrom d T).state = some done ∧
           (L.runFrom d T).inputPos = d.inputPos ∧
           (L.runFrom d T).workTapes =
