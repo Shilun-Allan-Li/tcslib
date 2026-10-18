@@ -109,7 +109,9 @@ up to `configBound + 1`), and so are the writer's leaf and its two endpoint shap
 - **The join** (`F3C2JoinProbe.lean.txt`): `cw_copy_constant`'s endpoint on the clock tape is
   `wordPatch ct p (List.replicate |f| e)`, and two such writes at `p` and `p + |f|` join by
   `wordPatch_append` into `wordPatch ct p (List.replicate (|f| + |g|) e)`; from public lemmas
-  only, sealed. ⟨to build at issue⟩
+  only, sealed. (Built 2026-10-18 against `oleans-lc6m` with `wordPatch_append` inlined, 0
+  errors: `drafts/b6-fill-configclock-cont2/F3C2JoinProbe.lean.txt`; re-run at issue citing the
+  published lemma.)
 
 ## Owned regions and targets (modify these and nothing else)
 
