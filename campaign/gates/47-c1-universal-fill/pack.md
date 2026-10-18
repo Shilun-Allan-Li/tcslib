@@ -56,8 +56,8 @@ lands as a partial**, as earlier partials did.
 |---|---|---|---|---|---|
 
 Severity guide as in `campaign/standards/TEMPLATE.md`. Findings go verbatim into
-`campaign/gates/47-c1-universal-fill/findings.md`. The gate closes when it has zero blockers and zero
-majors.
+`campaign/gates/47-c1-universal-fill/findings.md`. The gate closes when it has zero blockers and
+zero majors.
 
 **Deliver your findings as a downloadable Markdown file named `c1-universal-fill-findings.md`** (the
 findings table and the verdict line, no other wrapping), and also paste its content in your reply.
