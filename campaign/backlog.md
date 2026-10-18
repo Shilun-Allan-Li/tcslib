@@ -1118,6 +1118,10 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
   proofs over 20 lines get sketches in a docstring-only follow-up (the six main lemmas first).
   Landing PR from `lean/c1-exhaustive-fill` (16 cherry-picked commits + the review's fix); its
   4-module replay follows #132. BF's only open dependency is now UN.
+  **The six sketches are written** (`lean/c1-exhaustive-sketches` at `85ac8d57`, on #136's head:
+  `xr_passTM_run`, `xr_testTM_run`, `xr_clearTape_host`, `xr_cycle_host`, `xr_depth_host`,
+  `xr_run_host`; 0 errors, lint unchanged). Its PR opens after #136 merges (rebased onto the
+  campaign branch, so it is not stacked); the other 18 stay for the docstring pass.
 - **Addendum v2.2 and two fills at a time (2026-10-18; the user's rulings).** G4 cont2 and MIG-12
   cont1 stopped on a 12 GiB disk re-check after the toolchain, on one shared 33.8 GB disk that also
   held R and WC: the host fits about two fills (11 GiB each from scratch). v2.2 (`45405074…`):
