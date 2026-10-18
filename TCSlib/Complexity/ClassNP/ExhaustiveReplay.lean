@@ -5,6 +5,9 @@ Authors: Seyoon Ragavan
 -/
 import TCSlib.Complexity.ClassNP.NTIME
 import TCSlib.Complexity.TuringMachine.NDCodes
+import TCSlib.Complexity.TuringMachine.ChoiceReplay
+import TCSlib.Complexity.TuringMachine.Build.StepClock
+import TCSlib.Complexity.TuringMachine.Build.Seam
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
