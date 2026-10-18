@@ -1174,6 +1174,419 @@ private theorem xr_answerTM_run {K : ℕ} {x : List Bool} (b : Bool) (d : Cfg K 
     simp [xr_answerTM]
   · exact Action.apply_output _ _
 
+/-! #### The clocked replay and its silent embedding
+
+The step clock over the replay machine, as `Turing.exists_stepClockTMVia` supplies it, read at
+`Γ = Bool` with the identity embedding and no stop state; the tape bank of `E` (the clocked
+replay's `k + 2` tapes, then the capture tape and the depth tape); and one replay's two exits,
+identified with `N`'s branch along the choice word through the replay lemma and the translation
+of the work tapes. -/
+
+/-- **The step clock over the replay machine.** The control `Q`, the clocked machine `H` on
+`N.k + 2` tapes (the counter last), the injection of the replay's states, the two exit families,
+and the clock's two exits: `finish none` when the body halts within the budget, `timeout` with
+the body's live state when it does not, each with no earlier exit. -/
+private structure xr_Clock (N : FinNDTM Bool) where
+  Q : Type
+  [fintypeQ : Fintype Q]
+  [decEqQ : DecidableEq Q]
+  H : MultiTapeTM (N.k + 2) Bool Q
+  inj : N.State → Q
+  finish : Option N.State → Q
+  timeout : Option N.State → Q
+  finish_ne_timeout : ∀ a b, finish a ≠ timeout b
+  inj_ne : ∀ s r, inj s ≠ finish r ∧ inj s ≠ timeout r
+  spec_finish : ∀ {x : List Bool} (c : Cfg (N.k + 1) Bool N.State x) (q : N.State),
+    c.state = some q → ∀ (w : List Bool) (ct : ℤ → Option Bool) (cp : ℤ),
+    (∀ p : ℤ, -1 ≤ p → p ≤ (w.length : ℤ) → ct (cp + p) = FinTM.bufferTape w p) →
+    ∀ τ ≤ Nat.ofDigits 2 (w.map Bool.toNat), (N.tm.replayTM.runFrom c τ).state = none →
+    (∀ u < τ, (N.tm.replayTM.runFrom c u).state ≠ none) →
+    ∃ T ≤ 5 * τ + 2 * w.length + 2, ∃ w' : List Bool, w'.length = w.length ∧
+      H.runFrom (clockCfg (some (inj q)) c ct cp) T =
+        clockCfg (some (finish none)) (N.tm.replayTM.runFrom c τ) (wordPatch ct cp w') cp ∧
+      ∀ u < T, ∀ r, (H.runFrom (clockCfg (some (inj q)) c ct cp) u).state ≠ some (finish r) ∧
+        (H.runFrom (clockCfg (some (inj q)) c ct cp) u).state ≠ some (timeout r)
+  spec_timeout : ∀ {x : List Bool} (c : Cfg (N.k + 1) Bool N.State x) (q : N.State),
+    c.state = some q → ∀ (w : List Bool) (ct : ℤ → Option Bool) (cp : ℤ),
+    (∀ p : ℤ, -1 ≤ p → p ≤ (w.length : ℤ) → ct (cp + p) = FinTM.bufferTape w p) →
+    (∀ u ≤ Nat.ofDigits 2 (w.map Bool.toNat), (N.tm.replayTM.runFrom c u).state ≠ none) →
+    ∃ T ≤ 5 * Nat.ofDigits 2 (w.map Bool.toNat) + 2 * w.length + 2, ∃ w' : List Bool,
+      w'.length = w.length ∧
+      H.runFrom (clockCfg (some (inj q)) c ct cp) T =
+        clockCfg (some (timeout
+            (N.tm.replayTM.runFrom c (Nat.ofDigits 2 (w.map Bool.toNat))).state))
+          (N.tm.replayTM.runFrom c (Nat.ofDigits 2 (w.map Bool.toNat))) (wordPatch ct cp w') cp ∧
+      ∀ u < T, ∀ r, (H.runFrom (clockCfg (some (inj q)) c ct cp) u).state ≠ some (finish r) ∧
+        (H.runFrom (clockCfg (some (inj q)) c ct cp) u).state ≠ some (timeout r)
+
+attribute [instance] xr_Clock.fintypeQ xr_Clock.decEqQ
+
+/-- With no stop state, a body configuration is stopped exactly when it is halted. -/
+private theorem xr_stopped_iff {k : ℕ} {S : Type} {x : List Bool} (c : Cfg k Bool S x) :
+    c.Stopped (fun _ : S => false) ↔ c.state = none := by
+  rw [Cfg.stopped_iff]
+  simp
+
+/-- The clock exists: `Turing.exists_stepClockTMVia` at `Γ = Bool`, the identity embedding and
+no stop state, with its two exits read. -/
+private theorem xr_Clock.exists (N : FinNDTM Bool) : Nonempty (xr_Clock N) := by
+  obtain ⟨Q, instF, instD, H, inj, finish, timeout, -, -, hft, hinj, hspec⟩ :=
+    exists_stepClockTMVia (Function.Embedding.refl Bool) N.tm.replayTM (fun _ => false)
+  have hmap : ∀ w : List Bool, w.map ⇑(Function.Embedding.refl Bool) = w := fun w => by
+    rw [Function.Embedding.coe_refl, List.map_id]
+  letI : Fintype Q := instF
+  letI : DecidableEq Q := instD
+  refine ⟨⟨Q, H, inj, finish, timeout, hft, hinj, ?_, ?_⟩⟩
+  · intro x c q hq w ct cp hct τ hτ hstop hlive
+    have hct' : ∀ p : ℤ, -1 ≤ p → p ≤ (w.length : ℤ) →
+        ct (cp + p) = FinTM.bufferTape (w.map ⇑(Function.Embedding.refl Bool)) p := by
+      rw [hmap]; exact hct
+    obtain ⟨T, hT, w', hw', hrun, hguard, -⟩ := (hspec c q hq w ct cp hct').1 τ hτ
+      ((xr_stopped_iff _).mpr hstop)
+      (fun u hu => by rw [xr_stopped_iff]; exact hlive u hu)
+    refine ⟨T, hT, w', hw', ?_, hguard⟩
+    rw [hrun, hstop, hmap]
+  · intro x c q hq w ct cp hct hlive
+    have hct' : ∀ p : ℤ, -1 ≤ p → p ≤ (w.length : ℤ) →
+        ct (cp + p) = FinTM.bufferTape (w.map ⇑(Function.Embedding.refl Bool)) p := by
+      rw [hmap]; exact hct
+    obtain ⟨T, hT, w', hw', hrun, hguard, -⟩ := (hspec c q hq w ct cp hct').2
+      (fun u hu => by rw [xr_stopped_iff]; exact hlive u hu)
+    refine ⟨T, hT, w', hw', ?_, hguard⟩
+    rw [hrun, hmap]
+
+/-! The tape bank of `E` for an NDTM with `k` work tapes: the `k + 2` tapes of the clocked replay
+(`N`'s `k` tapes, the choice tape, the clock's counter), then the capture tape and the depth
+tape, as `Fin (k + 2 + 2)`. -/
+
+/-- The clocked replay's bank, as the first `k + 2` tapes. -/
+private def xr_ι (k : ℕ) : Fin (k + 2) ↪ Fin (k + 2 + 2) := Fin.castAddEmb 2
+
+/-- The capture tape. -/
+private def xr_cap (k : ℕ) : Fin (k + 2 + 2) := Fin.natAdd (k + 2) 0
+
+/-- The depth tape. -/
+private def xr_dep (k : ℕ) : Fin (k + 2 + 2) := Fin.natAdd (k + 2) 1
+
+/-- `N`'s work tape `j`. -/
+private def xr_work (k : ℕ) (j : Fin k) : Fin (k + 2 + 2) := Fin.castAdd 2 j.castSucc.castSucc
+
+/-- The choice tape. -/
+private def xr_choice (k : ℕ) : Fin (k + 2 + 2) := Fin.castAdd 2 (Fin.last k).castSucc
+
+/-- The clock's counter tape. -/
+private def xr_ctr (k : ℕ) : Fin (k + 2 + 2) := Fin.castAdd 2 (Fin.last (k + 1))
+
+/-- `E`'s work tapes from their five banks. -/
+private def xr_tapes {k : ℕ} (wk : Fin k → ℤ → Option Bool) (ch ctr cp dp : ℤ → Option Bool) :
+    Fin (k + 2 + 2) → ℤ → Option Bool :=
+  Fin.addCases (Fin.lastCases ctr (Fin.lastCases ch wk))
+    (fun j : Fin 2 => if j = 0 then cp else dp)
+
+/-- `E`'s work heads from their five banks. -/
+private def xr_heads {k : ℕ} (hk : Fin k → ℤ) (hch hctr hcp hdp : ℤ) : Fin (k + 2 + 2) → ℤ :=
+  Fin.addCases (Fin.lastCases hctr (Fin.lastCases hch hk))
+    (fun j : Fin 2 => if j = 0 then hcp else hdp)
+
+private theorem xr_tapes_work {k : ℕ} (wk : Fin k → ℤ → Option Bool) (ch ctr cp dp) (j : Fin k) :
+    xr_tapes wk ch ctr cp dp (xr_work k j) = wk j := by
+  simp [xr_tapes, xr_work]
+
+private theorem xr_tapes_choice {k : ℕ} (wk : Fin k → ℤ → Option Bool) (ch ctr cp dp) :
+    xr_tapes wk ch ctr cp dp (xr_choice k) = ch := by
+  simp [xr_tapes, xr_choice]
+
+private theorem xr_tapes_ctr {k : ℕ} (wk : Fin k → ℤ → Option Bool) (ch ctr cp dp) :
+    xr_tapes wk ch ctr cp dp (xr_ctr k) = ctr := by
+  simp [xr_tapes, xr_ctr]
+
+private theorem xr_tapes_cap {k : ℕ} (wk : Fin k → ℤ → Option Bool) (ch ctr cp dp) :
+    xr_tapes wk ch ctr cp dp (xr_cap k) = cp := by
+  simp [xr_tapes, xr_cap]
+
+private theorem xr_tapes_dep {k : ℕ} (wk : Fin k → ℤ → Option Bool) (ch ctr cp dp) :
+    xr_tapes wk ch ctr cp dp (xr_dep k) = dp := by
+  simp [xr_tapes, xr_dep]
+
+private theorem xr_heads_work {k : ℕ} (hk : Fin k → ℤ) (hch hctr hcp hdp : ℤ) (j : Fin k) :
+    xr_heads hk hch hctr hcp hdp (xr_work k j) = hk j := by
+  simp [xr_heads, xr_work]
+
+private theorem xr_heads_choice {k : ℕ} (hk : Fin k → ℤ) (hch hctr hcp hdp : ℤ) :
+    xr_heads hk hch hctr hcp hdp (xr_choice k) = hch := by
+  simp [xr_heads, xr_choice]
+
+private theorem xr_heads_ctr {k : ℕ} (hk : Fin k → ℤ) (hch hctr hcp hdp : ℤ) :
+    xr_heads hk hch hctr hcp hdp (xr_ctr k) = hctr := by
+  simp [xr_heads, xr_ctr]
+
+private theorem xr_heads_cap {k : ℕ} (hk : Fin k → ℤ) (hch hctr hcp hdp : ℤ) :
+    xr_heads hk hch hctr hcp hdp (xr_cap k) = hcp := by
+  simp [xr_heads, xr_cap]
+
+private theorem xr_heads_dep {k : ℕ} (hk : Fin k → ℤ) (hch hctr hcp hdp : ℤ) :
+    xr_heads hk hch hctr hcp hdp (xr_dep k) = hdp := by
+  simp [xr_heads, xr_dep]
+
+/-- The capture tape is outside the clocked replay's bank. -/
+private theorem xr_cap_not_mem (k : ℕ) : xr_cap k ∉ Set.range (xr_ι k) := by
+  rintro ⟨i, hi⟩
+  have := congrArg Fin.val hi
+  simp [xr_ι, xr_cap] at this
+  omega
+
+/-- The depth tape is outside the clocked replay's bank. -/
+private theorem xr_dep_not_mem (k : ℕ) : xr_dep k ∉ Set.range (xr_ι k) := by
+  rintro ⟨i, hi⟩
+  have := congrArg Fin.val hi
+  simp [xr_ι, xr_dep] at this
+  omega
+
+private theorem xr_dep_ne_cap (k : ℕ) : xr_dep k ≠ xr_cap k := by
+  intro h
+  have := congrArg Fin.val h
+  simp [xr_dep, xr_cap] at this
+
+/-- Every index of `Fin (m + n)` is a left or a right index. -/
+private theorem xr_addCases_split {m n : ℕ} (j : Fin (m + n)) :
+    (∃ i : Fin m, j = Fin.castAdd n i) ∨ ∃ i : Fin n, j = Fin.natAdd m i :=
+  Fin.addCases
+    (motive := fun j => (∃ i : Fin m, j = Fin.castAdd n i) ∨ ∃ i : Fin n, j = Fin.natAdd m i)
+    (fun i => Or.inl ⟨i, rfl⟩) (fun i => Or.inr ⟨i, rfl⟩) j
+
+/-- Every index of `Fin (n + 1)` is the last one or a cast. -/
+private theorem xr_lastCases_split {n : ℕ} (i : Fin (n + 1)) :
+    i = Fin.last n ∨ ∃ i' : Fin n, i = i'.castSucc :=
+  Fin.lastCases (motive := fun i => i = Fin.last n ∨ ∃ i' : Fin n, i = i'.castSucc)
+    (Or.inl rfl) (fun i' => Or.inr ⟨i', rfl⟩) i
+
+private theorem xr_fin2 (i : Fin 2) : i = 0 ∨ i = 1 := by
+  fin_cases i <;> simp
+
+/-- **The embedded clocked configuration, by banks**: the clocked replay configuration over `N`'s
+configuration `c`, the choice tape and the counter, embedded silently with the capture tape and
+the depth tape, is the explicit `E` configuration. -/
+private theorem xr_embed_eq {k : ℕ} {S Q : Type} {z : List Bool} (q : Option Q)
+    (c : Cfg k Bool S z) (chT ct : ℤ → Option Bool) (chP cp : ℤ) (dp : ℤ → Option Bool)
+    (hdp : ℤ) (pre out₀ : List Bool) :
+    embedSilentCfg (xr_ι k) (xr_cap k) (fun _ => dp) (fun _ => hdp) pre out₀
+        (clockCfg q (NDTM.withChoiceTape c chT chP) ct cp) =
+      ⟨q, c.inputPos, xr_tapes c.workTapes chT ct (FinTM.bufferTape (pre ++ c.output)) dp,
+        xr_heads c.workTapePos chP cp ((pre ++ c.output).length : ℤ) hdp, out₀⟩ := by
+  apply Cfg.ext
+  · rw [embedSilentCfg_state, clockCfg_state]
+  · rw [embedSilentCfg_inputPos, clockCfg_inputPos, NDTM.withChoiceTape_inputPos]
+  · funext j
+    rcases xr_addCases_split j with ⟨i, rfl⟩ | ⟨i, rfl⟩
+    · rw [← Fin.castAddEmb_apply, show Fin.castAddEmb 2 = xr_ι k from rfl,
+        embedSilentCfg_selected_tape]
+      funext a
+      rw [clockCfg_workTapes]
+      show _ = xr_tapes c.workTapes chT ct (FinTM.bufferTape (pre ++ c.output)) dp
+        (Fin.castAdd 2 i) a
+      rw [xr_tapes, Fin.addCases_left]
+      rcases xr_lastCases_split i with rfl | ⟨i, rfl⟩
+      · rw [Fin.lastCases_last, Fin.lastCases_last]
+      · rw [Fin.lastCases_castSucc, Fin.lastCases_castSucc, NDTM.withChoiceTape_workTapes]
+    · rcases xr_fin2 i with rfl | rfl
+      · rw [show Fin.natAdd (k + 2) (0 : Fin 2) = xr_cap k from rfl,
+          (embedSilentCfg_cap _ _ (xr_cap_not_mem k) _ _ _ _ _).1, clockCfg_output,
+          NDTM.withChoiceTape_output]
+        show _ = xr_tapes c.workTapes chT ct (FinTM.bufferTape (pre ++ c.output)) dp
+          (Fin.natAdd (k + 2) 0)
+        rw [xr_tapes, Fin.addCases_right]
+        simp
+      · rw [show Fin.natAdd (k + 2) (1 : Fin 2) = xr_dep k from rfl,
+          (embedSilentCfg_unselected _ _ _ _ _ _ _ _ (xr_dep_not_mem k) (xr_dep_ne_cap k)).1]
+        show _ = xr_tapes c.workTapes chT ct (FinTM.bufferTape (pre ++ c.output)) dp
+          (Fin.natAdd (k + 2) 1)
+        rw [xr_tapes, Fin.addCases_right]
+        simp
+  · funext j
+    rcases xr_addCases_split j with ⟨i, rfl⟩ | ⟨i, rfl⟩
+    · rw [← Fin.castAddEmb_apply, show Fin.castAddEmb 2 = xr_ι k from rfl,
+        embedSilentCfg_selected_pos, clockCfg_workTapePos]
+      show _ = xr_heads c.workTapePos chP cp ((pre ++ c.output).length : ℤ) hdp (Fin.castAdd 2 i)
+      rw [xr_heads, Fin.addCases_left]
+      rcases xr_lastCases_split i with rfl | ⟨i, rfl⟩
+      · rw [Fin.lastCases_last, Fin.lastCases_last]
+      · rw [Fin.lastCases_castSucc, Fin.lastCases_castSucc, NDTM.withChoiceTape_workTapePos]
+    · rcases xr_fin2 i with rfl | rfl
+      · rw [show Fin.natAdd (k + 2) (0 : Fin 2) = xr_cap k from rfl,
+          (embedSilentCfg_cap _ _ (xr_cap_not_mem k) _ _ _ _ _).2, clockCfg_output,
+          NDTM.withChoiceTape_output]
+        show _ = xr_heads c.workTapePos chP cp ((pre ++ c.output).length : ℤ) hdp
+          (Fin.natAdd (k + 2) 0)
+        rw [xr_heads, Fin.addCases_right]
+        simp
+      · rw [show Fin.natAdd (k + 2) (1 : Fin 2) = xr_dep k from rfl,
+          (embedSilentCfg_unselected _ _ _ _ _ _ _ _ (xr_dep_not_mem k) (xr_dep_ne_cap k)).2]
+        show _ = xr_heads c.workTapePos chP cp ((pre ++ c.output).length : ℤ) hdp
+          (Fin.natAdd (k + 2) 1)
+        rw [xr_heads, Fin.addCases_right]
+        simp
+  · rw [embedSilentCfg_output]
+
+/-- Patching a same-width word over a stored word at the origin stores the new word. -/
+private theorem xr_wordPatch_buffer (w w' : List Bool) (hw : w'.length = w.length) :
+    wordPatch (FinTM.bufferTape w) 0 w' = FinTM.bufferTape w' := by
+  funext q
+  by_cases h : 0 ≤ q ∧ q < 0 + (w'.length : ℤ)
+  · rw [wordPatch_of_mem _ _ _ h.1 h.2, sub_zero]
+  · rw [wordPatch_of_not_mem _ _ _ h, (xr_bufferTape_eq_none_iff _ _).mpr ?_,
+      (xr_bufferTape_eq_none_iff _ _).mpr ?_]
+    · omega
+    · omega
+
+/-- **The replay phase**: the clocked replay, embedded silently with the capture tape. -/
+private def xr_replayTM {N : FinNDTM Bool} (C : xr_Clock N) :
+    MultiTapeTM (N.k + 2 + 2) Bool C.Q :=
+  embedSilentTM (xr_ι N.k) (xr_cap N.k) C.H
+
+/-- `E` at the start of a replay of the choice word `s` under the budget word `w`: the clock at
+the replay's initial state, `N`'s tapes blank with their heads at `h`, the input head at `1`, the
+capture tape blank, the depth word `wD`, every auxiliary head at its origin. -/
+private def xr_replayStart {N : FinNDTM Bool} (C : xr_Clock N) (z s w wD : List Bool)
+    (h : Fin N.k → ℤ) : Cfg (N.k + 2 + 2) Bool C.Q z :=
+  ⟨some (C.inj N.tm.q₀), 1,
+    xr_tapes (fun _ _ => none) (FinTM.bufferTape s) (FinTM.bufferTape w) (FinTM.bufferTape [])
+      (FinTM.bufferTape wD),
+    xr_heads h 0 0 0 0, []⟩
+
+/-- The replay's start is the embedded clocked configuration over the translated initial
+configuration of `N`. -/
+private theorem xr_replayStart_eq {N : FinNDTM Bool} (C : xr_Clock N) (z s w wD : List Bool)
+    (h : Fin N.k → ℤ) :
+    xr_replayStart C z s w wD h =
+      embedSilentCfg (xr_ι N.k) (xr_cap N.k) (fun _ => FinTM.bufferTape wD) (fun _ => 0) [] []
+        (clockCfg (some (C.inj N.tm.q₀))
+          (NDTM.withChoiceTape (xr_shift h (N.tm.initCfg z)) (FinTM.bufferTape s) 0)
+          (FinTM.bufferTape w) 0) := by
+  rw [xr_embed_eq]
+  have h1 : (fun i p => (N.tm.initCfg z).workTapes i (p - h i)) =
+      fun (_ : Fin N.k) (_ : ℤ) => (none : Option Bool) := by
+    funext i p
+    rw [NDTM.initCfg_eq, Cfg.init_workTapes]
+  have h2 : (fun i => (N.tm.initCfg z).workTapePos i + h i) = h := by
+    funext i
+    rw [NDTM.initCfg_eq, Cfg.init_workTapePos, zero_add]
+  apply Cfg.ext
+  · rfl
+  · show (1 : Fin _) = (N.tm.initCfg z).inputPos
+    rw [NDTM.initCfg_eq, Cfg.init_inputPos]
+  · show xr_tapes (fun _ _ => none) _ _ (FinTM.bufferTape []) _ =
+      xr_tapes (fun i p => (N.tm.initCfg z).workTapes i (p - h i)) _ _
+        (FinTM.bufferTape ([] ++ (N.tm.initCfg z).output)) _
+    rw [h1, NDTM.initCfg_eq, Cfg.init_output, List.nil_append]
+  · show xr_heads h 0 0 0 0 =
+      xr_heads (fun i => (N.tm.initCfg z).workTapePos i + h i) 0 0
+        (([] ++ (N.tm.initCfg z).output).length : ℤ) 0
+    rw [h2, NDTM.initCfg_eq, Cfg.init_output, List.nil_append, List.length_nil, Nat.cast_zero]
+  · rfl
+
+/-- The replay's body states along the choice word are `N`'s branch states. -/
+private theorem xr_replay_state {N : FinNDTM Bool} (z s : List Bool) (h : Fin N.k → ℤ) (u : ℕ)
+    (hu : u ≤ s.length) :
+    (N.tm.replayTM.runFrom
+      (NDTM.withChoiceTape (xr_shift h (N.tm.initCfg z)) (FinTM.bufferTape s) 0) u).state =
+      (N.tm.runWith (s.take u) (N.tm.initCfg z)).state := by
+  obtain ⟨p, -, -, hrun⟩ := NDTM.replayTM_runFrom N.tm (xr_shift h (N.tm.initCfg z)) s u hu
+  rw [hrun, NDTM.withChoiceTape_state, xr_runWith_shift]
+  rfl
+
+/-- **One replay, the `finish` exit.** If the branch along `s` first halts at `τ ≤ |s|`, and the
+budget word `w` has value `|s|`, the replay phase reaches, within `5τ + 2|w| + 2` steps and with no
+earlier exit, the exit `finish none` over `N`'s halted branch configuration, translated by `h`:
+its input head and output, its work tapes and heads translated, the choice head at some `p ≤ τ`,
+the counter rewritten to some word of the same width with its head at the origin, the output
+captured with the capture head at its end, the depth tape untouched, and nothing emitted. -/
+private theorem xr_replay_finish {N : FinNDTM Bool} (C : xr_Clock N) (z s w wD : List Bool)
+    (h : Fin N.k → ℤ) (hval : Nat.ofDigits 2 (w.map Bool.toNat) = s.length) (τ : ℕ)
+    (hτ : τ ≤ s.length) (hhalt : (N.tm.runWith (s.take τ) (N.tm.initCfg z)).state = none)
+    (hlive : ∀ u < τ, (N.tm.runWith (s.take u) (N.tm.initCfg z)).state ≠ none) :
+    ∃ T ≤ 5 * τ + 2 * w.length + 2, ∃ p ≤ τ, ∃ w' : List Bool, w'.length = w.length ∧
+      (xr_replayTM C).runFrom (xr_replayStart C z s w wD h) T =
+        ⟨some (C.finish none), (N.tm.runWith (s.take τ) (N.tm.initCfg z)).inputPos,
+          xr_tapes (xr_shift h (N.tm.runWith (s.take τ) (N.tm.initCfg z))).workTapes
+            (FinTM.bufferTape s) (FinTM.bufferTape w')
+            (FinTM.bufferTape (N.tm.runWith (s.take τ) (N.tm.initCfg z)).output)
+            (FinTM.bufferTape wD),
+          xr_heads (xr_shift h (N.tm.runWith (s.take τ) (N.tm.initCfg z))).workTapePos p 0
+            ((N.tm.runWith (s.take τ) (N.tm.initCfg z)).output.length : ℤ) 0, []⟩ ∧
+      ∀ u < T, ∀ r,
+        ((xr_replayTM C).runFrom (xr_replayStart C z s w wD h) u).state ≠ some (C.finish r) ∧
+        ((xr_replayTM C).runFrom (xr_replayStart C z s w wD h) u).state ≠ some (C.timeout r) := by
+  have hq : (NDTM.withChoiceTape (xr_shift h (N.tm.initCfg z)) (FinTM.bufferTape s) 0).state =
+      some N.tm.q₀ := by
+    rw [NDTM.withChoiceTape_state]
+    show (N.tm.initCfg z).state = _
+    rw [NDTM.initCfg_eq, Cfg.init_state]
+  have hct : ∀ p : ℤ, -1 ≤ p → p ≤ (w.length : ℤ) →
+      FinTM.bufferTape w (0 + p) = FinTM.bufferTape w p := fun p _ _ => by rw [zero_add]
+  obtain ⟨T, hT, w', hw', hrun, hguard⟩ := C.spec_finish _ _ hq w (FinTM.bufferTape w) 0 hct τ
+    (by rw [hval]; exact hτ) (by rw [xr_replay_state z s h τ hτ]; exact hhalt)
+    (fun u hu => by rw [xr_replay_state z s h u (by omega)]; exact hlive u hu)
+  obtain ⟨p, hp, -, hrep⟩ := NDTM.replayTM_runFrom N.tm (xr_shift h (N.tm.initCfg z)) s τ hτ
+  rw [xr_runWith_shift] at hrep
+  have hE : ∀ u, (xr_replayTM C).runFrom (xr_replayStart C z s w wD h) u =
+      embedSilentCfg (xr_ι N.k) (xr_cap N.k) (fun _ => FinTM.bufferTape wD) (fun _ => 0) [] []
+        (C.H.runFrom (clockCfg (some (C.inj N.tm.q₀))
+          (NDTM.withChoiceTape (xr_shift h (N.tm.initCfg z)) (FinTM.bufferTape s) 0)
+          (FinTM.bufferTape w) 0) u) := fun u => by
+    rw [xr_replayStart_eq, xr_replayTM, embedSilentTM_runFrom _ _ (xr_cap_not_mem N.k)]
+  refine ⟨T, hT, p, hp, w', hw', ?_, fun u hu r => ?_⟩
+  · rw [hE, hrun, hrep, xr_embed_eq, xr_wordPatch_buffer w w' hw', List.nil_append]
+    rfl
+  · rw [hE, embedSilentCfg_state]
+    exact hguard u hu r
+
+/-- **One replay, the `timeout` exit.** If the branch along `s` is still live after `|s|` steps
+(and so at every earlier time), and the budget word `w` has value `|s|`, the replay phase reaches,
+within `7|s| + 2|w| + 2` steps and with no earlier exit, the exit `timeout` carrying the branch's
+live state, over `N`'s branch configuration translated by `h`, with the same bank layout as the
+`finish` exit. -/
+private theorem xr_replay_timeout {N : FinNDTM Bool} (C : xr_Clock N) (z s w wD : List Bool)
+    (h : Fin N.k → ℤ) (hval : Nat.ofDigits 2 (w.map Bool.toNat) = s.length)
+    (hlive : ∀ u ≤ s.length, (N.tm.runWith (s.take u) (N.tm.initCfg z)).state ≠ none) :
+    ∃ T ≤ 5 * s.length + 2 * w.length + 2, ∃ p ≤ s.length, ∃ w' : List Bool,
+      w'.length = w.length ∧
+      (xr_replayTM C).runFrom (xr_replayStart C z s w wD h) T =
+        ⟨some (C.timeout (N.tm.runWith s (N.tm.initCfg z)).state),
+          (N.tm.runWith s (N.tm.initCfg z)).inputPos,
+          xr_tapes (xr_shift h (N.tm.runWith s (N.tm.initCfg z))).workTapes
+            (FinTM.bufferTape s) (FinTM.bufferTape w')
+            (FinTM.bufferTape (N.tm.runWith s (N.tm.initCfg z)).output) (FinTM.bufferTape wD),
+          xr_heads (xr_shift h (N.tm.runWith s (N.tm.initCfg z))).workTapePos p 0
+            ((N.tm.runWith s (N.tm.initCfg z)).output.length : ℤ) 0, []⟩ ∧
+      ∀ u < T, ∀ r,
+        ((xr_replayTM C).runFrom (xr_replayStart C z s w wD h) u).state ≠ some (C.finish r) ∧
+        ((xr_replayTM C).runFrom (xr_replayStart C z s w wD h) u).state ≠ some (C.timeout r) := by
+  have hq : (NDTM.withChoiceTape (xr_shift h (N.tm.initCfg z)) (FinTM.bufferTape s) 0).state =
+      some N.tm.q₀ := by
+    rw [NDTM.withChoiceTape_state]
+    show (N.tm.initCfg z).state = _
+    rw [NDTM.initCfg_eq, Cfg.init_state]
+  have hct : ∀ p : ℤ, -1 ≤ p → p ≤ (w.length : ℤ) →
+      FinTM.bufferTape w (0 + p) = FinTM.bufferTape w p := fun p _ _ => by rw [zero_add]
+  obtain ⟨T, hT, w', hw', hrun, hguard⟩ := C.spec_timeout _ _ hq w (FinTM.bufferTape w) 0 hct
+    (fun u hu => by rw [xr_replay_state z s h u (by omega)]; exact hlive u (by omega))
+  rw [hval] at hT hrun
+  obtain ⟨p, hp, -, hrep⟩ := NDTM.replayTM_runFrom N.tm (xr_shift h (N.tm.initCfg z)) s s.length
+    le_rfl
+  rw [xr_runWith_shift, List.take_length] at hrep
+  have hE : ∀ u, (xr_replayTM C).runFrom (xr_replayStart C z s w wD h) u =
+      embedSilentCfg (xr_ι N.k) (xr_cap N.k) (fun _ => FinTM.bufferTape wD) (fun _ => 0) [] []
+        (C.H.runFrom (clockCfg (some (C.inj N.tm.q₀))
+          (NDTM.withChoiceTape (xr_shift h (N.tm.initCfg z)) (FinTM.bufferTape s) 0)
+          (FinTM.bufferTape w) 0) u) := fun u => by
+    rw [xr_replayStart_eq, xr_replayTM, embedSilentTM_runFrom _ _ (xr_cap_not_mem N.k)]
+  refine ⟨T, hT, p, hp, w', hw', ?_, fun u hu r => ?_⟩
+  · rw [hE, hrun, hrep, xr_embed_eq, xr_wordPatch_buffer w w' hw', List.nil_append,
+      NDTM.withChoiceTape_state]
+    rfl
+  · rw [hE, embedSilentCfg_state]
+    exact hguard u hu r
+
 /-- **The exhaustive replay `E`.** For every bundled binary NDTM `N` there is a deterministic
 machine `E` and a constant `C` such that, on every input `z` on which every branch of `N` of
 length `T` has halted (any `T`, which nobody needs to compute), `E` outputs `[true]` if `N`
