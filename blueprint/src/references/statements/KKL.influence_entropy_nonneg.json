@@ -1,9 +1,9 @@
 {
  "lean_name": "KKL.influence_entropy_nonneg",
- "key": "b5050696b7bd7cbb",
+ "key": "99b2aa2ab7f71d31",
  "kind": "lemma",
- "title": "Nonnegativity of the influence entropy",
- "statement": "Let $f : \\{0,1\\}^n \\to \\bbr$ be a Boolean function whose total influence $I[f] = \\sum_{i=1}^n \\mathrm{Inf}_i[f]$ is strictly positive. Then\n\\[\n  0 \\;\\le\\; \\sum_{i=1}^{n} \\frac{\\mathrm{Inf}_i[f]}{I[f]}\\,\n    \\log\\!\\left(\\frac{I[f]}{\\mathrm{Inf}_i[f]}\\right),\n\\]\nwhere $\\log$ denotes the natural logarithm.",
+ "title": "Nonnegative influence entropy",
+ "statement": "Let $f:\\{0,1\\}^n\\to\\mathbb R$ be a function on the uniform Boolean cube with $I(f)>0$. Then $\\sum_i[I_i(f)/I(f)]\\log(I(f)/I_i(f))\\ge0$, with zero influences contributing zero. For a real cube function $h$, define $I_i(h)=\\tfrac14\\mathbb E_x(h(x)-h(x^{(i)}))^2$, where $x^{(i)}$ flips coordinate $i$ and $\\mathbb E_x$ is uniform expectation, and $I(h)=\\sum_{i=0}^{n-1}I_i(h)$.",
  "hypotheses_covered": [
   "f is a Boolean function of arity n",
   "total influence I[f] is strictly positive"

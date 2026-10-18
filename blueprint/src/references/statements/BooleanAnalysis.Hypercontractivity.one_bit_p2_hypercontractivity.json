@@ -2,8 +2,8 @@
  "lean_name": "BooleanAnalysis.Hypercontractivity.one_bit_p2_hypercontractivity",
  "key": "2742afd59faa04d4",
  "kind": "theorem",
- "title": "One-bit $(p,2)$-hypercontractivity",
- "statement": "Let $f\\colon\\{0,1\\}^1\\to\\bbr$ be a Boolean function on a single bit, and let $p$ be a\nreal number with $1\\le p\\le 2$. Suppose $\\rho\\ge 0$ satisfies $\\rho^2\\le p-1$. Writing\n$T_\\rho$ for the noise operator and $\\E$ for expectation under the uniform measure on\n$\\{0,1\\}^1$,\n\\[\n  \\big(\\E\\big[(T_\\rho f)^2\\big]\\big)^{1/2}\\;\\le\\;\\big(\\E\\big[|f|^p\\big]\\big)^{1/p}.\n\\]",
+ "title": "Second norm controlled by a lower norm",
+ "statement": "Let $f\\colon\\{0,1\\}^1\\to\\bbr$ be a Boolean function on a single bit, and let $p$ be a\nreal number with $1\\le p\\le 2$. Suppose $\\rho\\ge 0$ satisfies $\\rho^2\\le p-1$. Writing\n$T_\\rho$ for the noise operator and $\\E$ for expectation under the uniform measure on\n$\\{0,1\\}^1$,\n\\[\n  \\big(\\E\\big[(T_\\rho f)^2\\big]\\big)^{1/2}\\;\\le\\;\\big(\\E\\big[|f|^p\\big]\\big)^{1/p}.\n\\] For $d\\in\\mathbb N$, $h:\\{0,1\\}^d\\to\\bbr$, and $\\tau\\in\\bbr$, the spectral noise operator is $T_\\tau h(x)=\\sum_{S\\subseteq[d]}\\tau^{|S|}\\widehat h(S)\\chi_S(x)$, where $\\chi_S(x)=(-1)^{\\sum_{i\\in S}x_i}$ and $\\widehat h(S)=\\E[h\\chi_S]$ under the uniform measure.",
  "hypotheses_covered": [
   "Boolean function on 1 bit",
   "1 ≤ p",
