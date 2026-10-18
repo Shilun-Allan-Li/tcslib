@@ -1065,8 +1065,9 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
 - **B6 F5 reviewed (2026-10-18):** phase 1 (`exists_rulerTestTM`, `C = 2`) proved; the other two
   targets open. **Rulings (user):** the landing imports `Build/Catalog` and cites
   `Turing.tapeAction` / `step_of_tapeAction_move` instead of the private joint move (the review's
-  variant), and phase 2's brief authorizes the same import; the environment addendum gains one
-  sentence (v2.1: `lake exe cache get` runs Lake internally; not a `lake build` violation). Review:
+  variant), and phase 2's brief authorizes the same import. The escalation E2 (`lake exe cache get`
+  runs `lake build --no-build proofwidgets:release` internally) is already answered by addendum v2,
+  Part 1 ("expected and allowed"); F5 was issued under v1, so no v2.1 is needed. Review:
   `campaign/fills/b6/reviews/rulerdevice-1/`.
 - **Fill rulings (user, 2026-10-18):** UN-1 by an API PR (`FinTM.pairExtractTM_fst_run` in
   `Build/Primitives`) with the cast-indexed `bufferedSecondCfg` pair (`Simulation`); canonizer cont6
