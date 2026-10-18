@@ -291,6 +291,384 @@ private theorem xr_firstArrival {k : ℕ} {S : Type} {x : List Bool} (tm : Multi
     rw [← MultiTapeTM.runFrom_add, Nat.add_sub_cancel' (Nat.find_min' hex hT')]
   rw [xr_runFrom_fixed tm _ (hstat _ (Nat.find_spec hex))] at hsplit
   exact hsplit.symm.trans h
+/-! #### The leaf rows
+
+This file's own rows, on `Bool` tapes, each exiting at a stationary anchor `done b`: the
+ruler-driven pass (the window clear's engine), the head rewind to a word's origin, the extension
+of a word by one `false`, the capture test (which also clears the captured output), the input
+rewind and the answer. Their run lemmas give exact times and exact configurations; the phase
+host's guard comes from `xr_firstArrival`. -/
+
+/-- The control of the leaf rows. -/
+private inductive xr_St where
+  | start
+  | run
+  | aux
+  | back (b : Bool)
+  | done (b : Bool)
+  deriving DecidableEq, Fintype
+
+/-- A silent action: no input move and no emission. -/
+private def xr_act {K : ℕ} (mv : Fin K → Option (Option Bool) × SignType) (q : Option xr_St) :
+    Action K Bool xr_St := ⟨0, mv, none, q⟩
+
+/-- Write `wr` and move `m` on tape `r` only. -/
+private def xr_mv1 {K : ℕ} (r : Fin K) (wr : Option (Option Bool)) (m : SignType) :
+    Fin K → Option (Option Bool) × SignType :=
+  fun i => if i = r then (wr, m) else (none, 0)
+
+/-- Write `wr` and move `m` on tape `j`, move `m'` on tape `r`. -/
+private def xr_mv2 {K : ℕ} (j r : Fin K) (wr : Option (Option Bool)) (m m' : SignType) :
+    Fin K → Option (Option Bool) × SignType :=
+  fun i => if i = j then (wr, m) else if i = r then (none, m') else (none, 0)
+
+/-- The blanking write: `some none` blanks the cell, `none` leaves it. -/
+private def xr_wr (blank : Bool) : Option (Option Bool) := if blank then some none else none
+
+/-- The stationary action at `q`. -/
+private def xr_stay {K : ℕ} (q : xr_St) : Action K Bool xr_St :=
+  xr_act (fun _ => (none, 0)) (some q)
+
+private theorem xr_cast_pos : ((SignType.pos : SignType) : ℤ) = 1 := rfl
+private theorem xr_cast_neg : ((SignType.neg : SignType) : ℤ) = -1 := rfl
+
+/-- A silent action's effect: the state, the writes under the heads, the head moves. -/
+private theorem xr_act_apply {K : ℕ} {x : List Bool}
+    (mv : Fin K → Option (Option Bool) × SignType) (q : Option xr_St) (d : Cfg K Bool xr_St x) :
+    (xr_act mv q).apply d =
+      ⟨q, d.inputPos,
+        fun i => Function.update (d.workTapes i) (d.workTapePos i)
+          ((mv i).1.getD (d.workTapes i (d.workTapePos i))),
+        fun i => d.workTapePos i + ((mv i).2 : ℤ), d.output⟩ := by
+  apply Cfg.ext
+  · exact Action.apply_state _ _
+  · exact (Action.apply_inputPos _ _).trans (moveInputPos_zero _)
+  · funext i
+    rw [Action.apply_workTapes, Cfg.workTapeSymbols_eq]
+    rfl
+  · funext i
+    exact Action.apply_workTapePos _ _ _
+  · exact (Action.apply_output _ _).trans (List.append_nil _)
+
+/-- A one-tape write-and-move. -/
+private theorem xr_mv1_apply {K : ℕ} {x : List Bool} (r : Fin K) (wr : Option (Option Bool))
+    (m : SignType) (q : Option xr_St) (d : Cfg K Bool xr_St x) :
+    (xr_act (xr_mv1 r wr m) q).apply d =
+      ⟨q, d.inputPos,
+        Function.update d.workTapes r (Function.update (d.workTapes r) (d.workTapePos r)
+          (wr.getD (d.workTapes r (d.workTapePos r)))),
+        Function.update d.workTapePos r (d.workTapePos r + (m : ℤ)), d.output⟩ := by
+  rw [xr_act_apply]
+  congr 1
+  · funext i
+    by_cases hi : i = r
+    · rw [hi]
+      simp [xr_mv1]
+    · simp [xr_mv1, hi]
+  · funext i
+    by_cases hi : i = r
+    · rw [hi]
+      simp [xr_mv1]
+    · simp [xr_mv1, hi]
+
+/-- A one-tape move without a write. -/
+private theorem xr_mv1_apply_none {K : ℕ} {x : List Bool} (r : Fin K) (m : SignType)
+    (q : Option xr_St) (d : Cfg K Bool xr_St x) :
+    (xr_act (xr_mv1 r none m) q).apply d =
+      ⟨q, d.inputPos, d.workTapes,
+        Function.update d.workTapePos r (d.workTapePos r + (m : ℤ)), d.output⟩ := by
+  rw [xr_mv1_apply]
+  congr 1
+  simp
+
+/-- A two-tape move: a write-and-move on `j`, a move on `r`. -/
+private theorem xr_mv2_apply {K : ℕ} {x : List Bool} (j r : Fin K) (hjr : j ≠ r)
+    (wr : Option (Option Bool)) (m m' : SignType) (q : Option xr_St) (d : Cfg K Bool xr_St x) :
+    (xr_act (xr_mv2 j r wr m m') q).apply d =
+      ⟨q, d.inputPos,
+        Function.update d.workTapes j (Function.update (d.workTapes j) (d.workTapePos j)
+          (wr.getD (d.workTapes j (d.workTapePos j)))),
+        fun i => if i = j then d.workTapePos j + (m : ℤ)
+          else if i = r then d.workTapePos r + (m' : ℤ) else d.workTapePos i, d.output⟩ := by
+  rw [xr_act_apply]
+  congr 1
+  · funext i
+    by_cases hij : i = j
+    · rw [hij]
+      simp [xr_mv2]
+    · by_cases hir : i = r
+      · rw [hir]
+        simp [xr_mv2, Ne.symm hjr]
+      · simp [xr_mv2, hij, hir]
+  · funext i
+    by_cases hij : i = j
+    · rw [hij]
+      simp [xr_mv2]
+    · by_cases hir : i = r
+      · rw [hir]
+        simp [xr_mv2, Ne.symm hjr]
+      · simp [xr_mv2, hij, hir]
+
+/-- A state whose table is the stationary action fixes every configuration in that state. -/
+private theorem xr_stay_step {K : ℕ} {x : List Bool} (tm : MultiTapeTM K Bool xr_St) (q : xr_St)
+    (htr : ∀ inp w, tm.tr q inp w = xr_stay q) (d : Cfg K Bool xr_St x) (hd : d.state = some q) :
+    tm.step d = d := by
+  rw [MultiTapeTM.step_of_some hd, htr, xr_stay, xr_act_apply]
+  apply Cfg.ext
+  · exact hd.symm
+  · rfl
+  · funext i
+    simp
+  · funext i
+    simp
+  · rfl
+
+/-- **The return pass** of the leaf rows. From `back b` with the head on the rightmost of the `m`
+non-blank cells `o, …, o + m - 1` and a blank at `o - 1`, `m + 1` steps write `wb` on those `m`
+cells, return the head to `o`, and stop at `done b`. -/
+private theorem xr_back_run {K : ℕ} {x : List Bool} (tm : MultiTapeTM K Bool xr_St) (r : Fin K)
+    (wb : Option (Option Bool))
+    (hsome : ∀ (b : Bool) inp w s, w r = some s →
+      tm.tr (.back b) inp w = xr_act (xr_mv1 r wb SignType.neg) (some (.back b)))
+    (hnone : ∀ (b : Bool) inp w, w r = none →
+      tm.tr (.back b) inp w = xr_act (xr_mv1 r none SignType.pos) (some (.done b)))
+    (b : Bool) (o : ℤ) (m : ℕ) :
+    ∀ d : Cfg K Bool xr_St x, d.state = some (.back b) → d.workTapePos r = o + m - 1 →
+      (∀ i : ℕ, i < m → d.workTapes r (o + i) ≠ none) → d.workTapes r (o - 1) = none →
+      tm.runFrom d (m + 1) =
+        ⟨some (.done b), d.inputPos,
+          Function.update d.workTapes r
+            (fun p => if o ≤ p ∧ p < o + m then wb.getD (d.workTapes r p) else d.workTapes r p),
+          Function.update d.workTapePos r o, d.output⟩ := by
+  induction m with
+  | zero =>
+    intro d hd hpos _ hleft
+    have hread : d.workTapeSymbols r = none := by
+      rw [Cfg.workTapeSymbols_eq, hpos]
+      simpa using hleft
+    rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero,
+      MultiTapeTM.step_of_some hd, hnone b _ _ hread, xr_mv1_apply_none]
+    congr 1
+    · symm
+      rw [Function.update_eq_self_iff]
+      funext p
+      split_ifs with h
+      · exfalso
+        push_cast at h
+        omega
+      · rfl
+    · rw [hpos, xr_cast_pos]
+      congr 1
+      push_cast
+      ring
+  | succ m ih =>
+    intro d hd hpos hcells hleft
+    have hcur : d.workTapes r (o + m) ≠ none := hcells m (by omega)
+    obtain ⟨s, hs⟩ := Option.ne_none_iff_exists'.mp hcur
+    have hpos' : d.workTapePos r = o + m := by rw [hpos]; push_cast; ring
+    have hread : d.workTapeSymbols r = some s := by
+      rw [Cfg.workTapeSymbols_eq, hpos', hs]
+    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.step_of_some hd, hsome b _ _ s hread,
+      xr_mv1_apply, hpos', xr_cast_neg]
+    have hX : ∀ p : ℤ, p ≠ o + m →
+        Function.update (d.workTapes r) (o + m) (wb.getD (d.workTapes r (o + m))) p =
+          d.workTapes r p := fun p hp => Function.update_of_ne hp _ _
+    rw [ih _ rfl ?_ ?_ ?_]
+    · dsimp only
+      simp only [Function.update_self, Function.update_idem]
+      congr 1
+      refine congrArg (Function.update d.workTapes r) (funext fun p => ?_)
+      dsimp only
+      by_cases hp : p = o + m
+      · rw [hp, Function.update_self, if_neg (fun h => lt_irrefl _ h.2),
+          if_pos ⟨by omega, by push_cast; omega⟩]
+      · rw [hX p hp]
+        by_cases h1 : o ≤ p ∧ p < o + m
+        · rw [if_pos h1, if_pos ⟨h1.1, by push_cast; omega⟩]
+        · rw [if_neg h1, if_neg (by push_cast at h1 ⊢; omega)]
+    · dsimp only
+      rw [Function.update_self]
+      omega
+    · intro i hi
+      dsimp only
+      rw [Function.update_self, hX _ (by omega)]
+      exact hcells i (by omega)
+    · dsimp only
+      rw [Function.update_self, hX _ (by omega)]
+      exact hleft
+
+/-- **The forward scan** of the leaf rows: from `run` with the head at `o` and `m` non-blank
+cells ahead, `m` steps move the head to `o + m` and change nothing else. -/
+private theorem xr_fwd_run {K : ℕ} {x : List Bool} (tm : MultiTapeTM K Bool xr_St) (r : Fin K)
+    (hsome : ∀ inp w s, w r = some s →
+      tm.tr .run inp w = xr_act (xr_mv1 r none SignType.pos) (some .run))
+    (m : ℕ) :
+    ∀ (o : ℤ) (d : Cfg K Bool xr_St x), d.state = some .run → d.workTapePos r = o →
+      (∀ i : ℕ, i < m → d.workTapes r (o + i) ≠ none) →
+      tm.runFrom d m =
+        ⟨some .run, d.inputPos, d.workTapes, Function.update d.workTapePos r (o + m), d.output⟩ := by
+  induction m with
+  | zero =>
+    intro o d hd hpos _
+    rw [MultiTapeTM.runFrom_zero]
+    apply Cfg.ext
+    · exact hd
+    · rfl
+    · rfl
+    · funext i
+      dsimp only
+      by_cases hi : i = r
+      · rw [hi, Function.update_self, hpos]
+        simp
+      · rw [Function.update_of_ne hi]
+    · rfl
+  | succ m ih =>
+    intro o d hd hpos hcells
+    obtain ⟨s, hs⟩ := Option.ne_none_iff_exists'.mp (hcells 0 (by omega))
+    have hread : d.workTapeSymbols r = some s := by
+      rw [Cfg.workTapeSymbols_eq, hpos]
+      simpa using hs
+    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.step_of_some hd, hsome _ _ s hread,
+      xr_mv1_apply_none, hpos, xr_cast_pos]
+    rw [ih (o + 1) _ rfl (by dsimp only; rw [Function.update_self]) ?_]
+    · dsimp only
+      rw [Function.update_idem]
+      congr 2
+      push_cast
+      ring
+    · intro i hi
+      dsimp only
+      have := hcells (i + 1) (by omega)
+      push_cast at this ⊢
+      convert this using 2
+      ring
+
+/-- **The rewind**: one step left, then left while reading a symbol, then one step right at the
+blank. -/
+private def xr_rewindTM (K : ℕ) (r : Fin K) : MultiTapeTM K Bool xr_St where
+  q₀ := .start
+  tr := fun q _ w =>
+    match q with
+    | .start => xr_act (xr_mv1 r none SignType.neg) (some (.back true))
+    | .back b =>
+      match w r with
+      | some _ => xr_act (xr_mv1 r none SignType.neg) (some (.back b))
+      | none => xr_act (xr_mv1 r none SignType.pos) (some (.done b))
+    | q => xr_stay q
+
+/-- From any head position `p₀ ≤ |u|` on the word `u` at the origin, the rewind returns the head
+to `0` in `p₀ + 2` steps, changes nothing else, and stops at `done true`. -/
+private theorem xr_rewindTM_run {K : ℕ} {x : List Bool} (r : Fin K) (u : List Bool) (p₀ : ℕ)
+    (hp₀ : p₀ ≤ u.length) (d : Cfg K Bool xr_St x) (hd : d.state = some .start)
+    (hr : d.workTapes r = FinTM.bufferTape u) (hpos : d.workTapePos r = p₀) :
+    (xr_rewindTM K r).runFrom d (p₀ + 2) =
+      ⟨some (.done true), d.inputPos, d.workTapes, Function.update d.workTapePos r 0,
+        d.output⟩ := by
+  rw [show p₀ + 2 = (p₀ + 1) + 1 from rfl, MultiTapeTM.runFrom_succ_eq_step,
+    MultiTapeTM.step_of_some hd,
+    show (xr_rewindTM K r).tr .start _ _ =
+      xr_act (xr_mv1 r none SignType.neg) (some (.back true)) from rfl,
+    xr_mv1_apply_none, hpos, xr_cast_neg]
+  rw [xr_back_run (xr_rewindTM K r) r none
+    (fun b inp w s hs => by simp [xr_rewindTM, hs]) (fun b inp w hw => by simp [xr_rewindTM, hw])
+    true 0 p₀ _ rfl ?_ ?_ ?_]
+  · dsimp only
+    rw [Function.update_idem]
+    congr 1
+    rw [Function.update_eq_self_iff]
+    funext p
+    simp
+  · dsimp only
+    rw [Function.update_self]
+    ring
+  · intro i hi
+    dsimp only
+    rw [zero_add, hr, FinTM.bufferTape_nat, ne_eq, List.getElem?_eq_none_iff]
+    omega
+  · dsimp only
+    rw [hr]
+    simp
+
+/-- **The extension**: right while reading a symbol, write `false` at the blank and turn, return
+to the origin: the word grows by one `false`. -/
+private def xr_extendTM (K : ℕ) (r : Fin K) : MultiTapeTM K Bool xr_St where
+  q₀ := .run
+  tr := fun q _ w =>
+    match q with
+    | .run =>
+      match w r with
+      | some _ => xr_act (xr_mv1 r none SignType.pos) (some .run)
+      | none => xr_act (xr_mv1 r (some (some false)) SignType.neg) (some (.back true))
+    | .back b =>
+      match w r with
+      | some _ => xr_act (xr_mv1 r none SignType.neg) (some (.back b))
+      | none => xr_act (xr_mv1 r none SignType.pos) (some (.done b))
+    | q => xr_stay q
+
+/-- From the origin of the word `u`, the extension writes `u ++ [false]` in `2|u| + 2` steps,
+returns the head to `0`, changes nothing else, and stops at `done true`. -/
+private theorem xr_extendTM_run {K : ℕ} {x : List Bool} (r : Fin K) (u : List Bool)
+    (d : Cfg K Bool xr_St x) (hd : d.state = some .run)
+    (hr : d.workTapes r = FinTM.bufferTape u) (hpos : d.workTapePos r = 0) :
+    (xr_extendTM K r).runFrom d (2 * u.length + 2) =
+      ⟨some (.done true), d.inputPos,
+        Function.update d.workTapes r (FinTM.bufferTape (u ++ [false])),
+        Function.update d.workTapePos r 0, d.output⟩ := by
+  have hcells : ∀ i : ℕ, i < u.length → d.workTapes r ((0 : ℤ) + i) ≠ none := by
+    intro i hi
+    rw [zero_add, hr, FinTM.bufferTape_nat, ne_eq, List.getElem?_eq_none_iff]
+    omega
+  have h1 : (xr_extendTM K r).runFrom d u.length = ⟨some .run, d.inputPos, d.workTapes,
+      Function.update d.workTapePos r (u.length : ℤ), d.output⟩ := by
+    rw [xr_fwd_run (xr_extendTM K r) r (fun inp w s hs => by simp [xr_extendTM, hs])
+      u.length 0 d hd hpos hcells, zero_add]
+  have hend : (⟨some .run, d.inputPos, d.workTapes,
+      Function.update d.workTapePos r (u.length : ℤ), d.output⟩ :
+      Cfg K Bool xr_St x).workTapeSymbols r = none := by
+    rw [Cfg.workTapeSymbols_eq]
+    dsimp only
+    rw [Function.update_self, hr, FinTM.bufferTape_nat]
+    simp
+  have h2 : (xr_extendTM K r).step ⟨some .run, d.inputPos, d.workTapes,
+      Function.update d.workTapePos r (u.length : ℤ), d.output⟩ =
+      ⟨some (.back true), d.inputPos,
+        Function.update d.workTapes r (FinTM.bufferTape (u ++ [false])),
+        Function.update d.workTapePos r ((u.length : ℤ) + -1), d.output⟩ := by
+    rw [MultiTapeTM.step_of_some rfl,
+      show (xr_extendTM K r).tr .run _ _ =
+        xr_act (xr_mv1 r (some (some false)) SignType.neg) (some (.back true)) by
+          simp only [xr_extendTM]
+          rw [hend],
+      xr_mv1_apply, xr_cast_neg]
+    dsimp only
+    rw [Function.update_self, Function.update_idem, Option.getD_some, hr,
+      ← FinTM.bufferTape_append]
+  have h3 := xr_back_run (xr_extendTM K r) r none
+    (fun b inp w s hs => by simp [xr_extendTM, hs]) (fun b inp w hw => by simp [xr_extendTM, hw])
+    true 0 u.length
+    ⟨some (.back true), d.inputPos, Function.update d.workTapes r (FinTM.bufferTape (u ++ [false])),
+      Function.update d.workTapePos r ((u.length : ℤ) + -1), d.output⟩ rfl
+    (by dsimp only; rw [Function.update_self]; ring)
+    (by
+      intro i hi
+      dsimp only
+      rw [Function.update_self, zero_add, FinTM.bufferTape_nat, ne_eq, List.getElem?_eq_none_iff]
+      simp only [List.length_append, List.length_singleton]
+      omega)
+    (by dsimp only; rw [Function.update_self]; simp)
+  have hsplit : (xr_extendTM K r).runFrom d (2 * u.length + 2) =
+      (xr_extendTM K r).runFrom ((xr_extendTM K r).step ((xr_extendTM K r).runFrom d u.length))
+        (u.length + 1) := by
+    rw [show 2 * u.length + 2 = (u.length + 1) + (u.length + 1) by ring,
+      MultiTapeTM.runFrom_add, ← MultiTapeTM.runFrom_succ_eq_step']
+  rw [hsplit, h1, h2, h3]
+  dsimp only
+  simp only [Function.update_self, Function.update_idem]
+  congr 1
+  refine congrArg (Function.update d.workTapes r) (funext fun p => ?_)
+  dsimp only
+  simp only [Option.getD_none, ite_self]
+
 /-- **The exhaustive replay `E`.** For every bundled binary NDTM `N` there is a deterministic
 machine `E` and a constant `C` such that, on every input `z` on which every branch of `N` of
 length `T` has halted (any `T`, which nobody needs to compute), `E` outputs `[true]` if `N`
