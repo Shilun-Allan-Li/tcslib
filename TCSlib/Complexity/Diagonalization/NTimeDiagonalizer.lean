@@ -29,7 +29,7 @@ diagonalization, as two contracts over a pure description of its stages. C1-E's 
 * **The stage query** (`Turing.NTimeDiag.query`) is the word that `D` hands to its simulators.
   - At the top `n = ℓᵢ₊₁` it is the flag `true` and the exponential decider's input
     `⟨⟨bits T*, α⟩, 1^a⟩`.
-  - In the middle it is the flag `false` and the interpreter's input `⟨⟨bits (g n), α⟩, 1^{n+1}⟩`.
+  - In the middle it is the flag `false` and `⟨⟨bits (g n), α⟩, 1^{n+1}⟩`; `D` rewrites its budget.
   - Off unary inputs of length at least `3` it is `[]`.
 
   One deterministic machine computes it in time linear in `g n + 1`
@@ -194,7 +194,7 @@ theorem stageCode_frequently (α : List Bool) (N : ℕ) : ∃ i, N ≤ i ∧ sta
   refine ⟨Nat.pair (m - 1) N, Nat.right_le_pair _ _, ?_⟩
   simp only [stageCode, Nat.unpair_pair, Nat.sub_add_cancel hm1, hm, List.dropLast_concat]
 
-/-- **The stage query** on an input `x`: the word the diagonalizer hands to its simulators. On a
+/-- **The stage query** on an input `x`: the word the diagonalizer builds its rungs from. On a
 unary `x = 1ⁿ` with `n ≥ 3`, in the stage `i = stage f n` with code `α = stageCode i` and bottom
 `ℓ = ladder f i`:
 - at the top `n = ladder f (i + 1)`: `true :: ⟨⟨bits (budget f ℓ), α⟩, 1^{ℓ + 1}⟩`;
@@ -273,8 +273,10 @@ theorem exists_queryTM {f g : ℕ → ℕ} (hf : Complexity.TimeConstructible f)
   sorry
 
 /-- **The diagonalizer** (C1-E; [AB09, proof of Theorem 3.2]; the route of C1's design §2.5 and the
-P3.3 gate's round 2, §§3–5): for time-constructible `f`, `g` and an effective scheme `c` there are
-a nondeterministic machine `D` and a constant `K` with:
+P3.3 gate's round 2, §§3–5): for time-constructible `f`, `g`, an effective scheme `c` and a
+deterministic decider of the coded machines' bounded acceptance in exponential time (`hBF`, the
+conclusion of `Turing.exists_ndAcceptsWithin_decider`) there are a nondeterministic machine `D` and
+a constant `K` with:
 - every branch of `D` on every input `x` halts within `K · (g |x| + 1)`;
 - for every code `α` a constant `C` such that, on `1ⁿ` with `n ≥ 3` in a stage of `α`:
   - in the middle (`n` not the stage's top): if `D` accepts `1ⁿ` within `K · (g n + 1)`, the coded
@@ -283,6 +285,12 @@ a nondeterministic machine `D` and a constant `K` with:
   - at the top (`n = ℓᵢ₊₁`), when `C · 2^{C · (T* + 1)} ≤ n`: `D` accepts `1ⁿ` within
     `K · (g n + 1)` iff the coded machine does not accept the bottom `1^{ℓᵢ + 1}` within
     `T* = budget f ℓᵢ`.
+
+**Why the decider is a hypothesis.** It is stated in
+`TCSlib.Complexity.Diagonalization.NTimeHierarchy`, whose `ntime_hierarchy` needs this module,
+so this module cannot import it. That proof supplies it from
+`Turing.exists_ndAcceptsWithin_decider`; taking it as a hypothesis keeps the two modules' imports
+acyclic.
 
 **Proof sketch.** `D` is assembled by the nondeterministic phase host
 `Turing.NDTM.phaseHostND`:
@@ -297,7 +305,7 @@ a nondeterministic machine `D` and a constant `K` with:
   is `⟨⟨bits b, α⟩, 1^{n + 1}⟩`, run by the interpreter core `Turing.exists_ndInterpreterCore` with
   the stream `s` (`b ≤ |s|`), under the step clock (`Turing.exists_stepClockTMVia`) with the body
   allowance `g n` (its counter is `bits (g n)`), accepting iff the interpreter accepts in time;
-- **top:** the exponential decider `Turing.exists_ndAcceptsWithin_decider` on the query word
+- **top:** the exponential decider of `hBF` on the query word
   (hosted by `Turing.vhostSilentTM`), under the same clock, accepting iff it completes with
   `[false]`;
 - default reject.
@@ -325,7 +333,14 @@ private leaf in `O(g n + 1)`); the transfer to every branch
 (`Turing.NDTM.runWith_mapState_of_agreeOn_det`); the clock's two exits per rung; the per-code
 constant `C = max 1 (max C_R C_BF)`. -/
 theorem exists_diagonalizer {f g : ℕ → ℕ} (hf : Complexity.TimeConstructible f)
-    (hg : Complexity.TimeConstructible g) (c : EffectiveNDMachineCode) :
+    (hg : Complexity.TimeConstructible g) (c : EffectiveNDMachineCode)
+    (hBF : ∃ BF : FinTM Bool, ∀ α : List Bool, ∃ C : ℕ, ∀ (x : List Bool) (t : ℕ),
+      ((c.decode α).toFinNDTM.AcceptsWithin x t →
+        BF.ComputesInTime (pairEncode (pairEncode (Nat.bits t) α) x) [true]
+          (C * 2 ^ (C * (t + 1)))) ∧
+      (¬(c.decode α).toFinNDTM.AcceptsWithin x t →
+        BF.ComputesInTime (pairEncode (pairEncode (Nat.bits t) α) x) [false]
+          (C * 2 ^ (C * (t + 1))))) :
     ∃ (D : FinNDTM Bool) (K : ℕ),
       (∀ x : List Bool, D.tm.HaltsWithin x (K * (g x.length + 1))) ∧
       ∀ α : List Bool, ∃ C : ℕ, ∀ n : ℕ, 3 ≤ n → stageCode (stage f n) = α →
