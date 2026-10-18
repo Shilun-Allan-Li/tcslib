@@ -95,8 +95,11 @@ not list. They are published `rfl` lemmas of `Build/Zone` and are fine.
   in `kinds.out`.
 - **Why.** Proof constants cannot show a definitional unfolding: `rfl` and `rfl`-lemmas leave no
   trace (`ax-base.out` shows the base's four helpers with no equation lemmas either).
-- **Control, the base.** It fails at exactly the four helpers phase 0 named: base lines 142, 146,
-  230, 235 and 237 (`seal-Base.out`). These are `repoint.md`'s lines.
+- **Control, the base.** It fails at three of the four helpers phase 0 named: `zr_read_slot`,
+  `zr_capacity_pos` and `zr_mirror_tape`, base lines 142, 146, 230, 235 and 237 (`seal-Base.out`).
+  These are `repoint.md`'s lines. The fourth, `zr_ruler_length`, unfolds `zoneCapacity`
+  explicitly (`simp only [zoneCapacity, Nat.mul_comm]`), which a seal does not block; the
+  inspection of rewrite arguments finds it. (Corrected: gate 44, finding 1.)
 - **The head.** The four pass. Exactly one new error remains (`seal-Head.out`, and identically at
   the tip, `seal-Head-tip.out`).
 - **F1.** The error is in `zr_zonedTape_right_fields`, the home separator case, head lines

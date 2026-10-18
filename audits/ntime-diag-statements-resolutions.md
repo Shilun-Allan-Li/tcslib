@@ -78,6 +78,8 @@ consumer. `ntime_hierarchy`'s sketch also used it (X1). Both now read the total-
 import `NTimeDiagonalizer`, so the two files cannot import each other. **Ruling: BF becomes a
 hypothesis of `exists_diagonalizer`, after #121 merges.** A small statement PR adds it, and H
 supplies it from `exists_ndAcceptsWithin_decider`. It gets its own gate, before E-D's brief.
+**Done:** PR #126 (`5333b29b`); gate 45, PASS 0/0/2/10
+(`audits/ntime-diag-bf-statements-resolutions.md`).
 
 **X3 (note):** `NTimeDiagonalizer.lean:32` and `:197` still call the middle word R's input; D
 now rewrites its budget field first. The review's one-line replacements ride with the X2

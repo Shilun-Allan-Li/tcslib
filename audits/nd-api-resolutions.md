@@ -54,7 +54,27 @@ minor 5, and the equations the reviews of C1 wave 1's first deliveries found mis
 (`counterValue_eq`, `codeBitsNat_eq`, `agreeOn_iff`, `bufferTape_eq`, `bufferTape_of_neg`), and
 gate 40's minor 1 (`NDCodeSimulator`'s Design bullet). 22 equations, 3 docstrings
 (`audits/nd-api-r2-pack.md`; evidence `audits/evidence/nd-api/r2/`). **Replay passed (user,
-2026-10-17):** 313 of 313, static-equal (96). Gate 41 is staged.
+2026-10-17):** 313 of 313, static-equal (96). **Gate 41** (folder `41-nd-api-r2-gate/`; bundle
+SHA-256 `94f7c977…7b36`, 60 sections; pack `audits/nd-api-r2-pack.md`).
+
+### Round 2's result: PASS (0 blockers, 0 majors, 1 minor, 14 notes). The gate is closed.
+
+The findings are in `audits/nd-api-r2-findings.md`, verbatim. The maintainer's review sub-agent
+verified every finding at `6a48b93e`: all true, at the auditor's severities. It rebuilt the
+bundle byte for byte, re-ran the lint at the head, and checked notes 2, 3, 5, 6, 8 and 9 in
+substance (a comment-aware freeze of the nine files; the statements against their definitions
+and consumers).
+
+| # | Severity | Finding | Resolution |
+|---|---|---|---|
+| 1 | minor | Two final-head records predate the last commits: the PR body says every new proof is `rfl` except `codeSkipActionK_append`, and `r2/lint/lint-head-final-TuringMachine.txt` gives `Simulation.lean` 1,175 lines and 58 publics (the head: 1,189 and 60). | **True; records.** Of the 22 proofs, 19 are `rfl`, `agreeOn_iff` is `Iff.rfl`, and `codeSkipActionK_append` and `bufferTape_of_neg` rewrite; the pack says so. The "final" log is `423b6536`'s, before `63d69835`'s buffer equations (`lint-wt-ndapi2-*` are commit 1's). **Fixed:** the head's lint is added (`r2/lint/lint-head-6a48b93e-TuringMachine.txt`, `-ClassNP.txt`): 0 FAIL, 63 and 15 WARN, as attested; it differs from the "final" log only in `Simulation.lean`'s two size figures. The old logs are kept. PR #122's body is corrected, and its new text snapshotted as `r2/pr-body-v2.md`. |
+| 2–15 | notes | Integrity and freeze; the 22 equations' faithfulness (StepBlock, CodeFormat, the encoders, the counter and binary values, `agreeOn_iff`, the buffer); gate 37's finding 1 closed for RC's route; the three docstrings; the screen's boundary pair; the logs, lint, replay and records. | No action. Note 15's prerequisite carries: NF's brief cites the separately stated and gated controller contract (`ndWriterTM_run_controller`), not the plan. |
+
+**Records:** the replay scripts' precheck message names `0a5878ed` in `replay-lc1w.sh`,
+`replay-lseam.sh`, `replay-lg4c1.sh` and `replay-lx2.sh`, copied from this round's script, where
+it is right (gates 42 and 45, minor 2).
+
+**#122 is clear to merge** at `6a48b93e`.
 
 ## Round 2's plan (as written before the PR)
 
