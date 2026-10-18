@@ -2654,10 +2654,10 @@ private theorem xr_branch_win {N : FinNDTM Bool} (z s : List Bool) (h : Fin N.k 
   omega
 
 /-- **One cycle on the host.** From the start of a cycle at depth `L = |s|` (the depth word has
-value `L` and width `L`, the counter width at most `L`), within `(18 N.k + 19)(L + 1)` steps the host
-replays the choice word `s`, folds its verdicts into the flags (the output `[true]` raises the
-accept flag, a live branch the live flag), restores the tapes, and either dispatches to the next
-cycle on `incFixed s`, or, at the overflow, to the depth's end. -/
+value `L` and width `L`, the counter width at most `L`), within `(18 N.k + 19)(L + 1)` steps the
+host replays the choice word `s`, folds its verdicts into the flags (the output `[true]` raises
+the accept flag, a live branch the live flag), restores the tapes, and either dispatches to the
+next cycle on `incFixed s`, or, at the overflow, to the depth's end. -/
 private theorem xr_cycle_host {N : FinNDTM Bool} (C : xr_Clock N) (z : List Bool) (a l : Bool)
     (wL s u : List Bool) (h : Fin N.k → ℤ) (hval : xr_val wL = s.length)
     (hL : wL.length = s.length) (hu : u.length ≤ wL.length) :
@@ -2747,6 +2747,207 @@ private theorem xr_cycle_host {N : FinNDTM Bool} (C : xr_Clock N) (z : List Bool
     rw [Option.some.injEq] at hs''
     subst hs''
     rw [hchain, h7]
+
+/-! #### One depth, the depth change -/
+
+/-- **One depth on the host.** From the cycle at the word `s`, with `m = 2^L - val s` words of
+depth `L` left to replay, the host runs through them to the depth's end within
+`m·(18 N.k + 19)(L + 1)` steps; the accept flag ends up raised exactly when it was, or some word
+of value at least `val s` outputs `[true]`, and the live flag exactly when it was, or some such
+word is live after `L` steps. -/
+private theorem xr_depth_host {N : FinNDTM Bool} (C : xr_Clock N) (z wL : List Bool) (L : ℕ)
+    (hL : wL.length = L) (hval : xr_val wL = L) :
+    ∀ (m : ℕ) (a l : Bool) (s u : List Bool) (h : Fin N.k → ℤ), s.length = L → u.length ≤ L →
+      2 ^ L - xr_val s = m →
+      ∃ T ≤ m * ((18 * N.k + 19) * (L + 1)), ∃ (a' l' : Bool) (u' : List Bool) (h' : Fin N.k → ℤ),
+        (xr_host C).runFrom (xr_cycle C z a l wL s u h) T = xr_depthEnd C z a' l' L wL u' h' ∧
+        (a' = true ↔ a = true ∨ ∃ s', s'.length = L ∧ xr_val s ≤ xr_val s' ∧
+          (N.tm.runWith s' (N.tm.initCfg z)).output = [true]) ∧
+        (l' = true ↔ l = true ∨ ∃ s', s'.length = L ∧ xr_val s ≤ xr_val s' ∧
+          (N.tm.runWith s' (N.tm.initCfg z)).state ≠ none) := by
+  intro m
+  induction m with
+  | zero =>
+    intro a l s u h hs hu hm
+    exfalso
+    have := xr_val_lt s
+    rw [hs] at this
+    omega
+  | succ m ih =>
+    intro a l s u h hs hu hm
+    obtain ⟨T₁, hT₁, u₁, hu₁, h₁, hsucc, hover⟩ := xr_cycle_host C z a l wL s u h
+      (hval.trans hs.symm) (hL.trans hs.symm) (hu.trans hL.symm.le)
+    rw [hs] at hT₁
+    rcases hinc : incFixed s with _ | s'
+    · -- `s` is the depth's last word
+      have hmax : ∀ s', s'.length = L → xr_val s ≤ xr_val s' → s' = s := fun s' hs' hle =>
+        xr_val_inj (hs'.trans hs.symm)
+          (le_antisymm (xr_incFixed_none_max hinc (hs'.trans hs.symm)) hle)
+      refine ⟨T₁, hT₁.trans (Nat.le_mul_of_pos_left _ (by omega)),
+        a || decide ((N.tm.runWith s (N.tm.initCfg z)).output = [true]),
+        l || (N.tm.runWith s (N.tm.initCfg z)).state.isSome, u₁, h₁, ?_, ?_, ?_⟩
+      · rw [hover hinc, hs]
+      · rw [Bool.or_eq_true, decide_eq_true_eq]
+        constructor
+        · rintro (h0 | h0)
+          · exact Or.inl h0
+          · exact Or.inr ⟨s, hs, le_rfl, h0⟩
+        · rintro (h0 | ⟨s', hs', hle, hout⟩)
+          · exact Or.inl h0
+          · rw [hmax s' hs' hle] at hout
+            exact Or.inr hout
+      · rw [Bool.or_eq_true, Option.isSome_iff_ne_none]
+        constructor
+        · rintro (h0 | h0)
+          · exact Or.inl h0
+          · exact Or.inr ⟨s, hs, le_rfl, h0⟩
+        · rintro (h0 | ⟨s', hs', hle, hlive⟩)
+          · exact Or.inl h0
+          · rw [hmax s' hs' hle] at hlive
+            exact Or.inr hlive
+    · -- `s'` follows `s`
+      have hs' : s'.length = L := (incFixed_length hinc).trans hs
+      have hv' : xr_val s' = xr_val s + 1 := xr_incFixed_val hinc
+      have hlt := xr_val_lt s'
+      rw [hs'] at hlt
+      obtain ⟨T₂, hT₂, a', l', u', h', hrun₂, ha', hl'⟩ := ih
+        (a || decide ((N.tm.runWith s (N.tm.initCfg z)).output = [true]))
+        (l || (N.tm.runWith s (N.tm.initCfg z)).state.isSome) s' u₁ h₁ hs'
+        (hu₁.trans hL.le) (by omega)
+      have hmul : (m + 1) * ((18 * N.k + 19) * (L + 1)) =
+          m * ((18 * N.k + 19) * (L + 1)) + (18 * N.k + 19) * (L + 1) := by ring
+      refine ⟨T₁ + T₂, by omega, a', l', u', h', ?_, ?_, ?_⟩
+      · rw [MultiTapeTM.runFrom_add, hsucc s' hinc, hrun₂]
+      · rw [ha', Bool.or_eq_true, decide_eq_true_eq]
+        constructor
+        · rintro ((h0 | h0) | ⟨s'', hs'', hle, hout⟩)
+          · exact Or.inl h0
+          · exact Or.inr ⟨s, hs, le_rfl, h0⟩
+          · exact Or.inr ⟨s'', hs'', by omega, hout⟩
+        · rintro (h0 | ⟨s'', hs'', hle, hout⟩)
+          · exact Or.inl (Or.inl h0)
+          · rcases Nat.lt_or_ge (xr_val s) (xr_val s'') with hlt' | hge
+            · exact Or.inr ⟨s'', hs'', by omega, hout⟩
+            · have hss : s'' = s := xr_val_inj (hs''.trans hs.symm) (le_antisymm hge hle)
+              subst hss
+              exact Or.inl (Or.inr hout)
+      · rw [hl', Bool.or_eq_true, Option.isSome_iff_ne_none]
+        constructor
+        · rintro ((h0 | h0) | ⟨s'', hs'', hle, hlive⟩)
+          · exact Or.inl h0
+          · exact Or.inr ⟨s, hs, le_rfl, h0⟩
+          · exact Or.inr ⟨s'', hs'', by omega, hlive⟩
+        · rintro (h0 | ⟨s'', hs'', hle, hlive⟩)
+          · exact Or.inl (Or.inl h0)
+          · rcases Nat.lt_or_ge (xr_val s) (xr_val s'') with hlt' | hge
+            · exact Or.inr ⟨s'', hs'', by omega, hlive⟩
+            · have hss : s'' = s := xr_val_inj (hs''.trans hs.symm) (le_antisymm hge hle)
+              subst hss
+              exact Or.inl (Or.inr hlive)
+
+/-- **The choice word's extension on the host**: within `2|s| + 3` steps a `false` is appended to
+the choice word and the host dispatches to the depth word's extension. -/
+private theorem xr_extC_host {N : FinNDTM Bool} (C : xr_Clock N) (z : List Bool) (a l : Bool)
+    (s u wL : List Bool) (h : Fin N.k → ℤ) :
+    ∃ T ≤ 2 * s.length + 3,
+      (xr_host C).runFrom (⟨some ⟨(.extC, a, l), xr_St.run⟩, 1,
+        xr_tapes (fun _ _ => none) (FinTM.bufferTape s) (FinTM.bufferTape u) (FinTM.bufferTape [])
+          (FinTM.bufferTape wL), xr_heads h 0 0 0 0, []⟩ :
+            Cfg (N.k + 2 + 2) Bool (Σ i, xr_PhSt C i) z) T =
+      ⟨some ⟨(.extD, a, l), xr_St.run⟩, 1,
+        xr_tapes (fun _ _ => none) (FinTM.bufferTape (s ++ [false])) (FinTM.bufferTape u)
+          (FinTM.bufferTape []) (FinTM.bufferTape wL), xr_heads h 0 0 0 0, []⟩ := by
+  have hrun := xr_extendTM_run (xr_choice N.k) s
+    (⟨some xr_St.run, 1, xr_tapes (fun _ _ => none) (FinTM.bufferTape s) (FinTM.bufferTape u)
+      (FinTM.bufferTape []) (FinTM.bufferTape wL), xr_heads h 0 0 0 0, []⟩ :
+      Cfg (N.k + 2 + 2) Bool xr_St z) rfl (xr_tapes_choice _ _ _ _ _) (xr_heads_choice _ _ _ _ _)
+  obtain ⟨T', hT', hrun', hguard⟩ := xr_firstArrival' (xr_extendTM (N.k + 2 + 2) (xr_choice N.k))
+    (fun s => ∃ b, s = .done b) (xr_done_stationary _ (fun b inp w => rfl)) hrun rfl ⟨_, rfl⟩
+  refine ⟨T' + 1, by omega, ?_⟩
+  rw [xr_phase_step C (.extC, a, l) xr_St.run 1 _ _ T' _ hrun' _ rfl rfl
+    ⟨(.extD, a, l), xr_St.run⟩ rfl
+    (fun u hu s hs => xr_red_leaf_none C (.extC, a, l)
+      (Or.inr (Or.inr (Or.inr (Or.inr (Or.inl ⟨a, l, rfl⟩))))) s (hguard u hu s hs) rfl)]
+  dsimp only
+  rw [xr_tapes_upd_choice, xr_heads_upd_choice]
+
+/-- **The depth word's extension on the host**: within `2|wL| + 3` steps a `false` is appended to
+the depth word and the host dispatches to its increment. -/
+private theorem xr_extD_host {N : FinNDTM Bool} (C : xr_Clock N) (z : List Bool) (a l : Bool)
+    (s u wL : List Bool) (h : Fin N.k → ℤ) :
+    ∃ T ≤ 2 * wL.length + 3,
+      (xr_host C).runFrom (⟨some ⟨(.extD, a, l), xr_St.run⟩, 1,
+        xr_tapes (fun _ _ => none) (FinTM.bufferTape s) (FinTM.bufferTape u) (FinTM.bufferTape [])
+          (FinTM.bufferTape wL), xr_heads h 0 0 0 0, []⟩ :
+            Cfg (N.k + 2 + 2) Bool (Σ i, xr_PhSt C i) z) T =
+      ⟨some ⟨(.incD, a, l), FlagPhase.run⟩, 1,
+        xr_tapes (fun _ _ => none) (FinTM.bufferTape s) (FinTM.bufferTape u) (FinTM.bufferTape [])
+          (FinTM.bufferTape (wL ++ [false])), xr_heads h 0 0 0 0, []⟩ := by
+  have hrun := xr_extendTM_run (xr_dep N.k) wL
+    (⟨some xr_St.run, 1, xr_tapes (fun _ _ => none) (FinTM.bufferTape s) (FinTM.bufferTape u)
+      (FinTM.bufferTape []) (FinTM.bufferTape wL), xr_heads h 0 0 0 0, []⟩ :
+      Cfg (N.k + 2 + 2) Bool xr_St z) rfl (xr_tapes_dep _ _ _ _ _) (xr_heads_dep _ _ _ _ _)
+  obtain ⟨T', hT', hrun', hguard⟩ := xr_firstArrival' (xr_extendTM (N.k + 2 + 2) (xr_dep N.k))
+    (fun s => ∃ b, s = .done b) (xr_done_stationary _ (fun b inp w => rfl)) hrun rfl ⟨_, rfl⟩
+  refine ⟨T' + 1, by omega, ?_⟩
+  rw [xr_phase_step C (.extD, a, l) xr_St.run 1 _ _ T' _ hrun' _ rfl rfl
+    ⟨(.incD, a, l), FlagPhase.run⟩ rfl
+    (fun u hu s hs => xr_red_leaf_none C (.extD, a, l)
+      (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr ⟨a, l, rfl⟩))))) s (hguard u hu s hs) rfl)]
+  dsimp only
+  rw [xr_tapes_upd_dep, xr_heads_upd_dep]
+
+/-- **The depth word's increment on the host**: with `incFixed w = some w'`, within `2|w| + 3` steps
+the depth tape holds `w'` and the host dispatches to the next depth's first cycle. -/
+private theorem xr_incD_host {N : FinNDTM Bool} (C : xr_Clock N) (z : List Bool) (a l : Bool)
+    (s u w w' : List Bool) (hw' : incFixed w = some w') (h : Fin N.k → ℤ) :
+    ∃ T ≤ 2 * w.length + 3,
+      (xr_host C).runFrom (⟨some ⟨(.incD, a, l), FlagPhase.run⟩, 1,
+        xr_tapes (fun _ _ => none) (FinTM.bufferTape s) (FinTM.bufferTape u) (FinTM.bufferTape [])
+          (FinTM.bufferTape w), xr_heads h 0 0 0 0, []⟩ :
+            Cfg (N.k + 2 + 2) Bool (Σ i, xr_PhSt C i) z) T = xr_cycle C z a l w' s u h := by
+  obtain ⟨hcfg, hguard, -⟩ := incrementTM_run_succ_ofCfg (xr_dep N.k) w w' hw'
+    (⟨some FlagPhase.run, 1, xr_tapes (fun _ _ => none) (FinTM.bufferTape s) (FinTM.bufferTape u)
+      (FinTM.bufferTape []) (FinTM.bufferTape w), xr_heads h 0 0 0 0, []⟩ :
+      Cfg (N.k + 2 + 2) Bool FlagPhase z) rfl
+    (by intro p _ _; dsimp only; rw [xr_tapes_dep, xr_heads_dep, zero_add])
+  refine ⟨2 * (w.takeWhile id).length + 2 + 1, by
+    have := (List.takeWhile_sublist (l := w) id).length_le; omega, ?_⟩
+  rw [xr_phase_step C (.incD, a, l) FlagPhase.run 1 _ _ _ _ hcfg (FlagPhase.done true) rfl rfl
+    ⟨(.copy, a, l), SweepPhase.sweep⟩ rfl
+    (fun t ht s hs => by
+      cases s with
+      | done b => exact absurd hs (hguard t ht b)
+      | run => rfl
+      | rewind b => rfl)]
+  dsimp only
+  rw [xr_patch_eq _ _ (xr_dep N.k) (xr_heads_dep _ _ _ _ _) w w' w (incFixed_length hw')
+    (xr_tapes_dep _ _ _ _ _) le_rfl, xr_tapes_upd_dep]
+  rfl
+
+/-- **The depth change on the host.** From a depth's end with the live flag up, within `6L + 11`
+steps the host extends the choice word to the all-`false` word of length `L + 1`, extends and
+increments the depth word to a word of width and value `L + 1`, lowers both flags, and starts
+the next depth's first cycle. -/
+private theorem xr_deepen_host {N : FinNDTM Bool} (C : xr_Clock N) (z : List Bool) (a : Bool)
+    (L : ℕ) (wL u : List Bool) (h : Fin N.k → ℤ) (hL : wL.length = L) (hval : xr_val wL = L) :
+    ∃ T ≤ 6 * L + 11, ∃ wL' : List Bool, wL'.length = L + 1 ∧ xr_val wL' = L + 1 ∧
+      (xr_host C).runFrom (xr_depthEnd C z a true L wL u h) T =
+        xr_cycle C z false false wL' (List.replicate (L + 1) false) u h := by
+  obtain ⟨T₁, hT₁, h1⟩ := xr_extC_host C z false false (List.replicate L false) u wL h
+  obtain ⟨T₂, hT₂, h2⟩ := xr_extD_host C z false false (List.replicate L false ++ [false]) u wL h
+  obtain ⟨wL', hwL'⟩ := xr_incFixed_append_false wL
+  obtain ⟨T₃, hT₃, h3⟩ := xr_incD_host C z false false (List.replicate L false ++ [false]) u
+    (wL ++ [false]) wL' hwL' h
+  have hlen : (wL ++ [false]).length = L + 1 := by simp [hL]
+  refine ⟨T₁ + T₂ + T₃, by rw [List.length_replicate] at hT₁; rw [hlen] at hT₃; omega, wL',
+    (incFixed_length hwL').trans hlen, by rw [xr_incFixed_val hwL', xr_val_append_false, hval], ?_⟩
+  rw [MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_add]
+  show (xr_host C).runFrom ((xr_host C).runFrom ((xr_host C).runFrom ⟨some ⟨(.extC, false, false),
+    xr_St.run⟩, 1, xr_tapes (fun _ _ => none) (FinTM.bufferTape (List.replicate L false))
+      (FinTM.bufferTape u) (FinTM.bufferTape []) (FinTM.bufferTape wL), xr_heads h 0 0 0 0, []⟩ T₁)
+      T₂) T₃ = _
+  rw [h1, h2, h3, ← List.replicate_succ']
 
 /-- **The exhaustive replay `E`.** For every bundled binary NDTM `N` there is a deterministic
 machine `E` and a constant `C` such that, on every input `z` on which every branch of `N` of
