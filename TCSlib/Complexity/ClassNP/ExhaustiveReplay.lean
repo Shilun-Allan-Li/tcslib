@@ -281,6 +281,16 @@ private theorem xr_runFrom_fixed {k : ℕ} {S : Type} {x : List Bool} (tm : Mult
   | zero => exact MultiTapeTM.runFrom_zero
   | succ n ih => rw [MultiTapeTM.runFrom_succ_eq_step', ih, hd]
 
+/-- One step of a run. -/
+private theorem xr_runFrom_one {k : ℕ} {S : Type} {x : List Bool} (tm : MultiTapeTM k Bool S)
+    (d : Cfg k Bool S x) : tm.runFrom d 1 = tm.step d := by
+  rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero]
+
+/-- Two steps of a run. -/
+private theorem xr_runFrom_two {k : ℕ} {S : Type} {x : List Bool} (tm : MultiTapeTM k Bool S)
+    (d : Cfg k Bool S x) : tm.runFrom d 2 = tm.step (tm.step d) := by
+  rw [show (2 : ℕ) = 1 + 1 from rfl, MultiTapeTM.runFrom_add, xr_runFrom_one, xr_runFrom_one]
+
 /-- **The first arrival at a stationary anchor.** If a run reaches `c'` in state `a` at time `T`
 and `a` is stationary, the first time the state is `a` is at most `T`, reaches `c'` too, and no
 earlier state is `a`: the phase host's guard, for free, from an exact-time run lemma. -/
@@ -448,8 +458,8 @@ private theorem xr_back_run {K : ℕ} {x : List Bool} (tm : MultiTapeTM K Bool x
     have hread : d.workTapeSymbols r = none := by
       rw [Cfg.workTapeSymbols_eq, hpos]
       simpa using hleft
-    rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero,
-      MultiTapeTM.step_of_some hd, hnone b _ _ hread, xr_mv1_apply_none]
+    rw [show (0 : ℕ) + 1 = 1 from rfl, xr_runFrom_one, MultiTapeTM.step_of_some hd,
+      hnone b _ _ hread, xr_mv1_apply_none]
     congr 1
     · symm
       rw [Function.update_eq_self_iff]
@@ -966,8 +976,6 @@ private theorem xr_testTM_run {K : ℕ} {x : List Bool} (r : Fin K) (out : List 
       ⟨some (.done (decide (out = [true]))), d.inputPos,
         Function.update d.workTapes r (fun _ => none), Function.update d.workTapePos r 0,
         d.output⟩ := by
-  have h1step : ∀ c : Cfg K Bool xr_St x, (xr_testTM K r).runFrom c 1 = (xr_testTM K r).step c :=
-    fun c => MultiTapeTM.runFrom_succ_eq_step'.trans (by rw [MultiTapeTM.runFrom_zero])
   have hstart : (xr_testTM K r).step d = ⟨some .run, d.inputPos, d.workTapes,
       Function.update d.workTapePos r ((out.length : ℤ) + -1), d.output⟩ := by
     rw [MultiTapeTM.step_of_some hd,
@@ -982,8 +990,8 @@ private theorem xr_testTM_run {K : ℕ} {x : List Bool} (r : Fin K) (out : List 
       rw [Cfg.workTapeSymbols_eq]
       dsimp only
       rw [Function.update_self, hr, FinTM.bufferTape_nil]
-    rw [show ([] : List Bool).length + 2 = 1 + 1 from rfl, MultiTapeTM.runFrom_succ_eq_step, h1step,
-      hstart, MultiTapeTM.step_of_some rfl,
+    rw [show ([] : List Bool).length + 2 = 2 from rfl, xr_runFrom_two, hstart,
+      MultiTapeTM.step_of_some rfl,
       show (xr_testTM K r).tr .run _ _ = xr_act (xr_mv1 r none SignType.pos) (some (.done false))
         by simp only [xr_testTM]; rw [hread],
       xr_mv1_apply_none, hdec]
@@ -1033,9 +1041,9 @@ private theorem xr_testTM_run {K : ℕ} {x : List Bool} (r : Fin K) (out : List 
         intro h
         have := List.append_inj_right' (h.trans (List.nil_append [true]).symm) rfl
         simp at this
-      rw [hlen, show L.length + 1 + 2 = L.length + 1 + 1 + 1 from rfl,
-        MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_succ_eq_step, hstart, hstep2,
-        xr_test_tail r L _ rfl (by dsimp only; rw [Function.update_self])
+      rw [hlen, show L.length + 1 + 2 = 2 + (L.length + 1) by omega,
+        MultiTapeTM.runFrom_add (tm := xr_testTM K r) d 2 (L.length + 1), xr_runFrom_two, hstart,
+        hstep2, xr_test_tail r L _ rfl (by dsimp only; rw [Function.update_self])
           (by dsimp only; rw [Function.update_self]), hdec]
       dsimp only
       rw [Function.update_idem, Function.update_idem]
@@ -1067,8 +1075,8 @@ private theorem xr_testTM_run {K : ℕ} {x : List Bool} (r : Fin K) (out : List 
           rw [Cfg.workTapeSymbols_eq]
           dsimp only
           rw [Function.update_self, Function.update_self, FinTM.bufferTape_nil]
-        rw [show (([] : List Bool) ++ [true]).length + 2 = 1 + 1 + 1 from rfl,
-          MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_succ_eq_step, h1step,
+        rw [show (([] : List Bool) ++ [true]).length + 2 = 2 + 1 from rfl,
+          MultiTapeTM.runFrom_add (tm := xr_testTM K r) d 2 1, xr_runFrom_two, xr_runFrom_one,
           hstart, hstep2, MultiTapeTM.step_of_some rfl,
           show (xr_testTM K r).tr .aux _ _ =
             xr_act (xr_mv1 r none SignType.pos) (some (.done true)) by
@@ -1120,10 +1128,11 @@ private theorem xr_testTM_run {K : ℕ} {x : List Bool} (r : Fin K) (out : List 
           intro h
           have := congrArg List.length h
           simp at this
-        rw [show (L' ++ [b'] ++ [true]).length + 2 = L'.length + 1 + 1 + 1 + 1 by
+        rw [show (L' ++ [b'] ++ [true]).length + 2 = 2 + 1 + (L'.length + 1) by
             simp only [List.length_append, List.length_singleton]; try omega,
-          MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_succ_eq_step,
-          MultiTapeTM.runFrom_succ_eq_step, hstart, hstep2, hstep3,
+          MultiTapeTM.runFrom_add (tm := xr_testTM K r) d (2 + 1) (L'.length + 1),
+          MultiTapeTM.runFrom_add (tm := xr_testTM K r) d 2 1, xr_runFrom_two, xr_runFrom_one,
+          hstart, hstep2, hstep3,
           xr_test_tail r L' _ rfl (by dsimp only; rw [Function.update_self])
             (by dsimp only; rw [Function.update_self]), hdec]
         dsimp only
