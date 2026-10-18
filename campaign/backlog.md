@@ -888,6 +888,16 @@ half threshold.
   edits `Build/Catalog`, whose downstream is most of the library, so it goes with Catalog's next
   edit (12.2c T3, Catalog core, or MIG-1).
 
+### BW-1: StepBlock's four buffer-word privates, restated publicly (user, 2026-10-18)
+
+*Origin: the user's ruling on the seam-layout fill's word identities; PR #140.*
+
+`TuringMachine/BufferWords` publishes six `FinTM.bufferTape` identities; four restate
+`Build/StepBlock`'s privates `bufferTape_suffix`, `_reads`, `_outside` and `_unary` (same
+statements, different proofs; no screen pair). **Acknowledged (user, 2026-10-18).**
+**Retirement, in the user's dedup window:** `StepBlock` imports `BufferWords`, deletes the four
+privates and re-points their uses (StepBlock's downstream is replayed then).
+
 ## 2. Campaign work queued or on hold
 
 ### MIG / RS: the foundation migration and the restyling backlog (user, 2026-10-12; design §16)
