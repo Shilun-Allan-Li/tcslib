@@ -1062,6 +1062,13 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
   `ss_captureInitial`/`ss_capture_indices` sketches are a required item of the U2-S continuation's
   brief; 49's stale status prose rides cont7's landing (`CodeSimulator`) and the docstring-cleanup
   pass (`Codes2Tape`, `EXPCOM`). #129 and #130 declared clear to merge; #131 after #130 (retarget).
+- **Addendum v2.3: the narrowed cache fetch (2026-10-18; the user's ruling).** R cont1 and WC cont1
+  (round 3) failed the cache fetch: the hosts' proxy refused ~1,900 of the full cache's 7,506 files
+  (CONNECT 403), 1,843 of them the same on both hosts; cont6's narrowed fetch (1,003 files)
+  succeeded on the same host class. v2.3 (`1ea7a376…`): `lake exe cache get <the order's Mathlib
+  roots>` only (35 roots for the 81-module briefs, 61 for MIG-12), two plain re-runs on failed
+  downloads, then the cleaned retry. Both deliveries carry unchecked drafts (WC: a complete
+  proof; R: 16 new privates), being checked here by review sub-agents (the user's ruling).
 - **C1-E cont1: a complete fill (2026-10-18).** `FinNDTM.exists_exhaustiveDecider` proved (`C =
   18·N.k + 41`, no `|z|` term); reviewed (`campaign/fills/c1/reviews/exhaustive-cont1/`). **Rulings
   (user):** the route's deviation (heads left in place, translation invariance by
