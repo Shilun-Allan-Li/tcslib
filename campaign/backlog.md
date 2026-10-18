@@ -1062,6 +1062,18 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
   `ss_captureInitial`/`ss_capture_indices` sketches are a required item of the U2-S continuation's
   brief; 49's stale status prose rides cont7's landing (`CodeSimulator`) and the docstring-cleanup
   pass (`Codes2Tape`, `EXPCOM`). #129 and #130 declared clear to merge; #131 after #130 (retarget).
+- **Four continuation briefs issued (2026-10-18)**, ancestor `96d60278` (TCSlib = `dac6b3b0`'s, after
+  #124), pre-ship against `oleans-lseam2`; dispatch files in `exchange/outbox/fills/`, with addendum
+  v2 (`2a80b0ef…`): WC cont1 `980f5b5d…`, G4 cont2 `3584091a…`, MIG-12 cont1 `0ee25ec5…` (the first
+  round's two commits as patches, the fold), R cont1 `5fefa735…` (G2 by `exists_seamLayoutTM`, E1 by
+  `counterValue_eq`, the four drafts in an overlay). Prompts given in chat; at most two C1 fills
+  at a time (E cont1 is out).
+- **Drafted, not issued** (`campaign/fills/*/drafts/`): the seam-layout fill (waits on its
+  word-identity ruling; its pre-ship is measured), canonizer cont7 (after #131 merges; gate 49's
+  deferred status text rides its landing), F5 cont1 (phases 2-3, after #133 merges).
+- **Landing PRs opened overnight (the user's pre-authorization):** #133 (F5 phase 1, with the
+  `tapeAction` swap) and #134 (F3 cont1). Their replays chain from #132's snapshot after #132
+  merges; gate packs 51 (#133) and 52 (#134) are drafted, staged after the replays.
 - **B6 F3 cont1 reviewed (2026-10-18):** a clean partial: six private `cw_` helpers (phase 0, the
   one-cell leaf, a field's constant copy, the clock clear); the target open. Lands as a partial
   (`lean/b6-f3-cont1-partial`, with the review's public-facing appendix, headed "Implementation
