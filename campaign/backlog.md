@@ -1062,6 +1062,15 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
   `ss_captureInitial`/`ss_capture_indices` sketches are a required item of the U2-S continuation's
   brief; 49's stale status prose rides cont7's landing (`CodeSimulator`) and the docstring-cleanup
   pass (`Codes2Tape`, `EXPCOM`). #129 and #130 declared clear to merge; #131 after #130 (retarget).
+- **E-RES triage and addendum v2.1 (2026-10-18; the user's ruling).** R cont1 and WC cont1 stopped
+  with E-RES on 8 GiB hosts after their cache step: v2's `limit − memory.current` counted
+  reclaimable page cache (anon 0.08/0.2 GB, no OOM event); R's retry was also triggered by the
+  cache tool's `leantar` failing to chown. **v2.1** (`2563c8d2…`): headroom = limit − (anon +
+  kernel + shmem); OOM events or exit 137 are shortages, page cache and `max`/`high` reclaim are
+  not; the cache runs with `TAR_OPTIONS=--no-same-owner`. Same thresholds. Triage:
+  `campaign/fills/c1/reviews/eres-2026-10-18/TRIAGE.md`. Both briefs re-dispatch unchanged with
+  v2.1. **E cont1 delivered a complete fill** (`exists_exhaustiveDecider` proved, per its
+  report); its review is running.
 - **Four continuation briefs issued (2026-10-18)**, ancestor `96d60278` (TCSlib = `dac6b3b0`'s, after
   #124), pre-ship against `oleans-lseam2`; dispatch files in `exchange/outbox/fills/`, with addendum
   v2 (`2a80b0ef…`): WC cont1 `980f5b5d…`, G4 cont2 `3584091a…`, MIG-12 cont1 `0ee25ec5…` (the first

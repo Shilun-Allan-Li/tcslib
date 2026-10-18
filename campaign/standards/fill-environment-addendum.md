@@ -1,9 +1,18 @@
-# Fill-agent environment addendum (v2): resources, the dependency cache, and starting Lean
+# Fill-agent environment addendum (v2.1): resources, the dependency cache, and starting Lean
 
-**Version 2 (2026-10-17).** Part 1, the resource and cache rules, is new and applies on **every**
-host (the user's authorization of 2026-10-17). Part 2, the shim for an unreadable
-`/proc/<pid>/exe`, is version 1's text, unchanged (authorized 2026-10-14). Everything else in your
-brief stays binding.
+**Version 2.1 (2026-10-18).** Part 1, the resource and cache rules, applies on **every** host
+(the user's authorization of 2026-10-17). Version 2.1 changes two things in it, and nothing else:
+- **the memory headroom counts memory in use, not the page cache** (items 1 and 6). Version 2's
+  `limit − memory.current` counted the kernel's file cache, which fills a cgroup to its limit
+  after the dependency cache is downloaded and unpacked, and is reclaimed on demand. Two hosts
+  of 2026-10-18 stopped with E-RES at 0.09 and 1.3 GiB "headroom" while their anonymous memory
+  was 0.2 and 0.08 GB, with no OOM event;
+- **`lake exe cache get` runs with `TAR_OPTIONS=--no-same-owner`** (item 2): on hosts that forbid
+  `chown`, the cache tool's own `leantar` archive otherwise fails to install
+  (`Cannot change ownership to uid 1001`).
+
+Part 2, the shim for an unreadable `/proc/<pid>/exe`, is version 1's text, unchanged (authorized
+2026-10-14). Everything else in your brief stays binding; where it names addendum v2, read v2.1.
 
 ## Part 1: resources and the dependency cache
 
@@ -18,20 +27,32 @@ cleanly.
 1. **Preflight, before any cache or Lean work.** Record in `evidence/logs/preflight.log`, and quote
    in `REPORT.md`:
    - `nproc`;
-   - the memory limit and use: the cgroup's `memory.max`, `memory.current` and `memory.events`
-     (or `free -b` where there is no cgroup);
+   - the memory limit and use: the cgroup's `memory.max`, `memory.current`, `memory.events` and
+     `memory.stat` (cgroup v1: `memory.limit_in_bytes`, `memory.usage_in_bytes`, `memory.stat`),
+     or `/proc/meminfo` where there is no cgroup limit;
    - `df -B1` and the filesystem type (`df -T`) of the clone's directory and of every scratch
      directory you use.
 
    **Stop with escalation E-RES**, quoting the numbers, if the clone's filesystem has less than
-   **12 GiB free**, or the memory headroom (limit minus current use) is below **4 GiB**. Do not
-   try to make room by copying, moving or deduplicating dependency trees.
+   **12 GiB free**, or the memory headroom is below **4 GiB**. Do not try to make room by copying,
+   moving or deduplicating dependency trees.
+   - **The memory headroom is the limit minus the memory in use**, where the memory in use is
+     `anon + kernel + shmem` from `memory.stat` (cgroup v1: `memory.usage_in_bytes − total_cache +
+     total_shmem`). Where `memory.max` is `max` (no cgroup limit), the headroom is `MemAvailable`
+     from `/proc/meminfo`. Log the fields and the computation.
+   - **Not shortages:** page cache (`file`, `active_file`, `inactive_file`, `file_mapped` in
+     `memory.stat`; `memory.current` includes it), and `memory.events`' `max` and `high` counters,
+     which count reclaim at the limit. The kernel reclaims the cache as Lean needs memory.
+   - **A shortage** is an `oom` or `oom_kill` event, a Lean exit 137, or a headroom below 4 GiB
+     as computed here.
    - **Measured needs at this pin:** the Mathlib cache is about 5.2 GiB unpacked (all packages
      about 5.5 GiB), plus the archives while unpacking. The TCSlib bootstrap writes about
      0.2–0.3 GB of oleans. Lean's peak memory is about 2.4 GB (`Build/Catalog`, at `-j4`); most
      modules need under 1.6 GB.
 2. **One checkout, one cache.** Do everything in a single clone.
-   - Run `lake exe cache get` once, into that clone's own `.lake/packages`. Alternatively,
+   - Run `lake exe cache get` once, into that clone's own `.lake/packages`, with
+     `TAR_OPTIONS=--no-same-owner` in its environment (extract the toolchain archive the same
+     way if it fails on ownership). Alternatively,
      symlink `.lake/packages` to a populated tree at exactly the same pins, recorded in
      `REPORT.md`.
    - Never copy, move, merge or deduplicate dependency trees between directories.
@@ -71,7 +92,8 @@ cleanly.
    - Log each module's start and end time, and its maximum memory (`/usr/bin/time -v` where
      available).
    - A module that stalls far beyond the measured figures is a resource symptom: re-read the
-     memory counters. If the headroom is gone, stop with E-RES.
+     memory counters, and compute the headroom as in item 1 (the memory in use, not
+     `memory.current`). Stop with E-RES only on a shortage as item 1 defines it.
 7. **Logs in place.** Write every log to its final path under `evidence/logs/` from the start
    (`2>&1 | tee …`). Never move a log that a running process is writing.
 8. **No checks against missing prerequisites.** If the bootstrap stops, record its tail and skip
