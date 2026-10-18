@@ -96,7 +96,7 @@ File: `Randomized/Reductions.lean`. Def 7.16 (`≤_r`, PTM or certificate form, 
 `C ∈ BPP ∧ B ≤_r C ⇒ B ∈ BPP`, Def 7.17 `BP·NP`; Ex 7.7 (BP·NP ⊆ NP/poly — define NP/poly)
 and Ex 7.8 if cheap.
 
-### U10 — §7.7 randomized space: BPL, RL, UPATH ∈ RL · TODO
+### U10 — §7.7 randomized space: BPL, RL, UPATH ∈ RL · DONE (a–d all PASS)
 * U10a [DONE, PASS r1] `Randomized/Space{,Amplify,AmplifyRun}.lean`: PTM space, Def 7.18 BPL/RL over `FinNDTM` (read-once coins),
   RL ⊆ NL ⊆ P, log-space error reduction remark. (After U1.)
 * U10b [DONE, PASS r2] `Randomized/RandomWalk{,Hitting,Pad}.lean` (pure math): random walk on a connected `D`-regular
