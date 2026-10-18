@@ -31,10 +31,9 @@ the linear-overhead coded normal form ([BGW70]-style guess-then-verify).
 Phase P3.3 of `AroraBarakChapters3-4Plan.md`, over the code layer of
 `TCSlib.Complexity.TuringMachine.NDCodes`.
 
-**Status: statement skeleton (phase P3.3).** Every contract is sorried with a
-sketch naming its fill obligations. The `Diagonalization.lean` facade is
-frozen under the live P3.2 gate; this module is wired through the root import
-only, with facade wiring at that gate's close (the P4.2 precedent).
+**Status.** The universal NDTM `Turing.exists_timed_universal_NDTM` and the hierarchy
+`Complexity.ntime_hierarchy` are sorried; the exponential decider and the two corollaries are
+proved from them.
 
 ## Design (declared deviations, each for the audit)
 
@@ -87,7 +86,7 @@ only, with facade wiring at that gate's close (the P4.2 precedent).
   `TCSlib.Complexity.ClassNP.ExhaustiveReplay`; the normal form is in
   `TCSlib.Complexity.ClassNP.NDNormalForm`.
 
-## Main results (all sorried; phase-P3.3 statements)
+## Main results
 
 * `Turing.exists_timed_universal_NDTM` — [AB09, Exercise 2.6] at linear
   overhead (CH34-Q8).
@@ -163,16 +162,7 @@ the expansion, the guess, the rewind and the window copy each cost
 `O(t + 1)`. Fill obligations, named: the startup and per-code installation;
 the choice writer's bounded contract; the window copy; the interpreter core
 (H1's hosted clock over the step block at three work tapes, harvested with
-H2's promotion); the guess-then-run assembly; the `C`-ledger per code.
-
-**Fill appendix (C1-UN).** This target remains open at the setup's scratch
-cleanup. The published first-component computation and prefix-canonizer result
-give the output, time and native input position, but not the extractor's scratch
-tape contents and head positions needed by `clearTM_run_ofCfg`. A public complete
-configuration contract for `FinTM.pairExtractTM true false` on `pairEncode a b`
-is requested in `REPORT.md`. Ground rule 10 forbids unfolding that machine or
-using its private run lemmas. No setup witness or setup constant is claimed.
--/
+H2's promotion); the guess-then-run assembly; the `C`-ledger per code. -/
 theorem exists_timed_universal_NDTM (c : EffectiveNDMachineCode) :
     ∃ UN : FinNDTM Bool, ∀ α : List Bool, ∃ C : ℕ, ∀ (x : List Bool) (t : ℕ),
       UN.tm.HaltsWithin (pairEncode (pairEncode (Nat.bits t) α) x) (C * (t + 1)) ∧
@@ -200,12 +190,8 @@ with `C := C_E·(C_α+1)`. This derivation is proved, as
 `Turing.ndAcceptsWithin_decider_of_universal`. Fill obligation, named: `E`
 itself (iterative deepening over the choice words of the fixed `UN`, each
 replayed by its replay machine under the step-clocked runner, with a window
-clear between replays; no `|x|` term).
-
-**Fill appendix (C1-UN).** The body applies the published exponential-decider
-transfer to the universal theorem above. In this partial delivery, the universal
-setup remains open, and the exhaustive-decider contract is a cited stub.
--/
+clear between replays; no `|x|` term). The proof applies
+`Turing.ndAcceptsWithin_decider_of_universal` to `Turing.exists_timed_universal_NDTM`. -/
 theorem exists_ndAcceptsWithin_decider (c : EffectiveNDMachineCode) :
     ∃ BF : FinTM Bool, ∀ α : List Bool, ∃ C : ℕ, ∀ (x : List Bool) (t : ℕ),
       ((c.decode α).toFinNDTM.AcceptsWithin x t →
@@ -330,12 +316,8 @@ with the larger class exactly `NTIME g` when `g` never vanishes — mirroring
 `NTIME (g + 1) ⊆ NTIME g`; the reverse is `Complexity.NTIME.mono`; conclude
 from `Complexity.ntime_hierarchy`.
 
-**Fill appendix (C1-UN).** Positivity gives `g n + 1 ≤ 2 * g n`.
-Apply `NTIME.mono`, whose proved transfer handles both all-branch halting and
-acceptance, then absorb the factor `2` into the membership witness's constant
-using `mem_NTIME_iff` and `decidesInTime_iff`. The reverse inclusion is another
-application of `NTIME.mono`. Rewrite the larger class in `ntime_hierarchy`.
--/
+Formally, the factor `2` is absorbed into the membership witness's constant
+(`Complexity.mem_NTIME_iff`, `Turing.FinNDTM.decidesInTime_iff`). -/
 theorem ntime_hierarchy_of_pos {f g : ℕ → ℕ} (hf : TimeConstructible f)
     (hg : TimeConstructible g) (hpos : ∀ n, 0 < g n)
     (hfg : ∀ A : ℕ, ∃ N, ∀ n ≥ N, A * (f (n + 1) + f n + n + 1) ≤ g n) :
@@ -366,20 +348,8 @@ vacuously), so no square-overhead route separates these two classes
 **Proof sketch.** `Complexity.ntime_hierarchy_of_pos` at `f := n + 1`,
 `g := (n + 1)²`: positivity is immediate; domination is
 `A·((n + 2) + (n + 1) + n + 1) = A·(3n + 4) ≤ (n + 1)²` for `n ≥ 3A + 4`.
-Fill obligations, named: the two constructibility witnesses —
-`TimeConstructible (n + 1)` (dominance `n ≤ n + 1`; an input-scan counter
-emitting `bits (n + 1)`, the `Complexity.timeConstructible_id` idiom) and
-`TimeConstructible ((n + 1)²)` (dominance `n ≤ (n + 1)²`; the grade-school
-square of the scanned length within `O((n + 1)²)` steps — a §12
-catalog/counter consumer).
-
-**Fill appendix (C1-UN).** Both witnesses are the existing
-`timeConstructible_poly`, at `(C, c) = (1, 0)` and `(1, 1)`, respectively;
-simplification identifies their functions with the displayed bounds. Apply the
-positive-bound corollary. For domination take `N = 3 * A + 4` and multiply
-`N ≤ n` by `n`; together with positivity this implies the required quadratic
-inequality, including `A = 0`. The dependency on `ntime_hierarchy` remains.
--/
+The two constructibility witnesses are `Complexity.timeConstructible_poly` at
+`(C, c) = (1, 0)` and `(1, 1)`; domination takes `N = 3A + 4` and multiplies `N ≤ n` by `n`. -/
 theorem NTIME_linear_ssubset_square :
     NTIME (fun n => n + 1) ⊂ NTIME (fun n => (n + 1) ^ 2) := by
   have hf : TimeConstructible (fun n => n + 1) := by
