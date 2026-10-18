@@ -2357,6 +2357,278 @@ private theorem xr_inc_host_overflow {N : FinNDTM Bool} (C : xr_Clock N) (z : Li
     xr_tapes_upd_choice]
   rfl
 
+/-! ##### The window clear on the host -/
+
+/-- Content within radius `R` of the cell `a`. -/
+private def xr_Win (f : ℤ → Option Bool) (a R : ℤ) : Prop :=
+  ∀ p, f p ≠ none → a - R ≤ p ∧ p ≤ a + R
+
+/-- Blank on `[lo, hi]`. -/
+private def xr_Blank (f : ℤ → Option Bool) (lo hi : ℤ) : Prop :=
+  ∀ p, lo ≤ p → p ≤ hi → f p = none
+
+private theorem xr_dir_cast (n : Fin 6) :
+    ((xr_dir n : SignType) : ℤ) = if n.val < 2 then -1 else 1 := by
+  unfold xr_dir
+  split_ifs <;> rfl
+
+/-- The phase at which the window clear of tape `m` starts (the increment when `m = N.k`). -/
+private def xr_passStart {N : FinNDTM Bool} (C : xr_Clock N) (a l : Bool) (m : ℕ) :
+    Σ i, xr_PhSt C i :=
+  if h : m < N.k then ⟨(.pass ⟨m, h⟩ 0, a, l), xr_St.run⟩ else ⟨(.inc, a, l), FlagPhase.run⟩
+
+private theorem xr_firstPass_eq {N : FinNDTM Bool} (C : xr_Clock N) (a l : Bool) :
+    xr_firstPass C a l = xr_passStart C a l 0 := rfl
+
+private theorem xr_afterPass_last {N : FinNDTM Bool} (C : xr_Clock N) (a l : Bool) (j : Fin N.k) :
+    xr_afterPass C a l j ⟨5, by omega⟩ = xr_passStart C a l (j.val + 1) := by
+  unfold xr_afterPass xr_passStart
+  rw [dif_neg (by decide)]
+
+/-- **One pass on the host.** From the start of pass `n` of tape `j`, within `2|wL| + 3` steps head
+`j` moves `|wL|` cells along the pass's direction, the cells between its start and its end are
+blanked, the ruler head returns, and the host dispatches to the next pass. -/
+private theorem xr_pass_host {N : FinNDTM Bool} (C : xr_Clock N) (z : List Bool) (a l : Bool)
+    (ip : Fin (z.length + 2)) (wk : Fin N.k → ℤ → Option Bool) (ch ctr cp : ℤ → Option Bool)
+    (wL : List Bool) (hk : Fin N.k → ℤ) (hch hctr hcp : ℤ) (j : Fin N.k) (n : Fin 6) :
+    ∃ T ≤ 2 * wL.length + 3, ∃ f : ℤ → Option Bool,
+      (xr_E C).tm.runFrom ⟨some ⟨(.pass j n, a, l), xr_St.run⟩, ip,
+        xr_tapes wk ch ctr cp (FinTM.bufferTape wL), xr_heads hk hch hctr hcp 0, []⟩ T =
+      ⟨some (xr_afterPass C a l j n), ip, xr_tapes (Function.update wk j f) ch ctr cp
+        (FinTM.bufferTape wL),
+        xr_heads (Function.update hk j (hk j + wL.length * (if n.val < 2 then -1 else 1))) hch hctr
+          hcp 0, []⟩ ∧
+      (∀ p : ℤ, (∃ i : ℕ, i ≤ wL.length ∧ p = hk j + i * (if n.val < 2 then -1 else 1)) →
+        f p = none) ∧
+      (∀ p, f p = none ∨ f p = wk j p) := by
+  obtain ⟨f, hrun, hblank, hkeep⟩ := xr_passTM_run (xr_work N.k j) (xr_dep N.k) (xr_work_ne_dep j)
+    (xr_dir n) wL
+    (⟨some xr_St.run, ip, xr_tapes wk ch ctr cp (FinTM.bufferTape wL),
+      xr_heads hk hch hctr hcp 0, []⟩ : Cfg (N.k + 2 + 2) Bool xr_St z) rfl
+    (xr_tapes_dep _ _ _ _ _) (xr_heads_dep _ _ _ _ _)
+  simp only [xr_heads_work, xr_tapes_work, xr_dir_cast] at hrun hblank hkeep
+  obtain ⟨T', hT', hrun', hguard⟩ := xr_firstArrival' (xr_passTM (N.k + 2 + 2) (xr_work N.k j)
+    (xr_dep N.k) (xr_dir n)) (fun s => ∃ b, s = .done b)
+    (xr_done_stationary _ (fun b inp w => rfl)) hrun rfl ⟨_, rfl⟩
+  refine ⟨T' + 1, by omega, f, ?_, hblank, ?_⟩
+  · rw [xr_phase_step C (.pass j n, a, l) xr_St.run ip _ _ T' _ hrun' _ rfl rfl
+      (xr_afterPass C a l j n) rfl
+      (fun u hu s hs => xr_red_leaf_none C (.pass j n, a, l)
+        (Or.inr (Or.inr (Or.inr (Or.inl ⟨j, n, a, l, rfl⟩)))) s (hguard u hu s hs) rfl)]
+    dsimp only
+    rw [xr_tapes_upd_work, xr_heads_upd_work]
+  · intro p
+    by_cases h : ∃ i : ℕ, i ≤ wL.length ∧ p = hk j + i * (if n.val < 2 then -1 else 1)
+    · exact Or.inl (hblank p h)
+    · exact Or.inr (hkeep p (fun i hi hp => h ⟨i, hi, hp⟩))
+
+/-- A leftward pass: head `j` moves `|wL|` cells left and `[hk j - |wL|, hk j]` is blanked. -/
+private theorem xr_pass_left {N : FinNDTM Bool} (C : xr_Clock N) (z : List Bool) (a l : Bool)
+    (ip : Fin (z.length + 2)) (wk : Fin N.k → ℤ → Option Bool) (ch ctr cp : ℤ → Option Bool)
+    (wL : List Bool) (hk : Fin N.k → ℤ) (hch hctr hcp : ℤ) (j : Fin N.k) (n : Fin 6)
+    (hn : n.val < 2) :
+    ∃ T ≤ 2 * wL.length + 3, ∃ f : ℤ → Option Bool,
+      (xr_E C).tm.runFrom ⟨some ⟨(.pass j n, a, l), xr_St.run⟩, ip,
+        xr_tapes wk ch ctr cp (FinTM.bufferTape wL), xr_heads hk hch hctr hcp 0, []⟩ T =
+      ⟨some (xr_afterPass C a l j n), ip, xr_tapes (Function.update wk j f) ch ctr cp
+        (FinTM.bufferTape wL),
+        xr_heads (Function.update hk j (hk j - wL.length)) hch hctr hcp 0, []⟩ ∧
+      xr_Blank f (hk j - wL.length) (hk j) ∧ (∀ p, f p = none ∨ f p = wk j p) := by
+  obtain ⟨T, hT, f, hrun, hbl, hsub⟩ := xr_pass_host C z a l ip wk ch ctr cp wL hk hch hctr hcp j n
+  have he : hk j + (wL.length : ℤ) * (-1) = hk j - wL.length := by ring
+  rw [if_pos hn, he] at hrun
+  refine ⟨T, hT, f, hrun, fun p hlo hhi => hbl p ⟨(hk j - p).toNat, by omega, ?_⟩, hsub⟩
+  rw [if_pos hn]
+  omega
+
+/-- A rightward pass: head `j` moves `|wL|` cells right and `[hk j, hk j + |wL|]` is blanked. -/
+private theorem xr_pass_right {N : FinNDTM Bool} (C : xr_Clock N) (z : List Bool) (a l : Bool)
+    (ip : Fin (z.length + 2)) (wk : Fin N.k → ℤ → Option Bool) (ch ctr cp : ℤ → Option Bool)
+    (wL : List Bool) (hk : Fin N.k → ℤ) (hch hctr hcp : ℤ) (j : Fin N.k) (n : Fin 6)
+    (hn : ¬ n.val < 2) :
+    ∃ T ≤ 2 * wL.length + 3, ∃ f : ℤ → Option Bool,
+      (xr_E C).tm.runFrom ⟨some ⟨(.pass j n, a, l), xr_St.run⟩, ip,
+        xr_tapes wk ch ctr cp (FinTM.bufferTape wL), xr_heads hk hch hctr hcp 0, []⟩ T =
+      ⟨some (xr_afterPass C a l j n), ip, xr_tapes (Function.update wk j f) ch ctr cp
+        (FinTM.bufferTape wL),
+        xr_heads (Function.update hk j (hk j + wL.length)) hch hctr hcp 0, []⟩ ∧
+      xr_Blank f (hk j) (hk j + wL.length) ∧ (∀ p, f p = none ∨ f p = wk j p) := by
+  obtain ⟨T, hT, f, hrun, hbl, hsub⟩ := xr_pass_host C z a l ip wk ch ctr cp wL hk hch hctr hcp j n
+  have he : hk j + (wL.length : ℤ) * 1 = hk j + wL.length := by ring
+  rw [if_neg hn, he] at hrun
+  refine ⟨T, hT, f, hrun, fun p hlo hhi => hbl p ⟨(p - hk j).toNat, by omega, ?_⟩, hsub⟩
+  rw [if_neg hn]
+  omega
+
+/-- Blank cells stay blank under a pass. -/
+private theorem xr_Blank_mono {f g : ℤ → Option Bool} (h : ∀ p, g p = none ∨ g p = f p) {lo hi : ℤ}
+    (hf : xr_Blank f lo hi) : xr_Blank g lo hi := by
+  intro p hlo hhi
+  rcases h p with h' | h'
+  · exact h'
+  · rw [h', hf p hlo hhi]
+
+/-- A blank cell stays blank under a pass. -/
+private theorem xr_none_mono {f g : ℤ → Option Bool} (h : ∀ p, g p = none ∨ g p = f p) {p : ℤ}
+    (hf : f p = none) : g p = none := by
+  rcases h p with h' | h'
+  · exact h'
+  · rw [h', hf]
+
+/-- **The window clear of one tape on the host.** From the start of pass `0` of tape `j`, whose
+content lies within radius `2|wL|` of its head, within `6(2|wL| + 3)` steps the six passes blank
+the tape and move its head `2|wL|` cells right; the host dispatches to the next tape (or the
+increment). -/
+private theorem xr_clearTape_host {N : FinNDTM Bool} (C : xr_Clock N) (z : List Bool) (a l : Bool)
+    (ip : Fin (z.length + 2)) (wk : Fin N.k → ℤ → Option Bool) (ch ctr cp : ℤ → Option Bool)
+    (wL : List Bool) (hk : Fin N.k → ℤ) (hch hctr hcp : ℤ) (j : Fin N.k)
+    (hwin : xr_Win (wk j) (hk j) (2 * wL.length)) :
+    ∃ T ≤ 6 * (2 * wL.length + 3),
+      (xr_E C).tm.runFrom ⟨some ⟨(.pass j ⟨0, by omega⟩, a, l), xr_St.run⟩, ip,
+        xr_tapes wk ch ctr cp (FinTM.bufferTape wL), xr_heads hk hch hctr hcp 0, []⟩ T =
+      ⟨some (xr_passStart C a l (j.val + 1)), ip,
+        xr_tapes (Function.update wk j (fun _ => none)) ch ctr cp (FinTM.bufferTape wL),
+        xr_heads (Function.update hk j (hk j + 2 * wL.length)) hch hctr hcp 0, []⟩ := by
+  have e0 : xr_afterPass C a l j ⟨0, by omega⟩ =
+    ⟨(.pass j ⟨1, by omega⟩, a, l), xr_St.run⟩ := rfl
+  have e1 : xr_afterPass C a l j ⟨1, by omega⟩ =
+    ⟨(.pass j ⟨2, by omega⟩, a, l), xr_St.run⟩ := rfl
+  have e2 : xr_afterPass C a l j ⟨2, by omega⟩ =
+    ⟨(.pass j ⟨3, by omega⟩, a, l), xr_St.run⟩ := rfl
+  have e3 : xr_afterPass C a l j ⟨3, by omega⟩ =
+    ⟨(.pass j ⟨4, by omega⟩, a, l), xr_St.run⟩ := rfl
+  have e4 : xr_afterPass C a l j ⟨4, by omega⟩ =
+    ⟨(.pass j ⟨5, by omega⟩, a, l), xr_St.run⟩ := rfl
+  obtain ⟨T₀, hT₀, f₀, hrun₀, hbl₀, hsub₀⟩ :=
+    xr_pass_left C z a l ip wk ch ctr cp wL hk hch hctr hcp j ⟨0, by omega⟩
+      (by show (0 : ℕ) < 2; omega)
+  rw [e0] at hrun₀
+  obtain ⟨T₁, hT₁, f₁, hrun₁, hbl₁, hsub₁⟩ :=
+    xr_pass_left C z a l ip (Function.update wk j f₀) ch ctr cp wL
+      (Function.update hk j (hk j - wL.length)) hch hctr hcp j ⟨1, by omega⟩
+      (by show (1 : ℕ) < 2; omega)
+  rw [e1, Function.update_idem, Function.update_self, Function.update_idem] at hrun₁
+  rw [Function.update_self] at hbl₁ hsub₁
+  obtain ⟨T₂, hT₂, f₂, hrun₂, hbl₂, hsub₂⟩ :=
+    xr_pass_right C z a l ip (Function.update wk j f₁) ch ctr cp wL
+      (Function.update hk j (hk j - wL.length - wL.length)) hch hctr hcp j ⟨2, by omega⟩
+      (by show ¬ ((2 : ℕ) < 2); omega)
+  rw [e2, Function.update_idem, Function.update_self, Function.update_idem] at hrun₂
+  rw [Function.update_self] at hbl₂ hsub₂
+  obtain ⟨T₃, hT₃, f₃, hrun₃, hbl₃, hsub₃⟩ :=
+    xr_pass_right C z a l ip (Function.update wk j f₂) ch ctr cp wL
+      (Function.update hk j (hk j - wL.length - wL.length + wL.length)) hch hctr hcp j
+      ⟨3, by omega⟩ (by show ¬ ((3 : ℕ) < 2); omega)
+  rw [e3, Function.update_idem, Function.update_self, Function.update_idem] at hrun₃
+  rw [Function.update_self] at hbl₃ hsub₃
+  obtain ⟨T₄, hT₄, f₄, hrun₄, hbl₄, hsub₄⟩ :=
+    xr_pass_right C z a l ip (Function.update wk j f₃) ch ctr cp wL
+      (Function.update hk j (hk j - wL.length - wL.length + wL.length + wL.length)) hch hctr hcp j
+      ⟨4, by omega⟩ (by show ¬ ((4 : ℕ) < 2); omega)
+  rw [e4, Function.update_idem, Function.update_self, Function.update_idem] at hrun₄
+  rw [Function.update_self] at hbl₄ hsub₄
+  obtain ⟨T₅, hT₅, f₅, hrun₅, hbl₅, hsub₅⟩ :=
+    xr_pass_right C z a l ip (Function.update wk j f₄) ch ctr cp wL
+      (Function.update hk j (hk j - wL.length - wL.length + wL.length + wL.length + wL.length))
+      hch hctr hcp j ⟨5, by omega⟩ (by show ¬ ((5 : ℕ) < 2); omega)
+  rw [xr_afterPass_last, Function.update_idem, Function.update_self, Function.update_idem]
+    at hrun₅
+  rw [Function.update_self] at hbl₅ hsub₅
+  have hf : f₅ = fun _ => none := by
+    funext p
+    by_cases hin : hk j - 2 * wL.length ≤ p ∧ p ≤ hk j + 2 * wL.length
+    · rcases le_or_gt p (hk j - wL.length) with h1 | h1
+      · exact xr_Blank_mono hsub₅ (xr_Blank_mono hsub₄ (xr_Blank_mono hsub₃ (xr_Blank_mono hsub₂
+          hbl₁))) p (by omega) (by omega)
+      · rcases le_or_gt p (hk j) with h2 | h2
+        · exact xr_Blank_mono hsub₅ (xr_Blank_mono hsub₄ (xr_Blank_mono hsub₃ (xr_Blank_mono hsub₂
+            (xr_Blank_mono hsub₁ hbl₀)))) p (by omega) (by omega)
+        · rcases le_or_gt p (hk j + wL.length) with h3 | h3
+          · exact xr_Blank_mono hsub₅ hbl₄ p (by omega) (by omega)
+          · exact hbl₅ p (by omega) (by omega)
+    · have h0 : wk j p = none := by
+        by_contra hne
+        exact hin (hwin p hne)
+      exact xr_none_mono hsub₅ (xr_none_mono hsub₄ (xr_none_mono hsub₃ (xr_none_mono hsub₂
+        (xr_none_mono hsub₁ (xr_none_mono hsub₀ h0)))))
+  have hh : hk j - wL.length - wL.length + wL.length + wL.length + wL.length + wL.length =
+      hk j + 2 * wL.length := by ring
+  rw [hf, hh] at hrun₅
+  refine ⟨T₀ + T₁ + T₂ + T₃ + T₄ + T₅, by omega, ?_⟩
+  rw [MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_add,
+    MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_add, hrun₀, hrun₁, hrun₂, hrun₃, hrun₄, hrun₅]
+
+/-- **The window clear on the host, from tape `N.k - m` on.** The tapes `N.k - m, …, N.k - 1`,
+each with its content within radius `2|wL|` of its head, are blanked within `m·6(2|wL| + 3)` steps,
+after which the host is at the increment. -/
+private theorem xr_clear_host {N : FinNDTM Bool} (C : xr_Clock N) (z : List Bool) (a l : Bool)
+    (ip : Fin (z.length + 2)) (ch ctr cp : ℤ → Option Bool) (wL : List Bool) (hch hctr hcp : ℤ) :
+    ∀ (m : ℕ), m ≤ N.k → ∀ (wk : Fin N.k → ℤ → Option Bool) (hk : Fin N.k → ℤ),
+      (∀ j : Fin N.k, N.k - m ≤ j.val → xr_Win (wk j) (hk j) (2 * wL.length)) →
+      ∃ T ≤ m * (6 * (2 * wL.length + 3)), ∃ hk' : Fin N.k → ℤ,
+        (xr_E C).tm.runFrom ⟨some (xr_passStart C a l (N.k - m)), ip,
+          xr_tapes wk ch ctr cp (FinTM.bufferTape wL), xr_heads hk hch hctr hcp 0, []⟩ T =
+        ⟨some ⟨(.inc, a, l), FlagPhase.run⟩, ip,
+          xr_tapes (fun j => if N.k - m ≤ j.val then (fun _ => none) else wk j) ch ctr cp
+            (FinTM.bufferTape wL),
+          xr_heads hk' hch hctr hcp 0, []⟩ := by
+  intro m
+  induction m with
+  | zero =>
+    intro _ wk hk _
+    refine ⟨0, Nat.zero_le _, hk, ?_⟩
+    rw [MultiTapeTM.runFrom_zero]
+    have h1 : xr_passStart C a l (N.k - 0) = ⟨(.inc, a, l), FlagPhase.run⟩ := by
+      unfold xr_passStart
+      rw [dif_neg (by omega)]
+    have h2 : (fun j : Fin N.k => if N.k - 0 ≤ j.val then (fun _ : ℤ => (none : Option Bool))
+        else wk j) = wk := by
+      funext j
+      rw [if_neg (by have := j.isLt; omega)]
+    rw [h1, h2]
+  | succ m ih =>
+    intro hm wk hk hwin
+    have hj : N.k - (m + 1) < N.k := by omega
+    have hstart : xr_passStart C a l (N.k - (m + 1)) =
+        ⟨(.pass ⟨N.k - (m + 1), hj⟩ ⟨0, by omega⟩, a, l), xr_St.run⟩ := by
+      unfold xr_passStart
+      rw [dif_pos hj]
+      rfl
+    obtain ⟨T₁, hT₁, hrun₁⟩ := xr_clearTape_host C z a l ip wk ch ctr cp wL hk hch hctr hcp
+      ⟨N.k - (m + 1), hj⟩ (hwin _ le_rfl)
+    have hnext : (⟨N.k - (m + 1), hj⟩ : Fin N.k).val + 1 = N.k - m := by
+      show N.k - (m + 1) + 1 = N.k - m
+      omega
+    rw [hnext] at hrun₁
+    obtain ⟨T₂, hT₂, hk', hrun₂⟩ := ih (by omega) (Function.update wk ⟨N.k - (m + 1), hj⟩
+      (fun _ => none))
+      (Function.update hk ⟨N.k - (m + 1), hj⟩ (hk ⟨N.k - (m + 1), hj⟩ + 2 * wL.length))
+      (by
+        intro j hjm
+        have hne : j ≠ ⟨N.k - (m + 1), hj⟩ := by
+          intro h
+          rw [h] at hjm
+          change N.k - m ≤ N.k - (m + 1) at hjm
+          omega
+        rw [Function.update_of_ne hne, Function.update_of_ne hne]
+        exact hwin j (by omega))
+    have htp : (fun j : Fin N.k => if N.k - m ≤ j.val then (fun _ : ℤ => (none : Option Bool))
+        else Function.update wk ⟨N.k - (m + 1), hj⟩ (fun _ => none) j) =
+        fun j => if N.k - (m + 1) ≤ j.val then (fun _ => none) else wk j := by
+      funext j
+      by_cases hjj : j = ⟨N.k - (m + 1), hj⟩
+      · rw [hjj, if_neg (by change ¬ (N.k - m ≤ N.k - (m + 1)); omega), Function.update_self,
+          if_pos (le_refl _)]
+      · rw [Function.update_of_ne hjj]
+        by_cases h1 : N.k - m ≤ j.val
+        · rw [if_pos h1, if_pos (by omega)]
+        · have hne : j.val ≠ N.k - (m + 1) := fun h => hjj (Fin.ext h)
+          rw [if_neg h1, if_neg (by omega)]
+    have hmul : (m + 1) * (6 * (2 * wL.length + 3)) =
+        m * (6 * (2 * wL.length + 3)) + 6 * (2 * wL.length + 3) := by ring
+    refine ⟨T₁ + T₂, by omega, hk', ?_⟩
+    rw [hstart, MultiTapeTM.runFrom_add, hrun₁, hrun₂, htp]
+
 /-- **The exhaustive replay `E`.** For every bundled binary NDTM `N` there is a deterministic
 machine `E` and a constant `C` such that, on every input `z` on which every branch of `N` of
 length `T` has halted (any `T`, which nobody needs to compute), `E` outputs `[true]` if `N`
