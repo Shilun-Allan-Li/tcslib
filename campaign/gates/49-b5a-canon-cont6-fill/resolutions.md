@@ -10,6 +10,14 @@ review's F1 fix; the grammar-stage stub stays `sorry`. Pack `pack.md`; bundle SH
 maintainer verified both minors at `aababd27`; the notes recommend no change to this landing.
 **The gate is closed.** #131 merges after #130, once retargeted to the campaign branch.
 
+**Re-replay at the merged state (2026-10-18).** After #129 merged, `Diagonalization/NTimeHierarchy`
+imports into `CodeSimulator`'s downstream closure, so the 9-module `replay-lc6.sh` no longer
+covered the tree #131 merges into. #131 was retargeted to the campaign branch, the campaign was
+merged into it (`4c19bad4`; its Lean diff from the tip `3de011c1` is exactly `CodeSimulator.lean`,
+blob `a66e63c3`), and `replay-lc6m.sh` replayed the 10-module closure into a copy of
+`oleans-lseam2`. **Passed (user, 2026-10-18):** 10 of 10, 0 failed, static-equal (9)
+(`evidence/merged/`). #131 was then declared clear to merge.
+
 | # | Severity | Finding | Resolution |
 |---|---|---|---|
 | 8 | minor | The worker's citation inventory omits `Turing.counterLoopOrbit`; the review's 241-check probe covers it. | **True; records.** The report is kept as delivered; the corrected inventory and the 241-name probe (`campaign/fills/b5a/reviews/canon-cont6/`) carry to cont7's brief. |
