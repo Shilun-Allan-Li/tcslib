@@ -2058,6 +2058,290 @@ private theorem xr_phase_step {N : FinNDTM Bool} (C : xr_Clock N) {z : List Bool
   · funext j; rw [Cfg.mapState_workTapePos]
   · rw [Cfg.mapState_output, hout]
 
+/-! #### One cycle: the phases of one replay, on the host
+
+The configurations between phases, by banks, and each phase's effect on the host, from the
+rows' run lemmas through `xr_phase_step`. -/
+
+/-- `E` at the start of a cycle at depth `|s|`: the copy phase with the flags `a` and `l`, the
+depth word `wL` on the depth tape, the choice word `s`, some word `u` on the counter, the capture
+tape blank, `N`'s tapes blank with their heads at `h`, the input head at `1`. -/
+private def xr_cycle {N : FinNDTM Bool} (C : xr_Clock N) (z : List Bool) (a l : Bool)
+    (wL s u : List Bool) (h : Fin N.k → ℤ) : Cfg (N.k + 2 + 2) Bool (Σ i, xr_PhSt C i) z :=
+  ⟨some ⟨(.copy, a, l), SweepPhase.sweep⟩, 1,
+    xr_tapes (fun _ _ => none) (FinTM.bufferTape s) (FinTM.bufferTape u) (FinTM.bufferTape [])
+      (FinTM.bufferTape wL),
+    xr_heads h 0 0 0 0, []⟩
+
+/-- `E` at the end of a depth, after the choice word's overflow: the deepening when some branch
+was live, else the answer; the choice tape holds the all-`false` word again. -/
+private def xr_depthEnd {N : FinNDTM Bool} (C : xr_Clock N) (z : List Bool) (a l : Bool)
+    (L : ℕ) (wL u : List Bool) (h : Fin N.k → ℤ) : Cfg (N.k + 2 + 2) Bool (Σ i, xr_PhSt C i) z :=
+  ⟨some (if l then ⟨(.extC, false, false), xr_St.run⟩ else ⟨(.answer a, a, l), xr_St.start⟩), 1,
+    xr_tapes (fun _ _ => none) (FinTM.bufferTape (List.replicate L false)) (FinTM.bufferTape u)
+      (FinTM.bufferTape []) (FinTM.bufferTape wL),
+    xr_heads h 0 0 0 0, []⟩
+
+/-- A branch of length `|s|` moves the input head at most `|s|` cells from its start at `1`
+(through the replay machine and `Turing.MultiTapeTM.timed_input_bound`). -/
+private theorem xr_branch_inputPos_le {N : FinNDTM Bool} (z s : List Bool) :
+    (N.tm.runWith s (N.tm.initCfg z)).inputPos.val ≤ 1 + s.length := by
+  obtain ⟨p, -, -, hrun⟩ := NDTM.replayTM_runFrom N.tm (N.tm.initCfg z) s s.length le_rfl
+  have h := MultiTapeTM.timed_input_bound (tm := N.tm.replayTM)
+    (NDTM.withChoiceTape (N.tm.initCfg z) (FinTM.bufferTape s) 0) s.length
+  rw [hrun, NDTM.withChoiceTape_inputPos, NDTM.withChoiceTape_inputPos, List.take_length,
+    NDTM.initCfg_eq, Cfg.init_inputPos] at h
+  simpa using h
+
+/-! ##### The redirect table, read -/
+
+private theorem xr_red_copy_done {N : FinNDTM Bool} (C : xr_Clock N) (a l : Bool) :
+    xr_red C (.copy, a, l) SweepPhase.done = some ⟨(.replay, a, l), C.inj N.tm.q₀⟩ := by
+  simp [xr_red]
+
+private theorem xr_red_copy_none {N : FinNDTM Bool} (C : xr_Clock N) (a l : Bool)
+    (s : SweepPhase) (hs : s ≠ SweepPhase.done) : xr_red C (.copy, a, l) s = none := by
+  simp [xr_red, hs]
+
+private theorem xr_red_replay_finish {N : FinNDTM Bool} (C : xr_Clock N) (a l : Bool)
+    (r : Option N.State) :
+    xr_red C (.replay, a, l) (C.finish r) = some ⟨(.test, a, l), xr_St.start⟩ := by
+  show (if ∃ r', C.finish r = C.finish r' then _ else _) = _
+  rw [if_pos ⟨r, rfl⟩]
+
+private theorem xr_red_replay_timeout {N : FinNDTM Bool} (C : xr_Clock N) (a l : Bool)
+    (r : Option N.State) :
+    xr_red C (.replay, a, l) (C.timeout r) = some ⟨(.test, a, true), xr_St.start⟩ := by
+  show (if ∃ r', C.timeout r = C.finish r' then _
+    else if ∃ r', C.timeout r = C.timeout r' then _ else _) = _
+  rw [if_neg (fun ⟨r', hr'⟩ => C.finish_ne_timeout r' r hr'.symm), if_pos ⟨r, rfl⟩]
+
+private theorem xr_red_replay_none {N : FinNDTM Bool} (C : xr_Clock N) (a l : Bool) (q : C.Q)
+    (hq : ∀ r, q ≠ C.finish r ∧ q ≠ C.timeout r) : xr_red C (.replay, a, l) q = none := by
+  show (if ∃ r', q = C.finish r' then _ else if ∃ r', q = C.timeout r' then _ else _) = _
+  rw [if_neg (fun ⟨r', hr'⟩ => (hq r').1 hr'), if_neg (fun ⟨r', hr'⟩ => (hq r').2 hr')]
+
+/-- The phases run by a leaf row redirect only at a `done` anchor. -/
+private theorem xr_red_leaf_none {N : FinNDTM Bool} (C : xr_Clock N) (i : xr_I N.k)
+    (hi : (∃ a l, i = (.test, a, l)) ∨ (∃ a l, i = (.crewind, a, l)) ∨ (∃ a l, i = (.irewind, a, l)) ∨
+      (∃ j n a l, i = (.pass j n, a, l)) ∨ (∃ a l, i = (.extC, a, l)) ∨ (∃ a l, i = (.extD, a, l)))
+    (s : xr_St) (hs : ¬ ∃ b, s = .done b) : ∀ (e : xr_PhSt C i = xr_St), xr_red C i (e ▸ s) = none := by
+  intro e
+  rcases hi with ⟨a, l, rfl⟩ | ⟨a, l, rfl⟩ | ⟨a, l, rfl⟩ | ⟨j, n, a, l, rfl⟩ | ⟨a, l, rfl⟩ | ⟨a, l, rfl⟩ <;>
+    cases s <;> first | rfl | exact absurd ⟨_, rfl⟩ hs
+
+/-! ##### The copy phase -/
+
+/-- **The copy phase on the host.** From the start of a cycle, `2|wL| + 3` steps copy the depth
+word onto the counter and dispatch to the replay. -/
+private theorem xr_copy_host {N : FinNDTM Bool} (C : xr_Clock N) (z : List Bool) (a l : Bool)
+    (wL s u : List Bool) (h : Fin N.k → ℤ) (hu : u.length ≤ wL.length) :
+    (xr_E C).tm.runFrom (xr_cycle C z a l wL s u h) (2 * wL.length + 3) =
+      ⟨some ⟨(.replay, a, l), C.inj N.tm.q₀⟩, 1,
+        xr_tapes (fun _ _ => none) (FinTM.bufferTape s) (FinTM.bufferTape wL) (FinTM.bufferTape [])
+          (FinTM.bufferTape wL),
+        xr_heads h 0 0 0 0, []⟩ := by
+  obtain ⟨hcfg, hguard, -⟩ := copyTM_run_ofCfg (xr_dep N.k) (xr_ctr N.k) (xr_ctr_ne_dep N.k).symm wL
+    (⟨some SweepPhase.sweep, 1, xr_tapes (fun _ _ => none) (FinTM.bufferTape s) (FinTM.bufferTape u)
+      (FinTM.bufferTape []) (FinTM.bufferTape wL), xr_heads h 0 0 0 0, []⟩ :
+      Cfg (N.k + 2 + 2) Bool SweepPhase z) rfl
+    (by intro p _ _; dsimp only; rw [xr_tapes_dep, xr_heads_dep, zero_add])
+  rw [xr_cycle, xr_phase_step C (.copy, a, l) SweepPhase.sweep 1 _ _ (2 * wL.length + 2) _ hcfg
+    SweepPhase.done rfl rfl _ (xr_red_copy_done C a l)
+    (fun t ht s hs => by
+      cases s with
+      | done => exact absurd hs (hguard t ht)
+      | sweep => exact xr_red_copy_none C a l _ (by simp)
+      | rewind => exact xr_red_copy_none C a l _ (by simp))]
+  dsimp only
+  rw [xr_patch_eq _ _ (xr_ctr N.k) (xr_heads_ctr _ _ _ _ _) wL wL u rfl (xr_tapes_ctr _ _ _ _ _) hu,
+    xr_tapes_upd_ctr]
+
+/-! ##### The replay phase -/
+
+/-- **The replay phase on the host.** From the copy's end, the clocked replay of the choice word
+`s` runs, within `5|s| + 2|wL| + 3` steps, to the capture test, raising the live flag exactly when
+the branch along `s` is live after `|s|` steps; the tapes hold the branch's configuration,
+translated by `h`, with the output captured. -/
+private theorem xr_replay_host {N : FinNDTM Bool} (C : xr_Clock N) (z : List Bool) (a l : Bool)
+    (wL s : List Bool) (h : Fin N.k → ℤ) (hval : xr_val wL = s.length) :
+    ∃ T ≤ 5 * s.length + 2 * wL.length + 3, ∃ p ≤ s.length, ∃ w' : List Bool,
+      w'.length = wL.length ∧
+      (xr_E C).tm.runFrom ⟨some ⟨(.replay, a, l), C.inj N.tm.q₀⟩, 1,
+        xr_tapes (fun _ _ => none) (FinTM.bufferTape s) (FinTM.bufferTape wL) (FinTM.bufferTape [])
+          (FinTM.bufferTape wL), xr_heads h 0 0 0 0, []⟩ T =
+      ⟨some ⟨(.test, a, l || (N.tm.runWith s (N.tm.initCfg z)).state.isSome), xr_St.start⟩,
+        (N.tm.runWith s (N.tm.initCfg z)).inputPos,
+        xr_tapes (xr_shift h (N.tm.runWith s (N.tm.initCfg z))).workTapes (FinTM.bufferTape s)
+          (FinTM.bufferTape w') (FinTM.bufferTape (N.tm.runWith s (N.tm.initCfg z)).output)
+          (FinTM.bufferTape wL),
+        xr_heads (xr_shift h (N.tm.runWith s (N.tm.initCfg z))).workTapePos p 0
+          ((N.tm.runWith s (N.tm.initCfg z)).output.length : ℤ) 0, []⟩ := by
+  classical
+  by_cases hb : (N.tm.runWith s (N.tm.initCfg z)).state = none
+  · -- the branch halts: the `finish` exit at the first halting time
+    have hex : ∃ u, (N.tm.runWith (s.take u) (N.tm.initCfg z)).state = none :=
+      ⟨s.length, by rw [List.take_length]; exact hb⟩
+    set τ := Nat.find hex with hτdef
+    have hτ : τ ≤ s.length := Nat.find_min' hex (by rw [List.take_length]; exact hb)
+    have hhalt : (N.tm.runWith (s.take τ) (N.tm.initCfg z)).state = none := Nat.find_spec hex
+    have hlive : ∀ u < τ, (N.tm.runWith (s.take u) (N.tm.initCfg z)).state ≠ none :=
+      fun u hu => Nat.find_min hex hu
+    have hbτ : N.tm.runWith s (N.tm.initCfg z) = N.tm.runWith (s.take τ) (N.tm.initCfg z) := by
+      conv_lhs => rw [← List.take_append_drop τ s]
+      rw [NDTM.runWith_append, NDTM.runWith_of_halt _ hhalt]
+    obtain ⟨T, hT, p, hp, w', hw', hrun, hguard⟩ :=
+      xr_replay_finish C z s wL wL h (by rw [← hval]; rfl) τ hτ hhalt hlive
+    refine ⟨T + 1, by omega, p, hp.trans hτ, w', hw', ?_⟩
+    rw [xr_phase_step C (.replay, a, l) (C.inj N.tm.q₀) 1 _ _ T _ hrun (C.finish none) rfl rfl _
+      (xr_red_replay_finish C a l none)
+      (fun u hu q hq => xr_red_replay_none C a l q (fun r =>
+        ⟨fun h => (hguard u hu r).1 (by rw [h] at hq; exact hq),
+          fun h => (hguard u hu r).2 (by rw [h] at hq; exact hq)⟩))]
+    rw [hbτ, hhalt, Option.isSome_none, Bool.or_false]
+  · -- the branch is live: the `timeout` exit
+    have hlive : ∀ u ≤ s.length, (N.tm.runWith (s.take u) (N.tm.initCfg z)).state ≠ none := by
+      intro u hu hhalt
+      apply hb
+      conv_lhs => rw [← List.take_append_drop u s]
+      rw [NDTM.runWith_append, NDTM.runWith_of_halt _ hhalt]
+      exact hhalt
+    obtain ⟨T, hT, p, hp, w', hw', hrun, hguard⟩ :=
+      xr_replay_timeout C z s wL wL h (by rw [← hval]; rfl) hlive
+    refine ⟨T + 1, by omega, p, hp, w', hw', ?_⟩
+    rw [xr_phase_step C (.replay, a, l) (C.inj N.tm.q₀) 1 _ _ T _ hrun _ rfl rfl _
+      (xr_red_replay_timeout C a l _)
+      (fun u hu q hq => xr_red_replay_none C a l q (fun r =>
+        ⟨fun h => (hguard u hu r).1 (by rw [h] at hq; exact hq),
+          fun h => (hguard u hu r).2 (by rw [h] at hq; exact hq)⟩))]
+    rw [Option.isSome_iff_ne_none.mpr hb, Bool.or_true]
+
+/-! ##### The capture test, the choice rewind, the input rewind -/
+
+/-- **The capture test on the host.** With the output `out` captured, within `|out| + 3` steps the
+host clears it, returns the capture head, raises the accept flag exactly when `out = [true]`, and
+dispatches to the choice rewind. -/
+private theorem xr_test_host {N : FinNDTM Bool} (C : xr_Clock N) (z : List Bool) (a l : Bool)
+    (ip : Fin (z.length + 2)) (wk : Fin N.k → ℤ → Option Bool) (ch ctr dp : ℤ → Option Bool)
+    (hk : Fin N.k → ℤ) (hch hctr hdp : ℤ) (out : List Bool) :
+    ∃ T ≤ out.length + 3,
+      (xr_E C).tm.runFrom ⟨some ⟨(.test, a, l), xr_St.start⟩, ip,
+        xr_tapes wk ch ctr (FinTM.bufferTape out) dp, xr_heads hk hch hctr (out.length : ℤ) hdp, []⟩
+        T =
+      ⟨some ⟨(.crewind, a || decide (out = [true]), l), xr_St.start⟩, ip,
+        xr_tapes wk ch ctr (FinTM.bufferTape []) dp, xr_heads hk hch hctr 0 hdp, []⟩ := by
+  have hrun := xr_testTM_run (xr_cap N.k) out
+    (⟨some xr_St.start, ip, xr_tapes wk ch ctr (FinTM.bufferTape out) dp,
+      xr_heads hk hch hctr (out.length : ℤ) hdp, []⟩ : Cfg (N.k + 2 + 2) Bool xr_St z) rfl
+    (xr_tapes_cap _ _ _ _ _) (xr_heads_cap _ _ _ _ _)
+  obtain ⟨T', hT', hrun', hguard⟩ := xr_firstArrival' (xr_testTM (N.k + 2 + 2) (xr_cap N.k))
+    (fun s => ∃ b, s = .done b) (xr_done_stationary _ (fun b inp w => rfl)) hrun rfl ⟨_, rfl⟩
+  refine ⟨T' + 1, by omega, ?_⟩
+  rw [xr_phase_step C (.test, a, l) xr_St.start ip _ _ T' _ hrun' _ rfl rfl
+    ⟨(.crewind, a || decide (out = [true]), l), xr_St.start⟩ rfl
+    (fun u hu s hs => xr_red_leaf_none C (.test, a, l) (Or.inl ⟨a, l, rfl⟩) s (hguard u hu s hs) rfl)]
+  dsimp only
+  rw [xr_tapes_upd_cap, xr_heads_upd_cap, FinTM.bufferTape_nil]
+
+/-- **The choice rewind on the host.** With the choice head at `p ≤ |s|`, within `p + 3` steps the
+host returns it to the origin and dispatches to the input rewind. -/
+private theorem xr_crewind_host {N : FinNDTM Bool} (C : xr_Clock N) (z : List Bool) (a l : Bool)
+    (ip : Fin (z.length + 2)) (wk : Fin N.k → ℤ → Option Bool) (s : List Bool)
+    (ctr cp dp : ℤ → Option Bool) (hk : Fin N.k → ℤ) (p : ℕ) (hp : p ≤ s.length)
+    (hctr hcp hdp : ℤ) :
+    ∃ T ≤ p + 3,
+      (xr_E C).tm.runFrom ⟨some ⟨(.crewind, a, l), xr_St.start⟩, ip,
+        xr_tapes wk (FinTM.bufferTape s) ctr cp dp, xr_heads hk (p : ℤ) hctr hcp hdp, []⟩ T =
+      ⟨some ⟨(.irewind, a, l), xr_St.start⟩, ip, xr_tapes wk (FinTM.bufferTape s) ctr cp dp,
+        xr_heads hk 0 hctr hcp hdp, []⟩ := by
+  have hrun := xr_rewindTM_run (xr_choice N.k) s p hp
+    (⟨some xr_St.start, ip, xr_tapes wk (FinTM.bufferTape s) ctr cp dp,
+      xr_heads hk (p : ℤ) hctr hcp hdp, []⟩ : Cfg (N.k + 2 + 2) Bool xr_St z) rfl
+    (xr_tapes_choice _ _ _ _ _) (xr_heads_choice _ _ _ _ _)
+  obtain ⟨T', hT', hrun', hguard⟩ := xr_firstArrival' (xr_rewindTM (N.k + 2 + 2) (xr_choice N.k))
+    (fun s => ∃ b, s = .done b) (xr_done_stationary _ (fun b inp w => rfl)) hrun rfl ⟨_, rfl⟩
+  refine ⟨T' + 1, by omega, ?_⟩
+  rw [xr_phase_step C (.crewind, a, l) xr_St.start ip _ _ T' _ hrun' _ rfl rfl
+    ⟨(.irewind, a, l), xr_St.start⟩ rfl
+    (fun u hu s hs => xr_red_leaf_none C (.crewind, a, l) (Or.inr (Or.inl ⟨a, l, rfl⟩)) s
+      (hguard u hu s hs) rfl)]
+  dsimp only
+  rw [xr_heads_upd_choice]
+
+/-- **The input rewind on the host.** Within `inputPos + 3` steps the host returns the input head
+to `1` and dispatches to the window clear (or to the increment when `N` has no work tape). -/
+private theorem xr_irewind_host {N : FinNDTM Bool} (C : xr_Clock N) (z : List Bool) (a l : Bool)
+    (ip : Fin (z.length + 2)) (tp : Fin (N.k + 2 + 2) → ℤ → Option Bool) (hd : Fin (N.k + 2 + 2) → ℤ) :
+    ∃ T ≤ ip.val + 3,
+      (xr_E C).tm.runFrom ⟨some ⟨(.irewind, a, l), xr_St.start⟩, ip, tp, hd, []⟩ T =
+        ⟨some (xr_firstPass C a l), 1, tp, hd, []⟩ := by
+  obtain ⟨T₀, hT₀, hrun₀⟩ := FinTM.timed_rewind (xr_inRewindTM (N.k + 2 + 2)) .start .run
+    (some (.done true)) (fun inp work => rfl) (fun inp work => by cases inp <;> rfl)
+    (⟨some xr_St.start, ip, tp, hd, []⟩ : Cfg (N.k + 2 + 2) Bool xr_St z) rfl
+  have hT₀' : T₀ ≤ ip.val + 2 := hT₀
+  obtain ⟨T', hT', hrun, hguard⟩ := xr_firstArrival' (xr_inRewindTM (N.k + 2 + 2))
+    (fun s => ∃ b, s = .done b) (xr_done_stationary _ (fun b inp w => rfl)) hrun₀ rfl ⟨_, rfl⟩
+  refine ⟨T' + 1, by omega, ?_⟩
+  rw [xr_phase_step C (.irewind, a, l) xr_St.start ip tp hd T' _ hrun (.done true) rfl rfl
+    (xr_firstPass C a l) rfl
+    (fun u hu s hs => xr_red_leaf_none C (.irewind, a, l) (Or.inr (Or.inr (Or.inl ⟨a, l, rfl⟩))) s
+      (hguard u hu s hs) rfl)]
+
+/-! ##### The increment of the choice word -/
+
+/-- **The increment on the host, a successor.** When `incFixed s = some s'`, within `2|s| + 3`
+steps the host writes `s'` on the choice tape and dispatches to the next cycle. -/
+private theorem xr_inc_host_succ {N : FinNDTM Bool} (C : xr_Clock N) (z : List Bool) (a l : Bool)
+    (wL s s' u : List Bool) (hs' : incFixed s = some s') (hk : Fin N.k → ℤ) :
+    ∃ T ≤ 2 * s.length + 3,
+      (xr_E C).tm.runFrom ⟨some ⟨(.inc, a, l), FlagPhase.run⟩, 1,
+        xr_tapes (fun _ _ => none) (FinTM.bufferTape s) (FinTM.bufferTape u) (FinTM.bufferTape [])
+          (FinTM.bufferTape wL), xr_heads hk 0 0 0 0, []⟩ T = xr_cycle C z a l wL s' u hk := by
+  obtain ⟨hcfg, hguard, -⟩ := incrementTM_run_succ_ofCfg (xr_choice N.k) s s' hs'
+    (⟨some FlagPhase.run, 1, xr_tapes (fun _ _ => none) (FinTM.bufferTape s) (FinTM.bufferTape u)
+      (FinTM.bufferTape []) (FinTM.bufferTape wL), xr_heads hk 0 0 0 0, []⟩ :
+      Cfg (N.k + 2 + 2) Bool FlagPhase z) rfl
+    (by intro p _ _; dsimp only; rw [xr_tapes_choice, xr_heads_choice, zero_add])
+  refine ⟨2 * (s.takeWhile id).length + 2 + 1, by
+    have := (List.takeWhile_sublist (l := s) id).length_le; omega, ?_⟩
+  rw [xr_phase_step C (.inc, a, l) FlagPhase.run 1 _ _ _ _ hcfg (FlagPhase.done true) rfl rfl
+    ⟨(.copy, a, l), SweepPhase.sweep⟩ rfl
+    (fun t ht s hs => by
+      cases s with
+      | done b => exact absurd hs (hguard t ht b)
+      | run => rfl
+      | rewind b => rfl)]
+  dsimp only
+  rw [xr_patch_eq _ _ (xr_choice N.k) (xr_heads_choice _ _ _ _ _) s s' s (incFixed_length hs')
+    (xr_tapes_choice _ _ _ _ _) le_rfl, xr_tapes_upd_choice]
+  rfl
+
+/-- **The increment on the host, the overflow.** When `incFixed s = none`, `2|s| + 3` steps leave
+the all-`false` word on the choice tape and dispatch to the depth's end. -/
+private theorem xr_inc_host_overflow {N : FinNDTM Bool} (C : xr_Clock N) (z : List Bool)
+    (a l : Bool) (wL s u : List Bool) (hs : incFixed s = none) (hk : Fin N.k → ℤ) :
+    (xr_E C).tm.runFrom ⟨some ⟨(.inc, a, l), FlagPhase.run⟩, 1,
+        xr_tapes (fun _ _ => none) (FinTM.bufferTape s) (FinTM.bufferTape u) (FinTM.bufferTape [])
+          (FinTM.bufferTape wL), xr_heads hk 0 0 0 0, []⟩ (2 * s.length + 3) =
+      xr_depthEnd C z a l s.length wL u hk := by
+  obtain ⟨hcfg, hguard, -⟩ := incrementTM_run_overflow_ofCfg (xr_choice N.k) s hs
+    (⟨some FlagPhase.run, 1, xr_tapes (fun _ _ => none) (FinTM.bufferTape s) (FinTM.bufferTape u)
+      (FinTM.bufferTape []) (FinTM.bufferTape wL), xr_heads hk 0 0 0 0, []⟩ :
+      Cfg (N.k + 2 + 2) Bool FlagPhase z) rfl
+    (by intro p _ _; dsimp only; rw [xr_tapes_choice, xr_heads_choice, zero_add])
+  rw [show 2 * s.length + 3 = 2 * s.length + 2 + 1 from rfl,
+    xr_phase_step C (.inc, a, l) FlagPhase.run 1 _ _ _ _ hcfg (FlagPhase.done false) rfl rfl
+    (if l then ⟨(.extC, false, false), xr_St.run⟩ else ⟨(.answer a, a, l), xr_St.start⟩) rfl
+    (fun t ht s hs => by
+      cases s with
+      | done b => exact absurd hs (hguard t ht b)
+      | run => rfl
+      | rewind b => rfl)]
+  dsimp only
+  rw [xr_patch_eq _ _ (xr_choice N.k) (xr_heads_choice _ _ _ _ _) s (List.replicate s.length false) s
+    List.length_replicate (xr_tapes_choice _ _ _ _ _) le_rfl, xr_tapes_upd_choice]
+  rfl
+
 /-- **The exhaustive replay `E`.** For every bundled binary NDTM `N` there is a deterministic
 machine `E` and a constant `C` such that, on every input `z` on which every branch of `N` of
 length `T` has halted (any `T`, which nobody needs to compute), `E` outputs `[true]` if `N`
