@@ -495,18 +495,7 @@ head at `2|α| + 3`. Skip the doubled state count and the separator of
 tape `k + 1` at offset `2` and the table to tape `k`; clear the scratch and the buffer. Rewind the
 input head to position `1` (`Turing.FinTM.timed_rewind`, `2|α| + 5` steps). Every phase depends
 on `α` only, so `T` and `B` do (`Turing.MultiTapeTM.spaceUsed_le_mul_succ` at the canonizer's
-halting time bounds its cells).
-
-**Fill appendix (U2-S).** This delivery completes phase 1: a cleaned canonizer,
-a bound depending only on input length, and cleanup at its first halt. The phase-2
-helpers prove a suffix-uniform first return of the silent capture, its exact embedding
-of the prefix run, silence through that return, and a uniform space bound. They do not
-yet normalize the returned tapes and heads to the redistribution layout. The target
-remains open. **Proof sketch (continuation).** Specialize the helpers to `E.canonizer`;
-normalize the prefix run through `prefixCanon_run` and the public configuration fields.
-Use the catalog contracts and justified finite leaves to redistribute the serialization
-and clear scratch, rewind at a code-only time, then compose with a fresh exit via the
-phase host or R2 seams. Sum the phase times and apply `spaceUsed_le_mul_succ`. -/
+halting time bounds its cells). -/
 theorem exists_selfStartupTMK (k : ℕ) (E : EffectiveCodeK k) :
     ∃ (K : ℕ) (P : Type) (_ : Fintype P) (_ : DecidableEq P)
       (R : MultiTapeTM (K + (k + 2)) Bool P) (exit : P),
