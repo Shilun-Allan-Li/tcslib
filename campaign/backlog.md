@@ -1062,6 +1062,15 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
   `ss_captureInitial`/`ss_capture_indices` sketches are a required item of the U2-S continuation's
   brief; 49's stale status prose rides cont7's landing (`CodeSimulator`) and the docstring-cleanup
   pass (`Codes2Tape`, `EXPCOM`). #129 and #130 declared clear to merge; #131 after #130 (retarget).
+- **C1-R round 3 (2026-10-18):** E-RES (the proxy 403s), with 16 new unchecked `ic_` drafts; the
+  review made all 16 check with 8 small repairs (`campaign/fills/c1/reviews/core-cont1-r3/`); the
+  target stays open. **Rulings (user):** R's next round starts from the overlay with all 16
+  repaired drafts (`out/overlay-verified.lean.txt`); **a public rewind row is published first**
+  (an API PR with its gate), for R's three work-tape rewinds (a word's end back to cell 0, the
+  empty word included), which no published row serves; E's private `xr_rewindTM` re-points to it
+  later. R cont2's brief issues after that PR merges. Route notes for it: the install call starts
+  and ends with the input head at 1 (copy the window before the install, or move the head back);
+  read the decoded machine by `simp only [CodeNDTM.toFinNDTM_tm, _k, _State]`.
 - **C1-WC lands from the worker's repaired draft (2026-10-18; the user's ruling, as for C1-W).**
   Round 3's unchecked Appendix C draft failed verbatim (7 errors); the review's 14 mechanical
   repairs make `exists_inputWindowCopyTM` proved (0 errors, standard axioms, the brief's route,
