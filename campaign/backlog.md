@@ -1062,6 +1062,13 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
   `ss_captureInitial`/`ss_capture_indices` sketches are a required item of the U2-S continuation's
   brief; 49's stale status prose rides cont7's landing (`CodeSimulator`) and the docstring-cleanup
   pass (`Codes2Tape`, `EXPCOM`). #129 and #130 declared clear to merge; #131 after #130 (retarget).
+- **Addendum v2.2 and two fills at a time (2026-10-18; the user's rulings).** G4 cont2 and MIG-12
+  cont1 stopped on a 12 GiB disk re-check after the toolchain, on one shared 33.8 GB disk that also
+  held R and WC: the host fits about two fills (11 GiB each from scratch). v2.2 (`45405074…`):
+  12 GiB at the initial preflight, 8 GiB at a re-check before the cache, then only ENOSPC; the
+  measured Lean peak is 2.8 GiB. G4 and MIG-12 re-dispatch unchanged when R or WC delivers.
+- **#132's replay passed (2026-10-18):** 314/314 at `91154701`, static-equal (93); gate 50
+  staged (`exchange/outbox/gates/50-un-u2s-api-gate/`, bundle `288f662c…`).
 - **E-RES triage and addendum v2.1 (2026-10-18; the user's ruling).** R cont1 and WC cont1 stopped
   with E-RES on 8 GiB hosts after their cache step: v2's `limit − memory.current` counted
   reclaimable page cache (anon 0.08/0.2 GB, no OOM event); R's retry was also triggered by the

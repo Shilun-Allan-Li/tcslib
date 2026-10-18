@@ -41,3 +41,29 @@ v2 is kept as `exchange/archive/fills/fill-environment-addendum-v2.md`.
 **Re-dispatch:** both briefs unchanged (ancestor `96d60278`; R `5fefa735…`, WC `980f5b5d…`), with
 v2.1 attached. For comparison, E cont1's host of the same day (cgroup v1, 14.3 GB limit, 27.6 GB
 free) passed v2 and completed its fill.
+
+## Later the same day: G4 cont2 and MIG-12 cont1 (under v2.1)
+
+Both stopped with E-RES on **disk**, at a 12 GiB re-check made after the initial preflight
+(reports `campaign/fills/s13d/reports/g4-cont2-eres-REPORT.md`,
+`campaign/fills/mig12/reports/cont1-eres-REPORT.md`; logs under `g4-cont2/` and `mig12-cont1/`).
+v2.1's memory rule worked on both: headroom 6.4 GiB, with `memory.current` at the limit.
+
+| UTC | Fill | Overlay `/` (33,770,192,896 bytes) used |
+|---|---|---|
+| 15:36:22 | G4 initial preflight (15.44 GiB free: pass) | 15,452,688,384 |
+| 15:36:46 | MIG-12 initial preflight (15.42 GiB free: pass) | 15,477,137,408 |
+| 15:40:18 | G4 re-check after the toolchain (11.21 GiB free: E-RES) | 19,997,040,640 |
+| 15:41:09 | MIG-12 re-check during the toolchain download (10.48 GiB: E-RES) | 20,780,457,984 |
+
+**The two fills shared one disk**, one timeline on the same overlay, and the 15.45 GB in use when
+they started is consistent with R cont1 and WC cont1, re-dispatched on the same host shortly
+before. A fill needs about 11 GiB from scratch (the toolchain 4.2 GiB with its archive, the
+packages about 6 GiB, the cache archives about 1 GiB, the oleans and the clone), so this host
+holds about two fills at once. On the stop itself, a 12 GiB re-check after the toolchain
+double-counts the toolchain: a lone fill at 11.2 GiB would have finished.
+
+**Rulings (user, 2026-10-18):** addendum **v2.2** (SHA-256 `45405074…`): the 12 GiB floor at the
+initial preflight; a re-check before the cache, once the toolchain is installed, needs 8 GiB;
+after the cache step only ENOSPC (item 4). And **at most two fills at once**: G4 cont2 and MIG-12
+cont1 re-dispatch, with their briefs unchanged, when R cont1 or WC cont1 delivers.

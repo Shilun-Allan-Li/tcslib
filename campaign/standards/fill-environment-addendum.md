@@ -1,7 +1,13 @@
-# Fill-agent environment addendum (v2.1): resources, the dependency cache, and starting Lean
+# Fill-agent environment addendum (v2.2): resources, the dependency cache, and starting Lean
 
-**Version 2.1 (2026-10-18).** Part 1, the resource and cache rules, applies on **every** host
-(the user's authorization of 2026-10-17). Version 2.1 changes two things in it, and nothing else:
+**Version 2.2 (2026-10-18).** Part 1, the resource and cache rules, applies on **every** host
+(the user's authorization of 2026-10-17). **Version 2.2** changes one rule, **when the free-disk
+floor applies** (item 1), and updates the measured Lean peak; nothing else. The 12 GiB floor is a
+start-of-run figure that includes installing the toolchain (about 4.2 GiB with its archive). A
+re-check after the toolchain is installed needs only the cache step's share, 8 GiB. Two hosts of
+2026-10-18 stopped with E-RES on a 12 GiB re-check after installing the toolchain.
+
+**Version 2.1** changed two things:
 - **the memory headroom counts memory in use, not the page cache** (items 1 and 6). Version 2's
   `limit − memory.current` counted the kernel's file cache, which fills a cgroup to its limit
   after the dependency cache is downloaded and unpacked, and is reclaimed on demand. Two hosts
@@ -12,7 +18,8 @@
   (`Cannot change ownership to uid 1001`).
 
 Part 2, the shim for an unreadable `/proc/<pid>/exe`, is version 1's text, unchanged (authorized
-2026-10-14). Everything else in your brief stays binding; where it names addendum v2, read v2.1.
+2026-10-14). Everything else in your brief stays binding; where it names addendum v2 or v2.1,
+read v2.2.
 
 ## Part 1: resources and the dependency cache
 
@@ -36,6 +43,11 @@ cleanly.
    **Stop with escalation E-RES**, quoting the numbers, if the clone's filesystem has less than
    **12 GiB free**, or the memory headroom is below **4 GiB**. Do not try to make room by copying,
    moving or deduplicating dependency trees.
+   - **When the disk floor applies.** The 12 GiB floor applies at this initial preflight, which
+     covers everything after it, the toolchain included. If you install the toolchain after it,
+     you may re-check before `lake exe cache get`; that re-check's floor is **8 GiB** (the
+     packages about 6 GiB, the cache archives about 1 GiB, the bootstrap's oleans and the clone).
+     After the cache step, disk is not re-checked: an ENOSPC is handled by item 4.
    - **The memory headroom is the limit minus the memory in use**, where the memory in use is
      `anon + kernel + shmem` from `memory.stat` (cgroup v1: `memory.usage_in_bytes − total_cache +
      total_shmem`). Where `memory.max` is `max` (no cgroup limit), the headroom is `MemAvailable`
@@ -45,10 +57,11 @@ cleanly.
      which count reclaim at the limit. The kernel reclaims the cache as Lean needs memory.
    - **A shortage** is an `oom` or `oom_kill` event, a Lean exit 137, or a headroom below 4 GiB
      as computed here.
-   - **Measured needs at this pin:** the Mathlib cache is about 5.2 GiB unpacked (all packages
-     about 5.5 GiB), plus the archives while unpacking. The TCSlib bootstrap writes about
-     0.2–0.3 GB of oleans. Lean's peak memory is about 2.4 GB (`Build/Catalog`, at `-j4`); most
-     modules need under 1.6 GB.
+   - **Measured needs at this pin:** the Mathlib cache is about 5.2 GiB unpacked (all packages, with
+     their git checkouts, about 6 GiB), plus about 1 GiB of archives kept by the cache tool; the
+     toolchain about 4.2 GiB with its archive. The TCSlib bootstrap writes about 0.2–0.3 GB of
+     oleans. Lean's peak memory is about 2.8 GiB (`Build/Catalog`, at `-j4`; 2,796 MiB measured on a
+     fill host); most modules need under 1.6 GB.
 2. **One checkout, one cache.** Do everything in a single clone.
    - Run `lake exe cache get` once, into that clone's own `.lake/packages`, with
      `TAR_OPTIONS=--no-same-owner` in its environment (extract the toolchain archive the same
