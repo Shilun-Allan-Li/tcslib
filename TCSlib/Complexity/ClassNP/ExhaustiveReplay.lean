@@ -1587,6 +1587,476 @@ private theorem xr_replay_timeout {N : FinNDTM Bool} (C : xr_Clock N) (z s w wD 
   · rw [hE, embedSilentCfg_state]
     exact hguard u hu r
 
+/-! #### The host: its phases, its redirect table, and one phase's step
+
+The exhaustive replay is `Turing.phaseHostTM` over the phases of one depth (copy the depth word
+to the clock's counter; one replay; the capture test; the choice and input rewinds; the window
+clear, six passes per work tape; the increment of the choice word) and of a depth change (extend
+the choice word and the depth word, increment the depth word), with the two flags "some branch
+accepted" and "some branch is live" in the phase index, and the answer phases. -/
+
+/-- **The first arrival at a stationary anchor, over a family of anchors.** If every state in `A`
+is stationary and a run reaches `c'` in a state of `A` at time `T`, the first time the state is in
+`A` is at most `T`, reaches `c'` too, and no earlier state is in `A`. -/
+private theorem xr_firstArrival' {k : ℕ} {S : Type} {x : List Bool} (tm : MultiTapeTM k Bool S)
+    (A : S → Prop)
+    (hstat : ∀ d : Cfg k Bool S x, ∀ a, d.state = some a → A a → tm.step d = d)
+    {c c' : Cfg k Bool S x} {T : ℕ} (h : tm.runFrom c T = c') {a : S} (hc' : c'.state = some a)
+    (ha : A a) :
+    ∃ T' ≤ T, tm.runFrom c T' = c' ∧
+      ∀ u < T', ∀ a', (tm.runFrom c u).state = some a' → ¬ A a' := by
+  classical
+  have hT' : ∃ a', (tm.runFrom c T).state = some a' ∧ A a' := ⟨a, by rw [h]; exact hc', ha⟩
+  have hex : ∃ u, ∃ a', (tm.runFrom c u).state = some a' ∧ A a' := ⟨T, hT'⟩
+  refine ⟨Nat.find hex, Nat.find_min' hex hT', ?_, fun u hu a' ha' hA => Nat.find_min hex hu ⟨a', ha', hA⟩⟩
+  obtain ⟨a'', ha'', hA''⟩ := Nat.find_spec hex
+  have hsplit : tm.runFrom c T = tm.runFrom (tm.runFrom c (Nat.find hex)) (T - Nat.find hex) := by
+    rw [← MultiTapeTM.runFrom_add, Nat.add_sub_cancel' (Nat.find_min' hex hT')]
+  rw [xr_runFrom_fixed tm _ (hstat _ a'' ha'' hA'')] at hsplit
+  exact hsplit.symm.trans h
+
+/-- Every `done` anchor of a leaf row whose table is stationary there is stationary. -/
+private theorem xr_done_stationary {K : ℕ} {x : List Bool} (tm : MultiTapeTM K Bool xr_St)
+    (htr : ∀ b inp w, tm.tr (.done b) inp w = xr_stay (.done b)) (d : Cfg K Bool xr_St x)
+    (a : xr_St) (hd : d.state = some a) (ha : ∃ b, a = .done b) : tm.step d = d := by
+  obtain ⟨b, rfl⟩ := ha
+  exact xr_stay_step tm (.done b) (htr b) d hd
+
+/-! ##### The banks are distinct -/
+
+private theorem xr_work_val {k : ℕ} (j : Fin k) : (xr_work k j).val = j.val := by
+  simp [xr_work]
+private theorem xr_choice_val (k : ℕ) : (xr_choice k).val = k := by
+  simp [xr_choice]
+private theorem xr_ctr_val (k : ℕ) : (xr_ctr k).val = k + 1 := by
+  simp [xr_ctr]
+private theorem xr_cap_val (k : ℕ) : (xr_cap k).val = k + 2 := by
+  simp [xr_cap]
+private theorem xr_dep_val (k : ℕ) : (xr_dep k).val = k + 3 := by
+  simp [xr_dep]
+
+private theorem xr_work_ne_choice {k : ℕ} (j : Fin k) : xr_work k j ≠ xr_choice k := by
+  intro h; have := congrArg Fin.val h; rw [xr_work_val, xr_choice_val] at this; omega
+private theorem xr_work_ne_ctr {k : ℕ} (j : Fin k) : xr_work k j ≠ xr_ctr k := by
+  intro h; have := congrArg Fin.val h; rw [xr_work_val, xr_ctr_val] at this; omega
+private theorem xr_work_ne_cap {k : ℕ} (j : Fin k) : xr_work k j ≠ xr_cap k := by
+  intro h; have := congrArg Fin.val h; rw [xr_work_val, xr_cap_val] at this; omega
+private theorem xr_work_ne_dep {k : ℕ} (j : Fin k) : xr_work k j ≠ xr_dep k := by
+  intro h; have := congrArg Fin.val h; rw [xr_work_val, xr_dep_val] at this; omega
+private theorem xr_choice_ne_ctr (k : ℕ) : xr_choice k ≠ xr_ctr k := by
+  intro h; have := congrArg Fin.val h; rw [xr_choice_val, xr_ctr_val] at this; omega
+private theorem xr_choice_ne_cap (k : ℕ) : xr_choice k ≠ xr_cap k := by
+  intro h; have := congrArg Fin.val h; rw [xr_choice_val, xr_cap_val] at this; omega
+private theorem xr_choice_ne_dep (k : ℕ) : xr_choice k ≠ xr_dep k := by
+  intro h; have := congrArg Fin.val h; rw [xr_choice_val, xr_dep_val] at this; omega
+private theorem xr_ctr_ne_cap (k : ℕ) : xr_ctr k ≠ xr_cap k := by
+  intro h; have := congrArg Fin.val h; rw [xr_ctr_val, xr_cap_val] at this; omega
+private theorem xr_ctr_ne_dep (k : ℕ) : xr_ctr k ≠ xr_dep k := by
+  intro h; have := congrArg Fin.val h; rw [xr_ctr_val, xr_dep_val] at this; omega
+private theorem xr_cap_ne_dep (k : ℕ) : xr_cap k ≠ xr_dep k := by
+  intro h; have := congrArg Fin.val h; rw [xr_cap_val, xr_dep_val] at this; omega
+private theorem xr_work_injective {k : ℕ} {j j' : Fin k} (h : xr_work k j = xr_work k j') : j = j' := by
+  apply Fin.ext
+  have := congrArg Fin.val h
+  rwa [xr_work_val, xr_work_val] at this
+
+/-- Two functions on `E`'s tape indices agree when they agree on every bank. -/
+private theorem xr_bank_ext {k : ℕ} {α : Type} (F G : Fin (k + 2 + 2) → α)
+    (hw : ∀ j, F (xr_work k j) = G (xr_work k j)) (hch : F (xr_choice k) = G (xr_choice k))
+    (hctr : F (xr_ctr k) = G (xr_ctr k)) (hcap : F (xr_cap k) = G (xr_cap k))
+    (hdep : F (xr_dep k) = G (xr_dep k)) : F = G := by
+  funext j
+  rcases xr_addCases_split j with ⟨i, rfl⟩ | ⟨i, rfl⟩
+  · rcases xr_lastCases_split i with rfl | ⟨i, rfl⟩
+    · exact hctr
+    · rcases xr_lastCases_split i with rfl | ⟨i, rfl⟩
+      · exact hch
+      · exact hw i
+  · rcases xr_fin2 i with rfl | rfl
+    · exact hcap
+    · exact hdep
+
+/-! ##### Updating one bank -/
+
+private theorem xr_tapes_upd_work {k : ℕ} (wk : Fin k → ℤ → Option Bool) (ch ctr cp dp) (j : Fin k)
+    (X : ℤ → Option Bool) :
+    Function.update (xr_tapes wk ch ctr cp dp) (xr_work k j) X =
+      xr_tapes (Function.update wk j X) ch ctr cp dp := by
+  apply xr_bank_ext
+  · intro j'
+    by_cases hj : j' = j
+    · subst hj; rw [Function.update_self, xr_tapes_work, Function.update_self]
+    · rw [Function.update_of_ne (fun h => hj (xr_work_injective h)), xr_tapes_work, xr_tapes_work,
+        Function.update_of_ne hj]
+  · rw [Function.update_of_ne (Ne.symm (xr_work_ne_choice j)), xr_tapes_choice, xr_tapes_choice]
+  · rw [Function.update_of_ne (Ne.symm (xr_work_ne_ctr j)), xr_tapes_ctr, xr_tapes_ctr]
+  · rw [Function.update_of_ne (Ne.symm (xr_work_ne_cap j)), xr_tapes_cap, xr_tapes_cap]
+  · rw [Function.update_of_ne (Ne.symm (xr_work_ne_dep j)), xr_tapes_dep, xr_tapes_dep]
+
+private theorem xr_tapes_upd_choice {k : ℕ} (wk : Fin k → ℤ → Option Bool) (ch ctr cp dp)
+    (X : ℤ → Option Bool) :
+    Function.update (xr_tapes wk ch ctr cp dp) (xr_choice k) X = xr_tapes wk X ctr cp dp := by
+  apply xr_bank_ext
+  · intro j; rw [Function.update_of_ne (xr_work_ne_choice j), xr_tapes_work, xr_tapes_work]
+  · rw [Function.update_self, xr_tapes_choice]
+  · rw [Function.update_of_ne (Ne.symm (xr_choice_ne_ctr k)), xr_tapes_ctr, xr_tapes_ctr]
+  · rw [Function.update_of_ne (Ne.symm (xr_choice_ne_cap k)), xr_tapes_cap, xr_tapes_cap]
+  · rw [Function.update_of_ne (Ne.symm (xr_choice_ne_dep k)), xr_tapes_dep, xr_tapes_dep]
+
+private theorem xr_tapes_upd_ctr {k : ℕ} (wk : Fin k → ℤ → Option Bool) (ch ctr cp dp)
+    (X : ℤ → Option Bool) :
+    Function.update (xr_tapes wk ch ctr cp dp) (xr_ctr k) X = xr_tapes wk ch X cp dp := by
+  apply xr_bank_ext
+  · intro j; rw [Function.update_of_ne (xr_work_ne_ctr j), xr_tapes_work, xr_tapes_work]
+  · rw [Function.update_of_ne (xr_choice_ne_ctr k), xr_tapes_choice, xr_tapes_choice]
+  · rw [Function.update_self, xr_tapes_ctr]
+  · rw [Function.update_of_ne (Ne.symm (xr_ctr_ne_cap k)), xr_tapes_cap, xr_tapes_cap]
+  · rw [Function.update_of_ne (Ne.symm (xr_ctr_ne_dep k)), xr_tapes_dep, xr_tapes_dep]
+
+private theorem xr_tapes_upd_cap {k : ℕ} (wk : Fin k → ℤ → Option Bool) (ch ctr cp dp)
+    (X : ℤ → Option Bool) :
+    Function.update (xr_tapes wk ch ctr cp dp) (xr_cap k) X = xr_tapes wk ch ctr X dp := by
+  apply xr_bank_ext
+  · intro j; rw [Function.update_of_ne (xr_work_ne_cap j), xr_tapes_work, xr_tapes_work]
+  · rw [Function.update_of_ne (xr_choice_ne_cap k), xr_tapes_choice, xr_tapes_choice]
+  · rw [Function.update_of_ne (xr_ctr_ne_cap k), xr_tapes_ctr, xr_tapes_ctr]
+  · rw [Function.update_self, xr_tapes_cap]
+  · rw [Function.update_of_ne (Ne.symm (xr_cap_ne_dep k)), xr_tapes_dep, xr_tapes_dep]
+
+private theorem xr_tapes_upd_dep {k : ℕ} (wk : Fin k → ℤ → Option Bool) (ch ctr cp dp)
+    (X : ℤ → Option Bool) :
+    Function.update (xr_tapes wk ch ctr cp dp) (xr_dep k) X = xr_tapes wk ch ctr cp X := by
+  apply xr_bank_ext
+  · intro j; rw [Function.update_of_ne (xr_work_ne_dep j), xr_tapes_work, xr_tapes_work]
+  · rw [Function.update_of_ne (xr_choice_ne_dep k), xr_tapes_choice, xr_tapes_choice]
+  · rw [Function.update_of_ne (xr_ctr_ne_dep k), xr_tapes_ctr, xr_tapes_ctr]
+  · rw [Function.update_of_ne (xr_cap_ne_dep k), xr_tapes_cap, xr_tapes_cap]
+  · rw [Function.update_self, xr_tapes_dep]
+
+private theorem xr_heads_upd_work {k : ℕ} (hk : Fin k → ℤ) (hch hctr hcp hdp : ℤ) (j : Fin k)
+    (X : ℤ) :
+    Function.update (xr_heads hk hch hctr hcp hdp) (xr_work k j) X =
+      xr_heads (Function.update hk j X) hch hctr hcp hdp := by
+  apply xr_bank_ext
+  · intro j'
+    by_cases hj : j' = j
+    · subst hj; rw [Function.update_self, xr_heads_work, Function.update_self]
+    · rw [Function.update_of_ne (fun h => hj (xr_work_injective h)), xr_heads_work, xr_heads_work,
+        Function.update_of_ne hj]
+  · rw [Function.update_of_ne (Ne.symm (xr_work_ne_choice j)), xr_heads_choice, xr_heads_choice]
+  · rw [Function.update_of_ne (Ne.symm (xr_work_ne_ctr j)), xr_heads_ctr, xr_heads_ctr]
+  · rw [Function.update_of_ne (Ne.symm (xr_work_ne_cap j)), xr_heads_cap, xr_heads_cap]
+  · rw [Function.update_of_ne (Ne.symm (xr_work_ne_dep j)), xr_heads_dep, xr_heads_dep]
+
+private theorem xr_heads_upd_choice {k : ℕ} (hk : Fin k → ℤ) (hch hctr hcp hdp : ℤ) (X : ℤ) :
+    Function.update (xr_heads hk hch hctr hcp hdp) (xr_choice k) X = xr_heads hk X hctr hcp hdp := by
+  apply xr_bank_ext
+  · intro j; rw [Function.update_of_ne (xr_work_ne_choice j), xr_heads_work, xr_heads_work]
+  · rw [Function.update_self, xr_heads_choice]
+  · rw [Function.update_of_ne (Ne.symm (xr_choice_ne_ctr k)), xr_heads_ctr, xr_heads_ctr]
+  · rw [Function.update_of_ne (Ne.symm (xr_choice_ne_cap k)), xr_heads_cap, xr_heads_cap]
+  · rw [Function.update_of_ne (Ne.symm (xr_choice_ne_dep k)), xr_heads_dep, xr_heads_dep]
+
+private theorem xr_heads_upd_ctr {k : ℕ} (hk : Fin k → ℤ) (hch hctr hcp hdp : ℤ) (X : ℤ) :
+    Function.update (xr_heads hk hch hctr hcp hdp) (xr_ctr k) X = xr_heads hk hch X hcp hdp := by
+  apply xr_bank_ext
+  · intro j; rw [Function.update_of_ne (xr_work_ne_ctr j), xr_heads_work, xr_heads_work]
+  · rw [Function.update_of_ne (xr_choice_ne_ctr k), xr_heads_choice, xr_heads_choice]
+  · rw [Function.update_self, xr_heads_ctr]
+  · rw [Function.update_of_ne (Ne.symm (xr_ctr_ne_cap k)), xr_heads_cap, xr_heads_cap]
+  · rw [Function.update_of_ne (Ne.symm (xr_ctr_ne_dep k)), xr_heads_dep, xr_heads_dep]
+
+private theorem xr_heads_upd_cap {k : ℕ} (hk : Fin k → ℤ) (hch hctr hcp hdp : ℤ) (X : ℤ) :
+    Function.update (xr_heads hk hch hctr hcp hdp) (xr_cap k) X = xr_heads hk hch hctr X hdp := by
+  apply xr_bank_ext
+  · intro j; rw [Function.update_of_ne (xr_work_ne_cap j), xr_heads_work, xr_heads_work]
+  · rw [Function.update_of_ne (xr_choice_ne_cap k), xr_heads_choice, xr_heads_choice]
+  · rw [Function.update_of_ne (xr_ctr_ne_cap k), xr_heads_ctr, xr_heads_ctr]
+  · rw [Function.update_self, xr_heads_cap]
+  · rw [Function.update_of_ne (Ne.symm (xr_cap_ne_dep k)), xr_heads_dep, xr_heads_dep]
+
+private theorem xr_heads_upd_dep {k : ℕ} (hk : Fin k → ℤ) (hch hctr hcp hdp : ℤ) (X : ℤ) :
+    Function.update (xr_heads hk hch hctr hcp hdp) (xr_dep k) X = xr_heads hk hch hctr hcp X := by
+  apply xr_bank_ext
+  · intro j; rw [Function.update_of_ne (xr_work_ne_dep j), xr_heads_work, xr_heads_work]
+  · rw [Function.update_of_ne (xr_choice_ne_dep k), xr_heads_choice, xr_heads_choice]
+  · rw [Function.update_of_ne (xr_ctr_ne_dep k), xr_heads_ctr, xr_heads_ctr]
+  · rw [Function.update_of_ne (xr_cap_ne_dep k), xr_heads_cap, xr_heads_cap]
+  · rw [Function.update_self, xr_heads_dep]
+
+/-- **The catalog rows' result tape.** A row that rewrites the cells `[0, |w|)` of a bank holding
+the word `w` at the origin with a same-width word `v` leaves that bank holding `v`. -/
+private theorem xr_patch_eq {K : ℕ} (tp : Fin K → ℤ → Option Bool) (hd : Fin K → ℤ) (i : Fin K)
+    (hi : hd i = 0) (w v : List Bool) (hv : v.length = w.length) (hw : tp i = FinTM.bufferTape w) :
+    (fun j q => if j = i ∧ hd j ≤ q ∧ q < hd j + (w.length : ℤ) then FinTM.bufferTape v (q - hd j)
+      else tp j q) = Function.update tp i (FinTM.bufferTape v) := by
+  funext j q
+  by_cases hj : j = i
+  · subst hj
+    rw [Function.update_self, hi, hw, sub_zero, zero_add]
+    by_cases h : 0 ≤ q ∧ q < (w.length : ℤ)
+    · rw [if_pos ⟨rfl, h⟩]
+    · rw [if_neg (fun h' => h h'.2), (xr_bufferTape_eq_none_iff _ _).mpr (by omega),
+        (xr_bufferTape_eq_none_iff _ _).mpr (by omega)]
+  · rw [Function.update_of_ne hj, if_neg (fun h' => hj h'.1)]
+
+/-! ##### The counter words: little-endian binary values -/
+
+/-- The value of a binary word, little-endian. -/
+private def xr_val (w : List Bool) : ℕ := Nat.ofDigits 2 (w.map Bool.toNat)
+
+private theorem xr_val_nil : xr_val [] = 0 := by
+  simp [xr_val]
+
+private theorem xr_val_cons (b : Bool) (w : List Bool) : xr_val (b :: w) = b.toNat + 2 * xr_val w := by
+  simp [xr_val, Nat.ofDigits_cons]
+
+private theorem xr_val_lt (w : List Bool) : xr_val w < 2 ^ w.length := by
+  have := Nat.ofDigits_lt_base_pow_length (b := 2) (l := w.map Bool.toNat) (by norm_num)
+    (by intro x hx; obtain ⟨b, -, rfl⟩ := List.mem_map.mp hx; cases b <;> simp)
+  simpa [xr_val] using this
+
+private theorem xr_val_inj : ∀ {w w' : List Bool}, w.length = w'.length → xr_val w = xr_val w' → w = w'
+  | [], [], _, _ => rfl
+  | [], _ :: _, h, _ => by simp at h
+  | _ :: _, [], h, _ => by simp at h
+  | b :: w, b' :: w', h, hv => by
+    rw [xr_val_cons, xr_val_cons] at hv
+    have hb : b = b' := by
+      cases b <;> cases b' <;> simp at hv ⊢ <;> omega
+    subst hb
+    have hw : xr_val w = xr_val w' := by omega
+    rw [xr_val_inj (by simpa using h) hw]
+
+private theorem xr_val_append_false (w : List Bool) : xr_val (w ++ [false]) = xr_val w := by
+  simp [xr_val, Nat.ofDigits_append]
+
+private theorem xr_val_replicate_false (n : ℕ) : xr_val (List.replicate n false) = 0 := by
+  induction n with
+  | zero => exact xr_val_nil
+  | succ n ih => rw [List.replicate_succ, xr_val_cons, ih]; rfl
+
+private theorem xr_val_replicate_true (n : ℕ) : xr_val (List.replicate n true) + 1 = 2 ^ n := by
+  induction n with
+  | zero => rw [List.replicate_zero, xr_val_nil]; rfl
+  | succ n ih => rw [List.replicate_succ, xr_val_cons, pow_succ]; simp only [Bool.toNat_true]; omega
+
+/-- The increment adds one to the value. -/
+private theorem xr_incFixed_val : ∀ {w v : List Bool}, incFixed w = some v → xr_val v = xr_val w + 1
+  | [], _, h => by rw [incFixed_nil] at h; exact absurd h (by simp)
+  | false :: w, v, h => by
+    rw [incFixed_false_cons, Option.some.injEq] at h
+    subst h
+    rw [xr_val_cons, xr_val_cons]
+    simp only [Bool.toNat_false, Bool.toNat_true]
+    omega
+  | true :: w, v, h => by
+    rw [incFixed_true_cons] at h
+    obtain ⟨v', hv', rfl⟩ := Option.map_eq_some_iff.mp h
+    rw [xr_val_cons, xr_val_cons, xr_incFixed_val hv']
+    simp only [Bool.toNat_false, Bool.toNat_true]
+    omega
+
+/-- At the overflow the word is all `true`, so every same-length word has a value at most its. -/
+private theorem xr_incFixed_none_max {w w' : List Bool} (h : incFixed w = none)
+    (hlen : w'.length = w.length) : xr_val w' ≤ xr_val w := by
+  have hrep := (incFixed_eq_none_iff_replicate w).mp h
+  have h1 := xr_val_lt w'
+  have h2 := xr_val_replicate_true w.length
+  rw [hlen] at h1
+  rw [hrep]
+  omega
+
+/-- A word not entirely `true` increments. -/
+private theorem xr_incFixed_append_false (w : List Bool) :
+    ∃ v, incFixed (w ++ [false]) = some v := by
+  rcases h : incFixed (w ++ [false]) with _ | v
+  · exfalso
+    have := (incFixed_eq_none_iff_replicate _).mp h
+    have hmem : false ∈ List.replicate (w ++ [false]).length true := by
+      rw [← this]; simp
+    simp at hmem
+  · exact ⟨v, rfl⟩
+
+/-! ##### The phase index, the phase machines and the redirect table -/
+
+/-- The phases of the exhaustive replay. -/
+private inductive xr_Ph (k : ℕ) where
+  /-- copy the depth word onto the clock's counter -/
+  | copy
+  /-- the clocked replay -/
+  | replay
+  /-- the capture test, which also clears the captured output -/
+  | test
+  /-- rewind the choice head -/
+  | crewind
+  /-- rewind the input head -/
+  | irewind
+  /-- pass `n` of the window clear of work tape `j`: `n < 2` leftward, then rightward -/
+  | pass (j : Fin k) (n : Fin 6)
+  /-- increment the choice word -/
+  | inc
+  /-- extend the choice word by one `false` (a depth change) -/
+  | extC
+  /-- extend the depth word by one `false` (a depth change) -/
+  | extD
+  /-- increment the depth word (a depth change) -/
+  | incD
+  /-- emit the answer and halt -/
+  | answer (b : Bool)
+  deriving DecidableEq, Fintype
+
+/-- The phase index: a phase with the two flags "some branch accepted" and "some branch is live". -/
+private abbrev xr_I (k : ℕ) := xr_Ph k × Bool × Bool
+
+/-- Each phase's control. -/
+private def xr_PhSt {N : FinNDTM Bool} (C : xr_Clock N) : xr_I N.k → Type
+  | (.copy, _, _) => SweepPhase
+  | (.replay, _, _) => C.Q
+  | (.test, _, _) => xr_St
+  | (.crewind, _, _) => xr_St
+  | (.irewind, _, _) => xr_St
+  | (.pass _ _, _, _) => xr_St
+  | (.inc, _, _) => FlagPhase
+  | (.extC, _, _) => xr_St
+  | (.extD, _, _) => xr_St
+  | (.incD, _, _) => FlagPhase
+  | (.answer _, _, _) => xr_St
+
+private instance xr_PhSt_fintype {N : FinNDTM Bool} (C : xr_Clock N) :
+    ∀ i, Fintype (xr_PhSt C i)
+  | (.copy, _, _) => inferInstanceAs (Fintype SweepPhase)
+  | (.replay, _, _) => inferInstanceAs (Fintype C.Q)
+  | (.test, _, _) => inferInstanceAs (Fintype xr_St)
+  | (.crewind, _, _) => inferInstanceAs (Fintype xr_St)
+  | (.irewind, _, _) => inferInstanceAs (Fintype xr_St)
+  | (.pass _ _, _, _) => inferInstanceAs (Fintype xr_St)
+  | (.inc, _, _) => inferInstanceAs (Fintype FlagPhase)
+  | (.extC, _, _) => inferInstanceAs (Fintype xr_St)
+  | (.extD, _, _) => inferInstanceAs (Fintype xr_St)
+  | (.incD, _, _) => inferInstanceAs (Fintype FlagPhase)
+  | (.answer _, _, _) => inferInstanceAs (Fintype xr_St)
+
+private instance xr_PhSt_decEq {N : FinNDTM Bool} (C : xr_Clock N) :
+    ∀ i, DecidableEq (xr_PhSt C i)
+  | (.copy, _, _) => inferInstanceAs (DecidableEq SweepPhase)
+  | (.replay, _, _) => inferInstanceAs (DecidableEq C.Q)
+  | (.test, _, _) => inferInstanceAs (DecidableEq xr_St)
+  | (.crewind, _, _) => inferInstanceAs (DecidableEq xr_St)
+  | (.irewind, _, _) => inferInstanceAs (DecidableEq xr_St)
+  | (.pass _ _, _, _) => inferInstanceAs (DecidableEq xr_St)
+  | (.inc, _, _) => inferInstanceAs (DecidableEq FlagPhase)
+  | (.extC, _, _) => inferInstanceAs (DecidableEq xr_St)
+  | (.extD, _, _) => inferInstanceAs (DecidableEq xr_St)
+  | (.incD, _, _) => inferInstanceAs (DecidableEq FlagPhase)
+  | (.answer _, _, _) => inferInstanceAs (DecidableEq xr_St)
+
+/-- The direction of pass `n`: the first two passes move left, the last four right. -/
+private def xr_dir (n : Fin 6) : SignType := if n.val < 2 then SignType.neg else SignType.pos
+
+/-- The phase machines. -/
+private def xr_M {N : FinNDTM Bool} (C : xr_Clock N) :
+    ∀ i : xr_I N.k, MultiTapeTM (N.k + 2 + 2) Bool (xr_PhSt C i)
+  | (.copy, _, _) => copyTM (N.k + 2 + 2) (xr_dep N.k) (xr_ctr N.k)
+  | (.replay, _, _) => xr_replayTM C
+  | (.test, _, _) => xr_testTM (N.k + 2 + 2) (xr_cap N.k)
+  | (.crewind, _, _) => xr_rewindTM (N.k + 2 + 2) (xr_choice N.k)
+  | (.irewind, _, _) => xr_inRewindTM (N.k + 2 + 2)
+  | (.pass j n, _, _) => xr_passTM (N.k + 2 + 2) (xr_work N.k j) (xr_dep N.k) (xr_dir n)
+  | (.inc, _, _) => incrementTM (N.k + 2 + 2) (xr_choice N.k)
+  | (.extC, _, _) => xr_extendTM (N.k + 2 + 2) (xr_choice N.k)
+  | (.extD, _, _) => xr_extendTM (N.k + 2 + 2) (xr_dep N.k)
+  | (.incD, _, _) => incrementTM (N.k + 2 + 2) (xr_dep N.k)
+  | (.answer b, _, _) => xr_answerTM (N.k + 2 + 2) b
+
+/-- The first phase of the window clear (the increment when `N` has no work tape). -/
+private def xr_firstPass {N : FinNDTM Bool} (C : xr_Clock N) (a l : Bool) : Σ i, xr_PhSt C i :=
+  if h : 0 < N.k then ⟨(.pass ⟨0, h⟩ 0, a, l), xr_St.run⟩ else ⟨(.inc, a, l), FlagPhase.run⟩
+
+/-- The phase after pass `n` of tape `j`: the next pass, the next tape, or the increment. -/
+private def xr_afterPass {N : FinNDTM Bool} (C : xr_Clock N) (a l : Bool) (j : Fin N.k)
+    (n : Fin 6) : Σ i, xr_PhSt C i :=
+  if h : n.val + 1 < 6 then ⟨(.pass j ⟨n.val + 1, h⟩, a, l), xr_St.run⟩
+  else if h' : j.val + 1 < N.k then ⟨(.pass ⟨j.val + 1, h'⟩ 0, a, l), xr_St.run⟩
+  else ⟨(.inc, a, l), FlagPhase.run⟩
+
+/-- The redirect of a leaf row's anchor `done b` at phase `i`, when the phase redirects on a
+`done` state at all. -/
+private def xr_redDone {N : FinNDTM Bool} (C : xr_Clock N) (i : xr_I N.k) (b : Bool) :
+    Option (Σ i, xr_PhSt C i) :=
+  match i with
+  | (.test, a, l) => some ⟨(.crewind, a || b, l), xr_St.start⟩
+  | (.crewind, a, l) => if b then some ⟨(.irewind, a, l), xr_St.start⟩ else none
+  | (.irewind, a, l) => if b then some (xr_firstPass C a l) else none
+  | (.pass j n, a, l) => if b then some (xr_afterPass C a l j n) else none
+  | (.extC, a, l) => if b then some ⟨(.extD, a, l), xr_St.run⟩ else none
+  | (.extD, a, l) => if b then some ⟨(.incD, a, l), FlagPhase.run⟩ else none
+  | _ => none
+
+open Classical in
+/-- The redirect table. -/
+private noncomputable def xr_red {N : FinNDTM Bool} (C : xr_Clock N) :
+    ∀ i : xr_I N.k, xr_PhSt C i → Option (Σ i, xr_PhSt C i)
+  | (.copy, a, l), s => if s = SweepPhase.done then some ⟨(.replay, a, l), C.inj N.tm.q₀⟩ else none
+  | (.replay, a, l), q =>
+    if ∃ r, q = C.finish r then some ⟨(.test, a, l), xr_St.start⟩
+    else if ∃ r, q = C.timeout r then some ⟨(.test, a, true), xr_St.start⟩ else none
+  | (.test, a, l), s => match s with | .done b => xr_redDone C (.test, a, l) b | _ => none
+  | (.crewind, a, l), s => match s with | .done b => xr_redDone C (.crewind, a, l) b | _ => none
+  | (.irewind, a, l), s => match s with | .done b => xr_redDone C (.irewind, a, l) b | _ => none
+  | (.pass j n, a, l), s => match s with | .done b => xr_redDone C (.pass j n, a, l) b | _ => none
+  | (.inc, a, l), s =>
+    match s with
+    | .done true => some ⟨(.copy, a, l), SweepPhase.sweep⟩
+    | .done false =>
+      some (if l then ⟨(.extC, false, false), xr_St.run⟩ else ⟨(.answer a, a, l), xr_St.start⟩)
+    | _ => none
+  | (.extC, a, l), s => match s with | .done b => xr_redDone C (.extC, a, l) b | _ => none
+  | (.extD, a, l), s => match s with | .done b => xr_redDone C (.extD, a, l) b | _ => none
+  | (.incD, a, l), s => match s with | .done _ => some ⟨(.copy, a, l), SweepPhase.sweep⟩ | _ => none
+  | (.answer _, _, _), _ => none
+
+/-- **The exhaustive replay `E`**, as a bundled machine: the phase host over the phases above,
+starting at the copy with both flags down. -/
+private noncomputable def xr_E {N : FinNDTM Bool} (C : xr_Clock N) : FinTM Bool :=
+  ⟨N.k + 2 + 2, Σ i, xr_PhSt C i,
+    phaseHostTM (xr_M C) ⟨(.copy, false, false), SweepPhase.sweep⟩ (xr_red C)⟩
+
+/-- **One phase of the host.** If phase `i`, started at `s₀` over the tapes `tp` and heads `hd`,
+reaches `c'` in `T` steps, `c'` is in a state `s'` that the table redirects to `q'`, and no earlier
+state is redirected, then the host, started at `⟨i, s₀⟩` over the same tapes, reaches `c'`'s tapes
+and heads in state `q'` in `T + 1` steps. -/
+private theorem xr_phase_step {N : FinNDTM Bool} (C : xr_Clock N) {z : List Bool} (i : xr_I N.k)
+    (s₀ : xr_PhSt C i) (ip : Fin (z.length + 2)) (tp : Fin (N.k + 2 + 2) → ℤ → Option Bool)
+    (hd : Fin (N.k + 2 + 2) → ℤ) (T : ℕ) (c' : Cfg (N.k + 2 + 2) Bool (xr_PhSt C i) z)
+    (h : (xr_M C i).runFrom ⟨some s₀, ip, tp, hd, []⟩ T = c') (s' : xr_PhSt C i)
+    (hs' : c'.state = some s') (hout : c'.output = []) (q' : Σ i, xr_PhSt C i)
+    (hred : xr_red C i s' = some q')
+    (hguard : ∀ u < T, ∀ s, ((xr_M C i).runFrom ⟨some s₀, ip, tp, hd, []⟩ u).state = some s →
+      xr_red C i s = none) :
+    (xr_E C).tm.runFrom ⟨some ⟨i, s₀⟩, ip, tp, hd, []⟩ (T + 1) =
+      ⟨some q', c'.inputPos, c'.workTapes, c'.workTapePos, []⟩ := by
+  have hstart : (⟨some ⟨i, s₀⟩, ip, tp, hd, []⟩ : Cfg (N.k + 2 + 2) Bool (Σ i, xr_PhSt C i) z) =
+      (⟨some s₀, ip, tp, hd, []⟩ : Cfg (N.k + 2 + 2) Bool (xr_PhSt C i) z).mapState (Sigma.mk i) := by
+    apply Cfg.ext
+    · rw [Cfg.mapState_state]; rfl
+    · rw [Cfg.mapState_inputPos]
+    · funext j p; rw [Cfg.mapState_workTapes]
+    · funext j; rw [Cfg.mapState_workTapePos]
+    · rw [Cfg.mapState_output]
+  have hhost := (phaseHostTM_run (xr_M C) ⟨(.copy, false, false), SweepPhase.sweep⟩ (xr_red C) i _
+    c' T h s' hs' q' hred hguard).2
+  rw [hstart]
+  show (phaseHostTM (xr_M C) ⟨(.copy, false, false), SweepPhase.sweep⟩ (xr_red C)).runFrom _
+    (T + 1) = _
+  rw [hhost]
+  apply Cfg.ext
+  · rw [Cfg.mapState_state, hs']; rfl
+  · rw [Cfg.mapState_inputPos]
+  · funext j p; rw [Cfg.mapState_workTapes]
+  · funext j; rw [Cfg.mapState_workTapePos]
+  · rw [Cfg.mapState_output, hout]
+
 /-- **The exhaustive replay `E`.** For every bundled binary NDTM `N` there is a deterministic
 machine `E` and a constant `C` such that, on every input `z` on which every branch of `N` of
 length `T` has halted (any `T`, which nobody needs to compute), `E` outputs `[true]` if `N`
