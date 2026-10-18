@@ -1062,6 +1062,12 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
   `ss_captureInitial`/`ss_capture_indices` sketches are a required item of the U2-S continuation's
   brief; 49's stale status prose rides cont7's landing (`CodeSimulator`) and the docstring-cleanup
   pass (`Codes2Tape`, `EXPCOM`). #129 and #130 declared clear to merge; #131 after #130 (retarget).
+- **C1-WC lands from the worker's repaired draft (2026-10-18; the user's ruling, as for C1-W).**
+  Round 3's unchecked Appendix C draft failed verbatim (7 errors); the review's 14 mechanical
+  repairs make `exists_inputWindowCopyTM` proved (0 errors, standard axioms, the brief's route,
+  `C = 6`; review `campaign/fills/c1/reviews/window-cont1-r3/`). Landing branch
+  `lean/c1-window-fill`: the repaired draft (author: the worker) and the maintainer's L1-L6. Its
+  2-module replay (InputWindow, the TuringMachine facade) follows #132. WC needs no further round.
 - **Addendum v2.3: the narrowed cache fetch (2026-10-18; the user's ruling).** R cont1 and WC cont1
   (round 3) failed the cache fetch: the hosts' proxy refused ~1,900 of the full cache's 7,506 files
   (CONNECT 403), 1,843 of them the same on both hosts; cont6's narrowed fetch (1,003 files)

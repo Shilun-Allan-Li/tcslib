@@ -1,0 +1,28 @@
+ReviewScratch/IWSealS2.lean:199:4: error: Type mismatch: After simplification, term
+  Eq.symm (iw_prefix_zero c p (Decidable.byContradiction fun a => iw_orbit._proof_1_2 c p hi a) hc hi)
+ has type
+  c = iw_prefix c p 0 ⋯
+but is expected to have type
+  counterLoopOrbit iw_body (fun x => 1) c 0 = iw_prefix c p 0 hr
+ReviewScratch/IWSealS2.lean:201:4: error: `simp` made no progress
+ReviewScratch/IWSealS2.lean:299:6: error: Type mismatch
+  Eq.trans
+    (congrArg (fun x => MultiTapeTM.runFrom x 1)
+      (horbit n (Decidable.byContradiction fun a => iw_local._proof_1_10 c p w n hn hnd hpn a)))
+    (iw_body_blank (iw_prefix c p n (Decidable.byContradiction fun a => iw_local._proof_1_10 c p w n hn hnd hpn a)) rfl
+      (Cfg.inputSymbol_of_end (id (Decidable.byContradiction fun a => iw_local._proof_1_13 c p w n hn hnd hpn a))))
+has type
+  MultiTapeTM.runFrom (counterLoopOrbit iw_body (fun x => 1) c n) 1 =
+    { state := some true, inputPos := (iw_prefix c p n ⋯).inputPos, workTapes := (iw_prefix c p n ⋯).workTapes,
+      workTapePos := (iw_prefix c p n ⋯).workTapePos, output := (iw_prefix c p n ⋯).output }
+but is expected to have type
+  counterLoopOrbit iw_body (fun x => 1) c (n + 1) =
+    { state := some true, inputPos := (iw_prefix c p n ⋯).inputPos, workTapes := (iw_prefix c p n ⋯).workTapes,
+      workTapePos := (iw_prefix c p n ⋯).workTapePos, output := (iw_prefix c p n ⋯).output }
+ReviewScratch/IWSealS2.lean:298:17: warning: This simp argument is unused:
+  roundOrbit_succ
+
+Hint: Omit it from the simp argument list.
+  simp only ̵[̵r̵o̵u̵n̵d̵O̵r̵b̵i̵t̵_̵s̵u̵c̵c̵]̵
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
