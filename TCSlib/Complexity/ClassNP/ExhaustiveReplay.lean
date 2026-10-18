@@ -327,9 +327,6 @@ private def xr_mv2 {K : ℕ} (j r : Fin K) (wr : Option (Option Bool)) (m m' : S
     Fin K → Option (Option Bool) × SignType :=
   fun i => if i = j then (wr, m) else if i = r then (none, m') else (none, 0)
 
-/-- The blanking write: `some none` blanks the cell, `none` leaves it. -/
-private def xr_wr (blank : Bool) : Option (Option Bool) := if blank then some none else none
-
 /-- The stationary action at `q`. -/
 private def xr_stay {K : ℕ} (q : xr_St) : Action K Bool xr_St :=
   xr_act (fun _ => (none, 0)) (some q)
@@ -1145,20 +1142,6 @@ private def xr_inRewindTM (K : ℕ) : MultiTapeTM K Bool xr_St where
       | none => FinTM.controlAction .pos (some (.done true))
     | q => xr_stay q
 
-/-- **The input rewind's contract** (`Turing.FinTM.timed_rewind`, with the first arrival at the
-anchor): within `inputPos + 2` steps the input head is at `1`, nothing else changes, the state is
-`done true`, and no earlier state is. -/
-private theorem xr_inRewindTM_run {K : ℕ} {x : List Bool} (d : Cfg K Bool xr_St x)
-    (hd : d.state = some .start) :
-    ∃ T ≤ d.inputPos.val + 2,
-      (xr_inRewindTM K).runFrom d T = {d with state := some (.done true), inputPos := 1} ∧
-      ∀ u < T, ((xr_inRewindTM K).runFrom d u).state ≠ some (.done true) := by
-  obtain ⟨T, hT, hrun⟩ := FinTM.timed_rewind (xr_inRewindTM K) .start .run (some (.done true))
-    (fun inp work => rfl) (fun inp work => by cases inp <;> rfl) d hd
-  obtain ⟨T', hT', hrun', hguard⟩ := xr_firstArrival (xr_inRewindTM K) (.done true)
-    (fun e he => xr_stay_step _ _ (fun inp w => rfl) e he) hrun rfl
-  exact ⟨T', hT'.trans hT, hrun', hguard⟩
-
 /-- **The answer**: emit `b` and halt. -/
 private def xr_answerTM (K : ℕ) (b : Bool) : MultiTapeTM K Bool xr_St where
   q₀ := .start
@@ -1765,15 +1748,6 @@ private theorem xr_heads_upd_choice {k : ℕ} (hk : Fin k → ℤ) (hch hctr hcp
   · rw [Function.update_of_ne (Ne.symm (xr_choice_ne_ctr k)), xr_heads_ctr, xr_heads_ctr]
   · rw [Function.update_of_ne (Ne.symm (xr_choice_ne_cap k)), xr_heads_cap, xr_heads_cap]
   · rw [Function.update_of_ne (Ne.symm (xr_choice_ne_dep k)), xr_heads_dep, xr_heads_dep]
-
-private theorem xr_heads_upd_ctr {k : ℕ} (hk : Fin k → ℤ) (hch hctr hcp hdp : ℤ) (X : ℤ) :
-    Function.update (xr_heads hk hch hctr hcp hdp) (xr_ctr k) X = xr_heads hk hch X hcp hdp := by
-  apply xr_bank_ext
-  · intro j; rw [Function.update_of_ne (xr_work_ne_ctr j), xr_heads_work, xr_heads_work]
-  · rw [Function.update_of_ne (xr_choice_ne_ctr k), xr_heads_choice, xr_heads_choice]
-  · rw [Function.update_self, xr_heads_ctr]
-  · rw [Function.update_of_ne (Ne.symm (xr_ctr_ne_cap k)), xr_heads_cap, xr_heads_cap]
-  · rw [Function.update_of_ne (Ne.symm (xr_ctr_ne_dep k)), xr_heads_dep, xr_heads_dep]
 
 private theorem xr_heads_upd_cap {k : ℕ} (hk : Fin k → ℤ) (hch hctr hcp hdp : ℤ) (X : ℤ) :
     Function.update (xr_heads hk hch hctr hcp hdp) (xr_cap k) X = xr_heads hk hch hctr X hdp := by
